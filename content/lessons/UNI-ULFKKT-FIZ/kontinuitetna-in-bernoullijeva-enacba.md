@@ -27,7 +27,7 @@ $$p(h) = p_0 + \rho g h.$$
 
 **3. Pascalov zakon.** Naj nestisljiva tekočina v zaprti posodi miruje. Če tlak na enem mestu povečamo za $\Delta p$, se za enak $\Delta p$ poveča tlak v vsaki točki tekočine in na stenah posode. To sledi iz izreka 2: razlika tlakov med točkama je $\rho g$ krat višinska razlika in se ne spremeni, ko spremenimo $p_0$. Na tem temeljijo hidravlične stiskalnice in zavore: pri ploščinah batov $S_1$ in $S_2$ je $F_2 = F_1 S_2/S_1$.
 
-*Hiter preizkus:* veliki bat ima $50$-krat večjo ploščino od malega, na mali pritisneš s $100\,\mathrm{N}$. Kolikšna je sila velikega bata? *($5000\,\mathrm{N}$.)*
+*Hiter preizkus:* veliki bat ima $50$-krat večjo ploščino od malega, na malega pritisneš s $100\,\mathrm{N}$. Kolikšna je sila velikega bata? *($5000\,\mathrm{N}$.)*
 
 **4. Vzgon (Arhimedov zakon).** Naj bo telo v celoti ali delno potopljeno v mirujočo tekočino. Potem je rezultanta tlačnih sil tekočine na telo navpična, usmerjena navzgor in enaka teži izpodrinjene tekočine:
 
@@ -100,7 +100,7 @@ $p = p_0 + \rho g h$
 
 1. Nadtlak nastane zaradi teže vode nad potapljačem: $\rho g h = 1025\,\mathrm{kg/m^3} \cdot 9{,}81\,\mathrm{m/s^2} \cdot 15\,\mathrm{m} \approx 1{,}508 \cdot 10^5\,\mathrm{Pa}$.
 2. Na gladino pritiska še zrak, zato mu nadtlak prištejemo: $p = 1{,}013 \cdot 10^5\,\mathrm{Pa} + 1{,}508 \cdot 10^5\,\mathrm{Pa} \approx 2{,}52 \cdot 10^5\,\mathrm{Pa}$.
-3. Odgovor: nadtlak je približno $1{,}51 \cdot 10^5\,\mathrm{Pa}$ (okoli $1{,}5\,\mathrm{bar}$), absolutni tlak pa približno $2{,}52 \cdot 10^5\,\mathrm{Pa}$, kar je dva in pol krat več kot na gladini.
+3. Odgovor: nadtlak je približno $1{,}51 \cdot 10^5\,\mathrm{Pa}$ (okoli $1{,}5\,\mathrm{bar}$), absolutni tlak pa približno $2{,}52 \cdot 10^5\,\mathrm{Pa}$, kar je dvainpolkrat več kot na gladini.
 
 ### Primer 2
 
@@ -169,7 +169,7 @@ $\Phi_V = 7{,}85 \cdot 10^{-5}\,\mathrm{m^2} \cdot 3{,}65\,\mathrm{m/s} \approx 
 
 ## Pogoste napake
 
-- **Hitrost sorazmerna s premerom.** Pri zožitvi na polovico premera se presek zmanjša na četrtino, hitrost pa se **početveri**, ne podvoji. Premere pred računanjem ploščin pretvori v metre ($1\,\mathrm{cm^2} = 10^{-4}\,\mathrm{m^2}$).
+- **Hitrost obratno sorazmerna s premerom.** Pri zožitvi na polovico premera se presek zmanjša na četrtino, hitrost pa se **početveri**, ne podvoji. Premere pred računanjem ploščin pretvori v metre ($1\,\mathrm{cm^2} = 10^{-4}\,\mathrm{m^2}$).
 - **Mešanje absolutnega tlaka in nadtlaka.** V Bernoullijevi enačbi sme biti na obeh straneh le ena vrsta tlaka. Pri odprtih posodah in curkih v zrak je tlak na prostih površinah $p_0$ in se pokrajša.
 - **Večja hitrost, večji tlak.** Pogosta intuicija je napačna: v ožjem delu vodoravne cevi je hitrost večja, tlak pa **manjši**. Curek iz šobe je hiter, ker ga poganja razlika tlakov.
 - **Bernoulli za viskozen tok v dolgi cevi.** V tankih ceveh (kapilare, injekcijske igle) in pri zelo viskoznih tekočinah prevladajo izgube zaradi notranjega trenja; idealni model tam ne zadošča.
@@ -199,7 +199,7 @@ Valjast odprt rezervoar s premerom $1{,}20\,\mathrm{m}$ je napolnjen z vodo do v
 **Rešitev:**
 
 1. Razmerje presekov rezervoarja in odprtine: $S/s = (D/d)^2 = (1{,}20/0{,}020)^2 = 3600$.
-2. Po kontinuiteti je hitrost gladine $3600$-krat manjša od hitrosti curka, zato je njen kinetični člen zanemarljiv, tok pa se spreminja zelo počasi (skoraj stacionarno). Torricellijev izrek zato velja v vsakem trenutku z trenutno višino $h$: $v = \sqrt{2gh}$.
+2. Po kontinuiteti je hitrost gladine $3600$-krat manjša od hitrosti curka, zato je njen kinetični člen zanemarljiv, tok pa se spreminja zelo počasi (skoraj stacionarno). Torricellijev izrek zato velja v vsakem trenutku s trenutno višino $h$: $v = \sqrt{2gh}$.
 3. Začetna hitrost: $v_0 = \sqrt{2 \cdot 9{,}81 \cdot 2{,}00}\,\mathrm{m/s} \approx 6{,}26\,\mathrm{m/s}$.
 4. Presek odprtine $s = \pi(0{,}020\,\mathrm{m})^2/4 \approx 3{,}14 \cdot 10^{-4}\,\mathrm{m^2}$, začetni pretok $\Phi_V = s v_0 \approx 3{,}14 \cdot 10^{-4} \cdot 6{,}26\,\mathrm{m^3/s} \approx 1{,}97 \cdot 10^{-3}\,\mathrm{m^3/s} = 1{,}97\,\mathrm{L/s}$.
 5. Prostornina v rezervoarju se zmanjšuje za iztekajoči pretok: $S\,\dfrac{\mathrm{d}h}{\mathrm{d}t} = -s\sqrt{2gh}$.

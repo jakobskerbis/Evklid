@@ -31,7 +31,7 @@ Primeri: $(\mathbb Z, +)$ z enoto $0$; $(\mathbb R \setminus \{0\}, \cdot)$ z en
 
 Vrstni red pri $(ab)^{-1}$ je obrnjen kot pri slačenju: najprej sezuješ čevelj, nato nogavico. Odslej operacijo pišemo kot množenje, $ab$.
 
-**3. Red elementa.** Za $a \in G$ pišemo $a^k = a \cdots a$ ($k$-krat). **Red elementa** $a$ je najmanjši $k \ge 1$ z $a^k = e$ (če obstaja). Grupa je **ciklična**, če obstaja $g$, da je vsak element potenca $g$; tedaj $G = \langle g \rangle$. $\mathbb Z_n$ je ciklična z generatorjem $1$.
+**3. Red elementa.** Za $a \in G$ pišemo $a^k = a \cdots a$ ($k$-krat). **Red elementa** $a$ je najmanjši $k \ge 1$ z $a^k = e$ (če obstaja). Grupa je **ciklična**, če obstaja $g$, da je vsak element cela potenca $g$ (tudi $g^0 = e$ in $g^{-k} = (g^{-1})^k$); tedaj $G = \langle g \rangle$. $\mathbb Z_n$ je ciklična z generatorjem $1$.
 
 *Preveri v eni vrstici:* kakšen red ima $4$ v $\mathbb Z_6$? ($4, 8 \equiv 2, 12 \equiv 0$, torej red $3$.)
 
@@ -77,7 +77,7 @@ Razcep v (a) dobiš tako, da slediš točki $1$, dokler se ne vrne, nato vzameš
 
 **Trditev.** Za homomorfizem velja $f(e_G) = e_K$ in $f(a^{-1}) = f(a)^{-1}$; $\ker f$ je podgrupa v $G$, $\operatorname{im} f$ je podgrupa v $K$; $f$ je injektiven natanko tedaj, ko je $\ker f = \{e_G\}$.
 
-**Dokaz.** Iz $f(e) = f(ee) = f(e)f(e)$ s krajšanjem $f(e) = e_K$. Iz $f(a)f(a^{-1}) = f(e) = e_K$ sledi $f(a^{-1}) = f(a)^{-1}$. Za $a, b \in \ker f$ je $f(ab^{-1}) = e_K e_K^{-1} = e_K$, zato je $\ker f$ po kriteriju podgrupa; za sliko podobno. Če je $f$ injektiven, v jedru je le $e_G$. Obratno: iz $f(a) = f(b)$ sledi $f(ab^{-1}) = e_K$, torej $ab^{-1} \in \ker f = \{e\}$ in $a = b$. $\square$
+**Dokaz.** Iz $f(e) = f(ee) = f(e)f(e)$ s krajšanjem $f(e) = e_K$. Iz $f(a)f(a^{-1}) = f(e) = e_K$ sledi $f(a^{-1}) = f(a)^{-1}$. Za $a, b \in \ker f$ je $f(ab^{-1}) = e_K e_K^{-1} = e_K$, zato je $\ker f$ po kriteriju podgrupa; za sliko podobno. Če je $f$ injektiven, je v jedru le $e_G$. Obratno: iz $f(a) = f(b)$ sledi $f(ab^{-1}) = e_K$, torej $ab^{-1} \in \ker f = \{e\}$ in $a = b$. $\square$
 
 Primeri: $\det\colon \mathrm{GL}_n(\mathbb R) \to \mathbb R \setminus \{0\}$ z jedrom $\mathrm{SL}_n(\mathbb R)$; $\operatorname{sgn}\colon S_n \to \{1, -1\}$ z jedrom $A_n$; $\exp\colon (\mathbb R, +) \to (\mathbb R_{>0}, \cdot)$ je izomorfizem, saj $e^{x+y} = e^xe^y$.
 
@@ -284,7 +284,7 @@ Vrtenja $\{\mathrm{id}, (1\;2\;3), (1\;3\;2)\}$ tvorijo podgrupo reda $3$ (to je
 ~ Faktoriela raste veliko hitreje.
 + približno $3{,}6$ milijona
 - približno $10^{10}$
-~ $10^{10}$ bi bilo število vseh preslikav $\{1..10\} \to \{1..10\}$, ne bijekcij.
+~ $10^{10}$ bi bilo število vseh preslikav $\{1, \dots, 10\} \to \{1, \dots, 10\}$, ne bijekcij.
 > $10! = 3\,628\,800$.
 
 ? Zakaj grupa s $15$ elementi ne more imeti elementa reda $4$?

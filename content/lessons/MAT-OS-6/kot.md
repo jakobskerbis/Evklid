@@ -36,13 +36,13 @@ Kateri kot je večji, $\alpha$ ali $\beta$? Napovej, nato pomisli, kaj pravzapra
 Večji je $\beta$: meri $70^\circ$, $\alpha$ pa le $40^\circ$. Kraka kota $\beta$ sta bolj razprta, čeprav sta krajša. Dolžina krakov pri velikosti kota ne šteje.
 :::
 
-**2. Kaj je kot.** Dva poltraka, ki imata isto krajišče, delita ravnino na dva dela. Vsak od obeh delov je **kot**. Skupno krajišče poltrakov imenujemo **vrh** kota, poltraka pa sta **kraka** kota.
+**2. Kaj je kot.** Dva poltraka, ki imata isti začetek, delita ravnino na dva dela. Vsak od obeh delov je **kot**. Skupni začetek poltrakov imenujemo **vrh** kota, poltraka pa sta **kraka** kota.
 
 Poltrak je neomejen. Na papirju narišemo le njegov začetni del, zato narisana dolžina kraka ni lastnost kota. **Velikost kota** pove samo, kako močno sta kraka razprta.
 
 Kot zapišemo s tremi točkami: $\angle AVB$. Črka v sredini je vedno vrh $V$, črki $A$ in $B$ sta točki na krakih. Pogosto ga označimo kar z grško črko: $\alpha$ (alfa), $\beta$ (beta), $\gamma$ (gama). Na sliki ga pokažemo z majhnim lokom med krakoma.
 
-**3. Enota stopinja.** Velikost kota merimo v **stopinjah**, znak je $^\circ$. Če poltrak zavrtimo okoli krajišča za cel krog nazaj v začetno lego, opiše **polni kot**, ki meri $360^\circ$. Ena stopinja je torej tristošestdesetinka polnega kota:
+**3. Enota stopinja.** Velikost kota merimo v **stopinjah**, znak je $^\circ$. Če poltrak zavrtimo okoli začetka za cel krog nazaj v začetno lego, opiše **polni kot**, ki meri $360^\circ$. Ena stopinja je torej tristošestdesetinka polnega kota:
 
 $$1^\circ = \frac{1}{360} \text{ polnega kota}$$
 
@@ -168,7 +168,7 @@ $\alpha_2 = 180^\circ - 95^\circ = 85^\circ$. Ker je $85^\circ < 90^\circ$, je k
 
 ## Povzetek
 
-- **Kot** sestavljata dva poltraka s skupnim krajiščem (vrh), poltraka sta kraka. Zapis: $\angle AVB$ (vrh je srednja črka) ali $\alpha$.
+- **Kot** sestavljata dva poltraka s skupnim začetkom (vrh), poltraka sta kraka. Zapis: $\angle AVB$ (vrh je srednja črka) ali $\alpha$.
 - Velikost kota merimo v **stopinjah** s kotomerom; $1^\circ = \dfrac{1}{360}$ polnega kota. Ni odvisna od dolžine krakov.
 - Ničelni $0^\circ$; ostri med $0^\circ$ in $90^\circ$; pravi $90^\circ$; topi med $90^\circ$ in $180^\circ$; iztegnjeni $180^\circ$; udrti med $180^\circ$ in $360^\circ$; polni $360^\circ$.
 - Merjenje: središče na vrh, ničla na krak, beri lestvico, ki se na kraku začne z $0$; prej oceni vrsto kota. Udrti kot: $360^\circ$ minus drugi kot.
@@ -179,7 +179,7 @@ $\alpha_2 = 180^\circ - 95^\circ = 85^\circ$. Ker je $85^\circ < 90^\circ$, je k
 
 Maja si je pri košarki poškodovala koleno. Prvi dan po operaciji je fizioterapevtka na stegno in golen položila velik kotomer z dolgima krakoma (goniometer). Središče je bilo na kolenu, en krak ob stegnu, drugi ob goleni. Kot je meril $160^\circ$, upogib je bil torej $180^\circ - 160^\circ = 20^\circ$.
 
-Majin brat, ki je visok skoraj dva metra, se je pošalil: »Če bi meril meni, bi bil kot večji, ker imam daljše noge.« Fizioterapevtka se je nasmehnila: »Daljše noge so kot daljša kraka. Koleno upogneš enako, kot ostane enak.«
+Majin brat, ki je visok skoraj dva metra, se je pošalil: »Če bi merili meni, bi bil kot večji, ker imam daljše noge.« Fizioterapevtka se je nasmehnila: »Daljše noge so kot daljša kraka. Koleno upogneš enako, kot ostane enak.«
 
 Po dveh tednih je Maja koleno upognila bolj. Pripravnik je odčital $70^\circ$. Fizioterapevtka je samo pogledala nogo: »Koleno ni pokrčeno ožje od pravega kota, torej je kot topi. Bral si napačno lestvico.« Na drugi lestvici je pisalo $110^\circ$; upogib je bil $180^\circ - 110^\circ = 70^\circ$.
 

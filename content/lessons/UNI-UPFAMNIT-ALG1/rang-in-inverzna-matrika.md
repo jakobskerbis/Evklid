@@ -37,11 +37,7 @@ $$E = \begin{pmatrix} 1 & 0 & 0 \\ -2 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}.$$
 
 **3. Stopničasta oblika.** Matrika je v **vrstični stopničasti obliki**, če so ničelne vrstice na dnu in je prvi neničelni element (**pivot**) vsake vrstice desno od pivota vrstice nad njo. Pod pivoti so same ničle. Skica (■ je pivot, * karkoli):
 
-```
-[ ■ * * * ]
-[ 0 0 ■ * ]
-[ 0 0 0 0 ]
-```
+$$\begin{pmatrix} \blacksquare & * & * & * \\ 0 & 0 & \blacksquare & * \\ 0 & 0 & 0 & 0 \end{pmatrix}$$
 
 Z Gaussovo eliminacijo pride vsaka matrika v stopničasto obliko. Če nadaljujemo, da so pivoti enaki $1$ in nad njimi tudi ničle, dobimo **reducirano** stopničasto obliko (Gauss-Jordanova metoda).
 
@@ -51,7 +47,7 @@ Z Gaussovo eliminacijo pride vsaka matrika v stopničasto obliko. Če nadaljujem
 
 **Izrek.** Elementarne transformacije vrstic ne spremenijo ranga. Zato je rang enak številu neničelnih vrstic v (poljubni) stopničasti obliki matrike.
 
-**Dokaz.** Pri T1 in T2 je jasno, da se množica vseh linearnih kombinacij vrstic (vrstični prostor) ne spremeni. Pri T3 je nova vrstica $V_i + cV_j$ kombinacija starih, stara $V_i = (V_i + cV_j) - cV_j$ pa kombinacija novih. Prostor je enak, zato je enaka tudi največja množica neodvisnih vrstic. V stopničasti obliki so neničelne vrstice neodvisne: v stolpcu pivota prve neničelne vrstice imajo vse nižje vrstice ničlo, zato mora biti njen koeficient v vsaki ničelni kombinaciji $0$; nato isto sklepamo za drugo vrstico in tako naprej. $\blacksquare$
+**Dokaz.** Pri T1 in T2 je jasno, da se množica vseh linearnih kombinacij vrstic (vrstični prostor) ne spremeni. Pri T3 je nova vrstica $V_i + cV_j$ kombinacija starih, stara $V_i = (V_i + cV_j) - cV_j$ pa kombinacija novih. Prostor je enak, zato je enako tudi največje število neodvisnih vrstic. V stopničasti obliki so neničelne vrstice neodvisne: v stolpcu pivota prve neničelne vrstice imajo vse nižje vrstice ničlo, zato mora biti njen koeficient v vsaki ničelni kombinaciji $0$; nato isto sklepamo za drugo vrstico in tako naprej. $\blacksquare$
 
 Velja tudi, da je vrstični rang enak stolpčnemu (dokaz v razdelku »Bolj natančno«), zato je $\operatorname{rang} A = \operatorname{rang} A^T$.
 
@@ -77,7 +73,7 @@ Na desni strani sheme si se pri eni transformaciji uštel, leva stran pa je prav
 Izračunaj produkt $A B$, kjer je $B$ dobljena desna stran. Če je napaka, $AB \neq I$. Preizkus stane eno množenje matrik in ujame vsako napako na desni.
 :::
 
-**6. Koliko dela.** Gauss-Jordan za matriko reda $n$ potrebuje okoli $n^3$ množenj. Za $n = 10$ je to približno $1000$, s prirejenko pa bi računali $100$ determinant reda $9$. Zato računalniki inverze in range vedno računajo z eliminacijo.
+**6. Koliko dela.** Gauss-Jordan za matriko reda $n$ potrebuje okoli $n^3$ množenj. Za $n = 10$ je to približno $1000$, s prirejenko pa bi računali $100$ determinant reda $9$. Zato računalniki inverzov ne računajo s prirejenko, temveč z eliminacijo.
 
 ## Rešeni primeri
 
@@ -181,7 +177,7 @@ $\vec{U}_b$ je drugi stolpec $G^{-1}$ krat $4$: $\vec{U}_b = (2, 4, 2)\,\mathrm{
 
 ## Povzetek
 
-- Elementarne transformacije vrstic: zamenjava, množenje z $c \neq 0$, prištevanje večkratnika druge vrstice; vsaka je množenje z elementarno matriko z leve.
+- Elementarne transformacije vrstic: zamenjava, množenje s $c \neq 0$, prištevanje večkratnika druge vrstice; vsaka je množenje z elementarno matriko z leve.
 - Rang je največje število neodvisnih vrstic (enako stolpcev); transformacije ga ne spremenijo, zato ga preberemo iz stopničaste oblike. Velja $\operatorname{rang} A \le \min(m, n)$.
 - Kvadratna $A$ reda $n$ je obrnljiva $\iff \operatorname{rang} A = n \iff \det A \neq 0 \iff A \sim I$.
 - Gauss-Jordan: $[A \mid I] \sim [I \mid A^{-1}]$; ničelna vrstica na levi pomeni, da inverza ni.

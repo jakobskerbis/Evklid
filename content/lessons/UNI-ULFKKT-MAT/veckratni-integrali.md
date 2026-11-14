@@ -107,7 +107,7 @@ Tip I: $\iint_D f\, dA = \int_a^b \int_{\varphi_1(x)}^{\varphi_2(x)} f\, dy\, dx
 3. Zunanji integral: $\int_0^1 \frac{x^3 - x^5}{2}\, dx = \frac{1}{2}\left(\frac{1}{4} - \frac{1}{6}\right) = \frac{1}{2} \cdot \frac{1}{12} = \frac{1}{24}$.
 4. Obrnjen vrstni red: za $0 \le y \le 1$ sega $x$ od premice $x = y$ do parabole $x = \sqrt{y}$, torej $D = \{0 \le y \le 1,\ y \le x \le \sqrt y\}$.
 5. $\int_y^{\sqrt y} xy\, dx = y\left[\frac{x^2}{2}\right]_y^{\sqrt y} = \frac{y}{2}(y - y^2)$ in $\int_0^1 \frac{y^2 - y^3}{2}\, dy = \frac{1}{2}\left(\frac{1}{3} - \frac{1}{4}\right) = \frac{1}{24}$.
-6. Odgovor: $\iint_D xy\, dA = \frac{1}{24} \approx 0{,}0417$; oba vrstna reda data isti rezultat.
+6. Odgovor: $\iint_D xy\, dA = \frac{1}{24} \approx 0{,}0417$; oba vrstna reda dasta isti rezultat.
 
 ### Primer 3 (težji)
 
@@ -142,7 +142,7 @@ $m = \iiint_T \rho\, dV$, sferne koordinate $dV = r^2\sin\vartheta\, dr\, d\vart
 - **Spremenljivke v mejah zunanjega integrala.** Meje zunanjega integrala morajo biti konstante. Če je rezultat dvojnega integrala po celem računu še odvisen od $x$ ali $y$, je meja napačno postavljena.
 - **Napačne meje pri zamenjavi vrstnega reda.** Študent le zamenja $dx$ in $dy$, meje pa pusti. Območje je treba vedno narisati in meje odčitati na novo.
 - **Napačna lega krivulj.** V Primeru 2 je na $(0, 1)$ parabola pod premico; z obrnjenima mejama dobimo $-\frac{1}{24}$. Pri ploščini ali masi negativen rezultat pomeni napako.
-- **Mešanje dogovorov za sferne koordinate.** Če je $\vartheta$ kot od osi $z$, je element $r^2\sin\vartheta$ in $\vartheta \in [0, \pi]$. Meja $\vartheta \in [0, 2\pi]$ šteje vsako točko dvakrat.
+- **Mešanje dogovorov za sferne koordinate.** Če je $\vartheta$ kot od osi $z$, je element $r^2\sin\vartheta$ in $\vartheta \in [0, \pi]$. Z mejo $\vartheta \in [0, 2\pi]$ bi vsako točko zajeli dvakrat, a ker je $\sin\vartheta$ na $[\pi, 2\pi]$ negativen, se prispevka odštejeta: prostornina krogle bi prišla $0$.
 - **Jacobijeva determinanta brez absolutne vrednosti.** Pri preslikavah, ki obrnejo orientacijo, je $J < 0$; v integral vstavimo $|J|$.
 
 ## Povzetek

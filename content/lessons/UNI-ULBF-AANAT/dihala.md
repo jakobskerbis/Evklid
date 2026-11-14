@@ -66,7 +66,7 @@ Pljuča hranita dva obtoka. Pljučne arterije prinesejo vso kri za izmenjavo pli
 - **plevra:** $8.$, $10.$ in $12.$ rebro v istih črtah;
 - razlika dveh reber je rebrno-prepončni recesus.
 
-**Dihalne mišice.** Glavna je **prepona**; živec preponec izhaja iz vratnih segmentov $\mathrm{C3}$–$\mathrm{C5}$. Ko se skrči, se kupola spusti in prsna votlina se poveča. Zunanje medrebrne mišice dvigajo rebra pri vdihu, notranje jih spuščajo pri aktivnem izdihu. Ob vsakem rebru, v žlebu na njegovem **spodnjem** robu, teče medrebrni snop: vena, arterija in živec, od zgoraj navzdol.
+**Dihalne mišice.** Glavna je **prepona**; prepončni živec izhaja iz vratnih segmentov $\mathrm{C3}$–$\mathrm{C5}$. Ko se skrči, se kupola spusti in prsna votlina se poveča. Zunanje medrebrne mišice dvigajo rebra pri vdihu, notranje jih spuščajo pri aktivnem izdihu. Ob vsakem rebru, v žlebu na njegovem **spodnjem** robu, teče medrebrni snop: vena, arterija in živec, od zgoraj navzdol.
 
 :::premisli
 Rana z nožem v spodnjem delu vratu, tik nad ključnico, lahko povzroči pnevmotoraks (zrak v plevralni votlini). Zakaj, če so pljuča vendar v prsnem košu?

@@ -96,7 +96,7 @@ $S(n) = n \cup \{n\}$
 2. $2 = S(1) = \{\emptyset\} \cup \{\{\emptyset\}\} = \{\emptyset, \{\emptyset\}\}$.
 3. $3 = S(2) = \{\emptyset, \{\emptyset\}, \{\emptyset, \{\emptyset\}\}\}$, torej $3 = \{0, 1, 2\}$.
 4. $4 = 3 \cup \{3\} = \{0, 1, 2, 3\}$, ker naslednik doda prav prejšnje število.
-5. Odgovor: $4$ ima $4$ elemente, kot vsako von Neumannovo število $n$ jih ima $n$.
+5. Odgovor: $4$ ima $4$ elemente, tako kot ima vsako von Neumannovo število $n$ natanko $n$ elementov.
 
 ### Primer 2: vozovnice na progi
 
@@ -137,7 +137,7 @@ Zornova lema: neprazna $(P, \subseteq)$, v kateri ima vsaka veriga zgornjo mejo 
 3. $U$ nima kroga: krog ima končno mnogo cest, vsaka leži v nekem členu verige, členi so primerljivi, zato vse ležijo v največjem od njih. Ta pa je brez krogov. Torej je $U \in P$ zgornja meja.
 4. Po Zornovi lemi obstaja maksimalni gozd $T$.
 5. Recimo, da $T$ ne poveže krajev $a$ in $b$. Na poti od $a$ do $b$ v $G$ je cesta $e$, ki povezuje dve različni komponenti $T$ (dela omrežja, ki ju ceste iz $T$ med sabo ne povežejo). Ker $e$ združi dve ločeni komponenti, gozd $T \cup \{e\}$ ostane brez kroga in je večji od $T$, kar je protislovje.
-6. Odgovor: maksimalni gozd $T$ poveže vse kraje in nima krogov, torej je vpeto drevo. Za končne grafe zadošča indukcija, za neskončne potrebujemo Zorna.
+6. Odgovor: maksimalni gozd $T$ poveže vse kraje in nima krogov, torej je vpeto drevo. Za končne grafe zadošča indukcija, za poljubne neskončne potrebujemo Zorna.
 
 ### Primer 4: zdaj ti
 
@@ -195,7 +195,7 @@ Podobno pri potovanju: iz vsake države vzameš glavno mesto, pravilo je jasno. 
 
 **Indukcija v $\omega$.** Naj bo $A \subseteq \omega$ induktivna. Ker je $\omega$ presek vseh induktivnih podmnožic izbrane induktivne množice $I$ in je $A \subseteq I$ ena izmed njih, je $\omega \subseteq A$, torej $A = \omega$.
 
-**Zorn $\Rightarrow$ AC.** Naj bo $\{A_i\}_{i \in J}$ družina nepraznih množic. $P$ naj bodo delne izbirne funkcije $f$ (definirane na delu $J$, $f(i) \in A_i$), urejene z razširitvijo ($f \subseteq g$). $\emptyset \in P$; unija verige je spet delna izbirna funkcija, zato zgornja meja. Maksimalna $f$ je definirana na vsem $J$: sicer bi pri manjkajočem $i$ dodali kak $a \in A_i$ in $f$ razširili. Obratna smer (AC $\Rightarrow$ Zorn) zahteva transfinitno rekurzijo po ordinalih.
+**Zorn $\Rightarrow$ AC.** Naj bo $\{A_i\}_{i \in J}$ družina nepraznih množic. $P$ naj bodo delne izbirne funkcije $f$ (definirane na delu $J$, $f(i) \in A_i$), urejene z razširitvijo ($f \subseteq g$). $\emptyset \in P$; unija verige je spet delna izbirna funkcija, zato zgornja meja. Maksimalna $f$ je definirana na vsem $J$: sicer bi pri manjkajočem $i$ dodali kak $a \in A_i$ in $f$ razširili. Obratno smer (AC $\Rightarrow$ Zorn) običajno dokažemo s transfinitno rekurzijo po ordinalih.
 
 ## Preveri se
 

@@ -31,11 +31,11 @@ kjer je $V$ število valenčnih elektronov prostega atoma, $N$ število nevezani
 
 Hibridizacijo atoma določimo iz **sterične številke**: število atomov, vezanih nanj, plus število nevezanih elektronskih parov.
 
-| sterična številka | hibridizacija | razporeditev | kot | primer |
-|---|---|---|---|---|
-| $4$ | $sp^3$ | tetraedrična | $109{,}5^\circ$ | $\mathrm{CH_4}$, $\mathrm{C}$ v etanu |
-| $3$ | $sp^2$ | trikotna ravninska | $120^\circ$ | $\mathrm{C}$ v etenu, $\mathrm{C{=}O}$ |
-| $2$ | $sp$ | linearna | $180^\circ$ | $\mathrm{C}$ v etinu, $\mathrm{CO_2}$ |
+| sterična številka | hibridizacija | razporeditev in kot | primer |
+|---|---|---|---|
+| $4$ | $sp^3$ | tetraedrična, $109{,}5^\circ$ | $\mathrm{CH_4}$, $\mathrm{C}$ v etanu |
+| $3$ | $sp^2$ | trikotna ravninska, $120^\circ$ | $\mathrm{C}$ v etenu, $\mathrm{C{=}O}$ |
+| $2$ | $sp$ | linearna, $180^\circ$ | $\mathrm{C}$ v etinu, $\mathrm{CO_2}$ |
 
 Hibridizirajo se tudi heteroatomi. Kisik v vodi in alkoholih ima dve vezi in dva nevezana para, torej $sp^3$; kot je zaradi odboja nevezanih parov manjši, $104{,}5^\circ$ v vodi. Dušik v amoniaku in aminih je $sp^3$ s kotom približno $107^\circ$.
 
@@ -45,10 +45,10 @@ Kakšno hibridizacijo ima dušik v nitrilni skupini $\mathrm{R{-}C{\equiv}N}$ in
 Dušik ima enega soseda (C) in en nevezani par, sterična številka je $2$: $sp$. Kisik ima enega soseda in dva nevezana para, sterična številka je $3$: $sp^2$. Število vezi ne odloča, štejejo sosedje in pari.
 :::
 
-**3. Vezi $\sigma$ in $\pi$.** Vez $\sigma$ nastane s prekrivanjem orbital **vzdolž osi** med jedroma (hibridna z hibridno ali s $s$ orbitalo vodika). Vez $\pi$ nastane z **bočnim** prekrivanjem nehibridiziranih orbital $p$, ki sta pravokotni na ravnino vezi $\sigma$; elektronska gostota je nad in pod osjo vezi.
+**3. Vezi $\sigma$ in $\pi$.** Vez $\sigma$ nastane s prekrivanjem orbital **vzdolž osi** med jedroma (hibridna s hibridno ali s $s$ orbitalo vodika). Vez $\pi$ nastane z **bočnim** prekrivanjem nehibridiziranih orbital $p$, ki sta pravokotni na ravnino vezi $\sigma$; elektronska gostota je nad in pod osjo vezi.
 
 - **Enojna vez** je ena vez $\sigma$.
-- **Dvojna vez** je ena $\sigma$ in ena $\pi$. Atoma sta $sp^2$.
+- **Dvojna vez** je ena $\sigma$ in ena $\pi$. Atoma sta navadno $sp^2$.
 - **Trojna vez** je ena $\sigma$ in dve $\pi$. Atoma sta $sp$.
 
 Okoli enojne vezi je vrtenje prosto, okoli dvojne pa ne, ker bi se vez $\pi$ pri zasuku pretrgala. Zato obstajajo **cis-trans** (E/Z) izomeri alkenov. Večkratne vezi so krajše in močnejše:
@@ -106,7 +106,7 @@ Ne. Ogljika C5 in C6 sta $sp^3$ in nimata orbitale $p$, zato obroč ni popolnoma
 | ester | $\mathrm{R{-}COO{-}R'}$ | etil etanoat |
 | amid | $\mathrm{R{-}CONH_2}$ | etanamid |
 | amin | $\mathrm{R{-}NH_2}$ | metanamin |
-| nitril | $\mathrm{R{-}C{\equiv}N}$ | etanonitril |
+| nitril | $\mathrm{R{-}C{\equiv}N}$ | etannitril |
 | tiol | $\mathrm{R{-}SH}$ | etantiol |
 
 Aldehidi, ketoni, kisline, estri in amidi vsebujejo **karbonilno skupino** $\mathrm{C{=}O}$ z ogljikom $sp^2$. Ločimo jih po tem, kaj je še vezano na karbonilni ogljik.
@@ -140,7 +140,7 @@ Sterična številka $4 \to sp^3$ ($109{,}5^\circ$), $3 \to sp^2$ ($120^\circ$), 
 4. Vezi: $\mathrm{C1{=}C2}$ da $1\sigma + 1\pi$, $\mathrm{C2{-}C3}$ da $1\sigma$, šest vezi $\mathrm{C{-}H}$ da $6\sigma$.
 5. Skupaj: $1 + 1 + 6 = 8$ vezi $\sigma$ in $1$ vez $\pi$.
 6. Preizkus s stopnjo nenasičenosti: $\mathrm{SN} = \frac{2 \cdot 3 + 2 - 6}{2} = 1$, kar ustreza eni vezi $\pi$.
-7. Odgovor: C1 in C2 sta $sp^2$ (kota okoli $120^\circ$), C3 je $sp^3$ (okoli $109{,}5^\circ$); propen ima $8$ vezi $\sigma$ in $1$ vez $\pi$.
+7. Odgovor: C1 in C2 sta $sp^2$ (koti okoli $120^\circ$), C3 je $sp^3$ (okoli $109{,}5^\circ$); propen ima $8$ vezi $\sigma$ in $1$ vez $\pi$.
 
 ### Primer 2
 
@@ -165,9 +165,9 @@ $\mathrm{FN} = V - N - \tfrac{1}{2}B$. Resonančne strukture se razlikujejo le v
 
 ### Primer 3 (težji)
 
-Paracetamol ima zgradbo $\mathrm{HO{-}C_6H_4{-}NH{-}CO{-}CH_3}$ (skupini $\mathrm{OH}$ in $\mathrm{NH}$ sta na benzenovem obroču v položaju *para*). Poimenuj funkcionalne skupine, določi hibridizacijo vseh ogljikovih atomov in dušika, preveri število vezi $\pi$ s stopnjo nenasičenosti in preštej vezi $\sigma$. Obroč nato katalitsko hidrogeniramo do 4-acetamidocikloheksanola (amidna skupina se ne reducira). Koliko litrov $\mathrm{H_2}$ pri $0\,°\mathrm{C}$ in $101{,}3\,\mathrm{kPa}$ ($V_m = 22{,}4\,\mathrm{L/mol}$) porabi $1{,}51\,\mathrm{g}$ paracetamola ($M = 151{,}2\,\mathrm{g/mol}$) in kolikšna je stopnja nenasičenosti produkta?
+Paracetamol ima zgradbo $\mathrm{HO{-}C_6H_4{-}NH{-}CO{-}CH_3}$ (skupini $\mathrm{OH}$ in $\mathrm{NH}$ sta na benzenovem obroču v položaju *para*). Poimenuj funkcionalne skupine, določi hibridizacijo vseh ogljikovih atomov in dušika, preveri število vezi $\pi$ s stopnjo nenasičenosti in preštej vezi $\sigma$. Obroč nato katalitsko hidrogeniramo do 4-acetamidocikloheksanola (amidna skupina se ne reducira). Koliko litrov $\mathrm{H_2}$ pri $0\,°\mathrm{C}$ in $101{,}3\,\mathrm{kPa}$ ($V_m = 22{,}4\,\mathrm{L/mol}$) porabi $1{,}512\,\mathrm{g}$ paracetamola ($M = 151{,}2\,\mathrm{g/mol}$) in kolikšna je stopnja nenasičenosti produkta?
 
-**Podatki:** zgradba $\mathrm{HO{-}C_6H_4{-}NH{-}CO{-}CH_3}$, *para* disubstituiran benzenov obroč, molekulska formula $\mathrm{C_8H_9NO_2}$; $m = 1{,}51\,\mathrm{g}$, $M = 151{,}2\,\mathrm{g/mol}$, $V_m = 22{,}4\,\mathrm{L/mol}$
+**Podatki:** zgradba $\mathrm{HO{-}C_6H_4{-}NH{-}CO{-}CH_3}$, *para* disubstituiran benzenov obroč, molekulska formula $\mathrm{C_8H_9NO_2}$; $m = 1{,}512\,\mathrm{g}$, $M = 151{,}2\,\mathrm{g/mol}$, $V_m = 22{,}4\,\mathrm{L/mol}$
 **Iščemo:** funkcionalne skupine, hibridizacijo atomov C in N, število vezi $\pi$ in $\sigma$, preizkus s stopnjo nenasičenosti; prostornino $V(\mathrm{H_2})$ in SN produkta
 
 :::formula
@@ -182,7 +182,7 @@ $\mathrm{SN} = \frac{2c + 2 + n - h - x}{2}$ (število obročev + vezi $\pi$). S
 4. Vezi $\pi$: tri v obroču (ena Kekuléjeva struktura) in ena v $\mathrm{C{=}O}$, skupaj $4$. Obroč je $1$.
 5. Stopnja nenasičenosti: $\mathrm{SN} = \frac{2 \cdot 8 + 2 + 1 - 9}{2} = \frac{10}{2} = 5 = 4 + 1$. Ujema se.
 6. Vezi $\sigma$: v obroču $6$ $\mathrm{C{-}C}$ in $4$ $\mathrm{C{-}H}$, nato $\mathrm{C{-}O}$, $\mathrm{O{-}H}$, $\mathrm{C{-}N}$ (obroč–dušik), $\mathrm{N{-}H}$, $\mathrm{N{-}C}$ (dušik–karbonilni ogljik), $\sigma$ v $\mathrm{C{=}O}$, $\mathrm{C{-}CH_3}$ in $3$ $\mathrm{C{-}H}$: $6 + 4 + 7 + 3 = 20$. Preizkus: v povezani molekuli je vezi $\sigma$ (število atomov $- 1$) + (število obročev) $= 20 - 1 + 1 = 20$.
-7. Množina: $n = 1{,}51/151{,}2 = 0{,}0100\,\mathrm{mol}$. Hidrogenirajo se tri vezi $\pi$ obroča, zato $n(\mathrm{H_2}) = 3 \cdot 0{,}0100 = 0{,}0300\,\mathrm{mol}$ in $V = 0{,}0300 \cdot 22{,}4 = 0{,}672\,\mathrm{L}$.
+7. Množina: $n = 1{,}512/151{,}2 = 0{,}0100\,\mathrm{mol}$. Hidrogenirajo se tri vezi $\pi$ obroča, zato $n(\mathrm{H_2}) = 3 \cdot 0{,}0100 = 0{,}0300\,\mathrm{mol}$ in $V = 0{,}0300 \cdot 22{,}4 = 0{,}672\,\mathrm{L}$.
 8. Produkt $\mathrm{C_8H_{15}NO_2}$: $\mathrm{SN} = \frac{2 \cdot 8 + 2 + 1 - 15}{2} = 2$, to sta obroč in vez $\mathrm{C{=}O}$.
 9. Odgovor: paracetamol ima fenolno skupino, aromatski obroč in amidno skupino; $7$ ogljikov je $sp^2$, metilni ogljik je $sp^3$, amidni dušik je zaradi resonance $sp^2$; molekula ima $4$ vezi $\pi$, $20$ vezi $\sigma$ in en obroč ($\mathrm{SN} = 5$). Hidrogeniranje porabi $0{,}672\,\mathrm{L}$ $\mathrm{H_2}$, produkt ima $\mathrm{SN} = 2$.
 

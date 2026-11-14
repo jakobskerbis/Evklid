@@ -42,7 +42,7 @@ Iz dveh znanih kotov tretjega dobiš z odštevanjem: $\gamma = 180^\circ - \alph
 :::premisli
 Ali lahko narišeš trikotnik z dvema topima kotoma? Napovej in povej, zakaj.
 ---
-Ne. Že dva topa kota sta skupaj več kot $180^\circ$, za tretji kot ne bi ostalo nič. Iz istega razloga ima trikotnik največ en pravi kot.
+Ne. Že dva topa kota sta skupaj več kot $180^\circ$, za tretji kot ne bi ostalo nič. Tudi pravi kot je lahko največ eden: dva prava kota sta skupaj že $180^\circ$.
 :::
 
 **5. Posledice za posebne trikotnike.**
@@ -222,7 +222,7 @@ To je $3 \cdot 180^\circ - (\alpha + \beta + \gamma) = 540^\circ - 180^\circ = 3
 
 ? Zakaj trikotnik ne more imeti dveh topih kotov?
 - Ker topi koti v trikotniku nastanejo le pri oglišču $C$.
-~ Oznake oglišč so poljubne. Topi kot je lahko pri kateremkoli oglišču.
+~ Oznake oglišč so poljubne. Topi kot je lahko pri katerem koli oglišču.
 + Ker bi bila že ta dva kota skupaj več kot $180^\circ$.
 - Ker mora biti vsak trikotnik ostrokoten.
 ~ Ne drži: obstajajo pravokotni in topokotni trikotniki. Topokotni ima natanko en topi kot.

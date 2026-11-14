@@ -132,7 +132,7 @@ $m = \gamma V_\mathrm{r}$; $c = \dfrac{\gamma}{M}$; $c_\mathrm{osm} = i\,c$
 1. Masa: $m = 9\,\mathrm{g/L} \cdot 0{,}5\,\mathrm{L} = 4{,}5\,\mathrm{g}$.
 2. Množinska koncentracija: $c = \dfrac{9}{58{,}44} \approx 0{,}154\,\mathrm{mol/L}$.
 3. NaCl v vodi razpade na $\mathrm{Na^+}$ in $\mathrm{Cl^-}$, zato $i = 2$: $c_\mathrm{osm} = 2 \cdot 0{,}154 = 0{,}308\,\mathrm{Osm/L}$.
-4. Odgovor: zatehtaš $4{,}5\,\mathrm{g}$ NaCl. Osmolarnost je okoli $308\,\mathrm{mOsm/L}$, kar je blizu $300\,\mathrm{mOsm/L}$ citosola. Ioni se v resnici med seboj nekoliko privlačijo, zato je izmerjena vrednost še bližja: okoli $286\,\mathrm{mOsm/L}$.
+4. Odgovor: zatehtaš $4{,}5\,\mathrm{g}$ NaCl. Osmolarnost je okoli $308\,\mathrm{mOsm/L}$, kar je blizu $300\,\mathrm{mOsm/L}$ citosola. Ioni se v resnici med seboj nekoliko privlačijo, zato je izmerjena vrednost nekoliko nižja: okoli $286\,\mathrm{mOsm/L}$.
 
 ### Primer 2: eritrocit v destilirani vodi
 
@@ -170,7 +170,7 @@ $V = b + (V_0 - b)\,\dfrac{c_0}{c}$; krogla: $r = \sqrt{\dfrac{A}{4\pi}}$, $V_\m
 3. Prostornina krogle: $V_\mathrm{k} = \dfrac{4}{3}\pi \cdot 3{,}338^3 \approx 156\,\mathrm{fL}$.
 4. (b) Iz $V_\mathrm{k} = b + (V_0 - b)\dfrac{c_0}{c_\mathrm{k}}$ izrazimo $c_\mathrm{k} = \dfrac{(V_0 - b)\,c_0}{V_\mathrm{k} - b} = \dfrac{54 \cdot 300}{155{,}8 - 36} \approx 135\,\mathrm{mOsm/L}$.
 5. (c) Množinska koncentracija NaCl je polovica osmolarnosti, $0{,}0676\,\mathrm{mol/L}$, zato $\gamma_\mathrm{k} = 0{,}0676 \cdot 58{,}44 \approx 3{,}95\,\mathrm{g/L}$.
-6. Odgovor: v $200\,\mathrm{mOsm/L}$ eritrocit nabrekne na $117\,\mathrm{fL}$; poči pri okoli $135\,\mathrm{mOsm/L}$, kar je okoli $0{,}40\,\%$ NaCl. Res v laboratoriju hemoliza začne pri okoli $0{,}45\,\%$ in je popolna pri okoli $0{,}35\,\%$, ker so posamezni eritrociti različni.
+6. Odgovor: v $200\,\mathrm{mOsm/L}$ eritrocit nabrekne na $117\,\mathrm{fL}$; poči pri okoli $135\,\mathrm{mOsm/L}$, kar je okoli $0{,}40\,\%$ NaCl. Res se v laboratoriju hemoliza začne pri okoli $0{,}45\,\%$ in je popolna pri okoli $0{,}35\,\%$, ker so posamezni eritrociti različni.
 
 ### Primer 4: zdaj ti
 

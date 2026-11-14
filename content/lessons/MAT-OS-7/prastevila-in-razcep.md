@@ -149,7 +149,7 @@ $21 : 3 = 7$ in $7 : 7 = 1$. Delili smo trikrat z $2$, enkrat s $3$ in enkrat s 
 - **»Liho pomeni praštevilo.«** Učenec reče, da je $21$ praštevilo, ker ni sodo. Lihost izključi le delitelj $2$. Preizkusi še $3$, $5$, $7$: $21 = 3 \cdot 7$.
 - **»Število $1$ je praštevilo.«** Zdi se, da se $1$ deli samo z $1$ in s samim seboj. A to je en in isti delitelj, praštevilo pa jih ima natanko dva. Zato $1$ ni praštevilo.
 - **Prehitro ustavljanje.** Učenec preveri le $2$, $3$ in $5$ ter razglasi $91$ ali $119$ za praštevilo. Preizkušati moraš vsa praštevila $p$, pri katerih je $p \cdot p$ največ toliko kot število, torej tudi $7$: $91 = 7 \cdot 13$.
-- **Nedokončan razcep.** Zapis $84 = 4 \cdot 21$ ni razcep na prafaktorje, ker $4$ in $21$ nista praštevili. Razstavljaj naprej, dokler so vsi faktorji praštevila.
+- **Nedokončan razcep.** Zapis $84 = 4 \cdot 21$ ni razcep na prafaktorje, ker $4$ in $21$ nista praštevili. Razstavljaj naprej, dokler niso vsi faktorji praštevila.
 - **Napačno branje potence.** Učenec prebere $2^3$ kot $2 \cdot 3 = 6$. Potenca $2^3$ pomeni $2 \cdot 2 \cdot 2 = 8$. Vedno preveri razcep z množenjem.
 
 ## Povzetek
@@ -216,7 +216,7 @@ Vrstni red pravil je vedno isti: najprej $2$, dokler gre, nato $3$, nato $5$, na
 
 ? Prafaktorji nekega števila so $2$, $3$, $3$ in $5$. Kaj zato zagotovo drži?
 - Število je liho, ker so trije od štirih prafaktorjev lihi.
-~ Že en faktor $2$ naredi zmnožek sodega. Število je sodo.
+~ Že en faktor $2$ naredi zmnožek sod. Število je sodo.
 - Število je deljivo s $4$.
 ~ Za deljivost s $4 = 2 \cdot 2$ bi potreboval dva faktorja $2$, v razcepu pa je samo eden.
 + Število je deljivo z $18$.

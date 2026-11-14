@@ -71,7 +71,7 @@ Pri zvezdi na primer vstaviš $U_{\mathrm{f}} = U_{\mathrm{m}}/\sqrt{3}$ in $I_{
 
 Podobno sta jalova moč $Q = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} \sin\varphi$ in navidezna moč $S = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}}$. Kot $\varphi$ je tudi tu kot impedance ene faze bremena. To je kot med fazno napetostjo in faznim tokom, ne med $U_{\mathrm{m}}$ in $I_{\mathrm{v}}$.
 
-Še ena razlika od enofaznega kroga je pomembna v praksi. Trenutne moči treh faz se seštejejo v *stalno* vrednost, $p(t) = P$. Motor zato ne trese, kar je pri pogonu teleskopa zelo dobrodošlo. Za isto moč potrebuješ tudi manj bakra kot pri treh ločenih enofaznih krogih.
+Še ena razlika od enofaznega kroga je pomembna v praksi. Trenutne moči treh faz se seštejejo v *stalno* vrednost, $p(t) = P$. Motor se zato ne trese, kar je pri pogonu teleskopa zelo dobrodošlo. Za isto moč potrebuješ tudi manj bakra kot pri treh ločenih enofaznih krogih.
 
 ## Rešeni primeri
 
@@ -258,7 +258,7 @@ I_{\mathrm{v}} | tok v vodniku | | A | v trikotu $\sqrt{3}\, I_{\mathrm{f}}$
 P | delovna moč | P = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} \cos\varphi | W
 Q | jalova moč | Q = S \sin\varphi | var
 S | navidezna moč | S = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} | VA
-\varphi | kot impedance bremena | | – | med $U_{\mathrm{f}}$ in $I_{\mathrm{f}}$
+\varphi | kot impedance bremena | | ° | med $U_{\mathrm{f}}$ in $I_{\mathrm{f}}$
 R | upor grelnega elementa | | \Omega
 Z | impedanca ene faze bremena | | \Omega | kazalec $\underline{Z}$, velikost $\lvert\underline{Z}\rvert$
 u_k | trenutna napetost faze $k$ | | V | $k = 0, 1, 2$

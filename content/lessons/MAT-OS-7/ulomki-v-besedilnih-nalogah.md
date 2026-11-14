@@ -196,20 +196,20 @@ En del od petih je $40\,\text{ha}$, zato je celota $40 \cdot 5 = 200$, torej $20
 - Del celote: $\dfrac{a}{b}$ od $c$ je $c : b \cdot a = \dfrac{a}{b} \cdot c$.
 - Celota iz dela: če je $\dfrac{a}{b}$ celote enako $d$, je celota $d : a \cdot b = d : \dfrac{a}{b}$.
 - Ostanek po odvzemu $\dfrac{a}{b}$ je $1 - \dfrac{a}{b}$ celote.
-- Del ostanka je nova celota: $\dfrac{p}{q}$ ostanka je $\dfrac{p}{q} \cdot \text{ostanek}$.
+- Pri delu ostanka je ostanek nova celota: $\dfrac{p}{q}$ ostanka je $\dfrac{p}{q} \cdot \text{ostanek}$.
 - Vedno najprej izračunaj vrednost enega dela, rezultat preveri in odgovori v stavku.
 
 ## Drugače: Na sliki
 
 Celoto nariši kot dolg pravokotnik, **trak**. Recimo, da je trak dolg $12$ kvadratkov v zvezku, ker se $12$ da razdeliti na $2$, $3$, $4$ in $6$ enakih delov.
 
-Za Anino žepnino trak najprej razdeli na $3$ enake dele po $4$ kvadratke in prvi del pobarvaj z rdečo (kino). Ostanejo $8$ kvadratki. Ta ostanek razdeli na $4$ enake dele po $2$ kvadratka in en del pobarvaj z modro (knjiga). Nepobarvanih ostane $6$ kvadratkov od $12$, torej polovica traku.
+Za Anino žepnino trak najprej razdeli na $3$ enake dele po $4$ kvadratke in prvi del pobarvaj z rdečo (kino). Ostane $8$ kvadratkov. Ta ostanek razdeli na $4$ enake dele po $2$ kvadratka in en del pobarvaj z modro (knjiga). Nepobarvanih ostane $6$ kvadratkov od $12$, torej polovica traku.
 
 Pod nepobarvani del napiši $18$ €. Ker je to $6$ kvadratkov, je en kvadratek vreden $3$ €, cel trak pa $12 \cdot 3 = 36$ €. Slika ti pokaže, kaj je celota in kaj ostanek, še preden začneš računati.
 
 ## Drugače: Iz vsakdanjega življenja
 
-Predstavljaj si pico, razrezano na $8$ enakih kosov. Če poješ $\dfrac{3}{8}$ pice, poješ $3$ kose. Če je pica tehtala $800$ g, je en kos $800 : 8 = 100$ g, tri kose pa $300$ g. To je **del celote**.
+Predstavljaj si pico, razrezano na $8$ enakih kosov. Če poješ $\dfrac{3}{8}$ pice, poješ $3$ kose. Če je pica tehtala $800$ g, je en kos $800 : 8 = 100$ g, trije kosi pa $300$ g. To je **del celote**.
 
 Zdaj obrni zgodbo. Prijatelj ti pove, da je pojedel $\dfrac{3}{8}$ pice in da je to bilo $360$ g. Koliko je tehtala cela pica? Trije kosi so $360$ g, en kos $120$ g, osem kosov pa $960$ g. To je **celota iz dela**.
 
@@ -265,7 +265,7 @@ $$c = d : \frac{a}{b} = d \cdot \frac{b}{a}$$
 ~ Pot $7{,}2\,\text{km}$ je krajša od $12\,\text{km}$, ki so le del poti. Celota ne more biti manjša od svojega dela.
 + Zamenjal je števec in imenovalec: deliti bi moral s $3$, množiti s $5$.
 - Deliti bi moral s $15$, ker je $3 \cdot 5 = 15$.
-~ Imenovalec in števec ne zmnožiš. Trije deli so $12\,\text{km}$, zato en del dobiš z deljenjem s $3$.
+~ Imenovalca in števca ne zmnožiš. Trije deli so $12\,\text{km}$, zato en del dobiš z deljenjem s $3$.
 > En del je $12 : 3 = 4\,\text{km}$, pot ima $5$ delov: $4 \cdot 5 = 20\,\text{km}$.
 
 ? Trakova kažeta porabo deževnice iz dveh sodov. Iz katerega soda so porabili več litrov vode?

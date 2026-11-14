@@ -47,7 +47,7 @@ Pri petih vozliščih štiri (vsa razen referenčnega). Pri dveh vozliščih le 
 
 **Metoda zančnih tokov.** Zdaj si zamisli, da po vsakem »okencu« vezja kroži svoj tok: $I_a$ po levem, $I_b$ po desnem, oba v smeri urinega kazalca. V zunanjih vejah teče samo en zančni tok. V skupni veji z $R_3$ tečeta oba, v nasprotnih smereh, zato je tok tam $I_a - I_b$. Za vsako okence zapišemo KZN in dobimo dve enačbi z dvema neznankama. Metoda se splača, ko je okenc manj kot vozlišč brez referenčnega.
 
-**Theveninov nadomestni vir.** Pogosto nas zanima tok le v eni veji, npr. v sprejemniku. Vse ostalo vezje si zamisli kot zaprto škatlo z dvema sponkama. Thévenin je pokazal, da se vsaka taka škatla iz upornikov in virov navzven obnaša kot en vir $U_\mathrm{Th}$ z zaporednim upornikom $R_\mathrm{Th}$:
+**Theveninov nadomestni vir.** Pogosto nas zanima tok le v eni veji, npr. v sprejemniku. Vse ostalo vezje si zamisli kot zaprto škatlo z dvema sponkama. Thévenin je pokazal, da se vsaka taka škatla iz linearnih upornikov in virov navzven obnaša kot en vir $U_\mathrm{Th}$ z zaporednim upornikom $R_\mathrm{Th}$:
 
 - $U_\mathrm{Th}$ je napetost na **odprtih sponkah** (breme odklopljeno);
 - $R_\mathrm{Th}$ je upornost med sponkama, ko vire »ugasnemo«: napetostni vir nadomestimo s kratkim stikom, tokovni vir s prekinitvijo.
@@ -62,7 +62,7 @@ Sponki škatle kratko skleneš. Kolikšen tok steče in kaj iz tega lahko sklepa
 Steče $I_k = \frac{U_\mathrm{Th}}{R_\mathrm{Th}}$, ker je $R_\mathrm{p} = 0$. Zato $R_\mathrm{Th} = \frac{U_\mathrm{Th}}{I_k}$: dve meritvi na sponkah zadoščata, notranjosti škatle ni treba poznati.
 :::
 
-**Zvezda in trikot.** Trije uporniki med tremi točkami $A$, $B$, $C$ so lahko vezani v **trikot** (vsak med dvema točkama) ali v **zvezdo** (vsak od ene točke do skupnega središča). Na zemljevidu je to razlika med tremi kraji, povezanimi s tremi cestami, in tremi kraji, ki imajo ceste do enega skupnega križišča. Vezji sta enakovredni, če je upornost med vsakima točkama enaka. Iz trikota v zvezdo:
+**Zvezda in trikot.** Trije uporniki med tremi točkami $A$, $B$, $C$ so lahko vezani v **trikot** (vsak med dvema točkama) ali v **zvezdo** (vsak od ene točke do skupnega središča). Na zemljevidu je to razlika med tremi kraji, povezanimi s tremi cestami, in tremi kraji, ki imajo ceste do enega skupnega križišča. Vezji sta enakovredni, če je upornost med vsakima dvema točkama enaka. Iz trikota v zvezdo:
 
 $$R_A = \frac{R_{AB} R_{CA}}{R_{AB} + R_{BC} + R_{CA}}$$
 
@@ -118,7 +118,7 @@ Desno okence: $-U_2 = R_3 (I_b - I_a) + R_2 I_b$
 
 ### Primer 3: telegrafska linija
 
-Baterija v Ljubljani ima napetost $60\,\mathrm{V}$ (notranjo upornost zanemarimo). Linija do Celja ima upornost $400\,\Omega$. V Celju je med linijo in zemljo priključena naprava z upornostjo $600\,\Omega$. Od Celja do Maribora vodi linija z upornostjo $260\,\Omega$, v Mariboru je med linijo in zemljo sprejemnik. Kolikšen tok teče skozi sprejemnik z $100\,\Omega$ in kolikšen skozi sprejemnik s $400\,\Omega$?
+Baterija v Ljubljani ima napetost $60\,\mathrm{V}$ (notranjo upornost zanemarimo). Linija do Celja ima upornost $400\,\Omega$. V Celju je med linijo in zemljo priključena naprava z upornostjo $600\,\Omega$. Od Celja do Maribora vodi linija z upornostjo $260\,\Omega$, v Mariboru je med linijo in zemljo sprejemnik. Kolikšen tok teče skozi sprejemnik s $100\,\Omega$ in kolikšen skozi sprejemnik s $400\,\Omega$?
 
 **Podatki:** $U = 60\,\mathrm{V}$, $R_1 = 400\,\Omega$, $R_2 = 600\,\Omega$, $R_3 = 260\,\Omega$, $R_\mathrm{p} = 100\,\Omega$ ali $400\,\Omega$
 **Iščemo:** tok skozi sprejemnik $I_\mathrm{p}$ za obe bremeni
@@ -221,7 +221,7 @@ Zaganjalnik pa potegne nekaj sto amperov. Pri $200\,\mathrm{A}$ in $0{,}01\,\Ome
 - Pada proti nič, ker večji upor zmanjša tok.
 ~ Tok res pada, a napetost na bremenu je $R_\mathrm{p} I_\mathrm{p}$. Pada proti nič, ko gre $R_\mathrm{p}$ proti nič.
 - Ostane enaka $U_\mathrm{Th}$ pri vsakem bremenu.
-~ Ne, ker na $R_\mathrm{Th}$ teče tok in na njej se izgubi del napetosti.
+~ Ne, ker skozi $R_\mathrm{Th}$ teče tok in na njej se izgubi del napetosti.
 + Narašča in se približuje $U_\mathrm{Th}$.
 > Večji $R_\mathrm{p}$ pomeni manjši tok, zato manjši padec na $R_\mathrm{Th}$. Pri zelo velikem bremenu je vezje skoraj odprto in napetost je skoraj $U_\mathrm{Th}$.
 

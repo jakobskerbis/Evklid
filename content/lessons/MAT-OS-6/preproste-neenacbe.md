@@ -170,7 +170,7 @@ Je, ker je $24 : 3 = 8 \le 8$. Pot je lahko dolga od $1$ do $24\,\text{km}$: $\{
 - **Meja pri $<$ in $\le$.** Pri $x + 2 < 9$ učenec napiše tudi $7$, ker ga je dobil v računu. Pri znaku $<$ meja ne spada zraven, saj $9 < 9$ ne drži. Mejo vedno vstavi in preveri.
 - **Napačna stran.** Pri $x + 3 > 10$ učenec našteje $1, 2, \dots, 6$, ker je navajen, da so rešitve pod mejo. Znak $>$ zahteva večje vrednosti. Vstavi eno število pod mejo in poglej, ali neenačba drži.
 - **Zaokroževanje navzdol.** Pri $25 \cdot x \ge 110$ učenec iz $4{,}4$ naredi $4$. Toda $25 \cdot 4 = 100$ je premalo. Kadar meja ni naravno število, preveri obe sosednji naravni števili.
-- **Ničla med rešitvami.** Pri $x + 5 < 12$ učenec začne z $0$. Ničla ni naravno število, zato množica rešitev začne z $1$.
+- **Ničla med rešitvami.** Pri $x + 5 < 12$ učenec začne z $0$. Ničla ni naravno število, zato se množica rešitev začne z $1$.
 
 ## Povzetek
 

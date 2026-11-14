@@ -175,7 +175,7 @@ $x_{n+1} = x_n - \dfrac{f(x_n)}{f'(x_n)}$, $\quad L_n = \dfrac{b-a}{2^n} < \vare
 **Rešitev:**
 
 1. Pri $x_0 = 5$: $f'(5) = 20 \cdot 0 = 0$. Delimo z nič, metoda se ustavi takoj. Tu ima škatla največjo prostornino ($2000\,\mathrm{cm^3}$), zato je tangenta vodoravna.
-2. Pri $x_0 = 6$: $f(6) = 6 \cdot 18^2 - 1000 = 944$ in $f'(6) = 18 \cdot (-6) = -108$. Dobimo $x_1 = 6 + \frac{944}{108} \approx 14{,}74$, kar je skoraj na robu pločevine. Naslednji korak da $x_2 \approx -18{,}1$, in približki bežijo stran od obeh rešitev.
+2. Pri $x_0 = 6$: $f(6) = 6 \cdot 18^2 - 1000 = 944$ in $f'(6) = 18 \cdot (-6) = -108$. Dobimo $x_1 = 6 + \frac{944}{108} \approx 14{,}74$, kar je skoraj na robu pločevine. Naslednji korak da $x_2 \approx -18{,}1$: približki skočijo daleč stran od obeh rešitev in se šele po še sedmih korakih vrnejo k $r \approx 1{,}34$, čeprav je bila bliže ničla $10$.
 3. Bisekcija: $f(0) = -1000 < 0$ in $f(5) = 1000 > 0$, zato je ničla v $[0;\ 5]$.
 4. Potrebujemo $\frac{5}{2^n} < 0{,}01$, torej $2^n > 500$. Ker je $2^8 = 256$ in $2^9 = 512$, je najmanjši $n = 9$, z dolžino $L_9 \approx 0{,}0098\,\mathrm{cm}$.
 5. Kombinacija, bisekcija: $f(2{,}5) = 562{,}5 > 0$, zato $[0;\ 2{,}5]$; $f(1{,}25) \approx -54{,}69 < 0$, zato $[1{,}25;\ 2{,}5]$; $f(1{,}875) \approx 292{,}0 > 0$, zato $[1{,}25;\ 1{,}875]$ s sredino $x_0 = 1{,}5625$.
@@ -183,7 +183,7 @@ $x_{n+1} = x_n - \dfrac{f(x_n)}{f'(x_n)}$, $\quad L_n = \dfrac{b-a}{2^n} < \vare
 7. $f(x_1) \approx -5{,}495$, $f'(x_1) \approx 601{,}9$, $x_2 \approx 1{,}33973$. Razlika $|x_2 - x_1| \approx 0{,}0091$ je še prevelika.
 8. $f(x_2) \approx -0{,}0087$, $f'(x_2) \approx 600{,}0$, $x_3 \approx 1{,}339746$. Razlika $\approx 0{,}0000144 < 0{,}001$, ustavimo se po $3$ Newtonovih korakih.
 9. Napaka: $x_3$ je mnogo bliže ničli kot $x_2$, zato je $e_2 \approx |x_3 - x_2| \approx 1{,}44 \cdot 10^{-5}$. Po kvadratični oceni je $e_3 \approx C e_2^2 \approx 0{,}173 \cdot (1{,}44 \cdot 10^{-5})^2 \approx 3{,}6 \cdot 10^{-11}\,\mathrm{cm}$.
-10. Odgovor: Matic se moti dvakrat. Newtonova metoda je odvisna od začetka: iz $x_0 = 5$ deli z nič, iz $x_0 = 6$ odbeži. Sama bisekcija potrebuje $9$ korakov za $0{,}01\,\mathrm{cm}$. Kombinacija s $3$ koraki bisekcije in $3$ Newtonovimi da $x \approx 1{,}339746\,\mathrm{cm}$ z napako reda $10^{-11}\,\mathrm{cm}$. Bisekcija poskrbi za zanesljiv začetek, Newton za natančnost.
+10. Odgovor: Matic se moti dvakrat. Newtonova metoda je odvisna od začetka: iz $x_0 = 5$ deli z nič, iz $x_0 = 6$ odskoči daleč stran in se vrne šele po mnogih korakih. Sama bisekcija potrebuje $9$ korakov za $0{,}01\,\mathrm{cm}$. Kombinacija s $3$ koraki bisekcije in $3$ Newtonovimi da $x \approx 1{,}339746\,\mathrm{cm}$ z napako reda $10^{-11}\,\mathrm{cm}$. Bisekcija poskrbi za zanesljiv začetek, Newton za natančnost.
 
 ### Primer 4 – zdaj ti
 
@@ -211,9 +211,9 @@ $f(x_1) \approx 0{,}5875$, $f'(x_1) \approx 22{,}535$, zato $x_2 = x_1 - \frac{f
 ## Pogoste napake
 
 - **Napačen predznak v Newtonovem predpisu.** Kdo zapiše $x_{n+1} = x_n + \frac{f(x_n)}{f'(x_n)}$, ker si zapomni »popravek«, ne pa njegove smeri. Približki se tako oddaljujejo od ničle. Pravilno: odštej količnik; preizkus je, da se mora $|f|$ v naslednjem koraku zmanjšati.
-- **Bisekcija obdrži napačno polovico.** Učenec vidi $f(a) < 0$ in $f(c) < 0$ ter obdrži $[a;\ c]$, »ker sta oba negativna«. Ničla pa je tam, kjer se predznak **zamenja**, torej v $[c;\ b]$. Primerjaj predznaka krajišč, ne vrednosti s sredino.
+- **Bisekcija obdrži napačno polovico.** Študent vidi $f(a) < 0$ in $f(c) < 0$ ter obdrži $[a;\ c]$, »ker sta oba negativna«. Ničla pa je tam, kjer se predznak **zamenja**, torej v $[c;\ b]$. Primerjaj predznaka krajišč, ne vrednosti s sredino.
 - **»Enak predznak v krajiščih pomeni, da ničle ni.«** Za $x^2 - 2$ na $[-2;\ 2]$ je $f(-2) = f(2) = 2$, ničli pa sta dve. Enak predznak pomeni le, da bisekcije na tem intervalu ne moreš začeti. Interval razdeli ali si nariši graf.
-- **»Newton vedno konvergira k najbližji ničli.«** Iz $x_0 = 6$ je škatla odbežala, iz $x_0 = 5$ smo delili z nič. Kvadratična hitrost velja le dovolj blizu ničle; daleč od nje lahko metoda skače ali se oddalji.
+- **»Newton vedno konvergira k najbližji ničli.«** Iz $x_0 = 6$ so približki odskočili do $-18$ in končali pri bolj oddaljeni ničli $1{,}34$, iz $x_0 = 5$ smo delili z nič. Kvadratična hitrost velja le dovolj blizu ničle; daleč od nje lahko metoda skače ali se oddalji.
 - **Napačen odvod.** Pri $x(30-2x)^2$ kdo zapiše $f'(x) = 2(30-2x)$ in pozabi pravilo za produkt. Metoda potem konvergira počasi ali nikamor. Odvod preveri z numerično oceno $\frac{f(x+h) - f(x)}{h}$ za majhen $h$.
 
 ## Povzetek

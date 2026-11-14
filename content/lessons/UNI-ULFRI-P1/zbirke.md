@@ -399,7 +399,7 @@ Laboratorij ima tri načine shranjevanja:
 
 **Obdelava podatkov.** Odstranjevanje podvojenih zapisov, štetje pojavitev in združevanje po ključu (»koliko meritev na napravo«) so vsakdanji vzorci `Set` in `Map`.
 
-**Predpomnilnik.** Strežniki rezultate dragih izračunov hranijo v slovarju; `LinkedHashMap` z vrstnim redom dostopa omogoča, da najstarejše vnose zavržejo.
+**Predpomnilnik.** Strežniki rezultate dragih izračunov hranijo v slovarju; `LinkedHashMap` z vrstnim redom dostopa omogoča, da najdlje neuporabljene vnose zavržejo.
 
 ## Drugače: Bolj natančno
 

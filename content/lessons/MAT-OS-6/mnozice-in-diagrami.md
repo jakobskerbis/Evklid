@@ -46,10 +46,10 @@ Vsak kraj pade v **natanko eno** polje, ker na obe vprašanji odgovoriš z da al
 :::premisli
 Zakaj ima Carrollov diagram za dve lastnosti vedno $4$ polja, Vennov diagram pa tudi $4$ področja (s tistim zunaj krogov)?
 ---
-Ker sta pri dveh lastnostih možne $4$ kombinacije odgovorov: da-da, da-ne, ne-da in ne-ne. Oba diagrama prikažeta iste $4$ skupine, le narisani sta drugače.
+Ker so pri dveh lastnostih možne $4$ kombinacije odgovorov: da-da, da-ne, ne-da in ne-ne. Oba diagrama prikažeta iste $4$ skupine, le narisani sta drugače.
 :::
 
-V simulaciji spodaj »Vennov diagram: presek in unija« izberi za $A$ soda števila in za $B$ števila, deljiva s $3$. Preden preklopiš na presek, napovej, katera števila bodo v njem. Nato preveri: v preseku so samo $6$, $12$ in $18$, ker so ta števila hkrati soda in deljiva s $3$. Preklopi še na unijo in primerjaj.
+V simulaciji spodaj »Vennov diagram: presek in unija« so za $A$ že izbrana soda števila in za $B$ števila, deljiva s $3$, prikazan pa je presek: v njem so samo $6$, $12$ in $18$, ker so ta števila hkrati soda in deljiva s $3$. Preden preklopiš na unijo, napovej, katera števila bodo v njej. Nato preveri in primerjaj.
 
 **Zapis s simboli.** Ko je slika jasna, jo zapišemo krajše:
 
@@ -218,7 +218,7 @@ Kdor nima ne enega ne drugega, ostane na pločniku. Tudi on je del razreda, le z
 + $3$
 - $7$
 ~ To je $20 - 13$: otroci, ki niso plavali. Ti so šli samo na pohod.
-> $13 + 10 = 23$, kar je $3$ več od $20$. Teh $3$ otrok je vsota štela dvakrat, ker so v preseku.
+> $13 + 10 = 23$, kar je $3$ več od $20$. Te $3$ otroke je vsota štela dvakrat, ker so v preseku.
 
 ? V razredu je $32$ učencev. Na morju jih je bilo $20$, v gorah $15$, na obeh $9$. Koliko jih ni bilo ne na morju ne v gorah?
 - $26$

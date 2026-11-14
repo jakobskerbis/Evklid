@@ -231,7 +231,7 @@ Bobnar paličico prime še na sredini z drugo roko, da se ne more odmakniti. Zda
 
 Postopek pri vsaki stisnjeni palici:
 
-1. **Podpore → $\beta$.** Vpeto spodaj in prosto zgoraj: $2$. Oba členka: $1$. Vpeto in členek: $0{,}7$. Obe vpeti: $0{,}5$.
+1. **Podpore → $\beta$.** Vpeto spodaj in prosto zgoraj: $2$. Oba členka: $1$. Vpeto in členek: $0{,}7$. Oba konca vpeta: $0{,}5$.
 2. **$L_u = \beta L$** v milimetrih.
 3. **$I$ za šibkejšo os** v $\mathrm{mm^4}$: krog $\pi d^4/64$, cev $\pi(D^4-d^4)/64$, pravokotnik $b h^3/12$ z manjšo stranico $h$.
 4. **$F_{kr} = \pi^2 E I/L_u^2$**: z $E$ v MPa dobiš njutone.
@@ -297,7 +297,7 @@ Povezava z zvokom: za členkasto palico pod tlačno silo $F$ velja za osnovno la
 
 ? Visok odrski stolp za luči ima tanke navpične cevi. Inženir doda vodoravne prečke na polovici višine. Zakaj?
 - Da cevi prenesejo večjo natezno silo.
-~ Navpične cevi so pri teži luči stisnjene, ne natezne. Prečke nateznosti ne spremenijo.
+~ Navpične cevi so pri teži luči stisnjene, ne nategnjene. Prečke tega ne spremenijo.
 - Da se zmanjša napetost $F/A$ v ceveh.
 ~ Prečke ne spremenijo preseka cevi niti sile v njej, zato $F/A$ ostane enak.
 + Da se uklonska dolžina cevi razpolovi in kritična sila poveča približno štirikrat.

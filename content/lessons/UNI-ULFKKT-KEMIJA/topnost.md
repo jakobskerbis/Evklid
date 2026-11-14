@@ -178,7 +178,7 @@ $Q = 1{,}0 \cdot 10^{-6}$ je približno $9000$-krat večji od $K_\mathrm{sp} = 1
 - **Mešanje raztopin brez razredčenja.** Ko zmešamo $100\,\mathrm{mL}$ in $100\,\mathrm{mL}$, se koncentraciji obeh raztopin razpolovita. $Q$ računamo z razredčenimi koncentracijami.
 - **$K_\mathrm{sp}$ se ne spremeni s skupnim ionom.** Spremeni se topnost, $K_\mathrm{sp}$ ostane enak (odvisen je le od temperature).
 - **Spiranje z vodo.** Oborine v gravimetriji ne spiramo s preveč čiste vode; uporabimo malo tekočine z elektrolitom ali skupnim ionom, sicer del oborine izgubimo ali pa preide v koloidno stanje in gre skozi filter.
-- **Gravimetrični faktor.** Pri izračunu mase iskane snovi pomnožimo maso oborine z razmerjem molskih mas, ne le z masnim deležem, in upoštevamo število atomov (npr. $\mathrm{Fe_2O_3}$ vsebuje dva atoma Fe: $m(\mathrm{Fe}) = m(\mathrm{Fe_2O_3}) \cdot 2M(\mathrm{Fe})/M(\mathrm{Fe_2O_3})$).
+- **Gravimetrični faktor.** Pri izračunu mase iskane snovi pomnožimo maso oborine z razmerjem molskih mas in pri tem upoštevamo število atomov (npr. $\mathrm{Fe_2O_3}$ vsebuje dva atoma Fe: $m(\mathrm{Fe}) = m(\mathrm{Fe_2O_3}) \cdot 2M(\mathrm{Fe})/M(\mathrm{Fe_2O_3})$).
 
 ## Povzetek
 

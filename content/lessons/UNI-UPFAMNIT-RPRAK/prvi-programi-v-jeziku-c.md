@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Na začetku sedemdesetih let sta Ken Thompson in Dennis Ritchie v Bellovih laboratorijih razvijala operacijski sistem Unix. Prve različice so bile napisane v zbirnem jeziku, ki ga razume le ena vrsta procesorja. Za vsak nov računalnik bi morali sistem napisati znova. Potrebovali so jezik, ki je blizu strojni opremi in hiter kot zbirnik, a ga je mogoče prevesti za različne stroje. Ritchie je zato razvil jezik **C** in z njim so Unix na novo napisali.
+Ko sta Ken Thompson in Dennis Ritchie v Bellovih laboratorijih razvijala operacijski sistem Unix, so bile prve različice napisane v zbirnem jeziku, ki ga razume le ena vrsta procesorja. Za vsak nov računalnik bi morali sistem napisati znova. Potrebovali so jezik, ki je blizu strojni opremi in hiter kot zbirnik, a ga je mogoče prevesti za različne stroje. Ritchie je zato razvil jezik **C** in z njim so Unix na novo napisali.
 
 Ta odločitev živi še danes. Jedro Linuxa, nad katerim teče tvoja ukazna lupina, je večinoma v C. V C so napisani tudi deli igralnih pogonov in programi v pametnih urah, ki štejejo korake med tekom. Ko razumeš C, razumeš, kaj se dogaja »pod pokrovom« jezikov, ki si jih spoznal pri vrstah programskih jezikov.
 
@@ -154,7 +154,7 @@ V vsakem obhodu: novi `skupaj` $=$ stari `skupaj` $+ 10 \cdot i$
 
 ### Primer 3: povprečje na tekmo, popravi napako
 
-Nogometaš je v štirih tekmah sezone tekel $18$, $25$, $21$ in $30$ minut s polno hitrostjo. Sošolec je napisal funkcijo, a izpiše `23.0` namesto pričakovanega `23.5`. Najdi napako in jo popravi.
+Nogometaš je v štirih tekmah sezone igral $18$, $25$, $21$ in $30$ minut. Sošolec je napisal funkcijo, a izpiše `23.0` namesto pričakovanega `23.5`. Najdi napako in jo popravi.
 
 ```c
 double povprecje(int vsota, int n) {
@@ -228,6 +228,63 @@ Izpiše `120`, ker se `tocke` v `main` ni spremenila. Popravek: `int dodaj_bonus
 - `int / int` zavrže decimalke; `%` da ostanek; za realen rezultat uporabi `double`.
 - `for (začetek; pogoj; korak)` in `while (pogoj)`; število obhodov preveri na mejnih vrednostih.
 - Funkcija ima tip vrnjene vrednosti in parametre; argumenti se podajo po vrednosti, rezultat vrne `return`.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- korake od izvorne do izvedljive datoteke (predprocesor, prevajalnik, povezovalnik) ter razliko med napako in opozorilom;
+- kaj določa tip spremenljivke, kaj vsebuje lokalna spremenljivka brez začetne vrednosti in kako C deli dva `int`;
+- kako se izvaja zanka `for` (začetek, pogoj, korak) in kako prešteješ obhode;
+- kaj pomeni podajanje argumentov po vrednosti in čemu služi prototip funkcije.
+
+### Naloga 1
+
+Program `izpit.c`:
+
+```c
+#include <stdio.h>
+
+int polovica(int x) {
+    x = x / 2;
+    return x;
+}
+
+int main(void) {
+    int n = 9, vsota = 0;
+    for (int i = 1; i <= n; i += 3) {
+        vsota += polovica(i) + i % 2;
+    }
+    double p = vsota / 2;
+    printf("%d %d %.1f\n", n, vsota, p);
+    return 0;
+}
+```
+
+(a) Kolikokrat se izvede telo zanke in katere vrednosti zavzame `i`? (b) Kaj program izpiše? (c) Popravi eno vrstico, da bo `p` prava polovica vsote, in navedi nov izpis.
+
+**Rešitev:**
+
+1. (a) `i` zavzame vrednosti $1$, $4$, $7$; pri $10$ pogoj `i <= 9` ne velja. Telo se izvede $3$-krat.
+2. Obhod `i = 1`: `polovica(1)` vrne $0$ (celoštevilsko deljenje), `1 % 2` je $1$; `vsota` je $0 + 0 + 1 = 1$.
+3. Obhod `i = 4`: `polovica(4)` vrne $2$, `4 % 2` je $0$; `vsota` je $1 + 2 + 0 = 3$.
+4. Obhod `i = 7`: `polovica(7)` vrne $3$, `7 % 2` je $1$; `vsota` je $3 + 3 + 1 = 7$.
+5. Funkcija `polovica` spreminja le svoj parameter `x`, ki je kopija; `i` v `main` ostane nespremenjen, zato zanka teče po korakih $3$.
+6. `vsota / 2` je deljenje dveh `int`: `7 / 2` je `3`, ki se nato pretvori v `3.0`.
+7. (b) Izpis: `9 7 3.0`.
+8. (c) `double p = (double) vsota / 2;` ali `double p = vsota / 2.0;`. Nov izpis: `9 7 3.5`.
+
+### Naloga 2
+
+Pojasni, kaj pomeni, da C podaja argumente po vrednosti. Utemelji, zakaj klic `podvoji(a);` funkcije `void podvoji(int x) { x = 2 * x; }` ne spremeni spremenljivke `a`, in funkcijo popravi. Opiši še, zakaj se popravek v izvorni datoteki pokaže šele po ponovnem prevajanju.
+
+**Rešitev:**
+
+1. Ob klicu se vrednost argumenta skopira v parameter. Parameter je lokalna spremenljivka funkcije z lastnim prostorom v pomnilniku.
+2. Pri `podvoji(a);` dobi `x` kopijo vrednosti `a`. Prireditev `x = 2 * x` spremeni le `x`; ko se funkcija konča, `x` izgine, `a` pa ostane enak.
+3. Popravek: funkcija naj novo vrednost vrne, `int podvoji(int x) { return 2 * x; }`, klic pa naj jo priredi: `a = podvoji(a);`.
+4. Tip vrnjene vrednosti se je spremenil iz `void` v `int`; če je nad `main` prototip, ga je treba popraviti enako.
+5. Procesor izvaja strojno kodo v izvedljivi datoteki, ne izvorne kode. Izvedljiva datoteka nastane ob prevajanju in se ob urejanju izvorne datoteke ne spremeni, zato je po vsakem popravku potreben nov `gcc`.
 
 ## Drugače: Kot zgodba
 

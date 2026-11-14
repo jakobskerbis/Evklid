@@ -57,7 +57,7 @@ $$\frac{\sigma_a}{\sigma_N} + \frac{\sigma_m}{R_m} = \frac{1}{n},$$
 
 kjer je $n$ varnostni faktor. Pri $n = 1$ ležijo na premici mejna stanja. Tlačna srednja napetost razpoke zapira; ugodnega vpliva v računu običajno ne upoštevamo.
 
-**Kumulativna poškodba.** Resnična obremenitev ima različne amplitude. **Palmgren-Minerovo pravilo** predpostavi, da $n_i$ ciklov z amplitudo, pri kateri je do loma $N_i$ ciklov, porabi delež $n_i/N_i$ življenjske dobe. Poškodba je
+**Kumulativna poškodba.** Resnična obremenitev ima različne amplitude. **Palmgren-Minerjevo pravilo** predpostavi, da $n_i$ ciklov z amplitudo, pri kateri je do loma $N_i$ ciklov, porabi delež $n_i/N_i$ življenjske dobe. Poškodba je
 
 $$D = \sum_i \frac{n_i}{N_i},$$
 
@@ -130,7 +130,7 @@ $\sigma_m = \dfrac{\sigma_{max} + \sigma_{min}}{2}$, $\sigma_a = \dfrac{\sigma_{
 
 ### Primer 3 (težji)
 
-Zvarni spoj v stolpu vetrne elektrarne ima Wöhlerjevo premico iz Primera 1. Iz meritev v enem letu so obremenitev razvrstili v bloke: $1000$ ciklov z amplitudo $350\,\mathrm{MPa}$, $10\,000$ ciklov s $300\,\mathrm{MPa}$, $50\,000$ ciklov s $260\,\mathrm{MPa}$ in $10^6$ ciklov z $200\,\mathrm{MPa}$. Kolikšna je letna poškodba po Minerjevem pravilu in kolikšna je pričakovana življenjska doba? Ali bi bila ocena varna, če bi stolp moral zdržati $20$ let in bi se zahtevala poškodba največ $D = 0{,}5$?
+Zvarni spoj v stolpu vetrne elektrarne ima Wöhlerjevo premico iz Primera 1. Iz meritev v enem letu so obremenitev razvrstili v bloke: $1000$ ciklov z amplitudo $350\,\mathrm{MPa}$, $10\,000$ ciklov s $300\,\mathrm{MPa}$, $50\,000$ ciklov z $260\,\mathrm{MPa}$ in $10^6$ ciklov z $200\,\mathrm{MPa}$. Kolikšna je letna poškodba po Minerjevem pravilu in kolikšna je pričakovana življenjska doba? Ali bi bila ocena varna, če bi stolp moral zdržati $20$ let in bi se zahtevala poškodba največ $D = 0{,}5$?
 
 **Podatki:** $\sigma_D = 240\,\mathrm{MPa}$, $N_D = 2 \cdot 10^6$, $k = 8$; letno $n_1 = 1000$ pri $350\,\mathrm{MPa}$, $n_2 = 10\,000$ pri $300\,\mathrm{MPa}$, $n_3 = 50\,000$ pri $260\,\mathrm{MPa}$, $n_4 = 10^6$ pri $200\,\mathrm{MPa}$; zahteva $20$ let pri $D \le 0{,}5$
 **Iščemo:** letno poškodbo $D_l$, življenjsko dobo $t$, ali zahteva velja
@@ -197,7 +197,7 @@ Znati moraš povedati:
 - definicije $\sigma_m$, $\sigma_a$, $R$ in trajne dinamične trdnosti;
 - obliko in razlago Wöhlerjeve krivulje ter razliko med jeklom in aluminijem;
 - mehanizem utrujenostnega loma (nastanek razpoke, rast, končni lom) in vpliv zarez ter površine;
-- Goodmanovo premico in Palmgren-Minerovo pravilo z omejitvami;
+- Goodmanovo premico in Palmgren-Minerjevo pravilo z omejitvami;
 - tri stopnje lezenja, Nortonov zakon z Arrheniusovim členom, napetostno relaksacijo in Larson-Millerjev parameter.
 
 ### Naloga 1
@@ -213,11 +213,11 @@ Pri $823\,\mathrm{K}$ in $100\,\mathrm{MPa}$ je izmerjena hitrost stacionarnega 
 5. Raztezek: $2{,}6 \cdot 10^{-10} \cdot 3{,}6 \cdot 10^8 \approx 0{,}093$, okoli $9\,\%$: cev bi se nedopustno raztegnila, verjetno bi prešla v terciarno lezenje.
 6. c) Dopustna hitrost: $0{,}01/(3{,}6 \cdot 10^8\,\mathrm{s}) \approx 2{,}78 \cdot 10^{-11}\,\mathrm{s^{-1}}$.
 7. Pri isti temperaturi je $\dot\varepsilon_s \propto \sigma^5$: $\sigma = 100\,\mathrm{MPa} \cdot (2{,}78)^{1/5} \approx 123\,\mathrm{MPa}$.
-8. Odgovor: a) $0{,}36\,\%$; b) okoli $2{,}6 \cdot 10^{-10}\,\mathrm{s^{-1}}$ in $9\,\%$; c) največ okoli $120\,\mathrm{MPa}$. Za $20\,\%$ večja napetost in $50\,\mathrm{K}$ višja temperatura povečata hitrost lezenja za faktor okoli $26$.
+8. Odgovor: a) $0{,}36\,\%$; b) okoli $2{,}6 \cdot 10^{-10}\,\mathrm{s^{-1}}$ in $9\,\%$; c) največ okoli $123\,\mathrm{MPa}$. Za $20\,\%$ večja napetost in $50\,\mathrm{K}$ višja temperatura povečata hitrost lezenja za faktor okoli $26$.
 
 ### Naloga 2
 
-Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga prepoznaš na prelomni ploskvi. Utemelji, zakaj zareze, hrapava površina in korozija zmanjšajo trajno dinamično trdnost. Navedi predpostavke Palmgren-Minerovega pravila in utemelji, zakaj je vrstni red obremenitev pomemben.
+Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga prepoznaš na prelomni ploskvi. Utemelji, zakaj zareze, hrapava površina in korozija zmanjšajo trajno dinamično trdnost. Navedi predpostavke Palmgren-Minerjevega pravila in utemelji, zakaj je vrstni red obremenitev pomemben.
 
 **Rešitev:**
 
@@ -235,7 +235,7 @@ Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga
 
 **Termoelektrarne.** Cevi pregrevalnikov in parovodi so dimenzionirani na lezenje za $10^5$ do $2 \cdot 10^5$ ur. Ob pregledih merijo premer cevi in s posnetki mikrostrukture iščejo pore lezenja.
 
-**Letalstvo.** Po nesrečah letal Comet v petdesetih letih 20. stoletja (razpoke ob vogalih oken) so uvedli oblikovanje z dopustnimi poškodbami: razpoke se smejo pojaviti, a jih je treba z rednimi pregledi najti, preden postanejo kritične.
+**Letalstvo.** Po nesrečah letal Comet v petdesetih letih 20. stoletja (razpoke ob vogalih oken) so uvedli oblikovanje, varno ob odpovedi (*fail-safe*), iz katerega se je v sedemdesetih letih razvilo oblikovanje z dopustnimi poškodbami: razpoke se smejo pojaviti, a jih je treba z rednimi pregledi najti, preden postanejo kritične.
 
 **Postopki za večjo trdnost.** Peskanje s kroglicami in valjanje površine ustvarita tlačne zaostale napetosti, ki razpoke zapirajo in povečajo $\sigma_D$.
 

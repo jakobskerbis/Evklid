@@ -169,7 +169,7 @@ Babica je omenila, da testo vedno postavi k topli peči. Zala je pomislila: »Mo
 
 Naslednji dan je zamesila dve enaki testi z enako moko, vodo in kvasom. Eno je postavila k peči, drugo na hladen balkon. Edina razlika je bila toplota, zato je bil **poskus pošten**.
 
-Čez eno uro je z ravnilom **izmerila** višino obeh testov in ju **zapisala** v zvezek. Testo ob peči se je dvignilo za več centimetrov, testo na balkonu skoraj nič. Zala je narisala dva stolpca in napisala **sklep**: kvas v toplem dela hitreje. Babičina skrivna sestavina je bila toplota.
+Čez eno uro je z ravnilom **izmerila** višini obeh test in ju **zapisala** v zvezek. Testo ob peči se je dvignilo za več centimetrov, testo na balkonu skoraj nič. Zala je narisala dva stolpca in napisala **sklep**: kvas v toplem dela hitreje. Babičina skrivna sestavina je bila toplota.
 
 ## Preveri se
 
@@ -216,7 +216,8 @@ Naslednji dan je zamesila dve enaki testi z enako moko, vodo in kvasom. Eno je p
 :::simboli
 t | čas meritve | | s
 \bar{t} | povprečni čas | \bar{t} = \dfrac{t_1 + t_2 + t_3}{3} | s
-t_1, t_2, t_3 | izmerjeni časi posameznih ponovitev | | s
+t_1, t_2, t_3 | izmerjeni časi (v Primeru 1 tri ponovitve, v Primeru 2 hladna in topla voda) | | s
+T_1, T_2 | temperatura vode v prvem in drugem kozarcu | | ^\circ\mathrm{C}
 o | obseg balona | | cm
 \bar{o} | povprečni obseg balona | \bar{o} = \dfrac{o_1 + o_2}{2} | cm
 o_1, o_2 | izmerjena obsega balona | | cm

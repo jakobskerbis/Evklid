@@ -15,14 +15,14 @@ Ima prav? Obe trditvi zvenita smiselno, a prva je napačna, druga pa je prenaglj
 
 **2. Premica.** Premica je ravna črta brez začetka in konca: v mislih se neomejeno nadaljuje v obe smeri. Označimo jo z majhno tiskano črko ($p$, $q$, $r$) ali z imenoma dveh točk na njej: premica $AB$.
 
-Poskusi: nariši točko $A$ in skozi njo z ravnilom potegni ravne črte. Narišeš jih lahko, kolikor hočeš. Dodaj točko $B$ in poskusi potegniti dve različni ravni črti skozi obe točki. Ne gre: vse se prekrijejo. Dva pravila veljata vedno:
+Poskusi: nariši točko $A$ in skozi njo z ravnilom potegni ravne črte. Narišeš jih lahko, kolikor hočeš. Dodaj točko $B$ in poskusi potegniti dve različni ravni črti skozi obe točki. Ne gre: vse se prekrijejo. Dve pravili veljata vedno:
 
 - skozi dve različni točki gre **natanko ena** premica,
 - skozi eno točko jih gre **neskončno mnogo**.
 
 **3. Točka in premica.** Točka lahko leži na premici ali ne. Zapišemo $A \in p$ (»$A$ leži na $p$«) in $D \notin p$ (»$D$ ne leži na $p$«).
 
-**4. Poltrak.** Točka $O$ razdeli premico na dva **poltraka**: vsak ima začetek v $O$, konca pa nima. Poltrak $AB$ ima začetek v $A$ in poteka skozi $B$ naprej. Vrstni red črk zato šteje: poltrak $AB$ in poltrak $BA$ sta različna, ker začneta v različnih točkah. Poltraka z isto začetno točko, ki skupaj sestavljata premico, sta **nasprotna**.
+**4. Poltrak.** Točka $O$ razdeli premico na dva **poltraka**: vsak ima začetek v $O$, konca pa nima. Poltrak $AB$ ima začetek v $A$ in poteka skozi $B$ naprej. Vrstni red črk zato šteje: poltrak $AB$ in poltrak $BA$ sta različna, ker se začneta v različnih točkah. Poltraka z isto začetno točko, ki skupaj sestavljata premico, sta **nasprotna**.
 
 **5. Daljica.** Daljica je del premice med dvema točkama, ki ju imenujemo **krajišči**. Ima začetek in konec, zato ima **dolžino**, ki jo izmerimo z ravnilom. Daljico med $A$ in $B$ imenujemo daljica $AB$, njeno dolžino zapišemo $|AB|$. Daljica $AB$ in daljica $BA$ sta ista daljica, zato je $|AB| = |BA|$.
 
@@ -113,7 +113,7 @@ $X \in p$ (točka leži na premici), $X \notin p$ (ne leži). Daljica $XY$ ima k
 
 1. a) $A \in p$, $B \in p$, $C \in p$ in $D \notin p$.
 2. b) Vsak par točk določa eno daljico: daljica $AB$, daljica $BC$ in daljica $AC$. Skupaj so tri.
-3. c) Poltrak z začetkom v $B$ skozi $A$ je poltrak $BA$, skozi $C$ pa poltrak $BC$. Nista enaka: začneta v isti točki, a tečeta v nasprotnih smereh (nasprotna poltraka).
+3. c) Poltrak z začetkom v $B$ skozi $A$ je poltrak $BA$, skozi $C$ pa poltrak $BC$. Nista enaka: začneta se v isti točki, a tečeta v nasprotnih smereh (nasprotna poltraka).
 4. Odgovor: tri daljice ($AB$, $BC$, $AC$); poltraka $BA$ in $BC$ nista enaka.
 
 ### Primer 2 (srednji)
@@ -216,7 +216,7 @@ $|CM| = 26\,\text{cm} : 2 = 13\,\text{cm}$ in $|AM| = 8\,\text{cm} + 13\,\text{c
 
 V kuhinji živijo štirje prijatelji. **Točka** je drobtina na pultu: pomembno je le, kje leži. **Daljica** je rob deske za rezanje: ima dva konca, zato lahko vsak izmeri, da je dolga $40\,\text{cm}$. **Poltrak** je žarek svetilke na telefonu, s katerim iščeš žlico pod omaro. Začne se pri telefonu in gre naravnost naprej. **Premica** pa se ne ustavi nikjer: teče čez pult, skozi steno in naprej v obe smeri. Vedno vidimo le njen kos.
 
-Nekega dne se predal zatika. Mojster pogleda vodili, po katerih drsi. »Nista vzporedni,« reče, »spredaj sta $2\,\text{mm}$ bolj narazen kot zadaj.« Ko ju naravna, da sta povsod enako narazen, predal spet drsi gladko. Nato z vogalom geotrikotnika preveri, ali sta stranica in dno omarice pravokotni.
+Nekega dne se predal zatika. Mojster pogleda vodili, po katerih drsi. »Nista vzporedni,« reče, »spredaj sta $2\,\text{mm}$ bolj narazen kot zadaj.« Ko ju naravna, da sta povsod enako narazen, predal spet drsi gladko. Nato z vogalom geotrikotnika preveri, ali sta stranica in dno omarice pravokotna.
 
 ## Preveri se
 

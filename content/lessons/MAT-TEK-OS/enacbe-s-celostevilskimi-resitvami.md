@@ -32,7 +32,7 @@ Rešitvi sta dve: $7$ avtobusnih in $2$ vlakovni vozovnici ali $2$ avtobusni in 
 
 **Zdaj posplošimo, kaj smo naredili.** Enačbi, pri kateri iščemo le celoštevilske rešitve, rečemo **diofantska enačba** (po grškem matematiku Diofantu). Postopek ima tri korake.
 
-*Omejevanje.* Neznanke so nenegativne, zato vsak člen leve strani ne sme preseči desne. Iz $5y \le 31$ sledi $y \le 6$. Tako iz neskončno možnosti nastane končen seznam.
+*Omejevanje.* Neznanke so nenegativne, zato vsak člen leve strani ne sme preseči desne. Iz $5y \le 31$ sledi $y \le 6$. Tako iz neskončno mnogo možnosti nastane končen seznam.
 
 *Preizkušanje.* Seznam pregledaš po vrsti. Izberi neznanko z **večjim koeficientom**, ker ima manj možnosti: za $y$ jih je $7$, za $x$ bi jih bilo $11$ (od $0$ do $10$).
 
@@ -73,11 +73,11 @@ $4x + 3y = 23$, $x, y$ cela in nenegativna
 2. Ostane $23 - 4x$ ljudi za trisede: $23, 19, 15, 11, 7, 3$.
 3. Deljivi s $3$ sta le $15$ (pri $x = 2$) in $3$ (pri $x = 5$). Torej $y = 5$ oziroma $y = 1$.
 4. Preverimo: $8 + 15 = 23$ in $20 + 3 = 23$.
-5. Odgovor: na dva načina, $2$ štirisedi in $5$ trisedov ali $5$ štirisedov in $1$ trised.
+5. Odgovor: na dva načina, $2$ štiriseda in $5$ trisedov ali $5$ štirisedov in $1$ trised.
 
 ### Primer 2: vozovnice za vzpenjačo
 
-Družina je za vzpenjačo plačala $65$ €. Vozovnica za odraslega stane $7$ €, za otroka $4$ €. Otrok je bilo več kot odraslih. Koliko je bilo odraslih in koliko otrok?
+Skupina izletnikov je za vzpenjačo plačala $65$ €. Vozovnica za odraslega stane $7$ €, za otroka $4$ €. Otrok je bilo več kot odraslih. Koliko je bilo odraslih in koliko otrok?
 
 **Podatki:** odrasli $7$ €, otrok $4$ €; skupaj $65$ €; otrok je več kot odraslih
 **Iščemo:** število odraslih $x$ in otrok $y$
@@ -144,7 +144,7 @@ Vrednosti $100 - 11y$ so $100, 78, 56, 34, 12$. Z $8$ je deljivo le $56$ pri $y 
 
 - **Necela ali negativna »rešitev«.** Par $x = 2{,}5$, $y = 4{,}7$ res da $3x + 5y = 31$, a pol vozovnice ne obstaja. Pri vsaki rešitvi preveri: ali sta števili celi in ali ju besedilo dovoli (ni negativnih ljudi).
 - **Ustavim se pri prvi rešitvi.** Diofantska enačba ima pogosto več rešitev. Naloga je rešena šele, ko pregledaš vse možnosti do meje ali s korakom zamenjave pokažeš, da drugih ni.
-- **Napačna meja.** Iz $5y \le 31$ sledi $y \le 6$, ne $y < 6$. Kdor izpusti krajno vrednost, lahko izgubi rešitev, kot je $y = 5$ pri $4x + 6y = 38$.
+- **Napačna meja.** Iz $5y \le 31$ sledi $y \le 6$, ne $y < 6$. Kdor izpusti krajno vrednost, lahko izgubi rešitev, kot je $x = 5$ pri $4x + 3y = 23$ (Primer 1).
 - **Prezrt pogoj iz besedila.** »Vsaj ena vozovnica vsake vrste«, »več otrok kot odraslih« ali »vsi čolni polni« izločijo nekatere rešitve. Pogoje beri na začetku in še enkrat na koncu.
 - **Spregledan skupni delitelj.** Kdor pri $6x + 9y = 31$ začne preizkušati, izgublja čas. Če skupni delitelj koeficientov ne deli desne strani, rešitve ni.
 
@@ -153,7 +153,7 @@ Vrednosti $100 - 11y$ so $100, 78, 56, 34, 12$. Z $8$ je deljivo le $56$ pri $y 
 - Diofantska enačba: iščemo le celoštevilske (pogosto nenegativne) rešitve, npr. število vozovnic.
 - Omejevanje: iz nenegativnosti dobiš mejo, npr. $5y \le 31$ da $y \le 6$.
 - Preizkušanje: pregleduj neznanko z večjim koeficientom; ostanki in parnost skrajšajo seznam.
-- Pri $ax + by = c$ se rešitve ponavljajo: $x$ se zmanjša za $b$, $y$ pa poveča za $a$, ali obratno (če $a$ in $b$ nimata skupnega delitelja).
+- Pri $ax + by = c$ se rešitve ponavljajo: $x$ se zmanjša za $b$, $y$ pa poveča za $a$, ali obratno (če $a$ in $b$ nimata skupnega delitelja, večjega od $1$).
 - Če skupni delitelj $a$ in $b$ ne deli $c$, rešitve ni.
 - Pri $xy$ v enačbi uredi neznanki ($x \le y$) in iz tega dobiš mejo za manjšo.
 - Na koncu preveri vse pogoje iz besedila.
@@ -175,7 +175,7 @@ kjer je $t$ poljubno celo število. Pogoj $x \ge 0$, $y \ge 0$ omeji $t$ na kon�
 
 Enačbo iz Primera 3 lahko rešiš tudi z razcepom. Iz $xy - 2x - 2y = 0$ dobiš, ko obema stranema prišteješ $4$:
 $$(x - 2)(y - 2) = 4.$$
-Zmnožek dveh celih števil je $4$: možnosti so $1 \cdot 4$, $2 \cdot 2$, $4 \cdot 1$ (negativni pari dajo $x \le 1$ ali $y \le 1$, kar ne ustreza). Dobiš $(3, 6)$, $(4, 4)$, $(6, 3)$. Ta trik dela vedno, ko enačba vsebuje $xy$, $x$ in $y$.
+Zmnožek dveh celih števil je $4$: možnosti so $1 \cdot 4$, $2 \cdot 2$, $4 \cdot 1$ (negativni pari dajo $x \le 1$ ali $y \le 1$, kar ne ustreza). Dobiš $(3, 6)$, $(4, 4)$, $(6, 3)$. Ta trik poskusi vedno, ko enačba vsebuje $xy$, $x$ in $y$.
 
 ## Preveri se
 
@@ -213,7 +213,7 @@ Zmnožek dveh celih števil je $4$: možnosti so $1 \cdot 4$, $2 \cdot 2$, $4 \c
 - $1$
 ~ Ustavil si se pri prvi rešitvi. Preveri vse $y$ do meje.
 - $2$
-~ Verjetno si izpustil krajno možnost $y = 5$, $x = 2$. Iz $6y \le 38$ sledi $y \le 6$, ne $y < 5$.
+~ Verjetno si izpustil zadnjo možnost $y = 5$, $x = 2$. Iz $6y \le 38$ sledi $y \le 6$, zato preveri vse $y$ do $6$.
 + $3$
 - $6$
 ~ $6$ je meja za število šestposteljnih sob, ne število rešitev. Vsak $y$ ne da celega $x$.

@@ -346,7 +346,7 @@ D_f | definicijsko območje funkcije f | |
 Z_f | zaloga vrednosti funkcije f | |
 D_{f^{-1}} | definicijsko območje inverzne funkcije | D_{f^{-1}} = Z_f |
 Z_{f^{-1}} | zaloga vrednosti inverzne funkcije | Z_{f^{-1}} = D_f |
-a | osnova logaritma | | | a > 0, a ≠ 1; pri premikih grafa premik v desno
+a | osnova eksponentne funkcije in logaritma | | | a > 0, a ≠ 1; pri premikih grafa premik v desno
 e | Eulerjevo število | | | e ≈ 2,718; osnova naravnega logaritma
 u | eksponent pri osnovi e | u = \ln v |
 v | pozitivna vrednost potence e^u | | | v > 0

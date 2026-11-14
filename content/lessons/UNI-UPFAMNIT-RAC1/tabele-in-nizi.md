@@ -147,7 +147,7 @@ Osnovne metode na primeru `v = "LJ;31.4;0.0"`:
 
 `substring(a, b)` vrne znake od indeksa $a$ do indeksa $b$, brez $b$.
 
-**Primerjava nizov.** `a == b` primerja sklica (ali je to isti objekt), `a.equals(b)` pa vsebino. Dva niza z enakimi znaki sta lahko različna objekta, zato vsebino **vedno** primerjaj z `equals`; vrstni red po kodah znakov da `compareTo` (zato `"ž"` pride za `"z"`, ne pred njim; to ni slovenska abeceda).
+**Primerjava nizov.** `a == b` primerja sklica (ali je to isti objekt), `a.equals(b)` pa vsebino. Dva niza z enakimi znaki sta lahko različna objekta, zato vsebino **vedno** primerjaj z `equals`; vrstni red po kodah znakov da `compareTo` (zato `"č"` pride za `"z"`, ne takoj za `"c"`; to ni slovenska abeceda).
 
 **Znaki so števila.** `char` je v Javi celoštevilski tip, zato `'7' - '0'` da $7$, `(char)('a' + 1)` pa `'b'`. Pretvorbo celega niza v število opravita `Integer.parseInt` in `Double.parseDouble`.
 
@@ -298,7 +298,7 @@ Koliko je deževnih dni, kolikšen je delež in kako ga izračunaš v Javi?
 - **`b = a` kot kopija.** Kopira se sklic; spremembe prek `b` vidiš v `a`. Za kopijo uporabi `clone()` ali `Arrays.copyOf`.
 - **Primerjava nizov z `==`.** Lahko vrne `false` za enaka besedila. Uporabi `equals`.
 - **`length` pri nizih in tabelah.** Tabela ima atribut `a.length`, niz metodo `s.length()`.
-- **Celoštevilsko deljenje pri povprečju ali deležu.** `vsota / n` z dvema `int` zaokroži navzdol; vsaj eno število pretvori v `double`.
+- **Celoštevilsko deljenje pri povprečju ali deležu.** `vsota / n` z dvema `int` odreže decimalni del; vsaj eno število pretvori v `double`.
 
 ## Povzetek
 
@@ -351,7 +351,7 @@ static double[][] zgladi(double[][] g) {
 }
 ```
 
-3. Pogoj `a >= 0 && a < v && b >= 0 && b < s` izloči sosede zunaj mreže; ker `&&` računa skrajšano, do `g[a][b]` pride le, ko sta indeksa veljavna.
+3. Pogoj `a >= 0 && a < v && b >= 0 && b < s` izloči sosede zunaj mreže; ker je dostop `g[a][b]` znotraj `if`, do njega pride le, ko sta indeksa veljavna.
 4. Celica $(0, 0)$: soseda sta $(1, 0) = 5$ in $(0, 1) = 3$; $(1 + 5 + 3)/3 = 3{,}0$.
 5. Celica $(1, 1)$: vse štiri sosede obstajajo, $(7 + 0 + 3 + 6 + 5)/5 = 21/5 = 4{,}2$.
 6. Celica $(2, 3)$: soseda sta $(1, 3) = 8$ in $(2, 2) = 4$; $(1 + 8 + 4)/3 \approx 4{,}33$.
@@ -456,7 +456,7 @@ Obrni tabelo `a = {3, 8, 1, 6, 4}` na mestu z zanko iz razlage.
 ~ Več sklicev na isto tabelo je dovoljeno in pogosto; to je ravno pomen sklica.
 > `b = a` kopira naslov; obe spremenljivki kažeta na isti objekt, zato je sprememba prek `b` vidna prek `a`.
 
-? Kateri korak rešitve je napačen? Naloga: povprečje tabele `t` z $7$ elementi. (1) `double s = 0;` (2) `for (int i = 0; i <= t.length; i++) s += t[i];` (3) `double p = s / t.length;`
+? Kateri korak rešitve je napačen? Naloga: povprečje tabele `t` s $7$ elementi. (1) `double s = 0;` (2) `for (int i = 0; i <= t.length; i++) s += t[i];` (3) `double p = s / t.length;`
 - korak 1
 ~ Seštevalnik se pravilno začne pri nič pred zanko.
 + korak 2

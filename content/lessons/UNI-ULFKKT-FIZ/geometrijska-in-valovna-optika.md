@@ -74,7 +74,7 @@ $$d\sin\theta = m\lambda.$$
 
 **8. Uklonska mrežica.** Mrežica ima veliko enako razmaknjenih rež s **konstanto mrežice** $d$ (npr. $600$ rež na milimeter pomeni $d = 1{,}67\,\mu\mathrm{m}$). Ojačitve so pri istih kotih kot pri dveh režah, $d\sin\theta = m\lambda$, a so zelo ozke in svetle. Ker je kot ojačitve odvisen od $\lambda$, mrežica razkloni svetlobo v spekter, zato je srce mnogih spektrometrov. Največji red je $m \le d/\lambda$, ker je $\sin\theta \le 1$.
 
-**9. Interferenca na tankih plasteh.** Svetloba, odbita na zgornji in spodnji ploskvi tanke plasti z debelino $h$ in lomnim količnikom $n$, interferira. Pri pravokotnem vpadu je razlika poti $2nh$, pri odboju na optično gostejši snovi pa se faza dodatno spremeni za pol valovne dolžine. Pri plasti v zraku (milnica) ima ta skok le en odboj, zato je odbita svetloba ojačena pri $2nh = (m + \tfrac{1}{2})\lambda_0$. Pri protiodbojni plasti na steklu ($n_\mathrm{zrak} < n < n_\mathrm{steklo}$) ga imata oba odboja, zato je odbita svetloba oslabljena pri $2nh = (m + \tfrac{1}{2})\lambda_0$, najtanjša plast ima $h = \lambda_0/(4n)$. Od tod barve milnih mehurčkov in oljnih madežev ter protiodbojne plasti na lečah.
+**9. Interferenca na tankih plasteh.** Svetloba, odbita na zgornji in spodnji ploskvi tanke plasti z debelino $h$ in lomnim količnikom $n$, interferira. Pri pravokotnem vpadu je razlika poti $2nh$, pri odboju na optično gostejši snovi pa se faza dodatno spremeni za $\pi$, kar ustreza pol valovne dolžine. Pri plasti v zraku (milnica) ima ta skok le en odboj, zato je odbita svetloba ojačena pri $2nh = (m + \tfrac{1}{2})\lambda_0$. Pri protiodbojni plasti na steklu ($n_\mathrm{zrak} < n < n_\mathrm{steklo}$) ga imata oba odboja, zato je odbita svetloba oslabljena pri $2nh = (m + \tfrac{1}{2})\lambda_0$, najtanjša plast ima $h = \lambda_0/(4n)$. Od tod barve milnih mehurčkov in oljnih madežev ter protiodbojne plasti na lečah.
 
 ### Uklon: meja, ki je ne odpravi nobena leča
 
@@ -346,4 +346,5 @@ D | vodoravna razdalja med točkama A in B | | m | pri uklonu širina reže ali 
 j | jakost svetlobe | | W/m^2
 j_1 | jakost svetlobe iz ene reže | | W/m^2
 s | razdalja med točkama, ki ju ločimo | s \approx L\theta | m
+h | debelina tanke plasti | | m
 :::

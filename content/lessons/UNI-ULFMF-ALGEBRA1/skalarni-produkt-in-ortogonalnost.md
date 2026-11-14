@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Na začetku 19. stoletja so astronomi izgubili komaj odkriti Ceres, ko je izginil v soju Sonca. Carl Friedrich Gauss je iz peščice netočnih meritev izračunal tir, ki se jim najbolj prilega, in Ceres so znova našli blizu mesta, ki ga je napovedal. Njegova metoda najmanjših kvadratov je v jeziku tega poglavja **ortogonalna projekcija**: izbere točko podprostora, ki je meritvam najbližja, tako kot konec sence poševne palice pod navpično svetilko leži na tleh najbliže njenemu vrhu. Enak račun danes potegne premico trenda skozi serijo bolnikovih meritev krvnega tlaka. Zanj potrebujemo dolžine in kote, ki jih vektorski prostor doslej ni poznal; prinese jih **skalarni produkt**. Iz njega dobimo normo, ortogonalnost, projekcije in Gram-Schmidtov postopek, ki iz poljubne baze naredi pravokotno.
+Na začetku 19. stoletja so astronomi izgubili komaj odkrito Cerero, ko je izginila v soju Sonca. Carl Friedrich Gauss je iz peščice netočnih meritev izračunal tir, ki se jim najbolj prilega, in Cerero so znova našli blizu mesta, ki ga je napovedal. Njegova metoda najmanjših kvadratov je v jeziku tega poglavja **ortogonalna projekcija**: izbere točko podprostora, ki je meritvam najbližja, tako kot konec sence poševne palice pod navpično svetilko leži na tleh najbliže njenemu vrhu. Enak račun danes potegne premico trenda skozi serijo bolnikovih meritev krvnega tlaka. Zanj potrebujemo dolžine in kote, ki jih vektorski prostor doslej ni poznal; prinese jih **skalarni produkt**. Iz njega dobimo normo, ortogonalnost, projekcije in Gram-Schmidtov postopek, ki iz poljubne baze naredi pravokotno.
 
 ## Razlaga
 
@@ -259,7 +259,7 @@ $$\|v - w\|^2 = \|v - p\|^2 + \|p - w\|^2 \ge \|v - p\|^2,$$
 
 z enakostjo le za $w = p$. Projekcija je torej enolična in ni odvisna od izbire ortogonalne baze $W$.
 
-**Ortogonalni komplement.** $W^\perp = \{v : \langle v, w \rangle = 0 \text{ za vse } w \in W\}$ je podprostor. V končnorazsežnem prostoru je $V = W \oplus W^\perp$, saj je $v = \operatorname{proj}_W v + (v - \operatorname{proj}_W v)$. Preslikava $v \mapsto \operatorname{proj}_W v$ je linearna, velja $P^2 = P$, lastni vrednosti pa sta $1$ (na $W$) in $0$ (na $W^\perp$).
+**Ortogonalni komplement.** $W^\perp = \{v : \langle v, w \rangle = 0 \text{ za vse } w \in W\}$ je podprostor. V končnorazsežnem prostoru je $V = W \oplus W^\perp$, saj je $v = \operatorname{proj}_W v + (v - \operatorname{proj}_W v)$. Preslikava $P\colon v \mapsto \operatorname{proj}_W v$ je linearna, velja $P^2 = P$, lastni vrednosti pa sta $1$ (na $W$) in $0$ (na $W^\perp$).
 
 **Matrična oblika.** Če so stolpci matrike $Q$ ortonormirana baza $W \subseteq \mathbb{R}^n$, je matrika projekcije $Q Q^{\mathsf T}$. Gram-Schmidt v matrični obliki je razcep $A = QR$ z zgornjetrikotno $R$.
 
@@ -309,7 +309,7 @@ z enakostjo le za $w = p$. Projekcija je torej enolična in ni odvisna od izbire
 x, y | vektorja v ℝⁿ | | | v ⟨p, q⟩ je x spremenljivka polinomov
 x_1, x_2, x_n | komponente vektorja x
 y_1, y_2, y_n | komponente vektorja y
-p, q | polinoma stopnje največ 1 | | | v dokazu najbližje točke je p projekcija v na W
+p, q | polinoma v skalarnem produktu ⟨p, q⟩ | | | v primerih 2 in 3 ter v dokazu najbližje točke je p projekcija vektorja
 d | oznaka diferenciala (dx) v integralu
 u, v | vektorja prostora s skalarnim produktom
 w | poljuben vektor podprostora W
@@ -320,6 +320,6 @@ v_1, v_2 | vektorji začetne baze podprostora W
 e_m | normirani vektor ortonormirane baze | e_m = \frac{u_m}{\lVert u_m \rVert}
 j | indeks člena vsote
 k | razsežnost podprostora W (število baznih vektorjev)
-t | realni parameter v dokazu Cauchy-Schwarzove neenakosti
+t | realni parameter v dokazu Cauchy-Schwarzeve neenakosti
 b | dana točka, ki jo projiciramo na W
 :::

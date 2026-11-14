@@ -168,7 +168,7 @@ V seminarski nalogi želiš izpis:
 > **Literatura:** [1] R. L. Graham, D. E. Knuth, O. Patashnik, *Concrete Mathematics*, Addison-Wesley, 1994.
 
 **Podatki:** besedilo izreka, dokaza in stavka, vir (avtorji, naslov, založba, leto); številki »1« pri izreku in viru naj nastaneta sami
-**Iščemo:** vrstico v preambuli in kodo za telo
+**Iščemo:** vrstici v preambuli in kodo za telo
 
 :::formula
 `\newtheorem{izrek}{Izrek}` v preambuli; okolji `izrek` in `proof`; `\label` + `\ref`; `\bibitem` + `\cite`.
@@ -199,7 +199,7 @@ enaka 5050~&#92;cite{gkp}.
 &#92;end{thebibliography}
 </code></pre>
 
-6. Odgovor: ena vrstica v preambuli in štirje gradniki v telesu (izrek, dokaz, sklic, viri); po dveh prevajanjih se izpišeta »Izrek 1« in »[1]«.
+6. Odgovor: dve vrstici v preambuli in štirje gradniki v telesu (izrek, dokaz, sklic, viri); po dveh prevajanjih se izpišeta »Izrek 1« in »[1]«.
 
 ### Primer 4 – zdaj ti: popravi sošolčevo kodo
 
@@ -235,7 +235,7 @@ Kakšna je celotna popravljena koda?
 
 - LaTeX je jezik oznak: pišeš izvorno datoteko `.tex`, program jo prevede v PDF.
 - Struktura: v preambuli `\documentclass` in paketi (`babel`, `amsmath`, `amsthm`), vsebina med `\begin{document}` in `\end{document}`; `\section` oštevilči sam.
-- Matematični način: formula v vrstici med dvema dolarjema, izpostavljena v svoji vrstici; presledki se ne upoštevajo, `^` in `_` delujeta na en znak, zato oklepaji; funkcije z `\sin`, `\log`; decimalna vejica `{,}`; besedilo z `\text`.
+- Matematični način: formula v vrstici med dvema dolarjema, izpostavljena v svoji vrstici; presledki se ne upoštevajo, `^` in `_` delujeta na en znak, zato oklepaji; funkcije s `\sin`, `\log`; decimalna vejica `{,}`; besedilo s `\text`.
 - Okolja `\begin{...}` ... `\end{...}`: `itemize`, `enumerate`, `equation` (s številko), `align`, izreki z `\newtheorem`, `proof`.
 - Sklici: `\label` + `\ref` ali `\eqref`; viri: `thebibliography`, `\bibitem` + `\cite`. Za pravilne številke prevedi dvakrat.
 

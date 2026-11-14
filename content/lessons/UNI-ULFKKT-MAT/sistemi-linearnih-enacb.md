@@ -277,8 +277,8 @@ Enak postopek z matriko $[A \mid I]$ namesto $[A \mid \vec{b}]$ da inverzno matr
 a_{11}, a_{12}, a_{1n}, a_{m1}, a_{mn} | koeficienti sistema (elementi matrike A) | | | aᵢⱼ: i-ta enačba, j-ta neznanka
 x_1, x_2, x_n | neznanke sistema | | |
 b_1, b_m | desne strani enačb | | |
-x | masa raztopine z deležem 10 % | | g |
-y | masa raztopine z deležem 40 % | | g |
+x | masa raztopine z deležem 10 % (Primer 1) | | g | drugod neznanka sistema brez enote
+y | masa raztopine z deležem 40 % (Primer 1) | | g | drugod neznanka sistema brez enote
 A | matrika sistema | | | razsežnost m × n
 \vec{b} | stolpec desnih strani | | |
 n | število neznank | | |

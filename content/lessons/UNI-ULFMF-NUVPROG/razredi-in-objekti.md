@@ -20,7 +20,7 @@ To deluje, dokler je programa malo. Ko imaš račune, stranke in kartice, se fun
 
 ## Razlaga
 
-**1. Razred in objekt.** **Razred** je načrt: opiše, katere podatke ima neka vrsta stvari in kaj zna. **Objekt** (tudi *primerek* ali *instanca*) je ena konkretna stvar, narejena po tem načrtu. Razred `Racun` je en, objektov `Racun` (Anin račun, Borov račun …) je lahko poljubno mnogo.
+**1. Razred in objekt.** **Razred** je načrt: opiše, katere podatke ima neka vrsta stvari in kaj zna. **Objekt** (tudi *primerek* ali *instanca*) je ena konkretna stvar, narejena po tem načrtu. Razred `Racun` je eden, objektov `Racun` (Anin račun, Borov račun …) je lahko poljubno mnogo.
 
 To že poznaš: `list` je razred, vsak seznam, ki ga ustvariš, pa je objekt tega razreda. Klic `[1, 2].append(3)` je klic **metode** `append` na tem objektu.
 
@@ -83,7 +83,7 @@ Metodo kličeš s piko in oklepaji: `a.polozi(50)`. Python sam vstavi `a` na mes
 Metoda `dvigni` pokaže, zakaj je razred koristen: pravilo »ne dvigni več, kot imaš« je zapisano na enem mestu, ob podatkih, ki jih varuje.
 
 :::premisli
-Imamo `a = Racun("Ana", 100)` in `b = Racun("Bor", 20)`. Pokličemo `a.polozi(30)`. Kolikšen je zdaj `b.stanje`? Zakaj?
+Imamo `a = Racun("Ana", 100)` in `b = Racun("Bor", 20)`. Pokličemo `a.polozi(30)`. Kolikšno je zdaj `b.stanje`? Zakaj?
 ---
 Še vedno `20`. Metoda je spremenila `self.stanje`, `self` pa je bil pri tem klicu objekt `a`. Objekt `b` ima svoj atribut `stanje`, ki ga nihče ni spremenil.
 :::
@@ -149,7 +149,7 @@ ok = a.dvigni(200)
 a.dvigni(30)
 ```
 
-Kolikšen je na koncu `a.stanje` in kaj je shranjeno v `ok`?
+Kolikšno je na koncu `a.stanje` in kaj je shranjeno v `ok`?
 
 **Podatki:** začetno stanje $100$, polog $50$, poskus dviga $200$, dvig $30$; metoda `dvigni` vrne `False` in ne spremeni stanja, če je znesek večji od stanja
 **Iščemo:** končno vrednost `a.stanje` in vrednost `ok`
@@ -251,7 +251,7 @@ Vrne `4.75`, ker je $2{,}5 + 1{,}5 + 0{,}75 = 4{,}75$. Brez `self.` metoda ne bi
 
 ## Pogoste napake
 
-- **Pozabljen `self` v definiciji.** Študent napiše `def obseg():`, ker pri klicu `p.obseg()` ne poda nobenega argumenta. Python pa objekt `p` poda sam, zato javi `TypeError: obseg() takes 0 positional arguments but 1 was given`. Prvi parameter vsake metode je `self`.
+- **Pozabljen `self` v definiciji.** Študent napiše `def obseg():`, ker pri klicu `p.obseg()` ne poda nobenega argumenta. Python pa objekt `p` poda sam, zato javi `TypeError: Pravokotnik.obseg() takes 0 positional arguments but 1 was given`. Prvi parameter vsake metode je `self`.
 - **Brez `self.` v metodi.** V metodi `polozi` študent napiše `stanje = stanje + znesek`. To je lokalna spremenljivka, ki ne obstaja, zato dobi napako; če pa je le priredi (`stanje = 0`), atribut ostane nespremenjen. Do atributov objekta vedno dostopaš s `self.ime`.
 - **Konstruktor naj vrne objekt.** Študent v `__init__` napiše `return self` ali kliče `a.__init__(...)` ročno. Objekt ustvari klic razreda `Racun(...)`; `__init__` ga le napolni z atributi in ne sme vrniti ničesar (Python javi `TypeError`).
 - **Klic metode brez oklepajev.** `p.ploscina` ni število, ampak metoda sama; izpis pokaže nekaj kot `<bound method ...>`. Za izračun potrebuješ `p.ploscina()`.

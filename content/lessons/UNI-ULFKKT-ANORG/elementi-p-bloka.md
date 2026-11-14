@@ -151,11 +151,11 @@ V $\mathrm{NH_4^+}$ je $x = -3$, v $\mathrm{NO_3^-}$ je $x = +5$. To sta prav na
 
 ## Pogoste napake
 
-- **"Najvišje oksidacijsko število je vedno najstabilnejše."** Velja za lahke elemente, ne za težke. Pri Pb, Bi in Tl je zaradi inertnega para stabilnejše število za $2$ nižje. Zato je $\mathrm{PbO_2}$ oksidant, $\mathrm{Pb^{2+}}$ pa stabilen.
-- **"HF je najmočnejša halogenovodikova kislina, ker je F najbolj elektronegativen."** Moč kisline v vodi odloča predvsem jakost vezi $\mathrm{H{-}X}$. Vez $\mathrm{H{-}F}$ je najmočnejša, zato je HF šibka kislina, HI pa najmočnejša.
-- **"Fluor ima kot klor tudi pozitivna oksidacijska števila."** Fluor je najbolj elektronegativen, zato v spojinah vedno pritegne elektrone: vedno $-1$.
-- **"Si je pod C, zato je $\mathrm{SiO_2}$ molekula kot $\mathrm{CO_2}$."** Silicij ne tvori stabilnih dvojnih vezi s kisikom. Tvori štiri enojne vezi $\mathrm{Si{-}O}$ in kovalentno mrežo.
-- **"Če obstaja $\mathrm{PCl_5}$, obstaja tudi $\mathrm{NCl_5}$."** Dušik je majhen in ima v 2. periodi prostor le za štiri vezi. Petih ligandov okoli sebe ne more imeti.
+- **»Najvišje oksidacijsko število je vedno najstabilnejše.«** Velja za lahke elemente, ne za težke. Pri Pb, Bi in Tl je zaradi inertnega para stabilnejše število za $2$ nižje. Zato je $\mathrm{PbO_2}$ oksidant, $\mathrm{Pb^{2+}}$ pa stabilen.
+- **»HF je najmočnejša halogenovodikova kislina, ker je F najbolj elektronegativen.«** Moč kisline v vodi odloča predvsem jakost vezi $\mathrm{H{-}X}$. Vez $\mathrm{H{-}F}$ je najmočnejša, zato je HF šibka kislina, HI pa najmočnejša.
+- **»Fluor ima kot klor tudi pozitivna oksidacijska števila.«** Fluor je najbolj elektronegativen, zato v spojinah vedno pritegne elektrone: vedno $-1$.
+- **»Si je pod C, zato je $\mathrm{SiO_2}$ molekula kot $\mathrm{CO_2}$.«** Silicij ne tvori stabilnih dvojnih vezi s kisikom. Tvori štiri enojne vezi $\mathrm{Si{-}O}$ in kovalentno mrežo.
+- **»Če obstaja $\mathrm{PCl_5}$, obstaja tudi $\mathrm{NCl_5}$.«** Dušik je majhen in ima v 2. periodi prostor le za štiri vezi. Petih ligandov okoli sebe ne more imeti.
 
 ## Povzetek
 
@@ -197,7 +197,7 @@ Belilo pripravljamo tako, da v $2{,}00\,\mathrm{L}$ raztopine NaOH s koncentraci
 
 ### Naloga 2
 
-Natančno navedi pogoj, pri katerem zvrst v Latimerjevem diagramu disproporcionira, in ga dokaži. Nato utemelji, ali klorova kislina $\mathrm{HClO_2}$ v kisli raztopini disproporcionira, če velja $\mathrm{ClO_3^-} \xrightarrow{1{,}21\,\mathrm{V}} \mathrm{HClO_2} \xrightarrow{1{,}65\,\mathrm{V}} \mathrm{HClO}$ (v obeh korakih se preneseta $2$ elektrona).
+Natančno navedi pogoj, pri katerem zvrst v Latimerjevem diagramu disproporcionira, in ga dokaži. Nato utemelji, ali klorova(III) kislina $\mathrm{HClO_2}$ v kisli raztopini disproporcionira, če velja $\mathrm{ClO_3^-} \xrightarrow{1{,}21\,\mathrm{V}} \mathrm{HClO_2} \xrightarrow{1{,}65\,\mathrm{V}} \mathrm{HClO}$ (v obeh korakih se preneseta $2$ elektrona).
 
 **Rešitev:**
 
@@ -207,7 +207,7 @@ Natančno navedi pogoj, pri katerem zvrst v Latimerjevem diagramu disproporcioni
 4. Za $\mathrm{HClO_2}$: $E^\circ_\mathrm{D} = 1{,}65\,\mathrm{V} > E^\circ_\mathrm{L} = 1{,}21\,\mathrm{V}$, $E^\circ_\text{celice} = 0{,}44\,\mathrm{V}$.
 5. $\Delta G^\circ = -2 \cdot 96\,485\,\mathrm{C/mol} \cdot 0{,}44\,\mathrm{V} \approx -84{,}9\,\mathrm{kJ/mol}$.
 6. Reakcija: $\mathrm{2\,HClO_2 \rightarrow ClO_3^- + HClO + H^+}$ (Cl iz $+3$ v $+5$ in $+1$).
-7. Odgovor: $\mathrm{HClO_2}$ v kislem disproporcionira, ker leži desni potencial nad levim; zato je klorova kislina nestabilna, obstojne so le njene soli, kloriti.
+7. Odgovor: $\mathrm{HClO_2}$ v kislem disproporcionira, ker leži desni potencial nad levim; zato je klorova(III) kislina nestabilna, obstojne so le njene soli, kloriti.
 
 ## Drugače: Na sliki
 
@@ -225,7 +225,7 @@ Izrez periodnega sistema, skupine 14 do 17, periode 2 do 6:
 - Smer **desno in gor** kaže proti večji elektronegativnosti in močnejšim oksidantom: $\mathrm{F_2}$ je v zgornjem desnem kotu.
 - Smer **levo in dol** kaže proti kovinam: Pb in Bi.
 - **Zgornja vrstica**: stabilne dvojne in trojne vezi.
-- **Spodnja vrstica**: oksidacijsko število "pade" za $2$ (Pb(II), Bi(III)).
+- **Spodnja vrstica**: oksidacijsko število »pade« za $2$ (Pb(II), Bi(III)).
 - Diagonala od B (levo od izreza) prek Si, As do Te loči nekovine (zgoraj desno) od kovin (spodaj levo).
 
 ## Drugače: Korak za korakom s številkami

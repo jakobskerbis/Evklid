@@ -7,7 +7,7 @@ avtor: AI
 
 Na letališču kupiš plastenko vode: trda je, prozorna, na dnu ima trikotnik s številko 1. Med letom te zebe, zato iz nahrbtnika potegneš mehko flis jopico. Na etiketi piše »poliester«.
 
-Prvi predmet je tog in gladek, drugi mehak in kosmat. Vendar sta iz iste snovi, polietilen tereftalata (PET). Mnoge flis jopice so celo izdelane iz recikliranih plastenk.
+Prvi predmet je tog in gladek, drugi mehak in kosmat. Vendar sta iz iste snovi, polietilentereftalata (PET). Mnoge flis jopice so celo izdelane iz recikliranih plastenk.
 
 Kako je to mogoče? Skrivnost je v obliki molekul. PET je zgrajen iz zelo dolgih verig enakih členov. V plastenki so verige med pihanjem raztegnjene v dveh smereh in tvorijo tanko trdo steno. V vlaknu so potegnjene vzdolž vlakna, tanka vlakna pa se zlahka upogibajo. Ko razumeš, kako so verige zgrajene in kako nastanejo, znaš razložiti, zakaj se ena plastika na soncu zmehča, druga pa ne, in kako iz istega monomera nastanejo zelo različni materiali.
 
@@ -28,7 +28,7 @@ Da dobiš občutek za mero: ena enota PE je vzdolž verige dolga okoli $0{,}25\,
 | rahlo zamrežena | redki mostovi med progami | guma | ostane prožna |
 | gosto zamrežena | gosta mreža cest | epoksi, bakelit | ne stali, razpade |
 
-Linearne in razvejane verige drži skupaj le šibka medmolekulska vez. Ko jih segreješ, zdrsnejo druga mimo druge. Takim polimerom rečemo **termoplasti**: lahko jih večkrat stališ in preoblikuješ.
+Linearne in razvejane verige držijo skupaj le šibke medmolekulske vezi. Ko jih segreješ, zdrsnejo druga mimo druge. Takim polimerom rečemo **termoplasti**: lahko jih večkrat stališ in preoblikuješ.
 
 Pri zamreženih verigah so med progami kovalentni mostovi. Redki mostovi dajo **elastomer**: verige se raztegnejo, mostovi pa jih vlečejo nazaj. Gosta mreža da **duromer** (duroplast), ki ga po strjevanju ne moreš več staliti.
 
@@ -54,7 +54,7 @@ Pod temperaturo steklastega prehoda $T_g$ so amorfna področja trda in krhka, na
 
 Stranskih produktov ni, zato ima ponavljajoča enota enake atome kot monomer. Tako nastanejo PE, PP, PVC in PS.
 
-**Kondenzacijska (stopenjska) polimerizacija** gradi progo iz kosov, ki se spajajo med seboj. Monomera imata vsak po dve **funkcionalni skupini**, na primer $-\mathrm{OH}$ in $-\mathrm{COOH}$ ali $-\mathrm{NH_2}$ in $-\mathrm{COOH}$. Ob vsaki novi vezi se odcepi majhna molekula, navadno voda. Najprej nastanejo dimeri, nato krajše verige, ki se povezujejo v daljše. Dolge verige dobiš šele, ko zreagira skoraj ves monomer. Tako nastanejo PET, poliamidi (najlon) in polikarbonat.
+**Kondenzacijska (stopenjska) polimerizacija** gradi progo iz kosov, ki se spajajo med seboj. Monomera imata vsak po dve **funkcionalni skupini**, na primer $-\mathrm{OH}$ in $-\mathrm{COOH}$ ali $-\mathrm{NH_2}$ in $-\mathrm{COOH}$. Ob vsaki novi vezi se odcepi majhna molekula, navadno voda. Najprej nastanejo dimeri, nato krajše verige, ki se povezujejo v daljše. Dolge verige dobiš šele, ko zreagirajo skoraj vse funkcionalne skupine. Tako nastanejo PET, poliamidi (najlon) in polikarbonat.
 
 Pri najlonu 6,6 reagirata heksametilendiamin in adipinska kislina:
 
@@ -174,7 +174,7 @@ $n = 30\,000 / 192{,}17 \approx 156$. To je približno šestdesetkrat manj kot p
 
 - Polimer je makromolekula iz $n$ ponavljajočih enot; monomer je izhodna majhna molekula; $n = M/M_0$.
 - Zgradba verig: linearna, razvejana, rahlo zamrežena (elastomeri), gosto zamrežena (duromeri). Linearni in razvejani polimeri so termoplasti.
-- Verige so lahko amorfne ali delno kristalne; nad $T_g$ postanejo amorfna področja gumijasta.
+- Polimeri so lahko amorfni ali delno kristalni; nad $T_g$ postanejo amorfna področja gumijasta.
 - Adicijska (verižna) polimerizacija: iniciacija, rast, zaključek; odpre se dvojna vez, stranskega produkta ni (PE, PP, PVC, PS).
 - Kondenzacijska (stopenjska) polimerizacija: bifunkcionalni monomeri, ob vsaki vezi se odcepi majhna molekula (PET, najlon).
 - Povprečji: $M_n = \sum x_i M_i$, $M_w = \sum w_i M_i$, $M_w \geq M_n$.
@@ -185,7 +185,7 @@ Vzemi škatlo sponk za papir.
 
 **Adicijska polimerizacija** je, kot bi imel en sam odprt konec verižice: sponke pripenjaš le na ta konec, eno za drugo. Verižica zelo hitro postane dolga. Na mizi imaš ves čas nekaj zelo dolgih verižic in veliko posameznih sponk, ki še čakajo.
 
-**Kondenzacijska polimerizacija** je, kot bi si sponke med seboj podajali vsi v razredu. Vsakdo spne dve, kar ima v roki. Za vsako spenjanje moraš oddati žeton, to je molekula vode. Najprej so povsod pari, nato kratke verižice. Dolge verižice so šele na koncu, ko so skoraj vse sponke že porabljene.
+**Kondenzacijska polimerizacija** je, kot bi si sponke med seboj podajali vsi v razredu. Vsakdo spne dve, kar ima v roki. Za vsako spenjanje moraš oddati žeton, to je molekula vode. Najprej so povsod pari, nato kratke verižice. Dolge verižice so šele na koncu, ko so skoraj vsi prosti konci že speti.
 
 Če bi nekaj sponk imelo tri ušesa namesto dveh, bi namesto verižic nastala mreža, ki je ne moreš več razplesti. To je duromer.
 
@@ -229,7 +229,7 @@ Opazi še kode 2 in 4: oboje je polietilen iz istega etena. Kanister je tog, vre
 ~ Krajše verige povzroči monomer z eno skupino, ki zapre konec verige.
 - Nič, nastane enak linearni polimer.
 ~ Tretja skupina tudi reagira in ustvari odcep. Linearna veriga ne more ostati linearna.
-+ Nastanejo razvejanja in pri dovolj veliko takih mestih mreža.
++ Nastanejo razvejanja in pri dovolj velikem številu takih mest mreža.
 > Vsaka trifunkcionalna molekula je razcep v tri smeri. Veje se povežejo v mrežo in nastane duromer.
 
 ? Polistiren ($M_0 = 104{,}15\,\mathrm{g/mol}$) ima molsko maso $208\,300\,\mathrm{g/mol}$. Kolikšna je stopnja polimerizacije?

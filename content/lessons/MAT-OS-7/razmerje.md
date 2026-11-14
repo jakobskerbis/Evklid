@@ -186,7 +186,7 @@ En del: $650 : 13 = 50$, torej $50$ €. Prva sestra dobi $6 \cdot 50 = 300$ €
 
 - **Različne enote.** Razmerje $50\,\text{cm} : 2\,\text{m}$ ni $50 : 2 = 25 : 1$. Količini morata biti v isti enoti, zato najprej pretvori: $50\,\text{cm} : 200\,\text{cm} = 1 : 4$.
 - **Zamenjan vrstni red.** Če naloga sprašuje razmerje bratovega prispevka proti tvojemu, odgovor $2 : 3$ ni pravilen, pravilno je $3 : 2$. Člene vedno zapiši v vrstnem redu, kot ga navaja besedilo.
-- **Deliš z napačnim številom delov.** Pri deljenju $35$ bonbonov v razmerju $3 : 4$ ne računaš $35 : 3$ ali $35 : 4$. Celoto sestavljajo vsi deli, zato deliš z $3 + 4 = 7$: en del je $5$, prvi dobi $15$, drugi $20$ bonbonov. Obratno, kadar poznaš le količino ene sestavine (na primer $3$ dele), deliš s $3$, ne z vsoto delov.
+- **Deliš z napačnim številom delov.** Pri deljenju $35$ bonbonov v razmerju $3 : 4$ ne računaš $35 : 3$ ali $35 : 4$. Celoto sestavljajo vsi deli, zato deliš s $3 + 4 = 7$: en del je $5$, prvi dobi $15$, drugi $20$ bonbonov. Obratno, kadar poznaš le količino ene sestavine (na primer $3$ dele), deliš s $3$, ne z vsoto delov.
 - **Razmerje zamenjaš z ulomkom celote.** V razmerju $2 : 3$ prvi del ni $\dfrac{2}{3}$ celote, ampak $\dfrac{2}{2 + 3} = \dfrac{2}{5}$ celote. Ulomek $\dfrac{2}{3}$ pove le, kolikšen je prvi del v primerjavi z drugim.
 - **Člene odštevaš, prištevaš ali ne okrajšaš do konca.** Razmerje $12 : 18$ ni enako $6 : 12$ (od obeh členov smo odšteli $6$), saj je $12 : 18 = 2 : 3$, $6 : 12$ pa $1 : 2$. Člena smeš le **deliti** ali **množiti** z istim številom. Razmerje $4 : 6$ je pravilno, a ni okrajšano do konca, ker imata $4$ in $6$ še skupni delitelj $2$.
 
@@ -204,7 +204,7 @@ En del: $650 : 13 = 50$, torej $50$ €. Prva sestra dobi $6 \cdot 50 = 300$ €
 
 Predstavljaj si vrsto kozarcev enake velikosti. Malinovec mešaš iz sirupa in vode v razmerju $1 : 5$. Postaviš en kozarec sirupa (temno rdeč) in pet kozarcev vode (prozornih). Vseh kozarcev je šest. Ko vse zliješ v vrč, je v vrču šest enakih delov in en del od šestih je sirup.
 
-Če želiš več pijače, k vsakemu kozarcu sirupa dodaš novih pet kozarcev vode: dva rdeča in deset prozornih, tri rdeči in petnajst prozornih. Vrsta kozarcev se podaljša, vzorec pa ostane enak: en rdeč na pet prozornih. Zato je malinovec enako sladek. To je razširjanje razmerja: $1 : 5 = 2 : 10 = 3 : 15$.
+Če želiš več pijače, k vsakemu kozarcu sirupa dodaš novih pet kozarcev vode: dva rdeča in deset prozornih, trije rdeči in petnajst prozornih. Vrsta kozarcev se podaljša, vzorec pa ostane enak: en rdeč na pet prozornih. Zato je malinovec enako sladek. To je razširjanje razmerja: $1 : 5 = 2 : 10 = 3 : 15$.
 
 Pri deljenju v razmerju naredi obratno: celotno količino razdeli na toliko enakih kozarcev, kolikor je vseh delov, nato jih preštej za vsako sestavino.
 
@@ -243,7 +243,7 @@ Pri deljenju količine $c$ v razmerju $a : b$ dobi prvi del $\dfrac{a}{a + b} \c
 
 ## Preveri se
 
-? Trak kaže, koliko vedrov cementa in peska je zidar stresel v mešalnik. Kakšno je okrajšano razmerje cementa proti pesku?
+? Trak kaže, koliko veder cementa in peska je zidar stresel v mešalnik. Kakšno je okrajšano razmerje cementa proti pesku?
 :::risba skica
 opis: Trak iz 6 enakih delov. Prva 2 dela sta siva in označena »cement«, naslednji 4 deli so oranžni in označeni »pesek«. Vsak del je eno vedro.
 območje: 0; 0 .. 12; 3
@@ -260,7 +260,7 @@ napis: 6; 0,4 | vsak del je eno vedro | sredina
 - $2 : 1$
 ~ Zamenjal si vrstni red: prvi je cement, ker je v vprašanju naveden prvi.
 - $1 : 3$
-~ To je del cementa v vsej mešanici ($2$ od $6$ vedrov), ne razmerje cementa proti pesku.
+~ To je del cementa v vsej mešanici ($2$ od $6$ veder), ne razmerje cementa proti pesku.
 - $2 : 4$
 ~ Razmerje je pravilno, a ni okrajšano do konca: $2$ in $4$ imata skupni delitelj $2$.
 + $1 : 2$

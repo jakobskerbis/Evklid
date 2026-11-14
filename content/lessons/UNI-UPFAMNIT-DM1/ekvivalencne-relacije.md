@@ -117,7 +117,7 @@ ekvivalenca: refleksivna, simetrična, tranzitivna; delna urejenost: refleksivna
 2. Skupin je $4 \cdot 2 = 8$, zato ima $\approx$ največ $8$ razredov (manj, če kakšne skupine med bolniki ni).
 3. $\to$ je refleksivna ($S \subseteq S$) in tranzitivna (vsebovanost je tranzitivna).
 4. Ni simetrična: darovalec $0$ Rh$-$ nima antigenov, zato lahko daruje bolniku $\mathrm A$ Rh$+$, obratno pa ne.
-5. Ni tudi antisimetrična: dva *različna* bolnika z isto skupino sta drug z drugim v relaciji v obe smeri. Refleksivni in tranzitivni relaciji rečemo **predurejenost** (kvaziurejenost).
+5. Tudi antisimetrična ni: dva *različna* bolnika z isto skupino sta drug z drugim v relaciji v obe smeri. Refleksivni in tranzitivni relaciji rečemo **predurejenost** (kvaziurejenost).
 6. Povezava: $x \to y$ in $y \to x$ hkrati velja natanko tedaj, ko $x \approx y$. Ko bolnike »združimo« po $\approx$, postane $\to$ na $8$ skupinah prava delna urejenost, vsebovanost množic antigenov.
 7. Odgovor: $\approx$ je ekvivalenca z največ $8$ razredi; $\to$ je predurejenost, ki na faktorski množici postane delna urejenost.
 
@@ -270,7 +270,7 @@ print(list(razredi.values()))
 
 **Ekvivalenčna ovojnica.** Presek poljubne družine ekvivalenc na $A$ je ekvivalenca. Zato za vsako relacijo $R \subseteq A \times A$ obstaja najmanjša ekvivalenca, ki jo vsebuje: presek vseh ekvivalenc, ki vsebujejo $R$. Konstruktivno: vzamemo $R$, dodamo diagonalo in obrnjene pare, nato tranzitivno ovojnico. Velja $a \sim b$ natanko tedaj, ko $a = b$ ali obstaja zaporedje $a = x_0, x_1, \dots, x_k = b$, v katerem je vsak sosednji par v $R$ ali v $R^{-1}$. To je točno to, kar izračuna union–find.
 
-**Mreža ekvivalenc.** Ekvivalence na $A$, urejene z vsebovanostjo (pravimo, da je finejša ekvivalenca manjša), tvorijo mrežo. Spodnja meja dveh ekvivalenc je njun presek, zgornja meja pa ekvivalenčna ovojnica unije, ne unija sama. Najmanjši element je enakost (vsak element sam v razredu), največji je $A \times A$ (en sam razred).
+**Mreža ekvivalenc.** Ekvivalence na $A$, urejene z vsebovanostjo (pravimo, da je finejša ekvivalenca manjša), tvorijo mrežo. Največja spodnja meja (infimum) dveh ekvivalenc je njun presek, najmanjša zgornja meja (supremum) pa ekvivalenčna ovojnica unije, ne unija sama. Najmanjši element je enakost (vsak element sam v razredu), največji je $A \times A$ (en sam razred).
 
 ## Preveri se
 

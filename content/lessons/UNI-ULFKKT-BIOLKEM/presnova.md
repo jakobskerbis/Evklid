@@ -231,7 +231,7 @@ Srčna mišica kot gorivo porablja laktat iz krvi. (a) Koliko ATP nastane pri po
 4. (b) Protoni: $5 \cdot 10 + 1 \cdot 6 = 56\,\mathrm{H^+}$; preizkus $56 : 4 = 14$, plus GTP, spet $15$.
 5. (c) Skozi sintazo gre $0{,}7 \cdot 56 = 39{,}2\,\mathrm{H^+}$, kar da $39{,}2 : 4 = 9{,}8$ ATP; skupaj z GTP $10{,}8$ ATP.
 6. Za enako ATP mora srce porabiti $15 : 10{,}8 \approx 1{,}39$-krat več laktata.
-7. Odgovor: laktat da $15$ ATP in prečrpa $56\,\mathrm{H^+}$; s $30\,\%$ uhajanjem le $10{,}8$ ATP, zato mora poraba laktata (in kisika) narasti za okoli $39\,\%$. Razlika se sprosti kot toplota. Zaradi smrtnih primerov pregretja so 2,4-dinitrofenol, ki so ga v 1930-ih prodajali za hujšanje, kot zdravilo prepovedali.
+7. Odgovor: laktat da $15$ ATP in prečrpa $56\,\mathrm{H^+}$; s $30\,\%$ uhajanjem le $10{,}8$ ATP, zato mora poraba laktata (in kisika) narasti za okoli $39\,\%$. Razlika se sprosti kot toplota. Zaradi smrtnih primerov pregretja so 2,4-dinitrofenol, ki so ga v tridesetih letih 20. stoletja prodajali za hujšanje, kot zdravilo prepovedali.
 
 ### Naloga 2
 

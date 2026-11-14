@@ -57,7 +57,7 @@ Vratna in ledvena odebelitev hrbtenjače imata več nevronov za roke oziroma nog
 :::premisli
 Zakaj zdravnik pri odraslem vbode iglo za odvzem likvorja med 3. in 4. ledvenim vretencem in ne v višini prsnih vretenc?
 ---
-Ker se hrbtenjača konča pri 1. do 2. ledvenem vretencu. Niže je v kanalu le likvor s korenini konjskega repa, ki se igli umaknejo. V prsnem delu bi igla lahko zadela hrbtenjačo.
+Ker se hrbtenjača konča pri 1. do 2. ledvenem vretencu. Niže je v kanalu le likvor s koreninami konjskega repa, ki se igli umaknejo. V prsnem delu bi igla lahko zadela hrbtenjačo.
 :::
 
 **Prepleti.** Sprednje veje vratnih, ledvenih in križnih živcev se spletajo v **vratni**, **pazdušni** (za roko), **ledveni** in **križni** preplet (za nogo; iz njega izhaja **ishiadični živec**). Prsni živci prepleta ne tvorijo; potekajo kot medrebrni živci.
@@ -98,7 +98,7 @@ OŽ = možgani + hrbtenjača (znotraj lobanje in hrbteničnega kanala); PŽ = vs
 
 **Rešitev:**
 
-1. Vratnih živcev je $8$, čeprav je vretenc $7$: prvi vratni živec izstopi nad 1. vretencem, osmi pod 7. vretencem. Prsnih, ledvenih in križnih parov je toliko kot vretenc, trtični par je en.
+1. Vratnih živcev je $8$, čeprav je vretenc $7$: prvi vratni živec izstopi nad 1. vretencem, osmi pod 7. vretencem. Prsnih, ledvenih in križnih parov je toliko kot vretenc, trtični par je en sam.
 2. Parov hrbtenjačnih živcev: $8 + 12 + 5 + 5 + 1 = 31$.
 3. Hrbtenjačnih živcev: $2 \cdot 31 = 62$, ker ima vsak par levi in desni živec.
 4. Skupaj z možganskimi: $31 + 12 = 43$ parov, torej $2 \cdot 43 = 86$ živcev.
@@ -179,7 +179,7 @@ Meje analogije: signal v živcu potuje le $1$ do $120\,\mathrm{m/s}$, hrbtenjač
 - **Razvoj.** Iz nevralne cevi nastanejo tri možganske vezikle (prozencefalon, mezencefalon, rombencefalon), nato pet: telencefalon (veliki možgani), diencefalon (medmožgani), mezencefalon (srednji možgani), metencefalon (most in mali možgani) in mielencefalon (podaljšana hrbtenjača). Votlina cevi postane prekati in osrednji kanal hrbtenjače.
 - **Vidni živec** je v razvoju izrastek medmožganov in ga obdajajo vse tri ovojnice, zato je po zgradbi proga OŽ, čeprav ga štejemo med možganske živce.
 - **Dermatomi.** Vsak hrbtenjačni živec oživčuje pas kože, dermatom. Mezinec in notranji rob dlani pripadata segmentu C8, palec C6. Po izpadu občutka v dermatomu nevrolog oceni višino okvare.
-- **Bela snov hrbtenjače** ima zadnje, stranske in sprednje snopiče. V stranskih se spušča lateralna kortikospinalna proga; okoli $90\,\%$ njenih vlaken se prekriža v piramidah podaljšane hrbtenjače.
+- **Bela snov hrbtenjače** ima zadnje, stranske in sprednje snopiče. V stranskih se spušča lateralna kortikospinalna proga; tvori jo okoli $90\,\%$ vlaken piramidne proge, ki se prekrižajo v piramidah podaljšane hrbtenjače.
 
 ## Preveri se
 

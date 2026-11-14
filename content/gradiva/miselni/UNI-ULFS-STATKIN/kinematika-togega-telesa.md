@@ -14,7 +14,7 @@ stanje: osnutek
   - presečišče pravokotnic na hitrosti
   - $v_B = \omega\,r_{PB}$, pravokotno na $PB$
 - Posebni primeri
-  - vzporedne hitrosti: trenutna translacija, $\omega = 0$
+  - vzporedni hitrosti, ne pravokotni na $AB$: trenutna translacija, $\omega = 0$
   - kotaljenje: pol v stični točki, $v_S = \omega R$
 - Pospeški
   - $\vec{a}_B = \vec{a}_A + \vec{\alpha} \times \vec{r}_{AB} - \omega^2\vec{r}_{AB}$

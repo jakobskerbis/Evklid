@@ -7,7 +7,7 @@ avtor: AI
 
 Najprej uganka, ki jo lahko preizkusiš v kuhinji. V prazno skodelico položi kovanec. Usedi se tako, da ti rob skodelice kovanec ravno še zakrije. Glave potem ne premikaj. Nekdo zdaj počasi in previdno nalije vodo, da se kovanec ne premakne.
 
-Kaj se bo zgodilo? Kovanec ostane skrit, se prikaže, ali se skrije še globlje? Zapiši si napoved, odgovor je v razlagi.
+Kaj se bo zgodilo? Kovanec ostane skrit, se prikaže ali se skrije še globlje? Zapiši si napoved, odgovor je v razlagi.
 
 Tudi žlica v kozarcu vode je videti prelomljena, lonec z vodo pa plitvejši, kot je. Vse to povzroča lom svetlobe. Na njem delujejo očala, lupa, fotoaparat in tvoje oko.
 

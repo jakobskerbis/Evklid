@@ -7,13 +7,13 @@ avtor: AI
 
 Na pultu turističnega urada stoji lep, raven kup zloženih zemljevidov. Vsak zložen zemljevid meri $20\,\text{cm} \times 10\,\text{cm}$, kup je visok $15\,\text{cm}$. Mimoidoči se ob kup zaleti in ga nagne: vsak zemljevid zdrsne malo dlje od tistega pod njim. Kup je zdaj poševen, njegovi stranski robovi so dolgi $18\,\text{cm}$.
 
-Ali nagnjeni kup zavzame več prostora? Na prvi pogled ja, saj je »daljši«. Pa vendar ne. Zemljevidov je toliko kot prej in nobeden se ni povečal. Oba kupa imata prostornino $200\,\text{cm}^2 \cdot 15\,\text{cm} = 3000\,\text{cm}^3$.
+Ali nagnjeni kup zavzame več prostora? Na prvi pogled da, saj je »daljši«. Pa vendar ne. Zemljevidov je toliko kot prej in nobeden se ni povečal. Oba kupa imata prostornino $200\,\text{cm}^2 \cdot 15\,\text{cm} = 3000\,\text{cm}^3$.
 
 Raven in nagnjen kup sta **prizmi**. Prizme so tudi kovček, škatla za čevlje, šotor in kartonski tulec za zemljevid. Iz površine prizme izveš, koliko blaga, kartona ali pločevine potrebuješ. Iz prostornine izveš, koliko gre vanjo. Vse, kar že znaš o kvadru, bomo razširili na poljubno prizmo.
 
 ## Razlaga
 
-**1. Prva skušnjava: »daljši rob, več prostora«.** Zakaj je zgornji račun pravilen? Kup si predstavljaj kot plasti. Vsaka plast (zemljevid) ima ploščino $200\,\text{cm}^2$, plasti pa je toliko, kolikor jih gre do višine $15\,\text{cm}$. Ko kup nagnemo, se plasti le premaknejo vstran. Nobena ne izgine in nobena ne zraste. Odločilna je torej **višina** kupa, ne dolžina poševnega roba. Kdor množi s $18\,\text{cm}$, dobi napačnih $3600\,\text{cm}^3$.
+**1. Prva skušnjava: »daljši rob, več prostora«.** Zakaj je zgornji račun pravilen? Kup si predstavljaj kot plasti. Vsaka plast (zemljevid) ima ploščino $200\,\text{cm}^2$, plasti pa je toliko, kolikor jih gre do višine $15\,\text{cm}$. Ko kup nagnemo, se plasti le premaknejo vstran. Nobena ne izgine in nobena ne zraste. Odločilna je torej **višina** kupa, ne dolžina poševnega roba. Kdor množi z $18\,\text{cm}$, dobi napačnih $3600\,\text{cm}^3$.
 
 **2. Kaj je prizma.** Prizma je geometrijsko telo z dvema **osnovnima ploskvama**. To sta skladna mnogokotnika v vzporednih ravninah. Ostale ploskve so **stranske ploskve**; to so paralelogrami. Vse stranske ploskve skupaj imenujemo **plašč**. Robove osnovnih ploskev imenujemo **osnovni robovi**, robove med dvema stranskima ploskvama pa **stranski robovi**. **Višina prizme** $v$ je razdalja med ravninama obeh osnovnih ploskev.
 
@@ -172,7 +172,7 @@ Streha: $2 \cdot 5 \cdot 8 = 80\,\text{m}^2$. Zatrepa: $2 \cdot 12 = 24\,\text{m
 
 Nika pred potovanjem izdeluje kartonsko škatlo za zemljevide v obliki tristrane prizme. Zatrep je pravokotni trikotnik s katetama $3\,\text{dm}$ in $4\,\text{dm}$ ter hipotenuzo $5\,\text{dm}$, škatla je dolga $10\,\text{dm}$.
 
-»Kartona potrebujem $O \cdot v$,« si reče. Trikotnik ima ploščino $\dfrac{3 \cdot 4}{2} = 6\,\text{dm}^2$, torej $6 \cdot 10 = 60$. Ko pa izreže trakove za stranice, vidi, da jih je tri: $3 \times 10$, $4 \times 10$ in $5 \times 10$. Skupaj imajo $30 + 40 + 50 = 120\,\text{dm}^2$, dvakrat toliko, kot je mislila. Trakovi so široki toliko kot stranice trikotnika, ne toliko kot njegova ploščina. Zato je plašč obseg krat dolžina: $12 \cdot 10 = 120\,\text{dm}^2$.
+»Kartona potrebujem $O \cdot v$,« si reče. Trikotnik ima ploščino $\dfrac{3 \cdot 4}{2} = 6\,\text{dm}^2$, torej $6 \cdot 10 = 60$. Ko pa izreže trakove za stranice, vidi, da so trije: $3 \times 10$, $4 \times 10$ in $5 \times 10$. Skupaj imajo $30 + 40 + 50 = 120\,\text{dm}^2$, dvakrat toliko, kot je mislila. Trakovi so široki toliko kot stranice trikotnika, ne toliko kot njegova ploščina. Zato je plašč obseg krat dolžina: $12 \cdot 10 = 120\,\text{dm}^2$.
 
 Doda še oba trikotnika in ima $P = 2 \cdot 6 + 120 = 132\,\text{dm}^2$ kartona. Njen prvi račun pa ni bil zaman: $6 \cdot 10 = 60\,\text{dm}^3$ je prostornina škatle, torej $60\,\text{l}$ prostora za zemljevide.
 
@@ -261,7 +261,7 @@ o | obseg osnovne ploskve | | |
 v | višina prizme | | | razdalja med osnovnima ploskvama
 V | prostornina prizme | V = O \cdot v | |
 a, b | stranici osnovne ploskve | | | pravokotnik, kateti ali osnovnica in krak trikotnika
-c | hipotenuza osnovne ploskve | c = \sqrt{a^2 + b^2} | | pravokotni trikotnik v Primeru 2
+c | hipotenuza osnovne ploskve | c = \sqrt{a^2 + b^2} | | pravokotni trikotnik v Primeru 2; pri kvadru v razlagi tretji rob (višina)
 h | višina trikotnika (zatrepa) | h = \sqrt{b^2 - \left(\frac{a}{2}\right)^2} | | enakokraki trikotnik v Primeru 3
 a_1, a_2, a_n | stranice osnovne ploskve | | | širine pravokotnikov, ki sestavljajo plašč
 :::

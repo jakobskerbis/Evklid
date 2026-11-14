@@ -202,7 +202,7 @@ Podatki: število sončnih ur v petih dneh: $7$, $2$, $9$, $4$, $5$.
 
 Tina je poleti pomagala dedku, ki je opazovalec na vremenski postaji. Vsako jutro je zapisala temperaturo v zvezek. Po tednu jo je sosed vprašal: »Kakšen je bil teden?«
 
-Tina je seštela vse temperature in delila s sedem. »Povprečno $17$ stopinj,« je rekla. Dedek se je nasmehnil: »Pa veš, da je bilo v sredo zjutraj le $3$ stopinje, ker je ponoči padla toča? Ostale dni je bilo okoli $19$.«
+Tina je seštela vse temperature in delila s sedem. »Povprečno $17$ stopinj,« je rekla. Dedek se je nasmehnil: »Pa veš, da so bile v sredo zjutraj le $3$ stopinje, ker je ponoči padla toča? Ostale dni je bilo okoli $19$.«
 
 Tina je temperature uredila od najnižje do najvišje in pogledala srednjo, četrto po vrsti. Bila je $19$. »Mediana pove, kakšno je bilo običajno jutro,« je ugotovila. »Povprečje pa je pokvarila ena sama mrzla sreda.«
 

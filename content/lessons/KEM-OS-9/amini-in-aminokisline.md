@@ -59,7 +59,7 @@ Alanin ima na srednjem ogljiku namesto enega vodika skupino $\mathrm{{-}CH_3}$. 
 
 *Hitri preizkus:* koliko atomov ogljika ima glicin? *(Dva.)*
 
-V simulaciji spodaj »3D: Glicin« zavrti molekulo in poišči obe skupini. Opazuj, da je dušik amino skupine in ogljik karboksilne skupine vezan na isti srednji ogljik.
+V simulaciji spodaj »3D: Glicin« zavrti molekulo in poišči obe skupini. Opazuj, da sta dušik amino skupine in ogljik karboksilne skupine vezana na isti srednji ogljik.
 
 **5. Kislina in baza hkrati.** Karboksilna skupina je kisla, amino skupina je bazična. Ime aminokislina pove oboje.
 

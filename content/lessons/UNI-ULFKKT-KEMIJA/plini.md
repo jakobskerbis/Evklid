@@ -276,7 +276,7 @@ Pri reakciji cinka s klorovodikovo kislino zberemo vodik nad vodo. Pri $25\,^\ci
 
 $$pV = \tfrac{1}{3}Nm\langle v^2 \rangle,$$
 
-kjer je $N$ število molekul in $\langle v^2 \rangle$ povprečje kvadrata hitrosti. Primerjava s $pV = nRT = Nk_BT$ da povprečno kinetično energijo molekule $\frac{1}{2}m\langle v^2 \rangle = \frac{3}{2}k_BT$: temperatura je merilo za kinetično energijo molekul. Korenska srednja hitrost je $v_{\mathrm{rms}} = \sqrt{3RT/M}$; za dušik pri $25\,^\circ\mathrm{C}$ je $\sqrt{3 \cdot 8{,}314 \cdot 298{,}15 / 0{,}02801}\,\mathrm{m/s} \approx 515\,\mathrm{m/s}$. Daltonov zakon sledi neposredno: prispevki različnih vrst molekul k sili na steno se seštejejo.
+kjer je $N$ število molekul in $\langle v^2 \rangle$ povprečje kvadrata hitrosti. Primerjava s $pV = nRT = Nk_BT$ da povprečno kinetično energijo molekule $\frac{1}{2}m\langle v^2 \rangle = \frac{3}{2}k_BT$: temperatura je merilo za kinetično energijo molekul. Korenska srednja hitrost je $v_{\mathrm{rms}} = \sqrt{3RT/M}$; za dušik pri $25\,^\circ\mathrm{C}$ je $\sqrt{3 \cdot 8{,}314 \cdot 298{,}15 / 0{,}02802}\,\mathrm{m/s} \approx 515\,\mathrm{m/s}$. Daltonov zakon sledi neposredno: prispevki različnih vrst molekul k sili na steno se seštejejo.
 
 **Van der Waalsova enačba.** Za realne pline
 

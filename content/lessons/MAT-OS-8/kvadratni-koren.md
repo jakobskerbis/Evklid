@@ -126,7 +126,7 @@ $a = \sqrt{S}$
 Delno koreni $\sqrt{72}$.
 
 **Podatki:** korenjenec $72$
-**Iščemo:** zapis $b\sqrt{c}$, pri katerem $c$ nima več popolnega kvadrata za faktor
+**Iščemo:** zapis $b\sqrt{c}$, pri katerem $c$ nima več popolnega kvadrata, večjega od $1$, za faktor
 
 :::formula
 $\sqrt{a \cdot b} = \sqrt{a} \cdot \sqrt{b}$ za $a, b \ge 0$
@@ -134,7 +134,7 @@ $\sqrt{a \cdot b} = \sqrt{a} \cdot \sqrt{b}$ za $a, b \ge 0$
 
 **Rešitev:**
 
-1. Popolni kvadrati, ki delijo $72$, so $4$, $9$ in $36$. Vzamemo največjega: $72 = 36 \cdot 2$.
+1. Popolni kvadrati, večji od $1$, ki delijo $72$, so $4$, $9$ in $36$. Vzamemo največjega: $72 = 36 \cdot 2$.
 2. Razbijemo koren na dva korena: $\sqrt{72} = \sqrt{36} \cdot \sqrt{2}$.
 3. Popolni kvadrat korenimo: $\sqrt{36} = 6$, zato je $\sqrt{72} = 6\sqrt{2}$.
 4. Preverimo s kvadriranjem: $6^2 \cdot 2 = 36 \cdot 2 = 72$. ✓
@@ -189,7 +189,7 @@ $17{,}3^2 = 299{,}29 < 300$ in $17{,}4^2 = 302{,}76 > 300$, zato je $17{,}3 < a 
 
 - **Koren zamenjaš z deljenjem.** $\sqrt{36}$ ni $18$. Iščeš število, ki **samo s seboj** pomnoženo da $36$: to je $6$. Podobno: če se ploščina poveča $4$-krat, se stranica ne poveča $4$-krat, ampak $2$-krat.
 - **Koren vsote razbiješ.** $\sqrt{36 + 64}$ ni $6 + 8$. Pravilo $\sqrt{a \cdot b} = \sqrt{a} \cdot \sqrt{b}$ velja za produkt, ne za vsoto. Najprej seštej: $\sqrt{100} = 10$.
-- **Decimalke prešteješ narobe.** $\sqrt{0{,}49}$ ni $0{,}07$, ker je $0{,}07^2 = 0{,}0049$. Koren ima pol toliko decimalk kot korenjenec: $0{,}7$.
+- **Decimalke prešteješ narobe.** $\sqrt{0{,}49}$ ni $0{,}07$, ker je $0{,}07^2 = 0{,}0049$. Če se koren izide, ima pol toliko decimalk kot korenjenec: $0{,}7$.
 - **Delno korenjenje ostane nedokončano.** $\sqrt{48} = 2\sqrt{12}$ še ni končni zapis, ker je $12 = 4 \cdot 3$. Takoj izlušči največji popolni kvadrat: $\sqrt{48} = \sqrt{16 \cdot 3} = 4\sqrt{3}$.
 - **Znak $\pm$ in negativni korenjenec.** $\sqrt{16} = 4$, ne $\pm 4$. $\sqrt{-16}$ pa ne obstaja, ker noben kvadrat ni negativen.
 
@@ -198,7 +198,7 @@ $17{,}3^2 = 299{,}29 < 300$ in $17{,}4^2 = 302{,}76 > 300$, zato je $17{,}3 < a 
 - $\sqrt{a}$ je stranica kvadrata s ploščino $a$: $\sqrt{a} = b$ pomeni $b^2 = a$, pri čemer $a \ge 0$ in $b \ge 0$.
 - Popolni kvadrati do $15^2 = 225$ imajo naravne korene; poznaj jih na pamet.
 - Koren negativnega števila ne obstaja. $\sqrt{16} = 4$, ne $\pm 4$.
-- Decimalke: $\sqrt{0{,}49} = 0{,}7$; koren ima pol toliko decimalk kot korenjenec.
+- Decimalke: $\sqrt{0{,}49} = 0{,}7$; koren, ki se izide, ima pol toliko decimalk kot korenjenec.
 - Ocena brez računala: če je $n^2 < a < (n+1)^2$, je $n < \sqrt{a} < n+1$. Decimalke poiščeš s kvadriranjem poskusov.
 - Delno korenjenje: $\sqrt{a \cdot b} = \sqrt{a} \cdot \sqrt{b}$; izlušči največji popolni kvadrat, npr. $\sqrt{72} = 6\sqrt{2}$.
 - Za vsoto pravilo ne velja: $\sqrt{9 + 16} = 5$, ne $7$.
@@ -252,7 +252,7 @@ Tudi ocena je upravičena. Za nenegativna števila večje število da večji kva
 
 ? Koliko je $\sqrt{0{,}49}$?
 - $0{,}07$
-~ $0{,}07^2 = 0{,}0049$. Koren ima pol toliko decimalk kot korenjenec, torej eno.
+~ $0{,}07^2 = 0{,}0049$. Koren, ki se izide, ima pol toliko decimalk kot korenjenec, torej eno.
 - $0{,}245$
 ~ To je $0{,}49 : 2$. Korenjenje ni deljenje z $2$.
 + $0{,}7$
@@ -292,7 +292,8 @@ Tudi ocena je upravičena. Za nenegativna števila večje število da večji kva
 
 :::simboli
 a | število pod korenom | | | a ≥ 0; v a = √S stranica kvadrata
-b | kvadratni koren števila a | b = \sqrt{a} | | b ≥ 0 in b² = a; v √(a · b) drugo število
+b | kvadratni koren števila a | b = \sqrt{a} | | b ≥ 0 in b² = a; v √(a · b) drugo število; v b√c število pred korenom
+c | število, ki pri delnem korenjenju ostane pod korenom | | | v zapisu b√c
 x, y | kvadratna korena števil a in b | | | x = √a, y = √b
 S | ploščina kvadrata | | | stranica je √S
 n | naravno število za oceno korena | | | iz n² < S < (n + 1)² sledi n < √S < n + 1

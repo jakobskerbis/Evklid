@@ -17,7 +17,7 @@ stanje: osnutek
   - lijak ali megafon: samo plašč
 - Prostornina
   - $V = \frac{\pi r^2 v}{3}$
-  - tretjina valja z enako $r$ in $v$
+  - tretjina valja z enakima $r$ in $v$
   - napaka: $s$ namesto $v$
 - Vrtenina
   - pravokotni trikotnik zavrtimo okoli katete

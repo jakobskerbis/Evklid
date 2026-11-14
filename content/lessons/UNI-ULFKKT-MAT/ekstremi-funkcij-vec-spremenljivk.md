@@ -42,7 +42,7 @@ Pogoj je **potreben, ne pa zadosten**: v stacionarni točki je lahko minimum, ma
 :::premisli
 Ima funkcija $f(x, y) = xy$ v izhodišču ekstrem?
 ---
-Nima, izhodišče je sedlo. Gradient $(y, x)$ je tam res nič, a na premici $y = x$ je $f = x^2 \ge 0$, na premici $y = -x$ pa $f = -x^2 \le 0$, zato $f$ blizu izhodišča zavzame obe predznaki.
+Nima, izhodišče je sedlo. Gradient $(y, x)$ je tam res nič, a na premici $y = x$ je $f = x^2 \ge 0$, na premici $y = -x$ pa $f = -x^2 \le 0$, zato $f$ blizu izhodišča zavzame oba predznaka.
 :::
 
 **3. Hessejeva matrika.** Drugi parcialni odvodi tvorijo **Hessejevo matriko**
@@ -64,9 +64,9 @@ Pri $D > 0$ sta $A$ in $C$ istega predznaka, zato lahko namesto $A$ pogledamo tu
 
 Ideja testa: blizu stacionarne točke je funkcija po Taylorjevi formuli približno kvadratna,
 $$f(x_0 + h, y_0 + k) \approx f(x_0, y_0) + \tfrac{1}{2}\left(Ah^2 + 2Bhk + Ck^2\right).$$
-Če je kvadratna forma za vse $(h, k) \neq (0, 0)$ pozitivna, je v točki minimum; če je negativna, maksimum; če zavzame obe predznaki, sedlo. Pri $A \neq 0$ jo dopolnimo do kvadrata:
+Če je kvadratna forma za vse $(h, k) \neq (0, 0)$ pozitivna, je v točki minimum; če je negativna, maksimum; če zavzame oba predznaka, sedlo. Pri $A \neq 0$ jo dopolnimo do kvadrata:
 $$Ah^2 + 2Bhk + Ck^2 = A\left(h + \tfrac{B}{A}k\right)^2 + \tfrac{AC - B^2}{A}\,k^2.$$
-Pri $D > 0$ imata oba člena predznak števila $A$ in nista hkrati nič, zato je forma pri $A > 0$ pozitivna, pri $A < 0$ negativna. Pri $D < 0$ da $k = 0$, $h \neq 0$ predznak $A$, izbira $h = -\frac{B}{A}k$, $k \neq 0$ pa nasprotni predznak, zato je točka sedlo. (Pri $A = 0$ in $D < 0$ je $B \neq 0$ in forma $2Bhk + Ck^2$ prav tako zavzame obe predznaki.)
+Pri $D > 0$ imata oba člena predznak števila $A$ in nista hkrati nič, zato je forma pri $A > 0$ pozitivna, pri $A < 0$ negativna. Pri $D < 0$ da $k = 0$, $h \neq 0$ predznak $A$, izbira $h = -\frac{B}{A}k$, $k \neq 0$ pa nasprotni predznak, zato je točka sedlo. (Pri $A = 0$ in $D < 0$ je $B \neq 0$ in forma $2Bhk + Ck^2$ prav tako zavzame oba predznaka.)
 
 **5. Več spremenljivk.** Za $f(x_1, \dots, x_n)$ je stacionarna točka rešitev sistema $\frac{\partial f}{\partial x_i} = 0$, $i = 1, \dots, n$, Hessejeva matrika pa je $n \times n$ z elementi $\frac{\partial^2 f}{\partial x_i \partial x_j}$. Če je $H$ v stacionarni točki **pozitivno definitna** (vse lastne vrednosti pozitivne), je tam lokalni minimum; če je **negativno definitna**, maksimum; če ima lastne vrednosti obeh predznakov, sedlo. Pozitivno definitnost preverimo s **Sylvestrovim kriterijem**: vse vodilne glavne poddeterminante $\Delta_1 = f_{x_1x_1}$, $\Delta_2$, …, $\Delta_n = \det H$ so pozitivne. Za negativno definitnost morajo predznaki alternirati: $\Delta_1 < 0$, $\Delta_2 > 0$, $\Delta_3 < 0$, …
 
@@ -355,7 +355,7 @@ h, k | prirastka spremenljivk x in y | | | v f(a + h) je h vektor prirastkov
 A | vrednost f_xx v stacionarni točki | A = f_{xx}(T_0) |
 B | vrednost f_xy v stacionarni točki | B = f_{xy}(T_0) |
 C | vrednost f_yy v stacionarni točki | C = f_{yy}(T_0) |
-D | determinanta Hessejeve matrike | D = f_{xx} f_{yy} - f_{xy}^2 | | D > 0 in A > 0: minimum; D < 0: sedlo
+D | determinanta Hessejeve matrike | D = f_{xx} f_{yy} - f_{xy}^2 | | D > 0 in A > 0: minimum; D < 0: sedlo; D je tudi množica, na kateri iščemo ekstreme
 L | Lagrangeova funkcija | L(x, y, \lambda) = f(x, y) - \lambda\, g(x, y) |
 \lambda | Lagrangeov multiplikator | |
 g | funkcija vezi | | | pogoj g(x, y) = 0

@@ -96,7 +96,7 @@ $P(A) = \dfrac{\text{število ugodnih izidov}}{\text{število vseh izidov}}$ (iz
 **Rešitev:**
 
 1. Vseh izidov je $6$. Kocka je poštena, zato so enako verjetni in smemo uporabiti formulo.
-2. Ugodna izida sta $5$ in $6$. Število $4$ ni večje od $4$, zato ni ugoden.
+2. Ugodna izida sta $5$ in $6$. Število $4$ ni večje od $4$, zato ni ugoden izid.
 3. $P(A) = \dfrac{2}{6} = \dfrac{1}{3}$.
 4. Preizkus: rezultat leži med $0$ in $1$.
 
@@ -155,7 +155,7 @@ $P(A) = \dfrac{\text{število ugodnih izidov}}{\text{število vseh izidov}}$
 
 **Rešitev:**
 
-1. Kovanca ločimo: prvi in drugi. Izidi so GG, GC, CG, CC. GC in CG sta različna izida, zato so vsi štirje enako verjetni.
+1. Kovanca ločimo: prvi in drugi. Izidi so GG, GC, CG, CC. GC in CG sta različna izida. Kovanca sta poštena, zato so vsi štirje izidi enako verjetni.
 2. Poišči ugodne izide in izračunaj verjetnost.
 
 :::premisli

@@ -242,8 +242,8 @@ Naj bo $b_n$ število načinov, kako plačaš $n$ evrov s kovanci za $1$ in $2$ 
 **Rešitev:**
 
 1. Število dvojk $j$ in enic $n - 2j$ natanko določa plačilo. Rodovna funkcija: $B(x) = (1 + x + x^2 + \cdots)(1 + x^2 + x^4 + \cdots) = \dfrac{1}{(1 - x)(1 - x^2)} = \dfrac{1}{(1 - x)^2(1 + x)}$.
-2. Nastavek: $\dfrac{1}{(1-x)^2(1+x)} = \dfrac{A}{1 - x} + \dfrac{B}{(1 - x)^2} + \dfrac{C}{1 + x}$, torej $1 = A(1 - x)(1 + x) + B(1 + x) + C(1 - x)^2$.
-3. Pri $x = 1$: $1 = 2B$, $B = \tfrac12$. Pri $x = -1$: $1 = 4C$, $C = \tfrac14$. Pri $x = 0$: $1 = A + \tfrac12 + \tfrac14$, $A = \tfrac14$.
+2. Nastavek: $\dfrac{1}{(1-x)^2(1+x)} = \dfrac{K}{1 - x} + \dfrac{L}{(1 - x)^2} + \dfrac{M}{1 + x}$, torej $1 = K(1 - x)(1 + x) + L(1 + x) + M(1 - x)^2$.
+3. Pri $x = 1$: $1 = 2L$, $L = \tfrac12$. Pri $x = -1$: $1 = 4M$, $M = \tfrac14$. Pri $x = 0$: $1 = K + \tfrac12 + \tfrac14$, $K = \tfrac14$.
 4. Koeficient pri $x^n$: $b_n = \tfrac14 + \tfrac12(n + 1) + \tfrac14(-1)^n = \dfrac{2n + 3 + (-1)^n}{4}$.
 5. Za sod $n$: $b_n = \dfrac{2n + 4}{4} = \dfrac{n}{2} + 1$. Za lih $n$: $b_n = \dfrac{2n + 2}{4} = \dfrac{n + 1}{2} = \left\lfloor \dfrac n2 \right\rfloor + 1$. ✓
 6. Odgovor: $B(x) = \frac{1}{(1-x)^2(1+x)}$ in $b_n = \lfloor n/2 \rfloor + 1$; na primer $5$ evrov plačaš na $3$ načine ($5 \times 1$, $2 + 3 \times 1$, $2 \cdot 2 + 1$).
@@ -279,7 +279,7 @@ Razlika do $500$ se vsako leto pomnoži z $0{,}98$, zato se presežek negibni to
 
 **Analiza algoritmov.** Čas rekurzivnih programov opišejo rekurzije: naiven izračun Fibonaccijevih števil potrebuje $T(n) = T(n-1) + T(n-2) + 1$ korakov, kar raste kot $\varphi^n$; zato programerji uporabijo zanko ali pomnjenje. Hanojski stolp potrebuje $2^n - 1$ premikov.
 
-**Digitalni filtri.** Filter z enačbo $y_n = 0{,}9\,y_{n-1} + 0{,}1\,x_n$ gladi meritve (na primer temperature s postaje): izhod je rekurzija prvega reda. Stabilnost filtra je pogoj, da so vsi koreni karakterističnega polinoma po absolutni vrednosti manjši od $1$.
+**Digitalni filtri.** Filter z enačbo $y_n = 0{,}9\,y_{n-1} + 0{,}1\,x_n$ gladi meritve (na primer temperature s postaje): izhod je rekurzija prvega reda. Pogoj za stabilnost filtra je, da so vsi koreni karakterističnega polinoma po absolutni vrednosti manjši od $1$.
 
 **Populacijski in podnebni modeli.** Modeli populacij po starostnih razredih (Lesliejeve matrike) za ribe ali gozdove so sistemi linearnih rekurzij; prevladujoči koren pove dolgoročno rast ali upad populacije. Preprosti modeli ogljičnega kroga z več zalogovniki (ozračje, površinski in globoki ocean) so prav tako linearne rekurzije z več časovnimi konstantami.
 
@@ -360,11 +360,11 @@ f | nehomogeni del (desna stran) $f(n)$ | | | $a_n^{(h)}$ homogeni, $a_n^{(p)}$ 
 p | karakteristični polinom $p(r)$ | | | $p(r) = r^k - c_1r^{k-1} - \cdots - c_k$
 r, r_1, r_2 | koreni karakterističnega polinoma | | |
 C, C_1, C_2 | konstante splošne rešitve | | |
-\alpha, \beta | konstante pri $2^n$ in $3^n$ | | |
+\alpha, \beta | konstanti splošne rešitve | | | v Primeru 3 pri $2^n$ in $3^n$
 t_n | število tlakovanj poti dolžine $n$ | t_n = t_{n-1} + t_{n-2} | |
 \varphi | zlato razmerje | \varphi = \frac{1 + \sqrt5}{2} | | približno 1,618
 \psi | drugi koren | \psi = \frac{1 - \sqrt5}{2} | | približno −0,618
-h_n | najmanjše število premikov Hanojskega stolpa | h_n = 2h_{n-1} + 1 | |
+h_n | najmanjše število premikov hanojskega stolpa | h_n = 2h_{n-1} + 1 | |
 A | rodovna funkcija $A(x)$ zaporedja $(a_n)$ | | | $A(x) = \sum a_nx^n$
 H | rodovna funkcija $H(x)$ zaporedja $(h_n)$ | | |
 x | formalna spremenljivka | | |

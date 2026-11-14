@@ -160,7 +160,7 @@ $\mathrm{pH} = \mathrm{p}K_a + \log\dfrac{n(\mathrm{A^-})}{n(\mathrm{HA})}$, ena
 **Rešitev:**
 
 1. $\mathrm{p}K_a = -\log(1{,}8 \cdot 10^{-5}) \approx 4{,}74$; v vmesnih računih obdržimo še eno decimalko, $4{,}745$.
-2. Pufer: $\mathrm{pH} = 4{,}74 + \log\dfrac{0{,}080}{0{,}100} = 4{,}745 - 0{,}097 \approx 4{,}65$ (baze je manj kot kisline, zato je pH pod $\mathrm{p}K_a$).
+2. Pufer: $\mathrm{pH} = 4{,}745 + \log\dfrac{0{,}080}{0{,}100} = 4{,}745 - 0{,}097 \approx 4{,}65$ (baze je manj kot kisline, zato je pH pod $\mathrm{p}K_a$).
 3. $\mathrm{NaOH}$ zreagira s kislino: $\mathrm{CH_3COOH + OH^- \to CH_3COO^- + H_2O}$. Nove množine: $n(\mathrm{CH_3COOH}) = 0{,}100 - 0{,}010 = 0{,}090\,\mathrm{mol}$, $n(\mathrm{CH_3COO^-}) = 0{,}080 + 0{,}010 = 0{,}090\,\mathrm{mol}$.
 4. $\mathrm{pH} = 4{,}74 + \log\dfrac{0{,}090}{0{,}090} = 4{,}74$. Sprememba je le okoli $+0{,}10$.
 5. V čisti vodi: $[\mathrm{OH^-}] = 0{,}010\,\mathrm{mol/L}$, $\mathrm{pOH} = 2{,}00$, $\mathrm{pH} = 12{,}00$. Sprememba od $7{,}00$ je $+5{,}00$.

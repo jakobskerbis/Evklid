@@ -10,7 +10,7 @@ stanje: osnutek
   - Vsak element napišeš natanko enkrat
 - Presek
   - $A \cap B$: v $A$ **in** v $B$
-  - Prekrivanje krogov, vedno najmanjši del
+  - Prekrivanje krogov, vedno del unije
 - Unija
   - $A \cup B$: v $A$ **ali** v $B$
   - Napaka: presek šteješ dvakrat, $12 + 9 \ne 16$

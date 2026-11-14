@@ -60,7 +60,7 @@ $$0{,}0032 = 3{,}2 \cdot 10^{-3}$$
 
 **6. Primerjava.** Pri pozitivnih številih najprej primerjaš eksponenta: večji eksponent pomeni večje število. Šele pri enakih eksponentih odloča $a$. Zato je $1{,}2 \cdot 10^5$ večje od $9 \cdot 10^4$, čeprav je $9 > 1{,}2$.
 
-V simulaciji spodaj »Od atoma do galaksije: desetiške potence« nastavi eksponent na $2$, nato na $-2$. Opazuj, da točka na premici ne preskoči na negativno stran, ampak se pomakne med $0$ in $1$.
+V simulaciji spodaj »Od atoma do galaksije: desetiške potence« nastavi eksponent na $2$, nato na $-2$. Opazuj daljši zapis: število ne postane negativno, ampak majhno pozitivno (med $0$ in $1$). Točka na premici se pomakne levo od $10^0$.
 
 ## Rešeni primeri
 
@@ -187,7 +187,7 @@ Recept za zapis z desetiško potenco:
 | $0{,}07$ | $2$ mesti desno | $7 \cdot 10^{-2}$ |
 | $0{,}000091$ | $5$ mest desno | $9{,}1 \cdot 10^{-5}$ |
 
-Vrstica s $4{,}8$ pokaže, zakaj potrebujemo $10^0 = 1$: števila med $1$ in $10$ ne premikamo.
+Vrstica s $4{,}8$ pokaže, zakaj potrebujemo $10^0 = 1$: pri številu med $1$ in $10$ vejice ne premikamo.
 
 ## Drugače: Bolj natančno
 
@@ -233,7 +233,7 @@ Pri majhnih številih velja enako: $0{,}0032 = 3 \cdot 10^{-3} + 2 \cdot 10^{-4}
 
 ? Membrana mikrofona je debela $0{,}000005\,\text{m}$. Kateri zapis je pravilen zapis z desetiško potenco?
 - $5 \cdot 10^{-5}\,\text{m}$
-~ Prešteti si ničle za vejico (pet). Šteti moraš premike vejice: šest mest v desno.
+~ Preštel si ničle za vejico (pet). Šteti moraš premike vejice: šest mest v desno.
 + $5 \cdot 10^{-6}\,\text{m}$
 - $5 \cdot 10^{6}\,\text{m}$
 ~ Število je manjše od $1$, zato je eksponent negativen. $5 \cdot 10^6$ je pet milijonov.

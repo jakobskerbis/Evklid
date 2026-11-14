@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Med drugo svetovno vojno so v Veliki Britaniji gradili prve reaktivne motorje. Plinska turbina je delovala, a lopatice turbine so se v vročem plinu pod veliko centrifugalno silo počasi raztezale in pokale. Jekla in lahke kovine pri teh temperaturah niso zdržala. Metalurgi so zato razvili nikljevo zlitino s kromom ter malo titana in aluminija, imenovano Nimonic 80. Njena trdnost je izvirala iz drobnih izločkov, ki ostanejo stabilni tudi pri okoli $750\,^\circ\mathrm C$. Aluminijeva zlitina T6 se prestara že nad okoli $200\,^\circ\mathrm C$, pri tej temperaturi pa bi se celo stalila.
+Med drugo svetovno vojno so v Veliki Britaniji gradili prve reaktivne motorje. Plinska turbina je delovala, a lopatice turbine so se v vročem plinu pod veliko centrifugalno silo počasi raztezale in pokale. Jekla in lahke kovine pri teh temperaturah niso zdržala. Metalurgi so zato razvili nikljevo zlitino s kromom ter malo titana in aluminija, imenovano Nimonic 80. Njena trdnost je izvirala iz drobnih izločkov, ki ostanejo stabilni tudi pri okoli $750\,^\circ\mathrm C$. Aluminijeva zlitina T6 se prestara že nad okoli $200\,^\circ\mathrm C$, pri $750\,^\circ\mathrm C$ pa bi se celo stalila.
 
 Iz bakra in niklja so vodniki, izmenjevalniki, ventili, propelerji, kovanci, vzmeti in lopatice motorjev. Lekcija gre od enega konkretnega primera (zakaj se baker in nikelj mešata v vsakem razmerju) do splošnih pravil za medenine, brone in superzlitine.
 
@@ -186,7 +186,7 @@ napetost v korenu lopatice s stalnim prerezom: $\sigma = \dfrac{\rho\,\omega^2 (
 3. (a) $\sigma = \dfrac{8700 \cdot 7{,}018 \cdot 10^{5} \cdot 0{,}07}{2} \approx 2{,}137 \cdot 10^{8}\,\mathrm{Pa} \approx 214\,\mathrm{MPa}$. Napetost ni odvisna od prereza: večji prerez nosi večjo maso.
 4. Interpolacija: $P$ pade za $1500$ na $100\,\mathrm{MPa}$, torej $P \approx 27\,000 - 15 \cdot 13{,}7 \approx 26\,794$.
 5. (b) $T = \dfrac{P}{C + \log_{10} t_\mathrm{r}} = \dfrac{26\,794}{20 + 4} \approx 1116\,\mathrm K$, to je okoli $843\,^\circ\mathrm C$.
-6. (c) Pri $T = 1166\,\mathrm K$: $\log_{10} t_\mathrm{r} = \dfrac{26\,794}{1166{,}4} - 20 \approx 2{,}97$, torej $t_\mathrm{r} \approx 10^{2{,}97} \approx 940\,\mathrm h$.
+6. (c) Pri $T = 1166{,}4\,\mathrm K$: $\log_{10} t_\mathrm{r} = \dfrac{26\,794}{1166{,}4} - 20 \approx 2{,}97$, torej $t_\mathrm{r} \approx 10^{2{,}97} \approx 940\,\mathrm h$.
 7. Odgovor: napetost v korenu je okoli $214\,\mathrm{MPa}$, kovina sme biti vroča največ okoli $843\,^\circ\mathrm C$, pri $50\,\mathrm K$ višji temperaturi pa se čas do loma skrajša z $10\,000$ na okoli $940\,\mathrm h$, več kot desetkrat. Zato so hlajenje lopatic in toplotne zaščitne plasti tako pomembni.
 
 ### Primer 4 – zdaj ti: merilni upor
@@ -264,7 +264,7 @@ Navedi Hume-Rotheryjeva pravila in z njimi utemelji, zakaj je diagram Cu-Ni izom
 2. Izpeljava: masa zlitine $m = m_\mathrm{L} + m_\alpha$, masa niklja $m\,C_0 = m_\mathrm{L} C_\mathrm{L} + m_\alpha C_\alpha$.
 3. Delimo z $m$: $C_0 = W_\mathrm{L} C_\mathrm{L} + (1 - W_\mathrm{L}) C_\alpha$, torej $W_\mathrm{L} (C_\alpha - C_\mathrm{L}) = C_\alpha - C_0$.
 4. Sledi $W_\mathrm{L} = \dfrac{C_\alpha - C_0}{C_\alpha - C_\mathrm{L}}$ in $W_\alpha = 1 - W_\mathrm{L} = \dfrac{C_0 - C_\mathrm{L}}{C_\alpha - C_\mathrm{L}}$.
-5. $\gamma'$: urejena faza $\mathrm{Ni_3(Al,Ti)}$, koherentna z $\gamma$, z velikim deležem prostornine. Dislokacija, ki vstopi vanjo, ustvari protifazno mejo, zato morajo dislokacije potovati v parih, kar zahteva večjo napetost. Pri višji temperaturi se dislokacije prečno zdrsnejo v lege, kjer se težje gibljejo, zato meja plastičnosti raste do okoli $800\,^\circ\mathrm C$.
+5. $\gamma'$: urejena faza $\mathrm{Ni_3(Al,Ti)}$, koherentna z $\gamma$, z velikim deležem prostornine. Dislokacija, ki vstopi vanjo, ustvari protifazno mejo, zato morajo dislokacije potovati v parih, kar zahteva večjo napetost. Pri višji temperaturi dislokacije prečno zdrsnejo v lege, kjer se težje gibljejo, zato meja plastičnosti raste do okoli $800\,^\circ\mathrm C$.
 6. Ker je $\gamma'$ stabilna skoraj do $1200\,^\circ\mathrm C$, izločki rastejo počasi in zlitina se ne prestara hitro.
 
 ## Drugače: Z analogijo

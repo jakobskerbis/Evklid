@@ -29,7 +29,7 @@ Poglej stolpec z odmiki. Odmiki so pozitivni in negativni, njihova vsota je toč
 
 **Trditev.** Povprečje je najboljša ocena prave vrednosti v tem smislu, da je vsota kvadratov odmikov $\sum (x_i - a)^2$ najmanjša natanko pri $a = \bar x$. *Dokaz:* $\sum (x_i - a)^2 = \sum \big((x_i - \bar x) + (\bar x - a)\big)^2 = \sum (x_i - \bar x)^2 + 2(\bar x - a)\sum (x_i - \bar x) + n(\bar x - a)^2$. Srednji člen je $0$, zadnji je $\ge 0$ in enak $0$ le pri $a = \bar x$.
 
-Za raztros odmike kvadriramo. Kvadrat odmika je vedno pozitiven, zato se ne izniči. **Definicija:** za $n \ge 2$ meritev je **standardni odklon** vzorca $s$, merilo za raztros posameznih meritev okoli povprečja,
+Za raztros odmike kvadriramo. Kvadrat odmika ni nikoli negativen, zato se ne izniči. **Definicija:** za $n \ge 2$ meritev je **standardni odklon** vzorca $s$, merilo za raztros posameznih meritev okoli povprečja,
 
 $$s = \sqrt{\frac{\sum (x_i - \bar x)^2}{n-1}}$$
 

@@ -138,7 +138,7 @@ Ločitev spremenljivk: $\int \frac{dc}{c} = -\int k\, dt$, rešitev $c(t) = c_0 
 3. Eksponent: $kt = 0{,}0250\,\mathrm{min^{-1}} \cdot 40\,\mathrm{min} = 1{,}00$ (brez enote, kot mora biti).
 4. $c(40\,\mathrm{min}) = 0{,}80\,\mathrm{mol/L} \cdot e^{-1} = 0{,}80 \cdot 0{,}3679\,\mathrm{mol/L} = 0{,}294\,\mathrm{mol/L}$.
 5. Razpolovni čas: $t_{1/2} = \frac{\ln 2}{0{,}0250\,\mathrm{min^{-1}}} = \frac{0{,}6931}{0{,}0250}\,\mathrm{min} = 27{,}7\,\mathrm{min}$.
-6. Preizkus: $40\,\mathrm{min}$ je malo več od enega razpolovnega časa, zato mora biti koncentracija malo manj od polovice $0{,}40\,\mathrm{mol/L}$; $0{,}294\,\mathrm{mol/L}$ se s tem ujema.
+6. Preizkus: $40\,\mathrm{min}$ je med enim in dvema razpolovnima časoma, zato mora biti koncentracija med $0{,}40\,\mathrm{mol/L}$ in $0{,}20\,\mathrm{mol/L}$; $0{,}294\,\mathrm{mol/L}$ se s tem ujema.
 7. Odgovor: po $40\,\mathrm{min}$ je koncentracija $0{,}294\,\mathrm{mol/L}$, razpolovni čas pa je $27{,}7\,\mathrm{min}$.
 
 ### Primer 2
@@ -370,6 +370,7 @@ N | velikost populacije | | | eksponentna rast: $N(t) = N_0 e^{kt}$
 N_0 | začetna velikost populacije | |
 t | čas | |
 k | konstanta rasti oziroma hitrosti | | | k > 0 rast, k < 0 upadanje; v kinetiki s⁻¹
+\lambda | razpadna konstanta | \lambda = -k | | pri razpadu ($k < 0$); $t_{1/2} = \ln 2/\lambda$
 r | stopnja rasti v logističnem modelu | |
 K | nosilnost okolja | | | drugje tudi poljubna konstanta v rešitvi
 c | množinska koncentracija reaktanta | c(t) = c_0 e^{-kt} | mol/L | kinetika prvega reda

@@ -16,7 +16,7 @@ V sobi izmeriš približno tole:
 
 V hladilniku je barva po istem času segla manj globoko. Nihče ni mešal, žele se ne pretaka, barva pa vseeno potuje. Temu pravimo **difuzija**: delci se zaradi naključnega gibanja razširijo iz kraja z veliko koncentracijo proti kraju z majhno.
 
-Enako se dogaja v kamninah, a neprimerno počasneje. Kristali granata v metamorfnih kamninah imajo plasti različne sestave, ki se po milijonih let le delno zabrišejo; iz tega geologi razberejo, kako hitro se je kamnina ohlajala. V tehniki z difuzijo kalimo zobnike (cementacija), spajkamo kovine in razumemo, zakaj se jeklo s časom »stara«. Za vse to potrebujemo dve stvari: koliko snovi prehaja (Fickova zakona) in kako hitro se to zgodi pri dani temperaturi (aktivacijska energija).
+Enako se dogaja v kamninah, a neprimerno počasneje. Kristali granata v metamorfnih kamninah imajo plasti različne sestave, ki se po milijonih let le delno zabrišejo; iz tega geologi razberejo, kako hitro se je kamnina ohlajala. V tehniki z difuzijo površinsko utrjujemo zobnike (cementacija), spajkamo kovine in razumemo, zakaj se jeklo s časom »stara«. Za vse to potrebujemo dve stvari: koliko snovi prehaja (Fickova zakona) in kako hitro se to zgodi pri dani temperaturi (aktivacijska energija).
 
 ## Razlaga
 
@@ -37,13 +37,13 @@ Približno $12\,\mathrm{mm}$. Ko se čas poveča štirikrat, se globina le podvo
 
 $$J = -D\,\frac{dC}{dx}$$
 
-To je **1. Fickov zakon**. Sorazmernostni faktor $D$ je **difuzijski koeficient** v $\mathrm{m^2/s}$: pove, kako lahkotno se snov giblje skozi material. Minus pove smer: snov teče *navzdol* po koncentraciji, od več proti manj. Kadar se koncentracije s časom ne spreminjajo (**stacionarno stanje**), na primer pri plinu, ki ves čas prehaja skozi steno cevi, je profil $C(x)$ v steni premica: skozi vsako plast stene mora teči enak tok, zato je gradient povsod enak.
+To je **1. Fickov zakon**. Sorazmernostni faktor $D$ je **difuzijski koeficient** v $\mathrm{m^2/s}$: pove, kako lahkotno se snov giblje skozi material. Minus pove smer: snov teče *navzdol* po koncentraciji, od več proti manj. Kadar se koncentracije s časom ne spreminjajo (**stacionarno stanje**), na primer pri plinu, ki ves čas prehaja skozi ravno steno posode, je profil $C(x)$ v steni pri stalnem $D$ premica: skozi vsako plast stene mora teči enak tok, zato je gradient povsod enak.
 
-**3. Kaj, ko se profil spreminja? 2. Fickov zakon.** Pri cementaciji ali v želeju se koncentracija na vsakem mestu s časom spreminja. Takrat velja **2. Fickov zakon**:
+**3. Kaj, ko se profil spreminja? 2. Fickov zakon.** Pri cementaciji ali v želeju se koncentracija na vsakem mestu s časom spreminja. Takrat velja **2. Fickov zakon** (za $D$, ki ni odvisen od koncentracije):
 
 $$\frac{\partial C}{\partial t} = D\,\frac{\partial^2 C}{\partial x^2}$$
 
-Desna stran meri ukrivljenost profila: kjer je profil močno ukrivljen, se koncentracija spreminja najhitreje, na premici pa se ne spreminja. Za pogost primer, ko je na površini ves čas enaka koncentracija $C_s$, v notranjosti pa je bila na začetku $C_0$, je rešitev:
+Desna stran meri ukrivljenost profila: kjer je profil močno ukrivljen, se koncentracija spreminja najhitreje, na premici pa se ne spreminja. Za pogost primer debelega kosa (difuzija ne doseže druge strani), ko je na površini ves čas enaka koncentracija $C_s$, v notranjosti pa je bila na začetku $C_0$, je rešitev:
 
 $$\frac{C_x - C_0}{C_s - C_0} = 1 - \mathrm{erf}\left(\frac{x}{2\sqrt{D t}}\right)$$
 
@@ -217,7 +217,7 @@ V trdnem je gneča še hujša: vsak stoji na svoji ploščici in lahko stopi le 
 > V stacionarnem stanju se koncentracija nikjer ne spreminja s časom, zato je profil premica: na vsak milimeter enak padec, tu $0{,}3\,\mathrm{kg/m^3}$.
 
 ? Zakaj ogljik v železu difundira mnogo hitreje kot železovi atomi sami?
-- Ker je ogljik lažji, zato se pri isti temperaturi giblje hitreje kot v plinu.
+- Ker je ogljik lažji, zato se pri isti temperaturi giblje hitreje, tako kot v plinu.
 ~ Atomi v trdnem ne letijo prosto kot v plinu. Odloča, ali ima atom kam skočiti in koliko energije za to potrebuje.
 + Ker je majhen in skače po intersticijah, ki jih je veliko, z manjšo aktivacijsko energijo; železo mora čakati na vakanco.
 - Ker ima ogljik večjo koncentracijo kot železo.

@@ -262,7 +262,7 @@ Q_D | povpraševana količina (funkcija povpraševanja) | Q_D = a - bP | m^2/ted
 Q_S | ponujena količina (funkcija ponudbe) | Q_S = c + dP | m^2/teden | naraščajoča funkcija cene
 Q | količina | | m^2/teden | Q* ravnovesna količina
 P | cena | | €/m^2 | P* ravnovesna cena
-a | količina povpraševanja pri ceni 0 | | m^2/teden
+a | povpraševana količina pri ceni 0 | | m^2/teden
 b | naklon povpraševanja (padec količine na 1 € cene) | | | b > 0
 c | ponujena količina pri ceni 0 | | m^2/teden | lahko je negativna
 d | naklon ponudbe (porast količine na 1 € cene) | | | d > 0

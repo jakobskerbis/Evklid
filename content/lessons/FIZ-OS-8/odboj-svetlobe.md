@@ -153,7 +153,7 @@ $\alpha = \dfrac{110^\circ}{2} = 55^\circ$ in $\gamma = 90^\circ - 55^\circ = 35
 
 - **Kot merijo od zrcala.** »Žarek oklepa z zrcalom $25^\circ$, torej je odbojni kot $25^\circ$.« Kota merimo od vpadne pravokotnice. Če je dan kot z zrcalom, ga odštej od $90^\circ$: vpadni in odbojni kot sta $65^\circ$.
 - **Slika je na površini zrcala.** Potem bi bila razdalja do slike enaka razdalji do zrcala. Slika je enako daleč *za* zrcalom, zato je od tebe dvakrat dlje kot zrcalo.
-- **Za vso postavo potrebuješ zrcalo tvoje višine.** Žarek od stopal se odbije na polovici višine oči, žarek od temena na polovici med očmi in temenom. Dovolj je zrcalo s polovico tvoje višine, če je pravilno obešeno.
+- **Za vso postavo potrebuješ zrcalo svoje višine.** Žarek od stopal se odbije na polovici višine oči, žarek od temena na polovici med očmi in temenom. Dovolj je zrcalo s polovico tvoje višine, če je pravilno obešeno.
 - **Če stopim nazaj, se vidim več.** Točki odboja za stopala in teme ostaneta na istih višinah. Na vsaki razdalji vidiš enak del sebe.
 - **Hrapave ploskve svetlobe ne odbijajo.** Odbijajo jo, a na vse strani. Prav zato jih sploh vidimo; slike v njih ni, ker odbiti žarki niso urejeni.
 

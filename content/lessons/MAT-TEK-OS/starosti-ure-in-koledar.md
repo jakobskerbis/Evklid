@@ -228,7 +228,7 @@ Na steni visi koledar s sedmimi stolpci. Po sedmih korakih v desno si spet v ist
 - 12.30 → $180^\circ$
 ~ Ob 12.30 urni kazalec ni več na dvanajstici, ampak $15^\circ$ naprej. Kot je $165^\circ$.
 - 3.15 → $0^\circ$
-~ Oba kazalca kažeta na trojko le na prvi pogled. Urni je $7{,}5^\circ$ za trojko, zato je kot $7{,}5^\circ$.
+~ Oba kazalca kažeta na trojko le na prvi pogled. Urni je $7{,}5^\circ$ naprej od trojke, zato je kot $7{,}5^\circ$.
 > Ob 9.00 je urni kazalec pri $270^\circ$, minutni pri $0^\circ$. Razlika $270^\circ$ je več kot $180^\circ$, zato je manjši kot $360^\circ - 270^\circ = 90^\circ$.
 
 ? Kuhinjska ura kaže 1.05. Približno kolikšen je manjši kot med kazalcema?

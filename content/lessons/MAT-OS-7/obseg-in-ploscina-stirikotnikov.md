@@ -112,11 +112,11 @@ $S = \dfrac{e \cdot f}{2}$, $o = 2(a + b)$
 
 **Rešitev:**
 
-1. Formula je obrnjena: znamo ploščino, iščemo diagonalo. Vstavimo podatke: $1260 = \dfrac{e \cdot 40}{2}$.
+1. Formula je obrnjena: poznamo ploščino, iščemo diagonalo. Vstavimo podatke: $1260 = \dfrac{e \cdot 40}{2}$.
 2. Obe strani pomnožimo z $2$: $e \cdot 40 = 2 \cdot 1260 = 2520$.
 3. Delimo s $40$: $e = 2520 : 40 = 63\,\text{cm}$.
 4. Preizkus: $\dfrac{63 \cdot 40}{2} = 1260$. ✓
-5. Obseg: $o = 2 \cdot (25 + 52) = 2 \cdot 77 = 154\,\text{cm}$. Diagonali v obseg ne štejemo, ker nista na robu.
+5. Obseg: $o = 2 \cdot (25 + 52) = 2 \cdot 77 = 154\,\text{cm}$. Diagonal v obseg ne štejemo, ker nista na robu.
 6. Odgovor: vzdolžna palica je dolga $63\,\text{cm}$, traku potrebujemo $154\,\text{cm}$.
 
 ### Primer 4: zdaj ti
@@ -228,7 +228,7 @@ $$S = \frac{e \cdot (f_1 + f_2)}{2} = \frac{e \cdot f}{2}$$
 + Ploščini sta enaki.
 > Romb: $\dfrac{10 \cdot 6}{2} = 30\,\text{cm}^2$. Paralelogram: $10 \cdot 3 = 30\,\text{cm}^2$.
 
-? Streha planinske koče ima obliko enakokrakega trapeza z osnovnicama $14\,\text{m}$ in $8\,\text{m}$, kraki po $5\,\text{m}$ in višino $4\,\text{m}$. Po sneženju je na vsakem kvadratnem metru $50\,\text{kg}$ snega. Koliko snega je na strehi?
+? Streha planinske koče ima obliko enakokrakega trapeza z osnovnicama $14\,\text{m}$ in $8\,\text{m}$, krakoma po $5\,\text{m}$ in višino $4\,\text{m}$. Po sneženju je na vsakem kvadratnem metru $50\,\text{kg}$ snega. Koliko snega je na strehi?
 - $4400\,\text{kg}$
 ~ Pozabil si deliti z $2$; ploščina je $44\,\text{m}^2$, ne $88\,\text{m}^2$.
 - $2750\,\text{kg}$

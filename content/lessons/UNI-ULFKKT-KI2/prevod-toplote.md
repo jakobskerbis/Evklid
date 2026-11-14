@@ -183,7 +183,7 @@ $R_c = \dfrac{\ln(r_\mathrm{zun}/r_\mathrm{not})}{2\pi\lambda L}$, $\Phi = \dfra
 
 ### Primer 4 – zdaj ti
 
-Fizioterapevt na koleno položi hladen obkladek s temperaturo $0\,^\circ\mathrm{C}$, med obkladek in kožo pa brisačo debeline $3{,}0\,\mathrm{mm}$ ($\lambda_b = 0{,}060\,\mathrm{W/(m\,K)}$). Pod kožo je $10\,\mathrm{mm}$ plast kože in podkožja s povprečno $\lambda_k = 0{,}30\,\mathrm{W/(m\,K)}$, pod njo tkivo s $34\,^\circ\mathrm{C}$. Privzemi stacionarno stanje in ravno plast. Kolikšna je temperatura kože pod brisačo?
+Fizioterapevt na koleno položi hladen obkladek s temperaturo $0\,^\circ\mathrm{C}$, med obkladek in kožo pa brisačo debeline $3{,}0\,\mathrm{mm}$ ($\lambda_b = 0{,}060\,\mathrm{W/(m\,K)}$). Pod brisačo je $10\,\mathrm{mm}$ debela plast kože in podkožja s povprečno $\lambda_k = 0{,}30\,\mathrm{W/(m\,K)}$, pod njo tkivo s $34\,^\circ\mathrm{C}$. Privzemi stacionarno stanje in ravno plast. Kolikšna je temperatura kože pod brisačo?
 
 **Podatki:** $T_o = 0\,^\circ\mathrm{C}$, $d_b = 0{,}0030\,\mathrm{m}$, $\lambda_b = 0{,}060\,\mathrm{W/(m\,K)}$, $d_k = 0{,}010\,\mathrm{m}$, $\lambda_k = 0{,}30\,\mathrm{W/(m\,K)}$, $T_t = 34\,^\circ\mathrm{C}$
 **Iščemo:** temperaturo kože $T_s$ na stiku z brisačo
@@ -239,7 +239,7 @@ Inkubator za celične kulture ima notranjo površino sten pri $37\,^\circ\mathrm
 
 1. Stena (zaporedne plasti), najprej ploskovni upor: $R_A = 2 \cdot 0{,}0010/16 + 0{,}040/0{,}030 \approx 1{,}3334\,\mathrm{m^2\,K/W}$, nato $R_s = 1{,}3334/1{,}30\,\mathrm{K/W} \approx 1{,}026\,\mathrm{K/W}$.
 2. Vrata: $R_A = 2 \cdot 0{,}0040/1{,}0 + 0{,}010/0{,}026 \approx 0{,}3926\,\mathrm{m^2\,K/W}$, nato $R_v = 0{,}3926/0{,}20\,\mathrm{K/W} \approx 1{,}963\,\mathrm{K/W}$.
-3. Steni in vrata so vzporedne poti med istima temperaturama: $\Phi_s = 15/1{,}026\,\mathrm{W} \approx 14{,}62\,\mathrm{W}$, $\Phi_v = 15/1{,}963\,\mathrm{W} \approx 7{,}64\,\mathrm{W}$.
+3. Stene in vrata so vzporedne poti med istima temperaturama: $\Phi_s = 15/1{,}026\,\mathrm{W} \approx 14{,}62\,\mathrm{W}$, $\Phi_v = 15/1{,}963\,\mathrm{W} \approx 7{,}64\,\mathrm{W}$.
 4. Moč grelnika: $\Phi = 14{,}62\,\mathrm{W} + 7{,}64\,\mathrm{W} \approx 22{,}3\,\mathrm{W}$.
 5. Nadomestni upor: $R = 15/22{,}26\,\mathrm{K/W} \approx 0{,}674\,\mathrm{K/W}$ (manjši od obeh, kot pri vzporednih električnih uporih).
 6. Delež vrat: $7{,}64/22{,}26 \approx 0{,}34$. Vrata so $13\,\%$ ploščine, a dajo $34\,\%$ izgub.
@@ -326,7 +326,7 @@ Koliko toplote na uro izgubi steklo okna v laboratoriju s ploščino $1{,}5\,\ma
 
 ## Drugače: Bolj natančno
 
-**Toplotna enačba.** Če stanje ni stacionarno, bilanca za majhen volumen da $\rho c_p\,\partial T/\partial t = -\nabla\cdot\vec{q} + \dot{q}_V$, kjer je $\dot{q}_V$ moč virov na enoto prostornine. S Fourierovim zakonom in stalno $\lambda$ dobimo $\partial T/\partial t = a\nabla^2T + \dot{q}_V/(\rho c_p)$, kjer je $a = \lambda/(\rho c_p)$ **temperaturna prevodnost** v $\mathrm{m^2/s}$. Čas, v katerem toplota prodre v globino $d$, je reda $d^2/a$: za $1\,\mathrm{cm}$ mesa ($a \approx 1{,}4 \cdot 10^{-7}\,\mathrm{m^2/s}$) je to okoli $12$ minut, za $2\,\mathrm{cm}$ štirikrat več. Zato se debelejši kos tako počasneje segreje.
+**Toplotna enačba.** Če stanje ni stacionarno, bilanca za majhen volumen da $\rho c_p\,\partial T/\partial t = -\nabla\cdot\vec{q} + \dot{q}_V$, kjer je $\dot{q}_V$ moč virov na enoto prostornine. S Fourierovim zakonom in stalno $\lambda$ dobimo $\partial T/\partial t = a\nabla^2T + \dot{q}_V/(\rho c_p)$, kjer je $a = \lambda/(\rho c_p)$ **temperaturna prevodnost** v $\mathrm{m^2/s}$. Čas, v katerem toplota prodre v globino $d$, je reda $d^2/a$: za $1\,\mathrm{cm}$ mesa ($a \approx 1{,}4 \cdot 10^{-7}\,\mathrm{m^2/s}$) je to okoli $12$ minut, za $2\,\mathrm{cm}$ štirikrat več. Zato se debelejši kos toliko počasneje segreje.
 
 **Viri v steni.** Pri enakomernih virih (Joulova toplota v vodniku, presnova v tkivu) iz $\lambda\,\mathrm{d}^2T/\mathrm{d}x^2 = -\dot{q}_V$ sledi paraboličen profil; najvišja temperatura je v notranjosti. Bioinženirji tako modelirajo temperaturo tkiva s Pennesovo enačbo, ki doda še prenos s krvjo.
 

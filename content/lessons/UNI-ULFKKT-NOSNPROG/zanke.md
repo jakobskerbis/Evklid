@@ -13,7 +13,7 @@ Koliko odbojev je višjih od centimetra? Koliko poti naredi žogica do konca? Na
 
 ### Najprej en primer
 
-Program za žogico iz uvoda: kolikokrat se odbije, preden je višina odboja pod $1\,\mathrm{cm}$?
+Program za žogico iz uvoda: kateri odboj po vrsti je prvi nižji od $1\,\mathrm{cm}$?
 
 ```python
 h = 1.0        # višina v metrih
@@ -42,7 +42,7 @@ Iz primera razberemo štiri stvari, ki veljajo za vsako zanko `while`:
 3. Telo mora pogoj sčasoma spremeniti, sicer se zanka nikoli ne konča.
 4. Po zanki pogoj ne velja več (tu: `h < 0.01`).
 
-Rezultat lahko preverimo z matematiko: po $n$ odbojih je $h = 0{,}64^n$; iščemo najmanjši $n$ s $0{,}64^n < 0{,}01$, torej $n > \ln 0{,}01/\ln 0{,}64 \approx 10{,}3$, zato $n = 11$. ✓
+Rezultat lahko preverimo z matematiko: po $n$ odbojih je $h = 0{,}64^n$; iščemo najmanjši $n$ s $0{,}64^n < 0{,}01$, torej $n > \ln 0{,}01/\ln 0{,}64 \approx 10{,}3$, zato $n = 11$. ✓ Enajsti odboj je torej prvi pod $1\,\mathrm{cm}$; višjih od centimetra je $10$ odbojev.
 
 ### Zanka `while`
 
@@ -80,7 +80,7 @@ izpiše vrstice `0 0`, `1 1`, `2 4`, `3 9`, `4 16`. Zanka `for` spremenljivki `i
 
 Zanka `for` lahko teče tudi po znakih niza: `for c in "DNA":` priredi `c` po vrsti `"D"`, `"N"`, `"A"`. Druge zbirke (sezname) spoznaš v naslednji lekciji.
 
-Vsako zanko `for` po `range` lahko zapišemo z `while`:
+Vsako zanko `for` po `range(a, b, k)` s $k > 0$ lahko zapišemo z `while`:
 
 ```python
 i = a
@@ -355,7 +355,7 @@ Natančno opiši pomen zanke `while`. Za program, ki z zanko `for k in range(1, 
 1. Pomen: izračunaj `bool(P)`; če `True`, izvedi telo in ponovi; če `False`, nadaljuj za zanko.
 2. Invarianta: po obhodu s števcem $k$ je `s` $= 1 + 2 + \dots + k$.
 3. Indukcija: pred prvim obhodom `s` $= 0$ (prazna vsota). Če velja za $k - 1$, po obhodu `s` $= (1 + \dots + (k - 1)) + k$. Po obhodu $k = n$ je `s` $= 1 + \dots + n$, kar je po Gaussovi formuli $n(n + 1)/2$.
-4. Z `while`: `k = 1`, `while k <= n:` `s += k`, `k += 1`.
+4. Z `while`: `s = 0`, `k = 1`, `while k <= n:` `s += k`, `k += 1`.
 5. Mera napredka: $n + 1 - k$ je pred vsakim obhodom nenegativno celo število (ker `k <= n`) in se v obhodu zmanjša za $1$; zato je obhodov največ $n$.
 6. Obhodi `range(a, b, k)`: vrednosti so $a + ik$ za $i = 0, 1, \dots$, dokler je $a + ik < b$, torej $i < (b - a)/k$. Število celih $i \geq 0$ s to lastnostjo je $\lceil (b - a)/k\rceil$ (pri $a \geq b$ nič).
 

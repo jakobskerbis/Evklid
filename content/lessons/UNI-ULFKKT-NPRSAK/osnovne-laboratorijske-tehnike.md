@@ -54,7 +54,7 @@ V ozki cevi je gladina vode ukrivljena navzdol. Tej ukrivljenosti rečemo **meni
 
 Steklovina je umerjena pri $20\,^\circ\mathrm{C}$; vroča tekočina v merilni bučki da napačen volumen.
 
-**Filtracija: filter za kavo proti filtrirnemu papirju.** Filtracija loči trdno snov od tekočine. Trdno, ki ostane na filtru, je **oborina**; tekočina, ki steče skozi, je **filtrat**. Tako kot pri kavi gredo raztopljene snovi skozi. Zato je bil filtrat iz luže bister, a ni bil čist: bel rob na krožniku so bile raztopljene soli. Enako naredijo tla z deževnico. Pesek zadrži delce, raztopljeni minerali pa pridejo v podtalnico in v mineralno vodo.
+**Filtracija: filter za kavo proti filtrirnemu papirju.** Filtracija loči trdno snov od tekočine. Trdna snov, ki ostane na filtru, je **oborina**; tekočina, ki steče skozi, je **filtrat**. Tako kot pri kavi gredo raztopljene snovi skozi. Zato je bil filtrat iz luže bister, a ni bil čist: bel rob na krožniku so bile raztopljene soli. Enako naredijo tla z deževnico. Pesek zadrži delce, raztopljeni minerali pa pridejo v podtalnico in v mineralno vodo.
 
 V laboratoriju izberemo eno od dveh poti:
 
@@ -146,10 +146,10 @@ Masa vode: $m_\mathrm{v} = \dfrac{m(\mathrm{KNO_3})}{169} \cdot 100\,\mathrm{g}$
 2. Pri $20\,^\circ\mathrm{C}$ ostane raztopljeno: $0{,}316 \cdot 26{,}6 \approx 8{,}4$, torej $8{,}4\,\mathrm{g}$ $\mathrm{KNO_3}$.
 3. Izkristalizira: $45 - 8{,}4 = 36{,}6$, torej $36{,}6\,\mathrm{g}$.
 4. Izkoristek: $\dfrac{36{,}6}{45} \cdot 100\,\% \approx 81\,\%$. Isto da izrek o največjem izkoristku: $1 - \dfrac{31{,}6}{169} \approx 0{,}81$.
-5. V $26{,}6\,\mathrm{g}$ vode se pri $20\,^\circ\mathrm{C}$ raztopi do $0{,}359 \cdot 26{,}6 \approx 9{,}5\,\mathrm{g}$ $\mathrm{NaCl}$. Imamo ga le $5\,\mathrm{g}$, zato ostane raztopljen v matičnici. To je tudi odgovor na obratno vprašanje: vzorec sme vsebovati največ okoli $9{,}5\,\mathrm{g}$ $\mathrm{NaCl}$.
+5. V $26{,}6\,\mathrm{g}$ vode se pri $20\,^\circ\mathrm{C}$ raztopi do $0{,}359 \cdot 26{,}63 \approx 9{,}6\,\mathrm{g}$ $\mathrm{NaCl}$. Imamo ga le $5\,\mathrm{g}$, zato ostane raztopljen v matičnici. To je tudi odgovor na obratno vprašanje: vzorec sme vsebovati največ okoli $9{,}6\,\mathrm{g}$ $\mathrm{NaCl}$.
 6. (c) Vode je $1{,}20 \cdot 26{,}6 \approx 31{,}9\,\mathrm{g}$. Raztopljenega ostane $0{,}316 \cdot 31{,}9 \approx 10{,}1\,\mathrm{g}$ $\mathrm{KNO_3}$, izkristalizira $45 - 10{,}1 = 34{,}9\,\mathrm{g}$.
 7. Izkoristek: $\dfrac{34{,}9}{45} \cdot 100\,\% \approx 78\,\%$. Vsak gram odvečne vode zadrži $0{,}316\,\mathrm{g}$ produkta v matičnici.
-8. Odgovor: dobimo okoli $36{,}6\,\mathrm{g}$ čistega $\mathrm{KNO_3}$ z izkoristkom $81\,\%$; $\mathrm{NaCl}$ ostane v raztopini, dokler ga ni več kot okoli $9{,}5\,\mathrm{g}$; z $20\,\%$ več vode izkoristek pade na okoli $78\,\%$.
+8. Odgovor: dobimo okoli $36{,}6\,\mathrm{g}$ čistega $\mathrm{KNO_3}$ z izkoristkom $81\,\%$; $\mathrm{NaCl}$ ostane v raztopini, dokler ga ni več kot okoli $9{,}6\,\mathrm{g}$; z $20\,\%$ več vode izkoristek pade na okoli $78\,\%$.
 
 ### Primer 4: zdaj ti – koliko je deževalo?
 

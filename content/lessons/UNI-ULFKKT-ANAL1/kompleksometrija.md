@@ -28,7 +28,7 @@ V izrazu nastopajo ravnotežne koncentracije pri stalni temperaturi (v razredče
 :::premisli
 Bakrove ione bi lahko titrirali z amoniakom, saj je $\beta_4$ za $\mathrm{[Cu(NH_3)_4]^{2+}}$ okoli $10^{13}$. Napovej, kakšna bi bila titracijska krivulja, in zakaj to v praksi ne deluje.
 ---
-Ker se štirje ligandi vežejo po korakih s podobnimi konstantami. V raztopini so hkrati $\mathrm{CuNH_3^{2+}}$, $\mathrm{Cu(NH_3)_2^{2+}}$ … in ni ene same ekvivalenčne točke z ostrim skokom.
+Ker se štirje ligandi vežejo po korakih s podobnimi konstantami. V raztopini so hkrati $\mathrm{CuNH_3^{2+}}$, $\mathrm{Cu(NH_3)_2^{2+}}$ … in ni ene same ekvivalentne točke z ostrim skokom.
 :::
 
 **3. EDTA.** Etilendiamintetraocetna kislina ima šest atomov, ki se vežejo na kovino (dva dušika in štiri karboksilatne kisike). Je torej **šestvezni** ligand: ion objame z vseh strani kot klešče; takemu kompleksu rečemo **kelat**. Njen popolnoma deprotonirani anion označimo z $\mathrm{Y^{4-}}$. Ker se ves ligand veže naenkrat, **EDTA vedno reagira s kovinskim ionom v razmerju 1 : 1**, ne glede na naboj iona:
@@ -62,7 +62,7 @@ $$K'_f = \alpha_{\mathrm{Y^{4-}}} \cdot K_f \qquad \log K'_f = \log K_f + \log \
 
 *Izpeljava:* $[\mathrm{Y^{4-}}] = \alpha_{\mathrm{Y^{4-}}}[\mathrm{EDTA}]'$ vstavimo v $K_f$ in dobimo $\dfrac{[\mathrm{MY}]}{[\mathrm{M}][\mathrm{EDTA}]'} = \alpha_{\mathrm{Y^{4-}}}K_f = K'_f$. Pogojna konstanta je konstantna le, dokler je pH stalen, zato titriramo v pufru.
 
-**Pogoj za titracijo.** V ekvivalenčni točki smo dodali enako množino EDTA kot kovine, kompleks pa razpada v razmerju $1 : 1$, zato je $[\mathrm{M}] = [\mathrm{EDTA}]'$; skoraj vsa kovina pa je vezana, $[\mathrm{MY}] \approx c$. Vstavimo v $K'_f$: $K'_f = c/[\mathrm{M}]^2$, torej $[\mathrm{M}] = \sqrt{c/K'_f}$. Če zahtevamo, da ostane prostega največ $0{,}1\ \%$ kovine, mora biti $\dfrac{[\mathrm{M}]}{c} = \dfrac{1}{\sqrt{c\,K'_f}} \leq 10^{-3}$, torej
+**Pogoj za titracijo.** V ekvivalentni točki smo dodali enako množino EDTA kot kovine, kompleks pa razpada v razmerju $1 : 1$, zato je $[\mathrm{M}] = [\mathrm{EDTA}]'$; skoraj vsa kovina pa je vezana, $[\mathrm{MY}] \approx c$. Vstavimo v $K'_f$: $K'_f = c/[\mathrm{M}]^2$, torej $[\mathrm{M}] = \sqrt{c/K'_f}$. Če zahtevamo, da ostane prostega največ $0{,}1\ \%$ kovine, mora biti $\dfrac{[\mathrm{M}]}{c} = \dfrac{1}{\sqrt{c\,K'_f}} \leq 10^{-3}$, torej
 $$\log(c\,K'_f) \geq 6.$$
 Za raztopine s $c \approx 0{,}01\ \mathrm{mol/L}$ to pomeni približno $\log K'_f \geq 8$.
 
@@ -74,7 +74,7 @@ Ni: $\log K'_f = 8{,}79 - 2{,}38 = 6{,}41$, kar je pod mejo 8. Pri $\mathrm{pH}\
 
 *Preizkus:* zakaj ne titriramo kar pri $\mathrm{pH}\ 13$? *(Iz poglavja o topnosti: obori se $\mathrm{Mg(OH)_2}$, ki ga EDTA ne doseže.)*
 
-**6. Indikator.** Končno točko pokaže **kovinski indikator**, barvilo, ki s kovino tvori obarvan kompleks. Eriokrom črno T (EBT) je pri $\mathrm{pH}\ 10$ prost modre barve, vezan na magnezij pa vinsko rdeče. Na začetku je raztopina rdeča. EDTA najprej veže proste ione, tik pred ekvivalenčno točko pa iztrga kovino še iz kompleksa z indikatorjem. Raztopina preide v modro. To deluje le, če je kompleks kovine z indikatorjem **šibkejši** od kompleksa z EDTA.
+**6. Indikator.** Končno točko pokaže **kovinski indikator**, barvilo, ki s kovino tvori obarvan kompleks. Eriokrom črno T (EBT) je pri $\mathrm{pH}\ 10$ prost modre barve, vezan na magnezij pa vinsko rdeče. Na začetku je raztopina rdeča. EDTA najprej veže proste ione, tik pred ekvivalentno točko pa iztrga kovino še iz kompleksa z indikatorjem. Raztopina preide v modro. To deluje le, če je kompleks kovine z indikatorjem **šibkejši** od kompleksa z EDTA.
 
 **7. Trdota vode.** Pri $\mathrm{pH}\ 10$ (pufer $\mathrm{NH_3/NH_4Cl}$, indikator EBT) EDTA titrira **Ca in Mg skupaj**: dobimo skupno trdoto. Pri $\mathrm{pH}$ okoli 12,5 se $\mathrm{Mg^{2+}}$ obori kot hidroksid, z indikatorjem za kalcij (npr. mureksid) titriramo **le Ca**. Magnezij dobimo iz razlike.
 
@@ -149,7 +149,7 @@ $c(\mathrm{Ca}+\mathrm{Mg}) = \dfrac{c(\mathrm{EDTA})\, V_{10}}{V(\text{vzorec})
 ## Povzetek
 
 - Kompleks nastane, ko ligand podari elektronske pare kovinskemu ionu; $K_f = \dfrac{[\mathrm{ML}]}{[\mathrm{M}][\mathrm{L}]}$, pri stopenjskem vezanju $\beta_n = K_1 K_2 \cdots K_n$.
-- EDTA je šestvezni ligand (kelat), s kovino vedno reagira 1 : 1 v enem koraku: $n(\mathrm{M}) = n(\mathrm{EDTA})$.
+- EDTA je šestvezni (kelatni) ligand, s kovino vedno reagira 1 : 1 v enem koraku: $n(\mathrm{M}) = n(\mathrm{EDTA})$.
 - Kovino veže le $\mathrm{Y^{4-}}$; pogojna konstanta $\log K'_f = \log K_f + \log \alpha_{\mathrm{Y^{4-}}}$ mora biti približno vsaj 8.
 - Kovinski indikator (EBT) mora vezati kovino šibkeje kot EDTA; pri $\mathrm{pH}\ 10$ preide iz vinsko rdeče v modro.
 - Trdota vode: pri $\mathrm{pH}\ 10$ Ca + Mg, pri $\mathrm{pH} \approx 12{,}5$ le Ca (Mg se obori); Mg iz razlike.
@@ -161,33 +161,33 @@ Znati moraš povedati:
 - definicijo konstante tvorbe, stopenjskih konstant in celokupne konstante ter dokaz $\beta_n = K_1K_2\cdots K_n$;
 - zakaj EDTA s kovinskim ionom reagira $1 : 1$ v enem koraku in kaj je kelat;
 - definicijo $\alpha_{\mathrm{Y^{4-}}}$ in pogojne konstante ter izpeljavo $K'_f = \alpha_{\mathrm{Y^{4-}}}K_f$;
-- izpeljavo $[\mathrm{M}] = \sqrt{c/K'_f}$ v ekvivalenčni točki in pogoja $\log(c\,K'_f) \geq 6$;
+- izpeljavo $[\mathrm{M}] = \sqrt{c/K'_f}$ v ekvivalentni točki in pogoja $\log(c\,K'_f) \geq 6$;
 - pogoj za kovinski indikator in postopek za Ca in Mg iz dveh titracij.
 
 ### Naloga 1
 
-$50{,}00\ \mathrm{mL}$ raztopine $\mathrm{Ca^{2+}}$ ($0{,}01000\ \mathrm{mol/L}$) titriramo z EDTA ($0{,}01000\ \mathrm{mol/L}$) v pufru. Dano: $\log K_f(\mathrm{CaY^{2-}}) = 10{,}65$, $\mathrm{p}K_a$ EDTA $2{,}00$; $2{,}69$; $6{,}13$; $10{,}37$. (a) Pokaži, da je v območju okoli $\mathrm{pH}\ 8$ do $9$ $\log\alpha_{\mathrm{Y^{4-}}} \approx \mathrm{pH} - \mathrm{p}K_4$. (b) Izračunaj najnižji pH, pri katerem ostane v ekvivalenčni točki prostega največ $0{,}1\ \%$ kalcija. (c) Izračunaj pCa v ekvivalenčni točki pri tem pH in ga primerjaj s $\mathrm{pH}\ 10$ ($\log\alpha_{\mathrm{Y^{4-}}} = -0{,}52$).
+$50{,}00\ \mathrm{mL}$ raztopine $\mathrm{Ca^{2+}}$ ($0{,}01000\ \mathrm{mol/L}$) titriramo z EDTA ($0{,}01000\ \mathrm{mol/L}$) v pufru. Dano: $\log K_f(\mathrm{CaY^{2-}}) = 10{,}65$, $\mathrm{p}K_a$ EDTA $2{,}00$; $2{,}69$; $6{,}13$; $10{,}37$. (a) Pokaži, da je v območju okoli $\mathrm{pH}\ 8$ do $9$ $\log\alpha_{\mathrm{Y^{4-}}} \approx \mathrm{pH} - \mathrm{p}K_4$. (b) Izračunaj najnižji pH, pri katerem ostane v ekvivalentni točki prostega največ $0{,}1\ \%$ kalcija. (c) Izračunaj pCa v ekvivalentni točki pri tem pH in ga primerjaj s $\mathrm{pH}\ 10$ ($\log\alpha_{\mathrm{Y^{4-}}} = -0{,}52$).
 
 **Rešitev:**
 
 1. Števec in imenovalec izraza za $\alpha_{\mathrm{Y^{4-}}}$ delimo s $K_1K_2K_3$: $\alpha = \dfrac{K_4}{\frac{[\mathrm{H^+}]^4}{K_1K_2K_3} + \frac{[\mathrm{H^+}]^3}{K_2K_3} + \frac{[\mathrm{H^+}]^2}{K_3} + [\mathrm{H^+}] + K_4}$.
 2. Pri $\mathrm{pH}\ 8$ je $[\mathrm{H^+}]/K_3 = 10^{-8}/10^{-6{,}13} \approx 0{,}013$ in $K_4/[\mathrm{H^+}] = 10^{-10{,}37}/10^{-8} \approx 0{,}004$; prvi trije členi in $K_4$ so zanemarljivi proti $[\mathrm{H^+}]$. Pri $\mathrm{pH}\ 9$ je $K_4/[\mathrm{H^+}] \approx 0{,}04$ in $[\mathrm{H^+}]/K_3 \approx 0{,}001$, približek torej velja v vsem območju. Zato $\alpha \approx K_4/[\mathrm{H^+}]$ in $\log\alpha \approx \mathrm{pH} - \mathrm{p}K_4$.
-3. V ekvivalenčni točki je $0{,}01000 \cdot 50{,}00 = 0{,}5000\ \mathrm{mmol}$ $\mathrm{CaY^{2-}}$ v $100{,}0\ \mathrm{mL}$: $c = 0{,}005000\ \mathrm{mol/L}$.
+3. V ekvivalentni točki je $0{,}01000 \cdot 50{,}00 = 0{,}5000\ \mathrm{mmol}$ $\mathrm{CaY^{2-}}$ v $100{,}0\ \mathrm{mL}$: $c = 0{,}005000\ \mathrm{mol/L}$.
 4. Pogoj $\log(c\,K'_f) \geq 6$ da $\log K'_f \geq 6 - \log 0{,}005000 = 6 + 2{,}30 = 8{,}30$.
 5. $\log\alpha \geq 8{,}30 - 10{,}65 = -2{,}35$, torej $\mathrm{pH} - 10{,}37 \geq -2{,}35$ in $\mathrm{pH} \geq 8{,}02$. Ta pH leži v območju, kjer približek iz koraka 2 velja.
 6. Pri $\mathrm{pH}\ 8{,}02$ je ravno $[\mathrm{Ca^{2+}}] = 10^{-3} \cdot 0{,}005000 = 5{,}0 \cdot 10^{-6}\ \mathrm{mol/L}$, $\mathrm{pCa} = 5{,}30$.
 7. Pri $\mathrm{pH}\ 10$: $\log K'_f = 10{,}13$, $\mathrm{pCa} = \tfrac12(\log K'_f - \log c) = \tfrac12(10{,}13 + 2{,}30) \approx 6{,}2$.
-8. Odgovor: kalcij lahko titriramo od približno $\mathrm{pH}\ 8{,}0$ naprej; tam je pCa v ekvivalenčni točki $5{,}30$, pri $\mathrm{pH}\ 10$ pa okoli $6{,}2$, zato je preskok pri $\mathrm{pH}\ 10$ višji in končna točka ostrejša.
+8. Odgovor: kalcij lahko titriramo od približno $\mathrm{pH}\ 8{,}0$ naprej; tam je pCa v ekvivalentni točki $5{,}30$, pri $\mathrm{pH}\ 10$ pa okoli $6{,}2$, zato je preskok pri $\mathrm{pH}\ 10$ višji in končna točka ostrejša.
 
 ### Naloga 2
 
-Natančno definiraj pogojno konstanto tvorbe in izpelji $K'_f = \alpha_{\mathrm{Y^{4-}}}K_f$. Izpelji koncentracijo proste kovine v ekvivalenčni točki in dokaži, da ostane prostega največ $0{,}1\ \%$ kovine natanko tedaj, ko je $\log(c\,K'_f) \geq 6$. Utemelji, ali je magnezij pri $\mathrm{pH}\ 10$ ($\log K_f = 8{,}79$, $\log\alpha_{\mathrm{Y^{4-}}} = -0{,}52$, $c(\mathrm{MgY^{2-}}) = 0{,}00500\ \mathrm{mol/L}$ v ekvivalenčni točki) še ustrezno titriran.
+Natančno definiraj pogojno konstanto tvorbe in izpelji $K'_f = \alpha_{\mathrm{Y^{4-}}}K_f$. Izpelji koncentracijo proste kovine v ekvivalentni točki in dokaži, da ostane prostega največ $0{,}1\ \%$ kovine natanko tedaj, ko je $\log(c\,K'_f) \geq 6$. Utemelji, ali je magnezij pri $\mathrm{pH}\ 10$ ($\log K_f = 8{,}79$, $\log\alpha_{\mathrm{Y^{4-}}} = -0{,}52$, $c(\mathrm{MgY^{2-}}) = 0{,}00500\ \mathrm{mol/L}$ v ekvivalentni točki) še ustrezno titriran.
 
 **Rešitev:**
 
 1. Naj bo pH stalen (pufer) in naj kovino veže le $\mathrm{Y^{4-}}$. Pogojna konstanta je $K'_f = \dfrac{[\mathrm{MY}]}{[\mathrm{M}][\mathrm{EDTA}]'}$, kjer je $[\mathrm{EDTA}]'$ koncentracija vse nevezane EDTA v vseh protoniranih oblikah.
 2. Po definiciji deleža je $[\mathrm{Y^{4-}}] = \alpha_{\mathrm{Y^{4-}}}[\mathrm{EDTA}]'$. Vstavimo v $K_f = \dfrac{[\mathrm{MY}]}{[\mathrm{M}][\mathrm{Y^{4-}}]}$ in preuredimo: $\dfrac{[\mathrm{MY}]}{[\mathrm{M}][\mathrm{EDTA}]'} = \alpha_{\mathrm{Y^{4-}}}K_f$.
-3. V ekvivalenčni točki smo dodali $n(\mathrm{EDTA}) = n(\mathrm{M})$; ker MY razpada na M in EDTA v razmerju $1 : 1$, je $[\mathrm{M}] = [\mathrm{EDTA}]'$, in ker je skoraj vse vezano, $[\mathrm{MY}] \approx c$.
+3. V ekvivalentni točki smo dodali $n(\mathrm{EDTA}) = n(\mathrm{M})$; ker MY razpada na M in EDTA v razmerju $1 : 1$, je $[\mathrm{M}] = [\mathrm{EDTA}]'$, in ker je skoraj vse vezano, $[\mathrm{MY}] \approx c$.
 4. Iz koraka 1: $K'_f = c/[\mathrm{M}]^2$, torej $[\mathrm{M}] = \sqrt{c/K'_f}$.
 5. Delež proste kovine je $\dfrac{[\mathrm{M}]}{c} = \dfrac{1}{\sqrt{c\,K'_f}}$. Neenakost $\dfrac{1}{\sqrt{c\,K'_f}} \leq 10^{-3}$ je ekvivalentna $c\,K'_f \geq 10^6$, to je $\log(c\,K'_f) \geq 6$.
 6. Magnezij: $\log K'_f = 8{,}79 - 0{,}52 = 8{,}27$, $\log(c\,K'_f) = 8{,}27 + \log 0{,}00500 = 8{,}27 - 2{,}30 = 5{,}97$.
@@ -205,7 +205,7 @@ Titracijska krivulja kompleksometrije je kot krivulja kislinsko-bazne titracije,
 | 50 | 6,21 | rahla disociacija $\mathrm{CaY^{2-}}$ |
 | 60 | 9,43 | prebitek EDTA potisne ravnotežje |
 
-Do 25 mL se pCa dvigne le za pol enote, okoli 50 mL pa poskoči za skoraj štiri enote. Pri $\mathrm{pH}\ 6$ bi se pCa za ekvivalenčno točko ustavil pri približno 5,2 namesto 9,4: preskok bi se sploščil v blago stopničko.
+Do 25 mL se pCa dvigne le za pol enote, okoli 50 mL pa poskoči za skoraj štiri enote. Pri $\mathrm{pH}\ 6$ bi se pCa za ekvivalentno točko ustavil pri približno 5,2 namesto 9,4: preskok bi se sploščil v blago stopničko.
 
 Mejo za $\log K'_f$ si predstavljaj na številski premici:
 
@@ -227,7 +227,7 @@ Pri $\mathrm{pH}\ 10$ prevladujeta zadnja dva člena, zato je $\alpha \approx \d
 
 $$K_f = \frac{[\mathrm{CaY^{2-}}]}{[\mathrm{Ca^{2+}}]\,\alpha_{\mathrm{Y^{4-}}}[\mathrm{EDTA}]'} \;\Rightarrow\; \frac{[\mathrm{CaY^{2-}}]}{[\mathrm{Ca^{2+}}][\mathrm{EDTA}]'} = \alpha_{\mathrm{Y^{4-}}} K_f = K'_f$$
 
-**Ekvivalenčna točka.** Tam je $[\mathrm{Ca^{2+}}] = [\mathrm{EDTA}]'$, zato $[\mathrm{Ca^{2+}}] = \sqrt{c(\mathrm{CaY^{2-}})/K'_f}$. Pri $c = 0{,}00500\ \mathrm{mol/L}$ in $K'_f = 1{,}3 \cdot 10^{10}$ dobimo $[\mathrm{Ca^{2+}}] = 6{,}1 \cdot 10^{-7}\ \mathrm{mol/L}$ in $\mathrm{pCa} = 6{,}21$.
+**Ekvivalentna točka.** Tam je $[\mathrm{Ca^{2+}}] = [\mathrm{EDTA}]'$, zato $[\mathrm{Ca^{2+}}] = \sqrt{c(\mathrm{CaY^{2-}})/K'_f}$. Pri $c = 0{,}00500\ \mathrm{mol/L}$ in $K'_f = 1{,}3 \cdot 10^{10}$ dobimo $[\mathrm{Ca^{2+}}] = 6{,}1 \cdot 10^{-7}\ \mathrm{mol/L}$ in $\mathrm{pCa} = 6{,}21$.
 
 **Pomožni ligandi.** Če v raztopini kovino veže še kak drug ligand (npr. $\mathrm{NH_3}$ iz pufra), uvedemo še delež proste kovine $\alpha_{\mathrm{M}}$ in $K''_f = \alpha_{\mathrm{M}}\,\alpha_{\mathrm{Y^{4-}}}\,K_f$. Pomožni ligand prepreči obarjanje hidroksida, a hkrati zmanjša preskok.
 
@@ -248,9 +248,9 @@ $$K_f = \frac{[\mathrm{CaY^{2-}}]}{[\mathrm{Ca^{2+}}]\,\alpha_{\mathrm{Y^{4-}}}[
 + S skoraj vsemi kovinskimi ioni reagira v razmerju 1 : 1 v enem koraku.
 - Kovino najmočneje veže v kisli raztopini, ko je popolnoma protonirana.
 ~ Protonirana EDTA ima donorske atome zasedene s protoni; kovino veže le $\mathrm{Y^{4-}}$.
-- Veže se po korakih kot amoniak, zato ima štiri ekvivalenčne točke.
+- Veže se po korakih kot amoniak, zato ima štiri ekvivalentne točke.
 ~ Prav zato EDTA uporabljamo: veže se naenkrat, preskok je en sam.
-> EDTA je kelat, ki z eno molekulo zasede vsa vezna mesta kovine, zato $n(\mathrm{M}) = n(\mathrm{EDTA})$.
+> EDTA je kelatni ligand, ki z eno molekulo zasede vsa vezna mesta kovine, zato $n(\mathrm{M}) = n(\mathrm{EDTA})$.
 
 ? $25{,}00\ \mathrm{mL}$ vzorca porabi $9{,}80\ \mathrm{mL}$ EDTA s koncentracijo $0{,}02000\ \mathrm{mol/L}$. Kolikšna je koncentracija $\mathrm{Ca^{2+}}$?
 - $3{,}92\ \mathrm{mmol/L}$

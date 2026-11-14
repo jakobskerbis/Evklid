@@ -143,7 +143,7 @@ Iz $\rho = \dfrac{n\,M}{a^3 N_\mathrm{A}}$ izrazimo $n = \dfrac{\rho\, a^3 N_\ma
 
 ### Primer 4: zdaj ti – vrzeli v vročem aluminiju
 
-Aluminij pri vlivanju posod segrejemo na $600\,^\circ\mathrm{C}$. Energija za nastanek vrzeli je $0{,}68\,\mathrm{eV}$. Kolikšen delež mest v mreži je prazen?
+Kos čistega aluminija segrejemo na $600\,^\circ\mathrm{C}$, tik pod tališče ($660\,^\circ\mathrm{C}$). Energija za nastanek vrzeli je $0{,}68\,\mathrm{eV}$. Kolikšen delež mest v mreži je prazen?
 
 **Podatki:** $T = 600\,^\circ\mathrm{C}$, $Q_\mathrm{v} = 0{,}68\,\mathrm{eV}$, $k = 8{,}617\cdot10^{-5}\,\mathrm{eV/K}$
 **Iščemo:** delež vrzeli $N_\mathrm{v}/N$

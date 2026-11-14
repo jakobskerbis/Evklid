@@ -16,12 +16,12 @@ Začnimo z molekulo, ki jo že poznaš: **etan**, $\mathrm{CH_3{-}CH_3}$. Iz nje
 **Korak 1: zamenjamo en atom H.** Na desnem ogljiku en atom H nadomestimo s skupino atomov $\mathrm{{-}OH}$: atom kisika, vezan na ogljik, in nanj atom vodika.
 
 ```
-     H   H                H   H
-     |   |                |   |
+    H H                H H
+    | |                | |
   H—C—C—H     →      H—C—C—O—H
-     |   |                |   |
-     H   H                H   H
-    etan                 etanol
+    | |                | |
+    H H                H H
+   etan              etanol
 ```
 
 Kisik tvori $2$ vezi (eno s C, eno s H), ogljik še vedno $4$. Racionalna formula je $\mathrm{CH_3{-}CH_2{-}OH}$, pogosto pišemo $\mathrm{C_2H_5OH}$.

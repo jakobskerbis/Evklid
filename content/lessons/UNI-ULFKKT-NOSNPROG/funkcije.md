@@ -226,7 +226,7 @@ Koliko je `skupaj` in kaj izpiše zadnja vrstica?
 - Vsak klic ima svoj okvir: spremenljivke, nastale v funkciji, so lokalne, zunaj jih ni, ob naslednjem klicu začnejo znova.
 - Prirejanje parametru ne spremeni zunanje spremenljivke, tudi če ima isto ime. Rezultat spraviš ven z `return` in ga priredi: `x = f(x)`.
 - `return` vrne vrednost na mesto klica in funkcijo takoj konča; brez njega funkcija vrne `None`.
-- Seznam, spremenjen z metodo (npr. `append`), se spremeni tudi zunaj, ker oba imena kažeta nanj.
+- Seznam, spremenjen z metodo (npr. `append`), se spremeni tudi zunaj, ker obe imeni kažeta nanj.
 
 ## Za izpit
 

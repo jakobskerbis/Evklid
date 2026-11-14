@@ -289,7 +289,7 @@ g = b == "1212" and len(a) > 2
 5. `int(-7.8)` odreže proti $0$ in da `-7`, zato je `f = -7 + 242 = 235`, tip `int`.
 6. `0.1 * 3` je `0.30000000000000004`, ker $0{,}1$ ni točno predstavljiv, zato je `h` enak `False`, tip `bool`.
 7. `a = "12" + "3"` je `"123"`; stara vrednost `"12"` je že bila uporabljena pri `b`, zato se `b` ne spremeni.
-8. `g`: `b == "1212"` je `True`, `len("123") > 2` je `True`, zato `g` je `True`.
+8. `g`: `b == "1212"` je `True`, `len("123") > 2` je `True`; `and` da `True` le, če sta resnična oba dela, zato `g` je `True`.
 9. Odgovor: `a = "123"`, `b = "1212"` (`str`); `c = 242`, `d = 2`, `e = -3`, `r = 3`, `f = 235` (`int`); `h = False`, `g = True` (`bool`).
 
 ### Naloga 2

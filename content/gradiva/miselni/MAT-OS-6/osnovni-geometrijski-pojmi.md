@@ -24,7 +24,7 @@ stanje: osnutek
 - Pravokotnici
   - $p \perp q$: sekata se pod pravim kotom
   - iz $a \parallel b$ in $c \perp a$ sledi $c \perp b$
-  - niso nujno vodoravna in navpična
+  - nista nujno vodoravna in navpična
 - Razdalja točke od premice
   - dolžina pravokotne daljice
   - najkrajša pot do premice

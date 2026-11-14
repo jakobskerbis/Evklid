@@ -175,7 +175,7 @@ Za sili na isti premici:
 
 Kolesar, veter v obraz: $(+80\,\mathrm{N}) + (-30\,\mathrm{N}) = +50\,\mathrm{N}$, torej $50\,\mathrm{N}$ naprej.
 
-Kolesar v nevihti, veter v obraz s $90\,\mathrm{N}$: $(+80\,\mathrm{N}) + (-90\,\mathrm{N}) = -10\,\mathrm{N}$. Minus pomeni: rezultanta $10\,\mathrm{N}$ kaže nazaj, veter kolesarja ustavlja.
+Kolesar v nevihti, veter v obraz z $90\,\mathrm{N}$: $(+80\,\mathrm{N}) + (-90\,\mathrm{N}) = -10\,\mathrm{N}$. Minus pomeni: rezultanta $10\,\mathrm{N}$ kaže nazaj, veter kolesarja ustavlja.
 
 Za sili pod kotom:
 
@@ -189,11 +189,11 @@ Za sili pod kotom:
 
 Ana in Bor se s splavom spuščata po mirni reki. Tok potiska splav dolvodno s silo $120\,\mathrm{N}$.
 
-Pred mostom hoče Bor ustaviti. Zarine veslo in potiska gorvodno, ravno s $120\,\mathrm{N}$. Splav obstane pod mostom: sili sta enako veliki, nasprotni in na isti premici, v ravnovesju.
+Pred mostom hoče Bor ustaviti. Zarine veslo in splav zaustavi, nato potiska gorvodno ravno s $120\,\mathrm{N}$. Splav miruje pod mostom: sili sta enako veliki, nasprotni in na isti premici, v ravnovesju.
 
 Ana se odloči pomagati in vesla v isto smer kot Bor s $60\,\mathrm{N}$. Skupaj zdaj potiskata gorvodno s $180\,\mathrm{N}$, tok pa dolvodno s $120\,\mathrm{N}$. Rezultanta je $60\,\mathrm{N}$ gorvodno, splav začne počasi lezti nazaj, proč od mostu.
 
-Na koncu zavijeta proti bregu. Bor vesla pravokotno na tok s $40\,\mathrm{N}$, Ana počiva, tok pa jih še vedno nese. Splav ne gre naravnost k bregu, ampak poševno, malo k bregu in malo dolvodno: tako, kot kaže diagonala paralelograma sil.
+Na koncu zavijeta proti bregu. Bor vesla pravokotno na tok s $40\,\mathrm{N}$, Ana počiva, tok pa ju še vedno nese. Splav ne gre naravnost k bregu, ampak poševno, malo k bregu in malo dolvodno: tako, kot kaže diagonala paralelograma sil.
 
 ## Preveri se
 
@@ -224,7 +224,7 @@ Na koncu zavijeta proti bregu. Bor vesla pravokotno na tok s $40\,\mathrm{N}$, A
 ~ Če bi bila sila žice večja, rezultanta ne bi bila nič in ptica bi se začela dvigovati.
 + Ker jo žica podpira z enako veliko silo navzgor, zato je rezultanta nič.
 - Ker na ptico, ki miruje, ne deluje nobena sila.
-~ Na ptico deluje teža in sila žice. Nič je le njuna rezultanta.
+~ Na ptico delujeta teža in sila žice. Nič je le njuna rezultanta.
 > Teža in sila žice sta enako veliki, nasprotni in na isti premici, torej v ravnovesju.
 
 ? Na splav delujeta dve sili v isto smer. Rezultanta je $90\,\mathrm{N}$, ena od sil je $35\,\mathrm{N}$. Kolikšna je druga?

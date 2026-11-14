@@ -39,7 +39,7 @@ cena = 40.0
 | `str` | nizi (besedilo) | `"Ana"`, `"42"` |
 | `bool` | logični vrednosti | `True`, `False` |
 
-V Pythonu tip pripada **vrednosti**, ne imenu: po `a = 5` in nato `a = "pet"` je `a` niz. Tip izveš s `type(a)`. Iz tipa je odvisen pomen operatorja: `3 + 4` je `7`, `"3" + "4"` pa `"34"` (stik nizov).
+V Pythonu tip pripada **vrednosti**, ne imenu: po `a = 5` in nato `a = "pet"` je `a` niz. Tip izveš s `type(a)`. Od tipa je odvisen pomen operatorja: `3 + 4` je `7`, `"3" + "4"` pa `"34"` (stik nizov).
 
 **3. Aritmetični operatorji.**
 

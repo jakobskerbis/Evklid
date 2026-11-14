@@ -218,7 +218,7 @@ Naj poteka ena sama reakcija $\sum_i \nu_i \mathrm{B}_i = 0$. a) Natančno defin
 1. a) Reakcijski obseg $\xi$ je količina z enoto mol, za katero velja $n_i = n_{i,0} + \nu_i\xi$ za vse snovi; pri $\xi = 1\,\mathrm{mol}$ reakcija poteče enkrat v molskem merilu, kot je zapisana.
 2. Masa sistema: $m = \sum_i n_i M_i = \sum_i n_{i,0}M_i + \xi\sum_i \nu_i M_i$.
 3. Urejena enačba ima na obeh straneh enako število atomov vsakega elementa; ker je $M_i$ vsota molskih mas atomov, je $\sum_i \nu_i M_i = 0$. Torej $m = \sum_i n_{i,0}M_i$ za vsak $\xi$: masa se ohranja.
-4. b) Omejujoči reaktant je reaktant, ki se ob popolnem poteku reakcije porabi prvi in zato določa največji obseg. Za reaktant je $\nu_i < 0$ in pogoj $n_i \ge 0$ da $\xi \le n_{i,0}/|\nu_i|$. Vsi pogoji hkrati dajo $\xi_\text{max} = \min_i n_{i,0}/|\nu_i|$; pri tem $\xi$ je množina reaktanta, kjer je dosežen minimum, enaka $0$, drugih pa še pozitivna.
+4. b) Omejujoči reaktant je reaktant, ki se ob popolnem poteku reakcije porabi prvi in zato določa največji obseg. Za reaktant je $\nu_i < 0$ in pogoj $n_i \ge 0$ da $\xi \le n_{i,0}/|\nu_i|$. Vsi pogoji hkrati dajo $\xi_\text{max} = \min_i n_{i,0}/|\nu_i|$; pri tem $\xi$ je množina reaktanta, kjer je dosežen minimum, enaka $0$, drugih pa še nenegativna.
 5. c) Ne. Pri $\mathrm{2\,H_2 + O_2 \to 2\,H_2O}$ z $1{,}0\,\mathrm{mol}$ $\mathrm{H_2}$ in $0{,}60\,\mathrm{mol}$ $\mathrm{O_2}$ je kisika manj, a $n/|\nu|$ je za vodik $0{,}50\,\mathrm{mol}$, za kisik $0{,}60\,\mathrm{mol}$: omejujoči je vodik, ostane $0{,}10\,\mathrm{mol}$ kisika.
 6. Odgovor: masa se ohranja, ker je $\sum_i \nu_i M_i = 0$; omejujoči reaktant je določen z najmanjšim $n_{i,0}/|\nu_i|$, ne z najmanjšo množino ali maso.
 

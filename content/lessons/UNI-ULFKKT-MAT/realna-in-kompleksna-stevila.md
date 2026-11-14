@@ -261,7 +261,7 @@ Rešitve enačbe $z^6 = 1$ so oglišča pravilnega šestkotnika na enotski krož
 
 **Spektroskopija in Fourierova analiza.** Signal pri NMR in FTIR je vsota nihanj $A\cos(\omega t + \delta)$, ki jih zapišemo kot realne dele $Ae^{i(\omega t + \delta)}$. Fourierova transformacija, ki iz signala izračuna spekter, deluje s kompleksnimi eksponenti; absolutna vrednost da jakost, argument pa fazo, ki jo pri obdelavi spektra popravljamo.
 
-**Dinamika procesov.** Pri dušenem nihanju ali pri regulaciji reaktorja dobimo karakteristično enačbo, na primer $\lambda^2 + 2\lambda + 5 = 0$ z rešitvama $\lambda = -1 \pm 2i$. Realni del $-1$ pove, kako hitro nihanje zamira (negativen realni del pomeni stabilen sistem), imaginarni del $2$ pa kotno frekvenco nihanja.
+**Dinamika procesov.** Pri dušenem nihanju ali pri regulaciji reaktorja dobimo karakteristično enačbo, na primer $\lambda^2 + 2\lambda + 5 = 0$ z rešitvama $\lambda = -1 \pm 2i$. Realni del $-1$ pove, kako hitro nihanje zamira (negativen realni del pomeni stabilen sistem), imaginarni del $2$ pa krožno frekvenco nihanja.
 
 ## Drugače: Korak za korakom s številkami
 

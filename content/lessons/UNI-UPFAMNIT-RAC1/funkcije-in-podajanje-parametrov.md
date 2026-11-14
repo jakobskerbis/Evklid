@@ -319,7 +319,7 @@ Rekurzija je kot veriga posvetov: vsak zdravnik vpraša kolega o nekoliko lažje
 - Java po imenih parametrov ugotovi pravi vrstni red in vrne $22{,}04$.
 ~ Argumenti nimajo imen; v parametre gredo po položaju.
 - Prevajalnik javi napako, ker se argumenta ne ujemata.
-~ Oba argumenta sta števili tipa, ki ga glava pričakuje, zato prevajalnik nima česa javiti.
+~ Oba argumenta sta števili, ki ju Java sprejme kot `double` (celo število $60$ samodejno pretvori), zato prevajalnik nima česa javiti.
 + Program teče brez napake, a vrne nesmiselno majhno število.
 > `masa` dobi $1{,}65$, `visina` pa $60$, zato je rezultat $\frac{1{,}65}{3600} \approx 0{,}00046$. Vrstni red argumentov je pomemben, napake pa računalnik ne opazi.
 
@@ -344,5 +344,5 @@ Rekurzija je kot veriga posvetov: vsak zdravnik vpraša kolega o nekoliko lažje
 > $400 \to 200 \to 100 \to 50 \to 25$: $\frac{400}{2^4} = 25\,\text{mg}$.
 
 :::simboli
-n | število razpolovnih časov (delitev) | n = \frac{\text{čas}}{\text{čas ene delitve}} | – | celice(n) = 2 · celice(n − 1)
+n | argument rekurzivne metode: število razpolovnih časov ali delitev, v primeru 4 število pacientov | n = \frac{\text{čas}}{\text{čas ene delitve}} | – | celice(n) = 2 · celice(n − 1)
 :::

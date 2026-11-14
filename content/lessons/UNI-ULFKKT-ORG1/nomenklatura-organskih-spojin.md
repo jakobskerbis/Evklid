@@ -56,7 +56,7 @@ Z drugega konca dobimo $\{2, 2, 4\}$, ki je na drugem mestu nižje od $\{2, 4, 4
 | karboksilna kislina | -ojska kislina | karboksi- | etanojska kislina |
 | ester | -oat (alkil …oat) | alkoksikarbonil- | etil etanoat |
 | amid | -amid | karbamoil- | etanamid |
-| nitril | -nitril | ciano- | etanonitril |
+| nitril | -nitril | ciano- | etannitril |
 | aldehid | -al | okso- (formil-) | propanal |
 | keton | -on | okso- | propanon |
 | alkohol | -ol | hidroksi- | propan-2-ol |

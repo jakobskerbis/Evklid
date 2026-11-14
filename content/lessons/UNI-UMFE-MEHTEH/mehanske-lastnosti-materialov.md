@@ -184,7 +184,7 @@ $\mathrm{KV} = 20\,\mathrm{kg} \cdot 9{,}81\,\mathrm{m/s^2} \cdot 0{,}10\,\mathr
 - **Sila namesto napetosti.** »Ta palica zdrži več, torej je boljše jeklo.« Sila je odvisna od velikosti kosa, material pa opisuje napetost $\sigma = F/S_0$. Pri primerjavi materialov vedno deli s presekom.
 - **Premer namesto polmera.** $S_0 = \pi d_0^2$ je štirikrat preveč, napetost pa štirikrat premalo. Pravilno je $S_0 = \pi d_0^2/4 = \pi r^2$.
 - **Trdnost zamenjaš s togostjo.** Močnejše jeklo se pri enaki sili ne povesi manj, ker imajo vsa jekla $E \approx 210\,\mathrm{GPa}$. Večja trdnost pomeni le, da trajna deformacija nastopi pozneje.
-- **Trdo pomeni žilavo.** Kaljeno dleto je zelo trdo, a ob udarcu lahko okruši. Visoka trdota pogosto pomeni manjšo žilavost; ravnotežje doseže popuščanje.
+- **Trdo pomeni žilavo.** Kaljeno dleto je zelo trdo, a se ob udarcu lahko okruši. Visoka trdota pogosto pomeni manjšo žilavost; ravnotežje doseže popuščanje.
 - **Žilavost je stalna lastnost.** Feritno jeklo, ki je pri sobni temperaturi žilavo, je pod prehodno temperaturo krhko. Žilavost vedno navedi skupaj s temperaturo preizkusa.
 
 ## Povzetek
@@ -220,7 +220,7 @@ Kovač Tine je za mizarja skoval novo dleto. Da bi dobro rezalo, ga je segrel do
 
 Mizar ga je naslednji dan prinesel nazaj: ob prvem močnejšem udarcu se je rob okrušil. Tine je dobil trdoto, izgubil pa žilavost. Trdo jeklo se ne zna deformirati, zato energija udarca odpre razpoko.
 
-Drugo dleto je po kaljenju še enkrat segrel, tokrat le do slamnato rumene barve oksida, približno $230\,^\circ\mathrm{C}$, in ga ohladil. To je popuščanje. Dleto je bilo nekoliko mehkejše, a ni več krušilo.
+Drugo dleto je po kaljenju še enkrat segrel, tokrat le do slamnato rumene barve oksida, približno $230\,^\circ\mathrm{C}$, in ga ohladil. To je popuščanje. Dleto je bilo nekoliko mehkejše, a se ni več krušilo.
 
 Pozimi so v njegovo železno ograjo zadele sani in prečka se je odlomila kot suha veja. Poleti je ista ograja prenesla vsak udarec. Jeklo je bilo pod prehodno temperaturo; Charpyjev preizkus na mrazu bi to pokazal vnaprej.
 

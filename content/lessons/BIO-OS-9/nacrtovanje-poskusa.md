@@ -56,7 +56,7 @@ Poskus je **ponovljiv**, če ga lahko kdo drug izvede po istem opisu in dobi pod
 
 **Graf.** Ko neodvisno spremenljivko spreminjamo v več korakih, rezultate narišemo. Na vodoravno os nanesemo neodvisno spremenljivko, na navpično pa odvisno.
 
-Nika na tekočem traku meri srčni utrip pri različnih hitrostih teka: pri $6\,\text{km/h}$ ima $100$ udarcev na minuto, pri $8\,\text{km/h}$ $120$, pri $10\,\text{km/h}$ $140$. Točke ležijo na premici. Pri enakem povečanju hitrosti se utrip vsakič poveča za enako ($20$). Taki odvisnosti rečemo **linearna**.
+Nika na tekalni stezi meri srčni utrip pri različnih hitrostih teka: pri $6\,\text{km/h}$ ima $100$ udarcev na minuto, pri $8\,\text{km/h}$ $120$, pri $10\,\text{km/h}$ $140$. Točke ležijo na premici. Pri enakem povečanju hitrosti se utrip vsakič poveča za enako ($20$). Taki odvisnosti rečemo **linearna**.
 
 :::premisli
 Kolikšen utrip napoveš pri $12\,\text{km/h}$, če odvisnost ostane linearna? Napovej, preden pogledaš.
@@ -170,7 +170,7 @@ Nika je razočarana, a ne obupa. S trenerjem se dogovorita za pravi poskus.
 
 Dva tedna bo vsak torek in četrtek skakala ob steni v telovadnici, ob isti uri in v istih copatih. Ogrevanje bo trajalo vedno deset minut. Trener ji pred skoki da plastenko, na kateri ni napisa. Nika ne ve, ali je v njej pijača X ali voda z enakim okusom. Tako njeno pričakovanje ne vpliva na skok.
 
-Vsakič skoči petkrat. Trener vpisuje višine. Po dveh tednih imata pri vsaki pijači po dvajset skokov. Povprečji se razlikujeta za manj kot centimeter.
+Vsakič skoči petkrat. Trener vpisuje višine. Po dveh tednih imata pri vsaki pijači po deset skokov. Povprečji se razlikujeta za manj kot centimeter.
 
 »Kaj pa soigralka?« vpraša Nika. »Njej je pomagalo.« Trener se nasmehne: »Ali je kdaj skočila brez pijače pod enakimi pogoji?« Nika ugotovi, da odgovor pozna. Žepnino porabi za nove štulpe.
 
@@ -210,7 +210,7 @@ Recept za poskus, na primeru »Ali ogrevanje vpliva na število sklec v eni minu
 ~ To je dobro vprašanje: ena spremenljivka, ki jo spreminjamo, in ena, ki jo merimo.
 - 2. korak: en dan pije čaj s kofeinom, drugi dan čaj brez kofeina.
 ~ To je pravilno: čaj brez kofeina je kontrolni poskus.
-+ 3. korak: s kofeinom meče z žogo za odrasle, brez kofeina z mlajšo, lažjo žogo.
++ 3. korak: s kofeinom meče z žogo za odrasle, brez kofeina z manjšo, lažjo žogo.
 - 4. korak: vsak dan meče trikrat po 20 metov in izračuna povprečje.
 ~ Ponovitve in povprečje so pravilen korak.
 > Žoga bi morala biti kontroliran pogoj. Ker se spremeni, ne vemo, ali je razlika zaradi kofeina ali zaradi žoge.

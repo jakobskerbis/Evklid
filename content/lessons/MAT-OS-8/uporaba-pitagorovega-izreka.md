@@ -8,7 +8,7 @@ avtor: AI
 
 V Mezopotamiji so pisarji merili polja, računali ploščine in načrtovali gradnje. Ohranile so se glinene tablice, na katerih so vadili. Na eni, stari več kot $3500$ let, je narisan kvadrat z obema diagonalama. Ob diagonali je zapisano, da je približno $1{,}41$-krat daljša od stranice. Danes vemo, da je to $\sqrt{2} \approx 1{,}41$.
 
-Kako so to vedeli brez ravnila, ki bi meril tako natančno? Diagonala kvadrata je hipotenuza pravokotnega trikotnika, kateti pa sta stranici. Prav tak trikotnik se skriva v marsikateri nalogi, le narisan ni.
+Kako so to vedeli brez ravnila, ki bi merilo tako natančno? Diagonala kvadrata je hipotenuza pravokotnega trikotnika, kateti pa sta stranici. Prav tak trikotnik se skriva v marsikateri nalogi, le narisan ni.
 
 Tudi v športu ga iščemo. Kako dolga je pot čez igrišče od kota do kota? Kako visoka je trikotna navijaška zastavica? Koliko prostora potrebuje rampa za rolkanje? Odgovor na vsa tri vprašanja da Pitagorov izrek, ko v liku najprej najdeš pravokotni trikotnik.
 
@@ -56,7 +56,7 @@ Tabela pove, kaj je v pogostih likih hipotenuza:
 | lestev ob zidu | višina na zidu, razdalja od zidu | lestev |
 
 :::premisli
-Krak ostane $13\,\text{cm}$, osnovnico pa podaljšamo z $10\,\text{cm}$ na $24\,\text{cm}$. Ali se višina poveča ali zmanjša? Napovej, nato izračunaj.
+Krak ostane $13\,\text{cm}$, osnovnico pa podaljšamo z dolžine $10\,\text{cm}$ na $24\,\text{cm}$. Ali se višina poveča ali zmanjša? Napovej, nato izračunaj.
 ---
 Zmanjša se. Hipotenuza ostane $13$, ena kateta zraste s $5$ na $12$, zato mora druga kateta upasti: $v = \sqrt{13^2 - 12^2} = \sqrt{25} = 5\,\text{cm}$. Trikotnik postane bolj ploščat.
 :::

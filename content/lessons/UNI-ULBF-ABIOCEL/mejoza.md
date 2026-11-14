@@ -164,7 +164,7 @@ Predstavljaj si omaro z 23 pari rokavic. V vsakem paru je ena rokavica od babice
 3. **Mejoza I:** iz vsakega para daš eno spetko v levo škatlo, drugo v desno. Katera gre levo, določi met kovanca, posebej za vsak par.
 4. **Mejoza II:** v vsaki škatli razpneš spetke in razdeliš izvirnik in kopijo v dve manjši škatli.
 
-Na koncu imaš štiri škatle, v vsaki po 23 rokavic, iz vsakega para ena. Nobeni dve škatli nista nujno enaki. Analogija ima mejo: kopija in izvirnik po prekrižanju nista več povsem enaka, ker si je le en od njiju zamenjal košček.
+Na koncu imaš štiri škatle, v vsaki po 23 rokavic, iz vsakega para ena. Nobeni dve škatli nista nujno enaki. Analogija ima mejo: kopija in izvirnik po prekrižanju nista več povsem enaka, ker si je le eden od njiju zamenjal košček.
 
 ## Drugače: Bolj natančno
 

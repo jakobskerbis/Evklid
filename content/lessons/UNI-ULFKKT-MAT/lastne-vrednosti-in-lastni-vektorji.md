@@ -10,7 +10,7 @@ Matrika $A$ velikosti $n \times n$ predstavlja linearno preslikavo: vektor $\vec
 Ko poznamo lastne vektorje in lastne vrednosti, postane zapleten problem preprost: v bazi iz lastnih vektorjev je matrika **diagonalna**, z diagonalno matriko pa računamo skoraj tako lahko kot s števili. Zato se lastne vrednosti pojavijo povsod:
 
 - v **kemiji**: energije molekulskih orbital (Hücklova metoda) in nihajne frekvence molekul so lastne vrednosti matrik,
-- v **biologiji**: dolgoročna rast populacije je največja lastna vrednost Lesliejeve matrike, ravnotežje Markovske verige je lastni vektor za lastno vrednost $1$,
+- v **biologiji**: dolgoročni faktor rasti populacije je največja lastna vrednost Lesliejeve matrike, ravnotežje markovske verige je lastni vektor za lastno vrednost $1$,
 - v **tehniki**: lastne frekvence nihanja zgradb in strojev, glavne napetosti v nosilcu,
 - v **statistiki**: metoda glavnih komponent iz lastnih vektorjev kovariančne matrike,
 - pri **sistemih diferencialnih enačb** $\dot{\vec{x}} = A\vec{x}$, ki opisujejo kemijsko kinetiko in farmakokinetiko.
@@ -55,7 +55,7 @@ Determinanta je $4 - 4 = 0$, zato je ena lastna vrednost $0$. Sled je $5$, zato 
 
 1. Izračunaj karakteristični polinom $\det(A - \lambda I)$.
 2. Poišči njegove ničle $\lambda_1, \lambda_2, \dots$
-3. Za vsako $\lambda_k$ reši homogeni sistem $(A - \lambda_kI)\vec{v} = \vec{0}$, na primer z Gaussovo eliminacijo. Ker je matrika singularna, ima sistem neskončno rešitev; zapiši jih s parametri.
+3. Za vsako $\lambda_k$ reši homogeni sistem $(A - \lambda_kI)\vec{v} = \vec{0}$, na primer z Gaussovo eliminacijo. Ker je matrika singularna, ima sistem neskončno mnogo rešitev; zapiši jih s parametri.
 4. Preveri: $A\vec{v} = \lambda\vec{v}$.
 
 Vse rešitve sistema v koraku 3 (skupaj z ničelnim vektorjem) tvorijo **lastni podprostor** $E_\lambda = \ker(A - \lambda I)$, jedro matrike $A - \lambda I$.
@@ -95,7 +95,7 @@ Tudi $\begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix}$ ima dvojno lastno vrednost $
 Je, saj je že diagonalna. Tu je $A - 2I$ ničelna matrika, zato je vsak neničelni vektor lastni in $\dim E_2 = 2$: geometrična večkratnost je enaka algebraični. Odloča razsežnost $E_\lambda$, ne večkratnost ničle.
 :::
 
-**8. Zakaj je diagonalizacija uporabna.** Potence: $A^k = PD^kP^{-1}$, kjer je $D^k$ diagonalna z elementi $\lambda_i^k$. Podobno za sistem diferencialnih enačb $\dot{\vec{x}} = A\vec{x}$: v novih spremenljivkah $\vec{y} = P^{-1}\vec{x}$ se sistem razpade na neodvisne enačbe $\dot{y}_i = \lambda_iy_i$ z rešitvami $y_i = y_i(0)e^{\lambda_it}$. Lastne vrednosti torej povedo, kako hitro posamezne »komponente« rastejo ali pojemajo.
+**8. Zakaj je diagonalizacija uporabna.** Potence: $A^k = PD^kP^{-1}$, kjer je $D^k$ diagonalna z elementi $\lambda_i^k$. Podobno za sistem diferencialnih enačb $\dot{\vec{x}} = A\vec{x}$: v novih spremenljivkah $\vec{y} = P^{-1}\vec{x}$ sistem razpade na neodvisne enačbe $\dot{y}_i = \lambda_iy_i$ z rešitvami $y_i = y_i(0)e^{\lambda_it}$. Lastne vrednosti torej povedo, kako hitro posamezne »komponente« rastejo ali pojemajo.
 
 ## Rešeni primeri
 
@@ -181,7 +181,7 @@ $p_A(\lambda) = \det(A - \lambda I)$; diagonalizabilna $\iff$ za vsako $\lambda$
 - Vsota lastnih vrednosti je sled, produkt je determinanta; trikotna matrika ima lastne vrednosti na diagonali.
 - Diagonalizacija $A = PDP^{-1}$: stolpci $P$ so lastni vektorji, $D$ ima lastne vrednosti na diagonali; mogoča natanko pri $n$ linearno neodvisnih lastnih vektorjih.
 - Različne lastne vrednosti ali simetrična matrika zagotavljajo diagonalizabilnost; simetrična: $A = QDQ^T$ z ortogonalno $Q$.
-- Uporaba: $A^k = PD^kP^{-1}$, sistemi $\dot{\vec{x}} = A\vec{x}$, ravnotežja Markovskih verig.
+- Uporaba: $A^k = PD^kP^{-1}$, sistemi $\dot{\vec{x}} = A\vec{x}$, ravnotežja markovskih verig.
 
 ## Za izpit
 
@@ -252,7 +252,7 @@ Pri negativni lastni vrednosti bi se vektor na svoji premici obrnil, pri lastni 
 
 **Kemometrija.** Kovariančna matrika spektrov (npr. bližnjih infrardečih pri stotinah valovnih dolžin) je simetrična. Njeni ortogonalni lastni vektorji so **glavne komponente**, delež variance, ki ga pojasni $i$-ta komponenta, pa je $\frac{\lambda_i}{\operatorname{sl}(C)}$. Pogosto dve ali tri komponente ločijo vzorce po izvoru ali kakovosti.
 
-**Infrardeča spektroskopija.** Kvadrati nihajnih krožnih frekvenc molekule $\mathrm{CO_2}$ so lastne vrednosti matrike, ki povezuje sile med atomi z odmiki, lastni vektorji pa **normalni načini nihanja**: simetrično in asimetrično raztezanje ter upogibanje. Pas v IR spektru da le način, pri katerem se spreminja dipolni moment, zato simetrično raztezanje v IR ne vidimo.
+**Infrardeča spektroskopija.** Kvadrati nihajnih krožnih frekvenc molekule $\mathrm{CO_2}$ so lastne vrednosti matrike, ki povezuje sile med atomi z odmiki, lastni vektorji pa **normalni načini nihanja**: simetrično in asimetrično raztezanje ter upogibanje. Pas v IR spektru da le način, pri katerem se spreminja dipolni moment, zato simetričnega raztezanja v IR ne vidimo.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -295,14 +295,17 @@ Namesto štirih množenj matrik $2 \times 2$ smo potenco izračunali na števili
 
 ? Katera trditev o kvadratni matriki reda $n$ je vedno pravilna?
 - Vsaka matrika z realnimi elementi ima $n$ realnih lastnih vrednosti.
+~ Realna matrika ima lahko kompleksne lastne vrednosti, na primer matrika zasuka.
 + Matrika z $n$ različnimi lastnimi vrednostmi je diagonalizabilna.
 - Matrika z dvojno lastno vrednostjo ni diagonalizabilna.
+~ Odloča razsežnost lastnega podprostora: enotska matrika ima večkratno lastno vrednost $1$ in je diagonalna.
 > Lastni vektorji za različne lastne vrednosti so linearno neodvisni, zato tvorijo bazo. Matrika zasuka nima realnih lastnih vrednosti, matrika $I$ pa ima dvojno lastno vrednost $1$ in je diagonalna.
 
 ? Za vektor $\vec{v}$ velja $A\vec{v} = 3\vec{v}$. Čemu je enako $A^2\vec{v}$?
 - $6\vec{v}$
 ~ Lastna vrednost se pri potenci množi sama s sabo, ne podvoji: $3 \cdot 3$.
 - $3\vec{v}$
+~ To je $A\vec{v}$; pri $A^2\vec{v}$ matrika deluje dvakrat, zato faktor $3$ nastopi dvakrat.
 + $9\vec{v}$
 > $A^2\vec{v} = A(3\vec{v}) = 3A\vec{v} = 9\vec{v}$.
 

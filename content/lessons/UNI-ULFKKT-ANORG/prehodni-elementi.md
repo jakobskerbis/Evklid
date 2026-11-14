@@ -26,7 +26,7 @@ Primerjaj nekaj ionov, ki se pojavljajo v tej lekciji:
 
 Ali vidiš, kako se zadnji stolpec izračuna iz srednjih dveh? To je hitro pravilo: število elektronov $d$ v ionu = številka skupine $-$ oksidacijsko število. Za $\mathrm{Fe^{3+}}$: $8 - 3 = 5$, torej $d^5$.
 
-Natančno: naj bo M element d-bloka v skupini $G$ ($3 \le G \le 12$) z oksidacijskim številom $x \ge 1$ v ionu ali kompleksu. Potem ima M $G - x$ elektronov $d$. Dokaz: atom ima zunaj jedra plemenitega plina (v 6. periodi še polne podlupine $4f^{14}$) $G$ valenčnih elektronov $ns$ in $(n-1)d$ (tudi pri izjemah Cr in Cu, kjer se razporedijo drugače). V kationu se orbitala $ns$ dvigne nad $(n-1)d$, zato odide najprej; preostalih $G - x$ elektronov je v orbitalah $d$.
+Natančno: naj bo M element d-bloka v skupini $G$ ($3 \le G \le 12$) z oksidacijskim številom $x \ge 1$ v ionu ali kompleksu. Potem ima M $G - x$ elektronov $d$. Dokaz: atom ima zunaj jedra plemenitega plina (v 6. periodi še polne podlupine $4f^{14}$) $G$ valenčnih elektronov $ns$ in $(n-1)d$ (tudi pri izjemah Cr in Cu, kjer se razporedijo drugače). V kationu se orbitala $ns$ dvigne nad $(n-1)d$, zato se najprej izprazni; preostalih $G - x$ elektronov je v orbitalah $d$.
 
 **3. Mnogo oksidacijskih števil.** Pri kalciju sta po energiji dostopna le dva elektrona $4s$. Tretji bi prišel iz notranje lupine, kar stane ogromno energije. Pri prehodnih elementih sta $3d$ in $4s$ po energiji blizu, zato atom lahko odda različno število elektronov. Ionizacijske energije rastejo postopoma, brez velikega skoka.
 
@@ -135,7 +135,7 @@ $E_\text{foton} = \dfrac{hc}{\lambda}$, $\Delta_\mathrm{o} = N_\mathrm{A} \cdot 
 
 ### Primer 3 (težji): kako ioni železa katalizirajo reakcijo
 
-Reakcija $\mathrm{S_2O_8^{2-} + 2\,I^- \rightarrow 2\,SO_4^{2-} + I_2}$ je počasna, ker se odbijata dva negativna iona. Malo $\mathrm{Fe^{2+}}$ jo močno pospeši. Pokaži, da sta obe stopnji s $\mathrm{Fe}$ termodinamsko ugodni, da se železo obnovi in da se $\Delta G^\circ$ stopenj sešteje v $\Delta G^\circ$ celotne reakcije. Kakšen pogoj mora izpolniti $E^\circ$ para, ki naj bi deloval enako kot železo, in ali bi ga izpolnil par $\mathrm{Cr^{3+}/Cr^{2+}}$?
+Reakcija $\mathrm{S_2O_8^{2-} + 2\,I^- \rightarrow 2\,SO_4^{2-} + I_2}$ je počasna, ker se odbijata dva negativna iona. Malo $\mathrm{Fe^{2+}}$ jo močno pospeši. Pokaži, da sta obe stopnji z $\mathrm{Fe}$ termodinamsko ugodni, da se železo obnovi in da se $\Delta G^\circ$ stopenj sešteje v $\Delta G^\circ$ celotne reakcije. Kakšen pogoj mora izpolniti $E^\circ$ para, ki naj bi deloval enako kot železo, in ali bi ga izpolnil par $\mathrm{Cr^{3+}/Cr^{2+}}$?
 
 **Podatki:** $E^\circ(\mathrm{S_2O_8^{2-}/SO_4^{2-}}) = 2{,}01\,\mathrm{V}$, $E^\circ(\mathrm{Fe^{3+}/Fe^{2+}}) = 0{,}77\,\mathrm{V}$, $E^\circ(\mathrm{I_2/I^-}) = 0{,}54\,\mathrm{V}$, $E^\circ(\mathrm{Cr^{3+}/Cr^{2+}}) = -0{,}41\,\mathrm{V}$, $F = 96\,485\,\mathrm{C/mol}$
 **Iščemo:** $E^\circ_\text{celice}$ in $\Delta G^\circ$ obeh stopenj, neto reakcijo in pogoj za katalizator
@@ -182,11 +182,11 @@ $\Delta_\mathrm{o} \approx 149{,}6\,\mathrm{kJ/mol}$, manj kot pri $\mathrm{Ti^{
 
 ## Pogoste napake
 
-- **"$\mathrm{Fe^{2+}}$ je $[\mathrm{Ar}]\,3d^4\,4s^2$."** Pri tvorbi kationa atom najprej odda elektrone $4s$, ne $3d$. Pravilno: $\mathrm{Fe^{2+}}$ je $[\mathrm{Ar}]\,3d^6$.
-- **"Ion je obarvan, ker absorbira barvo, ki jo vidimo."** Vidimo preostanek bele svetlobe, torej komplementarno barvo. Modri $\mathrm{Cu^{2+}}$ vsrkava rdečo.
-- **"Vsaka spojina prehodne kovine je obarvana."** Ioni $d^0$ in $d^{10}$ nimajo prehodov d–d, zato so $\mathrm{Zn^{2+}}$, $\mathrm{Sc^{3+}}$ in $\mathrm{TiO_2}$ brezbarvni oz. beli. Barva $d^0$ oksoanionov ($\mathrm{MnO_4^-}$) izvira iz prenosa naboja.
-- **"Najvišje oksidacijsko število je vedno številka skupine."** Velja le do mangana. Za železo ($8$. skupina) $+8$ v običajni kemiji ne nastopa.
-- **"Katalizator premakne ravnotežje k produktom."** Katalizator zniža aktivacijsko energijo za obe smeri enako. Ravnotežje se doseže hitreje, njegova lega ostane enaka.
+- **»$\mathrm{Fe^{2+}}$ je $[\mathrm{Ar}]\,3d^4\,4s^2$.«** Pri tvorbi kationa atom najprej odda elektrone $4s$, ne $3d$. Pravilno: $\mathrm{Fe^{2+}}$ je $[\mathrm{Ar}]\,3d^6$.
+- **»Ion je obarvan, ker absorbira barvo, ki jo vidimo.«** Vidimo preostanek bele svetlobe, torej komplementarno barvo. Modri $\mathrm{Cu^{2+}}$ vsrkava rdečo.
+- **»Vsaka spojina prehodne kovine je obarvana.«** Ioni $d^0$ in $d^{10}$ nimajo prehodov d–d, zato so $\mathrm{Zn^{2+}}$, $\mathrm{Sc^{3+}}$ in $\mathrm{TiO_2}$ brezbarvni oz. beli. Barva $d^0$ oksoanionov ($\mathrm{MnO_4^-}$) izvira iz prenosa naboja.
+- **»Najvišje oksidacijsko število je vedno številka skupine.«** Velja le do mangana. Za železo ($8$. skupina) $+8$ v običajni kemiji ne nastopa.
+- **»Katalizator premakne ravnotežje k produktom.«** Katalizator zniža aktivacijsko energijo za obe smeri enako. Ravnotežje se doseže hitreje, njegova lega ostane enaka.
 
 ## Povzetek
 
@@ -195,7 +195,7 @@ $\Delta_\mathrm{o} \approx 149{,}6\,\mathrm{kJ/mol}$, manj kot pri $\mathrm{Ti^{
 - Veliko oksidacijskih števil, ker sta $3d$ in $4s$ po energiji blizu; najvišje število raste do Mn ($+7$), nato pada.
 - Navzdol po skupini so visoka števila stabilnejša (obratno kot v p-bloku).
 - Barva: ligandi razcepijo orbitale $d$ za $\Delta_\mathrm{o}$; vsrka se foton $E = hc/\lambda$, vidimo komplementarno barvo; $d^0$ in $d^{10}$ sta brezbarvna (razen prenosa naboja).
-- Kataliza: menjava oksidacijskega števila (homogena, $\mathrm{Fe^{2+}/Fe^{3+}}$, $\mathrm{V_2O_5}$) in adsorpcija na površino (heterogena, Fe, Ni, Pt).
+- Kataliza: menjava oksidacijskega števila ($\mathrm{Fe^{2+}/Fe^{3+}}$ v raztopini, $\mathrm{V_2O_5}$) in adsorpcija na površino (heterogena, Fe, Ni, Pt).
 - Katalizator zniža aktivacijsko energijo, ne spremeni ravnotežja.
 
 ## Za izpit
@@ -256,13 +256,13 @@ Zakaj kalcij ostane pri $+2$, mangan pa ne? Poglej zaporedne ionizacijske energi
 1. Pri Ca je $I_3$ več kot štirikrat večja od $I_2$: tretji elektron je iz notranje lupine $3p$. Energija mreže ali hidratacije tega ne pokrije, zato $\mathrm{Ca^{3+}}$ ne nastane.
 2. Pri Mn je $I_3$ le približno dvakrat večja od $I_2$: tretji elektron je še vedno valenčni elektron $3d$.
 3. Pri Mn naraščanje ostane zmerno vse do sedmega elektrona, potem pride skok (notranja lupina). Zato je najvišje število $+7$.
-4. Visokih ionov kot $\mathrm{Mn^{7+}}$ v resnici ni. Visoka števila so stabilna le v kovalentnih oksoanionih, kot je $\mathrm{MnO_4^-}$, kjer kisik "deli" naboj.
+4. Visokih ionov kot $\mathrm{Mn^{7+}}$ v resnici ni. Visoka števila so stabilna le v kovalentnih oksoanionih, kot je $\mathrm{MnO_4^-}$, kjer kisik »deli« naboj.
 
 ## Drugače: Bolj natančno
 
 **Jakost polja.** Velikost $\Delta_\mathrm{o}$ je odvisna od liganda (spektrokemijska vrsta: $\mathrm{I^-} < \mathrm{Cl^-} < \mathrm{H_2O} < \mathrm{NH_3} < \mathrm{CN^-}$), od oksidacijskega števila (višje število, večji razcep) in od periode ($4d$ in $5d$ imata večji razcep kot $3d$, zato so njihovi kompleksi skoraj vedno nizkospinski).
 
-**Izbirna pravila.** Prehodi d–d so v središčnosimetričnem oktaedru prepovedani po Laportovem pravilu (ne spremeni se parnost orbitale). Opazimo jih le šibko, ker vibracije za trenutek porušijo simetrijo. Zato so raztopine $\mathrm{Cu^{2+}}$ ali $\mathrm{Ti^{3+}}$ blede v primerjavi s $\mathrm{MnO_4^-}$, kjer je prehod s prenosom naboja dovoljen. Visokospinski $d^5$ ($\mathrm{Mn^{2+}}$) ima prehode še spinsko prepovedane, zato je komaj rožnat.
+**Izbirna pravila.** Prehodi d–d so v središčnosimetričnem oktaedru prepovedani po Laportovem pravilu (ne spremeni se parnost orbitale). Opazimo jih le šibko, ker vibracije za trenutek porušijo simetrijo. Zato so raztopine $\mathrm{Cu^{2+}}$ ali $\mathrm{Ti^{3+}}$ blede v primerjavi z $\mathrm{MnO_4^-}$, kjer je prehod s prenosom naboja dovoljen. Visokospinski $d^5$ ($\mathrm{Mn^{2+}}$) ima prehode še spinsko prepovedane, zato je komaj rožnat.
 
 **Sabatierjevo načelo.** Dober heterogeni katalizator veže reaktante ravno prav močno: dovolj, da jih aktivira, a ne premočno, sicer produkt ne odide s površine. Če vrišemo hitrost reakcije proti jakosti vezave za različne kovine, dobimo krivuljo v obliki vulkana; pri sintezi amoniaka sta blizu vrha Fe in Ru.
 
@@ -308,7 +308,7 @@ Zakaj kalcij ostane pri $+2$, mangan pa ne? Poglej zaporedne ionizacijske energi
 + $199\,\mathrm{kJ/mol}$
 - $3{,}31 \cdot 10^{-19}\,\mathrm{J}$
 ~ To je energija enega fotona. Za kJ/mol pomnoži z $N_\mathrm{A}$.
-> $\Delta_\mathrm{o} = \dfrac{0{,}1196\,\mathrm{J\,m/mol}}{6{,}00 \cdot 10^{-7}\,\mathrm{m}} \approx 199\,400\,\mathrm{J/mol} \approx 199\,\mathrm{kJ/mol}$. Vsrkana je oranžna, raztopina je modra.
+> $\Delta_\mathrm{o} = \dfrac{0{,}1196\,\mathrm{J\,m/mol}}{6{,}00 \cdot 10^{-7}\,\mathrm{m}} \approx 199\,300\,\mathrm{J/mol} \approx 199\,\mathrm{kJ/mol}$. Vsrkana je oranžna, raztopina je modra.
 
 :::simboli
 d | orbitale d | | | prehodni elementi polnijo orbitale (n − 1)d
