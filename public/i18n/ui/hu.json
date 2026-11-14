@@ -3016,7 +3016,7 @@
   "rast.byUse": "Használat forrás szerint",
   "rast.d1Col": "Másnap",
   "rast.qCol": "Kérdés naponta",
-  "rast.aiCol": "MI tanulónként",
+  "rast.aiCol": "MI tanulónként havonta",
   "orders.title": "Iskolai rendelések",
   "orders.empty": "Még nincs rendelés.",
   "orders.status": "Állapot",

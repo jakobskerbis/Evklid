@@ -3023,7 +3023,7 @@
   "rast.byUse": "Uso por origem",
   "rast.d1Col": "Dia seguinte",
   "rast.qCol": "Perguntas por dia",
-  "rast.aiCol": "IA por aluno",
+  "rast.aiCol": "IA por aluno por mês",
   "orders.title": "Encomendas de escolas",
   "orders.empty": "Ainda não há encomendas.",
   "orders.status": "Estado",

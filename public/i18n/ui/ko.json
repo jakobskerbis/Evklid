@@ -2992,7 +2992,7 @@
   "rast.byUse": "유입 경로별 사용",
   "rast.d1Col": "다음 날",
   "rast.qCol": "하루 질문 수",
-  "rast.aiCol": "학생당 AI",
+  "rast.aiCol": "학생당 월 AI",
   "orders.title": "학교 주문",
   "orders.empty": "아직 주문이 없습니다.",
   "orders.status": "상태",

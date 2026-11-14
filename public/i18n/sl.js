@@ -3355,7 +3355,7 @@ export default {
   "rast.byUse": "Uporaba po viru",
   "rast.d1Col": "Naslednji dan",
   "rast.qCol": "Vprašanj na dan",
-  "rast.aiCol": "AI na učenca",
+  "rast.aiCol": "AI na učenca na mesec",
   "orders.title": "Naročila šol",
   "orders.empty": "Še ni naročil.",
   "orders.status": "Stanje",

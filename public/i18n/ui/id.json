@@ -2992,7 +2992,7 @@
   "rast.byUse": "Penggunaan menurut sumber",
   "rast.d1Col": "Hari berikutnya",
   "rast.qCol": "Pertanyaan per hari",
-  "rast.aiCol": "AI per siswa",
+  "rast.aiCol": "AI per siswa per bulan",
   "orders.title": "Pesanan sekolah",
   "orders.empty": "Belum ada pesanan.",
   "orders.status": "Status",

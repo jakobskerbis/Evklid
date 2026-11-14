@@ -45,7 +45,8 @@ test("B1 uporaba po viru: aktivni, naslednji dan, vprašanja na dan, AI na učen
   assert.equal(ig.askerDays, 3);
   assert.equal(ig.questionsPerAskerDay, 2);
   assert.equal(ig.aiUsers, 2);
-  assert.equal(ig.aiEurPerUser, Math.round(((0.6 * EUR_PER_USD()) / 2) * 1000) / 1000);
+  // Prva poraba pred 5 dnevi (6 dni z današnjim): na mesec × 30/6, kot server/pilot.js.
+  assert.equal(ig.aiEurPerUserMonth, Math.round(((0.6 * EUR_PER_USD()) / 2) * 5 * 1000) / 1000);
   const brez = r.usageBySource.find((u) => u.vir === "");
   assert.equal(brez.active, 1);
   assert.equal(brez.d1Eligible, 0, "star profil ni v kohorti");

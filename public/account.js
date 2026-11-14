@@ -1310,7 +1310,7 @@ function growthHtml(g, loc) {
     ${g.sources.length ? `<div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.visits")}${th("rast.profiles")}${th("rast.firstTask")}${th("rast.returned")}</tr></thead>
       <tbody>${g.sources.map((s) => `<tr><td>${esc(src(s.vir))}</td><td>${nf(s.visits)}</td><td>${nf(s.profiles)}</td><td>${nf(s.firstTask)}</td><td>${s.d7Eligible ? `${nf(s.d7Returned)} / ${nf(s.d7Eligible)}` : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
     ${g.usageBySource?.length ? `<h4>${esc(t("rast.byUse"))}</h4><div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.active")}${th("rast.d1Col")}${th("rast.qCol")}${th("rast.aiCol")}</tr></thead>
-      <tbody>${g.usageBySource.map((u) => `<tr><td>${esc(src(u.vir))}</td><td>${nf(u.active)}</td><td>${u.d1Eligible ? `${nf(u.d1Returned)} / ${nf(u.d1Eligible)}` : "–"}</td><td>${u.askerDays ? nf(u.questionsPerAskerDay) : "–"}</td><td>${u.aiUsers ? eurOf(u.aiEurPerUser) : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
+      <tbody>${g.usageBySource.map((u) => `<tr><td>${esc(src(u.vir))}</td><td>${nf(u.active)}</td><td>${u.d1Eligible ? `${nf(u.d1Returned)} / ${nf(u.d1Eligible)}` : "–"}</td><td>${u.askerDays ? nf(u.questionsPerAskerDay) : "–"}</td><td>${u.aiUsers ? eurOf(u.aiEurPerUserMonth) : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
     <p class="muted small">${esc(t("rast.note", { link: `\u2066${location.origin}/?vir=facebook\u2069` }))}</p>`;
 }
 

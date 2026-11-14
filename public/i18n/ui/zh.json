@@ -2992,7 +2992,7 @@
   "rast.byUse": "按来源的使用情况",
   "rast.d1Col": "次日",
   "rast.qCol": "每日提问",
-  "rast.aiCol": "每位学生的 AI",
+  "rast.aiCol": "每位学生每月的 AI",
   "orders.title": "学校订单",
   "orders.empty": "暂无订单。",
   "orders.status": "状态",
