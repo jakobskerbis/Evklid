@@ -91,6 +91,16 @@ Polinomi, racionalne funkcije, koreni, $\sin x$, $\cos x$, eksponentna in logari
 
 V simulaciji spodaj (»Limita in zveznost funkcije«) izberi funkcijo s skokom in zmanjšaj $h$ na $0{,}001$. Opazuj, ali se vrednost tik levo in tik desno od $x = 1$ ujemata. Nato isto naredi pri luknji.
 
+**8. Intervali zveznosti.** Funkcija je **zvezna na intervalu**, če je zvezna v vsaki točki tega intervala. Intervale, na katerih je dana funkcija zvezna, poiščemo v treh korakih:
+
+1. Zapišemo definicijsko območje: izločimo ničle imenovalca, pri sodem korenu zahtevamo nenegativen radikand, pri logaritmu pozitiven argument.
+2. Elementarna funkcija je zvezna na vsakem intervalu, ki v celoti leži v definicijskem območju.
+3. Če je funkcija podana z več predpisi, v vsaki točki stika po definiciji iz bloka 7 preverimo, ali se leva limita, desna limita in vrednost ujemajo.
+
+V krajišču, ki pripada intervalu, vrednost primerjamo le z enostransko limito z notranje strani intervala. Zato je $\sqrt{x}$ zvezna na $[0, \infty)$, čeprav leva limita v $0$ ne obstaja.
+
+Na primer $f(x) = \dfrac{x + 1}{x^2 - 4}$ ni definirana pri $x = -2$ in $x = 2$, zato je zvezna na intervalih $(-\infty, -2)$, $(-2, 2)$ in $(2, \infty)$. Ničla števca $x = -1$ ni nezveznost, tam je le $f(-1) = 0$.
+
 ## Rešeni primeri
 
 ### Primer 1: krajšanje pri $\frac{0}{0}$
@@ -155,7 +165,28 @@ Zveznost pri $t = 2$: $\lim\limits_{t \to 2^-} v(t) = \lim\limits_{t \to 2^+} v(
 5. Preizkus: $4 \cdot 2 - 3 = 5$, kar se ujema z levo limito.
 6. Odgovor: pri $k = 4$ ovojnica nima skoka in zvočnik ne poči.
 
-### Primer 4: zdaj ti
+### Primer 4: na katerih intervalih je funkcija zvezna
+
+Poišči intervale, na katerih je funkcija zvezna:
+
+$$f(x) = \begin{cases} x + 2, & x \le 0 \\[2mm] \dfrac{x + 6}{3 - x}, & x > 0 \end{cases}$$
+
+**Podatki:** $f(x) = x + 2$ za $x \le 0$, $f(x) = \dfrac{x + 6}{3 - x}$ za $x > 0$
+**Iščemo:** intervale, na katerih je $f$ zvezna
+
+:::formula
+Elementarna funkcija je zvezna na definicijskem območju. V točki stika $a$: $\lim\limits_{x \to a^-} f(x) = \lim\limits_{x \to a^+} f(x) = f(a)$.
+:::
+
+**Rešitev:**
+
+1. Levi del $x + 2$ je polinom, zato je $f$ zvezna na $(-\infty, 0)$.
+2. Desni del je racionalna funkcija. Imenovalec $3 - x$ je enak $0$ pri $x = 3$, ta točka pa leži v območju $x > 0$. Tam $f(3)$ ne obstaja, zato $f$ v $3$ ni zvezna. Na $(0, 3)$ in $(3, \infty)$ je zvezna.
+3. Pri $x \to 3$ gre števec proti $9$, imenovalec proti $0$: absolutne vrednosti funkcije rastejo čez vse meje, to je pol.
+4. Točka stika $x = 0$: vrednost $f(0) = 0 + 2 = 2$, leva limita je $2$, desna pa $\dfrac{0 + 6}{3 - 0} = 2$. Vse tri se ujemajo, zato je $f$ v $0$ zvezna.
+5. Odgovor: $f$ je zvezna na intervalih $(-\infty, 3)$ in $(3, \infty)$; edina nezveznost je pol pri $x = 3$.
+
+### Primer 5: zdaj ti
 
 Izračunaj $\lim\limits_{x \to 4} \dfrac{\sqrt{x} - 2}{x - 4}$.
 
@@ -195,6 +226,7 @@ Po krajšanju ostane $\dfrac{1}{\sqrt{x} + 2}$. Pri $x = 4$: $\dfrac{1}{2 + 2} =
 - $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$, $\lim\limits_{x \to \infty} \dfrac{1}{x} = 0$.
 - $f$ je zvezna v $a$, če $f(a)$ obstaja in je enaka limiti. Nezveznosti: luknja, skok, pol.
 - Elementarne funkcije so zvezne na definicijskem območju: tam je limita kar vrednost.
+- Intervali zveznosti: definicijsko območje razdeli v točkah, kjer funkcija ni definirana; pri funkciji z več predpisi preveri še točke stika.
 
 ## Za maturo
 
@@ -351,6 +383,16 @@ Zakaj je $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$ res, ne le v tabeli? Na e
 ~ Upoštevati moraš tudi vodilni koeficient imenovalca, $4$.
 > Delimo z $t^2$: $\dfrac{12 + \frac{5}{t^2}}{4 + \frac{5}{t^2}} \to \dfrac{12}{4} = 3$.
 
+? Na katerih intervalih je funkcija $f(x) = \dfrac{x + 1}{x^2 - 4x}$ zvezna?
+- $(-\infty, -1)$ in $(-1, \infty)$
+~ Ničla števca ni nezveznost: tam je le $f(-1) = 0$. Funkcija ni definirana v ničlah imenovalca.
+- $(-\infty, 4)$ in $(4, \infty)$
+~ Imenovalec je $x(x - 4)$, zato ima dve ničli: tudi pri $x = 0$ funkcija ni definirana.
++ $(-\infty, 0)$, $(0, 4)$ in $(4, \infty)$
+- Na vsem $\mathbb{R}$, ker je racionalna funkcija.
+~ Racionalna funkcija je zvezna le na definicijskem območju, ničle imenovalca vanj ne sodijo.
+> $x^2 - 4x = x(x - 4)$ je enak $0$ pri $x = 0$ in $x = 4$. Drugod je $f$ racionalna funkcija z neničelnim imenovalcem, zato je zvezna na $(-\infty, 0)$, $(0, 4)$ in $(4, \infty)$.
+
 <<RACUN
 limita: (x^2+2*x-3)/(x^2-1) | x | 1 | 2
 enako: (2*x^2-8)/(x^2-x-2) | 2*(x+2)/(x+1)
@@ -360,6 +402,10 @@ limita: sin(2*x)/x | x | 0 | 2
 limita: (sqrt(x+4)-2)/x | x | 0 | 1/4
 limita: 8*(sqrt(x+4)-2)/x | x | 0 | 2
 limita: 8*(sqrt(x+4)-2)/x | x | oo | 0
+resi: 3-x=0 | x | 3
+limita: (x+6)/(3-x) | x | 0 | 2
+resi: x^2-4*x=0 | x | 0, 4
+resi: x^2-4=0 | x | -2, 2
 >>
 
 :::simboli
