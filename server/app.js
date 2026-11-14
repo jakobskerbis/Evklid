@@ -26,6 +26,7 @@ import { mountPilotTasks, pilotMember } from "./pilot-naloge.js";
 import { mountOpinions } from "./pilot-mnenja.js";
 import { sourceVisitCounter, mountRast, setSource } from "./rast.js";
 import { mountOdpiranje } from "./odpiranje-delov.js";
+import { mountAnketa } from "./anketa-teden.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { mountVidnost } from "./vidnost.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
@@ -1837,6 +1838,7 @@ export function createApp(store, opts = {}) {
   const adminEmails = emailList(process.env.EVKLID_ADMIN_EMAILS); // isti razčlenjevalnik kot meja lastnika
   mountRast(app, store, { accounts: !!accounts, isLocalRequest, adminEmails });
   mountOdpiranje(app, store, { loadStudent, accounts: !!accounts, isLocalRequest, adminEmails }); // B2: odpiranje delov aplikacije (pilot)
+  mountAnketa(app, store, { loadStudent, accounts: accounts || null, isLocalRequest, adminEmails }); // B3: anketa po 7 dneh (pilot)
   mountSchoolOrders(app, store, { accounts: !!accounts, isLocalRequest }); // naročila šol in predračun (skrbnik)
   mountGradiva(app, store, { loadStudent, accounts, leagues }); // povzetek na eni strani, zvočni povzetek, delovni listi
   mountKviz(app, store, { loadStudent, leagues }); // kviz v živo za razred

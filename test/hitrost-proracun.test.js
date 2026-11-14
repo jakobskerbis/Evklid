@@ -27,7 +27,9 @@ const br = (u) => zlib.brotliCompressSync(fs.readFileSync(path.join(pub, u)), { 
 // 12. 11. 2026 (#602): namigi za razmerje a : b in količnik (5 novih ključev chk.* v
 // public/i18n/sl.js, +0,12 KB stisnjeno; prvo odprtje 820,98 → 821,10 KB, main po #605). Kviz in pilot pokažeta namig po kodi
 // iz sl.js, zato besedila ne moreta biti naložena pozneje.
-const BUDGET = { files: 140, totalKB: 2048, fileKB: 75 };
+// j 14. 11. 2026 (B3, #674, »Ok« na kartico): meja na datoteko 75 → 80 KB, ker je public/i18n/sl.js dosegel 74,96 KB in
+// anketa po 7 dneh (13 ključev, +0,2 KB stisnjeno) ne gre več noter.
+const BUDGET = { files: 140, totalKB: 2048, fileKB: 80 };
 
 test("prvo odprtje: velikost stisnjenih datotek v proračunu", () => {
   assert.ok(own.length <= BUDGET.files, `${own.length} datotek ob prvem odprtju (proračun ${BUDGET.files}); novo veliko kodo naloži z import() ob uporabi`);

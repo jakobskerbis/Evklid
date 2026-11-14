@@ -1254,12 +1254,18 @@ async function loadPilot(days = 30, school = "", focusId = "") {
   const seq = ++pilotSeq;
   const out = $("#pilot-out");
   if (!out) return;
-  let r, g, o;
+  let r, g, o, k;
   try {
     const qs = `days=${days}${school ? `&school=${school}` : ""}`;
     // Rast in vračanje (server/rast.js) je dodatek: če ne uspe, kartica pokaže vsaj merjenje v pilotu.
-    // B2: odpiranje delov aplikacije (server/odpiranje-delov.js), prav tako dodatek.
-    [r, g, o] = await Promise.all([api(`/api/admin/pilot?${qs}`), api(`/api/admin/rast?${qs}`).catch(() => null), api(`/api/admin/deli?${qs}`).catch(() => null)]);
+    // B2: odpiranje delov aplikacije (server/odpiranje-delov.js) in B3: anketa po 7 dneh (server/anketa-teden.js, vsi
+    // odgovori ne glede na obdobje) sta prav tako dodatka.
+    [r, g, o, k] = await Promise.all([
+      api(`/api/admin/pilot?${qs}`),
+      api(`/api/admin/rast?${qs}`).catch(() => null),
+      api(`/api/admin/deli?${qs}`).catch(() => null),
+      api("/api/admin/anketa-teden").catch(() => null),
+    ]);
     if (seq !== pilotSeq) return;
   } catch (err) {
     out.innerHTML = `<p class="muted">${esc(err.message)}</p>`;
@@ -1288,7 +1294,8 @@ async function loadPilot(days = 30, school = "", focusId = "") {
       <tbody>${[...r.rows].reverse().map((d) => `<tr><td>${esc(day(d.day))}</td><td>${nf(d.questions)}</td><td>${nf(d.askers)}</td><td>${eur(d.aiUsd * rate, 3)}</td><td>${nf(d.visits.starsi + d.visits.placaj)}</td></tr>`).join("")}</tbody></table></div>
     <p class="muted small">${esc(t("pilot.note"))}</p>
     ${g ? growthHtml(g, loc) : ""}
-    ${o ? deliHtml(o, loc) : ""}`;
+    ${o ? deliHtml(o, loc) : ""}
+    ${k ? anketaHtml(k, loc) : ""}`;
   // Kartica se izriše znova: fokus ostane na izbiri, ki jo je uporabnik spremenil (tipkovnica).
   if (focusId) setTimeout(() => $(`#${focusId}`)?.focus());
   const reload = (e) => loadPilot($("#pilot-days").value, $("#pilot-school")?.value || "", e.target.id);
@@ -1307,6 +1314,17 @@ function deliHtml(o, loc) {
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("deli.part")}${th("deli.opened")}${th("deli.returned")}</tr></thead>
       <tbody>${o.deli.map((d) => `<tr><td>${esc(Object.hasOwn(IME_DELA, d.del) ? t(IME_DELA[d.del]) : d.del)}</td><td>${d.odprli != null ? `${nf(d.odprli)} (${pc(d.delez)})` : "–"}</td><td>${d.odprli != null ? `${nf(d.vrnili)} (${pc(d.delezVrnili)})` : "–"}</td></tr>`).join("")}</tbody></table></div>
     <p class="muted small">${esc(t("deli.note"))} ${esc(t("deli.few", { n: o.minStudents }))}</p>`;
+}
+
+// Skrbnik, točka B3: anketa po 7 dneh (server/anketa-teden.js); vsote šele od k.min odgovorov naprej.
+function anketaHtml(k, loc) {
+  const nf = (x) => Number(x).toLocaleString(loc);
+  const OZNAKA = { zelo: "ank.a.zelo", malo: "ank.a.malo", da: "fb.yes", mogoce: "fb.maybe", ne: "fb.no" };
+  const vrstica = (q, v) => `<tr><th scope="row">${esc(t(q))}</th><td>${v ? Object.entries(v).map(([m, n]) => `${esc(t(OZNAKA[m]))} <b>${nf(n)}</b>`).join(" · ") : "–"}</td></tr>`;
+  return `<h4>${esc(t("ank.adm.title"))}</h4>
+    <ul class="pilot-sum"><li><b>${esc(typeof k.n === "number" ? nf(k.n) : k.n)}</b> ${esc(t("ank.adm.n"))}</li><li><b>${esc(typeof k.zavrnili === "number" ? nf(k.zavrnili) : k.zavrnili)}</b> ${esc(t("ank.adm.declined"))}</li></ul>
+    ${k.pomaga ? `<div class="pilot-scroll"><table class="table pilot-table"><tbody>${vrstica("ank.q.pomaga", k.pomaga)}${vrstica("ank.q.naprej", k.naprej)}${vrstica("ank.q.placal", k.placal)}${vrstica("ank.q.priporocil", k.priporocil)}</tbody></table></div>` : ""}
+    <p class="muted small">${esc(t("ank.adm.few", { min: k.min }))}</p>`;
 }
 
 // Skrbnik: rast in vračanje (server/rast.js): prva naloga v 24 urah, vrnitev naslednji dan in po 7 dneh, viri, tedni.
