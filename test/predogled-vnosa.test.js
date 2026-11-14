@@ -1,5 +1,5 @@
-// Predogled formul pod poljem za vnos (j, 12. 11. 2026: »Naj se ulomki, koreni itd. izpisujejo tudi v takih poljih«):
-// zapis s tipkovnice v odgovoru naloge in v vmesnih korakih se izriše pod poljem, vrednost polja ostane enaka,
+// Formule v poljih (j, 12. 11. 2026: »Naj se ulomki, koreni itd. izpisujejo tudi v takih poljih«; 14. 11.: »namesto
+// surovega zapisa, ne skupaj z njim«): odgovor naloge pokaže formulo v polju, vmesni koraki pod poljem; vrednost polja ostane enaka,
 // v kalkulatorju in klepetu (svoj izris) se ne pokaže. Chromium in WebKit, kolikor ju Playwright ima.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -65,7 +65,7 @@ test.after(async () => {
 });
 
 for (const [kind, browser] of browsers) {
-  test(`predogled pod poljem (${kind}, 360 px): ulomek in koren v odgovoru in vmesnih korakih, ne v kalkulatorju in klepetu`, async () => {
+  test(`formula v polju (${kind}, 360 px): ulomek v odgovoru namesto surovega zapisa, predogled pod vmesnimi koraki, ne v kalkulatorju in klepetu`, async () => {
     const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
     const p = await ctx.newPage();
     const errors = [];
@@ -78,32 +78,59 @@ for (const [kind, browser] of browsers) {
     await p.fill("#input", "(3)/(4)");
     const r = await p.evaluate(() => {
       const pv = (id) => {
-        const f = document.getElementById(id);
-        const n = (f.closest(".answer-row") || f).nextElementSibling;
+        const n = document.getElementById(id).nextElementSibling;
         return n?.classList.contains("vnos-predogled") && !n.hidden ? n : null;
       };
+      const f = document.getElementById("answer");
+      const o = document.querySelector(".answer-row .vnos-izris");
+      const a = f.getBoundingClientRect();
+      const b = o.getBoundingClientRect();
       return {
-        odgovor: pv("answer")?.querySelector("annotation")?.textContent,
-        koraki: [...(pv("koraki")?.querySelectorAll("annotation") || [])].map((a) => a.textContent),
-        vrednost: document.getElementById("answer").value,
-        kalk: !!pv("kalk"),
+        odgovor: o?.querySelector("annotation")?.textContent,
+        pod: document.querySelector(".answer-row").nextElementSibling?.className || "",
+        skrito: getComputedStyle(f).webkitTextFillColor,
+        znotraj: b.left >= a.left && b.right <= a.right && b.top >= a.top && b.bottom <= a.bottom,
+        koraki: [...(pv("koraki")?.querySelectorAll("annotation") || [])].map((x) => x.textContent),
+        vrednost: f.value,
+        kalk: !!pv("kalk") || !!document.querySelector(".sc .vnos-izris:not([hidden])"),
         klepet: !!pv("input"),
         sirina: document.scrollingElement.scrollWidth,
       };
     });
     assert.equal(r.odgovor, "\\displaystyle \\frac{3}{4}");
+    assert.ok(!/vnos-predogled/.test(r.pod), "pod poljem za odgovor ni več surovega zapisa in predogleda posebej");
+    assert.ok(/rgba\(0, 0, 0, 0\)|transparent/.test(r.skrito), `surovo besedilo polja je nevidno (${r.skrito})`);
+    assert.ok(r.znotraj, "izris je v polju");
     assert.deepEqual(r.koraki, ["\\displaystyle \\sqrt{2} + \\frac{\\square}{\\square}"]);
     assert.equal(r.vrednost, "(3)/(4)", "vrednost polja ostane, kot je napisana");
     assert.ok(!r.kalk && !r.klepet, "kalkulator in klepet imata svoj izris");
     assert.ok(r.sirina <= 360);
-    // Vrednost, ki jo nastavi koda (plošča Piši: prebrani zapis, Popravi), osveži predogled brez dogodka »input«.
+    // Vrednost, ki jo nastavi koda (plošča Piši: prebrani zapis, Popravi), osveži izris brez dogodka »input«.
     await p.evaluate(() => (document.getElementById("answer").value = "(1)/(2)"));
-    await p.waitForFunction(() => document.querySelector("form.answer-row + .vnos-predogled annotation")?.textContent.includes("\\frac{1}{2}"));
-    // Brez zapisa formule predogled izgine.
+    await p.waitForFunction(() => document.querySelector(".answer-row .vnos-izris annotation")?.textContent.includes("\\frac{1}{2}"));
+    // Brez zapisa formule izris izgine in polje spet kaže svoje besedilo.
     await p.fill("#answer", "0,75");
-    assert.equal(await p.evaluate(() => document.querySelector("form.answer-row").nextElementSibling.hidden), true);
-    await p.evaluate(() => (document.getElementById("answer").value = "(3)/(4)"));
-    await p.waitForFunction(() => !document.querySelector("form.answer-row + .vnos-predogled").hidden);
+    assert.deepEqual(await p.evaluate(() => [document.querySelector(".vnos-izris").hidden, document.getElementById("answer").className]), [true, ""]);
+    // Kazalec: π()/() s kazalcem v števcu, → skoči v imenovalec (ne obstane med »)/(«), ⌫ ga vrne v števec.
+    await p.fill("#answer", "π()/()");
+    await p.evaluate(() => document.getElementById("answer").setSelectionRange(2, 2));
+    await p.keyboard.type("1");
+    await p.keyboard.press("ArrowRight");
+    await p.keyboard.type("5");
+    const k = () => p.evaluate(() => [document.getElementById("answer").value, document.getElementById("answer").selectionStart]);
+    assert.deepEqual(await k(), ["π(1)/(5)", 7]);
+    assert.ok(await p.evaluate(() => !!document.querySelector(".vnos-izris .vnos-kazalka")), "kazalec je narisan v izrisu");
+    await p.keyboard.press("ArrowLeft");
+    await p.keyboard.press("Backspace");
+    assert.deepEqual(await k(), ["π(1)/(5)", 3], "⌫ na začetku imenovalca skoči na konec števca");
+    // Tap v izris postavi kazalec na najbližje mesto (pred π na začetek, v imenovalec za 5).
+    const o = await p.evaluate(() => JSON.parse(JSON.stringify(document.querySelector(".vnos-izris-v").getBoundingClientRect())));
+    await p.mouse.click(o.left + 1, o.top + o.height / 2);
+    assert.equal((await k())[1], 0);
+    await p.mouse.click(o.right - 1, o.bottom - 3);
+    assert.equal((await k())[1], 7);
+    await p.evaluate(() => document.getElementById("answer").setSelectionRange(5, 5)); // med »)/(«
+    await p.waitForFunction(() => [6, 3].includes(document.getElementById("answer").selectionStart));
     assert.deepEqual(errors, []);
     await ctx.close();
   });
