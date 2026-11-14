@@ -51,7 +51,7 @@ Sekanta ima s krožnico dve skupni točki, tangenta eno, mimobežnica nobene.
 
 Zadnji stolpec si predstavljaj s sliko: iz središča spustiš pravokotnico na premico. Če je ta krajša od polmera, premica gre skozi notranjost kroga in krožnico seka dvakrat. Če je enaka polmeru, se je le dotakne.
 
-**6. Tangenta.** Tangenta se krožnice dotakne v točki $T$ in je pravokotna na polmer $ST$. Vektor $\overrightarrow{ST}$ je zato normala tangente: skalarni produkt med $\overrightarrow{ST}$ in vsakim vektorjem vzdolž tangente je $0$.
+**6. Tangenta (višja raven).** Tangenta se krožnice dotakne v točki $T$ in je pravokotna na polmer $ST$. Vektor $\overrightarrow{ST}$ je zato normala tangente: skalarni produkt med $\overrightarrow{ST}$ in vsakim vektorjem vzdolž tangente je $0$.
 
 V simulaciji spodaj »Enačba krožnice« povleci središče $S$ v izhodišče in opazuj, kako se poenostavi zapis enačbe. Nato vklopi tangento in premikaj točko $T$: tangenta ostane pravokotna na polmer.
 

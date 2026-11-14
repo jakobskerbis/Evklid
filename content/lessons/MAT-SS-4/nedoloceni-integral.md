@@ -70,7 +70,7 @@ Zakaj pravilo za potence ne velja za $n = -1$?
 Ker bi v imenovalcu dobili $n + 1 = 0$. Funkcija $x^{-1} = \frac{1}{x}$ ima zato svoje pravilo: integral je $\ln\lvert x\rvert + C$.
 :::
 
-**Uvedba nove spremenljivke.** Odvajaj $(x^2 + 1)^4$ po verižnem pravilu: dobiš $4(x^2 + 1)^3 \cdot 2x$. Odvod notranje funkcije, $2x$, je »padel ven« kot faktor. Ko v integrandu vidiš notranjo funkcijo in zraven njen odvod, je to sled verižnega pravila. Postopek:
+**Uvedba nove spremenljivke (višja raven).** Odvajaj $(x^2 + 1)^4$ po verižnem pravilu: dobiš $4(x^2 + 1)^3 \cdot 2x$. Odvod notranje funkcije, $2x$, je »padel ven« kot faktor. Ko v integrandu vidiš notranjo funkcijo in zraven njen odvod, je to sled verižnega pravila. Postopek:
 
 1. Notranjo funkcijo poimenuješ z novo spremenljivko: $u = g(x)$.
 2. Odvajaš: $du = g'(x)\,dx$, in v integralu zamenjaš ves $x$ in $dx$.
@@ -123,7 +123,7 @@ $\int x^n\,dx = \dfrac{x^{n+1}}{n+1} + C$, $\int \sin x\,dx = -\cos x + C$, $\in
 5. Preverba: $\left(\dfrac{8}{3}x^{3/2}\right)' = \dfrac{8}{3} \cdot \dfrac{3}{2}\,x^{1/2} = 4\sqrt{x}$ ✓, $(3\cos x)' = -3\sin x$ ✓.
 6. Odgovor: integral je $\dfrac{8}{3}\,x\sqrt{x} + 3\cos x + 2e^x + C$.
 
-### Primer 3 (težji): nihanje kitarske strune
+### Primer 3 (težji, višja raven): nihanje kitarske strune
 
 Na počasnem posnetku se sredina kitarske strune giblje s hitrostjo $v(t) = 6\cos(3t)$, kjer je $v$ v $\mathrm{mm/s}$ in $t$ v sekundah. Ob $t = 0$ je struna v ravnovesni legi, odmik je $y(0) = 0$. Zapiši odmik $y(t)$ in izračunaj odmik ob $t = \dfrac{\pi}{6}\,\mathrm{s}$.
 
@@ -144,7 +144,7 @@ $y(t) = \int v(t)\,dt$, z novo spremenljivko $u = 3t$, $du = 3\,dt$
 6. Ob $t_1$: $y\!\left(\dfrac{\pi}{6}\right) = 2\sin\dfrac{\pi}{2} = 2$.
 7. Odgovor: odmik je $y(t) = 2\sin(3t)\,\mathrm{mm}$; ob $t = \dfrac{\pi}{6}\,\mathrm{s}$ je struna $2\,\mathrm{mm}$ od ravnovesne lege, kar je njen največji odmik.
 
-### Primer 4: zdaj ti
+### Primer 4 (višja raven): zdaj ti
 
 Izračunaj $\int 3x^2\,(x^3 - 2)^4\,dx$.
 
@@ -172,8 +172,8 @@ $\int u^4\,du = \dfrac{u^5}{5} + C$, torej $\dfrac{(x^3 - 2)^5}{5} + C$. Preverb
 - **Pozabljeni $C$.** Zapis $\int 2x\,dx = x^2$ izpusti vse premaknjene parabole. Nedoločeni integral je družina, zato vedno dodaj $+ C$. Konkretno vrednost $C$ določi šele dodaten podatek, kot je $y(0) = 0$.
 - **Odvajanje namesto integriranja.** Kdor pri $\int x^3\,dx$ napiše $3x^2$, je eksponent zmanjšal. Pri integriranju se eksponent *poveča* za $1$, nato deliš z novim eksponentom: $\dfrac{x^4}{4}$.
 - **Minus pri sinusu.** $\int \sin x\,dx = \cos x$ je narobe, ker je $(\cos x)' = -\sin x$. Pravilno: $-\cos x + C$. Preverba z odvajanjem to napako takoj ujame.
-- **Pozabljeni faktor pri notranji funkciji.** $\int \cos(3x)\,dx = \sin(3x) + C$ ne drži: odvod desne strani je $3\cos(3x)$. Ker je $dx = \dfrac{du}{3}$, je pravilno $\dfrac{\sin(3x)}{3} + C$.
-- **Integral produkta po faktorjih.** $\int 2x\,(x^2 + 1)^3\,dx$ ni $x^2 \cdot \dfrac{(x^2 + 1)^4}{4}$. Za produkt ni pravila »integriraj vsak faktor posebej«; tu pomaga nova spremenljivka $u = x^2 + 1$, rezultat je $\dfrac{(x^2 + 1)^4}{4} + C$.
+- **Pozabljeni faktor pri notranji funkciji (višja raven).** $\int \cos(3x)\,dx = \sin(3x) + C$ ne drži: odvod desne strani je $3\cos(3x)$. Ker je $dx = \dfrac{du}{3}$, je pravilno $\dfrac{\sin(3x)}{3} + C$.
+- **Integral produkta po faktorjih (višja raven).** $\int 2x\,(x^2 + 1)^3\,dx$ ni $x^2 \cdot \dfrac{(x^2 + 1)^4}{4}$. Za produkt ni pravila »integriraj vsak faktor posebej«; tu pomaga nova spremenljivka $u = x^2 + 1$, rezultat je $\dfrac{(x^2 + 1)^4}{4} + C$.
 
 ## Povzetek
 
@@ -181,7 +181,7 @@ $\int u^4\,du = \dfrac{u^5}{5} + C$, torej $\dfrac{(x^3 - 2)^5}{5} + C$. Preverb
 - Rezultat je družina funkcij, ki se razlikujejo za konstanto $C$; grafi so navpično premaknjeni, nakloni pri isti abscisi enaki.
 - Osnovni integrali: $\int x^n\,dx = \frac{x^{n+1}}{n+1} + C$ ($n \ne -1$), $\int \frac{1}{x}\,dx = \ln\lvert x\rvert + C$, $\int e^x\,dx = e^x + C$, $\int \cos x\,dx = \sin x + C$, $\int \sin x\,dx = -\cos x + C$.
 - Konstanto nesemo pred integral, vsoto integriramo po členih; za produkt takega pravila ni.
-- Nova spremenljivka: $u = g(x)$, $du = g'(x)\,dx$, integriraj po $u$, vrni se k $x$. Pri $u = kx$ deliš s $k$.
+- Nova spremenljivka (višja raven): $u = g(x)$, $du = g'(x)\,dx$, integriraj po $u$, vrni se k $x$. Pri $u = kx$ deliš s $k$.
 - Vedno preveri z odvajanjem.
 
 ## Drugače: Z analogijo
@@ -215,7 +215,7 @@ Enako pri kilometrskem števcu: hitrost avtomobila pove, koliko kilometrov doda�
 ~ $C$ ni napaka: brez nje manjkajo vse možne začetne glasnosti. Brez začetnega podatka je ne smemo izpustiti.
 > Hitrost pove le, kako se glasnost spreminja; od kod začne, določi konstanta $C$ (pri fade-inu iz uvoda $-40\,\mathrm{dB}$).
 
-? V katerem vrstnem redu izvedeš uvedbo nove spremenljivke? (A: izbereš $u = g(x)$; B: $dx$ izraziš z $du$; C: integriraš po $u$; D: namesto $u$ vstaviš $g(x)$.)
+? (višja raven) V katerem vrstnem redu izvedeš uvedbo nove spremenljivke? (A: izbereš $u = g(x)$; B: $dx$ izraziš z $du$; C: integriraš po $u$; D: namesto $u$ vstaviš $g(x)$.)
 - A, C, B, D
 ~ Integrirati po $u$ še ne moreš, dokler v integralu stoji $dx$. Najprej zamenjaj $x$ in $dx$.
 + A, B, C, D
@@ -223,7 +223,7 @@ Enako pri kilometrskem števcu: hitrost avtomobila pove, koliko kilometrov doda�
 ~ Če se vrneš k $x$ pred integriranjem, imaš spet prvotni integral in nisi nič pridobil.
 > Najprej novo spremenljivko in $du = g'(x)\,dx$, nato integral po $u$, na koncu nazaj k $x$.
 
-? Kaj se zgodi z rezultatom $\int \cos(kx)\,dx$, če $k$ podvojiš, z $2$ na $4$?
+? (višja raven) Kaj se zgodi z rezultatom $\int \cos(kx)\,dx$, če $k$ podvojiš, z $2$ na $4$?
 - Faktor pred sinusom se podvoji, z $2$ na $4$.
 ~ Tako bi bilo pri odvajanju: $\bigl(\sin(kx)\bigr)' = k\cos(kx)$. Pri integriranju s $k$ deliš.
 - Rezultat ostane $\sin(kx) + C$, spremeni se le $k$ v sinusu.

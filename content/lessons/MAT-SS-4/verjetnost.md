@@ -45,7 +45,7 @@ V kuhinji je verjetnost, da je v hladilniku mleko, $0{,}7$, da so jajca, pa $0{,
 Ne, verjetnost ne more biti večja od $1$. Dneve, ko sta v hladilniku oboje, smo šteli dvakrat. Odšteti moramo $P(A \cdot B)$; ta je vsaj $0{,}3$, saj mora biti vsota največ $1$.
 :::
 
-**4. Pogojna verjetnost.** Verjetnost dogodka $A$ ob pogoju, da se je $B$ že zgodil (z $P(B) > 0$), je
+**4. Pogojna verjetnost (višja raven).** Verjetnost dogodka $A$ ob pogoju, da se je $B$ že zgodil (z $P(B) > 0$), je
 $$P(A \mid B) = \frac{P(A \cdot B)}{P(B)}.$$
 Pogoj $B$ »zoži svet« na izide, v katerih se je $B$ zgodil, in med njimi gledamo, kolikšen delež jih je ugodnih za $A$.
 
@@ -55,7 +55,7 @@ Prvo jajce iz škatle je bilo celo. Kolikšna je zdaj verjetnost, da je celo tud
 $\frac{9}{11}$. V škatli je ostalo $11$ jajc, celih je še $9$. Pogoj »prvo je bilo celo« je spremenil vsebino škatle.
 :::
 
-**5. Verjetnost produkta.** Iz definicije pogojne verjetnosti sledi
+**5. Verjetnost produkta (višja raven).** Iz definicije pogojne verjetnosti sledi
 $$P(A \cdot B) = P(B) \cdot P(A \mid B).$$
 Verjetnost, da se zgodita oba dogodka, je verjetnost prvega, pomnožena z verjetnostjo drugega, ko je prvi že nastopil. To je pravilo za računanje po stopnjah (npr. dva izvlečka brez vračanja).
 
@@ -90,7 +90,7 @@ Na zgornji poti pomnožimo: $P = \frac{10}{12} \cdot \frac{9}{11} = \frac{90}{13
 
 Preveri: kolikšna je verjetnost, da sta obe jajci počeni? ($\frac{2}{12} \cdot \frac{1}{11} = \frac{2}{132} = \frac{1}{66}$.)
 
-**6. Neodvisna dogodka.** Dogodka $A$ in $B$ sta **neodvisna**, če informacija o enem ne spremeni verjetnosti drugega, torej $P(A \mid B) = P(A)$. Takrat velja
+**6. Neodvisna dogodka (višja raven).** Dogodka $A$ in $B$ sta **neodvisna**, če informacija o enem ne spremeni verjetnosti drugega, torej $P(A \mid B) = P(A)$. Takrat velja
 $$P(A \cdot B) = P(A) \cdot P(B).$$
 Primer: dva zaporedna meta kovanca. Pri vlečenju brez vračanja dogodka nista neodvisna.
 
@@ -119,7 +119,7 @@ $$P(A + B) = \frac{1}{2} + \frac{1}{2} - \frac{1}{3} = \frac{2}{3}.$$
 5. Preverimo z neposrednim štetjem: $A + B = \{2, 4, 5, 6\}$ ima $4$ izide, $\dfrac{4}{6} = \dfrac{2}{3}$. Ujemanje potrdi račun.
 6. Odgovor: verjetnost, da pade sodo število ali število, večje od $3$, je $\frac{2}{3}$.
 
-### Primer 2: produkt dogodkov brez vračanja
+### Primer 2 (višja raven): produkt dogodkov brez vračanja
 
 V košari je $5$ rdečih in $3$ zelena jabolka. Za zavitek brez gledanja vzameš dve. Kolikšna je verjetnost, da sta (a) obe rdeči, (b) različnih barv?
 
@@ -146,7 +146,7 @@ $P(A \cdot B) = P(A) \cdot P(B \mid A)$; za nezdružljiva dogodka $P(A + B) = P(
 
 Odgovor: obe jabolki sta rdeči z verjetnostjo $\frac{5}{14}$, različnih barv pa z verjetnostjo $\frac{15}{28}$.
 
-### Primer 3 (težji): pogojna verjetnost pri kontroli kakovosti
+### Primer 3 (težji, višja raven): pogojna verjetnost pri kontroli kakovosti
 
 Tovarna ima dva stroja. Stroj $A$ izdela $60\,\%$ vseh izdelkov, stroj $B$ pa $40\,\%$. Pri stroju $A$ je $2\,\%$ izdelkov pokvarjenih, pri stroju $B$ pa $5\,\%$. Naključno izberemo en izdelek in je pokvarjen. Kolikšna je verjetnost, da ga je izdelal stroj $A$?
 
@@ -175,19 +175,19 @@ $P(A \mid N) = \dfrac{0{,}012}{0{,}032} = \dfrac{12}{32} = \dfrac{3}{8} = 0{,}37
 ## Pogoste napake
 
 - **Pozabljen presek pri vsoti.** »Mleko $0{,}7$, jajca $0{,}6$, vsaj eno $1{,}3$.« Izidi, kjer se zgodita oba dogodka, so šteti dvakrat. Pri združljivih dogodkih odštej $P(A \cdot B)$; verjetnost nad $1$ je vedno znak te napake.
-- **Zamenjava $P(A \mid B)$ in $P(B \mid A)$.** »Stroj $A$ ima $2\,\%$ napak, torej je pokvarjen izdelek s stroja $A$ z verjetnostjo $0{,}02$.« To sta različni vprašanji z različnim pogojem. Popravek: najprej zapiši, kaj že veš (pogoj), in ta dogodek daj za navpičnico.
-- **Množenje, kot da sta dogodka neodvisna.** »Dve celi jajci: $\frac{10}{12} \cdot \frac{10}{12}$.« Brez vračanja se vsebina škatle po prvem jemanju spremeni. Popravek: drugi faktor je pogojna verjetnost $\frac{9}{11}$; $P(A) \cdot P(B)$ velja le za neodvisna dogodka.
-- **Zamenjava »nezdružljiva« in »neodvisna«.** »Ne moreta se zgoditi hkrati, torej se ne motita, torej sta neodvisna.« Ravno obratno: nezdružljiva dogodka (z verjetnostima nad $0$) sta močno odvisna, saj se drugi gotovo ne zgodi, če se zgodi prvi. Popravek: nezdružljivost preveri s $P(A \cdot B) = 0$, neodvisnost s $P(A \cdot B) = P(A) \cdot P(B)$.
-- **Napačen imenovalec pri pogojni verjetnosti.** Pri $P(A \mid B)$ učenec deli s številom vseh izidov. Pogoj pa zoži svet na $B$. Popravek: deli s $P(B)$ oziroma s številom izidov v $B$.
+- **Zamenjava $P(A \mid B)$ in $P(B \mid A)$ (višja raven).** »Stroj $A$ ima $2\,\%$ napak, torej je pokvarjen izdelek s stroja $A$ z verjetnostjo $0{,}02$.« To sta različni vprašanji z različnim pogojem. Popravek: najprej zapiši, kaj že veš (pogoj), in ta dogodek daj za navpičnico.
+- **Množenje, kot da sta dogodka neodvisna (višja raven).** »Dve celi jajci: $\frac{10}{12} \cdot \frac{10}{12}$.« Brez vračanja se vsebina škatle po prvem jemanju spremeni. Popravek: drugi faktor je pogojna verjetnost $\frac{9}{11}$; $P(A) \cdot P(B)$ velja le za neodvisna dogodka.
+- **Zamenjava »nezdružljiva« in »neodvisna« (višja raven).** »Ne moreta se zgoditi hkrati, torej se ne motita, torej sta neodvisna.« Ravno obratno: nezdružljiva dogodka (z verjetnostima nad $0$) sta močno odvisna, saj se drugi gotovo ne zgodi, če se zgodi prvi. Popravek: nezdružljivost preveri s $P(A \cdot B) = 0$, neodvisnost s $P(A \cdot B) = P(A) \cdot P(B)$.
+- **Napačen imenovalec pri pogojni verjetnosti (višja raven).** Pri $P(A \mid B)$ učenec deli s številom vseh izidov. Pogoj pa zoži svet na $B$. Popravek: deli s $P(B)$ oziroma s številom izidov v $B$.
 
 ## Povzetek
 
 - Dogodek je podmnožica izidov. Za nasprotni dogodek velja $P(\overline{A}) = 1 - P(A)$.
 - Vsota $A + B$ pomeni »$A$ ali $B$«, produkt $A \cdot B$ pa »$A$ in $B$«.
 - $P(A + B) = P(A) + P(B) - P(A \cdot B)$. Pri nezdružljivih dogodkih se zmanjša na $P(A) + P(B)$.
-- Pogojna verjetnost: $P(A \mid B) = \dfrac{P(A \cdot B)}{P(B)}$.
-- Produkt: $P(A \cdot B) = P(B) \cdot P(A \mid B)$. Pri neodvisnih dogodkih $P(A \cdot B) = P(A) \cdot P(B)$.
-- Pri nalogah s koraki si pomagaj z drevesom: verjetnosti vzdolž poti množimo, verjetnosti različnih poti, ki vodijo do istega dogodka, seštevamo.
+- Pogojna verjetnost (višja raven): $P(A \mid B) = \dfrac{P(A \cdot B)}{P(B)}$.
+- Produkt (višja raven): $P(A \cdot B) = P(B) \cdot P(A \mid B)$. Pri neodvisnih dogodkih $P(A \cdot B) = P(A) \cdot P(B)$.
+- (višja raven) Pri nalogah s koraki si pomagaj z drevesom: verjetnosti vzdolž poti množimo, verjetnosti različnih poti, ki vodijo do istega dogodka, seštevamo.
 
 ## Drugače: Na sliki
 
@@ -195,11 +195,11 @@ Predstavljaj si pravokotnik s ploščino $1$, ki predstavlja vse izide. Dogodek 
 
 - Vsota $A + B$ je ploščina, ki jo pokrivata skupaj. Če se liki prekrivata, prekrito območje pri seštevanju ploščin štejemo dvakrat, zato ga enkrat odštejemo: to je $P(A \cdot B)$.
 - Produkt $A \cdot B$ je ploščina prekritja.
-- Pogojna verjetnost $P(A \mid B)$: ostanemo samo znotraj lika $B$ in vprašamo, kolikšen del lika $B$ prekriva tudi $A$. To je ploščina prekritja, deljena s ploščino $B$.
+- (višja raven) Pogojna verjetnost $P(A \mid B)$: ostanemo samo znotraj lika $B$ in vprašamo, kolikšen del lika $B$ prekriva tudi $A$. To je ploščina prekritja, deljena s ploščino $B$.
 
-Pri računanju po stopnjah nariši **drevo**. Iz začetka potegni veje za možne izide prvega koraka in nanje napiši verjetnosti. Iz konca vsake veje potegni nove veje s pogojnimi verjetnostmi drugega koraka. Verjetnost cele poti dobiš tako, da verjetnosti na poti zmnožiš.
+(višja raven) Pri računanju po stopnjah nariši **drevo**. Iz začetka potegni veje za možne izide prvega koraka in nanje napiši verjetnosti. Iz konca vsake veje potegni nove veje s pogojnimi verjetnostmi drugega koraka. Verjetnost cele poti dobiš tako, da verjetnosti na poti zmnožiš.
 
-Predstavljaj si desko z vrstami žebljičkov (Galtonova deska), skozi katero padajo kroglice. Na vsakem žebljičku se kroglica odloči za levo ali desno. Vsak žebljiček je en dogodek v zaporedju, pot do posamezne košare pa je produkt takih dogodkov. Ker se kroglica na vsakem žebljičku odloča neodvisno, verjetnosti na poti množimo. Do iste košare vodi več različnih poti, njihove verjetnosti pa seštevamo (poti so med seboj nezdružljive). Pri treh vrstah in enaki verjetnosti levo/desno pridemo do skrajne košare le na eni poti: $\left(\dfrac{1}{2}\right)^3 = \dfrac{1}{8}$. V vsaki od dveh srednjih košar končamo po $3$ poteh, torej $\dfrac{3}{8}$. V simulaciji spodaj (»Verjetnost in relativna frekvenca«) lahko preveriš podobno: ko poskus ponoviš velikokrat, se relativna frekvenca približa izračunani verjetnosti.
+(višja raven) Predstavljaj si desko z vrstami žebljičkov (Galtonova deska), skozi katero padajo kroglice. Na vsakem žebljičku se kroglica odloči za levo ali desno. Vsak žebljiček je en dogodek v zaporedju, pot do posamezne košare pa je produkt takih dogodkov. Ker se kroglica na vsakem žebljičku odloča neodvisno, verjetnosti na poti množimo. Do iste košare vodi več različnih poti, njihove verjetnosti pa seštevamo (poti so med seboj nezdružljive). Pri treh vrstah in enaki verjetnosti levo/desno pridemo do skrajne košare le na eni poti: $\left(\dfrac{1}{2}\right)^3 = \dfrac{1}{8}$. V vsaki od dveh srednjih košar končamo po $3$ poteh, torej $\dfrac{3}{8}$. V simulaciji spodaj (»Verjetnost in relativna frekvenca«) lahko preveriš podobno: ko poskus ponoviš velikokrat, se relativna frekvenca približa izračunani verjetnosti.
 
 ## Drugače: Bolj natančno
 
@@ -208,10 +208,10 @@ $$|A + B| = |A| + |B| - |A \cdot B|,$$
 ker izide v preseku štejemo v $|A|$ in v $|B|$, torej dvakrat. Če vse delimo z $n$, dobimo
 $$P(A + B) = P(A) + P(B) - P(A \cdot B).$$
 
-**Zakaj je pogojna verjetnost takšna?** Pri klasični verjetnosti ima $B$ $|B|$ izidov. Če vemo, da se je $B$ zgodil, je prostor izidov zožen na $B$, ugodni pa so izidi iz $A \cdot B$. Zato
+**Zakaj je pogojna verjetnost takšna (višja raven)?** Pri klasični verjetnosti ima $B$ $|B|$ izidov. Če vemo, da se je $B$ zgodil, je prostor izidov zožen na $B$, ugodni pa so izidi iz $A \cdot B$. Zato
 $$P(A \mid B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(A \cdot B)}{P(B)}.$$
 
-**Neodvisnost.** Dogodka sta neodvisna natanko tedaj, ko je $P(A \mid B) = P(A)$, kar je po definiciji pogojne verjetnosti ekvivalentno $P(A \cdot B) = P(A) \cdot P(B)$. V Primeru 1 je $P(A \cdot B) = \dfrac{1}{3}$, medtem ko je $P(A) \cdot P(B) = \dfrac{1}{4}$. Ker se vrednosti razlikujeta, dogodka »sodo število« in »večje od $3$« nista neodvisna.
+**Neodvisnost (višja raven).** Dogodka sta neodvisna natanko tedaj, ko je $P(A \mid B) = P(A)$, kar je po definiciji pogojne verjetnosti ekvivalentno $P(A \cdot B) = P(A) \cdot P(B)$. V Primeru 1 je $P(A \cdot B) = \dfrac{1}{3}$, medtem ko je $P(A) \cdot P(B) = \dfrac{1}{4}$. Ker se vrednosti razlikujeta, dogodka »sodo število« in »večje od $3$« nista neodvisna.
 
 ## Preveri se
 
@@ -225,7 +225,7 @@ $$P(A \mid B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(
 ~ To je $P(A) + P(B)$. Produkt $A \cdot B$ pomeni »oba hkrati« in ne more biti verjetnejši od $A$ samega.
 > Iz $P(A + B) = P(A) + P(B) - P(A \cdot B)$ sledi $P(A \cdot B) = 0{,}5 + 0{,}4 - 0{,}6 = 0{,}3$.
 
-? Za dogodka $A$ in $B$ velja $P(A) = 0{,}6$, $P(B) = 0{,}4$ in $P(A \cdot B) = 0{,}12$. Kolikšna je $P(A \mid B)$?
+? (višja raven) Za dogodka $A$ in $B$ velja $P(A) = 0{,}6$, $P(B) = 0{,}4$ in $P(A \cdot B) = 0{,}12$. Kolikšna je $P(A \mid B)$?
 - $0{,}2$
 ~ To je $P(B \mid A) = \frac{0{,}12}{0{,}6}$: deljeno je z verjetnostjo napačnega dogodka. Pogoj je $B$, zato deli s $P(B)$.
 + $0{,}3$
@@ -233,7 +233,7 @@ $$P(A \mid B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(
 ~ To je $0{,}12 \cdot 0{,}4$. Pogojno verjetnost dobiš z deljenjem s $P(B)$, ne z množenjem.
 > $P(A \mid B) = \dfrac{P(A \cdot B)}{P(B)} = \dfrac{0{,}12}{0{,}4} = 0{,}3$.
 
-? Kuharska knjiga ima $20$ receptov:
+? (višja raven) Kuharska knjiga ima $20$ receptov:
 
 | | hiter | počasen |
 |---|---|---|
@@ -250,7 +250,7 @@ Naključno izbereš sladek recept. Kolikšna je verjetnost, da je hiter?
 ~ To je $\frac{9}{20}$, delež vseh hitrih receptov. Podatek, da je recept sladek, je prezrt.
 > Med $10$ sladkimi recepti je $6$ hitrih, zato $P(\text{hiter} \mid \text{sladek}) = \frac{6}{10} = 0{,}6$.
 
-? Iz škatle z $12$ jajci, od katerih sta $2$ počeni, vzameš dve. Zakaj verjetnost, da sta obe celi, ni $\frac{10}{12} \cdot \frac{10}{12}$?
+? (višja raven) Iz škatle z $12$ jajci, od katerih sta $2$ počeni, vzameš dve. Zakaj verjetnost, da sta obe celi, ni $\frac{10}{12} \cdot \frac{10}{12}$?
 - ker bi morali verjetnosti sešteti, ne zmnožiti
 ~ Seštevamo pri »ali« (nezdružljivi izidi). Tu sta obe jajci celi hkrati, to je produkt dogodkov.
 + ker po prvem celem jajcu v škatli ostane $11$ jajc in le $9$ celih
@@ -260,7 +260,7 @@ Naključno izbereš sladek recept. Kolikšna je verjetnost, da je hiter?
 ~ Množenje da pravi rezultat, če je drugi faktor pogojna verjetnost: $\frac{10}{12} \cdot \frac{9}{11}$. Isto dobiš s kombinacijami.
 > Prvo jemanje spremeni škatlo, zato je drugi faktor pogojna verjetnost $\frac{9}{11}$: $P = \frac{10}{12} \cdot \frac{9}{11} = \frac{15}{22}$.
 
-? Kruh z marmelado pade z mize z namazom navzdol z verjetnostjo približno $0{,}6$, padci so neodvisni. Kruh ti pade trikrat. Približno kolikšna je verjetnost, da vsaj enkrat pristane z namazom navzdol?
+? (višja raven) Kruh z marmelado pade z mize z namazom navzdol z verjetnostjo približno $0{,}6$, padci so neodvisni. Kruh ti pade trikrat. Približno kolikšna je verjetnost, da vsaj enkrat pristane z namazom navzdol?
 - približno $1{,}8$
 ~ To je $3 \cdot 0{,}6$. Verjetnost ne more biti večja od $1$: dogodki niso nezdružljivi, zato jih ne smeš kar sešteti.
 - približno $0{,}22$
