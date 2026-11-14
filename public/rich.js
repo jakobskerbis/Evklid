@@ -5,12 +5,75 @@ import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "./vodoravna-tabe
 
 const lib = (name) => globalThis[name];
 
+// Točka A3: besedilo od modela in učencev (in vse drugo, kar gre skozi renderRich) ne sme nalagati ničesar z drugih
+// strani in ne sme vsebovati obrazcev ali vrinjenih slogov (style z url() bi naložil zunanjo sliko, gumb ali obrazec
+// bi se pretvarjal, da je del aplikacije). Povezave ostanejo. KaTeX se vstavi šele po čiščenju (style v formulah ostane).
+const PREPOVEDANE_OZNAKE = ["form", "input", "button", "textarea", "select", "option", "style", "link", "meta", "base"];
+const PREPOVEDANI_ATRIBUTI = ["style", "srcset", "poster", "background", "formaction", "action"];
+const NASLOVI_SLIK = ["src", "href", "xlink:href"];
+// Slika ali vir je dovoljen samo z iste strani, kot data:image/… ali blob: (fotografija s kamere).
+function lokalno(v) {
+  const s = String(v || "").trim();
+  if (/^data:image\//i.test(s)) return true;
+  try {
+    const u = new URL(s, globalThis.location?.href);
+    return (u.protocol === "blob:" || u.protocol === location.protocol) && u.origin === location.origin;
+  } catch {
+    return false;
+  }
+}
+const escHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const XHTML = "http://www.w3.org/1999/xhtml";
+const MEDIJI = new Set(["img", "source", "video", "audio", "track", "image", "use", "feimage", "iframe", "embed", "object", "mglyph"]);
+// url(…) v atributu (fill, stroke, mask, filter, clip-path, marker-*, cursor …) naloži tuj dokument SVG; dovoljen je le
+// sklic znotraj strani url(#…). Enako image-set(…), image(…), src(…), cross-fade(…), element(…). Ubežne znake CSS
+// (u\rl, u\72 l) najprej razrešimo.
+const odCss = (v) =>
+  String(v)
+    .replace(/\\([0-9a-f]{1,6})[ \t\r\n\f]?/gi, (_, h) => String.fromCodePoint(Math.min(parseInt(h, 16), 0x10ffff) || 0xfffd))
+    .replace(/\\([\s\S])/g, "$1");
+const tujUrl = (v) => {
+  const s = odCss(v);
+  return /url\s*\(\s*['"]?\s*(?!#)/i.test(s) || /(?:image-set|image|src|cross-fade|element)\s*\(/i.test(s);
+};
+export function ocistiStrogo(html, purify = lib("DOMPurify")) {
+  const frag = purify.sanitize(html, { FORBID_TAGS: PREPOVEDANE_OZNAKE, FORBID_ATTR: PREPOVEDANI_ATRIBUTI, RETURN_DOM_FRAGMENT: true });
+  for (const el of frag.querySelectorAll("*")) {
+    const ime = el.localName.toLowerCase();
+    const medij = MEDIJI.has(ime);
+    // SVG in MathML (razen povezave <a>): naslov samo #… ali, pri slikah in virih, z iste strani.
+    const tuji = el.namespaceURI !== XHTML && ime !== "a";
+    for (const { name, value } of [...el.attributes]) {
+      const naslov = NASLOVI_SLIK.includes(name.toLowerCase());
+      if (naslov && medij && !lokalno(value)) el.removeAttribute(name);
+      else if (naslov && tuji && !medij && !String(value).trim().startsWith("#")) el.removeAttribute(name);
+      else if (tujUrl(value)) el.removeAttribute(name);
+    }
+  }
+  const ovoj = frag.ownerDocument.createElement("div");
+  ovoj.append(frag);
+  return ovoj.innerHTML;
+}
+
 // annotate(tex): klikljive formule (formula-info.js) ovijejo znane simbole in enote v \htmlData{fx=…};
 // renderMath(tex, display, false) jih izpusti (npr. v gumbih z možnostmi odgovora).
 export function createRenderer({ marked = lib("marked"), katex = lib("katex"), sanitize, annotate = null } = {}) {
-  const clean = sanitize || ((html) => lib("DOMPurify").sanitize(html));
+  const clean = sanitize || ((html) => ocistiStrogo(html));
   const plain = { throwOnError: false, strict: "ignore" };
   const trusted = { ...plain, trust: (c) => c.command === "\\htmlData" };
+  // D5: predpomnilnik izrisov KaTeX (isti TeX in iste možnosti → isti HTML). Med pretakanjem odgovora se iste formule
+  // izrišejo znova ob vsakem koraku; tako samo prvič. Neuspešen izris (throwOnError) se ne shrani.
+  const izrisi = new Map();
+  const NAJVEC_IZRISOV = 500;
+  const izris = (tex, opts, display) => {
+    const kljuc = `${opts === trusted ? "t" : "p"}${display ? "D" : "i"}${tex}`;
+    let h = izrisi.get(kljuc);
+    if (h !== undefined) return h;
+    h = katex.renderToString(tex, { ...opts, ...(opts === trusted ? { throwOnError: true } : {}), displayMode: display });
+    if (izrisi.size >= NAJVEC_IZRISOV) izrisi.delete(izrisi.keys().next().value);
+    izrisi.set(kljuc, h);
+    return h;
+  };
 
   // Označena formula, ki je KaTeX ne zna izrisati, se izriše neoznačena (nikoli rdeč surov LaTeX).
   // ctx: poved okoli formule (niz) ali { sentence, block }, da dvoumna črka dobi pomen iz besedila
@@ -22,16 +85,18 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
         const annotated = annotate(tex, o);
         if (annotated !== tex) {
           try {
-            return katex.renderToString(annotated, { ...trusted, throwOnError: true, displayMode: display });
+            return izris(annotated, trusted, display);
           } catch { /* spodaj brez oznak */ }
         }
       }
-      return katex.renderToString(tex, { ...plain, displayMode: display });
+      return izris(tex, plain, display);
     } catch {
       try {
-        return katex.renderToString(tex, { ...plain, displayMode: display });
+        return izris(tex, plain, display);
       } catch {
-        return tex;
+        // Ne ParseError (npr. RangeError ob zelo globokem gnezdenju): formula je bila skrita pred čiščenjem, zato
+        // gre surov TeX na stran samo kot izpisano besedilo (sicer bi bil v njem lahko poljuben HTML).
+        return escHtml(tex);
       }
     }
   }

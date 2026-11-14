@@ -150,3 +150,45 @@ test("Grafični po pripravi ob nedejavnosti: platno pravih mer in v barvah sloga
 });
 
 test.after(() => chromium?.close());
+
+test("Formule: zavihek Tekmovanja odpre list KEM-TEK, štirje zavihki stopnje so na telefonu brez pomikanja vstran", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p } = await phone(base);
+    try {
+      await p.evaluate(() => document.querySelector('#view-graph [data-calc-mode="formulas"]').click());
+      await p.waitForSelector("#view-graph .fm .fm-sec", { timeout: 60000 });
+      const tabs = await p.evaluate(() => [...document.querySelectorAll("#view-graph .fm-lvl [data-k]")].map((b) => b.dataset.k));
+      assert.deepEqual(tabs, ["OS", "SS", "TEK", "UNI"]);
+      await p.evaluate(() => {
+        document.querySelector('#view-graph .fm-subj [data-k="KEM"]').click();
+        document.querySelector('#view-graph .fm-lvl [data-k="TEK"]').click();
+      });
+      await p.waitForFunction(() => document.querySelector("#view-graph .fm-sec[id^=fm-KEM-TEK]"), null, { timeout: 60000 });
+      const r = await p.evaluate(() => {
+        const bar = document.querySelector("#view-graph .fm-bar");
+        const tek = document.querySelector('#view-graph .fm-lvl [data-k="TEK"]');
+        const b = tek.getBoundingClientRect();
+        const lvl = document.querySelector("#view-graph .fm-lvl");
+        const last = document.querySelector('#view-graph .fm-lvl [data-k="UNI"]').getBoundingClientRect();
+        return { lvlOver: lvl.scrollWidth - lvl.clientWidth, lastRight: last.right, active: tek.classList.contains("active"), barOver: bar.scrollWidth - bar.clientWidth, page: document.documentElement.scrollWidth, right: b.right, label: tek.textContent };
+      });
+      assert.ok(r.active, "zavihek TEK je izbran");
+      assert.equal(r.label, "Tekmovanja");
+      assert.ok(r.barOver <= 1 && r.lvlOver <= 1 && r.page <= 360 && r.right <= 360 && r.lastRight <= 360, `vrstica se ne pomika vstran: ${JSON.stringify(r)}`);
+      // dolg napis (npr. španski) na ozkem telefonu (320 px) se prelomi, nič se ne pomika vstran
+      await p.setViewportSize({ width: 320, height: 700 });
+      const l = await p.evaluate(() => {
+        document.querySelector('#view-graph .fm-lvl [data-k="SS"]').textContent = "Secundaria y bachillerato";
+        document.querySelector('#view-graph .fm-lvl [data-k="TEK"]').textContent = "Competiciones";
+        document.querySelector('#view-graph .fm-subj [data-k="MAT"]').textContent = "Mathématiques";
+        const fm = document.querySelector("#view-graph .fm");
+        const lvl = document.querySelector("#view-graph .fm-lvl");
+        const subj = document.querySelector("#view-graph .fm-subj");
+        return { subjOver: subj.scrollWidth - subj.clientWidth, fmOver: fm.scrollWidth - fm.clientWidth, lvlOver: lvl.scrollWidth - lvl.clientWidth, page: document.documentElement.scrollWidth };
+      });
+      assert.ok(l.subjOver <= 1 && l.fmOver <= 1 && l.lvlOver <= 1 && l.page <= 320, `dolg napis se prelomi: ${JSON.stringify(l)}`);
+    } finally {
+      await ctx.close();
+    }
+  });
+});

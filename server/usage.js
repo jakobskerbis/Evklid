@@ -60,6 +60,9 @@ export const NOTES = {
 
 // Razlogi, zakaj inštruktor ne odgovori (blockInfo). Enako besedilo je v public/i18n/sl.js pod istim ključem.
 // topupPrompt: true (poziv k dokupu), "birth" (dokup šele po vpisu datuma rojstva) ali false → pripona kode zavrnitve.
+// Današnji dan (UTC) kot razpon nad created_at: indeks (created_at) ali (student_id, created_at) se uporabi; z
+// date(created_at) = date('now') bi SQLite izračunal datum za vsako vrstico tabele (D2, meritev 13. 11.).
+const DANES = "created_at >= date('now') AND created_at < date('now', '+1 day')";
 const tpSuffix = (tp) => (tp === "birth" ? "Birth" : tp ? "Topup" : "");
 export const BLOCK_TEXT = {
   "block.daily": "Današnja vprašanja za inštruktorja so porabljena ({n} na dan). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
@@ -201,7 +204,8 @@ export class Usage {
     const now = Date.now();
     if (!this.shareCache || now - this.shareCache.at > SHARE_TTL_MS) {
       const ids = this.db
-        .prepare("SELECT DISTINCT student_id AS id FROM usage WHERE student_id IS NOT NULL AND kind NOT IN ('reuse','hint') AND created_at >= datetime('now','-30 days')")
+        // INDEXED BY (D1): samo zadnjih 30 dni, ne vsa zgodovina prek idx_usage_student.
+        .prepare("SELECT DISTINCT student_id AS id FROM usage INDEXED BY idx_usage WHERE student_id IS NOT NULL AND kind NOT IN ('reuse','hint') AND created_at >= datetime('now','-30 days')")
         .all()
         .map((r) => r.id);
       let sum = 0;
@@ -412,9 +416,10 @@ export class Usage {
     return studentId ? this.db.prepare(q).get(studentId).s : this.db.prepare(q).get().s;
   }
   // Število odgovorov zmogljivejšega modela danes; prekinjeni odgovori štejejo (sicer bi prekinitev obšla dnevno mejo).
+  // D2: »danes« kot razpon nad created_at (ne date(created_at) = …), da poizvedba uporabi indeks, ne bere cele tabele.
   deepToday(studentId, deepModel) {
     return this.db
-      .prepare("SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind IN ('chat', 'prekinjeno') AND model LIKE ? AND date(created_at) = date('now')")
+      .prepare(`SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind IN ('chat', 'prekinjeno') AND model LIKE ? AND ${DANES}`)
       .get(studentId, `%${String(deepModel).replace(/^claude-/, "").split("-")[0]}%`).n;
   }
   // Ali je imetnik aktivacijske kode dosegel skrito omejitev Opusa (danes ali ta mesec).
@@ -715,7 +720,7 @@ export class Usage {
   }
   summary() {
     const month = "u.created_at >= date('now','start of month')";
-    const today = "date(u.created_at) = date('now')";
+    const today = DANES.replaceAll("created_at", "u.created_at");
     const rows = this.db
       .prepare(
         `SELECT s.id, s.name, COUNT(CASE WHEN u.kind NOT IN ('reuse','hint') THEN 1 END) AS calls,

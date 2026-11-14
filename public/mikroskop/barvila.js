@@ -8,7 +8,7 @@ const norm = (v) => {
 };
 const HEM = norm([0.65, 0.704, 0.286]);
 const EOZ = norm([0.12, 0.9, 0.42]);
-const EOZ_G = norm([0.04, 0.72, 0.62]); // eozin v Giemsi: eritrociti lososovo rožnati
+const EOZ_G = norm([0.25, 0.72, 0.65]); // eozin in hemoglobin v Giemsi/May-Grünwaldu: eritrociti rožnato sivo-vijoličasti (izmerjeno na normalnem razmazu), zrnca eozinofilcev oranžno rožnata
 const MELANIN = norm([0.4, 0.55, 0.73]);
 const AZUR = norm([0.5, 0.86, 0.22]);
 const MET_MODRO = norm([0.86, 0.46, 0.12]);
@@ -24,7 +24,7 @@ const ORCEIN = norm([0.38, 0.86, 0.34]); // acetoorcein: kromosomi rdeče vijoli
 const RJAVKASTO = norm([0.28, 0.5, 0.82]); // obrus zoba ali kosti: rumeno rjav zaradi sipanja in organskih snovi
 
 export const BARVANJA = {
-  he: { ime: "hematoksilin in eozin (HE)", opis: "Jedra so modrovijolična, citoplazma in kolagen rožnata.", od: [HEM, EOZ, MELANIN], moc: 1.15 },
+  he: { ime: "hematoksilin in eozin (HE)", opis: "Jedra so modrovijolična, citoplazma in kolagen rožnata.", od: [HEM, EOZ, MELANIN], moc: 1.0 },
   giemsa: { ime: "barvilo po Giemsi", opis: "Jedra levkocitov so vijolična, eritrociti rožnati, citoplazma limfocitov svetlo modra.", od: [AZUR, EOZ_G, MET_MODRO], moc: 1.5 },
   jod: { ime: "Lugolova raztopina (jod)", opis: "Jod obarva jedra in citoplazmo rumenorjavo, škrob temno modro.", od: [JOD, SKROB_JOD, SIVO], moc: 1.3 },
   metilensko: { ime: "metilensko modro", opis: "Jedra so temno modra, citoplazma svetlo modra.", od: [MET_MODRO, SIVO, EOZ], moc: 1.5 },

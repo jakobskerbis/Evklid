@@ -332,3 +332,12 @@ test("drsnik: {izraz:.2} izpiše natanko 2 decimalki", () => {
   const r = renderDrawing("graf", "opis: pH je {2.3:.2}, c je {c:.1}, k je {c}.\nx: 0 .. 4\ny: 0 .. 4\ndrsnik: c | 1 .. 3 | 1 | 2 | c\nf: c");
   assert.match(r.html, /pH je 2,30, c je 2,0, k je 2\./);
 });
+
+test("stolpci: napis najvišjega stolpca ne prekrije imena osi (6000 pri osi do 6000)", () => {
+  const svg = renderDrawing("stolpci", "opis: Ostanek dolga po letih.\nos: ostanek dolga (€)\nkorak: 1000\nstolpec: 0 | 6000\nstolpec: 1 | 3000").html;
+  const ime = [...svg.matchAll(/<text[^>]*y="([\d.]+)"[^>]*>ostanek dolga \(€\)</g)].map((m) => +m[1]);
+  const vrh = [...svg.matchAll(/<text[^>]*y="([\d.]+)"[^>]*>6000</g)].map((m) => +m[1]).filter((y) => y > 0);
+  assert.equal(ime.length, 1, svg);
+  // Napis vrednosti (osnovnica) mora biti vsaj za višino črk (14) pod osnovnico imena osi.
+  assert.ok(vrh.length && Math.min(...vrh) - ime[0] >= 14, `ime osi y=${ime[0]}, napis 6000 y=${vrh}`);
+});

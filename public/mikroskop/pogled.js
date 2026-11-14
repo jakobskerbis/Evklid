@@ -2,7 +2,7 @@
 // največjih povečavah model molekul (sonda izmeri snov in membrano v središču). Brez DOM, a potrebuje upodobitev za sondo.
 import { matrikaBarvil, BARVANJA } from "./barvila.js";
 import { uniformeMolekul } from "./molekule-vrste.js";
-import { OBJEKTIVI, OKULAR, vidnoPolje, zamegljenost, svetlost, kontrast, TEM_LOCLJIVOST, SEM_LOCLJIVOST, utezModela } from "./optika.js";
+import { OBJEKTIVI, OKULAR, vidnoPolje, zamegljenost, svetlost, kontrast, lomSvetlobe, TEM_LOCLJIVOST, SEM_LOCLJIVOST, utezModela } from "./optika.js";
 
 export const ZACETNO = {
   nacin: "svetloba", // ali "sem" (vrstični) ali "tem" (presevni elektronski mikroskop)
@@ -20,6 +20,10 @@ export const ZACETNO = {
 export function povecava(s) {
   return s.nacin === "tem" || s.nacin === "sem" ? s.m : OBJEKTIVI[s.objektiv].m * OKULAR;
 }
+
+// Natančna koordinata (nm) za senčilnik molekul: po modulu 4000 nm zaradi natančnosti float32. Šiv (skok sveta molekul)
+// je pri x ≡ 2,22223 µm (mod 4 µm), ne pri okroglih številih, kjer se preparati pogosto začnejo.
+export const fino = (x) => ((((x * 1000 + 1777.77) % 4000) + 4000) % 4000);
 
 // Membrana in snov ob središču (za model molekul). Vrne uniforme ali null.
 function sondaModela(upo, c, m) {
@@ -47,10 +51,9 @@ function sondaModela(upo, c, m) {
   const ls = Math.hypot(smer[0], smer[1]);
   const smerL = ls > 0.5 ? 1 : 0;
   smer = ls > 1e-3 ? [smer[0] / ls, smer[1] / ls] : [1, 0];
-  const mod = (x) => ((((x * 1000) % 4000) + 4000) % 4000);
   return {
     sonda: o,
-    fine: [mod(c[0]), mod(c[1])],
+    fine: [fino(c[0]), fino(c[1])],
     stranA: strana(sa),
     stranB: strana(sb),
     mem,
@@ -61,6 +64,10 @@ function sondaModela(upo, c, m) {
     faza: o.r1 * 1000,
   };
 }
+
+// Kako močno preparat lomi svetlobo (optika.js lomSvetlobe), če preparat ne pove sam (vlaga): celice v vodi ali barvilu
+// pod krovnim steklom močno, posušen razmaz srednje, rezina v balzamu ali smoli malo.
+const VLAGA = { naravno: 1, jod: 1, metilensko: 0.9, orcein: 0.8, giemsa: 0.5, gram: 0.5, obrus: 0.4 };
 
 // Vrne { v (za narisi), mol (uniforme modela ali null), vp, sredisce }.
 export function izracunajPogled(upo, preparat, s, n, { hitro = false } = {}) {
@@ -106,6 +113,34 @@ export function izracunajPogled(upo, preparat, s, n, { hitro = false } = {}) {
       // šum: SEM pri šibkem snopu bolj šumi (manj elektronov na točko)
       sum: tem ? (mol ? 0.02 : 0.09) : sem ? 0.05 + 0.08 * (1 - s.zarnica) : 0.012,
       krog: !tem && !sem,
+      // pri majhni povečavi štirje vzorci na točko (glsl.js svetloba); med premikanjem (hitro) le eden
+      ss: !tem && !sem && !hitro && um > 0.8 ? 4 : 1,
+      lom: tem || sem ? 0 : lomSvetlobe(obj, s.dz, s.zaslonka, preparat.vlaga ?? VLAGA[preparat.barvanje] ?? 0.2, s.olje),
     },
   };
+}
+
+// Mreža k × k rež molekul (upodobi.js idMolekul, vrednost = reža + 1) in imena rež: odmik [dx, dy] v celicah mreže od
+// sredine do najbližje molekule, ki ni voda (do 2 celici globlje vanjo, da ni na sredini le njen rob), ali null, če je
+// na sredini že molekula ali v mreži ni nobene.
+export function najblizjaMolekula(id, k, reze) {
+  const ime = (i, j) => (i < 0 || j < 0 || i >= k || j >= k ? null : reze[id[j * k + i] - 1] || null);
+  let naj = null;
+  for (let j = 0; j < k; j++)
+    for (let i = 0; i < k; i++) {
+      const x = ime(i, j);
+      if (!x || x === "voda") continue;
+      const d = Math.hypot(i + 0.5 - k / 2, j + 0.5 - k / 2);
+      if (!naj || d < naj.d) naj = { i, j, d };
+    }
+  if (!naj || naj.d < 1) return null;
+  const ux = (naj.i + 0.5 - k / 2) / naj.d, uy = (naj.j + 0.5 - k / 2) / naj.d;
+  let dx = naj.i + 0.5 - k / 2, dy = naj.j + 0.5 - k / 2;
+  const prvo = ime(naj.i, naj.j);
+  for (let t = 1; t <= 2; t++) {
+    if (ime(Math.floor(naj.i + 0.5 + ux * t), Math.floor(naj.j + 0.5 + uy * t)) !== prvo) break;
+    dx += ux;
+    dy += uy;
+  }
+  return [dx, dy];
 }

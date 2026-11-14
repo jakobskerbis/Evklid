@@ -93,7 +93,7 @@ export function summaryParts(topicId) {
   return {
     topic: t,
     pathLabel: getPath(t.path)?.label || "",
-    status: lesson.status,
+    status: lesson.meta?.stanje || "osnutek",
     povzetek,
     authored: !!authored,
     branches: authored || items.slice(0, 8).map(branchOf),

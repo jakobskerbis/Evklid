@@ -27,39 +27,54 @@
 .uci-3d-sub { margin: 0 0 16px; }
 .uci-3d-area { margin-top: 24px; }
 .uci-3d-area > h2 { font-size: 1.15rem; margin: 0 0 10px; }
-/* Atlas med področji ima enak razmik kot področje (ne prilepljen pod mrežo nad sabo). */
-.uci-3d-area + .uci-3d-atlas { margin-top: 24px; }
 .uci-3d-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px; }
 .uci-3d-card { display: flex; flex-direction: column; gap: 4px; min-width: 0; min-height: 96px; padding: 14px 16px; color: var(--text); text-decoration: none; }
 .uci-3d-card:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
-.uci-3d-card:focus-visible, .uci-3d-atlas:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.uci-3d-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .uci-3d-grid > .uci-3d-card { margin: 0; }
 @media (max-width: 760px) { .uci-3d-card { min-height: 0; } }
 .uci-3d-card b { font-size: 1rem; line-height: 1.3; overflow-wrap: anywhere; }
 .uci-3d-card small { color: var(--muted); line-height: 1.4; }
 .uci-3d-card .uci-3d-subj { font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
-.uci-3d-card.mine { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
-.uci-3d-card.mine .uci-3d-subj { color: var(--accent); }
 
-/* Atlas telesa: kartica v barvah teme (--surface z rahlim odtenkom poudarka), ikona in gumb v --accent. */
-.uci-3d-atlas { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; margin-top: 8px; padding: 18px; text-decoration: none; color: var(--text); background: color-mix(in srgb, var(--accent) 6%, var(--surface)); }
-.uci-3d-atlas:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
-.uci-3d-atlas-ic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--accent); color: var(--accent-text); }
-.uci-3d-atlas-ic svg.i { width: 28px; height: 28px; }
-.uci-3d-atlas-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.uci-3d-atlas-txt .eyebrow { color: var(--muted); }
-.uci-3d-atlas-txt b { font-size: 1.15rem; }
-.uci-3d-atlas-txt span { color: var(--muted); line-height: 1.45; }
-.uci-3d-open { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px; border-radius: 999px; background: var(--accent); color: var(--accent-text); font-weight: 800; white-space: nowrap; }
-@media (max-width: 640px) {
-  .uci-3d-atlas { grid-template-columns: auto minmax(0, 1fr); }
-  .uci-3d-open { grid-column: 1 / -1; justify-content: center; }
+/* Drevo 3D sveta (public/3d/drevo.js): veje kot 3D ikone v slogu aplikacije na ploščici v barvi skupine, ime pod ikono,
+   število modelov v znački; liha zadnja veja na sredini, na širokem zaslonu do štiri v vrsto čez širino. */
+.uci-3d-pot { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; margin: 0 0 16px; color: var(--muted); }
+.uci-3d-pot > span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.uci-3d-korak { min-height: 40px; min-width: 40px; padding: 0 4px; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
+.uci-3d-korak:hover { text-decoration: underline; }
+.uci-3d-pot b { display: inline-flex; align-items: center; min-height: 40px; padding: 0 4px; color: var(--text); }
+.uci-3d-pot b:focus { outline: none; }
+[dir="rtl"] .uci-3d-loc { transform: scaleX(-1); }
+.uci-3d-drevo { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px 16px; }
+.uci-3d-veja {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 0 1 calc(50% - 8px); max-width: 300px; min-width: 0;
+  padding: 0; border: 0; background: none; color: var(--text); font: inherit; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
-/* Premično okno (okna.css): ozko okno na širokem zaslonu dobi isto postavitev kot telefon. */
-@container okno (max-width: 640px) {
-  .uci-3d-atlas { grid-template-columns: auto minmax(0, 1fr); }
-  .uci-3d-open { grid-column: 1 / -1; justify-content: center; }
+@media (min-width: 600px) { .uci-3d-veja { flex-basis: clamp(140px, calc((100% - 48px) / 4), 300px); } }
+@container okno (max-width: 600px) { .uci-3d-veja { flex-basis: calc(50% - 8px); } }
+.uci-3d-veja-ikona {
+  position: relative; display: block; width: 100%; aspect-ratio: 1; border-radius: 28%;
+  background: radial-gradient(70% 70% at 50% 42%, color-mix(in srgb, var(--veja) 20%, var(--surface)), color-mix(in srgb, var(--veja) 7%, var(--surface)) 72%);
+  border: 1.5px solid color-mix(in srgb, var(--veja) 34%, transparent); transition: transform 0.15s ease, border-color 0.15s ease;
 }
+.uci-3d-veja-ikona img { position: absolute; inset: 4%; width: 92%; height: 92%; object-fit: contain; }
+.uci-3d-veja:hover .uci-3d-veja-ikona { transform: translateY(-3px); border-color: var(--veja); }
+.uci-3d-veja:active .uci-3d-veja-ikona { transform: scale(0.96); }
+.uci-3d-veja:focus-visible { outline: none; }
+.uci-3d-veja:focus-visible .uci-3d-veja-ikona { outline: 2px solid var(--accent); outline-offset: 3px; }
+.uci-3d-veja-n {
+  position: absolute; top: 8px; inset-inline-end: 8px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; display: grid; place-items: center;
+  background: var(--veja); color: #0b0f16; font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.uci-3d-veja-ime { font-weight: 700; font-size: 1rem; line-height: 1.25; text-align: center; overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) { .uci-3d-veja-ikona { transition: none; } .uci-3d-veja:hover .uci-3d-veja-ikona, .uci-3d-veja:active .uci-3d-veja-ikona { transform: none; } }
+.uci-3d-mikroskop {
+  display: flex; align-items: center; justify-content: center; gap: 10px; width: fit-content; min-height: 44px; margin: 28px auto 0; padding: 8px 18px;
+  border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-weight: 700; text-decoration: none;
+}
+.uci-3d-mikroskop:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+
 @container okno (max-width: 480px) { .tb-link { flex: 1 1 100%; } }
 
 /* Atlas ali model čez cel zaslon: stran /3d v okvirju (isti izvor). Varno območje telefona doda podlaga, ker ga okvir

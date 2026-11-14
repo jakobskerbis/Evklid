@@ -59,7 +59,7 @@ export async function withAccounts(env, fn, extra = {}) {
     await call(/\/api\/auth\/verify\?token=[\w-]+/.exec(calls.filter((c) => c.host === "api.resend.com").at(-1).body.text)[0]);
     const kid = (await call("/api/students", { method: "POST", body: { name: "Lan", birth_year: YEAR - 13, consent: true } })).body;
     store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z'").run();
-    await fn({ call, store, kid, members, app, calls });
+    await fn({ call, store, kid, members, app, calls, base, jar });
   } finally {
     server.close();
     for (const [k, v] of Object.entries(prev)) {

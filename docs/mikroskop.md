@@ -78,6 +78,15 @@ Nad ~800 000× (TEM) se slika prelije v ponazoritev molekul, ki jih v izbranem p
   dedni zapis v virusu, arterija → elastična membrana …). Točke so izračunane z mrežo sond (256 × 256, korak 0,25 µm, pri
   virusih 4 nm) kot najbližje mesto, ki je vsaj 1 µm (virusi 20 nm) od roba snovi. Če se oblika preparata spremeni in točka
   ne ustreza več, mikroskop išče v njeni okolici (do 5 µm) in nato okoli sredine (do 100 µm).
+- Sredina pri atomih (j, 13. 11. 2026): ko je vidno polje manjše od 20 nm (nad ~8 000 000×) in je sredina v vodi, se ob
+  spremembi povečave preparat premakne na najbližjo molekulo v krogu ~30 nm (mreža ID 64 × 64 po 1 nm, `kMolekuli`,
+  `najblizjaMolekula`), npr. med filamenti miofibrile na miozin. Svet molekul je periodičen s 4 µm (`fino`, natančnost
+  float32); šiv je pri x ≡ 2,22223 µm, ne pri okroglih številih, čezenj se sredina ne premakne.
+- Hitrost: program molekul (~40 kB) se prevede v ozadju (KHR_parallel_shader_compile) ob prvem obisku TEM; sloj se riše
+  po pasovih (prvi pas 4 vrstice, nato ~25 ms na pas) in se sproti primeša (`uMolDo`), da telefon ne zamrzne in grafika
+  ne preseže časovne meje. Po izgubi grafike (`webglcontextlost`) se mikroskop obnovi sam.
+- Gladki ER (`S_GER`, 32): mreža cevk (premer ~45 nm) brez ribosomov, dve prepleteni izočrti šuma; največ v hepatocitih
+  (skupaj z glikogenom), v maščobnih celicah in enterocitih; membrana s citokromom P450.
 
 Viri: PDB 2HHB (hemoglobin), 1AO6 (albumin), 1IGT (mišji IgG2a), 1KX5 (nukleosom), 2MYS (miozin), 5VF3 (gp23 T4),
 6VXX (S SARS-CoV-2); Goodsell, *The Machinery of Life* (2009); Alberts, *Molecular Biology of the Cell*, 7. izd.

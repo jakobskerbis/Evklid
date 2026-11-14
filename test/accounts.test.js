@@ -863,7 +863,9 @@ test("aktivacijska koda: poln dostop za prve N računov, enkrat na račun", asyn
 });
 
 test("aktivacijska koda EVKLID3X: 3 meseci, zmogljivejši model največ Sonnet", async () => {
-  const cfg = promoConfig({});
+  // A2: brez EVKLID_PROMO_CODE koda ni aktivna; na Renderju jo vklopi EVKLID_PROMO_CODE=EVKLID3X.
+  assert.equal(promoConfig({}).code, null);
+  const cfg = promoConfig({ EVKLID_PROMO_CODE: "EVKLID3X" });
   assert.deepEqual([cfg.code, cfg.days, cfg.limit, cfg.maxModel], ["EVKLID3X", 90, 100, "sonnet"]);
   assert.equal(promoConfig({ EVKLID_PROMO_MODEL: "Opus" }).maxModel, null);
   const modes = [];
@@ -918,6 +920,7 @@ test("aktivacijska koda EVKLID3X: 3 meseci, zmogljivejši model največ Sonnet",
 
 test("aktivacijska koda: skrbnik vidi porabo in povezavo", async () => {
   process.env.EVKLID_ADMIN_EMAILS = "skrbnik@kod.si";
+  process.env.EVKLID_PROMO_CODE = "EVKLID3X"; // A2: koda je vklopljena samo z nastavitvijo
   try {
     await withServer(async ({ client, calls, store }) => {
       const a = client();
@@ -936,6 +939,7 @@ test("aktivacijska koda: skrbnik vidi porabo in povezavo", async () => {
     });
   } finally {
     delete process.env.EVKLID_ADMIN_EMAILS;
+    delete process.env.EVKLID_PROMO_CODE;
   }
 });
 

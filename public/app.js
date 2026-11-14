@@ -23,6 +23,7 @@ import { initSubjectSwitch } from "./subject-switch.js";
 import { initTextbook, showTextbook, openLesson, textbookBack, openTextbookLower, openLessonId } from "./textbook.js";
 import { loadLeague } from "./leagues.js";
 import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
+import { createIzrisBlokov, enIzrisNaSlicico } from "./izpis-toka.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
 import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
@@ -74,6 +75,7 @@ import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./
 import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
 import { initScan, showScan, leaveScan, scanBack, startPilotScan } from "./scan/scan.js";
 import { initPilot, loadPilot, showPilot, scanTask, isPilotMember } from "./pilot-naloge.js";
+import { initAnketa, preveriAnketo } from "./anketa-teden.js";
 import { initLab, showLab, labBack, openLabExperiment } from "./laboratorij.js";
 import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, UCI_TABS } from "./uci-se.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
@@ -271,6 +273,7 @@ function showView(name) {
     leaveUci(); // atlas ali model čez cel zaslon (3D svet)
   }
   syncHistory(name);
+  if (currentView === "chat" && name !== "chat" && !isFloating("chat")) leaveChat(); // odhod iz inštruktorja: od tu teče 10 min
   if (name !== currentView) prevView = currentView;
   currentView = name;
   syncCompetitionTab();
@@ -405,7 +408,10 @@ async function openStartScreen(z) {
   else showView(z.v);
 }
 document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden" && (currentView === "chat" || isFloating("chat"))) leaveChat();
   if (document.visibilityState === "hidden") return saveSnapshot();
+  // Vrnitev iz ozadja z odprtim inštruktorjem: pravilo »10 min zunaj« (freshChatIfStale) velja tudi tu (j, 14. 11. 2026).
+  if (currentView === "chat" || isFloating("chat")) freshChatIfStale();
   // Nameščena aplikacija, ki je v ozadju ostala odprta več kot 12 ur: Učna pot, kot ob novem odprtju.
   const installed = matchMedia("(display-mode: standalone)").matches || / EvklidApp\//.test(navigator.userAgent);
   // Tekmovanje z uro ali neposlano besedilo (klepet, odgovor) ostaneta na zaslonu.
@@ -413,8 +419,26 @@ document.addEventListener("visibilitychange", () => {
   if (installed && !busy && hiddenAt && Date.now() - hiddenAt > (ZACETEK?.MAX ?? Infinity) && state.student && currentView !== "path" && !document.body.classList.contains("auth-mode")) showView("path");
 });
 window.addEventListener("pagehide", saveSnapshot);
+// Točka B2 (pilot): odprtje dela aplikacije se zabeleži na strežniku (server/odpiranje-delov.js) največ enkrat na dan,
+// del in profil; strežnik hrani samo prvi in zadnji dan ter število dni. Brez povezave ali 5xx: poskusi ob naslednjem odprtju.
+const DEL_POGLEDA = { chat: "instruktor", topic: "vadnica", cards: "vadnica", exams: "vadnica", competition: "vadnica", games: "igre" };
+const odprtoDanes = new Set();
+let brezStetja = false; // zadnji zaslon in okna, obnovljena ob zagonu, niso odprtje (učenec jih ni odprl sam)
+function odprto(del) {
+  const id = state.student?.id;
+  if (!id || !del || brezStetja) return;
+  const k = `${id}:${del}:${new Date().toISOString().slice(0, 10)}`;
+  if (odprtoDanes.has(k)) return;
+  odprtoDanes.add(k);
+  const ne = () => odprtoDanes.delete(k);
+  fetch(`/api/students/${id}/odprto`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ del }), keepalive: true })
+    .then((r) => r.ok || r.status < 500 || ne()) // 4xx (npr. profil odprt drugje) se ne popravi s ponovitvijo
+    .catch(ne);
+}
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.
 function initView(name) {
+  odprto(DEL_POGLEDA[name]);
+  if (name === "chat") freshChatIfStale();
   if (name === "me") renderMe();
   if (name === "settings") {
     fillSettingsForm();
@@ -426,7 +450,10 @@ function initView(name) {
   if (name === "uci") showUci();
   if (name === "scan") showScan();
   if (name === "league") loadLeague(state.student.id);
-  if (name === "path") loadPath();
+  if (name === "path") {
+    loadPath();
+    preveriAnketo(); // B3: anketa po 7 dneh (public/anketa-teden.js)
+  }
   if (name === "competition") (regionalExams() ? loadExams() : loadCompetition());
   if (name === "exams") loadExams();
   if (name === "feedback") showFeedback();
@@ -589,6 +616,9 @@ function closeByEsc() {
   document.body.dispatchEvent(ev);
   return ev.defaultPrevented || sig() !== before;
 }
+// Telefon: spodnja vrstica je v postavitvi, tudi ko se na zaslonu za branje (klepet, tema, kalkulator) umakne. Takrat je
+// position: fixed (touch.css) in offsetParent je vedno null, zato beremo display.
+const tabbarShown = () => getComputedStyle($("#tabbar")).display !== "none";
 // En korak Nazaj: zapre najvišjo plast ali odpre pogled nad trenutnim. Vrne false, ko na Učni poti ni česa zapreti.
 function backStep(wasOverlay) {
   // Okna in meniji: Nazaj jih le zapre, pogled ostane.
@@ -618,8 +648,9 @@ function backStep(wasOverlay) {
     closePad();
     return true;
   }
+  // Kalkulator čez cel zaslon: najprej plast v njem (plošča funkcij ali konstant, meni vrstice grafa, povečan graf), nato okno.
   if (calcOverlayOpen()) {
-    closeCalcOverlay({ fromBack: true });
+    if (!calcBack()) closeCalcOverlay({ fromBack: true });
     return true;
   }
   if (cornerBack()) return true;
@@ -638,19 +669,22 @@ function backStep(wasOverlay) {
     startTour.end?.(); // Nazaj zapre vodič (kot Esc ali »Preskoči«)
     return true;
   }
-  if ($(".sidebar").classList.contains("open") && $("#toggle-sidebar").offsetParent && $("#tabbar").offsetParent) {
+  if ($(".sidebar").classList.contains("open") && $("#toggle-sidebar").offsetParent && tabbarShown()) {
     setSidebar(false); // seznam pogovorov na telefonu
     return true;
   }
+  // Plast v pogledu Kalkulator; šele za 3D in drugimi plastmi, ki ga prekrijejo.
+  if (currentView === "graph" && calcBack()) return true;
   // Podstran pogleda: lekcija → kazalo, poskus → seznam, igra → seznam iger …
   if (currentView === "uci" && uciBack({ textbookBack, labBack })) return true;
   if (currentView === "games" && gamesBack()) return true;
   if (currentView === "scan" && scanBack()) return true;
   if (closeByEsc()) return true;
   if (currentView === "path") return false;
-  const subMe = meView(currentView) && !["me", "graph"].includes(currentView);
-  // Telefon: s podstrani »Jaz« nazaj na »Jaz«. Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
-  const up = subMe && $("#tabbar").offsetParent ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
+  const subMe = meView(currentView) && currentView !== "me";
+  // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
+  // Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
+  const up = subMe && tabbarShown() ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
   if (up !== "path") {
     showView(up); // zapis v zgodovini doda showView (syncHistory)
     return true;
@@ -956,7 +990,9 @@ async function selectStudent(id) {
   sendOffline();
   state.conversationId = null;
   await loadConversations();
-  if (state.conversations.length) await openConversation(state.conversations[0].id);
+  // Nov pogovor ob odprtju (j 2026-11-14): zadnji pogovor samo, če je bil učenec v inštruktorju pred manj kot 10 min.
+  const keep = chatKeepId();
+  if (keep) await openConversation(keep, { mark: false });
   else renderEmptyChat();
   if (!$("#view-settings").hidden) fillSettingsForm();
   if (!$("#view-progress").hidden) loadProgress();
@@ -1084,7 +1120,9 @@ window.addEventListener("evklid:era", templeParts);
 function renderState(convState) {
   const s = state.student.settings;
   const subject = convState?.subject || s.subject;
-  const mode = convState?.mode || s.solving_mode;
+  // Izbira načina kaže nastavitev, ki jo spreminja, ne načina zadnjega odgovora (META): sicer je po
+  // zamenjavi v glavi spet pisalo »Vodenje«, čeprav je bila nastavitev že celotna rešitev (j 14. 11.).
+  const mode = s.solving_mode || "A";
   const program = isUni(s) ? programsCache().find((p) => p.id === s.study_program)?.label : null;
   // Predmet, način in letnik se zamenjajo kar v glavi (izbirni seznam), program je le napis.
   const pick = (key, label, options) =>
@@ -1170,10 +1208,69 @@ async function setChatFx(conv) {
 }
 const chatRich = (text) => withFormulaSubject(state.chatFx?.subject || state.student?.settings?.subject || "MAT", () => renderRich(text), state.chatFx?.symbols, topicScope(state.chatFx?.topic));
 
-async function openConversation(id) {
+// Nov pogovor v inštruktorju (j 2026-11-14): ko je učenec 10 min ali več zunaj inštruktorja (tudi z zaprto
+// aplikacijo) ali je medtem odprl drugo temo, kot je tema pogovora, se inštruktor odpre na novem pogovoru.
+// Stari pogovori ostanejo v seznamu »Pogovori«; nedokončano vprašanje v polju se nikoli ne izgubi.
+const CHAT_FRESH_MS = 10 * 60 * 1000;
+const chatSeenKey = () => `evklid.chatSeen.${state.student?.id}`;
+const chatTopicKey = () => `evklid.chatTopic.${state.student?.id}`;
+const readRec = (k) => {
+  try {
+    return JSON.parse(localStorageGet(k) || "null");
+  } catch {
+    return null;
+  }
+};
+// Učenec je (bil) v inštruktorju: čas in odprti pogovor.
+function markChat() {
+  if (state.student) localStorageSet(chatSeenKey(), JSON.stringify({ t: Date.now(), conv: state.conversationId }));
+}
+// Odprta tema (učna pot, lekcija): za pravilo »druga tema«.
+function markTopic(id) {
+  if (state.student && id) localStorageSet(chatTopicKey(), JSON.stringify({ id, t: Date.now() }));
+}
+// Ali pogovor po pravilu ostane (zadnji obisk pred manj kot 10 min in vmes ni bila odprta druga tema).
+function chatStillFresh(convTopic) {
+  const seen = readRec(chatSeenKey());
+  if (!seen || !(Date.now() - seen.t < CHAT_FRESH_MS)) return false;
+  const tp = readRec(chatTopicKey());
+  return !(convTopic && tp && tp.t >= seen.t && tp.id !== convTopic);
+}
+// Ob zagonu: id pogovora, ki naj ostane odprt, ali null (nov pogovor).
+function chatKeepId() {
+  const seen = readRec(chatSeenKey());
+  const conv = seen?.conv && state.conversations.find((c) => c.id === seen.conv);
+  return conv && chatStillFresh(conv.path_topic ?? null) ? conv.id : null;
+}
+// Inštruktor se prikaže: zastarel pogovor zamenja nov (razen z nedokončanim besedilom v polju ali med odgovorom).
+// Samo ob vrnitvi (chatAway): klik zavihka ali okna, ko je učenec že v inštruktorju, pogovora ne zamenja.
+let chatAway = true;
+function leaveChat() {
+  markChat();
+  chatAway = true;
+}
+function freshChatIfStale() {
+  if (!state.student) return; // profil se še nalaga
+  const back = chatAway;
+  chatAway = false;
+  if (!state.conversationId) return; // nov pogovor je že odprt
+  if (!back || state.sending || $("#input")?.value.trim()) return markChat();
+  if (!chatStillFresh(state.convTopic)) {
+    state.conversationId = null;
+    state.convTopic = null;
+    state.chatFx = null;
+    renderConversationList();
+    renderEmptyChat();
+    refreshBubble();
+  }
+  markChat();
+}
+
+async function openConversation(id, { mark = true } = {}) {
   const conv = await api(`/api/conversations/${id}`);
   state.conversationId = conv.id;
   state.convTopic = conv.topic?.id || null;
+  if (mark) markChat();
   await setChatFx(conv);
   if (state.conversationId !== conv.id) return; // medtem odprt drug pogovor
   $("#chat-title").textContent = conv.title;
@@ -1331,15 +1428,17 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     const takoj = lokalnoNujno(text);
     if (takoj?.vrsta !== "pogovor") showNujno(takoj, { before: bubble });
     const box = $("#messages");
-    const paint = (shown) => {
+    // D5: med izpisom dokončani bloki iz predpomnilnika in največ en izris na sličico; končni izris cel in takoj.
+    const izrisBlokov = createIzrisBlokov(chatRich);
+    const paint = enIzrisNaSlicico((shown, koncno) => {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-      bubble.innerHTML = chatRich(streamSafe(shown)) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
+      bubble.innerHTML = (koncno ? chatRich(shown) : izrisBlokov(streamSafe(shown))) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
       prilagodiZdaj(); // dolgo enačbo zloži že zdaj, da pomik na dno šteje njeno pravo višino
       if (atBottom) box.scrollTop = box.scrollHeight;
       // Varnostno okno ostane v celoti vidno: izpis odgovora ga ne potisne nad zgornji rob (pregled B2).
       if (atBottom && nujnoEl?.isConnected) box.scrollTop = Math.min(box.scrollTop, box.scrollTop + nujnoEl.getBoundingClientRect().top - box.getBoundingClientRect().top - 8);
-    };
-    paint("");
+    });
+    paint("", true);
     // Odgovor se izpisuje z berljivim tempom; dotik sporočila pokaže vse naenkrat.
     pacer = createPacer(currentPace(), paint);
     state.pacer = pacer;
@@ -1482,6 +1581,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
   } finally {
     state.sending = false;
     $("#send").disabled = false;
+    if (currentView === "chat" || isFloating("chat")) markChat(); // učenec je v pogovoru: 10 min teče od zdaj
   }
 }
 
@@ -3045,6 +3145,7 @@ async function openTopic(topicId) {
   state.topic = tp;
   state.topicFx = true;
   showView("topic");
+  markTopic(tp?.id || topicId); // po showView: tema, odprta iz pogovora, je za odhodom iz inštruktorja
   // Pogled teme se drsi sam in si zapomni mesto: nova tema se vedno odpre na vrhu (»Nova snov« drugič, #view-topic).
   const vt = $("#view-topic");
   if (vt) vt.scrollTop = 0;
@@ -4425,8 +4526,15 @@ try {
 } catch {}
 const calcTools = {};
 let calcP = null; // grafični kalkulator
+let calcShownTool = null; // orodje, ki je trenutno prikazano (za tipko Nazaj)
 function calcOverlayOpen() {
   return !$("#graph-overlay").hidden;
+}
+// Tipka Nazaj ali Esc: odprto ploščo ali meni v prikazanem orodju zapre orodje samo (back() v sci.js, calc.js).
+function calcBack() {
+  const tool = calcShownTool;
+  if (!tool?.back || !(calcOverlayOpen() || currentView === "graph")) return false;
+  return !!tool.root.isConnected && !tool.root.hidden && !!tool.back();
 }
 function calcSlot() {
   return calcOverlayOpen() ? $("#graph-overlay-body") : $("#graph-slot");
@@ -4538,8 +4646,10 @@ async function setCalcMode(mode) {
     if (calcMode !== mode) return;
   }
   calcShown.add(tool.root);
+  calcShownTool = tool;
   showCalcRoot(calcSlot(), tool.root);
   tool.resize?.();
+  refreshBubble(); // mehurček inštruktorja se umakne s tipk ali seznama tega orodja (okna.js KEEP_CLEAR)
   prebuildCalc();
   return tool;
 }
@@ -4624,7 +4734,7 @@ function closeCalcOverlay({ fromBack = false } = {}) {
 }
 $("#graph-close").addEventListener("click", () => closeCalcOverlay());
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && calcOverlayOpen() && !document.querySelector(".gc-pop:not([hidden])")) closeCalcOverlay();
+  if (e.key === "Escape" && calcOverlayOpen() && !e.defaultPrevented && !calcBack()) closeCalcOverlay();
 });
 // gumbi »Kalkulator« v Učni poti, vadnici in Inštruktorju
 document.querySelectorAll(".calc-open").forEach((b) =>
@@ -4725,6 +4835,7 @@ initOkna({
   showView,
   initView: (name) => (name === "account" ? renderAccount() : initView(name)),
   leaveView: (name) => {
+    if (name === "chat" && currentView !== "chat") leaveChat(); // zaprto okno inštruktorja: od tu teče 10 min
     if (name === "uci") {
       stopReading();
       leaveUci();
@@ -4836,6 +4947,8 @@ function syncOpinion(member, published = false) {
   opinionP.then((m) => m.loadOpinion()).catch(() => (opinionP = null));
 }
 // Naloge za člane pilota (public/pilot-naloge.js): Jaz → »Pomagaj izboljšati Evklid«.
+// Anketa po 7 dneh (točka B3, public/anketa-teden.js): samo na Učni poti.
+initAnketa({ api, toast, getStudent: () => state.student, currentView: () => currentView, floatingViews });
 initPilot({
   api,
   toast,
@@ -4864,6 +4977,7 @@ initUci({
   showTextbook,
   showLab,
   stopReading,
+  odprto,
   askTutor: (text) => {
     showView("chat");
     fillInput(text);
@@ -4977,7 +5091,14 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     const mark = apiSeq; // klici do sem so od profila in Učne poti
     const other = z || (first && START_VIEW && !o?.keepView);
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
-    if (z) await openStartScreen(z);
+    if (z) {
+      brezStetja = true;
+      try {
+        await openStartScreen(z);
+      } finally {
+        brezStetja = false;
+      }
+    }
     finishStart(other ? mark : null);
     if (first && START_ASK && !o?.keepView) {
       const box = $("#input");
@@ -4986,7 +5107,14 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
       startDone(); // viden pogled, sicer fokus ne gre v polje (B1)
       box.focus();
     }
-    if (first) restoreWindows();
+    if (first) {
+      brezStetja = true;
+      try {
+        restoreWindows();
+      } finally {
+        brezStetja = false;
+      }
+    }
     first = false;
   };
   captureSource(); // oznaka vira iz povezave (public/vir.js), pred prijavo, ki lahko preusmeri
