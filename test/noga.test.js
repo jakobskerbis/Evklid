@@ -97,6 +97,50 @@ test("while it is shown, every use restarts the 5 s", () => {
   assert.ok(o.razredi.has("tb-mir"));
 });
 
+test("a tap where the hidden bar was brings it back and does not open what is under it", () => {
+  const o = okolje();
+  o.pocakaj(MIROVANJE_MS);
+  o.sprozi("pointerdown", { clientY: 300 });
+  assert.ok(o.razredi.has("tb-mir"), "dotik vsebine višje vrstice ne vrne");
+  let ustavljen = false;
+  o.poslusalci.get("click")({ type: "click", preventDefault: () => (ustavljen = true), stopPropagation() {} });
+  assert.ok(!ustavljen, "in deluje kot prej");
+  o.sprozi("pointerdown", { clientY: 780 });
+  assert.ok(o.razredi.has("tb-vraca"), "dotik ob spodnjem robu jo vrne");
+  o.poslusalci.get("click")({ type: "click", preventDefault: () => (ustavljen = true), stopPropagation() {} });
+  assert.ok(ustavljen, "klik pod njo je pogoltnjen");
+  ustavljen = false;
+  o.poslusalci.get("click")({ type: "click", preventDefault: () => (ustavljen = true), stopPropagation() {} });
+  assert.ok(!ustavljen, "naslednji klik gre naprej");
+});
+
+test("Tab and a mouse at the bottom edge bring it back (keyboard, narrow desktop window)", () => {
+  const o = okolje();
+  o.pocakaj(MIROVANJE_MS);
+  o.sprozi("pointermove", { pointerType: "mouse", clientY: 400 });
+  assert.ok(o.razredi.has("tb-mir"));
+  o.sprozi("pointermove", { pointerType: "mouse", clientY: 760 });
+  assert.ok(!o.razredi.has("tb-mir"));
+  o.pocakaj(MIROVANJE_MS);
+  o.sprozi("keydown", { key: "Tab" });
+  assert.ok(!o.razredi.has("tb-mir"));
+});
+
+test("hidden on a normal screen, then a reading screen: the first swipe goes to its own rule (no tb-vraca delay)", () => {
+  const o = okolje();
+  o.pocakaj(MIROVANJE_MS);
+  o.stanje.branje = true; // odprl je klepet ali lekcijo s skrito vrstico
+  o.sprozi("wheel");
+  assert.ok(!o.razredi.has("tb-mir") && !o.razredi.has("tb-vraca"), "app.js isti poteg takoj obdela (barAuto)");
+});
+
+test("a leftover tb-peek is cleared when the bar hides, so --tabbar-h is 0", () => {
+  const o = okolje();
+  o.razredi.add("tb-peek");
+  o.pocakaj(MIROVANJE_MS);
+  assert.ok(o.razredi.has("tb-mir") && !o.razredi.has("tb-peek"));
+});
+
 test("reading screens keep their rule: a shown (peeked) bar hides after 5 s, nothing more", () => {
   const o = okolje({ branje: true });
   o.razredi.add("tb-peek");
@@ -121,12 +165,15 @@ test("hidden bar (desktop, pad, onboarding) and the guided tour are left alone",
 
 test("CSS: only phone/tablet, reading screens keep the stronger rule, reduced motion has no slide", () => {
   const css = readFileSync(new URL("../public/touch.css", import.meta.url), "utf8");
-  const i = css.indexOf("body.tb-mir > .tabbar");
+  const i = css.indexOf("body.tb-mir:not(");
   assert.ok(i > 0, "touch.css ima pravilo za body.tb-mir");
   const blok = css.slice(css.lastIndexOf("@media", i), i);
   assert.match(blok, /max-width: 760px\), \(max-width: 1240px\) and \(hover: none\) and \(pointer: coarse\)/);
   assert.match(css, /prefers-reduced-motion: reduce\) \{ \.tabbar[^}]*transition: none/);
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   assert.match(app, /nastaviNogo\(\{ bar: tabbarEl/);
+  assert.match(css, /body\.tb-mir:not\(:has\(> #tour:not\(\[hidden\]\)\)\) > \.tabbar/, "med vodičem je vrstica na mestu, tudi če je bila skrita");
+  const okna = readFileSync(new URL("../public/okna.js", import.meta.url), "utf8");
+  assert.match(okna, /\.tb-peek, \.tb-vraca/, "listi se dvignejo že med vrnitvijo");
   assert.match(app, /const barAuto = \(\) => [^\n]*tb-mir, \.tb-vraca/, "poteg in kolešček v app.js ne mešata neuporabe z zasloni za branje");
 });
