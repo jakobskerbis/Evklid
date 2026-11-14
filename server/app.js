@@ -1,5 +1,6 @@
 // HTTP strežnik Evklid: API + statični vmesnik.
 import "./env.js";
+import { createPomnilnik } from "./pomnilnik.js";
 import { mountMeritevPoObjavi } from "./meritev-po-objavi.js";
 import express from "express";
 import helmet from "helmet";
@@ -258,9 +259,12 @@ export function createApp(store, opts = {}) {
   let ustno = null; // ustno spraševanje (server/ustno-api.js): stikalo starša za glas velja tudi v klepetu
   let cloudBackups = null; // ista kopija še zunaj strežnika (server/kopije-oblak.js)
   let backupChecks = null; // nočni preizkus obnove iz kopije (server/kopije-preveri.js)
+  // Pomnilnik (točka D4): vzorci RSS po 10 s, Straža opozori nad 85 % meje gostovanja (server/pomnilnik.js).
+  const pomnilnik = createPomnilnik({ zacni: opts.pomnilnik !== false });
+  app.locals.pomnilnik = pomnilnik;
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje() });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
