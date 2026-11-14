@@ -292,9 +292,21 @@ export function createApp(store, opts = {}) {
   // Velika telesa (slike v pogovoru, skeniranje, urnik s fotografije) samo s prijavo. Brez prijave (z računi) pridejo
   // sem le javne poti (/api/school-orders, /api/auth/<neznano> …): 5 MB JSON bi brez prijave porabil ~0,3 s procesorja
   // (2 jedri) še pred omejitvijo na IP. Poti računov imajo svoj razčlenjevalnik (100 kb).
+  // Točka A9: tudi s prijavo je privzeta meja 100 kb; večja samo na poteh, ki sprejmejo fotografijo ali dolgo vsebino
+  // (vsaka ima v obdelavi še svojo, ožjo mejo). Prej je vsaka pot s prijavo sprejela 10 MB JSON (pomnilnik, procesor).
+  // Domača namestitev brez računov (en uporabnik) ostane pri 10 MB povsod.
   const bigJson = express.json({ limit: "10mb" });
   const smallJson = express.json({ limit: "100kb" });
-  app.use((req, res, next) => (accounts && !req.parent ? smallJson : bigJson)(req, res, next));
+  const VELIKA_TELESA = [
+    [/^\/api\/conversations\/[^/]+\/messages$/i, "10mb"], // sporočilo s sliko (MAX_IMAGE_B64)
+    // skener, zapiski, urnik s fotografije, zapis s prstom, fotografija naloge v pilotu
+    [/^\/api\/students\/[^/]+\/(scan\/read|zapiski\/preberi|schedule\/photo|tasks\/[^/]+\/read|pilot\/scan)$/i, "10mb"],
+    [/^\/api\/students\/[^/]+\/schedule\/ics$/i, "4mb"], // vsebina datoteke .ics (do 3 MB)
+    [/^\/api\/students\/[^/]+\/graphs(\/[^/]+)?$/i, "1mb"], // graf s sličico (MAX_DATA + MAX_THUMB)
+    [/^\/api\/conversations\/[^/]+\/messages\/[^/]+\/report$/i, "1mb"], // prijava odgovora z izrisanim HTML (SHOWN_MAX)
+  ].map(([pot, limit]) => [pot, express.json({ limit })]);
+  const jsonZa = (req) => (req.method === "POST" || req.method === "PUT" ? VELIKA_TELESA.find(([pot]) => pot.test(req.path))?.[1] : null) || smallJson;
+  app.use((req, res, next) => (!accounts ? bigJson : !req.parent ? smallJson : jsonZa(req))(req, res, next));
   // Neuspele klice API zapišemo v dnevnik, da je napako na telefonu mogoče poiskati.
   app.use("/api", (req, res, next) => {
     res.on("finish", () => {
