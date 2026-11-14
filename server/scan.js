@@ -78,7 +78,7 @@ export const READ_PROMPT =
   '- "given": only if the task states data or conditions needed to solve it (a measured quantity with its unit such as a = 3 cm, m = 2 kg or α = 30°, ' +
   "a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5 or k=0, a set of allowed digits or elements such as {1,2,4,8}, also when written in a »dano:« / »podatki:« line, in a box or short notes beside the task that belong to it (not a theory, hint or example box), or only in the sentence): " +
   'a list of them in LaTeX, one each, in the words of the page, keeping every unit and writing a decimal comma as {,} (e.g. ["a = 3\\\\ \\\\mathrm{cm}", "b = 2{,}5\\\\ \\\\mathrm{cm}", "T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Never drop a value stated in the task; never add a value from the student\'s working or a result, never invent one, and leave out a bare domain such as x ∈ ℝ. Otherwise leave it out.\n' +
-  'What the task asks you to find (e.g. the angle at which the graph cuts the x-axis, a perimeter) is never data: if it is not already the "text" or the "goal", add it as the last item of "given", starting with the word for "Sought:" (see the language line below), e.g. "\\text{Iskano: kot, pod katerim graf seka os x}".\n' +
+  'What the task asks you to find (e.g. the angle at which the graph cuts the x-axis, a perimeter) is never data. Only if it is something other than the <letter>=? \"text\" or than doing the \"goal\" to the \"text\" (solving it, its zeros, simplifying, factoring, evaluating, differentiating), add it, even when there is no other data, as the last item of \"given\", starting with the word for \"Sought:\" (see the language line below), e.g. \"\\\\text{Iskano: kot, pod katerim graf seka os x}\"; otherwise do not add it.\n' +
   "For a word or geometry problem without one equation or expression, give as \"text\" only the unknown asked for in calculator syntax as <letter>=? (e.g. P=?, v=?), never a sentence, and every stated value in \"given\".\n" +
   '- "tex": the same problem in LaTeX.\n' +
   "Ignore task numbers (1., a)), the wording of instructions (but keep their conditions in \"given\") and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve; if there is neither such an instruction nor an equation or inequality to solve, leave \"goal\" out.\n" +
@@ -87,7 +87,7 @@ export const READ_PROMPT =
   'Accept schoolwork even if people appear in the frame (book illustrations, a teacher at a whiteboard, hands). Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, do not describe it and return only {"problems":[],"unrelated":true}. If unsure, read it.';
 
 // lang: jezik aplikacije (j 14. 11. 2026: besede v »Podatki« so bile v angleščini). V svojem bloku za READ_PROMPT,
-// da ostane predpomnjen del enak za vse jezike.
+// da READ_PROMPT ostane enak za vse jezike (klic nima cache_control; slika je pred navodili).
 export const readLangLine = (lang) => `Language line: write every word in "given" (inside \\text{}) in ${languagePrompt(lang || "sl")}, never in English unless that is the language; keep maths, units and symbols as written.`;
 export async function readMathPhoto({ imageBase64, mediaType = "image/jpeg", lang = "sl" }) {
   const model = READ_MODEL();
