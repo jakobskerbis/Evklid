@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Urejeni par
+  - $(a, b) = (c, d) \iff a = c \wedge b = d$
+  - vozovnica Ljubljana–Koper ni Koper–Ljubljana
+  - par $(3, 3)$ je dovoljen
+- Kartezični produkt
+  - vsi pari s prvo komponento iz $A$, drugo iz $B$
+  - napaka: $A \times B = B \times A$
+  - kvadrat zemljevida $(c, 2)$ je element $S \times V$
+- Moč produkta
+  - $|A \times B| = |A| \cdot |B|$
+  - napaka: moči sešteješ
+  - $A \times \emptyset = \emptyset$
+- Graf produkta
+  - končni množici dasta posamezne točke
+  - $[1, 3] \times [0, 2]$ je pravokotnik z robom
+  - $B \times A$ je zrcalna slika čez $y = x$
+- Potenčna množica
+  - $\mathcal{P}(A)$: vse podmnožice množice $A$
+  - vedno vsebuje $\emptyset$ in $A$
+  - elementi so množice, npr. $\{1\}$, ne $1$
+- Moč potenčne množice (višja raven)
+  - $|\mathcal{P}(A)| = 2^n$ pri $|A| = n$
+  - nov element podvoji število podmnožic

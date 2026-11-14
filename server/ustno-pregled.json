@@ -2184,6 +2184,54 @@
    "o": "I",
    "r": "sklic na razlike iz lekcije"
   },
+  "MAT-SS-1/dvojiski-stevilski-sestav#p0": {
+   "h": "93afb64c761c",
+   "o": "I",
+   "r": "ne pove, da gre za dvojiški zapis; sklic na podvajanje iz razlage"
+  },
+  "MAT-SS-1/dvojiski-stevilski-sestav#p1": {
+   "h": "2b1b0c5cc67d",
+   "o": "D"
+  },
+  "MAT-SS-1/enacbe-neenacbe-in-sistemi-s-parametrom#p0": {
+   "h": "bdfeae2ed26f",
+   "o": "D"
+  },
+  "MAT-SS-1/enacbe-neenacbe-in-sistemi-s-parametrom#p1": {
+   "h": "3dffc8b00794",
+   "o": "I",
+   "r": "sklic na sistem enačb iz razlage lekcije"
+  },
+  "MAT-SS-1/enacbe-premice-in-kot-med-premicama#p1": {
+   "h": "3d67ba08cd5c",
+   "o": "D"
+  },
+  "MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb#p0": {
+   "h": "608c8e1a317d",
+   "o": "I",
+   "r": "sklic na tretji korak postopka iz lekcije"
+  },
+  "MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb#p1": {
+   "h": "95e2240c903d",
+   "o": "D",
+   "k": [
+    "Ne leži: $0 > 6$ ne velja",
+    "Rešitev je polravnina, ki izhodišča ne vsebuje, torej tista nad premico $2x + 3y = 6$"
+   ]
+  },
+  "MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb#p2": {
+   "h": "6e66bbd0c52f",
+   "o": "I",
+   "r": "nadaljevanje primera iz lekcije, samo ni razumljivo"
+  },
+  "MAT-SS-1/heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga#p1": {
+   "h": "e19c050e1f82",
+   "o": "D",
+   "k": [
+    "Ne more. Vsaka stranica je tetiva očrtane krožnice, tetiva pa ni nikoli daljša od premera $2R$",
+    "Zato je $R \\ge \\dfrac{c}{2}$ za najdaljšo stranico $c$"
+   ]
+  },
   "MAT-SS-1/linearna-funkcija#p0": {
    "h": "e1795da45718",
    "o": "I",
@@ -2218,6 +2266,11 @@
   "MAT-SS-1/mnozice#p1": {
    "h": "16bda8cd7171",
    "o": "D"
+  },
+  "MAT-SS-1/nacrtovalne-naloge#p1": {
+   "h": "becc071f6ac6",
+   "o": "I",
+   "r": "sklic na načrtovanje in sliko iz lekcije"
   },
   "MAT-SS-1/naravna-in-cela-stevila#p0": {
    "h": "f6058c06fc6a",
@@ -2259,6 +2312,10 @@
    "h": "496257bbd0a0",
    "o": "D"
   },
+  "MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka#p0": {
+   "h": "af6e080f382a",
+   "o": "D"
+  },
   "MAT-SS-1/racionalna-stevila#p1": {
    "h": "b151147ef2b4",
    "o": "D"
@@ -2266,6 +2323,19 @@
   "MAT-SS-1/razstavljanje-izrazov#p0": {
    "h": "61543b3017f0",
    "o": "D"
+  },
+  "MAT-SS-1/razstavljanje-vsote-in-razlike-potenc#p1": {
+   "h": "f0551ff367fb",
+   "o": "D",
+   "k": [
+    "Pri sodem $n$ je $(-b)^n = +b^n$, zato vstavljanje $-b$ v $a^n - b^n$ spet da $a^n - b^n$, ne vsote",
+    "Pri $a = 1$, $b = -1$ bi faktor $a + b$ dal $0$, vsota $1^2 + (-1)^2 = 2$ pa ni $0$, zato $a + b$ ni faktor $a^2 + b^2$"
+   ]
+  },
+  "MAT-SS-1/razstavljanje-vsote-in-razlike-potenc#p2": {
+   "h": "3137c75dafbe",
+   "o": "I",
+   "r": "točkovnik se sklicuje na razcep $2^{10} - 1$ iz lekcije (»prvi faktor«)"
   },
   "MAT-SS-1/realna-stevila-in-intervali#p2": {
    "h": "cd44d66a8196",
@@ -2275,6 +2345,18 @@
   "MAT-SS-1/sistemi-linearnih-enacb#p1": {
    "h": "22e77e7848fd",
    "o": "D"
+  },
+  "MAT-SS-1/togi-premiki#p0": {
+   "h": "c4e3ed3559e1",
+   "o": "D"
+  },
+  "MAT-SS-1/togi-premiki#p1": {
+   "h": "54227dadee99",
+   "o": "D",
+   "k": [
+    "Čez $O$ dobiš $(-2, -1)$, čez os $x$ pa $(2, -1)$",
+    "Sliki sta različni, torej premika nista enaka"
+   ]
   },
   "MAT-SS-1/trikotnik#p0": {
    "h": "8e8ecade01a1",

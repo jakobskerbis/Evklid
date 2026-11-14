@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Parameter
+  - dano, a poljubno število
+  - rešitev po primerih
+- Neenačba $ax > b$
+  - $a > 0$: $x > \dfrac{b}{a}$
+  - $a < 0$: $x < \dfrac{b}{a}$, znak obrnjen
+  - $a = 0$: preveri $0 > b$
+- Koeficient enak nič
+  - najprej poišči te vrednosti
+  - ne deli z izrazom, ki je $0$
+- Enačba $ax = b$
+  - $a \neq 0$: ena rešitev
+  - $a = 0$, $b \neq 0$: ni rešitve
+  - $a = 0$, $b = 0$: vsa realna števila
+- Sistem s parametrom
+  - prevedi na enačbo $Ax = B$
+  - ena, nobena ali neskončno rešitev
+- Lega premic
+  - sekata se: ena rešitev
+  - vzporedni: ni rešitve
+  - sovpadata: neskončno rešitev
+- Preizkus
+  - vstavi konkretno vrednost parametra

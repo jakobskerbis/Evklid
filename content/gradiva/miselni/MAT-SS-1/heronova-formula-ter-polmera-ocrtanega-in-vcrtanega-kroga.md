@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mamljiva bližnjica
+  - $S = \dfrac{ab}{2}$ le za kateti
+  - $5$, $5$, $6$: $12$, ne $12{,}5$
+- Polobseg
+  - $s = \dfrac{a + b + c}{2}$
+  - ne zamenjaj z obsegom $o$
+- Heronova formula
+  - $S = \sqrt{s(s - a)(s - b)(s - c)}$
+  - negativno pod korenom: trikotnik ne obstaja
+- Včrtana krožnica
+  - $r = \dfrac{S}{s}$
+  - trije trikotniki z višino $r$
+- Očrtana krožnica
+  - $R = \dfrac{abc}{4S}$
+  - dokaz s sinusnim izrekom v 3. letniku
+  - $R \ge \dfrac{c}{2}$ za najdaljšo stranico
+- Preizkus 3, 4, 5
+  - $S = 6$, $r = 1$, $R = 2{,}5$
+- Merilo
+  - najprej pretvori dolžine
+  - ploščina raste s kvadratom merila
