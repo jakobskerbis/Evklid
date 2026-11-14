@@ -74,3 +74,13 @@ test("drevo: the /3d hub opens on the tree, with the microscope next to search a
   assert.match(src, /k3-hub-mikroskop/);
   for (const k of ["a3.treePath", "a3.treeMore"]) assert.ok(sl[k], k);
 });
+
+test("drevo: »Uči se → 3D svet« (aplikacija in APK) shows the same tree with style icons", () => {
+  const js = fs.readFileSync(path.join(ROOT, "public", "uci-se.js"), "utf8");
+  assert.match(js, /import\("\.\/3d\/drevo\.js"\)/);
+  assert.match(js, /ikonaVeje\(v\.id, slog\)/);
+  assert.match(js, /addEventListener\?\.\("evklid:era", obSlogu\)/, "style change redraws the icons");
+  assert.doesNotMatch(js, /uci-3d-atlas/, "old area card list is gone");
+  const css = fs.readFileSync(path.join(ROOT, "public", "uci.css"), "utf8");
+  assert.match(css, /\.uci-3d-veja-ikona \{/);
+});

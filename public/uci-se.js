@@ -9,7 +9,6 @@ import { makeRowSortable } from "./vrstice.js";
 
 export const UCI_TABS = ["textbook", "lab", "3d"];
 const KEY = "evklid.uciZavihek";
-const PREDMETI = ["BIO", "KEM", "FIZ", "MAT", "NAR"];
 
 let D = null; // { escapeHtml, getStudent, showTextbook, showLab, stopReading, askTutor, onOverlay(open) }
 let tab = read();
@@ -71,6 +70,7 @@ export function showUci() {
 
 export function initUci(deps) {
   D = deps;
+  globalThis.addEventListener?.("evklid:era", obSlogu);
   const row = $(".uci-tabs");
   if (!row) return;
   row.addEventListener("click", (e) => {
@@ -140,57 +140,92 @@ export function leaveUci() {
   close3d();
 }
 
-// ---------- 3D svet: kartice strani /3d (atlas telesa in modeli iz kode, docs/3d.md) ----------
+// ---------- 3D svet: drevo (public/3d/drevo.js, enako kot zbirka strani /3d, docs/3d.md) ----------
+// Štirje predmeti, tap na vejo pokaže podveje, zadnja veja modele; atlas, model in mikroskop se odprejo čez cel zaslon.
+// Ikone vej so izrisi v slogu aplikacije (data-style; Igriv = Čist). Odprta veja ostane v seji (sessionStorage).
 
 const predmetIme = (p) => tr(`subj.${p}`, p);
+const VEJA = "evklid.3d.veja";
+let drevoMod = null; // public/3d/drevo.js (naloži se ob prvem prikazu)
+let pot = (() => {
+  try {
+    return String(sessionStorage.getItem(VEJA) || "");
+  } catch {
+    return "";
+  }
+})();
+function nastaviPot(v) {
+  pot = v;
+  try {
+    sessionStorage.setItem(VEJA, v);
+  } catch {}
+  hub = null;
+  show3d().then(() => document.querySelector("#uci-3d-content .uci-3d-pot [aria-current], #uci-3d-content .uci-3d-veja")?.focus({ preventScroll: true }));
+  paneOf("3d")?.scrollTo?.({ top: 0 });
+}
 
 async function show3d() {
   const box = document.getElementById("uci-3d-content");
   if (!box) return;
-  const mine = D.getStudent()?.settings?.subject || "";
-  const key = `${mine}|${document.documentElement.lang}`;
-  if (hub?.key === key && box.querySelector(".uci-3d-card, .uci-3d-atlas")) return;
+  const slog = document.documentElement.dataset.style || "";
+  const key = `${document.documentElement.lang}|${slog}|${pot}`;
+  if (hub?.key === key && box.querySelector(".uci-3d-veja, .uci-3d-card")) return;
   let modeli = [];
   try {
-    const { seznamModelov } = await import("./3d/modeli.js");
+    const [{ seznamModelov }, d] = await Promise.all([import("./3d/modeli.js"), drevoMod || import("./3d/drevo.js")]);
+    drevoMod = d;
     modeli = await seznamModelov();
   } catch {
     box.innerHTML = `<p class="muted">${esc(t("a3.loadError"))}</p>`;
     return;
   }
-  // Področja po vrstnem redu strani /3d, a najprej tista z modeli učenčevega predmeta (in v njih najprej ti modeli).
-  const podrocja = new Map();
-  for (const m of modeli) {
-    if (!podrocja.has(m.podrocje)) podrocja.set(m.podrocje, []);
-    podrocja.get(m.podrocje).push(m);
+  const { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje } = drevoMod;
+  const poId = new Map(modeli.map((m) => [m.id, m]));
+  const obstaja = new Set([...poId.keys(), "atlas"]);
+  const veje = poPoti(pot);
+  while (veje.length && !modeliVeje(veje[veje.length - 1], obstaja).length) veje.pop();
+  const potId = veje.map((v) => v.id).join("/");
+  const skupina = veje[0]?.sk;
+  const ime = (id) => tr(`a3.tree.${id}`, id);
+  const zdaj = veje[veje.length - 1];
+
+  // Pot: »3D svet › Biologija › …«, prejšnji koraki so gumbi.
+  let potHtml = "";
+  if (veje.length) {
+    const korak = (besedilo, v) => `<span><button type="button" class="uci-3d-korak" data-pot="${esc(v)}">${esc(besedilo)}</button><span class="uci-3d-loc" aria-hidden="true">›</span></span>`;
+    potHtml = `<nav class="uci-3d-pot" aria-label="${esc(t("a3.treePath"))}">${korak(t("a3.hubTitle"), "")}${veje
+      .slice(0, -1)
+      .map((v, i) => korak(ime(v.id), veje.slice(0, i + 1).map((x) => x.id).join("/")))
+      .join("")}<b aria-current="page" tabindex="-1">${esc(ime(zdaj.id))}</b></nav>`;
   }
-  const moj = (m) => (m.predmet === mine ? 0 : 1);
-  const skupine = [...podrocja.entries()]
-    .map(([p, list]) => ({ p, list: [...list].sort((a, b) => moj(a) - moj(b)), mine: list.some((m) => m.predmet === mine) }))
-    .sort((a, b) => Number(b.mine) - Number(a.mine));
-  // Atlas telesa je biologija: na vrhu za biologijo in naravoslovje (ali če učenčev predmet nima modelov), sicer za njegovimi področji.
-  const atlasFirst = ["BIO", "NAR"].includes(mine) || !PREDMETI.includes(mine) || !skupine.some((g) => g.mine);
-  const atlas = `<a class="card uci-3d-atlas" href="/3d#atlas" data-k3="atlas" data-k3-title="${esc(t("a3.title"))}">
-      <span class="uci-3d-atlas-ic">${icon("bone") || icon("box")}</span>
-      <span class="uci-3d-atlas-txt"><small class="eyebrow">${esc(t("a3.eyebrow"))}</small><b>${esc(t("a3.title"))}</b><span>${esc(t("a3.hubAtlas"))}</span></span>
-      <span class="uci-3d-open">${icon("box")}<span>${esc(t("a3.open"))}</span></span>
-    </a>`;
-  const area = (g) => `<section class="uci-3d-area">
-      <h2>${esc(tr(`a3.area.${g.p}`, g.p))}</h2>
-      <div class="uci-3d-grid">${g.list
-        .map(
-          (m) => `<a class="card uci-3d-card${m.predmet === mine ? " mine" : ""}" href="/3d#${encodeURIComponent(m.id)}" data-k3="${esc(m.id)}" data-k3-title="${esc(m.naslov)}">
+  const kartica = (m) => `<a class="card uci-3d-card" href="/3d#${encodeURIComponent(m.id)}" data-k3="${esc(m.id)}" data-k3-title="${esc(m.naslov)}">
           <small class="uci-3d-subj">${esc(predmetIme(m.predmet))}</small><b dir="auto">${esc(m.naslov)}</b>${m.opis ? `<small dir="auto">${esc(m.opis)}</small>` : ""}
-        </a>`,
-        )
-        .join("")}</div>
-    </section>`;
-  const nMine = skupine.filter((g) => g.mine).length;
-  const parts = skupine.map(area);
-  if (atlasFirst) parts.unshift(atlas);
-  else parts.splice(nMine, 0, atlas);
-  box.innerHTML = `<p class="muted uci-3d-sub">${esc(t("a3.hubSub"))}</p>${parts.join("")}`;
+        </a>`;
+  const veja = (v) => {
+    const n = modeliVeje(v, obstaja).length;
+    const barva = BARVE[v.sk || skupina] || BARVE.fiz;
+    const vsebina = `<span class="uci-3d-veja-ikona" aria-hidden="true"><img src="${esc(ikonaVeje(v.id, slog))}" alt="" width="256" height="256" decoding="async">${v.povezava || !n ? "" : `<span class="uci-3d-veja-n">${n}</span>`}</span><span class="uci-3d-veja-ime">${esc(ime(v.id))}</span>`;
+    return v.povezava
+      ? `<a class="uci-3d-veja" style="--veja:${barva}" href="/3d#${esc(v.povezava)}" data-k3="${esc(v.povezava)}" data-k3-title="${esc(t("a3.title"))}">${vsebina}</a>`
+      : `<button type="button" class="uci-3d-veja" style="--veja:${barva}" data-pot="${esc([potId, v.id].filter(Boolean).join("/"))}">${vsebina}</button>`;
+  };
+  let telo;
+  if (zdaj?.modeli) telo = `<div class="uci-3d-grid">${zdaj.modeli.map((id) => poId.get(id)).filter(Boolean).map(kartica).join("")}</div>`;
+  else {
+    telo = `<div class="uci-3d-drevo">${(zdaj ? zdaj.otroci : DREVO).filter((v) => modeliVeje(v, obstaja).length).map(veja).join("")}</div>`;
+    if (!zdaj) {
+      telo += `<a class="uci-3d-mikroskop" href="/3d#mikroskop" data-k3="mikroskop" data-k3-title="${esc(t("mk.title"))}">${icon("microscope") || ""}<span>${esc(t("mk.start"))}</span></a>`;
+      const vDrevesu = vsiModeliDrevesa();
+      const drugi = modeli.filter((m) => !vDrevesu.has(m.id));
+      if (drugi.length) telo += `<section class="uci-3d-area"><h2>${esc(t("a3.treeMore"))}</h2><div class="uci-3d-grid">${drugi.map(kartica).join("")}</div></section>`;
+    }
+  }
+  box.innerHTML = `${veje.length ? "" : `<p class="muted uci-3d-sub">${esc(t("a3.hubSub"))}</p>`}${potHtml}${telo}`;
   hub = { key };
+  box.querySelectorAll("[data-pot]").forEach((b) => b.addEventListener("click", () => nastaviPot(b.dataset.pot)));
+  box.querySelectorAll(".uci-3d-veja img").forEach((img) =>
+    img.addEventListener("error", () => img.remove()), // brez povezave: ostane ploščica z imenom
+  );
   box.querySelectorAll("[data-k3]").forEach((a) =>
     a.addEventListener("click", (e) => {
       if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // nov zavihek ostane navaden
@@ -198,6 +233,11 @@ async function show3d() {
       open3d(a.dataset.k3, a.dataset.k3Title || "");
     }),
   );
+}
+// Menjava sloga (theme.js): ikone vej v novem slogu, če je 3D svet odprt (prijavi initUci).
+function obSlogu() {
+  hub = null;
+  if (tab === "3d" && !paneOf("3d")?.hidden) show3d();
 }
 
 /** Odpre atlas (»atlas«) ali model z id-jem čez cel zaslon; param npr. { izberi } (atlas) ali { del } (model). */
