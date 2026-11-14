@@ -488,6 +488,7 @@ export const PATHS = {
         "Kvadratna funkcija | oblike zapisa, teme, ničle, graf",
         "Kvadratna enačba | diskriminanta, Vietove formule",
         "Kvadratna neenačba | reševanje z grafom",
+        "Ekstremalni problemi s kvadratno funkcijo | sestavljanje kvadratne funkcije iz besedila naloge, največja ali najmanjša vrednost v temenu, upoštevanje definicijskega območja (višja raven)",
         "Presečišča parabol in sistemi kvadratnih neenačb | presečišče parabole in premice ter dveh parabol; sistem kvadratnih neenačb (višja raven)",
       ]],
       ["Eksponentna in logaritemska funkcija", [

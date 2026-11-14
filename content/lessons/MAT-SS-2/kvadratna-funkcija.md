@@ -183,6 +183,8 @@ Obe imata teme $T(1, 8)$ nad osjo $x$. Parabola $f$ je odprta navzdol, njena kra
 
 *Preveri:* kakšna je zaloga vrednosti $f(x) = -(x - 2)^2 + 9$? ($(-\infty, 9]$, ker je $a < 0$.)
 
+**8. Predpis iz podatkov.** Obliko izberi po podatkih: teme in točka → temenska (Primer 4), ničli in točka → ničelna, tri točke → splošna. Vsaka točka da enačbo za $a$, $b$ in $c$. Pri $(0, 3)$, $(1, 2)$ in $(2, 5)$ je $c = f(0) = 3$. Iz $f(1) = a + b + 3 = 2$ sledi $a + b = -1$, iz $f(2) = 4a + 2b + 3 = 5$ pa $2a + b = 1$. Odštejemo: $a = 2$, torej $b = -3$ in $f(x) = 2x^2 - 3x + 3$.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
@@ -510,6 +512,12 @@ točka: 0; 1
 ~ Parabola se obrne okoli temena, ki ostane pod osjo $x$. Kraka gresta navzdol in osi ne dosežeta več.
 > $p$ in $q$ se ne spremenita, zato teme ostane. Zdaj sta $a$ in $q$ oba negativna: teme je najvišja točka in leži pod osjo $x$, zato realnih ničel ni.
 
+? Parabola gre skozi $(0, 1)$, $(1, 2)$ in $(-1, 6)$. Koliko je $a$?
+= 3 | 0
+~ -2 | To je $b$. Ko enačbi seštevaš, se $b$ izniči.
+~ 1 | To je prosti člen $c = f(0)$.
+> $c = 1$, $a + b = 1$ in $a - b = 5$; seštejemo: $2a = 6$, $a = 3$, $b = -2$.
+
 :::simboli
 f | kvadratna funkcija | f(x) = ax^2 + bx + c | | v Primeru 3 temperatura v $^\circ\text{C}$
 x | neodvisna spremenljivka | | | v Primeru 2 vodoravna razdalja od mesta meta v m
@@ -546,4 +554,7 @@ resi: -3*x^2+120*x=900 | x | 10, 30
 vrednost: 120-3*10 | 90
 neenacba: -3*x^2+120*x>=900 | x | [10, 30]
 resi: (x-2)^2-9=0 | x | -1, 5
+resi: a+b+3=2, 4*a+2*b+3=5 | a, b | a=2, b=-3
+resi: a+b=-1, 2*a+b=1 | a, b | a=2, b=-3
+resi: a+b+1=2, a-b+1=6 | a, b | a=3, b=-2
 >>

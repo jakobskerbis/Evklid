@@ -1,5 +1,6 @@
 // Generatorji za teme 2. letnika gimnazije, ki jih zahteva maturitetna pot (MAT-SS-2): iracionalne
-// enačbe, presečišča parabol in sistemi kvadratnih neenačb, grafi z absolutno vrednostjo in stopničaste funkcije.
+// enačbe, presečišča parabol in sistemi kvadratnih neenačb, grafi z absolutno vrednostjo in stopničaste funkcije,
+// ekstremalni problemi s kvadratno funkcijo.
 // Merila: docs/kakovost.md §2. Vsi rezultati so izračunani v kodi iz istih števil, ki jih vidi dijak.
 // Izvirne naloge, ne prepisane maturitetne.
 import { g } from "../rng.js";
@@ -1169,6 +1170,505 @@ const GENS = [
         data: { given: [`${fl(inner)} = ${k}`], find: [right ? "\\beta" : "\\alpha"] },
         formula: "\\lfloor u \\rfloor = k \\Leftrightarrow k \\le u < k + 1",
         solution: `$${k} \\le ${inner} < ${k + 1}$\n$${k - b} \\le ${a}x < ${k + 1 - b}$\n$${ft(nL, a)} \\le x < ${ft(nR, a)}$\n${right ? "$\\beta" : "$\\alpha"} = ${ft(right ? nR : nL, a)}$`,
+      };
+    },
+  },
+  // ---------------- ekstremalni problemi s kvadratno funkcijo (višja raven) ----------------
+  {
+    id: P + "ekstremalni-problemi",
+    topics: [T("ekstremalni-problemi-s-kvadratno-funkcijo")],
+    gen(level, r) {
+      const nm = name(r);
+      const U = (u) => `\\ \\mathrm{${u.replace("²", "^2")}}`;
+      const q = (v, u) => `${tx(cl(v))}${U(u)}`;
+      // Cele evre brez decimalk, sicer na cente (26,50 €).
+      const E = (v) => (Number.isInteger(cl(v)) ? `${tx(cl(v))}\\ \\text{€}` : eT(cl(v)));
+      const VERTEX = "p = -\\frac{b}{2a}";
+      const SIGN = "Pri $p = -\\frac{b}{2a}$ pazi na predznak.";
+      if (level === 1) {
+        const t = r.int(0, 2);
+        if (t === 0) {
+          if (r.next() < 0.5) {
+            // vsota s, največji zmnožek
+            const h = r.int(3, 20);
+            const s = 2 * h;
+            return {
+              text: `Vsota dveh realnih števil je $${s}$. Kolikšen je največji možni zmnožek teh dveh števil?`,
+              answer: num(h * h, null, [
+                { value: h, why: "To je število, pri katerem je zmnožek največji. Izračunaj še zmnožek obeh števil." },
+                { value: s * s, why: `Drugo število ni enako vsoti: če je prvo $x$, je drugo $${s} - x$.` },
+                { value: -3 * h * h, why: `${SIGN} Tu je $a = -1$.` },
+              ]),
+              hint: "Prvo število označi z $x$ in drugo izrazi z vsoto. Zmnožek zapiši kot kvadratno funkcijo in poišči njeno teme.",
+              data: { given: [`x + y = ${s}`], find: ["P_{\\max}"] },
+              formula: ["P(x) = x(s - x)", VERTEX],
+              solution: `Števili sta $x$ in $${s} - x$.\n$P(x) = x(${s} - x) = -x^2 + ${s}x$\nTeme: $p = -\\frac{${s}}{2 \\cdot (-1)} = ${h}$; ker je $a = -1 < 0$, je tu maksimum.\nŠtevili sta $${h}$ in $${s} - ${h} = ${h}$.\n$P_{\\max} = ${h} \\cdot ${h} = ${h * h}$`,
+            };
+          }
+          // razlika d, najmanjši zmnožek
+          const h = r.int(2, 10);
+          const d = 2 * h;
+          const askNum = r.next() < 0.4;
+          const zero = { value: 0, why: "Pri $x = 0$ je zmnožek $0$. Če je manjše število negativno, večje pa pozitivno, je zmnožek negativen, torej še manjši." };
+          return {
+            text: `Dve realni števili se razlikujeta za $${d}$. ${askNum ? "Koliko je manjše od obeh števil, ko je njun zmnožek najmanjši?" : "Kolikšen je najmanjši možni zmnožek teh dveh števil?"}`,
+            answer: askNum
+              ? num(-h, null, [
+                  { value: h, why: "To je večje od obeh števil." },
+                  zero,
+                  { value: -d, why: `To je ničla funkcije $P(x) = x(x + ${d})$. Teme leži na sredini med ničlama.` },
+                ])
+              : num(-h * h, null, [
+                  { value: h * h, why: "Števili imata različna predznaka, zato je njun zmnožek negativen." },
+                  zero,
+                  { value: -h, why: "To je manjše število. Izračunaj še zmnožek obeh števil." },
+                ]),
+            hint: `Manjše število označi z $x$; večje je potem $x + ${d}$. Zmnožek je kvadratna funkcija z $a > 0$: poišči njeno teme.`,
+            data: { given: [`y - x = ${d}`], find: [askNum ? "x" : "P_{\\min}"] },
+            formula: ["P(x) = x(x + d)", VERTEX],
+            solution: `Manjše število je $x$, večje $x + ${d}$.\n$P(x) = x(x + ${d}) = x^2 + ${d}x$\nTeme: $p = -\\frac{${d}}{2 \\cdot 1} = ${-h}$; ker je $a = 1 > 0$, je tu minimum.\nŠtevili sta $${-h}$ in $${-h} + ${d} = ${h}$.\n$P_{\\min} = (${-h}) \\cdot ${h} = ${-h * h}$`,
+          };
+        }
+        if (t === 1) {
+          // pravokotnik z danim obsegom
+          const k = r.int(3, 15);
+          const o = 4 * k;
+          const s = 2 * k;
+          const cm = r.next() < 0.3;
+          const u = cm ? "cm" : "m";
+          const askSide = r.next() < 0.35;
+          const ctx = cm
+            ? `${nm} iz žice, dolge $${o}${U(u)}$, upogne pravokoten okvir.`
+            : r.pick([
+                `${nm} ima $${o}${U(u)}$ mrežne ograje, s katero želi ograditi pravokoten prostor za kokoši.`,
+                `Taborniki bodo z vrvjo, dolgo $${o}${U(u)}$, označili pravokoten prostor za šotore.`,
+                `Na travniku bodo s trakom, dolgim $${o}${U(u)}$, označili pravokoten prostor za piknik.`,
+              ]);
+          return {
+            text: `${ctx} ${askSide ? "Koliko naj meri vsaka stranica pravokotnika, da bo njegova ploščina največja?" : "Kolikšna je največja možna ploščina tega pravokotnika?"}`,
+            answer: askSide
+              ? num(k, null, [
+                  { value: s, why: `Obseg šteje vsako stranico dvakrat: dolžina in širina skupaj merita polovico obsega, ne $${o}$.` },
+                  { value: k * k, why: "To je ploščina, vprašanje pa je dolžina stranice." },
+                ], u)
+              : num(k * k, null, [
+                  { value: s * s, why: `Obseg šteje vsako stranico dvakrat: dolžina in širina skupaj merita polovico obsega, ne $${o}$.` },
+                  { value: k, why: "To je dolžina stranice. Izračunaj še ploščino." },
+                  { value: o, why: "To je obseg. Ploščino zapiši kot funkcijo ene stranice." },
+                ], u + "²"),
+            hint: "Dolžina in širina skupaj merita polovico obsega. Eno stranico označi z $x$, drugo izrazi z njo in zapiši ploščino.",
+            data: { given: [`o = ${o}${U(u)}`], find: [askSide ? "x" : "P_{\\max}"] },
+            formula: ["P(x) = x\\left(\\frac{o}{2} - x\\right)", VERTEX],
+            solution: `Dolžina in širina skupaj merita $${o} : 2 = ${s}$. Če je ena stranica $x$, je druga $${s} - x$.\n$P(x) = x(${s} - x) = -x^2 + ${s}x$, območje $0 < x < ${s}$\nTeme: $p = -\\frac{${s}}{2 \\cdot (-1)} = ${k}$; ker je $a = -1 < 0$, je tu maksimum.\nDruga stranica: $${s} - ${k} = ${k}$, pravokotnik je kvadrat s stranico $${q(k, u)}$.\n$P_{\\max} = ${k} \\cdot ${k} = ${q(k * k, u + "²")}$`,
+          };
+        }
+        // navpični met: h(t) = -5t^2 + vt + h0
+        // Z roko vržemo navzgor največ s približno 20 m/s; hitrejši začetek le pri raketi.
+        const [subj, gen, vs] = r.pick([
+          [`${nm} vrže žogo navpično navzgor.`, "žoge", [10, 15]],
+          [`${nm} vrže kamen navpično navzgor.`, "kamna", [10, 15, 20]],
+          [`${nm} odbije teniško žogico navpično navzgor.`, "žogice", [10, 15, 20]],
+          ["Majhna raketa šolskega krožka poleti navpično navzgor.", "rakete", [20, 25, 30]],
+        ]);
+        const v = r.pick(vs);
+        const h0 = r.pick([0, 1, 1.5, 2]);
+        const tt = v / 10;
+        const hm = cl(h0 + (v * v) / 20);
+        const H = poly([-5, v, h0], "t");
+        const askT = r.next() < 0.4;
+        return {
+          text: `${subj} Višino ${gen} v metrih po $t$ sekundah opisuje funkcija $h(t) = ${H}$. ${askT ? "Po koliko sekundah doseže najvišjo točko?" : "Kolikšna je največja višina, ki jo doseže?"}`,
+          answer: askT
+            ? num(tt, null, [
+                { value: 2 * tt, why: "Takrat je spet na začetni višini. Najvišja točka je na sredini, v temenu parabole." },
+                { value: -tt, why: `${SIGN} Tu je $a = -5$.` },
+                { value: v / 20, why: "V imenovalcu je $2a = 2 \\cdot (-5)$." },
+              ], "s")
+            : num(hm, null, [
+                { value: tt, why: "To je čas, ko je najvišje. Vstavi ga v $h(t)$." },
+                { value: (v * v) / 20, why: "Ne pozabi začetne višine (prostega člena)." },
+                { value: cl(h0 - (v * v) / 20), why: "Pazi na predznake, ko vstaviš čas v predpis: $-5t^2$ je negativen, $" + v + "t$ pozitiven." },
+              ], "m"),
+          hint: "Parabola je odprta navzdol, zato je največja vrednost v temenu. Najprej izračunaj prvo koordinato temena.",
+          data: { given: [`h(t) = ${H}`], find: [askT ? "t" : "h_{\\max}"] },
+          formula: [VERTEX, "h_{\\max} = h(p)"],
+          solution: `Vodilni koeficient je $-5 < 0$, zato je v temenu maksimum.\nTeme: $p = -\\frac{${v}}{2 \\cdot (-5)} = ${tx(tt)}$, torej po $${q(tt, "s")}$ (leži v območju $t \\ge 0$).\n$h(${tx(tt)}) = -5 \\cdot ${tx(tt)}^2 + ${v} \\cdot ${tx(tt)}${h0 ? ` + ${tx(h0)}` : ""} = ${q(hm, "m")}$`,
+        };
+      }
+      if (level === 2) {
+        const t = r.int(0, 3);
+        if (t === 0) {
+          // ograda ob zidu, po želji s pregrado
+          const n = r.next() < 0.6 ? 2 : 3;
+          const k = r.int(3, 12);
+          const L = 2 * n * k;
+          const y = n * k;
+          const A = n * k * k;
+          const ask = r.int(0, 2);
+          const eq = { value: L / (n + 1), why: "Stranice niso nujno enako dolge. Ploščino zapiši kot funkcijo ene stranice in poišči teme." };
+          // Pregrado upošteva pri x, pri stranici ob zidu pa odšteje le dve stranici.
+          const part = { why: "Pri stranici ob zidu odštej vse tri stranice, pravokotne na zid (tudi pregrado)." };
+          const answers = [
+            num(A, null, [
+              { value: (L / 4) ** 2, why: "Ob zidu ograje ne potrebuješ: ograja pokrije le stranice, ki niso ob zidu." },
+              n === 3
+                ? { value: (L * L) / 8, why: "Ne pozabi pregrade: ograja pokrije tri stranice, pravokotne na zid." }
+                : { value: (L * L) / 4, why: "Stranici, pravokotni na zid, sta dve: za stranico ob zidu ostane $l - 2x$, ne $l - x$." },
+              n === 3 ? { value: k * (L - 2 * k), why: part.why } : { value: (L / (n + 1)) ** 2, why: eq.why },
+            ], "m²"),
+            num(y, null, [{ value: k, why: "To je stranica, pravokotna na zid." }, eq, ...(n === 3 ? [{ value: L - 2 * k, why: part.why }] : [])], "m"),
+            num(k, null, [
+              { value: y, why: "To je stranica ob zidu." },
+              eq,
+              { value: L / n, why: "Pri tej dolžini ostane za stranico ob zidu $0$: to je ničla funkcije ploščine. Teme leži na sredini med ničlama." },
+            ], "m"),
+          ];
+          return {
+            text: `${nm} ima $${L}${U("m")}$ ograje. Ob ravnem zidu skednja želi ograditi pravokoten pašnik za koze${n === 3 ? " in ga s pregrado, pravokotno na zid, razdeliti na dva dela" : ""}; ob zidu ograje ne potrebuje. ${["Kolikšna je največja možna ploščina pašnika?", "Koliko naj meri stranica ob zidu, da bo ploščina največja?", "Koliko naj meri stranica, pravokotna na zid, da bo ploščina največja?"][ask]}`,
+            answer: answers[ask],
+            hint: `Nariši skico. Stranice, pravokotne na zid, označi z $x$ (${n === 3 ? "s pregrado so tri" : "dve sta"}) in z dolžino ograje izrazi stranico ob zidu.`,
+            data: { given: [`l = ${L}${U("m")}`], find: [["P_{\\max}", "y", "x"][ask]] },
+            formula: [`P(x) = x(l - ${n}x)`, VERTEX],
+            solution: `Stranice, pravokotne na zid, merijo $x$; ${n === 3 ? "s pregrado so tri" : "dve sta"}. Za stranico ob zidu ostane $${L} - ${n}x$.\n$P(x) = x(${L} - ${n}x) = ${poly([-n, L, 0])}$, območje $0 < x < ${ft(L, n)}$\nTeme: $p = -\\frac{${L}}{2 \\cdot (-${n})} = ${k}$; ker je $a = -${n} < 0$, je tu maksimum.\nStranica ob zidu: $${L} - ${n} \\cdot ${k} = ${q(y, "m")}$\n$P_{\\max} = ${k} \\cdot ${y} = ${q(A, "m²")}$\nPašnik sega $${q(k, "m")}$ od zidu in $${q(y, "m")}$ vzdolž zidu.`,
+          };
+        }
+        if (t === 1) {
+          // najmanjša vsota kvadratov
+          const sub = r.int(0, 2);
+          if (sub === 0) {
+            const h = r.int(2, 15);
+            const s = 2 * h;
+            return {
+              text: `Vsota dveh realnih števil je $${s}$. Kolikšna je najmanjša možna vsota kvadratov teh dveh števil?`,
+              answer: num(2 * h * h, null, [
+                { value: h * h, why: "Kvadrirati in sešteti moraš obe števili." },
+                { value: s * s, why: "Pri $x = 0$ vsota kvadratov ni najmanjša: teme leži vmes." },
+                { value: h, why: "To je število, pri katerem je vsota najmanjša. Izračunaj še vsoto kvadratov." },
+              ]),
+              hint: "Prvo število označi z $x$, drugo izrazi z vsoto. Vsoto kvadratov razvij v kvadratno funkcijo in poišči teme.",
+              data: { given: [`x + y = ${s}`], find: ["S_{\\min}"] },
+              formula: ["S(x) = x^2 + (s - x)^2", VERTEX],
+              solution: `Števili sta $x$ in $${s} - x$.\n$S(x) = x^2 + (${s} - x)^2 = ${poly([2, -2 * s, s * s])}$\nTeme: $p = \\frac{${2 * s}}{2 \\cdot 2} = ${h}$; ker je $a = 2 > 0$, je tu minimum.\nŠtevili sta $${h}$ in $${h}$.\n$S_{\\min} = ${h}^2 + ${h}^2 = ${2 * h * h}$`,
+            };
+          }
+          if (sub === 1) {
+            const h = r.int(2, 12);
+            const d = 2 * h;
+            return {
+              text: `Dve realni števili se razlikujeta za $${d}$. Kolikšna je najmanjša možna vsota kvadratov teh dveh števil?`,
+              answer: num(2 * h * h, null, [
+                { value: d * d, why: "Pri $x = 0$ vsota kvadratov ni najmanjša: teme leži pri negativnem $x$." },
+                { value: h * h, why: "Kvadrirati in sešteti moraš obe števili." },
+                { value: 5 * h * h * 2, why: `${SIGN} Teme leži pri negativnem $x$.` },
+              ]),
+              hint: "Manjše število označi z $x$, večje je $x + d$. Vsoto kvadratov razvij v kvadratno funkcijo in poišči teme.",
+              data: { given: [`y - x = ${d}`], find: ["S_{\\min}"] },
+              formula: ["S(x) = x^2 + (x + d)^2", VERTEX],
+              solution: `Števili sta $x$ in $x + ${d}$.\n$S(x) = x^2 + (x + ${d})^2 = ${poly([2, 2 * d, d * d])}$\nTeme: $p = -\\frac{${2 * d}}{2 \\cdot 2} = ${-h}$; ker je $a = 2 > 0$, je tu minimum.\nŠtevili sta $${-h}$ in $${h}$.\n$S_{\\min} = (${-h})^2 + ${h}^2 = ${2 * h * h}$`,
+            };
+          }
+          const m = r.int(1, 6);
+          const s = 5 * m;
+          return {
+            text: `Za realni števili $x$ in $y$ velja $x + 2y = ${s}$. Kolikšna je najmanjša možna vrednost izraza $x^2 + y^2$?`,
+            answer: num(5 * m * m, null, [
+              { value: (s * s) / 4, why: "Pri $x = 0$ izraz ni najmanjši. Zapiši ga kot funkcijo ene spremenljivke in poišči teme." },
+              { value: (2 * s * s) / 9, why: "Števili nista nujno enaki. Iz zveze izrazi $x$ z $y$." },
+              { value: m, why: "To je vrednost $x$, pri kateri je izraz najmanjši. Izračunaj še $x^2 + y^2$." },
+            ]),
+            hint: "Iz zveze izrazi $x$ z $y$ in vstavi v $x^2 + y^2$. Dobiš kvadratno funkcijo spremenljivke $y$.",
+            data: { given: [`x + 2y = ${s}`], find: ["(x^2 + y^2)_{\\min}"] },
+            formula: ["x = s - 2y", VERTEX],
+            solution: `Iz zveze: $x = ${s} - 2y$.\n$S(y) = (${s} - 2y)^2 + y^2 = ${poly([5, -4 * s, s * s], "y")}$\nTeme: $p = \\frac{${4 * s}}{2 \\cdot 5} = ${2 * m}$; ker je $a = 5 > 0$, je tu minimum.\n$y = ${2 * m}$, $x = ${s} - 2 \\cdot ${2 * m} = ${m}$\n$S_{\\min} = ${m}^2 + ${2 * m}^2 = ${5 * m * m}$`,
+          };
+        }
+        if (t === 2) {
+          // pravokotnik v pravokotnem trikotniku
+          const a = 2 * r.int(3, 12);
+          const b = 2 * r.int(2, 9);
+          if (a === b) return null;
+          const u = r.pick(["cm", "dm"]);
+          const A = (a * b) / 4;
+          const askSide = r.next() < 0.35;
+          const tri = `pravokotnega trikotnika s katetama $${a}${U(u)}$ in $${b}${U(u)}$`;
+          const ctx = r.pick([
+            `${nm} ima leseno ploščo v obliki ${tri}. Iz nje želi izrezati pravokotno polico, ki ima dve stranici na katetah, nasprotno oglišče pa na hipotenuzi.`,
+            `Na steklo v obliki ${tri} nalepijo pravokotno nalepko tako, da dve njeni stranici ležita na katetah, nasprotno oglišče pa na hipotenuzi.`,
+          ]);
+          const kb = ft(b, a);
+          return {
+            text: `${ctx} ${askSide ? `Koliko meri stranica pravokotnika na kateti z dolžino $${a}${U(u)}$, ko je njegova ploščina največja?` : "Kolikšna je največja možna ploščina pravokotnika?"}`,
+            answer: askSide
+              ? num(a / 2, null, [
+                  { value: b / 2, why: "To je stranica na drugi kateti." },
+                  { value: a, why: "Stranica pravokotnika ne more biti cela kateta: takrat bi bila druga stranica $0$." },
+                  { value: A, why: "To je ploščina pravokotnika, vprašanje pa je dolžina stranice." },
+                ], u)
+              : num(A, null, [
+                  { value: (a * b) / 2, why: "To je ploščina celega trikotnika. Pravokotnik pokrije le del." },
+                  { value: a * b, why: "To je zmnožek katet. Stranici pravokotnika poveži s podobnostjo trikotnikov." },
+                  { value: (a * b) / 8, why: "Pri ploščini zmnoži obe stranici pravokotnika." },
+                ], u + "²"),
+            hint: `Stranico na kateti $${a}${U(u)}$ označi z $x$. Trikotnik, ki ostane ob pravokotniku, je podoben celemu: tako izraziš drugo stranico z $x$.`,
+            data: { given: [`a = ${a}${U(u)}`, `b = ${b}${U(u)}`], find: [askSide ? "x" : "P_{\\max}"] },
+            formula: ["\\frac{y}{a - x} = \\frac{b}{a}", "P = x \\cdot y"],
+            solution: `Stranica na kateti $${a}$ naj meri $x$, druga $y$. Ob pravokotniku ostane trikotnik s katetama $${a} - x$ in $y$, podoben celemu: $\\frac{y}{${a} - x} = \\frac{${b}}{${a}}$.\n$y = ${b} - ${kb}x$\n$P(x) = x\\left(${b} - ${kb}x\\right) = -${kb}x^2 + ${b}x$, območje $0 < x < ${a}$\nNičli sta $0$ in $${a}$, teme je na sredini: $p = ${a / 2}$; vodilni koeficient je negativen, zato je tu maksimum.\n$y = ${b} - ${kb} \\cdot ${a / 2} = ${b / 2}$\n$P_{\\max} = ${a / 2} \\cdot ${b / 2} = ${q(A, u + "²")}$\nStranici pravokotnika merita $${q(a / 2, u)}$ in $${q(b / 2, u)}$, polovici katet.`,
+          };
+        }
+        // največja ali najmanjša vrednost na zaprtem intervalu
+        const a = r.pick([1, -1, 2, -2]);
+        const p = r.int(-4, 5);
+        const qv = r.int(-8, 8);
+        const inside = r.next() < 0.5;
+        const len = r.int(2, 5);
+        const m = inside ? r.int(p - len + 1, p - 1) : r.next() < 0.5 ? r.int(p + 1, p + 3) : r.int(p - len - 3, p - len - 1);
+        const n = m + len;
+        const F = [a, -2 * a * p, a * p * p + qv];
+        const f = (x) => ev(F, x);
+        const askMax = r.next() < 0.5;
+        const cands = [[m, f(m)], [n, f(n)], ...(inside ? [[p, qv]] : [])];
+        const best = cands.reduce((bb, c) => ((askMax ? c[1] > bb[1] : c[1] < bb[1]) ? c : bb));
+        const ms = [];
+        if (qv !== best[1]) {
+          ms.push({
+            value: qv,
+            why: inside
+              ? `Pri $a ${a < 0 ? "< 0" : "> 0"}$ je v temenu ${a < 0 ? "največja" : "najmanjša"} vrednost, ne ${a < 0 ? "najmanjša" : "največja"}.`
+              : `Teme ($x = ${p}$) ne leži v intervalu, zato vrednosti v temenu funkcija tu ne doseže.`,
+          });
+        }
+        for (const [x, y] of cands) if (x !== best[0] && x !== p) ms.push({ value: y, why: "Izračunaj vrednosti v obeh krajiščih (in v temenu, če leži v intervalu) ter jih primerjaj." });
+        if (inside && p !== 0) ms.push({ value: f(-p), why: SIGN });
+        const fT = poly(F);
+        const word = askMax ? "največja" : "najmanjša";
+        return {
+          text: `Kolikšna je ${word} vrednost funkcije $f(x) = ${fT}$ na intervalu $[${m}, ${n}]$?`,
+          answer: num(best[1], null, ms),
+          zeroOk: true,
+          hint: "Najprej poišči teme in preveri, ali leži v intervalu. Nato izračunaj vrednosti v krajiščih.",
+          data: { given: [`f(x) = ${fT}`, `D = [${m}, ${n}]`], find: [askMax ? "f_{\\max}" : "f_{\\min}"] },
+          formula: [VERTEX, "\\text{ekstrem na } [m, n]\\text{: v temenu ali v krajišču}"],
+          solution: `Teme: $p = -\\frac{${pt(F[1])}}{2 \\cdot ${pt(a)}} = ${p}$, $f(${p}) = ${qv}$.\n${inside ? `Teme leži v intervalu $[${m}, ${n}]$.` : `Teme ne leži v intervalu $[${m}, ${n}]$, zato je funkcija na njem monotona in je ekstrem v krajišču.`}\n$f(${m}) = ${evT(F, m)} = ${f(m)}$\n$f(${n}) = ${evT(F, n)} = ${f(n)}$\n${askMax ? "Največja" : "Najmanjša"} izmed ${inside ? "teh treh vrednosti" : "vrednosti v krajiščih"} je $${best[1]}$ (pri $x = ${cands.filter((c) => c[1] === best[1]).map((c) => c[0]).join("$ in $x = ")}$).`,
+        };
+      }
+      // ---------- raven 3 ----------
+      const t = r.int(0, 3);
+      if (t === 0) {
+        // prihodek: R(x) = (c0 + x)(N0 - kx), po želji z zgornjo mejo cene
+        const k = r.pick([5, 10, 10, 20, 20, 25, 30, 40]);
+        const p = r.int(5, 15);
+        const xs = r.pick([-3, -2, -1, 1, 2, 3, 4, 5, 6]);
+        if (p + xs < 3) return null;
+        const n = k * p + 2 * k * xs;
+        if (n < 60 || n > 1200) return null;
+        const cap = xs >= 2 && r.next() < 0.45;
+        const C = cap ? p + r.int(1, xs - 1) : null;
+        const xb = cap ? C - p : xs;
+        const price = p + xb;
+        const N = n - k * xb;
+        const R = price * N;
+        const askPrice = r.next() < 0.45;
+        const [ctx, who] = r.pick([
+          [`Vstopnica za poletno gledališko predstavo na prostem stane $${p}\\ \\text{€}$, pri tej ceni pride $${n}$ gledalcev. Vsak evro podražitve odvrne $${k}$ gledalcev, vsak evro pocenitve pa privabi $${k}$ novih.`, "gledalcev"],
+          [`Dnevna izposoja kajaka stane $${p}\\ \\text{€}$, pri tej ceni je v poletnem mesecu $${n}$ izposoj. Vsak evro podražitve zmanjša število izposoj za $${k}$, vsak evro pocenitve pa ga poveča za $${k}$.`, "izposoj"],
+          [`Vstopnica za koncert v mladinskem centru stane $${p}\\ \\text{€}$, pri tej ceni jih prodajo $${n}$. Anketa pokaže, da vsak evro podražitve pomeni $${k}$ prodanih vstopnic manj, vsak evro pocenitve pa $${k}$ več.`, "vstopnic"],
+        ]);
+        const capT = cap ? ` Cena je lahko največ $${C}\\ \\text{€}$.` : "";
+        const vb = k * (p + xs) ** 2;
+        return {
+          text: `${ctx}${capT} ${askPrice ? "Pri kateri ceni je prihodek največji?" : "Kolikšen je največji možni prihodek?"}`,
+          answer: askPrice
+            ? eur(price, [
+                cap ? { value: p + xs, why: "To je cena v temenu, ki pa ni dovoljena. Na dovoljenem delu prihodek narašča." } : { value: p - xs, why: SIGN },
+                { value: p, why: "Pri sedanji ceni prihodek ni največji. Zapiši prihodek kot funkcijo spremembe cene in poišči teme." },
+                { value: xb, why: "To je sprememba cene, vprašanje pa je nova cena." },
+              ])
+            : eur(R, [
+                cap ? { value: vb, why: "To je prihodek v temenu, ki pa leži zunaj dovoljenih cen." } : { value: (p - xs) * (n + k * xs), why: SIGN },
+                { value: p * n, why: "To je prihodek pri sedanji ceni." },
+                { value: price * n, why: `Pri novi ceni se spremeni tudi število ${who}.` },
+              ]),
+          hint: "Spremembo cene označi z $x$ (pocenitev je negativen $x$). Ceno in število zapiši z $x$; prihodek je njun zmnožek.",
+          data: { given: [`c_0 = ${p}\\ \\text{€}`, `N_0 = ${n}`, `k = ${k}`, ...(cap ? [`c_{\\max} = ${C}\\ \\text{€}`] : [])], find: [askPrice ? "c" : "R_{\\max}"] },
+          formula: ["R(x) = (c_0 + x)(N_0 - kx)", VERTEX],
+          solution: `Cena se spremeni za $x$ evrov ($x < 0$ je pocenitev): cena je $${p} + x$, ${who} je $${n} - ${k}x$.\n$R(x) = (${p} + x)(${n} - ${k}x) = ${poly([-k, n - k * p, p * n])}$\nTeme: $p = -\\frac{b}{2a} = \\frac{${n - k * p}}{${2 * k}} = ${xs}$; ker je $a = -${k} < 0$, je tu maksimum.\n${cap ? `Cena je največ $${C}\\ \\text{€}$, torej $x \\le ${C - p}$. Teme $x = ${xs}$ leži zunaj; levo od temena $R$ narašča, zato je največji prihodek v krajišču $x = ${C - p}$.\n` : ""}Cena: $${p} ${sg(xb)} = ${E(price)}$; ${who}: $${n} - ${k} \\cdot ${pt(xb)} = ${N}$\n$R = ${price} \\cdot ${N} = ${E(R)}$`,
+        };
+      }
+      if (t === 1) {
+        const trip = r.next() < 0.5;
+        if (!trip) {
+          // sadovnjak: (N0 + x)(y0 - kx), prostor za največ m dodatnih dreves
+          const c = r.pick([2, 4, 5, 10]);
+          const n0 = r.int(12, 30);
+          const xs = r.int(3, 10);
+          const y = c * (n0 + 2 * xs);
+          const cap = r.next() < 0.5;
+          const mm = cap ? r.int(1, xs - 1) : xs + r.int(2, 8);
+          const xb = Math.min(mm, xs);
+          const T = n0 + xb;
+          const Y = y - c * xb;
+          const tot = T * Y;
+          const askT = r.next() < 0.45;
+          const jw = (v) => { const h = v % 100; return h === 1 ? "jabolko" : h === 2 ? "jabolki" : h === 3 || h === 4 ? "jabolka" : "jabolk"; };
+          return {
+            text: `V sadovnjaku raste ${sk(n0, "jablana", "jablani", "jablane", "jablan")}, vsaka da povprečno ${sk(y, "jabolko", "jabolki", "jabolka", "jabolk")}. Za vsako dodatno jablano se pridelek vsake jablane zmanjša za ${sk(c, "jabolko", "jabolki", "jabolka", "jabolk")}, ker si drevesa delajo senco. Prostora je še za ${sk(mm, "drevo", "drevesi", "drevesa", "dreves")}. ${askT ? "Koliko jablan naj bo skupaj v sadovnjaku, da bo pridelek največji?" : "Kolikšen je največji možni skupni pridelek jabolk?"}`,
+            answer: askT
+              ? num(T, null, [
+                  cap ? { value: n0 + xs, why: "Toliko jablan bi bilo v temenu, vendar za toliko dreves ni prostora." } : { value: n0 + mm, why: "Več dreves ne pomeni vedno več jabolk: poišči teme." },
+                  { value: xb, why: "To je število dodatnih jablan, vprašanje pa je, koliko jih je skupaj." },
+                  { value: n0, why: "Brez novih dreves pridelek ni največji. Zapiši pridelek kot funkcijo števila dodatnih dreves." },
+                ])
+              : num(tot, null, [
+                  cap ? { value: c * (n0 + xs) ** 2, why: "To je pridelek v temenu, vendar za toliko dreves ni prostora." } : { value: (n0 + mm) * (y - c * mm), why: "Več dreves ne pomeni vedno več jabolk: poišči teme." },
+                  { value: n0 * y, why: "To je sedanji pridelek." },
+                  { value: T * y, why: "Pridelek vsake jablane se z dodatnimi drevesi zmanjša." },
+                ]),
+            hint: "Število dodatnih jablan označi z $x$. Zapiši število jablan in pridelek ene jablane z $x$, zmnoži in upoštevaj, za koliko dreves je prostora.",
+            data: { given: [`N_0 = ${n0}`, `y_0 = ${y}`, `k = ${c}`, `x_{\\max} = ${mm}`], find: [askT ? "N" : "Q_{\\max}"] },
+            formula: ["Q(x) = (N_0 + x)(y_0 - kx)", VERTEX],
+            solution: `Z $x$ dodatnimi jablanami je jablan $${n0} + x$, vsaka da $${y} - ${c}x$ jabolk; $0 \\le x \\le ${mm}$.\n$Q(x) = (${n0} + x)(${y} - ${c}x) = ${poly([-c, y - c * n0, n0 * y])}$\nTeme: $p = -\\frac{b}{2a} = \\frac{${y - c * n0}}{${2 * c}} = ${xs}$; ker je $a = -${c} < 0$, je tu maksimum.\n${cap ? `Teme $${xs}$ leži zunaj intervala $[0, ${mm}]$. Levo od temena $Q$ narašča, zato je največ v krajišču $x = ${mm}$.` : `Teme $${xs}$ leži v intervalu $[0, ${mm}]$.`}\nJablan: $${n0} + ${xb} = ${T}$, vsaka da $${y} - ${c} \\cdot ${xb} = ${Y}$ ${jw(Y)}.\n$Q = ${T} \\cdot ${Y} = ${tot}$ ${jw(tot)}`,
+          };
+        }
+        // izlet z avtobusom: (N0 + x)(c0 - kx), avtobus ima S sedežev
+        const c = r.pick([0.5, 1, 1, 2]);
+        const n0 = r.pick([10, 15, 20, 25, 30]);
+        const xs = r.int(4, 14);
+        const P0 = cl(c * (n0 + 2 * xs));
+        const cap = r.next() < 0.5;
+        // Pri polnem avtobusu mora biti cena še pozitivna: S - n0 < n0 + 2xs.
+        const S = cap ? n0 + r.int(2, xs - 1) : n0 + xs + r.int(0, Math.min(15, n0 + xs - 1));
+        const xb = Math.min(S - n0, xs);
+        const T = n0 + xb;
+        const pr = cl(P0 - c * xb);
+        const R = cl(T * pr);
+        const askT = r.next() < 0.45;
+        return {
+          text: `Agencija pripravlja enodnevni izlet. Pri $${n0}$ udeležencih stane izlet $${E(P0)}$ na osebo; za vsakega dodatnega udeleženca se cena za vse zniža za $${E(c)}$. Avtobus ima $${S}$ sedežev. ${askT ? "Pri koliko udeležencih bo prihodek agencije največji?" : "Kolikšen je največji možni prihodek agencije?"}`,
+          answer: askT
+            ? num(T, null, [
+                cap ? { value: n0 + xs, why: "Toliko udeležencev bi bilo v temenu, vendar toliko ljudi ne gre na avtobus." } : { value: S, why: "Poln avtobus ne prinese največ: z vsakim dodatnim udeležencem se cena zniža za vse." },
+                { value: xb, why: "To je število dodatnih udeležencev, vprašanje pa je skupno število." },
+                { value: n0, why: "Pri najmanjšem številu udeležencev prihodek ni največji. Zapiši prihodek kot funkcijo števila dodatnih udeležencev." },
+              ])
+            : eur(R, [
+                cap ? { value: c * (n0 + xs) ** 2, why: "To je prihodek v temenu, vendar toliko ljudi ne gre na avtobus." } : { value: S * (P0 - c * (S - n0)), why: "Poln avtobus ne prinese največ: z vsakim dodatnim udeležencem se cena zniža za vse." },
+                { value: n0 * P0, why: `To je prihodek pri $${n0}$ udeležencih.` },
+                { value: T * P0, why: "Cena se zniža za vse udeležence, ne le za nove." },
+              ]),
+          hint: "Število dodatnih udeležencev označi z $x$. Zapiši število udeležencev in ceno na osebo z $x$, zmnoži in upoštevaj število sedežev.",
+          data: { given: [`N_0 = ${n0}`, `c_0 = ${E(P0)}`, `k = ${E(c)}`, `S = ${S}`], find: [askT ? "N" : "R_{\\max}"] },
+          formula: ["R(x) = (N_0 + x)(c_0 - kx)", VERTEX],
+          solution: `Z $x$ dodatnimi udeleženci jih je $${n0} + x$, vsak plača $${tx(P0)} - ${tx(c)}x$ evrov; sedežev je dovolj za $0 \\le x \\le ${S - n0}$.\n$R(x) = (${n0} + x)(${tx(P0)} - ${tx(c)}x) = ${poly([-c, cl(P0 - c * n0), n0 * P0])}$\nTeme: $p = -\\frac{b}{2a} = \\frac{${tx(cl(P0 - c * n0))}}{2 \\cdot ${tx(c)}} = ${xs}$; vodilni koeficient je negativen, zato je tu maksimum.\n${cap ? `Teme $${xs}$ leži zunaj intervala $[0, ${S - n0}]$. Levo od temena $R$ narašča, zato je največ v krajišču $x = ${S - n0}$ (poln avtobus).` : `Teme $${xs}$ leži v intervalu $[0, ${S - n0}]$.`}\nUdeležencev: $${n0} + ${xb} = ${T}$, cena: $${tx(P0)} - ${tx(c)} \\cdot ${xb} = ${E(pr)}$\n$R = ${T} \\cdot ${tx(pr)} = ${E(R)}$`,
+        };
+      }
+      if (t === 2) {
+        // dva kolesarja na pravokotnih cestah: najmanjša razdalja
+        let nm2 = name(r);
+        while (nm2 === nm) nm2 = name(r);
+        // Dvojina: kolesarja/kolesarki, bila/bili.
+        const fem2 = g(nm, false, true) && g(nm2, false, true);
+        const kol = fem2 ? "kolesarki" : "kolesarja";
+        // Hitrosti kolesarjev 9–20 km/h; pri kk = 5 je čas do temena cel le pri a = 25 km.
+        const kk = r.pick([3, 4, 5]);
+        const sw = r.next() < 0.5;
+        const v1 = (sw ? 4 : 3) * kk;
+        const v2 = (sw ? 3 : 4) * kk;
+        const c = 5 * kk;
+        const a = kk === 5 ? 25 : r.pick([5, 10, 15, 20, 25]);
+        const D2 = [c * c, -2 * a * v1, a * a];
+        const tmin = (60 * a * v1) / (c * c);
+        if (!Number.isInteger(tmin)) return null;
+        const dmin = (a * v2) / c;
+        const Ts = [];
+        // Zaokrožena razdalja v krajišču se mora razlikovati od d_min in od same oddaljenosti prvega kolesarja,
+        // sicer bi bil prav tudi odgovor brez krajišča ali brez drugega kolesarja.
+        for (let T = 3; T <= tmin - 2; T++) {
+          if ((v1 * T) % 3 !== 0 || (v2 * T) % 3 !== 0) continue;
+          const d = Math.hypot(a - (v1 * T) / 60, (v2 * T) / 60);
+          if (d - dmin >= 0.15 && Math.abs(d - (a - (v1 * T) / 60)) >= 0.15) Ts.push(T);
+        }
+        const turn = Ts.length > 0 && r.next() < 0.35;
+        const askT = !turn && r.next() < 0.4;
+        const T = turn ? r.pick(Ts) : null;
+        const dA = turn ? cl(a - (v1 * T) / 60) : 0;
+        const dB = turn ? cl((v2 * T) / 60) : 0;
+        const dT = turn ? Math.sqrt(dA * dA + dB * dB) : 0;
+        const intro = `Cesti se pravokotno sekata v križišču $K$. Na začetku je ${nm} $${a}${U("km")}$ pred $K$ in kolesari proti njemu s hitrostjo $${v1}${U("km/h")}$, ${nm2} pa je v $K$ in kolesari po drugi cesti stran od križišča s hitrostjo $${v2}${U("km/h")}$.`;
+        const ask = turn
+          ? `${nm} po $${T}$ minutah zavije s ceste. Kolikšna je najmanjša razdalja med njima do tega trenutka? Zaokroži na desetinko kilometra.`
+          : askT
+            ? "Po koliko minutah sta si najbližje?"
+            : "Kolikšna je najmanjša razdalja med njima?";
+        const ts = ft(a * v1, c * c);
+        const base = `Po $t$ urah je ${nm} od $K$ oddaljen${g(nm, "", "a")} $${a} - ${v1}t$, ${nm2} pa $${v2}t$ kilometrov; cesti sta pravokotni (Pitagorov izrek).\n$d^2 = (${a} - ${v1}t)^2 + (${v2}t)^2 = ${poly(D2, "t")}$\nRazdalja je najmanjša, ko je najmanjši $d^2$ (koren je naraščajoča funkcija).\nTeme: $p = \\frac{${2 * a * v1}}{2 \\cdot ${c * c}} = ${ts}\\ \\mathrm{h} = ${tmin}\\ \\mathrm{min}$; ker je $a = ${c * c} > 0$, je tu minimum.`;
+        const tail = turn
+          ? `${nm} zavije po $${T}$ min $= ${ft(T, 60)}\\ \\mathrm{h}$, še pred temenom. Na tem intervalu $d^2$ pada, zato je najmanjša razdalja v krajišču.\nTakrat: $${a} - ${v1} \\cdot ${ft(T, 60)} = ${tx(dA)}$ km in $${v2} \\cdot ${ft(T, 60)} = ${tx(dB)}$ km.\n$d = \\sqrt{${tx(dA)}^2 + ${tx(dB)}^2} ${ap(dT, 1)} ${tx(dT, 1)}\\ \\mathrm{km}$`
+          : `Najmanjša vrednost: $q = c - \\frac{b^2}{4a} = ${a * a} - \\frac{${2 * a * v1}^2}{4 \\cdot ${c * c}} = ${tx(cl(dmin * dmin))}$, zato $d_{\\min} = \\sqrt{${tx(cl(dmin * dmin))}} = ${q(dmin, "km")}$`;
+        return {
+          text: `${intro} ${ask}`,
+          answer: turn
+            ? num(dT, 1, [
+                { value: dmin, why: `Najbližje bi si bil${fem2 ? "i" : "a"} šele po tem, ko ${nm} zavije: teme leži zunaj intervala.` },
+                { value: dA, why: `To je le, koliko je ${nm} oddaljen${g(nm, "", "a")} od križišča. Upoštevaj še, kje je ${nm2}, in uporabi Pitagorov izrek.` },
+                { value: dA * dA + dB * dB, why: "To je $d^2$. Razdaljo dobiš s korenjenjem." },
+              ], "km")
+            : askT
+              ? { ...num(tmin, null, [
+                  { value: (a * v1) / (c * c), why: "To je čas v urah. Pretvori ga v minute." },
+                  { value: (60 * a) / v1, why: `Takrat ${nm} pride do križišča, najbližje pa sta si prej.` },
+                  { value: (60 * a * v1) / (2 * c * c), why: "Teme je pri $p = -\\frac{b}{2a}$: v imenovalcu je $2a$, ne $4a$." },
+                ], "min"), unitAlternatives: ["minut", "minute", "minuti", "minuto"] }
+              : num(dmin, null, [
+                  { value: a, why: `Razdalja na začetku ni najmanjša: sprva se ${kol} približujeta.` },
+                  { value: dmin * dmin, why: "To je $d^2$. Razdaljo dobiš s korenjenjem." },
+                  { value: (a * v2) / v1, why: `To je razdalja, ko ${nm} pride do križišča; najbližje pa sta si prej.` },
+                ], "km"),
+          hint: `Zapiši oddaljenosti obeh od križišča kot funkciji časa $t$ in s Pitagorovim izrekom zapiši $d^2$. Poišči teme te kvadratne funkcije${turn ? ` in preveri, ali je takrat ${nm} še na cesti` : ""}.`,
+          data: { given: [`d_0 = ${a}${U("km")}`, `v_1 = ${v1}${U("km/h")}`, `v_2 = ${v2}${U("km/h")}`, ...(turn ? [`t_1 = ${T}${U("min")}`] : [])], find: [askT ? "t" : "d_{\\min}"] },
+          formula: ["d^2 = (d_0 - v_1 t)^2 + (v_2 t)^2", VERTEX],
+          solution: `${base}\n${tail}`,
+        };
+      }
+      // ograda ob kratkem zidu: teme je lahko zunaj območja
+      const k = r.int(4, 12);
+      const L = 4 * k;
+      const short = r.next() < 0.65;
+      const w = short ? 2 * r.int(Math.ceil(k / 2), k - 1) : 2 * k + 2 * r.int(0, 4);
+      const xb = short ? (L - w) / 2 : k;
+      const yb = L - 2 * xb;
+      const A = xb * yb;
+      const lo = Math.max(0, (L - w) / 2);
+      const askX = r.next() < 0.4;
+      const third = { value: L / 3, why: "Stranice niso nujno enako dolge. Ploščino zapiši kot funkcijo ene stranice." };
+      return {
+        text: `${nm} ima $${L}${U("m")}$ ograje. Ob ravnem zidu, ki je dolg $${w}${U("m")}$, želi ograditi pravokoten vrt; ob zidu ograje ne potrebuje, stranica ob zidu pa ne sme biti daljša od zidu. ${askX ? "Koliko naj meri stranica, pravokotna na zid, da bo ploščina vrta največja?" : "Kolikšna je največja možna ploščina vrta?"}`,
+        answer: askX
+          ? num(xb, null, short
+              ? [
+                  { value: k, why: "Pri temenu bi bila stranica ob zidu daljša od zidu. Preveri, ali teme leži v dovoljenem območju." },
+                  { value: L - w, why: "Ograja pokrije dve stranici, pravokotni na zid." },
+                  third,
+                ]
+              : [
+                  { value: (L - w) / 2, why: "Zid je dovolj dolg: teme leži v dovoljenem območju, zato vrta ni treba raztegniti do konca zidu." },
+                  { value: 2 * k, why: "To je stranica ob zidu." },
+                  third,
+                ], "m")
+          : num(A, null, short
+              ? [
+                  { value: 2 * k * k, why: "Pri temenu bi bila stranica ob zidu daljša od zidu. Preveri, ali teme leži v dovoljenem območju." },
+                  { value: (L - w) * w, why: "Ograja pokrije dve stranici, pravokotni na zid." },
+                  { value: k * k, why: "Brez zidu bi bil najboljši kvadrat, tu pa ograja pokrije le tri stranice." },
+                ]
+              : [
+                  { value: ((L - w) / 2) * w, why: "Zid je dovolj dolg: teme leži v dovoljenem območju, zato vrta ni treba raztegniti do konca zidu." },
+                  { value: k * k, why: "Brez zidu bi bil najboljši kvadrat, tu pa ograja pokrije le tri stranice." },
+                  { value: (L / 3) ** 2, why: third.why },
+                ], "m²"),
+        hint: "Stranici, pravokotni na zid, označi z $x$. Zapiši ploščino in iz dolžine zidu določi, kateri $x$ so dovoljeni. Nato preveri, ali teme leži med njimi.",
+        data: { given: [`l = ${L}${U("m")}`, `z = ${w}${U("m")}`], find: [askX ? "x" : "P_{\\max}"] },
+        formula: ["P(x) = x(l - 2x)", "l - 2x \\le z"],
+        solution: `Stranici, pravokotni na zid, merita $x$; ob zidu ostane $${L} - 2x$.\n$P(x) = x(${L} - 2x) = -2x^2 + ${L}x$\nPogoja $${L} - 2x > 0$ in $${L} - 2x \\le ${w}$ dasta $${lo} ${lo > 0 ? "\\le" : "<"} x < ${L / 2}$.\nTeme: $p = -\\frac{${L}}{2 \\cdot (-2)} = ${k}$; ker je $a = -2 < 0$, je tu maksimum.\n${short ? `Teme $${k}$ leži levo od dovoljenih $x$; desno od temena $P$ pada, zato je največ v krajišču $x = ${xb}$ (stranica ob zidu je dolga kot zid).` : "Teme leži v dovoljenem območju."}\nStranica ob zidu: $${L} - 2 \\cdot ${xb} = ${q(yb, "m")}$\n$P_{\\max} = ${xb} \\cdot ${yb} = ${q(A, "m²")}$`,
       };
     },
   },

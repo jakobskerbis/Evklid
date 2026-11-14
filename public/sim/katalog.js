@@ -289,6 +289,7 @@ export const SIM_TOPICS = {
   "MAT-SS-2/kvadratna-enacba": ["graf", "Kvadratna enačba in diskriminanta", { preset: "kvadratna-enacba" }],
   "MAT-SS-2/kvadratna-neenacba": ["graf", "Kvadratna neenačba", { preset: "kvadratna-neenacba" }],
   "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb": ["graf", "Parabola in njena lega glede na os", { preset: "kvadratna-neenacba" }],
+  "MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo": ["graf", "Teme parabole: največja in najmanjša vrednost", { preset: "kvadratna" }],
   "MAT-SS-2/eksponentna-funkcija": ["graf", "Eksponentna funkcija", { preset: "eksponentna" }],
   "MAT-SS-2/eksponentne-enacbe": ["graf", "Eksponentna enačba grafično", { preset: "eksponentna-enacba" }],
   "MAT-SS-2/logaritem": ["graf", "Logaritem kot obratna funkcija", { preset: "logaritem" }],
