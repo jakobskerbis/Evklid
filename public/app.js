@@ -1724,19 +1724,16 @@ const input = $("#input");
 // Če besedilo ne gre več v polje, se samodejno pokaže v večjem oknu (public/razpri.js). Zadnja sporočila
 // ostanejo vidna nad poljem.
 function autoGrow(stick, again) {
-  // Predogled formul nad poljem: (3)/(4) se pokaže kot ulomek, preden ga pošlješ.
-  const pv = $("#formula-preview");
-  const show = hasFormula(input.value);
-  if (show) pv.innerHTML = renderUserText(input.value);
-  pv.hidden = !show;
   const box = $("#messages");
   const atBottom = typeof stick === "boolean" ? stick : box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   const max = Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
   input.style.maxHeight = `${max}px`;
   input.style.height = "auto";
-  const h = input.scrollHeight;
+  // Formule (ulomek, koren …) se izrišejo kar v polju (public/predogled-vnosa.js): višina po izrisu, ne po surovem zapisu.
+  const izris = input.classList.contains("vnos-izrisan") ? Number(input.dataset.izrisVisina) || 0 : 0;
+  const h = izris || input.scrollHeight;
   input.style.height = `${Math.min(h, max)}px`;
-  input.style.overflowY = h > max ? "auto" : "hidden";
+  input.style.overflowY = h > max && !izris ? "auto" : "hidden";
   // Telefon: daljše besedilo dobi celo širino vrstice, gumbi gredo pod polje (nazaj šele, ko je polje prazno).
   const row = input.closest(".composer-row");
   const multi = h > 60 || (row.classList.contains("multi") && !!input.value);
@@ -1751,6 +1748,7 @@ function autoGrow(stick, again) {
 }
 attachPrettify(input); // x^2 → x², 3/4 → ³⁄₄, sqrt → √ že med pisanjem (pred autoGrow, ki izmeri novo besedilo)
 input.addEventListener("input", autoGrow);
+input.addEventListener("vnos-izris-visina", () => autoGrow());
 // Ozko polje (telefon): namig se ne odreže sredi besede (»Napiši nalogo a«), ampak za zadnjo celo besedo
 // (»Napiši nalogo …«). Celoten namig ostane v polju, ko je prostora dovolj; nov namig (jezik, način) se izmeri znova.
 {

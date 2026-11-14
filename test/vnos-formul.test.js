@@ -39,14 +39,15 @@ test("every formula from the tutor keys renders in KaTeX", () => {
   }
 });
 
-test("tutor input: keys for fractions, powers, sequences, integrals and sums; preview above the field", () => {
+test("tutor input: keys for fractions, powers, sequences, integrals and sums; drawn inside the field", () => {
   const ins = TUTOR_CHIPS.map(([, v]) => v);
   for (const v of ["(@)/()", "^(@)", "_(@)", "∫ (@) dx", "∫_(@)^() () dx", "∑_(n=1)^(@) "]) assert.ok(ins.includes(v), v);
   const html = readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
-  assert.match(html, /id="formula-preview"[^>]*hidden/);
+  assert.match(html, /<textarea id="input"[^>]*data-izris-v-polju/, "ulomek se izriše v polju klepeta (public/predogled-vnosa.js)");
+  assert.doesNotMatch(html, /id="formula-preview"/, "ne še enkrat nad poljem");
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   assert.match(app, /splitFormulas\(p\)\.map/, "sporočilo učenca izriše zapis s tipk");
-  assert.match(app, /pv\.hidden = !show/);
+  assert.match(app, /dataset\.izrisVisina/, "polje klepeta zraste po izrisu");
 });
 
 test("»Razloži« in a lesson sends the original TeX, not the clickable-symbol wrappers", async () => {
