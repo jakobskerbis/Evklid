@@ -710,7 +710,7 @@ const covers = () => {
   const b = document.getElementById("chat-bubble");
   if (!b || b.hidden) return "";
   const r = b.getBoundingClientRect();
-  return [...document.querySelectorAll("#view-graph :is(.sc-keys, .sc-entry, .gc-panel)")]
+  return [...document.querySelectorAll("#view-graph :is(.calc-modes, .sc-keys, .sc-entry, .gc-panel, .gc-zoom)")]
     .filter((el) => el.offsetParent)
     .filter((el) => { const q = el.getBoundingClientRect(); return r.left < q.right && r.right > q.left && r.top < q.bottom && r.bottom > q.top; })
     .map((el) => el.className.split(" ")[0])

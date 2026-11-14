@@ -542,8 +542,8 @@ function flyToDrop() {
   }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 220);
 }
 // Deli glavnega pogleda, ki se z drsenjem ne premaknejo izpod mehurčka: tipke in vnos znanstvenega kalkulatorja,
-// seznam grafičnega (na telefonu spodnja polovica). Mehurček jih ne prekrije (pilot 14. 11. 2026).
-const KEEP_CLEAR = "body > main.view:not([hidden]):not(.in-okno) :is(.sc-keys, .sc-entry, .gc-panel)";
+// seznam in gumbi za povečavo grafičnega, izbira načina. Mehurček jih ne prekrije (pilot 14. 11. 2026).
+const KEEP_CLEAR = "body > main.view:not([hidden]):not(.in-okno) :is(.calc-modes, .sc-keys, .sc-entry, .gc-panel, .gc-zoom)";
 // Mehurček ne prekrije okna (npr. tipk kalkulatorja spodaj desno) ne KEEP_CLEAR: najbližje prosto mesto ob robu,
 // najprej na izbrani strani, nato na drugi.
 function placeBubble() {
@@ -569,10 +569,12 @@ function placeBubble() {
     }
     if (spot) break;
   }
-  // Ob tipkah ali seznamu kalkulatorja ni prostega mesta (telefon ležeče, tipke čez ves zaslon): mehurček se skrije,
-  // dokler se mesto ne sprosti (obrat, drug način ali pogled; j 14. 11. 2026). Klepet ostane v spodnji vrstici.
-  bubble.classList.toggle("umaknjen", !spot && clear.length > 0);
-  if (!spot && clear.length) return;
+  // Kalkulator na ležečem telefonu (nizek zaslon) ali brez prostega mesta ob njegovih tipkah: mehurček se skrije, dokler
+  // se to ne spremeni (obrat, drug način ali pogled; j 14. 11. 2026). Inštruktor ostane v spodnji vrstici.
+  const lowLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;
+  const away = clear.length > 0 && (!spot || lowLandscape);
+  bubble.classList.toggle("umaknjen", away);
+  if (away) return;
   // Ni prostega mesta: mehurček ne gre na tipke kalkulatorja, raje na drugo okno.
   if (!spot) {
     const calc = wins.get("graph")?.el.getBoundingClientRect();
