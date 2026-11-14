@@ -1118,7 +1118,9 @@ window.addEventListener("evklid:era", templeParts);
 function renderState(convState) {
   const s = state.student.settings;
   const subject = convState?.subject || s.subject;
-  const mode = convState?.mode || s.solving_mode;
+  // Izbira načina kaže nastavitev, ki jo spreminja, ne načina zadnjega odgovora (META): sicer je po
+  // zamenjavi v glavi spet pisalo »Vodenje«, čeprav je bila nastavitev že celotna rešitev (j 14. 11.).
+  const mode = s.solving_mode || "A";
   const program = isUni(s) ? programsCache().find((p) => p.id === s.study_program)?.label : null;
   // Predmet, način in letnik se zamenjajo kar v glavi (izbirni seznam), program je le napis.
   const pick = (key, label, options) =>
