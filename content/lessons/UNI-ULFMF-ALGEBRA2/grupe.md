@@ -238,13 +238,16 @@ Natančno navedi in dokaži Lagrangeov izrek. Nato dokaži: (a) grupa praštevil
 
 Simetrije enakostraničnega trikotnika z oglišči $1$, $2$, $3$:
 
-```
-       1
-      / \
-     /   \
-    /  .  \
-   2-------3
-```
+:::risba skica
+opis: Enakostranični trikotnik z oglišči 1 zgoraj, 2 levo spodaj in 3 desno spodaj. V sredini je označeno središče trikotnika, okoli katerega trikotnik vrtimo.
+območje: -1; -0,8 .. 5; 4,3
+enota: 40
+lik: 0; 0 -> 4; 0 -> 2; 3,464
+točka: 2; 1,155
+točka: 2; 3,464 | 1 | nad
+točka: 0; 0 | 2 | levo
+točka: 4; 0 | 3 | desno
+:::
 
 - Vrtenje za $120°$ pošlje $1 \to 2 \to 3 \to 1$: permutacija $(1\;2\;3)$; za $240°$: $(1\;3\;2)$.
 - Zrcaljenje čez os skozi $1$ zamenja $2$ in $3$: $(2\;3)$; podobno $(1\;3)$ in $(1\;2)$.

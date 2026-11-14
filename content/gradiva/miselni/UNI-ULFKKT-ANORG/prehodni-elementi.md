@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Definicija
+  - d-blok, skupine 3 do 12
+  - Zn, Cd, Hg: $d^{10}$, strogo niso prehodni
+- Elektroni d
+  - ion najprej izgubi elektrone $4s$
+  - število je $G - x$; $\mathrm{Fe^{3+}}$: $d^5$
+- Oksidacijska števila
+  - $3d$ in $4s$ blizu po energiji
+  - najvišje raste do Mn ($+7$)
+  - navzdol so visoka števila stabilnejša
+- Razcep ligandnega polja
+  - $t_{2g}$: $-0{,}4\,\Delta_\mathrm{o}$, $e_g$: $+0{,}6\,\Delta_\mathrm{o}$
+  - $\mathrm{LFSE} = (-0{,}4\,n_t + 0{,}6\,n_e)\,\Delta_\mathrm{o}$
+- Spin in magnetizem
+  - nizkospinski, če $\Delta_\mathrm{o} > P$
+  - $\mu = \sqrt{n(n+2)}\,\mu_\mathrm{B}$
+- Barva
+  - $\Delta_\mathrm{o} = N_\mathrm{A}hc/\lambda$, enota $\mathrm{kJ/mol}$
+  - vidimo komplementarno barvo
+  - $d^0$, $d^{10}$ brezbarvna; $\mathrm{MnO_4^-}$: prenos naboja
+- Kataliza
+  - menjava oksidacijskega števila: $\mathrm{V_2O_5}$, $\mathrm{Fe^{2+}/Fe^{3+}}$
+  - heterogena: adsorpcija na površino
+  - pazi: katalizator ne spremeni $K$

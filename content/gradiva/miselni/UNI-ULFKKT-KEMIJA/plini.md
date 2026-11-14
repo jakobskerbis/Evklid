@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Stanje plina
+  - $p$ v $\mathrm{Pa}$, $V$ v $\mathrm{m^3}$, $T$ v $\mathrm{K}$
+  - $T/\mathrm{K} = t/^\circ\mathrm{C} + 273{,}15$
+  - $1\,\mathrm{atm} = 101\,325\,\mathrm{Pa}$
+- Plinski zakoni
+  - Boyle: $pV = \text{konst.}$ pri stalnih $T$, $n$
+  - Gay-Lussac: $V/T = \text{konst.}$
+  - Avogadro: $V/n = \text{konst.}$
+- Splošna plinska enačba
+  - $pV = nRT$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$
+  - stalna množina: $p_1V_1/T_1 = p_2V_2/T_2$
+  - napaka: »$\mathrm{kPa}$ skupaj z $\mathrm{m^3}$«
+- Molska prostornina
+  - $V_m = RT/p \approx 22{,}4\,\mathrm{L/mol}$
+  - velja le pri $0\,^\circ\mathrm{C}$ in $101{,}325\,\mathrm{kPa}$
+- Gostota in molska masa
+  - $M = \rho RT/p$
+  - $\mathrm{CO_2}$ gostejši od zraka, helij redkejši
+- Daltonov zakon
+  - $p = \sum_i p_i$, $p_i = n_iRT/V$
+  - $p_i = x_i\,p$: množinski, ne masni delež
+- Plin nad vodo
+  - $p(\text{plin}) = p - p(\mathrm{H_2O})$
+  - voda pri $25\,^\circ\mathrm{C}$: $3{,}17\,\mathrm{kPa}$
+- Meje modela
+  - dober pri nizkem $p$ in visoki $T$
+  - $v_\mathrm{rms} = \sqrt{3RT/M}$
+  - visok tlak: van der Waalsova enačba

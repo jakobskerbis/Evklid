@@ -226,13 +226,27 @@ Naj poteka ena sama reakcija $\sum_i \nu_i \mathrm{B}_i = 0$. a) Natančno defin
 
 Vsak stehiometrijski račun je pot po tem zemljevidu:
 
-```
-  masa A          množina A          množina B          masa B
-  [ g ]  --:M-->  [ mol ]  --·νB/νA-->  [ mol ]  --·M-->  [ g ]
-                     ^                     |
-   V(plin), p, T ----+                     +----> V(plin) = nRT/p
-   c, V(raztopina) --+                     +----> c = n/V
-```
+:::risba skica
+opis: Zemljevid stehiometrijskega računa. Levo zgoraj je masa snovi A v gramih; puščica navzdol z napisom »deli z M(A)« vodi do množine A v molih. Od množine A vodi vodoravna puščica z napisom »krat razmerje koeficientov ν(B)/ν(A)« do množine B v molih. Od množine B vodi puščica navzgor z napisom »krat M(B)« do mase B v gramih. Pod množino A sta druga vhoda: plin, n = pV/(RT), in raztopina, n = cV. Pod množino B sta druga izhoda: plin, V = nRT/p, in raztopina, c = n/V. Mas A in B ne povezuje nobena neposredna puščica.
+območje: 0; 0 .. 12; 8
+napis: 2,5; 7,4 | masa A (g) | sredina | debelo
+puščica: 2,5; 6,9 -> 2,5; 5,6 | : M(A) | desno
+pravokotnik: 0,8; 3,5 .. 4,2; 5,5 | modra
+napis: 2,5; 4,9 | množina A | sredina | debelo
+napis: 2,5; 4,1 | (mol) | sredina
+puščica: 4,3; 4,5 -> 7,7; 4,5 | · ν_B/ν_A | nad
+pravokotnik: 7,8; 3,5 .. 11,2; 5,5 | modra
+napis: 9,5; 4,9 | množina B | sredina | debelo
+napis: 9,5; 4,1 | (mol) | sredina
+puščica: 9,5; 5,6 -> 9,5; 6,9 | · M(B) | desno
+napis: 9,5; 7,4 | masa B (g) | sredina | debelo
+puščica: 2,5; 2,2 -> 2,5; 3,4 | | | siva
+napis: 2,5; 1,6 | plin: n = pV/(RT) | sredina
+napis: 2,5; 0,6 | raztopina: n = cV | sredina
+puščica: 9,5; 3,4 -> 9,5; 2,2 | | | siva
+napis: 9,5; 1,6 | plin: V = nRT/p | sredina
+napis: 9,5; 0,6 | raztopina: c = n/V | sredina
+:::
 
 Vodoravna pot vedno teče skozi **množino**. Mase dveh različnih snovi nikoli ne povezujemo neposredno.
 

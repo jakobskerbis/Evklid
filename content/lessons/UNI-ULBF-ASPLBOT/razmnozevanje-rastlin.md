@@ -15,21 +15,27 @@ Zakaj sta pomagala čebele in druga sorta? Ker se v cvetu odvije potovanje. Pelo
 
 **Zemljevid življenjskega kroga.** Pri rastlinah se izmenjujeta dve generaciji. **Sporofit** je rastlina z diploidnimi ($2n$) celicami; tvori spore. **Gametofit** je rastlina ali skupina celic s haploidnimi ($n$) celicami; tvori gamete. Temu izmenjavanju rečemo **menjava generacij**. Krog ima pet postaj:
 
-```
-sporofit (2n)
-   │ mejoza
-   ▼
-spore (n)
-   │ mitoze
-   ▼
-gametofit (n)
-   │ mitoza
-   ▼
-gamete (n)
-   │ oploditev
-   ▼
-zigota (2n) → nov sporofit
-```
+:::risba skica
+opis: Življenjski krog rastline s petimi postajami od zgoraj navzdol. Sporofit (2n) z mejozo da spore (n). Iz spor z mitozami zraste gametofit (n). Gametofit z mitozo tvori gamete (n). Z oploditvijo nastane zigota (2n). Od zigote vodi puščica nazaj na vrh: iz nje zraste nov sporofit.
+območje: 0; 0 .. 11; 11
+pravokotnik: 5; 9,2 .. 9; 10,2 | zelena | ozadje
+napis: 7; 9,7 | sporofit (2n) | sredina
+puščica: 7; 9,2 -> 7; 8 | mejoza | desno
+pravokotnik: 5; 7 .. 9; 8 | oranžna | ozadje
+napis: 7; 7,5 | spore (n) | sredina
+puščica: 7; 7 -> 7; 5,8 | mitoze | desno
+pravokotnik: 5; 4,8 .. 9; 5,8 | oranžna | ozadje
+napis: 7; 5,3 | gametofit (n) | sredina
+puščica: 7; 4,8 -> 7; 3,6 | mitoza | desno
+pravokotnik: 5; 2,6 .. 9; 3,6 | oranžna | ozadje
+napis: 7; 3,1 | gamete (n) | sredina
+puščica: 7; 2,6 -> 7; 1,4 | oploditev | desno
+pravokotnik: 5; 0,4 .. 9; 1,4 | zelena | ozadje
+napis: 7; 0,9 | zigota (2n) | sredina
+črta: 5; 0,9 -> 4,2; 0,9 -> 4,2; 9,7 | črtkano
+puščica: 4,2; 9,7 -> 5; 9,7 | | | črtkano
+napis: 4; 5,3 | nov sporofit | levo
+:::
 
 Pomembna razlika od živali: mejoza pri rastlini ne da gamet, ampak **spore**. Gamete nastanejo pozneje, z mitozo v gametofitu.
 
@@ -62,16 +68,25 @@ $10$. Trosovnik je sporofit ($2n = 20$), blazinica pa je gametofit, ki je zrasel
 
 **Ženski gametofit.** **Semenska zasnova** je drobna tvorba v plodnici, iz katere po oploditvi nastane seme. V njej se matična celica razdeli z mejozo na štiri megaspore. Tri propadejo. Jedro preživele se trikrat zaporedoma deli z mitozo, zato nastane osem jeder. Iz njih se oblikuje **zarodni mešiček** s sedmimi celicami: celic je ena manj kot jeder, ker dve jedri, **polarni jedri**, ostaneta v isti osrednji celici. Narišimo ga od vrha proti odprtini zasnove, **mikropili**:
 
-```
-3 antipode (n)
-     ···
-osrednja celica
-z 2 polarnima jedroma
-     ···
-jajčna celica (n)
-in 2 sinergidi (n)
-══ mikropila ══
-```
+:::risba skica
+opis: Zarodni mešiček, narisan kot pokončen pravokotnik. Na vrhu so tri antipode (n). V sredini je osrednja celica z dvema polarnima jedroma. Spodaj je jajčna celica (n), levo in desno ob njej sta sinergidi (n). Pod mešičkom je mikropila; puščica kaže, da pelodna cev vstopi od spodaj.
+območje: 0; 0 .. 13; 10
+pravokotnik: 1; 1,6 .. 5; 9,4
+krog: 2; 8,5 | 0,4 | siva
+krog: 3; 8,5 | 0,4 | siva
+krog: 4; 8,5 | 0,4 | siva
+napis: 5,4; 8,5 | 3 antipode (n) | desno
+točka: 2,6; 5,5 | | | modra
+točka: 3,4; 5,5 | | | modra
+napis: 5,4; 5,8 | osrednja celica | desno
+napis: 5,4; 5,2 | z 2 polarnima jedroma | desno
+krog: 3; 2,7 | 0,55 | oranžna | debelo
+krog: 1,9; 2,4 | 0,4 | siva
+krog: 4,1; 2,4 | 0,4 | siva
+napis: 5,4; 2,9 | jajčna celica (n) | desno
+napis: 5,4; 2,3 | med 2 sinergidama (n) | desno
+puščica: 3; 0,4 -> 3; 1,5 | mikropila | desno
+:::
 
 **Opraševanje.** To je prenos peloda s prašnice na brazdo. Pri **samoopraševanju** pelod pride na brazdo istega cveta ali istega osebka. Pri **navzkrižnem opraševanju** pride z drugega osebka. Mnoge rastline, tudi češnja, so **samonezdružljive**: pestič zavrne pelod iste sorte. Zato je Tina potrebovala drugo sorto.
 
@@ -192,6 +207,59 @@ $n = \dfrac{21}{3} = 7$, zato ima semenska celica $7$ kromosomov, celica lista p
 - Opraševanje je prenos peloda na brazdo (samo- ali navzkrižno; veter, žuželke, ptiči, voda). Samonezdružljive rastline potrebujejo pelod drugega osebka ali sorte.
 - Dvojna oploditev: semenska celica + jajčna celica → zigota ($2n$); semenska celica + osrednja celica → endosperm ($3n$).
 
+## Za izpit
+
+Znati moraš povedati:
+- definicije: sporofit, gametofit, menjava generacij; kje v krogu je mejoza in kje mitoza ter zakaj mejoza pri rastlini da spore, ne gamet;
+- katera generacija prevladuje pri mahovih, praprotnicah in kritosemenkah;
+- dele cveta z vlogami ter razvoj moškega gametofita (mikrospora, vegetativna in generativna celica, dve semenski celici);
+- nastanek in zgradbo zarodnega mešička (megaspora, trije zaporedni krogi mitoze jeder, $8$ jeder, $7$ celic);
+- razliko med opraševanjem in oploditvijo, znake vetrocvetk in žužkocvetk, samonezdružljivost;
+- pot pelodne cevi in dvojno oploditev s ploidnostjo zigote ($2n$) in endosperma ($3n$).
+
+### Naloga 1
+
+Cvet češnje ima vrat pestiča dolg $12\,\mathrm{mm}$. Semenska zasnova je sposobna oploditve še $96\,\mathrm{h}$ po odprtju cveta. Čebela cvet opraši $10\,\mathrm{h}$ po odprtju. Pri $20\,^\circ\mathrm{C}$ pelod vzkali v $2\,\mathrm{h}$, cev pa raste s hitrostjo $0{,}25\,\mathrm{mm/h}$. Pri $10\,^\circ\mathrm{C}$ pelod vzkali v $6\,\mathrm{h}$, cev raste s hitrostjo $0{,}08\,\mathrm{mm/h}$. Privzemi, da je življenjska doba zasnove pri obeh temperaturah enaka. (a) Ali pelodna cev pri vsaki od temperatur pride do zasnove pravočasno? (b) Najmanj kako hitro bi morala cev rasti pri $10\,^\circ\mathrm{C}$? (c) Pestič ima alela $S_3S_4$. Nanj pride $40$ pelodnih zrn z drevesa z aleloma $S_4S_6$. Koliko zrn lahko pričakovano oplodi zasnovo? Koliko bi jih lahko, če bi pelod prišel z drevesa $S_3S_4$?
+
+**Rešitev:**
+
+1. Od oprašitve do vstopa cevi v zasnovo mine $t = t_\mathrm{k} + \dfrac{s}{v}$. Od odprtja cveta je treba prišteti še $10\,\mathrm{h}$ čakanja na oprašitev.
+2. Pri $20\,^\circ\mathrm{C}$: rast traja $\dfrac{12\,\mathrm{mm}}{0{,}25\,\mathrm{mm/h}} = 48\,\mathrm{h}$, zato od odprtja cveta mine $10 + 2 + 48 = 60\,\mathrm{h}$. To je manj kot $96\,\mathrm{h}$: oploditev je mogoča.
+3. Pri $10\,^\circ\mathrm{C}$: rast traja $\dfrac{12\,\mathrm{mm}}{0{,}08\,\mathrm{mm/h}} = 150\,\mathrm{h}$, zato od odprtja cveta mine $10 + 6 + 150 = 166\,\mathrm{h}$. To je več kot $96\,\mathrm{h}$: zasnova propade, preden cev pride do nje.
+4. Za rast pri $10\,^\circ\mathrm{C}$ ostane največ $96 - 10 - 6 = 80\,\mathrm{h}$. Najmanjša hitrost: $v = \dfrac{12\,\mathrm{mm}}{80\,\mathrm{h}} = 0{,}15\,\mathrm{mm/h}$, skoraj dvakrat več od dejanske.
+5. Samonezdružljivost češnje je gametofitska: odloča alel v haploidnem pelodnem zrnu. Drevo $S_4S_6$ z mejozo da polovico zrn z alelom $S_4$ in polovico z $S_6$.
+6. Alel $S_4$ se ujema z alelom pestiča, zato se rast teh cevi v vratu ustavi. Alela $S_6$ pestič nima, zato te cevi rastejo naprej: $\dfrac{40}{2} = 20$ zrn.
+7. Pelod z drevesa $S_3S_4$ nosi alel $S_3$ ali $S_4$. Oba sta tudi v pestiču, zato ne uspe nobeno zrno: $0$.
+8. Odgovor: (a) pri $20\,^\circ\mathrm{C}$ cev pride po $60\,\mathrm{h}$ in je pravočasna, pri $10\,^\circ\mathrm{C}$ bi potrebovala $166\,\mathrm{h}$ in zamudi; (b) vsaj $0{,}15\,\mathrm{mm/h}$; (c) pričakovano $20$ zrn od $40$, pri pelodu z drevesa $S_3S_4$ nobeno. Hladno vreme in napačna opraševalna sorta zato vsak zase zmanjšata pridelek.
+
+### Naloga 2
+
+Pšenica ima v celicah lista $42$ kromosomov. V klasu je dozorelo $48$ zrn; vsako je nastalo iz cveta z eno semensko zasnovo. (a) Najmanj koliko matičnih celic v prašnicah je moralo z mejozo dati pelod za ta zrna? (b) Koliko mitotskih delitev jeder je bilo potrebnih, da so iz preživelih megaspor nastali zarodni mešički vseh $48$ zasnov? (c) Koliko kromosomov je skupaj v vseh $8$ jedrih enega zarodnega mešička in koliko v jedru celice endosperma?
+
+**Rešitev:**
+
+1. Vsako zrno pomeni eno oplojeno zasnovo in eno pelodno zrno: potrebnih je vsaj $48$ pelodnih zrn.
+2. Ena matična celica da z mejozo štiri mikrospore, iz vsake nastane eno pelodno zrno. Najmanj $\dfrac{48}{4} = 12$ matičnih celic.
+3. Jedro megaspore se deli trikrat zaporedoma. V prvem krogu se deli $1$ jedro, v drugem $2$, v tretjem $4$: skupaj $1 + 2 + 4 = 7$ delitev jeder, nastane $8$ jeder.
+4. Za $48$ zasnov: $48 \cdot 7 = 336$ mitotskih delitev jeder.
+5. Haploidno število: $n = \dfrac{42}{2} = 21$. Vseh $8$ jeder zarodnega mešička je haploidnih: $8 \cdot 21 = 168$ kromosomov.
+6. Endosperm nastane iz semenske celice in dveh polarnih jeder: $3 \cdot 21 = 63$ kromosomov.
+7. Odgovor: (a) vsaj $12$ matičnih celic; (b) $336$ delitev jeder; (c) $168$ kromosomov v zarodnem mešičku in $63$ v jedru celice endosperma.
+
+### Naloga 3
+
+Primerjaj mah, praprot in kritosemenko: natančno navedi, katera generacija prevladuje in kako je videti druga. Nato utemelji, zakaj je hranilno tkivo semena pri kritosemenkah triploidno, pri golosemenkah pa haploidno.
+
+**Rešitev:**
+
+1. Pri vseh treh sporofit ($2n$) z mejozo tvori spore ($n$), iz spore zraste gametofit ($n$), ki z mitozo tvori gamete.
+2. Mah: prevladuje gametofit, zelena blazinica. Sporofit je trosovnik na peclju, ki raste na gametofitu.
+3. Praprot: prevladuje sporofit, velika rastlina z listi. Gametofit je drobna samostojna ploščica, protalij.
+4. Kritosemenka: prevladuje sporofit, drevo ali zelišče. Gametofita sta le nekaj celic: pelodno zrno (moški) in zarodni mešiček (ženski); ženski ostane v semenski zasnovi na sporofitu.
+5. Od mahov proti semenkam se gametofit krči in postaja odvisen od sporofita.
+6. Pri kritosemenkah hranilno tkivo nastane šele z oploditvijo: druga semenska celica ($n$) se zlije z osrednjo celico, ki ima dve polarni jedri ($n + n$). Endosperm je zato $3n$.
+7. Pri golosemenkah dvojne oploditve z nastankom endosperma ni. Hranilno tkivo je kar tkivo ženskega gametofita, ta pa je zrasel iz megaspore z mitozami in je zato $n$.
+
 ## Drugače: Z analogijo
 
 Predstavljaj si dostavo paketov. Pelodno zrno je dostavno vozilo, ki ima v prtljažniku dva paketa: semenski celici. Vozilo pripelje do avtobusne postaje, to je brazda. Od tam vodi ena sama cesta, vrat pestiča, do hiše v plodnici, to je semenska zasnova. V hišo vodijo vhodna vrata, mikropila.
@@ -200,11 +268,13 @@ V hiši sta dva naslovnika. Prvi paket gre jajčni celici in iz tega nastane zar
 
 Analogija ima mejo: vozilo pelje po zgrajeni cesti, pelodna cev pa sproti raste skozi vrat.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Koruzni storž z luknjami.** Če med cvetenjem piha vroč, suh veter, se nekateri laski ne oprašijo. Na storžu potem manjkajo zrna, in to na mestih teh laskov.
-- **Alergija na pelod.** Pelod breze, leske in trav draži, ker so to vetrocvetke: sproščajo ogromno lahkega peloda, saj ga večina zgreši brazdo.
-- **Kivi brez plodov.** Kivi je dvodomen: en osebek ima samo moške, drugi samo ženske cvetove. Kdor posadi le eno rastlino, plodov ne dobi.
+- **Opraševalne sorte v nasadu.** Sadjar pred sajenjem v preglednici alelov $S$ preveri, da se sorti razlikujeta vsaj v enem alelu in cvetita hkrati. Med cvetenjem pripelje v nasad čebelje družine. Če so tedaj napovedani hladni in deževni dnevi, pričakuje slabši nastavek plodov.
+- **Hibridno seme koruze.** Semenar seje vrste materinske in očetne linije izmenično. Materinskim rastlinam pred prašenjem odstrani metlice, zato vsa zrna na njihovih storžih nastanejo s pelodom očetne linije. Njiva je oddaljena od druge koruze, da veter ne prinese tujega peloda. Storži z manjkajočimi zrni pokažejo, da je med cvetenjem zmanjkalo peloda ali so se laski posušili.
+- **Žlahtnjenje.** Pri križanju žlahtnitelj cvetu materinske rastline pred zrelostjo odstrani prašnike, nanese izbrani pelod na brazdo in cvet pokrije z vrečko. Tako v zasnove pridejo le semenske celice izbranega očeta.
+- **Napoved peloda.** Aerobiolog z lovilnikom, ki vsesava zrak, pod mikroskopom šteje pelodna zrna breze, leske in trav. Iz števila zrn v kubičnem metru zraka nastane napoved za alergike. V zraku je predvsem pelod vetrocvetk.
+- **Nasad kivija.** Kivi je dvodomen: en osebek ima samo moške, drugi samo ženske cvetove. Pridelovalec zato med ženske rastline v rednih razmikih posadi moške.
 
 ## Drugače: Bolj natančno
 

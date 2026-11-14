@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vektorski prostor
+  - seštevanje in množenje s skalarjem
+  - primeri $\mathbb{R}^n$, $\mathbb{R}_n[x]$, $\mathbb{R}^{m \times n}$
+- Podprostor
+  - $\mathbf{0} \in U$ in $\alpha u + \beta v \in U$
+  - rešitve $A\mathbf{x} = \mathbf{0}$ so podprostor
+  - pazi: premica $y = 2x + 1$ ni podprostor
+- Linearna ogrinjača
+  - $\mathcal{L}\{v_1, \ldots, v_k\}$: vse linearne kombinacije
+  - odvečen vektor ogrinjače ne poveča
+- Linearna neodvisnost
+  - $\sum \alpha_i v_i = \mathbf{0} \Rightarrow$ vsi $\alpha_i = 0$
+  - test: rang ali $\det A \neq 0$
+  - pazi: paroma nevzporedni še niso neodvisni
+- Baza in koordinate
+  - neodvisna in napenja $V$
+  - zapis $v = \sum \alpha_i b_i$ je enoličen
+- Dimenzija
+  - število vektorjev v bazi, ne komponent
+  - $\dim \mathbb{R}^n = n$, $\dim \mathbb{R}_n[x] = n + 1$
+  - več kot $n$ vektorjev je odvisnih
+- Baza množice rešitev
+  - $\dim U$ je število prostih spremenljivk
+  - primer v $\mathbb{R}^4$: dve enačbi, $\dim U = 2$

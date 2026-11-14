@@ -228,17 +228,21 @@ Naj bo $A$ kvadratna matrika reda $n$. Dokaži, da imata $A$ in $A^T$ enak karak
 
 Preslikava z matriko $A = \begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix}$ iz Primera 1 enotsko krožnico preslika v elipso. Večina vektorjev se pri tem zasuka. Dve smeri ostaneta nespremenjeni:
 
-```
-              y
-              |      A·(1,1) = (5,5): ista smer, 5-krat daljši
-              |    ↗
-              |  ↗ (1,1)
-   -----------+------------- x
-              |\
-              | \ (1,-2)
-              |  \
-              |   ↘ A·(1,-2) = (2,-4): ista smer, 2-krat daljši
-```
+:::risba graf
+opis: Koordinatni sistem z dvema premicama skozi izhodišče. Na premici y = x leži vektor (1, 1), matrika A ga preslika v (5, 5): ista smer, 5-krat daljši. Na premici y = −2x leži vektor (1, −2), matrika A ga preslika v (2, −4): ista smer, 2-krat daljši.
+x: -3 .. 7 | 1 | x
+y: -5 .. 6 | 1 | y
+enako: da
+črta: -3; -3 -> 6; 6 | siva črtkano
+črta: -3; 6 -> 2,5; -5 | siva črtkano
+puščica: 0; 0 -> 5; 5 | A·(1, 1) = (5, 5) | desno | oranžna
+puščica: 0; 0 -> 1; 1 |  |  | modra debelo
+napis: 1,1; 0,6 | (1, 1) | desno | modra
+puščica: 0; 0 -> 2; -4 | A·(1, −2) = (2, −4) | desno | oranžna
+puščica: 0; 0 -> 1; -2 |  |  | modra debelo
+napis: 0,8; -0,9 | (1, −2) | desno | modra
+podnapis: Lastna vektorja (modro) in njuni sliki (oranžno): smer se ohrani, dolžina se pomnoži s 5 oziroma z 2
+:::
 
 Premica skozi $(1, 1)$ se preslika sama vase in se raztegne s faktorjem $5$, premica skozi $(1, -2)$ s faktorjem $2$. V koordinatnem sistemu, katerega osi kažeta v teh dveh smereh, je preslikava le razteg vzdolž osi, to pa je ravno diagonalna matrika $D = \operatorname{diag}(5, 2)$.
 

@@ -144,6 +144,58 @@ Leva plevralna votlina z levim pljučnim krilom. Obdaja jo popljučnica (plevra)
 - Dorzalno: lobanjska votlina in hrbtenični kanal. Ventralno: prsna votlina (dve plevralni votlini in sredoprsje s srcem) in pod prepono trebušno-medenična votlina.
 - Serozne mrene (popljučnica, osrčnik, potrebušnica) imajo parietalni in visceralni list, med njima je tanka plast tekočine.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo anatomskega položaja in zakaj vsi izrazi lege veljajo zanj, ne za trenutno držo;
+- tri ravnine (sagitalna z mediano, frontalna, transverzalna), os, ki je na vsako pravokotna, in tipičen gib v vsaki ravnini;
+- pare smernih izrazov s sopomenkami (superiorno/inferiorno, anteriorno/posteriorno) in to, da par proksimalno/distalno uporabljamo na udih;
+- delitev telesnih votlin: dorzalno lobanjska votlina in hrbtenični kanal, ventralno prsna (plevralni votlini, sredoprsje) in trebušno-medenična votlina, s prepono kot mejo;
+- zgradbo serozne mrene (parietalni in visceralni list, tekočina med njima) in tri serozne mrene z organi, ki jih prekrivajo;
+- delitev trebuha na štiri kvadrante z mediano ravnino in transverzalno ravnino skozi popek.
+
+### Naloga 1
+
+Na posnetku CT so lege treh točk podane s koordinatami $(x, y, z)$ v centimetrih. Izhodišče je v mediani ravnini v višini popka. Os $x$ kaže proti pacientovi levi strani, os $y$ ventralno, os $z$ kranialno. Točka $V$ v vranici je $(9, -5, 12)$, točka $J$ v jetrih $(-8, 1, 11)$, točka $M$ v sečnem mehurju $(0, 4, -14)$. (a) Z anatomskimi izrazi opiši lego $V$ glede na $J$ in lego $M$ glede na $V$. (b) V katerem kvadrantu trebuha in v kateri votlini je vsaka točka? (c) Naprava posname transverzalne rezine debeline $0{,}5\,\mathrm{cm}$ od višine točke $M$ do višine točke $V$. Koliko rezin nastane in koliko jih leži kranialno od popka? (d) Kolikšna je razdalja med $V$ in $J$ in vzdolž katere osi sta točki najbolj razmaknjeni?
+
+**Rešitev:**
+
+1. $V$ glede na $J$: $x$ je $9$ proti $-8$, zato je $V$ na levi, $J$ na desni strani mediane ravnine. Od nje je $V$ oddaljena $9\,\mathrm{cm}$, $J$ pa $8\,\mathrm{cm}$, zato je $V$ za $1\,\mathrm{cm}$ bolj lateralno. Razlika v $y$ je $-5 - 1 = -6$, zato je $V$ za $6\,\mathrm{cm}$ dorzalno od $J$. Razlika v $z$ je $12 - 11 = 1$, zato je $V$ za $1\,\mathrm{cm}$ kranialno od $J$.
+2. $M$ glede na $V$: $M$ ima $x = 0$, leži v mediani ravnini, torej je medialno od $V$. Razlika v $y$ je $4 - (-5) = 9$, zato je $M$ za $9\,\mathrm{cm}$ ventralno. Razlika v $z$ je $-14 - 12 = -26$, zato je $M$ za $26\,\mathrm{cm}$ kavdalno od $V$.
+3. Kvadranti: $V$ ima $x > 0$ in $z > 0$, torej levi zgornji kvadrant. $J$ ima $x < 0$ in $z > 0$, torej desni zgornji kvadrant. $M$ ima $z < 0$ in leži v mediani ravnini, torej na meji med desnim in levim spodnjim kvadrantom.
+4. Votline: vranica in jetra so v trebušni votlini, sečni mehur v medenični. Vse tri točke so kavdalno od prepone, v trebušno-medenični votlini, ki je en sam prostor.
+5. Rezine: posneti odsek je dolg $12 - (-14) = 26\,\mathrm{cm}$, torej $\frac{26}{0{,}5} = 52$ rezin. Kranialno od popka je $12\,\mathrm{cm}$, torej $\frac{12}{0{,}5} = 24$ rezin, kavdalno pa $52 - 24 = 28$.
+6. Razdalja: razlike koordinat so $17$, $6$ in $1\,\mathrm{cm}$, zato je $d = \sqrt{17^2 + 6^2 + 1^2} = \sqrt{326} \approx 18{,}1\,\mathrm{cm}$.
+7. Odgovor: $V$ je levo, $6\,\mathrm{cm}$ dorzalno in $1\,\mathrm{cm}$ kranialno od $J$; $M$ je medialno, $9\,\mathrm{cm}$ ventralno in $26\,\mathrm{cm}$ kavdalno od $V$. Nastane $52$ rezin, od tega $24$ kranialno od popka. Točki $V$ in $J$ sta $18{,}1\,\mathrm{cm}$ narazen, najbolj vzdolž frontalne osi (od leve proti desni), zato ju ena sama sagitalna rezina ne more pokazati skupaj.
+
+### Naloga 2
+
+Natančno navedi, v kateri ravnini in okoli katere osi potekajo fleksija in ekstenzija, abdukcija in addukcija ter rotacija. Utemelji, zakaj os giba nikoli nima istega imena kot ravnina giba, in pojasni, zakaj je treba gib opisati iz anatomskega položaja.
+
+**Rešitev:**
+
+1. Fleksija in ekstenzija (upogib in iztegnitev) potekata v sagitalni ravnini okoli frontalne osi, ki gre od leve proti desni.
+2. Abdukcija in addukcija (odmik in primik) potekata v frontalni ravnini okoli sagitalne osi, ki gre od spredaj nazaj.
+3. Rotacija (zasuk) poteka v transverzalni ravnini okoli vertikalne osi, ki gre od glave proti stopalom.
+4. Utemeljitev: vsaka točka uda se pri gibu giblje po krožnem loku, ki leži v ravnini giba. Os vrtenja je na to ravnino pravokotna. Osi so poimenovane po smeri, v kateri potekajo: sagitalna os leži v sagitalni ravnini, frontalna v frontalni, vertikalna je presečišče obeh. Os, ki bi ležala v ravnini giba, nanjo ne bi bila pravokotna. Zato je os upogiba v sagitalni ravnini frontalna, os odmika v frontalni ravnini pa sagitalna.
+5. Anatomski položaj: ravnine in osi so določene na telesu v dogovorjenem položaju. Če je ud že premaknjen, se isti gib glede na prostor zgodi v drugi smeri. Zamah iztegnjene roke naprej je na primer fleksija v rami, tudi če pacient leži na boku in roka pri tem potuje vodoravno.
+6. Sklep: par ravnina–os je vedno sagitalna–frontalna, frontalna–sagitalna in transverzalna–vertikalna; opis velja le, če izhajamo iz anatomskega položaja.
+
+### Naloga 3
+
+Rezilo zadene pacienta v desno stransko steno prsnega koša tik nad prepono. Usmerjeno je medialno in kavdalno, pljučnega krila ne zadene, predre prepono in se ustavi v jetrih, ki ležijo v desnem zgornjem kvadrantu trebuha. Po vrsti navedi votline in liste seroznih mren, ki jih je rezilo predrlo. Utemelji, kje se lahko nabira kri in zakaj osrčnik ni poškodovan.
+
+**Rešitev:**
+
+1. Za steno prsnega koša je parietalni list popljučnice. Rezilo ga predre in vstopi v desno plevralno votlino.
+2. Ker pljučnega krila ne zadene, visceralni list popljučnice ostane cel.
+3. Prepono na prsni strani prekriva parietalni list popljučnice. Rezilo predre ta list in nato prepono. S tem iz prsne votline preide v trebušno.
+4. Spodnjo stran prepone prekriva parietalni list potrebušnice. Za njim je potrebušnična votlina s tanko plastjo tekočine.
+5. Jetra prekriva visceralni list potrebušnice. Rezilo ga predre in vstopi v organ.
+6. Vrstni red: parietalna popljučnica, plevralna votlina, parietalna popljučnica na preponi, prepona, parietalna potrebušnica, potrebušnična votlina, visceralna potrebušnica, jetra. Predrti so torej trije parietalni listi in en visceralni.
+7. Kri: iz jeter teče v potrebušnično votlino. Ker med trebušno in medenično votlino ni stene, se pri stoječem pacientu zbira v medenični votlini. Skozi odprtino v preponi lahko pride tudi v desno plevralno votlino, ki je sicer od trebušne ločena.
+8. Osrčnik: srce z osrčnikom leži v sredoprsju, medialno od plevralne votline. Rezilo predre prepono že lateralno od sredoprsja in se ustavi v jetrih, zato osrčnika ne doseže.
+
 ## Drugače: Z analogijo
 
 **Hlebec kruha.** Pokončen hlebec, ki ima »obraz«, lahko razrežeš na tri načine. Če režeš od spredaj nazaj skozi sredino, dobiš levo in desno polovico: to je mediana ravnina. Če režeš vzporedno s »čelom«, dobiš sprednjo in zadnjo skorjo: frontalna ravnina. Če ga razrežeš na vodoravne rezine kot torto, dobiš transverzalne ravnine. Rezine CT so prav take transverzalne rezine telesa.

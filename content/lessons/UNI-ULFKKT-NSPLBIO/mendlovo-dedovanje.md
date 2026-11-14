@@ -75,13 +75,26 @@ Mendlova zakona veljata tudi tu; drugačen je le odnos med aleli.
 
 Pri človeku križanj ne izbiramo, zato dedovanje beremo iz **rodovnika**: kvadrat je moški, krog ženska, polno znamenje oseba z lastnostjo, vodoravna črta zakon, navpična potomce.
 
-```
- I    □───○        zdrava starša
-        │
- II   ┌─┼───┐
-      ■ ○   □      bolan sin,
-                   zdrava otroka
-```
+:::risba skica
+opis: Rodovnik z dvema generacijama. V generaciji I sta zdrava starša: oče (prazen kvadrat) in mati (prazen krog), povezana z vodoravno črto. Od nje gre navpična črta do treh otrok v generaciji II: bolan sin (poln kvadrat), zdrava hči (prazen krog) in zdrav sin (prazen kvadrat).
+območje: 0; 0,8 .. 8; 5,2
+napis: 0,6; 4 | I | sredina | debelo
+napis: 0,6; 2 | II | sredina | debelo
+pravokotnik: 2,6; 3,6 .. 3,4; 4,4
+krog: 5; 4 | 0,4
+črta: 3,4; 4 -> 4,6; 4
+napis: 4; 4,6 | zdrava starša | nad
+črta: 4; 4 -> 4; 2,4
+črta: 2; 3 -> 6; 3
+črta: 2; 3 -> 2; 2,4
+črta: 6; 3 -> 6; 2,4
+pravokotnik: 1,6; 1,6 .. 2,4; 2,4 | polno
+krog: 4; 2 | 0,4
+pravokotnik: 5,6; 1,6 .. 6,4; 2,4
+napis: 2; 1,5 | bolan sin | pod
+napis: 4; 1,5 | zdrava hči | pod
+napis: 6; 1,5 | zdrav sin | pod
+:::
 
 Tipični vzorci:
 
@@ -250,13 +263,32 @@ Natančno navedi Mendlov drugi zakon s pogoji. Izpelji razmerje fenotipov pri kr
 
 Dihibridno križanje si lahko narišeš kot **drevo** namesto tabele $4 \times 4$:
 
-```
- oblika        barva     delež
- okroglo 3/4 ┬ rumeno 3/4  9/16
-             └ zeleno 1/4  3/16
- nagub.  1/4 ┬ rumeno 3/4  3/16
-             └ zeleno 1/4  1/16
-```
+:::risba skica
+opis: Drevo verjetnosti za dihibridno križanje. Prva razvejitev je oblika: okroglo s 3/4 in nagubano z 1/4. Vsaka veja se razcepi po barvi: rumeno s 3/4 in zeleno z 1/4. Deleži na koncih vej: okroglo rumeno 9/16, okroglo zeleno 3/16, nagubano rumeno 3/16, nagubano zeleno 1/16.
+območje: 0; 0 .. 13; 6,6
+napis: 2,5; 6,1 | oblika | sredina | debelo
+napis: 6,2; 6,1 | barva | sredina | debelo
+napis: 12,9; 6,1 | delež | levo | debelo
+črta: 0,5; 3 -> 4,5; 4,6
+črta: 0,5; 3 -> 4,5; 1,4
+napis: 0,3; 4,6 | okroglo 3/4 | nad desno
+napis: 0,3; 1,4 | nagubano 1/4 | pod desno
+črta: 4,5; 4,6 -> 7,3; 5,25
+črta: 4,5; 4,6 -> 7,3; 3,75
+črta: 4,5; 1,4 -> 7,3; 2,25
+črta: 4,5; 1,4 -> 7,3; 0,75
+točka: 0,5; 3
+točka: 4,5; 4,6
+točka: 4,5; 1,4
+napis: 7,5; 5,25 | rumeno 3/4 | desno
+napis: 7,5; 3,75 | zeleno 1/4 | desno
+napis: 7,5; 2,25 | rumeno 3/4 | desno
+napis: 7,5; 0,75 | zeleno 1/4 | desno
+napis: 12,9; 5,25 | 9/16 | levo
+napis: 12,9; 3,75 | 3/16 | levo
+napis: 12,9; 2,25 | 3/16 | levo
+napis: 12,9; 0,75 | 1/16 | levo
+:::
 
 Vsaka pot skozi drevo je en razred; delež je produkt verjetnosti na veji. Drevo hitro raste: za tri gene ima $8$ končnih vej, tabela pa bi imela $64$ celic.
 

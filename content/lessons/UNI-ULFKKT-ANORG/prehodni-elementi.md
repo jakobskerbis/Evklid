@@ -52,14 +52,23 @@ $\mathrm{Fe^{3+}}$ je $d^5$: z oddajo enega elektrona železo doseže polovično
 
 Šest ligandov leži v ogliščih oktaedra. V prostem ionu imajo vseh pet orbital $d$ enako energijo. Ligandi pa elektrone v orbitalah, ki kažejo proti njim, odbijajo močneje. Pet orbital se razcepi na dve skupini:
 
-```
- E ^   --  --     e_g
-   |      |       (2, proti ligandom)
-   |      | Delta_o
-   |      |
-   |  --  --  --  t_2g
-                  (3, med ligandi)
-```
+:::risba skica
+opis: Energijski diagram razcepa orbital d v oktaedru. Navpična os je energija E. Zgoraj sta dve ravni e g, to sta orbitali, ki kažeta proti ligandom. Spodaj so tri ravni t 2g, to so orbitale, ki ležijo med ligandi. Navpična razdalja med skupinama je razcep Δo.
+območje: 0; -1,6 .. 13; 4,4
+enota: 22
+puščica: 0,6; -0,6 -> 0,6; 4 | E | levo
+črta: 2,25; 3 -> 3,25; 3 | debelo oranžna
+črta: 3,75; 3 -> 4,75; 3 | debelo oranžna
+črta: 1,5; 0 -> 2,5; 0 | debelo modra
+črta: 3; 0 -> 4; 0 | debelo modra
+črta: 4,5; 0 -> 5,5; 0 | debelo modra
+puščica: 3,5; 1,5 -> 3,5; 2,85 | Δ_o | desno
+puščica: 3,5; 1,5 -> 3,5; 0,15
+napis: 6; 3 | e_g | desno
+napis: 6; 1,95 | (2, proti ligandom) | desno
+napis: 6; 0 | t_{2g} | desno
+napis: 6; -1,05 | (3, med ligandi) | desno
+:::
 
 Razliko energij imenujemo **razcep ligandnega polja** $\Delta_\mathrm{o}$. Elektron lahko vsrka foton z energijo $\Delta_\mathrm{o}$ in skoči iz $t_{2g}$ v $e_g$ (prehod d–d). Za večino ionov je $\Delta_\mathrm{o}$ ravno v območju vidne svetlobe.
 

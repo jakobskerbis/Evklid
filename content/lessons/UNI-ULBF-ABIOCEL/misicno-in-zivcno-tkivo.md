@@ -255,30 +255,60 @@ Organofosfatni pesticidi zavrejo acetilholinesterazo, kurare (rastlinski strup) 
 
 ## Drugače: Na sliki
 
-Sarkomera pri mirovanju (zgoraj) in skrčena (spodaj), en znak je $0{,}1\,\mathrm{\mu m}$. `-` so tanki filamenti, pripeti na Z-ploščo `|`, `=` debeli filamenti v sredini:
+Sarkomera pri mirovanju (zgoraj) in skrčena (spodaj) v istem merilu. Tanki filamenti so pripeti na Z-plošči, debeli filamenti so v sredini:
 
-```
-mirovanje, 2,5 µm
-|----------     ----------|
-     ================
-     |<-- A 1,6 --->|
-
-skrčena, 2,0 µm
-|--------------------|
-   ================
-```
+:::risba skica
+opis: Dve sarkomeri v istem merilu, zgoraj pri mirovanju, spodaj skrčena. Zgoraj sta Z-plošči 2,5 µm narazen, tanki filamenti segajo od vsake Z-plošče 1,0 µm proti sredini, med njunima koncema je 0,5 µm široka H-cona. Spodaj sta Z-plošči 2,0 µm narazen in tanki filamenti se na sredini stikajo. Debeli filamenti v sredini so na obeh slikah dolgi 1,6 µm (A-pas), kar kažeta navpični črtkani črti.
+območje: -0,3; 0 .. 2,8; 3
+črta: 0; 1,8 -> 0; 2,4 | debelo
+črta: 2,5; 1,8 -> 2,5; 2,4 | debelo
+črta: 0; 2,23 -> 1; 2,23 | modra
+črta: 0; 1,97 -> 1; 1,97 | modra
+črta: 1,5; 2,23 -> 2,5; 2,23 | modra
+črta: 1,5; 1,97 -> 2,5; 1,97 | modra
+pravokotnik: 0,45; 2,04 .. 2,05; 2,16 | oranžna polno
+napis: 1,25; 2,62 | mirovanje: 2,5 µm | nad | debelo
+napis: 0; 2,4 | Z | nad
+napis: 2,5; 2,4 | Z | nad
+napis: 0,55; 2,25 | tanki | nad | modra
+napis: 1,25; 2,18 | debeli | nad | oranžna
+napis: 1,25; 1,97 | H 0,5 | pod
+črta: 0,45; 1,72 -> 2,05; 1,72
+napis: 1,25; 1,7 | A-pas 1,6 µm | pod
+črta: 0,25; 0,45 -> 0,25; 1,05 | debelo
+črta: 2,25; 0,45 -> 2,25; 1,05 | debelo
+črta: 0,25; 0,88 -> 1,25; 0,88 | modra
+črta: 0,25; 0,62 -> 1,25; 0,62 | modra
+črta: 1,25; 0,88 -> 2,25; 0,88 | modra
+črta: 1,25; 0,62 -> 2,25; 0,62 | modra
+pravokotnik: 0,45; 0,69 .. 2,05; 0,81 | oranžna polno
+napis: 1,25; 1,12 | skrčena: 2,0 µm | nad | debelo
+črta: 0,45; 0,37 -> 2,05; 0,37
+napis: 1,25; 0,35 | A-pas 1,6 µm | pod
+črta: 0,45; 0,37 -> 0,45; 2,04 | črtkano siva
+črta: 2,05; 0,37 -> 2,05; 2,04 | črtkano siva
+:::
 
 Debeli filamenti (A-pas) ostanejo enako dolgi, tanki zdrsijo proti sredini; svetla I-pasova ob Z-ploščah se zožita. Če bi se skrajšali filamenti, bi se moral skrajšati A-pas, česar pod mikroskopom ni.
 
 Akson z mielinom, signal skače med zažemki:
 
-```
- --[####]-[####]-[####]-->
-     ^   ^
-  mielin Ranvierjev zažemek
-```
+:::risba skica
+opis: Akson kot vodoravna črta s puščico v smeri prevajanja, na njem trije mielinski ovoji (internodiji) kot pravokotniki. Med ovoji so kratki goli deli aksona, Ranvierjevi zažemki. Puščice nad aksonom kažejo, da akcijski potencial skače od zažemka do zažemka. Zažemki so narisani širši, kot so v resnici.
+območje: 0; 0 .. 10; 2,6
+črta: 0,3; 1 -> 9,8; 1 | puščica
+pravokotnik: 1; 0,7 .. 3,4; 1,3 | oranžna polno
+pravokotnik: 3,8; 0,7 .. 6,2; 1,3 | oranžna polno
+pravokotnik: 6,6; 0,7 .. 9; 1,3 | oranžna polno
+puščica: 0,9; 1,7 -> 3,5; 1,7
+puščica: 3,7; 1,7 -> 6,3; 1,7 | signal skoči | nad
+puščica: 6,5; 1,7 -> 9,1; 1,7
+napis: 2,2; 0,65 | mielinski ovoj | pod
+črta: 6,4; 0,95 -> 6,4; 0,45 | siva
+napis: 6,4; 0,45 | Ranvierjev zažemek | pod
+:::
 
-`[####]` je mielinski ovoj (internodij), `-` med ovoji je goli akson v Ranvierjevem zažemku.
+Pravokotniki so mielinski ovoji (internodiji), med njimi je goli akson v Ranvierjevem zažemku.
 
 ## Drugače: Uporaba v stroki
 

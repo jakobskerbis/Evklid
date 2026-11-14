@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Podaljšek palice
+  - $\Delta L = \dfrac{FL}{EA}$, računaj v $\mathrm{N}$, $\mathrm{mm}$, $\mathrm{MPa}$
+  - osna togost $EA$, vzmet $k = EA/L$
+  - po odsekih: $\Delta L = \sum_i \dfrac{N_i L_i}{E_i A_i}$
+- Enakomerna napetost
+  - $\sigma = N/A$, $N$ z metodo prereza
+  - ravni prerezi, Saint-Venantovo načelo
+- Trdnostni pogoj
+  - $|\sigma| \le \sigma_\mathrm{dop} = R_\mathrm{e}/S$
+  - tlačena vitka palica: še uklon
+- Toplotni raztezek
+  - $\Delta L_T = \alpha\,\Delta T\,L$, brez preseka
+  - jeklo $\alpha = 12 \cdot 10^{-6}\,\mathrm{K^{-1}}$
+- Vpeta palica
+  - $\sigma_T = -E\alpha\,\Delta T$, segretje da tlak
+  - neodvisno od dolžine in preseka
+  - napaka: »ni podaljška, ni napetosti«
+- Reža
+  - dotik pri $\alpha\,\Delta T_d\,L = \delta$
+  - $\sigma = -E\,\dfrac{\alpha\,\Delta T\,L - \delta}{L}$
+- Statično nedoločeno
+  - ravnovesje in skladnost deformacij
+  - $\varepsilon = \sigma/E + \alpha\,\Delta T$

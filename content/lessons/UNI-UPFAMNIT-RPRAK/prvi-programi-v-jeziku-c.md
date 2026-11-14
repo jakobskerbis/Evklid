@@ -15,10 +15,23 @@ Pri vsakem koščku začnemo z mislijo, ki se ponuja, ker poznaš bash, in jo po
 
 **1. »Program napišem in ga poženem kot skripto.«** Pri bashu napišeš `igra.sh`, dodaš `chmod +x` in poženeš `./igra.sh`; lupina bere ukaze vrstico za vrstico. C je **prevajan** jezik: izvorne kode `igra.c` procesor ne razume. Najprej jo **prevajalnik** `gcc` pretvori v strojno kodo in nastane **izvedljiva datoteka**:
 
-```
-igra.c ──(predprocesor: #include)──(prevajalnik)──(povezovalnik)──► igra
- besedilo                                                        strojna koda
-```
+:::risba skica
+opis: Pot od izvorne kode do programa, od zgoraj navzdol. Zgoraj je datoteka igra.c, ki je besedilo. Puščice vodijo skozi tri zaporedne korake v pravokotnikih: predprocesor (obdela #include), prevajalnik in povezovalnik. Spodaj nastane datoteka igra, ki je strojna koda.
+območje: 0; 36 .. 308; 250
+enota: 1
+napis: 154; 238 | igra.c (besedilo) | sredina | debelo
+puščica: 154; 228 -> 154; 212
+pravokotnik: 44; 180 .. 264; 210 | modra
+napis: 154; 195 | predprocesor: #include | sredina
+puščica: 154; 180 -> 154; 162
+pravokotnik: 44; 130 .. 264; 160 | modra
+napis: 154; 145 | prevajalnik | sredina
+puščica: 154; 130 -> 154; 112
+pravokotnik: 44; 80 .. 264; 110 | modra
+napis: 154; 95 | povezovalnik | sredina
+puščica: 154; 80 -> 154; 62
+napis: 154; 48 | igra (strojna koda) | sredina | debelo
+:::
 
 ```bash
 gcc -Wall -o igra igra.c   # prevedi; -Wall vklopi opozorila

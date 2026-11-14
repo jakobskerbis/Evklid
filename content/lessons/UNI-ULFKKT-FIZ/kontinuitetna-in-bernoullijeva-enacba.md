@@ -228,15 +228,28 @@ Natančno navedi Bernoullijevo enačbo z vsemi pogoji in jo izpelji. Nato izpelj
 
 Vodoravna cev z zožitvijo in tremi manometrskimi cevkami:
 
-```
-   |#|          |#|          |#|      <- višina vode v cevkah = tlak
-   |#|          | |          |#|
-   |#|          | |          |#|
- ==|#|==========| |==========|#|==
-   ->  v1      ---> v2       ->  v1
- ==================================
-   široko       ozko         široko
-```
+:::risba skica
+opis: Vodoravna cev je na levi in desni široka, v sredini pa zožena na polovico premera. Iz vsakega dela se dviga navpična manometrska cevka. V obeh širokih delih je voda v cevki visoko in enako visoko, nad ozkim delom je precej nižje. Puščici hitrosti v širokih delih sta kratki, puščica v ozkem delu je štirikrat daljša.
+območje: 0; -1,2 .. 14; 7,6
+lik: 0; 0,5 -> 4; 0,5 -> 5,5; 1 -> 8,5; 1 -> 10; 0,5 -> 14; 0,5 -> 14; 2,5 -> 10; 2,5 -> 8,5; 2 -> 5,5; 2 -> 4; 2,5 -> 0; 2,5 | ozadje
+pravokotnik: 1,8; 2,5 .. 2,2; 6,5 | modra polno
+pravokotnik: 6,8; 2 .. 7,2; 4 | modra polno
+pravokotnik: 11,8; 2,5 .. 12,2; 6,5 | modra polno
+črta: 0; 2,5 -> 1,8; 2,5 -> 1,8; 7,2 | debelo
+črta: 2,2; 7,2 -> 2,2; 2,5 -> 4; 2,5 -> 5,5; 2 -> 6,8; 2 -> 6,8; 7,2 | debelo
+črta: 7,2; 7,2 -> 7,2; 2 -> 8,5; 2 -> 10; 2,5 -> 11,8; 2,5 -> 11,8; 7,2 | debelo
+črta: 12,2; 7,2 -> 12,2; 2,5 -> 14; 2,5 | debelo
+črta: 0; 0,5 -> 4; 0,5 -> 5,5; 1 -> 8,5; 1 -> 10; 0,5 -> 14; 0,5 | debelo
+puščica: 1,7; 1,5 -> 2,3; 1,5 | | | oranžna
+puščica: 5,8; 1,5 -> 8,2; 1,5 | | | oranžna
+puščica: 11,7; 1,5 -> 12,3; 1,5 | | | oranžna
+napis: 2; -0,2 | široko: v_1 | pod
+napis: 7; -0,2 | ozko: v_2 = 4v_1 | pod
+napis: 12; -0,2 | široko: v_1 | pod
+napis: 2,5; 6,2 | tlak p_1 | desno
+napis: 7,5; 3,7 | tlak p_2 < p_1 | desno
+podnapis: Višina vode v cevki kaže tlak, dolžina puščice hitrost toka.
+:::
 
 V ozkem delu so tokovnice gostejše (hitrost večja), voda v cevki pa je nižja (tlak manjši). Za zožitvijo se oba idealno vrneta na začetno vrednost.
 

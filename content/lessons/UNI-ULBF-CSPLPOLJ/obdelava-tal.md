@@ -15,13 +15,23 @@ Iz teme o rastnih dejavnikih veš, da korenine potrebujejo vodo, zrak, toploto i
 
 **Najprej slika.** Predstavljaj si navpičen prerez njive, kot bi z lopato izrezal steno:
 
-```
- 0 cm  ░░░░░░░░░░  setvenica: drobne mrvice, 3–8 cm
-       ▒▒▒▒▒▒▒▒▒▒
-       ▒▒▒▒▒▒▒▒▒▒  ornica: obdelani sloj, do 25–30 cm
-30 cm  ██████████  plužni taban: zbita plast
-       ▓▓▓▓▓▓▓▓▓▓  podornica: neobdelana tla
-```
+:::risba skica
+opis: Navpični prerez njive z globinami v centimetrih. Od površine (0 cm) do 8 cm je setvenica: drobne mrvice, debela 3 do 8 cm. Od 8 do 30 cm je ornica, obdelani sloj, ki sega do 25–30 cm. Na 30 cm, tik pod ornico, je tanek plužni taban, zbita plast. Pod njim je podornica, neobdelana tla.
+območje: 0; -46 .. 40; 4
+pravokotnik: 6; -8 .. 14; 0 | zelena
+pravokotnik: 6; -30 .. 14; -8 | ozadje
+pravokotnik: 6; -34 .. 14; -30 | rdeča polno
+pravokotnik: 6; -44 .. 14; -34 | siva
+črta: 6; 0 -> 14; 0 | debelo
+napis: 5; 0 | 0 cm | levo
+napis: 5; -30 | 30 cm | levo
+napis: 15; -2,5 | setvenica: | desno
+napis: 15; -5,5 | drobne mrvice, 3–8 cm | desno
+napis: 15; -17,5 | ornica: | desno
+napis: 15; -20,5 | obdelani sloj, do 25–30 cm | desno
+napis: 15; -32 | plužni taban: zbita plast | desno
+napis: 15; -39 | podornica: neobdelana tla | desno
+:::
 
 **Ornica** je zgornji sloj, ki ga vsako leto obdelamo. **Setvenica** je njen najvišji, najbolj drobljiv del, v katerega pade seme. Pod ornico se pogosto naredi **plužni taban**: zbita plast, ki jo stisnejo kolesa traktorja v brazdi in dno pluga. Korenine in voda skozenj težko prodrejo.
 
@@ -166,15 +176,75 @@ $t \approx 15{,}3\,\mathrm{h}$, torej dva dolga delovna dneva samo za oranje. Za
 - Poroznost $P = 1 - \rho_v/\rho_t$, $\rho_t \approx 2{,}65\,\mathrm{g/cm^3}$; zbita tla imajo večjo $\rho_v$ in manj por.
 - Obdeluj samo godna tla.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicije ornice, setvenice, plužnega tabana in strnišča ter kako plužni taban nastane;
+- razliko med osnovno in dopolnilno obdelavo: globina, namen, orodja, vrstni red opravil v tradicionalnem sistemu;
+- merilo konzervirajoče obdelave (po setvi vsaj $30\,\%$ površine pokrite z ostanki) in njene tri stopnje z razlikami;
+- prednosti in slabosti konzervirajoče obdelave v primerjavi z oranjem ter na katerih tleh se laže obnese;
+- kaj je godnost tal in kaj se zgodi pri obdelavi premokrih ali presuhih tal;
+- izpeljavo $P = 1 - \dfrac{\rho_v}{\rho_t}$ ter račun gostote tal, pokritosti $D$ in učinka stroja $U = b \cdot v \cdot \eta$.
+
+### Naloga 1
+
+Na njivi vzameš dva neporušena vzorca tal z valjem prostornine $100\,\mathrm{cm^3}$. Vzorec iz ornice ima po sušenju maso $135{,}0\,\mathrm{g}$, vzorec iz plužnega tabana pa $164{,}3\,\mathrm{g}$. Plužni taban je debel $6\,\mathrm{cm}$, gostota trdnih delcev je $2{,}65\,\mathrm{g/cm^3}$. (a) Izračunaj gostoto tal in poroznost obeh plasti. (b) Koliko ton suhih tal in koliko kubičnih metrov por je v plužnem tabanu na $1\,\mathrm{ha}$? (c) S podrahljavanjem se gostota te plasti zmanjša na $1{,}45\,\mathrm{g/cm^3}$. Kako debela je plast po rahljanju in koliko kubičnih metrov por na hektar pridobi?
+
+**Rešitev:**
+
+1. Gostota tal je masa suhih tal na prostornino valja: ornica $\rho_{v,1} = \dfrac{135{,}0}{100} = 1{,}35\,\mathrm{g/cm^3}$, plužni taban $\rho_{v,2} = \dfrac{164{,}3}{100} = 1{,}643\,\mathrm{g/cm^3}$.
+2. Poroznost ornice: $P_1 = 1 - \dfrac{1{,}35}{2{,}65} \approx 0{,}491$, torej okoli $49\,\%$.
+3. Poroznost plužnega tabana: $P_2 = 1 - \dfrac{1{,}643}{2{,}65} = 0{,}38$, torej $38\,\%$.
+4. Prostornina plužnega tabana na hektar: $V = 10\,000\,\mathrm{m^2} \cdot 0{,}06\,\mathrm{m} = 600\,\mathrm{m^3}$.
+5. Masa suhih tal ($1{,}643\,\mathrm{g/cm^3} = 1{,}643\,\mathrm{t/m^3}$): $m = 1{,}643 \cdot 600 = 985{,}8\,\mathrm{t}$.
+6. Prostornina por pred rahljanjem: $0{,}38 \cdot 600 = 228\,\mathrm{m^3}$.
+7. Rahljanje mase trdnih tal ne spremeni, zato velja $\rho_{v,2} \cdot h = \rho_{v,3} \cdot h'$. Nova debelina je $h' = 6 \cdot \dfrac{1{,}643}{1{,}45} \approx 6{,}8\,\mathrm{cm}$.
+8. Nova poroznost: $P_3 = 1 - \dfrac{1{,}45}{2{,}65} \approx 0{,}453$.
+9. Nova prostornina plasti je $10\,000 \cdot 0{,}068 = 680\,\mathrm{m^3}$, por je v njej $0{,}453 \cdot 680 \approx 308\,\mathrm{m^3}$.
+10. Pridobljene pore: $308 - 228 = 80\,\mathrm{m^3}$. Preizkus: prostornina trdnih delcev se ne spremeni, zato so vse dodatne pore enake povečanju prostornine plasti, $680 - 600 = 80\,\mathrm{m^3}$.
+11. Odgovor: ornica ima $1{,}35\,\mathrm{g/cm^3}$ in okoli $49\,\%$ por, plužni taban $1{,}643\,\mathrm{g/cm^3}$ in $38\,\%$ por. V tabanu je na hektar $985{,}8\,\mathrm{t}$ suhih tal in $228\,\mathrm{m^3}$ por. Po podrahljavanju je plast debela okoli $6{,}8\,\mathrm{cm}$ in ima okoli $80\,\mathrm{m^3}$ por na hektar več.
+
+### Naloga 2
+
+Kmetija mora spomladi obdelati in posejati $48\,\mathrm{ha}$, tla pa bodo godna predvidoma $6$ delovnih dni po $9\,\mathrm{h}$. Na voljo ima en traktor. Sistem A: oranje s plugom delovne širine $2{,}0\,\mathrm{m}$ pri $7\,\mathrm{km/h}$ in izkoristku časa $0{,}8$ (poraba $24\,\mathrm{L/ha}$), nato setvena kombinacija širine $3\,\mathrm{m}$ pri $8\,\mathrm{km/h}$ in izkoristku $0{,}75$ (poraba $14\,\mathrm{L/ha}$). Sistem B: namesto oranja rahljanje s kultivatorjem širine $4\,\mathrm{m}$ pri $10\,\mathrm{km/h}$ in izkoristku $0{,}8$ (poraba $10\,\mathrm{L/ha}$), nato ista setvena kombinacija. Po setvi v sistemu B štirikrat izmerijo pokritost s črto po $60$ oznak in naštejejo $17$, $21$, $19$ in $23$ zadetkov. (a) Koliko ur dela zahteva vsak sistem in kateri se izide v času godnih tal? (b) Koliko goriva prihrani sistem B? (c) Ali je sistem B konzervirajoča obdelava?
+
+**Rešitev:**
+
+1. Učinek pluga: $U = 2{,}0 \cdot 7000 \cdot 0{,}8 = 11\,200\,\mathrm{m^2/h} = 1{,}12\,\mathrm{ha/h}$; čas $\dfrac{48}{1{,}12} \approx 42{,}86\,\mathrm{h}$.
+2. Učinek setvene kombinacije: $U = 3 \cdot 8000 \cdot 0{,}75 = 18\,000\,\mathrm{m^2/h} = 1{,}8\,\mathrm{ha/h}$; čas $\dfrac{48}{1{,}8} \approx 26{,}67\,\mathrm{h}$.
+3. Učinek kultivatorja: $U = 4 \cdot 10\,000 \cdot 0{,}8 = 32\,000\,\mathrm{m^2/h} = 3{,}2\,\mathrm{ha/h}$; čas $\dfrac{48}{3{,}2} = 15\,\mathrm{h}$.
+4. Sistem A: $42{,}86 + 26{,}67 = 69{,}53\,\mathrm{h}$. Sistem B: $15 + 26{,}67 = 41{,}67\,\mathrm{h}$.
+5. Na voljo je $6 \cdot 9 = 54\,\mathrm{h}$. Sistem A razpoložljivi čas preseže za okoli $15{,}5\,\mathrm{h}$, sistem B se izide z rezervo okoli $12{,}3\,\mathrm{h}$.
+6. Poraba goriva: A $24 + 14 = 38\,\mathrm{L/ha}$, B $10 + 14 = 24\,\mathrm{L/ha}$. Prihranek: $(38 - 24) \cdot 48 = 672\,\mathrm{L}$.
+7. Pokritost: vseh zadetkov je $17 + 21 + 19 + 23 = 80$, vseh oznak $4 \cdot 60 = 240$, torej $D = \dfrac{80}{240} \approx 0{,}333$.
+8. $33{,}3\,\% \geq 30\,\%$, merilo je izpolnjeno. Prva meritev sama ($\dfrac{17}{60} \approx 28{,}3\,\%$) bi bila pod mejo, zato odloča povprečje več meritev.
+9. Odgovor: sistem A zahteva okoli $69{,}5\,\mathrm{h}$ in se v $54\,\mathrm{h}$ godnih tal ne izide, sistem B zahteva okoli $41{,}7\,\mathrm{h}$ in se izide. Sistem B prihrani $672\,\mathrm{L}$ goriva in je s pokritostjo okoli $33\,\%$ konzervirajoča obdelava (reducirana, ker tla rahljamo brez obračanja).
+
+### Naloga 3
+
+Izpelji zvezo $P = 1 - \dfrac{\rho_v}{\rho_t}$ iz definicij poroznosti in obeh gostot. Nato utemelji, ali drži trditev: »Njiva, ki je nismo orali, je konzervirajoče obdelana, njiva, ki smo jo obdelali s strojem, pa ne.«
+
+**Rešitev:**
+
+1. Vzorec suhih tal ima maso $m$ in prostornino $V$, ki je vsota prostornine trdnih delcev $V_t$ in prostornine por $V_p$: $V = V_t + V_p$.
+2. Poroznost je delež por v celotni prostornini: $P = \dfrac{V_p}{V} = \dfrac{V - V_t}{V} = 1 - \dfrac{V_t}{V}$.
+3. Gostota tal je $\rho_v = \dfrac{m}{V}$, gostota trdnih delcev $\rho_t = \dfrac{m}{V_t}$. Masa je v obeh ista, ker zrak v porah suhega vzorca nima omembe vredne mase.
+4. Od tod $V = \dfrac{m}{\rho_v}$ in $V_t = \dfrac{m}{\rho_t}$, zato $\dfrac{V_t}{V} = \dfrac{\rho_v}{\rho_t}$.
+5. Vstavimo v korak 2: $P = 1 - \dfrac{\rho_v}{\rho_t}$. Ker je $\rho_t$ za mineralna tla skoraj stalna ($\approx 2{,}65\,\mathrm{g/cm^3}$), večja $\rho_v$ vedno pomeni manjšo poroznost.
+6. Trditev ne drži v nobeno smer. Merilo konzervirajoče obdelave je pokritost: po setvi mora biti vsaj $30\,\%$ površine pokrite z rastlinskimi ostanki, tal pa ne obračamo.
+7. Prvi del: opustitev oranja ni dovolj. Če po predhodni poljščini ostane malo ostankov ali jih odpeljemo oziroma z večkratnim rahljanjem in brananjem zamešamo v tla, je pokritost pod $30\,\%$ in obdelava ni konzervirajoča, čeprav pluga ni bilo.
+8. Drugi del: stroj merila ne izključuje. Reducirana obdelava (kultivator ali rahljalnik brez obračanja) in obdelava v pasovih tla obdelata, a sta konzervirajoči, če ostane vsaj $30\,\%$ pokritosti. Samo neposredna setev je brez obdelave.
+9. Sklep: o tem, ali je obdelava konzervirajoča, odloča izmerjena pokritost z ostanki po setvi, ne to, ali je bil na njivi plug ali sploh kak stroj.
+
 ## Drugače: Z analogijo
 
 Obdelava tal je kot priprava teniškega igrišča iz peska. Na začetku sezone delavci trdo, zbito podlago razrahljajo in premešajo: to je osnovna obdelava. Nato površino zgladijo z mrežo in povaljajo, da žoga odskakuje enakomerno: to je dopolnilna obdelava. Med sezono pa igrišča ne prekopavajo vsak teden, ampak samo pometejo in zalijejo; zgornji sloj ostane, kakršen je. To je duh konzervirajoče obdelave: posegaj čim manj, površino zaščiti.
 
 Analogija ima mejo: igrišče mora biti ravno in trdo, njiva pa mora ostati rahla in polna por. Valjar na njivi zato le rahlo stisne setvenico, da seme dobi stik z vlažno zemljo.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Pomisli na domači vrt. Jeseni gredico prekoplješ z lopato in pustiš grude čez zimo: osnovna obdelava. Spomladi jih z grabljami zdrobiš in poravnaš, preden posadiš solato: dopolnilna obdelava. Kdor pa vrt zastira s slamo ali pokošeno travo in sadike le vtakne v luknjo v zastirki, dela po načelu konzervirajoče obdelave. Opazi, da pod zastirko zemlja dlje ostane vlažna, deževniki pridejo do površine, plevela pa je več, kjer zastirka ni dovolj debela. Vse to velja tudi na njivi, le da je površina tisočkrat večja in vsak prehod stroja stane gorivo.
+Agronom svetovalec odločitve o obdelavi ne sprejme na pogled, ampak z meritvami. Zbitost preveri s penetrometrom, palico s konico, ki jo potiska v tla in sproti odčitava upor: če upor na globini okoli $30\,\mathrm{cm}$ naglo naraste, je tam plužni taban. Za potrditev vzame neporušen vzorec z valjem prostornine $100\,\mathrm{cm^3}$, ga posuši pri $105\,°\mathrm{C}$ in stehta. Vzorec z maso $159\,\mathrm{g}$ pomeni $\rho_v = 1{,}59\,\mathrm{g/cm^3}$ in le $40\,\%$ por, zato svetuje podrahljavanje, in to samo do tik pod zbito plast, ker vsak centimeter globine stane gorivo. Po setvi z vrvjo s $100$ oznakami izmeri pokritost z ostanki; od tega, ali preseže $30\,\%$, je odvisno, ali kmetija obdelavo lahko uveljavlja kot konzervirajočo. Pri načrtovanju strojev pa iz delovne širine, hitrosti in izkoristka časa izračuna učinek in preveri, ali kmetija vse površine obdela v tistih nekaj dneh, ko so tla godna.
 
 ## Preveri se
 

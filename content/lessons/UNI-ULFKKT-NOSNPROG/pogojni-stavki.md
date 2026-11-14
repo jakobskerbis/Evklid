@@ -90,15 +90,13 @@ else:
     print("Počakaj na noč.")
 ```
 
-Kot drevo:
+Vse tri poti skozi program:
 
-```
-je_noc?
-├─ False → "Počakaj na noč."
-└─ True → oblacnost < 30?
-          ├─ True  → "Opazuj!"
-          └─ False → "Preveč oblačno."
-```
+| `je_noc` | `oblacnost < 30` | izpis |
+|---|---|---|
+| `False` | se ne preveri | Počakaj na noč. |
+| `True` | `True` | Opazuj! |
+| `True` | `False` | Preveč oblačno. |
 
 Notranji `if` je zamaknjen za štiri presledke, ker je znotraj zunanjega bloka, njegov blok pa za osem. Zamik pove, kateremu `if` pripada kateri `else`.
 

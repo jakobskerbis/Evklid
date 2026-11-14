@@ -23,11 +23,19 @@ Beseda »skelet« vabi k misli, da je citoskelet trdno, stalno ogrodje, podobno 
 
 Premeri v primerjavi (skica ni v merilu dolžine):
 
-```
-aktin           ===     ~7 nm
-intermediarni   ====    ~10 nm
-mikrotubul      ======  ~25 nm
-```
+:::risba skica
+opis: Primerjava premerov treh vrst filamentov, narisanih kot trije vodoravni trakovi, katerih debelina je v merilu premera. Najtanjši je aktin, približno 7 nm, srednji je intermediarni filament, približno 10 nm, najdebelejši je mikrotubul, približno 25 nm.
+območje: 0; 0 .. 32; 12
+pravokotnik: 11,5; 10,16 .. 24; 11 | modra polno
+napis: 0,3; 10,58 | aktin | desno
+napis: 24,8; 10,58 | ~7 nm | desno
+pravokotnik: 11,5; 6,76 .. 24; 7,96 | modra polno
+napis: 0,3; 7,36 | intermediarni | desno
+napis: 24,8; 7,36 | ~10 nm | desno
+pravokotnik: 11,5; 1,56 .. 24; 4,56 | modra polno
+napis: 0,3; 3,06 | mikrotubul | desno
+napis: 24,8; 3,06 | ~25 nm | desno
+:::
 
 **Aktinski filamenti** (mikrofilamenti) so zgrajeni iz kroglastega **G-aktina**, ki z vezanim ATP polimerizira v vijačni **F-aktin**. Filament je **polaren**: na koncu plus (»bodičastem«) se monomeri pripenjajo hitreje kot na koncu minus. Po vezavi se ATP hidrolizira v ADP. Aktin je zgoščen pod plazmalemo (celična skorja), gradi mikrovile in filopodije, s **miozinom** pa tvori krčljiv aparat (mišice, delitveni obroč pri citokinezi).
 

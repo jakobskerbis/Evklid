@@ -43,28 +43,51 @@ Leta 1884 je Hans Christian Gram opazil, da se bakterije po istem postopku barva
 
 **Gram-pozitivna ovojnica** (prerez, zunaj zgoraj):
 
-```
- ################################
- #  debel peptidoglikan        #
- #  20-80 nm, + teihojske k.  #
- ################################
- ==== citoplazemska membrana ====
-        citoplazma
-```
+:::risba skica
+opis: Prerez gram-pozitivne ovojnice, zunanjost je zgoraj. Na vrhu je debela plast peptidoglikana, debela 20 do 80 nm, s teihojskimi kislinami. Pod njo je citoplazemska membrana, pod membrano citoplazma.
+območje: 0; 0 .. 308; 150
+enota: 1
+pravokotnik: 10; 58 .. 298; 144 | siva
+napis: 154; 112 | debel peptidoglikan | sredina | debelo
+napis: 154; 90 | 20–80 nm, s teihojskimi kislinami
+pravokotnik: 10; 30 .. 298; 52 | oranžna
+napis: 154; 41 | citoplazemska membrana
+napis: 154; 13 | citoplazma
+:::
 
 Peptidoglikan ima več deset plasti in obsega večino suhe mase stene. Vanj so vpete **teihojske kisline** (polimeri glicerol- ali ribitol-fosfata); **lipoteihojske** so zasidrane v membrano. Fosfati dajo površini negativni naboj, vežejo kovinske ione in sodelujejo pri pritrjevanju na gostitelja.
 
 **Gram-negativna ovojnica**:
 
-```
- ~~~~~ LPS (O-antigen) ~~~~~~~~
- ===== zunanja membrana =======
- . . . periplazma . . . . . . .
- ----- tanek peptidoglikan ----
- . . . periplazma . . . . . . .
- ===== notranja membrana ======
-        citoplazma
-```
+:::risba skica
+opis: Prerez gram-negativne ovojnice, zunanjost je zgoraj. Od zgoraj navzdol: lipopolisaharid LPS z O-antigenom, ki štrli iz zunanje membrane, zunanja membrana, periplazma, v njej tanka plast peptidoglikana, spet periplazma, notranja membrana in pod njo citoplazma.
+območje: 0; 0 .. 308; 190
+enota: 1
+črta: 20; 142 -> 24; 149 -> 16; 156 -> 20; 163 | zelena
+črta: 40; 142 -> 44; 149 -> 36; 156 -> 40; 163 | zelena
+črta: 60; 142 -> 64; 149 -> 56; 156 -> 60; 163 | zelena
+črta: 80; 142 -> 84; 149 -> 76; 156 -> 80; 163 | zelena
+črta: 100; 142 -> 104; 149 -> 96; 156 -> 100; 163 | zelena
+črta: 120; 142 -> 124; 149 -> 116; 156 -> 120; 163 | zelena
+črta: 140; 142 -> 144; 149 -> 136; 156 -> 140; 163 | zelena
+črta: 160; 142 -> 164; 149 -> 156; 156 -> 160; 163 | zelena
+črta: 180; 142 -> 184; 149 -> 176; 156 -> 180; 163 | zelena
+črta: 200; 142 -> 204; 149 -> 196; 156 -> 200; 163 | zelena
+črta: 220; 142 -> 224; 149 -> 216; 156 -> 220; 163 | zelena
+črta: 240; 142 -> 244; 149 -> 236; 156 -> 240; 163 | zelena
+črta: 260; 142 -> 264; 149 -> 256; 156 -> 260; 163 | zelena
+črta: 280; 142 -> 284; 149 -> 276; 156 -> 280; 163 | zelena
+napis: 154; 178 | LPS (O-antigen)
+pravokotnik: 10; 120 .. 298; 142 | oranžna
+napis: 154; 131 | zunanja membrana
+napis: 154; 107 | periplazma
+pravokotnik: 10; 74 .. 298; 94 | siva
+napis: 154; 84 | tanek peptidoglikan
+napis: 154; 61 | periplazma
+pravokotnik: 10; 26 .. 298; 48 | oranžna
+napis: 154; 37 | notranja membrana
+napis: 154; 11 | citoplazma
+:::
 
 Peptidoglikan je tanek, $2$ do $7\,\mathrm{nm}$, v eni ali dveh plasteh. Leži v **periplazmi**, prostoru med membranama, ki je poln encimov in vezavnih beljakovin. Nad njim je **zunanja membrana**, na peptidoglikan pritrjena z Braunovim lipoproteinom. Njena notranja plast je iz fosfolipidov, zunanja iz **lipopolisaharida** (LPS):
 
@@ -109,16 +132,34 @@ Tu je $\Delta\psi$ membranski potencial (notranjost minus zunanjost, negativen),
 
 Bazalno telo gram-negativne bakterije (zunaj zgoraj):
 
-```
-   ~~~~~ filament ~~~~~~
-          |
-          ) kavelj
-   [ L ]  v zunanji membrani
-   [ P ]  v peptidoglikanu
-   [ MS]  v notranji membrani
-   [ C ]  v citoplazmi: stikalo
-  statorji MotA/MotB ob obroču MS
-```
+:::risba skica
+opis: Bazalno telo bička gram-negativne bakterije, zunanjost je zgoraj. Na vrhu je valovit filament, pod njim ukrivljen kavelj, ki prehaja v navpično os. Na osi si od zgoraj navzdol sledijo obroč L v zunanji membrani, obroč P v peptidoglikanu, obroč MS v notranji membrani in obroč C v citoplazmi, ki je stikalo. Ob obroču MS sta na obeh straneh statorja MotA/MotB.
+območje: 0; 0 .. 308; 250
+enota: 1
+pravokotnik: 6; 150 .. 138; 166 | oranžna
+pravokotnik: 6; 116 .. 138; 130 | siva
+pravokotnik: 6; 80 .. 138; 96 | oranžna
+pravokotnik: 67; 50 .. 77; 190 | ozadje
+pravokotnik: 50; 147 .. 94; 169 | ozadje
+pravokotnik: 50; 112 .. 94; 134 | ozadje
+pravokotnik: 44; 77 .. 100; 99 | ozadje
+pravokotnik: 38; 40 .. 106; 62 | ozadje
+pravokotnik: 20; 74 .. 38; 108 | modra
+pravokotnik: 106; 74 .. 124; 108 | modra
+črta: 72; 190 -> 72; 202 -> 78; 213 -> 90; 222 -> 95; 226,2 -> 100; 228 -> 105; 226,2 -> 110; 222 -> 115; 217,8 -> 120; 216 -> 125; 217,8 -> 130; 222 -> 135; 226,2 -> 140; 228 -> 145; 226,2 -> 150; 222 -> 155; 217,8 -> 160; 216 -> 165; 217,8 -> 170; 222 -> 175; 226,2 -> 180; 228 -> 185; 226,2 -> 190; 222 -> 195; 217,8 -> 200; 216 -> 205; 217,8 -> 210; 222 -> 215; 226,2 -> 220; 228 -> 225; 226,2 -> 230; 222 -> 235; 217,8 -> 240; 216 -> 245; 217,8 -> 250; 222 -> 255; 226,2 -> 260; 228 -> 265; 226,2 -> 270; 222 -> 275; 217,8 -> 280; 216 -> 285; 217,8 -> 290; 222 -> 295; 226,2 -> 300; 228 | debelo
+napis: 195; 240 | filament
+napis: 62; 204 | kavelj | levo
+napis: 72; 158 | L
+napis: 72; 123 | P
+napis: 72; 88 | MS
+napis: 72; 51 | C
+napis: 142; 158 | v zunanji membrani | desno
+napis: 142; 123 | v peptidoglikanu | desno
+napis: 142; 88 | v notranji membrani | desno
+napis: 142; 51 | v citoplazmi: stikalo | desno
+črta: 29; 74 -> 29; 24 | črtkano modra
+napis: 6; 12 | statorji MotA/MotB ob obroču MS | desno | modra
+:::
 
 Obroča L in P sta ležaja, skozi katera se vrti os. Gram-pozitivne bakterije nimajo zunanje membrane, zato imajo le obroče MS in C. **Statorji** so kanalčki za protone, pritrjeni na steno; ko protoni tečejo skoznje po protonski gonilni sili, potiskajo rotor. Motor *E. coli* se vrti s frekvenco okoli $100\,\mathrm{Hz}$ in za en obrat porabi okoli tisoč protonov. Nekatere morske vibrije namesto protonov uporabljajo $\mathrm{Na^+}$.
 
@@ -140,13 +181,21 @@ Ne. Za tako majhno telo so viskozne sile ogromne v primerjavi z vztrajnostjo, za
 
 Zgradba od zunaj navznoter:
 
-```
- ( eksosporij (pri nekaterih) )
-  ( plašč: plasti beljakovin )
-   ( korteks: peptidoglikan )
-    ( notranja membrana    )
-     ( sredica: DNA, Ca-DPA )
-```
+:::risba skica
+opis: Shematski prerez endospore: pet plasti, vloženih druga v drugo. Od zunaj navznoter: eksosporij (pri nekaterih), plašč iz plasti beljakovin, korteks iz peptidoglikana, notranja membrana in v sredini sredica z DNA in Ca-DPA.
+območje: 0; 0 .. 308; 184
+enota: 1
+pravokotnik: 4; 4 .. 304; 180 | siva
+pravokotnik: 18; 12 .. 290; 156 | ozadje
+pravokotnik: 32; 20 .. 276; 132 | zelena
+pravokotnik: 46; 28 .. 262; 108 | ozadje
+pravokotnik: 60; 36 .. 248; 84 | modra
+napis: 154; 168 | eksosporij (pri nekaterih)
+napis: 154; 144 | plašč: plasti beljakovin
+napis: 154; 120 | korteks: peptidoglikan
+napis: 154; 96 | notranja membrana
+napis: 154; 60 | sredica: DNA, Ca-DPA
+:::
 
 - **Sredica** vsebuje DNA, ribosome in encime, a le $10$ do $25\,\%$ vode, zato so encimi neaktivni in odporni proti vročini.
 - **Kalcijev dipikolinat** (Ca-DPA) obsega okoli $10\,\%$ suhe mase spore; veže vodo in stabilizira DNA.

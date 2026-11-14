@@ -49,11 +49,19 @@ Za vsebovanost $[b] \subseteq [a]$: iz $x \sim b$ in $a \sim b$ potrebujemo $b \
 
 Primer za $A = \{1, \dots, 6\}$ in razbitje $\{\{1, 2, 3\}, \{4\}, \{5, 6\}\}$:
 
-```
-+-------+-----+-----+
-| 1 2 3 |  4  | 5 6 |
-+-------+-----+-----+
-```
+:::risba skica
+opis: Pravokotnik, ki predstavlja množico A, je z dvema navpičnima črtama razdeljen na tri kose: v prvem so 1, 2 in 3, v drugem je 4, v tretjem sta 5 in 6.
+območje: 0; 0 .. 12; 3
+pravokotnik: 0,5; 0,5 .. 11,5; 2,5
+črta: 5,5; 0,5 -> 5,5; 2,5
+črta: 8; 0,5 -> 8; 2,5
+napis: 1,5; 1,5 | 1
+napis: 3; 1,5 | 2
+napis: 4,5; 1,5 | 3
+napis: 6,75; 1,5 | 4
+napis: 9; 1,5 | 5
+napis: 10,5; 1,5 | 6
+:::
 
 **Izrek 2 (ekvivalence in razbitja).** Za vsako ekvivalenco $\sim$ na $A$ je $A/{\sim}$ razbitje $A$. Obratno: za vsako razbitje $\mathcal R$ je relacija $a \sim_{\mathcal R} b \iff$ »$a$ in $b$ ležita v istem kosu« ekvivalenca, in njeni razredi so ravno kosi $\mathcal R$. Prireditvi sta druga drugi inverzni, zato je med ekvivalencami na $A$ in razbitji $A$ bijekcija.
 

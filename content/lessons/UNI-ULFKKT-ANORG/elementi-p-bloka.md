@@ -213,14 +213,15 @@ Natančno navedi pogoj, pri katerem zvrst v Latimerjevem diagramu disproporcioni
 
 Izrez periodnega sistema, skupine 14 do 17, periode 2 do 6:
 
-```
-        14    15    16    17
-  2:    C     N     O     F    <- majhni, vezi pi, posebni
-  3:    Si    P     S     Cl
-  4:    Ge    As    Se    Br
-  5:    Sn    Sb    Te    I
-  6:    Pb    Bi    Po    At   <- inertni par 6s2
-```
+| 14 | 15 | 16 | 17 |
+|---|---|---|---|
+| C | N | O | F |
+| Si | P | S | Cl |
+| Ge | As | Se | Br |
+| Sn | Sb | Te | I |
+| Pb | Bi | Po | At |
+
+Vrstica C–F je 2. perioda (majhni, posebni atomi z vezmi $\pi$), vrstica Pb–At 6. perioda (inertni par $6s^2$).
 
 - Smer **desno in gor** kaže proti večji elektronegativnosti in močnejšim oksidantom: $\mathrm{F_2}$ je v zgornjem desnem kotu.
 - Smer **levo in dol** kaže proti kovinam: Pb in Bi.

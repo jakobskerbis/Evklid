@@ -26,16 +26,20 @@ Odgovor je torej odvisen od tega, **kolikokrat** in **kako dolgo pri kateri temp
 
 Preizkušance obremenjujemo z različnimi amplitudami in štejemo cikle do loma $N$. Narišemo $\sigma_a$ proti $\log N$:
 
-```
- σa
- |\
- | \
- |  \___
- |      \____
- |           \_______ σD
- |_________________________
- 10^3  10^5  10^7     log N
-```
+:::risba graf
+opis: Wöhlerjeva krivulja. Na navpični osi je amplituda napetosti σa, na vodoravni log N z oznakami 10³, 10⁵ in 10⁷. Krivulja od 10³ ciklov pada in se med 10⁶ in 10⁷ cikli izravna v vodoravno črto na višini trajne dinamične trdnosti σD.
+x: 3 .. 8 | 1 | log N
+y: 0 .. 10 | 2 | σ_a
+oznake: ne
+mreža: ne
+oznakax: 3 | 10^3
+oznakax: 5 | 10^5
+oznakax: 7 | 10^7
+oznakay: 4 | σ_D
+črta: 3; 4 -> 6,5; 4 | črtkano siva
+f: 4*(9/4)^((13/2 - x)*2/7) | modra | 3 .. 6,5
+črta: 6,5; 4 -> 8; 4 | modra debelo
+:::
 
 Krivulja pada in pri jeklih okoli $N_D \approx 10^6$ do $10^7$ ciklov preide v vodoravno črto. Napetost $\sigma_D$ je **trajna dinamična trdnost**: pod njo jeklo v preizkusu ne poči niti po $10^7$ ali več ciklih. Za konstrukcijska jekla je približno $\sigma_D \approx 0{,}5\,R_m$ ($R_m$ natezna trdnost). Aluminijeve zlitine izrazite meje nimajo: krivulja pada naprej, zato zanje navedemo trdnost pri izbranem številu ciklov (npr. $5 \cdot 10^8$).
 

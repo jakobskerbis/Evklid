@@ -7,14 +7,29 @@ avtor: AI
 
 Začnimo z nalogo, kakršna se pojavi na izpitu. Grelec bioreaktorja je priključen na vezje spodaj: vir $U_0 = 12\,\mathrm{V}$, upor $R_1 = 4\,\Omega$ do vozlišča A, iz A upor $R_2 = 12\,\Omega$ proti masi in upor $R_3 = 2\,\Omega$ do sponk, kjer je grelec $R_\mathrm{L}$.
 
-```
-  R1=4Ω   A  R3=2Ω
- +--[==]--+--[==]--+
- |        |        |
-U0=12V  [==]R2   [==]RL
- |        |12Ω     |
- +--------+--------+
-```
+:::risba skica
+opis: Vezje z virom in štirimi upori. Levo je vir napetosti U₀ = 12 V. Od njegovega zgornjega priključka vodi upor R₁ = 4 Ω do vozlišča A. Iz A gre upor R₂ = 12 Ω navzdol proti masi (spodnji vodnik), upor R₃ = 2 Ω pa naprej do sponk, med katerima je grelec R L.
+območje: 0; 0 .. 17; 7,6
+črta: 2; 2,8 -> 2; 1 -> 14; 1 -> 14; 2,5
+črta: 2; 4,2 -> 2; 6 -> 4; 6
+črta: 6; 6 -> 10; 6
+črta: 12; 6 -> 14; 6 -> 14; 4,5
+črta: 8; 6 -> 8; 4,5
+črta: 8; 2,5 -> 8; 1
+krog: 2; 3,5 | 0,7
+pravokotnik: 4; 5,6 .. 6; 6,4
+pravokotnik: 10; 5,6 .. 12; 6,4
+pravokotnik: 7,6; 2,5 .. 8,4; 4,5
+pravokotnik: 13,6; 2,5 .. 14,4; 4,5 | oranžna
+točka: 8; 6 | A | nad
+točka: 8; 1
+napis: 1,5; 4,6 | + | levo
+napis: 2,9; 3,5 | U_0 = 12 V | desno
+napis: 5; 6,6 | R_1 = 4 Ω | nad
+napis: 11; 6,6 | R_3 = 2 Ω | nad
+napis: 8,6; 3,5 | R_2 = 12 Ω | desno
+napis: 14,6; 3,5 | R_L | desno | oranžna
+:::
 
 *Kolikšen naj bo upor grelca, da se v njem sprosti največja moč, in kolikšna je ta moč?*
 

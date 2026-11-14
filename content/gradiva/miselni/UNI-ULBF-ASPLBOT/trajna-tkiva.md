@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Trajno tkivo
+  - diferencirane celice, večinoma brez delitve
+  - nastane iz meristema
+  - pazi: »trajno« ne pomeni »nikoli več delitve«
+- Krovno tkivo
+  - povrhnjica: kutikula, listne reže, laski
+  - periderm s pluto iz plutnega kambija
+  - reže: $N = (g_\mathrm{sp} + g_\mathrm{zg}) \cdot S$
+- Parenhim
+  - žive celice, tanka stena, velika vakuola
+  - asimilacijski, založni, zračni, vodni
+  - lahko se dediferencira
+- Mehansko tkivo
+  - kolenhim: živ, raztegljiv, brez lignina
+  - sklerenhim: olesenel, večinoma mrtev
+  - vlakna (lan), sklereide (hruška)
+- Ksilem
+  - voda in minerali navzgor
+  - mrtve olesenele traheide in traheje
+  - $Q \propto r^4$, presek $\propto r^2$
+- Floem
+  - saharoza od vira k ponoru
+  - žive sitaste cevi brez jedra
+  - celica spremljevalka, sitaste plošče
+- Čas prenosa
+  - $t = \dfrac{h}{v}$, enota $\mathrm{h}$
+  - floemski tok počasnejši od ksilemskega

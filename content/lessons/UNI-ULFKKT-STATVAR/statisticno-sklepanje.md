@@ -19,14 +19,23 @@ $$\sigma_{\bar X} = \frac{\sigma}{\sqrt n},$$
 
 čemur pravimo **standardna napaka**. Na številski premici:
 
-```
-2,5 %   95 % povprečij   2,5 %
-----|---------|---------|----
-    L         μ         U
-
-L = μ − 1,96·σ/√n
-U = μ + 1,96·σ/√n
-```
+:::risba graf
+opis: Zvonasta krivulja porazdelitve vzorčnih povprečij nad številsko premico. Sredina je pri μ, meji sta L = μ − 1,96·σ/√n levo in U = μ + 1,96·σ/√n desno. Med L in U leži 95 % povprečij, levo od L 2,5 % in desno od U 2,5 %.
+x: -4 .. 4 | 1 | povprečje
+y: 0 .. 1,2 | 0,5 | gostota
+oznake: ne
+oznakax: -1,96 | L
+oznakax: 0 | μ
+oznakax: 1,96 | U
+f: exp(-x^2/2) | debelo
+črta: -1,96; 0 -> -1,96; 0,146 | črtkano siva
+črta: 1,96; 0 -> 1,96; 0,146 | črtkano siva
+črta: 0; 0 -> 0; 1 | črtkano siva
+napis: 0,12; 0,3 | 95 % | desno
+napis: -3; 0,25 | 2,5 %
+napis: 3; 0,25 | 2,5 %
+podnapis: L = μ − 1,96·σ/√n, U = μ + 1,96·σ/√n
+:::
 
 Če so meritve normalno porazdeljene, je $\bar X$ normalen; po centralnem limitnem izreku je približno normalen tudi pri drugih porazdelitvah, če je $n$ dovolj velik (praktično $n \gtrsim 30$). Med mejama $L$ in $U$ na skici, $\mu - 1{,}96\,\sigma/\sqrt n$ in $\mu + 1{,}96\,\sigma/\sqrt n$, pade $95\,\%$ povprečij.
 

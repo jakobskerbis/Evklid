@@ -265,12 +265,61 @@ Natančno navedi in dokaži lemo o strogo naraščajoči preslikavi dobro urejen
 
 Ordinal nariši kot vrsto črtic od leve proti desni. Črtice se proti »koncu« zgoščujejo, ker jih je neskončno mnogo.
 
-```
-w     | | | ||||…
-w+1   | | | ||||…  |
-1+w   | | | | ||||…
-w*2   | | |||…  | | |||…
-```
+:::risba skica
+opis: Štiri vrste navpičnih črtic, ki se proti desni zgoščujejo in končajo s tremi pikami. Vrsta ω: ena zgostitev. Vrsta ω + 1: ena zgostitev in desno za njo ena sama črtica. Vrsta 1 + ω: ena črtica dodana spredaj, slika je enaka kot pri ω. Vrsta ω · 2: dve zgostitvi zapored.
+območje: 0; 0 .. 17; 8
+napis: 0; 7 | ω | desno
+napis: 0; 5 | ω + 1 | desno
+napis: 0; 3 | 1 + ω | desno
+napis: 0; 1 | ω · 2 | desno
+črta: 4; 6,4 -> 4; 7,6
+črta: 6,5; 6,4 -> 6,5; 7,6
+črta: 8,38; 6,4 -> 8,38; 7,6
+črta: 9,78; 6,4 -> 9,78; 7,6
+črta: 10,84; 6,4 -> 10,84; 7,6
+črta: 11,63; 6,4 -> 11,63; 7,6
+črta: 12,22; 6,4 -> 12,22; 7,6
+črta: 12,67; 6,4 -> 12,67; 7,6
+napis: 13,5; 7 | …
+črta: 4; 4,4 -> 4; 5,6
+črta: 6,5; 4,4 -> 6,5; 5,6
+črta: 8,38; 4,4 -> 8,38; 5,6
+črta: 9,78; 4,4 -> 9,78; 5,6
+črta: 10,84; 4,4 -> 10,84; 5,6
+črta: 11,63; 4,4 -> 11,63; 5,6
+črta: 12,22; 4,4 -> 12,22; 5,6
+črta: 12,67; 4,4 -> 12,67; 5,6
+napis: 13,5; 5 | …
+črta: 15,5; 4,4 -> 15,5; 5,6 | oranžna debelo
+črta: 4; 2,4 -> 4; 3,6 | oranžna debelo
+črta: 4,8; 2,4 -> 4,8; 3,6
+črta: 7,1; 2,4 -> 7,1; 3,6
+črta: 8,82; 2,4 -> 8,82; 3,6
+črta: 10,12; 2,4 -> 10,12; 3,6
+črta: 11,09; 2,4 -> 11,09; 3,6
+črta: 11,82; 2,4 -> 11,82; 3,6
+črta: 12,36; 2,4 -> 12,36; 3,6
+črta: 12,77; 2,4 -> 12,77; 3,6
+napis: 13,5; 3 | …
+črta: 4; 0,4 -> 4; 1,6
+črta: 5,38; 0,4 -> 5,38; 1,6
+črta: 6,41; 0,4 -> 6,41; 1,6
+črta: 7,18; 0,4 -> 7,18; 1,6
+črta: 7,76; 0,4 -> 7,76; 1,6
+črta: 8,19; 0,4 -> 8,19; 1,6
+črta: 8,52; 0,4 -> 8,52; 1,6
+črta: 8,77; 0,4 -> 8,77; 1,6
+napis: 9,5; 1 | …
+črta: 10,5; 0,4 -> 10,5; 1,6
+črta: 11,88; 0,4 -> 11,88; 1,6
+črta: 12,91; 0,4 -> 12,91; 1,6
+črta: 13,68; 0,4 -> 13,68; 1,6
+črta: 14,26; 0,4 -> 14,26; 1,6
+črta: 14,69; 0,4 -> 14,69; 1,6
+črta: 15,02; 0,4 -> 15,02; 1,6
+črta: 15,27; 0,4 -> 15,27; 1,6
+napis: 16; 1 | …
+:::
 
 - $1 + \omega$: dodana črtica na začetku se izgubi v vrsti, slika je enaka $\omega$.
 - $\omega + 1$: črtica *za* zgostitvijo stoji sama; ima pred sabo neskončno elementov, a ni naslednik nobenega naravnega števila.

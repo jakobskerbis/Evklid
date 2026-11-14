@@ -246,13 +246,25 @@ Nepolarizirana svetloba vpada pod Brewstrovim kotom na kup tankih steklenih plo�
 
 Pogled vzdolž žarka (žarek gre iz zaslona proti tebi):
 
-```
- vpadna  za 1.  za 2.  za 3.
-  \|/      |      /     ---
- --*--     |     /
-  /|\      |    /
-  I0     I0/2   I0/4   I0/8
-```
+:::risba skica
+opis: Štiri sličice v vrsti, pogled vzdolž žarka. Vpadna nepolarizirana svetloba z gostoto toka I₀: črte električnega polja v vseh smereh. Za prvim polarizatorjem navpična črta, I₀/2. Za drugim črta pod kotom 45°, I₀/4. Za tretjim vodoravna črta, I₀/8.
+območje: 0; -2,4 .. 16; 2,6
+napis: 2; 1,9 | vpadna
+napis: 6; 1,9 | za 1.
+napis: 10; 1,9 | za 2.
+napis: 14; 1,9 | za 3.
+črta: 2; -1 -> 2; 1
+črta: 1; 0 -> 3; 0
+črta: 1,29; -0,71 -> 2,71; 0,71
+črta: 1,29; 0,71 -> 2,71; -0,71
+črta: 6; -1 -> 6; 1 | debelo
+črta: 9,29; -0,71 -> 10,71; 0,71 | debelo
+črta: 13; 0 -> 15; 0 | debelo
+napis: 2; -1,9 | I_0
+napis: 6; -1,9 | I_0 / 2
+napis: 10; -1,9 | I_0 / 4
+napis: 14; -1,9 | I_0 / 8
+:::
 
 Osi polarizatorjev: prvi navpično, drugi pod $45^\circ$, tretji vodoravno. Črta kaže smer $\vec{E}$ za vsakim.
 
@@ -260,17 +272,22 @@ Vsak polarizator iz puščice $\vec{E}$ obdrži le senco na svojo os. Senca puš
 
 Odboj pod Brewstrovim kotom v vpadni ravnini:
 
-```
- vpadni   |   odbiti (le s)
-    \  B  |  B  /
-      \   |   /
-        \ | /
- ---------*--------- gladina
-          |\
-          | \  lomljeni
-          |  \ (pravokotno
-          |   \ na odbitega)
-```
+:::risba skica
+opis: Vodoravna gladina in navpična vpadna pravokotnica. Vpadni žarek pride z leve zgoraj pod Brewstrovim kotom B glede na pravokotnico. Odbiti žarek gre desno navzgor pod enakim kotom B in ima le s-komponento. Lomljeni žarek gre desno navzdol, bližje pravokotnici, in je pravokoten na odbitega.
+območje: -5; -3,6 .. 5; 3,2
+črta: -5; 0 -> 5; 0 | debelo
+črta: 0; -3,4 -> 0; 2,9 | črtkano
+puščica: -3,33; 2,22 -> 0; 0
+puščica: 0; 0 -> 3,33; 2,22
+puščica: 0; 0 -> 1,66; -2,5
+pravikot: 0; 0 | 3,33; 2,22 | 1,66; -2,5
+napis: -0,6; 1,7 | B
+napis: 0,6; 1,7 | B
+napis: -3,4; 2,6 | vpadni
+napis: 3,2; 2,6 | odbiti (le s)
+napis: 3,2; -1,6 | lomljeni
+napis: -3,6; -0,5 | gladina
+:::
 
 Navpična črta je vpadna pravokotnica, $B$ je Brewstrov kot. Lomljeni žarek je bližje pravokotnici ($\theta_2 = 90^\circ - \theta_B$).
 

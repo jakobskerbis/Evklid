@@ -245,18 +245,78 @@ Utemelji, ali opazovalec sliši enako frekvenco, če se izvir s hitrostjo $v$ pr
 
 Prva tri lastna nihanja strune, vpete na obeh koncih (V = vozel, H = hrbet):
 
-```
-n = 1:   V~~~~~~~~H~~~~~~~~V          l = λ/2
-n = 2:   V~~~~H~~~~V~~~~H~~~~V        l = λ
-n = 3:   V~~H~~V~~H~~V~~H~~V          l = 3λ/2
-```
+:::risba graf
+opis: Prva tri lastna nihanja strune, vpete na obeh koncih, narisana eno pod drugim kot ovojnici stoječega valovanja; na vodoravni osi je lega x/l od 0 do 1. Pri n = 1 sta vozla na koncih in hrbet na sredini, l = λ/2. Pri n = 2 so vozli pri 0, 1/2 in 1, hrbta pri 1/4 in 3/4, l = λ. Pri n = 3 so vozli pri 0, 1/3, 2/3 in 1, hrbti pri 1/6, 1/2 in 5/6, l = 3λ/2.
+x: -0,3 .. 1,52
+y: 0,2 .. 9,8
+višina: 240
+oznake: ne
+mreža: ne
+črta: 0; 8 -> 1; 8 | siva
+f: 8 + sin(pi*x) | modra | 0 .. 1
+f: 8 - sin(pi*x) | modra črtkano | 0 .. 1
+točka: 0; 8 | V | pod levo
+točka: 1; 8 | V | pod desno
+napis: 0,5; 9,45 | H
+napis: -0,12; 8 | n = 1 | levo
+napis: 1,13; 8 | l = λ/2 | desno
+črta: 0; 5 -> 1; 5 | siva
+f: 5 + sin(2*pi*x) | modra | 0 .. 1
+f: 5 - sin(2*pi*x) | modra črtkano | 0 .. 1
+točka: 0; 5 | V | pod levo
+točka: 0,5; 5
+napis: 0,5; 4,3 | V
+točka: 1; 5 | V | pod desno
+napis: 0,25; 6,5 | H
+napis: 0,75; 6,5 | H
+napis: -0,12; 5 | n = 2 | levo
+napis: 1,13; 5 | l = λ | desno
+črta: 0; 2 -> 1; 2 | siva
+f: 2 + sin(3*pi*x) | modra | 0 .. 1
+f: 2 - sin(3*pi*x) | modra črtkano | 0 .. 1
+točka: 0; 2 | V | pod levo
+točka: 0,3333; 2
+točka: 0,6667; 2
+napis: 0,3333; 1,1 | V
+napis: 0,6667; 1,1 | V
+točka: 1; 2 | V | pod desno
+napis: 0,1667; 3,5 | H
+napis: 0,5; 3,5 | H
+napis: 0,8333; 3,5 | H
+napis: -0,12; 2 | n = 3 | levo
+napis: 1,13; 2 | l = 3λ/2 | desno
+podnapis: Struna, vpeta na obeh koncih: V = vozel, H = hrbet
+:::
 
 Zaprta piščal (zaprto levo, odprto desno):
 
-```
-n = 1:   V~~~~~~~~~~~~H               l = λ/4
-n = 2:   V~~~~H~~~~V~~~~H             l = 3λ/4
-```
+:::risba graf
+opis: Prvi dve lastni nihanji piščali, ki je zaprta na levem koncu in odprta na desnem, narisani eno pod drugim kot ovojnici odmika; na vodoravni osi je lega x/l od 0 do 1. Pri n = 1 je vozel na zaprtem koncu in hrbet na odprtem, l = λ/4. Pri n = 2 sta vozla pri 0 in 2/3, hrbta pri 1/3 in 1, l = 3λ/4.
+x: -0,3 .. 1,45
+y: 0,2 .. 6,8
+oznake: ne
+mreža: ne
+črta: 0; 5 -> 1; 5 | siva
+črta: 0; 3,8 -> 0; 6,2 | debelo
+f: 5 + sin(pi*x/2) | modra | 0 .. 1
+f: 5 - sin(pi*x/2) | modra črtkano | 0 .. 1
+točka: 0; 5 | V | pod levo
+napis: 1; 6,5 | H
+napis: -0,12; 5 | n = 1 | levo
+napis: 1,06; 5 | l = λ/4 | desno
+črta: 0; 2 -> 1; 2 | siva
+črta: 0; 0,8 -> 0; 3,2 | debelo
+f: 2 + sin(3*pi*x/2) | modra | 0 .. 1
+f: 2 - sin(3*pi*x/2) | modra črtkano | 0 .. 1
+točka: 0; 2 | V | pod levo
+točka: 0,6667; 2
+napis: 0,6667; 1,1 | V
+napis: 0,3333; 3,5 | H
+napis: 1; 3,5 | H
+napis: -0,12; 2 | n = 2 | levo
+napis: 1,06; 2 | l = 3λ/4 | desno
+podnapis: Piščal, zaprta levo (debela črta) in odprta desno: V = vozel, H = hrbet
+:::
 
 Dopplerjev pojav si predstavljaj kot krožne valovne fronte, ki jih izvir odda vsako periodo. Pri mirujočem izviru so krogi koncentrični. Ko se izvir premika v desno, je središče vsakega novega kroga bolj desno, zato so krogi pred izvirom zgoščeni (krajša valovna dolžina, višja frekvenca), za njim pa razredčeni.
 

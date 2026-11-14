@@ -236,15 +236,35 @@ Navedi predpostavke kinetične teorije idealnega plina in iz njih izpelji $pV = 
 
 Predstavljaj si posodo iz Primera 3 kot škatlo z dvema vrstama kroglic:
 
-```
- +-----------------------------+
- |  o   o    .   o    o   .    |    o  helij  (0,999 mol, 2/3 molekul)
- |    o    .    o   o    o     |    .  kisik  (0,500 mol, 1/3 molekul)
- |  .   o    o     .   o    o  |
- |    o   .    o   o    .      |    p(He) = 249 kPa
- +-----------------------------+    p(O2) = 125 kPa
-                                     p     = 374 kPa
-```
+:::risba skica
+opis: Zaprta posoda iz Primera 3 z 18 kroglicami: 12 majhnih praznih krožcev je helij (0,999 mol, dve tretjini molekul), 6 večjih polnih krogov je kisik (0,500 mol, ena tretjina molekul). Pod posodo so tlaki: parcialni tlak helija 249 kPa, parcialni tlak kisika 125 kPa, skupni tlak 374 kPa.
+območje: 0; -16 .. 320; 154
+pravokotnik: 40; 58 .. 280; 150 | ozadje
+krog: 61,6; 108,6 | 3 | modra
+krog: 265; 101,1 | 3 | modra
+krog: 105,5; 70 | 5,5 | oranžna polno
+krog: 55,1; 126,6 | 3 | modra
+krog: 143,6; 110,3 | 3 | modra
+krog: 182,6; 130,2 | 5,5 | oranžna polno
+krog: 59,2; 71,1 | 3 | modra
+krog: 219,1; 125,9 | 3 | modra
+krog: 141,5; 74,1 | 5,5 | oranžna polno
+krog: 169,1; 76,1 | 3 | modra
+krog: 207,3; 75,1 | 3 | modra
+krog: 246,7; 70,3 | 5,5 | oranžna polno
+krog: 133,3; 133,1 | 3 | modra
+krog: 181,1; 102,6 | 3 | modra
+krog: 93,3; 100,1 | 5,5 | oranžna polno
+krog: 229; 97,7 | 3 | modra
+krog: 97,6; 136,4 | 3 | modra
+krog: 246,4; 127,9 | 5,5 | oranžna polno
+krog: 62; 42 | 3 | modra
+napis: 72; 42 | helij: 0,999 mol, 2/3 molekul | desno
+krog: 62; 26 | 5,5 | oranžna polno
+napis: 72; 26 | kisik: 0,500 mol, 1/3 molekul | desno
+napis: 160; 8 | p(He) = 249 kPa, p(O_2) = 125 kPa
+napis: 160; -8 | p = 374 kPa
+:::
 
 Tlak nastane zaradi trkov molekul s stenami. Ker se pri idealnem plinu molekule ne zmenijo druga za drugo, vsaka vrsta »tolče« po stenah, kot da bi bila sama. Helijevih molekul je dvakrat več, zato prispevajo dve tretjini tlaka, čeprav je vsaka osemkrat lažja od molekule kisika. Pri isti temperaturi imajo namreč vse molekule enako povprečno kinetično energijo: lažje so ustrezno hitrejše, zato vsaka v povprečju enako močno tolče po steni.
 

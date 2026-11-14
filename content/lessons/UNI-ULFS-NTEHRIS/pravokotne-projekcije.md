@@ -164,25 +164,85 @@ Pravokotnik $60\,\mathrm{mm} \times 20\,\mathrm{mm}$ (globina × višina). V met
 - Aksonometrija pokaže tri ploskve na eni sliki. Izometrija: osi $120^\circ$, poenostavljeno $k = 1$. Dimetrija: osi $7^\circ$ in $42^\circ$, globina na polovico.
 - Mere nanašamo samo vzdolž osi.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo pravokotne projekcije in razlike od središčne (žarki, vzporednost robov, mere, globina);
+- kaj kažejo naris, tloris in stranski ris, katere mere si delijo in koliko pogledov je potrebnih za nedvoumno obliko;
+- razporeditev pogledov v metodi E in metodi A, utemeljeno z lego telesa v kvadrantu in z razgrnitvijo ravnin, ter kako metodo prepoznaš na risbi;
+- osi in merila izometrije in dimetrije ter izpeljavo faktorja $k = \sqrt{\tfrac{2}{3}}$;
+- zakaj v aksonometriji prave mere veljajo le vzdolž osi.
+
+### Naloga 1
+
+Klinasto stojalo je široko $a = 120\,\mathrm{mm}$, visoko $h = 60\,\mathrm{mm}$ in globoko $c = 80\,\mathrm{mm}$. Zadnja ploskev je navpična, poševna ploskev pada od zgornjega zadnjega roba k spodnjemu sprednjemu robu. (a) Narišemo naris, tloris in pogled z leve v metodi E z razmikom $15\,\mathrm{mm}$. Risalno polje pokončnega lista A4 meri $180\,\mathrm{mm} \times 277\,\mathrm{mm}$. Ali gre skupina pogledov nanj v merilu $1 : 1$? Kaj pa v merilu $1 : 2$? (b) V katerem pogledu ima poševni rob pravo dolžino in kolikšna je? (c) Kako dolg je poševni rob na sliki v poenostavljeni izometriji in kako dolg v dimetriji (globina na osi $42^\circ$), obakrat v merilu $1 : 1$? Os globine se od sprednjega roba proti zadnjemu dviga.
+
+**Rešitev:**
+
+1. (a) Merilo $1 : 1$: v vrsti sta naris in stranski ris, $B = a + d + c = 120 + 15 + 80 = 215\,\mathrm{mm}$. To je več kot $180\,\mathrm{mm}$, skupina ne gre na list.
+2. Merilo $1 : 2$: mere telesa na papirju so $60$, $30$ in $40\,\mathrm{mm}$, razmik ostane $15\,\mathrm{mm}$. $B = 60 + 15 + 40 = 115\,\mathrm{mm}$ in $H = 30 + 15 + 40 = 85\,\mathrm{mm}$. Oboje je manj od $180\,\mathrm{mm}$ in $277\,\mathrm{mm}$, skupina gre na list.
+3. (b) Poševni rob leži v ravnini globine in višine, ki je vzporedna z ravnino stranskega risa. Pravo dolžino ima zato v stranskem risu, kjer je hipotenuza pravokotnega trikotnika s katetama $c$ in $h$: $\sqrt{80^2 + 60^2} = \sqrt{10000} = 100\,\mathrm{mm}$. V narisu se vidi le njegova višina $60\,\mathrm{mm}$, v tlorisu le globina $80\,\mathrm{mm}$.
+4. (c) Na aksonometrični sliki pridemo od spodnjega sprednjega do zgornjega zadnjega oglišča z dvema premikoma vzdolž osi: za narisano globino $c'$ po osi globine in za $h$ navpično navzgor. Os globine oklepa z vodoravnico kot $\varphi$, zato sta premika po sliki vodoravno $c'\cos\varphi$ in navpično $h + c'\sin\varphi$. Dolžina slike roba je $\sqrt{c'^2 + h^2 + 2c'h\sin\varphi}$.
+5. Poenostavljena izometrija: $c' = 80\,\mathrm{mm}$, $\varphi = 30^\circ$, $\sin 30^\circ = 0{,}5$. Dolžina je $\sqrt{6400 + 3600 + 4800} = \sqrt{14800} \approx 121{,}7\,\mathrm{mm}$.
+6. Dimetrija: $c' = 0{,}5 \cdot 80 = 40\,\mathrm{mm}$, $\varphi = 42^\circ$, $\sin 42^\circ \approx 0{,}6691$. Dolžina je $\sqrt{1600 + 3600 + 4800 \cdot 0{,}6691} \approx \sqrt{8411{,}8} \approx 91{,}7\,\mathrm{mm}$.
+7. Odgovor: v merilu $1 : 1$ skupina ne gre na list ($215\,\mathrm{mm} > 180\,\mathrm{mm}$), v merilu $1 : 2$ zavzame $115\,\mathrm{mm} \times 85\,\mathrm{mm}$ in gre. Poševni rob je dolg $100\,\mathrm{mm}$, pravo dolžino kaže stranski ris. Na izometrični sliki meri približno $121{,}7\,\mathrm{mm}$, na dimetrični $91{,}7\,\mathrm{mm}$; nobena ni prava, ker rob ni vzporeden z nobeno osjo.
+
+### Naloga 2
+
+Natančno navedi, kako sta v metodi E in v metodi A glede na naris razporejena tloris in pogled z leve. Razporeditev utemelji z lego telesa glede na projekcijsko ravnino in z razgrnitvijo ravnin. Pojasni še, kako bralec risbe ugotovi, katera metoda je uporabljena, in kaj se zgodi, če to spregleda.
+
+**Rešitev:**
+
+1. Metoda E (prvi kvadrant): tloris leži pod narisom, pogled z leve desno od narisa. Metoda A (tretji kvadrant): tloris leži nad narisom, pogled z leve levo od narisa.
+2. Utemeljitev za E: telo je med opazovalcem in ravnino, zato slika pade na ravnino za telesom. Pogled od zgoraj pade na vodoravno ravnino pod telesom, pogled z leve na stransko ravnino desno od telesa. Ko ravnini razgrnemo okoli robov, ki jih imata skupne z ravnino narisa, se vodoravna zavrti navzdol in stranska v desno.
+3. Utemeljitev za A: ravnina je med opazovalcem in telesom. Pogled od zgoraj nastane na ravnini nad telesom, pogled z leve na ravnini levo od telesa. Po razgrnitvi zato vsak pogled leži na tisti strani narisa, s katere gledamo.
+4. V obeh metodah ostanejo skupne mere poravnane: tloris ima z narisom skupno širino, stranski ris skupno višino.
+5. Metodo pove simbol prisekanega stožca v naslovnem polju. Kdor ga spregleda, pogled desno od narisa razume kot pogled z napačne strani in izdela zrcalno telo.
+
+### Naloga 3
+
+Izpelji faktor skrajšanja robov v izometriji in pokaži, da slike treh med seboj pravokotnih robov oklepajo kote $120^\circ$. Nato izračunaj, kako dolg je na sliki rob z dolžino $50\,\mathrm{mm}$ v pravi in v poenostavljeni izometriji ter za koliko odstotkov je poenostavljena slika večja.
+
+**Rešitev:**
+
+1. V izometriji gledamo kocko v smeri prostorske diagonale. Enotski vektor smeri pogleda je $\tfrac{1}{\sqrt{3}}(1, 1, 1)$ in z vsemi tremi robovi oklepa enak kot.
+2. Enotski rob $(1, 0, 0)$ ima v smeri pogleda komponento $\tfrac{1}{\sqrt{3}}$. Pravokotna projekcija ohrani le del, pravokoten na smer pogleda, zato je dolžina slike $k = \sqrt{1 - \tfrac{1}{3}} = \sqrt{\tfrac{2}{3}} \approx 0{,}8165$. Enako velja za druga dva robova.
+3. Kot med slikama: sliki robov $(1, 0, 0)$ in $(0, 1, 0)$ dobimo tako, da vsakemu odštejemo komponento v smeri pogleda. Njun skalarni produkt je $0 - \tfrac{1}{3} = -\tfrac{1}{3}$, dolžini sta $\sqrt{\tfrac{2}{3}}$. Zato je $\cos\gamma = \dfrac{-\tfrac{1}{3}}{\tfrac{2}{3}} = -\tfrac{1}{2}$ in $\gamma = 120^\circ$. Zaradi simetrije velja to za vse tri pare.
+4. Prava izometrija: $0{,}8165 \cdot 50 \approx 40{,}8\,\mathrm{mm}$. Poenostavljena ($k = 1$): $50\,\mathrm{mm}$.
+5. Povečava poenostavljene slike: $\tfrac{1}{k} = \sqrt{\tfrac{3}{2}} \approx 1{,}225$, torej je večja za približno $22{,}5\,\%$.
+6. Odgovor: $k = \sqrt{\tfrac{2}{3}} \approx 0{,}82$, osi oklepajo $120^\circ$; rob meri na sliki $40{,}8\,\mathrm{mm}$ oziroma $50\,\mathrm{mm}$, poenostavljena izometrija je za okoli $22{,}5\,\%$ večja, oblika pa enaka.
+
 ## Drugače: Na sliki
 
 Zamisli si prozorno škatlo, v kateri lebdi telo. Na vsako steno škatle pade pravokotna slika telesa. Nato škatlo razpreš okoli robov zadnje stene z narisom in jo položiš v ravnino. V metodi E dobiš tak križ:
 
-```
-            [od spodaj]
-[z desne]   [ NARIS  ]   [z leve]   [zadaj]
-            [ TLORIS ]
-```
+:::risba skica
+opis: Razporeditev šestih pogledov v metodi E v obliki križa. V srednji vrsti so od leve proti desni pogled z desne, naris, pogled z leve in pogled od zadaj. Nad narisom je pogled od spodaj, pod narisom je tloris. Pogledi v isti vrsti so enako visoki, pogledi v istem stolpcu enako široki.
+območje: -0,3; -0,3 .. 23,8; 14,3
+pravokotnik: 0; 5,5 .. 5; 8,5
+pravokotnik: 5,5; 5,5 .. 11,5; 8,5 | debelo
+pravokotnik: 12; 5,5 .. 17; 8,5
+pravokotnik: 17,5; 5,5 .. 23,5; 8,5
+pravokotnik: 5,5; 9 .. 11,5; 14
+pravokotnik: 5,5; 0 .. 11,5; 5
+napis: 2,5; 7 | z desne | sredina
+napis: 8,5; 7 | NARIS | sredina | debelo
+napis: 14,5; 7 | z leve | sredina
+napis: 20,5; 7 | zadaj | sredina
+napis: 8,5; 11,5 | od spodaj | sredina
+napis: 8,5; 2,5 | TLORIS | sredina
+:::
 
 Opazi tri stvari. Pogled leži na *nasprotni* strani od smeri, iz katere gledamo: pogled od zgoraj je spodaj. Pogledi v isti vrsti imajo isto višino, v istem stolpcu isto širino. Pogled od zadaj je lahko tudi skrajno levo. V metodi A stene razgrneš proti sebi, zato križ zrcališ: pogled od zgoraj je zgoraj, pogled z leve levo.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Opoldne poleti sije sonce visoko. Njegovi žarki so praktično vzporedni, zato je senca vodoravnega telefona nad mizo skoraj njegov tloris, enako velika kot telefon. Če telefon dvigneš za nekaj centimetrov, senca ostane enako velika.
+Konstruktor danes najprej izdela 3D model, poglede pa iz njega izpelje program za modeliranje. Program postavi tloris in stranski ris po metodi, ki je nastavljena v predlogi risbe. Odločitve ostanejo konstruktorjeve: kateri pogled je naris, koliko pogledov je res potrebnih in ali je simbol v naslovnem polju pravi.
 
-Zdaj sveti z lučko drugega telefona od blizu. Žarki gredo iz ene točke in senca je večja od telefona. Bolj ko ga približaš lučki, večja je. To je središčna projekcija, kot pri fotografiji.
+Podjetje, ki dele naroča v Evropi in v ZDA, dobiva risbe v obeh postavitvah. Orodjar, ki ameriško risbo ohišja prebere po metodi E, izdela zrcalno orodje za brizganje; napaka se pokaže šele pri prvem vzorčnem kosu. Zato vhodna kontrola risb najprej preveri simbol postavitve.
 
-Aksonometrijo vidiš povsod, kjer mora ena slika pokazati obliko: na škatli sestavljivega pohištva, v navodilih za menjavo baterije, na ikonah aplikacij v izometričnem slogu. Ko pa izdelek gre v izdelavo, proizvajalec potrebuje poglede z merami.
+Aksonometrijo strojnik uporablja tam, kjer bralec ni risar: v montažnih navodilih, katalogih nadomestnih delov z razstavljenimi sklopi in v ponudbah. V delavnico gre vedno risba s pogledi, ker operater in merilec iz nje bereta prave mere.
 
 ## Drugače: Bolj natančno
 

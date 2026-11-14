@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Povpraševanje
+  - $Q_D = a - bP$, padajoča funkcija cene
+  - velja ob nespremenjenih drugih dejavnikih
+- Ponudba
+  - $Q_S = c + dP$, naraščajoča funkcija cene
+  - višja cena pokrije dražjo proizvodnjo
+- Tržno ravnovesje
+  - $Q_D(P^*) = Q_S(P^*)$
+  - deske: $P^* = 30$ €/m², $Q^* = 600$ m²
+- Zunaj ravnovesja
+  - nad $P^*$ presežek ponudbe, cena pada
+  - pod $P^*$ presežno povpraševanje, cena raste
+  - cenovna kapica: proda se manjša količina
+- Premik po krivulji
+  - spremeni se cena tega blaga
+  - napaka: »povpraševanje« namesto »povpraševana količina«
+- Premik krivulje
+  - povpraševanje: dohodek, nadomestki, dopolnila
+  - ponudba: vložki, tehnologija, število ponudnikov
+  - ponudba levo pomeni na grafu navzgor
+- Novo ravnovesje
+  - povpraševanje desno: $P$ in $Q$ zrasteta
+  - ponudba desno: $P$ pade, $Q$ zraste
+  - oba premika: ena spremenljivka nedoločena
+- Delitev stroška
+  - dvig ponudbe: $P \to P - t$ v $Q_S$
+  - kupci nosijo $\frac{d}{b+d}\,t$
+  - primer: $t = 5$, cena zraste za $3$

@@ -50,14 +50,29 @@ Precej bolj. Reža ima permeabilnost zraka, zato je njen magnetni upor tak kot u
 
 Postavimo na isto jedro še drugo navitje z $N_2$ ovoji. Tok $i_1$ v prvem navitju ustvari pretok, ki ga deloma objame tudi drugo.
 
-```
-  +========================+
-  |  )))            (((    |
- i1  ))) N1      N2 (((   u2
-  |  )))            (((    |
-  +========================+
-     pretok kroži po jedru
-```
+:::risba skica
+opis: Sklenjeno železno jedro v obliki okvirja z dvema navitjema. Na levem stebru je prvo navitje z N₁ ovoji, skozi katerega teče tok i₁. Na desnem stebru je drugo navitje z N₂ ovoji, na njegovih sponkah je napetost u₂. Črtkana sklenjena črta po sredini jedra kaže, da magnetni pretok kroži po jedru skozi obe navitji.
+območje: 0; 0 .. 15; 7
+pravokotnik: 2,5; 1 .. 12,5; 6 | siva debelo
+pravokotnik: 4; 2,2 .. 11; 4,8 | ozadje
+črta: 3,25; 1,6 -> 11,75; 1,6 -> 11,75; 5,4 -> 3,25; 5,4 -> 3,25; 1,6 | črtkano zelena
+črta: 2,3; 2,6 -> 4,2; 2,9 | modra debelo
+črta: 2,3; 3,1 -> 4,2; 3,4 | modra debelo
+črta: 2,3; 3,6 -> 4,2; 3,9 | modra debelo
+črta: 2,3; 4,1 -> 4,2; 4,4 | modra debelo
+črta: 10,8; 2,9 -> 12,7; 2,6 | oranžna debelo
+črta: 10,8; 3,4 -> 12,7; 3,1 | oranžna debelo
+črta: 10,8; 3,9 -> 12,7; 3,6 | oranžna debelo
+črta: 10,8; 4,4 -> 12,7; 4,1 | oranžna debelo
+puščica: 0,6; 4,1 -> 2,3; 4,1 | i_1 | nad | modra
+črta: 0,6; 2,6 -> 2,3; 2,6 | modra
+črta: 12,7; 4,1 -> 14; 4,1 | oranžna
+črta: 12,7; 2,6 -> 14; 2,6 | oranžna
+puščica: 13,7; 3,95 -> 13,7; 2,75 | u_2 | desno | oranžna
+napis: 4,5; 3,5 | N_1 | desno | modra
+napis: 10,5; 3,5 | N_2 | levo | oranžna
+napis: 7,5; 0,5 | pretok kroži po jedru | sredina | zelena
+:::
 
 **Definicija.** **Medsebojna induktivnost** je razmerje med pretokom, ki ga tok ene tuljave sprega z drugo, in tem tokom:
 

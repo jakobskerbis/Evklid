@@ -247,18 +247,19 @@ Utemelji, ali velja: če je $\vec{a} \neq \vec{0}$ in $\vec{a} \times \vec{b} = 
 
 Predstavljaj si dva vektorja, ki izhajata iz iste točke:
 
-```
-            a x b  (kaže iz ravnine, pravilo desne roke)
-              ^
-              |
-              |      b
-              |     /
-              |    /  ploščina = |a x b|
-              |   /___________
-              |  /           /
-              | /  phi      /
-              O-----------> a
-```
+:::risba skica
+opis: Iz točke O izhajata vektorja a in b, ki oklepata kot φ in napenjata paralelogram, katerega ploščina je enaka dolžini vektorja a × b. Vektor a × b izhaja iz O in je pravokoten na ravnino paralelograma; smer določa pravilo desne roke.
+območje: -1,5; -0,8 .. 7,2; 3,6
+lik: 0; 0 -> 4; 0 -> 6; 1,2 -> 2; 1,2 | modra ozadje
+črta: 4; 0 -> 6; 1,2 -> 2; 1,2 | črtkano
+puščica: 0; 0 -> 4; 0 | a | pod | modra debelo
+puščica: 0; 0 -> 2; 1,2 | b | nad levo | zelena debelo
+puščica: 0; 0 -> 0; 3 | a × b | desno | oranžna debelo
+točka: 0; 0 | O | levo
+napis: 1,05; 0,28 | φ
+napis: 4,4; 1,65 | ploščina = dolžina a × b
+podnapis: Vektor a × b je pravokoten na paralelogram, napet na a in b (pravilo desne roke).
+:::
 
 - **Skalarni produkt** je dolžina sence vektorja $\vec{a}$ na smeri $\vec{b}$, pomnožena z $|\vec{b}|$. Če svetimo pravokotno na $\vec{b}$ in sence ni, sta vektorja pravokotna.
 - **Vektorski produkt** je puščica, pravokotna na »list«, na katerem ležita $\vec{a}$ in $\vec{b}$; njena dolžina je ploščina paralelograma. Prste desne roke ukrivi od $\vec{a}$ proti $\vec{b}$, palec kaže smer $\vec{a} \times \vec{b}$.

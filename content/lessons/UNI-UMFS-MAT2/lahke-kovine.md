@@ -49,14 +49,16 @@ Pri jeklu kaljenje ujame ogljik v prenasičeni martenzit. Ta nastane brez difuzi
 2. **Gašenje** v vodi: difuzija nima časa, nastane **prenasičena trdna raztopina**. Ob tem ostane v mreži veliko praznih mest, ki kasneje pospešijo difuzijo.
 3. **Staranje**: pri sobni temperaturi (naravno) ali pri $120$ do $200\,^\circ\mathrm C$ (umetno). Baker se zbira v izločke v zaporedju: Guinier-Prestonove cone (ploščice debeline nekaj atomov) $\to$ $\theta''$ $\to$ $\theta'$ $\to$ ravnotežna faza $\theta$ ($\mathrm{Al_2Cu}$).
 
-```
-Rp ^      vrh (T6)
-   |     _--_
-   |   /      \__  prestaranje
-   |  /          ---
-   | /
-   +------------------> t
-```
+:::risba graf
+opis: Kvalitativen graf trdnosti Rp v odvisnosti od časa staranja t. Trdnost od začetne vrednosti po gašenju najprej strmo raste, doseže vrh (stanje T6) in nato počasi pada (prestaranje). Osi sta brez številk.
+x: 0 .. 6 | 1 | t
+y: 0 .. 6 | 1 | R_p
+oznake: ne
+f: 2 + 3*x*exp(1 - x) | debelo modra
+točka: 1; 5 | vrh (T6) | nad
+napis: 4; 3,2 | prestaranje | nad
+podnapis: Trdnost med staranjem: rast do vrha (T6), nato prestaranje
+:::
 
 Trdnost med staranjem najprej raste, doseže vrh in nato pada. Pri prestaranju izločki zrastejo, razdalje med njimi se povečajo in izgubijo koherenco z mrežo. Dislokacije jih tedaj obidejo.
 

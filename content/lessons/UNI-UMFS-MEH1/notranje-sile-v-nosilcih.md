@@ -169,6 +169,62 @@ Na sredini, kjer $T$ skoči s $+125$ na $-125\,\text{N}$: $M_{\max} = 125\,\text
 - $M$ je največji, kjer $T$ zamenja predznak; pri konzoli v vpetju.
 - Prostoležeči nosilec: sila na sredini $M_{\max} = FL/4$, enakomerna obremenitev $M_{\max} = qL^2/8$; konzola s silo na koncu $|M_{\max}| = FL$.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicije osne sile $N$, prečne sile $T$ in upogibnega momenta $M$ v prerezu ter dogovor o predznakih;
+- postopek miselnega reza: ravnotežje enega dela nosilca, sile le z ene strani reza, reakcije vključene;
+- diferencialni zvezi $\dfrac{\mathrm{d}T}{\mathrm{d}x} = -q$ in $\dfrac{\mathrm{d}M}{\mathrm{d}x} = T$ z izpeljavo iz ravnotežja kosa dolžine $\mathrm{d}x$;
+- pravila za risanje diagramov: točkovna sila da skok v $T$ in prelom v $M$, točkovni moment skok v $M$, stalna $q$ linearen $T$ in paraboličen $M$;
+- zakaj je $M$ ekstremen tam, kjer $T$ zamenja predznak, in kje je največji $|M|$ pri konzoli;
+- vrednosti $M_{\max} = \dfrac{FL}{4}$, $\dfrac{qL^2}{8}$ in $|M_{\max}| = FL$ z izpeljavo.
+
+### Naloga 1
+
+Nosilec dolžine $5\,\text{m}$ je v $A$ ($x = 0$) nepomično členkasto podprt, v $B$ ($x = 4\,\text{m}$) pa drsno. Del od $B$ do prostega konca $C$ ($x = 5\,\text{m}$) je previs. Med $A$ in $B$ deluje enakomerna obremenitev $q = 6\,\text{kN/m}$, na prostem koncu $C$ pa sila $F = 4\,\text{kN}$ navzdol. (a) Določi reakciji. (b) Zapiši $T(x)$ in $M(x)$ na obeh poljih. (c) Določi največji pozitivni in največji negativni upogibni moment ter njuni legi. (d) V katerem prerezu med podporama je $M = 0$?
+
+**Rešitev:**
+
+1. Momenti okoli $A$: $B_y \cdot 4 = 6 \cdot 4 \cdot 2 + 4 \cdot 5 = 68\,\text{kN·m}$, torej $B_y = 17\,\text{kN}$.
+2. Navpično ravnotežje: $A_y = 6 \cdot 4 + 4 - 17 = 11\,\text{kN}$. Vodoravnih sil ni, zato je $N = 0$.
+3. Polje $AB$ ($0 < x < 4\,\text{m}$), levi del: $T(x) = 11 - 6x$ in $M(x) = 11x - 3x^2$ (v kN in kN·m, $x$ v m).
+4. Polje $BC$ ($4 < x < 5\,\text{m}$), desni del, na katerem je le $F$: $T = 4\,\text{kN}$ in $M(x) = -4\,(5 - x)$.
+5. Preveritev v $B$: tik levo je $T = 11 - 6 \cdot 4 = -13\,\text{kN}$, skok za $B_y$ da $-13 + 17 = 4\,\text{kN}$. Moment z leve: $M(4) = 11 \cdot 4 - 3 \cdot 4^2 = -4\,\text{kN·m}$, z desne $-4 \cdot 1 = -4\,\text{kN·m}$. Ujema se.
+6. Na polju $AB$ je $T = 0$ pri $x = \dfrac{11}{6} \approx 1{,}83\,\text{m}$. Tam je $M_{\max} = \dfrac{11^2}{2 \cdot 6} = \dfrac{121}{12} \approx 10{,}08\,\text{kN·m}$.
+7. Največji negativni moment je nad podporo $B$, kjer $T$ skoči z $-13$ na $+4\,\text{kN}$: $M_B = -4\,\text{kN·m}$ (raztegnjena so zgornja vlakna).
+8. $M = 0$: $11x - 3x^2 = 0$ da $x = \dfrac{11}{3} \approx 3{,}67\,\text{m}$ (poleg $x = 0$).
+9. Odgovor: $A_y = 11\,\text{kN}$, $B_y = 17\,\text{kN}$; $M_{\max} \approx 10{,}08\,\text{kN·m}$ pri $x \approx 1{,}83\,\text{m}$, $M_B = -4\,\text{kN·m}$ nad podporo $B$; moment zamenja predznak pri $x \approx 3{,}67\,\text{m}$. Diagram $T$ je premica od $+11$ do $-13\,\text{kN}$, nato stalnih $+4\,\text{kN}$; diagram $M$ je parabola na $AB$ in daljica na previsu.
+
+### Naloga 2
+
+Izpelji zvezi med obremenitvijo $q$, prečno silo $T$ in upogibnim momentom $M$. Nato utemelji, (a) zakaj ima $M$ ekstrem tam, kjer je $T = 0$, in (b) zakaj točkovna sila v diagramu $M$ naredi prelom, ne skoka.
+
+**Rešitev:**
+
+1. Izrežemo kos nosilca dolžine $\mathrm{d}x$ brez točkovnih sil. Na levem prerezu delujeta $T$ in $M$, na desnem $T + \mathrm{d}T$ in $M + \mathrm{d}M$, vmes obremenitev $q\,\mathrm{d}x$ navzdol.
+2. Navpično ravnotežje: $T - q\,\mathrm{d}x - (T + \mathrm{d}T) = 0$, torej $\dfrac{\mathrm{d}T}{\mathrm{d}x} = -q$.
+3. Momentno ravnotežje okoli desnega prereza: $M + T\,\mathrm{d}x - q\,\mathrm{d}x \cdot \dfrac{\mathrm{d}x}{2} - (M + \mathrm{d}M) = 0$.
+4. Člen z $(\mathrm{d}x)^2$ je majhen višjega reda in ga zanemarimo: $\dfrac{\mathrm{d}M}{\mathrm{d}x} = T$. Od tod še $\dfrac{\mathrm{d}^2 M}{\mathrm{d}x^2} = -q$.
+5. (a) Ekstrem funkcije $M(x)$ je tam, kjer je njen odvod nič, odvod pa je $T$. Če $T$ preide iz pozitivne v negativno vrednost, $M$ najprej narašča in nato pada: to je maksimum. Pri $q > 0$ (navzdol) to potrdi tudi drugi odvod $-q < 0$.
+6. (b) Točkovna sila $F$ spremeni $T$ skokovito za $F$. Ker je $T$ naklon diagrama $M$, se v tej točki skokovito spremeni naklon: nastane prelom. Sama vrednost $M$ se ne more spremeniti, ker ima sila $F$ glede na prerez tik ob sebi ročico nič. Skok v $M$ da le zunanji točkovni moment.
+7. Sklep: $q$, $T$ in $M$ so povezani z odvajanjem; diagram $T$ dobimo z integriranjem $-q$, diagram $M$ z integriranjem $T$, v vsaki točkovni sili oziroma momentu pa dodamo skok.
+
+### Naloga 3
+
+Za prostoležeči nosilec dolžine $6\,\text{m}$ (podpori $A$ pri $x = 0$ in $B$ pri $x = 6\,\text{m}$) poznaš diagram prečne sile: od $A$ do $x = 2\,\text{m}$ je $T = 8\,\text{kN}$, pri $x = 2\,\text{m}$ skoči na $2\,\text{kN}$, nato linearno pada do $-10\,\text{kN}$ tik pred $B$. Določi vse zunanje sile na nosilec, preveri ravnotežje ter izračunaj največji upogibni moment in njegovo lego.
+
+**Rešitev:**
+
+1. V $A$ diagram začne pri $8\,\text{kN}$: $A_y = 8\,\text{kN}$ navzgor. V $B$ se mora $T$ vrniti na nič: $B_y = 10\,\text{kN}$ navzgor.
+2. Skok pri $x = 2\,\text{m}$: $8 - 2 = 6\,\text{kN}$, torej točkovna sila $F = 6\,\text{kN}$ navzdol.
+3. Med $2$ in $6\,\text{m}$ pade $T$ za $2 - (-10) = 12\,\text{kN}$ na $4\,\text{m}$. Iz $\dfrac{\mathrm{d}T}{\mathrm{d}x} = -q$ sledi $q = \dfrac{12}{4} = 3\,\text{kN/m}$.
+4. Ravnotežje sil: $8 + 10 = 18\,\text{kN}$ navzgor in $6 + 3 \cdot 4 = 18\,\text{kN}$ navzdol. Momenti okoli $A$: $6 \cdot 2 + 12 \cdot 4 = 60\,\text{kN·m}$ in $10 \cdot 6 = 60\,\text{kN·m}$. Ujema se.
+5. $M$ je ploščina pod diagramom $T$. Do sile: $M(2) = 8 \cdot 2 = 16\,\text{kN·m}$.
+6. Desno od sile je $T(x) = 2 - 3\,(x - 2)$. Ničla: $x = 2 + \dfrac{2}{3} \approx 2{,}67\,\text{m}$.
+7. Do ničle se $M$ poveča za ploščino trikotnika $\dfrac{1}{2} \cdot 2 \cdot \dfrac{2}{3} = \dfrac{2}{3}\,\text{kN·m}$: $M_{\max} = 16 + \dfrac{2}{3} \approx 16{,}67\,\text{kN·m}$.
+8. Preveritev v $B$: od ničle do $B$ je ploščina $-\dfrac{1}{2} \cdot 10 \cdot \dfrac{10}{3} = -\dfrac{50}{3}\,\text{kN·m}$, torej $M(6) = \dfrac{50}{3} - \dfrac{50}{3} = 0$, kot mora biti v členkasti podpori.
+9. Odgovor: $A_y = 8\,\text{kN}$, $B_y = 10\,\text{kN}$, sila $6\,\text{kN}$ pri $x = 2\,\text{m}$ in $q = 3\,\text{kN/m}$ med $2$ in $6\,\text{m}$; $M_{\max} \approx 16{,}67\,\text{kN·m}$ pri $x \approx 2{,}67\,\text{m}$, ne pod točkovno silo.
+
 ## Drugače: Z analogijo
 
 Predstavljaj si, da nosilec v resnici prerežeš, nato pa oba kosa spet držita dve osebi, vsaka svojega, tako da se nič ne premakne. Kaj morata narediti z rokami na mestu reza?
@@ -179,11 +235,11 @@ Predstavljaj si, da nosilec v resnici prerežeš, nato pa oba kosa spet držita 
 
 Diagram ni nič drugega kot zapis, kako močno morata vleči, podpirati in sukati, če se z rezom premikata od enega konca do drugega. Kjer bi bilo sukanje najtežje, tam bi se pravi nosilec zlomil.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Ravnilo med prsti.** Ravnilo položi na dva prsta in s tretjim pritisni na sredino. Najbolj se ukrivi na sredini, pri prstih pa ostane skoraj ravno. Tam je $M$ največji, pri podporah nič.
-- **Iztegnjena roka z vrečko.** Ko držiš vrečko v iztegnjeni roki, te boli rama, ne zapestje. Roka deluje kot konzola: ročica do ramena je najdaljša, zato mora rama prenesti največji moment.
-- **Lomljenje paličke.** Suho paličko zlomiš najlaže, če jo primeš na koncih in pritisneš s palcema na sredino. Na sredini z najmanj sile dosežeš največji moment.
+- **Gred reduktorja.** Gred med ležajema je prostoležeči nosilec, zobnik pa pritiska nanjo s prečno silo. Konstruktor nariše diagram $M$ in premer gredi določi v prerezu z največjim momentom. Pri sili $4\,\text{kN}$ na sredini med ležajema, razmaknjenima $0{,}3\,\text{m}$, je to $M_{\max} = \dfrac{4000 \cdot 0{,}3}{4} = 300\,\text{N·m}$.
+- **Roka robota in konzolni žerjav.** Roka, ki drži breme $500\,\text{N}$ na ročici $1{,}2\,\text{m}$, je konzola z momentom $500 \cdot 1{,}2 = 600\,\text{N·m}$ v vpetju. Zato je prerez roke ob vpetju največji in se proti prijemalu tanjša.
+- **Mostni žerjav.** Maček z bremenom se vozi po nosilcu med tirnicama. Največji moment nastane, ko je breme na sredini razpona, zato nosilec preverjajo za to lego bremena.
 
 ## Drugače: Bolj natančno
 

@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Limita funkcije
+  - $\lim_{x \to a} f(x) = L$, vrednost $f(a)$ ni pomembna
+  - $0 < |x - a| < \delta \Rightarrow |f(x) - L| < \varepsilon$
+- Enostranske in neskončne limite
+  - limita obstaja, ko sta leva in desna enaki
+  - $\frac{|x|}{x}$ v $0$: $-1$ in $1$, limite ni
+  - vodoravna asimptota $y = L$, navpična $x = a$
+- Pravila za računanje
+  - vsota, produkt, kvocient pri $B \neq 0$
+  - $\lim h(f(x)) = h(A)$ za zvezno $h$
+- Nedoločeni izrazi
+  - $\frac{0}{0}$, $\frac{\infty}{\infty}$, $\infty - \infty$, $0 \cdot \infty$, $1^\infty$
+  - krajšanje, racionalizacija, deljenje z najvišjo potenco
+  - pri $1^\infty$: $f^g = e^{g \ln f}$
+- Znane limite in sendvič
+  - $\lim_{x \to 0} \frac{\sin x}{x} = 1$, $\lim_{x \to 0} \frac{e^x - 1}{x} = 1$
+  - $\lim_{x \to \infty}\left(1 + \frac{1}{x}\right)^x = e$
+  - sendvič: $\lim_{x \to 0} x \sin\frac{1}{x} = 0$
+- Zveznost
+  - $\lim_{x \to a} f(x) = f(a)$
+  - elementarne funkcije so zvezne na $D_f$
+  - nezveznosti: odpravljiva, skok, pol
+- Zaprti interval
+  - zvezna na $[a, b]$: omejena, doseže min in max
+  - Bolzano: menjava predznaka da ničlo
+  - bisekcija: interval z ničlo razpolavljamo

@@ -229,13 +229,23 @@ Natančno navedi pravilo razmerja polmerov z vsemi predpostavkami in izpelji mej
 
 Nariši kvadrat, to je ena ploskev kocke fcc. V vsak vogal nariši četrtino kroga, v sredino cel krog. Vse se dotikajo vzdolž diagonale:
 
-```
-◔─────────◕
-│ \     / │
-│   (●)   │
-│ /     \ │
-◕─────────◔
-```
+:::risba skica
+opis: Kvadratna ploskev kocke fcc z robom a. V vsakem od štirih oglišč je središče kroga s polmerom r, v ploskvi leži od vsakega četrtina. V središču ploskve je cel krog s polmerom r. Diagonala ploskve gre skozi tri kroge, ki se na njej dotikajo: polmer r, premer 2r in polmer r, skupaj 4r.
+območje: -1,3; -1,6 .. 4,2; 4,1
+enota: 50
+krog: 0; 0 | 1 | siva
+krog: 2,828; 0 | 1 | siva
+krog: 0; 2,828 | 1 | siva
+krog: 2,828; 2,828 | 1 | siva
+krog: 1,414; 1,414 | 1 | modra
+pravokotnik: 0; 0 .. 2,828; 2,828 | debelo
+črta: 0; 0 -> 2,828; 2,828 | oranžna debelo
+napis: 0,354; 0,354 | r | desno
+napis: 1,65; 1,2 | 2r | desno
+napis: 2,475; 2,475 | r | desno
+napis: 1,414; 0 | a | pod
+podnapis: Ploskev fcc: na diagonali ležijo r, 2r in r, skupaj 4r
+:::
 
 Na diagonali naštej: polmer (vogal), premer (sredina), polmer (vogal). Skupaj $4r$, diagonala pa je $a\sqrt2$. Pri bcc isto naredi v prerezu skozi telesno diagonalo: pravokotnik s stranicama $a$ in $a\sqrt2$, njegova diagonala je $a\sqrt3$.
 

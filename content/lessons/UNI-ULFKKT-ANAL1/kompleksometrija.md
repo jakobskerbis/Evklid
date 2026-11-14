@@ -209,11 +209,40 @@ Do 25 mL se pCa dvigne le za pol enote, okoli 50 mL pa poskoči za skoraj štiri
 
 Mejo za $\log K'_f$ si predstavljaj na številski premici:
 
-```
- 5,91 (Ca, pH 6)     8   8,27 (Mg, pH 10)   10,13 (Ca, pH 10)
- ---|----------------|---|------------------|--------->  log K'
-     prešibko        | uporabno
-```
+:::risba skica
+opis: Številska premica za log K′ od 5 do 11. Od 5 do 8 je območje prešibko, od 8 do 11 območje uporabno. Točke: 5,91 za kalcij pri pH 6 (prešibko), 8,27 za magnezij pri pH 10 in 10,13 za kalcij pri pH 10 (obe uporabni).
+območje: 4,7; -1 .. 12,8; 2,3
+puščica: 4,8; 0 -> 11,45; 0
+črta: 5; 0 -> 8; 0 | rdeča debelo
+črta: 8; 0 -> 11; 0 | zelena debelo
+črta: 5; -0,12 -> 5; 0,12
+črta: 6; -0,12 -> 6; 0,12
+črta: 7; -0,12 -> 7; 0,12
+črta: 8; -0,12 -> 8; 0,12
+črta: 9; -0,12 -> 9; 0,12
+črta: 10; -0,12 -> 10; 0,12
+črta: 11; -0,12 -> 11; 0,12
+napis: 5; -0,2 | 5 | pod
+napis: 6; -0,2 | 6 | pod
+napis: 7; -0,2 | 7 | pod
+napis: 8; -0,2 | 8 | pod
+napis: 9; -0,2 | 9 | pod
+napis: 10; -0,2 | 10 | pod
+napis: 11; -0,2 | 11 | pod
+napis: 11,5; 0 | log K′ | desno
+napis: 6,5; 1,9 | prešibko | sredina | rdeča
+napis: 9,5; 1,9 | uporabno | sredina | zelena
+točka: 5,91; 0 | | | modra
+točka: 8,27; 0 | | | modra
+točka: 10,13; 0 | | | modra
+napis: 5,91; 0,3 | 5,91 | nad | modra
+napis: 8,27; 0,3 | 8,27 | nad | modra
+napis: 10,13; 0,3 | 10,13 | nad | modra
+napis: 5,91; 1,1 | Ca, pH 6 | sredina | modra
+napis: 8,27; 1,1 | Mg, pH 10 | sredina | modra
+napis: 10,13; 1,1 | Ca, pH 10 | sredina | modra
+podnapis: log K′ za tri primere; meja za uporabno titracijo je 8.
+:::
 
 ## Drugače: Bolj natančno
 

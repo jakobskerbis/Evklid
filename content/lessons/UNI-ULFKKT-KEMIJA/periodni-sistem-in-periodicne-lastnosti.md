@@ -245,17 +245,52 @@ Natančno definiraj prvo in drugo ionizacijsko energijo. Utemelji, zakaj je za v
 
 Trendi na obrisu periodnega sistema ($r$ polmer, $I_1$ ionizacijska energija, $\chi$ elektronegativnost):
 
-```
-              I1 in χ rasteta  ---->
-          +-----------------------------------------------+
-   r      |  Li  Be                        B  C  N  O  F  |  ^
-   raste  |  Na  Mg                       Al Si  P  S Cl  |  |  I1 in χ
-     |    |  K   Ca   (prehodne kovine)   Ga Ge As Se Br  |  |  rasteta
-     v    |  Rb  Sr                       In Sn Sb Te  I  |  |
-          |  Cs  Ba                       Tl Pb Bi Po At  |  |
-          +-----------------------------------------------+
-              <----  r in kovinski značaj rasteta
-```
+:::risba skica
+opis: Obris periodnega sistema z elementi blokov s in p od 2. do 6. periode: levo Li, Na, K, Rb, Cs in Be, Mg, Ca, Sr, Ba, v sredini prehodne kovine, desno skupine od B do F zgoraj in od Tl do At spodaj. Puščici v desno in navzgor: prva ionizacijska energija I₁ in elektronegativnost χ rasteta vzdolž periode in navzgor po skupini. Puščici v levo in navzdol: polmer r in kovinski značaj rasteta proti levi in navzdol po skupini.
+območje: 0; -6 .. 320; 154
+pravokotnik: 30; 26 .. 270; 122 | ozadje
+napis: 42; 110 | Li
+napis: 71; 110 | Be
+napis: 167; 110 | B
+napis: 189; 110 | C
+napis: 211; 110 | N
+napis: 233; 110 | O
+napis: 255; 110 | F
+napis: 42; 92 | Na
+napis: 71; 92 | Mg
+napis: 167; 92 | Al
+napis: 189; 92 | Si
+napis: 211; 92 | P
+napis: 233; 92 | S
+napis: 255; 92 | Cl
+napis: 42; 74 | K
+napis: 71; 74 | Ca
+napis: 167; 74 | Ga
+napis: 189; 74 | Ge
+napis: 211; 74 | As
+napis: 233; 74 | Se
+napis: 255; 74 | Br
+napis: 42; 56 | Rb
+napis: 71; 56 | Sr
+napis: 167; 56 | In
+napis: 189; 56 | Sn
+napis: 211; 56 | Sb
+napis: 233; 56 | Te
+napis: 255; 56 | I
+napis: 42; 38 | Cs
+napis: 71; 38 | Ba
+napis: 167; 38 | Tl
+napis: 189; 38 | Pb
+napis: 211; 38 | Bi
+napis: 233; 38 | Po
+napis: 255; 38 | At
+napis: 119; 83 | prehodne | sredina | siva
+napis: 119; 65 | kovine | sredina | siva
+puščica: 60; 134 -> 240; 134 | I_1 in χ rasteta | nad | modra
+puščica: 280; 38 -> 280; 110 | I_1, χ | desno | modra
+puščica: 240; 14 -> 60; 14 | r in kovinski značaj rasteta | pod | oranžna
+puščica: 20; 110 -> 20; 38 | r | levo | oranžna
+:::
 
 Graf $I_1(Z)$ je »žaga« z vrhovi pri žlahtnih plinih.
 

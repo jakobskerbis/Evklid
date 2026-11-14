@@ -155,6 +155,62 @@ $\dfrac{6{,}4\,\mathrm{pg}}{2} = 3{,}2\,\mathrm{pg}$, to je $1C$, polovica koli�
 - Rekombinacija = neodvisna razporeditev bivalentov ($2^n$ kombinacij) + prekrižanje. Pri človeku $2^{23} \approx 8{,}4 \cdot 10^6$ kombinacij že brez prekrižanja.
 - Pomen: stalno število kromosomov iz generacije v generacijo in genetska raznolikost potomcev.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicije: homologna kromosoma, sestrski in nesestrski kromatidi, bivalent (tetrada), sinapsa, hiazma, diploidna in haploidna celica;
+- potek mejoze po fazah s številom kromosomov, kromatid in količino DNA ($2C \to 4C \to 2C \to 1C$);
+- zakaj je mejoza I redukcijska in mejoza II ekvacijska delitev ter v čem se mejoza I razlikuje od mitoze;
+- oba vira rekombinacije: neodvisno razporeditev bivalentov ($2^n$ kombinacij, pogoj: brez prekrižanja) in prekrižanje med nesestrskima kromatidama;
+- pomen mejoze za spolno razmnoževanje: stalno število kromosomov in genetska raznolikost;
+- kaj je nerazdružitev in kakšne gamete nastanejo, če se zgodi v mejozi I ali v mejozi II.
+
+### Naloga 1
+
+Rastlina ima v telesnih celicah $2n = 14$, celica v fazi G1 vsebuje $16{,}6\,\mathrm{pg}$ DNA. (a) Koliko bivalentov, kromatid in DNA ima celica v metafazi I ter koliko kromosomov, kromatid in DNA celica v metafazi II? (b) Koliko različnih kombinacij kromosomov v gametah da neodvisna razporeditev (prekrižanje zanemari)? Kolikšna je verjetnost, da gameta dobi vseh $7$ kromosomov, ki jih je rastlina podedovala po materi? Koliko različnih kombinacij kromosomov je možnih v zigoti, če rastlino oplodi druga rastlina iste vrste (vsi kromosomi obeh staršev se med seboj razlikujejo)? (c) V eni mejozi se en homologni par v anafazi I ne loči, mejoza II poteče pravilno. Koliko kromosomov ima vsaka od štirih gamet? Kaj se spremeni, če mejoza I poteče pravilno, v anafazi II pa se v eni od obeh celic ne ločita sestrski kromatidi enega kromosoma?
+
+**Rešitev:**
+
+1. Haploidno število: $n = \frac{14}{2} = 7$. V metafazi I je vsak homologni par en bivalent: $7$ bivalentov.
+2. DNA je podvojena, vsak od $14$ kromosomov ima $2$ kromatidi: $14 \cdot 2 = 28$ kromatid. DNA: $2 \cdot 16{,}6 = 33{,}2\,\mathrm{pg}$ ($4C$).
+3. Mejoza I loči homologe. Celica v metafazi II ima $7$ kromosomov, vsakega z $2$ kromatidama: $7 \cdot 2 = 14$ kromatid. DNA: $\frac{33{,}2}{2} = 16{,}6\,\mathrm{pg}$ ($2C$), čeprav je celica haploidna.
+4. (b) Vsak od $7$ bivalentov se usmeri na $2$ načina, neodvisno od drugih: $2^7 = 128$ kombinacij.
+5. Vse kombinacije so enako verjetne, natanko ena ima samo materine kromosome: $\frac{1}{128} \approx 0{,}0078$, to je manj kot $1\,\%$.
+6. Pri oploditvi se sreča ena od $128$ kombinacij v jajčni celici z eno od $128$ v moški gameti druge rastline: $128 \cdot 128 = 16384$ kombinacij.
+7. (c) Nerazdružitev v anafazi I: ena celica dobi $7 + 1 = 8$ kromosomov, druga $7 - 1 = 6$. Mejoza II loči le kromatide, zato nastanejo gamete z $8$, $8$, $6$ in $6$ kromosomi; nobena ni normalna.
+8. Nerazdružitev v anafazi II v eni celici: ta celica da gameti z $8$ in $6$ kromosomi, druga celica dve normalni s $7$. Gamete imajo $8$, $6$, $7$ in $7$ kromosomov.
+9. Odgovor: metafaza I: $7$ bivalentov, $28$ kromatid, $33{,}2\,\mathrm{pg}$; metafaza II: $7$ kromosomov, $14$ kromatid, $16{,}6\,\mathrm{pg}$. Kombinacij v gametah je $128$, verjetnost samih materinih kromosomov $\frac{1}{128}$, kombinacij v zigoti $16384$. Napaka v mejozi I pokvari vse štiri gamete ($8$, $8$, $6$, $6$), napaka v mejozi II le dve ($8$, $6$, $7$, $7$).
+
+### Naloga 2
+
+Natančno navedi, v čem se mejoza I razlikuje od mitoze, in utemelji, zakaj je mejoza I redukcijska, mejoza II pa ekvacijska delitev. V odgovoru pojasni vlogo hiazem, kinetohorov in kohezina.
+
+**Rešitev:**
+
+1. Profaza: v mejozi I se homologa združita v bivalent (sinapsa, sinaptonemski kompleks) in med nesestrskima kromatidama poteče prekrižanje. V mitozi se homologa ne parita in prekrižanja ni.
+2. Metafaza: v mejozi I so na ekvatorialni ravnini bivalenti, v mitozi posamezni kromosomi.
+3. Kinetohori: v mejozi I sta kinetohora sestrskih kromatid usmerjena k istemu polu, zato vreteno vleče cel kromosom. V mitozi sta usmerjena k nasprotnima poloma.
+4. Hiazme držijo homologa skupaj do anafaze I in dajo vretenu pravilno napetost; brez njih se bivalent ne bi pravilno usmeril.
+5. Anafaza: v anafazi I se kohezin razgradi le ob krakih, zato se razpustijo hiazme in homologa gresta narazen. Ob centromeri kohezin ščiti šugošin, sestrski kromatidi ostaneta skupaj. V mitozi se kohezin razgradi v celoti in ločijo se sestrske kromatide.
+6. Redukcijska delitev: vsaka celica po mejozi I ima iz vsakega para le en kromosom (eno centromero), torej iz $2n$ nastane $n$. Število kromosomov štejemo po centromerah, zato je celica haploidna, čeprav ima vsak kromosom še dve kromatidi.
+7. Ekvacijska delitev: v anafazi II se razgradi kohezin ob centromeri in ločita se sestrski kromatidi. Iz celice z $n$ kromosomi nastaneta celici z $n$ kromosomi; spremeni se le število kromatid na kromosom (z $2$ na $1$) in količina DNA (z $2C$ na $1C$).
+8. Sklep: hčerinski celici mitoze sta genetsko enaki materinski, celice po mejozi I pa so haploidne in zaradi prekrižanja ter naključne usmeritve bivalentov med seboj različne.
+
+### Naloga 3
+
+Samec ima na enem homolognem kromosomu alela $A$ in $B$, na drugem alela $a$ in $b$ (gena ležita na istem kromosomu). (a) Utemelji, katere štiri semenčice nastanejo iz ene mejoze brez prekrižanja med genoma in katere iz mejoze z enim prekrižanjem med njima. (b) Eno prekrižanje med genoma poteče v $40\,\%$ mejoz, v drugih ga ni. Koliko semenčic vsake vrste pričakuješ med $1000$ semenčicami? (c) Utemelji, ali bi prekrižanje spremenilo izid pri samcu z aleli $A$, $B$ na obeh homologih.
+
+**Rešitev:**
+
+1. Po fazi S ima bivalent štiri kromatide: dve $AB$ (sestrski) in dve $ab$ (sestrski).
+2. (a) Brez prekrižanja mejoza I loči homologa, mejoza II sestrski kromatidi: nastanejo semenčice $AB$, $AB$, $ab$, $ab$, samo starševski kombinaciji.
+3. Pri enem prekrižanju si odsek izmenjata le dve od štirih kromatid, ena materina in ena očetova. Ti postaneta $Ab$ in $aB$, drugi dve ostaneta $AB$ in $ab$. Iz take mejoze nastanejo semenčice $AB$, $Ab$, $aB$, $ab$: polovica je rekombinantnih.
+4. (b) Rekombinantnih je polovica semenčic iz $40\,\%$ mejoz: $0{,}40 \cdot 0{,}5 = 0{,}20$, to je $20\,\%$.
+5. Med $1000$ semenčicami: $0{,}20 \cdot 1000 = 200$ rekombinantnih, po $\frac{200}{2} = 100$ vrste $Ab$ in $aB$.
+6. Starševskih je $1000 - 200 = 800$, po $\frac{800}{2} = 400$ vrste $AB$ in $ab$.
+7. (c) Ne. Pri takem samcu imajo vse štiri kromatide alela $A$ in $B$, zato izmenjava istoležnih odsekov da spet $AB$. Prekrižanje ustvari nove kombinacije le, če se homologa v obeh genih razlikujeta; iz istega razloga je brez učinka izmenjava med sestrskima kromatidama.
+8. Odgovor: brez prekrižanja $2\,AB + 2\,ab$, z enim prekrižanjem $AB$, $Ab$, $aB$, $ab$; med $1000$ semenčicami pričakujemo $400\,AB$, $400\,ab$, $100\,Ab$ in $100\,aB$. Delež rekombinantnih gamet je polovica deleža mejoz s prekrižanjem.
+
 ## Drugače: Z analogijo
 
 Predstavljaj si omaro z 23 pari rokavic. V vsakem paru je ena rokavica od babice in ena od dedka; obe sta za isto roko in istega kroja, razlikujeta se v barvi.

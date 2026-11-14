@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Osnovni pojmi
+  - topilo, topljenec, homogena zmes
+  - nasičena raztopina določa topnost
+- Izražanje sestave
+  - $c = n/V$ raztopine, enota $\mathrm{mol/L}$
+  - $b = n/m$ topila, enota $\mathrm{mol/kg}$
+  - $w$, $\gamma$ in $x_i$
+- Pretvarjanje
+  - $c = w\rho/M$
+  - osnova: $1\,\mathrm{L}$ ali $100\,\mathrm{g}$ raztopine
+  - napaka: gostota v $\mathrm{g/mL}$ namesto $\mathrm{g/L}$
+- Priprava in redčenje
+  - $m = cVM$, dopolnimo v merilni bučki
+  - $c_1V_1 = c_2V_2$, $V_2$ je končna prostornina
+  - kislino vlivamo v vodo
+- Koligativne lastnosti
+  - šteje število delcev, ne vrsta
+  - Raoult: $p = x_1\,p^*$
+  - $\Delta T_t = iK_kb$, $\Delta T_v = iK_eb$
+- Van 't Hoffov faktor
+  - $i = 1 + \alpha(\nu - 1)$
+  - glukoza $1$, $\mathrm{NaCl}$ idealno $2$
+- Osmozni tlak
+  - $\Pi = icRT$
+  - $c$ v $\mathrm{mol/m^3}$ da $\Pi$ v $\mathrm{Pa}$
+  - enak $\Pi$: izotonični raztopini
+- Molska masa topljenca
+  - $M = K_k\,m_2/(\Delta T_t\,m_1)$
+  - voda: $K_k = 1{,}86\,\mathrm{K\,kg/mol}$

@@ -199,13 +199,23 @@ Natančno navedi Kronecker-Capellijev izrek in dokaži, da je sistem $A\vec{x} =
 
 Pri dveh neznankah je vsaka enačba premica v ravnini. Možnosti so tri:
 
-```
- ena rešitev          ni rešitve           neskončno rešitev
-     \   /             ______              ______
-      \ /              ______              ======  (premici
-       X  (presečišče)  (vzporedni)                 sovpadata)
-      / \
-```
+:::risba skica
+opis: Tri sličice z dvema premicama. Levo se premici sekata v eni točki, presečišču: ena rešitev. V sredini sta premici vzporedni in različni: ni rešitve. Desno premici sovpadata, narisana je ena debela premica: neskončno rešitev.
+območje: 0; 0 .. 22; 6
+črta: 1; 1,4 -> 5; 4,6 | modra
+črta: 1; 4,6 -> 5; 1,4 | oranžna
+točka: 3; 3
+napis: 3; 5,4 | ena rešitev
+napis: 3; 0,6 | presečišče
+črta: 8,5; 1,6 -> 12,5; 3,2 | modra
+črta: 8,5; 2,8 -> 12,5; 4,4 | oranžna
+napis: 10,5; 5,4 | ni rešitve
+napis: 10,5; 0,6 | vzporedni
+črta: 16; 1,6 -> 20; 4 | modra debelo
+črta: 16; 1,6 -> 20; 4 | oranžna črtkano
+napis: 18; 5,4 | neskončno rešitev
+napis: 18; 0,6 | premici sovpadata
+:::
 
 - Premici se sekata: $\operatorname{rang} A = \operatorname{rang}[A \mid \vec{b}] = 2$.
 - Premici sta vzporedni in različni: $\operatorname{rang} A = 1$, $\operatorname{rang}[A \mid \vec{b}] = 2$.

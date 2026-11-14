@@ -236,13 +236,33 @@ Natančno navedi Amperov zakon z vsemi pogoji in z njim izpelji gostoto polja do
 
 Palica na tirnicah iz Primera 3 (polje kaže iz lista, $\odot$):
 
-```
-   o------------------------o
-   |     ⊙   ⊙   ⊙   |          palica →  v
-  [R]    ⊙   ⊙   ⊙   |  l
-   |     ⊙   ⊙   ⊙   |
-   o------------------------o
-```
+:::risba skica
+opis: Pogled od zgoraj na dve vzporedni vodoravni tirnici, ki sta na levem koncu povezani z uporom R. Čeznju leži navpično narisana palica dolžine l = 0,50 m, ki se giblje v desno s hitrostjo v = 2,0 m/s. Magnetno polje B = 0,40 T kaže iz lista (znaki ⊙). Inducirani tok I teče po palici navzdol, po spodnji tirnici v levo in skozi upor navzgor, torej v smeri urinega kazalca. Magnetna sila na palico kaže v levo, proti gibanju.
+območje: 0; -0,8 .. 12,5; 6,4
+črta: 1; 1 -> 11; 1
+črta: 1; 5 -> 11; 5
+črta: 1; 1 -> 1; 2,4
+črta: 1; 3,6 -> 1; 5
+pravokotnik: 0,7; 2,4 .. 1,3; 3,6
+napis: 1,5; 3 | R = 0,80 Ω | desno
+napis: 3,8; 4,2 | ⊙ | sredina | siva
+napis: 5; 4,2 | ⊙ | sredina | siva
+napis: 3,8; 1,8 | ⊙ | sredina | siva
+napis: 5; 1,8 | ⊙ | sredina | siva
+napis: 8,6; 4,2 | ⊙ | sredina | siva
+napis: 10; 4,2 | ⊙ | sredina | siva
+napis: 8,6; 1,8 | ⊙ | sredina | siva
+napis: 10; 1,8 | ⊙ | sredina | siva
+napis: 9,6; 0,4 | B = 0,40 T (iz lista) | pod | siva
+črta: 7; 0,7 -> 7; 5,3 | debelo
+napis: 7; 5,4 | palica, l = 0,50 m | nad
+puščica: 7; 3 -> 8,5; 3 | | | zelena
+napis: 8,7; 3 | v = 2,0 m/s | desno | zelena
+puščica: 7; 3 -> 5,6; 3 | | | rdeča
+napis: 6,3; 2,8 | F_m | pod | rdeča
+puščica: 5; 1 -> 3; 1 | I | pod | oranžna
+puščica: 3; 5 -> 5; 5 | I | nad | oranžna
+:::
 
 Palica drsi v desno, pretok narašča; inducirani tok ustvari polje v list, magnetna sila na palico pa kaže v levo, proti gibanju.
 

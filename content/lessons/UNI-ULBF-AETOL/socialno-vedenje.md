@@ -156,6 +156,61 @@ Bratje: $4 \cdot 0{,}25 = 1$ točka, skupaj $3 + 1 = 4$. Lastni potomci: $8 \cdo
 - Vzajemni altruizem pomaga razložiti pomoč med nesorodniki, ki se ponovno srečujejo.
 - Evsocialnost: skupna skrb za zarod, prekrivanje generacij, delitev razmnoževanja. Pri kožekrilcih sestre $r = 0{,}75$ (haplodiploidija), a to ni edina razlaga.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo biološkega altruizma in Hamiltonovo razvrstitev socialnih interakcij (sodelovanje, sebičnost, altruizem, zloba);
+- definicijo koeficienta sorodnosti $r$ in izračun po rodovniku z $r = \sum \left(\tfrac{1}{2}\right)^{L}$ za sorojence, polsorojence, teto in nečakinjo ter bratrance;
+- Hamiltonovo pravilo $rB > C$ s pomenom vseh treh količin in pogojem iste »valute« ter pojme neposredna, posredna in celokupna uspešnost;
+- pogoje za vzajemni altruizem med nesorodniki;
+- tri pogoje evsocialnosti in skupine živali, pri katerih jo najdemo;
+- izpeljavo $r_{\text{sestra}} = 0{,}75$ pri haplodiploidiji, povprečje $\bar r = 0{,}25 + \dfrac{0{,}5}{k}$ pri $k$ očetih in razloge, zakaj haplodiploidija sama evsocialnosti ne razloži.
+
+### Naloga 1
+
+V koloniji kožekrilca se je matica parila s $k$ samci, ki so enako prispevali k oploditvi jajčec. Delavka ima dve možnosti. Če ostane v koloniji, z delom vzgoji $12$ sorojencev: $9$ sester in $3$ brate. Če kolonijo zapusti in se razmnožuje sama, vzgoji $8$ lastnih potomcev ($r = 0{,}5$ za vsakega). (a) Izpelji povprečno sorodnost $\bar r$ med delavko in sestro, ki jo vzgaja, kot funkcijo $k$. (b) Primerjaj obe možnosti v »genskih točkah« za $k = 1$ in $k = 2$. (c) Do katerega največjega $k$ se pomoč v koloniji še izplača? (d) Največ koliko lastnih potomcev sme pri $k = 2$ prinesti samostojno razmnoževanje, da se pomoč še izplača?
+
+**Rešitev:**
+
+1. Sestra ima z delavko istega očeta z verjetnostjo $\dfrac{1}{k}$; tedaj je $r = 0{,}75$. Z verjetnostjo $1 - \dfrac{1}{k}$ imata različna očeta in ju veže le matica: na materini polovici genoma je verjetnost istega alela $0{,}5$, na očetovi $0$, torej $r = 0{,}5 \cdot 0{,}5 = 0{,}25$.
+2. Povprečje: $\bar r = \dfrac{1}{k} \cdot 0{,}75 + \left(1 - \dfrac{1}{k}\right) \cdot 0{,}25 = 0{,}25 + \dfrac{0{,}5}{k}$.
+3. Brat nastane iz neoplojenega jajčeca in ima samo matičine gene, zato mu je delavka sorodna z $0{,}25$ ne glede na $k$. Bratje prinesejo $3 \cdot 0{,}25 = 0{,}75$ točke.
+4. Lastni potomci: $8 \cdot 0{,}5 = 4$ točke.
+5. Pri $k = 1$: $\bar r = 0{,}75$, sestre $9 \cdot 0{,}75 = 6{,}75$ točke, skupaj $6{,}75 + 0{,}75 = 7{,}5$ točke. To je več od $4$.
+6. Pri $k = 2$: $\bar r = 0{,}5$, sestre $9 \cdot 0{,}5 = 4{,}5$ točke, skupaj $4{,}5 + 0{,}75 = 5{,}25$ točke. Še vedno več od $4$.
+7. Splošno: točke pomoči so $9 \cdot \left(0{,}25 + \dfrac{0{,}5}{k}\right) + 0{,}75 = 3 + \dfrac{4{,}5}{k}$. Pogoj $3 + \dfrac{4{,}5}{k} > 4$ da $\dfrac{4{,}5}{k} > 1$, torej $k < 4{,}5$.
+8. Preizkus: pri $k = 4$ je $\bar r = 0{,}375$ in točk $9 \cdot 0{,}375 + 0{,}75 = 4{,}125$, kar je več od $4$. Pri $k = 5$ je $\bar r = 0{,}35$ in točk $9 \cdot 0{,}35 + 0{,}75 = 3{,}9$, kar je manj od $4$.
+9. Za (d): pri $k = 2$ pomoč prinese $5{,}25$ točke. Lastni potomci jih prinesejo $0{,}5\,n$; pogoj $0{,}5\,n < 5{,}25$ da $n < 10{,}5$.
+10. Odgovor: (a) $\bar r = 0{,}25 + \dfrac{0{,}5}{k}$. (b) Pomoč prinese $7{,}5$ točke pri enem in $5{,}25$ točke pri dveh očetih, samostojno razmnoževanje pa $4$ točke; pomoč se izplača v obeh primerih. (c) Pomoč se izplača do $k = 4$, pri petih ali več očetih ne več. (d) Pri $k = 2$ se pomoč izplača, dokler samostojno razmnoževanje ne prinese več kot $10$ potomcev. Tu pomoč zmaga, ker delavka v koloniji vzgoji več osebkov ($12$ namesto $8$) in je med njimi več sester kot bratov, ne zaradi same haplodiploidije.
+
+### Naloga 2
+
+Natančno navedi Hamiltonovo pravilo in pomen vseh količin v njem. Izpelji ga s štetjem kopij genov izvajalca in z njim utemelji, zakaj razlaga »delavke se žrtvujejo za dobro vrste« ne drži.
+
+**Rešitev:**
+
+1. Pravilo: gen za altruistično vedenje se v populaciji širi, če velja $rB > C$.
+2. Količine: $C$ je število lastnih potomcev, ki jih izvajalec zaradi vedenja izgubi. $B$ je število dodatnih potomcev, ki jih zaradi vedenja dobi prejemnik. $r$ je koeficient sorodnosti med izvajalcem in prejemnikom, to je verjetnost, da ima prejemnik na nekem mestu v genomu isti alel zaradi skupnega prednika. $B$ in $C$ morata biti v isti »valuti«.
+3. Izguba: vsak lastni potomec nosi $0{,}5$ izvajalčevih genov, zato izvajalec izgubi $0{,}5\,C$ kopij (neposredna uspešnost se zmanjša).
+4. Dobiček: prejemnik je izvajalcu soroden z $r$, njegov potomec pa z $0{,}5\,r$. Dodatnih $B$ potomcev prinese $0{,}5\,rB$ kopij (posredna uspešnost se poveča).
+5. Gen se širi, če je dobiček večji od izgube: $0{,}5\,rB > 0{,}5\,C$. Po deljenju z $0{,}5$ dobimo $rB > C$. Celokupna uspešnost izvajalca se takrat poveča.
+6. »Za dobro vrste«: če izvajalec pomaga kateremukoli osebku vrste, je prejemnik v povprečju nesoroden, $r = 0$. Tedaj je $rB = 0$ in pogoj $0 > C$ pri nobeni pozitivni ceni ne velja. Alel za tako žrtvovanje bi izpodrinili sebični aleli, katerih nosilci korist sprejmejo, cene pa ne plačajo.
+7. Sklep: altruizem se ohrani le, če je pomoč usmerjena k nosilcem istih alelov, torej k sorodnikom ($r > 0$), in je korist dovolj velika: $B > \dfrac{C}{r}$. Delavke pomagajo matici, ki vzgaja njihove sestre in brate, ne vrsti.
+
+### Naloga 3
+
+Utemelji, ali haplodiploidija zadošča kot razlaga evsocialnosti. Najprej navedi pogoje evsocialnosti in izpelji sorodnost med sestrama pri haplodiploidiji, nato navedi dokaze za in proti.
+
+**Rešitev:**
+
+1. Evsocialnost zahteva troje: skupno skrb za zarod, prekrivanje vsaj dveh odraslih generacij v koloniji in delitev razmnoževalnega dela (nekateri osebki se razmnožujejo, drugi so skoraj neplodni).
+2. Sorodnost med sestrama: očetovo polovico genoma imata sestri zagotovo enako, ker je oče haploiden (verjetnost $1$); na materini polovici je verjetnost istega alela $0{,}5$. Torej $r_{\text{sestra}} = 0{,}5 \cdot 1 + 0{,}5 \cdot 0{,}5 = 0{,}75$, kar je več od $0{,}5$ do lastne hčere.
+3. Za: vzgoja sestre prinese več kopij genov kot vzgoja hčere, evsocialnost pa je pri kožekrilcih nastala večkrat. Delavke mravelj vlagajo v spola blizu razmerja $3 : 1$ v korist samic (Trivers in Hare), kar ustreza razmerju sorodnosti $0{,}75 : 0{,}25$.
+4. Proti, bratje: delavka je bratu sorodna le z $0{,}25$. Pri razmerju spolov $1 : 1$ je povprečna sorodnost do sorojencev $\dfrac{0{,}75 + 0{,}25}{2} = 0{,}5$, enako kot do lastnih potomcev.
+5. Proti, več očetov: pri $k$ očetih je $\bar r = 0{,}25 + \dfrac{0{,}5}{k}$. Že pri $k = 2$ je $\bar r = 0{,}5$, pri $k = 10$ le $0{,}3$. Matica medonosne čebele se pari s številnimi troti, kolonija pa je vseeno evsocialna.
+6. Proti, razširjenost: termiti in goli peskar so diploidni in evsocialni, mnogo haplodiploidnih os pa živi samotarsko. Haplodiploidija torej ni ne potreben ne zadosten pogoj.
+7. Sklep: haplodiploidija ne zadošča. Evsocialnost bolje razložita izvorna monogamija matic, ki zagotovi visoko sorodnost v koloniji, in ekološki pogoji, kot je dragoceno gnezdo, ki ga je vredno braniti. Haplodiploidija je kvečjemu olajšala njen nastanek pri kožekrilcih.
+
 ## Drugače: Z analogijo
 
 Kolesarska ekipa na veliki dirki je kot družina pri gnezdu. Kapetan je »razmnoževalec«: le on lahko osvoji skupno zmago. Pomočniki so »delavke«: vozijo v vetru, da kapetan prihrani moči.

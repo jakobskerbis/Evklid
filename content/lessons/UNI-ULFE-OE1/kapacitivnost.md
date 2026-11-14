@@ -242,39 +242,65 @@ Kondenzator $C_1 = 2{,}0\,\mu\mathrm{F}$ je nabit na $U_1 = 300\,\mathrm{V}$, ko
 
 Prerez koaksialnega kabla in potek polja:
 
-```
-     zunanji vodnik
-    .-------------.
-   /      |        \
-  |   --( a )--     |
-   \      |        /
-    '-------------'
-  silnice: radialno
-```
+:::risba skica
+opis: Prečni prerez koaksialnega kabla. V sredini je notranji vodnik s polmerom a, okoli njega soosno zunanji vodnik s polmerom b. Silnice električnega polja so ravne in radialne: osem puščic kaže od notranjega vodnika proti zunanjemu (narisano za pozitivno nabit notranji vodnik).
+območje: -5; -5 .. 5; 5,6
+krog: 0; 0 | 4 | debelo
+krog: 0; 0 | 1,3 | siva polno
+puščica: 1,3; 0 -> 3,8; 0 | | | modra
+puščica: 0,92; 0,92 -> 2,69; 2,69 | | | modra
+puščica: 0; 1,3 -> 0; 3,8 | | | modra
+puščica: -0,92; 0,92 -> -2,69; 2,69 | | | modra
+puščica: -1,3; 0 -> -3,8; 0 | | | modra
+puščica: -0,92; -0,92 -> -2,69; -2,69 | | | modra
+puščica: 0; -1,3 -> 0; -3,8 | | | modra
+puščica: 0,92; -0,92 -> 2,69; -2,69 | | | modra
+napis: 0; 0 | a | sredina
+napis: 0; 4,7 | zunanji vodnik (polmer b) | sredina
+napis: 0; -4,6 | silnice: radialno | sredina | modra
+:::
 
-```
-E
-|*
-| *
-|  *.
-|    '*..
-|        ''**--
-+--+------------+--> r
-   a            b
-```
+:::risba graf
+opis: Graf poljske jakosti E v odvisnosti od polmera r med vodnikoma, narisan za b = 3a. Pri r = a je polje največje (E max), nato pada kot 1/r: pri r = 2a je enako polovici največje vrednosti, pri r = b = 3a tretjini. Za r manjši od a in večji od b krivulje ni.
+x: 0 .. 4 | 1 | r
+y: 0 .. 1,2 | 0,5 | E
+oznake: ne
+oznakax: 1 | a
+oznakax: 2 | 2a
+oznakax: 3 | b
+oznakay: 1 | E_{max}
+f: 1/x | debelo | 1 .. 3
+črta: 1; 0 -> 1; 1 | črtkano siva
+črta: 0; 1 -> 1; 1 | črtkano siva
+črta: 2; 0 -> 2; 0,5 | črtkano siva
+črta: 0; 0,5 -> 2; 0,5 | črtkano siva
+črta: 3; 0 -> 3; 0,33 | črtkano siva
+točka: 1; 1
+točka: 2; 0,5
+točka: 3; 0,33
+napis: 0,05; 0,5 | E_{max}/2 | nad desno
+napis: 2,3; 0,62 | E ∝ 1/r | desno
+:::
 
 Polje pada kot $1/r$: pri dvakratnem polmeru je pol manjše. Najmočnejše je tik ob notranjem vodniku, zato tam izolacija »poči« prva.
 
 Sonda za nivo iz primera 2:
 
-```
-     |  |  sonda
- ____|__|__________
-|    |  |   zrak   |
-|~~~~|~~|~~~~~~~~~~| gladina
-|    |  |   olje   | h
-|____|__|__________|
-```
+:::risba skica
+opis: Navpični prerez rezervoarja s koaksialno sondo. Sonda (notranja palica in cev okoli nje) sega od vrha do dna rezervoarja. Spodnji del rezervoarja in sonde je do gladine na višini h napolnjen z oljem, nad gladino je zrak.
+območje: 0; 0 .. 10; 7,4
+pravokotnik: 1; 0,5 .. 9; 3 | modra
+črta: 1; 5,5 -> 1; 0,5 -> 9; 0,5 -> 9; 5,5 -> 1; 5,5
+črta: 1; 3 -> 9; 3 | modra debelo
+črta: 4,2; 0,5 -> 4,2; 6,5
+črta: 5,8; 0,5 -> 5,8; 6,5
+črta: 5; 0,5 -> 5; 6,5 | debelo
+napis: 5; 6,9 | sonda | sredina
+napis: 7,5; 4,6 | zrak | sredina
+napis: 7,5; 1,7 | olje | sredina
+napis: 7,5; 3,1 | gladina | nad | modra
+puščica: 2,5; 0,5 -> 2,5; 3 | h | levo
+:::
 
 Zgornji in spodnji del sonde sta dva vzporedna kondenzatorja z enakim $C'$, a različno dielektričnostjo.
 

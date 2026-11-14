@@ -110,14 +110,29 @@ Gradniki so deoksinukleozid-trifosfati (dATP, dGTP, dCTP, dTTP). Sproščeni pir
 
 Ker sta matrici antiparalelni, se ena nova veriga lahko podaljšuje ves čas v smeri gibanja vilice. To je **vodilna veriga**. Druga mora rasti stran od vilice, zato nastaja v koščkih, **Okazakijevih fragmentih** (pri bakterijah $1000$ do $2000$ nukleotidov). To je **zaostajajoča veriga**.
 
-Na sliki v besedah:
+Na sliki:
 
-```
-          5' ──────────────────── 3'   stara veriga
-vilica →     ═══► vodilna (neprekinjena)
-             ◄══ ◄══ ◄══ zaostajajoča (koščki)
-          3' ──────────────────── 5'   stara veriga
-```
+:::risba skica
+opis: Replikacijske vilice v obliki ležeče črke Y. Desno je še nerazpleteni del dvojne vijačnice, vilica se premika v desno. Zgornja stara veriga ima levo konec 3' in desno konec 5'; ob njej raste vodilna veriga kot ena neprekinjena puščica v desno, proti vilici. Spodnja stara veriga ima levo konec 5' in desno konec 3'; ob njej nastaja zaostajajoča veriga iz treh kratkih puščic v levo, stran od vilice. Vse nove verige rastejo v smeri od 5' proti 3'.
+območje: 0; 0 .. 14; 8
+črta: 1; 7 -> 8; 4,3 -> 12,5; 4,3 | siva debelo
+črta: 1; 1 -> 8; 3,7 -> 12,5; 3,7 | siva debelo
+napis: 0,5; 7 | 3'
+napis: 13; 4,3 | 5' | nad
+napis: 0,5; 1 | 5'
+napis: 13; 3,7 | 3' | pod
+napis: 8; 7,2 | stara veriga
+napis: 8; 0,7 | stara veriga
+puščica: 1; 6,4 -> 6,5; 4,28 | | | modra debelo
+puščica: 2,6; 2,22 -> 1; 1,6 | | | oranžna
+puščica: 4,6; 2,99 -> 3; 2,37 | | | oranžna
+puščica: 6,5; 3,72 -> 5; 3,14 | | | oranžna
+napis: 2,2; 4,5 | vodilna
+napis: 2,2; 3,5 | zaostajajoča
+puščica: 9; 5,6 -> 11,5; 5,6 | vilica | nad
+napis: 10; 2,6 | nerazpleteni del
+podnapis: Vodilna veriga raste neprekinjeno proti vilici, zaostajajoča v koščkih stran od nje
+:::
 
 :::premisli
 Kaj bi se zgodilo z zaostajajočo verigo, če bi DNA-polimeraza znala graditi tudi v smeri $3' \to 5'$?

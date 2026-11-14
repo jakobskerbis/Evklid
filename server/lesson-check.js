@@ -23,6 +23,23 @@ const REQUIRED = [
 // Vrne { errors, warnings } za vir lekcije. topicId je neobvezen (preveri obstoj teme).
 const STOCK_PHRASES = [/\bV tej lekciji\b/, /\bse bomo naučili\b/, /\bPoglejmo si\b/, /\bKot vemo\b/, /\bKot vidimo\b/];
 
+// Vsebina blokov ``` brez oznake jezika. Ograje se parijo po vrsti, zato zapiralna ograja bloka z oznako
+// (```python … ```) ne odpre novega bloka.
+export function untaggedFences(body) {
+  const out = [];
+  let open = null, lines = [];
+  for (const line of body.split(/\r?\n/)) {
+    const m = /^```(.*)$/.exec(line);
+    if (open === null) {
+      if (m) { open = m[1].trim(); lines = []; }
+    } else if (m && !m[1].trim()) {
+      if (!open) out.push(lines.join("\n"));
+      open = null;
+    } else lines.push(line);
+  }
+  return out;
+}
+
 export function checkLessonSource(src, topicId) {
   const errors = [];
   const warnings = [];
@@ -110,7 +127,7 @@ export function checkLessonSource(src, topicId) {
   const stripped = expandFormulaBlocks(body, "plain");
   for (const e of drawingErrors(body)) err(e);
   // Slika iz znakov v bloku ``` brez oznake jezika je v aplikaciji in PDF videti kot surov izpis (j, 10. 11. 2026).
-  const ascii = (body.match(/^```[ \t]*\n[\s\S]*?^```[ \t]*$/gm) || []).filter((b) => /[■●○▲▼│┌└├─═█▓▒░]|\|-{2,}|-{3,}\||<-{2,}|-{2,}>/.test(b)).length;
+  const ascii = untaggedFences(body).filter((b) => /[■●○▲▼│┌└├─═█▓▒░]|\|-{2,}|-{3,}\||<-{2,}|-{2,}>/.test(b)).length;
   if (ascii) warn(`Slike iz znakov v blokih (${ascii}): \`\`\` – zamenjaj jih z risbo »:::risba« (content/lessons/README.md, razdelek Risbe)`);
   if (/^[ \t]*:::/m.test(stripped)) err("nezaprt ali napačno zapisan blok »:::formula … :::« ali »:::premisli … :::« (vsak začetek in konec v svoji vrstici)");
   // Merila docs/kakovost.md §1: vmesna vprašanja v razlagi in razlaga vsakega napačnega odgovora.

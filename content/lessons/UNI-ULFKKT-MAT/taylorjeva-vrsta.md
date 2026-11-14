@@ -307,20 +307,32 @@ Nariši graf $y = \sin x$ in ob njem Taylorjeve polinome $T_1 = x$, $T_3 = x - \
 
 Pri $\ln(1 + x)$ je slika drugačna: polinomi se funkcije oprijemajo le na $(-1, 1]$. Zunaj tega intervala se z vsakim novim členom oddaljujejo vse bolj in bolj divje nihajo.
 
-Konvergenčna območja na številski osi (`=` konvergira, `-` divergira):
+Konvergenčna območja na številski osi (debela črta konvergira, črtkana divergira; poln krožec je vključen rob, prazen izključen):
 
-```
-e^x, sin x, cos x:
-====================  vsi x
-
-ln(1+x):
--------(====]-------
-      -1    1
-
-(1+x)^a, a ni naravno:
--------(====)-------
-      -1    1
-```
+:::risba skica
+opis: Tri številske osi z označenima točkama −1 in 1. Prva, za eˣ, sin x in cos x: debela črta po vsej osi, vrsta konvergira za vse x. Druga, za ln(1 + x): debela črta samo med −1 in 1, pri −1 prazen krožec (rob ni vključen), pri 1 poln krožec (rob je vključen); zunaj tega vrsta divergira. Tretja, za (1 + x) na α, kjer α ni naravno število: debela črta med −1 in 1, na obeh robovih prazen krožec.
+območje: 0; 0 .. 320; 200
+napis: 10; 184 | e^x, sin x, cos x: vsi x | desno
+črta: 20; 160 -> 300; 160 | debelo modra
+črta: 120; 155 -> 120; 165
+črta: 200; 155 -> 200; 165
+napis: 120; 160 | −1 | pod
+napis: 200; 160 | 1 | pod
+napis: 10; 118 | ln(1 + x) | desno
+črta: 20; 94 -> 300; 94 | črtkano siva
+črta: 120; 94 -> 200; 94 | debelo modra
+krog: 120; 94 | 4,5 | ozadje
+točka: 200; 94 | | | modra
+napis: 120; 94 | −1 | pod
+napis: 200; 94 | 1 | pod
+napis: 10; 52 | (1 + x)^α, α ni naravno | desno
+črta: 20; 28 -> 300; 28 | črtkano siva
+črta: 120; 28 -> 200; 28 | debelo modra
+krog: 120; 28 | 4,5 | ozadje
+krog: 200; 28 | 4,5 | ozadje
+napis: 120; 28 | −1 | pod
+napis: 200; 28 | 1 | pod
+:::
 
 Na robu binomske vrste je odvisno od $\alpha$: pri $\alpha > 0$ konvergira v obeh robnih točkah.
 

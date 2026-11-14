@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vodik
+  - $1\mathrm{s}^1$, nekovina; števila $+1$, $0$, $-1$
+  - $I_1 = 1312\,\mathrm{kJ/mol}$, vez $436\,\mathrm{kJ/mol}$
+  - parni reforming metana, elektroliza vode
+- Hidridi
+  - ionski, kovalentni, kovinski
+  - $\mathrm{NaH + H_2O \to NaOH + H_2}$
+  - pazi: v $\mathrm{NaH}$ vodik ni $+1$
+- Alkalijske kovine
+  - $n\mathrm{s}^1$, vedno $+1$; mehke, nizka tališča
+  - navzdol: $I_1$ pada, reaktivnost raste
+  - $\mathrm{Li_2O}$, $\mathrm{Na_2O_2}$, $\mathrm{KO_2}$
+- Born-Haberjev krog
+  - $\Delta_\mathrm{f}H = \Delta_\mathrm{sub}H + I_1 + \tfrac12 D + \Delta_\mathrm{eg}H + \Delta_\mathrm{L}H$
+  - mrežna entalpija negativna, enota $\mathrm{kJ/mol}$
+- Zemeljskoalkalijske kovine
+  - $n\mathrm{s}^2$, vedno $+2$; trše, višja tališča
+  - Be kovalenten, amfoteren
+  - Mg le z vročo vodo
+- Trendi 2. skupine
+  - hidroksidi: topnost navzdol raste
+  - sulfati: topnost pada, $\mathrm{BaSO_4}$ netopen
+  - karbonati: $T \approx \Delta_\mathrm{r}H/\Delta_\mathrm{r}S$ navzdol raste
+- Diagonalna podobnost
+  - Li in Mg: nitrid, razpad karbonata
+  - podobna gostota naboja ionov
+- Pomembne spojine
+  - $\mathrm{CaCO_3 \to CaO \to Ca(OH)_2 \to CaCO_3}$
+  - trdota vode: $\mathrm{Ca^{2+}}$, $\mathrm{Mg^{2+}}$; kotlovec
+  - 2 mol Na dasta 1 mol $\mathrm{H_2}$

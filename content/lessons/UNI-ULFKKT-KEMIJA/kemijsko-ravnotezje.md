@@ -271,18 +271,19 @@ Iz zveze $\Delta_\mathrm{r}G = \Delta_\mathrm{r}G^\circ + RT\ln Q$ izpelji povez
 
 Predstavljaj si graf koncentracij v odvisnosti od časa za Primer 2:
 
-```
- c [mol/L]
- 0,8 |               .................  HI (0,778)
-     |          ..''
- 0,5 |*      .''
-     |  *  .'
-     |   .*
-     |  .   *
- 0,1 | .       **********************  H2 = I2 (0,111)
-   0 |'_______________________________ čas
-      ^ začetek      ^ ravnotežje (vodoravne črte)
-```
+:::risba graf
+opis: Shematični graf koncentracij v odvisnosti od časa za Primer 2. Koncentracija H₂ in I₂ (ista krivulja) pada od 0,500 mol/L in se zravna pri 0,111 mol/L. Koncentracija HI raste od 0 in se zravna pri 0,778 mol/L. Od navpične črtkane črte naprej sta krivulji vodoravni: ravnotežje.
+x: 0 .. 6 | 1 | čas
+y: 0 .. 0,9 | 0,1 | c [mol/L]
+f: 0.1111 + 0.3889*exp(-1*x) | modra
+f: 0.7778*(1 - exp(-1*x)) | oranžna debelo
+črta: 4; 0 -> 4; 0,9 | črtkano siva
+točka: 0; 0,5 | 0,500 | nad desno
+napis: 5; 0,82 | HI (0,778) | sredina
+napis: 3,9; 0,24 | H_2 = I_2 (0,111) | levo
+napis: 4; 0,45 | ravnotežje | desno
+podnapis: Koncentracije se po določenem času ne spreminjajo več (časovni potek je shematičen)
+:::
 
 Krivulje se po določenem času zravnajo. To ne pomeni, da se reakcija ustavi, ampak da sta hitrosti v obe smeri enaki.
 

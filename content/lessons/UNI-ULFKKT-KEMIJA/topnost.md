@@ -230,12 +230,23 @@ Natančno navedi zvezo med topnostnim produktom in topnostjo soli $\mathrm{A}_m\
 
 Nasičeno raztopino si predstavljaj kot kristal na dnu čaše, iz katerega ioni stalno odhajajo v raztopino, iz raztopine pa se enako hitro vračajo nanj:
 
-```
-        raztopina:   Ag+    Cl-      Ag+
-                        Cl-     Ag+     Cl-
-                     ↑ raztapljanje   ↓ obarjanje
-        ===============[ AgCl(s) ]===============
-```
+:::risba skica
+opis: Čaša z nasičeno raztopino. Na dnu leži kristal AgCl(s). V raztopini nad njim so trije ioni Ag⁺ in trije ioni Cl⁻. Puščica navzgor od kristala je označena z raztapljanje, puščica navzdol h kristalu z obarjanje; v ravnotežju sta oba procesa enako hitra.
+območje: 0; 0 .. 12; 6,4
+črta: 1; 6 -> 1; 0,5 -> 11; 0,5 -> 11; 6 | debelo
+črta: 1; 5,3 -> 11; 5,3 | modra črtkano
+pravokotnik: 4; 0,5 .. 8; 1,4 | siva
+napis: 6; 0,95 | AgCl(s) | sredina
+puščica: 5; 1,5 -> 5; 2,7 | raztapljanje | levo | oranžna
+puščica: 7; 2,7 -> 7; 1,5 | obarjanje | desno | modra
+napis: 2,4; 4,5 | Ag⁺ | sredina
+napis: 4; 3,7 | Cl⁻ | sredina
+napis: 5,6; 4,6 | Ag⁺ | sredina
+napis: 6,4; 3,5 | Cl⁻ | sredina
+napis: 8,2; 4,4 | Cl⁻ | sredina
+napis: 9,7; 3,6 | Ag⁺ | sredina
+podnapis: Nasičena raztopina: raztapljanje in obarjanje potekata enako hitro
+:::
 
 Pri $Q < K_\mathrm{sp}$ je »odhajanje« hitrejše in kristal se manjša. Pri $Q > K_\mathrm{sp}$ je »vračanje« hitrejše in kristal raste (nastaja oborina).
 

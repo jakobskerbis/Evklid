@@ -155,32 +155,85 @@ Zgornja: $80 \cdot 2400 = 192\,000$ rež. Skupaj $600\,000 + 192\,000 = 792\,000
 - Mehansko tkivo: kolenhim (živ, neenakomerno odebeljena celulozna stena) in sklerenhim (olesenel, večinoma mrtev; vlakna, sklereide).
 - Ksilem: voda in mineralne snovi navzgor, mrtve olesenele traheide in traheje. Floem: asimilati od vira k ponoru, žive sitaste cevi brez jedra s celicami spremljevalkami.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo trajnega tkiva in diferenciacije ter razlike do tvornega tkiva (delitev, vakuola, celična stena, žive ali mrtve celice ob zrelosti);
+- zgradbo povrhnjice (kutikula, listne reže s celicama zapiralkama, laski) in kdaj jo zamenja periderm s pluto, ki jo tvori plutni kambij;
+- vrste parenhima po nalogi in zakaj se prav parenhim lahko dediferencira;
+- razlike med kolenhimom in sklerenhimom (stena, lignin, žive ali mrtve celice, lega in naloga) ter med vlakni in sklereidami;
+- primerjavo ksilema in floema: kaj prevajata, smer, prevajalne celice in njihovo stanje ob zrelosti, povezave med celicami (piknje, razgrajene prečne stene, sitaste plošče, plazmodezme);
+- pojma vir in ponor ter zakaj je pretok skozi cev sorazmeren z $r^4$, presek pa z $r^2$.
+
+### Naloga 1
+
+V žili stebla je $12$ trahej s premerom $60\,\mu\mathrm{m}$ in $300$ traheid s premerom $15\,\mu\mathrm{m}$. Vse celice so enako dolge in pod enako tlačno razliko, pretok skozi posamezno cev je sorazmeren s četrto potenco polmera. (a) Kolikšen delež vsega pretoka vode nosijo traheje? (b) Kolikšen delež skupnega prečnega preseka lumnov pripada trahejam? (c) Zračni mehurčki zaprejo $3$ traheje. Za kolikšen delež se zmanjša skupni pretok? (d) Koliko dodatnih traheid bi moralo nastati, da bi nadomestile izgubljeni pretok?
+
+**Rešitev:**
+
+1. Razmerje polmerov je enako razmerju premerov: $\dfrac{60}{15} = 4$.
+2. Za enoto vzamemo pretok skozi eno traheido. Ena traheja prevaja $4^4 = 256$ enot.
+3. Pretok skozi vse traheje: $12 \cdot 256 = 3072$ enot. Pretok skozi vse traheide: $300$ enot. Skupaj $3072 + 300 = 3372$ enot.
+4. (a) Delež trahej v pretoku: $\dfrac{3072}{3372} \approx 0{,}91$, torej okoli $91\,\%$.
+5. (b) Za enoto preseka vzamemo presek ene traheide. Ena traheja ima $4^2 = 16$ enot, vse traheje $12 \cdot 16 = 192$ enot, vse traheide $300$ enot, skupaj $192 + 300 = 492$ enot. Delež trahej v preseku: $\dfrac{192}{492} \approx 0{,}39$, torej okoli $39\,\%$.
+6. (c) Tri traheje nosijo $3 \cdot 256 = 768$ enot. Delež izgubljenega pretoka: $\dfrac{768}{3372} \approx 0{,}23$, torej okoli $23\,\%$.
+7. (d) Ena traheida prevaja $1$ enoto, zato bi jih moralo nastati $768$.
+8. Odgovor: traheje zavzemajo le okoli $39\,\%$ preseka lumnov, nosijo pa okoli $91\,\%$ pretoka. Izguba treh trahej od dvanajstih zmanjša pretok za okoli $23\,\%$; nadomestilo bi jih šele $768$ traheid, več kot dvakrat toliko, kot jih je v žili. Široke cevi so učinkovite, a je vsaka izguba draga; traheide so varnejša rezerva.
+
+### Naloga 2
+
+Natančno navedi, v čem se zrel trahejni člen razlikuje od zrelega člena sitaste cevi, in pri vsaki razliki utemelji, zakaj je taka zgradba nujna za nalogo celice.
+
+**Rešitev:**
+
+1. Stanje ob zrelosti: trahejni člen je mrtev in brez vsebine, člen sitaste cevi je živ, a brez jedra in vakuole.
+2. Utemeljitev za ksilem: voda teče skozi lumen; citoplazma, jedro in vakuola bi tok ovirali, prazen lumen pomeni manjši upor.
+3. Utemeljitev za floem: za floemski tok so potrebne žive membrane, zato člen ohrani celično membrano. Jedro in vakuolo izgubi, da je pot skozi celico bolj prosta.
+4. Celična stena: pri trahejnem členu je olesenela (lignin), ker mora zdržati podtlak, ko list vleče vodo navzgor; brez lignina bi se cev sesedla. Člen sitaste cevi nima olesenele stene.
+5. Povezava med zaporednimi celicami: pri trahejnih členih so prečne stene delno ali povsem razgrajene, zato nastane odprta cev, traheja. Členi sitastih cevi so povezani s sitastimi ploščami, prečnimi stenami s porami.
+6. Odvisnost od sosednjih celic: člen sitaste cevi brez jedra ne more sam skrbeti za svojo presnovo, zato je z mnogimi plazmodezmami povezan s celico spremljevalko. Mrtev trahejni člen take celice ne potrebuje.
+7. Kaj in kam prevajata: traheja vodo in mineralne snovi od korenin navzgor, sitasta cev asimilate (predvsem saharozo) od vira k ponoru, torej navzgor ali navzdol.
+8. Sklep: obe celici sta podolgovati in zloženi v vrste, rešitev pa je nasprotna: ksilem prevaja skozi mrtve olesenele cevi, floem skozi žive celice z membrano.
+
+### Naloga 3
+
+Jablani so poleti okrog debla odstranili ozek pas skorje z ličjem, les je ostal nepoškodovan. Utemelji, ali drži vsaka od trditev: (a) listi nad obročem takoj ovenijo; (b) korenine ostanejo brez sladkorja; (c) če bi enak obroč naredili zgodaj spomladi, preden se razvijejo listi, bi bili prizadeti brsti nad obročem.
+
+**Rešitev:**
+
+1. Z obročem je prekinjen floem, ki leži bliže površju; ksilem (les) je znotraj in ostane cel.
+2. (a) Ne drži. Voda in mineralne snovi potujejo po ksilemu od korenin navzgor, ta pot ni prekinjena, zato listi še naprej dobivajo vodo.
+3. (b) Drži. Poleti so zreli listi vir, korenine pa ponor. Sladkor potuje po floemu, ki je prekinjen, zato do korenin ne pride.
+4. Posledica: korenine porabijo zaloge in odmrejo; nato drevo ne more več črpati vode in propade tudi nadzemni del. Propad je zato počasen.
+5. (c) Drži. Spomladi so vir založne korenine, ponor pa brsti. Sladkor gre po floemu navzgor, obroč to pot prekine, zato brsti nad njim ne dobijo zalog iz korenin. Ostanejo jim le zaloge v vejah nad obročem, zato odganjajo slabše.
+6. Sklep: smer floemskega toka določata vir in ponor, ne težnost. Isti obroč poleti prizadene korenine, spomladi pa brste.
+
 ## Drugače: Na sliki
 
 Predstavljaj si prečni prerez mladega stebla dvokaličnice, od zunaj navznoter:
 
-```
-povrhnjica s kutikulo     ← krovno
-kolenhim (pod povrhnjico) ← mehansko, živo
-parenhim skorje           ← osnovno
-  žilni snop:
-    sklerenhimska kapa    ← mehansko, olesenelo
-    floem (zunaj)         ← sitaste cevi + spremljevalke
-    kambij                ← tvorno
-    ksilem (znotraj)      ← traheje, traheide
-stržen (parenhim)         ← osnovno
-```
+| Plast (od zunaj navznoter) | Tkivo |
+|---|---|
+| povrhnjica s kutikulo | krovno |
+| kolenhim (pod povrhnjico) | mehansko, živo |
+| parenhim skorje | osnovno |
+| žilni snop: sklerenhimska kapa | mehansko, olesenelo |
+| žilni snop: floem (zunaj) | sitaste cevi + spremljevalke |
+| žilni snop: kambij | tvorno |
+| žilni snop: ksilem (znotraj) | traheje, traheide |
+| stržen (parenhim) | osnovno |
 
 Opazi dve stvari. Floem je v snopu stebla praviloma bliže površju kot ksilem. Mehansko tkivo leži na obodu, kjer se najbolje upira upogibu, tako kot je pri cevi najtrdnejši zunanji rob.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Niti v steblu zelene:** ko jih izvlečeš iz stebla, držiš v rokah kolenhim in žilne snope.
-- **Zrnca v hruški:** sklereide, kratke olesenele celice sklerenhima.
-- **Lanena srajca:** tkana iz sklerenhimskih vlaken. **Bombaž** pa so laski povrhnjice semena.
-- **Zamašek steklenice:** pluta hrasta plutovca, krovno tkivo debla.
-- **Les za pohištvo:** ksilem drevesa, olesenele mrtve celice.
-- **Obročkanje:** če drevesu okrog debla odstraniš skorjo z ličjem, prekineš floem. Listi še nekaj časa dobivajo vodo po lesu, korenine pa ostanejo brez sladkorja, zato drevo počasi propade.
+- **Histološki preparat:** v botaničnem laboratoriju prerez stebla obarvaš s floroglucinolom in solno kislino. Olesenele stene (ksilem, sklerenhim) se obarvajo rdeče, kolenhim, parenhim in floem ostanejo neobarvani. Tako tkiva ločiš po ligninu.
+- **Lesarstvo in gozdarstvo:** les je ksilem drevesa. Les iglavcev je skoraj ves iz traheid, les listavcev ima tudi traheje in vlakna, zato vrsto lesa določajo po prerezu pod mikroskopom.
+- **Predivnice:** pri lanu in konoplji pridelujejo sklerenhimska vlakna iz stebla; ločijo jih od preostalih tkiv in spredejo. Pri bombažu so surovina laski povrhnjice semena.
+- **Plutarstvo:** pluto hrasta plutovca lupijo na približno $9$ let. Plutni kambij ostane na deblu in pluto obnovi.
+- **Sadjarstvo in vinogradništvo:** z obročkanjem namerno prekinejo floem na veji ali deblu z nekaj milimetrov širokim obročem. Sladkor ostane nad obročem, v plodovih; ozek obroč se zaraste, preden korenine propadejo.
+- **Tkivne kulture:** v biotehnološkem laboratoriju se košček parenhima na gojišču dediferencira in spet začne deliti. Iz nastalih celic vzgojijo nove rastline.
+- **Ekofiziologija:** gostoto listnih rež štejejo na odtisu povrhnjice pod mikroskopom, v režah na $\mathrm{mm^2}$, in iz nje sklepajo, koliko vode izgublja sorta.
 
 ## Preveri se
 

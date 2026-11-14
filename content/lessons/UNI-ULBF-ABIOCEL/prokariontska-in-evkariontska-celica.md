@@ -157,6 +157,61 @@ $V = \dfrac{10^{10}}{10^9}\,\mathrm{mm}^3 = 10\,\mathrm{mm}^3$, kar je manj kot 
 - Z rastjo celice se razmerje $P/V$ manjša ($P/V = 6/a$ za kocko); evkarionti to nadomestijo z notranjimi membranami in prenosom po citoskeletu.
 - Endosimbiontska teorija: mitohondriji izvirajo iz aerobnih bakterij, kloroplasti iz cianobakterij. Dokazi: dvojna membrana, krožna DNA, ribosomi $70\mathrm{S}$, delitev na dvoje, velikost, podobnost genov.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo prokariontske in evkariontske celice ter razlike med njima: jedro, DNA, ribosomi, organeli z membrano, citoskelet, celična stena, velikost;
+- kaj imajo skupnega vse celice: membrano, citoplazmo, ribosome in DNA;
+- kaj meri svedberg in zakaj se vrednosti ne seštevajo ($50\mathrm{S}$ in $30\mathrm{S}$ tvorita $70\mathrm{S}$);
+- zakaj se razmerje $P/V$ z rastjo celice manjša, z izpeljavo za kocko ($P/V = 6/a$), in kako evkariontska celica to nadomesti;
+- endosimbiontsko teorijo: kdo je bil gostitelj, iz česa sta nastala mitohondrij in kloroplast, ter vseh šest dokazov;
+- zakaj mitohondrij danes ni samostojen organizem.
+
+### Naloga 1
+
+Bakterijo (kok) obravnavaj kot kroglo s premerom $d_1 = 1\,\mu\mathrm{m}$, jetrno celico pa kot kroglo s premerom $d_2 = 20\,\mu\mathrm{m}$. (a) Izpelji razmerje $P/V$ za kroglo in ga izračunaj za obe celici. (b) Pri jetrni celici je celična membrana le $2\,\%$ površine vseh njenih membran. Koliko površine vseh membran pride na kubični mikrometer celice in kako se to primerja z bakterijo? (c) Mitohondriji zavzemajo $20\,\%$ prostornine jetrne celice. Vsak naj bo valj s premerom $0{,}5\,\mu\mathrm{m}$ in dolžino $2\,\mu\mathrm{m}$. Koliko jih je v celici?
+
+**Rešitev:**
+
+1. Za kroglo je $P = \pi d^2$ in $V = \dfrac{\pi d^3}{6}$, zato $\dfrac{P}{V} = \dfrac{6}{d}$.
+2. Bakterija: $\dfrac{P_1}{V_1} = \dfrac{6}{1} = 6\,\mu\mathrm{m}^{-1}$.
+3. Jetrna celica: $\dfrac{P_2}{V_2} = \dfrac{6}{20} = 0{,}3\,\mu\mathrm{m}^{-1}$, kar je $\dfrac{6}{0{,}3} = 20$-krat manj.
+4. Površina in prostornina jetrne celice: $P_2 = \pi \cdot 20^2 \approx 1257\,\mu\mathrm{m}^2$, $V_2 = \dfrac{\pi \cdot 20^3}{6} \approx 4189\,\mu\mathrm{m}^3$.
+5. Vse membrane: $\dfrac{1257}{0{,}02} = 62\,850$, torej približno $63\,000\,\mu\mathrm{m}^2$. Od tega je notranjih membran $98\,\%$.
+6. Membrane na prostornino: $\dfrac{P_2/V_2}{0{,}02} = \dfrac{0{,}3}{0{,}02} = 15\,\mu\mathrm{m}^{-1}$. To je $\dfrac{15}{6} = 2{,}5$-krat več kot pri bakteriji.
+7. Prostornina mitohondrijev: $0{,}2 \cdot 4189 \approx 838\,\mu\mathrm{m}^3$.
+8. En mitohondrij: $V_\text{m} = \pi \cdot 0{,}25^2 \cdot 2 \approx 0{,}393\,\mu\mathrm{m}^3$.
+9. Število: $\dfrac{838}{0{,}393} \approx 2130$.
+10. Odgovor: jetrna celica ima na enoto prostornine $20$-krat manj zunanje membrane kot bakterija ($0{,}3$ proti $6\,\mu\mathrm{m}^{-1}$). Z notranjimi membranami pa doseže $15\,\mu\mathrm{m}^{-1}$, kar je $2{,}5$-krat več kot bakterija. V njej je okoli $2100$ mitohondrijev, vsak približno tako velik kot bakterija.
+
+### Naloga 2
+
+Natančno navedi endosimbiontsko teorijo in dokaze zanjo. Pri vsakem dokazu utemelji, zakaj govori za bakterijski izvor mitohondrija in kloroplasta. Nato utemelji, ali je mitohondrij danes prokariont.
+
+**Rešitev:**
+
+1. Teorija: mitohondriji so nastali iz aerobnih bakterij, ki jih je pred več kot milijardo let vase sprejela večja celica, najverjetneje sorodnica današnjih arhej, in jih ni prebavila. Kloroplasti so kasneje enako nastali iz cianobakterij, a le v predniku rastlin in alg.
+2. Dvojna membrana: notranja je podobna bakterijski, zunanja po klasični razlagi izvira iz membrane gostiteljice, ki je bakterijo objela. Organel, ki bi nastal z uvihanjem lastne membrane, bi imel eno samo.
+3. Lastna krožna DNA: taka je značilna za prokarionte, v jedru pa so kromosomi linearni in s histoni.
+4. Ribosomi bakterijskega tipa $70\mathrm{S}$ (pri sesalcih okoli $55\mathrm{S}$), v citosolu iste celice pa $80\mathrm{S}$. Zato nekateri antibiotiki, ki zavirajo bakterijske ribosome, delno zavirajo tudi mitohondrijske.
+5. Delitev na dvoje: organela nastaneta le iz obstoječih, tako kot bakterije; celica novega ne more zgraditi sama.
+6. Velikost okoli $1\,\mu\mathrm{m}$, enaka kot pri bakterijah.
+7. Zaporedja genov so najbolj podobna genom določenih bakterij, ne genom v jedru iste celice. To je najmočnejši dokaz, ker podobnosti zaporedij ne razloži nič drugega kot skupen izvor.
+8. Mitohondrij danes ni prokariont in ni samostojen organizem. Večina genov prvotne bakterije se je preselila v jedro gostiteljice, zato večino beljakovin dobi iz citosola in zunaj celice ne preživi.
+
+### Naloga 3
+
+Utemelji, ali drži vsaka od trditev. (a) »Celica brez jedra nima dednega materiala.« (b) »Ribosom s podenotama $60\mathrm{S}$ in $40\mathrm{S}$ je ribosom $100\mathrm{S}$.« (c) »Vsaka celica s celično steno je prokariontska.« (d) »V evkariontski celici ni ribosomov $70\mathrm{S}$.«
+
+**Rešitev:**
+
+1. (a) Ne drži. Prokariont ima DNA v nukleoidu, navadno en krožen kromosom, pogosto še plazmide. Manjka mu le jedrna ovojnica.
+2. (b) Ne drži. Svedberg meri hitrost usedanja v centrifugi, ki je odvisna od mase in oblike, zato se vrednosti ne seštevajo. Podenoti $60\mathrm{S}$ in $40\mathrm{S}$ tvorita evkariontski ribosom $80\mathrm{S}$, tako kot $50\mathrm{S}$ in $30\mathrm{S}$ tvorita $70\mathrm{S}$.
+3. (c) Ne drži. Steno imajo tudi evkarionti: rastline iz celuloze, glive iz hitina. Prokariontsko celico določa odsotnost jedra in organelov z membrano; za bakterije je značilna stena iz peptidoglikana.
+4. (d) Ne drži. V citosolu so ribosomi $80\mathrm{S}$, v mitohondrijih in kloroplastih pa ribosomi bakterijskega tipa, kar je posledica njihovega bakterijskega izvora.
+5. Sklep: vse štiri trditve so napačne. Trditve (a), (c) in (d) zamenjajo značilnost, ki celice res loči (jedrna ovojnica, organeli z membrano, tip ribosomov), z lastnostjo, ki jih ne loči; trditev (b) napačno sešteva svedberge.
+
 ## Drugače: Kot zgodba
 
 Pred davnimi časi je bila večja celica, ki je energijo pridobivala počasi in brez kisika. Njen posel je bil kot majhna trgovina z enim samim prodajalcem. Nekega dne je vase sprejela manjšo bakterijo, ki je s kisikom iz hrane pridobila veliko več energije.

@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Deli lista
+  - lamina, pecelj, listno dno, prilista
+  - žile mrežaste ali vzporedne
+- Prerez lista
+  - povrhnjica s kutikulo, brez kloroplastov
+  - palisadni in gobasti parenhim: mezofil
+  - žila: ksilem zgoraj, floem spodaj
+- Listna reža
+  - dve zapiralki, pora, podrežna votlinica
+  - K⁺ in voda vstopita: reža se odpre
+  - abscizinska kislina jo na suši zapre
+- Gostota rež
+  - $g = \dfrac{N}{A}$, enota $\mathrm{mm^{-2}}$
+  - krožno polje: $A = \pi r^2$
+  - reže le spodaj: hipostomatičen list
+- Transpiracija
+  - vleče vodo po ksilemu, hladi list
+  - kompromis med CO₂ in izgubo vode
+- Prilagoditve
+  - sončni list debel, senčni tanek
+  - kserofiti: debela kutikula, ugreznjene reže, laski
+  - hidrofiti: aerenhim, reže zgoraj ali brez
+- Metamorfoze
+  - vitice, trni, luske, lovilni listi
+  - trni kaktusa so listi

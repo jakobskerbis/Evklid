@@ -162,6 +162,62 @@ $|A \times B| = 2 \cdot 3 = 6$, zato je $|\mathcal{P}(A \times B)| = 2^6 = 64$.
 - Urejeni par: $(a, b) \neq (b, a)$ za $a \neq b$. $A \times B = \{(a, b) ;\ a \in A,\ b \in B\}$, $|A \times B| = |A| \cdot |B|$.
 - Enakost množic dokažemo za poljuben element: $x \in X \Leftrightarrow x \in Y$.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo podmnožice s kvantifikatorjem, zakaj je $\emptyset \subseteq A$ za vsako množico $A$ in kako dokažemo enakost množic (v dveh smereh ali z enakovrednostjo pripadnosti);
+- definicije unije, preseka, razlike in komplementa z vezniki ter vlogo univerzalne množice $U$;
+- De Morganova zakona in distributivnost za množice, z dokazom za poljuben element;
+- definicijo potenčne množice in dokaz, da je $|\mathcal{P}(A)| = 2^n$ za $|A| = n$ (z odločitvami ali z indukcijo);
+- definicijo urejenega para in kartezičnega produkta, $|A \times B| = |A| \cdot |B|$ in zakaj v splošnem $A \times B \neq B \times A$;
+- formulo $|A \cup B| = |A| + |B| - |A \cap B|$ in zakaj presek odštejemo.
+
+### Naloga 1
+
+Naj bo $U = \{1, 2, \dots, 60\}$, $A$ množica števil iz $U$, deljivih s $4$, $B$ množica števil iz $U$, deljivih s $6$, in $C$ množica števil iz $U$, deljivih z $10$. (a) Zapiši $A \cap B$ in določi $|A \cup B|$. (b) Določi $|(A \cup B) \setminus C|$. (c) Koliko števil iz $U$ ni v nobeni od množic $A$, $B$, $C$? (d) Določi $|\mathcal{P}(A \cap B)|$, število podmnožic množice $A \cap B$, ki vsebujejo število $60$, in $|(A \setminus B) \times (B \setminus A)|$.
+
+**Rešitev:**
+
+1. Moči: $|A| = \frac{60}{4} = 15$, $|B| = \frac{60}{6} = 10$, $|C| = \frac{60}{10} = 6$.
+2. (a) Število je deljivo s $4$ in s $6$ natanko tedaj, ko je deljivo z njunim najmanjšim skupnim večkratnikom $12$: $A \cap B = \{12, 24, 36, 48, 60\}$, $|A \cap B| = 5$.
+3. $|A \cup B| = |A| + |B| - |A \cap B| = 15 + 10 - 5 = 20$.
+4. (b) Elementi $C$ so $10, 20, 30, 40, 50, 60$. V $A \cup B$ so tisti, ki so deljivi s $4$ ali s $6$: $(A \cup B) \cap C = \{20, 30, 40, 60\}$.
+5. Iz $A \cup B$ odstranimo te štiri elemente: $|(A \cup B) \setminus C| = 20 - 4 = 16$.
+6. (c) Formulo za unijo uporabimo za množici $A \cup B$ in $C$: $|A \cup B \cup C| = |A \cup B| + |C| - |(A \cup B) \cap C| = 20 + 6 - 4 = 22$.
+7. Po De Morganu je $A^c \cap B^c \cap C^c = (A \cup B \cup C)^c$, zato je iskanih števil $60 - 22 = 38$.
+8. (d) $|\mathcal{P}(A \cap B)| = 2^5 = 32$. Pri podmnožicah s številom $60$ je ena odločitev že sprejeta, ostanejo štiri: $2^4 = 16$.
+9. $|A \setminus B| = 15 - 5 = 10$ in $|B \setminus A| = 10 - 5 = 5$, zato je $|(A \setminus B) \times (B \setminus A)| = 10 \cdot 5 = 50$.
+10. Odgovor: $A \cap B = \{12, 24, 36, 48, 60\}$, $|A \cup B| = 20$; $|(A \cup B) \setminus C| = 16$; v nobeni množici ni $38$ števil; $|\mathcal{P}(A \cap B)| = 32$, število $60$ vsebuje $16$ podmnožic, kartezični produkt ima $50$ parov.
+
+### Naloga 2
+
+(a) Dokaži, da za poljubni množici velja $\mathcal{P}(A \cap B) = \mathcal{P}(A) \cap \mathcal{P}(B)$. (b) Utemelji, ali za poljubni množici velja $\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)$.
+
+**Rešitev:**
+
+1. (a) Elementi potenčne množice so množice. Vzamemo poljubno množico $X$ in pokažemo $X \in \mathcal{P}(A \cap B) \iff X \in \mathcal{P}(A) \cap \mathcal{P}(B)$.
+2. Po definiciji potenčne množice in podmnožice: $X \in \mathcal{P}(A \cap B) \iff X \subseteq A \cap B \iff \forall x\,(x \in X \Rightarrow (x \in A \wedge x \in B))$.
+3. Ker je $p \Rightarrow (q \wedge r) \sim (p \Rightarrow q) \wedge (p \Rightarrow r)$, je to enakovredno $\forall x\,(x \in X \Rightarrow x \in A) \wedge \forall x\,(x \in X \Rightarrow x \in B)$.
+4. To pomeni $X \subseteq A \wedge X \subseteq B$, torej $X \in \mathcal{P}(A) \wedge X \in \mathcal{P}(B)$, kar je $X \in \mathcal{P}(A) \cap \mathcal{P}(B)$. Enakost je dokazana.
+5. (b) Enakost v splošnem ne velja. Protiprimer: $A = \{1\}$, $B = \{2\}$. Tedaj je $\mathcal{P}(A) \cup \mathcal{P}(B) = \{\emptyset, \{1\}, \{2\}\}$, $\mathcal{P}(A \cup B) = \{\emptyset, \{1\}, \{2\}, \{1, 2\}\}$. Množica $\{1, 2\}$ je podmnožica unije, ni pa podmnožica ne $A$ ne $B$.
+6. Velja pa vsebovanost $\mathcal{P}(A) \cup \mathcal{P}(B) \subseteq \mathcal{P}(A \cup B)$: če je $X \subseteq A$ ali $X \subseteq B$, je vsak element $X$ v $A \cup B$, torej $X \subseteq A \cup B$.
+7. Odgovor: $\mathcal{P}(A \cap B) = \mathcal{P}(A) \cap \mathcal{P}(B)$ velja vedno; za unijo velja le $\mathcal{P}(A) \cup \mathcal{P}(B) \subseteq \mathcal{P}(A \cup B)$, enakost pa ne, na primer pri $A = \{1\}$, $B = \{2\}$ ($3$ elementi proti $4$).
+
+### Naloga 3
+
+Natančno navedi definicijo kartezičnega produkta. (a) Dokaži $A \times (B \cup C) = (A \times B) \cup (A \times C)$. (b) Utemelji, za katere množice $A$ in $B$ velja $A \times B = B \times A$.
+
+**Rešitev:**
+
+1. Definicija: $A \times B = \{(a, b) ;\ a \in A,\ b \in B\}$, torej $(a, b) \in A \times B \iff a \in A \wedge b \in B$. Za urejena para velja $(a, b) = (c, d) \iff a = c \wedge b = d$.
+2. (a) Vzamemo poljuben par $(x, y)$. Po definiciji: $(x, y) \in A \times (B \cup C) \iff x \in A \wedge (y \in B \vee y \in C)$.
+3. Distributivnost $p \wedge (q \vee r) \sim (p \wedge q) \vee (p \wedge r)$ da: $\iff (x \in A \wedge y \in B) \vee (x \in A \wedge y \in C)$.
+4. To je $(x, y) \in A \times B \vee (x, y) \in A \times C$, torej $(x, y) \in (A \times B) \cup (A \times C)$. Enakost je dokazana.
+5. (b) Če je $A = B$, sta produkta očitno enaka. Če je $A = \emptyset$ ali $B = \emptyset$, ni nobenega para in sta oba produkta prazna, torej enaka.
+6. Naj bosta $A$ in $B$ neprazni in $A \times B = B \times A$. Izberemo neki $b \in B$. Za poljuben $a \in A$ je $(a, b) \in A \times B = B \times A$, zato je $a \in B$. Torej $A \subseteq B$.
+7. Enako z izbranim $a \in A$ za poljuben $b \in B$ dobimo $b \in A$, torej $B \subseteq A$. Sledi $A = B$.
+8. Odgovor: $A \times B = B \times A$ velja natanko tedaj, ko je $A = B$ ali je vsaj ena od množic prazna.
+
 ## Drugače: Na sliki
 
 Vennov diagram za dve množici razdeli pravokotnik $U$ na štiri področja:
@@ -177,12 +233,12 @@ To je resničnostna tabela za izjavi $x \in A$ in $x \in B$, le da vrstice nari�
 
 Kartezični produkt nariši kot mrežo: na vodoravno os nanesi elemente $A$, na navpično elemente $B$. Vsaka točka mreže je en par. Pri $|A| = 2$ in $|B| = 3$ dobiš $2$ stolpca po $3$ točke, torej $6$ točk.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Množica** je seznam gostov brez podvajanj: če Ano napišeš dvakrat, pride še vedno ena Ana.
-- **Presek** so prijatelji, ki jih imata skupne ti in sošolec. **Unija** je seznam gostov, če povabita vsak svoje prijatelje.
-- **Potenčna množica** so vse možne pice, če imaš na voljo tri dodatke: za vsak dodatek rečeš da ali ne. Možnih pic je $2^3 = 8$, med njimi tudi pica brez dodatkov ($\emptyset$) in pica z vsem ($A$).
-- **Kartezični produkt** je jedilnik menijev: $2$ predjedi in $3$ glavne jedi dajo $2 \cdot 3 = 6$ menijev. Meni (juha, riba) ni isti kot (riba, juha), ker je prva vedno predjed.
+- **Množica** je v podatkovni zbirki stolpec brez podvajanj: poizvedba `SELECT DISTINCT` iz seznama strank naredi množico. Programski jeziki imajo množico kot podatkovni tip, v katerem se element, dodan dvakrat, shrani enkrat.
+- **Presek, unija in razlika** so poizvedbe `INTERSECT`, `UNION` in `EXCEPT`. Aktuar v zavarovalnici z $12\,000$ strankami našteje $7400$ avtomobilskih in $5100$ stanovanjskih zavarovanj, od tega ima $2300$ strank obe. Vsaj eno zavarovanje ima $7400 + 5100 - 2300 = 10\,200$ strank, nobenega pa $12\,000 - 10\,200 = 1800$.
+- **Potenčna množica** je v verjetnosti množica dogodkov: dogodek je podmnožica množice izidov, zato ima met kocke $2^6 = 64$ dogodkov. Statistik, ki izbira med $10$ napovednimi spremenljivkami, ima $2^{10} = 1024$ možnih modelov, tudi model brez spremenljivk ($\emptyset$) in model z vsemi.
+- **Kartezični produkt** je množica izidov sestavljenega poskusa: met dveh kock ima $6 \cdot 6 = 36$ izidov in izid $(2, 5)$ ni isti kot $(5, 2)$. V zbirki je to `CROSS JOIN`: tabeli z $2000$ in $500$ vrsticami dasta $2000 \cdot 500 = 1\,000\,000$ vrstic.
 
 ## Drugače: Bolj natančno
 

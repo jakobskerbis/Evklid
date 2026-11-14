@@ -218,11 +218,13 @@ V organski kemiji pogosto rišemo **skeletne** (črtne) formule: vsak vrh in kon
 
 Pri iskanju najdaljše verige si pomagaj tako, da s prstom potuješ od enega konca molekule do drugega in šteješ atome. Pri vsakem razvejišču preizkusi vse poti, kot tukaj:
 
-```
-        CH3
-        |
-CH3-CH2-CH-CH3        zapisano kot "veriga s 4 C in metilom"
-```
+:::risba molekula
+opis: Strukturna formula 2-metilbutana. Vodoravna veriga CH₃ – CH₂ – CH – CH₃ s štirimi ogljikovimi atomi; na tretji atom z leve, CH, je navzgor vezana skupina CH₃ (metil).
+---
+            CH3
+            |
+CH3 – CH2 – CH – CH3
+:::
 
 Z leve proti desni preko razvejišča je veriga $\mathrm{CH_3{-}CH_2{-}CH{-}CH_3}$ s štirimi atomi, enako dolga pa je tudi pot, ki pri razvejišču zavije navzgor v skupino $\mathrm{CH_3}$. Ime je *2-metilbutan*, ne glede na to, katero pot izberemo.
 

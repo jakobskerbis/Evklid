@@ -51,15 +51,22 @@ Generacijski čas je lastnost vrste in razmer, ne velikosti populacije. *E. coli
 
 **Druga napačna ideja: rast brez konca.** Prav to je bila napaka v računu z maso Zemlje. V **zaprti kulturi** (bučka ali epruveta z gojiščem, ki mu ničesar ne dodajamo in ničesar ne odvajamo) rast poteka v štirih fazah. Če narišemo $\log N$ v odvisnosti od časa, dobimo **rastno krivuljo**. Spominja na višinski profil kolesarske etape: ravnica, strm vzpon, planota in spust.
 
-```
-log N
- │         ______
- │        /      \
- │       /        \
- │______/          \
- └────────────────────► t
-  lag  eksp. stac. odm.
-```
+:::risba skica
+opis: Rastna krivulja v zaprti kulturi. Navpična os je log N, vodoravna čas t. Krivulja ima štiri odseke: v lag fazi je vodoravna, v eksponentni fazi je ravna črta, ki strmo narašča, v stacionarni fazi je spet vodoravna, a višje, v fazi odmiranja pada. Črtkane navpične črte ločijo faze.
+območje: 0; -0,6 .. 14; 8
+puščica: 1; 1 -> 1; 7,5
+napis: 1,2; 7,5 | log N | desno
+puščica: 1; 1 -> 13,5; 1
+napis: 13,5; 1,1 | t | nad
+črta: 4; 1 -> 4; 7 | siva črtkano
+črta: 7; 1 -> 7; 7 | siva črtkano
+črta: 10; 1 -> 10; 7 | siva črtkano
+črta: 1; 2,5 -> 4; 2,5 -> 7; 6 -> 10; 6 -> 13; 3 | modra debelo
+napis: 2,5; 0,5 | lag | sredina
+napis: 5,5; -0,2 | eksponentna | sredina
+napis: 8,5; 0,5 | stacionarna | sredina
+napis: 11,5; -0,2 | odmiranje | sredina
+:::
 
 Na logaritemski osi pomeni enak korak navzgor enak faktor, na primer desetkratno povečanje. Eksponentna rast v enakih časih pomnoži število z enakim faktorjem, zato je tam ravna črta.
 

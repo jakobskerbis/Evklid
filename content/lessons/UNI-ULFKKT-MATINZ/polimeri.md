@@ -274,30 +274,67 @@ Utemelji razliko med termoplasti, duromeri in elastomeri na ravni zgradbe verig.
 
 Štiri arhitekture verig:
 
-```
- linearna     ~~~~~~~~~~~~~~~~~~
- razvejena    ~~~~~~~~~~~~~~~~~~
-                  \~~~    \~~~
- zamrežena    ~~~~~~+~~~~~~~~~~~
-                    |
-              ~~~~~~+~~~~~+~~~~~
-                          |
-              ~~~~~~~~~~~~+~~~~~
- mrežasta     gosto: + na vsakih
-              nekaj atomih
-```
+:::risba skica
+opis: Štiri sheme verig, od zgoraj navzdol. Linearna: ena sama cikcakasta veriga brez vej. Razvejena: glavna veriga z dvema kratkima stranskima vejama. Zamrežena: tri verige, sosednji sta ponekod povezani s kovalentno vezjo (štiri vozlišča, označena s pikami). Mrežasta: gosta mreža, vozlišče na vsakih nekaj atomih.
+območje: 0; 0 .. 16; 12
+napis: 0,3; 11 | linearna | desno
+črta: 5; 11,15 -> 5,5; 10,85 -> 6; 11,15 -> 6,5; 10,85 -> 7; 11,15 -> 7,5; 10,85 -> 8; 11,15 -> 8,5; 10,85 -> 9; 11,15 -> 9,5; 10,85 -> 10; 11,15 -> 10,5; 10,85 -> 11; 11,15 -> 11,5; 10,85 -> 12; 11,15 -> 12,5; 10,85 -> 13; 11,15 -> 13,5; 10,85 -> 14; 11,15 -> 14,5; 10,85 -> 15; 11,15 | modra
+napis: 0,3; 9 | razvejena | desno
+črta: 5; 9,15 -> 5,5; 8,85 -> 6; 9,15 -> 6,5; 8,85 -> 7; 9,15 -> 7,5; 8,85 -> 8; 9,15 -> 8,5; 8,85 -> 9; 9,15 -> 9,5; 8,85 -> 10; 9,15 -> 10,5; 8,85 -> 11; 9,15 -> 11,5; 8,85 -> 12; 9,15 -> 12,5; 8,85 -> 13; 9,15 -> 13,5; 8,85 -> 14; 9,15 -> 14,5; 8,85 -> 15; 9,15 | modra
+črta: 7,5; 8,85 -> 7,9; 8,4 -> 8,4; 8,5 -> 8,8; 8,05 -> 9,3; 8,15 | modra
+črta: 11,5; 8,85 -> 11,9; 8,4 -> 12,4; 8,5 -> 12,8; 8,05 -> 13,3; 8,15 | modra
+napis: 0,3; 5,6 | zamrežena | desno
+črta: 5; 6,85 -> 5,5; 6,55 -> 6; 6,85 -> 6,5; 6,55 -> 7; 6,85 -> 7,5; 6,55 -> 8; 6,85 -> 8,5; 6,55 -> 9; 6,85 -> 9,5; 6,55 -> 10; 6,85 -> 10,5; 6,55 -> 11; 6,85 -> 11,5; 6,55 -> 12; 6,85 -> 12,5; 6,55 -> 13; 6,85 -> 13,5; 6,55 -> 14; 6,85 -> 14,5; 6,55 -> 15; 6,85 | modra
+črta: 5; 5,45 -> 5,5; 5,75 -> 6; 5,45 -> 6,5; 5,75 -> 7; 5,45 -> 7,5; 5,75 -> 8; 5,45 -> 8,5; 5,75 -> 9; 5,45 -> 9,5; 5,75 -> 10; 5,45 -> 10,5; 5,75 -> 11; 5,45 -> 11,5; 5,75 -> 12; 5,45 -> 12,5; 5,75 -> 13; 5,45 -> 13,5; 5,75 -> 14; 5,45 -> 14,5; 5,75 -> 15; 5,45 | modra
+črta: 5; 4,65 -> 5,5; 4,35 -> 6; 4,65 -> 6,5; 4,35 -> 7; 4,65 -> 7,5; 4,35 -> 8; 4,65 -> 8,5; 4,35 -> 9; 4,65 -> 9,5; 4,35 -> 10; 4,65 -> 10,5; 4,35 -> 11; 4,65 -> 11,5; 4,35 -> 12; 4,65 -> 12,5; 4,35 -> 13; 4,65 -> 13,5; 4,35 -> 14; 4,65 -> 14,5; 4,35 -> 15; 4,65 | modra
+črta: 7,5; 6,55 -> 7,5; 5,75 | oranžna debelo
+točka: 7,5; 6,55
+točka: 7,5; 5,75
+črta: 12,5; 6,55 -> 12,5; 5,75 | oranžna debelo
+točka: 12,5; 6,55
+točka: 12,5; 5,75
+črta: 9; 5,45 -> 9; 4,65 | oranžna debelo
+točka: 9; 5,45
+točka: 9; 4,65
+črta: 14; 5,45 -> 14; 4,65 | oranžna debelo
+točka: 14; 5,45
+točka: 14; 4,65
+napis: 0,3; 1,75 | mrežasta | desno
+črta: 5; 0,7 -> 15; 0,7 | modra
+črta: 5; 1,4 -> 15; 1,4 | modra
+črta: 5; 2,1 -> 15; 2,1 | modra
+črta: 5; 2,8 -> 15; 2,8 | modra
+črta: 5,5; 0,7 -> 5,5; 2,8 | oranžna
+črta: 6,5; 0,7 -> 6,5; 2,8 | oranžna
+črta: 7,5; 0,7 -> 7,5; 2,8 | oranžna
+črta: 8,5; 0,7 -> 8,5; 2,8 | oranžna
+črta: 9,5; 0,7 -> 9,5; 2,8 | oranžna
+črta: 10,5; 0,7 -> 10,5; 2,8 | oranžna
+črta: 11,5; 0,7 -> 11,5; 2,8 | oranžna
+črta: 12,5; 0,7 -> 12,5; 2,8 | oranžna
+črta: 13,5; 0,7 -> 13,5; 2,8 | oranžna
+črta: 14,5; 0,7 -> 14,5; 2,8 | oranžna
+podnapis: Oranžne črte so kovalentne vezi med verigami (vozlišča)
+:::
 
 Modul amorfnega polimera pri segrevanju (logaritemska os):
 
-```
- log E
-  |######  steklasto
-  |      #
-  |       # (T_g)
-  |        ######## gumijasto
-  |                #  tok
-  +-----------------#----> T
-```
+:::risba graf
+opis: Graf modula E amorfnega polimera v odvisnosti od temperature T, navpična os je logaritemska. Pri nizki temperaturi je steklasto območje z modulom okoli 3 GPa. Pri temperaturi steklastega prehoda modul strmo pade za okoli tri velikostne rede na gumijasti plato pri okoli 1 MPa. Pri še višji temperaturi krivulja termoplasta strmo pada v viskozni tok. Črtkana vodoravna črta kaže zamrežen polimer, ki ostane na platoju.
+x: 0 .. 10 | 1 | T
+y: 3 .. 10 | 1 | log E
+oznake: ne
+oznakax: 3 | T_g
+oznakay: 9,5 | 3 GPa
+oznakay: 6 | 1 MPa
+f: 9.5 - 1.75*(1 + tanh((x-3)/0.35)) - 0.35*ln(1 + exp((x-8)/0.25)) | modra debelo
+črta: 3; 3 -> 3; 10 | črtkano siva
+črta: 7; 6 -> 10; 6 | črtkano oranžna
+napis: 1,3; 9,5 | steklasto | pod
+napis: 5,5; 6 | gumijasti plato | nad
+napis: 9,2; 4,6 | tok | desno
+napis: 8,9; 6 | zamrežen | nad | oranžna
+:::
 
 Zamrežen polimer (elastomer) ostane na vodoravnem gumijastem delu, termoplast se pri višji temperaturi spusti v tok, duromer pa ima tudi gumijasti del zelo visoko, ker ga držijo goste vezi.
 

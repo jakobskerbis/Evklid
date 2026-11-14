@@ -19,13 +19,15 @@ Izmerimo pri $f = 1592\,\mathrm{Hz}$: na kondenzatorju je $50\,\mathrm{V}$ ampli
 
 Napaka je v besedi »seštejejo«. Kirchhoffov zakon velja za **kazalce** (kompleksne amplitude), ne za njihove velikosti. Napetost tuljave prehiteva tok za $90^\circ$, napetost kondenzatorja zaostaja za $90^\circ$. Kazalca sta nasprotna in se lahko skoraj odštejeta, čeprav je vsak zase velik.
 
-```
-   U_L ↑  50 V
-       |
-  U_R  +-----→ 5 V  (= U vira)
-       |
-   U_C ↓  50 V
-```
+:::risba skica
+opis: Kazalčni diagram napetosti zaporednega kroga pri resonanci, narisan v merilu. Kazalec napetosti tuljave kaže navpično navzgor in je dolg 50 voltov. Kazalec napetosti kondenzatorja kaže navpično navzdol in je dolg 50 voltov. Kazalec napetosti upornika kaže vodoravno v desno in je dolg 5 voltov; enak je napetosti vira. Navpična kazalca sta nasprotna in se odštejeta.
+območje: -9; -12 .. 13; 12
+enota: 12
+puščica: 0; 0 -> 0; 10 | U_L = 50 V | desno | modra debelo
+puščica: 0; 0 -> 0; -10 | U_C = 50 V | desno | oranžna debelo
+puščica: 0; 0 -> 1; 0 | U_R = U = 5 V | desno | zelena debelo
+podnapis: Kazalci napetosti pri resonanci v merilu: napetosti tuljave in kondenzatorja (vsaka 50 V) sta nasprotni, ostane napetost upornika 5 V.
+:::
 
 ### Zaporedni nihajni krog
 
@@ -73,16 +75,21 @@ $$B = \frac{R}{L} = \frac{\omega_0}{Q}, \qquad \omega_1\omega_2 = \omega_0^2.$$
 
 Resonančna frekvenca je torej **geometrijska** sredina mejnih, ne aritmetična; pri velikem $Q$ je razlika zanemarljiva.
 
-```
- I/I0
- 1,0 |        _
-     |       / \
- 0,71|------/---\------
-     |    _/     \_
-     |___/         \___
-     +-----+--+--+------ f
-          f1 f0 f2
-```
+:::risba graf
+opis: Resonančna krivulja zaporednega kroga s kvaliteto 10: razmerje toka in toka pri resonanci v odvisnosti od frekvence. Krivulja ima vrh z vrednostjo 1 pri resonančni frekvenci f₀ in na obe strani strmo pada. Vodoravna črtkana črta pri 0,71 seka krivuljo pri mejnih frekvencah f₁ (0,951 f₀) in f₂ (1,051 f₀). Razdalja med njima je pasovna širina, desetina f₀.
+x: 0,7 .. 1,3 | 0,1 | f / f_0
+y: 0 .. 1,1 | 0,25 | I / I_0
+f: 1/sqrt(1 + 100*(x - 1/x)^2) | modra debelo
+črta: 0,7; 0,707 -> 1,3; 0,707 | črtkano siva
+črta: 0,951; 0 -> 0,951; 0,707 | črtkano siva
+črta: 1,051; 0 -> 1,051; 0,707 | črtkano siva
+črta: 1; 0 -> 1; 1 | črtkano siva
+točka: 0,951; 0,707 | f_1 | nad levo
+točka: 1,051; 0,707 | f_2 | nad desno
+točka: 1; 1 | f_0 | nad
+napis: 1,2; 0,76 | 0,71 | nad
+podnapis: Resonančna krivulja pri Q = 10: med mejnima frekvencama je tok vsaj 0,71 največjega.
+:::
 
 ### Vzporedni nihajni krog
 

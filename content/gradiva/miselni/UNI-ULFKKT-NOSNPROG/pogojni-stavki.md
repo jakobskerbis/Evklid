@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Primerjave
+  - `<`, `>`, `<=`, `>=`, `==`, `!=` vrnejo `bool`
+  - `=` prireja, `==` primerja
+  - `float` s toleranco: `abs(x - y) < 1e-9`
+- Stavek if
+  - blok se izvede, ko je `bool(P)` `True`
+  - neresnične: `False`, `None`, `0`, `""`, `[]`
+  - dvopičje in zamik štirih presledkov
+- Stavek else
+  - izvede se natanko eden od dveh blokov
+- Veriga elif
+  - izvede se prvi blok z resničnim pogojem
+  - ožji pogoj pred širšim
+  - ločeni `if` se preverijo vsi
+- Gnezdenje
+  - zamik pove, kateremu `if` pripada `else`
+  - en izid: `je_noc and oblacnost < 30`
+- Logični operatorji
+  - `and`, `or` se računata skrajšano
+  - varen pogoj: `n != 0 and x / n > 2`
+- De Morganova zakona
+  - `not (A and B)` je `not A or not B`
+  - `not (A or B)` je `not A and not B`
+- Vnos s tipkovnice
+  - `input()` vrne niz, pretvori s `float()`
+  - `"12" < 15` javi `TypeError`

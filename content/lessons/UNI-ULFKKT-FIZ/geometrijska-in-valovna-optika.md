@@ -233,16 +233,21 @@ Natančno navedi enačbo tanke leče z vsemi pogoji in dogovorom o predznakih te
 
 Lom na meji zrak–voda (pravokotnica je navpična črta):
 
-```
-          |
-   \      |        zrak  n = 1,00
-     \ 40°|
-       \  |
-  ------\-+----------------  gladina
-          |\
-          | \ 28,9°    voda  n = 1,33
-          |  \
-```
+:::risba skica
+opis: Vodoravna gladina loči zrak z lomnim količnikom 1,00 zgoraj od vode z lomnim količnikom 1,33 spodaj. Žarek pade iz zraka z leve pod kotom 40° glede na navpično vpadno pravokotnico in se v vodi lomi k pravokotnici, pod kotom 28,9°.
+območje: -4; -3,4 .. 4; 3,2
+pravokotnik: -4; -3,4 .. 4; 0 | ozadje
+črta: -4; 0 -> 4; 0 | debelo
+črta: 0; -3,2 -> 0; 3 | črtkano siva
+puščica: -1,93; 2,3 -> 0; 0 | | | oranžna
+puščica: 0; 0 -> 1,45; -2,63 | | | oranžna
+napis: -0,55; 1,6 | 40° | nad
+napis: 0,7; -3 | 28,9°
+napis: 2,4; 1,8 | zrak, n = 1,00
+napis: 2,6; -1 | voda, n = 1,33
+napis: -2,9; 0,3 | gladina | nad
+napis: 0,2; 2,8 | pravokotnica | desno | siva
+:::
 
 Slika z lečo nastane v presečišču žarka, vzporednega z osjo, in žarka skozi središče; pri $a < f$ se sekata le podaljška nazaj.
 

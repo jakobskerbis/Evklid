@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zgradba celice
+  - stena, membrana, citoplazma, tonoplast, vakuola
+  - vakuola do $90\,\%$ prostornine
+- Celična stena
+  - srednja lamela: pektini
+  - primarna: celulozne mikrofibrile, raztegljiva
+  - sekundarna: pogosto lignin, po končani rasti
+- Vakuola in turgor
+  - celični sok, voda vstopa z osmozo
+  - turgor: tlak vsebine na steno
+- Plazmoliza
+  - protoplast odstopi, stena ostane
+  - pazi: selektivna je membrana, ne stena
+- Plastidi
+  - dvojna membrana, lastna DNA, iz proplastidov
+  - kloroplast, kromoplast, amiloplast, etioplast
+  - vrste se pretvarjajo
+- Vodni potencial
+  - $\Psi = \Psi_\mathrm{s} + \Psi_\mathrm{p}$, enota MPa
+  - voda teče k nižjemu $\Psi$
+  - $\Psi_\mathrm{s} \approx -cRT$, vedno negativen
