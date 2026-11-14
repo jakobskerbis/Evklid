@@ -39,19 +39,18 @@ const FEMALE = new Set(["Ana", "Eva", "Nika", "Zala", "Lara", "Maja"]);
 export const g = (name, m, f) => (FEMALE.has(name) ? f : m);
 
 // Slovenska sklanjatev ob številu: n + ustrezna oblika (1 delavec, 2 delavca, 3 delavci, 5 delavcev).
+// Odločata zadnji dve števki: 101 delavec, 102 delavca, 103 delavci, a 21 delavcev (ne »21 delavec«).
+const oblika = (n) => {
+  const h = Math.abs(n) % 100;
+  return h === 1 ? 0 : h === 2 ? 1 : h === 3 || h === 4 ? 2 : 3;
+};
 export function nOf(n, ena, dve, tri, pet) {
-  const h = n % 100;
-  const d = n % 10;
-  const form = h >= 11 && h <= 14 ? pet : d === 1 ? ena : d === 2 ? dve : d === 3 || d === 4 ? tri : pet;
-  return `${n} ${form}`;
+  return `${n} ${[ena, dve, tri, pet][oblika(n)]}`;
 }
 // Glagol ob številu: verbOf(3, "prepleska", "prepleskata", "prepleskajo") → "prepleskajo".
-// Pri 5 in več je glagol v ednini (srednji spol v pretekliku: "5 delavcev je prepleskalo").
+// Pri 0 in 5–99 (zadnji dve števki, tudi 21–24) je glagol v ednini (srednji spol v pretekliku: "5 delavcev je prepleskalo").
 export function verbOf(n, ena, dve, vec, pet = ena) {
-  const h = n % 100;
-  const d = n % 10;
-  if (h >= 11 && h <= 14) return pet;
-  return d === 1 ? ena : d === 2 ? dve : d === 3 || d === 4 ? vec : pet;
+  return [ena, dve, vec, pet][oblika(n)];
 }
 
 // Izbira odgovorov: pravilni + motilci, premešano. Vrne { options, index }.
