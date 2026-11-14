@@ -8,6 +8,9 @@
 //   tabela     vrstice z različnim številom celic, stolpec z različno poravnavo
 //   sredina    prikazna formula ($$…$$) ni na sredini kartice
 //   vrstica    formula sredi besedila razmakne vrstico (razmik med vrsticami ni enak)
+//   zaman      formula se pomika ali je pomanjšana, čeprav je v vrstici dovolj prostora zanjo (j 2026-11-14: »naj ne
+//              najdem nobene take stvari, kjer je popolnoma dovolj prostora«); preveri tudi odzive na vsak odgovor
+//              v »Preveri se« (»Pravilno! …«, »Ni čisto tako …«; na telefonu)
 // Formula ali tabela, ki je tudi po pomanjšanju (public/sirina.js) širša od kartice, se pomika z bledim
 // robom: to je le opozorilo »drsnik« (ne šteje kot napaka), da se vidi, kje bi pomagal krajši zapis.
 // Uporaba: node scripts/preveri-videz-lekcij.cjs [--slike mapa] [--samo POT/tema …] [--json datoteka] [--vse]
@@ -156,6 +159,54 @@ function measure() {
     if (!within(e)) add("sirina", e, "blok kode sega čez rob kartice");
   });
   if (document.documentElement.scrollWidth > innerWidth + 1) out.push({ kind: "sirina", detail: `stran se pomika vodoravno (${document.documentElement.scrollWidth - innerWidth} px)` });
+  zaman(root).forEach(([k, d]) => add("zaman", k, d));
+  return out;
+}
+
+// Formule v besedilu, ki jih je public/sirina.js po nepotrebnem naredil drsne ali pomanjšal: brez tega bi bila
+// formula v polni velikosti še vedno ožja od svoje vrstice. Vrne pare [formula, opis].
+function zaman(root) {
+  const out = [];
+  const blok = (e) => {
+    while (e && getComputedStyle(e).display === "inline") e = e.parentElement;
+    return e;
+  };
+  root.querySelectorAll(".katex.tb-dolga, .katex[style*='font-size']").forEach((k) => {
+    if (k.parentElement.closest(".katex-display, table, .katex, svg") || !k.getClientRects().length) return;
+    const b = blok(k.parentElement);
+    const cs = getComputedStyle(b);
+    const prostor = b.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const cls = k.className;
+    const fs = k.style.fontSize;
+    const mw = k.style.maxWidth;
+    k.classList.remove("tb-dolga");
+    k.style.fontSize = "";
+    k.style.maxWidth = "";
+    const w = k.getBoundingClientRect().width;
+    k.className = cls;
+    k.style.fontSize = fs;
+    k.style.maxWidth = mw;
+    if (w + 8 <= prostor) out.push([k, `formula je ${k.classList.contains("tb-dolga") ? "drsna" : "pomanjšana"}, čeprav je ${Math.round(w)} px široka in ima ${Math.round(prostor)} px prostora`]);
+  });
+  return out;
+}
+
+// »Preveri se«: vsak odgovor po vrsti (do pravilnega) in po vsakem pregled formul v odzivu pod vprašanjem.
+async function odzivi() {
+  const out = [];
+  // sirina.js prilagodi odziv že med klikom (prilagodiSirino) in v mikroopravilu (MutationObserver), zato zadošča
+  // setTimeout; čakanje na sliko (requestAnimationFrame) je v lekciji s 3D modelom trajalo po 3 s na klik.
+  const slika = () => new Promise((r) => setTimeout(r, 0));
+  for (const el of document.querySelectorAll("#view-textbook .tb-check:not(.tb-typed)")) {
+    for (const b of el.querySelectorAll(".tb-opt")) {
+      if (b.disabled) break;
+      b.click();
+      await slika();
+      const why = el.querySelector(".tb-why");
+      for (const [k, d] of zaman(why)) out.push({ kind: "zaman", detail: `odziv na odgovor ${Number(b.dataset.o) + 1}: ${d}`, tex: k.querySelector("annotation")?.textContent.slice(0, 160) || "", sec: "Preveri se", text: "" });
+      if (why.classList.contains("ok")) break;
+    }
+  }
   return out;
 }
 
@@ -190,7 +241,10 @@ function measure() {
           document.querySelectorAll("#view-textbook details").forEach((d) => (d.open = true));
         });
         await p.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(r, 40)))));
-        const found = await p.evaluate(measure);
+        const found = await p.evaluate(`(() => { ${zaman}; return (${measure})(); })()`);
+        // Odzivi samo na telefonu: tam je prostora najmanj, na računalniku pa lekcija s 3D modelom ob vsakem kliku
+        // izriše novo sliko (brez grafične kartice več sekund).
+        if (phone) found.push(...(await p.evaluate(`(async () => { ${zaman}; return (${odzivi})(); })()`)));
         for (const f of found) (report[id] ||= []).push({ view: label, ...f });
         if (shots && found.length) {
           fs.mkdirSync(shots, { recursive: true });
