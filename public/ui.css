@@ -229,6 +229,12 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
   .tb-lesson-grid.has-side:has(+ .tb-stepper) .tb-side { max-height: calc(100dvh - 206px); }
   .tb-side .demo-values { grid-template-columns: 1fr 1fr; }
   .tb-lesson-grid.has-side .tb-side .demo-svg { max-width: 100%; max-height: 46dvh; width: auto; display: block; margin: 0 auto; }
+  /* Tablica na dotik (iPad): poskus v lekciji pod besedilom koraka, ne ob strani (j 2026-11-14: »zdaj zakrijejo pol
+     ekrana na iPadu«). Računalnik z miško ostane v dveh stolpcih. !important: pravila zgoraj in v uci.css so močnejša. */
+  @media (hover: none) and (pointer: coarse) {
+    .tb-lesson-grid.has-side { display: block; }
+    .tb-lesson-grid.has-side .tb-side { position: static !important; max-height: none !important; overflow: visible !important; margin-top: 16px; }
+  }
 
   /* Kazalo učbenika: sklopi v stolpcih, kolikor jih gre v širino. */
   .tb-part { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 0 16px; align-items: start; }

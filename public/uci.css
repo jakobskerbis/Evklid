@@ -10,6 +10,7 @@
 /* Stranski del lekcije (graf), ki med pomikanjem obstane, se ustavi pod preklopnikom. */
 @media (min-width: 1200px), (min-width: 1000px) and (hover: none) and (pointer: coarse) {
   .uci-view .tb-lesson-grid.has-side .tb-side { top: var(--uci-head-h, 0px); max-height: calc(100dvh - 120px - var(--uci-head-h, 0px)); }
+  .uci-view .tb-lesson-grid.has-side:has(+ .tb-stepper) .tb-side { max-height: calc(100dvh - 206px - var(--uci-head-h, 0px)); }
 }
 /* Ime zavihka je v preklopniku: naslov zavihka ostane le za bralnike zaslona. */
 .uci-view .tb-head > h1, .uci-view .lab-h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
