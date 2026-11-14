@@ -186,7 +186,7 @@ $147 = 7 \cdot 21 + 0$, zato je $D(1071, 462) = 21$. Res je $1\,071 = 21 \cdot 5
 - Merila: $2$ (zadnja števka), $3$ in $9$ (vsota števk), $4$ (zadnji dve števki), $5$ (zadnja števka), $8$ (zadnje tri števke). Sestavljeno merilo (npr. za $6$) velja le za tuja delitelja.
 - Deljenje z ostankom: $a = q \cdot b + r$ z $0 \le r < b$.
 - Praštevilo ima natanko dva pozitivna delitelja; $1$ ni praštevilo. Vsako število $n > 1$ je na en sam način produkt praštevil.
-- $D(a, b)$: skupni prafaktorji z manjšim eksponentom. $v(a, b)$: vsi prafaktorji z večjim eksponentom. Velja $D(a, b) \cdot v(a, b) = a \cdot b$.
+- $D(a, b)$: skupni prafaktorji z manjšim eksponentom. $v(a, b)$: vsi prafaktorji z večjim eksponentom. (Višja raven) velja $D(a, b) \cdot v(a, b) = a \cdot b$.
 - (višja raven) Evklidov algoritem: $D(a, b) = D(b, r)$, ponavljamo do ostanka $0$.
 
 ## Drugače: Na sliki

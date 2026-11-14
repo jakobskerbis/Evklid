@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -196,10 +196,18 @@ Povezanost je negativna in precej močna: ob vetrovnejših dneh je bilo v povpre
 
 Žan preiskuje vprašanje »Ali dijaki, ki več ur na teden trenirajo šport, v povprečju spijo dlje?« Deset dijakov mu je povedalo, koliko ur na teden trenirajo ($x$) in koliko ur na noč povprečno spijo ($y$):
 
-| dijak | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
-|---|---|---|---|---|---|---|---|---|---|---|
-| $x$ (h na teden) | $2$ | $0$ | $5$ | $8$ | $3$ | $10$ | $1$ | $6$ | $4$ | $12$ |
-| $y$ (h na noč) | $7{,}0$ | $6{,}5$ | $7{,}5$ | $8{,}0$ | $6{,}8$ | $7{,}9$ | $7{,}2$ | $7{,}4$ | $7{,}1$ | $8{,}3$ |
+| dijak | $x$ (h na teden) | $y$ (h na noč) |
+|---|---|---|
+| 1 | $2$ | $7{,}0$ |
+| 2 | $0$ | $6{,}5$ |
+| 3 | $5$ | $7{,}5$ |
+| 4 | $8$ | $8{,}0$ |
+| 5 | $3$ | $6{,}8$ |
+| 6 | $10$ | $7{,}9$ |
+| 7 | $1$ | $7{,}2$ |
+| 8 | $6$ | $7{,}4$ |
+| 9 | $4$ | $7{,}1$ |
+| 10 | $12$ | $8{,}3$ |
 
 a) Kateri prikaz je primeren za te podatke? Uredi podatke po $x$ in opiši vrsto in moč povezanosti med $x$ in $y$. (2 točki)
 

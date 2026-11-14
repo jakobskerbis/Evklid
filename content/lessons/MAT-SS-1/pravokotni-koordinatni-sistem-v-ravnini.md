@@ -7,7 +7,7 @@ avtor: AI
 
 Vzemi karirast zvezek in ravnilo. Blizu levega spodnjega kota nariši vodoravno in navpično os. Za eno enoto vzemi dva kvadratka, to je $1\,\text{cm}$. Označi točki $A(1, 1)$ in $B(5, 4)$ ter ju poveži. Preden izmeriš, ugani: kako dolga je daljica $AB$? Nato izmeri z ravnilom.
 
-Če si risal natančno, si izmeril $5\,\text{cm}$. Zanimivo: točka $B$ je od $A$ oddaljena $4$ enote v desno in $3$ enote navzgor, razdalja pa je $5$. Te tri številke tesarji in zidarji poznajo že stoletja. Kot med letvama preverijo tako, da na eni odmerijo $3$, na drugi $4$ enote. Če je razdalja med oznakama $5$, je kot pravi.
+Če si risal natančno, si izmeril $5\,\text{cm}$. Zanimivo: točka $B$ je od $A$ oddaljena $4$ enote v desno in $3$ enote navzgor, razdalja pa je $5$. Ta tri števila tesarji in zidarji poznajo že stoletja. Kot med letvama preverijo tako, da na eni odmerijo $3$, na drugi $4$ enote. Če je razdalja med oznakama $5$, je kot pravi.
 
 Na načrtu hiše, terase ali omare so točke podane s koordinatami. Mojster mora iz njih izračunati dolžine, sredine in ploščine, ne da bi risal v naravni velikosti. Naučil se boš tri take izračune.
 

@@ -91,7 +91,7 @@ napis: 8,3; 1,35 | max | nad
 podnapis: Premica je med 70 in 400 prekinjena.
 :::
 
-V škatli je srednja polovica podatkov. Njena širina $Q_3 - Q_1 = 30$ je **medkvartilni razmik**. Podatek, ki je od škatle oddaljen več kot $1{,}5$ te širine (tu nad $60 + 45 = 105$), označimo kot **osamelec**. Igralec s $400$ minutami je osamelec.
+V škatli je srednja polovica podatkov. Njena širina $Q_3 - Q_1 = 30$ je **medkvartilni** (tudi medčetrtinski) **razmik**. Podatek, ki je od škatle oddaljen več kot $1{,}5$-kratnik te širine (tu nad $60 + 45 = 105$), označimo kot **osamelec**. Igralec s $400$ minutami je osamelec.
 
 **4. Od histograma h krivulji.** Pri veliko podatkih jih združimo v razrede in narišemo **histogram**. Če višino stolpca izberemo tako, da je **ploščina** stolpca enaka deležu podatkov v razredu, je skupna ploščina vseh stolpcev $1$.
 

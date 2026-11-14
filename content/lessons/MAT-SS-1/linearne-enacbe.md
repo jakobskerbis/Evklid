@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Poskus za doma: na kuhinjsko tehtnico postavi prazno skledo in v njo daj tri jajca. Recimo, da tehtnica pokaže $430\,\text{g}$, prazna skleda pa tehta $250\,\text{g}$. Koliko tehta eno jajce, če so jajca enako težka? Ne da bi ga stehtal posebej, sklepaš: jajca skupaj tehtajo $430 - 250 = 180\,\text{g}$, eno torej $60\,\text{g}$.
+Poskus za doma: na kuhinjsko tehtnico postavi prazno skledo in vanjo daj tri jajca. Recimo, da tehtnica pokaže $430\,\text{g}$, prazna skleda pa tehta $250\,\text{g}$. Koliko tehta eno jajce, če so jajca enako težka? Ne da bi ga stehtal posebej, sklepaš: jajca skupaj tehtajo $430 - 250 = 180\,\text{g}$, eno torej $60\,\text{g}$.
 
 Pravzaprav si rešil enačbo $3x + 250 = 430$. Takim enačbam rečemo **linearne enačbe**. Naučil se jih boš reševati tudi z ulomki (recepti so polni polovic in tretjin) in s **parametrom**, črko, ki je ne poznamo vnaprej.
 
@@ -23,7 +23,7 @@ Linearne enačbe nastopajo povsod, kjer se nekaj spreminja enakomerno: cena taks
 
 Opaziš vzorec? Neznanko vsakič osamimo tako, da »odstranjujemo« člene okrog nje, vedno na obeh straneh hkrati. Tik pred zadnjim korakom ima enačba obliko »število krat $x$ je število«.
 
-V simulaciji spodaj (»Linearne enačbe«) z obeh skodelic tehtnice odstrani enako uteži in opazuj, da ostane v ravnovesju. Nato vzemi utež samo z ene strani: ravnovesje se poruši, enačba ne velja več.
+V simulaciji spodaj (»Linearne enačbe«) z obeh skodelic tehtnice odstrani enako število uteži in opazuj, da ostane v ravnovesju. Nato vzemi utež samo z ene strani: ravnovesje se poruši, enačba ne velja več.
 
 **1. Kaj je linearna enačba.** Linearna enačba z eno neznanko $x$ je enačba, ki jo lahko z ekvivalentnimi preoblikami prevedemo na obliko
 
@@ -215,7 +215,7 @@ Preverimo: leva stran je $\dfrac{2 \cdot 5{,}5 - 1}{4} = \dfrac{10}{4} = 2{,}5$,
 
 Zakaj smemo enačbo množiti ali deliti z istim številom, ki ni $0$? Če velja $A = B$, potem velja tudi $kA = kB$ za vsak $k$. To je očitno. Obratno, če velja $kA = kB$ in je $k \neq 0$, lahko obe strani delimo s $k$ in dobimo $A = B$. Zato sta enačbi **ekvivalentni**, imata iste rešitve. Če je $k = 0$, dobimo $0 = 0$ ne glede na $A$ in $B$, zato bi izgubili vso informacijo in dobili »rešitve«, ki jih prej ni bilo.
 
-(višja raven) Zato pri parametru ne smemo deliti z izrazom, ki je lahko $0$. V enačbi $(a-1)x = a-1$ je množenje s faktorjem $a - 1$ ekvivalentna preoblika samo, če je $a - 1 \neq 0$. Primer $a = 1$ je treba rešiti ločeno, neposredno iz enačbe.
+(višja raven) Zato pri parametru ne smemo deliti z izrazom, ki je lahko $0$. V enačbi $(a-1)x = a-1$ je deljenje z izrazom $a - 1$ ekvivalentna preoblika samo, če je $a - 1 \neq 0$. Primer $a = 1$ je treba rešiti ločeno, neposredno iz enačbe.
 
 Splošno: enačbo $ax = b$ rešujemo takole.
 
@@ -270,7 +270,8 @@ Splošno: enačbo $ax = b$ rešujemo takole.
 
 :::simboli
 x | neznanka | | |
-a | koeficient pri neznanki | | | pri a ≠ 0 je rešitev x = b/a
+a | koeficient pri neznanki | | | pri a ≠ 0 je rešitev x = b/a; v Primeru 3 in v vprašanjih je $a$ parameter
 b | znano število na desni strani | | |
 m | parameter | | | poljubno, a fiksno število
+p | teža pladnja (parameter v zgodbi) | | g |
 :::

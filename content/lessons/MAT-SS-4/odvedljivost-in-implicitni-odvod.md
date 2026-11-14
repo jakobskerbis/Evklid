@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -450,5 +450,5 @@ c | koncentracija zdravila v krvi | | mg/L |
 t | čas od začetka infuzije | | h |
 k | smerni koeficient tangente | k = y'(x_0, y_0) | |
 x_0, y_0 | koordinati dotikališča | | |
-r | polmer krožnice | | mm |
+r | polmer krožnice | | |
 :::

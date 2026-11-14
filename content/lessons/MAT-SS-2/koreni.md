@@ -246,8 +246,8 @@ Za drugo gredico imata le letev, dolgo $1{,}2\,\text{m}$, ki naj bo ravno diagon
 ? Oceni $5\sqrt{3}$ brez računala. Med katerima zaporednima celima številoma leži?
 - med $3$ in $4$
 ~ Tako dobiš $\sqrt{15}$: faktor $5$ si vnesel pod koren brez kvadriranja. Pravilno je $5\sqrt{3} = \sqrt{25 \cdot 3} = \sqrt{75}$.
-- med $15$ in $16$
-~ Vzel si $\sqrt{3}$ kot $3$. V resnici je $\sqrt{3} \approx 1{,}73$.
+- med $6$ in $7$
+~ Seštel si $5 + \sqrt{3} \approx 6{,}73$. Zapis $5\sqrt{3}$ pomeni produkt $5 \cdot \sqrt{3}$.
 + med $8$ in $9$
 > $5\sqrt{3} = \sqrt{75}$ in $8^2 = 64 < 75 < 81 = 9^2$, zato je $8 < 5\sqrt{3} < 9$ (natančneje $5\sqrt{3} \approx 8{,}66$).
 

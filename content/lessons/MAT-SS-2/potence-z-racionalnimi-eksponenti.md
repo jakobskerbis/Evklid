@@ -282,5 +282,5 @@ m | števec eksponenta (eksponent potence pod korenom) | | | celo število; v pr
 n | imenovalec eksponenta (stopnja korena) | | | naravno število, $n \ge 2$; v pravilih iz točke 2 cel eksponent
 r, s | racionalna eksponenta | | |
 P | dnevna potreba po energiji v mirovanju | P = 70 \cdot M^{\frac{3}{4}} | kcal/dan | ocena za sesalce
-M | masa živali | | kg |
+M | masa (živali ali bolnika) | | kg |
 :::

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -246,7 +246,7 @@ Podobno razlika kubov $999 = 10^3 - 1 = 9 \cdot 111$ pove, da je $999$ deljivo s
 
 ? (višja raven) Zakaj $a^4 + b^4$ ne razstavimo s faktorjem $a + b$?
 - Ker $4$ ni praštevilo.
-~ Odločilna je sodost eksponenta, ne praštevilskost. Tudi $a^9 + b^9$ (eksponent $9$ ni praštevilo) ima faktor $a + b$.
+~ Odločilno je, ali je eksponent sod, ne ali je praštevilo. Tudi $a^9 + b^9$ (eksponent $9$ ni praštevilo) ima faktor $a + b$.
 + Ker je $(-b)^4 = b^4$; pri $a = 1$, $b = -1$ je $a + b = 0$, izraz pa je $2$, zato $a + b$ ni faktor.
 - Ker vsote potenc nikoli ne razstavimo.
 ~ Vsoto lihih potenc razstavimo, npr. $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$.

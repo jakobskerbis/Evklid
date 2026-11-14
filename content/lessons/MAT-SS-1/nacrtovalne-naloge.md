@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -303,6 +303,7 @@ napis: 1,6; 0,45 | 30° | sredina
 V katerem koraku je napaka? Vpiši, koliko rešitev ima naloga v resnici.
 = 0
 ~ 2 | To je Timov sklep iz 3. koraka. Pogoj $a < c$ ni dovolj: krožnica mora kraka sploh doseči, $a \ge d$.
+~ 3 | To je številka napačnega koraka; vpisati moraš število rešitev, teh pa ni.
 ~ 1 | Ena rešitev bi bila pri $a = d = 4\,\mathrm{cm}$ (dotik) ali pri $a \ge c$. Tu je $a = 3\,\mathrm{cm} < 4\,\mathrm{cm}$.
 > Napačen je 3. korak: zaradi 2. koraka bi moral najprej preveriti $a \ge d$. Ker je $3 < 4$, krožnica kraka ne doseže, kot kaže risba. Rešitve ni.
 
@@ -335,7 +336,7 @@ vrednost: 8/2 | 4
 >>
 
 :::simboli
-a, b, c | stranice trikotnika ($a = \lvert BC \rvert$, $b = \lvert AC \rvert$, $c = \lvert AB \rvert$) | | cm
+a, b, c | stranice trikotnika ($a = \lvert BC \rvert$, $b = \lvert AC \rvert$, $c = \lvert AB \rvert$) | | cm | pri paralelogramu in trapezu $a = \lvert AB \rvert$, $b = \lvert BC \rvert$, $c = \lvert CD \rvert$
 \alpha, \beta, \gamma | notranji koti trikotnika pri $A$, $B$, $C$ | | °
 v_c | višina na stranico $c$ | | cm
 t_c | težiščnica na stranico $c$ | | cm

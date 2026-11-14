@@ -115,7 +115,7 @@ $f(x) = kx + n$, presečišče z osjo $y$ je $(0, n)$; ničla: $f(x_0) = 0$
 
 ### Primer 2: funkcija iz dveh točk
 
-Premica poteka skozi točki $A(1, 5)$ in $B(4, -1)$. Zapiši enačbo funkcije.
+Premica poteka skozi točki $A(1, 5)$ in $B(4, -1)$. Zapiši enačbo funkcije in izračunaj njeno ničlo.
 
 **Podatki:** $A(1, 5)$, $B(4, -1)$
 **Iščemo:** enačbo $y = kx + n$ in ničlo $x_0$
@@ -189,7 +189,7 @@ Simulacija spodaj (»Graf funkcije y = kx + n«) ti omogoča, da premice razisku
 
 ## Drugače: Iz vsakdanjega življenja
 
-Predstavljaj si, da imaš na prepaidni kartici $10\,\text{€}$ in vsak dan porabiš $2\,\text{€}$. Stanje po $x$ dneh je
+Predstavljaj si, da imaš na predplačniški kartici $10\,\text{€}$ in vsak dan porabiš $2\,\text{€}$. Stanje po $x$ dneh je
 
 $$y = -2x + 10.$$
 
@@ -219,7 +219,7 @@ Recept za risanje grafa in iskanje ničle pri $f(x) = -\tfrac{1}{2}x + 3$.
 
 ## Drugače: Bolj natančno
 
-**Zakaj je graf premica in zakaj $k$ ne zavisi od izbire točk?**
+**Zakaj je graf premica in zakaj $k$ ni odvisen od izbire točk?**
 
 Vzemimo dve poljubni točki na grafu: $A(x_1, kx_1 + n)$ in $B(x_2, kx_2 + n)$. Izračunajmo količnik sprememb:
 

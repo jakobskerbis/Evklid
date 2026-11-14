@@ -260,7 +260,7 @@ d) Izračunaj $\lim\limits_{x \to \infty} f(x)$ in zapiši enačbo vodoravne asi
 3. b) $\lim\limits_{x \to 2} f(x) = \dfrac{2 \cdot 4}{3} = \dfrac{8}{3}$. Limita obstaja, vrednost $f(2)$ pa ne, zato ima $f$ pri $x = 2$ luknjo; zakrpamo jo z dodatkom $f(2) = \frac{8}{3}$.
 4. c) Za $x$ blizu $-1$ je $f(x) = \dfrac{2(x + 2)}{x + 1}$. Števec gre proti $2 \cdot 1 = 2 > 0$, imenovalec proti $0$. Z leve je $x + 1 < 0$, zato $\lim\limits_{x \to -1^-} f(x) = -\infty$; z desne je $x + 1 > 0$, zato $\lim\limits_{x \to -1^+} f(x) = +\infty$.
 5. c) Pri $x = -1$ je pol, navpična asimptota je $x = -1$.
-6. d) Števec in imenovalec delimo z $x^2$: $\dfrac{2 - \frac{8}{x^2}}{1 - \frac{1}{x} - \frac{2}{x^2}}$. Ulomki s $x$ v imenovalcu gredo proti $0$, zato je limita $\dfrac{2}{1} = 2$.
+6. d) Števec in imenovalec delimo z $x^2$: $\dfrac{2 - \frac{8}{x^2}}{1 - \frac{1}{x} - \frac{2}{x^2}}$. Ulomki z $x$ v imenovalcu gredo proti $0$, zato je limita $\dfrac{2}{1} = 2$.
 7. Odgovor: a) $D_f = \mathbb{R} \setminus \{-1, 2\}$; b) limita je $\frac{8}{3}$, pri $x = 2$ je luknja; c) leva limita je $-\infty$, desna $+\infty$, asimptota $x = -1$; d) limita je $2$, vodoravna asimptota je $y = 2$.
 
 **Točkovanje:** a) 1 točka za $D_f = \mathbb{R} \setminus \{-1, 2\}$; b) 1 točka za razcep in krajšanje, 1 točka za limito $\frac{8}{3}$, 1 točka za utemeljitev, da je pri $x = 2$ luknja (limita obstaja, $f(2)$ ne); c) 1 točka za obe enostranski limiti in 1 točka za asimptoto $x = -1$; d) 1 točka za limito $2$ in 1 točka za asimptoto $y = 2$.
@@ -381,7 +381,7 @@ Zakaj je $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$ res, ne le v tabeli? Na e
 + $3$
 - $12$
 ~ Upoštevati moraš tudi vodilni koeficient imenovalca, $4$.
-> Delimo z $t^2$: $\dfrac{12 + \frac{5}{t^2}}{4 + \frac{5}{t^2}} \to \dfrac{12}{4} = 3$.
+> Delimo s $t^2$: $\dfrac{12 + \frac{5}{t^2}}{4 + \frac{5}{t^2}} \to \dfrac{12}{4} = 3$.
 
 ? Na katerih intervalih je funkcija $f(x) = \dfrac{x + 1}{x^2 - 4x}$ zvezna?
 - $(-\infty, -1)$ in $(-1, \infty)$

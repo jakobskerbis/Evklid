@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -256,7 +256,7 @@ točka: 12,4 | izmerjeno
 
 ? Zakaj pri ploščini pravokotnika seštejemo relativni napaki stranic, ne absolutnih?
 - Ker je relativna napaka vedno manjša od absolutne.
-~ To ni res in ni razlog: $\delta x$ in $\Delta x$ imata različne enote, zato ju sploh ne primerjamo.
+~ To ni res in ni razlog: $\delta x$ je brez enote, $\Delta x$ pa ima enoto količine, zato ju sploh ne primerjamo.
 - Ker se pri produktu napake odštejejo.
 ~ Napake se v najslabšem primeru vedno povečajo, nikoli odštejejo.
 + Ker se napaka ene stranice pomnoži z drugo stranico; delež spremembe (relativna napaka) pa se približno sešteje.

@@ -142,12 +142,12 @@ $\tan \alpha = \dfrac{\text{nasprotna kateta}}{\text{priležna kateta}}$; $\;\ta
 
 **Rešitev:**
 
-1. Naj bo $d$ razdalja od bližjega opazovališča do vznožja stolpa. Daljše opazovališče je od vznožja oddaljeno $d + 20\,\text{m}$. Nastaneta dva pravokotna trikotnika s skupno kateto $h$.
-2. Iz bližjega mesta: $\tan 45^\circ = \dfrac{h}{d}$, torej $h = d$.
-3. Iz daljšega mesta: $\tan 30^\circ = \dfrac{h}{d + 20}$, torej $h = \dfrac{d + 20}{\sqrt{3}}$.
+1. Naj bo $d$ razdalja od bližjega opazovališča do vznožja stolpa. Bolj oddaljeno opazovališče je od vznožja oddaljeno $d + 20\,\text{m}$. Nastaneta dva pravokotna trikotnika s skupno kateto $h$.
+2. Z bližjega mesta: $\tan 45^\circ = \dfrac{h}{d}$, torej $h = d$.
+3. Z bolj oddaljenega mesta: $\tan 30^\circ = \dfrac{h}{d + 20}$, torej $h = \dfrac{d + 20}{\sqrt{3}}$.
 4. Vstavimo $d = h$ in pomnožimo s $\sqrt{3}$: $\sqrt{3}\,h = h + 20$, torej $h(\sqrt{3} - 1) = 20$ in $h = \dfrac{20}{\sqrt{3} - 1}\,\text{m}$.
 5. Racionaliziramo imenovalec: $h = \dfrac{20(\sqrt{3} + 1)}{3 - 1}\,\text{m} = 10(\sqrt{3} + 1)\,\text{m} \approx 27{,}32\,\text{m}$.
-6. Preverjanje: daljše opazovališče je od vznožja oddaljeno $47{,}32\,\text{m}$; $\;47{,}32 \cdot \tan 30^\circ \approx 47{,}32 \cdot 0{,}5774 \approx 27{,}32$. ✓
+6. Preverjanje: bolj oddaljeno opazovališče je od vznožja oddaljeno $47{,}32\,\text{m}$; $\;47{,}32 \cdot \tan 30^\circ \approx 47{,}32 \cdot 0{,}5774 \approx 27{,}32$. ✓
 7. Odgovor: stolp je visok $10(\sqrt{3} + 1)\,\text{m}$, to je približno $27{,}32\,\text{m}$.
 
 ### Primer 4 – zdaj ti: gora na Luni
@@ -262,14 +262,11 @@ Zdaj si predstavljaj, da hipotenuzo vrtiš okoli levega oglišča kot kazalec. K
 ~ Tipka $\tan^{-1}$ ne pomeni $\dfrac{1}{\tan}$. Obratna vrednost razmerja, $\dfrac{2{,}6}{1{,}5} \approx 1{,}73$, ni kot.
 > $\tan \alpha = \dfrac{1{,}5\,\text{m}}{2{,}6\,\text{m}} \approx 0{,}577$, zato je $\alpha = \tan^{-1} 0{,}577 \approx 30^\circ$ (natančneje $29{,}98^\circ$).
 
-? Lestev, dolga $5\,\text{m}$, je naslonjena na steno in s tlemi oklepa kot $70^\circ$. Kako visoko seže?
-- približno $1{,}71\,\text{m}$
-~ To je $5\,\text{m} \cdot \cos 70^\circ$, razdalja vznožja od stene. Višina je nasprotna kateta kota ob tleh, zato sinus.
-+ približno $4{,}70\,\text{m}$
-- približno $5{,}32\,\text{m}$
-~ Delil si, $\dfrac{5\,\text{m}}{\sin 70^\circ}$. Iz $\sin 70^\circ = \dfrac{h}{5\,\text{m}}$ sledi $h = 5\,\text{m} \cdot \sin 70^\circ$. Višina ne more biti večja od lestve.
-- približno $13{,}74\,\text{m}$
-~ To je $5\,\text{m} \cdot \tan 70^\circ$. Tangens povezuje kateti, lestev pa je hipotenuza.
+? Lestev, dolga $5\,\text{m}$, je naslonjena na steno in s tlemi oklepa kot $70^\circ$. Kako visoko seže? Rezultat zaokroži na stotinko metra.
+= 4,70 m | 0,01
+~ 1,71 | To je $5\,\text{m} \cdot \cos 70^\circ$, razdalja vznožja od stene. Višina je nasprotna kateta kota ob tleh, zato sinus.
+~ 5,32 | Delil si, $\dfrac{5\,\text{m}}{\sin 70^\circ}$. Iz $\sin 70^\circ = \dfrac{h}{5\,\text{m}}$ sledi $h = 5\,\text{m} \cdot \sin 70^\circ$. Višina ne more biti večja od lestve.
+~ 13,74 | To je $5\,\text{m} \cdot \tan 70^\circ$. Tangens povezuje kateti, lestev pa je hipotenuza.
 > Lestev je hipotenuza, višina je nasprotna kateta kota ob tleh: $h = 5\,\text{m} \cdot \sin 70^\circ \approx 4{,}70\,\text{m}$.
 
 :::simboli

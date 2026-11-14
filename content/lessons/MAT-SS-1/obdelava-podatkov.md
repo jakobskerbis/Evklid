@@ -13,7 +13,7 @@ Dva prijatelja sta avgusta pet noči štela utrinke iz roja Perzeidov, vsak na s
 
 Vsak je v petih nočeh naštel $100$ utrinkov, torej v povprečju $20$ na uro. Prihodnje leto boš imel samo eno prosto noč. Kam bi šel? Zapiši si odločitev in razlog zanjo.
 
-Na prvem kraju je vsaka noč skoraj enaka. Na drugem so bile nekatere noči oblačne, druge jasne, zato tam ne veš, kaj te čaka. Povprečje tega ne pove. Pove ti to **razpršenost** podatkov. Enaka orodja uporabljajo vremenoslovci, trenerji in novinarji, ki poročajo o anketah. Če jih razumeš, ne nasedaš preprosto izbranim številkam.
+Na prvem kraju je vsaka noč skoraj enaka. Na drugem so bile nekatere noči oblačne, druge jasne, zato tam ne veš, kaj te čaka. Povprečje tega ne pove. Pove ti to **razpršenost** podatkov. Enaka orodja uporabljajo vremenoslovci, trenerji in novinarji, ki poročajo o anketah. Če jih razumeš, ne nasedeš spretno izbranim številkam.
 
 ## Razlaga
 
@@ -40,7 +40,7 @@ Povprečje skoči na $\dfrac{9 \cdot 10 + 2\,000}{10} = 209\,\text{€}$, median
 **3. Mere razpršenosti.** Pokažejo, kako se podatki raztezajo okoli sredine.
 
 - **Razmah** (variacijski razmik) je $R = x_{\max} - x_{\min}$. Je preprost, a odvisen le od dveh skrajnih podatkov.
-- **Kvartili.** Urejene podatke razdelimo na štiri približno enake dele. Drugi kvartil $Q_2$ je mediana. Prvi kvartil $Q_1$ je mediana spodnje polovice, tretji kvartil $Q_3$ pa mediana zgornje polovice. Pri lihem $n$ srednjega podatka ne všteješ v nobeno polovico. **Medkvartilni razmik** je $Q_3 - Q_1$ in zajame sredinsko polovico podatkov.
+- **Kvartili.** Urejene podatke razdelimo na štiri približno enake dele. Drugi kvartil $Q_2$ je mediana. Prvi kvartil $Q_1$ je mediana spodnje polovice, tretji kvartil $Q_3$ pa mediana zgornje polovice. Pri lihem $n$ srednjega podatka ne všteješ v nobeno polovico. **Medkvartilni** (medčetrtinski) **razmik** je $Q_3 - Q_1$ in zajame sredinsko polovico podatkov.
 - **Varianca** je povprečje kvadratov odklonov. **Odklon** podatka je razlika $x_i - \bar{x}$, torej koliko podatek leži nad sredino ali pod njo:
 $$\sigma^2 = \frac{(x_1-\bar{x})^2 + \cdots + (x_n-\bar{x})^2}{n}$$
 - **Standardni odklon** je njen koren: $\sigma = \sqrt{\sigma^2}$. Ima enako enoto kot podatki, zato ga lahko neposredno primerjamo s sredino. Manjši kot je, bolj so podatki zbrani okoli sredine.
@@ -195,7 +195,7 @@ Predstavljaj si urejene podatke iz Primera 2 na številski premici. Škatla z br
 
 Dva strelca streljata na tarčo. Pet strelov prvega prinese $48, 50, 50, 50, 52$ točk, pet strelov drugega pa $30, 40, 50, 60, 70$. Oba imata povprečje $50$ točk. Trener bo kljub temu prvega označil za zanesljivega, drugega pa za nepredvidljivega. Standardni odklon to pove s številom: prvi strelec ima $\sigma \approx 1{,}3$ točke, drugi pa $\sigma \approx 14{,}1$ točke.
 
-Podobno je s plačami. Če v podjetju devet delavcev zasluži po $1000\,\text{€}$, direktor pa $11\,000\,\text{€}$, je povprečna plača $2000\,\text{€}$. Takšno povprečje nobenemu delavcu ne ustreza. Mediana plače, $1000\,\text{€}$, pove, kaj je običajno. Zato poročila o plačah in cenah stanovanj pogosto navajajo mediano. Prav tako vedno vprašaj, kolikšna je razpršenost, ne le sredina: avtobus, ki v povprečju pride ob 8.00, a včasih ob 7.40 in včasih ob 8.20, je za jutranjo uro precej slabši od tistega, ki je vedno natančen.
+Podobno je s plačami. Če v podjetju devet delavcev zasluži po $1\,000\,\text{€}$, direktor pa $11\,000\,\text{€}$, je povprečna plača $2\,000\,\text{€}$. Takšno povprečje nobenemu delavcu ne ustreza. Mediana plače, $1\,000\,\text{€}$, pove, kaj je običajno. Zato poročila o plačah in cenah stanovanj pogosto navajajo mediano. Prav tako vedno vprašaj, kolikšna je razpršenost, ne le sredina: avtobus, ki v povprečju pride ob 8.00, a včasih ob 7.40 in včasih ob 8.20, je za jutranjo uro precej slabši od tistega, ki je vedno natančen.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -225,7 +225,7 @@ Izračunajmo standardni odklon za podatke $3, 5, 6, 8, 8$. Pomagaj si s tabelo.
 $$\sigma^2 = \frac{\sum x_i^2}{n} - \bar{x}^2,$$
 torej »povprečje kvadratov minus kvadrat povprečja«. Preizkus za podatke $2, 4, 4, 4, 5, 5, 7, 9$: povprečje je $5$, povprečje kvadratov $\dfrac{232}{8} = 29$, zato je $\sigma^2 = 29 - 25 = 4$ in $\sigma = 2$.
 
-**Vzorec in populacija.** Zgornja formula, kjer delimo z $n$, velja, kadar imamo vse podatke populacije. Pri vzorcu, ki iz njega ocenjujemo širšo populacijo, delimo z $n - 1$ (to boš podrobneje spoznal pozneje). Različni računalniški programi tudi različno računajo kvartile, zato lahko dobiš nekoliko drugačne vrednosti kot tukaj.
+**Vzorec in populacija.** Zgornja formula, kjer delimo z $n$, velja, kadar imamo vse podatke populacije. Pri vzorcu, iz katerega ocenjujemo širšo populacijo, delimo z $n - 1$ (to boš podrobneje spoznal pozneje). Različni računalniški programi tudi različno računajo kvartile, zato lahko dobiš nekoliko drugačne vrednosti kot tukaj.
 
 **Linearna sprememba podatkov.** Če vsak podatek pomnožimo z $a$ in prištejemo $b$, se sredina spremeni v $a\bar{x} + b$, standardni odklon pa v $|a|\,\sigma$. Premik podatkov torej razpršenosti ne spremeni, raztegnitev pa jo raztegne.
 

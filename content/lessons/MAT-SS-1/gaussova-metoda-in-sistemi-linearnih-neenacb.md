@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -111,7 +111,7 @@ točka: -2 | | prazna
 točka: 4 | | modra
 :::
 
-4. Preizkus s $x = 0$: $-2 \le 10$ in $5 < 9$, obe veljata.
+4. Preizkus z $x = 0$: $-2 \le 10$ in $5 < 9$, obe veljata.
 5. Odgovor: rešitev je interval $(-2, 4]$.
 
 ### Primer 2: Gaussova metoda

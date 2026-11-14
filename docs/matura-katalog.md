@@ -766,7 +766,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Pogojna verjetnost | **VR** | `MAT-SS-4/verjetnost` | da |
 | Verjetnost produkta, neodvisna dogodka | **VR** | `MAT-SS-4/verjetnost`, `MAT-SS-4/mesane-maturitetne-naloge` | da |
 | Zaporedje neodvisnih poskusov | **VR** | `MAT-SS-4/verjetnost`, `MAT-SS-4/mesane-maturitetne-naloge`, `MAT-SS-4/zaporedje-neodvisnih-poskusov` | da – C3 (14. 11. 2026) |
-| Normalna porazdelitev | OR+VR | `MAT-SS-4/statistika` | da – v lekciji napačno označena kot višja raven |
+| Normalna porazdelitev | OR+VR | `MAT-SS-4/statistika` | da |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|

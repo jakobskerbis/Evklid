@@ -172,6 +172,21 @@ Vzemi $f(x) = 2x - 6$ in vse lastnosti preveri s števili.
 4. **Sodost.** $f(1) = -4$ in $f(-1) = -8$: vrednosti nista enaki ne nasprotni, ni ne soda ne liha.
 5. **Inverzna.** Ker narašča, je injektivna. Iz $y = 2x - 6$ dobiš $x = \dfrac{y + 6}{2}$, torej $f^{-1}(x) = \dfrac{x + 6}{2}$.
 6. **Preizkus inverzne.** $f(5) = 4$ in $f^{-1}(4) = \dfrac{10}{2} = 5$. Vrnila se je prvotna vrednost.
+7. **Graf inverzne.** Vsaki točki grafa $f$ zamenjaš koordinati: iz $(5, 4)$ nastane $(4, 5)$, iz ničle $(3, 0)$ pa $(0, 3)$. Skozi dobljeni točki narišeš premico; to je graf $f^{-1}$.
+
+:::risba graf
+opis: Grafa funkcije f(x) = 2x − 6 (polna črta) in njene inverzne funkcije (x + 6)/2 (črtkana oranžna črta) ter siva črtkana premica y = x. Točka (5, 4) na grafu f in točka (4, 5) na grafu inverzne funkcije ležita zrcalno glede na premico y = x; enako točki (3, 0) in (0, 3). Grafa se sekata na premici y = x v točki (6, 6).
+x: -2 .. 8 | 1 | x
+y: -2 .. 8 | 1 | y
+f: x | siva črtkano
+f: 2*x - 6 | modra debelo
+f: (x + 6)/2 | oranžna črtkano
+točka: 5; 4 | (5, 4) | desno | modra
+točka: 4; 5 | (4, 5) | nad levo | oranžna
+točka: 3; 0 | (3, 0) | pod desno | modra
+točka: 0; 3 | (0, 3) | nad desno | oranžna
+podnapis: Polna črta: f(x) = 2x − 6. Črtkana oranžna: inverzna funkcija. Siva črtkana: premica y = x, čez katero sta grafa zrcalna.
+:::
 
 ## Drugače: Kot zgodba
 
@@ -236,4 +251,5 @@ C | temperatura v stopinjah Celzija | C = \frac{F - 32}{1{,}8} | ^\circ\mathrm{C
 D_f | definicijsko območje funkcije $f$ | |
 Z_f | zaloga vrednosti funkcije $f$ | |
 x_1, x_2 | dva vhoda iz definicijskega območja | |
+T | temperatura juhe kot funkcija časa $t$ (kviz) | | ^\circ\mathrm{C}
 :::

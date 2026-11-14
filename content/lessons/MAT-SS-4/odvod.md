@@ -325,7 +325,7 @@ Diferenčni količnik vsote je $\frac{(f + g)(a + h) - (f + g)(a)}{h}$. Členi s
 
 ## Drugače: Korak za korakom s številkami
 
-Odvod funkcije $f(x) = x^3$ v točki $a = 2$ lahko »ujameš« s kalkulatorjem.
+Odvod funkcije $f(x) = x^3$ v točki $a = 2$ lahko »ujameš« z računalom.
 
 1. Izračunaj $f(2) = 8$.
 2. Izberi $h = 0{,}1$: $f(2{,}1) = 9{,}261$, diferenčni količnik je $\dfrac{9{,}261 - 8}{0{,}1} = 12{,}61$.

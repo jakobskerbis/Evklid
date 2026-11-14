@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -242,7 +242,7 @@ Smerni koeficient na sliki vidiš kot stopnico: $1$ v desno in $k$ navzgor. Pri 
 
 **Zakaj $k_1 k_2 = -1$.** Stopnica premice s smernim koeficientom $k$ je »$1$ desno, $k$ gor«. Če jo zavrtiš za $90^\circ$, postane »$k$ levo, $1$ gor«. Nova premica ima torej smerni koeficient $\dfrac{1}{-k} = -\dfrac{1}{k}$, in res je $k \cdot \left(-\dfrac{1}{k}\right) = -1$.
 
-**Od kod formula za kot.** Kot med premicama je razlika naklonskih kotov, $\varphi = |\alpha_2 - \alpha_1|$ (oziroma $180^\circ$ minus to). Iz $\tan\alpha_1 = k_1$ in $\tan\alpha_2 = k_2$ pride formula za $\tan\varphi$ po pravilu za tangens razlike kotov, ki ga spoznaš v 2. letniku pri kotnih funkcijah.
+**Od kod formula za kot.** Kot med premicama je razlika naklonskih kotov, $\varphi = |\alpha_2 - \alpha_1|$ (oziroma $180^\circ$ minus to). Iz $\tan\alpha_1 = k_1$ in $\tan\alpha_2 = k_2$ pride formula za $\tan\varphi$ po pravilu za tangens razlike kotov, ki ga spoznaš v 3. letniku pri kotnih funkcijah.
 
 **Katera oblika zajame vse premice.** Samo splošna. Eksplicitna izpusti navpične premice, odsekovna pa še premice skozi izhodišče in vodoravne premice. Zato v nalogah, kjer premica »lahko je karkoli«, raje začni s splošno obliko $ax + by + c = 0$.
 

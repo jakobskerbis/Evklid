@@ -15,7 +15,7 @@ Kaj natančno pomeni »ustali se« in kako to dokažemo z računom? Odgovor je *
 
 ## Razlaga
 
-**1. Kaj je zaporedje.** Oddaljenosti s pohoda nariši kot pike na številski premici: $8$; $4$; $2$; $1$; $0{,}5$ … Vsaka pika ima svojo zaporedno številko. Prav to je zaporedje: vsakemu naravnemu številu $n = 1, 2, 3, \ldots$ priredimo realno število $a_n$. Natančneje je **zaporedje** funkcija iz naravnih v realna števila. Številu $a_n$ rečemo **$n$-ti člen**, številu $n$ pa **indeks** (mesto člena). Zaporedje zapišemo kot $a_1, a_2, a_3, \ldots$ ali na kratko $(a_n)$.
+**1. Kaj je zaporedje.** Oddaljenosti s pohoda nariši kot pike na številski premici: $8$; $4$; $2$; $1$; $0{,}5$ … Vsaka pika ima svojo zaporedno številko. Prav to je zaporedje: vsakemu naravnemu številu $n = 1, 2, 3, \ldots$ priredimo realno število $a_n$. Natančneje je **zaporedje** funkcija iz naravnih v realna števila. Številu $a_n$ rečemo **$n$-ti člen**, številu $n$ pa **indeks** (mesto člena). Zaporedje zapišemo kot $a_1, a_2, a_3, \ldots$ ali na kratko $(a_n)$. Zaporedje z le končno mnogo členi (na primer $a_1, \ldots, a_{10}$) je **končno**, sicer je **neskončno**. Limito iščemo le pri neskončnih zaporedjih.
 
 **2. Kako podamo zaporedje.** Pri pohodu povemo prvi člen in pravilo, kako iz člena dobimo naslednjega: $a_1 = 8$ in $a_{n+1} = \dfrac{a_n}{2}$. Tak zapis je **rekurziven**. Pogosteje zaporedje podamo s **splošnim členom**, to je s formulo za $a_n$, na primer $a_n = 2 - \dfrac{1}{n}$. Člen izračunaš tako, da vstaviš indeks: $a_1 = 1$, $a_2 = 1{,}5$, $a_3 \approx 1{,}667$.
 
@@ -319,6 +319,7 @@ vrednost: 2+3/60 | 2.05
 a_n | $n$-ti člen zaporedja | | |
 a_{n+1} | člen, ki sledi členu $a_n$ | | | $a_{n+1} - a_n > 0$: zaporedje strogo narašča
 n | indeks (mesto člena) | | | naravno število
+m, M | spodnja in zgornja meja zaporedja | | | $m \le a_n \le M$ za vsak $n$
 L | limita zaporedja | \lim_{n \to \infty} a_n = L | |
 \varepsilon | polmer okolice limite | | | $\varepsilon > 0$, poljubno majhen
 v_n | povprečna hitrost po $n$ urah vožnje | v_n = \frac{200n}{2n+1} | km/h |
