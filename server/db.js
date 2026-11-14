@@ -32,8 +32,9 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   migrateLegacyDb(file);
   const db = new DatabaseSync(file);
   db.exec(`
-    -- D6: pisanje drugega procesa (skripta v lupini Render, zunanja kopija) zaklene bazo za kratek čas. Brez čakanja
-    -- (privzeto 0) strežnik takoj vrže »database is locked« (500, izgubljen odgovor); tako počaka največ 2 s.
+    -- D6: pisanje drugega procesa (npr. skripta v lupini Renderja) zaklene bazo za kratek čas. Brez čakanja (privzeto 0)
+    -- strežnik takoj vrže »database is locked« (500, izgubljen odgovor); tako počaka največ 2 s (ves strežnik, ker je
+    -- DatabaseSync sinhron).
     -- Prvo, da velja tudi za WAL in migracije ob zagonu.
     PRAGMA busy_timeout = 2000;
     PRAGMA journal_mode = WAL;

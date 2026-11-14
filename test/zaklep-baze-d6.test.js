@@ -1,4 +1,4 @@
-// D6 (obremenitveni preizkus 14. 11.): drug proces, ki za trenutek zaklene bazo za pisanje (skripta v lupini Render),
+// D6 (obremenitveni preizkus 14. 11.): drug proces, ki za trenutek zaklene bazo za pisanje (skripta v lupini Renderja),
 // strežniku ne povzroči napake »database is locked«: zapis počaka (busy_timeout). Na stari kodi pade.
 // Zagon: node --test test/zaklep-baze-d6.test.js
 import test from "node:test";
