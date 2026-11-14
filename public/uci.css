@@ -41,7 +41,7 @@
    število modelov v znački; liha zadnja veja na sredini, na širokem zaslonu do štiri v vrsto čez širino. */
 .uci-3d-pot { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; margin: 0 0 16px; color: var(--muted); }
 .uci-3d-pot > span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-.uci-3d-korak { min-height: 40px; padding: 0 4px; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
+.uci-3d-korak { min-height: 40px; min-width: 40px; padding: 0 4px; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
 .uci-3d-korak:hover { text-decoration: underline; }
 .uci-3d-pot b { display: inline-flex; align-items: center; min-height: 40px; padding: 0 4px; color: var(--text); }
 .uci-3d-pot b:focus { outline: none; }
@@ -74,6 +74,8 @@
   border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-weight: 700; text-decoration: none;
 }
 .uci-3d-mikroskop:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+
+@container okno (max-width: 480px) { .tb-link { flex: 1 1 100%; } }
 
 /* Atlas ali model čez cel zaslon: stran /3d v okvirju (isti izvor). Varno območje telefona doda podlaga, ker ga okvir
    sam ne dobi (env() je v okvirju 0); v aplikaciji je --varno-zg/--varno-sp 0, ker prostor pusti ona (theme.js).

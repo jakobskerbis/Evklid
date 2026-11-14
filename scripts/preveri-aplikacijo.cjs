@@ -1460,8 +1460,10 @@ async function uciPhone(p) {
     const over = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     if (over > 1) throw new Error(`Uči se → ${v}: vodoravno drsenje (${over} px)`);
   }
-  await expectVisible(p, "#view-3d .uci-3d-card", "kartice 3D sveta", 8000);
+  await expectVisible(p, "#view-3d .uci-3d-veja", "veje drevesa 3D sveta", 8000);
   await screen(p, "uci-3d");
+  await click(p, '#view-3d .uci-3d-veja[data-pot="matematika"]', { wait: 300 });
+  await expectVisible(p, "#view-3d .uci-3d-card", "modeli v veji Matematika", 8000);
   await click(p, "#view-3d .uci-3d-card", { wait: 300 });
   // Okvir je istega izvora in si deli glavno nit: gradnja prizora (swiftshader) lahko za nekaj sekund ustavi strani.
   await p.locator(".uci-3d-full iframe").waitFor({ state: "attached", timeout: 20000 }).catch(async () => {

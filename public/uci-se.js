@@ -1,6 +1,6 @@
 // Uči se (j, 4. 11. 2026): en gumb v zgornji in spodnji vrstici, v njem trije zavihki Učbenik | Laboratorij | 3D svet.
 // Vsebina zavihkov so obstoječi pogledi: #view-textbook (textbook.js), #view-lab (laboratorij.js) in #view-3d
-// (kartice strani /3d, spodaj). Gumb odpre zadnji uporabljeni zavihek (shranjen na napravi). Stare poti
+// (drevo vej z ikonami, isto kot zbirka /3d iz 3d/drevo.js, spodaj). Gumb odpre zadnji uporabljeni zavihek (shranjen na napravi). Stare poti
 // (showView("textbook"), ?pogled=lab, ukaz inštruktorju »odpri laboratorij«) izberejo pravi zavihek v app.js.
 // Atlas ali model iz 3D sveta se odpre čez cel zaslon: stran /3d v okvirju (isti izvor), Nazaj ali Esc ga zapreta.
 import { t } from "./i18n.js";
@@ -12,7 +12,7 @@ const KEY = "evklid.uciZavihek";
 
 let D = null; // { escapeHtml, getStudent, showTextbook, showLab, stopReading, askTutor, onOverlay(open) }
 let tab = read();
-let hub = null; // { key, html } narisan 3D svet (predmet in jezik)
+let hub = null; // { key, html } narisan 3D svet (key = jezik|slog|pot veje)
 let full = null; // { el, frame } odprt atlas ali model čez cel zaslon
 let fromLesson = false; // poskus je odprla povezava v lekciji: tipka Nazaj vrne v lekcijo
 
@@ -116,6 +116,8 @@ export function initUci(deps) {
 /** Tipka Nazaj v »Uči se«: zapre atlas ali model, sicer lekcijo ali poskus. Vrne true, če je kaj zaprla. */
 export function uciBack({ textbookBack, labBack }) {
   if (close3d()) return true;
+  // Nazaj v veji drevesa 3D sveta gre za eno vejo višje (kot drobtinice), šele na vrhu zapusti zavihek.
+  if (tab === "3d" && pot) { nastaviPot(pot.split("/").slice(0, -1).join("/")); return true; }
   if (tab === "textbook") return textbookBack();
   if (tab === "lab") {
     const closed = labBack();

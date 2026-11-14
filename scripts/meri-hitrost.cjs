@@ -71,7 +71,7 @@ const SCREENS = [
   { id: "ucbenik", name: "Uči se → Učbenik", pre: `localStorage.setItem("evklid.uciZavihek","textbook")`, tap: `q('.topbar .tab[data-view="uci"]').click(); q('#view-uci [data-uci-tab="textbook"]').click()`, shell: "#view-textbook", ready: "#view-textbook .tb-head" },
   { id: "lab", name: "Uči se → Laboratorij", tap: `q('#view-uci [data-uci-tab="lab"]').click()`, shell: "#view-lab", ready: "#view-lab .lab-card" },
   { id: "3d", name: "Uči se → 3D svet", tap: `q('#view-uci [data-uci-tab="3d"]').click()`, shell: "#view-3d", ready: "#view-3d .uci-3d-veja, #view-3d .uci-3d-card" },
-  { id: "3dmodel", name: "3D model (pregledovalnik)", tap: `q('#view-3d .uci-3d-card').click()`, shell: ".uci-3d-full, iframe.uci-3d-frame, .uci-3d-full iframe", ready: "@frame-canvas", tti: false },
+  { id: "3dmodel", name: "3D model (pregledovalnik)", before: `q('#view-3d .uci-3d-veja[data-pot="matematika"]').click()`, tap: `q('#view-3d .uci-3d-card').click()`, shell: ".uci-3d-full, iframe.uci-3d-frame, .uci-3d-full iframe", ready: "@frame-canvas", tti: false },
   { id: "instruktor", name: "Inštruktor", tap: `q('.topbar .tab[data-view="chat"]').click()`, shell: "#view-chat", ready: "#view-chat #input" },
   { id: "tipkovnica", name: "Tipkovnica (fokus v vnos)", before: `q('.topbar .tab[data-view="chat"]')`, tap: `const i = q('#input'); i.focus(); i.click()`, shell: "#tipkovnica", ready: "#tipkovnica button", only: "telefon" },
   { id: "skener", name: "Skeniraj", tap: `q('.topbar .tab[data-view="scan"]').click()`, shell: "#view-scan", ready: '#view-scan [data-act="type"]' },
