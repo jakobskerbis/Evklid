@@ -34,7 +34,7 @@ Ob vsaki združitvi v `main` GitHub zažene preverbo, ki počaka na miren trenut
 5 minut; novejša združitev jo zamenja. Urnik vsako uro je le rezerva, ker GitHub urnike pogosto zamakne za ure
 (`.github/workflows/render-posodobitev.yml`,
 pravila v `scripts/render-objava.js`; v `render.yaml` je `autoDeploy: false`). Ponovni zagon s trajnim
-diskom pomeni približno minuto izpada, zato (začasno do ponedeljka 16. 11. 2026 00:00 se vsaka združitev objavi takoj, `TAKOJ_DO` v `scripts/render-objava.js`; j, 14. 11.):
+diskom pomeni približno minuto izpada, zato (začasno do nedelje 15. 11. 2026 00:00, začetka pilota, se vsaka združitev objavi takoj, `TAKOJ_DO` v `scripts/render-objava.js`; j, 14. 11.):
 
 | Stanje | Kdaj se objavi |
 |---|---|

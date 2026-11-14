@@ -8,9 +8,10 @@
 export const MIRNO_MIN = 10; // toliko minut nihče ni nič poslal
 export const MED_OBJAVAMA_MIN = 60;
 export const NAJDLJE_MIN = 180;
-// Začasno (j, 14. 11. 2026: »Odstrani to pravilo o objavah do ponedeljka«): do ponedeljka 16. 11. 00:00 (Ljubljana)
+// Začasno (j, 14. 11. 2026: »Odstrani to pravilo o objavah do ponedeljka«): do nedelje 15. 11. 00:00 (Ljubljana)
 // se vsaka združitev v main objavi takoj, brez čakanja na miren strežnik in brez ure med objavama.
-export const TAKOJ_DO = Date.parse("2026-11-16T00:00:00+01:00");
+// Konec skrajšan na začetek pilota (j, 14. 11. 2026): objava med pilotom ne sme prekiniti odgovora inštruktorja.
+export const TAKOJ_DO = Date.parse("2026-11-15T00:00:00+01:00");
 
 // stanje: odgovor /healthz/stanje ali null (strežnik ni dosegljiv)
 // cakaMin: koliko minut je stara najstarejša neobjavljena sprememba v main
