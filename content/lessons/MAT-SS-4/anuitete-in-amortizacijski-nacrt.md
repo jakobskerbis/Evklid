@@ -201,6 +201,73 @@ $D_3 = 3811{,}2512 - 2418{,}4854 \approx 1392{,}77$ €. Preizkus: $\dfrac{759{,
 - Amortizacijski načrt: $o_k = D_{k-1} \cdot \frac{p}{100}$, $R_k = a - o_k$, $D_k = D_{k-1} - R_k$; zadnja vrstica se zapre z $D_n = 0$.
 - Obresti padajo, razdolžnine rastejo s faktorjem $r$; vsota razdolžnin je posojilo.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Posojilo odplačujemo z letnimi anuitetami po $3630$ € pri letni obrestni meri $10\,\%$. Po plačilu 4. anuitete je ostanek dolga $6300$ €. Izračunaj obresti in razdolžnino v 5. letu ter ostanek dolga po 5. letu.
+
+**Rešitev:**
+
+1. Obresti v 5. letu se računajo od dolga na začetku leta: $o_5 = 6300 \cdot \dfrac{10}{100} = 630$, torej $630$ €.
+2. Razdolžnina: $R_5 = a - o_5 = 3630 - 630 = 3000$, torej $3000$ €.
+3. Ostanek dolga: $D_5 = D_4 - R_5 = 6300 - 3000 = 3300$, torej $3300$ €.
+4. Preizkus: v 6. letu so obresti $3300 \cdot 0{,}1 = 330$ €, razdolžnina $3630 - 330 = 3300$ € pa je ravno ostanek, zato se dolg s 6. anuiteto zapre.
+5. Odgovor: v 5. letu so obresti $630$ €, razdolžnina $3000$ €, po 5. letu ostane $3300$ € dolga.
+
+**Točkovanje:** 1 točka za obresti $o_5 = 630$ €, 1 točka za razdolžnino $R_5 = 3000$ €, 1 točka za ostanek $D_5 = 3300$ €.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Posojilo $15\,000$ € odplačujemo s petimi enakimi letnimi anuitetami; prvo plačamo leto po najemu. Letna obrestna mera je $4{,}5\,\%$, obrestovanje je letno. Zneske zaokroži na cente.
+
+a) Izračunaj anuiteto. (2 točki)
+b) Sestavi prvi dve vrstici amortizacijskega načrta: obresti, razdolžnino in ostanek dolga za 1. in 2. leto. (3 točke)
+c) Banka ponudi tudi odlog: prvo od petih enakih anuitet plačamo šele dve leti po najemu, nato vsako leto po eno. Kolikšna bi bila tedaj anuiteta? Utemelji z načelom ekvivalence glavnic. (2 točki)
+
+**Rešitev:**
+
+1. a) Obrestovalni faktor je $r = 1{,}045$, potenca $r^5 = 1{,}045^5 \approx 1{,}24618194$ (ne zaokrožujemo na malo decimalk).
+2. a) $a = 15\,000 \cdot \dfrac{1{,}24618194 \cdot 0{,}045}{0{,}24618194} \approx 3416{,}87$, torej $3416{,}87$ €.
+3. b) 1. leto: $o_1 = 15\,000 \cdot 0{,}045 = 675$; $R_1 = 3416{,}87 - 675 = 2741{,}87$; $D_1 = 15\,000 - 2741{,}87 = 12\,258{,}13$.
+4. b) 2. leto: $o_2 = 12\,258{,}13 \cdot 0{,}045 \approx 551{,}62$; $R_2 = 3416{,}87 - 551{,}62 = 2865{,}25$; $D_2 = 12\,258{,}13 - 2865{,}25 = 9392{,}88$.
+
+| leto $k$ | $o_k$ | $R_k$ | $D_k$ |
+|---|---|---|---|
+| 0 | – | – | 15 000,00 |
+| 1 | 675,00 | 2741,87 | 12 258,13 |
+| 2 | 551,62 | 2865,25 | 9392,88 |
+
+5. c) Do konca 1. leta se posojilo le obrestuje in naraste na $15\,000 \cdot 1{,}045 = 15\,675$ €. Od tega trenutka naprej je položaj enak kot pri posojilu $15\,675$ € s petimi anuitetami, ki se začnejo leto pozneje.
+6. c) Po načelu ekvivalence glavnic je $a' = 15\,675 \cdot \dfrac{1{,}24618194 \cdot 0{,}045}{0{,}24618194} \approx 3570{,}63$, torej $3570{,}63$ € (to je $a \cdot 1{,}045$).
+7. Odgovor: a) anuiteta je $3416{,}87$ €; b) načrt je v tabeli; c) z odlogom bi bila anuiteta $3570{,}63$ €.
+
+**Točkovanje:** a) 1 točka za pravilno nastavljeno formulo ali enačbo ekvivalence in 1 točka za $3416{,}87$ €; b) 1 točka za vrstico 1. leta ($675$ €; $2741{,}87$ €; $12\,258{,}13$ €), 1 točka za obresti $o_2 \approx 551{,}62$ € in 1 točka za $R_2 = 2865{,}25$ € in $D_2 = 9392{,}88$ €, pri čemer upoštevamo tudi vrednosti, pravilno izračunane z napačno anuiteto iz dela a; c) 1 točka za preračun posojila na konec 1. leta ($15\,675$ €) ali enakovredno enačbo in 1 točka za $3570{,}63$ €.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj pove načelo ekvivalence glavnic in kako preračunamo znesek za $k$ obdobij naprej ali nazaj v času?
+---
+Zneskov, plačanih ob različnih trenutkih, ne smemo kar seštevati ali primerjati, ker denar medtem nosi obresti. Načelo ekvivalence glavnic pravi, da so plačila enakovredna, če so njihove vrednosti, preračunane na isti trenutek, enake. Za $k$ obdobij naprej znesek pomnožimo z $r^k$, za $k$ obdobij nazaj ga delimo z $r^k$, kjer je $r = 1 + \frac{p}{100}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji formulo za anuiteto posojila $G_0$, ki ga odplačamo z $n$ enakimi obroki ob koncu obdobij pri obrestovalnem faktorju $r$.
+---
+Vse zneske preračunamo na konec $n$-tega obdobja, ko je posojilo vredno $G_0 r^n$. Prvi obrok se obrestuje še $n - 1$ obdobij, drugi $n - 2$ in tako naprej, zadnji pa nič, zato je vrednost vseh obrokov $a\,(r^{n-1} + \dots + r + 1)$. To je vsota prvih $n$ členov geometrijskega zaporedja s prvim členom $1$ in količnikom $r$, torej $a \cdot \frac{r^n - 1}{r - 1}$. Po načelu ekvivalence glavnic velja $G_0 r^n = a \cdot \frac{r^n - 1}{r - 1}$, od koder je $a = G_0 \cdot \frac{r^n (r - 1)}{r^n - 1}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Dokaži, da je pri odplačevanju z enakimi anuitetami vsaka razdolžnina $r$-krat večja od prejšnje.
+---
+Razdolžnina v $k$-tem obdobju je $R_k = a - o_k$, obresti pa so $o_k = D_{k-1} \cdot \frac{p}{100} = D_{k-1}\,(r - 1)$. Ker je anuiteta vedno enaka, je $R_{k+1} - R_k = o_k - o_{k+1} = (D_{k-1} - D_k)(r - 1)$. Razlika zaporednih ostankov $D_{k-1} - D_k$ je ravno razdolžnina $R_k$, zato je $R_{k+1} - R_k = R_k\,(r - 1)$. Od tod sledi $R_{k+1} = R_k \cdot r$, torej razdolžnine naraščajo kot geometrijsko zaporedje s količnikom $r$.
+:::
+
 ## Drugače: Korak za korakom s številkami
 
 Recept za vsako nalogo z anuitetami, na posojilu za teleskop ($4000$ €, $5\,\%$, $4$ leta):
@@ -290,6 +357,19 @@ vrednost: 3807.38*0.06 | 228.44
 vrednost: 1210/1.1+1210/1.21 | 2100
 vrednost: 1100/1.05+1100/1.05^2+1100/1.05^3 | 2995.57
 vrednost: 4000*1.22*0.05/0.22 | 1109.09
+vrednost: 6300*10/100 | 630
+vrednost: 3630-630 | 3000
+vrednost: 6300-3000 | 3300
+vrednost: 3300*1.1 | 3630
+vrednost: 1.045^5 | 1.24618194
+vrednost: 15000*1.045^5*0.045/(1.045^5-1) | 3416.87
+vrednost: 3416.87-675 | 2741.87
+vrednost: 15000-2741.87 | 12258.13
+vrednost: 12258.13*0.045 | 551.62
+vrednost: 3416.87-551.62 | 2865.25
+vrednost: 12258.13-2865.25 | 9392.88
+vrednost: 15000*1.045 | 15675.0
+vrednost: 15675*1.045^5*0.045/(1.045^5-1) | 3570.63
 >>
 
 :::simboli

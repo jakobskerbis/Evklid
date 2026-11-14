@@ -165,6 +165,95 @@ $S_6 \approx 13\,604$ vstopnic v šestih sezonah.
 - »Vsako leto za $p\,\%$« → $a_n = a_1 q^{n-1}$ in $S_n = a_1 \frac{q^n - 1}{q - 1}$.
 - Paradoks rojstnih dni: pri $23$ ljudeh je verjetnost skupnega rojstnega dne približno $0{,}507$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+V vrečki je $5$ rdečih in $3$ modre kroglice. Hkrati naključno izvlečemo dve kroglici. Izračunaj verjetnost, da sta kroglici različnih barv.
+
+**Rešitev:**
+
+1. Vseh izidov je toliko, kot je načinov za izbiro $2$ od $8$ kroglic; vrstni red ni pomemben: $\binom{8}{2} = \dfrac{8 \cdot 7}{2} = 28$.
+2. Ugodni izidi: rdečo kroglico izberemo na $5$ načinov, modro na $3$, po osnovnem izreku kombinatorike skupaj $5 \cdot 3 = 15$.
+3. $P = \dfrac{15}{28}$.
+4. Odgovor: verjetnost, da sta kroglici različnih barv, je $\dfrac{15}{28}$.
+
+**Točkovanje:** 1 točka za število vseh izidov $28$, 1 točka za število ugodnih izidov $15$, 1 točka za verjetnost $\frac{15}{28}$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dani sta funkcija $f(x) = -x^2 + 4x$ in premica $p$ z enačbo $y = x$.
+
+a) Izračunaj ničli funkcije $f$ in koordinate presečišč grafa funkcije $f$ s premico $p$. (2 točki)
+
+b) Zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $x_0 = 1$. (2 točki)
+
+c) Izračunaj ploščino lika, ki ga omejujeta graf funkcije $f$ in premica $p$. (3 točke)
+
+**Rešitev:**
+
+1. a) $-x^2 + 4x = -x(x - 4) = 0$, zato sta ničli $x_1 = 0$ in $x_2 = 4$.
+2. a) Presečišča: $-x^2 + 4x = x$ da $x^2 - 3x = 0$ oziroma $x(x - 3) = 0$, torej $x = 0$ ali $x = 3$. Presečišči sta $A(0, 0)$ in $B(3, 3)$.
+3. b) $f(1) = -1 + 4 = 3$, $f'(x) = -2x + 4$, naklon tangente $k = f'(1) = 2$.
+4. b) Tangenta skozi $(1, 3)$: $y - 3 = 2(x - 1)$, torej $y = 2x + 1$.
+5. c) Med $x = 0$ in $x = 3$ je graf funkcije nad premico (na primer $f(1) = 3 > 1$), zato je $S = \int_0^3 \left(-x^2 + 4x - x\right) dx = \int_0^3 \left(-x^2 + 3x\right) dx$.
+6. c) $S = \left[-\dfrac{x^3}{3} + \dfrac{3x^2}{2}\right]_0^3 = -9 + \dfrac{27}{2} = \dfrac{9}{2}$.
+7. Odgovor: ničli sta $0$ in $4$, presečišči $A(0, 0)$ in $B(3, 3)$; tangenta ima enačbo $y = 2x + 1$; ploščina lika je $\dfrac{9}{2}$ kvadratne enote.
+
+**Točkovanje:** a) 1 točka za ničli $0$ in $4$, 1 točka za presečišči $(0, 0)$ in $(3, 3)$; b) 1 točka za $f(1) = 3$ in $f'(1) = 2$, 1 točka za enačbo $y = 2x + 1$; c) 1 točka za integral razlike $f(x) - x$ z mejama $0$ in $3$, 1 točka za primitivno funkcijo, 1 točka za ploščino $\frac{9}{2}$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Verjetnost, da je naključno izbrana žarnica iz neke tovarne pokvarjena, je $0{,}04$. Žarnice so pokvarjene neodvisno druga od druge.
+
+a) V škatli je $10$ žarnic. Izračunaj verjetnost, da je pokvarjena natanko ena. Rezultat zaokroži na štiri decimalna mesta. (2 točki)
+
+b) Izračunaj verjetnost, da je med $10$ žarnicami v škatli vsaj ena pokvarjena. Rezultat zaokroži na štiri decimalna mesta. (2 točki)
+
+c) Najmanj koliko žarnic mora biti v škatli, da je verjetnost, da je vsaj ena pokvarjena, večja od $0{,}5$? (3 točke)
+
+d) Kontrolor preizkuša žarnice eno za drugo. Verjetnost, da je prva pokvarjena žarnica šele $k$-ta preizkušena, je $p_k = 0{,}04 \cdot 0{,}96^{k-1}$. Utemelji, da so $p_1, p_2, p_3, \ldots$ členi geometrijskega zaporedja, izračunaj vsoto $p_1 + p_2 + \dots + p_{10}$ in pojasni, zakaj je enaka rezultatu iz b). (3 točke)
+
+**Rešitev:**
+
+1. a) Gre za zaporedje $10$ neodvisnih poskusov z verjetnostjo $0{,}04$ za pokvarjeno žarnico: $P = \binom{10}{1} \cdot 0{,}04 \cdot 0{,}96^9$.
+2. a) $P = 10 \cdot 0{,}04 \cdot 0{,}692534\ldots = 0{,}277013\ldots \approx 0{,}2770$.
+3. b) Nasprotni dogodek je »nobena žarnica ni pokvarjena«, njegova verjetnost je $0{,}96^{10} = 0{,}664832\ldots$.
+4. b) $P = 1 - 0{,}96^{10} = 0{,}335167\ldots \approx 0{,}3352$.
+5. c) Za $n$ žarnic zahtevamo $1 - 0{,}96^n > 0{,}5$, torej $0{,}96^n < 0{,}5$.
+6. c) Logaritmiramo: $n \ln 0{,}96 < \ln 0{,}5$. Ker je $\ln 0{,}96 < 0$, se pri deljenju znak neenakosti obrne: $n > \dfrac{\ln 0{,}5}{\ln 0{,}96} = 16{,}979\ldots$.
+7. c) Najmanjše naravno število je $n = 17$. Preverba: $0{,}96^{16} \approx 0{,}5204 > 0{,}5$ in $0{,}96^{17} \approx 0{,}4996 < 0{,}5$.
+8. d) $\dfrac{p_{k+1}}{p_k} = \dfrac{0{,}04 \cdot 0{,}96^{k}}{0{,}04 \cdot 0{,}96^{k-1}} = 0{,}96$ za vsak $k$, zato je zaporedje geometrijsko s prvim členom $p_1 = 0{,}04$ in količnikom $q = 0{,}96$.
+9. d) $S_{10} = 0{,}04 \cdot \dfrac{0{,}96^{10} - 1}{0{,}96 - 1} = 0{,}04 \cdot \dfrac{1 - 0{,}96^{10}}{0{,}04} = 1 - 0{,}96^{10} \approx 0{,}3352$.
+10. d) Dogodki »prva pokvarjena žarnica je $k$-ta« za $k = 1, 2, \ldots, 10$ so nezdružljivi, njihova vsota pa je dogodek »med prvimi $10$ žarnicami je vsaj ena pokvarjena«. Zato je vsota njihovih verjetnosti enaka verjetnosti iz b).
+11. Odgovor: a) $0{,}2770$; b) $0{,}3352$; c) najmanj $17$ žarnic; d) zaporedje je geometrijsko s $q = 0{,}96$, vsota prvih desetih členov je $1 - 0{,}96^{10} \approx 0{,}3352$, kar je verjetnost iz b).
+
+**Točkovanje:** a) 1 točka za nastavek $\binom{10}{1} \cdot 0{,}04 \cdot 0{,}96^9$ in 1 točka za rezultat $0{,}2770$; b) 1 točka za nasprotni dogodek z verjetnostjo $0{,}96^{10}$ in 1 točka za rezultat $0{,}3352$; c) 1 točka za neenačbo $0{,}96^n < 0{,}5$ in 1 točka za logaritmiranje z obratom neenačaja ter 1 točka za odgovor $17$ žarnic; d) 1 točka za utemeljitev s količnikom $q = 0{,}96$ in 1 točka za vsoto $S_{10} \approx 0{,}3352$ in 1 točka za pojasnilo, zakaj je enaka rezultatu iz b).
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Kdaj sta dogodka $A$ in $B$ neodvisna in kako tedaj izračunamo verjetnost, da se zgodita oba?
+---
+Dogodka $A$ in $B$ sta neodvisna, če to, ali se zgodi eden, ne vpliva na verjetnost drugega. Za neodvisna dogodka je verjetnost produkta enaka produktu verjetnosti: $P(A \cdot B) = P(A) \cdot P(B)$. To enakost lahko vzamemo tudi za definicijo neodvisnosti. Primer sta dva meta kovanca: verjetnost, da obakrat pade grb, je $\frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Opiši postopek, s katerim z odvodom poiščemo največjo vrednost zvezne funkcije na zaprtem intervalu.
+---
+Najprej izračunamo odvod $f'$ in poiščemo stacionarne točke v notranjosti intervala $[a, b]$, to je rešitve enačbe $f'(x) = 0$. Kandidati za največjo vrednost so te stacionarne točke, točke, kjer funkcija ni odvedljiva, in obe krajišči $a$ in $b$. V vseh kandidatih izračunamo vrednost funkcije in največja med njimi je iskana največja vrednost. Krajišč ne smemo izpustiti, ker je funkcija lahko največja prav na krajišču, čeprav odvod tam ni enak $0$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Izpelji formulo za vsoto prvih $n$ členov geometrijskega zaporedja s količnikom $q \neq 1$.
+---
+Vsoto zapišemo kot $S_n = a_1 + a_1 q + \dots + a_1 q^{n-1}$. Enakost pomnožimo s $q$ in dobimo $q S_n = a_1 q + a_1 q^2 + \dots + a_1 q^n$. Ko od druge enakosti odštejemo prvo, se vsi vmesni členi izničijo in ostane $q S_n - S_n = a_1 q^n - a_1$. Ker je $q \neq 1$, smemo deliti s $q - 1$ in dobimo $S_n = a_1 \frac{q^n - 1}{q - 1}$.
+:::
+
 ## Drugače: Z analogijo
 
 Trener ne izumi nove taktike za vsako akcijo nasprotnika. Pozna nekaj vzorcev (protinapad, prekršek pred kazenskim prostorom, kot) in za vsakega ima pripravljeno potezo. Ko prepozna vzorec, ve, kaj narediti.
@@ -253,3 +342,20 @@ S_n, S_6 | vsota prvih $n$ členov | S_n = a_1 \frac{q^n - 1}{q - 1} | |
 p | odstotek rasti | | \% |
 D | diskriminanta | D = b^2 - 4ac | |
 :::
+
+<<RACUN
+vrednost: 8*7/2 | 28
+vrednost: 5*3/28 | 15/28
+resi: -x^2+4*x=0 | x | 0, 4
+resi: -x^2+4*x=x | x | 0, 3
+odvod: -x^2+4*x | x | -2*x+4
+vrednost: -1^2+4*1 | 3
+integral: -x^2+3*x | x | 0 | 3 | 9/2
+vrednost: 10*0.04*0.96^9 | 0.2770
+vrednost: 0.96^10 | 0.6648
+vrednost: 1-0.96^10 | 0.3352
+vrednost: log(0.5)/log(0.96) | 16.98
+vrednost: 0.96^16 | 0.5204
+vrednost: 0.96^17 | 0.4996
+vrednost: 0.04*(0.96^10-1)/(0.96-1) | 0.3352
+>>

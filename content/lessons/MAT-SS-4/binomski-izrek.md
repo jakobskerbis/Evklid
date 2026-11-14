@@ -231,6 +231,64 @@ $\binom{5}{2} \cdot 8 \cdot 1 = 10 \cdot 8 = 80$. Predznak je pozitiven, ker je 
 - Splošni člen $T_{k+1} = \binom{n}{k}a^{n-k}b^k$; za člen z $x^m$ izenači eksponent z $m$ in izračunaj $k$.
 - $(a-b)^n$: predznaki se izmenjujejo; potenciraj cel člen, tudi število.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Z binomskim izrekom izračunaj $(1+\sqrt{2})^4$ in rezultat zapiši v obliki $a + b\sqrt{2}$, kjer sta $a$ in $b$ celi števili.
+
+**Rešitev:**
+
+1. Koeficienti iz vrstice $4$ Pascalovega trikotnika so $1, 4, 6, 4, 1$, zato je $(1+\sqrt{2})^4 = 1 + 4\sqrt{2} + 6(\sqrt{2})^2 + 4(\sqrt{2})^3 + (\sqrt{2})^4$.
+2. Potence: $(\sqrt{2})^2 = 2$, $(\sqrt{2})^3 = 2\sqrt{2}$, $(\sqrt{2})^4 = 4$, zato dobimo $1 + 4\sqrt{2} + 12 + 8\sqrt{2} + 4$.
+3. Odgovor: $(1+\sqrt{2})^4 = 17 + 12\sqrt{2}$.
+
+**Točkovanje:** 1 točka za razvoj s koeficienti $1, 4, 6, 4, 1$, 1 točka za pravilno izračunane potence $\sqrt{2}$, 1 točka za končni rezultat $17 + 12\sqrt{2}$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+V razvoju potence $(1 + 2x)^n$, kjer je $n$ naravno število, je koeficient pri $x^2$ enak $112$.
+
+a) Izračunaj $n$. (3 točke)
+b) Zapiši, koliko členov ima razvoj, in izračunaj njegov srednji člen. (2 točki)
+c) Izračunaj vsoto vseh koeficientov razvoja. (2 točki)
+
+**Rešitev:**
+
+1. a) Splošni člen je $T_{k+1} = \binom{n}{k} \cdot 1^{n-k} \cdot (2x)^k = \binom{n}{k} 2^k x^k$. Za $x^2$ je $k = 2$, koeficient je $\binom{n}{2} \cdot 2^2$.
+2. a) Iz $4 \cdot \frac{n(n-1)}{2} = 112$ dobimo $n(n-1) = 56$ oziroma $n^2 - n - 56 = 0$, torej $(n-8)(n+7) = 0$.
+3. a) Rešitev $n = -7$ ni naravno število, zato je $n = 8$.
+4. b) Razvoj ima $n + 1 = 9$ členov; srednji je peti člen, torej $k = 4$.
+5. b) $T_5 = \binom{8}{4}(2x)^4 = 70 \cdot 16x^4 = 1120x^4$.
+6. c) Vsoto koeficientov dobimo, če vstavimo $x = 1$: $(1 + 2 \cdot 1)^8 = 3^8 = 6561$.
+7. Odgovor: a) $n = 8$, b) razvoj ima $9$ členov, srednji člen je $1120x^4$, c) vsota koeficientov je $6561$.
+
+**Točkovanje:** a) 1 točka za koeficient pri $x^2$ v obliki $\binom{n}{2} \cdot 2^2$, 1 točka za enačbo $n^2 - n - 56 = 0$, 1 točka za $n = 8$ z utemeljitvijo, zakaj $n = -7$ ne pride v poštev; b) 1 točka za $9$ členov in ugotovitev, da je srednji peti člen ($k = 4$), 1 točka za $1120x^4$; c) 1 točka za vstavitev $x = 1$, 1 točka za $6561$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Povej binomski izrek za potenco $(a+b)^n$ in zapiši njegov splošni člen.
+---
+Za vsako naravno število $n$ velja $(a+b)^n = \binom{n}{0}a^n + \binom{n}{1}a^{n-1}b + \dots + \binom{n}{n}b^n$. Razvoj ima $n + 1$ členov, eksponent pri $a$ pada od $n$ do $0$, eksponent pri $b$ raste od $0$ do $n$, vsota eksponentov v vsakem členu je $n$. Koeficienti so binomski simboli $\binom{n}{k} = \frac{n!}{k!\,(n-k)!}$, ki tvorijo vrstico $n$ Pascalovega trikotnika. Splošni, $(k+1)$-ti člen je $T_{k+1} = \binom{n}{k}a^{n-k}b^k$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji, zakaj je v razvoju $(a+b)^n$ koeficient pri $a^{n-k}b^k$ enak $\binom{n}{k}$.
+---
+Potenca $(a+b)^n$ je zmnožek $n$ enakih oklepajev $(a+b)$. Pri množenju iz vsakega oklepaja vzamemo bodisi $a$ bodisi $b$ in vzete člene zmnožimo. Zmnožek $a^{n-k}b^k$ dobimo natanko takrat, ko iz $k$ oklepajev vzamemo $b$, iz preostalih $n - k$ pa $a$. Teh $k$ oklepajev lahko izmed $n$ izberemo na $\binom{n}{k}$ načinov, zato se $\binom{n}{k}$ enakih zmnožkov sešteje v koeficient $\binom{n}{k}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Opiši, kako sestavimo Pascalov trikotnik, in pojasni, zakaj je vsota števil v vrstici $n$ enaka $2^n$.
+---
+Na vrhu trikotnika, v vrstici $0$, stoji $1$, na robovih vsake vrstice pa so enice. Vsako notranje število je vsota obeh sosednjih števil, ki stojita nad njim, kar zapišemo kot $\binom{n}{k} + \binom{n}{k+1} = \binom{n+1}{k+1}$. Vrstica $n$ vsebuje binomske simbole $\binom{n}{0}, \binom{n}{1}, \dots, \binom{n}{n}$. Če v binomski izrek vstavimo $a = b = 1$, dobimo $\binom{n}{0} + \binom{n}{1} + \dots + \binom{n}{n} = (1+1)^n = 2^n$.
+:::
+
 ## Drugače: Z analogijo
 
 Razvoj $(a+b)^n$ je kot sestavljanje kosila v menzi z $n$ okenci. Pri vsakem okencu vzameš eno od dveh jedi, $a$ ali $b$. Ko pladenj pride do blagajne, blagajničarka ne gleda vrstnega reda, le koliko kosov $b$ imaš. Pladnjev s $k$ kosi $b$ je toliko, kolikor je načinov, da izbereš $k$ okenc od $n$, torej $\binom{n}{k}$. Vsota vseh pladnjev, razvrščenih po številu kosov $b$, je natanko razvoj $(a+b)^n$.
@@ -319,6 +377,11 @@ vrednost: 10*3^2 | 90
 vrednost: factorial(9)/(factorial(3)*factorial(6)) | 84
 vrednost: 20*2^3*(-1)^3 | -160
 vrednost: 11^4 | 14641
+vrednost: (1+sqrt(2))^4 | 17+12*sqrt(2)
+resi: 4*n*(n-1)/2=112 | n | -7, 8
+vrednost: factorial(8)/(factorial(2)*factorial(6))*2^2 | 112
+vrednost: factorial(8)/(factorial(4)*factorial(4))*2^4 | 1120
+vrednost: 3^8 | 6561
 >>
 
 :::simboli

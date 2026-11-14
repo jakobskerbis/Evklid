@@ -13,7 +13,7 @@ Ugodne in vse izide štejemo s kombinatoriko. Pri jajcih pa se zgodita *dve stva
 
 ## Razlaga
 
-**1. Dogodki.** Poskus ima množico možnih izidov. **Dogodek** je skupina izidov (podmnožica). Pri metu kocke je dogodek $A$: »padlo je sodo število« $= \{2, 4, 6\}$.
+**1. Dogodki.** Poskus ima množico možnih izidov, imenujemo jo **vzorčni prostor**. **Dogodek** je skupina izidov (podmnožica). Pri metu kocke je dogodek $A$: »padlo je sodo število« $= \{2, 4, 6\}$. Dogodek z enim samim izidom, na primer »padla je šestica« $= \{6\}$, je **elementarni dogodek**.
 
 - **Gotov dogodek** se zgodi vedno: $P = 1$.
 - **Nemogoč dogodek** se ne zgodi nikoli: $P = 0$.
@@ -189,6 +189,87 @@ $P(A \mid N) = \dfrac{0{,}012}{0{,}032} = \dfrac{12}{32} = \dfrac{3}{8} = 0{,}37
 - Produkt (višja raven): $P(A \cdot B) = P(B) \cdot P(A \mid B)$. Pri neodvisnih dogodkih $P(A \cdot B) = P(A) \cdot P(B)$.
 - (višja raven) Pri nalogah s koraki si pomagaj z drevesom: verjetnosti vzdolž poti množimo, verjetnosti različnih poti, ki vodijo do istega dogodka, seštevamo.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Hkrati vržemo dve pošteni kocki, rdečo in modro. Izračunaj verjetnost, da je vsota pik na obeh kockah enaka $8$.
+
+**Rešitev:**
+
+1. Izid zapišemo kot urejen par (pike na rdeči, pike na modri). Vseh enako verjetnih izidov je $6 \cdot 6 = 36$.
+2. Ugodni izidi so $(2, 6)$, $(3, 5)$, $(4, 4)$, $(5, 3)$ in $(6, 2)$, torej $5$ izidov.
+3. Po klasični definiciji je $P = \frac{5}{36}$.
+4. Odgovor: verjetnost, da je vsota pik $8$, je $\frac{5}{36}$.
+
+**Točkovanje:** 1 točka za število vseh izidov $36$, 1 točka za vseh $5$ ugodnih izidov, 1 točka za $\frac{5}{36}$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+V vrečki so $4$ rdeče, $3$ modre in $5$ zelenih kroglic. Na slepo hkrati izvlečemo $3$ kroglice.
+
+a) Izračunaj verjetnost, da so vse tri izvlečene kroglice zelene. (2 točki)
+b) Izračunaj verjetnost, da so vse tri izvlečene kroglice različnih barv. (2 točki)
+c) Izračunaj verjetnost, da je med izvlečenimi kroglicami vsaj ena rdeča. (2 točki)
+
+**Rešitev:**
+
+1. a) Vseh enako verjetnih izborov $3$ kroglic izmed $12$ je $\binom{12}{3} = \frac{12 \cdot 11 \cdot 10}{3 \cdot 2 \cdot 1} = 220$.
+2. a) Ugodnih izborov je $\binom{5}{3} = 10$, zato je $P = \frac{10}{220} = \frac{1}{22}$.
+3. b) Izberemo po eno kroglico vsake barve: $4 \cdot 3 \cdot 5 = 60$ izborov, $P = \frac{60}{220} = \frac{3}{11}$.
+4. c) Nasprotni dogodek je »nobena kroglica ni rdeča«, torej so vse tri izmed $8$ nerdečih: $\binom{8}{3} = 56$ izborov.
+5. c) $P = 1 - \frac{56}{220} = 1 - \frac{14}{55} = \frac{41}{55}$.
+6. Odgovor: a) $\frac{1}{22}$, b) $\frac{3}{11}$, c) $\frac{41}{55}$.
+
+**Točkovanje:** a) 1 točka za število vseh izborov $\binom{12}{3} = 220$, 1 točka za $\frac{1}{22}$; b) 1 točka za $4 \cdot 3 \cdot 5 = 60$ ugodnih izborov, 1 točka za $\frac{3}{11}$; c) 1 točka za nasprotni dogodek in $\binom{8}{3} = 56$ (ali za vsoto primerov z $1$, $2$ in $3$ rdečimi kroglicami, $112 + 48 + 4 = 164$), 1 točka za $\frac{41}{55}$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+V razredu je $30$ dijakov. Šport jih trenira $18$, glasbilo jih igra $12$, $6$ dijakov pa trenira šport in igra glasbilo. Naključno izberemo enega dijaka. Dogodek $S$: izbrani dijak trenira šport. Dogodek $G$: izbrani dijak igra glasbilo.
+
+a) Izračunaj $P(S + G)$ in z besedami opiši dogodek $S + G$. (2 točki)
+b) Izračunaj verjetnost, da izbrani dijak ne trenira športa in ne igra glasbila. (1 točka)
+c) Izbrani dijak igra glasbilo. Izračunaj verjetnost, da trenira tudi šport. (2 točki)
+d) Ali sta dogodka $S$ in $G$ nezdružljiva? Ali sta neodvisna? Oba odgovora utemelji z računom. (3 točke)
+e) Iz razreda naključno izberemo dva različna dijaka. Izračunaj verjetnost, da oba igrata glasbilo. (2 točki)
+
+**Rešitev:**
+
+1. a) $P(S) = \frac{18}{30} = \frac{3}{5}$, $P(G) = \frac{12}{30} = \frac{2}{5}$, $P(S \cdot G) = \frac{6}{30} = \frac{1}{5}$.
+2. a) $P(S + G) = \frac{3}{5} + \frac{2}{5} - \frac{1}{5} = \frac{4}{5}$. Dogodek $S + G$: izbrani dijak trenira šport ali igra glasbilo (vsaj eno od obojega).
+3. b) Iskani dogodek je nasprotni dogodek dogodka $S + G$, zato je $P = 1 - \frac{4}{5} = \frac{1}{5}$.
+4. c) $P(S \mid G) = \frac{P(S \cdot G)}{P(G)} = \frac{1/5}{2/5} = \frac{1}{2}$ (med $12$ dijaki, ki igrajo glasbilo, jih $6$ trenira šport).
+5. d) Dogodka nista nezdružljiva, ker je $P(S \cdot G) = \frac{1}{5} \ne 0$: $6$ dijakov trenira šport in igra glasbilo.
+6. d) $P(S) \cdot P(G) = \frac{3}{5} \cdot \frac{2}{5} = \frac{6}{25}$, $P(S \cdot G) = \frac{1}{5} = \frac{5}{25}$. Ker je $P(S \cdot G) \ne P(S) \cdot P(G)$, dogodka nista neodvisna (to kaže tudi $P(S \mid G) = \frac{1}{2} \ne \frac{3}{5} = P(S)$).
+7. e) Prvi izbrani igra glasbilo z verjetnostjo $\frac{12}{30}$, drugi ob tem pogoju z verjetnostjo $\frac{11}{29}$: $P = \frac{12}{30} \cdot \frac{11}{29} = \frac{132}{870} = \frac{22}{145}$.
+8. Odgovor: a) $\frac{4}{5}$, b) $\frac{1}{5}$, c) $\frac{1}{2}$, d) dogodka nista nezdružljiva in nista neodvisna, e) $\frac{22}{145}$.
+
+**Točkovanje:** a) 1 točka za formulo $P(S + G) = P(S) + P(G) - P(S \cdot G)$ s pravilnimi podatki, 1 točka za $\frac{4}{5}$ in opis dogodka; b) 1 točka za $\frac{1}{5}$ (nasprotni dogodek); c) 1 točka za pogojno verjetnost $\frac{P(S \cdot G)}{P(G)}$ ali zožitev na $12$ dijakov z glasbilom, 1 točka za $\frac{1}{2}$; d) 1 točka za utemeljitev, da dogodka nista nezdružljiva, 1 točka za primerjavo $P(S \cdot G)$ s $P(S) \cdot P(G)$, 1 točka za sklep, da nista neodvisna; e) 1 točka za zmnožek s pogojno verjetnostjo $\frac{12}{30} \cdot \frac{11}{29}$ ali za $\binom{12}{2} : \binom{30}{2}$, 1 točka za $\frac{22}{145}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Pojasni pojme poskus, dogodek in vzorčni prostor ter zapiši klasično definicijo verjetnosti.
+---
+Poskus je dejanje, ki ga lahko ponavljamo pod enakimi pogoji in katerega izid je odvisen od naključja, na primer met kocke. Vzorčni prostor je množica vseh možnih izidov poskusa, pri metu kocke $\{1, 2, 3, 4, 5, 6\}$. Dogodek je podmnožica vzorčnega prostora, na primer »padlo je sodo število« $= \{2, 4, 6\}$. Če ima poskus $n$ enako verjetnih izidov in je za dogodek $A$ ugodnih $m$ izidov, je po klasični definiciji $P(A) = \frac{m}{n}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Zapiši formulo za verjetnost vsote dveh dogodkov, jo utemelji in povej, kdaj se poenostavi.
+---
+Za poljubna dogodka velja $P(A + B) = P(A) + P(B) - P(A \cdot B)$. Izide, ki so v obeh dogodkih, v vsoti $P(A) + P(B)$ štejemo dvakrat, zato verjetnost produkta $A \cdot B$ enkrat odštejemo. Pri klasični verjetnosti to sledi iz štetja $|A + B| = |A| + |B| - |A \cdot B|$, ki ga delimo s številom vseh izidov. Če sta dogodka nezdružljiva, je $P(A \cdot B) = 0$ in velja $P(A + B) = P(A) + P(B)$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Pojasni razliko med nezdružljivima in neodvisnima dogodkoma ter navedi primer za vsako vrsto.
+---
+Dogodka sta nezdružljiva, če se ne moreta zgoditi hkrati, torej je $P(A \cdot B) = 0$. Dogodka sta neodvisna, če izid enega ne spremeni verjetnosti drugega, torej je $P(A \cdot B) = P(A) \cdot P(B)$. Pri enem metu kocke sta dogodka »pade $1$« in »pade $2$« nezdružljiva, pri dveh metih kovanca pa sta dogodka »v prvem metu pade grb« in »v drugem metu pade grb« neodvisna. Nezdružljiva dogodka, ki imata oba pozitivno verjetnost, nista neodvisna, saj se drugi gotovo ne zgodi, če se zgodi prvi.
+:::
+
 ## Drugače: Na sliki
 
 Predstavljaj si pravokotnik s ploščino $1$, ki predstavlja vse izide. Dogodek $A$ je lik v njem, njegova ploščina pa je $P(A)$. Dogodek $B$ je drug lik.
@@ -278,3 +359,19 @@ m | število izidov, ugodnih za dogodek A | | |
 n | število vseh enako verjetnih izidov | | |
 N | dogodek, da je izdelek pokvarjen | | |
 :::
+
+<<RACUN
+vrednost: 5/(6*6) | 5/36
+vrednost: factorial(12)/(factorial(3)*factorial(9)) | 220
+vrednost: factorial(5)/(factorial(3)*factorial(2))/220 | 1/22
+vrednost: 4*3*5/220 | 3/11
+vrednost: factorial(8)/(factorial(3)*factorial(5)) | 56
+vrednost: 1-56/220 | 41/55
+vrednost: (4*28+6*8+4)/220 | 41/55
+vrednost: 18/30+12/30-6/30 | 4/5
+vrednost: 1-4/5 | 1/5
+vrednost: (6/30)/(12/30) | 1/2
+vrednost: (18/30)*(12/30) | 6/25
+vrednost: 12/30*11/29 | 22/145
+vrednost: (factorial(12)/(factorial(2)*factorial(10)))/(factorial(30)/(factorial(2)*factorial(28))) | 22/145
+>>

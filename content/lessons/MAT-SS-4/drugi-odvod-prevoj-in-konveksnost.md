@@ -183,6 +183,78 @@ $f''(1) = -e^{-1} < 0$, zato je v $x = 1$ maksimum $f(1) = e^{-1} \approx 0{,}37
 - Iskanje: $f''$, ničle $f''$, predznak na intervalih, ordinata $f(x_0)$.
 - Test ekstrema: $f'(a) = 0$ in $f''(a) > 0$ minimum, $f''(a) < 0$ maksimum, $f''(a) = 0$ ne odloči.
 
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = x^4 - 4x^3 + 10$.
+
+a) Izračunaj $f'(x)$ in $f''(x)$. (2 točki)
+b) Določi intervale, na katerih je $f$ konveksna oziroma konkavna, in prevoje funkcije $f$. (3 točke)
+c) Poišči stacionarni točki funkcije $f$ in določi njuno vrsto. Pojasni, zakaj test z drugim odvodom v eni od njiju ne zadošča. (3 točke)
+
+**Rešitev:**
+
+1. a) $f'(x) = 4x^3 - 12x^2 = 4x^2(x - 3)$.
+2. a) $f''(x) = 12x^2 - 24x = 12x(x - 2)$.
+3. b) Ničli drugega odvoda sta $x = 0$ in $x = 2$. Predznak: $f''(-1) = 36 > 0$, $f''(1) = -12 < 0$, $f''(3) = 36 > 0$.
+4. b) $f$ je konveksna na $(-\infty, 0)$ in na $(2, \infty)$, konkavna na $(0, 2)$. V obeh ničlah $f''$ zamenja predznak.
+5. b) $f(0) = 10$ in $f(2) = 16 - 32 + 10 = -6$, zato sta prevoja $P_1(0, 10)$ in $P_2(2, -6)$.
+6. c) Iz $4x^2(x - 3) = 0$ dobimo stacionarni točki $x = 0$ in $x = 3$.
+7. c) $f''(3) = 108 - 72 = 36 > 0$, zato je v $x = 3$ lokalni minimum $f(3) = 81 - 108 + 10 = -17$, točka $(3, -17)$.
+8. c) $f''(0) = 0$, zato drugi odvod o vrsti ne odloči. Izraz $4x^2(x - 3)$ je levo in desno od $0$ negativen, $f'$ predznaka ne zamenja, zato v $x = 0$ ni ekstrema: točka $(0, 10)$ je prevoj z vodoravno tangento.
+9. Odgovor: $f$ je konveksna na $(-\infty, 0)$ in $(2, \infty)$, konkavna na $(0, 2)$; prevoja sta $P_1(0, 10)$ in $P_2(2, -6)$; lokalni minimum je $(3, -17)$, v $x = 0$ ekstrema ni.
+
+**Točkovanje:** a) 1 točka za $f'$, 1 točka za $f''$; b) 1 točka za ničli $f''$ s preverjeno menjavo predznaka, 1 točka za intervale konveksnosti in konkavnosti, 1 točka za oba prevoja z ordinatama; c) 1 točka za stacionarni točki, 1 točka za minimum $(3, -17)$ z utemeljitvijo, 1 točka za utemeljitev, da v $x = 0$ ni ekstrema ($f''(0) = 0$ ne odloči, $f'$ ne zamenja predznaka).
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Dana je funkcija $f(x) = (x^2 - 3)\,e^x$. Rezultate, ki niso cela števila, zaokroži na dve decimalki.
+
+a) Izračunaj $f'(x)$ in $f''(x)$ ter oba zapiši kot produkt polinoma in $e^x$. (2 točki)
+b) Poišči stacionarni točki funkcije $f$ in z drugim odvodom določi njuno vrsto. (3 točke)
+c) Izračunaj prevoja funkcije $f$ in utemelji, da sta res prevoja. (3 točke)
+d) Zapiši intervale, na katerih je $f$ konveksna oziroma konkavna. (2 točki)
+
+**Rešitev:**
+
+1. a) Po pravilu za produkt: $f'(x) = 2x\,e^x + (x^2 - 3)\,e^x = (x^2 + 2x - 3)\,e^x$.
+2. a) Še enkrat: $f''(x) = (2x + 2)\,e^x + (x^2 + 2x - 3)\,e^x = (x^2 + 4x - 1)\,e^x$.
+3. b) Ker je $e^x > 0$, je $f'(x) = 0$ natanko pri $x^2 + 2x - 3 = (x + 3)(x - 1) = 0$, torej pri $x = -3$ in $x = 1$.
+4. b) $f''(-3) = (9 - 12 - 1)\,e^{-3} = -4e^{-3} < 0$: lokalni maksimum $f(-3) = 6e^{-3} \doteq 0{,}2987$, točka $(-3; 0{,}30)$.
+5. b) $f''(1) = 4e > 0$: lokalni minimum $f(1) = -2e \doteq -5{,}4366$, točka $(1; -5{,}44)$.
+6. c) $f''(x) = 0$ pri $x^2 + 4x - 1 = 0$: $x_{1,2} = -2 \pm \sqrt{5}$, torej $x_1 \doteq -4{,}2361$ in $x_2 \doteq 0{,}2361$.
+7. c) Ničli kvadratnega polinoma sta enostavni, zato $x^2 + 4x - 1$ v obeh zamenja predznak; faktor $e^x > 0$ predznaka ne spremeni, zato ga zamenja tudi $f''$. Obe točki sta prevoja.
+8. c) $f(x_1) = (6 + 4\sqrt{5})\,e^{-2 - \sqrt{5}} \doteq 0{,}2162$ in $f(x_2) = (6 - 4\sqrt{5})\,e^{-2 + \sqrt{5}} \doteq -3{,}7282$. Prevoja sta $P_1(-4{,}24; 0{,}22)$ in $P_2(0{,}24; -3{,}73)$.
+9. d) Polinom $x^2 + 4x - 1$ je negativen med ničlama in pozitiven zunaj njiju. Zato je $f$ konveksna na $(-\infty, -2 - \sqrt{5})$ in na $(-2 + \sqrt{5}, \infty)$, konkavna pa na $(-2 - \sqrt{5}, -2 + \sqrt{5})$, približno na $(-4{,}24; 0{,}24)$.
+10. Odgovor: maksimum $(-3; 0{,}30)$, minimum $(1; -5{,}44)$, prevoja $P_1(-4{,}24; 0{,}22)$ in $P_2(0{,}24; -3{,}73)$; $f$ je konkavna med prevojema in konveksna zunaj tega intervala.
+
+**Točkovanje:** a) 1 točka za $f'$, 1 točka za $f''$; b) 1 točka za $x = -3$ in $x = 1$, 1 točka za maksimum z utemeljitvijo in ordinato, 1 točka za minimum z utemeljitvijo in ordinato; c) 1 točka za abscisi $-2 \pm \sqrt{5}$, 1 točka za utemeljitev menjave predznaka, 1 točka za ordinati; d) 1 točka za intervala konveksnosti, 1 točka za interval konkavnosti.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Kdaj je funkcija na intervalu konveksna in kdaj konkavna ter kako to ugotoviš z drugim odvodom?
+---
+Funkcija je na intervalu konveksna, če njen graf tam leži nad vsako svojo tangento, in konkavna, če leži pod njimi. Za dvakrat odvedljivo funkcijo velja: če je $f''(x) > 0$ na intervalu, je $f$ tam konveksna. Če je $f''(x) < 0$ na intervalu, je $f$ tam konkavna. Razlog je, da pri $f'' > 0$ odvod $f'$ narašča, nakloni tangent se večajo in graf se upogiba navzgor, stran od tangent.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Kaj je prevoj funkcije in kako ga poiščeš? Navedi primer, ki pokaže, da ničla drugega odvoda še ni nujno prevoj.
+---
+Prevoj je točka grafa, v kateri se konveksnost zamenja s konkavnostjo ali obratno; tangenta v njej graf preseka. V prevoju drugi odvod zamenja predznak, zato je tam $f''(x_0) = 0$, če $f''(x_0)$ obstaja. Prevoje iščeš med ničlami drugega odvoda in pri vsaki preveriš, ali $f''$ v njej zamenja predznak. Pri $f(x) = x^4$ je $f''(0) = 0$, a $f''(x) = 12x^2$ je na obeh straneh pozitiven, zato v $(0, 0)$ ni prevoja, ampak minimum.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Kako z drugim odvodom ugotoviš vrsto ekstrema v stacionarni točki in kdaj ta test ne odloči?
+---
+Naj bo $a$ stacionarna točka, torej $f'(a) = 0$. Če je $f''(a) > 0$, je v $a$ lokalni minimum: $f'$ v $a$ narašča, zato je tik levo od $a$ negativen, tik desno pa pozitiven. Če je $f''(a) < 0$, je v $a$ lokalni maksimum, ker $f'$ tam preide iz pozitivnih v negativne vrednosti. Če je $f''(a) = 0$, test ne odloči: $x^4$, $-x^4$ in $x^3$ imajo v $0$ po vrsti minimum, maksimum in nobenega ekstrema, zato pogledaš predznak $f'$ levo in desno od $a$.
+:::
+
 ## Drugače: Korak za korakom s številkami
 
 Primerjaj $x^3$ in $x^4$ blizu točke $0$, kjer je pri obeh $f''(0) = 0$. Izračunaj drugi odvod malo levo in malo desno.
@@ -277,6 +349,24 @@ odvod: 1/x | x | -1/x^2
 odvod: x^2-3*x+1 | x | 2*x-3
 resi: 2*x-3=0 | x | 1.5
 resi: 6*2+2*k=0 | k | -6
+odvod: x^4-4*x^3+10 | x | 4*x^3-12*x^2
+odvod: 4*x^3-12*x^2 | x | 12*x^2-24*x
+resi: 12*x^2-24*x=0 | x | 0, 2
+neenacba: 12*x^2-24*x<0 | x | (0, 2)
+vrednost: 2^4-4*2^3+10 | -6
+resi: 4*x^3-12*x^2=0 | x | 0, 3
+vrednost: 12*3^2-24*3 | 36
+vrednost: 3^4-4*3^3+10 | -17
+odvod: (x^2-3)*exp(x) | x | (x^2+2*x-3)*exp(x)
+odvod: (x^2+2*x-3)*exp(x) | x | (x^2+4*x-1)*exp(x)
+resi: x^2+2*x-3=0 | x | -3, 1
+vrednost: (9-12-1)*exp(-3) | -4*exp(-3)
+vrednost: ((-3)^2-3)*exp(-3) | 0.2987
+vrednost: (1-3)*exp(1) | -5.4366
+resi: x^2+4*x-1=0 | x | -2-sqrt(5), -2+sqrt(5)
+vrednost: (6+4*sqrt(5))*exp(-2-sqrt(5)) | 0.2162
+vrednost: (6-4*sqrt(5))*exp(-2+sqrt(5)) | -3.7282
+neenacba: x^2+4*x-1<0 | x | (-2-sqrt(5), -2+sqrt(5))
 >>
 
 :::simboli

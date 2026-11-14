@@ -179,6 +179,65 @@ $r = \sqrt{1{,}0816} = 1{,}04$, zato $\frac{p}{100} = 0{,}04$ in $p = 4\,\%$. Pr
 - Nazaj: $G_0 = \dfrac{G_n}{r^n}$; obrestna mera iz $r^n = \dfrac{G_n}{G_0}$.
 - Zaokrožuj šele na koncu.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Glavnica $2400\,\text{€}$ je bila $3$ leta naložena z navadnim obrestovanjem. Na koncu je bilo na računu $2616\,\text{€}$. Izračunaj letno obrestno mero.
+
+**Rešitev:**
+
+1. Obresti v treh letih: $2616 - 2400 = 216$, torej $216\,\text{€}$.
+2. Pri navadnem obrestovanju so obresti vsako leto enake: $o = 216 : 3 = 72$, torej $72\,\text{€}$ na leto.
+3. Iz $o = \dfrac{G_0 \cdot p}{100}$ sledi $p = \dfrac{100 \cdot o}{G_0} = \dfrac{100 \cdot 72}{2400} = 3$.
+4. Preizkus: $2400 \cdot \left(1 + \dfrac{3 \cdot 3}{100}\right) = 2400 \cdot 1{,}09 = 2616$.
+5. Odgovor: letna obrestna mera je $3\,\%$.
+
+**Točkovanje:** 1 točka za obresti v treh letih ($216\,\text{€}$), 1 točka za letne obresti ($72\,\text{€}$) ali za pravilno nastavljeno enačbo $2400\left(1 + \frac{3p}{100}\right) = 2616$, 1 točka za $p = 3\,\%$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
+
+Vlogo $6000\,\text{€}$ naložimo za $5$ let pri letni obrestni meri $3{,}6\,\%$ z obrestnim obrestovanjem. Zneske zaokroži na cente, odstotke na desetinko odstotka.
+
+a) Koliko bo na računu po $5$ letih, če banka obresti pripiše enkrat na leto? (2 točki)
+b) Koliko odstotkov vloge znašajo vse obresti v teh $5$ letih? Za koliko odstotnih točk je to več kot pri navadnem obrestovanju z isto obrestno mero? (2 točki)
+c) Druga banka ponuja enako letno obrestno mero, a obresti pripisuje mesečno z relativno mesečno obrestno mero. Koliko bi bilo na računu po $5$ letih in za koliko evrov več kot v a)? (2 točki)
+
+**Rešitev:**
+
+1. a) Obrestovalni faktor je $r = 1{,}036$, zato $G_5 = 6000 \cdot 1{,}036^5 \approx 6000 \cdot 1{,}1934350 \approx 7160{,}6101$, torej $7160{,}61\,\text{€}$.
+2. b) Vse obresti: $7160{,}61 - 6000 = 1160{,}61$, torej $1160{,}61\,\text{€}$. Delež vloge: $\dfrac{1160{,}61}{6000} \cdot 100 \approx 19{,}34$, torej približno $19{,}3\,\%$.
+3. b) Pri navadnem obrestovanju je vsako leto $3{,}6\,\%$ vloge, v petih letih $5 \cdot 3{,}6 = 18$, torej $18\,\%$. Razlika je $19{,}3 - 18 = 1{,}3$ odstotne točke.
+4. c) Relativna mesečna obrestna mera je $\dfrac{3{,}6}{12} = 0{,}3$, torej $0{,}3\,\%$; mesečni faktor je $1{,}003$, pripisov je $12 \cdot 5 = 60$.
+5. c) $G = 6000 \cdot 1{,}003^{60} \approx 7181{,}3688$, torej $7181{,}37\,\text{€}$. Razlika: $7181{,}37 - 7160{,}61 = 20{,}76$, torej $20{,}76\,\text{€}$.
+6. Odgovor: a) $7160{,}61\,\text{€}$; b) obresti so približno $19{,}3\,\%$ vloge, kar je $1{,}3$ odstotne točke več kot $18\,\%$ pri navadnem obrestovanju; c) $7181{,}37\,\text{€}$, kar je $20{,}76\,\text{€}$ več.
+
+**Točkovanje:** a) 1 točka za izraz $6000 \cdot 1{,}036^5$ in 1 točka za $7160{,}61\,\text{€}$; b) 1 točka za delež $19{,}3\,\%$ in 1 točka za $18\,\%$ pri navadnem obrestovanju z razliko $1{,}3$ odstotne točke; c) 1 točka za $6000 \cdot 1{,}003^{60} \approx 7181{,}37\,\text{€}$ in 1 točka za razliko $20{,}76\,\text{€}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Izpelji formuli za stanje na računu po $n$ letih pri navadnem in pri obrestnem obrestovanju ter povej, kakšno zaporedje tvorijo stanja v vsakem primeru.
+---
+Pri navadnem obrestovanju se obresti vsako leto računajo od začetne glavnice, zato se stanje vsako leto poveča za enake obresti $o = \frac{G_0 \cdot p}{100}$. Po $n$ letih je $G_n = G_0 + n \cdot \frac{G_0 \cdot p}{100} = G_0 \left(1 + \frac{n \cdot p}{100}\right)$, stanja pa tvorijo aritmetično zaporedje z diferenco $o$. Pri obrestnem obrestovanju se obresti pripišejo glavnici, zato se stanje vsako leto pomnoži z obrestovalnim faktorjem $r = 1 + \frac{p}{100}$. Po $n$ letih je $G_n = G_0 \cdot r^n$, stanja pa tvorijo geometrijsko zaporedje s količnikom $r$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kaj je relativna obrestna mera in kako izračunamo končno stanje, če banka obresti pripisuje večkrat na leto?
+---
+Relativna obrestna mera je letna obrestna mera, deljena s številom pripisov v enem letu, na primer $\frac{p}{12}$ pri mesečnem pripisu. Pri $m$ pripisih na leto se stanje ob vsakem pripisu pomnoži s faktorjem $1 + \frac{p}{100\,m}$. V $n$ letih je $m \cdot n$ pripisov, zato je končno stanje $G = G_0 \left(1 + \frac{p}{100\,m}\right)^{m n}$. Pri isti letni obrestni meri da pogostejši pripis nekoliko več kot letni pripis, ker se obresti prej začnejo obrestovati.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Dokaži, da je pri isti glavnici in isti pozitivni letni obrestni meri stanje pri obrestnem obrestovanju po vsaj dveh letih večje kot pri navadnem.
+---
+V prvem letu se pri obeh vrstah obrestovanja obresti računajo od iste glavnice $G_0$, zato so enake $o = \frac{G_0 \cdot p}{100}$. Pri navadnem obrestovanju so obresti vsako leto enake $o$, zato je po $n$ letih stanje $G_0 + n \cdot o$. Pri obrestnem obrestovanju se obresti $k$-tega leta računajo od stanja $G_{k-1} = G_0 \cdot r^{k-1}$, ki je za $k \ge 2$ večje od $G_0$, ker je pri $p > 0$ faktor $r > 1$, zato so obresti v vsakem letu od drugega naprej večje od $o$. Po $n \ge 2$ letih je torej vsota vseh obresti večja od $n \cdot o$, saj nobeno leto ne prinese manj kot $o$, vsaj drugo leto pa prinese več. Zato velja $G_0 \cdot r^n > G_0 \left(1 + \frac{n \cdot p}{100}\right)$ za vsak $n \ge 2$.
+:::
+
 ## Drugače: Na sliki
 
 Predstavljaj si stanje na računu kot stolpce, en stolpec za vsako leto.
@@ -247,6 +306,17 @@ V prvem letu sta obe stopnici enaki. Prostor med črto in krivuljo so obresti od
 ~ To je $4 \cdot 2{,}5\,\% = 10\,\%$, kot pri navadnem obrestovanju. Vsako leto se podraži že podražena cena.
 + približno $11\,038{,}13\,\text{€}$
 > Podražitve se »obrestujejo« kot pri obrestnem obrestovanju: $10\,000 \cdot 1{,}025^4 \approx 11\,038{,}13\,\text{€}$.
+
+<<RACUN
+vrednost: (2616-2400)/3 | 72
+vrednost: 100*72/2400 | 3
+vrednost: 2400*(1+3*3/100) | 2616
+vrednost: 6000*1.036^5 | 7160.61
+vrednost: (7160.61-6000)/6000*100 | 19.34
+vrednost: 5*3.6 | 18
+vrednost: 6000*(1+0.036/12)^60 | 7181.37
+vrednost: 7181.37-7160.61 | 20.76
+>>
 
 :::simboli
 G_0 | začetna glavnica (vloga) | G_0 = \dfrac{G_n}{r^n} | € | pri obrestnem obrestovanju

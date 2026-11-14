@@ -177,6 +177,73 @@ Povezanost je negativna in precej močna: ob vetrovnejših dneh je bilo v povpre
 - Pri opisni in številski spremenljivki primerjamo sredini (in mediani) skupin.
 - Povezanost ni dokaz vzroka; v interpretaciji navedi omejitve.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Šola ima $600$ dijakov. Ana želi raziskati, ali dijaki šole, ki se v šolo vozijo s kolesom, v povprečju spijo dlje od tistih, ki se vozijo z avtobusom. Anketirala je $40$ dijakov prvih letnikov. Zapiši populacijo in vzorec, navedi obe spremenljivki z njuno vrsto (številska ali opisna) in utemelji, ali je vzorec reprezentativen.
+
+**Rešitev:**
+
+1. Populacija je vseh $600$ dijakov šole, vzorec pa $40$ anketiranih dijakov prvih letnikov.
+2. Spremenljivki sta način prihoda v šolo (opisna, vrednosti kolo in avtobus) in čas spanja v urah (številska).
+3. Vzorec ni reprezentativen: v njem so le prvošolci, ki se od starejših dijakov lahko razlikujejo prav v tem, kar Ana meri (urnik, navade spanja, način prihoda). Vključiti bi morala dijake vseh letnikov, na primer z naključnim izborom iz vseh razredov.
+4. Odgovor: populacija so vsi dijaki šole, vzorec $40$ prvošolcev; način prihoda je opisna, čas spanja številska spremenljivka; vzorec ni reprezentativen, ker zajame le en letnik.
+
+**Točkovanje:** 1 točka za populacijo in vzorec, 1 točka za obe spremenljivki s pravilno vrsto, 1 točka za utemeljen sklep, da vzorec ni reprezentativen. Kot populacijo priznamo tudi vse dijake šole, ki se vozijo s kolesom ali avtobusom. Sama majhnost vzorca ni zadostna utemeljitev; utemeljitev mora omeniti izbor (le en letnik).
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Žan preiskuje vprašanje »Ali dijaki, ki več ur na teden trenirajo šport, v povprečju spijo dlje?« Deset dijakov mu je povedalo, koliko ur na teden trenirajo ($x$) in koliko ur na noč povprečno spijo ($y$):
+
+| dijak | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| $x$ (h na teden) | $2$ | $0$ | $5$ | $8$ | $3$ | $10$ | $1$ | $6$ | $4$ | $12$ |
+| $y$ (h na noč) | $7{,}0$ | $6{,}5$ | $7{,}5$ | $8{,}0$ | $6{,}8$ | $7{,}9$ | $7{,}2$ | $7{,}4$ | $7{,}1$ | $8{,}3$ |
+
+a) Kateri prikaz je primeren za te podatke? Uredi podatke po $x$ in opiši vrsto in moč povezanosti med $x$ in $y$. (2 točki)
+
+b) Dijake razdeli v dve skupini: tiste, ki trenirajo največ $4$ ure na teden, in tiste, ki trenirajo več kot $4$ ure. Izračunaj aritmetično sredino $y$ v vsaki skupini in razliko sredin izrazi v minutah. (3 točke)
+
+c) Odgovori na Žanovo vprašanje in navedi eno omejitev preiskave. Pojasni, zakaj iz podatkov ne smemo skleniti, da trening povzroči daljši spanec. (2 točki)
+
+**Rešitev:**
+
+1. a) Obe spremenljivki sta številski, zato je primeren razsevni diagram: vsak dijak je ena točka $(x, y)$.
+2. a) Urejeno po $x$: $x = 0, 1, 2, 3, 4, 5, 6, 8, 10, 12$, pripadajoči $y$ so $6{,}5$; $7{,}2$; $7{,}0$; $6{,}8$; $7{,}1$; $7{,}5$; $7{,}4$; $8{,}0$; $7{,}9$; $8{,}3$. Z naraščajočim $x$ se $y$ v splošnem dviga, le pri nekaj korakih malo pade; točke ležijo blizu naraščajoče premice, zato je povezanost pozitivna in močna.
+3. b) Skupina z največ $4$ urami treninga: $\bar y_1 = \dfrac{6{,}5 + 7{,}2 + 7{,}0 + 6{,}8 + 7{,}1}{5} = \dfrac{34{,}6}{5} = 6{,}92$ ure.
+4. b) Skupina z več kot $4$ urami: $\bar y_2 = \dfrac{7{,}5 + 7{,}4 + 8{,}0 + 7{,}9 + 8{,}3}{5} = \dfrac{39{,}1}{5} = 7{,}82$ ure.
+5. b) Razlika: $7{,}82 - 6{,}92 = 0{,}9$ ure, to je $0{,}9 \cdot 60 = 54$ minut.
+6. c) V teh podatkih dijaki, ki trenirajo več, spijo v povprečju dlje, za približno $54$ minut na noč. Omejitev: le deset dijakov, podatki pa so njihove ocene, ne meritve.
+7. c) Povezanost pokaže le, da se količini spreminjata skupaj. Obe lahko poganja tretja spremenljivka, na primer urejen dnevni ritem ali manj drugih obveznosti, zato bi za vzrok potrebovali poskus ali znanje o pojavu.
+8. Odgovor: povezanost je pozitivna in močna; sredini sta $6{,}92$ in $7{,}82$ ure, razlika je $54$ minut; odgovor na vprašanje je »da, v teh podatkih«, vzroka pa podatki ne dokažejo.
+
+**Točkovanje:** a) 1 točka za razsevni diagram, 1 točka za pozitivno povezanost z oceno moči (močna ali zmerno močna) in utemeljitvijo iz urejenih podatkov; b) 1 točka za sredino $6{,}92$ ure in 1 točka za sredino $7{,}82$ ure, 1 točka za razliko $54$ minut; c) 1 točka za odgovor na vprašanje z omejitvijo, 1 točka za utemeljitev, da povezanost ni dokaz vzroka (tretja spremenljivka).
+
+### Ustno vprašanje 1
+
+:::premisli
+Naštej korake statistične naloge in na kratko opiši, kaj narediš v vsakem.
+---
+Najprej izberemo temo in postavimo jasno, merljivo preiskovalno vprašanje. Nato zberemo podatke z merjenjem, opazovanjem, anketo ali iz obstoječih virov in povemo, kaj, kje, kdaj in koliko enot merimo. Podatke pregledno uredimo, jih razvrstimo v skupine ali razrede in izločimo napake. Sledi analiza z merami sredine in razpršenosti, primerjavo skupin ali razsevnim diagramom. Na koncu rezultate prikažemo, z besedami odgovorimo na vprašanje in navedemo omejitve preiskave.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kaj sta populacija in vzorec in kdaj je vzorec reprezentativen? Navedi primer vzorca, ki ni reprezentativen.
+---
+Populacija so vse enote, o katerih nas kaj zanima, vzorec pa je del populacije, ki ga res izmerimo. Vzorec je reprezentativen, če je populaciji podoben v vsem, kar bi lahko vplivalo na odgovor; tak vzorec najlažje dobimo z naključnim izborom enot iz cele populacije. Primer nereprezentativnega vzorca so samo člani športnega kluba, kadar sprašujemo o gibanju vseh dijakov šole. Sklep iz takega vzorca velja le za skupino, ki jo vzorec res predstavlja.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pojasni, zakaj povezanost dveh spremenljivk še ne pomeni, da ena povzroča drugo, in navedi primer.
+---
+Razsevni diagram pokaže le, da se količini spreminjata skupaj. Obe lahko poganja tretja spremenljivka, ki je v podatkih ne vidimo. Poleti na primer rasteta prodaja sladoleda in število opeklin od sonca, a sladoled opeklin ne povzroča; obe poganja toplo, sončno vreme. Za trditev o vzroku potrebujemo poskus ali znanje o pojavu, ne le podatke.
+:::
+
 ## Drugače: Na sliki
 
 Predstavljaj si razsevni diagram kot jato ptic na nebu. Če jata leti poševno navzgor, je povezanost pozitivna; če se spušča, negativna. Ozka, podolgovata jata pomeni močno povezanost, široka in razvlečena šibko. Okrogla jata, ki nikamor ne kaže, pomeni, da povezanosti ni. Takšen je diagram datuma v mesecu in najvišje temperature ob desetih naključnih dneh:
@@ -271,6 +338,9 @@ vrednost: (38+33+30+24)/4 | 31.25
 vrednost: 53.75-31.25 | 22.5
 vrednost: (30+34+26+30)/4-(12+18+14+16)/4 | 15
 vrednost: (21+23)/2 | 22
+vrednost: (6.5+7.2+7.0+6.8+7.1)/5 | 6.92
+vrednost: (7.5+7.4+8.0+7.9+8.3)/5 | 7.82
+vrednost: (7.82-6.92)*60 | 54
 >>
 
 :::simboli

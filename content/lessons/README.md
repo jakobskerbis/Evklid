@@ -264,5 +264,17 @@ Primer 3 je na ravni izpita; za »## Povzetek« pride razdelek »## Za izpit«
 (»Znati moraš povedati:« in 2–3 »### Naloga« z »**Rešitev:**«, ki je v aplikaciji
 skrita za gumbom); namesto »Drugače: Iz vsakdanjega življenja« je »Drugače: Uporaba v stroki«.
 
+## Maturitetne lekcije (MAT-SS)
+
+Lekcija srednješolske matematike ima za »## Povzetek« razdelek »## Za maturo« (j, 13. 11. 2026, točki C4 in C5;
+oblika nalog po *Predmetnem izpitnem katalogu za splošno maturo*, povzetek v `docs/matura-katalog.md`):
+
+- `### Naloga N: <vrsta> naloga, K točk, pola 1 (brez računala)` ali `… pola 2 (z računalom)`; osnovna raven: kratka
+  naloga (do 3 točke) in krajša strukturirana (5–8 točk); kjer katalog preverja tudi višjo raven, še
+  `### Naloga 3 (višja raven): strukturirana naloga, 9–11 točk, …`. Naloge za polo 1 so rešljive na roke.
+- Vsaka naloga ima `**Rešitev:**` (popolna, v aplikaciji skrita za gumbom) in vrstico `**Točkovanje:** …`.
+- 2–3 `### Ustno vprašanje N` z blokom `:::premisli` (vprašanje, `---`, vzorčni odgovor); gredo tudi v »Vprašaj me«.
+- Razdelek se ne šteje v mejo 2800 besed. `check-lesson.js` opozori, če manjka ali mu kaj manjka.
+
 Katere teme še nimajo lekcije, urejeno po številu programov:
 `node scripts/fakultetne-lekcije.js --letnik 1 --n 40`.

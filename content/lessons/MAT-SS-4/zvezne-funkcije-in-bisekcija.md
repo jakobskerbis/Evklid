@@ -194,6 +194,82 @@ $g(1{,}875) \approx -0{,}033 < 0$, zato je ničla na $(1{,}875; 1{,}88)$ in se z
 - Bisekcija: $c = \frac{a + b}{2}$, obdrži polovico z različnima predznakoma; po $n$ korakih je dolžina $\frac{b - a}{2^n}$.
 - S tehnologijo: tabela vrednosti s čedalje manjšim korakom ali ukaz za ničlo oz. presečišče v programu za grafe. Točka na krivulji ali presečišče = ničla razlike.
 
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = x^3 - 4x + 1$.
+
+a) Utemelji, da ima enačba $x^3 - 4x + 1 = 0$ natanko tri realne rešitve, in za vsako zapiši interval med zaporednima celima številoma, na katerem leži. (3 točke)
+b) Z dvema korakoma bisekcije, začenši na intervalu $[0, 1]$, zoži interval, na katerem leži ena od ničel. (2 točki)
+c) Utemelji, da $f$ na intervalu $[0, 2]$ doseže najmanjšo vrednost $m$, in pokaži, da je $m \le -2$. (2 točki)
+
+**Rešitev:**
+
+1. a) $f$ je polinom, zato je zvezna na vseh realnih številih. Vrednosti: $f(-3) = -27 + 12 + 1 = -14$, $f(-2) = -8 + 8 + 1 = 1$, $f(0) = 1$, $f(1) = 1 - 4 + 1 = -2$, $f(2) = 8 - 8 + 1 = 1$.
+2. a) Predznak se zamenja na intervalih $[-3, -2]$, $[0, 1]$ in $[1, 2]$, zato ima $f$ po izreku o ničli na vsakem od njih vsaj eno ničlo.
+3. a) Polinom tretje stopnje ima največ $3$ ničle, zato ima enačba natanko tri rešitve, po eno na vsakem od teh intervalov.
+4. b) Prvi korak: $c_1 = 0{,}5$ in $f(0{,}5) = 0{,}125 - 2 + 1 = -0{,}875 < 0$. Ker je $f(0) > 0$, obdržimo $[0; 0{,}5]$.
+5. b) Drugi korak: $c_2 = 0{,}25$ in $f(0{,}25) = \frac{1}{64} - 1 + 1 = \frac{1}{64} > 0$. Ker je $f(0{,}5) < 0$, obdržimo $[0{,}25; 0{,}5]$.
+6. c) $f$ je zvezna na zaprtem intervalu $[0, 2]$, zato na njem doseže najmanjšo vrednost $m$. Ker je $1 \in [0, 2]$, je $m \le f(1) = -2$.
+7. Odgovor: a) rešitve ležijo na $(-3, -2)$, $(0, 1)$ in $(1, 2)$; b) ničla je na $[0{,}25; 0{,}5]$; c) najmanjša vrednost obstaja in velja $m \le -2$.
+
+**Točkovanje:** a) 1 točka za vrednosti s tremi menjavami predznaka, 1 točka za uporabo izreka o ničli z omembo zveznosti, 1 točka za sklep »natanko tri« (polinom tretje stopnje ima največ tri ničle); b) 1 točka za prvi korak (interval $[0; 0{,}5]$) in 1 točka za drugi korak (interval $[0{,}25; 0{,}5]$); c) 1 točka za utemeljitev z zveznostjo na zaprtem intervalu in 1 točka za $m \le f(1) = -2$.
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Dani sta krivulji $y = 2^x$ in $y = 3 - x^2$.
+
+a) Pokaži, da je $x = 1$ abscisa enega od presečišč krivulj, in zapiši funkcijo $h$, katere ničle so abscise vseh presečišč. (2 točki)
+b) Utemelji, da imata krivulji presečišče z absciso na intervalu $[-2, -1]$. (2 točki)
+c) Naredi tri korake bisekcije na intervalu $[-2, -1]$. Vrednosti funkcije zaokroži na tri decimalke. (3 točke)
+d) Z računalom (na primer s tabelo vrednosti) določi absciso tega presečišča, zaokroženo na dve decimalki. Zaokrožitev utemelji z vrednostmi funkcije $h$. (2 točki)
+e) Koliko korakov bisekcije, začenši na $[-2, -1]$, najmanj potrebujemo, da bo interval krajši od $0{,}005$? (1 točka)
+
+**Rešitev:**
+
+1. a) Pri $x = 1$ je $2^1 = 2$ in $3 - 1^2 = 2$, zato je $T(1, 2)$ presečišče. Abscise presečišč so rešitve enačbe $2^x = 3 - x^2$, torej ničle funkcije $h(x) = 2^x + x^2 - 3$.
+2. b) $h$ je vsota zveznih funkcij, zato je zvezna. $h(-2) = 0{,}25 + 4 - 3 = 1{,}25 > 0$ in $h(-1) = 0{,}5 + 1 - 3 = -1{,}5 < 0$, zato ima $h$ po izreku o ničli na $(-2, -1)$ vsaj eno ničlo.
+3. c) Ker je $h(a) > 0$ in $h(b) < 0$, pri $h(c) < 0$ zamenjamo $b$, pri $h(c) > 0$ pa $a$.
+
+| korak | $[a, b]$ | $c$ | $h(c)$ |
+|---|---|---|---|
+| 1 | $[-2; -1]$ | $-1{,}5$ | $\approx -0{,}396 < 0$ |
+| 2 | $[-2; -1{,}5]$ | $-1{,}75$ | $\approx 0{,}360 > 0$ |
+| 3 | $[-1{,}75; -1{,}5]$ | $-1{,}625$ | $\approx -0{,}035 < 0$ |
+
+4. c) Po tretjem koraku ostane interval $[-1{,}75; -1{,}625]$.
+5. d) Tabela s korakom $0{,}1$: $h(-1{,}7) \approx 0{,}198 > 0$ in $h(-1{,}6) \approx -0{,}110 < 0$. Tabela s korakom $0{,}01$: $h(-1{,}64) \approx 0{,}0105 > 0$ in $h(-1{,}63) \approx -0{,}0200 < 0$, zato je ničla na $(-1{,}64; -1{,}63)$.
+6. d) Meja zaokroževanja: $h(-1{,}635) \approx -0{,}0048 < 0$, zato je ničla na $(-1{,}64; -1{,}635)$ in se zaokroži na $-1{,}64$.
+7. e) Po $n$ korakih je dolžina $\frac{1}{2^n}$. Potrebujemo $2^n > 200$: $2^7 = 128$ je premalo, $2^8 = 256$ zadošča, torej $8$ korakov.
+8. Odgovor: a) $h(x) = 2^x + x^2 - 3$; b) $h(-2) > 0$ in $h(-1) < 0$, zato je na $(-2, -1)$ ničla; c) po treh korakih bisekcije je abscisa na $[-1{,}75; -1{,}625]$; d) abscisa presečišča na $[-2, -1]$ je $x \approx -1{,}64$; e) za dolžino pod $0{,}005$ je potrebnih $8$ korakov.
+
+**Točkovanje:** a) 1 točka za preverjanje presečišča $T(1, 2)$ in 1 točka za $h(x) = 2^x + x^2 - 3$ (ali $3 - x^2 - 2^x$); b) 1 točka za vrednosti $h(-2)$ in $h(-1)$ z različnima predznakoma in 1 točka za utemeljitev z zveznostjo in izrekom o ničli; c) 1 točka za vsakega od treh pravilno izvedenih korakov (sredina, predznak, nov interval); d) 1 točka za interval $(-1{,}64; -1{,}63)$ z vrednostma $h$ različnih predznakov in 1 točka za preverjanje meje $-1{,}635$ (ali drugo pravilno utemeljitev zaokrožitve) in rezultat $x \approx -1{,}64$; e) 1 točka za $8$ korakov.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Povej izrek o ničli zvezne funkcije in pojasni, zakaj sta oba pogoja izreka nujna.
+---
+Če je funkcija $f$ zvezna na zaprtem intervalu $[a, b]$ in velja $f(a) \cdot f(b) < 0$, ima $f$ na odprtem intervalu $(a, b)$ vsaj eno ničlo. Brez zveznosti izrek ne velja, saj lahko funkcija z negativne vrednosti skoči na pozitivno in ničle ne doseže, kot funkcija, ki je na $[-1, 1]$ enaka $-1$ za $x < 0$ in $1$ za $x \ge 0$. Brez pogoja o različnih predznakih sklep prav tako ne velja: $f(x) = x^2 + 1$ je na $[-1, 1]$ zvezna, na krajiščih ima enaka predznaka in nima ničle, funkcija $x^2$ pa ima na istem intervalu pri enakih predznakih ničlo, zato izrek v tem primeru ne pove ničesar. Izrek zagotavlja vsaj eno ničlo, ne natanko ene.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Kaj velja za vrednosti zvezne funkcije na zaprtem intervalu? Navedi primer, ki pokaže, da je zaprtost intervala potrebna.
+---
+Zvezna funkcija na zaprtem intervalu $[a, b]$ na njem doseže najmanjšo vrednost $m$ in največjo vrednost $M$. Zavzame tudi vsako vrednost med $m$ in $M$, posebej vsako vrednost med $f(a)$ in $f(b)$. Na odprtem intervalu zvezna funkcija najmanjše ali največje vrednosti ne doseže nujno: funkcija $f(x) = x$ je na $(0, 1)$ zvezna, a največje vrednosti nima, ker vrednosti $1$ ne doseže.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Opiši metodo bisekcije za iskanje ničle in pojasni, kako natančno poznamo ničlo po $n$ korakih.
+---
+Začnemo z intervalom $[a, b]$, na katerem je $f$ zvezna in ima na krajiščih vrednosti različnih predznakov. Izračunamo sredino $c = \frac{a + b}{2}$ in vrednost $f(c)$, nato obdržimo tisto polovico, na kateri imata krajišči vrednosti različnih predznakov. Vsak korak interval razpolovi, zato je po $n$ korakih njegova dolžina $\frac{b - a}{2^n}$ in ničlo poznamo na to natančnost. Ko se obe krajišči zaokrožita na isto število, je ničla na toliko decimalk določena.
+:::
+
 ## Drugače: Kot zgodba
 
 Maja igra igro iz televizijske oddaje: uganiti mora ceno kolesa. Ve le, da je cena cel znesek v evrih, višja od $200$ € in največ $264$ €. Maja vpraša: »Je dražje od $232$ €?« »Da.« Cena je zdaj med $233$ € in $264$ €. Naslednje vprašanje zastavi spet na sredini: »Je dražje od $248$ €?« »Ne.« Ostane le še $233$ € do $248$ €.
@@ -286,6 +362,21 @@ vrednost: 1/2^7 | 0.0078125
 vrednost: 1.5^3+2*1.5-5 | 1.375
 vrednost: 1.25^3+2*1.25-5 | -0.547
 vrednost: 1.375^3+2*1.375-5 | 0.350
+vrednost: (-3)^3-4*(-3)+1 | -14
+vrednost: 1^3-4*1+1 | -2
+vrednost: 0.5^3-4*0.5+1 | -0.875
+vrednost: 0.25^3-4*0.25+1 | 0.015625
+vrednost: 2^(-2)+(-2)^2-3 | 1.25
+vrednost: 2^(-1)+(-1)^2-3 | -1.5
+vrednost: 2^(-1.5)+1.5^2-3 | -0.396
+vrednost: 2^(-1.75)+1.75^2-3 | 0.360
+vrednost: 2^(-1.625)+1.625^2-3 | -0.035
+vrednost: 2^(-1.7)+1.7^2-3 | 0.198
+vrednost: 2^(-1.6)+1.6^2-3 | -0.110
+vrednost: 2^(-1.64)+1.64^2-3 | 0.0105
+vrednost: 2^(-1.63)+1.63^2-3 | -0.0200
+vrednost: 2^(-1.635)+1.635^2-3 | -0.0048
+vrednost: 1/2^8 | 0.00390625
 >>
 
 :::simboli
@@ -297,6 +388,7 @@ n | število korakov bisekcije | | |
 r | obrestovalni faktor | r = 1 + \frac{p}{100} | – |
 p | letna obrestna mera | | \% | v odstotkih
 g | pomožna funkcija, katere ničlo iščemo | g(x) = x^3 - 3x - 1 | |
+h | razlika funkcij, katere ničle so abscise presečišč krivulj | | |
 x | neodvisna spremenljivka | | |
-y | ordinata točke na krivulji | y = x^3 - 3x + 1 | |
+y | ordinata točke na krivulji | | |
 :::

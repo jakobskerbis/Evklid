@@ -216,6 +216,89 @@ $k_n = -\frac{1}{f'(a)}$; $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\rig
 - Vrednost ekstrema dobiš z vstavljanjem v $f$.
 - Ekstremalni problem: sestavi funkcijo ene spremenljivke, določi smiselni interval, reši $f' = 0$, preveri predznak in robove, odgovori v stavku z enotami.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Na grafu funkcije $f(x) = x^2 - 4x + 5$ poišči točko, v kateri je tangenta vzporedna s premico $y = 2x - 1$, in zapiši enačbo te tangente.
+
+**Rešitev:**
+
+1. Vzporedni premici imata enaka smerna koeficienta, zato mora veljati $f'(x) = 2$.
+2. $f'(x) = 2x - 4$, iz $2x - 4 = 2$ sledi $x = 3$. Ordinata: $f(3) = 9 - 12 + 5 = 2$, dotikališče je $T(3, 2)$.
+3. Tangenta: $y = 2 + 2(x - 3) = 2x - 4$.
+4. Odgovor: tangenta v točki $T(3, 2)$ je vzporedna z dano premico, njena enačba je $y = 2x - 4$.
+
+**Točkovanje:** 1 točka za pogoj $f'(x) = 2$ z odvodom $2x - 4$, 1 točka za točko $T(3, 2)$, 1 točka za enačbo tangente.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = x^3 - 6x^2 + 9x$.
+
+a) Izračunaj ničle funkcije $f$. (2 točki)
+b) Določi intervale naraščanja in padanja ter lokalne ekstreme funkcije $f$. (3 točke)
+c) Nariši graf funkcije $f$. (2 točki)
+
+**Rešitev:**
+
+1. a) $f(x) = x(x^2 - 6x + 9) = x(x - 3)^2$.
+2. a) Ničli sta $x_1 = 0$ (enostavna) in $x_2 = 3$ (dvojna, graf se tam osi $x$ le dotakne).
+3. b) $f'(x) = 3x^2 - 12x + 9 = 3(x - 1)(x - 3)$, stacionarni točki sta $x = 1$ in $x = 3$.
+4. b) Predznak odvoda: $f'(0) = 9 > 0$, $f'(2) = -3 < 0$, $f'(4) = 9 > 0$. Funkcija narašča na $(-\infty, 1)$ in na $(3, \infty)$, pada na $(1, 3)$.
+5. b) V $x = 1$ se predznak $f'$ zamenja iz $+$ v $-$: lokalni maksimum $f(1) = 1 - 6 + 9 = 4$. V $x = 3$ se zamenja iz $-$ v $+$: lokalni minimum $f(3) = 0$.
+6. c) Graf pride od spodaj, seka os $x$ v izhodišču, se dvigne do $T_1(1, 4)$, spusti do $T_2(3, 0)$, kjer se osi $x$ dotakne, nato narašča čez vse meje. Za oporo: $f(-1) = -16$ in $f(4) = 4$.
+7. Odgovor: ničli sta $0$ in $3$ (dvojna); $f$ narašča na $(-\infty, 1)$ in $(3, \infty)$, pada na $(1, 3)$; lokalni maksimum je $T_1(1, 4)$, lokalni minimum $T_2(3, 0)$.
+
+**Točkovanje:** a) 1 točka za razcep $x(x - 3)^2$, 1 točka za obe ničli; b) 1 točka za odvod in stacionarni točki, 1 točka za intervale naraščanja in padanja, 1 točka za oba ekstrema z vrsto in ordinato; c) 1 točka za ničle in ekstreme na pravih mestih, 1 točka za pravilno obliko grafa (dotik osi $x$ v $x = 3$, obnašanje za velike $\lvert x \rvert$).
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Iz pločevine izdelujejo valjaste posode brez pokrova s prostornino $2$ litra. Dno je iz debelejše pločevine: kvadratni decimeter pločevine za dno stane $0{,}60\,€$, za plašč pa $0{,}30\,€$. Polmer dna označimo z $r$ (v decimetrih).
+
+a) Pokaži, da stroški pločevine za eno posodo v evrih znašajo $C(r) = 0{,}6\pi r^2 + \dfrac{1{,}2}{r}$, $r > 0$. (3 točke)
+b) Izračunaj polmer dna, pri katerem so stroški najmanjši, in utemelji, da so pri tem polmeru res najmanjši. Polmer zaokroži na milimeter. (4 točke)
+c) Izračunaj višino te posode (na milimeter) in najmanjše stroške (na cent). Kaj ugotoviš, ko višino primerjaš s premerom dna? (3 točke)
+
+**Rešitev:**
+
+1. a) $2\,\mathrm{L} = 2\,\mathrm{dm^3}$, zato $\pi r^2 h = 2$ in $h = \dfrac{2}{\pi r^2}$.
+2. a) Ploščina dna je $\pi r^2$, ploščina plašča $2\pi r h$. Stroški so $C = 0{,}6 \cdot \pi r^2 + 0{,}3 \cdot 2\pi r h$.
+3. a) Vstavimo $h$: $0{,}3 \cdot 2\pi r \cdot \dfrac{2}{\pi r^2} = \dfrac{1{,}2}{r}$, torej $C(r) = 0{,}6\pi r^2 + \dfrac{1{,}2}{r}$.
+4. b) $C'(r) = 1{,}2\pi r - \dfrac{1{,}2}{r^2}$.
+5. b) $C'(r) = 0$ da $1{,}2\pi r^3 = 1{,}2$, torej $r^3 = \dfrac{1}{\pi}$ in $r = \sqrt[3]{\dfrac{1}{\pi}} \doteq 0{,}68278\,\mathrm{dm}$.
+6. b) Za manjši $r$ je $\pi r^3 < 1$ in $C'(r) < 0$, za večji $r$ je $C'(r) > 0$: stroški najprej padajo, nato naraščajo, zato je to minimum. Ker gredo stroški pri $r \to 0$ in pri $r \to \infty$ čez vse meje, je to tudi najmanjša vrednost na $(0, \infty)$.
+7. b) $r \doteq 0{,}683\,\mathrm{dm} \doteq 6{,}8\,\mathrm{cm}$.
+8. c) $h = \dfrac{2}{\pi r^2} \doteq \dfrac{2}{\pi \cdot 0{,}68278^2} \doteq 1{,}3656\,\mathrm{dm} \doteq 13{,}7\,\mathrm{cm}$.
+9. c) $C(0{,}68278) \doteq 0{,}8788 + 1{,}7575 = 2{,}6363$, torej približno $2{,}64\,€$.
+10. c) Če je $\pi r^3 = 1$, je $h = \dfrac{2}{\pi r^2} = \dfrac{2r^3}{r^2} = 2r$: višina je enaka premeru dna.
+11. Odgovor: stroški so najmanjši pri polmeru dna $6{,}8\,\mathrm{cm}$ in višini $13{,}7\,\mathrm{cm}$ in znašajo približno $2{,}64\,€$ na posodo; najcenejša posoda je visoka toliko, kolikor meri premer dna.
+
+**Točkovanje:** a) 1 točka za $h = \frac{2}{\pi r^2}$, 1 točka za zapis stroškov dna in plašča, 1 točka za vstavljanje in poenostavitev; b) 1 točka za odvod, 1 točka za enačbo $r^3 = \frac{1}{\pi}$, 1 točka za utemeljitev minimuma, 1 točka za $r \doteq 6{,}8\,\mathrm{cm}$; c) 1 točka za višino, 1 točka za stroške z enoto, 1 točka za ugotovitev $h = 2r$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Izpelji enačbo tangente na graf funkcije $f$ v točki $(a, f(a))$ in iz nje enačbo normale.
+---
+Tangenta gre skozi točko $(a, f(a))$, njen smerni koeficient pa je odvod $f'(a)$. Premica s smernim koeficientom $k$ skozi točko $(a, f(a))$ ima enačbo $y - f(a) = k(x - a)$, zato je tangenta $y = f(a) + f'(a)(x - a)$. Normala gre skozi isto točko in je pravokotna na tangento, zato je pri $f'(a) \ne 0$ produkt njunih smernih koeficientov $-1$ in normala je $y = f(a) - \frac{1}{f'(a)}(x - a)$. Pri $f'(a) = 0$ je tangenta vodoravna, normala pa navpična premica $x = a$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kaj je stacionarna točka funkcije in kdaj ima funkcija v njej lokalni ekstrem? Navedi primer stacionarne točke, ki ni ekstrem.
+---
+Stacionarna točka je točka $a$, v kateri je $f'(a) = 0$; tangenta je tam vodoravna. Funkcija ima v njej lokalni maksimum, če odvod v njej zamenja predznak iz $+$ v $-$, in lokalni minimum, če ga zamenja iz $-$ v $+$. Če odvod predznaka ne zamenja, ekstrema ni. Primer je $f(x) = x^3$ v točki $0$: $f'(0) = 0$, a $f'(x) = 3x^2$ je na obeh straneh pozitiven, zato funkcija ves čas narašča.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kako izračunaš kot, pod katerim se sekata grafa dveh funkcij, in kdaj se grafa sekata pravokotno?
+---
+Najprej poiščeš presečišče grafov, recimo z absciso $x_0$. Kot med grafoma je kot med njunima tangentama v presečišču, ki imata smerna koeficienta $k_1 = f'(x_0)$ in $k_2 = g'(x_0)$. Če je $1 + k_1 k_2 \ne 0$, zanj velja $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$, kjer je $0^\circ \le \varphi < 90^\circ$. Grafa se sekata pravokotno, ko je $k_1 k_2 = -1$, saj sta tedaj tangenti pravokotni.
+:::
+
 ## Drugače: Z analogijo
 
 Predstavljaj si pohodnika v megli na grebenu. Vrha ne vidi, čuti pa naklon poti pod nogami. To je odvod.
@@ -302,4 +385,21 @@ odvod: 2-x^2 | x | -2*x
 enako: 1-(1/2)*(x-1) | -x/2+3/2
 vrednost: abs((-2-2)/(1+2*(-2))) | 4/3
 vrednost: atan(4/3)*180/pi | 53.13
+odvod: x^2-4*x+5 | x | 2*x-4
+resi: 2*x-4=2 | x | 3
+vrednost: 3^2-4*3+5 | 2
+enako: 2+2*(x-3) | 2*x-4
+enako: x^3-6*x^2+9*x | x*(x-3)^2
+odvod: x^3-6*x^2+9*x | x | 3*(x-1)*(x-3)
+resi: 3*x^2-12*x+9=0 | x | 1, 3
+neenacba: 3*x^2-12*x+9<0 | x | (1, 3)
+vrednost: 1^3-6*1^2+9*1 | 4
+vrednost: (-1)^3-6*(-1)^2+9*(-1) | -16
+vrednost: 4^3-6*4^2+9*4 | 4
+enako: 0.6*pi*r^2+0.3*2*pi*r*2/(pi*r^2) | 0.6*pi*r^2+1.2/r
+odvod: 0.6*pi*r^2+1.2/r | r | 1.2*pi*r-1.2/r^2
+vrednost: (1/pi)^(1/3) | 0.68278
+vrednost: 2/(pi*0.68278^2) | 1.3656
+vrednost: 0.6*pi*0.68278^2+1.2/0.68278 | 2.6363
+enako: 2/(pi*r^2)*pi*r^3 | 2*r
 >>

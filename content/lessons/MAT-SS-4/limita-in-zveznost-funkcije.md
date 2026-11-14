@@ -196,6 +196,95 @@ Po krajšanju ostane $\dfrac{1}{\sqrt{x} + 2}$. Pri $x = 4$: $\dfrac{1}{2 + 2} =
 - $f$ je zvezna v $a$, če $f(a)$ obstaja in je enaka limiti. Nezveznosti: luknja, skok, pol.
 - Elementarne funkcije so zvezne na definicijskem območju: tam je limita kar vrednost.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Izračunaj $\lim\limits_{x \to 1} \dfrac{x^2 + 2x - 3}{x^2 - 1}$.
+
+**Rešitev:**
+
+1. Vstavimo $x = 1$: števec je $1 + 2 - 3 = 0$, imenovalec $1 - 1 = 0$. Dobimo nedoločeni izraz $\frac{0}{0}$, zato izraz preoblikujemo.
+2. Razstavimo: $x^2 + 2x - 3 = (x - 1)(x + 3)$ in $x^2 - 1 = (x - 1)(x + 1)$.
+3. Okrajšamo $(x - 1)$, kar smemo, ker je pri limiti $x \ne 1$: ostane $\dfrac{x + 3}{x + 1}$.
+4. Vstavimo: $\dfrac{1 + 3}{1 + 1} = 2$.
+5. Odgovor: limita je $2$.
+
+**Točkovanje:** 1 točka za razcep števca in imenovalca, 1 točka za okrajšani izraz $\dfrac{x + 3}{x + 1}$, 1 točka za rezultat $2$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = \dfrac{2x^2 - 8}{x^2 - x - 2}$.
+
+a) Zapiši definicijsko območje funkcije $f$. (1 točka)
+b) Izračunaj $\lim\limits_{x \to 2} f(x)$ in pojasni, kakšno nezveznost ima $f$ pri $x = 2$. (3 točke)
+c) Izračunaj levo in desno limito funkcije $f$ pri $x \to -1$ in zapiši enačbo navpične asimptote. (2 točki)
+d) Izračunaj $\lim\limits_{x \to \infty} f(x)$ in zapiši enačbo vodoravne asimptote. (2 točki)
+
+**Rešitev:**
+
+1. a) Imenovalec razstavimo: $x^2 - x - 2 = (x - 2)(x + 1)$. Enak je $0$ pri $x = 2$ in $x = -1$, zato je $D_f = \mathbb{R} \setminus \{-1, 2\}$.
+2. b) Pri $x = 2$ sta števec $2 \cdot 4 - 8 = 0$ in imenovalec enaka $0$, zato preoblikujemo. Števec: $2x^2 - 8 = 2(x - 2)(x + 2)$. Po krajšanju $(x - 2)$ ostane $\dfrac{2(x + 2)}{x + 1}$.
+3. b) $\lim\limits_{x \to 2} f(x) = \dfrac{2 \cdot 4}{3} = \dfrac{8}{3}$. Limita obstaja, vrednost $f(2)$ pa ne, zato ima $f$ pri $x = 2$ luknjo; zakrpamo jo z dodatkom $f(2) = \frac{8}{3}$.
+4. c) Za $x$ blizu $-1$ je $f(x) = \dfrac{2(x + 2)}{x + 1}$. Števec gre proti $2 \cdot 1 = 2 > 0$, imenovalec proti $0$. Z leve je $x + 1 < 0$, zato $\lim\limits_{x \to -1^-} f(x) = -\infty$; z desne je $x + 1 > 0$, zato $\lim\limits_{x \to -1^+} f(x) = +\infty$.
+5. c) Pri $x = -1$ je pol, navpična asimptota je $x = -1$.
+6. d) Števec in imenovalec delimo z $x^2$: $\dfrac{2 - \frac{8}{x^2}}{1 - \frac{1}{x} - \frac{2}{x^2}}$. Ulomki s $x$ v imenovalcu gredo proti $0$, zato je limita $\dfrac{2}{1} = 2$.
+7. Odgovor: a) $D_f = \mathbb{R} \setminus \{-1, 2\}$; b) limita je $\frac{8}{3}$, pri $x = 2$ je luknja; c) leva limita je $-\infty$, desna $+\infty$, asimptota $x = -1$; d) limita je $2$, vodoravna asimptota je $y = 2$.
+
+**Točkovanje:** a) 1 točka za $D_f = \mathbb{R} \setminus \{-1, 2\}$; b) 1 točka za razcep in krajšanje, 1 točka za limito $\frac{8}{3}$, 1 točka za utemeljitev, da je pri $x = 2$ luknja (limita obstaja, $f(2)$ ne); c) 1 točka za obe enostranski limiti in 1 točka za asimptoto $x = -1$; d) 1 točka za limito $2$ in 1 točka za asimptoto $y = 2$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dana je funkcija
+
+$$f(x) = \begin{cases} \dfrac{\sin 2x}{x}, & x < 0 \\[2mm] \dfrac{b\,(\sqrt{x + 4} - 2)}{x}, & x > 0 \end{cases}$$
+
+kjer je $b$ realno število. V točki $0$ funkcija še ni definirana.
+
+a) Izračunaj $\lim\limits_{x \to 0^-} f(x)$. (2 točki)
+b) Izračunaj $\lim\limits_{x \to 0^+} f(x)$; rezultat izrazi z $b$. (3 točke)
+c) Določi $b$ in vrednost $f(0)$ tako, da bo $f$ zvezna v točki $0$. Utemelji z definicijo zveznosti. (3 točke)
+d) Za $b$ in $f(0)$ iz c) zapiši, kje je $f$ zvezna, in izračunaj $\lim\limits_{x \to \infty} f(x)$. (2 točki)
+
+**Rešitev:**
+
+1. a) Za $x < 0$ ulomek pomnožimo in delimo z $2$: $\dfrac{\sin 2x}{x} = 2 \cdot \dfrac{\sin 2x}{2x}$. Zdaj je v imenovalcu isti kot $2x$ kot v sinusu. Ko gre $x \to 0$, gre tudi $2x \to 0$, zato se po znani limiti $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$, v kateri namesto $x$ stoji $2x$, ulomek $\dfrac{\sin 2x}{2x}$ približuje $1$. (Sam $\dfrac{\sin 2x}{x}$ ne gre proti $1$, ker kot v sinusu ($2x$) ni enak imenovalcu ($x$).)
+2. a) $\lim\limits_{x \to 0^-} f(x) = 2 \cdot 1 = 2$.
+3. b) Vstavljanje da $\frac{0}{0}$, zato ulomek razširimo s $\sqrt{x + 4} + 2$: $\dfrac{b\,(\sqrt{x + 4} - 2)(\sqrt{x + 4} + 2)}{x\,(\sqrt{x + 4} + 2)} = \dfrac{b\,(x + 4 - 4)}{x\,(\sqrt{x + 4} + 2)}$.
+4. b) Okrajšamo $x$ (pri limiti je $x \ne 0$): ostane $\dfrac{b}{\sqrt{x + 4} + 2}$.
+5. b) $\lim\limits_{x \to 0^+} f(x) = \dfrac{b}{\sqrt{4} + 2} = \dfrac{b}{4}$.
+6. c) $f$ je zvezna v $0$, če je $f(0)$ definirana, limita v $0$ obstaja (leva in desna limita sta enaki) in je enaka $f(0)$.
+7. c) Iz $\dfrac{b}{4} = 2$ sledi $b = 8$. Tedaj je $\lim\limits_{x \to 0} f(x) = 2$, zato mora biti $f(0) = 2$.
+8. d) Za $x < 0$ je $f$ količnik zveznih funkcij z neničelnim imenovalcem, za $x > 0$ prav tako (koren je definiran za $x \ge -4$). V točki $0$ je $f$ zvezna po c), zato je zvezna na vsem $\mathbb{R}$.
+9. d) Za $x > 0$ je $f(x) = \dfrac{8}{\sqrt{x + 4} + 2}$. Imenovalec raste čez vse meje, zato je $\lim\limits_{x \to \infty} f(x) = 0$.
+10. Odgovor: leva limita je $2$, desna $\frac{b}{4}$; $f$ je zvezna v $0$ pri $b = 8$ in $f(0) = 2$, tedaj je zvezna na $\mathbb{R}$, njena limita v neskončnosti pa je $0$.
+
+**Točkovanje:** a) 1 točka za zapis z $\dfrac{\sin 2x}{2x}$ (uporaba $\lim\limits_{x \to 0} \frac{\sin x}{x} = 1$ za kot $2x$) in 1 točka za rezultat $2$; b) 1 točka za razširitev s $\sqrt{x + 4} + 2$, 1 točka za okrajšani izraz $\dfrac{b}{\sqrt{x + 4} + 2}$, 1 točka za $\dfrac{b}{4}$; c) 1 točka za pogoj zveznosti (leva limita = desna limita = $f(0)$), 1 točka za $b = 8$, 1 točka za $f(0) = 2$; d) 1 točka za zveznost na $\mathbb{R}$ z utemeljitvijo in 1 točka za limito $0$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kdaj je funkcija $f$ zvezna v točki $a$? Naštej pogoje in opiši tri vrste nezveznosti.
+---
+Funkcija $f$ je zvezna v točki $a$, če je vrednost $f(a)$ definirana, limita $\lim\limits_{x \to a} f(x)$ obstaja in je enaka $f(a)$. Če kateri od pogojev ni izpolnjen, ima $f$ v točki $a$ nezveznost. Pri luknji limita obstaja, vrednost $f(a)$ pa ne obstaja ali je drugačna od limite. Pri skoku sta leva in desna limita različni, pri polu pa absolutne vrednosti funkcije rastejo čez vse meje, ko se $x$ bliža $a$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Pojasni razliko med limito funkcije v neskončnosti in neskončno limito ter za vsako navedi primer.
+---
+Limita v neskončnosti pove, kateremu številu se bližajo vrednosti $f(x)$, ko $x$ raste čez vse meje, na primer $\lim\limits_{x \to \infty} \frac{1}{x} = 0$. Če je ta limita število $L$, ima graf vodoravno asimptoto $y = L$. Neskončna limita pa pomeni, da vrednosti $f(x)$ rastejo čez vse meje, ko se $x$ približuje končni točki $a$, na primer $\lim\limits_{x \to 0} \frac{1}{x^2} = \infty$. Takrat končne limite ni, graf pa ima pri $x = a$ pol in navpično asimptoto.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Dokaži, da je limita funkcije $\frac{\sin x}{x}$, ko gre $x$ proti $0$, enaka $1$.
+---
+Za $0 < x < \frac{\pi}{2}$ na enotski krožnici primerjamo ploščine dveh trikotnikov in krožnega izseka, kar da $\sin x < x < \tan x$. Neenakosti delimo s pozitivnim $\sin x$ in vzamemo obratne vrednosti, pa dobimo $\cos x < \frac{\sin x}{x} < 1$. Ker je $\frac{\sin x}{x}$ soda funkcija, ista neenakost velja tudi za $-\frac{\pi}{2} < x < 0$. Ko gre $x \to 0$, gre $\cos x \to 1$, zato je ulomek stisnjen med dve funkciji z limito $1$ in ima po izreku o sendviču tudi sam limito $1$.
+:::
+
 ## Drugače: Z analogijo
 
 Predstavljaj si posnetek violine, na katerem je za delček sekunde praska: en sam vzorec zvoka manjka. Program za urejanje zvoka ga zlahka nadomesti. Pogleda vzorce tik pred prasko in tik za njo in če se oboji bližajo isti vrednosti, vstavi to vrednost. Natanko to je limita: vrednost, ki jo določa okolica, tudi ko točka sama manjka. Taka praska je **luknja**, ki jo zakrpamo.
@@ -262,6 +351,17 @@ Zakaj je $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$ res, ne le v tabeli? Na e
 ~ Upoštevati moraš tudi vodilni koeficient imenovalca, $4$.
 > Delimo z $t^2$: $\dfrac{12 + \frac{5}{t^2}}{4 + \frac{5}{t^2}} \to \dfrac{12}{4} = 3$.
 
+<<RACUN
+limita: (x^2+2*x-3)/(x^2-1) | x | 1 | 2
+enako: (2*x^2-8)/(x^2-x-2) | 2*(x+2)/(x+1)
+limita: (2*x^2-8)/(x^2-x-2) | x | 2 | 8/3
+limita: (2*x^2-8)/(x^2-x-2) | x | oo | 2
+limita: sin(2*x)/x | x | 0 | 2
+limita: (sqrt(x+4)-2)/x | x | 0 | 1/4
+limita: 8*(sqrt(x+4)-2)/x | x | 0 | 2
+limita: 8*(sqrt(x+4)-2)/x | x | oo | 0
+>>
+
 :::simboli
 f | funkcija |  |  | v uvodu relativna moč zvoka v smeri $x$: $f(x) = \dfrac{\sin x}{x}$
 x | neodvisna spremenljivka (pri zvočniku odvisna od kota) |  |  | pri $\sin x$ v radianih
@@ -275,6 +375,7 @@ v | relativna glasnost (ovojnica) |  | – |
 t | čas |  | s |
 k | parameter ovojnice |  | s^{-1} |
 c | konstanta v števcu |  |  |
+b | realni parameter v predpisu funkcije |  |  |
 n | naravno število: indeks člena zaporedja ali eksponent |  |  |
 \pi | število pi |  |  | $\pi \approx 3{,}14$
 :::

@@ -228,6 +228,90 @@ $k = -\frac{2 + 2}{1 + 4} = -\frac{4}{5} = -0{,}8$. Tangenta: $y - 2 = -0{,}8(x 
 - (višja raven) Implicitni odvod: obe strani enačbe odvajaj po $x$, $y$ je funkcija od $x$: $(y^2)' = 2y\,y'$, $(xy)' = y + x\,y'$; izrazi $y'$ in nato vstavi točko.
 - (višja raven) Krožnica $x^2 + y^2 = r^2$: $y' = -\frac{x}{y}$; pri $y = 0$ je tangenta navpična.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Nariši graf funkcije $f(x) = \lvert x + 1 \rvert + \lvert x - 2 \rvert$ in iz grafa ugotovi, v katerih točkah $f$ ni odvedljiva. Odgovor utemelji.
+
+**Rešitev:**
+
+1. Predpis po intervalih: za $x < -1$ je $f(x) = -(x + 1) - (x - 2) = -2x + 1$, za $-1 \le x \le 2$ je $f(x) = (x + 1) - (x - 2) = 3$, za $x > 2$ je $f(x) = (x + 1) + (x - 2) = 2x - 1$.
+2. Graf je lomljena črta: premica s smernim koeficientom $-2$ (na primer skozi $(-2, 5)$) se v točki $(-1, 3)$ nadaljuje v vodoravno daljico do točke $(2, 3)$, ta pa v premico s smernim koeficientom $2$ (na primer skozi $(3, 5)$).
+3. V točkah $(-1, 3)$ in $(2, 3)$ ima graf vogal: v $x = -1$ se smerni koeficient spremeni z $-2$ na $0$, v $x = 2$ pa z $0$ na $2$. Tam tangente ni in odvod ne obstaja; drugod je graf del premice in odvod obstaja.
+4. Odgovor: $f$ ni odvedljiva v točkah $x = -1$ in $x = 2$, kjer ima graf vogal.
+
+**Točkovanje:** 1 točka za graf (predpis po intervalih ali pravilna skica lomljene črte), 1 točka za točki $x = -1$ in $x = 2$, 1 točka za utemeljitev (vogal: smerna koeficienta z leve in z desne se razlikujeta).
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = (x + 1)\,\lvert x - 1 \rvert$.
+
+a) Zapiši predpis funkcije $f$ brez absolutne vrednosti in nariši njen graf. (2 točki)
+b) Utemelji, da je $f$ v točki $x = 1$ zvezna, ni pa odvedljiva. Pri tem uporabi odvoda obeh kosov v $x = 1$. (2 točki)
+c) Z definicijo odvoda pokaži, da je funkcija $g(x) = (x - 1)\,\lvert x - 1 \rvert$ v točki $x = 1$ odvedljiva, in zapiši $g'(1)$. (2 točki)
+
+**Rešitev:**
+
+1. a) Za $x \ge 1$ je $\lvert x - 1 \rvert = x - 1$ in $f(x) = x^2 - 1$. Za $x < 1$ je $\lvert x - 1 \rvert = 1 - x$ in $f(x) = 1 - x^2$.
+2. a) Graf: levo od $x = 1$ je navzdol odprta parabola $y = 1 - x^2$ (teme $(0, 1)$, ničla $-1$), desno navzgor odprta parabola $y = x^2 - 1$. Kosa se stikata v točki $(1, 0)$, kjer je vogal.
+3. b) Oba kosa imata pri $x = 1$ vrednost $0$, graf se ne pretrga: $f$ je v $x = 1$ zvezna in $f(1) = 0$.
+4. b) Z leve: $(1 - x^2)' = -2x$, pri $x = 1$ je smerni koeficient $-2$. Z desne: $(x^2 - 1)' = 2x$, pri $x = 1$ je $2$. Smerna koeficienta se razlikujeta, zato $f'(1)$ ne obstaja.
+5. c) $g(1) = 0$, zato je diferenčni količnik $\dfrac{g(1 + h) - g(1)}{h} = \dfrac{h\,\lvert h \rvert}{h} = \lvert h \rvert$.
+6. c) Ko gre $h \to 0$ z leve ali z desne, gre $\lvert h \rvert \to 0$. Limita obstaja, zato je $g$ v $x = 1$ odvedljiva in $g'(1) = 0$.
+7. Odgovor: $f$ je v $x = 1$ zvezna, ima pa vogal (smerna koeficienta $-2$ in $2$), zato tam ni odvedljiva; $g$ je v $x = 1$ odvedljiva, $g'(1) = 0$.
+
+**Točkovanje:** a) 1 točka za predpis brez absolutne vrednosti, 1 točka za graf z vogalom v $(1, 0)$; b) 1 točka za zveznost, 1 točka za smerna koeficienta $-2$ in $2$ s sklepom; c) 1 točka za diferenčni količnik $\lvert h \rvert$, 1 točka za limito $0$ in sklep $g'(1) = 0$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Krivulja $K$ ima enačbo $x^2 - xy + y^2 = 12$.
+
+a) Z implicitnim odvajanjem izrazi $y'$ s spremenljivkama $x$ in $y$. (2 točki)
+b) Zapiši enačbi tangente in normale na $K$ v točki $A(-2, 2)$. (3 točke)
+c) Poišči vse točke na $K$, v katerih je tangenta vodoravna. (3 točke)
+d) Točka $B(4, 2)$ leži na $K$. Pojasni, kaj formula iz a) pove o tangenti v $B$, in zapiši enačbo te tangente. (2 točki)
+
+**Rešitev:**
+
+1. a) Obe strani odvajamo po $x$, pri tem je $(xy)' = y + x\,y'$ in $(y^2)' = 2y\,y'$: $2x - y - x\,y' + 2y\,y' = 0$.
+2. a) $y'(2y - x) = y - 2x$, torej $y' = \dfrac{y - 2x}{2y - x}$.
+3. b) Preizkus: $(-2)^2 - (-2) \cdot 2 + 2^2 = 4 + 4 + 4 = 12$, točka $A$ leži na $K$.
+4. b) $k = \dfrac{2 + 4}{4 + 2} = 1$. Tangenta: $y - 2 = x + 2$, torej $y = x + 4$.
+5. b) Normala ima smerni koeficient $-1$: $y - 2 = -(x + 2)$, torej $y = -x$.
+6. c) Tangenta je vodoravna, kjer je $y' = 0$: števec $y - 2x = 0$ (imenovalec pa ni $0$), torej $y = 2x$.
+7. c) Vstavimo v enačbo $K$: $x^2 - 2x^2 + 4x^2 = 3x^2 = 12$, zato $x = 2$ ali $x = -2$.
+8. c) Točki sta $(2, 4)$ in $(-2, -4)$; v njiju je imenovalec $2y - x$ enak $6$ oziroma $-6$, torej različen od $0$.
+9. d) V točki $B$ je imenovalec $2y - x = 4 - 4 = 0$, števec pa $y - 2x = -6 \ne 0$. Odvod $y'$ tam ne obstaja: tangenta je navpična.
+10. d) Navpična premica skozi $B(4, 2)$ je $x = 4$.
+11. Odgovor: $y' = \frac{y - 2x}{2y - x}$; v $A$ je tangenta $y = x + 4$ in normala $y = -x$; vodoravna tangenta je v točkah $(2, 4)$ in $(-2, -4)$; tangenta v $B$ je navpična premica $x = 4$.
+
+**Točkovanje:** a) 1 točka za pravilno odvajanje (zlasti $(xy)'$ in $(y^2)'$), 1 točka za izraženi $y'$; b) 1 točka za $k = 1$, 1 točka za tangento, 1 točka za normalo; c) 1 točka za pogoj $y = 2x$, 1 točka za $x = \pm 2$, 1 točka za obe točki; d) 1 točka za utemeljitev (imenovalec je $0$, števec ni), 1 točka za enačbo $x = 4$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kdaj je funkcija v točki odvedljiva in po čem na grafu prepoznaš točke, v katerih ni odvedljiva?
+---
+Funkcija $f$ je v točki $a$ odvedljiva, če obstaja limita diferenčnega količnika $\frac{f(a + h) - f(a)}{h}$ pri $h \to 0$ in je končna, torej limiti z leve in z desne obstajata in sta enaki. Na grafu funkcija ni odvedljiva v vogalu, kjer imata kraka različna naklona, na primer $|x|$ v $0$. Ni odvedljiva v osti in tam, kjer je tangenta navpična, na primer $\sqrt[3]{x}$ v $0$. Odvoda ni niti tam, kjer graf ni sklenjen (skok, luknja, pol), saj tam ni tangente.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Dokaži, da je funkcija, ki je v točki $a$ odvedljiva, v tej točki tudi zvezna. Ali velja obrat?
+---
+Za $h \ne 0$ zapišemo $f(a + h) - f(a) = \frac{f(a + h) - f(a)}{h} \cdot h$. Ko gre $h \to 0$, gre prvi faktor proti $f'(a)$, drugi pa proti $0$. Zato gre razlika proti $f'(a) \cdot 0 = 0$, torej $f(a + h) \to f(a)$, kar pomeni, da je $f$ v $a$ zvezna. Obrat ne velja: $|x|$ je v $0$ zvezna, odvedljiva pa ne.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Kako izračunaš odvod implicitno podane funkcije? Postopek opiši na krožnici $x^2 + y^2 = r^2$.
+---
+Obe strani enačbe odvajamo po $x$, pri tem pa $y$ obravnavamo kot funkcijo spremenljivke $x$. Člene z $y$ odvajamo po pravilu za sestavljeno funkcijo, na primer $(y^2)' = 2y\,y'$, odvod konstante na desni pa je $0$. Pri krožnici dobimo $2x + 2y\,y' = 0$, torej $y' = -\frac{x}{y}$ za $y \ne 0$. V točkah z $y = 0$ odvod ne obstaja, tangenta je tam navpična.
+:::
+
 ## Drugače: Z analogijo
 
 Graf si predstavljaj kot tire, po katerih pelje vlak. Na gladkem tiru ima vlak v vsakem trenutku točno določeno smer vožnje: to je tangenta. Če je tir na enem mestu prelomljen v vogal, vlak tam nima smeri, saj bi moral v trenutku zaviti. Pri osti bi moral naravnost navzgor, pri skoku tir sploh ni sklenjen.
@@ -321,6 +405,25 @@ vrednost: -(-3)/4 | 0.75
 odvod: x^2-4 | x | 2*x
 vrednost: 4-0^2 | 4
 vrednost: 3^2-4 | 5
+enako: -(x+1)-(x-2) | -2*x+1
+enako: (x+1)-(x-2) | 3
+enako: (x+1)+(x-2) | 2*x-1
+vrednost: abs(-2+1)+abs(-2-2) | 5
+vrednost: abs(-1+1)+abs(-1-2) | 3
+vrednost: abs(3+1)+abs(3-2) | 5
+enako: (x+1)*(x-1) | x^2-1
+enako: (x+1)*(1-x) | 1-x^2
+odvod: 1-x^2 | x | -2*x
+vrednost: -2*1 | -2
+enako: (1+h-1)*abs(1+h-1)/h | abs(h)
+limita: abs(h) | h | 0 | 0
+vrednost: (-2)^2-(-2)*2+2^2 | 12
+enako: -(2*x-y)/(2*y-x) | (y-2*x)/(2*y-x)
+vrednost: (2-2*(-2))/(2*2-(-2)) | 1
+resi: x^2-x*(x+4)+(x+4)^2=12 | x | -2
+resi: x^2-x*(2*x)+(2*x)^2=12 | x | -2, 2
+vrednost: 4^2-4*2+2^2 | 12
+resi: 4^2-4*y+y^2=12 | y | 2
 >>
 
 :::simboli

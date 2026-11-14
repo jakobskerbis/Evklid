@@ -2616,8 +2616,60 @@
    "o": "I",
    "r": "brez zgodbe lekcije ne pove, da gre za posojilo 4000 € z anuitetami"
   },
+  "MAT-SS-4/anuitete-in-amortizacijski-nacrt#p3": {
+   "h": "3afa4a498741",
+   "o": "D"
+  },
+  "MAT-SS-4/anuitete-in-amortizacijski-nacrt#p4": {
+   "h": "80a146bffad2",
+   "o": "D"
+  },
+  "MAT-SS-4/anuitete-in-amortizacijski-nacrt#p5": {
+   "h": "c2d2dbc7f841",
+   "o": "D"
+  },
   "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#p1": {
    "h": "f25347d6a8cf",
+   "o": "D"
+  },
+  "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#p3": {
+   "h": "8154aa40419a",
+   "o": "D"
+  },
+  "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#p4": {
+   "h": "729c49e2dcf4",
+   "o": "D"
+  },
+  "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#p5": {
+   "h": "f939fe256c77",
+   "o": "D"
+  },
+  "MAT-SS-4/binomski-izrek#p3": {
+   "h": "aa09fbcf1a62",
+   "o": "D",
+   "k": [
+    "Za vsako naravno število $n$ velja $(a+b)^n = \\binom{n}{0}a^n + \\binom{n}{1}a^{n-1}b + \\dots + \\binom{n}{n}b^n$",
+    "Splošni, $(k+1)$-ti člen je $T_{k+1} = \\binom{n}{k}a^{n-k}b^k$"
+   ]
+  },
+  "MAT-SS-4/binomski-izrek#p4": {
+   "h": "2f0267d40a7f",
+   "o": "D"
+  },
+  "MAT-SS-4/binomski-izrek#p5": {
+   "h": "4849b540c104",
+   "o": "D"
+  },
+  "MAT-SS-4/doloceni-integral#p3": {
+   "h": "303858c90db1",
+   "o": "D"
+  },
+  "MAT-SS-4/doloceni-integral#p4": {
+   "h": "e4492f9f4542",
+   "o": "D"
+  },
+  "MAT-SS-4/doloceni-integral#p5": {
+   "h": "1a3713b02e34",
    "o": "D"
   },
   "MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p0": {
@@ -2628,12 +2680,75 @@
    "h": "9e78eb7cc41d",
    "o": "D"
   },
+  "MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p3": {
+   "h": "d948a43a0544",
+   "o": "D",
+   "k": [
+    "Funkcija je na intervalu konveksna, če njen graf tam leži nad vsako svojo tangento, in konkavna, če leži pod njimi",
+    "Za dvakrat odvedljivo funkcijo velja: če je $f''(x) > 0$ na intervalu, je $f$ tam konveksna",
+    "Če je $f''(x) < 0$ na intervalu, je $f$ tam konkavna"
+   ]
+  },
+  "MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p4": {
+   "h": "0f6ab33e48ee",
+   "o": "D"
+  },
+  "MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p5": {
+   "h": "346150a05dcf",
+   "o": "D"
+  },
+  "MAT-SS-4/geometrijska-vrsta#p3": {
+   "h": "7021b92db88a",
+   "o": "D"
+  },
+  "MAT-SS-4/geometrijska-vrsta#p4": {
+   "h": "4f3a7fe249f4",
+   "o": "D"
+  },
+  "MAT-SS-4/geometrijska-vrsta#p5": {
+   "h": "d736f6b5fed0",
+   "o": "D",
+   "k": [
+    "Primer je vrsta $1 - 2 + 4 - 8 + \\ldots$ s količnikom $q = -2$",
+    "Njene delne vsote so $1, -1, 3, -5, \\ldots$ in skačejo vse dlje gor in dol",
+    "Zaporedje delnih vsot zato nima limite in vrsta divergira"
+   ]
+  },
   "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#p1": {
    "h": "f3d544bcbf80",
    "o": "D"
   },
+  "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#p3": {
+   "h": "0203b4e47117",
+   "o": "D"
+  },
+  "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#p4": {
+   "h": "0b6ba4a58bba",
+   "o": "D"
+  },
+  "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#p5": {
+   "h": "5e2da4310860",
+   "o": "D"
+  },
   "MAT-SS-4/kombinatorika#p1": {
    "h": "ebcc5175f5aa",
+   "o": "D"
+  },
+  "MAT-SS-4/kombinatorika#p3": {
+   "h": "762a91c2ba84",
+   "o": "D",
+   "k": [
+    "Variacija $k$-tega razreda iz $n$ elementov je urejen izbor $k$ elementov izmed $n$ elementov, pri katerem je vrstni red pomemben",
+    "Če se elementi ne smejo ponavljati (takrat je $k \\le n$), je variacij $V_n^k = n(n-1)\\cdots(n-k+1) = \\frac{n!}{(n-k)!}$",
+    "Če se elementi smejo ponavljati, je pri vsakem od $k$ izborov na voljo vseh $n$ elementov, zato je variacij $n^k$"
+   ]
+  },
+  "MAT-SS-4/kombinatorika#p4": {
+   "h": "98ddc2578f31",
+   "o": "D"
+  },
+  "MAT-SS-4/kombinatorika#p5": {
+   "h": "bdd0ae566aa9",
    "o": "D"
   },
   "MAT-SS-4/limita-in-zveznost-funkcije#p0": {
@@ -2644,6 +2759,18 @@
    "h": "602a2c8b02bc",
    "o": "D"
   },
+  "MAT-SS-4/limita-in-zveznost-funkcije#p3": {
+   "h": "79da4c3217df",
+   "o": "D"
+  },
+  "MAT-SS-4/limita-in-zveznost-funkcije#p4": {
+   "h": "8e1811a12b51",
+   "o": "D"
+  },
+  "MAT-SS-4/limita-in-zveznost-funkcije#p5": {
+   "h": "4ca87c2fd765",
+   "o": "D"
+  },
   "MAT-SS-4/matematicna-indukcija#p0": {
    "h": "5e3b6b153457",
    "o": "D"
@@ -2652,17 +2779,113 @@
    "h": "a1428020d9ce",
    "o": "D"
   },
+  "MAT-SS-4/matematicna-indukcija#p3": {
+   "h": "2040729db8e6",
+   "o": "D"
+  },
+  "MAT-SS-4/matematicna-indukcija#p4": {
+   "h": "b089d8dfb9ac",
+   "o": "D"
+  },
+  "MAT-SS-4/matematicna-indukcija#p5": {
+   "h": "3060a1bbe8a5",
+   "o": "D"
+  },
   "MAT-SS-4/mesane-maturitetne-naloge#p0": {
    "h": "99fc7000f73d",
    "o": "I",
    "r": "sklic na nalogo o rojstnih dnevih iz lekcije"
   },
+  "MAT-SS-4/mesane-maturitetne-naloge#p3": {
+   "h": "642e1eec0357",
+   "o": "D",
+   "k": [
+    "Dogodka $A$ in $B$ sta neodvisna, če to, ali se zgodi eden, ne vpliva na verjetnost drugega",
+    "Za neodvisna dogodka je verjetnost produkta enaka produktu verjetnosti: $P(A \\cdot B) = P(A) \\cdot P(B)$"
+   ]
+  },
+  "MAT-SS-4/mesane-maturitetne-naloge#p4": {
+   "h": "eae2112ee30c",
+   "o": "D",
+   "k": [
+    "Najprej izračunamo odvod $f'$ in poiščemo stacionarne točke v notranjosti intervala $[a, b]$, to je rešitve enačbe $f'(x) = 0$",
+    "Kandidati za največjo vrednost so te stacionarne točke, točke, kjer funkcija ni odvedljiva, in obe krajišči $a$ in $b$",
+    "V vseh kandidatih izračunamo vrednost funkcije in največja med njimi je iskana največja vrednost"
+   ]
+  },
+  "MAT-SS-4/mesane-maturitetne-naloge#p5": {
+   "h": "c1f847ade01e",
+   "o": "D"
+  },
   "MAT-SS-4/nedoloceni-integral#p1": {
    "h": "8c2b741d545d",
    "o": "D"
   },
+  "MAT-SS-4/nedoloceni-integral#p3": {
+   "h": "2802bbea0319",
+   "o": "D",
+   "k": [
+    "Funkcija $F$ je primitivna funkcija funkcije $f$ na intervalu, če za vsak $x$ s tega intervala velja $F'(x) = f(x)$",
+    "Če je $F$ primitivna funkcija za $f$, je primitivna funkcija tudi $F + C$ za vsako realno število $C$, ker je odvod konstante enak $0$",
+    "Množico vseh primitivnih funkcij imenujemo nedoločeni integral in pišemo $\\int f(x)\\,dx = F(x) + C$"
+   ]
+  },
+  "MAT-SS-4/nedoloceni-integral#p4": {
+   "h": "0cb771c4af29",
+   "o": "D"
+  },
+  "MAT-SS-4/nedoloceni-integral#p5": {
+   "h": "fedbad31abf9",
+   "o": "D"
+  },
+  "MAT-SS-4/obrestni-racun#p3": {
+   "h": "a8f30cfa77b3",
+   "o": "D"
+  },
+  "MAT-SS-4/obrestni-racun#p4": {
+   "h": "b0a3b55ceb99",
+   "o": "D",
+   "k": [
+    "Relativna obrestna mera je letna obrestna mera, deljena s številom pripisov v enem letu, na primer $\\frac{p}{12}$ pri mesečnem pripisu",
+    "Pri $m$ pripisih na leto se stanje ob vsakem pripisu pomnoži s faktorjem $1 + \\frac{p}{100\\,m}$",
+    "V $n$ letih je $m \\cdot n$ pripisov, zato je končno stanje $G = G_0 \\left(1 + \\frac{p}{100\\,m}\\right)^{m n}$"
+   ]
+  },
+  "MAT-SS-4/obrestni-racun#p5": {
+   "h": "f97145bb5f63",
+   "o": "D"
+  },
   "MAT-SS-4/odvedljivost-in-implicitni-odvod#p0": {
    "h": "864e60c615d1",
+   "o": "D"
+  },
+  "MAT-SS-4/odvedljivost-in-implicitni-odvod#p3": {
+   "h": "1b29c3757ed6",
+   "o": "D"
+  },
+  "MAT-SS-4/odvedljivost-in-implicitni-odvod#p4": {
+   "h": "a06b23bad0ca",
+   "o": "D"
+  },
+  "MAT-SS-4/odvedljivost-in-implicitni-odvod#p5": {
+   "h": "784a0906d872",
+   "o": "D"
+  },
+  "MAT-SS-4/odvod#p3": {
+   "h": "7936309e8591",
+   "o": "D",
+   "k": [
+    "Odvod funkcije $f$ v točki $a$ je limita diferenčnega količnika: $f'(a) = \\lim\\limits_{h \\to 0} \\frac{f(a + h) - f(a)}{h}$, če ta limita obstaja",
+    "Diferenčni količnik je smerni koeficient sekante skozi točki $(a, f(a))$ in $(a + h, f(a + h))$ grafa",
+    "Ko gre $h$ proti $0$, se sekanta zavrti v tangento, zato je $f'(a)$ smerni koeficient tangente na graf v točki $(a, f(a))$"
+   ]
+  },
+  "MAT-SS-4/odvod#p4": {
+   "h": "fe3f274910f9",
+   "o": "D"
+  },
+  "MAT-SS-4/odvod#p5": {
+   "h": "0564c0f9e1f4",
    "o": "D"
   },
   "MAT-SS-4/statisticna-naloga#p0": {
@@ -2678,8 +2901,37 @@
     "Podatki pokažejo le, da količini skupaj rasteta"
    ]
   },
+  "MAT-SS-4/statisticna-naloga#p3": {
+   "h": "8704ccd7a639",
+   "o": "D"
+  },
+  "MAT-SS-4/statisticna-naloga#p4": {
+   "h": "8c9b58165d7b",
+   "o": "D"
+  },
+  "MAT-SS-4/statisticna-naloga#p5": {
+   "h": "fc63ac2a71c6",
+   "o": "D",
+   "k": [
+    "Razsevni diagram pokaže le, da se količini spreminjata skupaj",
+    "Obe lahko poganja tretja spremenljivka, ki je v podatkih ne vidimo",
+    "Poleti na primer rasteta prodaja sladoleda in število opeklin od sonca, a sladoled opeklin ne povzroča; obe poganja toplo, sončno vreme"
+   ]
+  },
   "MAT-SS-4/statistika#p1": {
    "h": "37cb46c15df3",
+   "o": "D"
+  },
+  "MAT-SS-4/statistika#p3": {
+   "h": "6e1275b35354",
+   "o": "D"
+  },
+  "MAT-SS-4/statistika#p4": {
+   "h": "c47d3eb801fc",
+   "o": "D"
+  },
+  "MAT-SS-4/statistika#p5": {
+   "h": "12e8bf200b1d",
    "o": "D"
   },
   "MAT-SS-4/uporaba-odvoda#p0": {
@@ -2687,17 +2939,92 @@
    "o": "I",
    "r": "lok ni podan"
   },
+  "MAT-SS-4/uporaba-odvoda#p3": {
+   "h": "4de08d66012b",
+   "o": "D"
+  },
+  "MAT-SS-4/uporaba-odvoda#p4": {
+   "h": "302609580eac",
+   "o": "D"
+  },
+  "MAT-SS-4/uporaba-odvoda#p5": {
+   "h": "c1208aa9afa7",
+   "o": "D"
+  },
   "MAT-SS-4/verjetnost#p0": {
    "h": "bae5548048fc",
    "o": "D"
+  },
+  "MAT-SS-4/verjetnost#p3": {
+   "h": "fe1ac8542ea4",
+   "o": "D"
+  },
+  "MAT-SS-4/verjetnost#p4": {
+   "h": "b882b182520b",
+   "o": "D"
+  },
+  "MAT-SS-4/verjetnost#p5": {
+   "h": "5c182cb792d1",
+   "o": "D",
+   "k": [
+    "Dogodka sta nezdružljiva, če se ne moreta zgoditi hkrati, torej je $P(A \\cdot B) = 0$",
+    "Dogodka sta neodvisna, če izid enega ne spremeni verjetnosti drugega, torej je $P(A \\cdot B) = P(A) \\cdot P(B)$",
+    "Pri enem metu kocke sta dogodka »pade $1$« in »pade $2$« nezdružljiva, pri dveh metih kovanca pa sta dogodka »v prvem metu pade grb« in »v drugem metu pade grb« neodvisna"
+   ]
   },
   "MAT-SS-4/zaporedja#p0": {
    "h": "f360a8bdfeb5",
    "o": "I",
    "r": "zaporedje ni podano"
   },
+  "MAT-SS-4/zaporedja#p3": {
+   "h": "5a8da68b4d69",
+   "o": "D",
+   "k": [
+    "Število $L$ je limita zaporedja, če v vsaki okolici $(L - \\varepsilon, L + \\varepsilon)$ ležijo vsi členi od nekega indeksa naprej",
+    "Drugače povedano, zunaj poljubne okolice števila $L$ je le končno mnogo členov",
+    "Zaporedje, ki ima limito, je konvergentno, zaporedje brez limite pa divergentno"
+   ]
+  },
+  "MAT-SS-4/zaporedja#p4": {
+   "h": "2d421291c0dc",
+   "o": "D"
+  },
+  "MAT-SS-4/zaporedja#p5": {
+   "h": "cb81246bac5e",
+   "o": "D"
+  },
+  "MAT-SS-4/zaporedje-neodvisnih-poskusov#p3": {
+   "h": "385097b21e09",
+   "o": "D"
+  },
+  "MAT-SS-4/zaporedje-neodvisnih-poskusov#p4": {
+   "h": "bf7d171f0036",
+   "o": "D"
+  },
+  "MAT-SS-4/zaporedje-neodvisnih-poskusov#p5": {
+   "h": "4b20a0049e62",
+   "o": "D",
+   "k": [
+    "Verjetnosti $P_n(k) = \\binom{n}{k}p^k q^{n-k}$ so natanko členi razvoja potence $(q + p)^n$ po binomskem izreku",
+    "Zato je njihova vsota enaka $(q + p)^n$",
+    "Ker je $q + p = 1$, je vsota enaka $1^n = 1$"
+   ]
+  },
   "MAT-SS-4/zvezne-funkcije-in-bisekcija#p0": {
    "h": "fadeadf10be1",
+   "o": "D"
+  },
+  "MAT-SS-4/zvezne-funkcije-in-bisekcija#p3": {
+   "h": "66920337243b",
+   "o": "D"
+  },
+  "MAT-SS-4/zvezne-funkcije-in-bisekcija#p4": {
+   "h": "11aa538b537a",
+   "o": "D"
+  },
+  "MAT-SS-4/zvezne-funkcije-in-bisekcija#p5": {
+   "h": "36656670399b",
    "o": "D"
   },
   "MAT-TEK-OS/deljivost-in-ostanki#p1": {
