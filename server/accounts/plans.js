@@ -11,7 +11,8 @@ export const MAX_CHILDREN = 4;
 // 2026-11-10 (potrdil j 10. 11.): #511: neujemajoče plačilo 1 leto; #477: odstavek o pilotu.
 // 2026-11-11 (j 10. 11., združeno 11. 11.): eno obvestilo za Moje zapiske #563 (odstavek »Moji zapiski«: prepis rokopisa,
 // fotografija se ne shrani) in ustno spraševanje #564 (stikalo starša za glas, tudi mikrofon v Inštruktorju).
-export const PRIVACY_VERSION = "2026-11-11";
+// 2026-11-14 (j 14. 11., »Vse ja«): alineja »Kratka anketa po 7 dneh« (B3, #674).
+export const PRIVACY_VERSION = "2026-11-14";
 
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.
 // Cene po stopnjah (j 2026-11-04, »Cene z najmanj 75 % dobička«, Predlog A): cena velja za profil in sledi
