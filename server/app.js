@@ -159,14 +159,15 @@ function mountOldLinkRedirect(app, homeCheck) {
 }
 
 // Varnostne glave (helmet). CSP: samo lastne skripte (brez vrinjenih), slogi tudi vrinjeni (KaTeX, style=),
-// slike tudi z drugih strani https (kotiček z novicami), blob: za fotografije s kamere in posnetke.
+// slike samo lastne, data: in blob: (fotografije s kamere, posnetki); točka A3: nobena slika z drugih strani
+// (kotiček z novicami slik nima, besedilo od modela in učencev jih ne sme naložiti, public/rich.js).
 // Plačilo (Stripe) in portal sta navadni preusmeritvi (location.href), zato ju CSP ne omejuje.
 // Mobilna aplikacija (Expo) uporablja API in svoj WebView z lokalnim HTML, zato je CSP ne zadeva.
 export const CSP = {
   "default-src": ["'self'"],
   "script-src": ["'self'"],
   "style-src": ["'self'", "'unsafe-inline'"],
-  "img-src": ["'self'", "data:", "blob:", "https:"],
+  "img-src": ["'self'", "data:", "blob:"],
   "font-src": ["'self'", "data:"],
   "connect-src": ["'self'"],
   "media-src": ["'self'", "blob:"],
@@ -223,21 +224,23 @@ export function createApp(store, opts = {}) {
   const { streamFn = streamReply, readFn = readHandwriting } = opts;
   const app = express();
   app.disable("x-powered-by");
+  securityHeaders(app);
   // Usmerjevalnik Expressa pot s poševnico na koncu ujema kot pot brez nje (/messages/ = /messages) in predpono
-  // brez ozira na velike črke (/API = /api), vmesniki pred potmi (dnevna meja vprašanj, mesečna meja AI,
-  // lastništvo, zaklep računa, opravila po izbrisu, Cache-Control) pa req.path preverjajo z regularnimi izrazi
-  // in so oboje spregledali. Zato pri /api predpono zapišemo z malimi črkami in poševnice na koncu odrežemo,
-  // preden pot kdorkoli prebere: vsi vidijo isto pot kot usmerjevalnik (točka 1.1).
+  // brez ozira na velike črke (/API = /api), vmesniki pred potmi (meje, lastništvo, zaklep računa, opravila po
+  // izbrisu, Cache-Control) pa req.path preverjajo z regularnimi izrazi. Točka A1: nekanonične poti /api (predpona
+  // z velikimi črkami, poševnica na koncu, prazen del poti »//«) dobijo 404, preden pridejo do katerekoli poti.
+  // Odjemalci (spletna stran, aplikacija) kličejo samo kanonične poti. Dnevna meja vprašanj se poleg tega preverja
+  // v obdelavi sporočila pred rezervacijo za klic AI (accounts.dailyBlock), zato je pot ne more obiti.
   app.use((req, _res, next) => {
-    const q = req.url.indexOf("?");
-    const pot = q < 0 ? req.url : req.url.slice(0, q);
-    if (/^\/api(\/|$)/i.test(pot)) {
-      const cista = ("/api" + pot.slice(4)).replace(/(.)\/+$/, "$1");
-      if (cista !== pot) req.url = cista + (q < 0 ? "" : req.url.slice(q));
-    }
+    // req.path (ne req.url): zahteva v absolutni obliki (»POST http://gostitelj/API/…«) ima req.url brez začetne »/«,
+    // usmerjevalnik pa jo vseeno ujema po poti. Taka zahteva na /api ni kanonična.
+    const pot = req.path;
+    const absolutna = !req.url.startsWith("/");
+    // Samo oznaka: preverjanja računov (prijava 401, zaklep računa 403) veljajo tudi za take poti, nato 404
+    // (server/accounts/index.js; brez računov vmesnik takoj za mountAccounts spodaj).
+    if (/^\/api(\/|$)/i.test(pot) && (absolutna || !/^\/api(\/|$)/.test(pot) || /.\/$/.test(pot) || pot.includes("//"))) req.nekanonicnaApi = true;
     next();
   });
-  securityHeaders(app);
   mountOldLinkRedirect(app, opts.homeCheck);
   app.get("/healthz", (_req, res) => res.send("ok")); // za gostovanje, brez gesla
   // Brskalniki, Google in zaznamki iščejo /favicon.ico tudi brez <link rel="icon">: pošljemo logotip (scripts/logotip.cjs).
@@ -269,6 +272,7 @@ export function createApp(store, opts = {}) {
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
+  app.use((req, res, next) => (req.nekanonicnaApi ? res.status(404).json({ error: "Pot ne obstaja." }) : next())); // točka A1
   mountMobile(app, accounts, { scheduler: opts.scheduler, fetchFn: opts.fetchFn, ...opts.mobile }); // prijava z Apple, nakupi v trgovinah, obvestila, /prenesi
   if (gateNeeded()) app.use(passwordGate(process.env.EVKLID_PASSWORD)); // skupno geslo (samo brez računov, glej gate.js)
   mountWebApp(app); // manifest v jeziku vmesnika, povezava za Google Play
@@ -288,9 +292,22 @@ export function createApp(store, opts = {}) {
   // Velika telesa (slike v pogovoru, skeniranje, urnik s fotografije) samo s prijavo. Brez prijave (z računi) pridejo
   // sem le javne poti (/api/school-orders, /api/auth/<neznano> …): 5 MB JSON bi brez prijave porabil ~0,3 s procesorja
   // (2 jedri) še pred omejitvijo na IP. Poti računov imajo svoj razčlenjevalnik (100 kb).
+  // Točka A9: tudi s prijavo je privzeta meja 100 kb; večja samo na poteh, ki sprejmejo fotografijo ali dolgo vsebino
+  // (vsaka ima v obdelavi še svojo, ožjo mejo). Prej je vsaka pot s prijavo sprejela 10 MB JSON (pomnilnik, procesor).
+  // Domača namestitev brez računov (en uporabnik) ostane pri 10 MB povsod.
   const bigJson = express.json({ limit: "10mb" });
   const smallJson = express.json({ limit: "100kb" });
-  app.use((req, res, next) => (accounts && !req.parent ? smallJson : bigJson)(req, res, next));
+  const VELIKA_TELESA = [
+    [/^\/api\/conversations\/[^/]+\/messages$/i, "10mb"], // sporočilo s sliko (MAX_IMAGE_B64)
+    // skener, zapiski, urnik s fotografije, zapis s prstom, fotografija naloge v pilotu
+    [/^\/api\/students\/[^/]+\/(scan\/read|zapiski\/preberi|schedule\/photo|tasks\/[^/]+\/read|pilot\/scan)$/i, "10mb"],
+    [/^\/api\/students\/[^/]+\/schedule\/ics$/i, "4mb"], // vsebina datoteke .ics (do 3 MB)
+    [/^\/api\/students\/[^/]+\/graphs(\/[^/]+)?$/i, "1mb"], // graf s sličico (MAX_DATA + MAX_THUMB)
+    [/^\/api\/conversations\/[^/]+\/messages\/[^/]+\/report$/i, "1mb"], // prijava odgovora z izrisanim HTML (SHOWN_MAX)
+    [/^\/api\/students\/[^/]+\/offline-sync$/i, "1mb"], // vrsta odgovorov brez povezave (odjemalec je ne omeji; ~125 B na odgovor)
+  ].map(([pot, limit]) => [pot, express.json({ limit })]);
+  const jsonZa = (req) => (req.method === "POST" || req.method === "PUT" ? VELIKA_TELESA.find(([pot]) => pot.test(req.path))?.[1] : null) || smallJson;
+  app.use((req, res, next) => (!accounts ? bigJson : !req.parent ? smallJson : jsonZa(req))(req, res, next));
   // Neuspele klice API zapišemo v dnevnik, da je napako na telefonu mogoče poiskati.
   app.use("/api", (req, res, next) => {
     res.on("finish", () => {
@@ -754,6 +771,11 @@ export function createApp(store, opts = {}) {
     const conv = loadConversation(req, res);
     if (!conv) return;
     const student = store.getStudent(conv.student_id);
+    // Dnevna meja vprašanj (točka A1) se preverja tu, v obdelavi sporočila, ne po obliki poti v vmesniku. Od tod do
+    // rezervacije za klic AI in store.logQuestion spodaj ni nobenega await (razen na poteh, ki vrnejo odgovor), zato
+    // je ne obide nobena oblika poti in ne dve sočasni sporočili v različnih pogovorih.
+    const dnevna = accounts?.dailyBlock?.(student.id);
+    if (dnevna) return res.status(429).json(dnevna);
 
     const text = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_TEXT) : "";
     const image = req.body?.image;

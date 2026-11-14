@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -131,7 +131,7 @@ Izračunaj $\lim\limits_{x \to \infty} \dfrac{3x^2 - 5x}{6x^2 + 1}$.
 4. Ostane $\dfrac{3}{6} = 0{,}5$.
 5. Odgovor: limita je $0{,}5$. Graf ima vodoravno asimptoto $y = 0{,}5$.
 
-### Primer 3: ovojnica glasnosti brez poka
+### Primer 3 (višja raven): ovojnica glasnosti brez poka
 
 V programu za urejanje zvoka producent sestavi ovojnico glasnosti tona (relativna glasnost $v$ v odvisnosti od časa $t$ v sekundah):
 

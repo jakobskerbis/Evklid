@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -66,7 +66,7 @@ Napovej, preden računaš: koliko rešitev ima enačba $2x + 3 = 2x + 5$?
 Nobene. Ko na obeh straneh odštejemo $2x$, ostane $3 = 5$, kar ni res. To je oblika $0 \cdot x = 2$: leva stran je za vsak $x$ za $2$ manjša od desne.
 :::
 
-**5. Enačbe s parametrom.** Včasih v enačbi poleg $x$ nastopa še črka, npr. $a$ ali $m$, ki predstavlja neko poljubno, a fiksno število. Tej črki rečemo **parameter**. Za vsako vrednost parametra dobimo drugo enačbo, zato rešitev običajno zapišemo kot formulo in ločimo primere.
+**5. Enačbe s parametrom (višja raven).** Včasih v enačbi poleg $x$ nastopa še črka, npr. $a$ ali $m$, ki predstavlja neko poljubno, a fiksno število. Tej črki rečemo **parameter**. Za vsako vrednost parametra dobimo drugo enačbo, zato rešitev običajno zapišemo kot formulo in ločimo primere.
 
 Primer: $mx + 1 = 3x + 5$. Člene z $x$ prenesemo na levo: $mx - 3x = 5 - 1$, torej $(m-3)x = 4$.
 
@@ -119,7 +119,7 @@ $$6 \cdot \frac{x+1}{2} - 6 \cdot \frac{2x-1}{3} = 6 \cdot 1.$$
 6. Preverimo. $\dfrac{-1+1}{2} - \dfrac{2\cdot(-1)-1}{3} = \dfrac{0}{2} - \dfrac{-3}{3} = 0 + 1 = 1$. ✓
 7. Odgovor: rešitev enačbe je $x = -1$.
 
-### Primer 3: parameter
+### Primer 3 (višja raven): parameter
 
 Reši enačbo $ax + 3 = x + a + 2$ za neznanko $x$. Parameter $a$ je realno število.
 
@@ -169,7 +169,7 @@ $6x - 2x - 3x = x$, torej $x = 900\,\text{ml}$. Preizkus: $900 - 300 - 450 = 150
 - **Predznak pred oklepajem.** »$-(2x-1) = -2x - 1$.« Napačno: minus spremeni predznak *obema* členoma. Popravek: $-(2x-1) = -2x + 1$. Pri ulomku $-\dfrac{2x-1}{3}$ je števec v oklepaju, zato po množenju s $6$ dobimo $-2(2x-1)$.
 - **Pozabljeno množenje členov brez ulomka.** »Pri $\dfrac{x}{2} + \dfrac{x}{3} = 5$ množim s $6$ samo ulomka: $3x + 2x = 5$.« Napačno: tehtnica ostane v ravnovesju le, če pomnožiš *vsak* člen. Popravek: $3x + 2x = 30$.
 - **Prenos brez spremembe predznaka.** »Iz $5x - 7 = 3x + 9$ sledi $2x = 9 - 7$.« Napačno: $-7$ odstranimo tako, da na obeh straneh prištejemo $7$. Popravek: $2x = 9 + 7 = 16$.
-- **Deljenje z $0$ pri parametru.** »$(a-1)x = a-1$, torej vedno $x = 1$.« Napačno: pri $a = 1$ bi delil z $0$. Popravek: primer $a = 1$ reši posebej; tam velja vsak $x$.
+- **Deljenje z $0$ pri parametru (višja raven).** »$(a-1)x = a-1$, torej vedno $x = 1$.« Napačno: pri $a = 1$ bi delil z $0$. Popravek: primer $a = 1$ reši posebej; tam velja vsak $x$.
 - **Napačen zaključek pri $0 \cdot x = b$.** »$0 \cdot x = 6$, torej $x = 0$.« Napačno: $0 \cdot x$ je vedno $0$, nikoli $6$. Popravek: če je $b \neq 0$, rešitve ni; če je $b = 0$, so rešitve vsa števila.
 
 ## Povzetek
@@ -177,7 +177,7 @@ $6x - 2x - 3x = x$, torej $x = 900\,\text{ml}$. Preizkus: $900 - 300 - 450 = 150
 - Linearno enačbo z ekvivalentnimi preoblikami prevedemo na $ax = b$.
 - Postopek: odpri oklepaje, odpravi ulomke (množenje s skupnim imenovalcem), zberi člene z $x$ na eni strani, poenostavi, deli z $a$, preveri.
 - Za $a \neq 0$ je rešitev $x = \dfrac{b}{a}$. Za $a = 0$, $b \neq 0$ rešitve ni. Za $a = 0$, $b = 0$ je rešitev vsako realno število.
-- Pri enačbi s parametrom obravnavamo primere, kdaj je koeficient pri $x$ enak $0$ in kdaj ni.
+- (višja raven) Pri enačbi s parametrom obravnavamo primere, kdaj je koeficient pri $x$ enak $0$ in kdaj ni.
 - Rešitev vedno preveri z vstavitvijo.
 
 ## Drugače: Na sliki
@@ -215,7 +215,7 @@ Preverimo: leva stran je $\dfrac{2 \cdot 5{,}5 - 1}{4} = \dfrac{10}{4} = 2{,}5$,
 
 Zakaj smemo enačbo množiti ali deliti z istim številom, ki ni $0$? Če velja $A = B$, potem velja tudi $kA = kB$ za vsak $k$. To je očitno. Obratno, če velja $kA = kB$ in je $k \neq 0$, lahko obe strani delimo s $k$ in dobimo $A = B$. Zato sta enačbi **ekvivalentni**, imata iste rešitve. Če je $k = 0$, dobimo $0 = 0$ ne glede na $A$ in $B$, zato bi izgubili vso informacijo in dobili »rešitve«, ki jih prej ni bilo.
 
-Zato pri parametru ne smemo deliti z izrazom, ki je lahko $0$. V enačbi $(a-1)x = a-1$ je množenje s faktorjem $a - 1$ ekvivalentna preoblika samo, če je $a - 1 \neq 0$. Primer $a = 1$ je treba rešiti ločeno, neposredno iz enačbe.
+(višja raven) Zato pri parametru ne smemo deliti z izrazom, ki je lahko $0$. V enačbi $(a-1)x = a-1$ je množenje s faktorjem $a - 1$ ekvivalentna preoblika samo, če je $a - 1 \neq 0$. Primer $a = 1$ je treba rešiti ločeno, neposredno iz enačbe.
 
 Splošno: enačbo $ax = b$ rešujemo takole.
 
@@ -240,7 +240,7 @@ Splošno: enačbo $ax = b$ rešujemo takole.
 + $x = 6$
 > Pomnožimo s $6$: $3x + 2x = 30$, torej $5x = 30$ in $x = 6$. Če pozabimo pomnožiti desno stran, dobimo $x = 1$. Če ne delimo s $5$, dobimo $30$.
 
-? Za katero vrednost parametra $a$ enačba $ax - 2 = 4 + 2x$ nima rešitve?
+? (višja raven) Za katero vrednost parametra $a$ enačba $ax - 2 = 4 + 2x$ nima rešitve?
 - $a = 0$
 ~ Pri $a = 0$ dobimo $-2 = 4 + 2x$, ki ima rešitev $x = -3$. Gledati moraš koeficient pri $x$, ne samo $a$.
 - $a = 6$
@@ -260,7 +260,7 @@ Splošno: enačbo $ax = b$ rešujemo takole.
 ~ To so vsa štiri jabolka ($1052 - 248 = 804$). Deliti moraš še s $4$.
 > Enačba $4x + 248 = 1052$ da $4x = 804$ in $x = 201$. Eno jabolko tehta približno $200\,\text{g}$.
 
-? Zakaj enačbe $(a-1)x = a - 1$ ne smemo kar deliti z $a - 1$?
+? (višja raven) Zakaj enačbe $(a-1)x = a - 1$ ne smemo kar deliti z $a - 1$?
 - Ker $a$ ni znano število, zato z njim ne smemo računati.
 ~ S parametrom smemo računati kot s številom. Težava je samo, kadar je izraz enak $0$.
 + Ker je pri $a = 1$ izraz $a - 1$ enak $0$, z $0$ pa ne smemo deliti.

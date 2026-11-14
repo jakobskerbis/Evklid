@@ -29,6 +29,7 @@ export class Mailer {
         method: "POST",
         headers: { Authorization: `Bearer ${this.key}`, "Content-Type": "application/json" },
         body: JSON.stringify({ from: this.from, to: [to], subject, html, text }),
+        signal: AbortSignal.timeout(30_000), // obdelava dogodka Stripe ne sme čakati na pošto dlje od prevzema (točka A7)
       });
     } catch (err) {
       this.failed(`omrežje: ${err.message}`);
@@ -224,6 +225,16 @@ export function privacyChangeEmail(policyUrl, dateText = "6. novembra 2026") {
 
 // Enkratna koda za potrditev imetnika računa brez gesla (prijava z Apple): skrivanje obvestila o zasebnosti,
 // odgovor o plačilu, izbris fotografij pilota.
+// Točka A9: koda za skrbniški dostop. Če je skrbnik ni zahteval, nekdo pozna njegovo geslo.
+export function skrbnikKodaEmail(code) {
+  const opomba = "Velja 10 minut. Če je niste zahtevali, nekdo pozna vaše geslo: takoj ga zamenjajte.";
+  return {
+    subject: "Evklid: koda za skrbniški dostop",
+    text: `Vaša koda za skrbniški dostop v Evklidu: ${code}\n\n${opomba}`,
+    html: layout("Koda za skrbniški dostop", `<p>Vaša koda za skrbniški dostop v Evklidu:</p><p style="font-size:28px;font-weight:bold;letter-spacing:4px">${esc(code)}</p><p style="font-size:13px;color:#5f6779">${esc(opomba)}</p>`),
+  };
+}
+
 export function ownerCodeEmail(code) {
   return {
     subject: "Evklid: koda za potrditev",

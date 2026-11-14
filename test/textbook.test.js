@@ -36,6 +36,23 @@ Slika.
   assert.deepEqual(l.checks[0], { q: "Koliko je $2 + 2$?", options: ["3", "4"], correct: 1, why: "Ker je tako.", optionWhy: ["", ""] });
 });
 
+test("checkLessonSource: stanja osnutek / preverjeno / pregledano in polje pregledal", () => {
+  const src = (head) => `---\n${head}\n---\n## Razlaga\nBesedilo.\n`;
+  const st = (head) => {
+    const r = checkLessonSource(src(head));
+    return { errors: r.errors.filter((e) => /stanje|pregled/.test(e)), warnings: r.warnings.filter((w) => /stanje|pregled/.test(w)) };
+  };
+  for (const s of ["osnutek", "preverjeno"]) assert.deepEqual(st(`stanje: ${s}`), { errors: [], warnings: [] }, s);
+  assert.deepEqual(st("stanje: pregledano\npregledal: Ana Novak"), { errors: [], warnings: [] });
+  assert.equal(st("stanje: preverjen").errors.length, 1, "neznano stanje je napaka");
+  assert.equal(st("").errors.length, 1, "brez stanja je napaka");
+  assert.equal(st("stanje: pregledano").warnings.length, 1, "pregledano brez imena učitelja je opozorilo");
+  assert.equal(st("stanje: preverjeno\npregledal: Ana Novak").warnings.length, 1, "ime učitelja brez stanja pregledano");
+  for (const ai of ["AI", "Claude Opus", "program"]) assert.equal(st(`stanje: pregledano\npregledal: ${ai}`).errors.length, 1, `AI ni pregledovalec: ${ai}`);
+  for (const ime of ["Kaia Kos", "Mihael Zupan", "Ana Čaić"]) assert.deepEqual(st(`stanje: pregledano\npregledal: ${ime}`).errors, [], `človek: ${ime}`);
+  assert.equal(parseLesson(src("stanje: pregledano\npregledal: Ana Novak")).meta.pregledal, "Ana Novak");
+});
+
 test("lesson files load for competition paths too", () => {
   const dir = path.join(LESSONS_DIR, "MAT-TEK-OS");
   fs.mkdirSync(dir, { recursive: true });
@@ -133,7 +150,7 @@ test("every lesson file belongs to a topic and is complete", () => {
       for (const need of ["razlaga", "rešeni primeri", "povzetek"]) assert.ok(titles.includes(need), `${id}: manjka »${need}«`);
       assert.ok(v.lesson.alternatives.length >= 2, `${id}: premalo drugačnih razlag`);
       assert.ok(v.lesson.checks.length >= 2, `${id}: premalo vprašanj`);
-      if (v.lesson.status) assert.match(v.lesson.status, /^(osnutek|pregledano)$/);
+      if (v.lesson.status) assert.match(v.lesson.status, /^(osnutek|preverjeno|pregledano)$/);
       assert.ok(lessonSummaryForPrompt(id).length > 50);
       // Vsako vprašanje: natanko en pravilen odgovor, vsi odgovori različni.
       const raw = fs.readFileSync(path.join(LESSONS_DIR, dir.name, f), "utf8");

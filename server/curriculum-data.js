@@ -539,7 +539,7 @@ export const PATHS = {
       ["Kombinatorika in verjetnost", [
         "Kombinatorika | permutacije, variacije, kombinacije",
         "Verjetnost | dogodki, verjetnost vsote in produkta, pogojna verjetnost",
-        "Statistika | normalna porazdelitev (VR), obdelava podatkov",
+        "Statistika | normalna porazdelitev, obdelava podatkov",
       ]],
       ["Priprava na maturo", [
         "Mešane maturitetne naloge | ponovitev vseh letnikov",

@@ -57,6 +57,8 @@
 .tb-title { font-size: 1.7rem; margin-bottom: 6px; }
 .tb-goals { margin-top: 0; }
 .tb-draft { background: color-mix(in srgb, #e0a100 14%, transparent); border-radius: 10px; padding: 8px 12px; font-size: 0.9rem; }
+/* »preverjeno«: račune sta preverila program in AI, učitelj še ne – mirnejša barva kot osnutek */
+.tb-draft.tb-checked { background: color-mix(in srgb, var(--accent, #2f6fde) 10%, transparent); }
 .tb-section .explanation { line-height: 1.65; }
 .tb-section .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0 6px; } /* 6px: osvetlitev klikljive oznake v imenovalcu ni odrezana */
 /* Formula v besedilu se nikoli ne prelomi v dve vrstici (j 2026-10-31: »(p + | q)√b«); preširoko ureja sirina.js. */

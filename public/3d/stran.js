@@ -6,6 +6,7 @@ import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
 import { vgrajeno, starsu } from "./vgrajeno.js";
 import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
+import { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, slogIkon } from "./drevo.js";
 
 const glavni = document.getElementById("k3-glavni");
 const vAplikaciji = !!window.ReactNativeWebView;
@@ -60,8 +61,17 @@ function odpriMikroskop(p) {
 function izZbirke(e) {
   if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
+  // Mesto na zbirki shranimo v njen vnos v zgodovini: Nazaj (z modela ali iz podveje) vrne na isto mesto.
+  history.replaceState({ ...history.state, pomik: glavni.scrollTop }, "");
   history.pushState({ k3Iz: "hub" }, "", e.currentTarget.getAttribute("href"));
   usmeri();
+}
+// Naslov zbirke na veji v (»biologija/telo«) z iskanjem q; prazno = koren (ohrani ?vgrajeno ipd.).
+function naslovZbirke(v, q = "") {
+  const u = new URLSearchParams();
+  if (v) u.set("v", v);
+  if (q) u.set("q", q);
+  return u.toString() ? `#?${u}` : location.pathname + location.search;
 }
 
 // Gumb »3D svet« ob napaki (model ne obstaja, ni WebGL): na zbirko, v okvirju aplikacije pa zapre okvir (zbirka v
@@ -75,9 +85,8 @@ function naZbirko(b) {
     });
 }
 
-// Področja v izbirniku zbirke: »telo« združi atlas, organe in organske sisteme; ikona za kartico brez sličice.
-const TELO = ["organi", "sistemi"];
-const IKONE = { telo: "bone", celice: "droplet", organi: "heart", sistemi: "activity", kemija: "atom", fizika: "zap", matematika: "box", vesolje: "globe", procesi: "refresh-cw" };
+// Ikona področja za kartico modela brez sličice.
+const IKONE = { celice: "droplet", organi: "heart", sistemi: "activity", kemija: "atom", fizika: "zap", matematika: "box", vesolje: "globe", procesi: "refresh-cw" };
 const NEDAVNO = "evklid.3d.nedavno"; // zadnji odprti modeli (id, največ 8), samo v tej napravi
 const beri = (k, privzeto) => {
   try {
@@ -93,8 +102,8 @@ function zapomni(id) {
     localStorage.setItem(NEDAVNO, JSON.stringify(zdaj));
   } catch {}
 }
-// Pomnjenje mesta na zbirki: ob vrnitvi z modela (Nazaj) se stran odpre na istem mestu.
-let pomik = 0;
+// Slog aplikacije (theme.js shrani nastavitve v »evklid.theme«; /3d ga ne naloži): nabor ikon vej drevesa.
+const slogAplikacije = () => slogIkon(beri("evklid.theme", {})?.style);
 
 async function zbirka(param) {
   document.title = t("a3.hubTitle");
@@ -112,8 +121,9 @@ async function zbirka(param) {
   nas.append(mk("h1", "", t("a3.hubTitle")), mk("p", "", t("a3.hubSub")));
   vrh.append(nas);
 
-  // Iskanje in področja: lepljiva vrstica na vrhu (ostane vidna med pomikanjem).
+  // Iskanje in mikroskop: lepljiva vrstica na vrhu (ostane vidna med pomikanjem).
   const orodja = mk("div", "k3-hub-orodja");
+  const vrsta = mk("div", "k3-hub-iskanje");
   const isk = mk("label", "k3-iskalnik");
   isk.innerHTML = icon("search");
   const vnos = mk("input", "");
@@ -126,10 +136,17 @@ async function zbirka(param) {
   vnos.setAttribute("aria-label", t("a3.searchModels"));
   vnos.value = param.q || "";
   isk.append(vnos);
-  const cipi = mk("div", "k3-cipi");
-  cipi.setAttribute("role", "group");
-  cipi.setAttribute("aria-label", t("a3.areas"));
-  orodja.append(isk, cipi);
+  // Mikroskop (j, 12. 11. 2026): svetlobni in elektronski, vsi preparati; gumb ob iskanju (osnutek drevesa).
+  const mkGumb = mk("a", "k3-krog k3-hub-mikroskop");
+  mkGumb.href = "#mikroskop";
+  mkGumb.innerHTML = icon("microscope");
+  mkGumb.setAttribute("aria-label", t("mk.start"));
+  mkGumb.title = t("mk.start");
+  mkGumb.addEventListener("click", izZbirke);
+  vrsta.append(isk, mkGumb);
+  const potNav = mk("nav", "k3-drevo-pot");
+  potNav.setAttribute("aria-label", t("a3.treePath"));
+  orodja.append(vrsta, potNav);
   const vsebina = mk("div", "k3-hub-vsebina");
   box.append(vrh, orodja, vsebina);
   glavni.replaceChildren(box);
@@ -137,23 +154,15 @@ async function zbirka(param) {
   const modeli = (await seznamModelov()).map((m) => ({ ...m, podrocjeIme: t(`a3.area.${m.podrocje}`) }));
   const slicice = new Set((await seznamDatotek()).slicice || []);
   if (!box.isConnected) return null; // medtem odprt model ali atlas: ne prepišemo njegovega aktivno (pomik, unici)
-  const podrocja = new Map();
-  for (const m of modeli) {
-    if (!podrocja.has(m.podrocje)) podrocja.set(m.podrocje, []);
-    podrocja.get(m.podrocje).push(m);
-  }
-  const izbire = ["vse", "telo", ...[...podrocja.keys()].filter((p) => !TELO.includes(p))];
-  let izbrano = izbire.includes(param.p) ? param.p : "vse";
-
-  // Stanje v naslovu (#?p=celice&q=…), da Nazaj z modela vrne isto zbirko; zamenjava, ne nov vnos v zgodovini.
-  const shrani = () => {
-    const q = vnos.value.trim();
-    const u = new URLSearchParams();
-    if (izbrano !== "vse") u.set("p", izbrano);
-    if (q) u.set("q", q);
-    const h = u.toString() ? `#?${u}` : location.pathname + location.search;
-    history.replaceState(history.state, "", h);
-  };
+  const poId = new Map(modeli.map((m) => [m.id, m]));
+  const obstaja = new Set([...poId.keys(), "atlas"]);
+  const veje = poPoti(param.v);
+  // Veja brez modelov (strežnik nekega področja nima): pokažemo najbližjo višjo, ki jih ima.
+  while (veje.length && !modeliVeje(veje[veje.length - 1], obstaja).length) veje.pop();
+  const potId = veje.map((v) => v.id).join("/");
+  // Stanje v naslovu (#?v=biologija/telo&q=…), da Nazaj z modela vrne isto vejo; iskanje naslov zamenja.
+  if (potId !== (param.v || "")) history.replaceState(history.state, "", naslovZbirke(potId, param.q || ""));
+  const shrani = () => history.replaceState(history.state, "", naslovZbirke(potId, vnos.value.trim()));
 
   const kartica = (m, { nadnaslov = false } = {}) => {
     const a = mk("a", "k3-kartica");
@@ -202,7 +211,6 @@ async function zbirka(param) {
     }
     return z;
   };
-  // Mikroskop (j, 12. 11. 2026): svetlobni in elektronski, vsi preparati; kartica pod atlasom.
   const mikroskopKartica = () => {
     const z = mk("a", "k3-zvezda k3-zvezda-mk");
     z.href = "#mikroskop";
@@ -221,21 +229,11 @@ async function zbirka(param) {
     for (const m of seznam) g.append(kartica(m, opts));
     return g;
   };
-  // Polica: vodoravna vrsta kartic (vsa področja na enem zaslonu); »Pokaži vse« izbere področje.
-  const polica = (naslov, seznam, { p = null, nadnaslov = false } = {}) => {
+  // Polica: vodoravna vrsta kartic (nazadnje odprto, drugi modeli).
+  const polica = (naslov, seznam, { nadnaslov = false } = {}) => {
     const s = mk("section", "k3-podrocje");
     const glava = mk("div", "k3-podrocje-glava");
-    const h = mk("h2", "", naslov);
-    if (p) h.append(mk("span", "k3-stevec", String(seznam.length)));
-    glava.append(h);
-    if (p && seznam.length > 1) {
-      const b = mk("button", "k3-vec");
-      b.type = "button";
-      b.innerHTML = `<span></span>${icon("chevron-right")}`;
-      b.firstChild.textContent = t("a3.seeAll");
-      b.addEventListener("click", () => izberi(p, true));
-      glava.append(b);
-    }
+    glava.append(mk("h2", "", naslov));
     const vrsta = mk("div", "k3-polica");
     for (const m of seznam) vrsta.append(kartica(m, { nadnaslov }));
     // Puščici za miško (prst in sledilna ploščica vrsto potegneta sama); skriti, ko vrsta ni daljša od zaslona.
@@ -267,56 +265,114 @@ async function zbirka(param) {
     return s;
   };
 
+  // Drevo (public/3d/drevo.js): pot zgoraj, pod njo veje kot ikone ali, na zadnji veji, modeli kot kartice.
+  const skupina = veje[0]?.sk;
+  const ZNAKI = { bio: "droplet", kem: "atom", fiz: "zap", mat: "box" };
+  const ime = (id) => t(`a3.tree.${id}`);
+  const ikone = [];
+  const veja = (v) => {
+    const a = mk("a", "k3-veja");
+    if (v.povezava) a.href = `#${v.povezava}`;
+    else a.href = naslovZbirke([potId, v.id].filter(Boolean).join("/"));
+    a.addEventListener("click", izZbirke);
+    a.style.setProperty("--veja", BARVE[v.sk || skupina] || BARVE.fiz);
+    const ovoj = mk("span", "k3-veja-ikona");
+    ovoj.setAttribute("aria-hidden", "true");
+    const img = mk("img", "");
+    img.alt = "";
+    img.decoding = "async";
+    img.width = img.height = 256;
+    img.dataset.veja = v.id;
+    img.src = ikonaVeje(v.id, slogAplikacije());
+    // Brez povezave in ikona še ni v predpomnilniku: znak skupine namesto prazne ploščice.
+    img.addEventListener("error", () => {
+      img.remove();
+      ovoj.insertAdjacentHTML("afterbegin", icon(ZNAKI[v.sk || skupina] || "box"));
+    });
+    ikone.push(img);
+    ovoj.append(img);
+    const n = modeliVeje(v, obstaja).length;
+    if (!v.povezava && n) ovoj.append(mk("span", "k3-veja-stevec", String(n)));
+    a.append(ovoj, mk("span", "k3-veja-ime", ime(v.id)));
+    return a;
+  };
+  // Menjava sloga v nastavitvah (druga stran ali okvir aplikacije): ikone se zamenjajo brez ponovnega nalaganja.
+  const obSlogu = (e) => {
+    if (!box.isConnected) return removeEventListener("storage", obSlogu);
+    if (e.key && e.key !== "evklid.theme") return;
+    const s = slogAplikacije();
+    for (const img of ikone) if (img.isConnected) img.src = ikonaVeje(img.dataset.veja, s);
+  };
+  addEventListener("storage", obSlogu);
+
+  const narisiPot = () => {
+    const deli = [];
+    const korak = (besedilo, v) => {
+      const a = mk("a", "", besedilo);
+      a.href = naslovZbirke(v);
+      a.addEventListener("click", izZbirke);
+      return a;
+    };
+    if (veje.length) {
+      // Korak in ločilo za njim v enem kosu: ob prelomu vrstice »›« ostane na koncu prejšnje vrstice.
+      const kos = (el) => {
+        const s = mk("span", "");
+        s.append(el, mk("span", "k3-drevo-loc", "›"));
+        return s;
+      };
+      deli.push(kos(korak(t("a3.hubTitle"), "")));
+      veje.forEach((v, i) => {
+        if (i < veje.length - 1) deli.push(kos(korak(ime(v.id), veje.slice(0, i + 1).map((x) => x.id).join("/"))));
+        else {
+          const b = mk("b", "k3-drevo-zdaj", ime(v.id));
+          b.setAttribute("aria-current", "page");
+          b.tabIndex = -1; // fokus po premiku po drevesu
+          deli.push(b);
+        }
+      });
+    }
+    potNav.replaceChildren(...deli);
+    potNav.hidden = !deli.length;
+  };
+
   function narisi() {
     const q = vnos.value.trim();
     const deli = [];
+    ikone.length = 0;
     if (q) {
+      potNav.hidden = true;
       const atlasZadetek = najdi([{ id: "atlas", naslov: t("a3.title"), opis: `${t("a3.hubAtlas")} ${t("a3.area.telo")}`, podrocjeIme: "" }], q).length > 0;
-      const zadetki = najdi(modeli.filter((m) => izbrano === "vse" || m.podrocje === izbrano || (izbrano === "telo" && TELO.includes(m.podrocje))), q);
-      const n = zadetki.length + (atlasZadetek && (izbrano === "vse" || izbrano === "telo") ? 1 : 0);
+      const zadetki = najdi(modeli, q);
+      const n = zadetki.length + (atlasZadetek ? 1 : 0);
       deli.push(mk("p", "k3-zadetki", n ? t("a3.results", { n }) : t("a3.noModels", { q })));
-      if (atlasZadetek && (izbrano === "vse" || izbrano === "telo")) deli.push(atlasKartica());
-      if (izbrano === "vse" && najdi([{ id: "mikroskop", naslov: t("mk.title"), opis: t("mk.hub"), podrocjeIme: "" }], q).length) deli.push(mikroskopKartica());
+      if (atlasZadetek) deli.push(atlasKartica());
+      if (najdi([{ id: "mikroskop", naslov: t("mk.title"), opis: t("mk.hub"), podrocjeIme: "" }], q).length) deli.push(mikroskopKartica());
       if (zadetki.length) deli.push(mreza(zadetki, { nadnaslov: true }));
-    } else if (izbrano === "vse") {
-      deli.push(atlasKartica(), mikroskopKartica());
-      const vsi = new Map(modeli.map((m) => [m.id, m]));
-      const nedavni = (beri(NEDAVNO, []) || []).map((id) => vsi.get(id)).filter(Boolean);
-      if (nedavni.length) deli.push(polica(t("a3.recent"), nedavni, { nadnaslov: true }));
-      for (const [p, seznam] of podrocja) deli.push(polica(t(`a3.area.${p}`), seznam, { p: TELO.includes(p) ? "telo" : p }));
-    } else if (izbrano === "telo") {
-      deli.push(atlasKartica());
-      for (const p of TELO) {
-        if (!podrocja.has(p)) continue;
-        const s = mk("section", "k3-podrocje");
-        s.append(mk("h2", "", t(`a3.area.${p}`)), mreza(podrocja.get(p)));
-        deli.push(s);
-      }
     } else {
-      deli.push(mreza(podrocja.get(izbrano) || []));
+      narisiPot();
+      const zdaj = veje[veje.length - 1];
+      if (zdaj?.modeli) {
+        const g = mreza(zdaj.modeli.map((id) => poId.get(id)).filter(Boolean));
+        g.classList.add("k3-veja-modeli");
+        deli.push(g);
+      }
+      else {
+        const g = mk("div", "k3-drevo");
+        for (const v of zdaj ? zdaj.otroci : DREVO) if (modeliVeje(v, obstaja).length) g.append(veja(v));
+        deli.push(g);
+      }
+      if (!zdaj) {
+        const nedavni = (beri(NEDAVNO, []) || []).map((id) => poId.get(id)).filter(Boolean);
+        if (nedavni.length) deli.push(polica(t("a3.recent"), nedavni, { nadnaslov: true }));
+        // Model, ki ga drevo še ne pozna (nov v index.js), ostane dosegljiv.
+        const vDrevesu = vsiModeliDrevesa();
+        const drugi = modeli.filter((m) => !vDrevesu.has(m.id));
+        if (drugi.length) deli.push(polica(t("a3.treeMore"), drugi, { nadnaslov: true }));
+      }
     }
     vsebina.replaceChildren(...deli);
   }
 
-  function izberi(p, naVrh) {
-    izbrano = p;
-    for (const b of cipi.children) b.setAttribute("aria-pressed", String(b.dataset.p === p));
-    shrani();
-    narisi();
-    if (naVrh) glavni.scrollTo({ top: 0 });
-    cipi.querySelector(`[data-p="${p}"]`)?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
-  }
-  for (const p of izbire) {
-    const b = mk("button", "k3-cip");
-    b.type = "button";
-    b.dataset.p = p;
-    b.setAttribute("aria-pressed", String(p === izbrano));
-    const n = p === "vse" ? null : p === "telo" ? 1 + TELO.reduce((s, x) => s + (podrocja.get(x)?.length || 0), 0) : podrocja.get(p).length;
-    b.append(mk("span", "", p === "vse" ? t("a3.all") : t(`a3.area.${p}`)));
-    if (n) b.append(mk("small", "", String(n)));
-    b.addEventListener("click", () => izberi(p, true));
-    cipi.append(b);
-  }
   let zamik = 0;
   vnos.addEventListener("input", () => {
     clearTimeout(zamik);
@@ -331,13 +387,16 @@ async function zbirka(param) {
     }
   });
   narisi();
-  // Vrnitev z modela: isto mesto na zbirki (sicer vrh).
-  const nazajNa = pomik; // rAF teče po spodnji ponastavitvi, zato vrednost vzamemo zdaj
+  // Vrnitev (Nazaj z modela, atlasa, mikroskopa ali iz podveje): isto mesto, shranjeno v vnosu zgodovine; sicer vrh.
+  const nazajNa = +history.state?.pomik || 0;
   if (nazajNa) requestAnimationFrame(() => glavni.scrollTo({ top: nazajNa }));
-  pomik = 0;
+  else glavni.scrollTo({ top: 0 });
+  // Premik naprej po drevesu: fokus na novo mesto, da tipkovnica in bralnik zaslona ne začneta na vrhu.
+  if (!nazajNa && !vnos.value.trim() && history.state?.k3Iz === "hub" && (!document.activeElement || document.activeElement === document.body))
+    (potNav.querySelector(".k3-drevo-zdaj") || vsebina.querySelector(".k3-veja"))?.focus({ preventScroll: true });
   return {
     unici() {
-      pomik = glavni.scrollTop;
+      removeEventListener("storage", obSlogu);
     },
   };
 }
@@ -516,10 +575,21 @@ addEventListener("hashchange", usmeri);
 // Esc v modelu ali atlasu: nazaj na zbirko. Na window, da pridejo najprej na vrsto atlas in pregledovalnik (zaprejo
 // list, kviz ali izbiro in pokličejo preventDefault); v polju za vnos (iskanje) Esc ostane polju.
 addEventListener("keydown", (e) => {
-  if (e.key !== "Escape" || e.defaultPrevented || !razberi().id) return;
+  if (e.key !== "Escape" || e.defaultPrevented) return;
   if (e.target instanceof Element && e.target.closest("input, textarea, select, [contenteditable]")) return;
-  e.preventDefault();
-  nazaj();
+  const { id, param } = razberi();
+  if (id) {
+    e.preventDefault();
+    nazaj();
+  } else if (param.v && !param.q) {
+    // Zbirka na veji: Esc gre za vejo višje (kot Nazaj na telefonu).
+    e.preventDefault();
+    if (history.state?.k3Iz === "hub") history.back();
+    else {
+      history.replaceState(history.state, "", naslovZbirke(param.v.split("/").slice(0, -1).join("/")));
+      usmeri();
+    }
+  }
 });
 usmeri();
 

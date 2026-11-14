@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -63,7 +63,7 @@ V simulaciji spodaj (Zbirka simulacij za maturo) odpri Odvod in poišči točko,
 
 ## Rešeni primeri
 
-### Primer 1 (lažji): trije prosti meti
+### Primer 1 (lažji, višja raven): trije prosti meti
 
 Košarkarica zadene prosti met z verjetnostjo $0{,}8$, meti so neodvisni. Izvede tri mete. Kolikšna je verjetnost, da vsaj enkrat zgreši?
 
@@ -214,7 +214,7 @@ Razlog je število parov $\binom{n}{2} = \frac{n(n-1)}{2}$, ki raste s kvadratom
 ~ Vsaka od $10$ novih ekip odigra več kot eno tekmo, kar $2 \cdot 19 = 38$ tekem.
 > $V_{20}^2 = 20 \cdot 19 = 380$, $V_{10}^2 = 10 \cdot 9 = 90$. Število tekem raste približno s kvadratom števila ekip.
 
-? Napadalec zadene enajstmetrovko z verjetnostjo $0{,}7$. Izvede dve neodvisni. Kolikšna je verjetnost, da zadene vsaj eno?
+? (višja raven) Napadalec zadene enajstmetrovko z verjetnostjo $0{,}7$. Izvede dve neodvisni. Kolikšna je verjetnost, da zadene vsaj eno?
 - $1{,}4$
 ~ To je $0{,}7 + 0{,}7$. Verjetnost ne more biti večja od $1$; dogodka nista nezdružljiva.
 - $0{,}49$

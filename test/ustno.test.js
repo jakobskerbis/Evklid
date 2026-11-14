@@ -394,3 +394,45 @@ test("stikalo starša: zapis v dnevnik, zaklenjen Račun ga zavrne, velja tudi z
     { ustnoFn: fn, accountLock: true },
   );
 });
+
+// A1 (pregled 3): dnevna meja se pri ustnem spraševanju preveri tudi ob štetju. Preverjanje v vmesniku računov teče pred
+// branjem telesa, zato sta dve sočasni zahtevi s počasnim telesom prej obe videli isto število vprašanj in obe začeli.
+test("A1: sočasna začetka ustnega spraševanja ne obideta dnevne meje", async () => {
+  await withAccounts(
+    { EVKLID_FREE_DAILY_QUESTIONS: "4" },
+    async ({ store, kid, base, jar }) => {
+      const cookie = Object.entries(jar).map(([k, v]) => `${k}=${v}`).join("; ");
+      const telo = JSON.stringify({ tema: OHM, n: 3 });
+      const http = await import("node:http");
+      const { port } = new URL(base);
+      // Glava takoj, telo po 300 ms: obe zahtevi gresta čez vmesnik računov, preden se telo prebere.
+      const zahteve = [1, 2].map(() => {
+        let q;
+        const p = new Promise((ok) => {
+          q = http.request({ port, method: "POST", path: `/api/students/${kid.id}/ustno/zacni`, headers: { "content-type": "application/json", "content-length": Buffer.byteLength(telo), cookie } }, (res) => {
+            res.resume();
+            res.on("end", () => ok(res.statusCode));
+          });
+          q.flushHeaders();
+        });
+        return { q, p };
+      });
+      await new Promise((ok) => setTimeout(ok, 300));
+      for (const { q } of zahteve) q.end(telo);
+      const statusi = (await Promise.all(zahteve.map((z) => z.p))).sort();
+      assert.deepEqual(statusi, [201, 429]);
+      assert.equal(store.db.prepare("SELECT SUM(n) AS n FROM question_log WHERE student_id = ?").get(kid.id).n, USTNO_QUESTIONS);
+    },
+    { ustnoFn: fakeModel(() => ({ points: [], followup: "", feedback: "" })).fn },
+  );
+});
+
+test("oznaka »(višja raven)« iz učbenika ne pride v ustno vprašanje", async () => {
+  const { brezOznakeRavni, lessonQuestions } = await import("../server/ustno.js");
+  assert.equal(brezOznakeRavni("**6. Pravila (višja raven).** Besedilo"), "**6. Pravila.** Besedilo");
+  assert.equal(brezOznakeRavni("### Primer 3 (težji, višja raven): x"), "### Primer 3 (težji): x");
+  assert.equal(brezOznakeRavni("- (višja raven) Pri enačbi\n? (višja raven) Za katero"), "- Pri enačbi\n? Za katero");
+  const lesson = { sections: [{ title: "Pogoste napake", md: "- **Zamenjana pogoja (višja raven).** Napačno je, da $P(A \\mid B) = P(B \\mid A)$. Pogoja nista ista dogodka." }] };
+  const q = lessonQuestions("MAT-SS-4/verjetnost", lesson, "Verjetnost", { raw: true }).find((x) => x.vrsta === "napaka");
+  assert.ok(q && !/višja raven/.test(q.besedilo + q.vzorec), q?.besedilo);
+});

@@ -7,7 +7,7 @@ import { isLocalRequest } from "../feedback.js";
 import express from "express";
 import { migrateAccounts } from "./schema.js";
 import { hashPassword, verifyPassword, needsRehash, fakeVerify, unusablePasswordHash, randomToken, sha256, readCookie, Sessions, setSessionCookie, clearSessionCookie, Throttle } from "./auth.js";
-import { audit, detachAudit } from "../dnevnik-dostopov.js";
+import { audit, detachAudit, ensureAuditTable } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal, auditSecret } from "../crypto-polje.js";
@@ -19,7 +19,7 @@ import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, P
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
-import { Mailer, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail } from "./email.js";
+import { Mailer, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail, skrbnikKodaEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
 import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
 import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
@@ -226,6 +226,9 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Skrbnik po e-naslovu (EVKLID_ADMIN_EMAILS) šele po potrditvi e-naslova: sicer bi se kdorkoli registriral z njim.
   const isAdminEmail = (p) => !!p?.email_verified_at && adminEmails.includes(String(p.email).toLowerCase());
+  // Točka A9: skrbniške pravice šele po kodi na e-pošto (glej skrbnik_potrditve spodaj).
+  const skrbnikKoda =
+    env.EVKLID_ADMIN_KODA === "1" || (env.EVKLID_ADMIN_KODA !== "0" && (env.NODE_ENV === "production" || /^https:/i.test(env.EVKLID_BASE_URL || "")));
 
   // Imetnik računa, mlajši od 18 let (dijak, ki je račun ustvaril sam): sme imeti samo svoj profil.
   const isMinor = (p) => {
@@ -252,7 +255,9 @@ export function mountAccounts(app, store, opts = {}) {
     verified: !!p.email_verified_at,
     // Račun s prijavo z Apple nima gesla: splet za izvoz in izbris namesto gesla ponudi nastavitev gesla.
     has_password: !p.is_guest && !String(p.password_hash || "").startsWith("none$"),
-    is_admin: !!p.is_admin || isAdminEmail(p),
+    // S kodo za skrbnika (A9) je nova seja vedno nepotrjena: odgovori prijave skrbniških delov ne obljubijo
+    // (/api/account pove po seji).
+    is_admin: !skrbnikKoda && (!!p.is_admin || isAdminEmail(p)),
     weekly_email: !!p.weekly_email,
     referral_code: p.referral_code,
     trial_ends_at: p.trial_ends_at,
@@ -865,6 +870,21 @@ export function mountAccounts(app, store, opts = {}) {
     return freeBudgetInfo(studentId)?.error ?? null;
   }
 
+  // Vprašanja inštruktorju na dan: brezplačni paket (10); plačljivi paketi in šolska licenca vsaj vsota
+  // šolske licence (15) in Osebno (60), s proračunom AI več (dailyLimitFor). Vrne telo odgovora 429 ali null.
+  // Kliče ga server/app.js v obdelavi sporočila, sinhrono z rezervacijo in štetjem vprašanja (točka A1); n = koliko
+  // vprašanj bo zahteva porabila (ustno spraševanje USTNO_QUESTIONS, server/ustno-api.js).
+  function dailyBlock(studentId, n = 1) {
+    const r = rightsFor(studentId);
+    if (!r.personal && (!r.school || r.schoolAiOut)) {
+      const limit = freeDailyQuestions();
+      if (questionsToday(studentId) + n > limit) return { ...freeBlock(studentId, "block.freeDaily", { n: limit }), limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) };
+      return null;
+    }
+    const limit = dailyLimitFor(studentId, r);
+    if (limit && questionsToday(studentId) + n > limit) return { error: BLOCK_TEXT["block.daily"].replace("{n}", limit), code: "block.daily", params: { n: limit }, limit: true };
+    return null;
+  }
   function questionsToday(studentId) {
     const scope = quotaScope(studentId);
     return guests.questionsToday(scope.ids, scope.net);
@@ -881,12 +901,36 @@ export function mountAccounts(app, store, opts = {}) {
     }
   }
 
+  // Točka A9 (odločitev j 14. 11.): skrbniške pravice šele po kodi na e-pošto. Koda velja 10 minut (največ 5 poskusov),
+  // potrditev 12 ur za to sejo. Do takrat je skrbnik navaden starš (req.parent.is_admin = 0). Velja v produkciji
+  // (https EVKLID_BASE_URL ali NODE_ENV=production) ali z EVKLID_ADMIN_KODA=1; EVKLID_ADMIN_KODA=0 jo izklopi.
+  // Meja AI lastnika (isOwnerParent) ni skrbniška pravica in ostane brez kode.
+  // (skrbnikKoda je zgoraj, ob isAdminEmail)
+  const SKRBNIK_KODA_MS = 10 * 60000;
+  const SKRBNIK_POTRJENO_MS = 12 * 3600000;
+  const SKRBNIK_POSKUSOV = 5;
+  db.exec(`CREATE TABLE IF NOT EXISTS skrbnik_potrditve (
+    token_hash TEXT PRIMARY KEY,
+    parent_id INTEGER NOT NULL REFERENCES parents(id) ON DELETE CASCADE,
+    code_hash TEXT,
+    code_expires INTEGER,
+    tries INTEGER NOT NULL DEFAULT 0,
+    potrjeno_do INTEGER
+  )`);
+  const skrbnikPotrjen = (token, parentId) =>
+    !!token && !!db.prepare("SELECT 1 FROM skrbnik_potrditve WHERE token_hash = ? AND parent_id = ? AND potrjeno_do > ?").get(sha256(token), parentId, Date.now());
+
   // --- prijava in preverjanje lastništva za vse /api klice ---
   app.use("/api", (req, _res, next) => {
-    const pid = sessions.parentId(readCookie(req));
+    const token = readCookie(req);
+    const pid = sessions.parentId(token);
     req.parent = pid ? getParent(pid) : null;
     // Skrbnik: e-naslov v EVKLID_ADMIN_EMAILS (tudi če je bil dodan po registraciji).
     if (req.parent && isAdminEmail(req.parent)) req.parent.is_admin = 1;
+    if (skrbnikKoda && req.parent?.is_admin && !skrbnikPotrjen(token, req.parent.id)) {
+      req.parent.is_admin = 0;
+      req.skrbnikCaka = true;
+    }
     req.deviceId = devices.identify(req, _res);
     next();
   });
@@ -895,14 +939,17 @@ export function mountAccounts(app, store, opts = {}) {
   // preverjanje spodaj (zaklep računa, OWNER_ONLY), da otrok na skrbnikovi napravi ne vidi prijav mimo zaklepa.
   const SESSIONLESS = [/^\/kozmetika\/prijave\/izvoz$/, /^\/kozmetika\/prijave\/(message|lesson|app)\/\d+\/stanje$/];
   const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
+  // Nekanonična pot /api (server/app.js, točka A1): 404, le zaklenjen račun ostane 403 (enako kot kanonična pot).
+  const ni = (res) => res.status(404).json({ error: "Pot ne obstaja." });
   app.use("/api", (req, res, next) => {
-    if (PUBLIC.some((re) => re.test(req.path))) return next();
-    if (!req.parent && SESSIONLESS.some((re) => re.test(req.path))) return next();
+    if (PUBLIC.some((re) => re.test(req.path))) return req.nekanonicnaApi ? ni(res) : next();
+    if (!req.parent && SESSIONLESS.some((re) => re.test(req.path))) return req.nekanonicnaApi ? ni(res) : next();
     const p = req.parent;
-    if (!p) return res.status(401).json({ error: "Prijavi se.", login: true });
+    if (!p) return req.nekanonicnaApi ? ni(res) : res.status(401).json({ error: "Prijavi se.", login: true });
     if (lockable(p) && ownerOnly(req.path, req.method) && !accountLocks.touch(p.id, req.deviceId)) {
       return res.status(403).json({ error: "Za to vpiši geslo računa.", account_locked: true });
     }
+    if (req.nekanonicnaApi) return ni(res);
     if (p.is_guest && /^\/billing\//i.test(req.path)) return res.status(403).json({ error: "Najprej ustvari račun v zavihku Račun.", guest: true });
     if (p.is_guest && !guestAllowed(p)) return res.status(401).json({ error: "Uporaba brez računa ni več mogoča. Ustvari račun, da obdržiš napredek.", login: true, guest_off: true });
     // Porabo AI vidi samo skrbnik ali kdor aplikacijo odpre na računalniku, kjer teče strežnik.
@@ -958,44 +1005,17 @@ export function mountAccounts(app, store, opts = {}) {
       }
     }
 
-    // Vprašanja inštruktorju na dan: brezplačni paket (10); plačljivi paketi in šolska licenca vsaj vsota
-    // šolske licence (15) in Osebno (60), s proračunom AI več (dailyLimitFor).
+    // Dnevna meja vprašanj inštruktorju (dailyBlock zgoraj). Tu samo zgodnja zavrnitev pred drugimi preverjanji; meja
+    // velja v obdelavi sporočila (server/app.js), ne glede na obliko poti (točka A1).
     if (c && req.method === "POST" && /\/messages$/i.test(req.path)) {
-      const r = rightsFor(studentId);
-      if (!r.personal && (!r.school || r.schoolAiOut)) {
-        const limit = freeDailyQuestions();
-        if (questionsToday(studentId) >= limit) {
-          return res.status(429).json({
-            ...freeBlock(studentId, "block.freeDaily", { n: limit }),
-            limit: true,
-            upgrade: !!guests.netOf(studentId) || upsell(studentId),
-          });
-        }
-      } else {
-        const limit = dailyLimitFor(studentId, r);
-        if (limit && questionsToday(studentId) >= limit) {
-          return res.status(429).json({
-            error: BLOCK_TEXT["block.daily"].replace("{n}", limit),
-            code: "block.daily",
-            params: { n: limit },
-            limit: true,
-          });
-        }
-      }
+      const dnevna = dailyBlock(studentId);
+      if (dnevna) return res.status(429).json(dnevna);
     }
     // Ustno spraševanje (server/ustno-api.js) šteje kot USTNO_QUESTIONS vprašanj (j 10. 11.: 3 od 10 v brezplačnem paketu);
     // začne se le, če jih je danes še toliko na voljo. Samoocena (brez AI, /ustno/samoocena) ne šteje.
     if (s && req.method === "POST" && /^\/students\/\d+\/ustno\/zacni\/?$/i.test(req.path)) {
-      const r = rightsFor(studentId);
-      const free = !r.personal && (!r.school || r.schoolAiOut);
-      const limit = free ? freeDailyQuestions() : dailyLimitFor(studentId, r);
-      if (limit && questionsToday(studentId) + USTNO_QUESTIONS > limit) {
-        return res.status(429).json(
-          free
-            ? { ...freeBlock(studentId, "block.freeDaily", { n: limit }), limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) }
-            : { error: BLOCK_TEXT["block.daily"].replace("{n}", limit), code: "block.daily", params: { n: limit }, limit: true },
-        );
-      }
+      const dnevna = dailyBlock(studentId, USTNO_QUESTIONS); // isto preverjanje še enkrat ob štetju (server/ustno-api.js)
+      if (dnevna) return res.status(429).json(dnevna);
     }
     // Mesečna meja porabe brezplačnega paketa velja za vse klice AI (inštruktor, branje zapisa, fotografija urnika).
     // Z dokupljenim kreditom ta meja ne velja (poraba gre iz kredita, server/usage.js chargeCredit).
@@ -1452,6 +1472,66 @@ export function mountAccounts(app, store, opts = {}) {
     res.json({ ok: true, ...(devLinks(req, p.email) ? { dev_code: code } : {}) });
   });
 
+  // Točka A9: koda za skrbniški dostop (6 števk na e-naslov skrbnika), največ 3 na uro; potrditev velja 12 ur za to sejo.
+  // Meje so v dnevniku dostopov (audit_log), ne v pomnilniku: ponovni zagon strežnika jih ne pobriše.
+  // Največ 10 napačnih kod v 24 urah (nato ni nove kode do naslednjega dne): ugibanje ostane brez možnosti.
+  const SKRBNIK_NAPAK_DAN = 10;
+  ensureAuditTable(db);
+  const auditSteje = (parentId, action, okVal, okno) =>
+    db.prepare(`SELECT COUNT(*) AS n FROM audit_log WHERE parent_id = ? AND action = ? AND ok = ? AND at >= datetime('now', ?)`).get(parentId, action, okVal, okno).n;
+  const skrbnikPrevecNapak = (parentId) => auditSteje(parentId, "admin_code", 0, "-1 day") >= SKRBNIK_NAPAK_DAN;
+  app.post("/api/account/skrbnik/koda", json, async (req, res) => {
+    const p = req.parent;
+    const token = readCookie(req);
+    if (!p || !token) return res.status(401).json({ error: "Prijavi se.", login: true });
+    if (!req.skrbnikCaka) return res.status(400).json({ error: "Potrditev ni potrebna." });
+    if (p.is_guest || !p.email || !p.email_verified_at) return res.status(400).json({ error: "Račun nima potrjenega e-naslova za kodo." });
+    // Brez e-pošte (Resend) kode ni mogoče poslati: skrbnik jo izklopi z EVKLID_ADMIN_KODA=0.
+    if (!mailer.enabled) return res.status(503).json({ error: "E-pošta ni nastavljena, kode ni mogoče poslati (EVKLID_ADMIN_KODA=0 jo izklopi)." });
+    if (skrbnikPrevecNapak(p.id)) return res.status(429).json({ error: "Preveč napačnih kod. Poskusi jutri ali zamenjaj geslo." });
+    if (auditSteje(p.id, "admin_code_sent", 1, "-1 hour") >= 3) return res.status(429).json({ error: "Preveč kod. Poskusi čez eno uro." });
+    // Zapis pred pošiljanjem: vzporedne zahteve ne morejo preseči meje (pošiljanje je asinhrono).
+    audit(db, { req, parentId: p.id, action: "admin_code_sent", ok: true });
+    const code = String(crypto.randomInt(0, 1000000)).padStart(6, "0");
+    const th = sha256(token);
+    db.prepare(
+      `INSERT INTO skrbnik_potrditve (token_hash, parent_id, code_hash, code_expires, tries) VALUES (?, ?, ?, ?, 0)
+       ON CONFLICT(token_hash) DO UPDATE SET parent_id = excluded.parent_id, code_hash = excluded.code_hash, code_expires = excluded.code_expires, tries = 0`,
+    ).run(th, p.id, sha256(`${th}:${code}`), Date.now() + SKRBNIK_KODA_MS);
+    // Stare potrditve (potekle in brez veljavne kode) sproti počistimo.
+    db.prepare("DELETE FROM skrbnik_potrditve WHERE (potrjeno_do IS NULL OR potrjeno_do < ?) AND (code_expires IS NULL OR code_expires < ?)").run(Date.now(), Date.now());
+    try {
+      await mailer.send({ to: p.email, ...skrbnikKodaEmail(code) });
+    } catch {
+      return res.status(502).json({ error: "Kode ni bilo mogoče poslati. Poskusi znova." });
+    }
+    res.json({ ok: true });
+  });
+  app.post("/api/account/skrbnik/potrdi", json, (req, res) => {
+    const p = req.parent;
+    const token = readCookie(req);
+    if (!p || !token) return res.status(401).json({ error: "Prijavi se.", login: true });
+    if (!req.skrbnikCaka) return res.status(400).json({ error: "Potrditev ni potrebna." });
+    if (p.is_guest || !p.email || !p.email_verified_at) return res.status(400).json({ error: "Račun nima potrjenega e-naslova za kodo." });
+    // Brez e-pošte (Resend) kode ni mogoče poslati: skrbnik jo izklopi z EVKLID_ADMIN_KODA=0.
+    if (!mailer.enabled) return res.status(503).json({ error: "E-pošta ni nastavljena, kode ni mogoče poslati (EVKLID_ADMIN_KODA=0 jo izklopi)." });
+    if (skrbnikPrevecNapak(p.id)) return res.status(429).json({ error: "Preveč napačnih kod. Poskusi jutri ali zamenjaj geslo." });
+    const th = sha256(token);
+    const row = db.prepare("SELECT code_hash, code_expires, tries FROM skrbnik_potrditve WHERE token_hash = ? AND parent_id = ?").get(th, p.id);
+    if (!row?.code_hash || row.code_expires < Date.now() || row.tries >= SKRBNIK_POSKUSOV) return res.status(400).json({ error: "Koda je potekla. Pošlji novo." });
+    const code = String(req.body?.code ?? "").replace(/\s+/g, "");
+    const want = Buffer.from(row.code_hash);
+    const got = Buffer.from(sha256(`${th}:${code}`));
+    if (!/^\d{6}$/.test(code) || want.length !== got.length || !crypto.timingSafeEqual(want, got)) {
+      db.prepare("UPDATE skrbnik_potrditve SET tries = tries + 1 WHERE token_hash = ?").run(th);
+      audit(db, { req, parentId: p.id, action: "admin_code", ok: false });
+      return res.status(400).json({ error: "Napačna koda." });
+    }
+    db.prepare("UPDATE skrbnik_potrditve SET code_hash = NULL, code_expires = NULL, tries = 0, potrjeno_do = ? WHERE token_hash = ?").run(Date.now() + SKRBNIK_POTRJENO_MS, th);
+    audit(db, { req, parentId: p.id, action: "admin_code", ok: true });
+    res.json({ ok: true });
+  });
+
   // Obvestilo o spremenjeni politiki zasebnosti zaprto (»V redu« ali ×): ne pokaže se več do naslednje spremembe.
   // Samo z geslom računa (pasica v zavihku Račun), da obvestila ne zapre otrok na starševi napravi.
   app.post("/api/account/privacy-seen", json, async (req, res) => {
@@ -1524,10 +1604,12 @@ export function mountAccounts(app, store, opts = {}) {
 
   function accountView(req, p) {
     const access = accessOf(p);
+    // Skrbniški podatki po seji (req.parent), ne po vrstici v bazi: p je pogosto sveže prebran (is_admin = 1 v bazi).
+    const admin = !!req.parent?.is_admin && req.parent.id === p.id;
     const rewards = db.prepare("SELECT COUNT(*) AS n FROM referral_rewards WHERE referrer_id = ?").get(p.id).n;
     const special = specialOf(p);
     return {
-      parent: publicParent(p),
+      parent: { ...publicParent(p), is_admin: admin },
       access,
       // Pilot: poln paket brezplačno do zadnjega dne pilota (LLLL-MM-DD); lastnik: brez meje (public/account.js planText).
       pilot: special ? { kind: special, last_day: special === "pilot" ? pilotLastDay() : null, profiles: profileSeats(p) } : null,
@@ -1579,13 +1661,15 @@ export function mountAccounts(app, store, opts = {}) {
         redeemed: !!db.prepare("SELECT 1 FROM promo_redemptions WHERE parent_id = ?").get(p.id),
         available: promo.anyActive(),
         seats: promo.termsOf(p.id).seats,
-        ...(p.is_admin && promoCfg.code ? { admin: { ...promo.stats(), url: `${baseUrl(req)}/?koda=${promoCfg.code}` } } : {}),
-        ...(p.is_admin ? { codes: promo.list(), base_url: `${baseUrl(req)}/?koda=` } : {}),
+        ...(admin && promoCfg.code ? { admin: { ...promo.stats(), url: `${baseUrl(req)}/?koda=${promoCfg.code}` } } : {}),
+        ...(admin ? { codes: promo.list(), base_url: `${baseUrl(req)}/?koda=` } : {}),
       },
-      ...(isAdminEmail(p) ? { guest_invite: true } : {}),
-      ...(p.is_admin
+      ...(admin && isAdminEmail(p) ? { guest_invite: true } : {}),
+      ...(admin
         ? { billing_events: db.prepare("SELECT id, type, received_at, processed_at, error FROM billing_events ORDER BY received_at DESC, rowid DESC LIMIT 10").all() }
         : {}),
+      // Točka A9: skrbnik mora to sejo še potrditi s kodo na e-pošto (public/account.js skrbnikBox).
+      ...(req.skrbnikCaka ? { skrbnik_potrditev: true } : {}),
       consents: { adult: ADULT_TEXT, withdrawal: WITHDRAWAL_TEXT },
       grace_days: GRACE_DAYS,
       referral: { code: p.referral_code, url: `${baseUrl(req)}/?ref=${p.referral_code}`, rewards, days: REFERRAL_DAYS },
@@ -1598,7 +1682,7 @@ export function mountAccounts(app, store, opts = {}) {
   // Lastnik (EVKLID_ADMIN_EMAILS s potrjenim e-naslovom) ustvari povezavo za uporabo brez e-naslova.
   // Žeton je v odgovoru samo enkrat; v bazi je le njegov sha256.
   app.post("/api/admin/guest-invite", (req, res) => {
-    if (!isAdminEmail(req.parent)) return res.status(403).json({ error: "Samo za lastnika." });
+    if (!req.parent?.is_admin || !isAdminEmail(req.parent)) return res.status(403).json({ error: "Samo za lastnika." });
     const inv = invites.create(req.parent.id);
     res.status(201).json({ url: `${baseUrl(req)}/?gost=${inv.token}`, expires_at: inv.expires_at, max_uses: inv.max_uses });
   });
@@ -2462,6 +2546,9 @@ export function mountAccounts(app, store, opts = {}) {
     }
   }
 
+  // Oznaka prevzema dogodka Stripe (točka A7) in čas, po katerem velja prevzem za opuščen.
+  const PREVZEM = "v obdelavi";
+  const PREVZEM_MS = 5 * 60 * 1000;
   app.post("/api/stripe/webhook", express.raw({ type: "*/*", limit: "1mb" }), async (req, res) => {
     const raw = Buffer.isBuffer(req.body) ? req.body.toString("utf8") : "";
     if (!verifyWebhook(raw, req.get("stripe-signature"), webhookSecret)) return res.status(400).json({ error: "Neveljaven podpis." });
@@ -2472,10 +2559,24 @@ export function mountAccounts(app, store, opts = {}) {
       return res.status(400).json({ error: "Neveljaven JSON." });
     }
     const id = typeof event.id === "string" && event.id ? event.id.slice(0, 100) : null;
+    let oznaka = null; // oznaka prevzema te dostave (točka A7)
     if (id) {
       db.prepare("INSERT OR IGNORE INTO billing_events (id, type) VALUES (?, ?)").run(id, String(event.type || "").slice(0, 100));
-      const seen = db.prepare("SELECT processed_at FROM billing_events WHERE id = ?").get(id);
-      if (seen?.processed_at) return res.json({ received: true, duplicate: true });
+      // Točka A7: dogodek prevzamemo atomarno (en stavek UPDATE). Druga sočasna dostava istega dogodka ga ne obdela še
+      // enkrat, ampak dobi 409 in jo Stripe ponovi pozneje. Prevzem, star več kot PREVZEM_MS (proces je med obdelavo
+      // padel), se lahko prevzame znova; oznaka je v stolpcu error, zato shema ostane ista.
+      const zdaj = Date.now();
+      oznaka = `${PREVZEM} ${zdaj}`;
+      const prevzet = db
+        .prepare(
+          `UPDATE billing_events SET error = ? WHERE id = ? AND processed_at IS NULL
+             AND (error IS NULL OR error NOT LIKE '${PREVZEM} %' OR CAST(substr(error, ${PREVZEM.length + 2}) AS INTEGER) < ?)`,
+        )
+        .run(oznaka, id, zdaj - PREVZEM_MS).changes;
+      if (!prevzet) {
+        if (db.prepare("SELECT processed_at FROM billing_events WHERE id = ?").get(id)?.processed_at) return res.json({ received: true, duplicate: true });
+        return res.status(409).json({ error: "Dogodek je že v obdelavi." });
+      }
     }
     try {
       await handleEvent(event);
@@ -2483,7 +2584,9 @@ export function mountAccounts(app, store, opts = {}) {
       res.json({ received: true });
     } catch (err) {
       log.error?.("[evklid] webhook:", event.type, err.message);
-      if (id) db.prepare("UPDATE billing_events SET error = ? WHERE id = ?").run(String(err.message).slice(0, 300), id);
+      // Predpona »napaka:« loči sporočilo od oznake prevzema (sporočilo »v obdelavi …« dogodka ne sme zakleniti).
+      // Samo če je prevzem še naš: dolga obdelava, ki jo je po PREVZEM_MS prevzela druga dostava, ne pobriše njene oznake.
+      if (id) db.prepare("UPDATE billing_events SET error = ? WHERE id = ? AND error = ?").run(`napaka: ${String(err.message).slice(0, 290)}`, id, oznaka);
       res.status(500).json({ error: "Napaka pri obdelavi." });
     }
   });
@@ -2577,6 +2680,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { dropForeignAccess, confirmEmail, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { ageOfStudent, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { ageOfStudent, dailyBlock, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

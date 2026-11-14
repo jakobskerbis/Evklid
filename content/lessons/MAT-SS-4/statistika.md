@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -97,7 +97,7 @@ V škatli je srednja polovica podatkov. Njena širina $Q_3 - Q_1 = 30$ je **medk
 
 V simulaciji spodaj (Statistika: histogram in škatla z brki) postavi število podatkov na $300$ in razrede najprej na $5$, nato na $20$. Opazi, da se pri več podatkih in ožjih razredih vrhovi stolpcev poravnajo v gladko zvonasto obliko, škatla z brki pod njim pa je simetrična okoli mediane.
 
-**5. Normalna porazdelitev (višja raven).** Zvonasta krivulja, ki jo vidiš, je graf **gostote normalne porazdelitve**. Primerjaj ju točko za točko:
+**5. Normalna porazdelitev.** Zvonasta krivulja, ki jo vidiš, je graf **gostote normalne porazdelitve**. Primerjaj ju točko za točko:
 
 | | histogram | normalna krivulja |
 |---|---|---|

@@ -1,9 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
+
+*(višja raven) Matematično indukcijo matura preverja samo na višji ravni.*
 
 V 16. stoletju je sicilijanski matematik Francesco Maurolico dokazoval lastnosti naravnih števil, med njimi to, da je vsota prvih lihih števil vedno popoln kvadrat. Ni se zadovoljil s tem, da je pravilo preveril za nekaj primerov. Pokazal je, da iz veljavnosti za eno število sledi veljavnost za naslednje. Stoletje kasneje je Blaise Pascal na enak način dokazoval lastnosti svojega trikotnika, ime **matematična indukcija** pa se je uveljavilo šele v 19. stoletju.
 
