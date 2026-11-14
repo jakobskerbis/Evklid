@@ -451,6 +451,10 @@ function hitro(mesta) {
 // sosedov, v vrstici, ki se prelomi, pa vsa vrstica (sosed gre v naslednjo vrstico).
 function prostor(el) {
   const cs = getComputedStyle(el);
+  // Vrstični element (odstavek v odzivu »Pravilno! …« ima display: inline) nima svoje širine: clientWidth je 0,
+  // offsetWidth pa dolžina besedila, zato bi spodnji račun od prostora odštel kar ves odstavek in vsako formulo
+  // v njem naredil drsno (j 14. 11. 2026). Njegov prostor je prostor bloka, v katerem stoji.
+  if (cs.display === "inline" && el.parentElement && el.parentElement !== document.body) return prostor(el.parentElement);
   const px = (v) => parseFloat(v) || 0;
   const rob = px(cs.paddingLeft) + px(cs.paddingRight);
   const cw = el.clientWidth - rob;
