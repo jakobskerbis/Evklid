@@ -2244,7 +2244,8 @@ export function izvorOznak(steps, start) {
 // Kaj na grafu označimo kot rešitev naloge (j 14. 11. 2026: »povsod, kjer rešitev zahteva interval oz. točko«):
 // neenačba → intervali s številske premice, enačba → ničle ali presečišča (x-koordinate). null: ničesar.
 export function oznakaGrafa(r) {
-  if (!r?.graph) return null;
+  // sistem: rešitev je točka v ravnini (graf jo že kaže), ne vrednosti na osi x (y = 1 ni x = 1)
+  if (!r?.graph || r.kind === "system" || r.graph.vars) return null;
   const num = (e) => (e == null ? null : typeof e.num === "function" ? e.num() : Number(e.num));
   if (r.numberLine) {
     const intervals = (r.numberLine.intervals || [])
@@ -2259,10 +2260,12 @@ export function oznakaGrafa(r) {
 // »x = 2«, »x_{1} = -3,\quad x_{2} = \frac{1}{2}«, »x = 2{,}5« → števila (drugo, npr. koreni, vrne prazno).
 function resitveIzTex(t) {
   const out = [];
+  let ime = null;
   for (const del of t.split(/,\s*\\quad|\\quad|;/)) {
-    const m = /^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=\s*(.+?)\s*$/.exec(del);
-    if (!m) return [];
-    const d = m[1].replace(/\{,\}/g, ".").replace(/\s+/g, "");
+    const m = /^\s*([a-zA-Z])(?:_\{?\d+\}?)?\s*=\s*(.+?)\s*$/.exec(del);
+    if (!m || (ime && m[1] !== ime)) return [];
+    ime = m[1];
+    const d = m[2].replace(/\{,\}/g, ".").replace(/\s+/g, "");
     const f = /^(-?)\\[dt]?frac\{(\d+(?:\.\d+)?)\}\{(\d+(?:\.\d+)?)\}$/.exec(d);
     const v = f ? (f[1] ? -1 : 1) * (Number(f[2]) / Number(f[3])) : /^-?\d+(?:\.\d+)?$/.test(d) ? Number(d) : NaN;
     if (!Number.isFinite(v)) return [];

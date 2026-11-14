@@ -38,4 +38,6 @@ test("the graph marks the solution: interval for an inequality, points for an eq
   assert.deepEqual(oznakaGrafa(solve("2x+3=7")), { points: [2], curves: true });
   assert.ok(Math.abs(oznakaGrafa(solve("3x=2")).points[0] - 2 / 3) < 1e-12);
   assert.equal(oznakaGrafa(solve("x^2+1<0")), null); // prazna množica: ničesar
+  // sistem: rešitev je točka v ravnini, ne x = 2 in »x« = 1 na osi x
+  assert.equal(oznakaGrafa(solve("x+y=3, x-y=1")), null);
 });
