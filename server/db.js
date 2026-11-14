@@ -472,6 +472,10 @@ export class Store {
     this.touchConversation(conversationId);
     return Number(r.lastInsertRowid);
   }
+  // Ali ima pogovor kakšno sporočilo (D3: brez nalaganja in odšifriranja vseh sporočil, tudi fotografij).
+  hasMessages(conversationId) {
+    return !!this.db.prepare("SELECT EXISTS(SELECT 1 FROM messages WHERE conversation_id = ?) AS e").get(conversationId).e;
+  }
   listMessages(conversationId) {
     return this.db
       .prepare("SELECT * FROM messages WHERE conversation_id = ? ORDER BY id")
