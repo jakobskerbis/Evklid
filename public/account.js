@@ -1357,6 +1357,7 @@ async function loadSchoolOrders() {
 }
 
 function bindAdminCodes(acc) {
+  bindSkrbnik();
   bindGuestInvite();
   if (!acc.promo?.codes) return;
   loadPilot();
@@ -1550,6 +1551,55 @@ function renderGuestInvite() {
   });
 }
 
+// Točka A9: skrbnik to sejo potrdi s kodo na e-pošto, šele nato dobi skrbniške strani (12 ur). Samo za skrbnika,
+// zato v slovenščini (kot skrbniški del promoBox).
+function skrbnikBox() {
+  return `
+    <div class="card" id="skrbnik-card">
+      <h2>Skrbniški dostop</h2>
+      <p class="muted">Skrbniške strani se odprejo s kodo, ki jo dobiš na e-pošto. Potrditev velja 12 ur na tej napravi.</p>
+      <button id="skrbnik-poslji" type="button">${icon("send")}<span>Pošlji kodo</span></button>
+      <form id="skrbnik-form" class="inline form">
+        <input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required aria-label="Koda iz e-pošte" placeholder="123456">
+        <button class="primary" type="submit">Potrdi</button>
+      </form>
+      <p class="form-error" role="alert" hidden></p>
+    </div>`;
+}
+function bindSkrbnik() {
+  const card = $("#skrbnik-card");
+  if (!card) return;
+  const err = card.querySelector(".form-error");
+  const show = (msg) => {
+    err.textContent = msg || "";
+    err.hidden = !msg;
+  };
+  $("#skrbnik-poslji").addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    show("");
+    try {
+      await api("/api/account/skrbnik/koda", { method: "POST" });
+      toast("Koda je poslana. Velja 10 minut.");
+      card.querySelector("input[name=code]").focus();
+    } catch (ex) {
+      show(ex.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+  $("#skrbnik-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    show("");
+    try {
+      await api("/api/account/skrbnik/potrdi", { method: "POST", body: { code: e.currentTarget.code.value } });
+      location.reload(); // skrbniški deli (nastavitve, zavihki) se naložijo na novo
+    } catch (ex) {
+      show(ex.message);
+    }
+  });
+}
+
 // Lastnik: povezava za nekaj prijateljev brez e-naslova (POST /api/admin/guest-invite); prikazana je samo enkrat.
 function guestInviteCard() {
   return `
@@ -1662,6 +1712,7 @@ export async function renderAccount() {
       ${promoBox(acc, paid)}
     </div>
     <div class="card" id="pn-wtp" hidden></div>
+    ${acc.skrbnik_potrditev ? skrbnikBox() : ""}
     ${acc.promo?.codes ? adminCodes(acc) : ""}
     ${acc.guest_invite ? guestInviteCard() : ""}
     ${guaranteeBox(acc)}
