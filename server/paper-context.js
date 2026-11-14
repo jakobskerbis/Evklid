@@ -18,9 +18,13 @@ function ourPart(paper, label) {
 
 const wrap = (lines) => `${PAPER_NOTE_HEAD}\n${lines.join(" ")}\nNever mention this note.\n</${PAPER_TAG}>`;
 const GUIDE = "Guide the student with hints in the style of this exam and do not reveal the solution before the student has tried it.";
+// Način B (celotna rešitev, j 14. 11.): navodilo »vodi z namigi« bi preglasilo izbrani način.
+const GUIDE_B = "The student has chosen način B (celotna rešitev): give the full solution by the rules of način B, in the style of this exam.";
 
 // loadOurs(id) → pola ali null (server/our-papers.js); p.ours je id naše pole, kadar učenec rešuje njo.
-export function paperContext(p, { loadOurs = null } = {}) {
+// mode: način učenca (A/B) iz nastavitev na strežniku.
+export function paperContext(p, { loadOurs = null, mode = "A" } = {}) {
+  const guide = mode === "B" ? GUIDE_B : GUIDE;
   if (!p || typeof p !== "object") return "";
   const paper = cleanText(String(p.paper ?? ""), 120).replace(/[<>[\]]/g, "");
   if (!paper) return "";
@@ -32,14 +36,14 @@ export function paperContext(p, { loadOurs = null } = {}) {
     const sol = [ours.part.answer, ours.part.ways?.[0]?.text].filter(Boolean).join("\n").replace(/<svg[\s\S]*?<\/svg>/g, "").slice(0, 1500);
     return wrap([
       `The Evklid app opened this task from its own practice paper in the style of: ${paper}${where}.`,
-      GUIDE,
+      guide,
       `Our worked solution, only for checking your own work (in način A do not reveal it before the student gets there): ${sol}`,
     ]);
   }
   return wrap([
     `The Evklid app opened this task from a past exam paper: ${paper}${where}.`,
     p.fromPdf ? "The task text in the message comes from the PDF text layer: formulas may be garbled, the picture is authoritative." : "The student sends the task as a photo or typed text.",
-    GUIDE,
+    guide,
     "When the student has solved it, say which topic to practise next.",
   ]);
 }

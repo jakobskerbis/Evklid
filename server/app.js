@@ -43,6 +43,7 @@ import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
 import { isHiddenNote } from "./skrite-opombe.js";
 import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
+import { modeSwitchNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
@@ -888,7 +889,8 @@ export function createApp(store, opts = {}) {
     const userContent = [];
     if (image) userContent.push({ type: "image", source: { type: "base64", media_type: image.media_type, data: image.data } });
     // Naloga iz pretekle pole: navodilo za inštruktorja kot skrit blok (server/paper-context.js), učenec vidi le text.
-    const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper });
+    const solvingMode = student.settings.solving_mode === "B" ? "B" : "A";
+    const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper, mode: solvingMode });
     if (paperNote) userContent.push({ type: "text", text: paperNote });
     // D3: praznost z EXISTS; zgodovino pogovora naložimo (in odšifriramo) samo enkrat, spodaj (prior).
     const isFirst = !store.hasMessages(conv.id);
@@ -900,7 +902,12 @@ export function createApp(store, opts = {}) {
     } catch (err) {
       console.warn(`[evklid] iskanje lekcije ni uspelo: ${err?.message || err}`);
     }
-    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson) });
+    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson, solvingMode) });
+    // Zamenjava načina A/B med pogovorom (j 14. 11.): skrita opomba, sicer zgodovina vleče nazaj v stari način.
+    // Prej: način, s katerim je inštruktor nazadnje odgovoril (stolpec; pri starih pogovorih iz META zadnjega odgovora).
+    const modeBefore = isFirst ? null : conv.solving_mode || store.lastEvent(conv.id)?.mode || null;
+    const modeNote = modeSwitchNote(modeBefore, solvingMode);
+    if (modeNote) userContent.push({ type: "text", text: modeNote });
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
@@ -1306,6 +1313,9 @@ export function createApp(store, opts = {}) {
       if (!display) display = "…";
 
       const assistantId = store.addMessage(conv.id, "assistant", content, display);
+      // Način, v katerem je ta odgovor nastal (po morebitni spremembi z orodjem v tem odgovoru).
+      const modeAfter = store.getStudent(student.id)?.settings?.solving_mode === "B" ? "B" : "A";
+      if (conv.solving_mode !== modeAfter) store.db.prepare("UPDATE conversations SET solving_mode = ? WHERE id = ?").run(modeAfter, conv.id);
       // Kartice za ponavljanje iz odgovora (ne pri zavrnitvi in ne pri opozorilih).
       // Kartice so vidne šele po trojnem preverjanju; z napačnim računom se sploh ne shranijo.
       const parsedCards = result.stopReason !== "refusal" && !fix && !claimFailed && (!meta || meta.flag === "none") ? parseCards(result.text) : [];

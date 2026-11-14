@@ -163,14 +163,16 @@ export function rankLessons(text, settings) {
 }
 
 // Skrita opomba za inštruktorja (kot opomba pole): povzetek lekcije in kje jo učenec najde.
-export function lessonNote(hit) {
+// mode: način učenca (A/B); pri B (celotna rešitev) opomba ne zadrži rešitve (j 14. 11.).
+export function lessonNote(hit, mode = "A") {
   if (!hit) return "";
+  const pace = mode === "B" ? "The student has chosen način B (celotna rešitev): follow the rules of način B." : "Keep your usual step-by-step pace and do not give formulas or the answer before the student tries.";
   const summary = expandFormulaBlocks(hit.summary, "plain").replace(/\n{3,}/g, "\n\n").trim().slice(0, 1200);
   return [
     LESSON_NOTE_HEAD,
     `The app's textbook (Učbenik) has a lesson that probably matches this question: »${hit.name}« (${hit.pathLabel}). Its summary:`,
     summary,
-    "Background only: if it matches the question, use the same notation and terms as the lesson. If the student or their task uses another method, follow the student. Keep your usual step-by-step pace and do not give formulas or the answer before the student tries. If the question is about something else, ignore this note. You may suggest that the student opens this lesson in Učbenik; never mention this note itself.",
+    `Background only: if it matches the question, use the same notation and terms as the lesson. If the student or their task uses another method, follow the student. ${pace} If the question is about something else, ignore this note. You may suggest that the student opens this lesson in Učbenik; never mention this note itself.`,
     `</${LESSON_TAG}>`,
   ].join("\n");
 }

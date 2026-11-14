@@ -317,6 +317,8 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   const convCols = db.prepare("PRAGMA table_info(conversations)").all().map((c) => c.name);
   if (!convCols.includes("path_topic")) db.exec("ALTER TABLE conversations ADD COLUMN path_topic TEXT");
   if (!convCols.includes("deep")) db.exec("ALTER TABLE conversations ADD COLUMN deep INTEGER NOT NULL DEFAULT 0");
+  // Način (A/B), s katerim je inštruktor nazadnje odgovoril v tem pogovoru: ob zamenjavi v glavi dobi opombo (server/nacin.js).
+  if (!convCols.includes("solving_mode")) db.exec("ALTER TABLE conversations ADD COLUMN solving_mode TEXT");
   // Trojno preverjanje (server/verify.js): shranjen odgovor in kartica sta vidna šele, ko sta preverjena.
   // Stari shranjeni odgovori niso bili preverjeni, zato ostanejo skriti (privzeto 0); stare kartice ostanejo.
   const cacheCols = db.prepare("PRAGMA table_info(answer_cache)").all().map((c) => c.name);
