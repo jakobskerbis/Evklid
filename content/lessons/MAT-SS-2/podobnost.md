@@ -189,6 +189,67 @@ $c_b = 50 - 18 = 32\,\text{cm}$ in $v_c^2 = 18 \cdot 32 = 576$, zato $v_c = 24\,
 - Višinski izrek: $v_c^2 = c_a \cdot c_b$.
 - Pri nalogah najprej nariši skico, označi enake kote in šele nato zapiši sorazmerje.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+V trikotniku $ABC$ vzporednica s stranico $AB$ seka stranico $AC$ v točki $M$ in stranico $BC$ v točki $N$. Velja $|CM| = 4\,\text{cm}$ in $|MA| = 2\,\text{cm}$, ploščina trikotnika $MNC$ pa je $12\,\text{cm}^2$. Izračunaj ploščino trapeza $ABNM$.
+
+**Rešitev:**
+
+1. Ker je $MN \parallel AB$, sta kota pri $M$ in $A$ istoležna kota ob vzporednicah, zato enaka; kot pri $C$ je skupen. Po izreku KK sta trikotnika $ABC$ in $MNC$ podobna.
+2. Ustrezni stranici sta $|CA| = 4\,\text{cm} + 2\,\text{cm} = 6\,\text{cm}$ in $|CM| = 4\,\text{cm}$, zato je koeficient podobnosti $k = \dfrac{|CA|}{|CM|} = \dfrac{6}{4} = \dfrac{3}{2}$.
+3. Razmerje ploščin je $k^2 = \dfrac{9}{4}$, zato je ploščina trikotnika $ABC$ enaka $\dfrac{9}{4} \cdot 12\,\text{cm}^2 = 27\,\text{cm}^2$.
+4. Trapez $ABNM$ je trikotnik $ABC$ brez trikotnika $MNC$: $27\,\text{cm}^2 - 12\,\text{cm}^2 = 15\,\text{cm}^2$.
+5. Odgovor: ploščina trapeza $ABNM$ je $15\,\text{cm}^2$.
+
+**Točkovanje:** 1 točka za podobnost trikotnikov in $k = \dfrac{3}{2}$, 1 točka za ploščino trikotnika $ABC$ ($27\,\text{cm}^2$), 1 točka za ploščino trapeza ($15\,\text{cm}^2$).
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+V pravokotnem trikotniku $ABC$ s pravim kotom pri $C$ je $D$ nožišče višine iz oglišča $C$ na hipotenuzo. Višina meri $|CD| = 6\,\text{cm}$, odsek hipotenuze pa $|DB| = 3\,\text{cm}$.
+
+a) Izračunaj dolžino odseka $|AD|$ in dolžino hipotenuze $|AB|$. (2 točki)
+b) Izračunaj dolžini katet $a = |BC|$ in $b = |AC|$. Rezultata zapiši s poenostavljenima korenoma. (2 točki)
+c) Utemelji, da sta trikotnika $ACD$ in $CBD$ podobna. Izračunaj koeficient podobnosti $k = \dfrac{|AC|}{|CB|}$ in razmerje ploščin trikotnikov $ACD$ in $CBD$. (3 točke)
+
+**Rešitev:**
+
+1. a) Odsek $|DB|$ leži ob kateti $a$, zato je $c_a = 3\,\text{cm}$, iskani odsek je $c_b = |AD|$. Po višinskem izreku je $v_c^2 = c_a \cdot c_b$, torej $c_b = \dfrac{v_c^2}{c_a} = \dfrac{36}{3} = 12\,\text{cm}$.
+2. a) Hipotenuza: $c = c_a + c_b = 3 + 12 = 15\,\text{cm}$.
+3. b) Po Evklidovem izreku je $a^2 = c \cdot c_a = 15 \cdot 3 = 45$, zato $a = \sqrt{45} = 3\sqrt{5}\,\text{cm}$.
+4. b) Prav tako $b^2 = c \cdot c_b = 15 \cdot 12 = 180$, zato $b = \sqrt{180} = 6\sqrt{5}\,\text{cm}$. Preverimo: $45 + 180 = 225 = 15^2$. ✓
+5. c) Oba trikotnika imata pravi kot pri $D$. Kot trikotnika $ACD$ pri $A$ je kot $\alpha$ trikotnika $ABC$. V trikotniku $CBD$ je kot pri $C$ enak $90^\circ - \beta = \alpha$. Trikotnika se ujemata v dveh kotih, zato sta po izreku KK podobna.
+6. c) Ustrezni stranici sta hipotenuzi obeh trikotnikov, $|AC|$ in $|CB|$: $k = \dfrac{6\sqrt{5}}{3\sqrt{5}} = 2$. Preverimo še z drugim parom ustreznih stranic: $\dfrac{|AD|}{|CD|} = \dfrac{12}{6} = 2$. ✓
+7. c) Razmerje ploščin je $k^2 = 4$. Preverimo: ploščina trikotnika $ACD$ je $\dfrac{12 \cdot 6}{2} = 36\,\text{cm}^2$, ploščina trikotnika $CBD$ je $\dfrac{3 \cdot 6}{2} = 9\,\text{cm}^2$, in $36 : 9 = 4$. ✓
+8. Odgovor: a) $|AD| = 12\,\text{cm}$, $|AB| = 15\,\text{cm}$; b) $a = 3\sqrt{5}\,\text{cm}$, $b = 6\sqrt{5}\,\text{cm}$; c) trikotnika sta podobna po izreku KK, $k = 2$, razmerje ploščin je $4 : 1$.
+
+**Točkovanje:** a) 1 točka za višinski izrek z vstavljenimi podatki in $|AD| = 12\,\text{cm}$, 1 točka za $|AB| = 15\,\text{cm}$; b) 1 točka za $a = 3\sqrt{5}\,\text{cm}$, 1 točka za $b = 6\sqrt{5}\,\text{cm}$ (pravilna odseka v Evklidovem izreku); c) 1 točka za utemeljitev podobnosti z dvema enakima kotoma, 1 točka za $k = 2$, 1 točka za razmerje ploščin $4$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Naštej izreke o podobnosti trikotnikov in pojasni, zakaj pri izreku KK zadoščata dva para enakih kotov.
+---
+Po izreku KK sta trikotnika podobna, če se ujemata v dveh kotih. Dva kota zadoščata, ker je vsota notranjih kotov trikotnika $180^\circ$, zato sta enaka tudi tretja kota. Po izreku SSS sta trikotnika podobna, če so razmerja vseh treh parov ustreznih stranic enaka. Po izreku SKS sta podobna, če sta razmerji dveh parov ustreznih stranic enaki in sta enaka kota med tema stranicama. Po izreku SSK sta podobna, če sta razmerji dveh parov ustreznih stranic enaki in sta enaka kota, ki ležita nasproti daljše od teh dveh stranic.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Dokaži Evklidov izrek v pravokotnem trikotniku in iz njega izpelji Pitagorov izrek.
+---
+V pravokotnem trikotniku $ABC$ s pravim kotom pri $C$ višina iz $C$ seka hipotenuzo v točki $D$ in jo razdeli na odseka $c_a = |DB|$ in $c_b = |AD|$. Trikotnika $ABC$ in $CBD$ imata pravi kot in skupni kot pri $B$, zato sta po izreku KK podobna. Iz razmerja ustreznih stranic $\dfrac{c}{a} = \dfrac{a}{c_a}$ sledi $a^2 = c \cdot c_a$, enako iz podobnosti trikotnikov $ABC$ in $ACD$ sledi $b^2 = c \cdot c_b$. Ko obe enakosti seštejemo, dobimo $a^2 + b^2 = c\,(c_a + c_b) = c^2$, kar je Pitagorov izrek.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+V kakšnem razmerju sta ploščini dveh podobnih trikotnikov? Odgovor utemelji.
+---
+Če sta trikotnika podobna s koeficientom podobnosti $k$, je razmerje njunih ploščin $k^2$. Vse dolžine drugega trikotnika so $k$-krat daljše, torej tudi izbrana stranica in višina nanjo. Ploščina je polovica zmnožka stranice in višine, zato se pomnoži s $k \cdot k = k^2$. Na primer pri dvakrat daljših stranicah je ploščina štirikrat večja.
+:::
+
 ## Drugače: Na sliki
 
 Predstavljaj si fotografijo, ki jo povečaš na fotokopirnem stroju. Vsi kosi na sliki se povečajo za isti faktor, kotov pa stroj ne spremeni. Povečani trikotnik je podoben prvotnemu, faktor povečave je $k$.
@@ -299,4 +360,19 @@ r | razdalja kovanca od očesa | | cm
 R | razdalja od Zemlje do Lune | | km
 A, B, C | oglišča trikotnika | | | pravi kot je pri C
 D | nožišče višine na hipotenuzo | | |
+M, N | presečišči vzporednice z AB s stranicama AC in BC (naloga 1 za maturo) | | |
 :::
+
+<<RACUN
+vrednost: (4+2)/4 | 3/2
+vrednost: (3/2)^2*12 | 27
+vrednost: 27-12 | 15
+vrednost: 6^2/3 | 12
+vrednost: 3+12 | 15
+vrednost: sqrt(15*3) | 3*sqrt(5)
+vrednost: sqrt(15*12) | 6*sqrt(5)
+vrednost: (6*sqrt(5))/(3*sqrt(5)) | 2
+vrednost: (12*6/2)/(3*6/2) | 4
+vrednost: 12*6/2 | 36
+vrednost: 3*6/2 | 9
+>>

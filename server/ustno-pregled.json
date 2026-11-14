@@ -2380,12 +2380,48 @@
    "o": "I",
    "r": "funkcija g ni podana"
   },
+  "MAT-SS-2/eksponentna-funkcija#p3": {
+   "h": "495a307b877c",
+   "o": "D"
+  },
+  "MAT-SS-2/eksponentna-funkcija#p4": {
+   "h": "61e2bf60f10b",
+   "o": "D"
+  },
+  "MAT-SS-2/eksponentna-funkcija#p5": {
+   "h": "9424b4af084d",
+   "o": "D"
+  },
   "MAT-SS-2/eksponentne-enacbe#p1": {
    "h": "9ae27fd41af4",
    "o": "D"
   },
+  "MAT-SS-2/eksponentne-enacbe#p3": {
+   "h": "358da8b7a881",
+   "o": "D"
+  },
+  "MAT-SS-2/eksponentne-enacbe#p4": {
+   "h": "60c6acba2d09",
+   "o": "D"
+  },
+  "MAT-SS-2/eksponentne-enacbe#p5": {
+   "h": "493e22829749",
+   "o": "D"
+  },
   "MAT-SS-2/funkcije-in-njihove-lastnosti#p1": {
    "h": "d17e86d20f84",
+   "o": "D"
+  },
+  "MAT-SS-2/funkcije-in-njihove-lastnosti#p3": {
+   "h": "818c0a153f5a",
+   "o": "D"
+  },
+  "MAT-SS-2/funkcije-in-njihove-lastnosti#p4": {
+   "h": "d5b789b3f436",
+   "o": "D"
+  },
+  "MAT-SS-2/funkcije-in-njihove-lastnosti#p5": {
+   "h": "2501606e6708",
    "o": "D"
   },
   "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#p0": {
@@ -2402,6 +2438,18 @@
     "Njena leva polovica je že zrcalna slika desne, zato zrcaljenje desne polovice da isti graf"
    ]
   },
+  "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#p3": {
+   "h": "c99e435af632",
+   "o": "D"
+  },
+  "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#p4": {
+   "h": "86d83629184d",
+   "o": "D"
+  },
+  "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#p5": {
+   "h": "a4a257550cec",
+   "o": "D"
+  },
   "MAT-SS-2/iracionalne-enacbe#p0": {
    "h": "89cd692ee00f",
    "o": "I",
@@ -2411,8 +2459,28 @@
    "h": "e5bef783ee0c",
    "o": "D"
   },
+  "MAT-SS-2/iracionalne-enacbe#p3": {
+   "h": "e6a717563784",
+   "o": "D"
+  },
+  "MAT-SS-2/iracionalne-enacbe#p4": {
+   "h": "297656825828",
+   "o": "D"
+  },
+  "MAT-SS-2/kompleksna-stevila#p5": {
+   "h": "a13a23e7fa58",
+   "o": "D"
+  },
   "MAT-SS-2/koreni#p1": {
    "h": "ddb428c98211",
+   "o": "D"
+  },
+  "MAT-SS-2/koreni#p4": {
+   "h": "83545982c396",
+   "o": "D"
+  },
+  "MAT-SS-2/koreni#p5": {
+   "h": "a75eca13ddae",
    "o": "D"
   },
   "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#p0": {
@@ -2423,8 +2491,32 @@
    "h": "b1638b9dcd4c",
    "o": "D"
   },
+  "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#p3": {
+   "h": "357166ef64ad",
+   "o": "D"
+  },
+  "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#p4": {
+   "h": "c7f529a94e1c",
+   "o": "D"
+  },
+  "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#p5": {
+   "h": "c6f71716d860",
+   "o": "D"
+  },
   "MAT-SS-2/kvadratna-enacba#p1": {
    "h": "2ab78ced0ac9",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-enacba#p3": {
+   "h": "bcb63e054d12",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-enacba#p4": {
+   "h": "c707f9d4a71a",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-enacba#p5": {
+   "h": "5885a16fa4a6",
    "o": "D"
   },
   "MAT-SS-2/kvadratna-funkcija#p0": {
@@ -2440,19 +2532,99 @@
    "o": "I",
    "r": "funkcija ni podana"
   },
+  "MAT-SS-2/kvadratna-funkcija#p3": {
+   "h": "97d1a261226e",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-funkcija#p4": {
+   "h": "4b8248202a05",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-neenacba#p3": {
+   "h": "7c3c5542f0a6",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-neenacba#p4": {
+   "h": "472137fcf50e",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-neenacba#p5": {
+   "h": "10e128d74bc0",
+   "o": "D"
+  },
+  "MAT-SS-2/logaritem#p3": {
+   "h": "084436f78b1f",
+   "o": "D"
+  },
+  "MAT-SS-2/logaritem#p4": {
+   "h": "bf350a7884cc",
+   "o": "D"
+  },
+  "MAT-SS-2/logaritem#p5": {
+   "h": "51b6b6cd56aa",
+   "o": "D"
+  },
   "MAT-SS-2/logaritemska-funkcija-in-enacbe#p2": {
    "h": "bf37a36bd0b6",
    "o": "I",
    "r": "enačba ni podana"
   },
+  "MAT-SS-2/logaritemska-funkcija-in-enacbe#p3": {
+   "h": "63b3eaf159a9",
+   "o": "D"
+  },
+  "MAT-SS-2/logaritemska-funkcija-in-enacbe#p4": {
+   "h": "9f1a07cebecd",
+   "o": "D"
+  },
+  "MAT-SS-2/logaritemska-funkcija-in-enacbe#p5": {
+   "h": "a122a1116f8f",
+   "o": "D"
+  },
   "MAT-SS-2/podobnost#p0": {
    "h": "475ef8610349",
+   "o": "D"
+  },
+  "MAT-SS-2/podobnost#p3": {
+   "h": "0dae39556692",
+   "o": "D"
+  },
+  "MAT-SS-2/podobnost#p4": {
+   "h": "15fea58b1629",
+   "o": "D"
+  },
+  "MAT-SS-2/podobnost#p5": {
+   "h": "452bb49ca48f",
+   "o": "D"
+  },
+  "MAT-SS-2/potence-z-racionalnimi-eksponenti#p3": {
+   "h": "13fa1fc09d43",
+   "o": "D"
+  },
+  "MAT-SS-2/potence-z-racionalnimi-eksponenti#p4": {
+   "h": "7e5509975869",
+   "o": "D"
+  },
+  "MAT-SS-2/potence-z-racionalnimi-eksponenti#p5": {
+   "h": "11d70a900c7a",
    "o": "D"
   },
   "MAT-SS-2/potencna-in-korenska-funkcija#p1": {
    "h": "3c20dfbebc7b",
    "o": "D",
    "r": "Samostojno vprašanje; oba dela (kateri x in kaj storiti) pokrijejo vsi štirje pojmi."
+  },
+  "MAT-SS-2/potencna-in-korenska-funkcija#p3": {
+   "h": "52143f58549e",
+   "o": "D"
+  },
+  "MAT-SS-2/potencna-in-korenska-funkcija#p4": {
+   "h": "63417a4a4771",
+   "o": "D"
+  },
+  "MAT-SS-2/potencna-in-korenska-funkcija#p5": {
+   "h": "b9f385aad01f",
+   "o": "D"
   },
   "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p0": {
    "h": "5608ff8b236d",
@@ -2463,12 +2635,28 @@
    "h": "313299f5e2e9",
    "o": "D"
   },
+  "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p3": {
+   "h": "33ae0d19e7eb",
+   "o": "D"
+  },
+  "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p4": {
+   "h": "2d8c8a227442",
+   "o": "D"
+  },
+  "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p5": {
+   "h": "eb01dfedb28e",
+   "o": "D"
+  },
   "MAT-SS-2/transformacije-grafov#p0": {
    "h": "6eb30da6d32a",
    "o": "D"
   },
   "MAT-SS-2/transformacije-grafov#p1": {
    "h": "a7403ff37f4f",
+   "o": "D"
+  },
+  "MAT-SS-2/transformacije-grafov#p4": {
+   "h": "e2b2e9bf3422",
    "o": "D"
   },
   "MAT-SS-3/adicijski-izreki#p1": {

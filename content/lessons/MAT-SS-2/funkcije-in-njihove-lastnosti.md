@@ -162,6 +162,67 @@ $g(600) = 0{,}0012 \cdot 600 = 0{,}72$, mleko stane $0{,}72\,€$. Splošno $(g 
 - $(g \circ f)(x) = g(f(x))$, najprej $f$.
 - $f^{-1}$ obstaja natanko za injektivno $f$; dobiš jo iz $y = f(x)$ z izražanjem $x$; $D_{f^{-1}} = Z_f$, graf je zrcaljen čez $y = x$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = x^4 - 2x^2 + 3$. Ugotovi, ali je $f$ soda, liha ali ni ne soda ne liha, in ali je na $\mathbb{R}$ injektivna. Oba odgovora utemelji.
+
+**Rešitev:**
+
+1. $D_f = \mathbb{R}$, zato je z vsakim $x$ v $D_f$ tudi $-x$. Izračunamo $f(-x) = (-x)^4 - 2(-x)^2 + 3 = x^4 - 2x^2 + 3 = f(x)$.
+2. Ker velja $f(-x) = f(x)$ za vsak $x \in \mathbb{R}$, je $f$ soda. Liha ni, saj je $f(-1) = 2$, $-f(1) = -2$.
+3. Injektivnost: $f(1) = 1 - 2 + 3 = 2$ in $f(-1) = 2$. Različna $x$ imata isto vrednost, zato $f$ ni injektivna.
+4. Odgovor: $f$ je soda in na $\mathbb{R}$ ni injektivna.
+
+**Točkovanje:** 1 točka za izračun $f(-x) = f(x)$, 1 točka za sklep, da je $f$ soda, 1 točka za primer $f(-1) = f(1)$ in sklep, da $f$ ni injektivna.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dani sta funkciji $f(x) = 2x - 3$ in $g(x) = x^2 + 1$, obe definirani na $\mathbb{R}$.
+
+a) Izračunaj $(g \circ f)(1)$ in $(f \circ g)(1)$. (2 točki)
+b) Zapiši predpis $(g \circ f)(x)$ v razviti obliki in reši enačbo $(g \circ f)(x) = 10$. (2 točki)
+c) Utemelji, da funkcija $g \circ f$ na $\mathbb{R}$ nima inverzne funkcije. (1 točka)
+d) Zapiši predpis inverzne funkcije $f^{-1}$ in pokaži, da je $f^{-1}(f(x)) = x$ za vsak realni $x$. (2 točki)
+
+**Rešitev:**
+
+1. a) $f(1) = 2 - 3 = -1$, zato je $(g \circ f)(1) = g(-1) = 1 + 1 = 2$.
+2. a) $g(1) = 2$, zato je $(f \circ g)(1) = f(2) = 4 - 3 = 1$. Vrednosti sta različni, vrstni red sestavljanja je pomemben.
+3. b) $(g \circ f)(x) = g(2x - 3) = (2x - 3)^2 + 1 = 4x^2 - 12x + 10$.
+4. b) Iz $4x^2 - 12x + 10 = 10$ sledi $4x^2 - 12x = 0$, torej $4x(x - 3) = 0$ in $x = 0$ ali $x = 3$.
+5. c) Po b) je $(g \circ f)(0) = (g \circ f)(3) = 10$. Različna $x$ dasta isto vrednost, zato $g \circ f$ ni injektivna in nima inverzne funkcije.
+6. d) $f$ je linearna s pozitivnim smernim koeficientom, zato narašča in je injektivna. Iz $y = 2x - 3$ izrazimo $x = \dfrac{y + 3}{2}$ in zamenjamo oznaki: $f^{-1}(x) = \dfrac{x + 3}{2}$.
+7. d) $f^{-1}(f(x)) = \dfrac{(2x - 3) + 3}{2} = \dfrac{2x}{2} = x$.
+8. Odgovor: $(g \circ f)(1) = 2$, $(f \circ g)(1) = 1$; $(g \circ f)(x) = 4x^2 - 12x + 10$, rešitvi enačbe sta $0$ in $3$; $g \circ f$ ni injektivna; $f^{-1}(x) = \dfrac{x + 3}{2}$.
+
+**Točkovanje:** a) 1 točka za $(g \circ f)(1) = 2$, 1 točka za $(f \circ g)(1) = 1$; b) 1 točka za predpis $4x^2 - 12x + 10$, 1 točka za rešitvi $0$ in $3$; c) 1 točka za utemeljitev z dvema različnima $x$, ki imata isto vrednost; d) 1 točka za $f^{-1}(x) = \dfrac{x + 3}{2}$, 1 točka za preverjanje $f^{-1}(f(x)) = x$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kdaj je funkcija injektivna in kako injektivnost prepoznamo na njenem grafu?
+---
+Funkcija $f$ je injektivna, če različnima vhodoma $x_1 \ne x_2$ iz $D_f$ vedno pripadata različni vrednosti $f(x_1) \ne f(x_2)$. Na grafu to pomeni, da vsaka vodoravna premica seka graf največ enkrat. Funkcija, ki na vsem definicijskem območju narašča ali na vsem pada, je vedno injektivna. Funkcija $x^2$ na $\mathbb{R}$ ni injektivna, ker je $(-2)^2 = 2^2$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Pod kakšnim pogojem ima funkcija inverzno funkcijo in kako je graf inverzne funkcije povezan z grafom prvotne funkcije?
+---
+Funkcija $f$ ima inverzno funkcijo $f^{-1}$ natanko takrat, ko je injektivna. Inverzna funkcija vsaki vrednosti $y = f(x)$ priredi prvotni $x$, zato je $f^{-1}(f(x)) = x$. Definicijsko območje in zaloga vrednosti se zamenjata: $D_{f^{-1}} = Z_f$ in $Z_{f^{-1}} = D_f$. Vsaka točka $(a, b)$ grafa $f$ preide v točko $(b, a)$, zato je graf $f^{-1}$ zrcalna slika grafa $f$ čez premico $y = x$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kaj je sestavljena funkcija $g \circ f$? Na primeru pokaži, da je vrstni red sestavljanja pomemben.
+---
+Sestavljena funkcija $g \circ f$ ima predpis $(g \circ f)(x) = g(f(x))$: najprej deluje $f$, nato $g$ na njenem rezultatu. Za $f(x) = x + 1$ in $g(x) = x^2$ je $(g \circ f)(x) = (x + 1)^2$, $(f \circ g)(x) = x^2 + 1$. Pri $x = 1$ je prva vrednost $4$, druga pa $2$. Zato funkciji $g \circ f$ in $f \circ g$ v splošnem nista enaki.
+:::
+
 ## Drugače: Korak za korakom s številkami
 
 Vzemi $f(x) = 2x - 6$ in vse lastnosti preveri s števili.
@@ -239,6 +300,20 @@ Nekega dne kuhar dobi le skodelico moke in vpraša: »Koliko zrnja je bilo?« Od
 - Da, ker je vsaka funkcija časa injektivna.
 ~ Temperatura pečice, ki se vklaplja in izklaplja, isto vrednost doseže večkrat.
 > Funkcija, ki ves čas pada, vsako vrednost doseže le enkrat. $T^{-1}(40)$ je iskani čas.
+
+<<RACUN
+enako: (-x)^4-2*(-x)^2+3 | x^4-2*x^2+3
+vrednost: 1^4-2*1^2+3 | 2
+vrednost: (-1)^4-2*(-1)^2+3 | 2
+vrednost: (2*1-3)^2+1 | 2
+vrednost: 2*(1^2+1)-3 | 1
+enako: (2*x-3)^2+1 | 4*x^2-12*x+10
+resi: 4*x^2-12*x+10=10 | x | 0, 3
+enako: 2*((x+3)/2)-3 | x
+enako: ((2*x-3)+3)/2 | x
+vrednost: (1+1)^2 | 4
+vrednost: 1^2+1 | 2
+>>
 
 :::simboli
 f | funkcija (pravilo, ki vsakemu $x$ priredi natanko eno vrednost) | | | pri babici $f(x) = 50x + 100$ (palačinke → mleko)

@@ -175,6 +175,64 @@ $\dfrac{4 \cdot \sqrt{4}}{8} = \dfrac{4 \cdot 2}{8} = 1$. Preverjanje v prvotnem
 - Pravila: $a^r a^s = a^{r+s}$, $a^r : a^s = a^{r-s}$, $(a^r)^s = a^{rs}$, $(ab)^r = a^r b^r$.
 - Korene pretvori v potence, uporabi pravila in rezultat zapiši nazaj s korenom.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Izraz $\sqrt[3]{2} \cdot \sqrt[4]{8}$ zapiši kot potenco števila $2$ z racionalnim eksponentom. Nato ga zapiši kot produkt celega števila in korena.
+
+**Rešitev:**
+
+1. Korena zapišemo s potencama: $\sqrt[3]{2} = 2^{\frac{1}{3}}$ in $\sqrt[4]{8} = \sqrt[4]{2^3} = 2^{\frac{3}{4}}$.
+2. Pri množenju potenc z isto osnovo eksponente seštejemo: $\dfrac{1}{3} + \dfrac{3}{4} = \dfrac{4}{12} + \dfrac{9}{12} = \dfrac{13}{12}$, torej je izraz enak $2^{\frac{13}{12}}$.
+3. Ker je $\dfrac{13}{12} = 1 + \dfrac{1}{12}$, je $2^{\frac{13}{12}} = 2^1 \cdot 2^{\frac{1}{12}} = 2\sqrt[12]{2}$.
+4. Odgovor: $\sqrt[3]{2} \cdot \sqrt[4]{8} = 2^{\frac{13}{12}} = 2\sqrt[12]{2}$.
+
+**Točkovanje:** 1 točka za zapis obeh korenov s potencama števila $2$, 1 točka za $2^{\frac{13}{12}}$, 1 točka za $2\sqrt[12]{2}$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
+
+Srčni utrip mirujočega sesalca ocenimo z modelom $f = 240 \cdot M^{-\frac{1}{4}}$, kjer je $M$ masa živali v kilogramih, $f$ pa utrip v udarcih na minuto.
+
+a) Izračunaj utrip mačke z maso $4\,\mathrm{kg}$. Rezultat zaokroži na celo število. (2 točki)
+b) Kolikšna je po modelu masa živali z utripom $50$ udarcev na minuto? Rezultat zaokroži na cel kilogram. (2 točki)
+c) Za koliko odstotkov je po modelu utrip živali z desetkrat večjo maso manjši od utripa lažje živali? Rezultat zaokroži na desetinko odstotka. (2 točki)
+
+**Rešitev:**
+
+1. a) $4^{-\frac{1}{4}} = \dfrac{1}{\sqrt[4]{4}} = \dfrac{1}{\sqrt{2}} \approx 0{,}70711$, zato je $f = 240 \cdot 4^{-\frac{1}{4}} \approx 169{,}706$, torej približno $170$ udarcev na minuto.
+2. b) Iz $240 \cdot M^{-\frac{1}{4}} = 50$ dobimo $M^{-\frac{1}{4}} = \dfrac{50}{240}$, torej $M^{\frac{1}{4}} = \dfrac{240}{50} = 4{,}8$.
+3. b) Potenciramo s $4$: $M = 4{,}8^4 = 530{,}8416$, torej približno $531\,\mathrm{kg}$.
+4. c) Razmerje utripov pri masah $10M$ in $M$: $\dfrac{240 \cdot (10M)^{-\frac{1}{4}}}{240 \cdot M^{-\frac{1}{4}}} = 10^{-\frac{1}{4}} \approx 0{,}56234$.
+5. c) Utrip se zmanjša za $1 - 0{,}56234 = 0{,}43766$ dela, to je za približno $43{,}8\,\%$.
+6. Odgovor: mačka ima utrip približno $170$ udarcev na minuto; utrip $50$ ima žival z maso približno $531\,\mathrm{kg}$; pri desetkrat večji masi je utrip manjši za približno $43{,}8\,\%$.
+
+**Točkovanje:** a) 1 točka za vstavljanje v model in vrednost $4^{-\frac{1}{4}}$, 1 točka za $170$ udarcev na minuto; b) 1 točka za $M^{\frac{1}{4}} = 4{,}8$ (ali $M^{-\frac{1}{4}} = \frac{5}{24}$), 1 točka za $M \approx 531\,\mathrm{kg}$; c) 1 točka za razmerje $10^{-\frac{1}{4}}$, 1 točka za zmanjšanje za $43{,}8\,\%$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako je definirana potenca $a^{\frac{m}{n}}$ z racionalnim eksponentom in zakaj je $a^{\frac{1}{n}} = \sqrt[n]{a}$?
+---
+Za $a > 0$, celo število $m$ in naravno število $n \ge 2$ je $a^{\frac{m}{n}} = \sqrt[n]{a^m} = \left(\sqrt[n]{a}\right)^m$. Imenovalec eksponenta je stopnja korena, števec pa eksponent potence. Definicijo izberemo tako, da še naprej velja pravilo $\left(a^r\right)^s = a^{r \cdot s}$. Iz njega sledi $\left(a^{\frac{1}{n}}\right)^n = a^1 = a$, zato je $a^{\frac{1}{n}}$ pozitivno število, katerega $n$-ta potenca je $a$, torej $\sqrt[n]{a}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Navedi primer, ki pokaže, zakaj potenc z racionalnim eksponentom in negativno osnovo ne definiramo.
+---
+Ulomek $\frac{1}{3}$ lahko zapišemo tudi kot $\frac{2}{6}$. Za osnovo $-8$ bi po prvem zapisu dobili $(-8)^{\frac{1}{3}} = \sqrt[3]{-8} = -2$, po drugem pa $(-8)^{\frac{2}{6}} = \sqrt[6]{(-8)^2} = \sqrt[6]{64} = 2$. Ista potenca bi imela dve različni vrednosti, zato pri racionalnem eksponentu zahtevamo pozitivno osnovo. Kubični koren $\sqrt[3]{-8} = -2$ obstaja, le kot potenco ga ne pišemo.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Dokaži, da za $a > 0$ in racionalni števili $r$ in $s$ velja $a^r \cdot a^s = a^{r+s}$.
+---
+Ulomka zapišemo s skupnim imenovalcem: $r = \frac{p}{n}$ in $s = \frac{q}{n}$, kjer sta $p$ in $q$ celi števili, $n$ pa naravno število. Število $c = a^r \cdot a^s$ je pozitivno. Po pravilih za cele eksponente je $c^n = \left(a^{\frac{p}{n}}\right)^n \cdot \left(a^{\frac{q}{n}}\right)^n = a^p \cdot a^q = a^{p+q}$. Zato je $c$ pozitivni $n$-ti koren števila $a^{p+q}$, torej $c = a^{\frac{p+q}{n}} = a^{r+s}$.
+:::
+
 ## Drugače: Z analogijo
 
 Program za urejanje slik z enim klikom poveča sliko $8$-krat. Kaj bi bila »tretjina klika«? Tak manjši klik, da trije zaporedni dajo isto kot en cel. Če tretjina klika poveča za faktor $q$, mora veljati $q \cdot q \cdot q = 8$, torej $q = 2 = 8^{\frac{1}{3}}$. Dve tretjini klika povečata za $2 \cdot 2 = 4 = 8^{\frac{2}{3}}$.
@@ -283,4 +341,14 @@ n | imenovalec eksponenta (stopnja korena) | | | naravno število, $n \ge 2$; v 
 r, s | racionalna eksponenta | | |
 P | dnevna potreba po energiji v mirovanju | P = 70 \cdot M^{\frac{3}{4}} | kcal/dan | ocena za sesalce
 M | masa (živali ali bolnika) | | kg |
+f | srčni utrip mirujočega sesalca | f = 240 \cdot M^{-\frac{1}{4}} | 1/min | model, udarci na minuto
 :::
+
+<<RACUN
+enako: 2^(1/3)*8^(1/4) | 2^(13/12)
+enako: 2^(13/12) | 2*2^(1/12)
+vrednost: 240*4^(-1/4) | 169.706
+vrednost: (240/50)^4 | 530.8416
+vrednost: 10^(-1/4) | 0.56234
+vrednost: 1-10^(-1/4) | 0.43766
+>>

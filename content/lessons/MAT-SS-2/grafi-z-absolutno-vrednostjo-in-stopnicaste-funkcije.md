@@ -318,6 +318,131 @@ Iz $x^2 - 4 = 3$ sledi $x^2 = 7$, torej $x = -\sqrt{7}$ ali $x = \sqrt{7}$ ($\sq
 - (višja raven) $y = |f(x)|$: del pod osjo $x$ prezrcališ navzgor. $y = f(|x|)$: desno polovico prezrcališ na levo.
 - (višja raven) Enačbo ali neenačbo z $|\ldots|$ rešiš z vodoravno premico $y = c$; natančne meje izračunaš iz predpisa ustreznega dela.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Določi vsa realna števila $x$, za katera velja $\left\lfloor \dfrac{x + 1}{2} \right\rfloor = -1$. Rešitev zapiši z intervalom.
+
+**Rešitev:**
+
+1. Celi del števila je $-1$ natanko takrat, ko je število vsaj $-1$ in manjše od $0$: $-1 \le \dfrac{x + 1}{2} < 0$.
+2. Pomnožimo z $2$: $-2 \le x + 1 < 0$, nato odštejemo $1$: $-3 \le x < -1$.
+3. Preizkus krajišč: pri $x = -3$ je $\left\lfloor -1 \right\rfloor = -1$, pri $x = -1$ pa $\left\lfloor 0 \right\rfloor = 0$, zato $-3$ spada k rešitvam, $-1$ pa ne.
+4. Odgovor: $x \in [-3, -1)$.
+
+**Točkovanje:** 1 točka za dvojno neenačbo $-1 \le \dfrac{x + 1}{2} < 0$, 1 točka za $-3 \le x < -1$, 1 točka za interval $[-3, -1)$ s pravilnima krajiščema.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Izposoja električnega skiroja stane $1\,\text{€}$ za odklepanje in še $0{,}50\,\text{€}$ za vsakih začetih $10$ minut vožnje. Vožnja traja največ $40$ minut. Cena vožnje, ki traja $s$ minut, je $K(s)$, pri čemer je $0 < s \le 40$.
+
+a) Koliko stane vožnja, dolga $10$ minut, in koliko vožnja, dolga $25$ minut? (2 točki)
+b) Zapiši $K(s)$ po intervalih in nariši graf funkcije $K$. Pazi na krajišča stopnic. (3 točke)
+c) Sošolec trdi, da ceno opisuje predpis $K(s) = 1 + 0{,}5\left(\left\lfloor \dfrac{s}{10} \right\rfloor + 1\right)$. Pokaži, da ima pri $s = 25$ prav, pri $s = 10$ pa ne, in zapiši vse $s$, pri katerih predpis da napačno ceno. (2 točki)
+
+**Rešitev:**
+
+1. a) Pri $10$ minutah je začet en interval po $10$ minut: $K(10) = 1 + 0{,}5 = 1{,}50\,\text{€}$.
+2. a) Pri $25$ minutah so začeti trije intervali (od $0$ do $10$, od $10$ do $20$ in od $20$ do $25$ minut): $K(25) = 1 + 3 \cdot 0{,}5 = 2{,}50\,\text{€}$.
+3. b) $K(s) = 1{,}50\,\text{€}$ za $0 < s \le 10$, $K(s) = 2\,\text{€}$ za $10 < s \le 20$, $K(s) = 2{,}50\,\text{€}$ za $20 < s \le 30$ in $K(s) = 3\,\text{€}$ za $30 < s \le 40$.
+4. b) Graf so štiri vodoravne stopnice. Pri »vsakih začetih $10$ minutah« desno krajišče pripada stopnici (polna pika), levo ne (prazen krožec):
+
+:::risba graf
+opis: Graf cene K v evrih v odvisnosti od trajanja vožnje s v minutah. Stopnice: 1,50 € za s od 0 do 10 min, 2 € od 10 do 20 min, 2,50 € od 20 do 30 min, 3 € od 30 do 40 min. Na levem koncu vsake stopnice je prazen krožec, na desnem polna pika.
+x: -0,5 .. 4,5 | 1 | s (min)
+y: 0 .. 3,5 | 1 | K (€)
+oznake: ne
+oznakax: 1 | 10
+oznakax: 2 | 20
+oznakax: 3 | 30
+oznakax: 4 | 40
+oznakay: 1 | 1
+oznakay: 2 | 2
+oznakay: 3 | 3
+črta: 0; 1,5 -> 1; 1,5 | modra debelo
+črta: 1; 2 -> 2; 2 | modra debelo
+črta: 2; 2,5 -> 3; 2,5 | modra debelo
+črta: 3; 3 -> 4; 3 | modra debelo
+krog: 0; 1,5 | 0,08 | modra ozadje
+krog: 1; 2 | 0,08 | modra ozadje
+krog: 2; 2,5 | 0,08 | modra ozadje
+krog: 3; 3 | 0,08 | modra ozadje
+točka: 1; 1,5
+točka: 2; 2
+točka: 3; 2,5
+točka: 4; 3
+podnapis: Cena vožnje s skirojem: polna pika na desnem koncu stopnice
+:::
+
+5. c) Pri $s = 25$: $\left\lfloor 2{,}5 \right\rfloor = 2$ in $1 + 0{,}5 \cdot 3 = 2{,}50\,\text{€}$, kar je prava cena.
+6. c) Pri $s = 10$: $\left\lfloor 1 \right\rfloor = 1$ in $1 + 0{,}5 \cdot 2 = 2\,\text{€}$, prava cena pa je $1{,}50\,\text{€}$.
+7. c) Kadar $s$ ni večkratnik števila $10$, je $\left\lfloor \frac{s}{10} \right\rfloor + 1$ ravno število začetih intervalov. Kadar je $s$ večkratnik števila $10$, je to število za $1$ preveliko, ker naslednji interval še ni začet. Predpis je napačen za $s = 10$, $20$, $30$ in $40$, kjer da $0{,}50\,\text{€}$ previsoko ceno.
+8. Odgovor: $K(10) = 1{,}50\,\text{€}$, $K(25) = 2{,}50\,\text{€}$; sošolčev predpis je napačen pri $s \in \{10, 20, 30, 40\}$.
+
+**Točkovanje:** a) 1 točka za ceno $1{,}50\,\text{€}$ in 1 točka za ceno $2{,}50\,\text{€}$; b) 1 točka za višine stopnic, 1 točka za meje intervalov, 1 točka za graf s polnimi pikami na desnih in praznimi krožci na levih krajiščih; c) 1 točka za izračun pri $s = 25$ in $s = 10$, 1 točka za vrednosti $10$, $20$, $30$, $40$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = |x + 1| - |x - 3|$.
+
+a) Zapiši predpis funkcije $f$ po primerih, brez absolutnih vrednosti. (3 točke)
+b) Nariši graf funkcije $f$ ter zapiši njeno ničlo in zalogo vrednosti. (2 točki)
+c) Reši neenačbo $f(x) > 2$. (2 točki)
+d) Zapiši predpis funkcije $y = |f(x)|$ po primerih. Reši enačbo $|f(x)| = 2$ in ugotovi, koliko rešitev ima enačba $|f(x)| = 4$. (3 točke)
+
+**Rešitev:**
+
+1. a) Izraza v absolutnih vrednostih sta enaka $0$ pri $x = -1$ in $x = 3$. Ti točki razdelita os na tri intervale.
+2. a) Za $x < -1$ je $|x + 1| = -x - 1$ in $|x - 3| = -x + 3$, zato $f(x) = (-x - 1) - (-x + 3) = -4$.
+3. a) Za $-1 \le x < 3$ je $|x + 1| = x + 1$ in $|x - 3| = -x + 3$, zato $f(x) = (x + 1) - (-x + 3) = 2x - 2$.
+4. a) Za $x \ge 3$ je $f(x) = (x + 1) - (x - 3) = 4$.
+5. b) Graf je vodoraven poltrak na višini $-4$ do točke $(-1, -4)$, daljica od $(-1, -4)$ do $(3, 4)$ in vodoraven poltrak na višini $4$ od točke $(3, 4)$ naprej:
+
+:::risba graf
+opis: Graf funkcije f, razlike absolutnih vrednosti od x + 1 in od x − 3, za x od −4 do 6. Levo od −1 je vodoraven na višini −4, med −1 in 3 je premica 2x − 2, ki seka os x v točki 1, desno od 3 je vodoraven na višini 4.
+x: -4 .. 6 | 1
+y: -5 .. 5 | 1
+f: abs(x+1)-abs(x-3) | modra
+točka: -1; -4 | (−1, −4) | pod levo
+točka: 3; 4 | (3, 4) | nad levo
+točka: 1; 0 | 1 | pod desno
+podnapis: f(x) = |x + 1| − |x − 3|
+:::
+
+6. b) Na zunanjih intervalih je $f$ stalno $-4$ oziroma $4$, ničla je lahko le na srednjem: $2x - 2 = 0$ da $x = 1$. Zaloga vrednosti je $Z_f = [-4, 4]$.
+7. c) Za $x < -1$ je $f(x) = -4$, neenačba ne velja. Za $-1 \le x < 3$ iz $2x - 2 > 2$ sledi $x > 2$, torej $2 < x < 3$. Za $x \ge 3$ je $f(x) = 4 > 2$, neenačba velja. Rešitev je $x \in (2, \infty)$.
+8. d) Del grafa pod osjo $x$ prezrcalimo navzgor: $|f(x)| = 4$ za $x < -1$, $|f(x)| = 2 - 2x$ za $-1 \le x < 1$, $|f(x)| = 2x - 2$ za $1 \le x < 3$ in $|f(x)| = 4$ za $x \ge 3$.
+9. d) $|f(x)| = 2$: iz $2 - 2x = 2$ sledi $x = 0$, iz $2x - 2 = 2$ sledi $x = 2$; na zunanjih intervalih je vrednost $4$. Rešitvi sta $0$ in $2$.
+10. d) Za $-1 < x < 3$ je $|2x - 2| < 4$, za vse $x \le -1$ in vse $x \ge 3$ pa je $|f(x)| = 4$. Enačba $|f(x)| = 4$ ima neskončno mnogo rešitev.
+11. Odgovor: $f(x) = -4$ za $x < -1$, $f(x) = 2x - 2$ za $-1 \le x < 3$, $f(x) = 4$ za $x \ge 3$; ničla $1$, $Z_f = [-4, 4]$; $f(x) > 2$ za $x \in (2, \infty)$; $|f(x)| = 2$ za $x = 0$ in $x = 2$; $|f(x)| = 4$ ima neskončno rešitev ($x \le -1$ ali $x \ge 3$).
+
+**Točkovanje:** a) 1 točka za vsak pravilen predpis na enem od treh intervalov; b) 1 točka za graf, 1 točka za ničlo $1$ in $Z_f = [-4, 4]$; c) 1 točka za $x > 2$ na srednjem intervalu, 1 točka za rešitev $(2, \infty)$; d) 1 točka za predpis funkcije $|f(x)|$, 1 točka za rešitvi $0$ in $2$, 1 točka za utemeljitev, da ima enačba $|f(x)| = 4$ neskončno rešitev.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je celi del realnega števila? Pojasni, zakaj je celi del števila $-2{,}3$ enak $-3$ in ne $-2$.
+---
+Celi del števila $x$, zapisan $\lfloor x \rfloor$, je največje celo število, ki ni večje od $x$. Število $-2$ je večje od $-2{,}3$, zato ne pride v poštev. Največje celo število, ki ni večje od $-2{,}3$, je $-3$. Pri negativnih številih celega dela torej ne dobimo z odrezovanjem decimalk.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Navedi primer stopničaste funkcije iz vsakdanjega življenja in pojasni, kaj na njenem grafu pomenita polna pika in prazen krožec.
+---
+Primer stopničaste funkcije je cena parkiranja, pri kateri plačamo vsako začeto uro. Cena je znotraj vsake ure stalna, ob prehodu v novo uro pa skoči. Njen graf sestavljajo vodoravne daljice, stopnice. Polna pika pomeni, da krajišče stopnice pripada grafu, prazen krožec pa, da mu ne pripada. Na vsakem skoku je polna natanko ena pika, ker funkcija vsakemu $x$ priredi natanko eno vrednost. Pri plačilu za vsako začeto uro je polna pika na desnem krajišču stopnice, ker pri parkiranju, dolgem natanko eno uro, plačamo še samo eno uro.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Pojasni, kako iz grafa funkcije $f$ narišemo graf funkcije $y = |f(x)|$ in kako graf funkcije $y = f(|x|)$.
+---
+Pri $y = |f(x)|$ vzamemo absolutno vrednost vrednosti funkcije. Del grafa nad osjo $x$ ostane, del pod osjo $x$ pa prezrcalimo čez os $x$ navzgor, zato graf ne leži pod osjo $x$. Pri $y = f(|x|)$ vzamemo absolutno vrednost spremenljivke, zato za $x \ge 0$ velja $f(|x|) = f(x)$ in desna polovica grafa ostane. Levo polovico dobimo kot zrcalno sliko desne čez os $y$, zato je $f(|x|)$ soda funkcija.
+:::
+
 ## Drugače: Na sliki
 
 **Navpična premica.** Navpično ravnilo premikaj čez graf stopničaste funkcije. Grafa se vedno dotakne natanko enkrat, tudi na skoku: tam zadene eno polno piko, prazen krožec ne šteje.
@@ -425,6 +550,20 @@ resi: 2*x+1=5 | x | 2
 neenacba: abs(x-1)+abs(x+2)<=5 | x | [-3, 2]
 resi: abs(x^2-4)=3 | x | -sqrt(7), -1, 1, sqrt(7)
 vrednost: floor(-3.7)+floor(3.7) | -1
+neenacba: (x+1)/2>=-1 | x | [-3, oo)
+neenacba: (x+1)/2<0 | x | (-oo, -1)
+vrednost: floor((-3+1)/2) | -1
+vrednost: floor((-1+1)/2) | 0
+vrednost: 1+0.5 | 1.5
+vrednost: 1+3*0.5 | 2.5
+vrednost: 1+0.5*(floor(25/10)+1) | 2.5
+vrednost: 1+0.5*(floor(10/10)+1) | 2
+enako: (-x-1)-(-x+3) | -4
+enako: (x+1)-(-x+3) | 2*x-2
+enako: (x+1)-(x-3) | 4
+resi: abs(x+1)-abs(x-3)=0 | x | 1
+neenacba: abs(x+1)-abs(x-3)>2 | x | (2, oo)
+resi: abs(abs(x+1)-abs(x-3))=2 | x | 0, 2
 >>
 
 :::simboli
@@ -437,4 +576,6 @@ C | cena parkiranja | | €
 t | čas parkiranja | | h
 c | stalna vrednost na desni strani enačbe $f(x) = c$ (višina vodoravne premice) | |
 T | temperatura v pečici | | ^\circ\mathrm{C}
+K | cena vožnje s skirojem (naloga za maturo) | | €
+s | trajanje vožnje s skirojem (naloga za maturo) | | min
 :::

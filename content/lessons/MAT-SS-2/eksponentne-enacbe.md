@@ -175,6 +175,90 @@ Ker je $128 = 2^7$, je $\frac{1}{128} = \left(\frac{1}{2}\right)^7$ in $n = 7$. 
 - Iz $a^u = b^u$ za različni pozitivni osnovi sledi $u = 0$.
 - Vsako rešitev preveri s preizkusom v prvotni enačbi.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Reši enačbo $\sqrt{27^{x}} = \dfrac{9^{x+1}}{3}$.
+
+**Rešitev:**
+
+1. Levo stran zapišemo s potenco števila $3$: $\sqrt{27^x} = \left(3^{3x}\right)^{\frac{1}{2}} = 3^{\frac{3x}{2}}$.
+2. Desno stran zapišemo s potenco števila $3$: $\dfrac{9^{x+1}}{3} = \dfrac{3^{2x+2}}{3^1} = 3^{2x+1}$.
+3. Izenačimo eksponenta: $\dfrac{3x}{2} = 2x + 1$, torej $3x = 4x + 2$ in $x = -2$.
+4. Preizkus: $\sqrt{27^{-2}} = \sqrt{\dfrac{1}{729}} = \dfrac{1}{27}$ in $\dfrac{9^{-1}}{3} = \dfrac{1}{27}$.
+5. Odgovor: $x = -2$.
+
+**Točkovanje:** 1 točka za zapis leve strani kot $3^{\frac{3x}{2}}$; 1 točka za zapis desne strani kot $3^{2x+1}$; 1 točka za rešitev $x = -2$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = 4^x - 6 \cdot 2^x + 8$.
+
+a) Izračunaj presečišče grafa funkcije $f$ z osjo $y$. (1 točka)
+b) Izračunaj ničli funkcije $f$. (3 točke)
+c) Reši enačbo $f(x) = 24$. (3 točke)
+
+**Rešitev:**
+
+1. a) $f(0) = 4^0 - 6 \cdot 2^0 + 8 = 1 - 6 + 8 = 3$, presečišče je točka $(0, 3)$.
+2. b) Ker je $4^x = \left(2^x\right)^2$, vpeljemo $t = 2^x$ s pogojem $t > 0$. Enačba $f(x) = 0$ se glasi $t^2 - 6t + 8 = 0$.
+3. b) Razcep $(t - 2)(t - 4) = 0$ da $t_1 = 2$ in $t_2 = 4$; obe vrednosti sta pozitivni.
+4. b) Iz $2^x = 2$ sledi $x_1 = 1$, iz $2^x = 4 = 2^2$ pa $x_2 = 2$.
+5. c) Enačba $f(x) = 24$ se s $t = 2^x$ glasi $t^2 - 6t + 8 = 24$, torej $t^2 - 6t - 16 = 0$.
+6. c) Razcep $(t - 8)(t + 2) = 0$ da $t_1 = 8$ in $t_2 = -2$. Vrednost $t_2 = -2$ zavržemo, ker je $2^x > 0$.
+7. c) Iz $2^x = 8 = 2^3$ sledi $x = 3$. Preizkus: $f(3) = 64 - 48 + 8 = 24$.
+8. Odgovor: a) $(0, 3)$; b) ničli sta $x_1 = 1$ in $x_2 = 2$; c) $x = 3$.
+
+**Točkovanje:** a) 1 točka za točko $(0, 3)$; b) 1 točka za kvadratno enačbo $t^2 - 6t + 8 = 0$; 1 točka za $t_1 = 2$ in $t_2 = 4$; 1 točka za ničli $x_1 = 1$ in $x_2 = 2$; c) 1 točka za enačbo $t^2 - 6t - 16 = 0$; 1 točka za zavrnjeno vrednost $t = -2$ z utemeljitvijo; 1 točka za $x = 3$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+V laboratoriju gojijo dve kulturi bakterij. Po $x$ urah je v prvi kulturi $A(x) = 200 \cdot 2^x$ bakterij, v drugi pa $B(x) = 25 \cdot 4^x$ bakterij.
+
+a) Koliko bakterij je v vsaki kulturi na začetku? (1 točka)
+b) Po koliko urah je v obeh kulturah enako število bakterij? Koliko jih je takrat v vsaki? (3 točke)
+c) Po koliko urah je v obeh kulturah skupaj $9600$ bakterij? (3 točke)
+d) Za $x$ od $0$ do $4$ skiciraj grafa funkcij $A$ in $B$ v istem koordinatnem sistemu. Z grafa razberi, kdaj je v drugi kulturi več bakterij kot v prvi, in odgovor utemelji z računom. (3 točke)
+
+**Rešitev:**
+
+1. a) $A(0) = 200$ in $B(0) = 25$: na začetku je v prvi kulturi $200$, v drugi $25$ bakterij.
+2. b) Enačbo $200 \cdot 2^x = 25 \cdot 4^x$ delimo s $25 \cdot 2^x$ (ki ni $0$) in dobimo $8 = \dfrac{4^x}{2^x} = 2^x$.
+3. b) Iz $2^x = 2^3$ sledi $x = 3$. Takrat je $A(3) = 200 \cdot 8 = 1600$ in $B(3) = 25 \cdot 64 = 1600$.
+4. c) Enačba $200 \cdot 2^x + 25 \cdot 4^x = 9600$; delimo s $25$ in vpeljemo $t = 2^x$, $t > 0$: $t^2 + 8t - 384 = 0$.
+5. c) Diskriminanta je $D = 64 + 1536 = 1600$, zato je $t_{1,2} = \dfrac{-8 \pm 40}{2}$, torej $t_1 = 16$ in $t_2 = -24$. Vrednost $t_2 = -24$ zavržemo, ker je $2^x > 0$.
+6. c) Iz $2^x = 16 = 2^4$ sledi $x = 4$. Preizkus: $A(4) + B(4) = 3200 + 6400 = 9600$.
+7. d) Točke grafa $A$: $(0, 200)$, $(1, 400)$, $(2, 800)$, $(3, 1600)$, $(4, 3200)$; točke grafa $B$: $(0, 25)$, $(1, 100)$, $(2, 400)$, $(3, 1600)$, $(4, 6400)$. Grafa se sekata v točki $(3, 1600)$, desno od nje leži graf $B$ nad grafom $A$.
+8. d) Račun: neenačbo $25 \cdot 4^x > 200 \cdot 2^x$ delimo s pozitivnim številom $25 \cdot 2^x$ in dobimo $2^x > 8 = 2^3$. Ker je $2^x$ strogo naraščajoča, to velja natanko za $x > 3$.
+9. Odgovor: a) $200$ in $25$ bakterij; b) po $3$ urah, takrat jih je v vsaki $1600$; c) po $4$ urah; d) v drugi kulturi je več bakterij za $x > 3$, torej po treh urah.
+
+**Točkovanje:** a) 1 točka za $200$ in $25$; b) 1 točka za poenostavitev na $2^x = 8$; 1 točka za $x = 3$; 1 točka za $1600$ bakterij; c) 1 točka za kvadratno enačbo $t^2 + 8t - 384 = 0$ (ali enakovredno); 1 točka za $t = 16$ z zavrnjeno vrednostjo $t = -24$; 1 točka za $x = 4$; d) 1 točka za oba grafa s presečiščem $(3, 1600)$; 1 točka za prevedbo na $2^x > 8$; 1 točka za odgovor $x > 3$ z utemeljitvijo z naraščanjem funkcije $2^x$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Utemelji, zakaj iz enakosti $a^u = a^v$ sledi $u = v$, in povej, kateri pogoji za osnovo $a$ so pri tem potrebni.
+---
+Osnova mora biti pozitivna in različna od $1$, torej $a > 0$ in $a \ne 1$. Pri takih osnovah je funkcija $a^x$ strogo monotona: za $a > 1$ narašča, za $0 < a < 1$ pada. Strogo monotona funkcija nobene vrednosti ne zavzame dvakrat, zato iz $a^u = a^v$ sledi $u = v$. Pri $a = 1$ sklep ne velja, ker je $1^u = 1$ za vsak eksponent $u$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Opiši reševanje eksponentne enačbe z uvedbo nove spremenljivke in pojasni, katere rešitve pri tem zavržemo.
+---
+Novo spremenljivko uvedemo, kadar v enačbi nastopata $a^{2x}$ in $a^x$, saj je $a^{2x} = \left(a^x\right)^2$. Vpeljemo $t = a^x$ in dobimo kvadratno enačbo za $t$, ki jo rešimo. Ker je $a^x > 0$ za vsak $x$, zavržemo vse rešitve $t \le 0$. Za vsako pozitivno rešitev nato rešimo enačbo $a^x = t$ in rešitve preverimo v prvotni enačbi.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer eksponentne enačbe, ki nima realne rešitve, in pojasni, zakaj je nima.
+---
+Primer je enačba $3^x = -9$. Potenca s pozitivno osnovo je pozitivna pri vsakem realnem eksponentu. Zato $3^x$ ne more biti enako negativnemu številu in enačba nima rešitve. Enako velja za vsako enačbo $a^x = c$, kjer je $a > 0$ in $c \le 0$.
+:::
+
 ## Drugače: Na sliki
 
 Predstavljaj si graf funkcije $y = 2^x$ in nekaj njegovih točk:
@@ -285,4 +369,25 @@ t_{1,2} | rešitvi kvadratne enačbe za $t$ | t_{1,2} = \frac{-b \pm \sqrt{b^2 -
 b | linearni koeficient kvadratne enačbe za $t$ | | | v točki 8 druga osnova potence, v grafičnem pogledu desna stran $y = b$
 c | prosti člen kvadratne enačbe za $t$ | | | v enačbi $a^x = c$ desna stran
 D | diskriminanta kvadratne enačbe za $t$ | D = b^2 - 4ac | |
+f | funkcija (Za maturo, naloga 2) | f(x) = 4^x - 6 \cdot 2^x + 8 | |
+A, B | število bakterij v prvi in drugi kulturi po $x$ urah (Za maturo, naloga 3) | A(x) = 200 \cdot 2^x | | $B(x) = 25 \cdot 4^x$
 :::
+
+<<RACUN
+resi: sqrt(27^x)=9^(x+1)/3 | x | -2
+resi: 3*x/2=2*x+1 | x | -2
+vrednost: 9^(-1)/3 | 1/27
+vrednost: 4^0-6*2^0+8 | 3
+resi: t^2-6*t+8=0 | t | 2, 4
+resi: 4^x-6*2^x+8=0 | x | 1, 2
+resi: t^2-6*t-16=0 | t | -2, 8
+resi: 4^x-6*2^x+8=24 | x | 3
+vrednost: 4^3-6*2^3+8 | 24
+resi: 200*2^x=25*4^x | x | 3
+vrednost: 200*2^3 | 1600
+vrednost: 25*4^3 | 1600
+resi: t^2+8*t-384=0 | t | -24, 16
+resi: 200*2^x+25*4^x=9600 | x | 4
+vrednost: 200*2^4+25*4^4 | 9600
+neenacba: 25*4^x>200*2^x | x | (3, oo)
+>>

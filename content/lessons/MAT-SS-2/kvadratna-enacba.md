@@ -195,6 +195,92 @@ $x_1^2 x_2^2 = (x_1 x_2)^2 = 3^2 = 9$, zato je enačba $y^2 - 43y + 9 = 0$. Prev
 - Vietovi formuli: $x_1 + x_2 = -\dfrac{b}{a}$, $x_1 x_2 = \dfrac{c}{a}$.
 - Razcep: $ax^2 + bx + c = a(x - x_1)(x - x_2)$; enačba z rešitvama $x_1$, $x_2$: $x^2 - (x_1 + x_2)x + x_1 x_2 = 0$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Reši enačbo $(x - 3)^2 = 2x - 6$.
+
+**Rešitev:**
+
+1. Desno stran zapišemo kot $2x - 6 = 2(x - 3)$ in vse prenesemo na levo: $(x - 3)^2 - 2(x - 3) = 0$.
+2. Izpostavimo skupni faktor $x - 3$: $(x - 3)(x - 3 - 2) = 0$, torej $(x - 3)(x - 5) = 0$.
+3. Produkt je enak $0$, ko je enak $0$ vsaj en faktor: $x_1 = 3$ ali $x_2 = 5$. Z $x - 3$ ne smemo deliti, ker bi izgubili rešitev $x = 3$.
+4. Preverjanje: za $x = 3$ sta obe strani enaki $0$, za $x = 5$ pa obe enaki $4$.
+5. Odgovor: rešitvi sta $x_1 = 3$ in $x_2 = 5$.
+
+**Točkovanje:** 1 točka za zapis z ničlo na desni (ali splošno obliko $x^2 - 8x + 15 = 0$), 1 točka za razcep $(x - 3)(x - 5) = 0$, 1 točka za obe rešitvi.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je enačba $x^2 - 6x + c = 0$, kjer je $c$ realno število.
+
+a) Za katere vrednosti $c$ ima enačba dve različni realni rešitvi? (2 točki)
+b) Ena rešitev enačbe je $x_1 = 2$. Brez obrazca za rešitve določi drugo rešitev $x_2$ in število $c$. (2 točki)
+c) Naj bo $c = 13$. Reši enačbo v množici kompleksnih števil in rešitvi preveri z Vietovima formulama. (3 točke)
+
+**Rešitev:**
+
+1. a) Diskriminanta je $D = (-6)^2 - 4 \cdot 1 \cdot c = 36 - 4c$.
+2. a) Dve različni realni rešitvi sta pri $D > 0$: iz $36 - 4c > 0$ sledi $c < 9$.
+3. b) Po Vietu je $x_1 + x_2 = 6$, zato $x_2 = 6 - 2 = 4$.
+4. b) Prav tako je $x_1 x_2 = c$, zato $c = 2 \cdot 4 = 8$. Preverjanje: $2^2 - 6 \cdot 2 + 8 = 0$.
+5. c) $D = 36 - 52 = -16 < 0$, zato realnih rešitev ni; $\sqrt{-D} = 4$.
+6. c) $x_{1,2} = \dfrac{6 \pm 4i}{2} = 3 \pm 2i$.
+7. c) Vsota: $(3 + 2i) + (3 - 2i) = 6 = -\dfrac{-6}{1}$. Produkt: $(3 + 2i)(3 - 2i) = 9 + 4 = 13 = \dfrac{13}{1}$.
+8. Odgovor: a) $c < 9$; b) $x_2 = 4$, $c = 8$; c) $x_{1,2} = 3 \pm 2i$.
+
+**Točkovanje:** a) 1 točka za $D = 36 - 4c$, 1 točka za $c < 9$; b) 1 točka za $x_2 = 4$, 1 točka za $c = 8$; c) 1 točka za $D = -16$, 1 točka za rešitvi $3 \pm 2i$, 1 točka za preverjanje vsote in produkta.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Sliko z merami $40\,\text{cm} \times 30\,\text{cm}$ obdamo s paspartujem (kartonskim robom), ki je na vseh štirih straneh širok $x$ centimetrov.
+
+a) Pokaži, da je ploščina paspartuja (brez slike) $P(x) = 4x^2 + 140x$ v $\text{cm}^2$. (2 točki)
+b) Kako širok mora biti paspartu, da je njegova ploščina enaka ploščini slike? Rezultat zaokroži na milimeter. (3 točke)
+c) Utemelji, da funkcija $P$ na intervalu $[0, \infty)$ narašča, in od tod sklepaj, da ima enačba $P(x) = S$ za vsako pozitivno število $S$ natanko eno pozitivno rešitev. (2 točki)
+d) Druga slika ima enako ploščino, a mere $60\,\text{cm} \times 20\,\text{cm}$. Kako širok paspartu potrebuje, da je njegova ploščina enaka ploščini slike? Rezultat zaokroži na milimeter in pojasni, zakaj je paspartu ožji kot pri prvi sliki. (3 točke)
+
+**Rešitev:**
+
+1. a) Zunanji meri sta $40 + 2x$ in $30 + 2x$, zato je ploščina celotnega pravokotnika $(40 + 2x)(30 + 2x) = 4x^2 + 140x + 1200$.
+2. a) Odštejemo ploščino slike $1200\,\text{cm}^2$: $P(x) = 4x^2 + 140x$.
+3. b) Enačba $4x^2 + 140x = 1200$ po deljenju s $4$: $x^2 + 35x - 300 = 0$.
+4. b) $D = 35^2 + 4 \cdot 300 = 2425$, $x_{1,2} = \dfrac{-35 \pm \sqrt{2425}}{2}$, torej $x_1 \approx 7{,}1221$ in $x_2 \approx -42{,}1221$.
+5. b) Širina ne more biti negativna, zato ustreza le $x_1 \approx 7{,}1\,\text{cm}$.
+6. c) Graf funkcije $P$ je parabola, odprta navzgor ($4 > 0$), s temenom pri $x = -\dfrac{140}{2 \cdot 4} = -17{,}5$. Desno od temena funkcija narašča, zato narašča na vsem intervalu $[0, \infty)$.
+7. c) Ker je $P(0) = 0$ in $P$ na $[0, \infty)$ narašča čez vse meje, zavzame vsako pozitivno vrednost $S$ pri natanko enem $x > 0$. (Enako sledi iz Vietovih formul: rešitvi enačbe $4x^2 + 140x - S = 0$ imata produkt $-\dfrac{S}{4} < 0$, zato je natanko ena pozitivna.)
+8. d) Ploščina paspartuja je zdaj $(60 + 2x)(20 + 2x) - 1200 = 4x^2 + 160x$. Enačba $4x^2 + 160x = 1200$ da $x^2 + 40x - 300 = 0$.
+9. d) $D = 1600 + 1200 = 2800$, pozitivna rešitev je $x = \dfrac{-40 + \sqrt{2800}}{2} \approx 6{,}4575$, torej $x \approx 6{,}5\,\text{cm}$.
+10. d) Linearni člen ploščine paspartuja je obseg slike krat $x$: $140x$ pri prvi in $160x$ pri drugi sliki. Podolgovata slika ima pri enaki ploščini večji obseg, zato da vsak centimeter širine več kartona in zadošča ožji paspartu.
+11. Odgovor: b) približno $7{,}1\,\text{cm}$; d) približno $6{,}5\,\text{cm}$, ker ima druga slika večji obseg.
+
+**Točkovanje:** a) 1 točka za zunanji meri $40 + 2x$ in $30 + 2x$, 1 točka za $P(x) = 4x^2 + 140x$; b) 1 točka za enačbo v splošni obliki, 1 točka za rešitvi (vrednost pred zaokrožitvijo), 1 točka za $x \approx 7{,}1\,\text{cm}$ z izločitvijo negativne rešitve; c) 1 točka za teme pri $x = -17{,}5$ in naraščanje funkcije $P$ na $[0, \infty)$, 1 točka za sklep o natanko eni pozitivni rešitvi (priznamo tudi utemeljitev z Vietovima formulama); d) 1 točka za enačbo $x^2 + 40x - 300 = 0$, 1 točka za $x \approx 6{,}5\,\text{cm}$ in 1 točka za utemeljitev z obsegom.
+
+### Ustno vprašanje 1
+
+:::premisli
+Izpelji obrazec za rešitvi kvadratne enačbe $ax^2 + bx + c = 0$ z dopolnjevanjem do popolnega kvadrata.
+---
+Enačbo delimo z $a \ne 0$ in dobimo $x^2 + \frac{b}{a}x + \frac{c}{a} = 0$. Levo stran dopolnimo do popolnega kvadrata in dobimo $\left(x + \frac{b}{2a}\right)^2 = \frac{b^2 - 4ac}{4a^2}$. Ker je $4a^2 > 0$, ima desna stran predznak diskriminante $D = b^2 - 4ac$. Pri $D \ge 0$ korenimo in dobimo $x + \frac{b}{2a} = \pm \frac{\sqrt{D}}{2a}$, torej $x_{1,2} = \frac{-b \pm \sqrt{D}}{2a}$. Pri $D < 0$ korenimo v kompleksnih številih in dobimo $x_{1,2} = \frac{-b \pm i\sqrt{-D}}{2a}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Zapiši Vietovi formuli za rešitvi kvadratne enačbe in ju dokaži.
+---
+Za rešitvi $x_1$ in $x_2$ enačbe $ax^2 + bx + c = 0$ velja $x_1 + x_2 = -\frac{b}{a}$ in $x_1 x_2 = \frac{c}{a}$. Rešitvi sta $\frac{-b + \sqrt{D}}{2a}$ in $\frac{-b - \sqrt{D}}{2a}$, zato se pri seštevanju korena odštejeta in vsota je $\frac{-2b}{2a} = -\frac{b}{a}$. Pri množenju uporabimo razliko kvadratov in dobimo $\frac{b^2 - D}{4a^2} = \frac{4ac}{4a^2} = \frac{c}{a}$. Formuli veljata tudi za dvojno rešitev in za kompleksni rešitvi.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer kvadratne enačbe, ki nima realnih rešitev, in pojasni, kakšne rešitve ima v kompleksnih številih.
+---
+Primer je enačba $x^2 + 4 = 0$ z diskriminanto $D = -16 < 0$. Kvadrat realnega števila ni negativen, zato realne rešitve ni. V kompleksnih številih sta rešitvi $x_{1,2} = \pm 2i$, saj je $(2i)^2 = -4$. Pri $D < 0$ sta rešitvi enačbe z realnimi koeficienti vedno konjugirani kompleksni števili.
+:::
+
 ## Drugače: Na sliki
 
 Reševanje kvadratne enačbe si lahko predstavljaš kot vprašanje: **kje parabola $y = ax^2 + bx + c$ prečka os $x$?** Diskriminanta je takrat kot napoved, ki jo izrečeš, še preden pogledaš graf.
@@ -290,4 +376,29 @@ h_1 | dana višina | | m
 h_2 | višina, za katero preverjamo, ali je dosežena | | m
 v_0 | začetna hitrost | | m/s
 g | težni pospešek | | m/s^2 | na Luni $1{,}62\,\mathrm{m/s^2}$
+P | ploščina paspartuja | P(x) = 4x^2 + 140x | cm^2 | v nalogi za maturo; $x$ je širina paspartuja v cm
+S | dana ploščina paspartuja | | cm^2 | v nalogi za maturo
 :::
+
+<<RACUN
+resi: (x-3)^2=2*x-6 | x | 3, 5
+enako: (x-3)^2-2*(x-3) | (x-3)*(x-5)
+neenacba: 36-4*c>0 | c | (-oo, 9)
+resi: 2^2-6*2+c=0 | c | 8
+resi: x^2-6*x+8=0 | x | 2, 4
+vrednost: 36-4*13 | -16
+vrednost: (3+2*I)^2-6*(3+2*I)+13 | 0
+vrednost: (3-2*I)^2-6*(3-2*I)+13 | 0
+vrednost: (3+2*I)*(3-2*I) | 13
+vrednost: (3+2*I)+(3-2*I) | 6
+enako: (40+2*x)*(30+2*x)-1200 | 4*x^2+140*x
+resi: 4*x^2+140*x=1200 | x | -35/2-5*sqrt(97)/2, -35/2+5*sqrt(97)/2
+vrednost: (-35+sqrt(2425))/2 | 7.1221
+vrednost: (-35-sqrt(2425))/2 | -42.1221
+vrednost: -140/(2*4) | -17.5
+enako: (60+2*x)*(20+2*x)-1200 | 4*x^2+160*x
+resi: x^2+40*x-300=0 | x | -20-10*sqrt(7), -20+10*sqrt(7)
+vrednost: (-40+sqrt(2800))/2 | 6.4575
+vrednost: (2*I)^2+4 | 0
+vrednost: (-2*I)^2+4 | 0
+>>

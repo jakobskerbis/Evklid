@@ -200,6 +200,91 @@ Iz $\log x = 1$ sledi $x = 10^1 = 10$, iz $\log x = 2$ pa $x = 10^2 = 100$. Obe 
 - Enačbe: $\log_a A = c \Rightarrow A = a^c$; $\;\log_a A = \log_a B \Rightarrow A = B$; po potrebi $t = \log_a x$.
 - Na začetku zapiši pogoje, na koncu naredi preizkus.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Reši enačbo $\log_2 (x + 1) - \log_2 (x - 2) = 2$.
+
+**Rešitev:**
+
+1. Pogoja: $x + 1 > 0$ in $x - 2 > 0$, oba hkrati veljata za $x > 2$.
+2. Logaritma združimo: $\log_2 \dfrac{x + 1}{x - 2} = 2$, zato je po definiciji $\dfrac{x + 1}{x - 2} = 2^2 = 4$.
+3. Iz $x + 1 = 4x - 8$ sledi $3x = 9$ in $x = 3$, kar ustreza pogoju $x > 2$.
+4. Preizkus: $\log_2 4 - \log_2 1 = 2 - 0 = 2$.
+5. Odgovor: $x = 3$.
+
+**Točkovanje:** 1 točka za pogoj $x > 2$ in združitev v logaritem kvocienta; 1 točka za enačbo $\dfrac{x + 1}{x - 2} = 4$; 1 točka za $x = 3$ s preizkusom ali preverjenim pogojem.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = \log_2 (x + 4) - 1$.
+
+a) Zapiši definicijsko območje funkcije $f$ in enačbo asimptote njenega grafa. (2 točki)
+b) Izračunaj ničlo funkcije $f$ in presečišče njenega grafa z osjo $y$. (2 točki)
+c) Zapiši predpis obratne funkcije $f^{-1}$ in njeno zalogo vrednosti. (2 točki)
+d) V isti koordinatni sistem nariši grafa funkcij $f$ in $f^{-1}$. (2 točki)
+
+**Rešitev:**
+
+1. a) Logaritmand mora biti pozitiven: $x + 4 > 0$, zato je $D_f = (-4, \infty)$. Asimptota je navpična premica $x = -4$.
+2. b) Iz $\log_2 (x + 4) - 1 = 0$ sledi $\log_2 (x + 4) = 1$, torej $x + 4 = 2$ in $x = -2$.
+3. b) $f(0) = \log_2 4 - 1 = 2 - 1 = 1$, presečišče z osjo $y$ je točka $(0, 1)$.
+4. c) Zapišemo $y = \log_2 (x + 4) - 1$ in izrazimo $x$: $y + 1 = \log_2 (x + 4)$, po definiciji $x + 4 = 2^{y+1}$ in $x = 2^{y+1} - 4$.
+5. c) Zamenjamo vlogi spremenljivk: $f^{-1}(x) = 2^{x+1} - 4$. Zaloga vrednosti obratne funkcije je definicijsko območje funkcije $f$, torej $Z_{f^{-1}} = (-4, \infty)$; to se ujema z $2^{x+1} > 0$.
+6. d) Točke grafa $f$: $(-3, -1)$, $(-2, 0)$, $(0, 1)$, $(4, 2)$, navpična asimptota $x = -4$. Točke grafa $f^{-1}$ dobimo z zamenjavo koordinat: $(-1, -3)$, $(0, -2)$, $(1, 0)$, $(2, 4)$, vodoravna asimptota $y = -4$. Grafa sta zrcalna čez premico $y = x$.
+7. Odgovor: a) $D_f = (-4, \infty)$, asimptota $x = -4$; b) ničla $x = -2$, presečišče $(0, 1)$; c) $f^{-1}(x) = 2^{x+1} - 4$, $Z_{f^{-1}} = (-4, \infty)$.
+
+**Točkovanje:** a) 1 točka za $D_f = (-4, \infty)$; 1 točka za asimptoto $x = -4$; b) 1 točka za ničlo $x = -2$; 1 točka za presečišče $(0, 1)$; c) 1 točka za predpis $f^{-1}(x) = 2^{x+1} - 4$; 1 točka za $Z_{f^{-1}} = (-4, \infty)$; d) 1 točka za graf $f$ z asimptoto; 1 točka za graf $f^{-1}$, zrcalen čez $y = x$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Hitrost tipkanja začetnika lahko približno opišemo z modelom $h(x) = r + s \log_2 (x + 1)$, kjer je $x$ število tednov vadbe, $h(x)$ pa število besed, ki jih natipka v eni minuti. Na začetku natipka $20$ besed na minuto, po $3$ tednih pa $32$ besed na minuto.
+
+a) Določi parametra $r$ in $s$. (2 točki)
+b) Koliko besed na minuto natipka po $7$ tednih vadbe? (1 točka)
+c) Po koliko tednih vadbe natipka $50$ besed na minuto? (2 točki)
+d) Koliko tednov potrebuje, da se hitrost poveča z $20$ na $32$ besed na minuto, in koliko, da se poveča z $32$ na $44$ besed na minuto? Kaj to pove o naraščanju funkcije $h$? (2 točki)
+e) Po koliko tednih vadbe natipka $40$ besed na minuto? Rezultat zaokroži na desetinko tedna. (3 točke)
+
+**Rešitev:**
+
+1. a) $h(0) = r + s \log_2 1 = r$, zato je $r = 20$.
+2. a) $h(3) = 20 + s \log_2 4 = 20 + 2s = 32$, zato je $s = 6$ in $h(x) = 20 + 6 \log_2 (x + 1)$.
+3. b) $h(7) = 20 + 6 \log_2 8 = 20 + 18 = 38$ besed na minuto.
+4. c) Iz $20 + 6 \log_2 (x + 1) = 50$ sledi $\log_2 (x + 1) = 5$, torej $x + 1 = 2^5 = 32$ in $x = 31$ tednov.
+5. d) Hitrost $32$ doseže pri $x = 3$. Iz $20 + 6 \log_2 (x + 1) = 44$ sledi $\log_2 (x + 1) = 4$ in $x = 15$.
+6. d) Za prvih $12$ besed na minuto potrebuje $3$ tedne, za naslednjih $12$ pa $15 - 3 = 12$ tednov. Funkcija $h$ narašča, a vse počasneje: za enak prirastek potrebuje vedno več časa.
+7. e) Iz $20 + 6 \log_2 (x + 1) = 40$ sledi $\log_2 (x + 1) = \dfrac{10}{3}$, po definiciji $x + 1 = 2^{\frac{10}{3}}$.
+8. e) Z računalom: $2^{\frac{10}{3}} \approx 10{,}0794$, zato je $x \approx 9{,}0794$, zaokroženo $9{,}1$ tedna.
+9. Odgovor: a) $r = 20$, $s = 6$; b) $38$ besed na minuto; c) po $31$ tednih; d) $3$ tedne in $12$ tednov, rast se upočasnjuje; e) po približno $9{,}1$ tedna.
+
+**Točkovanje:** a) 1 točka za $r = 20$; 1 točka za $s = 6$; b) 1 točka za $38$ besed na minuto; c) 1 točka za enačbo $\log_2 (x + 1) = 5$; 1 točka za $31$ tednov; d) 1 točka za $3$ tedne in $12$ tednov; 1 točka za ugotovitev, da $h$ narašča vse počasneje; e) 1 točka za enačbo $\log_2 (x + 1) = \dfrac{10}{3}$; 1 točka za $x + 1 = 2^{\frac{10}{3}}$; 1 točka za rezultat $9{,}1$ tedna.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako dobimo graf logaritemske funkcije $y = \log_a x$ iz grafa eksponentne funkcije $y = a^x$ in kaj se pri tem zgodi z asimptoto?
+---
+Funkciji $y = a^x$ in $y = \log_a x$ sta druga drugi obratni. Zato je graf logaritemske funkcije zrcalna slika grafa eksponentne funkcije čez premico $y = x$. Točka $(0, 1)$ preide v točko $(1, 0)$, točka $(1, a)$ pa v točko $(a, 1)$. Vodoravna asimptota $y = 0$ se spremeni v navpično asimptoto $x = 0$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Naštej lastnosti logaritemske funkcije $f(x) = \log_a x$ pri osnovi $0 < a < 1$.
+---
+Definicijsko območje je $(0, \infty)$, zaloga vrednosti pa $\mathbb{R}$. Funkcija je strogo padajoča. Njena edina ničla je $x = 1$, graf pa gre tudi skozi točko $(a, 1)$. Os $y$ je navpična asimptota grafa. Funkcija je pozitivna na intervalu $(0, 1)$ in negativna na intervalu $(1, \infty)$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer logaritemske enačbe, pri kateri dobimo odvečno rešitev, in pojasni, kako jo izločimo.
+---
+Primer je enačba $\log_2 x + \log_2 (x - 2) = 3$. Ko logaritma združimo, dobimo enačbo $x(x - 2) = 8$ z rešitvama $x = 4$ in $x = -2$. Pri $x = -2$ logaritmanda nista pozitivna, zato prvotna enačba tam ni definirana in $-2$ ni njena rešitev. Odvečne rešitve izločimo s pogoji, da so vsi logaritmandi pozitivni, ali s preizkusom v prvotni enačbi.
+:::
+
 ## Drugače: Z analogijo
 
 Logaritem je kot števec prepogibov. List papirja je debel $0{,}1\,\mathrm{mm}$; vsak prepogib debelino podvoji. Eksponentna funkcija odgovori na vprašanje »Kako debel je kup po $x$ prepogibih?«, logaritemska pa na obratno: »Kolikokrat moram prepogniti, da dobim dano debelino?«. Za $0{,}8\,\mathrm{mm}$ je odgovor $\log_2 8 = 3$.
@@ -289,4 +374,25 @@ t | nova neznanka | t = \log x | |
 k | število poltonov nad tonom A | k = 12 \log_2 \frac{\nu}{\nu_0} | – | negativno pod tonom A
 \nu | frekvenca tona | | Hz | $\nu > 0$
 \nu_0 | frekvenca tona A | | Hz | $440\,\mathrm{Hz}$
+h | hitrost tipkanja po $x$ tednih vadbe (Za maturo, naloga 3) | h(x) = r + s \log_2 (x + 1) | besed/min |
+r, s | parametra modela hitrosti tipkanja | | | $r = 20$, $s = 6$
+Z_{f^{-1}} | zaloga vrednosti obratne funkcije | Z_{f^{-1}} = D_f | |
 :::
+
+<<RACUN
+vrednost: log(4, 2)-log(1, 2) | 2
+resi: (x+1)/(x-2)=4 | x | 3
+resi: log(x+4, 2)-1=0 | x | -2
+vrednost: log(4, 2)-1 | 1
+vrednost: log(1, 2)-1 | -1
+vrednost: log(8, 2)-1 | 2
+enako: log(2^(x+1)-4+4, 2)-1 | x
+resi: 20+2*s=32 | s | 6
+vrednost: 20+6*log(8, 2) | 38
+resi: 20+6*log(x+1, 2)=50 | x | 31
+resi: 20+6*log(x+1, 2)=44 | x | 15
+vrednost: 2^(10/3) | 10.0794
+resi: 20+6*log(x+1, 2)=40 | x | 9.08
+resi: log(x, 2)+log(x-2, 2)=3 | x | 4
+resi: x*(x-2)=8 | x | -2, 4
+>>
