@@ -421,7 +421,7 @@ function nazaj({ entries = [null], view = "path" } = {}) {
       h.queue.push(-1);
     },
   };
-  const open = new Set(); // odprte plasti: "dialog", "keyboard", "pad", "menu", "lesson", "3d", "esc"
+  const open = new Set(); // odprte plasti: "dialog", "keyboard", "pad", "menu", "lesson", "3d", "esc", "calc"
   const toasts = [];
   const timers = [];
   const closeIf = (k) => () => open.delete(k);
@@ -437,7 +437,8 @@ function nazaj({ entries = [null], view = "path" } = {}) {
     KeyboardEvent: class {},
     setTimeout: (fn, ms) => timers.push({ fn, ms }),
     clearTimeout: (id) => id && (timers[id - 1].off = true),
-    $: (s) => (s === "#tabbar" ? { offsetParent: {} } : s === "#tour" ? null : { classList: { contains: () => false }, offsetParent: null }),
+    getComputedStyle: () => ({ display: "flex" }), // telefon: spodnja vrstica je v postavitvi
+    $: (s) => (s === "#tabbar" ? { offsetParent: null } : s === "#tour" ? null : { classList: { contains: () => false }, offsetParent: null }),
     t: (k) => SL[k],
     toast: (m) => toasts.push(m),
     state: { backTo: "path" },
@@ -454,6 +455,7 @@ function nazaj({ entries = [null], view = "path" } = {}) {
     hideKeyboard: closeIf("keyboard"),
     padIsSheet: () => open.has("pad"),
     closePad: closeIf("pad"),
+    calcBack: () => open.delete("calc"),
     calcOverlayOpen: () => false,
     closeCalcOverlay() {},
     cornerBack: () => false,
@@ -467,7 +469,7 @@ function nazaj({ entries = [null], view = "path" } = {}) {
     labBack() {},
     gamesBack: () => false,
     scanBack: () => false,
-    meView: (v) => ["me", "settings", "progress"].includes(v),
+    meView: (v) => ["me", "settings", "progress", "graph"].includes(v),
   };
   vm.runInNewContext(
     `${src}
@@ -620,6 +622,25 @@ test("Nazaj po osvežitvi na podstrani, v starem zavihku brez varovala in ob okn
   assert.equal(c.h.left, false);
 });
 
+test("Nazaj v Kalkulatorju (telefon): najprej plošča ali meni v kalkulatorju, nato na »Jaz« kot gumb ← Jaz (j, 14. 11. 2026)", () => {
+  const a = nazaj();
+  a.show("path");
+  a.show("me");
+  a.show("graph");
+  // Odprta plošča funkcij (⋯) ali konstant, meni vrstice grafa ali povečan graf: Nazaj zapre samo to.
+  a.open.add("calc");
+  a.back();
+  assert.equal(a.open.has("calc"), false, "Nazaj ne zapre plošče v kalkulatorju");
+  assert.equal(a.view(), "graph", "Nazaj ob odprti plošči zapusti kalkulator");
+  // Nato na »Jaz« (od tam je odprt in tja vodi gumb v glavi), šele potem na Učno pot.
+  a.back();
+  assert.equal(a.view(), "me", "Nazaj s Kalkulatorja ne vodi na »Jaz«");
+  a.back();
+  assert.equal(a.view(), "path");
+  assert.equal(a.h.left, false);
+  assert.equal(a.levels(), "021");
+});
+
 test("plasti v app.js: okno <dialog>, Evklidova tipkovnica (samo prek API) in plošča so pred pogledi", () => {
   const app = read("public/app.js");
   const step = app.slice(app.indexOf("function backStep("), app.indexOf('window.addEventListener("popstate"'));
@@ -629,6 +650,11 @@ test("plasti v app.js: okno <dialog>, Evklidova tipkovnica (samo prek API) in pl
   };
   const views = at('if (currentView === "uci" && uciBack(');
   for (const s of ["closeTopDialog()", "hideKeyboard({ blur: true })", "padIsSheet()", "isOpen3d()", "setSidebar(false)"]) assert.ok(at(s) < views, s);
+  // Plast v kalkulatorju se zapre pred kalkulatorjem čez cel zaslon (okno iz naloge ali Inštruktorja); v pogledu
+  // Kalkulator šele za 3D in drugimi plastmi, ki ga prekrijejo.
+  assert.ok(at("if (calcOverlayOpen())") < at("if (!calcBack()) closeCalcOverlay({ fromBack: true });"));
+  const graphLayer = at('if (currentView === "graph" && calcBack()) return true;');
+  assert.ok(at("isOpen3d()") < graphLayer && at("setSidebar(false)") < graphLayer && graphLayer < views);
   assert.ok(views < at("closeByEsc()") && at("closeByEsc()") < at('if (currentView === "path") return false;'));
   assert.match(step, /currentView === "topic" && \["competition", "exams"\]\.includes\(state\.backTo\) \? state\.backTo : "path"/);
   // Tipkovnice se dotaknemo samo prek izvoženih funkcij (PR #543 spreminja public/tipkovnica.js).

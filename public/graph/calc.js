@@ -1252,6 +1252,13 @@ export function createCalculator(root, opts) {
       view.draw();
       if (state.items.some((x) => x.slider?.play)) animate(); // drsnik, ki je tekel pred preklopom, teče naprej
     },
+    /** Tipka Nazaj (app.js calcBack): zapre meni vrstice ali povečan graf. Vrne true, če je kaj zaprla. */
+    back() {
+      if (!pop.hidden) closePop();
+      else if (root.classList.contains("gc-full")) root.querySelector('[data-act="expand"]')?.click();
+      else return false;
+      return true;
+    },
     /** Ob menjavi učenca: njegov zadnji graf (shranjen na napravi). */
     reload() {
       undo.length = 0;
