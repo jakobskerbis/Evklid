@@ -291,14 +291,11 @@ Galerija na telefonu deluje enako. »Letošnji videi« so presek dveh množic, �
 ~ Komplement $B^c$ zajema tudi območje zunaj obeh krogov, ki ni osenčeno.
 > Osenčeni so elementi, ki so v $A$, niso pa v $B$. To je razlika $A \setminus B = A \cap B^c$.
 
-? V razredu je $30$ dijakov. Kolo ima $25$ dijakov, smuči $20$. Najmanj koliko dijakov ima oboje?
-- $0$
-~ Množici bi bili lahko disjunktni le, če bi bilo $25 + 20$ največ $30$. Ker je $45 > 30$, se morata prekrivati.
-- $20$
-~ To je največ, kolikor jih lahko ima oboje: tedaj ima vsak s smučmi tudi kolo.
-+ $15$
-- $45$
-~ To je $|A| + |B|$, ki presek šteje dvakrat. V razredu sploh ni $45$ dijakov.
+? (brez računala) V razredu je $30$ dijakov. Kolo ima $25$ dijakov, smuči $20$. Najmanj koliko dijakov ima oboje?
+= 15
+~ 0 | Množici bi bili lahko disjunktni le, če bi bilo $25 + 20$ največ $30$. Ker je $45 > 30$, se morata prekrivati.
+~ 20 | To je največ, kolikor jih lahko ima oboje: tedaj ima vsak s smučmi tudi kolo.
+~ 45 | To je $|A| + |B|$, ki presek šteje dvakrat. V razredu sploh ni $45$ dijakov.
 > Naj bo $A$ množica dijakov s kolesom, $B$ pa s smučmi. V uniji je največ $30$ dijakov, zato je $|A \cap B| = |A| + |B| - |A \cup B| \ge 25 + 20 - 30 = 15$.
 
 ? Zakaj v formuli $|A \cup B| = |A| + |B| - |A \cap B|$ odštejemo $|A \cap B|$?
@@ -321,14 +318,11 @@ Galerija na telefonu deluje enako. »Letošnji videi« so presek dveh množic, �
 ~ Presek bi bil pravi, unija pa le $\{1, 2, 3\}$, brez $4$ in $5$.
 > $B$ mora vsebovati $4$ in $5$ (zaradi unije) in $3$ (zaradi preseka), ne sme pa vsebovati $1$ in $2$. Torej $B = \{3, 4, 5\}$.
 
-? Telefon ima v galeriji $120$ fotografij. Med priljubljene jih je označenih $45$, lokacijo jih ima $30$, oboje pa $12$. Koliko fotografij ni priljubljenih in nima lokacije?
-- $45$
-~ Izračunal si $120 - 45 - 30$ in fotografije z obema oznakama odštel dvakrat.
-- $63$
-~ To je število fotografij z vsaj eno oznako, torej unija. Vprašanje sprašuje po njenem komplementu.
-+ $57$
-- $75$
-~ To so fotografije, ki niso priljubljene. Med njimi jih ima nekaj lokacijo.
+? (brez računala) Telefon ima v galeriji $120$ fotografij. Med priljubljene jih je označenih $45$, lokacijo jih ima $30$, oboje pa $12$. Koliko fotografij ni priljubljenih in nima lokacije?
+= 57
+~ 45 | Izračunal si $120 - 45 - 30$ in fotografije z obema oznakama odštel dvakrat.
+~ 63 | To je število fotografij z vsaj eno oznako, torej unija. Vprašanje sprašuje po njenem komplementu.
+~ 75 | To so fotografije, ki niso priljubljene. Med njimi jih ima nekaj lokacijo.
 > Unija: $45 + 30 - 12 = 63$. Komplement v $\mathcal{U}$ s $120$ fotografijami: $120 - 63 = 57$.
 
 <<RACUN
@@ -342,6 +336,8 @@ vrednost: 2^5 | 32
 vrednost: 6+6+5-4-4-2+2 | 9
 vrednost: 12-3 | 9
 vrednost: 2+3 | 5
+vrednost: 25+20-30 | 15
+vrednost: 120-(45+30-12) | 57
 >>
 
 :::simboli

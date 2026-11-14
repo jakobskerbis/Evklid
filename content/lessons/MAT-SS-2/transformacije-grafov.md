@@ -446,7 +446,7 @@ Ko na koncu pogledaš predpis $2(x - p)^2 + q$, iz njega razbereš vso zgodbo: k
 4. $\frac{1}{2}x^2$
 > Širino določa samo faktor: $(2x)^2 = 4x^2$ je najožja, sledi $3x^2$. Prištevanje $5$ parabolo le dvigne, zato je $x^2 + 5$ široka kot $x^2$. Faktor $\frac{1}{2}$ jo razširi.
 
-? Točka $(4, 2)$ leži na grafu $f(x) = \sqrt{x}$. Graf preslikamo v $g(x) = -2\sqrt{x - 1} + 3$. Vpiši koordinato $y$ točke, v katero preide $(4, 2)$.
+? (brez računala) Točka $(4, 2)$ leži na grafu $f(x) = \sqrt{x}$. Graf preslikamo v $g(x) = -2\sqrt{x - 1} + 3$. Vpiši koordinato $y$ točke, v katero preide $(4, 2)$.
 = -1 | 0,01
 ~ 7 | Izpustil si minus pred $2$. Negativen faktor vrednost še zrcali čez os $x$.
 ~ -10 | Najprej si prištel $3$ in šele nato množil z $-2$. Razteg pride pred premikom $q$.

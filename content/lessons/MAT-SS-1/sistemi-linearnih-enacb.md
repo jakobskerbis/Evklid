@@ -302,22 +302,17 @@ Reši sistem $3x + 2y = 7$ in $5x - 4y = -3$ z nasprotnimi koeficienti.
 ~ Enaki koeficienti niso potrebni. Pomembno je le, da sta pri eni neznanki nasprotna, npr. $+3y$ in $-3y$.
 > Pri $+3y$ in $-3y$ je vsota $0 \cdot y$, zato ostane le druga neznanka. Takšno enačbo že znaš rešiti.
 
-? Par $(2, -1)$ je rešitev sistema $x + y = 1$ in $3x + by = 8$. Kolikšen je $b$?
-- $2$
-~ Namesto $y = -1$ si vstavil $y = 1$: $6 + b = 8$. Pazi na predznak.
-+ $-2$
-- $-14$
-~ Število $6$ si prenesel na drugo stran brez spremembe predznaka: $-b = 8 + 6$.
+? (brez računala) Par $(2, -1)$ je rešitev sistema $x + y = 1$ in $3x + by = 8$. Kolikšen je $b$?
+= -2 | 0,01
+~ 2 | Namesto $y = -1$ si vstavil $y = 1$: $6 + b = 8$. Pazi na predznak.
+~ -14 | Število $6$ si prenesel na drugo stran brez spremembe predznaka: $-b = 8 + 6$.
 > Vstavimo $x = 2$ in $y = -1$: $3 \cdot 2 + b \cdot (-1) = 8$, torej $6 - b = 8$ in $b = -2$. Prva enačba je izpolnjena: $2 + (-1) = 1$.
 
-? V dveh deževnih dneh je padlo skupaj $30\,\text{mm}$ padavin, drugi dan $8\,\text{mm}$ več kot prvi. Koliko je padlo prvi dan?
-- $19\,\text{mm}$
-~ To je količina drugega dne. Vprašanje sprašuje po prvem.
-- $22\,\text{mm}$
-~ Od $30$ si odštel $8$ in dobil $2x = 22$, nato pa pozabil deliti z $2$.
-- $15\,\text{mm}$
-~ Vsoto si razdelil na pol, kot da bi oba dneva padlo enako.
-+ $11\,\text{mm}$
+? (brez računala) V dveh deževnih dneh je padlo skupaj $30\,\text{mm}$ padavin, drugi dan $8\,\text{mm}$ več kot prvi. Koliko je padlo prvi dan?
+= 11 mm | 0,01
+~ 19 | To je količina drugega dne. Vprašanje sprašuje po prvem.
+~ 22 | Od $30$ si odštel $8$ in dobil $2x = 22$, nato pa pozabil deliti z $2$.
+~ 15 | Vsoto si razdelil na pol, kot da bi oba dneva padlo enako.
 > Sistem $x + y = 30$ in $y - x = 8$. Seštejemo: $2y = 38$, $y = 19$, nato $x = 30 - 19 = 11$. Preizkus: $19 - 11 = 8$ velja.
 
 :::simboli

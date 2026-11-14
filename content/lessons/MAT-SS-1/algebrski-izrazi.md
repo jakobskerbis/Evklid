@@ -285,14 +285,11 @@ Vajenka zapiše še s črkami. Stari pekač ima stranico $a$, podaljšek je $b$.
 ~ Pravokotnik ima stranici $x$ in $3$, zato je njegova ploščina $3x$, ne $2 \cdot 3$.
 > Deli so kvadrat $x \cdot x$, dva pravokotnika $x \cdot 3$ in kvadratek $3 \cdot 3$. Skupaj $(x + 3)^2 = x^2 + 6x + 9$.
 
-? Izračunaj $98^2$ s pomočjo $(100 - 2)^2$. Kateri rezultat je pravilen?
-- $9996$
-~ To je $100^2 - 2^2$, kot da bi bil kvadrat razlike enak razliki kvadratov. Manjka člen $-2 \cdot 100 \cdot 2$.
-- $10\,004$
-~ To je $100^2 + 2^2$. Ker je $98 < 100$, mora biti $98^2$ manj kot $10\,000$.
-+ $9604$
-- $9600$
-~ Pravilno si odštel $400$, pozabil pa si prišteti kvadrat drugega člena $2^2 = 4$.
+? (brez računala) Izračunaj $98^2$ s pomočjo $(100 - 2)^2$.
+= 9604
+~ 9996 | To je $100^2 - 2^2$, kot da bi bil kvadrat razlike enak razliki kvadratov. Manjka člen $-2 \cdot 100 \cdot 2$.
+~ 10004 | To je $100^2 + 2^2$. Ker je $98 < 100$, mora biti $98^2$ manj kot $10\,000$.
+~ 9600 | Pravilno si odštel $400$, pozabil pa si prišteti kvadrat drugega člena $2^2 = 4$.
 > $(100 - 2)^2 = 10\,000 - 400 + 4 = 9604$. Ocena: $98^2$ je malo pod $10\,000$, za približno $2 \cdot 100 \cdot 2 = 400$.
 
 ? Zakaj je zadnji člen v razvoju $(x - 4)^2$ pozitiven?
@@ -325,6 +322,12 @@ Vajenka zapiše še s črkami. Stari pekač ima stranico $a$, podaljšek je $b$.
 ~ Dodal si tri plošče, pozabil pa tri palčke. Člen $3ab^2$ da pri $b = 1$ še $3n$.
 > Dodati moraš $(n + 1)^3 - n^3 = 3n^2 + 3n + 1$: tri plošče $n \cdot n$, tri palčke dolžine $n$ in eno kocko v kotu. Pri $n = 2$ je to $12 + 6 + 1 = 19$, res $27 - 8 = 19$.
 
+? (brez računala) Izračunaj $103 \cdot 97$ s pomočjo zmnožka vsote in razlike $(100 + 3)(100 - 3)$.
+= 9991
+~ 10009 | To je $100^2 + 3^2$. Pri zmnožku vsote in razlike se srednja člena uničita, kvadrata pa se odštejeta: $a^2 - b^2$.
+~ 9997 | Odštel si $3$ namesto $3^2 = 9$. Drugi člen moraš kvadrirati.
+> $(100 + 3)(100 - 3) = 100^2 - 3^2 = 10\,000 - 9 = 9991$.
+
 <<RACUN
 enako: (x+2)^3 | x^3+6*x^2+12*x+8
 enako: x*(x+3)^2 | x^3+6*x^2+9*x
@@ -335,6 +338,8 @@ enako: 2*(x*(x+2)+x*(x-2)+(x+2)*(x-2)) | 6*x^2-8
 enako: (x+1)^3-(x^3-4*x) | 3*x^2+7*x+1
 vrednost: 6^3-5*7*3 | 111
 vrednost: 3*5^2+7*5+1 | 111
+vrednost: 98^2 | 9604
+vrednost: 103*97 | 9991
 >>
 
 :::simboli

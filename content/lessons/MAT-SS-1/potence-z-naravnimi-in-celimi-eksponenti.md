@@ -322,22 +322,17 @@ Najpogostejša past je četrti korak: odštevanje negativnega eksponenta je pri�
 ~ Kvadrat bi bil $(2^n)^2 = 2^{2n}$: eksponent bi se podvojil, ne povečal za $1$.
 > $2^{n+1} = 2^n \cdot 2$, torej je igralcev dvakrat več, na primer $128$ namesto $64$.
 
-? Koliko je $\left(\dfrac{2}{5}\right)^{-2}$?
-- $\dfrac{4}{25}$
-~ Pozabiš obrniti ulomek. Negativni eksponent pomeni obratno vrednost.
-+ $\dfrac{25}{4}$
-- $-\dfrac{4}{25}$
-~ Negativni eksponent ne naredi rezultata negativnega, ulomek pa je treba obrniti.
-- $\dfrac{5}{2}$
-~ Ulomek si obrnil, a pozabil kvadrirati.
-> $\left(\dfrac{2}{5}\right)^{-2} = \left(\dfrac{5}{2}\right)^2 = \dfrac{25}{4}$.
+? (brez računala) Koliko je $\left(\dfrac{2}{5}\right)^{-2}$? Vpiši kot decimalno število.
+= 6,25 | 0,001
+~ 0,16 | Pozabiš obrniti ulomek: $\dfrac{4}{25} = 0{,}16$. Negativni eksponent pomeni obratno vrednost.
+~ -0,16 | Negativni eksponent ne naredi rezultata negativnega, ulomek pa je treba obrniti.
+~ 2,5 | Ulomek si obrnil, $\dfrac{5}{2} = 2{,}5$, a pozabil kvadrirati.
+> $\left(\dfrac{2}{5}\right)^{-2} = \left(\dfrac{5}{2}\right)^2 = \dfrac{25}{4} = 6{,}25$.
 
-? Koliko je $\dfrac{2^3 \cdot 2^{-5}}{2^{-4}}$?
-- $\dfrac{1}{64}$
-~ Pri deljenju odšteješ $-4$, kar je prištevanje: $-2 - (-4) = 2$, ne $-6$.
-+ $4$
-- $-4$
-~ Negativni eksponenti ne dajo negativnega rezultata: potenca pozitivne osnove je vedno pozitivna.
+? (brez računala) Koliko je $\dfrac{2^3 \cdot 2^{-5}}{2^{-4}}$?
+= 4 | 0,01
+~ 0,016 | To je $2^{-6} = \dfrac{1}{64} \approx 0{,}016$. Pri deljenju odšteješ $-4$, kar je prištevanje: $-2 - (-4) = 2$, ne $-6$.
+~ -4 | Negativni eksponenti ne dajo negativnega rezultata: potenca pozitivne osnove je vedno pozitivna.
 > Števec: $2^{3 + (-5)} = 2^{-2}$. Deljenje: $2^{-2 - (-4)} = 2^2 = 4$.
 
 <<RACUN

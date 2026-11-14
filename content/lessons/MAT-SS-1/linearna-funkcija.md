@@ -292,24 +292,19 @@ Razmerje je za **vsak** par točk enako $k$. To je prav lastnost premice: konsta
 
 ## Preveri se
 
-? Katera je ničla funkcije $f(x) = 3x - 12$?
-- $x = -4$
-~ Napačen predznak: $-12$ na desni postane $+12$, zato $3x = 12$ in $x = 4$.
-+ $x = 4$
-- $x = -12$
-~ To je $n$, presečišče z osjo $y$, ne ničla. Ničla je pri $f(x) = 0$.
-- $x = 12$
-~ Pozabil si deliti s $3$: iz $3x = 12$ sledi $x = 4$.
+? (brez računala) Izračunaj ničlo funkcije $f(x) = 3x - 12$. Vpiši vrednost $x$.
+= 4 | 0,01
+~ -4 | Napačen predznak: $-12$ na desni postane $+12$, zato $3x = 12$ in $x = 4$.
+~ -12 | To je $n$, presečišče z osjo $y$, ne ničla. Ničla je pri $f(x) = 0$.
+~ 12 | Pozabil si deliti s $3$: iz $3x = 12$ sledi $x = 4$.
 > Rešimo $3x - 12 = 0$, torej $3x = 12$ in $x = 4$. Vrednost $-12$ je presečišče z osjo $y$ ($f(0) = -12$), ne ničla.
 
-? Premica poteka skozi točki $(2, 1)$ in $(5, 7)$. Kolikšen je smerni koeficient?
-- $k = \dfrac{1}{2}$
-~ Obrnjen ulomek: razlika $x$ ne sodi v števec. $k = \dfrac{y_2 - y_1}{x_2 - x_1}$.
-- $k = 3$
-~ To je samo razlika $x$ ($5 - 2$). Spremembo $y$ moraš deliti z njo.
-+ $k = 2$
-- $k = -2$
-~ Razliki si odštel v različnem vrstnem redu. Ko $x$ raste, raste tudi $y$, zato je $k > 0$.
+? (brez računala) Premica poteka skozi točki $(2, 1)$ in $(5, 7)$. Kolikšen je smerni koeficient $k$?
+= 2 | 0,01
+~ 0,5 | Obrnjen ulomek: razlika $x$ ne sodi v števec. $k = \dfrac{y_2 - y_1}{x_2 - x_1}$.
+~ 3 | To je samo razlika $x$ ($5 - 2$). Spremembo $y$ moraš deliti z njo.
+~ 6 | To je samo razlika $y$ ($7 - 1$). Deliti jo moraš še z razliko $x$.
+~ -2 | Razliki si odštel v različnem vrstnem redu. Ko $x$ raste, raste tudi $y$, zato je $k > 0$.
 > $k = \dfrac{7 - 1}{5 - 2} = \dfrac{6}{3} = 2$. Odgovor $\dfrac12$ je obrnjen ulomek, $-2$ pa bi veljal za padajočo funkcijo.
 
 ? Katera tabela vrednosti pri $x = 0$; $1$; $2$ sodi k funkciji $y = -4x + 1$?
@@ -357,4 +352,6 @@ vrednost: -0.064*285+48 | 29.76
 resi: -0.064*x+48=7 | x | 640.625
 resi: -0.064*x+48=0 | x | 750
 vrednost: 48/0.064 | 750
+resi: 3*x-12=0 | x | 4
+vrednost: (7-1)/(5-2) | 2
 >>

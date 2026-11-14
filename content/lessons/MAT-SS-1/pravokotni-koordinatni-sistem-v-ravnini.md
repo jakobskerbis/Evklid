@@ -376,14 +376,11 @@ Pri ploščini je izraz $u_1 v_2 - u_2 v_1$ ploščina paralelograma, ki ga nape
 ~ Druga koordinata je $3 > 0$, zato je daljica nad osjo $x$.
 > Obe točki imata $y = 3$, zato ležita na vodoravnici nad osjo $x$. Dolžina je $|4 - (-2)| = 6$.
 
-? Oceni brez računala razdaljo med $O(0, 0)$ in $T(7, 7)$. Kateri približek je najboljši?
-- $7$
-~ To je samo ena kateta. Hipotenuza je daljša od vsake katete.
-+ $10$
-- $14$
-~ To je vsota katet, pot po kvadratkih. Poševna pot je krajša.
-- $49$
-~ To je $7^2$, kvadrat ene razlike. Manjkata drugi kvadrat in koren.
+? (brez računala) Oceni razdaljo med $O(0, 0)$ in $T(7, 7)$. Vpiši celo število, ki ji je najbližje.
+= 10
+~ 7 | To je samo ena kateta. Hipotenuza je daljša od vsake katete.
+~ 14 | To je vsota katet, pot po kvadratkih. Poševna pot je krajša.
+~ 49 | To je $7^2$, kvadrat ene razlike. Manjkata drugi kvadrat in koren.
 > $d = \sqrt{49 + 49} = \sqrt{98} \approx 9{,}9$, kar je skoraj $10$. Ker je $\sqrt{100} = 10$, je razdalja malo manj kot $10$.
 
 ? Zakaj pri formuli za razdaljo ni pomembno, katero točko vzameš za prvo?

@@ -315,14 +315,11 @@ Implikacijo si nariši kot tabelo s štirimi polji in prečrtaj samo polje »$A$
 ~ To je lastnost ekvivalence $A \Leftrightarrow B$. Implikacija je pravilna tudi pri $A$ = N, $B$ = P.
 > Implikacija je kot obljuba: prelomljena je samo, če predpostavka drži, posledica pa ne.
 
-? Koliko vrstic ima pravilnostna tabela izjave $(A \wedge B) \Rightarrow C$?
-- $6$
-~ To je $2 \cdot 3$. Vsaka izjava število vrstic podvoji, zato računaš $2^3$, ne $2 \cdot 3$.
-- $3$
-~ Preštel si samo izjave. Vrstic je toliko, kolikor je vseh kombinacij vrednosti.
-- $4$
-~ Štiri vrstice ima tabela z dvema izjavama. Tu so tri: $A$, $B$ in $C$.
-+ $8$
+? (brez računala) Koliko vrstic ima pravilnostna tabela izjave $(A \wedge B) \Rightarrow C$?
+= 8
+~ 6 | To je $2 \cdot 3$. Vsaka izjava število vrstic podvoji, zato računaš $2^3$, ne $2 \cdot 3$.
+~ 3 | Preštel si samo izjave. Vrstic je toliko, kolikor je vseh kombinacij vrednosti.
+~ 4 | Štiri vrstice ima tabela z dvema izjavama. Tu so tri: $A$, $B$ in $C$.
 > Tri izjave, vsaka P ali N: $2^3 = 8$ vrstic.
 
 ? Jure je preverjal, ali velja $\neg(A \wedge B) \equiv \neg A \wedge \neg B$. Zapisal je: »Pri $A$ = P in $B$ = P sta obe izjavi N, torej sta enakovredni.« Kje je napaka?
@@ -353,8 +350,16 @@ Implikacijo si nariši kot tabelo s štirimi polji in prečrtaj samo polje »$A$
 ~ Gledaš samo posledico. Ana ne brusi, zato je predpostavka nepravilna in pravila ne krši.
 > Implikacija je nepravilna samo pri predpostavki P in posledici N: Luka brusi (P), očal nima (N).
 
+? (brez računala) V koliko vrsticah pravilnostne tabele je izjava $(A \vee B) \Rightarrow C$ nepravilna?
+= 3
+~ 1 | Upošteval si le vrstico $A$ = P, $B$ = P. Disjunkcija $A \vee B$ je pravilna v treh od štirih kombinacij $A$ in $B$.
+~ 4 | To so vse vrstice s $C$ = N. Pri $A$ = N in $B$ = N je predpostavka nepravilna, zato je implikacija tam pravilna.
+~ 5 | To je število vrstic, v katerih je izjava pravilna. Vprašanje sprašuje po nepravilnih.
+> Implikacija je nepravilna le, ko je predpostavka $A \vee B$ pravilna (to je v $3$ od $4$ kombinacij $A$ in $B$) in posledica $C$ nepravilna. Takih vrstic je $3 \cdot 1 = 3$, od vseh $2^3 = 8$.
+
 <<RACUN
 vrednost: 2^2 | 4
+vrednost: 2^3 | 8
 >>
 
 :::simboli

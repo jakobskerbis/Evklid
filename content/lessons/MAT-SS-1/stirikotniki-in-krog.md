@@ -293,13 +293,11 @@ Na koncu dedek iz okrogle deske izreže mizico in išče njeno središče. Kotni
 ~ To je deltoid: razpolovljena je le diagonala, ki ni simetrala lika.
 > Romb je paralelogram, zato se diagonali razpolavljata; ker so stranice enake, se sekata pod pravim kotom.
 
-? Okrogla miza ima premer $1{,}2\,\text{m}$. Približno kolikšna je ploščina mizne plošče?
-- približno $4{,}5\,\text{m}^2$
-~ Premer si vzel za polmer: $\pi \cdot 1{,}2^2 \approx 4{,}5$. Polmer je $0{,}6\,\text{m}$.
-- približno $3{,}8\,\text{m}^2$
-~ To je obseg, $2\pi \cdot 0{,}6 \approx 3{,}8$, in njegova enota je $\text{m}$, ne $\text{m}^2$.
-+ približno $1{,}1\,\text{m}^2$
-> $r = 0{,}6\,\text{m}$, $S = \pi r^2 \approx 3{,}14 \cdot 0{,}36 \approx 1{,}1\,\text{m}^2$.
+? Okrogla miza ima premer $1{,}2\,\text{m}$. Kolikšna je ploščina mizne plošče? Vpiši v $\text{m}^2$, zaokroženo na dve decimalki.
+= 1,13 $\text{m}^2$ | 0,01
+~ 4,52 | Premer si vzel za polmer: $\pi \cdot 1{,}2^2 \approx 4{,}52$. Polmer je $0{,}6\,\text{m}$.
+~ 3,77 | To je obseg, $2\pi \cdot 0{,}6 \approx 3{,}77$, in njegova enota je $\text{m}$, ne $\text{m}^2$.
+> $r = 0{,}6\,\text{m}$, $S = \pi r^2 = \pi \cdot 0{,}36 \approx 1{,}13\,\text{m}^2$.
 
 ? Zakaj sta dva obodna kota nad istim lokom enaka?
 - Ker je vsak od njiju enak središčnemu kotu nad tem lokom.
@@ -309,12 +307,10 @@ Na koncu dedek iz okrogle deske izreže mizico in išče njeno središče. Kotni
 + Ker je vsak od njiju polovica istega središčnega kota.
 > Oba stojita nad istim lokom, ki mu pripada en sam središčni kot $\alpha$, zato sta oba enaka $\dfrac{\alpha}{2}$.
 
-? Trapez ima ploščino $60\,\text{cm}^2$ ter osnovnici $11\,\text{cm}$ in $9\,\text{cm}$. Kolikšna je njegova višina?
-- $3\,\text{cm}$
-~ Pozabil si, da je v formuli deljenje z $2$: $v = \dfrac{2S}{a + c}$, ne $\dfrac{S}{a + c}$.
-- približno $5{,}45\,\text{cm}$
-~ Računal si kot pri paralelogramu z eno osnovnico, $\dfrac{60}{11}$. Trapez ima dve različni osnovnici.
-+ $6\,\text{cm}$
+? (brez računala) Trapez ima ploščino $60\,\text{cm}^2$ ter osnovnici $11\,\text{cm}$ in $9\,\text{cm}$. Kolikšna je njegova višina?
+= 6 cm | 0,01
+~ 3 | Pozabil si, da je v formuli deljenje z $2$: $v = \dfrac{2S}{a + c}$, ne $\dfrac{S}{a + c}$.
+~ 5,45 | Računal si kot pri paralelogramu z eno osnovnico, $\dfrac{60}{11} \approx 5{,}45$. Trapez ima dve različni osnovnici.
 > Iz $S = \dfrac{(a + c)\, v}{2}$ sledi $v = \dfrac{2S}{a + c} = \dfrac{120}{20} = 6\,\text{cm}$.
 
 ? Tesar s kotnikom išče središče okrogle plošče. Oglišče pravega kota položi na rob, kraka sekata rob v točkah $P$ in $Q$. Kaj je daljica $PQ$?
