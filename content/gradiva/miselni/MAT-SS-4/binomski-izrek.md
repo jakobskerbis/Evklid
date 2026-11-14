@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Poti na zemljevidu
+  - najkrajša pot: samo vzhod ali sever
+  - križišče = vsota števil levo in spodaj
+- Pascalov trikotnik
+  - robovi $1$, notranje število = vsota sosedov nad njim
+  - vrstice štejemo od $0$; vsota vrstice $n$ je $2^n$
+- Binomski simbol
+  - $\binom{n}{k} = C_n^k = \frac{n!}{k!\,(n-k)!}$
+  - simetrija $\binom{n}{k} = \binom{n}{n-k}$
+- Pravila razvoja
+  - $n + 1$ členov, vsota eksponentov vedno $n$
+  - eksponent pri $a$ pada, pri $b$ raste
+- Binomski izrek
+  - $(a+b)^n = \binom{n}{0}a^n + \dots + \binom{n}{n}b^n$
+  - splošni člen $T_{k+1} = \binom{n}{k}a^{n-k}b^k$
+- Dvočlenik z minusom
+  - predznaki se izmenjujejo
+  - $(a-b)^3 = a^3 - 3a^2b + 3ab^2 - b^3$
+- Iskani člen
+  - eksponent $x$ izenači z želenim, izračunaj $k$
+  - napaka: $(2x)^3 = 2x^3$

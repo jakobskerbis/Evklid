@@ -41,6 +41,18 @@ $$y = f(a) + f'(a)\,(x - a)$$
 
 Za rogljičke je prihodek $R(x) = 500x - 200x^2$ in $R'(x) = 500 - 400x$. Pri ceni $1\,€$ je $R'(1) = 100$. Tangenta tam je $y = 300 + 100(x - 1)$ oziroma $y = 100x + 200$. Število $100$ pove: pri majhni podražitvi prihodek raste približno za $100\,€$ na vsak evro podražitve, torej približno $1\,€$ na vsak cent.
 
+**Normala.** Normala je premica skozi dotikališče, pravokotna na tangento. Produkt smernih koeficientov pravokotnih premic je $-1$, zato ima normala pri $k_t = f'(a) \ne 0$ smerni koeficient $k_n = -\frac{1}{k_t}$ in enačbo
+
+$$y = f(a) - \frac{1}{f'(a)}\,(x - a)$$
+
+Pri $f'(a) = 0$ je normala navpična premica $x = a$.
+
+**Presečni kot krivulj.** Kot med grafoma $f$ in $g$ v presečišču z absciso $x_0$ je kot med tangentama v tej točki. Z $k_1 = f'(x_0)$ in $k_2 = g'(x_0)$ je
+
+$$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$
+
+in $0^\circ \le \varphi \le 90^\circ$. Pri $k_1 k_2 = -1$ se krivulji sekata **pravokotno**, pri $k_1 = k_2$ se dotikata ($\varphi = 0^\circ$).
+
 **Naraščanje in padanje.** Predznak odvoda pove smer grafa:
 
 - $f'(x) > 0$ na intervalu: funkcija tam **narašča**,
@@ -168,6 +180,24 @@ Ali je pri $x = 5$ res maksimum in kolikšna je prostornina?
 Za $x = 4$ sta oba faktorja pozitivna, $V' > 0$; za $x = 6$ je $30 - 6x < 0$, $V' < 0$. Predznak gre iz $+$ v $-$, torej maksimum. $V(5) = 5 \cdot 20^2 = 2000\,\mathrm{cm^3}$, to sta $2$ litra.
 :::
 
+### Primer 5: normala in presečni kot
+
+Paraboli $f(x) = x^2$ in $g(x) = 2 - x^2$ se sekata v $T(1, 1)$. (a) Zapiši enačbo normale na graf $f$ v $T$. (b) Izračunaj presečni kot parabol v $T$.
+
+**Podatki:** $f(x) = x^2$, $g(x) = 2 - x^2$, $T(1, 1)$
+**Iščemo:** (a) normalo $y = kx + n$, (b) kot $\varphi$
+
+:::formula
+$k_n = -\frac{1}{f'(a)}$; $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$
+:::
+
+**Rešitev:**
+
+1. $f'(x) = 2x$ in $g'(x) = -2x$, zato $k_1 = f'(1) = 2$ in $k_2 = g'(1) = -2$.
+2. (a) $k_n = -\frac{1}{2}$, $y = 1 - \frac{1}{2}(x - 1) = -\frac{1}{2}x + \frac{3}{2}$.
+3. (b) $\tan\varphi = \left|\frac{-2 - 2}{1 + 2 \cdot (-2)}\right| = \frac{4}{3}$, $\varphi \approx 53{,}13^\circ$.
+4. Odgovor: normala je $y = -\frac{1}{2}x + \frac{3}{2}$, paraboli se sekata pod kotom $\varphi \approx 53{,}13^\circ$ ($53^\circ 8'$).
+
 ## Pogoste napake
 
 - **»Odvod je nič, torej je ekstrem.«** Pri $f(x) = x^3$ je $f'(0) = 0$, ekstrema pa ni, ker odvod ne zamenja predznaka. Vedno preveri predznak levo in desno od stacionarne točke.
@@ -179,6 +209,8 @@ Za $x = 4$ sta oba faktorja pozitivna, $V' > 0$; za $x = 6$ je $30 - 6x < 0$, $V
 ## Povzetek
 
 - Tangenta v $\bigl(a, f(a)\bigr)$: $y = f(a) + f'(a)(x - a)$; smerni koeficient je $f'(a)$.
+- Normala: pravokotna na tangento, $k_n = -\frac{1}{f'(a)}$; pri $f'(a) = 0$ je $x = a$.
+- Presečni kot (med tangentama): $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$; $k_1 k_2 = -1$: pravokotno.
 - $f' > 0$ na intervalu: $f$ narašča; $f' < 0$: $f$ pada.
 - Stacionarna točka: $f'(a) = 0$. Ekstrem je tam le, če $f'$ zamenja predznak ($+ \to -$ maksimum, $- \to +$ minimum).
 - Vrednost ekstrema dobiš z vstavljanjem v $f$.
@@ -257,4 +289,17 @@ c | prodajna cena slušalk | | €
 D | dobiček (v primeru 3 tedenski) | D(c) = (c - 20)(600 - 10c) | €
 D' | odvod dobička | D'(c) = -20c + 800 |
 V | prostornina škatle | V(x) = x\,(30 - 2x)^2 | cm^3
+k_t | smerni koeficient tangente | k_t = f'(a) |
+k_n | smerni koeficient normale | k_n = -\frac{1}{k_t} |
+g | druga funkcija | |
+x_0 | abscisa presečišča | |
+k_1, k_2 | smerna koeficienta tangent | |
+\varphi | presečni kot krivulj | | °
 :::
+
+<<RACUN
+odvod: 2-x^2 | x | -2*x
+enako: 1-(1/2)*(x-1) | -x/2+3/2
+vrednost: abs((-2-2)/(1+2*(-2))) | 4/3
+vrednost: atan(4/3)*180/pi | 53.13
+>>

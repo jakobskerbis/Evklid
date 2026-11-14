@@ -22,9 +22,9 @@ krajših strukturiranih nalog (5–8 točk, skupaj 40). Višja raven: na vsaki p
 
 ## Povzetek pokritosti
 
-Postavk (vsebin in ciljev): 513. Pokrito (»da«): 332, delno: 105, manjka: 71, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 24, delno 21, manjka 42).
+Postavk (vsebin in ciljev): 513. Pokrito (»da«): 364, delno: 101, manjka: 43, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 39, delno 20, manjka 28).
 
-Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka.
+Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka. Postavke z opombo »C3« so dopolnjene z novimi lekcijami ali dopolnitvami lekcij (točka C3, 4. letnik: 14. 11. 2026).
 
 ### Manjka
 
@@ -37,7 +37,6 @@ Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); 
 | 4.3.3 Realna števila | Absolutna in relativna napaka | OR+VR |
 | 4.3.3 Realna števila | primerja pomen absolutne in relativne napake ter oceni absolutno in relativno napako vsote, razlike, produkta in kvocienta dveh podatkov | OR+VR |
 | 4.4 Algebrski izrazi, enačbe in neenačbe | Linearna neenačba s parametrom | VR |
-| 4.4 Algebrski izrazi, enačbe in neenačbe | s pomočjo Pascalovega trikotnika določi pravila za višje potence dvočlenika in jih tudi uporablja | OR+VR |
 | 4.4 Algebrski izrazi, enačbe in neenačbe | razstavi izraze aⁿ ± bⁿ | VR |
 | 4.4 Algebrski izrazi, enačbe in neenačbe | obravnava preproste linearne neenačbe s parametrom | VR |
 | 4.5 Potence in koreni | Iracionalne enačbe | VR |
@@ -56,19 +55,13 @@ Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); 
 | 4.8 Vektorji v ravnini in prostoru | Uporaba vektorskega računa v trikotniku in paralelogramu, razmerja, težišče | VR |
 | 4.8 Vektorji v ravnini in prostoru | Povezava med skalarnim produktom in kosinusnim izrekom | OR+VR |
 | 4.8 Vektorji v ravnini in prostoru | presodi linearno neodvisnost vektorjev | VR |
-| 4.10 Funkcije (splošno) | Lastnosti zveznih funkcij na zaprtem intervalu | VR |
-| 4.10 Funkcije (splošno) | Iskanje ničel z uporabo tehnologije | VR |
 | 4.10 Funkcije (splošno) | nariše graf stopničaste funkcije | OR+VR |
-| 4.10 Funkcije (splošno) | sklepa o lastnostih konkretne zvezne funkcije na zaprtem intervalu | VR |
-| 4.10 Funkcije (splošno) | poišče ničlo ali točko na krivulji na predvideno natančnost z uporabo tehnologije | VR |
 | 4.10.1 Linearna funkcija | Kot med premicama | OR+VR |
 | 4.10.1 Linearna funkcija | Gaussova eliminacijska metoda | VR |
 | 4.10.1 Linearna funkcija | Sistem linearnih neenačb | VR |
 | 4.10.1 Linearna funkcija | izračuna kot med premicama | OR+VR |
 | 4.10.4 Kvadratna funkcija | Presečišče dveh parabol | OR+VR |
 | 4.10.4 Kvadratna funkcija | Sistem kvadratnih neenačb | VR |
-| 4.10.7 Polinomska funkcija | Metoda bisekcije | VR |
-| 4.10.7 Polinomska funkcija | uporablja metodo bisekcije | VR |
 | 4.10.8 Racionalna funkcija | Racionalne neenačbe | VR |
 | 4.10.8 Racionalna funkcija | reši racionalne neenačbe | VR |
 | 4.10.9 Kotne funkcije | Faktorizacija in razčlenitev produkta | VR |
@@ -79,27 +72,6 @@ Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); 
 | 4.11 Stožnice | izpelje enačbe elipse iz enačbe krožnice z raztegom vzdolž izbrane osi | VR |
 | 4.11 Stožnice | analizira grafično predstavitev hiperbole in parabole v premaknjeni legi | VR |
 | 4.11 Stožnice | analizira enačbo hiperbole in parabole v premaknjeni legi | VR |
-| 4.12 Zaporedja in vrste | Anuitete | OR+VR |
-| 4.12 Zaporedja in vrste | Amortizacijski načrt | OR+VR |
-| 4.12 Zaporedja in vrste | uporabi načelo ekvivalence glavnic | OR+VR |
-| 4.12 Zaporedja in vrste | izračuna anuiteto in izdela amortizacijski načrt | OR+VR |
-| 4.13 Diferencialni račun | Drugi odvod funkcije | VR |
-| 4.13 Diferencialni račun | Prevoj, konveksnost in konkavnost funkcije | VR |
-| 4.13 Diferencialni račun | Zveznost odvedljivih funkcij | VR |
-| 4.13 Diferencialni račun | računa odvod implicitno podanih funkcij | VR |
-| 4.13 Diferencialni račun | ugotovi točke (ne)odvedljivosti iz grafa | OR+VR |
-| 4.13 Diferencialni račun | izračuna presečni kot med krivuljama | OR+VR |
-| 4.14 Integralski račun | Integracija »per partes« | VR |
-| 4.14 Integralski račun | Integracija racionalnih funkcij | VR |
-| 4.14 Integralski račun | integrira »per partes« | VR |
-| 4.14 Integralski račun | integrira racionalne funkcije (z razcepom na parcialne ulomke) | VR |
-| 4.15 Kombinatorika | Pravilo vsote | OR+VR |
-| 4.15 Kombinatorika | Permutacije s ponavljanjem | OR+VR |
-| 4.15 Kombinatorika | Binomski izrek | OR+VR |
-| 4.15 Kombinatorika | Pascalov trikotnik | OR+VR |
-| 4.17 Statistika | Zbiranje podatkov | OR+VR |
-| 4.17 Statistika | Statistična naloga | OR+VR |
-| 4.17 Statistika | ocenjuje preproste povezave med statističnimi spremenljivkami | OR+VR |
 | 4.17 Statistika | uporabi znanje o delu s podatki v celovitem postopku empiričnega preiskovanja (izbere temo, postavi preiskovalno vprašanje, zbere podatke, jih uredi in strukturira, analizira, prikaže in interpretira rezultate) | OR+VR |
 
 ## Oznaka višje ravni v lekcijah
@@ -270,7 +242,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | primerja in razlikuje zapis in pomen izraza in enačbe ter spremenljivke in neznanke | OR+VR | `MAT-SS-1/algebrski-izrazi`, `MAT-SS-1/linearne-enacbe` | delno – izraz/enačba in spremenljivka/neznanka nista izrecno primerjana |
 | sešteva in množi algebrske izraze | OR+VR | `MAT-SS-1/algebrski-izrazi` | da |
 | uporablja in utemelji pravili za kvadrat in kub dvočlenika | OR+VR | `MAT-SS-1/algebrski-izrazi` | da |
-| s pomočjo Pascalovega trikotnika določi pravila za višje potence dvočlenika in jih tudi uporablja | OR+VR | – | manjka – Pascalov trikotnik le zgodovinsko omenjen v matematicna-indukcija; le koeficienti 1, 3, 3, 1 |
+| s pomočjo Pascalovega trikotnika določi pravila za višje potence dvočlenika in jih tudi uporablja | OR+VR | `MAT-SS-4/binomski-izrek` | da – C3 (14. 11. 2026) |
 | prepozna in uporablja ustrezni način razstavljanja danega izraza: izpostavljanje, razlika kvadratov, vsota in razlika kubov, Viètovo pravilo, razstavljanje štiričlenikov | OR+VR | `MAT-SS-1/razstavljanje-izrazov` | delno – vsota in razlika kubov manjkata |
 | razstavi izraze aⁿ ± bⁿ | **VR** | – | manjka |
 | računa z algebrskimi ulomki (vse štiri računske operacije in izrazi z oklepaji) | OR+VR | `MAT-SS-1/ulomljeni-izrazi` | da |
@@ -439,8 +411,8 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Limita funkcije | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | da |
 | Posebni primeri limit | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | da – sin x / x, 0/0, 1/x |
 | Zveznost funkcije | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | da |
-| Lastnosti zveznih funkcij na zaprtem intervalu | **VR** | – | manjka |
-| Iskanje ničel z uporabo tehnologije | **VR** | – | manjka |
+| Lastnosti zveznih funkcij na zaprtem intervalu | **VR** | `MAT-SS-4/zvezne-funkcije-in-bisekcija` | da – C3 (14. 11. 2026) |
+| Iskanje ničel z uporabo tehnologije | **VR** | `MAT-SS-4/zvezne-funkcije-in-bisekcija` | da – C3 (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
@@ -459,8 +431,8 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | prepozna zveznost funkcije, ki je podana s svojim grafom | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | da |
 | razloži zveznost s predpisom podane funkcije | **VR** | `MAT-SS-4/limita-in-zveznost-funkcije` | da – Primer 3; vprašanje vr. 219 mejno (definicija zveznosti) |
 | poišče intervale, na katerih je dana funkcija zvezna | OR+VR | `MAT-SS-4/limita-in-zveznost-funkcije` | delno – le trditev o zveznosti elementarnih funkcij, brez naloge |
-| sklepa o lastnostih konkretne zvezne funkcije na zaprtem intervalu | **VR** | – | manjka |
-| poišče ničlo ali točko na krivulji na predvideno natančnost z uporabo tehnologije | **VR** | – | manjka |
+| sklepa o lastnostih konkretne zvezne funkcije na zaprtem intervalu | **VR** | `MAT-SS-4/zvezne-funkcije-in-bisekcija` | da – C3 (14. 11. 2026) |
+| poišče ničlo ali točko na krivulji na predvideno natančnost z uporabo tehnologije | **VR** | `MAT-SS-4/zvezne-funkcije-in-bisekcija` | da – C3 (14. 11. 2026) |
 
 
 ### 4.10.1 Linearna funkcija
@@ -602,7 +574,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Analiza grafa polinomske funkcije | OR+VR | `MAT-SS-3/graf-polinoma` | da |
 | Polinomske enačbe | OR+VR | `MAT-SS-3/polinomi` | da |
 | Polinomske neenačbe | OR+VR | `MAT-SS-3/graf-polinoma` | da |
-| Metoda bisekcije | **VR** | – | manjka |
+| Metoda bisekcije | **VR** | `MAT-SS-4/zvezne-funkcije-in-bisekcija` | da – C3 (14. 11. 2026) |
 | Modeliranje realističnih pojavov s polinomi | **VR** | `MAT-SS-3/graf-polinoma`, `MAT-SS-3/polinomi` | delno – modeli podani (temperatura, jezero, sonda); sestavljanje modela manjka |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
@@ -614,7 +586,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | uporablja Hornerjev algoritem za iskanje ničel polinomske funkcije | OR+VR | `MAT-SS-3/polinomi` | da |
 | v problemskih nalogah uporablja lastnosti polinomov | OR+VR | `MAT-SS-3/polinomi`, `MAT-SS-3/graf-polinoma` | da |
 | nariše in interpretira graf polinomske funkcije | OR+VR | `MAT-SS-3/graf-polinoma` | da |
-| uporablja metodo bisekcije | **VR** | – | manjka |
+| uporablja metodo bisekcije | **VR** | `MAT-SS-4/zvezne-funkcije-in-bisekcija` | da – C3 (14. 11. 2026) |
 | reši polinomske enačbe in neenačbe | OR+VR | `MAT-SS-3/polinomi`, `MAT-SS-3/graf-polinoma` | da |
 
 
@@ -719,8 +691,8 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Vrste | OR+VR | `MAT-SS-4/geometrijska-vrsta` | da – le geometrijska vrsta; delne vsote in konvergenca na njej |
 | Konvergenca geometrijske vrste | OR+VR | `MAT-SS-4/geometrijska-vrsta` | da |
 | Obrestni račun | OR+VR | `MAT-SS-4/obrestni-racun` | da |
-| Anuitete | OR+VR | – | manjka |
-| Amortizacijski načrt | OR+VR | – | manjka |
+| Anuitete | OR+VR | `MAT-SS-4/anuitete-in-amortizacijski-nacrt` | da – C3 (14. 11. 2026) |
+| Amortizacijski načrt | OR+VR | `MAT-SS-4/anuitete-in-amortizacijski-nacrt` | da – C3 (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
@@ -737,9 +709,9 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | izračuna vsoto geometrijske vrste | OR+VR | `MAT-SS-4/geometrijska-vrsta` | da |
 | razlikuje navadno in obrestno obrestovanje | OR+VR | `MAT-SS-4/obrestni-racun` | da |
 | razlikuje med konformno in relativno obrestno mero | OR+VR | `MAT-SS-4/obrestni-racun` | delno – relativna le v Bolj natančno; konformna obrestna mera manjka |
-| uporabi načelo ekvivalence glavnic | OR+VR | – | manjka |
+| uporabi načelo ekvivalence glavnic | OR+VR | `MAT-SS-4/anuitete-in-amortizacijski-nacrt` | da – C3 (14. 11. 2026) |
 | poišče realne primere obrestovanja, napove pričakovanja in se odloči na osnovi simulativnih izračunov | OR+VR | `MAT-SS-4/obrestni-racun` | da – uganka z bankama A in B, primerjalna tabela |
-| izračuna anuiteto in izdela amortizacijski načrt | OR+VR | – | manjka |
+| izračuna anuiteto in izdela amortizacijski načrt | OR+VR | `MAT-SS-4/anuitete-in-amortizacijski-nacrt` | da – C3 (14. 11. 2026) |
 
 
 ### 4.13 Diferencialni račun
@@ -750,9 +722,9 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Pravila za odvajanje, odvodi osnovnih funkcij | OR+VR | `MAT-SS-4/odvod` | da |
 | Uporaba odvoda | OR+VR | `MAT-SS-4/uporaba-odvoda` | da |
 | Ekstremi, naraščanje in padanje funkcije | OR+VR | `MAT-SS-4/uporaba-odvoda` | da |
-| Drugi odvod funkcije | **VR** | – | manjka |
-| Prevoj, konveksnost in konkavnost funkcije | **VR** | – | manjka – statistika le mimogrede omeni prevoja normalne krivulje |
-| Zveznost odvedljivih funkcij | **VR** | – | manjka |
+| Drugi odvod funkcije | **VR** | `MAT-SS-4/drugi-odvod-prevoj-in-konveksnost` | da – C3 (14. 11. 2026) |
+| Prevoj, konveksnost in konkavnost funkcije | **VR** | `MAT-SS-4/drugi-odvod-prevoj-in-konveksnost` | da – C3 (14. 11. 2026) |
+| Zveznost odvedljivih funkcij | **VR** | `MAT-SS-4/odvedljivost-in-implicitni-odvod` | da – C3 (14. 11. 2026) |
 | Ekstremalni problemi | OR+VR | `MAT-SS-4/uporaba-odvoda` | da |
 | Modeliranje realnih problemov in njihovo reševanje z uporabo metod diferencialnega računa | **VR** | `MAT-SS-4/uporaba-odvoda`, `MAT-SS-4/odvod` | da – Primer 3 (spletna trgovina), Primer 4 (škatla); mešano z OR, brez oznake |
 
@@ -765,11 +737,11 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | izpelje preprosta pravila odvajanja z uporabo definicije odvoda | **VR** | `MAT-SS-4/odvod` | delno – le vzorec za x², x³ (blok 3); izpeljave pravil za vsoto, produkt manjkajo |
 | izpelje odvode funkcij z uporabo pravil za odvajanje | **VR** | `MAT-SS-4/odvod` | delno – tabela odvodov brez izpeljav, npr. (tan x)' ni izpeljan |
 | odvaja elementarne funkcije in kompozitum funkcij | OR+VR | `MAT-SS-4/odvod` | da |
-| računa odvod implicitno podanih funkcij | **VR** | – | manjka |
-| ugotovi točke (ne)odvedljivosti iz grafa | OR+VR | – | manjka |
+| računa odvod implicitno podanih funkcij | **VR** | `MAT-SS-4/odvedljivost-in-implicitni-odvod` | da – C3 (14. 11. 2026) |
+| ugotovi točke (ne)odvedljivosti iz grafa | OR+VR | `MAT-SS-4/odvedljivost-in-implicitni-odvod` | da – C3 (14. 11. 2026) |
 | povezuje lastnosti funkcij in njen odvod (napoveduje lastnosti, skicira graf …) | OR+VR | `MAT-SS-4/uporaba-odvoda` | da |
-| zapiše enačbi tangente in normale v dani točki krivulje | OR+VR | `MAT-SS-4/uporaba-odvoda` | delno – tangenta da; normala manjka |
-| izračuna presečni kot med krivuljama | OR+VR | – | manjka |
+| zapiše enačbi tangente in normale v dani točki krivulje | OR+VR | `MAT-SS-4/uporaba-odvoda` | da – C3 (14. 11. 2026) |
+| izračuna presečni kot med krivuljama | OR+VR | `MAT-SS-4/uporaba-odvoda` | da – C3 (14. 11. 2026) |
 | analizira funkcijo z odvodom (razloži ekstreme, določi intervale naraščanja in padanja) in nariše graf | OR+VR | `MAT-SS-4/uporaba-odvoda` | da |
 | poveže pojma zveznosti in odvedljivosti funkcije na danem intervalu | **VR** | `MAT-SS-4/limita-in-zveznost-funkcije`, `MAT-SS-4/odvod` | delno – zveznost in odvedljivost obravnavani ločeno; povezave ni |
 | reši preprost ekstremalni problem | OR+VR | `MAT-SS-4/uporaba-odvoda` | da |
@@ -783,8 +755,8 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Nedoločeni integral (primitivna funkcija) | OR+VR | `MAT-SS-4/nedoloceni-integral` | da |
 | Lastnosti nedoločenega integrala | OR+VR | `MAT-SS-4/nedoloceni-integral` | da |
 | Uvedba nove spremenljivke | **VR** | `MAT-SS-4/nedoloceni-integral` | da |
-| Integracija »per partes« | **VR** | – | manjka |
-| Integracija racionalnih funkcij | **VR** | – | manjka |
+| Integracija »per partes« | **VR** | `MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij` | da – C3 (14. 11. 2026) |
+| Integracija racionalnih funkcij | **VR** | `MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij` | da – C3 (14. 11. 2026) |
 | Določeni integral | OR+VR | `MAT-SS-4/doloceni-integral` | da |
 | Lastnosti določenega integrala | OR+VR | `MAT-SS-4/doloceni-integral` | delno – le predznak in deljenje v ničlah; aditivnost, zamenjava mej manjkata |
 | Zveza med določenim in nedoločenim integralom | OR+VR | `MAT-SS-4/doloceni-integral` | da |
@@ -797,8 +769,8 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | pozna tabelo osnovnih integralov in njeno povezavo s tabelo odvodov | OR+VR | `MAT-SS-4/nedoloceni-integral` | da |
 | uporablja lastnosti nedoločenega integrala | OR+VR | `MAT-SS-4/nedoloceni-integral` | da |
 | integrira z uvedbo nove spremenljivke | **VR** | `MAT-SS-4/nedoloceni-integral` | da |
-| integrira »per partes« | **VR** | – | manjka |
-| integrira racionalne funkcije (z razcepom na parcialne ulomke) | **VR** | – | manjka |
+| integrira »per partes« | **VR** | `MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij` | da – C3 (14. 11. 2026) |
+| integrira racionalne funkcije (z razcepom na parcialne ulomke) | **VR** | `MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij` | da – C3 (14. 11. 2026) |
 | pozna geometrijski pomen določenega integrala | OR+VR | `MAT-SS-4/doloceni-integral` | da |
 | uporablja lastnosti določenega integrala | OR+VR | `MAT-SS-4/doloceni-integral` | delno – le predznak in deljenje v ničlah; aditivnost, zamenjava mej manjkata |
 | uporabi zvezo med določenim in nedoločenim integralom | OR+VR | `MAT-SS-4/doloceni-integral` | da |
@@ -810,21 +782,21 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | Osnovni izrek kombinatorike, kombinatorično drevo | OR+VR | `MAT-SS-4/kombinatorika` | da |
-| Pravilo vsote | OR+VR | – | manjka – le en stavek v Pogostih napakah (seštevaš, kadar izbereš eno ali drugo) |
+| Pravilo vsote | OR+VR | `MAT-SS-4/kombinatorika` | da – C3 (14. 11. 2026) |
 | Permutacije | OR+VR | `MAT-SS-4/kombinatorika` | da |
-| Permutacije s ponavljanjem | OR+VR | – | manjka |
+| Permutacije s ponavljanjem | OR+VR | `MAT-SS-4/kombinatorika` | da – C3 (14. 11. 2026) |
 | Variacije | OR+VR | `MAT-SS-4/kombinatorika` | da |
 | Variacije s ponavljanjem | OR+VR | `MAT-SS-4/kombinatorika` | da |
 | Kombinacije | OR+VR | `MAT-SS-4/kombinatorika` | da |
-| Binomski izrek | OR+VR | – | manjka – le (a + b)² in (a + b)³ v algebrski-izrazi |
-| Pascalov trikotnik | OR+VR | – | manjka |
+| Binomski izrek | OR+VR | `MAT-SS-4/binomski-izrek` | da – C3 (14. 11. 2026) |
+| Pascalov trikotnik | OR+VR | `MAT-SS-4/binomski-izrek` | da – C3 (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | izračuna n! | OR+VR | `MAT-SS-4/kombinatorika` | da |
 | loči posamezne kombinatorične pojme | OR+VR | `MAT-SS-4/kombinatorika` | da |
 | izračuna vrednost binomskega simbola | OR+VR | `MAT-SS-4/kombinatorika` | da |
-| razvije potenco dvočlenika | OR+VR | `MAT-SS-1/algebrski-izrazi` | delno – le kvadrat in kub dvočlenika; višje potence (binomski izrek) manjkajo |
+| razvije potenco dvočlenika | OR+VR | `MAT-SS-1/algebrski-izrazi`, `MAT-SS-4/binomski-izrek` | da – C3 (14. 11. 2026) |
 
 
 ### 4.16 Verjetnostni račun
@@ -837,7 +809,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Računanje verjetnosti nasprotnih dogodkov, vsote dogodkov | OR+VR | `MAT-SS-4/verjetnost` | da |
 | Pogojna verjetnost | **VR** | `MAT-SS-4/verjetnost` | da |
 | Verjetnost produkta, neodvisna dogodka | **VR** | `MAT-SS-4/verjetnost`, `MAT-SS-4/mesane-maturitetne-naloge` | da |
-| Zaporedje neodvisnih poskusov | **VR** | `MAT-SS-4/verjetnost`, `MAT-SS-4/mesane-maturitetne-naloge` | delno – le »vsaj enkrat« pri neodvisnih ponovitvah; Bernoullijeva formula manjka |
+| Zaporedje neodvisnih poskusov | **VR** | `MAT-SS-4/verjetnost`, `MAT-SS-4/mesane-maturitetne-naloge`, `MAT-SS-4/zaporedje-neodvisnih-poskusov` | da – C3 (14. 11. 2026) |
 | Normalna porazdelitev | OR+VR | `MAT-SS-4/statistika` | da – v lekciji napačno označena kot višja raven |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
@@ -858,26 +830,26 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 |---|---|---|---|
 | Osnovni statistični pojmi | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – vzorec in populacija le v Bolj natančno |
 | Vrste podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – le omemba kategorij v povratni informaciji kviza |
-| Zbiranje podatkov | OR+VR | – | manjka |
+| Zbiranje podatkov | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 | Urejanje in strukturiranje podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – frekvenčna tabela, razredi, razredna sredina |
 | Prikazovanje podatkov (stolpčni, pozicijski, tortni diagram, histogram, razsevni diagram, linijski in krivuljni diagram, škatla z brki) | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | delno – manjkajo pozicijski, razsevni, linijski in krivuljni diagram |
 | Aritmetična sredina, mediana, modus | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | Variacijski razmik, standardni odklon, medčetrtinski razmik | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
-| Statistična naloga | OR+VR | – | manjka |
+| Statistična naloga | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | loči med preučevano značilnostjo (spremenljivko), enoto, vrednostjo spremenljivke, vzorcem, populacijo | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – vzorec, populacija le v Bolj natančno; brez vaj |
 | prepozna preučevano značilnost enote | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – le definicija spremenljivke; brez vaj |
 | razlikuje med opisnimi ali kvalitativnimi podatki, vrstnimi ali ordinalnimi ter številskimi ali kvantitativnimi podatki | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – vrste podatkov (opisni, vrstni, številski) niso razložene |
-| zbere podatke, jih uredi in strukturira | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – urejanje da; zbiranje podatkov manjka |
+| zbere podatke, jih uredi in strukturira | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 | izbere ustrezni diagram za prikaz podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | da |
 | bere, izdela in interpretira statistične diagrame | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | razvija kritični odnos do interpretacije rezultatov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da – splošni cilj; kviza o plačah in povprečni porabi |
 | pozna in uporablja različne načine povzemanja podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | izbere primeren način povzemanja podatkov glede na vrsto podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | delno – izbira glede na osamelce; izbira glede na vrsto podatkov manjka |
 | izračuna, oceni in interpretira srednjo vrednost, modus in mediano kot mere osredinjenosti podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
-| ocenjuje preproste povezave med statističnimi spremenljivkami | OR+VR | – | manjka |
+| ocenjuje preproste povezave med statističnimi spremenljivkami | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 | izračuna, oceni in interpretira variacijski razmik, standardni odklon in medčetrtinski razmik kot mere razpršenosti podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | uporabi znanje o delu s podatki v celovitem postopku empiričnega preiskovanja (izbere temo, postavi preiskovalno vprašanje, zbere podatke, jih uredi in strukturira, analizira, prikaže in interpretira rezultate) | OR+VR | – | manjka |
 
