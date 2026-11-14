@@ -162,6 +162,92 @@ Diskriminanta je $14^2 - 4 \cdot 49 = 0$, zato je premica tangenta. Rešitev je 
 - Lega premice: vstavi premico v krožnico; diskriminanta pozitivna – sekanta, $0$ – tangenta, negativna – mimobežnica. Enako pove primerjava razdalje $d$ središča od premice s polmerom.
 - Tangenta je pravokotna na polmer v dotikališču.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Daljica $AB$ s krajiščema $A(-1, 4)$ in $B(5, -4)$ je premer krožnice. Zapiši enačbo krožnice v središčni obliki.
+
+**Rešitev:**
+
+1. Središče je razpolovišče premera: $S\left(\frac{-1 + 5}{2}, \frac{4 + (-4)}{2}\right) = S(2, 0)$.
+2. Dolžina premera je $|AB| = \sqrt{6^2 + (-8)^2} = \sqrt{100} = 10$, zato je polmer $r = 5$.
+3. Odgovor: enačba krožnice je $(x - 2)^2 + y^2 = 25$.
+
+**Točkovanje:** 1 točka za središče $S(2, 0)$, 1 točka za polmer $r = 5$, 1 točka za enačbo krožnice.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dani sta krožnica z enačbo $x^2 + y^2 + 4x - 2y - 20 = 0$ in premica z enačbo $x + y = 4$.
+
+a) Določi središče $S$ in polmer krožnice. (2 točki)
+b) Izračunaj presečišči $P_1$ in $P_2$ krožnice in premice. (3 točke)
+c) Izračunaj ploščino trikotnika $S P_1 P_2$. (2 točki)
+
+**Rešitev:**
+
+1. a) Dopolnimo do popolnih kvadratov: $x^2 + 4x = (x + 2)^2 - 4$ in $y^2 - 2y = (y - 1)^2 - 1$.
+2. a) Enačba postane $(x + 2)^2 - 4 + (y - 1)^2 - 1 - 20 = 0$ oziroma $(x + 2)^2 + (y - 1)^2 = 25$. Središče je $S(-2, 1)$, polmer $r = 5$.
+3. b) Iz enačbe premice izrazimo $y = 4 - x$, zato je $y - 1 = 3 - x$. Vstavimo v enačbo krožnice: $(x + 2)^2 + (3 - x)^2 = 25$.
+4. b) Odpravimo oklepaje: $x^2 + 4x + 4 + 9 - 6x + x^2 = 25$, torej $2x^2 - 2x - 12 = 0$ oziroma $x^2 - x - 6 = 0$.
+5. b) Razstavimo: $(x - 3)(x + 2) = 0$, zato $x_1 = 3$ in $x_2 = -2$. Iz premice $y_1 = 1$ in $y_2 = 6$. Presečišči sta $P_1(3, 1)$ in $P_2(-2, 6)$.
+6. c) Točki $S$ in $P_1$ imata enako ordinato, zato je $SP_1$ vzporedna z osjo $x$; točki $S$ in $P_2$ imata enako absciso, zato je $SP_2$ vzporedna z osjo $y$. Kot pri $S$ je pravi, kateti sta polmera dolžine $5$.
+7. c) Ploščina: $\frac{5 \cdot 5}{2} = \frac{25}{2}$.
+8. Odgovor: a) $S(-2, 1)$, $r = 5$; b) $P_1(3, 1)$ in $P_2(-2, 6)$; c) ploščina trikotnika je $\frac{25}{2}$ kvadratne enote.
+
+**Točkovanje:** a) 1 točka za dopolnjevanje do popolnih kvadratov, 1 točka za središče in polmer; b) 1 točka za kvadratno enačbo po vstavljanju, 1 točka za obe abscisi, 1 točka za obe presečišči; c) 1 točka za utemeljitev pravega kota pri $S$ (ali drug pravilen postopek za ploščino), 1 točka za ploščino $\frac{25}{2}$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dani sta krožnica z enačbo $x^2 + y^2 - 2x + 4y - 20 = 0$ in točka $A(8, -1)$.
+
+a) Določi središče $S$ in polmer krožnice ter pokaži, da točka $A$ leži zunaj krožnice. (2 točki)
+b) Pokaži, da točka $T(4, 2)$ leži na krožnici. Zapiši enačbo tangente na krožnico v točki $T$ in preveri, da gre skozi točko $A$. (3 točke)
+c) Iz točke $A$ poteka še ena tangenta na krožnico. Zapiši njeno enačbo in izračunaj njeno dotikališče $B$. (3 točke)
+d) Utemelji, da sta tangenti iz točke $A$ pravokotni, in izračunaj ploščino štirikotnika $ATSB$. (2 točki)
+
+**Rešitev:**
+
+1. a) Dopolnimo: $x^2 - 2x = (x - 1)^2 - 1$ in $y^2 + 4y = (y + 2)^2 - 4$, zato je enačba $(x - 1)^2 + (y + 2)^2 = 25$. Središče je $S(1, -2)$, polmer $r = 5$.
+2. a) Za točko $A$: $(8 - 1)^2 + (-1 + 2)^2 = 49 + 1 = 50$. Ker je $50 > 25$, točka $A$ leži zunaj krožnice.
+3. b) Za točko $T$: $(4 - 1)^2 + (2 + 2)^2 = 9 + 16 = 25$, zato $T$ leži na krožnici.
+4. b) Tangenta je pravokotna na polmer $ST$, zato je $\overrightarrow{ST} = (3, 4)$ njen normalni vektor. Enačba tangente: $3(x - 4) + 4(y - 2) = 0$ oziroma $3x + 4y = 20$.
+5. b) Preizkus za $A$: $3 \cdot 8 + 4 \cdot (-1) = 24 - 4 = 20$. Tangenta gre skozi $A$.
+6. c) Navpična premica $x = 8$ je od središča oddaljena $8 - 1 = 7 > 5$, zato ni tangenta. Iščemo premico $y + 1 = k(x - 8)$ oziroma $kx - y - 8k - 1 = 0$.
+7. c) Na premici je $y + 2 = kx - 8k + 1$. Vstavimo v enačbo krožnice: $(x - 1)^2 + (kx - 8k + 1)^2 = 25$, po ureditvi $(k^2 + 1)x^2 - 2(8k^2 - k + 1)x + 64k^2 - 16k - 23 = 0$.
+8. c) Premica je tangenta natanko tedaj, ko je diskriminanta te kvadratne enačbe enaka $0$. Njena četrtina je $(8k^2 - k + 1)^2 - (k^2 + 1)(64k^2 - 16k - 23) = -24k^2 + 14k + 24$, zato $12k^2 - 7k - 12 = 0$. Rešitvi sta $k = \frac{7 \pm 25}{24}$, torej $k = \frac43$ in $k = -\frac34$. (Enako enačbo da pogoj, da je razdalja središča od premice enaka polmeru: $(1 - 7k)^2 = 25(k^2 + 1)$.)
+9. c) Smerni koeficient $-\frac34$ ima tangenta iz b). Druga tangenta je $y + 1 = \frac43(x - 8)$ oziroma $4x - 3y = 35$.
+10. c) Dotikališče: iz $y = \frac{4x - 35}{3}$ je $y + 2 = \frac{4x - 29}{3}$. Vstavimo v enačbo krožnice in pomnožimo z $9$: $9(x - 1)^2 + (4x - 29)^2 = 225$, torej $25x^2 - 250x + 625 = 0$ oziroma $(x - 5)^2 = 0$. Dvojna rešitev $x = 5$ da $y = \frac{20 - 35}{3} = -5$, zato je $B(5, -5)$.
+11. d) Produkt smernih koeficientov je $\frac43 \cdot \left(-\frac34\right) = -1$, zato sta tangenti pravokotni.
+12. d) Štirikotnik $ATSB$ ima pravi kot pri $A$ ter prava kota pri $T$ in $B$, ker je tangenta pravokotna na polmer. Zato je pravokotnik. Ker je $|ST| = |SB| = 5$, je kvadrat s stranico $5$. Ploščina je $25$.
+13. Odgovor: a) $S(1, -2)$, $r = 5$, $A$ je zunaj; b) tangenta $3x + 4y = 20$; c) tangenta $4x - 3y = 35$ z dotikališčem $B(5, -5)$; d) ploščina štirikotnika $ATSB$ je $25$ kvadratnih enot.
+
+**Točkovanje:** a) 1 točka za središče in polmer, 1 točka za utemeljitev, da je $A$ zunaj; b) 1 točka za preizkus, da $T$ leži na krožnici, 1 točka za normalo $\overrightarrow{ST}$ (ali smerni koeficient tangente $-\frac34$), 1 točka za enačbo tangente s preizkusom za $A$; c) 1 točka za pogoj tangentnosti (diskriminanta enaka $0$ ali razdalja središča od premice enaka polmeru), 1 točka za $k = \frac43$ in enačbo druge tangente, 1 točka za dotikališče $B(5, -5)$; d) 1 točka za utemeljitev pravokotnosti, 1 točka za ploščino $25$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Izpelji enačbo krožnice s središčem $S(p, q)$ in polmerom $r$.
+---
+Krožnica je množica vseh točk ravnine, ki so od središča $S(p, q)$ oddaljene za $r$. Za točko $T(x, y)$ je ta razdalja dolžina vektorja $\overrightarrow{ST} = (x - p, y - q)$, torej $\sqrt{(x - p)^2 + (y - q)^2}$. Iz pogoja $\sqrt{(x - p)^2 + (y - q)^2} = r$ s kvadriranjem dobimo $(x - p)^2 + (y - q)^2 = r^2$. Kvadriranje ne doda novih rešitev, ker sta obe strani nenegativni. Če je središče v izhodišču, je enačba $x^2 + y^2 = r^2$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Navedi primer enačbe oblike $x^2 + y^2 + Dx + Ey + F = 0$, ki ne opisuje krožnice, in pojasni, kako to ugotoviš.
+---
+Primer je enačba $x^2 + y^2 - 2x + 5 = 0$. Z dopolnjevanjem do popolnega kvadrata jo preoblikujemo v $(x - 1)^2 + y^2 = -4$. Vsota kvadratov ne more biti negativna, zato tej enačbi ne ustreza nobena točka. V splošnem enačba opisuje krožnico le, če je $\frac{D^2}{4} + \frac{E^2}{4} - F > 0$; če je ta vrednost $0$, opisuje eno samo točko.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Kako zapišeš enačbo tangente na krožnico v dani točki krožnice in zakaj postopek deluje?
+---
+Tangenta krožnice je pravokotna na polmer v dotikališču $T$. Zato je vektor $\overrightarrow{ST}$ od središča do dotikališča normalni vektor tangente. Za središče $S(p, q)$ in dotikališče $T(x_0, y_0)$ je zato enačba tangente $(x_0 - p)(x - x_0) + (y_0 - q)(y - y_0) = 0$, saj je skalarni produkt vektorja $\overrightarrow{ST}$ in vektorja od $T$ do poljubne točke $(x, y)$ tangente enak $0$. Enakovredno je tangenta premica, ki je od središča oddaljena natanko $r$, oziroma premica, pri kateri ima kvadratna enačba sistema s krožnico dvojno rešitev.
+:::
+
 ## Drugače: Kot zgodba
 
 Stara gozdarka Meta je v gozdu zabila kol in nanj privezala kozo z vrvjo dolžine $5\,\mathrm{m}$. Koza je popasla vso travo, do katere je segla. Ko je Meta zjutraj pogledala, je bil v travi popasen krog, njegov rob pa točno krožnica: vsaka točka roba je bila $5\,\mathrm{m}$ od kola.
@@ -232,6 +318,29 @@ Naloga: lega premice $y = x + 1$ in krožnice $x^2 + y^2 = 13$.
 - Kmetija leži točno na robu dosega.
 ~ Na robu bi bila, če bi bilo $x^2 + y^2 = 9$; tu je $8$.
 > Kmetija je $\sqrt{8} \approx 2{,}83\,\mathrm{km}$ od vzletišča, torej znotraj kroga z enačbo roba $x^2 + y^2 = 9$.
+
+<<RACUN
+vrednost: sqrt((5+1)^2 + (-4-4)^2) | 10
+enako: (x-2)^2 + y^2 - 25 | x^2 - 4*x + y^2 - 21
+enako: (x+2)^2 + (y-1)^2 - 25 | x^2 + y^2 + 4*x - 2*y - 20
+enako: (x+2)^2 + (3-x)^2 - 25 | 2*x^2 - 2*x - 12
+resi: x^2 - x - 6 = 0 | x | -2, 3
+vrednost: 5*5/2 | 25/2
+enako: (x-1)^2 + (y+2)^2 - 25 | x^2 + y^2 - 2*x + 4*y - 20
+vrednost: (8-1)^2 + (-1+2)^2 | 50
+vrednost: (4-1)^2 + (2+2)^2 | 25
+enako: 3*(x-4) + 4*(y-2) | 3*x + 4*y - 20
+vrednost: 3*8 + 4*(-1) | 20
+enako: (x-1)^2 + (k*x-8*k+1)^2 - 25 | (k^2+1)*x^2 - 2*(8*k^2-k+1)*x + 64*k^2 - 16*k - 23
+enako: (8*k^2-k+1)^2 - (k^2+1)*(64*k^2-16*k-23) | -24*k^2 + 14*k + 24
+resi: 12*k^2 - 7*k - 12 = 0 | k | -3/4, 4/3
+resi: (1-7*k)^2 = 25*(k^2+1) | k | -3/4, 4/3
+enako: 9*(x-1)^2 + (4*x-29)^2 - 225 | 25*(x-5)^2
+vrednost: (5-1)^2 + (-5+2)^2 | 25
+enako: 3*(y+1) - 4*(x-8) | 3*y - 4*x + 35
+vrednost: (4/3)*(-3/4) | -1
+enako: (x-1)^2 + y^2 + 4 | x^2 + y^2 - 2*x + 5
+>>
 
 :::simboli
 x, y | koordinati točke na krožnici | | | v primerih v km

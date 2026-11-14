@@ -195,6 +195,67 @@ V II. kvadrantu je kosinus negativen, zato $\cos\alpha = -\frac45$. Potem je $\t
 - Kota $\alpha$ in $\alpha + 360^\circ$ imata enake vrednosti kotnih funkcij.
 - $\pi\,\text{rad} = 180^\circ$, $1\,\text{rad} \approx 57{,}3^\circ$; pretvorba z $\dfrac{\pi}{180^\circ}$ oziroma $\dfrac{180^\circ}{\pi}$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Brez uporabe računala izračunaj natančno vrednost izraza $\sin\frac{7\pi}{4} \cdot \cos\frac{3\pi}{4} - \tan\frac{8\pi}{3}$.
+
+**Rešitev:**
+
+1. Kot $\frac{7\pi}{4} = 315^\circ$ leži v IV. kvadrantu s pripadajočim ostrim kotom $45^\circ$, zato je $\sin\frac{7\pi}{4} = -\frac{\sqrt2}{2}$. Kot $\frac{3\pi}{4} = 135^\circ$ leži v II. kvadrantu s pripadajočim ostrim kotom $45^\circ$, zato je $\cos\frac{3\pi}{4} = -\frac{\sqrt2}{2}$.
+2. Produkt: $\left(-\frac{\sqrt2}{2}\right) \cdot \left(-\frac{\sqrt2}{2}\right) = \frac{2}{4} = \frac12$.
+3. Velja $\frac{8\pi}{3} = 2\pi + \frac{2\pi}{3}$, zato je $\tan\frac{8\pi}{3} = \tan\frac{2\pi}{3} = \tan 120^\circ$. Kot $120^\circ$ leži v II. kvadrantu s pripadajočim ostrim kotom $60^\circ$, kjer je tangens negativen: $\tan\frac{8\pi}{3} = -\sqrt3$.
+4. Izraz: $\frac12 - \left(-\sqrt3\right) = \frac12 + \sqrt3$.
+5. Odgovor: vrednost izraza je $\frac12 + \sqrt3$.
+
+**Točkovanje:** 1 točka za $\sin\frac{7\pi}{4} = -\frac{\sqrt2}{2}$ in $\cos\frac{3\pi}{4} = -\frac{\sqrt2}{2}$ s pravilnima predznakoma, 1 točka za $\tan\frac{8\pi}{3} = -\sqrt3$ (z odštetim polnim kotom), 1 točka za končni rezultat $\frac12 + \sqrt3$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Gibljivi krak kota $\alpha$, $0 \le \alpha < 2\pi$, seka enotsko krožnico v točki $T\left(-\frac{5}{13}, y\right)$, ki leži pod osjo $x$.
+
+a) Izračunaj $y$ ter zapiši $\cos\alpha$ in $\sin\alpha$. (2 točki)
+b) Določi, v katerem kvadrantu leži kot $\alpha$, in izračunaj $\tan\alpha$. (2 točki)
+c) Točka $S$ je zrcalna slika točke $T$ čez os $x$. Gibljivi krak kota $\beta$, $0 \le \beta < 2\pi$, seka enotsko krožnico v točki $S$. Zapiši koordinati točke $S$, izrazi $\beta$ z $\alpha$ ter zapiši $\sin\beta$ in $\cos\beta$. (3 točke)
+
+**Rešitev:**
+
+1. a) Točka $T$ leži na enotski krožnici, zato je $\left(-\frac{5}{13}\right)^2 + y^2 = 1$ in $y^2 = 1 - \frac{25}{169} = \frac{144}{169}$.
+2. a) Točka $T$ leži pod osjo $x$, zato je $y < 0$ in $y = -\frac{12}{13}$. Torej je $\cos\alpha = -\frac{5}{13}$ in $\sin\alpha = -\frac{12}{13}$.
+3. b) Obe koordinati točke $T$ sta negativni, zato kot $\alpha$ leži v III. kvadrantu.
+4. b) $\tan\alpha = \dfrac{\sin\alpha}{\cos\alpha} = \dfrac{-12/13}{-5/13} = \dfrac{12}{5}$, kar je pozitivno, kot mora biti v III. kvadrantu.
+5. c) Zrcaljenje čez os $x$ ohrani koordinato $x$ in spremeni predznak koordinate $y$: $S\left(-\frac{5}{13}, \frac{12}{13}\right)$.
+6. c) Krak kota $\beta$ je zrcalna slika kraka kota $\alpha$ čez os $x$, zato je $\beta = -\alpha + 2\pi = 2\pi - \alpha$. Ker je $\pi < \alpha < \frac{3\pi}{2}$, je $\frac{\pi}{2} < \beta < \pi$, torej $\beta$ res leži v $[0, 2\pi)$.
+7. c) Iz koordinat točke $S$: $\sin\beta = \frac{12}{13}$ in $\cos\beta = -\frac{5}{13}$.
+8. Odgovor: a) $y = -\frac{12}{13}$, $\cos\alpha = -\frac{5}{13}$, $\sin\alpha = -\frac{12}{13}$; b) III. kvadrant, $\tan\alpha = \frac{12}{5}$; c) $S\left(-\frac{5}{13}, \frac{12}{13}\right)$, $\beta = 2\pi - \alpha$, $\sin\beta = \frac{12}{13}$, $\cos\beta = -\frac{5}{13}$.
+
+**Točkovanje:** a) 1 točka za enačbo $\frac{25}{169} + y^2 = 1$ (ali $y^2 = \frac{144}{169}$), 1 točka za $y = -\frac{12}{13}$ z utemeljenim predznakom ter $\cos\alpha$ in $\sin\alpha$; b) 1 točka za III. kvadrant, 1 točka za $\tan\alpha = \frac{12}{5}$; c) 1 točka za koordinati točke $S$, 1 točka za $\beta = 2\pi - \alpha$, 1 točka za $\sin\beta = \frac{12}{13}$ in $\cos\beta = -\frac{5}{13}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako s pomočjo enotske krožnice definiramo sinus, kosinus in tangens poljubnega kota?
+---
+Enotska krožnica ima središče v koordinatnem izhodišču in polmer $1$. Kot $\alpha$ nanesemo od pozitivnega poltraka osi $x$, pozitivno v nasprotni smeri urinega kazalca, in njegov gibljivi krak seka enotsko krožnico v točki $T(x, y)$. Kosinus kota je abscisa te točke, $\cos\alpha = x$, sinus pa njena ordinata, $\sin\alpha = y$. Tangens je količnik $\tan\alpha = \frac{\sin\alpha}{\cos\alpha}$ in je definiran le, kadar je $\cos\alpha \neq 0$. Za ostre kote se ta definicija ujema z definicijo v pravokotnem trikotniku.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji zvezo $\sin^2\alpha + \cos^2\alpha = 1$ za poljuben kot in pojasni, kaj iz nje sledi za vrednosti sinusa in kosinusa.
+---
+Gibljivi krak kota $\alpha$ seka enotsko krožnico v točki $T(\cos\alpha, \sin\alpha)$. Razdalja točke $T$ od izhodišča je enaka polmeru $1$. Po Pitagorovem izreku je kvadrat te razdalje enak $x^2 + y^2$, zato velja $\cos^2\alpha + \sin^2\alpha = 1$. Oba kvadrata sta nenegativna, zato nobeden ni večji od $1$, torej sta sinus in kosinus vedno med $-1$ in $1$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pojasni, kako s pripadajočim ostrim kotom izračunaš vrednost kotne funkcije kota, ki ni oster, in postopek pokaži na primeru.
+---
+Kot, večji od $360^\circ$ ali negativen, najprej s prištevanjem ali odštevanjem polnih kotov prevedemo na kot med $0^\circ$ in $360^\circ$ ter določimo kvadrant, v katerem leži. Pripadajoči ostri kot je ostri kot med gibljivim krakom in osjo $x$: v II. kvadrantu je $180^\circ - \alpha$, v III. kvadrantu $\alpha - 180^\circ$ in v IV. kvadrantu $360^\circ - \alpha$. Absolutno vrednost kotne funkcije dobimo iz pripadajočega ostrega kota, predznak pa iz kvadranta. Na primer kot $225^\circ$ leži v III. kvadrantu s pripadajočim ostrim kotom $45^\circ$, zato je $\cos 225^\circ = -\cos 45^\circ = -\frac{\sqrt2}{2}$.
+:::
+
 ## Drugače: Na sliki
 
 Nariši koordinatni sistem in krožnico s polmerom $1$. Iz točke $T$ na krožnici spusti dve senci: eno navpično na os $x$ in eno vodoravno na os $y$.
@@ -286,6 +347,18 @@ Radian je naravna enota: na krožnici s polmerom $r$ je dolžina loka pri sredi�
 - Kalkulator je v načinu DEG, zato je rezultat napačen.
 ~ V načinu DEG bi dobil prav $\sin 30^\circ = 0{,}5$. Napačen rezultat da ravno drugi način.
 > V načinu RAD kalkulator število $30$ razume kot $30\,\text{rad}$, in $\sin 30 \approx -0{,}988$. Preklopi na DEG ali kot pretvori v radiane: $30^\circ = \frac{\pi}{6}$.
+
+<<RACUN
+vrednost: sin(7*pi/4) | -sqrt(2)/2
+vrednost: cos(3*pi/4) | -sqrt(2)/2
+vrednost: tan(8*pi/3) | -sqrt(3)
+vrednost: sin(7*pi/4)*cos(3*pi/4)-tan(8*pi/3) | 1/2+sqrt(3)
+resi: (-5/13)^2+y^2=1 | y | -12/13, 12/13
+vrednost: (-12/13)/(-5/13) | 12/5
+vrednost: sin(2*pi-(2*pi-acos(-5/13))) | 12/13
+vrednost: cos(2*pi-acos(-5/13)) | -5/13
+vrednost: sin(2*pi-acos(-5/13)) | -12/13
+>>
 
 :::simboli
 \alpha | kot | | | v stopinjah ali radianih

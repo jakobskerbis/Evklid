@@ -165,6 +165,67 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 - Vodoravna asimptota: števec nižji $\Rightarrow y = 0$; enaki stopnji $\Rightarrow y = \frac{a_n}{b_n}$; števec višji za $1$ $\Rightarrow$ poševna asimptota (količnik pri deljenju).
 - Graf vodoravno asimptoto lahko seka, navpične nikoli.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Zapiši enačbi obeh asimptot grafa funkcije $f(x) = \dfrac{x^2 - 3x + 4}{x - 1}$.
+
+**Rešitev:**
+
+1. Imenovalec je enak $0$ pri $x = 1$. Števec tam ni $0$, saj je $1 - 3 + 4 = 2$, zato je $x = 1$ pol in premica $x = 1$ navpična asimptota.
+2. Števec delimo z imenovalcem: količnik je $x - 2$, ostanek $2$, saj je $x^2 - 3x + 4 = (x - 1)(x - 2) + 2$. Torej je $f(x) = x - 2 + \dfrac{2}{x - 1}$.
+3. Ulomek $\dfrac{2}{x - 1}$ gre za velike $|x|$ proti $0$, zato se graf bliža premici $y = x - 2$. Asimptota je poševna, ker je stopnja števca za $1$ višja od stopnje imenovalca.
+4. Odgovor: navpična asimptota je $x = 1$, poševna asimptota je $y = x - 2$.
+
+**Točkovanje:** 1 točka za navpično asimptoto $x = 1$, 1 točka za deljenje (količnik $x - 2$ in ostanek $2$), 1 točka za poševno asimptoto $y = x - 2$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = \dfrac{x^2 - 4x + 3}{x^2 - 2x}$.
+
+a) Zapiši definicijsko območje funkcije $f$ ter izračunaj njene ničle in pole. (2 točki)
+b) Zapiši enačbe vseh asimptot grafa funkcije $f$. (2 točki)
+c) Izračunaj koordinati točke, v kateri graf funkcije $f$ seka svojo vodoravno asimptoto. (2 točki)
+d) Nariši graf funkcije $f$. (2 točki)
+
+**Rešitev:**
+
+1. a) Razcepimo: $x^2 - 4x + 3 = (x - 1)(x - 3)$ in $x^2 - 2x = x(x - 2)$. Skupnega faktorja ni, zato krajšati ni kaj.
+2. a) Imenovalec je $0$ pri $x = 0$ in $x = 2$, zato je $D_f = \mathbb{R} \setminus \{0, 2\}$. Ničli sta $x = 1$ in $x = 3$, pola $x = 0$ in $x = 2$, oba stopnje $1$.
+3. b) Navpični asimptoti sta $x = 0$ in $x = 2$. Števec in imenovalec imata stopnjo $2$ in vodilna koeficienta $1$ in $1$, zato je vodoravna asimptota $y = \frac{1}{1} = 1$.
+4. c) Rešimo enačbo $\dfrac{x^2 - 4x + 3}{x^2 - 2x} = 1$. Za $x \in D_f$ jo pomnožimo z $x^2 - 2x$ in dobimo $x^2 - 4x + 3 = x^2 - 2x$.
+5. c) Kvadratna člena se odštejeta: $-2x = -3$, torej $x = \frac{3}{2}$. To število je v $D_f$, zato je presečišče $\left(\frac{3}{2}, 1\right)$.
+6. d) Predznaki na intervalih (testna števila $-1$, $\frac{1}{2}$, $\frac{3}{2}$, $\frac{5}{2}$, $4$): $f$ je pozitivna na $(-\infty, 0)$, $(1, 2)$ in $(3, \infty)$, negativna na $(0, 1)$ in $(2, 3)$. Z osjo $y$ se graf ne seka, ker je $0$ pol.
+7. d) Oba pola sta lihe stopnje, zato graf ob vsakem zamenja predznak. Leva veja leži nad premico $y = 1$, se ji daleč levo bliža od zgoraj in se ob $x = 0$ dviga v $+\infty$. Srednja veja pride iz $-\infty$ desno od $x = 0$, gre skozi $(1, 0)$ in $\left(\frac{3}{2}, 1\right)$ ter se ob $x = 2$ dviga v $+\infty$. Desna veja pride iz $-\infty$ desno od $x = 2$, gre skozi $(3, 0)$ in se od spodaj bliža premici $y = 1$.
+8. Odgovor: $D_f = \mathbb{R} \setminus \{0, 2\}$, ničli $1$ in $3$, pola $0$ in $2$; asimptote $x = 0$, $x = 2$ in $y = 1$; graf seka vodoravno asimptoto v točki $\left(\frac{3}{2}, 1\right)$.
+
+**Točkovanje:** a) 1 točka za $D_f$, 1 točka za ničli in pola; b) 1 točka za navpični asimptoti, 1 točka za vodoravno asimptoto $y = 1$; c) 1 točka za enačbo $f(x) = 1$, preoblikovano v $x^2 - 4x + 3 = x^2 - 2x$, 1 točka za točko $\left(\frac{3}{2}, 1\right)$; d) 1 točka za pravilen potek vej ob polih in asimptotah, 1 točka za ničle, presečišče z asimptoto in pravilne predznake.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je racionalna funkcija in kako določimo njeno definicijsko območje, ničle in pole?
+---
+Racionalna funkcija je količnik dveh polinomov $f(x) = \frac{p(x)}{q(x)}$, kjer $q$ ni ničelni polinom. Definirana je za vsa realna števila razen ničel imenovalca. Ko števec in imenovalec razcepimo in okrajšamo skupne faktorje, so ničle funkcije ničle števca, poli pa ničle imenovalca. Če se faktor $(x - c)$ iz imenovalca povsem okrajša, ima graf pri $x = c$ luknjo in ne pola.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Pojasni, kako iz stopenj števca in imenovalca racionalne funkcije določiš njeno vodoravno ali poševno asimptoto.
+---
+Števec delimo z imenovalcem in dobimo $f(x) = k(x) + \frac{r(x)}{q(x)}$, kjer ima ostanek $r$ nižjo stopnjo kot imenovalec $q$. Ulomek $\frac{r(x)}{q(x)}$ gre za velike $|x|$ proti $0$, zato se graf funkcije bliža grafu količnika $k$. Če ima števec nižjo stopnjo kot imenovalec, je asimptota $y = 0$. Pri enakih stopnjah je asimptota $y = \frac{a_n}{b_n}$, kjer sta $a_n$ in $b_n$ vodilna koeficienta števca in imenovalca. Če je stopnja števca za $1$ višja, je asimptota poševna premica $y = k(x)$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer racionalne funkcije, pri kateri ničla imenovalca ni pol, in pojasni, kaj je tam na grafu.
+---
+Primer je $f(x) = \frac{x^2 - 1}{x - 1}$, ki pri $x = 1$ ni definirana. Po krajšanju je $f(x) = x + 1$ za $x \ne 1$, faktor $(x - 1)$ v imenovalcu torej ne ostane. Graf je premica $y = x + 1$ brez točke $(1, 2)$, ki ji rečemo luknja. Pol z navpično asimptoto bi nastal le, če bi ničla imenovalca ostala tudi po krajšanju.
+:::
+
 ## Drugače: Z analogijo
 
 **Pol je tekoči trak v nasprotno smer.** Na letališču hodiš po tekočem traku, ki pelje nazaj. Če trak pelje skoraj tako hitro, kot hodiš, se komaj premikaš in do konca potrebuješ celo večnost. Ko se hitrost traku približa tvoji, čas raste čez vse meje. Tako se obnaša $\frac{12}{v - 3}$ pri $v$ tik nad $3$.
@@ -225,6 +286,17 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 ~ To je $20 \cdot 2 + 4$. Iz $\frac{20}{v - 4} = 2$ sledi $v - 4 = \frac{20}{2}$, ne $20 \cdot 2$.
 > $\dfrac{20}{v - 4} = 2$, torej $v - 4 = 10$ in $v = 14\,\mathrm{km/h}$.
 
+<<RACUN
+enako: (x^2-3*x+4)/(x-1) | x-2+2/(x-1)
+limita: (x^2-3*x+4)/(x-1)-(x-2) | x | oo | 0
+enako: (x^2-4*x+3)/(x^2-2*x) | (x-1)*(x-3)/(x*(x-2))
+resi: x^2-4*x+3=0 | x | 1, 3
+resi: x^2-2*x=0 | x | 0, 2
+limita: (x^2-4*x+3)/(x^2-2*x) | x | oo | 1
+resi: (x^2-4*x+3)/(x^2-2*x)=1 | x | 3/2
+enako: (x^2-1)/(x-1) | x+1
+>>
+
 :::simboli
 \bar v | povprečna hitrost na poti tja in nazaj | \bar v = \frac{6v}{v + 3} | km/h
 v | hitrost (v uvodu hitrost sestopa, v primeru 3 hitrost čolna v mirni vodi) | | km/h
@@ -233,7 +305,7 @@ x | neodvisna spremenljivka | |
 y | vrednost funkcije (os $y$), v enačbi asimptote | |
 p | polinom v števcu | |
 q | polinom v imenovalcu | |
-k | količnik pri deljenju $p$ s $q$ | | | njegov graf je asimptota
+k | količnik pri deljenju $p$ s $q$ | | | če je stopnje največ $1$, je njegov graf asimptota
 r | ostanek pri deljenju $p$ s $q$ | | | stopnja manjša od stopnje $q$
 a_n | vodilni koeficient števca | |
 b_n | vodilni koeficient imenovalca | |

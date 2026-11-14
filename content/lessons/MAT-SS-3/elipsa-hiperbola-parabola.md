@@ -187,6 +187,90 @@ $p = \frac{1600}{20} = 80$, gorišče je pri $\frac{p}{2} = 40$. Sprejemnik mora
 - Polosi preberi kot korena imenovalcev; večji imenovalec pove, na kateri osi sta gorišči elipse.
 - Graf $y = \frac{c}{x}$ je zasukana hiperbola, graf kvadratne funkcije je parabola.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Parabola s temenom v izhodišču in osjo na osi $x$ poteka skozi točko $A(2, -4)$. Zapiši njeno enačbo, koordinati gorišča in enačbo vodnice.
+
+**Rešitev:**
+
+1. Enačba ima obliko $y^2 = 2px$. Vstavimo točko $A$: $(-4)^2 = 2p \cdot 2$, torej $16 = 4p$ in $p = 4$.
+2. Enačba parabole je $y^2 = 8x$.
+3. Gorišče je $F\left(\frac{p}{2}, 0\right) = F(2, 0)$, vodnica je premica $x = -\frac{p}{2} = -2$.
+4. Preizkus: točka $A$ je od gorišča oddaljena $4$, od vodnice pa $2 - (-2) = 4$.
+5. Odgovor: parabola $y^2 = 8x$, gorišče $F(2, 0)$, vodnica $x = -2$.
+
+**Točkovanje:** 1 točka za $p = 4$, 1 točka za enačbo $y^2 = 8x$, 1 točka za gorišče in vodnico.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Umetni satelit kroži okoli Zemlje po elipsi, središče Zemlje je v enem od njenih gorišč. Najmanjša oddaljenost satelita od središča Zemlje je $7000\,\mathrm{km}$, največja pa $13\,000\,\mathrm{km}$. Koordinatni sistem postavi tako, da je središče elipse v izhodišču, velika os na osi $x$ in središče Zemlje v gorišču $F_2$ na pozitivnem delu osi $x$. Enota je $1000\,\mathrm{km}$.
+
+a) Izračunaj veliko polos $a$, linearno ekscentričnost $e$ in numerično ekscentričnost $\varepsilon$ tira. (3 točke)
+b) Izračunaj malo polos $b$, zaokroženo na dve decimalni mesti, in zapiši enačbo tira. (2 točki)
+c) Koliko je satelit oddaljen od središča Zemlje v trenutku, ko je zveznica med satelitom in središčem Zemlje pravokotna na veliko os? Rezultat zapiši v kilometrih. (2 točki)
+
+**Rešitev:**
+
+1. a) Najmanjša in največja oddaljenost od gorišča sta razdalji do temen na veliki osi: $a - e = 7$ in $a + e = 13$.
+2. a) Seštejemo: $2a = 20$, torej $a = 10$ (to je $10\,000\,\mathrm{km}$), in $e = 13 - 10 = 3$ (to je $3000\,\mathrm{km}$).
+3. a) Numerična ekscentričnost: $\varepsilon = \frac{e}{a} = \frac{3}{10} = 0{,}3$.
+4. b) Iz $e^2 = a^2 - b^2$ sledi $b = \sqrt{a^2 - e^2} = \sqrt{100 - 9} = \sqrt{91} = 9{,}539\ldots \approx 9{,}54$, torej približno $9540\,\mathrm{km}$.
+5. b) Enačba tira: $\frac{x^2}{100} + \frac{y^2}{91} = 1$.
+6. c) Središče Zemlje je v $F_2(3, 0)$, zato ima satelit tedaj absciso $x = 3$. Vstavimo: $\frac{9}{100} + \frac{y^2}{91} = 1$, torej $y^2 = 91 \cdot 0{,}91 = 82{,}81$ in $|y| = 9{,}1$.
+7. c) Preizkus z definicijo elipse: razdalja do $F_1(-3, 0)$ je $\sqrt{6^2 + 82{,}81} = \sqrt{118{,}81} = 10{,}9$, vsota razdalj je $10{,}9 + 9{,}1 = 20 = 2a$.
+8. Odgovor: a) $a = 10\,000\,\mathrm{km}$, $e = 3000\,\mathrm{km}$, $\varepsilon = 0{,}3$; b) $b \approx 9{,}54$ (približno $9540\,\mathrm{km}$), enačba $\frac{x^2}{100} + \frac{y^2}{91} = 1$; c) satelit je od središča Zemlje oddaljen $9100\,\mathrm{km}$.
+
+**Točkovanje:** a) 1 točka za zvezi $a - e = 7$ in $a + e = 13$ (ali utemeljitev, da je $2a = 7 + 13$), 1 točka za $a$ in $e$, 1 točka za $\varepsilon = 0{,}3$; b) 1 točka za $b = \sqrt{91}$, pravilno zaokroženo na dve decimalni mesti, 1 točka za enačbo tira; c) 1 točka za vstavitev $x = 3$ v enačbo tira, 1 točka za rezultat $9100\,\mathrm{km}$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Radijski svetilnik $A(-4, 0)$ stoji na obali, ki poteka po premici $x = -4$, svetilnik $B(4, 0)$ pa na otoku. Enota je kilometer. Ladja iz razlike časov prihoda signalov ugotovi, da je od svetilnika $A$ za $4\,\mathrm{km}$ bolj oddaljena kot od svetilnika $B$.
+
+a) Utemelji, da ladja leži na hiperboli z goriščema $A$ in $B$. Zapiši enačbo hiperbole in povej, na kateri veji leži ladja. (3 točke)
+b) Ladja pluje po premici $y = x + 2$. Izračunaj, kje je ladja, in utemelji, zakaj ena od rešitev sistema ne ustreza. (4 točke)
+c) Ribolov je dovoljen v območju točk, ki so bližje svetilniku $B$ kot obali. Zapiši enačbo meje tega območja in utemelji, ali ladja sme loviti ribe. (3 točke)
+
+**Rešitev:**
+
+1. a) Za lego ladje $T$ velja $r_1 - r_2 = 4$, kjer je $r_1 = |TA|$ in $r_2 = |TB|$. Razlika razdalj do dveh stalnih točk je stalna, zato $T$ leži na hiperboli z goriščema $A$ in $B$.
+2. a) Iz $2a = 4$ sledi $a = 2$. Gorišči sta $4$ od središča, zato $e = 4$ in $b^2 = e^2 - a^2 = 16 - 4 = 12$. Enačba je $\frac{x^2}{4} - \frac{y^2}{12} = 1$.
+3. a) Ladja je bližje svetilniku $B$, zato leži na desni veji ($x \ge 2$).
+4. b) Enačbo hiperbole pomnožimo z $12$ in vstavimo $y = x + 2$: $3x^2 - (x + 2)^2 = 12$, torej $2x^2 - 4x - 16 = 0$ oziroma $x^2 - 2x - 8 = 0$.
+5. b) Razstavimo: $(x - 4)(x + 2) = 0$. Rešitvi sistema sta $(4, 6)$ in $(-2, 0)$.
+6. b) Točka $(-2, 0)$ je teme leve veje: od $A$ je oddaljena $2$, od $B$ pa $6$, torej je bližje $A$. Enačba hiperbole opisuje obe veji ($|r_1 - r_2| = 4$), pogoju $r_1 - r_2 = 4$ pa ta točka ne ustreza.
+7. b) Za točko $(4, 6)$: $r_1 = \sqrt{8^2 + 6^2} = 10$ in $r_2 = \sqrt{0^2 + 6^2} = 6$, razlika je $4$. Ladja je v točki $(4, 6)$.
+8. c) Meja območja so točke, ki so enako oddaljene od $B$ in od obale: to je parabola z goriščem $B(4, 0)$ in vodnico $x = -4$. Razdalja med goriščem in vodnico je $p = 8$, teme je na sredini, v izhodišču. Enačba meje je $y^2 = 16x$.
+9. c) Ladja je od svetilnika $B$ oddaljena $6\,\mathrm{km}$, od obale pa $4 - (-4) = 8\,\mathrm{km}$. Ker je $6 < 8$, je v območju ribolova (enakovredno: $6^2 = 36 < 16 \cdot 4 = 64$).
+10. Odgovor: a) $\frac{x^2}{4} - \frac{y^2}{12} = 1$, desna veja; b) ladja je v točki $(4, 6)$; c) meja območja je parabola $y^2 = 16x$, ladja sme loviti ribe.
+
+**Točkovanje:** a) 1 točka za utemeljitev z razliko razdalj, 1 točka za $a = 2$ in $b^2 = 12$ z enačbo hiperbole, 1 točka za desno vejo; b) 1 točka za kvadratno enačbo po vstavljanju, 1 točka za obe rešitvi sistema, 1 točka za utemeljitev, da točka $(-2, 0)$ ne ustreza, 1 točka za lego ladje $(4, 6)$; c) 1 točka za prepoznano parabolo z goriščem $B$ in vodnico $x = -4$, 1 točka za enačbo $y^2 = 16x$, 1 točka za utemeljen sklep.
+
+### Ustno vprašanje 1
+
+:::premisli
+Definiraj hiperbolo kot množico točk ravnine ter zapiši njeno enačbo v središčni legi in enačbi asimptot.
+---
+Hiperbola je množica točk ravnine, za katere je absolutna vrednost razlike razdalj do dveh stalnih točk, gorišč $F_1$ in $F_2$, enaka $2a$. Pri tem je $2a$ pozitivno in manjše od razdalje med goriščema. Če gorišči ležita na osi $x$ simetrično glede na izhodišče, je enačba hiperbole $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$, kjer je $e$ razdalja gorišča od središča in velja $e^2 = a^2 + b^2$. Asimptoti sta premici $y = \pm\frac{b}{a}x$, ki se jima veji hiperbole vse bolj približujeta.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji zvezo med polosema $a$, $b$ in linearno ekscentričnostjo $e$ elipse ter pojasni, kdaj je elipsa krožnica.
+---
+Teme na mali osi je enako oddaljeno od obeh gorišč. Ker je vsota razdalj do gorišč enaka $2a$, je vsaka od teh razdalj enaka $a$. To teme, središče in gorišče tvorijo pravokotni trikotnik s katetama $b$ in $e$ ter hipotenuzo $a$, zato po Pitagorovem izreku velja $a^2 = b^2 + e^2$. Ko je $e = 0$, gorišči sovpadeta s središčem, velja $b = a$ in elipsa je krožnica s polmerom $a$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer uporabe parabole v tehniki in pojasni, katero lastnost parabole izkorišča.
+---
+Primer je satelitska antena, katere prerez je parabola. Žarki, ki so vzporedni z osjo parabole, se na paraboli odbijejo v gorišče. Zato je sprejemnik postavljen v gorišče, kjer se zbere ves signal. Isto lastnost v obratni smeri izkorišča žaromet: svetilo v gorišču pošilja vzporeden snop svetlobe.
+:::
+
 ## Drugače: Z analogijo
 
 Misli na denar. Imaš $10\,€$ za dve stvari, porabiti moraš vse. Več kot daš za eno, manj ostane za drugo, vsota je stalna. Elipsa je takšen proračun za razdalje: vsota $r_1 + r_2$ je vedno $2a$. Ko se svinčnik približa enemu žebljičku, se od drugega oddalji.
@@ -255,6 +339,26 @@ Elipse najdeš v orbitah planetov (Sonce je v enem gorišču) in v ovalnih ogled
 - V teme zrcala
 ~ Iz temena bi se žarki razpršili. Vzporeden snop dobiš le iz gorišča.
 > Iz $2p = 6$ je $p = 3$, gorišče je pri $\frac{p}{2} = 1{,}5$, torej $1{,}5\,\mathrm{cm}$ od temena.
+
+<<RACUN
+resi: (-4)^2 = 2*p*2 | p | 4
+vrednost: sqrt((2-2)^2 + (-4)^2) | 4
+vrednost: (7 + 13)/2 | 10
+vrednost: 13 - 10 | 3
+vrednost: 3/10 | 0.3
+vrednost: sqrt(100 - 9) | 9.54
+vrednost: 91*(1 - 9/100) | 82.81
+vrednost: sqrt(82.81) | 9.1
+vrednost: sqrt(6^2 + 82.81) | 10.9
+vrednost: 10.9 + 9.1 | 20
+vrednost: 4^2 - 2^2 | 12
+enako: 3*x^2 - (x+2)^2 - 12 | 2*(x^2 - 2*x - 8)
+resi: x^2 - 2*x - 8 = 0 | x | -2, 4
+vrednost: sqrt(8^2 + 6^2) - sqrt(0^2 + 6^2) | 4
+vrednost: 4^2/4 - 6^2/12 | 1
+enako: (x-4)^2 + y^2 - (x+4)^2 | y^2 - 16*x
+vrednost: 16*4 | 64
+>>
 
 :::simboli
 x, y | koordinati točke na krivulji | | | v Primerih 3 in 4 v cm

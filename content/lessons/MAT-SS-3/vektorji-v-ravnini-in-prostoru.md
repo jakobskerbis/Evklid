@@ -19,7 +19,7 @@ Premike seštejemo po smereh: naprej $12 + 3 = 15$, v levo $5 + 4 = 9$. Žoga ko
 
 Koliko pa so podaje dolge? Po Pitagorovem izreku je prva dolga $\sqrt{12^2 + 5^2} = 13\,\mathrm{m}$, druga $\sqrt{3^2 + 4^2} = 5\,\mathrm{m}$. Skupaj je žoga prepotovala $18\,\mathrm{m}$. Od izhodišča pa je oddaljena le $\sqrt{15^2 + 9^2} = \sqrt{306} \approx 17{,}5\,\mathrm{m}$. Spet ista uganka kot pri saneh: dolžini se ne seštejeta.
 
-**Kaj je vektor.** Vsako podajo narišemo kot puščico, **usmerjeno daljico**. Vektor ima tri lastnosti: **dolžino** (velikost), **smer** (premico, na kateri leži) in **usmerjenost** (kam kaže puščica). Vektor označimo s $\vec a$, njegovo dolžino z $|\vec a|$.
+**Kaj je vektor.** Vsako podajo narišemo kot puščico, **usmerjeno daljico**. Vektor ima tri lastnosti: **dolžino** (velikost), **smer** (premico, na kateri leži) in **usmerjenost** (kam kaže puščica). Vektor označimo z $\vec a$, njegovo dolžino z $|\vec a|$.
 
 Dve puščici z enako dolžino, smerjo in usmerjenostjo predstavljata **isti vektor**, tudi če začneta na različnih mestih. Podaja »$12\,\mathrm{m}$ naprej in $5\,\mathrm{m}$ levo« je isti vektor, ne glede na to, kje na igrišču jo izvedeš. Puščico lahko zato vzporedno premikamo.
 
@@ -60,7 +60,7 @@ Kaj naredi $k$ s puščico:
 
 Vektor $(-1)\vec a = -\vec a$ je **nasprotni vektor**: enako dolg, kaže v obratno stran. Z njim odštevamo: $\vec a - \vec b = \vec a + (-\vec b)$.
 
-Vektorja, ki ležita na vzporednih premicah, imenujemo **kolinearna**; takrat je $\vec b = k\vec a$ za neko število $k$. Izraz $k\vec a + m\vec b$ imenujemo **linearna kombinacija** vektorjev $\vec a$ in $\vec b$.
+Vektorja, ki ležita na vzporednih premicah, imenujemo **kolinearna**; takrat je $\vec b = k\vec a$ za neko število $k$ (če $\vec a$ ni ničelni vektor). Izraz $k\vec a + m\vec b$ imenujemo **linearna kombinacija** vektorjev $\vec a$ in $\vec b$.
 
 :::premisli
 Sošolec zapiše: dolžina vektorja $k\vec a$ je $k \cdot |\vec a|$. Preizkusi to pri $k = -2$. Kaj gre narobe in kako se zapiše pravilno?
@@ -166,12 +166,76 @@ $k + 3(2k - 4) = 9$, torej $7k = 21$ in $k = 3$. Potem je $m = 2 \cdot 3 - 4 = 2
 - $|\vec a + \vec b| \le |\vec a| + |\vec b|$; enakost le pri enako usmerjenih vektorjih.
 - $k < 0$ obrne usmerjenost, $|k\vec a| = |k| \cdot |\vec a|$; $\vec a - \vec b = \vec a + (-\vec b)$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Vektorja $\vec a = (2, p, -3)$ in $\vec b = (q, 6, 9)$ sta kolinearna. Izračunaj števili $p$ in $q$.
+
+**Rešitev:**
+
+1. Vektor $\vec a$ ni ničelen in vektorja sta kolinearna, zato je $\vec b = k\vec a$ za neko število $k$. Po komponentah: $q = 2k$, $6 = kp$ in $9 = -3k$.
+2. Iz tretje komponente: $k = \frac{9}{-3} = -3$.
+3. Potem je $q = 2 \cdot (-3) = -6$, iz $6 = -3p$ pa sledi $p = -2$.
+4. Preizkus: $\vec a = (2, -2, -3)$ in $\vec b = (-6, 6, 9) = -3\vec a$.
+5. Odgovor: $p = -2$, $q = -6$.
+
+**Točkovanje:** 1 točka za zapis $\vec b = k\vec a$ po komponentah, 1 točka za $k = -3$, 1 točka za $p = -2$ in $q = -6$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Dane so točke $A(1, 0, 2)$, $B(3, 2, 3)$ in $C(1, 3, 5)$.
+
+a) Izračunaj vektorja $\overrightarrow{AB}$ in $\overrightarrow{BC}$. (1 točka)
+b) Določi koordinate točke $D$, da bo štirikotnik $ABCD$ paralelogram. (2 točki)
+c) Izračunaj dolžini stranic $AB$ in $BC$ ter dolžino diagonale $AC$. Utemelji, da je paralelogram $ABCD$ kvadrat. (3 točke)
+d) Dana je še točka $E(3, 5, 6)$. Zapiši vektor $\overrightarrow{AE}$ kot linearno kombinacijo vektorjev $\overrightarrow{AB}$ in $\overrightarrow{BC}$ ter utemelji, da točka $E$ leži v ravnini paralelograma $ABCD$. (2 točki)
+
+**Rešitev:**
+
+1. a) $\overrightarrow{AB} = (3 - 1,\ 2 - 0,\ 3 - 2) = (2, 2, 1)$ in $\overrightarrow{BC} = (1 - 3,\ 3 - 2,\ 5 - 3) = (-2, 1, 2)$.
+2. b) V paralelogramu $ABCD$ je $\overrightarrow{AD} = \overrightarrow{BC}$. Krajevni vektor točke $D$ (vektor od izhodišča $O$ do $D$) je zato $\overrightarrow{OD} = \overrightarrow{OA} + \overrightarrow{BC} = (1 - 2,\ 0 + 1,\ 2 + 2) = (-1, 1, 4)$.
+3. b) Preizkus: $\overrightarrow{DC} = (1 + 1,\ 3 - 1,\ 5 - 4) = (2, 2, 1)$, kar je enako $\overrightarrow{AB}$.
+4. c) $|\overrightarrow{AB}| = \sqrt{2^2 + 2^2 + 1^2} = \sqrt{9} = 3$ in $|\overrightarrow{BC}| = \sqrt{(-2)^2 + 1^2 + 2^2} = \sqrt{9} = 3$.
+5. c) $\overrightarrow{AC} = (1 - 1,\ 3 - 0,\ 5 - 2) = (0, 3, 3)$, zato je $|\overrightarrow{AC}| = \sqrt{0 + 9 + 9} = \sqrt{18} = 3\sqrt{2}$.
+6. c) Nasprotni stranici paralelograma sta enako dolgi, sosednji stranici $AB$ in $BC$ pa sta tudi enako dolgi, zato vse štiri stranice merijo $3$ in je $ABCD$ romb. Ker je $|\overrightarrow{AB}|^2 + |\overrightarrow{BC}|^2 = 9 + 9 = 18 = |\overrightarrow{AC}|^2$, je po obratu Pitagorovega izreka kot pri oglišču $B$ pravi. Romb s pravim kotom je kvadrat. (Pravi kot pri $B$ pokaže tudi skalarni produkt $\overrightarrow{AB} \cdot \overrightarrow{BC} = -4 + 2 + 2 = 0$.)
+7. d) $\overrightarrow{AE} = (3 - 1,\ 5 - 0,\ 6 - 2) = (2, 5, 4)$. Iščemo števili $k$ in $m$, da je $k\overrightarrow{AB} + m\overrightarrow{BC} = \overrightarrow{AE}$. Po komponentah: $2k - 2m = 2$, $2k + m = 5$ in $k + 2m = 4$.
+8. d) Prvo enačbo odštejemo od druge: $3m = 3$, torej $m = 1$ in $k = 2$. Tudi tretja enačba drži: $2 + 2 \cdot 1 = 4$. Zato je $\overrightarrow{AE} = 2\overrightarrow{AB} + \overrightarrow{BC}$.
+9. d) Vektor $\overrightarrow{AE}$ je linearna kombinacija vektorjev $\overrightarrow{AB}$ in $\overrightarrow{AD} = \overrightarrow{BC}$, zato so ti trije vektorji koplanarni. Točka $E$ torej leži v ravnini skozi $A$, ki jo določata stranici $AB$ in $AD$, to je v ravnini paralelograma.
+10. Odgovor: a) $\overrightarrow{AB} = (2, 2, 1)$, $\overrightarrow{BC} = (-2, 1, 2)$; b) $D(-1, 1, 4)$; c) $|\overrightarrow{AB}| = |\overrightarrow{BC}| = 3$, $|\overrightarrow{AC}| = 3\sqrt{2}$, $ABCD$ je kvadrat (vse stranice merijo $3$, kot pri $B$ je pravi); d) $\overrightarrow{AE} = 2\overrightarrow{AB} + \overrightarrow{BC}$, točka $E$ leži v ravnini paralelograma.
+
+**Točkovanje:** a) 1 točka za oba vektorja; b) 1 točka za zvezo $\overrightarrow{AD} = \overrightarrow{BC}$ (ali $\overrightarrow{OD} = \overrightarrow{OA} + \overrightarrow{BC}$), 1 točka za $D(-1, 1, 4)$; c) 1 točka za obe dolžini stranic $3$, 1 točka za $|\overrightarrow{AC}| = 3\sqrt{2}$, 1 točka za utemeljitev (enake stranice in pravi kot pri $B$, z obratom Pitagorovega izreka ali z $\overrightarrow{AB} \cdot \overrightarrow{BC} = 0$) in sklep, da je $ABCD$ kvadrat; d) 1 točka za $k = 2$ in $m = 1$ iz sistema, 1 točka za preverjeno tretjo enačbo in sklep o ravnini.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kdaj sta dva vektorja kolinearna in kdaj so trije vektorji koplanarni?
+---
+Vektorja sta kolinearna, če ležita na isti ali na vzporednih premicah. Če je $\vec a \ne \vec 0$, sta $\vec a$ in $\vec b$ kolinearna natanko tedaj, ko je $\vec b = k\vec a$ za neko realno število $k$. Trije vektorji so koplanarni, če jih, narisane iz skupne točke, lahko položimo v isto ravnino. Če $\vec a$ in $\vec b$ nista kolinearna, so $\vec a$, $\vec b$ in $\vec c$ koplanarni natanko tedaj, ko je $\vec c = k\vec a + m\vec b$ za neki realni števili $k$ in $m$. Trije vektorji, ki niso koplanarni, tvorijo bazo prostora.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Opiši pravilo trikotnika in pravilo paralelograma za seštevanje vektorjev ter utemelji, da je seštevanje vektorjev komutativno.
+---
+Po pravilu trikotnika drugi vektor vzporedno premaknemo, da začne v končni točki prvega; vsota je vektor od začetka prvega do konca drugega. Po pravilu paralelograma oba vektorja narišemo iz iste točke in ju dopolnimo do paralelograma; vsota je diagonala iz skupnega začetka. Nasprotni stranici paralelograma predstavljata isti vektor, zato po eni poti ob robu dobimo $\vec a + \vec b$, po drugi pa $\vec b + \vec a$. Obe poti se končata v istem oglišču, zato je $\vec a + \vec b = \vec b + \vec a$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer baze ravnine, ki je ne sestavljata enotska vektorja v smereh osi, in po njej razstavi en vektor.
+---
+Bazo ravnine tvorita poljubna nekolinearna vektorja, na primer $\vec a = (1, 1)$ in $\vec b = (1, -1)$, saj noben ni večkratnik drugega. Vsak vektor ravnine lahko na en sam način zapišemo kot linearno kombinacijo $k\vec a + m\vec b$ baznih vektorjev. Za vektor $\vec c = (5, 1)$ iz $k\vec a + m\vec b = \vec c$ po komponentah dobimo sistem $k + m = 5$ in $k - m = 1$. Od tod je $k = 3$ in $m = 2$, torej $\vec c = 3\vec a + 2\vec b$, kar potrdi preizkus $3 \cdot (1, 1) + 2 \cdot (1, -1) = (5, 1)$.
+:::
+
 ## Drugače: Z analogijo
 
 Vektor je kot **navodilo na zemljevidu zaklada**: »3 korake proti vzhodu, 1 proti severu«. Navodilo ne pove, kje stojiš. Pove le, kako se premakneš. Zato je isto navodilo, izvedeno na dveh krajih, isti vektor.
 
 - **Seštevanje** pomeni, da navodili izvedeš zapored. Vrstni red ni pomemben: v obeh primerih končaš na istem mestu.
-- **Množenje z $k = 3$** pomeni, da navodilo ponoviš trikrat. Pri $k = \frac{1}{2}$ narediš le pol vsakega koraka.
+- **Množenje s $k = 3$** pomeni, da navodilo ponoviš trikrat. Pri $k = \frac{1}{2}$ narediš le pol vsakega koraka.
 - **Negativen $k$** pomeni, da navodilo izvedeš vzvratno: hodiš proti zahodu in jugu.
 - **Dolžina** je zračna razdalja od začetka do konca, ne število korakov, ki si jih naredil.
 
@@ -243,6 +307,23 @@ Vsa sledijo iz pravil za realna števila, ker računamo po komponentah.
 - $6{,}25\,\mathrm{m/s}$
 ~ To je $|\vec v|^2$. Pozabil si koreniti.
 > $\vec v = (2;\ 1{,}5)\,\mathrm{m/s}$, zato je $|\vec v| = \sqrt{2^2 + 1{,}5^2} = \sqrt{6{,}25} = 2{,}5\,\mathrm{m/s}$.
+
+<<RACUN
+resi: 9=-3*k | k | -3
+resi: 6=-3*p | p | -2
+vrednost: 2*(-3) | -6
+vrednost: sqrt(2^2+2^2+1^2) | 3
+vrednost: sqrt((-2)^2+1^2+2^2) | 3
+vrednost: sqrt(0^2+3^2+3^2) | 3*sqrt(2)
+vrednost: 3^2+3^2 | 18
+vrednost: 2*(-2)+2*1+1*2 | 0
+resi: 2*k-2*m=2, 2*k+m=5 | k, m | k=2, m=1
+vrednost: 2+2*1 | 4
+vrednost: 2*2-2*1 | 2
+vrednost: 2*2+1 | 5
+resi: k+m=5, k-m=1 | k, m | k=3, m=2
+vrednost: 3*1+2*(-1) | 1
+>>
 
 :::simboli
 \vec a, \vec b, \vec c | vektor | | | dolžina $\lvert\vec a\rvert = \sqrt{a_x^2 + a_y^2 + a_z^2}$

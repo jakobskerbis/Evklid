@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -73,7 +73,7 @@ puščica: -4; 3 -> -4; 1,8
 |---|---|
 | $(0, 5)$ | $(0, 3)$ |
 | $(3, 4)$ | $(3; 2{,}4)$ |
-| $(4, 3)$ | $(4; 1{,}8)$ |
+| $(-4, 3)$ | $(-4; 1{,}8)$ |
 | $(5, 0)$ | $(5, 0)$ |
 
 Zdaj še simboli. Točka $(x, y)$ na elipsi je nastala iz točke $\left(x, \frac53 y\right)$ na krožnici, saj nazaj množimo z obratnim faktorjem $\frac53$. Ta zadošča enačbi krožnice: $x^2 + \left(\frac53 y\right)^2 = 25$. Delimo s $25$ in dobimo $\frac{x^2}{25} + \frac{y^2}{9} = 1$. Splošno: krožnica $x^2 + y^2 = a^2$, raztegnjena vzdolž osi $y$ s faktorjem $\frac{b}{a}$, je elipsa s polosema $a$ in $b$. Faktor manjši od $1$ krožnico stisne, večji jo raztegne. Pri krožnici s središčem $S(x_0, y_0)$ raztegujemo glede na premico $y = y_0$ in dobimo premaknjeno elipso.
@@ -254,6 +254,91 @@ $0{,}2x - 0{,}4 + 0{,}4y + 1{,}2 = 1$, torej $0{,}2x + 0{,}4y = 0{,}2$ in po mno
 - (višja raven) Parabola: $(y - y_0)^2 = 2p(x - x_0)$, gorišče $\left(x_0 + \frac{p}{2}, y_0\right)$, vodnica $x = x_0 - \frac{p}{2}$.
 - (višja raven) Tangenta v točki stožnice: en faktor vsakega kvadrata zamenjaš s koordinato točke. Tangenta z dano smerjo ali skozi zunanjo točko: vstaviš $y = kx + n$ in zahtevaš $D = 0$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Elipsa ima gorišči $F_1(-4, 2)$ in $F_2(2, 2)$, eno njeno teme pa je točka $(4, 2)$. Zapiši enačbo elipse.
+
+**Rešitev:**
+
+1. Središče je razpolovišče daljice $F_1F_2$: $S(-1, 2)$. Gorišči sta od središča oddaljeni $e = 3$.
+2. Teme $(4, 2)$ leži na isti vodoravni premici kot gorišči, torej na veliki osi: $a = 4 - (-1) = 5$. Mala polos je $b = \sqrt{a^2 - e^2} = \sqrt{25 - 9} = 4$.
+3. Odgovor: $\frac{(x + 1)^2}{25} + \frac{(y - 2)^2}{16} = 1$.
+
+**Točkovanje:** 1 točka za središče $S(-1, 2)$ in $e = 3$, 1 točka za $a = 5$ in $b = 4$, 1 točka za enačbo elipse.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je krivulja z enačbo $25x^2 + 9y^2 - 50x + 36y - 164 = 0$.
+
+a) Pokaži, da je krivulja elipsa, ter določi njeno središče in polosi. (3 točke)
+b) Zapiši koordinate gorišč in vseh štirih temen ter elipso skiciraj. (2 točki)
+c) Skozi gorišče z večjo ordinato položimo premico, vzporedno z osjo $x$. Izračunaj dolžino tetive, ki jo elipsa odreže na tej premici. (2 točki)
+
+**Rešitev:**
+
+1. a) Združimo člene z isto spremenljivko in izpostavimo koeficienta: $25(x^2 - 2x) + 9(y^2 + 4y) = 164$.
+2. a) Dopolnimo do popolnih kvadratov in dodano odštejemo, pomnoženo s koeficientom: $25(x - 1)^2 - 25 + 9(y + 2)^2 - 36 = 164$, torej $25(x - 1)^2 + 9(y + 2)^2 = 225$.
+3. a) Delimo z $225$: $\frac{(x - 1)^2}{9} + \frac{(y + 2)^2}{25} = 1$. Kvadrata imata enak predznak in desna stran je $1$, zato je to elipsa s središčem $S(1, -2)$, polosjo $a = 3$ v smeri osi $x$ in polosjo $b = 5$ v smeri osi $y$.
+4. b) Daljša polos je navpična, zato gorišči ležita na premici $x = 1$, od središča oddaljeni $e = \sqrt{b^2 - a^2} = \sqrt{25 - 9} = 4$. Gorišči sta $F_1(1, 2)$ in $F_2(1, -6)$.
+5. b) Temena so $(-2, -2)$, $(4, -2)$, $(1, 3)$ in $(1, -7)$. Skica: elipsa skozi ta štiri temena, daljša v navpični smeri.
+6. c) Premica skozi $F_1(1, 2)$, vzporedna osi $x$, je $y = 2$. Vstavimo: $\frac{(x - 1)^2}{9} + \frac{16}{25} = 1$, torej $(x - 1)^2 = \frac{81}{25}$ in $x - 1 = \pm\frac95$.
+7. c) Krajišči tetive sta $\left(\frac{14}{5}, 2\right)$ in $\left(-\frac45, 2\right)$, dolžina tetive je $\frac{14}{5} + \frac45 = \frac{18}{5}$.
+8. Odgovor: a) elipsa s središčem $S(1, -2)$ in polosema $3$ (vodoravno) in $5$ (navpično); b) gorišči $(1, 2)$ in $(1, -6)$, temena $(-2, -2)$, $(4, -2)$, $(1, 3)$, $(1, -7)$; c) tetiva je dolga $\frac{18}{5}$.
+
+**Točkovanje:** a) 1 točka za dopolnjevanje do popolnih kvadratov s pravilno odštetima $25$ in $36$, 1 točka za enačbo z desno stranjo $1$, 1 točka za središče in polosi; b) 1 točka za gorišči, 1 točka za temena in skico; c) 1 točka za enačbo $(x - 1)^2 = \frac{81}{25}$, 1 točka za dolžino tetive $\frac{18}{5}$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dana je krivulja z enačbo $8x^2 - y^2 + 32x + 2y + 23 = 0$.
+
+a) Pokaži, da je krivulja hiperbola, ter določi njeno središče, temeni in gorišči. (3 točke)
+b) Zapiši enačbi asimptot hiperbole. (1 točka)
+c) Točka $T_1$ na hiperboli ima absciso $1$ in ordinato, večjo od $1$. Izračunaj ordinato točke $T_1$ in zapiši enačbo tangente na hiperbolo v točki $T_1$. (3 točke)
+d) Določi enačbo druge tangente hiperbole, ki je vzporedna tangenti iz c), in izračunaj njeno dotikališče. (3 točke)
+
+**Rešitev:**
+
+1. a) Združimo in dopolnimo: $8(x^2 + 4x) - (y^2 - 2y) = -23$, torej $8(x + 2)^2 - 32 - (y - 1)^2 + 1 = -23$ in $8(x + 2)^2 - (y - 1)^2 = 8$.
+2. a) Delimo z $8$: $(x + 2)^2 - \frac{(y - 1)^2}{8} = 1$. Kvadrata imata nasprotna predznaka, zato je to hiperbola s središčem $S(-2, 1)$, $a = 1$ in $b = \sqrt8 = 2\sqrt2$.
+3. a) $e = \sqrt{a^2 + b^2} = \sqrt{1 + 8} = 3$. Temeni sta $(-3, 1)$ in $(-1, 1)$, gorišči $F_1(-5, 1)$ in $F_2(1, 1)$.
+4. b) Asimptoti: $y - 1 = 2\sqrt2\,(x + 2)$ in $y - 1 = -2\sqrt2\,(x + 2)$.
+5. c) Pri $x_1 = 1$: $8 \cdot 3^2 - (y_1 - 1)^2 = 8$, torej $(y_1 - 1)^2 = 64$ in $y_1 - 1 = \pm 8$. Ker je $y_1 > 1$, je $y_1 = 9$ in $T_1(1, 9)$.
+6. c) Tangenta v točki hiperbole: $\frac{(x_1 - x_0)(x - x_0)}{a^2} - \frac{(y_1 - y_0)(y - y_0)}{b^2} = 1$, torej $3(x + 2) - \frac{8(y - 1)}{8} = 1$.
+7. c) Uredimo: $3x + 6 - y + 1 = 1$, tangenta je $y = 3x + 6$.
+8. d) Vzporedna premica ima enačbo $y = 3x + n$, zato je $y - 1 = 3x + n - 1$. Vstavimo v $8(x + 2)^2 - (y - 1)^2 = 8$: $8x^2 + 32x + 32 - 9x^2 - 6(n - 1)x - (n - 1)^2 = 8$.
+9. d) Uredimo in pomnožimo z $-1$: $x^2 - (38 - 6n)x + (n - 1)^2 - 24 = 0$.
+10. d) Diskriminanta: $D = (38 - 6n)^2 - 4\big((n - 1)^2 - 24\big) = 32n^2 - 448n + 1536 = 32(n - 6)(n - 8)$. Iz $D = 0$ sledi $n = 6$ (tangenta iz c) ali $n = 8$.
+11. d) Pri $n = 8$ je enačba $x^2 + 10x + 25 = 0$, dvojna rešitev $x = -5$, $y = 3 \cdot (-5) + 8 = -7$.
+12. Odgovor: a) hiperbola s središčem $S(-2, 1)$, temeni $(-3, 1)$ in $(-1, 1)$, gorišči $(-5, 1)$ in $(1, 1)$; b) $y - 1 = \pm 2\sqrt2\,(x + 2)$; c) $T_1(1, 9)$, tangenta $y = 3x + 6$; d) tangenta $y = 3x + 8$ z dotikališčem $(-5, -7)$.
+
+**Točkovanje:** a) 1 točka za dopolnjevanje do popolnih kvadratov, 1 točka za središče ter $a$ in $b$, 1 točka za temeni in gorišči; b) 1 točka za obe asimptoti; c) 1 točka za $T_1(1, 9)$, 1 točka za vstavitev v enačbo tangente (ali pogoj $D = 0$), 1 točka za tangento $y = 3x + 6$; d) 1 točka za kvadratno enačbo z neznanim $n$, 1 točka za $n = 8$, 1 točka za dotikališče $(-5, -7)$. Enakovreden je postopek s središčno simetrijo hiperbole: dotikališče je zrcalna slika točke $T_1$ čez središče $S$, tangenta skozi to točko ima smerni koeficient $3$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako iz enačbe elipse s središčem v izhodišču dobiš enačbo elipse s središčem v točki $S(x_0, y_0)$? Utemelji, zakaj je v oklepajih minus.
+---
+Premaknjeno elipso dobimo tako, da vsako točko elipse v središčni legi premaknemo za vektor $(x_0, y_0)$. Točka $(x, y)$ leži na premaknjeni elipsi natanko tedaj, ko točka $(x - x_0, y - y_0)$ leži na prvotni elipsi. Zato v enačbo $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$ namesto $x$ vstavimo $x - x_0$ in namesto $y$ vstavimo $y - y_0$ ter dobimo $\frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1$. Polosi in linearna ekscentričnost ostanejo enake, premakneta se središče in gorišči.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Pojasni, kako z raztegom krožnice $x^2 + y^2 = a^2$ vzdolž osi $y$ dobiš elipso, in izpelji njeno enačbo.
+---
+Pri raztegu vzdolž osi $y$ s faktorjem $\frac{b}{a}$ vsaki točki krožnice abscisa ostane enaka, ordinata pa se pomnoži z $\frac{b}{a}$. Točka $(x, y)$ elipse je zato nastala iz točke $\left(x, \frac{a}{b}y\right)$ na krožnici. Ta točka zadošča enačbi krožnice, torej velja $x^2 + \frac{a^2}{b^2}y^2 = a^2$. Po deljenju z $a^2$ dobimo $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$, kar je elipsa s polosema $a$ in $b$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Navedi primer premice, ki ima s hiperbolo natanko eno skupno točko, pa ni njena tangenta, in pojasni, zakaj.
+---
+Primer je premica $y = \frac{b}{a}x + 1$, ki je vzporedna asimptoti hiperbole $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$. Ko jo vstavimo v enačbo hiperbole, se člena z $x^2$ odštejeta in ostane linearna enačba z eno samo rešitvijo. Premica hiperbolo seka in gre z ene strani veje na drugo, zato se je ne dotika. Tangenta je le premica, pri kateri ima kvadratna enačba dvojno rešitev, torej $D = 0$.
+:::
+
 ## Drugače: Z analogijo
 
 Premik stožnice je kot premik police v trgovini. Polica ostane enaka, le njen položaj merimo od drugega mesta. Kupec meri razdaljo od vrat, prodajalec od blagajne. Če je blagajna $x_0$ metrov od vrat, je polica, ki je $x$ metrov od vrat, od blagajne oddaljena $x - x_0$. Tako je tudi v enačbi: $x - x_0$ je razdalja, izmerjena od novega središča. Zato je v oklepaju minus.
@@ -336,6 +421,21 @@ enako: 4*(x+1)^2 - 4 - y^2 | 4*x^2 - y^2 + 8*x
 enako: (x-3)^2 + 4*(y+1)^2 - 4 | x^2 + 4*y^2 - 6*x + 8*y + 9
 resi: (2*n-6)^2 - 4*((n-1)^2 - 8) = 0 | n | 4
 vrednost: -3 + sqrt(25-9) | 1
+vrednost: sqrt(5^2 - 3^2) | 4
+enako: 16*(x+1)^2 + 25*(y-2)^2 - 400 | 16*x^2 + 25*y^2 + 32*x - 100*y - 284
+enako: 25*(x-1)^2 + 9*(y+2)^2 - 225 | 25*x^2 + 9*y^2 - 50*x + 36*y - 164
+vrednost: sqrt(25 - 9) | 4
+resi: (x-1)^2/9 + (2+2)^2/25 = 1 | x | -4/5, 14/5
+vrednost: 14/5 + 4/5 | 18/5
+enako: 8*(x+2)^2 - (y-1)^2 - 8 | 8*x^2 - y^2 + 32*x + 2*y + 23
+vrednost: sqrt(1 + 8) | 3
+resi: 8*(1+2)^2 - (y-1)^2 = 8 | y | -7, 9
+enako: 3*(x+2) - (y-1) - 1 | 3*x - y + 6
+enako: 8*(x+2)^2 - (3*x+n-1)^2 - 8 | -(x^2 - (38-6*n)*x + (n-1)^2 - 24)
+enako: (38-6*n)^2 - 4*((n-1)^2 - 24) | 32*(n-6)*(n-8)
+resi: x^2 + 10*x + 25 = 0 | x | -5
+vrednost: 8*(-5+2)^2 - (-7-1)^2 | 8
+enako: (x^2/a^2 - ((b/a)*x + 1)^2/b^2) | -2*x/(a*b) - 1/b^2
 >>
 
 :::simboli

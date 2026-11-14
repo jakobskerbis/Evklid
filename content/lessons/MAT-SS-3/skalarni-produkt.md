@@ -197,6 +197,67 @@ $|\vec a - \vec b|^2 = |\vec a|^2 - 2\,\vec a \cdot \vec b + |\vec b|^2$, $\quad
 - Neničelna vektorja sta pravokotna natanko tedaj, ko je $\vec a \cdot \vec b = 0$. Velja $\vec a \cdot \vec a = |\vec a|^2$.
 - Kosinusni izrek: iz $|\vec a - \vec b|^2 = |\vec a|^2 - 2\,\vec a \cdot \vec b + |\vec b|^2$ sledi $c^2 = a^2 + b^2 - 2ab\cos\gamma$.
 
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Za katera realna števila $n$ sta vektorja $\vec a = (n, 2, -1)$ in $\vec b = (n, n, 8)$ pravokotna?
+
+**Rešitev:**
+
+1. Vektorja nista ničelna (druga komponenta $\vec a$ je $2$, tretja komponenta $\vec b$ je $8$), zato sta pravokotna natanko tedaj, ko je $\vec a \cdot \vec b = 0$.
+2. Po komponentah: $n \cdot n + 2 \cdot n + (-1) \cdot 8 = 0$, torej $n^2 + 2n - 8 = 0$.
+3. Razcep: $(n + 4)(n - 2) = 0$, zato je $n = -4$ ali $n = 2$.
+4. Preizkus: pri $n = 2$ je $\vec a \cdot \vec b = 4 + 4 - 8 = 0$, pri $n = -4$ je $16 - 8 - 8 = 0$.
+5. Odgovor: vektorja sta pravokotna za $n = 2$ in za $n = -4$.
+
+**Točkovanje:** 1 točka za enačbo $n^2 + 2n - 8 = 0$ iz pogoja $\vec a \cdot \vec b = 0$, 1 točka za pravilno reševanje kvadratne enačbe, 1 točka za obe rešitvi $n = 2$ in $n = -4$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 2 (z računalom)
+
+Dan je trikotnik z oglišči $A(1, -1, 2)$, $B(3, 0, 4)$ in $C(2, 3, 1)$.
+
+a) Izračunaj notranji kot $\alpha$ trikotnika pri oglišču $A$. Rezultat zaokroži na stotinko stopinje. (3 točke)
+b) Izračunaj dolžino pravokotne projekcije vektorja $\overrightarrow{AC}$ na vektor $\overrightarrow{AB}$ in zapiši to projekcijo kot vektor s komponentami. (3 točke)
+c) Izračunaj višino trikotnika na stranico $AB$ in ploščino trikotnika $ABC$. Rezultata zaokroži na dve decimalni mesti. (2 točki)
+
+**Rešitev:**
+
+1. a) Oba vektorja izhajata iz vrha kota $A$: $\overrightarrow{AB} = (3 - 1,\ 0 + 1,\ 4 - 2) = (2, 1, 2)$ in $\overrightarrow{AC} = (2 - 1,\ 3 + 1,\ 1 - 2) = (1, 4, -1)$.
+2. a) Skalarni produkt: $\overrightarrow{AB} \cdot \overrightarrow{AC} = 2 \cdot 1 + 1 \cdot 4 + 2 \cdot (-1) = 4$. Dolžini: $|\overrightarrow{AB}| = \sqrt{4 + 1 + 4} = 3$ in $|\overrightarrow{AC}| = \sqrt{1 + 16 + 1} = \sqrt{18} = 3\sqrt{2}$.
+3. a) $\cos\alpha = \dfrac{4}{3 \cdot 3\sqrt{2}} = \dfrac{4}{9\sqrt{2}} \approx 0{,}314270$, zato je $\alpha = \arccos 0{,}314270 \approx 71{,}6833^\circ \approx 71{,}68^\circ$.
+4. b) Dolžina projekcije je $|\overrightarrow{AC}|\cos\alpha = \dfrac{\overrightarrow{AB} \cdot \overrightarrow{AC}}{|\overrightarrow{AB}|} = \dfrac{4}{3}$.
+5. b) Skalarni produkt je pozitiven, zato projekcija kaže v smer $\overrightarrow{AB}$. Enotski vektor v tej smeri je $\frac{1}{3}(2, 1, 2)$, projekcija pa $\frac{4}{3} \cdot \frac{1}{3}(2, 1, 2) = \frac{4}{9}(2, 1, 2) = \left(\frac{8}{9}, \frac{4}{9}, \frac{8}{9}\right)$.
+6. c) Višina $v_c$ na stranico $AB$, projekcija dolžine $\frac{4}{3}$ in stranica $AC$ tvorijo pravokotni trikotnik s hipotenuzo $|\overrightarrow{AC}| = \sqrt{18}$. Zato je $v_c^2 = 18 - \frac{16}{9} = \frac{146}{9}$ in $v_c = \frac{\sqrt{146}}{3} \approx 4{,}0277$, torej $v_c \approx 4{,}03$.
+7. c) Ploščina: $S = \dfrac{|\overrightarrow{AB}| \cdot v_c}{2} = \dfrac{\sqrt{146}}{2} \approx 6{,}0415$, torej $S \approx 6{,}04$. Enako dobimo iz $S = \frac{1}{2}\,|\overrightarrow{AB}|\,|\overrightarrow{AC}| \sin\alpha$.
+8. Odgovor: a) $\alpha \approx 71{,}68^\circ$; b) dolžina projekcije je $\frac{4}{3}$, projekcija je $\left(\frac{8}{9}, \frac{4}{9}, \frac{8}{9}\right)$; c) $v_c \approx 4{,}03$, $S \approx 6{,}04$.
+
+**Točkovanje:** a) 1 točka za vektorja iz oglišča $A$ in skalarni produkt $4$, 1 točka za dolžini $3$ in $3\sqrt{2}$, 1 točka za $\alpha \approx 71{,}68^\circ$; b) 1 točka za dolžino projekcije $\frac{4}{3}$, 1 točka za smer (enotski vektor ali faktor $\frac{4}{9}$), 1 točka za $\left(\frac{8}{9}, \frac{4}{9}, \frac{8}{9}\right)$; c) 1 točka za $v_c \approx 4{,}03$ in 1 točka za $S \approx 6{,}04$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako je definiran skalarni produkt dveh vektorjev in kaj njegov predznak pove o kotu med njima?
+---
+Skalarni produkt vektorjev $\vec a$ in $\vec b$ je število $\vec a \cdot \vec b = |\vec a|\,|\vec b|\cos\varphi$, kjer je $\varphi$ kot med vektorjema s skupnim začetkom in $0^\circ \le \varphi \le 180^\circ$. Geometrijsko je to dolžina vektorja $\vec a$, pomnožena s predznačeno dolžino pravokotne projekcije vektorja $\vec b$ na $\vec a$. Za neničelna vektorja sta dolžini pozitivni, zato o predznaku odloča $\cos\varphi$. Pozitiven produkt torej pomeni oster kot, produkt $0$ pravi kot in negativen produkt top kot.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji kosinusni izrek za trikotnik s pomočjo skalarnega produkta vektorjev.
+---
+V trikotniku $ABC$ vzamemo vektorja $\vec a = \overrightarrow{CB}$ in $\vec b = \overrightarrow{CA}$, ki imata dolžini $a$ in $b$ ter oklepata kot $\gamma$. Tretja stranica je vektor $\overrightarrow{AB} = \vec a - \vec b$ z dolžino $c$. Kvadrat dolžine vektorja je skalarni produkt vektorja s samim seboj, zato je $c^2 = (\vec a - \vec b) \cdot (\vec a - \vec b) = \vec a \cdot \vec a - 2\,\vec a \cdot \vec b + \vec b \cdot \vec b$. Ko vstavimo $\vec a \cdot \vec a = a^2$, $\vec b \cdot \vec b = b^2$ in $\vec a \cdot \vec b = ab\cos\gamma$, dobimo $c^2 = a^2 + b^2 - 2ab\cos\gamma$. Pri $\gamma = 90^\circ$ je $\cos\gamma = 0$ in izrek preide v Pitagorov izrek.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer dveh neničelnih pravokotnih vektorjev v prostoru in pojasni, kako pravokotnost preveriš brez merjenja kota.
+---
+Primer sta vektorja $\vec a = (1, 2, 2)$ in $\vec b = (2, 1, -2)$. Njun skalarni produkt po komponentah je $1 \cdot 2 + 2 \cdot 1 + 2 \cdot (-2) = 0$. Ker sta vektorja neničelna, iz $|\vec a|\,|\vec b|\cos\varphi = 0$ sledi $\cos\varphi = 0$ in zato $\varphi = 90^\circ$. Neničelna vektorja sta torej pravokotna natanko tedaj, ko je njun skalarni produkt enak $0$.
+:::
+
 ## Drugače: Z analogijo
 
 Predstavljaj si, da je $\vec a$ tekoči trak na letališču, $\vec b$ pa tvoj korak. Trak »šteje« samo del koraka, ki kaže vzdolž njega. Korak naravnost po traku šteje v celoti, korak čez trak (pravokotno) ne šteje nič, korak nazaj šteje negativno. Skalarni produkt je ta šteti del, pomnožen še z dolžino traku: dolg trak naredi isti šteti del pomembnejši.
@@ -255,6 +316,17 @@ Fiziki temu rečejo **delo** sile: $\vec F \cdot \vec s = |\vec F|\,|\vec s|\cos
 vrednost: 3*5*cos(120°) | -7.5
 vrednost: 9-2*(-7.5)+25 | 49
 vrednost: sqrt(3^2+5^2-2*3*5*cos(120°)) | 7
+resi: n^2+2*n-8=0 | n | -4, 2
+vrednost: 2*1+1*4+2*(-1) | 4
+vrednost: sqrt(1^2+4^2+(-1)^2) | 3*sqrt(2)
+vrednost: 4/(9*sqrt(2)) | 0.314270
+vrednost: acos(4/(9*sqrt(2)))*180/pi | 71.68
+vrednost: 4/3*1/3*2 | 8/9
+vrednost: 18-16/9 | 146/9
+vrednost: sqrt(146)/3 | 4.03
+vrednost: sqrt(146)/2 | 6.04
+vrednost: 1/2*3*sqrt(18)*sin(acos(4/(9*sqrt(2)))) | 6.04
+vrednost: 1*2+2*1+2*(-2) | 0
 >>
 
 :::simboli

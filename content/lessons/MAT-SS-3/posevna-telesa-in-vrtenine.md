@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -35,7 +35,7 @@ Telo je **poševno**, kadar stranski robovi (pri valju tvorilke, daljice na pla�
 
 $$V = O\,v$$
 
-$O$ je ploščina osnovne ploskve (v lekciji o površini smo jo pisali $S$), $v$ pa **višina**: razdalja med ravninama osnovnih ploskev. Tudi poševno piramido primerjamo s pokončno z enako osnovno ploskvijo in višino: na isti višini sta prereza osnovna ploskev, pomanjšana v istem razmerju, torej imata enako ploščino. Zato za poševno piramido in poševni stožec velja $V = \frac{O\,v}{3}$.
+$O$ je ploščina osnovne ploskve (v lekciji o površini smo jo pisali $S$), $v$ pa **višina**: razdalja med ravninama osnovnih ploskev. Tudi poševno piramido primerjamo s pokončno z enako osnovno ploskvijo in višino: na isti višini sta prereza osnovna ploskev, pomanjšana v istem razmerju, torej imata enako ploščino. Zato za poševno piramido in poševni stožec, pri katerih vrh ne leži nad središčem osnovne ploskve, velja $V = \frac{O\,v}{3}$.
 
 **3. Višina ni stranski rob.** Na sliki imata obe prizmi isto osnovnico in isto višino $v$. Pri poševni je stranski rob $s$ daljši od $v$.
 
@@ -194,6 +194,75 @@ $V_{stožec} = \frac{\pi \cdot 16 \cdot 3}{3} = 16\pi\,\mathrm{cm^3}$, zato $V =
 - Pravokotnik okoli stranice: valj; pravokotni trikotnik okoli katete: stožec, okoli hipotenuze: dvojni stožec z $r = \frac{a\,b}{c}$; pravokotni trapez okoli daljše osnovnice: valj in stožec.
 - Prostornino in površino vrtenine sestaviš iz formul za valj in stožec; notranjih ploskev ne štej.
 
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Poševna prizma ima za osnovno ploskev enakostranični trikotnik s stranico $4\,\mathrm{cm}$. Stranski robovi so dolgi $6\,\mathrm{cm}$ in z ravnino osnovne ploskve oklepajo kot $60^\circ$.
+
+a) Izračunaj višino prizme. (2 točki)
+b) Izračunaj prostornino prizme. (2 točki)
+c) Pokončna prizma ima isto osnovno ploskev in enako dolge stranske robove kot dana poševna prizma. Izračunaj razmerje prostornin poševne in pokončne prizme. (2 točki)
+
+**Rešitev:**
+
+1. a) Stranski rob, njegova pravokotna projekcija na osnovno ploskev in višina tvorijo pravokotni trikotnik; višina leži nasproti kota $\alpha = 60^\circ$.
+2. a) $v = s\sin\alpha = 6 \cdot \dfrac{\sqrt{3}}{2} = 3\sqrt{3}\,\mathrm{cm}$.
+3. b) Osnovna ploskev: $O = \dfrac{\sqrt{3}}{4} \cdot 4^2 = 4\sqrt{3}\,\mathrm{cm^2}$.
+4. b) Po Cavalierijevem načelu velja $V = O\,v = 4\sqrt{3} \cdot 3\sqrt{3} = 36\,\mathrm{cm^3}$.
+5. c) Pokončna prizma ima višino enako stranskemu robu, $6\,\mathrm{cm}$, zato $V' = 4\sqrt{3} \cdot 6 = 24\sqrt{3}\,\mathrm{cm^3}$.
+6. c) $\dfrac{V}{V'} = \dfrac{36}{24\sqrt{3}} = \dfrac{3}{2\sqrt{3}} = \dfrac{\sqrt{3}}{2}$. Razmerje je enako $\sin 60^\circ$, ker se prizmi razlikujeta le v višini.
+7. Odgovor: a) $v = 3\sqrt{3}\,\mathrm{cm}$; b) $V = 36\,\mathrm{cm^3}$; c) $V : V' = \sqrt{3} : 2$.
+
+**Točkovanje:** a) 1 točka za zvezo $v = s\sin\alpha$ (pravokotni trikotnik), 1 točka za $v = 3\sqrt{3}\,\mathrm{cm}$; b) 1 točka za $O = 4\sqrt{3}\,\mathrm{cm^2}$, 1 točka za $V = 36\,\mathrm{cm^3}$; c) 1 točka za $V' = 24\sqrt{3}\,\mathrm{cm^3}$, 1 točka za razmerje $\sqrt{3} : 2$.
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Trikotnik $ABC$ ima stranici $AB = 10\,\mathrm{cm}$ in $AC = 7\,\mathrm{cm}$ ter kot $\angle BAC = 40^\circ$. Vmesnih rezultatov ne zaokrožuj.
+
+a) Izračunaj dolžino stranice $BC$. Zaokroži na dve decimalki. (2 točki)
+b) Trikotnik zavrtimo okoli premice $AB$. Opiši nastalo vrtenino, utemelji, da nožišče višine iz $C$ leži na stranici $AB$, in izračunaj polmer vrtenine na dve decimalki. (3 točke)
+c) Izračunaj prostornino in površino te vrtenine. Zaokroži na eno decimalko. (3 točke)
+d) Trikotnik zavrtimo še okoli premice skozi $C$, ki je vzporedna z $AB$. Opiši nastalo vrtenino in pokaži, da ima dvakrat večjo prostornino kot vrtenina iz dela b). (2 točki)
+
+**Rešitev:**
+
+1. a) Kosinusni izrek: $BC^2 = 7^2 + 10^2 - 2 \cdot 7 \cdot 10 \cos 40^\circ \approx 41{,}754$, zato $BC \approx 6{,}4617\,\mathrm{cm} \approx 6{,}46\,\mathrm{cm}$.
+2. b) Najdaljša stranica je $AB$, zato je največji kot pri $C$. Kota pri $A$ in $B$ sta ostra, zato nožišče $D$ višine iz $C$ leži med $A$ in $B$.
+3. b) Točki $A$ in $B$ ležita na osi, točka $C$ opiše krožnico s polmerom $r = CD$. Stranica $CA$ opiše plašč stožca z vrhom $A$, stranica $CB$ plašč stožca z vrhom $B$. Nastane dvojni stožec s skupno osnovno ploskvijo.
+4. b) Polmer: $r = AC\sin 40^\circ = 7\sin 40^\circ \approx 4{,}4995\,\mathrm{cm} \approx 4{,}50\,\mathrm{cm}$.
+5. c) Višini stožcev sta $AD$ in $DB$, skupaj $AB$. Zato $V = \dfrac{\pi r^2 \cdot AD}{3} + \dfrac{\pi r^2 \cdot DB}{3} = \dfrac{\pi r^2 \cdot AB}{3} \approx 212{,}01\,\mathrm{cm^3} \approx 212{,}0\,\mathrm{cm^3}$.
+6. c) Površino sestavljata le plašča, stranici stožcev sta $AC$ in $BC$: $P = \pi r\,(AC + BC) \approx \pi \cdot 4{,}4995 \cdot 13{,}4617 \approx 190{,}29\,\mathrm{cm^2} \approx 190{,}3\,\mathrm{cm^2}$.
+7. d) Točka $C$ leži na osi, $A$ in $B$ pa sta od nje oddaljeni $r$. Stranica $AB$ je vzporedna z osjo in opiše plašč valja s polmerom $r$ in višino $AB$. Stranici $CA$ in $CB$ gresta skozi točko osi in opišeta plašča dveh stožcev z vrhom v $C$, ki sta izrezana iz valja. Višini stožcev sta dolžini projekcij $CA$ in $CB$ na os, to sta $AD$ in $DB$.
+8. d) $V' = \pi r^2 \cdot AB - \dfrac{\pi r^2 (AD + DB)}{3} = \pi r^2 \cdot AB - \dfrac{\pi r^2 \cdot AB}{3} = 2 \cdot \dfrac{\pi r^2 \cdot AB}{3} = 2V \approx 424{,}0\,\mathrm{cm^3}$.
+9. Odgovor: a) $BC \approx 6{,}46\,\mathrm{cm}$; b) dvojni stožec s polmerom $r \approx 4{,}50\,\mathrm{cm}$; c) $V \approx 212{,}0\,\mathrm{cm^3}$ in $P \approx 190{,}3\,\mathrm{cm^2}$; d) valj, iz katerega sta izrezana dva stožca, $V' = 2V \approx 424{,}0\,\mathrm{cm^3}$.
+
+**Točkovanje:** a) 1 točka za kosinusni izrek, 1 točka za $BC \approx 6{,}46\,\mathrm{cm}$; b) 1 točka za opis dvojnega stožca, 1 točka za utemeljitev, da sta kota pri $A$ in $B$ ostra, 1 točka za $r \approx 4{,}50\,\mathrm{cm}$; c) 1 točka za $V = \frac{\pi r^2 \cdot AB}{3}$, 1 točka za $V \approx 212{,}0\,\mathrm{cm^3}$ (priznamo tudi $212{,}1\,\mathrm{cm^3}$ z zaokroženim polmerom), 1 točka za $P \approx 190{,}3\,\mathrm{cm^2}$; d) 1 točka za opis (valj brez dveh stožcev), 1 točka za izračun $V' = 2V$.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Kaj pravi Cavalierijevo načelo in kako iz njega sledi prostornina poševne prizme?
+---
+Če dve telesi ležita med dvema vzporednima ravninama in ju vsaka vzporedna ravnina med njima seka v likih z enako ploščino, imata telesi enako prostornino. Poševno prizmo primerjamo s pokončno prizmo z enako osnovno ploskvijo in enako višino. Prerezi obeh prizem, vzporedni z osnovno ploskvijo, so skladni z osnovno ploskvijo, zato imajo enako ploščino. Poševna prizma ima torej enako prostornino kot pokončna, $V = O\,v$, kjer je $v$ razdalja med ravninama osnovnih ploskev.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Pravokotni trikotnik zavrtimo enkrat okoli katete, drugič okoli hipotenuze. Opiši nastali vrtenini in pojasni, kako dobimo njuna polmera.
+---
+Pri vrtenju okoli katete nastane stožec: kateta na osi je višina, druga kateta je polmer, hipotenuza pa opiše plašč. Pri vrtenju okoli hipotenuze nastane dvojni stožec, to sta dva stožca s skupno osnovno ploskvijo. Njun polmer je razdalja oglišča s pravim kotom od hipotenuze, torej višina na hipotenuzo. Iz dveh zapisov ploščine trikotnika, $\frac{a\,b}{2} = \frac{c\,r}{2}$, dobimo $r = \frac{a\,b}{c}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Ali imata pokončna in poševna prizma z enako osnovno ploskvijo in enako višino tudi enako površino? Utemelji.
+---
+Ne, enaka je le prostornina, ker Cavalierijevo načelo govori samo o prerezih in prostornini. Osnovne ploskve so pri obeh prizmah skladne, razlikujejo se stranske ploskve. Pri pokončni prizmi je stranska ploskev nad osnovnim robom $e$ pravokotnik s ploščino $e\,v$, pri poševni pa paralelogram s ploščino $e\,h$, kjer je $h$ njegova višina na rob $e$. Višina $h$ je razdalja med vzporednima robovoma, ki ležita v ravninah obeh osnovnih ploskev, zato je $h \ge v$; enakost velja le, če je stranska ploskev pravokotna na osnovno ploskev. Pri poševni prizmi ne morejo biti vse stranske ploskve pravokotne na osnovno ploskev, ker bi bil sicer stranski rob kot presečnica dveh sosednjih stranskih ploskev pravokoten nanjo, zato ima poševna prizma večjo površino.
+:::
+
 ## Drugače: Korak za korakom s številkami
 
 Isti pravokotni trapez kot v Primeru 4 (osnovnici $6\,\mathrm{cm}$ in $3\,\mathrm{cm}$, pravokotni krak $4\,\mathrm{cm}$) zavrtimo okoli **krajše** osnovnice.
@@ -279,6 +348,17 @@ vrednost: pi*4^2*3 + pi*4^2*3/3 | 201.1
 vrednost: pi*4^2*6 - pi*4^2*3/3 | 251.3
 vrednost: pi*5^2*10*sin(30°) | 392.7
 vrednost: sqrt(96*3/8) | 6
+vrednost: 6*sin(60°) | 3*sqrt(3)
+vrednost: sqrt(3)/4*4^2 | 4*sqrt(3)
+vrednost: 4*sqrt(3)*3*sqrt(3) | 36
+vrednost: 4*sqrt(3)*6 | 24*sqrt(3)
+vrednost: 36/(24*sqrt(3)) | sqrt(3)/2
+vrednost: 7^2+10^2-2*7*10*cos(40°) | 41.754
+vrednost: sqrt(7^2+10^2-2*7*10*cos(40°)) | 6.46
+vrednost: 7*sin(40°) | 4.50
+vrednost: pi*(7*sin(40°))^2*10/3 | 212.0
+vrednost: pi*7*sin(40°)*(7+sqrt(7^2+10^2-2*7*10*cos(40°))) | 190.3
+vrednost: 2*pi*(7*sin(40°))^2*10/3 | 424.0
 >>
 
 :::simboli

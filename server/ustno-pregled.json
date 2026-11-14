@@ -2474,6 +2474,18 @@
    "h": "59713dedf443",
    "o": "D"
   },
+  "MAT-SS-3/adicijski-izreki#p3": {
+   "h": "d893edaa38bb",
+   "o": "D"
+  },
+  "MAT-SS-3/adicijski-izreki#p4": {
+   "h": "cb8ce3f08591",
+   "o": "D"
+  },
+  "MAT-SS-3/adicijski-izreki#p5": {
+   "h": "89589784bc86",
+   "o": "D"
+  },
   "MAT-SS-3/elipsa-hiperbola-parabola#p0": {
    "h": "1121b26c3dba",
    "o": "I",
@@ -2481,6 +2493,18 @@
   },
   "MAT-SS-3/elipsa-hiperbola-parabola#p1": {
    "h": "ac274372c2cc",
+   "o": "D"
+  },
+  "MAT-SS-3/elipsa-hiperbola-parabola#p3": {
+   "h": "e76ee42f2ba7",
+   "o": "D"
+  },
+  "MAT-SS-3/elipsa-hiperbola-parabola#p4": {
+   "h": "9e7dd0a8cf36",
+   "o": "D"
+  },
+  "MAT-SS-3/elipsa-hiperbola-parabola#p5": {
+   "h": "46799691c1c6",
    "o": "D"
   },
   "MAT-SS-3/graf-polinoma#p0": {
@@ -2496,12 +2520,48 @@
     "Vodilni člen je $-x^4$: stopnja $4$ je soda, vodilni koeficient $-1$ negativen"
    ]
   },
+  "MAT-SS-3/graf-polinoma#p3": {
+   "h": "005ff9691d15",
+   "o": "D"
+  },
+  "MAT-SS-3/graf-polinoma#p4": {
+   "h": "12041c5e9fc9",
+   "o": "D"
+  },
+  "MAT-SS-3/graf-polinoma#p5": {
+   "h": "63c8c9cfa89d",
+   "o": "D"
+  },
   "MAT-SS-3/grafi-kotnih-funkcij#p1": {
    "h": "999ed4bf4c8e",
    "o": "D"
   },
+  "MAT-SS-3/grafi-kotnih-funkcij#p3": {
+   "h": "42e667612436",
+   "o": "D"
+  },
+  "MAT-SS-3/grafi-kotnih-funkcij#p4": {
+   "h": "f0e7e74585f1",
+   "o": "D"
+  },
+  "MAT-SS-3/grafi-kotnih-funkcij#p5": {
+   "h": "ab7027df5926",
+   "o": "D"
+  },
   "MAT-SS-3/kotne-funkcije-poljubnega-kota#p0": {
    "h": "3403f6611fc4",
+   "o": "D"
+  },
+  "MAT-SS-3/kotne-funkcije-poljubnega-kota#p3": {
+   "h": "83107ceb1e8d",
+   "o": "D"
+  },
+  "MAT-SS-3/kotne-funkcije-poljubnega-kota#p4": {
+   "h": "34a6acd72918",
+   "o": "D"
+  },
+  "MAT-SS-3/kotne-funkcije-poljubnega-kota#p5": {
+   "h": "467fffddcaa0",
    "o": "D"
   },
   "MAT-SS-3/krozne-funkcije#p0": {
@@ -2510,6 +2570,18 @@
   },
   "MAT-SS-3/krozne-funkcije#p1": {
    "h": "aad990b25b96",
+   "o": "D"
+  },
+  "MAT-SS-3/krozne-funkcije#p3": {
+   "h": "460aaa56d80a",
+   "o": "D"
+  },
+  "MAT-SS-3/krozne-funkcije#p4": {
+   "h": "7ae6a14c6421",
+   "o": "D"
+  },
+  "MAT-SS-3/krozne-funkcije#p5": {
+   "h": "b20ae0256698",
    "o": "D"
   },
   "MAT-SS-3/kroznica#p0": {
@@ -2521,6 +2593,18 @@
    "o": "I",
    "r": "sklic na nalogo iz lekcije"
   },
+  "MAT-SS-3/kroznica#p3": {
+   "h": "c38ed17c87d8",
+   "o": "D"
+  },
+  "MAT-SS-3/kroznica#p4": {
+   "h": "106379039830",
+   "o": "D"
+  },
+  "MAT-SS-3/kroznica#p5": {
+   "h": "bffef9d97cf2",
+   "o": "D"
+  },
   "MAT-SS-3/polinomi#p1": {
    "h": "b622850ab0dc",
    "o": "D"
@@ -2529,6 +2613,18 @@
    "h": "f58a6daa414a",
    "o": "I",
    "r": "deljenje ni podano"
+  },
+  "MAT-SS-3/polinomi#p3": {
+   "h": "6c0c84286fb5",
+   "o": "D"
+  },
+  "MAT-SS-3/polinomi#p4": {
+   "h": "7343e5b17394",
+   "o": "D"
+  },
+  "MAT-SS-3/polinomi#p5": {
+   "h": "264f6d617a6f",
+   "o": "D"
   },
   "MAT-SS-3/posevna-telesa-in-vrtenine#p0": {
    "h": "4633a110a6f5",
@@ -2539,14 +2635,50 @@
    "h": "0b7410e44178",
    "o": "D"
   },
+  "MAT-SS-3/posevna-telesa-in-vrtenine#p3": {
+   "h": "99d015c0e5a1",
+   "o": "D"
+  },
+  "MAT-SS-3/posevna-telesa-in-vrtenine#p4": {
+   "h": "54cd357ea8b3",
+   "o": "D"
+  },
+  "MAT-SS-3/posevna-telesa-in-vrtenine#p5": {
+   "h": "2ec48048fb01",
+   "o": "D"
+  },
   "MAT-SS-3/povrsina-in-prostornina-teles#p0": {
    "h": "106468105879",
+   "o": "D"
+  },
+  "MAT-SS-3/povrsina-in-prostornina-teles#p3": {
+   "h": "7143405a6e1a",
+   "o": "D"
+  },
+  "MAT-SS-3/povrsina-in-prostornina-teles#p4": {
+   "h": "338314a151bd",
+   "o": "D"
+  },
+  "MAT-SS-3/povrsina-in-prostornina-teles#p5": {
+   "h": "c946d98e9b85",
    "o": "D"
   },
   "MAT-SS-3/premice-in-ravnine-v-prostoru#p0": {
    "h": "f0feef623692",
    "o": "I",
    "r": "»ena premica ni dovolj« se sklicuje na prejšnji odstavek lekcije"
+  },
+  "MAT-SS-3/premice-in-ravnine-v-prostoru#p3": {
+   "h": "f6421c406505",
+   "o": "D"
+  },
+  "MAT-SS-3/premice-in-ravnine-v-prostoru#p4": {
+   "h": "2b48485cc63d",
+   "o": "D"
+  },
+  "MAT-SS-3/premice-in-ravnine-v-prostoru#p5": {
+   "h": "63d229cbc845",
+   "o": "D"
   },
   "MAT-SS-3/racionalne-funkcije#p0": {
    "h": "4be5784578f7",
@@ -2556,8 +2688,20 @@
    "h": "41dcbf577f68",
    "o": "D"
   },
+  "MAT-SS-3/racionalne-funkcije#p3": {
+   "h": "6f37a0d32f15",
+   "o": "D"
+  },
+  "MAT-SS-3/racionalne-funkcije#p4": {
+   "h": "8de377cfeb03",
+   "o": "D"
+  },
+  "MAT-SS-3/racionalne-funkcije#p5": {
+   "h": "cf4fc2f5bbd0",
+   "o": "D"
+  },
   "MAT-SS-3/racionalne-neenacbe#p1": {
-   "h": "33144d8fea5a",
+   "h": "58d58c315c5f",
    "o": "D"
   },
   "MAT-SS-3/racionalne-neenacbe#p2": {
@@ -2565,13 +2709,45 @@
    "o": "I",
    "r": "ne pove, za kateri ulomek gre (primer iz lekcije)"
   },
+  "MAT-SS-3/racionalne-neenacbe#p4": {
+   "h": "8a4d3d210d46",
+   "o": "D"
+  },
+  "MAT-SS-3/racionalne-neenacbe#p5": {
+   "h": "7c24ff2854b0",
+   "o": "D"
+  },
   "MAT-SS-3/sinusni-in-kosinusni-izrek#p1": {
    "h": "1a97ad1a00c9",
    "o": "I",
    "r": "sklic na past iz lekcije"
   },
+  "MAT-SS-3/sinusni-in-kosinusni-izrek#p3": {
+   "h": "d885c4b300e7",
+   "o": "D"
+  },
+  "MAT-SS-3/sinusni-in-kosinusni-izrek#p4": {
+   "h": "8c74f69606a5",
+   "o": "D"
+  },
+  "MAT-SS-3/sinusni-in-kosinusni-izrek#p5": {
+   "h": "4478348250d7",
+   "o": "D"
+  },
   "MAT-SS-3/skalarni-produkt#p1": {
    "h": "8b3ea9f140ee",
+   "o": "D"
+  },
+  "MAT-SS-3/skalarni-produkt#p3": {
+   "h": "20cc33a1cdbd",
+   "o": "D"
+  },
+  "MAT-SS-3/skalarni-produkt#p4": {
+   "h": "9de9321c593f",
+   "o": "D"
+  },
+  "MAT-SS-3/skalarni-produkt#p5": {
+   "h": "1b5411ea4f53",
    "o": "D"
   },
   "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p0": {
@@ -2580,6 +2756,30 @@
   },
   "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p1": {
    "h": "a671c322442a",
+   "o": "D"
+  },
+  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p3": {
+   "h": "1806b4f8156a",
+   "o": "D"
+  },
+  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p4": {
+   "h": "d61ee8595ae2",
+   "o": "D"
+  },
+  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p5": {
+   "h": "53eb08b39c86",
+   "o": "D"
+  },
+  "MAT-SS-3/trigonometrijske-enacbe#p3": {
+   "h": "c05fc221b9a2",
+   "o": "D"
+  },
+  "MAT-SS-3/trigonometrijske-enacbe#p4": {
+   "h": "1f20dea4f89d",
+   "o": "D"
+  },
+  "MAT-SS-3/trigonometrijske-enacbe#p5": {
+   "h": "fb0069d6071a",
    "o": "D"
   },
   "MAT-SS-3/vektorji-v-geometriji#p0": {
@@ -2591,17 +2791,25 @@
    ]
   },
   "MAT-SS-3/vektorji-v-geometriji#p1": {
-   "h": "70a4733d19a2",
-   "o": "D",
-   "k": [
-    "Pri $\\vec b = 2\\vec a$ sta $3\\vec a + 1\\vec b$ in $5\\vec a + 0\\vec b$ oba enaka $5\\vec a$, koeficienti pa so različni",
-    "Primerjava bi dala nesmisel $3 = 5$"
-   ]
+   "h": "e8a9314de499",
+   "o": "D"
   },
   "MAT-SS-3/vektorji-v-geometriji#p2": {
    "h": "0c31b2164309",
    "o": "I",
    "r": "sklic na »tretjo enačbo« in let drona iz primera v lekciji"
+  },
+  "MAT-SS-3/vektorji-v-geometriji#p3": {
+   "h": "0022aeb147ba",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-geometriji#p4": {
+   "h": "feaeafd5bbbe",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-geometriji#p5": {
+   "h": "da19008e0a67",
+   "o": "D"
   },
   "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p0": {
    "h": "b61fa5c4b425",
@@ -2609,6 +2817,18 @@
   },
   "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p1": {
    "h": "256339ef08d0",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p3": {
+   "h": "6e8c40137e40",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p4": {
+   "h": "a0b5ab817a0e",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p5": {
+   "h": "54f542cd234d",
    "o": "D"
   },
   "MAT-SS-4/anuitete-in-amortizacijski-nacrt#p1": {
