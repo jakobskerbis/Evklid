@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Linearna kombinacija
+  - $\vec v = \alpha\vec a + \beta\vec b$
+  - $\overrightarrow{OP} = 2\vec a + \vec b$ na mreži
+- Kolinearnost
+  - $\vec b = k\vec a$: enaka razmerja komponent
+  - točke: $\overrightarrow{AC} = k\,\overrightarrow{AB}$, skupni začetek
+  - napaka: vzporedni premici nista ista premica
+- Koplanarnost
+  - $\vec c = \alpha\vec a + \beta\vec b$
+  - smisel ima le v prostoru
+- Linearna neodvisnost (višja raven)
+  - $\alpha\vec a + \beta\vec b = \vec 0$ le pri $\alpha = \beta = 0$
+  - neodvisno ni isto kot pravokotno
+  - pri neodvisnih primerjamo koeficiente
+- Delilno razmerje (višja raven)
+  - $\vec r_D = \dfrac{n\vec r_A + m\vec r_B}{m + n}$
+  - bližja točka dobi večjo utež
+- Težišče (višja raven)
+  - $\vec r_T = \dfrac{\vec r_A + \vec r_B + \vec r_C}{3}$
+  - deli težiščnico v razmerju $2 : 1$
+- Presečišče daljic (višja raven)
+  - isti vektor zapiši na dva načina
+  - diagonali paralelograma se razpolavljata

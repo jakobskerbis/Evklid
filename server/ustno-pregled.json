@@ -2390,6 +2390,14 @@
    "h": "3403f6611fc4",
    "o": "D"
   },
+  "MAT-SS-3/krozne-funkcije#p0": {
+   "h": "07c65d481a09",
+   "o": "D"
+  },
+  "MAT-SS-3/krozne-funkcije#p1": {
+   "h": "aad990b25b96",
+   "o": "D"
+  },
   "MAT-SS-3/kroznica#p0": {
    "h": "3088d20fba7b",
    "o": "D"
@@ -2408,9 +2416,23 @@
    "o": "I",
    "r": "deljenje ni podano"
   },
+  "MAT-SS-3/posevna-telesa-in-vrtenine#p0": {
+   "h": "4633a110a6f5",
+   "o": "I",
+   "r": "sklic na kup palačink iz zgodbe lekcije (16 palačink, 8 cm)"
+  },
+  "MAT-SS-3/posevna-telesa-in-vrtenine#p1": {
+   "h": "0b7410e44178",
+   "o": "D"
+  },
   "MAT-SS-3/povrsina-in-prostornina-teles#p0": {
    "h": "106468105879",
    "o": "D"
+  },
+  "MAT-SS-3/premice-in-ravnine-v-prostoru#p0": {
+   "h": "f0feef623692",
+   "o": "I",
+   "r": "»ena premica ni dovolj« se sklicuje na prejšnji odstavek lekcije"
   },
   "MAT-SS-3/racionalne-funkcije#p0": {
    "h": "4be5784578f7",
@@ -2420,6 +2442,15 @@
    "h": "41dcbf577f68",
    "o": "D"
   },
+  "MAT-SS-3/racionalne-neenacbe#p1": {
+   "h": "33144d8fea5a",
+   "o": "D"
+  },
+  "MAT-SS-3/racionalne-neenacbe#p2": {
+   "h": "c03848f6bd28",
+   "o": "I",
+   "r": "ne pove, za kateri ulomek gre (primer iz lekcije)"
+  },
   "MAT-SS-3/sinusni-in-kosinusni-izrek#p1": {
    "h": "1a97ad1a00c9",
    "o": "I",
@@ -2428,6 +2459,35 @@
   "MAT-SS-3/skalarni-produkt#p1": {
    "h": "8b3ea9f140ee",
    "o": "D"
+  },
+  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p0": {
+   "h": "1cabcce3b57a",
+   "o": "D"
+  },
+  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p1": {
+   "h": "a671c322442a",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-geometriji#p0": {
+   "h": "8c71d33571b9",
+   "o": "D",
+   "k": [
+    "Ne. Premici $AB$ in $CD$ sta lahko le vzporedni, kot nasprotni stranici pravokotnika",
+    "Na eni premici so točke šele, ko imata premici skupno točko"
+   ]
+  },
+  "MAT-SS-3/vektorji-v-geometriji#p1": {
+   "h": "70a4733d19a2",
+   "o": "D",
+   "k": [
+    "Pri $\\vec b = 2\\vec a$ sta $3\\vec a + 1\\vec b$ in $5\\vec a + 0\\vec b$ oba enaka $5\\vec a$, koeficienti pa so različni",
+    "Primerjava bi dala nesmisel $3 = 5$"
+   ]
+  },
+  "MAT-SS-3/vektorji-v-geometriji#p2": {
+   "h": "0c31b2164309",
+   "o": "I",
+   "r": "sklic na »tretjo enačbo« in let drona iz primera v lekciji"
   },
   "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p0": {
    "h": "b61fa5c4b425",
