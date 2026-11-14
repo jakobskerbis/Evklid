@@ -280,7 +280,11 @@ body.graph-open { overflow: hidden; }
 /* Vnos je viden samo kot lep zapis s kazalcem (j, 5. 11.: »nikjer naj ni viden surov vnos«): surovo polje je prosojno čez vso vnosno vrstico (tipkovnica, dotik in kazalec delujejo kot prej), prazno pa kaže namig. */
 .sc-entry { position: relative; }
 .sc-entry:has(.sc-preview:not(:empty)) .sc-input { position: absolute; inset: 0 12px; width: auto; height: 100%; opacity: 0; }
-.sc-entry:has(.sc-preview:not(:empty)) .sc-preview { min-height: 2.2em; display: flex; align-items: center; justify-content: flex-end; cursor: text; }
+.sc-entry:has(.sc-preview:not(:empty)) .sc-preview { min-height: 2.2em; display: flex; align-items: center; cursor: text; }
+/* desno poravnano z margin-left: auto (ne justify-content: flex-end), da se dolg vnos lahko pomakne tudi do začetka */
+.sc-preview > .katex { margin-left: auto; }
+/* zložena formula v zgodovini (sirina.js) ostane ob desnem robu kot ostale */
+.sc .katex.tb-zlozena { margin-left: auto; margin-right: 0; }
 /* kazalec in prazen okvirček (sci-vnos.js): barvi iz spremenljivk teme, tudi v temni temi */
 .sc-preview .sc-caret { color: var(--accent); animation: sc-blink 1.1s steps(1) infinite; }
 .sc-preview .sc-caret .rule { border-color: currentColor; }

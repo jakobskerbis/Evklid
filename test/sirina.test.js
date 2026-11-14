@@ -4,7 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { MIN, pomanjsaj } from "../public/sirina.js";
+import { MIN, pomanjsaj, mestoFormule } from "../public/sirina.js";
 
 const pub = (f) => fs.readFileSync(path.join(import.meta.dirname, "..", "public", f), "utf8");
 
@@ -194,4 +194,12 @@ test("a list without brackets folds after top-level commas, a chemical chain bef
   assert.equal(zlozTex("\\mathrm{CH(CH_2{-}CH_2{-}CH_2{-}CH_3)}", 3, 6), null);
   // Naboj iona (^{-}) ni vez: »\mathrm{OH^}« bi se ne izrisal.
   assert.doesNotMatch(zlozTex("\\mathrm{C_6H_{11}Br + OH^{-} \\xrightarrow{H_2O} C_6H_{11}OH + Br^{-}}", 3, 8), /\^\}/);
+});
+
+// Znanstveni kalkulator ima svojo postavitev: zlaganje je formule v zgodovini zlagalo in razlagalo (utripanje),
+// vnos pa izrisalo brez oznake kazalca (rdeč »\\htmlClass«; j 14. 11. 2026).
+test("formulas in the scientific calculator are left to the calculator", () => {
+  const sc = { classes: ["sc"] };
+  const k = { parentElement: { closest: () => null }, closest: (sel) => (sel.split(",").some((s) => s.trim() === ".sc") ? sc : null) };
+  assert.equal(mestoFormule(k), null);
 });
