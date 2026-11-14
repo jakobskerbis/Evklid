@@ -99,7 +99,7 @@ function kazalec(f) {
   if (!m.includes(p)) {
     const prej = zadnje.get(f) ?? p;
     const naprej = m.find((x) => x >= p);
-    const nazaj = m.findLast((x) => x <= p);
+    const nazaj = m.filter((x) => x <= p).pop(); // brez findLast (iOS < 15.4)
     const n = p >= prej ? (naprej ?? nazaj) : (nazaj ?? naprej);
     if (n == null) return p;
     p = n;

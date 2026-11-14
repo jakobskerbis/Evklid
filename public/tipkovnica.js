@@ -662,7 +662,8 @@ function deleteChunk(f, kind) {
     return document.execCommand("delete");
   }
   const r = sel(f);
-  if (!r || r[0] !== r[1]) return backspace(f);
+  // Polje s formulo (public/predogled-vnosa.js): »beseda« je ves zapis »(1)/(2« in bi pustila »)«; vsak tap je en ⌫.
+  if (!r || r[0] !== r[1] || f.classList.contains("vnos-izrisan")) return backspace(f);
   const from = kind === "word" ? wordsBack(f.value, r[0], 1) : sentenceBack(f.value, r[0]);
   if (from === r[0]) return;
   f.setRangeText("", from, r[0], "end");
