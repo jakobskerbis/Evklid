@@ -731,10 +731,14 @@ async function calculator(p, label) {
     if (mode === "sci" && p.viewportSize().width < 760) {
       const size = p.viewportSize();
       await p.setViewportSize({ width: size.height, height: size.width });
-      await settle(p, 300);
-      const lez = await p.evaluate(covers);
-      await p.setViewportSize(size);
-      await settle(p, 300);
+      let lez;
+      try {
+        await settle(p, 300);
+        lez = await p.evaluate(covers);
+      } finally {
+        await p.setViewportSize(size);
+        await settle(p, 300);
+      }
       if (lez) throw new Error(`mehurček inštruktorja ležeče prekrije ${lez} v kalkulatorju`);
     }
   }
