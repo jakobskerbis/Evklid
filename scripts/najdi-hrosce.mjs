@@ -9,7 +9,7 @@
 //   node scripts/najdi-hrosce.mjs a.js b.json  # samo te datoteke
 //   node scripts/najdi-hrosce.mjs --json     # izid kot JSON (za teste)
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join, relative, extname } from "node:path";
+import { join, relative, extname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as acorn from "acorn";
 
@@ -119,7 +119,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const args = process.argv.slice(2);
   const json = args.includes("--json");
   const izbrane = args.filter((a) => !a.startsWith("--"));
-  const poti = izbrane.length ? izbrane.map((a) => join(process.cwd(), a)) : MAPE.flatMap((m) => [...datoteke(join(KOREN, m))]);
+  const poti = izbrane.length ? izbrane.map((a) => resolve(a)) : MAPE.flatMap((m) => [...datoteke(join(KOREN, m))]);
   const { najdbe, napake } = preveri(poti);
   if (json) {
     console.log(JSON.stringify({ datotek: poti.length, najdbe, napake }, null, 2));
