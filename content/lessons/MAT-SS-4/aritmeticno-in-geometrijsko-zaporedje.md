@@ -233,7 +233,7 @@ $S_6 = 3 \cdot \dfrac{2^6 - 1}{2 - 1} = 3 \cdot 63 = 189$. Preizkus: $3 + 6 + 12
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Med števili $7$ in $43$ vstavi osem števil tako, da vseh deset števil v tem vrstnem redu tvori aritmetično zaporedje. Zapiši vstavljena števila in izračunaj vsoto vseh desetih števil.
+Med števili $7$ in $43$ vstavite osem števil tako, da vseh deset števil v tem vrstnem redu tvori aritmetično zaporedje. Zapišite vstavljena števila in izračunajte vsoto vseh desetih števil.
 
 **Rešitev:**
 
@@ -248,10 +248,10 @@ Med števili $7$ in $43$ vstavi osem števil tako, da vseh deset števil v tem v
 
 Kolesarka se pripravlja na dirko. V prvem tednu priprav prevozi $120\,\text{km}$, nato vsak teden prevozi $8\,\%$ več kot v prejšnjem tednu.
 
-a) Koliko kilometrov prevozi v šestem tednu? Rezultat zaokroži na desetinko kilometra. (2 točki)
-b) Koliko kilometrov skupaj prevozi v prvih desetih tednih? Rezultat zaokroži na desetinko kilometra. (2 točki)
+a) Koliko kilometrov prevozi v šestem tednu? Rezultat zaokrožite na desetinko kilometra. (2 točki)
+b) Koliko kilometrov skupaj prevozi v prvih desetih tednih? Rezultat zaokrožite na desetinko kilometra. (2 točki)
 c) V katerem tednu prvič prevozi več kot $250\,\text{km}$? (2 točki)
-d) Njen sotekmovalec v prvem tednu prav tako prevozi $120\,\text{km}$, nato pa vsak teden $12\,\text{km}$ več kot v prejšnjem tednu. Kdo v prvih desetih tednih skupaj prevozi več in za koliko? Razliko zaokroži na desetinko kilometra. (2 točki)
+d) Njen sotekmovalec v prvem tednu prav tako prevozi $120\,\text{km}$, nato pa vsak teden $12\,\text{km}$ več kot v prejšnjem tednu. Kdo v prvih desetih tednih skupaj prevozi več in za koliko? Razliko zaokrožite na desetinko kilometra. (2 točki)
 
 **Rešitev:**
 
@@ -317,7 +317,7 @@ Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri
 > Od $a_1$ do $a_n$ je $n - 1$ množenj s $q$; pri $n = 1$ formula da $a_1 \cdot q^0 = a_1$.
 
 ? (brez računala) Aritmetično zaporedje ima $a_1 = 4$ in $d = 3$. Koliko je $a_{15}$?
-= 46
+= 46 | 0
 ~ 49 | To je $4 + 15 \cdot 3$. Korakov je le $14$, ker prvi člen že imaš.
 ~ 19131876 | To je $4 \cdot 3^{14}$: tako računaš pri geometrijskem zaporedju. Pri aritmetičnem diferenco prišteješ.
 > $a_{15} = 4 + 14 \cdot 3 = 46$.
@@ -349,7 +349,7 @@ Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri
 > Vrednosti tvorijo geometrijsko zaporedje s $q = 0{,}8$: po $3$ letih je vrtalnik vreden $500 \cdot 0{,}8^3 = 256\,\text{€}$.
 
 ? (brez računala) Nadaljuj zaporedje $1, 5, 11, 19, 29, \ldots$ po vzorcu. Koliko je šesti člen?
-= 41
+= 41 | 0
 ~ 39 | Razlike niso enake: $4, 6, 8, 10$. Vsaka je za $2$ večja od prejšnje, zato je naslednja $12$, ne $10$.
 ~ 58 | Zaporedje ni geometrijsko: $\frac{5}{1} \ne \frac{11}{5}$. Poglej razlike sosednjih členov.
 > Razlike so $4, 6, 8, 10$, naslednja je $12$: $a_6 = 29 + 12 = 41$. Splošni člen je $a_n = n^2 + n - 1$.

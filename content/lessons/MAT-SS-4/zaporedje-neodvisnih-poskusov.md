@@ -205,10 +205,10 @@ $P_5(5) = 0{,}8^5 = 0{,}32768$, skupaj $0{,}4096 + 0{,}32768 = 0{,}73728$. Sprej
 
 Lokostrelec zadene tarčo z verjetnostjo $\frac{2}{3}$, izidi strelov so med seboj neodvisni. Na tarčo ustreli $4$-krat.
 
-a) Utemelji, zakaj lahko uporabimo Bernoullijevo formulo, in zapiši $n$, $p$ in $q$. (1 točka)
-b) Izračunaj verjetnost, da tarčo zadene natanko dvakrat. (2 točki)
-c) Izračunaj verjetnost, da tarčo zadene vsaj enkrat. (2 točki)
-d) Izračunaj verjetnost, da tarčo zadene vsaj trikrat. (2 točki)
+a) Utemeljite, zakaj lahko uporabimo Bernoullijevo formulo, in zapišite $n$, $p$ in $q$. (1 točka)
+b) Izračunajte verjetnost, da tarčo zadene natanko dvakrat. (2 točki)
+c) Izračunajte verjetnost, da tarčo zadene vsaj enkrat. (2 točki)
+d) Izračunajte verjetnost, da tarčo zadene vsaj trikrat. (2 točki)
 
 **Rešitev:**
 
@@ -223,12 +223,12 @@ d) Izračunaj verjetnost, da tarčo zadene vsaj trikrat. (2 točki)
 
 ### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
 
-Stroj izdela izdelek z napako z verjetnostjo $0{,}04$, neodvisno od drugih izdelkov. Izdelke pakirajo v škatle po $20$. Trgovina škatlo vrne, če sta v njej vsaj $2$ izdelka z napako. Rezultate zaokroži na štiri decimalna mesta.
+Stroj izdela izdelek z napako z verjetnostjo $0{,}04$, neodvisno od drugih izdelkov. Izdelke pakirajo v škatle po $20$. Trgovina škatlo vrne, če sta v njej vsaj $2$ izdelka z napako. Rezultate zaokrožite na štiri decimalna mesta.
 
-a) Izračunaj verjetnost, da v škatli ni nobenega izdelka z napako. (2 točki)
-b) Izračunaj verjetnost, da sta v škatli natanko $2$ izdelka z napako. (2 točki)
-c) Izračunaj verjetnost, da trgovina škatlo vrne. (3 točke)
-d) Trgovina prejme $5$ škatel. Izračunaj verjetnost, da ne vrne nobene od njih. (3 točke)
+a) Izračunajte verjetnost, da v škatli ni nobenega izdelka z napako. (2 točki)
+b) Izračunajte verjetnost, da sta v škatli natanko $2$ izdelka z napako. (2 točki)
+c) Izračunajte verjetnost, da trgovina škatlo vrne. (3 točke)
+d) Trgovina prejme $5$ škatel. Izračunajte verjetnost, da ne vrne nobene od njih. (3 točke)
 
 **Rešitev:**
 
@@ -298,12 +298,12 @@ Po binomskem izreku je $\sum_{k=0}^{n} P(X = k) = (p+q)^n = 1$, kar potrdi, da s
 > $q^5 = 0{,}03$, zato $q^{10} = (q^5)^2 = 0{,}03^2 = 0{,}0009$. Več poskusov naredi popoln neuspeh mnogo manj verjeten.
 
 ? Rok računa, kolikšna je verjetnost vsaj $2$ uspehov v $4$ poskusih, če je $p = 0{,}3$. V katerem koraku je napaka?
-| korak | Rokov zapis |
+| | Rokov zapis |
 |---|---|
-| (1) | nasprotni dogodek je »največ $1$ uspeh« |
+| (1) | nasprotni dogodek: »največ $1$ uspeh« |
 | (2) | $P_4(0) = 0{,}7^4 = 0{,}2401$ |
 | (3) | $P_4(1) = 0{,}3 \cdot 0{,}7^3 = 0{,}1029$ |
-| (4) | $P = 1 - 0{,}2401 - 0{,}1029 = 0{,}657$ |
+| (4) | $1 - 0{,}2401 - 0{,}1029 = 0{,}657$ |
 - V koraku (1).
 ~ Nasprotje dogodka »vsaj $2$« so izidi $k = 0$ in $k = 1$, torej res »največ $1$«.
 - V koraku (2).

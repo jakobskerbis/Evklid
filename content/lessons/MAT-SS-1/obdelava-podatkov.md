@@ -47,21 +47,23 @@ Povprečje skoči na $\dfrac{9 \cdot 10 + 2\,000}{10} = 209\,\text{€}$, median
 
 **Kako povzamemo podatke?** Odloča vrsta podatkov.
 
-| Vrsta podatkov | Primeren povzetek |
+| Podatki | Povzetek |
 |---|---|
 | opisni | modus |
 | vrstni | mediana |
 | številski | aritmetična sredina; ob osamelcih mediana |
 
-Opisnih podatkov ne moremo urediti, zato ostane modus. Vrstne uredimo, ne seštejemo pa jih, zato vzamemo mediano: pri ocenah $1, 3, 3, 4, 5$ je to $3$ (dobro).
+Opisnih podatkov ne moremo urediti, zato ostane modus. Vrstne uredimo, ne seštejemo pa jih: pri ocenah $1, 3, 3, 4, 5$ je mediana $3$ (dobro).
 
 **4. Mere razpršenosti.** Pokažejo, kako se podatki raztezajo okoli sredine.
 
 - **Razmah** (variacijski razmik) je $R = x_{\max} - x_{\min}$. Je preprost, a odvisen le od dveh skrajnih podatkov.
-- **Kvartili.** Urejene podatke razdelimo na štiri približno enake dele. Drugi kvartil $Q_2$ je mediana. Prvi kvartil $Q_1$ je mediana spodnje polovice, tretji kvartil $Q_3$ pa mediana zgornje polovice. Pri lihem $n$ srednjega podatka ne všteješ v nobeno polovico. **Medkvartilni** (medčetrtinski) **razmik** je $Q_3 - Q_1$ in zajame sredinsko polovico podatkov.
+- **Kvartili.** Urejene podatke razdelimo na štiri približno enake dele. Drugi kvartil $Q_2$ je mediana. Prvi kvartil $Q_1$ je mediana spodnje polovice, tretji kvartil $Q_3$ pa mediana zgornje polovice. Pri lihem $n$ srednjega podatka ne všteješ v nobeno polovico. **Medkvartilni** (medčetrtinski) **razmik** je $Q_3 - Q_1$ in zajame sredinsko polovico podatkov. Metod za kvartile je več (učbeniki, računala, preglednice), pri malo podatkih se rezultati lahko malo razlikujejo; na maturi zapiši, kako si kvartila določil.
 - **Varianca** je povprečje kvadratov odklonov. **Odklon** podatka je razlika $x_i - \bar{x}$, torej koliko podatek leži nad sredino ali pod njo:
 $$\sigma^2 = \frac{(x_1-\bar{x})^2 + \cdots + (x_n-\bar{x})^2}{n}$$
 - **Standardni odklon** je njen koren: $\sigma = \sqrt{\sigma^2}$. Ima enako enoto kot podatki, zato ga lahko neposredno primerjamo s sredino. Manjši kot je, bolj so podatki zbrani okoli sredine.
+
+Na maturi in v tej lekciji deliš z $n$: na računalu izberi $\sigma_n$ ali $\sigma_x$, ne $s_x$ ali $\sigma_{n-1}$. Vzorčni odklon $s$ (deljenje z $n - 1$) služi ocenjevanju populacije iz vzorca, matura ga ne zahteva.
 
 *Preveri:* Kolikšen je razmah utrinkov na drugem kraju iz uvoda? ($38 - 2 = 36$, na prvem pa le $22 - 18 = 4$.)
 
@@ -77,19 +79,15 @@ Vsota odklonov je vedno $0$, ker se pozitivni in negativni izničijo. Na prvem k
 
 **6. Prikazi podatkov.**
 
-| Prikaz | Kdaj ga uporabimo |
-|---|---|
-| Frekvenčna tabela | urejen pregled vrednosti, frekvenc in deležev |
-| Stolpčni diagram | kategorije ali posamezne vrednosti; stolpci so ločeni |
-| Krožni (tortni) diagram | deleži celote; središčni kot kroga je $\dfrac{f}{n}\cdot 360^\circ$ |
-| Pozicijski diagram | malo številskih podatkov; vsak podatek je pika nad številsko premico |
-| Histogram | števila, razvrščena v razrede iste širine; stolpci se dotikajo |
-| Škatla z brki | pet števil: najmanjši podatek, $Q_1$, $M$, $Q_3$, največji podatek; osamelce rišemo kot pike |
-| Linijski diagram | spreminjanje s časom; zaporedne točke povežemo z daljicami |
-| Krivuljni diagram | kot linijski, a z gladko krivuljo, ko se količina spreminja zvezno |
-| Razsevni diagram | dve številski spremenljivki; vsaka enota je točka $(x, y)$ |
-
-Opisne in vrstne podatke kažemo s stolpčnim ali krožnim diagramom, številske s pozicijskim diagramom, histogramom ali škatlo z brki.
+- **Frekvenčna tabela**: urejen pregled vrednosti, frekvenc in deležev.
+- **Stolpčni diagram**: kategorije ali posamezne vrednosti; stolpci so ločeni.
+- **Krožni (tortni) diagram**: deleži celote; središčni kot kroga je $\dfrac{f}{n}\cdot 360^\circ$.
+- **Pozicijski diagram**: malo številskih podatkov; vsak podatek je pika nad številsko premico.
+- **Histogram**: števila, razvrščena v razrede iste širine; stolpci se dotikajo.
+- **Škatla z brki**: pet števil: najmanjši podatek, $Q_1$, $M$, $Q_3$, največji podatek; osamelce rišemo kot pike.
+- **Linijski diagram**: spreminjanje s časom; zaporedne točke povežemo z daljicami.
+- **Krivuljni diagram**: kot linijski, a z gladko krivuljo, ko se količina spreminja zvezno.
+- **Razsevni diagram**: dve številski spremenljivki; vsaka enota je točka $(x, y)$.
 
 :::risba graf
 opis: Pozicijski diagram podatkov 6, 9, 7, 10, 8, 9, 5, 12 iz Primera 1. Nad številsko osjo od 4 do 13 je pri vrednostih 5, 6, 7, 8, 10 in 12 po ena pika, pri vrednosti 9 pa dve piki, druga nad drugo.
@@ -268,7 +266,7 @@ opisni podatki: modus; vrstni: mediana; številski: aritmetična sredina ali med
 
 ## Pogoste napake
 
-- **Mediana neurejenih podatkov.** Če vzameš srednji podatek v prvotnem vrstnem redu, dobiš napačno število. Mediana je definirana za *urejene* podatke. Najprej uredi, nato poišči sredino.
+- **Mediana neurejenih podatkov.** Če vzameš srednji podatek v prvotnem vrstnem redu, dobiš napačno število. Najprej uredi, nato poišči sredino.
 - **Napačen imenovalec pri frekvenčni tabeli.** Pri frekvenčni tabeli učenci pogosto delijo s številom različnih vrednosti (v Primeru 3 s $5$), ne s številom podatkov ($20$). Pravilno: $\bar{x} = \dfrac{\sum f_i x_i}{\sum f_i}$.
 - **Standardni odklon brez korena.** Varianca ima enoto na kvadrat (npr. $\text{min}^2$), zato je ni smiselno primerjati s podatki. Vedno dokončaj z $\sigma = \sqrt{\sigma^2}$.
 - **Vsota odklonov namesto vsote kvadratov.** $\sum (x_i - \bar{x}) = 0$ za vsak nabor podatkov. Odklone moraš najprej kvadrirati in šele nato sešteti.
@@ -310,7 +308,7 @@ opisni podatki: modus; vrstni: mediana; številski: aritmetična sredina ali med
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Sedem dijakov je naredilo $15$, $8$, $12$, $20$, $9$, $14$ in $11$ sklec. Zapiši pet števil, s katerimi narišemo škatlo z brki, in izračunaj medkvartilni (medčetrtinski) razmik.
+Sedem dijakov je naredilo $15$, $8$, $12$, $20$, $9$, $14$ in $11$ sklec. Zapišite pet števil, s katerimi narišemo škatlo z brki, in izračunajte medkvartilni (medčetrtinski) razmik.
 
 **Rešitev:**
 
@@ -330,10 +328,10 @@ Na dveh vremenskih postajah so šest dni zapored ob poldne izmerili hitrost vetr
 - prva postaja: $38, 41, 40, 44, 37, 40$,
 - druga postaja: $35, 46, 39, 43, 33, 44$.
 
-a) Za vsako postajo izračunaj aritmetično sredino in mediano. (2 točki)
-b) Za vsako postajo izračunaj standardni odklon. Rezultat zaokroži na dve decimalni mesti. (3 točke)
-c) Na kateri postaji je bila hitrost vetra bolj enakomerna? Odgovor utemelji. (1 točka)
-d) Sedmi dan so na prvi postaji izmerili $54\,\text{km/h}$. Izračunaj novo aritmetično sredino in mediano vseh sedmih meritev prve postaje ter pojasni, zakaj se je sredina spremenila bolj kot mediana. (2 točki)
+a) Za vsako postajo izračunajte aritmetično sredino in mediano. (2 točki)
+b) Za vsako postajo izračunajte standardni odklon. Rezultat zaokrožite na dve decimalni mesti. (3 točke)
+c) Na kateri postaji je bila hitrost vetra bolj enakomerna? Odgovor utemeljite. (1 točka)
+d) Sedmi dan so na prvi postaji izmerili $54\,\text{km/h}$. Izračunajte novo aritmetično sredino in mediano vseh sedmih meritev prve postaje ter pojasnite, zakaj se je sredina spremenila bolj kot mediana. (2 točki)
 
 **Rešitev:**
 
@@ -346,7 +344,7 @@ d) Sedmi dan so na prvi postaji izmerili $54\,\text{km/h}$. Izračunaj novo arit
 7. d) Podatek $54$ je precej večji od ostalih. V aritmetično sredino prispeva s svojo velikostjo in jo dvigne za $2\,\text{km/h}$, mediana pa je odvisna le od srednjih podatkov in ostane enaka.
 8. Odgovor: na obeh postajah je $\bar{x} = 40\,\text{km/h}$, mediani sta $40\,\text{km/h}$ in $41\,\text{km/h}$; standardna odklona sta približno $2{,}24\,\text{km/h}$ in $4{,}76\,\text{km/h}$, zato je bil veter bolj enakomeren na prvi postaji; po sedmi meritvi je na prvi postaji $\bar{x} = 42\,\text{km/h}$ in $M = 40\,\text{km/h}$.
 
-**Točkovanje:** a) 1 točka za obe aritmetični sredini, 1 točka za obe mediani; b) 1 točka za vsoti kvadratov odklonov $30$ in $136$ (ali za varianci $5$ in $22{,}67$), 1 točka za $\sigma \approx 2{,}24\,\text{km/h}$ na prvi postaji in 1 točka za $\sigma \approx 4{,}76\,\text{km/h}$ na drugi postaji; c) 1 točka za odgovor »prva postaja«, utemeljen z manjšim standardnim odklonom; d) 1 točka za $\bar{x} = 42\,\text{km/h}$ in $M = 40\,\text{km/h}$, 1 točka za pojasnilo.
+**Točkovanje:** a) 1 točka za obe aritmetični sredini, 1 točka za obe mediani; b) 1 točka za vsoti kvadratov odklonov $30$ in $136$ (ali za varianci $5$ in $22{,}67$), 1 točka za $\sigma \approx 2{,}24\,\text{km/h}$ na prvi postaji in 1 točka za $\sigma \approx 4{,}76\,\text{km/h}$ na drugi postaji (odklona $2{,}45$ in $5{,}22$, deljena z $n - 1$, ne dobita točk za rezultat, točka za vsoti kvadratov ostane); c) 1 točka za odgovor »prva postaja«, utemeljen z manjšim standardnim odklonom; d) 1 točka za $\bar{x} = 42\,\text{km/h}$ in $M = 40\,\text{km/h}$, 1 točka za pojasnilo.
 
 ### Ustno vprašanje 1
 
@@ -376,26 +374,24 @@ Mediana je srednji podatek urejenih podatkov, zato je odvisna le od podatkov na 
 
 Predstavljaj si urejene podatke iz Primera 2 na številski premici. Škatla z brki jih povzame s petimi številkami:
 
-| Del slike | Vrednost | Kaj pomeni |
-|---|---|---|
-| levi brk se začne | $12$ | najmanjši podatek |
-| leva stranica škatle | $14$ | $Q_1$ |
-| črta v škatli | $15$ | mediana |
-| desna stranica škatle | $17$ | $Q_3$ |
-| desni brk se konča | $18$ | največji podatek znotraj mej |
-| posamezna pika | $45$ | osamelec |
+- levi brk se začne: $12$, najmanjši podatek;
+- leva stranica škatle: $14$, $Q_1$;
+- črta v škatli: $15$, mediana;
+- desna stranica škatle: $17$, $Q_3$;
+- desni brk se konča: $18$, največji podatek znotraj mej;
+- posamezna pika: $45$, osamelec.
 
-Širina škatle je medkvartilni razmik: v njej leži sredinska polovica podatkov. Če je črta mediane bližje levemu robu škatle, so podatki na levi strani bolj zgoščeni, na desni pa razvlečeni. Histogram pa je kot »ogrodje iz stolpcev«: višji stolpec pomeni več podatkov v tistem razredu. Krožni diagram prikazuje le deleže celote, zato ne pokaže, kako veliki so podatki.
+Širina škatle je medkvartilni razmik: v njej leži sredinska polovica podatkov. Če je črta mediane bližje levemu robu škatle, so podatki na levi strani bolj zgoščeni, na desni pa razvlečeni.
 
 ## Drugače: Iz vsakdanjega življenja
 
 Dva strelca streljata na tarčo. Pet strelov prvega prinese $48, 50, 50, 50, 52$ točk, pet strelov drugega pa $30, 40, 50, 60, 70$. Oba imata povprečje $50$ točk. Trener bo kljub temu prvega označil za zanesljivega, drugega pa za nepredvidljivega. Standardni odklon to pove s številom: prvi strelec ima $\sigma \approx 1{,}3$ točke, drugi pa $\sigma \approx 14{,}1$ točke.
 
-Podobno je s plačami. Če v podjetju devet delavcev zasluži po $1\,000\,\text{€}$, direktor pa $11\,000\,\text{€}$, je povprečna plača $2\,000\,\text{€}$. Takšno povprečje nobenemu delavcu ne ustreza. Mediana plače, $1\,000\,\text{€}$, pove, kaj je običajno. Zato poročila o plačah in cenah stanovanj pogosto navajajo mediano. Prav tako vedno vprašaj, kolikšna je razpršenost, ne le sredina: avtobus, ki v povprečju pride ob 8.00, a včasih ob 7.40 in včasih ob 8.20, je za jutranjo uro precej slabši od tistega, ki je vedno natančen.
+Podobno je s plačami. Če v podjetju devet delavcev zasluži po $1\,000\,\text{€}$, direktor pa $11\,000\,\text{€}$, je povprečna plača $2\,000\,\text{€}$, kar nobenemu delavcu ne ustreza. Mediana, $1\,000\,\text{€}$, pove, kaj je običajno, zato jo poročila o plačah pogosto navajajo.
 
 ## Drugače: Korak za korakom s številkami
 
-Izračunajmo standardni odklon za podatke $3, 5, 6, 8, 8$. Pomagaj si s tabelo.
+Izračunajmo standardni odklon za podatke $3, 5, 6, 8, 8$.
 
 1. Aritmetična sredina: $\bar{x} = \dfrac{3 + 5 + 6 + 8 + 8}{5} = \dfrac{30}{5} = 6$.
 2. Za vsak podatek izračunaj odklon in njegov kvadrat:
@@ -415,13 +411,11 @@ Izračunajmo standardni odklon za podatke $3, 5, 6, 8, 8$. Pomagaj si s tabelo.
 
 ## Drugače: Bolj natančno
 
-**Zakaj vsota odklonov nikoli ne prinese informacije.** Ker je $\bar{x} = \dfrac{\sum x_i}{n}$, velja $\sum (x_i - \bar{x}) = \sum x_i - n\bar{x} = 0$. Zato odklone kvadriramo. Aritmetična sredina je prav tisto število $c$, pri katerem je vsota $\sum (x_i - c)^2$ najmanjša.
+**Zakaj vsota odklonov nikoli ne prinese informacije.** Ker je $\bar{x} = \dfrac{\sum x_i}{n}$, velja $\sum (x_i - \bar{x}) = \sum x_i - n\bar{x} = 0$. Aritmetična sredina je prav tisto število $c$, pri katerem je vsota $\sum (x_i - c)^2$ najmanjša.
 
 **Drugi zapis variance.** Če odklone kvadriramo kot dvočlenike in člene seštejemo, dobimo
 $$\sigma^2 = \frac{\sum x_i^2}{n} - \bar{x}^2,$$
 torej »povprečje kvadratov minus kvadrat povprečja«. Preizkus za podatke $2, 4, 4, 4, 5, 5, 7, 9$: povprečje je $5$, povprečje kvadratov $\dfrac{232}{8} = 29$, zato je $\sigma^2 = 29 - 25 = 4$ in $\sigma = 2$.
-
-**Vzorec in populacija.** Zgornja formula, kjer delimo z $n$, velja, kadar imamo vse podatke populacije. Pri vzorcu, iz katerega ocenjujemo širšo populacijo, delimo z $n - 1$ (to boš podrobneje spoznal pozneje). Različni računalniški programi tudi različno računajo kvartile, zato lahko dobiš nekoliko drugačne vrednosti kot tukaj.
 
 **Linearna sprememba podatkov.** Če vsak podatek pomnožimo z $a$ in prištejemo $b$, se sredina spremeni v $a\bar{x} + b$, standardni odklon pa v $|a|\,\sigma$. Premik podatkov torej razpršenosti ne spremeni, raztegnitev pa jo raztegne.
 
@@ -449,6 +443,7 @@ torej »povprečje kvadratov minus kvadrat povprečja«. Preizkus za podatke $2,
 = 0,14 min | 0,01
 ~ 0,02 | To je varianca $\sigma^2$ (in njena enota je $\text{min}^2$). Pozabil si koreniti.
 ~ 1,4 | Noben podatek ni od sredine $6{,}0$ oddaljen več kot $0{,}2\,\text{min}$, zato tipični odklon ne more biti večji.
+~ 0,16 | Delil si z $n - 1 = 4$ (tipka $s_x$). Na maturi deliš z $n = 5$ (tipka $\sigma_x$).
 > Odkloni od $6{,}0$ so med $-0{,}2$ in $0{,}2$, zato je $\sigma$ manjši od $0{,}2\,\text{min}$. Natančno: $\sigma^2 = \dfrac{0{,}1}{5} = 0{,}02$ in $\sigma \approx 0{,}14\,\text{min}$.
 
 ? (brez računala) Sedem dijakov je zapisalo, koliko minut so reševali nalogo: $8, 3, 11, 5, 15, 6, 9$. Kolikšna je mediana?
@@ -474,6 +469,14 @@ torej »povprečje kvadratov minus kvadrat povprečja«. Preizkus za podatke $2,
 + Zadovoljstvo z malico: nezadovoljen, delno zadovoljen, zadovoljen.
 > Vrstni podatek: odgovore uredimo, ne seštejemo pa jih, zato vzamemo mediano.
 
+? Krožek je $30$ obiskovalcev večera s teleskopi vprašal, koliko ur na teden opazujejo nebo, in sklepal o vseh dijakih šole. Kaj velja?
+- Vzorec so vsi dijaki šole.
+~ To je populacija. Vzorec je del, ki ga res vprašamo.
+- Sklep velja, ker je $30$ podatkov dovolj.
+~ Ne gre za število: na večer s teleskopi pridejo predvsem ljubitelji neba.
++ Vzorec je $30$ obiskovalcev, a sklep ne velja, ker vzorec ni podoben populaciji.
+> Obiskovalci večera s teleskopi opazujejo nebo pogosteje kot povprečen dijak, zato bi bilo povprečje previsoko.
+
 <<RACUN
 vrednost: 15-9 | 6
 vrednost: 9-1.5*6 | 0
@@ -486,10 +489,13 @@ vrednost: (-5)^2+6^2+(-1)^2+3^2+(-7)^2+4^2 | 136
 vrednost: sqrt(30/6) | 2.24
 vrednost: 136/6 | 22.67
 vrednost: sqrt(136/6) | 4.76
+vrednost: sqrt(30/5) | 2.45
+vrednost: sqrt(136/5) | 5.22
 vrednost: (240+54)/7 | 42
 vrednost: (1+2+3+4+100)/5 | 22
 vrednost: (5.8+6.0+6.1+5.9+6.2)/5 | 6
 vrednost: sqrt(((-0.2)^2+0^2+0.1^2+(-0.1)^2+0.2^2)/5) | 0.14
+vrednost: sqrt(((-0.2)^2+0^2+0.1^2+(-0.1)^2+0.2^2)/4) | 0.16
 vrednost: (8+3+11+5+15+6+9)/7 | 8.14
 >>
 

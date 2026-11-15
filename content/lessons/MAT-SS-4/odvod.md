@@ -21,9 +21,9 @@ Ali ima prav? Za kuharja ni vseeno: če se olje v nekem trenutku segreva hitro, 
 
 $$\frac{T(4 + h) - T(4)}{h}$$
 
-Temu ulomku rečemo **diferenčni količnik**. Izračunajmo ga za vedno krajše razmike $h$:
+Temu ulomku rečemo **diferenčni količnik**. Izračunajmo ga za vedno krajše razmike $h$ ($h$ v minutah, $T$ v $^\circ$C, povprečna hitrost v $^\circ$C/min):
 
-| $h$ [min] | $T(4 + h)$ [$^\circ$C] | povprečna hitrost [$^\circ$C/min] |
+| $h$ | $T(4 + h)$ | hitrost |
 |---|---|---|
 | $1$ | $95$ | $11$ |
 | $0{,}1$ | $85{,}19$ | $11{,}9$ |
@@ -269,7 +269,7 @@ $f'(x) = 3(x^2 + 1)^2 \cdot 2x = 6x(x^2 + 1)^2$. Pri $x = 1$: $6 \cdot 1 \cdot 2
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Odvajaj funkcijo $f(x) = x^2 e^{2x}$ in določi vse $x$, za katere je $f'(x) = 0$.
+Odvajajte funkcijo $f(x) = x^2 e^{2x}$ in določite vse $x$, za katere je $f'(x) = 0$.
 
 **Rešitev:**
 
@@ -284,9 +284,9 @@ Odvajaj funkcijo $f(x) = x^2 e^{2x}$ in določi vse $x$, za katere je $f'(x) = 0
 
 Dana je funkcija $f(x) = \dfrac{4}{x}$.
 
-a) Izračunaj diferenčni količnik funkcije $f$ na intervalu $[1, 4]$ in pojasni, kaj to število pomeni na grafu funkcije. (2 točki)
-b) Po definiciji odvoda izračunaj $f'(2)$. (3 točke)
-c) Zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $2$. V kakšni legi sta ta tangenta in sekanta skozi točki grafa z abscisama $1$ in $4$? Odgovor utemelji. (2 točki)
+a) Izračunajte diferenčni količnik funkcije $f$ na intervalu $[1, 4]$ in pojasnite, kaj to število pomeni na grafu funkcije. (2 točki)
+b) Po definiciji odvoda izračunajte $f'(2)$. (3 točke)
+c) Zapišite enačbo tangente na graf funkcije $f$ v točki z absciso $2$. V kakšni legi sta ta tangenta in sekanta skozi točki grafa z abscisama $1$ in $4$? Odgovor utemeljite. (2 točki)
 
 **Rešitev:**
 
@@ -302,10 +302,10 @@ c) Zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $2$. V kakš
 
 ### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
 
-a) Z definicijo odvoda pokaži, da za $x > 0$ velja $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$. (3 točke)
-b) Iz odvodov funkcij $\sin x$ in $\cos x$ izpelji, da za $\cos x \ne -1$ velja $\left(\dfrac{\sin x}{1 + \cos x}\right)' = \dfrac{1}{1 + \cos x}$. (3 točke)
-c) Izračunaj $f'(4)$ za funkcijo $f(x) = \sqrt{x^2 + 9}$. (2 točki)
-d) Poišči vse točke na grafu funkcije $g(x) = \tan x$, $-\frac{\pi}{2} < x < \frac{\pi}{2}$, v katerih ima tangenta smerni koeficient $4$. (2 točki)
+a) Z definicijo odvoda pokažite, da za $x > 0$ velja $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$. (3 točke)
+b) Iz odvodov funkcij $\sin x$ in $\cos x$ izpeljite, da za $\cos x \ne -1$ velja $\left(\dfrac{\sin x}{1 + \cos x}\right)' = \dfrac{1}{1 + \cos x}$. (3 točke)
+c) Izračunajte $f'(4)$ za funkcijo $f(x) = \sqrt{x^2 + 9}$. (2 točki)
+d) Poiščite vse točke na grafu funkcije $g(x) = \tan x$, $-\frac{\pi}{2} < x < \frac{\pi}{2}$, v katerih ima tangenta smerni koeficient $4$. (2 točki)
 
 **Rešitev:**
 

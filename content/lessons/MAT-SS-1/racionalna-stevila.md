@@ -29,11 +29,9 @@ Ulomka $\dfrac{6}{9}$ in $\dfrac{10}{15}$ sta enaka, ker je $6 \cdot 15 = 90 = 9
 
 **3. Računanje z ulomki.** Najbolj mamljivo je sešteti števca in imenovalca: $\dfrac{1}{2} + \dfrac{1}{3} = \dfrac{2}{5}$ (napačno). Rezultat $0{,}4$ je manjši od $\dfrac{1}{2}$, zato ne more biti prav. Polovica in tretjina sta različno velika kosa. Najprej ju zapišemo s kosi iste velikosti, s **skupnim imenovalcem**: $\dfrac{3}{6} + \dfrac{2}{6} = \dfrac{5}{6}$. **Obratna vrednost** ulomka $\dfrac{c}{d}$ (za $c \neq 0$) je $\dfrac{d}{c}$, saj je njun zmnožek $1$.
 
-| Operacija | Pravilo | Primer |
-|---|---|---|
-| Vsota in razlika | skupni imenovalec: $\dfrac{a}{b} \pm \dfrac{c}{d} = \dfrac{ad \pm bc}{bd}$ | $\dfrac{1}{2} + \dfrac{1}{3} = \dfrac{3 + 2}{6} = \dfrac{5}{6}$ |
-| Zmnožek | števec s števcem, imenovalec z imenovalcem: $\dfrac{a}{b} \cdot \dfrac{c}{d} = \dfrac{ac}{bd}$ | $\dfrac{2}{3} \cdot \dfrac{3}{8} = \dfrac{6}{24} = \dfrac{1}{4}$ |
-| Količnik | množimo z obratno vrednostjo: $\dfrac{a}{b} : \dfrac{c}{d} = \dfrac{a}{b} \cdot \dfrac{d}{c}$, $c \neq 0$ | $\dfrac{3}{4} : \dfrac{9}{8} = \dfrac{3}{4} \cdot \dfrac{8}{9} = \dfrac{2}{3}$ |
+- **Vsota in razlika**, skupni imenovalec: $\dfrac{a}{b} \pm \dfrac{c}{d} = \dfrac{ad \pm bc}{bd}$. Primer: $\dfrac{1}{2} + \dfrac{1}{3} = \dfrac{3 + 2}{6} = \dfrac{5}{6}$.
+- **Zmnožek**, števec s števcem, imenovalec z imenovalcem: $\dfrac{a}{b} \cdot \dfrac{c}{d} = \dfrac{ac}{bd}$. Primer: $\dfrac{2}{3} \cdot \dfrac{3}{8} = \dfrac{6}{24} = \dfrac{1}{4}$.
+- **Količnik**, množimo z obratno vrednostjo: $\dfrac{a}{b} : \dfrac{c}{d} = \dfrac{a}{b} \cdot \dfrac{d}{c}$, $c \neq 0$. Primer: $\dfrac{3}{4} : \dfrac{9}{8} = \dfrac{3}{4} \cdot \dfrac{8}{9} = \dfrac{2}{3}$.
 
 Za skupni imenovalec je najbolje vzeti **najmanjši skupni večkratnik** $v(b,d)$, da so števila manjša. Rezultat vedno skrajšaj. Ulomek z večjim števcem od imenovalca lahko zapišemo kot **mešano število**: $\dfrac{19}{12} = 1\dfrac{7}{12}$, kar pomeni $1 + \dfrac{7}{12}$ (ne zmnožek!). Vsota, razlika, zmnožek in količnik dveh racionalnih števil (pri količniku delitelj ni $0$) so spet racionalna števila. V $\mathbb{Q}$ torej deljenje vedno uspe, v $\mathbb{Z}$ ne.
 
@@ -260,7 +258,7 @@ točka: 1,25 | 5/4 | modra
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Število $0{,}\overline{135}$ zapiši kot nekrajšljiv ulomek. Nato brez računala ugotovi, katero od števil $0{,}\overline{135}$ in $\dfrac{2}{15}$ je večje.
+Število $0{,}\overline{135}$ zapišite kot nekrajšljiv ulomek. Nato brez računala ugotovite, katero od števil $0{,}\overline{135}$ in $\dfrac{2}{15}$ je večje.
 
 **Rešitev:**
 
@@ -276,8 +274,8 @@ točka: 1,25 | 5/4 | modra
 Zbiralnik za deževnico je bil zjutraj napolnjen do $\dfrac{3}{8}$ svoje prostornine. Čez dan je natekla še voda, ki zavzema $\dfrac{5}{12}$ prostornine zbiralnika. Zvečer so za zalivanje porabili $\dfrac{2}{3}$ vode, ki je bila takrat v zbiralniku.
 
 a) Kolikšen del prostornine zbiralnika je bil napolnjen tik pred zalivanjem? (2 točki)
-b) Kolikšen del prostornine zbiralnika je bil napolnjen po zalivanju? Rezultat zapiši kot nekrajšljiv ulomek. (2 točki)
-c) Brez deljenja utemelji, ali ima ulomek iz b) končen ali periodičen decimalni zapis. Nato ga zapiši kot decimalno število. (2 točki)
+b) Kolikšen del prostornine zbiralnika je bil napolnjen po zalivanju? Rezultat zapišite kot nekrajšljiv ulomek. (2 točki)
+c) Brez deljenja utemeljite, ali ima ulomek iz b) končen ali periodičen decimalni zapis. Nato ga zapišite kot decimalno število. (2 točki)
 d) Prostornina zbiralnika je $360$ litrov. Koliko litrov vode je ostalo v zbiralniku po zalivanju? (1 točka)
 
 **Rešitev:**
@@ -416,7 +414,7 @@ točka: 1,4 | D | modra
 > $\dfrac{3}{4} \cdot \left(\dfrac{7}{9} + \dfrac{2}{9}\right) = \dfrac{3}{4} \cdot 1 = \dfrac{3}{4} = 0{,}75$.
 
 ? Pri testu je Luka pravilno rešil $17$ od $20$ nalog. Koliko odstotkov nalog je rešil pravilno?
-= 85 %
+= 85 % | 0
 ~ 17 | To je število nalog, ne delež.
 ~ 0,85 | To je delež. V odstotkih ga pomnoži s $100$.
 > $\dfrac{17}{20} = \dfrac{85}{100} = 0{,}85 = 85\,\%$.

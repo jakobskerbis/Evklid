@@ -215,7 +215,7 @@ $\tan 6^\circ \approx 0{,}1051$, zato je $h \approx 15\,\text{km} \cdot 0{,}1051
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Za ostri kot $\alpha$ velja $\tan \alpha = 2$. Brez računala izračunaj natančni vrednosti $\sin \alpha$ in $\cos \alpha$. Rezultata zapiši z racionaliziranim imenovalcem.
+Za ostri kot $\alpha$ velja $\tan \alpha = 2$. Brez računala izračunajte natančni vrednosti $\sin \alpha$ in $\cos \alpha$. Rezultata zapišite z racionaliziranim imenovalcem.
 
 **Rešitev:**
 
@@ -231,9 +231,9 @@ Za ostri kot $\alpha$ velja $\tan \alpha = 2$. Brez računala izračunaj natanč
 
 Diagonali romba $ABCD$ merita $e = |AC| = 10\,\text{cm}$ in $f = |BD| = 6\,\text{cm}$. Diagonali se sekata v točki $M$.
 
-a) Izračunaj dolžino stranice romba. Rezultat zaokroži na stotinko centimetra. (2 točki)
-b) Izračunaj notranja kota romba pri ogliščih $A$ in $B$. Rezultata zaokroži na stotinko stopinje. (3 točke)
-c) S kotno funkcijo izračunaj višino romba $v$. Rezultat zaokroži na stotinko centimetra. (2 točki)
+a) Izračunajte dolžino stranice romba. Rezultat zaokrožite na stotinko centimetra. (2 točki)
+b) Izračunajte notranja kota romba pri ogliščih $A$ in $B$. Rezultata zaokrožite na stotinko stopinje. (3 točke)
+c) S kotno funkcijo izračunajte višino romba $v$. Rezultat zaokrožite na stotinko centimetra. (2 točki)
 
 **Rešitev:**
 

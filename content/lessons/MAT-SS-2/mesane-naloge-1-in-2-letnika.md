@@ -53,16 +53,17 @@ Ne. Enačba bi bila $\left(\frac{1}{2}\right)^{t/6} = \frac{12}{80} = 0{,}15$, �
 
 Najtežji je prvi korak. Pomaga ti ta preglednica za snov 1. in 2. letnika.
 
-| v besedilu piše | orodje | zapis |
-|---|---|---|
-| razpolovi se | eksp. funkcija | $c_0 q^t$ |
-| kdaj doseže | logaritem | $\log_q b$ |
-| presečišče | enačba | $f = g$ |
-| nad mejo | neenačba | $f > M$ |
-| največ, najmanj | teme | $-\frac{b}{2a}$ |
-| koren | potenca | $a^{m/n}$ |
-| senca, merilo | podobnost | $a' = ka$ |
-| naklon, kot | tangens | $\tan \alpha$ |
+| v besedilu | orodje: zapis |
+|---|---|
+| razpolovi se | eksp. funkcija: $c_0 q^t$ |
+| kdaj doseže | logaritem: $\log_q b$ |
+| presečišče | enačba: $f = g$ |
+| nad mejo | neenačba: $f > M$ |
+| največ | teme: $-\frac{b}{2a}$ |
+| najmanj | teme: $-\frac{b}{2a}$ |
+| koren | potenca: $a^{m/n}$ |
+| senca, merilo | podobnost: $a' = ka$ |
+| naklon, kot | tangens: $\tan \alpha$ |
 
 :::premisli
 Naloga pravi: »Graf funkcije $f(x) = \log_2 (x + 1)$ seka premico $y = 3$.« Kateri dve orodji iz preglednice potrebuješ in zakaj na koncu ne smeš pozabiti pogoja?
@@ -199,7 +200,7 @@ $x^2 - 2x - 8 = (x - 4)(x + 2) = 0$ da $x = 4$ ali $x = -2$. Pogoju $x > 2$ ustr
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Dana je funkcija $f(x) = \log_3 (x + 1) - 2$. Zapiši enačbo navpične asimptote, izračunaj ničlo in presečišče grafa z osjo $y$. (logaritemska funkcija + transformacije grafov + logaritemska enačba)
+Dana je funkcija $f(x) = \log_3 (x + 1) - 2$. Zapišite enačbo navpične asimptote, izračunajte ničlo in presečišče grafa z osjo $y$. (logaritemska funkcija + transformacije grafov + logaritemska enačba)
 
 **Rešitev:**
 
@@ -214,9 +215,9 @@ Dana je funkcija $f(x) = \log_3 (x + 1) - 2$. Zapiši enačbo navpične asimptot
 
 Klančina pred zdravstvenim domom premaga višinsko razliko $0{,}45\,\mathrm{m}$ na vodoravni razdalji $6\,\mathrm{m}$. (kotne funkcije + Pitagorov izrek + podobnost)
 
-a) Izračunaj naklonski kot klančine v stopinjah, na dve decimalki. (2 točki)
+a) Izračunajte naklonski kot klančine v stopinjah, na dve decimalki. (2 točki)
 
-b) Izračunaj dolžino klančine, na centimeter natančno. (2 točki)
+b) Izračunajte dolžino klančine, na centimeter natančno. (2 točki)
 
 c) Na vodoravni razdalji $2\,\mathrm{m}$ od spodnjega konca je pod klančino navpičen podporni steber. Kako visok je? (2 točki)
 
@@ -233,15 +234,15 @@ c) Na vodoravni razdalji $2\,\mathrm{m}$ od spodnjega konca je pod klančino nav
 
 Dana je funkcija $f(x) = -x^2 + 2x + 8$ in funkcija $h(x) = \log_2 f(x)$. (kvadratna funkcija + kvadratna neenačba + logaritemska funkcija + logaritemska enačba)
 
-a) Izračunaj ničli in teme funkcije $f$. (2 točki)
+a) Izračunajte ničli in teme funkcije $f$. (2 točki)
 
-b) Reši neenačbo $f(x) \ge 0$. (2 točki)
+b) Rešite neenačbo $f(x) \ge 0$. (2 točki)
 
-c) Zapiši definicijsko območje funkcije $h$. (1 točka)
+c) Zapišite definicijsko območje funkcije $h$. (1 točka)
 
-d) Reši enačbo $h(x) = 3$. (3 točke)
+d) Rešite enačbo $h(x) = 3$. (3 točke)
 
-e) Utemelji, da ima $h$ največjo vrednost, in jo izračunaj. (2 točki)
+e) Utemeljite, da ima $h$ največjo vrednost, in jo izračunajte. (2 točki)
 
 **Rešitev:**
 

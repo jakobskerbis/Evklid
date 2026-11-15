@@ -17,10 +17,13 @@ Obakrat se je telefon zmotil za $0{,}3\,\mathrm{km}$. Pa je bila zmota enako hud
 
 Zaokrožimo tako, da pogledamo prvo števko, ki jo odvržemo. Če je $0$, $1$, $2$, $3$ ali $4$, zadnjo ohranjeno števko pustimo. Če je $5$ ali več, jo povečamo za $1$.
 
-| število | 1 decimalka | 2 decimalki | 3 decimalke |
-|---|---|---|---|
-| $\sqrt{2} = 1{,}41421\ldots$ | $1{,}4$ | $1{,}41$ | $1{,}414$ |
-| $\pi = 3{,}14159\ldots$ | $3{,}1$ | $3{,}14$ | $3{,}142$ |
+Za $\sqrt{2} = 1{,}41421\ldots$ in $\pi = 3{,}14159\ldots$ dobimo:
+
+| decimalke | $\sqrt{2}$ | $\pi$ |
+|---|---|---|
+| $1$ | $1{,}4$ | $3{,}1$ |
+| $2$ | $1{,}41$ | $3{,}14$ |
+| $3$ | $1{,}414$ | $3{,}142$ |
 
 Pri $\pi$ na tri decimalke je odvržena števka $5$, zato se $1$ poveča v $2$.
 
@@ -81,10 +84,8 @@ $$\delta(x \cdot y) \approx \delta x + \delta y \qquad \delta\!\left(\frac{x}{y}
 
 Pravilo je **ocena**, ne natančna enakost. Preverimo ga na travniku na oba načina:
 
-| način | spodnja meja | zgornja meja | napaka $S$ |
-|---|---|---|---|
-| natančno | $39{,}5 \cdot 24{,}5 = 967{,}75$ | $40{,}5 \cdot 25{,}5 = 1032{,}75$ | do $32{,}75\,\mathrm{m^2}$ |
-| ocena | $1000 - 32{,}5 = 967{,}5$ | $1000 + 32{,}5 = 1032{,}5$ | $32{,}5\,\mathrm{m^2}$ |
+- natančno: spodnja meja $39{,}5 \cdot 24{,}5 = 967{,}75$, zgornja meja $40{,}5 \cdot 25{,}5 = 1032{,}75$, napaka $S$ do $32{,}75\,\mathrm{m^2}$;
+- ocena: spodnja meja $1000 - 32{,}5 = 967{,}5$, zgornja meja $1000 + 32{,}5 = 1032{,}5$, napaka $S$ je $32{,}5\,\mathrm{m^2}$.
 
 Ocena: $\delta a + \delta b = \dfrac{0{,}5}{40} + \dfrac{0{,}5}{25} = 0{,}0325$, torej $3{,}25\,\%$ od $1000\,\mathrm{m^2}$, kar je $32{,}5\,\mathrm{m^2}$. Natančna meja je $1032{,}75 - 1000 = 32{,}75\,\mathrm{m^2}$. Razlika $0{,}25\,\mathrm{m^2}$ je ravno $0{,}5 \cdot 0{,}5$, majhen kotiček, ki ga ocena izpusti (glej »Drugače: Na sliki«).
 
@@ -222,7 +223,7 @@ $\delta S \approx \dfrac{1}{120} + \dfrac{1}{80} \approx 0{,}021 = 2{,}1\,\%$ in
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Ulomek $\dfrac{2}{3}$ zaokroži na dve decimalni mesti. Izračunaj absolutno napako tega približka (zapiši jo z ulomkom) in relativno napako v odstotkih.
+Ulomek $\dfrac{2}{3}$ zaokrožite na dve decimalni mesti. Izračunajte absolutno napako tega približka (zapišite jo z ulomkom) in relativno napako v odstotkih.
 
 **Rešitev:**
 
@@ -235,11 +236,11 @@ Ulomek $\dfrac{2}{3}$ zaokroži na dve decimalni mesti. Izračunaj absolutno nap
 
 ### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
 
-Pravokotna lesena plošča ima izmerjeni stranici $a = (2{,}40 \pm 0{,}01)\,\mathrm{m}$ in $b = (0{,}85 \pm 0{,}01)\,\mathrm{m}$, njena masa je $m = (30{,}6 \pm 0{,}2)\,\mathrm{kg}$. Absolutne napake zaokroži na dve decimalni mesti, relativne napake zapiši v odstotkih in jih zaokroži na dve decimalni mesti.
+Pravokotna lesena plošča ima izmerjeni stranici $a = (2{,}40 \pm 0{,}01)\,\mathrm{m}$ in $b = (0{,}85 \pm 0{,}01)\,\mathrm{m}$, njena masa je $m = (30{,}6 \pm 0{,}2)\,\mathrm{kg}$. Absolutne napake zaokrožite na dve decimalni mesti, relativne napake zapišite v odstotkih in jih zaokrožite na dve decimalni mesti.
 
-a) Izračunaj obseg $o$ plošče in njegovo absolutno napako $\Delta o$. (2 točki)
-b) Izračunaj ploščino $S$ plošče ter oceni njeno relativno napako $\delta S$ in absolutno napako $\Delta S$. (2 točki)
-c) Izračunaj maso enega kvadratnega metra plošče $q = \dfrac{m}{S}$ ter oceni njeno relativno napako $\delta q$ in absolutno napako $\Delta q$. (2 točki)
+a) Izračunajte obseg $o$ plošče in njegovo absolutno napako $\Delta o$. (2 točki)
+b) Izračunajte ploščino $S$ plošče ter ocenite njeno relativno napako $\delta S$ in absolutno napako $\Delta S$. (2 točki)
+c) Izračunajte maso enega kvadratnega metra plošče $q = \dfrac{m}{S}$ ter ocenite njeno relativno napako $\delta q$ in absolutno napako $\Delta q$. (2 točki)
 
 **Rešitev:**
 

@@ -25,12 +25,14 @@ V tem enem računu so že vsi koraki: pogoji, razširjanje, seštevanje in kraj�
 
 **2. Kaj je ulomljeni izraz.** Ulomljeni izraz je količnik $\dfrac{A}{B}$ dveh algebrskih izrazov, pri čemer imenovalec $B$ vsebuje spremenljivko. Ulomek ni definiran, kadar je imenovalec enak $0$. Zato vsak ulomljeni izraz zahteva **pogoje**: vrednosti spremenljivke, pri katerih je imenovalec $0$, izločimo. Imenovalec razstavimo in poiščemo vrednosti, pri katerih je kateri od faktorjev enak $0$.
 
-| Izraz | Imenovalec | Pogoji |
-|---|---|---|
-| $\dfrac{3}{x-5}$ | $x-5$ | $x \neq 5$ |
-| $\dfrac{x}{x^2-4}$ | $(x-2)(x+2)$ | $x \neq 2$, $x \neq -2$ |
-| $\dfrac{1}{x^2+x}$ | $x(x+1)$ | $x \neq 0$, $x \neq -1$ |
-| $\dfrac{2}{x^2+1}$ | $x^2 + 1$ | ni pogojev |
+Na primer $x^2 - 4 = (x-2)(x+2)$ in $x^2 + x = x(x+1)$, zato:
+
+| Izraz | Pogoji |
+|---|---|
+| $\dfrac{3}{x-5}$ | $x \neq 5$ |
+| $\dfrac{x}{x^2-4}$ | $x \neq 2$, $x \neq -2$ |
+| $\dfrac{1}{x^2+x}$ | $x \neq 0$, $x \neq -1$ |
+| $\dfrac{2}{x^2+1}$ | ni pogojev |
 
 Pri zadnjem izrazu je $x^2 + 1 \ge 1$, zato imenovalec ni nikoli $0$.
 
@@ -218,7 +220,7 @@ Kakšen je ulomek in koliko sekund trajata oba dela pri $t = 100$?
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Okrajšaj ulomljeni izraz $\dfrac{x^2 - 5x + 6}{18 - 2x^2}$ in zapiši, za katere vrednosti $x$ velja dobljena enakost.
+Okrajšajte ulomljeni izraz $\dfrac{x^2 - 5x + 6}{18 - 2x^2}$ in zapišite, za katere vrednosti $x$ velja dobljena enakost.
 
 **Rešitev:**
 
@@ -236,9 +238,9 @@ Dan je izraz
 
 $$\left(\frac{x+1}{x-1} - \frac{x-1}{x+1}\right) : \frac{2x}{x^2-1}.$$
 
-a) Zapiši vse vrednosti $x$, za katere izraz ni definiran, in vsako utemelji. (2 točki)
-b) Razliko v oklepaju zapiši kot en ulomek in ga poenostavi. (2 točki)
-c) Poenostavi dani izraz. Kaj opaziš o njegovi vrednosti? (2 točki)
+a) Zapišite vse vrednosti $x$, za katere izraz ni definiran, in vsako utemeljite. (2 točki)
+b) Razliko v oklepaju zapišite kot en ulomek in ga poenostavite. (2 točki)
+c) Poenostavite dani izraz. Kaj opazite o njegovi vrednosti? (2 točki)
 
 **Rešitev:**
 
@@ -284,7 +286,7 @@ Skupni imenovalec je najbolj groba mreža, na katero padeta oba ulomka. Za $\dfr
 
 **Krajšanje kot zidaki.** Ulomek si predstavljaj kot dve vrsti zidakov: zgoraj faktorji števca, spodaj faktorji imenovalca. Za $\dfrac{x^2-9}{x^2+3x}$ dobiš:
 
-| | 1. faktor | 2. faktor |
+| | 1. | 2. |
 |---|---|---|
 | števec | $x-3$ | $x+3$ |
 | imenovalec | $x$ | $x+3$ |

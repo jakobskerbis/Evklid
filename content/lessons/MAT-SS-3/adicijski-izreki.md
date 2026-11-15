@@ -17,14 +17,14 @@ Kako se potem »sestavi«? Odgovor dajo **adicijski izreki** (lat. *additio* = s
 
 **1. Iskanje vzorca.** Vzemimo nekaj parov kotov, pri katerih $\sin(\alpha + \beta)$ poznamo, in preizkusimo dve ideji. Prva je naivna vsota sinusov. Druga je »križni« izraz $\sin\alpha\cos\beta + \cos\alpha\sin\beta$, v katerem se sinus enega kota pomnoži s kosinusom drugega.
 
-| $\alpha + \beta$ | $\sin\alpha + \sin\beta$ | križni izraz | $\sin(\alpha+\beta)$ |
-|---|---|---|---|
-| $30^\circ + 60^\circ$ | $1{,}366$ | $1$ | $1$ |
-| $30^\circ + 30^\circ$ | $1$ | $0{,}866$ | $0{,}866$ |
-| $60^\circ + 90^\circ$ | $1{,}866$ | $0{,}5$ | $0{,}5$ |
-| $45^\circ + 30^\circ$ | $1{,}207$ | $0{,}966$ | $0{,}966$ |
+| $\alpha + \beta$ | križni | $\sin(\alpha+\beta)$ |
+|---|---|---|
+| $30^\circ + 60^\circ$ | $1$ | $1$ |
+| $30^\circ + 30^\circ$ | $0{,}866$ | $0{,}866$ |
+| $60^\circ + 90^\circ$ | $0{,}5$ | $0{,}5$ |
+| $45^\circ + 30^\circ$ | $0{,}966$ | $0{,}966$ |
 
-Vsota sinusov se ne ujema nikjer. Križni izraz se ujema v vsaki vrstici. To ni naključje, temveč pravilo, ki velja za vse kote.
+Vsota sinusov se ne ujema nikjer: za iste pare kotov da $1{,}366$; $1$; $1{,}866$ in $1{,}207$. Križni izraz se ujema v vsaki vrstici. To ni naključje, temveč pravilo, ki velja za vse kote.
 
 **2. Sinus vsote.** Pravilo se imenuje adicijski izrek za sinus:
 
@@ -252,7 +252,7 @@ $\sin^2\dfrac{\alpha}{2} = \dfrac{1 - \cos\alpha}{2}$, $\quad \cos^2\dfrac{\alph
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Brez uporabe računala izračunaj natančno vrednost $\tan 75^\circ$. Rezultat zapiši brez korena v imenovalcu.
+Brez uporabe računala izračunajte natančno vrednost $\tan 75^\circ$. Rezultat zapišite brez korena v imenovalcu.
 
 **Rešitev:**
 
@@ -267,10 +267,10 @@ Brez uporabe računala izračunaj natančno vrednost $\tan 75^\circ$. Rezultat z
 
 Kota $\alpha$ in $\beta$ sta ostra. Velja $\cos\alpha = \frac{7}{25}$ in $\tan\beta = \frac43$.
 
-a) Izračunaj $\sin\alpha$, $\sin\beta$ in $\cos\beta$. (2 točki)
-b) Izračunaj $\sin(\alpha + \beta)$ in $\cos(\alpha + \beta)$. (2 točki)
-c) Utemelji, ali je kot $\alpha + \beta$ oster ali top. (1 točka)
-d) Izračunaj $\sin 2\beta$ in $\cos 2\beta$ ter pokaži, da je $\alpha + 2\beta = 180^\circ$. (3 točke)
+a) Izračunajte $\sin\alpha$, $\sin\beta$ in $\cos\beta$. (2 točki)
+b) Izračunajte $\sin(\alpha + \beta)$ in $\cos(\alpha + \beta)$. (2 točki)
+c) Utemeljite, ali je kot $\alpha + \beta$ oster ali top. (1 točka)
+d) Izračunajte $\sin 2\beta$ in $\cos 2\beta$ ter pokažite, da je $\alpha + 2\beta = 180^\circ$. (3 točke)
 
 **Rešitev:**
 
@@ -290,10 +290,10 @@ d) Izračunaj $\sin 2\beta$ in $\cos 2\beta$ ter pokaži, da je $\alpha + 2\beta
 
 Dan je izraz $E(\alpha) = \sin 3\alpha - \sin\alpha$.
 
-a) Izraz $E(\alpha)$ zapiši kot produkt. (2 točki)
-b) Določi vse kote $\alpha \in [0^\circ, 180^\circ]$, za katere je $E(\alpha) = 0$. (3 točke)
-c) S formulo za polovični kot izračunaj natančno vrednost $\sin 22{,}5^\circ$, nato še natančno vrednost $E(22{,}5^\circ)$. (3 točke)
-d) Pokaži, da za vsak kot $\alpha$ velja $E(\alpha) = 2\sin\alpha - 4\sin^3\alpha$. (2 točki)
+a) Izraz $E(\alpha)$ zapišite kot produkt. (2 točki)
+b) Določite vse kote $\alpha \in [0^\circ, 180^\circ]$, za katere je $E(\alpha) = 0$. (3 točke)
+c) S formulo za polovični kot izračunajte natančno vrednost $\sin 22{,}5^\circ$, nato še natančno vrednost $E(22{,}5^\circ)$. (3 točke)
+d) Pokažite, da za vsak kot $\alpha$ velja $E(\alpha) = 2\sin\alpha - 4\sin^3\alpha$. (2 točki)
 
 **Rešitev:**
 

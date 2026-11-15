@@ -26,20 +26,18 @@ Zato je $\sqrt{(-3)^2} = \sqrt{9} = 3 = |-3|$ in ne $-3$.
 
 | Zmnožek | Posebej | En koren |
 |---|---|---|
-| $\sqrt{4} \cdot \sqrt{9}$ | $2 \cdot 3 = 6$ | $\sqrt{36} = 6$ |
-| $\sqrt{4} \cdot \sqrt{25}$ | $2 \cdot 5 = 10$ | $\sqrt{100} = 10$ |
+| $\sqrt{4} \cdot \sqrt{9}$ | $2 \cdot 3$ | $\sqrt{36}$ |
+| $\sqrt{4} \cdot \sqrt{25}$ | $2 \cdot 5$ | $\sqrt{100}$ |
 | $\sqrt{2} \cdot \sqrt{225}$ | $1{,}414 \cdot 15$ | $\sqrt{450}$ |
 
-Vsakič dobiš isto, tudi v zadnji vrstici: oba izraza sta približno $21{,}21$. Zadnja vrstica je diagonala lista iz uvoda: $\sqrt{450} = \sqrt{225} \cdot \sqrt{2} = 15\sqrt{2}$.
+Vsakič dobiš isto: v prvi vrstici $6$, v drugi $10$, v zadnji pa sta oba izraza približno $21{,}21$. Zadnja vrstica je diagonala lista iz uvoda: $\sqrt{450} = \sqrt{225} \cdot \sqrt{2} = 15\sqrt{2}$.
 
 **Pravila za računanje.** Vzorec velja v splošnem. Za $a, b \ge 0$ (in $b > 0$ pri deljenju) veljajo:
 
-| Pravilo | Primer |
-|---|---|
-| $\sqrt{a \cdot b} = \sqrt{a} \cdot \sqrt{b}$ | $\sqrt{3} \cdot \sqrt{12} = \sqrt{36} = 6$ |
-| $\sqrt{\dfrac{a}{b}} = \dfrac{\sqrt{a}}{\sqrt{b}}$ | $\sqrt{\dfrac{25}{4}} = \dfrac{5}{2}$ |
-| $\sqrt[n]{a \cdot b} = \sqrt[n]{a} \cdot \sqrt[n]{b}$ | $\sqrt[3]{2} \cdot \sqrt[3]{4} = \sqrt[3]{8} = 2$ |
-| $\sqrt[m]{\sqrt[n]{a}} = \sqrt[m \cdot n]{a}$ | $\sqrt{\sqrt{16}} = \sqrt[4]{16} = 2$ |
+- $\sqrt{a \cdot b} = \sqrt{a} \cdot \sqrt{b}$, primer: $\sqrt{3} \cdot \sqrt{12} = \sqrt{36} = 6$;
+- $\sqrt{\dfrac{a}{b}} = \dfrac{\sqrt{a}}{\sqrt{b}}$, primer: $\sqrt{\dfrac{25}{4}} = \dfrac{5}{2}$;
+- $\sqrt[n]{a \cdot b} = \sqrt[n]{a} \cdot \sqrt[n]{b}$, primer: $\sqrt[3]{2} \cdot \sqrt[3]{4} = \sqrt[3]{8} = 2$;
+- $\sqrt[m]{\sqrt[n]{a}} = \sqrt[m \cdot n]{a}$, primer: $\sqrt{\sqrt{16}} = \sqrt[4]{16} = 2$.
 
 :::premisli
 Ali vzorec velja tudi za vsoto? Napovej, ali je $\sqrt{9} + \sqrt{16}$ enako $\sqrt{9 + 16}$, nato izračunaj.
@@ -283,7 +281,7 @@ $b = \sqrt[n]{a}$ pomeni $b^n = a$; na računalu tipka $\sqrt[\square]{\square}$
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izračunaj in rezultat zapiši čim preprosteje: $\sqrt{48} + \dfrac{9}{\sqrt{3}} - \sqrt{75}$.
+Izračunajte in rezultat zapišite čim preprosteje: $\sqrt{48} + \dfrac{9}{\sqrt{3}} - \sqrt{75}$.
 
 **Rešitev:**
 
@@ -298,9 +296,9 @@ Izračunaj in rezultat zapiši čim preprosteje: $\sqrt{48} + \dfrac{9}{\sqrt{3}
 
 Kocka ima prostornino $V = 128\,\text{cm}^3$.
 
-a) Zapiši enačbo za rob $c$ kocke in iz nje izrazi $c$ natančno, z delno korenjenim kubičnim korenom. (2 točki)
-b) Izračunaj rob $c$ in diagonalo ploskve kocke $D = c\sqrt{2}$. Rezultata zaokroži na dve decimalni mesti. (2 točki)
-c) Izračunaj natančno prostornino kocke, katere rob je dolg $D$, in jo nato zaokroži na cele kubične centimetre. (2 točki)
+a) Zapišite enačbo za rob $c$ kocke in iz nje izrazite $c$ natančno, z delno korenjenim kubičnim korenom. (2 točki)
+b) Izračunajte rob $c$ in diagonalo ploskve kocke $D = c\sqrt{2}$. Rezultata zaokrožite na dve decimalni mesti. (2 točki)
+c) Izračunajte natančno prostornino kocke, katere rob je dolg $D$, in jo nato zaokrožite na cele kubične centimetre. (2 točki)
 
 **Rešitev:**
 
@@ -439,7 +437,7 @@ Za drugo gredico imata le letev, dolgo $1{,}2\,\text{m}$, ki naj bo ravno diagon
 > $\sqrt{30^2 + 30^2} = \sqrt{900 \cdot 2} = 30\sqrt{2} \approx 42{,}4\,\text{cm}$.
 
 ? (brez računala) Za konstrukcijo daljice $\sqrt{n}$ narišeš pravokotni trikotnik s katetama $1$ in $4$. Njegova hipotenuza meri $\sqrt{n}$. Koliko je $n$?
-= 17
+= 17 | 0
 ~ 5 | Seštel si kateti, $1 + 4$. Po Pitagorovem izreku pod koren gresta kvadrata katet.
 ~ 15 | Odštel si kvadrata, $16 - 1$. Tako dobiš kateto trikotnika s hipotenuzo $4$, ne hipotenuze.
 > Hipotenuza je $\sqrt{1^2 + 4^2} = \sqrt{17}$, torej $n = 17$.

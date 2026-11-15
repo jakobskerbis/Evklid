@@ -66,9 +66,9 @@ Napovej, preden pogledaš tabelo spodaj: ali imata navadno in obrestno obrestova
 V prvem letu se obe obrestujeta od iste glavnice $G_0$, zato sta obresti enaki. Od drugega leta naprej obrestno obrestovanje računa obresti od $G_1 > G_0$, navadno pa še vedno od $G_0$. Razlika so obresti od že pripisanih obresti in vsako leto raste.
 :::
 
-**5. Primerjava.** Vzemimo $1000\,\text{€}$ pri $5\,\%$:
+**5. Primerjava.** Vzemimo $1000\,\text{€}$ pri $5\,\%$ (stanja v €):
 
-| leto $n$ | navadno [€] | obrestno [€] |
+| leto $n$ | navadno | obrestno |
 |---|---|---|
 | 0 | 1000 | 1000 |
 | 1 | 1050 | 1050 |
@@ -280,7 +280,7 @@ $r = \sqrt{1{,}0816} = 1{,}04$, zato $\frac{p}{100} = 0{,}04$ in $p = 4\,\%$. Pr
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Glavnica $2400\,\text{€}$ je bila $3$ leta naložena z navadnim obrestovanjem. Na koncu je bilo na računu $2616\,\text{€}$. Izračunaj letno obrestno mero.
+Glavnica $2400\,\text{€}$ je bila $3$ leta naložena z navadnim obrestovanjem. Na koncu je bilo na računu $2616\,\text{€}$. Izračunajte letno obrestno mero.
 
 **Rešitev:**
 
@@ -294,12 +294,12 @@ Glavnica $2400\,\text{€}$ je bila $3$ leta naložena z navadnim obrestovanjem.
 
 ### Naloga 2: krajša strukturirana naloga, 8 točk, pola 2 (z računalom)
 
-Vlogo $6000\,\text{€}$ naložimo za $5$ let pri letni obrestni meri $3{,}6\,\%$ z obrestnim obrestovanjem. Zneske zaokroži na cente, odstotke v b) na desetinko odstotka, v d) na tisočinko odstotka.
+Vlogo $6000\,\text{€}$ naložimo za $5$ let pri letni obrestni meri $3{,}6\,\%$ z obrestnim obrestovanjem. Zneske zaokrožite na cente, odstotke v b) na desetinko odstotka, v d) na tisočinko odstotka.
 
 a) Koliko bo na računu po $5$ letih, če banka obresti pripiše enkrat na leto? (2 točki)
 b) Koliko odstotkov vloge znašajo vse obresti v teh $5$ letih? Za koliko odstotnih točk je to več kot pri navadnem obrestovanju z isto obrestno mero? (2 točki)
 c) Druga banka ponuja enako letno obrestno mero, a obresti pripisuje mesečno z relativno mesečno obrestno mero. Koliko bi bilo na računu po $5$ letih in za koliko evrov več kot v a)? (2 točki)
-d) Kolikšna bi morala biti mesečna obrestna mera, da bi mesečni pripis po $5$ letih dal natanko toliko kot letni pripis v a)? Kako se imenuje ta mera? Primerjaj jo z relativno mesečno obrestno mero iz c) in razliko utemelji. (2 točki)
+d) Kolikšna bi morala biti mesečna obrestna mera, da bi mesečni pripis po $5$ letih dal natanko toliko kot letni pripis v a)? Kako se imenuje ta mera? Primerjajte jo z relativno mesečno obrestno mero iz c) in razliko utemeljite. (2 točki)
 
 **Rešitev:**
 
@@ -408,7 +408,7 @@ V prvem letu sta obe stopnici enaki. Prostor med črto in krivuljo so obresti od
 > Podražitve se »obrestujejo« kot pri obrestnem obrestovanju: $10\,000 \cdot 1{,}025^4 \approx 11\,038{,}13\,\text{€}$.
 
 ? (brez računala) Kuharska knjiga stane $80\,\text{€}$. Najprej jo znižajo za $25\,\%$, nato novo ceno zvišajo za $25\,\%$. Koliko evrov stane na koncu?
-= 75 €
+= 75 € | 0
 ~ 80 | Spremembi se ne izničita: zvišanje za $25\,\%$ se računa od nižje cene $60\,\text{€}$.
 ~ 60 | To je cena le po znižanju. Zvišaj jo še za $25\,\%$.
 > $80 \cdot 0{,}75 = 60$, nato $60 \cdot 1{,}25 = 75$. Skupni faktor $0{,}75 \cdot 1{,}25 = 0{,}9375$: cena je za $6{,}25\,\%$ nižja.

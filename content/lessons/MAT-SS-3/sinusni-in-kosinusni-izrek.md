@@ -51,12 +51,10 @@ Izrek velja za vsako stranico; črke le zamenjaš: $a^2 = b^2 + c^2 - 2bc\cos\al
 
 **Kateri izrek izbrati.** Odloči se po tem, kaj poznaš:
 
-| poznaš | začni s | opomba |
-|---|---|---|
-| tri stranice | kosinusnim | kot iz $\cos$ |
-| dve stranici in kot med njima | kosinusnim | najprej tretja stranica |
-| stranico in dva kota | sinusnim | tretji kot iz $180^\circ$ |
-| dve stranici in kot nasproti ene | sinusnim | lahko sta dve rešitvi |
+- tri stranice → kosinusni izrek (kot iz $\cos$);
+- dve stranici in kot med njima → kosinusni izrek (najprej tretja stranica);
+- stranico in dva kota → sinusni izrek (tretji kot iz $180^\circ$);
+- dve stranici in kot nasproti ene → sinusni izrek (lahko sta dve rešitvi).
 
 **Past pri sinusu.** Kadar s sinusnim izrekom iščeš kot, dobiš njegov sinus. Iz lekcije o trigonometrijskih enačbah veš, da ima $\sin x = 0{,}9$ med $0^\circ$ in $180^\circ$ dve rešitvi: $x \approx 64{,}2^\circ$ in $x \approx 115{,}8^\circ$. Kalkulator pokaže le prvo. Trikotnik lahko obstaja z obema kotoma, le z enim ali z nobenim. Zato za vsakega kandidata preveri, ali je njegova vsota z znanim kotom manjša od $180^\circ$.
 
@@ -200,7 +198,7 @@ $\cos\kappa = \dfrac{5{,}76 + 9{,}61 - 12{,}25}{14{,}88} = \dfrac{3{,}12}{14{,}8
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Stranice trikotnika merijo $3\,\mathrm{cm}$, $5\,\mathrm{cm}$ in $7\,\mathrm{cm}$. Izračunaj največji notranji kot trikotnika.
+Stranice trikotnika merijo $3\,\mathrm{cm}$, $5\,\mathrm{cm}$ in $7\,\mathrm{cm}$. Izračunajte največji notranji kot trikotnika.
 
 **Rešitev:**
 
@@ -215,9 +213,9 @@ Stranice trikotnika merijo $3\,\mathrm{cm}$, $5\,\mathrm{cm}$ in $7\,\mathrm{cm}
 
 Parcela ima obliko trikotnika $ABC$. Velja $|AB| = 85\,\mathrm{m}$, $|AC| = 62\,\mathrm{m}$, notranji kot pri oglišču $A$ pa meri $74^\circ$.
 
-a) Izračunaj dolžino stranice $BC$. Rezultat zaokroži na decimeter. (2 točki)
-b) Izračunaj notranji kot pri oglišču $B$. Rezultat zaokroži na stotinko stopinje. (2 točki)
-c) Okoli parcele želijo speljati krožno pot, ki gre skozi vsa tri oglišča. Izračunaj polmer te krožnice. Rezultat zaokroži na decimeter. (2 točki)
+a) Izračunajte dolžino stranice $BC$. Rezultat zaokrožite na decimeter. (2 točki)
+b) Izračunajte notranji kot pri oglišču $B$. Rezultat zaokrožite na stotinko stopinje. (2 točki)
+c) Okoli parcele želijo speljati krožno pot, ki gre skozi vsa tri oglišča. Izračunajte polmer te krožnice. Rezultat zaokrožite na decimeter. (2 točki)
 
 **Rešitev:**
 

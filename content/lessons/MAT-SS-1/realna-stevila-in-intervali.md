@@ -58,17 +58,19 @@ $$|x - 3| = \begin{cases} x - 3, & x \ge 3 \\ 3 - x, & x < 3 \end{cases}$$
 
 **3. Intervali.** **Interval** je množica **vseh** realnih števil med dvema **krajiščema** $a$ in $b$ ($a < b$). Zapis $[2, 5]$ torej ne pomeni le »števila $2, 3, 4, 5$«, ampak vsebuje tudi $2{,}5$, $\pi$ in $\sqrt{10}$. Krajišče je lahko vključeno ali izključeno. Interval je lahko tudi neomejen, če se razteza v neskončnost.
 
-| Interval | Neenačba | Ime | Na številski premici |
-|---|---|---|---|
-| $(a, b)$ | $a < x < b$ | odprti | oba prazna krožca |
-| $[a, b]$ | $a \le x \le b$ | zaprti | oba polna krožca |
-| $[a, b)$ | $a \le x < b$ | polodprti | poln pri $a$, prazen pri $b$ |
-| $(a, b]$ | $a < x \le b$ | polodprti | prazen pri $a$, poln pri $b$ |
-| $(a, \infty)$ | $x > a$ | neomejeni | prazen krožec, puščica v desno |
-| $[a, \infty)$ | $x \ge a$ | neomejeni | poln krožec, puščica v desno |
-| $(-\infty, b)$ | $x < b$ | neomejeni | prazen krožec, puščica v levo |
-| $(-\infty, b]$ | $x \le b$ | neomejeni | poln krožec, puščica v levo |
-| $(-\infty, \infty)$ | vsak $x$ | cela premica | $\mathbb{R}$ |
+| Interval | Neenačba |
+|---|---|
+| $(a, b)$ | $a < x < b$ |
+| $[a, b]$ | $a \le x \le b$ |
+| $[a, b)$ | $a \le x < b$ |
+| $(a, b]$ | $a < x \le b$ |
+| $(a, \infty)$ | $x > a$ |
+| $[a, \infty)$ | $x \ge a$ |
+| $(-\infty, b)$ | $x < b$ |
+| $(-\infty, b]$ | $x \le b$ |
+| $(-\infty, \infty)$ | vsak $x$ |
+
+Po vrsti so to **odprti**, **zaprti**, dva **polodprta** in štirje **neomejeni** intervali. Na številski premici izključeno krajišče narišemo s praznim krožcem, vključeno s polnim. Interval do $\infty$ ima puščico v desno, interval od $-\infty$ v levo, $(-\infty, \infty)$ pa je cela premica $\mathbb{R}$.
 
 Pravila za zapis:
 
@@ -234,7 +236,7 @@ $|u| = u$ za $u \ge 0$ in $|u| = -u$ za $u < 0$; $\;|u| = a$ z $a > 0$ $\iff u =
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši enačbo $2|x + 1| - 3 = 5$.
+Rešite enačbo $2|x + 1| - 3 = 5$.
 
 **Rešitev:**
 
@@ -249,10 +251,10 @@ Reši enačbo $2|x + 1| - 3 = 5$.
 
 Dana sta intervala $A = (-3, \sqrt{10}\,]$ in $B = [0, 6)$.
 
-a) Opiši, kako s pomočjo Pitagorovega izreka na številski premici z ravnilom in šestilom konstruiraš točko, ki pripada številu $\sqrt{10}$. (2 točki)
-b) Med katerima zaporednima celima številoma leži $\sqrt{10}$? Odgovor utemelji. (1 točka)
-c) Določi $A \cap B$ in $A \cup B$. (2 točki)
-d) Zapiši vsa cela števila, ki so v množici $A \setminus B$. (1 točka)
+a) Opišite, kako s pomočjo Pitagorovega izreka na številski premici z ravnilom in šestilom konstruirate točko, ki pripada številu $\sqrt{10}$. (2 točki)
+b) Med katerima zaporednima celima številoma leži $\sqrt{10}$? Odgovor utemeljite. (1 točka)
+c) Določite $A \cap B$ in $A \cup B$. (2 točki)
+d) Zapišite vsa cela števila, ki so v množici $A \setminus B$. (1 točka)
 
 **Rešitev:**
 
@@ -270,10 +272,10 @@ d) Zapiši vsa cela števila, ki so v množici $A \setminus B$. (1 točka)
 
 Množica $A$ vsebuje vsa realna števila $x$, ki so od števila $2$ oddaljena največ za $3$. Množica $B$ je množica vseh rešitev neenačbe $|3 - 2x| > 5$.
 
-a) Zapiši pogoj za števila iz $A$ z absolutno vrednostjo in množico $A$ zapiši kot interval. (2 točki)
-b) Reši neenačbo $|3 - 2x| > 5$ in množico $B$ zapiši kot unijo intervalov. (3 točke)
-c) Določi $A \cap B$ in $A \cup B$. (2 točki)
-d) Množico $A \setminus B$ zapiši kot interval in z neenačbo oblike $|x - c| \le r$. (3 točke)
+a) Zapišite pogoj za števila iz $A$ z absolutno vrednostjo in množico $A$ zapišite kot interval. (2 točki)
+b) Rešite neenačbo $|3 - 2x| > 5$ in množico $B$ zapišite kot unijo intervalov. (3 točke)
+c) Določite $A \cap B$ in $A \cup B$. (2 točki)
+d) Množico $A \setminus B$ zapišite kot interval in z neenačbo oblike $|x - c| \le r$. (3 točke)
 
 **Rešitev:**
 
@@ -366,7 +368,7 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 > Nova rešitev so vsa števila, ki jih stara ni vsebovala: dva kosa zunaj, s krajiščema, ker sta oddaljeni natanko $2$.
 
 ? (brez računala) Kolikšna je vrednost izraza $|3 - 8| - |{-2}|$?
-= 3
+= 3 | 0
 ~ 7 | Absolutni vrednosti si seštel. Med njima je minus: $5 - 2$.
 ~ -7 | Prvo absolutno vrednost si izpustil: $-5 - 2$. Najprej $|3 - 8| = |-5| = 5$.
 ~ -3 | Obe absolutni vrednosti si izpustil: $-5 - (-2)$. Absolutna vrednost ni nikoli negativna.
@@ -383,7 +385,7 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 > Dovoljene mase so $[235, 265]\,\text{mg}$. Pri $234\,\text{mg}$ je odmik $|234 - 250| = 16 > 15$, zato tableta ne ustreza.
 
 ? (brez računala) Reši enačbo $|2x - 5| = 9$ in vpiši vsoto obeh rešitev.
-= 5
+= 5 | 0
 ~ 7 | To je le rešitev enačbe $2x - 5 = 9$. Druga je iz $2x - 5 = -9$, to je $x = -2$.
 ~ -2 | To je le rešitev enačbe $2x - 5 = -9$. Druga je iz $2x - 5 = 9$, to je $x = 7$.
 > $2x - 5 = 9$ da $x = 7$, $2x - 5 = -9$ pa $x = -2$. Vsota je $7 + (-2) = 5$.

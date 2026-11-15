@@ -17,11 +17,11 @@ Vprašanje »kje je količina večja ali manjša od dane vrednosti« vodi do **k
 
 Ničli dobimo iz enačbe $400 - 25x^2 = 0$: $x^2 = 16$, torej $x_1 = -4$ in $x_2 = 4$. Vodilni koeficient je $-25 < 0$, zato je parabola odprta navzdol. Med ničlama je nad osjo, levo in desno od njiju pa pod njo. Ničli razdelita os $x$ na tri dele; v vsakem preverimo po eno število:
 
-| del osi | preizkus | predznak |
-|---|---|---|
-| $x < -4$ | $f(-5) = -225$ | $-$ |
-| $-4 < x < 4$ | $f(0) = 400$ | $+$ |
-| $x > 4$ | $f(5) = -225$ | $-$ |
+| del osi | preizkus |
+|---|---|
+| $x < -4$ | $f(-5) = -225 < 0$ |
+| $-4 < x < 4$ | $f(0) = 400 > 0$ |
+| $x > 4$ | $f(5) = -225 < 0$ |
 
 Rešitev je $x \in (-4, 4)$: nad snežno mejo je $8\,\text{km}$ ceste, po štiri na vsaki strani vrha. Sošolec je pozabil, da je $\sqrt{x^2} = |x|$. Iz $x^2 < 16$ sledi $|x| < 4$, torej $-4 < x < 4$, ne le $x < 4$.
 
@@ -185,7 +185,7 @@ Nima. $D = 25600 - 26000 = -400 < 0$, parabola je odprta navzgor in je vsa nad o
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši neenačbo $2x^2 \ge x + 6$.
+Rešite neenačbo $2x^2 \ge x + 6$.
 
 **Rešitev:**
 
@@ -201,9 +201,9 @@ Reši neenačbo $2x^2 \ge x + 6$.
 
 Dana je funkcija $f(x) = x^2 - 2x + c$, kjer je $c$ realno število.
 
-a) Naj bo $c = -3$. Reši neenačbo $f(x) > 0$. (2 točki)
-b) Za katere vrednosti $c$ velja neenačba $f(x) > 0$ za vsa realna števila $x$? Odgovor utemelji. (2 točki)
-c) Določi $c$ tako, da bo rešitev neenačbe $f(x) \le 0$ zaprt interval dolžine $6$. Zapiši ta interval. (3 točke)
+a) Naj bo $c = -3$. Rešite neenačbo $f(x) > 0$. (2 točki)
+b) Za katere vrednosti $c$ velja neenačba $f(x) > 0$ za vsa realna števila $x$? Odgovor utemeljite. (2 točki)
+c) Določite $c$ tako, da bo rešitev neenačbe $f(x) \le 0$ zaprt interval dolžine $6$. Zapišite ta interval. (3 točke)
 
 **Rešitev:**
 
@@ -222,10 +222,10 @@ c) Določi $c$ tako, da bo rešitev neenačbe $f(x) \le 0$ zaprt interval dolži
 
 Zaustavitvena pot avtomobila je pot, ki jo avtomobil prevozi od trenutka, ko voznik opazi oviro, do ustavitve. Sestavljena je iz poti v reakcijskem času, ki je sorazmerna s hitrostjo $v$, in zavorne poti, ki je sorazmerna s kvadratom hitrosti. Na suhi cesti je pri hitrosti $50\,\text{km/h}$ pot v reakcijskem času $15\,\text{m}$, zavorna pot pa $20\,\text{m}$.
 
-a) Pokaži, da je zaustavitvena pot na suhi cesti pri hitrosti $v$ (v $\text{km/h}$) enaka $d(v) = 0{,}3v + 0{,}008v^2$ metrov. (2 točki)
-b) Voznik opazi oviro $60\,\text{m}$ pred avtomobilom. Pri katerih hitrostih se ustavi pred oviro? Mejno hitrost zaokroži na desetinko. (3 točke)
-c) Na mokri cesti je zavorna pot $1{,}5$-krat daljša, pot v reakcijskem času pa je enaka. Zapiši model zaustavitvene poti $d_m(v)$ na mokri cesti in izračunaj, pri katerih hitrostih se avtomobil ustavi pred oviro na razdalji $60\,\text{m}$. Mejno hitrost zaokroži na desetinko. (3 točke)
-d) Za koliko odstotkov je mejna hitrost na mokri cesti manjša od mejne hitrosti na suhi cesti? Rezultat zaokroži na desetinko odstotka. (2 točki)
+a) Pokažite, da je zaustavitvena pot na suhi cesti pri hitrosti $v$ (v $\text{km/h}$) enaka $d(v) = 0{,}3v + 0{,}008v^2$ metrov. (2 točki)
+b) Voznik opazi oviro $60\,\text{m}$ pred avtomobilom. Pri katerih hitrostih se ustavi pred oviro? Mejno hitrost zaokrožite na desetinko. (3 točke)
+c) Na mokri cesti je zavorna pot $1{,}5$-krat daljša, pot v reakcijskem času pa je enaka. Zapišite model zaustavitvene poti $d_m(v)$ na mokri cesti in izračunajte, pri katerih hitrostih se avtomobil ustavi pred oviro na razdalji $60\,\text{m}$. Mejno hitrost zaokrožite na desetinko. (3 točke)
+d) Za koliko odstotkov je mejna hitrost na mokri cesti manjša od mejne hitrosti na suhi cesti? Rezultat zaokrožite na desetinko odstotka. (2 točki)
 
 **Rešitev:**
 
@@ -363,7 +363,7 @@ Izraz v oglatem oklepaju je vsota nenegativnega kvadrata in pozitivnega števila
 > Ničli sta $2$ in $4$. Parabola je odprta navzdol, nad osjo je med ničlama; neenačaj je nestrog, zato ničli vključimo.
 
 ? (brez računala) Koliko celih števil reši neenačbo $x^2 - 2x - 8 < 0$?
-= 5
+= 5 | 0
 ~ 7 | Šteješ tudi ničli $-2$ in $4$. Neenačaj $<$ je strog: $f(-2) = 0$ ni manjše od $0$.
 ~ 6 | To je dolžina intervala, $4 - (-2) = 6$, ne število celih števil v njem.
 > Ničli sta $-2$ in $4$ (razcep $(x + 2)(x - 4)$). Parabola je odprta navzgor, pod osjo je med ničlama: $x \in (-2, 4)$. Cela števila v njem so $-1$, $0$, $1$, $2$ in $3$, torej $5$.

@@ -17,12 +17,16 @@ Ne. Vesoljska sonda daleč za Neptunom pošilja na Zemljo fotografije, meritve t
 
 **2. Štetje z dvema števkama.** Kaj pa, če imaš samo števki $0$ in $1$? Šteješ po istem pravilu, le da prenašaš že po $1$. Za $0$ in $1$ ni težav. Število $2$ nima svoje števke, zato zapišeš $0$ in preneseš: $10$. Nadaljuj:
 
-| število | zapis z $0$ in $1$ | število | zapis z $0$ in $1$ |
-|---|---|---|---|
-| $1$ | $1$ | $5$ | $101$ |
-| $2$ | $10$ | $6$ | $110$ |
-| $3$ | $11$ | $7$ | $111$ |
-| $4$ | $100$ | $8$ | $1000$ |
+| število | zapis z $0$ in $1$ |
+|---|---|
+| $1$ | $1$ |
+| $2$ | $10$ |
+| $3$ | $11$ |
+| $4$ | $100$ |
+| $5$ | $101$ |
+| $6$ | $110$ |
+| $7$ | $111$ |
+| $8$ | $1000$ |
 
 Opaziš vzorec? Zapisi $1$, $10$, $100$, $1000$ pripadajo številom $1$, $2$, $4$, $8$. Vsak naslednji zapis z eno enico in samimi ničlami za njo pomeni **dvakrat** večje število od prejšnjega.
 
@@ -34,7 +38,7 @@ $16$ je spet podvojitev, zato je zapis $10000$. Zapis $1111$ je število tik pre
 
 **3. Pravilo: mestne vrednosti so potence števila 2.** V **dvojiškem** (binarnem) številskem sestavu je osnova $2$. Števki sta $0$ in $1$; eni števki rečemo **bit**. Mestne vrednosti so od desne proti levi $2^0 = 1$, $2^1 = 2$, $2^2 = 4$, $2^3 = 8$ in tako naprej:
 
-| mesto od desne | mestna vrednost | desetiško |
+| mesto | vrednost | desetiško |
 |---|---|---|
 | 1. | $2^0$ | $1$ |
 | 2. | $2^1$ | $2$ |
@@ -222,10 +226,10 @@ $10 = 8 + 2$, torej $58 = 32 + 16 + 8 + 2$. Mesta $4$ in $1$ dobita ničlo: $111
 
 Števec na vhodu v muzej število obiskovalcev prikazuje v dvojiškem sestavu. Opoldne je pokazal $1110011_{(2)}$. V celem dnevu je prišlo $200$ obiskovalcev.
 
-a) Koliko obiskovalcev je prišlo do opoldneva? Rezultat zapiši desetiško. (2 točki)
-b) Število $200$ z zaporednim deljenjem z $2$ zapiši v dvojiškem sestavu. (2 točki)
-c) Koliko obiskovalcev je prišlo popoldne? Rezultat zapiši desetiško in dvojiško. (2 točki)
-d) Samo iz dvojiškega zapisa iz b) utemelji, ali je število $200$ deljivo z $8$. (1 točka)
+a) Koliko obiskovalcev je prišlo do opoldneva? Rezultat zapišite desetiško. (2 točki)
+b) Število $200$ z zaporednim deljenjem z $2$ zapišite v dvojiškem sestavu. (2 točki)
+c) Koliko obiskovalcev je prišlo popoldne? Rezultat zapišite desetiško in dvojiško. (2 točki)
+d) Samo iz dvojiškega zapisa iz b) utemeljite, ali je število $200$ deljivo z $8$. (1 točka)
 
 **Rešitev:**
 
@@ -242,11 +246,11 @@ d) Samo iz dvojiškega zapisa iz b) utemelji, ali je število $200$ deljivo z $8
 
 Šola vsakemu dijaku dodeli številko kartice. Številke so zapisane dvojiško z enakim številom bitov (spredaj so lahko ničle) in se začnejo pri $0$.
 
-a) Koliko različnih številk lahko zapišemo z $9$ biti? Katera je največja? Zapiši jo desetiško. (2 točki)
-b) Šola ima $700$ dijakov, ki dobijo številke od $0$ do $699$. Najmanj koliko bitov potrebuje? Odgovor utemelji. (2 točki)
-c) Dijakinja ima kartico s številko $1001011010_{(2)}$. Pretvori jo v desetiški sestav. (2 točki)
-d) Največjo številko $699$ z zaporednim deljenjem z $2$ zapiši v dvojiškem sestavu. (2 točki)
-e) Brez pretvarjanja zapiši dvojiški zapis števila, ki je dvakrat večje od številke dijakinje iz c). Pravilo utemelji z zapisom $n = a_k \cdot 2^k + \dots + a_1 \cdot 2 + a_0$. (2 točki)
+a) Koliko različnih številk lahko zapišemo z $9$ biti? Katera je največja? Zapišite jo desetiško. (2 točki)
+b) Šola ima $700$ dijakov, ki dobijo številke od $0$ do $699$. Najmanj koliko bitov potrebuje? Odgovor utemeljite. (2 točki)
+c) Dijakinja ima kartico s številko $1001011010_{(2)}$. Pretvorite jo v desetiški sestav. (2 točki)
+d) Največjo številko $699$ z zaporednim deljenjem z $2$ zapišite v dvojiškem sestavu. (2 točki)
+e) Brez pretvarjanja zapišite dvojiški zapis števila, ki je dvakrat večje od številke dijakinje iz c). Pravilo utemeljite z zapisom $n = a_k \cdot 2^k + \dots + a_1 \cdot 2 + a_0$. (2 točki)
 
 **Rešitev:**
 
@@ -329,7 +333,7 @@ Ko so iztegnjeni vsi prsti, je dan $16 + 8 + 4 + 2 + 1 = 31$. Ena roka ji torej 
 > Mestne vrednosti so potence števila $2$: $1, 2, 4, 8, 16$ …; vsaka je dvakrat večja od prejšnje.
 
 ? (brez računala) Pretvori $110110_{(2)}$ v desetiški sestav.
-= 54
+= 54 | 0
 ~ 108 | Začel si z mestno vrednostjo $2$ namesto $1$, zato je rezultat dvakrat prevelik.
 ~ 27 | Bral si števke v obratnem vrstnem redu ($011011_{(2)}$). Skrajno desna števka ima vrednost $1$.
 > Enice stojijo na mestih $32$, $16$, $4$ in $2$: $32 + 16 + 4 + 2 = 54$.
@@ -374,7 +378,7 @@ napis: 4,5; 0,3 | 1 | sredina | debelo
 napis: 5,5; 0,3 | 0 | sredina
 napis: 6,5; 0,3 | 1 | sredina | debelo
 :::
-= 101
+= 101 | 0
 ~ 83 | Bral si od desne proti levi. Skrajno desna lučka ima vrednost $1$, skrajno leva $64$.
 ~ 202 | Začel si z vrednostjo $2$ namesto $1$, zato je rezultat dvakrat prevelik.
 > $1100101_{(2)}$: enice na mestih $64$, $32$, $4$ in $1$, torej $64 + 32 + 4 + 1 = 101$.
