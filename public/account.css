@@ -78,6 +78,8 @@ details .card { margin-top: 8px; }
 .verify-trouble [aria-expanded]::after { content: " ▾" / ""; }
 .verify-trouble [aria-expanded="true"]::after { content: " ▴" / ""; }
 #verify-trouble-box { margin-top: 8px; }
+/* Zaklenjen »Pošlji znova« (60 s) mora biti videti zaklenjen, ne le ne odzivati se (pregled 3, #745). */
+#verify-resend:disabled { opacity: 0.55; cursor: default; }
 #ask-parent .form-actions { flex-wrap: wrap; }
 .whose-field { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
 .whose-field legend { font-weight: 600; margin-bottom: 4px; padding: 0; }

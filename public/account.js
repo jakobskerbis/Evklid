@@ -699,6 +699,8 @@ function renderVerifyLink(token) {
     const open = e.currentTarget.getAttribute("aria-expanded") !== "true";
     e.currentTarget.setAttribute("aria-expanded", String(open));
     $("#verify-trouble-box").hidden = !open;
+    // Na telefonu je odprta kartica pod robom zaslona: pokaži jo (pregled 3, #745).
+    if (open) $("#verify-trouble-box").scrollIntoView({ block: "nearest" });
   });
   $("#auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();
