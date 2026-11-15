@@ -48,3 +48,51 @@ test("in a real browser no sim keeps creating clickable elements on its own", { 
   assert.deepEqual(napake, [], napake.join("\n"));
   assert.deepEqual(slabi.map((s) => `${s.id} ${JSON.stringify(s.opts)}: ${s.najdbe.join(", ")}`), []);
 });
+
+// Grafični kalkulator: med predvajanjem drsnika se seznam osveži vsako sličico. Vrstice s parametrično ali polarno
+// krivuljo (polji za meje t in θ) in z napako (»Dodaj drsnike«) so se prej gradile znova vsako sličico.
+test("graphing calculator: playing a slider does not rebuild inputs and buttons of other rows", { timeout: 60000 }, async (t) => {
+  if (!chromium) return t.skip("Playwright chromium ni nameščen");
+  const http = await import("node:http");
+  const path = await import("node:path");
+  const { OPAZUJ } = require("../scripts/gumbi-na-dotik.cjs");
+  const PUB = path.resolve("public");
+  const PAGE = `<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="/style.css"><script>${OPAZUJ}</script><div id="g" style="height:700px"></div>
+<script type="module">import { createCalculator } from "/graph/calc.js";
+window.calc = createCalculator(document.getElementById("g"), { t: (k) => k, icon: () => "", locale: () => "sl", storageKey: () => "t-calc", studentId: () => "", toast() {}, askTutor() {} });</script>`;
+  const server = http.createServer((req, res) => {
+    const url = req.url.split("?")[0];
+    if (url === "/t.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(PAGE);
+    const file = path.join(PUB, path.normalize(url));
+    let body;
+    try {
+      if (!file.startsWith(PUB + path.sep)) throw new Error("zunaj");
+      body = fs.readFileSync(file);
+    } catch {
+      return res.writeHead(404).end();
+    }
+    res.writeHead(200, { "content-type": { ".js": "text/javascript", ".css": "text/css", ".json": "application/json" }[path.extname(file)] || "application/octet-stream" }).end(body);
+  });
+  await new Promise((ok) => server.listen(0, "127.0.0.1", ok));
+  const browser = await chromium.launch();
+  try {
+    const p = await (await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 1024, height: 1366 }, reducedMotion: "no-preference" })).newPage();
+    await p.goto(`http://127.0.0.1:${server.address().port}/t.html`);
+    await p.waitForFunction(() => window.calc);
+    await p.evaluate(() => window.calc.show(["a = 1", "(a cos(t), sin(t))", "r = a + cos(θ)", "y = a x + c"]));
+    await p.waitForTimeout(300);
+    assert.equal(await p.locator(".gc-extra .gc-lim[data-dom]").count(), 4, "meje t in θ");
+    assert.equal(await p.locator(".gc-extra .gc-chip").count(), 1, "»Dodaj drsnike« pri vrstici z napako");
+    const before = await p.locator(".gc-extra .gc-lim[data-dom]").first().elementHandle();
+    await p.locator(".gc-play").first().click();
+    await p.evaluate(() => ((window.__najdbe = []), (window.__stej = true)));
+    await p.waitForTimeout(1000);
+    const najdbe = await p.evaluate(() => ((window.__stej = false), window.__najdbe.map((n) => n.opis)));
+    assert.equal(await p.locator(".gc-play").first().getAttribute("data-on"), "true", "drsnik teče");
+    assert.deepEqual([...new Set(najdbe)], []);
+    assert.ok(await before.evaluate((el) => el.isConnected), "polje za mejo ostane isto");
+  } finally {
+    await browser.close();
+    server.close();
+  }
+});

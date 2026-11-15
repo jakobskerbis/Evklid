@@ -95,8 +95,8 @@ async function seznam() {
     const list = Array.isArray(v[0]) ? v : [v];
     for (const [id, , opts] of list) {
       if (!id || id === "zbirka") continue;
-      const k = `${id}:${JSON.stringify(opts || {})}`;
-      if (!out.has(k) && !out.has(id + (opts && Object.keys(opts).length ? k : ""))) out.set(k, { id, opts: opts || {} });
+      const k = opts && Object.keys(opts).length ? `${id}:${JSON.stringify(opts)}` : id; // brez možnosti: isti ključ kot pogon
+      if (!out.has(k)) out.set(k, { id, opts: opts || {} });
     }
   }
   return [...out.values()];
