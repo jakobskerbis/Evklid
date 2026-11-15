@@ -369,3 +369,30 @@ test("darilna koda: dvojni dogodek ustvari eno kodo, prejemnik dobi dostop, spor
     assert.equal((await prejemnik.acc()).access.tier, "free", "po sporu: prejemnik nima več dostopa");
   });
 });
+
+test("naročnina: preklic in nato nadaljevanje (pred koncem obdobja); neuspešni ponovni poskusi končajo z unpaid → brezplačni paket", async () => {
+  await withServer(async (ctx) => {
+    const { stripe, hook } = ctx;
+    const acct = await account(ctx, "nadaljuj@poti.si");
+    const { customer, sub } = await subscribe(ctx, acct);
+    // Kupec v portalu prekliče, nato si premisli (»Renew«): cancel_at_period_end spet false.
+    stripe.state.subs.sub_1 = sub({ cancel_at_period_end: true });
+    await hook("customer.subscription.updated", stripe.state.subs.sub_1);
+    assert.equal((await acct.acc()).parent.subscription.cancel_at_period_end, true);
+    stripe.state.subs.sub_1 = sub();
+    await hook("customer.subscription.updated", stripe.state.subs.sub_1);
+    let ac = await acct.acc();
+    assert.equal(ac.parent.subscription.cancel_at_period_end, false, "nadaljevanje odstrani preklic");
+    assert.equal(ac.access.tier, "paid");
+
+    // Vsi ponovni poskusi plačila spodletijo: Stripe naročnino označi unpaid (ali jo prekliče) → brez odloga.
+    await hook("invoice.payment_failed", { id: "in_9", customer, subscription: "sub_1", amount_due: 1399, attempt_count: 4 });
+    stripe.state.subs.sub_1 = sub({ status: "unpaid" });
+    await hook("customer.subscription.updated", stripe.state.subs.sub_1);
+    ac = await acct.acc();
+    assert.equal(ac.access.tier, "free", "unpaid: brezplačni paket");
+    stripe.state.subs.sub_1 = sub({ status: "canceled", ended_at: now() });
+    await hook("customer.subscription.deleted", stripe.state.subs.sub_1);
+    assert.equal((await acct.acc()).access.tier, "free");
+  });
+});
