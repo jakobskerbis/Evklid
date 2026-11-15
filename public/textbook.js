@@ -250,23 +250,23 @@ async function renderHome() {
   // Študent fakultete: najprej učbenik njegovega študijskega programa, nato OŠ/SŠ.
   const program = jeFaks(student?.settings) ? student.settings.study_program || "" : "";
   const system = student?.settings?.school_system || "SI";
-  if (!tb.books.length || tb.program !== program || tb.system !== system) {
-    const books = await ctx.api(`/api/textbook/books?system=${encodeURIComponent(system)}${program ? `&program=${encodeURIComponent(program)}` : ""}`);
-    // Stanje šele po preverjanju: zavržen odgovor ne sme pustiti novih knjig brez ponastavitve predmeta in poti.
-    if (my !== navSeq) return;
+  // Seznam učbenikov in učenčeva pot hkrati (prej drug za drugim: dva čakanja na omrežje pred prvim izrisom).
+  const needBooks = !tb.books.length || tb.program !== program || tb.system !== system;
+  const [fetchedBooks, myPath] = await Promise.all([
+    needBooks ? ctx.api(`/api/textbook/books?system=${encodeURIComponent(system)}${program ? `&program=${encodeURIComponent(program)}` : ""}`) : null,
+    needBooks || tb.myPath === null ? ctx.api(`/api/students/${student.id}/path`).then((r) => r?.key || "", () => "") : tb.myPath,
+  ]);
+  // Stanje šele po preverjanju: zavržen odgovor ne sme pustiti novih knjig brez ponastavitve predmeta in poti.
+  if (my !== navSeq) return;
+  if (needBooks) {
     tb.program = program;
     tb.system = system;
-    tb.books = books;
+    tb.books = fetchedBooks;
     tb.subject = null;
     tb.book = null;
     tb.group = null;
-    tb.myPath = null;
   }
-  if (tb.myPath === null) {
-    const key = (await ctx.api(`/api/students/${student.id}/path`).catch(() => null))?.key || "";
-    if (my !== navSeq) return;
-    tb.myPath = key;
-  }
+  tb.myPath = myPath;
   // Privzeto: učbenik predmeta in ravni, ki ju učenec ima v učni poti.
   if (!tb.subject) tb.subject = program ? "PROG" : (tb.myPath || student?.settings?.subject || "MAT").split("-")[0];
   const subjects = [...new Map(tb.books.map((b) => [b.subject, b.subject === "PROG" ? t("tbk.myStudy") : b.subjectName])).entries()];
@@ -389,13 +389,18 @@ async function renderBody() {
     body.innerHTML = `<div class="card"><p>${esc(t("tbk.noBook"))}</p></div>`;
     return;
   }
-  let book;
-  try {
-    book = await ctx.api(`/api/textbook/toc?book=${encodeURIComponent(tb.book)}&system=${encodeURIComponent(tb.system || "SI")}`);
-  } catch (err) {
-    return failed(err);
+  // Kazalo iz pomnilnika (učbenik, ki je bil v tej seji že odprt ali vnaprej naložen): takoj, brez omrežja.
+  // Sicer »Nalagam …« namesto prazne strani, dokler kazalo ne pride (j, 15. 11. 2026: prazno, dolgo nalaganje).
+  let book = tocCache.get(tocKey(tb.book));
+  if (!book) {
+    body.innerHTML = `<p class="muted tb-loading" role="status">${esc(t("common.loading"))}</p>`;
+    try {
+      book = await loadToc(tb.book);
+    } catch (err) {
+      return failed(err);
+    }
+    if (stale()) return;
   }
-  if (stale()) return;
   if (book.subject === "PROG" && tb.mode === "refs") return renderRefs(body, book, stale);
   const unitHtml = (u, i, pathKey) => `<section class="card tb-unit">
         <h2><span class="tb-num">${i + 1}</span>${esc(u.title)}</h2>
@@ -438,6 +443,47 @@ async function renderBody() {
       renderBody();
     }),
   );
+  // Med brskanjem po vseh učbenikih naložimo kazala drugih učbenikov v ozadju, da se predmet in raven zamenjata takoj.
+  if (tb.browse) prefetchTocs();
+}
+
+// Kazala učbenikov v tej seji (ključ: učbenik in šolski sistem). Vsebina se spremeni le z novo različico strežnika,
+// ob kateri se stran osveži sama (app.js), zato jih ne osvežujemo. Zahteva, ki še teče, se deli (vnaprej in klik).
+const tocCache = new Map();
+const tocPending = new Map();
+const tocKey = (bookKey) => `${tb.system || "SI"}|${bookKey}`;
+function loadToc(bookKey) {
+  const key = tocKey(bookKey);
+  if (tocCache.has(key)) return Promise.resolve(tocCache.get(key));
+  let p = tocPending.get(key);
+  if (!p) {
+    p = ctx
+      .api(`/api/textbook/toc?book=${encodeURIComponent(bookKey)}&system=${encodeURIComponent(tb.system || "SI")}`)
+      .then((book) => {
+        // Kopija brez povezave (service worker, 503 z X-Offline) ali napaka ne pride sem; v pomnilnik samo pravo kazalo.
+        if (book && Array.isArray(book.parts)) tocCache.set(key, book);
+        return book;
+      })
+      .finally(() => tocPending.delete(key));
+    tocPending.set(key, p);
+  }
+  return p;
+}
+let prefetching = false;
+async function prefetchTocs() {
+  if (prefetching) return;
+  prefetching = true;
+  try {
+    // Ena za drugo, v mirnem trenutku: brez gneče zahtev ob odprtju (12 učbenikov, skupaj ~70 kB).
+    await new Promise((ok) => setTimeout(ok, 300));
+    for (const b of tb.books) {
+      if (b.subject === "PROG" || tocCache.has(tocKey(b.key))) continue;
+      // Brez povezave ali ob napaki strežnika nehamo (sicer do 12 × 7 s čakanja service workerja); klik naloži sam.
+      if (!(await loadToc(b.key).then(() => true, () => false))) break;
+    }
+  } finally {
+    prefetching = false;
+  }
 }
 
 // Klik na temo v kazalu ali iskanju.
