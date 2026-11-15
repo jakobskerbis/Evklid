@@ -80,3 +80,11 @@ test("kartica: obljuba nagrade samo z reward, povezava in »Ne zdaj«", () => {
     assert.ok(h.includes("data-povabi-copy") && h.includes("data-povabi-later"));
   }
 });
+
+test("povabiNaNapravi: pravila brez računa (trgovina, 7 dni) za izognitev klicu /api/account", async () => {
+  const { povabiNaNapravi } = await import("../public/povabi.js");
+  const k = POVABI_KLJUC + "7";
+  assert.equal(povabiNaNapravi({ profileId: 7, now: NOW, storage: shramba(), ua: "x EvklidApp/1.0" }), false);
+  assert.equal(povabiNaNapravi({ profileId: 7, now: NOW, storage: shramba({ [k]: JSON.stringify({ shown: NOW - DAN }) }) }), false);
+  assert.equal(povabiNaNapravi({ profileId: 7, now: NOW, storage: shramba() }), true);
+});
