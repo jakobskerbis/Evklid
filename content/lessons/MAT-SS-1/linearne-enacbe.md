@@ -198,6 +198,26 @@ $6x - 2x - 3x = x$, torej $x = 900\,\text{ml}$. Preizkus: $900 - 300 - 450 = 150
 - (višja raven) Pri enačbi s parametrom obravnavamo primere, kdaj je koeficient pri $x$ enak $0$ in kdaj ni.
 - Rešitev vedno preveri z vstavitvijo.
 
+## Ponovitev
+
+**Formule**
+- $ax = b$, $a \ne 0$: $x = \frac{b}{a}$ (na pamet)
+- $a = 0$, $b \ne 0$: ni rešitve (na pamet)
+- $a = 0$, $b = 0$: rešitev je vsak $x \in \mathbb{R}$ (na pamet)
+- $-(2x - 1) = -2x + 1$ (na pamet)
+
+**Postopek**
+1. Odpri oklepaje.
+2. Odpravi ulomke: vsak člen pomnoži s skupnim imenovalcem.
+3. Člene z $x$ zberi na eni strani, števila na drugi.
+4. Poenostavi v $ax = b$ in deli z $a$.
+5. Preveri z vstavitvijo v začetno enačbo.
+
+**Pazi na**
+- Minus pred oklepajem spremeni predznak obema členoma.
+- S skupnim imenovalcem pomnoži vsak člen, tudi tiste brez ulomka.
+- Člen prenašaš tako, da ga na obeh straneh prišteješ ali odšteješ: $-7$ postane $+7$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

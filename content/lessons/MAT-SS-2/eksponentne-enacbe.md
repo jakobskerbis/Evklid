@@ -223,6 +223,27 @@ podnapis: a) krivulja je pod padajočo premico za x < 2; b) pod premico y = x + 
 - Iz $a^u = b^u$ za različni pozitivni osnovi sledi $u = 0$.
 - Vsako rešitev preveri s preizkusom v prvotni enačbi.
 
+## Ponovitev
+
+**Formule**
+- $a^{u} = a^{v} \iff u = v$ ($a > 0$, $a \ne 1$) (na pamet)
+- $\dfrac{1}{a^n} = a^{-n}$, $\sqrt[n]{a^m} = a^{\frac{m}{n}}$ (na pamet)
+- $(a^m)^n = a^{mn}$, $a^{x+n} = a^n \cdot a^x$ (na pamet)
+- $a^x = c$ s $c \le 0$ nima rešitve (na pamet)
+- $a^u = b^u$, $a \ne b$ $\Rightarrow$ $u = 0$ (na pamet)
+
+**Postopek**
+1. Obe strani zapiši kot potenci z isto osnovo, npr. $\dfrac{1}{8} = 2^{-3}$.
+2. Pri vsoti potenc z isto osnovo izpostavi skupni faktor $a^x$.
+3. Če nastopata $a^{2x}$ in $a^x$, vpelji $t = a^x$ s pogojem $t > 0$.
+4. Izenači eksponenta in reši dobljeno enačbo.
+5. Vsako rešitev preveri v prvotni enačbi.
+
+**Pazi na**
+- Eksponenta izenači le pri enakih osnovah, zato najprej $4^{x-1} = 2^{2x-2}$.
+- Vsota v eksponentu je produkt potenc: $2^{x+3} = 8 \cdot 2^x$, ne $2^x + 2^3$.
+- Pri $t = a^x$ zavrzi vrednosti $t \le 0$: $3^x = -3$ nima rešitve.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

@@ -217,6 +217,26 @@ Dobiš $0 = 0$, zato je rešitev neskončno. Izberemo $z = t$: $y = 1 + t$ in $x
 - Neenačba z dvema neznankama: polravnina z robom $ax + by = c$; stran izbereš s testno točko; rob polno pri $\le$, $\ge$, črtkano pri $<$, $>$.
 - Sistem neenačb z dvema neznankama: presek polravnin; preizkus s točko v notranjosti.
 
+## Ponovitev
+
+**Formule**
+- Trikotna oblika: $x$ odstrani iz 2. in 3., nato $y$ iz 3. enačbe (na pamet)
+- $0 = c$, $c \ne 0$: ni rešitve; $0 = 0$: neskončno rešitev (na pamet)
+- Sistem neenačb: rešitev je presek (na pamet)
+- $ax + by = c$ je rob; $\le$, $\ge$ polno, $<$, $>$ črtkano (na pamet)
+
+**Postopek**
+1. Z ekvivalentnimi preoblikami spravi sistem v trikotno obliko.
+2. Vstavljaj nazaj od $z$ do $x$ in naredi preizkus.
+3. Pri neenačbah z eno neznanko reši vsako in vzemi presek intervalov.
+4. Pri dveh neznankah nariši rob, stran izberi s testno točko.
+5. Presek polravnin preveri s točko v notranjosti.
+
+**Pazi na**
+- Enačbo pomnoži v celoti, tudi desno stran.
+- Za drugi krog uporabi novo drugo enačbo, ki $x$ nima več.
+- Polravnine ne ugibaj po znaku: vedno uporabi testno točko.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)

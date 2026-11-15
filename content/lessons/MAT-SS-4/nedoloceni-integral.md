@@ -184,6 +184,28 @@ $\int u^4\,du = \dfrac{u^5}{5} + C$, torej $\dfrac{(x^3 - 2)^5}{5} + C$. Preverb
 - Nova spremenljivka (višja raven): $u = g(x)$, $du = g'(x)\,dx$, integriraj po $u$, vrni se k $x$. Pri $u = kx$ deliš s $k$.
 - Vedno preveri z odvajanjem.
 
+## Ponovitev
+
+**Formule**
+- $\int f(x)\,dx = F(x) + C$, kjer $F'(x) = f(x)$ (na pamet)
+- $\int x^n\,dx = \frac{x^{n+1}}{n+1} + C$, $n \ne -1$ (na pamet)
+- $\int \frac{1}{x}\,dx = \ln\lvert x\rvert + C$ (na pamet)
+- $\int e^x\,dx = e^x + C$ (na pamet)
+- $\int \sin x\,dx = -\cos x + C$, $\int \cos x\,dx = \sin x + C$ (na pamet)
+- (višja raven) nova spremenljivka: $u = g(x)$, $du = g'(x)\,dx$ (na pamet)
+
+**Postopek**
+1. Vsoto integriraj po členih, konstanto postavi pred integral.
+2. Vsak člen integriraj po osnovnih integralih.
+3. Dodaj $+ C$.
+4. Če je dan podatek, npr. $y(0) = 0$, iz njega izračunaj $C$.
+5. Rezultat preveri z odvajanjem.
+
+**Pazi na**
+- Vedno dodaj $+ C$: rezultat je družina funkcij.
+- Eksponent povečaj za $1$ in deli z novim: $\int x^3\,dx = \frac{x^4}{4} + C$.
+- $\int \sin x\,dx = -\cos x + C$, ne $\cos x$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

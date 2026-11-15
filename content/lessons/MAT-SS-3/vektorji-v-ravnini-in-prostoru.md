@@ -219,6 +219,27 @@ $\vec F = k\vec a + m\vec b$, po komponentah: $k a_x + m b_x = F_x$ in $k a_y + 
 - Krajevni vektor $\vec r_T = \overrightarrow{OT}$ ima za komponente koordinate točke $T$; $\overrightarrow{AB} = \vec r_B - \vec r_A$.
 - Bazo ravnine tvorita dva nekolinearna vektorja, bazo prostora trije nekoplanarni. Razstavljanje sile na dani smeri je razvoj po bazi (paralelogram).
 
+## Ponovitev
+
+**Formule**
+- $\vec a + \vec b = (a_x + b_x,\ a_y + b_y,\ a_z + b_z)$ (na pamet)
+- $k\vec a = (ka_x,\ ka_y,\ ka_z)$ (na pamet)
+- $|\vec a| = \sqrt{a_x^2 + a_y^2 + a_z^2}$ (na pamet)
+- $|k\vec a| = |k| \cdot |\vec a|$ (na pamet)
+- $\overrightarrow{AB} = \vec r_B - \vec r_A$ (na pamet)
+- kolinearna: $\vec b = k\vec a$ (na pamet)
+
+**Postopek**
+1. Zapiši krajevne vektorje točk ali vektorje po komponentah.
+2. Seštej, odštej ali pomnoži s številom po komponentah.
+3. Iz dobljenih komponent izračunaj dolžino.
+4. Pri kolinearnosti ali razvoju po bazi zapiši enačbo po komponentah in reši sistem.
+
+**Pazi na**
+- $|\vec a + \vec b| \ne |\vec a| + |\vec b|$: najprej seštej komponente, nato računaj dolžino.
+- S številom $k$ pomnoži vsako komponento.
+- Negativne komponente piši v oklepaju: $6 - (-1) = 7$, ne $5$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

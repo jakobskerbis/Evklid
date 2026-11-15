@@ -189,6 +189,25 @@ $6 \cdot 100 - 12 \cdot 10 + 8 = 600 - 120 + 8 = 488$. Preizkus: $1000 - 512 = 4
 - Kub dvočlenika: $(a \pm b)^3 = a^3 \pm 3a^2b + 3ab^2 \pm b^3$, koeficienti so $1, 3, 3, 1$.
 - Razvit izraz preveri tako, da v oba izraza vstaviš isto majhno število, ki ni $0$.
 
+## Ponovitev
+
+**Formule**
+- $(a + b)(c + d) = ac + ad + bc + bd$ (na pamet)
+- $(a \pm b)^2 = a^2 \pm 2ab + b^2$ (na pamet)
+- $(a + b)(a - b) = a^2 - b^2$ (na pamet)
+- $(a \pm b)^3 = a^3 \pm 3a^2b + 3ab^2 \pm b^3$ (na pamet)
+
+**Postopek**
+1. Razvij kvadrate in kube dvočlenikov po formulah.
+2. Odpravi oklepaje: vsak člen z vsakim, minus pred oklepajem obrne vse predznake.
+3. Združi podobne člene (enak spremenljivi del).
+4. Preveri: v začetni in končni izraz vstavi isto majhno število, ki ni $0$.
+
+**Pazi na**
+- $(a + b)^2 \ne a^2 + b^2$: ne pozabi mešanega člena $2ab$.
+- Pri $(x - 3)^2$ je minus le pri srednjem členu: $x^2 - 6x + 9$.
+- Seštevaš samo podobne člene: $3x + 2x^2$ ostane tak, $3x \cdot 2x = 6x^2$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

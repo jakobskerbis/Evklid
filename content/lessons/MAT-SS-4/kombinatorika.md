@@ -192,6 +192,26 @@ $P_n^{k_1, k_2, \ldots, k_r} = \frac{n!}{k_1!\,k_2! \cdots k_r!}$
 - Permutacije s ponavljanjem ($n$ elementov, $k_1, \ldots, k_r$ enakih po vrstah): $P_n^{k_1, \ldots, k_r} = \frac{n!}{k_1! \cdots k_r!}$.
 - Pred računanjem vprašaj: vsi ali le nekateri? Je vrstni red pomemben? Je ponavljanje dovoljeno?
 
+## Ponovitev
+
+**Formule**
+- Zaporedne izbire $m \cdot n$, ločeni primeri $m + n$ (na pamet)
+- $P_n = n!$, $0! = 1$ (na pamet)
+- $V_n^k = \frac{n!}{(n-k)!}$, s ponavljanjem $n^k$ (na pamet)
+- $C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!}$ (na pamet)
+- $P_n^{k_1, \ldots, k_r} = \frac{n!}{k_1! \cdots k_r!}$ (na pamet)
+
+**Postopek**
+1. Vprašaj se: vsi ali le nekateri elementi?
+2. Je vrstni red pomemben? Je ponavljanje dovoljeno?
+3. Izberi permutacije, variacije ali kombinacije.
+4. Zaporedne izbire (in) množi, ločene primere (ali) seštej.
+
+**Pazi na**
+- Če zamenjava dveh izbranih ne da nič novega, uporabi $\binom{n}{k}$.
+- Pri ponavljanju (koda $0007$) je možnosti $n^k$, brez njega vsakič ena manj.
+- $0! = 1$; v $\binom{n}{k}$ ne pozabi $(n-k)!$ v imenovalcu.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

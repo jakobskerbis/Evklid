@@ -158,6 +158,24 @@ $H_{n + 1} = 2(2^n - 1) + 1 = 2^{n + 1} - 2 + 1 = 2^{n + 1} - 1$, kar je $P(n + 
 - Neenakosti: uporabimo predpostavko, nato pokažemo še pomožno neenakost; baza je tam, kjer korak začne veljati.
 - Nekaj preverjenih primerov ni dokaz.
 
+## Ponovitev
+
+**Formule**
+- Baza: preveri $P(n_0)$, običajno $n_0 = 1$ (na pamet)
+- Korak: iz $P(n)$ izpelji $P(n + 1)$ za vsak $n \ge n_0$ (na pamet)
+
+**Postopek**
+1. Zapiši trditev $P(n)$ in preveri bazo $P(n_0)$.
+2. Zapiši predpostavko $P(n)$ in cilj $P(n + 1)$.
+3. Izraz za $n + 1$ preoblikuj, da se pojavi izraz iz $P(n)$: pri vsoti loči $(n + 1)$-ti člen, pri deljivosti izraz za $n$ plus večkratnik delitelja.
+4. Ta del zamenjaj po predpostavki.
+5. Pridi do $P(n + 1)$ in zapiši sklep.
+
+**Pazi na**
+- Baze ne izpusti; postavi jo tam, od koder korak deluje.
+- Korak gre od $P(n)$ k $P(n + 1)$; ne začni s $P(n + 1)$.
+- Predpostavko res uporabi, sicer nisi ničesar dokazal.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)

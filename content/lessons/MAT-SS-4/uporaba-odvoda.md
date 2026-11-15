@@ -216,6 +216,27 @@ $k_n = -\frac{1}{f'(a)}$; $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\rig
 - Vrednost ekstrema dobiš z vstavljanjem v $f$.
 - Ekstremalni problem: sestavi funkcijo ene spremenljivke, določi smiselni interval, reši $f' = 0$, preveri predznak in robove, odgovori v stavku z enotami.
 
+## Ponovitev
+
+**Formule**
+- tangenta: $y = f(a) + f'(a)(x - a)$ (na pamet)
+- normala: $k_n = -\frac{1}{f'(a)}$, $f'(a) \ne 0$ (na pamet)
+- $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$ (na pamet)
+- $f' > 0$: narašča, $f' < 0$: pada (na pamet)
+- ekstrem: $f'(a) = 0$ in $f'$ zamenja predznak (na pamet)
+
+**Postopek**
+1. Sestavi funkcijo ene spremenljivke.
+2. Določi smiselni interval.
+3. Reši $f'(x) = 0$.
+4. Preveri predznak $f'$ levo in desno ter vrednosti na robovih.
+5. Najdeno točko vstavi v $f$ in odgovori v stavku z enotami.
+
+**Pazi na**
+- $f'(a) = 0$ še ni ekstrem ($x^3$ pri $0$); preveri menjavo predznaka.
+- V tangenti je smerni koeficient število $f'(a)$, ne $f'(x)$.
+- Absciso vstavi v $f$, ne v $f'$; vrednost primerjaj še z vrednostma na robovih.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

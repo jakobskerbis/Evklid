@@ -172,6 +172,28 @@ $S_6 \approx 13\,604$ vstopnic v šestih sezonah.
 - »Vsako leto za $p\,\%$« → $a_n = a_1 q^{n-1}$ in $S_n = a_1 \frac{q^n - 1}{q - 1}$.
 - Paradoks rojstnih dni: pri $23$ ljudeh je verjetnost skupnega rojstnega dne približno $0{,}507$.
 
+## Ponovitev
+
+**Formule**
+- $P(A) = 1 - P(\overline{A})$ (na pamet)
+- največ, najmanj: $f'(x) = 0$ (na pamet)
+- $V_n^k = \frac{n!}{(n-k)!}$ (na pamet)
+- $a_n = a_1 q^{n-1}$ (na pamet)
+- $S_n = a_1 \frac{q^n - 1}{q - 1}$, $q \ne 1$ (priloga)
+- pot iz hitrosti: $\int_a^b v(t)\,dt$ (na pamet)
+
+**Postopek**
+1. Poišči ključno besedo (»vsaj«, »največ«, »na koliko načinov«).
+2. Izberi orodje, ki ji ustreza.
+3. Vsak člen verige reši posebej in zapiši rezultat.
+4. Preveri smiselnost (verjetnost je med $0$ in $1$).
+5. Še enkrat preberi vprašanje in odgovori prav nanj.
+
+**Pazi na**
+- Pri »vsaj eden« verjetnosti ne seštevaj; računaj z nasprotnim dogodkom.
+- Iz $h'(t) = 0$ dobiš čas vrha; za višino izračunaj še $h(t)$.
+- Je vrstni red pomemben (doma in v gosteh)? Potem $V_n^k$, ne $\binom{n}{k}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

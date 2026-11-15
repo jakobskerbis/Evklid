@@ -221,6 +221,28 @@ $\sin\alpha + \sin\beta = 2\sin\dfrac{\alpha + \beta}{2}\cos\dfrac{\alpha - \bet
 - Kotnih funkcij ne krajšaj, ampak izpostavi.
 - (višja raven) Vsoto sinusov ali kosinusov spremeni v produkt in vsak faktor izenači z $0$. Pri kotih $x$ in $\frac{x}{2}$ vse zapiši s polovičnim kotom ($1 + \cos x = 2\cos^2\frac{x}{2}$).
 
+## Ponovitev
+
+**Formule**
+- $\sin x = a$: $x = x_1 + k \cdot 360^\circ$ (na pamet)
+- ali $x = 180^\circ - x_1 + k \cdot 360^\circ$ (na pamet)
+- $\cos x = a$: $x = \pm x_1 + k \cdot 360^\circ$ (na pamet)
+- $\tan x = a$: $x = x_1 + k \cdot 180^\circ$ (na pamet)
+- $|a| > 1$: $\sin x = a$ in $\cos x = a$ nimata rešitev (na pamet)
+- (višja raven) $\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$ (priloga, višja raven)
+
+**Postopek**
+1. Enačbo preoblikuj v obliko $\sin x = a$, $\cos x = a$ ali $\tan x = a$; skupni faktor izpostavi.
+2. Preveri, ali je $|a| \le 1$ (pri sinusu in kosinusu).
+3. S kalkulatorjem izračunaj osnovno rešitev $x_1$ ($\arcsin a$, $\arccos a$ ali $\arctan a$).
+4. Dopiši drugo družino in periodo, $k \in \mathbb{Z}$.
+5. Pri $\sin(bx) = a$ reši za $bx$, nato deli z $b$; izberi rešitve na danem intervalu.
+
+**Pazi na**
+- Dopiši drugo rešitev: $180^\circ - x_1$ pri sinusu, $-x_1$ pri kosinusu.
+- Perioda je $360^\circ$ pri sinusu in kosinusu, $180^\circ$ le pri tangensu.
+- Ne deli s $\cos x$ ali $\sin x$: izpostavi, sicer izgubiš rešitve.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

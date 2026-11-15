@@ -198,6 +198,26 @@ $\delta S \approx \dfrac{1}{120} + \dfrac{1}{80} \approx 0{,}021 = 2{,}1\,\%$ in
 - Vsota in razlika: absolutni napaki se seštejeta. Razlika podobnih števil ima veliko relativno napako.
 - Produkt in količnik: relativni napaki se približno seštejeta (ocena; natančna meja je malo večja).
 
+## Ponovitev
+
+**Formule**
+- $\Delta x = |\bar{x} - x|$, $x = \bar{x} \pm \Delta x$ (na pamet)
+- $\delta x = \frac{\Delta x}{|x|} \approx \frac{\Delta x}{|\bar{x}|}$ (na pamet)
+- $\Delta(x \pm y) \le \Delta x + \Delta y$ (na pamet)
+- $\delta(x \cdot y) \approx \delta x + \delta y$, $\delta\left(\frac{x}{y}\right) \approx \delta x + \delta y$ (na pamet)
+
+**Postopek**
+1. Podatke zapiši kot $\bar{x} \pm \Delta x$.
+2. Pri vsoti ali razliki seštej absolutni napaki.
+3. Pri produktu ali količniku izračunaj relativni napaki in ju seštej.
+4. Relativno napako pomnoži z rezultatom, da dobiš absolutno.
+5. Zaokroži v enem koraku, iz izvirnega števila.
+
+**Pazi na**
+- Pri razliki napaki seštej, nikoli ne odštej.
+- Pri produktu ne seštevaj absolutnih napak, ampak relativne.
+- Natančnost meritev primerjaj z relativno napako, ne z absolutno.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

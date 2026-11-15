@@ -168,6 +168,26 @@ Delimo z $-2$, zato se znak obrne: $x \le -5$. Interval je $(-\infty, -5]$, kraj
 - Rešitev zapišemo kot interval: okrogel oklepaj pri strogi neenačbi in pri $\pm\infty$, oglati oklepaj pri $\le$, $\ge$.
 - Pri besedilnih nalogah upoštevamo še smiselnost rešitve (npr. $x \ge 0$).
 
+## Ponovitev
+
+**Formule**
+- Prištevanje, odštevanje: znak ostane (na pamet)
+- Množenje ali deljenje z $c > 0$: znak ostane (na pamet)
+- Z $c < 0$ se znak obrne: $-2x < 6 \Rightarrow x > -3$ (na pamet)
+- $x > 4$: $(4, \infty)$; $x \le 4$: $(-\infty, 4]$ (na pamet)
+
+**Postopek**
+1. Odpri oklepaje in odpravi ulomke.
+2. Člene z $x$ zberi na eni strani.
+3. Deli s koeficientom; pri negativnem obrni znak.
+4. Rešitev zapiši kot interval in jo nariši na številsko premico.
+5. Pri besedilni nalogi upoštevaj smiselnost (npr. $x \ge 0$, cela števila).
+
+**Pazi na**
+- Pri deljenju z negativnim številom obrni znak.
+- Okrogel oklepaj pri $<$, $>$ in $\pm\infty$, oglati pri $\le$, $\ge$.
+- Interval piši od manjšega k večjemu: $x > 4$ je $(4, \infty)$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

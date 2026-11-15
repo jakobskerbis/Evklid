@@ -226,6 +226,28 @@ $\sin^2\dfrac{\alpha}{2} = \dfrac{1 - \cos\alpha}{2}$, $\quad \cos^2\dfrac{\alph
 - (višja raven) Polovični kot: $\sin^2\frac{\alpha}{2} = \frac{1 - \cos\alpha}{2}$, $\cos^2\frac{\alpha}{2} = \frac{1 + \cos\alpha}{2}$; predznak po kvadrantu $\frac{\alpha}{2}$.
 - (višja raven) Vsota v produkt: $\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$; podobno za ostale tri.
 
+## Ponovitev
+
+**Formule**
+- $\sin(\alpha \pm \beta) = \sin\alpha\cos\beta \pm \cos\alpha\sin\beta$ (priloga)
+- $\cos(\alpha \pm \beta) = \cos\alpha\cos\beta \mp \sin\alpha\sin\beta$ (priloga)
+- $\tan(\alpha \pm \beta) = \frac{\tan\alpha \pm \tan\beta}{1 \mp \tan\alpha\tan\beta}$ (priloga)
+- $\sin 2\alpha = 2\sin\alpha\cos\alpha$ (na pamet)
+- $\cos 2\alpha = \cos^2\alpha - \sin^2\alpha$ (na pamet)
+- (višja raven) $\sin^2\frac{\alpha}{2} = \frac{1 - \cos\alpha}{2}$, $\cos^2\frac{\alpha}{2} = \frac{1 + \cos\alpha}{2}$ (priloga)
+
+**Postopek**
+1. Kot razstavi na znana kota, na primer $75^\circ = 45^\circ + 30^\circ$.
+2. Manjkajočo funkcijo izračunaj iz $\sin^2\alpha + \cos^2\alpha = 1$.
+3. Predznak korena določi po kvadrantu kota.
+4. Vstavi v pravi izrek in poenostavi.
+5. Preveri s preprostim kotom ali z računalom.
+
+**Pazi na**
+- $\sin(\alpha + \beta) \ne \sin\alpha + \sin\beta$: uporabi križni izraz.
+- Pri kosinusu se predznak obrne: pri vsoti minus, pri razliki plus.
+- $\sin 2\alpha = 2\sin\alpha\cos\alpha$, ne $2\sin\alpha$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

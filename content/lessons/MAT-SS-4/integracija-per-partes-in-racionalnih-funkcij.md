@@ -190,6 +190,26 @@ $\int x^2\,e^x\,dx = x^2\,e^x - 2(x\,e^x - e^x) + C = (x^2 - 2x + 2)\,e^x + C$. 
 - Racionalna funkcija: če je stopnja števca vsaj tolikšna kot stopnja imenovalca, najprej deli; imenovalec razcepi na različne linearne faktorje; $\frac{A}{x - a} + \frac{B}{x - b}$; $A$ in $B$ dobiš z vstavljanjem ničel imenovalca.
 - $\int \frac{k}{x - a}\,dx = k\ln\lvert x - a\rvert + C$, pri $\frac{1}{a - x}$ pa pride minus.
 
+## Ponovitev
+
+**Formule**
+- $\int u\,v'\,dx = u\,v - \int u'\,v\,dx$ (priloga, višja raven)
+- $\int \ln x\,dx = x\ln x - x + C$ (na pamet)
+- Nastavek: $\frac{A}{x - a} + \frac{B}{x - b}$ (na pamet)
+- $\int \frac{k}{x - a}\,dx = k\ln\lvert x - a\rvert + C$ (na pamet)
+
+**Postopek**
+1. Per partes: za $u$ izberi polinom ali $\ln x$, za $v'$ pa $e^x$, $\sin x$, $\cos x$ ali $1$.
+2. Izračunaj $u'$ in $v$ ter vstavi v formulo.
+3. Racionalna funkcija: če stopnja števca ni manjša od stopnje imenovalca, najprej deli.
+4. Imenovalec razcepi, $A$ in $B$ dobi z vstavljanjem ničel imenovalca.
+5. Integriraj vsak ulomek posebej in rezultat preveri z odvajanjem.
+
+**Pazi na**
+- Integral produkta ni produkt integralov: uporabi per partes.
+- Pri $v' = \sin x$ je $v = -\cos x$; minus pred novim integralom velja za cel oklepaj.
+- $\int \frac{dx}{x^2 - 1}$ ni $\ln\lvert x^2 - 1\rvert + C$: najprej razcepi na parcialne ulomke.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 6 točk, pola 1 (brez računala)

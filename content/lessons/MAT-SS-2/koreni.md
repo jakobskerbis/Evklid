@@ -258,6 +258,27 @@ $b = \sqrt[n]{a}$ pomeni $b^n = a$; na računalu tipka $\sqrt[\square]{\square}$
 - Daljico $\sqrt{n}$ konstruiramo s Pitagorovim izrekom: kot hipotenuzo $\sqrt{p^2 + q^2}$ ali kot kateto $\sqrt{h^2 - p^2}$.
 - Na računalu: tipka za $n$-ti koren ali potenca $a^{1/n}$ z eksponentom v oklepaju; rezultat preveri s potenciranjem.
 
+## Ponovitev
+
+**Formule**
+- $\sqrt{x^2} = |x|$, $\;\left(\sqrt{a}\right)^2 = a$ (na pamet)
+- $\sqrt{ab} = \sqrt{a}\sqrt{b}$, $\;\sqrt{\dfrac{a}{b}} = \dfrac{\sqrt{a}}{\sqrt{b}}$ za $a, b \ge 0$ (pri ulomku $b > 0$) (na pamet)
+- $p\sqrt{b} + q\sqrt{b} = (p + q)\sqrt{b}$ (na pamet)
+- $\sqrt{a^2 b} = a\sqrt{b}$ za $a, b \ge 0$ (na pamet)
+- $\dfrac{a}{\sqrt{b}} = \dfrac{a\sqrt{b}}{b}$ (na pamet)
+- $\left(\sqrt{a} - \sqrt{b}\right)\left(\sqrt{a} + \sqrt{b}\right) = a - b$ (na pamet)
+
+**Postopek**
+1. Delno koreni: izvleči največji popolni kvadrat.
+2. Seštej istovrstne korene.
+3. Racionaliziraj imenovalec: razširi s korenom ali s konjugiranim izrazom.
+4. Rezultat preveri s potenciranjem ali na računalu.
+
+**Pazi na**
+- $\sqrt{a + b} \ne \sqrt{a} + \sqrt{b}$: pravilo velja le za produkt in količnik.
+- Seštevaš le korene z enakim številom pod korenom; najprej delno koreni.
+- Pri $\sqrt{a} - \sqrt{b}$ v imenovalcu razširi z $\sqrt{a} + \sqrt{b}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

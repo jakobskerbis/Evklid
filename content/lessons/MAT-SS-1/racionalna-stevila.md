@@ -236,6 +236,26 @@ točka: 1,25 | 5/4 | modra
 - Gostost: med dvema racionalnima številoma je vedno še eno, npr. $\dfrac{p+q}{2}$.
 - V $\mathbb{Q}$ veljajo zamenljivost, združevalnost in razčlenitev; vsako število razen $0$ ima obratno vrednost. Odstotek je stotina: $\dfrac{5}{8} = 62{,}5\,\%$.
 
+## Ponovitev
+
+**Formule**
+- $\frac{a}{b} = \frac{c}{d} \iff ad = bc$ (na pamet)
+- $\frac{a}{b} \cdot \frac{c}{d} = \frac{ac}{bd}$, $\frac{a}{b} : \frac{c}{d} = \frac{a}{b} \cdot \frac{d}{c}$ (na pamet)
+- vsota in razlika: najprej skupni imenovalec, najbolje $v(b, d)$ (na pamet)
+- $\frac{a}{b} < \frac{c}{d} \iff ad < bc$ za $b, d > 0$ (na pamet)
+- končen decimalni zapis: v imenovalcu nekrajšljivega ulomka le praštevili $2$ in $5$ (na pamet)
+
+**Postopek**
+1. Decimalna in periodična števila zapiši kot ulomke.
+2. Pri seštevanju poišči skupni imenovalec, pri deljenju množi z obratno vrednostjo.
+3. Krajšaj le skupne faktorje; rezultat naj bo nekrajšljiv.
+4. Periodično število: $x = 0{,}\overline{3}$, $10x - x = 3$, $x = \frac{1}{3}$.
+
+**Pazi na**
+- Števcev in imenovalcev ne seštevaj: $\frac{1}{2} + \frac{1}{3} = \frac{5}{6}$.
+- Krajšaš faktorje, ne seštevancev: $\frac{4 + 3}{4} = \frac{7}{4}$.
+- Minus obrne vrstni red: $-\frac{1}{2} < -\frac{1}{3}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

@@ -160,6 +160,27 @@ Nima. $D = 25600 - 26000 = -400 < 0$, parabola je odprta navzgor in je vsa nad o
 - Pri $D < 0$ ima $ax^2 + bx + c$ za vse $x$ predznak koeficienta $a$.
 - Pri množenju ali deljenju z negativnim številom obrni neenačaj.
 
+## Ponovitev
+
+**Formule**
+- $D = b^2 - 4ac$, $\;x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$ (na pamet)
+- $a > 0$, $D > 0$: $f(x) < 0$ za $x \in (x_1, x_2)$ (na pamet)
+- $a > 0$, $D > 0$: $f(x) > 0$ zunaj $[x_1, x_2]$ (na pamet)
+- $D < 0$: $f(x)$ ima za vse $x$ predznak $a$ (na pamet)
+
+**Postopek**
+1. Prenesi vse na levo, da je na desni $0$.
+2. Poišči ničle z $D$ in obrazcem.
+3. Nariši skico parabole glede na predznak $a$.
+4. Odčitaj, kje je graf nad ali pod osjo $x$.
+5. Rešitev zapiši z intervali: strog neenačaj $(\;)$, nestrog $[\;]$.
+6. Preveri z enim številom.
+
+**Pazi na**
+- Pri deljenju z negativnim številom obrni neenačaj.
+- Neenačbe ne koreni: $x^2 > 9$ velja tudi za $x < -3$.
+- Ali je rešitev med ničlama ali zunaj, odloči skica, ne navada.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

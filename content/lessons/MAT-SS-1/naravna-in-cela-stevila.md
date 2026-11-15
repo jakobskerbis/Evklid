@@ -241,6 +241,27 @@ $a + b = b + a$, $\; a \cdot b = b \cdot a$, $\; (a + b) + c = a + (b + c)$, $\;
 - $D(a, b)$: skupni prafaktorji z manjšim eksponentom. $v(a, b)$: vsi prafaktorji z večjim eksponentom. (Višja raven) velja $D(a, b) \cdot v(a, b) = a \cdot b$.
 - (višja raven) Evklidov algoritem: $D(a, b) = D(b, r)$, ponavljamo do ostanka $0$.
 
+## Ponovitev
+
+**Formule**
+- $a \mid b$: obstaja celo število $k$ z $b = k \cdot a$ (na pamet)
+- $a = q \cdot b + r$ z $0 \le r < b$ (na pamet)
+- merila: $2$, $5$ zadnja števka; $4$ zadnji dve; $8$ zadnje tri; $3$, $9$ vsota števk (na pamet)
+- $D(a, b)$: skupni prafaktorji z manjšim eksponentom (na pamet)
+- $v(a, b)$: vsi prafaktorji z večjim eksponentom (na pamet)
+- višja raven: $D(a, b) \cdot v(a, b) = a \cdot b$ in $D(a, b) = D(b, r)$ (na pamet)
+
+**Postopek**
+1. Obe števili razcepi na prafaktorje (deli po merilih z $2$, $3$, $5$, …).
+2. Razcepa zapiši s potencami.
+3. Sestavi $D(a, b)$ in $v(a, b)$ po pravilu zgoraj.
+4. Preveri: $D \cdot v = a \cdot b$.
+
+**Pazi na**
+- $1$ ni praštevilo in liha števila niso vsa praštevila: $9 = 3 \cdot 3$.
+- Sestavljeno merilo velja le za tuja delitelja: iz deljivosti z $2$ in $4$ ne sledi deljivost z $8$.
+- Ostanek je med $0$ in $b - 1$: $-17 = (-4) \cdot 5 + 3$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

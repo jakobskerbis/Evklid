@@ -246,6 +246,28 @@ $\vec F_a = \dfrac{\vec a \cdot \vec F}{|\vec a|^2}\,\vec a$, $\quad |\vec F_a| 
 - Pravokotna projekcija $\vec b$ na $\vec a$: $\vec b_a = \dfrac{\vec a \cdot \vec b}{|\vec a|^2}\,\vec a$, ostanek $\vec b - \vec b_a$ je pravokoten na $\vec a$.
 - Kosinusni izrek: iz $|\vec a - \vec b|^2 = |\vec a|^2 - 2\,\vec a \cdot \vec b + |\vec b|^2$ sledi $c^2 = a^2 + b^2 - 2ab\cos\gamma$.
 
+## Ponovitev
+
+**Formule**
+- $\vec a \cdot \vec b = |\vec a|\,|\vec b|\cos\varphi$ (na pamet)
+- $\vec a \cdot \vec b = a_x b_x + a_y b_y + a_z b_z$ (na pamet)
+- $\cos\varphi = \dfrac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$ (na pamet)
+- $\vec a \perp \vec b \iff \vec a \cdot \vec b = 0$ (na pamet)
+- $\vec a \cdot \vec a = |\vec a|^2$ (na pamet)
+- projekcija $\vec b$ na $\vec a$: $\vec b_a = \dfrac{\vec a \cdot \vec b}{|\vec a|^2}\,\vec a$ (na pamet)
+
+**Postopek**
+1. Zapiši vektorja s skupnim začetkom v vrhu iskanega kota.
+2. Izračunaj komponente in skalarni produkt po komponentah.
+3. Izračunaj dolžini obeh vektorjev.
+4. Deli produkt z dolžinama in dobiš $\cos\varphi$.
+5. Kot izračunaj z $\arccos$; pri pravokotnosti preveri $\vec a \cdot \vec b = 0$.
+
+**Pazi na**
+- Rezultat je število: komponente zmnoži in seštej.
+- Pri kotu z vrhom $B$ vzemi $\overrightarrow{BA}$ in $\overrightarrow{BC}$, ne $\overrightarrow{AB}$.
+- Za $\cos\varphi$ produkt deli z obema dolžinama.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

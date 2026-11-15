@@ -288,6 +288,26 @@ Večina napak ni v formulah, ampak v predznakih in vrstnem redu.
 - Množica točk ob pogojih: $x \ge a$ je polravnina, $|y| < b$ pas $-b < y < b$; pri »in« vzamemo presek, pri »ali« unijo. Rob z $\le$, $\ge$ je poln, z $<$, $>$ črtkan.
 - Negativne koordinate piši v oklepaje.
 
+## Ponovitev
+
+**Formule**
+- $d(A, B) = \sqrt{(x_B - x_A)^2 + (y_B - y_A)^2}$ (na pamet)
+- $S_{AB}\left(\frac{x_A + x_B}{2}, \frac{y_A + y_B}{2}\right)$ (na pamet)
+- $x_B = 2x_S - x_A$, $y_B = 2y_S - y_A$ (na pamet)
+- $S = \frac{1}{2}|u_1 v_2 - u_2 v_1|$; $u$, $v$ sta premika od $A$ do $B$ in do $C$; priloga jo zapiše s koordinatami oglišč (priloga)
+- $S = 0$: točke so kolinearne (na pamet)
+
+**Postopek**
+1. Nariši točke; negativne koordinate piši v oklepaje.
+2. Izračunaj razlike koordinat, npr. $x_B - x_A$ in $y_B - y_A$.
+3. Vstavi v formulo za razdaljo, razpolovišče ali ploščino.
+4. Ploščino preveri: očrtan pravokotnik minus trije robni trikotniki.
+
+**Pazi na**
+- Odštevanje negativne koordinate: $4 - (-2) = 6$, ne $2$.
+- Razdalja ni vsota katet: uporabi Pitagorov izrek.
+- Ploščina trikotnika je polovica absolutne vrednosti $u_1 v_2 - u_2 v_1$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

@@ -194,6 +194,29 @@ $g(1{,}875) \approx -0{,}033 < 0$, zato je ničla na $(1{,}875; 1{,}88)$ in se z
 - Bisekcija: $c = \frac{a + b}{2}$, obdrži polovico z različnima predznakoma; po $n$ korakih je dolžina $\frac{b - a}{2^n}$.
 - S tehnologijo: tabela vrednosti s čedalje manjšim korakom ali ukaz za ničlo oz. presečišče v programu za grafe. Točka na krivulji ali presečišče = ničla razlike.
 
+## Ponovitev
+
+*(višja raven)*
+
+**Formule**
+- $f$ zvezna na $[a, b]$ in $f(a) \cdot f(b) < 0$ $\Rightarrow$ vsaj ena ničla na $(a, b)$ (na pamet)
+- zvezna na $[a, b]$ doseže najmanjšo in največjo vrednost (na pamet)
+- $c = \frac{a + b}{2}$ (na pamet)
+- dolžina po $n$ korakih: $\frac{b - a}{2^n}$ (na pamet)
+
+**Postopek**
+1. Presečišče ali točko na krivulji prevedi na ničlo razlike, npr. $f(x) - 2$.
+2. Preveri, da je $f$ na $[a, b]$ zvezna.
+3. Izračunaj $f(a)$ in $f(b)$ ter preveri, da imata različna predznaka.
+4. Izračunaj $c = \frac{a + b}{2}$ in $f(c)$.
+5. Obdrži polovico, na krajiščih katere sta predznaka različna.
+6. Ponavljaj, dokler se obe krajišči ne zaokrožita enako.
+
+**Pazi na**
+- Brez zveznosti izrek ne velja: $\frac{1}{x}$ na $[-1, 1]$ ničle nima.
+- Izrek zagotovi vsaj eno ničlo, ne natanko ene; enaka predznaka ne povesta ničesar.
+- Obdrži polovico z različnima predznakoma na krajiščih, ne tiste s $f(c) > 0$.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)

@@ -193,6 +193,28 @@ $d = \sqrt{48100} \approx 219{,}3\,\text{cm}$. Obe diagonali morata meriti pribl
 - Obodni kot je polovica središčnega; obodni kot nad premerom je pravi (Talesov izrek).
 - Tetivni štirikotnik: vsota nasprotnih kotov je $180^\circ$. Tangentni: $a + c = b + d$.
 
+## Ponovitev
+
+**Formule**
+- paralelogram $S = a \cdot v_a$, trapez $S = \dfrac{(a + c)\, v}{2}$ (na pamet)
+- romb in deltoid $S = \dfrac{e \cdot f}{2}$ (na pamet)
+- krog $o = 2\pi r$, $S = \pi r^2$ (na pamet)
+- lok $l = \dfrac{\pi r \alpha}{180^\circ}$, izsek $S = \dfrac{\pi r^2 \alpha}{360^\circ}$ (na pamet)
+- obodni kot je polovica središčnega, nad premerom je $90^\circ$ (na pamet)
+- tetivni: $\alpha + \gamma = 180^\circ$; tangentni: $a + c = b + d$ (na pamet)
+
+**Postopek**
+1. Nariši skico in označi znane količine.
+2. Če je podan premer, izračunaj $r = \dfrac{d}{2}$.
+3. Manjkajočo višino ali diagonalo dobiš s Pitagorovim izrekom.
+4. Vstavi v formulo za ploščino oziroma obseg.
+5. Preveri enoto: dolžina v $\text{cm}$, ploščina v $\text{cm}^2$.
+
+**Pazi na**
+- Pri paralelogramu in rombu vzemi višino, ne stranice: $S = a \cdot v_a$.
+- Pri trapezu je višina pravokotna na osnovnici, ne krak.
+- Pri rombu in deltoidu deli z $2$: $S = \dfrac{e \cdot f}{2}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

@@ -202,6 +202,27 @@ Prvi oklepaj je $x + 3 - x + 3 = 6$, drugi $2x$, zato je razlika $6 \cdot 2x = 1
 - Vrstni red: skupni faktor, nato obrazec glede na število členov, nato preglej vse faktorje in na koncu preizkus.
 - Razcepna enačba: vse na levo, levo stran razstavi, vsak faktor izenači z $0$ (produkt je $0$ natanko tedaj, ko je $0$ vsaj en faktor).
 
+## Ponovitev
+
+**Formule**
+- $ab + ac = a(b + c)$ (na pamet)
+- $ax + ay + bx + by = (a + b)(x + y)$ (na pamet)
+- $a^2 - b^2 = (a - b)(a + b)$ (na pamet)
+- $a^2 \pm 2ab + b^2 = (a \pm b)^2$ (na pamet)
+- $x^2 + px + q = (x + a)(x + b)$, $a + b = p$, $a \cdot b = q$ (na pamet)
+
+**Postopek**
+1. Izpostavi največji skupni faktor.
+2. Preštej člene: dva – razlika kvadratov; trije – popolni kvadrat ali Vieta; štirje – po skupinah.
+3. Preglej vse faktorje in razstavljaj naprej.
+4. Preizkus: faktorje zmnoži nazaj.
+5. Pri razcepni enačbi vsak faktor izenači z $0$.
+
+**Pazi na**
+- Pri izpostavljanju ostane $1$: $4x^2 + 4x = 4x(x + 1)$.
+- Ko izpostaviš $-x$, obrni predznake: $-x^2 + 4x = -x(x - 4)$.
+- Pri Vieti preveri vsoto in produkt: $x^2 - 5x + 6 = (x - 2)(x - 3)$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

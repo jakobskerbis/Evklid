@@ -186,6 +186,27 @@ Ostane $x = 1$. Preizkus: $\sqrt{4} = 2$ in $1 + 1 = 2$. Kandidat $x = -4$ ne iz
 - Enačba $x^n = a$: pri lihem $n$ je $x = \sqrt[n]{a}$; pri sodem $n$ in $a > 0$ je $x = \pm\sqrt[n]{a}$; pri sodem $n$ in $a < 0$ ni realne rešitve. Isto dobiš z razstavljanjem.
 - Pri nalogi z besedilom rezultat razloži: kandidat, ki nima smisla (negativna površina), odpade.
 
+## Ponovitev
+
+**Formule**
+- $\sqrt{A} = B$: pogoja $A \ge 0$ in $B \ge 0$ (na pamet)
+- $\sqrt{A} = B \;\Rightarrow\; A = B^2$, nato preizkus (na pamet)
+- $(a + b)^2 = a^2 + 2ab + b^2$ (na pamet)
+- $x^n = a$, lihi $n$: $x = \sqrt[n]{a}$ (na pamet)
+- $x^n = a$, sodi $n$, $a > 0$: $x = \pm\sqrt[n]{a}$ (na pamet)
+
+**Postopek**
+1. Osami koren na eni strani enačbe.
+2. Zapiši pogoja $A \ge 0$ in $B \ge 0$.
+3. Kvadriraj obe strani in reši dobljeno enačbo.
+4. Pri dveh korenih osami drugi koren in kvadriraj še enkrat.
+5. Vsakega kandidata preveri v prvotni enačbi.
+
+**Pazi na**
+- Ne kvadriraj po členih: najprej osami koren, pri kvadratu vsote ne pozabi dvojnega zmnožka.
+- Kvadriranje doda navidezne rešitve, zato je preizkus obvezen.
+- Pogoj $A \ge 0$ ni dovolj: tudi druga stran mora biti $B \ge 0$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

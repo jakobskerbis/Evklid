@@ -273,6 +273,28 @@ $0{,}2x - 0{,}4 + 0{,}4y + 1{,}2 = 1$, torej $0{,}2x + 0{,}4y = 0{,}2$ in po mno
 - Presečišča stožnice s premico: eno spremenljivko iz premice vstaviš v enačbo stožnice; vsaka rešitev da eno presečišče.
 - (višja raven) Tangenta v točki stožnice: en faktor vsakega kvadrata zamenjaš s koordinato točke. Tangenta z dano smerjo ali skozi zunanjo točko: vstaviš $y = kx + n$ in zahtevaš $D = 0$.
 
+## Ponovitev
+
+**Formule**
+- elipsa: $\frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1$ (na pamet)
+- elipsa: $e^2 = a^2 - b^2$ (priloga)
+- gorišči pri $a > b$: $(x_0 \pm e, y_0)$ (na pamet)
+- (višja raven) hiperbola: $e^2 = a^2 + b^2$ (priloga)
+- (višja raven) tangenta v točki $T_1$ stožnice: v vsakem kvadratu en faktor zamenjaj s koordinato $T_1$ (na pamet)
+- (višja raven) tangenta skozi zunanjo točko ali z dano smerjo: $y = kx + n$, $D = 0$ (na pamet)
+
+**Postopek**
+1. Člene z $x$ in z $y$ dopolni do popolnega kvadrata; dodano odštej, pomnoženo s koeficientom.
+2. Deli, da je na desni $1$.
+3. Preberi središče $S(x_0, y_0)$ ter polosi $a$ in $b$.
+4. Izračunaj $e$ in gorišči, premaknjeni za $S$.
+5. Za presečišča s premico eno spremenljivko vstavi v enačbo stožnice.
+
+**Pazi na**
+- Iz $(x + 2)^2$ preberi $x_0 = -2$, ne $2$.
+- Pri $4(y^2 + 2y)$ odštej $4 \cdot 1 = 4$, ne $1$.
+- Polosi preberi šele, ko je na desni $1$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

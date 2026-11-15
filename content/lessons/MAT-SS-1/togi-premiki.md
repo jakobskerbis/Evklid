@@ -221,6 +221,27 @@ $Z_2(-3, 5)$. V primerjavi z $Z(3, -5)$ sta obe koordinati nasprotni: $(x, y) \m
 - Zrcaljenje čez premico obrne orientacijo trikotnika; premik, vrtež in zrcaljenje čez točko jo ohranijo.
 - Lika sta skladna, če enega s togimi premiki preslikamo na drugega.
 
+## Ponovitev
+
+**Formule**
+- premik za $(p, q)$: $(x, y) \mapsto (x + p, y + q)$ (na pamet)
+- čez os $x$: $(x, -y)$; čez os $y$: $(-x, y)$ (na pamet)
+- čez $O$: $(-x, -y)$, to je vrtež za $180^\circ$ (na pamet)
+- čez točko $S$: $x' = 2x_S - x$, $y' = 2y_S - y$ (na pamet)
+- vrtež za $90^\circ$ okoli $O$: $(x, y) \mapsto (-y, x)$ (na pamet)
+
+**Postopek**
+1. Ugotovi vrsto premika: premik, zrcaljenje čez premico ali točko, vrtež.
+2. Izberi pravilo za koordinate.
+3. Preslikaj vsako oglišče posebej.
+4. Preveri na točki: pri vrtežu za $90^\circ$ gre $(1, 0)$ v $(0, 1)$.
+5. Pri orientaciji štej zrcaljenja čez premico: vsako jo obrne.
+
+**Pazi na**
+- Čez točko se spremenita obe koordinati: $T(2, 1) \mapsto (-2, -1)$.
+- Pozitivna smer vrteža je nasprotna urinemu kazalcu: $(x, y) \mapsto (-y, x)$.
+- Zrcaljenje čez točko je vrtež za $180^\circ$, zato orientacijo ohrani.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

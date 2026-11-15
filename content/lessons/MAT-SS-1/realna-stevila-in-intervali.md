@@ -209,6 +209,27 @@ $|u| = u$ za $u \ge 0$ in $|u| = -u$ za $u < 0$; $\;|u| = a$ z $a > 0$ $\iff u =
 - Presek, unija in razlika intervalov: nariši na isto premico in preveri krajišča.
 - (višja raven) $|x - c| < r \iff x \in (c - r,\, c + r)$ (med). $|x - c| > r \iff x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$ (zunaj).
 
+## Ponovitev
+
+**Formule**
+- $|x| = x$ za $x \ge 0$, $|x| = -x$ za $x < 0$ (na pamet)
+- razdalja med $a$ in $b$: $|a - b|$ (na pamet)
+- $|ab| = |a||b|$, $|a + b| \le |a| + |b|$ (na pamet)
+- $|u| = a$, $a > 0$ $\Rightarrow$ $u = a$ ali $u = -a$; za $a < 0$ ni rešitve (na pamet)
+- višja raven: $|x - c| < r \iff x \in (c - r,\, c + r)$ (na pamet)
+
+**Postopek**
+1. Poišči ničlo izraza v absolutni vrednosti.
+2. Na vsakem intervalu odpravi absolutno vrednost po definiciji.
+3. Reši in obdrži le rešitve z ustreznega intervala.
+4. Pri preseku in uniji nariši intervale na isto premico.
+5. Preveri krajišča: vključeno oglat, nevključeno okrogel oklepaj.
+
+**Pazi na**
+- $|a + b|$ ni vedno $|a| + |b|$: najprej izračunaj vsoto, nato absolutno vrednost.
+- Višja raven: $|x| > 3$ je zunaj: $(-\infty, -3) \cup (3, \infty)$, ne $(-3, 3)$.
+- Pri $\le$ in $\ge$ oglat oklepaj, ob $\infty$ vedno okrogel: $[2, \infty)$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

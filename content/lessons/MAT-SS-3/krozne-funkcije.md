@@ -235,6 +235,29 @@ $\frac{2\pi}{3}$. Velja $\cos\frac{2\pi}{3} = -\frac12$ in $\frac{2\pi}{3}$ lež
 - $\sin(\arcsin x) = x$ za vse $x \in [-1, 1]$; $\arcsin(\sin x) = x$ samo za $x \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$.
 - $\sin^{-1}$ na kalkulatorju je $\arcsin$, ne $\frac{1}{\sin}$. Arkus da le eno rešitev enačbe; ostale dobiš s splošno rešitvijo.
 
+## Ponovitev
+
+*(višja raven)*
+
+**Formule**
+- $\arcsin$: $D = [-1, 1]$, $Z = \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$ (na pamet)
+- $\arccos$: $D = [-1, 1]$, $Z = [0, \pi]$ (na pamet)
+- $\arctan$: $D = \mathbb{R}$, $Z = \left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ (na pamet)
+- $\arccos(-x) = \pi - \arccos x$ (na pamet)
+- $\sin x = a$, $x_1 = \arcsin a$: $x = x_1 + 2k\pi$ ali $x = \pi - x_1 + 2k\pi$ (na pamet)
+
+**Postopek**
+1. Za argument $u$ zahtevaj $-1 \le u \le 1$ in dobiš $D_f$.
+2. Zalogo vrednosti pomnoži s faktorjem pred funkcijo.
+3. Vrednosti izračunaj z znanimi koti; kot mora biti v $Z$ osnovne funkcije.
+4. Skiciraj graf med krajiščema; $\arcsin$ narašča, $\arccos$ pada.
+5. Pri enačbi zapiši obe družini rešitev.
+
+**Pazi na**
+- $\sin^{-1} x$ je $\arcsin x$, ne $\frac{1}{\sin x}$.
+- $\arccos\left(-\frac12\right) = \frac{2\pi}{3}$, ne $-\frac{\pi}{3}$.
+- $\arcsin a$ je le ena rešitev $\sin x = a$; dodaj $\pi - x_1$ in $2k\pi$.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)

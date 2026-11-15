@@ -274,6 +274,27 @@ točka: 8; -5,196 | T_2 | desno
 - Polosi preberi kot korena imenovalcev; večji imenovalec pove, na kateri osi sta gorišči elipse.
 - Graf $y = \frac{c}{x}$ je zasukana hiperbola, graf kvadratne funkcije je parabola.
 
+## Ponovitev
+
+**Formule**
+- $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$, $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$ (na pamet)
+- Elipsa: $e^2 = a^2 - b^2$, $\varepsilon = \frac{e}{a}$ (priloga)
+- Hiperbola: $e^2 = a^2 + b^2$, $\varepsilon = \frac{e}{a}$ (priloga)
+- Asimptoti hiperbole: $y = \pm \frac{b}{a} x$ (na pamet)
+- $y^2 = 2px$: gorišče $\left(\frac{p}{2}, 0\right)$, vodnica $x = -\frac{p}{2}$ (priloga)
+
+**Postopek**
+1. Polosi preberi kot korena imenovalcev.
+2. Večji imenovalec elipse pove, na kateri osi sta gorišči.
+3. Zapiši temena, na primer $(\pm a, 0)$ in $(0, \pm b)$.
+4. Izračunaj $e$ in gorišči, nato $\varepsilon = \frac{e}{a}$.
+5. Pri hiperboli vriši asimptoti, pri paraboli gorišče in vodnico.
+
+**Pazi na**
+- Pod $x^2$ je $a^2$: pri $25$ je $a = 5$, ne $25$.
+- Elipsa odšteva ($e^2 = a^2 - b^2$), hiperbola sešteva ($e^2 = a^2 + b^2$).
+- Gorišče parabole $y^2 = 2px$ je v $\left(\frac{p}{2}, 0\right)$, ne v $(p, 0)$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

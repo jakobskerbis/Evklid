@@ -236,6 +236,28 @@ $\Phi(2) - \Phi(-1) = 0{,}4772 + 0{,}3413 = 0{,}8185$, torej približno $82\,\%$
 - Pravilo $68$–$95$–$99{,}7\,\%$ za $\mu \pm \sigma$, $\mu \pm 2\sigma$, $\mu \pm 3\sigma$.
 - $z = \frac{x - \mu}{\sigma}$; $P(X < x) = 0{,}5 + \Phi(z)$, $P(X > x) = 0{,}5 - \Phi(z)$.
 
+## Ponovitev
+
+**Formule**
+- $\bar x = \frac{x_1 + x_2 + \dots + x_N}{N}$ (na pamet)
+- $\sigma = \sqrt{\frac{1}{N}\sum (x_i - \bar x)^2}$ (priloga)
+- medkvartilni razmik $Q_3 - Q_1$ (na pamet)
+- $z = \frac{x - \mu}{\sigma}$ (na pamet)
+- $P(X < x) = 0{,}5 + \Phi(z)$, $P(X > x) = 0{,}5 - \Phi(z)$ (na pamet)
+- $68$–$95$–$99{,}7\,\%$ za $\mu \pm \sigma$, $\mu \pm 2\sigma$, $\mu \pm 3\sigma$ (na pamet)
+
+**Postopek**
+1. Podatke uredi po velikosti.
+2. Izračunaj $\bar x$, $\mathrm{Me}$ in $\sigma$; pri osamelcih navedi mediano.
+3. Pri normalni porazdelitvi nariši krivuljo in pobarvaj iskano ploščino.
+4. Izračunaj $z$ in v tabeli odčitaj $\Phi(z)$.
+5. Glede na sliko $\Phi(z)$ prištej k $0{,}5$ ali ga odštej od $0{,}5$.
+
+**Pazi na**
+- Mediano išči šele v urejenem nizu.
+- $\Phi(z)$ je ploščina od sredine do $z$, ne od roba.
+- V $z$ deli s $\sigma$, ne z varianco: iz $\sigma^2 = 4$ je $\sigma = 2$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

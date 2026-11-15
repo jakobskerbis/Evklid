@@ -214,6 +214,27 @@ $D$ je presečišče krožnic $k(A, 3\,\mathrm{cm})$ in $k(C, 5\,\mathrm{cm})$ n
 - Diskusija: SSS zahteva $|a - b| < c < a + b$, KSK pa $\alpha + \beta < 180^\circ$; dve stranici in kot nasproti krajše dasta 0, 1 ali 2 rešitvi.
 - (višja raven) V programu za dinamično geometrijo dober načrt prestane test vlečenja; z drsnikom preveriš število rešitev.
 
+## Ponovitev
+
+**Formule**
+- SSS: $|a - b| < c < a + b$ (na pamet)
+- KSK: $\alpha + \beta < 180^\circ$ (na pamet)
+- oglišče je presečišče dveh množic točk, npr. $k(B, a)$ in krak kota (na pamet)
+- višina $v_c$: $C$ leži na vzporednici k $AB$ na razdalji $v_c$ (na pamet)
+- dve stranici in kot nasproti krajše: 0, 1 ali 2 rešitvi (na pamet)
+
+**Postopek**
+1. Nariši skico in nanjo vpiši dane podatke (analiza).
+2. Ugotovi, katero oglišče dobiš kot presečišče dveh množic točk.
+3. Zapiši opis načrtovanja po korakih.
+4. Načrtaj z ravnilom in šestilom.
+5. V diskusiji zapiši pogoje in število rešitev.
+
+**Pazi na**
+- Skica, opis in diskusija so obvezni: brez njih izgubiš točke tudi pri natančni risbi.
+- Trikotniška neenakost je stroga: pri $a + b = c$ trikotnika ni.
+- Višina ni stranica: $v_c$ ne nanašaj na krak kota, $C$ leži na vzporednici.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

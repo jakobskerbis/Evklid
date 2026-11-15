@@ -205,6 +205,27 @@ točka: -3; 4 | P_2 | levo
 - Tangenta je pravokotna na polmer v dotikališču.
 - Krožnica je krivulja drugega reda. Presečišča z drugo krivuljo dobiš kot rešitve sistema; vsako rešitev preveri (pri $x^2 < 0$ ni točke).
 
+## Ponovitev
+
+**Formule**
+- $(x - p)^2 + (y - q)^2 = r^2$, središče $S(p, q)$ (na pamet)
+- $x^2 + y^2 + Dx + Ey + F = 0$ (na pamet)
+- $r^2 = \frac{D^2}{4} + \frac{E^2}{4} - F$ (na pamet)
+- Lega točke: levo stran primerjaj z $r^2$ (na pamet)
+- Lega premice: diskriminanta $> 0$ sekanta, $= 0$ tangenta, $< 0$ mimobežnica (na pamet)
+
+**Postopek**
+1. Člene z $x$ in z $y$ dopolni do popolnih kvadratov.
+2. Dodane prištevke odštej in prenesi na desno.
+3. Odčitaj $S(p, q)$ z obrnjenima predznakoma in $r$ kot koren desne strani.
+4. Za lego premice jo vstavi v krožnico in izračunaj diskriminanto.
+5. Presečišča izračunaj iz sistema in vsako preveri.
+
+**Pazi na**
+- $(x + 2)^2$ pomeni $p = -2$: središče je $S(-2, 3)$, ne $S(2, -3)$.
+- Na desni je $r^2$: pri $9$ je $r = 3$.
+- Pri dopolnjevanju odštej dodano: $x^2 - 6x = (x - 3)^2 - 9$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

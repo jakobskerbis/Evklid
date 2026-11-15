@@ -166,6 +166,27 @@ Iz $x + 8 = 14$ sledi $x = 6$. Preizkus: $2 \cdot 6 + 4 \cdot 8 = 12 + 32 = 44$ 
 - Premici se sekata (ena rešitev), sta vzporedni (nobene rešitve, npr. $0 = 2$) ali sovpadata (neskončno rešitev, $0 = 0$).
 - Preizkus: rešitev vstavi v obe prvotni enačbi.
 
+## Ponovitev
+
+**Formule**
+- $\begin{cases} a_1x + b_1y = c_1 \\ a_2x + b_2y = c_2 \end{cases}$, rešitev je par $(x, y)$ (na pamet)
+- zamenjava: izrazi $y = \ldots$ in vstavi v drugo enačbo (na pamet)
+- nasprotna koeficienta $k$ in $-k$: enačbi seštej (na pamet)
+- $0 = 2$: ni rešitve, premici sta vzporedni (na pamet)
+- $0 = 0$: neskončno rešitev, premici sovpadata (na pamet)
+
+**Postopek**
+1. Izberi metodo: zamenjava ali nasprotni koeficienti.
+2. Pomnoži enačbo (vse člene), da dobiš $k$ in $-k$.
+3. Enačbi seštej in reši enačbo z eno neznanko.
+4. Vstavi nazaj in izračunaj še drugo neznanko.
+5. Naredi preizkus v obeh prvotnih enačbah.
+
+**Pazi na**
+- Pomnoži vsak člen: $5x - 4y = -3$ krat $2$ je $10x - 8y = -6$.
+- Odštevanje spremeni znak vsem členom: raje množi z negativnim številom in seštej.
+- Izraženo neznanko vstavi v drugo enačbo, ne v isto.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

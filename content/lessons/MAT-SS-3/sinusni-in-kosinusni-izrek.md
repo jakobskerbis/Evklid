@@ -176,6 +176,26 @@ $\cos\kappa = \dfrac{5{,}76 + 9{,}61 - 12{,}25}{14{,}88} = \dfrac{3{,}12}{14{,}8
 - Kot iz sinusa ima lahko dve vrednosti, $x$ in $180^\circ - x$. Kot iz kosinusa je en sam.
 - Nasproti največjega kota leži najdaljša stranica; top kot je lahko le tam.
 
+## Ponovitev
+
+**Formule**
+- $\dfrac{a}{\sin\alpha} = \dfrac{b}{\sin\beta} = \dfrac{c}{\sin\gamma} = 2R$ (na pamet)
+- $c^2 = a^2 + b^2 - 2ab\cos\gamma$ (na pamet)
+- $\cos\gamma = \dfrac{a^2 + b^2 - c^2}{2ab}$ (na pamet)
+- $\sin x = \sin(180^\circ - x)$ (na pamet)
+
+**Postopek**
+1. Skiciraj trikotnik in vsako stranico poveži z nasprotnim kotom.
+2. Če poznaš cel par (stranica in nasprotni kot), uporabi sinusni izrek.
+3. Pri treh stranicah ali dveh stranicah z vmesnim kotom uporabi kosinusni izrek.
+4. Pri kotu iz sinusa preveri oba kandidata, $x$ in $180^\circ - x$.
+5. Tretji kot izračunaj iz vsote kotov $180^\circ$.
+
+**Pazi na**
+- V sinusnem izreku stoji stranica le z nasprotnim kotom.
+- Iz sinusa sta lahko dva kota; preveri tudi topega.
+- Kosinusni izrek da $c^2$: na koncu koreni.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

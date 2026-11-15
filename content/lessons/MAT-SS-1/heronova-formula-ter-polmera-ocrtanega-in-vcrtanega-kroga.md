@@ -178,6 +178,26 @@ $r = \dfrac{30}{15} = 2\,\text{km}$ in $R = \dfrac{5 \cdot 12 \cdot 13}{4 \cdot 
 - Preizkus s $3$, $4$, $5$: $S = 6$, $r = 1$, $R = 2{,}5 = \dfrac{c}{2}$.
 - Pri merilu najprej pretvori dolžine; ploščina se poveča s kvadratom merila.
 
+## Ponovitev
+
+**Formule**
+- $s = \frac{a + b + c}{2}$ (na pamet)
+- $S = \sqrt{s(s - a)(s - b)(s - c)}$ (priloga)
+- $r = \frac{S}{s}$ (priloga)
+- $R = \frac{abc}{4S}$ (priloga)
+
+**Postopek**
+1. Izračunaj polobseg $s$.
+2. Izračunaj $S$ s Heronovo formulo (ne pozabi korena).
+3. Polmer včrtane krožnice: $r = \frac{S}{s}$.
+4. Polmer očrtane krožnice: $R = \frac{abc}{4S}$.
+5. Preveri z razmislekom: $R > r$; pri $3$, $4$, $5$ je $S = 6$, $r = 1$.
+
+**Pazi na**
+- V formulo vstavi polobseg $s$, ne obseg $o$ (tudi pri $r$).
+- $s(s - a)(s - b)(s - c)$ je $S^2$: na koncu koreni.
+- $S = \frac{ab}{2}$ velja le za kateti; sicer uporabi Heronovo formulo.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

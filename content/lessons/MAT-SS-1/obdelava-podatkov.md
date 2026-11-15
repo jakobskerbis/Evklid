@@ -285,6 +285,27 @@ opisni podatki: modus; vrstni: mediana; številski: aritmetična sredina ali med
 - Vrste podatkov: opisni (modus), vrstni (mediana), številski (aritmetična sredina).
 - Prikazi: stolpčni, krožni (kot $\dfrac{f}{n}\cdot 360^\circ$), pozicijski, linijski, krivuljni in razsevni diagram, histogram, škatla z brki.
 
+## Ponovitev
+
+**Formule**
+- $\bar{x} = \frac{\sum x_i}{n}$, s frekvencami $\bar{x} = \frac{\sum f_i x_i}{\sum f_i}$ (na pamet)
+- $\sigma = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n}}$ (priloga)
+- $R = x_{\max} - x_{\min}$, medkvartilni razmik $Q_3 - Q_1$ (na pamet)
+- osamelec: pod $Q_1 - 1{,}5\,(Q_3 - Q_1)$ ali nad $Q_3 + 1{,}5\,(Q_3 - Q_1)$ (na pamet)
+- krožni diagram: kot $\frac{f}{n} \cdot 360^\circ$ (na pamet)
+
+**Postopek**
+1. Uredi podatke po velikosti.
+2. Izračunaj $\bar{x}$, poišči mediano in modus.
+3. Določi $Q_1$ in $Q_3$ ter preveri, ali je kak podatek osamelec.
+4. Odklone od $\bar{x}$ kvadriraj, seštej, deli z $n$ in koreni.
+5. Primerjaj sredino in razpršenost; ob osamelcih raje navedi mediano.
+
+**Pazi na**
+- Mediano išči šele v urejenih podatkih.
+- Pri frekvenčni tabeli deli s $\sum f_i$, ne s številom različnih vrednosti.
+- Odklone kvadriraj, preden jih sešteješ, in na koncu koreni: $\sigma = \sqrt{\sigma^2}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

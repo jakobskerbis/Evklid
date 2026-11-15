@@ -218,6 +218,28 @@ $\alpha = \tan^{-1} \dfrac{4}{3} \approx 53{,}13^\circ$, zato $\varphi = 90^\cir
 - Naklonski kot: $k = \tan\alpha$, $0^\circ \le \alpha < 180^\circ$; na računalu $\tan^{-1}$ v stopinjah (DEG).
 - Kot med premicama: $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$, $0^\circ \le \varphi \le 90^\circ$; pri navpični premici uporabi naklonska kota.
 
+## Ponovitev
+
+**Formule**
+- $k = \frac{y_2 - y_1}{x_2 - x_1} = \tan\alpha$ (na pamet)
+- $y - y_1 = k(x - x_1)$ (na pamet)
+- $y = kx + n$; $ax + by + c = 0$: $k = -\frac{a}{b}$ (na pamet)
+- $\frac{x}{m} + \frac{y}{n} = 1$, $m$, $n$ odseka na oseh (na pamet)
+- Vzporedni $k_1 = k_2$, pravokotni $k_1 k_2 = -1$ (na pamet)
+- $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$ (na pamet)
+
+**Postopek**
+1. Izračunaj $k$ iz dveh točk ali ga preberi iz enačbe.
+2. Za vzporednico ali pravokotnico vzemi $k_2 = k_1$ ali $k_2 = -\frac{1}{k_1}$.
+3. Zapiši $y - y_1 = k(x - x_1)$ in preoblikuj v zahtevano obliko.
+4. Za kot: izračunaj $\tan\varphi$ ali naklonska kota ($\tan^{-1}$ v DEG).
+5. Preveri, da je $0^\circ \le \varphi \le 90^\circ$.
+
+**Pazi na**
+- Pri $3x - 4y + 12 = 0$ je $k = -\frac{a}{b} = \frac{3}{4}$, ne $3$.
+- Odseka dobiš z deljenjem z desno stranjo: $2x + 3y = 6 \to \frac{x}{3} + \frac{y}{2} = 1$.
+- Pravokotnica: obratna vrednost s spremenjenim predznakom, $k_1 k_2 = -1$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

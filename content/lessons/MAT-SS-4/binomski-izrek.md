@@ -231,6 +231,25 @@ $\binom{5}{2} \cdot 8 \cdot 1 = 10 \cdot 8 = 80$. Predznak je pozitiven, ker je 
 - Splošni člen $T_{k+1} = \binom{n}{k}a^{n-k}b^k$; za člen z $x^m$ izenači eksponent z $m$ in izračunaj $k$.
 - $(a-b)^n$: predznaki se izmenjujejo; potenciraj cel člen, tudi število.
 
+## Ponovitev
+
+**Formule**
+- $\binom{n}{k} = \frac{n!}{k!\,(n-k)!}$ (na pamet)
+- $(a+b)^n = \binom{n}{0}a^n + \dots + \binom{n}{n}b^n$ (na pamet)
+- $T_{k+1} = \binom{n}{k}a^{n-k}b^k$ (na pamet)
+- $\binom{n}{k} + \binom{n}{k+1} = \binom{n+1}{k+1}$ (na pamet)
+
+**Postopek**
+1. Zapiši splošni člen $T_{k+1}$; $a$ in $b$ vzemi skupaj s številom in predznakom.
+2. Potenciraj in zberi eksponent pri $x$.
+3. Eksponent izenači z iskanim $m$ in izračunaj $k$.
+4. Vstavi $k$ in izračunaj koeficient, skupaj s potenco števila.
+
+**Pazi na**
+- $(a+b)^n \ne a^n + b^n$: razvoj ima $n + 1$ členov.
+- Potenciraj cel člen: $(2x)^3 = 8x^3$; pri $(a-b)^n$ piši $(a+(-b))^n$.
+- Člen z $\binom{n}{k}$ je $(k+1)$-ti, vrstice štejemo od $0$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

@@ -243,6 +243,28 @@ $f'(x) = 3(x^2 + 1)^2 \cdot 2x = 6x(x^2 + 1)^2$. Pri $x = 1$: $6 \cdot 1 \cdot 2
 - Najprej odvajaj, nato vstavi točko. $f' > 0$: funkcija narašča, $f' < 0$: pada.
 - (višja raven) Pravila izpeljemo iz definicije (pri produktu v števcu prištejemo in odštejemo $f(a)\,g(a + h)$), iz pravil pa nove odvode, npr. $(\tan x)' = \frac{1}{\cos^2 x}$, $(\cot x)' = -\frac{1}{\sin^2 x}$, $(2^x)' = 2^x \ln 2$.
 
+## Ponovitev
+
+**Formule**
+- $f'(a) = \lim\limits_{h \to 0} \frac{f(a + h) - f(a)}{h}$ (na pamet)
+- $(x^n)' = n x^{n-1}$, $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$ (na pamet)
+- $(e^x)' = e^x$, $(\ln x)' = \frac{1}{x}$ (na pamet)
+- $(f g)' = f' g + f g'$ (na pamet)
+- $\left(\frac{f}{g}\right)' = \frac{f' g - f g'}{g^2}$ (na pamet)
+- $\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$ (na pamet)
+
+**Postopek**
+1. Prepoznaj obliko: vsota, produkt, kvocient ali sestavljena funkcija.
+2. Uporabi ustrezno pravilo; konstanta ima odvod $0$.
+3. Pri sestavljeni funkciji pomnoži še z notranjim odvodom.
+4. Šele nato vstavi točko: $f'(a)$ je smerni koeficient tangente.
+5. Predznak $f'$ pove, kje funkcija narašča ($f' > 0$) in kje pada.
+
+**Pazi na**
+- Produkt: $(x^2 \sin x)' = 2x \sin x + x^2 \cos x$, ne $2x \cos x$.
+- Kvocient: v števcu $f' g - f g'$ v tem vrstnem redu, spodaj $g^2$.
+- Ne pozabi notranjega odvoda: $\bigl((x^2 + 1)^3\bigr)' = 3(x^2 + 1)^2 \cdot 2x$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

@@ -392,6 +392,27 @@ $b = \frac{2\pi}{4} = \frac{\pi}{2}$. Val se začne na srednji črti pri $x = 1$
 - Zaloga vrednosti: $[d - |A|,\ d + |A|]$.
 - Pred branjem premika izpostavi $b$: $\sin(bx - p) = \sin\big(b(x - \frac{p}{b})\big)$.
 
+## Ponovitev
+
+**Formule**
+- $f(x) = A\sin\big(b(x - c)\big) + d$ (na pamet)
+- Amplituda $|A|$, perioda $T = \frac{2\pi}{|b|}$ (na pamet)
+- $\tan(bx)$: perioda $\frac{\pi}{|b|}$ (na pamet)
+- $Z_f = [d - |A|,\ d + |A|]$ (na pamet)
+- Ničle: $\sin x = 0$ pri $x = k\pi$, $\cos x = 0$ pri $x = \frac{\pi}{2} + k\pi$ (na pamet)
+
+**Postopek**
+1. Izpostavi $b$: $2x - \frac{\pi}{3} = 2\left(x - \frac{\pi}{6}\right)$.
+2. Odčitaj $A$, $b$, $c$ in $d$.
+3. Izračunaj amplitudo, periodo in zalogo vrednosti.
+4. Nariši srednjo črto $y = d$ in začetek vala premakni v $x = c$.
+5. Periodo razdeli na četrtine in vriši vrhove, dna in točke na srednji črti.
+
+**Pazi na**
+- Perioda se deli: pri $\sin 2x$ je $T = \pi$, ne $4\pi$.
+- $\sin\left(x - \frac{\pi}{3}\right)$ je premaknjen v desno, ne v levo.
+- Amplitudo meri od srednje črte $y = d$, ne od osi $x$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

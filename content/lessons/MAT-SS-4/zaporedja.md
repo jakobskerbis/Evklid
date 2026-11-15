@@ -176,6 +176,27 @@ Oba ulomka gresta proti $0$, zato je $\lim\limits_{n \to \infty} a_n = \dfrac{2 
 - Konvergentno zaporedje je omejeno; monotono in omejeno zaporedje je konvergentno.
 - $\lim\limits_{n \to \infty} \dfrac{1}{n} = 0$; pri ulomkih deli z najvišjo potenco $n$ v imenovalcu.
 
+## Ponovitev
+
+**Formule**
+- strogo naraščajoče: $a_{n+1} - a_n > 0$ za vsak $n$ (na pamet)
+- omejeno: $m \le a_n \le M$ za vsak $n$ (na pamet)
+- $\lim\limits_{n \to \infty} a_n = L$: v vsaki okolici $(L - \varepsilon, L + \varepsilon)$ so vsi členi od nekega indeksa naprej (na pamet)
+- monotono in omejeno $\Rightarrow$ konvergentno (na pamet)
+- $\lim\limits_{n \to \infty} \frac{1}{n} = 0$ (na pamet)
+
+**Postopek**
+1. Izračunaj nekaj členov za občutek.
+2. Monotonost dokaži z razliko $a_{n+1} - a_n$ za vsak $n$.
+3. Poišči spodnjo mejo $m$ in zgornjo mejo $M$.
+4. Pri ulomku deli števec in imenovalec z najvišjo potenco $n$ v imenovalcu.
+5. Uporabi $\lim \frac{1}{n} = 0$ in zapiši limito.
+
+**Pazi na**
+- Monotonosti ne sklepaj iz prvih nekaj členov: $(n - 3)^2$.
+- Omejeno zaporedje nima nujno limite: $(-1)^n$.
+- »Neskončno deljeno z neskončno« ni $1$: $\frac{2n + 1}{n + 3} \to 2$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

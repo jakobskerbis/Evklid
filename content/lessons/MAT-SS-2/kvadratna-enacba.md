@@ -235,6 +235,26 @@ Iz $A \cdot B = 0$ sledi $A = 0$ ali $B = 0$; $\; x^2 - k = (x - \sqrt{k})(x + \
 - Vietovi formuli: $x_1 + x_2 = -\dfrac{b}{a}$, $x_1 x_2 = \dfrac{c}{a}$.
 - Razcep: $ax^2 + bx + c = a(x - x_1)(x - x_2)$; enačba z rešitvama $x_1$, $x_2$: $x^2 - (x_1 + x_2)x + x_1 x_2 = 0$.
 
+## Ponovitev
+
+**Formule**
+- $D = b^2 - 4ac$ (na pamet)
+- $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$ (na pamet)
+- $x_1 + x_2 = -\dfrac{b}{a}$, $\;x_1 x_2 = \dfrac{c}{a}$ (na pamet)
+- $ax^2 + bx + c = a(x - x_1)(x - x_2)$ (na pamet)
+
+**Postopek**
+1. Prenesi vse na levo: $ax^2 + bx + c = 0$.
+2. Preberi $a$, $b$ in $c$ s predznaki.
+3. Nepopolno enačbo reši z izpostavljanjem ali s korenjenjem.
+4. Če gre, levo stran razstavi in vsak faktor izenači z $0$.
+5. Sicer izračunaj $D$ in rešitvi z obrazcem; pri $D < 0$ realnih rešitev ni.
+
+**Pazi na**
+- Koeficiente bereš šele iz splošne oblike z $0$ na desni.
+- Negativen $b$ vstavi v oklepaj: $(-3)^2 = 9$.
+- Ne deli z $x$: izpostavi in ohrani rešitev $x = 0$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

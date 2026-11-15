@@ -222,6 +222,26 @@ Dva kraja: $\{\text{Piran}, \text{Bled}\}$, $\{\text{Piran}, \text{Ptuj}\}$, $\{
 - Potenčna množica $\mathcal{P}(A)$ je množica vseh podmnožic $A$; vedno vsebuje $\emptyset$ in $A$; njeni elementi so množice.
 - (višja raven) Če ima $A$ $n$ elementov, je $|\mathcal{P}(A)| = 2^n$.
 
+## Ponovitev
+
+**Formule**
+- $(a, b) = (c, d) \iff a = c \wedge b = d$ (na pamet)
+- $A \times B = \{(a, b) \mid a \in A \wedge b \in B\}$ (na pamet)
+- $|A \times B| = |A| \cdot |B|$ (na pamet)
+- $\mathcal{P}(A)$: vse podmnožice $A$, tudi $\emptyset$ in $A$ (na pamet)
+- Višja raven: $|A| = n \Rightarrow |\mathcal{P}(A)| = 2^n$ (na pamet)
+
+**Postopek**
+1. Pare tvori po vrsti: prva komponenta iz $A$, druga iz $B$.
+2. Vsak element iz $A$ združi z vsakim iz $B$; preštej $|A| \cdot |B|$.
+3. Graf: končni množici dasta točke, intervala pravokotnik.
+4. Za $\mathcal{P}(A)$ naštej podmnožice po velikosti, od $\emptyset$ do $A$.
+
+**Pazi na**
+- Vrstni red v paru je pomemben: v splošnem $A \times B \ne B \times A$.
+- Moči se zmnožijo, ne seštejejo: $3 \cdot 2 = 6$ parov.
+- Elementi $\mathcal{P}(A)$ so množice: $\{1\}$, ne $1$; ne pozabi $\emptyset$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
