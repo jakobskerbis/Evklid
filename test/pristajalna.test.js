@@ -26,7 +26,7 @@ test("en gumb, prijava kot navadna povezava, brez cen in stopenj (j 2026-11-15)"
     assert.doesNotMatch(html, /na mesec|na leto|€|EUR|land-level|land-feat|land-cta|land-facts|land-more/);
     assert.doesNotMatch(html, /Račune preveri program|Brez oglasov/);
     assert.match(html, /<h1>Ko se pri domači nalogi zatakne, ti Evklid pokaže naslednji korak\.<\/h1>/);
-    assert.match(html, /Za gimnazijo, med letom\./);
+    assert.match(html, /Za gimnazijo, vse šolsko leto\./);
     assert.equal((html.match(/class="card land-proof"/g) || []).length, 3);
     assert.equal((html.match(/class="land-msg /g) || []).length, 6);
     assert.ok(html.indexOf('data-land="register"') < html.indexOf("land-demo"), "gumb je pred zgledom pogovora");
