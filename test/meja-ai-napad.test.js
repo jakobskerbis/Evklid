@@ -5,8 +5,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { withAccounts, META } from "./racuni-pomoc.js";
-import { modeParams, costUsd } from "../server/claude.js";
+import { modeParams, costUsd, supportsFallback } from "../server/claude.js";
 import { replyReserveUsd } from "../server/meje-ai.js";
+import { passCapUsd } from "../server/accounts/plans.js";
 
 const DAY = 86400000;
 const dayIso = (days) => new Date(Date.now() + days * DAY).toISOString().slice(0, 10);
@@ -15,9 +16,13 @@ const textBytes = (content) =>
   typeof content === "string" ? bytes(content) : (content || []).reduce((a, b) => a + (b.type === "text" ? bytes(b.text) : b.type === "image" ? 4800 : bytes(b)), 0);
 
 // Najdražji odgovor, ki ga API sploh lahko vrne za te parametre (gl. server/meje-ai.js, rezerva klica).
-function worstUsage({ system, messages, tools, mode }) {
+// Ves vhod zapisan v predpomnilnik za 1 h (2× cena vhoda), izhod = max_tokens; s strežniškim nadomestnim modelom
+// (fallback, ne Haiku) še zavrnjen poskus enake cene (extra_cost_usd, pregled #462 S6).
+function worstUsage({ system, messages, tools, mode, fallback = false }) {
   const input = messages.reduce((a, m) => a + 20 + textBytes(m.content), 0) + Math.ceil((bytes(system) + bytes(tools)) / 2);
-  return { input_tokens: input, output_tokens: modeParams(mode).max_tokens };
+  const u = { input_tokens: 0, cache_creation_input_tokens: input, cache_creation: { ephemeral_5m_input_tokens: 0, ephemeral_1h_input_tokens: input }, output_tokens: modeParams(mode).max_tokens };
+  const model = modeParams(mode).model;
+  return fallback !== false && supportsFallback(model) ? { ...u, extra_cost_usd: costUsd(model, u) } : u;
 }
 
 function napadalec(log) {
@@ -32,10 +37,10 @@ function napadalec(log) {
 }
 
 // Vsaka meja profila po napadu: porabljeno ≤ meja (z vsemi rezervacijami sproščenimi).
-function assertUnderCaps(app, kidId, label) {
+// caps: meje, ki so veljale med napadom (paket pred testom po porabi preide v brezplačni paket, capsFor ga ne vrne več).
+function assertUnderCaps(app, kidId, label, caps = app.locals.usage.capsFor(kidId)) {
   const usage = app.locals.usage;
   assert.equal(usage.inflight.size, 0, `${label}: rezervacije po koncu niso sproščene`);
-  const caps = usage.capsFor(kidId);
   assert.ok(caps.length > 0, `${label}: profil nima nobene meje`);
   for (const c of caps) assert.ok((c.spent || 0) <= c.usd + 1e-9, `${label}: meja ${c.key} prekoračena: ${c.spent} > ${c.usd}`);
   return caps;
@@ -81,10 +86,11 @@ async function napad(call, kidId, n) {
 const BREZ_DNEVNE = { EVKLID_FREE_DAILY_QUESTIONS: "1000", EVKLID_OSEBNO_DAILY_QUESTIONS: "1000", EVKLID_DAILY_QUESTIONS: "1000" };
 
 const PAKETI = [
-  { ime: "brezplačni", env: {}, priprava: () => {} },
-  { ime: "preizkus 7 dni", env: {}, priprava: (store) => store.db.prepare("UPDATE parents SET trial_ends_at = ?").run(new Date(Date.now() + 5 * DAY).toISOString()) },
-  { ime: "pilot", env: { EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(20) }, priprava: () => {} },
-  { ime: "naročnina", env: {}, priprava: (store) => store.db.prepare("UPDATE parents SET sub_status = 'active', sub_seats = 1").run() },
+  { ime: "brezplačni", env: {}, priprava: () => {}, paket: /freepool/ },
+  { ime: "preizkus 7 dni", env: {}, priprava: (store) => store.db.prepare("UPDATE parents SET trial_ends_at = ?").run(new Date(Date.now() + 5 * DAY).toISOString()), paket: /nopaypool/ },
+  { ime: "aktivacijska koda", env: {}, priprava: (store) => store.db.prepare("UPDATE parents SET promo_until = ?").run(new Date(Date.now() + 60 * DAY).toISOString()), paket: /nopaypool/ },
+  { ime: "pilot", env: { EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(20) }, priprava: () => {}, paket: /block\.shareOut/ },
+  { ime: "naročnina", env: {}, priprava: (store) => store.db.prepare("UPDATE parents SET sub_status = 'active', sub_seats = 1").run(), paket: /"s:\d+"/, ne: /freepool|nopaypool/ },
   {
     ime: "dnevna vstopnica (paket pred testom)",
     env: {},
@@ -93,6 +99,13 @@ const PAKETI = [
       store.db
         .prepare("INSERT INTO passes (parent_id, student_id, days, amount, currency, ai_usd, status, starts_at, ends_at, level) VALUES (?, ?, 7, 519, 'EUR', 0.75, 'active', ?, ?, 'SS')")
         .run(pid, kid.id, new Date(Date.now() - DAY).toISOString(), new Date(Date.now() + 6 * DAY).toISOString());
+    },
+    paket: /pass:/,
+    // Porabljen paket preide v brezplačni paket (billing.js passPremium), ta pa šteje porabo paketa: preveri mejo paketa.
+    meje: (store, kid) => {
+      const ps = store.db.prepare("SELECT * FROM passes WHERE student_id = ?").get(kid.id);
+      const spent = store.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE student_id = ? AND created_at >= datetime(?)").get(kid.id, ps.starts_at).s;
+      return [{ key: `pass:${ps.id}`, usd: passCapUsd(ps), spent }];
     },
   },
 ];
@@ -104,6 +117,10 @@ for (const paket of PAKETI) {
       { ...BREZ_DNEVNE, ...paket.env },
       async ({ call, store, kid, app }) => {
         paket.priprava(store, kid);
+        // Priprava res velja (sicer bi test tiho preverjal brezplačni paket): ključ ali koda meje paketa.
+        const opis = JSON.stringify(app.locals.usage.capsFor(kid.id).map((c) => [c.key, c.code]));
+        assert.match(opis, paket.paket, `${paket.ime}: meje ${opis}`);
+        if (paket.ne) assert.doesNotMatch(opis, paket.ne, `${paket.ime}: meje ${opis}`);
         // Malo prostora (0,10 $): napad mora mejo res doseči, ne glede na velikost paketa.
         spendTo(app, store, kid.id, 0.1);
         const { statusi, poti, denar } = await napad(call, kid.id, 24);
@@ -112,7 +129,7 @@ for (const paket of PAKETI) {
         poti.forEach((p, k) => {
           if (k % POTI(0).length < ZAVRNJENE) assert.equal(p.status, 404, `${paket.ime}: ${POTI("ID")[k % POTI(0).length]} ni zavrnjena: ${p.status}`);
         });
-        assertUnderCaps(app, kid.id, paket.ime);
+        assertUnderCaps(app, kid.id, paket.ime, paket.meje?.(store, kid));
         const ok = [...statusi, ...poti.map((p) => p.status)].filter((s) => s === 200).length;
         assert.equal(log.length, ok, "vsak klic modela je en odgovor 200 (tudi na drugačni obliki poti), noben mimo meje");
       },
@@ -132,7 +149,9 @@ test("meja AI: dva profila hkrati ne presežeta skupnega deleža (pilot, Družin
       spendTo(app, store, kid.id, 0.1);
       const [a, b] = await Promise.all([napad(call, kid.id, 12), napad(call, second, 12)]);
       assert.ok(a.denar + b.denar > 0, `meja v $ ni bila dosežena (${[...a.statusi, ...b.statusi]})`);
-      assert.ok(b.statusi.includes(200) && a.statusi.includes(200), "oba profila sta dobila vsaj en odgovor");
+      // Kateri profil dobi prostor prvi, je stvar vrstnega reda zahtev; skupna meja mora biti ena (isti ključ).
+      assert.ok([...a.statusi, ...b.statusi].includes(200), "vsaj en odgovor");
+      assert.equal(app.locals.usage.capsFor(kid.id)[0].key, app.locals.usage.capsFor(second)[0].key, "profila nimata skupne meje");
       assertUnderCaps(app, kid.id, "prvi profil");
       assertUnderCaps(app, second, "drugi profil");
     },
@@ -161,9 +180,11 @@ test("rezerva klica pokrije najdražji mogoči odgovor (vsi načini, dolg pogovo
   const slika = [{ role: "user", content: [{ type: "image", source: { type: "base64", media_type: "image/png", data: "AAAA" } }, { type: "text", text: "Kaj je na sliki?" }] }];
   for (const mode of ["lite", "chat", "think", "mid", "deep"]) {
     for (const messages of [dolg, slika]) {
-      const reserve = replyReserveUsd({ mode, system, messages, tools, fallback: false });
-      const worst = costUsd(modeParams(mode).model, worstUsage({ system, messages, tools, mode }));
-      assert.ok(reserve >= worst - 1e-12, `${mode}: rezerva ${reserve} < najdražji odgovor ${worst}`);
+      for (const fallback of [false, true]) {
+        const reserve = replyReserveUsd({ mode, system, messages, tools, fallback });
+        const worst = costUsd(modeParams(mode).model, worstUsage({ system, messages, tools, mode, fallback }));
+        assert.ok(reserve >= worst - 1e-12, `${mode} (fallback ${fallback}): rezerva ${reserve} < najdražji odgovor ${worst}`);
+      }
     }
   }
 });
