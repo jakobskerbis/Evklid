@@ -73,8 +73,14 @@ function streznik() {
     const url = decodeURIComponent(req.url.split("?")[0]);
     if (url === "/" || url === "/t.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(STRAN);
     const file = path.join(PUB, path.normalize(url));
-    if (!file.startsWith(PUB) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return res.writeHead(404).end();
-    res.writeHead(200, { "content-type": TYPES[path.extname(file)] || "application/octet-stream" }).end(fs.readFileSync(file));
+    if (!file.startsWith(PUB + path.sep)) return res.writeHead(404).end();
+    let body;
+    try {
+      body = fs.readFileSync(file); // mapa ali manjkajoča datoteka vrže napako: 404 (brez ločenega preverjanja pred branjem)
+    } catch {
+      return res.writeHead(404).end();
+    }
+    res.writeHead(200, { "content-type": TYPES[path.extname(file)] || "application/octet-stream" }).end(body);
   });
   return new Promise((ok) => srv.listen(0, "127.0.0.1", () => ok(srv)));
 }
