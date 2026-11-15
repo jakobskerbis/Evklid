@@ -45,6 +45,13 @@ test("formula brez oznake priloge, napačno število napak in korakov", () => {
   assert.ok(w.some((x) => /2–6 oštevilčenih korakov \(1\)/.test(x)), w.join("\n"));
 });
 
+test("formula v dveh vrsticah in podalineja pod napako ne dasta lažnega opozorila", () => {
+  const zavita = dobra
+    .replace(" (priloga)", "\n  (priloga)")
+    .replace("- Število členov ni zadnji člen.\n", "- Število členov ni zadnji člen.\n  - npr. pri $a_{10}$ je členov 10.\n");
+  assert.deepEqual(ponWarn(src(zavita)), []);
+});
+
 test("ponovitev za »Za maturo« in predolga ponovitev", () => {
   assert.ok(ponWarn(src("", "## Za maturo\nBesedilo.\n" + dobra)).some((w) => /pred »Za maturo«/.test(w)));
   const dolga = dobra.replace("**Pazi na**", `${"beseda ".repeat(150)}\n\n**Pazi na**`);
