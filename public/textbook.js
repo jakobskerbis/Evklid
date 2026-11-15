@@ -478,7 +478,8 @@ async function prefetchTocs() {
     await new Promise((ok) => setTimeout(ok, 300));
     for (const b of tb.books) {
       if (b.subject === "PROG" || tocCache.has(tocKey(b.key))) continue;
-      await loadToc(b.key).catch(() => null);
+      // Brez povezave ali ob napaki strežnika nehamo (sicer do 12 × 7 s čakanja service workerja); klik naloži sam.
+      if (!(await loadToc(b.key).then(() => true, () => false))) break;
     }
   } finally {
     prefetching = false;
