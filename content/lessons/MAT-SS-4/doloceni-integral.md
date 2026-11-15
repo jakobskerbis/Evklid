@@ -19,13 +19,13 @@ Z isto idejo izračunaš tudi prostornino žoge za ragbi, stožca ali pokala, ki
 
 Interval razdelimo na $n$ enako širokih delov, vsak je širok $\Delta x = \frac{1}{n}$. Nad vsakim delom narišemo pravokotnik. Parabola na $[0, 1]$ narašča. Če zato višino vzamemo na levem robu dela, so vsi pravokotniki pod krivuljo: njihova skupna ploščina je **spodnja vsota**. Če jo vzamemo na desnem robu, segajo čez krivuljo: to je **zgornja vsota**. Prava ploščina je vedno nekje vmes.
 
-| $n$ | spodnja vsota | zgornja vsota | razlika |
-|---|---|---|---|
-| $4$ | $0{,}21875$ | $0{,}46875$ | $0{,}25$ |
-| $10$ | $0{,}285$ | $0{,}385$ | $0{,}1$ |
-| $100$ | $0{,}32835$ | $0{,}33835$ | $0{,}01$ |
+| $n$ | spodnja | zgornja |
+|---|---|---|
+| $4$ | $0{,}21875$ | $0{,}46875$ |
+| $10$ | $0{,}285$ | $0{,}385$ |
+| $100$ | $0{,}32835$ | $0{,}33835$ |
 
-Obe vsoti se stiskata k istemu številu, $\frac{1}{3}$. Lik pod parabolo zavzema natanko tretjino kvadrata. To je odkril že Arhimed, skoraj dva tisoč let pred iznajdbo odvoda.
+Razlika med vsotama je po vrsti $0{,}25$; $0{,}1$ in $0{,}01$. Obe vsoti se stiskata k istemu številu, $\frac{1}{3}$. Lik pod parabolo zavzema natanko tretjino kvadrata. To je odkril že Arhimed, skoraj dva tisoč let pred iznajdbo odvoda.
 
 :::premisli
 Razlika med zgornjo in spodnjo vsoto je bila $0{,}25$; $0{,}1$ in $0{,}01$. Kolikšna bo pri $n = 1000$? Zakaj se tako lepo zmanjšuje?
@@ -218,7 +218,7 @@ $\int_0^{30} \frac{x^2}{9}\,dx = \frac{x^3}{27}\Big|_0^{30} = \frac{27000}{27} =
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izračunaj $\int_0^{\pi/2} (3\sin x + 2\cos x)\,dx$.
+Izračunajte $\int_0^{\pi/2} (3\sin x + 2\cos x)\,dx$.
 
 **Rešitev:**
 
@@ -233,11 +233,11 @@ Izračunaj $\int_0^{\pi/2} (3\sin x + 2\cos x)\,dx$.
 
 Dani sta funkciji $g(x) = 4 - x^2$ in $f(x) = x + 2$.
 
-a) Izračunaj koordinate presečišč grafov funkcij $f$ in $g$. (2 točki)
+a) Izračunajte koordinate presečišč grafov funkcij $f$ in $g$. (2 točki)
 
-b) Izračunaj ploščino lika, ki ga omejujeta grafa funkcij $f$ in $g$. (3 točke)
+b) Izračunajte ploščino lika, ki ga omejujeta grafa funkcij $f$ in $g$. (3 točke)
 
-c) Izračunaj ploščino lika, ki ga omejujeta graf funkcije $g$ in os $x$. Kolikšen delež te ploščine zavzema lik iz b)? (3 točke)
+c) Izračunajte ploščino lika, ki ga omejujeta graf funkcije $g$ in os $x$. Kolikšen delež te ploščine zavzema lik iz b)? (3 točke)
 
 **Rešitev:**
 
@@ -256,13 +256,13 @@ c) Izračunaj ploščino lika, ki ga omejujeta graf funkcije $g$ in os $x$. Koli
 
 Notranjost posode ima obliko vrtenine, ki nastane, ko graf funkcije $f(x) = \frac{12}{\sqrt{x}}$ na intervalu $[4, 16]$ zavrtimo okoli osi $x$. Enota na obeh oseh je $1\,\mathrm{cm}$.
 
-a) Izračunaj polmera obeh krožnih robov posode in njeno višino. (1 točka)
+a) Izračunajte polmera obeh krožnih robov posode in njeno višino. (1 točka)
 
-b) Izračunaj prostornino posode. Rezultat zaokroži na cele kubične centimetre. (4 točke)
+b) Izračunajte prostornino posode. Rezultat zaokrožite na cele kubične centimetre. (4 točke)
 
-c) Določi število $c$, za katero ima del posode med $x = 4$ in $x = c$ natanko polovico celotne prostornine. (3 točke)
+c) Določite število $c$, za katero ima del posode med $x = 4$ in $x = c$ natanko polovico celotne prostornine. (3 točke)
 
-d) Izračunaj ploščino osnega preseka posode, to je lika med grafoma funkcij $f$ in $-f$ na intervalu $[4, 16]$. (2 točki)
+d) Izračunajte ploščino osnega preseka posode, to je lika med grafoma funkcij $f$ in $-f$ na intervalu $[4, 16]$. (2 točki)
 
 **Rešitev:**
 

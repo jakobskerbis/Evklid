@@ -15,7 +15,7 @@ Katera funkcija ima to lastnost in kakšen je njen graf? To je **eksponentna fun
 
 **1. En primer do konca.** Nikin sintetizator najprej uglasimo po oktavah. Vsaka oktava navzgor frekvenco podvoji, vsaka navzdol jo razpolovi. Z $x$ označimo, za koliko oktav je ton nad a¹ (pod a¹ je $x$ negativen). Frekvenca je potem $440 \cdot 2^x$ hercev:
 
-| $x$ (oktave) | $2^x$ | frekvenca v Hz |
+| $x$ | $2^x$ | Hz |
 |---|---|---|
 | $-2$ | $\frac{1}{4}$ | $110$ |
 | $-1$ | $\frac{1}{2}$ | $220$ |
@@ -89,13 +89,13 @@ Ob povečanju $x$ za $1$ se $2^x$ **podvoji**, $\left(\frac{1}{2}\right)^x$ pa *
 
 **5. Lastnosti funkcije $f(x) = a^x$.**
 
-Pri vsaki osnovi je definicijsko območje $\mathbb{R}$, zaloga vrednosti $(0, \infty)$ in presečišče z osjo $y$ točka $(0, 1)$. Ničel ni. Funkcija je navzdol omejena (z $0$), navzgor ne. Osnova odloča le o tem:
+Pri vsaki osnovi je definicijsko območje $\mathbb{R}$, zaloga vrednosti $(0, \infty)$ in presečišče z osjo $y$ točka $(0, 1)$. Ničel ni. Funkcija je navzdol omejena (z $0$), navzgor ne, in strogo monotona. Os $x$ ($y = 0$) je asimptota. Osnova odloča le o tem:
 
-| Lastnost | $a > 1$ | $0 < a < 1$ |
+| | $a > 1$ | $0 < a < 1$ |
 |---|---|---|
-| monotonost | strogo naraščajoča | strogo padajoča |
-| vrednosti pri $x > 0$ | večje od $1$ | med $0$ in $1$ |
-| asimptota $y = 0$ | na levi | na desni |
+| graf | narašča | pada |
+| $x > 0$ | $a^x > 1$ | $0 < a^x < 1$ |
+| asimptota | na levi | na desni |
 
 Vsak graf gre skozi $(0, 1)$ in $(1, a)$, ker je $a^0 = 1$ in $a^1 = a$. Os $x$ je **vodoravna asimptota**: graf se ji poljubno približa, a je ne doseže. Dosežene so vse pozitivne vrednosti: z oktavami navzgor frekvenca preseže vsako mejo, navzdol pade pod vsako pozitivno mejo, vmes pa graf nima lukenj. Ker je funkcija strogo monotona, je **injektivna**: vsako vrednost doseže le pri enem $x$ (vodoravna premica seka graf največ enkrat).
 
@@ -307,7 +307,7 @@ točka: 1; 0 | (1, 0) | pod desno
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Graf funkcije $f(x) = c \cdot a^x$, kjer je $c > 0$, $a > 0$ in $a \ne 1$, poteka skozi točki $A(-1, 12)$ in $B(1, 3)$. Določi $a$ in $c$ ter utemelji, ali je funkcija $f$ naraščajoča ali padajoča.
+Graf funkcije $f(x) = c \cdot a^x$, kjer je $c > 0$, $a > 0$ in $a \ne 1$, poteka skozi točki $A(-1, 12)$ in $B(1, 3)$. Določite $a$ in $c$ ter utemeljite, ali je funkcija $f$ naraščajoča ali padajoča.
 
 **Rešitev:**
 
@@ -322,9 +322,9 @@ Graf funkcije $f(x) = c \cdot a^x$, kjer je $c > 0$, $a > 0$ in $a \ne 1$, potek
 
 Bolnik zaužije tableto, po kateri je v njegovi krvi $400\,\mathrm{mg}$ zdravila. Vsako uro telo izloči $15\,\%$ količine zdravila, ki je bila v krvi na začetku te ure. Z $m(t)$ označimo količino zdravila v krvi (v mg) $t$ ur po zaužitju.
 
-a) Zapiši predpis funkcije $m$. (2 točki)
-b) Koliko zdravila je v krvi $3$ ure po zaužitju? Rezultat zaokroži na cele miligrame. (2 točki)
-c) Po koliko celih urah je v krvi prvič manj kot $200\,\mathrm{mg}$ zdravila? Utemelji. (2 točki)
+a) Zapišite predpis funkcije $m$. (2 točki)
+b) Koliko zdravila je v krvi $3$ ure po zaužitju? Rezultat zaokrožite na cele miligrame. (2 točki)
+c) Po koliko celih urah je v krvi prvič manj kot $200\,\mathrm{mg}$ zdravila? Utemeljite. (2 točki)
 d) Za koliko odstotkov se količina zdravila zmanjša v dveh urah? (2 točki)
 
 **Rešitev:**
@@ -344,11 +344,11 @@ d) Za koliko odstotkov se količina zdravila zmanjša v dveh urah? (2 točki)
 
 Dani sta funkciji $f(x) = 2^{x-1} + 1$ in $g(x) = x + 1$.
 
-a) Zapiši definicijsko območje, zalogo vrednosti in enačbo vodoravne asimptote funkcije $f$. (3 točke)
-b) Izračunaj presečišče grafa funkcije $f$ z osjo $y$ in utemelji, zakaj $f$ nima ničel. (2 točki)
-c) V isti koordinatni sistem nariši grafa funkcij $f$ in $g$ za $x$ od $-2$ do $3$. (2 točki)
-d) Z grafa razberi, za katere $x$ z intervala $[-2, 3]$ velja $f(x) \le g(x)$, in abscisi presečišč grafov preveri z računom. (3 točke)
-e) Dana je še funkcija $h(x) = e^{x-1} + 1$. Brez računanja vrednosti utemelji, da za vsak $x > 1$ leži graf funkcije $h$ nad grafom funkcije $f$. (1 točka)
+a) Zapišite definicijsko območje, zalogo vrednosti in enačbo vodoravne asimptote funkcije $f$. (3 točke)
+b) Izračunajte presečišče grafa funkcije $f$ z osjo $y$ in utemeljite, zakaj $f$ nima ničel. (2 točki)
+c) V isti koordinatni sistem narišite grafa funkcij $f$ in $g$ za $x$ od $-2$ do $3$. (2 točki)
+d) Z grafa razberite, za katere $x$ z intervala $[-2, 3]$ velja $f(x) \le g(x)$, in abscisi presečišč grafov preverite z računom. (3 točke)
+e) Dana je še funkcija $h(x) = e^{x-1} + 1$. Brez računanja vrednosti utemeljite, da za vsak $x > 1$ leži graf funkcije $h$ nad grafom funkcije $f$. (1 točka)
 
 **Rešitev:**
 
@@ -475,7 +475,7 @@ f: 2^x - 3 | modra debelo
 > Le pri B je razmerje zaporednih vrednosti stalno: $\frac{6}{3} = \frac{12}{6} = \frac{24}{12} = 2$. Funkcija je $3 \cdot 2^x$, zato je pri $x = 4$ vrednost $24 \cdot 2 = 48$.
 
 ? (brez računala) Vpiši celi del števila $e^2$.
-= 7
+= 7 | 0
 > $2{,}7 < e < 2{,}8$, zato je $7{,}29 < e^2 < 7{,}84$.
 
 :::simboli

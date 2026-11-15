@@ -39,16 +39,14 @@ Bliže $2$. Na sredini med $2$ in $3$ bi bila potenca $2^{2{,}5} = \sqrt{32} \ap
 
 **5. Pravila za računanje: postavi jih ob pravila za potence.** Logaritem je eksponent, zato vsako pravilo za potence z isto osnovo da pravilo za logaritme. Za $a > 0$, $a \ne 1$, $x, y > 0$ in realno število $n$ (pri korenu je $n$ naravno, $n \ge 2$):
 
-| potence (že znaš) | logaritmi (novo) |
-|---|---|
-| $a^u \cdot a^v = a^{u+v}$ | $\log_a (xy) = \log_a x + \log_a y$ |
-| $\dfrac{a^u}{a^v} = a^{u-v}$ | $\log_a \dfrac{x}{y} = \log_a x - \log_a y$ |
-| $\left(a^u\right)^n = a^{nu}$ | $\log_a x^n = n \cdot \log_a x$ |
-| $\sqrt[n]{a^u} = a^{\frac{u}{n}}$ | $\log_a \sqrt[n]{x} = \dfrac{1}{n} \log_a x$ |
+- $a^u \cdot a^v = a^{u+v}$, zato $\log_a (xy) = \log_a x + \log_a y$;
+- $\dfrac{a^u}{a^v} = a^{u-v}$, zato $\log_a \dfrac{x}{y} = \log_a x - \log_a y$;
+- $\left(a^u\right)^n = a^{nu}$, zato $\log_a x^n = n \cdot \log_a x$;
+- $\sqrt[n]{a^u} = a^{\frac{u}{n}}$, zato $\log_a \sqrt[n]{x} = \dfrac{1}{n} \log_a x$.
 
 Primeri po vrsti: $\log_2 (4 \cdot 8) = 2 + 3 = 5$, $\;\log 50 - \log 5 = \log 10 = 1$, $\;\log_3 9^5 = 5 \cdot 2 = 10$, $\;\log_2 \sqrt{8} = \dfrac{3}{2}$.
 
-Primerjaj stolpca. Pri potencah eksponenta $u$ in $v$ vidiš, ker stojita desno zgoraj ob osnovi. Pri logaritmih sta skrita: $u = \log_a x$, $v = \log_a y$. Pravilo je isto, le vsaka računska operacija se pri logaritmih spusti za stopnjo nižje. Množenje števil postane seštevanje logaritmov, deljenje odštevanje, potenciranje pa množenje z eksponentom.
+Primerjaj pare. Pri potencah eksponenta $u$ in $v$ vidiš, ker stojita desno zgoraj ob osnovi. Pri logaritmih sta skrita: $u = \log_a x$, $v = \log_a y$. Pravilo je isto, le vsaka računska operacija se pri logaritmih spusti za stopnjo nižje. Množenje števil postane seštevanje logaritmov, deljenje odštevanje, potenciranje pa množenje z eksponentom.
 
 Dokaz prvega pravila: označimo $u = \log_a x$ in $v = \log_a y$, torej $x = a^u$, $y = a^v$. Potem je $x \cdot y = a^{u+v}$ in po definiciji $\log_a (xy) = u + v$.
 
@@ -312,7 +310,7 @@ $v = A + B \log P$; točka $t$ dekade desno od oznake $10^n$ pripada številu $1
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Brez računala izračunaj vrednost izraza $\log_2 24 + \log_2 \dfrac{2}{3} - \log_5 \sqrt{5}$.
+Brez računala izračunajte vrednost izraza $\log_2 24 + \log_2 \dfrac{2}{3} - \log_5 \sqrt{5}$.
 
 **Rešitev:**
 
@@ -328,9 +326,9 @@ Brez računala izračunaj vrednost izraza $\log_2 24 + \log_2 \dfrac{2}{3} - \lo
 Glasnost zvoka $L$ v decibelih izračunamo po formuli $L = 10 \log \dfrac{I}{I_0}$, kjer je $I$ jakost zvoka v $\mathrm{W/m^2}$, $I_0 = 10^{-12}\,\mathrm{W/m^2}$ pa jakost zvoka na pragu slišnosti.
 
 a) Kolikšna je glasnost pogovora z jakostjo $I = 10^{-6}\,\mathrm{W/m^2}$? (2 točki)
-b) Kolikšna je glasnost sesalnika z jakostjo $I = 3{,}2 \cdot 10^{-5}\,\mathrm{W/m^2}$? Rezultat zaokroži na desetinko decibela. (2 točki)
-c) Kolikšna je jakost zvoka z glasnostjo $85\,\mathrm{dB}$? Rezultat zapiši na tri veljavna mesta. (2 točki)
-d) Za koliko decibelov se poveča glasnost, če jakost zvoka povečamo za faktor $5$? Rezultat zaokroži na desetinko decibela. (2 točki)
+b) Kolikšna je glasnost sesalnika z jakostjo $I = 3{,}2 \cdot 10^{-5}\,\mathrm{W/m^2}$? Rezultat zaokrožite na desetinko decibela. (2 točki)
+c) Kolikšna je jakost zvoka z glasnostjo $85\,\mathrm{dB}$? Rezultat zapišite na tri veljavna mesta. (2 točki)
+d) Za koliko decibelov se poveča glasnost, če jakost zvoka povečamo za faktor $5$? Rezultat zaokrožite na desetinko decibela. (2 točki)
 
 **Rešitev:**
 
@@ -349,11 +347,11 @@ d) Za koliko decibelov se poveča glasnost, če jakost zvoka povečamo za faktor
 
 Naj bo $r = \log_2 3$.
 
-a) Z $r$ izrazi $\log_2 18$ in $\log_2 \dfrac{9}{16}$. (2 točki)
-b) Z $r$ izrazi $\log_3 2$ in $\log_{18} 12$. (3 točke)
-c) Z $r$ izrazi $\log_8 \sqrt{27}$. (2 točki)
-d) Pokaži, da je $\log_2 3 \cdot \log_3 4 \cdot \log_4 5 \cdot \log_5 6 \cdot \log_6 7 \cdot \log_7 8 = 3$. (2 točki)
-e) Na logaritemski skali leži oznaka vsakega števila, večjega od $1$, toliko centimetrov desno od oznake števila $1$, kolikor je njegov logaritem z osnovo $2$. Z $r$ izrazi, kje ležita oznaki števil $3$ in $12$, in ugotovi, katero število ima oznako natanko na sredini med njima. (2 točki)
+a) Z $r$ izrazite $\log_2 18$ in $\log_2 \dfrac{9}{16}$. (2 točki)
+b) Z $r$ izrazite $\log_3 2$ in $\log_{18} 12$. (3 točke)
+c) Z $r$ izrazite $\log_8 \sqrt{27}$. (2 točki)
+d) Pokažite, da je $\log_2 3 \cdot \log_3 4 \cdot \log_4 5 \cdot \log_5 6 \cdot \log_6 7 \cdot \log_7 8 = 3$. (2 točki)
+e) Na logaritemski skali leži oznaka vsakega števila, večjega od $1$, toliko centimetrov desno od oznake števila $1$, kolikor je njegov logaritem z osnovo $2$. Z $r$ izrazite, kje ležita oznaki števil $3$ in $12$, in ugotovite, katero število ima oznako natanko na sredini med njima. (2 točki)
 
 **Rešitev:**
 
@@ -499,7 +497,7 @@ Logaritme uporabljamo povsod, kjer se količine razlikujejo za veliko velikostni
 > Naj bo $c_1$ koncentracija v kislem, $c_2$ pa v čistem dežju: $\log c_1 - \log c_2 = -4{,}6 + 5{,}6 = 1$, torej $\log \dfrac{c_1}{c_2} = 1$ in $\dfrac{c_1}{c_2} = 10$.
 
 ? (brez računala) Koliko je $\ln \mathrm{e}^4 + \mathrm{e}^{\ln 3} - \ln 1$?
-= 7
+= 7 | 0
 ~ 6 | Upošteval si $\ln 1 = 1$. Pravilno je $\ln 1 = 0$, ker je $\mathrm{e}^0 = 1$.
 ~ 8 | Upošteval si $\ln 1 = -1$. Pravilno je $\ln 1 = 0$, ker je $\mathrm{e}^0 = 1$.
 > $\ln \mathrm{e}^4 = 4$, $\mathrm{e}^{\ln 3} = 3$ in $\ln 1 = 0$, zato je vrednost $4 + 3 - 0 = 7$.

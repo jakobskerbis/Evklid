@@ -15,11 +15,9 @@ Linearne enačbe nastopajo povsod, kjer se nekaj spreminja enakomerno: cena taks
 
 **Najprej opazuj.** Tri tehtanja iz kuhinje, vsako zapisano kot enačba. Pri vsakem smo na obeh straneh naredili isto:
 
-| Enačba | Kaj naredimo na obeh straneh | Ostane |
-|---|---|---|
-| $x + 250 = 430$ | odštejemo $250$ | $x = 180$ |
-| $3x = 180$ | delimo s $3$ | $x = 60$ |
-| $3x + 250 = 430$ | odštejemo $250$, nato delimo s $3$ | $x = 60$ |
+- $x + 250 = 430$: odštejemo $250$, ostane $x = 180$;
+- $3x = 180$: delimo s $3$, ostane $x = 60$;
+- $3x + 250 = 430$: odštejemo $250$, nato delimo s $3$, ostane $x = 60$.
 
 Opaziš vzorec? Neznanko vsakič osamimo tako, da »odstranjujemo« člene okrog nje, vedno na obeh straneh hkrati. Tik pred zadnjim korakom ima enačba obliko »število krat $x$ je število«.
 
@@ -27,7 +25,7 @@ V simulaciji spodaj (»Linearne enačbe«) z obeh skodelic tehtnice odstrani ena
 
 **1. Izraz in enačba, spremenljivka in neznanka.** Primerjaj zapisa $3x + 250$ in $3x + 250 = 430$. Prvi je **izraz**: števila in črke, povezani z računskimi operacijami, brez enačaja. Izraz ničesar ne trdi. Pove le, kako iz števila $x$ izračunaš novo število. Drugi zapis je **enačba**: dva izraza, povezana z enačajem. Enačba je trditev »leva stran je enaka desni«. Pri danem $x$ je resnična ali neresnična. Ta enačba velja pri eni vrednosti $x$, pri drugih ne:
 
-| $x$ | vrednost izraza $3x + 250$ | enačba $3x + 250 = 430$ |
+| $x$ | $3x + 250$ | enačba |
 |---|---|---|
 | $50$ | $400$ | ne velja |
 | $60$ | $430$ | velja |
@@ -222,7 +220,7 @@ $6x - 2x - 3x = x$, torej $x = 900\,\text{ml}$. Preizkus: $900 - 300 - 450 = 150
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši enačbo $\dfrac{x - 3}{4} - \dfrac{2x + 1}{6} = \dfrac{x}{3} - 3$.
+Rešite enačbo $\dfrac{x - 3}{4} - \dfrac{2x + 1}{6} = \dfrac{x}{3} - 3$.
 
 **Rešitev:**
 
@@ -238,7 +236,7 @@ Reši enačbo $\dfrac{x - 3}{4} - \dfrac{2x + 1}{6} = \dfrac{x}{3} - 3$.
 
 Operater A zaračuna mesečno naročnino $8{,}40\,\text{€}$ in $0{,}035\,\text{€}$ za vsako minuto klicev, operater B pa naročnino $5{,}20\,\text{€}$ in $0{,}06\,\text{€}$ za minuto. Število minut klicev v mesecu označimo z $x$.
 
-a) Zapiši enačbo, s katero izračunaš, pri koliko minutah klicev sta mesečna računa pri obeh operaterjih enaka, in jo reši. (3 točke)
+a) Zapišite enačbo, s katero izračunate, pri koliko minutah klicev sta mesečna računa pri obeh operaterjih enaka, in jo rešite. (3 točke)
 b) Koliko evrov znaša takrat mesečni račun? (1 točka)
 c) Mesečni račun pri operaterju A je znašal $17{,}85\,\text{€}$. Koliko minut klicev je bilo v tem mesecu? (2 točki)
 
@@ -257,10 +255,10 @@ c) Mesečni račun pri operaterju A je znašal $17{,}85\,\text{€}$. Koliko min
 
 Dana je enačba $\dfrac{mx + 2}{2} - \dfrac{m + 3}{3} = \dfrac{4 - x}{2} - \dfrac{m}{3}$ z neznanko $x$ in realnim parametrom $m$.
 
-a) Reši enačbo za $m = 3$. (1 točka)
-b) Reši enačbo za vse vrednosti parametra $m$. (4 točke)
-c) Za katere vrednosti $m$ je rešitev enačbe negativno število? Utemelji. (2 točki)
-d) Za katere cele vrednosti $m$ je rešitev enačbe celo število? Zapiši vse take $m$. (3 točke)
+a) Rešite enačbo za $m = 3$. (1 točka)
+b) Rešite enačbo za vse vrednosti parametra $m$. (4 točke)
+c) Za katere vrednosti $m$ je rešitev enačbe negativno število? Utemeljite. (2 točki)
+d) Za katere cele vrednosti $m$ je rešitev enačbe celo število? Zapišite vse take $m$. (3 točke)
 
 **Rešitev:**
 
@@ -345,7 +343,7 @@ Splošno: enačbo $ax = b$ rešujemo takole.
 ## Preveri se
 
 ? (brez računala) Izraz $5x - 2$ ima pri $x = 4$ vrednost $18$. Pri katerem $x$ ima vrednost $33$? Vpiši rešitev enačbe $5x - 2 = 33$.
-= 7
+= 7 | 0
 ~ 163 | Število $33$ si vstavil namesto $x$ in izračunal vrednost izraza. V enačbi je $x$ neznanka: iščeš $x$, pri katerem je izraz enak $33$.
 ~ 6,2 | Pri prenosu $-2$ nisi spremenil predznaka: $5x = 33 - 2$. Pravilno je $5x = 33 + 2$.
 > Prištejemo $2$: $5x = 35$, torej $x = 7$. Preizkus: $5 \cdot 7 - 2 = 33$. Izraz ima vrednost pri vsakem $x$, enačba pa je resnična le pri $x = 7$.

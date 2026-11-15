@@ -40,10 +40,10 @@ Obris postaja vse bolj okrogel, $e$ in $\varepsilon$ se manjšata. Ko se žeblji
 
 **2. Hiperbola z razliko.** Spet imamo dve gorišči, a zdaj zahtevamo, da je stalna **razlika** razdalj. Za hiperbolo z gorišči $F_1(-5, 0)$ in $F_2(5, 0)$ in razliko $8$:
 
-| točka | $r_1$ | $r_2$ | $r_1 - r_2$ |
+| točka | $r_1$ | $r_2$ | razlika |
 |---|---|---|---|
 | $(4, 0)$ | $9$ | $1$ | $8$ |
-| $(5;\; 2{,}25)$ | $10{,}25$ | $2{,}25$ | $8$ |
+| $(5; 2{,}25)$ | $10{,}25$ | $2{,}25$ | $8$ |
 | $(8, \sqrt{27})$ | $14$ | $6$ | $8$ |
 
 Točke, ki so bližje $F_2$, tvorijo desno vejo. Na levi je zrcalna veja točk, bližjih $F_1$. Hiperbola ima torej **dve veji**. Razlika je $2a$, tu $a = 4$, temeni sta $(\pm 4, 0)$; $a$ je **realna polos**. Gorišči sta tokrat dlje od središča kot temeni, zato zveza obrne predznak: $e^2 = a^2 + b^2$, torej $e = \sqrt{a^2 + b^2}$. Število $b$ imenujemo **imaginarna polos**: ni razdalja do točke na krivulji, ampak ga določa ta zveza. Tu je $b = \sqrt{25 - 16} = 3$.
@@ -90,11 +90,9 @@ Graf $y = -\frac{x^2}{8}$ zapišemo kot $x^2 = -8y$: parabola je odprta navzdol,
 
 **4. Pregled na eni sliki.**
 
-| krivulja in pravilo | enačba |
-|---|---|
-| elipsa: $r_1 + r_2 = 2a$ | $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$ |
-| hiperbola: $\lvert r_1 - r_2\rvert = 2a$ | $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$ |
-| parabola: do $F$ = do vodnice | $y^2 = 2px$ |
+- elipsa, $r_1 + r_2 = 2a$: $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$
+- hiperbola, $\lvert r_1 - r_2\rvert = 2a$: $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$
+- parabola, do $F$ = do vodnice: $y^2 = 2px$
 
 V simulaciji spodaj »Elipsa, hiperbola in parabola« izberi elipso in povleci točko $T$ po obrisu. Opazuj vsoto $r_1 + r_2$: ostane enaka. Nato nastavi $b = a$ in poglej, kaj postane elipsa.
 
@@ -299,7 +297,7 @@ točka: 8; -5,196 | T_2 | desno
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Parabola s temenom v izhodišču in osjo na osi $x$ poteka skozi točko $A(2, -4)$. Zapiši njeno enačbo, koordinati gorišča in enačbo vodnice.
+Parabola s temenom v izhodišču in osjo na osi $x$ poteka skozi točko $A(2, -4)$. Zapišite njeno enačbo, koordinati gorišča in enačbo vodnice.
 
 **Rešitev:**
 
@@ -313,11 +311,11 @@ Parabola s temenom v izhodišču in osjo na osi $x$ poteka skozi točko $A(2, -4
 
 ### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
 
-Umetni satelit kroži okoli Zemlje po elipsi, središče Zemlje je v enem od njenih gorišč. Najmanjša oddaljenost satelita od središča Zemlje je $7000\,\mathrm{km}$, največja pa $13\,000\,\mathrm{km}$. Koordinatni sistem postavi tako, da je središče elipse v izhodišču, velika os na osi $x$ in središče Zemlje v gorišču $F_2$ na pozitivnem delu osi $x$. Enota je $1000\,\mathrm{km}$.
+Umetni satelit kroži okoli Zemlje po elipsi, središče Zemlje je v enem od njenih gorišč. Najmanjša oddaljenost satelita od središča Zemlje je $7000\,\mathrm{km}$, največja pa $13\,000\,\mathrm{km}$. Koordinatni sistem postavite tako, da je središče elipse v izhodišču, velika os na osi $x$ in središče Zemlje v gorišču $F_2$ na pozitivnem delu osi $x$. Enota je $1000\,\mathrm{km}$.
 
-a) Izračunaj veliko polos $a$, linearno ekscentričnost $e$ in numerično ekscentričnost $\varepsilon$ tira. (3 točke)
-b) Izračunaj malo polos $b$, zaokroženo na dve decimalni mesti, in zapiši enačbo tira. (2 točki)
-c) Koliko je satelit oddaljen od središča Zemlje v trenutku, ko je zveznica med satelitom in središčem Zemlje pravokotna na veliko os? Rezultat zapiši v kilometrih. (2 točki)
+a) Izračunajte veliko polos $a$, linearno ekscentričnost $e$ in numerično ekscentričnost $\varepsilon$ tira. (3 točke)
+b) Izračunajte malo polos $b$, zaokroženo na dve decimalni mesti, in zapišite enačbo tira. (2 točki)
+c) Koliko je satelit oddaljen od središča Zemlje v trenutku, ko je zveznica med satelitom in središčem Zemlje pravokotna na veliko os? Rezultat zapišite v kilometrih. (2 točki)
 
 **Rešitev:**
 
@@ -336,9 +334,9 @@ c) Koliko je satelit oddaljen od središča Zemlje v trenutku, ko je zveznica me
 
 Radijski svetilnik $A(-4, 0)$ stoji na obali, ki poteka po premici $x = -4$, svetilnik $B(4, 0)$ pa na otoku. Enota je kilometer. Ladja iz razlike časov prihoda signalov ugotovi, da je od svetilnika $A$ za $4\,\mathrm{km}$ bolj oddaljena kot od svetilnika $B$.
 
-a) Utemelji, da ladja leži na hiperboli z goriščema $A$ in $B$. Zapiši enačbo hiperbole in povej, na kateri veji leži ladja. (3 točke)
-b) Ladja pluje po premici $y = x + 2$. Izračunaj, kje je ladja, in utemelji, zakaj ena od rešitev sistema ne ustreza. (4 točke)
-c) Ribolov je dovoljen v območju točk, ki so bližje svetilniku $B$ kot obali. Zapiši enačbo meje tega območja in utemelji, ali ladja sme loviti ribe. (3 točke)
+a) Utemeljite, da ladja leži na hiperboli z goriščema $A$ in $B$. Zapišite enačbo hiperbole in povejte, na kateri veji leži ladja. (3 točke)
+b) Ladja pluje po premici $y = x + 2$. Izračunajte, kje je ladja, in utemeljite, zakaj ena od rešitev sistema ne ustreza. (4 točke)
+c) Ribolov je dovoljen v območju točk, ki so bližje svetilniku $B$ kot obali. Zapišite enačbo meje tega območja in utemeljite, ali ladja sme loviti ribe. (3 točke)
 
 **Rešitev:**
 
@@ -455,19 +453,19 @@ Elipse najdeš v orbitah planetov (Sonce je v enem gorišču) in v ovalnih ogled
 > $2p = 10$, $p = 5$. Parabola je odprta navzdol, zato je gorišče $\left(0, -\frac{p}{2}\right) = (0;\; -2{,}5)$, vodnica pa $y = 2{,}5$.
 
 ? Enačba $x^2 + Cy^2 - 16 = 0$ opisuje hiperbolo z imaginarno polosjo $b = 2$. Vpiši $C$.
-= -4
+= -4 | 0
 ~ 4 | Pri $C = 4$ imata kvadrata enaka predznaka: to je elipsa.
 ~ -0,25 | Obrnil si ulomek. Po deljenju s $16$ je pod $y^2$ imenovalec $-\frac{16}{C}$, ki mora biti $b^2 = 4$.
 > Hiperbola: $\frac{x^2}{16} - \frac{y^2}{4} = 1$. Pomnožimo s $16$: $x^2 - 4y^2 - 16 = 0$, torej $C = -4$.
 
 ? (višja raven) Hiperbolo z razliko razdalj do gorišč $2a = 6$ konstruiraš s šestilom. Okoli gorišča $F_2$ zarišeš lok s polmerom $4$. Kolikšen polmer vzameš za lok okoli $F_1$, da dobiš točki desne veje?
-= 10
+= 10 | 0
 ~ 2 | Polmera morata imeti razliko $6$, ne vsote $6$.
 ~ 7 | Prištel si $a = 3$. Razlika razdalj je $2a = 6$.
 > Za točke desne veje je $r_1 - r_2 = 2a$, zato $r_1 = 4 + 6 = 10$.
 
 ? (višja raven) V Desmos vpišeš $\frac{x^2}{9} - \frac{y^2}{b^2} = 1$ in premikaš drsnik za $b$. Pri katerem $b > 0$ sta asimptoti premici $y = x$ in $y = -x$?
-= 3
+= 3 | 0
 ~ 9 | $9$ je $a^2$. Naklon asimptot je $\frac{b}{a}$, ne $\frac{b^2}{a^2}$.
 ~ 1 | Naklon $1$ pomeni $\frac{b}{a} = 1$, torej $b = a$, ne $b = 1$.
 > Naklon asimptot je $\frac{b}{a} = 1$, zato $b = a = 3$.

@@ -251,7 +251,7 @@ Po krajšanju ostane $\dfrac{1}{\sqrt{x} + 2}$. Pri $x = 4$: $\dfrac{1}{2 + 2} =
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izračunaj $\lim\limits_{x \to 1} \dfrac{x^2 + 2x - 3}{x^2 - 1}$.
+Izračunajte $\lim\limits_{x \to 1} \dfrac{x^2 + 2x - 3}{x^2 - 1}$.
 
 **Rešitev:**
 
@@ -267,10 +267,10 @@ Izračunaj $\lim\limits_{x \to 1} \dfrac{x^2 + 2x - 3}{x^2 - 1}$.
 
 Dana je funkcija $f(x) = \dfrac{2x^2 - 8}{x^2 - x - 2}$.
 
-a) Zapiši definicijsko območje funkcije $f$. (1 točka)
-b) Izračunaj $\lim\limits_{x \to 2} f(x)$ in pojasni, kakšno nezveznost ima $f$ pri $x = 2$. (3 točke)
-c) Izračunaj levo in desno limito funkcije $f$ pri $x \to -1$ in zapiši enačbo navpične asimptote. (2 točki)
-d) Izračunaj $\lim\limits_{x \to \infty} f(x)$ in zapiši enačbo vodoravne asimptote. (2 točki)
+a) Zapišite definicijsko območje funkcije $f$. (1 točka)
+b) Izračunajte $\lim\limits_{x \to 2} f(x)$ in pojasnite, kakšno nezveznost ima $f$ pri $x = 2$. (3 točke)
+c) Izračunajte levo in desno limito funkcije $f$ pri $x \to -1$ in zapišite enačbo navpične asimptote. (2 točki)
+d) Izračunajte $\lim\limits_{x \to \infty} f(x)$ in zapišite enačbo vodoravne asimptote. (2 točki)
 
 **Rešitev:**
 
@@ -292,10 +292,10 @@ $$f(x) = \begin{cases} \dfrac{\sin 2x}{x}, & x < 0 \\[2mm] \dfrac{b\,(\sqrt{x + 
 
 kjer je $b$ realno število. V točki $0$ funkcija še ni definirana.
 
-a) Izračunaj $\lim\limits_{x \to 0^-} f(x)$. (2 točki)
-b) Izračunaj $\lim\limits_{x \to 0^+} f(x)$; rezultat izrazi z $b$. (3 točke)
-c) Določi $b$ in vrednost $f(0)$ tako, da bo $f$ zvezna v točki $0$. Utemelji z definicijo zveznosti. (3 točke)
-d) Za $b$ in $f(0)$ iz c) zapiši, kje je $f$ zvezna, in izračunaj $\lim\limits_{x \to \infty} f(x)$. (2 točki)
+a) Izračunajte $\lim\limits_{x \to 0^-} f(x)$. (2 točki)
+b) Izračunajte $\lim\limits_{x \to 0^+} f(x)$; rezultat izrazite z $b$. (3 točke)
+c) Določite $b$ in vrednost $f(0)$ tako, da bo $f$ zvezna v točki $0$. Utemeljite z definicijo zveznosti. (3 točke)
+d) Za $b$ in $f(0)$ iz c) zapišite, kje je $f$ zvezna, in izračunajte $\lim\limits_{x \to \infty} f(x)$. (2 točki)
 
 **Rešitev:**
 

@@ -246,7 +246,7 @@ Dva kraja: $\{\text{Piran}, \text{Bled}\}$, $\{\text{Piran}, \text{Ptuj}\}$, $\{
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Dani sta množici $A = \{-1, 0, 2\}$ in $B = \{1, 3\}$. Z naštevanjem elementov zapiši kartezični produkt $A \times B$ in nariši njegov graf.
+Dani sta množici $A = \{-1, 0, 2\}$ in $B = \{1, 3\}$. Z naštevanjem elementov zapišite kartezični produkt $A \times B$ in narišite njegov graf.
 
 **Rešitev:**
 
@@ -275,10 +275,10 @@ točka: 2; 3 | (2, 3) | desno | modra
 
 Dana sta intervala $A = [-1, 2]$ in $B = [1, 3]$.
 
-a) Ugotovi, ali točki $T(0, 2)$ in $L(2, 0)$ ležita na grafu kartezičnega produkta $A \times B$. Odgovor utemelji. (2 točki)
-b) V istem koordinatnem sistemu nariši grafa $A \times B$ in $B \times A$. (2 točki)
-c) Presek grafov iz b) zapiši kot kartezični produkt dveh intervalov in izračunaj njegovo ploščino. (2 točki)
-d) Utemelji, da je $A \times B \neq B \times A$. (1 točka)
+a) Ugotovite, ali točki $T(0, 2)$ in $L(2, 0)$ ležita na grafu kartezičnega produkta $A \times B$. Odgovor utemeljite. (2 točki)
+b) V istem koordinatnem sistemu narišite grafa $A \times B$ in $B \times A$. (2 točki)
+c) Presek grafov iz b) zapišite kot kartezični produkt dveh intervalov in izračunajte njegovo ploščino. (2 točki)
+d) Utemeljite, da je $A \times B \neq B \times A$. (1 točka)
 
 **Rešitev:**
 
@@ -308,9 +308,9 @@ napis: 2,5; -0,5 | B × A | sredina | oranžna debelo
 
 Dani sta množici $A = \{1, 2, 3\}$ in $B = \{0, 5\}$.
 
-a) Zapiši potenčno množico $\mathcal{P}(B)$. (2 točki)
+a) Zapišite potenčno množico $\mathcal{P}(B)$. (2 točki)
 b) Koliko elementov imata množici $\mathcal{P}(A)$ in $A \times \mathcal{P}(B)$? (2 točki)
-c) Za vsako od izjav $\{5\} \in \mathcal{P}(B)$, $5 \in \mathcal{P}(B)$ in $(\{0\}, 2) \in A \times \mathcal{P}(B)$ ugotovi, ali je pravilna, in odgovor utemelji. (3 točke)
+c) Za vsako od izjav $\{5\} \in \mathcal{P}(B)$, $5 \in \mathcal{P}(B)$ in $(\{0\}, 2) \in A \times \mathcal{P}(B)$ ugotovite, ali je pravilna, in odgovor utemeljite. (3 točke)
 d) Množici $A$ dodamo nekaj novih elementov. Potenčna množica tako dobljene množice ima $128$ elementov. Koliko elementov smo dodali? Koliko podmnožic nove množice ne vsebuje števila $1$? (3 točke)
 
 **Rešitev:**
@@ -405,7 +405,7 @@ točka: 2; 3 | | | modra
 > Druga koordinata mora biti iz $B = \{1, 2\}$, točka $(2, 3)$ pa ima drugo koordinato $3 \notin B$. Par $(2, 3)$ bi bil v $B \times A$, ne v $A \times B$.
 
 ? Velja $|A| = 5$ in $|B| = 4$. Množici $A$ dodamo en nov element, $B$ ostane enaka. Za koliko elementov se poveča $A \times B$?
-= 4
+= 4 | 0
 ~ 1 | Tako bi bilo, če bi se moči seštevale. Nov element tvori par z vsakim od $4$ elementov množice $B$.
 ~ 24 | To je nova moč $6 \cdot 4$, vprašanje pa sprašuje, za koliko se je povečala.
 > Prej $5 \cdot 4 = 20$, potem $6 \cdot 4 = 24$; razlika je $4$, po en nov par za vsak element iz $B$.
@@ -422,7 +422,7 @@ točka: 2; 3 | | | modra
 > Pravilno je $\mathcal{P}(\{a, b\}) = \{\emptyset, \{a\}, \{b\}, \{a, b\}\}$. V 4. koraku je Nika izpustila $\emptyset$ in namesto množic $\{a\}$, $\{b\}$ zapisala elementa $a$, $b$.
 
 ? (brez računala) Kartezični produkt $A \times B$ ima $42$ elementov, množica $A$ pa $6$. Koliko elementov ima $B$?
-= 7
+= 7 | 0
 ~ 36 | Odštel si $42 - 6$, kot da bi se moči seštevale. Velja $|A| \cdot |B| = 42$.
 ~ 252 | Pomnožil si $42 \cdot 6$. Iz $6 \cdot |B| = 42$ moraš deliti.
 > $6 \cdot |B| = 42$, zato $|B| = 42 : 6 = 7$.

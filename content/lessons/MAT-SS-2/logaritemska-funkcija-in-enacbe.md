@@ -55,12 +55,12 @@ imenujemo **logaritemska funkcija** z osnovo $a$. Ker je logaritem definiran le 
 |---|---|---|
 | $D_f$ | $(0, \infty)$ | $(0, \infty)$ |
 | $Z_f$ | $\mathbb{R}$ | $\mathbb{R}$ |
-| monotonost | narašča | pada |
+| graf | narašča | pada |
 | ničla | $x = 1$ | $x = 1$ |
 | točka | $(a, 1)$ | $(a, 1)$ |
 | asimptota | $x = 0$ | $x = 0$ |
-| $f(x) < 0$ | na $(0, 1)$ | na $(1, \infty)$ |
-| $f(x) > 0$ | na $(1, \infty)$ | na $(0, 1)$ |
+| $f(x) < 0$ | $(0, 1)$ | $(1, \infty)$ |
+| $f(x) > 0$ | $(1, \infty)$ | $(0, 1)$ |
 
 Graf vsake logaritemske funkcije gre skozi točko $(1, 0)$, ker je $\log_a 1 = 0$. Os $y$ je **navpična asimptota**: pri $a > 1$ se graf, ko gre $x$ proti $0$, spušča neomejeno navzdol in se osi $y$ približuje, a je nikoli ne doseže. Osi $y$ graf ne seka, ker $0$ ni v definicijskem območju. Za $x > 1$ graf pri $a > 1$ narašča vse počasneje, a ni navzgor omejen: $\log_2 x = 10$ doseže šele pri $x = 1024$.
 
@@ -293,7 +293,7 @@ podnapis: Premik za 1 v desno in razteg s faktorjem 3 v smeri osi y
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši enačbo $\log_2 (x + 1) - \log_2 (x - 2) = 2$.
+Rešite enačbo $\log_2 (x + 1) - \log_2 (x - 2) = 2$.
 
 **Rešitev:**
 
@@ -309,10 +309,10 @@ Reši enačbo $\log_2 (x + 1) - \log_2 (x - 2) = 2$.
 
 Dana je funkcija $f(x) = \log_2 (x + 4) - 1$.
 
-a) Zapiši definicijsko območje funkcije $f$ in enačbo asimptote njenega grafa. (2 točki)
-b) Izračunaj ničlo funkcije $f$ in presečišče njenega grafa z osjo $y$. (2 točki)
-c) Zapiši predpis obratne funkcije $f^{-1}$ in njeno zalogo vrednosti. (2 točki)
-d) V isti koordinatni sistem nariši grafa funkcij $f$ in $f^{-1}$. (2 točki)
+a) Zapišite definicijsko območje funkcije $f$ in enačbo asimptote njenega grafa. (2 točki)
+b) Izračunajte ničlo funkcije $f$ in presečišče njenega grafa z osjo $y$. (2 točki)
+c) Zapišite predpis obratne funkcije $f^{-1}$ in njeno zalogo vrednosti. (2 točki)
+d) V isti koordinatni sistem narišite grafa funkcij $f$ in $f^{-1}$. (2 točki)
 
 **Rešitev:**
 
@@ -330,11 +330,11 @@ d) V isti koordinatni sistem nariši grafa funkcij $f$ in $f^{-1}$. (2 točki)
 
 Hitrost tipkanja začetnika lahko približno opišemo z modelom $h(x) = r + s \log_2 (x + 1)$, kjer je $x$ število tednov vadbe, $h(x)$ pa število besed, ki jih natipka v eni minuti. Na začetku natipka $20$ besed na minuto, po $3$ tednih pa $32$ besed na minuto.
 
-a) Določi parametra $r$ in $s$. (2 točki)
+a) Določite parametra $r$ in $s$. (2 točki)
 b) Koliko besed na minuto natipka po $7$ tednih vadbe? (1 točka)
 c) Po koliko tednih vadbe natipka $50$ besed na minuto? (2 točki)
 d) Koliko tednov potrebuje, da se hitrost poveča z $20$ na $32$ besed na minuto, in koliko, da se poveča z $32$ na $44$ besed na minuto? Kaj to pove o naraščanju funkcije $h$? (2 točki)
-e) Po koliko tednih vadbe natipka $40$ besed na minuto? Rezultat zaokroži na desetinko tedna. (3 točke)
+e) Po koliko tednih vadbe natipka $40$ besed na minuto? Rezultat zaokrožite na desetinko tedna. (3 točke)
 
 **Rešitev:**
 
@@ -448,13 +448,13 @@ Pri $1000$ številih zadošča $10$ vprašanj, pri milijardi pa le $30$. To je z
 > Iz $12 \log_2 \dfrac{\nu}{440} = -12$ sledi $\log_2 \dfrac{\nu}{440} = -1$ in $\dfrac{\nu}{440} = 2^{-1}$, torej $\nu = 220\,\mathrm{Hz}$: ena oktava pod A.
 
 ? (brez računala) Graf funkcije $g(x) = c \log_3 x$ gre skozi točko $(9, -4)$. Koliko je $c$?
-= -2
+= -2 | 0
 ~ 2 | Pozabil si na predznak: ker je $\log_3 9 = 2$ pozitiven, mora biti $c$ negativen, da je $g(9) = -4$.
 ~ -0,44 | Delil si $-4$ z $9$. Faktor $c$ množi vrednost $\log_3 9 = 2$, ne abscise $9$.
 > $g(9) = c \log_3 9 = 2c = -4$, zato je $c = -2$: graf $\log_3 x$ je raztegnjen s faktorjem $2$ in prezrcaljen čez os $x$.
 
 ? (brez računala) Funkcija $y = 2^x$ doseže vrednost $1024$ že pri $x = 10$. Pri katerem $x$ doseže vrednost $10$ funkcija $y = \log_2 x$?
-= 1024
+= 1024 | 0
 ~ 10 | To je abscisa za $2^x$. Graf $\log_2 x$ je zrcalna slika čez $y = x$, zato se koordinati zamenjata.
 ~ 20 | Logaritem ni produkt: iz $\log_2 x = 10$ sledi $x = 2^{10}$, ne $x = 2 \cdot 10$.
 > Iz $\log_2 x = 10$ sledi $x = 2^{10} = 1024$. Točka $(10, 1024)$ grafa $y = 2^x$ preide v točko $(1024, 10)$ grafa $y = \log_2 x$: eksponentna funkcija pride do $1024$ v desetih korakih, logaritemska pa potrebuje $1024$ enot, da pride do $10$.

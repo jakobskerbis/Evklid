@@ -69,11 +69,9 @@ Metodi zamenjave in nasprotnih koeficientov sta enakovredni: obe dasta isto reš
 
 **5. Koliko rešitev ima sistem?** V simulaciji spodaj »Sistem dveh enačb grafično« sta premici $y = k_1x + n_1$ in $y = k_2x + n_2$. Nastavi $k_1 = k_2$, nato spreminjaj $n_2$. Preden premakneš drsnik, napovej: koliko skupnih točk imata premici pri $n_1 \ne n_2$ in koliko pri $n_1 = n_2$? Premici v ravnini imata natanko eno od treh leg, zato so možni trije primeri:
 
-| Lega premic | Število rešitev | Kako se pokaže pri računanju |
-|---|---|---|
-| sekata se | natanko ena | dobimo konkretno vrednost za $x$ in za $y$ |
-| vzporedni sta | nobene | pride protislovje, npr. $0 = 5$ |
-| sovpadata | neskončno mnogo | pride enakost, ki vedno velja, npr. $0 = 0$ |
+- premici **se sekata**: natanko ena rešitev; pri računanju dobimo konkretno vrednost za $x$ in za $y$;
+- premici **sta vzporedni**: nobene rešitve; pri računanju pride protislovje, npr. $0 = 5$;
+- premici **sovpadata**: neskončno mnogo rešitev; pri računanju pride enakost, ki vedno velja, npr. $0 = 0$.
 
 Primer vzporednih premic: $x + y = 3$ in $2x + 2y = 8$. Če prvo pomnožimo z $-2$ in seštejemo, dobimo $0 = 2$, kar je nemogoče, zato rešitve ni. Primer sovpadanja: $x + y = 3$ in $2x + 2y = 6$. Druga enačba je le dvakratnik prve, zato dobimo $0 = 0$ in vsak par $(x, 3 - x)$ je rešitev.
 
@@ -191,7 +189,7 @@ Iz $x + 8 = 14$ sledi $x = 6$. Preizkus: $2 \cdot 6 + 4 \cdot 8 = 12 + 32 = 44$ 
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši sistem enačb $4x - 3y = 5$ in $2x + 5y = 9$.
+Rešite sistem enačb $4x - 3y = 5$ in $2x + 5y = 9$.
 
 **Rešitev:**
 
@@ -207,9 +205,9 @@ Reši sistem enačb $4x - 3y = 5$ in $2x + 5y = 9$.
 
 Na šolski prireditvi so prodali $236$ vstopnic. Vstopnica za dijake je stala $3{,}50\,\text{€}$, za odrasle pa $6{,}80\,\text{€}$. Skupaj so iztržili $1103{,}20\,\text{€}$.
 
-a) Z $x$ označi število prodanih vstopnic za dijake, z $y$ pa za odrasle. Zapiši sistem enačb, ki opisuje podatke. (2 točki)
-b) Reši sistem in zapiši, koliko vstopnic posamezne vrste so prodali. (2 točki)
-c) Kolikšen delež iztržka so prinesle vstopnice za odrasle? Rezultat zapiši v odstotkih, zaokroženo na eno decimalko. (2 točki)
+a) Z $x$ označite število prodanih vstopnic za dijake, z $y$ pa za odrasle. Zapišite sistem enačb, ki opisuje podatke. (2 točki)
+b) Rešite sistem in zapišite, koliko vstopnic posamezne vrste so prodali. (2 točki)
+c) Kolikšen delež iztržka so prinesle vstopnice za odrasle? Rezultat zapišite v odstotkih, zaokroženo na eno decimalko. (2 točki)
 
 **Rešitev:**
 
@@ -230,10 +228,10 @@ Dan je sistem enačb s parametroma $m$ in $p$:
 
 $$\begin{cases} 2x - y = 3 \\ mx + 2y = p \end{cases}$$
 
-a) Reši sistem za $m = 3$ in $p = 1$. (2 točki)
-b) Pokaži, da iz sistema sledi enačba $(m + 4)x = p + 6$, in ugotovi, za katere vrednosti $m$ ima sistem natanko eno rešitev. (3 točke)
-c) Naj bo $m = -4$. Za katero vrednost $p$ ima sistem neskončno mnogo rešitev? Zapiši vse rešitve v tem primeru. Koliko rešitev ima sistem pri drugih vrednostih $p$? (3 točke)
-d) V isti koordinatni sistem nariši premici, ki ju določata enačbi sistema pri $m = -4$ in $p = 2$. Z risbo pojasni, koliko rešitev ima sistem. (2 točki)
+a) Rešite sistem za $m = 3$ in $p = 1$. (2 točki)
+b) Pokažite, da iz sistema sledi enačba $(m + 4)x = p + 6$, in ugotovite, za katere vrednosti $m$ ima sistem natanko eno rešitev. (3 točke)
+c) Naj bo $m = -4$. Za katero vrednost $p$ ima sistem neskončno mnogo rešitev? Zapišite vse rešitve v tem primeru. Koliko rešitev ima sistem pri drugih vrednostih $p$? (3 točke)
+d) V isti koordinatni sistem narišite premici, ki ju določata enačbi sistema pri $m = -4$ in $p = 2$. Z risbo pojasnite, koliko rešitev ima sistem. (2 točki)
 
 **Rešitev:**
 

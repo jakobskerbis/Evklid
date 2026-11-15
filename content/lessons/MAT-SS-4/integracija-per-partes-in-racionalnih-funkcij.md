@@ -67,9 +67,9 @@ Pomagaj si s tabelo; $k$ in $a$ sta realni števili:
 |---|---|
 | $\frac{1}{x - a}$ | $\ln\lvert x - a\rvert$ |
 | $\frac{k}{x - a}$ | $k \ln\lvert x - a\rvert$ |
-| $\frac{1}{a - x}$ | $-\ln\lvert a - x\rvert$ (pozor na minus) |
+| $\frac{1}{a - x}$ | $-\ln\lvert a - x\rvert$ |
 
-Minus v zadnji vrstici pride iz nove spremenljivke $t = a - x$, $dt = -dx$.
+Pozor na minus v zadnji vrstici: pride iz nove spremenljivke $t = a - x$, $dt = -dx$.
 
 **8. Najprej deljenje.** Razcep zgoraj deluje, kadar je stopnja števca manjša od stopnje imenovalca.
 
@@ -214,11 +214,11 @@ $\int x^2\,e^x\,dx = x^2\,e^x - 2(x\,e^x - e^x) + C = (x^2 - 2x + 2)\,e^x + C$. 
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
 
-Oba integrala izračunaj z integracijo per partes.
+Oba integrala izračunajte z integracijo per partes.
 
-a) Izračunaj $\int (2x + 1)\,e^x\,dx$. (3 točke)
+a) Izračunajte $\int (2x + 1)\,e^x\,dx$. (3 točke)
 
-b) Izračunaj $\int x\ln x\,dx$ za $x > 0$. (3 točke)
+b) Izračunajte $\int x\ln x\,dx$ za $x > 0$. (3 točke)
 
 **Rešitev:**
 
@@ -236,13 +236,13 @@ b) Izračunaj $\int x\ln x\,dx$ za $x > 0$. (3 točke)
 
 Dana je funkcija $f(x) = \dfrac{x^2 + x - 4}{x^2 - 2x - 3}$.
 
-a) Zapiši definicijsko območje funkcije $f$ in pokaži, da je $f(x) = 1 + \dfrac{3x - 1}{x^2 - 2x - 3}$. (2 točki)
+a) Zapišite definicijsko območje funkcije $f$ in pokažite, da je $f(x) = 1 + \dfrac{3x - 1}{x^2 - 2x - 3}$. (2 točki)
 
-b) Ulomek $\dfrac{3x - 1}{x^2 - 2x - 3}$ razcepi na parcialne ulomke. (3 točke)
+b) Ulomek $\dfrac{3x - 1}{x^2 - 2x - 3}$ razcepite na parcialne ulomke. (3 točke)
 
-c) Izračunaj $\int f(x)\,dx$. (3 točke)
+c) Izračunajte $\int f(x)\,dx$. (3 točke)
 
-d) Na intervalu $(3, \infty)$ poišči tisto primitivno funkcijo $G$ funkcije $f$, za katero je $G(4) = 4$. (2 točki)
+d) Na intervalu $(3, \infty)$ poiščite tisto primitivno funkcijo $G$ funkcije $f$, za katero je $G(4) = 4$. (2 točki)
 
 **Rešitev:**
 
@@ -322,7 +322,7 @@ Vsak rezultat lahko preveriš tudi s števili, brez simbolnega odvajanja.
 > Pri $\int 2x\,e^{x^2}\,dx$ je $2x$ odvod notranje funkcije $x^2$. Z $t = x^2$, $dt = 2x\,dx$ dobiš $\int e^t\,dt = e^{x^2} + C$.
 
 ? (brez računala) Velja $\frac{3x + 1}{(x - 1)(x + 1)} = \frac{A}{x - 1} + \frac{B}{x + 1}$. Koliko je $A$?
-= 2
+= 2 | 0
 ~ 1 | To je $B$: pri $x = -1$ dobiš $-2 = -2B$. Za $A$ vstavi $x = 1$.
 ~ 4 | To je samo števec pri $x = 1$. Iz $3x + 1 = A(x + 1) + B(x - 1)$ pri $x = 1$ sledi $4 = 2A$.
 > Pomnožimo z imenovalcem: $3x + 1 = A(x + 1) + B(x - 1)$. Pri $x = 1$ je $4 = 2A$, torej $A = 2$ (in pri $x = -1$ je $B = 1$).
@@ -342,9 +342,9 @@ Vsak rezultat lahko preveriš tudi s števili, brez simbolnega odvajanja.
 | 1 | $1 - x^2 = (1 - x)(1 + x)$ |
 | 2 | $\frac{2}{1 - x^2} = \frac{1}{1 - x} + \frac{1}{1 + x}$ |
 | 3 | $\int \frac{dx}{1 - x} = \ln\lvert 1 - x\rvert + C$ |
-| 4 | vsota: $\ln\lvert 1 - x\rvert + \ln\lvert 1 + x\rvert + C$ |
+| 4 | $\ln\lvert 1 - x\rvert + \ln\lvert 1 + x\rvert + C$ |
 
-= 3
+= 3 | 0
 ~ 2 | Korak 2 je pravilen: na skupnem imenovalcu je števec $(1 + x) + (1 - x) = 2$.
 ~ 4 | Korak 4 le sešteje, kar je dobil prej. Napaka nastane že pri integriranju posameznega ulomka.
 > Odvod $\ln\lvert 1 - x\rvert$ je $\frac{-1}{1 - x}$, zato je $\int \frac{dx}{1 - x} = -\ln\lvert 1 - x\rvert + C$. Pravilni rezultat je $\ln\lvert 1 + x\rvert - \ln\lvert 1 - x\rvert + C$.

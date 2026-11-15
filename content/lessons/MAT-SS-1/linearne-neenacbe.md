@@ -46,12 +46,14 @@ $x = -5$ je rešitev, ker $5 > 3$. $x = 0$ ni, ker $0 > 3$ ne drži. Rešitve so
 
 **4. Zapis rešitve kot interval.** Množico rešitev zapišemo na številski premici in z intervalom:
 
-| Neenačba | Interval | Pomen |
-|---|---|---|
-| $x > a$ | $(a, \infty)$ | od $a$ naprej, brez $a$ |
-| $x \ge a$ | $[a, \infty)$ | od $a$ naprej, z $a$ |
-| $x < a$ | $(-\infty, a)$ | do $a$, brez $a$ |
-| $x \le a$ | $(-\infty, a]$ | do $a$, z $a$ |
+| Neenačba | Interval |
+|---|---|
+| $x > a$ | $(a, \infty)$ |
+| $x \ge a$ | $[a, \infty)$ |
+| $x < a$ | $(-\infty, a)$ |
+| $x \le a$ | $(-\infty, a]$ |
+
+Prva dva intervala segata od $a$ naprej, zadnja dva do $a$.
 
 - **Oklepaj** $($ ali $)$ pomeni, da krajišče **ni** v množici (pri strogih znakih $<$, $>$). Na številski premici ga narišemo kot **prazen krožec**.
 - **Oglati oklepaj** $[$ ali $]$ pomeni, da krajišče **je** v množici (pri $\le$, $\ge$). Narišemo ga kot **poln krožec**.
@@ -192,7 +194,7 @@ Delimo z $-2$, zato se znak obrne: $x \le -5$. Interval je $(-\infty, -5]$, kraj
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši neenačbo $\dfrac{x - 1}{3} - \dfrac{x + 2}{2} \ge \dfrac{x}{6} - 1$ in rešitev zapiši z intervalom.
+Rešite neenačbo $\dfrac{x - 1}{3} - \dfrac{x + 2}{2} \ge \dfrac{x}{6} - 1$ in rešitev zapišite z intervalom.
 
 **Rešitev:**
 
@@ -208,9 +210,9 @@ Reši neenačbo $\dfrac{x - 1}{3} - \dfrac{x + 2}{2} \ge \dfrac{x}{6} - 1$ in re
 
 Podjetje izdeluje majice s potiskom. Mesečni stalni stroški so $1350\,\text{€}$, izdelava ene majice stane $4{,}20\,\text{€}$, majico pa prodajo za $11{,}70\,\text{€}$. Z $x$ označimo število majic, ki jih v mesecu izdelajo in prodajo.
 
-a) Zapiši izraz za mesečni dobiček v odvisnosti od $x$. (1 točka)
-b) Zapiši in reši neenačbo, s katero ugotoviš, najmanj koliko majic mora podjetje prodati, da bo dobiček pozitiven. (2 točki)
-c) Najmanj koliko majic mora podjetje prodati, da bo dobiček znašal vsaj $20\,\%$ prihodka od prodaje? Mejo izračunaj na dve decimalni mesti natančno in odgovor utemelji. (3 točke)
+a) Zapišite izraz za mesečni dobiček v odvisnosti od $x$. (1 točka)
+b) Zapišite in rešite neenačbo, s katero ugotovite, najmanj koliko majic mora podjetje prodati, da bo dobiček pozitiven. (2 točki)
+c) Najmanj koliko majic mora podjetje prodati, da bo dobiček znašal vsaj $20\,\%$ prihodka od prodaje? Mejo izračunajte na dve decimalni mesti natančno in odgovor utemeljite. (3 točke)
 
 **Rešitev:**
 
@@ -228,11 +230,11 @@ c) Najmanj koliko majic mora podjetje prodati, da bo dobiček znašal vsaj $20\,
 
 Dani sta linearni funkciji $f(x) = \dfrac{x + 7}{2}$ in $g(x) = \dfrac{4x - 2}{3}$.
 
-a) Reši neenačbo $f(x) \ge g(x)$ in rešitev zapiši z intervalom. (3 točke)
-b) Pojasni, kaj rešitev iz a) pove o legi grafov funkcij $f$ in $g$. (1 točka)
+a) Rešite neenačbo $f(x) \ge g(x)$ in rešitev zapišite z intervalom. (3 točke)
+b) Pojasnite, kaj rešitev iz a) pove o legi grafov funkcij $f$ in $g$. (1 točka)
 c) Za katera števila $x$ sta vrednosti obeh funkcij pozitivni? (2 točki)
-d) Zapiši množico števil $x$, ki izpolnjujejo pogoja iz a) in c) hkrati. (1 točka)
-e) Določi realni parameter $p$ tako, da bo množica rešitev neenačbe $f(x) \ge g(x) + p$ enaka $(-\infty, 2]$. (3 točke)
+d) Zapišite množico števil $x$, ki izpolnjujejo pogoja iz a) in c) hkrati. (1 točka)
+e) Določite realni parameter $p$ tako, da bo množica rešitev neenačbe $f(x) \ge g(x) + p$ enaka $(-\infty, 2]$. (3 točke)
 
 **Rešitev:**
 

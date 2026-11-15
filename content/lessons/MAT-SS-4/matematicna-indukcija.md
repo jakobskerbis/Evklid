@@ -182,8 +182,8 @@ $H_{n + 1} = 2(2^n - 1) + 1 = 2^{n + 1} - 2 + 1 = 2^{n + 1} - 1$, kar je $P(n + 
 
 Zaporedje je podano rekurzivno: $a_1 = 2$ in $a_{n+1} = 3a_n - 2$ za vsako naravno število $n$.
 
-a) Izračunaj člene $a_2$, $a_3$, $a_4$ in $a_5$ ter postavi domnevo o splošnem členu $a_n$. (2 točki)
-b) Domnevo dokaži z matematično indukcijo. (3 točke)
+a) Izračunajte člene $a_2$, $a_3$, $a_4$ in $a_5$ ter postavite domnevo o splošnem členu $a_n$. (2 točki)
+b) Domnevo dokažite z matematično indukcijo. (3 točke)
 c) Kateri člen zaporedja je enak $730$? (2 točki)
 
 **Rešitev:**
@@ -202,10 +202,10 @@ c) Kateri člen zaporedja je enak $730$? (2 točki)
 
 Za vsako naravno število $n$ je $S_n = \dfrac{1}{1 \cdot 2} + \dfrac{1}{2 \cdot 3} + \ldots + \dfrac{1}{n(n + 1)}$.
 
-a) Izračunaj $S_1$, $S_2$ in $S_3$ ter postavi domnevo o vrednosti $S_n$. (2 točki)
-b) Domnevo iz a) dokaži z matematično indukcijo. (3 točke)
-c) Izračunaj vsoto vrste $\dfrac{1}{1 \cdot 2} + \dfrac{1}{2 \cdot 3} + \dfrac{1}{3 \cdot 4} + \ldots$ in določi najmanjši $n$, pri katerem se $S_n$ od vsote vrste razlikuje za manj kot $0{,}01$. (3 točke)
-d) Za vsoto $T_n = \dfrac{1}{1 \cdot 3} + \dfrac{1}{2 \cdot 4} + \ldots + \dfrac{1}{n(n + 2)}$ velja $T_1 = \dfrac{1}{3} = \dfrac{1}{1 + 2}$. Dijak zato po zgledu domneve iz a) sklepa, da je $T_n = \dfrac{n}{n + 2}$ za vsak $n$. Ovrzi to domnevo. (2 točki)
+a) Izračunajte $S_1$, $S_2$ in $S_3$ ter postavite domnevo o vrednosti $S_n$. (2 točki)
+b) Domnevo iz a) dokažite z matematično indukcijo. (3 točke)
+c) Izračunajte vsoto vrste $\dfrac{1}{1 \cdot 2} + \dfrac{1}{2 \cdot 3} + \dfrac{1}{3 \cdot 4} + \ldots$ in določite najmanjši $n$, pri katerem se $S_n$ od vsote vrste razlikuje za manj kot $0{,}01$. (3 točke)
+d) Za vsoto $T_n = \dfrac{1}{1 \cdot 3} + \dfrac{1}{2 \cdot 4} + \ldots + \dfrac{1}{n(n + 2)}$ velja $T_1 = \dfrac{1}{3} = \dfrac{1}{1 + 2}$. Dijak zato po zgledu domneve iz a) sklepa, da je $T_n = \dfrac{n}{n + 2}$ za vsak $n$. Ovrzite to domnevo. (2 točki)
 
 **Rešitev:**
 
@@ -273,7 +273,7 @@ Predstavljaj si plezalno steno z oprimki v enakih razmikih. Plezalec doseže vsa
 > Preverjanje primerov je koristno za domnevo, ni pa del dokaza: tudi sto pravilnih primerov ne zagotovi stoprvega.
 
 ? (brez računala) Koliko potez najmanj potrebuješ za Hanojski stolp s $7$ ploščicami?
-= 127
+= 127 | 0
 ~ 128 | To je $2^7$; pozabil si odšteti $1$. Za eno ploščico je $2^1 = 2$, potrebuješ pa le $1$ potezo.
 ~ 49 | To je $7^2$. Število potez se z vsako ploščico približno podvoji, ne raste kot kvadrat.
 ~ 14 | To je $2 \cdot 7$. Velja $H_{n + 1} = 2H_n + 1$, zato se število potez podvaja, ne prišteva.
@@ -298,7 +298,7 @@ Predstavljaj si plezalno steno z oprimki v enakih razmikih. Plezalec doseže vsa
 > Brez baze korak ne dokaže ničesar. Pravilna formula je $\frac{n(n + 1)}{2}$.
 
 ? Na tekmovanju v podiranju domin postavijo $500$ domin. Vsaka padajoča podre naslednjo, le med $120.$ in $121.$ je razmik prevelik. Podrejo prvo. Koliko domin pade?
-= 120
+= 120 | 0
 ~ 500 | Ne padejo vse: korak ne velja pri $120 \to 121$, zato se veriga tam pretrga.
 ~ 0 | Prva pade, korak pa velja pri vseh prehodih do $120.$ domine, zato padejo vse do te vrzeli.
 ~ 121 | Prehod $120 \to 121$ je ravno tisti, kjer korak ne velja: $120.$ domina pade, a $121.$ ne podre, zato ta ostane pokonci.

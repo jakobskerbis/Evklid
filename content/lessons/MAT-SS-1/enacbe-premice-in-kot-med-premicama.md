@@ -244,7 +244,7 @@ $\alpha = \tan^{-1} \dfrac{4}{3} \approx 53{,}13^\circ$, zato $\varphi = 90^\cir
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Premica gre skozi točko $T(2, 3)$ in je vzporedna premici $3x + 2y - 1 = 0$. Zapiši njeno enačbo v odsekovni obliki.
+Premica gre skozi točko $T(2, 3)$ in je vzporedna premici $3x + 2y - 1 = 0$. Zapišite njeno enačbo v odsekovni obliki.
 
 **Rešitev:**
 
@@ -259,9 +259,9 @@ Premica gre skozi točko $T(2, 3)$ in je vzporedna premici $3x + 2y - 1 = 0$. Za
 
 Dan je trikotnik z oglišči $A(-2, 1)$, $B(4, 4)$ in $C(3, -3)$.
 
-a) Zapiši enačbi premic $AB$ in $AC$ v splošni obliki. (2 točki)
-b) Izračunaj naklonski kot premice $AC$. Rezultat zaokroži na stotinko stopinje. (2 točki)
-c) Izračunaj notranji kot trikotnika pri oglišču $A$. Rezultat zaokroži na stotinko stopinje. (3 točke)
+a) Zapišite enačbi premic $AB$ in $AC$ v splošni obliki. (2 točki)
+b) Izračunajte naklonski kot premice $AC$. Rezultat zaokrožite na stotinko stopinje. (2 točki)
+c) Izračunajte notranji kot trikotnika pri oglišču $A$. Rezultat zaokrožite na stotinko stopinje. (3 točke)
 
 **Rešitev:**
 
@@ -374,7 +374,7 @@ točka: 0; 2 | B | desno
 > $k = -\dfrac{a}{2} = 3$, torej $a = -6$. Premica je $-6x + 2y - 6 = 0$ oziroma $y = 3x + 3$.
 
 ? (brez računala) Mizar ima na skici dve letvi, ki ležita na premicah $y = x$ in $y = \sqrt{3}\,x$. Kolikšen kot v stopinjah oklepata letvi? Uporabi tabelo naklonskih kotov iz razlage.
-= 15 °
+= 15 ° | 0
 ~ 105 | Naklonska kota si seštel. Kot med premicama je razlika.
 ~ 75 | To je $180^\circ - 105^\circ$; najprej si kota napačno seštel.
 ~ 60 | To je samo naklonski kot druge letve.

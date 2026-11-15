@@ -20,12 +20,10 @@ Nato na rešetko v pečici, katere žice so vzporedne, položi raven nož pošev
 
 **3. Medsebojna lega dveh premic v ravnini.** Pri sistemih linearnih enačb si videl, da se dve premici v koordinatnem sistemu sekata, sta vzporedni ali sovpadata. Enake tri možnosti veljajo za vsaki dve premici v ravnini, tudi brez koordinat. Lego zdaj ugotovimo brez računa, s skupnimi točkami:
 
-| Lega | Opis | Zapis |
-|---|---|---|
-| sekata se | imata natanko eno skupno točko | |
-| pravokotni sta | sekata se pod pravim kotom | $p \perp q$ |
-| vzporedni sta | ležita v isti ravnini in nimata skupnih točk | $p \parallel q$ |
-| sovpadata | imata vse točke skupne (je ista premica) | $p = q$ |
+- **sekata se**: imata natanko eno skupno točko;
+- **pravokotni sta**, $p \perp q$: sekata se pod pravim kotom;
+- **vzporedni sta**, $p \parallel q$: ležita v isti ravnini in nimata skupnih točk;
+- **sovpadata**, $p = q$: imata vse točke skupne (je ista premica).
 
 **Aksiom o vzporednici:** skozi točko, ki ne leži na dani premici, poteka natanko ena vzporednica k tej premici. Vzporednost je zamenljiva: če je $p \parallel q$, je tudi $q \parallel p$. Če sta premici $p$ in $q$ vzporedni s tretjo premico $r$, sta vzporedni tudi med seboj (ali pa sovpadata). Pravokotni premici sta poseben primer sekajočih se premic. Tudi pravokotnica je ena sama: skozi vsako točko poteka natanko ena pravokotnica na dano premico.
 
@@ -97,11 +95,9 @@ Na sliki je $|AB| = 5$, $|AA'| = 1$ in $|BB'| = 4$, zato je $|A'B'|^2 = 25 - 9 =
 
 **9. Koti ob prečnici vzporednic.** Premica $t$, ki seka vzporednici $p$ in $q$, je njuna **prečnica**. Nastane osem kotov, ki so največ dveh velikosti (pri $t \perp p$ so vsi pravi). Pari:
 
-| Par kotov | Lega | Odnos pri $p \parallel q$ |
-|---|---|---|
-| **istoležna** | na isti strani prečnice, oba nad ali oba pod svojo premico | enaka |
-| **izmenična** | oba med vzporednicama (ali oba zunaj), na nasprotnih straneh prečnice | enaka |
-| **notranja na isti strani prečnice** | med vzporednicama, na isti strani prečnice | vsota $180^\circ$ |
+- **istoležna**: na isti strani prečnice, oba nad ali oba pod svojo premico; pri $p \parallel q$ sta enaka;
+- **izmenična**: oba med vzporednicama (ali oba zunaj), na nasprotnih straneh prečnice; pri $p \parallel q$ sta enaka;
+- **notranja na isti strani prečnice**: med vzporednicama, na isti strani prečnice; pri $p \parallel q$ je njuna vsota $180^\circ$.
 
 Velja tudi **obrat**: če sta istoležna ali izmenična kota enaka (ali kota na isti strani prečnice suplementarna), sta premici vzporedni. Pazi: ta pravila veljajo *samo*, če sta premici vzporedni.
 
@@ -260,7 +256,7 @@ $|A'B'|^2 = |AB|^2 - (|BB'| - |AA'|)^2$, ko sta $A$ in $B$ na isti strani premic
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Dve premici se sekata. Vsota dveh od štirih kotov, ki nastanejo ob presečišču, meri $129^\circ 20'$. Izračunaj velikosti vseh štirih kotov in utemelji odgovor.
+Dve premici se sekata. Vsota dveh od štirih kotov, ki nastanejo ob presečišču, meri $129^\circ 20'$. Izračunajte velikosti vseh štirih kotov in utemeljite odgovor.
 
 **Rešitev:**
 
@@ -276,9 +272,9 @@ Dve premici se sekata. Vsota dveh od štirih kotov, ki nastanejo ob presečišč
 
 Premici $p$ in $q$ seka premica $t$. Kot ob presečišču $t$ s $p$ in njemu istoležni kot ob presečišču $t$ s $q$ merita $2y + 10^\circ$ oziroma $4y - 30^\circ$.
 
-a) Izračunaj $y$, pri katerem sta premici $p$ in $q$ vzporedni, in odgovor utemelji. (2 točki)
-b) Naj bo $p \parallel q$. Izračunaj velikosti vseh štirih kotov ob presečišču premic $t$ in $q$. (2 točki)
-c) Skozi presečišče premic $t$ in $p$ poteka premica $r$, ki je pravokotna na $p$. Izračunaj ostri kot med premicama $r$ in $t$ ter utemelji, da je $r$ pravokotna tudi na $q$. (2 točki)
+a) Izračunajte $y$, pri katerem sta premici $p$ in $q$ vzporedni, in odgovor utemeljite. (2 točki)
+b) Naj bo $p \parallel q$. Izračunajte velikosti vseh štirih kotov ob presečišču premic $t$ in $q$. (2 točki)
+c) Skozi presečišče premic $t$ in $p$ poteka premica $r$, ki je pravokotna na $p$. Izračunajte ostri kot med premicama $r$ in $t$ ter utemeljite, da je $r$ pravokotna tudi na $q$. (2 točki)
 
 **Rešitev:**
 
@@ -386,7 +382,7 @@ Lastnosti kotov ob prečnici izhajajo iz **aksioma o vzporednici**, ki ga je v n
 > Pri vzporednicah imata notranja kota na isti strani prečnice vsoto $180^\circ$: $180^\circ - 72^\circ = 108^\circ$.
 
 ? (brez računala) Daljica $AB$ je dolga $10\,\text{cm}$. Krajišči ležita na isti strani premice $p$: $A$ je od nje oddaljena $1\,\text{cm}$, $B$ pa $9\,\text{cm}$. Koliko centimetrov meri pravokotna projekcija daljice $AB$ na $p$?
-= 6 cm
+= 6 cm | 0
 ~ 8 | To je razlika razdalj krajišč od premice, $9 - 1$, torej druga kateta. Projekcija je kateta $\sqrt{10^2 - 8^2}$.
 ~ 10 | Tako dolga je projekcija le, če je daljica vzporedna s $p$. Tu sta krajišči različno oddaljeni od premice.
 ~ 0 | Razdalji si seštel ($1 + 9 = 10$) in dobil $\sqrt{10^2 - 10^2} = 0$. Seštejemo le, kadar sta krajišči na različnih straneh premice.
