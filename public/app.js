@@ -541,7 +541,7 @@ document.addEventListener("scroll", (e) => {
 document.addEventListener("focusin", () => document.body.classList.contains("tb-peek") && typing() && peekBar(false));
 // Odprta lekcija v Učbeniku (vrstica se umakne) ali nazaj na kazalo: pogled ostane isti, vsebina se zamenja.
 new MutationObserver(() => { lessonTop = null; peekBar(false); }).observe($("#view-textbook"), { childList: true });
-// Po 5 s neuporabe se vrstica skrije (j 2026-11-14), kjer ni že drugače določeno (public/noga.js).
+// Po 3 s neuporabe se vrstica skrije (j 2026-11-14, 3 s od 2026-11-15), kjer ni že drugače določeno (public/noga.js).
 nastaviNogo({ bar: tabbarEl, sync: syncTabbarH, skrijPokukano: () => peekBar(false) });
 $("#chat-back").addEventListener("click", () => showView(!["chat", "onboard", "auth"].includes(prevView) && !isFloating(prevView) ? prevView : "path"));
 

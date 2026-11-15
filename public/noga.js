@@ -1,13 +1,13 @@
-// Spodnja vrstica (»noga«, #tabbar) se povsod po 5 s neuporabe skrije, ob drsenju pa se pojavi nazaj
-// (j 2026-11-14; telefon in tablica na dotik).
-//  - Zasloni, kjer je vrstica v postavitvi (Učna pot, Uči se, Tekmovanja, Jaz …): po 5 s zdrsne pod rob (body.tb-mir),
+// Spodnja vrstica (»noga«, #tabbar) se povsod po 3 s neuporabe skrije, ob drsenju pa se pojavi nazaj
+// (j 2026-11-14; telefon in tablica na dotik; 3 s namesto 5 s: j 2026-11-15).
+//  - Zasloni, kjer je vrstica v postavitvi (Učna pot, Uči se, Tekmovanja, Jaz …): po 3 s zdrsne pod rob (body.tb-mir),
 //    drsenje (poteg, kolešček) jo pripelje nazaj (body.tb-vraca, 0,22 s, nato spet v postavitvi).
 //  - Zasloni za branje (klepet, tema, kartice, kalkulator, lekcija Učbenika, poskus; touch.css) jo že umikajo; pokaže
-//    jo drsenje nazaj gor (body.tb-peek, app.js). Pokazano tu po 5 s skrijemo.
+//    jo drsenje nazaj gor (body.tb-peek, app.js). Pokazano tu po 3 s skrijemo.
 //  - Dotik, tipka ali premik miške je uporaba: dokler je vrstica vidna, čas začne teči znova. Skrito vrne le dotik
 //    ob spodnjem robu (tam, kjer je bila; klik pogoltnemo), Tab in miška ob spodnjem robu (ozko okno na računalniku).
 //  - Ne skriva se, ko je ni (plošča Piši, uvod, računalnik), med vodičem (kaže nanjo) in s fokusom s tipkovnico v njej.
-export const MIROVANJE_MS = 5000;
+export const MIROVANJE_MS = 3000;
 export const VRNITEV_MS = 240; // malo več kot prehod v touch.css (0,22 s)
 // Dogodek »scroll« sam ne vrne vrstice: ko se skrije, pogled zraste in brskalnik lahko sam premakne odmik (scroll),
 // kar bi jo takoj spet pokazalo. Šteje poteg prsta, kolešček in tipke za drsenje.
