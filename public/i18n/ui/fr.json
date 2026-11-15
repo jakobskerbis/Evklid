@@ -1546,6 +1546,7 @@
   "games.wishPlaceholder": "Par exemple : un chapeau de pirate, un personnage hibou avec des lunettes …",
   "games.wishSend": "Envoyer mon souhait",
   "games.wishThanks": "Merci pour ton vote !",
+  "games.shopWishThanks": "Merci ! Nous lirons ton souhait lors de la prochaine mise à jour.",
   "games.boughtFull": "Acheté ! Tu portes déjà {n} objets de ce tiroir : enlèves-en un pour mettre le nouveau.",
   "games.slot.kind": "Personnage",
   "games.slot.body": "Couleur",

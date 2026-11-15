@@ -1790,7 +1790,7 @@ export default {
   "games.wishHint": "Vsak teden dodamo nove predmete. Napiši, kakšen klobuk, lik, ozadje ali značko si želiš. Ne piši svojega imena ali drugih osebnih podatkov.",
   "games.wishPlaceholder": "Na primer: piratski klobuk, lik sove z očali …",
   "games.wishSend": "Pošlji željo",
-  "games.wishThanks": "Hvala! Tvojo željo preberemo pri naslednji posodobitvi.",
+  "games.shopWishThanks": "Hvala! Tvojo željo preberemo pri naslednji posodobitvi.",
   "games.boughtFull": "Kupljeno! V predalu že nosiš {n} predmetov: enega snemi, da oblečeš novega.",
   "games.slot.kind": "Lik",
   "games.slot.body": "Barva",

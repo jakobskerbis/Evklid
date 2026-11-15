@@ -1546,6 +1546,7 @@
   "games.wishPlaceholder": "Például: kalózkalap, szemüveges bagolyfigura …",
   "games.wishSend": "Kívánság elküldése",
   "games.wishThanks": "Köszönjük a szavazatot!",
+  "games.shopWishThanks": "Köszönjük! A kívánságodat a következő frissítésnél elolvassuk.",
   "games.boughtFull": "Megvetted! Ebből a fiókból már {n} tárgyat viselsz: vegyél le egyet, hogy felvehesd az újat.",
   "games.slot.kind": "Figura",
   "games.slot.body": "Szín",
