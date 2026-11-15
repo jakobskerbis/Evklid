@@ -113,7 +113,7 @@ test("kartica ob meji na telefonu: mladoletni, polnoleten in brez plačil", opts
     assert.match(await m.card.innerText(), /Jutri jih spet dobiš/);
     assert.match(await m.card.innerText(), /9,99\s€ na mesec/);
     const btn = m.card.locator("[data-meja-link]");
-    assert.ok((await btn.boundingBox()).height >= 40, "gumb vsaj 40 px");
+    assert.ok((await btn.boundingBox()).height >= 44, "gumb vsaj 44 px");
     // Kartica fokusa ne prevzame (polje za pisanje ga obdrži ali pa ga nima nihče v kartici).
     assert.equal(await m.page.evaluate(() => !!document.activeElement?.closest(".meja-card")), false);
     await btn.tap();

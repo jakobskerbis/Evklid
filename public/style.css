@@ -1088,7 +1088,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 /* Pod odgovorom inštruktorja: dodane kartice */
 .cards-note { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); font-size: 0.92rem; }
 .cards-note .cn-head { display: flex; align-items: center; gap: 6px; color: var(--accent); }
-/* Kartica ob porabljenih brezplačnih vprašanjih (public/meja-placilo.js): brez rdeče barve napake, gumbi ≥ 40 px. */
+/* Kartica ob porabljenih brezplačnih vprašanjih (public/meja-placilo.js): brez rdeče barve napake, gumbi ≥ 44 px (dotik). */
 .meja-card { display: grid; gap: 10px; }
 .meja-card p { margin: 0; }
 .meja-card .meja-head { display: flex; gap: 8px; align-items: flex-start; }
@@ -1098,12 +1098,13 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 .meja-card li { display: flex; gap: 6px; align-items: flex-start; }
 .meja-card li > svg.i { flex: none; margin-top: 3px; color: var(--ok); }
 .meja-card .meja-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
-.meja-card .meja-actions button { min-height: 40px; }
+.meja-card .meja-actions button { min-height: 44px; }
+.meja-card .meja-price { margin-top: 8px; }
 .meja-card .meja-actions .text-btn { margin: 0; display: inline-flex; align-items: center; gap: 2px; }
 .meja-card .pay-link { margin-top: 0; }
 .meja-card .pay-link .inline { display: flex; flex-wrap: wrap; gap: 8px; }
-.meja-card .pay-link input { flex: 1 1 180px; min-width: 0; min-height: 40px; }
-.meja-card .pay-link button { min-height: 40px; }
+.meja-card .pay-link input { flex: 1 1 180px; min-width: 0; min-height: 44px; }
+.meja-card .pay-link button { min-height: 44px; }
 .meja-card .meja-out:empty { display: none; }
 .cards-note .cn-head b { color: var(--text); }
 .allowance-note .cn-head small { color: var(--text); font-size: 0.92em; }

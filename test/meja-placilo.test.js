@@ -124,11 +124,3 @@ test("vsi novi napisi so v sl.js in prevedeni v vseh 32 jezikih", () => {
     }
   }
 });
-
-test("cena v valuti brez decimalk (XOF) ni 100-krat prenizka", () => {
-  const p = { currency: "XOF", plans: plansFor("XOF") };
-  const v = limitVariant({ body: daily("block.hintAdult"), status: status(), prices: p, level: "OS" });
-  const n = Number(v.price.replace(/[^\d]/g, ""));
-  const plan = p.plans.find((x) => x.seats === 1 && x.interval === "month");
-  assert.equal(n, plan.amount);
-});

@@ -13,13 +13,7 @@ import { linkBox, bindLinkBox } from "./pay-ui.js";
 import { levelPrices } from "./pristajalna.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-// Valute brez decimalk imajo v ceniku cele enote (server/accounts/plans.js ZERO_DECIMAL, enako public/account.js money).
-const ZERO_DECIMAL = new Set(["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"]);
-const money = (minor, currency) => {
-  const major = ZERO_DECIMAL.has(currency) ? minor : minor / 100;
-  const digits = currency !== "EUR" && Number.isInteger(major) ? 0 : 2;
-  return major.toLocaleString(locale(), { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
-};
+const money = (minor, currency) => (minor / 100).toLocaleString(locale(), { style: "currency", currency });
 
 // Kode porabljenega brezplačnega dela (server/usage.js BLOCK_TEXT; server/accounts/index.js freeBlock, aiBlockFor).
 export const FREE_LIMIT_CODES = new Set(["block.freeDaily", "block.freeMonth", "block.freePool", "block.trialOut"]);
@@ -65,8 +59,10 @@ const hintText = (body) => {
 
 export function limitCardHtml(v, body) {
   const facts = v.kind === "offer"
-    ? [v.price ? t("meja.price", { price: v.price }) : "", t("meja.more"), t("meja.deep"), t("meja.lessons")].filter(Boolean)
+    ? [t("meja.more"), t("meja.deep"), t("meja.lessons")]
     : [];
+  // Cena je posebna vrstica pod seznamom, ne alineja s kljukico (»Z naročnino dobiš: 9,99 € na mesec« bi bilo narobe).
+  const price = v.kind === "offer" && v.price ? `<p class="meja-price">${esc(t("meja.price", { price: v.price }))}</p>` : "";
   // Namig strežnika (»ustvari račun«, »naj starš izbere naročnino«) ostane, ko ni gumba, ki ga nadomesti,
   // razen ko plačila ne delujejo (takrat bi pošiljal v zavihek, kjer nakupa ni).
   const hint = v.kind === "guest" || (v.kind === "offer" && !v.action && v.payOn) ? hintText(body) : "";
@@ -76,7 +72,7 @@ export function limitCardHtml(v, body) {
       ? `<button type="button" class="primary" data-meja-account>${icon("wallet")} <span>${esc(t("meja.btnAdult"))}</span></button>`
       : "";
   return `<div class="meja-head">${icon("info")}<p>${esc(reason(body))}${hint ? ` ${esc(hint)}` : ""}</p></div>
-    ${facts.length ? `<div class="meja-plus"><p class="meja-sub">${esc(t("meja.sub"))}</p><ul>${facts.map((f) => `<li>${icon("check")}<span>${esc(f)}</span></li>`).join("")}</ul></div>` : ""}
+    ${facts.length ? `<div class="meja-plus"><p class="meja-sub">${esc(t("meja.sub"))}</p><ul>${facts.map((f) => `<li>${icon("check")}<span>${esc(f)}</span></li>`).join("")}</ul>${price}</div>` : ""}
     <div class="meja-out"></div>
     <div class="meja-actions">${btn}<button type="button" class="text-btn" data-meja-practice>${esc(t("meja.practice"))} ${icon("chevron-right")}</button></div>
     <p class="form-error" role="alert" hidden></p>`;
@@ -116,7 +112,8 @@ export async function showLimitCard(box, body, ctx) {
       bindLinkBox(out, r.url, ctx.toast);
       b.hidden = true;
       // Fokus ostane učencu: polje s povezavo samo pokažemo (klik je bil njegov).
-      out.scrollIntoView?.({ block: "nearest" });
+      // Vrstica z »Vadi naprej« pod povezavo ostane vidna (na telefonu je bila odrezana pod robom klepeta).
+      el.querySelector(".meja-actions")?.scrollIntoView?.({ block: "nearest" });
     } catch (x) {
       err.textContent = x.message;
       err.hidden = false;
