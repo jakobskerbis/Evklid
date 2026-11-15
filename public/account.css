@@ -73,6 +73,11 @@ details .card { margin-top: 8px; }
 .profile-pw { margin-top: 10px; }
 .warn { background: #fff4d6; color: #6b4e00; padding: 8px 10px; border-radius: 10px; font-size: 0.92rem; }
 .dark .warn { background: #3a3014; color: #f3d98a; }
+/* Potrditev e-naslova v drugem brskalniku: »Težave?« odpre zaščito računa (pregled uvoda 15. 11. 2026). */
+.verify-trouble { text-align: center; margin: 12px 0 0; }
+.verify-trouble [aria-expanded]::after { content: " ▾" / ""; }
+.verify-trouble [aria-expanded="true"]::after { content: " ▴" / ""; }
+#verify-trouble-box { margin-top: 8px; }
 #ask-parent .form-actions { flex-wrap: wrap; }
 .whose-field { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
 .whose-field legend { font-weight: 600; margin-bottom: 4px; padding: 0; }

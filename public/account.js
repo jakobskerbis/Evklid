@@ -680,18 +680,26 @@ function renderForgot() {
 function renderVerifyLink(token) {
   // Žeton ne ostane v naslovni vrstici in zgodovini, ko je porabljen (pregled #492/#500 A P3-2).
   const forget = () => history.replaceState(null, "", "/");
+  // Mirno besedilo za novinca (pregled uvoda 15. 11. 2026, ovira 1): povezava v drugem brskalniku je običajna;
+  // »Računa nisem ustvaril jaz« je skrit pod »Težave?«, da novinec najprej ne vidi rdečega gumba. Dejanje je enako.
   shell(`
     <h1>Potrdi e-naslov</h1>
     <form id="auth-form" class="card form">
-      <p>Za potrditev vpiši geslo svojega računa.</p>
+      <div><p>${esc(t("verify.otherBrowser"))}</p><p>${esc(t("verify.otherBrowserPw"))}</p></div>
       <label>Geslo <input name="password" type="password" required autocomplete="current-password"></label>
       <p class="form-error" role="alert" hidden></p>
       <button class="primary" type="submit">Potrdi e-naslov</button>
     </form>
-    <div class="card">
+    <p class="verify-trouble"><button id="verify-trouble" class="ghost" type="button" aria-expanded="false" aria-controls="verify-trouble-box">${esc(t("verify.trouble"))}</button></p>
+    <div class="card" id="verify-trouble-box" hidden>
       <p>Računa nisi ustvaril ti ali ne poznaš gesla? Račun zaščitimo: dosedanje geslo in prijave na vseh napravah ne bodo več veljale. Na e-naslov računa ti pošljemo povezavo za novo geslo.</p>
       <button id="verify-not-mine" class="danger" type="button">Računa nisem ustvaril jaz / ne poznam gesla</button>
     </div>`);
+  $("#verify-trouble").addEventListener("click", (e) => {
+    const open = e.currentTarget.getAttribute("aria-expanded") !== "true";
+    e.currentTarget.setAttribute("aria-expanded", String(open));
+    $("#verify-trouble-box").hidden = !open;
+  });
   $("#auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     try {
@@ -845,27 +853,80 @@ function renderBirth() {
   });
 }
 
+// Ponovno pošiljanje: gumb je 60 s po pošiljanju zaklenjen in pove, čez koliko časa bo spet na voljo (ostane
+// zaklenjen tudi ob ponovnem izrisu zaslona). Nova povezava zamenja prejšnjo (strežnik shrani nov žeton).
+const RESEND_WAIT = 60000;
+let resendAt = 0;
+
 function renderVerify() {
   const dev = store.get("evklid_dev_verify");
+  // Mladoletni imetnik (15–17 let, račun zase) ne izjavlja, da je starš (pregled uvoda, ovira 4). Račun brez
+  // datuma rojstva (star račun) ostane pri dosedanjem besedilu.
+  const note = status.parent.minor
+    ? esc(t("verify.selfNote"))
+    : "S potrditvijo tudi izjaviš, da si starš ali zakoniti zastopnik otroka. To zahteva zakon o varstvu podatkov za otroke, mlajše od 15 let.";
   shell(`
     <h1>Potrdi e-naslov</h1>
     <div class="card">
       <p>Na <b>${esc(status.parent.email)}</b> smo poslali povezavo. Klikni jo, nato se vrni sem.</p>
-      <p class="muted">S potrditvijo tudi izjaviš, da si starš ali zakoniti zastopnik otroka. To zahteva zakon o varstvu podatkov za otroke, mlajše od 15 let.</p>
+      <p class="muted verify-note">${note}</p>
       ${dev && !status.email ? `<p class="muted">Razvojni način (e-pošta ni nastavljena): <a href="${esc(dev)}">potrdi e-naslov</a></p>` : ""}
       ${!dev && !status.email ? `<p class="warn">Pošiljanje e-pošte še ni nastavljeno, zato povezava ni prišla. Na računalniku, kjer teče Evklid, se prijavi v ta račun in klikni »Pošlji znova«.</p>` : ""}
+      <p id="verify-state" class="warn" role="status" aria-live="polite" hidden></p>
       <div class="form-actions">
         <button class="primary" id="verify-done" type="button">Sem potrdil(a)</button>
-        <button id="verify-resend" type="button">Pošlji znova</button>
+        <button id="verify-resend" type="button" aria-describedby="verify-resend-hint">Pošlji znova</button>
         <button id="verify-logout" type="button">Odjava</button>
       </div>
+      <p class="muted" id="verify-resend-hint">${esc(t("verify.resendHint"))}</p>
     </div>`);
-  $("#verify-done").addEventListener("click", continueFlow);
-  $("#verify-resend").addEventListener("click", async () => {
-    const r = await api("/api/auth/resend-verification", { method: "POST" });
-    if (r.dev_verify_url) store.set("evklid_dev_verify", r.dev_verify_url);
-    toast("Povezava je poslana znova.");
-    if (r.dev_verify_url) renderVerify();
+  const state = $("#verify-state");
+  // Isto besedilo ob drugem dotiku: najprej izpraznimo, da ga bralnik zaslona prebere znova in je sprememba vidna.
+  const say = (msg) => {
+    state.hidden = true;
+    state.textContent = "";
+    setTimeout(() => {
+      state.textContent = msg;
+      state.hidden = false;
+    }, 60);
+  };
+  $("#verify-done").addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    try {
+      status = await api("/api/account/status");
+      if (status.logged_in && !status.parent.verified && !status.parent.guest) return say(t("verify.notYet"));
+      if (await route()) await onReadyCb?.();
+    } catch (err) {
+      say(err.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+  const resend = $("#verify-resend");
+  const hint = $("#verify-resend-hint");
+  const tick = () => {
+    if (!resend.isConnected) return;
+    const left = Math.ceil((resendAt + RESEND_WAIT - Date.now()) / 1000);
+    resend.disabled = left > 0;
+    hint.textContent = left > 0 ? t("verify.resendWait", { s: left }) : t("verify.resendHint");
+    if (left > 0) setTimeout(tick, 1000);
+  };
+  tick();
+  resend.addEventListener("click", async () => {
+    resend.disabled = true;
+    try {
+      const r = await api("/api/auth/resend-verification", { method: "POST" });
+      if (r.verified) return continueFlow();
+      resendAt = Date.now();
+      if (r.dev_verify_url) store.set("evklid_dev_verify", r.dev_verify_url);
+      toast("Povezava je poslana znova.");
+      if (r.dev_verify_url) return renderVerify();
+      tick();
+    } catch (err) {
+      resend.disabled = false;
+      say(err.message);
+    }
   });
   $("#verify-logout").addEventListener("click", logout);
 }
