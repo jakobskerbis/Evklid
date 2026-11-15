@@ -271,6 +271,7 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
 // poročilo vrne samo števila. Plačilo se samo bere (server/accounts/ in plačila ostanejo nespremenjeni): res plačan
 // račun naročnine (kv ai_paid_<račun>), plačan paket pred testom, plačan dokup AI ali aktivna naročnina v trgovini.
 // Brez skrbnikov, gostov in šolskih poročil (null, ker šolski učenci niso prišli z registracijo).
+// Račun šteje v delež šele, ko je njegovo okno celo minilo (sicer bi mlad račun znižal delež).
 export const D3_WINDOW = [3, 6];
 export const D7_WINDOW = [7, 13];
 
@@ -338,8 +339,8 @@ function accountFunnel(db, { from, today, active, counted, adminEmails, schoolId
     verified: share(accounts, (p) => !!p.email_verified_at),
     task24: share(accounts, (p) => taskWithin(p, 1)),
     task7: share(accounts, (p) => taskWithin(p, 7)),
-    d3: share(accounts.filter((p) => age(p) >= D3_WINDOW[0]), (p) => backOn(p, D3_WINDOW)),
-    d7: share(accounts.filter((p) => age(p) >= D7_WINDOW[0]), (p) => backOn(p, D7_WINDOW)),
+    d3: share(accounts.filter((p) => age(p) >= D3_WINDOW[1]), (p) => backOn(p, D3_WINDOW)),
+    d7: share(accounts.filter((p) => age(p) >= D7_WINDOW[1]), (p) => backOn(p, D7_WINDOW)),
     paid: share(accounts, paid),
   };
 }

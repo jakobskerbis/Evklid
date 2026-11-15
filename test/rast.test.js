@@ -142,19 +142,19 @@ test("account funnel: sign-up → e-mail → first task → day 3 and 7 → paym
   const act = (s, daysAgo) => db.prepare("INSERT INTO xp_events (student_id, amount, reason, created_at) VALUES (?, 5, 'test', ?)").run(s, at(daysAgo));
   const task = (s, daysAgo, h = 10) => db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, solved, attempts, created_at) VALUES (?, 'T', 1, '{}', 1, 1, ?)").run(s, at(daysAgo, h));
 
-  // A: pred 10 dnevi, potrjen, naloga takoj, nazaj 4. in 8. dan, plačal naročnino (kv ai_paid_).
-  const a = account(10, { verified: true });
-  const ak = kid(a, 10);
-  task(ak, 10);
-  act(ak, 6);
-  act(ak, 2);
+  // A: pred 15 dnevi, potrjen, naloga takoj, nazaj 4. in 8. dan, plačal naročnino (kv ai_paid_).
+  const a = account(15, { verified: true });
+  const ak = kid(a, 15);
+  task(ak, 15);
+  act(ak, 11);
+  act(ak, 7);
   db.prepare("INSERT INTO kv (key, value) VALUES (?, ?)").run(`ai_paid_${a}`, JSON.stringify([{ start: 0, end: now + DAY, eur: 8.19, cents: 999 }]));
-  // B: pred 8 dnevi, nepotrjen, naloga 3. dan (v 7 dneh, ne v 24 urah), drugi profil se vrne 7. dan; nedokončan paket ne šteje.
-  const b = account(8);
-  kid(b, 8);
-  const bk2 = kid(b, 8);
-  task(bk2, 5);
-  act(bk2, 1);
+  // B: pred 14 dnevi, nepotrjen, naloga 3. dan (v 7 dneh, ne v 24 urah), drugi profil se vrne 7. dan; nedokončan paket ne šteje.
+  const b = account(14);
+  kid(b, 14);
+  const bk2 = kid(b, 14);
+  task(bk2, 11);
+  act(bk2, 7);
   db.prepare("INSERT INTO passes (parent_id, student_id, days, amount, ai_usd, status) VALUES (?, ?, 14, 499, 0.5, 'pending')").run(b, bk2);
   // C: pred 2 dnevoma, potrjen: za 3. in 7. dan še ni zrel; plačal dokup AI.
   const c = account(2, { verified: true });
