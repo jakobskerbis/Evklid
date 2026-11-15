@@ -168,6 +168,26 @@ $9 + 6 + 5 = 20$. Sodelovalo je $36$ dijakov, natanko eno vrsto aplikacij jih up
 - Moč unije: $|A \cup B| = |A| + |B| - |A \cap B|$.
 - Pri treh množicah izpolnjuješ Vennov diagram od sredine navzven.
 
+## Ponovitev
+
+**Formule**
+- $A \cup B$: v $A$ ali v $B$; $A \cap B$: v $A$ in v $B$ (na pamet)
+- $A \setminus B$: v $A$, ne v $B$; $A^c$: v $\mathcal{U}$, ne v $A$ (na pamet)
+- $|A \cup B| = |A| + |B| - |A \cap B|$ (na pamet)
+- višja raven: $(A \cup B)^c = A^c \cap B^c$ in $(A \cap B)^c = A^c \cup B^c$ (na pamet)
+- višja raven: množica z $n$ elementi ima $2^n$ podmnožic (na pamet)
+
+**Postopek**
+1. Določi univerzalno množico $\mathcal{U}$ in naštej elemente danih množic.
+2. Nariši Vennov diagram; pri treh množicah ga izpolnjuj od sredine navzven.
+3. Za vsak element preveri pogoj operacije (ali, in, ne).
+4. Iz diagrama preberi iskano množico ali število elementov.
+
+**Pazi na**
+- $\in$ ali $\subseteq$: levo je element ($2 \in A$) ali množica ($\{2\} \subseteq A$).
+- Presek ne štej dvakrat: $|A \cup B|$ ni $|A| + |B|$, presek odštej.
+- Komplement je odvisen od $\mathcal{U}$: najprej določi $\mathcal{U}$, nato izloči elemente $A$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

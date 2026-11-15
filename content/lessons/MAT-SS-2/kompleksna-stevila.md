@@ -228,6 +228,27 @@ Iz druge enačbe je $a = 2b - 1$. Vstavimo v prvo: $4(2b - 1) - b = 10$, torej $
 - Absolutna vrednost: $|z| = \sqrt{a^2 + b^2}$ je razdalja točke $(a, b)$ od izhodišča v kompleksni ravnini.
 - Enakost: $a + bi = c + di$ natanko tedaj, ko je $a = c$ in $b = d$.
 
+## Ponovitev
+
+**Formule**
+- $i^2 = -1$, $z = a + bi$, $\mathrm{Re}\,z = a$, $\mathrm{Im}\,z = b$ (na pamet)
+- $\bar{z} = a - bi$, $\;z \cdot \bar{z} = a^2 + b^2$ (na pamet)
+- $|z| = \sqrt{a^2 + b^2}$ (na pamet)
+- $\dfrac{1}{a + bi} = \dfrac{a - bi}{a^2 + b^2}$ (na pamet)
+- potence $i$ se ponavljajo s periodo $4$: $i, -1, -i, 1$ (na pamet)
+
+**Postopek**
+1. Seštevaj ločeno realna in imaginarna dela.
+2. Množi kot dvočlenika in zamenjaj $i^2$ z $-1$.
+3. Pri deljenju razširi ulomek s številom, konjugiranim imenovalcu.
+4. Rezultat zapiši v obliki $a + bi$.
+5. Pri enačbi izenači realna dela in imaginarna dela.
+
+**Pazi na**
+- $i^2 = -1$, ne $1$: zato je $-8i^2 = +8$.
+- $\mathrm{Im}\,z$ je realno število brez $i$: za $4 - 7i$ je $-7$.
+- Konjugiraš le imaginarni del: $\overline{3 + 2i} = 3 - 2i$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

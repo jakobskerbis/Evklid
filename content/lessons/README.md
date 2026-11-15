@@ -276,5 +276,13 @@ oblika nalog po *Predmetnem izpitnem katalogu za splošno maturo*, povzetek v `d
 - 2–3 `### Ustno vprašanje N` z blokom `:::premisli` (vprašanje, `---`, vzorčni odgovor); gredo tudi v »Vprašaj me«.
 - Razdelek se ne šteje v mejo 2800 besed. `check-lesson.js` opozori, če manjka ali mu kaj manjka.
 
+Med »## Povzetek« in »## Za maturo« stoji »## Ponovitev« (j, 15. 11. 2026, točka C8): ponovitev na en zaslon telefona
+(največ 170 besed brez formul, ne šteje se v mejo besed), iz Povzetka in Pogostih napak lekcije, v treh delih:
+
+- `**Formule**`: alineje s formulami in pravili lekcije; vsaka se konča z `(priloga)`, `(priloga, višja raven)` ali
+  `(na pamet)` po seznamu formul, ki so priložene izpitni poli (katalog M-MAT-2026, poglavje 9.2);
+- `**Postopek**`: 2–6 oštevilčenih korakov, kako se lotiš tipične naloge;
+- `**Pazi na**`: natanko 3 najpogostejše napake.
+
 Katere teme še nimajo lekcije, urejeno po številu programov:
 `node scripts/fakultetne-lekcije.js --letnik 1 --n 40`.

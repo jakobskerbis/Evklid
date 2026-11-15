@@ -230,6 +230,27 @@ $k = -\frac{2 + 2}{1 + 4} = -\frac{4}{5} = -0{,}8$. Tangenta: $y - 2 = -0{,}8(x 
 - (višja raven) Implicitni odvod: obe strani enačbe odvajaj po $x$, $y$ je funkcija od $x$: $(y^2)' = 2y\,y'$, $(xy)' = y + x\,y'$; izrazi $y'$ in nato vstavi točko.
 - (višja raven) Krožnica $x^2 + y^2 = r^2$: $y' = -\frac{x}{y}$; pri $y = 0$ je tangenta navpična.
 
+## Ponovitev
+
+**Formule**
+- $f'(a) = \lim\limits_{h \to 0} \frac{f(a + h) - f(a)}{h}$ (na pamet)
+- odvedljiva v $a$: limiti diferenčnega količnika z leve in z desne sta enaki (na pamet)
+- (višja raven) odvedljiva $\Rightarrow$ zvezna, obrat ne velja: $|x|$ (na pamet)
+- (višja raven) $(y^2)' = 2y\,y'$, $(xy)' = y + x\,y'$ (na pamet)
+- (višja raven) krožnica $x^2 + y^2 = r^2$: $y' = -\frac{x}{y}$, $y \ne 0$ (na pamet)
+
+**Postopek**
+1. Pri funkciji z več predpisi preveri zveznost v točki stika.
+2. Kjer ni zvezna, ni odvedljiva.
+3. Kjer je zvezna, primerjaj smerna koeficienta z leve in z desne.
+4. (višja raven) Implicitno: obe strani odvajaj po $x$, pri vsakem $y$ dodaj $y'$.
+5. Izrazi $y'$, šele nato vstavi točko in zapiši tangento.
+
+**Pazi na**
+- Zvezna funkcija ni nujno odvedljiva: išči vogale, osti in navpične tangente.
+- V vogalu odvoda ni; smeri ne povprečuj.
+- (višja raven) $(y^2)' = 2y\,y'$, ne $2y$; odvod konstante je $0$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

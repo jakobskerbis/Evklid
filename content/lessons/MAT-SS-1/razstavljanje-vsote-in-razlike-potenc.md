@@ -206,6 +206,28 @@ $31$ je prvi faktor, drugi faktor pa je $33 = 3 \cdot 11$. Torej je $1023 = 3 \c
 - (višja raven) $a^2 + b^2$ in $a^4 + b^4$ nimata faktorja $a \pm b$. Uporaba: krajšanje ulomkov, npr. $\dfrac{x^5 - 1}{x - 1}$.
 - Pri razliki sodih potenc najprej razlika kvadratov ($x^6 - 1$). Deljivost: $2^{10} - 1 = 31 \cdot 33$, $1001 = 7 \cdot 11 \cdot 13$.
 
+## Ponovitev
+
+**Formule**
+- $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$ (priloga)
+- $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$ (priloga)
+- $a^2 - b^2 = (a - b)(a + b)$ (na pamet)
+- $a^n - b^n = (a - b)(a^{n-1} + \ldots + b^{n-1})$ (priloga, višja raven)
+- $a^n + b^n = (a + b)(a^{n-1} - \ldots + b^{n-1})$ le za lih $n$ (priloga, višja raven)
+
+**Postopek**
+1. Najprej izpostavi skupni faktor.
+2. Prepoznaj kube in zapiši $a$ in $b$, npr. $8x^3 = (2x)^3$, $27 = 3^3$.
+3. Pri sodem eksponentu začni z razliko kvadratov.
+4. Vstavi v obrazec: v prvem oklepaju znak naloge, srednji člen nasproten, zadnji vedno plus.
+5. Drugi oklepaj $a^2 \pm ab + b^2$ pusti, z realnimi števili se ne razstavi naprej.
+6. Preveri z množenjem.
+
+**Pazi na**
+- $a^3 + b^3 \neq (a + b)^3$: prav je $(a + b)(a^2 - ab + b^2)$.
+- Srednji člen je $ab$ z nasprotnim znakom, ne $2ab$: $x^3 + 8 = (x + 2)(x^2 - 2x + 4)$.
+- Nedokončan razcep: $x^6 - 1$ razstavi najprej kot razliko kvadratov $(x^3 - 1)(x^3 + 1)$, nato vsak oklepaj s kubi.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

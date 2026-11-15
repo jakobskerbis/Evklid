@@ -196,6 +196,26 @@ $10 = 8 + 2$, torej $58 = 32 + 16 + 8 + 2$. Mesta $4$ in $1$ dobita ničlo: $111
 - Zadnja števka je ostanek pri deljenju z $2$: $0$ pri sodem, $1$ pri lihem številu.
 - S $k$ biti zapišeš števila od $0$ do $2^k - 1$.
 
+## Ponovitev
+
+**Formule**
+- Mestne vrednosti od desne: $2^0, 2^1, 2^2, \dots = 1, 2, 4, 8, \dots$ (na pamet)
+- $1011_{(2)} = 8 + 2 + 1 = 11$ (na pamet)
+- Deljenje z ostankom: $a = q \cdot 2 + r$, $r \in \{0, 1\}$ (na pamet)
+- S $k$ biti: števila od $0$ do $2^k - 1$ (na pamet)
+
+**Postopek**
+1. Iz dvojiškega: nad števke zapiši $1, 2, 4, 8, \dots$ od desne.
+2. Seštej mestne vrednosti nad enicami.
+3. V dvojiški: zaporedno deli z $2$ in zapisuj ostanke.
+4. Ostanke beri od spodaj navzgor (ali zapiši vsoto potenc $2$).
+5. Preveri s pretvorbo nazaj v desetiški zapis.
+
+**Pazi na**
+- Ostanke beri od spodaj navzgor: prvi ostanek je zadnja števka.
+- Skrajno desno mesto je $2^0 = 1$, ne $2$.
+- Manjkajoče potence dobijo ničlo: $40 = 101000_{(2)}$.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)

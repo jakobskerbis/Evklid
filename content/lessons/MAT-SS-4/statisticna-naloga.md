@@ -177,6 +177,27 @@ Povezanost je negativna in precej močna: ob vetrovnejših dneh je bilo v povpre
 - Pri opisni in številski spremenljivki primerjamo sredini (in mediani) skupin.
 - Povezanost ni dokaz vzroka; v interpretaciji navedi omejitve.
 
+## Ponovitev
+
+**Formule**
+- $\bar x = \frac{x_1 + x_2 + \dots + x_N}{N}$ (na pamet)
+- $\mathrm{Me}$: srednji podatek urejenega niza (na pamet)
+- enota v razsevnem diagramu je točka $(x_i, y_i)$ (na pamet)
+- korelacijski koeficient je med $-1$ in $1$; blizu $1$ ali $-1$: močna povezanost, blizu $0$: je ni (na pamet)
+
+**Postopek**
+1. Postavi merljivo preiskovalno vprašanje.
+2. Določi populacijo in reprezentativen vzorec.
+3. Zberi podatke in jih uredi v tabelo.
+4. Dve številski spremenljivki prikaži z razsevnim diagramom; pri opisni primerjaj $\bar x$ in $\mathrm{Me}$ skupin.
+5. Opiši povezanost: pozitivna ali negativna, močna ali šibka.
+6. Interpretiraj in navedi omejitve.
+
+**Pazi na**
+- Povezanost ni dokaz vzroka; zapiši »sta povezani«.
+- Sklep velja le za populacijo, ki jo vzorec res predstavlja.
+- Točk v razsevnem diagramu ne povezuj s črto.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

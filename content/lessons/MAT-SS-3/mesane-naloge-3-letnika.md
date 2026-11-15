@@ -174,6 +174,27 @@ $x = \frac{20 \pm \sqrt{400 - 100}}{2} = 10 \pm 5\sqrt{3}$, torej $x \approx 1{,
 - Polinom tretje stopnje z znano ničlo $x_0$ deliš z $x - x_0$ (Horner) in rešiš kvadratni faktor.
 - Podobna telesa: prostornina se spremeni s $k^3$.
 
+## Ponovitev
+
+**Formule**
+- $\cos\varphi = \frac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$ (na pamet)
+- Pravokotnost: $\vec a \cdot \vec b = 0$ (na pamet)
+- $S = \frac{1}{2}ab\sin\gamma$ (na pamet)
+- Tangenta: diskriminanta $D = 0$ (na pamet)
+- Podobna telesa: ploščine s $k^2$, prostornine s $k^3$ (na pamet)
+
+**Postopek**
+1. Določi neznanko in zapiši omejitve, na primer $0 < x < 15$.
+2. Besedilo prevedi v enačbo, sistem ali vektor.
+3. Izberi orodje: »pravokotna« da skalarni produkt, »tangenta« $D = 0$.
+4. Reši; pri polinomu z znano ničlo $x_0$ deli z $x - x_0$.
+5. Z omejitvami izberi smiselne rešitve in zapiši odgovor.
+
+**Pazi na**
+- Skalarni produkt deli s produktom dolžin; kosinus je med $-1$ in $1$.
+- Omejitve uporabi na koncu: ničla $18{,}66$ za pekač ne pride v poštev.
+- Stožec, napolnjen do polovice višine, je poln le do osmine ($k^3$).
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

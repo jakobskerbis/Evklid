@@ -194,6 +194,27 @@ $V_{stožec} = \frac{\pi \cdot 16 \cdot 3}{3} = 16\pi\,\mathrm{cm^3}$, zato $V =
 - Pravokotnik okoli stranice: valj; pravokotni trikotnik okoli katete: stožec, okoli hipotenuze: dvojni stožec z $r = \frac{a\,b}{c}$; pravokotni trapez okoli daljše osnovnice: valj in stožec.
 - Prostornino in površino vrtenine sestaviš iz formul za valj in stožec; notranjih ploskev ne štej.
 
+## Ponovitev
+
+**Formule**
+- prizma in valj: $V = O\,v$ (na pamet)
+- piramida in stožec: $V = \dfrac{O\,v}{3}$ (na pamet)
+- višina poševnega telesa: $v = s\sin\alpha$ ($s$ stranski rob, $\alpha$ njegov kot z osnovno ploskvijo) (na pamet)
+- plašč stožca: $P_{pl} = \pi r s$, $s = \sqrt{r^2 + v^2}$ (na pamet)
+- dvojni stožec (trikotnik okoli hipotenuze $c$): $r = \dfrac{a\,b}{c}$ (na pamet)
+
+**Postopek**
+1. Skiciraj lik in os ter določi, kateri deli nastanejo (valj, stožec, dvojni stožec).
+2. Kar leži na osi, je višina; kar je pravokotno na os, je polmer.
+3. Izračunaj prostornino vsakega dela in jih seštej ali odštej.
+4. Za površino seštej samo zunanje ploskve.
+5. Pri poševnem telesu izračunaj višino $v = s\sin\alpha$ in jo vstavi v $V$.
+
+**Pazi na**
+- Stranski rob ni višina: $v = s\sin\alpha$.
+- Ne zamenjaj polmera in višine: višina leži na osi, polmer je pravokoten nanjo.
+- Notranjih ploskev (skupna osnovna ploskev dvojnega stožca) ne prištej k površini.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 6 točk, pola 1 (brez računala)

@@ -236,6 +236,26 @@ $|A'B'|^2 = |AB|^2 - (|BB'| - |AA'|)^2$, ko sta $A$ in $B$ na isti strani premic
 - Pri $p \parallel q$ in prečnici: istoležna in izmenična kota sta enaka, notranja kota na isti strani imata vsoto $180^\circ$.
 - Veljajo tudi obrati teh pravil.
 
+## Ponovitev
+
+**Formule**
+- sovršna kota sta enaka; sokota: $\alpha + \beta = 180^\circ$ (na pamet)
+- komplementarna kota: $\alpha + \beta = 90^\circ$; suplementarna: $180^\circ$ (na pamet)
+- $1^\circ = 60'$, $1' = 60''$ (na pamet)
+- pri $p \parallel q$: istoležna in izmenična kota sta enaka, notranja na isti strani imata vsoto $180^\circ$ (na pamet)
+- projekcija ($A$, $B$ na isti strani $p$): $|A'B'|^2 = |AB|^2 - (|BB'| - |AA'|)^2$ (na pamet)
+
+**Postopek**
+1. Na skici označi dane kote, premice in prečnico.
+2. Preveri, ali je $p \parallel q$ podano ali utemeljeno.
+3. Poišči par kotov: sovršna, sokota, istoležna, izmenična ali notranja na isti strani.
+4. Zapiši enačbo za neznani kot, jo reši in navedi pravilo, ki si ga uporabil.
+
+**Pazi na**
+- Komplementarna imata vsoto $90^\circ$, suplementarna $180^\circ$ (K je pred S).
+- Minute niso decimalke: $37^\circ 42' = 37{,}7^\circ$.
+- Sovršna kota (nasproti) sta enaka, sokota (skupen krak) imata vsoto $180^\circ$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

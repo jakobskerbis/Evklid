@@ -318,6 +318,26 @@ Iz $x^2 - 4 = 3$ sledi $x^2 = 7$, torej $x = -\sqrt{7}$ ali $x = \sqrt{7}$ ($\sq
 - (višja raven) $y = |f(x)|$: del pod osjo $x$ prezrcališ navzgor. $y = f(|x|)$: desno polovico prezrcališ na levo.
 - (višja raven) Enačbo ali neenačbo z $|\ldots|$ rešiš z vodoravno premico $y = c$; natančne meje izračunaš iz predpisa ustreznega dela.
 
+## Ponovitev
+
+**Formule**
+- $\lfloor x \rfloor \le x < \lfloor x \rfloor + 1$, npr. $\lfloor -2{,}7 \rfloor = -3$ (na pamet)
+- $|x| = x$ za $x \ge 0$, $|x| = -x$ za $x < 0$ (na pamet)
+- višja raven: $y = |f(x)|$ del pod osjo $x$ prezrcali navzgor (na pamet)
+- višja raven: $y = f(|x|)$ desno polovico prezrcali na levo (na pamet)
+
+**Postopek**
+1. Stopnice: na vsakem intervalu nariši vodoravno daljico.
+2. Na vsakem skoku nariši natanko eno polno piko.
+3. Celi del: polna pika na levem koncu stopnice; »vsaka začeta ura«: na desnem.
+4. Višja raven: ničle izrazov v $|\ldots|$ razdelijo os na intervale.
+5. Na vsakem intervalu odstrani absolutno vrednost in nariši del grafa.
+
+**Pazi na**
+- Na skoku je polna le ena pika, sicer to ni funkcija.
+- Celi del ni odrezan decimalni del: $\lfloor -2{,}3 \rfloor = -3$.
+- Višja raven: minus velja za oba člena; za $x < 1$ je $|x - 1| = -x + 1$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

@@ -201,6 +201,27 @@ $D_3 = 3811{,}2512 - 2418{,}4854 \approx 1392{,}77$ €. Preizkus: $\dfrac{759{,
 - Amortizacijski načrt: $o_k = D_{k-1} \cdot \frac{p}{100}$, $R_k = a - o_k$, $D_k = D_{k-1} - R_k$; zadnja vrstica se zapre z $D_n = 0$.
 - Obresti padajo, razdolžnine rastejo s faktorjem $r$; vsota razdolžnin je posojilo.
 
+## Ponovitev
+
+**Formule**
+- $r = 1 + \frac{p}{100}$ (na pamet)
+- $a = G_0 \cdot \frac{r^n (r - 1)}{r^n - 1}$ (na pamet)
+- $D_k = G_0 r^k - a \cdot \frac{r^k - 1}{r - 1}$ (na pamet)
+- $o_k = D_{k-1} \cdot \frac{p}{100}$, $R_k = a - o_k$ (na pamet)
+- $D_k = D_{k-1} - R_k$ (na pamet)
+
+**Postopek**
+1. Iz $p$ izračunaj $r$ in določi število obdobij $n$.
+2. Vsa plačila preračunaj na isti trenutek in zapiši enačbo ekvivalence.
+3. Iz nje izračunaj anuiteto $a$.
+4. V načrtu vsako leto izračunaj $o_k$, nato $R_k$ in $D_k$.
+5. Preveri: zadnja vrstica da $D_n = 0$, vsota razdolžnin je posojilo.
+
+**Pazi na**
+- Obresti računaj vsako leto od ostanka $D_{k-1}$, ne od celega posojila.
+- Pri anuitetah so obroki enaki, razdolžnine rastejo: posojila ne deli z $n$.
+- Ne zaokrožuj prezgodaj: na cente zaokroži šele zneske v načrtu.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

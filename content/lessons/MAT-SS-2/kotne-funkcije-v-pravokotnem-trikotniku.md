@@ -190,6 +190,27 @@ $\tan 6^\circ \approx 0{,}1051$, zato je $h \approx 15\,\text{km} \cdot 0{,}1051
 - Za ostri kot je $0 < \sin \alpha, \cos \alpha < 1$, $\tan \alpha > 0$.
 - Iz stranice in kota: $a = c \sin \alpha$, $b = c \cos \alpha$, $a = b \tan \alpha$; kot iz razmerja s $\sin^{-1}$, $\cos^{-1}$, $\tan^{-1}$ (računalo v stopinjah).
 
+## Ponovitev
+
+**Formule**
+- $\sin \alpha = \dfrac{a}{c}$, $\;\cos \alpha = \dfrac{b}{c}$, $\;\tan \alpha = \dfrac{a}{b}$ (na pamet)
+- $\sin^2 \alpha + \cos^2 \alpha = 1$ (na pamet)
+- $\tan \alpha = \dfrac{\sin \alpha}{\cos \alpha}$, $\;\sin \alpha = \cos (90^\circ - \alpha)$ (na pamet)
+- $\sin 30^\circ = \dfrac{1}{2}$, $\sin 45^\circ = \dfrac{\sqrt{2}}{2}$, $\tan 60^\circ = \sqrt{3}$ (na pamet)
+
+**Postopek**
+1. Nariši skico in označi pravi kot ter opazovani kot.
+2. Določi nasprotno in priležno kateto za ta kot.
+3. Izberi funkcijo, ki poveže znano in iskano količino.
+4. Izrazi neznanko, npr. $a = c \sin \alpha$, in izračunaj.
+5. Kot dobiš s $\sin^{-1}$, $\cos^{-1}$ ali $\tan^{-1}$.
+6. Preveri smiselnost: kateta je krajša od hipotenuze.
+
+**Pazi na**
+- Katete poimenuj glede na opazovani kot: nasprotna leži nasproti kota, priležna je njegov krak.
+- Računalo naj bo v stopinjah (DEG), ne v radianih.
+- Iz $\sin \alpha = \dfrac{a}{c}$ sledi $a = c \sin \alpha$, ne deli s $\sin \alpha$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

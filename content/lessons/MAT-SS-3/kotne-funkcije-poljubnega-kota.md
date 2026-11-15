@@ -195,6 +195,26 @@ V II. kvadrantu je kosinus negativen, zato $\cos\alpha = -\frac45$. Potem je $\t
 - Kota $\alpha$ in $\alpha + 360^\circ$ imata enake vrednosti kotnih funkcij.
 - $\pi\,\text{rad} = 180^\circ$, $1\,\text{rad} \approx 57{,}3^\circ$; pretvorba z $\dfrac{\pi}{180^\circ}$ oziroma $\dfrac{180^\circ}{\pi}$.
 
+## Ponovitev
+
+**Formule**
+- Na enotski krožnici: $T(\cos\alpha, \sin\alpha)$ (na pamet)
+- $\tan\alpha = \frac{\sin\alpha}{\cos\alpha}$ za $\cos\alpha \ne 0$ (na pamet)
+- $\sin^2\alpha + \cos^2\alpha = 1$ (na pamet)
+- $\pi\,\text{rad} = 180^\circ$, $1\,\text{rad} \approx 57{,}3^\circ$ (na pamet)
+
+**Postopek**
+1. Kot v radianih pretvori v stopinje: $\frac{7\pi}{6} = 210^\circ$.
+2. Odštej večkratnike $360^\circ$.
+3. Določi kvadrant in pripadajoči ostri kot.
+4. Absolutno vrednost vzemi pri pripadajočem ostrem kotu.
+5. Predznak določi iz kvadranta.
+
+**Pazi na**
+- Predznak je iz kvadranta: $\cos 120^\circ = -\frac12$, ne $\frac12$.
+- $1\,\text{rad} \approx 57{,}3^\circ$: kot $2$ je v II. kvadrantu.
+- Kalkulator: za stopinje DEG, za radiane RAD.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

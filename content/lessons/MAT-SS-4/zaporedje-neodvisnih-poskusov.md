@@ -177,6 +177,28 @@ $P_5(5) = 0{,}8^5 = 0{,}32768$, skupaj $0{,}4096 + 0{,}32768 = 0{,}73728$. Sprej
 - Vse verjetnosti $P_n(0)$ do $P_n(n)$ so členi razvoja $(q+p)^n$, zato je njihova vsota $1$.
 - Pri vlečenju brez vračanja formula ne velja.
 
+## Ponovitev
+
+*(višja raven)*
+
+**Formule**
+- $q = 1 - p$ (na pamet)
+- $P_n(k) = \binom{n}{k}p^k q^{n-k}$ (priloga, višja raven)
+- vsaj en uspeh: $1 - q^n$ (na pamet)
+- $P_n(0) + P_n(1) + \dots + P_n(n) = 1$ (na pamet)
+
+**Postopek**
+1. Preveri pogoje: isti poskus $n$-krat, dva izida, neodvisni poskusi, vsakič isti $p$.
+2. Določi $n$, $k$, $p$ in $q = 1 - p$.
+3. Za natanko $k$ uspehov vstavi v Bernoullijevo formulo.
+4. Pri »vsaj« in »največ« izberi krajšo pot: seštej ali uporabi nasprotni dogodek.
+5. Brez vračanja računaj s kombinacijami, ne z Bernoullijevo formulo.
+
+**Pazi na**
+- Ne pozabi $\binom{n}{k}$: šteje vse poteke s $k$ uspehi.
+- »Vsaj en« je $1 - q^n$, ne $n \cdot p$.
+- Nasprotje »vsaj $2$« je »največ $1$«, ne »največ $2$«.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)

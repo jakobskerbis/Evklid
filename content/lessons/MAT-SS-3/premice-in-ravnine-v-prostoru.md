@@ -199,6 +199,25 @@ $c = d\tan 60^\circ = 5\sqrt{3} \approx 8{,}66\,\mathrm{cm}$.
 - Telesna diagonala kocke oklepa z osnovno ploskvijo kot $\approx 35{,}26^\circ$, ne glede na rob.
 - (višja raven) Enako oddaljene od dveh točk: simetralna ravnina; od točke: sfera; od premice: valjasta ploskev.
 
+## Ponovitev
+
+**Formule**
+- premica $\perp$ ravnina $\iff$ premica $\perp$ dve sekajoči se premici ravnine (na pamet)
+- daljica $l$, projekcija $p$, razdalja $v$ krajišča od ravnine: $\sin\varphi = \frac{v}{l}$, $\cos\varphi = \frac{p}{l}$, $\tan\varphi = \frac{v}{p}$ (na pamet)
+- projekcija: $p = l\cos\varphi$ (na pamet)
+
+**Postopek**
+1. Skiciraj telo in označi premico ter ravnino.
+2. Iz zgornjega krajišča spusti pravokotnico na ravnino in poišči nožišče.
+3. Poveži nožišče s presečiščem premice in ravnine: to je projekcija.
+4. V pravokotnem trikotniku daljica–projekcija–razdalja izračunaj manjkajoče stranice.
+5. Kot $\varphi$ izračunaj s $\sin$, $\cos$ ali $\tan$.
+
+**Pazi na**
+- Premici, ki se ne sekata, sta lahko mimobežni: preveri, ali ležita v isti ravnini.
+- Ena pravokotnica ne zadošča: premica mora biti pravokotna na dve sekajoči se premici ravnine.
+- Projekcija $AG$ na $ABCD$ je diagonala $AC$, ne rob $AB$: najprej poišči nožišče ($G \to C$).
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

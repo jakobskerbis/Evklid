@@ -204,6 +204,27 @@ $x \in (-2, 0]$. Del $[4, \infty)$ ne seka intervala $(-2, 3)$. Število $0$ je 
 - Ničle parabole so le presečišča z osjo $x$.
 - (višja raven) Sistem kvadratnih neenačb: reši vsako neenačbo posebej (skica parabole), rešitve nariši na isto številsko premico in vzemi presek. Krajišča vključi samo, če ju vključita obe neenačbi.
 
+## Ponovitev
+
+**Formule**
+- Presečišča: $f(x) = g(x)$ (na pamet)
+- S premico $y = kx + n$: $ax^2 + (b - k)x + (c - n) = 0$ (na pamet)
+- $D = (b - k)^2 - 4a(c - n)$ (na pamet)
+- $D > 0$ sekanta, $D = 0$ tangenta, $D < 0$ mimobežnica (na pamet)
+
+**Postopek**
+1. Izenači $f(x) = g(x)$ in vse prenesi na eno stran.
+2. Reši enačbo; pri enakem $a$ je linearna.
+3. Ordinato izračunaj iz preprostejše funkcije in jo preveri na drugi.
+4. Presečišča zapiši kot točke $(x, y)$.
+5. Za lego premice izračunaj $D$: sekanta, tangenta ali mimobežnica.
+6. (višja raven) Sistem neenačb: reši vsako s skico parabole in vzemi presek.
+
+**Pazi na**
+- Ničle so le presečišča z osjo $x$; za drug graf izenači $f(x) = g(x)$.
+- $D$ izračunaj šele po prenosu na eno stran, ne iz parabole same.
+- Presečišče je točka: izračunaj še ordinato.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

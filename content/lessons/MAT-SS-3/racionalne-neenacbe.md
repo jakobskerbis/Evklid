@@ -228,6 +228,25 @@ Ulomek je pozitiven, kjer imata števec in imenovalec enak predznak: na $(-\inft
 - Pri $\le$, $\ge$ ničle vključimo, pri $<$, $>$ ne. Polov ne vključimo nikoli.
 - Rešitev $f(x) > 0$ so tisti $x$, kjer je graf racionalne funkcije nad osjo $x$.
 
+## Ponovitev
+
+**Formule**
+- oblika: $\dfrac{p(x)}{q(x)} > 0$ (ali $<$, $\ge$, $\le$), na desni $0$ (na pamet)
+- predznak se menja le v ničli ali polu lihe stopnje (na pamet)
+- $\le$, $\ge$: ničle vključi; poli nikoli (na pamet)
+
+**Postopek**
+1. Vse prenesi na eno stran, da je na drugi $0$.
+2. Zapiši levo stran kot en ulomek in razstavi števec ter imenovalec.
+3. Poišči ničle (števec) in pole (imenovalec).
+4. Sestavi tabelo predznakov po intervalih; za vsak faktor posebej.
+5. Izberi intervale z želenim predznakom; ničle vključi le pri $\le$, $\ge$.
+
+**Pazi na**
+- Ne množi z imenovalcem neznanega predznaka; uporabi tabelo predznakov.
+- Pri $\frac{x + 5}{x - 1} \ge 2$ najprej odštej $2$, šele nato sestavi tabelo.
+- Pol vedno ostane odprt, tudi pri nestrogi neenačbi.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)

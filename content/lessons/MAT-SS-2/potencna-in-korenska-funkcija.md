@@ -265,6 +265,27 @@ podnapis: Hiperbola y = 2/(x − 1) − 1 s središčem (1, −1); črtkani prem
 - $y = a \cdot (x - p)^n + q$: $(0, 0)$ preide v $(p, q)$; pri $n < 0$ imata asimptoti enačbi $x = p$ in $y = q$.
 - $y = c \cdot x^n$: količnik $\frac{y}{x^n}$ je stalen, podvojeni $x$ pomnoži $y$ z $2^n$; premo sorazmerje ima $n = 1$. Model preveri na vseh podatkih.
 
+## Ponovitev
+
+**Formule**
+- $x^{-n} = \frac{1}{x^n}$, $x \ne 0$ (na pamet)
+- $\sqrt[n]{x}$ je inverz od $x^n$; pri sodem $n$ le za $x \ge 0$ (na pamet)
+- $\sqrt{x^2} = |x|$ (na pamet)
+- $y = a \cdot (x - p)^n + q$: $(0, 0)$ preide v $(p, q)$ (na pamet)
+- $y = c \cdot x^n$: podvojeni $x$ pomnoži $y$ z $2^n$ (na pamet)
+
+**Postopek**
+1. Preveri, ali je eksponent $n$ sod ali lih, pozitiven ali negativen.
+2. Nariši osnovni graf skozi $(1, 1)$ in $(-1, 1)$ oziroma $(-1, -1)$.
+3. Premakni ga tako, da $(0, 0)$ preide v $(p, q)$.
+4. Pri $n < 0$ vriši asimptoti $x = p$ in $y = q$.
+5. Odčitaj definicijsko območje, zalogo vrednosti, sodost ali lihost in monotonost.
+
+**Pazi na**
+- $2^{-2} = \frac{1}{4}$, ne $-4$: negativni eksponent da obratno vrednost.
+- Skozi $(-1, 1)$ gre graf le pri sodem $n$, pri lihem skozi $(-1, -1)$.
+- $\sqrt{x^2} = |x|$, ne $x$; $\sqrt[3]{-8} = -2$ obstaja.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

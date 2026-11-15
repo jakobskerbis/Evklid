@@ -191,6 +191,28 @@ $2^{-2} = \dfrac{1}{4}$, $(a^4)^{-2} = a^{-8}$ in $(b^{-3})^{-2} = b^6$, torej $
 - Pravila veljajo za vsa cela števila $m$ in $n$, osnove pa morajo biti različne od $0$. Izraz $0^0$ ni definiran.
 - Znanstveni zapis: $a \cdot 10^n$ z $1 \le a < 10$ in celim $n$.
 
+## Ponovitev
+
+**Formule**
+- $a^m \cdot a^n = a^{m+n}$, $a^m : a^n = a^{m-n}$ (na pamet)
+- $(a^m)^n = a^{m \cdot n}$ (na pamet)
+- $(a \cdot b)^n = a^n \cdot b^n$, $\left(\frac{a}{b}\right)^n = \frac{a^n}{b^n}$ (na pamet)
+- $a^0 = 1$ in $a^{-n} = \frac{1}{a^n}$ za $a \neq 0$ (na pamet)
+- $\left(\frac{a}{b}\right)^{-n} = \left(\frac{b}{a}\right)^n$ (na pamet)
+- znanstveni zapis: $a \cdot 10^n$ z $1 \le a < 10$ (na pamet)
+
+**Postopek**
+1. Vse osnove zapiši kot potence iste osnove.
+2. Uporabi pravili za potenco potence in potenco zmnožka.
+3. Pri množenju eksponente seštej, pri deljenju odštej.
+4. Rezultat zapiši brez negativnih eksponentov.
+5. Preizkusi z majhnim številom.
+
+**Pazi na**
+- Minus brez oklepaja ni del osnove: $-3^2 = -9$, $(-3)^2 = 9$.
+- Pri množenju eksponente seštevaš, množiš jih le pri potenci potence: $2^3 \cdot 2^4 = 2^7$.
+- Negativni eksponent da obratno vrednost, ne negativnega števila: $2^{-3} = \frac{1}{8}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

@@ -194,6 +194,26 @@ $\int_0^{30} \frac{x^2}{9}\,dx = \frac{x^3}{27}\Big|_0^{30} = \frac{27000}{27} =
 - (višja raven) Prostornina vrtenine okoli osi $x$: $V = \pi \int_a^b f(x)^2\,dx$.
 - Pot je integral hitrosti po času: $s = \int_{t_1}^{t_2} v(t)\,dt$.
 
+## Ponovitev
+
+**Formule**
+- $\int_a^b f(x)\,dx = F(b) - F(a)$ (na pamet)
+- $\int_b^a f\,dx = -\int_a^b f\,dx$ (na pamet)
+- $\int_a^b f\,dx + \int_b^c f\,dx = \int_a^c f\,dx$ (na pamet)
+- Med krivuljama: $\int_a^b (g - f)\,dx$, $g$ zgoraj (na pamet)
+- $V = \pi \int_a^b f(x)^2\,dx$ (priloga, višja raven)
+
+**Postopek**
+1. Poišči ničle funkcije oziroma presečišča grafov.
+2. Interval razdeli v ničlah in poišči primitivno funkcijo $F$.
+3. Na vsakem delu izračunaj $F(b) - F(a)$.
+4. Za ploščino seštej absolutne vrednosti delov.
+
+**Pazi na**
+- Integral ni ploščina, če graf prečka os: deli pod osjo štejejo z minusom.
+- Vedno zgornja minus spodnja meja; $F(0)$ ni vedno $0$, izračunaj ga.
+- Med krivuljama odštej višji graf minus nižji; pri $V$ je $f$ na kvadrat.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

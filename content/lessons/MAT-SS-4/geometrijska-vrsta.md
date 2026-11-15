@@ -168,6 +168,25 @@ $S = \dfrac{0{,}36}{0{,}99} = \dfrac{36}{99} = \dfrac{4}{11}$. Preizkus: $4 : 11
 - Negativen $q$: delne vsote skačejo okoli vsote. Pri $1 - q$ pazi na predznak.
 - Uporaba: Zenonov paradoks, pot odbijajoče se žoge, periodična decimalna števila kot ulomki.
 
+## Ponovitev
+
+**Formule**
+- $q = \frac{a_2}{a_1}$ (na pamet)
+- $S_n = a_1 \cdot \frac{q^n - 1}{q - 1}$, $q \ne 1$ (priloga)
+- Konvergenca natanko pri $|q| < 1$ (na pamet)
+- $S = \frac{a_1}{1 - q}$ pri $|q| < 1$ (na pamet)
+
+**Postopek**
+1. Zapiši vrsto; pri žogi najprej nariši pot.
+2. Določi $a_1$ in $q = \frac{a_2}{a_1}$.
+3. Preveri $|q| < 1$; sicer vrsta divergira.
+4. Izračunaj $S = \frac{a_1}{1 - q}$ in ulomek okrajšaj.
+
+**Pazi na**
+- Formulo $S = \frac{a_1}{1 - q}$ uporabi le pri $|q| < 1$.
+- Negativen $q$ vstavi v oklepaju: pri $q = -\frac{1}{2}$ je $1 - q = \frac{3}{2}$.
+- Žoga vsako višino po odboju prepotuje dvakrat.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

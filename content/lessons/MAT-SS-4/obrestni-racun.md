@@ -254,6 +254,28 @@ $r = \sqrt{1{,}0816} = 1{,}04$, zato $\frac{p}{100} = 0{,}04$ in $p = 4\,\%$. Pr
 - Pripis $m$-krat na leto: relativna mera $\dfrac{p}{m}$ da v letu več kot letni pripis; konformna, $r_m = \sqrt[m]{1 + \dfrac{p}{100}}$, da enako.
 - Zaokrožuj šele na koncu.
 
+## Ponovitev
+
+**Formule**
+- povečanje za $p\,\%$: množi z $1 + \frac{p}{100}$ (na pamet)
+- navadno: $G_n = G_0 \left(1 + \frac{n \cdot p}{100}\right)$ (na pamet)
+- obrestno: $G_n = G_0 \cdot r^n$, $r = 1 + \frac{p}{100}$ (na pamet)
+- nazaj: $G_0 = \frac{G_n}{r^n}$ (na pamet)
+- obrestna mera iz $r^n = \frac{G_n}{G_0}$ (na pamet)
+- konformna mera: $r_m = \sqrt[m]{r}$ (na pamet)
+
+**Postopek**
+1. Ugotovi, ali se obresti računajo od $G_0$ (navadno) ali od stanja (obrestno).
+2. Izračunaj faktor $r = 1 + \frac{p}{100}$.
+3. Vstavi v pravo formulo; za $G_0$ deli z $r^n$.
+4. Pri pripisu $m$-krat na leto loči relativno mero $\frac{p}{m}$ od konformne.
+5. Zaokrožuj šele na koncu.
+
+**Pazi na**
+- Zaporedne spremembe množi: $1{,}2 \cdot 0{,}8 = 0{,}96$, odstotkov ne seštevaj.
+- Potenciraj, ne množi z $n$: $3000 \cdot 1{,}02^3$.
+- Pri $p = 4$ je $r = 1{,}04$, ne $1{,}4$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

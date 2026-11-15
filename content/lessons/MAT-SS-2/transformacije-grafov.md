@@ -334,6 +334,29 @@ Enačba je $5 = a \cdot 2^2 - 3$, torej $4a = 8$, $a = 2$ in $g(x) = 2(x + 2)^2 
 - $f(kx)$ s $k > 0$: skrčitev v smeri osi $x$ s faktorjem $k$.
 - $a \cdot f(x - p) + q$: točka $(x, y)$ preide v $(x + p,\ ay + q)$; teme $x^2$ gre v $(p, q)$.
 
+## Ponovitev
+
+**Formule**
+- $f(x) + q$: premik za $q$ navzgor (na pamet)
+- $f(x - p)$: premik za $p$ v desno (na pamet)
+- $-f(x)$ zrcali čez os $x$, $f(-x)$ čez os $y$ (na pamet)
+- $a \cdot f(x)$: razteg v smeri osi $y$ (na pamet)
+- $f(kx)$, $k > 0$: skrčitev v smeri osi $x$ s faktorjem $k$ (na pamet)
+- $a \cdot f(x - p) + q$: $(x, y) \mapsto (x + p,\ ay + q)$ (na pamet)
+
+**Postopek**
+1. Prepoznaj osnovno funkcijo $f$ in parametre $a$, $p$, $q$.
+2. Minus pred $x$ najprej izpostavi: $\sqrt{2 - x} = \sqrt{-(x - 2)}$.
+3. Premakni vodoravno: oklepaj je $0$ pri $x = p$.
+4. Raztegni z $a$ (pri $a < 0$ še zrcali čez os $x$).
+5. Na koncu premakni za $q$ navpično.
+6. Preveri s točko, na primer temenom ali začetno točko.
+
+**Pazi na**
+- $(x - 2)^2$ premakne graf v desno, ne v levo.
+- Parabola $2x^2$ je ožja, ne širša: širšo da $0 < a < 1$.
+- Razteg pride pred premikom za $q$: $2x^2 + 1 \ne 2(x^2 + 1)$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

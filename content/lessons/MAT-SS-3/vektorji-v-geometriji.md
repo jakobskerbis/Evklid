@@ -237,6 +237,27 @@ Drži: $3\beta = 3 \cdot 3 = 9$. Torej je $\vec c = 2\vec a + 3\vec b$ in vsi tr
 - (višja raven) Delilno razmerje $AD : DB = m : n$: $\vec r_D = \frac{n\vec r_A + m\vec r_B}{m + n}$; razpolovišče $\frac{\vec r_A + \vec r_B}{2}$; težišče $\frac{\vec r_A + \vec r_B + \vec r_C}{3}$, deli težiščnico $2 : 1$.
 - (višja raven) Naloga »v kakšnem razmerju se sekata«: izberi neodvisna bazna vektorja, isti vektor zapiši na dva načina, primerjaj koeficiente. Diagonali paralelograma se razpolavljata.
 
+## Ponovitev
+
+**Formule**
+- $\overrightarrow{AB} = \vec r_B - \vec r_A$ (na pamet)
+- kolinearna: $\vec b = k\vec a$; točke na premici: $\overrightarrow{AC} = k\,\overrightarrow{AB}$ (na pamet)
+- koplanarni: $\vec c = \alpha\vec a + \beta\vec b$ (na pamet)
+- (višja raven) $AD : DB = m : n$: $\vec r_D = \frac{n\vec r_A + m\vec r_B}{m + n}$ (na pamet)
+- (višja raven) težišče: $\vec r_T = \frac{\vec r_A + \vec r_B + \vec r_C}{3}$ (na pamet)
+
+**Postopek**
+1. Iz koordinat točk izračunaj vektorje s skupnim začetkom, npr. $\overrightarrow{AB}$ in $\overrightarrow{AC}$.
+2. Preveri, ali je en vektor večkratnik drugega (enaka razmerja komponent).
+3. Če je, so točke na premici; sicer vektorja napenjata ravnino.
+4. (višja raven) Pri razmerju sekanja isti vektor zapiši na dva načina z neodvisnima baznima vektorjema.
+5. (višja raven) Primerjaj koeficiente in reši sistem.
+
+**Pazi na**
+- $\overrightarrow{AB} = k\,\overrightarrow{CD}$ pomeni le vzporedni premici; za točke vzemi skupni začetek.
+- Dva vektorja napenjata ravnino le, če nista kolinearna.
+- (višja raven) Bližja točka ima večjo utež: pri $1 : 2$ je $\vec r_D = \frac{2\vec r_A + \vec r_B}{3}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

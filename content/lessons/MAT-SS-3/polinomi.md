@@ -229,6 +229,26 @@ $p(x) = (x - z_1)(x - z_2)(x - z_3)$; pri realnih koeficientih je z $z$ ničla t
 - Linearna funkcija je polinomska funkcija stopnje $1$, kvadratna funkcija stopnje $2$.
 - Osnovni izrek algebre: polinom stopnje $n \ge 1$ ima kompleksno ničlo, zato natanko $n$ kompleksnih ničel (štetih s stopnjo). Pri realnih koeficientih so nerealne ničle v konjugiranih parih; polinom lihe stopnje ima vsaj eno realno ničlo.
 
+## Ponovitev
+
+**Formule**
+- $p(x) = q(x)\,k(x) + r(x)$, ostanek nižje stopnje (na pamet)
+- ostanek pri deljenju z $x - a$ je $p(a)$ (na pamet)
+- $p(a) = 0 \iff (x - a)$ deli $p(x)$ (na pamet)
+- pri celih koeficientih so cele ničle delitelji prostega člena $a_0$, z obema predznakoma (na pamet)
+
+**Postopek**
+1. Zapiši koeficiente vseh potenc, manjkajoče z $0$.
+2. Delitelje prostega člena preizkušaj s Hornerjem, dokler ne dobiš $p(a) = 0$.
+3. Iz zadnje vrstice sheme preberi količnik $k(x)$.
+4. Količnik razstavi naprej (pri stopnji $2$ s kvadratno enačbo).
+5. Zapiši $p(x)$ kot produkt in naštej vse ničle.
+
+**Pazi na**
+- Manjkajoča potenca: v shemo napiši $0$ (pri $2x^3 - 5x + 3$ so to $2, 0, -5, 3$).
+- Pri deljenju z $x + 2$ vzemi $a = -2$, ne $2$.
+- Kandidati za ničle so delitelji z obema predznakoma, ne le pozitivni.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

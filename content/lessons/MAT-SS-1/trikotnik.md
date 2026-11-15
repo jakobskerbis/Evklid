@@ -239,6 +239,27 @@ Zunanji kot $\varphi' = 180^\circ - \varphi = \dfrac{360^\circ}{n}$; $\;d_n = \d
 - Pitagorov izrek v pravokotnem trikotniku: $a^2 + b^2 = c^2$.
 - $n$-kotnik: vsota notranjih kotov $(n - 2) \cdot 180^\circ$, vsota zunanjih $360^\circ$, diagonal $\frac{n(n - 3)}{2}$; pravilni $n$-kotnik ima zunanji kot $\frac{360^\circ}{n}$.
 
+## Ponovitev
+
+**Formule**
+- $\alpha + \beta + \gamma = 180^\circ$ (na pamet)
+- $|a - b| < c < a + b$ (na pamet)
+- $r = \dfrac{S}{s}$, $s$ je polobseg (priloga)
+- pravokotni trikotnik: $a^2 + b^2 = c^2$, $R = \dfrac{c}{2}$ (na pamet)
+- $n$-kotnik: vsota kotov $(n - 2) \cdot 180^\circ$, diagonal $\frac{n(n - 3)}{2}$ (na pamet)
+
+**Postopek**
+1. Preveri, ali trikotnik obstaja: najdaljša stranica proti vsoti drugih dveh.
+2. Manjkajoči kot izračunaj iz vsote kotov $180^\circ$.
+3. Za skladnost izberi SSS, SKS, KSK ali SsK.
+4. Očrtana krožnica: simetrale stranic; včrtana: simetrale kotov.
+5. Težišče deli težiščnico $2:1$ od oglišča.
+
+**Pazi na**
+- Pri SKS je kot med znanima stranicama; sicer SsK, kot nasproti daljše.
+- Trikotniško neenakost preveri za najdaljšo stranico; enakost ne zadošča.
+- Višina je pravokotna na stranico, težiščnica gre do njene sredine.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

@@ -175,6 +175,26 @@ Odštejemo $3$: $1{,}2x = 24$. Delimo z $1{,}2$: $x = 20$. Preizkus: $1{,}2 \cdo
 - Ničla: $x_0 = -\dfrac{n}{k}$ (za $k \ne 0$), presečišče z osjo $x$.
 - Vedno preveri z vstavljanjem v funkcijo.
 
+## Ponovitev
+
+**Formule**
+- $f(x) = kx + n$, začetna vrednost $n$: točka $(0, n)$ (na pamet)
+- $k = \frac{y_2 - y_1}{x_2 - x_1}$ (na pamet)
+- $k > 0$ narašča, $k < 0$ pada, $k = 0$ konstantna (na pamet)
+- Ničla: $x_0 = -\frac{n}{k}$, $k \ne 0$ (na pamet)
+
+**Postopek**
+1. Iz dveh točk izračunaj $k$.
+2. Vstavi eno točko v $y = kx + n$ in izračunaj $n$.
+3. Ničlo dobiš iz $f(x) = 0$.
+4. Nariši premico skozi $(0, n)$ in $(x_0, 0)$.
+5. Preveri z vstavljanjem obeh točk.
+
+**Pazi na**
+- $k$ je število ob $x$, $n$ prosti člen: pri $y = -4x + 1$ je $k = -4$.
+- Razlika $y$ je v števcu: $k = \frac{y_2 - y_1}{x_2 - x_1}$.
+- Ničla leži na osi $x$: postavi $f(x) = 0$, ne vzemi $n$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

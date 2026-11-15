@@ -196,6 +196,27 @@ $3 \cdot 36 - \frac{216}{3} = 108 - 72 = 36$, vodostaj se dvigne za $36\,\mathrm
 - Točke so za korake: nastavek, vmesni rezultat, rezultat, odgovor z enoto. Rezultat brez poti lahko izgubi večino točk ali vse.
 - Preverjanje: vstavi nazaj, preveri pogoje, oceni smiselnost. Ko obtičiš, zapiši nastavek.
 
+## Ponovitev
+
+**Formule**
+- pola: $90$ minut, $60$ točk (na pamet)
+- naloga s $k$ točkami: približno $1{,}5 \cdot k$ minut (na pamet)
+- s $15$ minutami za pregled in preverjanje: $1{,}25$ minute na točko (na pamet)
+- točke = nastavek + vmesni rezultat + rezultat + odgovor z enoto (na pamet)
+
+**Postopek**
+1. Preleti celo polo.
+2. Najprej reši naloge, ki jih znaš.
+3. Po dvojnem predvidenem času nalogo označi, preskoči in se vrni na koncu.
+4. Pri vsaki nalogi zapiši nastavek in vmesne rezultate.
+5. Pred odgovorom še enkrat preberi vprašanje; odgovori v stavku z enoto.
+6. Na koncu preverjaj: vstavi nazaj, preveri pogoje, oceni smiselnost.
+
+**Pazi na**
+- Rezultat brez poti lahko izgubi večino točk; zapiši pot.
+- Rešitev pri imenovalcih in logaritmih vstavi nazaj ali preveri pogoje.
+- Vedno poskusi vse dele; b) je pogosto neodvisen od a).
+
 ## Za maturo
 
 Pola 1: $90$ minut, brez računala, s prilogo s formulami. Na osnovni ravni rešiš Naloge 1–14 ($60$ točk), na višji ravni Naloge 9–16 ($60$ točk). Za vsako točko imaš približno minuto in pol; ura naj teče, ko začneš.

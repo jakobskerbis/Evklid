@@ -201,6 +201,28 @@ Pogoji: imenovalci $\ne 0$; obe strani pomnožimo z najmanjšim skupnim imenoval
 - Graf vodoravno asimptoto lahko seka, navpične nikoli.
 - Racionalna enačba: pogoji (imenovalci $\ne 0$), množenje z najmanjšim skupnim imenovalcem, rešitev, preizkus. Kandidat, ki je ničla kakega imenovalca, je navidezna rešitev.
 
+## Ponovitev
+
+**Formule**
+- $f(x) = \dfrac{p(x)}{q(x)}$, $D_f$: vsi $x$ s $q(x) \ne 0$ (na pamet)
+- po krajšanju: ničle iz $p$, poli iz $q$ (na pamet)
+- števec nižje stopnje: vodoravna asimptota $y = 0$ (na pamet)
+- enaki stopnji: vodoravna asimptota $y = \frac{a_n}{b_n}$ (na pamet)
+- števec višji za $1$: poševna asimptota $y = k(x)$, $k$ je količnik $p : q$ (na pamet)
+
+**Postopek**
+1. Določi definicijsko območje.
+2. Števec in imenovalec razcepi in okrajšaj; skupni faktor da luknjo.
+3. Poišči ničle in pole s stopnjami.
+4. Določi asimptote.
+5. Izračunaj $f(0)$ in predznake na intervalih ter skiciraj graf.
+6. Pri racionalni enačbi zapiši pogoje in vsako rešitev preveri z njimi.
+
+**Pazi na**
+- Ničle dá števec, pole imenovalec.
+- Najprej okrajšaj: okrajšan faktor da luknjo, ne pola.
+- Pri enakih stopnjah deliš vodilna koeficienta, ne prostih členov.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

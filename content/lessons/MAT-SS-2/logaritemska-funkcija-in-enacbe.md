@@ -267,6 +267,28 @@ podnapis: Premik za 1 v desno in razteg s faktorjem 3 v smeri osi y
 - Enačbe: $\log_a A = c \Rightarrow A = a^c$; $\;\log_a A = \log_a B \Rightarrow A = B$; po potrebi $t = \log_a x$.
 - Na začetku zapiši pogoje, na koncu naredi preizkus.
 
+## Ponovitev
+
+**Formule**
+- $f(x) = \log_a x$: $D_f = (0, \infty)$, $Z_f = \mathbb{R}$ (na pamet)
+- $g(x) = \log_a (x - p) + q$: asimptota $x = p$, $D_g = (p, \infty)$ (na pamet)
+- $\log_a A = c \Rightarrow A = a^c$ (na pamet)
+- $\log_a A = \log_a B \Rightarrow A = B$ (na pamet)
+- $\log_a A + \log_a B = \log_a (AB)$ (na pamet)
+
+**Postopek**
+1. Zapiši pogoje: izrazi pod logaritmi so strogo pozitivni.
+2. Logaritme z isto osnovo združi v enega.
+3. Prevedi v potenco, $A = a^c$, ali izenači logaritmanda.
+4. Pri $(\log x)^2$ uvedi novo neznanko $t = \log x$.
+5. Reši dobljeno enačbo.
+6. Vsako rešitev preveri v prvotni enačbi.
+
+**Pazi na**
+- Brez pogojev in preizkusa ostanejo tuje rešitve.
+- Potenciraš osnovo: iz $\log_3 (2x + 1) = 2$ sledi $2x + 1 = 3^2$.
+- Za vsoto pod logaritmom pravila ni: $\log_2 (x + 3)$ pusti celega.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

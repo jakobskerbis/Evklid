@@ -183,6 +183,26 @@ $f''(1) = -e^{-1} < 0$, zato je v $x = 1$ maksimum $f(1) = e^{-1} \approx 0{,}37
 - Iskanje: $f''$, ničle $f''$, predznak na intervalih, ordinata $f(x_0)$.
 - Test ekstrema: $f'(a) = 0$ in $f''(a) > 0$ minimum, $f''(a) < 0$ maksimum, $f''(a) = 0$ ne odloči.
 
+## Ponovitev
+
+**Formule**
+- $f''(x) = \bigl(f'(x)\bigr)'$ (na pamet)
+- $f'' > 0$: konveksna ($\cup$); $f'' < 0$: konkavna ($\cap$) (na pamet)
+- Prevoj: $f''(x_0) = 0$ in $f''$ zamenja predznak (na pamet)
+- $f'(a) = 0$ in $f''(a) > 0$: minimum (na pamet)
+- $f'(a) = 0$ in $f''(a) < 0$: maksimum (na pamet)
+
+**Postopek**
+1. Izračunaj $f'$ in $f''$.
+2. Reši $f''(x) = 0$.
+3. Določi predznak $f''$ na intervalih med ničlami.
+4. Kjer $f''$ zamenja predznak in je $f(x_0)$ definirana, je prevoj $(x_0, f(x_0))$.
+
+**Pazi na**
+- Ničla $f''$ je le kandidatka: pri $x^4$ v $0$ prevoja ni.
+- Za prevoj rešiš $f''(x) = 0$, ne $f'(x) = 0$.
+- Naraščanje pove $f'$, konveksnost pa $f''$.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 8 točk, pola 1 (brez računala)

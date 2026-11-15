@@ -193,6 +193,27 @@ Kakšen je ulomek in koliko sekund trajata oba dela pri $t = 100$?
 - Pri odštevanju drugi števec zapiši v oklepaju. Na koncu poskusi rezultat še krajšati.
 - Faktorja $a-b$ in $b-a$ sta nasprotna: $b - a = -(a-b)$.
 
+## Ponovitev
+
+**Formule**
+- $\dfrac{A \cdot C}{B \cdot C} = \dfrac{A}{B}$, $B \neq 0$, $C \neq 0$ (na pamet)
+- $\dfrac{A}{B} \cdot \dfrac{C}{D} = \dfrac{A \cdot C}{B \cdot D}$ (na pamet)
+- $\dfrac{A}{B} : \dfrac{C}{D} = \dfrac{A}{B} \cdot \dfrac{D}{C}$, $C \neq 0$ (na pamet)
+- $\dfrac{A}{C} \pm \dfrac{B}{C} = \dfrac{A \pm B}{C}$ (na pamet)
+- $b - a = -(a-b)$ (na pamet)
+
+**Postopek**
+1. Razstavi vse števce in imenovalce.
+2. Iz prvotnih imenovalcev zapiši pogoje, npr. $x \neq 0$.
+3. Pri seštevanju poišči skupni imenovalec in razširi ulomke.
+4. Seštej števce; drugi števec pri odštevanju zapiši v oklepaju.
+5. Krajšaj faktorje in rezultat zapiši s pogoji iz prvotnih imenovalcev.
+
+**Pazi na**
+- Krajšaj le faktorje, ne členov, zato najprej razstavi: $\dfrac{x+3}{3} \neq x$.
+- Seštej šele pri enakih imenovalcih: $\dfrac{1}{x} + \dfrac{1}{y} = \dfrac{x+y}{xy}$, ne $\dfrac{2}{x+y}$.
+- Minus velja za ves drugi števec, zato ga zapiši v oklepaju: $5x - (2x-3)$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

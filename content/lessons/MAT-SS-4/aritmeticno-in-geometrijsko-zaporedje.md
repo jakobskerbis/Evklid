@@ -209,6 +209,26 @@ $S_6 = 3 \cdot \dfrac{2^6 - 1}{2 - 1} = 3 \cdot 63 = 189$. Preizkus: $3 + 6 + 12
 - Vrsto zaporedja določi šele, ko preveriš razliko oziroma količnik pri vseh danih parih.
 - Zaporedje po vzorcu: išči enake razlike, količnike, vzorec v razlikah ali zvezo z indeksom $n$; domnevo za $a_n$ preveri pri vseh danih členih.
 
+## Ponovitev
+
+**Formule**
+- $a_n = a_1 + (n - 1)d$ (na pamet)
+- $S_n = \frac{n}{2}(a_1 + a_n)$ (priloga)
+- $a_n = a_1 \cdot q^{n-1}$ (na pamet)
+- $S_n = a_1 \cdot \frac{q^n - 1}{q - 1}$, $q \ne 1$ (priloga)
+- $S_n = n\,a_1$ pri $q = 1$ (priloga)
+
+**Postopek**
+1. Preveri razliko oziroma količnik pri vseh danih parih in določi vrsto zaporedja.
+2. Znane podatke ($a_1$, $d$ ali $q$, $n$) vstavi v formulo za $a_n$ ali $S_n$.
+3. Iz enačbe ali sistema izračunaj neznanko.
+4. Rezultat preveri pri $n = 1$ in pri danih členih.
+
+**Pazi na**
+- Do $a_n$ je $n - 1$ korakov: $a_1 + (n - 1)d$ in $a_1 \cdot q^{n-1}$.
+- Padec za $20\,\%$ pomeni $q = 0{,}8$, rast za $5\,\%$ pa $q = 1{,}05$.
+- Gaussova formula $S_n = \frac{n}{2}(a_1 + a_n)$ velja le za aritmetično zaporedje.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

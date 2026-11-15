@@ -228,6 +228,25 @@ Po krajšanju ostane $\dfrac{1}{\sqrt{x} + 2}$. Pri $x = 4$: $\dfrac{1}{2 + 2} =
 - Elementarne funkcije so zvezne na definicijskem območju: tam je limita kar vrednost.
 - Intervali zveznosti: definicijsko območje razdeli v točkah, kjer funkcija ni definirana; pri funkciji z več predpisi preveri še točke stika.
 
+## Ponovitev
+
+**Formule**
+- $\lim\limits_{x \to 0} \frac{\sin x}{x} = 1$ (priloga)
+- $\lim\limits_{x \to \infty} \frac{1}{x} = 0$ (na pamet)
+- Limita obstaja, ko sta leva in desna limita enaki (na pamet)
+- Zveznost v $a$: $\lim\limits_{x \to a} f(x) = f(a)$ (na pamet)
+
+**Postopek**
+1. Pri elementarni funkciji vstavi $a$; če dobiš število, je to limita.
+2. Pri $\frac{0}{0}$ razstavi in okrajšaj, pri korenih razširi.
+3. Pri $\frac{\infty}{\infty}$ deli z najvišjo potenco.
+4. V točki stika primerjaj levo limito, desno limito in $f(a)$.
+
+**Pazi na**
+- $\frac{0}{0}$ in $\frac{\infty}{\infty}$ nista $0$ ali $1$: izraz preoblikuj.
+- Krajšaš le faktorje, ne členov: najprej razstavi.
+- Limita je $f(a)$ le pri zvezni funkciji; pri skoku je ni.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

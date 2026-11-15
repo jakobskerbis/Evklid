@@ -212,6 +212,27 @@ Na obeh straneh enačbe naredimo isto operacijo. Ko je na vsaki strani en sam ul
 - $(g \circ f)(x) = g(f(x))$, najprej $f$.
 - $f^{-1}$ obstaja natanko za injektivno $f$; dobiš jo iz $y = f(x)$ z izražanjem $x$; $D_{f^{-1}} = Z_f$, graf je zrcaljen čez $y = x$.
 
+## Ponovitev
+
+**Formule**
+- soda: $f(-x) = f(x)$; liha: $f(-x) = -f(x)$ (na pamet)
+- narašča: $x_1 < x_2 \Rightarrow f(x_1) < f(x_2)$ (na pamet)
+- $(g \circ f)(x) = g(f(x))$, najprej $f$ (na pamet)
+- $f^{-1}$ obstaja le za injektivno $f$; $D_{f^{-1}} = Z_f$ (na pamet)
+- surjektivna $f\colon A \to B$: $Z_f = B$ (na pamet)
+
+**Postopek**
+1. Določi $D_f$: imenovalec $\neq 0$, pod sodim korenom $\ge 0$.
+2. Ničle: reši $f(x) = 0$.
+3. Sodost in lihost: izračunaj $f(-x)$ in primerjaj z $f(x)$ in $-f(x)$.
+4. Inverzna: v $y = f(x)$ izrazi $x$, nato zamenjaj $x$ in $y$.
+5. Preveri: $D_{f^{-1}} = Z_f$, graf zrcaljen čez $y = x$.
+
+**Pazi na**
+- $f^{-1}(x)$ ni $\dfrac{1}{f(x)}$, ampak funkcija, ki odpravi $f$.
+- $(g \circ f)(x)$ ni $f(g(x))$: najprej deluje desna funkcija $f$.
+- Če funkcija ni soda, še ni liha: pri $x^2 + 2x$ ne velja nobena, zato preveri obe zahtevi.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

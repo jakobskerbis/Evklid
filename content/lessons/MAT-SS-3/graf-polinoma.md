@@ -213,6 +213,26 @@ $C(t) = a_3 t^3 + a_2 t^2 + a_1 t + a_0$; vsaka meritev $(t_i, C_i)$ da enačbo 
 - Za velike $|x|$ je $p(x) \approx a_n x^n$. Sod $n$: kraka na isti strani; lih $n$: na nasprotnih. Predznak $a_n$ pove smer desnega kraka.
 - Presečišče z osjo $y$ je $(0, p(0))$.
 
+## Ponovitev
+
+**Formule**
+- $p(x) = a\,(x - x_1)^{k_1}(x - x_2)^{k_2}\cdots$ (na pamet)
+- $k$ lih: graf seka os $x$; $k$ sod: se je dotakne (na pamet)
+- Za velike $|x|$: $p(x) \approx a_n x^n$ (na pamet)
+- Presečišče z osjo $y$: $(0, p(0))$ (na pamet)
+
+**Postopek**
+1. Polinom razcepi in odčitaj ničle z njihovimi stopnjami.
+2. Izračunaj $p(0)$.
+3. Iz $a_n x^n$ določi smer obeh krakov.
+4. Pri vsaki ničli odloči, ali graf seka os ali se je dotakne.
+5. Nariši graf od leve proti desni; dvom razreši s testno točko.
+
+**Pazi na**
+- Pri ničli sode stopnje se graf osi le dotakne, predznak ostane.
+- Predznaki se izmenjujejo le, če so vse ničle lihe stopnje.
+- Kraka določa člen z najvišjo potenco, ne prosti člen.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

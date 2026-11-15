@@ -174,6 +174,27 @@ $x^2 - 2x - 8 = (x - 4)(x + 2) = 0$ da $x = 4$ ali $x = -2$. Pogoju $x > 2$ ustr
 - Pri logaritemskih enačbah zapiši pogoje na začetku in z njimi izloči tuje rešitve.
 - Odstotek upadanja $p$ da faktor $q = 1 - \frac{p}{100}$.
 
+## Ponovitev
+
+**Formule**
+- upadanje za $p\,\%$ na enoto časa: $c_0 \cdot q^t$, $\;q = 1 - \frac{p}{100}$ (na pamet)
+- $q^t = b \Rightarrow t \cdot \log q = \log b$ (na pamet)
+- $\sqrt[n]{a^m} = a^{m/n}$ (na pamet)
+- $\log_a (AB) = \log_a A + \log_a B$ (na pamet)
+- $a^{2x}$ in $a^x$: nova neznanka $s = a^x > 0$ (na pamet)
+
+**Postopek**
+1. Iz besed prepoznaj orodje: odstotek, logaritem, teme, enačba.
+2. Nalogo razstavi na verigo manjših korakov.
+3. Pri logaritmih na začetku zapiši pogoje.
+4. Vmesne rezultate zapisuj in jih hrani v računalu.
+5. Preveri smisel odgovora in pogoje.
+
+**Pazi na**
+- Vsote pod logaritmom ne razbiješ; pravilo velja za produkt.
+- Ko združiš logaritme, preveri pogoje, sicer ostane tuja rešitev.
+- »Izloči $20\,\%$« pomeni $q = 0{,}8$, ne $0{,}2$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

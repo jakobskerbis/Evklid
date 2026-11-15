@@ -216,6 +216,28 @@ Opazi: rob je položnejši od ploskve ($50{,}8^\circ < 60^\circ$), ker je njegov
 - Pri sestavljenih telesih računaj posebej vsak del in pazi, katere ploskve so res zunaj.
 - Kote v telesih računaš v pravokotnih trikotnikih z višino: naklon stranske ploskve s $\frac{a}{2}$ in $v_s$, naklon stranskega roba s polovico diagonale, naklon stranice stožca z $r$ in $s$.
 
+## Ponovitev
+
+**Formule**
+- prizma: $P = 2S + S_p$, $V = S\,v$ (na pamet)
+- piramida: $P = S + S_p$, $V = \dfrac{S\,v}{3}$ (na pamet)
+- valj: $P = 2\pi r(r+v)$, $V = \pi r^2 v$ (na pamet)
+- stožec: $P = \pi r(r+s)$, $V = \dfrac{\pi r^2 v}{3}$ (na pamet)
+- stožec: $s = \sqrt{r^2+v^2}$ (na pamet)
+- krogla: $P = 4\pi r^2$, $V = \dfrac{4\pi r^3}{3}$ (priloga)
+
+**Postopek**
+1. Skiciraj telo in označi dane količine.
+2. Manjkajočo višino ali stranico ($s$, $v_s$) izračunaj s Pitagorovim izrekom v pravokotnem trikotniku.
+3. Izračunaj ploščino osnovne ploskve in plašča.
+4. Vstavi v formulo; pri sestavljenem telesu računaj vsak del posebej.
+5. Pri površini seštej le ploskve, ki so res zunaj.
+
+**Pazi na**
+- Pri piramidi in stožcu deli s $3$.
+- Plašč stožca je $\pi r s$ s stranico $s$, ne z višino $v$.
+- Premer najprej razpolovi, šele nato vstavi $r$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

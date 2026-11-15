@@ -219,6 +219,29 @@ $x^2 + 8x = (x + 4)^2 - 16$, teme je $T(-4, -16)$. Števili sta $-4$ in $4$, naj
 - Med pravokotniki z enakim obsegom ima največjo ploščino kvadrat. Pri ograji ob steni je stranica ob steni dvakrat daljša od drugih dveh.
 - Odgovor so mere, cena ali čas z enoto, ne le vrednost $q$.
 
+## Ponovitev
+
+*(višja raven)*
+
+**Formule**
+- teme: $p = -\dfrac{b}{2a}$, $q = f(p)$ (na pamet)
+- temenska oblika $f(x) = a(x - p)^2 + q$ (na pamet)
+- $a < 0$: maksimum $q$; $a > 0$: minimum $q$ (na pamet)
+- na $[m, n]$: primerjaj $f(p)$, $f(m)$, $f(n)$ (na pamet)
+
+**Postopek**
+1. Nariši skico in vsako dolžino zapiši z $x$.
+2. Z zvezo (obseg, vsota, ograja) izrazi drugo količino z $x$.
+3. Sestavi kvadratno funkcijo in iz besedila zapiši območje za $x$.
+4. Izračunaj teme in preveri, ali leži v območju.
+5. Če ne, izračunaj vrednosti v krajiščih.
+6. Odgovori z merami in enoto, ne le z $q$.
+
+**Pazi na**
+- Teme upoštevaj le, če leži v območju; sicer je ekstrem v krajišču.
+- Pri obsegu $40\,\text{m}$ sta stranici $x$ in $20 - x$, ne $40 - x$.
+- Pri $a > 0$ je v temenu minimum, ne maksimum.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 2 (z računalom)

@@ -199,6 +199,26 @@ Za $a > 0$ delimo s pozitivnim številom in znak ostane: $t \le \dfrac{15}{a}$. 
 - Sistem dveh linearnih enačb s parametrom prevedemo na enačbo $Ax = B$ s parametrom: ena rešitev (premici se sekata), nobene (vzporedni), neskončno (sovpadata).
 - Rezultat preverimo z vstavitvijo ene konkretne vrednosti parametra.
 
+## Ponovitev
+
+**Formule**
+- $ax > b$, $a > 0$: $x > \frac{b}{a}$; $a < 0$: $x < \frac{b}{a}$ (na pamet)
+- $ax > b$, $a = 0$: preveri $0 > b$ (vsi $x$ ali noben) (na pamet)
+- $ax = b$, $a \ne 0$: ena rešitev $x = \frac{b}{a}$ (na pamet)
+- $0 \cdot x = b$: $b \ne 0$ nobene, $b = 0$ vsi $x \in \mathbb{R}$ (na pamet)
+
+**Postopek**
+1. Preoblikuj v $ax = b$ ali $ax > b$ (pri sistemu v $Ax = B$).
+2. Poišči vrednosti parametra, pri katerih je koeficient $a$ enak $0$.
+3. Te vrednosti vstavi in reši neposredno.
+4. Za $a > 0$ in $a < 0$ deli posebej, pri $a < 0$ obrni znak.
+5. Rešitev zapiši po primerih; preveri z eno konkretno vrednostjo.
+
+**Pazi na**
+- Z izrazom s parametrom deli šele, ko izločiš primer $a = 0$.
+- Pri negativnem deljitelju se znak neenačbe obrne.
+- $0 = 0$ pomeni vsak $x$ (premici sovpadata), $0 = 8$ pa nobene rešitve.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 6 točk, pola 1 (brez računala)

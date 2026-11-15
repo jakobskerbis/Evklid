@@ -286,6 +286,28 @@ $v = A + B \log P$; točka $t$ dekade desno od oznake $10^n$ pripada številu $1
 - Prehod na novo osnovo (višja raven): $\log_a b = \dfrac{\log_c b}{\log_c a} = \dfrac{\log b}{\log a}$.
 - Za logaritem vsote ali razlike ni pravila.
 
+## Ponovitev
+
+**Formule**
+- $\log_a b = x \iff a^x = b$; $a > 0$, $a \ne 1$, $b > 0$ (na pamet)
+- $\log_a 1 = 0$, $\;\log_a a = 1$, $\;a^{\log_a b} = b$ (na pamet)
+- $\log_a (xy) = \log_a x + \log_a y$ (na pamet)
+- $\log_a \dfrac{x}{y} = \log_a x - \log_a y$ (na pamet)
+- $\log_a x^n = n \log_a x$ (na pamet)
+- (višja raven) prehod na novo osnovo: $\log_a b = \dfrac{\log_c b}{\log_c a}$ (priloga, višja raven)
+
+**Postopek**
+1. Preveri pogoje: osnova pozitivna in različna od $1$, logaritmand pozitiven.
+2. Če se da, logaritem zapiši kot eksponent: $a^x = b$.
+3. Vsoto in razliko logaritmov z isto osnovo združi v en logaritem.
+4. Eksponent logaritmanda prenesi pred logaritem.
+5. Pri različnih osnovah uporabi prehod na novo osnovo (višja raven).
+
+**Pazi na**
+- $\log (x + y) \ne \log x + \log y$: za vsoto pravila ni.
+- $\dfrac{\log x}{\log y}$ ni $\log \dfrac{x}{y}$, ampak $\log_y x$.
+- $\left(\log x\right)^2 \ne \log x^2$: pred logaritem gre le eksponent logaritmanda.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

@@ -200,6 +200,27 @@ V vrstici PN je $\neg B$ = P, v NP je $\neg A$ = P, v NN sta obe P. Disjunkcija 
 - Enakovredni izjavi ($\equiv$) se ujemata v vseh vrsticah: $A \Rightarrow B \equiv \neg B \Rightarrow \neg A \equiv \neg A \vee B$; obrat $B \Rightarrow A$ ni enakovreden.
 - De Morgan: $\neg(A \wedge B) \equiv \neg A \vee \neg B$ in $\neg(A \vee B) \equiv \neg A \wedge \neg B$.
 
+## Ponovitev
+
+**Formule**
+- $A \wedge B$ je P le, ko sta obe P (na pamet)
+- $A \vee B$ je N le, ko sta obe N (vključni »ali«) (na pamet)
+- $A \Rightarrow B$ je N le pri $A$ = P, $B$ = N (na pamet)
+- $A \Leftrightarrow B$ je P, ko imata enako vrednost (na pamet)
+- $A \Rightarrow B \equiv \neg B \Rightarrow \neg A \equiv \neg A \vee B$ (na pamet)
+- $\neg(A \wedge B) \equiv \neg A \vee \neg B$, $\neg(A \vee B) \equiv \neg A \wedge \neg B$ (na pamet)
+
+**Postopek**
+1. Za $n$ izjav napiši tabelo z $2^n$ vrsticami.
+2. Dodaj stolpec za vsak delni izraz, od notranjih oklepajev navzven.
+3. Stolpce izpolni po pravilih veznikov.
+4. Vse P: tavtologija; vse N: protislovje; enaka stolpca: enakovredni izjavi.
+
+**Pazi na**
+- Negacija »vsi so« je »vsaj en ni«, ne »noben ni«.
+- Implikacija z nepravilno predpostavko je pravilna.
+- Obrat $B \Rightarrow A$ ni enakovreden $A \Rightarrow B$; enakovredna je le kontrapozicija.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

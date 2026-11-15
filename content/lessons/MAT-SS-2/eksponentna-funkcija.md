@@ -282,6 +282,27 @@ točka: 1; 0 | (1, 0) | pod desno
 - $y = c \cdot a^x$, $c > 0$: razteg v smeri osi $y$; graf gre skozi $(0, c)$.
 - Naravna eksponentna funkcija: $e^x$, $e \approx 2{,}718$.
 
+## Ponovitev
+
+**Formule**
+- $f(x) = a^x$, $a > 0$, $a \ne 1$; $D_f = \mathbb{R}$, $Z_f = (0, \infty)$ (na pamet)
+- $a > 1$ narašča, $0 < a < 1$ pada (na pamet)
+- $a^{-x} = \left(\frac{1}{a}\right)^x$, $a^{-3} = \dfrac{1}{a^3}$ (na pamet)
+- $y = a^{x - p} + q$: asimptota $y = q$ (na pamet)
+- $y = c \cdot a^x$, $c > 0$, gre skozi $(0, c)$ (na pamet)
+
+**Postopek**
+1. Iz osnove določi, ali funkcija narašča ali pada.
+2. Nariši osnovni graf skozi $(0, 1)$ in $(1, a)$.
+3. Premakni ga za $p$ po osi $x$ in za $q$ po osi $y$.
+4. Zapiši asimptoto $y = q$ in zalogo vrednosti $(q, \infty)$.
+5. Izračunaj presečišče z osjo $y$: vstavi $x = 0$.
+
+**Pazi na**
+- Negativni eksponent pomeni obratno vrednost, ne negativne: $2^{-3} = \dfrac{1}{8}$.
+- $y = 2^{x-3}$ je premaknjen za $3$ v desno, ne v levo.
+- O smeri odloča le osnova, ne pozitivni faktor pred potenco: $8 \cdot 0{,}5^x$ pada.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

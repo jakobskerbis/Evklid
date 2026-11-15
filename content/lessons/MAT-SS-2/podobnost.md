@@ -248,6 +248,27 @@ $x' = x_S + k\,(x - x_S)$, $\;y' = y_S + k\,(y - y_S)$; ploščina slike je $k^2
 - Središčni razteg s središčem $S$ in koeficientom $k \ne 0$: $|ST'| = |k| \cdot |ST|$; pri $k < 0$ je $T'$ na drugi strani $S$. Slika je podobna liku s koeficientom $|k|$, ploščina se pomnoži s $k^2$.
 - Pri nalogah najprej nariši skico, označi enake kote in šele nato zapiši sorazmerje.
 
+## Ponovitev
+
+**Formule**
+- $\dfrac{a'}{a} = \dfrac{b'}{b} = \dfrac{c'}{c} = k$ (na pamet)
+- razmerje ploščin je $k^2$ (na pamet)
+- $a^2 = c \cdot c_a$, $\;b^2 = c \cdot c_b$ (priloga)
+- $v_c^2 = c_a \cdot c_b$ (priloga)
+- središčni razteg: $|ST'| = |k| \cdot |ST|$ (na pamet)
+
+**Postopek**
+1. Nariši skico in označi enake kote.
+2. Podobnost utemelji s KK, SSS, SKS ali SSK.
+3. Poveži ustrezni stranici in izračunaj $k$.
+4. Zapiši sorazmerje v istem vrstnem redu na obeh straneh.
+5. Izračunaj neznano dolžino; pri ploščinah uporabi $k^2$.
+
+**Pazi na**
+- Povezuj stranici nasproti enakih kotov.
+- Ploščina se pomnoži s $k^2$, ne s $k$.
+- Pri Evklidovem in višinskem izreku na koncu še koreni.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
