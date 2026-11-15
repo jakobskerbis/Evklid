@@ -70,7 +70,7 @@ test("brez namiga s ceno (pod 15, šola, med poukom, učitelj izklopil, preizkus
   }
 });
 
-test("plačila izklopljena (Stripe, računi, cenik): samo primerjava, brez gumba in cene", () => {
+test("plačila izklopljena (Stripe, računi, cenik): samo sporočilo in Vadnica, brez seznama, gumba in cene (j 2026-11-16)", () => {
   const cases = [
     status({}, { billing: false }),
     { enabled: false },
@@ -82,7 +82,8 @@ test("plačila izklopljena (Stripe, računi, cenik): samo primerjava, brez gumba
     assert.equal(v.action, null);
     assert.equal(v.price, "");
     const html = limitCardHtml(v, daily("block.hintAdult"));
-    assert.match(html, /Z naročnino dobiš/);
+    assert.doesNotMatch(html, /Z naročnino dobiš|meja-plus/);
+    assert.match(html, /data-meja-practice/);
     assert.doesNotMatch(html, /data-meja-link|data-meja-account|zavihku Račun/);
   }
   const empty = limitVariant({ body: daily("block.hintParent"), status: status({ minor: true }), prices: { currency: "EUR", plans: [] } });

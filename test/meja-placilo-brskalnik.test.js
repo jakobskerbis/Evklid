@@ -143,7 +143,7 @@ test("kartica ob meji na telefonu: mladoletni, polnoleten in brez plačil", opts
     open.push(off.server);
     const o = await cardFor(browser, off);
     assert.equal(await o.card.getAttribute("data-variant"), "offer");
-    assert.match(await o.card.innerText(), /Z naročnino dobiš/);
+    assert.doesNotMatch(await o.card.innerText(), /Z naročnino dobiš/);
     assert.doesNotMatch(await o.card.innerText(), /€|Izberi naročnino|zavihku Račun/);
     await o.card.locator("[data-meja-practice]").tap();
     await o.page.locator("#view-topic").waitFor({ state: "visible", timeout: 10_000 });

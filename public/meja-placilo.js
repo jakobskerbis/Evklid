@@ -64,7 +64,8 @@ const hintText = (body) => {
 };
 
 export function limitCardHtml(v, body) {
-  const facts = v.kind === "offer"
+  // Brez delujočih plačil seznama ni (j 2026-11-16): nakup ni mogoč, zato ostaneta sporočilo in »Vadi naprej«.
+  const facts = v.kind === "offer" && v.payOn
     ? [t("meja.more"), t("meja.deep"), t("meja.lessons")]
     : [];
   // Cena je posebna vrstica pod seznamom, ne alineja s kljukico (»Z naročnino dobiš: 9,99 € na mesec« bi bilo narobe).
