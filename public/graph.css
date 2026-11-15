@@ -692,6 +692,8 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
    zasede vso širino razdelka, ob dovolj prostora je skica levo, čipi, drsniki in navodilo pa desno ob njej. */
 .fm-sec .md-table-wrap > table:has(.fm-skica-row) { width: 100%; }
 .fm-skica { container-type: inline-size; }
+/* Na široki skici (nad telefonom) vrednost drsnika ne sme sloneti ob rob kartice. */
+@container (min-width: 480px) { .fm-skica > .sk { padding-inline-end: 12px; } }
 @container (min-width: 720px) {
   .fm-skica > .sk { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); grid-template-rows: auto auto auto 1fr; column-gap: 20px; align-items: start; padding-inline-end: 12px; }
   .fm-skica > .sk > .sk-frame { grid-column: 1; grid-row: 1 / -1; }
