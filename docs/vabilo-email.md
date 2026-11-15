@@ -16,7 +16,7 @@ V pilotu imaš do vključno 15. decembra 2026 brezplačno inštruktorja z mejo p
 
 Kako začneš:
 1. Odpri https://evklid.app/vabilo?koda=KODA
-2. Ustvari račun in potrdi e-naslov (članstvo nato potrdim jaz).
+2. Ustvari račun s tem e-naslovom in ga potrdi (v pilot te nato dodam jaz).
 3. Reši prvo nalogo na učni poti.
 
 Prosim te samo za iskreno mnenje: kaj ti pomaga in kaj te moti. Vsaka pripomba šteje.

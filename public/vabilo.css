@@ -1,6 +1,7 @@
 /* Stran /vabilo (public/vabilo.html): telefon najprej, en glavni gumb. */
 body { display: block; }
-.vab { max-width: 560px; margin: 0 auto; padding: 24px 16px 60px; }
+.vab { max-width: 560px; margin: 0 auto; padding: 8px 16px 60px; }
+.vab > p:first-child { margin: 0; }
 .vab h1 { font-size: 1.5rem; line-height: 1.25; }
 .vab a { color: var(--accent); }
 .vab form { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
@@ -17,3 +18,5 @@ body { display: block; }
 .vab-hint { color: var(--muted); }
 @media (min-width: 700px) { .vab { padding-top: 48px; } }
 .vab .small { font-size: 0.9rem; }
+/* Povezave (← Evklid, »Ustvari račun brez vabila«): dotik vsaj 44 px visok (docs/pregled.md §1, prehod 3). */
+.vab a:not(.btn-primary) { display: inline-flex; align-items: center; min-height: 44px; }
