@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { nastaviNogo, MIROVANJE_MS, VRNITEV_MS } from "../public/noga.js";
 
-function okolje({ vidna = true, branje = false, vodic = false } = {}) {
+function okolje({ vidna = true, branje = false, vodic = false, okno = false } = {}) {
   let ura = 1000;
   let id = 0;
   const casovniki = new Map();
@@ -26,12 +26,13 @@ function okolje({ vidna = true, branje = false, vodic = false } = {}) {
     removeEventListener: (ime) => poslusalci.delete(ime),
   };
   const doc = { hidden: false, activeElement: null, addEventListener: () => {} };
-  const stanje = { vidna, branje, vodic, sync: 0 };
+  const stanje = { vidna, branje, vodic, okno, sync: 0 };
   const noga = nastaviNogo({
     bar, body, win, doc,
     vidna: () => stanje.vidna,
     branje: () => stanje.branje,
     vodic: () => stanje.vodic,
+    okno: () => stanje.okno,
     sync: () => stanje.sync++,
     zdaj: () => ura,
   });
@@ -112,6 +113,28 @@ test("a tap where the hidden bar was brings it back and does not open what is un
   ustavljen = false;
   o.poslusalci.get("click")({ type: "click", preventDefault: () => (ustavljen = true), stopPropagation() {} });
   assert.ok(!ustavljen, "naslednji klik gre naprej");
+});
+
+test("a tap on a button in the bottom band, or in an open dialog, goes through and the bar stays hidden (j 2026-11-15)", () => {
+  const o = okolje();
+  const klik = () => {
+    let ustavljen = false;
+    o.poslusalci.get("click")({ type: "click", preventDefault: () => (ustavljen = true), stopPropagation() {} });
+    return ustavljen;
+  };
+  const gumb = { closest: (s) => (s.includes("button") ? gumb : null) };
+  o.pocakaj(MIROVANJE_MS);
+  o.sprozi("pointerdown", { clientY: 780, target: gumb }); // »Začni trening« ob dnu
+  assert.ok(o.razredi.has("tb-mir") && !o.razredi.has("tb-vraca"), "vrstica ne zdrsne čez gumb");
+  assert.ok(!klik(), "klik na gumb deluje že prvič");
+  o.stanje.okno = true; // anketa o zanimanjih (.iq-wrap), prazen prostor ob dnu
+  o.sprozi("pointerdown", { clientY: 780, target: { closest: () => null } });
+  assert.ok(o.razredi.has("tb-mir"), "z odprtim oknom dotik ob dnu vrstice ne vrne");
+  assert.ok(!klik(), "in klik ni pogoltnjen");
+  o.stanje.okno = false;
+  o.sprozi("pointerdown", { clientY: 780, target: { closest: () => null } });
+  assert.ok(o.razredi.has("tb-vraca"), "prazen prostor ob dnu jo še vedno vrne");
+  assert.ok(klik(), "klik pogoltnjen kot prej");
 });
 
 test("Tab and a mouse at the bottom edge bring it back (keyboard, narrow desktop window)", () => {
