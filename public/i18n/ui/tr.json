@@ -4191,5 +4191,14 @@
   "ginv.joinTitle": "Evklid'e davet edildin",
   "ginv.joinIntro": "Evklid'i e-posta adresi olmadan, ücretsiz planla kullanabilirsin. İlerlemen yalnızca bu cihazda kalır; istediğin zaman hesap oluşturabilirsin.",
   "ginv.start": "E-postasız başla",
-  "ginv.invalid": "Bu davet artık geçerli değil (süresi doldu ya da kullanıldı). Bir hesap oluştur veya yeni bir bağlantı iste."
+  "ginv.invalid": "Bu davet artık geçerli değil (süresi doldu ya da kullanıldı). Bir hesap oluştur veya yeni bir bağlantı iste.",
+  "meja.label": "Ücretsiz sorular bitti",
+  "meja.sub": "Abonelikle şunları alırsın:",
+  "meja.price": "Aylık {price}",
+  "meja.more": "Her gün ve her ay öğretmene daha fazla soru",
+  "meja.deep": "Daha yetenekli bir modelden daha ayrıntılı açıklamalar",
+  "meja.lessons": "Seviyendeki tüm konularda derslerin etkileşimli bölümleri",
+  "meja.btnParent": "Ebeveynine bağlantı gönder",
+  "meja.btnAdult": "Abonelik seç",
+  "meja.practice": "Alıştırmalar’da çalışmaya devam et"
 }

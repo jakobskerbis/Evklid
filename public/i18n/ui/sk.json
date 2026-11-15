@@ -4259,5 +4259,14 @@
   "ginv.joinTitle": "Si pozvaný/á do Evklidu",
   "ginv.joinIntro": "Evklid môžeš používať bez e-mailovej adresy, s bezplatným balíkom. Pokrok zostáva len na tomto zariadení; účet si môžeš vytvoriť kedykoľvek.",
   "ginv.start": "Začať bez e-mailu",
-  "ginv.invalid": "Táto pozvánka už neplatí (vypršala alebo je vyčerpaná). Vytvor si účet alebo požiadaj o nový odkaz."
+  "ginv.invalid": "Táto pozvánka už neplatí (vypršala alebo je vyčerpaná). Vytvor si účet alebo požiadaj o nový odkaz.",
+  "meja.label": "Bezplatné otázky sú vyčerpané",
+  "meja.sub": "S predplatným získaš:",
+  "meja.price": "{price} mesačne",
+  "meja.more": "Viac otázok pre lektora každý deň aj každý mesiac",
+  "meja.deep": "Podrobnejšie vysvetlenia od schopnejšieho modelu",
+  "meja.lessons": "Interaktívne časti lekcií vo všetkých témach tvojej úrovne",
+  "meja.btnParent": "Poslať odkaz rodičovi",
+  "meja.btnAdult": "Vybrať predplatné",
+  "meja.practice": "Precvičuj ďalej v Precvičovaní"
 }

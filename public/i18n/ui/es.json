@@ -4194,5 +4194,14 @@
   "ginv.joinTitle": "Te han invitado a Evklid",
   "ginv.joinIntro": "Puedes usar Evklid sin correo electrónico, con el plan gratuito. Tu progreso se queda solo en este dispositivo; puedes crear una cuenta cuando quieras.",
   "ginv.start": "Empezar sin correo",
-  "ginv.invalid": "Esta invitación ya no es válida (ha caducado o se ha agotado). Crea una cuenta o pide un enlace nuevo."
+  "ginv.invalid": "Esta invitación ya no es válida (ha caducado o se ha agotado). Crea una cuenta o pide un enlace nuevo.",
+  "meja.label": "Preguntas gratis agotadas",
+  "meja.sub": "Con una suscripción obtienes:",
+  "meja.price": "{price} al mes",
+  "meja.more": "Más preguntas al tutor cada día y cada mes",
+  "meja.deep": "Explicaciones más detalladas de un modelo más capaz",
+  "meja.lessons": "Partes interactivas de las lecciones en todos los temas de tu nivel",
+  "meja.btnParent": "Enviar un enlace a tu madre o padre",
+  "meja.btnAdult": "Elegir una suscripción",
+  "meja.practice": "Sigue practicando en Práctica"
 }

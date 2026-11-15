@@ -4193,5 +4193,14 @@
   "ginv.joinTitle": "Du bist zu Evklid eingeladen",
   "ginv.joinIntro": "Du kannst Evklid ohne E-Mail-Adresse im kostenlosen Paket nutzen. Dein Fortschritt bleibt nur auf diesem Gerät; ein Konto kannst du jederzeit erstellen.",
   "ginv.start": "Ohne E-Mail starten",
-  "ginv.invalid": "Diese Einladung gilt nicht mehr (abgelaufen oder aufgebraucht). Erstelle ein Konto oder bitte um einen neuen Link."
+  "ginv.invalid": "Diese Einladung gilt nicht mehr (abgelaufen oder aufgebraucht). Erstelle ein Konto oder bitte um einen neuen Link.",
+  "meja.label": "Kostenlose Fragen aufgebraucht",
+  "meja.sub": "Mit einem Abo bekommst du:",
+  "meja.price": "{price} pro Monat",
+  "meja.more": "Mehr Fragen an den Tutor jeden Tag und jeden Monat",
+  "meja.deep": "Ausführlichere Erklärungen von einem leistungsfähigeren Modell",
+  "meja.lessons": "Interaktive Lektionsteile in allen Themen deiner Stufe",
+  "meja.btnParent": "Link an ein Elternteil senden",
+  "meja.btnAdult": "Abo wählen",
+  "meja.practice": "Weiter üben im Übungsbereich"
 }

@@ -4194,5 +4194,14 @@
   "ginv.joinTitle": "Tu es invité(e) sur Evklid",
   "ginv.joinIntro": "Tu peux utiliser Evklid sans adresse e-mail, avec l'offre gratuite. Ta progression reste uniquement sur cet appareil ; tu peux créer un compte à tout moment.",
   "ginv.start": "Commencer sans e-mail",
-  "ginv.invalid": "Cette invitation n'est plus valable (expirée ou épuisée). Crée un compte ou demande un nouveau lien."
+  "ginv.invalid": "Cette invitation n'est plus valable (expirée ou épuisée). Crée un compte ou demande un nouveau lien.",
+  "meja.label": "Questions gratuites épuisées",
+  "meja.sub": "Avec un abonnement, tu obtiens :",
+  "meja.price": "{price} par mois",
+  "meja.more": "Plus de questions au tuteur chaque jour et chaque mois",
+  "meja.deep": "Des explications plus détaillées par un modèle plus performant",
+  "meja.lessons": "Les parties interactives des leçons dans tous les thèmes de ton niveau",
+  "meja.btnParent": "Envoyer un lien à un parent",
+  "meja.btnAdult": "Choisir un abonnement",
+  "meja.practice": "Continue à t’entraîner dans Exercices"
 }

@@ -4227,5 +4227,14 @@
   "ginv.joinTitle": "Ești invitat(ă) în Evklid",
   "ginv.joinIntro": "Poți folosi Evklid fără adresă de e-mail, cu planul gratuit. Progresul rămâne doar pe acest dispozitiv; poți crea un cont oricând.",
   "ginv.start": "Începe fără e-mail",
-  "ginv.invalid": "Această invitație nu mai este valabilă (a expirat sau a fost folosită). Creează un cont sau cere un link nou."
+  "ginv.invalid": "Această invitație nu mai este valabilă (a expirat sau a fost folosită). Creează un cont sau cere un link nou.",
+  "meja.label": "Întrebările gratuite s-au terminat",
+  "meja.sub": "Cu un abonament primești:",
+  "meja.price": "{price} pe lună",
+  "meja.more": "Mai multe întrebări pentru tutore în fiecare zi și în fiecare lună",
+  "meja.deep": "Explicații mai detaliate de la un model mai capabil",
+  "meja.lessons": "Părți interactive ale lecțiilor în toate temele nivelului tău",
+  "meja.btnParent": "Trimite un link unui părinte",
+  "meja.btnAdult": "Alege un abonament",
+  "meja.practice": "Exersează în continuare la Exersare"
 }

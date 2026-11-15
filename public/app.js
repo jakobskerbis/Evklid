@@ -97,6 +97,7 @@ import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 import { GUIDE } from "./vodic.js";
 import { initOpen, addOpen, simOverlayOpen, closeSimOverlay } from "./odpri.js";
+import { FREE_LIMIT_CODES, showLimitCard } from "./meja-placilo.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Delo ob nedejavnosti glavne niti (priprava naslednjih zaslonov), da ne zakasni dotikov.
@@ -1467,7 +1468,8 @@ async function send(text, { deep = false, image: attached = null } = {}) {
       if (serverDown(res)) throw new Error(t("off.serverBusy"));
       if (err.chat_off) throw Object.assign(new Error(t("chat.off")), { chatOff: true });
       // Meja porabe (429, limit): sporočilo je »poslano« (ostane v oblačku), polje ostane prazno.
-      throw Object.assign(new Error(serverError(err, res.status)), { limit: res.status === 429 && err.limit === true });
+      // limitBody: kartica »Z naročnino dobiš« ob porabljenih brezplačnih vprašanjih (public/meja-placilo.js).
+      throw Object.assign(new Error(serverError(err, res.status)), { limit: res.status === 429 && err.limit === true, limitBody: res.status === 429 ? err : null });
     }
 
     if (paperCtx && state.paperCtx === paperCtx) state.paperCtx = null; // strežnik ga je shranil s sporočilom
@@ -1576,8 +1578,9 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     // Prekinjena povezava (npr. med objavo nove različice) je TypeError z »network error« v angleščini: učenec
     // dobi razumljivo obvestilo, vprašanje ostane v polju za ponovno pošiljanje.
     const dropped = err instanceof TypeError && /^(network ?error|failed to fetch|load failed|networkerror)/i.test(err.message);
-    if (!dropped) console.error(err);
-    addMessage("assistant", dropped ? t("off.serverBusy") : err.message, false, { error: true });
+    if (!dropped && !err.limit) console.error(err); // meja porabe je pričakovan odgovor, ne napaka aplikacije
+    if (err.limitBody && FREE_LIMIT_CODES.has(err.limitBody.code)) await showLimitCard($("#messages"), err.limitBody, limitCardCtx());
+    else addMessage("assistant", dropped ? t("off.serverBusy") : err.message, false, { error: true });
     // Neuspelo pošiljanje (omrežje, strežnik): besedilo in fotografija se vrneta v polje, da se ne izgubita.
     // Meja porabe: ne (sporočilo ostane v oblačku, polje prazno).
     // »Razloži podrobneje« (deep) se ne vrne v polje (kot mobilna): ponovno pošiljanje bi šlo kot navadno vprašanje.
@@ -1689,6 +1692,16 @@ function checkReplyFits(bubble, id) {
   copy.querySelectorAll("button, .msg-foot, .graph-btn").forEach((b) => b.remove());
   showFull({ kind: "reply", sig: String(id || bubble.textContent.length), title: t("nav.chat"), html: copy.innerHTML });
 }
+
+// Kartica ob porabljenih brezplačnih vprašanjih: Vadnica odpre temo pogovora (če jo ima) ali dnevno vajo.
+const limitCardCtx = () => ({
+  api,
+  toast,
+  level: stopnja(state.student),
+  inApp: / EvklidApp\//.test(navigator.userAgent),
+  openAccount: () => $("#account-tab").click(),
+  openPractice: () => (state.chatFx?.topic?.id ? openTopic(state.chatFx.topic.id) : startSession("daily", { path: state.pathKey })),
+});
 
 // Obvestilo pod odgovorom: koliko podrobnih razlag je še ostalo (nikoli € ali $). Gumb za dokup samo, ko ga
 // strežnik dovoli (polnoleten imetnik, profil 15+, ena ponudba naenkrat).

@@ -4165,5 +4165,14 @@
   "ginv.joinTitle": "Bạn được mời dùng Evklid",
   "ginv.joinIntro": "Bạn có thể dùng Evklid không cần địa chỉ email, với gói miễn phí. Tiến độ chỉ lưu trên thiết bị này; bạn có thể tạo tài khoản bất cứ lúc nào.",
   "ginv.start": "Bắt đầu không cần email",
-  "ginv.invalid": "Lời mời này không còn hiệu lực (đã hết hạn hoặc đã dùng hết). Hãy tạo tài khoản hoặc xin liên kết mới."
+  "ginv.invalid": "Lời mời này không còn hiệu lực (đã hết hạn hoặc đã dùng hết). Hãy tạo tài khoản hoặc xin liên kết mới.",
+  "meja.label": "Đã hết câu hỏi miễn phí",
+  "meja.sub": "Với gói đăng ký, bạn nhận được:",
+  "meja.price": "{price} mỗi tháng",
+  "meja.more": "Nhiều câu hỏi cho gia sư hơn mỗi ngày và mỗi tháng",
+  "meja.deep": "Giải thích chi tiết hơn từ mô hình mạnh hơn",
+  "meja.lessons": "Phần tương tác của bài học trong mọi chủ đề ở cấp của bạn",
+  "meja.btnParent": "Gửi liên kết cho phụ huynh",
+  "meja.btnAdult": "Chọn gói đăng ký",
+  "meja.practice": "Tiếp tục luyện tập trong Luyện tập"
 }

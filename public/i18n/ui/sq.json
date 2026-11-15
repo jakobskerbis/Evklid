@@ -4193,5 +4193,14 @@
   "ginv.joinTitle": "Je ftuar në Evklid",
   "ginv.joinIntro": "Mund ta përdorësh Evklid pa adresë emaili, me paketën falas. Përparimi mbetet vetëm në këtë pajisje; llogari mund të krijosh në çdo kohë.",
   "ginv.start": "Fillo pa email",
-  "ginv.invalid": "Kjo ftesë nuk është më e vlefshme (ka skaduar ose është përdorur). Krijo një llogari ose kërko një lidhje të re."
+  "ginv.invalid": "Kjo ftesë nuk është më e vlefshme (ka skaduar ose është përdorur). Krijo një llogari ose kërko një lidhje të re.",
+  "meja.label": "Pyetjet falas janë mbaruar",
+  "meja.sub": "Me abonim merr:",
+  "meja.price": "{price} në muaj",
+  "meja.more": "Më shumë pyetje për tutorin çdo ditë dhe çdo muaj",
+  "meja.deep": "Shpjegime më të hollësishme nga një model më i aftë",
+  "meja.lessons": "Pjesë interaktive të mësimeve në të gjitha temat e nivelit tënd",
+  "meja.btnParent": "Dërgoji një lidhje prindit",
+  "meja.btnAdult": "Zgjidh një abonim",
+  "meja.practice": "Vazhdo të ushtrohesh te Ushtrimet"
 }
