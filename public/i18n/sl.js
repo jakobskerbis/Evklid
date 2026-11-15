@@ -205,6 +205,7 @@ export default {
   "credit.est": { one: "približno {n} pogovor z inštruktorjem", two: "približno {n} pogovora z inštruktorjem", few: "približno {n} pogovori z inštruktorjem", other: "približno {n} pogovorov z inštruktorjem" },
   "credit.paid": "Plačilo je uspelo. Dodatni pogovori so pripisani.",
   "credit.pending": "Plačilo še preverjamo. Pogovori se pripišejo, ko banka potrdi plačilo.",
+  "credit.payTotal": "Nadaljuj za skupaj {price}",
   // kartice za ponavljanje (public/flashcards.js)
   "mode.cards": "Kartice",
   "mode.cardsSub": "Pomembna dejstva",

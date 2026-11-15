@@ -7,7 +7,9 @@ import { icon, hydrateIcons } from "./icons.js";
 import { consentFields, consentsOk, consentBody } from "./pay-ui.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const money = (cents, currency) => (cents / 100).toLocaleString(locale(), { style: "currency", currency });
+// Cela vsota brez »,00« (10 €), sicer na cent (j 2026-11-15: »Nadaljuj za skupaj 10 €«).
+const money = (cents, currency) =>
+  (cents / 100).toLocaleString(locale(), { style: "currency", currency, minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2 });
 
 export async function renderCreditCard(el, { api }) {
   if (!el) return;
@@ -22,12 +24,15 @@ export async function renderCreditCard(el, { api }) {
     el.innerHTML = "";
     return;
   }
-  // Ploščice: cena zgoraj, ocena pogovorov pod njo; izbrana ploščica dobi obrobo in kljukico.
+  // Velike izbirne ploščice (j 2026-11-15 izjema: samo videz dokupa): glavna vrstica je ocena pogovorov, cena je
+  // ob njej; privzeto je izbran srednji paket. Prave radijske tipke: puščice in Tab delujejo kot v brskalniku.
+  // Razmerja do mesečne meje ne pokažemo: /api/billing/credit vrne samo pogovore paketa, ne meje profila.
+  const pick = d.packs.length === 1 ? 0 : 1;
   const packs = d.packs
     .map(
-      (p, i) => `<label class="credit-pack"><input type="radio" name="pack" value="${esc(p.id)}" ${i === 1 || d.packs.length === 1 ? "checked" : ""}>
-        <b class="credit-price">${esc(money(p.amount, p.currency))}</b>
-        <span class="credit-conv">${esc(t("credit.est", { n: p.conversations }))}</span></label>`,
+      (p, i) => `<label class="credit-pack"><input type="radio" name="pack" value="${esc(p.id)}" data-price="${esc(money(p.amount, p.currency))}" ${i === pick ? "checked" : ""}>
+        <span class="credit-conv">${esc(t("credit.est", { n: p.conversations }))}</span>
+        <b class="credit-price">${esc(money(p.amount, p.currency))}</b></label>`,
     )
     .join("");
   const canPay = d.billing && !d.minor && !d.birth_missing && d.packs.length;
@@ -46,12 +51,20 @@ export async function renderCreditCard(el, { api }) {
             : `<fieldset class="credit-packs"><legend class="sr-only">${esc(t("credit.title"))}</legend>${packs}</fieldset>
       <p class="muted">${esc(t("credit.note"))}</p>`
       }
-      ${canPay ? `${consentFields()}<button type="submit" class="primary">${esc(t("pay.continue"))}</button>` : ""}
+      ${canPay ? `${consentFields()}<button type="submit" class="primary credit-go">${esc(t("pay.continue"))}</button>` : ""}
       <p class="form-error" role="alert" hidden></p>
     </form>`;
   hydrateIcons?.(el);
   const form = el.querySelector("form");
   const err = form.querySelector(".form-error");
+  // En gumb s skupnim zneskom izbranega paketa; besedilo sledi izbiri.
+  const go = form.querySelector(".credit-go");
+  const total = () => {
+    const price = form.querySelector('input[name="pack"]:checked')?.dataset.price;
+    if (go && price) go.textContent = t("credit.payTotal", { price });
+  };
+  total();
+  form.addEventListener("change", (e) => e.target.name === "pack" && total());
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     err.hidden = true;

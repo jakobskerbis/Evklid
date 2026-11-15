@@ -1374,6 +1374,7 @@
   },
   "credit.paid": "Payment successful. The extra conversations have been added.",
   "credit.pending": "We are still checking the payment. The conversations are added once the bank confirms it.",
+  "credit.payTotal": "Continue for {price} total",
   "nav.games": "Games",
   "games.meSub": "Learning through games",
   "games.intro": "Play and learn: {n} games for maths, physics, chemistry, biology and more. The difficulty adapts to you.",

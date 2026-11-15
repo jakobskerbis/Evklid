@@ -1394,6 +1394,7 @@
   },
   "credit.paid": "Płatność udana. Dodatkowe rozmowy zostały dodane.",
   "credit.pending": "Wciąż sprawdzamy płatność. Rozmowy zostaną dodane, gdy bank ją potwierdzi.",
+  "credit.payTotal": "Przejdź dalej za łącznie {price}",
   "nav.games": "Gry",
   "games.meSub": "Nauka przez zabawę",
   "games.intro": "Graj i ucz się: {n} gier z matematyki, fizyki, chemii, biologii i innych przedmiotów. Poziom dopasowuje się do ciebie.",

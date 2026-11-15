@@ -1367,6 +1367,7 @@
   },
   "credit.paid": "付款成功。額外對話已入帳。",
   "credit.pending": "我們仍在確認付款。銀行確認後對話即入帳。",
+  "credit.payTotal": "繼續，共計 {price}",
   "nav.games": "遊戲",
   "games.meSub": "在遊戲中學習",
   "games.intro": "邊玩邊學：{n} 個數學、物理、化學、生物等科目的遊戲。難度會隨你調整。",

@@ -1384,6 +1384,7 @@
   },
   "credit.paid": "Plaćanje je uspjelo. Dodatni razgovori su pripisani.",
   "credit.pending": "Plaćanje još provjeravamo. Razgovori se pripisuju kad banka potvrdi plaćanje.",
+  "credit.payTotal": "Nastavi za ukupno {price}",
   "nav.games": "Igre",
   "games.meSub": "Učenje kroz igru",
   "games.intro": "Igraj i uči: {n} igara iz matematike, fizike, kemije, biologije i drugih predmeta. Težina se prilagođava tebi.",

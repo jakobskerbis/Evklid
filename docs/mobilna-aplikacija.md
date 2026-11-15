@@ -93,7 +93,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Okna | več oken hkrati (`okna.js`) | L | samo iPad (Split View); na telefonu ne | ✗ (namerno na telefonu) |
 | Nastavitve | slogi (Igriv, Temen, zgodovinski), lastne barve, jezik, tempo, tipkovnica, glas; aplikacija ima raven, opomnike, vibracijo | M | naravno; slogi kot dodatne palete v `theme.ts` | delno |
 | Račun staršev | otroci, plačila, darila, šole (`account.js`) | M | odpri spletno stran prijavljeno (`app-link.js` v obratni smeri) | delno (naročnina, izbris) |
-| Nadgradnja stopnje, dokup razlag, darilo po stopnji | gumb »Odpri: …« (doplačilo razlike), gumb »Dokupi razlage« ob obvestilu o porabi, izbira stopnje darilne kode (`account.js`, `app.js` addAllowanceNote) | S | splet; aplikacija iz trgovine teh nakupov ne sme ponuditi mimo trgovine | delno (cena stopnje, Družina, obvestilo o porabi brez gumba) |
+| Nadgradnja stopnje, dokup razlag, darilo po stopnji | gumb »Odpri: …« (doplačilo razlike), gumb »Dokupi razlage« ob obvestilu o porabi, izbira stopnje darilne kode (`account.js`, `app.js` addAllowanceNote) | S | splet; aplikacija iz trgovine teh nakupov ne sme ponuditi mimo trgovine | delno (cena stopnje, Družina, obvestilo o porabi brez gumba; mobilna aplikacija nima zaslona za dokup pogovorov, zato videza izbire dokupa iz `credit-card.js` — ploščice in gumb »Nadaljuj za skupaj …«, j 2026-11-15 — ni treba usklajevati) |
 | Skrbnik | upravljanje (APK, uporabniki) | S | samo splet | ✗ (namerno) |
 | Skeniraj: po korakih | reševalnik po korakih (`public/scan/`); aplikacija pošlje fotografijo inštruktorju | M | WebView strani skeniranja ali naravni zaslon korakov | delno |
 | Govor | mikrofon v klepetu (`speech.js`) | M | naravna odvisnost (prepoznava govora) → nova gradnja APK | ✗ |
