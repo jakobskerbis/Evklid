@@ -3,7 +3,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { growthReport, cleanSource, sourceFromQuery } from "../server/rast.js";
+import { growthReport, cleanSource, sourceFromQuery, migrateRast } from "../server/rast.js";
 
 test("source tags: cleaned to a short slug; referral and class code tag themselves", () => {
   assert.equal(cleanSource("Facebook Učitelji!"), "facebook-ucitelji");
@@ -115,4 +115,71 @@ test("growth report: admin profiles are not counted; goal met at 40 % with enoug
   assert.equal(r.newProfiles, 5);
   assert.deepEqual(r.d7, { eligible: 5, returned: 2, pct: 0.4 });
   assert.equal(r.goal.status, "met");
+});
+
+test("account funnel: sign-up → e-mail → first task → day 3 and 7 → payment; nothing new stored, admins left out", async () => {
+  const { migrateAccounts } = await import("../server/accounts/schema.js");
+  const { migrateBilling } = await import("../server/accounts/billing.js");
+  const { migrateCredits } = await import("../server/placila/krediti.js");
+  const store = openDb(":memory:");
+  const db = store.db;
+  migrateAccounts(db);
+  migrateBilling(db);
+  migrateCredits(db);
+  const DAY = 86400000;
+  const now = Date.now();
+  const midnight = Date.parse(new Date(now).toISOString().slice(0, 10));
+  const at = (daysAgo, h = 10) => new Date(midnight - daysAgo * DAY + h * 3600000).toISOString().replace("T", " ").slice(0, 19);
+  let n = 0;
+  const account = (daysAgo, { verified = false, admin = 0, email } = {}) =>
+    ++n && db
+      .prepare(
+        `INSERT INTO parents (email, password_hash, privacy_version, unsubscribe_token, referral_code, is_admin, email_verified_at, created_at)
+         VALUES (?, 'x', 'v1', ?, ?, ?, ?, ?)`,
+      )
+      .run(email || `p${n}@test.si`, `u${n}`, `R${n}`, admin, verified ? at(daysAgo, 9) : null, at(daysAgo, 8)).lastInsertRowid;
+  const kid = (parent, daysAgo) => db.prepare("INSERT INTO students (name, settings, parent_id, created_at) VALUES ('K', '{}', ?, ?)").run(parent, at(daysAgo, 8)).lastInsertRowid;
+  const act = (s, daysAgo) => db.prepare("INSERT INTO xp_events (student_id, amount, reason, created_at) VALUES (?, 5, 'test', ?)").run(s, at(daysAgo));
+  const task = (s, daysAgo, h = 10) => db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, solved, attempts, created_at) VALUES (?, 'T', 1, '{}', 1, 1, ?)").run(s, at(daysAgo, h));
+
+  // A: pred 10 dnevi, potrjen, naloga takoj, nazaj 4. in 8. dan, plačal naročnino (kv ai_paid_).
+  const a = account(10, { verified: true });
+  const ak = kid(a, 10);
+  task(ak, 10);
+  act(ak, 6);
+  act(ak, 2);
+  db.prepare("INSERT INTO kv (key, value) VALUES (?, ?)").run(`ai_paid_${a}`, JSON.stringify([{ start: 0, end: now + DAY, eur: 8.19, cents: 999 }]));
+  // B: pred 8 dnevi, nepotrjen, naloga 3. dan (v 7 dneh, ne v 24 urah), drugi profil se vrne 7. dan; nedokončan paket ne šteje.
+  const b = account(8);
+  kid(b, 8);
+  const bk2 = kid(b, 8);
+  task(bk2, 5);
+  act(bk2, 1);
+  db.prepare("INSERT INTO passes (parent_id, student_id, days, amount, ai_usd, status) VALUES (?, ?, 14, 499, 0.5, 'pending')").run(b, bk2);
+  // C: pred 2 dnevoma, potrjen: za 3. in 7. dan še ni zrel; plačal dokup AI.
+  const c = account(2, { verified: true });
+  task(kid(c, 2), 2);
+  db.prepare("INSERT INTO ai_credit_buys (parent_id, pack, amount, credit_usd, status, paid_at) VALUES (?, 'p5', 500, 4, 'active', ?)").run(c, at(1));
+  // Skrbnik (zastavica in e-naslov) in star račun: ne štejeta.
+  task(kid(account(3, { admin: 1 }), 3), 3);
+  task(kid(account(3, { email: "jaz@evklid.app" }), 3), 3);
+  account(40);
+
+  migrateRast(db); // tabela obstoječega števca obiskov
+  const before = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name").all().map((r) => r.name).join();
+  const f = growthReport(db, { days: 30, now, adminEmails: ["JAZ@evklid.app"] }).funnel;
+  assert.equal(f.registered, 3);
+  assert.deepEqual(f.verified, { eligible: 3, returned: 2, pct: 0.667 });
+  assert.deepEqual(f.task24, { eligible: 3, returned: 2, pct: 0.667 }); // A in C
+  assert.deepEqual(f.task7, { eligible: 3, returned: 3, pct: 1 });
+  assert.deepEqual(f.d3, { eligible: 2, returned: 1, pct: 0.5 }); // A (4. dan); B se v 3.–6. dnevu ni vrnil
+  assert.deepEqual(f.d7, { eligible: 2, returned: 2, pct: 1 }); // A 8. dan, B 7. dan
+  assert.deepEqual(f.paid, { eligible: 3, returned: 2, pct: 0.667 }); // A in C; B ima samo nedokončan paket
+  // Poročilo ne ustvari tabel in ne vrne e-naslovov.
+  const after = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name").all().map((r) => r.name).join();
+  assert.equal(after, before);
+  assert.ok(!JSON.stringify(f).includes("@"));
+  // Šolsko poročilo in baza brez računov: lijaka ni.
+  assert.equal(growthReport(db, { days: 30, now, schoolId: 1 }).funnel, null);
+  assert.equal(growthReport(openDb(":memory:").db, { days: 30, now }).funnel, null);
 });
