@@ -248,12 +248,11 @@ export function mountAccounts(app, store, opts = {}) {
     // Star račun brez datuma rojstva: aplikacija ga ob prijavi enkrat vpraša (need_birth), pozneje v zavihku Račun.
     birth_missing: !p.is_guest && !p.birth_date,
     need_birth: !p.is_guest && !p.birth_date && !p.birth_asked_at,
-    // Račun brez gesla (prijava z Apple): potrditev imetnika s kodo na e-pošto namesto gesla.
-    has_password: !String(p.password_hash || "").startsWith("none$"),
     // Politika zasebnosti se je spremenila po registraciji: aplikacija enkrat pokaže kratko obvestilo s povezavo.
     privacy_notice: !p.is_guest && (p.privacy_seen || p.privacy_version || "") < PRIVACY_VERSION ? PRIVACY_VERSION : null,
     verified: !!p.email_verified_at,
-    // Račun s prijavo z Apple nima gesla: splet za izvoz in izbris namesto gesla ponudi nastavitev gesla.
+    // Račun brez gesla (prijava z Apple): potrditev imetnika s kodo na e-pošto namesto gesla; splet za izvoz
+    // in izbris namesto gesla ponudi nastavitev gesla. (Prej je bil ključ zapisan dvakrat; veljal je ta, z gostom.)
     has_password: !p.is_guest && !String(p.password_hash || "").startsWith("none$"),
     // S kodo za skrbnika (A9) je nova seja vedno nepotrjena: odgovori prijave skrbniških delov ne obljubijo
     // (/api/account pove po seji).

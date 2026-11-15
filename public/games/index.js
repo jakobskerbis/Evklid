@@ -864,7 +864,7 @@ function renderShop(msg = "", top = false) {
     f.querySelector("button").disabled = true;
     try {
       await ctx.api(`/api/students/${s.id}/feedback`, { method: "POST", body: JSON.stringify({ kind: "cosmetics", ideas: wish, lang }) });
-      f.outerHTML = `<p class="gm-shop-msg gm-wish-done" role="status" tabindex="-1">${esc(t("games.wishThanks"))}</p>`;
+      f.outerHTML = `<p class="gm-shop-msg gm-wish-done" role="status" tabindex="-1">${esc(t("games.shopWishThanks"))}</p>`;
       root.querySelector(".gm-wish-done")?.focus();
     } catch (err) {
       f.querySelector("button").disabled = false;
