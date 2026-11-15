@@ -4191,5 +4191,11 @@
   "ginv.joinTitle": "Meghívtak az Evklidbe",
   "ginv.joinIntro": "Az Evklidet e-mail-cím nélkül, az ingyenes csomaggal használhatod. A haladásod csak ezen az eszközön marad; fiókot bármikor létrehozhatsz.",
   "ginv.start": "Kezdés e-mail nélkül",
-  "ginv.invalid": "Ez a meghívó már nem érvényes (lejárt vagy elfogyott). Hozz létre fiókot, vagy kérj új linket."
+  "ginv.invalid": "Ez a meghívó már nem érvényes (lejárt vagy elfogyott). Hozz létre fiókot, vagy kérj új linket.",
+  "povabi.title": "Mutasd meg az Evklidet egy barátodnak",
+  "povabi.text": "Ha az Evklid segít neked, küldd el a linket egy barátodnak, aki szintén tanul.",
+  "povabi.reward": "Amikor egy általad meghívott család előfizet és először fizet, mindkét család egy hónapot ingyen kap.",
+  "povabi.later": "Most nem",
+  "povabi.link": "Link egy barátnak",
+  "povabi.shareText": "Az Evkliddel tanulok. Próbáld ki te is:"
 }

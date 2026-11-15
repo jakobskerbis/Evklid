@@ -4194,5 +4194,11 @@
   "ginv.joinTitle": "Te han invitado a Evklid",
   "ginv.joinIntro": "Puedes usar Evklid sin correo electrónico, con el plan gratuito. Tu progreso se queda solo en este dispositivo; puedes crear una cuenta cuando quieras.",
   "ginv.start": "Empezar sin correo",
-  "ginv.invalid": "Esta invitación ya no es válida (ha caducado o se ha agotado). Crea una cuenta o pide un enlace nuevo."
+  "ginv.invalid": "Esta invitación ya no es válida (ha caducado o se ha agotado). Crea una cuenta o pide un enlace nuevo.",
+  "povabi.title": "Enseña Evklid a un amigo",
+  "povabi.text": "Si Evklid te ayuda, envía el enlace a un amigo que también estudie.",
+  "povabi.reward": "Cuando una familia a la que invites se suscriba y pague por primera vez, ambas familias recibirán un mes gratis.",
+  "povabi.later": "Ahora no",
+  "povabi.link": "Enlace para un amigo",
+  "povabi.shareText": "Estoy aprendiendo con Evklid. Pruébalo tú también:"
 }

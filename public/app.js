@@ -12,6 +12,7 @@ import { dialectsFor } from "./dialects.js";
 
 hydrateIcons();
 import { initAccount, prefetchAccountStatus, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { povabiPoUspehu } from "./povabi.js";
 import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
@@ -3755,6 +3756,7 @@ async function checkTask(task, ctx, value) {
       html += `<div class="card result ${p.passed ? "celebrate" : ""}">${p.passed ? `<div class="result-icon">${icon("award")}</div>` : ""}<h2>${p.passed ? t("placement.passed") : t("placement.notYet")}</h2>
         <p>${t("placement.score", { correct: p.correct, total: p.total })}${p.passed ? (p.xp ? ` +${p.xp.gained} XP` : "") : t("placement.startFirst")}</p>${r.unlocked ? unlockedHtml(r.unlocked) : ""}
         <button class="primary big" id="fb-back">${t("result.toPath")}</button></div>`;
+      if (p.passed) html += `<div class="povabi-slot"></div>`;
     } else html += next();
   } else if (r.closed) {
     html = `<div class="fb ${r.correct ? "ok" : "bad"}">${icon(r.correct ? "circle-check" : "circle-x")}<span>${r.correct ? t("task.correct") : t("task.wrong")}</span></div>${closedNote}
@@ -3769,6 +3771,8 @@ async function checkTask(task, ctx, value) {
       ${r.selfExplain ? `<div class="fb info">${icon("circle-help")}<span>${escapeHtml(r.selfExplain)}</span></div>` : ""}
       ${r.offline ? "" : tutorRow(task.id)}`;
     html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next();
+    // Osvojena tema: povabilo po končani nalogi; med serijo (trening, priprava na test) šele, ko je serija končana.
+    if (r.mastered && !r.offline && (ctx.mode === "practice" || r.next?.finished)) html += `<div class="povabi-slot"></div>`;
   } else {
     html = `<div class="fb bad shake">${icon("circle-x")}<span>${escapeHtml(fbText(r) || t("task.wrong"))}</span></div>
       ${mistakeHtml(r.mistake)}
@@ -3785,6 +3789,8 @@ async function checkTask(task, ctx, value) {
     }
   }
   fb.innerHTML = html;
+  const sid = state.student?.id;
+  if (accountsOn()) povabiPoUspehu(fb.querySelector(".povabi-slot"), { api, profileId: sid, toast, alive: () => state.student?.id === sid });
   // Nov XP (pravilno, opravljen preizkus znanja, konec treninga): zgornji znesek se animira, ob novi ravni čestitka.
   if (!r.offline && (r.correct || r.xp || r.placement?.xp || r.next?.xp)) refreshXp();
   // Ko je naloga zaključena, plošča izgine, da sta razlaga in gumb »Naprej« vidna.

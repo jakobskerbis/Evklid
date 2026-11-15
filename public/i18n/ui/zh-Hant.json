@@ -4165,5 +4165,11 @@
   "ginv.joinTitle": "你受邀使用 Evklid",
   "ginv.joinIntro": "你可以無需電子郵件地址、使用免費方案來使用 Evklid。學習進度只會保存在這台裝置上；你隨時可以建立帳戶。",
   "ginv.start": "無需電子郵件開始",
-  "ginv.invalid": "此邀請已失效（已過期或名額已滿）。請建立帳戶或索取新連結。"
+  "ginv.invalid": "此邀請已失效（已過期或名額已滿）。請建立帳戶或索取新連結。",
+  "povabi.title": "把 Evklid 推薦給朋友",
+  "povabi.text": "如果 Evklid 對你有幫助，就把連結傳給也在學習的朋友吧。",
+  "povabi.reward": "你邀請的家庭訂閱並首次付款後，兩個家庭都可免費使用一個月。",
+  "povabi.later": "以後再說",
+  "povabi.link": "給朋友的連結",
+  "povabi.shareText": "我在用 Evklid 學習，你也來試試："
 }
