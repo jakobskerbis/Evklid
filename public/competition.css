@@ -17,6 +17,15 @@
 .comp-hero .hero-icon svg.i { fill: none; }
 .contest-timer { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 900; font-variant-numeric: tabular-nums; font-size: 1.05rem; flex: none; }
 .contest-timer.warn { background: var(--danger-bg); color: var(--danger); }
+.contest-bar > .muted { flex: 1; min-width: 0; }
+.contest-count { flex: none; font-variant-numeric: tabular-nums; font-weight: 900; color: var(--muted); }
+/* Telefon med testom (j 2026-11-15): ob pomiku navzdol se zgornja vrstica skrije in timer se pripne čisto na vrh;
+   ob pomiku navzgor se vrstica vrne (app.js → glavaMedTestom). */
+@media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
+  .topbar { transition: margin-top 0.2s ease; }
+  body.glava-skrita .topbar { margin-top: calc(-1 * var(--glava-h, 64px)); }
+}
+@media (prefers-reduced-motion: reduce) { .topbar { transition: none; } }
 .pts { font-size: 0.8rem; font-weight: 800; color: #8a5a00; background: color-mix(in srgb, var(--gold) 22%, transparent); padding: 3px 10px; border-radius: 999px; }
 .dark .pts { color: #ffd27a; }
 .contest-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
