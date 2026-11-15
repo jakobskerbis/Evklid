@@ -13,6 +13,7 @@ import { toChoice } from "./practice/choice.js";
 import { taskLanguage, localName } from "./exams.js";
 import { levelProgress, cleanXpGoal } from "../public/xp-levels.js";
 import { nowParts } from "./schedule.js";
+import { schoolYear } from "./games.js";
 
 // Tekmovalni trening in poskusno tekmovanje veljata tudi za priprave na izpite.
 const isPrepPath = (key) => isCompetitionPath(key) || isExamPath(key);
@@ -77,6 +78,11 @@ export class Progress {
   // jezike, ki v vmesniku padejo nazaj nanjo (bhodžpuri, maratščina …), sicer angleško.
   taskLang(studentId) {
     return taskLanguage(this.store.getStudent?.(studentId)?.settings?.language);
+  }
+  // Leto šolanja (OŠ 1–9, SŠ 10–13, faks 14) za izbiro nalog po razredu (practice/index.js fitsYear).
+  taskYear(studentId) {
+    const st = this.store.getStudent?.(studentId);
+    return st ? schoolYear(st.settings || {}) : null;
   }
   // Jezik vmesnika (za imena tem mednarodne poti v slovenskem vmesniku).
   uiLang(studentId) {
@@ -220,7 +226,7 @@ export class Progress {
     if (!hasGenerator(topicId)) return null;
     const s = this.state(studentId, topicId);
     if (!s.seen_example) {
-      const ex = generateTask(topicId, 1, undefined, this.taskLang(studentId));
+      const ex = generateTask(topicId, 1, undefined, this.taskLang(studentId), this.taskYear(studentId));
       s.seen_example = 1;
       if (s.status === "new") s.status = "learning";
       this.saveState(s);
@@ -237,7 +243,7 @@ export class Progress {
     if (pending) {
       return { task: { id: pending.id, mode: "practice", ...publicTask(JSON.parse(pending.payload)) }, state: { level: s.level, streak: s.streak }, resumed: true };
     }
-    const task = generateTask(topicId, s.level, undefined, this.taskLang(studentId));
+    const task = generateTask(topicId, s.level, undefined, this.taskLang(studentId), this.taskYear(studentId));
     const id = this.saveTask(studentId, task, "practice");
     return { task: { id, mode: "practice", ...publicTask(task) }, state: { level: s.level, streak: s.streak } };
   }
@@ -282,7 +288,7 @@ export class Progress {
         this.saveState(st);
       }
       const level = item.level ?? st.level;
-      let task = generateTask(item.topic, level, undefined, this.taskLang(sess.student_id));
+      let task = generateTask(item.topic, level, undefined, this.taskLang(sess.student_id), this.taskYear(sess.student_id));
       // Izpitni format: izbirna vprašanja (A–D) namesto vpisa števila.
       if (item.format === "choice") task = toChoice(task, task.seed, item.options || 4);
       const id = this.saveTask(sess.student_id, task, item.mode, sessionId);
@@ -763,7 +769,7 @@ export class Progress {
       info[t.id] = { id: t.id, name: topic.name, goals: topic.goals, unit: topic.unit, path: pathKey, subject: topic.subject, pathLabel: path.label };
       tasks[t.id] = Array.from({ length: perTopic }, (_, i) => {
         const level = Math.max(1, Math.min(3, t.level + (i % 3 === 2 ? 1 : 0)));
-        const task = generateTask(t.id, level, undefined, this.taskLang(studentId));
+        const task = generateTask(t.id, level, undefined, this.taskLang(studentId), this.taskYear(studentId));
         issue.run(studentId, t.id, task.seed, level);
         return { level, seed: task.seed, task: publicTask(task), answer: task.answer, solution: task.solution, hint: task.hint };
       });
@@ -797,7 +803,7 @@ export class Progress {
       const xp = left > 0;
       left -= 1;
       if (!xp) noXp += 1;
-      const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId));
+      const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId), this.taskYear(studentId));
       const id = this.saveTask(studentId, task, "practice");
       const out = this.answer(studentId, id, String(r.answer ?? "").slice(0, 200), { xp });
       synced += 1;

@@ -80,3 +80,42 @@ test("učenec 6. razreda: razdelek, trening in poskusno tekmovanje samo s temami
     server.close();
   }
 });
+
+// Naloge po razredu (j, 15. 11. 2026): do 4. razreda generatorji iz tek-mat-os-mladi.js (majhna števila,
+// brez stopinj, enačb in binomskih simbolov), od 5. razreda prejšnji. Brez razreda se nič ne spremeni.
+test("tekmovalne naloge za 1.–4. razred so iz mladih generatorjev, od 5. razreda prejšnje", async () => {
+  const { generateTask } = await import("../server/practice/index.js");
+  const young = idsOf("MAT-TEK-OS").filter((id) => minYear(id) <= 4);
+  assert.ok(young.length >= 6, young.join(", "));
+  for (const id of young) {
+    for (let seed = 0; seed < 60; seed++) {
+      const level = 1 + (seed % 3);
+      for (const year of [1, 2, 3, 4]) {
+        const t = generateTask(id, level, seed, "sl", year);
+        assert.match(t.generator, /^tek-mladi-/, `${id} ${year}. razred`);
+        assert.doesNotMatch(t.text + t.solution, /\\binom|°|\\circ|undefined|NaN/, `${t.generator}: ${t.text}`);
+      }
+      assert.doesNotMatch(generateTask(id, level, seed, "sl", 5).generator, /^tek-mladi-/);
+      assert.doesNotMatch(generateTask(id, level, seed, "sl").generator, /^tek-mladi-/);
+    }
+  }
+});
+
+test("učenec 3. razreda: poskusno tekmovanje z nalogami za mlajše", async () => {
+  const store = openDb(":memory:");
+  const app = createApp(store, { streamFn: async () => ({ content: [], text: "", stopReason: "end_turn" }) });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const post = async (path, body) => (await fetch(base + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })).json();
+  try {
+    const s = await post("/api/students", { name: "Tim", settings: { educational_track: "OSNOVNA_SOLA", curriculum_level: "3. razred", subject: "MAT" } });
+    const ct = await post(`/api/students/${s.id}/contest`, { path: "MAT-TEK-OS" });
+    assert.ok(ct.sessionId);
+    const plan = JSON.parse(store.db.prepare("SELECT plan FROM sessions WHERE id = ?").get(ct.sessionId).plan);
+    assert.ok(plan.every((p) => minYear(p.topic) <= 3));
+    const first = JSON.parse(store.db.prepare("SELECT payload FROM tasks WHERE session_id = ? ORDER BY id LIMIT 1").get(ct.sessionId).payload);
+    assert.match(first.generator, /^tek-mladi-/);
+  } finally {
+    server.close();
+  }
+});
