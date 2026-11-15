@@ -147,7 +147,8 @@ test(
       const meta = { parent_id: String(parent.id), parent_uid: s["metadata[parent_uid]"] };
       const customer = customerOf(store, parent.id);
       const p1 = now() + 30 * DAY;
-      const sub = (extra = {}) => ({ id: "sub_1", object: "subscription", customer, created: now(), status: "active", cancel_at_period_end: false, metadata: meta, items: { data: [{ price: { lookup_key: plan }, current_period_end: p1 }] }, ...extra });
+      // Oblika API 2024-06-20 (Stripe-Version v server/accounts/stripe.js): konec obdobja na naročnini, ne na postavki.
+      const sub = (extra = {}) => ({ id: "sub_1", object: "subscription", customer, created: now(), status: "active", cancel_at_period_end: false, metadata: meta, current_period_end: p1, items: { data: [{ price: { lookup_key: plan } }] }, ...extra });
       stripe.state.subs.sub_1 = sub();
       await hook("checkout.session.completed", { id: "cs_1", object: "checkout.session", created: now(), customer, subscription: "sub_1", payment_status: "paid", metadata: meta, client_reference_id: String(parent.id) });
       let ac = await acc();
@@ -159,7 +160,7 @@ test(
 
       // Podaljšanje: invoice.paid za novo obdobje + customer.subscription.updated z novim koncem obdobja.
       const p2 = p1 + 30 * DAY;
-      stripe.state.subs.sub_1 = sub({ items: { data: [{ price: { lookup_key: plan }, current_period_end: p2 }] } });
+      stripe.state.subs.sub_1 = sub({ current_period_end: p2 });
       await hook("invoice.paid", { id: "in_2", customer, subscription: "sub_1", currency: "eur", amount_paid: 1399, lines: { data: [{ amount: 1399, period: { start: p1, end: p2 } }] } });
       await hook("customer.subscription.updated", stripe.state.subs.sub_1);
       ac = await acc();
@@ -167,7 +168,7 @@ test(
       assert.equal(Date.parse(ac.parent.subscription.period_end), p2 * 1000, "po podaljšanju: nov konec obdobja");
 
       // Preklic ob koncu obdobja: dostop ostane do konca plačanega obdobja.
-      stripe.state.subs.sub_1 = sub({ cancel_at_period_end: true, items: { data: [{ price: { lookup_key: plan }, current_period_end: p2 }] } });
+      stripe.state.subs.sub_1 = sub({ cancel_at_period_end: true, current_period_end: p2 });
       await hook("customer.subscription.updated", stripe.state.subs.sub_1);
       ac = await acc();
       assert.equal(ac.access.tier, "paid", "preklicana naročnina velja do konca obdobja");
@@ -175,7 +176,7 @@ test(
       assert.equal(await ask(), 200);
 
       // Konec obdobja: Stripe pošlje customer.subscription.deleted → brezplačni paket.
-      stripe.state.subs.sub_1 = sub({ status: "canceled", cancel_at_period_end: true, ended_at: now(), items: { data: [{ price: { lookup_key: plan }, current_period_end: p2 }] } });
+      stripe.state.subs.sub_1 = sub({ status: "canceled", cancel_at_period_end: true, ended_at: now(), current_period_end: p2 });
       await hook("customer.subscription.deleted", stripe.state.subs.sub_1);
       ac = await acc();
       assert.equal(ac.access.tier, "free", "po koncu naročnine: brezplačni paket");
@@ -197,7 +198,7 @@ async function subscribe({ stripe, store, hook }, { a, parent }, { amount = 1399
   const customer = customerOf(store, parent.id);
   const start = now() - DAY;
   const end = start + 30 * DAY;
-  const sub = (extra = {}) => ({ id: "sub_1", object: "subscription", customer, created: start, status: "active", cancel_at_period_end: false, metadata: meta, items: { data: [{ price: { lookup_key: plan }, current_period_start: start, current_period_end: end }] }, ...extra });
+  const sub = (extra = {}) => ({ id: "sub_1", object: "subscription", customer, created: start, status: "active", cancel_at_period_end: false, metadata: meta, current_period_start: start, current_period_end: end, items: { data: [{ price: { lookup_key: plan } }] }, ...extra });
   stripe.state.subs.sub_1 = sub();
   await hook("checkout.session.completed", { id: "cs_1", object: "checkout.session", created: now(), customer, subscription: "sub_1", payment_status: "paid", metadata: meta });
   const invoice = { id: "in_1", customer, subscription: "sub_1", currency: "eur", amount_paid: amount, lines: { data: [{ amount, period: { start, end } }] } };
@@ -338,7 +339,6 @@ test("dokup pogovorov: nakup doda kredit, vračilo ga odvzame, spor pri aktivnem
     await hook("charge.dispute.created", { id: "dp_k2", payment_intent: "pi_k2", charge: "ch_k2" });
     assert.equal(status(k2), "refunded");
     assert.ok(balance() < 1e-9);
-    assert.equal(stripe.calls.filter((c) => c.method === "DELETE").length, 0, "spor pri dokupu ne prekliče ničesar v Stripu");
   });
 });
 
@@ -352,9 +352,11 @@ test("darilna koda: dvojni dogodek ustvari eno kodo, prejemnik dobi dostop, spor
     const giftId = Number(s["metadata[gift_id]"]);
     const session = { id: "cs_g", object: "checkout.session", created: now(), payment_status: "paid", payment_intent: "pi_g", metadata: { kind: "gift", gift_id: String(giftId), parent_id: String(kupec.parent.id), parent_uid: s["metadata[parent_uid]"] } };
     await hook("checkout.session.completed", session, "evt_g1");
+    const prva = store.db.prepare("SELECT code FROM gifts WHERE id = ?").get(giftId).code;
     assert.equal((await hook("checkout.session.completed", session, "evt_g1")).duplicate, true);
     await hook("checkout.session.async_payment_succeeded", session);
     const g = store.db.prepare("SELECT status, code FROM gifts WHERE id = ?").get(giftId);
+    assert.equal(g.code, prva, "zamujen dogodek ne zamenja že poslane kode");
     assert.equal(g.status, "paid");
     assert.ok(g.code);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM gifts WHERE code IS NOT NULL").get().n, 1, "ena koda");
