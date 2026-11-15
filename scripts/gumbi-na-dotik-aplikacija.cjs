@@ -51,10 +51,13 @@ async function profil(p, raven) {
   await p.waitForTimeout(300);
 }
 
-async function stej(p) {
+// Zaslon, ki se še nalaga (lekcija se izriše po delih v ~0,6 s), ni napaka: šteje le, če se klikljivi elementi
+// pojavljajo še v drugem zaporednem oknu.
+async function stej(p, krog = 0) {
   await p.evaluate(() => ((window.__najdbe = []), (window.__stej = true)));
   await p.waitForTimeout(MIR);
   const n = ponavlja(await p.evaluate(() => ((window.__stej = false), window.__najdbe)));
+  if (n.length && !krog) return stej(p, 1);
   return n.length ? [...new Set(n)].slice(0, 4).concat(`${n.length}×`) : [];
 }
 
