@@ -13,7 +13,13 @@ import { linkBox, bindLinkBox } from "./pay-ui.js";
 import { levelPrices } from "./pristajalna.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const money = (minor, currency) => (minor / 100).toLocaleString(locale(), { style: "currency", currency });
+// Valute brez decimalk imajo v ceniku cele enote (server/accounts/plans.js ZERO_DECIMAL, enako public/account.js money).
+const ZERO_DECIMAL = new Set(["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"]);
+const money = (minor, currency) => {
+  const major = ZERO_DECIMAL.has(currency) ? minor : minor / 100;
+  const digits = currency !== "EUR" && Number.isInteger(major) ? 0 : 2;
+  return major.toLocaleString(locale(), { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
+};
 
 // Kode porabljenega brezplačnega dela (server/usage.js BLOCK_TEXT; server/accounts/index.js freeBlock, aiBlockFor).
 export const FREE_LIMIT_CODES = new Set(["block.freeDaily", "block.freeMonth", "block.freePool", "block.trialOut"]);
