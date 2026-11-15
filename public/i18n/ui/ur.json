@@ -3033,7 +3033,7 @@
   "rast.qCol": "فی طالب علم روزانہ سوالات",
   "rast.aiCol": "فی طالب علم ماہانہ AI",
   "rast.funnel.title": "اکاؤنٹس کی قیف",
-  "rast.funnel.registered": "اس مدت میں نئے اکاؤنٹس",
+  "rast.funnel.registered": "نئے اکاؤنٹس (اس مدت میں)",
   "rast.funnel.verified": "نے ای میل کی تصدیق کی ({b} میں سے {a})",
   "rast.funnel.task24": "نے 24 گھنٹوں میں پہلا سوال حل کیا ({b} میں سے {a})",
   "rast.funnel.task7": "نے 7 دنوں میں پہلا سوال حل کیا ({b} میں سے {a})",

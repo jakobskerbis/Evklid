@@ -3033,7 +3033,7 @@
   "rast.qCol": "Öğrenci başına günlük soru",
   "rast.aiCol": "Öğrenci başına aylık yapay zekâ",
   "rast.funnel.title": "Hesap hunisi",
-  "rast.funnel.registered": "dönemdeki yeni hesap",
+  "rast.funnel.registered": "yeni hesap (bu dönemde)",
   "rast.funnel.verified": "e-postasını doğruladı ({a} / {b})",
   "rast.funnel.task24": "24 saat içinde ilk görevi çözdü ({a} / {b})",
   "rast.funnel.task7": "7 gün içinde ilk görevi çözdü ({a} / {b})",

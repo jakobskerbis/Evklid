@@ -3033,7 +3033,7 @@
   "rast.qCol": "प्रति छात्र प्रति दिन प्रश्न",
   "rast.aiCol": "प्रति छात्र मासिक AI",
   "rast.funnel.title": "खाता फ़नल",
-  "rast.funnel.registered": "इस अवधि में नए खाते",
+  "rast.funnel.registered": "नए खाते (इस अवधि में)",
   "rast.funnel.verified": "ने ई-मेल की पुष्टि की ({b} में से {a})",
   "rast.funnel.task24": "ने 24 घंटे में पहला सवाल हल किया ({b} में से {a})",
   "rast.funnel.task7": "ने 7 दिन में पहला सवाल हल किया ({b} में से {a})",

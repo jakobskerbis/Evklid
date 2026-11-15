@@ -3043,7 +3043,7 @@
   "rast.funnel.d3": "sono tornati nei giorni 3–6 ({a} su {b})",
   "rast.funnel.d7": "sono tornati nei giorni 7–13 ({a} su {b})",
   "rast.funnel.paid": "hanno pagato ({a} su {b})",
-  "rast.funnel.note": "Ogni account conta con tutti i suoi profili, giorni dalla registrazione. Pagamento significa abbonamento, pacchetto prima del test o ricarica AI effettivamente pagati. Non si salva nulla di nuovo; gli account amministratore non contano.",
+  "rast.funnel.note": "Ogni account è contato con tutti i suoi profili; i giorni dalla registrazione. Pagamento significa abbonamento, pacchetto prima del test o ricarica AI effettivamente pagati. Non si salva nulla di nuovo; gli account amministratore non contano.",
   "orders.title": "Ordini delle scuole",
   "orders.empty": "Ancora nessun ordine.",
   "orders.status": "Stato",

@@ -175,6 +175,18 @@ test("account funnel: sign-up → e-mail → first task → day 3 and 7 → paym
   assert.deepEqual(f.d3, { eligible: 2, returned: 1, pct: 0.5 }); // A (4. dan); B se v 3.–6. dnevu ni vrnil
   assert.deepEqual(f.d7, { eligible: 2, returned: 2, pct: 1 }); // A 8. dan, B 7. dan
   assert.deepEqual(f.paid, { eligible: 3, returned: 2, pct: 0.667 }); // A in C; B ima samo nedokončan paket
+  // Naročnina iz trgovine šteje, testni nakup (Sandbox) ne.
+  db.exec("CREATE TABLE IF NOT EXISTS store_subscriptions (provider TEXT, original_id TEXT, parent_id INTEGER, environment TEXT)");
+  db.exec("ALTER TABLE parents ADD COLUMN sub_provider TEXT");
+  for (const env of ["Production", "Sandbox"]) {
+    const id = account(1);
+    db.prepare("UPDATE parents SET sub_provider = 'apple', sub_status = 'active' WHERE id = ?").run(id);
+    db.prepare("INSERT INTO store_subscriptions (provider, original_id, parent_id, environment) VALUES ('apple', ?, ?, ?)").run(`o${id}`, id, env);
+  }
+  const f2 = growthReport(db, { days: 30, now, adminEmails: ["JAZ@evklid.app"] }).funnel;
+  assert.equal(f2.registered, 5);
+  assert.equal(f2.paid.returned, 3);
+  db.exec("DROP TABLE store_subscriptions");
   // Poročilo ne ustvari tabel in ne vrne e-naslovov.
   const after = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name").all().map((r) => r.name).join();
   assert.equal(after, before);

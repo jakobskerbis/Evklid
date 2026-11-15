@@ -309,6 +309,10 @@ function accountFunnel(db, { from, today, active, counted, adminEmails, schoolId
     ? db.prepare("SELECT 1 FROM passes WHERE parent_id = ? AND payment_id IS NOT NULL AND status IN ('active', 'expired', 'refunded', 'disputed') LIMIT 1")
     : null;
   const paidCredit = hasTable(db, "ai_credit_buys") ? db.prepare("SELECT 1 FROM ai_credit_buys WHERE parent_id = ? AND paid_at IS NOT NULL LIMIT 1") : null;
+  // Testni nakupi v trgovini (Sandbox, testni računi) niso denar.
+  const sandboxBuy = hasTable(db, "store_subscriptions")
+    ? db.prepare("SELECT 1 FROM store_subscriptions WHERE parent_id = ? AND environment = 'Sandbox' LIMIT 1")
+    : null;
   const paidInvoice = (id) => {
     try {
       const rows = JSON.parse(paidKv?.get(`ai_paid_${id}`)?.value || "[]");
@@ -321,7 +325,7 @@ function accountFunnel(db, { from, today, active, counted, adminEmails, schoolId
     paidInvoice(p.id) ||
     !!paidPass?.get(p.id) ||
     !!paidCredit?.get(p.id) ||
-    (["apple", "google"].includes(p.sub_provider) && ["active", "past_due", "canceled"].includes(p.sub_status));
+    (["apple", "google"].includes(p.sub_provider) && ["active", "past_due", "canceled"].includes(p.sub_status) && !sandboxBuy?.get(p.id));
 
   const share = (list, ok) => {
     const eligible = list.length;

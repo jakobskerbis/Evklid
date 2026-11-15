@@ -3042,7 +3042,7 @@
   "rast.funnel.d3": "came back on days 3–6 ({a} of {b})",
   "rast.funnel.d7": "came back on days 7–13 ({a} of {b})",
   "rast.funnel.paid": "paid ({a} of {b})",
-  "rast.funnel.note": "Each account counts with all its profiles, days from sign-up. Payment means an actually paid subscription, test pass or AI top-up. Nothing new is stored; admin accounts are not counted.",
+  "rast.funnel.note": "Each account is counted with all its profiles; days are counted from sign-up. Payment means an actually paid subscription, pre-test pack or AI top-up. Nothing new is stored; admin accounts are not counted.",
   "orders.title": "School orders",
   "orders.empty": "No orders yet.",
   "orders.status": "Status",

@@ -3382,7 +3382,7 @@ export default {
   "rast.funnel.d3": "se jih je vrnilo 3.–6. dan ({a} od {b})",
   "rast.funnel.d7": "se jih je vrnilo 7.–13. dan ({a} od {b})",
   "rast.funnel.paid": "jih je plačalo ({a} od {b})",
-  "rast.funnel.note": "Šteje se račun z vsemi svojimi profili, dnevi od registracije. Plačilo je res plačana naročnina, paket pred testom ali dokup AI. Nič novega se ne shrani; skrbniški računi se ne štejejo.",
+  "rast.funnel.note": "Račun se šteje z vsemi svojimi profili, dnevi pa od registracije. Plačilo je res plačana naročnina, paket pred testom ali dokup AI. Nič novega se ne shrani; skrbniški računi se ne štejejo.",
   "orders.title": "Naročila šol",
   "orders.empty": "Še ni naročil.",
   "orders.status": "Stanje",

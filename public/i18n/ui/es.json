@@ -3043,7 +3043,7 @@
   "rast.funnel.d3": "volvieron los días 3–6 ({a} de {b})",
   "rast.funnel.d7": "volvieron los días 7–13 ({a} de {b})",
   "rast.funnel.paid": "pagaron ({a} de {b})",
-  "rast.funnel.note": "Cada cuenta cuenta con todos sus perfiles, días desde el registro. Pago significa suscripción, paquete antes del examen o recarga de IA realmente pagados. No se guarda nada nuevo; las cuentas de administrador no se cuentan.",
+  "rast.funnel.note": "Cada cuenta se cuenta con todos sus perfiles; los días, desde el registro. Pago significa suscripción, paquete antes del examen o recarga de IA realmente pagados. No se guarda nada nuevo; las cuentas de administrador no se cuentan.",
   "orders.title": "Pedidos de escuelas",
   "orders.empty": "Aún no hay pedidos.",
   "orders.status": "Estado",

@@ -3043,7 +3043,7 @@
   "rast.funnel.d3": "sont revenus les jours 3–6 ({a} sur {b})",
   "rast.funnel.d7": "sont revenus les jours 7–13 ({a} sur {b})",
   "rast.funnel.paid": "ont payé ({a} sur {b})",
-  "rast.funnel.note": "Chaque compte compte avec tous ses profils, jours depuis l'inscription. Paiement = abonnement, pack avant contrôle ou recharge IA réellement payés. Rien de nouveau n'est enregistré ; les comptes administrateur ne sont pas comptés.",
+  "rast.funnel.note": "Chaque compte est compté avec tous ses profils ; les jours, depuis l'inscription. Paiement = abonnement, pack avant contrôle ou recharge IA réellement payés. Rien de nouveau n'est enregistré ; les comptes administrateur ne sont pas comptés.",
   "orders.title": "Commandes des écoles",
   "orders.empty": "Aucune commande pour l'instant.",
   "orders.status": "Statut",

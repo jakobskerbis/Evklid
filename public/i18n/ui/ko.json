@@ -3009,7 +3009,7 @@
   "rast.qCol": "학생 1명당 하루 질문 수",
   "rast.aiCol": "학생당 월 AI",
   "rast.funnel.title": "계정 퍼널",
-  "rast.funnel.registered": "기간 내 신규 계정",
+  "rast.funnel.registered": "개의 새 계정 (기간 중)",
   "rast.funnel.verified": "이메일 인증 ({b}개 중 {a}개)",
   "rast.funnel.task24": "24시간 안에 첫 문제 해결 ({b}개 중 {a}개)",
   "rast.funnel.task7": "7일 안에 첫 문제 해결 ({b}개 중 {a}개)",

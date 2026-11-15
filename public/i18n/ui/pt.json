@@ -3047,7 +3047,7 @@
   "rast.funnel.d3": "voltaram nos dias 3–6 ({a} de {b})",
   "rast.funnel.d7": "voltaram nos dias 7–13 ({a} de {b})",
   "rast.funnel.paid": "pagaram ({a} de {b})",
-  "rast.funnel.note": "Cada conta conta com todos os seus perfis, dias desde o registo. Pagamento é assinatura, pacote antes do teste ou carregamento de IA efetivamente pagos. Nada de novo é guardado; as contas de administrador não contam.",
+  "rast.funnel.note": "Cada conta é contada com todos os seus perfis; os dias, desde o registo. Pagamento é assinatura, pacote antes do teste ou carregamento de IA efetivamente pagos. Nada de novo é guardado; as contas de administrador não contam.",
   "orders.title": "Encomendas de escolas",
   "orders.empty": "Ainda não há encomendas.",
   "orders.status": "Estado",

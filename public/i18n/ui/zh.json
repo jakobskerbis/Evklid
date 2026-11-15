@@ -3009,7 +3009,7 @@
   "rast.qCol": "每名学生每日提问",
   "rast.aiCol": "每位学生每月的 AI",
   "rast.funnel.title": "账户漏斗",
-  "rast.funnel.registered": "期间内的新账户",
+  "rast.funnel.registered": "个新账户（本期）",
   "rast.funnel.verified": "确认了邮箱（{b} 个中 {a} 个）",
   "rast.funnel.task24": "在 24 小时内做出第一道题（{b} 个中 {a} 个）",
   "rast.funnel.task7": "在 7 天内做出第一道题（{b} 个中 {a} 个）",
