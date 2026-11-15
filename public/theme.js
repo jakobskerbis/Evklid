@@ -41,6 +41,19 @@
   } catch {}
 })();
 
+// Aplikacija (WebView) in nameščena spletna aplikacija nimata gumba za povečavo: nehoten poteg z dvema prstoma je
+// zaslon za nekaj odstotkov povečal in ostal tak. Glava je nato ob drsenju napol zdrsnila z zaslona, spodnji vrstici
+// so se odrezali napisi, ob desnem in spodnjem robu pa sta bila vidna drsnika (j 2026-11-15). Tam strani ne
+// povečujemo (sprememba ob zagonu povečavo tudi ponastavi); velikost pisave ostane po nastavitvi telefona.
+// V brskalniku povečava ostane (dostopnost).
+(function () {
+  try {
+    const app = / EvklidApp\//.test(navigator.userAgent) || (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+    const vp = document.querySelector('meta[name="viewport"]');
+    if (app && vp && !/maximum-scale/.test(vp.content)) vp.setAttribute("content", vp.content + ", minimum-scale=1, maximum-scale=1, user-scalable=no");
+  } catch {}
+})();
+
 (function () {
   const KEY = "evklid.theme";
   // Zgodovinski slogi: VSE o slogu na enem mestu (docs/oblikovanje.md → »Kako dodati novo zgodovinsko temo«).
