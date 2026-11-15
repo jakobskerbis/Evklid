@@ -432,7 +432,7 @@ function goAuth(mode) {
   });
 }
 
-// Cene in preizkus za pristajalno stran (isti podatki kot na strani za starše); največ 1,5 s čakanja.
+// Preizkus, starost in garancija za pristajalno stran (isti podatki kot na strani za starše); največ 1,5 s čakanja.
 let landingPrices, landingReq;
 function loadLandingPrices() {
   if (landingReq) return landingPrices;
@@ -450,16 +450,14 @@ async function renderLanding() {
   authMode(true);
   document.body.classList.add("land-mode");
   const name = document.querySelector(".topbar .brand-name")?.textContent || "";
-  // Cele zneske brez decimalk (99 € namesto 99,00 €), sicer kot drugod v računu.
-  const whole = (minor, currency) => money(minor, currency).replace(/[,.]00(?=\D*$)/, "");
-  $("#view-auth").innerHTML = landingHtml({ name, prices, money: whole });
+  $("#view-auth").innerHTML = landingHtml({ name, prices });
   $("#view-auth").querySelectorAll("[data-land]").forEach((a) =>
     a.addEventListener("click", (e) => {
       e.preventDefault();
       goAuth(a.dataset.land);
     }),
   );
-  // Cene so prišle po izrisu (počasna povezava): kartice stopenj dopolnimo, ko pridejo.
+  // Podatki s strežnika so prišli po izrisu (počasna povezava): preizkus in garancijo dopolnimo, ko pridejo.
   if (!prices) landingReq.then((p) => p && document.body.classList.contains("land-mode") && renderLanding());
 }
 

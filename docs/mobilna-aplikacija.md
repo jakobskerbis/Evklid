@@ -98,6 +98,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Skeniraj: po korakih | reševalnik po korakih (`public/scan/`); aplikacija pošlje fotografijo inštruktorju | M | WebView strani skeniranja ali naravni zaslon korakov | delno |
 | Govor | mikrofon v klepetu (`speech.js`) | M | naravna odvisnost (prepoznava govora) → nova gradnja APK | ✗ |
 | Učbenik za tisk | PDF učbenika (`/ucbenik`) | S | odpri v brskalniku (`WebBrowser`) | ✗ |
+| Pristajalna stran pred prijavo | eno sporočilo za gimnazijce, en gumb »Začni brezplačno«, prijava kot povezava, zgled pogovora in trije dokazi (`public/pristajalna.js`, j 15. 11. 2026) | S | naravno: naslov in en gumb nad prijavo v `sign-in.tsx` | ✗ aplikacija se odpre na naravni prijavi (`sign-in.tsx`: logotip, `mob.tagline`, »Prijava« in »Ustvari račun« kot dva gumba); pristajalne strani nima, ker jo namesti nekdo, ki je Evklid že izbral |
 
 - **Deljiva kartica zbirke** (»Deli zbirko«, public/deli-kartico.js): WebView ne podpira Web Share z datotekami
   ne prenosa slike, zato aplikacija deli prek mostu (`public/deli-most.js`, `mobile/src/app/web.tsx`):
