@@ -461,7 +461,11 @@ function prostor(el) {
   const p = el.parentElement;
   const ps = p && getComputedStyle(p);
   const vFlex = !!ps && /flex$/.test(ps.display) && !ps.flexDirection.startsWith("column");
-  if (!vFlex && !el.matches(".msg, .bubble, .fx-pop") && !/^inline/.test(cs.display) && !/^(?:fixed|absolute)$/.test(cs.position)) return cw;
+  // Odstavek v mehurčku, ki se skrči na vsebino (klepet), je širok le toliko kot njegova najširša vrstica: formula, ki je
+  // v odstavku sama, bi bila zato vedno »preširoka« za ločilo in zložena v stolpec (j 15. 11. 2026: »x²« zgoraj, »− 5x + 6«
+  // in »= 0« pod njim). Njegov prostor je prostor mehurčka.
+  const vMehurcku = !!p?.closest(".msg, .bubble, .fx-pop");
+  if (!vFlex && !vMehurcku && !el.matches(".msg, .bubble, .fx-pop") && !/^inline/.test(cs.display) && !/^(?:fixed|absolute)$/.test(cs.position)) return cw;
   let pw = p && p !== document.body ? prostor(p) : innerWidth;
   if (vFlex && ps.flexWrap === "nowrap") {
     const gap = px(ps.columnGap);
