@@ -92,7 +92,7 @@ test("Potrdi e-naslov na telefonu: sporočilo »še ni potrjeno«, Pošlji znova
       assert.doesNotMatch(await page.locator("#view-auth").innerText(), PARENT_LINE);
 
       const state = page.locator("#verify-state");
-      assert.equal(await state.getAttribute("role"), "status");
+      assert.equal(await state.evaluate((el) => el.parentElement.getAttribute("role")), "status");
       assert.equal(await state.isVisible(), false);
       await page.locator("#verify-done").tap();
       await state.waitFor({ state: "visible" });

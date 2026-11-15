@@ -874,7 +874,7 @@ function renderVerify() {
       <p class="muted verify-note">${note}</p>
       ${dev && !status.email ? `<p class="muted">Razvojni način (e-pošta ni nastavljena): <a href="${esc(dev)}">potrdi e-naslov</a></p>` : ""}
       ${!dev && !status.email ? `<p class="warn">Pošiljanje e-pošte še ni nastavljeno, zato povezava ni prišla. Na računalniku, kjer teče Evklid, se prijavi v ta račun in klikni »Pošlji znova«.</p>` : ""}
-      <p id="verify-state" class="warn" role="status" aria-live="polite" hidden></p>
+      <div role="status" aria-live="polite"><p id="verify-state" class="warn" hidden></p></div>
       <div class="form-actions">
         <button class="primary" id="verify-done" type="button">Sem potrdil(a)</button>
         <button id="verify-resend" type="button" aria-describedby="verify-resend-hint">Pošlji znova</button>
