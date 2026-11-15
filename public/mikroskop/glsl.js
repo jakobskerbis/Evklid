@@ -924,7 +924,9 @@ float semVisina(T t, vec2 p, float px) {
     // mikrobi (mikrob v celice.js) imajo v smer.x razdaljo do površine; meja je lahko do vakuole ali jedra
     bool mikr = t.tip == C_BAKTERIJA || t.tip == C_KVASOVKA;
     float dm = mikr ? -t.smer.x : t.meja;
-    float W = t.tip == C_BAKTERIJA ? 0.5 : max(dm + length(p - t.cc), 0.3);
+    // W = polovična širina celice: palička (ovojnica Gram–, t.r1 = 2) 0,31 µm, sicer polmer iz središča (kok, kvasovka …);
+    // z napačnim W je imela palička vzdolžno gubo, kok pa konico na vrhu
+    float W = t.tip == C_BAKTERIJA && t.r1 > 1.5 && t.r1 < 2.5 ? 0.31 : max(dm + length(p - t.cc), 0.3);
     float m = min(max(dm, 0.0), W);
     return -0.9 + 0.3 * sumL(p, 70.0, px) + 0.9 * sqrt(max(m * (2.0 * W - m), 0.0)) + 0.06 * sumL(p, 0.35, px) + zrno;
   } else if (t.meja < 100.0) {
