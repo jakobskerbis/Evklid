@@ -34,7 +34,7 @@ import { splitFormulas, hasFormula } from "./vnos-formul.js";
 import { attachPrettify } from "./lepi-zapis.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
 import { offlineApi, offlineBootApi, saveStudents, saveConfig, clearProfile, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
-import { initFeedback, showFeedback } from "./feedback.js";
+import { initFeedback, showFeedback, renderFeedbackCard } from "./feedback.js";
 import { openAdminBug, deviceInfo, shownHtml } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
@@ -1018,8 +1018,9 @@ async function selectStudent(id) {
   refreshProfileButton();
   refreshXp();
   loadPilot(); // naloge za člane pilota (vrstica v Jaz, obvestilo ob prvi prijavi)
-  // Vprašalnik kotička zanimanj: profil, ki ga še ni izpolnil, ga dobi ob zagonu (enkrat).
-  state.interestsAsk = maybeAskInterests();
+  // Vprašalnik zanimanj in vodič prideta šele po prvi rešeni nalogi, na Učni poti (maybeIntro, j 15. 11. 2026).
+  state.interestsAsk = null;
+  renderFeedbackCard(); // kartica mnenja šele od drugega dne profila
 }
 $("#student-select").addEventListener("change", (e) => selectStudent(e.target.value));
 
@@ -3044,9 +3045,10 @@ async function loadPath(key = state.pathKey) {
       .join("") +
     greekFactHtml("gr-path");
   wireGreekFacts(content);
+  renderFeedbackCard(); // nov dan med odprto aplikacijo: kartica se pokaže ob naslednjem izrisu poti
   if (!maybeTour.done) {
     maybeTour.done = true;
-    maybeTour();
+    maybeIntro();
   }
 }
 
@@ -3734,6 +3736,7 @@ async function checkTask(task, ctx, value) {
     fb.innerHTML = `<div class="fb bad">${icon("circle-x")}<span>${err.status ? t("task.checkFailed", { msg }) : t("task.checkError", { msg })}</span></div>`;
     return false;
   }
+  if (r.correct) markFirstTask(); // po prvi rešeni nalogi pridejo vprašalnik zanimanj in vodič (maybeIntro)
   const next = (label = t("task.next")) => `<div class="actions"><button class="primary big" id="fb-next">${label}${icon("arrow-right")}</button></div>`;
   // Naloga je bila že preverjena (npr. drugi dotik na »Preveri«): pokažemo shranjeni izid, ne napake.
   const closedNote = r.closed ? `<div class="fb info">${icon("info")}<span>${t("task.alreadyChecked")}</span></div>` : "";
@@ -4466,14 +4469,26 @@ const TOUR = [
   { sel: "#profile-btn", title: "tour.profile", text: "tour.profileText" },
   { title: "tour.end", text: "tour.endText" },
 ];
+// Prvi ogled ima samo tri korake (j, 15. 11. 2026): Današnji trening, Inštruktor, Jaz (na računalniku
+// meni profila z nastavitvami). Ves ogled ostane v Nastavitvah (»Ponovi uvodni ogled«).
+// Seznam v koraku: prvi viden element (spodnja vrstica na telefonu ali zgornji zavihek).
+const TOUR_SHORT = [
+  { sel: "#xp-card", title: "daily.title", text: "tour.dailyText" },
+  { sel: '.tab[data-view="chat"]', title: "nav.chat", text: "tour.chatText" },
+  [
+    { sel: '#tabbar [data-view="me"]', title: "nav.me", text: "tour.meText2" },
+    { sel: "#profile-btn", title: "tour.profile", text: "tour.profileText" },
+  ],
+];
 const TOUR_KEY = "evklid.tour";
 const visibleEl = (sel) => [...document.querySelectorAll(sel)].find((el) => el.getClientRects().length && !el.closest("[hidden]"));
 
-function startTour() {
+function startTour({ full = false } = {}) {
   const box = $("#tour");
   if (!box.hidden) return; // že odprt (npr. »Ponovi ogled« med ogledom)
   // Koraki, ki jih na tem zaslonu lahko pokažemo (števec »3 / 12« potem drži).
-  const steps = TOUR.filter((s) => !s.sel || visibleEl(s.sel));
+  const list = full ? TOUR : TOUR_SHORT.map((s) => (Array.isArray(s) ? s.find((o) => visibleEl(o.sel)) : s)).filter(Boolean);
+  const steps = list.filter((s) => !s.sel || visibleEl(s.sel));
   let i = 0;
   const spot = box.querySelector(".tour-spot");
   const card = box.querySelector(".tour-card");
@@ -4545,9 +4560,35 @@ function maybeTour() {
     }, 400),
   );
 }
+// Prva rešena naloga (j, 15. 11. 2026): nov učenec pride do prve naloge brez ovinkov; vprašalnik zanimanj
+// in kratek vodič dobi šele potem, ob naslednjem prihodu na Učno pot (nikoli sredi naloge).
+// settings.first_task se shrani ob prvem pravilnem odgovoru; star profil brez ključa, ki že ima XP, velja za rešenega.
+async function firstTaskDone(s) {
+  if (s.settings?.first_task) return true;
+  const x = state.xp?.sid === s.id ? state.xp : await api(`/api/students/${s.id}/xp`).catch(() => null);
+  return (x?.total || 0) > 0;
+}
+function markFirstTask() {
+  const s = state.student;
+  if (!s || s.settings?.first_task) return;
+  s.settings = { ...s.settings, first_task: 1 };
+  api(`/api/students/${s.id}`, { method: "PUT", body: { settings: { first_task: 1 } } }).catch(() => null);
+}
+async function maybeIntro() {
+  const s = state.student;
+  if (!s || (s.settings?.interests !== null && (s.settings?.tour_version || 0) >= TOUR_VERSION)) return;
+  const done = await firstTaskDone(s);
+  if (!done || state.student?.id !== s.id || currentView !== "path") {
+    maybeTour.done = false; // poskusi znova ob naslednjem izrisu Učne poti
+    return;
+  }
+  // Vprašalnik zanimanj (enkrat na profil), nato vodič, ko je vprašalnik zaprt.
+  state.interestsAsk = maybeAskInterests();
+  maybeTour();
+}
 $("#tour-again").addEventListener("click", () => {
   showView("path");
-  setTimeout(startTour, 500);
+  setTimeout(() => startTour({ full: true }), 500);
 });
 
 // Vodič po aplikaciji (Nastavitve → Pomoč): opis vsakega dela, tapni vrstico in odpre se ta del.
