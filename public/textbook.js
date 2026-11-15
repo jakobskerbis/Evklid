@@ -6,7 +6,7 @@ import { withFormulaSubject, plainTex } from "./formula-data.js";
 import { lessonSteps, demoSteps } from "./lesson-steps.js";
 import { gradivaHtml, wireGradiva, stopReading } from "./gradiva.js";
 import { prilagodiSirino } from "./sirina.js";
-import { jeFaks } from "./stopnja.js";
+import { jeFaks, jeSs } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
 import { predmetiNaRavni, knjigaNaRavni } from "./ucbenik-ravni.js";
 
@@ -250,6 +250,11 @@ async function renderHome() {
   // Študent fakultete: najprej učbenik njegovega študijskega programa, nato OŠ/SŠ.
   const program = jeFaks(student?.settings) ? student.settings.study_program || "" : "";
   const system = student?.settings?.school_system || "SI";
+  // Ob prvem odprtju že zdaj kazalo učbenika, ki ga bo učenec najverjetneje videl (predmet in raven iz nastavitev),
+  // hkrati s seznamom učbenikov in potjo: namesto treh čakanj na strežnik eno. Napačna ugibanja ostanejo v pomnilniku.
+  // Samo slovenski učbeniki, ki zagotovo obstajajo (napačen ključ bi dal 404 v dnevniku).
+  const guess = `${student?.settings?.subject}-${jeSs(student?.settings) ? "SS" : "OS"}`;
+  if (!tb.book && !program && system === "SI" && /^(MAT|FIZ|KEM|BIO)-(OS|SS)$|^NAR-OS$/.test(guess)) loadToc(guess, system).catch(() => null);
   // Seznam učbenikov in učenčeva pot hkrati (prej drug za drugim: dva čakanja na omrežje pred prvim izrisom).
   const needBooks = !tb.books.length || tb.program !== program || tb.system !== system;
   const [fetchedBooks, myPath] = await Promise.all([
@@ -451,14 +456,14 @@ async function renderBody() {
 // ob kateri se stran osveži sama (app.js), zato jih ne osvežujemo. Zahteva, ki še teče, se deli (vnaprej in klik).
 const tocCache = new Map();
 const tocPending = new Map();
-const tocKey = (bookKey) => `${tb.system || "SI"}|${bookKey}`;
-function loadToc(bookKey) {
-  const key = tocKey(bookKey);
+const tocKey = (bookKey, system = tb.system || "SI") => `${system}|${bookKey}`;
+function loadToc(bookKey, system = tb.system || "SI") {
+  const key = tocKey(bookKey, system);
   if (tocCache.has(key)) return Promise.resolve(tocCache.get(key));
   let p = tocPending.get(key);
   if (!p) {
     p = ctx
-      .api(`/api/textbook/toc?book=${encodeURIComponent(bookKey)}&system=${encodeURIComponent(tb.system || "SI")}`)
+      .api(`/api/textbook/toc?book=${encodeURIComponent(bookKey)}&system=${encodeURIComponent(system)}`)
       .then((book) => {
         // Kopija brez povezave (service worker, 503 z X-Offline) ali napaka ne pride sem; v pomnilnik samo pravo kazalo.
         if (book && Array.isArray(book.parts)) tocCache.set(key, book);
@@ -486,14 +491,58 @@ async function prefetchTocs() {
   }
 }
 
-// Klik na temo v kazalu ali iskanju.
+// Klik na temo v kazalu ali iskanju (in Prejšnja/Naslednja lekcija). Ime teme gre takoj na zaslon (renderLesson).
+const lessonName = (b) => (b.querySelector(".tb-name")?.textContent || b.textContent || "").replace(/^\s*←\s*|\s*→\s*$/g, "").trim();
 document.addEventListener("click", (e) => {
   const b = e.target.closest("#view-textbook [data-lesson]");
   if (b) {
     tb.topicId = b.dataset.lesson;
-    renderLesson(tb.topicId);
+    renderLesson(tb.topicId, lessonName(b));
   }
 });
+// Lekcija vnaprej (j, 15. 11. 2026: »vse se ob kliku odpre takoj«): ob dotiku (pointerdown je ~0,1–0,3 s pred klikom)
+// ali ko miška pride nad temo, zahtevo za lekcijo že pošljemo; po odprtju lekcije v ozadju še naslednjo lekcijo.
+// Kopija velja minuto (osebna polja: test predznanja, paket) in se porabi enkrat.
+const lessonAhead = new Map(); // id -> { at, p }
+const LESSON_AHEAD_MS = 60_000;
+function prefetchLesson(id) {
+  if (!id || !ctx?.getStudent?.()) return;
+  for (const [k, v] of lessonAhead) if (Date.now() - v.at >= LESSON_AHEAD_MS) lessonAhead.delete(k); // stare kopije iz pomnilnika
+  const hit = lessonAhead.get(id);
+  if (hit && Date.now() - hit.at < LESSON_AHEAD_MS) return;
+  const p = ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(id)}`);
+  const hit2 = { at: Date.now(), p, sid: ctx.getStudent().id, done: false };
+  p.then(
+    () => (hit2.done = true),
+    () => lessonAhead.get(id) === hit2 && lessonAhead.delete(id),
+  );
+  lessonAhead.set(id, hit2);
+}
+function takeLesson(id) {
+  const hit = lessonAhead.get(id);
+  lessonAhead.delete(id);
+  return hit && Date.now() - hit.at < LESSON_AHEAD_MS && hit.sid === ctx.getStudent()?.id ? hit : null;
+}
+// Miška: šele ko ostane nad temo 0,1 s (premik čez kazalo ne naloži vseh lekcij, ki jih prečka).
+let hoverTimer = null;
+document.addEventListener(
+  "pointerover",
+  (e) => {
+    if (e.pointerType !== "mouse") return;
+    const b = e.target.closest?.("#view-textbook [data-lesson]");
+    clearTimeout(hoverTimer);
+    if (b) hoverTimer = setTimeout(() => b.isConnected && b.matches(":hover") && prefetchLesson(b.dataset.lesson), 100);
+  },
+  { passive: true },
+);
+document.addEventListener(
+  "pointerdown",
+  (e) => {
+    const b = e.target.closest?.("#view-textbook [data-lesson]");
+    if (b) prefetchLesson(b.dataset.lesson);
+  },
+  { passive: true },
+);
 
 // Formula in rešitev v rešenem primeru sta skriti za gumbom, da učenec najprej poskusi sam.
 // Kadar je vsaka črka formule klikljiva s pomenom iz lekcije (:::simboli), okna »Pokaži formulo«
@@ -523,13 +572,30 @@ function wireFormulas(root) {
   );
 }
 
-async function renderLesson(topicId) {
+async function renderLesson(topicId, name = "") {
   const my = ++navSeq;
   stopReading();
   const box = $("#view-textbook");
+  // Takoj po kliku: Nazaj, ime teme in »Nalagam …« (prej je kazalo ostalo na zaslonu, dokler lekcija ni prišla,
+  // kot da klik ni uspel). Kopija, ki je že prispela (vnaprej), se izriše v istem trenutku in tega vmesnega zaslona ni;
+  // zahteva, ki ob dotiku še teče (pointerdown tik pred klikom), vmesni zaslon pokaže.
+  const ahead = takeLesson(topicId);
+  // Ista lekcija znova (vrnitev na zavihek, menjava jezika): ostane na zaslonu, dokler nova kopija ne pride.
+  if (!ahead?.done && box && current?.id !== topicId) {
+    box.innerHTML = `<div class="tb-lesson-grid"><div class="tb-main">
+      <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
+      <p class="muted tb-crumb">&nbsp;</p>
+      ${name ? `<h1 class="tb-title">${esc(name)}</h1>` : ""}
+      <p class="muted tb-loading" role="status">${esc(t("common.loading"))}</p></div></div>`;
+    $("#tb-back")?.addEventListener("click", () => {
+      tb.topicId = null;
+      renderHome();
+    });
+    window.scrollTo(0, 0);
+  }
   let L;
   try {
-    L = await ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(topicId)}`);
+    L = await (ahead?.p || ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(topicId)}`));
   } catch (err) {
     // Brez povezave: javna kopija že obiskane lekcije iz predpomnilnika (public/sw.js, samo besedilo).
     L = err?.status ? null : await ctx.api(`/api/lesson?id=${encodeURIComponent(topicId)}`).catch(() => null);
@@ -699,6 +765,8 @@ async function renderLesson(topicId) {
     });
   }
   box.scrollTop = 0;
+  // Naslednja lekcija v ozadju: »Naslednja lekcija →« na koncu se odpre takoj.
+  if (L.next?.id) setTimeout(() => current?.id === L.id && prefetchLesson(L.next.id), 1500);
 
   $("#tb-back").addEventListener("click", () => {
     tb.topicId = null;

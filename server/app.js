@@ -224,6 +224,8 @@ function securityHeaders(app) {
   });
 }
 
+export const SLIKE_3D_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
+
 export function createApp(store, opts = {}) {
   const { streamFn = streamReply, readFn = readHandwriting } = opts;
   const app = express();
@@ -359,6 +361,14 @@ export function createApp(store, opts = {}) {
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,
   // in z različico datotek (service worker in app.js ne mešata stare in nove različice).
   app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0" })); // =0: brez seznama (primerjava)
+  // Ikone vej drevesa 3D sveta in sličice modelov (slike, ki se spremenijo le z novim izrisom): brskalnik jih dan
+  // vzame iz svojega predpomnilnika brez vprašanja strežniku, nato še teden prikaže staro in v ozadju preveri novo.
+  // Prej max-age=0: po vsaki objavi (service worker zavrže kopije stare različice) je vsaka ikona čakala na
+  // strežnik, zato so bile ikone vidne šele po sekundi ali dveh (j, 15. 11. 2026: »vse se ob kliku odpre takoj«).
+  app.use(["/3d/ikone-drevo/", "/3d/slicice/"], (req, res, next) => {
+    if (/\.webp$/i.test(req.path)) res.set("Cache-Control", SLIKE_3D_CACHE);
+    next();
+  });
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
     const statics = compressedStatic([
