@@ -97,5 +97,7 @@ Obnova od zunaj (npr. na novem strežniku z istim `EVKLID_DATA_KEY`): `node scri
 
 ### Vaja obnove (enkrat pred pilotom, nato enkrat na mesec)
 
+Cel postopek obnove z izmerjenimi časi (tudi na novem strežniku): [obnova.md](obnova.md).
+
 1. `node scripts/obnovi-kopijo.js --zdaj`, nato `node scripts/obnovi-kopijo.js --preveri`: mora pisati »OBNOVA BI USPELA«.
 2. Prava vaja (ko nihče ne uporablja Evklida; kar se vpiše med vajo, se izgubi): `node scripts/obnovi-kopijo.js <datum ročne kopije iz 1. koraka>`, Restart service, preveri prijavo in profil, nato `--razveljavi` in še en Restart service.
