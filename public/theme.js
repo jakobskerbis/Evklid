@@ -50,7 +50,10 @@
   try {
     const app = / EvklidApp\//.test(navigator.userAgent) || (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
     const vp = document.querySelector('meta[name="viewport"]');
-    if (app && vp && !/maximum-scale/.test(vp.content)) vp.setAttribute("content", vp.content + ", minimum-scale=1, maximum-scale=1, user-scalable=no");
+    if (!app || !vp || /maximum-scale/.test(vp.content)) return;
+    // Izvirnik za pregledovalnik izpitnih pol (paper-viewer.js): tam drobni tisk A4 berejo s povečavo s prsti.
+    vp.setAttribute("data-izvirno", vp.content);
+    vp.setAttribute("content", vp.content + ", minimum-scale=1, maximum-scale=1, user-scalable=no");
   } catch {}
 })();
 

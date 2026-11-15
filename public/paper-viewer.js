@@ -62,6 +62,11 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     <div class="pv-scroll"><div class="pv-pages"></div></div>`;
   document.body.append(el);
   document.documentElement.classList.add("pv-open");
+  // Pola nima svoje povečave: v aplikaciji, kjer je povečava strani sicer izklopljena (theme.js), jo za čas branja
+  // vrnemo; ob zaprtju se spet izklopi in zaslon se vrne na običajno velikost (glava in spodnja vrstica cela).
+  const vpMeta = document.querySelector('meta[name="viewport"][data-izvirno]');
+  const vpBrez = vpMeta?.getAttribute("content");
+  if (vpMeta) vpMeta.setAttribute("content", vpMeta.getAttribute("data-izvirno"));
   const $ = (s) => el.querySelector(s);
   const status = (msg) => ($(".pv-status").textContent = msg);
   const scroller = $(".pv-scroll");
@@ -101,6 +106,7 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     if (blobUrl) URL.revokeObjectURL(blobUrl);
     el.remove();
     document.documentElement.classList.remove("pv-open");
+    if (vpMeta) vpMeta.setAttribute("content", vpBrez);
     back?.focus?.();
   };
   current = { close };

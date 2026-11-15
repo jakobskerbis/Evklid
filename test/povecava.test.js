@@ -1,6 +1,6 @@
 // Aplikacija in nameščena spletna aplikacija strani ne povečujeta (public/theme.js, j 2026-11-15): nehoten poteg z
 // dvema prstoma je zaslon povečal, glava je zdrsnila, spodnji vrstici so se odrezali napisi, vidna sta bila drsnika.
-// V brskalniku povečava ostane. Pas s preklopnikom v Uči se je neprosojen (public/uci.css).
+// V brskalniku in v pregledovalniku izpitnih pol (test/paper-viewer-fallback.test.js) povečava ostane. Pas s preklopnikom v Uči se je neprosojen (public/uci.css).
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -12,6 +12,7 @@ const VP = "width=device-width, initial-scale=1, interactive-widget=resizes-cont
 
 function viewportPo(userAgent, standalone = false) {
   const meta = { content: VP, setAttribute(k, v) { this[k] = v; } };
+  globalThis.__meta = meta;
   const el = () => ({ style: { setProperty() {}, removeProperty() {} }, dataset: {}, classList: { toggle() {}, add() {} }, removeAttribute() {}, setAttribute() {}, appendChild() {} });
   const store = new Map();
   const window = {
@@ -34,6 +35,7 @@ test("v aplikaciji (WebView) in nameščeni spletni aplikaciji se stran ne pove�
     assert.match(vp, /maximum-scale=1/);
     assert.match(vp, /user-scalable=no/);
     assert.ok(vp.startsWith(VP), "prejšnje nastavitve ostanejo");
+    assert.equal(globalThis.__meta["data-izvirno"], VP, "izvirnik za pregledovalnik izpitnih pol");
   }
 });
 
