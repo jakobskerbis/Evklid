@@ -2921,16 +2921,22 @@ document.querySelectorAll("#modebar [data-mode]").forEach((b) =>
   }),
 );
 
+const pathsCache = new Map(); // /api/paths?… -> seznam poti (javni podatki, enaki za vse)
 async function loadPath(key = state.pathKey) {
   // Šola (OŠ/SŠ): učna pot je vedno za razred/letnik iz profila; nižje razrede ima Učbenik (j, 1. 11.).
   // Fakulteta: izbira med predmeti študijskega programa ostane.
   const uni = isUni(state.student.settings);
   const q = uni && key ? `?key=${encodeURIComponent(key)}` : "";
-  const p = await api(`/api/students/${state.student.id}/path${q}`);
-  const content = $("#path-content");
-  if (uni) await loadPrograms(api);
   const sys = state.student.settings.school_system || "SI";
-  const paths = await api(uni ? `/api/paths?program=${encodeURIComponent(state.student.settings.study_program)}` : `/api/paths?subject=${state.student.settings.subject}&system=${encodeURIComponent(sys)}`);
+  // Učna pot, seznam poti in programi hkrati (prej drug za drugim: trije čakanji na strežnik ob vsakem odprtju
+  // domačega zaslona); seznam poti je enak za vse in se v seji ne spremeni (j, 15. 11. 2026: »vse takoj«).
+  const pathsUrl = uni ? `/api/paths?program=${encodeURIComponent(state.student.settings.study_program)}` : `/api/paths?subject=${state.student.settings.subject}&system=${encodeURIComponent(sys)}`;
+  const [p, , paths] = await Promise.all([
+    api(`/api/students/${state.student.id}/path${q}`),
+    uni ? loadPrograms(api) : null,
+    pathsCache.get(pathsUrl) || api(pathsUrl).then((list) => (Array.isArray(list) && pathsCache.set(pathsUrl, list), list)),
+  ]);
+  const content = $("#path-content");
   const pathName = (x) => escapeHtml(x.label.replace(/ \((?:UL|UM|UP|UNG) [A-Z]+\)$/, ""));
   const opt = (x) => `<option value="${x.key}" ${x.key === p.key ? "selected" : ""}>${pathName(x)}${uni && x.key === p.defaultKey ? t("path.mySubject") : ""}</option>`;
   const own = uni ? null : paths.find((x) => x.key === p.key);
