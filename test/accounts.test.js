@@ -1353,7 +1353,7 @@ test("premlad za račun: Evklid pošlje staršu povezavo, naslova ne shrani, ome
     assert.deepEqual(mail.body.to, ["mama@primer.si"]);
     assert.equal(mail.body.subject, "Prošnja za dovoljenje za Evklid");
     assert.match(mail.body.text, /^Mihascript bi rad/);
-    assert.match(mail.body.text, /\/starsi\.html\?ime=Mihascript/);
+    assert.match(mail.body.text, /\/starsi\.html\?ime=Mihascript&prosnja=1/);
     assert.doesNotMatch(mail.body.html, /<script/);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM parents").get().n, 0);
     assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "ni-naslov" } })).status, 400);

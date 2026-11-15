@@ -579,7 +579,7 @@ function renderLogin(mode = "login") {
 
 // Premlad za lasten račun: povezava za starše s vsemi podatki (kaj je Evklid, podatki, cena, soglasje).
 function renderAskParent(minAge) {
-  const linkFor = (name) => `${location.origin}/starsi.html${name ? `?ime=${encodeURIComponent(name)}` : ""}`;
+  const linkFor = (name) => `${location.origin}/starsi.html?${name ? `ime=${encodeURIComponent(name)}&` : ""}prosnja=1`; // prosnja: starsi.js pokaže obvestilo
   shell(`
     <h1>Vprašaj starše</h1>
     <p class="muted">${minAge ? `Za mlajše od ${minAge} let` : "Za mlajše učence"} račun ustvari starš ali skrbnik. Vpiši e-naslov starša in Evklid mu pošlje povezavo, ali pa mu jo pošlji sam(a). Tam piše, kaj je Evklid, katere podatke hranimo in koliko stane. Ko starš ustvari račun in doda tvoj profil, se lahko začneš učiti.</p>
@@ -603,7 +603,7 @@ function renderAskParent(minAge) {
   const link = () => linkFor(f.name.value.trim());
   const text = () => {
     const n = f.name.value.trim();
-    return `${n ? `${n} bi rad(a)` : "Rad(a) bi"} uporabljal(a) Evklid, AI inštruktorja za matematiko, fiziko in kemijo. Za to potrebujem tvoje dovoljenje:`;
+    return `${n ? `${n} bi rad(a)` : "Rad(a) bi"} uporabljal(a) Evklid, AI inštruktorja za matematiko, fiziko, kemijo, biologijo in naravoslovje. Za to potrebujem tvoje dovoljenje:`;
   };
   const mail = () => (location.href = `mailto:?subject=${encodeURIComponent("Evklid – prosim za dovoljenje")}&body=${encodeURIComponent(`${text()}\n${link()}`)}`);
   f.name.addEventListener("input", () => (f.link.value = link()));
@@ -825,7 +825,7 @@ function bindBirthForm(form, onDone) {
 // Mlajši od starosti digitalne privolitve: datum je shranjen, za soglasje pa velja pot prek staršev kot pri registraciji.
 const underAgeHtml = (minAge) => `<div class="birth-under" role="status">
       <p>${esc(t("birth.underAge", { age: minAge }))}</p>
-      <p><a href="/starsi.html" target="_blank">${esc(t("birth.parents"))}</a></p>
+      <p><a href="/starsi.html?prosnja=1" target="_blank">${esc(t("birth.parents"))}</a></p>
     </div>`;
 
 function renderBirth() {
@@ -1498,7 +1498,7 @@ function bindGuestForms(after) {
       btn.disabled = false;
       showError(f, err);
       if (err.data?.under_age) {
-        errorBox(f).append(" ", t("guest.parentHint"), " ", Object.assign(document.createElement("a"), { href: "/starsi.html", target: "_blank", textContent: t("guest.parentLink") }));
+        errorBox(f).append(" ", t("guest.parentHint"), " ", Object.assign(document.createElement("a"), { href: "/starsi.html?prosnja=1", target: "_blank", textContent: t("guest.parentLink") }));
       }
       if (err.data?.exists) {
         const login = $("#guest-login-form");
