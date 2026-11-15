@@ -1,4 +1,4 @@
-// Spodnja vrstica se po 5 s neuporabe skrije (public/noga.js, j 2026-11-14), kjer ni že drugače določeno.
+// Spodnja vrstica se po 3 s neuporabe skrije (public/noga.js, j 2026-11-14; 3 s od 2026-11-15), kjer ni že drugače določeno.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -49,20 +49,20 @@ function okolje({ vidna = true, branje = false, vodic = false } = {}) {
   return { noga, razredi, stanje, pocakaj, sprozi, poslusalci };
 }
 
-test("after 5 s without use the bar slides away; scrolling brings it back", () => {
+test("after 3 s without use the bar slides away; scrolling brings it back", () => {
   const o = okolje();
-  assert.equal(MIROVANJE_MS, 5000);
-  o.pocakaj(4999);
-  assert.ok(!o.razredi.has("tb-mir"), "pred 5 s ostane");
+  assert.equal(MIROVANJE_MS, 3000);
+  o.pocakaj(2999);
+  assert.ok(!o.razredi.has("tb-mir"), "pred 3 s ostane");
   o.pocakaj(1);
-  assert.ok(o.razredi.has("tb-mir"), "po 5 s se skrije");
+  assert.ok(o.razredi.has("tb-mir"), "po 3 s se skrije");
   o.sprozi("wheel");
   assert.ok(!o.razredi.has("tb-mir"));
   assert.ok(o.razredi.has("tb-vraca"), "vrne se z drsenjem navzgor");
   o.pocakaj(VRNITEV_MS);
   assert.ok(!o.razredi.has("tb-vraca"), "nato je spet v postavitvi");
   o.pocakaj(MIROVANJE_MS - VRNITEV_MS);
-  assert.ok(o.razredi.has("tb-mir"), "in se po novih 5 s spet skrije");
+  assert.ok(o.razredi.has("tb-mir"), "in se po novih 3 s spet skrije");
   assert.ok(o.stanje.sync > 0, "višina vrstice za liste (--tabbar-h) se osveži");
 });
 
@@ -85,15 +85,15 @@ test("a finger swipe of 10 px or a scroll key brings it back; a tap, a slider or
   assert.ok(!o.razredi.has("tb-mir"), "tipka za drsenje jo vrne");
 });
 
-test("while it is shown, every use restarts the 5 s", () => {
+test("while it is shown, every use restarts the 3 s", () => {
   const o = okolje();
   for (const tip of ["pointerdown", "wheel", "keydown", "input", "scroll", "pointermove", "touchstart"]) {
-    o.pocakaj(3000);
+    o.pocakaj(2000);
     o.sprozi(tip, { key: "a" });
   }
-  o.pocakaj(4000);
+  o.pocakaj(2999);
   assert.ok(!o.razredi.has("tb-mir"));
-  o.pocakaj(1000);
+  o.pocakaj(1);
   assert.ok(o.razredi.has("tb-mir"));
 });
 
@@ -141,7 +141,7 @@ test("a leftover tb-peek is cleared when the bar hides, so --tabbar-h is 0", () 
   assert.ok(o.razredi.has("tb-mir") && !o.razredi.has("tb-peek"));
 });
 
-test("reading screens keep their rule: a shown (peeked) bar hides after 5 s, nothing more", () => {
+test("reading screens keep their rule: a shown (peeked) bar hides after 3 s, nothing more", () => {
   const o = okolje({ branje: true });
   o.razredi.add("tb-peek");
   o.pocakaj(MIROVANJE_MS);

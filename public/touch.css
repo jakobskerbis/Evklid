@@ -134,7 +134,7 @@
   }
   body.tb-peek > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { transform: translateY(calc(var(--tb-step-pb) - 12px - var(--tabbar-h, 0px))); }
 }
-/* ---------- Spodnja vrstica se po 5 s neuporabe skrije (j, 2026-11-14; public/noga.js) ----------
+/* ---------- Spodnja vrstica se po 3 s neuporabe skrije (j, 2026-11-14; public/noga.js) ----------
    Na zaslonih, kjer je vrstica v postavitvi (Učna pot, Uči se, Tekmovanja, Jaz …): body.tb-mir jo pritrdi pod spodnji
    rob (vsebina dobi njen prostor), body.tb-vraca jo ob uporabi pripelje nazaj (0,22 s), nato je spet v postavitvi.
    Zasloni za branje zgoraj imajo močnejše pravilo (--tb-y) in ostanejo po starem. Med vodičem (kaže na zavihke) je
