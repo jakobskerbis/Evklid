@@ -13,7 +13,7 @@ import SL from "../public/i18n/sl.js";
 
 const require = createRequire(import.meta.url);
 const ROOT = path.join(import.meta.dirname, "..");
-const KEYS = ["verify.notYet", "verify.resendHint", "verify.resendWait", "verify.otherBrowser", "verify.otherBrowserPw", "verify.trouble", "verify.selfNote"];
+const KEYS = ["verify.notYet", "verify.resendHint", "verify.resendWait", "verify.otherBrowser", "verify.otherBrowserPw", "verify.trouble", "verify.selfNote", "verify.parentNote"];
 const PARENT_LINE = /starš ali zakoniti zastopnik/;
 
 test("novi ključi potrditve e-naslova: v sl.js in vseh ui/*.json, {s} ohranjen, ne v slovenščini", () => {
@@ -124,7 +124,9 @@ test("Potrdi e-naslov na telefonu: sporočilo »še ni potrjeno«, Pošlji znova
     {
       const { ctx, page } = await phone();
       const link = await register(page, "stars@example.com", 40);
-      assert.match(await page.locator(".verify-note").innerText(), PARENT_LINE);
+      const adultNote = await page.locator(".verify-note").innerText();
+      assert.match(adultNote, PARENT_LINE);
+      assert.equal(adultNote, SL["verify.parentNote"], "polnoletni: pogojni stavek (samo če ustvari profil za otroka)");
       // 3) Povezava v drugem brskalniku: mirno besedilo, rdeči gumb skrit pod »Težave?«.
       const other = await phone();
       await other.page.goto(link);

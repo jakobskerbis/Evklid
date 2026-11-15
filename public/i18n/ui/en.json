@@ -3962,6 +3962,7 @@
   "verify.otherBrowserPw": "To finish, enter the password you chose when you signed up.",
   "verify.trouble": "Having trouble?",
   "verify.selfNote": "Once you confirm your email address, you create your profile and can start learning.",
+  "verify.parentNote": "If you create a profile for a child, by confirming you declare that you are their parent or legal guardian. Data protection law requires this for children under 15.",
   "birth.missing": "Enter your date of birth. We use it to check whether you can create the account yourself or a parent should create it.",
   "birth.enter": "Enter a valid date of birth.",
   "birth.underAge": "Thank you. Because you are younger than {age}, payments now go through a parent or guardian. Show them the page for parents, which explains what this app is and what data we keep.",

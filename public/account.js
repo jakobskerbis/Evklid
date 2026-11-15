@@ -863,10 +863,9 @@ let resendAt = 0;
 function renderVerify() {
   const dev = store.get("evklid_dev_verify");
   // Mladoletni imetnik (15–17 let, račun zase) ne izjavlja, da je starš (pregled uvoda, ovira 4). Račun brez
-  // datuma rojstva (star račun) ostane pri dosedanjem besedilu.
-  const note = status.parent.minor
-    ? esc(t("verify.selfNote"))
-    : "S potrditvijo tudi izjaviš, da si starš ali zakoniti zastopnik otroka. To zahteva zakon o varstvu podatkov za otroke, mlajše od 15 let.";
+  // datuma rojstva (star račun) dobi pogojni stavek: izjava velja le, če ustvari profil za otroka (j 2026-11-15,
+  // polnoletni dijak zase ni starš; končno besedilo pregleda pravnik).
+  const note = esc(t(status.parent.minor ? "verify.selfNote" : "verify.parentNote"));
   shell(`
     <h1>Potrdi e-naslov</h1>
     <div class="card">

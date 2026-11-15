@@ -4127,6 +4127,7 @@ export default {
   "verify.otherBrowserPw": "Za konec vpiši geslo, ki si ga izbral(a) ob registraciji.",
   "verify.trouble": "Težave?",
   "verify.selfNote": "Ko potrdiš e-naslov, ustvariš svoj profil in se lahko začneš učiti.",
+  "verify.parentNote": "Če ustvariš profil za otroka, s potrditvijo izjaviš, da si njegov starš ali zakoniti zastopnik. To zahteva zakon o varstvu podatkov za otroke, mlajše od 15 let.",
   "birth.missing": "Vpiši svoj datum rojstva. Z njim preverimo, ali lahko račun ustvariš sam ali ga ustvari starš.",
   "birth.enter": "Vpiši pravi datum rojstva.",
   "birth.underAge": "Hvala. Ker si mlajši ali mlajša od {age} let, plačila zdaj potekajo prek starša ali skrbnika. Pokaži mu stran za starše, kjer piše, kaj je ta aplikacija in katere podatke hranimo.",

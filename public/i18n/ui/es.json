@@ -3963,6 +3963,7 @@
   "verify.otherBrowserPw": "Para terminar, escribe la contraseña que elegiste al registrarte.",
   "verify.trouble": "¿Problemas?",
   "verify.selfNote": "Cuando confirmes tu correo, crearás tu perfil y podrás empezar a aprender.",
+  "verify.parentNote": "Si creas un perfil para un hijo, al confirmar declaras que eres su padre, madre o tutor legal. La ley de protección de datos lo exige para menores de 15 años.",
   "birth.missing": "Escribe tu fecha de nacimiento. Con ella comprobamos si puedes crear la cuenta tú mismo o debe crearla un padre o una madre.",
   "birth.enter": "Escribe una fecha de nacimiento válida.",
   "birth.underAge": "Gracias. Como tienes menos de {age} años, los pagos pasan ahora por tu padre, tu madre o tu tutor. Enséñale la página para padres, donde se explica qué es esta aplicación y qué datos guardamos.",

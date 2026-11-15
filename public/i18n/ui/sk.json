@@ -4028,6 +4028,7 @@
   "verify.otherBrowserPw": "Na záver zadaj heslo, ktoré si si zvolil(a) pri registrácii.",
   "verify.trouble": "Problémy?",
   "verify.selfNote": "Keď potvrdíš e-mail, vytvoríš si profil a môžeš sa začať učiť.",
+  "verify.parentNote": "Ak vytváraš profil pre dieťa, potvrdením vyhlasuješ, že si jeho rodič alebo zákonný zástupca. Vyžaduje to zákon o ochrane osobných údajov pri deťoch mladších ako 15 rokov.",
   "birth.missing": "Zadaj svoj dátum narodenia. Podľa neho overíme, či si účet môžeš vytvoriť sám, alebo ho má vytvoriť rodič.",
   "birth.enter": "Zadaj platný dátum narodenia.",
   "birth.underAge": "Ďakujeme. Keďže máš menej ako {age} rokov, platby teraz prebiehajú cez rodiča alebo zákonného zástupcu. Ukáž mu stránku pre rodičov, kde je napísané, čo je táto aplikácia a aké údaje uchovávame.",

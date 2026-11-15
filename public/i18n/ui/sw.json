@@ -3960,6 +3960,7 @@
   "verify.otherBrowserPw": "Ili kumaliza, weka nenosiri ulilochagua wakati wa kujisajili.",
   "verify.trouble": "Una tatizo?",
   "verify.selfNote": "Ukithibitisha barua pepe yako, unaunda wasifu wako na unaweza kuanza kujifunza.",
+  "verify.parentNote": "Ukiunda wasifu kwa ajili ya mtoto, kwa kuthibitisha unatangaza kuwa wewe ni mzazi au mlezi wake halali. Sheria ya ulinzi wa data inataka hivi kwa watoto walio chini ya miaka 15.",
   "birth.missing": "Andika tarehe yako ya kuzaliwa. Kwayo tunaangalia kama unaweza kufungua akaunti mwenyewe au mzazi anapaswa kuifungua.",
   "birth.enter": "Andika tarehe sahihi ya kuzaliwa.",
   "birth.underAge": "Asante. Kwa kuwa una umri chini ya miaka {age}, malipo sasa yanapitia kwa mzazi au mlezi. Mwonyeshe ukurasa wa wazazi, unaoeleza programu hii ni nini na data gani tunahifadhi.",

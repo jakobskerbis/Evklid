@@ -3994,6 +3994,7 @@
   "verify.otherBrowserPw": "Za kraj upiši lozinku koju si odabrao/la pri registraciji.",
   "verify.trouble": "Problemi?",
   "verify.selfNote": "Kad potvrdiš e-adresu, napravit ćeš svoj profil i možeš početi učiti.",
+  "verify.parentNote": "Ako napraviš profil za dijete, potvrdom izjavljuješ da si njegov roditelj ili zakonski zastupnik. To zahtijeva zakon o zaštiti podataka za djecu mlađu od 15 godina.",
   "birth.missing": "Upiši svoj datum rođenja. Po njemu provjeravamo možeš li sam otvoriti račun ili ga otvara roditelj.",
   "birth.enter": "Upiši ispravan datum rođenja.",
   "birth.underAge": "Hvala. Pošto si mlađi ili mlađa od {age} godina, plaćanja sada idu preko roditelja ili staratelja. Pokaži mu stranicu za roditelje, gdje piše šta je ova aplikacija i koje podatke čuvamo.",

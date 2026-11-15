@@ -3934,6 +3934,7 @@
   "verify.otherBrowserPw": "Untuk menyelesaikan, masukkan kata sandi yang kamu pilih saat mendaftar.",
   "verify.trouble": "Ada masalah?",
   "verify.selfNote": "Setelah kamu mengonfirmasi email, kamu membuat profilmu dan bisa mulai belajar.",
+  "verify.parentNote": "Jika kamu membuat profil untuk anak, dengan mengonfirmasi kamu menyatakan bahwa kamu orang tua atau wali sahnya. Undang-undang perlindungan data mewajibkan ini untuk anak di bawah 15 tahun.",
   "birth.missing": "Masukkan tanggal lahirmu. Dengan itu kami memeriksa apakah kamu bisa membuat akun sendiri atau orang tua yang harus membuatnya.",
   "birth.enter": "Masukkan tanggal lahir yang benar.",
   "birth.underAge": "Terima kasih. Karena usiamu di bawah {age} tahun, pembayaran sekarang dilakukan melalui orang tua atau wali. Tunjukkan kepadanya halaman untuk orang tua, yang menjelaskan apa aplikasi ini dan data apa yang kami simpan.",

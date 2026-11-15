@@ -3962,6 +3962,7 @@
   "verify.otherBrowserPw": "Gib zum Abschluss das Passwort ein, das du bei der Registrierung gewählt hast.",
   "verify.trouble": "Probleme?",
   "verify.selfNote": "Sobald du deine E-Mail-Adresse bestätigst, erstellst du dein Profil und kannst mit dem Lernen beginnen.",
+  "verify.parentNote": "Wenn du ein Profil für ein Kind erstellst, erklärst du mit der Bestätigung, dass du ein Elternteil oder gesetzlicher Vertreter bist. Das Datenschutzrecht verlangt dies für Kinder unter 15 Jahren.",
   "birth.missing": "Gib dein Geburtsdatum ein. Damit prüfen wir, ob du das Konto selbst erstellen kannst oder ein Elternteil es erstellt.",
   "birth.enter": "Gib ein gültiges Geburtsdatum ein.",
   "birth.underAge": "Danke. Weil du jünger als {age} bist, laufen Zahlungen jetzt über einen Elternteil oder Erziehungsberechtigten. Zeig ihm die Seite für Eltern, auf der steht, was diese App ist und welche Daten wir speichern.",

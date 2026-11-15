@@ -3962,6 +3962,7 @@
   "verify.otherBrowserPw": "Për ta përfunduar, shkruaj fjalëkalimin që zgjodhe gjatë regjistrimit.",
   "verify.trouble": "Probleme?",
   "verify.selfNote": "Kur ta konfirmosh adresën e email-it, krijon profilin tënd dhe mund të fillosh të mësosh.",
+  "verify.parentNote": "Nëse krijon një profil për një fëmijë, me konfirmimin deklaron se je prindi ose përfaqësuesi i tij ligjor. Këtë e kërkon ligji për mbrojtjen e të dhënave për fëmijët nën 15 vjeç.",
   "birth.missing": "Shkruaj datën tënde të lindjes. Me të kontrollojmë nëse mund ta krijosh llogarinë vetë apo e krijon një prind.",
   "birth.enter": "Shkruaj një datë të vlefshme lindjeje.",
   "birth.underAge": "Faleminderit. Meqë je më i ri ose më e re se {age} vjeç, pagesat tani kalojnë përmes prindit ose kujdestarit. Tregoji faqen për prindërit, ku shkruhet çfarë është ky aplikacion dhe çfarë të dhënash ruajmë.",

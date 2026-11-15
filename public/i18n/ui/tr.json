@@ -3960,6 +3960,7 @@
   "verify.otherBrowserPw": "Bitirmek için kayıt olurken seçtiğin şifreyi gir.",
   "verify.trouble": "Sorun mu var?",
   "verify.selfNote": "E-posta adresini onayladığında profilini oluşturur ve öğrenmeye başlayabilirsin.",
+  "verify.parentNote": "Bir çocuk için profil oluşturursan, onaylayarak onun ebeveyni veya yasal temsilcisi olduğunu beyan edersin. Veri koruma yasası bunu 15 yaşından küçük çocuklar için şart koşar.",
   "birth.missing": "Doğum tarihini gir. Hesabı kendin mi açabileceğini yoksa bir ebeveynin mi açması gerektiğini bununla kontrol ediyoruz.",
   "birth.enter": "Geçerli bir doğum tarihi gir.",
   "birth.underAge": "Teşekkürler. {age} yaşından küçük olduğun için ödemeler artık ebeveyn veya vasi üzerinden yapılır. Ona, bu uygulamanın ne olduğunu ve hangi verileri sakladığımızı anlatan ebeveyn sayfasını göster.",

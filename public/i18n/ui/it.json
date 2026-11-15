@@ -3963,6 +3963,7 @@
   "verify.otherBrowserPw": "Per finire, inserisci la password che hai scelto alla registrazione.",
   "verify.trouble": "Problemi?",
   "verify.selfNote": "Quando confermi l'indirizzo e-mail, crei il tuo profilo e puoi iniziare a imparare.",
+  "verify.parentNote": "Se crei un profilo per un figlio, confermando dichiari di esserne genitore o tutore legale. Lo richiede la legge sulla protezione dei dati per i minori di 15 anni.",
   "birth.missing": "Inserisci la tua data di nascita. Serve per verificare se puoi creare l'account da solo o se deve crearlo un genitore.",
   "birth.enter": "Inserisci una data di nascita valida.",
   "birth.underAge": "Grazie. Poiché hai meno di {age} anni, i pagamenti ora passano da un genitore o tutore. Mostragli la pagina per i genitori, dove si spiega cos'è questa app e quali dati conserviamo.",

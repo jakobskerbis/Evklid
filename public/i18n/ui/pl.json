@@ -4030,6 +4030,7 @@
   "verify.otherBrowserPw": "Na koniec wpisz hasło wybrane podczas rejestracji.",
   "verify.trouble": "Problemy?",
   "verify.selfNote": "Gdy potwierdzisz adres e-mail, utworzysz swój profil i możesz zacząć się uczyć.",
+  "verify.parentNote": "Jeśli tworzysz profil dla dziecka, potwierdzając oświadczasz, że jesteś jego rodzicem lub opiekunem prawnym. Wymaga tego prawo o ochronie danych w przypadku dzieci poniżej 15 lat.",
   "birth.missing": "Wpisz swoją datę urodzenia. Dzięki niej sprawdzamy, czy możesz sam założyć konto, czy powinien je założyć rodzic.",
   "birth.enter": "Wpisz prawidłową datę urodzenia.",
   "birth.underAge": "Dziękujemy. Ponieważ masz mniej niż {age} lat, płatności odbywają się teraz przez rodzica lub opiekuna. Pokaż mu stronę dla rodziców, gdzie jest napisane, czym jest ta aplikacja i jakie dane przechowujemy.",

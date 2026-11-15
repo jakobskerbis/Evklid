@@ -3934,6 +3934,7 @@
   "verify.otherBrowserPw": "Để hoàn tất, hãy nhập mật khẩu bạn đã chọn khi đăng ký.",
   "verify.trouble": "Gặp sự cố?",
   "verify.selfNote": "Khi xác nhận email, bạn sẽ tạo hồ sơ của mình và có thể bắt đầu học.",
+  "verify.parentNote": "Nếu bạn tạo hồ sơ cho con, khi xác nhận bạn cam kết mình là cha mẹ hoặc người giám hộ hợp pháp của con. Luật bảo vệ dữ liệu yêu cầu điều này đối với trẻ dưới 15 tuổi.",
   "birth.missing": "Nhập ngày sinh của bạn. Chúng tôi dùng nó để kiểm tra bạn có thể tự tạo tài khoản hay cha mẹ phải tạo.",
   "birth.enter": "Nhập ngày sinh hợp lệ.",
   "birth.underAge": "Cảm ơn bạn. Vì bạn chưa đủ {age} tuổi, việc thanh toán từ nay sẽ do cha mẹ hoặc người giám hộ thực hiện. Hãy cho họ xem trang dành cho phụ huynh, nơi giải thích ứng dụng này là gì và chúng tôi lưu những dữ liệu nào.",

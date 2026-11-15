@@ -3996,6 +3996,7 @@
   "verify.otherBrowserPw": "Ca să termini, scrie parola pe care ai ales-o la înregistrare.",
   "verify.trouble": "Probleme?",
   "verify.selfNote": "După ce îți confirmi adresa de e-mail, îți creezi profilul și poți începe să înveți.",
+  "verify.parentNote": "Dacă creezi un profil pentru un copil, prin confirmare declari că ești părintele sau reprezentantul lui legal. Legea protecției datelor cere acest lucru pentru copiii sub 15 ani.",
   "birth.missing": "Scrie data ta de naștere. Cu ea verificăm dacă poți crea singur contul sau trebuie să-l creeze un părinte.",
   "birth.enter": "Scrie o dată de naștere validă.",
   "birth.underAge": "Mulțumim. Pentru că ai sub {age} ani, plățile se fac acum prin părinte sau tutore. Arată-i pagina pentru părinți, unde scrie ce este această aplicație și ce date păstrăm.",
