@@ -563,38 +563,47 @@ export const bakterije = {
   sredisceBlizu: [0, 0],
   imena: { 7: "bakterija" },
   snovi: { 11: "celična stena bakterije" },
-  isci: "Pri 1000× z oljem poišči vijolične koke v grozdih in rožnate paličke. Pri TEM primerjaj steni: debelo pri grampozitivnih, dve membrani pri gramnegativnih.",
+  isci: "Pri 1000× z oljem poišči vijolične koke v grozdih in rožnate paličke. Pri TEM primerjaj steni: debelo pri grampozitivnih, dve membrani pri gramnegativnih. SEM barv ne zazna (slika je črno-bela, vzorec je prevlečen s tanko plastjo zlata), zato tam bakterije ločiš le po obliki: okrogle koke in paličke.",
   glsl: "#define SEM_PROSTE\n" + MIKROB_TEM + /* glsl */ `
+// Gostota grozdov v točki c. Obstoj koka ali paličke se odloči v njenem središču (ne v točki p), sicer meja grozda
+// odreže kroglo ali paličko po ravni črti (pri SEM so bile vidne polkrogle in ploske odrezane ploskve; j, 15. 11. 2026).
+float grozdV(vec2 c) { return smoothstep(0.6, 0.7, fbm(c / 14.0, 3)); }
 T tkivo(vec2 p, float px) {
   T t = prazno();
   if (odsek(p, vec2(500.0, 350.0), 59.0) > 0.0) return t;
   t.dye = vec3(0.0, 0.04 * sumL(p, 3.0, px), 0.0);
-  float grozd = smoothstep(0.6, 0.7, fbm(p / 14.0, 3));
-  if (grozd > 0.0) {
-    vec4 k = krogci(p, 1.05, 0.46, 0.52, 0.92 * grozd, 81.0);
-    if (k.x < px) {
-      T b = mikrob(k.x, 0.032, k.yz, vec2(k.w, 1.0), C_BAKTERIJA, 1.0);
-      b.dye = vec3(1.35 * pokrij(k.x, px), 0.0, 0.0);
-      if (k.x < 0.0) return b;
-      t.dye = mix(t.dye, b.dye, pokrij(k.x, px));
-    }
+  // stafilokoki: mreža 1,1 µm z zmernim zamikom; sosednji koki se večinoma dotikajo, redki pari se prekrivajo kot pri delitvi (diplokoki)
+  vec2 n = floor(p / 1.1);
+  vec4 k = vec4(1e3);
+  for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) {
+    vec2 kk = n + vec2(i, j);
+    vec4 h = h42(kk + 81.0);
+    vec2 c = (kk + 0.5 + 0.45 * (h.xy - 0.5)) * 1.1;
+    float d = length(p - c) - mix(0.42, 0.48, h.w);
+    if (d >= min(k.x, px) || h.z > 0.92 * grozdV(c)) continue; // grozdV le za koke, ki lahko pokrijejo p
+    k = vec4(d, c, h.w + kk.x * 7.0 + kk.y * 13.0);
   }
-  vec2 n = floor(p / 3.5);
+  if (k.x < px) {
+    T b = mikrob(k.x, 0.032, k.yz, vec2(k.w, 1.0), C_BAKTERIJA, 1.0);
+    // tudi pas glajenja ob robu (0 < d < px) vrne bakterijo: SEM tam vidi rob krogle na stekelcu, ne tkiva
+    b.dye = mix(t.dye, vec3(1.35, 0.0, 0.0), pokrij(k.x, px));
+    return b;
+  }
   float best = 1e3; vec2 bc = vec2(0.0); vec2 bid = vec2(0.0);
+  n = floor(p / 3.5);
   for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) {
     vec2 kk = n + vec2(i, j);
     vec4 h = h42(kk + 91.0);
-    if (h.z > 0.5 * (1.0 - grozd)) continue;
     vec2 c = (kk + 0.5 + 0.6 * (h.xy - 0.5)) * 3.5;
     vec2 z = rot(h.w * 6.2832) * (p - c);
     float d = sdKapsula(z, 0.55 + 0.45 * h.x, 0.31);
-    if (d < best) { best = d; bc = c; bid = kk; }
+    if (d >= min(best, px) || h.z > 0.5 * (1.0 - grozdV(c))) continue;
+    best = d; bc = c; bid = kk;
   }
   if (best < px) {
     T b = mikrob(best, 0.022, bc, bid, C_BAKTERIJA, 2.0);
-    b.dye = vec3(0.0, 1.0 * pokrij(best, px), 0.0);
-    if (best < 0.0) return b;
-    t.dye = mix(t.dye, b.dye, pokrij(best, px));
+    b.dye = mix(t.dye, vec3(0.0, 1.0, 0.0), pokrij(best, px));
+    return b;
   }
   return t;
 }`,
