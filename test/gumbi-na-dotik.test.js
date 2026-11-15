@@ -91,6 +91,12 @@ window.calc = createCalculator(document.getElementById("g"), { t: (k) => k, icon
     assert.equal(await p.locator(".gc-play").first().getAttribute("data-on"), "true", "drsnik teče");
     assert.deepEqual([...new Set(najdbe)], []);
     assert.ok(await before.evaluate((el) => el.isConnected), "polje za mejo ostane isto");
+    // Napačna meja se ob potrditvi zavrže (vrstica se zgradi znova, čeprav se njen HTML ni spremenil).
+    await p.locator(".gc-play").first().click();
+    const lim = p.locator(".gc-extra .gc-lim[data-dom]").first();
+    await lim.fill("abc");
+    await lim.dispatchEvent("change");
+    assert.equal(await p.locator(".gc-extra .gc-lim[data-dom]").first().inputValue(), "0");
   } finally {
     await browser.close();
     server.close();

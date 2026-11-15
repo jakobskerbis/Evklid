@@ -446,6 +446,8 @@ export function createCalculator(root, opts) {
         } catch {
           v = NaN;
         }
+        // vrstica se zgradi znova (napačen vnos izgine, 2*pi se izpiše kot 2π), čeprav se njen HTML ni spremenil
+        extra._html = null;
         if (!Number.isFinite(v)) return refresh();
         const d = [...(it.domain || DEFAULT_DOMAIN[o.kind])];
         d[Number(inp.dataset.dom)] = v;
