@@ -180,7 +180,7 @@ const GENS = [
   // ---------------- iracionalne enačbe ----------------
   {
     id: P + "iracionalne-enacbe",
-    topics: [T("iracionalne-enacbe")],
+    topics: [T("iracionalne-enacbe"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -526,7 +526,7 @@ const GENS = [
   // ---------------- presečišča parabol, sistemi kvadratnih neenačb ----------------
   {
     id: P + "presecisca-sistemi",
-    topics: [T("presecisca-parabol-in-sistemi-kvadratnih-neenacb")],
+    topics: [T("presecisca-parabol-in-sistemi-kvadratnih-neenacb"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -844,7 +844,7 @@ const GENS = [
   // ---------------- absolutna vrednost, stopničaste funkcije ----------------
   {
     id: P + "absolutna-stopnicaste",
-    topics: [T("grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije")],
+    topics: [T("grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -1176,7 +1176,7 @@ const GENS = [
   // ---------------- ekstremalni problemi s kvadratno funkcijo (višja raven) ----------------
   {
     id: P + "ekstremalni-problemi",
-    topics: [T("ekstremalni-problemi-s-kvadratno-funkcijo")],
+    topics: [T("ekstremalni-problemi-s-kvadratno-funkcijo"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const nm = name(r);
       const U = (u) => `\\ \\mathrm{${u.replace("²", "^2")}}`;

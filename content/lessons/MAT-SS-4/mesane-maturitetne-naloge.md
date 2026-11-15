@@ -41,15 +41,22 @@ Poveča se, a za malo (na približno $54\,\%$). Novi človek prinese $23$ novih 
 
 Isti štirje koraki delujejo pri vsaki mešani nalogi. Najtežji je drugi: iz besed naloge prepoznati orodje. Pomaga ti ta preglednica.
 
-| v besedilu piše | orodje | zapis |
-|---|---|---|
-| največ, najmanj, najvišja točka | odvod $= 0$ | $f'(x) = 0$ |
-| naklon tangente, hitrost spreminjanja | odvod v točki | $k = f'(x_0)$ |
-| ploščina pod grafom, pot iz hitrosti | določeni integral | $\int_a^b f(x)\,dx$ |
-| na koliko načinov, koliko tekem | kombinatorika | $n!$, $V_n^k$, $\binom{n}{k}$ |
-| vsaj eden, vsaj dva | nasprotni dogodek | $1 - P(\overline{A})$ |
-| vsako leto za $p\,\%$ | geometrijsko zaporedje | $a_n = a_1 q^{n-1}$ |
-| tipična vrednost, razpršenost | statistika | $\bar x$, $\mathrm{Me}$, $\sigma$ |
+| v besedilu piše | orodje in zapis |
+|---|---|
+| največ, najmanj, najvišja točka | odvod, $f'(x) = 0$ |
+| naklon tangente, hitrost spreminjanja | odvod v točki, $k = f'(x_0)$ |
+| ploščina pod grafom, pot iz hitrosti | določeni integral $\int_a^b f(x)\,dx$ |
+| na koliko načinov, koliko tekem | kombinatorika: $n!$, $V_n^k$, $\binom{n}{k}$ |
+| vsaj eden, vsaj dva | nasprotni dogodek, $1 - P(\overline{A})$ |
+| vsako leto za $p\,\%$ | geometrijsko zaporedje, $a_n = a_1 q^{n-1}$ |
+| tipična vrednost, razpršenost | statistika: $\bar x$, $\mathrm{Me}$, $\sigma$ |
+| kje se grafa sekata | sistem enačb, $f(x) = g(x)$ |
+| podvoji se, razpolovi se | eksponentna enačba in logaritem, $q^t = 2$ ali $q^t = \frac{1}{2}$ |
+| kot med vektorjema | skalarni produkt in dolžini vektorjev |
+| razdalja od premice | pravokotnica skozi točko, razdalja do projekcije |
+| ničle polinoma | razcep ali Hornerjev algoritem, $p(x) = 0$ |
+| se dotika | diskriminanta, pogoj $D = 0$ |
+| stranica nasproti kota | kosinusni izrek |
 
 Večkoračna naloga je **veriga** takih orodij. Primer: »Žoga leti po tiru $h(t)$. Kdaj je najvišje in kdaj pade na tla?« Prvi del je odvod, drugi kvadratna enačba iz 1. letnika. Vsak člen verige reši posebej in rezultat prvega zapiši, preden začneš drugega.
 
