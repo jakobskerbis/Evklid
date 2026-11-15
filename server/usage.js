@@ -590,7 +590,9 @@ export class Usage {
       const n = sb.group?.length || 1;
       caps.push({
         key: sb.group ? `pool:${[...sb.group].sort((a, b) => a - b).join(",")}` : `s:${studentId}`,
-        // Rezervacije v teku pod ključem računa: z dodanim ali izbrisanim profilom ostanejo štete (inflightOf).
+        // Rezervacije v teku pod ključem računa: z dodanim ali izbrisanim profilom ostanejo štete (inflightOf). Račun ima
+        // največ eno zajamčeno mejo (Družina je en skupni delež); če bi jih imel več, bi se klici v teku šteli v vse
+        // (ustavi prej, nikoli čez mejo).
         fly: sb.owner != null ? `g:${sb.owner}` : undefined,
         usd: Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, this.totalOf(studentId) ?? Infinity) + Math.max(0, sb.credit || 0),
         spent: sb.spent,
