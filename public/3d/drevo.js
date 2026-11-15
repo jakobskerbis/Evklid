@@ -12,6 +12,30 @@ export const SLOGI_IKON = ["cist", "antik", "renesansa", "bagdad", "indija", "eg
 export const slogIkon = (slog) => (SLOGI_IKON.includes(slog) ? slog : "cist");
 export const ikonaVeje = (id, slog) => `/3d/ikone-drevo/${slogIkon(slog)}/${id}.webp`;
 
+// Ikone naslednje ravni vnaprej (j, 15. 11. 2026: »vse se ob kliku odpre takoj«): ko je raven drevesa narisana, se
+// v mirnem trenutku naložijo ikone podvej vidnih vej, zato je ob dotiku na vejo njena raven takoj cela. Slike ostanejo
+// v pomnilniku strani (referenca v »vnaprej«), da jih nova raven vzame brez ponovnega preverjanja na strežniku.
+// veje: vidne veje ({ otroci }); obstaja: id-ji modelov, ki obstajajo (veja brez modelov se ne pokaže, zato ne nalagamo).
+const vnaprej = new Map();
+export function ikoneVnaprej(veje, slog, obstaja = null) {
+  const naslovi = [];
+  for (const v of veje || []) for (const o of v?.otroci || []) if (!obstaja || modeliVeje(o, obstaja).length) naslovi.push(ikonaVeje(o.id, slog));
+  const novi = naslovi.filter((u) => !vnaprej.has(u));
+  if (!novi.length || typeof Image !== "function") return novi.length;
+  const zacni = () => {
+    for (const u of novi) {
+      if (vnaprej.has(u)) continue;
+      const img = new Image();
+      img.decoding = "async";
+      img.src = u;
+      vnaprej.set(u, img);
+    }
+  };
+  if (typeof requestIdleCallback === "function") requestIdleCallback(zacni, { timeout: 500 });
+  else setTimeout(zacni, 50);
+  return novi.length;
+}
+
 // Veja: { id, otroci: [veje] } ali { id, modeli: [id modela] } ali { id, povezava: "atlas" }; sk (skupina) le na vrhu.
 export const DREVO = [
   {

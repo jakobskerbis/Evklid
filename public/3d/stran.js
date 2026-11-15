@@ -6,7 +6,7 @@ import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
 import { vgrajeno, starsu } from "./vgrajeno.js";
 import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
-import { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, slogIkon } from "./drevo.js";
+import { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, slogIkon, ikoneVnaprej } from "./drevo.js";
 
 const glavni = document.getElementById("k3-glavni");
 const vAplikaciji = !!window.ReactNativeWebView;
@@ -358,8 +358,10 @@ async function zbirka(param) {
       }
       else {
         const g = mk("div", "k3-drevo");
-        for (const v of zdaj ? zdaj.otroci : DREVO) if (modeliVeje(v, obstaja).length) g.append(veja(v));
+        const vidne = (zdaj ? zdaj.otroci : DREVO).filter((v) => modeliVeje(v, obstaja).length);
+        for (const v of vidne) g.append(veja(v));
         deli.push(g);
+        ikoneVnaprej(vidne, slogAplikacije(), obstaja); // dotik na vejo: njene podveje že z ikonami
       }
       if (!zdaj) {
         const nedavni = (beri(NEDAVNO, []) || []).map((id) => poId.get(id)).filter(Boolean);
