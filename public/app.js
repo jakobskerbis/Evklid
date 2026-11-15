@@ -3448,7 +3448,7 @@ function renderTask(task, ctx) {
     input = `<form class="answer-row"><input id="answer" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
   }
   const calcBtn = ["contest", "placement", "pretest"].includes(ctx.mode) ? "" : `<button type="button" class="ghost task-calc icon-only" title="${escapeHtml(t("nav.graph"))}" aria-label="${escapeHtml(t("nav.graph"))}">${icon("calculator")}</button>`;
-  const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span></div>` : "";
+  const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span>${ctx.total ? `<span class="contest-count">${ctx.index} / ${ctx.total}</span>` : ""}</div>` : "";
   const penalty = ctx.mode === "contest" && task.penalty ? `<span class="pts neg">${t("exam.penaltyPts", { n: String(task.penalty).replace("-", "−") })}</span>` : "";
   const hintLadder = task.hintSteps > 0 && !["contest", "placement", "pretest"].includes(ctx.mode);
   const pretestHead =
@@ -4272,6 +4272,7 @@ function startContestTimer(sessionId, deadline) {
   const tick = () => {
     const el = $("#contest-timer");
     const ms = deadline - Date.now();
+    if (!el?.offsetParent) glavaMedTestom(false);
     if (el) {
       el.querySelector("b").textContent = leftText(deadline);
       el.classList.toggle("warn", ms <= 300000);
@@ -4292,6 +4293,54 @@ function leftText(deadline) {
 function stopContestTimer() {
   if (state.contestTimer) clearInterval(state.contestTimer);
   state.contestTimer = null;
+  glavaMedTestom(false);
+}
+
+// Med testom na telefonu (j 2026-11-15): pomik navzdol skrije zgornjo vrstico (timer se pripne na njeno mesto),
+// pomik navzgor ali vrh strani jo vrne. Samo v pogledu, ki ima timer; competition.css → body.glava-skrita.
+// Skrita vrstica podaljša pogled; brskalnik ob dnu zato sam zmanjša scrollTop. Da to ni videti kot pomik navzgor
+// (utripanje), po vsakem preklopu 300 ms ne beremo pomika, ob dnu ga ne štejemo za »gor«, kratke naloge pa glave ne skrijejo.
+let glavaZaklep = 0;
+function glavaMedTestom(skrij) {
+  const bar = document.querySelector(".topbar");
+  const zdaj = document.body.classList.contains("glava-skrita");
+  if (!!skrij === zdaj) return;
+  if (skrij && bar) document.body.style.setProperty("--glava-h", `${bar.offsetHeight}px`);
+  document.body.classList.toggle("glava-skrita", !!skrij);
+  glavaZaklep = skrij ? Date.now() + 300 : 0;
+}
+{
+  const zadnji = new WeakMap();
+  document.addEventListener(
+    "scroll",
+    (e) => {
+      const box = e.target;
+      if (!(box instanceof Element) || !box.querySelector("#contest-timer")) return;
+      const y = box.scrollTop;
+      if (Date.now() < glavaZaklep || !zadnji.has(box)) return void zadnji.set(box, y);
+      const prej = zadnji.get(box);
+      const max = box.scrollHeight - box.clientHeight;
+      const glavaH = parseFloat(document.body.style.getPropertyValue("--glava-h")) || 64;
+      const skrita = document.body.classList.contains("glava-skrita");
+      if (y < 0 || y > max) return; // odboj na robu (iPhone)
+      if (y < 12) glavaMedTestom(false);
+      else if (y > prej + 6) {
+        if (!skrita && max > (document.querySelector(".topbar")?.offsetHeight || 64) + 120) glavaMedTestom(true);
+      } else if (y < prej - 6) {
+        if (y < max - glavaH) glavaMedTestom(false);
+      } else return;
+      zadnji.set(box, Date.now() < glavaZaklep ? box.scrollTop : y);
+    },
+    { capture: true, passive: true },
+  );
+  // Samo sprememba širine (obrat, drugo okno); višino spreminja tudi naslovna vrstica brskalnika med pomikom.
+  let sirina = innerWidth;
+  const pokazi = () => {
+    if (innerWidth !== sirina) glavaMedTestom(false);
+    sirina = innerWidth;
+  };
+  addEventListener("resize", pokazi, { passive: true });
+  addEventListener("orientationchange", pokazi);
 }
 
 function showContestResult(c, timeUp = false) {
