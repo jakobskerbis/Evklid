@@ -1,5 +1,5 @@
-// Nove vrste gradiv ob lekciji (docs/gradiva.md): povzetek na eni strani z miselnim vzorcem,
-// zvočni povzetek in delovni list za tisk z rešitvami. Vse je narejeno iz že pregledanih lekcij
+// Nove vrste gradiv ob lekciji (docs/gradiva.md): povzetek na eni strani z miselnim vzorcem
+// in delovni list za tisk z rešitvami. Vse je narejeno iz že pregledanih lekcij
 // in generatorjev nalog, zato ne stane nič in ne potrebuje nove vsebine.
 // Kdo kaj dobi, odloča ena funkcija (canUse) po pravicah iz server/placila/pravice.js:
 // šolska licenca za teme svojih predmetov in razredov, Evklid Osebno za vse.
@@ -10,7 +10,6 @@ import { loadLesson } from "./textbook.js";
 import { renderMd, shell } from "./textbook-print.js";
 import { createPageCache, lessonVersion } from "./tisk-predpomnilnik.js";
 import { generateTask, hasGenerator, optionsAreTex } from "./practice/index.js";
-import { speakMarkdown } from "./govor.js";
 import { GRADIVA_DIR, hasGradivo, gradivoPage, videoFor } from "./gradiva-vsebina.js";
 import { weakTopicsFor } from "./weaknesses.js";
 
@@ -18,7 +17,6 @@ import { weakTopicsFor } from "./weaknesses.js";
 // Ostalo velja za šolsko licenco (šolski predmeti) in Evklid Osebno (vsi predmeti).
 export const VRSTE = {
   povzetek: { icon: "file-text", free: true },
-  zvok: { icon: "volume-2", free: true },
   "delovni-list": { icon: "clipboard-check", free: false },
   // Napisana gradiva (server/gradiva-vsebina.js): samo, kjer datoteka obstaja.
   video: { icon: "play", free: false },
@@ -178,16 +176,6 @@ export function summaryPage(topicId) {
     ${p.status !== "pregledano" ? `<p class="muted small">Narejeno iz lekcije, ki jo še pregleduje učitelj.</p>` : ""}
   </section>`;
   return shell(`${t.name} · povzetek`, content, SUMMARY_CSS);
-}
-
-// --- zvočni povzetek ---
-
-export function audioSummary(topicId) {
-  const p = summaryParts(topicId);
-  if (!p) return null;
-  const formulas = p.formulas.length ? `\nFormule.\n${p.formulas.map((f) => speakMarkdown(f)).join("\n")}` : "";
-  const text = `Povzetek: ${p.topic.name}.\n${speakMarkdown(p.povzetek)}${formulas}`;
-  return { topic: p.topic.id, title: p.topic.name, lang: "sl-SI", text, parts: text.split("\n").filter(Boolean) };
 }
 
 // --- delovni list ---
@@ -352,7 +340,7 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
     const items = [];
     if (summaryParts(t.id)) {
       const [p, slug] = t.id.split("/");
-      items.push({ vrsta: "povzetek", url: `/gradiva/povzetek/${p}/${slug}` }, { vrsta: "zvok" });
+      items.push({ vrsta: "povzetek", url: `/gradiva/povzetek/${p}/${slug}` });
     }
     if (hasGenerator(t.id)) items.push({ vrsta: "delovni-list" });
     for (const v of ["video", "poskus", "projekt"]) if (hasGradivo(v, t.id)) items.push({ vrsta: v });
@@ -365,16 +353,6 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
     if (!s) return;
     const topics = weakTopicIds(store.db, s.id, 3, s).map((id) => ({ id, name: getTopic(id).name }));
     res.json({ topics, locked: !canUse(s, "delovni-list") });
-  });
-
-  app.get("/api/students/:id/gradiva/zvok", (req, res) => {
-    const s = loadStudent(req, res);
-    if (!s) return;
-    const t = topicOf(req, res);
-    if (!t) return;
-    const a = audioSummary(t.id);
-    if (!a) return res.status(404).json({ error: "Za to temo povzetka še ni." });
-    res.json(a);
   });
 
   // Domači poskus ali projekt: stran za tisk (odjemalec jo odpre v novem oknu).

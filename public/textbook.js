@@ -574,8 +574,8 @@ async function renderLesson(topicId) {
   const nChecks = lesson?.checks?.length || 0;
   const checksHtml = nChecks ? checksCard(lesson.checks.map((_, i) => i)) : "";
 
-  // Po korakih (privzeto): kratke kartice, vmes vprašanje, spodaj Nazaj / Naprej.
-  const stepMode = !!lesson && sections.length > 0 && stepPref();
+  // Vedno po korakih (j, 15. 11. 2026; prej izbira »Vse naenkrat«): kratke kartice, vmes vprašanje, spodaj Nazaj / Naprej.
+  const stepMode = !!lesson && sections.length > 0;
   const steps = stepMode ? lessonSteps(sections, nChecks) : [];
   // Simulacija je na istem koraku kot besedilo, ki jo omenja (j, 2. 11. 2026).
   const onStep = steps.map(() => []);
@@ -598,9 +598,6 @@ async function renderLesson(topicId) {
         <span class="tb-step-count" aria-live="polite"></span>
         <button type="button" class="tb-step-btn next" id="tb-step-next" aria-label="${esc(t("tb.steps.next"))}" title="${esc(t("tb.steps.next"))}">${ic("arrow-right")}</button>
       </div>`
-    : "";
-  const modeBtn = lesson
-    ? `<button type="button" class="ghost tb-mode-btn" id="tb-mode">${ic(stepMode ? "file-text" : "layers")}${esc(t(stepMode ? "tb.steps.all" : "tb.steps.byStep"))}</button>`
     : "";
 
   // Ista tema v Laboratoriju ali 3D svetu (public/sim/katalog.js, strežnik: lessonView → links): en dotik odpre poskus
@@ -635,7 +632,7 @@ async function renderLesson(topicId) {
     <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
     <p class="muted tb-crumb">${esc(L.pathLabel)} · ${esc(L.unit)}</p>
     <h1 class="tb-title">${esc(L.name)}</h1>
-    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}${modeBtn}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
+    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
     ${linkHtml}
     ${pending ? "" : `<p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>`}
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
@@ -742,10 +739,6 @@ async function renderLesson(topicId) {
       }),
     );
   });
-  $("#tb-mode")?.addEventListener("click", () => {
-    setStepPref(!stepMode);
-    renderLesson(topicId);
-  });
   if (stepMode) wireSteps(box, L.id, steps.length);
   $("#tb-practice")?.addEventListener("click", async () => {
     if (!(await ctx.openTopic(L.id))) ctx.nextPractice();
@@ -759,19 +752,6 @@ async function renderLesson(topicId) {
 }
 
 // ---------- Lekcija po korakih ----------
-const STEP_PREF = "tb-steps";
-function stepPref() {
-  try {
-    return localStorage.getItem(STEP_PREF) !== "0";
-  } catch {
-    return true;
-  }
-}
-function setStepPref(on) {
-  try {
-    localStorage.setItem(STEP_PREF, on ? "1" : "0");
-  } catch {}
-}
 function wireSteps(box, lessonId, n) {
   const key = `tb-step:${lessonId}`;
   const all = [...box.querySelectorAll(".tb-step")];
