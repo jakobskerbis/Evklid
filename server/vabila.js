@@ -77,10 +77,12 @@ export function mountInviteApi(app, { env = process.env, limiter = createInviteL
   });
 }
 
-// Stran /vabilo (statična public/vabilo.html, prevodi kot placaj.html). Za skupnim geslom, kot druge strani.
-export function mountInvitePage(app, publicDir) {
-  app.get("/vabilo", (_req, res) => {
-    res.set("Cache-Control", "no-cache");
-    res.sendFile("vabilo.html", { root: publicDir });
+// Stran /vabilo (statična public/vabilo.html, prevodi kot placaj.html): pot se prepiše na /vabilo.html, ki jo
+// postreže običajni strežnik statičnih datotek (stiskanje, predpomnjenje, skupno geslo kot pri drugih straneh).
+export function mountInvitePage(app) {
+  app.get("/vabilo", (req, _res, next) => {
+    const q = req.url.indexOf("?");
+    req.url = "/vabilo.html" + (q >= 0 ? req.url.slice(q) : "");
+    next();
   });
 }
