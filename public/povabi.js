@@ -32,16 +32,21 @@ function zapisi(storage, id, rec) {
   } catch {}
 }
 
+// Pravila, ki jih poznamo brez računa (aplikacija iz trgovine, 7 dni): preverimo jih pred klicem /api/account.
+export function povabiNaNapravi({ profileId, now = new Date(), storage, ua = "" }) {
+  if (/ EvklidApp\//.test(ua)) return false;
+  const rec = storage ? preberiZapis(storage, profileId) : null;
+  const meja = now.getTime() - POVABI_DNI * DAN;
+  return !(rec && ((rec.shown || 0) > meja || (rec.dismissed || 0) > meja));
+}
+
 // Ali smemo kartico pokazati? Vrne { reward } ali null.
 export function povabiSme({ acc, profileId, now = new Date(), storage, ua = "" }) {
   if (!acc || !acc.parent || acc.parent.guest || !acc.referral?.url) return null;
-  if (/ EvklidApp\//.test(ua)) return null;
+  if (!povabiNaNapravi({ profileId, now, storage, ua })) return null;
   const profil = (acc.children || []).find((c) => String(c.id) === String(profileId));
   if (!profil || !odrasel15(profil.birth_year, now)) return null;
   if (acc.parent.birth_missing || !odrasel15(acc.parent.birth_year, now)) return null;
-  const rec = storage ? preberiZapis(storage, profileId) : null;
-  const meja = now.getTime() - POVABI_DNI * DAN;
-  if (rec && ((rec.shown || 0) > meja || (rec.dismissed || 0) > meja)) return null;
   return { reward: !!acc.billing && !acc.pilot && !acc.parent.minor };
 }
 
@@ -65,12 +70,18 @@ const naloziRacun = (api) => (accPromise ||= api("/api/account").catch(() => nul
 export const _ponastavi = () => (accPromise = null);
 
 // Pokaže kartico v `slot`, če pravila to dovolijo; vse napake tiho.
-export async function povabiPoUspehu(slot, { api, profileId, toast = () => {}, alive = () => true }) {
+export async function povabiPoUspehu(slot, opts) {
+  try {
+    await pokazi(slot, opts);
+  } catch {}
+}
+async function pokazi(slot, { api, profileId, toast = () => {}, alive = () => true }) {
   if (!slot || profileId == null) return;
   let storage = null;
   try {
     storage = window.localStorage;
   } catch {}
+  if (!povabiNaNapravi({ profileId, storage, ua: navigator.userAgent || "" })) return; // brez klica /api/account
   const acc = await naloziRacun(api);
   if (!alive() || !slot.isConnected) return;
   const ok = povabiSme({ acc, profileId, storage, ua: navigator.userAgent || "" });
