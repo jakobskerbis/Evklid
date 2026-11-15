@@ -12,7 +12,8 @@ Splošno o kopijah: [objava.md → Varnostna kopija](objava.md#varnostna-kopija)
 | Posnetek celega diska (7 dni) | Render → Disks | samodejno, Render |
 | Šifrirana kopija zunaj Renderja | Cloudflare R2 | **ni nastavljena** (`kopijeZunaj` null) |
 
-Brez R2 pomaga ob izgubi celega Render računa ali diska samo Renderjev posnetek diska. Nastavitev R2: objava.md →
+Brez R2 ob odpovedi diska pomaga samo Renderjev posnetek diska (dokler stara storitev obstaja); ob izgubi storitve
+ali celega Render računa ni nobene kopije. Nastavitev R2: objava.md →
 »Kopija zunaj Renderja (Cloudflare R2)«.
 
 ## Izmerjeni časi
@@ -38,19 +39,22 @@ gradnjo in objavo naredi Render sam (Render → Events pokaže dejanski čas; ob
 Po obnovi so se ujemala števila vrstic (starši, profili, pogovori, sporočila, poraba) z izvirno bazo, pogovori so
 bili berljivi, kopija v R2 pa ni vsebovala berljivega besedila.
 
-**Pričakovan čas do delovanja na Renderju:** pokvarjena baza, kopija na disku: **~5 min** (od tega večino čaka
+**Pričakovan čas do delovanja na Renderju:** pokvarjena baza, kopija na disku: **~5 min** (večino časa vzame
 Restart service). Izgubljen strežnik, kopija v R2: nov Render strežnik z istimi nastavitvami + obnova **~20–30 min**.
 
 ## Postopek A: pokvarjena baza, strežnik deluje (najpogostejše)
 
 V Render → evklid → **Shell**:
 
-1. `node scripts/obnovi-kopijo.js` – seznam kopij (časi so UTC). Izberi zadnjo pred napako.
+1. `node scripts/obnovi-kopijo.js` – seznam kopij (časi so UTC). Izberi zadnjo pred napako. `<datum>` spodaj
+   prepiši natanko, kot je v seznamu (npr. `2026-11-14` ali ročna `2026-11-14-0930`).
 2. `node scripts/obnovi-kopijo.js --preveri <datum>` – mora pisati »OBNOVA BI USPELA«.
 3. `node scripts/obnovi-kopijo.js <datum>` – pripravi obnovo.
 4. **V naslednji uri:** Render → Manual Deploy → **Restart service**. Pozneje obnova ne velja več (varovalka).
-5. Preveri: `https://evklid.app/healthz/stanje` → `kopije.obnovaCaka` je `false`; prijavi se in odpri profil.
-6. Če je obnova slabša od prej: `node scripts/obnovi-kopijo.js --razveljavi` in še en Restart service (14 dni).
+5. Preveri: Render → Logs mora pisati »baza obnovljena iz kopije« (`kopije.obnovaCaka` je `false` tudi, ko je
+   obnova potekla in se ni zgodila); prijavi se in odpri profil.
+6. Če je obnova slabša od prej: `node scripts/obnovi-kopijo.js --razveljavi` in še en Restart service (mogoče
+   14 dni po obnovi).
 
 Izgubi se vse, kar se je zgodilo po izbrani kopiji.
 
@@ -58,16 +62,24 @@ Izgubi se vse, kar se je zgodilo po izbrani kopiji.
 
 1. Render → New → Blueprint iz repozitorija (objava.md → Koraki) z **istimi** nastavitvami okolja, predvsem
    **isti `EVKLID_DATA_KEY`** iz upravitelja gesel. Z drugim ključem pogovorov ni mogoče prebrati (vaja to preveri:
-   `--preveri` z napačnim ključem javi napako).
+   `--preveri` z napačnim ključem javi napako). **Dodaj še `EVKLID_BACKUPS=0`:** sicer nova namestitev 2 minuti
+   po zagonu naredi kopijo svoje prazne baze in jo po 10 minutah naloži v R2 pod današnjim datumom, s tem pa
+   prepiše današnjo pravo kopijo. Ukazi `--oblak…` delujejo tudi z `EVKLID_BACKUPS=0`.
 2. Počakaj na prvi zagon. **Ta korak je obvezen:** `obnovi-kopijo.js` brez obstoječe baze napiše »Baze … ni« in
    ne naredi ničesar; prvi zagon ustvari prazno bazo.
 3. Kopija:
    - iz R2: `node scripts/obnovi-kopijo.js --oblak` (seznam), nato `node scripts/obnovi-kopijo.js --oblak-prenesi <LLLL-MM-DD>`;
      kopija dobi ime `<datum>-0000`;
-   - ali iz Renderjevega posnetka diska: Render → Disks → Restore snapshot (cel disk, nato samo Restart).
+   - ali, če stara storitev še obstaja in je odpovedal samo disk: v stari storitvi Render → Disks → Restore
+     snapshot (cel disk, nato samo Restart; koraki 1, 2 in 4 odpadejo).
 4. `node scripts/obnovi-kopijo.js --preveri <datum>-0000`, nato `node scripts/obnovi-kopijo.js <datum>-0000`.
-5. V naslednji uri Restart service, nato preveri kot v postopku A (5.).
-6. Če se je spremenil naslov: `EVKLID_BASE_URL` in Cloudflare CNAME (objava.md → Lastna domena), Stripe webhook.
+5. V naslednji uri Restart service, nato preveri kot v postopku A (5.), na naslovu nove storitve
+   (`https://<ime>.onrender.com`), ker `evklid.app` še kaže na stari strežnik.
+6. Domena: v novi storitvi Render → Settings → Custom Domains dodaj `evklid.app` in v Cloudflare popravi CNAME
+   (objava.md → Lastna domena). Če se je spremenil javni naslov: še `EVKLID_BASE_URL` in Stripe webhook (nov
+   `STRIPE_WEBHOOK_SECRET`).
+7. Šele ko prijava in pogovori delujejo: odstrani `EVKLID_BACKUPS=0` (Save → Render znova zažene strežnik in kopije
+   spet tečejo vsak dan).
 
 ## Kaj vidijo učenci po obnovi
 

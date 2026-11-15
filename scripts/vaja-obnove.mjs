@@ -32,12 +32,22 @@ const JSON_IZID = args.includes("--json");
 const UCENCEV = Math.max(1, Number(args[args.indexOf("--ucencev") + 1]) || 20);
 const RACUNOV = 3; // pravih računov prek API (z geslom in potrditvijo)
 const YEAR = new Date().getFullYear();
+// Nova namestitev ne sme naložiti kopije svoje prazne baze v R2 čez pravo (docs/obnova.md, postopek B).
+const BREZ_KOPIJ = { EVKLID_BACKUPS: "0" };
 
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-vaja-obnove-"));
 const KLJUC = crypto.randomBytes(32).toString("base64");
 const casi = [];
 const napake = [];
 const log = (s) => JSON_IZID || console.log(s);
+// Strežniki, ki še tečejo: ob prekinitvi (npr. časovna omejitev testa pošlje SIGTERM) ne smejo ostati živi.
+const zivi = new Set();
+for (const sig of ["SIGINT", "SIGTERM"])
+  process.on(sig, () => {
+    for (const p of zivi) p.kill("SIGKILL");
+    fs.rmSync(TMP, { recursive: true, force: true });
+    process.exit(1);
+  });
 
 async function korak(ime, fn) {
   const t0 = performance.now();
@@ -120,26 +130,34 @@ function okolje(dbFile, r2, extra = {}) {
 }
 
 // Strežnik kot na Renderju (npm start brez .env): vrne { base, ustavi, izpis, zagonMs }.
-async function zazeni(dbFile, r2) {
+async function zazeni(dbFile, r2, extra = {}) {
   const port = await prostVrata();
   const t0 = performance.now();
   const p = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], {
     cwd: ROOT,
-    env: { ...okolje(dbFile, r2), PORT: String(port) },
+    env: { ...okolje(dbFile, r2, extra), PORT: String(port) },
     stdio: ["ignore", "pipe", "pipe"],
   });
+  zivi.add(p);
   const izpis = [];
   p.stdout.on("data", (d) => izpis.push(String(d)));
   p.stderr.on("data", (d) => izpis.push(String(d)));
   let konec = null;
-  p.on("exit", (c) => (konec = c ?? "signal"));
+  p.on("exit", (c) => {
+    konec = c ?? "signal";
+    zivi.delete(p);
+  });
   const base = `http://127.0.0.1:${port}`;
-  while (performance.now() - t0 < 120_000) {
+  for (let tece = false; !tece; ) {
     if (konec !== null) throw new Error(`strežnik se je ustavil (${konec}): ${izpis.join("").slice(-800)}`);
+    if (performance.now() - t0 > 120_000) {
+      p.kill("SIGKILL");
+      throw new Error(`strežnik se ni odzval v 120 s: ${izpis.join("").slice(-800)}`);
+    }
     try {
-      if ((await fetch(base + "/healthz", { signal: AbortSignal.timeout(1000) })).ok) break;
+      tece = (await fetch(base + "/healthz", { signal: AbortSignal.timeout(1000) })).ok;
     } catch {}
-    await new Promise((r) => setTimeout(r, 100));
+    if (!tece) await new Promise((r) => setTimeout(r, 100));
   }
   const zagonMs = Math.round(performance.now() - t0);
   const ustavi = () =>
@@ -323,9 +341,12 @@ async function main() {
     const kopija = fs.readdirSync(path.join(path.dirname(A), "kopije")).find((n) => n.endsWith(".db"));
     datum = kopija.match(/evklid-(.+)\.db$/)[1];
     velikostMB = +(fs.statSync(path.join(path.dirname(A), "kopije", kopija)).size / 1048576).toFixed(1);
-    // Šifrirana vsebina v R2: nobeno besedilo pogovora ni berljivo brez ključa.
+    // Šifrirana kopija v R2: glava BKP1, ni datoteka SQLite, nešifrirani stolpci (e-pošta, ime profila) niso berljivi.
+    // (Besedilo pogovora je zapečateno že v bazi, zato samo po sebi ne dokazuje šifriranja kopije.)
     const vR2 = [...r2.objekti.values()][0];
-    if (!vR2 || vR2.includes(Buffer.from(racuni[0].besedilo))) throw new Error("kopija v R2 ni šifrirana");
+    const odprto = (s) => vR2.includes(Buffer.from(s));
+    if (!vR2 || vR2.subarray(0, 4).toString() !== "BKP1" || odprto("SQLite format 3") || odprto(racuni[0].email) || odprto(racuni[0].kidName))
+      throw new Error("kopija v R2 ni šifrirana");
 
     // --- B: sveža namestitev s kopijo na disku ---
     const sB0 = await korak("B: prvi zagon sveže namestitve (ustvari prazno bazo)", () => zazeni(B, r2));
@@ -351,17 +372,18 @@ async function main() {
     if (JSON.stringify(vrsticeB) !== JSON.stringify(vrsticeA)) throw new Error(`vrstice A ${JSON.stringify(vrsticeA)} ≠ B ${JSON.stringify(vrsticeB)}`);
 
     // --- C: sveža namestitev, ki ima samo kopijo zunaj strežnika (Render v celoti izgubljen) ---
-    const sC0 = await korak("C: prvi zagon sveže namestitve", () => zazeni(C, r2));
+    const sC0 = await korak("C: prvi zagon sveže namestitve (EVKLID_BACKUPS=0)", () => zazeni(C, r2, BREZ_KOPIJ));
     await sC0.ustavi();
     const dan = datum.slice(0, 10);
-    const pc = await korak(`C: obnovi-kopijo.js --oblak-prenesi ${dan}`, () => ukaz(C, r2, ["--oblak-prenesi", dan]));
+    const pc = await korak(`C: obnovi-kopijo.js --oblak-prenesi ${dan}`, () => ukaz(C, r2, ["--oblak-prenesi", dan], BREZ_KOPIJ));
     if (!pc.ok || !/Prenesena/.test(pc.izpis)) throw new Error(`--oblak-prenesi: ${pc.izpis}`);
-    const vc = await korak(`C: obnovi-kopijo.js --preveri ${dan}-0000`, () => ukaz(C, r2, ["--preveri", `${dan}-0000`]));
+    const vc = await korak(`C: obnovi-kopijo.js --preveri ${dan}-0000`, () => ukaz(C, r2, ["--preveri", `${dan}-0000`], BREZ_KOPIJ));
     if (!/OBNOVA BI USPELA/.test(vc.izpis)) throw new Error(`--preveri C: ${vc.izpis}`);
-    const oc = await korak(`C: obnovi-kopijo.js ${dan}-0000`, () => ukaz(C, r2, [`${dan}-0000`]));
+    const oc = await korak(`C: obnovi-kopijo.js ${dan}-0000`, () => ukaz(C, r2, [`${dan}-0000`], BREZ_KOPIJ));
     if (!oc.ok) throw new Error(`obnova C: ${oc.izpis}`);
-    const sC = await korak("C: ponovni zagon (obnova ob zagonu)", () => zazeni(C, r2));
+    const sC = await korak("C: ponovni zagon (obnova ob zagonu)", () => zazeni(C, r2, BREZ_KOPIJ));
     try {
+      if (!/baza obnovljena iz kopije/.test(sC.izpis.join(""))) throw new Error("strežnik C ni javil obnove");
       await korak("C: prijava z geslom, profil in pogovor berljivi", () => preveriRacune(sC.base, racuni));
     } finally {
       await sC.ustavi();
@@ -372,7 +394,7 @@ async function main() {
     // --- napačen ključ: preizkus mora odkriti, da pogovorov ni mogoče prebrati ---
     const nk = await korak("Napačen ključ: --preveri zazna neberljive pogovore", async () => {
       const r = await ukaz(B, r2, ["--preveri", datum], { EVKLID_DATA_KEY: crypto.randomBytes(32).toString("base64") });
-      if (r.ok || /OBNOVA BI USPELA/.test(r.izpis)) throw new Error(`napačen ključ ni bil zaznan: ${r.izpis}`);
+      if (r.ok || /OBNOVA BI USPELA/.test(r.izpis) || !/ne da prebrati/.test(r.izpis)) throw new Error(`napačen ključ ni bil zaznan: ${r.izpis}`);
       return r;
     });
     void nk;
