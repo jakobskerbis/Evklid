@@ -18,10 +18,14 @@ const DRUGI = { parent: 4999, student: 7999, oznaka: "DRUGI-B7", email: "drugi.r
 const OZNAKA = "ZASEBNO-A9";
 const EMAIL = "izbris.vse@primer.si";
 const IMENI = ["Zarjaizbris", "Tinetestnik"];
+// S ključem za šifriranje bi bila besedila v bazi šifrirana in pregled oznak slep: test teče brez njega.
+delete process.env.EVKLID_DATA_KEY;
 
 // Stolpci, ki pripadajo računu ali profilu (kot server/zasebnost.js OWNER_COLS), in tuji ključi na parents/students.
 const STUDENT_COLS = new Set(["student_id", "owner_student_id"]);
 const PARENT_COLS = new Set(["parent_id", "owner_parent_id", "buyer_id", "redeemed_by", "referrer_id", "referred_id", "created_by"]);
+
+const PO_IMENU = { conversation_id: "conversations", message_id: "messages", class_id: "classes", school_id: "schools" };
 
 function tabele(db) {
   return db
@@ -30,28 +34,62 @@ function tabele(db) {
     .map(({ name }) => {
       const cols = db.prepare(`PRAGMA table_info("${name}")`).all();
       const fks = db.prepare(`PRAGMA foreign_key_list("${name}")`).all();
-      const fk = Object.fromEntries(fks.map((f) => [f.from, f.table]));
+      // Stolpec po imenu, tudi brez tujega ključa (če bi ga kdo odstranil, vrstica ne sme ostati nevidna).
+      const fk = { ...Object.fromEntries(cols.filter((c) => c.name in PO_IMENU && name !== PO_IMENU[c.name]).map((c) => [c.name, PO_IMENU[c.name]])), ...Object.fromEntries(fks.map((f) => [f.from, f.table])) };
       const vloga = (c) => (fk[c] === "students" || STUDENT_COLS.has(c) ? "student" : fk[c] === "parents" || PARENT_COLS.has(c) ? "parent" : fk[c] || null);
       return { name, cols, fk, vloga };
     });
+}
+// Tabela pripada računu: ima stolpec računa ali profila ali tuji ključ na tabelo, ki ga ima (povzetek pogovora,
+// sporočilo, licenca šole).
+function racunske(vse) {
+  const lastnik = (t) => t.cols.some((c) => ["student", "parent"].includes(t.vloga(c.name)));
+  const imena = new Set(vse.filter(lastnik).map((t) => t.name));
+  return vse.filter((t) => !["parents", "students"].includes(t.name) && (lastnik(t) || t.cols.some((c) => imena.has(t.vloga(c.name)))));
+}
+// Vrstica v tabeli »v« (ki ima stolpec računa), ki pripada računu: SQL za seznam njenih id.
+function vrsticeRacuna(vse, v, { parent, students }) {
+  const ref = vse.find((x) => x.name === v);
+  const own = ref?.cols.filter((x) => ["student", "parent"].includes(ref.vloga(x.name))) || [];
+  if (!own.length) return null;
+  return `SELECT rowid FROM "${v}" WHERE ${own.map((o) => `"${o.name}" IN (${ref.vloga(o.name) === "student" ? students.join(",") : parent})`).join(" OR ")}`;
+}
+
+// Ključi kv z id računa ali profila (meja AI, plačila, pilot, števec varnostnih pregledov): vrednost nosi oznako.
+function napolniKv(db, { parent, students, oznaka }) {
+  const mesec = new Date().toISOString().slice(0, 7);
+  const dan = new Date().toISOString().slice(0, 10);
+  // Brez računa (parent = null): samo ključi profila.
+  const kljuci = [
+    ...(parent == null ? [] : ["ai_paid_", "ai_paid_bal_", "ai_paid_refunds_", "ai_window_", "ai_upgrade_", "school_sub_end:"].map((p) => p + parent)),
+    ...(parent == null ? [] : [`pilot_stopnja_p${parent}_${mesec}`]),
+    ...students.map((s) => `varnost_${dan}_${s}`),
+  ];
+  for (const k of kljuci) db.prepare("INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)").run(k, JSON.stringify(`${oznaka} ${k}`));
+  return kljuci;
 }
 
 // Vrstica računa v vsaki tabeli, ki ima stolpec računa ali profila (če je še ni). Tuji ključi na druge tabele dobijo
 // vrstico istega računa iz te tabele (pogovor, sporočilo, razred …), besedila oznako. Vrne tabele, ki jih ni bilo
 // mogoče napolniti (z razlogom).
-function napolni(db, { parent, students, oznaka, vedno = false }) {
+// profil: tabele s stolpcem profila dobijo vrstico tega profila, tudi če račun v njih že ima vrstico.
+function napolni(db, { parent, students, oznaka, vedno = false, profil = false }) {
   const vse = tabele(db);
-  let caka = vse.filter((t) => !["parents", "students"].includes(t.name) && t.cols.some((c) => ["student", "parent"].includes(t.vloga(c.name))));
+  let caka = racunske(vse);
   const ni = {};
   let zap = 0;
   for (let krog = 0; krog < 4 && caka.length; krog++) {
     const naslednji = [];
     for (const t of caka) {
+      const brezLastnika = !t.cols.some((c) => ["student", "parent"].includes(t.vloga(c.name)));
+      const zaProfil = profil && t.cols.some((c) => t.vloga(c.name) === "student");
       const imaVrstico = t.cols.some((c) => {
         const v = t.vloga(c.name);
+        if (zaProfil && v !== "student") return false;
         if (v === "student") return db.prepare(`SELECT 1 FROM "${t.name}" WHERE "${c.name}" IN (${students.join(",")}) LIMIT 1`).get();
         if (v === "parent") return db.prepare(`SELECT 1 FROM "${t.name}" WHERE "${c.name}" = ? LIMIT 1`).get(parent);
-        return false;
+        const sql = brezLastnika && v && vrsticeRacuna(vse, v, { parent, students });
+        return sql ? db.prepare(`SELECT 1 FROM "${t.name}" WHERE "${c.name}" IN (${sql}) LIMIT 1`).get() : false;
       });
       if (imaVrstico && (!vedno || t.vedno)) continue;
       if (vedno) t.vedno = true; // ena dodatna vrstica na tabelo
@@ -81,7 +119,9 @@ function napolni(db, { parent, students, oznaka, vedno = false }) {
               ? db.prepare(`SELECT m.id FROM messages m JOIN conversations c ON c.id = m.conversation_id WHERE c.student_id IN (${students.join(",")}) LIMIT 1`).get()?.id
               : null;
           // Tabela brez stolpca računa (skupina lige, šola) brez vrstic: ena splošna vrstica.
-          if (id == null && viaConv == null && !own && !["conversations", "messages"].includes(v)) {
+          // Tabela brez stolpca računa (povzetek, licenca) se naveže samo na vrstico tega računa: počaka nanjo.
+          if (brezLastnika && own && id == null) row.__caka = v;
+          else if (id == null && viaConv == null && !own && !["conversations", "messages"].includes(v)) {
             const cols = db.prepare(`PRAGMA table_info("${v}")`).all().filter((x) => x.notnull && x.dflt_value == null && !(x.pk && /INT/i.test(x.type)));
             const r = db.prepare(`INSERT INTO "${v}" (${cols.map((x) => `"${x.name}"`).join(",") || "rowid"}) VALUES (${cols.map((x) => (/INT|REAL/i.test(x.type) ? 1 : "'x'")).join(",") || "NULL"})`).run();
             row[c.name] = Number(r.lastInsertRowid);
@@ -91,9 +131,18 @@ function napolni(db, { parent, students, oznaka, vedno = false }) {
         else row[c.name] = JSON.stringify(`${oznaka} ${t.name}.${c.name}`);
       }
       const keys = Object.keys(row).filter((k) => row[k] !== undefined);
+      if (row.__caka) {
+        naslednji.push(t);
+        ni[t.name] = `ni vrstice računa v ${row.__caka}`;
+        continue;
+      }
       try {
         db.prepare(`INSERT INTO "${t.name}" (${keys.map((k) => `"${k}"`).join(",")}) VALUES (${keys.map(() => "?").join(",")})`).run(...keys.map((k) => row[k]));
       } catch (e) {
+        // Ena vrstica na račun (garancija): profil se vpiše v obstoječo vrstico računa.
+        const sc = t.cols.filter((c) => t.vloga(c.name) === "student").map((c) => `"${c.name}" = ${students[0]}`);
+        const pc = t.cols.filter((c) => t.vloga(c.name) === "parent").map((c) => `"${c.name}" = ${parent}`);
+        if (profil && /UNIQUE/.test(e.message) && sc.length && pc.length && db.prepare(`UPDATE "${t.name}" SET ${sc.join(",")} WHERE ${pc.join(" OR ")}`).run().changes) continue;
         naslednji.push(t);
         ni[t.name] = e.message;
       }
@@ -252,6 +301,8 @@ const DOVOLJENO = {
   answer_cache: "splošen odgovor inštruktorja brez imena učenca, deljen med učenci (uporabi se 30 dni)",
   pilot_mnenja_prenehalo: "naključna oznaka mnenja brez osebnih podatkov, da skrbnik umakne objavljeno mnenje",
   schools: "šola ostane; created_by postane NULL",
+  school_licences: "licenca šole (sedeži, predmeti, veljavnost) ostane s šolo; ni podatkov računa",
+  school_orders: "naročilo šole iz obrazca za šole (kontakt šole, ne računa) ostane s šolo",
   class_assignments: "naloga, ki jo je učitelj dal v razredu drugega učitelja, ostane razredu (created_by → NULL)",
 };
 // Ostane in še kaže na račun ali profil: z razlogom, zakaj to ni uhajanje.
@@ -262,6 +313,7 @@ const POVEZANO = {
 // Najdbe koraka 5 (15. 11. 2026), zapisane za j in ne popravljene: po popravku jih odstrani od tu.
 const ZNANO = {
   ai_school_use: "knjiga porabe AI šole obdrži id izbrisanega profila (student_id ni tuji ključ; id se lahko ponovno uporabi)",
+  "kv:varnost_#-#-#_#": "dnevni števec varnostnih pregledov profila (server/nujno.js) ostane do naslednjega dne",
 };
 
 test("izbris računa: v nobeni tabeli ne ostane nič, kar kaže na račun, njegove profile ali njihova besedila", { timeout: 60_000 }, async () => {
@@ -271,12 +323,16 @@ test("izbris računa: v nobeni tabeli ne ostane nič, kar kaže na račun, njego
     assert.equal(parent, DRUGI.parent + 1);
     assert.equal(kids[0], DRUGI.student + 1);
     napolni(db, { parent: DRUGI.parent, students: [DRUGI.student], oznaka: DRUGI.oznaka });
+    const kvDrugi = napolniKv(db, { parent: DRUGI.parent, students: [DRUGI.student], oznaka: DRUGI.oznaka });
     const ni = napolni(db, { parent, students: kids, oznaka: OZNAKA });
     assert.deepEqual(ni, {}, "vsaka tabela z računom ali profilom ima pred izbrisom vrstico tega računa");
+    const kvRacun = napolniKv(db, { parent, students: kids, oznaka: OZNAKA });
     const drugi = steviloDrugega(db);
     const oznake = [EMAIL, OZNAKA, ...IMENI];
     const pred = ostanki(db, { parent, students: kids, oznake });
-    assert.ok(Object.keys(pred).length > 90, `premalo napolnjenih tabel: ${Object.keys(pred).length}`);
+    // Pregled vidi vrstico tega računa v vsaki tabeli računa in vsak ključ kv (sicer bi bil po izbrisu slep).
+    const vidi = [...racunske(tabele(db)).map((t) => t.name), ...kvRacun.map((k) => `kv:${k.replace(/\d+/g, "#")}`)];
+    assert.deepEqual(vidi.filter((k) => !(k in pred)), [], "pregled pred izbrisom ne najde vrstice računa");
 
     // Stara kopija mnenj na disku (brez ključa za šifriranje jo strežnik piše ob mnenju) z mnenjem tega računa.
     fs.writeFileSync(ctx.feedbackFile, JSON.stringify(db.prepare("SELECT * FROM feedback").all()));
@@ -296,6 +352,7 @@ test("izbris računa: v nobeni tabeli ne ostane nič, kar kaže na račun, njego
     // Znane najdbe še veljajo (ko so popravljene, jih odstrani iz ZNANO).
     for (const k of Object.keys(ZNANO)) assert.ok(k in po, `${k} ne ostane več: odstrani ga iz ZNANO`);
     assert.deepEqual(steviloDrugega(db), drugi, "izbris se ne sme dotakniti drugega računa");
+    for (const k of kvDrugi) assert.ok(db.prepare("SELECT 1 FROM kv WHERE key = ?").get(k), `izbris je pobrisal ključ drugega računa ${k}`);
   });
 });
 
@@ -309,6 +366,8 @@ const PROFIL_OSTANE = {
   ai_holds: POVEZANO.ai_holds,
   ...ZNANO,
 };
+// Od teh ostane id profila (brez drugih podatkov profila).
+const PROFIL_ID = { profile_changes: 1, app_links: 1, ai_holds: 1, ...ZNANO };
 
 test("izbris profila: ne ostane nič od profila, račun in drugi profil ostaneta", { timeout: 60_000 }, async () => {
   await withServer(async (ctx) => {
@@ -317,12 +376,20 @@ test("izbris profila: ne ostane nič od profila, račun in drugi profil ostaneta
     const [ostane, gre] = kids;
     const PROFIL = "PROFIL-C3";
     napolni(db, { parent, students: [ostane], oznaka: OZNAKA });
-    assert.deepEqual(napolni(db, { parent, students: [gre], oznaka: PROFIL }), {});
+    assert.deepEqual(napolni(db, { parent, students: [gre], oznaka: PROFIL, profil: true }), {});
+    napolniKv(db, { parent, students: [ostane], oznaka: OZNAKA });
+    napolniKv(db, { parent: null, students: [gre], oznaka: PROFIL });
+    const vrsticGre = ostanki(db, { parent: -1, students: [gre], oznake: [PROFIL], samoProfil: true });
+    for (const t of racunske(tabele(db)).filter((t) => t.cols.some((c) => t.vloga(c.name) === "student"))) assert.ok(t.name in vrsticGre, `profil nima vrstice v ${t.name}`);
     // Napolnjeno geslo profila ga zaklene (brisanje zahteva odklep z geslom): vrstico gesla izbriše tuji ključ
     // (CASCADE), preveri jo test izbrisa računa.
     db.prepare("DELETE FROM profile_passwords WHERE student_id = ?").run(gre);
-    const brez = (m) => Object.fromEntries(Object.entries(m).filter(([t]) => !["profile_changes", "students"].includes(t)));
+    // Tabele, kjer vrstice profila ostanejo računu (student_id → NULL): po izbrisu jih račun obdrži vse.
+    const ostanejo = Object.keys(PROFIL_OSTANE).filter((t) => !(t in PROFIL_ID));
+    const brez = (m) => Object.fromEntries(Object.entries(m).filter(([t]) => !["profile_changes", "students", ...ostanejo].includes(t)));
     const racun = brez(steviloRacuna(db, parent, [ostane], gre));
+    const vse = steviloRacuna(db, parent, [ostane, gre]);
+    for (const t of ostanejo) assert.ok(db.prepare(`SELECT 1 FROM "${t}" WHERE student_id = ?`).get(gre), `profil nima vrstice v ${t}`);
     const d = await a(`/api/students/${gre}`, { method: "DELETE" });
     assert.equal(d.status, 200, JSON.stringify(d.body));
     // Kopija mnenj na disku se prepiše: brez mnenja izbrisanega profila, mnenje drugega profila ostane.
@@ -332,7 +399,12 @@ test("izbris profila: ne ostane nič od profila, račun in drugi profil ostaneta
     const po = ostanki(db, { parent: -1, students: [gre], oznake: [PROFIL, IMENI[1]], samoProfil: true });
     const nedovoljeno = Object.keys(po).filter((k) => !(k in PROFIL_OSTANE));
     assert.deepEqual(nedovoljeno, [], `po izbrisu profila ostane: ${JSON.stringify(Object.fromEntries(nedovoljeno.map((k) => [k, po[k]])))}`);
+    // Zapisi, ki ostanejo računu, ne kažejo več na profil (student_id → NULL), razen kjer je id namenoma.
+    const povezani = Object.keys(ostanki(db, { parent: -1, students: [gre], oznake: [], samoProfil: true }));
+    assert.deepEqual(povezani.filter((k) => !(k in PROFIL_ID)), [], "zapis, ki ostane računu, še kaže na izbrisan profil");
     assert.deepEqual(brez(steviloRacuna(db, parent, [ostane], gre)), racun, "izbris profila se ne sme dotakniti računa in drugega profila");
+    const po2 = steviloRacuna(db, parent, [ostane]);
+    for (const t of ostanejo) assert.equal(po2[t], vse[t], `${t}: vrstice profila bi morale ostati računu`);
     assert.deepEqual(db.prepare("SELECT id FROM students WHERE parent_id = ?").all(parent).map((r) => r.id), [ostane]);
   });
 });
