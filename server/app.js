@@ -29,6 +29,7 @@ import { sourceVisitCounter, mountRast, setSource } from "./rast.js";
 import { mountOdpiranje } from "./odpiranje-delov.js";
 import { mountAnketa } from "./anketa-teden.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
+import { mountInviteApi, mountInvitePage } from "./vabila.js";
 import { mountVidnost } from "./vidnost.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
@@ -280,6 +281,7 @@ export function createApp(store, opts = {}) {
     next();
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
+  mountInviteApi(app); // koda vabila v pilot (javno, pred prijavo; server/vabila.js)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
   app.use((req, res, next) => (req.nekanonicnaApi ? res.status(404).json({ error: "Pot ne obstaja." }) : next())); // točka A1
   mountMobile(app, accounts, { scheduler: opts.scheduler, fetchFn: opts.fetchFn, ...opts.mobile }); // prijava z Apple, nakupi v trgovinah, obvestila, /prenesi
@@ -356,6 +358,7 @@ export function createApp(store, opts = {}) {
   app.use(visitCounter(store.db));
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
+  mountInvitePage(app, publicDir); // stran /vabilo (public/vabilo.html, server/vabila.js)
   mountVidnost(app); // robots.txt, sitemap.xml, llms.txt in stran /o-evklidu za iskalnike (server/vidnost.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,
