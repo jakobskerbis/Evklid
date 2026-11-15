@@ -45,7 +45,8 @@ export function initFeedback(opts, config = {}) {
 // Profil je star vsaj en koledarski dan (lokalni datum): nov učenec na prvi dan vidi najprej trening (j, 15. 11. 2026).
 const localDay = (d) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 function secondDay(s) {
-  if (!s?.created_at) return false;
+  if (!s) return false;
+  if (!s.created_at) return true; // brez datuma nastanka (npr. profil samo na napravi) kartica ostane kot prej
   const born = new Date(`${String(s.created_at).replace(" ", "T")}Z`); // created_at je UTC (SQLite datetime)
   return !Number.isNaN(born.getTime()) && born < new Date() && localDay(born) !== localDay(new Date());
 }

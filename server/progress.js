@@ -1064,6 +1064,8 @@ export class Progress {
 
   xpSummary(studentId) {
     const total = this.db.prepare("SELECT COALESCE(SUM(amount),0) AS s FROM xp_events WHERE student_id = ?").get(studentId).s;
+    // ownTotal: XP brez nalog pilota (razlog »pilot: …«); po njem klient ve, ali je učenec sam kaj rešil (uvod po prvi nalogi).
+    const ownTotal = this.db.prepare("SELECT COALESCE(SUM(amount),0) AS s FROM xp_events WHERE student_id = ? AND COALESCE(reason, '') NOT LIKE 'pilot:%'").get(studentId).s;
     const week = this.db
       .prepare("SELECT COALESCE(SUM(amount),0) AS s FROM xp_events WHERE student_id = ? AND created_at >= ?")
       .get(studentId, weekStart()).s;
@@ -1074,7 +1076,7 @@ export class Progress {
     // Raven in napredek do naslednje (levelFrom/levelTo = skupni XP na začetku te in naslednje ravni),
     // današnji XP in dnevni cilj iz nastavitve profila xp_goal.
     const goal = cleanXpGoal(this.store.getStudent?.(studentId)?.settings?.xp_goal);
-    return { total, week, today, goal, streak: this.dayStreak(studentId), level: lp.level, levelFrom: lp.from, levelTo: lp.to };
+    return { total, ownTotal, week, today, goal, streak: this.dayStreak(studentId), level: lp.level, levelFrom: lp.from, levelTo: lp.to };
   }
 
 }

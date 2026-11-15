@@ -3721,6 +3721,7 @@ function checkBar(fb) {
 
 async function checkTask(task, ctx, value) {
   const fb = $("#feedback");
+  const asked = state.student; // profil, ki je odgovoril (med preverjanjem lahko zamenjan)
   let r;
   try {
     fb.innerHTML = `<div class="fb info">${t("task.checking")}</div>`;
@@ -3736,7 +3737,7 @@ async function checkTask(task, ctx, value) {
     fb.innerHTML = `<div class="fb bad">${icon("circle-x")}<span>${err.status ? t("task.checkFailed", { msg }) : t("task.checkError", { msg })}</span></div>`;
     return false;
   }
-  if (r.correct) markFirstTask(); // po prvi rešeni nalogi pridejo vprašalnik zanimanj in vodič (maybeIntro)
+  if (r.correct) markFirstTask(asked); // po prvi rešeni nalogi pridejo vprašalnik zanimanj in vodič (maybeIntro)
   const next = (label = t("task.next")) => `<div class="actions"><button class="primary big" id="fb-next">${label}${icon("arrow-right")}</button></div>`;
   // Naloga je bila že preverjena (npr. drugi dotik na »Preveri«): pokažemo shranjeni izid, ne napake.
   const closedNote = r.closed ? `<div class="fb info">${icon("info")}<span>${t("task.alreadyChecked")}</span></div>` : "";
@@ -4566,10 +4567,9 @@ function maybeTour() {
 async function firstTaskDone(s) {
   if (s.settings?.first_task) return true;
   const x = state.xp?.sid === s.id ? state.xp : await api(`/api/students/${s.id}/xp`).catch(() => null);
-  return (x?.total || 0) > 0;
+  return (x?.ownTotal ?? x?.total ?? 0) > 0; // XP nalog pilota (ownTotal ga ne šteje) ni rešena naloga
 }
-function markFirstTask() {
-  const s = state.student;
+function markFirstTask(s = state.student) {
   if (!s || s.settings?.first_task) return;
   s.settings = { ...s.settings, first_task: 1 };
   api(`/api/students/${s.id}`, { method: "PUT", body: { settings: { first_task: 1 } } }).catch(() => null);
