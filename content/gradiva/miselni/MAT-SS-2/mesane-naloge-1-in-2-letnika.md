@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zdravilo v krvi
+  - $c(t) = 80 \cdot \left(\frac{1}{2}\right)^{t/6}$
+  - pod $10\,\mathrm{mg/L}$ po $18$ urah
+- Štirje koraki
+  - prepoznaj orodje, razstavi verigo
+  - vmesni rezultati, smisel in pogoji
+- Besede v orodja
+  - »razpolovi se«: eksponentna funkcija
+  - »kdaj doseže«: enačba $q^t = b$, logaritem
+- Koreni kot potence
+  - $\sqrt[n]{a^m} = a^{m/n}$
+  - $\log_2 \frac{8\sqrt{2}}{\sqrt[3]{4}} = \frac{17}{6}$
+- Skrita kvadratna enačba
+  - nova neznanka $s = 2^x > 0$
+  - negativen $s$ zavržeš
+- Pogoji pri logaritmih
+  - izraz pod logaritmom $> 0$
+  - napaka: tuja rešitev $x = -2$
+- Odstotek upadanja
+  - izloči $p\,\%$: $q = 1 - \frac{p}{100}$
+  - napaka: $q = 0{,}2$ namesto $0{,}8$

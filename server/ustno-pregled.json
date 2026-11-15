@@ -2927,6 +2927,23 @@
    "h": "a122a1116f8f",
    "o": "D"
   },
+  "MAT-SS-2/mesane-naloge-1-in-2-letnika#p1": {
+   "h": "0dcffc6a26b4",
+   "o": "I",
+   "r": "sklic na preglednico iz lekcije"
+  },
+  "MAT-SS-2/mesane-naloge-1-in-2-letnika#p3": {
+   "h": "5b3c0ca0fdd6",
+   "o": "D"
+  },
+  "MAT-SS-2/mesane-naloge-1-in-2-letnika#p4": {
+   "h": "3a6c08e7b232",
+   "o": "D"
+  },
+  "MAT-SS-2/mesane-naloge-1-in-2-letnika#p5": {
+   "h": "b639ae3f0a47",
+   "o": "D"
+  },
   "MAT-SS-2/podobnost#p0": {
    "h": "475ef8610349",
    "o": "D"
@@ -3138,6 +3155,28 @@
   },
   "MAT-SS-3/kroznica#p5": {
    "h": "bffef9d97cf2",
+   "o": "D"
+  },
+  "MAT-SS-3/mesane-naloge-3-letnika#p0": {
+   "h": "2d318e8294b9",
+   "o": "I",
+   "r": "sklic na zgodbo iz lekcije (pekač)"
+  },
+  "MAT-SS-3/mesane-naloge-3-letnika#p1": {
+   "h": "7ab32c54deb7",
+   "o": "I",
+   "r": "sklic na prejšnji korak lekcije (n = 4)"
+  },
+  "MAT-SS-3/mesane-naloge-3-letnika#p3": {
+   "h": "6b78cf6b724a",
+   "o": "D"
+  },
+  "MAT-SS-3/mesane-naloge-3-letnika#p4": {
+   "h": "874335f6be80",
+   "o": "D"
+  },
+  "MAT-SS-3/mesane-naloge-3-letnika#p5": {
+   "h": "92e581c3b1f9",
    "o": "D"
   },
   "MAT-SS-3/polinomi#p1": {
@@ -3699,6 +3738,23 @@
   },
   "MAT-SS-4/uporaba-odvoda#p5": {
    "h": "c1208aa9afa7",
+   "o": "D"
+  },
+  "MAT-SS-4/vadbena-maturitetna-pola#p0": {
+   "h": "fe575f7f42bd",
+   "o": "I",
+   "r": "strategija pisanja pole, ne matematična vsebina"
+  },
+  "MAT-SS-4/vadbena-maturitetna-pola#p3": {
+   "h": "81c3f68a9533",
+   "o": "D"
+  },
+  "MAT-SS-4/vadbena-maturitetna-pola#p4": {
+   "h": "e6ee5b6ed723",
+   "o": "D"
+  },
+  "MAT-SS-4/vadbena-maturitetna-pola#p5": {
+   "h": "814267099522",
    "o": "D"
   },
   "MAT-SS-4/verjetnost#p0": {

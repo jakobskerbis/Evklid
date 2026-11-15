@@ -232,7 +232,7 @@ const GENS = [
   // ================= premice in ravnine v prostoru =================
   {
     id: P + "premice-ravnine",
-    topics: [T("premice-in-ravnine-v-prostoru")],
+    topics: [T("premice-in-ravnine-v-prostoru"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -480,7 +480,7 @@ const GENS = [
   // ================= poševna telesa in vrtenine =================
   {
     id: P + "posevna-telesa-vrtenine",
-    topics: [T("posevna-telesa-in-vrtenine")],
+    topics: [T("posevna-telesa-in-vrtenine"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -725,7 +725,7 @@ const GENS = [
   // ================= vektorji v geometriji =================
   {
     id: P + "vektorji-geometrija",
-    topics: [T("vektorji-v-geometriji")],
+    topics: [T("vektorji-v-geometriji"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         if (r.next() < 0.5) {
@@ -925,7 +925,7 @@ const GENS = [
   // ================= krožne funkcije =================
   {
     id: P + "krozne-funkcije",
-    topics: [T("krozne-funkcije")],
+    topics: [T("krozne-funkcije"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const fn = r.pick(["arcsin", "arccos", "arctan"]);
@@ -1133,7 +1133,7 @@ const GENS = [
   // ================= stožnice v premaknjeni legi in tangente =================
   {
     id: P + "stoznice-premaknjene",
-    topics: [T("stoznice-v-premaknjeni-legi-in-tangente")],
+    topics: [T("stoznice-v-premaknjeni-legi-in-tangente"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -1432,7 +1432,7 @@ const GENS = [
   // ================= racionalne neenačbe =================
   {
     id: P + "racionalne-neenacbe",
-    topics: [T("racionalne-neenacbe")],
+    topics: [T("racionalne-neenacbe"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const m = r.pick([1, 1, 2, 3, -1, -2]);

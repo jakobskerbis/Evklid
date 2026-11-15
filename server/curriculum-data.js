@@ -501,6 +501,9 @@ export const PATHS = {
         "Podobnost | podobni trikotniki, Evklidov in višinski izrek",
         "Kotne funkcije v pravokotnem trikotniku | sin, cos, tan, uporaba",
       ]],
+      ["Priprava na maturo", [
+        "Mešane naloge 1. in 2. letnika | izrazi, enačbe, funkcije, potence, koreni in logaritmi v nalogah, ki povežejo več poglavij",
+      ]],
     ],
   },
   "MAT-SS-3": {
@@ -534,6 +537,9 @@ export const PATHS = {
         "Premice in ravnine v prostoru | vzporednost in pravokotnost premic in ravnin, pravokotna projekcija premice na ravnino; množice točk v prostoru (višja raven)",
         "Površina in prostornina teles | prizma, piramida, valj, stožec, krogla",
         "Poševna telesa in vrtenine | poševna prizma, valj, piramida in stožec; telesa, ki nastanejo z vrtenjem likov (višja raven)",
+      ]],
+      ["Priprava na maturo", [
+        "Mešane naloge 3. letnika | kotne funkcije, vektorji, geometrija v ravnini in prostoru, polinomi in racionalne funkcije v nalogah, ki povežejo več poglavij",
       ]],
     ],
   },
@@ -571,6 +577,7 @@ export const PATHS = {
       ]],
       ["Priprava na maturo", [
         "Mešane maturitetne naloge | ponovitev vseh letnikov",
+        "Vadbena maturitetna pola | pola 1 brez računala in pola 2 z računalom iz snovi vseh štirih letnikov, točkovanje in razporejanje časa",
       ]],
     ],
   },
