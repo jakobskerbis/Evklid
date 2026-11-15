@@ -563,7 +563,7 @@ export const bakterije = {
   sredisceBlizu: [0, 0],
   imena: { 7: "bakterija" },
   snovi: { 11: "celična stena bakterije" },
-  isci: "Pri 1000× z oljem poišči vijolične koke v grozdih in rožnate paličke. Pri TEM primerjaj steni: debelo pri grampozitivnih, dve membrani pri gramnegativnih. SEM barvila ne vidi (vzorec je prevlečen z zlatom), zato tam bakterije ločiš le po obliki: okrogle koke in paličke.",
+  isci: "Pri 1000× z oljem poišči vijolične koke v grozdih in rožnate paličke. Pri TEM primerjaj steni: debelo pri grampozitivnih, dve membrani pri gramnegativnih. SEM barv ne zazna (slika je črno-bela, vzorec je prevlečen s tanko plastjo zlata), zato tam bakterije ločiš le po obliki: okrogle koke in paličke.",
   glsl: "#define SEM_PROSTE\n" + MIKROB_TEM + /* glsl */ `
 // Gostota grozdov v točki c. Obstoj koka ali paličke se odloči v njenem središču (ne v točki p), sicer meja grozda
 // odreže kroglo ali paličko po ravni črti (pri SEM so bile vidne polkrogle in ploske odrezane ploskve; j, 15. 11. 2026).
@@ -572,7 +572,7 @@ T tkivo(vec2 p, float px) {
   T t = prazno();
   if (odsek(p, vec2(500.0, 350.0), 59.0) > 0.0) return t;
   t.dye = vec3(0.0, 0.04 * sumL(p, 3.0, px), 0.0);
-  // stafilokoki: mreža 1,1 µm z majhnim zamikom, da se sosednji koki dotikajo, ne prerezujejo
+  // stafilokoki: mreža 1,1 µm z zmernim zamikom; sosednji koki se večinoma dotikajo, redki pari se prekrivajo kot pri delitvi (diplokoki)
   vec2 n = floor(p / 1.1);
   vec4 k = vec4(1e3);
   for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) {
