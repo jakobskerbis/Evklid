@@ -507,27 +507,42 @@ const lessonAhead = new Map(); // id -> { at, p }
 const LESSON_AHEAD_MS = 60_000;
 function prefetchLesson(id) {
   if (!id || !ctx?.getStudent?.()) return;
+  for (const [k, v] of lessonAhead) if (Date.now() - v.at >= LESSON_AHEAD_MS) lessonAhead.delete(k); // stare kopije iz pomnilnika
   const hit = lessonAhead.get(id);
   if (hit && Date.now() - hit.at < LESSON_AHEAD_MS) return;
   const p = ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(id)}`);
-  p.catch(() => lessonAhead.get(id)?.p === p && lessonAhead.delete(id));
-  lessonAhead.set(id, { at: Date.now(), p, sid: ctx.getStudent().id });
+  const hit2 = { at: Date.now(), p, sid: ctx.getStudent().id, done: false };
+  p.then(
+    () => (hit2.done = true),
+    () => lessonAhead.get(id) === hit2 && lessonAhead.delete(id),
+  );
+  lessonAhead.set(id, hit2);
 }
 function takeLesson(id) {
   const hit = lessonAhead.get(id);
   lessonAhead.delete(id);
-  return hit && Date.now() - hit.at < LESSON_AHEAD_MS && hit.sid === ctx.getStudent()?.id ? hit.p : null;
+  return hit && Date.now() - hit.at < LESSON_AHEAD_MS && hit.sid === ctx.getStudent()?.id ? hit : null;
 }
-for (const type of ["pointerdown", "pointerover"])
-  document.addEventListener(
-    type,
-    (e) => {
-      if (type === "pointerover" && e.pointerType !== "mouse") return;
-      const b = e.target.closest?.("#view-textbook [data-lesson]");
-      if (b) prefetchLesson(b.dataset.lesson);
-    },
-    { passive: true },
-  );
+// Miška: šele ko ostane nad temo 0,1 s (premik čez kazalo ne naloži vseh lekcij, ki jih prečka).
+let hoverTimer = null;
+document.addEventListener(
+  "pointerover",
+  (e) => {
+    if (e.pointerType !== "mouse") return;
+    const b = e.target.closest?.("#view-textbook [data-lesson]");
+    clearTimeout(hoverTimer);
+    if (b) hoverTimer = setTimeout(() => b.isConnected && b.matches(":hover") && prefetchLesson(b.dataset.lesson), 100);
+  },
+  { passive: true },
+);
+document.addEventListener(
+  "pointerdown",
+  (e) => {
+    const b = e.target.closest?.("#view-textbook [data-lesson]");
+    if (b) prefetchLesson(b.dataset.lesson);
+  },
+  { passive: true },
+);
 
 // Formula in rešitev v rešenem primeru sta skriti za gumbom, da učenec najprej poskusi sam.
 // Kadar je vsaka črka formule klikljiva s pomenom iz lekcije (:::simboli), okna »Pokaži formulo«
@@ -562,11 +577,14 @@ async function renderLesson(topicId, name = "") {
   stopReading();
   const box = $("#view-textbook");
   // Takoj po kliku: Nazaj, ime teme in »Nalagam …« (prej je kazalo ostalo na zaslonu, dokler lekcija ni prišla,
-  // kot da klik ni uspel). Kopija, ki je že tu (vnaprej), se izriše v istem trenutku in tega vmesnega zaslona ni.
+  // kot da klik ni uspel). Kopija, ki je že prispela (vnaprej), se izriše v istem trenutku in tega vmesnega zaslona ni;
+  // zahteva, ki ob dotiku še teče (pointerdown tik pred klikom), vmesni zaslon pokaže.
   const ahead = takeLesson(topicId);
-  if (!ahead && box) {
+  // Ista lekcija znova (vrnitev na zavihek, menjava jezika): ostane na zaslonu, dokler nova kopija ne pride.
+  if (!ahead?.done && box && current?.id !== topicId) {
     box.innerHTML = `<div class="tb-lesson-grid"><div class="tb-main">
       <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
+      <p class="muted tb-crumb">&nbsp;</p>
       ${name ? `<h1 class="tb-title">${esc(name)}</h1>` : ""}
       <p class="muted tb-loading" role="status">${esc(t("common.loading"))}</p></div></div>`;
     $("#tb-back")?.addEventListener("click", () => {
@@ -577,7 +595,7 @@ async function renderLesson(topicId, name = "") {
   }
   let L;
   try {
-    L = await (ahead || ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(topicId)}`));
+    L = await (ahead?.p || ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(topicId)}`));
   } catch (err) {
     // Brez povezave: javna kopija že obiskane lekcije iz predpomnilnika (public/sw.js, samo besedilo).
     L = err?.status ? null : await ctx.api(`/api/lesson?id=${encodeURIComponent(topicId)}`).catch(() => null);

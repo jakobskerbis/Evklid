@@ -111,7 +111,16 @@ test("Učbenik: lekcija takoj pokaže ime in »Nalagam …«, ob dotiku se nalo�
     await p.waitForSelector("#view-textbook .tb-loading", { timeout: 400 });
     assert.ok(Date.now() - t0 < 400);
     assert.equal((await p.locator("#view-textbook h1.tb-title").innerText()).trim(), ime);
-    await p.waitForSelector("#view-textbook .tb-crumb", { timeout: 5000 });
+    await p.waitForSelector("#view-textbook .tb-crumb:not(:empty):not(:has(+ h1 + .tb-loading))", { timeout: 5000 });
+    await p.waitForSelector("#view-textbook .tb-loading", { state: "detached", timeout: 5000 });
+    // Dotik (pointerdown sproži nalaganje vnaprej, klik takoj za njim): vmesni zaslon se vseeno pokaže takoj.
+    await p.click("#tb-back");
+    await p.waitForSelector("#tb-body .tb-topic:not(.pending)");
+    const tretja = p.locator("#tb-body .tb-topic:not(.pending)").nth(2);
+    await tretja.dispatchEvent("pointerdown", { pointerType: "touch", bubbles: true });
+    await tretja.click();
+    assert.equal(await p.locator("#view-textbook .tb-loading").count(), 1, "ob dotiku ni vmesnega zaslona");
+    await p.waitForSelector("#view-textbook .tb-loading", { state: "detached", timeout: 5000 });
     // Nazaj na kazalo, nato miška nad drugo temo: lekcija se naloži vnaprej in se ob kliku odpre brez čakanja.
     await p.click("#tb-back");
     await p.waitForSelector("#tb-body .tb-topic:not(.pending)");
