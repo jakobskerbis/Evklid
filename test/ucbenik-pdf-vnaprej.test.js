@@ -12,10 +12,10 @@ import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { createPdfStore, pdfTargets, pdfHash, pdfTemplateHash, pdfDownloadName, PDF_MANIFEST, PDF_PROOF, PDF_MAX_BYTES, PDF_FONT_NAMES } from "../server/ucbenik-pdf.js";
+import { createPdfStore, pdfTargets, pdfHash, pdfTemplateHash, pdfDownloadName, PDF_MANIFEST, PDF_PROOF, PDF_MAX_BYTES, PDF_FONT_NAMES, PDF_BOOK_MAX_LESSONS, PDF_BOOK_MAX_BYTES } from "../server/ucbenik-pdf.js";
 import { getPath, topicOrder } from "../server/curriculum.js";
 import { verifyAttestation } from "../server/pdf-potrdilo.js";
-import { loadLesson } from "../server/textbook.js";
+import { loadLesson, getBook } from "../server/textbook.js";
 
 const require = createRequire(import.meta.url);
 const ROOT = path.join(import.meta.dirname, "..");
@@ -57,8 +57,14 @@ test("seznam PDF-jev: predmeti, razredi in poglavja šolskih učbenikov; zgošč
   const ids = new Set(targets.map((t) => t.id));
   assert.equal(ids.size, targets.length, "vsak PDF enkrat");
   for (const id of [KEY, `${KEY}?${UNIT}`, "FIZ-OS"]) assert.ok(ids.has(id), id);
-  assert.ok(!ids.has("MAT-OS"), "prevelik predmet (79 lekcij) ostane pri tisku v brskalniku");
-  assert.equal(pdfHash("MAT-OS"), null);
+  // Prevelik predmet (matematika OŠ: 79 lekcij) se sestavi iz PDF-jev razredov (j 16. 11.: na telefonu tisk ne dela).
+  const big = targets.find((t) => t.id === "MAT-OS");
+  assert.ok(big?.lessons > PDF_BOOK_MAX_LESSONS, "MAT-OS je sestavljen predmet");
+  assert.deepEqual(big.zdruzi, getBook("MAT-OS").paths.map((x) => x.key).filter((k) => ids.has(k)));
+  assert.ok(big.zdruzi.length >= 2 && big.zdruzi.every((k) => targets.find((t) => t.id === k)?.kind === "razred"));
+  assert.ok(targets.filter((t) => t.kind === "predmet" && t.lessons <= PDF_BOOK_MAX_LESSONS).every((t) => !t.zdruzi), "manjši predmet se izriše v celoti");
+  assert.match(pdfHash("MAT-OS"), /^[0-9a-f]{20}$/);
+  assert.equal(pdfDownloadName("MAT-OS"), "Evklid - Matematika - osnovna šola.pdf");
   assert.ok(!targets.some((t) => t.key.startsWith("UNI-") || t.key.startsWith("P-")), "fakultetni učbeniki ostanejo pri tisku v brskalniku");
   const razred = targets.find((t) => t.id === KEY);
   assert.equal(razred.lessons, topicOrder(KEY).filter((t) => loadLesson(t.id)).length);
@@ -187,7 +193,7 @@ test("shramba: meja velikosti in prostor na disku", async () => {
     const full = createPdfStore({ dir, url: "x", fetchFn: fakeRelease({ [fileA]: a }, manifest).fetchFn, minFree: Number.MAX_SAFE_INTEGER, verify, log: quiet });
     assert.equal(await full.sync(), 0);
     assert.match(full.status().napaka, /premalo prostora/);
-    const big = { value: { v: 1, files: { [KEY]: { ...entry(fileA, a, pdfHash(KEY)), bytes: PDF_MAX_BYTES + 1 } } } };
+    const big = { value: { v: 1, files: { [KEY]: { ...entry(fileA, a, pdfHash(KEY)), bytes: PDF_BOOK_MAX_BYTES + 1 } } } };
     const dir2 = tmp();
     const store = createPdfStore({ dir: dir2, url: "x", fetchFn: fakeRelease({ [fileA]: a }, big).fetchFn, verify, log: quiet });
     assert.equal(await store.sync(), 0, "prevelik PDF se ne prenese");
@@ -366,6 +372,7 @@ try {
   if (!fs.existsSync(chromium.executablePath())) chromium = null;
 } catch {}
 const hasPdftoppm = spawnSync("pdftoppm", ["-v"]).status === 0;
+const hasPypdf = spawnSync("python3", ["-I", "-c", "import pypdf"]).status === 0; // sestava velikih predmetov
 
 // Opis risbe (<title> v SVG) se v PDF ne izpiše, zato ga pregled PDF-ja ne sme pričakovati med besedami.
 test("READ_DOM: besedilo lekcije ne vsebuje opisov risb (svg title) in formul", { skip: chromium ? false : "Playwright/Chromium ni nameščen", timeout: 60_000 }, async () => {
@@ -439,6 +446,22 @@ test("skripta izdela pravi PDF majhnega razreda in poglavja; pregled ujame napak
     assert.equal(b.dom.toc.length, 0, "poglavje nima kazala");
     assert.equal(b.dom.lessons.length, poglavje.lessons);
     assert.deepEqual((await checkPdf(b.buf, b.dom, opts)).errors, []);
+
+    // Sestavljen predmet (pypdf): dva razreda v enem PDF-ju, zaznamek za vsak razred, kazala vodijo v svoj razred.
+    if (hasPypdf) {
+      const { mergePdfs, checkMerged } = require("../scripts/ucbenik-pdf.cjs");
+      const drugi = targets.filter((t) => t.kind === "razred" && t.lessons >= 2 && t.id !== razred.id).sort((x, y) => x.lessons - y.lessons)[0];
+      const c = await renderPdf(context, server.base, drugi, cfg);
+      const pa = (await checkPdf(a.buf, a.dom, { ...opts, tocPages: a.tocPages })).info.pages;
+      const pc = (await checkPdf(c.buf, c.dom, { ...opts, tocPages: c.tocPages })).info.pages;
+      const parts = [{ pages: pa, title: a.dom.title }, { pages: pc, title: c.dom.title }];
+      const m = mergePdfs([a.buf, c.buf], "Poskus");
+      assert.deepEqual((await checkMerged(m, parts, PDF_BOOK_MAX_BYTES)).errors, []);
+      assert.equal((await checkMerged(m, parts, PDF_BOOK_MAX_BYTES)).pages, pa + pc);
+      assert.match((await checkMerged(m, [parts[0], { ...parts[1], pages: pc + 1 }], PDF_BOOK_MAX_BYTES)).errors.join("\n"), /strani/);
+      assert.match((await checkMerged(m, parts, 1000)).errors.join("\n"), /presega mejo/);
+      assert.match((await checkMerged(mergePdfs([a.buf], "Poskus"), parts, PDF_BOOK_MAX_BYTES)).errors.join("\n"), /zaznamkov na vrhu 1, razredov 2/);
+    }
   } finally {
     await browser.close();
     server.stop();

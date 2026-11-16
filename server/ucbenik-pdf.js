@@ -25,6 +25,8 @@ export const PDF_TAG = "ucbenik-pdf"; // oznaka izdaje na GitHubu
 export const PDF_MANIFEST = "kazalo.json";
 export const PDF_PROOF = "kazalo.potrdilo.json"; // potrdilo o izvoru kazala (server/pdf-potrdilo.js)
 export const PDF_MAX_BYTES = 15 * 1024 * 1024; // cilj: razred < 15 MB (večji PDF se ne objavi)
+// Cel predmet, sestavljen iz PDF-jev razredov (PDF_BOOK_MAX_LESSONS): matematika SŠ ima ~20 MB.
+export const PDF_BOOK_MAX_BYTES = 40 * 1024 * 1024;
 
 // Nastavitve izdelave PDF (scripts/ucbenik-pdf.cjs). Sprememba tukaj spremeni zgoščeno vrednost predloge, zato
 // se vsi PDF-ji izdelajo na novo. Pisavi sta iz paketov npm (devDependencies; skripta ju streže brskalniku sama),
@@ -125,8 +127,10 @@ export function pdfTemplateHash() {
   ).slice(0, 16));
 }
 
-// Cel predmet z več lekcijami (matematika OŠ: 79, SŠ: 60) Chromium ne zmore izrisati v en PDF (zmanjka mu
-// pomnilnika: »Printing failed«), zato zanj ostane rezerva; razredi in poglavja teh predmetov so izdelani.
+// Cel predmet z več lekcijami (matematika OŠ: 79, SŠ: 91, biologija SŠ: 64) Chromium ne zmore izrisati v en PDF
+// (zmanjka mu pomnilnika: »Printing failed«), telefon pa še manj (j 16. 11.: »Shrani kot PDF« ne dela). Tak PDF se
+// sestavi iz že izdelanih PDF-jev razredov (zdruzi: ključi razredov; scripts/ucbenik-pdf.cjs, pypdf: zaznamki in
+// povezave kazal ostanejo), brez novega izrisa.
 export const PDF_BOOK_MAX_LESSONS = 45;
 
 const unitFile = (key, unit) => `${key}--${slugify(unit).slice(0, 40) || "sklop"}-${sha(unit).slice(0, 6)}`;
@@ -138,7 +142,8 @@ export function pdfTargets() {
   const out = [];
   for (const book of listBooks()) {
     const parts = book.paths.map((p) => ({ p, ready: topicOrder(p.key).filter((t) => loadLesson(t.id)) })).filter((x) => x.ready.length);
-    if (parts.length > 1 && parts.reduce((n, x) => n + x.ready.length, 0) <= PDF_BOOK_MAX_LESSONS) out.push({ id: book.key, key: book.key, unit: null, kind: "predmet", base: book.key, lessons: parts.reduce((n, x) => n + x.ready.length, 0), parts: parts.length });
+    const lessons = parts.reduce((n, x) => n + x.ready.length, 0);
+    if (parts.length > 1) out.push({ id: book.key, key: book.key, unit: null, kind: "predmet", base: book.key, lessons, parts: parts.length, ...(lessons > PDF_BOOK_MAX_LESSONS ? { zdruzi: parts.map((x) => x.p.key) } : {}) });
     for (const { p, ready } of parts) {
       out.push({ id: p.key, key: p.key, unit: null, kind: "razred", base: p.key, lessons: ready.length });
       for (const unit of [...new Set(ready.map((t) => t.unit))].filter(Boolean))
@@ -165,8 +170,10 @@ function targetTopics(key, unit) {
   if (!book) return null;
   const all = book.paths.flatMap((x) => topicOrder(x.key));
   const topics = all.filter((t) => loadLesson(t.id));
-  if (!topics.length || topics.length > PDF_BOOK_MAX_LESSONS || book.paths.filter((x) => topicOrder(x.key).some((t) => loadLesson(t.id))).length < 2) return null;
-  return { topics, label: [book.subjectName, book.schoolName, all.length, book.paths.map((x) => x.label)] };
+  const parts = book.paths.filter((x) => topicOrder(x.key).some((t) => loadLesson(t.id)));
+  if (!topics.length || parts.length < 2) return null;
+  const label = [book.subjectName, book.schoolName, all.length, book.paths.map((x) => x.label)];
+  return topics.length > PDF_BOOK_MAX_LESSONS ? { topics, label, zdruzi: parts.map((x) => x.key) } : { topics, label };
 }
 
 // Zgoščena vrednost vsebine PDF-ja: predloga + naslovi + vse, kar se izriše iz vsake lekcije. Enaka na strežniku
@@ -180,6 +187,14 @@ export function pdfHash(key, unit = null) {
   const sig = `${pdfTemplateHash()}|${lessons.map(lessonVersion).join(",")}`;
   const hit = hashes.get(id);
   if (hit?.sig === sig) return hit.hash;
+  if (x.zdruzi) {
+    // Sestavljen PDF: velja, dokler veljajo vsi PDF-ji razredov, iz katerih je sestavljen.
+    const parts = x.zdruzi.map((k) => pdfHash(k));
+    if (parts.some((h) => !h)) return null;
+    const hash = sha(JSON.stringify([pdfTemplateHash(), id, "zdruzi", x.label, x.zdruzi, parts])).slice(0, 20);
+    hashes.set(id, { sig, hash });
+    return hash;
+  }
   const body = x.topics.map((t, i) => [t.id, t.name, t.unit, t.goals || "", simsFor(t.id, lessons[i])[0]?.title || "", lessons[i].sections, lessons[i].alternatives, lessons[i].checks]);
   const hash = sha(JSON.stringify([pdfTemplateHash(), id, x.label, body])).slice(0, 20);
   hashes.set(id, { sig, hash });
@@ -224,7 +239,7 @@ const idParts = (id) => {
   const at = id.indexOf("?");
   return at < 0 ? [id, null] : [id.slice(0, at), id.slice(at + 1)];
 };
-const validEntry = (e) => !!e && FILE_RE.test(e.file || "") && /^[0-9a-f]{64}$/.test(e.sha256 || "") && e.bytes > 0 && e.bytes <= PDF_MAX_BYTES && typeof e.hash === "string";
+const validEntry = (e) => !!e && FILE_RE.test(e.file || "") && /^[0-9a-f]{64}$/.test(e.sha256 || "") && e.bytes > 0 && e.bytes <= PDF_BOOK_MAX_BYTES && typeof e.hash === "string";
 
 // Shramba PDF-jev na disku. find() je sinhron in ne bere diska; sync() prenese kazalo izdaje in manjkajoče datoteke.
 // Kazalo velja samo s potrdilom o izvoru (server/pdf-potrdilo.js): brez njega ostanejo prejšnje datoteke oziroma rezerva.
