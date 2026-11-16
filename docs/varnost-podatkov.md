@@ -58,6 +58,8 @@ Vse vrednosti so v `server/zasebnost.js` (`RETENTION`); čiščenje teče ob zag
 | Potekle seje in odklepi profilov | izbrisani takoj po poteku |
 | Dnevnik e-pošte (preprečuje dvojna sporočila) | 1 leto |
 | Dnevnik obvestil na telefon | 90 dni |
+| Predpomnjen splošen odgovor inštruktorja (`answer_cache`, brez imena učenca) | 30 dni |
+| Ročna varnostna kopija baze (`obnovi-kopijo.js --zdaj`) | zadnje 3, največ 28 dni (`server/kopije.js`); dnevne 7 dni |
 | Dnevnik dostopov | 1 leto |
 | Plačilo Stripa, ki ga ni mogoče pripisati računu (`kv` `stripe_unmatched:*`: id-ji Stripa, znesek, razlog, `parent_uid`; brez e-naslova) | 365 dni, nato izbris (`server/zasebnost.js` `runRetention`) |
 | Račun brez potrjenega e-naslova, brez profilov, plačil in seje | 30 dni |

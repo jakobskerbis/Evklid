@@ -10,6 +10,9 @@ import { DatabaseSync } from "node:sqlite";
 
 export const KEEP_DAYS = 7;
 export const KEEP_MANUAL = 3;
+// Ročna kopija (tudi prenesena iz R2) se pobriše po 28 dneh, četudi je med zadnjimi tremi: zasebnost.html §5 obljublja
+// izbris iz varnostnih kopij najpozneje v 30 dneh, čiščenje pa teče ob dnevni kopiji (2 dni rezerve, če kakšen dan izpade).
+export const MANUAL_MAX_DAYS = 28;
 export const RESTORE_TTL_MS = 60 * 60 * 1000; // pripravljena obnova velja 1 uro, nato se ne uporabi več
 const SAVED_DAYS = 14; // .pred-obnovo-* (za razveljavitev obnove) se pobrišejo po 14 dneh
 const HOUR = 60 * 60 * 1000;
@@ -65,10 +68,14 @@ export function withoutPilotPhotos(file) {
   }
 }
 
-// Pobriše dnevne kopije nad keepDaily in ročne nad keepManual (najstarejše najprej) ter ostanke .tmp.
-function prune(dbFile, keepDaily, keepManual) {
+// Pobriše dnevne kopije nad keepDaily, ročne nad keepManual (najstarejše najprej) in ročne, starejše od
+// MANUAL_MAX_DAYS, ter ostanke .tmp.
+export function prune(dbFile, keepDaily, keepManual, now = new Date()) {
   const list = listBackups(dbFile);
-  for (const b of [...list.filter((x) => !x.manual).slice(keepDaily), ...list.filter((x) => x.manual).slice(keepManual)]) fs.rmSync(b.file, { force: true });
+  const meja = day(new Date(now.getTime() - MANUAL_MAX_DAYS * 864e5));
+  const manual = list.filter((x) => x.manual);
+  const stare = [...manual.slice(keepManual), ...manual.slice(0, keepManual).filter((x) => x.date.slice(0, 10) <= meja)];
+  for (const b of [...list.filter((x) => !x.manual).slice(keepDaily), ...stare]) fs.rmSync(b.file, { force: true });
   const dir = backupDir(dbFile);
   // Ostanki prekinjenih kopij (starejši od 1 ure; mlajšega morda prav zdaj piše druga kopija).
   if (fs.existsSync(dir))
@@ -86,7 +93,7 @@ export function makeBackup(db, dbFile, { now = new Date(), keep = KEEP_DAYS, man
   const name = manual ? `${day(now)}-${now.toISOString().slice(11, 16).replace(":", "")}` : day(now);
   const file = path.join(dir, `${stem(dbFile)}-${name}.db`);
   if (fs.existsSync(file)) return { made: false, reason: manual ? "kopija s to uro že obstaja" : "danes že narejena", file };
-  prune(dbFile, manual ? keep : keep - 1, manual ? KEEP_MANUAL - 1 : KEEP_MANUAL);
+  prune(dbFile, manual ? keep : keep - 1, manual ? KEEP_MANUAL - 1 : KEEP_MANUAL, now);
   // Disk (Render: 1 GB) ne sme biti poln: kopija potrebuje vsaj dvakratno velikost baze prostora.
   const size = fs.existsSync(dbFile) ? fs.statSync(dbFile).size : 0;
   const need = size * 2 + 20 * MB;

@@ -24,6 +24,8 @@ export const RETENTION = {
   unverifiedDays: 30,
   // Odpiranje delov aplikacije (točka B2, server/odpiranje-delov.js MAX_DNI): po toliko dneh brez odprtja.
   odpiranjeDni: 120,
+  // Predpomnjeni odgovori inštruktorja se uporabijo 30 dni (app.js), nato izbrišejo (docs/izbris-izvoz.md, najdba 4).
+  answerCacheDays: 30,
   // Potekle seje in odklepi profilov se izbrišejo takoj (niso več veljavni).
 };
 
@@ -169,6 +171,7 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
     out.pushLog = Number(db.prepare("DELETE FROM push_log WHERE period GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*' AND substr(period, 1, 10) < ?").run(ago(RETENTION.pushLogDays).slice(0, 10)).changes);
   }
   if (hasTable(db, "odpiranje_delov")) out.odpiranje = Number(db.prepare("DELETE FROM odpiranje_delov WHERE zadnji < ?").run(ago(RETENTION.odpiranjeDni).slice(0, 10)).changes);
+  if (hasTable(db, "answer_cache")) out.answerCache = Number(db.prepare("DELETE FROM answer_cache WHERE created_at < ?").run(ago(RETENTION.answerCacheDays)).changes);
   ensureAuditTable(db);
   out.audit = Number(db.prepare("DELETE FROM audit_log WHERE at < ?").run(ago(RETENTION.auditDays)).changes);
   out.unverified = deleteStaleUnverified(db, { nowIso, before: ago(RETENTION.unverifiedDays) });

@@ -115,3 +115,24 @@ test("kopije: ročna kopija ne prepiše dnevne; obnova, starejša od 1 ure, se n
   store.db.close();
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+// Najdba 1 koraka 5 pilota (docs/izbris-izvoz.md): ročne kopije so imele samo omejitev števila (zadnje 3). Ker
+// zasebnost.html §5 obljublja izbris iz kopij v 30 dneh, se ročna kopija po 28 dneh pobriše tudi, če je med zadnjimi 3.
+test("kopije: ročna kopija, starejša od 28 dni, se pobriše ob naslednji dnevni ali ročni kopiji", () => {
+  const dir = tmp();
+  const file = path.join(dir, "evklid.db");
+  const store = openDb(file);
+  makeBackup(store.db, file, { now: new Date("2026-10-01T05:00:00Z"), manual: true });
+  makeBackup(store.db, file, { now: new Date("2026-10-20T05:00:00Z"), manual: true });
+  assert.deepEqual(listBackups(file).map((b) => b.date), ["2026-10-20-0500", "2026-10-01-0500"]);
+  // 28. 10.: kopija z 1. 10. je stara 27 dni in ostane.
+  makeBackup(store.db, file, { now: new Date("2026-10-28T03:00:00Z") });
+  assert.deepEqual(listBackups(file).map((b) => b.date), ["2026-10-28", "2026-10-20-0500", "2026-10-01-0500"]);
+  // 29. 10.: stara 28 dni, pobrisana; z 20. 10. ostane (zadnje 3 ročne in mlajša od 28 dni).
+  makeBackup(store.db, file, { now: new Date("2026-10-29T03:00:00Z") });
+  assert.deepEqual(listBackups(file).map((b) => b.date), ["2026-10-29", "2026-10-28", "2026-10-20-0500"]);
+  // Tudi ročna kopija pobriše prestare ročne.
+  makeBackup(store.db, file, { now: new Date("2026-11-20T03:00:00Z"), manual: true });
+  assert.deepEqual(listBackups(file).filter((b) => b.manual).map((b) => b.date), ["2026-11-20-0300"]);
+  store.db.close();
+});
