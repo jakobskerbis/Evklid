@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Ciljna meritev natančnosti po spremembi lekcij ali prompta v main; teče v GitHubu (.github/workflows/meritev-po-objavi.yml),
-// ne na strežniku (Render starter 512 MB: strežnik in meritev skupaj sta ga presegla, j 16. 11. 2026).
+// ne na strežniku (paket Starter na Renderju, 512 MB: strežnik in meritev skupaj sta ga presegla, j 16. 11. 2026).
 // Vse varovalke stroška so v server/meritev-po-objavi.js (1 $ na zagon, 15 $ na teden, en zagon na commit).
 // Stanje in knjiga stroška: mapa baze (EVKLID_DB), v delovnem toku .meritev v predpomnilniku Actions.
 // Brez ključa ANTHROPIC_API_KEY (skrivnost v GitHubu) se ne zgodi nič in nič ne stane.

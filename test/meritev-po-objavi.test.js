@@ -196,7 +196,7 @@ test("zaženi: ročne meritve iz iste knjige štejejo v tedensko mejo 15 $", asy
   w("content/lessons/MAT-OS-7/a.md", "a2");
   const r = await zaženi({ ...o, env: env("c1") });
   assert.equal(r.ok, false);
-  assert.match(r.razlog, /tedenska meja: porabljeno 14\.20/);
+  assert.match(r.razlog, /tedenska meja: porabljeno 14,20/);
   assert.equal(zagon.klici.length, 0);
   // Neberljiva knjiga (npr. mapa namesto datoteke) zavrne zagon.
   assert.equal(porabaKnjige(path.dirname(knjiga), "2026-W46"), Infinity);
@@ -253,4 +253,28 @@ test("GET /api/admin/meritev-po-objavi: skrbnik vidi povzetek (besedilo in JSON 
     server.close();
     delete process.env.EVKLID_DB;
   }
+});
+
+test("skripta v GitHubu: brez ključa ne naredi nič in nič ne zapiše", async () => {
+  const { spawnSync } = await import("node:child_process");
+  const dir = fs.mkdtempSync(path.join(tmpdir(), "meritev-ci-"));
+  const env = { ...process.env, GITHUB_ACTIONS: "true", EVKLID_MERITEV_PO_OBJAVI: "1", ANTHROPIC_API_KEY: "", EVKLID_DB: path.join(dir, "evklid.db"), NODE_ENV: "" };
+  delete env.GITHUB_STEP_SUMMARY;
+  const r = spawnSync(process.execPath, ["--disable-warning=ExperimentalWarning", new URL("../scripts/meritev-po-objavi.mjs", import.meta.url).pathname], { env, encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /izklopljena/);
+  assert.deepEqual(fs.readdirSync(dir), [], "ni stanja ne knjige");
+});
+
+test("delovni tok: le main, brez PR, skrivnost le v koraku meritve, stanje se shrani vedno", () => {
+  const y = fs.readFileSync(new URL("../.github/workflows/meritev-po-objavi.yml", import.meta.url), "utf8");
+  assert.doesNotMatch(y, /^\s+pull_request(_target)?:/m);
+  assert.match(y, /if: github\.ref == 'refs\/heads\/main'/);
+  assert.equal((y.match(/secrets\./g) || []).length, 1);
+  assert.match(y, /cache\/save@[^\n]+\n\s+if: always\(\)/);
+  const kljuci = [...y.matchAll(/^\s+key: (.+)$/gm)].map((m) => m[1]);
+  assert.equal(kljuci.length, 2);
+  assert.equal(kljuci[0], kljuci[1], "restore in save z istim ključem");
+  assert.match(y, /restore-keys: meritev-po-objavi-\n/);
+  assert.ok(kljuci[0].startsWith("meritev-po-objavi-"));
 });

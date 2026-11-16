@@ -35,6 +35,8 @@ export const MAX_ZAGON_USD = 1;
 export const MAX_TEDEN_USD = 15;
 export const MAX_PRIMEROV = 4; // id-jev na zagon (vsak 4×): več se v 1 $ ne izide za uravnotežen izid
 export const PONOVI = 4;
+// Znesek z decimalno vejico za besedila, ki jih bere človek (povzetek zagona, dnevnik).
+const dec = (x) => Number(x).toFixed(2).replace(".", ",");
 const ZGODOVINA = 30; // zadnjih zagonov v stanju
 const DNEVNIKI = 20; // zadnjih dnevnikov na disku
 
@@ -132,14 +134,14 @@ export function porabaTedna(stanje, teden) {
 }
 
 // Ali sme ta objava zagnati meritev. Vrne { ok, razlog }.
-// knjiga: poraba tedna iz knjige vseh meritev (tudi ročnih).
+// knjiga: poraba tedna iz knjige stroška (v GitHubu le samodejne meritve; ročne pišejo v svojo knjigo).
 export function odlociZagon(stanje, { objava, teden, idji, knjiga = 0, maxZagon = MAX_ZAGON_USD, maxTeden = MAX_TEDEN_USD }) {
   if (!objava) return { ok: false, razlog: "neznana objava" };
   if ((stanje.objave || []).includes(objava)) return { ok: false, razlog: "ta objava je že obdelana (največ en zagon na objavo)" };
   if (!idji.length) return { ok: false, razlog: "objava ni spremenila merljivih lekcij ne prompta" };
   const poraba = porabaTedna(stanje, teden) + knjiga;
   if (!(poraba + maxZagon <= maxTeden + 1e-9)) // tudi NaN ali Infinity (neberljiva knjiga) zavrne
-    return { ok: false, razlog: `tedenska meja: porabljeno ${poraba.toFixed(2)} $ od ${maxTeden} $, zagon rezervira ${maxZagon} $` };
+    return { ok: false, razlog: `tedenska meja: porabljeno ${dec(poraba)} $ od ${maxTeden} $, zagon rezervira ${maxZagon} $` };
   return { ok: true, razlog: "" };
 }
 
@@ -169,8 +171,8 @@ function zapisiStanje(file, s) {
 function zaženiSkripto({ idji, maxUsd, izidFile, logFile, root }) {
   return new Promise((resolve) => {
     const fd = fs.openSync(logFile, "a");
-    // Meja kopice: varovalka pred uhajanjem pomnilnika (meritev teče v GitHubu, ne ob strežniku).
-    const args = ["--disable-warning=ExperimentalWarning", "--max-old-space-size=256", "scripts/primerjava-modelov.js", "--s-preverjanjem", "--samo", idji.join(","), "--ponovi", String(PONOVI), "--pogoj", "s", "--max-usd", String(maxUsd), "--izid-json", izidFile];
+    // Meja kopice: varovalka pred uhajanjem pomnilnika (stroj GitHub ima dovolj pomnilnika; meritev ni več ob strežniku).
+    const args = ["--disable-warning=ExperimentalWarning", "--max-old-space-size=1024", "scripts/primerjava-modelov.js", "--s-preverjanjem", "--samo", idji.join(","), "--ponovi", String(PONOVI), "--pogoj", "s", "--max-usd", String(maxUsd), "--izid-json", izidFile];
     const child = spawn(process.execPath, args, { cwd: root, stdio: ["ignore", fd, fd], env: { ...process.env, EVKLID_MERITEV_PO_OBJAVI: "0" } });
     try {
       os.setPriority(child.pid, 19);
@@ -178,8 +180,12 @@ function zaženiSkripto({ idji, maxUsd, izidFile, logFile, root }) {
     child.unref();
     // Ob izhodu starša (preklic zagona) se ustavi tudi meritev: nič več klicev AI; rezervacija 1 $ ostane šteta.
     const ubij = () => child.kill("SIGTERM");
+    // Preklic v GitHubu pošlje SIGINT/SIGTERM, ob katerih Node dogodka »exit« ne sproži: ustavi otroka tudi takrat.
+    const ubijInKoncaj = () => (ubij(), process.exit(130));
     process.once("exit", ubij);
-    const konec = (r) => (process.off("exit", ubij), fs.closeSync(fd), resolve(r));
+    process.once("SIGINT", ubijInKoncaj);
+    process.once("SIGTERM", ubijInKoncaj);
+    const konec = (r) => (process.off("exit", ubij), process.off("SIGINT", ubijInKoncaj), process.off("SIGTERM", ubijInKoncaj), fs.closeSync(fd), resolve(r));
     child.on("error", (e) => konec({ code: -1, napaka: String(e?.message || e) }));
     child.on("exit", (code) => konec({ code }));
   });
@@ -205,7 +211,7 @@ export async function zaženi({
   }
   const teden = isoTeden(now());
   if (stanje.teden !== teden) Object.assign(stanje, { teden, porabljeno_usd: 0 });
-  // Zagon, ki ga je prekinila prejšnja objava: rezervacija (cel 1 $) ostane štet.
+  // Prekinjen prejšnji zagon: rezervacija (cel 1 $) ostane šteta.
   for (const z of stanje.zgodovina || []) if (z.stanje === "teče") Object.assign(z, { stanje: "prekinjeno", strosek_usd: z.rezervirano_usd });
 
   const zdaj = odtisi(root);
@@ -223,7 +229,7 @@ export async function zaženi({
   const idji = izberiIdje(poti, { krog, merljiv: jeMerljiv });
   const odl = prvic ? { ok: false, razlog: "prvi zagon: shranjeno izhodišče za primerjavo naslednjih objav" } : odlociZagon(stanje, { objava, teden, idji, knjiga: porabaKnjige(knjiga, teden) });
 
-  // Objava je obdelana že zdaj (pred zagonom): ponovni zagon strežnika iste objave ne meri znova.
+  // Commit je obdelan že zdaj (pred zagonom): ponovni zagon istega commita ne meri znova.
   stanje.objave = [...(stanje.objave || []), objava].slice(-50);
   stanje.odtisi = zdaj;
   const vnos = { cas: now().toISOString(), objava: objava.slice(0, 12), teden, spremenjenih: poti.length, idji, stanje: odl.ok ? "teče" : "preskočeno", razlog: odl.razlog };
@@ -243,7 +249,7 @@ export async function zaženi({
   const ime = `${vnos.cas.replace(/[:.]/g, "-")}-${vnos.objava}`;
   const izidFile = path.join(mapa, `${ime}.json`);
   vnos.dnevnik = `${ime}.log`;
-  log(`[evklid] meritev po objavi: ${idji.join(", ")} (${PONOVI}×, največ ${MAX_ZAGON_USD} $; ta teden že ${(stanje.porabljeno_usd - MAX_ZAGON_USD + porabaKnjige(knjiga, teden)).toFixed(2)} $)`);
+  log(`[evklid] meritev po objavi: ${idji.join(", ")} (${PONOVI}×, največ ${MAX_ZAGON_USD} $; ta teden že ${dec(stanje.porabljeno_usd - MAX_ZAGON_USD + porabaKnjige(knjiga, teden))} $)`);
   const r = await zagon({ idji, maxUsd: MAX_ZAGON_USD, izidFile, logFile: path.join(mapa, vnos.dnevnik), root });
 
   // Rezervacija odpade le, če je skripta zapisala izid (njen strošek je že v knjigi); sicer ostane cel 1 $.
@@ -261,7 +267,7 @@ export async function zaženi({
   zapisiStanje(file, s2);
   fs.rmSync(`${izidFile}.napredek.json`, { force: true }); // odgovori modela; povzetek je v izidu
   pocistiDnevnike(mapa);
-  log(`[evklid] meritev po objavi: ${v2.stanje}, strošek ${v2.strosek_usd} $; ta teden ${(porabaTedna(s2, teden) + porabaKnjige(knjiga, teden)).toFixed(2)} $ od ${MAX_TEDEN_USD} $`);
+  log(`[evklid] meritev po objavi: ${v2.stanje}, strošek ${dec(v2.strosek_usd)} $; ta teden ${dec(porabaTedna(s2, teden) + porabaKnjige(knjiga, teden))} $ od ${MAX_TEDEN_USD} $`);
   return { ok: true, vnos: v2 };
 }
 

@@ -53,9 +53,11 @@ PDF razreda, poglavja in celega predmeta se ne izdela več na telefonu. Ob vsaki
 - Ciljna meritev natančnosti po spremembi lekcij ali prompta **ne teče več na strežniku** (16. 11. 2026: strežnik in meritev
   skupaj sta presegla 512 MB paketa Starter in Render je strežnik ponovno zagnal). Teče v GitHubu ob vsaki združitvi v main,
   ki spremeni lekcije ali prompt: `.github/workflows/meritev-po-objavi.yml` (koda `scripts/meritev-po-objavi.mjs`,
-  `server/meritev-po-objavi.js`). Največ 1 $ na zagon, 15 $ na teden (ISO, UTC), en zagon na commit; brez sprememb ni zagona.
+  `server/meritev-po-objavi.js`). Največ 1 $ na zagon, 15 $ na teden (ISO, UTC; šteje le samodejne meritve v GitHubu, ročne meritve na Renderju ali
+  računalniku ne), en zagon na commit; brez sprememb ni zagona. Enkrat na teden tek brez sprememb ohrani stanje
+  (0 $), da GitHub predpomnilnika ne izbriše.
   Potrebuje skrivnost `ANTHROPIC_API_KEY` v GitHubu (Settings > Secrets and variables > Actions). Izid: Actions > Meritev po
-  objavi > zagon (povzetek in artefakt z dnevnikom). `EVKLID_MERITEV_PO_OBJAVI` v Render → Environment lahko izbrišeš;
+  objavi > zagon (povzetek in artefakt z dnevnikom). Spremenljivko `EVKLID_MERITEV_PO_OBJAVI` v Render → Environment lahko izbrišeš;
   strežnik je ne bere več. `/api/admin/meritev-po-objavi` kaže le še staro zgodovino s strežnika.
 
 Vse lahko spremeniš v Render → Environment.

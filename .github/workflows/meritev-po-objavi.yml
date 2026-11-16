@@ -16,6 +16,12 @@ on:
       - "prompts/system_prompt.md"
       - "server/prompt.js"
       - "server/live-check.js"
+      # Združitev te spremembe shrani izhodišče, da je izmerjena že prva naslednja sprememba lekcij.
+      - ".github/workflows/meritev-po-objavi.yml"
+      - "scripts/meritev-po-objavi.mjs"
+  # Enkrat na teden (0 $: commit je že obdelan ali brez sprememb): predpomnilnik ostane živ (GitHub ga po 7 dneh izbriše).
+  schedule:
+    - cron: "17 3 * * 1"
   workflow_dispatch:
 permissions:
   contents: read
@@ -29,6 +35,8 @@ defaults:
     shell: bash
 jobs:
   meritev:
+    # Samo main: ročni zagon z druge veje bi tekel z njeno kodo in shranil porabo v predpomnilnik te veje (mimo meje 15 $).
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
@@ -42,10 +50,13 @@ jobs:
       # Namesti tudi SymPy (postinstall), ki ga meritev s preverjanjem potrebuje.
       - run: npm ci --omit=dev --no-audit --no-fund
         timeout-minutes: 10
+      # Brez SymPy bi meritev s preverjanjem tekla drugače in vseeno stala: raje ustavi.
+      - name: SymPy nameščen
+        run: PYTHONPATH=.pylib python3 -c "import sympy; print('SymPy', sympy.__version__)"
       - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .meritev
-          key: meritev-po-objavi-${{ github.run_id }}
+          key: meritev-po-objavi-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: meritev-po-objavi-
       - name: Meritev
         env:
@@ -58,7 +69,7 @@ jobs:
         if: always()
         with:
           path: .meritev
-          key: meritev-po-objavi-${{ github.run_id }}
+          key: meritev-po-objavi-${{ github.run_id }}-${{ github.run_attempt }}
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
