@@ -2,6 +2,13 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-16: skice samo z blokom SKICA/GRAF (PR #782, j potrdil na kartici 16. 11.)
+
+- Zakaj: j je na telefonu (OŠ 9. razred, »Razloži mi Pitagorov izrek.«) dobil trikotnik, narisan iz `|`, `\` in `_` v kodnem bloku, ki je bil zamaknjen. Splošno pravilo »dodaj preprosto skico v besedilu« je model bral kot risbo iz znakov; blok `SKICA` je opisan šele v razdelku Orodja aplikacije.
+- Prompt (stalni del): Besedilo in predstava »preprosto skico (blok `SKICA` ali `GRAF`) … Risb iz znakov (poševnice, podčrtaji, tudi v kodnem bloku) ne delaš: na zaslonu se zamaknejo.«; MAT »… in jo, kjer pomaga, nariši s `SKICA`«; FIZ »skica s `SKICA` (vektorji)«; `SKICA` »Česar ne moreš narisati s `SKICA` ali `GRAF`, opiši z besedami ali tabelo, ne z risbo iz znakov.«
+- Stalni del +264 znakov (55 013 → 55 277; ~75 predpomnjenih žetonov, zanemarljiv strošek). Meja 300 znakov je v testu skic; test »Pritisk in grožnje« ima zdaj le spodnjo mejo.
+- Test: `test/prompt.test.js` (besedilo v predpomnjenem delu, »skico v besedilu« ni več). Živega odgovora v oblaku ni bilo mogoče preveriti (brez API ključa): po objavi j ponovi »Razloži mi Pitagorov izrek.«
+
 ## 2026-11-12: preverjevalec kartic – sodba za vsako kartico (osnutek PR »Kartice: pravilne kartice se ne zavržejo več«)
 
 - Zakaj: meritev kroga 8 (KEM-OS-8/formule-spojin) je dvakrat zapisala »kartice niso shranjene (claude-sonnet-5-5: The flashcard states the criss-cross rule: the cation's subscript is the anion's charge and vice vers…)«. Razlog ne vsebuje besede NAPAKA: Sonnet kartice ni zavrnil, ampak je pred sodbo napisal utemeljitev. `parseVerdict` je vse razen golega »OK« štel za zavrnitev in kot razlog izpisal ves odgovor. Poleg tega je ena sodba veljala za vse kartice odgovora, zato bi ena napačna zavrgla tudi pravilne.

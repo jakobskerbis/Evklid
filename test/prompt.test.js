@@ -206,8 +206,8 @@ test("pressure and threats: own situation in the cached part; extortion gets the
   // »Pritisk in grožnje« doda 788 znakov predpomnjenega dela (54 225 po krogu 8 → 55 013; ~230 predpomnjenih žetonov;
   // j 16. 11.: Samarijan za odrasle, flag=distress le ob izsiljevanju/ustrahovanju).
   const fixed = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8").split(SPLIT_MARKER)[0];
-  // Skice samo z blokom SKICA/GRAF (j 16. 11., kartica): +242 znakov (55 013 → 55 255).
-  assert.ok(fixed.length < 54225 + 850 + 250, `stalni del ${fixed.length} znakov`);
+  // Zgornja meja rasti je odslej v testu skic (16. 11.); tu ostane le spodnja.
+  assert.ok(fixed.length > 54225, `stalni del ${fixed.length} znakov`);
 });
 
 test("sketches (j 2026-11-16): figures only with the SKICA/GRAF block, never drawn from characters, in the cached part", () => {
@@ -219,5 +219,8 @@ test("sketches (j 2026-11-16): figures only with the SKICA/GRAF block, never dra
   assert.doesNotMatch(general, /skico v besedilu/, "»skica v besedilu« je model bral kot risbo iz znakov");
   assert.match(line("- **MAT:**"), /nariši s `SKICA`/);
   assert.match(line("- `SKICA`:"), /ne z risbo iz znakov/);
+  assert.match(line("- **FIZ:**"), /skica s `SKICA` \(vektorji\)/);
+  // Skice dodajo ~270 znakov predpomnjenega dela (55 013 → 55 277; ~75 žetonov), meja 300.
+  assert.ok(stat.length < 55013 + 300, `stalni del ${stat.length} znakov`);
   assert.doesNotMatch(dyn, /Risb iz znakov/);
 });
