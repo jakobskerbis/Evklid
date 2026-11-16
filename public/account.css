@@ -208,6 +208,10 @@ details .card { margin-top: 8px; }
 .land-cta .land-actions a.btn-secondary { background: var(--surface); }
 .land-foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; font-size: 0.92rem; }
 .land-foot a { min-height: 40px; display: inline-flex; align-items: center; }
+/* Ponudnik in kontakt pod povezavami (pregled »kupca« 16. 11. 2026) */
+.land-provider { flex-basis: 100%; margin: 0; text-align: center; color: var(--muted); }
+/* Pristajalna stran brez JavaScripta (<noscript> v index.html, scripts/pristajalna-noscript.js): opomba namesto gumbov */
+.land-nojs { margin: 0; font-weight: 600; }
 @media (max-width: 520px) {
   .land-actions a { flex: 1 1 100%; }
 }

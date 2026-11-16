@@ -5,6 +5,10 @@
 import { icon } from "./icons.js";
 import { t } from "./i18n.js";
 
+// Kdo stoji za aplikacijo (pregled »kupca« 16. 11. 2026: starši na vstopni strani niso našli ponudnika in kontakta).
+// Isto kot v public/zasebnost.html, točka 1 »Upravljavec« (test/pristajalna.test.js preveri, da se ne razideta).
+export const PROVIDER = Object.freeze({ name: "Jakob Skerbiš", email: "zasebnost@evklid.app" });
+
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
 const FEATURES = [
@@ -48,12 +52,15 @@ export function levelPrices(prices, money) {
   return out;
 }
 
-export function landingHtml({ name, prices = null, money = (x) => String(x) } = {}) {
+// noscript: stran za brskalnike brez JavaScripta in bralnike besedila (iskalniki, predogledi, orodja AI), ki jo
+// scripts/pristajalna-noscript.js zapiše v <noscript> v public/index.html. Namesto gumbov za registracijo in prijavo
+// (delujeta le z JavaScriptom) je opomba.
+export function landingHtml({ name, prices = null, money = (x) => String(x), noscript = false } = {}) {
   const days = prices?.trial_days;
   const age = prices?.min_age;
   const lp = prices ? levelPrices(prices, money) : {};
   const trial = days ? `<p class="land-trial">${icon("gift")}<span>${esc(t("land.trial", { n: days }))}</span></p>` : "";
-  const actions = (where) => `<div class="land-actions">
+  const actions = (where) => noscript ? `<p class="land-nojs">${esc(t("land.noJs"))}</p>` : `<div class="land-actions">
       <a class="btn-primary" href="#registracija" data-land="register" data-where="${where}">${esc(t("land.start"))}</a>
       <a class="btn-secondary" href="#prijava" data-land="login">${esc(t("mob.signIn"))}</a>
     </div>`;
@@ -135,6 +142,7 @@ export function landingHtml({ name, prices = null, money = (x) => String(x) } = 
       <a href="/starsi.html">${esc(t("land.par.t"))}</a>
       <a href="/sole.html">${esc(t("land.sch.t"))}</a>
       <a href="/prenesi">${esc(t("land.app.go"))}</a>
+      <p class="land-provider">${esc(t("land.provider", { app: name, name: PROVIDER.name }))} · ${esc(t("land.contact"))}: <a href="mailto:${PROVIDER.email}">${PROVIDER.email}</a></p>
     </footer>
   </div>`;
 }

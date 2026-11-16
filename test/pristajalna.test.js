@@ -2,7 +2,7 @@
 // vsi napisi prevedeni in pot do prijave ter registracije.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { plansFor } from "../server/accounts/plans.js";
 
 // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
@@ -11,6 +11,8 @@ const { landingHtml, levelPrices } = await import("../public/pristajalna.js");
 // Uvozi so pred prvim testom: po njem bi jih --test-force-exit izpustil skupaj s testi.
 const { guaranteeAdvertised, GUARANTEE } = await import("../server/placila/garancija.js");
 const { default: SL } = await import("../public/i18n/sl.js");
+const { PROVIDER } = await import("../public/pristajalna.js");
+const nos = await import("../scripts/pristajalna-noscript.js");
 const money = (minor, cur) => `${minor / 100} ${cur}`;
 
 test("cene po stopnjah pridejo iz cenika (OŠ, SŠ, faks in družina)", () => {
@@ -140,4 +142,47 @@ test("prvo dejstvo brez »ne AI« v vseh jezikih (j 2026-11-10)", async () => {
     assert.ok(v && !/AI|KI|IA|MI|ИИ|ШІ|ذكاء|هوش|人工|인공/.test(v), `${f}: ${v}`);
   }
   assert.equal(JSON.parse(readFileSync(new URL("de.json", dir), "utf8"))["land.fact1"], "Berechnungen prüft ein Programm");
+});
+
+// Pregled »kupca« 16. 11. 2026: ponudnik in kontakt na vstopni strani, pristajalna stran tudi brez JavaScripta.
+
+test("ponudnik in kontakt v nogi sta ista kot upravljavec v obvestilu o zasebnosti", () => {
+  const html = landingHtml({ name: "Evklid" });
+  assert.match(html, /class="land-provider">Evklid razvija in upravlja Jakob Skerbiš · Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
+  const priv = readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
+  const sec = priv.slice(priv.indexOf("1. Upravljavec"), priv.indexOf("<h2>", priv.indexOf("1. Upravljavec")));
+  assert.ok(sec.includes(PROVIDER.name) && sec.includes(`mailto:${PROVIDER.email}`), "public/zasebnost.html točka 1 se ujema s PROVIDER");
+  const dir = new URL("../public/i18n/ui/", import.meta.url);
+  for (const f of readdirSync(dir).filter((x) => x.endsWith(".json"))) {
+    const d = JSON.parse(readFileSync(new URL(f, dir), "utf8"));
+    assert.ok(d["land.provider"]?.includes("{app}") && d["land.provider"].includes("{name}"), `${f}: land.provider`);
+    assert.ok(d["land.contact"] && /JavaScript/.test(d["land.noJs"] || ""), `${f}: land.contact, land.noJs`);
+  }
+});
+
+test("index.html: pristajalna stran v <noscript> je posodobljena (node scripts/pristajalna-noscript.js)", () => {
+  const src = readFileSync(nos.INDEX, "utf8");
+  assert.equal(nos.withBlock(src), src, "zaženi node scripts/pristajalna-noscript.js");
+});
+
+test("index.html brez JavaScripta: najprej pristajalna stran, lupina skrita, brez skritih obvestil v besedilu", () => {
+  const src = readFileSync(nos.INDEX, "utf8");
+  const body = src.slice(src.indexOf("<body>") + "<body>".length).trimStart();
+  assert.ok(body.startsWith(nos.START), "blok je prvi v <body>");
+  const block = src.slice(src.indexOf(nos.START), src.indexOf(nos.END));
+  assert.match(block, /<noscript>[\s\S]*<\/noscript>/);
+  assert.match(block, /<h1>Rešitev najdeš sam\. Evklid ti pokaže pot\.<\/h1>/);
+  assert.match(block, /13,99\s€ na mesec/);
+  assert.match(block, /ali 139\s€ na leto/);
+  assert.match(block, /7 dni brezplačno, brez kartice\./);
+  assert.match(block, /Za mlajše od 15 let račun ustvari starš\./);
+  assert.match(block, /Jakob Skerbiš · Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
+  assert.match(block, /href="\/zasebnost\.html"/);
+  assert.match(block, /class="land-nojs"/);
+  assert.doesNotMatch(block, /data-land=|<svg|land\.|undefined|garancija\.html/);
+  const head = src.slice(0, src.indexOf("</head>"));
+  assert.match(head, /<noscript><style>body > :not\(noscript\) \{ display: none !important; \}<\/style><\/noscript>/);
+  // Skrito obvestilo o izklopljenem klepetu napiše šele i18n.js (data-i18n), ko ga aplikacija res pokaže.
+  assert.doesNotMatch(src, /začasno izklopljen/);
+  assert.match(src, /<div id="chat-off" class="chat-off" role="status" data-i18n="chat\.off" hidden><\/div>/);
 });

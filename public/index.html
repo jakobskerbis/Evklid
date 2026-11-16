@@ -54,15 +54,65 @@
   <link rel="stylesheet" href="okna.css">
   <link rel="stylesheet" href="tipkovnica.css">
   <link rel="stylesheet" href="drsniki.css">
+  <!-- Brez JavaScripta je vidna samo pristajalna stran (<noscript> na začetku strani), ne lupina aplikacije. -->
+  <noscript><style>body > :not(noscript) { display: none !important; }</style></noscript>
 </head>
 <body>
+  <!-- pristajalna-noscript: začetek (scripts/pristajalna-noscript.js) -->
   <noscript>
-    <div class="card" style="margin: 16px">
-      <h1>Evklid – slovenski AI inštruktor</h1>
-      <p>Evklid (evklid.app) je slovenska aplikacija za učenje matematike, fizike, kemije, biologije in naravoslovja po slovenskem učnem načrtu, od 1. razreda osnovne šole do fakultete. Za uporabo aplikacije vklopi JavaScript.</p>
-      <p><a href="/o-evklidu">Kaj je Evklid, cene in pogosta vprašanja</a> · <a href="/zakaj-evklid">Zakaj Evklid</a> · <a href="/sole">Za učitelje in šole</a></p>
-    </div>
+    <main class="view narrow land-static">
+    <div class="land">
+    <section class="land-top">
+      <ul class="land-facts"><li><span>Račune preveri program</span></li><li><span>Po slovenskem učnem načrtu</span></li><li><span>Brez oglasov</span></li></ul>
+    </section>
+    <section class="land-hero">
+      <div class="land-hero-text">
+        <p class="land-eyebrow">Matematika · Fizika · Kemija · Biologija</p>
+        <h1>Rešitev najdeš sam. Evklid ti pokaže pot.</h1>
+        <p class="land-lead">Inštruktor za matematiko, fiziko, kemijo in biologijo od 1. razreda osnovne šole do fakultete. Naloge ne reši namesto tebe, ampak te z namigi in vprašanji vodi korak za korakom. Vse po slovenskem učnem načrtu.</p>
+        <p class="land-nojs">Za registracijo in prijavo v brskalniku vklopi JavaScript.</p>
+        <p class="land-trial"><span>7 dni brezplačno, brez kartice.</span></p>
+      </div>
+      <figure class="land-demo" aria-label="Primer pogovora z inštruktorjem">
+        <figcaption><b>Evklid</b><small>Inštruktor</small></figcaption>
+        <ol><li class="land-msg me" style="--i:0">Kako rešim 3x + 5 = 20?</li><li class="land-msg tutor" style="--i:1">Kaj moraš narediti, da ostane 3x sam na levi strani?</li><li class="land-msg me" style="--i:2">Na obeh straneh odštejem 5.</li><li class="land-msg tutor" style="--i:3">Tako je. Koliko je zdaj 3x?</li><li class="land-msg me" style="--i:4">15. Torej je x = 5.</li><li class="land-msg tutor" style="--i:5">Odlično, rešitev je tvoja! Preizkus: 3 · 5 + 5 = 20 ✓</li></ol>
+      </figure>
+    </section>
+    <section class="land-sec" aria-labelledby="land-feat-h">
+      <h2 id="land-feat-h">Kaj zna Evklid</h2>
+      <ul class="land-grid land-feats"><li class="card land-feat"><h3>Inštruktor po korakih</h3><p>Rešitve ne izda. Najprej ugotovi, kaj že znaš, nato te z namigi vodi do konca. Vprašaš ga lahko tudi z glasom.</p></li><li class="card land-feat"><h3>Pravilni izračuni</h3><p>Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah gre odgovor še skozi dodaten pregled.</p></li><li class="card land-feat"><h3>Učna pot po učnem načrtu</h3><p>Snov za tvoj razred in šolo, po sklopih. Sklop, ki ga že znaš, preskočiš s preizkusom znanja.</p></li><li class="card land-feat"><h3>Vaje, ki ne zmanjkajo</h3><p>Vsakič nove številke in težavnost po tvoji meri. Evklid pokaže, v katerem koraku je napaka.</p></li><li class="card land-feat"><h3>Fotografiraj ali piši z roko</h3><p>Slikaj nalogo iz zvezka ali jo napiši s prstom. Evklid jo prebere in ti pomaga po korakih.</p></li><li class="card land-feat"><h3>Učbenik, simulacije in laboratorij</h3><p>Kratke lekcije, formule z razlago vsakega simbola, simulacije in poskusi, ki jih sestaviš sam.</p></li><li class="card land-feat"><h3>NPZ in matura</h3><p>Pretekle izpitne pole, razdeljene na posamezne naloge. Vsako lahko rešuješ skupaj z inštruktorjem.</p></li><li class="card land-feat"><h3>Igre, točke in lige</h3><p>Več kot 30 iger, v katerih igranje pomeni računanje. Zbiraš točke XP in tekmuješ s prijatelji ali razredom.</p></li></ul>
+    </section>
+    <section class="land-sec" aria-labelledby="land-lv-h">
+      <h2 id="land-lv-h">Za vsako stopnjo</h2>
+      <ul class="land-grid land-levels"><li class="card land-level"><h3>Osnovna šola</h3><p>Od 1. do 9. razreda: inštruktor in igre, od 6. razreda tudi učna pot po razredih in priprava na NPZ.</p><p class="land-price"><b>9,99 € na mesec</b><span>ali 99 € na leto</span></p></li><li class="card land-level"><h3>Srednja šola</h3><p>Vsi letniki: urnik s testi, priprava nanje in na maturo.</p><p class="land-price"><b>13,99 € na mesec</b><span>ali 139 € na leto</span></p></li><li class="card land-level"><h3>Fakulteta</h3><p>Več kot 70 slovenskih študijskih programov: predmeti po uradnih predmetnikih, urnik s kolokviji in izpiti.</p><p class="land-price"><b>19,99 € na mesec</b><span>ali 199 € na leto</span></p></li></ul>
+      <p class="land-note">Družina (2–4 profili): 18,99 € na mesec.</p>
+      <p class="land-note">Po preizkusu izbereš naročnino ali ostaneš na brezplačnem paketu z omejenim številom vprašanj na dan. Brez oglasov.</p>
+    </section>
+    <section class="land-sec" aria-labelledby="land-how-h">
+      <h2 id="land-how-h">Kako začneš</h2>
+      <ol class="land-grid land-steps"><li class="card land-step"><span class="land-num" aria-hidden="true">1</span><div><h3>Ustvari račun</h3><p>Z e-naslovom in geslom. Za mlajše od 15 let račun ustvari starš.</p></div></li><li class="card land-step"><span class="land-num" aria-hidden="true">2</span><div><h3>Izberi razred in cilj</h3><p>Evklid pripravi učno pot za tvoj razred in za cilj, ki ga izbereš: test, NPZ ali maturo.</p></div></li><li class="card land-step"><span class="land-num" aria-hidden="true">3</span><div><h3>Uči se po malem vsak dan</h3><p>Današnji trening traja okoli 15 minut: nova snov in ponavljanje ob pravem času, da znanje ne zbledi.</p></div></li></ol>
+    </section>
+    <section class="land-sec">
+      <ul class="land-grid land-mores"><li class="card land-more"><h3>Za starše</h3><p>Starš vidi, kaj otrok dela, kaj mu gre in kje potrebuje pomoč, in dobi tedensko poročilo. Brez oglasov.</p><a href="/starsi.html">Več za starše</a></li><li class="card land-more"><h3>Za učitelje in šole</h3><p>Učiteljski račun je brezplačen. Učitelj odpre razred, dodeli teme in vidi, kdo potrebuje pomoč.</p><a href="/sole.html">Več za šole</a></li><li class="card land-more"><h3>Aplikacija za telefon</h3><p>Evklid deluje v brskalniku in kot aplikacija za Android, ki se sama posodablja. Napredek je povsod enak.</p><a href="/prenesi">Prenesi aplikacijo</a></li></ul>
+    </section>
+    <section class="land-cta">
+      <h2>Prva naloga te že čaka.</h2>
+      <p class="land-nojs">Za registracijo in prijavo v brskalniku vklopi JavaScript.</p>
+      <p class="land-trial"><span>7 dni brezplačno, brez kartice.</span></p>
+    </section>
+    <footer class="land-foot">
+      <a href="/o-evklidu">Kaj je Evklid?</a>
+      <a href="/zakaj-evklid">Zakaj Evklid?</a>
+      <a href="/zasebnost.html">Zasebnost</a>
+      <a href="/starsi.html">Za starše</a>
+      <a href="/sole.html">Za učitelje in šole</a>
+      <a href="/prenesi">Prenesi aplikacijo</a>
+      <p class="land-provider">Evklid razvija in upravlja Jakob Skerbiš · Kontakt: <a href="mailto:zasebnost@evklid.app">zasebnost@evklid.app</a></p>
+    </footer>
+  </div>
+    </main>
   </noscript>
+  <!-- pristajalna-noscript: konec -->
   <header class="topbar">
     <button type="button" class="brand" aria-haspopup="menu" aria-expanded="false" aria-controls="quick-pop" aria-label="Nadaljuj z učenjem" data-i18n-aria="qs.title" title="Nadaljuj z učenjem" data-i18n-title="qs.title">
       <span class="logo" aria-hidden="true"><i data-icon="kristal"></i></span>
@@ -180,7 +230,7 @@
   <main id="view-zbirke" class="view narrow" hidden>
     <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
     <button type="button" class="ghost back zb-back" hidden><i data-icon="arrow-left"></i><span data-i18n="games.back">Nazaj na igre</span></button>
-    <h1 class="with-icon"><i data-icon="award"></i> <span data-i18n="zb.title">Zbirke in učni pass</span></h1>
+    <h1 class="with-icon"><i data-icon="award"></i> <span data-i18n="zb.title">Zbirke in nagradna pot</span></h1>
     <div id="zbirke-content"><p class="muted" data-i18n="common.loading">Nalagam …</p></div>
   </main>
 
@@ -234,7 +284,7 @@
       <div id="messages" class="messages" aria-live="polite">
         <div class="empty"></div>
       </div>
-      <div id="chat-off" class="chat-off" role="status" data-i18n="chat.off" hidden>Klepet z inštruktorjem je začasno izklopljen. Drugi deli aplikacije delujejo.</div>
+      <div id="chat-off" class="chat-off" role="status" data-i18n="chat.off" hidden></div>
       <form id="composer" class="composer">
         <div id="image-preview" class="image-preview" hidden>
           <img alt="Predogled fotografije" data-i18n-alt="chat.photoPreview">
