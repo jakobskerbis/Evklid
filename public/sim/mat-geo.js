@@ -975,7 +975,7 @@ export function tales(el) {
       slider({ label: "druga vzporednica", min: 0.3, max: 0.95, step: 0.01, value: t2, onInput: (v) => ((t2 = Math.max(v, t1 + 0.05)), draw()), format: (v) => fmt(v, 2) }),
     ],
     out,
-    tryText: "Kako bi s Talesovim izrekom izmeril višino drevesa s pomočjo njegove sence in palice?",
+    tryText: { razmisli: "Kako bi s Talesovim izrekom izmeril višino drevesa s pomočjo njegove sence in palice?" },
   });
   draw();
 }

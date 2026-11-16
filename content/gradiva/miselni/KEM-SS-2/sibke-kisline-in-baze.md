@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Močna ali šibka
+  - močna: $[\mathrm{H_3O^+}] = c$
+  - šibka: ravnotežje, odda le nekaj odstotkov
+  - šibka ne pomeni razredčena
+- Konstanta kislosti
+  - $K_\mathrm{a} = \dfrac{[\mathrm{H_3O^+}][\mathrm{A^-}]}{[\mathrm{HA}]}$
+  - ocetna kislina $1{,}8 \cdot 10^{-5}\,\mathrm{mol/L}$
+  - odvisna le od temperature
+- Vrednost pKa
+  - $\mathrm{p}K_\mathrm{a} = -\log K_\mathrm{a}$
+  - manjši $\mathrm{p}K_\mathrm{a}$, močnejša kislina
+- pH šibke kisline
+  - $[\mathrm{H_3O^+}] = \sqrt{K_\mathrm{a} \cdot c}$
+  - napaka: pozabljen koren
+  - velja, če proton odda manj kot okoli $5\,\%$ molekul
+- Šibke baze
+  - $\mathrm{NH_3}$, $K_\mathrm{b} = 1{,}8 \cdot 10^{-5}\,\mathrm{mol/L}$
+  - $[\mathrm{OH^-}] = \sqrt{K_\mathrm{b} \cdot c}$, nato pOH
+- Pufer
+  - šibka kislina in njena konjugirana baza
+  - acetat prestreže kislino, ocetna kislina bazo
+  - napaka: $\mathrm{HCl}$ in $\mathrm{NaCl}$ nista pufer
+- pH pufra
+  - $[\mathrm{H_3O^+}] = K_\mathrm{a} \cdot \dfrac{[\mathrm{HA}]}{[\mathrm{A^-}]}$
+  - enaki koncentraciji: $\mathrm{pH} = \mathrm{p}K_\mathrm{a}$
+  - razredčenje pH skoraj ne spremeni

@@ -29,11 +29,11 @@ Kaj je v mehurčkih, ki nastajajo v vreli vodi: vodik in kisik ali nekaj drugega
 Vodna para, torej cele molekule $\mathrm{H_2O}$. Pri vrenju premagamo le šibke sile med molekulami. Vezi $\mathrm{O{-}H}$ so mnogo močnejše in jih toplota štedilnika ne pretrga.
 :::
 
-**2. Disperzijske sile: tudi med nepolarnimi molekulami.** Pri kovalentni vezi je bila nepolarna molekula tista, pri kateri je elektronski oblak enakomerno razporejen. A elektroni se ves čas gibljejo. V trenutku se jih na eni strani nabere malo več in molekula postane kratkotrajni dipol. Ta premakne elektrone v sosednji molekuli in med njima nastane šibek privlak. To so **disperzijske (Londonove) sile**.
+**2. Disperzijske sile: tudi med nepolarnimi molekulami.** Pri kovalentni vezi je bila nepolarna molekula tista, pri kateri so elektroni enakomerno razporejeni. A elektroni se ves čas gibljejo. V trenutku se jih na eni strani nabere malo več in molekula postane kratkotrajni dipol. Ta premakne elektrone v sosednji molekuli in med njima nastane šibek privlak. To so **disperzijske (Londonove) sile**.
 
 Delujejo med vsemi molekulami. Večja kot je molekula in več elektronov ima, močnejše so. Zato fluor ($M_r = 38$) vre pri $-188\,°\mathrm{C}$, klor ($M_r = 71$) pri $-34\,°\mathrm{C}$, brom ($M_r = 160$) pa je pri sobni temperaturi tekočina.
 
-**3. Dipol-dipol: polarne molekule.** Za razliko od kratkotrajnih dipolov imajo polarne molekule delna naboja stalno. Konec $\delta^+$ ene molekule privlači konec $\delta^-$ sosednje. Tej sili rečemo **dipol-dipol**. Spominja na ionsko vez, a naboja sta le delna, zato je mnogo šibkejša. Primer je vodikov klorid $\overset{\delta+}{\mathrm{H}}{-}\overset{\delta-}{\mathrm{Cl}}$.
+**3. Dipol-dipol: polarne molekule.** Za razliko od kratkotrajnih dipolov imajo polarne molekule delna naboja stalno. Konec $\delta^+$ ene molekule privlači konec $\delta^-$ sosednje. Tej sili rečemo **dipol-dipol**; v učbenikih jo najdeš tudi kot **orientacijsko silo**. Spominja na ionsko vez, a naboja sta le delna, zato je mnogo šibkejša. Primer je vodikov klorid $\overset{\delta+}{\mathrm{H}}{-}\overset{\delta-}{\mathrm{Cl}}$.
 
 **4. Vodikova vez: posebno močan dipol.** Vodik, vezan na zelo elektronegativen atom, je skoraj gol: elektronski par vezi je potegnjen proč od njega. Najmočneje se to zgodi pri vezeh $\mathrm{F{-}H}$, $\mathrm{O{-}H}$ in $\mathrm{N{-}H}$. Tak vodik privlači **prost (nevezni) elektronski par** atoma $\mathrm{F}$, $\mathrm{O}$ ali $\mathrm{N}$ v sosednji molekuli. To je par valenčnih elektronov, ki ni v nobeni vezi: kisik v vodi ima dva taka para, dušik v amoniaku enega.
 
@@ -124,7 +124,7 @@ Snov je tekoča, če velja $T_t < T < T_v$.
 
 Jupitrova atmosfera vsebuje amoniak $\mathrm{NH_3}$ in fosfin $\mathrm{PH_3}$. Vrelišči teh dveh snovi sta $-33\,°\mathrm{C}$ in $-88\,°\mathrm{C}$. Katero vrelišče pripada kateri snovi?
 
-**Podatki:** $A_r(\mathrm{N}) = 14$, $A_r(\mathrm{P}) = 31$, $A_r(\mathrm{H}) = 1$; vrelišči $-33\,°\mathrm{C}$ in $-88\,°\mathrm{C}$; $\mathrm{EN}(\mathrm{N}) = 3{,}0$, $\mathrm{EN}(\mathrm{P}) = 2{,}2$
+**Podatki:** $A_r(\mathrm{N}) = 14$, $A_r(\mathrm{P}) = 31$, $A_r(\mathrm{H}) = 1$; vrelišči $-33\,°\mathrm{C}$ in $-88\,°\mathrm{C}$; $\mathrm{EN}(\mathrm{N}) = 3{,}0$, $\mathrm{EN}(\mathrm{P}) = 2{,}2$, $\mathrm{EN}(\mathrm{H}) = 2{,}2$
 **Iščemo:** vrelišče vsake snovi
 
 :::formula

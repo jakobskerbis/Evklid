@@ -15,7 +15,21 @@ const own = startupFiles(pub, "index.html").filter((u) => u !== "/" && !u.starts
 const br = (u) => zlib.brotliCompressSync(fs.readFileSync(path.join(pub, u)), { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 9 } }).length;
 
 // Ob nastanku (6. 11. 2026): 128 datotek, ~690 KB stisnjeno, največja ~60 KB (i18n/sl.js, app.js).
-const BUDGET = { files: 140, totalKB: 780, fileKB: 75 };
+// 10. 11. 2026 (#479, j potrdil 10. 11.): +30 KB za public/nujno.js (lokalni zaznavalnik nujnih primerov, ~24 KB stisnjeno).
+// Ostane del prvega odprtja namenoma: okno z nujno pomočjo mora delovati takoj ob pošiljanju in brez povezave.
+// 10. 11. 2026 (#553, čaka potrditev j): +5 KB za nove znake lokalnega zaznavalnika (public/nujno.js +3 KB stisnjeno; prvo odprtje 811,4 KB).
+// 10. 11. 2026 (#560, j potrdil 10. 11.: 815 → 819 KB): +5 KB za hiter zagon (public/zacetek.js pokaže posnetek zadnjega zaslona, ga
+// očisti in preveri račun/profil, klice zagona začne že v <head>; zamenjava posnetka s pravim pogledom v app.js);
+// prvo odprtje 814,4 → 818,7 KB (main po #556). Shranjevanje posnetka (public/posnetek.js) se naloži po zagonu in ne šteje sem.
+// j 10. 11.: nujna pomoč (#561, 819 → 821 KB): popravki lokalnega zaznavalnika po pregledih A in B (public/nujno.js +1,2 KB
+// stisnjeno; prvo odprtje 819,2 → 820,4 KB). Okno z nujno pomočjo mora delovati takoj in brez povezave.
+// j 12. 11. 2026 (#604, kviz z novimi vrstami vprašanj, main že 820,98 KB): »dvigni na 2MB« → 2048 KB.
+// 12. 11. 2026 (#602): namigi za razmerje a : b in količnik (5 novih ključev chk.* v
+// public/i18n/sl.js, +0,12 KB stisnjeno; prvo odprtje 820,98 → 821,10 KB, main po #605). Kviz in pilot pokažeta namig po kodi
+// iz sl.js, zato besedila ne moreta biti naložena pozneje.
+// j 14. 11. 2026 (B3, #674, »Ok« na kartico): meja na datoteko 75 → 80 KB, ker je public/i18n/sl.js dosegel 74,96 KB in
+// anketa po 7 dneh (13 ključev, +0,2 KB stisnjeno) ne gre več noter.
+const BUDGET = { files: 140, totalKB: 2048, fileKB: 80 };
 
 test("prvo odprtje: velikost stisnjenih datotek v proračunu", () => {
   assert.ok(own.length <= BUDGET.files, `${own.length} datotek ob prvem odprtju (proračun ${BUDGET.files}); novo veliko kodo naloži z import() ob uporabi`);

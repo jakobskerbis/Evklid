@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Taksonomija
+  - kraljestvo, deblo, razred, red, družina, rod, vrsta
+  - dvobesedno ime: *Homo sapiens*
+- Filogenija
+  - drevo sorodnosti iz skupnih izpeljanih znakov
+  - napaka: »drevo brati kot lestvico«
+- Homologija in analogija
+  - roka človeka in plavut kita: homologija
+  - krila netopirja in komarja: analogija
+- Znaki zunanje zgradbe
+  - somernost, zarodni listi, členjenost
+  - acelomati, psevdocelom, celom
+  - kutikula z levitvijo
+- Drevo živali
+  - spužve, ožigalkarji, bilateralci
+  - prvousti: spiralci in levilci
+  - drugousti: iglokožci, strunarji
+- Medicinsko pomembne skupine
+  - trakulje in metljaji: ploski črvi
+  - klop: pajkovec z $8$ nogami
+  - napaka: »črvi so ena skupina«
+- Število dreves
+  - $T(n) = (2n-3)!!$
+  - $n = 5$: $105$ dreves

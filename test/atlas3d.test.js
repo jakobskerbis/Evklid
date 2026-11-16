@@ -305,3 +305,18 @@ test("prevodi: vsak ključ a3.* iz public/3d je v sl.js", () => {
   for (const p of PODROCJA) assert.ok(`a3.area.${p}` in sl, `a3.area.${p}`);
   for (const s of ["okostje", "sklepi", "misice", "organi", "zile", "zivcevje", "limfni", "koza"]) assert.ok(`a3.l.${s}` in sl, `a3.l.${s}`);
 });
+
+test("kviz: ob napačnem odgovoru se rentgen prižge za 5 s in se nato vrne, kot je bil", () => {
+  const src = fs.readFileSync(path.join(D3, "atlas.js"), "utf8");
+  assert.match(src, /const KVIZ_RENTGEN_MS = 5000;/);
+  // Oba načina kviza (»Najdi« in »Kaj je to?«) ob napaki prižgeta rentgen.
+  const najdi = src.slice(src.indexOf("function odgovorNajdi"), src.indexOf("function odgovorKaj"));
+  const kaj = src.slice(src.indexOf("function odgovorKaj"), src.indexOf("async function koncajKviz"));
+  assert.match(najdi, /if \(!ok\) kvizRentgenZaHip\(\)/);
+  assert.match(kaj, /kvizRentgenZaHip\(\)/);
+  // Naslednje vprašanje, konec kviza in zaprtje atlasa rentgen vrnejo oz. časovnik počistijo; ročni preklop ima prednost.
+  assert.match(src.slice(src.indexOf("function pokaziVprasanje")), /koncajKvizRentgen\(\)/);
+  assert.match(src.slice(src.indexOf("async function koncajKviz")), /koncajKvizRentgen\(\)/);
+  assert.match(src.slice(src.indexOf("unici() {")), /pozabiKvizRentgen\(\)/);
+  assert.match(src, /pozabiKvizRentgen\(\); \/\/ učenec je rentgen preklopil sam/);
+});

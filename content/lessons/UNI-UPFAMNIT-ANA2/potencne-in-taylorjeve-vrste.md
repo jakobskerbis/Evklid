@@ -58,7 +58,7 @@ Iz tega sledi, da je vsota $f(x) = \sum a_n (x-a)^{n}$ neskončnokrat odvedljiva
 
 $$\sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x-a)^{n}.$$
 
-Pri $a = 0$ ji pravimo tudi Maclaurinova vrsta. Njena delna vsota $T_n$ je Taylorjev polinom. Napako opiše Lagrangeov ostanek (posledica izreka o srednji vrednosti):
+Pri $a = 0$ ji pravimo tudi Maclaurinova vrsta. Njena delna vsota $T_n$ je Taylorjev polinom. Če je $f$ med $a$ in $x$ $(n+1)$-krat odvedljiva, napako opiše Lagrangeov ostanek (posledica izreka o srednji vrednosti):
 
 $$f(x) - T_n(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}$$
 
@@ -114,7 +114,7 @@ $\dfrac{1}{1-q} = \sum\limits_{n=0}^{\infty} q^{n}$ za $|q|<1$; integriranje po 
 1. Vstavimo $q = -x^{2}$: $f(x) = \sum_{n=0}^{\infty} (-1)^{n} x^{2n} = 1 - x^{2} + x^{4} - \dots$. Odvajati ni bilo treba, ker je razvoj enoličen.
 2. Pogoj $|q| < 1$ pomeni $x^{2} < 1$, torej $R = 1$.
 3. Integriramo po členih od $0$ do $x$: $\arctan x = \sum_{n=0}^{\infty} (-1)^{n}\dfrac{x^{2n+1}}{2n+1}$, prav tako z $R = 1$.
-4. Razlog za $R = 1$ je v kompleksni ravnini: $1 + z^{2} = 0$ pri $z = \pm i$. Tam ima $f$ pol, ki je od središča oddaljen $1$. Krog konvergence se ne more razširiti čez pol.
+4. Razlog za $R = 1$ je v kompleksni ravnini: $1 + z^{2} = 0$ pri $z = \pm i$. Tam ima $f$ pol, ki je od središča oddaljen za $1$. Krog konvergence se ne more razširiti čez pol.
 5. Odgovor: $f(x) = \sum (-1)^{n} x^{2n}$ in $\arctan x = \sum (-1)^{n}\frac{x^{2n+1}}{2n+1}$, obe z $R = 1$; polmer omejujeta kompleksni točki $\pm i$.
 
 ### Primer 3 (težji): koncentracija zdravila
@@ -177,13 +177,66 @@ $h \approx 0{,}6 \cdot 0{,}2955 \approx 0{,}1773\,\mathrm{m}$, torej približno 
 - $e^{x}$, $\sin x$, $\cos x$: $R = \infty$; $\frac{1}{1-x}$, $\ln(1+x)$, $(1+x)^{\alpha}$: $R = 1$.
 - Z istimi vrstami definiramo $e^{z}$, $\sin z$, $\cos z$ za vse $z \in \mathbb{C}$.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo potenčne vrste in konvergenčnega polmera $R$: absolutna konvergenca za $|x-a| < R$, divergenca za $|x-a| > R$, krajišči posebej;
+- Cauchy–Hadamardovo formulo $\frac{1}{R} = \limsup \sqrt[n]{|a_n|}$ in formulo s kvocientom (ta velja le, če limita obstaja);
+- izrek o odvajanju in integriranju po členih: polmer ostane isti, vsota je neskončnokrat odvedljiva in $f^{(n)}(a) = n!\,a_n$ (enoličnost razvoja);
+- Taylorjevo vrsto in Lagrangeov ostanek s pogoji ter kdaj je funkcija enaka vsoti svoje Taylorjeve vrste (protiprimer $e^{-1/x^{2}}$);
+- vrste za $e^{x}$, $\sin x$, $\cos x$, $\frac{1}{1-x}$, $\ln(1+x)$ in $(1+x)^{\alpha}$ s polmeri.
+
+### Naloga 1
+
+Razvij funkcijo $f(x) = \ln\dfrac{1+x}{1-x}$ v Maclaurinovo vrsto in določi njen konvergenčni polmer. Z izbiro $x = \frac13$ nato izračunaj $\ln 2$ z napako, manjšo od $10^{-4}$. Napako oceni z geometrijsko vrsto in utemelji, koliko členov je treba sešteti.
+
+**Rešitev:**
+
+1. Za $|x| < 1$ je $\ln(1+x) = \sum_{n\ge1} (-1)^{n+1}\dfrac{x^{n}}{n}$. Vstavimo $-x$: $\ln(1-x) = -\sum_{n\ge1} \dfrac{x^{n}}{n}$.
+2. Odštejemo: $f(x) = \ln(1+x) - \ln(1-x) = \sum_{n\ge1} \big((-1)^{n+1} + 1\big)\dfrac{x^{n}}{n}$. Sodi členi odpadejo, lihi se podvojijo: $f(x) = 2\sum_{n=0}^{\infty} \dfrac{x^{2n+1}}{2n+1}$.
+3. Polmer: obe vrsti konvergirata za $|x| < 1$, torej $R \ge 1$. Pri $x = 1$ dobimo $2\sum \frac{1}{2n+1}$, ki divergira, zato je $R = 1$.
+4. Iz $\dfrac{1+x}{1-x} = 2$ sledi $1 + x = 2 - 2x$, $x = \frac13$. Ta točka je znotraj polmera. Členi vrste so $\dfrac{2}{(2n+1)\,3^{2n+1}}$: $\dfrac{2}{3} \approx 0{,}666667$, $\dfrac{2}{81} \approx 0{,}024691$, $\dfrac{2}{1215} \approx 0{,}001646$, $\dfrac{2}{15309} \approx 0{,}000131$.
+5. Ocena ostanka po $N$ členih ($n = 0, \dots, N-1$): vsi členi so pozitivni, zato Leibnizova ocena ne velja. V ostanku je $\frac{1}{2n+1} \le \frac{1}{2N+1}$, preostane geometrijska vrsta s količnikom $x^{2} = \frac19$:
+   $0 < r_N < \dfrac{2}{2N+1}\cdot\dfrac{x^{2N+1}}{1 - x^{2}}$.
+6. Za $N = 3$: $\dfrac{2}{7}\cdot\dfrac{3^{-7}}{8/9} \approx 0{,}000147$, kar še ni pod $10^{-4}$. Za $N = 4$: $\dfrac{2}{9}\cdot\dfrac{3^{-9}}{8/9} \approx 0{,}000013 < 10^{-4}$. Potrebni so štirje členi.
+7. Vsota štirih členov: $0{,}666667 + 0{,}024691 + 0{,}001646 + 0{,}000131 = 0{,}693135$.
+8. Odgovor: $f(x) = 2\sum_{n=0}^{\infty} \dfrac{x^{2n+1}}{2n+1}$, $R = 1$; $\ln 2 \approx 0{,}693135$ z napako pod $1{,}3 \cdot 10^{-5}$ (točna vrednost je $0{,}693147$). Vrsta za $\ln(1+x)$ pri $x = 1$ bi za enako natančnost potrebovala okoli $10^{4}$ členov.
+
+### Naloga 2
+
+Določi vse realne $x$, pri katerih konvergira vrsta $\displaystyle\sum_{n=1}^{\infty} \frac{(-1)^{n}(x-1)^{n}}{\sqrt{n}\,4^{n}}$. Za vsako krajišče povej, ali je konvergenca absolutna ali pogojna. Kolikšen je polmer vrste, ki jo dobiš z odvajanjem po členih?
+
+**Rešitev:**
+
+1. Središče je $a = 1$, koeficienti so $a_n = \dfrac{(-1)^{n}}{\sqrt{n}\,4^{n}}$.
+2. Cauchy–Hadamard: $\sqrt[n]{|a_n|} = \dfrac{1}{4\,n^{1/(2n)}} \to \dfrac14$, ker gre $n^{1/(2n)} = \sqrt{\sqrt[n]{n}}$ proti $1$. Torej $R = 4$. Kvocient da isto: $\left|\dfrac{a_n}{a_{n+1}}\right| = 4\sqrt{\dfrac{n+1}{n}} \to 4$.
+3. Vrsta konvergira absolutno za $|x - 1| < 4$, torej na $(-3, 5)$, in divergira za $|x - 1| > 4$.
+4. Krajišče $x = 5$: $(x-1)^{n} = 4^{n}$, dobimo $\sum \dfrac{(-1)^{n}}{\sqrt{n}}$. Členi $\frac{1}{\sqrt n}$ padajo proti $0$, zato vrsta po Leibnizovem kriteriju konvergira. Vrsta absolutnih vrednosti $\sum \frac{1}{\sqrt n}$ divergira (členi so večji ali enaki členom harmonične vrste), zato je konvergenca pogojna.
+5. Krajišče $x = -3$: $(x-1)^{n} = (-4)^{n}$, dobimo $\sum \dfrac{(-1)^{n}(-1)^{n}}{\sqrt{n}} = \sum \dfrac{1}{\sqrt{n}}$, ki divergira.
+6. Odvod po členih je $\sum_{n\ge1} \dfrac{(-1)^{n}\,n\,(x-1)^{n-1}}{\sqrt{n}\,4^{n}}$; po izreku ima isti polmer $R = 4$. Krajišča se smejo spremeniti: pri $x = 5$ so členi odvoda $\dfrac{(-1)^{n}\sqrt{n}}{4}$, ti ne gredo proti $0$, zato odvajana vrsta tam divergira.
+7. Odgovor: vrsta konvergira natanko za $x \in (-3, 5]$; na $(-3, 5)$ absolutno, pri $x = 5$ pogojno. Odvajana vrsta ima polmer $4$.
+
+### Naloga 3
+
+Natančno navedi Taylorjevo formulo z Lagrangeovim ostankom. Z njo dokaži, da je $e^{x} = \sum_{n=0}^{\infty} \dfrac{x^{n}}{n!}$ za vsak $x \in \mathbb{R}$. Utemelji še, ali je vsaka neskončnokrat odvedljiva funkcija v okolici središča enaka vsoti svoje Taylorjeve vrste.
+
+**Rešitev:**
+
+1. Izrek: če je $f$ med $a$ in $x$ $(n+1)$-krat odvedljiva, obstaja $\xi$ med $a$ in $x$, da je $f(x) = T_n(x) + \dfrac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}$, kjer je $T_n(x) = \sum_{k=0}^{n} \dfrac{f^{(k)}(a)}{k!}(x-a)^{k}$.
+2. Za $f(x) = e^{x}$ in $a = 0$ je $f^{(k)}(x) = e^{x}$ za vsak $k$, torej $f^{(k)}(0) = 1$ in $T_n(x) = \sum_{k=0}^{n} \dfrac{x^{k}}{k!}$.
+3. Ostanek: $e^{x} - T_n(x) = \dfrac{e^{\xi}}{(n+1)!}x^{n+1}$ za neki $\xi$ med $0$ in $x$. Ker je $\xi \le |x|$ in eksponentna funkcija narašča, je $e^{\xi} \le e^{|x|}$, zato $|e^{x} - T_n(x)| \le e^{|x|}\dfrac{|x|^{n+1}}{(n+1)!}$.
+4. Pri izbranem $x$ je $e^{|x|}$ konstanta. Zaporedje $b_n = \dfrac{|x|^{n}}{n!}$ gre proti $0$: velja $\dfrac{b_{n+1}}{b_n} = \dfrac{|x|}{n+1} \le \dfrac12$ za $n + 1 \ge 2|x|$, od tam naprej se členi vsaj razpolavljajo.
+5. Ostanek gre torej proti $0$ za vsak $x \in \mathbb{R}$, zato je $e^{x} = \lim T_n(x) = \sum_{n=0}^{\infty} \dfrac{x^{n}}{n!}$.
+6. Splošna trditev ne velja. Protiprimer: $f(x) = e^{-1/x^{2}}$ za $x \neq 0$ in $f(0) = 0$. Funkcija je neskončnokrat odvedljiva in $f^{(n)}(0) = 0$ za vsak $n$, zato je njena Maclaurinova vrsta ničelna in konvergira povsod. Toda $f(x) > 0$ za $x \neq 0$, torej je $f$ enaka vsoti vrste le v točki $0$.
+7. Sklep: konvergenca Taylorjeve vrste ni dovolj. Funkcija je enaka vsoti svoje Taylorjeve vrste natanko v tistih točkah, kjer gre ostanek $f(x) - T_n(x)$ proti $0$; pri $e^{x}$ smo to dokazali, pri $e^{-1/x^{2}}$ je ostanek kar $f(x)$ in ne gre proti $0$.
+
 ## Drugače: Z analogijo
 
 Predstavljaj si mikroskop, izostren na eno točko preparata, v središče $a$. V tej točki vidiš vrednost funkcije in vse njene odvode: to so podatki, iz katerih sestaviš Taylorjevo vrsto. Bolj ko povečuješ (več členov), natančneje vidiš okolico.
 
 Vidno polje mikroskopa pa je okroglo in ima rob: to je konvergenčni polmer. Rob postavi najbližja »napaka v preparatu«, točka, kjer funkcija odpove. Lahko je skrita v drugi ravnini, kot pola $\pm i$ pri $\frac{1}{1+x^{2}}$. Na realni osi ju ne vidiš, a vidno polje vseeno omejita. Pri $e^{x}$, $\sin x$ in $\cos x$ napak ni nikjer, zato je vidno polje neomejeno.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
 Kratek čas po injekciji koncentracija zdravila pada skoraj premočrtno: $c \approx c_0(1 - kt)$. To je Taylorjev polinom stopnje $1$, linearni približek $f(a) + f'(a)(x - a)$. Po daljšem času pa premica pade pod nič, prava krivulja $c_0 e^{-kt}$ pa se le počasi približuje ničli. Zato programi, ki računajo odmerke, ne uporabljajo enega polinoma za vse čase. Čas razdelijo na kratke korake in na vsakem uporabijo nekaj členov vrste, kjer je ostanek zanesljivo majhen.
 
@@ -210,7 +263,7 @@ Kratek čas po injekciji koncentracija zdravila pada skoraj premočrtno: $c \app
 ? Zakaj Maclaurinova vrsta funkcije $\frac{1}{1+x^{2}}$ divergira pri $x = 2$, čeprav je $f(2) = 0{,}2$?
 - Ker $f$ v točki $x = 1$ ni odvedljiva.
 ~ $f$ je odvedljiva povsod na $\mathbb{R}$; težava ni na realni osi.
-+ Ker ima $f$ v kompleksni ravnini pola $\pm i$, oddaljena od središča $1$, zato je $R = 1$.
++ Ker ima $f$ v kompleksni ravnini pola $\pm i$, ki sta od središča oddaljena za $1$, zato je $R = 1$.
 - Ker ima vsaka potenčna vrsta konvergenčni polmer $1$.
 ~ Vrsta za $e^{x}$ ima $R = \infty$, vrsta $\sum 2^{n}x^{n}$ pa $R = \frac12$.
 > Krog konvergence sega do najbližje točke, kjer funkcija odpove; za $\frac{1}{1+z^{2}}$ sta to $\pm i$.

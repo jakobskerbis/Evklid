@@ -218,7 +218,7 @@ Naj poteka ena sama reakcija $\sum_i \nu_i \mathrm{B}_i = 0$. a) Natančno defin
 1. a) Reakcijski obseg $\xi$ je količina z enoto mol, za katero velja $n_i = n_{i,0} + \nu_i\xi$ za vse snovi; pri $\xi = 1\,\mathrm{mol}$ reakcija poteče enkrat v molskem merilu, kot je zapisana.
 2. Masa sistema: $m = \sum_i n_i M_i = \sum_i n_{i,0}M_i + \xi\sum_i \nu_i M_i$.
 3. Urejena enačba ima na obeh straneh enako število atomov vsakega elementa; ker je $M_i$ vsota molskih mas atomov, je $\sum_i \nu_i M_i = 0$. Torej $m = \sum_i n_{i,0}M_i$ za vsak $\xi$: masa se ohranja.
-4. b) Omejujoči reaktant je reaktant, ki se ob popolnem poteku reakcije porabi prvi in zato določa največji obseg. Za reaktant je $\nu_i < 0$ in pogoj $n_i \ge 0$ da $\xi \le n_{i,0}/|\nu_i|$. Vsi pogoji hkrati dajo $\xi_\text{max} = \min_i n_{i,0}/|\nu_i|$; pri tem $\xi$ je množina reaktanta, kjer je dosežen minimum, enaka $0$, drugih pa še pozitivna.
+4. b) Omejujoči reaktant je reaktant, ki se ob popolnem poteku reakcije porabi prvi in zato določa največji obseg. Za reaktant je $\nu_i < 0$ in pogoj $n_i \ge 0$ da $\xi \le n_{i,0}/|\nu_i|$. Vsi pogoji hkrati dajo $\xi_\text{max} = \min_i n_{i,0}/|\nu_i|$; pri tem $\xi$ je množina reaktanta, kjer je dosežen minimum, enaka $0$, drugih pa še nenegativna.
 5. c) Ne. Pri $\mathrm{2\,H_2 + O_2 \to 2\,H_2O}$ z $1{,}0\,\mathrm{mol}$ $\mathrm{H_2}$ in $0{,}60\,\mathrm{mol}$ $\mathrm{O_2}$ je kisika manj, a $n/|\nu|$ je za vodik $0{,}50\,\mathrm{mol}$, za kisik $0{,}60\,\mathrm{mol}$: omejujoči je vodik, ostane $0{,}10\,\mathrm{mol}$ kisika.
 6. Odgovor: masa se ohranja, ker je $\sum_i \nu_i M_i = 0$; omejujoči reaktant je določen z najmanjšim $n_{i,0}/|\nu_i|$, ne z najmanjšo množino ali maso.
 
@@ -226,13 +226,27 @@ Naj poteka ena sama reakcija $\sum_i \nu_i \mathrm{B}_i = 0$. a) Natančno defin
 
 Vsak stehiometrijski račun je pot po tem zemljevidu:
 
-```
-  masa A          množina A          množina B          masa B
-  [ g ]  --:M-->  [ mol ]  --·νB/νA-->  [ mol ]  --·M-->  [ g ]
-                     ^                     |
-   V(plin), p, T ----+                     +----> V(plin) = nRT/p
-   c, V(raztopina) --+                     +----> c = n/V
-```
+:::risba skica
+opis: Zemljevid stehiometrijskega računa. Levo zgoraj je masa snovi A v gramih; puščica navzdol z napisom »deli z M(A)« vodi do množine A v molih. Od množine A vodi vodoravna puščica z napisom »krat razmerje koeficientov ν(B)/ν(A)« do množine B v molih. Od množine B vodi puščica navzgor z napisom »krat M(B)« do mase B v gramih. Pod množino A sta druga vhoda: plin, n = pV/(RT), in raztopina, n = cV. Pod množino B sta druga izhoda: plin, V = nRT/p, in raztopina, c = n/V. Mas A in B ne povezuje nobena neposredna puščica.
+območje: 0; 0 .. 12; 8
+napis: 2,5; 7,4 | masa A (g) | sredina | debelo
+puščica: 2,5; 6,9 -> 2,5; 5,6 | : M(A) | desno
+pravokotnik: 0,8; 3,5 .. 4,2; 5,5 | modra
+napis: 2,5; 4,9 | množina A | sredina | debelo
+napis: 2,5; 4,1 | (mol) | sredina
+puščica: 4,3; 4,5 -> 7,7; 4,5 | · ν_B/ν_A | nad
+pravokotnik: 7,8; 3,5 .. 11,2; 5,5 | modra
+napis: 9,5; 4,9 | množina B | sredina | debelo
+napis: 9,5; 4,1 | (mol) | sredina
+puščica: 9,5; 5,6 -> 9,5; 6,9 | · M(B) | desno
+napis: 9,5; 7,4 | masa B (g) | sredina | debelo
+puščica: 2,5; 2,2 -> 2,5; 3,4 | | | siva
+napis: 2,5; 1,6 | plin: n = pV/(RT) | sredina
+napis: 2,5; 0,6 | raztopina: n = cV | sredina
+puščica: 9,5; 3,4 -> 9,5; 2,2 | | | siva
+napis: 9,5; 1,6 | plin: V = nRT/p | sredina
+napis: 9,5; 0,6 | raztopina: c = n/V | sredina
+:::
 
 Vodoravna pot vedno teče skozi **množino**. Mase dveh različnih snovi nikoli ne povezujemo neposredno.
 

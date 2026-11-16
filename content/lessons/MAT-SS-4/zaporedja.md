@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,7 +15,7 @@ Kaj natančno pomeni »ustali se« in kako to dokažemo z računom? Odgovor je *
 
 ## Razlaga
 
-**1. Kaj je zaporedje.** Oddaljenosti s pohoda nariši kot pike na številski premici: $8$; $4$; $2$; $1$; $0{,}5$ … Vsaka pika ima svojo zaporedno številko. Prav to je zaporedje: vsakemu naravnemu številu $n = 1, 2, 3, \ldots$ priredimo realno število $a_n$. Natančneje je **zaporedje** funkcija iz naravnih v realna števila. Številu $a_n$ rečemo **$n$-ti člen**, številu $n$ pa **indeks** (mesto člena). Zaporedje zapišemo kot $a_1, a_2, a_3, \ldots$ ali na kratko $(a_n)$.
+**1. Kaj je zaporedje.** Oddaljenosti s pohoda nariši kot pike na številski premici: $8$; $4$; $2$; $1$; $0{,}5$ … Vsaka pika ima svojo zaporedno številko. Prav to je zaporedje: vsakemu naravnemu številu $n = 1, 2, 3, \ldots$ priredimo realno število $a_n$. Natančneje je **zaporedje** funkcija iz naravnih v realna števila. Številu $a_n$ rečemo **$n$-ti člen**, številu $n$ pa **indeks** (mesto člena). Zaporedje zapišemo kot $a_1, a_2, a_3, \ldots$ ali na kratko $(a_n)$. Zaporedje z le končno mnogo členi (na primer $a_1, \ldots, a_{10}$) je **končno**, sicer je **neskončno**. Limito iščemo le pri neskončnih zaporedjih.
 
 **2. Kako podamo zaporedje.** Pri pohodu povemo prvi člen in pravilo, kako iz člena dobimo naslednjega: $a_1 = 8$ in $a_{n+1} = \dfrac{a_n}{2}$. Tak zapis je **rekurziven**. Pogosteje zaporedje podamo s **splošnim členom**, to je s formulo za $a_n$, na primer $a_n = 2 - \dfrac{1}{n}$. Člen izračunaš tako, da vstaviš indeks: $a_1 = 1$, $a_2 = 1{,}5$, $a_3 \approx 1{,}667$.
 
@@ -176,6 +176,87 @@ Oba ulomka gresta proti $0$, zato je $\lim\limits_{n \to \infty} a_n = \dfrac{2 
 - Konvergentno zaporedje je omejeno; monotono in omejeno zaporedje je konvergentno.
 - $\lim\limits_{n \to \infty} \dfrac{1}{n} = 0$; pri ulomkih deli z najvišjo potenco $n$ v imenovalcu.
 
+## Ponovitev
+
+**Formule**
+- strogo naraščajoče: $a_{n+1} - a_n > 0$ za vsak $n$ (na pamet)
+- omejeno: $m \le a_n \le M$ za vsak $n$ (na pamet)
+- $\lim\limits_{n \to \infty} a_n = L$: v vsaki okolici $(L - \varepsilon, L + \varepsilon)$ so vsi členi od nekega indeksa naprej (na pamet)
+- monotono in omejeno $\Rightarrow$ konvergentno (na pamet)
+- $\lim\limits_{n \to \infty} \frac{1}{n} = 0$ (na pamet)
+
+**Postopek**
+1. Izračunaj nekaj členov za občutek.
+2. Monotonost dokaži z razliko $a_{n+1} - a_n$ za vsak $n$.
+3. Poišči spodnjo mejo $m$ in zgornjo mejo $M$.
+4. Pri ulomku deli števec in imenovalec z najvišjo potenco $n$ v imenovalcu.
+5. Uporabi $\lim \frac{1}{n} = 0$ in zapiši limito.
+
+**Pazi na**
+- Monotonosti ne sklepaj iz prvih nekaj členov: $(n - 3)^2$.
+- Omejeno zaporedje nima nujno limite: $(-1)^n$.
+- »Neskončno deljeno z neskončno« ni $1$: $\frac{2n + 1}{n + 3} \to 2$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Zaporedje je podano rekurzivno: $a_1 = 3$ in $a_{n+1} = 2a_n - 1$. Zapišite člene $a_2$, $a_3$ in $a_4$. Ali je število $129$ člen tega zaporedja? Če je, zapišite, kateri člen je.
+
+**Rešitev:**
+
+1. $a_2 = 2 \cdot 3 - 1 = 5$, $a_3 = 2 \cdot 5 - 1 = 9$, $a_4 = 2 \cdot 9 - 1 = 17$.
+2. Nadaljujemo po istem pravilu: $a_5 = 33$, $a_6 = 65$, $a_7 = 2 \cdot 65 - 1 = 129$. (Vsak člen je za $1$ večji od potence števila $2$: $a_n = 2^n + 1$, in $129 = 2^7 + 1$.)
+3. Odgovor: $a_2 = 5$, $a_3 = 9$, $a_4 = 17$; število $129$ je sedmi člen zaporedja, $a_7 = 129$.
+
+**Točkovanje:** 1 točka za člene $a_2$, $a_3$ in $a_4$, 1 točka za nadaljevanje zaporedja (ali za zapis $a_n = 2^n + 1$), 1 točka za odgovor $a_7 = 129$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dano je zaporedje s splošnim členom $a_n = \dfrac{2n + 5}{n + 1}$.
+
+a) Izračunajte prve tri člene zaporedja. (1 točka)
+b) Dokažite, da je zaporedje strogo padajoče. (2 točki)
+c) Utemeljite, da je zaporedje omejeno, in izračunajte njegovo limito. (2 točki)
+d) Koliko členov zaporedja leži zunaj okolice limite s polmerom $\varepsilon = 0{,}05$? (2 točki)
+
+**Rešitev:**
+
+1. a) $a_1 = \dfrac{7}{2}$, $a_2 = \dfrac{9}{3} = 3$, $a_3 = \dfrac{11}{4}$.
+2. b) Člen preoblikujemo: $a_n = \dfrac{2(n + 1) + 3}{n + 1} = 2 + \dfrac{3}{n + 1}$.
+3. b) $a_{n+1} - a_n = \dfrac{3}{n + 2} - \dfrac{3}{n + 1} = \dfrac{3(n + 1) - 3(n + 2)}{(n + 1)(n + 2)} = -\dfrac{3}{(n + 1)(n + 2)}$. Imenovalec je pozitiven, zato je razlika za vsak $n$ negativna in zaporedje strogo pada.
+4. c) Ker je $\dfrac{3}{n + 1} > 0$, je $a_n > 2$. Ker zaporedje pada, je $a_n \le a_1 = \dfrac{7}{2}$. Torej je $2 < a_n \le \dfrac{7}{2}$ in zaporedje je omejeno.
+5. c) Ker gre $\dfrac{3}{n + 1}$ proti $0$, je $\lim\limits_{n \to \infty} a_n = 2$.
+6. d) Razdalja člena do limite je $|a_n - 2| = \dfrac{3}{n + 1}$. Pogoj $\dfrac{3}{n + 1} < 0{,}05$ da $n + 1 > 60$, torej $n > 59$.
+7. d) Člen $a_{59} = 2 + \dfrac{3}{60} = 2{,}05$ leži natanko na robu okolice, rob pa ne spada v okolico (odprti interval); od $a_{60}$ naprej so vsi členi v okolici.
+8. Odgovor: a) $\dfrac{7}{2}$, $3$, $\dfrac{11}{4}$; b) zaporedje je strogo padajoče; c) $2 < a_n \le \dfrac{7}{2}$, limita je $2$; d) zunaj okolice je $59$ členov, od $a_1$ do $a_{59}$.
+
+**Točkovanje:** a) 1 točka za tri pravilne člene; b) 1 točka za izračunano razliko $a_{n+1} - a_n$, 1 točka za utemeljen sklep o njenem predznaku (enakovredno: iz $a_n = 2 + \dfrac{3}{n + 1}$ utemeljen sklep, da ulomek z naraščajočim $n$ pada); c) 1 točka za spodnjo in zgornjo mejo z utemeljitvijo (ali za sklep, da je zaporedje konvergentno in zato omejeno), 1 točka za limito $2$; d) 1 točka za pravilno postavljeno neenačbo za razdaljo do limite in 1 točka za odgovor $59$ členov.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kdaj je število $L$ limita zaporedja $(a_n)$ in kdaj zaporedje imenujemo konvergentno?
+---
+Število $L$ je limita zaporedja, če v vsaki okolici $(L - \varepsilon, L + \varepsilon)$ ležijo vsi členi od nekega indeksa naprej. Drugače povedano, zunaj poljubne okolice števila $L$ je le končno mnogo členov. Zaporedje, ki ima limito, je konvergentno, zaporedje brez limite pa divergentno. Na primer $\lim\limits_{n \to \infty} \dfrac{1}{n} = 0$, zaporedje $(-1)^n$ pa limite nima.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kakšna je zveza med omejenostjo, monotonostjo in konvergentnostjo zaporedja?
+---
+Vsako konvergentno zaporedje je omejeno. Obratno ne velja, saj je zaporedje $(-1)^n$ omejeno, a ni konvergentno. Vsako monotono in omejeno zaporedje je konvergentno. Monotonost in omejenost skupaj torej zadoščata za obstoj limite, sama omejenost pa ne.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer rekurzivno podanega zaporedja in pojasni, kako se rekurzivni zapis razlikuje od zapisa s splošnim členom.
+---
+Primer je zaporedje z $a_1 = 1$ in $a_{n+1} = a_n + 2$, ki ima člene $1, 3, 5, 7$ in tako naprej. Rekurzivni zapis pove prvi člen in pravilo, kako iz prejšnjega člena dobimo naslednjega. Splošni člen je formula, iz katere $n$-ti člen izračunamo neposredno z vstavljanjem indeksa, pri tem zaporedju $a_n = 2n - 1$. Pri rekurzivnem zapisu moramo za oddaljen člen izračunati vse prejšnje člene, pri splošnem členu pa ne.
+:::
+
 ## Drugače: Z analogijo
 
 Graf zaporedja si predstavljaj kot cesto, ob kateri stojijo oštevilčeni kilometrski kamni $1, 2, 3, \ldots$; ob $n$-tem kamnu je cesta na višini $a_n$. **Naraščajoče** zaporedje je cesta, ki gre samo navkreber ali po ravnem. **Omejeno** je cesta med dvema ograjama: vijuga lahko, čez ograjo ne more.
@@ -212,7 +293,7 @@ Limita je ena sama: če bi imelo zaporedje limiti $L_1 \ne L_2$, bi izbrali $\va
 - Limita postane $7$, ker se zaporedje zdaj začne s samimi sedmicami.
 ~ Limito določajo členi daleč v zaporedju. Zunaj okolice sme biti končno mnogo členov.
 - Limite ni več, ker zaporedje ni več monotono.
-~ Monotonost ni pogoj za limito. Od $a_{1001}$ naprej so členi enaki kot prej in se bližajo $0$.
+~ Zaporedje je še vedno padajoče (le ne več strogo), pa tudi sicer monotonost ni pogoj za limito. Od $a_{1001}$ naprej so členi enaki kot prej in se bližajo $0$.
 + Limita ostane $0$.
 > Spremenili smo le končno mnogo členov. V vsaki okolici števila $0$ so še vedno vsi členi od nekega indeksa naprej (zdaj vsaj od $1001$).
 
@@ -224,26 +305,37 @@ Limita je ena sama: če bi imelo zaporedje limiti $L_1 \ne L_2$, bi izbrali $\va
 + $b$, $c$, $a$
 > Po deljenju z najvišjo potenco dobiš $\lim b_n = \dfrac{1}{2}$, $\lim c_n = 2$ in $\lim a_n = 3$.
 
-? Kolikšna je $\lim\limits_{n \to \infty} \dfrac{5n^2 - 2}{2n^2 + n}$?
-- $1$
-~ Toliko je člen $a_1$, »neskončno deljeno z neskončno« pa ni $1$. Deli z $n^2$.
-+ $\dfrac{5}{2}$
-- Limite ni, ker števec raste čez vse meje.
-~ Enako hitro raste tudi imenovalec. Po deljenju z $n^2$ dobiš ulomek, ki ima limito.
-> Delimo z $n^2$: $\dfrac{5 - \frac{2}{n^2}}{2 + \frac{1}{n}} \to \dfrac{5}{2}$.
+? (brez računala) Kolikšna je $\lim\limits_{n \to \infty} \dfrac{5n^2 - 2}{2n^2 + n}$? Vpiši kot decimalno število.
+= 2,5 | 0,01
+~ 1 | Toliko je člen $a_1$, »neskončno deljeno z neskončno« pa ni $1$. Deli z $n^2$.
+> Delimo z $n^2$: $\dfrac{5 - \frac{2}{n^2}}{2 + \frac{1}{n}} \to \dfrac{5}{2} = 2{,}5$. Števec raste čez vse meje, a enako hitro tudi imenovalec, zato limita obstaja.
 
-? Prvo uro poti zaradi gneče prevoziš le $60\,\text{km}$, nato vsako uro $90\,\text{km}$. Povprečna hitrost po $n$ urah je $v_n = 90 - \dfrac{30}{n}$ (v km/h) in ima limito $90\,\text{km/h}$. Od katere ure naprej je za manj kot $2\,\text{km/h}$ pod limito?
-- Od $15$. ure naprej.
-~ Pri $n = 15$ je razlika $\dfrac{30}{15} = 2$, kar ni manj kot $2$. Rob okolice ne spada v okolico.
-+ Od $16$. ure naprej.
-- Od $60$. ure naprej.
-~ To je $30 \cdot 2$. Iz $\dfrac{30}{n} < 2$ sledi $n > \dfrac{30}{2}$, ne $n > 30 \cdot 2$.
+? Prvo uro poti zaradi gneče prevoziš le $60\,\text{km}$, nato vsako uro $90\,\text{km}$. Povprečna hitrost po $n$ urah je $v_n = 90 - \dfrac{30}{n}$ (v km/h) in ima limito $90\,\text{km/h}$. Od katere ure naprej je za manj kot $2\,\text{km/h}$ pod limito? Vpiši $n$.
+= 16 | 0
+~ 15 | Pri $n = 15$ je razlika $\dfrac{30}{15} = 2$, kar ni manj kot $2$. Rob okolice ne spada v okolico.
+~ 60 | To je $30 \cdot 2$. Iz $\dfrac{30}{n} < 2$ sledi $n > \dfrac{30}{2}$, ne $n > 30 \cdot 2$.
 > $|v_n - 90| = \dfrac{30}{n} < 2$ velja za $n > 15$, torej od $n = 16$ naprej.
+
+<<RACUN
+vrednost: 2*3-1 | 5
+vrednost: 2*5-1 | 9
+vrednost: 2*9-1 | 17
+vrednost: 2*65-1 | 129
+vrednost: 2^7+1 | 129
+vrednost: (2*1+5)/(1+1) | 7/2
+vrednost: (2*3+5)/(3+1) | 11/4
+enako: (2*n+5)/(n+1) | 2+3/(n+1)
+enako: 3/(n+2)-3/(n+1) | -3/((n+1)*(n+2))
+limita: (2*n+5)/(n+1) | n | oo | 2
+resi: 3/(n+1)=0.05 | n | 59
+vrednost: 2+3/60 | 2.05
+>>
 
 :::simboli
 a_n | $n$-ti člen zaporedja | | |
 a_{n+1} | člen, ki sledi členu $a_n$ | | | $a_{n+1} - a_n > 0$: zaporedje strogo narašča
 n | indeks (mesto člena) | | | naravno število
+m, M | spodnja in zgornja meja zaporedja | | | $m \le a_n \le M$ za vsak $n$
 L | limita zaporedja | \lim_{n \to \infty} a_n = L | |
 \varepsilon | polmer okolice limite | | | $\varepsilon > 0$, poljubno majhen
 v_n | povprečna hitrost po $n$ urah vožnje | v_n = \frac{200n}{2n+1} | km/h |

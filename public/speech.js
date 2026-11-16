@@ -78,13 +78,12 @@ export function spokenMath(text) {
  * Med govorom je sproti viden delni zapis; na koncu ga dopolnimo s simboli.
  * @param {HTMLElement} button
  * @param {HTMLTextAreaElement|HTMLInputElement} field
- * @param {{ onMessage?: (msg: string) => void, onChange?: () => void }} [opts]
+ * allowed: ali sme profil govoriti (stikalo starša za mlajše od 15 let, j 10. 11.); ob »ne« onBlocked namesto poslušanja.
+ * @param {{ onMessage?: (msg: string) => void, onChange?: () => void, allowed?: () => boolean | Promise<boolean>, onBlocked?: () => void }} [opts]
  */
-export function attachMic(button, field, { onMessage = () => {}, onChange = () => {} } = {}) {
-  if (!speechSupported()) {
-    button.hidden = true;
-    return null;
-  }
+export function attachMic(button, field, { onMessage = () => {}, onChange = () => {}, allowed = null, onBlocked = () => {} } = {}) {
+  button.hidden = !speechSupported();
+  if (button.hidden) return null;
   const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
   let rec = null;
   let base = "";
@@ -150,7 +149,11 @@ export function attachMic(button, field, { onMessage = () => {}, onChange = () =
     }
   }
 
-  button.addEventListener("click", () => (rec ? stop() : start()));
+  button.addEventListener("click", async () => {
+    if (rec) return stop();
+    if (allowed && !(await allowed())) return onBlocked();
+    start();
+  });
   setListening(false);
   return { stop, get listening() { return !!rec; } };
 }

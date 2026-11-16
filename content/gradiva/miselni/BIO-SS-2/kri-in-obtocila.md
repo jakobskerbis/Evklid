@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Arterije in vene
+  - arterija od srca, vena k srcu
+  - napaka: arterija vedno vozi kisik
+  - pljučna arterija vozi kri z malo kisika
+- Srce
+  - 2 preddvora sprejemata, 2 prekata potiskata
+  - zaklopke preprečijo povratni tok
+  - ritem daje sinusni vozel
+- Dvojni obtok
+  - mali: desni prekat, pljuča, levi preddvor
+  - veliki: levi prekat, aorta, telo, desni preddvor
+- Minutni volumen
+  - $Q = f \cdot V_\mathrm{u}$
+  - pri miru okoli $5\,\mathrm{L/min}$
+- Žile in hitrost
+  - kapilare: največji skupni presek, najpočasnejši tok
+  - vene imajo zaklopke, pomagajo mišice
+- Sestava krvi
+  - plazma okoli $55\,\%$
+  - eritrociti s hemoglobinom, levkociti, trombociti
+  - strdek: fibrinogen v fibrin
+- Bolezni ožilja
+  - ateroskleroza, srčni infarkt, možganska kap
+  - tromboza pri dolgem sedenju
+- Obtočila živali
+  - odprto pri členonožcih, zaprto pri deževniku
+  - ribe enojni obtok, sesalci štiridelno srce

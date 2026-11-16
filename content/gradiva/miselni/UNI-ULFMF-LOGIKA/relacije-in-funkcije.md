@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Relacija
+  - $R \subseteq A \times A$, pišemo $a \,R\, b$
+  - puščični diagram, par $(a, a)$ je zanka
+- Štiri lastnosti
+  - refleksivna: zanka na vsaki točki
+  - simetrična in antisimetrična se ne izključujeta
+  - tranzitivnost preveri tudi za verige, ki se vrnejo
+- Ekvivalenčna relacija
+  - refleksivna, simetrična, tranzitivna
+  - razred $[a] = \{x ;\ x \sim a\}$
+  - razredi tvorijo razbitje, $A/{\sim}$
+- Urejenost
+  - refleksivna, antisimetrična, tranzitivna
+  - linearna: vsaka dva elementa primerljiva
+  - »deli«: $4 \nmid 6$ in $6 \nmid 4$
+- Funkcija
+  - vsak $a \in A$ ima natanko eno sliko
+  - domena, kodomena, zaloga vrednosti $f(A)$
+- Injektivnost in surjektivnost
+  - injektivna: $f(a_1) = f(a_2) \Rightarrow a_1 = a_2$
+  - surjektivna: $f(A) = B$
+  - bijekcija ima inverz $f^{-1}$
+- Domena in kodomena
+  - $x^2$ je bijekcija $[0, \infty) \to [0, \infty)$
+  - vseh funkcij $A \to B$ je $|B|^{|A|}$

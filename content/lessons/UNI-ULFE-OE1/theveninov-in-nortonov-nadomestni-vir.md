@@ -7,14 +7,29 @@ avtor: AI
 
 Začnimo z nalogo, kakršna se pojavi na izpitu. Grelec bioreaktorja je priključen na vezje spodaj: vir $U_0 = 12\,\mathrm{V}$, upor $R_1 = 4\,\Omega$ do vozlišča A, iz A upor $R_2 = 12\,\Omega$ proti masi in upor $R_3 = 2\,\Omega$ do sponk, kjer je grelec $R_\mathrm{L}$.
 
-```
-  R1=4Ω   A  R3=2Ω
- +--[==]--+--[==]--+
- |        |        |
-U0=12V  [==]R2   [==]RL
- |        |12Ω     |
- +--------+--------+
-```
+:::risba skica
+opis: Vezje z virom in štirimi upori. Levo je vir napetosti U₀ = 12 V. Od njegovega zgornjega priključka vodi upor R₁ = 4 Ω do vozlišča A. Iz A gre upor R₂ = 12 Ω navzdol proti masi (spodnji vodnik), upor R₃ = 2 Ω pa naprej do sponk, med katerima je grelec R L.
+območje: 0; 0 .. 17; 7,6
+črta: 2; 2,8 -> 2; 1 -> 14; 1 -> 14; 2,5
+črta: 2; 4,2 -> 2; 6 -> 4; 6
+črta: 6; 6 -> 10; 6
+črta: 12; 6 -> 14; 6 -> 14; 4,5
+črta: 8; 6 -> 8; 4,5
+črta: 8; 2,5 -> 8; 1
+krog: 2; 3,5 | 0,7
+pravokotnik: 4; 5,6 .. 6; 6,4
+pravokotnik: 10; 5,6 .. 12; 6,4
+pravokotnik: 7,6; 2,5 .. 8,4; 4,5
+pravokotnik: 13,6; 2,5 .. 14,4; 4,5 | oranžna
+točka: 8; 6 | A | nad
+točka: 8; 1
+napis: 1,5; 4,6 | + | levo
+napis: 2,9; 3,5 | U_0 = 12 V | desno
+napis: 5; 6,6 | R_1 = 4 Ω | nad
+napis: 11; 6,6 | R_3 = 2 Ω | nad
+napis: 8,6; 3,5 | R_2 = 12 Ω | desno
+napis: 14,6; 3,5 | R_L | desno | oranžna
+:::
 
 *Kolikšen naj bo upor grelca, da se v njem sprosti največja moč, in kolikšna je ta moč?*
 
@@ -39,7 +54,7 @@ Superpozicija velja za tokove in napetosti, *ne pa za moč*, ker je moč kvadrat
 - $U_\mathrm{Th}$ napetost odprtih sponk (brez bremena);
 - $R_\mathrm{Th}$ upornost med sponkama, ko so vsi neodvisni viri izklopljeni.
 
-**Izpeljava.** Breme nadomestimo s tokovnim virom $I$, ki vleče isti tok iz sponk. Vezje je zdaj linearno z viri vezja in virom $I$. Po superpoziciji je napetost sponk $U = U' + U''$. Del $U'$ prispevajo notranji viri pri $I = 0$; to je napetost odprtih sponk, $U' = U_\mathrm{Th}$. Del $U''$ prispeva le $I$ pri izklopljenih notranjih virih; takrat je vezje pasivno (upori in morebitni krmiljeni viri) in se s sponk vidi kot upornost $R_\mathrm{Th}$, zato $U'' = -R_\mathrm{Th} I$. Skupaj:
+**Izpeljava.** Breme nadomestimo s tokovnim virom $I$, ki vleče isti tok iz sponk. Vezje je zdaj linearno z viri vezja in virom $I$. Po superpoziciji je napetost sponk $U = U' + U''$. Del $U'$ prispevajo notranji viri pri $I = 0$; to je napetost odprtih sponk, $U' = U_\mathrm{Th}$. Del $U''$ prispeva le $I$ pri izklopljenih notranjih virih; takrat je vezje brez neodvisnih virov (upori in morebitni krmiljeni viri) in se s sponk vidi kot upornost $R_\mathrm{Th}$, zato $U'' = -R_\mathrm{Th} I$. Skupaj:
 
 $$U = U_\mathrm{Th} - R_\mathrm{Th} I.$$
 
@@ -118,7 +133,7 @@ $U_\mathrm{A} = U_\mathrm{A}' + U_\mathrm{A}''$; $U_\mathrm{A}' = U_1\dfrac{R_2}
 
 ### Primer 3 (težji, izpitna raven): prilagoditev in izkoristek
 
-Vezju iz Primera 2 dodamo upor $R_3 = 3{,}6\,\Omega$ od A do sponk, na katere priključimo črpalko z uporom $R_\mathrm{L}$. (a) Določi Theveninov in Nortonov nadomestni vir. (b) Pri katerem $R_\mathrm{L}$ je moč na črpalki največja in koliko je? (c) Kolikšen je takrat izkoristek prvotnega vezja?
+Vezju iz Primera 2 dodamo upor $R_3 = 3{,}6\,\Omega$ od A do sponk, na katere priključimo črpalko z uporom $R_\mathrm{L}$. (a) Določi Theveninov in Nortonov nadomestni vir. (b) Pri katerem $R_\mathrm{L}$ je moč na črpalki največja in kolikšna je? (c) Kolikšen je takrat izkoristek prvotnega vezja?
 
 **Podatki:** $U_1 = 12\,\mathrm{V}$, $R_1 = 4\,\Omega$, $R_2 = 6\,\Omega$, $I_0 = 2\,\mathrm{A}$, $R_3 = 3{,}6\,\Omega$
 **Iščemo:** $U_\mathrm{Th}$, $R_\mathrm{Th}$, $I_\mathrm{N}$, $R_\mathrm{L}$ za največjo moč, $P_\mathrm{max}$, izkoristek $\eta$
@@ -157,7 +172,7 @@ $R_\mathrm{L} = R_\mathrm{Th}$, $P_\mathrm{max} = \dfrac{U_\mathrm{Th}^2}{4R_\ma
 3. Zdaj izberi $R_\mathrm{L}$ in izračunaj največjo moč sam.
 
 :::premisli
-Koliko sta $R_\mathrm{L}$ in $P_\mathrm{max}$? Preveri še, da je pri $R_\mathrm{L} = 2\,\Omega$ in $R_\mathrm{L} = 10\,\Omega$ moč res manjša.
+Kolikšna sta $R_\mathrm{L}$ in $P_\mathrm{max}$? Preveri še, da je pri $R_\mathrm{L} = 2\,\Omega$ in $R_\mathrm{L} = 10\,\Omega$ moč res manjša.
 ---
 $R_\mathrm{L} = 5\,\Omega$ in $P_\mathrm{max} = \frac{9^2}{4 \cdot 5} = 4{,}05\,\mathrm{W}$. Pri $2\,\Omega$ je $P = \left(\frac{9}{7}\right)^2 \cdot 2 \approx 3{,}31\,\mathrm{W}$, pri $10\,\Omega$ je $P = \left(\frac{9}{15}\right)^2 \cdot 10 = 3{,}6\,\mathrm{W}$. Oboje manj, kot napove izrek.
 :::
@@ -218,15 +233,25 @@ Izpelji, pri katerem uporu bremena $R_\mathrm{L} > 0$ prejme breme na viru $U_\m
 
 Vsak linearen vir na sponkah opiše ena premica v ravnini $(I, U)$:
 
-```
-U
-|\
-| \  U = UTh - RTh*I
-|  \
-|   \
-+----\---- I
-     IN
-```
+:::risba graf
+opis: Premica vira v ravnini (I, U). Os U seka pri Theveninovi napetosti (napetost odprtih sponk), os I pri Nortonovem toku (tok kratkega stika); njen naklon je minus Theveninova upornost. Črtkana premica bremena gre skozi izhodišče. Narisana je za breme z upornostjo, enako Theveninovi: delovna točka je na sredini premice vira, pri polovici Nortonovega toka in polovici Theveninove napetosti, pravokotnik pod njo pa predstavlja moč.
+x: 0 .. 1,25 | 0,5 | I
+y: 0 .. 1,25 | 0,5 | U
+enako: da
+oznake: ne
+oznakax: 0,5 | I_N/2
+oznakax: 1 | I_N
+oznakay: 0,5 | U_{Th}/2
+oznakay: 1 | U_{Th}
+pravokotnik: 0; 0 .. 0,5; 0,5 | oranžna
+črta: 0; 1 -> 1; 0 | debelo modra
+črta: 0; 0 -> 1,15; 1,15 | črtkano zelena
+točka: 0,5; 0,5 | delovna točka | desno | oranžna
+napis: 0,04; 1,18 | U = U_{Th} − R_{Th}·I | desno | modra
+napis: 0,95; 1,05 | U = R_L·I | levo | zelena
+napis: 0,36; 0,13 | P | sredina | oranžna debelo
+podnapis: Narisan je primer, ko je upornost bremena enaka Theveninovi upornosti.
+:::
 
 Premica seka os $U$ pri $U_\mathrm{Th}$ (odprte sponke, $I = 0$) in os $I$ pri $I_\mathrm{N}$ (kratek stik, $U = 0$). Njen naklon je $-R_\mathrm{Th}$. Breme je premica $U = R_\mathrm{L} I$ skozi izhodišče; delovna točka je presečišče. Moč je ploščina pravokotnika pod delovno točko. Ta je največja, ko je delovna točka na sredini premice vira: tam je $U = \frac{U_\mathrm{Th}}{2}$ in $I = \frac{I_\mathrm{N}}{2}$.
 

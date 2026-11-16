@@ -133,7 +133,7 @@ $a'$ je komplement: $\operatorname{D}(a, a') = 1$ in $\operatorname{v}(a, a') = 
 3. ($\Rightarrow$) Naj $p^2 \mid n$ in naj ima $p$ komplement $x$. Iz $\operatorname{D}(p, x) = 1$ sledi $p \nmid x$, zato $\operatorname{v}(p, x) = px = n$ in $x = \frac np$.
 4. Ker $p^2 \mid n$, je $p \mid \frac np = x$, kar nasprotuje koraku 3. Torej $p$ nima komplementa.
 5. $D_{30} = \{1, 2, 3, 5, 6, 10, 15, 30\}$ ima $8$ elementov; komplementi so $d' = \frac{30}{d}$: $1 \leftrightarrow 30$, $2 \leftrightarrow 15$, $3 \leftrightarrow 10$, $5 \leftrightarrow 6$.
-6. Odgovor: $D_n$ je Boolova algebra natanko za $n$ brez kvadratnih faktorjev. $D_{30}$ je tak primer; z $d \mapsto \{p : p \mid d\}$ je enak $\mathcal P(\{2, 3, 5\})$ (komplement delitelja ustreza komplementu množice).
+6. Odgovor: $D_n$ je Boolova algebra natanko za $n$ brez kvadratnih faktorjev. $D_{30}$ je tak primer; z $d \mapsto \{p : p \mid d\}$ je izomorfen $\mathcal P(\{2, 3, 5\})$ (komplement delitelja ustreza komplementu množice).
 
 ### Primer 4 – zdaj ti
 
@@ -227,17 +227,30 @@ Natančno navedi in dokaži izrek o enoličnosti komplementa v omejeni distribut
 
 Hassejev diagram $\mathcal P(\{a, b, c\})$ je kocka:
 
-```
-       {a,b,c}
-      /   |   \
-  {a,b} {a,c} {b,c}
-    | \  / \  / |
-    |  \/   \/  |
-    |  /\   /\  |
-   {a}   {b}   {c}
-      \   |   /
-         { }
-```
+:::risba skica
+opis: Hassejev diagram potenčne množice {a, b, c} v štirih ravneh. Spodaj je prazna množica, nad njo {a}, {b}, {c}, nad njimi {a, b}, {a, c}, {b, c}, na vrhu {a, b, c}. Prazna množica je povezana z vsemi tremi enoelementnimi, {a} z {a, b} in {a, c}, {b} z {a, b} in {b, c}, {c} z {a, c} in {b, c}, vse tri dvoelementne pa z {a, b, c}. Povezav je dvanajst, kot robov kocke.
+območje: -1,4; -0,9 .. 9,4; 6,9
+črta: 4; 0 -> 1; 2
+črta: 4; 0 -> 4; 2
+črta: 4; 0 -> 7; 2
+črta: 1; 2 -> 1; 4
+črta: 1; 2 -> 4; 4
+črta: 4; 2 -> 1; 4
+črta: 4; 2 -> 7; 4
+črta: 7; 2 -> 4; 4
+črta: 7; 2 -> 7; 4
+črta: 1; 4 -> 4; 6
+črta: 4; 4 -> 4; 6
+črta: 7; 4 -> 4; 6
+točka: 4; 0 | { } | pod
+točka: 1; 2 | {a} | levo
+točka: 4; 2 | {b} | pod desno
+točka: 7; 2 | {c} | desno
+točka: 1; 4 | {a, b} | levo
+točka: 4; 4 | {a, c} | nad desno
+točka: 7; 4 | {b, c} | desno
+točka: 4; 6 | {a, b, c} | nad
+:::
 
 Vsaka enoelementna množica je povezana z dvema dvoelementnima, ki jo vsebujeta ($\{a\}$ z $\{a, b\}$ in $\{a, c\}$). Vsaka raven ima množice z enakim številom elementov. Supremum dveh točk poiščeš tako, da greš iz obeh navzgor do prve skupne točke; infimum navzdol. Komplement je točka, »zrcalna« čez središče kocke: $\{a\}$ in $\{b, c\}$. Diagram $D_{30}$ je ista kocka, le z oznakami $1$, $2$, $3$, $5$, $6$, $10$, $15$, $30$. Diagram $D_{12}$ pa je pravokotnik $3 \times 2$ točk, ki nima te simetrije; zato komplementi manjkajo.
 
@@ -273,7 +286,7 @@ Vsaka enoelementna množica je povezana z dvema dvoelementnima, ki jo vsebujeta 
 ~ $8$ je število elementov, ne povezav.
 + $12$
 - $19$
-~ Štete so vse primerljive pare brez enakih, ne le pokritja.
+~ Šteti so vsi primerljivi pari brez enakih, ne le pokritja.
 - $6$
 ~ Šteta so le pokritja nad $1$ in pod $30$; kocka ima $12$ robov.
 > $D_{30}$ je kocka $\mathcal P(\{2, 3, 5\})$: $12$ robov (vsak element pokrijejo elementi z enim praštevilom več).
@@ -295,7 +308,7 @@ Vsaka enoelementna množica je povezana z dvema dvoelementnima, ki jo vsebujeta 
 - Le $(\mathbb N, \le)$ je mreža.
 ~ Tudi pri deljivosti ima vsak par $\operatorname{v}$ in $\operatorname{D}$.
 - Le $(\mathbb N, \mid)$ ima najmanjši element.
-~ Obe imata najmanjši element $1$ (pri $\mid$ ga $1$ deli vse, pri $\le$ je najmanjše število).
+~ Obe imata najmanjši element $1$ (pri $\mid$ število $1$ deli vsa števila, pri $\le$ je najmanjše število).
 > Linearna urejenost je vedno mreža (max in min); deljivost je delna, a mreža.
 
 ? V obratu morata operaciji X in Y obe slediti čiščenju in biti končani pred pakiranjem, med seboj pa nimata zahteve. Kaj to pomeni za urnik?

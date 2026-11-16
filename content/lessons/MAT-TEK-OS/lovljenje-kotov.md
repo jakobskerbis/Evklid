@@ -186,7 +186,7 @@ Za zunanje kote si zamisli godbo na pihala, ki koraka okoli trga. Na vsakem voga
 
 **Zakaj velja pravilo za zunanji kot.** V trikotniku ABC podaljšamo BC čez C in skozi C narišemo vzporednico z AB. Ta razdeli zunanji kot pri C na dva dela: prvi je enak kotu pri A (prečnica AC), drugi kotu pri B (prečnica BC). Zunanji kot je zato $\alpha + \beta$. Ker je zunanji kot sokot notranjega $\gamma$, sledi še $\alpha + \beta + \gamma = 180^\circ$.
 
-**Tekmovalni izziv: konice zvezde.** Nariši petkotnik ABCDE in vseh pet njegovih diagonal; nastane zvezda s konicami A, B, C, D, E. Petkotnik ni nujno pravilen. Vsota kotov v petih konicah je vedno $180^\circ$. Skica dokaza: diagonala BE seka AC v točki P in AD v točki Q. Kot pri P v trikotniku APQ je zunanji kot trikotnika PCE, zato je enak vsoti kotov v konicah C in E. Enako je kot pri Q v trikotniku APQ enak vsoti kotov v konicah B in D. Vsota kotov trikotnika APQ je $180^\circ$, torej je tudi vsota vseh petih konic $180^\circ$. Pri pravilni zvezdi meri vsaka konica $36^\circ$.
+**Tekmovalni izziv: konice zvezde.** Nariši petkotnik ABCDE in vseh pet njegovih diagonal; nastane zvezda s konicami A, B, C, D, E. Petkotnik je konveksen, ni pa nujno pravilen. Vsota kotov v petih konicah je vedno $180^\circ$. Skica dokaza: diagonala BE seka AC v točki P in AD v točki Q. Kot pri P v trikotniku APQ je zunanji kot trikotnika PCE, zato je enak vsoti kotov v konicah C in E. Enako je kot pri Q v trikotniku APQ enak vsoti kotov v konicah B in D. Vsota kotov trikotnika APQ je $180^\circ$, torej je tudi vsota vseh petih konic $180^\circ$. Pri pravilni zvezdi meri vsaka konica $36^\circ$.
 
 ## Preveri se
 
@@ -240,6 +240,6 @@ Za zunanje kote si zamisli godbo na pihala, ki koraka okoli trga. Na vsakem voga
 
 :::simboli
 n | število oglišč mnogokotnika | | | vsota notranjih kotov je (n − 2) · 180°
-\alpha | notranji kot pravilnega n-kotnika | \alpha = \frac{(n-2) \cdot 180^\circ}{n} | |
+\alpha | notranji kot pravilnega n-kotnika | \alpha = \frac{(n-2) \cdot 180^\circ}{n} | ° | v primeru 1; drugje je α oznaka poljubnega kota
 A, B, C, D | oglišča lika | | | v primeru s trapezom AB ∥ CD
 :::

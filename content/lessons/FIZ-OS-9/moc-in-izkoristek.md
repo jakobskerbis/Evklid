@@ -57,7 +57,7 @@ Za mišice je $\eta = \frac{20}{100} = 0{,}2 = 20\,\%$; izmerjene vrednosti so p
 :::premisli
 Zakaj se ti pri hitrem teku po stopnicah segreje telo bolj kot pri počasni hoji, čeprav dvigneš isto telo na isto višino?
 ---
-Delo je enako, a ga opraviš v krajšem času, zato je moč večja. Pri izkoristku približno $20\,\%$ se v toploto spremeni štirikrat toliko energije, kot je opravljenega dela. Pri večji moči zato v vsaki sekundi nastane več toplote, kot je telo sproti odda okolici.
+Delo je enako, a ga opraviš v krajšem času, zato je moč večja. Pri izkoristku približno $20\,\%$ se v toploto spremeni štirikrat toliko energije, kot je opravljenega dela. Pri večji moči zato v vsaki sekundi nastane več toplote, kot jo telo sproti odda okolici.
 :::
 
 V simulaciji spodaj (»Moč in izkoristek dvigala«) maso, višino in moč motorja pusti nespremenjene, izkoristek pa zmanjšaj s $60\,\%$ na $30\,\%$. Pritisni »Dvigni« in opazuj: koristno delo ostane enako, rdeči pas izgub se razširi, dvig pa traja dvakrat dlje.
@@ -145,7 +145,7 @@ $P_\text{dovedena} = 3000\,\mathrm{W}$, zato $\eta = \dfrac{1800\,\mathrm{W}}{30
 
 ## Pogoste napake
 
-- **Čas ni v sekundah.** Kdor vstavi $3$ namesto $180\,\text{s}$, dobi moč v »joulih na minuto«, ne v vatih. $1\,\text{min} = 60\,\text{s}$, $1\,\text{h} = 3600\,\text{s}$.
+- **Čas ni v sekundah.** Kdor delo deli s $3$ (minute) namesto s $180\,\text{s}$, dobi moč v »joulih na minuto«, ne v vatih. $1\,\text{min} = 60\,\text{s}$, $1\,\text{h} = 3600\,\text{s}$.
 - **»Hitreje pomeni več dela.«** Luka pri hitrem in počasnem teku opravi enako delo. Krajši čas poveča moč, ne dela.
 - **Zamenjava moči in energije.** Vat je enota za moč, joule za delo in energijo. Kilovatna ura ($\mathrm{kWh}$) na računu za elektriko je energija: $1\,\mathrm{kWh} = 1000\,\mathrm{W} \cdot 3600\,\text{s} = 3\,600\,000\,\text{J}$.
 - **Obrnjen izkoristek.** Koristno delimo z dovedenim. Izkoristek nad $100\,\%$ je znak, da si števec in imenovalec zamenjal.

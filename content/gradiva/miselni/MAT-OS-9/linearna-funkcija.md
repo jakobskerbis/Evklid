@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Funkcija
+  - vsakemu $x$ natanko en $y$
+  - $x$ neodvisna, $y$ odvisna spremenljivka
+- Predpis
+  - $y = kx + n$
+  - dežemer: $y = 4x + 12$
+  - graf je premica
+- Začetna vrednost
+  - $n$ je $y$ pri $x = 0$
+  - presečišče z osjo $y$: $(0, n)$
+  - lahko negativna: $y = 2x - 5$
+- Smerni koeficient
+  - sprememba $y$, ko $x$ zraste za $1$
+  - $k > 0$ narašča, $k < 0$ pada, $k = 0$ vodoravna
+  - večji $|k|$, bolj strma premica
+- Dve točki
+  - $k = \dfrac{y_2 - y_1}{x_2 - x_1}$
+  - nato $n$ iz vstavljene točke
+  - napaka: pozabiš deliti s spremembo $x$
+- Premo sorazmerje
+  - $n = 0$: $y = kx$
+  - premica skozi izhodišče

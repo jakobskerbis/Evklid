@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -17,7 +17,7 @@ Na laboratorijskem izvidu krvi ima vsaka vrednost ob sebi **referenčno območje
 
 $$\mathbb{R} = \mathbb{Q} \cup \mathbb{I}, \qquad \mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}.$$
 
-Vsakemu realnemu številu pripada natanko ena točka na številski premici in vsaki točki natanko eno realno število. Za računanje in primerjanje veljajo ista pravila kot pri racionalnih številih.
+Vsakemu realnemu številu pripada natanko ena točka na številski premici in vsaki točki natanko eno realno število. Številski premici zato rečemo tudi **realna os**. Za računanje in primerjanje veljajo ista pravila kot pri racionalnih številih.
 
 Koren naravnega števila je celo število, če je število popoln kvadrat ($\sqrt{9} = 3$, $\sqrt{16} = 4$), sicer je iracionalen ($\sqrt{2}$, $\sqrt{3}$, $\sqrt{5}$). Iracionalnega števila ne moremo zapisati natančno z decimalkami, zato računamo s približki. Ocenimo $\sqrt{2}$: ker je $1{,}41^2 = 1{,}9881$ in $1{,}42^2 = 2{,}0164$, velja $1{,}41 < \sqrt{2} < 1{,}42$.
 
@@ -48,19 +48,29 @@ Za vsa $x \le 0$. Pri negativnem $x$ je $-x$ pozitivno in enako razdalji od $0$,
 
 Podobno je $|x - c| = r$ ($r > 0$) enačba točk, ki so od $c$ oddaljene za $r$: $x = c - r$ ali $x = c + r$.
 
+Enako rešujemo, ko je v absolutni vrednosti drug izraz: iz $|u| = a$ z $a > 0$ sledi $u = a$ ali $u = -a$. Enačba $|2x - 1| = 7$ da $2x - 1 = 7$, torej $x = 4$, ali $2x - 1 = -7$, torej $x = -3$. Če absolutna vrednost ni sama na eni strani, jo najprej osamimo. Na koncu naredimo preizkus.
+
+**Absolutna vrednost izraza s spremenljivko.** Pri $|x - 3|$ ne vemo, ali je $x - 3$ pozitiven ali negativen. Odloči ničla izraza v absolutni vrednosti, tu $x = 3$:
+
+$$|x - 3| = \begin{cases} x - 3, & x \ge 3 \\ 3 - x, & x < 3 \end{cases}$$
+
+Če vemo, na katerem intervalu leži $x$, absolutno vrednost odpravimo. Za $x < 3$ je $|x - 3| + x = (3 - x) + x = 3$, izraz je tam stalen.
+
 **3. Intervali.** **Interval** je množica **vseh** realnih števil med dvema **krajiščema** $a$ in $b$ ($a < b$). Zapis $[2, 5]$ torej ne pomeni le »števila $2, 3, 4, 5$«, ampak vsebuje tudi $2{,}5$, $\pi$ in $\sqrt{10}$. Krajišče je lahko vključeno ali izključeno. Interval je lahko tudi neomejen, če se razteza v neskončnost.
 
-| Interval | Neenačba | Ime | Na številski premici |
-|---|---|---|---|
-| $(a, b)$ | $a < x < b$ | odprti | oba prazna krožca |
-| $[a, b]$ | $a \le x \le b$ | zaprti | oba polna krožca |
-| $[a, b)$ | $a \le x < b$ | polodprti | poln pri $a$, prazen pri $b$ |
-| $(a, b]$ | $a < x \le b$ | polodprti | prazen pri $a$, poln pri $b$ |
-| $(a, \infty)$ | $x > a$ | neomejeni | prazen krožec, puščica v desno |
-| $[a, \infty)$ | $x \ge a$ | neomejeni | poln krožec, puščica v desno |
-| $(-\infty, b)$ | $x < b$ | neomejeni | prazen krožec, puščica v levo |
-| $(-\infty, b]$ | $x \le b$ | neomejeni | poln krožec, puščica v levo |
-| $(-\infty, \infty)$ | vsak $x$ | cela premica | $\mathbb{R}$ |
+| Interval | Neenačba |
+|---|---|
+| $(a, b)$ | $a < x < b$ |
+| $[a, b]$ | $a \le x \le b$ |
+| $[a, b)$ | $a \le x < b$ |
+| $(a, b]$ | $a < x \le b$ |
+| $(a, \infty)$ | $x > a$ |
+| $[a, \infty)$ | $x \ge a$ |
+| $(-\infty, b)$ | $x < b$ |
+| $(-\infty, b]$ | $x \le b$ |
+| $(-\infty, \infty)$ | vsak $x$ |
+
+Po vrsti so to **odprti**, **zaprti**, dva **polodprta** in štirje **neomejeni** intervali. Na številski premici izključeno krajišče narišemo s praznim krožcem, vključeno s polnim. Interval do $\infty$ ima puščico v desno, interval od $-\infty$ v levo, $(-\infty, \infty)$ pa je cela premica $\mathbb{R}$.
 
 Pravila za zapis:
 
@@ -80,7 +90,7 @@ $$A \cap B = (3, 5], \qquad A \cup B = [1, 8), \qquad A \setminus B = [1, 3].$$
 
 V simulaciji spodaj »Intervali, unija in presek« nastavi $A$ od $1$ do $5$ in $B$ od $3$ do $8$ ($B$ je tam vedno zaprt) ter izberi $\cap$. Nato izklopi »A vsebuje desno krajišče«. Opazuj, kako se presek iz $[3, 5]$ spremeni v $[3, 5)$: krajišče ostane v preseku le, če je v obeh intervalih.
 
-**5. Absolutna vrednost in intervali.** Kdor reši $|x| > 3$ kot $x > 3$, izgubi polovico rešitev: tudi $-4$ je od $0$ oddaljen za več kot $3$. Pogoj $|x - c| < r$ pomeni »$x$ je od $c$ oddaljen za manj kot $r$«. Zato leži $x$ na intervalu s središčem $c$ in polmerom $r$:
+**5. Absolutna vrednost in intervali (višja raven).** Kdor reši $|x| > 3$ kot $x > 3$, izgubi polovico rešitev: tudi $-4$ je od $0$ oddaljen za več kot $3$. Pogoj $|x - c| < r$ pomeni »$x$ je od $c$ oddaljen za manj kot $r$«. Zato leži $x$ na intervalu s središčem $c$ in polmerom $r$:
 
 - $|x - c| < r \iff c - r < x < c + r \iff x \in (c - r,\, c + r)$,
 - $|x - c| \le r \iff x \in [c - r,\, c + r]$,
@@ -137,11 +147,11 @@ $x \in A \cap B \iff x \in A \text{ in } x \in B$; $\;x \in A \cup B \iff x \in 
 5. Preverba s števili: $x = 1$ je v $A$, ni v $B$, torej je v razliki. Število $x = 4$ je v $B$, ni v $A$, torej je v uniji, ne pa v preseku.
 6. Odgovor: $A \cap B = (1, 4)$, $A \cup B = [-2, 6]$, $A \setminus B = [-2, 1]$.
 
-### Primer 3 (težji)
+### Primer 3 (težji, višja raven)
 
 Na izvidu piše, da je normalni srčni utrip odraslega v mirovanju od $60$ do $100$ utripov na minuto, obe meji vključno. (a) Zapiši območje kot interval. (b) Zapiši isti pogoj z absolutno vrednostjo v obliki $|x - c| \le r$. (c) Ali sta normalna utripa $58$ in $96$ utripov na minuto?
 
-**Podatki:** spodnja meja $a = 60\,\text{min}^{-1}$, zgornja meja $b = 100\,\text{min}^{-1}$, obe meji vključeni; izmerjena utripa $58\,\text{min}^{-1}$ in $96\,\text{min}^{-1}$
+**Podatki:** spodnja meja $a = 60$ utripov na minuto, zgornja meja $b = 100$ utripov na minuto, obe meji vključeni; izmerjena utripa $58$ in $96$ utripov na minuto
 **Iščemo:** interval, središče $c$ in polmer $r$ za pogoj $|x - c| \le r$ ter ali sta utripa normalna
 
 :::formula
@@ -162,11 +172,32 @@ Ali sta utripa $58$ in $96$ normalna?
 $|58 - 80| = |-22| = 22 > 20$, zato utrip $58$ ni normalen (je prenizek). $|96 - 80| = 16 \le 20$, zato je utrip $96$ normalen. Isto pove interval: $58 < 60$, $96$ pa leži v $[60, 100]$. Odgovor: pogoj je $|x - 80| \le 20$, normalen je le utrip $96$ na minuto.
 :::
 
+### Primer 4: Izraz in enačba z absolutno vrednostjo
+
+(a) Poenostavi izraz $E = |x + 1| + |x - 3|$ za $-1 \le x < 3$ in za $x \ge 3$. (b) Reši enačbo $|5 - 2x| = 3$.
+
+**Podatki:** izraz $E = |x + 1| + |x - 3|$, intervala $[-1, 3)$ in $[3, \infty)$, enačba $|5 - 2x| = 3$
+**Iščemo:** $E$ brez absolutnih vrednosti na obeh intervalih, rešitve enačbe
+
+:::formula
+$|u| = u$ za $u \ge 0$ in $|u| = -u$ za $u < 0$; $\;|u| = a$ z $a > 0$ $\iff u = a$ ali $u = -a$
+:::
+
+**Rešitev:**
+
+1. Ničli izrazov v absolutnih vrednostih sta $x = -1$ in $x = 3$. Na vsakem intervalu med njima ima vsak izraz stalen predznak.
+2. Za $-1 \le x < 3$ je $x + 1 \ge 0$ in $x - 3 < 0$, zato je $E = (x + 1) + (3 - x) = 4$. Preizkus z $x = 0$: $|1| + |-3| = 4$.
+3. Za $x \ge 3$ sta oba izraza nenegativna, zato je $E = (x + 1) + (x - 3) = 2x - 2$. Preizkus z $x = 5$: $|6| + |2| = 8 = 2 \cdot 5 - 2$.
+4. Na premici je $E$ vsota razdalj točke $x$ od $-1$ in od $3$. Za točke med njima je ta vsota enaka razdalji $4$ med $-1$ in $3$.
+5. Enačba: $5 - 2x = 3$ ali $5 - 2x = -3$. Prva da $-2x = -2$ in $x = 1$, druga $-2x = -8$ in $x = 4$.
+6. Preizkus: $|5 - 2| = 3$ in $|5 - 8| = |-3| = 3$.
+7. Odgovor: za $-1 \le x < 3$ je $E = 4$, za $x \ge 3$ je $E = 2x - 2$. Rešitvi enačbe sta $x = 1$ in $x = 4$.
+
 ## Pogoste napake
 
 - **»Absolutna vrednost vsote je vsota absolutnih vrednosti«: $|a + b| = |a| + |b|$.** To velja le, če imata $a$ in $b$ isti predznak (ali je eno od njiju $0$). Za $a = 3$, $b = -5$ je $|3 + (-5)| = |{-2}| = 2$, medtem ko je $|3| + |{-5}| = 8$. Pravilno: najprej izračunaj vsoto, nato ji vzemi absolutno vrednost. Splošno velja le $|a + b| \le |a| + |b|$.
 - **Odstranjevanje minusa po občutku: $|2 - 5| = 2 + 5 = 7$.** Absolutna vrednost ne spreminja znakov znotraj izraza. Pravilno: $2 - 5 = -3$, ta vrednost je negativna, zato jo zamenjaš z nasprotno: $|{-3}| = 3$.
-- **Pomešani smeri pri neenačbah: rešitev $|x| > 3$ zapišeš kot $(-3, 3)$.** Razdalja od $0$ večja od $3$ pomeni **zunaj** tega odseka. Pravilno: $|x| < 3$ je $(-3, 3)$, $|x| > 3$ pa je $(-\infty, -3) \cup (3, \infty)$.
+- **Pomešani smeri pri neenačbah (višja raven): rešitev $|x| > 3$ zapišeš kot $(-3, 3)$.** Razdalja od $0$ večja od $3$ pomeni **zunaj** tega odseka. Pravilno: $|x| < 3$ je $(-3, 3)$, $|x| > 3$ pa je $(-\infty, -3) \cup (3, \infty)$.
 - **Napačni oklepaji: $[2, \infty]$ za $x \ge 2$ ali $(2, 5)$ za $2 \le x \le 5$.** Znak $\infty$ ni število, zato mu sledi okrogel oklepaj: $[2, \infty)$. Pri $\le$ in $\ge$ piši oglat oklepaj, pri $<$ in $>$ okrogel. Pravilno: $2 \le x \le 5$ je $[2, 5]$.
 - **»Interval vsebuje le števila, ki jih vidiš«: $[3{,}5;\,5{,}1]$ beremo kot $3{,}5;\ 3{,}6;\ \dots;\ 5{,}1$.** Zapis z dvema krajiščema ni naštevanje. Interval vsebuje vsa realna števila med krajiščema, tudi $4{,}27$ ali $\sqrt{20}$. Pravilno: pri vsakem številu se vprašaj le, ali leži med krajiščema in ali je krajišče vključeno.
 
@@ -174,12 +205,117 @@ $|58 - 80| = |-22| = 22 > 20$, zato utrip $58$ ni normalen (je prenizek). $|96 -
 
 - Realna števila: $\mathbb{R} = \mathbb{Q} \cup \mathbb{I}$. Iracionalna števila ($\sqrt{2}$, $\pi$) imajo neskončen neperiodičen decimalni zapis. Realna števila ustrezajo točkam na številski premici.
 - Absolutna vrednost: $|x| = x$ za $x \ge 0$, $|x| = -x$ za $x < 0$. Pomeni razdaljo od $0$, razdalja med $a$ in $b$ je $|a - b|$.
-- Lastnosti: $|{-x}| = |x|$, $|ab| = |a||b|$, $|a + b| \le |a| + |b|$. Enačba $|x| = a$ ima za $a > 0$ rešitvi $\pm a$, za $a = 0$ le $x = 0$, za $a < 0$ je brez rešitve.
+- Lastnosti: $|{-x}| = |x|$, $|ab| = |a||b|$, $|a + b| \le |a| + |b|$. Enačba $|x| = a$ ima za $a > 0$ rešitvi $\pm a$, za $a = 0$ le $x = 0$, za $a < 0$ je brez rešitve. Iz $|u| = a$ ($a > 0$) sledi $u = a$ ali $u = -a$.
+- Izraz s spremenljivko: predznak izraza v absolutni vrednosti se spremeni v njegovi ničli. Na intervalu s stalnim predznakom absolutno vrednost odpravimo po definiciji.
 - Intervali: $(a, b)$, $[a, b]$, $[a, b)$, $(a, b]$ in neomejeni. Okrogel oklepaj: krajišče ni vključeno. Oglat: je vključeno. Ob $\infty$ vedno okrogel.
 - Presek, unija in razlika intervalov: nariši na isto premico in preveri krajišča.
-- $|x - c| < r \iff x \in (c - r,\, c + r)$ (med). $|x - c| > r \iff x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$ (zunaj).
+- (višja raven) $|x - c| < r \iff x \in (c - r,\, c + r)$ (med). $|x - c| > r \iff x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$ (zunaj).
 
-## Drugače: Kot zgodba
+## Ponovitev
+
+**Formule**
+- $|x| = x$ za $x \ge 0$, $|x| = -x$ za $x < 0$ (na pamet)
+- razdalja med $a$ in $b$: $|a - b|$ (na pamet)
+- $|ab| = |a||b|$, $|a + b| \le |a| + |b|$ (na pamet)
+- $|u| = a$, $a > 0$ $\Rightarrow$ $u = a$ ali $u = -a$; za $a < 0$ ni rešitve (na pamet)
+- višja raven: $|x - c| < r \iff x \in (c - r,\, c + r)$ (na pamet)
+
+**Postopek**
+1. Poišči ničlo izraza v absolutni vrednosti.
+2. Na vsakem intervalu odpravi absolutno vrednost po definiciji.
+3. Reši in obdrži le rešitve z ustreznega intervala.
+4. Pri preseku in uniji nariši intervale na isto premico.
+5. Preveri krajišča: vključeno oglat, nevključeno okrogel oklepaj.
+
+**Pazi na**
+- $|a + b|$ ni vedno $|a| + |b|$: najprej izračunaj vsoto, nato absolutno vrednost.
+- Višja raven: $|x| > 3$ je zunaj: $(-\infty, -3) \cup (3, \infty)$, ne $(-3, 3)$.
+- Pri $\le$ in $\ge$ oglat oklepaj, ob $\infty$ vedno okrogel: $[2, \infty)$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Rešite enačbo $2|x + 1| - 3 = 5$.
+
+**Rešitev:**
+
+1. Absolutno vrednost osamimo: $2|x + 1| = 8$, torej $|x + 1| = 4$.
+2. Število $x + 1$ je od $0$ oddaljeno za $4$, zato je $x + 1 = 4$ ali $x + 1 = -4$.
+3. Iz prve enačbe dobimo $x = 3$, iz druge $x = -5$. Preizkus: $2|4| - 3 = 5$ in $2|{-4}| - 3 = 5$.
+4. Odgovor: rešitvi sta $x = 3$ in $x = -5$.
+
+**Točkovanje:** 1 točka za $|x + 1| = 4$, 1 točka za razdelitev na primera $x + 1 = 4$ in $x + 1 = -4$, 1 točka za obe rešitvi.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Dana sta intervala $A = (-3, \sqrt{10}\,]$ in $B = [0, 6)$.
+
+a) Opišite, kako s pomočjo Pitagorovega izreka na številski premici z ravnilom in šestilom konstruirate točko, ki pripada številu $\sqrt{10}$. (2 točki)
+b) Med katerima zaporednima celima številoma leži $\sqrt{10}$? Odgovor utemeljite. (1 točka)
+c) Določite $A \cap B$ in $A \cup B$. (2 točki)
+d) Zapišite vsa cela števila, ki so v množici $A \setminus B$. (1 točka)
+
+**Rešitev:**
+
+1. a) Velja $10 = 3^2 + 1^2$. Na številski premici narišemo daljico od $0$ do $3$, v točki $3$ postavimo pravokotnico in nanjo nanesemo daljico dolžine $1$.
+2. a) Hipotenuza pravokotnega trikotnika s katetama $3$ in $1$ meri po Pitagorovem izreku $\sqrt{3^2 + 1^2} = \sqrt{10}$. S šestilom s središčem v $0$ jo prenesemo na številsko premico in dobimo točko $\sqrt{10}$.
+3. b) Ker je $3^2 = 9 < 10 < 16 = 4^2$, velja $3 < \sqrt{10} < 4$.
+4. c) $A$ so števila z $-3 < x \le \sqrt{10}$, $B$ pa števila z $0 \le x < 6$. Za presek vzamemo večjo levo mejo $0$ (vključena, ker $0 \in A$ in $0 \in B$) in manjšo desno mejo $\sqrt{10}$ (vključena, ker $\sqrt{10} \in A$ in $\sqrt{10} \in B$): $A \cap B = [0, \sqrt{10}\,]$.
+5. c) Intervala se prekrivata, zato je unija en interval od najmanjše do največje meje: $A \cup B = (-3, 6)$.
+6. d) $A \setminus B$ so števila iz $A$, ki niso v $B$, torej $-3 < x < 0$: $A \setminus B = (-3, 0)$. Cela števila v njem sta $-2$ in $-1$.
+7. Odgovor: $3 < \sqrt{10} < 4$, $A \cap B = [0, \sqrt{10}\,]$, $A \cup B = (-3, 6)$, v $A \setminus B$ sta celi števili $-2$ in $-1$.
+
+**Točkovanje:** a) 1 točka za pravokotni trikotnik s katetama $3$ in $1$, 1 točka za prenos hipotenuze s šestilom na premico; b) 1 točka za $3 < \sqrt{10} < 4$ z utemeljitvijo; c) 1 točka za $A \cap B = [0, \sqrt{10}\,]$, 1 točka za $A \cup B = (-3, 6)$; d) 1 točka za števili $-2$ in $-1$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Množica $A$ vsebuje vsa realna števila $x$, ki so od števila $2$ oddaljena največ za $3$. Množica $B$ je množica vseh rešitev neenačbe $|3 - 2x| > 5$.
+
+a) Zapišite pogoj za števila iz $A$ z absolutno vrednostjo in množico $A$ zapišite kot interval. (2 točki)
+b) Rešite neenačbo $|3 - 2x| > 5$ in množico $B$ zapišite kot unijo intervalov. (3 točke)
+c) Določite $A \cap B$ in $A \cup B$. (2 točki)
+d) Množico $A \setminus B$ zapišite kot interval in z neenačbo oblike $|x - c| \le r$. (3 točke)
+
+**Rešitev:**
+
+1. a) Razdalja števila $x$ od $2$ je $|x - 2|$, pogoj je $|x - 2| \le 3$. Zato je $2 - 3 \le x \le 2 + 3$ in $A = [-1, 5]$.
+2. b) Izraz $3 - 2x$ je od $0$ oddaljen za več kot $5$, zato je $3 - 2x < -5$ ali $3 - 2x > 5$.
+3. b) Prvi primer: $-2x < -8$. Delimo z negativnim številom $-2$, zato se znak obrne: $x > 4$.
+4. b) Drugi primer: $-2x > 2$, po deljenju z $-2$ dobimo $x < -1$. Torej $B = (-\infty, -1) \cup (4, \infty)$.
+5. c) V preseku so števila iz $[-1, 5]$, ki so manjša od $-1$ ali večja od $4$. Manjših od $-1$ v $A$ ni, zato je $A \cap B = (4, 5]$.
+6. c) Unija: $B$ pokrije vsa števila levo od $-1$ in desno od $4$, $A$ pa vse od $-1$ do $5$. Vrzeli ni, zato je $A \cup B = \mathbb{R} = (-\infty, \infty)$.
+7. d) Iz $A = [-1, 5]$ odstranimo števila, večja od $4$: $A \setminus B = [-1, 4]$.
+8. d) Središče intervala je $c = \dfrac{-1 + 4}{2} = \dfrac{3}{2}$, polmer pa $r = \dfrac{4 - (-1)}{2} = \dfrac{5}{2}$. Krajišči sta vključeni, zato je $A \setminus B$ množica rešitev neenačbe $\left|x - \dfrac{3}{2}\right| \le \dfrac{5}{2}$.
+9. Odgovor: $A = [-1, 5]$, $B = (-\infty, -1) \cup (4, \infty)$, $A \cap B = (4, 5]$, $A \cup B = \mathbb{R}$, $A \setminus B = [-1, 4]$, kar je množica rešitev neenačbe $\left|x - \dfrac{3}{2}\right| \le \dfrac{5}{2}$.
+
+**Točkovanje:** a) 1 točka za pogoj $|x - 2| \le 3$, 1 točka za $A = [-1, 5]$; b) 1 točka za razdelitev na primera $3 - 2x < -5$ in $3 - 2x > 5$, 1 točka za pravilno obrnjena znaka pri deljenju z $-2$, 1 točka za $B = (-\infty, -1) \cup (4, \infty)$; c) 1 točka za $A \cap B = (4, 5]$, 1 točka za $A \cup B = \mathbb{R}$; d) 1 točka za $[-1, 4]$, 1 točka za središče $c = \dfrac{3}{2}$ in polmer $r = \dfrac{5}{2}$, 1 točka za neenačbo $\left|x - \dfrac{3}{2}\right| \le \dfrac{5}{2}$ (enakovredno $|2x - 3| \le 5$).
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako je definirana absolutna vrednost realnega števila in kaj pomeni na številski premici?
+---
+Absolutna vrednost je definirana z $|x| = x$ za $x \ge 0$ in $|x| = -x$ za $x < 0$. Na številski premici pomeni razdaljo točke $x$ od izhodišča $0$, zato je vedno nenegativna. Razdalja med točkama z abscisama $a$ in $b$ je $|a - b| = |b - a|$. Veljata še $|a \cdot b| = |a| \cdot |b|$ in trikotniška neenakost $|a + b| \le |a| + |b|$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kaj je iracionalno število? Navedi primer in pojasni, kako ga s Pitagorovim izrekom konstruiraš na številski premici.
+---
+Iracionalno število je realno število, ki ga ne moremo zapisati kot ulomek $\dfrac{a}{b}$ s celim $a$ in naravnim $b$, njegov decimalni zapis pa je neskončen in neperiodičen. Primera sta $\sqrt{2}$ in $\pi$. Za $\sqrt{2}$ narišemo pravokotni trikotnik s katetama dolžine $1$ tako, da ena kateta leži na premici od $0$ do $1$. Njegova hipotenuza po Pitagorovem izreku meri $\sqrt{1^2 + 1^2} = \sqrt{2}$. Hipotenuzo s šestilom s središčem v $0$ prenesemo na premico in dobimo točko $\sqrt{2}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Kako rešimo neenačbi $|x - c| < r$ in $|x - c| > r$ za $r > 0$ in kaj rešitvi pomenita na številski premici?
+---
+Izraz $|x - c|$ je razdalja števila $x$ od števila $c$ na številski premici. Neenačba $|x - c| < r$ pomeni, da je $x$ od $c$ oddaljen manj kot $r$, zato je $c - r < x < c + r$ in rešitev je interval $(c - r, c + r)$. Neenačba $|x - c| > r$ pomeni, da je $x$ od $c$ oddaljen več kot $r$, zato je rešitev unija $(-\infty, c - r) \cup (c + r, \infty)$. Pri znakih $\le$ in $\ge$ sta krajišči $c - r$ in $c + r$ vključeni v rešitev.
+:::
+
+## Drugače: Kot zgodba (višja raven)
 
 Medicinska sestra Nina dela nočno izmeno. Zdravnik ji je naročil: »Pokliči me, če se temperatura bolnika od $37\,°\text{C}$ razlikuje za več kot $0{,}5\,°\text{C}$.« Nina si navodilo zapiše po svoje: kliči, če je $|t - 37| > 0{,}5$.
 
@@ -187,7 +323,7 @@ Ob polnoči ima gospod Kovač $38{,}2\,°\text{C}$, gospa Novak pa $35{,}8\,°\t
 
 Ob dveh ima gospod Kovač $37{,}3\,°\text{C}$. Odmik je $|37{,}3 - 37| = 0{,}3$, kar ni več kot $0{,}5$, zato ne kliče. Na rob kartona si nariše številsko premico. Mirne vrednosti so $|t - 37| \le 0{,}5$, torej interval $[36{,}5;\,37{,}5]$ s polnima krožcema. Klicati mora, ko je temperatura v enem od dveh kosov zunaj njega: $(-\infty;\,36{,}5) \cup (37{,}5;\,\infty)$.
 
-## Drugače: Korak za korakom s številkami
+## Drugače: Korak za korakom s številkami (višja raven)
 
 Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 
@@ -213,15 +349,15 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 + Normalne so vse vrednosti od $3{,}5$ do $5{,}1$, obe meji vključno.
 > Interval $[a, b]$ je množica vseh realnih $x$ z $a \le x \le b$. Oglata oklepaja povesta, da sta tudi $3{,}5$ in $5{,}1$ normalni vrednosti.
 
-? Razvrsti od najmanjšega do največjega: $a = |-7|$, $b = |3 - 5|$, $c = -|4|$, $d = |0|$.
-- $d < b < c < a$
-~ Tu je $c$ vzet kot $4$. Minus stoji zunaj absolutne vrednosti, zato je $c = -|4| = -4$.
-- $c < d < a < b$
+? Razvrsti od najmanjšega do največjega: $p = |-7|$, $q = |3 - 5|$, $u = -|4|$, $v = |0|$.
+- $v < q < u < p$
+~ Tu je $u$ vzet kot $4$. Minus stoji zunaj absolutne vrednosti, zato je $u = -|4| = -4$.
+- $u < v < p < q$
 ~ Tu je $|3 - 5|$ izračunano kot $3 + 5 = 8$. Najprej izračunaj $3 - 5 = -2$, nato $|-2| = 2$.
-+ $c < d < b < a$
-> Vrednosti so $a = 7$, $b = 2$, $c = -4$ in $d = 0$. Le $c$ je negativen, ker minus stoji pred absolutno vrednostjo.
++ $u < v < q < p$
+> Vrednosti so $p = 7$, $q = 2$, $u = -4$ in $v = 0$. Le $u$ je negativen, ker minus stoji pred absolutno vrednostjo.
 
-? Rešitev neenačbe $|x - 1| < 2$ je $(-1, 3)$. Kaj se zgodi z rešitvijo, če znak $<$ zamenjamo z $\ge$?
+? (višja raven) Rešitev neenačbe $|x - 1| < 2$ je $(-1, 3)$. Kaj se zgodi z rešitvijo, če znak $<$ zamenjamo z $\ge$?
 - Postane $[-1, 3]$.
 ~ Spremenil si le oklepaja. Znak $\ge$ pomeni »vsaj $2$ stran od $1$«, to pa je zunaj, ne med.
 - Postane $(-\infty, -1) \cup (3, \infty)$.
@@ -231,17 +367,14 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 + Postane $(-\infty, -1] \cup [3, \infty)$.
 > Nova rešitev so vsa števila, ki jih stara ni vsebovala: dva kosa zunaj, s krajiščema, ker sta oddaljeni natanko $2$.
 
-? Kolikšna je vrednost izraza $|3 - 8| - |{-2}|$?
-- $7$
-~ Absolutni vrednosti si seštel. Med njima je minus: $5 - 2$.
-+ $3$
-- $-7$
-~ Prvo absolutno vrednost si izpustil: $-5 - 2$. Najprej $|3 - 8| = |-5| = 5$.
-- $-3$
-~ Obe absolutni vrednosti si izpustil: $-5 - (-2)$. Absolutna vrednost ni nikoli negativna.
+? (brez računala) Kolikšna je vrednost izraza $|3 - 8| - |{-2}|$?
+= 3 | 0
+~ 7 | Absolutni vrednosti si seštel. Med njima je minus: $5 - 2$.
+~ -7 | Prvo absolutno vrednost si izpustil: $-5 - 2$. Najprej $|3 - 8| = |-5| = 5$.
+~ -3 | Obe absolutni vrednosti si izpustil: $-5 - (-2)$. Absolutna vrednost ni nikoli negativna.
 > Najprej $3 - 8 = -5$, torej $|{-5}| = 5$. Nato $|{-2}| = 2$. Rezultat je $5 - 2 = 3$.
 
-? Tableta mora vsebovati zdravilno učinkovino z maso $m$, za katero velja $|m - 250| \le 15$ (v mg). Katera tableta NE ustreza?
+? (višja raven) Tableta mora vsebovati zdravilno učinkovino z maso $m$, za katero velja $|m - 250| \le 15$ (v mg). Katera tableta NE ustreza?
 - $265\,\text{mg}$
 ~ Odmik je $|265 - 250| = 15$, kar je dovoljeno, saj znak $\le$ krajišče vključi.
 - $236\,\text{mg}$
@@ -251,10 +384,46 @@ Reši neenačbo $|2x - 1| < 5$ in rešitev zapiši z intervalom.
 ~ To je središče intervala z odmikom $0$, zato zagotovo ustreza.
 > Dovoljene mase so $[235, 265]\,\text{mg}$. Pri $234\,\text{mg}$ je odmik $|234 - 250| = 16 > 15$, zato tableta ne ustreza.
 
+? (brez računala) Reši enačbo $|2x - 5| = 9$ in vpiši vsoto obeh rešitev.
+= 5 | 0
+~ 7 | To je le rešitev enačbe $2x - 5 = 9$. Druga je iz $2x - 5 = -9$, to je $x = -2$.
+~ -2 | To je le rešitev enačbe $2x - 5 = -9$. Druga je iz $2x - 5 = 9$, to je $x = 7$.
+> $2x - 5 = 9$ da $x = 7$, $2x - 5 = -9$ pa $x = -2$. Vsota je $7 + (-2) = 5$.
+
+? Za $x > 2$ poenostavi izraz $|2 - x| + x$.
+- $2$
+~ Absolutno vrednost si le izpustil. Za $x > 2$ je $2 - x < 0$, zato je $|2 - x| = -(2 - x) = x - 2$.
++ $2x - 2$
+- $2x + 2$
+~ Minus pred oklepajem spremeni predznak obema členoma: $-(2 - x) = -2 + x$, ne $2 + x$.
+> Za $x > 2$ je $2 - x < 0$, zato je $|2 - x| = x - 2$ in $|2 - x| + x = x - 2 + x = 2x - 2$.
+
+<<RACUN
+vrednost: abs(2-5)+5 | 8
+resi: abs(2*x-1)=7 | x | -3, 4
+resi: abs(5-2*x)=3 | x | 1, 4
+resi: abs(2*x-5)=9 | x | -2, 7
+vrednost: abs(0+1)+abs(0-3) | 4
+vrednost: abs(5+1)+abs(5-3) | 8
+vrednost: 2*5-2 | 8
+resi: 2*abs(x+1)-3=5 | x | -5, 3
+vrednost: 2*abs(4)-3 | 5
+vrednost: 2*abs(-4)-3 | 5
+vrednost: 3^2+1^2 | 10
+neenacba: abs(x-2)<=3 | x | [-1, 5]
+neenacba: abs(3-2*x)>5 | x | (-oo, -1) U (4, oo)
+neenacba: abs(x-3/2)<=5/2 | x | [-1, 4]
+neenacba: abs(2*x-3)<=5 | x | [-1, 4]
+vrednost: (-1+4)/2 | 3/2
+vrednost: (4-(-1))/2 | 5/2
+>>
+
 :::simboli
 x | realno število (v primeru 3 srčni utrip) | | |
 A, B | intervala (množici realnih števil) | | | v primeru 1 točki na številski premici
-a, b | krajišči intervala ali abscisi točk $A$ in $B$ | | | razdalja točk je $\lvert b - a \rvert$
+a, b | krajišči intervala ali abscisi točk $A$ in $B$ | | | razdalja točk je $\lvert b - a \rvert$; v enačbi $\lvert x \rvert = a$ je $a$ dano število
+u | izraz v absolutni vrednosti (npr. $2x - 1$) | | | iz $\lvert u \rvert = a$, $a > 0$, sledi $u = a$ ali $u = -a$
+E | izraz z absolutnimi vrednostmi v primeru 4 | E = \lvert x + 1 \rvert + \lvert x - 3 \rvert | |
 c | središče, od katerega merimo razdaljo | c = \frac{a + b}{2} | |
 r | polmer: največja razdalja od $c$ | r = \frac{b - a}{2} | | $r > 0$
 :::

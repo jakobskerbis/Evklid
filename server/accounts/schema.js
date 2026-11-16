@@ -126,6 +126,14 @@ export function migrateAccounts(db) {
   // guest_net = zgoščeni IP omrežja, da brisanje piškotkov ne da nove brezplačne kvote.
   if (!pcols.includes("is_guest")) db.exec("ALTER TABLE parents ADD COLUMN is_guest INTEGER NOT NULL DEFAULT 0");
   if (!pcols.includes("guest_net")) db.exec("ALTER TABLE parents ADD COLUMN guest_net TEXT");
+  // Naključna identiteta računa, ki se nikoli ne ponovi (parents.id se po izbrisu ponovno uporabi). Gre v metapodatke
+  // plačil Stripa; webhook pripiše plačilo računu samo ob enakem uid (server/accounts/ponoven-id.js, pregled #511 A).
+  if (!pcols.includes("uid")) db.exec("ALTER TABLE parents ADD COLUMN uid TEXT");
+  db.exec("UPDATE parents SET uid = lower(hex(randomblob(16))) WHERE uid IS NULL");
+  db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_parents_uid ON parents(uid)");
+  db.exec(`CREATE TRIGGER IF NOT EXISTS parents_uid AFTER INSERT ON parents WHEN NEW.uid IS NULL BEGIN
+    UPDATE parents SET uid = lower(hex(randomblob(16))) WHERE id = NEW.id;
+  END;`);
   // Gost iz lastnikovega povabila (/?gost=…, server/accounts/guest.js GuestInvites): uporablja Evklid, čeprav je uporaba brez računa sicer izklopljena.
   if (!pcols.includes("guest_invite_id")) db.exec("ALTER TABLE parents ADD COLUMN guest_invite_id INTEGER");
   const cols = db.prepare("PRAGMA table_info(students)").all().map((c) => c.name);
@@ -136,6 +144,12 @@ export function migrateAccounts(db) {
   if (db.prepare("PRAGMA table_info(usage)").all().some((c) => c.name === "parent_id")) {
     db.exec(`CREATE TRIGGER IF NOT EXISTS usage_parent_detach AFTER DELETE ON parents BEGIN
       UPDATE usage SET parent_id = NULL WHERE parent_id = OLD.id;
+    END;`);
+  }
+  // Izbris računa: strani zapiskov izbrisanih profilov (server/zapiski.js) niso več vezane na račun.
+  if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'zapiski_strani'").get()) {
+    db.exec(`CREATE TRIGGER IF NOT EXISTS zapiski_strani_parent_delete AFTER DELETE ON parents BEGIN
+      DELETE FROM zapiski_strani WHERE parent_id = OLD.id;
     END;`);
   }
   // Izbris računa (vse poti: račun, gost, čiščenje neaktivnih): zapisi meje AI v kv z id računa (server/placila/placano.js

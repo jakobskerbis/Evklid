@@ -9,6 +9,7 @@ import { sameSubject } from "./subjects.js";
 export const INTERVALS = [1, 3, 7, 16, 35, 90];
 export const MAX_PER_REPLY = 3;
 export const MAX_CARDS = 2000;
+export const MAX_FROM_NOTES = 12;
 const FRONT_MAX = 300;
 const BACK_MAX = 600;
 
@@ -35,6 +36,8 @@ const view = (r) =>
     topic: r.topic,
     topic_id: r.topic_id,
     source: r.source,
+    // Kartica iz zapiskov: preverjena (koda in pregled) ali »Iz tvojih zapiskov – nepreverjeno«.
+    ...(r.source === "zapiski" ? { checked: r.checked === 1, zapisek_id: r.zapisek_id } : {}),
     box: r.box,
     due: r.due,
     is_due: !!r.is_due,
@@ -50,20 +53,23 @@ export class Flashcards {
 
   // Doda kartice; podvojene (isto vprašanje pri istem učencu) preskoči. Vrne dodane kartice.
   // verified = false: kartica iz odgovora inštruktorja čaka na trojno preverjanje (server/verify.js) in je do takrat skrita.
-  add(studentId, cards, { conversationId = null, topicId = null, subject = null, topic = null, source = "tutor", verified = true } = {}) {
+  // Iz zapiskov (source »zapiski«, server/zapiski.js): do MAX_FROM_NOTES kartic, vsaka s svojo oznako c.checked.
+  add(studentId, cards, { conversationId = null, topicId = null, subject = null, topic = null, source = "tutor", verified = true, noteId = null } = {}) {
     const added = [];
     if (this.count(studentId) >= MAX_CARDS) return added;
     const ins = this.db.prepare(
-      `INSERT OR IGNORE INTO flashcards (student_id, conversation_id, topic_id, subject, topic, front, back, norm, source, verified)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT OR IGNORE INTO flashcards (student_id, conversation_id, topic_id, subject, topic, front, back, norm, source, verified, zapisek_id, checked)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     );
-    for (const c of cards.slice(0, source === "tutor" ? MAX_PER_REPLY : 1)) {
+    const max = source === "tutor" ? MAX_PER_REPLY : source === "zapiski" ? MAX_FROM_NOTES : 1;
+    for (const c of cards.slice(0, Math.min(max, MAX_CARDS - this.count(studentId)))) {
       const front = clean(c.front, FRONT_MAX);
       const back = clean(c.back, BACK_MAX);
       const norm = normCard(front);
       if (!norm || !back) continue;
       // Besedilo šifrirano, norm je slepi indeks (server/crypto-polje.js); brez ključa oboje nespremenjeno.
-      const r = ins.run(studentId, conversationId, topicId, subject, topic ? String(topic).slice(0, 80) : null, seal(front), seal(back), blindIndex(norm), source, verified ? 1 : 0);
+      const checked = source === "zapiski" ? (c.checked === true ? 1 : 0) : null;
+      const r = ins.run(studentId, conversationId, topicId, subject, topic ? String(topic).slice(0, 80) : null, seal(front), seal(back), blindIndex(norm), source, verified ? 1 : 0, noteId, checked);
       if (r.changes) added.push(this.get(studentId, Number(r.lastInsertRowid), { pending: true }));
     }
     return added;
@@ -133,7 +139,8 @@ export class Flashcards {
     const b = back === undefined ? c.back : clean(back, BACK_MAX);
     if (!normCard(f) || !b) return { error: "empty" };
     try {
-      this.db.prepare("UPDATE flashcards SET front = ?, back = ?, norm = ? WHERE id = ?").run(seal(f), seal(b), blindIndex(normCard(f)), id);
+      // Popravljena kartica iz zapiskov ni več preverjena (besedilo je učenčevo).
+      this.db.prepare("UPDATE flashcards SET front = ?, back = ?, norm = ?, checked = CASE WHEN source = 'zapiski' THEN 0 ELSE checked END WHERE id = ?").run(seal(f), seal(b), blindIndex(normCard(f)), id);
     } catch {
       return { error: "duplicate" };
     }

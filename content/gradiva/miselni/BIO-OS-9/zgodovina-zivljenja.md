@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Časovni trak
+  - merilo: $1$ m za $1$ mio. let
+  - $d = \dfrac{t}{k}$
+  - napaka: $300\,000$ let ni $300$ m, ampak $0{,}3$ m
+- Starost Zemlje
+  - približno $4{,}6$ milijarde let
+  - iz razpada urana v kamninah
+- Fosili
+  - ostanek ali sled v kamnini
+  - minerali nadomestijo trde dele
+  - spodnje plasti so starejše
+- Prvo življenje
+  - pred $3{,}5$ milijarde let v morju
+  - enocelično, brez jedra in kisika
+  - Millerjev poskus: iskre dajo aminokisline
+- Cianobakterije in kisik
+  - fotosinteza sprošča kisik
+  - kisik v zraku od $2{,}4$ milijarde let
+  - ozonski plašč omogoči kopno
+- Množična izumrtja
+  - pet velikih izumrtij
+  - konec perma: $252$ mio. let
+  - asteroid in dinozavri: $66$ mio. let
+- Izvor človeka
+  - skupni prednik s šimpanzom, $6$ do $7$ mio. let
+  - *Homo sapiens* v Afriki pred $300\,000$ leti
+  - napaka: ljudje niso živeli z dinozavri

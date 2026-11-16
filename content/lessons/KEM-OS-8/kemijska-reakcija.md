@@ -14,7 +14,7 @@ Spremembe, pri katerih nastanejo nove snovi, potekajo tudi v tvojem telefonu. Ko
 
 ## Razlaga
 
-**1. Nova snov ali ista snov?** Pri spajkanju vezja se spajka (kovina, večinoma iz kositra) stali. Ko se ohladi, se spet strdi. Snov ostane ista. Taki spremembi rečemo **fizikalna sprememba**.
+**1. Nova snov ali ista snov?** Pri spajkanju vezja se spajka (zlitina, večinoma iz kositra) stali. Ko se ohladi, se spet strdi. Snov ostane ista. Taki spremembi rečemo **fizikalna sprememba**.
 
 Pri **kemijski reakciji** pa iz ene ali več snovi nastane ena ali več **novih snovi z drugačnimi lastnostmi**. Ko baker na zraku potemni, temna plast ni več baker, ampak bakrov oksid.
 
@@ -37,7 +37,7 @@ Ogljik in kisik sta reaktanta, ogljikov dioksid je produkt. Znak $+$ tu pomeni �
 | znak | primer |
 |---|---|
 | nastane plin | šumeča tableta v vodi |
-| nastane oborina (trdna snov v raztopini) | apnica (bistra raztopina gašenega apna) se ob vpihovanju izdihanega zraka pooblači |
+| nastane oborina (trdna snov v raztopini) | apnica (bistra raztopina gašenega apna) se ob vpihovanju izdihanega zraka pomotni |
 | spremeni se barva | baker na zraku potemni |
 | sprosti se toplota ali svetloba | gorenje sveče |
 | nastane nov vonj | mleko se skisa |
@@ -194,7 +194,7 @@ V simulaciji spodaj (»Kemijska reakcija: atomi se preuredijo«) izberi reakcijo
 
 **Kaj pomenijo koeficienti?** Koeficient pove, koliko molekul (ali drugih delcev) snovi sodeluje v reakciji. V enačbi $2\,\mathrm{H_2} + \mathrm{O_2} \longrightarrow 2\,\mathrm{H_2O}$ dve molekuli vodika reagirata z eno molekulo kisika in nastaneta dve molekuli vode. Koeficienta 1 ne zapisujemo.
 
-**Preverjanje mase v enačbi.** Pri ogljiku in kisiku: z relativnimi atomskimi masami $A_r(\mathrm{C}) = 12$ in $A_r(\mathrm{O}) = 16$ je relativna molekulska masa $\mathrm{CO_2}$ enaka $12 + 2 \cdot 16 = 44$. Iz $12\,\text{g}$ ogljika in $32\,\text{g}$ kisika zato nastane $44\,\text{g}$ ogljikovega dioksida. Podobno pri primeru 2: $A_r(\mathrm{Cu}) \approx 64$, zato je v bakrovem oksidu ($\mathrm{CuO}$) na vsakih $64$ delov mase bakra $16$ delov kisika. Ker je $6{,}4 : 1{,}6 = 64 : 16$, se z $6{,}4\,\text{g}$ bakra veže prav $1{,}6\,\text{g}$ kisika.
+**Preverjanje mase v enačbi.** Pri ogljiku in kisiku: z relativnimi atomskimi masami $A_r(\mathrm{C}) = 12$ in $A_r(\mathrm{O}) = 16$ je relativna molekulska masa $\mathrm{CO_2}$ enaka $12 + 2 \cdot 16 = 44$. Iz $12\,\text{g}$ ogljika in $32\,\text{g}$ kisika zato nastane $44\,\text{g}$ ogljikovega dioksida. Podobno pri primeru 2: $A_r(\mathrm{Cu}) \approx 64$, zato je v bakrovem oksidu ($\mathrm{CuO}$) na vsakih $64$ delov mase bakra $16$ delov kisika. Ker je $6{,}4 : 1{,}6 = 64 : 16$, se s $6{,}4\,\text{g}$ bakra veže prav $1{,}6\,\text{g}$ kisika.
 
 ## Preveri se
 

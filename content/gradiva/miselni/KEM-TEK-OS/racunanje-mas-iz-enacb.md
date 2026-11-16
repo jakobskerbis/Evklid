@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enačba kot recept
+  - koeficienti štejejo mole, ne grame
+  - napaka: 16 g metana da 16 g $\mathrm{CO_2}$
+- Pot čez mole
+  - masa A, mol A, mol B, masa B
+  - $n = \frac{m}{M}$, nato $m = n \cdot M$
+- Ohranitev mase
+  - masa reaktantov = masa produktov
+  - plini uidejo: soda bikarbona izgubi 31 g
+- Omejitveni reaktant
+  - primerjaj $\frac{n}{\text{koeficient}}$, ne mas
+  - produkt računaj iz njega
+- Prebitek
+  - ostanek = začetna minus porabljena množina
+  - $\mathrm{Fe + S}$: ostane 2,0 g žvepla
+- Izkoristek
+  - $\eta = \frac{m_{\mathrm{dej}}}{m_{\mathrm{teor}}} \cdot 100\,\%$
+  - nikoli nad 100 %

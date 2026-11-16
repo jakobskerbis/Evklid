@@ -3,6 +3,7 @@
 // danes in ta mesec; klik odpre pregled po profilih.
 import { icon } from "./icons.js";
 import { t, locale } from "./i18n.js";
+import { zavrzi } from "./odgovor.js";
 
 const $ = (sel) => document.querySelector(sel);
 let D = null; // { escapeHtml, showView, toast }
@@ -45,7 +46,7 @@ export async function refreshUsageMeter() {
   } catch {
     return; // brez povezave: pusti zadnje stanje
   }
-  const u = res.ok ? await res.json().catch(() => null) : null;
+  const u = res.ok ? await res.json().catch(() => null) : (zavrzi(res), null); // 403 ne-skrbnik: telo zavržemo
   if (!u) {
     // Ni dovoljenja (ni skrbnik, odpira prek povezave za telefon): števec je skrit.
     last = null;

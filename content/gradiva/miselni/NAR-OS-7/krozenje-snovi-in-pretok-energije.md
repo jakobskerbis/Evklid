@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Van Helmontova vrba
+  - vrba zrasla za več kot $70\,\mathrm{kg}$
+  - prst izgubila le okoli $57\,\mathrm{g}$
+- Kroženje ogljika
+  - fotosinteza vzame $\mathrm{CO_2}$ iz zraka
+  - hrana ga prenese na živali
+  - dihanje, razkroj, gorenje ga vrnejo v zrak
+- Dihanje
+  - rastline dihajo podnevi in ponoči
+  - ogljik ne izgine, odide kot $\mathrm{CO_2}$
+- Kroženje vode
+  - izhlapevanje in transpiracija → oblaki
+  - padavine → reke, podtalnica, morje
+- Energija teče
+  - Sonce → proizvajalci → porabniki → toplota
+  - toplote rastline ne ujamejo
+- Pravilo desetine
+  - $E_2 = \dfrac{E_1}{10}$, nazaj $E_1 = 10 \cdot E_2$
+  - žito $50\,000\,\mathrm{kJ}$ → sova $500\,\mathrm{kJ}$
+- Kratke verige
+  - na vrhu malo plenilcev
+  - meso stane desetkrat več žita

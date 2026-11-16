@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Reakcijska entalpija
+  - $\Delta H < 0$ eksotermna, $\Delta H > 0$ endotermna
+  - enota kJ/mol: na mol reakcije, kot je zapisana
+- Termokemijska enačba
+  - pomnožena enačba: $\Delta H$ pomnožiš
+  - obrnjena enačba: nasproten predznak
+  - $\mathrm{H_2O(l)}$ in $\mathrm{H_2O(g)}$: razlika $44{,}0\,\mathrm{kJ/mol}$
+- Toplota iz množine
+  - $Q = \frac{n}{\nu}\,|\Delta H|$
+  - napaka: pozabljen koeficient $\nu$
+- Tvorbene entalpije
+  - produkti minus reaktanti, vsak krat $\nu$
+  - elementi v osnovni obliki imajo nič
+- Hessov zakon
+  - entalpija je veličina stanja
+  - obrni, pomnoži, seštej enačbe in $\Delta H$
+  - pot prek $\mathrm{H_2O_2}$ ne da več toplote
+- Kalorimetrija
+  - $Q = m\,c\,\Delta T$ ali $Q = C_\mathrm{kal}\,\Delta T$
+  - $\Delta H = -\frac{Q}{n}$, pazi J in kJ

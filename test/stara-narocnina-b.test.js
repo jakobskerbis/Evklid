@@ -48,10 +48,10 @@ function fakeStripe() {
   return { calls, state, fetchFn };
 }
 
-async function withServer(fn) {
+async function withServer(fn, { key = "sk_test_x" } = {}) {
   const store = openDb(":memory:");
   const stripe = fakeStripe();
-  const app = createApp(store, { accounts: true, scheduler: false, stripeKey: "sk_test_x", resendKey: "re_x", webhookSecret: SECRET, fetchFn: stripe.fetchFn, log: { error() {} } });
+  const app = createApp(store, { accounts: true, scheduler: false, stripeKey: key, resendKey: "re_x", webhookSecret: SECRET, fetchFn: stripe.fetchFn, log: { error() {} } });
   const server = app.listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
   const client = () => {
@@ -211,6 +211,9 @@ test("N7: spor pri plačilu trenutne ob drugi aktivni → dostop ostane po drugi
 
 test("N8: garancija vrne VSA plačila naročnin (tudi druge), prekliče le trenutno → dostop ostane po vrnjeni drugi", async () => {
   process.env.EVKLID_ADMIN_EMAILS = "skrbnik@n8.si";
+  // Garancija se ponudi samo ob vseh treh varovalih (garancija.js guaranteeAdvertised).
+  process.env.EVKLID_GARANCIJA_OGLAS = "1";
+  process.env.EVKLID_GUARANTEE_LIVE = "1";
   try {
     await withServer(async ({ client, stripe, store }) => {
       const a = client();
@@ -239,8 +242,10 @@ test("N8: garancija vrne VSA plačila naročnin (tudi druge), prekliče le trenu
       assert.equal(r.status, 200, JSON.stringify(r.body));
       assert.equal(r.body.guarantees[0].refunded_cents, 1998, "vrnjeni sta obe plačili");
       assert.equal(paidActive(row(store, p.id)), false, `vse vrnjeno, a dostop ostane: ${JSON.stringify(cur(store, p.id))}`);
-    });
+    }, { key: "sk_live_x" });
   } finally {
+    delete process.env.EVKLID_GARANCIJA_OGLAS;
+    delete process.env.EVKLID_GUARANTEE_LIVE;
     delete process.env.EVKLID_ADMIN_EMAILS;
   }
 });

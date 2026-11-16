@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pospešek proti središču
+  - $a_r = \dfrac{v^2}{r} = \dfrac{4\pi^2 r}{t_0^2}$
+  - daje ga rezultanta znanih sil
+  - napaka: centrifugalna sila navzven
+- Gravitacija drži tir
+  - $F_g = \dfrac{G m M}{r^2}$
+  - $v = \sqrt{GM/r}$, masa satelita se pokrajša
+- Zakaj astronavti lebdijo
+  - ISS: $g \approx 8{,}6\,\mathrm{m/s^2}$
+  - astronavti prosto padajo s postajo
+- Elipsa
+  - Sonce v gorišču
+  - 1. Keplerjev zakon
+- Enake ploščine
+  - $v_p r_p = v_a r_a$
+  - v prisončju najhitreje
+- Tretji zakon
+  - $r^3/t_0^2 = GM/(4\pi^2)$
+  - $r \propto t_0^{2/3}$, ne $t_0^{3/2}$
+- Sateliti
+  - geostacionarni: $42\,160\,\mathrm{km}$, nad ekvatorjem
+  - GPS: dva obhoda na dan
+  - $r$ od središča, ne višina

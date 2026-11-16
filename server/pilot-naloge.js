@@ -194,7 +194,13 @@ export function pilotState(db, studentId, { now = new Date() } = {}) {
     try {
       photos = db.prepare("SELECT s.cond FROM pilot_photos p JOIN pilot_scans s ON s.id = p.scan_id WHERE p.student_id = ? ORDER BY s.cond").all(studentId).map((r) => r.cond);
     } catch {}
-    return photos.length ? { member: false, photos } : { member: false };
+    // Dano dovoljenje za objavo mnenja (server/pilot-mnenja.js): aplikacija naloži public/mnenje.js, da ga bivši član
+    // lahko prekliče (GDPR čl. 7(3)); brez tega podatka se modul nečlanu ne naloži.
+    let opinion = false;
+    try {
+      opinion = !!db.prepare("SELECT 1 FROM pilot_mnenja WHERE student_id = ? AND publish = 1 LIMIT 1").get(studentId);
+    } catch {}
+    return { member: false, ...(photos.length ? { photos } : {}), ...(opinion ? { opinion: true } : {}) };
   }
   migratePilotTasks(db);
   db.prepare("INSERT OR IGNORE INTO pilot_state (student_id) VALUES (?)").run(studentId);

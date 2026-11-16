@@ -2,7 +2,7 @@
    Lastne barve iz Nastavitve → Videz theme.js zapiše kot slog na <html> in prepišejo te privzete. */
 :root {
   --rob-strani: clamp(16px, 2.5vw, 40px); /* rob vsebine ob straneh pogleda, brez praznega pasu (j 2026-11-04) */
-  /* Slog Čist (privzeti, docs/oblikovanje.md); Igriv in Temen sta v ui.css (»Slogi«) in theme.js. */
+  /* Slog Čist (privzeti, docs/oblikovanje.md); Igriv je v ui.css (»Slogi«) in theme.js. */
   --bg: #f6f7f9;
   --surface: #ffffff;
   --surface-2: #eef1f5;
@@ -103,6 +103,12 @@ h2 { font-size: 1.12rem; margin: 0 0 8px; font-weight: 800; }
 .pretest-note { margin: 8px 0 0; font-weight: 600; }
 .eyebrow { font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 a { color: var(--accent); }
+/* Dotik (j 2026-11-13): brez modrega bliska ob vsakem dotiku in brez oblačka s povezavo, ko pridržiš kartico ali
+   gumb-povezavo (Android, iPhone; JS del v public/dotik.js; namerno za vse povezave, tudi v besedilu lekcij). Odziv na pritisk dajo kartice same (a.card:active). */
+html { -webkit-tap-highlight-color: transparent; }
+@media (pointer: coarse) { a[href] { -webkit-touch-callout: none; -webkit-user-drag: none; } }
+a.card { transition: transform 0.08s, border-color 0.15s; }
+a.card:active { transform: scale(0.985); }
 :focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
 
 /* ---------- gumbi ---------- */
@@ -157,6 +163,19 @@ button.danger { background: none; border: 1.5px solid var(--danger); color: var(
 }
 .tab:hover { color: var(--text); background: var(--surface-2); }
 .tab.active { background: var(--accent-soft); color: var(--accent); }
+/* Odprtje na zadnjem zaslonu (public/zacetek.js): dokler app.js ne pokaže prvega pogleda, Učna pot iz index.html in
+   njen označeni zavihek ne utripneta. */
+html[data-zacetek]:not([data-zacetek-pod]) #view-path:not([data-posnetek]) { display: none; }
+html[data-zacetek] .tabs .tab.active { background: none; color: var(--muted); }
+/* Hiter zagon: posnetek zadnjega zaslona ali okostje (main[data-posnetek], vstavi ga zacetek.js) je samo slika. Ko
+   app.js odkrije pravi pogled, je ta do zamenjave neviden na svojem mestu, posnetek pa pripet čezenj (app.js pinSnapshot). */
+main[data-posnetek] { pointer-events: none; user-select: none; }
+html[data-zacetek-pod] main[data-posnetek] { position: absolute; z-index: 1; margin: 0; flex: none; box-sizing: border-box; }
+html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidden; }
+.zagon-okostje .card { box-shadow: none; border-color: transparent; background: var(--surface-2); min-height: 96px; animation: zagon-okostje 1.4s ease-in-out infinite; }
+.zagon-okostje .zo-a { min-height: 150px; }
+@keyframes zagon-okostje { 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { .zagon-okostje .card { animation: none; } }
 .xp-badge { display: flex; gap: 8px; }
 .stat { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 999px; background: var(--surface-2); font-weight: 800; font-size: 0.92rem; white-space: nowrap; }
 .stat .xp-unit { color: var(--muted); font-weight: 700; font-size: 0.8rem; }
@@ -321,6 +340,22 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 .md-table > thead > tr:not(:has(th:not(:empty))) { display: none; }
 :where(.md-table, .table, .demo-table, .pse-tab, .doc table) [align="center"] { text-align: center; }
 :where(.md-table, .table, .demo-table, .pse-tab, .doc table) [align="right"] { text-align: right; }
+/* Vodoravna tabela (public/vodoravna-tabela.js): stolpci kot tabela, ki se na ozkem zaslonu prelomijo v več vrstic
+   namesto pomika vstran. Robovi se prekrivajo (−1 px), da je črta med celicami enojna kot v tabeli. */
+.md-vod { display: flex; flex-wrap: wrap; row-gap: 8px; width: fit-content; max-width: 100%; margin: 10px 0; padding: 0 1px 1px 0; font-variant-numeric: tabular-nums; }
+.md-vod-st { display: flex; flex-direction: column; margin: 0 -1px -1px 0; border: 1px solid var(--border); background: var(--surface); color: var(--text); text-align: center; }
+.md-vod-c { display: flex; align-items: center; justify-content: center; min-height: 2.6em; padding: 6px 10px; }
+.md-vod-c + .md-vod-c { border-top: 1px solid var(--border); }
+.md-vod-c:last-child { flex: 1 0 auto; }
+.md-vod-v { min-height: 3.6em; }
+.md-vod-h { background: var(--surface-2); font-weight: 800; }
+.md-vod-leg { font-weight: 800; }
+.md-vod .katex { white-space: nowrap; font-size: 1.1em; }
+/* Vodoravna tabela z več vrsticami vrednosti (x | 0 | π/6 | … s sin, cos, tan): na ozkem mestu obrnjena, stolpci postanejo
+   vrstice (public/vodoravna-tabela.js obrnjenaTabela); na širokem ostane, kot jo je zapisal avtor. */
+.md-obrni { container-type: inline-size; }
+.md-obrni-ozka { display: none; }
+@container (max-width: 520px) { .md-obrni-siroka { display: none; } .md-obrni-ozka { display: block; } }
 
 /* Tabela iz Markdowna: tako široka kot vsebina; na ozkem zaslonu se pomika vstran, ne stisne.
    Kratke celice in formule se ne prelamljajo (ulomki ostanejo celi), daljše besedilo se. */
@@ -428,6 +463,17 @@ html[data-tutor-ic] .msg.assistant::after {
 .msg .katex-display:has(.mfrac [data-fx]) { padding-top: 9px; margin-top: calc(1em - 5px); }
 .msg .photo-note { display: flex; align-items: center; gap: 6px; font-size: 0.85em; opacity: 0.9; margin-bottom: 4px; }
 .msg.error { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
+/* Varnostni odgovor (public/nujno.js): miren, ne kot napaka; velike številke za klic, zapre se z ×. */
+.msg.nujno-card { align-self: stretch; max-width: 100%; width: auto; position: relative; background: var(--surface); color: var(--text); border: 2px solid var(--warm); border-radius: var(--radius); padding-block: 14px 12px; padding-inline: 16px 52px; box-shadow: var(--shadow); }
+.nujno-card h3 { margin: 0 0 6px; font-size: 1.1rem; line-height: 1.4; }
+.nujno-card p { margin: 4px 0; }
+.nujno-card .nujno-zapri { position: absolute; inset-inline-end: 6px; top: 6px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); border-radius: var(--radius-sm); cursor: pointer; }
+.nujno-card .nujno-zapri:focus-visible, .nujno-klic:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.nujno-card .nujno-zapri svg { width: 20px; height: 20px; }
+.nujno-klici { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 6px; }
+.nujno-klic { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px; border-radius: var(--radius-sm); background: var(--accent); color: var(--accent-text); font-weight: 700; font-size: 1.05rem; text-decoration: none; }
+.nujno-klic svg { width: 18px; height: 18px; }
+.nujno-card .nujno-opomba { color: var(--muted); font-size: 0.85rem; }
 /* Pika »piše …« na koncu zadnjega odstavka; ::before in ::after mehurčka sta avatar inštruktorja in ju ne smemo zadeti
    (prej je .typing::after avatarju dodal zamik 4 px, utripanje in modro ozadje, zato je bil znak izven sredine). */
 /* Pri seznamu za besedilom zadnje točke, ne v novi vrstici; prazen mehurček dobi <p></p> (app.js, paint). */
@@ -465,6 +511,8 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .adm-rep .pill { background: var(--surface); color: var(--text); } /* --muted na --surface-2 je v slogih Igriv/Temen pod 4,5 : 1 */
 .adm-rep button.small { min-height: 40px !important; }
 .adm-rep-note { margin: 0; overflow-wrap: anywhere; }
+.adm-rep-pr { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; font-weight: 600; overflow-wrap: anywhere; } /* samodejni pregled: povezava na PR s popravkom */
+.adm-rep-pr svg.i { width: 16px; height: 16px; flex: none; }
 .adm-rep-shown { justify-self: stretch; display: grid; gap: 4px; }
 .adm-rep-shown .msg { max-width: 100%; margin: 0; contain: layout paint; } /* posnetek nič ne prekrije zunaj kartice */
 .adm-rep-shown .msg::before, .adm-rep-shown .msg::after { display: none; } /* brez avatarja ob robu kartice */
@@ -775,6 +823,7 @@ label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
 @media (min-width: 761px) {
   .topbar .tabs { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; padding: 4px; margin: -4px; }
   .topbar .tabs::-webkit-scrollbar { display: none; }
+  .topbar .tabs .tab { scroll-margin-inline: 48px; } /* izbrani zavihek se pomakne iz zbledelega roba (dolgi napisi, npr. Povratne informacije) */
   .topbar .tabs.fade-end { mask-image: linear-gradient(to right, black calc(100% - 48px), transparent); -webkit-mask-image: linear-gradient(to right, black calc(100% - 48px), transparent); }
   .topbar .tabs.fade-start { mask-image: linear-gradient(to left, black calc(100% - 48px), transparent); -webkit-mask-image: linear-gradient(to left, black calc(100% - 48px), transparent); }
   .topbar .tabs.fade-start.fade-end { mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent); }
@@ -1059,8 +1108,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 /* Okvir »Zapomni si« v odgovorih inštruktorja (Markdown citat) */
 .msg.assistant blockquote { margin: 10px 0; padding: 8px 12px; border-inline-start: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0; border-start-end-radius: 10px; border-end-end-radius: 10px; }
 .msg.assistant blockquote p { margin: 0.2em 0; }
-.fx-nb { white-space: nowrap; } /* formula in ločilo za njo se ne ločita (rich.js); znotraj formule se vrstica še sme prelomiti */
-.fx-nb .katex-html { white-space: normal; }
+.fx-nb { white-space: nowrap; } /* formula in ločilo za njo se ne ločita (rich.js); tudi znotraj formule se vrstica ne prelomi (j 2026-11-08) */
 
 /* ---------- spodnja vrstica (telefon in tablica na dotik) ---------- */
 .tabbar { display: none; }
@@ -1208,6 +1256,19 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .reward-offer button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
 .reward-offer.calm { border-style: solid; border-width: 1px; background: var(--surface); }
 .reward-offer.calm .reward-ic { background: var(--accent-soft); color: var(--accent); }
+/* Povabi prijatelja po uspehu (public/povabi.js): mirna kartica pod rezultatom, brez pritiska */
+.povabi-slot:empty { display: none; }
+.povabi { max-width: 520px; margin: 16px 0 0; padding: 14px; text-align: start; }
+.povabi-glava { display: flex; align-items: center; gap: 12px; }
+.povabi-ic { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); flex-shrink: 0; }
+.povabi-t { min-width: 0; }
+.povabi-t b, .povabi-t small { display: block; }
+.povabi-t small { color: var(--muted); margin-top: 2px; }
+.povabi-nagrada { margin: 10px 0 0; font-size: .92em; }
+.povabi-vrsta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.povabi-vrsta input { flex: 1 1 200px; min-width: 0; min-height: 44px; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+.povabi-vrsta button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+.povabi-ne { display: block; margin: 8px 0 0; margin-inline-start: auto; min-height: 44px; }
 
 /* Orodja aplikacije pod odgovorom inštruktorja (public/odpri.js): gumbi, formula, graf, skica, okno poskusa. */
 .open-tools { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; min-width: 0; }

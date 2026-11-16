@@ -4,7 +4,7 @@ stanje: osnutek
 ---
 - Glukoza
   - $\mathrm{C_6H_{12}O_6}$, $M = 180\,\text{g/mol}$
-  - obroč s petimi skupinami $\mathrm{{-}OH}$
+  - obroč, pet skupin $\mathrm{{-}OH}$
   - nastane s fotosintezo
 - Ogljikovi hidrati
   - spojine C, H in O

@@ -19,13 +19,15 @@ Izmerimo pri $f = 1592\,\mathrm{Hz}$: na kondenzatorju je $50\,\mathrm{V}$ ampli
 
 Napaka je v besedi »seštejejo«. Kirchhoffov zakon velja za **kazalce** (kompleksne amplitude), ne za njihove velikosti. Napetost tuljave prehiteva tok za $90^\circ$, napetost kondenzatorja zaostaja za $90^\circ$. Kazalca sta nasprotna in se lahko skoraj odštejeta, čeprav je vsak zase velik.
 
-```
-   U_L ↑  50 V
-       |
-  U_R  +-----→ 5 V  (= U vira)
-       |
-   U_C ↓  50 V
-```
+:::risba skica
+opis: Kazalčni diagram napetosti zaporednega kroga pri resonanci, narisan v merilu. Kazalec napetosti tuljave kaže navpično navzgor in je dolg 50 voltov. Kazalec napetosti kondenzatorja kaže navpično navzdol in je dolg 50 voltov. Kazalec napetosti upornika kaže vodoravno v desno in je dolg 5 voltov; enak je napetosti vira. Navpična kazalca sta nasprotna in se odštejeta.
+območje: -9; -12 .. 13; 12
+enota: 12
+puščica: 0; 0 -> 0; 10 | U_L = 50 V | desno | modra debelo
+puščica: 0; 0 -> 0; -10 | U_C = 50 V | desno | oranžna debelo
+puščica: 0; 0 -> 1; 0 | U_R = U = 5 V | desno | zelena debelo
+podnapis: Kazalci napetosti pri resonanci v merilu: napetosti tuljave in kondenzatorja (vsaka 50 V) sta nasprotni, ostane napetost upornika 5 V.
+:::
 
 ### Zaporedni nihajni krog
 
@@ -73,16 +75,21 @@ $$B = \frac{R}{L} = \frac{\omega_0}{Q}, \qquad \omega_1\omega_2 = \omega_0^2.$$
 
 Resonančna frekvenca je torej **geometrijska** sredina mejnih, ne aritmetična; pri velikem $Q$ je razlika zanemarljiva.
 
-```
- I/I0
- 1,0 |        _
-     |       / \
- 0,71|------/---\------
-     |    _/     \_
-     |___/         \___
-     +-----+--+--+------ f
-          f1 f0 f2
-```
+:::risba graf
+opis: Resonančna krivulja zaporednega kroga s kvaliteto 10: razmerje toka in toka pri resonanci v odvisnosti od frekvence. Krivulja ima vrh z vrednostjo 1 pri resonančni frekvenci f₀ in na obe strani strmo pada. Vodoravna črtkana črta pri 0,71 seka krivuljo pri mejnih frekvencah f₁ (0,951 f₀) in f₂ (1,051 f₀). Razdalja med njima je pasovna širina, desetina f₀.
+x: 0,7 .. 1,3 | 0,1 | f / f_0
+y: 0 .. 1,1 | 0,25 | I / I_0
+f: 1/sqrt(1 + 100*(x - 1/x)^2) | modra debelo
+črta: 0,7; 0,707 -> 1,3; 0,707 | črtkano siva
+črta: 0,951; 0 -> 0,951; 0,707 | črtkano siva
+črta: 1,051; 0 -> 1,051; 0,707 | črtkano siva
+črta: 1; 0 -> 1; 1 | črtkano siva
+točka: 0,951; 0,707 | f_1 | nad levo
+točka: 1,051; 0,707 | f_2 | nad desno
+točka: 1; 1 | f_0 | nad
+napis: 1,2; 0,76 | 0,71 | nad
+podnapis: Resonančna krivulja pri Q = 10: med mejnima frekvencama je tok vsaj 0,71 največjega.
+:::
 
 ### Vzporedni nihajni krog
 
@@ -92,7 +99,7 @@ $$Y = \frac{1}{R} + \mathrm{j}\left(\omega C - \frac{1}{\omega L}\right).$$
 
 Resonanca je spet pri $\omega_0 = 1/\sqrt{LC}$, a tu je pri resonanci **admitanca** najmanjša, **impedanca** največja ($Z = R$) in tok iz vira najmanjši. Kvaliteta je $Q = R/(\omega_0 L) = \omega_0 RC$, pasovna širina $B = 1/(RC)$. Tokova skozi tuljavo in kondenzator sta pri resonanci $Q$-krat večja od toka vira: med njima kroži velik tok, vir pa dovaja le izgube.
 
-**Realni vzporedni krog.** V praksi ima upornost predvsem tuljava: veja $R + \mathrm{j}\omega L$, vzporedno pa $C$. Ničli jalovega dela admitance da
+**Realni vzporedni krog.** V praksi ima upornost predvsem tuljava: veja $R + \mathrm{j}\omega L$, vzporedno pa $C$. Ničla jalovega dela admitance da
 
 $$\omega_0 = \sqrt{\frac{1}{LC} - \frac{R^2}{L^2}}, \qquad Z_0 = \frac{L}{RC}.$$
 
@@ -166,7 +173,7 @@ $\omega_0 = \sqrt{\dfrac{1}{LC} - \dfrac{R^2}{L^2}}$, $Z_0 = \dfrac{L}{RC}$, $Q 
 4. Harmonska napetost z baterijo: $U_5 = 2{,}0 \cdot 30{,}9\,\mathrm{V} \approx 62\,\mathrm{V}$, to je $62/230 \approx 27\,\%$ fazne napetosti.
 5. Brez baterije teče harmonski tok le skozi omrežje: reaktanca $\omega L = 1571 \cdot 5{,}0 \cdot 10^{-4}\,\Omega \approx 0{,}785\,\Omega$ in $Z_L = \sqrt{0{,}020^2 + 0{,}785^2}\,\Omega \approx 0{,}786\,\Omega$, zato $U_5 \approx 1{,}57\,\mathrm{V}$, okoli $0{,}7\,\%$.
 6. Kvaliteta: $Q = 1571 \cdot 5{,}0 \cdot 10^{-4}/0{,}020 \approx 39$. Razmerje obeh napetosti, $62/1{,}57 \approx 39$, je enako $Q$.
-7. Odgovor: resonanca je pri $250\,\mathrm{Hz}$; baterija harmonsko napetost poveča s $1{,}6\,\mathrm{V}$ na okoli $62\,\mathrm{V}$, kar je okoli $39$-kratno povečanje (kvaliteta kroga). Standard kakovosti napetosti dovoljuje za peto harmonsko komponento okoli $6\,\%$; zato baterijam dodajo dušilke, ki resonanco premaknejo pod $250\,\mathrm{Hz}$.
+7. Odgovor: resonanca je pri $250\,\mathrm{Hz}$; baterija harmonsko napetost poveča z $1{,}6\,\mathrm{V}$ na okoli $62\,\mathrm{V}$, kar je okoli $39$-kratno povečanje (kvaliteta kroga). Standard kakovosti napetosti dovoljuje za peto harmonsko komponento okoli $6\,\%$; zato baterijam dodajo dušilke, ki resonanco premaknejo pod $250\,\mathrm{Hz}$.
 
 ### Primer 4 – zdaj ti
 

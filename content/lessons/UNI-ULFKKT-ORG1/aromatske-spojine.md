@@ -27,7 +27,7 @@ Benzen ni edini tak obroč. **Hücklovo pravilo:** spojina (molekula ali ion) je
 - vsak atom v obroču ima orbitalo $p$ (sklenjen, nepretrgan sistem $\pi$),
 - v sistemu $\pi$ je $4n + 2$ elektronov ($n = 0, 1, 2, \ldots$), torej $2$, $6$, $10$, $14$ …
 
-Če so prvi dve točki izpolnjeni, elektronov $\pi$ pa je $4n$ ($4$, $8$ …), je spojina **antiaromatska** in posebno nestabilna. Molekule, ki prvih dveh točk ne izpolnijo, so **nearomatske**: obnašajo se kot navadni polieni. Pravilo velja strogo za monociklične sisteme; pri zlitih obročih (naftalen) štejemo vse elektrone $\pi$ in ga uporabljamo kot dobro oceno.
+Če sta prvi dve točki izpolnjeni, elektronov $\pi$ pa je $4n$ ($4$, $8$ …), je spojina **antiaromatska** in posebno nestabilna. Molekule, ki prvih dveh točk ne izpolnijo, so **nearomatske**: obnašajo se kot navadni polieni. Pravilo velja strogo za monociklične sisteme; pri zlitih obročih (naftalen) štejemo vse elektrone $\pi$ in ga uporabljamo kot dobro oceno.
 
 **Utemeljitev (teorija MO).** V ravnem, cikličnem sistemu z $N$ orbitalami $p$ da Hücklova metoda energije $E_k = \alpha + 2\beta\cos\dfrac{2\pi k}{N}$, $k = 0, 1, \ldots, N - 1$, kjer je $\beta < 0$.
 1. Najnižja orbitala ($k = 0$, $E = \alpha + 2\beta$) je ena sama; orbitali $k$ in $N - k$ imata enako energijo, zato so višje orbitale v degeneriranih parih (pri sodem $N$ je ena sama še najvišja, $k = N/2$, ki je protivezna in pri štetju veznih elektronov ne nastopi).
@@ -88,7 +88,7 @@ Skupina, ki je že na obroču, odloči, kako hitro poteče naslednja substitucij
 
 - **Aktivirajoče skupine** ($-\text{OH}$, $-\text{OR}$, $-\text{NH}_2$, alkil) dajejo obroču elektrone. Pri napadu na orto ali para mesto pride pozitivni naboj na ogljik s to skupino, ki ga stabilizira (pri $-\text{OH}$ celo z neveznim parom kisika). Usmerjajo **orto/para**, reakcija je hitrejša kot pri benzenu.
 - **Deaktivirajoče skupine** ($-\text{NO}_2$, $-\text{CN}$, $-\text{CHO}$, $-\text{COR}$, $-\text{COOH}$, $-\text{SO}_3\text{H}$) elektrone odvzemajo. Pri orto/para napadu bi pozitivni naboj sedel tik ob skupini, ki ga ne prenese. Ostane **meta**, reakcija je počasnejša.
-- **Halogeni** so izjema: z induktivnim učinkom obroč deaktivirajo, z neveznim parom pa stabilizirajo orto/para ion. Usmerjajo **orto/para**, a so počasnejši od benzena.
+- **Halogeni** so izjema: z induktivnim učinkom obroč deaktivirajo, z neveznim parom pa stabilizirajo orto/para ion. Usmerjajo **orto/para**, a je reakcija počasnejša kot pri benzenu.
 
 **Utemeljitev usmerjanja.** Naj bo skupina G na C1. Narišemo resonančne strukture areniumskega iona za napad na C2 (orto), C3 (meta) in C4 (para).
 1. Pozitivni naboj je vedno na ogljikih v orto in para položaju glede na mesto napada.
@@ -135,7 +135,7 @@ $\text{ArH} + \text{E}^+ \to [\text{Ar(H)E}]^+ \to \text{ArE} + \text{H}^+$
 
 **Rešitev:**
 
-1. Nastanek elektrofila: $\text{FeBr}_3$ sprejme par z enega broma. Vez Br–Br se polarizira, zunanji brom postane $\text{Br}^{\delta+}$, ker je sam brom za benzen prešibak elektrofil.
+1. Nastanek elektrofila: $\text{FeBr}_3$ sprejme par z enega broma. Vez Br–Br se polarizira, zunanji brom postane $\text{Br}^{\delta+}$. To je potrebno, ker je sam brom za benzen prešibak elektrofil.
 2. Napad: par $\pi$ benzena napade $\text{Br}^{\delta+}$, nastaneta areniumski ion in $\text{FeBr}_4^-$. Aromatičnost se začasno izgubi, zato je to počasni korak.
 3. Deprotonacija: $\text{FeBr}_4^-$ odvzame proton z ogljika, ki nosi brom. Obroč je spet aromatski, nastaneta $\text{HBr}$ in spet $\text{FeBr}_3$, torej je ta res katalizator.
 4. Odgovor: nastane bromobenzen ($\text{C}_6\text{H}_5\text{Br}$) in $\text{HBr}$; obroč ostane aromatski.
@@ -181,7 +181,7 @@ $-\text{OR}$: aktivirajoča skupina, usmerja orto/para.
 :::premisli
 Katera produkta nastaneta in kako hitra je reakcija?
 ---
-Nastaneta 2-nitroanizol (orto) in 4-nitroanizol (para); para pogosto prevladuje, ker je orto mesto sterično bolj oviran. Reakcija je hitrejša kot pri benzenu, ker je $-\text{OCH}_3$ aktivirajoča skupina.
+Nastaneta 2-nitroanizol (orto) in 4-nitroanizol (para); para pogosto prevladuje, ker je orto mesto sterično bolj ovirano. Reakcija je hitrejša kot pri benzenu, ker je $-\text{OCH}_3$ aktivirajoča skupina.
 :::
 
 ## Pogoste napake

@@ -120,10 +120,10 @@ test("kopija dobi oznako različice, ki jo je poslal strežnik (ne APP service w
 
 // Pregled B2 P2-1: stara stran iz predpomnilnika (vstopna stran zamuja) do osvežitve dobiva svoje lene module.
 test("počasna vstopna stran ob objavi: stara stran dobi lene module svoje različice, nova stran nove", async () => {
-  const sw = loadSw("stara", { served: "nova", slowEntry: 3000, open: ["stara-stran"] });
+  const sw = loadSw("stara", { served: "nova", slowEntry: 1500, open: ["stara-stran"] });
   const st = await sw.caches.open("evklid-v1-static");
   for (const f of ["/", "/app.js", "/graph/tools.js"]) await st.put(`${ORIGIN}${f}`, new Response(`staro:${f}`, { headers: { "X-Evklid-App": "stara" } }));
-  assert.equal(await sw.get("/", "navigate", { resultingClientId: "stara-stran" }), "staro:/", "v roku 2,5 s shranjena stran");
+  assert.equal(await sw.get("/", "navigate", { resultingClientId: "stara-stran" }), "staro:/", "po roku vstopne strani (1 s) shranjena stran");
   await new Promise((r) => setTimeout(r, 700)); // odgovor nove različice pride, kopije za odprto staro stran ostanejo
   assert.equal(await sw.get("/graph/tools.js", "no-cors", { clientId: "stara-stran" }), "staro:/graph/tools.js");
   assert.equal(await sw.get("/graph/tools.js", "no-cors", { clientId: "nova-stran" }), `net:${ORIGIN}/graph/tools.js`);
@@ -145,7 +145,7 @@ test("vstopna stran brez povezave (omrežje ne odgovori): v kratkem roku shranje
   await (await sw.caches.open("evklid-v1-static")).put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
   const t0 = Date.now();
   assert.equal(await sw.get("/", "navigate"), "shranjena stran");
-  assert.ok(Date.now() - t0 < 3500, "rok vstopne strani je kratek");
+  assert.ok(Date.now() - t0 < 2000, "rok vstopne strani je kratek (1 s)");
 });
 
 test("nova različica aplikacije: stara kopija ni več sveža, gre na omrežje", async () => {

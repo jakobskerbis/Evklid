@@ -446,7 +446,8 @@ body.graph-open { overflow: hidden; }
 .fm-bar { padding-top: 12px; }
 /* kazalo poglavij ostane na vrhu, ko se pomikaš po zbirki */
 .fm-sel { display: flex; flex-wrap: wrap; gap: 8px 12px; justify-content: center; }
-.fm-toc { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 6px 0; margin: -6px 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.fm-toc-bar { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 6px 0; margin: -6px 0; }
+.fm-toc { position: relative; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
 .fm-toc::-webkit-scrollbar { display: none; }
 .fm-toc > button { flex: none; }
 .fm-body { display: flex; flex-direction: column; gap: 12px; }
@@ -466,6 +467,14 @@ body.graph-open { overflow: hidden; }
 .fm-f { min-width: 0; overflow-x: auto; overflow-y: hidden; line-height: 1.55; padding: 2px 0; }
 .fm-f .katex { white-space: nowrap; }
 .fm-f p { margin: 0; }
+/* Štiri stopnje (OŠ, SŠ, Tekmovanja, Fakulteta) v vrstici ne gredo na telefon: dve po dve, brez pomikanja vstran;
+   dolg napis (npr. v španščini) se prelomi v dve vrstici. */
+@media (max-width: 720px) {
+  .fm-sel .fm-lvl { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; border-radius: 22px; }
+  .fm-sel .fm-lvl > button { min-width: 0; white-space: normal; }
+}
+/* zelo ozek telefon: »Mathématiques« in »Mathematics« sta preširoka za tri predmete v vrstici */
+@media (max-width: 360px) { .fm-sel .seg > button { padding: 6px 6px !important; } }
 @media (max-width: 600px) {
   .fm-wrap { padding: 0 12px 20px; }
   .fm-sel .seg { width: 100%; }
@@ -653,6 +662,23 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 [dir="rtl"] .sc-acts, [dir="rtl"] .sc-err { justify-content: flex-start; }
 [dir="rtl"] .sc-const { text-align: right; }
 
+/* ---------- tabele s tremi ali več stolpci v listu formul (Telo | Površina | Prostornina) ----------
+   Na telefonu se vrstica zloži v kartico: prvi stolpec je naslov, pod njim vsaka vrednost z imenom svojega stolpca
+   (data-label, public/vodoravna-tabela.js), da se tabela nikoli ne pomika vstran. */
+.fm-sec .md-table-wrap:has(> .md-stolpci) { container-type: inline-size; }
+@container (max-width: 560px) {
+  .fm-sec table.md-stolpci, .fm-sec .md-stolpci > tbody, .fm-sec .md-stolpci > tbody > tr, .fm-sec .md-stolpci > tbody > tr > td { display: block; }
+  .fm-sec table.md-stolpci { width: 100%; }
+  .fm-sec .md-stolpci > thead { display: none; }
+  .fm-sec .md-stolpci > tbody > tr + tr { border-top: 1px solid var(--border); }
+  .fm-sec .md-stolpci > tbody > tr.fm-skica-row { border-top: 0; }
+  .fm-sec .md-stolpci > tbody > tr > td { border: 0; padding: 6px 12px; background: none; text-align: start; }
+  .fm-sec .md-stolpci > tbody > tr > td:first-child { background: var(--surface-2); font-weight: 800; }
+  .fm-sec .md-stolpci > tbody > tr.fm-skica-row > td { background: none; padding: 4px 0 12px; }
+  .fm-sec .md-stolpci > tbody > tr > td:empty:not(:first-child) { display: none; }
+  .fm-sec .md-stolpci td[data-label]:not(:first-child, :empty)::before { content: attr(data-label); display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
+}
+
 /* ---------- interaktivne skice v karticah formul (public/skice/) ---------- */
 /* Temen okvir v obeh temah; barve količin so enake v skici, čipu in drsniku. */
 .fm-item.has-skica { grid-template-columns: minmax(0, 1fr); }
@@ -691,11 +717,15 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-pt .sk-ring { fill: color-mix(in srgb, var(--sk-pt) 28%, transparent); stroke: none; }
 .sk-pt .sk-core { fill: var(--sk-pt); stroke: #fff; stroke-width: 2; }
 .sk-pt:focus-visible .sk-ring { stroke: #fff; stroke-width: 2; }
-.sk-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.sk-chip { direction: ltr; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 2px 7px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); font-size: 0.92rem; }
+/* Okna s podatki: stalna mreža (stolpci le po širini, ne po vsebini), vsa okna enako visoka, oznaka vedno nad
+   vrednostjo; nič se ne prelomi in nič ne skače, ko drsnik spremeni vrednost (j, 12. 11. 2026). */
+.sk-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); grid-auto-rows: 1fr; gap: 6px; }
+.sk-chip { direction: ltr; display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: center; align-items: center; gap: 3px 7px; min-width: 0; padding: 6px 10px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); font-size: 0.92rem; }
+.sk-chip-siroko { grid-column: 1 / -1; }
 .sk-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18); flex: none; }
+.sk-tex { min-width: 0; white-space: nowrap; overflow-x: clip; }
 .sk-tex .katex { white-space: nowrap; }
-.sk-val { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; }
+.sk-val { grid-column: 1 / -1; min-width: 0; min-height: 1.35em; line-height: 1.35; white-space: nowrap; overflow-x: clip; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; font-variant-numeric: tabular-nums; }
 .sk-glavna { --sk-c: #8a8fa8; }
 .sk-ploskev { --sk-c: var(--sk-ploskev); }
 .sk-izbor { --sk-c: var(--sk-izbor); }
@@ -717,7 +747,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-ctl .demo-slider-label::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); margin-inline-end: 6px; }
 .sk-ctl input[type="range"] { accent-color: var(--sk-c); min-height: 40px;
   background: linear-gradient(to right, var(--sk-c) var(--sk-p, 0%), transparent var(--sk-p, 0%)) center / 100% 4px no-repeat; }
-.sk-ctl output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; min-width: 4.5ch; text-align: end; }
+.sk-ctl output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; min-width: 4.5ch; text-align: end; white-space: nowrap; }
 .sk-svg .sk-n { font: 500 11px/1 var(--font, system-ui), sans-serif; fill: var(--sk-glavna); opacity: 0.7; }
 .sk-svg .sk-grid { stroke: var(--sk-line); stroke-width: 1; }
 .sk-svg .sk-fill { stroke: none; }

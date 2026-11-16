@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lomni količnik
+  - $n = c_0/c \ge 1$; voda $1{,}33$, steklo okoli $1{,}5$
+  - $\lambda = \lambda_0/n$, frekvenca se ne spremeni
+- Lomni zakon
+  - $n_1\sin\alpha = n_2\sin\beta$, koti od vpadne pravokotnice
+  - v gostejšo snov: lom k pravokotnici
+  - zrak–voda: $40^\circ$ da $28{,}9^\circ$
+- Totalni odboj
+  - $\sin\alpha_m = n_2/n_1$, le iz gostejše v redkejšo
+  - optična vlakna, refraktometer
+- Tanke leče
+  - $1/a + 1/b = 1/f$, $M = -b/a$
+  - $b < 0$ navidezna slika, $f < 0$ razpršilna leča
+  - lomnost $1/f$ v dioptrijah, $1\,\mathrm{dpt} = 1\,\mathrm{m^{-1}}$
+- Interferenca
+  - ojačitev $\Delta = m\lambda$, oslabitev $\Delta = (m + \tfrac{1}{2})\lambda$
+  - pogoj: koherentni valovanji
+- Reži in mrežica
+  - $d\sin\theta = m\lambda$, največji red $m \le d/\lambda$
+  - dve reži: $\Delta y = \lambda L/d$
+- Tanke plasti
+  - razlika poti $2nh$ pri pravokotnem vpadu
+  - odboj na gostejši snovi: fazni skok $\pi$
+- Uklon in ločljivost
+  - reža: temne proge $D\sin\theta = m\lambda$
+  - okrogla odprtina: $\sin\theta \approx 1{,}22\lambda/D$
+  - modra svetloba loči drobneje kot rdeča

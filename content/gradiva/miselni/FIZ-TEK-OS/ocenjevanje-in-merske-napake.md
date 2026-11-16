@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ocena
+  - razbij na korake, okrogla števila
+  - rezultat z enim ali dvema mestoma
+- Odčitek
+  - natančen na najmanjši razdelek
+  - pravokoten pogled, brez paralakse
+- Povprečje
+  - $\bar{x} = \dfrac{x_1 + x_2 + \dots + x_n}{n}$
+  - ni nujno enako kateri meritvi
+- Absolutna napaka
+  - največje odstopanje od $\bar{x}$
+  - enake meritve: najmanjši razdelek
+  - ni razpon ne vsota odstopanj
+- Zapis rezultata
+  - $x = \bar{x} \pm \Delta x$
+  - napaka na eno mesto
+  - več decimalk ni večja natančnost
+- Relativna napaka
+  - $\delta = \dfrac{\Delta x}{\bar{x}}$, v odstotkih
+  - primerja različno velike meritve
+- Tekmovalne strategije
+  - skladovnica: $\Delta d = \dfrac{\Delta D}{N}$
+  - vsota: absolutni napaki se seštejeta
+  - produkt: najmanjša in največja vrednost

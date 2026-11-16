@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Poskus z amilazo
+  - škrob v klistru, test z jodovico
+  - brez encima ni razgradnje
+- Encim
+  - beljakovina, biološki katalizator
+  - se ne porabi, zniža aktivacijsko energijo
+- Aktivno mesto
+  - model ključa in ključavnice
+  - encim je specifičen za substrat
+- Hitrost reakcije
+  - $v = \dfrac{m}{t}$, enota mg/min
+  - $+10\,^\circ\text{C}$ pod optimumom: približno dvakrat hitreje
+- Temperatura in pH
+  - optimum okoli $37\,^\circ\text{C}$, vročina denaturira
+  - mraz le upočasni
+  - pepsin pH $2$, amilaza pH $7$
+- Presnova
+  - razgradnja sprošča, izgradnja porabi energijo
+- ATP
+  - adenin, riboza, tri fosfatne skupine
+  - ATP → ADP + fosfat sprosti energijo
+  - napaka: ATP kot dolgoročna zaloga energije

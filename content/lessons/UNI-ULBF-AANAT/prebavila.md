@@ -58,7 +58,7 @@ Tešče in vito črevo sta intraperitonealna in visita na gibljivem mezenteriju.
 
 **3. Jetra.** **Jetra** so največja žleza v telesu (pri odraslem okoli $1{,}5\,\mathrm{kg}$). Ležijo v desnem zgornjem delu trebuha pod prepono. Na sprednji strani **srpasta vez** loči večji desni in manjši levi reženj; na spodnji strani sta med njima še **kvadratni** in **repati** reženj.
 
-**Jetrna vrata** so žleb na spodnji strani jeter. Skozi njih vstopata **portalna vena** in **lastna jetrna arterija** (z desno in levo vejo), izstopata pa desni in levi jetrni vod, ki se tik pod vrati združita v **skupni jetrni vod**. Portalna vena, lastna jetrna arterija in žolčni vod (zgoraj skupni jetrni vod, pod pritokom voda žolčnika skupni žolčevod) potekajo v **hepatoduodenalni vezi** (desni rob malega omentuma).
+**Jetrna vrata** so žleb na spodnji strani jeter. Skoznje vstopata **portalna vena** in **lastna jetrna arterija** (z desno in levo vejo), izstopata pa desni in levi jetrni vod, ki se tik pod vrati združita v **skupni jetrni vod**. Portalna vena, lastna jetrna arterija in žolčni vod (zgoraj skupni jetrni vod, pod pritokom voda žolčnika skupni žolčevod) potekajo v **hepatoduodenalni vezi** (desni rob malega omentuma).
 
 **Dvojni dotok krvi.** Jetra dobijo okoli $75\,\%$ krvi po portalni veni (bogata s hranili, revna s kisikom) in okoli $25\,\%$ po jetrni arteriji (bogata s kisikom). Obe se pomešata v **sinusoidih** in odtečeta v **centralno veno** jetrnega režnjiča, od tam po **jetrnih venah** naravnost v spodnjo votlo veno. Jetrne vene torej **ne** gredo skozi jetrna vrata.
 
@@ -116,7 +116,7 @@ $Q_\mathrm{j} = 0{,}28 \cdot 5{,}2\,\mathrm{L/min}$; $Q_\mathrm{p} = 0{,}75\,Q_\
 
 ### Primer 3 (težji)
 
-Ultrazvok pokaže žolčni kamen. Za vsako lego napovej, ali bo bolnik zlatenast in ali grozi vnetje trebušne slinavke: (a) v vodu žolčnika, (b) v skupnem žolčevodu nad trebušno slinavko, (c) tik pred veliko dvanajstnikovo papilo, kjer se združi z glavnim vodom trebušne slinavke.
+Ultrazvok pokaže žolčni kamen. Za vsako lego napovej, ali bo bolnik zlateničen in ali grozi vnetje trebušne slinavke: (a) v vodu žolčnika, (b) v skupnem žolčevodu nad trebušno slinavko, (c) tik pred veliko dvanajstnikovo papilo, kjer se združi z glavnim vodom trebušne slinavke.
 
 **Podatki:** tri lege kamna (a)–(c); žolč nastaja v jetrih, žolčnik ga shranjuje; vod trebušne slinavke se navadno izliva skupaj z žolčevodom
 **Iščemo:** za vsako lego: zlatenica da/ne, vnetje trebušne slinavke da/ne
@@ -152,7 +152,7 @@ Vene črevesja → portalni sistem → jetra → spodnja votla vena → srce →
 :::premisli
 Kako gre pot naprej?
 ---
-Desni prekat → pljučno deblo → pljuča → pljučne vene → levi preddvor → levi prekat → aorta → aortni lok → ramenoglavično deblo in iz njega desna skupna karotidna arterija oziroma leva skupna karotidna arterija → notranji karotidni arteriji (in vretenčni arteriji iz podključničnih).
+Desni prekat → pljučno deblo → pljuča → pljučne vene → levi preddvor → levi prekat → aorta → aortni lok → ramenoglavično deblo in iz njega desna skupna karotidna arterija, leva skupna karotidna arterija pa izhaja neposredno iz aortnega loka → notranji karotidni arteriji (in vretenčni arteriji iz podključničnih).
 :::
 
 ## Pogoste napake
@@ -185,7 +185,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Jetra iz krvi, ki gre skozi njih, odstranijo $70\,\%$ zdravila (razmerje izločanja $E = 0{,}7$); pretok krvi skozi jetra je $1{,}5\,\mathrm{L/min}$. Zdravilo se iz črevesa vsrka v celoti. (a) Kolikšen delež peroralnega odmerka pride v veliki obtok? (b) Kolikšen peroralni odmerek da enako količino v obtoku kot $10\,\mathrm{mg}$ v veno? (c) Kolikšen je jetrni očistek $Q \cdot E$? (d) Zakaj se učinek prvega prehoda pri zdravilu pod jezik ne pojavi?
+Jetra iz krvi, ki gre skoznje, odstranijo $70\,\%$ zdravila (razmerje izločanja $E = 0{,}7$); pretok krvi skozi jetra je $1{,}5\,\mathrm{L/min}$. Zdravilo se iz črevesa vsrka v celoti. (a) Kolikšen delež peroralnega odmerka pride v veliki obtok? (b) Kolikšen peroralni odmerek da enako količino v obtoku kot $10\,\mathrm{mg}$ v veno? (c) Kolikšen je jetrni očistek $Q \cdot E$? (d) Zakaj se učinek prvega prehoda pri zdravilu pod jezik ne pojavi?
 
 **Rešitev:**
 

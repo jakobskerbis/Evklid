@@ -174,6 +174,7 @@ export function predracunHtml(o, now = new Date()) {
   return `<!doctype html>
 <html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Predračun ${esc(number)}</title>
+<script src="/predracun.js" defer></script>
 <style>
   body { font-family: system-ui, sans-serif; color: #111; background: #fff; max-width: 800px; margin: 0 auto; padding: 24px 16px; line-height: 1.45; }
   h1 { font-size: 1.5rem; margin: 0 0 4px; }
@@ -190,7 +191,7 @@ export function predracunHtml(o, now = new Date()) {
   @media print { button { display: none; } body { padding: 0; } }
 </style></head>
 <body>
-<button type="button" onclick="window.print()">Natisni ali shrani kot PDF</button>
+<button type="button" id="natisni">Natisni ali shrani kot PDF</button>
 <h1>Predračun št. ${esc(number)}</h1>
 <p>Datum izdaje: ${esc(issued)} · Rok plačila: ${PAYMENT_DAYS} dni (do ${esc(due)})</p>
 <div class="cols">

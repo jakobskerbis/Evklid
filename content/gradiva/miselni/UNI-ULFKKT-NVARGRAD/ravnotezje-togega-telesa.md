@@ -15,7 +15,7 @@ stanje: osnutek
   - vpetje da tudi moment
 - Statična določenost
   - $n = 3$ določeno, $n < 3$ mehanizem
-  - vzporedne ali sočasne reakcije: labilno
+  - reakcije vzporedne ali skozi isto točko: labilno
 - Prostoležeči nosilec
   - $A_y = F\,b/l$, $B = F\,a/l$
   - bližja podpora nosi več

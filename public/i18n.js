@@ -4,6 +4,7 @@
 // po tem (public/zagon.js), zato lahko ti t() kličejo že ob nalaganju. Brez top-level await: Safari ima
 // z njim napako, ko modul uvaža več modulov hkrati (WebKit 242740, aplikacija na iPadu se ni izrisala).
 import SL from "./i18n/sl.js";
+import { zavrzi } from "./odgovor.js";
 import { DEFAULT_LANGUAGE, LANGUAGES, isLanguage, langInfo, uiChain, UI_LANGUAGES, detectLanguage, homeLanguage } from "./i18n/languages.js";
 
 const KEY = "evklid.lang";
@@ -41,7 +42,7 @@ async function fetchDict(code) {
   if (!UI_LANGUAGES.includes(file) || file === "sl") return null;
   try {
     const res = await fetch(`i18n/ui/${file}.json`);
-    if (!res.ok) return null;
+    if (!res.ok) return zavrzi(res), null;
     const d = await res.json();
     return code === "sr-Latn" ? translit(d) : d;
   } catch {

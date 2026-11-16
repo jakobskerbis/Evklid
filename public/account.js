@@ -177,6 +177,7 @@ const lockError = (err) => (unreachable(err) ? t("lock.offline") : err.status ==
 
 export function openProfileLock(student, students = []) {
   $("#lock-overlay")?.remove();
+  window.evklidZacetek?.pozabi?.(); // zaklep (tudi med uporabo, 423): posnetek zadnjega zaslona izgine (public/zacetek.js)
   const set = !student.locked;
   const others = students.filter((s) => s.id !== student.id);
   const pw = (name, auto, label) =>
@@ -303,7 +304,10 @@ function showError(form, err) {
 // pred Učno potjo (naloga hitrost, j 6. 11. 2026). Samo branje; initAccount ga porabi enkrat.
 let statusEarly = null;
 export function prefetchAccountStatus() {
-  statusEarly ||= api("/api/account/status").catch(() => ({ enabled: false }));
+  // Klic je zagon že začel v <head> (public/zacetek.js); neuspel ali star odgovor ne velja, takrat običajni klic.
+  statusEarly ||= Promise.resolve(window.evklidZacetek?.vnaprej?.("/api/account/status"))
+    .then((early) => early ?? api("/api/account/status"))
+    .catch(() => ({ enabled: false }));
 }
 
 export async function initAccount({ onReady }) {
@@ -575,7 +579,7 @@ function renderLogin(mode = "login") {
 
 // Premlad za lasten račun: povezava za starše s vsemi podatki (kaj je Evklid, podatki, cena, soglasje).
 function renderAskParent(minAge) {
-  const linkFor = (name) => `${location.origin}/starsi.html${name ? `?ime=${encodeURIComponent(name)}` : ""}`;
+  const linkFor = (name) => `${location.origin}/starsi.html?${name ? `ime=${encodeURIComponent(name)}&` : ""}prosnja=1`; // prosnja: starsi.js pokaže obvestilo
   shell(`
     <h1>Vprašaj starše</h1>
     <p class="muted">${minAge ? `Za mlajše od ${minAge} let` : "Za mlajše učence"} račun ustvari starš ali skrbnik. Vpiši e-naslov starša in Evklid mu pošlje povezavo, ali pa mu jo pošlji sam(a). Tam piše, kaj je Evklid, katere podatke hranimo in koliko stane. Ko starš ustvari račun in doda tvoj profil, se lahko začneš učiti.</p>
@@ -599,7 +603,7 @@ function renderAskParent(minAge) {
   const link = () => linkFor(f.name.value.trim());
   const text = () => {
     const n = f.name.value.trim();
-    return `${n ? `${n} bi rad(a)` : "Rad(a) bi"} uporabljal(a) Evklid, AI inštruktorja za matematiko, fiziko in kemijo. Za to potrebujem tvoje dovoljenje:`;
+    return `${n ? `${n} bi rad(a)` : "Rad(a) bi"} uporabljal(a) Evklid, AI inštruktorja za matematiko, fiziko, kemijo, biologijo in naravoslovje. Za to potrebujem tvoje dovoljenje:`;
   };
   const mail = () => (location.href = `mailto:?subject=${encodeURIComponent("Evklid – prosim za dovoljenje")}&body=${encodeURIComponent(`${text()}\n${link()}`)}`);
   f.name.addEventListener("input", () => (f.link.value = link()));
@@ -821,7 +825,7 @@ function bindBirthForm(form, onDone) {
 // Mlajši od starosti digitalne privolitve: datum je shranjen, za soglasje pa velja pot prek staršev kot pri registraciji.
 const underAgeHtml = (minAge) => `<div class="birth-under" role="status">
       <p>${esc(t("birth.underAge", { age: minAge }))}</p>
-      <p><a href="/starsi.html" target="_blank">${esc(t("birth.parents"))}</a></p>
+      <p><a href="/starsi.html?prosnja=1" target="_blank">${esc(t("birth.parents"))}</a></p>
     </div>`;
 
 function renderBirth() {
@@ -932,7 +936,17 @@ function bindChildForm(after) {
     const knownYear = own && status?.parent?.birth_year;
     f.querySelector(".year-field").hidden = fixedSelf || !!knownYear;
     f.birth_year.required = !(fixedSelf || knownYear);
+    fillName(own);
   };
+  // Lasten profil: ime iz registracije se vpiše samo (dijak ga ne tipka dvakrat). Pri profilu za otroka
+  // ostane prazno (ime imetnika je ime starša); samodejno vpisano ime se ob preklopu pobriše, ročno vpisano ne.
+  const ownName = String(status?.parent?.name || "").trim().slice(0, 40);
+  const fillName = (own) => {
+    if (own && ownName && !f.name.value.trim()) (f.name.value = ownName), (f.name.dataset.auto = "1");
+    else if (!own && f.name.dataset.auto) (f.name.value = ""), delete f.name.dataset.auto;
+  };
+  f.name.addEventListener("input", () => delete f.name.dataset.auto);
+  fillName(isSelf());
   f.querySelectorAll('input[name="whose"]').forEach((r) => r.addEventListener("change", sync));
   // Pri fakulteti je profil najpogosteje študentov lasten.
   const toggle = (_, track) => {
@@ -1072,7 +1086,7 @@ function plansPicker(acc) {
       ${schoolRow(acc)}
       <div id="plan-rest" class="plans" hidden>
       <p class="form-error" role="alert" hidden></p>
-      ${acc.guarantee ? guaranteeLine() : ""}
+      ${acc.guarantee?.offered ? guaranteeLine() : ""}
       ${acc.prices_draft ? `<p class="muted">${esc(t("pay.pricesDraft"))}</p>` : ""}
       ${acc.parent.minor
         ? `<p class="muted">${esc(t("pay.minorNote"))}</p>
@@ -1114,6 +1128,8 @@ function giftBox(acc) {
     .join("");
   // Cena v obliki jezika vmesnika (sl: 49,00 €, en: €49.00), ker je kartica v celoti prevedena.
   const fmt = (c) => (c / 100).toLocaleString(locale(), { style: "currency", currency: "EUR" });
+  // V pilotu brez nakupa (j 2026-11-10): samo že kupljene kode, če obstajajo.
+  if (acc.gift_buy === false) return list ? `<div class="card gift-card"><h2>${icon("gift")} ${esc(t("gift.title"))}</h2><ul class="gift-list">${list}</ul></div>` : "";
   const prices = acc.gift_prices || { OS: acc.gift_price || 9900 };
   const vals = Object.values(prices);
   const price = vals.length > 1 ? `${fmt(Math.min(...vals))} – ${fmt(Math.max(...vals))}` : fmt(vals[0]);
@@ -1146,7 +1162,7 @@ function promoBox(acc, paid) {
   if (paid) return admin;
   return `<details class="promo-code"${store.get("evklid_koda") ? " open" : ""}><summary>${esc(t("gift.codeSummary"))}</summary>
       <form id="promo-form" class="inline form">
-        <input name="code" maxlength="40" required autocapitalize="characters" aria-label="${esc(t("gift.codeSummary"))}" placeholder="${esc(t("acct.codeExample", { code: "EVKLID3X" }))}" value="${esc(store.get("evklid_koda") || "")}">
+        <input name="code" maxlength="40" required autocapitalize="characters" aria-label="${esc(t("gift.codeSummary"))}" placeholder="${esc(t("acct.codeExample", { code: "KODA-2026" }))}" value="${esc(store.get("evklid_koda") || "")}">
         <button class="primary" type="submit">${esc(t("acct.activate"))}</button>
         <p class="form-error" hidden></p>
       </form></details>${admin}`;
@@ -1238,11 +1254,18 @@ async function loadPilot(days = 30, school = "", focusId = "") {
   const seq = ++pilotSeq;
   const out = $("#pilot-out");
   if (!out) return;
-  let r, g;
+  let r, g, o, k;
   try {
     const qs = `days=${days}${school ? `&school=${school}` : ""}`;
     // Rast in vračanje (server/rast.js) je dodatek: če ne uspe, kartica pokaže vsaj merjenje v pilotu.
-    [r, g] = await Promise.all([api(`/api/admin/pilot?${qs}`), api(`/api/admin/rast?${qs}`).catch(() => null)]);
+    // B2: odpiranje delov aplikacije (server/odpiranje-delov.js) in B3: anketa po 7 dneh (server/anketa-teden.js, vsi
+    // odgovori ne glede na obdobje) sta prav tako dodatka.
+    [r, g, o, k] = await Promise.all([
+      api(`/api/admin/pilot?${qs}`),
+      api(`/api/admin/rast?${qs}`).catch(() => null),
+      api(`/api/admin/deli?${qs}`).catch(() => null),
+      api("/api/admin/anketa-teden").catch(() => null),
+    ]);
     if (seq !== pilotSeq) return;
   } catch (err) {
     out.innerHTML = `<p class="muted">${esc(err.message)}</p>`;
@@ -1270,12 +1293,38 @@ async function loadPilot(days = 30, school = "", focusId = "") {
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr><th scope="col">${esc(t("pilot.day"))}</th><th scope="col">${esc(t("pilot.questions"))}</th><th scope="col">${esc(t("pilot.askers"))}</th><th scope="col">${esc(t("pilot.ai"))}</th><th scope="col">${esc(t("pilot.parents"))}</th></tr></thead>
       <tbody>${[...r.rows].reverse().map((d) => `<tr><td>${esc(day(d.day))}</td><td>${nf(d.questions)}</td><td>${nf(d.askers)}</td><td>${eur(d.aiUsd * rate, 3)}</td><td>${nf(d.visits.starsi + d.visits.placaj)}</td></tr>`).join("")}</tbody></table></div>
     <p class="muted small">${esc(t("pilot.note"))}</p>
-    ${g ? growthHtml(g, loc) : ""}`;
+    ${g ? growthHtml(g, loc) : ""}
+    ${o ? deliHtml(o, loc) : ""}
+    ${k ? anketaHtml(k, loc) : ""}`;
   // Kartica se izriše znova: fokus ostane na izbiri, ki jo je uporabnik spremenil (tipkovnica).
   if (focusId) setTimeout(() => $(`#${focusId}`)?.focus());
   const reload = (e) => loadPilot($("#pilot-days").value, $("#pilot-school")?.value || "", e.target.id);
   $("#pilot-days").addEventListener("change", reload);
   $("#pilot-school")?.addEventListener("change", reload);
+}
+
+// Skrbnik, točka B2: kateri deli aplikacije se odpirajo in ali se isti učenec vrača (server/odpiranje-delov.js).
+const IME_DELA = { lekcije: "nav.textbook", vadnica: "pn.i.practice", instruktor: "nav.chat", svet3d: "a3.hubTitle", laboratorij: "nav.lab", igre: "nav.games" };
+function deliHtml(o, loc) {
+  const nf = (x) => Number(x).toLocaleString(loc);
+  const pc = (x) => (x == null ? "–" : Number(x).toLocaleString(loc, { style: "percent", maximumFractionDigits: 0 }));
+  const th = (k) => `<th scope="col">${esc(t(k))}</th>`;
+  return `<h4>${esc(t("deli.title"))}</h4>
+    ${o.ucenci != null ? `<ul class="pilot-sum"><li><b>${nf(o.ucenci)}</b> ${esc(t("deli.students"))}</li></ul>` : ""}
+    <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("deli.part")}${th("deli.opened")}${th("deli.returned")}</tr></thead>
+      <tbody>${o.deli.map((d) => `<tr><td>${esc(Object.hasOwn(IME_DELA, d.del) ? t(IME_DELA[d.del]) : d.del)}</td><td>${d.odprli != null ? `${nf(d.odprli)} (${pc(d.delez)})` : "–"}</td><td>${d.odprli != null ? `${nf(d.vrnili)} (${pc(d.delezVrnili)})` : "–"}</td></tr>`).join("")}</tbody></table></div>
+    <p class="muted small">${esc(t("deli.note"))} ${esc(t("deli.few", { n: o.minStudents }))}</p>`;
+}
+
+// Skrbnik, točka B3: anketa po 7 dneh (server/anketa-teden.js); vsote šele od k.min odgovorov naprej.
+function anketaHtml(k, loc) {
+  const nf = (x) => Number(x).toLocaleString(loc);
+  const OZNAKA = { zelo: "ank.a.zelo", malo: "ank.a.malo", da: "fb.yes", mogoce: "fb.maybe", ne: "fb.no" };
+  const vrstica = (q, v) => `<tr><th scope="row">${esc(t(q))}</th><td>${v ? Object.entries(v).map(([m, n]) => `${esc(t(OZNAKA[m]))} <b>${nf(n)}</b>`).join(" · ") : "–"}</td></tr>`;
+  return `<h4>${esc(t("ank.adm.title"))}</h4>
+    <ul class="pilot-sum"><li><b>${esc(typeof k.n === "number" ? nf(k.n) : k.n)}</b> ${esc(t("ank.adm.n"))}</li><li><b>${esc(typeof k.zavrnili === "number" ? nf(k.zavrnili) : k.zavrnili)}</b> ${esc(t("ank.adm.declined"))}</li></ul>
+    ${k.pomaga ? `<div class="pilot-scroll"><table class="table pilot-table"><tbody>${vrstica("ank.q.pomaga", k.pomaga)}${vrstica("ank.q.naprej", k.naprej)}${vrstica("ank.q.placal", k.placal)}${vrstica("ank.q.priporocil", k.priporocil)}</tbody></table></div>` : ""}
+    <p class="muted small">${esc(t("ank.adm.few", { min: k.min }))}</p>`;
 }
 
 // Skrbnik: rast in vračanje (server/rast.js): prva naloga v 24 urah, vrnitev naslednji dan in po 7 dneh, viri, tedni.
@@ -1286,8 +1335,9 @@ function growthHtml(g, loc) {
   const of = (s) => ({ a: nf(s.returned), b: nf(s.eligible) });
   const dm = (s) => new Date(`${s}T12:00:00`).toLocaleDateString(loc, { day: "numeric", month: "numeric" });
   const SRC = { "": "rast.src.none", priporocilo: "rast.src.ref", razred: "rast.src.class", drugo: "rast.src.other" };
-  const src = (v) => (SRC[v] ? t(SRC[v]) : v);
+  const src = (v) => (Object.hasOwn(SRC, v) ? t(SRC[v]) : v);
   const th = (k) => `<th scope="col">${esc(t(k))}</th>`;
+  const eurOf = (x) => Number(x).toLocaleString(loc, { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 3 });
   // Povezava v opombi je v \u2066 … \u2069 (LRI … PDI), da je v arabščini in perzijščini ne premeša smer besedila.
   return `<h3 class="rast-title">${esc(t("rast.title"))}</h3>
     <ul class="pilot-sum">
@@ -1296,11 +1346,14 @@ function growthHtml(g, loc) {
       <li><b>${pct(g.d1)}</b> ${esc(t("rast.d1", of(g.d1)))}</li>
       <li><b>${pct(g.d7)}</b> ${esc(t("rast.d7", of(g.d7)))} · ${esc(t("rast.goal", { pct: pc(g.goal.target) }))} <b>${esc(t(`rast.goal.${g.goal.status}`))}</b></li>
       <li><b>${nf(g.weeklyActive)}</b> ${esc(t("rast.wau"))}</li>
+      ${g.activeProfiles != null ? `<li><b>${nf(g.activeProfiles)}</b> ${esc(t("rast.activeProfiles"))}</li>` : ""}
     </ul>
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.week")}${th("rast.new")}${th("rast.active")}</tr></thead>
       <tbody>${[...g.weeks].reverse().map((w) => `<tr><td>${esc(`${dm(w.start)} – ${dm(w.end)}`)}</td><td>${nf(w.newProfiles)}</td><td>${nf(w.active)}</td></tr>`).join("")}</tbody></table></div>
     ${g.sources.length ? `<div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.visits")}${th("rast.profiles")}${th("rast.firstTask")}${th("rast.returned")}</tr></thead>
       <tbody>${g.sources.map((s) => `<tr><td>${esc(src(s.vir))}</td><td>${nf(s.visits)}</td><td>${nf(s.profiles)}</td><td>${nf(s.firstTask)}</td><td>${s.d7Eligible ? `${nf(s.d7Returned)} / ${nf(s.d7Eligible)}` : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
+    ${g.usageBySource?.length ? `<h4>${esc(t("rast.byUse"))}</h4><div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.active")}${th("rast.d1Col")}${th("rast.qCol")}${th("rast.aiCol")}</tr></thead>
+      <tbody>${g.usageBySource.map((u) => `<tr><td>${esc(src(u.vir))}</td><td>${nf(u.active)}</td><td>${u.d1Eligible ? `${nf(u.d1Returned)} / ${nf(u.d1Eligible)}` : "–"}</td><td>${u.askerDays ? nf(u.questionsPerAskerDay) : "–"}</td><td>${u.aiUsers ? eurOf(u.aiEurPerUserMonth) : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
     <p class="muted small">${esc(t("rast.note", { link: `\u2066${location.origin}/?vir=facebook\u2069` }))}</p>`;
 }
 
@@ -1351,10 +1404,12 @@ async function loadSchoolOrders() {
 }
 
 function bindAdminCodes(acc) {
+  bindSkrbnik();
   bindGuestInvite();
   if (!acc.promo?.codes) return;
   loadPilot();
   renderPilotAdmin($("#pilot-tasks-out"), { api, toast }); // naloge članov pilota: vsote brez imen
+  import("./mnenje.js").then((m) => m.renderOpinionsAdmin($("#pilot-mnenja-out"), { api })).catch(() => {}); // mnenja članov pilota: seznam brez imen
   renderAdminReports($("#reports-out"), { api, toast });
   bindApk();
   loadSchoolOrders();
@@ -1443,7 +1498,7 @@ function bindGuestForms(after) {
       btn.disabled = false;
       showError(f, err);
       if (err.data?.under_age) {
-        errorBox(f).append(" ", t("guest.parentHint"), " ", Object.assign(document.createElement("a"), { href: "/starsi.html", target: "_blank", textContent: t("guest.parentLink") }));
+        errorBox(f).append(" ", t("guest.parentHint"), " ", Object.assign(document.createElement("a"), { href: "/starsi.html?prosnja=1", target: "_blank", textContent: t("guest.parentLink") }));
       }
       if (err.data?.exists) {
         const login = $("#guest-login-form");
@@ -1539,6 +1594,55 @@ function renderGuestInvite() {
       }
       showError(f, err);
       btn.disabled = false;
+    }
+  });
+}
+
+// Točka A9: skrbnik to sejo potrdi s kodo na e-pošto, šele nato dobi skrbniške strani (12 ur). Samo za skrbnika,
+// zato v slovenščini (kot skrbniški del promoBox).
+function skrbnikBox() {
+  return `
+    <div class="card" id="skrbnik-card">
+      <h2>Skrbniški dostop</h2>
+      <p class="muted">Skrbniške strani se odprejo s kodo, ki jo dobiš na e-pošto. Potrditev velja 12 ur na tej napravi.</p>
+      <button id="skrbnik-poslji" type="button">${icon("send")}<span>Pošlji kodo</span></button>
+      <form id="skrbnik-form" class="inline form">
+        <input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required aria-label="Koda iz e-pošte" placeholder="123456">
+        <button class="primary" type="submit">Potrdi</button>
+      </form>
+      <p class="form-error" role="alert" hidden></p>
+    </div>`;
+}
+function bindSkrbnik() {
+  const card = $("#skrbnik-card");
+  if (!card) return;
+  const err = card.querySelector(".form-error");
+  const show = (msg) => {
+    err.textContent = msg || "";
+    err.hidden = !msg;
+  };
+  $("#skrbnik-poslji").addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    show("");
+    try {
+      await api("/api/account/skrbnik/koda", { method: "POST" });
+      toast("Koda je poslana. Velja 10 minut.");
+      card.querySelector("input[name=code]").focus();
+    } catch (ex) {
+      show(ex.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+  $("#skrbnik-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    show("");
+    try {
+      await api("/api/account/skrbnik/potrdi", { method: "POST", body: { code: e.currentTarget.code.value } });
+      location.reload(); // skrbniški deli (nastavitve, zavihki) se naložijo na novo
+    } catch (ex) {
+      show(ex.message);
     }
   });
 }
@@ -1655,6 +1759,7 @@ export async function renderAccount() {
       ${promoBox(acc, paid)}
     </div>
     <div class="card" id="pn-wtp" hidden></div>
+    ${acc.skrbnik_potrditev ? skrbnikBox() : ""}
     ${acc.promo?.codes ? adminCodes(acc) : ""}
     ${acc.guest_invite ? guestInviteCard() : ""}
     ${guaranteeBox(acc)}
@@ -1663,6 +1768,7 @@ export async function renderAccount() {
     ${adminCards(acc)}
     ${acc.promo?.codes ? `<div class="card" id="pilot-card"><h2>${esc(t("pilot.title"))}</h2><div id="pilot-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="pilot-tasks-card"><h2>${esc(t("pilot.n.title"))}</h2><div id="pilot-tasks-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
+    ${acc.promo?.codes ? `<div class="card" id="pilot-mnenja-card"><h2>${esc(t("pilot.mn.title"))}</h2><div id="pilot-mnenja-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="reports-card"><h2>${esc(t("adm.rep.title"))}</h2><div id="reports-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="orders-card"><h2>${esc(t("orders.title"))}</h2><div id="orders-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
 
@@ -1698,6 +1804,7 @@ export async function renderAccount() {
       ${birthFormHtml(false)}
     </div>` : ""}
     <div id="credit-card"></div>
+    <div id="ustno-starsi"></div>
 
     <div class="card">
       <h2>${icon("award")} Povabi prijatelje</h2>
@@ -1772,6 +1879,7 @@ export async function renderAccount() {
   wirePrivacyBanner(hasPassword); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
   renderCreditCard($("#credit-card"), { api });
+  import("./ustno/starsi.js").then((m) => m.karticaStarsev($("#ustno-starsi"), api)).catch(() => {}); // glas pri ustnem (ob odprtju)
   $("#gift-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = $("button[type=submit]", e.target);

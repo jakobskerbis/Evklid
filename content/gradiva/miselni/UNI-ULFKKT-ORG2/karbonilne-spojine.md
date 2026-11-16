@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Polarna vez C=O
+  - ogljik $\delta+$ elektrofil, kisik $\delta-$
+  - razcepi se le vez $\pi$
+  - napaka: »nukleofil napade kisik«
+- Nukleofilna adicija
+  - napad na C, alkoksid, protonacija
+  - povratno: $\mathrm{H_2O}$, ROH, $\mathrm{CN^-}$
+  - nepovratno: $\mathrm{H^-}$, Grignardov R–MgX
+- Hidrat in reaktivnost
+  - $x = \dfrac{K_\text{hidr}}{1 + K_\text{hidr}}$
+  - metanal > drugi aldehidi > ketoni
+  - alkilne skupine: donorske in zastirajo pot
+- Redukcija in Grignard
+  - aldehid → primarni, keton → sekundarni alkohol
+  - $1\,\text{mol}$ $\mathrm{NaBH_4}$ reducira $4\,\text{mol}$ ketona
+  - Grignard s ketonom: terciarni alkohol
+- Acetal in imin
+  - hemiacetal: OH in OR; acetal: dve OR
+  - acetal ščiti karbonil v bazičnem
+  - imin C=N, najhitreje pri pH $4$–$5$
+- Enolat
+  - vodiki $\alpha$ kisli, $\text{p}K_\text{a} \approx 19$
+  - nukleofil na ogljiku $\alpha$
+- Aldolna reakcija
+  - enolat + karbonil → $\beta$-hidroksi karbonil
+  - $n(\text{aldol}) = \tfrac{1}{2}\,n(\text{aldehid})$
+  - segrevanje: izstop vode, E1cB, enal
+- Križna aldolna reakcija
+  - čista le s partnerjem brez vodikov $\alpha$
+  - primer: benzaldehid in propanon

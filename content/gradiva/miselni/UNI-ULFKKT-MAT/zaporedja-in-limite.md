@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zaporedje
+  - splošni člen $a_n$ ali rekurzivno pravilo
+  - geometrijsko: $a_n = a_1 q^{n-1}$
+- Omejenost in monotonost
+  - predznak razlike $a_{n+1} - a_n$
+  - supremum: najmanjša zgornja meja
+- Limita
+  - $|a_n - L| < \varepsilon$ za vse $n \ge N$
+  - $N$ odvisen od $\varepsilon$, ne od $n$
+  - limita je enolična
+- Računanje limit
+  - deli z najvišjo potenco imenovalca
+  - sendvič: $b_n \le a_n \le c_n$
+  - $q^n \to 0$ za $|q| < 1$, $\sqrt[n]{n} \to 1$
+- Monotono in omejeno
+  - konvergira k $\sup a_n$ oziroma $\inf a_n$
+  - rekurzija: najprej obstoj, nato $L = f(L)$
+  - omejenost sama ne zadošča: $(-1)^n$
+- Število e
+  - $e = \lim \left(1 + \frac{1}{n}\right)^n \approx 2{,}718$
+  - $\left(1 + \frac{x}{n}\right)^n \to e^x$
+  - napaka: »$1^\infty = 1$«
+- Podzaporedja in stekališča
+  - stekališče: limita podzaporedja
+  - Bolzano-Weierstrass: omejeno ima konvergentno podzaporedje
+- Cauchyjeva zaporedja
+  - $|a_m - a_n| < \varepsilon$ za $m, n \ge N$
+  - v $\mathbb{R}$ enakovredno konvergenci

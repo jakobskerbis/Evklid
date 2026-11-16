@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Biološka vrsta
+  - parjenje v naravi, plodni potomci
+  - napaka: videz ne odloča (brokoli, cvetača)
+- Reproduktivna izolacija
+  - pred oploditvijo: prostor, čas, vedenje, zgradba
+  - po oploditvi: mula, $63$ kromosomov, neplodna
+- Alopatrična speciacija
+  - pregrada ustavi pretok genov
+  - veverici ob Velikem kanjonu
+- Simpatrična speciacija
+  - poliploidija pri rastlinah
+  - pšenica za kruh: $21 \cdot 2 = 42$ kromosomov
+  - napaka: sešteti $2n$ namesto $n$
+- Adaptivna radiacija
+  - en prednik, več vrst
+  - Darwinovi ščinkavci, kljun po hrani
+- Adaptacije
+  - poveča preživetje in razmnoževanje
+  - kapsaicin v čiliju, ptice raznašajo semena
+  - ne nastane, ker jo organizem potrebuje
+- Izumrtje
+  - umre zadnji osebek
+  - množična izumrtja, dinozavri
+  - danes pospešuje človek

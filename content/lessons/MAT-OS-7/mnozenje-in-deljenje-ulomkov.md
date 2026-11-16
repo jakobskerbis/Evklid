@@ -175,7 +175,7 @@ $$\frac{1}{2}\cdot\frac{1}{3}=\frac{1}{6}$$
 
 Množiti z $\frac{1}{2}$ pomeni vzeti polovico. Zato je rezultat manjši.
 
-**Deljenje.** Številsko premico od $0$ do $1$ razdeli na osmine. Do $\frac{3}{4}=\frac{6}{8}$ lahko po vrsti narišeš korake dolžine $\frac{1}{8}$. Koraki so natanko $6$, zato $\frac{3}{4}:\frac{1}{8}=6$. Deljenje sprašuje, **kolikokrat** se krajši korak prilega v daljšo dolžino.
+**Deljenje.** Številsko premico od $0$ do $1$ razdeli na osmine. Do $\frac{3}{4}=\frac{6}{8}$ lahko po vrsti narišeš korake dolžine $\frac{1}{8}$. Korakov je natanko $6$, zato $\frac{3}{4}:\frac{1}{8}=6$. Deljenje sprašuje, **kolikokrat** se krajši korak prilega v daljšo dolžino.
 
 ## Drugače: Iz vsakdanjega življenja
 
@@ -189,7 +189,7 @@ Beseda »od« pri ulomkih pogosto pomeni množenje: polovica od $\frac{3}{4}$ je
 
 $$\frac{2}{3}:\frac{1}{6}=\frac{2}{3}\cdot\frac{6}{1}=\frac{12}{3}=4$$
 
-Dobiš $4$ kose. Preveri po pamet: $\frac{2}{3}=\frac{4}{6}$, torej štiri šestine.
+Dobiš $4$ kose. Preveri na pamet: $\frac{2}{3}=\frac{4}{6}$, torej štiri šestine.
 
 ## Drugače: Bolj natančno
 

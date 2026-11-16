@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kinematika vrtenja
+  - vse točke: ista $\omega$ in $\alpha$
+  - obodna hitrost $v = \omega r$
+- Navor
+  - $\vec{M} = \vec{r}\times\vec{F}$, $M = r_\perp F$
+  - enota $\mathrm{N\,m}$
+  - napaka: $rF$ brez kota
+- Vztrajnostni moment
+  - $J = \sum m_ir_i^2 = \int r^2\,\mathrm{d}m$
+  - obroč $mR^2$, valj $\tfrac12 mR^2$, krogla $\tfrac25 mR^2$
+  - Steiner: $J = J_{ms} + md^2$
+- Zakon vrtenja
+  - $\sum M = J\alpha$
+  - vez pri vrvi na kolutu: $a = \alpha R$
+- Energija in delo
+  - $W_k = \tfrac12 J\omega^2$, $\omega$ v $\mathrm{s^{-1}}$
+  - delo $A = M\varphi$, moč $P = M\omega$
+  - kotaljenje: $\tfrac12 mv_{ms}^2 + \tfrac12 J_{ms}\omega^2$
+- Vrtilna količina
+  - $\Gamma = J\omega$, $\sum\vec{M} = \mathrm{d}\vec{\Gamma}/\mathrm{d}t$
+  - brez zunanjih navorov: $J_1\omega_1 = J_2\omega_2$
+  - kinetična energija se pri tem spremeni
+- Ravnovesje
+  - $\sum\vec{F} = 0$ in $\sum\vec{M} = 0$
+  - os skozi prijemališče neznane sile

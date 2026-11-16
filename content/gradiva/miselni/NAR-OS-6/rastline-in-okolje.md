@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prilagoditev
+  - podedovana lastnost, ki pomaga preživeti
+  - vprašaj: česa je premalo?
+  - napaka: rastlina se ne prilagodi v tednih
+- Suho okolje
+  - kaktus: zaloga vode v steblu
+  - bodice so spremenjeni listi
+  - voščena prevleka, netresk
+- Izguba vode
+  - $m_v = m_1 - m_2$, v gramih
+  - fikus $24\,\text{g}$, kaktus $2\,\text{g}$ na dan
+- Senca
+  - veliki tanki listi ujamejo svetlobo
+  - zvonček cveti pred olistanjem dreves
+- Voda in mraz
+  - lokvanj: plavajoči listi, reže zgoraj
+  - listavci odvržejo liste: zmrzla tla
+  - iglice z voščeno prevleko
+- Pomen rastlin
+  - proizvajalci: vsa hrana živali iz rastlin
+  - kisik, dom, zavetje, nektar
+  - napaka: tudi lisica potrebuje rastline

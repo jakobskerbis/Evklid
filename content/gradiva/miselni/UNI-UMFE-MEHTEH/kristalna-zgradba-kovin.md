@@ -18,7 +18,7 @@ stanje: osnutek
   - α-Fe: približno $7{,}88\,\mathrm{g/cm^3}$
 - Alotropija železa
   - do $912\,^\circ\mathrm{C}$ ferit (KPC)
-  - nad tem avstenit (KPloC)
+  - od $912$ do $1394\,^\circ\mathrm{C}$ avstenit (KPloC)
 - Točkaste napake
   - praznina, intersticijski, substitucijski atom
   - ogljik v železu je intersticijski

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lastno ali tuje
+  - merilo so antigeni, ne škodljivost
+  - napaka: »napade le škodljivo«
+- Patogeni
+  - virusi, bakterije, glive, praživali, zajedavci
+- Nespecifična obramba
+  - koža, sluznice, vnetje
+  - fagociti požrejo tujke
+- Specifična obramba
+  - plazmatke izločajo protitelesa
+  - celice T pomagalke in ubijalke
+  - spominske celice, cepljenje
+- Sistem ABO
+  - aleli $I^A$, $I^B$ kodominantna, $i$ recesiven
+  - protitelesa proti antigenu, ki ga nimaš
+- Sistem Rh
+  - antigen D, Rh− je $dd$
+  - anti-D šele po stiku, ogrožen drugi otrok
+- Transfuzija
+  - O− univerzalni darovalec eritrocitov
+  - AB+ univerzalni prejemnik
+- Presaditve
+  - antigeni HLA se morajo ujemati
+  - imunosupresivi po presaditvi

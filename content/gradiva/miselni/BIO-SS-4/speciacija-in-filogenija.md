@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Biološka vrsta
+  - plodni potomci v naravi
+  - mula: $32 + 31 = 63$ kromosomov, neplodna
+- Geografska izolacija
+  - fizična ovira: gorovje, reka, morje
+  - alopatrična speciacija, Darwinovi ščinkavci
+- Ekološka izolacija
+  - isto območje, drug gostitelj ali hrana
+  - simpatrična speciacija, jabolčna muha
+- Pregrade med vrstami
+  - predoploditvene: časovna, vedenjska, mehanska, gametna
+  - pooploditvene: hibrid propade ali je neploden
+  - ključno vprašanje: ali zigota nastane?
+- Kladogram
+  - vozlišče je skupni prednik
+  - napaka: sosednji konci vej so najbližji
+- Molekulska ura
+  - $r = \dfrac{d_0}{t_0}$, umerimo s fosilom
+  - $t = \dfrac{d}{r}$, čas v Ma
+- Tri domene
+  - bakterije, arheje, evkarionti (Woese, rRNA)
+  - arheje so bližje evkariontom

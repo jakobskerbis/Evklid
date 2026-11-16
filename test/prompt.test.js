@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { buildSystemPrompt, systemBlocks, SPLIT_MARKER } from "../server/prompt.js";
+import { readFileSync } from "node:fs";
 import { normalizeSettings } from "../server/settings.js";
 
 test("static part of the prompt is identical for every student and goes first", () => {
@@ -109,4 +110,80 @@ test("disengaged student: own situation in the cached part, with choices, small 
     assert.match(row, re);
   }
   assert.ok(row.length < 1100, `točka naj ostane kratka (${row.length} znakov)`);
+});
+
+test("Meje: zdravstvena nuja, požar in plin → takoj 112, frustracija ni nujen primer (#479)", () => {
+  const stat = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const meje = stat.slice(stat.indexOf("## Meje"), stat.indexOf("## Varnostni ščit"));
+  const row = meje.split("\n").find((l) => l.startsWith("- Če učenec opisuje nujen primer"));
+  assert.ok(row, "alineja o nujnem primeru je v Mejah");
+  for (const re of [/takoj pokliče 112/, /požar ali vonj po plinu/, /ne prižiga luči in ne pritiska stikal/, /»Šolski sistem«/, /`flag=distress`/, /umrl bom od te matematike/, /brez pridige/, /ne svetuj zdravil/, /ravnaj, kot da je/]) assert.match(row, re);
+});
+
+test("extra exercises and side claims (2026-11-11): one labelled exercise, realistic, exactly one answer; every claim checked, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const start = fixed.indexOf("- **Dodatne vaje in stranske trditve.**");
+  assert.ok(start > fixed.indexOf("### Pravilnost"), "pravilo je v razdelku Pravilnost, v predpomnjenem delu");
+  const rule = fixed.slice(start, fixed.indexOf("\n- ", start + 10));
+  for (const s of ["»**Vaja:**«", "največ eno na sporočilo", "po običajnih pravilih", "izjeme, ki jih naloga ne potrebuje", "ista situacija z drugimi števili", "resničnem obsegu", "topnost", "natanko ena pravilna rešitev", "natanko eno skupino", "»Zapomni si«", "Preverbi", "učbeniško definicijo", "Preverba preveri samo tvoj rezultat", "mejni ali posebni primer", "ne dodaja novih dejstev"]) {
+    assert.ok(rule.includes(s), `pravilo vsebuje »${s}«`);
+  }
+  assert.ok(rule.length < 2000, `pravilo naj ostane kratko (${rule.length} znakov)`);
+  assert.match(fixed, /6\. \*\*Preverba:\*\* samo tvoj rezultat: enote, velikostni red, vstavljanje, mejni ali posebni primer/, "vzorec in pravilo o Preverbi se ujemata");
+});
+
+test("accuracy round 2 (2026-11-11): Lewis rule, possible exercise results and table values, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["število zunanjih elektronov", "ne vrstno število", "vodik $v = 1$", "Ob vsakem atomu preštej elektrone", "po 2 na vezni in na nevezni par", "Pravilo ne velja za $\\mathrm{CO}$", "ione", "$\\mathrm{BF_3}$", "$\\mathrm{SF_6}$", "ne zavrneš zaradi okteta"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  const rule = fixed.slice(fixed.indexOf("- **Dodatne vaje in stranske trditve.**"));
+  assert.match(rule.slice(0, 2000), /vsi dani, rezultat mogoč \(ocena na lestvici naloge, v šoli 1–5; celo število ljudi ali predmetov; delež ≤ 100 %\)/);
+  const pravilnost = fixed.slice(fixed.indexOf("### Pravilnost"), fixed.indexOf("## Način A"));
+  assert.match(pravilnost, /najprej vprašaj, namesto da si podatke izmisliš\. Tabelna vrednost, ki je naloga ne poda .*»\(tabelna vrednost\)«.*iz svojega učbenika.*Če je odvisna od vira \(razmerja hitrosti\) ali je ne veš zagotovo, vprašaj/);
+  // Krog 2 je dodal manj kot 800 znakov predpomnjenega dela (50 912 → 51 711); mejo za nove kroge preveri test kroga 4.
+});
+
+test("accuracy round 4: no side facts about other substances, OŠ stays on the task, groups 1–18, mass always conserved", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const start = fixed.indexOf("- **Dodatne vaje in stranske trditve.**");
+  const rule = fixed.slice(start, fixed.indexOf("\n- ", start + 10));
+  assert.match(rule, /zgodovina, lastnosti drugih snovi in pojavov, primerjave z njimi, ki jih ne zahtevata naloga ali učenec\), ne dodajaš; v OŠ ostani pri snovi in pojavu iz naloge \(analogija za razlago je dovoljena\)\./);
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["Skupine periodnega sistema štej 1–18", "N v 15., O v 16. skupini", "Masa se pri kemijski reakciji ohrani vedno", "ali se veže kisik iz zraka, se spremeni le izmerjena masa", "iz šumeče tablete v vodi), je produkt, ne reaktant"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  assert.doesNotMatch(fixed, /masa ostane enaka, če plin ne uide/);
+  // Krog 4 doda manj kot 550 znakov predpomnjenega dela (51 711 pred spremembo; 500 → 550 po pregledu B:
+  // izjema za vprašano primerjavo in analogijo, kisik iz zraka, CO₂ pri tableti).
+  // Krog 4 je končal pri 52 228 znakih, blok »Račun za kodo« (#581) doda do 1200; mejo za nove kroge preveri test kroga 6.
+  assert.ok(fixed.length > 51711);
+});
+
+test("accuracy round 6 (2026-11-12): one Lewis notation in LaTeX, every mark one lone pair, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["vsaka oznaka en nevezni par", "»:« ob strani", "`\\overset{\\cdot\\cdot}{}` nad", "`\\underset{\\cdot\\cdot}{}` pod", "»:« in `\\ddot` ob istem atomu sta dva para", "${:}\\mathrm{N}{\\equiv}\\mathrm{N}{:}$", "oznake preštej"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  // Krog 6 je dodal 274 znakov predpomnjenega dela (53 413 → 53 687); mejo za nove kroge preveri test kroga 7.
+  assert.ok(fixed.length > 53413);
+});
+
+test("accuracy round 7 (2026-11-12): cross rule always with reducing the subscripts, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["povej ga vedno s krajšanjem", "indeksa skrajšaj na najmanjše celo razmerje", "$\\mathrm{Mg_2O_2}$ → $\\mathrm{MgO}$", "molekulskih formul ne krajšaj"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  // Krog 7 je dodal 281 znakov predpomnjenega dela (53 687 → 53 968); mejo za nove kroge preveri test kroga 8.
+  assert.ok(fixed.length > 53687);
+});
+
+test("accuracy round 8 (2026-11-12): charge balance first, cross rule as a shortcut with explicit sides and a check, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
+  for (const s of ["Formulo ionske spojine določa vsota nabojev $0$", "$2 \\cdot 3 + 3 \\cdot (-2) = 0$", "Križno pravilo je le bližnjica", "indeks kationa je naboj aniona, indeks aniona naboj kationa", "en ion na en ion", "Vsako razmerje ionov, ki ga navedeš, preveri z vsoto nabojev"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
+  assert.doesNotMatch(kem, /naboj kationa je indeks aniona in obratno/, "strani križnega pravila sta izrecni");
+  // Krog 8 doda manj kot 300 znakov predpomnjenega dela (53 968 pred spremembo; ~75 predpomnjenih žetonov).
+  assert.ok(fixed.length < 53968 + 300, `stalni del ${fixed.length} znakov`);
 });

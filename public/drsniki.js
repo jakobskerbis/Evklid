@@ -6,7 +6,7 @@
 
 export const DRSNE = [
   // učbenik, klepet, rešitve
-  ".katex-display", ".md-table-wrap", ".msg.assistant pre", ".solution", ".textbook .katex.tb-dolga",
+  ".katex-display", ".md-table-wrap", ".msg.assistant pre", ".solution", ".textbook .katex.tb-dolga", ".katex.tb-dolga",
   ".textbook .explanation pre", ".demo-eq", ".demo-table", ".graf-eq", ".demo-readout", ".lab-table-wrap",
   ".formula-body", ".pad-value", ".fb-summary", ".pilot-scroll", ".tc-scroll", ".lab-bench",
   // kalkulator, grafi, formule

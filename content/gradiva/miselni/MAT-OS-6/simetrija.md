@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Os zrcaljenja
+  - Os je simetrala daljice $AA'$
+  - Daljica $AA'$ je pravokotna na os
+- Enaka razdalja
+  - $d' = d$, slika na drugi strani osi
+  - $\lvert AA'\rvert = 2d$, ne $d$
+- Konstrukcija slike
+  - Pravokotnica skozi točko
+  - Razdaljo do osi preneseš na drugo stran
+  - Točka na osi je sama sebi slika
+- Skladna slika
+  - Ohrani dolžine, kote, obseg in ploščino
+  - Smer obhoda se obrne
+- Simetrijska os
+  - Ob prepogibu se polovici prekrijeta
+  - Diagonala pravokotnika ni os
+- Število osi
+  - Kvadrat $4$, pravokotnik $2$
+  - Enakostranični $3$, enakokraki $1$, raznostranični $0$
+  - Krog ima neskončno osi

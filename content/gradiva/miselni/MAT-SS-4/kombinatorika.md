@@ -22,3 +22,8 @@ stanje: osnutek
   - vsi ali le nekateri?
   - je vrstni red pomemben?
   - se smejo ponavljati?
+- Pravilo vsote
+  - eno ali drugo, primeri se ne prekrivajo: $m + n$
+- Permutacije s ponavljanjem
+  - $\frac{n!}{k_1!\,k_2! \cdots k_r!}$
+  - POPOTNIK: $\frac{8!}{2! \cdot 2!} = 10\,080$

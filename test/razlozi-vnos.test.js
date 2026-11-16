@@ -32,7 +32,8 @@ test("send: on a usage limit the input stays empty, on any other failure text an
   // Izrez naloge iz pole gre kot slika samodejnega sporočila (ne prek polja).
   assert.match(app, /await send\(text \? `\$\{head\}\\n\\n\$\{text\}` : head, \{ image: task\.image \}\);/);
   // Server res pošlje limit: true pri meji.
-  assert.match(read("server/app.js"), /if \(blocked\) return res\.status\(429\)\.json\(\{ \.\.\.blocked, limit: true \}\);/);
+  // (pred zavrnitvijo še varnostni odgovor, server/nujno.js)
+  assert.match(read("server/app.js"), /return res\.status\(429\)\.json\(\{ \.\.\.blocked, limit: true(?:, nujno: nujno \|\| undefined)? \}\);/);
   // Mobilna aplikacija: enako pravilo kot splet (samo meja ne vrne besedila in fotografije; tudi 400 ju vrne).
   const mob = read("mobile/src/app/chat/[id].tsx");
   assert.match(mob, /const limit = err instanceof ApiError && err\.status === 429 && err\.body\?\.limit === true;\s*if \(!limit && !body\.deep\) \{\s*setText\(\(cur\) => \(cur\.trim\(\) \? cur : msgText\)\);\s*if \(body\.image\) setPhoto/);

@@ -48,7 +48,7 @@ Zakaj so energije negativne? Ničlo izberemo tam, kjer je elektron prost, daleč
 
 Pozor pri primerjanju: $-0{,}85\,\mathrm{eV}$ je *več* kot $-3{,}40\,\mathrm{eV}$. Večji $n$ pomeni višji nivo.
 
-Velja tudi obratno. Bela svetloba vsebuje fotone vseh energij. Ko gre skozi hladnejši plin, atomi **absorbirajo** samo fotone, katerih energija je točno enaka razliki dveh nivojev; elektron pri tem skoči navzgor. V spektru ostanejo temne črte na mavričnem ozadju. Pri vodiku je treba paziti: hladen vodik je skoraj ves v osnovnem stanju $n = 1$, zato vpija le ultravijolične fotone. Temne *vidne* črte vodika nastanejo tam, kjer je veliko atomov na nivoju $n = 2$, na primer v ozračju vroče zvezde. To je **absorpcijski spekter**. Svetle črte žarečega plina so **emisijski spekter**. Žareča nitka ali Sonce pa dasta **zvezni spekter**, mavrico brez vrzeli.
+Velja tudi obratno. Bela svetloba vsebuje fotone vseh energij. Ko gre skozi hladnejši plin, atomi **absorbirajo** samo fotone, katerih energija je točno enaka razliki dveh nivojev; elektron pri tem skoči navzgor. V spektru ostanejo temne črte na mavričnem ozadju. Pri vodiku je treba paziti: hladen vodik je skoraj ves v osnovnem stanju $n = 1$, zato vpija le ultravijolične fotone. Temne *vidne* črte vodika nastanejo tam, kjer je veliko atomov na nivoju $n = 2$, na primer v ozračju vroče zvezde. To je **absorpcijski spekter**. Svetle črte žarečega plina so **emisijski spekter**. Žareča nitka žarnice pa da **zvezni spekter**, mavrico brez vrzeli.
 
 :::premisli
 Zakaj so temne črte v absorpcijskem spektru vodika točno na istih mestih kot svetle črte v emisijskem?

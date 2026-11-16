@@ -150,7 +150,6 @@
   },
   {
    "id": "aorta",
-   "znotraj": 0.55,
    "ime": "Aorta",
    "la": "Aorta",
    "barva": "#f43f5e",
@@ -163,7 +162,6 @@
   },
   {
    "id": "pljucno-deblo",
-   "znotraj": 0.55,
    "ime": "Pljučno deblo",
    "la": "Truncus pulmonalis",
    "barva": "#818cf8",
@@ -177,7 +175,6 @@
   },
   {
    "id": "votli-veni",
-   "znotraj": 0.55,
    "ime": "Votli veni",
    "la": "Venae cavae",
    "barva": "#60a5fa",
@@ -189,7 +186,6 @@
   },
   {
    "id": "pljucne-vene",
-   "znotraj": 0.55,
    "ime": "Pljučne vene",
    "la": "Venae pulmonales",
    "barva": "#fda4af",
@@ -337,8 +333,8 @@
  },
  "velikost": 0.2259,
  "trikotniki": {
-  "racunalnik": 259998,
-  "telefon": 80459
+  "racunalnik": 297986,
+  "telefon": 89597
  },
  "luci": [
   {

@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Anatomski položaj
+  - pokončno, dlani naprej, palca navzven
+  - opis velja zanj, ne za trenutno držo
+- Tri ravnine
+  - sagitalna: levo in desno, mediana skozi sredino
+  - frontalna: spredaj in zadaj
+  - transverzalna: zgoraj in spodaj, rezine CT
+- Osi in gibi
+  - os je pravokotna na ravnino giba
+  - fleksija: sagitalna ravnina, frontalna os
+  - abdukcija: frontalna ravnina; rotacija: vertikalna os
+- Smerni izrazi
+  - kranialno/kavdalno, ventralno/dorzalno, medialno/lateralno
+  - proksimalno/distalno samo na udih
+  - napaka: »desno z gledalčeve strani«
+- Telesne votline
+  - dorzalno: lobanjska votlina, hrbtenični kanal
+  - prsna: dve plevralni votlini in sredoprsje
+  - prepona; trebušna in medenična brez stene
+- Serozne mrene
+  - parietalni list na steni, visceralni na organu
+  - popljučnica, osrčnik, potrebušnica
+- Kvadranti trebuha
+  - mediana in transverzalna ravnina skozi popek
+  - vranica: levi zgornji kvadrant

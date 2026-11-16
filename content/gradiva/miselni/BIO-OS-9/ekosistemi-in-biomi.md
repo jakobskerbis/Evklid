@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Deli ekosistema
+  - abiotski: svetloba, voda, temperatura, prst
+  - proizvajalci, potrošniki, razkrojevalci
+  - napaka: gobe niso proizvajalci
+- Prehranjevalni splet
+  - trava → zajec → lisica
+  - puščica kaže, kam gre hrana
+- Pravilo desetine
+  - $E_2 = p \cdot E_1$, $p \approx 0{,}1$
+  - desetina od ravni tik pod njo
+  - zato je meso dražje
+- Energija in snovi
+  - energija teče: Sonce → toplota
+  - snovi krožijo prek razkrojevalcev
+- Sukcesija
+  - primarna: gola skala, lišaji, mahovi
+  - sekundarna: opuščen travnik, že s prstjo
+  - travnik → grmovje → gozd
+- Biomi
+  - določata temperatura in padavine
+  - najprej preveri tundro, nato puščavo
+  - Slovenija: listnati gozd
+- Biosfera
+  - del Zemlje z življenjem, okoli $20\,\mathrm{km}$
+  - kisik, premog, apnenec

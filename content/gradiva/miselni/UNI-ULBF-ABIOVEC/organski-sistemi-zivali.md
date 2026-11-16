@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mejni prehodi
+  - svetlina prebavne cevi je zunanji svet
+  - tanek epitel z veliko površino
+  - Fickov zakon $J = k \cdot \dfrac{A \cdot \Delta p}{d}$
+- Prebavila
+  - votlina z eno odprtino ali popolna cev
+  - gube, resice, mikrovili povečajo površino
+  - vamp: mikroorganizmi razgrajujejo celulozo
+- Dihala
+  - traheje pripeljejo zrak do celic
+  - škrge: protitok ohrani razliko koncentracij
+  - ptiči: zračne vreče, enosmerni tok
+- Obtočila
+  - odprta: hemolimfa obliva organe
+  - arterija od srca, vena k srcu
+  - čas obhoda $t = \dfrac{V}{Q}$, okoli $66\,\mathrm{s}$
+- Krvna obtoka
+  - ribe: en obtok, tlak pade v škrgah
+  - ptiči, sesalci: dva obtoka, štirje deli srca
+- Dušikovi odpadki
+  - amoniak: vodne živali, strupen, topen
+  - sečnina: sesalci, dvoživke
+  - sečna kislina: ptiči, plazilci, žuželke
+- Izločala
+  - protonefridiji, metanefridiji, Malpighijeve cevke, ledvice
+  - nefron: filtracija, reabsorpcija, sekrecija
+  - $180\,\mathrm{L}$ filtrata, $1{,}5\,\mathrm{L}$ seča na dan

@@ -69,7 +69,7 @@ export async function loadPilot({ notices = true } = {}) {
     st = st?.member ? st : { member: false };
   }
   paintMeRow();
-  D.onMember?.(!!st.member);
+  D.onMember?.(!!st.member, !!st.opinion); // opinion: bivši član z danim dovoljenjem za objavo mnenja (preklic)
   if (!$("#view-pilot")?.hidden) render();
   if (notices && st.member) maybeNotice();
 }

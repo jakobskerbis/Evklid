@@ -183,7 +183,7 @@ $R_c = \dfrac{\ln(r_\mathrm{zun}/r_\mathrm{not})}{2\pi\lambda L}$, $\Phi = \dfra
 
 ### Primer 4 – zdaj ti
 
-Fizioterapevt na koleno položi hladen obkladek s temperaturo $0\,^\circ\mathrm{C}$, med obkladek in kožo pa brisačo debeline $3{,}0\,\mathrm{mm}$ ($\lambda_b = 0{,}060\,\mathrm{W/(m\,K)}$). Pod kožo je $10\,\mathrm{mm}$ plast kože in podkožja s povprečno $\lambda_k = 0{,}30\,\mathrm{W/(m\,K)}$, pod njo tkivo s $34\,^\circ\mathrm{C}$. Privzemi stacionarno stanje in ravno plast. Kolikšna je temperatura kože pod brisačo?
+Fizioterapevt na koleno položi hladen obkladek s temperaturo $0\,^\circ\mathrm{C}$, med obkladek in kožo pa brisačo debeline $3{,}0\,\mathrm{mm}$ ($\lambda_b = 0{,}060\,\mathrm{W/(m\,K)}$). Pod brisačo je $10\,\mathrm{mm}$ debela plast kože in podkožja s povprečno $\lambda_k = 0{,}30\,\mathrm{W/(m\,K)}$, pod njo tkivo s $34\,^\circ\mathrm{C}$. Privzemi stacionarno stanje in ravno plast. Kolikšna je temperatura kože pod brisačo?
 
 **Podatki:** $T_o = 0\,^\circ\mathrm{C}$, $d_b = 0{,}0030\,\mathrm{m}$, $\lambda_b = 0{,}060\,\mathrm{W/(m\,K)}$, $d_k = 0{,}010\,\mathrm{m}$, $\lambda_k = 0{,}30\,\mathrm{W/(m\,K)}$, $T_t = 34\,^\circ\mathrm{C}$
 **Iščemo:** temperaturo kože $T_s$ na stiku z brisačo
@@ -239,7 +239,7 @@ Inkubator za celične kulture ima notranjo površino sten pri $37\,^\circ\mathrm
 
 1. Stena (zaporedne plasti), najprej ploskovni upor: $R_A = 2 \cdot 0{,}0010/16 + 0{,}040/0{,}030 \approx 1{,}3334\,\mathrm{m^2\,K/W}$, nato $R_s = 1{,}3334/1{,}30\,\mathrm{K/W} \approx 1{,}026\,\mathrm{K/W}$.
 2. Vrata: $R_A = 2 \cdot 0{,}0040/1{,}0 + 0{,}010/0{,}026 \approx 0{,}3926\,\mathrm{m^2\,K/W}$, nato $R_v = 0{,}3926/0{,}20\,\mathrm{K/W} \approx 1{,}963\,\mathrm{K/W}$.
-3. Steni in vrata so vzporedne poti med istima temperaturama: $\Phi_s = 15/1{,}026\,\mathrm{W} \approx 14{,}62\,\mathrm{W}$, $\Phi_v = 15/1{,}963\,\mathrm{W} \approx 7{,}64\,\mathrm{W}$.
+3. Stene in vrata so vzporedne poti med istima temperaturama: $\Phi_s = 15/1{,}026\,\mathrm{W} \approx 14{,}62\,\mathrm{W}$, $\Phi_v = 15/1{,}963\,\mathrm{W} \approx 7{,}64\,\mathrm{W}$.
 4. Moč grelnika: $\Phi = 14{,}62\,\mathrm{W} + 7{,}64\,\mathrm{W} \approx 22{,}3\,\mathrm{W}$.
 5. Nadomestni upor: $R = 15/22{,}26\,\mathrm{K/W} \approx 0{,}674\,\mathrm{K/W}$ (manjši od obeh, kot pri vzporednih električnih uporih).
 6. Delež vrat: $7{,}64/22{,}26 \approx 0{,}34$. Vrata so $13\,\%$ ploščine, a dajo $34\,\%$ izgub.
@@ -277,33 +277,45 @@ Izpelji toplotni upor krogelne plasti s polmeroma $r_1 < r_2$ in stalno $\lambda
 
 Profil temperature v panelu zamrzovalne komore (jeklo – pena – jeklo), toplo zunaj levo:
 
-```
- T
- |##
- |##\
- |## \
- |##  \
- |##   \
- |##    \
- |##     \##
- |##      ##
- +--------------> x
- jeklo pena jeklo
-```
+:::risba graf
+opis: Temperatura v panelu v odvisnosti od globine x v milimetrih, toplo zunaj levo. V zunanji jekleni pločevini od 0 do 1 mm je črta vodoravna pri 25 °C. V peni od 1 do 101 mm temperatura premo pade s 25 °C na −20 °C. V notranji pločevini od 101 do 102 mm je črta spet vodoravna pri −20 °C.
+x: -10 .. 122 | 20 | x [mm]
+y: -30 .. 35 | 10 | T [°C]
+pravokotnik: 0; -30 .. 1; 35 | siva
+pravokotnik: 101; -30 .. 102; 35 | siva
+črta: 0; 25 -> 1; 25 -> 101; -20 -> 102; -20 | modra debelo
+točka: 1; 25 | 25 °C | nad desno
+točka: 101; -20 | −20 °C | pod levo
+napis: 10; -10 | pena, 100 mm | desno
+napis: 1; -25 | jeklo, 1 mm | desno
+napis: 101; 30 | jeklo, 1 mm | levo
+podnapis: Profil temperature v panelu jeklo – pena – jeklo (Primer 2)
+:::
 
 V tankih jeklenih plasteh je črta vodoravna, ker imajo zanemarljiv upor. V peni je premica, ker je $\lambda$ stalna in tok povsod enak. V valjasti izolaciji bi se ista črta krivila: strma pri cevi, položna navzven, ker se ploščina z $r$ veča.
 
 Električna analogija za Primer 2:
 
-```
- 25 °C (zunaj)
-   |
- [jeklo]  R = 0,00006
- [ pena]  R = 4,0
- [jeklo]  R = 0,00006
-   |
--20 °C (znotraj)
-```
+:::risba skica
+opis: Trije zaporedni upori med zunanjo površino pri 25 °C zgoraj in notranjo pri −20 °C spodaj. Jeklo ima ploskovni upor 0,0000625 m² K/W, pena 4,0 m² K/W, drugo jeklo 0,0000625 m² K/W. Skozi vse tri teče ista gostota toka q = 11,25 W/m², navzdol.
+območje: 0; 0 .. 16; 11
+napis: 4; 10,3 | 25 °C (zunaj)
+črta: 4; 9,7 -> 4; 8,5
+pravokotnik: 2,5; 7 .. 5,5; 8,5 | siva
+napis: 4; 7,75 | jeklo
+napis: 6; 7,75 | R_A = 0,0000625 m² K/W | desno
+črta: 4; 7 -> 4; 6,25
+pravokotnik: 2,5; 4,75 .. 5,5; 6,25 | oranžna
+napis: 4; 5,5 | pena
+napis: 6; 5,5 | R_A = 4,0 m² K/W | desno
+črta: 4; 4,75 -> 4; 4
+pravokotnik: 2,5; 2,5 .. 5,5; 4 | siva
+napis: 4; 3,25 | jeklo
+napis: 6; 3,25 | R_A = 0,0000625 m² K/W | desno
+črta: 4; 2,5 -> 4; 1,3
+napis: 4; 0,7 | −20 °C (znotraj)
+puščica: 1,2; 8,5 -> 1,2; 2,5 | q | levo | modra
+:::
 
 Upori so zaporedni, isti »tok« $q$ teče skozi vse tri, »napetost« (padec temperature) se razdeli v razmerju uporov.
 
@@ -326,7 +338,7 @@ Koliko toplote na uro izgubi steklo okna v laboratoriju s ploščino $1{,}5\,\ma
 
 ## Drugače: Bolj natančno
 
-**Toplotna enačba.** Če stanje ni stacionarno, bilanca za majhen volumen da $\rho c_p\,\partial T/\partial t = -\nabla\cdot\vec{q} + \dot{q}_V$, kjer je $\dot{q}_V$ moč virov na enoto prostornine. S Fourierovim zakonom in stalno $\lambda$ dobimo $\partial T/\partial t = a\nabla^2T + \dot{q}_V/(\rho c_p)$, kjer je $a = \lambda/(\rho c_p)$ **temperaturna prevodnost** v $\mathrm{m^2/s}$. Čas, v katerem toplota prodre v globino $d$, je reda $d^2/a$: za $1\,\mathrm{cm}$ mesa ($a \approx 1{,}4 \cdot 10^{-7}\,\mathrm{m^2/s}$) je to okoli $12$ minut, za $2\,\mathrm{cm}$ štirikrat več. Zato se debelejši kos tako počasneje segreje.
+**Toplotna enačba.** Če stanje ni stacionarno, bilanca za majhen volumen da $\rho c_p\,\partial T/\partial t = -\nabla\cdot\vec{q} + \dot{q}_V$, kjer je $\dot{q}_V$ moč virov na enoto prostornine. S Fourierovim zakonom in stalno $\lambda$ dobimo $\partial T/\partial t = a\nabla^2T + \dot{q}_V/(\rho c_p)$, kjer je $a = \lambda/(\rho c_p)$ **temperaturna prevodnost** v $\mathrm{m^2/s}$. Čas, v katerem toplota prodre v globino $d$, je reda $d^2/a$: za $1\,\mathrm{cm}$ mesa ($a \approx 1{,}4 \cdot 10^{-7}\,\mathrm{m^2/s}$) je to okoli $12$ minut, za $2\,\mathrm{cm}$ štirikrat več. Zato se debelejši kos toliko počasneje segreje.
 
 **Viri v steni.** Pri enakomernih virih (Joulova toplota v vodniku, presnova v tkivu) iz $\lambda\,\mathrm{d}^2T/\mathrm{d}x^2 = -\dot{q}_V$ sledi paraboličen profil; najvišja temperatura je v notranjosti. Bioinženirji tako modelirajo temperaturo tkiva s Pennesovo enačbo, ki doda še prenos s krvjo.
 

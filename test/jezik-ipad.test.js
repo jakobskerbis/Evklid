@@ -5,7 +5,7 @@
 // 2) v pravem brskalniku (Playwright WebKit iPad, ležeče in pokončno, ter Chromium tablica, če sta
 //    nameščena): menjava sl → sr-Latn → ar (RTL) → de → sl in prvo nalaganje v jeziku naprave; prevodi
 //    zamujajo (počasna povezava), stran se mora vseeno izrisati v celoti (ikone, obrazec, brez napak).
-import test from "node:test";
+import test, { before } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import http from "node:http";
@@ -80,8 +80,13 @@ async function launch(kind) {
     return null;
   }
 }
-const webkit = await launch("webkit");
-const chromium = await launch("chromium");
+// Brskalnika se zaženeta v before(): vsi testi se registrirajo sinhrono (sicer jih --test-force-exit izpusti).
+let webkit = null;
+let chromium = null;
+before(async () => {
+  webkit = await launch("webkit");
+  chromium = await launch("chromium");
+});
 
 async function withApp(fn) {
   const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, warn() {}, info() {} } });
@@ -108,8 +113,9 @@ const DEVICES = [
   ["chromium", "Galaxy Tab S4"],
 ];
 for (const [kind, dev] of DEVICES) {
-  const browser = kind === "webkit" ? webkit : chromium;
-  test(`language switch reloads fully: ${kind} ${dev}`, { skip: browser ? false : `Playwright ${kind} ni nameščen` }, async () => {
+  test(`language switch reloads fully: ${kind} ${dev}`, async (t) => {
+    const browser = kind === "webkit" ? webkit : chromium;
+    if (!browser) return t.skip(`Playwright ${kind} ni nameščen`);
     await withApp(async (base) => {
       // Prvo nalaganje v jeziku naprave (nemščina), prevodi zamujajo 800 ms.
       const ctx = await browser.newContext({ ...pw.devices[dev], locale: "de-DE", serviceWorkers: "block" });
@@ -154,8 +160,10 @@ function serveFixtures() {
   });
   return new Promise((ok) => server.listen(0, "127.0.0.1", () => ok(server)));
 }
-for (const [kind, browser] of [["webkit", webkit], ["chromium", chromium]]) {
-  test(`zagon.js: a failing module does not stop the next ones (${kind})`, { skip: browser ? false : `Playwright ${kind} ni nameščen` }, async () => {
+for (const kind of ["webkit", "chromium"]) {
+  test(`zagon.js: a failing module does not stop the next ones (${kind})`, async (t) => {
+    const browser = kind === "webkit" ? webkit : chromium;
+    if (!browser) return t.skip(`Playwright ${kind} ni nameščen`);
     const server = await serveFixtures();
     const ctx = await browser.newContext({ locale: "en-US", timezoneId: "America/New_York" });
     try {

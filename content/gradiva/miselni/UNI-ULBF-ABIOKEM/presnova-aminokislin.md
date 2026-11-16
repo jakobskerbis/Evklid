@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Usoda aminokislin
+  - ni zaloge, presežek se razgradi
+  - dušik v sečnino, skelet za gorivo
+- Transaminacija
+  - aminokislina + α-ketoglutarat $\rightleftharpoons$ α-ketokislina + glutamat
+  - koencim PLP iz vitamina $\mathrm{B_6}$
+  - pazi: amonijak se tu ne sprosti
+- Oksidativna deaminacija
+  - glutamat dehidrogenaza, jetrni mitohondrij
+  - nastaneta $\mathrm{NH_4^+}$ in NADH
+- Cikel sečnine
+  - karbamoil fosfat, citrulin, argininosukcinat, arginin
+  - nosilec ornitin se obnovi
+  - mitohondrij (2 koraka), citosol (3 koraki)
+- Dva dušika in energija
+  - prvi N iz $\mathrm{NH_4^+}$, drugi iz aspartata
+  - 3 ATP, a 4 visokoenergijske vezi
+  - $n(\text{sečnina}) = \dfrac{n(\mathrm{N})}{2}$
+- Krebsovo dvokolo
+  - fumarat → malat → oksaloacetat → aspartat
+  - sečnina nastane v jetrih, ne v ledvicah
+- Ogljikov skelet
+  - glukogene: alanin → piruvat
+  - ketogeni: levcin, lizin → acetil-CoA

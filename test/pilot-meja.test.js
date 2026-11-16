@@ -233,6 +233,8 @@ test("GDPR (pregled A2): HMAC e-naslova, brisanje zapisov pilota po mesecu, ob k
   const keys = (store, like) => store.db.prepare("SELECT key FROM kv WHERE key LIKE ?").all(like).map((r) => r.key);
   await withAccounts({ EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(10) }, async ({ call, store, kid }) => {
     await call(`/api/students/${kid.id}/usage`);
+    assert.equal(keys(store, "pilot_stopnja_%").length, 0, "pogled pred prvo porabo AI ne zaklene (j 2026-11-10)");
+    await ask(call, kid.id, 1); // prva poraba AI v mesecu zaklene stopnjo
     assert.equal(keys(store, "pilot_stopnja_%").length, 1, "zaklep stopnje zapisan");
     assert.equal((await call(`/api/students/${kid.id}`, { method: "DELETE" })).status, 200);
     assert.equal(keys(store, "pilot_stopnja_%").length, 1, "zaklep je na računu (C1): izbris profila ga ne zbriše");

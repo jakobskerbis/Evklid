@@ -182,7 +182,7 @@ H, $-\mathrm{CH_3}$ (metil), $-\mathrm{CH_2CH_3}$ (etil) in $-\mathrm{CH_2CH_2CH
 
 - **Zavita veriga je nov izomer.** $\mathrm{CH_3{-}CH_2{-}CH_2{-}CH_3}$, narisan v obliki črke L, je še vedno butan. Če dobiš isto ime, je to ista spojina.
 - **Podobno ime pomeni izomer.** Butan in buten imata različni formuli ($\mathrm{C_4H_{10}}$ in $\mathrm{C_4H_8}$), zato nista izomera. Vedno najprej preštej atome.
-- **Vsaka dvojna vez da cis in trans.** Pri but-1-en ali 2-metilbut-2-en en ogljik dvojne vezi nosi dve enaki skupini, zato druge oblike ni. Preveri oba ogljika.
+- **Vsaka dvojna vez da cis in trans.** Pri but-1-enu ali 2-metilbut-2-enu en ogljik dvojne vezi nosi dve enaki skupini, zato druge oblike ni. Preveri oba ogljika.
 - **Kiralnost presojaš po prvem atomu skupine.** V 3-metilheksanu sta ob C3 dve skupini $\mathrm{CH_2}$, a eno nadaljuje en ogljik (etil), drugo dva (propil). Primerjaj cele skupine, ne le sosednji atom.
 - **Enantiomera imata različno vrelišče ali formulo.** Formula, vrelišče in gostota so enaki. Razlikujeta se le po zasuku polarizirane svetlobe in po delovanju v živih bitjih.
 
@@ -260,7 +260,7 @@ Vsako vrsto izomerije si lahko predstavljaš kot preprosto sliko.
 + Obstaja v dveh enantiomerih, ki sta si zrcalni sliki.
 - Ima dva enantiomera z različnima molekulskima formulama.
 ~ Enantiomera imata enako formulo in enaka vrelišča. Razlikujeta se le po razporeditvi v prostoru.
-> Srednji ogljik nosi štiri različne skupine, zato je kiralen. Alanin obstaja kot dva enantiomera, živa bitja pa uporabljajo le enega.
+> Srednji ogljik nosi štiri različne skupine, zato je kiralen. Alanin obstaja kot dva enantiomera, v beljakovine pa živa bitja vgrajujejo le enega.
 
 :::simboli
 n | število atomov ogljika v molekuli | | – | alkan CₙH₂ₙ₊₂
