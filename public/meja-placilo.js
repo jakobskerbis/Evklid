@@ -10,7 +10,6 @@
 import { t, locale } from "./i18n.js";
 import { icon } from "./icons.js";
 import { linkBox, bindLinkBox } from "./pay-ui.js";
-import { levelPrices } from "./pristajalna.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 // Valute brez decimalk imajo v ceniku cele enote (server/accounts/plans.js ZERO_DECIMAL, enako public/account.js money).
@@ -55,8 +54,12 @@ export function limitVariant({ body, status = null, prices = null, level = "OS",
   // Naročnina (tudi pretekla) v drugi valuti kot cenik: cene ne pokažemo, ker plačilo ne bi bilo v tej valuti.
   const subPlan = status?.parent?.subscription?.plan;
   const sameCurrency = !subPlan || planCurrency(subPlan) === prices?.currency;
-  const lp = payOn && single && sameCurrency ? levelPrices(prices, money) : {};
-  const price = lp[level]?.month || "";
+  // Mesečna cena paketa za 1 profil na učenčevi stopnji (prej levelPrices iz pristajalna.js, ki ga je #750 odstranil).
+  const leveled = plans.some((p) => p.level);
+  const m = payOn && single && sameCurrency
+    ? plans.find((p) => (leveled ? p.level === level : p.seats === 1) && !p.family && p.interval === "month")
+    : null;
+  const price = m ? money(m.amount, prices.currency) : "";
   const parentPays = !!status?.parent?.minor || body.hint === "block.hintParent";
   let action = null;
   if (payOn && !status.parent.birth_missing) {
