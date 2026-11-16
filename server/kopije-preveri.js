@@ -161,7 +161,7 @@ export function startBackupChecks(db, dbFile, { scheduler = true, mock = false, 
   const status = () => {
     if (off) return null;
     const s = db.isOpen === false ? null : kvGet();
-    return s ? { datum: s.datum, ok: s.ok } : null;
+    return s ? { datum: s.datum, ok: s.ok, ob: s.ob ?? null } : null; // ob: čas preizkusa (Straža opozori enkrat)
   };
   return { status, run, tick };
 }

@@ -40,6 +40,13 @@ const corrupt = (file) => {
   fs.closeSync(fd);
 };
 
+// Javno stanje ima še čas preizkusa (ob), da Straža opozori samo enkrat (docs/spremljanje.md).
+const brezOb = (s) => {
+  assert.match(s.ob, /^\d{4}-\d\d-\d\dT/);
+  const { ob, ...ostalo } = s;
+  return ostalo;
+};
+
 test("preverjanje kopij: zdrava kopija → ok, brez e-pošte (v ločeni niti)", async () => {
   const s = setup();
   const checks = startBackupChecks(s.store.db, s.file, { scheduler: false, log: s.log, now: () => NOW, env: ENV, mailer: s.mailer });
@@ -48,7 +55,7 @@ test("preverjanje kopij: zdrava kopija → ok, brez e-pošte (v ločeni niti)", 
   assert.equal(r.kopija, "2026-11-09");
   assert.equal(s.mailer.sent.length, 0);
   assert.equal(s.logs.error.length, 0);
-  assert.deepEqual(checks.status(), { datum: "2026-11-09", ok: true });
+  assert.deepEqual(brezOb(checks.status()), { datum: "2026-11-09", ok: true });
   s.done();
 });
 
@@ -68,7 +75,7 @@ test("preverjanje kopij: pokvarjena kopija (v niti) → napaka, en e-mail na skr
   await checks.run({ force: true });
   assert.equal(s.mailer.sent.length, 2);
   assert.equal(await checks.tick(), undefined);
-  assert.deepEqual(checks.status(), { datum: "2026-11-09", ok: false });
+  assert.deepEqual(brezOb(checks.status()), { datum: "2026-11-09", ok: false });
   // Naslednji dan (kopija še vedno pokvarjena in zastarela): nov e-mail.
   t = new Date("2026-11-10T03:40:00Z");
   await checks.tick();
@@ -181,7 +188,7 @@ test("preverjanje kopij: urnik samo ponoči, enkrat na dan, počaka na zahteve v
   assert.equal(checks.status(), null);
   busy = false;
   await checks.tick();
-  assert.deepEqual(checks.status(), { datum: "2026-11-09", ok: true });
+  assert.deepEqual(brezOb(checks.status()), { datum: "2026-11-09", ok: true });
   assert.equal(await checks.run(), null, "isti dan se ne ponovi");
   t = new Date("2026-11-09T07:10:00Z"); // 8.10: prepozno za začetek
   assert.equal(checks.tick(), undefined);
