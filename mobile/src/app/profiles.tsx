@@ -1,7 +1,7 @@
 // Izbira profila učenca (profil z geslom se na tej napravi odklene) in nov profil.
 // Pravila so na strežniku: število profilov po paketu, soglasje starša, lasten profil od starosti privolitve.
 import React, { useState } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import { AccessibilityInfo, Alert, Pressable, Text, View } from "react-native";
 import { api, ApiError } from "@/lib/api";
 import { useSession, type Student } from "@/lib/session";
 import { t } from "@/lib/i18n";
@@ -137,13 +137,20 @@ export default function Profiles() {
   );
 }
 
-// Nepotrjen e-naslov: profila še ni mogoče ustvariti.
+// Nepotrjen e-naslov: profila še ni mogoče ustvariti. »Je potrjen« ob še nepotrjenem naslovu pove, kaj storiti
+// (ob potrditvi kartica izgine, ker refresh osveži parent.verified); kot splet (public/account.js renderVerify).
 function VerifyEmail() {
   const { refresh } = useSession();
   const [sent, setSent] = useState(false);
+  const [notYet, setNotYet] = useState(0);
   return (
     <Card tone="gold">
       <Body>{t("mob.verifyEmail")}</Body>
+      {notYet ? (
+        <View key={notYet} accessibilityLiveRegion="polite">
+          <Banner text={t("verify.notYet")} tone="danger" />
+        </View>
+      ) : null}
       <View style={{ flexDirection: "row", gap: 8 }}>
         <Button
           title={sent ? t("mob.sent") : t("mob.resend")}
@@ -155,8 +162,20 @@ function VerifyEmail() {
             setSent(true);
           }}
         />
-        <Button title={t("mob.verified")} style={{ flex: 1 }} onPress={() => refresh()} />
+        <Button
+          title={t("mob.verified")}
+          style={{ flex: 1 }}
+          onPress={async () => {
+            const s = await api<{ parent?: { verified?: boolean } }>("/api/account/status").catch(() => null);
+            if (s?.parent && !s.parent.verified) {
+              setNotYet((n) => n + 1);
+              AccessibilityInfo.announceForAccessibility(t("verify.notYet"));
+            }
+            await refresh().catch(() => {});
+          }}
+        />
       </View>
+      <Body muted>{t("verify.resendHint")}</Body>
     </Card>
   );
 }
