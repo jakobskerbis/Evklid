@@ -10,7 +10,8 @@ Evklidova tipkovnica, laboratorij, NPZ, vse nove stvari s spleta. Seja je ena: W
 (`server/mobile/web-session.js`). Odjava na spletu odjavi tudi aplikacijo. Splet aplikacijo prepozna po
 `EvklidApp/<različica>` v User-Agent (`public/install.js` → `isStandalone()`: brez ponudbe »Namesti aplikacijo«).
 Vrstici telefona (ura, gumbi) dobita barvo roba strani. Gumb nazaj na Androidu gre nazaj po strani, povezave na
-druge strani odpre brskalnik.
+druge strani odpre brskalnik. Povezava iz e-pošte `https://evklid.app/vabilo?koda=…` (vabilo v pilot, `server/vabila.js`) se vedno odpre v
+brskalniku (aplikacija nima univerzalnih povezav); registracija tam je ista kot v aplikaciji, zato posebnega zaslona v aplikaciji ni.
 
 Naravno ostane: prijava in registracija (tipkovnica telefona), posodobitve (OTA in nov APK), obvestila, vaje
 brez povezave. Med objavo nove različice (gostitelj vrne 502/503/504) aplikacija ob vrtavki pokaže »Evklid se posodablja …« in poskuša znova do ~70 s (`BUSY_WAIT`, kot splet), ob prekinjeni povezavi dvakrat tiho poskusi znova. Ko strežnik še vedno ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez

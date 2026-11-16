@@ -170,6 +170,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       topic_id TEXT NOT NULL,
       seed INTEGER NOT NULL,
       level INTEGER NOT NULL,
+      year INTEGER,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       PRIMARY KEY (student_id, topic_id, seed)
     );
@@ -326,6 +327,9 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   const stateCols = db.prepare("PRAGMA table_info(topic_state)").all().map((c) => c.name);
   if (!stateCols.includes("pretest")) db.exec("ALTER TABLE topic_state ADD COLUMN pretest INTEGER");
   const convCols = db.prepare("PRAGMA table_info(conversations)").all().map((c) => c.name);
+  // Razred ob izdaji paketa brez povezave: sinhronizacija nalogo iz semena ustvari z istim razredom (tek-mladi-*).
+  const issuedCols = db.prepare("PRAGMA table_info(offline_issued)").all().map((c) => c.name);
+  if (!issuedCols.includes("year")) db.exec("ALTER TABLE offline_issued ADD COLUMN year INTEGER");
   if (!convCols.includes("path_topic")) db.exec("ALTER TABLE conversations ADD COLUMN path_topic TEXT");
   if (!convCols.includes("deep")) db.exec("ALTER TABLE conversations ADD COLUMN deep INTEGER NOT NULL DEFAULT 0");
   // Način (A/B), s katerim je inštruktor nazadnje odgovoril v tem pogovoru: ob zamenjavi v glavi dobi opombo (server/nacin.js).
