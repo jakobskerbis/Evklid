@@ -862,7 +862,7 @@ export function mountAccounts(app, store, opts = {}) {
   // Meja velja že, ko ne ostane prostora niti za najcenejši klic (trda meja, server/meje-ai.js).
   function freeBudgetInfo(studentId) {
     const need = aiUsage.minCallUsd();
-    const room = (c) => c.usd - c.spent - (aiUsage.inflight.get(c.key) || 0);
+    const room = (c) => c.usd - c.spent - aiUsage.inflightOf(c);
     for (const c of freeCaps(studentId)) if (room(c) < need) return freeBlock(studentId, c.code);
     return null;
   }
@@ -1813,18 +1813,32 @@ export function mountAccounts(app, store, opts = {}) {
           }
         })(),
         // Naloge za člane pilota (server/pilot-naloge.js): ocene, opombe, anketa; sama fotografija (če je shranjena) je v data.other.pilot_photos.
+        // Vsak del posebej (docs/izbris-izvoz.md, najdba 3): manjkajoča tabela ali ena pokvarjena vrstica ne skrije ostalega.
         pilot: (() => {
-          try {
-            return {
-              scans: q("SELECT s.cond, s.ok, s.note, s.problems, s.created_at, (p.scan_id IS NOT NULL) AS photo_saved, p.created_at AS photo_at FROM pilot_scans s LEFT JOIN pilot_photos p ON p.scan_id = s.id WHERE s.student_id = ?", c.id).map(
-                (r) => ({ ...r, note: unseal(r.note), problems: r.problems ? JSON.parse(unseal(r.problems, "[]") || "[]") : [] }),
+          const del = (fn) => {
+            try {
+              return fn();
+            } catch {
+              return [];
+            }
+          };
+          const seznam = (v) => {
+            const t = unseal(v, "[]") || "[]";
+            try {
+              return JSON.parse(t);
+            } catch {
+              return t; // ni JSON: izvoz dobi besedilo, kot je shranjeno
+            }
+          };
+          return {
+            scans: del(() =>
+              q("SELECT s.cond, s.ok, s.note, s.problems, s.created_at, (p.scan_id IS NOT NULL) AS photo_saved, p.created_at AS photo_at FROM pilot_scans s LEFT JOIN pilot_photos p ON p.scan_id = s.id WHERE s.student_id = ?", c.id).map(
+                (r) => ({ ...r, note: unseal(r.note), problems: r.problems ? seznam(r.problems) : [] }),
               ),
-              features: q("SELECT feature, ok, note, created_at FROM pilot_features WHERE student_id = ?", c.id).map((r) => ({ ...r, note: unseal(r.note) })),
-              survey: q("SELECT answers, created_at FROM pilot_survey WHERE student_id = ?", c.id),
-            };
-          } catch {
-            return null;
-          }
+            ),
+            features: del(() => q("SELECT feature, ok, note, created_at FROM pilot_features WHERE student_id = ?", c.id).map((r) => ({ ...r, note: unseal(r.note) }))),
+            survey: del(() => q("SELECT answers, created_at FROM pilot_survey WHERE student_id = ?", c.id)),
+          };
         })(),
         // Mnenja člana pilota (server/pilot-mnenja.js): ocena, besedili, razred ali letnik in dovoljenje za objavo.
         pilot_opinions: (() => {

@@ -5,7 +5,7 @@ import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { pilotReport } from "../server/pilot.js";
 import { SCHOOL_LICENCE_PRICES } from "../server/schools.js";
-import { validateOrder, predracunHtml, CONSENT_TEXT } from "../server/sole.js";
+import { validateOrder, predracunHtml, CONSENT_TEXT, questionsWord, firstDays } from "../server/sole.js";
 import { BRAND } from "../server/brand.js";
 import { createRequire } from "node:module";
 
@@ -81,7 +81,10 @@ test("/sole page, orders without accounts (local admin), status, predračun", as
     for (const p of Object.values(SCHOOL_LICENCE_PRICES)) assert.ok(new RegExp(`>${p.eur}\\s€<`).test(html), `cena ${p.eur}`);
     assert.ok(html.includes("na učenca na leto"));
     assert.ok(html.includes("UJP") && html.includes('id="order-form"') && html.includes('name="website"'));
-    assert.ok(!/DDV/.test(html), "na strani ni trditev o DDV");
+    // Status DDV: j 16. 11. 2026 potrdil, da ni zavezanec. Na strani sta samo ti dve potrjeni trditvi o DDV, nič drugega.
+    const vat = "Izvajalec ni zavezanec za DDV, zato DDV ni obračunan.";
+    assert.ok(html.includes(vat), "potrjena trditev o DDV");
+    assert.ok(!/DDV/.test(html.replace(vat, "").replace("Izvajalec ni zavezanec za DDV.", "")), "na strani ni drugih trditev o DDV");
     assert.equal((await fetch(`${base}/sole.html`, { headers: ua })).status, 200);
     await new Promise((r) => setTimeout(r, 20));
     assert.equal(pilotReport(store.db, { days: 1 }).totals.visits.sole, 2);
@@ -172,6 +175,8 @@ test("predračun: totals per plan and escaping of every buyer field", () => {
   assert.ok(html.includes(`data-total="${3 * SCHOOL_LICENCE_PRICES.pilot.eur}"`));
   assert.ok(html.includes("Predračun št. 2026-0007") && html.includes("SI00 2026-0007"));
   assert.ok(html.includes("Šifra PU"));
+  // Status DDV (j 16. 11. 2026): ni zavezanec; vrstice »DDV [izpolni]« ni več.
+  assert.ok(html.includes("<td colspan=\"4\">Izvajalec ni zavezanec za DDV.</td>") && !/<td colspan="3">DDV<\/td>/.test(html));
   assert.ok(!predracunHtml({ ...o, budget_user: 0, budget_code: null }, NOW).includes("Šifra PU"));
 });
 
@@ -257,4 +262,9 @@ test("predračun: brez vrinjenih skript, gumb Natisni pod CSP odpre tiskanje", {
     await browser.close();
     server.close();
   }
+});
+
+test("stran /sole: slovenske množinske oblike za ustno spraševanje in dneve preizkusa", () => {
+  assert.deepEqual([1, 2, 3, 5].map(questionsWord), ["1 vprašanje", "2 vprašanji", "3 vprašanja", "5 vprašanj"]);
+  assert.deepEqual([1, 2, 3, 5, 7].map(firstDays), ["prvi dan", "prva 2 dneva", "prvi 3 dnevi", "prvih 5 dni", "prvih 7 dni"]);
 });

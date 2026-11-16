@@ -1,0 +1,30 @@
+/* Javne strani za obiskovalce (Zakaj Evklid, O Evklidu, Za starše, Za šole, Garancija): enak zgornji meni in pas
+   zaupanja (zunanji pregled 16. 11. 2026). Barve iz spremenljivk strani, zato tudi v temnem načinu. */
+.mkt-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 14px; }
+.mkt-brand { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text); font-weight: 800; font-size: 1.2rem; text-decoration: none; }
+.mkt-brand img { width: 28px; height: 28px; border-radius: 8px; }
+.mkt-cta { margin-inline-start: auto; display: inline-flex; align-items: center; min-height: 44px; padding: 8px 16px; border-radius: 12px; background: var(--accent); color: var(--accent-text) !important; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.mkt-nav { order: 3; flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 0 2px; margin-inline-start: -8px; }
+.mkt-nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; border-radius: 10px; color: var(--text); font-weight: 600; text-decoration: none; }
+.mkt-nav a:hover { background: var(--surface-2); }
+.mkt-nav a[aria-current="page"] { color: var(--accent); text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 2px; }
+.mkt-top a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (min-width: 760px) {
+  .mkt-nav { order: 0; flex-basis: auto; margin-inline-start: auto; }
+  .mkt-cta { margin-inline-start: 0; }
+}
+.mkt-trust { list-style: none; margin: 0 0 16px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); font-size: 0.92rem; font-weight: 600; line-height: 1.6; }
+/* Vrstica v besedilu (inline): pika ostane na koncu vrstice, ko se pas na telefonu prelomi. */
+.mkt-trust li { display: inline; }
+.mkt-trust li:not(:last-child)::after { content: "\00a0·"; color: var(--muted); }
+.mkt-trust a { color: var(--accent); }
+.mkt-name span { color: var(--accent); }
+/* Primer pogovora na strani Za starše: oblački kot .land-msg na pristajalni strani in v Zakaj Evklid (account.css),
+   tu brez account.css in brez animacije. */
+.mkt-chat { margin: 0 0 12px; padding: 14px; max-width: 560px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+.mkt-chat ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.doc .mkt-chat ol li { margin: 0; }
+.mkt-chat .land-msg { max-width: 85%; padding: 10px 14px; border-radius: 16px; line-height: 1.4; overflow-wrap: anywhere; }
+.mkt-chat .land-msg.me { align-self: flex-end; background: var(--accent); color: var(--accent-text); border-end-end-radius: 4px; }
+.mkt-chat .eq { white-space: nowrap; }
+.mkt-chat .land-msg.tutor { align-self: flex-start; background: var(--surface-2); color: var(--text); border-end-start-radius: 4px; }

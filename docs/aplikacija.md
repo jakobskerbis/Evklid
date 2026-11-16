@@ -53,7 +53,12 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   gre ob shranjevanju skozi DOMPurify, ob odprtju skozi `ociscen()` (`<template>`, brez skriptov, dogodkov in
   naslovov drugih izvorov). Vstopna stran čaka
   omrežje največ 1 s (`public/sw.js`), nato shranjena kopija iste različice. APK drži zagonski zaslon do sporočila
-  »izris« (`mobile/src/app/web.tsx`). Meri korak `tel-zagon` v `scripts/preveri-aplikacijo.cjs` (nad 1,5 s opozorilo, napaka nad 5 s ali če posnetek ni
+  »izris« (`mobile/src/app/web.tsx`). Brez utripa ob odprtju (j 16. 11. 2026): ikone vstopne strani pošlje
+  strežnik že izrisane (`server/vstopna-stran.js withIcons`, `svg[data-zg]`; ob zgodovinskem slogu skrite do ikon
+  obdobja, `html[data-ikone]`), posnetek nosi tudi besedila zgornje vrstice (`hd`: poraba, XP, dnevi, cilj,
+  začetnica, ime; `pozabi()` jih vrne), stran se do razčlenjene spodnje vrstice ne izriše po kosih
+  (`html[data-zacetek-lupina]`, varovalo 3 s), samodejna osvežitev po objavi (`reloadIfNewer`) pa enkrat dovoli posnetek
+  prejšnje različice (`sessionStorage evklid.posnetek-prenos`), da se pokaže isti zaslon namesto okostja. Meri korak `tel-zagon` v `scripts/preveri-aplikacijo.cjs` (nad 1,5 s opozorilo, napaka nad 5 s ali če posnetek ni
   prva vsebina).
 - `public/zacetek.js` po delih (komentarji so tu, ker datoteka šteje v proračun prvega odprtja): `izberi` (zadnji
   pogled ≤ 12 ur, zapis iz prihodnosti ne velja), `konec` (oznaki `data-zacetek`, `data-zacetek-pod` in posnetek

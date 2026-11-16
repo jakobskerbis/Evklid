@@ -42,7 +42,6 @@ test("Učbenik: »Nalagam …« med čakanjem, kazala vnaprej, menjava ravni bre
     );
     await p.evaluate((id) => localStorage.setItem("studentId", String(id)), id);
     await p.goto(base + "/?pogled=textbook");
-    await p.waitForSelector(".iq-wrap [data-iq=skip]", { timeout: 8000 }).then((b) => b.click()).catch(() => {});
     await p.waitForSelector("#view-textbook .tb-book", { timeout: 15000 });
     // Prvo kazalo (učenčev učbenik) še nalaga: vidno sporočilo, ne prazen prostor.
     assert.match(await p.locator("#tb-body").innerText(), /Nalagam/);
@@ -99,7 +98,6 @@ test("Učbenik: lekcija takoj pokaže ime in »Nalagam …«, ob dotiku se nalo�
     );
     await p.evaluate((id) => localStorage.setItem("studentId", String(id)), id);
     await p.goto(base + "/?pogled=textbook");
-    await p.waitForSelector(".iq-wrap [data-iq=skip]", { timeout: 8000 }).then((b) => b.click()).catch(() => {});
     await p.waitForSelector("#tb-body .tb-topic:not(.pending)", { timeout: 15000 });
 
     // Klik brez vnaprejšnjega nalaganja (tipkovnica): takoj ime teme in »Nalagam …«, nato lekcija.

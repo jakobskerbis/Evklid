@@ -76,9 +76,19 @@ test("pdf.js se ne naloži: sporočilo in povezava »Odpri PDF« na isto datotek
   await app.route("**/vendor/pdfjs/legacy/build/pdf.min.mjs", (r) => r.abort());
   await app.goto(`${base}/t.html`);
   await app.waitForFunction(() => window.ready);
+  // Povečava strani je v aplikaciji izklopljena (theme.js); pola jo za čas branja vrne, zaprtje jo spet izklopi.
+  const vp = () => app.evaluate(() => document.querySelector('meta[name="viewport"]').content);
+  await app.evaluate(() => {
+    const m = document.querySelector('meta[name="viewport"]');
+    m.setAttribute("data-izvirno", m.content);
+    m.content += ", maximum-scale=1, user-scalable=no";
+  });
   await app.evaluate((d) => window.odpri(d), b64);
   await app.locator(".pv .pv-fallback p").waitFor({ timeout: 15000 });
   assert.equal(await app.locator(".pv-fb-open").count(), 0, "v aplikaciji ni gumba »Odpri PDF«");
+  assert.equal(await vp(), "width=device-width", "med branjem pole je povečava s prsti spet mogoča");
+  await app.click("[data-pv-close]");
+  assert.equal(await vp(), "width=device-width, maximum-scale=1, user-scalable=no", "po zaprtju pole spet brez povečave");
   // 2) običajna pot: izris, brez rezerve
   const good = await ctx.newPage();
   await good.goto(`${base}/t.html`);

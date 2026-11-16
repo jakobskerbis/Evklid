@@ -360,7 +360,8 @@ T acinus(vec2 p, float s, float serozni, float seme, float px) {
   t.snov = S_CITO; t.tip = C_ZLEZNA; t.cid = vec2(i, 0.0) + v.id * 7.0;
   t.meja = min(v.rob - rez, 6.283 * rq / n * (0.5 - abs(fract(a * n) - 0.5)));
   float Rb = rq + v.rob;
-  t.cc = c + smer * Rb * 0.6; t.jc = c + smer * Rb * (serozni > 0.5 ? 0.72 : 0.9);
+  // središče celice (TEM: sistem organelov) mora biti v celici stalno; Rb se v vogalih acinusa spreminja s točko
+  t.cc = c + smer * 0.3 * s; t.jc = c + smer * Rb * (serozni > 0.5 ? 0.72 : 0.9);
   float meja = crta(t.meja, 0.18, px);
   if (serozni > 0.5) {
     // bazalno bazofilna (zrnati ER), apikalno eozinofilna zrnca zimogena

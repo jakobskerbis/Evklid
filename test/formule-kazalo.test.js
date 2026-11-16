@@ -46,8 +46,7 @@ async function phone(base, init, onPage) {
   await p.evaluate((id) => localStorage.setItem("studentId", String(id)), id);
   await p.goto(base + "/");
   await p.waitForSelector('.topbar .tab[data-view="graph"]', { state: "attached", timeout: 60000 });
-  // vprašanje o zanimanjih (novi profil) zapremo, kot bi ga učenec
-  await p.waitForSelector(".iq-wrap [data-iq=skip]", { timeout: 15000 }).then((b) => b.click()).catch(() => {});
+  await p.waitForSelector("#view-path #xp-card .hero", { timeout: 60000 }); // profil izbran, Učna pot izrisana (prej je to počakal vprašalnik zanimanj)
   await p.evaluate(() => document.querySelector('.topbar .tab[data-view="graph"]').click());
   // kalkulator odprt: viden razdelek v #graph-slot (skriti razdelki ostanejo v pomnilniku)
   await p.waitForFunction(() => [...document.querySelectorAll("#graph-slot > *")].some((c) => !c.hidden && c.getClientRects().length), null, { timeout: 60000 });

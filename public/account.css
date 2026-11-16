@@ -209,6 +209,7 @@ details .card { margin-top: 8px; }
   .land-hero { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(32px, 4vw, 64px); }
 }
 /* Razredi, ki jih še uporabljata /o-evklidu in /zakaj-evklid (pristajalna stran jih ne): kartice zmožnosti in stopenj, opomba, spodnji poziv */
+.land-hero .land-actions a.btn-secondary { background: transparent; color: #fff; border-color: rgb(255 255 255 / 0.7); }
 .land-note { margin: 12px 0 0; color: var(--muted); }
 .land-cta { text-align: center; padding: clamp(28px, 4vw, 48px) var(--rob-strani); border-radius: var(--radius); background: var(--accent-soft); }
 .land-cta .land-actions, .land-cta .land-trial { justify-content: center; }
