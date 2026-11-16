@@ -4096,6 +4096,7 @@ export default {
   "land.app.go": "Prenesi aplikacijo",
   "land.ctaTitle": "Prva naloga te že čaka.",
   "land.privacy": "Zasebnost",
+  "land.terms": "Pogoji uporabe",
   "land.what": "Kaj je Evklid?",
   "land.why": "Zakaj Evklid?",
   "open.group": "Odpri v aplikaciji",

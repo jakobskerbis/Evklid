@@ -25,7 +25,7 @@ export const ORIGIN = `https://${BRAND.domain}`;
 export const ABOUT_PATH = "/o-evklidu";
 export const WHY_PATH = "/zakaj-evklid";
 // Javne strani za iskalnike (brez prijave, brez osebnih podatkov). Garancija je še osnutek, zato je ni tu.
-export const PUBLIC_PAGES = ["/", ABOUT_PATH, WHY_PATH, "/starsi.html", "/sole", "/prenesi", "/zasebnost.html"];
+export const PUBLIC_PAGES = ["/", ABOUT_PATH, WHY_PATH, "/starsi.html", "/sole", "/prenesi", "/zasebnost.html", "/pogoji.html"];
 // Zasebne poti: API, plačilna stran s kodo, prijava testne različice, stanje strežnika, datoteke aplikacije za prenos.
 export const PRIVATE_PATHS = ["/api/", "/placaj.html", "/prijava", "/healthz", "/gradiva/", "/prenesi/"];
 
@@ -173,6 +173,7 @@ ${f.accAny ? `- Measured accuracy. ${f.accSentenceEn} Other tools were not measu
 - [Za učitelje in šole](${ORIGIN}/sole)
 - [Aplikacija za telefon](${ORIGIN}/prenesi)
 - [Varstvo osebnih podatkov](${ORIGIN}/zasebnost.html)
+- [Splošni pogoji uporabe](${ORIGIN}/pogoji.html)
 `;
 }
 
