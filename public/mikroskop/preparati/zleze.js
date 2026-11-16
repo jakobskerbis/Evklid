@@ -93,7 +93,20 @@ T tkivo(vec2 p, float px) {
   float H = 7.0 + 4.0 * h.x;
   float d = rb - pre;
   if (d < H) {
-    T e = epitel(H - d, atan(qf.y, qf.x) * 50.0, H, 8.0, 0.4, C_ZLEZNA, v.id, p, -nv, px);
+    // središče celice (TEM riše organele v sistemu celice, ki mora biti v celici stalen, sicer nariše pasove): lega
+    // vzdolž epitelija je kot okoli središča folikla (·50), zato je središče celice presečišče žarka pod kotom sredine
+    // celice s črto na polovici višine celice. Celice ostanejo, kot so.
+    float sk = atan(qf.y, qf.x) * 50.0;
+    T e = epitel(H - d, sk, H, 8.0, 0.4, C_ZLEZNA, v.id, w, -nv, px);
+    vec2 pv = vec2(nv.y, -nv.x);
+    vec2 jo = e.jc - e.cc;
+    float ac = (sk - dot(w - e.cc, pv)) / 50.0;
+    vec2 u = vec2(cos(ac), sin(ac));
+    float xu = u.x * pv.y - u.y * pv.x;
+    vec2 mq = qf + nv * (d - 0.5 * H);                     // točka na sredini višine celice (zvita ravnina, glede na folikel)
+    float tt = -(u.x * mq.y - u.y * mq.x) / (sign(xu + 1e-6) * max(abs(xu), 0.05));
+    e.cc = p + nv * (d - 0.5 * H) + tt * pv;
+    e.jc = e.cc + jo;
     e.dye.x += 0.05; // citoplazma tirocitov je rahlo bazofilna (vijoličasta)
     return e;
   }
