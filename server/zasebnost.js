@@ -4,6 +4,7 @@ import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, blindIndex, warn
 import { normCard } from "./flashcards.js";
 import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
 import { PHOTO_MAX_DAYS, dropFormerPhotos } from "./pilot-naloge.js";
+import { pocistiStare } from "./kopije.js";
 
 // Šifrirani stolpci (SEALED) in štetje neberljivih (encryptionStats) sta v crypto-polje.js: rabi ju tudi lahka nit
 // za nočni preizkus kopij (server/kopije-preizkus.js), ki ne sme naložiti tega modula in vsega, kar ta uvaža.
@@ -22,6 +23,17 @@ export const RETENTION = {
   pushLogDays: 90,
   // Račun, ki e-naslova ni potrdil v toliko dneh in nima profilov, plačil ali seje, se izbriše.
   unverifiedDays: 30,
+  // Odpiranje delov aplikacije (točka B2, server/odpiranje-delov.js MAX_DNI): po toliko dneh brez odprtja.
+  odpiranjeDni: 120,
+  // Predpomnjeni odgovori inštruktorja se uporabijo 30 dni (app.js), nato izbrišejo (docs/izbris-izvoz.md, najdba 4).
+  answerCacheDays: 30,
+  // Naročila šol (school_orders: ime, e-naslov in telefon kontaktne osebe) od zadnje spremembe (updated_at).
+  // j 2026-11-16: brez pogodbe 2 leti po zadnjem stiku, sklenjeno 10 let (računovodska listina).
+  schoolOrderOpenDays: 730,
+  schoolOrderWonDays: 3653,
+  // Soglasje plačnika ob nakupu (billing_consents, z e-naslovom plačnika) po izbrisu računa: dokaz soglasja.
+  // j 2026-11-16: 5 let po nakupu (splošni zastaralni rok, OZ 346).
+  billingConsentDays: 1826,
   // Potekle seje in odklepi profilov se izbrišejo takoj (niso več veljavni).
 };
 
@@ -165,6 +177,25 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
   if (hasTable(db, "push_log")) {
     // period se začne z datumom (YYYY-MM-DD:učenec).
     out.pushLog = Number(db.prepare("DELETE FROM push_log WHERE period GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*' AND substr(period, 1, 10) < ?").run(ago(RETENTION.pushLogDays).slice(0, 10)).changes);
+  }
+  if (hasTable(db, "odpiranje_delov")) out.odpiranje = Number(db.prepare("DELETE FROM odpiranje_delov WHERE zadnji < ?").run(ago(RETENTION.odpiranjeDni).slice(0, 10)).changes);
+  if (hasTable(db, "answer_cache")) out.answerCache = Number(db.prepare("DELETE FROM answer_cache WHERE created_at < ?").run(ago(RETENTION.answerCacheDays)).changes);
+  // Rok hrambe varnostnih kopij na disku tudi z EVKLID_BACKUPS=0 (ko ne teče dnevna kopija): docs/izbris-izvoz.md.
+  try {
+    const file = db.prepare("PRAGMA database_list").all().find((r) => r.name === "main")?.file;
+    if (file) out.backups = pocistiStare(file, new Date(now));
+  } catch (e) {
+    log.error?.(`[evklid] čiščenje starih varnostnih kopij: ${e.message}`);
+  }
+  if (hasTable(db, "school_orders")) {
+    // Sklenjeno: status »won« ali šola z licenco iz naročila (school_id); ostalo je povpraševanje brez pogodbe.
+    const won = "(status = 'won' OR school_id IS NOT NULL)";
+    const del = (cond, d) => (d ? Number(db.prepare(`DELETE FROM school_orders WHERE ${cond} AND updated_at < ?`).run(ago(d)).changes) : 0);
+    out.schoolOrders = del(`NOT ${won}`, RETENTION.schoolOrderOpenDays) + del(won, RETENTION.schoolOrderWonDays);
+  }
+  if (RETENTION.billingConsentDays && hasTable(db, "billing_consents")) {
+    // Samo soglasja izbrisanih računov (parent_id NULL); pri obstoječem računu ostanejo, dokler je račun.
+    out.billingConsents = Number(db.prepare("DELETE FROM billing_consents WHERE parent_id IS NULL AND created_at < ?").run(ago(RETENTION.billingConsentDays)).changes);
   }
   ensureAuditTable(db);
   out.audit = Number(db.prepare("DELETE FROM audit_log WHERE at < ?").run(ago(RETENTION.auditDays)).changes);

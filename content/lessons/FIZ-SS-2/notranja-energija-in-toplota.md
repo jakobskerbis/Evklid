@@ -5,312 +5,405 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-**Uganka.** Nekateri telefoni za igre imajo pod zaslonom tanko kovinsko ploščico, v kateri je zaprtih le nekaj kapljic vode (parna komora). Ob vročem procesorju voda izpari, ob hladnejšem robu ohišja se para spet zgosti v kapljice. Zakaj inženirji ne vgradijo raje večjega kosa kovine?
+**Prvi prizor: avgust ob morju.** Opoldne te pesek na plaži peče v podplate, morje je le prijetno toplo. Sonce je oboje grelo enako dolgo.
 
-Preden bereš naprej, ugani: kaj odvzame več energije, en gram vode, ki se segreje za $1\,^\circ\text{C}$, ali en gram vode, ki izpari? Desetkrat več, stokrat več ali še več? Odgovor boš izračunal sam v razlagi.
+**Drugi prizor: zima v planinski koči.** Na gorilniku topiš sneg za čaj. Plamen gori, termometer v loncu pa več minut kaže $0\,^\circ\text{C}$. Temperatura se premakne šele, ko se stali ves sneg.
 
-Iz 1. letnika poznaš energijo, delo in zakon o ohranitvi energije. Veš, da se pri trenju mehanska energija »izgubi«, telesa pa se segrejejo. Ista vprašanja se skrivajo za kotličkom, ki zavre vodo, in za ledom, ki se v kozarcu tali pri stalnih $0\,^\circ\text{C}$: kam gre energija in koliko je je?
+Prizora sta si na videz daleč narazen, skrivata pa isto spoznanje: **prejeta energija sama ne pove, za koliko se snov segreje.** Odvisno je od tega, katera snov je to, in od tega, ali se snov ravno tali ali izpareva.
+
+Ugani, preden bereš naprej: energija, ki stali $1\,\text{kg}$ snega, bi segrela $1\,\text{kg}$ vode z $0\,^\circ\text{C}$ za koliko stopinj? Za $5$, za $20$ ali za $80$? Odgovor izračunaš v razlagi.
+
+Pomagal bo zakon o ohranitvi energije iz 1. letnika.
 
 ## Razlaga
 
-**1. Notranja energija.** Snov je zgrajena iz delcev (atomov, molekul), ki se neprestano gibljejo in med seboj delujejo. **Notranja energija** $W_n$ telesa je vsota kinetičnih energij vseh delcev (zaradi gibanja) in potencialnih energij zaradi medsebojnih sil med delci. Višja ko je temperatura, hitreje se v povprečju gibljejo delci in večja je notranja energija.
+**1. Najprej en račun.** S potopnim grelnikom grejemo vodo v kampu. Meritev pokaže: $1\,\text{kg}$ vode se segreje za $1\,\text{K}$, ko prejme približno $4200\,\text{J}$ energije.
 
-*Preizkus:* Ima kozarec ledene vode notranjo energijo? *(Da, delci se gibljejo pri vsaki temperaturi.)*
+Koliko energije potrebujeta $2\,\text{kg}$ vode, da se segrejeta za $10\,\text{K}$? Vsak kilogram potrebuje svojih $4200\,\text{J}$ za vsak kelvin. Kilogramov je $2$, kelvinov $10$:
 
-**2. Toplota.** **Toplota** $Q$ je energija, ki se zaradi temperaturne razlike prenese z enega telesa na drugo (ali z okolice na telo). Toplota ni »shranjena« v telesu: telo ima notranjo energijo, toplota pa je energija, ki se *prenaša*. Merimo jo v joulih ($\text{J}$). Toplota sama od sebe teče vedno z toplejšega telesa na hladnejše.
+$$Q = 2 \cdot 10 \cdot 4200\,\text{J} = 84\,000\,\text{J}$$
 
-Notranjo energijo lahko spremenimo tudi z delom (npr. drgnjenje dlani, stiskanje zraka s tlačilko). Če se mehansko delo ne opravlja, velja: dovedena toplota poveča notranjo energijo, odvedena jo zmanjša:
+Dvakrat več vode potrebuje dvakrat več energije, dvakrat večje segretje prav tako. Energija je sorazmerna z maso in s spremembo temperature.
+
+**2. Toplota in notranja energija.** Energijo, ki preide z enega telesa na drugo **zaradi razlike temperatur**, imenujemo **toplota** $Q$. Merimo jo v joulih. Sama od sebe teče vedno s toplejšega telesa na hladnejše, tu z grelnika v vodo.
+
+Kam gre ta energija? Voda je zgrajena iz molekul, ki se ves čas gibljejo in med seboj delujejo s silami. **Notranja energija** $W_n$ je vsota kinetičnih energij vseh delcev in potencialnih energij zaradi sil med njimi. Toplota, ki jo voda prejme, ji poveča notranjo energijo. Če ni dela (telo ga ne opravlja in tudi okolica ga ne opravlja na telesu), velja:
 
 $$\Delta W_n = Q$$
 
-*Preizkus:* Telefon na polnjenju je toplejši od mize. V katero smer teče toplota? *(S telefona na mizo.)*
+Telo torej *ima* notranjo energijo, toplote pa nima. Toplota je energija na poti. Notranjo energijo lahko povečamo tudi z delom, na primer ko si drgnemo dlani.
 
-**3. Specifična toplota.** Različne snovi za enako segrevanje potrebujejo različno toploto. **Specifična toplota** $c$ pove, koliko toplote potrebuje $1\,\text{kg}$ snovi, da se segreje za $1\,\text{K}$ (ali $1\,^\circ\text{C}$):
-
-$$c = \frac{Q}{m\,\Delta T}, \qquad \text{enota: } \frac{\text{J}}{\text{kg\,K}}$$
-
-Iz tega sledi osnovna enačba za segrevanje ali ohlajanje:
+**3. Posplošitev: specifična toplota.** Račun iz točke 1 velja za vsako snov, le število $4200$ je drugo. To število imenujemo **specifična toplota** $c$: pove, koliko toplote potrebuje $1\,\text{kg}$ snovi, da se segreje za $1\,\text{K}$. Za maso $m$ in spremembo temperature $\Delta T$:
 
 $$Q = m\,c\,\Delta T$$
 
-kjer je $\Delta T = T_{\text{končna}} - T_{\text{začetna}}$. Pri segrevanju je $Q>0$, pri ohlajanju $Q<0$ (telo toploto oddaja).
+$$c = \frac{Q}{m\,\Delta T}$$
 
-Nekaj približnih vrednosti: voda $c \approx 4200\,\dfrac{\text{J}}{\text{kg\,K}}$, led približno $2100\,\dfrac{\text{J}}{\text{kg\,K}}$, železo približno $450\,\dfrac{\text{J}}{\text{kg\,K}}$. Voda ima za snov zelo veliko specifično toploto: težko se segreje in težko ohladi.
+Enota za $c$ je $\text{J/(kg\,K)}$. Sprememba temperature je $\Delta T = t_2 - t_1$, končna minus začetna. Pri segrevanju je $Q > 0$, pri ohlajanju $Q < 0$: telo toploto oddaja. Razlika $1\,\text{K}$ je enaka razliki $1\,^\circ\text{C}$, zato pri $\Delta T$ stopinj ni treba pretvarjati v kelvine.
 
-:::premisli
-V simulaciji spodaj zmešaj $1\,\text{kg}$ vode s $80\,^\circ\text{C}$ in $1\,\text{kg}$ železa z $20\,^\circ\text{C}$. Napovej: bo končna temperatura bliže $80\,^\circ\text{C}$ ali $20\,^\circ\text{C}$? Nato namesto železa izberi vodo.
----
-Z železom je približno $74\,^\circ\text{C}$, bliže $80\,^\circ\text{C}$. Voda ima približno $9$-krat večjo $c$ kot železo, zato se ob isti oddani toploti njena temperatura spremeni veliko manj. Z vodo namesto železa je končna temperatura $50\,^\circ\text{C}$, točno na sredini.
+:::risba stolpci
+opis: Stolpčni prikaz specifične toplote nekaterih snovi v kJ/(kg K): voda 4,2, led 2,1, aluminij 0,9, suh pesek 0,8, železo 0,45. Voda ima največjo, dvakrat večjo kot led in več kot petkrat večjo kot pesek.
+podnapis: Specifična toplota c v kJ/(kg K); 4,2 kJ/(kg K) = 4200 J/(kg K)
+os: c [kJ/(kg K)]
+korak: 1
+stolpec: voda | 4,2
+stolpec: led | 2,1
+stolpec: aluminij | 0,9
+stolpec: pesek | 0,8
+stolpec: železo | 0,45
 :::
 
-**4. Temperaturna razlika.** Razlika $1\,\text{K}$ je enaka razliki $1\,^\circ\text{C}$, zato pri $\Delta T$ ni treba pretvarjati stopinj Celzija v kelvine.
+Voda ima med vsakdanjimi snovmi izjemno veliko specifično toploto. Zdaj razumemo plažo: enaka masa peska se ob enaki prejeti toploti segreje več kot petkrat bolj kot voda. To je glavni, a ne edini razlog: voda se še meša in izpareva.
 
-*Preizkus:* Baterija se segreje z $20\,^\circ\text{C}$ na $35\,^\circ\text{C}$. Koliko je $\Delta T$? *($15\,\text{K}$.)*
+:::risba graf
+opis: Graf spremembe temperature ΔT v kelvinih v odvisnosti od prejete toplote Q v kilojoulih za m = {m} kg vode in m = {m} kg suhega peska. Obe črti sta premici skozi izhodišče; premica za pesek je več kot petkrat strmejša. Pri 40 kJ se voda segreje za {40/(4.2*m):.1} K, pesek za {40/(0.8*m):.1} K.
+x: 0 .. 60 | 10 | Q [kJ]
+y: 0 .. 70 | 10 | ΔT [K]
+drsnik: m | 1 .. 3 | 0,5 | 1 | masa vode in peska v kg
+f: 10*x/(42*m) | modra debelo | 0 .. 52
+f: 10*x/(8*m) | oranžna črtkano | 0 .. 52
+točka: 40; 400/(42*m) | voda | nad levo
+točka: 40; 50/m | pesek | nad levo
+podnapis: m = {m} kg; pri 40 kJ: voda {40/(4.2*m):.1} K, pesek {40/(0.8*m):.1} K
+:::
 
-**5. Fazni prehodi.** Snov je lahko v trdnem, tekočem ali plinastem agregatnem stanju. Prehodi so:
+Na sliki je $m = 1\,\text{kg}$: pri $40\,\text{kJ}$ se voda segreje za $9{,}5\,\text{K}$, pesek za $50\,\text{K}$. V aplikaciji premikaj drsnik $m$ proti $3\,\text{kg}$ in opazuj obe premici. Pri trikrat večji masi je segretje trikrat manjše, razmerje med peskom in vodo pa ostane enako, ker je odvisno samo od $c$.
 
-- taljenje (trdno $\to$ tekoče) in obratno strjevanje,
-- izparevanje oziroma vrenje (tekoče $\to$ plinasto) in obratno kondenzacija,
-- sublimacija (trdno $\to$ plinasto) in obratno desublimacija.
+:::premisli
+V lonec z $1\,\text{kg}$ vode z $80\,^\circ\text{C}$ položiš $1\,\text{kg}$ železa z $20\,^\circ\text{C}$. Toplota naj ne uhaja v okolico. Napovej: bo skupna končna temperatura bliže $80\,^\circ\text{C}$ ali $20\,^\circ\text{C}$? Zakaj?
+---
+Bliže $80\,^\circ\text{C}$. Železo prejme toliko toplote, kolikor je voda odda. Voda ima približno $9$-krat večjo $c$, zato se njena temperatura ob isti toploti spremeni veliko manj kot temperatura železa.
+:::
 
-Med faznim prehodom se temperatura snovi **ne spreminja**, čeprav ji dovajamo toploto. Dovedena energija se porabi za spremembo medsebojne lege in vezi med delci (poveča se potencialna energija delcev), ne pa za hitrejše gibanje.
+**4. Toplotna bilanca.** Preverimo napoved z računom: železo zdaj damo v vodo v **kalorimetru**, posodi z dobro toplotno izolacijo. Toplota teče iz vode v železo, dokler nimata enake končne temperature $t_k$. Ker energija ne uide, odda voda natanko toliko toplote, kolikor jo prejme železo:
 
-*Preizkus:* Voda v kotličku vre, grelec še vedno greje. Kaj kaže termometer v vodi? *(Ves čas približno $100\,^\circ\text{C}$.)*
+$$Q_{\text{oddana}} = Q_{\text{prejeta}}$$
 
-**6. Specifična talilna in izparilna toplota.** Toplota, potrebna za taljenje mase $m$ pri tališču:
+$$m_{\text{voda}}\,c_{\text{voda}}\,(t_{\text{voda}} - t_k) = m_{\text{Fe}}\,c_{\text{Fe}}\,(t_k - t_{\text{Fe}})$$
+
+Na obeh straneh je pozitivna toplota: od večje temperature odštejemo manjšo. Z $c_{\text{voda}} = 4200\,\text{J/(kg\,K)}$ in $c_{\text{Fe}} = 450\,\text{J/(kg\,K)}$ za $1\,\text{kg}$ vsake snovi dobimo $4200\,(80 - t_k) = 450\,(t_k - 20)$. Člene s $t_k$ zberemo na eni strani:
+
+$$t_k = \frac{4200 \cdot 80 + 450 \cdot 20}{4200 + 450}\,^\circ\text{C} = 74{,}2\,^\circ\text{C}$$
+
+Voda se ohladi le za $5{,}8\,\text{K}$, železo se segreje za $54{,}2\,\text{K}$, toplota pa je na obeh straneh približno $24\,\text{kJ}$. V simulaciji »Toplotna bilanca pri mešanju« spodaj nastavi $m_1 = 1\,\text{kg}$ vode z $80\,^\circ\text{C}$ in za drugo snov $1\,\text{kg}$ železa z $20\,^\circ\text{C}$. Nato železo zamenjaj z vodo: končna temperatura je $50\,^\circ\text{C}$, točno na sredini, ker sta $m$ in $c$ na obeh straneh enaka.
+
+**5. Ko temperatura obstane: fazni prehodi.** Vrnimo se k loncu snega. Gorilnik ves čas dovaja toploto, termometer pa stoji pri $0\,^\circ\text{C}$. Snov ravno spreminja **agregatno stanje** (trdnina, kapljevina, plin). Takim spremembam pravimo **fazni prehodi**:
+
+- taljenje (trdnina $\to$ kapljevina) in obratno strjevanje,
+- izparevanje (kapljevina $\to$ plin) in obratno kondenzacija; izparevanje poteka s površine pri vsaki temperaturi (morje, znoj), vrenje pa v vsej prostornini pri vrelišču,
+- sublimacija (trdnina $\to$ plin) in obratno desublimacija.
+
+:::risba skica
+opis: Delci v treh agregatnih stanjih, vsako v svojem okvirju. Levo trdnina: 9 delcev v urejeni mreži 3 krat 3. V sredini kapljevina: 9 delcev skoraj tako blizu kot v trdnini, a neurejeno. Desno plin: 4 delci daleč narazen, vsak s puščico v drugo smer. Nad okvirji vodi puščica z napisom taljenje od trdnine h kapljevini in puščica z napisom izparevanje od kapljevine k plinu.
+območje: 0; -0,8 .. 12; 4,9
+enota: 24
+pravokotnik: 0; 0 .. 3,4; 3,4
+pravokotnik: 4,3; 0 .. 7,7; 3,4
+pravokotnik: 8,6; 0 .. 12; 3,4
+krog: 1; 1 | 0,3 | modra polno
+krog: 1,7; 1 | 0,3 | modra polno
+krog: 2,4; 1 | 0,3 | modra polno
+krog: 1; 1,7 | 0,3 | modra polno
+krog: 1,7; 1,7 | 0,3 | modra polno
+krog: 2,4; 1,7 | 0,3 | modra polno
+krog: 1; 2,4 | 0,3 | modra polno
+krog: 1,7; 2,4 | 0,3 | modra polno
+krog: 2,4; 2,4 | 0,3 | modra polno
+krog: 4,8; 0,5 | 0,3 | modra polno
+krog: 5,6; 0,55 | 0,3 | modra polno
+krog: 6,4; 0,5 | 0,3 | modra polno
+krog: 7,2; 0,6 | 0,3 | modra polno
+krog: 5,15; 1,25 | 0,3 | modra polno
+krog: 6; 1,3 | 0,3 | modra polno
+krog: 6,85; 1,3 | 0,3 | modra polno
+krog: 5,55; 2,05 | 0,3 | modra polno
+krog: 6,45; 2,1 | 0,3 | modra polno
+krog: 9,3; 2,6 | 0,3 | modra polno
+krog: 11,2; 2,5 | 0,3 | modra polno
+krog: 9,9; 0,8 | 0,3 | modra polno
+krog: 11,3; 1,1 | 0,3 | modra polno
+puščica: 9,3; 2,6 -> 9,9; 3,1
+puščica: 11,2; 2,5 -> 11,7; 1,9
+puščica: 9,9; 0,8 -> 9,2; 0,4
+puščica: 11,3; 1,1 -> 10,6; 1,6
+puščica: 2,4; 3,8 -> 5,3; 3,8 | taljenje | nad
+puščica: 6,7; 3,8 -> 9,9; 3,8 | izparevanje | nad
+napis: 1,7; -0,4 | trdnina | sredina
+napis: 6; -0,4 | kapljevina | sredina
+napis: 10,3; -0,4 | plin | sredina
+:::
+
+Slika pokaže, kam gre energija. Pri taljenju se urejena mreža podre, pri izparevanju se delci razmaknejo daleč narazen. Za to je treba premagati sile med delci, zato se poveča njihova **potencialna** energija. Ker gre energija v potencialno energijo, se povprečna kinetična energija delcev in s tem temperatura ne spremenita.
+
+**6. Talilna in izparilna toplota.** Toplota za taljenje je sorazmerna z maso, ki se stali. Isto velja za izparevanje:
 
 $$Q = m\,q_t$$
 
-Toplota, potrebna za izparevanje pri vrelišču:
-
 $$Q = m\,q_i$$
 
-Pri vodi je pri normalnem tlaku $q_t \approx 334\,\dfrac{\text{kJ}}{\text{kg}}$ ($0\,^\circ\text{C}$) in $q_i \approx 2260\,\dfrac{\text{kJ}}{\text{kg}}$ ($100\,^\circ\text{C}$). Pri strjevanju in kondenzaciji se ista toplota sprosti.
+**Specifična talilna toplota** $q_t$ pove, koliko toplote potrebuje $1\,\text{kg}$ snovi za taljenje pri tališču, **specifična izparilna toplota** $q_i$ pa enako za izparevanje. Za vodo pri normalnem zračnem tlaku je $q_t \approx 334\,\text{kJ/kg}$ (pri $0\,^\circ\text{C}$) in $q_i \approx 2260\,\text{kJ/kg}$ (pri $100\,^\circ\text{C}$). Pri strjevanju in kondenzaciji se ista toplota sprosti. Vrelišče je odvisno od zračnega tlaka: pri nižjem tlaku voda zavre pri nižji temperaturi, pri višjem pri višji.
 
-:::premisli
-Vrni se k uganki s telefonom. Kolikokrat več energije odvzame $1\,\text{g}$ vode, ki izpari, kot $1\,\text{g}$ vode, ki se segreje za $1\,\text{K}$?
----
-Izparevanje: $Q = 0{,}001 \cdot 2\,260\,000\,\text{J} = 2260\,\text{J}$. Segrevanje: $Q = 0{,}001 \cdot 4200 \cdot 1\,\text{J} = 4{,}2\,\text{J}$. To je okoli $540$-krat več. Zato nekaj kapljic vode, ki izpareva in se zgošča, odvede veliko toplote. (V parni komori je tlak nižji in voda vre pod $100\,^\circ\text{C}$, $q_i$ pa je še malo večja.)
+Zdaj lahko odgovoriš na uganko. Za taljenje $1\,\text{kg}$ snega potrebuješ $334\,\text{kJ}$. Za segretje $1\,\text{kg}$ vode za $80\,\text{K}$ potrebuješ:
+
+$$Q = 1 \cdot 4200 \cdot 80\,\text{J} = 336\,000\,\text{J}$$
+
+To je skoraj natanko enako. Ista energija bi vodo segrela z $0$ na približno $80\,^\circ\text{C}$.
+
+Vse skupaj pokaže **krivulja segrevanja**: temperatura ledu v odvisnosti od dovedene toplote.
+
+:::risba graf
+opis: Krivulja segrevanja za m = {m} kg ledu z začetno temperaturo −40 °C pri normalnem tlaku; temperatura v °C v odvisnosti od dovedene toplote v kJ. Od 0 do {84*m:.1} kJ temperatura naraste z −40 na 0 °C (led se segreva). Od {84*m:.1} do {418*m:.1} kJ ostane 0 °C (taljenje); ta odsek leži na vodoravni osi, zato sta njegov začetek in konec označena s točkama, območje taljenja je osenčeno s črtkanim pravokotnikom, napis s puščico kaže nanj. Od {418*m:.1} do {838*m:.1} kJ naraste na 100 °C (voda se segreva). Od {838*m:.1} kJ naprej ostane 100 °C (vrenje, ki se konča šele pri {3098*m:.1} kJ, desno zunaj slike).
+x: 0 .. 140 | 20 | Q [kJ]
+y: -40 .. 120 | 20 | t [°C]
+drsnik: m | 0,05 .. 0,14 | 0,01 | 0,1 | masa ledu v kg
+pravokotnik: 84*m; -40 .. 418*m; 120 | siva črtkano
+črta: 0; -40 -> 84*m; 0 -> 418*m; 0 -> 838*m; 100 -> 140; 100 | modra debelo
+točka: 84*m; 0
+točka: 418*m; 0
+puščica: 50; -22 -> 300*m; -3
+napis: 52; -24 | taljenje pri 0 °C | desno
+napis: 130; 100 | vrenje | pod
+podnapis: m = {m} kg: taljenje traja {334*m:.1} kJ, vrenje {2260*m:.1} kJ
 :::
 
-**7. Kako računamo, če so v nalogi vmes fazni prehodi.** Račun razdelimo na odseke: segrevanje v eni fazi ($Q = mc\Delta T$), nato fazni prehod ($Q = mq$), nato spet segrevanje, in na koncu toplote seštejemo.
+Pri $m = 0{,}1\,\text{kg}$ se led z $-40\,^\circ\text{C}$ segreje do tališča po $8{,}4\,\text{kJ}$, taljenje traja do $41{,}8\,\text{kJ}$, voda doseže $100\,^\circ\text{C}$ pri $83{,}8\,\text{kJ}$, vrenje pa se konča šele pri $309{,}8\,\text{kJ}$, daleč desno zunaj slike. Vodoravna odseka sta fazna prehoda. Odsek taljenja pri $0\,^\circ\text{C}$ leži na sami vodoravni osi; na sliki ga označujeta točki in osenčen črtkan pravokotnik. V aplikaciji spreminjaj maso $m$ in opazuj: vsi odseki se raztegnejo v istem razmerju; podnapis pokaže, da je vrenje vedno skoraj sedemkrat daljše od taljenja, ker je $q_i$ toliko večja od $q_t$. Poševna odseka imata različna naklona: led ima manjšo $c$ kot voda, zato se segreva hitreje in je njegov odsek strmejši.
+
+:::premisli
+Kaj te bolj opeče: $1\,\text{g}$ vode s $100\,^\circ\text{C}$ ali $1\,\text{g}$ pare s $100\,^\circ\text{C}$, ki se na koži zgosti? Napovej in utemelji.
+---
+Para. Ko se zgosti, odda $0{,}001 \cdot 2\,260\,000\,\text{J} = 2260\,\text{J}$, šele nato se kot voda ohlaja. Če se oboje ohladi na približno $35\,^\circ\text{C}$, voda odda $0{,}001 \cdot 4200 \cdot 65\,\text{J} = 273\,\text{J}$, para pa $2260\,\text{J} + 273\,\text{J} = 2533\,\text{J}$, približno devetkrat več.
+:::
+
+**7. Račun po odsekih.** Če je med segrevanjem fazni prehod, račun razdelimo kot krivuljo: segrevanje v eni fazi ($Q = mc\Delta T$, s $c$ te faze), fazni prehod ($Q = mq_t$ ali $Q = mq_i$), spet segrevanje. Toplote vseh odsekov seštejemo.
 
 ## Rešeni primeri
 
-### Primer 1: segrevanje vode (lažji)
+### Primer 1: voda za pomivanje v kampu (lažji)
 
-Koliko toplote potrebujemo, da $2\,\text{kg}$ vode segrejemo z $20\,^\circ\text{C}$ na $70\,^\circ\text{C}$? Uporabi $c = 4200\,\dfrac{\text{J}}{\text{kg\,K}}$.
+V kampu na gorilniku segrejemo $2\,\text{kg}$ vode z $20\,^\circ\text{C}$ na $70\,^\circ\text{C}$. Koliko toplote mora prejeti voda? Uporabi $c = 4200\,\text{J/(kg\,K)}$.
 
-**Podatki:** $m = 2\,\text{kg}$, $T_1 = 20\,^\circ\text{C}$, $T_2 = 70\,^\circ\text{C}$, $c = 4200\,\dfrac{\text{J}}{\text{kg\,K}}$
+**Podatki:** $m = 2\,\text{kg}$, $t_1 = 20\,^\circ\text{C}$, $t_2 = 70\,^\circ\text{C}$, $c = 4200\,\text{J/(kg\,K)}$
 **Iščemo:** toploto $Q$
 
 :::formula
-$Q = m\,c\,\Delta T$, kjer je $\Delta T = T_2 - T_1$
+$Q = m\,c\,\Delta T$, kjer je $\Delta T = t_2 - t_1$
 :::
 
 **Rešitev:**
 
-1. Voda se samo segreva (ostaja tekoča), zato uporabimo $Q = mc\Delta T$.
+1. Voda se samo segreva (ostaja kapljevina), zato uporabimo $Q = mc\Delta T$.
 2. Temperaturna razlika: $\Delta T = 70\,^\circ\text{C} - 20\,^\circ\text{C} = 50\,\text{K}$. Razliko lahko zapišemo v kelvinih, ker sta razliki v $^\circ\text{C}$ in K enaki.
-3. Vstavimo: $Q = 2\,\text{kg} \cdot 4200\,\dfrac{\text{J}}{\text{kg\,K}} \cdot 50\,\text{K} = 420\,000\,\text{J}$.
-4. Odgovor: $Q = 420\,\text{kJ}$. Preverimo smiselnost: $Q$ je pozitiven, kar ustreza segrevanju.
+3. Vstavimo: $Q = 2\,\text{kg} \cdot 4200\,\text{J/(kg\,K)} \cdot 50\,\text{K} = 420\,000\,\text{J}$.
+4. Odgovor: voda mora prejeti $420\,\text{kJ}$ toplote. $Q$ je pozitiven, kar ustreza segrevanju.
 
-### Primer 2: iskanje specifične toplote
+### Primer 2: iz katere kovine je plošča žara?
 
-Kos kovine z maso $0{,}50\,\text{kg}$ segrejemo s $20\,^\circ\text{C}$ na $60\,^\circ\text{C}$. Pri tem mu dovedemo $9000\,\text{J}$ toplote. Kolikšna je specifična toplota kovine?
+Kovinsko ploščo prenosnega žara z maso $0{,}50\,\text{kg}$ segrejemo z $20\,^\circ\text{C}$ na $60\,^\circ\text{C}$. Pri tem prejme $9000\,\text{J}$ toplote. Kolikšna je specifična toplota kovine?
 
-**Podatki:** $m = 0{,}50\,\text{kg}$, $T_1 = 20\,^\circ\text{C}$, $T_2 = 60\,^\circ\text{C}$, $Q = 9000\,\text{J}$
+**Podatki:** $m = 0{,}50\,\text{kg}$, $t_1 = 20\,^\circ\text{C}$, $t_2 = 60\,^\circ\text{C}$, $Q = 9000\,\text{J}$
 **Iščemo:** specifično toploto $c$
 
 :::formula
-$c = \dfrac{Q}{m\,\Delta T}$, kjer je $\Delta T = T_2 - T_1$
+$c = \dfrac{Q}{m\,\Delta T}$, kjer je $\Delta T = t_2 - t_1$
 :::
 
 **Rešitev:**
 
-1. Izhajamo iz $Q = mc\Delta T$ in izrazimo $c$: $c = \dfrac{Q}{m\,\Delta T}$.
+1. Iščemo $c$, zato enačbo $Q = mc\Delta T$ delimo z $m\,\Delta T$: $c = \dfrac{Q}{m\,\Delta T}$.
 2. $\Delta T = 60\,^\circ\text{C} - 20\,^\circ\text{C} = 40\,\text{K}$.
-3. Vstavimo: $c = \dfrac{9000\,\text{J}}{0{,}50\,\text{kg} \cdot 40\,\text{K}} = \dfrac{9000}{20}\,\dfrac{\text{J}}{\text{kg\,K}} = 450\,\dfrac{\text{J}}{\text{kg\,K}}$.
-4. Odgovor: $c = 450\,\dfrac{\text{J}}{\text{kg\,K}}$. Ta vrednost se ujema z vrednostjo za železo, zato je kovina lahko železo. Zanesljivo tega iz ene same vrednosti ne moremo trditi, ker imajo tudi druge snovi podobno $c$.
+3. Vstavimo: $c = \dfrac{9000\,\text{J}}{0{,}50\,\text{kg} \cdot 40\,\text{K}} = 450\,\text{J/(kg\,K)}$.
+4. Odgovor: $c = 450\,\text{J/(kg\,K)}$, kar se ujema z železom. Zanesljivo pa tega iz ene vrednosti ne moremo trditi, ker imajo podobno $c$ tudi druge snovi.
 
-### Primer 3: led, ki ga segrejemo do vode (težji)
+### Primer 3: čaj iz snega na Kredarici (težji)
 
-Koliko toplote potrebujemo, da $0{,}20\,\text{kg}$ ledu s temperaturo $-10\,^\circ\text{C}$ spremenimo v vodo s temperaturo $20\,^\circ\text{C}$? Uporabi: $c_{\text{led}} = 2100\,\dfrac{\text{J}}{\text{kg\,K}}$, $c_{\text{voda}} = 4200\,\dfrac{\text{J}}{\text{kg\,K}}$, $q_t = 334\,000\,\dfrac{\text{J}}{\text{kg}}$.
+Triglavski dom na Kredarici stoji na približno $2500\,\text{m}$ nadmorske višine. Zračni tlak je tam nižji, zato voda zavre že pri približno $92\,^\circ\text{C}$. Planinec stali $1{,}0\,\text{kg}$ snega s temperaturo $-10\,^\circ\text{C}$ in vodo segreje do vrenja. Koliko toplote mora prejeti? Za koliko manj je to, kot bi bilo ob morju, kjer voda zavre pri $100\,^\circ\text{C}$? Uporabi $c_{\text{led}} = 2100\,\text{J/(kg\,K)}$, $c_{\text{voda}} = 4200\,\text{J/(kg\,K)}$, $q_t = 334\,000\,\text{J/kg}$.
 
-**Podatki:** $m = 0{,}20\,\text{kg}$, začetna temperatura ledu $T_1 = -10\,^\circ\text{C}$, končna temperatura vode $T_2 = 20\,^\circ\text{C}$, $c_{\text{led}} = 2100\,\dfrac{\text{J}}{\text{kg\,K}}$, $c_{\text{voda}} = 4200\,\dfrac{\text{J}}{\text{kg\,K}}$, $q_t = 334\,000\,\dfrac{\text{J}}{\text{kg}}$ (tališče ledu je $0\,^\circ\text{C}$)
-**Iščemo:** skupno toploto $Q$
+**Podatki:** $m = 1{,}0\,\text{kg}$, $t_1 = -10\,^\circ\text{C}$, vrelišče $t_2 = 92\,^\circ\text{C}$ (ob morju $100\,^\circ\text{C}$), tališče $0\,^\circ\text{C}$, $c_{\text{led}} = 2100\,\text{J/(kg\,K)}$, $c_{\text{voda}} = 4200\,\text{J/(kg\,K)}$, $q_t = 334\,000\,\text{J/kg}$
+**Iščemo:** skupno toploto $Q$ in razliko glede na morje
 
 :::formula
-$Q = m c_{\text{led}} \Delta T_1 + m q_t + m c_{\text{voda}} \Delta T_2$, kjer je $\Delta T_1 = 0\,^\circ\text{C} - T_1$ in $\Delta T_2 = T_2 - 0\,^\circ\text{C}$
+$Q = m c_{\text{led}} \Delta T_1 + m q_t + m c_{\text{voda}} \Delta T_2$, kjer je $\Delta T_1 = 0\,^\circ\text{C} - t_1$ in $\Delta T_2 = t_2 - 0\,^\circ\text{C}$
 :::
 
 **Rešitev:**
 
 Proces ima tri odseke, ker je vmes fazni prehod pri $0\,^\circ\text{C}$.
 
-1. **Segrevanje ledu od $-10\,^\circ\text{C}$ do $0\,^\circ\text{C}$.** $\Delta T = 10\,\text{K}$.
-   $Q_1 = 0{,}20 \cdot 2100 \cdot 10\,\text{J} = 4200\,\text{J}$.
-2. **Taljenje ledu pri $0\,^\circ\text{C}$.** Temperatura se ne spreminja, zato uporabimo $q_t$.
-   $Q_2 = m q_t = 0{,}20 \cdot 334\,000\,\text{J} = 66\,800\,\text{J}$.
-3. **Segrevanje vode od $0\,^\circ\text{C}$ do $20\,^\circ\text{C}$.** $\Delta T = 20\,\text{K}$.
-   $Q_3 = 0{,}20 \cdot 4200 \cdot 20\,\text{J} = 16\,800\,\text{J}$.
-4. **Skupaj.** $Q = Q_1 + Q_2 + Q_3 = 4200 + 66\,800 + 16\,800 = 87\,800\,\text{J}$.
-5. Odgovor: potrebujemo približno $87{,}8\,\text{kJ}$. Opazimo, da je za taljenje potrebnega največ ($66{,}8\,\text{kJ}$), čeprav se temperatura pri tem ne spremeni.
+1. **Segrevanje snega do $0\,^\circ\text{C}$**, s $c$ ledu: $\Delta T_1 = 10\,\text{K}$, $Q_1 = 1{,}0 \cdot 2100 \cdot 10\,\text{J} = 21\,000\,\text{J}$.
+2. **Taljenje pri $0\,^\circ\text{C}$**; temperatura stoji, zato uporabimo $q_t$: $Q_2 = 1{,}0 \cdot 334\,000\,\text{J} = 334\,000\,\text{J}$.
+3. **Segrevanje vode do vrelišča**, zdaj s $c$ vode: $\Delta T_2 = 92\,\text{K}$, $Q_3 = 1{,}0 \cdot 4200 \cdot 92\,\text{J} = 386\,400\,\text{J}$.
+4. **Skupaj:** $Q = 21\,000 + 334\,000 + 386\,400 = 741\,400\,\text{J}$.
+5. **Ob morju** bi se voda grela še $8\,\text{K}$ dlje: $1{,}0 \cdot 4200 \cdot 8\,\text{J} = 33\,600\,\text{J}$ več.
+6. Odgovor: planinec potrebuje približno $740\,\text{kJ}$, za $33{,}6\,\text{kJ}$ manj kot ob morju. Skoraj polovico energije pobere taljenje, čeprav se temperatura pri njem ne spremeni. Če gorilnik vodi preda recimo $750\,\text{J}$ na sekundo, traja to $741\,400\,\text{J} / 750\,\text{W} \approx 990\,\text{s}$, približno $16\,\text{min}$.
 
-### Primer 4 – zdaj ti: ohišje telefona
+### Primer 4 – zdaj ti: led v hladilni torbi
 
-Med igranjem se aluminijasto ohišje telefona z maso $30\,\text{g}$ segreje s $25\,^\circ\text{C}$ na $40\,^\circ\text{C}$. Koliko toplote je prejelo? Za aluminij je $c = 900\,\dfrac{\text{J}}{\text{kg\,K}}$.
+Na izletu je v hladilni torbi $0{,}50\,\text{kg}$ ledu pri $0\,^\circ\text{C}$. Do večera se ves stali in nastala voda se segreje na $8\,^\circ\text{C}$. Koliko toplote je led prejel od hrane in zraka v torbi? Uporabi $q_t = 334\,000\,\text{J/kg}$ in $c = 4200\,\text{J/(kg\,K)}$.
 
-**Podatki:** $m = 30\,\text{g}$, $T_1 = 25\,^\circ\text{C}$, $T_2 = 40\,^\circ\text{C}$, $c = 900\,\dfrac{\text{J}}{\text{kg\,K}}$
-**Iščemo:** toploto $Q$
+**Podatki:** $m = 0{,}50\,\text{kg}$, začetna temperatura ledu $0\,^\circ\text{C}$, končna temperatura vode $8\,^\circ\text{C}$, $q_t = 334\,000\,\text{J/kg}$, $c = 4200\,\text{J/(kg\,K)}$
+**Iščemo:** prejeto toploto $Q$
 
 :::formula
-$Q = m\,c\,\Delta T$
+$Q = m\,q_t + m\,c\,\Delta T$
 :::
 
 **Rešitev:**
 
-1. Ohišje ostane trdno, zato fazni prehod ni vmes in velja $Q = mc\Delta T$.
-2. Maso pretvorimo v kilograme, ker je $c$ podana na kilogram: $30\,\text{g} = 0{,}030\,\text{kg}$.
-3. $\Delta T = 40\,^\circ\text{C} - 25\,^\circ\text{C} = 15\,\text{K}$.
-4. Vstavi in izračunaj sam.
+1. Led je že pri tališču, zato odseka s segrevanjem ledu ni.
+2. Taljenje: $Q_1 = 0{,}50 \cdot 334\,000\,\text{J} = 167\,000\,\text{J}$.
+3. Izračunaj sam toploto za segrevanje vode z $0$ na $8\,^\circ\text{C}$ in obe toploti seštej.
 
 :::premisli
-Koliko je $Q = 0{,}030\,\text{kg} \cdot 900\,\dfrac{\text{J}}{\text{kg\,K}} \cdot 15\,\text{K}$?
+Koliko toplote je prejel led?
 ---
-$Q = 405\,\text{J}$. Ohišje je prejelo približno $0{,}4\,\text{kJ}$ toplote.
+Segrevanje vode: $0{,}50 \cdot 4200 \cdot 8\,\text{J} = 16\,800\,\text{J}$. Skupaj $Q = 167\,000\,\text{J} + 16\,800\,\text{J} = 183\,800\,\text{J}$, približno $1{,}8 \cdot 10^5\,\text{J}$. Večino je led prejel za taljenje, zato led hladi veliko bolje kot enaka masa mrzle vode.
 :::
 
 ## Pogoste napake
 
-- **Mešanje pojmov toplota in temperatura.** »Vroč čaj vsebuje veliko toplote.« Toplota je energija, ki se *prenaša*; čaj ima visoko temperaturo in notranjo energijo. Prav: o toploti govori samo, ko energija prehaja z enega telesa na drugo.
-- **Uporaba $Q = mc\Delta T$ med faznim prehodom.** »Led se tali pri stalnih $0\,^\circ\text{C}$, torej je $\Delta T = 0$ in $Q = 0$.« Taljenje vseeno potrebuje energijo, ker se z njo trgajo vezi med delci. Prav: med faznim prehodom uporabi $Q = mq_t$ ali $Q = mq_i$.
-- **Pozabljen odsek ali napačna $c$.** »Od ledu pri $-10\,^\circ\text{C}$ do vode pri $20\,^\circ\text{C}$ je $\Delta T = 30\,\text{K}$, torej $Q = 0{,}20 \cdot 4200 \cdot 30\,\text{J} = 25\,200\,\text{J}$.« To je več kot trikrat premalo: manjka taljenje, led pa ima drugo $c$ kot voda. Prav: razdeli na odseke kot v Primeru 3, vsak s $c$ svoje faze.
-- **Masa v gramih.** »$Q = 250 \cdot 4200 \cdot 20$« za $250\,\text{g}$ vode da $1000$-krat preveliko toploto. Specifična toplota je podana na kilogram. Prav: najprej $250\,\text{g} = 0{,}25\,\text{kg}$.
-- **Predznak $\Delta T$.** »Voda se ohladi z $80$ na $30\,^\circ\text{C}$, $\Delta T = 50\,\text{K}$, torej je prejela toploto.« Prav: računaj vedno končna minus začetna temperatura; negativen $Q$ pomeni, da telo toploto oddaja.
+- **Mešanje toplote in temperature.** »Vroč čaj v termovki vsebuje veliko toplote.« Toplota je energija, ki se *prenaša*; čaj ima visoko temperaturo in veliko notranjo energijo. Prav: o toploti govori samo, ko energija prehaja z enega telesa na drugo.
+- **$Q = mc\Delta T$ med faznim prehodom.** »Led se tali pri stalnih $0\,^\circ\text{C}$, torej je $\Delta T = 0$ in $Q = 0$.« Taljenje vseeno potrebuje energijo, ker se z njo razmikajo delci. Prav: med faznim prehodom uporabi $Q = mq_t$ ali $Q = mq_i$.
+- **»Močnejši ogenj, bolj vroča vrela voda.«** Med vrenjem gre dodatna toplota v izparevanje, temperatura ostane pri vrelišču. Prav: močnejši ogenj pomeni le hitrejše izparevanje.
+- **Pozabljen odsek ali napačna $c$.** »Od snega pri $-10\,^\circ\text{C}$ do vode pri $92\,^\circ\text{C}$ je $102\,\text{K}$, torej $Q = 1{,}0 \cdot 4200 \cdot 102\,\text{J}$.« Manjka taljenje, led pa ima drugo $c$ kot voda. Prav: razdeli na odseke kot v Primeru 3.
+- **Masa v gramih.** »$Q = 250 \cdot 4200 \cdot 20$« za $250\,\text{g}$ vode da $1000$-krat preveliko toploto, ker je $c$ podana na kilogram. Prav: najprej $250\,\text{g} = 0{,}25\,\text{kg}$.
 
 ## Povzetek
 
-- Notranja energija je vsota kinetičnih in potencialnih energij delcev telesa; z naraščajočo temperaturo se povečuje.
-- Toplota $Q$ je energija, ki se zaradi temperaturne razlike prenaša s toplejšega na hladnejše telo; merimo jo v $\text{J}$.
-- Segrevanje in ohlajanje: $Q = mc\Delta T$, specifična toplota $c$ ima enoto $\dfrac{\text{J}}{\text{kg\,K}}$.
-- Voda ima $c \approx 4200\,\dfrac{\text{J}}{\text{kg\,K}}$.
-- Med faznim prehodom se temperatura ne spreminja; toplota je $Q = mq_t$ (taljenje) ali $Q = mq_i$ (izparevanje).
-- Pri večstopenjskih nalogah račun razdelimo na odseke in toplote seštejemo.
+- Notranja energija je vsota kinetičnih in potencialnih energij delcev telesa.
+- Toplota $Q$ je energija, ki se zaradi razlike temperatur prenaša s toplejšega na hladnejše telo; merimo jo v $\text{J}$.
+- Segrevanje in ohlajanje: $Q = mc\Delta T$, $\Delta T = t_2 - t_1$; voda ima veliko $c \approx 4200\,\text{J/(kg\,K)}$.
+- Med faznim prehodom temperatura stoji: $Q = mq_t$ (taljenje) ali $Q = mq_i$ (izparevanje); za vodo $334\,\text{kJ/kg}$ in $2260\,\text{kJ/kg}$.
+- Vrelišče je odvisno od tlaka: na Kredarici voda zavre pri približno $92\,^\circ\text{C}$.
+- Naloge s prehodi računamo po odsekih krivulje segrevanja in toplote seštejemo.
 
-## Drugače: Na sliki
+## Drugače: Z analogijo
 
-Graf kaže temperaturo $100\,\text{g}$ ledu z začetnimi $-20\,^\circ\text{C}$ v odvisnosti od dovedene toplote.
+Krivuljo segrevanja si predstavljaj kot višinski profil pohodne poti na zemljevidu. Prehojena pot je dovedena toplota $Q$, nadmorska višina je temperatura $t$.
 
-:::risba graf
-opis: Graf temperature v stopinjah Celzija v odvisnosti od dovedene toplote v kilojoulih za 100 g ledu. Od 0 do 4,2 kJ temperatura naraste z −20 na 0 °C (segrevanje ledu). Od 4,2 do 37,6 kJ ostane 0 °C (taljenje). Od 37,6 do 79,6 kJ naraste z 0 na 100 °C (segrevanje vode). Od 79,6 kJ naprej ostane 100 °C (vrenje, ki se konča šele pri 305,6 kJ).
-x: 0 .. 100 | 20 | Q [kJ]
-y: -20 .. 120 | 20 | T [°C]
-črta: 0; -20 -> 4,2; 0 -> 37,6; 0 -> 79,6; 100 -> 100; 100 | modra debelo
-napis: 21; 0 | taljenje | nad
-napis: 90; 100 | vrenje | nad
-:::
+- Na poševnih odsekih z vsakim korakom pridobiš višino. Specifična toplota je kot položnost poti: pri vodi je pot položna (veliko hoje za malo višine), pri pesku strma.
+- Fazni prehod je ravna planota: hodiš in se trudiš, višina pa ostaja enaka. Planota pri vrenju je skoraj sedemkrat daljša od planote pri taljenju.
+- Večja masa je kot daljša pot v enakem merilu: vsi odseki se podaljšajo v istem razmerju.
 
-Graf ima pet delov (peti je že desno od slike):
-
-1. **Poševna črta navzgor** (led se segreva do $0\,^\circ\text{C}$).
-2. **Vodoravna črta pri $0\,^\circ\text{C}$** (taljenje; temperatura ostaja enaka).
-3. **Poševna črta navzgor** (voda se segreva do $100\,^\circ\text{C}$).
-4. **Vodoravna črta pri $100\,^\circ\text{C}$** (vrenje).
-5. **Poševna črta navzgor** (vodna para se segreva).
-
-Naklon poševnih delov je odvisen od specifične toplote: večja ko je $c$, več toplote potrebuješ za isto zvišanje temperature, zato je graf položnejši. Vodoravna dela sta daljša ali krajša glede na $q_t$ in $q_i$. Vodoravni del pri vrenju je veliko daljši kot pri taljenju, ker je $q_i$ precej večja od $q_t$.
-
-V simulaciji spodaj (»Toplotna bilanca pri mešanju«) zmešaš dve snovi z različnima temperaturama in opazuješ, kakšna je končna temperatura. Toploto, ki jo odda toplejša snov, prejme hladnejša. Poskusi spreminjati mase in snovi ter napovej rezultat, preden ga preveriš.
-
-## Drugače: Iz vsakdanjega življenja
-
-**Morje in pesek.** Poleti je pesek na plaži opoldne vroč, morje pa le toplo. Voda ima veliko specifično toploto, zato potrebuje veliko več energije za isto zvišanje temperature kot pesek. Zvečer se pesek hitro ohladi, morje pa počasi. Zato je podnebje ob morju bolj uravnoteženo.
-
-**Led v pijači.** Če v pijačo daš led, se pijača ohladi, ne le zato, ker je led hladen, ampak predvsem zato, ker led za taljenje porablja energijo iz pijače ($334\,\text{kJ}$ na kilogram). Led pri $0\,^\circ\text{C}$ ohladi pijačo bolje kot enaka masa hladne vode pri $0\,^\circ\text{C}$.
-
-**Kuhanje.** Ko voda v loncu zavre, se temperatura ne dvigne več, čeprav ogenj gori močno naprej. Dodatna toplota se porabi za izparevanje, zato je pri kuhanju ob vrenju bolje zmanjšati ogenj: voda ne bo nič bolj vroča, le hitreje bo izparevala.
-
-## Drugače: Korak za korakom s številkami
-
-Primer: koliko toplote odda $0{,}5\,\text{kg}$ vode, ko se ohladi z $80\,^\circ\text{C}$ na $30\,^\circ\text{C}$?
-
-| Korak | Kaj naredimo | Rezultat |
-|---|---|---|
-| 1 | Je prišlo do faznega prehoda? | Ne, voda ostane tekoča |
-| 2 | Izberemo enačbo | $Q = mc\Delta T$ |
-| 3 | Izračunamo $\Delta T$ | $30 - 80 = -50\,\text{K}$ |
-| 4 | Vstavimo | $Q = 0{,}5 \cdot 4200 \cdot (-50)$ |
-| 5 | Izračunamo | $Q = -105\,000\,\text{J}$ |
-| 6 | Razlaga predznaka | Negativen $Q$: voda toploto oddaja |
-
-Odgovor: voda odda $105\,\text{kJ}$ toplote.
-
-Za naloge s faznimi prehodi si pripravi preglednico odsekov:
-
-| Odsek | Enačba | Opomba |
-|---|---|---|
-| Segrevanje trdne snovi | $m c_{\text{trdno}} \Delta T$ | do tališča |
-| Taljenje | $m q_t$ | $T$ konstantna |
-| Segrevanje tekočine | $m c_{\text{tekoče}} \Delta T$ | do vrelišča |
-| Izparevanje | $m q_i$ | $T$ konstantna |
-
-Uporabi samo tiste vrstice, ki jih proces res zajame, in rezultate seštej.
+Analogija ima mejo: na pravi poti višina lahko pada, tudi ko hodiš naprej. Na krivulji segrevanja temperatura ob dovajanju toplote nikoli ne pade; pade le, če telo toploto odda.
 
 ## Drugače: Bolj natančno
 
-**Zakaj se temperatura med taljenjem ne spremeni?** Temperatura je povezana s povprečno kinetično energijo delcev. V ledu so molekule vode vezane v urejeno kristalno strukturo. Ko ledu dovajamo toploto pri tališču, ta energija ne poveča hitrosti delcev, ampak oslabi in prekine vezi med molekulami, zato se poveča potencialna energija delcev. Ko je ves led staljen, dodana energija spet poveča kinetično energijo delcev in temperatura začne naraščati.
+**Zakaj temperatura med taljenjem stoji?** Temperatura je povezana s povprečno kinetično energijo delcev. V ledu so molekule vode vezane v urejeno kristalno mrežo. Dovedena energija pri tališču ne pospeši delcev, ampak jih iztrga iz mreže; poveča se njihova potencialna energija. Ko je ves led staljen, energija spet poveča kinetično energijo in temperatura začne naraščati.
 
-**Izpeljava enačbe $Q = mc\Delta T$.** Iz definicije specifične toplote $c = \dfrac{Q}{m\,\Delta T}$ takoj dobimo $Q = mc\Delta T$. Enačba velja približno, če se $c$ v obravnavanem temperaturnem območju bistveno ne spreminja. To pri šolskih nalogah predpostavimo.
+**Kdaj velja $Q = mc\Delta T$?** Ko je $c$ v obravnavanem območju temperatur stalna; v resnici se s temperaturo nekoliko spreminja.
 
-**Ohranitev energije.** Če dve telesi izmenjujeta toploto samo med seboj, je toplota, ki jo odda toplejše telo, enaka toploti, ki jo sprejme hladnejše:
-
-$$Q_{\text{oddana}} = Q_{\text{sprejeta}}$$
-
-To je poseben primer zakona o ohranitvi energije in je osnova za račun končne temperature pri mešanju.
-
+**Kalorimeter ni popolnoma nevtralen.** V točki 4 smo predpostavili, da toploto izmenjujeta le voda in železo. Pravi kalorimeter se segreje ali ohladi skupaj z vodo, zato pri natančni meritvi upoštevamo še toploto posode, $C\,\Delta T$, kjer je $C$ toplotna kapaciteta posode v $\text{J/K}$.
 ## Preveri se
 
-? Koliko toplote potrebujemo, da $3\,\text{kg}$ vode segrejemo za $10\,\text{K}$? Uporabi $c = 4200\,\dfrac{\text{J}}{\text{kg\,K}}$.
-- $12\,600\,\text{J}$
-~ To je samo $m \cdot c$. Pozabil si pomnožiti s spremembo temperature $\Delta T = 10\,\text{K}$.
-+ $126\,000\,\text{J}$
-- $1260\,\text{J}$
-~ Stokrat premalo: verjetno si za $c$ vzel $42$. Specifična toplota vode je $4200\,\frac{\text{J}}{\text{kg\,K}}$.
-- $42\,000\,\text{J}$
-~ To je $c \cdot \Delta T$ za en sam kilogram. Pomnožiti moraš še z maso $3\,\text{kg}$.
-> $Q = mc\Delta T = 3 \cdot 4200 \cdot 10 = 126\,000\,\text{J}$.
+? V planinski koči nekdo reče: »Kad mlačne vode za kopanje vsebuje več toplote kot skodelica vrelega čaja.« Kaj je fizikalno pravilno?
+- Prav ima: v kadi je več vode, zato je v njej več toplote.
+~ Telo toplote nima, ima notranjo energijo. Toplota je le energija, ki prehaja zaradi razlike temperatur.
+- Čaj ima več toplote, ker ima višjo temperaturo.
+~ Temperatura ni energija. Čaj je bolj vroč, a ima veliko manj vode, zato manjšo notranjo energijo kot kad.
++ Kad ima večjo notranjo energijo, čaj višjo temperaturo; toplota je energija, ki bi tekla s čaja na mlačno vodo, če bi ju staknili.
+- Kad in čaj imata enako toplote, ker sta oba v isti sobi.
+~ Isti prostor ne izenači energije. Čaj ima drugo temperaturo, kad pa veliko večjo maso.
+> Vsako telo ima notranjo energijo; pri kadi je zaradi velike mase večja. Toplota ni nekaj, kar telo vsebuje, ampak energija, ki teče s toplejšega na hladnejše telo.
 
-? Led pri $0\,^\circ\text{C}$ enakomerno segrevamo in se tali. Katera trditev o njegovi temperaturi med taljenjem drži?
-- Enakomerno narašča, ker dovajamo toploto.
-~ Dovedena toplota med taljenjem ne pospeši delcev, ampak trga vezi med njimi; temperatura stoji.
-- Pada, ker led porablja energijo.
-~ Led energijo prejema od grelca, ne od samega sebe, zato se ne ohlaja.
-+ Ostaja $0\,^\circ\text{C}$, ker se energija porablja za spremembo vezi med delci.
-- Najprej narašča, nato pade.
-~ Na grafu $T(Q)$ je taljenje vodoraven odsek: temperatura se med taljenjem ne spremeni.
-> Med faznim prehodom se dovedena toplota porabi za prekinjanje vezi med delci, zato se temperatura ne spremeni, dokler ni ves led staljen.
+? Razvrsti postopke od tistega, ki potrebuje najmanj toplote, do tistega, ki potrebuje največ. Vse velja za $1\,\text{kg}$ snovi.
+1. segrevanje ledu za $10\,\text{K}$
+2. segrevanje vode za $10\,\text{K}$
+3. taljenje ledu pri $0\,^\circ\text{C}$
+4. segrevanje vode z $0$ na $100\,^\circ\text{C}$
+5. izparevanje vode pri $100\,^\circ\text{C}$
+> Toplote: $21\,\text{kJ}$; $42\,\text{kJ}$; $334\,\text{kJ}$; $420\,\text{kJ}$; $2260\,\text{kJ}$. Led ima polovično $c$ vode, izparevanje pa potrebuje največ.
 
-? Maja računa toploto za segrevanje $250\,\text{g}$ vode za $20\,\text{K}$: »$Q = 250 \cdot 4200 \cdot 20\,\text{J} = 21\,000\,000\,\text{J}$.« Kje je napaka?
-- $\Delta T$ bi morala zapisati v kelvinih kot $293\,\text{K}$.
-~ $20\,\text{K}$ je razlika temperatur, ta je v kelvinih in stopinjah Celzija enaka. $293\,\text{K}$ bi bila temperatura, ne razlika.
-- Uporabiti bi morala $Q = mq_i$.
-~ Voda se samo segreva in ne izpareva, zato velja $Q = mc\Delta T$.
-+ Maso bi morala pretvoriti v kilograme.
-- Napake ni.
-~ $21\,\text{MJ}$ bi zadoščalo, da izpari več kot $9\,\text{kg}$ vrele vode. Tak rezultat za kozarec vode ni smiseln.
-> $c$ je podana na kilogram, zato $Q = 0{,}25 \cdot 4200 \cdot 20\,\text{J} = 21\,000\,\text{J}$. Brez pretvorbe je rezultat $1000$-krat prevelik.
+? Lonec na pritisk tesno zapremo, zato je tlak v njem višji kot zunaj. Kaj se zgodi z vreliščem vode v njem?
++ Vrelišče se zviša nad $100\,^\circ\text{C}$, zato se hrana skuha hitreje.
+- Vrelišče ostane $100\,^\circ\text{C}$, ker je to vrelišče vode.
+~ $100\,^\circ\text{C}$ velja le pri normalnem zračnem tlaku. Vrelišče je odvisno od tlaka.
+- Vrelišče se zniža, kot na Kredarici.
+~ Na Kredarici je tlak nižji, zato je nižje tudi vrelišče. V loncu na pritisk je tlak višji, zato je vrelišče višje.
+- Vrelišče se ne spremeni; voda le hitreje izpareva, kot pri močnejšem ognju.
+~ Močnejši ogenj spremeni le hitrost izparevanja. Vrelišče spremeni tlak, ne moč gorilnika.
+> Pri višjem tlaku voda zavre pri višji temperaturi. V loncu na pritisk voda vre nad $100\,^\circ\text{C}$, zato hrana prej prejme dovolj toplote.
 
-? Kaj potrebuje več toplote: da $1\,\text{kg}$ ledu pri $0\,^\circ\text{C}$ stališ ali da $1\,\text{kg}$ vode segreješ z $0\,^\circ\text{C}$ na $50\,^\circ\text{C}$?
-- Segrevanje vode, ker se temperatura spremeni za $50\,\text{K}$, pri taljenju pa nič.
-~ Pri taljenju je $\Delta T = 0$, toplota pa ni nič: računaš jo s $Q = mq_t$.
-- Oboje potrebuje enako toplote, ker je masa enaka.
-~ Masa je enaka, procesa pa sta različna in imata različni toploti.
-+ Taljenje ledu.
-> Taljenje: $Q = 1 \cdot 334\,000\,\text{J} = 334\,000\,\text{J}$. Segrevanje: $Q = 1 \cdot 4200 \cdot 50\,\text{J} = 210\,000\,\text{J}$. Taljenje potrebuje več.
+? Na postanku v termovko s $0{,}30\,\text{kg}$ čaja z $90\,^\circ\text{C}$ doliješ $0{,}20\,\text{kg}$ vode s $15\,^\circ\text{C}$. Kolikšna je končna temperatura v $^\circ\text{C}$? Čaj ima enako $c$ kot voda, izgube toplote zanemari.
+= 60 °C | 0,5
+~ 52,5 | To je navadno povprečje obeh temperatur. Čaja je več kot vode, zato je končna temperatura bliže $90\,^\circ\text{C}$.
+~ 45 | Mase si zamenjal. Več je vročega čaja ($0{,}30\,\text{kg}$), zato je končna temperatura bliže temperaturi čaja.
+> $Q_{\text{oddana}} = Q_{\text{prejeta}}$: $0{,}30 \cdot c\,(90 - t_k) = 0{,}20 \cdot c\,(t_k - 15)$. $c$ se krajša: $t_k = \dfrac{0{,}30 \cdot 90 + 0{,}20 \cdot 15}{0{,}50}\,^\circ\text{C} = 60\,^\circ\text{C}$.
 
-? Ko voda za testenine zavre, jo kuhamo naprej. Katero enačbo uporabimo za toploto, potrebno, da $0{,}1\,\text{kg}$ vode pri $100\,^\circ\text{C}$ povsem izpari?
-- $Q = mc\Delta T$
-~ Med vrenjem je $\Delta T = 0$, ta enačba bi dala nič, voda pa vseeno potrebuje energijo.
-- $Q = mq_t$
-~ $q_t$ je talilna toplota, za prehod iz ledu v vodo. Tu voda prehaja v paro.
-+ $Q = mq_i$
-> Pri izparevanju pri vrelišču se temperatura ne spreminja ($\Delta T = 0$), zato enačba $Q = mc\Delta T$ ne pride v poštev. Za izparevanje uporabimo specifično izparilno toploto $q_i$, specifična talilna toplota $q_t$ pa je za taljenje.
+? Graf kaže, kako se spreminja temperatura $0{,}50\,\text{kg}$ neznane trdne snovi, ko ji dovajamo toploto. Z grafa odčitaj potrebne podatke in izračunaj specifično talilno toploto snovi v $\text{kJ/kg}$.
+:::risba graf
+opis: Graf temperature v °C v odvisnosti od dovedene toplote v kJ za 0,50 kg neznane snovi. Od 0 do 20 kJ temperatura naraste z 20 na 80 °C. Od 20 do 70 kJ ostane 80 °C. Od 70 do 100 kJ naraste z 80 na 120 °C.
+x: 0 .. 100 | 10 | Q [kJ]
+y: 0 .. 140 | 20 | t [°C]
+črta: 0; 20 -> 20; 80 -> 70; 80 -> 100; 120 | modra debelo
+:::
+= 100 kJ/kg | 2
+~ 50 | To je toplota za taljenje vse snovi. Deliti jo moraš še z maso $0{,}50\,\text{kg}$.
+~ 140 | Vzel si toploto na koncu vodoravnega odseka ($70\,\text{kJ}$). Za taljenje šteje samo razlika $70 - 20 = 50\,\text{kJ}$.
+~ 160 | Vzel si temperaturo tališča ($80$) namesto toplote. Na vodoravni osi odčitaj začetek in konec vodoravnega odseka.
+> Taljenje je vodoravni odsek pri $80\,^\circ\text{C}$, od $20$ do $70\,\text{kJ}$, torej $Q = 50\,\text{kJ}$. Zato $q_t = \dfrac{50\,\text{kJ}}{0{,}50\,\text{kg}} = 100\,\text{kJ/kg}$.
+
+? V hladilni torbi je $200\,\text{g}$ ledu z $-5\,^\circ\text{C}$. Koliko toplote prejme, da postane voda z $20\,^\circ\text{C}$? Odgovor v $\text{kJ}$. Uporabi $c_{\text{led}} = 2100\,\text{J/(kg\,K)}$, $c_{\text{voda}} = 4200\,\text{J/(kg\,K)}$, $q_t = 334\,000\,\text{J/kg}$.
+= 85,7 kJ | 0,5
+~ 18,9 | Pozabil si taljenje. Pri $0\,^\circ\text{C}$ led prejme še $0{,}20 \cdot 334\,000\,\text{J} = 66\,800\,\text{J}$, čeprav se temperatura ne spremeni.
+~ 21 | Računal si samo $0{,}20 \cdot 4200 \cdot 25\,\text{J}$: brez taljenja in s $c$ vode tudi za led.
+~ 87,8 | Taljenje imaš, a si tudi led segreval s $c$ vode. Led ima $c = 2100\,\text{J/(kg\,K)}$.
+~ 85700 | Če si računal pravilno v J, deli s 1000: $85\,700\,\text{J} = 85{,}7\,\text{kJ}$. Če pa si maso vstavil v gramih, si dobil 1000-krat preveč: $200\,\text{g} = 0{,}20\,\text{kg}$.
+> Po odsekih: led do $0\,^\circ\text{C}$: $0{,}20 \cdot 2100 \cdot 5\,\text{J} = 2100\,\text{J}$; taljenje: $0{,}20 \cdot 334\,000\,\text{J} = 66\,800\,\text{J}$; voda do $20\,^\circ\text{C}$: $0{,}20 \cdot 4200 \cdot 20\,\text{J} = 16\,800\,\text{J}$. Skupaj $85\,700\,\text{J} = 85{,}7\,\text{kJ}$.
 
 :::simboli
-\Delta W_n | sprememba notranje energije | \Delta W_n = Q | J | kadar telo ne opravlja dela
-Q | toplota | Q = m\,c\,\Delta T | J | pri segrevanju Q > 0, pri ohlajanju Q < 0
+\Delta W_n | sprememba notranje energije | \Delta W_n = Q | J | kadar ni dela
+W_n | notranja energija | | J | kinetične in potencialne energije delcev
+Q | toplota | Q = m\,c\,\Delta T | J | pri segrevanju $Q > 0$, pri ohlajanju $Q < 0$
 m | masa | | kg
-c | specifična toplota | c = \dfrac{Q}{m\,\Delta T} | J/(kg\,K) | voda 4200 J/(kg K)
-T | temperatura | | ^\circ C | razlika 1 K je enaka razliki 1 °C
-T_1 | začetna temperatura | | ^\circ C
-T_2 | končna temperatura | | ^\circ C
-\Delta T_1 | sprememba temperature ledu do tališča | \Delta T_1 = 0\,^\circ\text{C} - T_1 | K
-\Delta T_2 | sprememba temperature vode od tališča | \Delta T_2 = T_2 - 0\,^\circ\text{C} | K
-q_t | specifična talilna toplota | | J/kg | voda 334 kJ/kg
-q_i | specifična izparilna toplota | | J/kg | voda 2260 kJ/kg
+c | specifična toplota | c = \frac{Q}{m\,\Delta T} | J/(kg\,K) | voda 4200 J/(kg K)
+\Delta T | sprememba temperature | \Delta T = t_2 - t_1 | K | razlika 1 K je enaka razliki 1 °C
+t | temperatura | | ^\circ C | os krivulje segrevanja
+t_1 | začetna temperatura | | ^\circ C | na začetku segrevanja ali ohlajanja
+t_2 | končna temperatura | | ^\circ C | na koncu segrevanja ali ohlajanja
+\Delta T_1 | sprememba temperature snega do tališča | \Delta T_1 = 0\,^\circ\text{C} - t_1 | K
+\Delta T_2 | sprememba temperature vode od tališča | \Delta T_2 = t_2 - 0\,^\circ\text{C} | K
+q_t | specifična talilna toplota | q_t = \frac{Q}{m} | J/kg | voda 334 kJ/kg
+q_i | specifična izparilna toplota | q_i = \frac{Q}{m} | J/kg | voda 2260 kJ/kg
 Q_{\text{oddana}} | toplota, ki jo toplejše telo odda | | J
-Q_{\text{sprejeta}} | toplota, ki jo hladnejše telo sprejme | | J
+Q_{\text{prejeta}} | toplota, ki jo hladnejše telo prejme | | J | v kalorimetru $Q_{\text{oddana}} = Q_{\text{prejeta}}$
+t_k | končna skupna temperatura | | ^\circ C | po izenačitvi temperatur
+m_{\text{voda}} | masa vode | | kg
+t_{\text{voda}} | začetna temperatura vode | | ^\circ C | v točki 4: 80 °C
+m_{\text{Fe}} | masa železa | | kg
+c_{\text{Fe}} | specifična toplota železa | | J/(kg\,K) | 450 J/(kg K)
+t_{\text{Fe}} | začetna temperatura železa | | ^\circ C | v točki 4: 20 °C
+Q_1 | toplota prvega odseka | | J | Primer 3: segrevanje snega; Primer 4: taljenje
+Q_2 | toplota taljenja v Primeru 3 | Q_2 = m\,q_t | J
+Q_3 | toplota za segrevanje vode do vrelišča | Q_3 = m\,c_{\text{voda}}\,\Delta T_2 | J
 c_{\text{led}} | specifična toplota ledu | | J/(kg\,K) | 2100 J/(kg K)
 c_{\text{voda}} | specifična toplota vode | | J/(kg\,K) | 4200 J/(kg K)
+C | toplotna kapaciteta posode | C = \frac{Q}{\Delta T} | J/K | kalorimeter
 :::
+
+<<RACUN
+vrednost: 2*10*4200 | 84000
+vrednost: 1*4200*80 | 336000
+vrednost: (4200*80+450*20)/(4200+450) | 74.19
+vrednost: 40/4.2 | 9.52
+vrednost: 40/0.8 | 50
+vrednost: 2*4200*50 | 420000
+vrednost: 9000/(0.50*40) | 450
+vrednost: 1.0*2100*10 + 1.0*334000 + 1.0*4200*92 | 741400
+vrednost: 1.0*4200*8 | 33600
+vrednost: 0.50*334000 + 0.50*4200*8 | 183800
+vrednost: 0.001*2260000 + 0.001*4200*65 | 2533
+vrednost: 0.25*4200*20 | 21000
+vrednost: (70-20)/0.50 | 100
+vrednost: 0.20*2100*5 + 0.20*334000 + 0.20*4200*20 | 85700
+vrednost: 0.20*2100*5 + 0.20*4200*20 | 18900
+vrednost: 0.20*4200*25 | 21000
+vrednost: 0.20*4200*25 + 0.20*334000 | 87800
+vrednost: 741400/750 | 988.5
+vrednost: 3098*0.1 | 309.8
+vrednost: (0.30*90 + 0.20*15)/0.50 | 60
+vrednost: 4200*(80-74.19) | 24402
+vrednost: 450*(74.19-20) | 24386
+vrednost: 84*0.1 | 8.4
+vrednost: 418*0.1 | 41.8
+vrednost: 838*0.1 | 83.8
+>>

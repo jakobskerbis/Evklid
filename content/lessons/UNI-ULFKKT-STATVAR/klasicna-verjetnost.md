@@ -69,7 +69,7 @@ $$P(A \mid B) = \frac{P(A \cap B)}{P(B)}.$$
 
 Pri enako verjetnih izidih je to natanko $|A \cap B|/|B|$ iz tabele. Iz definicije sledi **pravilo množenja** $P(A \cap B) = P(B)\,P(A \mid B)$.
 
-Pozor: $P(A \mid B)$ in $P(B \mid A)$ sta različni števili. V uvodu je $P(\text{pozitiven} \mid \text{bolan}) = 0{,}99$, $P(\text{bolan} \mid \text{pozitiven})$ pa le okoli $0{,}02$. Ju poveže Bayesova formula.
+Pozor: $P(A \mid B)$ in $P(B \mid A)$ sta različni števili. V uvodu je $P(\text{pozitiven} \mid \text{bolan}) = 0{,}99$, $P(\text{bolan} \mid \text{pozitiven})$ pa le okoli $0{,}02$. Poveže ju Bayesova formula.
 
 **Izrek (formula o popolni verjetnosti).** Naj dogodki $H_1, \dots, H_n$ tvorijo **popoln sistem**: so paroma nezdružljivi, njihova unija je $\Omega$ in $P(H_i) > 0$. Potem je za vsak dogodek $A$
 
@@ -130,7 +130,7 @@ $|\Omega| = n^k$; $P(A) = \dfrac{|A|}{|\Omega|}$; izbira mest za G: $\dbinom{6}{
 **Rešitev:**
 
 1. (a) Vrstni red šteje, ponavljanje je dovoljeno: $|\Omega| = 4^6 = 4096$.
-2. (b) Ugoden je en sam izid: $P = 1/4096 \approx 2{,}44 \cdot 10^{-4}$. V genomu z milijoni položajev se tako mesto pojavi v povprečju na vsakih $4096$ baznih parov.
+2. (b) Ugoden je en sam izid: $P = 1/4096 \approx 2{,}44 \cdot 10^{-4}$. V genomu z milijoni položajev se tako mesto pojavi v povprečju enkrat na vsakih $4096$ baznih parov.
 3. (c) Najprej izberemo, kateri dve mesti sta G: $\binom{6}{2} = 15$ načinov. Na preostalih štirih mestih je lahko le A, C ali T: $3^4 = 81$ možnosti.
 4. Ugodnih je $15 \cdot 81 = 1215$, zato $P = 1215/4096 \approx 0{,}297$.
 5. Odgovor: zaporedij je $4096$; verjetnost za GAATTC je $1/4096$; natanko dva G ima približno $29{,}7\,\%$ zaporedij.
@@ -192,7 +192,7 @@ $P(E \mid B) = \dfrac{P(E \cap B)}{P(B)}$
 
 1. Prostor izidov (alel od matere, alel od očeta): $\{AA, Aa, aA, aa\}$, vsi z verjetnostjo $1/4$.
 2. Dominanten fenotip: $B = \{AA, Aa, aA\}$, $P(B) = 3/4$.
-3. Zdaj ti: določi $E \cap B$ in izračunaj pogojno verjetnost. (Dogodek ne imenujemo $A$, ker je $A$ tu ime alela.)
+3. Zdaj ti: določi $E \cap B$ in izračunaj pogojno verjetnost. (Dogodka ne imenujemo $A$, ker je $A$ tu ime alela.)
 
 :::premisli
 Kolikšna je verjetnost, da je otrok heterozigot?
@@ -271,15 +271,24 @@ Dvakrat vržemo pošten kovanec. Naj bo $A$ »prvi met je cifra«, $B$ »drugi m
 
 Presejalni test iz uvoda kot drevo verjetnosti za $100\,000$ ljudi:
 
-```
-100 000 testiranih
-├─ bolni 100
-│  ├─ test + : 99
-│  └─ test − : 1
-└─ zdravi 99 900
-   ├─ test + : 4995
-   └─ test − : 94 905
-```
+:::risba skica
+opis: Drevo verjetnosti za 100 000 testiranih. Prva razvejitev: bolni 100 in zdravi 99 900. Pri bolnih: test pozitiven 99, test negativen 1. Pri zdravih: test pozitiven 4995, test negativen 94 905. Veji s pozitivnim testom sta poudarjeni.
+območje: 0; 0 .. 12; 8
+napis: 6; 7,4 | 100 000 testiranih | sredina
+črta: 6; 7 -> 3; 5,4
+črta: 6; 7 -> 9; 5,4
+napis: 3; 5 | bolni 100 | sredina
+napis: 9; 5 | zdravi 99 900 | sredina
+črta: 3; 4,6 -> 1,6; 2,8 | oranžna debelo
+črta: 3; 4,6 -> 4,4; 1,4
+črta: 9; 4,6 -> 7,6; 2,8 | oranžna debelo
+črta: 9; 4,6 -> 10,2; 1,4
+napis: 1,6; 2,4 | test +: 99 | sredina
+napis: 4,4; 1 | test −: 1 | sredina
+napis: 7,6; 2,4 | test +: 4995 | sredina
+napis: 10,2; 1 | test −: 94 905 | sredina
+podnapis: Poudarjeni veji se končata s »test +«: 99 + 4995 = 5094
+:::
 
 Bayesova formula je na drevesu le delež: med vsemi vejami »test +« ($99 + 4995 = 5094$) je bolnih $99$, torej $99/5094 \approx 1{,}9\,\%$. Formula o popolni verjetnosti sešteje vse veje, ki se končajo s »test +«.
 
@@ -343,7 +352,7 @@ Laboratorij dobiva vzorce iz treh obratov: $50\,\%$ iz prvega, $30\,\%$ iz druge
 - $0{,}8$
 ~ To je verjetnost za eno seme. Pri treh semenih je možnosti za uspeh več.
 - $2{,}4$
-~ Seštel si verjetnosti nezdružljivih dogodkov, a dogodki niso nezdružljivi; verjetnost ne more biti večja od $1$.
+~ Seštel si verjetnosti, kot da bi bili dogodki nezdružljivi, a niso; verjetnost ne more biti večja od $1$.
 + $0{,}992$
 > $P(\text{nobeno}) = 0{,}2^3 = 0{,}008$, zato $P(\geq 1) = 1 - 0{,}008 = 0{,}992$.
 

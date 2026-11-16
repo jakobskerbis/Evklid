@@ -5,7 +5,7 @@ import { marked } from "marked";
 import katex from "katex";
 import { createRenderer, streamSafe, fixTables, isTableSeparator, centerNumberColumns, subHeadings } from "../public/rich.js";
 import { nextChunk } from "../public/pace.js";
-import { annotateTex } from "../public/formula-data.js";
+import { annotateTex, withFormulaSubject } from "../public/formula-data.js";
 
 const { renderRich } = createRenderer({ marked, katex, sanitize: (h) => h });
 
@@ -32,7 +32,8 @@ const count = (s, re) => (s.match(re) || []).length;
 
 test("tabela iz odgovora inštruktorja je prava tabela z razredom md-table", () => {
   const html = renderRich(REPLY);
-  assert.match(html, /<div class="md-table-wrap"><table class="md-table">/);
+  // Tabela s 3+ stolpci ima imena stolpcev v celicah (zložljiva na telefonu, public/vodoravna-tabela.js).
+  assert.match(html, /<div class="md-table-wrap"><table class="md-table md-stolpci">/);
   assert.equal(count(html, /<th[ >]/g), 4);
   assert.equal(count(html, /<td[ >]/g), 16);
   assert.ok(!html.includes("|"), "v izrisu ni ostala nobena navpična črta");
@@ -47,7 +48,7 @@ test("stolpci s števili in formulami so na sredini, besedilni levo", () => {
   const head = html.match(/<thead>[\s\S]*?<\/thead>/)[0];
   assert.match(head, /<th>ime<\/th>/);
   assert.equal(count(head, /align="center"/g), 2);
-  assert.match(html, /<td>Ana<\/td>/);
+  assert.match(html, /<td data-label="ime">Ana<\/td>/);
   // Poravnava, ki jo zapiše avtor, ostane.
   const own = renderRich("| a | b |\n|:--|--:|\n| 1 | 2 |");
   assert.match(own, /<td align="left">1<\/td>/);
@@ -130,7 +131,7 @@ test("videz tabel je skupen v vsej aplikaciji (style.css), tudi v temnem načinu
 test("stolpec z dolgim besedilom se sme prelomiti, formule ne", () => {
   const html = renderRich("| Korak | Kaj naredimo | Rezultat |\n|---|---|---|\n| 1 | Odpravimo ulomke: vse pomnožimo s $4$ (skupni imenovalec) | $2x + 12 = x + 20$ |");
   assert.match(html, /<th class="wrap">Kaj naredimo<\/th>/);
-  assert.match(html, /<td align="center">1<\/td>/);
+  assert.match(html, /<td align="center" data-label="Korak">1<\/td>/);
   assert.equal(count(html, /class="wrap"/g), 2);
 });
 
@@ -174,7 +175,14 @@ test("klikljive formule: \\log_a, \\vec F, \\frac1e se izrišejo brez rdeče nap
   for (const tex of ["\\log_a x^n = n \\log_a x", "\\ln x = \\log_e x", "\\vec F = m \\vec a", "\\bar v \\cdot t", "\\frac1e", "\\int_a^b f(x)\\,dx"]) {
     const html = r.renderMath(tex, false);
     assert.doesNotMatch(html, /katex-error/, tex);
-    if (/log_a/.test(tex)) assert.match(html, /data-fx=/, "simbol ostane klikljiv");
+    // a v \log_a ni »vodilni koeficient« (pregled 463-2); z oznako lekcije (osnova) je klikljiv brez napake.
+    if (/log_a/.test(tex)) {
+      const g = [{ keys: ["a"], tex: ["a"], n: "osnova logaritma", r: "", u: "", note: "" }];
+      const r2 = createRenderer({ marked, katex, sanitize: (h) => h, annotate: (t2, o) => annotateTex(t2, undefined, o) });
+      const lab = withFormulaSubject("MAT", () => r2.renderMath(tex, false), g);
+      assert.doesNotMatch(lab, /katex-error/, tex);
+      assert.match(lab, /data-fx=/, "simbol ostane klikljiv");
+    }
   }
 });
 

@@ -442,7 +442,7 @@ body.graph-open { overflow: hidden; }
 .pse-lg i { background: color-mix(in srgb, var(--c) 45%, var(--surface)); }
 
 /* formule */
-.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 24px; display: flex; flex-direction: column; gap: 12px; }
+.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 88px; display: flex; flex-direction: column; gap: 12px; }
 .fm-bar { padding-top: 12px; }
 /* kazalo poglavij ostane na vrhu, ko se pomikaš po zbirki */
 .fm-sel { display: flex; flex-wrap: wrap; gap: 8px 12px; justify-content: center; }
@@ -467,8 +467,16 @@ body.graph-open { overflow: hidden; }
 .fm-f { min-width: 0; overflow-x: auto; overflow-y: hidden; line-height: 1.55; padding: 2px 0; }
 .fm-f .katex { white-space: nowrap; }
 .fm-f p { margin: 0; }
+/* Štiri stopnje (OŠ, SŠ, Tekmovanja, Fakulteta) v vrstici ne gredo na telefon: dve po dve, brez pomikanja vstran;
+   dolg napis (npr. v španščini) se prelomi v dve vrstici. */
+@media (max-width: 720px) {
+  .fm-sel .fm-lvl { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; border-radius: 22px; }
+  .fm-sel .fm-lvl > button { min-width: 0; white-space: normal; }
+}
+/* zelo ozek telefon: »Mathématiques« in »Mathematics« sta preširoka za tri predmete v vrstici */
+@media (max-width: 360px) { .fm-sel .seg > button { padding: 6px 6px !important; } }
 @media (max-width: 600px) {
-  .fm-wrap { padding: 0 12px 20px; }
+  .fm-wrap { padding: 0 12px 88px; } /* prostor za gumb ob zadnji formuli */
   .fm-sel .seg { width: 100%; }
   .fm-sel .seg > button { min-height: 36px; padding: 6px 10px !important; }
   .fm-body .fm-sec { padding: 14px 16px; }
@@ -653,6 +661,23 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 [dir="rtl"] .sc-h-row { align-items: flex-start; }
 [dir="rtl"] .sc-acts, [dir="rtl"] .sc-err { justify-content: flex-start; }
 [dir="rtl"] .sc-const { text-align: right; }
+
+/* ---------- tabele s tremi ali več stolpci v listu formul (Telo | Površina | Prostornina) ----------
+   Na telefonu se vrstica zloži v kartico: prvi stolpec je naslov, pod njim vsaka vrednost z imenom svojega stolpca
+   (data-label, public/vodoravna-tabela.js), da se tabela nikoli ne pomika vstran. */
+.fm-sec .md-table-wrap:has(> .md-stolpci) { container-type: inline-size; }
+@container (max-width: 560px) {
+  .fm-sec table.md-stolpci, .fm-sec .md-stolpci > tbody, .fm-sec .md-stolpci > tbody > tr, .fm-sec .md-stolpci > tbody > tr > td { display: block; }
+  .fm-sec table.md-stolpci { width: 100%; }
+  .fm-sec .md-stolpci > thead { display: none; }
+  .fm-sec .md-stolpci > tbody > tr + tr { border-top: 1px solid var(--border); }
+  .fm-sec .md-stolpci > tbody > tr.fm-skica-row { border-top: 0; }
+  .fm-sec .md-stolpci > tbody > tr > td { border: 0; padding: 6px 12px; background: none; text-align: start; }
+  .fm-sec .md-stolpci > tbody > tr > td:first-child { background: var(--surface-2); font-weight: 800; }
+  .fm-sec .md-stolpci > tbody > tr.fm-skica-row > td { background: none; padding: 4px 0 12px; }
+  .fm-sec .md-stolpci > tbody > tr > td:empty:not(:first-child) { display: none; }
+  .fm-sec .md-stolpci td[data-label]:not(:first-child, :empty)::before { content: attr(data-label); display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
+}
 
 /* ---------- interaktivne skice v karticah formul (public/skice/) ---------- */
 /* Temen okvir v obeh temah; barve količin so enake v skici, čipu in drsniku. */

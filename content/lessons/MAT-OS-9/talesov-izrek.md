@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Poskus za jasen večer s polno Luno. Iz papirja izreži krožec s premerom $5\,\text{mm}$ in ga z lepilnim trakom pritrdi na okensko steklo. Zapri eno oko in se od okna počasi odmikaj, dokler krožec ravno pokrije Luno. Prijatelj naj izmeri razdaljo od tvojega očesa do krožca. Dobil bo približno $55\,\text{cm}$.
+Poskus za jasen večer s polno Luno. Iz papirja izreži krožec s premerom $5\,\text{mm}$ in ga z lepilnim trakom pritrdi na okensko steklo. Zapri eno oko in se od okna počasi odmikaj, dokler krožec ravno ne pokrije Lune. Prijatelj naj izmeri razdaljo od tvojega očesa do krožca. Dobil bo približno $55\,\text{cm}$.
 
 Iz te meritve in iz razdalje do Lune ($384\,000\,\text{km}$) izračunaš, da ima Luna premer približno $3\,500\,\text{km}$. Za to ne potrebuješ vesoljske ladje, le sorazmerje. Žarka od očesa do robov krožca in Lune sta kraka kota, krožec in Luna pa sta dve vzporedni daljici med krakoma.
 
@@ -231,7 +231,7 @@ Dokaz, da iz $AB \parallel CD$ sledi $SA : SC = SB : SD$. Uporabimo ploščine t
 2. Daljica $AD$ razdeli trikotnik $SCD$ na $SAD$ in $ACD$, daljica $BC$ pa na $SBC$ in $BCD$. Zato je $p(SAD) = p(SCD) - p(ACD) = p(SCD) - p(BCD) = p(SBC)$.
 3. Trikotnika $SAB$ in $SAD$ imata skupno oglišče $A$, osnovnici $SB$ in $SD$ pa ležita na isti premici. Višina iz $A$ je skupna, zato je razmerje ploščin enako razmerju osnovnic: $p(SAB) : p(SAD) = SB : SD$.
 4. Enako imata $SAB$ in $SBC$ skupno oglišče $B$ in osnovnici $SA$, $SC$ na isti premici: $p(SAB) : p(SBC) = SA : SC$.
-5. Ker je $p(SAD) = p(SBC)$, sta leva strani v korakih 3 in 4 enaki. Zato je $SB : SD = SA : SC$.
+5. Ker je $p(SAD) = p(SBC)$, sta levi strani v korakih 3 in 4 enaki. Zato je $SB : SD = SA : SC$.
 
 Drugo sorazmerje sledi iz prvega. Če je $SC = k \cdot SA$ in $SD = k \cdot SB$, je $AC = (k - 1) \cdot SA$ in $BD = (k - 1) \cdot SB$, torej $SA : AC = SB : BD$.
 

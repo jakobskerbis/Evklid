@@ -354,3 +354,29 @@ test("strežnik: prave vrste vsebine, stran /o-evklidu in povezava s pristajalne
   assert.ok(land.includes('<a href="/o-evklidu">${esc(t("land.what"))}</a>'), "povezava v nogi pristajalne strani");
   assert.ok(land.includes('<a href="/zakaj-evklid">${esc(t("land.why"))}</a>'), "povezava na Zakaj Evklid v nogi pristajalne strani");
 });
+
+// j 2026-11-15: vse javne strani za obiskovalce so videti enako, kot je nastavljen telefon (svetlo ali temno), ne v
+// slogu, ki ga je kdo izbral v aplikaciji (theme.js). Temne barve so prepis :root.dark iz style.css.
+test("javne strani (Za starše, Za šole, Zasebnost) imajo videz po napravi, brez theme.js", () => {
+  const read = (f) => readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8");
+  const decls = (block) => block.split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("/*"));
+  const appDark = read("style.css").match(/:root\.dark \{\n([\s\S]*?)\n\}/)[1];
+  const pageDark = read("videz-naprave.css").match(/@media \(prefers-color-scheme: dark\) \{\s*:root \{\n([\s\S]*?)\n\s*\}/)[1];
+  assert.deepEqual(decls(pageDark), decls(appDark), "temne barve = :root.dark v public/style.css");
+  for (const f of ["starsi.html", "sole.html", "zasebnost.html"]) {
+    const html = read(f);
+    assert.ok(!html.includes("theme.js"), f);
+    assert.ok(html.includes('<meta name="color-scheme" content="light dark">') && html.includes('href="/videz-naprave.css"'), f);
+    assert.ok(html.includes("matematiko, fiziko, kemijo, biologijo in naravoslovje"), f);
+  }
+  // Obvestilo »Vaš otrok bi rad …« samo po povezavi, ki jo pošlje otrok (?prosnja=1), ne s klikom na »Za starše«.
+  assert.match(read("starsi.html"), /<p class="ask" id="ask" hidden>/);
+  assert.match(read("starsi.js"), /if \(q\.has\("prosnja"\) \|\| ime\) document\.getElementById\("ask"\)\.hidden = false;/);
+  assert.ok(read("account.js").includes("/starsi.html?${name ? `ime=${encodeURIComponent(name)}&` : \"\"}prosnja=1"), "povezava v prošnji otroka");
+  for (const href of ['href="/starsi.html?prosnja=1" target="_blank">${esc(t("birth.parents"))}', 'href: "/starsi.html?prosnja=1", target: "_blank", textContent: t("guest.parentLink")'])
+    assert.ok(read("account.js").includes(href), href);
+  // V aplikaciji (WebView) brez dvojnega odmika, enako kot theme.js.
+  const app = read("v-aplikaciji.js").match(/\(function \(\) \{[\s\S]*\}\)\(\);/)[0];
+  assert.ok(read("theme.js").includes(app), "v-aplikaciji.js = blok iz theme.js");
+  for (const f of ["starsi.html", "sole.html", "zasebnost.html"]) assert.ok(read(f).includes('<script src="/v-aplikaciji.js"></script>'), f);
+});

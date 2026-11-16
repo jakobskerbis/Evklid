@@ -11,9 +11,10 @@ aplikacija spremembo pobere ob naslednjem odprtju lekcije.
 
 ```markdown
 ---
-stanje: osnutek        # osnutek | pregledano (osnutek pokaže opozorilo učencu)
+stanje: osnutek        # osnutek | preverjeno | pregledano (glej »Stanje lekcije« spodaj)
 demo: pitagora         # neobvezno: dodatna simulacija (simulacije za vsako temo so v public/sim/katalog.js)
 avtor: učitelj / AI    # neobvezno, za evidenco
+pregledal: Ana Novak   # neobvezno: učitelj (človek), ki je lekcijo pregledal; samo pri »pregledano«
 ---
 
 ## Zakaj se tega učimo
@@ -76,6 +77,18 @@ v | hitrost | v = \frac{s}{t} | m/s
 t | čas | | s
 :::
 ```
+
+## Stanje lekcije
+
+| `stanje:` | Kdaj | Kaj vidi učenec |
+|---|---|---|
+| `osnutek` | lekcija je napisana, pregledi še niso končani | rumeno opozorilo »Osnutek: lekcijo mora še pregledati učitelj …« |
+| `preverjeno` | `check-lesson.js` je brez napak (preračunani računi) in pregledovalci AI so lekcijo pregledali | modro opombo »Račune sta preverila program in AI. Učitelj lekcije še ni pregledal. …« |
+| `pregledano` | lekcijo je pregledal učitelj (človek) | nič |
+
+`pregledano` je samo za lekcije, ki jih je pregledal človek; njegovo ime zapiši v `pregledal:` (učencu se ne izpiše).
+AI ni nikoli `pregledal:` (`check-lesson.js` to javi kot napako); pregled AI je stanje `preverjeno`. Nova lekcija
+ostane `osnutek`, dokler niso končani vsi trije pregledi (`docs/pregled.md` §2).
 
 ## Preveri se: vrste vprašanj
 
@@ -250,6 +263,29 @@ natančne definicije, izreki s pogoji in dokazi, ki jih izpit zahteva, so v »Ra
 Primer 3 je na ravni izpita; za »## Povzetek« pride razdelek »## Za izpit«
 (»Znati moraš povedati:« in 2–3 »### Naloga« z »**Rešitev:**«, ki je v aplikaciji
 skrita za gumbom); namesto »Drugače: Iz vsakdanjega življenja« je »Drugače: Uporaba v stroki«.
+
+## Maturitetne lekcije (MAT-SS)
+
+Lekcija srednješolske matematike ima za »## Povzetek« razdelek »## Za maturo« (j, 13. 11. 2026, točki C4 in C5;
+oblika nalog po *Predmetnem izpitnem katalogu za splošno maturo*, povzetek v `docs/matura-katalog.md`):
+
+- `### Naloga N: <vrsta> naloga, K točk, pola 1 (brez računala)` ali `… pola 2 (z računalom)`; osnovna raven: kratka
+  naloga (do 3 točke) in krajša strukturirana (5–8 točk); kjer katalog preverja tudi višjo raven, še
+  `### Naloga 3 (višja raven): strukturirana naloga, 9–11 točk, …`. Naloge za polo 1 so rešljive na roke.
+- Besedilo naloge (do `**Rešitev:**`) vika kot na maturi (»Izračunajte …«, »Rezultat zaokrožite …«; j, 15. 11.
+  2026); rešitev, točkovanje in ustna vprašanja tikajo kot vsa lekcija.
+- Standardni odklon se računa z N (formula na prilogi, tipka σn ali σx), ne z N − 1.
+- Vsaka naloga ima `**Rešitev:**` (popolna, v aplikaciji skrita za gumbom) in vrstico `**Točkovanje:** …`.
+- 2–3 `### Ustno vprašanje N` z blokom `:::premisli` (vprašanje, `---`, vzorčni odgovor); gredo tudi v »Vprašaj me«.
+- Razdelek se ne šteje v mejo 2800 besed. `check-lesson.js` opozori, če manjka ali mu kaj manjka.
+
+Med »## Povzetek« in »## Za maturo« stoji »## Ponovitev« (j, 15. 11. 2026, točka C8): ponovitev na en zaslon telefona
+(največ 170 besed brez formul, ne šteje se v mejo besed), iz Povzetka in Pogostih napak lekcije, v treh delih:
+
+- `**Formule**`: alineje s formulami in pravili lekcije; vsaka se konča z `(priloga)`, `(priloga, višja raven)` ali
+  `(na pamet)` po seznamu formul, ki so priložene izpitni poli (katalog M-MAT-2026, poglavje 9.2);
+- `**Postopek**`: 2–6 oštevilčenih korakov, kako se lotiš tipične naloge;
+- `**Pazi na**`: natanko 3 najpogostejše napake.
 
 Katere teme še nimajo lekcije, urejeno po številu programov:
 `node scripts/fakultetne-lekcije.js --letnik 1 --n 40`.

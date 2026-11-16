@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Funkcija
+  - vsakemu $x \in D_f$ natanko ena vrednost
+  - $Z_f$: množica vseh vrednosti
+  - $\ln(x - 1)$ zahteva $x > 1$
+- Lastnosti
+  - injektivnost, surjektivnost, monotonost, omejenost
+  - soda $f(-x) = f(x)$, liha $f(-x) = -f(x)$
+  - periodičnost, osnovna perioda
+- Inverzna funkcija
+  - obstaja le za bijektivno funkcijo
+  - graf zrcalimo čez $y = x$
+  - $f^{-1}(x)$ ni $\frac{1}{f(x)}$
+- Eksponentna in logaritemska
+  - $a^x$: $D = \mathbb{R}$, $Z = (0, \infty)$
+  - $\log_a x$: $D = (0, \infty)$, $Z = \mathbb{R}$
+  - $\ln(xy) = \ln x + \ln y$
+- Krožne funkcije
+  - $\sin$, $\cos$: perioda $2\pi$, zaloga $[-1, 1]$
+  - $\tan$: perioda $\pi$
+  - koti v radianih
+- Ciklometrične funkcije
+  - $\arcsin\colon [-1, 1] \to [-\frac{\pi}{2}, \frac{\pi}{2}]$
+  - $\arccos\colon [-1, 1] \to [0, \pi]$
+  - $\arcsin(\sin \frac{5\pi}{6}) = \frac{\pi}{6}$

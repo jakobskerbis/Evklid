@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Delo sile
+  - $A = \int\vec{F}\cdot\mathrm{d}\vec{r}$, enota $\mathrm{J}$
+  - stalna sila: $A = Fs\cos\varphi$
+  - sila pravokotna na premik: $A = 0$
+- Moč
+  - $P = \mathrm{d}A/\mathrm{d}t = \vec{F}\cdot\vec{v}$, enota $\mathrm{W}$
+- Izrek o kinetični energiji
+  - $A_{\text{vseh sil}} = \Delta\left(\tfrac{1}{2}mv^2\right)$
+  - napaka: »delo ene same sile«
+- Potencialna energija
+  - le za konservativne sile
+  - $mgh$, $\tfrac{1}{2}kx^2$, $-GmM/r$
+  - ničla poljubna, a v vsem računu ista
+- Ohranitev mehanske energije
+  - $\Delta W_k + \Delta W_p = A'$
+  - trenje: $A' = -F_{tr}s < 0$
+- Gibalna količina
+  - vektor $\vec{G} = m\vec{v}$, enota $\mathrm{kg\,m/s}$
+  - sunek sile: $\Delta\vec{G} = \int\vec{F}\,\mathrm{d}t$
+  - brez zunanjih sil se ohranja
+- Trki
+  - gibalna količina se ohrani vedno
+  - prožni, $m_2$ miruje: $v_2' = \dfrac{2m_1}{m_1 + m_2}\,v_1$
+  - popolnoma neprožni, $m_2$ miruje: izguba $\dfrac{m_2}{m_1 + m_2}$
+- Masno središče
+  - $\vec{r}_{ms} = \sum m_i\vec{r}_i/\sum m_i$
+  - $m_{\text{cel}}\vec{a}_{ms} = \sum\vec{F}^{\text{zun}}$

@@ -1,7 +1,7 @@
 // Nabori za razvrščanje pri biologiji (OŠ 8. in 9. razred, gimnazija 1.–4. letnik) po UN.
 // Samo podatki: uporabljajo jih simulacija »uvrsti« (public/sim/nar.js) in naloge
 // (server/practice/generators/bio.js). Oblika je enaka kot v nar-data.js:
-// { q: vprašanje, cats: [[ključ, napis]], items: [[kartica, ključ, razlaga]], try: premislek, hint: namig }
+// { q: vprašanje, cats: [[ključ, napis]], items: [[kartica, ključ, razlaga]], razmisli: vprašanje za razmislek (»Razmisli:«, public/sim/napis-poskusa.js), hint: namig }
 
 export const SETS = {
   // ------------------------------------------------------------ OŠ 8. razred
@@ -18,7 +18,7 @@ export const SETS = {
       ["Enake količine kvasa damo v vodo s 15 °C in 35 °C ter štejemo mehurčke.", "posk", "Načrt poskusa: ena spremenljivka (temperatura), vse drugo enako."],
       ["Pri 35 °C je nastalo trikrat več plina, toplota pospeši delovanje kvasovk.", "skl", "Sklep pove, ali rezultati podpirajo domnevo."],
     ],
-    try: "Zakaj pri poskusu s fižolom potrebujemo več lončkov, ne le enega na oknu in enega v omari?",
+    razmisli: "Zakaj pri poskusu s fižolom potrebujemo več lončkov, ne le enega na oknu in enega v omari?",
     hint: "Vprašanje sprašuje, domneva napove, poskus preverja, sklep razloži rezultat.",
   },
   "b8-ravni": {
@@ -35,7 +35,7 @@ export const SETS = {
       ["prebavni sistem", "sis", "Vsi organi, ki hrano prebavijo in vsrkajo, sestavljajo prebavni sistem."],
       ["ledvica", "org", "Ledvica je organ izločal."],
     ],
-    try: "Kaj je večje: tkivo ali organ? Naštej tkiva, iz katerih je zgrajena koža.",
+    razmisli: "Kaj je večje: tkivo ali organ? Naštej tkiva, iz katerih je zgrajena koža.",
     hint: "Celica → tkivo (enake celice) → organ (več tkiv) → organski sistem (več organov).",
   },
   "b8-celice": {
@@ -51,7 +51,7 @@ export const SETS = {
       ["ima mitohondrije, nima pa kloroplastov", "ziv", "Živalske celice energijo pridobivajo s celičnim dihanjem v mitohondrijih."],
       ["je zelo majhna, nekaj tisočink milimetra", "bak", "Bakterije so približno desetkrat manjše od celic rastlin in živali."],
     ],
-    try: "Pod mikroskopom vidiš celice s steno, a brez kloroplastov. Iz katerega dela rastline bi lahko bile?",
+    razmisli: "Pod mikroskopom vidiš celice s steno, a brez kloroplastov. Iz katerega dela rastline bi lahko bile?",
     hint: "Bakterija nima jedra. Kloroplast in celulozna stena sta rastlinska. Membrana in ribosomi so povsod.",
   },
   "b8-organeli": {
@@ -67,7 +67,7 @@ export const SETS = {
       ["pri delitvi celice se njegova DNA podvoji", "jed", "Pred delitvijo se DNA v jedru podvoji, da vsaka hčerinska celica dobi enako kopijo."],
       ["sprejema signale iz okolja in ločuje celico od okolice", "mem", "Membrana je meja celice in ima beljakovine za sprejem signalov."],
     ],
-    try: "Celice v listu imajo kloroplaste, celice v korenini ne. Zakaj je to smiselno?",
+    razmisli: "Celice v listu imajo kloroplaste, celice v korenini ne. Zakaj je to smiselno?",
     hint: "Jedro vodi, membrana ločuje in prepušča, mitohondrij sprošča energijo, kloroplast jo veže iz svetlobe.",
   },
   "b8-dna": {
@@ -82,7 +82,7 @@ export const SETS = {
       ["Gen je cel kromosom.", "ne", "Gen je le odsek molekule DNA. En kromosom vsebuje veliko genov."],
       ["Mišične celice imajo več DNA kot živčne, ker več delajo.", "ne", "Celice se razlikujejo po tem, kateri geni so vklopljeni, ne po količini DNA."],
     ],
-    try: "Zakaj lahko s kapljico sline ugotovimo DNA človeka, čeprav je DNA »v jedru celic«?",
+    razmisli: "Zakaj lahko s kapljico sline ugotovimo DNA človeka, čeprav je DNA »v jedru celic«?",
     hint: "DNA je v vsaki celici z jedrom, zapis je pri vseh organizmih enak, gen je le del DNA.",
   },
   "b8-delitev": {
@@ -97,7 +97,7 @@ export const SETS = {
       ["celica se poveča in izdela nove snovi", "rast", "Celica med delitvami raste in izdeluje beljakovine ter druge snovi."],
       ["nastane več celic, tkivo zraste ali se zaceli", "po", "Mitoza omogoča rast organizma in celjenje ran."],
     ],
-    try: "Iz ene oplojene jajčne celice nastane telo s približno 30 000 milijardami celic. Približno kolikokrat se mora vsaka celica deliti?",
+    razmisli: "Iz ene oplojene jajčne celice nastane telo s približno 30 000 milijardami celic. Približno kolikokrat se mora vsaka celica deliti?",
     hint: "Najprej rast in podvojitev DNA, nato mitoza, na koncu dve enaki celici.",
   },
   "b8-bolezni": {
@@ -113,7 +113,7 @@ export const SETS = {
       ["zlom kosti", "ne", "Zlom je poškodba, ne okužba."],
       ["barvna slepota", "ne", "Barvna slepota je podedovana: povzroča jo sprememba gena."],
     ],
-    try: "Zakaj zdravnik pri prehladu ne predpiše antibiotika?",
+    razmisli: "Zakaj zdravnik pri prehladu ne predpiše antibiotika?",
     hint: "Antibiotik deluje le na bakterije. Poškodbe in dedne bolezni niso okužbe.",
   },
   "b8-prebava": {
@@ -128,7 +128,7 @@ export const SETS = {
       ["vsrkava se voda, nastaja blato", "debelo", "V debelem črevesu se vrača voda v telo."],
       ["koristne bakterije izdelajo vitamin K", "debelo", "Črevesne bakterije pomagajo telesu, med drugim izdelajo nekatere vitamine."],
     ],
-    try: "Zakaj je tanko črevo tako dolgo (okoli 6 m) in nagubano?",
+    razmisli: "Zakaj je tanko črevo tako dolgo (okoli 6 m) in nagubano?",
     hint: "Usta drobijo, želodec kisa in začne beljakovine, tanko črevo prebavi do konca in vsrka, debelo vsrka vodo.",
   },
   "b8-dihala": {
@@ -143,7 +143,7 @@ export const SETS = {
       ["poteka tudi v celicah možganov in kože", "cel", "Vse žive celice dihajo, ne le pljuča."],
       ["dlačice in sluz v sapniku ujamejo prah", "plj", "Dihalne poti čistijo, grejejo in vlažijo vdihani zrak."],
     ],
-    try: "Kako sta pljučno in celično dihanje povezani? Kaj ju povezuje na poti kisika?",
+    razmisli: "Kako sta pljučno in celično dihanje povezani? Kaj ju povezuje na poti kisika?",
     hint: "Pljučno dihanje je izmenjava zraka in plinov v pljučih; celično dihanje sprošča energijo v celicah.",
   },
   "b8-kri": {
@@ -158,7 +158,7 @@ export const SETS = {
       ["njihovo število se poveča pri okužbi", "lev", "Ob vnetju telo izdela več belih krvničk."],
       ["po krvodajalstvu jo lahko uporabijo ločeno od celic", "plaz", "Plazmo uporabljajo npr. pri opeklinah in za zdravila."],
     ],
-    try: "Zakaj je kri iz arterij svetlejše rdeča od krvi iz ven?",
+    razmisli: "Zakaj je kri iz arterij svetlejše rdeča od krvi iz ven?",
     hint: "Rdeče = kisik, bele = obramba, ploščice = strjevanje, plazma = tekočina, ki prenaša raztopljene snovi.",
   },
   "b8-izlocala": {
@@ -172,7 +172,7 @@ export const SETS = {
       ["sledi zdravil in drog", "led", "Zato lahko s testom seča ugotovimo uživanje snovi."],
       ["vodna para v izdihanem zraku", "plj", "Izdihan zrak je vlažen."],
     ],
-    try: "Zakaj po zelo slanem obroku več piješ in manj pogosto lulaš?",
+    razmisli: "Zakaj po zelo slanem obroku več piješ in manj pogosto lulaš?",
     hint: "Ledvice čistijo kri in tvorijo seč, pljuča izdihajo CO₂, koža izloča znoj.",
   },
   "b8-zivcevje": {
@@ -187,7 +187,7 @@ export const SETS = {
       ["koleno se samo stegne ob udarcu kladivca", "ziv", "Pogačični refleks poteka prek hrbtenjače."],
       ["ščitnica uravnava hitrost presnove", "hor", "Hormoni ščitnice vplivajo na porabo energije v vsem telesu."],
     ],
-    try: "Zakaj je za umik roke z vroče plošče boljše živčevje kot hormoni?",
+    razmisli: "Zakaj je za umik roke z vroče plošče boljše živčevje kot hormoni?",
     hint: "Živčni signali so hitri in kratki, hormoni potujejo s krvjo in delujejo počasneje in dlje.",
   },
   "b8-cutila": {
@@ -202,7 +202,7 @@ export const SETS = {
       ["brbončice na jeziku", "kem", "Brbončice zaznajo raztopljene snovi: sladko, slano, kislo, grenko, umami."],
       ["vohalne celice v zgornjem delu nosu", "kem", "Voh zazna snovi v zraku; z njim zaznamo večino »okusa« hrane."],
     ],
-    try: "Zakaj pri zamašenem nosu hrana skoraj nima okusa?",
+    razmisli: "Zakaj pri zamašenem nosu hrana skoraj nima okusa?",
     hint: "Oko: leča in mrežnica. Uho: bobnič in polž. Ravnotežje: polkrožni kanali. Kemoreceptorji: jezik in nos.",
   },
   "b8-gibala": {
@@ -217,7 +217,7 @@ export const SETS = {
       ["srčna mišica", "mis", "Srčna mišica deluje neutrudno in neodvisno od naše volje."],
       ["lobanja", "kost", "Kosti lobanje so zrasle in varujejo možgane."],
     ],
-    try: "Zakaj mišice delujejo v parih? Kaj naredi biceps, kaj triceps?",
+    razmisli: "Zakaj mišice delujejo v parih? Kaj naredi biceps, kaj triceps?",
     hint: "Kosti so ogrodje, sklepi in vezi jih povezujejo, mišice jih premikajo (vlečejo, nikoli ne potiskajo).",
   },
   "b8-koza": {
@@ -231,7 +231,7 @@ export const SETS = {
       ["čutnice za dotik, toploto in bolečino", "usnj", "Usnjica ima veliko živčnih končičev."],
       ["maščobno tkivo izolira in hrani zalogo", "podk", "Podkožna maščoba varuje pred mrazom in udarci."],
     ],
-    try: "Zakaj na soncu zagorimo? Zakaj je sončna opeklina nevarna za DNA?",
+    razmisli: "Zakaj na soncu zagorimo? Zakaj je sončna opeklina nevarna za DNA?",
     hint: "Povrhnjica ščiti in obnavlja, usnjica ima žile, žleze in čutnice, podkožje je maščoba.",
   },
   "b8-razmnozevanje": {
@@ -246,7 +246,7 @@ export const SETS = {
       ["izdelujejo moški spolni hormon testosteron", "moda", "Testosteron sproži sekundarne spolne znake pri fantih."],
       ["izdelujeta ženska spolna hormona estrogen in progesteron", "jaj", "Hormoni jajčnikov uravnavajo menstrualni ciklus."],
     ],
-    try: "Zakaj imajo spolne celice le polovico kromosomov drugih celic? Kaj bi se zgodilo pri oploditvi sicer?",
+    razmisli: "Zakaj imajo spolne celice le polovico kromosomov drugih celic? Kaj bi se zgodilo pri oploditvi sicer?",
     hint: "Jajčnik = jajčne celice, jajcevod = oploditev, maternica = razvoj ploda, moda = semenčice.",
   },
 
@@ -263,7 +263,7 @@ export const SETS = {
       ["čistilna naprava z bakterijami", "okolje", "Bakterije razgradijo organske snovi v odpadni vodi."],
       ["antibiotiki iz plesni", "med", "Penicilin so odkrili v plesni Penicillium."],
     ],
-    try: "Naštej poklic, pri katerem znanje biologije potrebuješ, a ga ne bi pričakoval.",
+    razmisli: "Naštej poklic, pri katerem znanje biologije potrebuješ, a ga ne bi pričakoval.",
     hint: "Pomisli, kdo bo rezultat uporabil: zdravnik, kmet ali naravovarstvenik.",
   },
   "b9-poskus": {
@@ -278,7 +278,7 @@ export const SETS = {
       ["število mehurčkov v minuti", "odv", "Tudi to je merjena količina, ki pove, kako hitro kvasovke delajo."],
       ["čas merjenja", "kont", "Vsako epruveto merimo enako dolgo."],
     ],
-    try: "Zakaj vsak poskus ponovimo vsaj trikrat?",
+    razmisli: "Zakaj vsak poskus ponovimo vsaj trikrat?",
     hint: "Spreminjamo eno stvar (neodvisna), merimo posledico (odvisna), vse drugo ohranimo enako.",
   },
   "b9-snovi": {
@@ -294,7 +294,7 @@ export const SETS = {
       ["voda", "anorg", "Voda je anorganska snov, v celicah je je približno 70 %."],
       ["kalcijev fosfat v kosteh", "anorg", "Rudninske soli dajejo kostem trdnost."],
     ],
-    try: "Zakaj se gradnikom živih bitij reče »organske« snovi? Kateri element imajo vse?",
+    razmisli: "Zakaj se gradnikom živih bitij reče »organske« snovi? Kateri element imajo vse?",
     hint: "Sladkorji in škrob = ogljikovi hidrati, olja = maščobe, encimi in keratin = beljakovine, voda in soli = anorganske.",
   },
   "b9-kromosomi": {
@@ -309,7 +309,7 @@ export const SETS = {
       ["leži na točno določenem mestu kromosoma", "gen", "Mesto gena na kromosomu je stalno."],
       ["odkrili so njeno zgradbo Watson, Crick in Franklinova", "dna", "Dvojno vijačnico so opisali leta 1953."],
     ],
-    try: "Kako je mogoče, da 2 m DNA iz ene celice spravimo v jedro, ki meri nekaj tisočink milimetra?",
+    razmisli: "Kako je mogoče, da 2 m DNA iz ene celice spravimo v jedro, ki meri nekaj tisočink milimetra?",
     hint: "DNA je molekula, gen je njen odsek, kromosom je zvita DNA z beljakovinami, alel je različica gena.",
   },
   "b9-dedovanje": {
@@ -324,7 +324,7 @@ export const SETS = {
       ["črna morska prašička imata belega mladiča; alel za belo dlako je …", "rec", "Starša sta skrita nosilca (Bb), beli mladič je bb."],
       ["grah z rumenimi semeni, ki ima tudi alel za zelena", "hetero", "Rumena barva se izrazi, alel za zeleno je skrit: Yy."],
     ],
-    try: "Ali lahko dva bela morska prašička (bb) dobita črnega mladiča? Zakaj ne?",
+    razmisli: "Ali lahko dva bela morska prašička (bb) dobita črnega mladiča? Zakaj ne?",
     hint: "Dominanten = velika črka, izrazi se vedno. Homo = enaka alela, hetero = različna.",
   },
   "b9-clovek": {
@@ -339,7 +339,7 @@ export const SETS = {
       ["Downov sindrom", "krom", "Tri kopije 21. kromosoma; ugotovijo ga s kromosomsko analizo."],
       ["cistična fibroza", "en", "Recesivna bolezen enega gena: bolan je le osebek z dvema okvarjenima aleloma."],
     ],
-    try: "Zakaj je barvna slepota pogostejša pri fantih kot pri dekletih?",
+    razmisli: "Zakaj je barvna slepota pogostejša pri fantih kot pri dekletih?",
     hint: "Spolno vezane lastnosti so na X. Kromosomske spremembe vidimo pod mikroskopom. Večina lastnosti je odvisna od več genov.",
   },
   "b9-biotehnologija": {
@@ -354,7 +354,7 @@ export const SETS = {
       ["potaknjenci vrtnice iz ene rastline", "klon", "Vegetativno razmnoževanje da genetsko enake rastline."],
       ["sir s plesnijo", "trad", "Plesni dajo siru okus in vonj."],
     ],
-    try: "Navedi eno korist in eno tveganje gensko spremenjenih rastlin.",
+    razmisli: "Navedi eno korist in eno tveganje gensko spremenjenih rastlin.",
     hint: "Tradicionalna uporablja organizme, kakršni so; GSO ima vstavljen tuj gen; klon je genetsko enaka kopija.",
   },
   "b9-izbor": {
@@ -369,7 +369,7 @@ export const SETS = {
       ["populacijo razdeli nova reka, skupini se ne parita več", "izol", "Geografska izolacija je pogosto začetek nastanka novih vrst."],
       ["pri enem mladiču se pojavi nenavadna barva dlake", "mut", "Nova lastnost se pojavi naključno, ne zato, ker bi jo žival potrebovala."],
     ],
-    try: "Zakaj žirafe nimajo dolgih vratov zato, ker so jih »raztegovale«? Kako to razloži naravni izbor?",
+    razmisli: "Zakaj žirafe nimajo dolgih vratov zato, ker so jih »raztegovale«? Kako to razloži naravni izbor?",
     hint: "Mutacija prinese novo lastnost naključno, naravni izbor izbere uspešne, izolacija loči populacije.",
   },
   "b9-zgodovina": {
@@ -384,7 +384,7 @@ export const SETS = {
       ["izumrtje dinozavrov po trku asteroida", "nov", "Pred 66 milijoni let; po tem so se razširili sesalci."],
       ["pojav človeka (Homo sapiens)", "nov", "Naša vrsta je stara okoli 300 000 let."],
     ],
-    try: "Če bi zgodovino Zemlje stisnil v en dan, ob kateri uri bi se pojavil človek?",
+    razmisli: "Če bi zgodovino Zemlje stisnil v en dan, ob kateri uri bi se pojavil človek?",
     hint: "Najprej Zemlja in bakterije, kisik, nato kopno in dinozavri, na koncu sesalci in človek.",
   },
   "b9-sistematika": {
@@ -400,7 +400,7 @@ export const SETS = {
       ["Panthera (velike mačke)", "rod", "Lev in tiger sta v istem rodu."],
       ["vretenčarji", "razred", "Vretenčarji so poddeblo strunarjev, višje od razreda."],
     ],
-    try: "Zakaj znanstveniki uporabljajo latinska imena, ne domačih (npr. »medved«)?",
+    razmisli: "Zakaj znanstveniki uporabljajo latinska imena, ne domačih (npr. »medved«)?",
     hint: "Vrsta < rod < družina < red < razred < deblo < kraljestvo. Dvodelno ime = rod + vrsta.",
   },
   "b9-pestrost": {
@@ -414,7 +414,7 @@ export const SETS = {
       ["v jamah živi več kot 100 vrst jamskih živali", "vrst", "Slovenija je med najbogatejšimi na svetu po jamskih vrstah."],
       ["gozd, barje, reka in jezero v isti dolini", "eko", "Mozaik ekosistemov povečuje skupno pestrost."],
     ],
-    try: "Zakaj je populacija z majhno gensko pestrostjo bolj ogrožena?",
+    razmisli: "Zakaj je populacija z majhno gensko pestrostjo bolj ogrožena?",
     hint: "Znotraj vrste = genska, število vrst = vrstna, različna okolja = ekosistemska.",
   },
   "b9-biomi": {
@@ -429,7 +429,7 @@ export const SETS = {
       ["plasti dreves, lian in epifitov", "trop", "Rastline tekmujejo za svetlobo."],
       ["manj kot 250 mm padavin na leto", "pus", "Puščava je določena z zelo malo padavinami."],
     ],
-    try: "Zakaj imajo kaktusi v Ameriki in mlečki v Afriki podobno obliko, čeprav niso sorodni?",
+    razmisli: "Zakaj imajo kaktusi v Ameriki in mlečki v Afriki podobno obliko, čeprav niso sorodni?",
     hint: "Biom določata predvsem temperatura in količina padavin.",
   },
   "b9-okolje": {
@@ -444,7 +444,7 @@ export const SETS = {
       ["krčenje deževnega gozda za plantaže", "habitat", "S posekom izginejo vrste, ki živijo le tam."],
       ["težke kovine v prsti ob tovarni", "onesn", "Kopičijo se v rastlinah in živalih."],
     ],
-    try: "Kaj lahko narediš sam, da zmanjšaš svoj vpliv na okolje? Naštej tri stvari.",
+    razmisli: "Kaj lahko narediš sam, da zmanjšaš svoj vpliv na okolje? Naštej tri stvari.",
     hint: "Segrevanje = CO₂ in metan; ozon = freoni; izumiranje = izguba habitatov; pomor rib = onesnaženje.",
   },
 
@@ -461,7 +461,7 @@ export const SETS = {
       ["celice se ves čas obnavljajo, populacije nihajo", "dinam", "Živi sistemi niso statični: nenehno se spreminjajo."],
       ["listi, korenine in cvetovi so zelo različno zgrajeni", "razn", "Različni deli imajo posebne vloge v celoti."],
     ],
-    try: "Kateri dve značilnosti živega na videz nasprotujeta druga drugi? Kako ju razloži evolucija?",
+    razmisli: "Kateri dve značilnosti živega na videz nasprotujeta druga drugi? Kako ju razloži evolucija?",
     hint: "Enotnost = skupno vsem (DNA, ATP, celica). Raznolikost = razlike. Soodvisnost = povezanost. Dinamičnost = spremembe.",
   },
   "s1-raziskovanje": {
@@ -476,7 +476,7 @@ export const SETS = {
       ["50 semen v vsaki petrijevki, tri ponovitve", "kont", "Dovolj velik vzorec in ponovitve zmanjšajo vpliv naključja."],
       ["dolžina koreninice po 5 dneh", "odv", "Tudi to je merljiva posledica."],
     ],
-    try: "Kako bi prikazal rezultate: s stolpčnim ali črtnim grafom? Zakaj?",
+    razmisli: "Kako bi prikazal rezultate: s stolpčnim ali črtnim grafom? Zakaj?",
     hint: "Hipoteza napove, neodvisno spreminjamo, odvisno merimo, kontrola in stalni pogoji izključijo druge vplive.",
   },
   "s1-snovi": {
@@ -492,7 +492,7 @@ export const SETS = {
       ["encim amilaza", "belj", "Encimi so večinoma beljakovine."],
       ["RNA", "nk", "Polimer nukleotidov z ribozo."],
     ],
-    try: "Zakaj celice gradijo velike molekule iz majhnega nabora gradnikov, npr. 20 aminokislin?",
+    razmisli: "Zakaj celice gradijo velike molekule iz majhnega nabora gradnikov, npr. 20 aminokislin?",
     hint: "Sladkorji in njihovi polimeri = OH, maščobe in fosfolipidi = lipidi, polimeri aminokislin = beljakovine, polimeri nukleotidov = NK.",
   },
   "s1-membrana": {
@@ -507,7 +507,7 @@ export const SETS = {
       ["kloridni ioni skozi ionski kanal", "olaj", "Ioni potrebujejo kanal, gibanje je po gradientu."],
       ["privzem jodida v ščitnico pri nizki zunanji koncentraciji", "akt", "Kopičenje proti gradientu zahteva energijo."],
     ],
-    try: "Zakaj solata v slani zalivki oveni? Kam gre voda?",
+    razmisli: "Zakaj solata v slani zalivki oveni? Kam gre voda?",
     hint: "Po gradientu brez beljakovine = difuzija, z beljakovino = olajšana, proti gradientu = aktivni, voda = osmoza.",
   },
   "s1-celica": {
@@ -522,7 +522,7 @@ export const SETS = {
       ["ima lastno DNA in ribosome kot bakterije", "mit", "To je dokaz endosimbiontske teorije."],
       ["v njem poteka Krebsov cikel", "mit", "Aerobni del celičnega dihanja."],
     ],
-    try: "Sledi poti beljakovine prebavnega encima od gena do izločanja iz celice trebušne slinavke.",
+    razmisli: "Sledi poti beljakovine prebavnega encima od gena do izločanja iz celice trebušne slinavke.",
     hint: "Ribosom izdela, ER prenaša, Golgi zapakira, lizosom razgrajuje, mitohondrij daje ATP.",
   },
   "s1-encimi": {
@@ -537,7 +537,7 @@ export const SETS = {
       ["dodamo več encima", "vec", "Več aktivnih mest pretvori več substrata v istem času."],
       ["raztopino z encimom ohladimo s 37 °C na 4 °C", "manj", "Molekule se gibljejo počasneje, a encim se ne pokvari: po segretju spet deluje."],
     ],
-    try: "Zakaj visoka vročina (nad 41 °C) ogrozi življenje?",
+    razmisli: "Zakaj visoka vročina (nad 41 °C) ogrozi življenje?",
     hint: "Ključ in ključavnica: oblika aktivnega mesta mora ustrezati substratu. Vročina in neprimeren pH spremenita obliko.",
   },
   "s1-dihanje": {
@@ -552,7 +552,7 @@ export const SETS = {
       ["nastaneta le 2 ATP na molekulo glukoze, brez kisika", "gli", "Glikoliza da malo ATP in ne potrebuje kisika."],
       ["bakterije v jogurtu skisajo mleko", "mle", "Mlečnokislinske bakterije."],
     ],
-    try: "Zakaj kvasovke v testu brez kisika »delajo« in hkrati dobijo veliko manj energije kot v prisotnosti kisika?",
+    razmisli: "Zakaj kvasovke v testu brez kisika »delajo« in hkrati dobijo veliko manj energije kot v prisotnosti kisika?",
     hint: "Glikoliza je vedno prva, v citoplazmi. Z O₂ sledi mitohondrij, brez O₂ vrenje.",
   },
   "s1-fotosinteza": {
@@ -567,7 +567,7 @@ export const SETS = {
       ["poteka na membranah tilakoid", "svet", "Membrane omogočajo ureditev barvil in encimov."],
       ["poteka v stromi", "calv", "Stroma je tekočina okrog tilakoid z encimi Calvinovega cikla."],
     ],
-    try: "Zakaj se vezava CO₂ kmalu ustavi, ko rastlino postavimo v temo?",
+    razmisli: "Zakaj se vezava CO₂ kmalu ustavi, ko rastlino postavimo v temo?",
     hint: "Svetlobne reakcije: svetloba, voda, kisik, ATP. Calvinov cikel: CO₂ → sladkor s porabo ATP.",
   },
   "s1-dnabelj": {
@@ -582,7 +582,7 @@ export const SETS = {
       ["prepiše se le en gen, ne cela DNA", "prep", "Celica prepisuje le gene, ki jih potrebuje."],
       ["nastajajo peptidne vezi", "prev", "Aminokisline se povežejo v polipeptid."],
     ],
-    try: "Zaporedje DNA je TAC GGA. Kakšna je mRNA in kateri sta kodona?",
+    razmisli: "Zaporedje DNA je TAC GGA. Kakšna je mRNA in kateri sta kodona?",
     hint: "Podvojevanje = DNA → DNA, prepisovanje = DNA → mRNA (jedro), prevajanje = mRNA → beljakovina (ribosom).",
   },
   "s1-mitoza": {
@@ -596,7 +596,7 @@ export const SETS = {
       ["okoli kromosomov na vsakem polu nastane jedrna ovojnica", "telo", "Nastaneta dve jedri, sledi delitev citoplazme."],
       ["jedrna ovojnica razpade", "pro", "Razpad ovojnice omogoči vretenu dostop do kromosomov."],
     ],
-    try: "Zakaj rakave celice veljajo za »pokvarjen« celični cikel?",
+    razmisli: "Zakaj rakave celice veljajo za »pokvarjen« celični cikel?",
     hint: "PMAT: profaza (zgostitev), metafaza (sredina), anafaza (ločitev), telofaza (dve jedri). Pred tem interfaza.",
   },
   "s1-mutacije": {
@@ -610,7 +610,7 @@ export const SETS = {
       ["poliploidna pšenica s šestimi kompleti kromosomov", "genom", "Spremeni se število celih kompletov."],
       ["vrinjen en nukleotid premakne bralni okvir", "gen", "Vrinjenje spremeni vse naslednje kodone."],
     ],
-    try: "Zakaj nekatere točkovne mutacije sploh ne spremenijo beljakovine?",
+    razmisli: "Zakaj nekatere točkovne mutacije sploh ne spremenijo beljakovine?",
     hint: "Gen = sprememba nukleotidov, kromosom = sprememba zgradbe kromosoma, genom = sprememba števila kromosomov.",
   },
   "s1-mejoza": {
@@ -625,7 +625,7 @@ export const SETS = {
       ["poteka v jajčnikih in modih pri nastanku spolnih celic", "mej", "Tako nastanejo gamete z 23 kromosomi."],
       ["sestrski kromatidi se ločita v anafazi", "obe", "V mitozi in v drugi delitvi mejoze."],
     ],
-    try: "Koliko različnih kombinacij kromosomov lahko nastane v gameti človeka samo zaradi naključne razporeditve 23 parov?",
+    razmisli: "Koliko različnih kombinacij kromosomov lahko nastane v gameti človeka samo zaradi naključne razporeditve 23 parov?",
     hint: "Mitoza: 1 → 2 enaki diploidni. Mejoza: 1 → 4 različne haploidne, s prekrižanjem.",
   },
   "s1-mendel": {
@@ -639,7 +639,7 @@ export const SETS = {
       ["Bb × Bb, črna dlaka dominantna", "31", "Tri četrtine črnih, ena bela."],
       ["Rr × rr pri nepopolni dominanci", "11", "Polovica rožnatih (Rr), polovica belih (rr)."],
     ],
-    try: "Kako bi s križanjem ugotovil, ali je črn pes AA ali Aa?",
+    razmisli: "Kako bi s križanjem ugotovil, ali je črn pes AA ali Aa?",
     hint: "Nariši Punnettov kvadrat. Heterozigot × heterozigot da 3 : 1, s homozigotom recesivnim pa 1 : 1.",
   },
   "s1-tehnologija": {
@@ -653,7 +653,7 @@ export const SETS = {
       ["zlati riž z vstavljenim genom za beta-karoten", "gi", "Tuj gen omogoča sintezo provitamina A."],
       ["krompir iz gomoljev ene rastline", "klon", "Vegetativno razmnoževanje da klone."],
     ],
-    try: "Kaj je hitreje: z žlahtnjenjem ali z genskim inženiringom dobiti sorto, odporno na bolezen? Zakaj?",
+    razmisli: "Kaj je hitreje: z žlahtnjenjem ali z genskim inženiringom dobiti sorto, odporno na bolezen? Zakaj?",
     hint: "Izbor = izbiramo in križamo, inženiring = vstavimo gen, kloniranje = genetsko enaka kopija.",
   },
 
@@ -670,7 +670,7 @@ export const SETS = {
       ["prokariont je vsrkal aerobno bakterijo, ki postane mitohondrij", "evk", "Endosimbiontska teorija."],
       ["rastline in živali poselijo kopno", "evk", "Ozonska plast je omogočila življenje na kopnem."],
     ],
-    try: "Kateri dokazi podpirajo endosimbiontsko teorijo?",
+    razmisli: "Kateri dokazi podpirajo endosimbiontsko teorijo?",
     hint: "Najprej molekule, nato celice brez kisika, nato fotosinteza, nato evkarionti in kopno.",
   },
   "s2-mehanizmi": {
@@ -684,7 +684,7 @@ export const SETS = {
       ["bakterije, odporne na antibiotik, se namnožijo", "izbor", "Antibiotik izbere odporne."],
       ["na otok pride par ptic, ki ima le del alelov celinske populacije", "drift", "Učinek ustanovitelja je oblika genskega zdrsa."],
     ],
-    try: "Zakaj naravni izbor ne more ustvariti »popolnega« organizma?",
+    razmisli: "Zakaj naravni izbor ne more ustvariti »popolnega« organizma?",
     hint: "Nov alel = mutacija, prilagojeni preživijo = izbor, prihod osebkov = migracija, naključje v majhni populaciji = zdrs.",
   },
   "s2-vrste": {
@@ -698,7 +698,7 @@ export const SETS = {
       ["kolonija veveric na dveh straneh Velikega kanjona", "geo", "Kanjon loči populaciji, ki se razvijata ločeno."],
       ["dve vrsti kresnic z različnim vzorcem utripanja", "ved", "Samica prepozna le vzorec svoje vrste."],
     ],
-    try: "Po biološki definiciji vrste: zakaj sta konj in osel različni vrsti, čeprav se lahko parita?",
+    razmisli: "Po biološki definiciji vrste: zakaj sta konj in osel različni vrsti, čeprav se lahko parita?",
     hint: "Pregrade pred oploditvijo: prostor, čas, vedenje. Po oploditvi: neplodni ali šibki križanci.",
   },
   "s2-dokazi": {
@@ -713,7 +713,7 @@ export const SETS = {
       ["zaporedje fosilov konj od majhnih do velikih", "fos", "Plasti kamnin kažejo postopne spremembe."],
       ["isti genetski kod pri vseh organizmih", "mol", "Molekulski dokaz skupnega izvora vsega živega."],
     ],
-    try: "Zakaj sta krilo ptice in krilo netopirja hkrati homologna (kot okončini) in analogna (kot krili)?",
+    razmisli: "Zakaj sta krilo ptice in krilo netopirja hkrati homologna (kot okončini) in analogna (kot krili)?",
     hint: "Homologija = isti izvor, analogija = ista naloga. Fosili kažejo preteklost, DNA in beljakovine sorodnost.",
   },
   "s2-sistem": {
@@ -729,7 +729,7 @@ export const SETS = {
       ["navadni jurček", "gl", "Gobe so trosnjaki gliv."],
       ["metanogene arheje v vampu krav", "bak", "Arheje so prokarionti, ki izdelujejo metan."],
     ],
-    try: "Zakaj glive niso rastline, čeprav se ne premikajo?",
+    razmisli: "Zakaj glive niso rastline, čeprav se ne premikajo?",
     hint: "Prokarionti brez jedra; glive heterotrofne s steno iz hitina; rastline fotosintezne; živali heterotrofne brez stene.",
   },
   "s2-problemi": {
@@ -744,7 +744,7 @@ export const SETS = {
       ["zunanji skelet hrošča", "oblika", "Ogrodje daje obliko in ščiti."],
       ["mitohondriji v mišični celici", "energ", "Celično dihanje da ATP."],
     ],
-    try: "Kako termostat v hiši ponazori negativno povratno zanko?",
+    razmisli: "Kako termostat v hiši ponazori negativno povratno zanko?",
     hint: "Vsi organizmi morajo dobiti energijo, ohraniti notranje okolje in obliko ter se razmnoževati.",
   },
   "s2-bakterije": {
@@ -759,7 +759,7 @@ export const SETS = {
       ["bakterije, ki razgrajujejo listje v gozdu", "razk", "Vrnejo snovi v kroženje."],
       ["Clostridium tetani", "pat", "Povzroča tetanus; ščiti nas cepljenje."],
     ],
-    try: "Zakaj »ni ekosistema brez bakterij«?",
+    razmisli: "Zakaj »ni ekosistema brez bakterij«?",
     hint: "Svetloba = foto, anorganske snovi = kemo, mrtve organske snovi = razkrojevalec, gostitelj = patogen.",
   },
   "s2-glive": {
@@ -773,7 +773,7 @@ export const SETS = {
       ["lišaj na skali", "simb", "Gliva in alga ali cianobakterija živita skupaj."],
       ["štorovke na odmrlem deblu", "razk", "Razkrajajo les."],
     ],
-    try: "Zakaj glive ne morejo opravljati fotosinteze in kako to vpliva na njihovo življenje?",
+    razmisli: "Zakaj glive ne morejo opravljati fotosinteze in kako to vpliva na njihovo življenje?",
     hint: "Razkrojevalec = mrtva snov, zajedavec = škoduje živemu, simbiont = obojestranska korist.",
   },
   "s2-rastlina": {
@@ -788,7 +788,7 @@ export const SETS = {
       ["les debla", "ksil", "Les je ksilem, ki nastane s sekundarno rastjo."],
       ["kambij med lesom in ličjem", "mer", "Kambij omogoča debeljenje stebla."],
     ],
-    try: "Zakaj drevo umre, če mu olupimo obroč lubja okrog debla?",
+    razmisli: "Zakaj drevo umre, če mu olupimo obroč lubja okrog debla?",
     hint: "Ksilem = voda gor, floem = sladkor kamorkoli, reže = plini, mezofil = fotosinteza, tvorno = delitve.",
   },
   "s2-transport": {
@@ -802,7 +802,7 @@ export const SETS = {
       ["hormon abscizinska kislina ob pomanjkanju vode", "manj", "ABA sproži zapiranje rež."],
       ["topel sončen dan, tla so dobro zalita", "vec", "Če je vode dovolj, rastlina reže drži odprte; toplota še pospeši izhlapevanje."],
     ],
-    try: "Kako voda pride do vrha 30-metrskega drevesa brez črpalke?",
+    razmisli: "Kako voda pride do vrha 30-metrskega drevesa brez črpalke?",
     hint: "Reže so kompromis: odprte = CO₂ noter, voda ven. Ob pomanjkanju vode se zaprejo.",
   },
   "s2-razmnozevanje": {
@@ -817,7 +817,7 @@ export const SETS = {
       ["nedotika izstreli semena", "sama", "Plod poči in vrže semena."],
       ["kokosov oreh", "sama", "Plava po morju na velike razdalje."],
     ],
-    try: "Zakaj imajo vetrocvetke ogromno peloda, žužkocvetke pa malo?",
+    razmisli: "Zakaj imajo vetrocvetke ogromno peloda, žužkocvetke pa malo?",
     hint: "Lahko in veliko = veter; barve, vonj, užitni plodovi, kaveljčki = živali.",
   },
   "s2-odzivi": {
@@ -831,7 +831,7 @@ export const SETS = {
       ["kopriva ima žgalne laske", "obr", "Obramba pred rastlinojedci."],
       ["napaden list sprosti snovi, ki opozorijo sosednje rastline", "obr", "Kemična obramba."],
     ],
-    try: "Kako se rastline »premikajo«, čeprav so pritrjene?",
+    razmisli: "Kako se rastline »premikajo«, čeprav so pritrjene?",
     hint: "Tropizmi so rast proti dražljaju ali stran od njega; hormoni uravnavajo rast, zorenje in odpadanje.",
   },
   "s2-prebava": {
@@ -845,7 +845,7 @@ export const SETS = {
       ["nevtralizira kislo vsebino želodca", "treb", "Sok trebušne slinavke vsebuje hidrogenkarbonat."],
       ["nastaja v jetrih, hrani se v žolčniku", "zolc", "Žolč se izloča v dvanajstnik."],
     ],
-    try: "Zakaj želodec ne prebavi samega sebe?",
+    razmisli: "Zakaj želodec ne prebavi samega sebe?",
     hint: "Slina = škrob, želodec = beljakovine v kislem, trebušna slinavka = vse tri skupine, žolč = emulgira maščobe.",
   },
   "s2-dihanje": {
@@ -860,7 +860,7 @@ export const SETS = {
       ["paglavec", "skrge", "Ličinke dvoživk dihajo s škrgami."],
       ["golob", "plj", "Ptice imajo pljuča z zračnimi vrečami."],
     ],
-    try: "Zakaj imajo večje živali posebne dihalne organe? Poveži z razmerjem med površino in prostornino.",
+    razmisli: "Zakaj imajo večje živali posebne dihalne organe? Poveži z razmerjem med površino in prostornino.",
     hint: "Majhni in ploski = površina; v vodi = škrge; žuželke = vzdušnice; kopenski vretenčarji = pljuča.",
   },
   "s2-kri": {
@@ -875,7 +875,7 @@ export const SETS = {
       ["vodijo kri k srcu", "ven", "Smer toka določa ime žile."],
       ["skupna površina je največja, tok najpočasnejši", "kap", "Počasen tok omogoča izmenjavo."],
     ],
-    try: "Zakaj pljučna arterija vodi s kisikom revno kri?",
+    razmisli: "Zakaj pljučna arterija vodi s kisikom revno kri?",
     hint: "Arterija = od srca, vena = k srcu, kapilara = izmenjava. Kisik ne odloča o imenu.",
   },
   "s2-izlocala": {
@@ -890,7 +890,7 @@ export const SETS = {
       ["odrasla žaba", "secn", "Na kopnem preide na sečnino."],
       ["kuščar v puščavi", "kisl", "Plazilci in ptice varčujejo z vodo."],
     ],
-    try: "Zakaj mladiči ptic v jajcu izločajo sečno kislino, ne amonijaka?",
+    razmisli: "Zakaj mladiči ptic v jajcu izločajo sečno kislino, ne amonijaka?",
     hint: "Več vode v okolju = bolj strupen odpadek. Amonijak (voda), sečnina (sesalci), sečna kislina (varčevanje z vodo).",
   },
 
@@ -907,7 +907,7 @@ export const SETS = {
       ["adrenalin v stresu pospeši srčni utrip", "nadl", "Sredica nadledvične žleze."],
       ["kortizol pri dolgotrajnem stresu", "nadl", "Skorja nadledvične žleze."],
     ],
-    try: "Zakaj pri sladkorni bolezni tipa 1 bolnik potrebuje injekcije inzulina?",
+    razmisli: "Zakaj pri sladkorni bolezni tipa 1 bolnik potrebuje injekcije inzulina?",
     hint: "Sladkor v krvi = trebušna slinavka, presnova = ščitnica, uravnava druge žleze = hipofiza, stres = nadledvična žleza.",
   },
   "s3-nevron": {
@@ -921,7 +921,7 @@ export const SETS = {
       ["prenašalec se veže na receptorje naslednje celice", "sin", "Odprejo se kanali v postsinaptični membrani."],
       ["Na⁺/K⁺ črpalka porablja ATP", "mir", "Ohranja razliko koncentracij ionov."],
     ],
-    try: "Zakaj signal po mieliniziranem vlaknu potuje hitreje?",
+    razmisli: "Zakaj signal po mieliniziranem vlaknu potuje hitreje?",
     hint: "Mir = −70 mV, Na⁺ noter = depolarizacija, K⁺ ven = repolarizacija, prenašalec = sinapsa.",
   },
   "s3-zivcevje": {
@@ -935,7 +935,7 @@ export const SETS = {
       ["zaznava vida v zatilnem režnju", "veliki", "Vidna skorja je v zatilnem delu."],
       ["vožnja s kolesom brez razmišljanja", "mali", "Naučeni gibi se avtomatizirajo."],
     ],
-    try: "Zakaj poškodba hrbtenjače v vratu ohromi roke in noge?",
+    razmisli: "Zakaj poškodba hrbtenjače v vratu ohromi roke in noge?",
     hint: "Mišljenje = veliki možgani, koordinacija = mali, življenjske funkcije = deblo, refleksi = hrbtenjača.",
   },
   "s3-cutila": {
@@ -950,7 +950,7 @@ export const SETS = {
       ["jamice klopotače za infrardeče sevanje", "topl", "Kača zazna toploto plena v temi."],
       ["sestavljene oči žuželk", "svet", "Veliko omatidijev da mozaično sliko."],
     ],
-    try: "Zakaj možgane imenujemo »enako pomemben del zaznavanja kot čutilo«?",
+    razmisli: "Zakaj možgane imenujemo »enako pomemben del zaznavanja kot čutilo«?",
     hint: "Ločimo po vrsti energije: svetloba, gibanje ali pritisk, snovi, toplota.",
   },
   "s3-koza": {
@@ -965,7 +965,7 @@ export const SETS = {
       ["hkrati ogrodje in zaščita", "clen", "Hitinski oklep je tudi skelet."],
       ["vlažna koža žabe, skozi katero diha", "drugo", "Dvoživke dihajo tudi s kožo."],
     ],
-    try: "Zakaj žabe ne morejo dolgo živeti na suhem?",
+    razmisli: "Zakaj žabe ne morejo dolgo živeti na suhem?",
     hint: "Človek: plasti in žleze. Členonožci: hitin, levitev. Drugi: luske, perje, vlažna koža.",
   },
   "s3-opora": {
@@ -980,7 +980,7 @@ export const SETS = {
       ["hrošč", "zun", "Trdi oklep iz hitina."],
       ["morski pes", "notr", "Hrustančni skelet."],
     ],
-    try: "Kakšne prednosti in slabosti ima zunanje ogrodje v primerjavi z notranjim?",
+    razmisli: "Kakšne prednosti in slabosti ima zunanje ogrodje v primerjavi z notranjim?",
     hint: "Zunanje = oklep (členonožci), notranje = kosti ali hrustanec (vretenčarji), hidrostatsko = tekočina pod tlakom.",
   },
   "s3-imunost": {
@@ -996,7 +996,7 @@ export const SETS = {
       ["cepivo z oslabljenim povzročiteljem", "imuniz", "Aktivna umetna imunizacija: telo samo izdela protitelesa."],
       ["serum s protitelesi proti kačjemu strupu", "imuniz", "Pasivna imunizacija: dobimo že narejena protitelesa."],
     ],
-    try: "Zakaj nas cepivo zaščiti za več let, serum pa le za nekaj tednov?",
+    razmisli: "Zakaj nas cepivo zaščiti za več let, serum pa le za nekaj tednov?",
     hint: "Pregrade ne pustijo noter, nespecifična napade vse, specifična prepozna en antigen in si ga zapomni.",
   },
   "s3-razmnozevanje": {
@@ -1010,7 +1010,7 @@ export const SETS = {
       ["vrtni polž je dvospolnik, a se pari z drugim polžem", "spol", "Hermafrodit z navzkrižno oploditvijo."],
       ["sesalci se parijo v sezoni parjenja", "spol", "Spolno razmnoževanje z oploditvijo."],
     ],
-    try: "Zakaj je pri spremenljivem okolju spolno razmnoževanje bolj uspešno kot nespolno?",
+    razmisli: "Zakaj je pri spremenljivem okolju spolno razmnoževanje bolj uspešno kot nespolno?",
     hint: "Nespolno = en starš, kloni. Spolno = dve gameti, nove kombinacije genov.",
   },
   "s3-razvoj": {
@@ -1024,7 +1024,7 @@ export const SETS = {
       ["kačji pastir z vodnimi ličinkami brez bube", "nepop", "Ličinka se preobrazi v odraslega brez bube."],
       ["kokoš", "neposr", "Iz jajca se izvali piščanec, podoben odrasli živali."],
     ],
-    try: "Kakšna je prednost, da ličinka in odrasla žival živita v različnem okolju in jesta različno hrano?",
+    razmisli: "Kakšna je prednost, da ličinka in odrasla žival živita v različnem okolju in jesta različno hrano?",
     hint: "Popolna = z bubo, nepopolna = ličinke brez bube, ki se z levitvami spremenijo v odrasle, neposreden = brez ličinke.",
   },
   "s3-ekosistem": {
@@ -1038,7 +1038,7 @@ export const SETS = {
       ["kozorogi na Triglavu", "pop", "Ena vrsta, eno območje."],
       ["čas aktivnosti in vrsta hrane netopirja", "nisa", "Časovna in prehranska niša."],
     ],
-    try: "Kako se ekologija razlikuje od varstva okolja?",
+    razmisli: "Kako se ekologija razlikuje od varstva okolja?",
     hint: "Ena vrsta = populacija, vse vrste = združba, neživo = biotop, način življenja vrste = niša.",
   },
   "s3-dejavniki": {
@@ -1053,7 +1053,7 @@ export const SETS = {
       ["zajedavci", "bio", "Živi dejavnik."],
       ["slanost", "abio", "Pomembna v morju in brakični vodi."],
     ],
-    try: "Postrv ima ozko strpnostno območje za temperaturo in kisik. Kaj to pomeni za postrvi v toplem poletju?",
+    razmisli: "Postrv ima ozko strpnostno območje za temperaturo in kisik. Kaj to pomeni za postrvi v toplem poletju?",
     hint: "Neživo okolje = abiotski, drugi organizmi = biotski.",
   },
   "s3-odnosi": {
@@ -1068,7 +1068,7 @@ export const SETS = {
       ["trakulja v črevesju", "zaj", "Hrani se na račun gostitelja."],
       ["volk in lisica lovita iste zajce", "tek", "Prekrivanje niš."],
     ],
-    try: "Kaj se zgodi s populacijo plenilca specialista, ko zmanjka njegovega plena?",
+    razmisli: "Kaj se zgodi s populacijo plenilca specialista, ko zmanjka njegovega plena?",
     hint: "Plenilstvo +/−, tekmovanje −/−, zajedavstvo +/−, mutualizem +/+.",
   },
   "s3-pretok": {
@@ -1084,7 +1084,7 @@ export const SETS = {
       ["glive na odmrlem lesu", "razk", "Razgradijo les."],
       ["mah", "prim", "Fotosintezni organizem."],
     ],
-    try: "Zakaj je v ekosistemu veliko manj risov kot srn?",
+    razmisli: "Zakaj je v ekosistemu veliko manj risov kot srn?",
     hint: "Energija teče od proizvajalcev prek potrošnikov; razkrojevalci predelajo odmrlo snov. Na vsaki ravni se večina energije izgubi.",
   },
   "s3-sukcesija": {
@@ -1098,7 +1098,7 @@ export const SETS = {
       ["lišaji na goli skali", "zac", "Primarna sukcesija se začne z lišaji."],
       ["največja biomasa in zaprti krogi snovi", "klim", "Klimaks ima največ vezane biomase."],
     ],
-    try: "Kaj se zgodi s travnikom, ki ga 30 let ne kosimo?",
+    razmisli: "Kaj se zgodi s travnikom, ki ga 30 let ne kosimo?",
     hint: "Najprej pionirji, nato grmi in svetloljubna drevesa, na koncu stabilen gozd.",
   },
   "s3-clovek": {
@@ -1113,7 +1113,7 @@ export const SETS = {
       ["krčenje gozdov za njive", "hab", "Drobljenje in izguba habitatov."],
       ["nezakonit lov na nosoroge", "izkor", "Krivolov zaradi rogov."],
     ],
-    try: "Kaj je Natura 2000 in zakaj ščiti območja, ne le posamezne vrste?",
+    razmisli: "Kaj je Natura 2000 in zakaj ščiti območja, ne le posamezne vrste?",
     hint: "Kje živijo, kdo jih izpodriva, kaj jih zastruplja, koliko jih ujamemo.",
   },
 
@@ -1129,7 +1129,7 @@ export const SETS = {
       ["horoskop napove zdravje", "neznan", "Ni preverljiv s poskusom."],
       ["poročilo raziskave z dvojno slepim poskusom", "znan", "Dober načrt zmanjša pristranskost."],
     ],
-    try: "Zakaj nova znanstvena razlaga ne nadomesti stare takoj, ko jo nekdo objavi?",
+    razmisli: "Zakaj nova znanstvena razlaga ne nadomesti stare takoj, ko jo nekdo objavi?",
     hint: "Znanstvena = izvirna, recenzirana, z metodami. Poljudna = razlaga drugih. Neznanstvena = ni preverljiva.",
   },
   "s4-statistika": {
@@ -1143,7 +1143,7 @@ export const SETS = {
       ["ali je število rib po vrstah v dveh rekah enako porazdeljeno", "hi", "Kategorialni podatki."],
       ["ali je masa ptic v dveh populacijah različna", "ttest", "Dve skupini, številska spremenljivka."],
     ],
-    try: "Zakaj velika korelacija ne pomeni nujno, da ena spremenljivka povzroča drugo?",
+    razmisli: "Zakaj velika korelacija ne pomeni nujno, da ena spremenljivka povzroča drugo?",
     hint: "Opis vzorca = povprečje in SD. Dve povprečji = t-test. Štetja po kategorijah = hi-kvadrat. Povezanost = korelacija.",
   },
   "s4-signali": {
@@ -1157,7 +1157,7 @@ export const SETS = {
       ["A-kinaza veže fosfat na encime", "kin", "Fosforilacija spremeni obliko in delovanje beljakovin."],
       ["aktiviran encim razgradi glikogen v glukozo", "kin", "Končni odziv celice."],
     ],
-    try: "Zakaj ena molekula adrenalina lahko sproži nastanek milijonov molekul glukoze?",
+    razmisli: "Zakaj ena molekula adrenalina lahko sproži nastanek milijonov molekul glukoze?",
     hint: "Signal zunaj → receptor v membrani → cAMP ali Ca²⁺ v celici → kinaze fosforilirajo encime.",
   },
   "s4-energetika": {
@@ -1172,7 +1172,7 @@ export const SETS = {
       ["protoni se kopičijo v notranjosti tilakoid", "klo", "Gradient čez tilakoidno membrano."],
       ["nastaja NADPH", "klo", "Za vezavo CO₂ v Calvinovem ciklu."],
     ],
-    try: "Zakaj fotosinteza pri modri in rdeči svetlobi poteka hitreje kot pri zeleni?",
+    razmisli: "Zakaj fotosinteza pri modri in rdeči svetlobi poteka hitreje kot pri zeleni?",
     hint: "Oba: prenos elektronov, protonski gradient, ATP-sintaza, lastna DNA. Svetloba in NADPH = kloroplast, O₂ kot sprejemnik = mitohondrij.",
   },
   "s4-endo": {
@@ -1186,7 +1186,7 @@ export const SETS = {
       ["izločanje prebavnih encimov", "ekso", "Iz Golgijevega aparata v vezikle in ven."],
       ["celica vsrka kapljice tekočine (pinocitoza)", "endo", "»Pitje« celice."],
     ],
-    try: "Zakaj morata biti endocitoza in eksocitoza uravnoteženi?",
+    razmisli: "Zakaj morata biti endocitoza in eksocitoza uravnoteženi?",
     hint: "Endo = membrana se uviha in nekaj zajame. Ekso = vezikel se zlije z membrano in sprosti vsebino.",
   },
   "s4-molgen": {
@@ -1200,7 +1200,7 @@ export const SETS = {
       ["introni se izrežejo iz pre-mRNA", "evk", "Izrezovanje intronov poteka v jedru."],
       ["nima lastnih ribosomov, uporablja celične", "virus", "Virusi niso celice."],
     ],
-    try: "Kako operon lac »ve«, da mora vklopiti gene za razgradnjo laktoze?",
+    razmisli: "Kako operon lac »ve«, da mora vklopiti gene za razgradnjo laktoze?",
     hint: "Virus = DNA ali RNA brez celice, prokariont = krožna DNA in operoni, evkariont = linearni kromosomi s histoni.",
   },
   "s4-misice": {
@@ -1214,7 +1214,7 @@ export const SETS = {
       ["mitohondriji v vlaknih tipa I pri teku na dolge proge", "aerob", "Vzdržljivost temelji na aerobnem dihanju."],
       ["hiter, a kratkotrajen vir ATP brez kisika", "anaer", "Anaerobno da ATP hitro, a malo."],
     ],
-    try: "Zakaj po teku še nekaj minut hitro dihamo?",
+    razmisli: "Zakaj po teku še nekaj minut hitro dihamo?",
     hint: "Krčenje = Ca²⁺, aktin, miozin, ATP. Dovolj O₂ = aerobno, premalo O₂ = laktat.",
   },
   "s4-homeostaza": {
@@ -1228,7 +1228,7 @@ export const SETS = {
       ["termoreceptorji v hipotalamusu, ki merijo temperaturo krvi", "rec", "Notranji senzor."],
       ["žile v koži, ki se zožijo", "efek", "Zmanjšajo izgubo toplote."],
     ],
-    try: "Zakaj je regulacija z dvema nasprotnima efektorjema (znojenje, drgetanje) natančnejša?",
+    razmisli: "Zakaj je regulacija z dvema nasprotnima efektorjema (znojenje, drgetanje) natančnejša?",
     hint: "Receptor zazna, center primerja in odloči, efektor izvede odziv. Negativna povratna zanka vrne stanje.",
   },
   "s4-krvne": {
@@ -1242,7 +1242,7 @@ export const SETS = {
       ["IᴬIᴮ", "AB", "Iᴬ in Iᴮ sta kodominantna: izrazita se oba."],
       ["ii", "0", "Brez antigenov A in B."],
     ],
-    try: "Ali lahko starša s krvnima skupinama A in B dobita otroka s skupino 0?",
+    razmisli: "Ali lahko starša s krvnima skupinama A in B dobita otroka s skupino 0?",
     hint: "Iᴬ in Iᴮ sta kodominantna, i je recesiven proti obema.",
   },
   "s4-razvoj": {
@@ -1256,7 +1256,7 @@ export const SETS = {
       ["zgodnji zarodek se razdeli in nastaneta enojajčna dvojčka", "mat", "Celice zgodnjega zarodka lahko postanejo katerakoli celica, zato vsaka polovica zraste v celega človeka."],
       ["izražanje genov se v razvoju spreminja po časovnem načrtu", "dif", "Uravnavanje genov vodi razvoj."],
     ],
-    try: "Zakaj imata enojajčna dvojčka enako DNA, a ne povsem enakih prstnih odtisov?",
+    razmisli: "Zakaj imata enojajčna dvojčka enako DNA, a ne povsem enakih prstnih odtisov?",
     hint: "Spol = kromosom Y (SRY), diferenciacija = različno izražanje genov, matične = še nespecializirane, rak = nenadzorovana delitev.",
   },
   "s4-nastanek": {
@@ -1270,7 +1270,7 @@ export const SETS = {
       ["življenje je nastalo pri hidrotermalnih vrelcih", "hip", "Ena od hipotez o kraju nastanka."],
       ["pasovite železove rude kažejo naraščanje kisika", "fos", "Oksidirano železo v plasteh."],
     ],
-    try: "Zakaj Millerjev poskus ne dokazuje, kako je življenje nastalo, ampak le, da je bilo mogoče?",
+    razmisli: "Zakaj Millerjev poskus ne dokazuje, kako je življenje nastalo, ampak le, da je bilo mogoče?",
     hint: "Poskus izvedemo v laboratoriju, hipoteza je predlog razlage, kamnine so sledi preteklosti.",
   },
   "s4-popgen": {
@@ -1284,7 +1284,7 @@ export const SETS = {
       ["populacija 20 osebkov na otoku", "krsi", "V majhni populaciji deluje genski zdrs."],
       ["nove mutacije se ne pojavljajo", "ne", "To je eden od pogojev ravnovesja."],
     ],
-    try: "Zakaj v naravi skoraj nobena populacija ni točno v Hardy-Weinbergovem ravnovesju?",
+    razmisli: "Zakaj v naravi skoraj nobena populacija ni točno v Hardy-Weinbergovem ravnovesju?",
     hint: "Ravnovesje velja le za veliko populacijo brez izbora, mutacij, selitev in izbirnega parjenja.",
   },
   "s4-filogenija": {
@@ -1299,7 +1299,7 @@ export const SETS = {
       ["glive, rastline in živali", "evk", "Vsi mnogoceličarji so evkarionti."],
       ["metanogeni v močvirjih", "arh", "Proizvajajo metan."],
     ],
-    try: "Zakaj so delitev v tri domene predlagali šele po primerjavi zaporedij rRNA?",
+    razmisli: "Zakaj so delitev v tri domene predlagali šele po primerjavi zaporedij rRNA?",
     hint: "Arheje: ekstremna okolja, brez peptidoglikana, bližje evkariontom. Evbakterije: peptidoglikan. Evkarionti: jedro.",
   },
   "s4-clovek": {
@@ -1313,7 +1313,7 @@ export const SETS = {
       ["ročni klini (ašelejska orodja)", "erect", "Izdelana kamnita orodja."],
       ["sledi stopal v Laetoliju", "austr", "Dokaz pokončne hoje pred 3,6 milijona let."],
     ],
-    try: "Ali se je človek razvil iz šimpanza? Kako pravilno opišemo sorodnost?",
+    razmisli: "Ali se je človek razvil iz šimpanza? Kako pravilno opišemo sorodnost?",
     hint: "Australopithecus = pokončna hoja, majhni možgani. Homo erectus = ogenj, izhod iz Afrike. Homo sapiens = mi.",
   },
   "s4-mikrobi": {
@@ -1328,7 +1328,7 @@ export const SETS = {
       ["bakteriofag T4", "virus", "Virus, ki napada bakterije."],
       ["plazmodij malarije", "prazival", "Praživali zajedavec."],
     ],
-    try: "Zakaj antibiotiki ne delujejo na viruse?",
+    razmisli: "Zakaj antibiotiki ne delujejo na viruse?",
     hint: "Bakterije: prokarionti s steno. Virusi: brez celice. Praživali in alge: enocelični evkarionti. Glive: hitinska stena.",
   },
   "s4-zdravje": {
@@ -1342,7 +1342,7 @@ export const SETS = {
       ["železo za hemoglobin", "min", "Pomanjkanje povzroča slabokrvnost."],
       ["v citrusih in papriki", "vitC", "Vodotopen vitamin."],
     ],
-    try: "Zakaj so vegani pozorni na vitamin B12 in kombinacijo beljakovinskih živil?",
+    razmisli: "Zakaj so vegani pozorni na vitamin B12 in kombinacijo beljakovinskih živil?",
     hint: "Poveži bolezen pomanjkanja s snovjo: skorbut = C, rahitis = D, slabokrvnost = železo.",
   },
   "s4-vedenje": {
@@ -1356,7 +1356,7 @@ export const SETS = {
       ["prašičja uš se hitreje giblje na suhem, dokler ne najde vlage", "taks", "Kineza: neusmerjena sprememba hitrosti."],
       ["čebela s plesom sporoči smer hrane", "prir", "Von Frisch: plesni jezik čebel."],
     ],
-    try: "Kakšna je prednost prirojenega vedenja za žival, ki nikoli ne vidi staršev?",
+    razmisli: "Kakšna je prednost prirojenega vedenja za žival, ki nikoli ne vidi staršev?",
     hint: "Prirojeno je brez izkušenj, naučeno se oblikuje z izkušnjo, taksije in kineze so preprosti odzivi na dražljaj.",
   },
   "s4-viri": {
@@ -1371,7 +1371,7 @@ export const SETS = {
       ["fosfatne rude za gnojila", "neobn", "Zaloge so omejene."],
       ["bombaž", "obn", "Rastlina, ki jo gojimo vsako leto."],
     ],
-    try: "Kdaj postane obnovljiv vir, npr. riba ali gozd, v praksi neobnovljiv?",
+    razmisli: "Kdaj postane obnovljiv vir, npr. riba ali gozd, v praksi neobnovljiv?",
     hint: "Obnovljiv se obnovi v človeškem času, neobnovljiv je nastajal milijone let.",
   },
 };

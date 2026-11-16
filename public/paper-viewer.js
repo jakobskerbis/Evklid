@@ -3,6 +3,7 @@
 // Naloge najde besedilna plast (public/paper-tasks.js); »Pomoč pri tej nalogi« izreže le to nalogo (JPEG, največ
 // 1600 px) in jo z besedilom pošlje inštruktorju. Strani brez zaznanih nalog: učenec povleče okvir (prst ali miška).
 import { t } from "./i18n.js";
+import { zadrziFokus } from "./fokus-okna.js";
 import { icon } from "./icons.js";
 import { splitTasks, textInBox } from "./paper-tasks.js";
 
@@ -62,6 +63,11 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     <div class="pv-scroll"><div class="pv-pages"></div></div>`;
   document.body.append(el);
   document.documentElement.classList.add("pv-open");
+  // Pola nima svoje povečave: v aplikaciji, kjer je povečava strani sicer izklopljena (theme.js), jo za čas branja
+  // vrnemo; ob zaprtju se spet izklopi in zaslon se vrne na običajno velikost (glava in spodnja vrstica cela).
+  const vpMeta = document.querySelector('meta[name="viewport"][data-izvirno]');
+  const vpBrez = vpMeta?.getAttribute("content");
+  if (vpMeta) vpMeta.setAttribute("content", vpMeta.getAttribute("data-izvirno"));
   const $ = (s) => el.querySelector(s);
   const status = (msg) => ($(".pv-status").textContent = msg);
   const scroller = $(".pv-scroll");
@@ -99,12 +105,14 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     for (const p of pages) p.task?.cancel?.();
     loading?.destroy();
     if (blobUrl) URL.revokeObjectURL(blobUrl);
+    sprosti({ vrni: false });
     el.remove();
     document.documentElement.classList.remove("pv-open");
+    if (vpMeta) vpMeta.setAttribute("content", vpBrez);
     back?.focus?.();
   };
   current = { close };
-  $("[data-pv-close]").focus();
+  const sprosti = zadrziFokus(el, { zacetni: $("[data-pv-close]"), prej: back });
   $("[data-pv-close]").onclick = () => close(); // že med nalaganjem in ob napaki
 
   el.addEventListener("keydown", (e) => {

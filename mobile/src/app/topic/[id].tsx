@@ -1,13 +1,11 @@
 // Lekcija teme: po korakih (kratke kartice z vprašanji »Preveri se« vmes, public/lesson-steps.js)
-// ali vsa naenkrat, »Razloži drugače«, nato Vadi naloge ali razlaga z inštruktorjem.
+// (vedno po korakih), »Razloži drugače«, nato Vadi naloge ali razlaga z inštruktorjem.
 import React, { useMemo, useRef, useState } from "react";
 import { Alert, Platform, Pressable, Text, TextInput, View } from "react-native";
-import Storage from "expo-sqlite/kv-store";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { lessonSteps } from "../../../../public/lesson-steps.js";
 import { checkNumber, moveItem, orderHits, orderOk, placeItem } from "../../../../public/preveri-se.js";
 import { api } from "@/lib/api";
-import { key } from "@/lib/keys";
 import { useStudent } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { radius, useTheme } from "@/lib/theme";
@@ -44,8 +42,6 @@ type Lesson = {
 };
 type Step = { type: "text"; title: string; md: string; section: number } | { type: "check"; checks: number[]; final: boolean };
 
-const STEP_PREF = key("lessonSteps");
-
 export default function Topic() {
   const th = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -58,7 +54,8 @@ export default function Topic() {
     answered.current.add(qi);
     api(`/api/students/${student.id}/lesson-check`, { body: { topic: L.id, q: qi, ...a } }).catch(() => null);
   };
-  const [byStep, setByStep] = useState(() => Storage.getItemSync(STEP_PREF) !== "0");
+  // Lekcija je vedno po korakih (j, 15. 11. 2026; prej izbira »Vse naenkrat«).
+  const byStep = true;
   const [step, setStep] = useState(0);
   const [alt, setAlt] = useState<number | null>(null);
   const [starting, setStarting] = useState(false);
@@ -78,11 +75,6 @@ export default function Topic() {
     if (starting) return;
     const quote = sel.length > 800 ? `${sel.slice(0, 800)} …` : sel;
     learnWithTutor(t("mob.explainAsk", { name: L.name, quote }));
-  };
-  const setMode = (v: boolean) => {
-    tap();
-    setByStep(v);
-    Storage.setItemSync(STEP_PREF, v ? "1" : "0");
   };
   const learnWithTutor = async (send = t("topic.startMsg", { name: L.name })) => {
     setStarting(true);
@@ -146,13 +138,6 @@ export default function Topic() {
           Alert.alert(t("lrep.thanks"));
         }}
       />
-
-      {lesson && steps.length > 1 ? (
-        <View style={{ flexDirection: "row", gap: 8 }}>
-          <Chip label={t("tb.steps.byStep")} active={byStep} onPress={() => setMode(true)} />
-          <Chip label={t("tb.steps.all")} active={!byStep} onPress={() => setMode(false)} />
-        </View>
-      ) : null}
 
       {!lesson ? (
         <Card>{L.explanation ? <RichText text={L.explanation} onExplain={explain} /> : <Body>{t("topic.noExplanation")}</Body>}</Card>

@@ -170,7 +170,7 @@ stolpcev: 10
 
 Večkratniki števila $10$ so vsi v zadnjem stolpcu. Večkratniki števila $5$ so v petem in zadnjem stolpcu. Soda števila zapolnijo vsak drugi stolpec. Vzorec je pokončen, ker se v vsakem stolpcu zadnja števka ne spreminja.
 
-Večkratniki števila $9$ pa tvorijo poševno črto: $9, 18, 27, 36, \dots$ V vsaki naslednji vrsti se premaknejo za eno polje v levo. Do $90$ je pri vseh vsota števk $9$. Večkratniki števila $3$ tvorijo več takih poševnih črt. Zato pri $3$ in $9$ ne gledamo stolpca, ampak vsoto števk.
+Večkratniki števila $9$ pa tvorijo poševno črto: $9, 18, 27, 36, \dots$ Do $81$ se v vsaki naslednji vrsti premaknejo za eno polje v levo. Do $90$ je pri vseh vsota števk $9$. Večkratniki števila $3$ tvorijo več takih poševnih črt. Zato pri $3$ in $9$ ne gledamo stolpca, ampak vsoto števk.
 
 ## Drugače: Bolj natančno
 

@@ -50,6 +50,15 @@ PDF razreda, poglavja in celega predmeta se ne izdela več na telefonu. Ob vsaki
 - `EVKLID_FREE_POOL_USD=10` – brezplačni paket: vsi brezplačni učenci skupaj porabijo največ 10 $ (≈ 8,7 €) na mesec, nato do 1. v mesecu samo Vadnica in lekcije.
 - `EVKLID_FREE_STUDENT_USD=0.2` – brezplačni paket: največ 0,2 $ na brezplačnega učenca na mesec.
 - `EVKLID_MONTHLY_BUDGET_USD=50` – opozorilo v dnevniku pri 80 % porabe.
+- Ciljna meritev natančnosti po spremembi lekcij ali prompta **ne teče več na strežniku** (16. 11. 2026: strežnik in meritev
+  skupaj sta presegla 512 MB paketa Starter in Render je strežnik ponovno zagnal). Teče v GitHubu ob vsaki združitvi v main,
+  ki spremeni lekcije ali prompt: `.github/workflows/meritev-po-objavi.yml` (koda `scripts/meritev-po-objavi.mjs`,
+  `server/meritev-po-objavi.js`). Največ 1 $ na zagon, 15 $ na teden (ISO, UTC; šteje le samodejne meritve v GitHubu, ročne meritve na Renderju ali
+  računalniku ne), en zagon na commit; brez sprememb ni zagona. Enkrat na teden tek brez sprememb ohrani stanje
+  (0 $), da GitHub predpomnilnika ne izbriše.
+  Potrebuje skrivnost `ANTHROPIC_API_KEY` v GitHubu (Settings > Secrets and variables > Actions). Izid: Actions > Meritev po
+  objavi > zagon (povzetek in artefakt z dnevnikom). Spremenljivko `EVKLID_MERITEV_PO_OBJAVI` v Render → Environment lahko izbrišeš;
+  strežnik je ne bere več. `/api/admin/meritev-po-objavi` kaže le še staro zgodovino s strežnika.
 
 Vse lahko spremeniš v Render → Environment.
 
@@ -90,6 +99,8 @@ Nastavitev (enkrat):
 Obnova od zunaj (npr. na novem strežniku z istim `EVKLID_DATA_KEY`): `node scripts/obnovi-kopijo.js --oblak-prenesi 2026-11-04` prenese, odšifrira in preveri kopijo ter jo shrani kot lokalno `2026-11-04-0000`; naprej kot zgoraj (`--preveri 2026-11-04-0000`, nato `node scripts/obnovi-kopijo.js 2026-11-04-0000` in Restart service). Brez `EVKLID_DATA_KEY` (ali starega ključa v `EVKLID_DATA_KEYS_OLD`) se kopije od zunaj ne da odpreti, zato ključ hrani tudi v upravitelju gesel.
 
 ### Vaja obnove (enkrat pred pilotom, nato enkrat na mesec)
+
+Cel postopek obnove z izmerjenimi časi (tudi na novem strežniku): [obnova.md](obnova.md).
 
 1. `node scripts/obnovi-kopijo.js --zdaj`, nato `node scripts/obnovi-kopijo.js --preveri`: mora pisati »OBNOVA BI USPELA«.
 2. Prava vaja (ko nihče ne uporablja Evklida; kar se vpiše med vajo, se izgubi): `node scripts/obnovi-kopijo.js <datum ročne kopije iz 1. koraka>`, Restart service, preveri prijavo in profil, nato `--razveljavi` in še en Restart service.

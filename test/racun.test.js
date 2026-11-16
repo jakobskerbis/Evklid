@@ -3,7 +3,7 @@
 import test, { after } from "node:test";
 import assert from "node:assert/strict";
 import { casCheck, casAvailable, casStop } from "../server/cas.js";
-import { parseClaims, checkAnswerClaims, chemBalanced, molarOk, STATS_KV } from "../server/racun.js";
+import { MAX_CLAIMS, parseClaims, checkAnswerClaims, chemBalanced, molarOk, STATS_KV } from "../server/racun.js";
 import { stripMeta, createStreamFilter } from "../server/meta.js";
 import { stripRacunBlocks } from "../server/textbook.js";
 import { verifyAiFull } from "../server/scan.js";
@@ -224,4 +224,11 @@ cas("klepet: napačna trditev v bloku RACUN sproži en popravek; blok ni viden",
   } finally {
     server.close();
   }
+});
+
+test("parseClaims: odgovor inštruktorja do MAX_CLAIMS, lekcija (max = Infinity) vse trditve", () => {
+  const lines = Array.from({ length: MAX_CLAIMS + 5 }, () => `kemija: H2 + Cl2 -> 2 HCl`).join("\n");
+  const text = `<<RACUN\n${lines}\n>>`;
+  assert.equal(parseClaims(text).length, MAX_CLAIMS);
+  assert.equal(parseClaims(text, Infinity).length, MAX_CLAIMS + 5);
 });

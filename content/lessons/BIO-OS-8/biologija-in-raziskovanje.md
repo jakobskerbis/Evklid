@@ -62,7 +62,7 @@ Višja raven zmore več kot njeni deli posebej: ena mišična celica ravnila ne 
 :::premisli
 Je srce tkivo ali organ? Odloči se, preden pogledaš, in povej zakaj.
 ---
-Organ. Srce je zgrajeno iz več vrst tkiva: mišičnega, veznega in živčnega. Skupaj poganjajo kri. Tkivo pa je ena sama vrsta podobnih celic.
+Organ. Srce je zgrajeno iz več vrst tkiva: mišičnega, veznega in živčnega. Skupaj poganjajo kri. Tkivo pa je skupina podobnih celic z enako nalogo.
 :::
 
 V simulaciji spodaj »Ravni organizacije živega« uvrsti srce, želodec in kostno tkivo. Opazuj, kje zamenjaš tkivo in organ.
@@ -125,7 +125,7 @@ Pošten poskus: spreminja se samo en dejavnik, vse drugo ostane enako. Kontrolna
 2. Več zadetkov bi lahko povzročila suha umetna trava, ne kopačke. Vzrokov ne moremo ločiti, zato to ni dokaz.
 3. Popravek: oba niza strelov na istem igrišču, isti dan, z isto žogo. Spremeni se le obutev. Streli s starimi kopačkami so kontrola.
 4. En strelec en dan ni dovolj. Naj sodeluje več igralcev; polovica naj začne s starimi kopačkami, polovica z novimi, da utrujenost ne zadene le ene skupine.
-5. Odgovor: to ni dokaz, ker sta se spremenila dva dejavnika.
+5. Odgovor: to ni dokaz, ker se je poleg kopačk spremenilo še drugo: podlaga in dan.
 
 ### Primer 4: zdaj ti
 
@@ -169,7 +169,7 @@ $35{,}1 + 34{,}9 + 35{,}3 = 105{,}3$ in $\dfrac{105{,}3}{3} = 35{,}1$, torej $35
 
 **Pošten poskus je kot pošten tek.** Na atletskem mitingu tečejo vsi tekači na isti stezi, isto razdaljo in startajo ob istem strelu. Razlikujejo se le tekači, zato zmaga res najhitrejši. Če bi eden tekel po tartanu, drugi pa po pesku, ne bi vedel, ali je zmagal zaradi nog ali zaradi podlage. V poskusu je dejavnik, ki ga preverjamo, »tekač«, vse drugo pa je »steza«, ki mora biti za vse enaka. Kontrolna skupina je tekač, ki teče brez napitka, na isti stezi.
 
-**Ravni so kot športna organizacija.** Ena igralka je kot celica. Vse krilne igralke z enako nalogo so kot tkivo. Ekipa, v kateri vratarka, krila in branilke skupaj zmagajo tekmo, je kot organ. Klub z več ekipami je kot organski sistem. Na vsaki stopnji nastane nekaj, česar ena igralka sama ne zmore.
+**Ravni so kot športna organizacija.** Ena igralka je kot celica. Vse krilne igralke z enako nalogo so kot tkivo. Ekipa, v kateri vratarka, krila in branilke skupaj zmagajo na tekmi, je kot organ. Klub z več ekipami je kot organski sistem. Na vsaki stopnji nastane nekaj, česar ena igralka sama ne zmore.
 
 Analogija ima meje: celice v tkivu so si podobnejše kot igralke.
 
@@ -179,7 +179,7 @@ Analogija ima meje: celice v tkivu so si podobnejše kot igralke.
 - **Slepi poskus.** Igralke niso vedele, kaj pijejo, zato pričakovanje ni vplivalo na rezultat. Že občutek »spil sem nekaj posebnega« lahko izboljša dosežek.
 - **Naključna razdelitev.** Osebke razdelimo v skupini z žrebom, da v eni ne pristanejo vsi najboljši.
 - **Ponovljivost.** Sklep velja šele, ko poskus ponovijo tudi drugi in dobijo podoben rezultat.
-- **Ravni pod celico.** Celica je najmanjša *živa* enota. Sestavljajo jo organeli (drobni deli celice z različnimi nalogami), ti pa iz molekul in atomov, ki sami niso živi.
+- **Ravni pod celico.** Celica je najmanjša *živa* enota. Sestavljajo jo organeli (drobni deli celice z različnimi nalogami), ti pa so iz molekul in atomov, ki sami niso živi.
 
 ## Preveri se
 

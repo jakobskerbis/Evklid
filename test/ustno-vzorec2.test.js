@@ -140,7 +140,7 @@ test("ročni pregled :::premisli: izločena vprašanja niso ponujena (#7, #16, #
     if (q?.h && file[id]?.h === q.h) assert.ok(file[id].o === "I" && file[id].r, id);
   }
   // pregledano vprašanje iz :::premisli je ponujeno (da so pregledana vsa, preveri test »vsa vprašanja … imajo veljaven pregled«)
-  assert.equal(real("FIZ-SS-2/gravitacijski-zakon#p0")?.vrsta, "razlozi");
+  assert.equal(real("FIZ-SS-2/gravitacijski-zakon#p1")?.vrsta, "razlozi");
 });
 
 test("ročni pregled: novo ali spremenjeno :::premisli brez pregleda ni ponujeno, napaka in povzetek pa sta", () => {

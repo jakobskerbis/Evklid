@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Najprej ločba
+  - v kiveti: $A = b\,(\varepsilon_1 c_1 + \varepsilon_2 c_2 + \dots)$
+  - kromatogram: vsak vrh ena snov
+- Porazdelitev med fazama
+  - $K = c_\mathrm{S}/c_\mathrm{M}$; večji $K$, kasnejši vrh
+  - mrtvi čas $t_\mathrm{M} = L/u$
+- Retencija in selektivnost
+  - $k = (t_\mathrm{R} - t_\mathrm{M})/t_\mathrm{M} = K\,V_\mathrm{S}/V_\mathrm{M}$
+  - $t_\mathrm{R} = t_\mathrm{M}(1 + k)$
+  - $\alpha = k_2/k_1 \ge 1$
+- Učinkovitost kolone
+  - $N = 16\,(t_\mathrm{R}/w)^2 = 5{,}54\,(t_\mathrm{R}/w_{1/2})^2$
+  - višina podu $H = L/N$
+- Ločljivost
+  - $R_\mathrm{s} = \dfrac{2\,(t_\mathrm{R,2} - t_\mathrm{R,1})}{w_1 + w_2}$; bazna ločba pri $1{,}5$
+  - Purnell: $R_\mathrm{s} = \dfrac{\sqrt N}{4}\cdot\dfrac{\alpha - 1}{\alpha}\cdot\dfrac{k_2}{1 + k_2}$
+  - pazi: $R_\mathrm{s} \propto \sqrt L$, ne $L$
+- GC in HPLC
+  - GC: inerten plin, hlapni vzorci, temperatura
+  - HPLC: topilo, nehlapni vzorci, gradient
+  - reverzna faza $\mathrm{C_{18}}$: polarne snovi prve
+- Umeritev s površino vrha
+  - premica $y = a + b\,c$, najmanjši kvadrati
+  - $c_0 = f \cdot (y - a)/b$; odštej odsek
+  - notranji standard: razmerje $A_x/A_\mathrm{IS}$

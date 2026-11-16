@@ -59,7 +59,7 @@ test("/3d page loads the Evklid keyboard and its colours, the viewer page mode h
   const blok = css.match(/html\.k3-stran \{([^}]*)\}/)[1];
   const iz = new Set([...tk.matchAll(/var\(--([a-z0-9-]+)/g)].map((m) => m[1]).filter((v) => !/^(tk-|varno-|cols$)/.test(v)));
   for (const v of iz) assert.ok(blok.includes(`--${v}:`), `--${v} missing in html.k3-stran`);
-  for (const k of ["a3.searchModels", "a3.areas", "a3.all", "a3.area.telo", "a3.recent", "a3.seeAll", "a3.results", "a3.noModels", "a3.prevModel", "a3.nextModel", "a3.position", "a3.fullscreen", "a3.exitFullscreen", "a3.about", "a3.hintModel", "a3.hintModelMouse", "a3.zoomIn", "a3.zoomOut", "sc.try"]) {
+  for (const k of ["a3.searchModels", "a3.areas", "a3.all", "a3.area.telo", "a3.recent", "a3.seeAll", "a3.results", "a3.noModels", "a3.prevModel", "a3.nextModel", "a3.position", "a3.fullscreen", "a3.exitFullscreen", "a3.about", "a3.hintModel", "a3.hintModelMouse", "a3.zoomIn", "a3.zoomOut", "sc.try", "sc.think"]) {
     assert.ok(typeof sl[k] === "string" && sl[k], `missing ${k}`);
   }
   const src = fs.readFileSync(path.join(D3, "stran.js"), "utf8");
@@ -169,12 +169,26 @@ test("selecting a part hides the parts around it (wall, membrane, envelope) and 
   const src = fs.readFileSync(path.join(D3, "pregledovalnik.js"), "utf8");
   assert.match(src, /obarvaj\(d\);\s*skrijObdajajoce\(d\);/);
   assert.match(src, /for \(const \[o, maska\] of skrite\) o\.layers\.mask = maska;/, "restore first");
-  // izračun ovojev je v ovoji.js (vedenje: test/3d-ovoji.test.js)
-  const ovoji = fs.readFileSync(path.join(D3, "ovoji.js"), "utf8");
-  assert.match(src, /najdiOvoje\(THREE, d, model\.deli, model\.group\)/);
-  assert.match(ovoji, /smeri\.every\(/, "all six rays from outside must hit the shell");
-  assert.match(ovoji, /velikost\(p\) < vS \* 1\.25/, "the shell is bigger than the selected part");
-  assert.match(src, /\(info\.predmet \|\| "BIO"\) !== "BIO"/, "biology only");
+  // the rule itself lives in ovoji.js (behaviour tested in test/3d-ovoji.test.js)
+  assert.match(src, /mrezeOvojev\(THREE, model\.deli, d, \{ group: model\.group/);
+  const ov = fs.readFileSync(path.join(D3, "ovoji.js"), "utf8");
+  assert.match(ov, /if \(!zad\.length\) obdaja = false;/, "all six rays from outside must hit the shell");
+  assert.match(ov, /prostornina\(THREE, okvirDela\(THREE, p, bP\)\) < vS \* 1\.25/, "the shell is bigger than the selected part");
+  assert.match(ov, /pred \* 2 <= smeri\.length/, "the shell is reached before the selected part in most directions");
+  assert.match(src, /\(info\.predmet \|\| "BIO"\) !== "BIO"\) return;/, "biology only");
   assert.match(src, /obarvaj\(null\);[^\n]*\n\s*skrijObdajajoce\(null\);/, "restored before a rebuild");
   assert.match(src, /o\.layers\.set\(SKRITA_PLAST\)/);
+});
+
+test("model page header on phones: name on its own full-width row, never broken mid-word", () => {
+  const css = fs.readFileSync(path.join(D3, "3d.css"), "utf8");
+  const blok = css.slice(css.indexOf("@media (max-width: 480px) {\n  /* Ob štirih gumbih"), css.indexOf("@media (max-width: 359px)"));
+  assert.ok(blok.length > 0, "phone block for the model header exists");
+  // ob štirih gumbih je imelo ime le ~90 px (»Bakteriofa/g T4«)
+  assert.match(blok, /\.k3-model-vrh:not\(\.mk-vrh\) \{ display: grid;[^}]*grid-template-areas: "nazaj nad desno" "ime ime ime";/);
+  assert.match(blok, /\.k3-model-vrh:not\(\.mk-vrh\) \.k3-model-naslov \{ display: contents; \}/);
+  assert.match(blok, /\.k3-model-vrh:not\(\.mk-vrh\) h1 \{ grid-area: ime;/);
+  assert.doesNotMatch(blok, /overflow-wrap: anywhere|word-break: break-all/, "words break only when one alone is wider than the line");
+  // mikroskop uporablja iste razrede, a ima svojo glavo (v lekciji brez gumba Nazaj): ostane v eni vrstici
+  assert.match(blok, /\.mk-vrh \{ gap: 8px; \}/);
 });

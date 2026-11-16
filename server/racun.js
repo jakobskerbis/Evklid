@@ -33,8 +33,9 @@ const OPS = {
   molska: "molar", molar: "molar", "molska masa": "molar",
 };
 
-/** Vse trditve iz blokov RACUN v besedilu: [{ line, op, args }]. */
-export function parseClaims(text) {
+/** Vse trditve iz blokov RACUN v besedilu: [{ line, op, args }]. Odgovor inštruktorja: največ MAX_CLAIMS
+ *  (čas za učenca); preverjanje lekcij (scripts/check-lesson.js) poda max = Infinity, da ne izpusti nobene. */
+export function parseClaims(text, max = MAX_CLAIMS) {
   const out = [];
   for (const m of String(text || "").matchAll(BLOCK_RE)) {
     for (const raw of m[1].split("\n")) {
@@ -44,7 +45,7 @@ export function parseClaims(text) {
       const op = OPS[k[1].trim().toLowerCase()];
       if (!op) continue;
       out.push({ line, op, args: k[2].split("|").map((s) => s.trim()) });
-      if (out.length >= MAX_CLAIMS) return out;
+      if (out.length >= max) return out;
     }
   }
   return out;
@@ -124,13 +125,13 @@ async function checkOne(c) {
 // Skupni rok za en odgovor: 16 počasnih trditev po 9 s bi učenca pustilo čakati minute.
 const BUDGET_MS = () => Number(process.env.EVKLID_RACUN_BUDGET_MS) || 20_000;
 
-export async function checkClaims(claims) {
+export async function checkClaims(claims, { max = MAX_CLAIMS, budgetMs = BUDGET_MS() } = {}) {
   const out = { checked: 0, failed: [], unsure: [] };
   const t0 = Date.now();
-  for (const c of claims.slice(0, MAX_CLAIMS)) {
+  for (const c of claims.slice(0, max)) {
     let r;
     try {
-      r = Date.now() - t0 > BUDGET_MS() ? { ok: null, why: "ni časa" } : await checkOne(c);
+      r = Date.now() - t0 > budgetMs ? { ok: null, why: "ni časa" } : await checkOne(c);
     } catch (e) {
       r = { ok: null, why: String(e?.message || e) };
     }

@@ -38,18 +38,30 @@ Pri $680\,\mathrm{nm}$ je to okoli $176\,\mathrm{kJ}$ na mol fotonov. Modri foto
 
 Prenos elektronov narišemo kot črko Z, postavljeno na bok. Navpično je energija elektrona (bolj zgoraj je močnejši reducent), vodoravno zaporedje prenašalcev:
 
-```
- P680*            P700*
-  ^  \             ^  \
-  |   PQ           |   Fd
-  |    \           |    \
-  |    b6f         |   NADPH
-  |      \         |
-  |       PC ----> P700
- P680
-  ^
- H2O
-```
+:::risba skica
+opis: Shema Z. Navpično je energija elektrona, vodoravno zaporedje prenašalcev. Elektron gre iz vode (H₂O, levo, malo nad P680) navzdol na P680. Foton ga dvigne navpično na vzbujeni P680*. Od tam se spušča prek PQ in citokroma b₆f do PC in naprej na P700. Drugi foton ga dvigne navpično na vzbujeni P700*, ki leži najvišje. Od tam se spusti prek Fd do NADPH.
+območje: -1; 1 .. 18; 12,5
+puščica: 1; 3 -> 3; 2
+puščica: 3; 2 -> 3; 9 | foton | levo | oranžna debelo
+puščica: 3; 9 -> 5; 7,5
+puščica: 5; 7,5 -> 7; 6
+puščica: 7; 6 -> 9; 4,5
+puščica: 9; 4,5 -> 11; 4
+puščica: 11; 4 -> 11; 11 | foton | levo | oranžna debelo
+puščica: 11; 11 -> 13; 8,7
+puščica: 13; 8,7 -> 15; 8
+točka: 1; 3 | H_2O | levo
+točka: 3; 2 | P680 | desno
+točka: 3; 9 | P680* | nad
+točka: 5; 7,5 | PQ | nad desno
+točka: 7; 6 | b_6f | nad desno
+točka: 9; 4,5 | PC | pod
+točka: 11; 4 | P700 | desno
+točka: 11; 11 | P700* | nad
+točka: 13; 8,7 | Fd | nad desno
+točka: 15; 8 | NADPH | desno
+podnapis: Shema Z: oranžni navpični puščici sta vzbujanji s fotonom, druge puščice so prenos elektrona.
+:::
 
 Navpični puščici sta vzbujanji s svetlobo.
 
@@ -84,7 +96,7 @@ Bilanca: $3$ ATP in $2$ NADPH na vezan $\mathrm{CO_2}$. Iz treh obratov ostane e
 
 RuBisCO je počasen (nekaj reakcij na sekundo) in ne loči dobro $\mathrm{CO_2}$ od $\mathrm{O_2}$. Ob **oksigenaciji** veže kisik: nastane en 3-fosfoglicerat in en **2-fosfoglikolat**, ki ga mora celica predelati v kloroplastu, peroksisomu in mitohondriju. Pri tem se sprosti pol molekule $\mathrm{CO_2}$ na oksigenacijo in porabita se ATP in redukcijski ekvivalenti. To je **fotorespiracija**. Razmerje oksigenacij proti karboksilacijam $\varphi$ raste s temperaturo (topnost $\mathrm{CO_2}$ pada hitreje od topnosti $\mathrm{O_2}$) in ko so listne reže zaprte.
 
-**Rastline C4** (koruza, sladkorni trs, proso) prostorsko ločita vezavo:
+**Rastline C4** (koruza, sladkorni trs, proso) prostorsko ločijo vezavo:
 
 - v **mezofilnih celicah** encim **PEP-karboksilaza**, ki nima afinitete do kisika, veže $\mathrm{HCO_3^-}$ na fosfoenolpiruvat; nastane oksaloacetat ($4$ C), nato malat;
 - malat potuje v **celice žilnega ovoja** (venčasta ali Kranzova zgradba lista), kjer se dekarboksilira; tam je $\mathrm{CO_2}$ okoli desetkrat bolj zgoščen in RuBisCO skoraj ne oksigenira;

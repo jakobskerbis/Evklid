@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Norma
+  - pozitivnost, homogenost, trikotniška neenakost
+  - razdalja je $\|x - y\|$
+- Tri norme
+  - $\|x\|_1 = \sum |x_i|$, $\|x\|_\infty = \max |x_i|$
+  - $\|x\|_2 = \sqrt{\sum x_i^2}$, iz skalarnega produkta
+  - $\|x\|_\infty \le \|x\|_2 \le \|x\|_1$
+- Enotske krogle
+  - romb, krog, kvadrat v $\mathbb{R}^2$
+  - romb v krogu, krog v kvadratu
+- Konveksnost
+  - $tx + (1 - t)y \in K$ za $t \in [0, 1]$
+  - krogla vsake norme je konveksna
+  - presek da, unija v splošnem ne
+- Norma matrike
+  - $\|A\| = \max \|Ax\| / \|x\|$
+  - $\|A\|_1$ stolpci, $\|A\|_\infty$ vrstice
+  - $\|A\|_2 = \sqrt{\lambda_{\max}(A^{\mathsf T}A)}$, ne lastna vrednost $A$
+- Izometrije
+  - $f(x) = Qx + b$, $Q^{\mathsf T}Q = I$
+  - $\det Q = 1$ rotacija, $\det Q = -1$ zrcaljenje
+- Rotacija v prostoru
+  - os: $Qv = v$
+  - kot: $\operatorname{sl} Q = 1 + 2\cos\varphi$

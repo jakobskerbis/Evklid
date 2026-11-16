@@ -5,79 +5,146 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Zidarji in tesarji že stoletja preverjajo navpičnost sten s **svinčnico**: utež na vrvici. Napeta vrvica kaže proti središču Zemlje. Recimo, da svinčnico z utežjo $0{,}2\,\mathrm{kg}$ obesiš ob betonski blok z maso $50\,\mathrm{t}$, tako da je utež $2\,\mathrm{m}$ od težišča bloka. Ali blok povleče utež k sebi? In če jo, za koliko pokvari meritev?
+Leta 1619 je Johannes Kepler izdal knjigo *Harmonices Mundi* (Harmonija sveta). Iskal je »glasbo sfer«: verjel je, da so gibanja planetov urejena kot glasbeni intervali. Našel je zanimivo ujemanje. Ko je Zemlja najbližje Soncu, okoli njega kroži hitreje kot takrat, ko je najdlje. Razmerje obeh kotnih hitrosti, gledano s Sonca, je približno $16 : 15$. To je v glasbi poltonski korak, od mi do fa.
 
-Newtonov gravitacijski zakon odgovori: da, vsako telo privlači vsako drugo. Blok vleče utež s silo približno $1{,}7 \cdot 10^{-7}\,\mathrm{N}$. Zemlja jo vleče z $2\,\mathrm{N}$, kar je več kot desetmilijonkrat več. Na metrski vrvici se svinčnica odmakne za manj kot desettisočinko milimetra, zato gradbeniku ni treba skrbeti. Ob veliki gori pa je odklon merljiv. Leta 1774 so ga izmerili na škotski gori in iz njega prvič ocenili maso Zemlje.
+V isti knjigi je objavil še eno pravilo, ki ga danes imenujemo 3. Keplerjev zakon: planet, ki je dlje od Sonca, potrebuje za en obhod veliko več časa. Natančneje: kvadrat obhodnega časa je sorazmeren s kubom razdalje od Sonca, $t_0^2 \propto r^3$. Kepler je znal opisati, **kako** se planeti gibljejo, ni pa znal pravilno pojasniti, **zakaj**. Slutil je, da planete poganja neka sila s Sonca, a jo je opisal napačno. Kaj jih sploh drži na tirih?
 
-Isti zakon drži Luno ob Zemlji in planete ob Soncu. Z njim izračunamo, kako hitro mora leteti satelit, ki telefonu pošilja signal GPS, in koliko bi tehtal gradbeni blok na Luni.
+Odgovor je pozneje dal Isaac Newton z gravitacijskim zakonom. Z njim danes izračunamo, kako hitro mora leteti vesoljska postaja, in na kateri višini mora krožiti satelit, s katerega gledamo televizijo ali poslušamo radio.
 
 ## Razlaga
 
-Novo idejo zgradimo ob znani. Primerjali bomo silo teže, ki jo poznaš, in gravitacijski zakon ter si ogledali, v čem se razlikujeta.
+**Dve telesi na sliki.** Začnimo z risbo dveh krogel. Vsaka vleče drugo k sebi.
 
-**Staro: sila teže.** Iz 1. letnika veš, da Zemlja vleče telo z maso $m$ s silo $F_g = m g$, kjer je $g = 9{,}81\,\mathrm{m/s^2}$. Na gradbišču to zadostuje: žerjav mora dvigniti tono betona, ki tehta $9810\,\mathrm{N}$. Ta formula pa molči o dveh stvareh. Ali beton privlači tudi delavca ob sebi? In kolikšen je privlak na Luni, $384\,000\,\mathrm{km}$ daleč?
+:::risba skica
+opis: Dve krogli, levo večja z maso m₁, desno manjša z maso m₂. Na vsako deluje enako dolga puščica gravitacijske sile proti drugi krogli. Spodaj je označena razdalja r med središčema krogel.
+območje: 0; -2,4 .. 10; 2
+krog: 2; 0 | 1,2 | modra
+krog: 8; 0 | 0,7 | oranžna
+točka: 2; 0 | m_1 | pod
+točka: 8; 0 | m_2 | pod
+puščica: 3,3; 0 -> 4,8; 0 | F_g | nad | puščica
+puščica: 7,2; 0 -> 5,7; 0 | F_g | nad | puščica
+črta: 2; -1,8 -> 8; -1,8 | siva
+črta: 2; -1,5 -> 2; -2,1 | siva
+črta: 8; -1,5 -> 8; -2,1 | siva
+napis: 5; -1,8 | r (med središčema) | pod
+podnapis: Telesi se privlačita z enako veliko silo; r merimo od središča do središča.
+:::
 
-**Novo: gravitacijski zakon.** Dve telesi z masama $m_1$ in $m_2$ se privlačita s silo
+Iz risbe preberemo tri stvari. Sili sta enako dolgi in nasprotno usmerjeni, kot zahteva 3. Newtonov zakon. Sila deluje vzdolž zveznice središč. Razdaljo $r$ merimo med **središčema**, ne med površjema.
+
+**Kako je sila odvisna od razdalje?** Newton je primerjal dve telesi, ki ju Zemlja pospešuje: jabolko na površju in Luno. Luna je od središča Zemlje približno $60$ Zemljinih polmerov ($384\,000\,\mathrm{km}$) in jo obkroži v $27{,}3$ dneh. Njen centripetalni pospešek izračunamo iz enakomernega kroženja.
+
+| Telo | razdalja $r$ | pospešek |
+|---|---|---|
+| jabolko | $1\,R_Z$ | $9{,}81\,\mathrm{m/s^2}$ |
+| Luna | $60\,R_Z$ | $0{,}00272\,\mathrm{m/s^2}$ |
+
+Razdalja je $60$-krat večja, pospešek pa $9{,}81 : 0{,}00272 \approx 3600$-krat manjši. In $60^2 = 3600$. Privlak Zemlje je torej **obratno sorazmeren s kvadratom razdalje**: pri dvakratni razdalji je štirikrat manjši, pri trikratni devetkrat.
+
+**Kako je sila odvisna od mas?** Telo z dvakrat večjo maso Zemlja vleče z dvakrat večjo silo (teža $mg$). Ker telesi delujeta druga na drugo enako, mora sila na enak način rasti tudi z maso drugega telesa. Če bi bila sorazmerna le z $m_1$, bi bila sila jabolka na Zemljo drugačna od sile Zemlje na jabolko, kar krši 3. Newtonov zakon. Zato vsebuje produkt $m_1 m_2$. Vse skupaj zapišemo v **gravitacijski zakon**:
 
 $$F_g = G\,\frac{m_1 m_2}{r^2}$$
 
-Tu je $r$ razdalja med **središčema** teles (pri krogli je to njeno geometrijsko središče). Natančno zakon velja za krogle in za telesa, ki so majhna v primerjavi z razdaljo med njima; za druga telesa da dobro oceno. $G = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2}$ je **gravitacijska konstanta**, enaka za vsa telesa v vesolju.
+$G = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2}$ je **gravitacijska konstanta**, enaka za vsa telesa v vesolju. Zakon natančno velja za krogelno simetrična telesa (npr. homogene krogle) in za telesa, ki so majhna v primerjavi z razdaljo med njima. Ker je $G$ tako majhen, je privlak med predmeti v sobi neznaten. Opazen postane, ko je vsaj eno telo velikansko, kot planet.
 
-Razlike med starim in novim so zbrane v tabeli.
+**Težni pospešek na različnih razdaljah.** Za telo z maso $m$ na površju Zemlje vstavimo maso Zemlje $M_Z = 5{,}97 \cdot 10^{24}\,\mathrm{kg}$ in $r = R_Z = 6370\,\mathrm{km}$. Sila mora biti ravno teža $mg$:
 
-| Lastnost | Sila teže $mg$ | Gravitacijski zakon |
-|---|---|---|
-| Kdo privlači | samo Zemlja | vsako telo |
-| Odvisnost od razdalje | ni je, $g$ je stalen | pada s kvadratom razdalje |
-| Na koga deluje | na telo | na obe telesi, enako močno |
-| Kje velja | blizu površja Zemlje | povsod |
+$$G\,\frac{M_Z\, m}{R_Z^2} = m g$$
 
-**Razlika 1: privlači vsako telo.** Ker je $G$ tako majhen, je privlak med predmeti na gradbišču neznaten. Opazen postane šele, ko je vsaj eno telo velikansko, kot planet ali zvezda.
+$$g = \frac{G M_Z}{R_Z^2}$$
 
-**Razlika 2: sila pada s kvadratom razdalje.** Če se razdalja med središčema podvoji, se sila zmanjša na četrtino. Pri trikratni razdalji je devetkrat manjša. Pomembno: $r$ merimo od **središča** Zemlje, ne od površja. Človek na tleh je od središča oddaljen en Zemljin polmer, $R_Z = 6370\,\mathrm{km}$.
+Števec je $G M_Z = 6{,}67 \cdot 10^{-11} \cdot 5{,}97 \cdot 10^{24} \approx 3{,}98 \cdot 10^{14}\,\mathrm{m^3/s^2}$; ta produkt bomo potrebovali pri satelitih. Iz tega dobimo $g \approx 9{,}81\,\mathrm{m/s^2}$. Višje nad Zemljo ali na drugem planetu je težni pospešek drugačen: $g = \dfrac{G M}{r^2}$.
 
 :::premisli
-Satelit kroži $6370\,\mathrm{km}$ nad površjem Zemlje. Kolikšen del svoje teže na tleh ima tam? Napovej, preden bereš naprej.
+Satelit kroži $6370\,\mathrm{km}$ nad površjem Zemlje. Kolikšen del svoje teže na tleh ima tam? Napovej, preden pogledaš graf spodaj.
 ---
-Četrtino. Višina nad površjem je en Zemljin polmer, zato je satelit od središča oddaljen $2 R_Z$. Razdalja od središča se je podvojila, sila pa je zato štirikrat manjša. Kdor vzame samo višino $6370\,\mathrm{km}$ kot razdaljo, dobi napačen rezultat.
+Četrtino. Višina je en Zemljin polmer, zato je satelit od središča oddaljen $2\,R_Z$. Razdalja od središča se je podvojila, sila je štirikrat manjša. Kdor vzame za $r$ samo višino, dobi napačen rezultat.
 :::
 
-**Razlika 3: sila deluje na obe telesi.** Zemlja vleče jabolko in jabolko vleče Zemljo z enako veliko silo v nasprotni smeri, kot pravi 3. Newtonov zakon. To vidiš tudi v formuli: če zamenjaš $m_1$ in $m_2$, ostane sila enaka.
+:::risba graf
+opis: Graf težnega pospeška g v odvisnosti od razdalje r od središča Zemlje, merjene v Zemljinih polmerih, od 1 do 8. Krivulja pada vedno počasneje. V aplikaciji drsnik izbere razdaljo; izbrano je r = {d}-kratnik Zemljinega polmera, kjer je g = {9.81/(d*d):.2} m/s².
+x: 0 .. 8 | 1 | r [R_Z]
+y: 0 .. 12 | 2 | g [m/s^2]
+drsnik: d | 1 .. 6 | 0,5 | 2 | razdalja od središča v Zemljinih polmerih
+f: 9.81/x^2 | modra | 1 .. 8
+črta: d; 0 -> d; 9.81/d^2 | siva črtkano
+točka: d; 9.81/d^2 | {9.81/(d*d):.2} | nad desno | oranžna
+podnapis: Pri r = {d}-kratniku Zemljinega polmera je g = {9.81/(d*d):.2} m/s²: vrednost s površja, deljena z {d*d}.
+:::
+
+Napoved preveri na grafu. V aplikaciji premikaj drsnik od $1$ do $6$. Opazi: pri $r = 2\,R_Z$ je $g = 2{,}45\,\mathrm{m/s^2}$, četrtina vrednosti na tleh, pri $3\,R_Z$ pa le še devetina, $1{,}09\,\mathrm{m/s^2}$. Krivulja se hitro položi, a nikoli ne pade na nič.
 
 :::premisli
-Če jabolko vleče Zemljo z enako silo kot Zemlja jabolko, zakaj jabolko pade na Zemljo in ne Zemlja na jabolko?
+Jabolko vleče Zemljo z enako veliko silo kot Zemlja jabolko. Zakaj potem jabolko pade na Zemljo in ne Zemlja na jabolko?
 ---
-Enaka sila ne pomeni enakega pospeška. Po 2. Newtonovem zakonu je $a = \dfrac{F}{m}$. Masa Zemlje je okoli $10^{25}$-krat večja od mase jabolka, zato je njen pospešek nemerljivo majhen. Premakne se jabolko.
+Enaka sila ne pomeni enakega pospeška. Po 2. Newtonovem zakonu je $a = \dfrac{F}{m}$. Masa Zemlje je več kot $10^{25}$-krat večja od mase jabolka, zato je njen pospešek nemerljivo majhen.
 :::
 
-**Staro kot poseben primer novega.** Za telo na površju Zemlje vstavimo maso Zemlje $m_1 = M_Z$ in razdaljo $r = R_Z$. Gravitacijski zakon mora dati ravno težo $mg$:
+**Sateliti in planeti.** Kamen na vrvici kroži, ker mu vrvica daje centripetalno silo. Satelit nima vrvice; njeno vlogo prevzame gravitacija.
 
-$$G\,\frac{M_Z\, m}{R_Z^2} = m g \quad\Rightarrow\quad g = \frac{G M_Z}{R_Z^2}$$
+:::risba skica
+opis: Zemlja v središču in satelit na krožnem tiru nad njo. Na satelit deluje gravitacijska sila navzdol proti središču Zemlje, hitrost v kaže vodoravno po tangenti. Na desni je razdalja od središča do tira razdeljena na polmer Zemlje in višino h; skupaj je to r.
+območje: -5,6; -6,6 .. 5,6; 6,4
+enota: 26
+črta: 5,00; 0,00 -> 4,94; 0,78 -> 4,76; 1,55 -> 4,46; 2,27 -> 4,05; 2,94 -> 3,54; 3,54 -> 2,94; 4,05 -> 2,27; 4,46 -> 1,55; 4,76 -> 0,78; 4,94 -> 0,00; 5,00 -> -0,78; 4,94 -> -1,55; 4,76 -> -2,27; 4,46 -> -2,94; 4,05 -> -3,54; 3,54 -> -4,05; 2,94 -> -4,46; 2,27 -> -4,76; 1,55 -> -4,94; 0,78 -> -5,00; 0,00 -> -4,94; -0,78 -> -4,76; -1,55 -> -4,46; -2,27 -> -4,05; -2,94 -> -3,54; -3,54 -> -2,94; -4,05 -> -2,27; -4,46 -> -1,55; -4,76 -> -0,78; -4,94 -> 0,00; -5,00 -> 0,78; -4,94 -> 1,55; -4,76 -> 2,27; -4,46 -> 2,94; -4,05 -> 3,54; -3,54 -> 4,05; -2,94 -> 4,46; -2,27 -> 4,76; -1,55 -> 4,94; -0,78 -> 5,00; 0,00 | siva črtkano
+krog: 0; 0 | 2,5 | modra
+točka: 0; 0 | | | modra
+napis: -1,1; -1,2 | Zemlja | sredina
+točka: 0; 5 | satelit | nad levo | oranžna
+puščica: 0; 5 -> 2,4; 5 | v | nad | puščica
+puščica: 0; 5 -> 0; 3,3 | F_g | levo | puščica debelo
+črta: 0; 0 -> 5; 0 | siva
+napis: 1,25; 0 | R_Z | nad
+napis: 3,75; 0 | h | nad
+točka: 2,5; 0 | | | siva
+črta: 0; -5,9 -> 5; -5,9 | siva
+črta: 0; -5,6 -> 0; -6,2 | siva
+črta: 5; -5,6 -> 5; -6,2 | siva
+napis: 2,5; -5,9 | r = R_Z + h | pod
+podnapis: Gravitacija kaže proti središču, hitrost po tangenti.
+:::
 
-Z maso Zemlje $M_Z = 5{,}97 \cdot 10^{24}\,\mathrm{kg}$ dobimo $g \approx 9{,}81\,\mathrm{m/s^2}$. Zdaj vemo več kot prej: na drugem planetu ali višje nad Zemljo je $g$ drugačen, $g = \dfrac{G M}{r^2}$.
+Na risbi kaže sila $F_g$ proti središču, hitrost $v$ pa pravokotno nanjo. Sila satelita ne zavira, le zavija mu smer. Pri krožnem tiru mora biti gravitacijska sila ravno enaka potrebni centripetalni sili:
 
-**Gibanje satelitov in planetov.** Spomni se kamna na vrvici: kroži, ker mu vrvica daje centripetalno silo $\dfrac{m v^2}{r}$. Satelit nima vrvice. Njeno vlogo prevzame gravitacija osrednjega telesa z maso $M$, na primer Zemlje. Pri krožnem tiru mora biti gravitacijska sila enaka potrebni centripetalni sili:
+$$G\,\frac{M m}{r^2} = \frac{m v^2}{r}$$
 
-$$G\,\frac{M m}{r^2} = \frac{m v^2}{r} \quad\Rightarrow\quad v = \sqrt{\frac{G M}{r}}$$
+$$v = \sqrt{\frac{G M}{r}}$$
 
-Masa satelita $m$ se pokrajša. Majhen satelit in velika postaja na istem tiru letita enako hitro.
+Tu je $M$ masa osrednjega telesa. Masa satelita $m$ se pokrajša: majhen satelit in velika postaja na istem tiru letita enako hitro.
 
-Dlje od središča je hitrost manjša, pot okoli pa daljša, zato obhodni čas hitro raste. To hitrost vstavimo v $t_0 = \dfrac{2\pi r}{v}$ in enačbo kvadriramo:
+Dlje od središča je hitrost manjša, pot okoli pa daljša, zato obhodni čas hitro raste. Hitrost vstavimo v $t_0 = \dfrac{2\pi r}{v}$ in kvadriramo:
 
 $$t_0^2 = \frac{4\pi^2}{G M}\, r^3$$
 
-Ulomek pred $r^3$ je odvisen le od mase osrednjega telesa. Za vse planete okoli Sonca je torej razmerje $\dfrac{t_0^2}{r^3}$ enako. To je **3. Keplerjev zakon**.
+Ulomek pred $r^3$ je odvisen le od mase osrednjega telesa. Za vse planete okoli Sonca je razmerje $\dfrac{t_0^2}{r^3}$ enako. To je Keplerjevo pravilo iz leta 1619, ki ga je Newton zdaj tudi pojasnil. Pri eliptičnem tiru namesto $r$ vstavimo **veliko polos**, polovico najdaljšega premera elipse.
 
-V simulaciji spodaj (»Gravitacijski zakon in orbite«) nastavi začetno hitrost na $1{,}00$-kratnik krožne in zaženi: tir je krožnica. Nato hitrost zmanjšaj na $0{,}80$. Opazi, da tir postane elipsa in da je planet blizu zvezde hitrejši kot daleč od nje.
+:::risba graf
+opis: Hitrost satelita na krožnem tiru okoli Zemlje v odvisnosti od polmera tira r v tisočih kilometrov, od 6,37 do 60. Označeni so ISS pri 6,79 in 7,66 km/s, sateliti GPS pri 26,6 in 3,87 km/s ter geostacionarni sateliti pri 42,2 in 3,07 km/s. V aplikaciji drsnik izbere polmer; izbrano je r = {s} tisoč km, kjer je v = {sqrt(398.6/s):.2} km/s in obhodni čas {2*pi*s/sqrt(398.6/s)/3.6:.1} h.
+x: 0 .. 60 | 10 | r [1000 km]
+y: 0 .. 9 | 1 | v [km/s]
+drsnik: s | 6,8 .. 42,2 | 0,2 | 10 | polmer tira v tisočih km
+f: sqrt(398.6/x) | modra | 6,37 .. 60
+točka: 6,79; 7,66 | ISS | levo
+točka: 26,6; 3,87 | GPS | nad
+točka: 42,2; 3,07 | GEO | pod
+črta: s; 0 -> s; sqrt(398.6/s) | oranžna črtkano
+točka: s; sqrt(398.6/s) | {sqrt(398.6/s):.2} | nad desno | oranžna
+podnapis: Pri r = {s} tisoč km je v = {sqrt(398.6/s):.2} km/s, en obhod traja {2*pi*s/sqrt(398.6/s)/3.6:.1} h.
+:::
+
+Oznaka GEO na grafu pomeni geostacionarni tir (primer 3). V aplikaciji premikaj drsnik od ISS proti GEO. Opazi dvoje: hitrost pada, obhodni čas pa raste mnogo hitreje, od približno $1{,}5\,\mathrm{h}$ do $24\,\mathrm{h}$. Polmer se poveča približno $6$-krat, obhodni čas pa $16$-krat, ker $t_0$ raste z $r^{3/2}$.
+
+V simulaciji spodaj (»Gravitacijski zakon in orbite«) nastavi začetno hitrost na $1{,}00$-kratnik krožne: tir je krožnica. Nato jo zmanjšaj na $0{,}80$. Tir postane elipsa, planet pa je blizu zvezde hitrejši kot daleč od nje. To je isti pojav, ki ga je Kepler pri Zemlji zapisal kot polton. Zemljin tir je skoraj krožnica, zato je pri njej razlika le $16 : 15$.
 
 ## Rešeni primeri
 
-### Primer 1: privlak betonskega bloka
+### Primer 1: dva koncertna klavirja
 
-Žerjav drži betonski blok z maso $3{,}0\,\mathrm{t}$. Delavec z maso $80\,\mathrm{kg}$ stoji tako, da je razdalja med njegovim težiščem in težiščem bloka $2{,}0\,\mathrm{m}$. S kolikšno silo se privlačita? Primerjaj jo s težo delavca.
+Na velikem odru stojita dva koncertna klavirja. Recimo, da ima vsak maso približno $480\,\mathrm{kg}$ in da sta njuni težišči $5\,\mathrm{m}$ narazen. S kolikšno silo se privlačita? Primerjaj jo s težo klavirja. Klavirja obravnavaj kot točkasti telesi; ker nista krogli, dobiš le red velikosti.
 
-**Podatki:** $m_1 = 3{,}0\,\mathrm{t}$, $m_2 = 80\,\mathrm{kg}$, $r = 2{,}0\,\mathrm{m}$, $G = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2}$, $g = 9{,}81\,\mathrm{m/s^2}$
-**Iščemo:** gravitacijsko silo $F_g$ med blokom in delavcem
+**Podatki:** $m_1 = m_2 = 480\,\mathrm{kg}$, $r = 5\,\mathrm{m}$, $G = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2}$, $g = 9{,}81\,\mathrm{m/s^2}$
+**Iščemo:** gravitacijsko silo $F_g$ med klavirjema
 
 :::formula
 $F_g = G\,\dfrac{m_1 m_2}{r^2}$
@@ -85,18 +152,17 @@ $F_g = G\,\dfrac{m_1 m_2}{r^2}$
 
 **Rešitev:**
 
-1. Maso bloka pretvorimo v kilograme: $m_1 = 3000\,\mathrm{kg}$.
-2. Produkt mas: $m_1 m_2 = 3000\,\mathrm{kg} \cdot 80\,\mathrm{kg} = 240\,000\,\mathrm{kg^2}$; kvadrat razdalje: $r^2 = 4{,}0\,\mathrm{m^2}$.
-3. $F_g = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2} \cdot \dfrac{240\,000\,\mathrm{kg^2}}{4{,}0\,\mathrm{m^2}} \approx 4{,}0 \cdot 10^{-6}\,\mathrm{N}$.
-4. Teža delavca: $m_2 g = 80\,\mathrm{kg} \cdot 9{,}81\,\mathrm{m/s^2} \approx 785\,\mathrm{N}$, kar je okoli $200$ milijonkrat več.
-5. Odgovor: blok in delavec se privlačita s silo približno $4 \cdot 10^{-6}\,\mathrm{N}$. Delavec je ne more občutiti.
+1. Produkt mas: $480 \cdot 480 = 230\,400$, torej $230\,400\,\mathrm{kg^2}$. Kvadrat razdalje: $5^2 = 25$, torej $25\,\mathrm{m^2}$.
+2. Vstavimo v zakon: $F_g = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2} \cdot \dfrac{230\,400\,\mathrm{kg^2}}{25\,\mathrm{m^2}} \approx 6{,}1 \cdot 10^{-7}\,\mathrm{N}$.
+3. Teža klavirja za primerjavo: $480 \cdot 9{,}81 = 4708{,}8$, torej okoli $4710\,\mathrm{N}$, kar je več kot milijardokrat več.
+4. Odgovor: klavirja se privlačita s silo reda velikosti $6 \cdot 10^{-7}\,\mathrm{N}$. Trenje s tlemi je neprimerno večje, zato se ne premakneta.
 
-### Primer 2: gradbeni blok na Luni
+### Primer 2: bobni na Luni
 
-Načrtovalci lunarne baze bi zidove gradili iz blokov, stisnjenih iz luninega prahu. En blok ima maso $500\,\mathrm{kg}$. Kolikšna je njegova teža na Luni in kolikokrat je manjša kot na Zemlji? Masa Lune je $7{,}35 \cdot 10^{22}\,\mathrm{kg}$, njen polmer $1740\,\mathrm{km}$.
+Bend bi za koncert v lunarni bazi pripeljal bobne z maso $40\,\mathrm{kg}$. Kolikšna je njihova teža na Luni in kolikokrat je manjša kot na Zemlji? Masa Lune je $7{,}35 \cdot 10^{22}\,\mathrm{kg}$, njen polmer $1740\,\mathrm{km}$.
 
-**Podatki:** $m = 500\,\mathrm{kg}$, $M_L = 7{,}35 \cdot 10^{22}\,\mathrm{kg}$, $R_L = 1740\,\mathrm{km}$, $G = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2}$, na Zemlji $g = 9{,}81\,\mathrm{m/s^2}$
-**Iščemo:** težo bloka na Luni $F_L$ in razmerje s težo na Zemlji
+**Podatki:** $m = 40\,\mathrm{kg}$, $M_L = 7{,}35 \cdot 10^{22}\,\mathrm{kg}$, $R_L = 1740\,\mathrm{km}$, $G = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2}$, na Zemlji $g = 9{,}81\,\mathrm{m/s^2}$
+**Iščemo:** težo $F_L$ na Luni in razmerje s težo na Zemlji
 
 :::formula
 $g_L = \dfrac{G M_L}{R_L^2}$, nato $F_L = m\, g_L$
@@ -104,36 +170,38 @@ $g_L = \dfrac{G M_L}{R_L^2}$, nato $F_L = m\, g_L$
 
 **Rešitev:**
 
-1. Polmer v metrih: $R_L = 1{,}74 \cdot 10^6\,\mathrm{m}$, zato $R_L^2 \approx 3{,}03 \cdot 10^{12}\,\mathrm{m^2}$.
+1. Polmer v metrih, ker je $G$ v metrih: $R_L = 1{,}74 \cdot 10^6\,\mathrm{m}$, $R_L^2 \approx 3{,}03 \cdot 10^{12}\,\mathrm{m^2}$.
 2. Števec: $G M_L \approx 4{,}90 \cdot 10^{12}\,\mathrm{N\,m^2/kg}$.
-3. Težni pospešek na Luni: $g_L = \dfrac{4{,}90 \cdot 10^{12}}{3{,}03 \cdot 10^{12}}\,\mathrm{m/s^2} \approx 1{,}62\,\mathrm{m/s^2}$.
-4. Teža bloka: $F_L = 500\,\mathrm{kg} \cdot 1{,}62\,\mathrm{m/s^2} = 810\,\mathrm{N}$. Na Zemlji bi bila $500\,\mathrm{kg} \cdot 9{,}81\,\mathrm{m/s^2} \approx 4905\,\mathrm{N}$.
-5. Odgovor: na Luni blok tehta približno $810\,\mathrm{N}$, kar je okoli šestkrat manj kot na Zemlji. Žerjav na Luni je lahko precej šibkejši. Masa bloka pa ostane $500\,\mathrm{kg}$, zato ga je enako težko pospešiti ali ustaviti.
+3. Težni pospešek na Luni: $g_L \approx \dfrac{4{,}90 \cdot 10^{12}}{3{,}03 \cdot 10^{12}}\,\mathrm{m/s^2} \approx 1{,}62\,\mathrm{m/s^2}$.
+4. Teža na Luni: $40 \cdot 1{,}62 = 64{,}8$, torej $F_L \approx 65\,\mathrm{N}$. Na Zemlji: $40 \cdot 9{,}81 = 392{,}4$, torej okoli $392\,\mathrm{N}$.
+5. Razmerje: $9{,}81 : 1{,}62 \approx 6{,}1$.
+6. Odgovor: bobni na Luni tehtajo okoli $65\,\mathrm{N}$, približno šestkrat manj kot na Zemlji. Masa ostane $40\,\mathrm{kg}$, zato jih je enako težko pospešiti ali ustaviti.
 
-### Primer 3: hitrost in obhodni čas vesoljske postaje
+### Primer 3: satelit za televizijo in radio
 
-ISS kroži po krožnici s polmerom $6790\,\mathrm{km}$ okoli središča Zemlje. Kolikšna mora biti njena hitrost, da ostane na tem tiru, in koliko časa traja en obhod?
+Satelit, s katerega sprejemamo televizijske in radijske programe, mora biti nad istim krajem na ekvatorju ves čas. Zato obkroži Zemljo v istem času, kot se Zemlja zavrti okoli osi: v $23\,\mathrm{h}\,56\,\mathrm{min}$. Na kolikšni višini nad površjem kroži?
 
-**Podatki:** $r = 6790\,\mathrm{km}$, $M_Z = 5{,}97 \cdot 10^{24}\,\mathrm{kg}$, $G = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2}$
-**Iščemo:** hitrost $v$ in obhodni čas $t_0$
+**Podatki:** $t_0 = 23\,\mathrm{h}\,56\,\mathrm{min}$, $G M_Z = 3{,}98 \cdot 10^{14}\,\mathrm{m^3/s^2}$, $R_Z = 6370\,\mathrm{km}$
+**Iščemo:** polmer tira $r$ in višino $h$ nad površjem
 
 :::formula
-Gravitacija je centripetalna sila: $G\,\dfrac{M_Z m}{r^2} = \dfrac{m v^2}{r}$, zato $v = \sqrt{\dfrac{G M_Z}{r}}$; nato $t_0 = \dfrac{2\pi r}{v}$.
+$t_0^2 = \dfrac{4\pi^2}{G M_Z}\, r^3$, torej $r = \sqrt[3]{\dfrac{G M_Z\, t_0^2}{4\pi^2}}$; nato $h = r - R_Z$
 :::
 
 **Rešitev:**
 
-1. Pretvorimo: $r = 6{,}79 \cdot 10^6\,\mathrm{m}$. Izračunamo $G M_Z \approx 3{,}98 \cdot 10^{14}\,\mathrm{m^3/s^2}$.
-2. Delimo s polmerom: $\dfrac{G M_Z}{r} \approx 5{,}86 \cdot 10^7\,\mathrm{m^2/s^2}$.
-3. Korenimo: $v \approx 7660\,\mathrm{m/s}$.
-4. Obseg tira: $2\pi r \approx 4{,}27 \cdot 10^7\,\mathrm{m}$, zato $t_0 = \dfrac{4{,}27 \cdot 10^7\,\mathrm{m}}{7660\,\mathrm{m/s}} \approx 5570\,\mathrm{s}$, kar je okoli $93\,\mathrm{min}$.
-5. Odgovor: postaja mora leteti s hitrostjo približno $7{,}7\,\mathrm{km/s}$ in obkroži Zemljo v približno $93$ minutah. Masa postaje v računu ni nastopila.
+1. Čas v sekundah: $23 \cdot 3600 + 56 \cdot 60 = 86\,160$, torej $t_0 = 86\,160\,\mathrm{s}$.
+2. Kvadrat časa: $t_0^2 \approx 7{,}42 \cdot 10^{9}\,\mathrm{s^2}$.
+3. Pod korenom: $\dfrac{G M_Z\, t_0^2}{4\pi^2} \approx 7{,}48 \cdot 10^{22}\,\mathrm{m^3}$.
+4. Tretji koren: $r \approx 4{,}214 \cdot 10^7\,\mathrm{m} = 42\,140\,\mathrm{km}$. To je polmer tira, merjen od **središča**.
+5. Višina nad površjem: $h = 42\,140\,\mathrm{km} - 6370\,\mathrm{km} \approx 35\,800\,\mathrm{km}$, ker odštejemo Zemljin polmer.
+6. Odgovor: satelit kroži približno $35\,800\,\mathrm{km}$ nad ekvatorjem. Tak tir imenujemo **geostacionarni**. Zato satelitska antena na hiši ves čas gleda v isto točko neba.
 
 ### Primer 4: zdaj ti
 
-Sateliti GPS, po katerih telefon določi svoj položaj, krožijo na razdalji $26\,600\,\mathrm{km}$ od središča Zemlje. Kolikšna je njihova hitrost in kolikšen obhodni čas?
+Leta 2013 je astronavt Chris Hadfield na Mednarodni vesoljski postaji (ISS) s kitaro posnel pesem *Space Oddity*; videospot pogosto navajajo kot prvega, posnetega v vesolju. Postaja kroži po krožnici s polmerom $6790\,\mathrm{km}$ okoli središča Zemlje. Kako hitro leti in koliko časa traja en obhod, torej ena »kitica« okoli Zemlje?
 
-**Podatki:** $r = 26\,600\,\mathrm{km}$, $G M_Z = 3{,}98 \cdot 10^{14}\,\mathrm{m^3/s^2}$
+**Podatki:** $r = 6790\,\mathrm{km}$, $G M_Z = 3{,}98 \cdot 10^{14}\,\mathrm{m^3/s^2}$
 **Iščemo:** hitrost $v$ in obhodni čas $t_0$
 
 :::formula
@@ -142,125 +210,151 @@ $v = \sqrt{\dfrac{G M_Z}{r}}$, nato $t_0 = \dfrac{2\pi r}{v}$
 
 **Rešitev:**
 
-1. Pretvorimo: $r = 2{,}66 \cdot 10^7\,\mathrm{m}$.
-2. $\dfrac{G M_Z}{r} \approx 1{,}50 \cdot 10^7\,\mathrm{m^2/s^2}$; obseg tira $2\pi r \approx 1{,}67 \cdot 10^8\,\mathrm{m}$.
-3. Koreni in izračunaj obhodni čas sam, nato preveri:
+1. Pretvorimo: $r = 6{,}79 \cdot 10^6\,\mathrm{m}$.
+2. $\dfrac{G M_Z}{r} \approx 5{,}86 \cdot 10^7\,\mathrm{m^2/s^2}$; obseg tira $2\pi r \approx 4{,}27 \cdot 10^7\,\mathrm{m}$.
+3. Izračunaj koren in nato še obhodni čas sam, potem preveri:
 
 :::premisli
-Najprej napovej: bo satelit GPS hitrejši ali počasnejši od ISS? Nato izračunaj $v$ in $t_0$.
+Napovej najprej: bo ISS hitrejša ali počasnejša od geostacionarnega satelita iz primera 3? Nato izračunaj $v$ in $t_0$.
 ---
-Počasnejši, ker je dlje od središča Zemlje. $v = \sqrt{1{,}50 \cdot 10^7}\,\mathrm{m/s} \approx 3870\,\mathrm{m/s}$ in $t_0 = \dfrac{1{,}67 \cdot 10^8\,\mathrm{m}}{3870\,\mathrm{m/s}} \approx 43\,200\,\mathrm{s} = 12\,\mathrm{h}$. Satelit GPS obkroži Zemljo dvakrat na dan.
+Hitrejša, ker je bližje središču Zemlje. $v = \sqrt{5{,}86 \cdot 10^7}\,\mathrm{m/s} \approx 7660\,\mathrm{m/s}$ in $t_0 = \dfrac{4{,}27 \cdot 10^7\,\mathrm{m}}{7660\,\mathrm{m/s}} \approx 5570\,\mathrm{s}$, kar je okoli $93\,\mathrm{min}$. Ker je $86\,400\,\mathrm{s} : 5570\,\mathrm{s} \approx 15{,}5$, je Hadfield Zemljo obkrožil 15- do 16-krat na dan.
 :::
 
 ## Pogoste napake
 
-- **Razdalja od površja.** V gravitacijski zakon vstavljaš razdaljo med središčema. Za satelit $400\,\mathrm{km}$ nad tlemi je $r = 6370\,\mathrm{km} + 400\,\mathrm{km} = 6770\,\mathrm{km}$, ne $400\,\mathrm{km}$.
-- **Dvakrat dlje, pol manjša sila.** Razdalja je v imenovalcu na kvadrat. Dvakratna razdalja pomeni štirikrat manjšo silo, trikratna devetkrat manjšo.
+- **Razdalja od površja.** V zakon vstavljaš razdaljo med središčema. Za ISS, ki je $420\,\mathrm{km}$ nad tlemi, je $r = 6370\,\mathrm{km} + 420\,\mathrm{km} = 6790\,\mathrm{km}$, ne $420\,\mathrm{km}$. Kdor vstavi $420\,\mathrm{km}$, dobi težni pospešek nekaj tisoč $\mathrm{m/s^2}$, kar ne more biti res.
+- **»Dvakrat dlje, pol manjša sila.«** Razdalja je v imenovalcu na kvadrat. Dvakratna razdalja pomeni štirikrat manjšo silo, trikratna devetkrat manjšo.
 - **»Zemlja vleče jabolko močneje kot jabolko Zemljo.«** Sili sta enako veliki in nasprotno usmerjeni. Različna sta le pospeška, ker sta masi zelo različni.
-- **»Na ISS ni gravitacije.«** Na višini postaje je težni pospešek še okoli $8{,}6\,\mathrm{m/s^2}$. Astronavti lebdijo, ker skupaj s postajo prosto padajo okoli Zemlje.
-- **»Težji satelit mora leteti hitreje.«** Masa satelita se pri izenačitvi gravitacijske in centripetalne sile pokrajša. Hitrost na krožnem tiru je odvisna le od mase osrednjega telesa in od $r$.
+- **»Na ISS ni gravitacije.«** Na višini postaje ($420\,\mathrm{km}$) je težni pospešek še okoli $8{,}6\,\mathrm{m/s^2}$. Astronavti in Hadfieldova kitara lebdijo, ker skupaj s postajo prosto padajo okoli Zemlje.
+- **»Višji satelit mora leteti hitreje« ali »težji satelit mora leteti hitreje«.** Iz $v = \sqrt{\dfrac{G M}{r}}$ sledi, da je na višjem tiru hitrost manjša, masa satelita pa sploh ne nastopa.
 
 ## Povzetek
 
 - Gravitacijski zakon: $F_g = G\,\dfrac{m_1 m_2}{r^2}$, $G = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2}$; $r$ je razdalja med središčema.
-- Privlačita se obe telesi z enako veliko silo; sila pada s kvadratom razdalje.
-- Teža $mg$ je poseben primer: $g = \dfrac{G M}{r^2}$, na površju Zemlje $9{,}81\,\mathrm{m/s^2}$, na Luni $1{,}62\,\mathrm{m/s^2}$.
+- Obe telesi se privlačita z enako veliko silo; sila je obratno sorazmerna s kvadratom razdalje (Newtonova primerjava jabolka in Lune).
+- Težni pospešek: $g = \dfrac{G M}{r^2}$; na površju Zemlje $9{,}81\,\mathrm{m/s^2}$, na Luni $1{,}62\,\mathrm{m/s^2}$.
 - Pri satelitih in planetih je gravitacija centripetalna sila: $v = \sqrt{\dfrac{G M}{r}}$, neodvisno od mase satelita.
-- Dlje od središča je hitrost manjša in obhodni čas daljši; $\dfrac{t_0^2}{r^3}$ je enak za vsa telesa okoli istega središča (3. Keplerjev zakon).
+- Višje je hitrost manjša in obhodni čas daljši; $\dfrac{t_0^2}{r^3}$ je enak za vsa telesa okoli istega središča (3. Keplerjev zakon; pri elipsi namesto $r$ velika polos). Geostacionarni satelit kroži okoli $35\,800\,\mathrm{km}$ nad ekvatorjem.
 
-## Drugače: Na sliki
+## Drugače: Z analogijo
 
-Predstavljaj si pleskarja, ki z barvno pištolo razprši stalno količino barve. Blizu pištole barva prekrije majhno ploskev z debelo plastjo. Dvakrat dlje se ista barva razporedi na ploskev, ki je dvakrat širša in dvakrat višja, torej štirikrat večja. Plast je štirikrat tanjša. Gravitacija Zemlje se »razporeja« podobno, na krogle okoli Zemlje, zato pada s kvadratom razdalje.
+Gravitacija se z razdaljo »redči« podobno kot zvok iz zvočnika na prostem. Zvočnik odda vsako sekundo enako energijo, ta pa se razširi po krogli okoli njega. Površina krogle je $4\pi r^2$. Dvakrat dlje se ista energija porazdeli po štirikrat večji površini, zato je jakost zvoka tam štirikrat manjša.
 
-Graf prikazuje težni pospešek v odvisnosti od razdalje od središča Zemlje:
+| razdalja | površina | jakost |
+|---|---|---|
+| $1\,\mathrm{m}$ | $4\pi\,\mathrm{m^2}$ | $I$ |
+| $2\,\mathrm{m}$ | $16\pi\,\mathrm{m^2}$ | $I/4$ |
+| $3\,\mathrm{m}$ | $36\pi\,\mathrm{m^2}$ | $I/9$ |
 
-:::risba graf
-opis: Graf težnega pospeška g v odvisnosti od razdalje r od središča Zemlje, merjene v polmerih Zemlje. Pri enem polmeru je g 9,81 m/s², pri dveh 2,45, pri treh 1,09, pri štirih 0,61 m/s². Krivulja pada vedno počasneje in ne doseže nič.
-x: 0 .. 4,5 | 1 | r
-y: 0 .. 10 | 2 | g [m/s^2]
-oznake: ne
-oznakax: 1 | R_Z
-oznakax: 2 | 2R_Z
-oznakax: 3 | 3R_Z
-oznakax: 4 | 4R_Z
-oznakay: 2 | 2
-oznakay: 4 | 4
-oznakay: 6 | 6
-oznakay: 8 | 8
-oznakay: 10 | 10
-f: 9.81/x^2 | modra | 1 .. 4,5
-točka: 1; 9,81 | 9,81 | desno
-točka: 2; 2,45 | 2,45 | nad desno
-točka: 3; 1,09 | 1,09 | nad desno
-točka: 4; 0,61 | 0,61 | nad
-:::
-
-Vsak naslednji padec $g$ je manjši od prejšnjega: krivulja se hitro položi, a nikoli ne pade na nič.
+Če si gravitacijo predstavljamo kot »silnice«, ki se redčijo po vse večjih kroglah okoli Zemlje, dobimo isti $1/r^2$. To je slika, ne dokaz: Newton je zakon dobil iz Lune (zgoraj). Razlika je ena: zvok lahko stena zaustavi, gravitacije ne zaustavi nič.
 
 ## Drugače: Iz vsakdanjega življenja
 
-Na vrhu visokega stolpa stoji zidar in vodoravno vrže opeko. Pri počasnem metu pade blizu stolpa. Pri hitrejšem metu pade dlje. Zemlja je okrogla, zato se tla pod opeko ves čas malo »umikajo« navzdol.
+Na vrhu visokega stolpa stoji bobnar in vodoravno vrže paličico. Pri počasnem metu pade blizu stolpa, pri hitrejšem dlje. Zemlja je okrogla, zato se tla pod paličico ves čas malo »umikajo« navzdol.
 
-Zdaj si zamisli, da bi jo vrgel s hitrostjo skoraj $8\,\mathrm{km/s}$ in da zrak ne bi zaviral. Opeka bi ves čas padala, tla pa bi se umikala enako hitro. Nikoli ne bi pristala, ampak bi obkrožila Zemljo. To je satelit: telo, ki pada, a ves čas zgreši tla.
+Zamisli si met s hitrostjo skoraj $8\,\mathrm{km/s}$ brez zračnega upora. Paličica bi ves čas padala, tla pa bi se umikala enako hitro. Nikoli ne bi pristala, ampak bi obkrožila Zemljo. To je satelit: telo, ki pada, a ves čas zgreši tla.
 
-Zato astronavti na ISS lebdijo. Gravitacija nanje deluje, a padajo skupaj s postajo. Podoben občutek imaš za hip na toboganu ali v dvigalu, ki naglo spelje navzdol.
+Zato je Hadfieldova kitara na ISS lebdela. Gravitacija je delovala nanjo, a je padala skupaj s postajo in astronavtom. Podoben občutek imaš za hip v dvigalu, ki naglo spelje navzdol.
 
 ## Preveri se
 
-? Satelit na razdalji $r$ od središča Zemlje privlači Zemlja s silo $F$. Katera vrstica pravilno kaže silo pri razdaljah $r$, $2r$ in $3r$?
-- $F$, $\dfrac{F}{2}$, $\dfrac{F}{3}$
-~ To bi veljalo, če bi sila padala premo sorazmerno z razdaljo. Razdalja je v imenovalcu na kvadrat.
-+ $F$, $\dfrac{F}{4}$, $\dfrac{F}{9}$
-- $F$, $F$, $F$
-~ Stalna sila velja le blizu površja, kjer se razdalja od središča skoraj ne spremeni. Daleč od Zemlje sila pada.
-> $F_g \propto \dfrac{1}{r^2}$: pri dvakratni razdalji je sila $2^2 = 4$-krat manjša, pri trikratni $3^2 = 9$-krat.
+? Katera trditev o gravitacijski sili med dvema telesoma **ne** drži?
+- Deluje med vsemi telesi, tudi med dvema klavirjema.
+~ To drži: zakon velja za vsa telesa, sila je le zelo majhna, kadar sta obe masi majhni.
+- Pri trikratni razdalji med središčema je devetkrat manjša.
+~ To drži: razdalja je v imenovalcu na kvadrat, $3^2 = 9$.
++ Težje telo vleče lažje močneje, kot lažje vleče težje.
+- Razdaljo merimo med središčema teles.
+~ To drži: pri satelitu je to polmer tira, ne višina nad tlemi.
+> Sili sta po 3. Newtonovem zakonu enako veliki; v formuli lahko $m_1$ in $m_2$ zamenjaš, pa se sila ne spremeni. Različna sta le pospeška.
 
-? Dva sošolca z masama po $70\,\mathrm{kg}$ stojita $1\,\mathrm{m}$ narazen. Oceni, s kolikšno silo se gravitacijsko privlačita.
-- Približno $700\,\mathrm{N}$.
-~ To je teža enega sošolca, torej privlak Zemlje. Privlak med sošolcema je neprimerno manjši, ker sta njuni masi majhni.
-+ Približno $3 \cdot 10^{-7}\,\mathrm{N}$.
-- Točno $0\,\mathrm{N}$, ljudje se ne privlačijo.
-~ Gravitacijski zakon velja za vsa telesa. Sila ni nič, je le premajhna, da bi jo občutili.
-> $F_g = 6{,}67 \cdot 10^{-11} \cdot \dfrac{70 \cdot 70}{1^2}\,\mathrm{N} \approx 3{,}3 \cdot 10^{-7}\,\mathrm{N}$.
+? Graf kaže silo Zemlje na sondo v odvisnosti od razdalje od središča Zemlje. Z grafa odčitaj silo na površju in izračunaj, kolikšna je sila, ko je sonda $2\,R_Z$ **nad površjem**.
+:::risba graf
+opis: Graf sile F v newtonih v odvisnosti od razdalje r od središča Zemlje, merjene v Zemljinih polmerih od 1 do 4,2. Na površju, pri r = 1, je sila 900 N, nato krivulja pada.
+x: 0 .. 5 | 1 | r [R_Z]
+y: 0 .. 1000 | 100 | F [N]
+f: 900/x^2 | modra | 1 .. 4,2
+črta: 0; 900 -> 1; 900 | siva črtkano
+točka: 1; 900 | 900 N | desno
+:::
+= 100 N | 2
+~ 225 | To je sila pri $r = 2\,R_Z$. Višini $2\,R_Z$ moraš prišteti še polmer Zemlje: $r = 3\,R_Z$.
+~ 300 | Sila ne pada premo z razdaljo, ampak s kvadratom: pri trikratni razdalji je devetkrat manjša.
+~ 450 | Vzel si višino za razdaljo in še delil z $2$ namesto z $2^2$.
+> Na površju je $900\,\mathrm{N}$. Razdalja od središča je $R_Z + 2\,R_Z = 3\,R_Z$, zato je sila $\dfrac{900\,\mathrm{N}}{3^2} = 100\,\mathrm{N}$. Preveri na grafu: pri $r = 2$ krivulja kaže okoli $225\,\mathrm{N}$ (četrtina), pri $r = 3$ pa $100\,\mathrm{N}$ (devetina).
 
-? Zakaj ISS ne pade na Zemljo, čeprav jo Zemlja privlači?
-- Ker na višini $400\,\mathrm{km}$ ni več gravitacije.
-~ Na tej višini je težni pospešek še skoraj $90\,\%$ tistega na tleh. Brez gravitacije bi postaja odletela naravnost.
-- Ker centrifugalna sila navzven uravnovesi gravitacijo.
-~ Na postajo deluje le gravitacija proti središču. Rezultanta ni nič, sicer bi postaja letela premo.
-+ Ker ima tolikšno vodoravno hitrost, da je gravitacija ravno potrebna centripetalna sila.
-> Postaja ves čas pada proti Zemlji, a se med padanjem toliko premakne vstran, da ostaja na krožnici: $G\,\dfrac{M m}{r^2} = \dfrac{m v^2}{r}$.
+? Satelit s pogonom prestavimo z nižjega na višji krožni tir. Kaj se zgodi z njegovo hitrostjo in obhodnim časom, ko spet enakomerno kroži?
++ Hitrost se zmanjša, obhodni čas se podaljša.
+- Hitrost se poveča, obhodni čas se podaljša.
+~ Višje je gravitacija šibkejša, zato je za kroženje potrebna manjša centripetalna sila in manjša hitrost: $v = \sqrt{\dfrac{G M}{r}}$.
+- Hitrost ostane enaka, ker se masa satelita ni spremenila.
+~ Masa satelita res ne vpliva, vpliva pa polmer tira $r$.
+- Hitrost se zmanjša, obhodni čas se skrajša.
+~ Obhodni čas se podaljša iz dveh razlogov: pot okoli je daljša, hitrost pa manjša.
+> Iz $v = \sqrt{\dfrac{G M}{r}}$ in $t_0 = \dfrac{2\pi r}{v}$ sledi: večji $r$, manjša $v$, daljši $t_0$ (ISS $93\,\mathrm{min}$, geostacionarni satelit en dan).
 
-? Na istem krožnem tiru krožita satelit z maso $100\,\mathrm{kg}$ in satelit z maso $1000\,\mathrm{kg}$. Kaj velja za njuni hitrosti?
-- Težji je hitrejši, ker nanj deluje večja sila.
-~ Večja je tudi potrebna centripetalna sila $\dfrac{m v^2}{r}$. Masa se na obeh straneh pokrajša.
-- Lažji je hitrejši, ker ga Zemlja manj zavira.
-~ Gravitacija na krožnem tiru satelita ne zavira, ampak mu le spreminja smer. Masa satelita na hitrost ne vpliva.
-+ Hitrosti sta enaki.
-> $v = \sqrt{\dfrac{G M_Z}{r}}$ vsebuje le maso Zemlje in polmer tira, ne mase satelita.
+? Dijakinja računa težni pospešek na ISS, $420\,\mathrm{km}$ nad površjem. V katerem koraku je napaka?
+1) $g = \dfrac{G M_Z}{r^2}$
+2) $r = 420\,\mathrm{km} = 4{,}2 \cdot 10^5\,\mathrm{m}$
+3) $r^2 \approx 1{,}76 \cdot 10^{11}\,\mathrm{m^2}$
+4) $g = \dfrac{3{,}98 \cdot 10^{14}}{1{,}76 \cdot 10^{11}}\,\mathrm{m/s^2} \approx 2260\,\mathrm{m/s^2}$
+- V 1. koraku.
+~ Formula je pravilna: težni pospešek na razdalji $r$ od središča je $\dfrac{G M}{r^2}$.
++ V 2. koraku.
+- V 3. koraku.
+~ Kvadriranje je pravilno izvedeno; napačna je že vrednost $r$, ki jo kvadriraš.
+- V 4. koraku.
+~ Deljenje je pravilno; rezultat je nesmiseln (več kot na tleh), ker je napačen $r$.
+> $r$ je razdalja od središča: $r = 6370\,\mathrm{km} + 420\,\mathrm{km} = 6790\,\mathrm{km}$. Potem je $g \approx 8{,}6\,\mathrm{m/s^2}$.
 
-? Na kateri višini nad površjem Zemlje ($R_Z = 6370\,\mathrm{km}$) je teža telesa četrtina teže na tleh?
-- $12\,740\,\mathrm{km}$
-~ To je razdalja od središča, $2 R_Z$. Višino nad površjem dobiš, ko odšteješ $R_Z$.
-+ $6370\,\mathrm{km}$
-- $19\,110\,\mathrm{km}$
-~ Tako dobiš, če misliš, da sila pada premo z razdaljo, in vzameš $r = 4 R_Z$. Sila pada s kvadratom, zato zadošča $r = 2 R_Z$.
-> Četrtina sile pomeni dvakratno razdaljo od središča: $r = 2 R_Z$. Višina nad površjem je $r - R_Z = R_Z = 6370\,\mathrm{km}$.
+? Razvrsti korake, s katerimi iz višine satelita nad površjem izračunaš njegov obhodni čas v minutah.
+1. Višini prišteješ polmer Zemlje in dobiš $r$ (v metrih).
+2. Iz $r$ izračunaš hitrost $v = \sqrt{\dfrac{G M_Z}{r}}$.
+3. Iz $r$ in $v$ izračunaš $t_0 = \dfrac{2\pi r}{v}$.
+4. $t_0$ iz sekund pretvoriš v minute.
+> Vsak korak potrebuje rezultat prejšnjega: brez $r$ od središča ni hitrosti, brez hitrosti ni obhodnega časa, ta pa pride v sekundah, zato ga na koncu pretvoriš.
+
+? Sateliti GPS krožijo približno $20\,200\,\mathrm{km}$ nad površjem Zemlje. Kolikšna je njihova hitrost v $\mathrm{km/s}$? Uporabi $G M_Z = 3{,}98 \cdot 10^{14}\,\mathrm{m^3/s^2}$ in $R_Z = 6370\,\mathrm{km}$.
+= 3,87 km/s | 0,05
+~ 4,44 | Za $r$ si vzel višino. Prištej polmer Zemlje: $r = 26\,570\,\mathrm{km}$.
+~ 122 | Polmer si vstavil v kilometrih, $G M_Z$ pa je v metrih. Najprej pretvori $r$ v metre.
+> $r = 20\,200\,\mathrm{km} + 6370\,\mathrm{km} = 2{,}657 \cdot 10^7\,\mathrm{m}$, zato je $v = \sqrt{\dfrac{3{,}98 \cdot 10^{14}}{2{,}657 \cdot 10^7}}\,\mathrm{m/s} \approx 3870\,\mathrm{m/s} = 3{,}87\,\mathrm{km/s}$. Enako kaže točka GPS na grafu hitrosti v razlagi.
 
 :::simboli
 F_g | gravitacijska sila | F_g = G\,\dfrac{m_1 m_2}{r^2} | N
-G | gravitacijska konstanta | | N\,m^2/kg^2 | 6,67 · 10⁻¹¹ N m²/kg²
+G | gravitacijska konstanta | | N\,m^2/kg^2 | $6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2}$
 m_1, m_2 | masi teles | | kg
 r | razdalja med središčema teles | | m | pri satelitu polmer tira
 m | masa telesa (satelita) | | kg
-M_Z | masa Zemlje | | kg | 5,97 · 10²⁴ kg
-R_Z | polmer Zemlje | | m | 6370 km
+M_Z | masa Zemlje | | kg | $5{,}97 \cdot 10^{24}\,\mathrm{kg}$
+R_Z | polmer Zemlje | | m | $6370\,\mathrm{km}$
 M | masa osrednjega telesa | | kg
-g | težni pospešek | g = \frac{G M_Z}{R_Z^2} | m/s^2 | na površju Zemlje 9,81 m/s²
-v | hitrost kroženja satelita | v = \sqrt{\dfrac{G M_Z}{r}} | m/s
+g | težni pospešek | g = \frac{G M}{r^2} | m/s^2 | na površju Zemlje $9{,}81\,\mathrm{m/s^2}$
+v | hitrost kroženja satelita | v = \sqrt{\dfrac{G M}{r}} | m/s
 t_0 | obhodni čas | t_0 = \dfrac{2\pi r}{v} | s
-g_L | težni pospešek na Luni | g_L = \dfrac{G M_L}{R_L^2} | m/s^2 | približno 1,62 m/s²
-M_L | masa Lune | | kg
-R_L | polmer Lune | | m | 1740 km
+a | pospešek | a = \dfrac{F}{m} | m/s^2
+h | višina nad površjem | h = r - R_Z | m
+g_L | težni pospešek na Luni | g_L = \dfrac{G M_L}{R_L^2} | m/s^2 | približno $1{,}62\,\mathrm{m/s^2}$
+M_L | masa Lune | | kg | $7{,}35 \cdot 10^{22}\,\mathrm{kg}$
+R_L | polmer Lune | | m | $1740\,\mathrm{km}$
 F_L | teža na Luni | F_L = m\, g_L | N
 :::
+
+<<RACUN
+vrednost: 4*pi**2*3.84*10**(8)/(27.3*86400)**2 | 0.00272
+vrednost: 9.81/0.00272 | 3606.6
+vrednost: 6.67*10**(-11)*5.97*10**(24)/(6.37*10**(6))**2 | 9.81
+vrednost: 6.67*10**(-11)*480*480/5**2 | 6.15*10**(-7)
+vrednost: 6.67*10**(-11)*7.35*10**(22)/(1.74*10**(6))**2 | 1.62
+vrednost: 9.81/1.62 | 6.06
+vrednost: (3.98*10**(14)*(23*3600+56*60)**2/(4*pi**2))**(1/3)/10**7 | 4.214
+vrednost: 42140-6370 | 35770
+vrednost: 3.98*10**(14)/(6.79*10**(6))/10**7 | 5.86
+vrednost: sqrt(3.98*10**(14)/(6.79*10**(6)))/1000 | 7.66
+vrednost: 2*pi*6.79*10**(6)/sqrt(3.98*10**(14)/(6.79*10**(6)))/1000 | 5.57
+vrednost: 86400/5570 | 15.5
+vrednost: 900/3**2 | 100
+vrednost: 3.98*10**(14)/(6.79*10**(6))**2 | 8.63
+vrednost: 3.98*10**(14)/(4.2*10**(5))**2/1000 | 2.256
+vrednost: sqrt(3.98*10**(14)/(2.657*10**(7)))/1000 | 3.87
+>>

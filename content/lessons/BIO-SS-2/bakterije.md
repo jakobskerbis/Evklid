@@ -72,7 +72,7 @@ Astronavt na postaji zboli za gripo, ki jo povzroča virus. Napovej: ali mu bo p
 Ne. Virus nima ne celične stene ne svojih ribosomov, zato antibiotik nima kaj napasti. Virus se razmnožuje v naših celicah. Antibiotik bi pomagal le pri morebitni dodatni bakterijski okužbi.
 :::
 
-**Odpornost** nastaja z naravnim izborom. Med milijardami bakterij je po naključni mutaciji ali prejetem plazmidu nekaj takih, ki antibiotik preživijo. Ko antibiotik pobije ostale, se te razmnožijo. Prehitro prekinjeno zdravljenje in antibiotik za prehlad zato vzgajata odporne seve.
+**Odpornost** nastaja z naravnim izborom. Med milijardami bakterij je po naključni mutaciji ali prejetem plazmidu nekaj takih, ki antibiotik preživijo. Ko antibiotik pobije ostale, se te razmnožijo. Antibiotik za prehlad in samovoljno prekinjeno zdravljenje zato lahko vzgajata odporne seve.
 
 ## Rešeni primeri
 
@@ -221,8 +221,8 @@ V simulaciji »3D: Bakteriofag T4« spodaj vidiš virus, ki napada prav bakterij
 ~ Simptomi izginejo prej kot vse bakterije. Najprej odmrejo najbolj občutljive.
 - Naj neha, sicer se njeno telo navadi na antibiotik.
 ~ Na antibiotik se ne navadi telo. Odporne postanejo bakterije, in to z naravnim izborom.
-+ Naj jemlje do konca, ker bi preživele prav najbolj odporne bakterije in se razmnožile.
-> Prekinjeno zdravljenje pusti živeti bakterije, ki so antibiotik najbolje prenašale. Te se razmnožijo, zato se izbirajo odporni sevi.
++ Naj ga jemlje tako dolgo, kot je predpisal zdravnik, ker bi ob prezgodnji prekinitvi lahko preživele prav najbolj odporne bakterije.
+> Prezgodaj prekinjeno zdravljenje lahko pusti živeti bakterije, ki so antibiotik najbolje prenašale. Te se razmnožijo, zato se izbirajo odporni sevi. Koliko dni jemati antibiotik, določi zdravnik.
 
 <<RACUN
 vrednost: 3*60 | 180

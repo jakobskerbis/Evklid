@@ -15,17 +15,39 @@ To je posledica Maxwellovih enačb, ki jih že poznaš: iz njih sledi, da se ele
 
 Predstavljaj si val, ki potuje v smeri osi $z$. V vsaki točki na osi narišemo dve puščici:
 
-```
-  x (E)
-  ^     _           _
-  |    / \         / \
---+---/---\-------/---\---> z
-  |        \_   _/     \_
-  |          \_/
-  y (B): iz ravnine, v fazi z E
-```
+:::risba skica
+opis: Raven val vzdolž osi z, narisani sta dve valovni dolžini λ. Električno polje E niha v smeri x (navzgor in navzdol), magnetno polje B v smeri y (iz ravnine risbe proti bralcu in nazaj). Obe sinusni krivulji imata ničle pri z = 0, λ/2, λ, 3λ/2 in 2λ ter vrhove na istih mestih, pri z = λ/4 in 5λ/4: polji nihata v fazi. Smer širjenja z kaže vektorski produkt E × B. Pod osjo z sta s puščicama označeni obe valovni dolžini λ.
+območje: -2,2; -2,4 .. 10,6; 2,8
+črta: -0,6; 0 -> 9,6; 0 | puščica
+črta: 0; -2 -> 0; 2,3 | puščica
+črta: 0,84; 0,7 -> -1,32; -1,1 | puščica
+napis: 9,9; 0 | z | desno
+napis: 0; 2,5 | x | nad
+napis: -1,6; -1,3 | y | levo
+črta: 0; 0 -> 0,17; 0,39 -> 0,33; 0,75 -> 0,5; 1,06 -> 0,67; 1,3 -> 0,83; 1,45 -> 1; 1,5 -> 1,17; 1,45 -> 1,33; 1,3 -> 1,5; 1,06 -> 1,67; 0,75 -> 1,83; 0,39 -> 2; 0 -> 2,17; -0,39 -> 2,33; -0,75 -> 2,5; -1,06 -> 2,67; -1,3 -> 2,83; -1,45 -> 3; -1,5 -> 3,17; -1,45 -> 3,33; -1,3 -> 3,5; -1,06 -> 3,67; -0,75 -> 3,83; -0,39 -> 4; 0 -> 4,17; 0,39 -> 4,33; 0,75 -> 4,5; 1,06 -> 4,67; 1,3 -> 4,83; 1,45 -> 5; 1,5 -> 5,17; 1,45 -> 5,33; 1,3 -> 5,5; 1,06 -> 5,67; 0,75 -> 5,83; 0,39 -> 6; 0 -> 6,17; -0,39 -> 6,33; -0,75 -> 6,5; -1,06 -> 6,67; -1,3 -> 6,83; -1,45 -> 7; -1,5 -> 7,17; -1,45 -> 7,33; -1,3 -> 7,5; -1,06 -> 7,67; -0,75 -> 7,83; -0,39 -> 8; 0 | modra debelo
+črta: 0; 0 -> -0,07; -0,19 -> -0,12; -0,37 -> -0,14; -0,53 -> -0,11; -0,65 -> -0,04; -0,72 -> 0,1; -0,75 -> 0,3; -0,72 -> 0,55; -0,65 -> 0,86; -0,53 -> 1,22; -0,37 -> 1,6; -0,19 -> 2; 0 -> 2,4; 0,19 -> 2,78; 0,38 -> 3,14; 0,53 -> 3,45; 0,65 -> 3,7; 0,72 -> 3,9; 0,75 -> 4,04; 0,72 -> 4,11; 0,65 -> 4,14; 0,53 -> 4,12; 0,38 -> 4,07; 0,19 -> 4; 0 -> 3,93; -0,19 -> 3,88; -0,37 -> 3,86; -0,53 -> 3,89; -0,65 -> 3,96; -0,72 -> 4,1; -0,75 -> 4,3; -0,72 -> 4,55; -0,65 -> 4,86; -0,53 -> 5,22; -0,37 -> 5,6; -0,19 -> 6; 0 -> 6,4; 0,19 -> 6,78; 0,37 -> 7,14; 0,53 -> 7,45; 0,65 -> 7,7; 0,72 -> 7,9; 0,75 -> 8,04; 0,72 -> 8,11; 0,65 -> 8,14; 0,53 -> 8,12; 0,37 -> 8,07; 0,19 -> 8; 0 | oranžna črtkano debelo
+puščica: 1; 0 -> 1; 1,5 |  | nad | modra
+puščica: 1; 0 -> 0,1; -0,75 |  | levo | oranžna
+napis: 1; 1,5 | E | nad | modra
+napis: 0,1; -0,75 | B | pod desno | oranžna
+puščica: 3; 0 -> 3; -1,5 |  | pod | modra
+puščica: 3; 0 -> 3,9; 0,75 |  | levo | oranžna
+puščica: 5; 0 -> 5; 1,5 |  | nad | modra
+puščica: 5; 0 -> 4,1; -0,75 |  | levo | oranžna
+puščica: 7; 0 -> 7; -1,5 |  | pod | modra
+puščica: 7; 0 -> 7,9; 0,75 |  | levo | oranžna
+črta: 4; -1,8 -> 4; -2,1
+črta: 8; -1,8 -> 8; -2,1
+puščica: 2; -1,95 -> 0; -1,95
+puščica: 2; -1,95 -> 4; -1,95
+puščica: 6; -1,95 -> 4; -1,95
+puščica: 6; -1,95 -> 8; -1,95
+napis: 2; -1,95 | λ | nad
+napis: 6; -1,95 | λ | nad
+podnapis: E (polna črta) niha v smeri x, B (črtkana črta) v smeri y, iz ravnine risbe; polji sta v fazi, val potuje v smeri z.
+:::
 
-- Električno polje $\vec{E}$ niha v smeri $x$, magnetno $\vec{B}$ v smeri $y$, val potuje v smeri $z$: vsi trije so med seboj pravokotni. Valovanje je **transverzalno**.
+- Električno polje $\vec{E}$ niha v smeri $x$, magnetno $\vec{B}$ v smeri $y$, val potuje v smeri $z$: vse tri smeri so med seboj pravokotne. Valovanje je **transverzalno**.
 - $\vec{E}$ in $\vec{B}$ nihata **v fazi**: kjer je eno največje, je največje tudi drugo.
 - Smer širjenja kaže $\vec{E}\times\vec{B}$.
 - Razmerje velikosti je v vsaki točki enako, $B = E/c$.
@@ -392,13 +414,13 @@ m | masa | | kg
 \alpha | vpadni kot | | °
 \alpha' | odbojni kot | | °
 \beta | lomni kot | | °
-R | odbojnost | R = \left(\frac{n_1 - n_2}{n_1 + n_2}\right)^2 | – | pri pravokotnem vpadu
+R | odbojnost | R = \left(\frac{n_1 - n_2}{n_1 + n_2}\right)^2 | – | pri pravokotnem vpadu; v Nalogi 2 je $R$ polmer telesa
 \alpha_m | mejni kot totalnega odboja | \sin\alpha_m = \frac{n_2}{n_1} | °
 \alpha_B | Brewstrov kot | \tan\alpha_B = \frac{n_2}{n_1} | °
 \theta | vpadni kot na čelno ploskev vlakna | | °
 \theta_1 | kot žarka z osjo v jedru | | °
 r_s, r_p | amplitudna odbojna koeficienta za polarizaciji s in p | | –
-r | amplitudni odbojni koeficient | | – | $R = r^2$
+r | amplitudni odbojni koeficient | | – | $R = r^2$; v Nalogi 2 je $r$ razdalja do Sonca
 \vec{H}, H | magnetna poljska jakost | H = \frac{B}{\mu_0} | A/m | v nemagnetni snovi
 \varepsilon_r | relativna dielektričnost | | –
 \mu_r | relativna permeabilnost | | –

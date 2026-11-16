@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vodni potencial
+  - $\Psi = \Psi_m + \Psi_o + \Psi_g$, enota kPa
+  - prosta čista voda ima $0$
+  - voda teče k bolj negativnemu $\Psi$
+- Gravitacijska voda
+  - pore nad $10\,\mathrm{\mu m}$, odteče v $1$–$3$ dneh
+  - nasičena tla: korenine brez zraka
+- Poljska kapaciteta
+  - $-10$ do $-33\,\mathrm{kPa}$, pF $2$–$2{,}5$
+  - pazi: PK ni največja vsebnost vode
+- Točka venenja
+  - $-1500\,\mathrm{kPa}$, pF $4{,}2$
+  - pore pod $0{,}2\,\mathrm{\mu m}$: voda nedostopna
+- Rastlinam dostopna voda
+  - $\mathrm{RDV} = (\theta_{PK} - \theta_{TV}) \cdot z$
+  - $1\,\mathrm{mm} = 1\,\mathrm{L/m^2}$
+  - $\theta = w \cdot \rho_v/\rho_{\text{voda}}$
+- Vpliv teksture
+  - RDV: pesek $7\,\%$, ilovica $18\,\%$, glina $16\,\%$
+  - glina: TV kar $28\,\%$
+- Lestvica pF
+  - $\mathrm{pF} = \log_{10} h$, $h$ v cm
+  - $10\,\mathrm{cm} \approx 1\,\mathrm{kPa}$
+- Soli v tleh
+  - $\Psi_o = -i\,c\,R\,T$
+  - $0{,}154\,\mathrm{mol/L}$ NaCl: okrog $-750\,\mathrm{kPa}$

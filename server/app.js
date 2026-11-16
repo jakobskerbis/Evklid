@@ -1,5 +1,7 @@
 // HTTP strežnik Evklid: API + statični vmesnik.
 import "./env.js";
+import { createPomnilnik } from "./pomnilnik.js";
+import { mountMeritevPoObjavi } from "./meritev-po-objavi.js";
 import express from "express";
 import helmet from "helmet";
 import fs from "node:fs";
@@ -24,6 +26,8 @@ import { visitCounter, mountPilot } from "./pilot.js";
 import { mountPilotTasks, pilotMember } from "./pilot-naloge.js";
 import { mountOpinions } from "./pilot-mnenja.js";
 import { sourceVisitCounter, mountRast, setSource } from "./rast.js";
+import { mountOdpiranje } from "./odpiranje-delov.js";
+import { mountAnketa } from "./anketa-teden.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { mountVidnost } from "./vidnost.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
@@ -39,6 +43,7 @@ import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
 import { isHiddenNote } from "./skrite-opombe.js";
 import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
+import { modeSwitchNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
@@ -57,7 +62,7 @@ import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
-import { mountGames, notePathActivity } from "./games.js";
+import { mountGames, notePathActivity, schoolYear } from "./games.js";
 import { mountDailyPuzzle } from "./daily-puzzle.js";
 import { mountLab } from "./laboratorij.js";
 import { Avatars, mountAvatar } from "./avatar.js";
@@ -83,6 +88,7 @@ import { nujnoPredZavrnitvijo, nujnoZa, lokalnaVrsta, varnostniPregled, vsakoVkl
 import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
+import { startAiCostAlert } from "./opozorilo-ai.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -158,14 +164,15 @@ function mountOldLinkRedirect(app, homeCheck) {
 }
 
 // Varnostne glave (helmet). CSP: samo lastne skripte (brez vrinjenih), slogi tudi vrinjeni (KaTeX, style=),
-// slike tudi z drugih strani https (kotiček z novicami), blob: za fotografije s kamere in posnetke.
+// slike samo lastne, data: in blob: (fotografije s kamere, posnetki); točka A3: nobena slika z drugih strani
+// (kotiček z novicami slik nima, besedilo od modela in učencev jih ne sme naložiti, public/rich.js).
 // Plačilo (Stripe) in portal sta navadni preusmeritvi (location.href), zato ju CSP ne omejuje.
 // Mobilna aplikacija (Expo) uporablja API in svoj WebView z lokalnim HTML, zato je CSP ne zadeva.
 export const CSP = {
   "default-src": ["'self'"],
   "script-src": ["'self'"],
   "style-src": ["'self'", "'unsafe-inline'"],
-  "img-src": ["'self'", "data:", "blob:", "https:"],
+  "img-src": ["'self'", "data:", "blob:"],
   "font-src": ["'self'", "data:"],
   "connect-src": ["'self'"],
   "media-src": ["'self'", "blob:"],
@@ -218,11 +225,29 @@ function securityHeaders(app) {
   });
 }
 
+export const SLIKE_3D_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
+
 export function createApp(store, opts = {}) {
   const { streamFn = streamReply, readFn = readHandwriting } = opts;
   const app = express();
   app.disable("x-powered-by");
   securityHeaders(app);
+  // Usmerjevalnik Expressa pot s poševnico na koncu ujema kot pot brez nje (/messages/ = /messages) in predpono
+  // brez ozira na velike črke (/API = /api), vmesniki pred potmi (meje, lastništvo, zaklep računa, opravila po
+  // izbrisu, Cache-Control) pa req.path preverjajo z regularnimi izrazi. Točka A1: nekanonične poti /api (predpona
+  // z velikimi črkami, poševnica na koncu, prazen del poti »//«) dobijo 404, preden pridejo do katerekoli poti.
+  // Odjemalci (spletna stran, aplikacija) kličejo samo kanonične poti. Dnevna meja vprašanj se poleg tega preverja
+  // v obdelavi sporočila pred rezervacijo za klic AI (accounts.dailyBlock), zato je pot ne more obiti.
+  app.use((req, _res, next) => {
+    // req.path (ne req.url): zahteva v absolutni obliki (»POST http://gostitelj/API/…«) ima req.url brez začetne »/«,
+    // usmerjevalnik pa jo vseeno ujema po poti. Taka zahteva na /api ni kanonična.
+    const pot = req.path;
+    const absolutna = !req.url.startsWith("/");
+    // Samo oznaka: preverjanja računov (prijava 401, zaklep računa 403) veljajo tudi za take poti, nato 404
+    // (server/accounts/index.js; brez računov vmesnik takoj za mountAccounts spodaj).
+    if (/^\/api(\/|$)/i.test(pot) && (absolutna || !/^\/api(\/|$)/.test(pot) || /.\/$/.test(pot) || pot.includes("//"))) req.nekanonicnaApi = true;
+    next();
+  });
   mountOldLinkRedirect(app, opts.homeCheck);
   app.get("/healthz", (_req, res) => res.send("ok")); // za gostovanje, brez gesla
   // Brskalniki, Google in zaznamki iščejo /favicon.ico tudi brez <link rel="icon">: pošljemo logotip (scripts/logotip.cjs).
@@ -238,14 +263,18 @@ export function createApp(store, opts = {}) {
   let ustno = null; // ustno spraševanje (server/ustno-api.js): stikalo starša za glas velja tudi v klepetu
   let cloudBackups = null; // ista kopija še zunaj strežnika (server/kopije-oblak.js)
   let backupChecks = null; // nočni preizkus obnove iz kopije (server/kopije-preveri.js)
+  let aiCostAlert = null; // opozorilo o dnevnem strošku AI (server/opozorilo-ai.js)
+  // Pomnilnik (točka D4): vzorci RSS po 10 s, Straža opozori nad 85 % meje gostovanja (server/pomnilnik.js).
+  const pomnilnik = createPomnilnik({ zacni: opts.pomnilnik !== false });
+  app.locals.pomnilnik = pomnilnik;
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
   app.use((req, res, next) => {
-    if (req.method === "DELETE" && /^\/api\/(students\/\d+|account)$/.test(req.path)) {
+    if (req.method === "DELETE" && /^\/api\/(students\/\d+|account)$/i.test(req.path)) {
       res.on("finish", () => {
         if (res.statusCode < 300) for (const fn of afterDelete) fn();
       });
@@ -254,6 +283,7 @@ export function createApp(store, opts = {}) {
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
+  app.use((req, res, next) => (req.nekanonicnaApi ? res.status(404).json({ error: "Pot ne obstaja." }) : next())); // točka A1
   mountMobile(app, accounts, { scheduler: opts.scheduler, fetchFn: opts.fetchFn, ...opts.mobile }); // prijava z Apple, nakupi v trgovinah, obvestila, /prenesi
   if (gateNeeded()) app.use(passwordGate(process.env.EVKLID_PASSWORD)); // skupno geslo (samo brez računov, glej gate.js)
   mountWebApp(app); // manifest v jeziku vmesnika, povezava za Google Play
@@ -273,9 +303,22 @@ export function createApp(store, opts = {}) {
   // Velika telesa (slike v pogovoru, skeniranje, urnik s fotografije) samo s prijavo. Brez prijave (z računi) pridejo
   // sem le javne poti (/api/school-orders, /api/auth/<neznano> …): 5 MB JSON bi brez prijave porabil ~0,3 s procesorja
   // (2 jedri) še pred omejitvijo na IP. Poti računov imajo svoj razčlenjevalnik (100 kb).
+  // Točka A9: tudi s prijavo je privzeta meja 100 kb; večja samo na poteh, ki sprejmejo fotografijo ali dolgo vsebino
+  // (vsaka ima v obdelavi še svojo, ožjo mejo). Prej je vsaka pot s prijavo sprejela 10 MB JSON (pomnilnik, procesor).
+  // Domača namestitev brez računov (en uporabnik) ostane pri 10 MB povsod.
   const bigJson = express.json({ limit: "10mb" });
   const smallJson = express.json({ limit: "100kb" });
-  app.use((req, res, next) => (accounts && !req.parent ? smallJson : bigJson)(req, res, next));
+  const VELIKA_TELESA = [
+    [/^\/api\/conversations\/[^/]+\/messages$/i, "10mb"], // sporočilo s sliko (MAX_IMAGE_B64)
+    // skener, zapiski, urnik s fotografije, zapis s prstom, fotografija naloge v pilotu
+    [/^\/api\/students\/[^/]+\/(scan\/read|zapiski\/preberi|schedule\/photo|tasks\/[^/]+\/read|pilot\/scan)$/i, "10mb"],
+    [/^\/api\/students\/[^/]+\/schedule\/ics$/i, "4mb"], // vsebina datoteke .ics (do 3 MB)
+    [/^\/api\/students\/[^/]+\/graphs(\/[^/]+)?$/i, "1mb"], // graf s sličico (MAX_DATA + MAX_THUMB)
+    [/^\/api\/conversations\/[^/]+\/messages\/[^/]+\/report$/i, "1mb"], // prijava odgovora z izrisanim HTML (SHOWN_MAX)
+    [/^\/api\/students\/[^/]+\/offline-sync$/i, "1mb"], // vrsta odgovorov brez povezave (odjemalec je ne omeji; ~125 B na odgovor)
+  ].map(([pot, limit]) => [pot, express.json({ limit })]);
+  const jsonZa = (req) => (req.method === "POST" || req.method === "PUT" ? VELIKA_TELESA.find(([pot]) => pot.test(req.path))?.[1] : null) || smallJson;
+  app.use((req, res, next) => (!accounts ? bigJson : !req.parent ? smallJson : jsonZa(req))(req, res, next));
   // Neuspele klice API zapišemo v dnevnik, da je napako na telefonu mogoče poiskati.
   app.use("/api", (req, res, next) => {
     res.on("finish", () => {
@@ -320,6 +363,14 @@ export function createApp(store, opts = {}) {
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,
   // in z različico datotek (service worker in app.js ne mešata stare in nove različice).
   app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0" })); // =0: brez seznama (primerjava)
+  // Ikone vej drevesa 3D sveta in sličice modelov (slike, ki se spremenijo le z novim izrisom): brskalnik jih dan
+  // vzame iz svojega predpomnilnika brez vprašanja strežniku, nato še teden prikaže staro in v ozadju preveri novo.
+  // Prej max-age=0: po vsaki objavi (service worker zavrže kopije stare različice) je vsaka ikona čakala na
+  // strežnik, zato so bile ikone vidne šele po sekundi ali dveh (j, 15. 11. 2026: »vse se ob kliku odpre takoj«).
+  app.use(["/3d/ikone-drevo/", "/3d/slicice/"], (req, res, next) => {
+    if (/\.webp$/i.test(req.path)) res.set("Cache-Control", SLIKE_3D_CACHE);
+    next();
+  });
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
     const statics = compressedStatic([
@@ -329,7 +380,8 @@ export function createApp(store, opts = {}) {
       ["/vendor/dompurify/", path.join(modules, "dompurify", "dist")],
       ["/vendor/three/build/", path.join(modules, "three", "build")],
       ...FONTS.map(([dir, pkg]) => [`/vendor/${dir}/`, path.join(modules, "@fontsource-variable", pkg)]),
-      ["/practice/", path.join(here, "practice")],
+      // Iz server/practice samo check.js (kot spodaj brez stiskanja), ne cela mapa s kodo strežnika (točka 1.7).
+      ["/practice/check.js", path.join(here, "practice", "check.js")],
       ["/", publicDir],
     ]);
     app.use(statics);
@@ -508,7 +560,7 @@ export function createApp(store, opts = {}) {
   const verifyHold = (txt) => usage.appHold("verify", VERIFY_DAILY_USD(), [...new Set(VERIFY_MODELS())].reduce((t, m) => t + checkReserveUsd(m, txt), 0));
   const settleLater = (promise, done) =>
     Promise.resolve(promise)
-      .then((v) => done(!!v?.ok, v?.reason || ""), (e) => done(false, e?.message || "napaka"))
+      .then((v) => done(!!v?.ok, v?.reason || "", v), (e) => done(false, e?.message || "napaka", null))
       .catch((e) => console.warn(`[evklid] preverjanje: ${e?.message || e}`));
   const progress = new Progress(store);
   const knowledge = new Knowledge(store.db); // zbirke znanja in učni pass (server/zbirke.js)
@@ -559,6 +611,9 @@ export function createApp(store, opts = {}) {
     topicName: (id) => lessonView(id)?.name || null,
     localOnly: (req, res, next) => (isLocalRequest(req) ? next() : res.status(403).json({ error: "Samo na računalniku, kjer teče Evklid." })),
   });
+
+  // Izid samodejne meritve natančnosti po objavi (server/meritev-po-objavi.js), samo za skrbnika.
+  mountMeritevPoObjavi(app, { isAdmin: (req) => !!req.parent?.is_admin || isLocalRequest(req) });
 
   // Obvestilo »Testna verzija«: kaj še ne dela. EVKLID_TESTNA_VERZIJA=off ga skrije (ob javni objavi).
   const testNotice = () => {
@@ -735,6 +790,11 @@ export function createApp(store, opts = {}) {
     const conv = loadConversation(req, res);
     if (!conv) return;
     const student = store.getStudent(conv.student_id);
+    // Dnevna meja vprašanj (točka A1) se preverja tu, v obdelavi sporočila, ne po obliki poti v vmesniku. Od tod do
+    // rezervacije za klic AI in store.logQuestion spodaj ni nobenega await (razen na poteh, ki vrnejo odgovor), zato
+    // je ne obide nobena oblika poti in ne dve sočasni sporočili v različnih pogovorih.
+    const dnevna = accounts?.dailyBlock?.(student.id);
+    if (dnevna) return res.status(429).json(dnevna);
 
     const text = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_TEXT) : "";
     const image = req.body?.image;
@@ -841,9 +901,11 @@ export function createApp(store, opts = {}) {
     const userContent = [];
     if (image) userContent.push({ type: "image", source: { type: "base64", media_type: image.media_type, data: image.data } });
     // Naloga iz pretekle pole: navodilo za inštruktorja kot skrit blok (server/paper-context.js), učenec vidi le text.
-    const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper });
+    const solvingMode = student.settings.solving_mode === "B" ? "B" : "A";
+    const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper, mode: solvingMode });
     if (paperNote) userContent.push({ type: "text", text: paperNote });
-    const isFirst = store.listMessages(conv.id).length === 0;
+    // D3: praznost z EXISTS; zgodovino pogovora naložimo (in odšifriramo) samo enkrat, spodaj (prior).
+    const isFirst = !store.hasMessages(conv.id);
     // Prvo vprašanje prostega pogovora: povzetek ujemajoče se lekcije iz učbenika kot skrita opomba
     // (server/lekcija-za-vprasanje.js). Shranjen s sporočilom, zato se začetek zgodovine ne spreminja.
     let lesson = null;
@@ -852,11 +914,17 @@ export function createApp(store, opts = {}) {
     } catch (err) {
       console.warn(`[evklid] iskanje lekcije ni uspelo: ${err?.message || err}`);
     }
-    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson) });
+    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson, solvingMode) });
+    // Zamenjava načina A/B med pogovorom (j 14. 11.): skrita opomba, sicer zgodovina vleče nazaj v stari način.
+    // Prej: način, s katerim je inštruktor nazadnje odgovoril (stolpec; pri starih pogovorih iz META zadnjega odgovora).
+    const modeBefore = isFirst ? null : conv.solving_mode || store.lastEvent(conv.id)?.mode || null;
+    const modeNote = modeSwitchNote(modeBefore, solvingMode);
+    if (modeNote) userContent.push({ type: "text", text: modeNote });
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
-    const prior = staleImages(store.apiHistory(conv.id));
+    const zgodovina = store.apiHistory(conv.id);
+    const prior = staleImages(zgodovina);
     const reserveFor = (m, fallback = true) =>
       replyReserveUsd({
         fallback,
@@ -995,8 +1063,10 @@ export function createApp(store, opts = {}) {
       if (note) send("delta", { text: note });
       // Naloga, ki jo reši naš preverjeni reševalnik: model dobi pravilen rezultat v skriti opombi.
       const pre = liveCheckOn() && !cached && !image && !win && !hinted ? presolve(text, { first: isFirst }) : null;
-      // Zgodovina tu že vsebuje trenutno sporočilo (shranjeno zgoraj), zato +1: njegova slika ostane vedno.
-      const fullHistory = staleImages(store.apiHistory(conv.id), LIMITS.historyImageTurns() + 1);
+      // Zgodovina z zdaj shranjenim sporočilom, isto kot ponovno branje iz baze: med branjem zgoraj in tem mestom ni
+      // nobenega await (vmes ne more pisati nobena druga zahteva), pogovor pa je tudi zaseden (busy). +1: slika
+      // trenutnega sporočila ostane vedno.
+      const fullHistory = staleImages([...zgodovina, { role: "user", content: userContent }], LIMITS.historyImageTurns() + 1);
       const shortDeep = deep && !routed.boosted;
       let history = shortDeep ? recentHistory(fullHistory) : windowHistory(fullHistory);
       // Odrezani starejši del dolgega pogovora: kratek povzetek pred oknom (server/povzetek.js).
@@ -1241,7 +1311,7 @@ export function createApp(store, opts = {}) {
               if (ok) store.db.prepare("UPDATE answer_cache SET verified = 1 WHERE key = ? AND text = ?").run(key, generic);
               else {
                 store.db.prepare("DELETE FROM answer_cache WHERE key = ? AND text = ? AND verified = 0").run(key, generic);
-                console.warn(`[evklid] odgovor ni shranjen za ponovno uporabo (${String(reason).slice(0, 120)})`);
+                console.warn(`[evklid] odgovor ni shranjen za ponovno uporabo (razlog ${String(reason).length} znakov; besedilo ne gre v dnevnik, docs/varnost-podatkov.md)`);
               }
             });
           }
@@ -1255,6 +1325,9 @@ export function createApp(store, opts = {}) {
       if (!display) display = "…";
 
       const assistantId = store.addMessage(conv.id, "assistant", content, display);
+      // Način, v katerem je ta odgovor nastal (po morebitni spremembi z orodjem v tem odgovoru).
+      const modeAfter = store.getStudent(student.id)?.settings?.solving_mode === "B" ? "B" : "A";
+      if (conv.solving_mode !== modeAfter) store.db.prepare("UPDATE conversations SET solving_mode = ? WHERE id = ?").run(modeAfter, conv.id);
       // Kartice za ponavljanje iz odgovora (ne pri zavrnitvi in ne pri opozorilih).
       // Kartice so vidne šele po trojnem preverjanju; z napačnim računom se sploh ne shranijo.
       const parsedCards = result.stopReason !== "refusal" && !fix && !claimFailed && (!meta || meta.flag === "none") ? parseCards(result.text) : [];
@@ -1275,10 +1348,15 @@ export function createApp(store, opts = {}) {
       if (cHold && !cards.length) cHold.release();
       if (cards.length && liveCards) {
         const ids = cards.map((c) => c.id);
-        settleLater(runVerify({ question: text, answer: cardsText, kind: "cards" }), (ok, reason) => {
+        // Vsaka kartica dobi svojo sodbo (server/verify.js): napačna se izbriše, pravilne ostanejo.
+        const list = cards.map((c) => `${c.front} → ${c.back}`);
+        settleLater(runVerify({ question: text, answer: list.join("\n"), kind: "cards", cards: list }), (ok, reason, v) => {
           cHold.release();
-          store.cards.settle(ids, ok);
-          if (!ok) console.warn(`[evklid] kartice niso shranjene (${String(reason).slice(0, 120)})`);
+          const pass = Array.isArray(v?.cards) && v.cards.length === ids.length ? v.cards : ids.map(() => ok);
+          store.cards.settle(ids.filter((_, i) => pass[i]), true);
+          store.cards.settle(ids.filter((_, i) => !pass[i]), false);
+          const lost = pass.filter((p) => !p).length;
+          if (lost) console.warn(`[evklid] kartice niso shranjene (${lost} od ${ids.length}; razlog ne gre v dnevnik, docs/varnost-podatkov.md)`);
         });
       }
       // Nepreverjenih kartic učenec še ne vidi (tudi ne v obvestilu »dodane kartice«).
@@ -1439,7 +1517,7 @@ export function createApp(store, opts = {}) {
   // Formule in konstante predmeta (za orodja ob kalkulatorju), npr. ?book=KEM-OS
   app.get("/api/formulas", (req, res) => {
     const key = String(req.query.book || "");
-    const sheet = /^[A-Z]{3}-(OS|SS|UNI)$/.test(key) ? formulaSheetSections(key) : null;
+    const sheet = /^[A-Z]{3}-(OS|SS|TEK|UNI)$/.test(key) ? formulaSheetSections(key) : null;
     if (!sheet) return res.status(404).json({ error: "Zbirke formul ni." });
     res.set("Cache-Control", "public, max-age=3600").json({ key, md: sheet.md, sections: sheet.sections });
   });
@@ -1570,7 +1648,7 @@ export function createApp(store, opts = {}) {
     if (!key) return res.json({ key: null, message: "Tekmovanja so na voljo za osnovno in srednjo šolo." });
     res.json({
       ...competitionInfo(key),
-      ...progress.pathView(s.id, key),
+      ...progress.pathView(s.id, key, schoolYear(s.settings)),
       defaultKey,
       history: progress.contestHistory(s.id, key),
       openContest: progress.openContest(s.id, key),
@@ -1612,14 +1690,14 @@ export function createApp(store, opts = {}) {
   app.post("/api/students/:id/competition-training", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = progress.startCompetition(s.id, String(req.body?.path || ""));
+    const out = progress.startCompetition(s.id, String(req.body?.path || ""), schoolYear(s.settings));
     if (!out) return res.status(400).json({ error: "Za to tekmovanje še ni nalog." });
     res.json(out);
   });
   app.post("/api/students/:id/contest", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = progress.startContest(s.id, String(req.body?.path || ""));
+    const out = progress.startContest(s.id, String(req.body?.path || ""), schoolYear(s.settings));
     if (!out) return res.status(400).json({ error: "Za to tekmovanje še ni nalog." });
     res.json(out);
   });
@@ -1789,6 +1867,8 @@ export function createApp(store, opts = {}) {
   // Rast in vračanje (skrbnik): viri, prva naloga, vrnitev po 1 in 7 dneh; profili skrbnika se ne štejejo.
   const adminEmails = emailList(process.env.EVKLID_ADMIN_EMAILS); // isti razčlenjevalnik kot meja lastnika
   mountRast(app, store, { accounts: !!accounts, isLocalRequest, adminEmails });
+  mountOdpiranje(app, store, { loadStudent, accounts: !!accounts, isLocalRequest, adminEmails }); // B2: odpiranje delov aplikacije (pilot)
+  mountAnketa(app, store, { loadStudent, accounts: accounts || null, isLocalRequest, adminEmails }); // B3: anketa po 7 dneh (pilot)
   mountSchoolOrders(app, store, { accounts: !!accounts, isLocalRequest }); // naročila šol in predračun (skrbnik)
   mountGradiva(app, store, { loadStudent, accounts, leagues }); // povzetek na eni strani, zvočni povzetek, delovni listi
   mountKviz(app, store, { loadStudent, leagues }); // kviz v živo za razred
@@ -1848,5 +1928,7 @@ export function createApp(store, opts = {}) {
   cloudBackups = startCloudBackups(store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
   // Vsako noč (4.30–8.00 po ljubljanskem času) v ločeni niti; ob napaki e-mail skrbnikom, največ enkrat na dan.
   backupChecks = startBackupChecks(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, isBusy: () => activity.active > 0 });
+  // Vsakih 10 min: današnji strošek AI nad EVKLID_OPOZORILO_AI_USD → e-mail skrbnikom, največ enkrat na dan.
+  aiCostAlert = startAiCostAlert(store.db, usage, { scheduler: opts.scheduler !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
   return app;
 }

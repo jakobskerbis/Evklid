@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lega in konfiguracija
+  - $ns^2\,np^1$ do $ns^2\,np^6$, skupine 13 do 18
+  - oksidacijsko število od $G - 18$ do $G - 10$
+  - izjemi: O in F
+- Trendi po skupini
+  - navzdol: večji polmer, manjša elektronegativnost
+  - C nekovina, Pb kovina
+- Inertni par
+  - Tl, Pb, Bi: stabilnejše število $G - 12$
+  - $\mathrm{PbO_2}$ oksidant, $\mathrm{Pb^{2+}}$ stabilen
+- Prvi element skupine
+  - močne vezi $\pi$: $\mathrm{CO_2}$ plin, $\mathrm{SiO_2}$ mreža
+  - največ štiri vezi: $\mathrm{NCl_5}$ ne obstaja
+- Halogeni
+  - izpodrivanje: $E^\circ(\mathrm{X_2/X^-}) > E^\circ(\mathrm{Y_2/Y^-})$
+  - $\Delta G^\circ = -zFE^\circ_\text{celice}$, enota $\mathrm{kJ/mol}$
+  - pazi: HF ni najmočnejša kislina
+- Oksokisline in disproporcionacija
+  - Pauling: $\mathrm{p}K_\mathrm{a1} \approx 8 - 5p$
+  - Latimer: disproporcionira, če $E^\circ_\mathrm{D} > E^\circ_\mathrm{L}$
+  - klor v bazi da belilo
+- Skupine 14 do 16
+  - S: $-2$, $+4$, $+6$; kontaktni postopek
+  - N od $-3$ do $+5$; $\mathrm{P_4}$ reaktiven
+  - diamant, grafit, silikati

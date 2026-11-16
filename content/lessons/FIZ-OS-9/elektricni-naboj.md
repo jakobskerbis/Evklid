@@ -33,7 +33,7 @@ Atom ima enako protonov kot elektronov, zato je navzven **nevtralen**: pozitivni
 
 Naboj se pri drgnjenju ne ustvari, ampak se le **prerazporedi**. Kolikor elektronov eno telo izgubi, toliko jih drugo dobi. Zato sta telesi po drgnjenju nabiti **nasprotno in enako močno**.
 
-**Preveri:** Volnena krpa po drgnjenju PVC-palice manjka $10^{9}$ elektronov. Koliko elektronov ima palica preveč? *(Natanko $10^{9}$.)*
+**Preveri:** Volneni krpi po drgnjenju PVC-palice manjka $10^{9}$ elektronov. Koliko elektronov ima palica preveč? *(Natanko $10^{9}$.)*
 
 **3. Koliko naboja.** Količini naboja pravimo **elektrina** in jo označimo z $e$. Enota je **amperska sekunda** ($\mathrm{As}$), drugo ime zanjo je coulomb ($\mathrm{C}$). Zakaj ima tako ime, boš videl v lekciji o toku.
 
@@ -45,7 +45,7 @@ Predznak dodaš posebej: $-$, če je elektrone prejelo, $+$, če jih je oddalo. 
 
 **Preveri:** Ali ima kapljica lahko elektrino $0{,}5 \cdot e_0$? *(Ne, elektrona ne moreš razdeliti.)*
 
-**4. Sile med naboji.** Nabiti telesi delujeta druga na drugo s silo, tudi ko se ne dotikata.
+**4. Sile med naboji.** Nabiti telesi delujeta drugo na drugo s silo, tudi ko se ne dotikata.
 
 - **Istoimenska** naboja ($+$ in $+$ ali $-$ in $-$) se **odbijata**.
 - **Raznoimenska** naboja ($+$ in $-$) se **privlačita**.
@@ -219,7 +219,7 @@ Vrsta pojasni tudi tvoj telefon: steklo zaslona je skoraj na začetku vrste, zat
 ~ A ima enako protonov in elektronov, zato je nevtralno, ne negativno.
 + B
 - C
-~ C ima več delcev skupaj, a predznak določa razlika: elektronov je manj kot protonov, zato je C pozitiven.
+~ C ima skupaj enako delcev kot B, a predznak določa razlika: elektronov je manj kot protonov, zato je C pozitiven.
 > B ima tri elektrone več, kot je protonov, zato prevladuje negativni naboj.
 
 ? Balon ima elektrino približno $3{,}2 \cdot 10^{-8}\,\mathrm{As}$. Približno koliko elektronov je prejel?

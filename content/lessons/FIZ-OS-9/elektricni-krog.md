@@ -147,9 +147,9 @@ Ne smejo: $2{,}5\,\text{A}$ je več kot preostalih $1{,}5\,\text{A}$. Skupni tok
 
 ## Pogoste napake
 
-- **»Tok se po žarnicah porabi.«** Učenec misli, da skozi drugo zaporedno vezano žarnico teče manj toka, ker ga je prva »vzela«, ali da se tok deli na pol. Tok se ne porabi: pri zaporedni vezavi ima ena sama pot, zato je povsod enak. Ampermeter pred prvo in za drugo žarnico kaže isto.
+- **»Tok se po žarnicah porabi.«** Učenec misli, da skozi drugo zaporedno vezano žarnico teče manj toka, ker ga je prva »vzela«, ali da se tok deli na pol. Tok se ne porabi: pri zaporedni vezavi ima eno samo pot, zato je povsod enak. Ampermeter pred prvo in za drugo žarnico kaže isto.
 - **»Pri vzporedni vezavi se napetost deli.«** Učenec prenese pravilo zaporedne vezave in na vsako od dveh vej pripiše polovico napetosti. Vsaka veja pa je priključena na ista dva pola vira, zato ima vsaka polno napetost. Deli se tok, ne napetost.
-- **»Več porabnikov, manj toka iz vira.«** Učenec misli, da dodana vzporedna luč toka »ovira«, zato iz vira teče manj, ali pa da ostane enak. Pri vzporedni vezavi vsaka nova veja doda svoj tok, zato tok iz vira **naraste**. Zato preveč vzporedno priključenih naprav sproži varovalko.
+- **»Več porabnikov, manj toka iz vira.«** Učenec misli, da dodana vzporedna luč tok »ovira«, zato iz vira teče manj, ali pa da ostane enak. Pri vzporedni vezavi vsaka nova veja doda svoj tok, zato tok iz vira **naraste**. Zato preveč vzporedno priključenih naprav sproži varovalko.
 - **Napačna vezava merilnikov.** Ampermeter vežemo zaporedno, voltmeter vzporedno. Vzporedno vezan ampermeter ustvari skoraj neovirano pot mimo porabnika, zato steče zelo velik tok, ki lahko poškoduje merilnik.
 
 ## Povzetek

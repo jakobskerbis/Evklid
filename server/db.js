@@ -32,6 +32,11 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   migrateLegacyDb(file);
   const db = new DatabaseSync(file);
   db.exec(`
+    -- D6: pisanje drugega procesa (npr. skripta v lupini Renderja) zaklene bazo za kratek čas. Brez čakanja (privzeto 0)
+    -- strežnik takoj vrže »database is locked« (500, izgubljen odgovor); tako počaka največ 2 s (ves strežnik, ker je
+    -- DatabaseSync sinhron).
+    -- Prvo, da velja tudi za WAL in migracije ob zagonu.
+    PRAGMA busy_timeout = 2000;
     PRAGMA journal_mode = WAL;
     PRAGMA foreign_keys = ON;
     CREATE TABLE IF NOT EXISTS students (
@@ -279,6 +284,17 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
     CREATE INDEX IF NOT EXISTS idx_school_use ON ai_school_use(school_id, created_at);
     CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);`);
   if (!hadSchoolUse) db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES ('ai_school_ledger_start', datetime('now'))").run();
+  // Izbrisan profil (docs/izbris-izvoz.md, najdba 2): poraba ostane šoli, brez id profila (id dobi lahko nov profil).
+  // Ob zagonu še za profile, izbrisane pred sprožilcem (brez takih vrstic ne zapiše nič).
+  db.exec(`CREATE TRIGGER IF NOT EXISTS ai_school_use_student_delete AFTER DELETE ON students BEGIN
+      UPDATE ai_school_use SET student_id = NULL WHERE student_id = OLD.id;
+    END;
+    UPDATE ai_school_use SET student_id = NULL WHERE student_id IS NOT NULL AND student_id NOT IN (SELECT id FROM students);
+    -- Dnevni števec varnostnih pregledov profila (server/nujno.js, varnost_<dan>_<id>; najdba 5): nov profil z istim id
+    -- ga ne podeduje.
+    CREATE TRIGGER IF NOT EXISTS kv_student_delete AFTER DELETE ON students BEGIN
+      DELETE FROM kv WHERE key GLOB 'varnost_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_' || OLD.id;
+    END;`);
   // Migracija: nova tabela dobi današnja vprašanja iz obstoječih pogovorov, da se števec ob posodobitvi ne ponastavi.
   const hadQuestionLog = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'question_log'").get();
   db.exec(`CREATE TABLE IF NOT EXISTS question_log (
@@ -312,6 +328,8 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   const convCols = db.prepare("PRAGMA table_info(conversations)").all().map((c) => c.name);
   if (!convCols.includes("path_topic")) db.exec("ALTER TABLE conversations ADD COLUMN path_topic TEXT");
   if (!convCols.includes("deep")) db.exec("ALTER TABLE conversations ADD COLUMN deep INTEGER NOT NULL DEFAULT 0");
+  // Način (A/B), s katerim je inštruktor nazadnje odgovoril v tem pogovoru: ob zamenjavi v glavi dobi opombo (server/nacin.js).
+  if (!convCols.includes("solving_mode")) db.exec("ALTER TABLE conversations ADD COLUMN solving_mode TEXT");
   // Trojno preverjanje (server/verify.js): shranjen odgovor in kartica sta vidna šele, ko sta preverjena.
   // Stari shranjeni odgovori niso bili preverjeni, zato ostanejo skriti (privzeto 0); stare kartice ostanejo.
   const cacheCols = db.prepare("PRAGMA table_info(answer_cache)").all().map((c) => c.name);
@@ -360,6 +378,50 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Rok hrambe dnevnih vsot za šibke točke.
   db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
+  // D1 (hitrost, j 13. 11.): indeksi za poizvedbe po profilu, ki so brez njih brale celo tabelo ali ves mesec porabe
+  // (meritev 13. 11.: docs/meritve). Po vseh migracijah, ker obnova tabele events zgoraj ohrani samo idx_events_student.
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_conv_student ON conversations(student_id, updated_at);
+    CREATE INDEX IF NOT EXISTS idx_usage_student ON usage(student_id, created_at);
+    CREATE INDEX IF NOT EXISTS idx_tasks_session ON tasks(session_id);
+    CREATE INDEX IF NOT EXISTS idx_events_conv ON events(conversation_id, id);
+  `);
+  // D7 (hitrost, j 14. 11.): poraba AI vseh učencev po dnevih (UTC), da skupna vsota za danes in za ta mesec ni
+  // seštevanje celega meseca vrstic usage ob vsakem sporočilu (pri 1 M vrsticah ~0,3 s na vsoto, ~11 vsot na
+  // sporočilo). Vsoto vzdržujejo sprožilci ob vsakem vpisu, spremembi in brisanju iz usage (tudi iz drugega procesa),
+  // zato je enaka SUM(cost_usd) nad istimi vrsticami. Pozor: INSERT OR REPLACE / REPLACE INTO v usage bi vsoto
+  // podvojil (zamenjana vrstica ne sproži brisanja); tega v kodi ni. Če tabela ali kateri od sprožilcev manjka (prvi
+  // zagon, ročni poseg), se vse ustvari znova in napolni iz obstoječe porabe, v eni transakciji.
+  const dnevnoCelo = () =>
+    db.prepare("SELECT COUNT(*) AS n FROM sqlite_master WHERE name IN ('usage_dnevno', 'usage_dnevno_ins', 'usage_dnevno_del', 'usage_dnevno_upd')").get().n === 4;
+  if (!dnevnoCelo()) {
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      if (!dnevnoCelo()) {
+        db.exec(`
+          CREATE TABLE IF NOT EXISTS usage_dnevno (dan TEXT PRIMARY KEY, usd REAL NOT NULL DEFAULT 0);
+          CREATE TRIGGER IF NOT EXISTS usage_dnevno_ins AFTER INSERT ON usage BEGIN
+            INSERT INTO usage_dnevno (dan, usd) VALUES (substr(NEW.created_at, 1, 10), NEW.cost_usd)
+              ON CONFLICT(dan) DO UPDATE SET usd = usd + excluded.usd;
+          END;
+          CREATE TRIGGER IF NOT EXISTS usage_dnevno_del AFTER DELETE ON usage BEGIN
+            UPDATE usage_dnevno SET usd = usd - OLD.cost_usd WHERE dan = substr(OLD.created_at, 1, 10);
+          END;
+          CREATE TRIGGER IF NOT EXISTS usage_dnevno_upd AFTER UPDATE OF cost_usd, created_at ON usage BEGIN
+            UPDATE usage_dnevno SET usd = usd - OLD.cost_usd WHERE dan = substr(OLD.created_at, 1, 10);
+            INSERT INTO usage_dnevno (dan, usd) VALUES (substr(NEW.created_at, 1, 10), NEW.cost_usd)
+              ON CONFLICT(dan) DO UPDATE SET usd = usd + excluded.usd;
+          END;
+          DELETE FROM usage_dnevno;
+          INSERT INTO usage_dnevno (dan, usd) SELECT substr(created_at, 1, 10), SUM(cost_usd) FROM usage GROUP BY 1;
+        `);
+      }
+      db.exec("COMMIT");
+    } catch (err) {
+      db.exec("ROLLBACK");
+      throw err;
+    }
+  }
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
@@ -471,6 +533,10 @@ export class Store {
       .run(conversationId, role, sealJson(apiContent), seal(displayText), hasImage ? 1 : 0);
     this.touchConversation(conversationId);
     return Number(r.lastInsertRowid);
+  }
+  // Ali ima pogovor kakšno sporočilo (D3: brez nalaganja in odšifriranja vseh sporočil, tudi fotografij).
+  hasMessages(conversationId) {
+    return !!this.db.prepare("SELECT EXISTS(SELECT 1 FROM messages WHERE conversation_id = ?) AS e").get(conversationId).e;
   }
   listMessages(conversationId) {
     return this.db

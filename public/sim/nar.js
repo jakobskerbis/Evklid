@@ -64,7 +64,7 @@ function sortSim(el, set) {
     stage: svg,
     controls: [grid || buttons(...def.cats.map(([k, t]) => button(t, () => pick(k), "secondary"))), buttons(button("Naslednja ▸", next, "primary small"))],
     out,
-    tryText: def.try,
+    tryText: def.razmisli ? { razmisli: def.razmisli } : def.try, // napis-poskusa.js
   });
 }
 

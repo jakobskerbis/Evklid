@@ -23,7 +23,7 @@ Glukoza je **monosaharid**, najmanjša enota ogljikovih hidratov. Ti imajo pogos
 
 ### Obroč in anomera
 
-V vodi se skupina $-\text{OH}$ na C5 glukoze veže na karbonilni ogljik C1. Nastane šestčlenski obroč (**piranoza**) s **hemiacetalno** skupino: na C1 sta zdaj hkrati $-\text{OH}$ in kisik obroča. Fruktoza tvori predvsem petčlenski obroč (**furanoza**). C1 glukoze postane nov stereocenter, **anomerni ogljik**. Če je $-\text{OH}$ na C1 v Haworthovi projekciji (obroč narisan kot ploščica, gledana s strani) pod ravnino obroča (na nasprotni strani kot $\text{CH}_2\text{OH}$), je to anomer $\alpha$; če je nad njo, anomer $\beta$. V raztopini se obroč odpira in zapira, zato se oblike pretvarjajo druga v drugo (**mutarotacija**).
+V vodi se skupina $-\text{OH}$ na C5 glukoze veže na karbonilni ogljik C1. Nastane šestčlenski obroč (**piranoza**) s **hemiacetalno** skupino: na C1 sta zdaj hkrati $-\text{OH}$ in kisik obroča. Fruktoza tvori tudi petčlenski obroč (**furanoza**); tak je v saharozi. C1 glukoze postane nov stereocenter, **anomerni ogljik**. Če je $-\text{OH}$ na C1 v Haworthovi projekciji (obroč narisan kot ploščica, gledana s strani) pod ravnino obroča (na nasprotni strani kot $\text{CH}_2\text{OH}$), je to anomer $\alpha$; če je nad njo, anomer $\beta$. V raztopini se obroč odpira in zapira, zato se oblike pretvarjajo druga v drugo (**mutarotacija**).
 
 **Definiciji.** **Epimera** sta diastereomera (stereoizomera, ki nista zrcalni sliki), ki se razlikujeta v konfiguraciji na natanko enem stereocentru (glukoza in manoza na C2, glukoza in galaktoza na C4). **Anomera** sta epimera, ki se razlikujeta le na anomernem ogljiku. Ker se rotacije sestavin zmesi seštevajo, je ravnotežna optična rotacija tehtano povprečje rotacij anomerov (glej Primer 3).
 
@@ -78,14 +78,52 @@ Dvojna vez *cis* upogne verigo, zato se verige ne morejo tesno zložiti. Med nji
 
 Fosfolipidi se v vodi sami uredijo v **dvosloj**. Predstavljaj si ga takole, od zunaj navznoter:
 
-```
-voda
-o o o o o o   polarne glave
-| | | | | |   repi (nepolarni)
-| | | | | |   repi (nepolarni)
-o o o o o o   polarne glave
-voda (citosol)
-```
+:::risba skica
+opis: Prerez fosfolipidnega dvosloja. Zgoraj je voda, pod njo vrsta polarnih glav (krogci), iz vsake glave segata navzdol dva nepolarna repa. Spodnja plast je zrcalna: repi segajo navzgor iz spodnje vrste polarnih glav, pod katero je voda (citosol). Repi obeh plasti se stikajo v sredini.
+območje: 0; -1,5 .. 11; 5,5
+črta: 0,88; 3,7 -> 0,88; 2,1 | siva
+črta: 1,12; 3,7 -> 1,12; 2,1 | siva
+krog: 1; 4 | 0,3 | modra polno
+črta: 0,88; 0,3 -> 0,88; 1,9 | siva
+črta: 1,12; 0,3 -> 1,12; 1,9 | siva
+krog: 1; 0 | 0,3 | modra polno
+črta: 1,88; 3,7 -> 1,88; 2,1 | siva
+črta: 2,12; 3,7 -> 2,12; 2,1 | siva
+krog: 2; 4 | 0,3 | modra polno
+črta: 1,88; 0,3 -> 1,88; 1,9 | siva
+črta: 2,12; 0,3 -> 2,12; 1,9 | siva
+krog: 2; 0 | 0,3 | modra polno
+črta: 2,88; 3,7 -> 2,88; 2,1 | siva
+črta: 3,12; 3,7 -> 3,12; 2,1 | siva
+krog: 3; 4 | 0,3 | modra polno
+črta: 2,88; 0,3 -> 2,88; 1,9 | siva
+črta: 3,12; 0,3 -> 3,12; 1,9 | siva
+krog: 3; 0 | 0,3 | modra polno
+črta: 3,88; 3,7 -> 3,88; 2,1 | siva
+črta: 4,12; 3,7 -> 4,12; 2,1 | siva
+krog: 4; 4 | 0,3 | modra polno
+črta: 3,88; 0,3 -> 3,88; 1,9 | siva
+črta: 4,12; 0,3 -> 4,12; 1,9 | siva
+krog: 4; 0 | 0,3 | modra polno
+črta: 4,88; 3,7 -> 4,88; 2,1 | siva
+črta: 5,12; 3,7 -> 5,12; 2,1 | siva
+krog: 5; 4 | 0,3 | modra polno
+črta: 4,88; 0,3 -> 4,88; 1,9 | siva
+črta: 5,12; 0,3 -> 5,12; 1,9 | siva
+krog: 5; 0 | 0,3 | modra polno
+črta: 5,88; 3,7 -> 5,88; 2,1 | siva
+črta: 6,12; 3,7 -> 6,12; 2,1 | siva
+krog: 6; 4 | 0,3 | modra polno
+črta: 5,88; 0,3 -> 5,88; 1,9 | siva
+črta: 6,12; 0,3 -> 6,12; 1,9 | siva
+krog: 6; 0 | 0,3 | modra polno
+napis: 3,5; 5 | voda
+napis: 3,5; -1 | voda (citosol)
+napis: 7; 4 | polarne glave | desno
+napis: 7; 2,9 | repi (nepolarni) | desno
+napis: 7; 1,1 | repi (nepolarni) | desno
+napis: 7; 0 | polarne glave | desno
+:::
 
 Repi se skrijejo pred vodo v notranjost, glave so obrnjene proti vodi na obeh straneh. Tako je nastanek dvosloja energijsko ugoden (hidrofobni učinek, kot pri zvijanju proteinov). V dvosloj so vgrajeni proteini, holesterol in glikolipidi. Membrana prepušča majhne nepolarne molekule ($\text{O}_2$, $\text{CO}_2$), ione pa ne.
 

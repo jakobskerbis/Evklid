@@ -19,15 +19,32 @@ Ko izbiraš jezik za nalogo (krmiljenje merilne naprave, obdelavo meritev, bazo 
 
 **Lestvica jezikov.** Najprej slika. Spodaj je procesor, više je vse bližje človeku:
 
-```
- 5. gen. Prolog   pravila, logika
- 4. gen. SQL      KAJ želim
- 3. gen. C, Java  KAKO, berljivo
- 2. gen. ADD 13   zbirni jezik
- 1. gen. 00101101 strojni jezik
- --------------------------------
-          PROCESOR
-```
+:::risba skica
+opis: Lestvica iz petih plasti nad procesorjem, od spodaj navzgor. 1. generacija: 00101101, strojni jezik. 2. generacija: ADD 13, zbirni jezik. 3. generacija: C, Java, KAKO, berljivo. 4. generacija: SQL, KAJ želim. 5. generacija: Prolog, pravila, logika. Čisto spodaj je PROCESOR.
+območje: 0; 0 .. 30; 12
+pravokotnik: 0; 0 .. 30; 2 | siva
+napis: 15; 1 | PROCESOR | sredina | debelo
+pravokotnik: 0; 2 .. 30; 12
+črta: 0; 4 -> 30; 4
+črta: 0; 6 -> 30; 6
+črta: 0; 8 -> 30; 8
+črta: 0; 10 -> 30; 10
+napis: 0,6; 11 | 5. gen. | desno
+napis: 7; 11 | Prolog | desno
+napis: 16; 11 | pravila, logika | desno
+napis: 0,6; 9 | 4. gen. | desno
+napis: 7; 9 | SQL | desno
+napis: 16; 9 | KAJ želim | desno
+napis: 0,6; 7 | 3. gen. | desno
+napis: 7; 7 | C, Java | desno
+napis: 16; 7 | KAKO, berljivo | desno
+napis: 0,6; 5 | 2. gen. | desno
+napis: 7; 5 | ADD 13 | desno
+napis: 16; 5 | zbirni jezik | desno
+napis: 0,6; 3 | 1. gen. | desno
+napis: 7; 3 | 00101101 | desno
+napis: 16; 3 | strojni jezik | desno
+:::
 
 Vsaka stopnja skrije podrobnosti spodnje. Ena vrstica na višji stopnji pomeni veliko vrstic na nižji. Lestvico bomo zdaj prehodili od spodaj navzgor na istem drobnem računu.
 
@@ -46,7 +63,7 @@ Ukazi se izvajajo po vrsti od naslova $0$, razen ko skok določi drugače. Progr
 
 **1. Strojni jezik (1. generacija).** **Definicija.** Strojni jezik je množica ukazov, ki jih procesor izvaja neposredno, zapisanih kot dvojiška števila. Vsaka družina procesorjev (x86 v prenosnikih, ARM v telefonih) ima svoj nabor ukazov, angl. *instruction set*. Program, ki iz celic $13$ in $14$ sešteje dolžini dveh palic in shrani vsoto v celico $12$, je v strojnem jeziku:
 
-```
+```text
 0001 1101
 0010 1110
 0100 1100
@@ -59,7 +76,7 @@ Z dvojiškim zapisom iz prejšnje lekcije ga beremo: `0001` je LOAD, `1101` je $
 
 **2. Zbirni jezik (2. generacija).** **Definicija.** Zbirni jezik (angl. *assembly*) je strojni jezik, zapisan s kratkimi besednimi oznakami ukazov (**mnemoniki**: LOAD, ADD) in z imeni namesto številk. Isti program:
 
-```
+```text
 LOAD 13   ; ACC = palica 1
 ADD 14    ; ACC = ACC + palica 2
 STORE 12  ; vsota v celico 12
@@ -72,7 +89,7 @@ Program, ki zbirni zapis prevede v strojno kodo, je **zbirnik** (angl. *assemble
 
 **3. Višji jeziki (3. generacija).** **Definicija.** Višji programski jezik je neodvisen od procesorja in uporablja zapise, blizu matematiki in naravnemu jeziku: spremenljivke z imeni, izraze, pogoje, zanke, funkcije. Isti račun v C ali Pythonu je ena vrstica:
 
-```
+```python
 dolzina = palica1 + palica2
 ```
 
@@ -95,7 +112,7 @@ Višje jezike delimo še po **slogu** (paradigmi): **proceduralni** (zaporedje u
 
 **4. Jeziki četrte generacije.** **Definicija.** Jeziki 4. generacije (4GL) so namenjeni določenemu področju in so **deklarativni**: opišeš, *kaj* želiš, sistem sam izbere *kako*. Najbolj znan je SQL za podatkovne baze:
 
-```
+```sql
 SELECT ime FROM materiali
 WHERE meja_tecenja > 300
 ORDER BY cena;
@@ -180,7 +197,7 @@ Zanka: dokler $n \ne 0$, prištej $m$ k $S$ in zmanjšaj $n$ za $1$. Kode: JZ `0
 
 1. (a) Načrt: na začetku zanke preverimo $n$; če je $0$, skočimo na konec. Sicer zmanjšamo $n$ in prištejemo $m$ k $S$, nato skočimo na začetek.
 2. Program (naslov: ukaz):
-```
+```text
 0: LOAD 12   ; ACC = n
 1: JZ 8      ; n = 0 -> konec
 2: SUB 15    ; n - 1
@@ -256,7 +273,7 @@ Pri preizkusu materialov hranimo meji tečenja dveh jekel: $a = 235\,\mathrm{MPa
 
 1. (a) Ideja: izračunamo $a - b$; če je negativno, je večji $b$, sicer $a$. Uporabimo JN (koda `0111`).
 2. Program:
-```
+```text
 0: LOAD 12   ; ACC = a
 1: SUB 13    ; ACC = a - b
 2: JN 6      ; a < b -> naslov 6

@@ -690,7 +690,7 @@ export function integral(el, { mode = "doloceni" } = {}) {
       segmented({ options: [["levo", "levo"], ["desno", "desno"], ["sredina", "sredina"], ["trapez", "trapezi"]], value: rule, onChange: (v) => ((rule = v), draw()) }),
     );
   else ctl.push(slider({ label: "C", min: -3, max: 3, value: C, onInput: (v) => ((C = v), draw()) }));
-  layout(el, { stage: mode === "doloceni" ? [svg, sa, sb] : [svg], controls: ctl, out, tryText: mode === "doloceni" ? "Pri katerem pravilu je napaka najmanjša pri istem številu delov?" : "Zakaj ima vsaka funkcija neskončno primitivnih funkcij?" });
+  layout(el, { stage: mode === "doloceni" ? [svg, sa, sb] : [svg], controls: ctl, out, tryText: mode === "doloceni" ? "Pri katerem pravilu je napaka najmanjša pri istem številu delov?" : { razmisli: "Zakaj ima vsaka funkcija neskončno primitivnih funkcij?" } });
   draw();
 }
 

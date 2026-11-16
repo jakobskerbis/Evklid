@@ -140,7 +140,7 @@ $s = \dfrac{4 \cdot 100}{2} = 200\,\text{m}$. Preverba s povprečno hitrostjo: h
 
 ## Pogoste napake
 
-- **»Pospešek $3\,\mathrm{m/s^2}$ pomeni hitrost $3\,\mathrm{m/s}$.«** Hitrost ($\mathrm{m/s}$) pove, kako hitro se telo giblje, pospešek ($\mathrm{m/s^2}$) pa, za koliko se hitrost spremeni v vsaki sekundi. Letalo, ki leti enakomerno s $250\,\mathrm{m/s}$, ima pospešek $0$. Pri vsaki količini preveri enoto.
+- **»Pospešek $3\,\mathrm{m/s^2}$ pomeni hitrost $3\,\mathrm{m/s}$.«** Hitrost ($\mathrm{m/s}$) pove, kako hitro se telo giblje, pospešek ($\mathrm{m/s^2}$) pa, za koliko se hitrost spremeni v vsaki sekundi. Letalo, ki leti enakomerno z $250\,\mathrm{m/s}$, ima pospešek $0$. Pri vsaki količini preveri enoto.
 - **Pozabljeno deljenje z $2$ pri poti.** Kdor računa $s = a \cdot t^2$, vzame pravokotnik pod grafom $v(t)$ namesto trikotnika. Pot je zato dvakrat prevelika. Pravilno: $s = \dfrac{a \cdot t^2}{2}$.
 - **Kvadriran cel produkt.** V formuli za pot se kvadrira samo čas: $a \cdot t^2$, ne $(a \cdot t)^2$. Pri $a = 2\,\mathrm{m/s^2}$ in $t = 3\,\text{s}$ je $a \cdot t^2 = 18$, $(a \cdot t)^2$ pa $36$.
 - **»Dvakrat več časa, dvakrat daljša pot.«** To velja pri enakomernem gibanju. Pri pospešenem gibanju je telo v drugi polovici časa hitrejše, zato pot raste s kvadratom časa: dvakrat več časa, štirikrat daljša pot.

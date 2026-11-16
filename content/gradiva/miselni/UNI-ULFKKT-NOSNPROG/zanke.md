@@ -4,7 +4,7 @@ stanje: osnutek
 ---
 - Sledilna tabela
   - stanje spremenljivk po vsakem obhodu
-  - žogica: 11 odbojev nad 1 cm
+  - žogica: 11. odboj je prvi pod 1 cm
 - Zanka while
   - pogoj pred vsakim obhodom
   - mera napredka, sicer neskončna zanka

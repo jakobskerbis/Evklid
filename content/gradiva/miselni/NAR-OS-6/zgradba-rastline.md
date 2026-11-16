@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Štirje organi
+  - korenina, steblo, list, cvet
+  - primerjava s hišo: temelj, stebri in cevi, sončne celice
+- Korenina
+  - pritrdi rastlino v tla
+  - vsrkava vodo in rudninske snovi skozi koreninske laske
+  - glavna s stranskimi ali šopaste
+- Steblo
+  - nosi liste in cvetove proti svetlobi
+  - prevaja vodo navzgor, hrano navzdol
+  - napaka: krompir je gomolj, podzemno steblo
+- Letnice
+  - deblo vsako leto dobi eno letnico
+  - $N = \dfrac{r}{d}$, štej od sredine do skorje
+- List
+  - izdeluje hrano s pomočjo svetlobe
+  - listna ploskev, pecelj, listne žile
+  - listne reže: plini noter in ven, izhlapevanje vode
+- Cvet
+  - organ za razmnoževanje
+  - venčni listi privabijo žuželke
+  - iz pestiča nastane plod s semeni

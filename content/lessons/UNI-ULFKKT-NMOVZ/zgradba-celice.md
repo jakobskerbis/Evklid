@@ -17,9 +17,9 @@ Poskusi odgovoriti sam. Rešitev se pokaže sredi razlage, ko boš primerjal nek
 
 ## Razlaga
 
-**Štiri celice v eni tabeli.** Primerjaj črevesno bakterijo *Escherichia coli*, pekovski kvas, celico jeter in celico iz lista. Za vsako je naveden tipičen premer:
+**Štiri celice v eni tabeli.** Primerjaj črevesno bakterijo *Escherichia coli*, pekovski kvas, celico jeter in celico iz lista. Za vsako je navedena tipična velikost:
 
-| Celica | Premer | Jedro z ovojnico | Notranje membrane |
+| Celica | Velikost | Jedro z ovojnico | Notranje membrane |
 |---|---|---|---|
 | *E. coli* | $\approx 1\text{–}2\,\mu\mathrm{m}$ | ne | ne |
 | kvasovka | $\approx 5\text{–}10\,\mu\mathrm{m}$ | da | da |
@@ -71,7 +71,7 @@ Ker bi bilo razmerje $S/V$ nekaj tisočkrat manjše. Skozi membrano ne bi prišl
 
 Jedrna ovojnica, ER, Golgijev aparat, lizosomi in vezikli so povezani v **endomembranski sistem**: beljakovina nastane na zrnatem ER, v mešičku (veziklu) potuje v Golgijev aparat in od tam v membrano, lizosom ali iz celice.
 
-Mitohondriji in kloroplasti so izjema. Imajo dvojno membrano, lastno krožno DNA in ribosome 70S, kot bakterije. Razlaga je **endosimbiontska teorija**: nastali so iz bakterij, ki jih je nekoč pogoltnila večja celica in jih ni prebavila. Dokazi: dvojna membrana, lastna krožna DNA brez histonov (beljakovin, okoli katerih je navita jedrna DNA evkariontov), ribosomi 70S, nastajanje z delitvijo že obstoječih organelov (kot bakterije) in zaporedja njihove DNA, ki so najbolj sorodna bakterijskim (mitohondriji alfa-proteobakterijam, kloroplasti cianobakterijam).
+Mitohondriji in kloroplasti so izjema. Imajo dvojno membrano, lastno krožno DNA in ribosome bakterijskega tipa. V kloroplastih so 70S, v mitohondrijih sesalcev 55S (manj rRNA, več beljakovin), a so po izvoru in občutljivosti za antibiotike še vedno bakterijski. Razlaga je **endosimbiontska teorija**: nastali so iz bakterij, ki jih je nekoč pogoltnila večja celica in jih ni prebavila. Dokazi: dvojna membrana, lastna krožna DNA brez histonov (beljakovin, okoli katerih je navita jedrna DNA evkariontov), ribosomi bakterijskega tipa, nastajanje z delitvijo že obstoječih organelov (kot bakterije) in zaporedja njihove DNA, ki so najbolj sorodna bakterijskim (mitohondriji alfa-proteobakterijam, kloroplasti cianobakterijam).
 
 **Membrana od blizu.** Vse membrane, tako zunanja kot membrane organelov, so zgrajene po istem načrtu. Osnovna molekula je **fosfolipid**: ima polarno »glavico«, ki rada leži v vodi (je **hidrofilna**), in dva dolga nepolarna »repa«, ki se vode izogibata (sta **hidrofobna**). V vodi se fosfolipidi sami uredijo v **dvosloj**: glavice navzven proti vodi na obeh straneh, repi navznoter, skriti pred vodo. Dvosloj je debel okrog $5\,\mathrm{nm}$, z beljakovinami vred $7$ do $10\,\mathrm{nm}$.
 
@@ -112,7 +112,7 @@ za kroglo $\dfrac{S}{V} = \dfrac{3}{r}$
 
 1. Bakterija: $\dfrac{S}{V} = \dfrac{3}{0{,}5\,\mu\mathrm{m}} = 6\,\mu\mathrm{m}^{-1}$.
 2. Evkariontska celica: $\dfrac{S}{V} = \dfrac{3}{10\,\mu\mathrm{m}} = 0{,}3\,\mu\mathrm{m}^{-1}$.
-3. Razmerje: $\dfrac{6}{0{,}3} = 20$, kar je enako razmerju polmerov, ker je $S/V$ obratno sorazmeren z $r$.
+3. Razmerje: $\dfrac{6}{0{,}3} = 20$, kar je enako razmerju polmerov, ker je $S/V$ obratno sorazmerno z $r$.
 4. Odgovor: bakterija ima na enoto prostornine $20$-krat več površine kot evkariontska celica.
 
 ### Primer 3 (težji): koliko membran skriva celica jeter
@@ -173,7 +173,7 @@ $N = \dfrac{300\,000\,\mathrm{nm}}{7{,}5\,\mathrm{nm}} = 40\,000$. Šele štirid
 - Prokarionti (bakterije, arheje): $0{,}5$–$5\,\mu\mathrm{m}$, brez jedra in membranskih organelov, krožna DNA v nukleoidu, plazmidi, ribosomi 70S, pogosto peptidoglikanska stena.
 - Evkarionti: $10$–$100\,\mu\mathrm{m}$, jedro z dvojno ovojnico, membranski organeli, ribosomi 80S, citoskelet.
 - Za kroglo $S/V = 3/r$; večja celica ima na enoto prostornine manj površine, zato potrebuje notranje membrane in predelke.
-- Endomembranski sistem: jedrna ovojnica, ER, Golgijev aparat, lizosomi, vezikli. Mitohondriji in kloroplasti imajo dvojno membrano, lastno DNA in ribosome 70S (endosimbioza).
+- Endomembranski sistem: jedrna ovojnica, ER, Golgijev aparat, lizosomi, vezikli. Mitohondriji in kloroplasti imajo dvojno membrano, lastno DNA in ribosome bakterijskega tipa (kloroplasti 70S, mitohondriji sesalcev 55S; endosimbioza).
 - Membrana: fosfolipidni dvosloj (hidrofilne glavice navzven, hidrofobni repi navznoter) z beljakovinami, model tekočega mozaika, selektivna prepustnost.
 
 ## Za izpit
@@ -239,7 +239,7 @@ Celica z lastno elektrarno si je lahko privoščila večjo velikost in več notr
 ## Drugače: Uporaba v stroki
 
 - **Frakcioniranje celic.** Homogenat jeter centrifugirajo pri vse večjem pospešku: najprej se usedejo jedra (okoli $1000\,g$), nato mitohondriji (okoli $10\,000$–$20\,000\,g$), pri okoli $100\,000\,g$ pa koščki ER (mikrosomi). Tako ločijo organele za biokemijske meritve.
-- **Antibiotiki.** Tetraciklini, aminoglikozidi in makrolidi zavirajo ribosome 70S, penicilini sintezo peptidoglikanske stene. Človeške celice nimajo celične stene, njihovi citoplazemski ribosomi pa so 80S; ker imajo mitohondriji ribosome 70S, so pri velikih odmerkih prizadeti tudi ti.
+- **Antibiotiki.** Tetraciklini, aminoglikozidi in makrolidi zavirajo ribosome 70S, penicilini sintezo peptidoglikanske stene. Človeške celice nimajo celične stene, njihovi citoplazemski ribosomi pa so 80S; ker so mitohondrijski ribosomi bakterijskega tipa, so pri velikih odmerkih prizadeti tudi ti (npr. aminoglikozidi lahko okvarijo sluh).
 - **Liposomi.** Fosfolipidi v vodi sami tvorijo zaprte dvoslojne mešičke. V farmaciji vanje zapirajo zdravila, npr. citostatik doksorubicin, da manj škodi zdravim tkivom.
 
 ## Preveri se
@@ -275,12 +275,12 @@ Celica z lastno elektrarno si je lahko privoščila večjo velikost in več notr
 ? Primerjaj mitohondrij in bakterijo *E. coli*. Kaj imata skupnega?
 - Oba imata lastno jedro.
 ~ Ne bakterija ne mitohondrij nimata jedra; DNA je v obeh krožna in leži prosto.
-+ Krožno DNA in ribosome 70S.
++ Krožno DNA in ribosome bakterijskega tipa.
 - Oba sta obdana z enojno membrano.
 ~ Mitohondrij ima dvojno membrano; to je tudi ena od sledi, da je nastal z vključitvijo bakterije v drugo celico.
 - Oba lahko živita samostojno zunaj celice.
 ~ Mitohondrij je večino genov predal jedru, zato zunaj celice ne preživi.
-> Krožna DNA in ribosomi 70S sta glavna dokaza endosimbiontske teorije: mitohondriji so potomci bakterij.
+> Krožna DNA in ribosomi bakterijskega tipa sta glavna dokaza endosimbiontske teorije: mitohondriji so potomci bakterij. Pri sesalcih so mitohondrijski ribosomi sicer 55S (manj rRNA, več beljakovin), a po izvoru bakterijski.
 
 ? Zdravnik predpiše antibiotik, ki se veže na ribosome 70S in ustavi sintezo beljakovin. Zakaj ubije bakterije, človeških celic pa večinoma ne?
 - Ker človeške celice nimajo ribosomov.
@@ -290,7 +290,7 @@ Celica z lastno elektrarno si je lahko privoščila večjo velikost in več notr
 + Ker so ribosomi v citoplazmi človeških celic 80S in se nanje antibiotik ne veže dobro.
 - Ker antibiotik ne more skozi nobeno membrano.
 ~ Če ne bi mogel skozi membrano, ne bi dosegel niti bakterijskih ribosomov.
-> Razlika 70S/80S je tarča mnogih antibiotikov. Mitohondriji imajo ribosome 70S, zato so pri velikih odmerkih lahko prizadeti tudi oni.
+> Razlika 70S/80S je tarča mnogih antibiotikov. Mitohondrijski ribosomi so bakterijskega tipa (pri sesalcih 55S), zato so pri velikih odmerkih lahko prizadeti tudi oni.
 
 :::simboli
 S | površina celice | S = 4\pi r^2 | µm^2 | za kroglo

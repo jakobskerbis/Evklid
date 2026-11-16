@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Biološki altruizem
+  - izvajalec izgubi potomce, prejemnik pridobi
+  - štejejo posledice, ne namen
+  - napaka: »za dobro vrste«
+- Koeficient sorodnosti
+  - $r = \sum \left(\tfrac{1}{2}\right)^{L}$ po poteh rodovnika
+  - sorojenca $0{,}5$, polsorojenca $0{,}25$, bratranca $0{,}125$
+  - pazi: $r$ ni delež skupnih genov
+- Sorodstvena selekcija
+  - celokupna uspešnost = neposredna + posredna
+  - prepoznavanje: skupno gnezdo, vonj, oglašanje
+- Hamiltonovo pravilo
+  - $rB > C$, torej $B > \dfrac{C}{r}$
+  - $B$ in $C$ v isti valuti
+  - polsestra: $0{,}25 \cdot 3 = 0{,}75 < 1$
+- Vzajemni altruizem
+  - nesorodniki, usluga se vrne
+  - vampirji delijo kri, pomnijo goljufe
+- Evsocialnost
+  - skupna skrb, prekrivanje generacij, delitev razmnoževanja
+  - kožekrilci, termiti, goli peskar
+- Haplodiploidija
+  - sestra $0{,}75$, brat $0{,}25$, hči $0{,}5$
+  - $k$ očetov: $\bar r = 0{,}25 + \dfrac{0{,}5}{k}$
+  - sama evsocialnosti ne razloži

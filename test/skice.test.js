@@ -181,6 +181,27 @@ test("linearna funkcija: k = tan α, ničla x₀ = −n/k", async () => {
   assert.equal(linearna(0, 0).vsakX, true);
 });
 
+test("linearna funkcija: premica je izrisana pri vsakem k od −100 do 50 in vsakem n (tudi strma, k = 3 pri n = −1,8)", async () => {
+  const { linearna, potPremice } = await import("../public/skice/linearna.js");
+  const { fnPath } = await import("../public/sim/kit.js");
+  const A = { x0: -5, x1: 5, y0: -3.94, y1: 3.94, X: (x) => 150 + 28.4 * x, Y: (y) => 120 - 28.4 * y };
+  const ks = [-100, -50, -10, -3, -2.5, -1, 0, 0.5, 1.94, 2.36, 2.44, 3, 10, 50];
+  for (const k of ks)
+    for (let n = -3; n <= 3; n += 0.5) {
+      const d = potPremice(linearna(k, n).f, A);
+      const m = d.match(/^M(-?[\d.]+),(-?[\d.]+)L(-?[\d.]+),(-?[\d.]+)$/);
+      assert.ok(m, `k=${k} n=${n}: ${d}`);
+      // Od levega do desnega roba okna, skozi točko N(0; n) (ta je vedno v oknu, okvir obreže preostanek).
+      const [x1, y1, x2, y2] = m.slice(1).map(Number);
+      assert.equal(x1, Number(A.X(-5).toFixed(1)));
+      assert.equal(x2, Number(A.X(5).toFixed(1)));
+      const yN = y1 + ((y2 - y1) * (A.X(0) - x1)) / (x2 - x1);
+      assert.ok(Math.abs(yN - A.Y(n)) < 0.1, `k=${k} n=${n}: premica ne gre skozi N`);
+    }
+  // Redko vzorčenje (n = 2, tudi vrtenina) ne sme zaradi »preskoka« izgubiti črte (k·10 > 1,5 · razpon pri k > 2,36).
+  for (const k of [2.44, 3]) assert.ok(fnPath((x) => k * x - 1.8, A, { n: 2 }).includes("L"), `fnPath k=${k}`);
+});
+
 test("točke: razdalja, razpolovišče, ploščina in orientacija", async () => {
   const { tocke } = await import("../public/skice/tocke.js");
   const q = tocke([0, 0], [3, 4], [0, 2]);

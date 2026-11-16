@@ -161,7 +161,8 @@ test("a folded formula keeps the original MathML; the chat scrolls to the bottom
   assert.equal((js.match(/const n = zamenjaj\(k, html\);\n\s*ohraniMathml\(k, n\);/g) || []).length, 2);
   assert.match(js, /export function prilagodiZdaj\(\) \{\n\s*if \(mo\) noveFormule\(mo\.takeRecords\(\)\);/);
   const app = pub("app.js");
-  assert.match(app, /bubble\.innerHTML = chatRich\(streamSafe\(shown\)\)[^\n]*\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
+  // D5 (#684): izris med tokom gre prek predpomnilnika blokov (izrisBlokov), končni prek chatRich; vrstni red ostane.
+  assert.match(app, /bubble\.innerHTML = \(koncno \? chatRich\(shown\) : izrisBlokov\(streamSafe\(shown\)\)\)[^\n]*\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
   assert.match(app, /box\.appendChild\(el\);\n\s*prilagodiZdaj\(\);\n\s*box\.scrollTop = box\.scrollHeight;/);
   // kemijska enačba: znak na začetku nadaljevanja ostane zunaj \mathrm (sicer predznak brez razmika)
   const { zlozTex } = await import("../public/sirina.js");
@@ -193,4 +194,11 @@ test("a list without brackets folds after top-level commas, a chemical chain bef
   assert.equal(zlozTex("\\mathrm{CH(CH_2{-}CH_2{-}CH_2{-}CH_3)}", 3, 6), null);
   // Naboj iona (^{-}) ni vez: »\mathrm{OH^}« bi se ne izrisal.
   assert.doesNotMatch(zlozTex("\\mathrm{C_6H_{11}Br + OH^{-} \\xrightarrow{H_2O} C_6H_{11}OH + Br^{-}}", 3, 8), /\^\}/);
+});
+
+// j 2026-11-14: v odzivu »Pravilno! …« (odstavek z display: inline) je bila vsaka formula drsna in pomanjšana, čeprav je
+// bilo prostora dovolj: vrstični element nima clientWidth, zato je račun od prostora odštel ves odstavek.
+test("an inline paragraph (quiz feedback) measures the space of its block, not its own text", () => {
+  assert.match(pub("sirina.js"), /if \(cs\.display === "inline" && el\.parentElement && el\.parentElement !== document\.body\) return prostor\(el\.parentElement\);/);
+  assert.match(pub("textbook.css"), /\.tb-checks \.tb-why p \{ display: inline; \}/);
 });

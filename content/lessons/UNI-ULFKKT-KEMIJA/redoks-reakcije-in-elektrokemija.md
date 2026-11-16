@@ -151,7 +151,7 @@ Metoda polreakcij (O z $\mathrm{H_2O}$, H z $\mathrm{H^+}$, naboj z $\mathrm{e^-
 
 **Rešitev:**
 
-1. Oksidacija: $\mathrm{Fe^{2+} \to Fe^{3+} + e^-}$ (oksidacijsko število železa naraste z $+2$ na $+3$, odda en elektron).
+1. Oksidacija: $\mathrm{Fe^{2+} \to Fe^{3+} + e^-}$ (oksidacijsko število železa naraste s $+2$ na $+3$, odda en elektron).
 2. Redukcija: $\mathrm{MnO_4^- \to Mn^{2+}}$. Kisik uredimo s $4\,\mathrm{H_2O}$ na desni, vodik z $8\,\mathrm{H^+}$ na levi: $\mathrm{MnO_4^- + 8\,H^+ \to Mn^{2+} + 4\,H_2O}$. Naboj levo $+7$, desno $+2$, zato dodamo $5\,\mathrm{e^-}$ na levo: $\mathrm{MnO_4^- + 8\,H^+ + 5\,e^- \to Mn^{2+} + 4\,H_2O}$.
 3. Oksidacijo pomnožimo s $5$, da je oddanih elektronov toliko kot sprejetih, in seštejemo: $\mathrm{MnO_4^- + 8\,H^+ + 5\,Fe^{2+} \to Mn^{2+} + 5\,Fe^{3+} + 4\,H_2O}$.
 4. Preizkus naboja: levo $-1 + 8 + 10 = +17$, desno $+2 + 15 = +17$. Atomi: Mn $1$, Fe $5$, O $4$, H $8$ na obeh straneh.
@@ -265,19 +265,35 @@ a) Iz $\Delta_\mathrm{r}G = \Delta_\mathrm{r}G^\circ + RT\ln Q$ izpelji Nernstov
 
 Daniellov člen:
 
-```
-         e-  ---->  ---->  ---->  e-
-        +------------( V )------------+
-        |                             |
-     [ Zn ] (-)                    (+) [ Cu ]
-     anoda                          katoda
-   ~~~~~~~~~~~~    solni most    ~~~~~~~~~~~~
-   |  Zn2+    |=================|   Cu2+    |
-   |  SO4 2-  |  K+ -->  <-- NO3-|  SO4 2-  |
-   +----------+                 +-----------+
-   Zn -> Zn2+ + 2e-             Cu2+ + 2e- -> Cu
-   (cink se raztaplja)          (baker se izloča)
-```
+:::risba skica
+opis: Daniellov člen. Levo je čaša z raztopino cinkovega sulfata in cinkovo elektrodo: to je anoda, negativni pol, kjer poteka Zn → Zn²⁺ + 2e⁻ in se cink raztaplja. Desno je čaša z raztopino bakrovega sulfata in bakreno elektrodo: to je katoda, pozitivni pol, kjer poteka Cu²⁺ + 2e⁻ → Cu in se baker izloča. Elektrodi zgoraj povezuje žica z voltmetrom; elektroni tečejo po njej od cinka k bakru. Čaši povezuje solni most, v katerem gredo ioni NO₃⁻ proti anodi, ioni K⁺ pa proti katodi.
+območje: 0; 0 .. 16; 13,5
+pravokotnik: 1; 2,5 .. 7; 5,1 | modra
+pravokotnik: 9; 2,5 .. 15; 5,1 | modra
+črta: 1; 5,7 -> 1; 2,5 -> 7; 2,5 -> 7; 5,7
+črta: 9; 5,7 -> 9; 2,5 -> 15; 2,5 -> 15; 5,7
+pravokotnik: 2,2; 3,7 .. 3,2; 9 | siva polno
+pravokotnik: 12,8; 3,7 .. 13,8; 9 | oranžna polno
+črta: 2,7; 9 -> 2,7; 11 -> 13,3; 11 -> 13,3; 9
+krog: 8; 11 | 0,8 | ozadje
+napis: 8; 11 | V | sredina
+puščica: 3,6; 12 -> 6,4; 12 | e⁻ | nad
+puščica: 9,6; 12 -> 12,4; 12 | e⁻ | nad
+napis: 3,5; 10,1 | Zn (−) | desno
+napis: 3,5; 9,2 | anoda | desno
+napis: 12,5; 10,1 | Cu (+) | levo
+napis: 12,5; 9,2 | katoda | levo
+črta: 6; 4,3 -> 6; 7,6 -> 10; 7,6 -> 10; 4,3 | siva debelo
+napis: 8; 8,2 | solni most | sredina
+puščica: 7,8; 6,9 -> 6,3; 6,9 | NO₃⁻ | pod
+puščica: 8,2; 6,9 -> 9,7; 6,9 | K⁺ | pod
+napis: 3,9; 3,1 | Zn²⁺, SO₄²⁻ | sredina
+napis: 12,1; 3,1 | Cu²⁺, SO₄²⁻ | sredina
+napis: 4; 1,6 | Zn → Zn²⁺ + 2e⁻ | sredina
+napis: 12; 1,6 | Cu²⁺ + 2e⁻ → Cu | sredina
+napis: 4; 0,6 | cink se raztaplja | sredina
+napis: 12; 0,6 | baker se izloča | sredina
+:::
 
 Elektroni tečejo po žici od anode k katodi, ioni v solnem mostu pa tako, da nadomestijo naboj: kationi proti katodi, anioni proti anodi.
 

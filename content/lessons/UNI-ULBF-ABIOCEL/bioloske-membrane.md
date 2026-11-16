@@ -15,17 +15,92 @@ Naslednjih petdeset let so se biologi prepirali, kje so v tej dvoplasti beljakov
 
 Začnimo s prerezom membrane, kot bi ga videli v elektronskem mikroskopu pri zelo veliki povečavi. Skica ni v merilu:
 
-```
-     zunaj celice
-     Y       Y   (oligosaharidi)
- o o o o o|###|o o o o o o
- | | | | ||###|| | | | | |
- | | | | ||###|| | | | | |
- o o o o o|###|o o o o o o
-     citosol
-```
+:::risba skica
+opis: Prerez membrane, ni v merilu. Zgoraj je zunanjost celice, spodaj citosol. Membrano sestavljata dve plasti fosfolipidov: krogci so polarne glave, obrnjene navzven k vodi na obeh straneh, po dve črtici iz vsake glave sta nepolarna repa, obrnjena v sredino dvosloja. V sredini je pravokotnik, integralna beljakovina, ki prečka vso membrano. Na zunanji strani štrlita iz enega lipida in iz beljakovine razvejani verigi sladkorjev, oligosaharida.
+območje: 0; 0 .. 32; 21
+pravokotnik: 13; 4,5 .. 19; 15,5 | oranžna polno
+črta: 1,25; 13,45 -> 1,25; 10,3 | siva
+črta: 1,25; 6,55 -> 1,25; 9,7 | siva
+črta: 1,75; 13,45 -> 1,75; 10,3 | siva
+črta: 1,75; 6,55 -> 1,75; 9,7 | siva
+krog: 1,5; 14 | 0,6 | modra polno
+krog: 1,5; 6 | 0,6 | modra polno
+črta: 3,25; 13,45 -> 3,25; 10,3 | siva
+črta: 3,25; 6,55 -> 3,25; 9,7 | siva
+črta: 3,75; 13,45 -> 3,75; 10,3 | siva
+črta: 3,75; 6,55 -> 3,75; 9,7 | siva
+krog: 3,5; 14 | 0,6 | modra polno
+krog: 3,5; 6 | 0,6 | modra polno
+črta: 5,25; 13,45 -> 5,25; 10,3 | siva
+črta: 5,25; 6,55 -> 5,25; 9,7 | siva
+črta: 5,75; 13,45 -> 5,75; 10,3 | siva
+črta: 5,75; 6,55 -> 5,75; 9,7 | siva
+krog: 5,5; 14 | 0,6 | modra polno
+krog: 5,5; 6 | 0,6 | modra polno
+črta: 7,25; 13,45 -> 7,25; 10,3 | siva
+črta: 7,25; 6,55 -> 7,25; 9,7 | siva
+črta: 7,75; 13,45 -> 7,75; 10,3 | siva
+črta: 7,75; 6,55 -> 7,75; 9,7 | siva
+krog: 7,5; 14 | 0,6 | modra polno
+krog: 7,5; 6 | 0,6 | modra polno
+črta: 9,25; 13,45 -> 9,25; 10,3 | siva
+črta: 9,25; 6,55 -> 9,25; 9,7 | siva
+črta: 9,75; 13,45 -> 9,75; 10,3 | siva
+črta: 9,75; 6,55 -> 9,75; 9,7 | siva
+krog: 9,5; 14 | 0,6 | modra polno
+krog: 9,5; 6 | 0,6 | modra polno
+črta: 11,25; 13,45 -> 11,25; 10,3 | siva
+črta: 11,25; 6,55 -> 11,25; 9,7 | siva
+črta: 11,75; 13,45 -> 11,75; 10,3 | siva
+črta: 11,75; 6,55 -> 11,75; 9,7 | siva
+krog: 11,5; 14 | 0,6 | modra polno
+krog: 11,5; 6 | 0,6 | modra polno
+črta: 20,25; 13,45 -> 20,25; 10,3 | siva
+črta: 20,25; 6,55 -> 20,25; 9,7 | siva
+črta: 20,75; 13,45 -> 20,75; 10,3 | siva
+črta: 20,75; 6,55 -> 20,75; 9,7 | siva
+krog: 20,5; 14 | 0,6 | modra polno
+krog: 20,5; 6 | 0,6 | modra polno
+črta: 22,25; 13,45 -> 22,25; 10,3 | siva
+črta: 22,25; 6,55 -> 22,25; 9,7 | siva
+črta: 22,75; 13,45 -> 22,75; 10,3 | siva
+črta: 22,75; 6,55 -> 22,75; 9,7 | siva
+krog: 22,5; 14 | 0,6 | modra polno
+krog: 22,5; 6 | 0,6 | modra polno
+črta: 24,25; 13,45 -> 24,25; 10,3 | siva
+črta: 24,25; 6,55 -> 24,25; 9,7 | siva
+črta: 24,75; 13,45 -> 24,75; 10,3 | siva
+črta: 24,75; 6,55 -> 24,75; 9,7 | siva
+krog: 24,5; 14 | 0,6 | modra polno
+krog: 24,5; 6 | 0,6 | modra polno
+črta: 26,25; 13,45 -> 26,25; 10,3 | siva
+črta: 26,25; 6,55 -> 26,25; 9,7 | siva
+črta: 26,75; 13,45 -> 26,75; 10,3 | siva
+črta: 26,75; 6,55 -> 26,75; 9,7 | siva
+krog: 26,5; 14 | 0,6 | modra polno
+krog: 26,5; 6 | 0,6 | modra polno
+črta: 28,25; 13,45 -> 28,25; 10,3 | siva
+črta: 28,25; 6,55 -> 28,25; 9,7 | siva
+črta: 28,75; 13,45 -> 28,75; 10,3 | siva
+črta: 28,75; 6,55 -> 28,75; 9,7 | siva
+krog: 28,5; 14 | 0,6 | modra polno
+krog: 28,5; 6 | 0,6 | modra polno
+črta: 30,25; 13,45 -> 30,25; 10,3 | siva
+črta: 30,25; 6,55 -> 30,25; 9,7 | siva
+črta: 30,75; 13,45 -> 30,75; 10,3 | siva
+črta: 30,75; 6,55 -> 30,75; 9,7 | siva
+krog: 30,5; 14 | 0,6 | modra polno
+krog: 30,5; 6 | 0,6 | modra polno
+črta: 4,7; 17 -> 5,5; 16 -> 6,3; 17 | zelena debelo
+črta: 5,5; 14,6 -> 5,5; 16 | zelena debelo
+črta: 15,2; 17,9 -> 16; 16,9 -> 16,8; 17,9 | zelena debelo
+črta: 16; 15,5 -> 16; 16,9 | zelena debelo
+napis: 17,6; 17,2 | oligosaharidi | desno
+napis: 16; 20 | zunaj celice
+napis: 16; 2 | citosol
+:::
 
-Oznake: `o` so polarne glave fosfolipidov, `|` njihovi nepolarni repi, `###` integralna beljakovina, ki prečka vso membrano, `Y` verige sladkorjev na zunanji strani.
+Oznake: krogci so polarne glave fosfolipidov, črtice njihovi nepolarni repi, pravokotnik integralna beljakovina, ki prečka vso membrano, vilice verige sladkorjev na zunanji strani.
 
 Vsak **fosfolipid** je **amfipatična** molekula: ima polarno, hidrofilno glavo (fosfat in npr. holin) in dva nepolarna, hidrofobna repa iz maščobnih kislin. V vodi se taki lipidi sami uredijo tako, da so repi skriti pred vodo, glave pa obrnjene k njej. Nastane **lipidni dvosloj**, debel okoli $5\,\mathrm{nm}$. Pri tem ne nastanejo kovalentne vezi med lipidi, repi se privlačijo le s šibkimi van der Waalsovimi silami. Dvosloj drži skupaj **hidrofobni učinek**: voda okoli izpostavljenih repov bi bila bolj urejena, zato skupek poveča entropijo vode in je ugodnejši.
 
@@ -132,7 +207,7 @@ $m = \gamma V_\mathrm{r}$; $c = \dfrac{\gamma}{M}$; $c_\mathrm{osm} = i\,c$
 1. Masa: $m = 9\,\mathrm{g/L} \cdot 0{,}5\,\mathrm{L} = 4{,}5\,\mathrm{g}$.
 2. Množinska koncentracija: $c = \dfrac{9}{58{,}44} \approx 0{,}154\,\mathrm{mol/L}$.
 3. NaCl v vodi razpade na $\mathrm{Na^+}$ in $\mathrm{Cl^-}$, zato $i = 2$: $c_\mathrm{osm} = 2 \cdot 0{,}154 = 0{,}308\,\mathrm{Osm/L}$.
-4. Odgovor: zatehtaš $4{,}5\,\mathrm{g}$ NaCl. Osmolarnost je okoli $308\,\mathrm{mOsm/L}$, kar je blizu $300\,\mathrm{mOsm/L}$ citosola. Ioni se v resnici med seboj nekoliko privlačijo, zato je izmerjena vrednost še bližja: okoli $286\,\mathrm{mOsm/L}$.
+4. Odgovor: zatehtaš $4{,}5\,\mathrm{g}$ NaCl. Osmolarnost je okoli $308\,\mathrm{mOsm/L}$, kar je blizu $300\,\mathrm{mOsm/L}$ citosola. Ioni se v resnici med seboj nekoliko privlačijo, zato je izmerjena vrednost nekoliko nižja: okoli $286\,\mathrm{mOsm/L}$.
 
 ### Primer 2: eritrocit v destilirani vodi
 
@@ -170,7 +245,7 @@ $V = b + (V_0 - b)\,\dfrac{c_0}{c}$; krogla: $r = \sqrt{\dfrac{A}{4\pi}}$, $V_\m
 3. Prostornina krogle: $V_\mathrm{k} = \dfrac{4}{3}\pi \cdot 3{,}338^3 \approx 156\,\mathrm{fL}$.
 4. (b) Iz $V_\mathrm{k} = b + (V_0 - b)\dfrac{c_0}{c_\mathrm{k}}$ izrazimo $c_\mathrm{k} = \dfrac{(V_0 - b)\,c_0}{V_\mathrm{k} - b} = \dfrac{54 \cdot 300}{155{,}8 - 36} \approx 135\,\mathrm{mOsm/L}$.
 5. (c) Množinska koncentracija NaCl je polovica osmolarnosti, $0{,}0676\,\mathrm{mol/L}$, zato $\gamma_\mathrm{k} = 0{,}0676 \cdot 58{,}44 \approx 3{,}95\,\mathrm{g/L}$.
-6. Odgovor: v $200\,\mathrm{mOsm/L}$ eritrocit nabrekne na $117\,\mathrm{fL}$; poči pri okoli $135\,\mathrm{mOsm/L}$, kar je okoli $0{,}40\,\%$ NaCl. Res v laboratoriju hemoliza začne pri okoli $0{,}45\,\%$ in je popolna pri okoli $0{,}35\,\%$, ker so posamezni eritrociti različni.
+6. Odgovor: v $200\,\mathrm{mOsm/L}$ eritrocit nabrekne na $117\,\mathrm{fL}$; poči pri okoli $135\,\mathrm{mOsm/L}$, kar je okoli $0{,}40\,\%$ NaCl. Res se v laboratoriju hemoliza začne pri okoli $0{,}45\,\%$ in je popolna pri okoli $0{,}35\,\%$, ker so posamezni eritrociti različni.
 
 ### Primer 4: zdaj ti
 

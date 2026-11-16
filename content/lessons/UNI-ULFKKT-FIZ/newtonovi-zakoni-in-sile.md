@@ -199,7 +199,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Ovinek avtoceste s polmerom $80\,\mathrm{m}$ je nagnjen za $15^\circ$ proti središču. Koeficient lepenja med gumami in cesto je $0{,}60$, $g = 9{,}81\,\mathrm{m/s^2}$. (a) Pri kateri hitrosti avto pelje skozi ovinek brez pomoči lepenja? (b) Izpelji izraz za največjo hitrost brez zdrsa in jo izračunaj. (c) Utemelji, ali lahko avto v ovinku stoji, ne da bi zdrsnil navzdol.
+Ovinek ceste na dirkališču s polmerom $80\,\mathrm{m}$ je nagnjen za $15^\circ$ proti središču. Koeficient lepenja med gumami in cesto je $0{,}60$, $g = 9{,}81\,\mathrm{m/s^2}$. (a) Pri kateri hitrosti avto pelje skozi ovinek brez pomoči lepenja? (b) Izpelji izraz za največjo hitrost brez zdrsa in jo izračunaj. (c) Utemelji, ali lahko avto v ovinku stoji, ne da bi zdrsnil navzdol.
 
 **Rešitev:**
 
@@ -231,18 +231,28 @@ Natančno navedi Newtonov gravitacijski zakon s pogoji in iz njega izpelji hitro
 
 Diagram sil za klado na klancu (Primer 2):
 
-```
-                 F_N
-                  ^
-                   \        F_tr (navzgor po klancu)
-                    \     /
-                     [klada]
-                    /  |
-      smer gibanja v   |
-                       v  F_g = mg
-   _________________________
-   \  alfa
-```
+:::risba skica
+opis: Klanec z naklonom α = 30° se spušča proti desni, na njem je klada. Iz središča klade so narisane tri sile v merilu: teža F g = mg = 49 N navpično navzdol, normalna sila F N = 42,5 N pravokotno na klanec navzgor in trenje F tr = 8,5 N vzdolž klanca navzgor. Črtkano sta narisani komponenti teže: mg sin α = 24,5 N vzdolž klanca navzdol in mg cos α = 42,5 N pravokotno v klanec. Puščica nad klancem kaže smer gibanja po klancu navzdol.
+območje: -0,5; -0,6 .. 13,5; 7,6
+lik: 0; 6,93 -> 0; 0 -> 12; 0 | ozadje
+črta: 0; 6,93 -> 12; 0 | debelo
+črta: 0; 0 -> 12; 0
+lik: 5,39; 3,81 -> 6,61; 3,11 -> 7,31; 4,33 -> 6,09; 5,03 | siva
+puščica: 6,35; 4,07 -> 4,96; 1,67 | | | črtkano siva
+napis: 4,8; 1,7 | mg cos α | levo | siva
+puščica: 6,35; 4,07 -> 7,74; 3,27 | | | črtkano siva
+napis: 7,9; 3,1 | mg sin α | desno | siva
+puščica: 6,35; 4,07 -> 6,35; 0,87 | | | modra
+napis: 6,1; 1 | F_g = mg | levo | modra
+puščica: 6,35; 4,07 -> 7,74; 6,47 | | | zelena
+napis: 7,9; 6,4 | F_N | desno | zelena
+puščica: 6,35; 4,07 -> 5,87; 4,35 | | | rdeča
+napis: 5,3; 5 | F_{tr} | nad levo | rdeča
+puščica: 9,55; 4,42 -> 10,76; 3,72 | | | oranžna
+napis: 10,2; 4,3 | smer gibanja | nad | oranžna
+napis: 10,6; 0,5 | α = 30° | levo
+podnapis: Sile na klado iz Primera 2, narisane v merilu.
+:::
 
 Težo razstavimo na komponento vzdolž klanca $mg\sin\alpha$ (vleče klado navzdol) in komponento pravokotno na klanec $mg\cos\alpha$ (pritiska klado ob podlago). Pravokotno se $F_N$ in $mg\cos\alpha$ izničita; vzdolž klanca se $mg\sin\alpha$ in $F_{tr}$ ne izničita in dasta pospešek.
 
@@ -335,7 +345,7 @@ k_l | koeficient lepenja | | – | telo zdrsne, ko tan α > k_l
 G | gravitacijska konstanta | | N\,m^2/kg^2 | 6,674 · 10⁻¹¹ N m²/kg²
 \vec{G} | gibalna količina | \vec{G} = m\vec{v} | kg\,m/s
 m | masa telesa | | kg
-m_1, m_2 | masi telesa, ki se privlačita | | kg
+m_1, m_2 | masi teles, ki se privlačita | | kg
 M | masa osrednjega telesa (npr. Zemlje) | | kg
 M_Z | masa Zemlje | | kg | 5,972 · 10²⁴ kg
 \vec{a} | vektor pospeška | | m/s^2

@@ -2,7 +2,7 @@
 // simulacija (public/sim/nar.js) in naloge (server/practice/generators/nar.js).
 // Kartica: [besedilo, ključ skupine, razlaga].
 
-// set: { q: vprašanje, cats: [[ključ, napis]], items: [[kartica, ključ, razlaga]], try: premislek }
+// set: { q: vprašanje, cats: [[ključ, napis]], items: [[kartica, ključ, razlaga]], razmisli: vprašanje za razmislek (»Razmisli:«) ali try: naloga v simulaciji (»Preizkusi:«), public/sim/napis-poskusa.js }
 export const SETS = {
   celica: {
     q: "Kje najdemo ta del celice?",
@@ -16,7 +16,7 @@ export const SETS = {
       ["kloroplast", "rastlinska", "V kloroplastih je klorofil, v njih poteka fotosinteza."],
       ["velika vakuola s celičnim sokom", "rastlinska", "Velika osrednja vakuola s pritiskom napenja rastlinsko celico."],
     ],
-    try: "Zakaj živalska celica ne potrebuje kloroplastov? Od kod dobi hrano?",
+    razmisli: "Zakaj živalska celica ne potrebuje kloroplastov? Od kod dobi hrano?",
   },
   locevanje: {
     q: "S katerim postopkom najlaže ločiš to zmes?",
@@ -31,7 +31,7 @@ export const SETS = {
       ["železni opilki in žveplo", "magnet", "Železo privlači magnet, žvepla pa ne."],
       ["moka in rozine", "sito", "Rozine so večje od luknjic sita, moka pade skozi."],
     ],
-    try: "Kako bi ločil zmes peska, soli in vode? Kateri postopek narediš prvi?",
+    razmisli: "Kako bi ločil zmes peska, soli in vode? Kateri postopek narediš prvi?",
   },
   rastlina: {
     q: "Kateri del rastline opravlja to nalogo?",
@@ -47,7 +47,7 @@ export const SETS = {
       ["privablja žuželke z barvo in vonjem", "cvet", "Žuželke pri obisku prenašajo pelod in cvetove oprašijo."],
       ["shranjuje hrano (krompirjev gomolj)", "steb", "Gomolj krompirja je odebeljeno podzemno steblo, ne korenina."],
     ],
-    try: "Zakaj rastlina oveni, če ji odrežeš korenine, čeprav stoji na soncu?",
+    razmisli: "Zakaj rastlina oveni, če ji odrežeš korenine, čeprav stoji na soncu?",
   },
   fotosinteza: {
     q: "Velja to za fotosintezo, za celično dihanje ali za oboje?",
@@ -62,7 +62,7 @@ export const SETS = {
       ["poteka v rastlinskih celicah", "obe", "Rastline fotosintetizirajo in tudi dihajo, podnevi in ponoči."],
       ["poteka v živalskih celicah", "dih", "Živali nimajo kloroplastov, zato samo dihajo."],
     ],
-    try: "Ali rastlina ponoči porablja ali sprošča kisik? Zakaj?",
+    razmisli: "Ali rastlina ponoči porablja ali sprošča kisik? Zakaj?",
   },
   "voda-rastline": {
     q: "Kaj se zgodi z vodo v rastlini?",
@@ -89,7 +89,7 @@ export const SETS = {
       ["iz čebule zraste nova čebula", "nespol", "Čebula je podzemni del rastline z zalogo hrane."],
       ["veter raznaša pelod leske", "spol", "Pri vetrocvetkah prenaša pelod veter."],
     ],
-    try: "Zakaj so rastline, vzgojene iz potaknjencev, med seboj enake, sejanci pa ne?",
+    razmisli: "Zakaj so rastline, vzgojene iz potaknjencev, med seboj enake, sejanci pa ne?",
   },
   rastline: {
     q: "V katero skupino sodi rastlina?",
@@ -104,7 +104,7 @@ export const SETS = {
       ["regrat", "kriti", "Kritosemenke imajo cvetove in plodove."],
       ["pšenica", "kriti", "Trave so kritosemenke z drobnimi cvetovi, ki jih opraši veter."],
     ],
-    try: "Kaj imajo semenke, česar mahovi in praprotnice nimajo? Zakaj jim to pomaga na suhem?",
+    razmisli: "Kaj imajo semenke, česar mahovi in praprotnice nimajo? Zakaj jim to pomaga na suhem?",
   },
   kraljestva: {
     q: "V katero skupino živih bitij sodi?",
@@ -119,7 +119,7 @@ export const SETS = {
       ["mah", "rast", "Rastline imajo klorofil in si hrano naredijo same."],
       ["lišaj", "glive", "Lišaj je sožitje glive in alge (ali cianobakterije); glavni del je gliva."],
     ],
-    try: "Zakaj glive niso rastline, čeprav ne hodijo naokrog?",
+    razmisli: "Zakaj glive niso rastline, čeprav ne hodijo naokrog?",
   },
   "prilagoditve-rastlin": {
     q: "Na kakšno okolje je rastlina s to lastnostjo prilagojena?",
@@ -133,7 +133,7 @@ export const SETS = {
       ["nizka, blazinasta rast tik ob tleh", "mraz", "Pri tleh je manj vetra, sneg rastlino varuje pred mrazom."],
       ["iglice z voščeno prevleko", "mraz", "Iglice pozimi izgubijo malo vode, ki je v zmrznjenih tleh ni mogoče dobiti."],
     ],
-    try: "Zakaj listavci jeseni odvržejo liste?",
+    razmisli: "Zakaj listavci jeseni odvržejo liste?",
   },
   spremembe: {
     q: "Je to fizikalna ali kemijska sprememba?",
@@ -148,7 +148,7 @@ export const SETS = {
       ["kisanje mleka", "kem", "Bakterije spremenijo mlečni sladkor v mlečno kislino."],
       ["izparevanje vode iz luže", "fiz", "Voda preide v vodno paro, a ostane voda."],
     ],
-    try: "Po čem prepoznaš, da je nastala nova snov? Naštej tri znake.",
+    razmisli: "Po čem prepoznaš, da je nastala nova snov? Naštej tri znake.",
   },
   "organski-sistemi": {
     q: "V kateri organski sistem sodi organ?",
@@ -163,7 +163,7 @@ export const SETS = {
       ["ledvice", "izl", "Ledvice iz krvi odstranijo odpadne snovi in nastaja seč."],
       ["hrbtenjača", "ziv", "Hrbtenjača povezuje možgane z drugimi deli telesa."],
     ],
-    try: "Kako sodelujeta dihala in krvožilje, da kisik pride do mišice v nogi?",
+    razmisli: "Kako sodelujeta dihala in krvožilje, da kisik pride do mišice v nogi?",
   },
   prehrana: {
     q: "Kako se ta žival prehranjuje?",
@@ -178,7 +178,7 @@ export const SETS = {
       ["kragulj", "mes", "Ujede imajo močne kremplje in kljun za trganje mesa."],
       ["govedo", "rast", "Govedo je prežvekovalec z večdelnim želodcem za prebavo trave."],
     ],
-    try: "Po čem na lobanji spoznaš, ali je bila žival mesojeda ali rastlinojeda?",
+    razmisli: "Po čem na lobanji spoznaš, ali je bila žival mesojeda ali rastlinojeda?",
   },
   dihanje: {
     q: "S čim diha ta žival?",
@@ -192,7 +192,7 @@ export const SETS = {
       ["delfin", "pljuca", "Delfin je sesalec in mora po zrak na površje."],
       ["vrabec", "pljuca", "Ptiči imajo pljuča in zračne mešičke za učinkovito dihanje."],
     ],
-    try: "Zakaj riba na kopnem ne more dihati, čeprav je v zraku več kisika kot v vodi?",
+    razmisli: "Zakaj riba na kopnem ne more dihati, čeprav je v zraku več kisika kot v vodi?",
   },
   gibanje: {
     q: "Kakšno ogrodje (oporo) ima ta žival?",
@@ -206,7 +206,7 @@ export const SETS = {
       ["krap", "notr", "Ribe imajo notranje okostje; plavajo z gibanjem trupa in plavuti."],
       ["deževnik", "brez", "Deževnik se premika s krčenjem obročastih in vzdolžnih mišic."],
     ],
-    try: "Zakaj se rak med rastjo levi, mačka pa ne?",
+    razmisli: "Zakaj se rak med rastjo levi, mačka pa ne?",
   },
   cutila: {
     q: "Katero čutilo zazna ta dražljaj?",
@@ -220,7 +220,7 @@ export const SETS = {
       ["vroče in hladno", "koza", "V koži so čutnice za toploto in mraz."],
       ["dotik in pritisk", "koza", "Najgosteje so čutnice za dotik v blazinicah prstov."],
     ],
-    try: "Zakaj hrana ob prehladu skoraj nima okusa?",
+    razmisli: "Zakaj hrana ob prehladu skoraj nima okusa?",
   },
   razvoj: {
     q: "Kakšen je razvoj te živali?",
@@ -234,7 +234,7 @@ export const SETS = {
       ["kokoš", "brez", "Iz jajca se izleže piščanec, ki je podoben odrasli kokoši."],
       ["muha", "popolna", "Iz jajca se izleže ličinka (žerka), nato buba in muha."],
     ],
-    try: "Zakaj je za žival dobro, da ličinka in odrasla žival jesta drugačno hrano?",
+    razmisli: "Zakaj je za žival dobro, da ličinka in odrasla žival jesta drugačno hrano?",
   },
   zivali: {
     q: "V katero skupino sodi žival?",
@@ -250,7 +250,7 @@ export const SETS = {
       ["kit", "ses", "Kit diha s pljuči in mladiča doji."],
       ["želva", "plaz", "Želve so plazilci z oklepom; jajca odlagajo na kopnem."],
     ],
-    try: "Netopir in ptič letita. Po čem ju ločiš v skupine?",
+    razmisli: "Netopir in ptič letita. Po čem ju ločiš v skupine?",
   },
   ekosistem: {
     q: "Je to živi ali neživi dejavnik ekosistema?",
@@ -264,7 +264,7 @@ export const SETS = {
       ["kamnine in prst", "neziv", "Tla dajejo rudninske snovi in oporo rastlinam."],
       ["srnjad, ki objeda mlada drevesa", "ziv", "Živali vplivajo na rast rastlin in na druge organizme."],
     ],
-    try: "Kako sprememba enega neživega dejavnika (npr. suša) vpliva na živa bitja v gozdu?",
+    razmisli: "Kako sprememba enega neživega dejavnika (npr. suša) vpliva na živa bitja v gozdu?",
   },
   veriga: {
     q: "Kakšno vlogo ima v prehranjevalni verigi?",
@@ -278,7 +278,7 @@ export const SETS = {
       ["gliva na odmrlem deblu", "razk", "Glive razkrajajo les in vračajo snovi v tla."],
       ["sinica, ki je gosenice", "por", "Sinica je porabnik, ki je rastlinojede gosenice."],
     ],
-    try: "Kaj bi se zgodilo v gozdu, če bi izginili vsi razkrojevalci?",
+    razmisli: "Kaj bi se zgodilo v gozdu, če bi izginili vsi razkrojevalci?",
   },
   krozenje: {
     q: "Kateremu kroženju pripada ta proces?",
@@ -293,7 +293,7 @@ export const SETS = {
       ["razkroj odmrlih organizmov", "ogljik", "Razkrojevalci pri razgradnji sproščajo CO₂."],
       ["podtalnica, ki teče v reko", "voda", "Voda se po tleh in pod njimi vrača v reke in morje."],
     ],
-    try: "Kako sta kroženji vode in ogljika povezani v enem drevesu?",
+    razmisli: "Kako sta kroženji vode in ogljika povezani v enem drevesu?",
   },
   ekosistemi: {
     q: "Kje bi najverjetneje našel ta organizem?",
@@ -308,7 +308,7 @@ export const SETS = {
       ["morska zvezda", "morje", "Morske zvezde živijo v slani vodi, na dnu."],
       ["pozidonija (morska trava)", "morje", "Travniki pozidonije so pomembno okolje v Jadranu."],
     ],
-    try: "Zakaj travnik, ki ga nehamo kositi, sčasoma zaraste v gozd?",
+    razmisli: "Zakaj travnik, ki ga nehamo kositi, sčasoma zaraste v gozd?",
   },
   clovek: {
     q: "Ali to ravnanje naravi škoduje ali jo varuje?",
@@ -323,7 +323,7 @@ export const SETS = {
       ["vožnja z avtom namesto s kolesom na kratke razdalje", "skodi", "Izpusti onesnažujejo zrak in povečujejo CO₂."],
       ["prinašanje tujerodnih rastlin v naravo", "skodi", "Tujerodne invazivne vrste lahko izpodrinejo domače (npr. japonski dresnik)."],
     ],
-    try: "Kaj lahko v svoji šoli narediš za več biotske raznovrstnosti?",
+    razmisli: "Kaj lahko v svoji šoli narediš za več biotske raznovrstnosti?",
   },
   "zgradba-snovi": {
     q: "Kaj ta pojav pove o delcih snovi?",
@@ -336,7 +336,7 @@ export const SETS = {
       ["plin v brizgi lahko stisnemo", "prostor", "Med delci plina je veliko praznega prostora."],
       ["mokro perilo se hitreje posuši na soncu", "temp", "Toplejši delci vode hitreje uidejo v zrak."],
     ],
-    try: "Zakaj se sladkor v hladnem čaju raztaplja počasneje kot v vročem?",
+    razmisli: "Zakaj se sladkor v hladnem čaju raztaplja počasneje kot v vročem?",
   },
   // ---------------- teme, dodane po primerjavi z učnimi načrti (2026-10-30); nabore uporabljajo tudi naloge (dodatne-un-vrzeli.js)
   carroll: {
@@ -359,7 +359,7 @@ export const SETS = {
       ["16", "sv", "16 je sodo in večje od 10."],
     ],
     hint: "Za vsako število odgovori na dve vprašanji: ali je deljivo z 2 in ali je večje od 10.",
-    try: "Zakaj v Carrollovem diagramu vsako število pade v natanko eno polje? V katero polje sodi 10 in zakaj?",
+    razmisli: "Zakaj v Carrollovem diagramu vsako število pade v natanko eno polje? V katero polje sodi 10 in zakaj?",
   },
   naprave: {
     q: "Za katero napravo velja trditev?",
@@ -380,7 +380,7 @@ export const SETS = {
       ["Para poganja turbino, ta pa generator.", "jedrska", "V jedrski elektrarni toplota iz reaktorja upari vodo; para vrti turbino in generator."],
     ],
     hint: "Pomisli, kaj naprava potrebuje za delovanje: signal s satelita, svetlobo, ki jo seva, svetlobo, ki jo prejme, ali jedrsko gorivo.",
-    try: "Katera od štirih naprav daje električno energijo brez goriva in brez vrtečih se delov? Katera ne bi delovala, če ne bi poznali hitrosti svetlobe?",
+    razmisli: "Katera od štirih naprav daje električno energijo brez goriva in brez vrtečih se delov? Katera ne bi delovala, če ne bi poznali hitrosti svetlobe?",
   },
   oksidi: {
     q: "Kakšen je ta oksid?",
@@ -398,7 +398,7 @@ export const SETS = {
       ["ZnO", "amf", "Cinkov oksid reagira s kislinami in z bazami, zato je amfoteren."],
     ],
     hint: "Oksidi kovin so večinoma bazični, oksidi nekovin kisli. Al in Zn sta izjemi na meji.",
-    try: "Kako se značaj oksidov spreminja v 3. periodi od Na₂O prek Al₂O₃ do SO₃? Zakaj?",
+    razmisli: "Kako se značaj oksidov spreminja v 3. periodi od Na₂O prek Al₂O₃ do SO₃? Zakaj?",
   },
   halogeni: {
     q: "Ali reakcija poteče?",
@@ -417,7 +417,7 @@ export const SETS = {
       ["2 Na + Cl₂ →", "da", "Natrij in klor burno reagirata v natrijev klorid (halogenid)."],
     ],
     hint: "Reaktivnejši halogen (višje v 17. skupini) izpodrine manj reaktivnega iz njegove soli. Alkalijske kovine reagirajo z vodo in kisikom.",
-    try: "Zakaj klor izpodrine brom iz raztopine kalijevega bromida, jod pa broma ne? Kako se reaktivnost spreminja po 17. skupini navzdol?",
+    razmisli: "Zakaj klor izpodrine brom iz raztopine kalijevega bromida, jod pa broma ne? Kako se reaktivnost spreminja po 17. skupini navzdol?",
   },
   biogeni: {
     q: "Kateri biogeni element je tu bistven?",
@@ -437,7 +437,7 @@ export const SETS = {
       ["aminokislini cistein in metionin", "S", "Ti dve aminokislini vsebujeta žveplo."],
     ],
     hint: "Spomni se, iz katerih skupin so zgrajene molekule: amino skupina (N), fosfatna skupina (P), skupina –SH (S); kovinski ioni imajo posebne naloge.",
-    try: "Zakaj potrebujejo rastline dušikova gnojila, čeprav je v zraku 78 % dušika?",
+    razmisli: "Zakaj potrebujejo rastline dušikova gnojila, čeprav je v zraku 78 % dušika?",
   },
   dusikove: {
     q: "V katero skupino sodi spojina?",
@@ -457,7 +457,7 @@ export const SETS = {
       ["C₂H₅OH (etanol)", "drugo", "Alkohol brez dušika."],
     ],
     hint: "Poišči dušik: je vezan na karbonilno skupino C=O (amid), le na ogljikovodikov ostanek (amin) ali je v molekuli tudi skupina –COOH (aminokislina)?",
-    try: "Zakaj vodna raztopina metanamina obarva univerzalni indikator modro, raztopina etanamida pa ne?",
+    razmisli: "Zakaj vodna raztopina metanamina obarva univerzalni indikator modro, raztopina etanamida pa ne?",
   },
 };
 
@@ -475,7 +475,7 @@ Object.assign(SETS, {
       ["vsak dan ob isti uri zapišeš, kakšno je vreme", "opaz", "Sistematično opazovanje: vedno enako in sproti zapisano."],
       ["sumiš, da se sladkor v topli vodi raztopi hitreje", "nap", "To je domneva; preverimo jo s poskusom s toplo in hladno vodo."],
     ],
-    try: "Zakaj mora pri poskusu ostati vse enako razen ene stvari?",
+    razmisli: "Zakaj mora pri poskusu ostati vse enako razen ene stvari?",
     hint: "Ali samo gledaš, odčitaš število z enoto, nekaj predvidevaš ali načrtno nekaj spremeniš?",
   },
   agregatna: {
@@ -491,7 +491,7 @@ Object.assign(SETS, {
       ["vroča čokolada se na krožniku strdi", "strj", "Ko se ohladi, preide iz tekočega v trdno stanje."],
       ["voda v loncu vre", "izpar", "Vrenje je izparevanje v vsej tekočini pri vrelišču."],
     ],
-    try: "Zakaj se pozimi orosijo okna od znotraj, ne od zunaj?",
+    razmisli: "Zakaj se pozimi orosijo okna od znotraj, ne od zunaj?",
     hint: "Iz katerega stanja v katero preide snov? Ali jo segrevamo ali ohlajamo?",
   },
   "snovi-zmesi": {
@@ -507,7 +507,7 @@ Object.assign(SETS, {
       ["olje in voda", "hetero", "Olje plava na vodi v ločeni plasti."],
       ["zlat prstan iz čistega zlata (24 karatov)", "cista", "Čisto zlato je ena sama snov, element."],
     ],
-    try: "Ali je mleko homogena zmes? Kaj vidiš pod mikroskopom?",
+    razmisli: "Ali je mleko homogena zmes? Kaj vidiš pod mikroskopom?",
     hint: "Ali je v njem ena sama snov? Če je več snovi: ali jih lahko ločeno vidiš?",
   },
   energija: {
@@ -523,7 +523,7 @@ Object.assign(SETS, {
       ["rastlina raste na soncu", "sev", "S fotosintezo rastlina energijo svetlobe shrani v hrani (kemijska energija)."],
       ["kolesar se brez poganjanja spušča po klancu", "leg", "Potencialna energija na vrhu se pretvarja v gibalno."],
     ],
-    try: "Sledi energiji od Sonca do tvojega teka: skozi katere oblike gre?",
+    razmisli: "Sledi energiji od Sonca do tvojega teka: skozi katere oblike gre?",
     hint: "Kaj je vir: svetloba, hrana ali gorivo (kemijska), vtičnica (električna), gibanje ali višina?",
   },
   toplota: {
@@ -537,7 +537,7 @@ Object.assign(SETS, {
       ["voda v loncu na štedilniku", "prej", "Plošča je toplejša od vode in ji predaja toploto."],
       ["topla jed, ki jo zaviješ v alu folijo", "odd", "Še vedno oddaja toploto, a počasneje, ker folija zmanjša sevanje."],
     ],
-    try: "Ali pulover greje? Ali le zmanjša oddajanje toplote telesa?",
+    razmisli: "Ali pulover greje? Ali le zmanjša oddajanje toplote telesa?",
     hint: "Toplota teče vedno s toplejšega telesa na hladnejše. Katero od obeh je toplejše?",
   },
   elementi: {
@@ -553,7 +553,7 @@ Object.assign(SETS, {
       ["morska voda", "zm", "Zmes vode in raztopljenih soli."],
       ["aluminij (Al)", "el", "Kovina, sestavljena iz ene vrste atomov."],
     ],
-    try: "Po čem se spojina razlikuje od zmesi istih snovi? Ali jo lahko ločiš s filtriranjem?",
+    razmisli: "Po čem se spojina razlikuje od zmesi istih snovi? Ali jo lahko ločiš s filtriranjem?",
     hint: "Ena vrsta atomov je element. Več vrst atomov, trdno povezanih v stalnem razmerju, je spojina. Več snovi skupaj je zmes.",
   },
 });

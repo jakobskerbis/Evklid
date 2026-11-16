@@ -187,7 +187,7 @@ V vseh primerih se vprašaš isto: kaj so predali, koliko jih je in koliko je pr
 ~ Dve drevesi sta res zagotovljeni, a načelo zagotavlja več. Predalov je $200\,001$, dreves pa skoraj petkrat toliko.
 + $5$
 - $50$
-~ Število dreves si delil s $20\,000$ namesto z $200\,001$ (številom predalov).
+~ Število dreves si delil z $20\,000$ namesto z $200\,001$ (številom predalov).
 - Nič, ker so vsa drevesa različna.
 ~ Drevesa so različna, njihovo število listov pa je lahko enako. Predalov (števil listov) je manj kot dreves.
 > Predali so možna števila listov od $0$ do $200\,000$, to je $200\,001$ predalov. Ker je $200\,001 \cdot 4 = 800\,004$ manj kot milijon, je v nekem predalu vsaj $5$ dreves.
@@ -220,5 +220,5 @@ V vseh primerih se vprašaš isto: kaj so predali, koliko jih je in koliko je pr
 
 :::simboli
 n | število predalov | | |
-k | največje število predmetov v predalu | | | pri več kot k · n predmetih ima nek predal vsaj k + 1
+k | največje število predmetov v predalu | | | pri več kot k · n predmetih ima neki predal vsaj k + 1
 :::

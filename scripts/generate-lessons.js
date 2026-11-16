@@ -148,4 +148,4 @@ for await (const result of await client.messages.batches.results(batch.id)) {
 const pr = PRICES[model] || PRICES["claude-opus-5-5"];
 const cost = (spent.in * pr.in + spent.out * pr.out + spent.cacheRead * pr.cacheRead + spent.cacheWrite * pr.cacheWrite) / 1e6 / 2;
 console.log(`Poraba: ${spent.in} vh., ${spent.out} izh., predpomnilnik ${spent.cacheRead}/${spent.cacheWrite} žetonov ≈ ${cost.toFixed(3)} $ (Batch, -50 %).`);
-console.log(`Shranjenih ${ok} lekcij v ${LESSONS_DIR}. Preglej jih (npm test preveri obliko), nato v glavi nastavi "stanje: pregledano".`);
+console.log(`Shranjenih ${ok} lekcij v ${LESSONS_DIR}. Preglej jih (npm test preveri obliko); ko račune preverita program in AI, nastavi "stanje: preverjeno", ko lekcijo pregleda učitelj, "stanje: pregledano" in "pregledal: <ime>".`);

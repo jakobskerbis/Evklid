@@ -7,7 +7,7 @@ avtor: AI
 
 V trgovini kupiš tri enake zvezke in en svinčnik za 1,20 €. Plačaš 7,20 €. Koliko stane en zvezek? Verjetno boš to izračunal kar na pamet: od 7,20 € odšteješ svinčnik in ostanek razdeliš na tri dele, torej zvezek stane 2 €. Ko pa so podatki bolj prepleteni (starosti, ki se s časom spreminjajo, stranice, ki so odvisne ena od druge), ugibanje ne gre več.
 
-Linearne enačbe že znaš reševati. V tej lekciji se naučiš drugega, pogosto težjega dela: kako iz besedila **sestaviš** enačbo. To je most med matematiko in resničnim svetom. Inženirji, ekonomisti in fiziki vsak dan prevajajo opise v enačbe.
+Linearne enačbe že znaš reševati. Zdaj se naučiš drugega, pogosto težjega dela: kako iz besedila **sestaviš** enačbo. To je most med matematiko in resničnim svetom. Inženirji, ekonomisti in fiziki vsak dan prevajajo opise v enačbe.
 
 ## Razlaga
 
@@ -207,7 +207,7 @@ Pri pravokotniku iz primera 2 si nariši obe stranici kot trakova. Dolžina je t
 
 Taksi zaračuna 3 € ob vstopu in 1,20 € za vsak prevožen kilometer. Za vožnjo si plačal 15 €. Koliko kilometrov si prevozil?
 
-Razmišljaj kot pri računu v trgovini. Del zneska je stalen (3 €), del pa je odvisen od kilometrov. Če s $x$ označiš število kilometrov, je cena
+Razmišljaj kot pri računu v trgovini. Del zneska je stalen (3 €), del pa je odvisen od kilometrov. Če z $x$ označiš število kilometrov, je cena
 
 $$3 + 1{,}2x = 15$$
 

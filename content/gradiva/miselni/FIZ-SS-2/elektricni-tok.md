@@ -14,7 +14,7 @@ stanje: osnutek
   - napaka: upor raste z napetostjo
 - Ohmov zakon
   - $U = I \cdot R$, torej $I = \dfrac{U}{R}$
-  - navigacija: $\dfrac{12\,\text{V}}{20\,\Omega} = 0{,}6\,\text{A}$
+  - grelec: $\dfrac{12\,\text{V}}{20\,\Omega} = 0{,}6\,\text{A}$
   - napaka: $\dfrac{R}{U}$ namesto $\dfrac{U}{R}$
 - Graf I(U)
   - premica skozi izhodišče

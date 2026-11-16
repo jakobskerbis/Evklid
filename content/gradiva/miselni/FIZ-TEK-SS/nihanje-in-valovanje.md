@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Nihajni čas
+  - $\nu = \dfrac{1}{t_0}$, enota Hz
+  - amplituda ne vpliva na $t_0$
+- Vračajoča sila
+  - $F = -kx$ pomeni harmonično nihanje
+  - senca enakomernega kroženja, $\omega = \dfrac{2\pi}{t_0}$
+- Utež na vzmeti
+  - $t_0 = 2\pi\sqrt{m/k}$
+  - štirikratna masa, dvakratni nihajni čas
+- Nihalo
+  - $t_0 = 2\pi\sqrt{l/g}$, le majhni koti
+  - masa se okrajša
+- Valovanje
+  - $c = \lambda\nu$
+  - delci nihajo na mestu, potuje energija
+- Stoječe valovanje
+  - vozli in hrbti, razmik $\lambda/2$
+  - struna: $\lambda_n = \dfrac{2L}{n}$, $\nu_n = \dfrac{nc}{2L}$
+  - mikrovalovka: pege razmaknjene za $\lambda/2$

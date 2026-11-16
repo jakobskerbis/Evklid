@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tanke rezine
+  - razreži, zapiši prispevek rezine, integriraj
+  - trak $f(x)\,dx$ da $A = \int_a^b f(x)\,dx$ za $f \ge 0$
+- Graf pod osjo
+  - $A = \int_a^b |f(x)|\,dx$, deli v ničlah
+  - $\int_0^{2\pi} \sin x\,dx = 0$, ploščina pa $4$
+  - napaka: »integral enačiš s ploščino«
+- Lik med krivuljama
+  - $A = \int_a^b (f - g)\,dx$, zgornja minus spodnja
+  - meji: reši $f(x) = g(x)$
+  - $y = 2x$ in $y = x^2$: $A = \frac{4}{3}$
+- Vrtenina
+  - $V = \pi \int_a^b f^2\,dx$, rezina je valj
+  - $y = \sqrt{x}$ na $[0, 4]$: $V = 8\pi$
+  - napaka: pozabljen kvadrat
+- Votlo telo
+  - $V = \pi \int_a^b (f^2 - g^2)\,dx$, rezina je obroč
+  - napaka: »$\pi \int (f - g)^2\,dx$«
+- Dolžina loka
+  - $L = \int_a^b \sqrt{1 + f'^2}\,dx$
+  - pod korenom odvod, ne $f$
+  - lok je vsaj tako dolg kot tetiva

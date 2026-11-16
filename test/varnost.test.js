@@ -103,8 +103,9 @@ test("varnostne glave: CSP, HSTS samo prek https, no-store za API", async () => 
     const call = client();
     const home = await call("/");
     const csp = home.headers.get("content-security-policy");
-    for (const d of ["default-src 'self'", "script-src 'self'", "object-src 'none'", "frame-ancestors 'none'", "img-src 'self' data: blob: https:", "connect-src 'self'"]) assert.ok(csp.includes(d), d);
+    for (const d of ["default-src 'self'", "script-src 'self'", "object-src 'none'", "frame-ancestors 'none'", "img-src 'self' data: blob:", "connect-src 'self'"]) assert.ok(csp.includes(d), d);
     assert.ok(!/script-src[^;]*unsafe-inline/.test(csp));
+    assert.ok(!/img-src[^;]*https:/.test(csp), "A3: slike samo lastne, data: in blob:");
     assert.equal(home.headers.get("x-content-type-options"), "nosniff");
     assert.equal(home.headers.get("referrer-policy"), "strict-origin-when-cross-origin");
     assert.equal(home.headers.get("cross-origin-opener-policy"), "same-origin");
@@ -261,7 +262,11 @@ test("roki hrambe: stare fotografije, potekle seje, nepotrjeni računi brez poda
     db.prepare("UPDATE students SET parent_id = ? WHERE id = ?").run(kept, kid.id);
     store.createConversation(kid.id);
     db.prepare("INSERT INTO parent_sessions (token_hash, parent_id, expires_at) VALUES ('t', ?, '2000-01-01T00:00:00.000Z')").run(parent.id);
+    // Predpomnjen odgovor se uporablja 30 dni, nato izbriše (docs/izbris-izvoz.md, najdba 4).
+    db.prepare("INSERT INTO answer_cache (key, text, created_at) VALUES ('star', 'x', datetime('now','-31 days')), ('nov', 'y', datetime('now','-29 days'))").run();
     const out = runRetention(db, { log: {} });
+    assert.equal(out.answerCache, 1);
+    assert.deepEqual(db.prepare("SELECT key FROM answer_cache WHERE key IN ('star','nov')").all().map((r) => r.key), ["nov"]);
     assert.equal(out.images, 1);
     assert.equal(out.unverified, 1);
     assert.ok(out.sessions >= 1);

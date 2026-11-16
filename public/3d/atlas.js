@@ -15,6 +15,7 @@ import { vgrajeno, starsu } from "./vgrajeno.js";
 import { skoziLupino } from "./izbira.js";
 import { ravenProfila, razlaga } from "./raven.js";
 import { barvniNacin, nastaviBarvniNacin, ucnaBarvaTkiva } from "./barve.js";
+import { preparatAtlasa } from "/mikroskop/mapa.js";
 
 export const SLOJI = [
   { id: "koza", ikona: "user", barva: "#e5b79e" },
@@ -118,7 +119,7 @@ export function imeStrukture(row, im, jezik = "sl") {
   return row.stran === "l" || row.stran === "r" ? `${base} (${t(row.stran === "l" ? "a3.left" : "a3.right")})` : base;
 }
 
-export async function odpriAtlas(el, { zapri = null } = {}) {
+export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
   const jezik = currentLang();
   const kakovost = kakovostNaprave();
   const mapa = mapaTelesaNaprave(kakovost); // telo-hd na računalniku, telo na telefonu (modeli.js)
@@ -924,6 +925,13 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     const bVprasaj = gumb("a3-pill a3-mali a3-glavni", `${icon("message-circle")}<span>${t("a3.ask")}</span>`);
     bVprasaj.addEventListener("click", () => vprasaj(r));
     akcije.append(bSkrij, bSamo, bVprasaj);
+    // »Poglej z mikroskopom« (j, 12. 11. 2026): tkivo strukture pod mikroskopom (public/mikroskop/mapa.js).
+    const prep = mikroskop && preparatAtlasa(r);
+    if (prep) {
+      const bMik = gumb("a3-pill a3-mali", `${icon("microscope")}<span>${t("mk.open")}</span>`);
+      bMik.addEventListener("click", () => mikroskop(prep));
+      akcije.append(bMik);
+    }
     kartica.append(akcije);
     kartica.hidden = false;
   }

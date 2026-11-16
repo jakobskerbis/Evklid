@@ -44,6 +44,8 @@ const server = app.listen(port, () => {
     };
     setTimeout(pdfSync, 20_000).unref();
   }
+  // Ciljna meritev natančnosti po objavi ne teče več na strežniku (512 MB meja na Renderju, 16. 11. 2026), ampak v
+  // GitHubu: .github/workflows/meritev-po-objavi.yml.
 });
 
 // Zaustavitev (objava na Render pošlje SIGTERM): novih zahtev ne sprejmemo, klici AI v teku se lahko končajo

@@ -3,6 +3,7 @@
 // Barve jemljemo iz CSS spremenljivk, da delujejo v svetli in temni temi.
 
 import { okrasi, vstavi } from "./materiali.js";
+import { napisPoskusa } from "./napis-poskusa.js";
 
 export const NS = "http://www.w3.org/2000/svg";
 
@@ -219,7 +220,11 @@ export const values = (list) =>
   `<div class="demo-values">${list.map(([label, v]) => `<div class="demo-val"><span>${label}</span><b>${v}</b></div>`).join("")}</div>`;
 export const readout = () => h("div", { class: "demo-readout", "aria-live": "polite" });
 export const stage = (...kids) => h("div", { class: "demo-stage" }, ...kids);
-export const tryIt = (text) => (text ? h("p", { class: "demo-try" }, h("b", {}, "Poskusi: "), text) : null);
+// »Preizkusi: …« (niz) ali »Razmisli: …« ({ razmisli: "…" }); pravilo v napis-poskusa.js.
+export const tryIt = (x) => {
+  const n = napisPoskusa(x);
+  return n ? h("p", { class: "demo-try", "data-vrsta": n.vrsta }, h("b", {}, `${n.napis} `), n.besedilo) : null;
+};
 
 // Animacija, ki se ustavi, ko simulacija ni več na strani.
 // Vrne { play(), pause(), toggle(), running }.
@@ -416,7 +421,7 @@ export function fnPath(f, A, { from = A.x0, to = A.x1, n = 240 } = {}) {
     const x = from + ((to - from) * i) / n;
     const y = f(x);
     const ok = Number.isFinite(y) && y > A.y0 - span * 2 && y < A.y1 + span * 2;
-    if (ok && pen && prevY != null && Math.abs(y - prevY) > span * 1.5) pen = false;
+    if (n >= 20 && ok && pen && prevY != null && Math.abs(y - prevY) > span * 1.5) pen = false; // pri redkem vzorčenju (premica, vrtenina, n = 2) preskok ni nezveznost
     if (ok) d += `${pen ? "L" : "M"}${A.X(x).toFixed(1)},${A.Y(y).toFixed(1)}`;
     pen = ok;
     prevY = ok ? y : null;

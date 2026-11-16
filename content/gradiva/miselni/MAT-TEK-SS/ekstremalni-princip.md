@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kralj turnirja
+  - izberi skupino z največ zmagami
+  - najmanj zmag ne deluje vedno
+- Trije koraki
+  - izberi skrajni objekt
+  - predpostavi, da trditev ne velja
+  - sestavi bolj skrajnega: protislovje
+- Obstoj ekstrema
+  - končna množica ali pozitivna cela števila
+  - napaka: najmanjše pozitivno racionalno število
+- Največja vrednost
+  - zvočnik z glasnostjo $M$: soseda tudi $M$
+  - povprečje sosedov enako $M$ le, če sta oba $M$
+- Najdaljša pot
+  - sosedi krajišča so vsi na poti
+  - stopnja vsaj $d \ge 2$: cikel z vsaj $d + 1$ točkami
+- Neskončni spust
+  - pozitivna cela ne padajo v nedogled
+  - $\sqrt{2} = \frac{p}{q}$ z najmanjšim $p$ vodi v protislovje
+- Spust z ostanki
+  - kvadrat pri deljenju s $3$: ostanek $0$ ali $1$
+  - $x^2 + y^2 = 3z^2$ nima pozitivnih rešitev
+  - napaka: rešitev $0, 0, 0$ ne pada

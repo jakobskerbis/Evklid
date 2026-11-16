@@ -5,12 +5,13 @@
 import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { skoziLupino } from "./izbira.js";
+import { mrezeOvojev, okvirDela as okvirDelaVSvetu } from "./ovoji.js";
 import { t, dodajIzvirnik } from "/i18n.js";
 import SL3D from "/i18n/sl-3d.js";
+import { napisPoskusa } from "../sim/napis-poskusa.js";
 import { icon } from "/icons.js";
 import { ravenProfila, razlaga, imaRavni } from "./raven.js";
 import { SKUPINE, zacetnaIzbira } from "./skupine.js";
-import { najdiOvoje, okvir } from "./ovoji.js";
 dodajIzvirnik(SL3D); // imena skupin delov (a3.grp.*), niso v prvem odprtju aplikacije
 
 const mk = (tag, cls, text) => {
@@ -29,6 +30,44 @@ function pretvori(c, v) {
   if (c.tip === "stikalo") return v === true || /^(1|true|da|on)$/i.test(String(v));
   if (c.tip === "izbira") return (c.moznosti || []).some(([k]) => String(k) === String(v)) ? (c.moznosti.find(([k]) => String(k) === String(v))[0]) : c.vrednost;
   return v;
+}
+
+// Izpis s formulami (nadzor s tex: true): deli med $…$ so formule KaTeX s pravimi ulomki, ostalo je besedilo
+// (j, 12. 11. 2026: »Popravi take formule povsod«; prej V = a³√2/12 v besedilu). Stran /3d (3d.html) KaTeX ne
+// naloži sama: naložimo ga ob prvem takem izpisu in izpise nato osvežimo.
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+// Ločilo tik ob formuli (»(β = 80°«, »= 4,5 cm;«) gre v formulo, da ne ostane samo na začetku ali koncu vrstice.
+export function izpisHtml(v) {
+  const d = String(v).split(/\$([^$]*)\$/);
+  for (let i = 1; i < d.length; i += 2) {
+    const pred = /\($/.exec(d[i - 1]);
+    const za = /^[.,;:)]+/.exec(d[i + 1] ?? "");
+    if (pred) d[i - 1] = d[i - 1].slice(0, -1);
+    if (za) d[i + 1] = d[i + 1].slice(za[0].length);
+    d[i] = `${pred ? "\\text{(}" : ""}${d[i]}${za ? `\\text{${za[0]}}` : ""}`;
+  }
+  // \n: vsaka formula v svoji vrstici
+  return d.map((x, i) => (i % 2 ? globalThis.katex.renderToString(x, { throwOnError: false }) : esc(x).replace(/\n/g, "<br>"))).join("");
+}
+// Brez KaTeX (ni povezave): formula kot berljivo besedilo, (a)/(b) in √(x).
+const brezTex = (v) => {
+  let t = v.replace(/\$/g, "").replace(/\\(?:mathrm|text)\{([^{}]*)\}/g, "$1");
+  for (let p = ""; p !== t; ) (p = t), (t = t.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)").replace(/\\sqrt\{([^{}]*)\}/g, "√($1)"));
+  return t.replace(/\\cdot ?/g, "· ").replace(/\\,/g, " ").replace(/\^2/g, "²").replace(/\^3/g, "³").replace(/\^\\circ/g, "°").replace(/\\(pi|alpha|beta|varphi|sin) ?/g, (m, g) => ({ pi: "π", alpha: "α", beta: "β", varphi: "φ", sin: "sin " })[g]).replace(/[{}]/g, "").replace(/_(\w)/g, "$1");
+};
+let katexObljuba = null;
+function naloziKatex() {
+  if (globalThis.katex) return Promise.resolve();
+  return (katexObljuba ??= new Promise((ok, ne) => {
+    const css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = new URL("../vendor/katex/katex.min.css", import.meta.url).href;
+    const js = document.createElement("script");
+    js.src = new URL("../vendor/katex/katex.min.js", import.meta.url).href;
+    js.onload = ok;
+    js.onerror = ne;
+    document.head.append(css, js);
+  }));
 }
 
 const decimalke = (korak) => {
@@ -84,9 +123,10 @@ export function odpriModel(el, mod, opts = {}) {
     oModelu = mk("section", "k3-o-modelu");
     oModelu.setAttribute("aria-label", t("a3.about"));
     if (info.opis) oModelu.append(mk("p", "k3-o-opis", info.opis));
-    if (info.poskusi) {
+    const np = napisPoskusa(info.poskusi); // »Preizkusi:« ali »Razmisli:« (public/sim/napis-poskusa.js)
+    if (np) {
       const p = mk("p", "k3-o-poskusi");
-      p.append(mk("b", "", `${t("sc.try")} `), mk("bdi", "", info.poskusi)); // bdi: slovensko besedilo v RTL ostane LTR
+      p.append(mk("b", "", `${t(np.kljuc)} `), mk("bdi", "", np.besedilo)); // bdi: slovensko besedilo v RTL ostane LTR
       oModelu.append(p);
     }
     oModelu.hidden = !oModelu.children.length;
@@ -216,6 +256,10 @@ export function odpriModel(el, mod, opts = {}) {
         if (c.emissive) {
           c.emissive = barva.clone();
           c.emissiveIntensity = 0.85;
+        } else if (c.isPointsMaterial) {
+          // točke nimajo emisije: svetlejše in večje, da se izbrani del (npr. glikokaliks, ribosomi) loči
+          c.color = new THREE.Color(1, 1, 1).lerp(barva, 0.35).multiplyScalar(1.8);
+          c.size = x.size * 1.6;
         }
         if (c.userData?.mokro) c.clearcoat = Math.min(c.clearcoat, 0.1); // učna barva brez mokrega laka (ostane > 0: isti program)
         return c;
@@ -316,20 +360,19 @@ export function odpriModel(el, mod, opts = {}) {
   }
 
   // Izbrani del: deli, ki ga res obdajajo (celična stena, membrana, ovojnica ...), postanejo nevidni, da se izbrani
-  // vidi (j, 4. 11.). »Obdaja« = vseh šest žarkov od zunaj (±x, ±y, ±z) proti središču izbranega zadene ploskev tega
-  // dela (tudi skrit pokrov izreza), preden pride do središča; razpršeni deli (ribosomi, silnice, pasovi, vijačnica DNK) tega ne izpolnijo.
-  // Ovoj mora biti tudi večji od izbranega. Skrijemo s plastjo 31, ki je kamera in tap ne vidita; model sam še naprej
+  // vidi (j, 4. 11.); pravilo je v ovoji.js. Skrijemo s plastjo 31, ki je kamera in tap ne vidita; model sam še naprej
   // upravlja `visible`. Samo biologija (celice, virusi, organi): pri fiziki, kemiji in matematiki so »ovoji« (silnice,
   // lupine, telesa) snov učenja.
   const SKRITA_PLAST = 31;
   const skrite = new Map(); // object → izvirna maska plasti
-  const okvirDela = (d, box) => okvir(d, box);
-  // Ovoji in stene okoli izbranega dela ali skupine (public/3d/ovoji.js: najdiOvoje, test 3d-ovoji).
+  const _rc = new THREE.Raycaster();
+  function okvirDela(d, box) { return okvirDelaVSvetu(THREE, d, box); }
   function skrijObdajajoce(d) {
     for (const [o, maska] of skrite) o.layers.mask = maska;
     skrite.clear();
-    if (!d || !model?.deli || (info.predmet || "BIO") !== "BIO" || !model.group) return;
-    for (const o of najdiOvoje(THREE, d, model.deli, model.group)) {
+    if (!d || !model?.deli || !model.group || (info.predmet || "BIO") !== "BIO") return;
+    for (const o of mrezeOvojev(THREE, model.deli, d, { group: model.group, raycaster: _rc })) {
+      if (skrite.has(o)) continue;
       skrite.set(o, o.layers.mask);
       o.layers.set(SKRITA_PLAST);
     }
@@ -381,7 +424,11 @@ export function odpriModel(el, mod, opts = {}) {
   }
 
   // Okno izbranega dela v plošči: barvna pika, ime, latinsko ime, opis, »Poglej pod povečavo«, ×.
+  // kaj kaže okno dela (deli() ga osveži, ko model po ob() zamenja del ali njegovo besedilo, npr. »Podrobnosti za faks«)
+  let prikazan = null;
+  const podpis = (d) => d && [d.ime, d.opis, d.barva, ...(d.meshes || []).map((m) => m?.geometry?.uuid)].join("|");
   function pokaziInfo(d, { izTapa = false, pomakni = false } = {}) {
+    prikazan = d ? { d, p: podpis(d) } : null;
     infoEl.replaceChildren();
     infoEl.hidden = !d;
     el.classList.toggle("k3-ima-info", !!d);
@@ -418,6 +465,16 @@ export function odpriModel(el, mod, opts = {}) {
       b.innerHTML = `${icon("zoom-in")}<span></span>`;
       b.lastChild.textContent = t("a3.magnify");
       b.addEventListener("click", () => opts.povecava(d.povecava));
+      infoEl.append(b);
+    }
+    // »Poglej z mikroskopom« (stran /3d da opts.mikroskop): preparat tkiva tega dela ali modela (public/mikroskop/mapa.js).
+    const prep = opts.mikroskop?.za?.(d.id);
+    if (prep) {
+      const b = mk("button", "k3-pill k3-povecava-gumb");
+      b.type = "button";
+      b.innerHTML = `${icon("microscope")}<span></span>`;
+      b.lastChild.textContent = t("mk.open");
+      b.addEventListener("click", () => opts.mikroskop.odpri(prep));
       infoEl.append(b);
     }
     // Stran /3d: plošča se drsi sama in okno je na njenem vrhu. Tap na model: plošča takoj na vrh (gladko drsenje se je
@@ -566,7 +623,14 @@ export function odpriModel(el, mod, opts = {}) {
     }
     // Brez barvnih krogcev čez model (j, 5. 11.): kaj je klikljivo, pokaže sij delov ob prvem ogledu (namigniDele).
     if (izbran && !najdiDel(izbran)) izberi(null, { leti: false });
-    else if (izbran) skrijObdajajoce(najdiDel(izbran)); // nova faza: drugi ovoji
+    else if (izbran) {
+      const d = najdiDel(izbran);
+      skrijObdajajoce(d); // nova faza: drugi ovoji
+      if (prikazan && (prikazan.d !== d || prikazan.p !== podpis(d))) { // isti id, drug del ali besedilo
+        obarvaj(d);
+        pokaziInfo(d, { pomakni: false });
+      }
+    }
     // nov nabor delov (odprtje, drug pogled, faza): po kadriranju (naslednja sličica) en primerek vsakega dela zasije
     if (!izbran) requestAnimationFrame(() => !unicen && namigniDele());
   }
@@ -630,7 +694,13 @@ export function odpriModel(el, mod, opts = {}) {
   const osveziIzpise = () => {
     for (const [c, out] of izpisi) {
       try {
-        out.textContent = String(c.vrednost?.() ?? "");
+        const v = String(c.vrednost?.() ?? "");
+        if (!c.tex) out.textContent = v;
+        else if (!globalThis.katex) naloziKatex().then(() => !unicen && osveziIzpise(), () => (out.textContent = brezTex(v)));
+        else if (out.dataset.v !== v) {
+          out.innerHTML = izpisHtml(v);
+          out.dataset.v = v;
+        }
       } catch {}
     }
   };
@@ -848,7 +918,7 @@ export function odpriModel(el, mod, opts = {}) {
         lab.append(mk("span", "", c.oznaka), sw);
         nadzorEl.append(lab);
       } else if (c.tip === "izpis") {
-        const line = mk("div", "k3-izpis");
+        const line = mk("div", c.tex ? "k3-izpis k3-izpis-tex" : "k3-izpis");
         const out = mk("output", "");
         out.setAttribute("aria-live", "polite");
         line.append(mk("span", "", c.oznaka), out);
@@ -1065,6 +1135,8 @@ export function odpriModel(el, mod, opts = {}) {
     model = m;
     nalaganje(null);
     el.classList.toggle("k3-organ", model.postavitev === "organ");
+    // Celice (oder: "celica"): temno vijoličen oder kot v ciljnem videzu celic (public/3d/celice-videz.js).
+    el.classList.toggle("k3-celica", model.oder === "celica");
     // Organ: nadzor (npr. stikalo »Prerez«) lebdi na odru levo zgoraj, spodaj ostanejo deli in »Podrobnosti organa«.
     // organ: stikala lebdijo nad odrom; na telefonu (≤ 480 px) so pod odrom, da ne prekrijejo vrha organa
     if (model.postavitev === "organ" && !ozekZaslon.matches) oder.append(nadzorEl);

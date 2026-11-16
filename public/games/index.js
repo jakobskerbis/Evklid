@@ -269,15 +269,23 @@ function renderPortal() {
   if (filter.kind === "kid" && !kidEngines.length) filter.kind = "all";
   const kinds = ENGINES.filter((e) => filter.kind === "all" || e.id === filter.kind || (filter.kind === "kid" && kidEngines.includes(e.id)));
   const match = (c, e) => !q || `${conceptName(c)} ${areaName(c.area)} ${kindName(e)}`.toLowerCase().includes(q);
+  // Predmeti glede na stopnjo (j 2026-11-14): le predmeti z igrami za učenčevo stopnjo (pravilo »Zate«),
+  // gimnazijec npr. ne vidi Spoznavanja okolja. Brez profila vsi; iskanje še vedno najde vse igre.
+  const subjects = ctx.getStudent() ? SUBJECTS.filter((x) => CONCEPTS.some((c) => c.subject === x && forYou(c))) : SUBJECTS;
+  if (!subjects.length) subjects.push(...SUBJECTS);
+  // Skrit shranjen predmet se le prikaže kot drug (filtra ne spreminjamo: prvi prikaz teče še s privzetim letnikom).
+  const hidden = !subjects.includes(filter.subject);
+  const subj = hidden ? (subjects.includes("MAT") ? "MAT" : subjects[0]) : filter.subject;
+  const fArea = hidden && !["you", "all"].includes(filter.area) ? "you" : filter.area;
   // Iskanje gre čez vse predmete, sicer le izbrani predmet.
   // »Zate« brez iger za ta predmet (npr. fakultetni predmet v OŠ) → vsa področja predmeta.
-  const anyForYou = CONCEPTS.some((c) => c.subject === filter.subject && forYou(c));
-  const area = filter.area === "you" && !anyForYou ? "all" : filter.area;
-  const pick = (c) => (q || c.subject === filter.subject) && (area === "you" ? forYou(c) : area === "all" || c.area === area);
+  const anyForYou = CONCEPTS.some((c) => c.subject === subj && forYou(c));
+  const area = fArea === "you" && !anyForYou ? "all" : fArea;
+  const pick = (c) => (q || c.subject === subj) && (area === "you" ? forYou(c) : area === "all" || c.area === area);
   let total = 0;
   let paths = 0;
   // Najprej le seznam iger (brez HTML), nato HTML samo za igre na trenutni strani.
-  const groups = AREAS.filter((a) => q || a[3] === filter.subject).map(([id]) => {
+  const groups = AREAS.filter((a) => q || a[3] === subj).map(([id]) => {
     // Sosednji ploščici se razlikujeta po snovi in po vrsti igre (pisana mreža).
     const cs = CONCEPTS.filter((c) => c.area === id && pick(c));
     const path = [];
@@ -323,10 +331,10 @@ function renderPortal() {
         <label class="gm-search">${icon("search")}<input type="search" value="${esc(filter.q)}" placeholder="${esc(t("games.search"))}" aria-label="${esc(t("games.search"))}"></label>
       </div>
       ${ctx.getStudent() && !q ? dailyCard(daily, { t, lang: ctx.currentLang(), level: curDailyLevel(), suggested: suggestedDaily() }) : ""}
-      ${SUBJECTS.length > 1 ? `<div class="chip-row gm-subjects" role="group" aria-label="${esc(t("games.subjects"))}">${SUBJECTS.map((x) => chip(x, t(`subj.${x}`), filter.subject === x)).join("")}</div>` : ""}
+      ${subjects.length > 1 ? `<div class="chip-row gm-subjects" role="group" aria-label="${esc(t("games.subjects"))}">${subjects.map((x) => chip(x, t(`subj.${x}`), subj === x)).join("")}</div>` : ""}
       <div class="chip-row gm-areas" role="group" aria-label="${esc(t("games.areas"))}">
-        ${chip("you", t("games.forYou"), filter.area === "you")}${chip("all", t("games.all"), filter.area === "all")}
-        ${AREAS.filter((a) => a[3] === filter.subject).map(([id]) => chip(id, areaName(id), filter.area === id)).join("")}
+        ${chip("you", t("games.forYou"), fArea === "you")}${chip("all", t("games.all"), fArea === "all")}
+        ${AREAS.filter((a) => a[3] === subj).map(([id]) => chip(id, areaName(id), fArea === id)).join("")}
       </div>
       <div class="chip-row gm-kinds" role="group" aria-label="${esc(t("games.kinds"))}">
         ${chip("all", t("games.allKinds"), filter.kind === "all")}${kidEngines.length ? chip("kid", `🕹️ ${t("games.kidChip")}`, filter.kind === "kid") : ""}${ENGINES.map((e) => chip(e.id, kindName(e), filter.kind === e.id, isNewDate(e.added))).join("")}
@@ -348,6 +356,7 @@ function renderPortal() {
   root.querySelector(".gm-areas").addEventListener("click", (ev) => {
     const b = ev.target.closest("button[data-val]");
     if (!b) return;
+    filter.subject = subj; // prikazani predmet (skrit shranjeni se ob izbiri področja zamenja s prikazanim)
     filter.area = b.dataset.val;
     page = 0;
     saveFilter();
@@ -855,7 +864,7 @@ function renderShop(msg = "", top = false) {
     f.querySelector("button").disabled = true;
     try {
       await ctx.api(`/api/students/${s.id}/feedback`, { method: "POST", body: JSON.stringify({ kind: "cosmetics", ideas: wish, lang }) });
-      f.outerHTML = `<p class="gm-shop-msg gm-wish-done" role="status" tabindex="-1">${esc(t("games.wishThanks"))}</p>`;
+      f.outerHTML = `<p class="gm-shop-msg gm-wish-done" role="status" tabindex="-1">${esc(t("games.shopWishThanks"))}</p>`;
       root.querySelector(".gm-wish-done")?.focus();
     } catch (err) {
       f.querySelector("button").disabled = false;
