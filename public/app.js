@@ -1716,6 +1716,7 @@ const limitCardCtx = () => ({
   inApp: / EvklidApp\//.test(navigator.userAgent),
   openAccount: () => $("#account-tab").click(),
   openPractice: () => (state.chatFx?.topic?.id ? openTopic(state.chatFx.topic.id) : startSession("daily", { path: state.pathKey })),
+  key: () => `${state.student?.id ?? ""}|${state.conversationId ?? ""}`,
 });
 
 // Obvestilo pod odgovorom: koliko podrobnih razlag je še ostalo (nikoli € ali $). Gumb za dokup samo, ko ga

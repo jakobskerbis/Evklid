@@ -8,7 +8,7 @@ import { plansFor } from "../server/accounts/plans.js";
 
 // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
 globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
-const { limitVariant, limitCardHtml, FREE_LIMIT_CODES } = await import("../public/meja-placilo.js");
+const { limitVariant, limitCardHtml, showLimitCard, planCurrency, FREE_LIMIT_CODES } = await import("../public/meja-placilo.js");
 const { default: SL } = await import("../public/i18n/sl.js");
 
 const prices = { currency: "EUR", plans: plansFor("EUR") };
@@ -132,4 +132,57 @@ test("cena v valuti brez decimalk (XOF) ni 100-krat prenizka", () => {
   const n = Number(v.price.replace(/[^\d]/g, ""));
   const plan = p.plans.find((x) => x.seats === 1 && x.interval === "month");
   assert.equal(n, plan.amount);
+});
+
+test("seznam ne obljublja »bolj premišljenih« razlag (meja.deep)", () => {
+  const html = limitCardHtml(limitVariant({ body: daily("block.hintAdult"), status: status(), prices }), daily("block.hintAdult"));
+  assert.match(html, /Podrobnejše razlage z zmogljivejšim modelom/);
+  assert.doesNotMatch(html, /premišljen/);
+});
+
+test("naročnina (tudi pretekla) v drugi valuti kot cenik: kartica brez cene, gumb ostane", () => {
+  assert.equal(planCurrency("evklid_1_month_inr"), "INR");
+  assert.equal(planCurrency("evklid_ss_month"), "EUR");
+  assert.equal(planCurrency("evklid_2_year"), "EUR");
+  assert.equal(planCurrency("price_1AbCdEf"), null, "neznana oblika ključa");
+  const sub = (plan, status_ = "canceled") => ({ subscription: { status: status_, plan, seats: 1, period_end: null, cancel_at_period_end: false } });
+  for (const plan of ["evklid_1_month_inr", "price_1AbCdEf"]) {
+    const v = limitVariant({ body: daily("block.hintParent"), status: status({ minor: true, ...sub(plan) }), prices, level: "SS" });
+    assert.equal(v.price, "", plan);
+    assert.equal(v.action, "link", "povezava ostane; starš na njej vidi znesek v pravi valuti");
+    assert.doesNotMatch(limitCardHtml(v, daily("block.hintParent")), /meja-price|€/, plan);
+  }
+  // Evrska naročnina (pretekla) in evrski cenik: cena ostane.
+  assert.match(limitVariant({ body: daily("block.hintParent"), status: status({ minor: true, ...sub("evklid_ss_month") }), prices, level: "SS" }).price, /13[,.]99/);
+  // Pretekla evrska naročnina, cenik v drugi valuti (npr. dostop iz tujine): brez cene.
+  const xof = { currency: "XOF", plans: plansFor("XOF") };
+  assert.equal(limitVariant({ body: daily("block.hintAdult"), status: status(sub("evklid_ss_month")), prices: xof }).price, "");
+});
+
+test("kartica se ne vstavi, če se profil ali pogovor zamenja med nalaganjem stanja in cenika", async () => {
+  const el = () => ({ dataset: {}, setAttribute() {}, querySelector: () => null, set innerHTML(_v) {} });
+  const oldCreate = globalThis.document.createElement;
+  globalThis.document.createElement = el;
+  try {
+    let key = "7|12";
+    const added = [];
+    const box = { appendChild: (x) => added.push(x), scrollHeight: 0 };
+    const ctx = {
+      level: "SS",
+      inApp: false,
+      key: () => key,
+      api: async (url) => {
+        key = "7|13"; // učenec je medtem odprl drug pogovor
+        return url.endsWith("status") ? status({ minor: true }) : prices;
+      },
+    };
+    assert.equal(await showLimitCard(box, daily("block.hintParent"), ctx), null);
+    assert.equal(added.length, 0);
+    // Brez zamenjave se kartica vstavi.
+    ctx.api = async (url) => (url.endsWith("status") ? status({ minor: true }) : prices);
+    assert.ok(await showLimitCard(box, daily("block.hintParent"), ctx));
+    assert.equal(added.length, 1);
+  } finally {
+    globalThis.document.createElement = oldCreate;
+  }
 });

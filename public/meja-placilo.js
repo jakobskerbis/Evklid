@@ -25,6 +25,16 @@ const money = (minor, currency) => {
 export const FREE_LIMIT_CODES = new Set(["block.freeDaily", "block.freeMonth", "block.freePool", "block.trialOut"]);
 const OFFER_HINTS = new Set(["block.hintParent", "block.hintAdult"]);
 
+// Valuta naročnine na računu iz ključa paketa (server/accounts/plans.js: regijski paketi končajo z _inr, _ngn …,
+// evrski brez pripone). Neznana oblika ključa → null. Strežnik povezavo za plačilo naredi v valuti obstoječe
+// (tudi pretekle) naročnine (currencyOf), cenik /api/account/prices pa brez računa, zato se lahko razlikujeta.
+export const planCurrency = (key) => {
+  const k = String(key ?? "");
+  const m = /_([a-z]{3})$/.exec(k);
+  if (m) return m[1].toUpperCase();
+  return /^[a-z]+(_[a-z0-9]+)+$/.test(k) ? "EUR" : null;
+};
+
 // Katero različico pokažemo. body: telo odgovora 429 ({ code, hint, params }); status: /api/account/status;
 // prices: /api/account/prices; level: stopnja profila (OS, SS, FAKS); inApp: aplikacija iz trgovine
 // (nakupa mimo trgovine ne ponudimo). Vrne null (ni kartice), ali { kind, price, action }:
@@ -42,7 +52,10 @@ export function limitVariant({ body, status = null, prices = null, level = "OS",
   // Cena enega profila velja samo za račun z enim profilom: paket za 1 profil ima stopnjo prvega profila
   // (server/accounts/index.js planForAccount), pri več profilih pa izbira med paketi ostane v zavihku Račun.
   const single = (status?.children ?? 0) <= 1;
-  const lp = payOn && single ? levelPrices(prices, money) : {};
+  // Naročnina (tudi pretekla) v drugi valuti kot cenik: cene ne pokažemo, ker plačilo ne bi bilo v tej valuti.
+  const subPlan = status?.parent?.subscription?.plan;
+  const sameCurrency = !subPlan || planCurrency(subPlan) === prices?.currency;
+  const lp = payOn && single && sameCurrency ? levelPrices(prices, money) : {};
   const price = lp[level]?.month || "";
   const parentPays = !!status?.parent?.minor || body.hint === "block.hintParent";
   let action = null;
@@ -86,9 +99,11 @@ export function limitCardHtml(v, body) {
 }
 
 // Kartico vstavi v klepet (box = #messages, ki je aria-live) in poveže gumbe. Fokusa ne prevzame.
-// ctx: { api, level, inApp, toast, openAccount, openPractice }.
+// ctx: { api, level, inApp, toast, openAccount, openPractice, key }. key(): profil in pogovor; če se med
+// nalaganjem stanja in cenika spremenita, kartice ne vstavimo (sodila bi v drug pogovor).
 export async function showLimitCard(box, body, ctx) {
   if (!FREE_LIMIT_CODES.has(body?.code)) return null;
+  const key = ctx.key?.();
   const el = document.createElement("div");
   el.className = "msg assistant meja-card";
   el.setAttribute("role", "group");
@@ -99,6 +114,7 @@ export async function showLimitCard(box, body, ctx) {
   if (OFFER_HINTS.has(body.hint) && !ctx.inApp) {
     [status, prices] = await Promise.all([ctx.api("/api/account/status").catch(() => null), ctx.api("/api/account/prices").catch(() => null)]);
   }
+  if (ctx.key && ctx.key() !== key) return null;
   const v = limitVariant({ body, status, prices, level: ctx.level, inApp: ctx.inApp });
   el.dataset.variant = `${v.kind}${v.action ? `-${v.action}` : ""}`;
   el.innerHTML = limitCardHtml(v, body);
