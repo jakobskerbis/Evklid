@@ -17,6 +17,43 @@ async function dobi(pot) {
   return r;
 }
 
+// Stanje strežnika (/healthz/stanje) → { napake, opozorila }. Napaka podre Stražo (GitHub pošlje e-pošto), opozorilo se
+// samo izpiše. Stanja, ki trajajo ves dan (strošek AI nad mejo, neuspel nočni preizkus kopije, neuspela e-pošta),
+// so napaka samo eno uro po dogodku (do 4 zagoni Straže, torej do 4 e-pošte GitHuba), nato samo opozorilo
+// (docs/spremljanje.md). Strežnik sam pošlje skrbniku e-pošto za strošek AI in preizkus kopije.
+export const SVEZE_MS = 60 * 60 * 1000;
+export function presojaStanja(j, now = Date.now()) {
+  const napake = [];
+  const opozorila = [];
+  const sveze = (iso) => !iso || now - Date.parse(iso) < SVEZE_MS;
+  if (!j.razlicica || !j.id) napake.push("manjka različica ali id");
+  if (j.kopije?.napaka) napake.push("varnostna kopija baze javlja napako");
+  // Točka D4: opozorilo, ko je bil pomnilnik v zadnjih 30 minutah nad 85 % meje (Render ob meji proces ubije).
+  const pm = j.pomnilnik;
+  if (pm && pm.najvecDelez > (pm.opozorilo ?? 85))
+    napake.push(`pomnilnik ${pm.najvecDelez} % meje ${pm.mejaMb} MB v zadnjih ${pm.oknoMin ?? 30} min (opozorilo nad ${pm.opozorilo ?? 85} %; zdaj ${pm.mb} MB)`);
+  // 6. korak priprave na pilot: strošek AI, nočni preizkus kopije, e-pošta.
+  if (j.aiStrosek?.nadMejo) {
+    if (sveze(j.aiStrosek.od)) napake.push(`strošek AI danes je nad mejo opozorila (od ${j.aiStrosek.od || "zdaj"}; skrbnik dobi e-pošto z zneskom)`);
+    else opozorila.push("strošek AI danes je nad mejo opozorila (že javljeno)");
+  }
+  const pk = j.preverjanjeKopij;
+  if (pk && pk.ok === false && !pk.prehodna) {
+    if (sveze(pk.ob)) napake.push(`nočni preizkus obnove iz kopije (${pk.datum}) ni uspel`);
+    else opozorila.push(`nočni preizkus obnove iz kopije (${pk.datum}) ni uspel (že javljeno)`);
+  }
+  // E-pošta: zadnje pošiljanje ni uspelo zaradi Resenda ali omrežja (ne zaradi enega napačnega naslova).
+  const po = j.posta;
+  if (po?.nastavljena && po.zadnjaNapaka && (!po.zadnjiUspeh || po.zadnjaNapaka > po.zadnjiUspeh) && /^(omrežje|401|403|429|5\d\d)/.test(po.razlog || "")) {
+    if (sveze(po.zadnjaNapaka)) napake.push(`e-pošta (Resend) ne gre ven: ${po.razlog}`);
+    else opozorila.push(`zadnje pošiljanje e-pošte ni uspelo (${po.razlog})`);
+  }
+  if (j.pdfUcbenika?.napaka) opozorila.push(`PDF učbenika: ${j.pdfUcbenika.napaka} (aplikacija ponudi tiskanje)`);
+  if (j.kopije && !j.kopijeZunaj) opozorila.push("kopija baze zunaj Renderja (R2) ni nastavljena");
+  return { napake, opozorila };
+}
+export const OPOZORILA = [];
+
 // Preizkusi: ime (slovensko, za povzetek), pot in funkcija, ki vrže napako, če vsebina ni pravilna.
 export const PREIZKUSI = [
   { ime: "Zdravje strežnika (/healthz)", pot: "/healthz", preveri: async (r) => { if ((await r.text()).trim() !== "ok") throw new Error("odgovor ni »ok«"); } },
@@ -24,13 +61,9 @@ export const PREIZKUSI = [
     ime: "Stanje strežnika (/healthz/stanje)",
     pot: "/healthz/stanje",
     preveri: async (r) => {
-      const j = await r.json();
-      if (!j.razlicica || !j.id) throw new Error("manjka različica ali id");
-      if (j.kopije?.napaka) throw new Error("varnostna kopija baze javlja napako");
-      // Točka D4: opozorilo, ko je bil pomnilnik v zadnjih 30 minutah nad 85 % meje (Render ob meji proces ubije).
-      const pm = j.pomnilnik;
-      if (pm && pm.najvecDelez > (pm.opozorilo ?? 85))
-        throw new Error(`pomnilnik ${pm.najvecDelez} % meje ${pm.mejaMb} MB v zadnjih ${pm.oknoMin ?? 30} min (opozorilo nad ${pm.opozorilo ?? 85} %; zdaj ${pm.mb} MB)`);
+      const { napake, opozorila } = presojaStanja(await r.json());
+      OPOZORILA.splice(0, OPOZORILA.length, ...opozorila);
+      if (napake.length) throw new Error(napake.join("; "));
     },
   },
   { ime: "Domača stran", pot: "/", preveri: async (r) => { const t = await r.text(); if (!t.includes("<title>" + brand.name) || !t.includes("zagon.js")) throw new Error("manjka naslov ali zagonski skript"); } },
@@ -69,6 +102,7 @@ export async function zazeni(preizkusi = PREIZKUSI, pauzaMs = PAUZA_MS) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   console.log(`Straža: preverjam ${OSNOVA}`);
   const napake = await zazeni();
+  for (const o of OPOZORILA) console.log(`Opozorilo: ${o}`);
   if (!napake.length) {
     console.log(`V redu: vseh ${PREIZKUSI.length} preizkusov uspešnih.`);
   } else {

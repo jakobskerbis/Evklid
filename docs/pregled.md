@@ -111,4 +111,5 @@ public step (teacher pilot, open beta).
   3D atlasa in `/api/config`. Samo GET, brez prijave, računov, AI in pisanja. 20 s na preizkus, ob napaki en
   ponovni poskus čez 30 s. Če preizkus ne uspe, delovni tok pade, GitHub pošlje e-pošto, v dnevniku pa je slovenski
   povzetek. Ročno: Actions > Straža > Run workflow, ali `node scripts/straza.mjs`. Javnih vsebinskih API-jev
-  (lekcije, formule) brez prijave ni, zato so preverjene le statične datoteke in `/api/config`.
+  (lekcije, formule) brez prijave ni, zato so preverjene le statične datoteke in `/api/config`. Kaj v
+  `/healthz/stanje` podre Stražo (strošek AI, preizkus kopije, e-pošta, pomnilnik): `docs/spremljanje.md`.
