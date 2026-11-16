@@ -113,7 +113,7 @@ test("stran /o-evklidu: brez JavaScripta, cene iz cenika, pogosta vprašanja", (
     assert.ok(html.includes(`<td>${eur(c.month)}</td><td>${eur(c.year)}</td>`), `cena ${c.month}`);
   }
   assert.ok(html.includes("9,99 €") && html.includes("99 €"));
-  assert.ok(html.includes("33 jezikov") && html.includes(`${TRIAL_DAYS} dni brezplačno`));
+  assert.ok(html.includes("33 jezikih") && !html.includes("33 jezikov") && html.includes(`${TRIAL_DAYS} dni brezplačno`));
   assert.match(html, /Ni povezan s projekti z imenom »Euclid«/);
   assert.ok(html.includes("Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; izračune in rezultate preveri Evklidov program."));
   assert.ok(html.includes("vidijo samo njegov starš in, če je otrok v razredu, učitelj razreda") && !html.includes("Ime je dobil"));
@@ -177,7 +177,7 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.match(claimNote("x = 5", pre), /CORRECT/);
   // Trditev o preverjanju je omejena na to, kar program res preveri (pregled #555).
   assert.ok(text.includes("Račune v enačbah, odvodih in daljših izračunih preveri program") && !/Račune preveri program|račune in rezultate/i.test(text));
-  assert.ok(text.includes("Pri nekaterih nalogah (na primer tekmovanja, fakulteta) odgovor v plačljivih paketih, do dnevne meje, pregleda še zmogljivejši model."));
+  assert.ok(text.includes("Pri nekaterih nalogah (na primer tekmovanja, fakulteta) v plačljivih paketih odgovor pregleda še zmogljivejši model. Teh pregledov je na dan omejeno število.") && !text.includes("do dnevne meje"));
 
   // Kaj dobite: cene, preizkus, brezplačni paket in jeziki iz kode.
   for (const c of [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina, FAMILY_PRICES.druzina_student]) {
@@ -397,6 +397,11 @@ test("javne strani: kaj doda naročnina, matura, vprašanja staršev, noga podst
   assert.ok(about.includes("Kaj doda naročnina"));
   for (const s of ["od 1. do 9. razreda", "vsi letniki in matura, tudi snov osnovne šole", "2–4 profili, osnovna in srednja šola", "2–4 profili, tudi fakulteta", "Priprava na maturo iz matematike, fizike, kemije in biologije", "Celotno rešitev pokaže le, če jo otrok izrecno zahteva", "novo stopnjo odprto takoj in brez doplačila do konca plačanega obdobja. O novi ceni vas obvestimo 30 dni pred podaljšanjem."])
     assert.ok(about.includes(s), s);
+  // Tri prednosti na vrhu /o-evklidu in strani za starše (Gemini, točka 3); brez poudarka na jezikih in »vajah, ki ne zmanjkajo« (točka 10).
+  const strengths = ["Program preveri račune", "Matura z inštruktorjem", "Varno za otroke", "Ni klepeta z drugimi uporabniki"];
+  for (const s of strengths) assert.ok(about.includes(s) && text(read("starsi.html")).includes(s), s);
+  assert.ok(about.indexOf("Program preveri račune") < about.indexOf("Kaj zna Evklid"));
+  assert.ok(!/ne zmanjkajo|neskončn/i.test(about) && about.includes("Na iPhonu ga odprete v Safariju"));
   // Brez obljub, ki jih koda ne drži: naročnina ni neomejena.
   assert.ok(!/neomejen\w* vprašanj|brez dnevne (meje|zapore)/i.test(about));
   // Za starše: pet vprašanj, vikanje, brez obljube branja na glas ali omejitve časa.
