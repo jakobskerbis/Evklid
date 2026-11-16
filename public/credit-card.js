@@ -11,6 +11,9 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 const money = (cents, currency) =>
   (cents / 100).toLocaleString(locale(), { style: "currency", currency, minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2 });
 
+// Enočrkovni predlog (»z«, »v«, »s«) ostane ob naslednji besedi, da ne visi sam na koncu vrstice.
+const glue = (s) => s.replace(/(^|\s)(\p{L})\s/gu, "$1$2\u00a0");
+
 export async function renderCreditCard(el, { api }) {
   if (!el) return;
   let d;
@@ -24,15 +27,15 @@ export async function renderCreditCard(el, { api }) {
     el.innerHTML = "";
     return;
   }
-  // Velike izbirne ploščice (j 2026-11-15 izjema: samo videz dokupa): glavna vrstica je ocena pogovorov, cena je
-  // ob njej; privzeto je izbran srednji paket. Prave radijske tipke: puščice in Tab delujejo kot v brskalniku.
+  // Izbirne ploščice (j 2026-11-15 izjema: samo videz dokupa): cena je glavni element, ocena pogovorov ob njej
+  // (na telefonu pod njo); privzeto je izbran srednji paket. Prave radijske tipke: puščice in Tab delujejo kot v brskalniku.
   // Razmerja do mesečne meje ne pokažemo: /api/billing/credit vrne samo pogovore paketa, ne meje profila.
   const pick = d.packs.length === 1 ? 0 : 1;
   const packs = d.packs
     .map(
       (p, i) => `<label class="credit-pack"><input type="radio" name="pack" value="${esc(p.id)}" data-price="${esc(money(p.amount, p.currency))}" ${i === pick ? "checked" : ""}>
-        <span class="credit-conv">${esc(t("credit.est", { n: p.conversations }))}</span>
-        <b class="credit-price">${esc(money(p.amount, p.currency))}</b></label>`,
+        <b class="credit-price">${esc(money(p.amount, p.currency))}</b>
+        <span class="credit-conv">${esc(glue(t("credit.est", { n: p.conversations })))}</span></label>`,
     )
     .join("");
   const canPay = d.billing && !d.minor && !d.birth_missing && d.packs.length;
