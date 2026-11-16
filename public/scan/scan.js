@@ -9,6 +9,7 @@ import { solve, analyze, prep, tex as exprTex, parseTask } from "./solvecore.js"
 import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
 import { answerParts } from "./odgovor.js";
+import { plottableFromText } from "../graph/math.js";
 
 let D = null; // { api, getStudent, toast, escapeHtml, askTutor, openGraph }
 const fresh = () => ({
@@ -750,8 +751,24 @@ function fromAi(sol) {
     answer: { tex: sol.answer_tex },
     methods: sol.methods.map((m, i) => ({ id: `ai${i}`, name: m.name, steps: m.steps.map((s) => ({ title: s.title, tex: s.tex, whyText: s.why })) })),
     verified: !!sol.verified,
-    graph: null,
+    graph: graphOfProblem(sol.problem_tex, S.text),
   };
+}
+
+// Naloge, ki jih reši AI: če je v besedilu funkcija ali krivulja (f(x) = …, y = …), jo narišemo kot v kalkulatorju.
+// Besedilo (\text{kot, pod katerim …}) in vejice med deli odstranimo, da ostane samo zapis za risanje.
+function graphOfProblem(tex, text) {
+  const clean = (s) =>
+    String(s || "")
+      .replace(/\\(text|mathrm|textrm|mbox)\s*\{[^{}]*\}/g, "\\quad ")
+      .replace(/,\s*(?:\\[ ,;:!]|\\q?quad|~)\s*|,\s+/g, " \\quad "); // ne decimalne vejice (2,5 ali 2{,}5)
+  for (const src of [tex, text]) {
+    try {
+      const exprs = plottableFromText(`$${clean(src)}$`);
+      if (exprs.length) return { exprs };
+    } catch {}
+  }
+  return null;
 }
 
 function renderSolution(box) {
