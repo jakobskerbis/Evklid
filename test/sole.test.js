@@ -175,6 +175,8 @@ test("predračun: totals per plan and escaping of every buyer field", () => {
   assert.ok(html.includes(`data-total="${3 * SCHOOL_LICENCE_PRICES.pilot.eur}"`));
   assert.ok(html.includes("Predračun št. 2026-0007") && html.includes("SI00 2026-0007"));
   assert.ok(html.includes("Šifra PU"));
+  // Status DDV (j 16. 11. 2026): ni zavezanec; vrstice »DDV [izpolni]« ni več.
+  assert.ok(html.includes("<td colspan=\"4\">Izvajalec ni zavezanec za DDV.</td>") && !/<td colspan="3">DDV<\/td>/.test(html));
   assert.ok(!predracunHtml({ ...o, budget_user: 0, budget_code: null }, NOW).includes("Šifra PU"));
 });
 

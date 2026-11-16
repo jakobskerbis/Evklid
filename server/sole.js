@@ -165,8 +165,7 @@ export function mountSolePage(app, store = null) {
 }
 
 // Predračun (natisni ali shrani kot PDF). Podatke prodajalca nastavi j v .env; manjkajoči so »[izpolni]«.
-// TODO(j): status DDV. Predlog besedila: »cene brez DDV, DDV po veljavni zakonodaji« – potrdi, preden
-// predračun pošlješ šoli, in vrstico »DDV« izpolni (ali odstrani, če nisi zavezanec za DDV).
+// DDV: j 16. 11. 2026 potrdil, da ni zavezanec za DDV (isto besedilo kot na public/sole.html).
 export function predracunHtml(o, now = new Date()) {
   const env = (k) => (process.env[`${BRAND.env}_SELLER_${k}`] || "").trim() || "[izpolni]";
   const number = orderNumber(o);
@@ -212,7 +211,7 @@ export function predracunHtml(o, now = new Date()) {
   <thead><tr><th scope="col">Postavka</th><th scope="col" class="num">Količina</th><th scope="col" class="num">Cena na učenca na leto</th><th scope="col" class="num">Znesek</th></tr></thead>
   <tbody><tr><td>${esc(item)}</td><td class="num">${esc(o.students)} učencev</td><td class="num">${esc(eur(o.price_eur))}</td><td class="num">${esc(eur(total))}</td></tr></tbody>
   <tfoot>
-    <tr><td colspan="3">DDV</td><td class="num">[izpolni]</td></tr>
+    <tr><td colspan="4">Izvajalec ni zavezanec za DDV.</td></tr>
     <tr class="total"><td colspan="3">Skupaj za plačilo</td><td class="num" data-total="${esc(total)}">${esc(eur(total))}</td></tr>
   </tfoot>
 </table>
