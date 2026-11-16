@@ -38,10 +38,13 @@ for (const g of GENERATORS) {
       bad++;
       continue;
     }
-    for (let level = 1; level <= 3; level++) {
+    // Generatorji z maxYear (npr. tek-mladi-* do 4. razreda) se brez razreda ne izberejo: preverimo jih
+    // za vsak razred od 1 (oz. minYear) do maxYear.
+    const years = g.maxYear != null ? Array.from({ length: g.maxYear - (g.minYear ?? 1) + 1 }, (_, i) => (g.minYear ?? 1) + i) : [null];
+    for (const [year, level] of years.flatMap((y) => [1, 2, 3].map((l) => [y, l]))) {
       for (let seed = 1; seed <= SEEDS; seed++) {
         try {
-          const t = generateTask(topicId, level, seed);
+          const t = generateTask(topicId, level, seed, undefined, year);
           if (t.generator !== g.id) continue;
           n++;
           const a = t.answer;
@@ -62,7 +65,7 @@ for (const g of GENERATORS) {
           // Dvojezični generatorji (indijski izpiti): hindijska naloga z istim semenom mora imeti
           // enak odgovor, besedilo v devanagariju in prav toliko $ kot angleška.
           if (g.langs?.includes("hi")) {
-            const h = generateTask(topicId, level, seed, "hi");
+            const h = generateTask(topicId, level, seed, "hi", year);
             if (h.generator !== g.id || JSON.stringify(stripWhy(h.answer)) !== JSON.stringify(stripWhy(a))) throw new Error("hindijska naloga ima drug odgovor kot angleška (isto seme)");
             for (const f of ["text", "hint", "solution"]) {
               if (!h[f]) throw new Error(`hindijska naloga nima polja ${f}`);
@@ -75,7 +78,7 @@ for (const g of GENERATORS) {
           }
         } catch (e) {
           bad++;
-          if (bad <= 40) console.log(`${g.id} | ${topicId} | raven ${level} | seme ${seed}: ${e.message}`);
+          if (bad <= 40) console.log(`${g.id} | ${topicId} | raven ${level}${year ? ` | ${year}. razred` : ""} | seme ${seed}: ${e.message}`);
         }
       }
     }

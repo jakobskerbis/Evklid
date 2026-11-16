@@ -119,3 +119,96 @@ test("učenec 3. razreda: poskusno tekmovanje z nalogami za mlajše", async () =
     server.close();
   }
 });
+
+// Popravki pregleda PR #729 (16. 11. 2026): 1. razred števila do 20, 2. do 100, brez negativnih števil
+// v rešitvah, brez množenja v 1. in 2. razredu, ura čez polno uro ali v isti uri, kvadrati v mreži.
+test("tek-mladi: razponi po razredu, brez negativnih števil, lastni odgovor sprejet", async () => {
+  const { TEK_MAT_OS_MLADI } = await import("../server/practice/generators/tek-mat-os-mladi.js");
+  const { makeRng } = await import("../server/practice/rng.js");
+  const { checkAnswer, fmt } = await import("../server/practice/check.js");
+  for (const G of TEK_MAT_OS_MLADI) {
+    for (let level = 1; level <= 3; level++) {
+      for (const year of [1, 2, 3, 4]) {
+        const texts = new Set();
+        for (let seed = 1; seed <= 60; seed++) {
+          const t = G.gen(level, makeRng(seed * 7919 + level * 31 + year), G.topics[0], "sl", year);
+          texts.add(t.text);
+          const a = t.answer;
+          const own = a.type === "choice" ? String(a.index) : fmt(a.value) + (a.unit ? " " + a.unit : "");
+          assert.equal(checkAnswer(a, own).kind, "correct", `${G.id}: ${t.text}`);
+          const shown = [t.text, t.hint, t.solution, t.formula, a.type === "choice" ? a.options.join(" ") : a.value].join("\n");
+          assert.doesNotMatch(shown, /(^|[\s(=+$:])-\d|\+ -|undefined|NaN|karkoli|katerakoli/, `${G.id} L${level}: ${shown}`);
+          if (year <= 2) assert.doesNotMatch(shown, /\\cdot|·|večkratnik|deljiv/, `${G.id} L${level} ${year}. r.: ${shown}`);
+          // Ure (8.30) so zapis časa, ne števili 8 in 30.
+          const lim = year === 1 ? 20 : year <= 3 ? 100 : 1000;
+          const big = (shown.replace(/\b\d{1,2}\.\d{2}\b/g, "").match(/\d+/g) || []).map(Number).filter((x) => x > lim);
+          assert.deepEqual(big, [], `${G.id} L${level} ${year}. r.: ${shown}`);
+        }
+        assert.ok(texts.size >= 12, `${G.id} L${level} ${year}. r.: samo ${texts.size} različnih nalog`);
+      }
+    }
+  }
+});
+
+test("tek-mladi-ure: trajanje s prehodom čez polno uro in brez njega", async () => {
+  const { TEK_MAT_OS_MLADI } = await import("../server/practice/generators/tek-mat-os-mladi.js");
+  const { makeRng } = await import("../server/practice/rng.js");
+  const G = TEK_MAT_OS_MLADI.find((x) => x.id === "tek-mladi-ure");
+  const seen = { cross: 0, same: 0 };
+  for (const year of [2, 3, 4]) {
+    for (let seed = 1; seed <= 200; seed++) {
+      const t = G.gen(2, makeRng(seed), G.topics[0], "sl", year);
+      const [s, e] = t.text.match(/\d{1,2}\.\d{2}/g).map((x) => Number(x.split(".")[0]) * 60 + Number(x.split(".")[1]));
+      assert.equal(t.answer.value, e - s, t.text);
+      if (year === 2) assert.ok([0, 30].includes(s % 60) && [30, 60].includes(e - s), t.text);
+      const cross = Math.floor(s / 60) !== Math.floor((e - 1) / 60);
+      if (cross) {
+        seen.cross++;
+        assert.match(t.solution, new RegExp(`Skupaj \\$[\\d + ]+= ${e - s}\\$`), t.solution);
+      } else {
+        seen.same++;
+        assert.doesNotMatch(t.solution, /Skupaj/, t.solution);
+      }
+    }
+  }
+  assert.ok(seen.cross > 20 && seen.same > 20, JSON.stringify(seen));
+  // 1. razred: samo cele in pol ure, odgovor z besedami (pol ure, eno uro).
+  for (let seed = 1; seed <= 60; seed++) {
+    const t = G.gen(2, makeRng(seed), G.topics[0], "sl", 1);
+    assert.match(t.text, /ob \d{1,2}\.(00|30) in .* ob \d{1,2}\.(00|30)\./, t.text);
+    assert.ok(["pol ure", "eno uro"].includes(t.answer.options[t.answer.index]), t.text);
+  }
+});
+
+test("tek-mladi-liki: število kvadratov v mreži (preštevanje vseh kvadratov)", async () => {
+  const { TEK_MAT_OS_MLADI } = await import("../server/practice/generators/tek-mat-os-mladi.js");
+  const { makeRng } = await import("../server/practice/rng.js");
+  const G = TEK_MAT_OS_MLADI.find((x) => x.id === "tek-mladi-liki");
+  const brute = (w, h) => {
+    let c = 0;
+    for (let k = 1; k <= Math.min(w, h); k++) for (let i = 0; i + k <= w; i++) for (let j = 0; j + k <= h; j++) c++;
+    return c;
+  };
+  assert.deepEqual([brute(2, 5), brute(3, 4), brute(4, 4), brute(3, 3)], [14, 20, 30, 14]);
+  const shapes = new Set();
+  for (const level of [2, 3]) {
+    for (const year of [1, 2, 3, 4]) {
+      for (let seed = 1; seed <= 60; seed++) {
+        const t = G.gen(level, makeRng(seed), G.topics[0], "sl", year);
+        assert.doesNotMatch(t.text, /na sliki/);
+        const [, h, w] = t.text.match(/ima (\d+) vrst\S* in v vsaki vrsti \S+ (\d+) /).map(Number);
+        shapes.add(`${w}x${h}`);
+        assert.equal(t.answer.value, brute(w, h), t.text);
+      }
+    }
+  }
+  assert.ok(["5x2", "4x3", "3x4"].every((s) => shapes.has(s)), [...shapes].join(", "));
+});
+
+test("predlog s/z pred številom", async () => {
+  const { sz } = await import("../server/practice/generators/tek-util.js");
+  const S = [3, 4, 5, 6, 7, 13, 17, 23, 30, 45, 100, 150, 300, 1000];
+  const Z = [0, 1, 2, 8, 9, 10, 11, 12, 18, 19, 20, 21, 28, 80, 200, 800, 2000];
+  for (const n of S) assert.equal(sz(n), "s", String(n));
+  for (const n of Z) assert.equal(sz(n), "z", String(n));
+});

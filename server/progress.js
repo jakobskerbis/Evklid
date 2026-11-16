@@ -762,7 +762,7 @@ export class Progress {
     if (packsToday >= RULES.offlinePacksPerDay) return { limited: true };
     this.db.prepare("INSERT INTO offline_packs (student_id) VALUES (?)").run(studentId);
     // Izdane naloge (seme, raven): sinhronizacija sprejme samo te, ne poljubnih semen (P2: neomejen XP).
-    const issue = this.db.prepare("INSERT OR IGNORE INTO offline_issued (student_id, topic_id, seed, level) VALUES (?, ?, ?, ?)");
+    const issue = this.db.prepare("INSERT OR IGNORE INTO offline_issued (student_id, topic_id, seed, level, year) VALUES (?, ?, ?, ?, ?)");
     this.db.prepare(`DELETE FROM offline_issued WHERE created_at < datetime('now','-${RULES.offlineIssuedDays} days')`).run();
     for (const t of topics) {
       const topic = getTopic(t.id);
@@ -770,7 +770,7 @@ export class Progress {
       tasks[t.id] = Array.from({ length: perTopic }, (_, i) => {
         const level = Math.max(1, Math.min(3, t.level + (i % 3 === 2 ? 1 : 0)));
         const task = generateTask(t.id, level, undefined, this.taskLang(studentId), this.taskYear(studentId));
-        issue.run(studentId, t.id, task.seed, level);
+        issue.run(studentId, t.id, task.seed, level, this.taskYear(studentId));
         return { level, seed: task.seed, task: publicTask(task), answer: task.answer, solution: task.solution, hint: task.hint };
       });
     }
@@ -788,14 +788,15 @@ export class Progress {
     let noXp = 0;
     const seen = this.db.prepare("INSERT OR IGNORE INTO offline_results (student_id, topic_id, seed) VALUES (?, ?, ?)");
     const issued = this.db.prepare(
-      `SELECT 1 FROM offline_issued WHERE student_id = ? AND topic_id = ? AND seed = ? AND level = ? AND created_at >= datetime('now','-${RULES.offlineIssuedDays} days')`,
+      `SELECT year FROM offline_issued WHERE student_id = ? AND topic_id = ? AND seed = ? AND level = ? AND created_at >= datetime('now','-${RULES.offlineIssuedDays} days')`,
     );
     let left = RULES.offlineXpPerDay - this.db.prepare("SELECT COUNT(*) AS n FROM offline_results WHERE student_id = ? AND date(created_at) = date('now')").get(studentId).n;
     for (const r of results.slice(0, 300)) {
       const level = Number(r?.level);
       const seed = Number(r?.seed);
       if (!getTopic(r?.topic_id) || !hasGenerator(r.topic_id) || ![1, 2, 3].includes(level) || !Number.isInteger(seed) || seed < 0 || seed >= 2 ** 31) continue;
-      if (!issued.get(studentId, r.topic_id, seed, level)) {
+      const iss = issued.get(studentId, r.topic_id, seed, level);
+      if (!iss) {
         skipped += 1;
         continue;
       }
@@ -803,7 +804,8 @@ export class Progress {
       const xp = left > 0;
       left -= 1;
       if (!xp) noXp += 1;
-      const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId), this.taskYear(studentId));
+      // Razred ob izdaji (učenec ga je vmes lahko spremenil): ista naloga kot v paketu.
+      const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId), iss.year ?? this.taskYear(studentId));
       const id = this.saveTask(studentId, task, "practice");
       const out = this.answer(studentId, id, String(r.answer ?? "").slice(0, 200), { xp });
       synced += 1;
