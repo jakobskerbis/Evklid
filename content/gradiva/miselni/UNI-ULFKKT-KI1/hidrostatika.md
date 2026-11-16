@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Hidrostatični tlak
+  - $p = p_0 + \rho g h$
+  - šteje globina, ne oblika posode
+  - voda: okoli $1\,\mathrm{bar}$ na $10\,\mathrm{m}$
+- Osnovna enačba hidrostatike
+  - $\dfrac{\mathrm{d}p}{\mathrm{d}z} = -\rho g$, vodoravno tlak stalen
+  - manometer: $p_1 - p_2 = (\rho_\mathrm{m} - \rho)\, g\, \Delta h$
+- Tlak v vse smeri
+  - pravokotno na vsako ploskev
+  - Pascalov zakon: hidravlična stiskalnica
+- Absolutni tlak in nadtlak
+  - $p_\mathrm{n} = p - p_0 = \rho g h$
+  - napaka: »globina iz absolutnega tlaka«
+- Sila na ravno ploskev
+  - $F = \rho g h_\mathrm{T} A$, globina težišča
+  - središče tlaka: $y_\mathrm{P} = y_\mathrm{T} + \dfrac{I_\mathrm{T}}{y_\mathrm{T} A}$
+  - napaka: »tlak zgornjega roba«
+- Vzgon
+  - $F_\mathrm{vz} = \rho g V$, Arhimedov zakon
+  - prijemlje v središču vzgona
+  - neodvisen od gostote telesa
+- Plavanje
+  - pogoj: $\bar\rho < \rho$
+  - potopljeni delež $\dfrac{V_\mathrm{pot}}{V} = \dfrac{\bar\rho}{\rho}$

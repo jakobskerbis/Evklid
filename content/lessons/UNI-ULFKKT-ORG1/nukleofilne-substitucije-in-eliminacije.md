@@ -260,7 +260,7 @@ Ogljik $\alpha$ je sredina dežnika, substituenti so žice, izstopajoča skupina
 
 ## Drugače: Korak za korakom s številkami
 
-Kako s hitrostjo ločiš $\mathrm{S_N1}$ od $\mathrm{S_N2}$? Merimo začetno hitrost pri treh poskusih z 2-bromo-2-metilpropanom in razredčenim $\mathrm{OH^-}$ v vodni raztopini pri sobni temperaturi, $k = 1{,}2 \cdot 10^{-5}\,\mathrm{s^{-1}}$. Pri tako nizki koncentraciji baze in brez segrevanja prevlada solvoliza, ne E2.
+Kako s hitrostjo ločiš $\mathrm{S_N1}$ od $\mathrm{S_N2}$? Merimo začetno hitrost pri treh poskusih z 2-bromo-2-metilpropanom in razredčenim $\mathrm{OH^-}$ v mešanici acetona in vode pri sobni temperaturi, $k = 1{,}2 \cdot 10^{-5}\,\mathrm{s^{-1}}$. Pri tako nizki koncentraciji baze in brez segrevanja prevlada solvoliza, ne E2.
 
 | poskus | $[\mathrm{RX}]$ / $\mathrm{mol\,L^{-1}}$ | $[\mathrm{OH^-}]$ / $\mathrm{mol\,L^{-1}}$ | $v$ / $\mathrm{mol\,L^{-1}\,s^{-1}}$ |
 |---|---|---|---|

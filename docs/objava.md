@@ -50,6 +50,12 @@ PDF razreda, poglavja in celega predmeta se ne izdela več na telefonu. Ob vsaki
 - `EVKLID_FREE_POOL_USD=10` – brezplačni paket: vsi brezplačni učenci skupaj porabijo največ 10 $ (≈ 8,7 €) na mesec, nato do 1. v mesecu samo Vadnica in lekcije.
 - `EVKLID_FREE_STUDENT_USD=0.2` – brezplačni paket: največ 0,2 $ na brezplačnega učenca na mesec.
 - `EVKLID_MONTHLY_BUDGET_USD=50` – opozorilo v dnevniku pri 80 % porabe.
+- `EVKLID_MERITEV_PO_OBJAVI=1` – 5 min po vsaki objavi ciljna meritev natančnosti lekcij, ki jih je objava spremenila
+  (ob spremembi prompta ali sprotnega preverjanja še primeri zadnjega kroga iz `docs/spremembe-prompta.md`), 4×, s preverjanjem.
+  Največ 1 $ na zagon, 15 $ na teden (ISO, UTC) skupaj z ročnimi meritvami (knjiga `/var/data/meritve-strosek.jsonl`, ki jo
+  piše `primerjava-modelov.js` ob vsakem plačanem odgovoru), en zagon na objavo; brez sprememb ni zagona. Izid: prijavljen skrbnik odpre
+  `/api/admin/meritev-po-objavi` (`?json=1` za JSON); stanje in dnevniki v `/var/data/meritev-po-objavi.json` in
+  `/var/data/meritve-po-objavi/`. Koda: `server/meritev-po-objavi.js`. `0` izklopi.
 
 Vse lahko spremeniš v Render → Environment.
 
@@ -90,6 +96,8 @@ Nastavitev (enkrat):
 Obnova od zunaj (npr. na novem strežniku z istim `EVKLID_DATA_KEY`): `node scripts/obnovi-kopijo.js --oblak-prenesi 2026-11-04` prenese, odšifrira in preveri kopijo ter jo shrani kot lokalno `2026-11-04-0000`; naprej kot zgoraj (`--preveri 2026-11-04-0000`, nato `node scripts/obnovi-kopijo.js 2026-11-04-0000` in Restart service). Brez `EVKLID_DATA_KEY` (ali starega ključa v `EVKLID_DATA_KEYS_OLD`) se kopije od zunaj ne da odpreti, zato ključ hrani tudi v upravitelju gesel.
 
 ### Vaja obnove (enkrat pred pilotom, nato enkrat na mesec)
+
+Cel postopek obnove z izmerjenimi časi (tudi na novem strežniku): [obnova.md](obnova.md).
 
 1. `node scripts/obnovi-kopijo.js --zdaj`, nato `node scripts/obnovi-kopijo.js --preveri`: mora pisati »OBNOVA BI USPELA«.
 2. Prava vaja (ko nihče ne uporablja Evklida; kar se vpiše med vajo, se izgubi): `node scripts/obnovi-kopijo.js <datum ročne kopije iz 1. koraka>`, Restart service, preveri prijavo in profil, nato `--razveljavi` in še en Restart service.

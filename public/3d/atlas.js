@@ -12,6 +12,8 @@ import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
 import { vgrajeno, starsu } from "./vgrajeno.js";
+import { skoziLupino } from "./izbira.js";
+import { preparatAtlasa } from "/mikroskop/mapa.js";
 
 export const SLOJI = [
   { id: "koza", ikona: "user", barva: "#e5b79e" },
@@ -115,7 +117,7 @@ export function imeStrukture(row, im, jezik = "sl") {
   return row.stran === "l" || row.stran === "r" ? `${base} (${t(row.stran === "l" ? "a3.left" : "a3.right")})` : base;
 }
 
-export async function odpriAtlas(el, { zapri = null } = {}) {
+export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
   const jezik = currentLang();
   const kakovost = kakovostNaprave();
   const mapa = mapaTelesaNaprave(kakovost); // telo-hd na računalniku, telo na telefonu (modeli.js)
@@ -910,6 +912,13 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     const bVprasaj = gumb("a3-pill a3-mali a3-glavni", `${icon("message-circle")}<span>${t("a3.ask")}</span>`);
     bVprasaj.addEventListener("click", () => vprasaj(r));
     akcije.append(bSkrij, bSamo, bVprasaj);
+    // »Poglej z mikroskopom« (j, 12. 11. 2026): tkivo strukture pod mikroskopom (public/mikroskop/mapa.js).
+    const prep = mikroskop && preparatAtlasa(r);
+    if (prep) {
+      const bMik = gumb("a3-pill a3-mali", `${icon("microscope")}<span>${t("mk.open")}</span>`);
+      bMik.addEventListener("click", () => mikroskop(prep));
+      akcije.append(bMik);
+    }
     kartica.append(akcije);
     kartica.hidden = false;
   }
@@ -932,18 +941,20 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
 
   // Tap na model: izbira (ali odgovor v kvizu »Najdi strukturo«).
   const vidniObjekti = () => [...[...sloji.values()].flatMap((s) => (s.viden ? s.skupine : [])), ...(sij.visible ? [sij] : [])];
+  // Skozi kožo izbere del pod njo; spredaj = preskočena koža (najbližja prva). Izbrani del (sij) ni nikoli preskočen.
+  const idZadetka = (h) => (h.object === sij ? izbran : h.object.userData[h.batchId]?.row.id || null);
   function zadetek(ndc) {
     const hits = kit.zadetki(ndc, vidniObjekti(), (h) => !prerez.on || ravnina.distanceToPoint(h.point) >= 0);
-    const h = hits[0];
-    if (!h) return null;
-    if (h.object === sij) return izbran;
-    return h.object.userData[h.batchId]?.row.id || null;
+    const { zadetek: h, spredaj } = skoziLupino(hits, (x) => x.object !== sij && x.object.material.userData.razred === "koza");
+    return { id: h ? idZadetka(h) : null, spredaj: spredaj.map(idZadetka).filter(Boolean) };
   }
   kit.naTap((ndc) => {
-    const id = zadetek(ndc);
+    const { id, spredaj } = zadetek(ndc);
     zapriPlavajoce();
-    if (kvizStanje?.nacin === "najdi" && !kvizStanje.odgovorjeno) return odgovorNajdi(id);
+    if (kvizStanje?.nacin === "najdi" && !kvizStanje.odgovorjeno) return odgovorNajdi(id, spredaj);
     if (kvizStanje) return;
+    // Drugi tap na izbrani del pod kožo izbere kožo pred njim (tretji izbiro počisti).
+    if (id && id === izbran && spredaj.length && deli.get(izbran)?.row.sistem !== "koza") return izberi(spredaj[0]);
     izberi(id && id !== izbran ? id : null);
   });
 
@@ -991,7 +1002,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       if (lebdiXY.gumbi || kvizStanje) return oznaciLebdenje(null), false;
       const r = kit.canvas.getBoundingClientRect();
       const ndc = new THREE.Vector2(((lebdiXY.x - r.left) / r.width) * 2 - 1, -((lebdiXY.y - r.top) / r.height) * 2 + 1);
-      const id = zadetek(ndc);
+      const { id } = zadetek(ndc);
       oznaciLebdenje(id);
       const row = id && vrstice.get(id);
       if (row) {
@@ -1553,12 +1564,12 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     kviz.append(naprej);
     naprej.focus({ preventScroll: true });
   }
-  function odgovorNajdi(id) {
+  function odgovorNajdi(id, spredaj = []) {
     const k = kvizStanje;
     const d = k.vprasanja[k.i];
     if (!id) return;
     k.odgovorjeno = true;
-    const ok = id === d.row.id;
+    const ok = id === d.row.id || spredaj.includes(d.row.id); // tudi koža, skozi katero je učenec tapnil
     const istoIme = !ok && vrstice.get(id)?.ime === d.row.ime;
     if (ok) k.prav++;
     else k.narobe++;
@@ -1745,6 +1756,10 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     get stVidnih() {
       return stVidnih;
     },
+    get izbran() {
+      return izbran;
+    },
+    preklopiSloj, // za preizkuse: plast vklopi/izklopi kot stikalo v Brskaj
     // Za preizkuse (Playwright) in povezave: /3d#atlas?izberi=Femur.r
     izberiIzSeznama,
     nastavi(k, v) {

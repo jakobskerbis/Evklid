@@ -76,7 +76,7 @@ Ulomka seštejemo, ko imata enak imenovalec. Najmanjši skupni imenovalec je $v$
 - delim nekaj na **enake** dele, skupine, kose, čim večje ali čim več? To je $D$;
 - čakam, da se dva ponavljajoča se dogodka spet zgodita **hkrati**? To je $v$.
 
-*Preveri:* Dva dežemera praznimo vsakih $3$ in vsakih $5$ dni. Kdaj ju spet praznimo isti dan, poiščeš z $D$ ali z $v$? *(Z $v$.)*
+*Preveri:* Dva dežemera praznimo vsake $3$ in vsakih $5$ dni. Kdaj ju spet praznimo isti dan, poiščeš z $D$ ali z $v$? *(Z $v$.)*
 
 ## Rešeni primeri
 
@@ -93,7 +93,7 @@ $D(a, b)$ = največji element preseka $D(a)$ in $D(b)$; $v(a, b)$ = prvi skupni 
 
 **Rešitev:**
 
-1. Delitelja: $D(16)=\{1, 2, 4, 8, 16\}$, $D(24)=\{1, 2, 3, 4, 6, 8, 12, 24\}$.
+1. Delitelji: $D(16)=\{1, 2, 4, 8, 16\}$, $D(24)=\{1, 2, 3, 4, 6, 8, 12, 24\}$.
 2. Skupni delitelji so $1, 2, 4, 8$. Največji je $8$, torej $D(16, 24)=8$.
 3. Večkratnike pišemo, dokler se ne pojavi skupni: pri $16$ so $16, 32, 48$, pri $24$ pa $24, 48$.
 4. Prvi skupni je $48$, torej $v(16, 24)=48$.
@@ -138,7 +138,7 @@ Gozdar ima $48$ sadik bukve in $60$ sadik smreke. Ob potoku jih želi posaditi v
 1. Delimo na enake dele in iščemo čim več delov, zato je to največji skupni delitelj.
 2. Razcep: $48=2^4\cdot 3$, $60=2^2\cdot 3\cdot 5$.
 3. Manjši potenci skupnih prafaktorjev sta $2^2$ in $3$; petice ni v $48$, zato je ne vzamemo. $D(48, 60)=2^2\cdot 3=12$.
-4. V vsaki gruči je $48:12=4$ bukev in $60:12=5$ smrek.
+4. V vsaki gruči so $48:12=4$ bukve in $60:12=5$ smrek.
 5. Preizkus: $12\cdot 4=48$ in $12\cdot 5=60$.
 6. Odgovor: gozdar naredi $12$ gruč, v vsaki so $4$ bukve in $5$ smrek.
 

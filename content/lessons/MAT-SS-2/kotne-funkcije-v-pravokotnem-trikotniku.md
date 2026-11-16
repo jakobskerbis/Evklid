@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -142,12 +142,12 @@ $\tan \alpha = \dfrac{\text{nasprotna kateta}}{\text{priležna kateta}}$; $\;\ta
 
 **Rešitev:**
 
-1. Naj bo $d$ razdalja od bližjega opazovališča do vznožja stolpa. Daljše opazovališče je od vznožja oddaljeno $d + 20\,\text{m}$. Nastaneta dva pravokotna trikotnika s skupno kateto $h$.
-2. Iz bližjega mesta: $\tan 45^\circ = \dfrac{h}{d}$, torej $h = d$.
-3. Iz daljšega mesta: $\tan 30^\circ = \dfrac{h}{d + 20}$, torej $h = \dfrac{d + 20}{\sqrt{3}}$.
+1. Naj bo $d$ razdalja od bližjega opazovališča do vznožja stolpa. Bolj oddaljeno opazovališče je od vznožja oddaljeno $d + 20\,\text{m}$. Nastaneta dva pravokotna trikotnika s skupno kateto $h$.
+2. Z bližjega mesta: $\tan 45^\circ = \dfrac{h}{d}$, torej $h = d$.
+3. Z bolj oddaljenega mesta: $\tan 30^\circ = \dfrac{h}{d + 20}$, torej $h = \dfrac{d + 20}{\sqrt{3}}$.
 4. Vstavimo $d = h$ in pomnožimo s $\sqrt{3}$: $\sqrt{3}\,h = h + 20$, torej $h(\sqrt{3} - 1) = 20$ in $h = \dfrac{20}{\sqrt{3} - 1}\,\text{m}$.
 5. Racionaliziramo imenovalec: $h = \dfrac{20(\sqrt{3} + 1)}{3 - 1}\,\text{m} = 10(\sqrt{3} + 1)\,\text{m} \approx 27{,}32\,\text{m}$.
-6. Preverjanje: daljše opazovališče je od vznožja oddaljeno $47{,}32\,\text{m}$; $\;47{,}32 \cdot \tan 30^\circ \approx 47{,}32 \cdot 0{,}5774 \approx 27{,}32$. ✓
+6. Preverjanje: bolj oddaljeno opazovališče je od vznožja oddaljeno $47{,}32\,\text{m}$; $\;47{,}32 \cdot \tan 30^\circ \approx 47{,}32 \cdot 0{,}5774 \approx 27{,}32$. ✓
 7. Odgovor: stolp je visok $10(\sqrt{3} + 1)\,\text{m}$, to je približno $27{,}32\,\text{m}$.
 
 ### Primer 4 – zdaj ti: gora na Luni
@@ -189,6 +189,88 @@ $\tan 6^\circ \approx 0{,}1051$, zato je $h \approx 15\,\text{km} \cdot 0{,}1051
 - Posebne vrednosti: $\sin 30^\circ = \cos 60^\circ = \dfrac{1}{2}$, $\sin 45^\circ = \cos 45^\circ = \dfrac{\sqrt{2}}{2}$, $\tan 45^\circ = 1$, $\tan 60^\circ = \sqrt{3}$.
 - Za ostri kot je $0 < \sin \alpha, \cos \alpha < 1$, $\tan \alpha > 0$.
 - Iz stranice in kota: $a = c \sin \alpha$, $b = c \cos \alpha$, $a = b \tan \alpha$; kot iz razmerja s $\sin^{-1}$, $\cos^{-1}$, $\tan^{-1}$ (računalo v stopinjah).
+
+## Ponovitev
+
+**Formule**
+- $\sin \alpha = \dfrac{a}{c}$, $\;\cos \alpha = \dfrac{b}{c}$, $\;\tan \alpha = \dfrac{a}{b}$ (na pamet)
+- $\sin^2 \alpha + \cos^2 \alpha = 1$ (na pamet)
+- $\tan \alpha = \dfrac{\sin \alpha}{\cos \alpha}$, $\;\sin \alpha = \cos (90^\circ - \alpha)$ (na pamet)
+- $\sin 30^\circ = \dfrac{1}{2}$, $\sin 45^\circ = \dfrac{\sqrt{2}}{2}$, $\tan 60^\circ = \sqrt{3}$ (na pamet)
+
+**Postopek**
+1. Nariši skico in označi pravi kot ter opazovani kot.
+2. Določi nasprotno in priležno kateto za ta kot.
+3. Izberi funkcijo, ki poveže znano in iskano količino.
+4. Izrazi neznanko, npr. $a = c \sin \alpha$, in izračunaj.
+5. Kot dobiš s $\sin^{-1}$, $\cos^{-1}$ ali $\tan^{-1}$.
+6. Preveri smiselnost: kateta je krajša od hipotenuze.
+
+**Pazi na**
+- Katete poimenuj glede na opazovani kot: nasprotna leži nasproti kota, priležna je njegov krak.
+- Računalo naj bo v stopinjah (DEG), ne v radianih.
+- Iz $\sin \alpha = \dfrac{a}{c}$ sledi $a = c \sin \alpha$, ne deli s $\sin \alpha$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Za ostri kot $\alpha$ velja $\tan \alpha = 2$. Brez računala izračunajte natančni vrednosti $\sin \alpha$ in $\cos \alpha$. Rezultata zapišite z racionaliziranim imenovalcem.
+
+**Rešitev:**
+
+1. Narišemo pravokotni trikotnik s kotom $\alpha$, v katerem je $\tan \alpha = \dfrac{a}{b} = 2$: vzamemo kateti $a = 2$ in $b = 1$ (razmerja so odvisna le od kota, ne od velikosti trikotnika).
+2. Hipotenuza: $c = \sqrt{2^2 + 1^2} = \sqrt{5}$.
+3. $\sin \alpha = \dfrac{a}{c} = \dfrac{2}{\sqrt{5}} = \dfrac{2\sqrt{5}}{5}$ in $\cos \alpha = \dfrac{b}{c} = \dfrac{1}{\sqrt{5}} = \dfrac{\sqrt{5}}{5}$.
+4. Preverimo: $\sin^2 \alpha + \cos^2 \alpha = \dfrac{4}{5} + \dfrac{1}{5} = 1$. ✓
+5. Odgovor: $\sin \alpha = \dfrac{2\sqrt{5}}{5}$ in $\cos \alpha = \dfrac{\sqrt{5}}{5}$.
+
+**Točkovanje:** 1 točka za trikotnik s katetama v razmerju $2 : 1$ in hipotenuzo $\sqrt{5}$ (ali za zvezo $1 + \tan^2 \alpha = \dfrac{1}{\cos^2 \alpha}$ z vstavljenim $\tan \alpha = 2$), 1 točka za $\cos \alpha = \dfrac{\sqrt{5}}{5}$, 1 točka za $\sin \alpha = \dfrac{2\sqrt{5}}{5}$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Diagonali romba $ABCD$ merita $e = |AC| = 10\,\text{cm}$ in $f = |BD| = 6\,\text{cm}$. Diagonali se sekata v točki $M$.
+
+a) Izračunajte dolžino stranice romba. Rezultat zaokrožite na stotinko centimetra. (2 točki)
+b) Izračunajte notranja kota romba pri ogliščih $A$ in $B$. Rezultata zaokrožite na stotinko stopinje. (3 točke)
+c) S kotno funkcijo izračunajte višino romba $v$. Rezultat zaokrožite na stotinko centimetra. (2 točki)
+
+**Rešitev:**
+
+1. a) Diagonali romba se razpolavljata in sta pravokotni, zato je trikotnik $AMB$ pravokoten s pravim kotom pri $M$ in s katetama $|AM| = 5\,\text{cm}$ in $|BM| = 3\,\text{cm}$.
+2. a) Stranica je hipotenuza tega trikotnika: $|AB| = \sqrt{5^2 + 3^2}\,\text{cm} = \sqrt{34}\,\text{cm} \approx 5{,}8310\,\text{cm} \approx 5{,}83\,\text{cm}$.
+3. b) Diagonala $AC$ razpolavlja kot pri oglišču $A$. V trikotniku $AMB$ je $|BM|$ nasprotna, $|AM|$ pa priležna kateta kota $\angle MAB$, zato je $\tan \angle MAB = \dfrac{3}{5}$ in $\angle MAB \approx 30{,}9638^\circ$.
+4. b) Kot pri oglišču $A$: $\angle DAB = 2 \cdot \angle MAB \approx 61{,}9275^\circ \approx 61{,}93^\circ$.
+5. b) Sosednja kota romba sta suplementarna: $\angle ABC = 180^\circ - \angle DAB \approx 118{,}0725^\circ \approx 118{,}07^\circ$.
+6. c) Višina iz oglišča $D$ na stranico $AB$, stranica $AD$ in del stranice $AB$ tvorijo pravokotni trikotnik s hipotenuzo $|AD| = \sqrt{34}\,\text{cm}$. Višina $v$ leži nasproti kota $\angle DAB$, zato $v = |AD| \cdot \sin \angle DAB = \sqrt{34}\,\text{cm} \cdot \sin 61{,}9275^\circ \approx 5{,}14496\,\text{cm} \approx 5{,}14\,\text{cm}$.
+7. c) Preverimo s ploščino: ploščina romba je $\dfrac{e \cdot f}{2} = \dfrac{10 \cdot 6}{2} = 30\,\text{cm}^2$, hkrati pa $|AB| \cdot v$, zato $v = \dfrac{30}{\sqrt{34}}\,\text{cm} \approx 5{,}14\,\text{cm}$. ✓
+8. Odgovor: a) stranica meri približno $5{,}83\,\text{cm}$; b) kot pri $A$ meri približno $61{,}93^\circ$, kot pri $B$ približno $118{,}07^\circ$; c) višina romba meri približno $5{,}14\,\text{cm}$.
+
+**Točkovanje:** a) 1 točka za pravokotni trikotnik s katetama $5\,\text{cm}$ in $3\,\text{cm}$ (polovici diagonal), 1 točka za $|AB| \approx 5{,}83\,\text{cm}$; b) 1 točka za $\tan \angle MAB = \dfrac{3}{5}$ (ali enakovredno zvezo s sinusom oziroma kosinusom), 1 točka za kot pri $A$, $\angle DAB \approx 61{,}93^\circ$, in 1 točka za kot pri $B$, $\angle ABC \approx 118{,}07^\circ$; c) 1 točka za zvezo $v = |AD| \cdot \sin \angle DAB$, 1 točka za $v \approx 5{,}14\,\text{cm}$ (natančna vrednost $5{,}14496\,\text{cm}$ je blizu meje zaokrožanja: kdor računa z zaokroženim kotom $61{,}93^\circ$ in nezaokroženo stranico, dobi $5{,}15\,\text{cm}$, kar se prav tako upošteva).
+
+### Ustno vprašanje 1
+
+:::premisli
+Definiraj sinus, kosinus in tangens ostrega kota v pravokotnem trikotniku in pojasni, zakaj so njihove vrednosti odvisne samo od kota.
+---
+Sinus ostrega kota je razmerje med nasprotno kateto in hipotenuzo, kosinus razmerje med priležno kateto in hipotenuzo. Tangens je razmerje med nasprotno in priležno kateto. Vsi pravokotni trikotniki z istim ostrim kotom se ujemajo v dveh kotih, zato so po izreku KK podobni. Pri podobnih trikotnikih so razmerja ustreznih stranic enaka, zato je vrednost vsake kotne funkcije odvisna samo od kota, ne od velikosti trikotnika.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji vrednosti sinusa, kosinusa in tangensa za kota $30^\circ$ in $60^\circ$.
+---
+Vzamemo enakostranični trikotnik s stranico $2$, ki ima vse kote po $60^\circ$, in narišemo višino na osnovnico. Višina ga razdeli na dva pravokotna trikotnika s koti $30^\circ$, $60^\circ$ in $90^\circ$, s hipotenuzo $2$ in krajšo kateto $1$. Po Pitagorovem izreku meri višina $\sqrt{4 - 1} = \sqrt{3}$. Krajša kateta leži nasproti kota $30^\circ$, zato je $\sin 30^\circ = \frac{1}{2}$, $\cos 30^\circ = \frac{\sqrt{3}}{2}$ in $\tan 30^\circ = \frac{1}{\sqrt{3}} = \frac{\sqrt{3}}{3}$. Za kot $60^\circ$ se kateti zamenjata, zato je $\sin 60^\circ = \frac{\sqrt{3}}{2}$, $\cos 60^\circ = \frac{1}{2}$ in $\tan 60^\circ = \sqrt{3}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Izpelji zvezi $\sin^2 \alpha + \cos^2 \alpha = 1$ in $\tan \alpha = \frac{\sin \alpha}{\cos \alpha}$ za ostri kot pravokotnega trikotnika.
+---
+V pravokotnem trikotniku s katetama $a$ in $b$ ter hipotenuzo $c$ velja $\sin \alpha = \frac{a}{c}$, $\cos \alpha = \frac{b}{c}$ in $\tan \alpha = \frac{a}{b}$. Pitagorov izrek $a^2 + b^2 = c^2$ delimo s $c^2$ in dobimo $\left(\frac{a}{c}\right)^2 + \left(\frac{b}{c}\right)^2 = 1$, torej $\sin^2 \alpha + \cos^2 \alpha = 1$. Količnik $\frac{\sin \alpha}{\cos \alpha} = \frac{a/c}{b/c}$ se okrajša v $\frac{a}{b}$, kar je $\tan \alpha$.
+:::
 
 ## Drugače: Na sliki
 
@@ -262,15 +344,17 @@ Zdaj si predstavljaj, da hipotenuzo vrtiš okoli levega oglišča kot kazalec. K
 ~ Tipka $\tan^{-1}$ ne pomeni $\dfrac{1}{\tan}$. Obratna vrednost razmerja, $\dfrac{2{,}6}{1{,}5} \approx 1{,}73$, ni kot.
 > $\tan \alpha = \dfrac{1{,}5\,\text{m}}{2{,}6\,\text{m}} \approx 0{,}577$, zato je $\alpha = \tan^{-1} 0{,}577 \approx 30^\circ$ (natančneje $29{,}98^\circ$).
 
-? Lestev, dolga $5\,\text{m}$, je naslonjena na steno in s tlemi oklepa kot $70^\circ$. Kako visoko seže?
-- približno $1{,}71\,\text{m}$
-~ To je $5\,\text{m} \cdot \cos 70^\circ$, razdalja vznožja od stene. Višina je nasprotna kateta kota ob tleh, zato sinus.
-+ približno $4{,}70\,\text{m}$
-- približno $5{,}32\,\text{m}$
-~ Delil si, $\dfrac{5\,\text{m}}{\sin 70^\circ}$. Iz $\sin 70^\circ = \dfrac{h}{5\,\text{m}}$ sledi $h = 5\,\text{m} \cdot \sin 70^\circ$. Višina ne more biti večja od lestve.
-- približno $13{,}74\,\text{m}$
-~ To je $5\,\text{m} \cdot \tan 70^\circ$. Tangens povezuje kateti, lestev pa je hipotenuza.
+? Lestev, dolga $5\,\text{m}$, je naslonjena na steno in s tlemi oklepa kot $70^\circ$. Kako visoko seže? Rezultat zaokroži na stotinko metra.
+= 4,70 m | 0,01
+~ 1,71 | To je $5\,\text{m} \cdot \cos 70^\circ$, razdalja vznožja od stene. Višina je nasprotna kateta kota ob tleh, zato sinus.
+~ 5,32 | Delil si, $\dfrac{5\,\text{m}}{\sin 70^\circ}$. Iz $\sin 70^\circ = \dfrac{h}{5\,\text{m}}$ sledi $h = 5\,\text{m} \cdot \sin 70^\circ$. Višina ne more biti večja od lestve.
+~ 13,74 | To je $5\,\text{m} \cdot \tan 70^\circ$. Tangens povezuje kateti, lestev pa je hipotenuza.
 > Lestev je hipotenuza, višina je nasprotna kateta kota ob tleh: $h = 5\,\text{m} \cdot \sin 70^\circ \approx 4{,}70\,\text{m}$.
+
+? (brez računala) Kateta nasproti kota $\alpha = 30^\circ$ v pravokotnem trikotniku meri $7\,\text{cm}$. Kolikšna je hipotenuza?
+= 14 cm | 0,01
+~ 3,5 | To je $7\,\text{cm} \cdot \sin 30^\circ$. Iz $\sin 30^\circ = \dfrac{a}{c}$ sledi $c = \dfrac{a}{\sin 30^\circ}$, deliti moraš. Hipotenuza je najdaljša stranica, ne more biti krajša od katete.
+> $\sin 30^\circ = \dfrac{a}{c} = \dfrac{1}{2}$, zato je $c = 2a = 2 \cdot 7\,\text{cm} = 14\,\text{cm}$.
 
 :::simboli
 \alpha | ostri kot pravokotnega trikotnika (v primeru 4 višina Sonca nad obzorjem) | | °
@@ -282,4 +366,19 @@ c | hipotenuza | c^2 = a^2 + b^2 | cm
 S | ploščina trikotnika | S = \frac{a \cdot b}{2} | cm^2
 h | višina (v primeru 3 stolpa, v primeru 4 gore) | h = s \cdot \tan \alpha | m | v primeru 4 v km
 s | dolžina sence | | m | v primeru 4 v km
+e, f | diagonali romba (naloga 2 za maturo) | | cm
+v | višina romba (naloga 2 za maturo) | | cm
 :::
+
+<<RACUN
+vrednost: sqrt(2^2+1^2) | sqrt(5)
+vrednost: sin(atan(2)) | 2*sqrt(5)/5
+vrednost: cos(atan(2)) | sqrt(5)/5
+vrednost: sqrt(5^2+3^2) | 5.83
+vrednost: atan(3/5)*180/pi | 30.9638
+vrednost: 2*atan(3/5)*180/pi | 61.93
+vrednost: 180-2*atan(3/5)*180/pi | 118.07
+vrednost: sqrt(34)*sin(2*atan(3/5)) | 5.14
+vrednost: 10*6/2 | 30
+vrednost: 30/sqrt(34) | 5.14
+>>

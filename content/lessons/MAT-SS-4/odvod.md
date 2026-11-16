@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -21,9 +21,9 @@ Ali ima prav? Za kuharja ni vseeno: če se olje v nekem trenutku segreva hitro, 
 
 $$\frac{T(4 + h) - T(4)}{h}$$
 
-Temu ulomku rečemo **diferenčni količnik**. Izračunajmo ga za vedno krajše razmike $h$:
+Temu ulomku rečemo **diferenčni količnik**. Izračunajmo ga za vedno krajše razmike $h$ ($h$ v minutah, $T$ v $^\circ$C, povprečna hitrost v $^\circ$C/min):
 
-| $h$ [min] | $T(4 + h)$ [$^\circ$C] | povprečna hitrost [$^\circ$C/min] |
+| $h$ | $T(4 + h)$ | hitrost |
 |---|---|---|
 | $1$ | $95$ | $11$ |
 | $0{,}1$ | $85{,}19$ | $11{,}9$ |
@@ -103,6 +103,26 @@ $$\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$$
 | $e^x$ | $e^x$ |
 | $\ln x$ | $\frac{1}{x}$ |
 
+**8. Pravila iz definicije (višja raven).** Pravila iz blokov 5 in 6 niso dogovor: izpeljemo jih iz definicije odvoda. Pokažimo to za vsoto in produkt. Naj bosta $f$ in $g$ odvedljivi v točki $a$.
+
+*Vsota.* Diferenčni količnik vsote razpade na dva:
+
+$$\frac{(f + g)(a + h) - (f + g)(a)}{h} = \frac{f(a + h) - f(a)}{h} + \frac{g(a + h) - g(a)}{h}$$
+
+Ko gre $h \to 0$, gre prvi ulomek proti $f'(a)$, drugi proti $g'(a)$, zato je $(f + g)'(a) = f'(a) + g'(a)$.
+
+*Produkt.* V števcu prištejemo in odštejemo $f(a)\,g(a + h)$, nato delimo s $h$:
+
+$$\frac{f(a + h)\,g(a + h) - f(a)\,g(a)}{h} = \frac{f(a + h) - f(a)}{h} \cdot g(a + h) + f(a) \cdot \frac{g(a + h) - g(a)}{h}$$
+
+Ko gre $h \to 0$, gresta ulomka proti $f'(a)$ in $g'(a)$, $g(a + h)$ pa proti $g(a)$, ker je odvedljiva funkcija zvezna: $g(a + h) - g(a) = \frac{g(a + h) - g(a)}{h} \cdot h \to g'(a) \cdot 0 = 0$. Dobimo $(f g)'(a) = f'(a)\,g(a) + f(a)\,g'(a)$. Pravilo za konstantni faktor je poseben primer: pri $g = c$ je $g' = 0$.
+
+**9. Novi odvodi iz pravil (višja raven).** S pravili in tabelo iz bloka 7 izpeljemo nove odvode brez limit.
+
+- Po pravilu za kvocient z $u = 1$ in $v = x$: $\left(\frac{1}{x}\right)' = \frac{0 \cdot x - 1 \cdot 1}{x^2} = -\frac{1}{x^2}$. To se ujema s pravilom za potenco pri $n = -1$.
+- Ker je $\tan x = \frac{\sin x}{\cos x}$, je $(\tan x)' = \frac{\cos x \cdot \cos x - \sin x \cdot (-\sin x)}{\cos^2 x} = \frac{1}{\cos^2 x}$, saj je $\sin^2 x + \cos^2 x = 1$ (za $\cos x \ne 0$).
+- Ker je $2 = e^{\ln 2}$, je $2^x = e^{x \ln 2}$. Po pravilu za sestavljeno funkcijo je $(2^x)' = e^{x \ln 2} \cdot \ln 2 = 2^x \ln 2$. Enako za vsako osnovo $a > 0$: $(a^x)' = a^x \ln a$.
+
 ## Rešeni primeri
 
 ### Primer 1: odvod po definiciji
@@ -163,7 +183,26 @@ $T'(t)$ s pravilom za potenco in vsoto; ohlajanje pomeni $T'(t) < 0$.
 4. Temperatura takrat: $T(6) = 180 - 180 + 54 = 54$.
 5. Odgovor: takoj po tem, ko ga vzameš iz pečice, se pekač ohlaja s hitrostjo $30\,^\circ\mathrm{C/min}$. Po $6$ minutah se ohlaja s hitrostjo $12\,^\circ\mathrm{C/min}$ in ima $54\,^\circ\mathrm{C}$.
 
-### Primer 4: zadnji korak je tvoj
+### Primer 4 (višja raven): odvod kotangensa
+
+Iz odvodov funkcij $\sin x$ in $\cos x$ izpelji odvod funkcije $\cot x$. Nato izračunaj smerni koeficient tangente na graf funkcije $\cot x$ v točki z absciso $\frac{\pi}{4}$.
+
+**Podatki:** $\cot x = \dfrac{\cos x}{\sin x}$, $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$, abscisa $x_0 = \frac{\pi}{4}$
+**Iščemo:** $(\cot x)'$ in smerni koeficient $k$ tangente v $x_0$
+
+:::formula
+$\left(\dfrac{u}{v}\right)' = \dfrac{u' \cdot v - u \cdot v'}{v^2}$ z $u = \cos x$ in $v = \sin x$; $\sin^2 x + \cos^2 x = 1$
+:::
+
+**Rešitev:**
+
+1. Odvoda delov: $u' = -\sin x$, $v' = \cos x$.
+2. Pravilo za kvocient: $(\cot x)' = \dfrac{-\sin x \cdot \sin x - \cos x \cdot \cos x}{\sin^2 x} = -\dfrac{\sin^2 x + \cos^2 x}{\sin^2 x}$.
+3. Števec je $-1$, zato je $(\cot x)' = -\dfrac{1}{\sin^2 x}$ (za $\sin x \ne 0$).
+4. V $x_0 = \frac{\pi}{4}$ je $\sin\frac{\pi}{4} = \frac{\sqrt{2}}{2}$ in $\sin^2\frac{\pi}{4} = \frac{1}{2}$, zato je $k = -\dfrac{1}{1/2} = -2$.
+5. Odgovor: $(\cot x)' = -\dfrac{1}{\sin^2 x}$; tangenta v točki z absciso $\frac{\pi}{4}$ ima smerni koeficient $-2$.
+
+### Primer 5: zadnji korak je tvoj
 
 Izračunaj $f'(1)$ za $f(x) = (x^2 + 1)^3$.
 
@@ -202,10 +241,113 @@ $f'(x) = 3(x^2 + 1)^2 \cdot 2x = 6x(x^2 + 1)^2$. Pri $x = 1$: $6 \cdot 1 \cdot 2
 - $(c f)' = c f'$, $(f + g)' = f' + g'$.
 - $(f g)' = f' g + f g'$, $\left(\frac{f}{g}\right)' = \dfrac{f' g - f g'}{g^2}$, $\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$.
 - Najprej odvajaj, nato vstavi točko. $f' > 0$: funkcija narašča, $f' < 0$: pada.
+- (višja raven) Pravila izpeljemo iz definicije (pri produktu v števcu prištejemo in odštejemo $f(a)\,g(a + h)$), iz pravil pa nove odvode, npr. $(\tan x)' = \frac{1}{\cos^2 x}$, $(\cot x)' = -\frac{1}{\sin^2 x}$, $(2^x)' = 2^x \ln 2$.
+
+## Ponovitev
+
+**Formule**
+- $f'(a) = \lim\limits_{h \to 0} \frac{f(a + h) - f(a)}{h}$ (na pamet)
+- $(x^n)' = n x^{n-1}$, $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$ (na pamet)
+- $(e^x)' = e^x$, $(\ln x)' = \frac{1}{x}$ (na pamet)
+- $(f g)' = f' g + f g'$ (na pamet)
+- $\left(\frac{f}{g}\right)' = \frac{f' g - f g'}{g^2}$ (na pamet)
+- $\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$ (na pamet)
+
+**Postopek**
+1. Prepoznaj obliko: vsota, produkt, kvocient ali sestavljena funkcija.
+2. Uporabi ustrezno pravilo; konstanta ima odvod $0$.
+3. Pri sestavljeni funkciji pomnoži še z notranjim odvodom.
+4. Šele nato vstavi točko: $f'(a)$ je smerni koeficient tangente.
+5. Predznak $f'$ pove, kje funkcija narašča ($f' > 0$) in kje pada.
+
+**Pazi na**
+- Produkt: $(x^2 \sin x)' = 2x \sin x + x^2 \cos x$, ne $2x \cos x$.
+- Kvocient: v števcu $f' g - f g'$ v tem vrstnem redu, spodaj $g^2$.
+- Ne pozabi notranjega odvoda: $\bigl((x^2 + 1)^3\bigr)' = 3(x^2 + 1)^2 \cdot 2x$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Odvajajte funkcijo $f(x) = x^2 e^{2x}$ in določite vse $x$, za katere je $f'(x) = 0$.
+
+**Rešitev:**
+
+1. Po pravilu za produkt: $f'(x) = (x^2)' \cdot e^{2x} + x^2 \cdot (e^{2x})'$.
+2. Po pravilu za sestavljeno funkcijo je $(e^{2x})' = e^{2x} \cdot 2$, zato $f'(x) = 2x\,e^{2x} + 2x^2 e^{2x} = 2x(x + 1)\,e^{2x}$.
+3. Ker je $e^{2x} > 0$ za vsak $x$, je $f'(x) = 0$ natanko tedaj, ko je $2x(x + 1) = 0$.
+4. Odgovor: $f'(x) = 2x(x + 1)\,e^{2x}$; odvod je enak $0$ pri $x = 0$ in pri $x = -1$.
+
+**Točkovanje:** 1 točka za uporabo pravila za produkt, 1 točka za pravilni odvod $(e^{2x})' = 2e^{2x}$, 1 točka za obe rešitvi $x = 0$ in $x = -1$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = \dfrac{4}{x}$.
+
+a) Izračunajte diferenčni količnik funkcije $f$ na intervalu $[1, 4]$ in pojasnite, kaj to število pomeni na grafu funkcije. (2 točki)
+b) Po definiciji odvoda izračunajte $f'(2)$. (3 točke)
+c) Zapišite enačbo tangente na graf funkcije $f$ v točki z absciso $2$. V kakšni legi sta ta tangenta in sekanta skozi točki grafa z abscisama $1$ in $4$? Odgovor utemeljite. (2 točki)
+
+**Rešitev:**
+
+1. a) $f(1) = 4$ in $f(4) = 1$, zato je diferenčni količnik $\dfrac{f(4) - f(1)}{4 - 1} = \dfrac{1 - 4}{3} = -1$.
+2. a) To je smerni koeficient sekante skozi točki $(1, 4)$ in $(4, 1)$ grafa, torej povprečna sprememba funkcije na intervalu $[1, 4]$.
+3. b) $\dfrac{f(2 + h) - f(2)}{h} = \dfrac{\frac{4}{2 + h} - 2}{h} = \dfrac{4 - 4 - 2h}{h(2 + h)} = \dfrac{-2}{2 + h}$ (krajšamo $h \ne 0$).
+4. b) $f'(2) = \lim\limits_{h \to 0} \dfrac{-2}{2 + h} = -1$.
+5. c) $f(2) = 2$, zato je tangenta $y = 2 - 1 \cdot (x - 2) = -x + 4$.
+6. c) Sekanta iz a) je $y = 4 - (x - 1) = -x + 5$. Premici imata enak smerni koeficient $-1$, zato sta vzporedni.
+7. Odgovor: diferenčni količnik je $-1$ (smerni koeficient sekante), $f'(2) = -1$, tangenta $y = -x + 4$ je vzporedna s sekanto $y = -x + 5$.
+
+**Točkovanje:** a) 1 točka za vrednost $-1$, 1 točka za pomen (smerni koeficient sekante skozi točki $(1, 4)$ in $(4, 1)$); b) 1 točka za zapis diferenčnega količnika, 1 točka za poenostavitev na $\frac{-2}{2 + h}$, 1 točka za limito $-1$; c) 1 točka za enačbo tangente, 1 točka za ugotovitev, da sta premici vzporedni (enaka smerna koeficienta).
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+a) Z definicijo odvoda pokažite, da za $x > 0$ velja $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$. (3 točke)
+b) Iz odvodov funkcij $\sin x$ in $\cos x$ izpeljite, da za $\cos x \ne -1$ velja $\left(\dfrac{\sin x}{1 + \cos x}\right)' = \dfrac{1}{1 + \cos x}$. (3 točke)
+c) Izračunajte $f'(4)$ za funkcijo $f(x) = \sqrt{x^2 + 9}$. (2 točki)
+d) Poiščite vse točke na grafu funkcije $g(x) = \tan x$, $-\frac{\pi}{2} < x < \frac{\pi}{2}$, v katerih ima tangenta smerni koeficient $4$. (2 točki)
+
+**Rešitev:**
+
+1. a) Diferenčni količnik je $\dfrac{\sqrt{x + h} - \sqrt{x}}{h}$. Razširimo ga z $\sqrt{x + h} + \sqrt{x}$: $\dfrac{(x + h) - x}{h\,(\sqrt{x + h} + \sqrt{x})} = \dfrac{1}{\sqrt{x + h} + \sqrt{x}}$.
+2. a) Ko gre $h \to 0$, gre $\sqrt{x + h} \to \sqrt{x}$, zato je limita enaka $\dfrac{1}{2\sqrt{x}}$. Torej $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$.
+3. b) Pravilo za kvocient $\left(\dfrac{u}{v}\right)' = \dfrac{u'v - uv'}{v^2}$ uporabimo z $u = \sin x$ in $v = 1 + \cos x$, kjer je $u' = \cos x$ in $v' = -\sin x$. Imenovalec je $(1 + \cos x)^2$, števec pa $(1 + \cos x)\cos x + \sin^2 x = \cos x + \cos^2 x + \sin^2 x$.
+4. b) Ker je $\sin^2 x + \cos^2 x = 1$, je števec enak $1 + \cos x$. Okrajšamo: $\dfrac{1 + \cos x}{(1 + \cos x)^2} = \dfrac{1}{1 + \cos x}$ (za $\cos x \ne -1$).
+5. c) Sestavljena funkcija z notranjo funkcijo $x^2 + 9$: $f'(x) = \dfrac{1}{2\sqrt{x^2 + 9}} \cdot 2x = \dfrac{x}{\sqrt{x^2 + 9}}$.
+6. c) $f'(4) = \dfrac{4}{\sqrt{16 + 9}} = \dfrac{4}{5}$.
+7. d) Ker je $(\tan x)' = \dfrac{1}{\cos^2 x}$, pogoj $\dfrac{1}{\cos^2 x} = 4$ da $\cos^2 x = \dfrac{1}{4}$. Na intervalu $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ je $\cos x > 0$, zato $\cos x = \dfrac{1}{2}$ in $x = \pm\dfrac{\pi}{3}$.
+8. d) $\tan\dfrac{\pi}{3} = \sqrt{3}$ in $\tan\left(-\dfrac{\pi}{3}\right) = -\sqrt{3}$.
+9. Odgovor: $(\sqrt{x})' = \frac{1}{2\sqrt{x}}$, $\left(\frac{\sin x}{1 + \cos x}\right)' = \frac{1}{1 + \cos x}$, $f'(4) = \frac{4}{5}$; iskani točki sta $\left(\frac{\pi}{3}, \sqrt{3}\right)$ in $\left(-\frac{\pi}{3}, -\sqrt{3}\right)$.
+
+**Točkovanje:** a) 1 točka za zapis diferenčnega količnika, 1 točka za razširitev in krajšanje, 1 točka za limito; b) 1 točka za pravilo za kvocient, 1 točka za pravilna odvoda sinusa in kosinusa v števcu, 1 točka za poenostavitev s $\sin^2 x + \cos^2 x = 1$ in krajšanje; c) 1 točka za $f'(x)$, 1 točka za $f'(4) = \frac{4}{5}$; d) 1 točka za $x = \pm\frac{\pi}{3}$, 1 točka za obe točki z ordinatama.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako je definiran odvod funkcije $f$ v točki $a$ in kaj pomeni na grafu funkcije?
+---
+Odvod funkcije $f$ v točki $a$ je limita diferenčnega količnika: $f'(a) = \lim\limits_{h \to 0} \frac{f(a + h) - f(a)}{h}$, če ta limita obstaja. Diferenčni količnik je smerni koeficient sekante skozi točki $(a, f(a))$ in $(a + h, f(a + h))$ grafa. Ko gre $h$ proti $0$, se sekanta zavrti v tangento, zato je $f'(a)$ smerni koeficient tangente na graf v točki $(a, f(a))$. Odvod pove tudi, kako hitro se funkcija spreminja v točki $a$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Zapiši pravilo za odvod sestavljene funkcije in ga uporabi na funkciji $\sin(x^2)$.
+---
+Pri sestavljeni funkciji $f(g(x))$ je $f$ zunanja in $g$ notranja funkcija. Če je $g$ odvedljiva v $x$ in $f$ odvedljiva v $g(x)$, velja $\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$: odvajamo zunanjo funkcijo, notranjo pustimo nespremenjeno, in pomnožimo z odvodom notranje funkcije. Pri $\sin(x^2)$ je zunanja funkcija sinus, notranja pa $x^2$. Zato je $\bigl(\sin(x^2)\bigr)' = \cos(x^2) \cdot 2x$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Z definicijo odvoda izpelji pravilo za odvod vsote dveh funkcij, ki sta v točki $a$ odvedljivi.
+---
+Diferenčni količnik vsote je $\frac{(f + g)(a + h) - (f + g)(a)}{h}$. Členi se preuredijo v vsoto $\frac{f(a + h) - f(a)}{h} + \frac{g(a + h) - g(a)}{h}$. Ker sta $f$ in $g$ v $a$ odvedljivi, imata ulomka pri $h \to 0$ limiti $f'(a)$ in $g'(a)$. Limita vsote je vsota limit, zato je $(f + g)'(a) = f'(a) + g'(a)$.
+:::
 
 ## Drugače: Korak za korakom s številkami
 
-Odvod funkcije $f(x) = x^3$ v točki $a = 2$ lahko »ujameš« s kalkulatorjem.
+Odvod funkcije $f(x) = x^3$ v točki $a = 2$ lahko »ujameš« z računalom.
 
 1. Izračunaj $f(2) = 8$.
 2. Izberi $h = 0{,}1$: $f(2{,}1) = 9{,}261$, diferenčni količnik je $\dfrac{9{,}261 - 8}{0{,}1} = 12{,}61$.
@@ -238,14 +380,11 @@ Vajenec čez nekaj minut pokaže termometer: »Zdaj se skoraj ne segreva več.«
 ~ To je povprečna hitrost na razmiku $h = 1$. Odvod je limita takih količnikov, ko gre $h \to 0$.
 > Odvod je limita smernih koeficientov sekant, ko gre $h \to 0$, torej smerni koeficient tangente.
 
-? Koliko je $f'(1)$ za $f(x) = 4x^3 - 2x + 7$?
-- $9$
-~ To je $f(1) = 4 - 2 + 7$. Vrednost funkcije ni odvod.
-- $17$
-~ Konstanta $7$ je ostala. Njen odvod je $0$.
-- $0$
-~ Tako dobiš, če najprej vstaviš $x = 1$ in nato odvajaš število. Najprej odvajaj, nato vstavi.
-+ $10$
+? (brez računala) Koliko je $f'(1)$ za $f(x) = 4x^3 - 2x + 7$?
+= 10 | 0,01
+~ 9 | To je $f(1) = 4 - 2 + 7$. Vrednost funkcije ni odvod.
+~ 17 | Konstanta $7$ je ostala. Njen odvod je $0$.
+~ 0 | Tako dobiš, če najprej vstaviš $x = 1$ in nato odvajaš število. Najprej odvajaj, nato vstavi.
 > $f'(x) = 12x^2 - 2$, zato je $f'(1) = 12 - 2 = 10$.
 
 ? Ana je zapisala: $(x^2 \sin x)' = 2x \cos x$. Kje je napaka?
@@ -272,6 +411,23 @@ Vajenec čez nekaj minut pokaže termometer: »Zdaj se skoraj ne segreva več.«
 + $8\,^\circ\mathrm{C/min}$
 > $T'(t) = 12 - t$, zato je $T'(4) = 8\,^\circ\mathrm{C/min}$.
 
+? (višja raven) Pri izpeljavi pravila za produkt iz definicije pride v limiti $h \to 0$ izraz $\dfrac{f(a + h) - f(a)}{h} \cdot g(a + h)$. Zakaj gre ta izraz proti $f'(a)\,g(a)$?
++ Ker je $g$ v $a$ odvedljiva, zato tudi zvezna: $g(a + h) \to g(a)$.
+- Ker vstavimo $h = 0$.
+~ Pri $h = 0$ bi v ulomku delili z nič. Govorimo o limiti, ko gre $h$ proti $0$, pri čemer je $h \ne 0$.
+- Ker je $g(a + h) = g(a)$ za vsak $h$.
+~ To bi veljalo le za konstantno funkcijo. V splošnem se vrednosti razlikujeta, razlika gre proti $0$ šele v limiti.
+- Ker je odvod produkta produkt odvodov.
+~ To ne velja: že pri $x \cdot x$ dobiš $1 \cdot 1 = 1$, pravi odvod pa je $2x$.
+> Prvi faktor gre proti $f'(a)$. Odvedljiva funkcija je zvezna, zato gre $g(a + h)$ proti $g(a)$. Limita produkta je produkt limit.
+
+? (višja raven) (brez računala) Iz odvoda funkcije $\cos x$ s pravilom za kvocient izpelji odvod funkcije $f(x) = \dfrac{1}{\cos x}$. Koliko je $f'\!\left(\frac{\pi}{6}\right)$? Zaokroži na dve decimalki.
+= 0,67 | 0,01
+~ -0,67 | Odvod kosinusa je $-\sin x$, zato je števec $0 \cdot \cos x - 1 \cdot (-\sin x) = \sin x$, brez minusa.
+~ 0,58 | To je $\frac{\sin x}{\cos x}$. V imenovalcu je $\cos^2 x$, kvadrat imenovalca.
+~ -2 | Izračunal si $\frac{1}{(\cos x)'} = -\frac{1}{\sin x}$. Odvod ulomka ni ulomek z odvodom imenovalca: uporabi $\frac{u' v - u v'}{v^2}$.
+> $f'(x) = \dfrac{0 \cdot \cos x - 1 \cdot (-\sin x)}{\cos^2 x} = \dfrac{\sin x}{\cos^2 x}$. Pri $x = \frac{\pi}{6}$: $\dfrac{1/2}{3/4} = \dfrac{2}{3} \approx 0{,}67$.
+
 :::simboli
 T | temperatura |  | °C | v razlagi olje: $T(t) = 20 + 20t - t^2$; v Primeru 3 pekač, v kvizu mleko
 t | čas |  | min |
@@ -285,4 +441,32 @@ c | konstanta |  |  |
 g | druga (pri sestavljeni notranja) funkcija |  |  |
 u | števec ulomka |  |  |
 v | imenovalec ulomka |  |  |
+k | smerni koeficient tangente | k = f'(x_0) |  |
+x_0 | abscisa dotikališča tangente |  |  |
 :::
+
+<<RACUN
+odvod: x^2*exp(2*x) | x | 2*x*(x+1)*exp(2*x)
+resi: 2*x*(x+1)=0 | x | -1, 0
+vrednost: (4/4-4/1)/(4-1) | -1
+enako: (4/(2+h)-2)/h | -2/(2+h)
+limita: (4/(2+h)-2)/h | h | 0 | -1
+odvod: 4/x | x | -4/x^2
+enako: 2-(x-2) | -x+4
+enako: 4-(x-1) | -x+5
+limita: (sqrt(4+h)-sqrt(4))/h | h | 0 | 1/4
+enako: ((4+h)-4)/(h*(sqrt(4+h)+2)) | 1/(sqrt(4+h)+2)
+odvod: tan(x) | x | 1/cos(x)^2
+odvod: sin(x)/(1+cos(x)) | x | 1/(1+cos(x))
+enako: cos(x)*(1+cos(x))+sin(x)^2 | 1+cos(x)
+odvod: sqrt(x^2+9) | x | x/sqrt(x^2+9)
+vrednost: 4/sqrt(4^2+9) | 4/5
+vrednost: 1/cos(pi/3)^2 | 4
+vrednost: tan(pi/3) | sqrt(3)
+odvod: 1/x | x | -1/x^2
+odvod: 2^x | x | 2^x*log(2)
+odvod: cot(x) | x | -1/sin(x)^2
+vrednost: -1/sin(pi/4)^2 | -2
+odvod: 1/cos(x) | x | sin(x)/cos(x)^2
+vrednost: sin(pi/6)/cos(pi/6)^2 | 2/3
+>>

@@ -430,26 +430,36 @@ export const PATHS = {
       ["Množice in števila", [
         "Osnove logike | izjave in logične povezave (negacija, konjunkcija, disjunkcija, implikacija, ekvivalenca), pravilnostne tabele, tavtologija, enakovredne izjave",
         "Množice | operacije z množicami, Vennov diagram",
+        "Kartezični produkt in potenčna množica | urejeni pari, kartezični produkt in njegov graf, moč kartezičnega produkta, potenčna množica in njena moč",
         "Naravna in cela števila | deljivost, praštevila, D in v",
+        "Dvojiški številski sestav | pretvarjanje med desetiškim in dvojiškim sestavom (višja raven)",
         "Racionalna števila | ulomki, decimalni zapis, urejenost",
         "Realna števila in intervali | absolutna vrednost, intervali",
+        "Približki ter absolutna in relativna napaka | zaokroževanje, absolutna in relativna napaka, ocena napake vsote, razlike, produkta in kvocienta",
       ]],
       ["Izrazi", [
         "Potence z naravnimi in celimi eksponenti | pravila za računanje",
         "Algebrski izrazi | množenje, kvadrat in kub dvočlenika",
         "Razstavljanje izrazov | izpostavljanje, razlika kvadratov, Vietovo pravilo",
+        "Razstavljanje vsote in razlike potenc | vsota in razlika kubov, razstavljanje izrazov aⁿ ± bⁿ (višja raven)",
         "Ulomljeni izrazi | krajšanje, seštevanje, množenje",
       ]],
       ["Linearna funkcija, enačbe in neenačbe", [
         "Linearna funkcija | graf, smerni koeficient, ničla",
+        "Enačbe premice in kot med premicama | eksplicitna, splošna in odsekovna oblika, premica skozi točko, vzporednost in pravokotnost, kot med premicama",
         "Linearne enačbe | tudi z ulomki in parametrom",
         "Linearne neenačbe | rešitve kot intervali",
         "Sistemi linearnih enačb | zamenjalni in nasprotni koeficienti, grafično",
+        "Enačbe, neenačbe in sistemi s parametrom | linearna enačba, neenačba in sistem dveh enačb s parametrom, obravnava primerov (višja raven)",
+        "Gaussova metoda in sistemi linearnih neenačb | Gaussova eliminacijska metoda, sistem linearnih neenačb in njegova grafična rešitev (višja raven)",
       ]],
       ["Geometrija v ravnini", [
         "Osnovni geometrijski pojmi | premice, koti, vzporednost",
         "Trikotnik | skladnost, značilne točke",
+        "Togi premiki | vzporedni premik, zrcaljenje čez premico in točko, vrtež, orientacija trikotnika, skladnost",
+        "Heronova formula ter polmera očrtanega in včrtanega kroga | ploščina trikotnika iz stranic, R = abc/(4S), r = S/s",
         "Štirikotniki in krog | lastnosti, ploščine",
+        "Načrtovalne naloge | načrtovanje trikotnikov in štirikotnikov z ravnilom in šestilom, analiza in opis načrtovanja, programi za dinamično geometrijo (višja raven)",
         "Pravokotni koordinatni sistem v ravnini | razdalja med točkama, razpolovišče daljice, ploščina trikotnika z oglišči v koordinatah",
       ]],
       ["Statistika", [
@@ -463,6 +473,7 @@ export const PATHS = {
       ["Potence in koreni", [
         "Koreni | pravila za računanje, delno korenjenje, racionalizacija",
         "Potence z racionalnimi eksponenti | zveza s koreni",
+        "Iracionalne enačbe | reševanje s kvadriranjem, pogoji in preizkus rešitev (višja raven)",
       ]],
       ["Kompleksna števila", [
         "Kompleksna števila | računanje, konjugirano število, absolutna vrednost",
@@ -470,12 +481,15 @@ export const PATHS = {
       ["Funkcije", [
         "Funkcije in njihove lastnosti | definicijsko območje, zaloga vrednosti, ničle, naraščanje in padanje, sodost in lihost, injektivnost, sestavljena in inverzna funkcija",
         "Transformacije grafov | vzporedni premik, zrcaljenje čez osi in raztezanje grafa funkcije",
+        "Grafi z absolutno vrednostjo in stopničaste funkcije | graf stopničaste funkcije; graf funkcije z absolutno vrednostjo po primerih (višja raven)",
         "Potenčna in korenska funkcija | grafi in lastnosti potenčnih funkcij s celim eksponentom, korenska funkcija kot inverzna funkcija, modeliranje",
       ]],
       ["Kvadratna funkcija", [
         "Kvadratna funkcija | oblike zapisa, teme, ničle, graf",
         "Kvadratna enačba | diskriminanta, Vietove formule",
         "Kvadratna neenačba | reševanje z grafom",
+        "Ekstremalni problemi s kvadratno funkcijo | sestavljanje kvadratne funkcije iz besedila naloge, največja ali najmanjša vrednost v temenu, upoštevanje definicijskega območja (višja raven)",
+        "Presečišča parabol in sistemi kvadratnih neenačb | presečišče parabole in premice ter dveh parabol; sistem kvadratnih neenačb (višja raven)",
       ]],
       ["Eksponentna in logaritemska funkcija", [
         "Eksponentna funkcija | graf, lastnosti",
@@ -487,6 +501,9 @@ export const PATHS = {
         "Podobnost | podobni trikotniki, Evklidov in višinski izrek",
         "Kotne funkcije v pravokotnem trikotniku | sin, cos, tan, uporaba",
       ]],
+      ["Priprava na maturo", [
+        "Mešane naloge 1. in 2. letnika | izrazi, enačbe, funkcije, potence, koreni in logaritmi v nalogah, ki povežejo več poglavij",
+      ]],
     ],
   },
   "MAT-SS-3": {
@@ -497,23 +514,32 @@ export const PATHS = {
         "Grafi kotnih funkcij | perioda, amplituda, premiki",
         "Adicijski izreki | dvojni koti, preoblikovanje izrazov",
         "Trigonometrijske enačbe | splošne rešitve",
+        "Krožne funkcije | arkus sinus, arkus kosinus in arkus tangens: definicija, graf in lastnosti (višja raven)",
         "Sinusni in kosinusni izrek | reševanje poljubnega trikotnika",
       ]],
       ["Vektorji", [
         "Vektorji v ravnini in prostoru | seštevanje, množenje s skalarjem",
         "Skalarni produkt | kot med vektorjema, pravokotnost",
+        "Vektorji v geometriji | linearna neodvisnost, koplanarnost, delilno razmerje in težišče (višja raven)",
       ]],
       ["Polinomi in racionalne funkcije", [
         "Polinomi | deljenje, Hornerjev algoritem, ničle",
         "Graf polinoma | ničle in njihova stopnja, obnašanje v neskončnosti",
         "Racionalne funkcije | poli, asimptote, graf",
+        "Racionalne neenačbe | reševanje s tabelo predznakov (višja raven)",
       ]],
       ["Stožnice", [
         "Krožnica | enačba, lega premice in krožnice",
         "Elipsa, hiperbola, parabola | enačbe in grafi",
+        "Stožnice v premaknjeni legi in tangente | elipsa v premaknjeni legi; hiperbola in parabola v premaknjeni legi, tangenta stožnice (višja raven)",
       ]],
       ["Geometrijska telesa", [
+        "Premice in ravnine v prostoru | vzporednost in pravokotnost premic in ravnin, pravokotna projekcija premice na ravnino; množice točk v prostoru (višja raven)",
         "Površina in prostornina teles | prizma, piramida, valj, stožec, krogla",
+        "Poševna telesa in vrtenine | poševna prizma, valj, piramida in stožec; telesa, ki nastanejo z vrtenjem likov (višja raven)",
+      ]],
+      ["Priprava na maturo", [
+        "Mešane naloge 3. letnika | kotne funkcije, vektorji, geometrija v ravnini in prostoru, polinomi in racionalne funkcije v nalogah, ki povežejo več poglavij",
       ]],
     ],
   },
@@ -526,23 +552,32 @@ export const PATHS = {
         "Aritmetično in geometrijsko zaporedje | splošni člen, vsota",
         "Geometrijska vrsta | konvergenca, vsota",
         "Obrestni račun | navadno in obrestno obrestovanje",
+        "Anuitete in amortizacijski načrt | načelo ekvivalence glavnic, anuiteta, amortizacijski načrt",
       ]],
       ["Odvod", [
         "Limita in zveznost funkcije | računanje limit",
+        "Zvezne funkcije in bisekcija | lastnosti zveznih funkcij na zaprtem intervalu, iskanje ničel z bisekcijo in tehnologijo (višja raven)",
         "Odvod | definicija, pravila odvajanja",
+        "Odvedljivost in implicitni odvod | točke neodvedljivosti iz grafa; zveznost odvedljivih funkcij in odvod implicitno podane funkcije (višja raven)",
         "Uporaba odvoda | tangenta, naraščanje, ekstremi, ekstremalni problemi",
+        "Drugi odvod, prevoj in konveksnost | drugi odvod, konveksnost, konkavnost in prevoj (višja raven)",
       ]],
       ["Integral", [
         "Nedoločeni integral | osnovni integrali, uvedba nove spremenljivke",
+        "Integracija per partes in racionalnih funkcij | integracija »per partes« in z razcepom na parcialne ulomke (višja raven)",
         "Določeni integral | ploščina, prostornina vrtenine",
       ]],
       ["Kombinatorika in verjetnost", [
         "Kombinatorika | permutacije, variacije, kombinacije",
+        "Binomski izrek | binomski simbol, Pascalov trikotnik, razvoj potence dvočlenika",
         "Verjetnost | dogodki, verjetnost vsote in produkta, pogojna verjetnost",
-        "Statistika | normalna porazdelitev (VR), obdelava podatkov",
+        "Zaporedje neodvisnih poskusov | Bernoullijeva formula (višja raven)",
+        "Statistika | normalna porazdelitev, obdelava podatkov",
+        "Statistična naloga | zbiranje podatkov, razsevni diagram in povezanost spremenljivk, empirično preiskovanje",
       ]],
       ["Priprava na maturo", [
         "Mešane maturitetne naloge | ponovitev vseh letnikov",
+        "Vadbena maturitetna pola | pola 1 brez računala in pola 2 z računalom iz snovi vseh štirih letnikov, točkovanje in razporejanje časa",
       ]],
     ],
   },

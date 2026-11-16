@@ -148,6 +148,15 @@ test("lesson links: only lab experiments and 3D views that the catalogue has for
       { kind: "lab", key: "lab-ohm", title: "Ohmov zakon: tok in napetost" },
     ],
   );
+  // Faks lekcija: začetne vrednosti iz kataloga gredo z gumbom »Poglej v 3D« (odpre se s podrobnostmi za faks).
+  const faks = lessonView("UNI-ULFKKT-NMOVZ/zgradba-celice").links.find((k) => k.id === "celica-zivalska");
+  assert.deepEqual(faks?.zacetek, { faks: "1" });
+  assert.equal(lessonLinks([{ id: "3d-celica-zivalska", title: "Ž", opts: { zacetek: { faks: false } } }])[0].zacetek, undefined);
+  assert.equal(lessonLinks(simsForTopic("BIO-OS-8/celica-pod-mikroskopom")).find((k) => k.id === "celica-zivalska")?.zacetek, undefined);
+  // Odjemalec: gumb nese data-zacetek in ga poda open3d (ta ga doda v /3d#<id>?faks=1).
+  const tb = read("public/textbook.js");
+  assert.match(tb, /data-zacetek=/);
+  assert.match(tb, /ctx\.open3d\?\.\([^;]*b\.dataset\.zacetek/);
 });
 
 test("3D world: the /3d page in a frame closes itself and asks the tutor through the app", () => {

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -17,14 +17,14 @@ Kako se potem »sestavi«? Odgovor dajo **adicijski izreki** (lat. *additio* = s
 
 **1. Iskanje vzorca.** Vzemimo nekaj parov kotov, pri katerih $\sin(\alpha + \beta)$ poznamo, in preizkusimo dve ideji. Prva je naivna vsota sinusov. Druga je »križni« izraz $\sin\alpha\cos\beta + \cos\alpha\sin\beta$, v katerem se sinus enega kota pomnoži s kosinusom drugega.
 
-| $\alpha + \beta$ | $\sin\alpha + \sin\beta$ | križni izraz | $\sin(\alpha+\beta)$ |
-|---|---|---|---|
-| $30^\circ + 60^\circ$ | $1{,}366$ | $1$ | $1$ |
-| $30^\circ + 30^\circ$ | $1$ | $0{,}866$ | $0{,}866$ |
-| $60^\circ + 90^\circ$ | $1{,}866$ | $0{,}5$ | $0{,}5$ |
-| $45^\circ + 30^\circ$ | $1{,}207$ | $0{,}966$ | $0{,}966$ |
+| $\alpha + \beta$ | križni | $\sin(\alpha+\beta)$ |
+|---|---|---|
+| $30^\circ + 60^\circ$ | $1$ | $1$ |
+| $30^\circ + 30^\circ$ | $0{,}866$ | $0{,}866$ |
+| $60^\circ + 90^\circ$ | $0{,}5$ | $0{,}5$ |
+| $45^\circ + 30^\circ$ | $0{,}966$ | $0{,}966$ |
 
-Vsota sinusov se ne ujema nikjer. Križni izraz se ujema v vsaki vrstici. To ni naključje, temveč pravilo, ki velja za vse kote.
+Vsota sinusov se ne ujema nikjer: za iste pare kotov da $1{,}366$; $1$; $1{,}866$ in $1{,}207$. Križni izraz se ujema v vsaki vrstici. To ni naključje, temveč pravilo, ki velja za vse kote.
 
 **2. Sinus vsote.** Pravilo se imenuje adicijski izrek za sinus:
 
@@ -77,6 +77,28 @@ Ker je $\sin 2\alpha = 2\sin\alpha \cdot \cos\alpha$ in je za ostri kot $0 < \co
 :::
 
 **6. Preoblikovanje izrazov.** Izreki delujejo v obe smeri. Izraz $2\sin x\cos x$ lahko zapišeš krajše kot $\sin 2x$, izraz $\cos^2 x - \sin^2 x$ pa kot $\cos 2x$. Pri poenostavljanju iščeš prav takšne vzorce in jih zamenjaš s krajšim zapisom.
+
+**7. Polovični koti (višja raven).** Ker je $\alpha$ dvojni kot kota $\frac{\alpha}{2}$, iz točke 5 sledi $\cos\alpha = 1 - 2\sin^2\frac{\alpha}{2} = 2\cos^2\frac{\alpha}{2} - 1$. Izrazimo kvadrata:
+
+$$\sin^2\frac{\alpha}{2} = \frac{1 - \cos\alpha}{2}$$
+
+$$\cos^2\frac{\alpha}{2} = \frac{1 + \cos\alpha}{2}$$
+
+Pri korenjenju dobimo $\pm$; predznak določi kvadrant kota $\frac{\alpha}{2}$, ne kota $\alpha$.
+
+**8. Vsota v produkt (višja raven).** Seštejemo izreka za $\sin(u + v)$ in $\sin(u - v)$ in dobimo $\sin(u + v) + \sin(u - v) = 2\sin u\cos v$. Označimo $\alpha = u + v$ in $\beta = u - v$, torej $u = \frac{\alpha + \beta}{2}$ in $v = \frac{\alpha - \beta}{2}$:
+
+$$\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$$
+
+Podobno dobimo še:
+
+$$\sin\alpha - \sin\beta = 2\cos\frac{\alpha + \beta}{2}\sin\frac{\alpha - \beta}{2}$$
+
+$$\cos\alpha + \cos\beta = 2\cos\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$$
+
+$$\cos\alpha - \cos\beta = -2\sin\frac{\alpha + \beta}{2}\sin\frac{\alpha - \beta}{2}$$
+
+Tako vsoto razstavimo na produkt (**faktorizacija**), brano nazaj pa produkt na vsoto. Preizkus: $\sin 75^\circ + \sin 15^\circ = 2\sin 45^\circ\cos 30^\circ = \frac{\sqrt{6}}{2} \approx 1{,}225$.
 
 ## Rešeni primeri
 
@@ -166,6 +188,25 @@ Kaj ostane od $\dfrac{2\sin\alpha\cos\alpha}{2\cos^2\alpha}$?
 Krajšamo $2\cos\alpha$ in ostane $\dfrac{\sin\alpha}{\cos\alpha} = \tan\alpha$. Preizkus z $\alpha = 30^\circ$: $\dfrac{\sin 60^\circ}{1 + \cos 60^\circ} = \dfrac{0{,}866}{1{,}5} \approx 0{,}577 = \tan 30^\circ$.
 :::
 
+### Primer 5 (višja raven): polovični kot
+
+Za kot $\alpha$, $180^\circ < \alpha < 270^\circ$, velja $\cos\alpha = -\dfrac{7}{25}$. Izračunaj $\sin\dfrac{\alpha}{2}$ in $\cos\dfrac{\alpha}{2}$.
+
+**Podatki:** $\cos\alpha = -\dfrac{7}{25}$, $180^\circ < \alpha < 270^\circ$
+**Iščemo:** $\sin\dfrac{\alpha}{2}$, $\cos\dfrac{\alpha}{2}$
+
+:::formula
+$\sin^2\dfrac{\alpha}{2} = \dfrac{1 - \cos\alpha}{2}$, $\quad \cos^2\dfrac{\alpha}{2} = \dfrac{1 + \cos\alpha}{2}$
+:::
+
+**Rešitev:**
+
+1. Iz $180^\circ < \alpha < 270^\circ$ sledi $90^\circ < \dfrac{\alpha}{2} < 135^\circ$. V drugem kvadrantu je sinus pozitiven, kosinus negativen.
+2. $\sin^2\dfrac{\alpha}{2} = \dfrac{1 + \frac{7}{25}}{2} = \dfrac{16}{25}$, zato $\sin\dfrac{\alpha}{2} = \dfrac{4}{5}$.
+3. $\cos^2\dfrac{\alpha}{2} = \dfrac{1 - \frac{7}{25}}{2} = \dfrac{9}{25}$, zato $\cos\dfrac{\alpha}{2} = -\dfrac{3}{5}$.
+4. Preverba: $\cos^2\dfrac{\alpha}{2} - \sin^2\dfrac{\alpha}{2} = \dfrac{9}{25} - \dfrac{16}{25} = -\dfrac{7}{25}$. ✓
+5. Odgovor: $\sin\dfrac{\alpha}{2} = 0{,}8$ in $\cos\dfrac{\alpha}{2} = -0{,}6$.
+
 ## Pogoste napake
 
 - **»Sinus vsote je vsota sinusov.«** Zapis $\sin(\alpha + \beta) = \sin\alpha + \sin\beta$ je videti kot razčlenjevanje oklepaja. Sinus pa ni množenje s številom, zato oklepaja ne smeš »razčleniti«. Že $\sin 45^\circ + \sin 30^\circ > 1$ pokaže, da je to nemogoče. Uporabi križni izraz.
@@ -182,6 +223,116 @@ Krajšamo $2\cos\alpha$ in ostane $\dfrac{\sin\alpha}{\cos\alpha} = \tan\alpha$.
 - Dvojni kot: $\sin 2\alpha = 2\sin\alpha\cos\alpha$, $\cos 2\alpha = \cos^2\alpha - \sin^2\alpha = 1 - 2\sin^2\alpha = 2\cos^2\alpha - 1$.
 - $\sin(\alpha + \beta) \neq \sin\alpha + \sin\beta$ in $\sin 2\alpha \neq 2\sin\alpha$.
 - Izreki veljajo v obe smeri: z njimi razstaviš kot ali pa izraz zložiš v krajši zapis.
+- (višja raven) Polovični kot: $\sin^2\frac{\alpha}{2} = \frac{1 - \cos\alpha}{2}$, $\cos^2\frac{\alpha}{2} = \frac{1 + \cos\alpha}{2}$; predznak po kvadrantu $\frac{\alpha}{2}$.
+- (višja raven) Vsota v produkt: $\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$; podobno za ostale tri.
+
+## Ponovitev
+
+**Formule**
+- $\sin(\alpha \pm \beta) = \sin\alpha\cos\beta \pm \cos\alpha\sin\beta$ (priloga)
+- $\cos(\alpha \pm \beta) = \cos\alpha\cos\beta \mp \sin\alpha\sin\beta$ (priloga)
+- $\tan(\alpha \pm \beta) = \frac{\tan\alpha \pm \tan\beta}{1 \mp \tan\alpha\tan\beta}$ (priloga)
+- $\sin 2\alpha = 2\sin\alpha\cos\alpha$ (na pamet)
+- $\cos 2\alpha = \cos^2\alpha - \sin^2\alpha$ (na pamet)
+- (višja raven) $\sin^2\frac{\alpha}{2} = \frac{1 - \cos\alpha}{2}$, $\cos^2\frac{\alpha}{2} = \frac{1 + \cos\alpha}{2}$ (priloga)
+
+**Postopek**
+1. Kot razstavi na znana kota, na primer $75^\circ = 45^\circ + 30^\circ$.
+2. Manjkajočo funkcijo izračunaj iz $\sin^2\alpha + \cos^2\alpha = 1$.
+3. Predznak korena določi po kvadrantu kota.
+4. Vstavi v pravi izrek in poenostavi.
+5. Preveri s preprostim kotom ali z računalom.
+
+**Pazi na**
+- $\sin(\alpha + \beta) \ne \sin\alpha + \sin\beta$: uporabi križni izraz.
+- Pri kosinusu se predznak obrne: pri vsoti minus, pri razliki plus.
+- $\sin 2\alpha = 2\sin\alpha\cos\alpha$, ne $2\sin\alpha$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Brez uporabe računala izračunajte natančno vrednost $\tan 75^\circ$. Rezultat zapišite brez korena v imenovalcu.
+
+**Rešitev:**
+
+1. Kot razstavimo na kota iz tabele: $75^\circ = 45^\circ + 30^\circ$, kjer je $\tan 45^\circ = 1$ in $\tan 30^\circ = \frac{\sqrt3}{3}$.
+2. Adicijski izrek za tangens: $\tan 75^\circ = \dfrac{1 + \frac{\sqrt3}{3}}{1 - 1 \cdot \frac{\sqrt3}{3}} = \dfrac{3 + \sqrt3}{3 - \sqrt3}$, ko števec in imenovalec pomnožimo s $3$.
+3. Imenovalec racionaliziramo z razširitvijo s $3 + \sqrt3$: $\dfrac{(3 + \sqrt3)^2}{(3 - \sqrt3)(3 + \sqrt3)} = \dfrac{9 + 6\sqrt3 + 3}{9 - 3} = \dfrac{12 + 6\sqrt3}{6} = 2 + \sqrt3$.
+4. Odgovor: $\tan 75^\circ = 2 + \sqrt3$.
+
+**Točkovanje:** 1 točka za razstavitev $75^\circ = 45^\circ + 30^\circ$ in pravilno zapisan adicijski izrek za tangens, 1 točka za vstavljene vrednosti $\tan 45^\circ = 1$ in $\tan 30^\circ = \frac{\sqrt3}{3}$, 1 točka za racionaliziran rezultat $2 + \sqrt3$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Kota $\alpha$ in $\beta$ sta ostra. Velja $\cos\alpha = \frac{7}{25}$ in $\tan\beta = \frac43$.
+
+a) Izračunajte $\sin\alpha$, $\sin\beta$ in $\cos\beta$. (2 točki)
+b) Izračunajte $\sin(\alpha + \beta)$ in $\cos(\alpha + \beta)$. (2 točki)
+c) Utemeljite, ali je kot $\alpha + \beta$ oster ali top. (1 točka)
+d) Izračunajte $\sin 2\beta$ in $\cos 2\beta$ ter pokažite, da je $\alpha + 2\beta = 180^\circ$. (3 točke)
+
+**Rešitev:**
+
+1. a) $\sin^2\alpha = 1 - \frac{49}{625} = \frac{576}{625}$. Kot $\alpha$ je oster, zato je $\sin\alpha = \frac{24}{25}$.
+2. a) Iz pogoja $\tan\beta = \frac43$ dobimo enačbo $\sin\beta = \frac43\cos\beta$. Vstavimo v $\sin^2\beta + \cos^2\beta = 1$: $\frac{16}{9}\cos^2\beta + \cos^2\beta = \frac{25}{9}\cos^2\beta = 1$, torej $\cos^2\beta = \frac{9}{25}$. Kot $\beta$ je oster, zato je $\cos\beta = \frac35$ in $\sin\beta = \frac43 \cdot \frac35 = \frac45$.
+3. b) $\sin(\alpha + \beta) = \frac{24}{25} \cdot \frac35 + \frac{7}{25} \cdot \frac45 = \frac{72 + 28}{125} = \frac{100}{125} = \frac45$.
+4. b) $\cos(\alpha + \beta) = \frac{7}{25} \cdot \frac35 - \frac{24}{25} \cdot \frac45 = \frac{21 - 96}{125} = -\frac{75}{125} = -\frac35$.
+5. c) Vsota dveh ostrih kotov leži med $0^\circ$ in $180^\circ$. Na tem intervalu je kosinus negativen samo pri topih kotih, zato je $\alpha + \beta$ topi kot.
+6. d) $\sin 2\beta = 2 \cdot \frac45 \cdot \frac35 = \frac{24}{25}$ in $\cos 2\beta = \cos^2\beta - \sin^2\beta = \frac{9}{25} - \frac{16}{25} = -\frac{7}{25}$.
+7. d) Po adicijskem izreku: $\cos(\alpha + 2\beta) = \cos\alpha\cos 2\beta - \sin\alpha\sin 2\beta = \frac{7}{25} \cdot \left(-\frac{7}{25}\right) - \frac{24}{25} \cdot \frac{24}{25} = -\frac{49 + 576}{625} = -1$.
+8. d) Ker je $0^\circ < \alpha < 90^\circ$ in $0^\circ < 2\beta < 180^\circ$, je $0^\circ < \alpha + 2\beta < 270^\circ$. Na tem intervalu ima kosinus vrednost $-1$ samo pri $180^\circ$, zato je $\alpha + 2\beta = 180^\circ$.
+9. Odgovor: a) $\sin\alpha = \frac{24}{25}$, $\sin\beta = \frac45$, $\cos\beta = \frac35$; b) $\sin(\alpha + \beta) = \frac45$, $\cos(\alpha + \beta) = -\frac35$; c) kot $\alpha + \beta$ je top; d) $\sin 2\beta = \frac{24}{25}$, $\cos 2\beta = -\frac{7}{25}$ in $\alpha + 2\beta = 180^\circ$.
+
+**Točkovanje:** a) 1 točka za $\sin\alpha = \frac{24}{25}$, 1 točka za $\cos\beta = \frac35$ in $\sin\beta = \frac45$; b) 1 točka za $\sin(\alpha + \beta) = \frac45$, 1 točka za $\cos(\alpha + \beta) = -\frac35$; c) 1 točka za sklep, da je kot top, z utemeljitvijo z negativnim kosinusom; d) 1 točka za $\sin 2\beta$ in $\cos 2\beta$, 1 točka za $\cos(\alpha + 2\beta) = -1$ (ali enakovreden izračun), 1 točka za sklep z utemeljitvijo, v katerem intervalu leži $\alpha + 2\beta$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dan je izraz $E(\alpha) = \sin 3\alpha - \sin\alpha$.
+
+a) Izraz $E(\alpha)$ zapišite kot produkt. (2 točki)
+b) Določite vse kote $\alpha \in [0^\circ, 180^\circ]$, za katere je $E(\alpha) = 0$. (3 točke)
+c) S formulo za polovični kot izračunajte natančno vrednost $\sin 22{,}5^\circ$, nato še natančno vrednost $E(22{,}5^\circ)$. (3 točke)
+d) Pokažite, da za vsak kot $\alpha$ velja $E(\alpha) = 2\sin\alpha - 4\sin^3\alpha$. (2 točki)
+
+**Rešitev:**
+
+1. a) Uporabimo razčlenitev razlike sinusov v produkt: $\sin 3\alpha - \sin\alpha = 2\cos\frac{3\alpha + \alpha}{2}\sin\frac{3\alpha - \alpha}{2}$.
+2. a) Torej je $E(\alpha) = 2\cos 2\alpha\sin\alpha$.
+3. b) Produkt je enak $0$, kadar je $\sin\alpha = 0$ ali $\cos 2\alpha = 0$.
+4. b) Na intervalu $[0^\circ, 180^\circ]$ je $\sin\alpha = 0$ pri $\alpha = 0^\circ$ in $\alpha = 180^\circ$.
+5. b) Za $\alpha \in [0^\circ, 180^\circ]$ je $2\alpha \in [0^\circ, 360^\circ]$. Kosinus je tam enak $0$ pri $2\alpha = 90^\circ$ in $2\alpha = 270^\circ$, torej pri $\alpha = 45^\circ$ in $\alpha = 135^\circ$.
+6. c) Ker je $22{,}5^\circ = \frac{45^\circ}{2}$, velja $\sin^2 22{,}5^\circ = \dfrac{1 - \cos 45^\circ}{2} = \dfrac{1 - \frac{\sqrt2}{2}}{2} = \dfrac{2 - \sqrt2}{4}$.
+7. c) Kot $22{,}5^\circ$ leži v I. kvadrantu, zato je sinus pozitiven: $\sin 22{,}5^\circ = \dfrac{\sqrt{2 - \sqrt2}}{2}$.
+8. c) Iz zapisa v a): $E(22{,}5^\circ) = 2\cos 45^\circ \sin 22{,}5^\circ = 2 \cdot \dfrac{\sqrt2}{2} \cdot \dfrac{\sqrt{2 - \sqrt2}}{2} = \dfrac{\sqrt{2(2 - \sqrt2)}}{2} = \dfrac{\sqrt{4 - 2\sqrt2}}{2}$.
+9. d) V produkt iz a) vstavimo $\cos 2\alpha = 1 - 2\sin^2\alpha$: $E(\alpha) = 2\sin\alpha\,(1 - 2\sin^2\alpha) = 2\sin\alpha - 4\sin^3\alpha$.
+10. Odgovor: a) $E(\alpha) = 2\cos 2\alpha\sin\alpha$; b) $\alpha \in \{0^\circ, 45^\circ, 135^\circ, 180^\circ\}$; c) $\sin 22{,}5^\circ = \frac{\sqrt{2 - \sqrt2}}{2}$, $E(22{,}5^\circ) = \frac{\sqrt{4 - 2\sqrt2}}{2}$; d) enakost velja.
+
+**Točkovanje:** a) 1 točka za uporabo formule za razliko sinusov; 1 točka za $E(\alpha) = 2\cos 2\alpha\sin\alpha$. b) 1 točka za pogoj $\sin\alpha = 0$ ali $\cos 2\alpha = 0$; 1 točka za $0^\circ$ in $180^\circ$; 1 točka za $45^\circ$ in $135^\circ$. c) 1 točka za vstavitev v formulo za polovični kot; 1 točka za $\sin 22{,}5^\circ = \frac{\sqrt{2 - \sqrt2}}{2}$ z utemeljenim predznakom; 1 točka za $E(22{,}5^\circ) = \frac{\sqrt{4 - 2\sqrt2}}{2}$ (ali enakovreden zapis). d) 1 točka za uporabo $\cos 2\alpha = 1 - 2\sin^2\alpha$; 1 točka za končni zapis.
+
+### Ustno vprašanje 1
+
+:::premisli
+Povej adicijska izreka za sinus in kosinus vsote dveh kotov ter iz njiju izpelji izreka za razliko kotov.
+---
+Za poljubna kota velja $\sin(\alpha + \beta) = \sin\alpha\cos\beta + \cos\alpha\sin\beta$ in $\cos(\alpha + \beta) = \cos\alpha\cos\beta - \sin\alpha\sin\beta$. Razliko zapišemo kot vsoto $\alpha - \beta = \alpha + (-\beta)$. Točka na enotski krožnici za kot $-\beta$ je zrcalna slika točke za kot $\beta$ čez os $x$, zato je $\cos(-\beta) = \cos\beta$ in $\sin(-\beta) = -\sin\beta$. Ko to vstavimo v izreka za vsoto, dobimo $\sin(\alpha - \beta) = \sin\alpha\cos\beta - \cos\alpha\sin\beta$ in $\cos(\alpha - \beta) = \cos\alpha\cos\beta + \sin\alpha\sin\beta$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji formuli za sinus in kosinus dvojnega kota ter zapiši še drugi dve obliki kosinusa dvojnega kota.
+---
+Dvojni kot je vsota $2\alpha = \alpha + \alpha$, zato v adicijska izreka vstavimo $\beta = \alpha$. Iz izreka za sinus vsote dobimo $\sin 2\alpha = \sin\alpha\cos\alpha + \cos\alpha\sin\alpha = 2\sin\alpha\cos\alpha$. Iz izreka za kosinus vsote dobimo $\cos 2\alpha = \cos^2\alpha - \sin^2\alpha$. Z zvezo $\sin^2\alpha + \cos^2\alpha = 1$ nadomestimo enega od kvadratov in dobimo še $\cos 2\alpha = 1 - 2\sin^2\alpha$ in $\cos 2\alpha = 2\cos^2\alpha - 1$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Izpelji formulo, s katero vsoto $\sin\alpha + \sin\beta$ zapišemo kot produkt.
+---
+Zapišemo adicijska izreka $\sin(u + v) = \sin u\cos v + \cos u\sin v$ in $\sin(u - v) = \sin u\cos v - \cos u\sin v$. Ko ju seštejemo, se člena s $\cos u\sin v$ izničita, zato je $\sin(u + v) + \sin(u - v) = 2\sin u\cos v$. Označimo $\alpha = u + v$ in $\beta = u - v$; od tod je $u = \frac{\alpha + \beta}{2}$ in $v = \frac{\alpha - \beta}{2}$. Tako dobimo $\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$.
+:::
 
 ## Drugače: Korak za korakom s številkami
 
@@ -223,14 +374,11 @@ Luka preveri z $\alpha = \beta = 60^\circ$: $2 \cdot \frac{\sqrt{3}}{2} \cdot \f
 ~ Dvojka pred kotom ni dvojka pred funkcijo: $\sin 2\alpha = 2\sin\alpha\cos\alpha$.
 > Pri kosinusu vsote ostaneta skupaj enaki funkciji, med členoma je minus. Preizkus: $\cos(30^\circ + 60^\circ) = 0$.
 
-? Za kot $\alpha$ velja $\sin\alpha = 0{,}6$ in $\cos\alpha = 0{,}8$. Koliko je $\sin 2\alpha$?
-- $1{,}2$
-~ To je $2\sin\alpha$. Pozabil si na faktor $\cos\alpha$.
-- $0{,}48$
-~ To je le $\sin\alpha\cos\alpha$, manjka dvojka.
-+ $0{,}96$
-- $0{,}28$
-~ To je $\cos 2\alpha = 0{,}64 - 0{,}36$, ne sinus dvojnega kota.
+? (brez računala) Za kot $\alpha$ velja $\sin\alpha = 0{,}6$ in $\cos\alpha = 0{,}8$. Koliko je $\sin 2\alpha$? Vpiši decimalno število.
+= 0,96 | 0,001
+~ 1,2 | To je $2\sin\alpha$. Pozabil si na faktor $\cos\alpha$.
+~ 0,48 | To je le $\sin\alpha\cos\alpha$, manjka dvojka.
+~ 0,28 | To je $\cos 2\alpha = 0{,}64 - 0{,}36$, ne sinus dvojnega kota.
 > $\sin 2\alpha = 2 \cdot 0{,}6 \cdot 0{,}8 = 0{,}96$.
 
 ? Nina računa $\cos 75^\circ$. (1) $75^\circ = 45^\circ + 30^\circ$. (2) $\cos 75^\circ = \cos 45^\circ\cos 30^\circ + \sin 45^\circ\sin 30^\circ$. (3) Rezultat: $\dfrac{\sqrt{6} + \sqrt{2}}{4} \approx 0{,}966$. Kje je napaka?
@@ -253,13 +401,42 @@ Luka preveri z $\alpha = \beta = 60^\circ$: $2 \cdot \frac{\sqrt{3}}{2} \cdot \f
 ~ Za vse ostre kote velja $0 < \cos\alpha < 1$, zato je odnos vedno enak.
 > $\sin 2\alpha = 2\sin\alpha \cdot \cos\alpha$ in $0 < \cos\alpha < 1$, zato je $\sin 2\alpha < 2\sin\alpha$.
 
-? Skodelica je na krožniku mikrovalovne pečice v točki $(10\,\text{cm};\ 0)$. Krožnik se zavrti za $45^\circ$ in nato še za $30^\circ$ v pozitivni smeri. Kolikšna je zdaj koordinata $y$ skodelice?
-- $12{,}07\,\text{cm}$
-~ To je $10\,\text{cm} \cdot (\sin 45^\circ + \sin 30^\circ)$. Koordinata $y$ bi bila večja od razdalje skodelice od središča ($10\,\text{cm}$), kar ni mogoče.
-+ $9{,}66\,\text{cm}$
-- $2{,}59\,\text{cm}$
-~ To je $10\,\text{cm} \cdot \sin 15^\circ$. Kota zasukov se seštejeta, ne odštejeta.
+? Skodelica je na krožniku mikrovalovne pečice v točki $(10\,\text{cm};\ 0)$. Krožnik se zavrti za $45^\circ$ in nato še za $30^\circ$ v pozitivni smeri. Kolikšna je zdaj koordinata $y$ skodelice? Vpiši jo v centimetrih, zaokroženo na dve decimalki.
+= 9,66 cm | 0,01
+~ 12,07 | To je $10\,\text{cm} \cdot (\sin 45^\circ + \sin 30^\circ)$. Koordinata $y$ bi bila večja od razdalje skodelice od središča ($10\,\text{cm}$), kar ni mogoče.
+~ 2,59 | To je $10\,\text{cm} \cdot \sin 15^\circ$. Kota zasukov se seštejeta, ne odštejeta.
 > Skupni zasuk je $75^\circ$, zato $y = 10\,\text{cm} \cdot \sin 75^\circ = 10\,\text{cm} \cdot \dfrac{\sqrt{6} + \sqrt{2}}{4} \approx 9{,}66\,\text{cm}$.
+
+<<RACUN
+enako: sin(a/2)^2 | (1-cos(a))/2
+enako: cos(a/2)^2 | (1+cos(a))/2
+enako: sin(a)+sin(b) | 2*sin((a+b)/2)*cos((a-b)/2)
+enako: sin(a)-sin(b) | 2*cos((a+b)/2)*sin((a-b)/2)
+enako: cos(a)+cos(b) | 2*cos((a+b)/2)*cos((a-b)/2)
+enako: cos(a)-cos(b) | -2*sin((a+b)/2)*sin((a-b)/2)
+vrednost: sin(75°)+sin(15°) | 1.225
+vrednost: sin(pi-atan(4/3)) | 0.8
+vrednost: cos(pi-atan(4/3)) | -0.6
+vrednost: cos(2*(pi-atan(4/3))) | -0.28
+vrednost: tan(75°) | 2+sqrt(3)
+vrednost: (1+sqrt(3)/3)/(1-sqrt(3)/3) | 2+sqrt(3)
+vrednost: (3+sqrt(3))^2/((3-sqrt(3))*(3+sqrt(3))) | 2+sqrt(3)
+vrednost: sin(acos(7/25)) | 24/25
+vrednost: cos(atan(4/3)) | 3/5
+vrednost: sin(atan(4/3)) | 4/5
+vrednost: sin(acos(7/25)+atan(4/3)) | 4/5
+vrednost: cos(acos(7/25)+atan(4/3)) | -3/5
+vrednost: sin(2*atan(4/3)) | 24/25
+vrednost: cos(2*atan(4/3)) | -7/25
+vrednost: (7/25)*(-7/25)-(24/25)*(24/25) | -1
+vrednost: (acos(7/25)+2*atan(4/3))*180/pi | 180
+enako: sin(3*a)-sin(a) | 2*cos(2*a)*sin(a)
+enako: sin(3*a)-sin(a) | 2*sin(a)-4*sin(a)^3
+vrednost: sin(22.5°) | sqrt(2-sqrt(2))/2
+vrednost: sin(3*22.5°)-sin(22.5°) | sqrt(4-2*sqrt(2))/2
+vrednost: sin(3*45°)-sin(45°) | 0
+vrednost: sin(3*135°)-sin(135°) | 0
+>>
 
 :::simboli
 \alpha | prvi kot (začetni kot) | |
@@ -268,4 +445,7 @@ r | polmer krožnika (razdalja skodelice od središča) | | cm
 \varphi | kot točke na krožnici | |
 x | koordinata $x$ skodelice po zasuku | x = r\cos(\alpha + \beta) | cm
 y | koordinata $y$ skodelice po zasuku | y = r\sin(\alpha + \beta) | cm
+u | pomožni kot (polovica vsote) | u = \frac{\alpha + \beta}{2} |
+v | pomožni kot (polovica razlike) | v = \frac{\alpha - \beta}{2} |
+E | izraz v Nalogi 3 za maturo | E(\alpha) = \sin 3\alpha - \sin\alpha |
 :::

@@ -28,6 +28,7 @@
 //   --ponovi <N>     vsak primer N-krat (1–10), ker isti model na isto nalogo ne odgovori vedno enako
 //   --pogoj s|brez   samo en pogoj (privzeto oba); »s« = cel Evklidov odgovor s preverjanjem
 //   --nadaljuj       nadaljuje prekinjeno ciljno ponovitev (privzeto vsak zagon začne na novo)
+//   --izid-json <f>  na koncu zapiše strošek in štetje po primerih v <f> (bere ga server/meritev-po-objavi.js)
 // Vmesne vrstice gredo v data/natancnost-ponovitve.json (ne v napredek prave meritve), na koncu je tabela po primerih.
 // Ciljna ponovitev ni meritev za objavo: povzetka za repozitorij ne izpiše. --dry pokaže izbor in oceno stroška.
 import "../server/env.js";
@@ -42,7 +43,8 @@ import { getTopic, getPath, learningPathPrompt } from "../server/curriculum.js";
 import { lessonSummaryForPrompt } from "../server/textbook.js";
 import { EUR_PER_USD } from "../server/usage.js";
 import { PROGRAMS } from "../server/university-data.js";
-import { runChecked, summarize, writeMeasurement, measurementError, CONDITIONS, MIN_PRIMERI, GRADER_FINAL_RULE } from "./meritev-natancnosti.js";
+import { vpisiVKnjigo, knjigaFile } from "../server/meritev-po-objavi.js";
+import { runChecked, summarize, writeMeasurement, measurementError, examplesOf, CONDITIONS, MIN_PRIMERI, GRADER_FINAL_RULE } from "./meritev-natancnosti.js";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const arg = (name, d) => {
@@ -74,7 +76,7 @@ if (SAMO.length < SAMO_ALL.length) console.warn(`--samo: podvojeni id-ji so izpu
 const PONOVI_RAW = process.argv.includes("--ponovi") ? arg("ponovi", "") : "1";
 const PONOVI = /^\d+$/.test(PONOVI_RAW) ? Number(PONOVI_RAW) : NaN;
 const POGOJ = arg("pogoj", "");
-const flagNoValue = ["samo", "ponovi", "pogoj"].find((k) => process.argv.includes(`--${k}`) && !arg(k, ""));
+const flagNoValue = ["samo", "ponovi", "pogoj", "izid-json"].find((k) => process.argv.includes(`--${k}`) && !arg(k, ""));
 if (SAMO.length || flagNoValue || process.argv.includes("--ponovi") || POGOJ || process.argv.includes("--nadaljuj")) {
   const why = flagNoValue
     ? `--${flagNoValue} potrebuje vrednost`
@@ -115,27 +117,7 @@ const GROUPS = arg("groups", "")
 const LABEL = { chat: "Haiku", think: "Haiku (več razmisleka)", mid: "Sonnet", deep: "Opus" };
 
 // --- 1. Naloge iz lekcij --------------------------------------------------
-// Rešene primere pišeta in pregledujeta Opus ali Fable, zato je njihova rešitev merilo.
-function examplesOf(file) {
-  const md = fs.readFileSync(file, "utf8");
-  const sec = md.split(/^## Rešeni primeri\s*$/m)[1]?.split(/^## (?!#)/m)[0];
-  if (!sec) return [];
-  return sec
-    .split(/^### /m)
-    .slice(1)
-    .map((block) => {
-      const [head, ...rest] = block.split("\n");
-      const body = rest.join("\n").trim();
-      const cut = body.search(/^\*\*(Podatki|Rešitev|Iščemo)[:*]/m);
-      // Vprašanje je pogosto le v »Iščemo« (ne izda rešitve), zato ga dodamo; formulo (namig) izpustimo.
-      const wanted = body.match(/^\*\*Iščemo(?::\*\*|\*\*:)\s*(.+)$/m)?.[1];
-      const prose = (cut > 0 ? body.slice(0, cut) : "").replace(/:::formula[\s\S]*?:::/g, "").trim();
-      const task = prose && wanted ? `${prose}\n\nIščemo: ${wanted.trim()}` : prose;
-      return { title: head.trim(), task, solution: body, hard: /težj/i.test(head) };
-    })
-    .filter((e) => e.task.length >= 30 && /Rešitev/.test(e.solution));
-}
-
+// Rešeni primeri: examplesOf v meritev-natancnosti.js (pišeta in pregledujeta jih Opus ali Fable, zato je rešitev merilo).
 const group = (key) => (key.startsWith("UNI-") ? "fakulteta" : key.includes("-TEK-") ? "tekmovanja" : key.includes("-SS-") ? "srednja šola" : "osnovna šola");
 const SHARE = { "osnovna šola": 0.3, "srednja šola": 0.3, tekmovanja: 0.15, fakulteta: 0.25 };
 
@@ -304,7 +286,18 @@ const worstPair =
   costUsd(thinkP.model, { input_tokens: thinkP.max_tokens + 4000, output_tokens: thinkP.max_tokens }) +
   2 * costUsd(MODEL_DEEP, { input_tokens: thinkP.max_tokens + 6000, output_tokens: GRADER_MAX_TOKENS });
 const REAL_CAP = process.argv.includes("--resnicna-meja");
-const PROGRESS = path.join(root, "data", SAMO.length ? "natancnost-ponovitve.json" : "natancnost-napredek.json");
+// Samodejna meritev po objavi (--izid-json) ima svoj napredek, da ne pobriše ročne ponovitve, ki morda teče hkrati.
+const IZID_RAW = arg("izid-json", "");
+const PROGRESS = IZID_RAW ? `${path.resolve(root, IZID_RAW)}.napredek.json` : path.join(root, "data", SAMO.length ? "natancnost-ponovitve.json" : "natancnost-napredek.json");
+// Tedenska knjiga stroška vseh meritev (server/meritev-po-objavi.js): samodejna meritev se ne zažene, če bi skupaj z
+// ročnimi presegla 15 $ na teden. Vsak plačan odgovor se vpiše sproti, zato šteje tudi prekinjen zagon.
+const knjiga = (usd) => {
+  try {
+    vpisiVKnjigo(knjigaFile(), usd, { vir: IZID_RAW ? "po-objavi" : "ročno" });
+  } catch (e) {
+    console.warn(`Knjiga stroška meritev: ${e?.message || e}`);
+  }
+};
 if (CHECK) {
   const estC = tasks.reduce((s, t) => s + pairEstimate(t), 0);
   const perUsd = estC / Math.max(1, tasks.length);
@@ -319,7 +312,7 @@ if (DRY) {
 if (CHECK) {
   // Ciljna ponovitev začne vedno na novo (stari odgovori so lahko iz prejšnjega prompta); --nadaljuj nadaljuje prekinjeno.
   if (SAMO.length ? !process.argv.includes("--nadaljuj") : process.argv.includes("--znova")) fs.rmSync(PROGRESS, { force: true });
-  const r = await runChecked({ tasks, settingsFor, question, grade, group, maxUsd: MAX_USD, worstPair, progressFile: PROGRESS, realCap: REAL_CAP, conditions: CONDS });
+  const r = await runChecked({ tasks, settingsFor, question, grade, group, maxUsd: MAX_USD, worstPair, progressFile: PROGRESS, realCap: REAL_CAP, conditions: CONDS, knjiga });
   if (SAMO.length) {
     // Tabela po primerih in pogojih (ni povzetka za objavo: izbor ni vzorec vseh lekcij).
     console.log(`\nCiljna ponovitev (${PONOVI}× na primer):`);
@@ -331,6 +324,19 @@ if (CHECK) {
         for (const x of mine.filter((x) => x.ocena !== "pravilno")) console.log(`    ${x.id} ${x.ocena}: ${String(x.razlog || "").slice(0, 220)}`);
       }
     console.log(`Strošek: ${(r.appUsd + r.gradeUsd).toFixed(2)} $ (aplikacija ${r.appUsd.toFixed(2)} $, ocenjevalec ${r.gradeUsd.toFixed(2)} $). Odgovori: ${path.relative(root, PROGRESS)}.`);
+    // Samodejna meritev po objavi (server/meritev-po-objavi.js) prebere dejanski strošek za tedensko mejo in povzetek za skrbnika.
+    // Brez odgovorov in nalog: le id-ji lekcij, štetje ocen in kratek razlog ocenjevalca (učenčevih podatkov tu ni).
+    const IZID = IZID_RAW;
+    if (IZID) {
+      const primeri = chosen.flatMap((t) =>
+        CONDS.map((c) => {
+          const mine = r.rows.filter((x) => (x.id === t.id || x.id.startsWith(`${t.id}#`)) && x.pogoj === c.kljuc);
+          const n = (o) => mine.filter((x) => x.ocena === o).length;
+          return { id: t.id, pogoj: c.kljuc, od: mine.length, napaka: n("napaka"), manjsa_napaka: n("manjsa_napaka"), pravilno: n("pravilno"), razlogi: mine.filter((x) => x.ocena !== "pravilno").map((x) => `${x.ocena}: ${String(x.razlog || "").slice(0, 220)}`) };
+        }),
+      );
+      fs.writeFileSync(path.resolve(root, IZID), JSON.stringify({ strosek_usd: Number((r.appUsd + r.gradeUsd).toFixed(4)), ponovi: PONOVI, ustavljeno_ob_meji: !!r.stopped, primeri }, null, 1));
+    }
     process.exit(0);
   }
   const summary = summarize(r.rows, {
@@ -389,6 +395,7 @@ for (const [i, t] of tasks.entries()) {
     // Cena ocene (Opus) je ločena od cene odgovora, sicer bi stolpec »Cena na odgovor« kazal ceno ocenjevanja.
     const { usd: gradeUsd = 0, ...verdict } = g;
     spent += usd + gradeUsd;
+    knjiga(usd + gradeUsd);
     rows.push({ ...t, mode: m, answer, usd, grade_usd: gradeUsd, ...verdict });
     console.log(`[${i + 1}/${tasks.length}] ${LABEL[m].padEnd(8)} ${String(g.ocena).padEnd(13)} ${t.id}  (skupaj ${spent.toFixed(2)} $)`);
   }

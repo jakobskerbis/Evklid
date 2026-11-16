@@ -43,7 +43,7 @@ Manj. Alkohol v bučki še ni prejel dovolj energije, da bi se segrel na tempera
 
 Poleg tekočinskih poznamo še druge termometre. **Digitalni** ima elektronski senzor, katerega lastnosti se s temperaturo spreminjajo. **Infrardeči** (na primer na čelu) meri nevidno svetlobo, ki jo oddaja površina, in se telesa sploh ne dotakne. **Bimetalni** ima dva sprijeta trakova različnih kovin, ki se pri segrevanju različno raztezata in zato ukrivita kazalec.
 
-**4. Tri lestvice drug ob drugem.** Predstavljaj si tri termometre, postavljene drug ob drugem. Na vsakem je svoja lestvica, a vsi trije kažejo iste dogodke na isti višini:
+**4. Tri lestvice druga ob drugi.** Predstavljaj si tri termometre, postavljene drug ob drugem. Na vsakem je svoja lestvica, a vsi trije kažejo iste dogodke na isti višini:
 
 | Dogodek | Celzij [$^\circ\mathrm{C}$] | Kelvin [$\mathrm{K}$] | Fahrenheit [$^\circ\mathrm{F}$] |
 |---|---|---|---|
@@ -127,7 +127,7 @@ $t_2 = \dfrac{t_\mathrm{F} - 32}{1{,}8}$, nato $\Delta t = t_1 - t_2$
 
 ### Primer 4: zdaj ti
 
-Satelit posname zemljevid temperatur površja Julijskih Alp. Na barvni lestvici ob zemljevidu je vrh Triglava označen s $268\,\mathrm{K}$. Koliko je to v stopinjah Celzija? Ali se sneg na vrhu lahko tali?
+Satelit posname zemljevid temperatur površja Julijskih Alp. Na barvni lestvici ob zemljevidu je vrh Triglava označen z $268\,\mathrm{K}$. Koliko je to v stopinjah Celzija? Ali se sneg na vrhu lahko tali?
 
 **Podatki:** $T = 268\,\mathrm{K}$
 **Iščemo:** temperaturo $t$ v $^\circ\mathrm{C}$
@@ -240,4 +240,5 @@ t_{\mathrm{F}} | temperatura v stopinjah Fahrenheita | t_\mathrm{F} = 1{,}8 \cdo
 t_1 | temperatura v Ljubljani | | ^\circ C
 t_2 | temperatura v Chicagu | t_2 = \dfrac{t_\mathrm{F} - 32}{1{,}8} | ^\circ C
 \Delta t | razlika temperatur | \Delta t = t_1 - t_2 | ^\circ C | v kelvinih je razlika enaka
+W_n | notranja energija (vsota energij vseh delcev) | | J
 :::

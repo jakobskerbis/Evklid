@@ -49,14 +49,16 @@ Pri jeklu kaljenje ujame ogljik v prenasičeni martenzit. Ta nastane brez difuzi
 2. **Gašenje** v vodi: difuzija nima časa, nastane **prenasičena trdna raztopina**. Ob tem ostane v mreži veliko praznih mest, ki kasneje pospešijo difuzijo.
 3. **Staranje**: pri sobni temperaturi (naravno) ali pri $120$ do $200\,^\circ\mathrm C$ (umetno). Baker se zbira v izločke v zaporedju: Guinier-Prestonove cone (ploščice debeline nekaj atomov) $\to$ $\theta''$ $\to$ $\theta'$ $\to$ ravnotežna faza $\theta$ ($\mathrm{Al_2Cu}$).
 
-```
-Rp ^      vrh (T6)
-   |     _--_
-   |   /      \__  prestaranje
-   |  /          ---
-   | /
-   +------------------> t
-```
+:::risba graf
+opis: Kvalitativen graf trdnosti Rp v odvisnosti od časa staranja t. Trdnost od začetne vrednosti po gašenju najprej strmo raste, doseže vrh (stanje T6) in nato počasi pada (prestaranje). Osi sta brez številk.
+x: 0 .. 6 | 1 | t
+y: 0 .. 6 | 1 | R_p
+oznake: ne
+f: 2 + 3*x*exp(1 - x) | debelo modra
+točka: 1; 5 | vrh (T6) | nad
+napis: 4; 3,2 | prestaranje | nad
+podnapis: Trdnost med staranjem: rast do vrha (T6), nato prestaranje
+:::
 
 Trdnost med staranjem najprej raste, doseže vrh in nato pada. Pri prestaranju izločki zrastejo, razdalje med njimi se povečajo in izgubijo koherenco z mrežo. Dislokacije jih tedaj obidejo.
 
@@ -78,7 +80,7 @@ Magnezij je najlažja konstrukcijska kovina. Ima heksagonalno mrežo z malo drsn
 
 ### Titanove zlitine
 
-Titan je skoraj dvakrat lažji od jekla, ima zelo veliko specifično trdnost, ohrani jo do okoli $500\,^\circ\mathrm C$ in je izredno odporen proti koroziji zaradi goste plasti $\mathrm{TiO_2}$. Je drag, ker ga pridobivamo v zapletenem postopku prek $\mathrm{TiCl_4}$. Legirni elementi stabilizirajo eno od obeh modifikacij:
+Titan je za dobrih $40\,\%$ lažji od jekla, ima zelo veliko specifično trdnost, ohrani jo do okoli $500\,^\circ\mathrm C$ in je izredno odporen proti koroziji zaradi goste plasti $\mathrm{TiO_2}$. Je drag, ker ga pridobivamo v zapletenem postopku prek $\mathrm{TiCl_4}$. Legirni elementi stabilizirajo eno od obeh modifikacij:
 
 - **stabilizatorji $\alpha$** (Al, O, N) dvignejo temperaturo prehoda;
 - **stabilizatorji $\beta$** (V, Mo, Nb, Fe) jo znižajo.
@@ -86,7 +88,7 @@ Titan je skoraj dvakrat lažji od jekla, ima zelo veliko specifično trdnost, oh
 Ločimo zlitine $\alpha$, $\alpha + \beta$ in $\beta$. Najpogostejša je $\alpha + \beta$ zlitina **Ti-6Al-4V**: letalski deli, lopatice kompresorjev, vsadki. Zlitine $\alpha + \beta$ in $\beta$ lahko tudi toplotno utrdimo z raztopnim žarjenjem in staranjem.
 
 :::premisli
-Zakaj je titanova zlitina boljša izbira za del, ki je vroč $400\,^\circ\mathrm C$, kot aluminijeva zlitina T6, čeprav ima ta podobno specifično trdnost pri sobni temperaturi?
+Zakaj je titanova zlitina boljša izbira za del, ki dela pri $400\,^\circ\mathrm C$, kot aluminijeva zlitina T6, čeprav ima ta podobno specifično trdnost pri sobni temperaturi?
 ---
 Pri $400\,^\circ\mathrm C$ je aluminijeva zlitina daleč nad temperaturo staranja: izločki hitro zrastejo, zlitina se prestara in izgubi trdnost. Aluminij se tali že pri $660\,^\circ\mathrm C$, titan pri $1668\,^\circ\mathrm C$, zato je $400\,^\circ\mathrm C$ zanj sorazmerno »hladno«.
 :::
@@ -242,12 +244,12 @@ Predstavljaj si dislokacijo kot vrv, ki jo vlečeš po polju s količki.
 - Pri vrhu so količki ravno tako veliki, da jih vrv komaj še prereže, in še vedno gosti.
 - Pri prestaranju se drobni količki zlijejo v redke debele stebre. Vrv jih ne more prerezati, a se med njimi lahko upogne in jih obide. Razmiki so veliki, zato gre spet lažje.
 
-Krivulja trdnosti v času iz razlage je zato hrib: na levi je odločilno rezanje, na desni obidenje.
+Krivulja trdnosti v času iz razlage je zato hrib: na levi je odločilno rezanje, na desni obhod.
 
 ## Drugače: Uporaba v stroki
 
 - **Letalstvo.** Spodnja stran kril je pogosto iz 2024-T3 (odpornost proti utrujanju), zgornja iz 7075-T6 ali novejših zlitin 7xxx (tlačna trdnost).
-- **Varjenje toplotno utrjevalnih zlitin.** V toplotno vplivnem področju zvara pri 6061-T6 se izločki delno raztopijo, malo dlje od zvara pa prestarajo; trdnost ob zvaru pade za tretjino ali več, kar mora konstrukter upoštevati ali zvar ponovno toplotno obdelati.
+- **Varjenje toplotno utrjevalnih zlitin.** V toplotno vplivanem področju zvara pri 6061-T6 se izločki delno raztopijo, malo dlje od zvara pa prestarajo; trdnost ob zvaru pade za tretjino ali več, kar mora konstrukter upoštevati ali zvar ponovno toplotno obdelati.
 - **Avtomobilska industrija.** Aluminijeve pločevine 6xxx dobavijo v stanju T4. Med sušenjem laka (okoli $180\,^\circ\mathrm C$, $20$ do $30\,\mathrm{min}$) se karoserija delno umetno postara, kar je izkoristek ene toplotne obdelave za dve nalogi.
 - **Medicina.** Ti-6Al-4V in čisti titan sta standard za kolčne endoproteze, zobne vsadke in plošče za kosti. Kost se na titanov oksid neposredno veže (oseointegracija). Modul titana ($110\,\mathrm{GPa}$) je še vedno večkrat večji od modula kortikalne kosti (okoli $10$ do $30\,\mathrm{GPa}$), zato vsadek prevzame del obremenitve in kost okoli njega se lahko tanjša. Razgradljivi magnezijevi vijaki se uporabljajo pri manjših zlomih.
 

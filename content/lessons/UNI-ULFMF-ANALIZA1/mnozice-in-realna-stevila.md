@@ -163,7 +163,7 @@ Prištej $2n + 1$ obema stranema predpostavke: $1 + 3 + \dots + (2n-1) + (2n+1) 
 
 ## Pogoste napake
 
-- **Supremum je vedno element množice.** Napačno sklepanje: »$\sup [0, 1)$ ne obstaja, ker $1$ ni v množici.« Supremum je najmanjša zgornja meja in je lahko zunaj množice. V množici ni le *maksimum*. Popravek: ločuj $\sup$ in $\max$.
+- **Supremum je vedno element množice.** Napačno sklepanje: »$\sup [0, 1)$ ne obstaja, ker $1$ ni v množici.« Supremum je najmanjša zgornja meja in je lahko zunaj množice. V množici mora ležati le *maksimum*. Popravek: ločuj $\sup$ in $\max$.
 - **Katerakoli zgornja meja je supremum.** »$\sup [0, 1) = 2$, ker je $2$ zgornja meja.« Res je meja, ni pa najmanjša: tudi $1{,}5$ je meja. Popravek: preveri še pogoj z $\varepsilon$.
 - **Pogoj z $\varepsilon$ za en sam $\varepsilon$.** Kdor pokaže, da obstaja element nad $0{,}99$, še ni dokazal, da je $1$ supremum. Pogoj mora veljati za **vsak** $\varepsilon > 0$, zato $n$ izrazimo z $\varepsilon$.
 - **Indukcija brez baze.** »Če $n > n + 1$, potem $n + 1 > n + 2$« je pravilen korak, trditev pa je za vsak $n$ napačna. Korak sam ničesar ne dokaže. Popravek: vedno preveri bazo.
@@ -176,6 +176,60 @@ Prištej $2n + 1$ obema stranema predpostavke: $1 + 3 + \dots + (2n-1) + (2n+1) 
 - $M = \sup A \iff$ $M$ je zgornja meja in za vsak $\varepsilon > 0$ obstaja $a \in A$ z $a > M - \varepsilon$.
 - Aksiom o polnosti: vsaka neprazna navzgor omejena $A \subseteq \mathbb{R}$ ima supremum. V $\mathbb{Q}$ to ne velja. Posledica: arhimedska lastnost.
 - Indukcija: baza $T(n_0)$ in korak $T(n) \Rightarrow T(n+1)$ dasta $T(n)$ za vse $n \ge n_0$.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije zgornje in spodnje meje, omejene množice, supremuma, infimuma, maksimuma in minimuma ter razliko med $\sup$ in $\max$;
+- karakterizacijo supremuma z $\varepsilon$ (oba pogoja) in zrcalno karakterizacijo infimuma;
+- aksiom o polnosti z obema predpostavkama (neprazna, navzgor omejena) in primer, da v $\mathbb{Q}$ ne velja;
+- arhimedsko lastnost in njen dokaz iz aksioma o polnosti;
+- načelo matematične indukcije (baza, korak, indukcijska predpostavka, začetek pri $n_0$);
+- dokaz enoličnosti supremuma in dokaz, da $\sqrt2$ ni racionalno število.
+
+### Naloga 1
+
+Dana je množica $A = \left\{\dfrac{m}{m+n} : m, n \in \mathbb{N}\right\}$. (a) Določi $\sup A$ in $\inf A$ ter oboje dokaži s pogojem z $\varepsilon$. (b) Ali obstajata $\max A$ in $\min A$? (c) Za $\varepsilon = 0{,}001$ zapiši element $A$, ki je večji od $\sup A - \varepsilon$, in element, ki je manjši od $\inf A + \varepsilon$.
+
+**Rešitev:**
+
+1. Za vse $m, n \in \mathbb{N}$ je $0 < m < m + n$, zato $0 < \dfrac{m}{m+n} < 1$. Število $1$ je zgornja meja, število $0$ spodnja meja.
+2. Supremum: izberemo $n = 1$. Pogoj $\dfrac{m}{m+1} > 1 - \varepsilon$ je enak $\dfrac{1}{m+1} < \varepsilon$ oziroma $m > \dfrac1\varepsilon - 1$. Tak $m \in \mathbb{N}$ obstaja po arhimedski lastnosti. Oba pogoja veljata, zato $\sup A = 1$.
+3. Infimum: izberemo $m = 1$. Pogoj $\dfrac{1}{1+n} < 0 + \varepsilon$ je enak $n > \dfrac1\varepsilon - 1$. Tak $n \in \mathbb{N}$ spet obstaja po arhimedski lastnosti, zato $\inf A = 0$.
+4. Po koraku 1 so vse neenakosti stroge, torej $1 \notin A$ in $0 \notin A$. Maksimum in minimum ne obstajata.
+5. Za $\varepsilon = 0{,}001$ je $\dfrac1\varepsilon - 1 = 999$. Vzamemo $m = 1000$, $n = 1$: $\dfrac{1000}{1001} \approx 0{,}999001 > 0{,}999$. Vzamemo $m = 1$, $n = 1000$: $\dfrac{1}{1001} \approx 0{,}000999 < 0{,}001$.
+6. Odgovor: $\sup A = 1$, $\inf A = 0$, maksimuma in minimuma ni; ustrezata na primer elementa $\dfrac{1000}{1001}$ in $\dfrac{1}{1001}$.
+
+### Naloga 2
+
+Naj bo $s_n = 1 + \dfrac{1}{2^2} + \dfrac{1}{3^2} + \dots + \dfrac{1}{n^2}$. (a) Z indukcijo dokaži, da je $s_n \le 2 - \dfrac1n$ za vsak $n \in \mathbb{N}$. (b) Utemelji, da ima množica $S = \{s_n : n \in \mathbb{N}\}$ supremum, in pokaži, da je $\dfrac{49}{36} < \sup S \le 2$. (c) Ali ima $S$ maksimum?
+
+**Rešitev:**
+
+1. Baza: $s_1 = 1$ in $2 - \dfrac11 = 1$, torej $s_1 \le 2 - \dfrac11$.
+2. Indukcijska predpostavka: $s_n \le 2 - \dfrac1n$. Potem je $s_{n+1} = s_n + \dfrac{1}{(n+1)^2} \le 2 - \dfrac1n + \dfrac{1}{(n+1)^2}$.
+3. Pokazati moramo $2 - \dfrac1n + \dfrac{1}{(n+1)^2} \le 2 - \dfrac{1}{n+1}$, kar je enako $\dfrac{1}{(n+1)^2} \le \dfrac1n - \dfrac{1}{n+1} = \dfrac{1}{n(n+1)}$.
+4. Zadnja neenakost je enaka $n \le n + 1$ (obe strani pomnožimo z $n(n+1)^2 > 0$) in zato drži. Torej $s_{n+1} \le 2 - \dfrac{1}{n+1}$; po načelu indukcije trditev velja za vse $n$.
+5. Množica $S$ je neprazna ($s_1 = 1 \in S$) in navzgor omejena: $s_n \le 2 - \dfrac1n < 2$. Po aksiomu o polnosti obstaja $\sup S$. Ker je $2$ zgornja meja, supremum pa najmanjša zgornja meja, je $\sup S \le 2$.
+6. Spodnja ocena: $s_3 = 1 + \dfrac14 + \dfrac19 = \dfrac{49}{36}$ in $s_4 = s_3 + \dfrac1{16} > s_3$. Ker je $\sup S \ge s_4$, je $\sup S > \dfrac{49}{36} \approx 1{,}361$.
+7. Maksimuma ni: za vsak $n$ je $s_{n+1} = s_n + \dfrac{1}{(n+1)^2} > s_n$, zato noben element $S$ ni največji.
+8. Odgovor: $s_n \le 2 - \dfrac1n$ za vse $n$; $\sup S$ obstaja, velja $\dfrac{49}{36} < \sup S \le 2$, maksimuma ni.
+
+### Naloga 3
+
+Natančno navedi aksiom o polnosti in arhimedsko lastnost. Arhimedsko lastnost dokaži. Nato utemelji, zakaj v aksiomu ne smemo izpustiti nobene od predpostavk »neprazna« in »navzgor omejena« in zakaj trditev aksioma v $\mathbb{Q}$ ne velja.
+
+**Rešitev:**
+
+1. Aksiom o polnosti: vsaka neprazna navzgor omejena podmnožica $\mathbb{R}$ ima supremum v $\mathbb{R}$.
+2. Arhimedska lastnost: množica $\mathbb{N}$ ni navzgor omejena; za vsak $x \in \mathbb{R}$ obstaja $n \in \mathbb{N}$ z $n > x$.
+3. Dokaz s protislovjem: denimo, da je $\mathbb{N}$ navzgor omejena. Ker je neprazna, po aksiomu obstaja $s = \sup \mathbb{N}$.
+4. Število $s - 1$ je manjše od $s$, zato ni zgornja meja: obstaja $n \in \mathbb{N}$ z $n > s - 1$. Potem je $n + 1 \in \mathbb{N}$ in $n + 1 > s$, kar nasprotuje temu, da je $s$ zgornja meja. Torej $\mathbb{N}$ ni navzgor omejena.
+5. »Neprazna«: za prazno množico je vsako realno število zgornja meja (pogoj $a \le M$ za vse $a \in \emptyset$ je izpolnjen na prazno). Najmanjše zgornje meje ni, ker najmanjšega realnega števila ni.
+6. »Navzgor omejena«: množica brez zgornje meje, na primer $\mathbb{N}$, nima niti ene zgornje meje, torej tudi najmanjše ne.
+7. V $\mathbb{Q}$: množica $B = \{x \in \mathbb{Q} : x^2 < 2\}$ je neprazna ($1 \in B$) in navzgor omejena z $2$. V $\mathbb{R}$ je $\sup B = \sqrt2$. Če bi imela $B$ najmanjšo zgornjo mejo $q \in \mathbb{Q}$, je $q \ge 1$ (ker $1 \in B$) in $q \ne \sqrt2$, ker $\sqrt2$ ni racionalno. Če je $q < \sqrt2$, zaradi gostosti $\mathbb{Q}$ obstaja ulomek $r$ s $q < r < \sqrt2$; ta je v $B$ (ker $0 < r < \sqrt2$, je $r^2 < 2$), zato $q$ ni zgornja meja. Če je $q > \sqrt2$, obstaja ulomek $r$ s $\sqrt2 < r < q$; ta je manjša zgornja meja. V obeh primerih dobimo protislovje.
+8. Sklep: polnost je lastnost, ki $\mathbb{R}$ loči od $\mathbb{Q}$; obe predpostavki sta potrebni, iz aksioma pa sledi arhimedska lastnost.
 
 ## Drugače: Na sliki
 
@@ -261,6 +315,6 @@ n_0 | začetna vrednost indukcije | | | trditev velja za vse n ≥ n₀
 T | trditev, odvisna od n | | | T(n) ⇒ T(n+1) je indukcijski korak
 A | množica realnih števil
 a | element množice A
-M | supremum (najmanjša zgornja meja) množice A | M = \sup A
+M | zgornja meja množice A; najmanjša zgornja meja je supremum | a \le M | | M = sup A, če je M najmanjša zgornja meja
 \varepsilon | poljubno majhno pozitivno število | | | ε > 0
 :::

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enačba premice
+  - $\vec r = \vec r_A + t\,\vec e$, smerni vektor $\vec e \ne \vec 0$
+  - kanonična: $\frac{x - x_0}{e_1} = \frac{y - y_0}{e_2} = \frac{z - z_0}{e_3}$
+- Enačba ravnine
+  - $ax + by + cz = d$, normala $\vec n = (a, b, c)$
+  - skozi tri točke: $\vec n = \overrightarrow{AB} \times \overrightarrow{AC}$
+  - pazi: ena enačba ni premica
+- Lega dveh premic
+  - sovpadata, vzporedni, sekata se, mimobežni
+  - sekata se: $\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2) = 0$
+  - presečišče: različna parametra $t$ in $s$
+- Premica in ravnina
+  - $\vec e \cdot \vec n \ne 0$: vstavi, reši na $t$
+  - $\vec e \cdot \vec n = 0$: vzporedna ali leži v njej
+- Dve ravnini
+  - vzporedni normali: vzporedni ali sovpadata
+  - presečnica s smerjo $\vec n_1 \times \vec n_2$
+- Razdalje
+  - točka–ravnina: $\frac{|ax_1 + by_1 + cz_1 - d|}{|\vec n|}$
+  - točka–premica: $\frac{|\overrightarrow{AT} \times \vec e|}{|\vec e|}$
+  - mimobežnici: $\frac{|\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2)|}{|\vec e_1 \times \vec e_2|}$
+- Koti
+  - premici, ravnini: $\cos\varphi$ z absolutno vrednostjo
+  - premica in ravnina: $\sin\varphi = \frac{|\vec e \cdot \vec n|}{|\vec e|\,|\vec n|}$

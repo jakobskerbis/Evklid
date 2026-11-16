@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Rekurzivna funkcija
+  - kliče sebe na manjšem problemu
+  - primer: `vsota([3, 5, 2])` vrne $10$
+- Osnovni primer
+  - odgovor brez novega klica
+  - pazi: brez njega prekoračitev sklada
+- Klicni sklad
+  - čakajoči klici, LIFO
+  - globina pri vsoti $n + 1$
+- Rekurzija ali iteracija
+  - zanka: nekaj spremenljivk, brez sklada
+  - rekurzija: ko se problem razcepi
+- Hanojski stolp
+  - $n - 1$ na pomožno, največji na cilj
+  - $P(n) = 2P(n-1) + 1 = 2^n - 1$
+  - pazi: potez ni $2n$
+- Dvojiško iskanje
+  - samo urejena tabela
+  - $s = \lfloor (\mathrm{lo} + \mathrm{hi})/2 \rfloor$, nato $s + 1$ ali $s - 1$
+  - največ $\lceil \log_2(n+1) \rceil$ primerjav

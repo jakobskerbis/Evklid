@@ -8,6 +8,9 @@ import { plansFor } from "../server/accounts/plans.js";
 // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
 globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
 const { landingHtml, levelPrices } = await import("../public/pristajalna.js");
+// Uvozi so pred prvim testom: po njem bi jih --test-force-exit izpustil skupaj s testi.
+const { guaranteeAdvertised, GUARANTEE } = await import("../server/placila/garancija.js");
+const { default: SL } = await import("../public/i18n/sl.js");
 const money = (minor, cur) => `${minor / 100} ${cur}`;
 
 test("cene po stopnjah pridejo iz cenika (OŠ, SŠ, faks in družina)", () => {
@@ -50,8 +53,6 @@ test("account.js: nov obiskovalec dobi pristajalno stran, znana naprava prijavo;
 });
 
 // Pas pri vrhu (j 2026-11-10): tri dejstva vedno, garancija samo, ko jo strežnik oglašuje.
-const { guaranteeAdvertised, GUARANTEE } = await import("../server/placila/garancija.js");
-const { default: SL } = await import("../public/i18n/sl.js");
 
 test("pas pri vrhu: tri dejstva so vedno, garancije brez stikala ni", () => {
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, min_age: 15 };

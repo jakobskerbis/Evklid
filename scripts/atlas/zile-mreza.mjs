@@ -112,7 +112,17 @@ export function zapisi(doc, node, prim, m) {
   else {
     const predznacen = TipP === Int16Array || TipP === Int8Array;
     const sama = node.getMesh().listParents().filter((p) => p.propertyType === "Node").length === 1 && node.getMesh().listPrimitives().length === 1;
-    if (norm && predznacen && sama) {
+    if (norm && predznacen && sama && m.mreza) {
+      // Skupna mreža kvantizacije za dele, ki se stikajo (popravi-zile: »stikiSkupaj«): vozlišča dobijo isti premik
+      // in isto merilo, zato imajo oglišča na stiku v obeh delih do bita enak položaj (brez špranj ob stiku, enaki
+      // trikotniki pregrade). Samo za vozlišče brez starša in brez zasuka (premik in merilo sta potem svetovna).
+      const [qx, qy, qz, qw] = node.getRotation();
+      if (node.getParentNode() || Math.abs(qx) + Math.abs(qy) + Math.abs(qz) > 1e-12 || qw < 0) throw new Error(`${node.getName()}: skupna mreža zahteva vozlišče brez starša in zasuka`);
+      const { c, h } = m.mreza;
+      for (let i = 0; i < n; i++) for (let k = 0; k < 3; k++) L[i * 3 + k] = (m.P[i * 3 + k] - c[k]) / h;
+      node.setTranslation(c.slice());
+      node.setScale([h, h, h]);
+    } else if (norm && predznacen && sama) {
       const c = [(mn[0] + mx[0]) / 2, (mn[1] + mx[1]) / 2, (mn[2] + mx[2]) / 2];
       // Ohranimo število bitov izvirne kvantizacije (npr. 14 bitov v Int16: manjša datoteka po stiskanju).
       const polno = TipP === Int16Array ? 32767 : 127;

@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ligand in receptor
+  - membrano prečka informacija, ne molekula
+  - endokrino, parakrino, avtokrino, sinaptično
+- Lega receptorja
+  - lipofilen ligand: znotrajcelični receptor, geni, ure
+  - hidrofilen ligand: membranski receptor, sekunde
+- Membranski receptorji
+  - ionotropni: kanal, acetilholin, milisekunde
+  - z G-proteinom: GDP se zamenja za GTP
+  - receptorske tirozin-kinaze: inzulin
+- Sekundarni obveščevalci
+  - $\mathrm{G_s}$ → adenilat-ciklaza → cAMP → PKA
+  - $\mathrm{G_q}$ → fosfolipaza C → IP₃, DAG
+  - IP₃ sprosti $\mathrm{Ca^{2+}}$ iz ER
+- Ojačitev in ugašanje
+  - števila se množijo: $N = 5 \cdot 10^6$
+  - napaka: seštevanje korakov
+  - GTPaza, fosfodiesteraza, fosfataze
+- Apoptoza in nekroza
+  - apoptoza: skrčenje, telesca, brez vnetja
+  - nekroza: celica poči, vnetje
+  - $6 \cdot 10^{10}$ celic na dan
+- Poti apoptoze
+  - notranja: p53, Bax, citokrom c, kaspaza 9
+  - zunanja: Fas, kaspaza 8
+  - Bcl-2 zavira, kaspaza 3 izvrši

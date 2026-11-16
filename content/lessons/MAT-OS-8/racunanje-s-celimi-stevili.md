@@ -169,7 +169,7 @@ Več, ker odštevanje $-8$ doda $8$, $-5$ pa odvzame le $5$. $12 + 8 + (-5) = 20
 
 ## Pogoste napake
 
-- **»Minus in minus je plus« tudi pri seštevanju.** Kdo zapiše $(-3) + (-4) = 7$, ker si je zapomnil le kratek stavek. Pri seštevanju dveh negativnih števil gremo dvakrat v levo, zato $(-3) + (-4) = -7$. Pravilo o dveh minusih velja le za množenje in deljenje.
+- **»Minus in minus je plus« tudi pri seštevanju.** Marsikdo zapiše $(-3) + (-4) = 7$, ker si je zapomnil le kratek stavek. Pri seštevanju dveh negativnih števil gremo dvakrat v levo, zato $(-3) + (-4) = -7$. Pravilo o dveh minusih velja le za množenje in deljenje.
 - **Odšteti negativno, kot da bi bilo pozitivno.** $5 - (-3) = 2$ je napačno, ker je odštevanec obravnavan kot $3$. Odštevanje negativnega števila je prištevanje nasprotnega: $5 - (-3) = 5 + 3 = 8$.
 - **Predznak od pozitivnega števila.** Pri $(-9) + 5$ kdo napiše $4$ ali vzame predznak kar od $5$. Odločilna je večja absolutna vrednost, to je $9$, zato $(-9) + 5 = -4$.
 - **Računanje od leve proti desni brez vrstnega reda.** $2 + 3 \cdot (-4)$ ni $5 \cdot (-4) = -20$. Množenje ima prednost: $2 + (-12) = -10$.
@@ -217,11 +217,11 @@ Ana pride v trgovski center z avtom in parkira v kleti, v nadstropju $-2$. Stopi
 
 Ko kupi polnilnik, se spomni, da je pozabila vrečko v avtu. Pelje se $9$ nadstropij dol: $5 - 9 = -4$. Ups, to je prenizko! Avto je v $-2$. Za koliko je zgrešila? Razlika je $(-2) - (-4) = (-2) + 4 = 2$, torej mora $2$ nadstropji gor.
 
-Dvigalo med vožnjo dol vsako sekundo prevozi $-1$ nadstropje. Po $3$ sekundah je sprememba $3 \cdot (-1) = -3$. Kje je bilo dvigalo $3$ sekunde *pred* tem trenutkom? Čas nazaj je $-3$, zato sprememba $(-3)\cdot(-1) = 3$: bilo je $3$ nadstropja višje. Tako se v zgodbi pokaže, zakaj negativno krat negativno da pozitivno: vrtimo film nazaj, dvigalo pa se je peljalo dol.
+Dvigalo med vožnjo dol vsako sekundo spremeni višino za $-1$ nadstropje. Po $3$ sekundah je sprememba $3 \cdot (-1) = -3$. Kje je bilo dvigalo $3$ sekunde *pred* tem trenutkom? Čas nazaj je $-3$, zato sprememba $(-3)\cdot(-1) = 3$: bilo je $3$ nadstropja višje. Tako se v zgodbi pokaže, zakaj negativno krat negativno da pozitivno: vrtimo film nazaj, dvigalo pa se je peljalo dol.
 
 ## Preveri se
 
-? Katera tabela pravilno kaže predznak rezultata pri množenju?
+? Kateri zapis pravilno kaže predznak rezultata pri množenju?
 - $(-)\cdot(-) = -$ in $(+)\cdot(-) = -$
 ~ Tako misli, kdor meni, da en sam minus »okuži« ves račun. Enaka predznaka dasta plus.
 + $(-)\cdot(-) = +$ in $(+)\cdot(-) = -$

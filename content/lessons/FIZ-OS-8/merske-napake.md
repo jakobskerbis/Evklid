@@ -168,7 +168,7 @@ $d_4 = 154{,}0\,\text{mm} - 115{,}7\,\text{mm} = 38{,}3\,\text{mm}$. Preizkus: $
 - **»Ena meritev je prava, druge so napačne.«** Tako je mislil Žan. Napako ima vsaka meritev, tudi najbolj skrbna, zato nobena ni »prava«. Najboljši približek je povprečje vseh.
 - **»Več decimalk pomeni bolj natančno.«** Kalkulator da $58{,}16$ ali $42{,}1333$, a štoparica s človeškim prstom ne meri na stotinke sekunde. Povprečje zaokroži na natančnost meritev.
 - **»Vse meritve gredo v povprečje.«** Meritev, ki je očitno pokvarjena (prepozno ustavljena štoparica, napačno odčitan razdelek), povprečje močno premakne. Grobo napako najprej izloči.
-- **»Povprečje odpravi vse napake.«** Odpravi le naključne, ki gredo enkrat gor, enkrat dol. Če vsi merijo z ravnilom, ki ima obrabljen začetek, so vse dolžine prekratke, in povprečje je prekratko prav tako.
+- **»Povprečje odpravi vse napake.«** Odpravi le naključne, ki gredo enkrat gor, enkrat dol. Če vsi merijo z ravnilom, ki ima obrabljen začetek, so vse dolžine predolge, in povprečje je predolgo prav tako.
 
 ## Povzetek
 
@@ -191,7 +191,7 @@ Recept za vsako ponovljeno meritev, na primeru časov $12{,}4$; $12{,}7$; $12{,}
 
 ## Drugače: Kot zgodba
 
-Leta 1676 je danski astronom Ole Rømer opazoval Io, Jupitrovo luno. Io vsakih nekaj dni zaide v senco Jupitra in »ugasne«. Rømer je zapisoval čase teh mrkov, noč za nočjo.
+Leta 1676 je danski astronom Ole Rømer opazoval Io, Jupitrovo luno. Io vsaka slaba dva dneva zaide v senco Jupitra in »ugasne«. Rømer je zapisoval čase teh mrkov, noč za nočjo.
 
 Ni se zanesel na eno opazovanje. Vedel je, da se lahko zmoti za kakšno minuto: oblak, nemirna slika v teleskopu, utrujene oči. Zato je mrke opazoval znova in znova in primerjal množico zapisov.
 

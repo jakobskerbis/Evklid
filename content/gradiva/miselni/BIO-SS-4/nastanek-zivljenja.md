@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kemijska evolucija
+  - gradniki → polimeri → RNA → protocelica
+  - brez živih bitij, brez kisika
+- Miller in Urey
+  - $\mathrm{CH_4}$, $\mathrm{NH_3}$, $\mathrm{H_2}$, voda in iskre
+  - nastanejo aminokisline, ne celica
+  - napaka: »poskus dokaže nastanek življenja«
+- Polimeri na glini
+  - nukleotidi se zgostijo in povežejo
+  - luže, ki se sušijo
+- Svet RNA
+  - RNA hrani zapis in katalizira
+  - ribozim; rRNA v ribosomu
+  - kratki zapisi: $P = (1 - f)^n$
+- Membrana sama nastane
+  - hidrofobni repi stran od vode
+  - dvojni sloj se sklene v mehurček
+- Protocelica in prve celice
+  - mehurček z RNA raste in se deli
+  - stromatoliti, $3{,}5$ milijarde let

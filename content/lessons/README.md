@@ -11,9 +11,10 @@ aplikacija spremembo pobere ob naslednjem odprtju lekcije.
 
 ```markdown
 ---
-stanje: osnutek        # osnutek | pregledano (osnutek pokaže opozorilo učencu)
+stanje: osnutek        # osnutek | preverjeno | pregledano (glej »Stanje lekcije« spodaj)
 demo: pitagora         # neobvezno: dodatna simulacija (simulacije za vsako temo so v public/sim/katalog.js)
 avtor: učitelj / AI    # neobvezno, za evidenco
+pregledal: Ana Novak   # neobvezno: učitelj (človek), ki je lekcijo pregledal; samo pri »pregledano«
 ---
 
 ## Zakaj se tega učimo
@@ -77,6 +78,60 @@ t | čas | | s
 :::
 ```
 
+## Stanje lekcije
+
+| `stanje:` | Kdaj | Kaj vidi učenec |
+|---|---|---|
+| `osnutek` | lekcija je napisana, pregledi še niso končani | rumeno opozorilo »Osnutek: lekcijo mora še pregledati učitelj …« |
+| `preverjeno` | `check-lesson.js` je brez napak (preračunani računi) in pregledovalci AI so lekcijo pregledali | modro opombo »Račune sta preverila program in AI. Učitelj lekcije še ni pregledal. …« |
+| `pregledano` | lekcijo je pregledal učitelj (človek) | nič |
+
+`pregledano` je samo za lekcije, ki jih je pregledal človek; njegovo ime zapiši v `pregledal:` (učencu se ne izpiše).
+AI ni nikoli `pregledal:` (`check-lesson.js` to javi kot napako); pregled AI je stanje `preverjeno`. Nova lekcija
+ostane `osnutek`, dokler niso končani vsi trije pregledi (`docs/pregled.md` §2).
+
+## Preveri se: vrste vprašanj
+
+Vsako vprašanje se začne z `?`; besedilo vprašanja (tudi tabela ali risba `:::risba`) stoji med vrstico `?` in
+prvim odgovorom. Vrsta vprašanja sledi iz odgovorov; v enem vprašanju je samo ena vrsta. Mešaj vrste: kjer je odgovor
+število, naj ga učenec vpiše; kjer ima tema graf, skico ali tabelo, naj vsaj eno vprašanje zahteva branje risbe.
+
+**Izbira** (kot zgoraj): vsaj 3 možnosti, natanko ena `+`, vsaka `-` ima svojo vrstico `~`.
+
+**Vpiši število:** natanko ena vrstica `= vrednost | toleranca`.
+
+```markdown
+? Kolikšen je pH raztopine HCl s koncentracijo $0{,}0050\,\mathrm{mol/L}$?
+= 2,30 | 0,01
+~ 5,30 | Uporabil si naravni logaritem (ln) namesto desetiškega (log).
+~ -2,30 | pH kisle raztopine ni negativen: pozabil si na minus pred logaritmom.
+> $\mathrm{pH} = -\log 0{,}0050 = 2{,}30$.
+```
+
+- Vrednost z decimalno vejico, brez `$`; potenca kot `1,5·10^-3`. Za vrednostjo sme stati enota (`= 2,5 m/s | 0,1`), ki se izpiše ob polju za vnos (enoto lahko zapišeš tudi v `$…$`).
+- Toleranca je neobvezna; brez nje velja natančno na izpisane decimalke (`= 2,30` sprejme 2,295 do 2,305, tudi »2,3«).
+- `~ vrednost | zakaj`: tipična napačna vrednost in razlaga, ki se pokaže ob njej. Ujema se na svoje izpisane decimalke (`~ 501` sprejme 501,19; `~ 1·10^-10` le vrednosti okoli 10⁻¹⁰), zato jo zapiši tako natančno, kot jo dijak res vpiše. Napačna vrednost ne sme biti znotraj tolerance pravilne.
+- Učenec sme pisati vejico ali piko, katerikoli minus (−, -), potenco tudi brez množitelja (»10^-4«) in enoto (se ne upošteva).
+
+**Razvrsti:** 3 do 6 vrstic `1.`, `2.` … v pravilnem vrstnem redu; aplikacija jih pokaže premešane (ob vsakem
+nalaganju enako), učenec jih postavi po vrsti z dotikom ali puščicama. Razlaga je v `>`, vrstic `~` ni.
+
+```markdown
+? Razvrsti raztopine od najbolj kisle do najbolj bazične.
+1. HCl, $0{,}1\,\mathrm{mol/L}$
+2. ocetna kislina, $0{,}1\,\mathrm{mol/L}$
+3. voda
+4. NaOH, $0{,}1\,\mathrm{mol/L}$
+> Močna kislina ima najnižji pH, šibka višjega, voda 7, močna baza najvišjega.
+```
+
+**Risba v vprašanju:** blok `:::risba … :::` (razdelek Risbe) takoj pod vrstico `?`, pred odgovori. Izriše se v
+aplikaciji, tisku in PDF; inštruktor dobi njen `opis:`. Vprašanje naj se nanjo nanaša (»Z grafa odčitaj …«).
+
+V tisku in PDF ima vpiši število prazno črto, razvrsti premešane elemente z začetnicami (a, b, c), rešitve pa
+pravilno vrednost oziroma vrstni red. `check-lesson.js` preveri zapis vseh treh vrst (pri številu samo zapis, ne
+računa).
+
 ## Risbe (`:::risba`)
 
 Slike nikoli ne riši z znaki v bloku ```` ``` ```` (črtice, `|---|`, ■): v aplikaciji in PDF je to videti kot surov izpis.
@@ -101,7 +156,7 @@ do: 3
 | `premica` | `od`, `do`, `korak`, `oznake` (vsaka koliko enot; `ne`), `oznaka: x \| besedilo`, `točka: x \| napis \| slog` (`prazna`), `skok: a -> b \| napis`, `interval: a .. b \| napis` |
 | `mreža` | `vrstic`, `stolpcev`, `spodaj`, `desno` (napisa ob stranicah), `številke: da` |
 | `stolpci` | `stolpec: ime \| vrednost` (2–8), `os` (ime navpične osi), `korak` |
-| `graf` | `x: od .. do \| korak \| ime`, `y: …`, `enako: da` (ista enota na obeh oseh), `višina`, `oznake: ne`, `oznakax` / `oznakay: vrednost \| besedilo`, `f: izraz \| slog \| od .. do` in liki |
+| `graf` | `x: od .. do \| korak \| ime`, `y: …`, `enako: da` (ista enota na obeh oseh), `višina`, `oznake: ne`, `oznakax` / `oznakay: vrednost \| besedilo`, `f: izraz \| slog \| od .. do`, `drsnik: ime \| od .. do \| korak \| začetna \| napis` (spodaj) in liki |
 | `skica` | `območje: x0; y0 .. x1; y1`, `enota` (px na enoto), `mreža: da` in liki |
 | `atom` | `jedro` (napis), `lupine: 2, 8, 1`, `imena: K, L, M` |
 | `molekula` | pod vrstico `---` strukturna formula z znaki: atomi, vezi `– \| = ≡ / \\`, nevezni pari `··` ali `:` |
@@ -109,6 +164,26 @@ do: 3
 Liki (v `graf` in `skica`, v koordinatah lekcije, rišejo se po vrsti): `črta: x; y -> x; y -> … | slog`,
 `lik: x; y -> … | slog`, `pravokotnik: x; y .. x; y | slog`, `krog: x; y | polmer | slog`, `točka: x; y | napis | lega | slog`,
 `napis: x; y | besedilo | lega | slog`, `puščica: x; y -> x; y | napis | lega | slog`, `pravikot: oglišče | točka | točka`.
+
+**Graf z drsniki** (samo `graf`, 1 do 3 drsniki): učenec pod sliko premika drsnik in graf se sproti izriše znova.
+
+```markdown
+:::risba graf
+opis: Premica y = kx + n. V aplikaciji se k in n spreminjata z drsnikoma; izbrano je k = {k} in n = {n}.
+x: -6 .. 6
+y: -6 .. 6
+drsnik: k | -3 .. 3 | 0,5 | 1 | smerni koeficient k
+drsnik: n | -3 .. 3 | 1 | 2 | začetna vrednost n
+f: k*x + n
+točka: 0; n | (0, {n}) | levo
+podnapis: Premica y = kx + n pri k = {k} in n = {n}
+:::
+```
+
+- `drsnik: ime | od .. do | korak | začetna | napis`: ime je ena črka (ne `x`, `y`, `e`), korak razdeli območje na največ 200 enakih delov, začetna vrednost leži na koraku. Napis je navadno besedilo (bere ga bralnik zaslona); če ga ni, je napis ime.
+- Ime uporabiš v `f:` (`k*x + n`), v koordinatah likov in polmeru kroga (`točka: 0; n`, `črta: 0; n -> 1; k + n`) ter kot `{izraz}` v napisih likov, v `opis:` in `podnapis:` (`k = {k}`, `{-n/k}`; `{+n}` izpiše predznak: »+ 2« ali »− 2«; v podnapisu raje piši »k = {k} in n = {n}« kot »y = {k}x {+n}«, ker bi to dalo »y = 1x + 2«). Besedilo ob risbi naj ima smisel tudi v tisku, kjer drsnikov ni (»v aplikaciji …«). Vrednost se izpiše z decimalno vejico, zaokrožena na 2 decimalki (pri drobnejšem koraku drsnika do 4); izraz, ki ni določen (deljenje z 0), se izpiše kot »/«. Z `{izraz:.2}` se izpiše natanko toliko decimalk (»2,30« namesto »2,3«), kot jih ima besedilo. V koordinati `|x|` piši kot `abs(x)`.
+- Tisk, PDF, inštruktor in branje na glas dobijo sliko oziroma opis pri začetnih vrednostih, zato mora biti takrat vse na sliki (sicer napaka). Pri drugih vrednostih se lik, ki pade iz območja ali ni določen, samo ne nariše.
+- check-lesson javi: napačno območje, korak ali začetno vrednost, več kot 3 drsnike, drsnik, ki ni nikjer uporabljen, in neznano črko v izrazu. Vzorec: `MAT-SS-1/linearna-funkcija.md`.
 
 Vsi liki (tudi napisi in točke) morajo biti znotraj `območje` oziroma osi `x`, `y`, sicer check-lesson javi napako.
 Risba mora kazati točno to, kar pove besedilo (ista števila in oznake). Koordinate izračunaj, ne ocenjuj na oko:
@@ -162,6 +237,18 @@ Demonstracija se pokaže za razdelkom »Rešeni primeri«. Formule piši v LaTeX
 decimalno vejico (`$3{,}5$`). Če je med naštetimi števili vsaj eno decimalno, jih loči s podpičjem:
 `$1{,}5$; $2$ ali $2{,}99$`, točka `$(1{,}5; 2)$` (preveri `check-lesson.js`).
 
+## Račun za kodo (`<<RACUN`)
+
+Na koncu lekcije je blok z vsemi končnimi in pomembnimi vmesnimi rezultati rešenih primerov, vaj in vprašanj v strojni obliki, ena trditev na vrstico (zapis in ključne besede kot v `prompts/system_prompt.md`, »Račun za kodo«: `resi`, `neenacba`, `enako`, `odvod`, `integral`, `limita`, `vrednost`, `enote`, `kemija`, `molska`). Učenec ga ne vidi (`server/textbook.js`); `node scripts/check-lesson.js` vsako trditev preveri s SymPy oziroma urejevalnikom enačb in napačno javi kot napako.
+
+```
+<<RACUN
+resi: 2*x+3=11 | x | 4
+enote: 72*km/h | 20*m/s
+kemija: CH4 + 2 O2 -> CO2 + 2 H2O
+>>
+```
+
 ## Fakultetne lekcije
 
 Fakultetna tema z enakim naslovom in predmetom se pojavi v več predmetih (npr.
@@ -176,6 +263,29 @@ natančne definicije, izreki s pogoji in dokazi, ki jih izpit zahteva, so v »Ra
 Primer 3 je na ravni izpita; za »## Povzetek« pride razdelek »## Za izpit«
 (»Znati moraš povedati:« in 2–3 »### Naloga« z »**Rešitev:**«, ki je v aplikaciji
 skrita za gumbom); namesto »Drugače: Iz vsakdanjega življenja« je »Drugače: Uporaba v stroki«.
+
+## Maturitetne lekcije (MAT-SS)
+
+Lekcija srednješolske matematike ima za »## Povzetek« razdelek »## Za maturo« (j, 13. 11. 2026, točki C4 in C5;
+oblika nalog po *Predmetnem izpitnem katalogu za splošno maturo*, povzetek v `docs/matura-katalog.md`):
+
+- `### Naloga N: <vrsta> naloga, K točk, pola 1 (brez računala)` ali `… pola 2 (z računalom)`; osnovna raven: kratka
+  naloga (do 3 točke) in krajša strukturirana (5–8 točk); kjer katalog preverja tudi višjo raven, še
+  `### Naloga 3 (višja raven): strukturirana naloga, 9–11 točk, …`. Naloge za polo 1 so rešljive na roke.
+- Besedilo naloge (do `**Rešitev:**`) vika kot na maturi (»Izračunajte …«, »Rezultat zaokrožite …«; j, 15. 11.
+  2026); rešitev, točkovanje in ustna vprašanja tikajo kot vsa lekcija.
+- Standardni odklon se računa z N (formula na prilogi, tipka σn ali σx), ne z N − 1.
+- Vsaka naloga ima `**Rešitev:**` (popolna, v aplikaciji skrita za gumbom) in vrstico `**Točkovanje:** …`.
+- 2–3 `### Ustno vprašanje N` z blokom `:::premisli` (vprašanje, `---`, vzorčni odgovor); gredo tudi v »Vprašaj me«.
+- Razdelek se ne šteje v mejo 2800 besed. `check-lesson.js` opozori, če manjka ali mu kaj manjka.
+
+Med »## Povzetek« in »## Za maturo« stoji »## Ponovitev« (j, 15. 11. 2026, točka C8): ponovitev na en zaslon telefona
+(največ 170 besed brez formul, ne šteje se v mejo besed), iz Povzetka in Pogostih napak lekcije, v treh delih:
+
+- `**Formule**`: alineje s formulami in pravili lekcije; vsaka se konča z `(priloga)`, `(priloga, višja raven)` ali
+  `(na pamet)` po seznamu formul, ki so priložene izpitni poli (katalog M-MAT-2026, poglavje 9.2);
+- `**Postopek**`: 2–6 oštevilčenih korakov, kako se lotiš tipične naloge;
+- `**Pazi na**`: natanko 3 najpogostejše napake.
 
 Katere teme še nimajo lekcije, urejeno po številu programov:
 `node scripts/fakultetne-lekcije.js --letnik 1 --n 40`.

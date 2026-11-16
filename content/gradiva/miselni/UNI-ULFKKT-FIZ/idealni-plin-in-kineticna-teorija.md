@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Model idealnega plina
+  - točkaste molekule, sile le ob trkih
+  - prožni trki, naključne smeri
+- Plinska enačba
+  - $pV = nRT = Nk_BT$, $T$ v kelvinih
+  - stalna množina: $p_1V_1/T_1 = p_2V_2/T_2$
+  - gostota $\rho = pM/(RT)$
+- Tlak iz trkov
+  - $p = \tfrac{1}{3}\tfrac{N}{V}m_0\langle v^2\rangle$
+  - odboj preda steni $2m_0v_x$
+- Pomen temperature
+  - $\langle W_k\rangle = \tfrac{3}{2}k_BT$
+  - $v_{\text{ef}} = \sqrt{3RT/M}$, $M$ v $\mathrm{kg/mol}$
+- Notranja energija
+  - $W_n = \tfrac{f}{2}nRT$, odvisna le od $T$
+  - enoatomni $f = 3$, dvoatomni $f = 5$
+- Toplotne kapacitete
+  - $C_V = \tfrac{f}{2}R$, $C_p = C_V + R$
+  - $\kappa = C_p/C_V$: $1{,}67$ ali $1{,}40$
+- Realni plini
+  - van der Waals: konstanti $a$ in $b$
+  - visok tlak, nizka temperatura

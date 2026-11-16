@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: koren
 avtor: AI
 ---
@@ -26,20 +26,18 @@ Zato je $\sqrt{(-3)^2} = \sqrt{9} = 3 = |-3|$ in ne $-3$.
 
 | Zmnožek | Posebej | En koren |
 |---|---|---|
-| $\sqrt{4} \cdot \sqrt{9}$ | $2 \cdot 3 = 6$ | $\sqrt{36} = 6$ |
-| $\sqrt{4} \cdot \sqrt{25}$ | $2 \cdot 5 = 10$ | $\sqrt{100} = 10$ |
+| $\sqrt{4} \cdot \sqrt{9}$ | $2 \cdot 3$ | $\sqrt{36}$ |
+| $\sqrt{4} \cdot \sqrt{25}$ | $2 \cdot 5$ | $\sqrt{100}$ |
 | $\sqrt{2} \cdot \sqrt{225}$ | $1{,}414 \cdot 15$ | $\sqrt{450}$ |
 
-Vsakič dobiš isto, tudi v zadnji vrstici: oba izraza sta približno $21{,}21$. Zadnja vrstica je diagonala lista iz uvoda: $\sqrt{450} = \sqrt{225} \cdot \sqrt{2} = 15\sqrt{2}$.
+Vsakič dobiš isto: v prvi vrstici $6$, v drugi $10$, v zadnji pa sta oba izraza približno $21{,}21$. Zadnja vrstica je diagonala lista iz uvoda: $\sqrt{450} = \sqrt{225} \cdot \sqrt{2} = 15\sqrt{2}$.
 
 **Pravila za računanje.** Vzorec velja v splošnem. Za $a, b \ge 0$ (in $b > 0$ pri deljenju) veljajo:
 
-| Pravilo | Primer |
-|---|---|
-| $\sqrt{a \cdot b} = \sqrt{a} \cdot \sqrt{b}$ | $\sqrt{3} \cdot \sqrt{12} = \sqrt{36} = 6$ |
-| $\sqrt{\dfrac{a}{b}} = \dfrac{\sqrt{a}}{\sqrt{b}}$ | $\sqrt{\dfrac{25}{4}} = \dfrac{5}{2}$ |
-| $\sqrt[n]{a \cdot b} = \sqrt[n]{a} \cdot \sqrt[n]{b}$ | $\sqrt[3]{2} \cdot \sqrt[3]{4} = \sqrt[3]{8} = 2$ |
-| $\sqrt[m]{\sqrt[n]{a}} = \sqrt[m \cdot n]{a}$ | $\sqrt{\sqrt{16}} = \sqrt[4]{16} = 2$ |
+- $\sqrt{a \cdot b} = \sqrt{a} \cdot \sqrt{b}$, primer: $\sqrt{3} \cdot \sqrt{12} = \sqrt{36} = 6$;
+- $\sqrt{\dfrac{a}{b}} = \dfrac{\sqrt{a}}{\sqrt{b}}$, primer: $\sqrt{\dfrac{25}{4}} = \dfrac{5}{2}$;
+- $\sqrt[n]{a \cdot b} = \sqrt[n]{a} \cdot \sqrt[n]{b}$, primer: $\sqrt[3]{2} \cdot \sqrt[3]{4} = \sqrt[3]{8} = 2$;
+- $\sqrt[m]{\sqrt[n]{a}} = \sqrt[m \cdot n]{a}$, primer: $\sqrt{\sqrt{16}} = \sqrt[4]{16} = 2$.
 
 :::premisli
 Ali vzorec velja tudi za vsoto? Napovej, ali je $\sqrt{9} + \sqrt{16}$ enako $\sqrt{9 + 16}$, nato izračunaj.
@@ -76,6 +74,47 @@ S čim razširiš ulomek $\dfrac{1}{\sqrt[3]{2}}$, da v imenovalcu ne bo več ko
 ---
 S $\sqrt[3]{4}$, ker je $\sqrt[3]{2} \cdot \sqrt[3]{4} = \sqrt[3]{8} = 2$. Torej je $\dfrac{1}{\sqrt[3]{2}} = \dfrac{\sqrt[3]{4}}{2}$. Razširitev s $\sqrt[3]{2}$ ne zadošča, ker je $\sqrt[3]{2} \cdot \sqrt[3]{2} = \sqrt[3]{4}$ še vedno koren.
 :::
+
+**7. Konstrukcija kvadratnih korenov.** Kvadratni koren naravnega števila, ki ni popolni kvadrat, je iracionalen: $\sqrt{2}$, $\sqrt{3}$, $\sqrt{5}$, $\sqrt{13}$ (dokaz je podoben kot za $\sqrt{2}$ v razdelku »Bolj natančno«). Njihove decimalke se nikoli ne končajo, daljico take dolžine pa vseeno narišemo natančno, z ravnilom in šestilom. Pomaga Pitagorov izrek.
+
+- **Koren kot hipotenuza.** Kateti $p$ in $q$ dasta hipotenuzo $\sqrt{p^2 + q^2}$. Kateti $1$ in $1$ dasta $\sqrt{2}$, kateti $1$ in $2$ dasta $\sqrt{5}$, kateti $2$ in $3$ dasta $\sqrt{13}$.
+- **Spirala.** Na hipotenuzo $\sqrt{n}$ postavimo pravokotno kateto $1$. Nova hipotenuza je $\sqrt{n + 1}$, saj je $\left(\sqrt{n}\right)^2 + 1^2 = n + 1$. Tako dobimo po vrsti $\sqrt{2}$, $\sqrt{3}$, $\sqrt{4} = 2$, $\sqrt{5}$ in naprej (risba).
+- **Koren kot kateta.** Hipotenuza $h$ in kateta $p$ dasta drugo kateto $\sqrt{h^2 - p^2}$. Hipotenuza $2$ in kateta $1$ dasta $\sqrt{3}$.
+
+:::risba skica
+opis: Polžasta spirala iz štirih pravokotnih trikotnikov s skupnim ogliščem O. Prvi ima obe kateti dolgi 1. Vsak naslednji ima za eno kateto hipotenuzo prejšnjega, druga kateta dolžine 1 je pravokotna nanjo. Hipotenuze iz O merijo po vrsti √2, √3, 2 in √5; dolžina je napisana ob zunanjem krajišču vsake.
+območje: -2,1; -0,4 .. 1,6; 2,3
+enota: 80
+lik: 0; 0 -> 1; 0 -> 1; 1 | modra
+lik: 0; 0 -> 1; 1 -> 0,293; 1,707 | modra
+lik: 0; 0 -> 0,293; 1,707 -> -0,693; 1,876 | modra
+lik: 0; 0 -> -0,693; 1,876 -> -1,631; 1,53 | modra
+pravikot: 1; 0 | 0; 0 | 1; 1
+pravikot: 1; 1 | 0; 0 | 0,293; 1,707
+pravikot: 0,293; 1,707 | 0; 0 | -0,693; 1,876
+pravikot: -0,693; 1,876 | 0; 0 | -1,631; 1,53
+točka: 0; 0 | O | pod
+napis: 0,5; 0 | 1 | pod
+napis: 1; 0,5 | 1 | desno
+točka: 1; 1 | √2 | desno
+točka: 0,293; 1,707 | √3 | nad desno
+točka: -0,693; 1,876 | 2 | nad
+točka: -1,631; 1,53 | √5 | levo
+:::
+
+Narisano dolžino prenesemo na številsko premico: šestilo zapičimo v $0$ in odmerimo hipotenuzo. Tako dobimo točko $\sqrt{5}$ med $2$ in $3$, natančno, brez zaokroževanja.
+
+**8. Kubični in n-ti koreni z računalom.** Kubične korene popolnih kubov računamo na pamet. Zapomni si kube $1$, $8$, $27$, $64$, $125$, $216$, $343$, $512$, $729$, $1000$. Z njimi je $\sqrt[3]{343} = 7$, $\sqrt[3]{-64} = -4$, $\sqrt[3]{0{,}008} = 0{,}2$ (ker je $0{,}2^3 = 0{,}008$) in $\sqrt[3]{\dfrac{27}{125}} = \dfrac{3}{5}$.
+
+Kadar korenjenec ni popolni kub, uporabimo računalo. Tipke so na različnih računalih različno označene (druga funkcija je dosegljiva s SHIFT ali 2nd), vse pa naredijo isto:
+
+- tipka za kubični koren $\sqrt[3]{\square}$: $\sqrt[3]{50} \approx 3{,}684$;
+- tipka za $n$-ti koren $\sqrt[\square]{\square}$: najprej vtipkaš korenski eksponent, nato korenjenec, na primer $\sqrt[5]{200} \approx 2{,}885$;
+- potenca z eksponentom $\frac{1}{n}$ (velja $a^{\frac{1}{n}} = \sqrt[n]{a}$, podrobneje v lekciji o potencah z racionalnimi eksponenti): koren $\sqrt[5]{200}$ vtipkaš kot `200 ^ (1 ÷ 5)`. Oklepaj je nujen, brez njega računalo izračuna $200^1 : 5 = 40$.
+
+Lihi koren negativnega števila je realen: $\sqrt[3]{-20} \approx -2{,}714$. Nekatera računala pri potenci $(-20)^{1/3}$ javijo napako, tedaj izračunaš $-\sqrt[3]{20}$. Sodi koren negativnega števila računalo zavrne z napako, ker ni realen.
+
+Rezultat računala vedno preveri: s potenciranjem ($3{,}684^3 \approx 50{,}0$) in z oceno ($27 < 50 < 64$, zato je $\sqrt[3]{50}$ med $3$ in $4$).
 
 ## Rešeni primeri
 
@@ -159,6 +198,44 @@ Kaj dobiš za drugi ulomek in kaj za celoten izraz?
 Drugi ulomek: imenovalec je $3 - 2 = 1$, števec $\left(\sqrt{3} - \sqrt{2}\right)^2 = 3 - 2\sqrt{6} + 2 = 5 - 2\sqrt{6}$. Razlika: $\left(5 + 2\sqrt{6}\right) - \left(5 - 2\sqrt{6}\right) = 4\sqrt{6}$. Preverjanje: prvi ulomek je približno $9{,}899$, drugi $0{,}101$, razlika $9{,}798$, in $4\sqrt{6} \approx 9{,}798$.
 :::
 
+### Primer 5: konstrukcija korenov
+
+Z ravnilom, trikotnikom in šestilom nariši daljici, dolgi $\sqrt{13}\,\text{cm}$ in $\sqrt{7}\,\text{cm}$.
+
+**Podatki:** dolžini $\sqrt{13}\,\text{cm}$ in $\sqrt{7}\,\text{cm}$; orodje: ravnilo, trikotnik (za pravi kot) in šestilo
+**Iščemo:** konstrukcijo obeh daljic
+
+:::formula
+Hipotenuza s katetama $p$ in $q$ meri $\sqrt{p^2 + q^2}$; kateta pri hipotenuzi $h$ in drugi kateti $p$ meri $\sqrt{h^2 - p^2}$.
+:::
+
+**Rešitev:**
+
+1. Število $13$ zapišemo kot vsoto kvadratov: $13 = 4 + 9 = 2^2 + 3^2$. Zato je $\sqrt{13}$ hipotenuza trikotnika s katetama $2\,\text{cm}$ in $3\,\text{cm}$.
+2. Nariši daljico $3\,\text{cm}$, v enem krajišču s trikotnikom pravokotnico in na njej odmeri $2\,\text{cm}$. Zveznica prostih krajišč meri $\sqrt{13}\,\text{cm} \approx 3{,}61\,\text{cm}$.
+3. Število $7$ ni vsota dveh kvadratov celih števil, je pa razlika: $7 = 16 - 9 = 4^2 - 3^2$. Zato je $\sqrt{7}$ kateta trikotnika s hipotenuzo $4\,\text{cm}$ in kateto $3\,\text{cm}$.
+4. Nariši daljico $3\,\text{cm}$ in v enem krajišču pravokotnico. Šestilo odpri na $4\,\text{cm}$, ga zapiči v drugo krajišče daljice in zareži pravokotnico. Odsek pravokotnice do zareze meri $\sqrt{16 - 9} = \sqrt{7}\,\text{cm} \approx 2{,}65\,\text{cm}$.
+5. Odgovor: $\sqrt{13}$ je hipotenuza trikotnika s katetama $2$ in $3$, $\sqrt{7}$ je kateta trikotnika s hipotenuzo $4$ in kateto $3$ (v centimetrih). Z ravnilom izmeriš približno $3{,}6\,\text{cm}$ in $2{,}6\,\text{cm}$.
+
+### Primer 6: na pamet in z računalom
+
+a) Na pamet izračunaj $\sqrt[3]{-0{,}125}$ in $\sqrt[3]{\dfrac{8}{27}}$. b) Z računalom izračunaj $\sqrt[3]{-20}$ in $\sqrt[4]{500}$ na tri decimalke in rezultata preveri. c) Naložba v sklad v $5$ letih zraste za $30\,\%$. Vsako leto se pomnoži z istim faktorjem $q$. Kolikšen je $q$?
+
+**Podatki:** korenjenci $-0{,}125$; $\dfrac{8}{27}$; $-20$ in $500$; rast naložbe za $30\,\%$ (faktor $1{,}3$) v $5$ letih
+**Iščemo:** vrednosti korenov in letni faktor $q$
+
+:::formula
+$b = \sqrt[n]{a}$ pomeni $b^n = a$; na računalu tipka $\sqrt[\square]{\square}$ ali potenca z eksponentom $\frac{1}{n}$
+:::
+
+**Rešitev:**
+
+1. a) $(-0{,}5)^3 = -0{,}125$, zato je $\sqrt[3]{-0{,}125} = -0{,}5$. Ker je $2^3 = 8$ in $3^3 = 27$, je $\sqrt[3]{\dfrac{8}{27}} = \dfrac{2}{3}$.
+2. b) Računalo da $\sqrt[3]{-20} \approx -2{,}714$. Preverjanje: $(-2{,}714)^3 \approx -19{,}99$, ocena pa $-27 < -20 < -8$, zato je koren med $-3$ in $-2$.
+3. b) S tipko za $n$-ti koren (najprej $4$, nato $500$) dobimo $\sqrt[4]{500} \approx 4{,}729$. Preverjanje: $4{,}729^4 \approx 500{,}1$; ker je $4^4 = 256$ in $5^4 = 625$, je koren med $4$ in $5$.
+4. c) V petih letih se vloga pomnoži s $q^5$, zato velja enačba $q^5 = 1{,}3$ in $q = \sqrt[5]{1{,}3} \approx 1{,}0539$.
+5. Odgovor: a) $-0{,}5$ in $\dfrac{2}{3}$; b) $\sqrt[3]{-20} \approx -2{,}714$ in $\sqrt[4]{500} \approx 4{,}729$; c) $q \approx 1{,}054$. Naložba vsako leto zraste za približno $5{,}4\,\%$, ne za $30\,\% : 5 = 6\,\%$.
+
 ## Pogoste napake
 
 - **Koren vsote kot vsota korenov.** Zapis $\sqrt{a + b} = \sqrt{a} + \sqrt{b}$ je napačen, saj pravilo velja le za produkt in količnik. Če je v korenu vsota, je ne smeš razdeliti. Preizkus: $\sqrt{9 + 16} = 5 \ne 7$.
@@ -176,6 +253,88 @@ Drugi ulomek: imenovalec je $3 - 2 = 1$, števec $\left(\sqrt{3} - \sqrt{2}\righ
 - Delno korenjenje: $\sqrt{a^2 b} = a\sqrt{b}$ za $a, b \ge 0$; izvleči moraš največji popolni kvadrat.
 - Racionalizacija: $\dfrac{a}{\sqrt{b}} = \dfrac{a\sqrt{b}}{b}$.
 - Konjugirani izraz: $\left(\sqrt{a} - \sqrt{b}\right)\left(\sqrt{a} + \sqrt{b}\right) = a - b$.
+- Daljico $\sqrt{n}$ konstruiramo s Pitagorovim izrekom: kot hipotenuzo $\sqrt{p^2 + q^2}$ ali kot kateto $\sqrt{h^2 - p^2}$.
+- Na računalu: tipka za $n$-ti koren ali potenca $a^{1/n}$ z eksponentom v oklepaju; rezultat preveri s potenciranjem.
+
+## Ponovitev
+
+**Formule**
+- $\sqrt{x^2} = |x|$, $\;\left(\sqrt{a}\right)^2 = a$ (na pamet)
+- $\sqrt{ab} = \sqrt{a}\sqrt{b}$, $\;\sqrt{\dfrac{a}{b}} = \dfrac{\sqrt{a}}{\sqrt{b}}$ za $a, b \ge 0$ (pri ulomku $b > 0$) (na pamet)
+- $p\sqrt{b} + q\sqrt{b} = (p + q)\sqrt{b}$ (na pamet)
+- $\sqrt{a^2 b} = a\sqrt{b}$ za $a, b \ge 0$ (na pamet)
+- $\dfrac{a}{\sqrt{b}} = \dfrac{a\sqrt{b}}{b}$ (na pamet)
+- $\left(\sqrt{a} - \sqrt{b}\right)\left(\sqrt{a} + \sqrt{b}\right) = a - b$ (na pamet)
+
+**Postopek**
+1. Delno koreni: izvleči največji popolni kvadrat.
+2. Seštej istovrstne korene.
+3. Racionaliziraj imenovalec: razširi s korenom ali s konjugiranim izrazom.
+4. Rezultat preveri s potenciranjem ali na računalu.
+
+**Pazi na**
+- $\sqrt{a + b} \ne \sqrt{a} + \sqrt{b}$: pravilo velja le za produkt in količnik.
+- Seštevaš le korene z enakim številom pod korenom; najprej delno koreni.
+- Pri $\sqrt{a} - \sqrt{b}$ v imenovalcu razširi z $\sqrt{a} + \sqrt{b}$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Izračunajte in rezultat zapišite čim preprosteje: $\sqrt{48} + \dfrac{9}{\sqrt{3}} - \sqrt{75}$.
+
+**Rešitev:**
+
+1. Delno korenimo: $\sqrt{48} = \sqrt{16 \cdot 3} = 4\sqrt{3}$ in $\sqrt{75} = \sqrt{25 \cdot 3} = 5\sqrt{3}$.
+2. Racionaliziramo: $\dfrac{9}{\sqrt{3}} = \dfrac{9\sqrt{3}}{3} = 3\sqrt{3}$.
+3. Seštejemo istovrstne korene: $4\sqrt{3} + 3\sqrt{3} - 5\sqrt{3} = 2\sqrt{3}$.
+4. Odgovor: $2\sqrt{3}$.
+
+**Točkovanje:** 1 točka za delno korenjenje obeh korenov, 1 točka za racionalizacijo $\dfrac{9}{\sqrt{3}} = 3\sqrt{3}$, 1 točka za rezultat $2\sqrt{3}$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
+
+Kocka ima prostornino $V = 128\,\text{cm}^3$.
+
+a) Zapišite enačbo za rob $c$ kocke in iz nje izrazite $c$ natančno, z delno korenjenim kubičnim korenom. (2 točki)
+b) Izračunajte rob $c$ in diagonalo ploskve kocke $D = c\sqrt{2}$. Rezultata zaokrožite na dve decimalni mesti. (2 točki)
+c) Izračunajte natančno prostornino kocke, katere rob je dolg $D$, in jo nato zaokrožite na cele kubične centimetre. (2 točki)
+
+**Rešitev:**
+
+1. a) $c^3 = 128$. Eksponent $3$ je lih, zato ima enačba natanko eno realno rešitev $c = \sqrt[3]{128}$.
+2. a) $128 = 64 \cdot 2 = 4^3 \cdot 2$, zato je $c = \sqrt[3]{4^3 \cdot 2} = 4\sqrt[3]{2}\,\text{cm}$.
+3. b) Z računalom (tipka za $n$-ti koren ali potenca $128^{1/3}$): $c \approx 5{,}039684$, torej $c \approx 5{,}04\,\text{cm}$.
+4. b) $D = c\sqrt{2} \approx 5{,}039684 \cdot 1{,}414214 \approx 7{,}127190$, torej $D \approx 7{,}13\,\text{cm}$.
+5. c) $D^3 = \left(c\sqrt{2}\right)^3 = c^3 \cdot \left(\sqrt{2}\right)^3 = 128 \cdot 2\sqrt{2} = 256\sqrt{2}\,\text{cm}^3$.
+6. c) $256\sqrt{2} \approx 362{,}0387$, torej približno $362\,\text{cm}^3$.
+7. Odgovor: $c = 4\sqrt[3]{2}\,\text{cm} \approx 5{,}04\,\text{cm}$; $D \approx 7{,}13\,\text{cm}$; prostornina večje kocke je $256\sqrt{2}\,\text{cm}^3 \approx 362\,\text{cm}^3$.
+
+**Točkovanje:** a) 1 točka za enačbo $c^3 = 128$, 1 točka za $c = 4\sqrt[3]{2}\,\text{cm}$; b) 1 točka za $c \approx 5{,}04\,\text{cm}$ in 1 točka za $D \approx 7{,}13\,\text{cm}$; c) 1 točka za natančno vrednost $256\sqrt{2}\,\text{cm}^3$ in 1 točka za zaokroženo vrednost $362\,\text{cm}^3$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Pod kakšnimi pogoji obstaja $n$-ti koren realnega števila $a$ in koliko realnih rešitev ima enačba $x^n = a$?
+---
+Pri sodem korenskem eksponentu $n$ je $\sqrt[n]{a}$ definiran le za $a \ge 0$ in je po dogovoru nenegativen. Zato ima enačba $x^n = a$ pri sodem $n$ dve rešitvi $\pm\sqrt[n]{a}$, če je $a > 0$, eno rešitev $0$, če je $a = 0$, in nobene realne rešitve, če je $a < 0$. Pri lihem $n$ je $\sqrt[n]{a}$ definiran za vsako realno število $a$, tudi za negativno. Enačba $x^n = a$ ima pri lihem $n$ natanko eno realno rešitev $x = \sqrt[n]{a}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kaj pomeni racionalizirati imenovalec ulomka in kako to naredimo, kadar je v imenovalcu razlika dveh kvadratnih korenov?
+---
+Racionalizirati imenovalec pomeni ulomek preoblikovati v enak ulomek, ki v imenovalcu nima korena. Ulomek razširimo, torej števec in imenovalec pomnožimo z istim izrazom, zato se njegova vrednost ne spremeni. Pri imenovalcu $\sqrt{a} - \sqrt{b}$ razširimo s konjugiranim izrazom $\sqrt{a} + \sqrt{b}$. Po razliki kvadratov je $\left(\sqrt{a} - \sqrt{b}\right)\left(\sqrt{a} + \sqrt{b}\right) = a - b$, kar ne vsebuje več korena.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Dokaži, da je število $\sqrt{2}$ iracionalno, torej ga ne moremo zapisati kot ulomek.
+---
+Denimo nasprotno, da je $\sqrt{2} = \frac{p}{q}$, kjer sta $p$ in $q$ tuji naravni števili. S kvadriranjem dobimo $p^2 = 2q^2$, zato je $p^2$ sodo število in je sodo tudi $p$, saj je kvadrat lihega števila lih. Zapišemo $p = 2r$ in dobimo $4r^2 = 2q^2$, torej $q^2 = 2r^2$, zato je sodo tudi $q$. Števili $p$ in $q$ sta tedaj obe sodi, kar nasprotuje predpostavki, da sta tuji, zato $\sqrt{2}$ ni racionalno število.
+:::
 
 ## Drugače: Na sliki
 
@@ -246,8 +405,8 @@ Za drugo gredico imata le letev, dolgo $1{,}2\,\text{m}$, ki naj bo ravno diagon
 ? Oceni $5\sqrt{3}$ brez računala. Med katerima zaporednima celima številoma leži?
 - med $3$ in $4$
 ~ Tako dobiš $\sqrt{15}$: faktor $5$ si vnesel pod koren brez kvadriranja. Pravilno je $5\sqrt{3} = \sqrt{25 \cdot 3} = \sqrt{75}$.
-- med $15$ in $16$
-~ Vzel si $\sqrt{3}$ kot $3$. V resnici je $\sqrt{3} \approx 1{,}73$.
+- med $6$ in $7$
+~ Seštel si $5 + \sqrt{3} \approx 6{,}73$. Zapis $5\sqrt{3}$ pomeni produkt $5 \cdot \sqrt{3}$.
 + med $8$ in $9$
 > $5\sqrt{3} = \sqrt{75}$ in $8^2 = 64 < 75 < 81 = 9^2$, zato je $8 < 5\sqrt{3} < 9$ (natančneje $5\sqrt{3} \approx 8{,}66$).
 
@@ -277,13 +436,56 @@ Za drugo gredico imata le letev, dolgo $1{,}2\,\text{m}$, ki naj bo ravno diagon
 ~ Iz korena izvlečeš $\sqrt{900} = 30$, ne $900$.
 > $\sqrt{30^2 + 30^2} = \sqrt{900 \cdot 2} = 30\sqrt{2} \approx 42{,}4\,\text{cm}$.
 
+? (brez računala) Za konstrukcijo daljice $\sqrt{n}$ narišeš pravokotni trikotnik s katetama $1$ in $4$. Njegova hipotenuza meri $\sqrt{n}$. Koliko je $n$?
+= 17 | 0
+~ 5 | Seštel si kateti, $1 + 4$. Po Pitagorovem izreku pod koren gresta kvadrata katet.
+~ 15 | Odštel si kvadrata, $16 - 1$. Tako dobiš kateto trikotnika s hipotenuzo $4$, ne hipotenuze.
+> Hipotenuza je $\sqrt{1^2 + 4^2} = \sqrt{17}$, torej $n = 17$.
+
+? Z računalom izračunaj $\sqrt[5]{300}$ in rezultat zaokroži na dve decimalni mesti.
+= 3,13
+~ 60 | Vtipkal si 300 ^ 1 ÷ 5 brez oklepaja, zato je računalo izračunalo $300 : 5$. Eksponent $\frac{1}{5}$ mora biti v oklepaju.
+~ 17,32 | To je kvadratni koren $\sqrt{300}$. Pri tipki za $n$-ti koren najprej vneseš korenski eksponent $5$.
+> $\sqrt[5]{300} \approx 3{,}129$, zaokroženo $3{,}13$. Preverjanje: $3{,}129^5 \approx 300$, ocena: $3^5 = 243 < 300 < 1024 = 4^5$.
+
+<<RACUN
+enako: sqrt(48) | 4*sqrt(3)
+enako: sqrt(75) | 5*sqrt(3)
+enako: 9/sqrt(3) | 3*sqrt(3)
+enako: sqrt(48)+9/sqrt(3)-sqrt(75) | 2*sqrt(3)
+resi: c^3=128 | c | 4*2^(1/3)
+enako: 128^(1/3) | 4*2^(1/3)
+vrednost: 128^(1/3) | 5.04
+vrednost: 128^(1/3)*sqrt(2) | 7.13
+enako: (4*2^(1/3)*sqrt(2))^3 | 256*sqrt(2)
+vrednost: 256*sqrt(2) | 362.04
+enako: sqrt(2^2+3^2) | sqrt(13)
+enako: sqrt(4^2-3^2) | sqrt(7)
+vrednost: sqrt(13) | 3.61
+vrednost: sqrt(7) | 2.65
+vrednost: 50^(1/3) | 3.684
+vrednost: 200^(1/5) | 2.885
+vrednost: 300^(1/5) | 3.13
+vrednost: 3.129^5 | 299.94
+enako: (-1/2)^3 | -1/8
+enako: (2/3)^3 | 8/27
+vrednost: -(20^(1/3)) | -2.714
+vrednost: 500^(1/4) | 4.729
+vrednost: 1.3^(1/5) | 1.0539
+enako: 1^2+4^2 | 17
+>>
+
 :::simboli
 a | korenjenec; pri delnem korenjenju faktor pred korenom, pri racionalizaciji števec ulomka | | | a ≥ 0 pri kvadratnem korenu
-n, m | korenski eksponent | | | naravno število, n ≥ 2
-b | korenjenec (faktor pod korenom) | | | b > 0 pri deljenju
+n, m | korenski eksponent | | | naravno število, n ≥ 2; pri konstrukciji korenov (spirala, vprašanje) je $n$ število pod korenom $\sqrt{n}$
+b | korenjenec (faktor pod korenom) | | | b > 0 pri deljenju; v definiciji $n$-tega korena in v primeru 6 vrednost korena, $b^n = a$
 x | realno število | | | koren iz x² je absolutna vrednost x
-p, q | koeficienta pred istim korenom | | | v dokazu iracionalnosti števila $\sqrt{2}$ števec in imenovalec ulomka
+p, q | koeficienta pred istim korenom | | | v dokazu iracionalnosti števila $\sqrt{2}$ števec in imenovalec ulomka; pri konstrukciji korenov kateti; v primeru 6 je $q$ letni faktor rasti
+h | hipotenuza pri konstrukciji korena | | cm |
 S | ploščina ploščice | | cm^2 |
 s | stranica kvadrata | s = \sqrt{S} | cm |
 d | dolžina stene | | cm |
+V | prostornina kocke | V = c^3 | cm^3 |
+c | rob kocke | c = \sqrt[3]{V} | cm |
+D | diagonala ploskve kocke | D = c\sqrt{2} | cm |
 :::

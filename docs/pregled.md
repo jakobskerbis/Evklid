@@ -15,11 +15,12 @@ commands below and the checklist of their lens.
 ## 1. Code and UI changes (every PR that touches `public/`, `server/`, `prompts/`, `scripts/`)
 
 **Pass 1 – automatic (must be green before passes 2 and 3):**
-- **Green CI on the PR** (j, 2026-11-06). `.github/workflows/testi.yml` runs two parallel jobs on every
-  PR and push to main: `testi` (`npm test`, Chromium + WebKit) and `preveri`
-  (`node scripts/preveri-aplikacijo.cjs`), in test mode with no secrets. Read the result with
+- **Green CI on the PR** (j, 2026-11-06). `.github/workflows/testi.yml` runs three parallel jobs on every
+  PR and push to main: `testi` (`npm test`, Chromium + WebKit), `preveri`
+  (`node scripts/preveri-aplikacijo.cjs`) and `hrosci` (`node scripts/najdi-hrosce.mjs`: duplicate keys in
+  code and translations, no AI), in test mode with no secrets. Read the result with
   `gh api repos/jakobskerbis/evklid/commits/<sha>/check-runs -q '.check_runs[]|"\(.name) \(.status) \(.conclusion) \(.output.annotations_count) \(.id)"'`
-  (both `completed success`); on failure the run's artifacts hold the log and screenshots
+  (all three `completed success`); on failure the run's artifacts hold the log and screenshots
   (`gh api repos/jakobskerbis/evklid/actions/runs/<run>/artifacts`). A new push to a PR cancels its old run
   (pushes to main are never cancelled).
 - **`annotations_count > 0` on `testi` = a flaky test**: a failed test file passed only on its single retry.
@@ -31,7 +32,8 @@ commands below and the checklist of their lens.
   `preveri-aplikacijo.cjs` (it clicks through every tab and main flow on desktop and phone in test mode;
   fails on page errors, console errors, HTTP ≥ 400, horizontal scroll, raw i18n keys).
 - when touched: `node scripts/preveri-generatorje.js` (0 errors), `node scripts/kakovost-nalog.js <prefix>`,
-  `node scripts/preveri-simulacije.cjs`, `node scripts/check-lesson.js -q <files>`,
+  `node scripts/preveri-simulacije.cjs`, `node scripts/gumbi-na-dotik.cjs [ids]` (sims: no clickable element
+  redrawn every frame, or taps on iPad/iPhone do nothing; `gumbi-na-dotik-aplikacija.cjs` for app-wide screens), `node scripts/check-lesson.js -q <files>`,
   `node scripts/preveri-formule.cjs` (sims, `public/sirina.js` or KaTeX output: no formula may scroll at 360 px)
 
 **Pass 2 – function (reviewer agent 1):** reads the diff and the code paths it touches, and uses the
@@ -91,7 +93,7 @@ public step (teacher pilot, open beta).
 
 ## 5. Samodejni pregledi brez AI
 
-Trije brezplačni pregledi, ki ne kličejo AI in ne stanejo nič (j, 2026-11-08):
+Štirje brezplačni pregledi, ki ne kličejo AI in ne stanejo nič (j, 2026-11-08):
 
 - **Dependabot** (`.github/dependabot.yml`): ob ponedeljkih en PR za npm in en za GitHub Actions (vse minor/patch skupaj,
   največ 3 odprti). Varnostni popravki pridejo kot ločeni PR-ji. `mobile/` je namenoma izven (Expo SDK posodabljamo skupaj).
@@ -101,6 +103,9 @@ Trije brezplačni pregledi, ki ne kličejo AI in ne stanejo nič (j, 2026-11-08)
   `security-extended`, ob PR v main, ob združitvi v main in ob ponedeljkih. Izidi: GitHub > Security > Code scanning
   (če ga repozitorij še nima vklopljenega: Settings > Advanced Security). Velikih ustvarjenih podatkov (npr.
   `server/university-extra.js`, generatorji nalog, `public/i18n`) ne pregleduje.
+- **Iskalnik hroščev** (`scripts/najdi-hrosce.mjs`, posel `hrosci` v `.github/workflows/testi.yml`, j 2026-11-15): ob
+  vsakem PR in združitvi v main poišče podvojene ključe v predmetih v `server/`, `public/`, `scripts/`, `sim/`
+  in v prevodih (`public/i18n/sl.js`, `public/i18n/ui/*.json`). Ročno: `node scripts/najdi-hrosce.mjs`.
 - **Straža** (`.github/workflows/straza.yml`, `scripts/straza.mjs`): vsakih 15 min in po delovnem toku »Render«
   preveri živo spletišče (domena iz `brand.json`): `/healthz`, `/healthz/stanje`, domačo stran, `app.js`, JSON
   3D atlasa in `/api/config`. Samo GET, brez prijave, računov, AI in pisanja. 20 s na preizkus, ob napaki en

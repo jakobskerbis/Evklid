@@ -12,11 +12,15 @@ stanje: osnutek
 - Enačbe padanja
   - $v = g\,t$, $h = \dfrac{g t^2}{2}$
   - $v^2 = 2\,g\,h$, ko čas ni znan
-  - ravnilo pade $20\,\mathrm{cm}$: reakcija $0{,}2\,\mathrm{s}$
+  - pot je ploščina pod $v(t)$
 - Met navzgor
   - os navzgor: $v = v_0 - g\,t$
   - $y = v_0\,t - \dfrac{g t^2}{2}$
   - napaka: $g$ prišteti k $v_0$
+- Predznaki
+  - izberi os in je ne spreminjaj
+  - os navzgor: $a = -g$
+  - os navzdol: $a = +g$
 - Najvišja točka
   - $t_\text{vrh} = \dfrac{v_0}{g}$, $h_\text{max} = \dfrac{v_0^2}{2g}$
   - hitrost nič, pospešek še vedno $g$

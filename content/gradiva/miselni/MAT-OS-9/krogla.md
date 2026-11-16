@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Krogla in ploskev
+  - točke, oddaljene od $S$ največ $r$
+  - meja je kroglina ploskev
+  - premer $d = 2r$, v formule vstavi $r$
+- Krogla v valju
+  - valj s polmerom $r$ in višino $2r$
+  - ni mreže, ni robov
+- Površina
+  - $P = 4\pi r^2$, enota $\text{cm}^2$
+  - štirje največji krogi, kot plašč valja
+- Prostornina
+  - $V = \frac{4}{3}\pi r^3$, enota $\text{cm}^3$
+  - valj : krogla : stožec $= 3 : 2 : 1$
+  - napaka: brez deljenja s $3$
+- Večji polmer
+  - $2r$: površina $4$-krat, prostornina $8$-krat
+  - toča $4\,\text{cm}$ proti $1\,\text{cm}$: $64$-krat več ledu
+- Obratna naloga
+  - iz $P$: $r^2 = \frac{P}{4\pi}$
+  - iz $V$: kubični koren iz $r^3$
+  - napaka: koren pozabljen

@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Drugi odvod
+  - $f''(x) = \bigl(f'(x)\bigr)'$
+  - pri gibanju: pospešek
+- Konveksnost
+  - $f''(x) > 0$: graf nad tangentami
+  - oblika skodelice, primer $x^2$
+- Konkavnost
+  - $f''(x) < 0$: graf pod tangentami
+  - $\ln x$ narašča, a je konkavna
+- Prevoj
+  - $f''$ zamenja predznak
+  - tangenta preseka graf
+  - $f'$ ima tam ekstrem
+- Past z ničlo
+  - $f''(x_0) = 0$ ni dovolj
+  - $x^4$: v $0$ minimum, ne prevoj
+- Test ekstrema
+  - $f'(a) = 0$, $f''(a) > 0$: minimum
+  - $f'(a) = 0$, $f''(a) < 0$: maksimum
+  - $f''(a) = 0$: test ne odloči

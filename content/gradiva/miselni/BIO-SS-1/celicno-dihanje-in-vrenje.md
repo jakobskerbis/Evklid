@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Gorenje in dihanje
+  - ista enačba, v celici v korakih z encimi
+  - $\mathrm{C_6H_{12}O_6} + 6\,\mathrm{O_2} \rightarrow 6\,\mathrm{CO_2} + 6\,\mathrm{H_2O}$
+  - ogljik v $\mathrm{CO_2}$ izvira iz glukoze
+- Glikoliza
+  - citoplazma, brez kisika
+  - glukoza → $2$ piruvata, čisto $2$ ATP
+  - $\mathrm{NAD^+}$ sprejme vodik, nastane $\mathrm{NADH}$
+- Mitohondrij
+  - Krebsov cikel v matriksu sprosti $\mathrm{CO_2}$
+  - dihalna veriga na notranji membrani
+  - kisik sprejme vodik, nastane voda
+- Izkupiček ATP
+  - dihanje okoli $30$ ATP na glukozo
+  - vrenje le $2$ ATP, $15$-krat manj
+  - vrenje le obnovi $\mathrm{NAD^+}$, da glikoliza teče naprej
+- Mlečnokislinsko vrenje
+  - piruvat → mlečna kislina
+  - mišice pri šprintu, jogurt
+- Alkoholno vrenje
+  - piruvat → etanol in $\mathrm{CO_2}$
+  - kvasovke v testu in vinu
+  - napaka: drugi korak vrenja ne da ATP

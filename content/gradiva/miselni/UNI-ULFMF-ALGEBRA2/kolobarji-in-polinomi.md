@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kolobar
+  - Abelova grupa za $+$, asociativno množenje, distributivnost
+  - primeri: $\mathbb{Z}$, $\mathbb{Z}_n$, $R[x]$, matrike
+- Delitelji niča
+  - $a, b \neq 0$, a $ab = 0$
+  - $3 \cdot 4 \equiv 0 \pmod{12}$
+  - cel kolobar jih nima
+- Obrnljivi elementi
+  - $k$ obrnljiv v $\mathbb{Z}_n$ natanko pri $\gcd(k, n) = 1$
+  - $7 \cdot 7 \equiv 1 \pmod{12}$
+- Polje
+  - vsak neničelen element je obrnljiv
+  - $\mathbb{Z}_n$ polje natanko pri praštevilskem $n$
+- Deljenje z ostankom
+  - $f = qg + r$, $\deg r < \deg g$
+  - potrebno polje: delimo z vodilnim koeficientom
+  - Evklidov algoritem: zadnji neničelni ostanek je $\gcd$
+- Ničle polinoma
+  - ostanek pri deljenju z $x - a$ je $f(a)$
+  - nad celim kolobarjem največ $n$ ničel
+  - pazi: $x^2 - 1$ ima v $\mathbb{Z}_{12}$ štiri
+- Nerazcepni polinomi
+  - stopnja $2$ ali $3$: nerazcepen natanko brez ničle
+  - $F[x]/(p)$ polje natanko pri nerazcepnem $p$
+  - $\mathbb{R}[x]/(x^2 + 1)$ je $\mathbb{C}$

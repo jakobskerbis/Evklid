@@ -77,15 +77,36 @@ Oksaloacetat se obnovi, a ne z istimi atomi: ogljika iz acetila ostaneta v štir
 
 Par elektronov iz NADH torej prečrpa $10\,\mathrm{H^+}$, iz $\mathrm{FADH_2}$ le $6$. Elektroni tečejo k vedno pozitivnejšemu redukcijskemu potencialu, od $\mathrm{NAD^+/NADH}$ ($E^{\circ\prime} = -0{,}320\,\mathrm{V}$) do $\mathrm{O_2/H_2O}$ ($+0{,}815\,\mathrm{V}$).
 
-```
- medmembranski prostor (H+ visok)
-  H+    H+    H+         H+
-  ^     ^     ^          |
-==I=====III===IV========ATP==
-  |     Q  c  |        sintaza
- NADH        O2->H2O     v
- matriks (H+ nizek)   ADP->ATP
-```
+:::risba skica
+opis: Notranja mitohondrijska membrana kot vodoraven pas. Nad njo je medmembranski prostor z visoko koncentracijo H⁺, pod njo matriks z nizko. V membrani so od leve proti desni kompleksi I, III in IV ter ATP-sintaza. Med I in III je ubikinon Q, med III in IV citokrom c. NADH odda elektrone kompleksu I, pri kompleksu IV iz O₂ nastane H₂O. Kompleksi I, III in IV črpajo H⁺ navzgor v medmembranski prostor, skozi ATP-sintazo pa H⁺ teče navzdol v matriks, kjer iz ADP nastane ATP.
+območje: 0; 0 .. 320; 206
+napis: 160; 194 | medmembranski prostor (H^+ visok)
+pravokotnik: 0; 90 .. 320; 110 | siva
+pravokotnik: 15; 78 .. 45; 122 | ozadje
+pravokotnik: 75; 78 .. 105; 122 | ozadje
+pravokotnik: 135; 78 .. 165; 122 | ozadje
+pravokotnik: 268; 78 .. 298; 122 | ozadje
+napis: 30; 100 | I
+napis: 90; 100 | III
+napis: 150; 100 | IV
+napis: 60; 100 | Q
+napis: 120; 122 | c
+napis: 216; 100 | ATP-sintaza
+puščica: 30; 124 -> 30; 152 | | | oranžna
+puščica: 90; 124 -> 90; 152 | | | oranžna
+puščica: 150; 124 -> 150; 152 | | | oranžna
+napis: 30; 154 | H^+ | nad | oranžna
+napis: 90; 154 | H^+ | nad | oranžna
+napis: 150; 154 | H^+ | nad | oranžna
+napis: 283; 154 | H^+ | nad | oranžna
+puščica: 283; 152 -> 283; 46 | | | oranžna
+puščica: 30; 62 -> 30; 77
+napis: 30; 62 | NADH | pod
+črta: 150; 78 -> 150; 64
+napis: 150; 64 | O_2 → H_2O | pod
+napis: 268; 44 | ADP → ATP | pod
+napis: 110; 14 | matriks (H^+ nizek)
+:::
 
 **6. Kemiozmoza in ATP-sintaza.**
 
@@ -231,7 +252,7 @@ Srčna mišica kot gorivo porablja laktat iz krvi. (a) Koliko ATP nastane pri po
 4. (b) Protoni: $5 \cdot 10 + 1 \cdot 6 = 56\,\mathrm{H^+}$; preizkus $56 : 4 = 14$, plus GTP, spet $15$.
 5. (c) Skozi sintazo gre $0{,}7 \cdot 56 = 39{,}2\,\mathrm{H^+}$, kar da $39{,}2 : 4 = 9{,}8$ ATP; skupaj z GTP $10{,}8$ ATP.
 6. Za enako ATP mora srce porabiti $15 : 10{,}8 \approx 1{,}39$-krat več laktata.
-7. Odgovor: laktat da $15$ ATP in prečrpa $56\,\mathrm{H^+}$; s $30\,\%$ uhajanjem le $10{,}8$ ATP, zato mora poraba laktata (in kisika) narasti za okoli $39\,\%$. Razlika se sprosti kot toplota. Zaradi smrtnih primerov pregretja so 2,4-dinitrofenol, ki so ga v 1930-ih prodajali za hujšanje, kot zdravilo prepovedali.
+7. Odgovor: laktat da $15$ ATP in prečrpa $56\,\mathrm{H^+}$; s $30\,\%$ uhajanjem le $10{,}8$ ATP, zato mora poraba laktata (in kisika) narasti za okoli $39\,\%$. Razlika se sprosti kot toplota. Zaradi smrtnih primerov pregretja so 2,4-dinitrofenol, ki so ga v tridesetih letih 20. stoletja prodajali za hujšanje, kot zdravilo prepovedali.
 
 ### Naloga 2
 

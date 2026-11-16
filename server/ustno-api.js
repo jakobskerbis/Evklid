@@ -153,6 +153,10 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     if (!qs.length) return res.status(404).json({ error: "Za to snov še ni vprašanj za ustno.", code: "u.niVprasanj" });
     let convId = null;
     if (!samoocena) {
+      // Dnevna meja (točka A1, pregled 3): tudi tu, sinhrono s štetjem spodaj. Preverjanje v vmesniku računov teče pred
+      // branjem telesa, zato bi ga sočasne zahteve obšle (vse bi videle isto število vprašanj).
+      const dnevna = accounts?.dailyBlock?.(s.id, USTNO_QUESTIONS);
+      if (dnevna) return res.status(429).json(dnevna);
       const conv = store.createConversation(s.id, { pathTopic: snov.teme.length === 1 ? snov.teme[0].id : qs.length && qs.every((q) => q.topicId === qs[0].topicId) ? qs[0].topicId : null, title: `Ustno spraševanje: ${snov.naslov}`.slice(0, 80) });
       convId = conv.id;
       addMsg(convId, "user", `Vprašaj me (${qs.length} vprašanj): ${snov.naslov}`);

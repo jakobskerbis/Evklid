@@ -182,21 +182,115 @@ $2\,600\,000\,\mathrm{kg} \cdot 1{,}603\,\mathrm{g/kg} \approx 4\,168\,000\,\mat
 - Organska snov $\approx 1{,}724 \cdot C_\mathrm{org}$; daje KIK, zalogo N, P, S, strukturo in blaži pH.
 - Hranila so v mineralih, na izmenjalnih mestih in v raztopini; dostopnost uravnava pH (P najbolje pri $6$ do $7$, Fe v kislem, Mo v bazičnem).
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo pH, pomen logaritemske lestvice in razliko med meritvijo v vodi ($1 : 2{,}5$) in v $0{,}01\,\mathrm{M}$ $\mathrm{CaCl_2}$;
+- definicijo KIK z enoto $\text{cmol(+)/kg}$ (šteje naboje, ne ionov) in velikostni red KIK za pesek, kaolinit, illit, smektit in humus;
+- definicijo bazične nasičenosti $V$, bazične in kisle katione ter mejo $50\,\%$ med evtričnimi in distričnimi tlemi;
+- vrsto jakosti vezave kationov in zakaj zakisanje vodi v izpiranje Ca in Mg ter pod pH okoli $5$ v strupenost aluminija;
+- preračun $w_\mathrm{OS} \approx 1{,}724 \cdot w_{C_\mathrm{org}}$ z izvorom faktorja, vloge organske snovi in pomen razmerja $\mathrm{C : N}$;
+- tri zaloge hranil in vpliv pH na dostopnost P, Fe, Mn in Mo.
+
+### Naloga 1
+
+Izvid za zgornjih $20\,\mathrm{cm}$ kislih gozdnih tal z gostoto $1{,}1\,\mathrm{g/cm^3}$ našteje izmenljive katione v $\text{cmol(+)/kg}$: $\mathrm{Ca^{2+}}$ $1{,}8$, $\mathrm{Mg^{2+}}$ $0{,}6$, $\mathrm{K^+}$ $0{,}3$, $\mathrm{Na^+}$ $0{,}1$, $\mathrm{H^+ + Al^{3+}}$ $9{,}2$. (a) Izračunaj KIK in bazično nasičenost ter tla označi. (b) Z apnjenjem želimo doseči $V = 60\,\%$. Koliko $\text{cmol(+)/kg}$ kislih kationov mora nadomestiti kalcij, če se KIK ne spremeni? (c) Koliko ton $\mathrm{CaCO_3}$ ($M = 100{,}09\,\mathrm{g/mol}$) na hektar je za to najmanj potrebno? (d) Utemelji, zakaj je dejanska potreba po apnu večja.
+
+**Rešitev:**
+
+1. Bazični kationi: $1{,}8 + 0{,}6 + 0{,}3 + 0{,}1 = 2{,}8$ (v $\text{cmol(+)/kg}$).
+2. KIK: $2{,}8 + 9{,}2 = 12{,}0$.
+3. $V = \dfrac{2{,}8}{12{,}0} \cdot 100\,\% \approx 23{,}3\,\%$, kar je manj kot $50\,\%$: tla so distrična.
+4. Pri $V = 60\,\%$ mora biti bazičnih kationov $0{,}60 \cdot 12{,}0 = 7{,}2$.
+5. Kalcij mora nadomestiti $7{,}2 - 2{,}8 = 4{,}4$, torej $4{,}4\,\text{cmol(+)/kg} = 0{,}044\,\mathrm{mol(+)/kg}$.
+6. En mol $\mathrm{CaCO_3}$ nevtralizira dva mola $\mathrm{H^+}$ in da en $\mathrm{Ca^{2+}}$ z dvema nabojema: $\dfrac{0{,}044}{2} = 0{,}022$, torej $0{,}022\,\mathrm{mol}$ $\mathrm{CaCO_3}$ na kilogram tal.
+7. Masa apna na kilogram tal: $0{,}022 \cdot 100{,}09 \approx 2{,}202$, torej $2{,}202\,\mathrm{g/kg}$.
+8. Masa plasti na hektar: $10\,000\,\mathrm{m^2} \cdot 0{,}2\,\mathrm{m} \cdot 1100\,\mathrm{kg/m^3} = 2\,200\,000\,\mathrm{kg}$.
+9. Masa apna: $2\,200\,000 \cdot 2{,}202 \approx 4\,844\,000$, torej $4\,844\,000\,\mathrm{g} \approx 4{,}8\,\mathrm{t}$.
+10. Odgovor: KIK je $12{,}0\,\text{cmol(+)/kg}$, $V \approx 23\,\%$, tla so distrična; nadomestiti je treba $4{,}4\,\text{cmol(+)/kg}$, za kar je potrebnih najmanj okoli $4{,}8\,\mathrm{t}$ $\mathrm{CaCO_3}$ na hektar. Dejanska potreba je večja, ker izmenljivi $\mathrm{Al^{3+}}$ s hidrolizo sproti dovaja $\mathrm{H^+}$ (pufrska kapaciteta), z dvigom pH pa disociirajo še karboksilne skupine humusa, zato KIK naraste in z njo število mest, ki jih je treba zasesti.
+
+### Naloga 2
+
+Tla vsebujejo $18\,\%$ gline, ki je pretežno illit (KIK $30\,\text{cmol(+)/kg}$), laboratorij pa izmeri $2{,}32\,\%$ organskega ogljika. Za humus vzemi KIK $200\,\text{cmol(+)/kg}$. Izmerjena sta še $\mathrm{pH_{H_2O}} = 5{,}6$ in $\mathrm{pH_{CaCl_2}} = 5{,}0$. (a) Oceni KIK tal. (b) Kolikšen delež KIK prispeva organska snov? (c) Kolikokrat večja je koncentracija $\mathrm{H^+}$ v suspenziji s $\mathrm{CaCl_2}$ kot v vodni in od kod ta razlika?
+
+**Rešitev:**
+
+1. Organska snov: $1{,}724 \cdot 2{,}32 \approx 4{,}0$, torej $w_\mathrm{OS} \approx 4{,}0\,\% = 0{,}040$.
+2. Prispevek gline: $0{,}18 \cdot 30 = 5{,}4$ (v $\text{cmol(+)/kg}$).
+3. Prispevek organske snovi: $0{,}040 \cdot 200 = 8{,}0$.
+4. KIK: $5{,}4 + 8{,}0 = 13{,}4$.
+5. Delež organske snovi: $\dfrac{8{,}0}{13{,}4} \cdot 100\,\% \approx 59{,}7\,\%$.
+6. Razlika pH je $5{,}6 - 5{,}0 = 0{,}6$, zato je razmerje koncentracij $10^{0{,}6} \approx 3{,}98$.
+7. Odgovor: KIK je okoli $13\,\text{cmol(+)/kg}$; okoli $60\,\%$ je prispeva organska snov, čeprav je je po masi štiriinpolkrat manj kot gline. V suspenziji s $\mathrm{CaCl_2}$ je $\mathrm{H^+}$ okoli štirikrat več, ker $\mathrm{Ca^{2+}}$ z izmenjalnih mest izrine del $\mathrm{H^+}$ in $\mathrm{Al^{3+}}$ v raztopino.
+
+### Naloga 3
+
+Natančno navedi definiciji kationske izmenjalne kapacitete in bazične nasičenosti. Nato utemelji, ali drži trditev: »Tla z večjo KIK so za rastline vedno ugodnejša.« Odgovor podpri s primerom kislih gozdnih tal pod iglavci in s primerom karbonatnih tal.
+
+**Rešitev:**
+
+1. KIK je skupna množina naboja izmenljivo vezanih kationov, ki jih tla lahko zadržijo, na kilogram suhih tal; enota je $\text{cmol(+)/kg}$. Nosilca sta negativno nabita površina glinenih mineralov in humus.
+2. Bazična nasičenost $V$ je delež KIK, ki ga zasedajo bazični kationi $\mathrm{Ca^{2+}}$, $\mathrm{Mg^{2+}}$, $\mathrm{K^+}$ in $\mathrm{Na^+}$, v odstotkih; preostanek zasedata kisla kationa $\mathrm{H^+}$ in $\mathrm{Al^{3+}}$.
+3. Trditev ne drži. KIK pove le, koliko mest je na voljo, ne pa, kaj je na njih.
+4. Kisla gozdna tla pod iglavci imajo zaradi humusa lahko veliko KIK. Ker se $\mathrm{Al^{3+}}$ in $\mathrm{H^+}$ vežeta močneje od $\mathrm{Ca^{2+}}$ in $\mathrm{Mg^{2+}}$, ju izrineta, bazična kationa pa se izpereta; $V$ je nizka (distrična tla).
+5. Posledice pri pH pod okoli $5$: raztopljeni aluminij je strupen za korenine, fosfor vežeta železo in aluminij, opad s $\mathrm{C : N}$ nad okoli $25$ se razkraja počasi in dušika ne sprošča.
+6. Karbonatna tla imajo visoko $V$ in pogosto ugodno KIK, vendar je pri pH nad $7{,}5$ železo v netopnih oksidih in hidroksidih (kloroza), slabo dostopna sta tudi mangan in fosfor, ki ga veže kalcij.
+7. Sklep: KIK je treba vedno brati skupaj z bazično nasičenostjo in pH. Najugodnejša so tla z zadostno KIK, visoko $V$ in pH okoli $6$ do $7$, kjer je dostopnih največ hranil.
+
 ## Drugače: Na sliki
 
-Predstavljaj si glinen delec kot ploščico, na kateri so po vsej površini znaki minus. Okrog nje lebdi oblak kationov: veliko $\mathrm{Ca^{2+}}$, nekaj $\mathrm{Mg^{2+}}$ in $\mathrm{K^+}$, v kislih tleh pa vedno več $\mathrm{H^+}$ in $\mathrm{Al^{3+}}$. Ob ploščici je koreninski las. Iz njega izstopi $\mathrm{H^+}$, sede na prazno mesto minus, sosednji $\mathrm{Ca^{2+}}$ pa odplava k korenini. Število minusov na ploščici je KIK. Delež minusov, ob katerih sedijo bazični kationi, je bazična nasičenost.
+Predstavljaj si glinen delec kot ploščico, na kateri so po vsej površini znaki minus. Okrog nje lebdi oblak kationov: veliko $\mathrm{Ca^{2+}}$, nekaj $\mathrm{Mg^{2+}}$ in $\mathrm{K^+}$, v kislih tleh pa vedno več $\mathrm{H^+}$ in $\mathrm{Al^{3+}}$. Ob ploščici je koreninski las. Iz njega izstopita dva $\mathrm{H^+}$ in sedeta na mesti minus, $\mathrm{Ca^{2+}}$, ki sta ga izrinila, pa odplava k korenini. Število minusov na ploščici je KIK. Delež minusov, ob katerih sedijo bazični kationi, je bazična nasičenost.
 
-Dostopnost hranil glede na pH (■ dobro, ▪ srednje, · slabo):
+Dostopnost hranil glede na pH:
 
-```
-pH        4  5  6  7  8
-dušik     ·  ▪  ■  ■  ■
-fosfor    ·  ▪  ■  ■  ▪
-kalij     ·  ▪  ■  ■  ■
-železo    ■  ■  ■  ▪  ·
-mangan    ■  ■  ■  ▪  ·
-molibden  ·  ▪  ▪  ■  ■
-```
+:::risba skica
+opis: Preglednica s krogi: dostopnost šestih hranil pri pH 4, 5, 6, 7 in 8. Velik poln krog pomeni dobro, manjši prazen krog srednjo, pika slabo dostopnost. Dušik in kalij: slabo pri 4, srednje pri 5, dobro pri 6, 7 in 8. Fosfor: slabo pri 4, srednje pri 5, dobro pri 6 in 7, srednje pri 8. Železo in mangan: dobro pri 4, 5 in 6, srednje pri 7, slabo pri 8. Molibden: slabo pri 4, srednje pri 5 in 6, dobro pri 7 in 8.
+območje: 1; 0,3 .. 8,7; 7,7
+napis: 2,2; 7 | pH
+napis: 4; 7 | 4
+napis: 5; 7 | 5
+napis: 6; 7 | 6
+napis: 7; 7 | 7
+napis: 8; 7 | 8
+črta: 1,2; 6,5 -> 8,5; 6,5 | siva
+napis: 2,2; 6 | dušik
+krog: 4; 6 | 0,06 | siva polno
+krog: 5; 6 | 0,2 | modra
+krog: 6; 6 | 0,35 | modra polno
+krog: 7; 6 | 0,35 | modra polno
+krog: 8; 6 | 0,35 | modra polno
+napis: 2,2; 5 | fosfor
+krog: 4; 5 | 0,06 | siva polno
+krog: 5; 5 | 0,2 | modra
+krog: 6; 5 | 0,35 | modra polno
+krog: 7; 5 | 0,35 | modra polno
+krog: 8; 5 | 0,2 | modra
+napis: 2,2; 4 | kalij
+krog: 4; 4 | 0,06 | siva polno
+krog: 5; 4 | 0,2 | modra
+krog: 6; 4 | 0,35 | modra polno
+krog: 7; 4 | 0,35 | modra polno
+krog: 8; 4 | 0,35 | modra polno
+napis: 2,2; 3 | železo
+krog: 4; 3 | 0,35 | modra polno
+krog: 5; 3 | 0,35 | modra polno
+krog: 6; 3 | 0,35 | modra polno
+krog: 7; 3 | 0,2 | modra
+krog: 8; 3 | 0,06 | siva polno
+napis: 2,2; 2 | mangan
+krog: 4; 2 | 0,35 | modra polno
+krog: 5; 2 | 0,35 | modra polno
+krog: 6; 2 | 0,35 | modra polno
+krog: 7; 2 | 0,2 | modra
+krog: 8; 2 | 0,06 | siva polno
+napis: 2,2; 1 | molibden
+krog: 4; 1 | 0,06 | siva polno
+krog: 5; 1 | 0,2 | modra
+krog: 6; 1 | 0,2 | modra
+krog: 7; 1 | 0,35 | modra polno
+krog: 8; 1 | 0,35 | modra polno
+podnapis: Velik poln krog: dobro dostopno. Manjši prazen krog: srednje. Pika: slabo.
+:::
 
 Stolpec pri pH $6$ do $7$ je najbolj »poln«. Zato se v vrtnarstvu in kmetijstvu tla pogosto apnijo do tega območja. Marsovski regolit s pH $7{,}7$ leži desno, kjer železa in mangana primanjkuje.
 

@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pravilo produkta
+  - zaporedni izbiri: $m \cdot n$ izidov
+  - druga izbira neodvisna od prve
+  - eno ali drugo: seštevamo
+- Permutacije in variacije
+  - vseh $n$ predmetov: $n!$, $0! = 1$
+  - brez ponavljanja: $\frac{n!}{(n-k)!}$
+  - s ponavljanjem: $n^k$
+- Kombinacije
+  - $\binom{n}{k} = \frac{n!}{k!\,(n-k)!}$
+  - urejene izbore delimo s $k!$
+  - simetrija: $\binom{n}{k} = \binom{n}{n-k}$
+- Pascalov trikotnik
+  - $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$
+  - vsota vrstice: $2^n$
+- Binomski izrek
+  - $(a+b)^n = \sum \binom{n}{k} a^k b^{n-k}$
+  - $a = -1$, $b = 1$: izmenična vsota $0$
+- Vključitve in izključitve
+  - $|A \cup B| = |A| + |B| - |A \cap B|$
+  - tri množice: trojni presek prištej nazaj
+  - napaka: presek štet dvakrat
+- Štetje komplementa
+  - dobri = vsi − slabi
+  - C in G vsaj enkrat: $4380$ melodij

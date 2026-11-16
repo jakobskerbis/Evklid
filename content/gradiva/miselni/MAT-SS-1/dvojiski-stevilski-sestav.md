@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dve števki
+  - samo $0$ in $1$, ena števka je bit
+  - zapis $1011_{(2)}$, beri števko za števko
+- Mestne vrednosti
+  - od desne $1, 2, 4, 8, 16$ …
+  - vsaka dvakrat večja od prejšnje
+  - napaka: začneš z $2$ namesto z $1$
+- Dvojiško v desetiško
+  - seštej vrednosti nad enicami
+  - $101101_{(2)}$: $32 + 8 + 4 + 1 = 45$
+- Vsota potenc
+  - odštevaj največjo potenco števila $2$
+  - manjkajoče potence dobijo ničlo
+- Deljenje z 2
+  - $a = q \cdot 2 + r$, ostanek $0$ ali $1$
+  - ostanke beri od spodaj navzgor
+  - $89$ je $1011001_{(2)}$
+- Biti v računalniku
+  - dve stanji: impulz je ali ga ni
+  - $k$ bitov: števila od $0$ do $2^k - 1$

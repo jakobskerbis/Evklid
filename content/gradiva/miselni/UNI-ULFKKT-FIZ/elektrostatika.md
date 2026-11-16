@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Naboj
+  - kvantiziran: $e_0 = 1{,}602 \cdot 10^{-19}\,\mathrm{C}$
+  - ohranja se, enota $\mathrm{C} = \mathrm{A\,s}$
+- Coulombov zakon
+  - $F = \dfrac{|q_1q_2|}{4\pi\varepsilon\varepsilon_0r^2}$
+  - v vodi sila $80$-krat manjša
+- Električno polje
+  - $\vec{E} = \vec{F}/q$, enota $\mathrm{V/m}$
+  - točkasti naboj: $E = \dfrac{|Q|}{4\pi\varepsilon_0r^2}$
+  - polja seštevamo vektorsko
+- Gaussov zakon
+  - $\oint\vec{E}\cdot\mathrm{d}\vec{S} = Q/\varepsilon_0$
+  - med ploščama: $E = \sigma/\varepsilon_0$
+  - v prevodniku je polje nič
+- Potencial in napetost
+  - $\varphi = \dfrac{Q}{4\pi\varepsilon_0r}$, skalar, enota $\mathrm{V}$
+  - delo $A = qU_{AB}$, homogeno polje $E = U/d$
+  - napaka: $1/r^2$ namesto $1/r$
+- Kondenzator
+  - $C = Q/U$, ploščati $C = \varepsilon\varepsilon_0S/d$
+  - vzporedno $C = C_1 + C_2$, obratno kot upori
+- Energija polja
+  - $W = \tfrac{1}{2}CU^2 = Q^2/(2C)$
+  - gostota $w = \tfrac{1}{2}\varepsilon\varepsilon_0E^2$

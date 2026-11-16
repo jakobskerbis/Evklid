@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Gostota
+  - $\rho = \frac{m}{V}$ v $\mathrm{g/cm^3}$
+  - lastnost snovi, ne predmeta
+  - zlato $19{,}3$, verižica $8{,}6$: ponaredek
+- Plavanje
+  - plava na tekočini z večjo gostoto
+  - led potone v alkoholu
+- Topnost
+  - gramov snovi na $100\,\mathrm{g}$ vode
+  - napaka: ni na $100\,\mathrm{g}$ raztopine
+  - $\mathrm{KNO_3}$ strma krivulja, $\mathrm{NaCl}$ skoraj ravna
+- Kristalizacija
+  - kristali = raztopljeno minus topnost pri nižji temperaturi
+  - $150 - 32 = 118\,\mathrm{g}$ čistega $\mathrm{KNO_3}$
+  - sol iz solin z izparevanjem
+- Raztopina
+  - $m_r = m_v + m_s$
+  - masni delež $w = \frac{m_s}{m_r}$
+- Postopki ločevanja
+  - filtracija: netopna trdna snov
+  - destilacija: različno vrelišče
+  - lij ločnik, magnet, kromatografija
+- Zmes treh snovi
+  - magnet, raztapljanje, filtracija, izparevanje
+  - napaka: sol ne ostane na filtru

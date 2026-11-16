@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kaj potuje
+  - motnja in energija, snov le niha
+  - transverzalno ali longitudinalno (zvok v plinu)
+- Sinusno valovanje
+  - $s = s_0\sin(kx - \omega t)$, $k = 2\pi/\lambda$
+  - $c = \omega/k = \lambda\nu$
+  - pazi: $c$ ni hitrost delcev
+- Valovna enačba
+  - $\partial^2 s/\partial t^2 = c^2\,\partial^2 s/\partial x^2$
+  - struna: $c = \sqrt{F/\mu}$
+  - plin: $c = \sqrt{\kappa RT/M}$, zrak okoli $343\,\mathrm{m/s}$
+- Jakost in decibeli
+  - točkast izvir: $j = P/(4\pi r^2)$
+  - $L = 10\,\mathrm{dB}\cdot\log_{10}(j/j_0)$, $j_0 = 10^{-12}\,\mathrm{W/m^2}$
+  - seštevamo jakosti, ne ravni
+- Superpozicija
+  - stoječe valovanje: $s = 2s_0\sin(kx)\cos(\omega t)$
+  - sosednja vozla narazen $\lambda/2$
+  - utripanje: $|\nu_1 - \nu_2|$
+- Lastne frekvence
+  - struna, odprta piščal: $\nu_n = nc/(2l)$
+  - zaprta piščal: $\nu_n = (2n-1)c/(4l)$
+  - zaprta piščal: le lihi večkratniki
+- Dopplerjev pojav
+  - $\nu' = \nu(c + v_o)/(c - v_i)$
+  - približevanje: hitrosti pozitivne, ton višji
+  - izvir spremeni $\lambda$, opazovalec ne

@@ -28,8 +28,9 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
 - Dolg pritisk na ikono (Android, računalnik): bližnjice Učna pot, Inštruktor, Učbenik, Kalkulator
   (`/?pogled=chat` …).
 - Tipka Nazaj (Android, nameščena aplikacija, APK, brskalnik) gre po plasteh (`public/app.js` → `backStep`):
-  najprej zapre okno, meni ali Evklidovo tipkovnico, nato podstran (iz lekcije na seznam lekcij, iz 3D modela
-  v 3D svet, iz Nastavitev na Jaz), sicer na Učno pot. Na Učni poti sta za izhod potrebna dva pritiska
+  najprej zapre okno, meni ali Evklidovo tipkovnico (tudi ploščo funkcij ali konstant, meni vrstice grafa in
+  povečan graf v kalkulatorju), nato podstran (iz lekcije na seznam lekcij, iz 3D modela v 3D svet, iz Nastavitev
+  ali Kalkulatorja na telefonu na Jaz), sicer na Učno pot. Na Učni poti sta za izhod potrebna dva pritiska
   (ob prvem obvestilo »Še enkrat pritisni Nazaj za izhod.«). Zgodovina ima tri zapise in se ne nabira.
 - Aplikacija se odpre na zadnjem zaslonu (tudi odprta tema ali lekcija Učbenika); na Učno pot samo, če je od
   zadnjega obiska minilo več kot 12 ur. Odločitev pade pred prvim izrisom (`public/zacetek.js` v `<head>`,

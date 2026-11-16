@@ -39,6 +39,7 @@ export const GOOD = 0.75;
 
 const THINK_RE = /^[ \t]*:::[ \t]*premisli[ \t]*\n([\s\S]*?)\n[ \t]*:::[ \t]*$/gm;
 const DRAW_RE = /^[ \t]*:::[ \t]*risba\b[^\n]*\n[\s\S]*?\n[ \t]*:::[ \t]*$/gm;
+export const brezOznakeRavni = (md) => String(md || "").replace(/^\(višja raven\) /gm, "").replace(/(, | \()višja raven\)/g, (m, a) => (a === ", " ? ")" : ""));
 const clean = (md) =>
   String(md || "")
     .replace(DRAW_RE, "")
@@ -125,8 +126,11 @@ function section(lesson, re) {
  */
 export function lessonQuestions(topicId, lesson, name = "", { raw = false, pregled = true } = {}) {
   if (!lesson) return [];
+  // Oznaka »(višja raven)« (docs/matura-katalog.md) je za učbenik: v ustnem vprašanju in vzorcu je ni, zgoščene
+  // vrednosti ročnih pregledov pa ostanejo enake kot pred oznako.
+  lesson = { ...lesson, sections: (lesson.sections || []).map((s) => ({ ...s, md: brezOznakeRavni(s.md) })) };
   const out = [];
-  const all = (lesson.sections || []).map((s) => s.md).join("\n\n");
+  const all = lesson.sections.map((s) => s.md).join("\n\n");
   let i = 0;
   for (const m of all.matchAll(THINK_RE)) {
     const [q, ...rest] = m[1].split(/^[ \t]*---[ \t]*$/m);

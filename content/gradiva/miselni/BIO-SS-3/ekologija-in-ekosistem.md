@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ekologija
+  - veda o odnosih med organizmi in z okoljem
+  - napaka: »ekološko« na izdelku ni ekologija
+- Populacija
+  - osebki ene vrste na enem prostoru
+  - gostota $g = \dfrac{N}{V}$, npr. $0{,}2$ neonke na liter
+- Združba in biotop
+  - združba (biocenoza): vse populacije skupaj
+  - biotop: neživi prostor, voda, tla, svetloba
+- Ekosistem
+  - združba in biotop z vsemi odnosi
+  - energija vstopa, snovi krožijo
+  - primer: akvarij, Blejsko jezero
+- Habitat in niša
+  - habitat: kje vrsta živi
+  - niša: kako živi, kaj je, kdaj
+  - enaka niša pomeni tekmovanje
+- Biom in biosfera
+  - biom: ekosistemi podobnega podnebja
+  - biosfera: okoli $20\,\mathrm{km}$; $0{,}3\,\%$ polmera Zemlje
+- Varstvo okolja
+  - uporaba ekološkega znanja v praksi
+  - zavarovana območja, čistilne naprave, ločevanje

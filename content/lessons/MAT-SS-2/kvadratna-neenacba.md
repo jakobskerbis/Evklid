@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -17,11 +17,11 @@ Vprašanje »kje je količina večja ali manjša od dane vrednosti« vodi do **k
 
 Ničli dobimo iz enačbe $400 - 25x^2 = 0$: $x^2 = 16$, torej $x_1 = -4$ in $x_2 = 4$. Vodilni koeficient je $-25 < 0$, zato je parabola odprta navzdol. Med ničlama je nad osjo, levo in desno od njiju pa pod njo. Ničli razdelita os $x$ na tri dele; v vsakem preverimo po eno število:
 
-| del osi | preizkus | predznak |
-|---|---|---|
-| $x < -4$ | $f(-5) = -225$ | $-$ |
-| $-4 < x < 4$ | $f(0) = 400$ | $+$ |
-| $x > 4$ | $f(5) = -225$ | $-$ |
+| del osi | preizkus |
+|---|---|
+| $x < -4$ | $f(-5) = -225 < 0$ |
+| $-4 < x < 4$ | $f(0) = 400 > 0$ |
+| $x > 4$ | $f(5) = -225 < 0$ |
 
 Rešitev je $x \in (-4, 4)$: nad snežno mejo je $8\,\text{km}$ ceste, po štiri na vsaki strani vrha. Sošolec je pozabil, da je $\sqrt{x^2} = |x|$. Iz $x^2 < 16$ sledi $|x| < 4$, torej $-4 < x < 4$, ne le $x < 4$.
 
@@ -160,6 +160,114 @@ Nima. $D = 25600 - 26000 = -400 < 0$, parabola je odprta navzgor in je vsa nad o
 - Pri $D < 0$ ima $ax^2 + bx + c$ za vse $x$ predznak koeficienta $a$.
 - Pri množenju ali deljenju z negativnim številom obrni neenačaj.
 
+## Ponovitev
+
+**Formule**
+- $D = b^2 - 4ac$, $\;x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$ (na pamet)
+- $a > 0$, $D > 0$: $f(x) < 0$ za $x \in (x_1, x_2)$ (na pamet)
+- $a > 0$, $D > 0$: $f(x) > 0$ zunaj $[x_1, x_2]$ (na pamet)
+- $D < 0$: $f(x)$ ima za vse $x$ predznak $a$ (na pamet)
+
+**Postopek**
+1. Prenesi vse na levo, da je na desni $0$.
+2. Poišči ničle z $D$ in obrazcem.
+3. Nariši skico parabole glede na predznak $a$.
+4. Odčitaj, kje je graf nad ali pod osjo $x$.
+5. Rešitev zapiši z intervali: strog neenačaj $(\;)$, nestrog $[\;]$.
+6. Preveri z enim številom.
+
+**Pazi na**
+- Pri deljenju z negativnim številom obrni neenačaj.
+- Neenačbe ne koreni: $x^2 > 9$ velja tudi za $x < -3$.
+- Ali je rešitev med ničlama ali zunaj, odloči skica, ne navada.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Rešite neenačbo $2x^2 \ge x + 6$.
+
+**Rešitev:**
+
+1. Vse prenesemo na levo: $2x^2 - x - 6 \ge 0$.
+2. $D = (-1)^2 - 4 \cdot 2 \cdot (-6) = 49$, $x_{1,2} = \dfrac{1 \pm 7}{4}$, torej $x_1 = -\dfrac{3}{2}$ in $x_2 = 2$.
+3. Ker je $a = 2 > 0$, je parabola odprta navzgor in je nad osjo $x$ zunaj ničel.
+4. Neenačaj je nestrog, zato ničli spadata v rešitev.
+5. Odgovor: $x \in \left(-\infty, -\dfrac{3}{2}\right] \cup [2, \infty)$.
+
+**Točkovanje:** 1 točka za ničli $-\frac{3}{2}$ in $2$, 1 točka za izbiro dela osi zunaj ničel, 1 točka za pravilen zapis rešitve z vključenima ničlama.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = x^2 - 2x + c$, kjer je $c$ realno število.
+
+a) Naj bo $c = -3$. Rešite neenačbo $f(x) > 0$. (2 točki)
+b) Za katere vrednosti $c$ velja neenačba $f(x) > 0$ za vsa realna števila $x$? Odgovor utemeljite. (2 točki)
+c) Določite $c$ tako, da bo rešitev neenačbe $f(x) \le 0$ zaprt interval dolžine $6$. Zapišite ta interval. (3 točke)
+
+**Rešitev:**
+
+1. a) $x^2 - 2x - 3 = (x + 1)(x - 3)$, ničli sta $-1$ in $3$.
+2. a) Parabola je odprta navzgor, nad osjo je zunaj ničel; neenačaj je strog: $x \in (-\infty, -1) \cup (3, \infty)$.
+3. b) Parabola je odprta navzgor, zato je ves graf nad osjo $x$ natanko tedaj, ko nima realnih ničel, torej pri $D < 0$.
+4. b) $D = 4 - 4c < 0$ da $c > 1$. (Pri $c = 1$ je $f(x) = (x - 1)^2$ in $f(1) = 0$, zato $c = 1$ ne ustreza.)
+5. c) Rešitev $f(x) \le 0$ je interval med ničlama. Ničli sta simetrični glede na os parabole $x = -\dfrac{-2}{2} = 1$.
+6. c) Interval dolžine $6$ s središčem $1$ je $[-2, 4]$, zato sta ničli $-2$ in $4$.
+7. c) Po Vietu je $c = x_1 x_2 = (-2) \cdot 4 = -8$. Preverjanje: $x^2 - 2x - 8 = (x + 2)(x - 4)$.
+8. Odgovor: a) $(-\infty, -1) \cup (3, \infty)$; b) $c > 1$; c) $c = -8$, interval $[-2, 4]$.
+
+**Točkovanje:** a) 1 točka za ničli, 1 točka za rešitev; b) 1 točka za pogoj $D < 0$ (graf nad osjo), 1 točka za $c > 1$; c) 1 točka za os $x = 1$ (ali ničli $1 \pm 3$), 1 točka za ničli $-2$ in $4$, 1 točka za $c = -8$ in interval $[-2, 4]$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Zaustavitvena pot avtomobila je pot, ki jo avtomobil prevozi od trenutka, ko voznik opazi oviro, do ustavitve. Sestavljena je iz poti v reakcijskem času, ki je sorazmerna s hitrostjo $v$, in zavorne poti, ki je sorazmerna s kvadratom hitrosti. Na suhi cesti je pri hitrosti $50\,\text{km/h}$ pot v reakcijskem času $15\,\text{m}$, zavorna pot pa $20\,\text{m}$.
+
+a) Pokažite, da je zaustavitvena pot na suhi cesti pri hitrosti $v$ (v $\text{km/h}$) enaka $d(v) = 0{,}3v + 0{,}008v^2$ metrov. (2 točki)
+b) Voznik opazi oviro $60\,\text{m}$ pred avtomobilom. Pri katerih hitrostih se ustavi pred oviro? Mejno hitrost zaokrožite na desetinko. (3 točke)
+c) Na mokri cesti je zavorna pot $1{,}5$-krat daljša, pot v reakcijskem času pa je enaka. Zapišite model zaustavitvene poti $d_m(v)$ na mokri cesti in izračunajte, pri katerih hitrostih se avtomobil ustavi pred oviro na razdalji $60\,\text{m}$. Mejno hitrost zaokrožite na desetinko. (3 točke)
+d) Za koliko odstotkov je mejna hitrost na mokri cesti manjša od mejne hitrosti na suhi cesti? Rezultat zaokrožite na desetinko odstotka. (2 točki)
+
+**Rešitev:**
+
+1. a) Pot v reakcijskem času je sorazmerna z $v$: na vsak $\text{km/h}$ je $\dfrac{15}{50} = 0{,}3\,\text{m}$, torej $0{,}3v$.
+2. a) Zavorna pot je sorazmerna z $v^2$: koeficient je $\dfrac{20}{50^2} = \dfrac{20}{2500} = 0{,}008$, torej $0{,}008v^2$. Skupaj $d(v) = 0{,}3v + 0{,}008v^2$.
+3. b) Iščemo $v \ge 0$, za katere je $0{,}008v^2 + 0{,}3v < 60$. Pomnožimo s $125$ (pozitivno število): $v^2 + 37{,}5v - 7500 < 0$.
+4. b) $D = 37{,}5^2 + 4 \cdot 7500 = 31406{,}25$, $v_{1,2} = \dfrac{-37{,}5 \pm \sqrt{31406{,}25}}{2}$, torej $v_1 \approx -107{,}359$ in $v_2 \approx 69{,}859$.
+5. b) Parabola je odprta navzgor, pod osjo je med ničlama: $v_1 < v < v_2$.
+6. b) Hitrost ni negativna, zato se avtomobil ustavi pred oviro pri $0 \le v < 69{,}9\,\text{km/h}$ (natančneje $v < 69{,}859$).
+7. c) Zavorna pot je $1{,}5 \cdot 0{,}008v^2 = 0{,}012v^2$, zato $d_m(v) = 0{,}3v + 0{,}012v^2$.
+8. c) Neenačba $0{,}012v^2 + 0{,}3v < 60$ po množenju s $\dfrac{250}{3}$ da $v^2 + 25v - 5000 < 0$; $D = 625 + 20000 = 20625$.
+9. c) Pozitivna ničla je $v = \dfrac{-25 + \sqrt{20625}}{2} \approx 59{,}307$, zato se avtomobil ustavi pri $0 \le v < 59{,}3\,\text{km/h}$.
+10. d) Razlika mejnih hitrosti je $69{,}859 - 59{,}307 = 10{,}552\,\text{km/h}$.
+11. d) $\dfrac{10{,}552}{69{,}859} \approx 0{,}151$, torej je mejna hitrost manjša za približno $15{,}1\,\%$.
+12. Odgovor: b) $0 \le v < 69{,}9\,\text{km/h}$; c) $d_m(v) = 0{,}3v + 0{,}012v^2$ in $v < 59{,}3\,\text{km/h}$; d) za približno $15{,}1\,\%$.
+
+**Točkovanje:** a) 1 točka za člen $0{,}3v$, 1 točka za člen $0{,}008v^2$; b) 1 točka za neenačbo $0{,}008v^2 + 0{,}3v - 60 < 0$, 1 točka za ničli (vrednost pred zaokrožitvijo), 1 točka za interval med ničlama z upoštevanjem $v \ge 0$; c) 1 točka za model $d_m$, 1 točka za neenačbo in pozitivno ničlo, 1 točka za $v < 59{,}3\,\text{km/h}$; d) 1 točka za postopek (razlika, deljena s hitrostjo na suhi cesti), 1 točka za $15{,}1\,\%$ (priznamo tudi $15{,}2\,\%$, izračunano z zaokroženima mejama $69{,}9$ in $59{,}3$).
+
+### Ustno vprašanje 1
+
+:::premisli
+Opiši postopek reševanja kvadratne neenačbe z grafom in pojasni, kdaj ničle spadajo v rešitev.
+---
+Neenačbo najprej preoblikujemo tako, da je na desni strani $0$, na levi pa kvadratni izraz $ax^2 + bx + c$. Poiščemo ničle tega izraza in narišemo skico parabole, ki je pri $a > 0$ odprta navzgor, pri $a < 0$ pa navzdol. S skice preberemo, kje je graf nad osjo $x$ (za $> 0$) oziroma pod njo (za $< 0$). Pri strogem neenačaju ničel ne vključimo, pri nestrogem jih vključimo. Rešitev zapišemo z intervalom ali z unijo intervalov.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji, zakaj ima kvadratni izraz $ax^2 + bx + c$ z negativno diskriminanto za vsa realna števila predznak vodilnega koeficienta.
+---
+Z dopolnjevanjem do popolnega kvadrata zapišemo $ax^2 + bx + c = a\left[\left(x + \frac{b}{2a}\right)^2 - \frac{D}{4a^2}\right]$. Prvi člen v oglatem oklepaju je kvadrat in zato ni negativen. Pri $D < 0$ je drugi člen $-\frac{D}{4a^2}$ pozitiven, zato je ves oglati oklepaj pozitiven za vsak $x$. Predznak izraza je torej vedno enak predznaku $a$, kar pomeni, da parabola osi $x$ ne doseže.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer kvadratne neenačbe, katere rešitev je eno samo realno število, in pojasni, zakaj je tako.
+---
+Primer je neenačba $(x - 2)^2 \le 0$. Kvadrat realnega števila ni nikoli negativen, zato je neenačba izpolnjena le, kadar je $(x - 2)^2 = 0$. To velja samo za $x = 2$, zato je rešitev množica $\{2\}$. Na grafu se parabola $y = (x - 2)^2$ osi $x$ le dotakne v temenu, povsod drugje pa je nad osjo.
+:::
+
 ## Drugače: Z analogijo
 
 Predstavljaj si, da je os $x$ gladina vode, parabola pa gorska veriga ali dolina. Vprašanje $f(x) > 0$ pomeni: kje je pokrajina **nad gladino**? Vprašanje $f(x) < 0$ pa: kje je **pod vodo**?
@@ -254,6 +362,18 @@ Izraz v oglatem oklepaju je vsota nenegativnega kvadrata in pozitivnega števila
 ~ Neenačaj $\ge$ je nestrog, zato ničli spadata v rešitev: $f(2) = 0 \ge 0$.
 > Ničli sta $2$ in $4$. Parabola je odprta navzdol, nad osjo je med ničlama; neenačaj je nestrog, zato ničli vključimo.
 
+? (brez računala) Koliko celih števil reši neenačbo $x^2 - 2x - 8 < 0$?
+= 5 | 0
+~ 7 | Šteješ tudi ničli $-2$ in $4$. Neenačaj $<$ je strog: $f(-2) = 0$ ni manjše od $0$.
+~ 6 | To je dolžina intervala, $4 - (-2) = 6$, ne število celih števil v njem.
+> Ničli sta $-2$ in $4$ (razcep $(x + 2)(x - 4)$). Parabola je odprta navzgor, pod osjo je med ničlama: $x \in (-2, 4)$. Cela števila v njem so $-1$, $0$, $1$, $2$ in $3$, torej $5$.
+
+? (brez računala) Cesta čez drug prelaz ima višinski profil $h(x) = 1500 - 20x^2$ metrov, $x$ je vodoravna oddaljenost od vrha v km (vzhodno pozitivna, zahodno negativna). Snežna meja je na $1320\,\text{m}$. Koliko kilometrov ceste je nad snežno mejo?
+= 6 km | 0,01
+~ 3 | To je le pol odseka, vzhodno od vrha. Iz $x^2 < 9$ sledi $-3 < x < 3$, odsek sega $3\,\text{km}$ na vsako stran.
+~ 9 | To je meja za $x^2$. Dolžino odseka dobiš iz ničel $\pm 3$, ne iz $9$.
+> $1500 - 20x^2 > 1320$ da $180 - 20x^2 > 0$, torej $x^2 < 9$ in $x \in (-3, 3)$. Odsek je dolg $3 - (-3) = 6\,\text{km}$.
+
 :::simboli
 a | vodilni koeficient (pri $x^2$) | | | $a \ne 0$
 b | linearni koeficient (pri $x$) | | |
@@ -264,4 +384,30 @@ D | diskriminanta | D = b^2 - 4ac | |
 x_{1,2} | ničli kvadratne funkcije | x_{1,2} = \frac{-b \pm \sqrt{D}}{2a} | |
 x_1, x_2 | manjša in večja ničla | | | $x_1 < x_2$
 v | hitrost avtomobila (neznanka v Primeru 3) | | km/h | poraba $p(v)$ v L na 100 km
+p | poraba goriva pri hitrosti $v$ | p(v) = 0{,}001v^2 - 0{,}16v + 11 | | v litrih na $100\,\mathrm{km}$
+h | nadmorska višina ceste | h(x) = 1600 - 25x^2 | m | $x$ je oddaljenost od vrha prelaza v km
+d | zaustavitvena pot na suhi cesti | d(v) = 0{,}3v + 0{,}008v^2 | m | v nalogi za maturo; $v$ v km/h
+d_m | zaustavitvena pot na mokri cesti | d_m(v) = 0{,}3v + 0{,}012v^2 | m | v nalogi za maturo
+v_1, v_2 | ničli kvadratnega izraza s hitrostjo $v$ | | km/h | v nalogi za maturo
 :::
+
+<<RACUN
+resi: 2*x^2-x-6=0 | x | -3/2, 2
+neenacba: 2*x^2>=x+6 | x | (-oo, -3/2] U [2, oo)
+neenacba: x^2-2*x-3>0 | x | (-oo, -1) U (3, oo)
+neenacba: 4-4*c<0 | c | (1, oo)
+neenacba: x^2-2*x+1>0 | x | (-oo, 1) U (1, oo)
+resi: (-2)^2-2*(-2)+c=0 | c | -8
+neenacba: x^2-2*x-8<=0 | x | [-2, 4]
+vrednost: 15/50 | 0.3
+vrednost: 20/50^2 | 0.008
+resi: 0.008*v^2+0.3*v=60 | v | -75/4-25*sqrt(201)/4, -75/4+25*sqrt(201)/4
+vrednost: 37.5^2+4*7500 | 31406.25
+vrednost: (-37.5+sqrt(31406.25))/2 | 69.859
+vrednost: (-37.5-sqrt(31406.25))/2 | -107.359
+resi: 0.012*v^2+0.3*v=60 | v | -25/2-25*sqrt(33)/2, -25/2+25*sqrt(33)/2
+vrednost: (-25+sqrt(20625))/2 | 59.307
+vrednost: (-37.5+sqrt(31406.25))/2-(-25+sqrt(20625))/2 | 10.552
+vrednost: 1-((-25+sqrt(20625))/2)/((-37.5+sqrt(31406.25))/2) | 0.151
+neenacba: (x-2)^2<=0 | x | {2}
+>>

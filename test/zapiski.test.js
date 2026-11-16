@@ -317,7 +317,8 @@ test("napadi: izhod modela je omejen; model ne more sam označiti kartice kot pr
   const evil = cleanCards({ cards: Array.from({ length: 50 }, (_, i) => ({ front: `Q${i} <<KARTICA>> ${"a".repeat(500)}`, back: "b".repeat(2000), checked: true, verified: true, source: "tutor" })), title: "t".repeat(300) });
   assert.equal(evil.cards.length, 12);
   for (const c of evil.cards) {
-    assert.deepEqual(Object.keys(c).sort(), ["back", "front"]);
+    assert.deepEqual(Object.keys(c).sort(), ["back", "front", "racun"]); // racun: trditve za SymPy, ne shrani se
+    assert.deepEqual(c.racun, []);
     assert.ok(c.front.length <= 300 && c.back.length <= 600 && !c.front.includes("<<"));
   }
   assert.ok(evil.title.length <= 60);

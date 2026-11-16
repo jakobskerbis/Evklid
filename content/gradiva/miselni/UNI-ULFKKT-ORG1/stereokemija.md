@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vrste izomerov
+  - konstitucijski: drugačna povezanost atomov
+  - stereoizomeri: enantiomeri ali diastereomeri
+- Kiralnost
+  - ne prekrije se z zrcalno sliko
+  - kriterij: nobene osi $S_n$
+- Stereocenter
+  - ogljik $sp^3$ s štirimi različnimi skupinami
+  - butan-2-ol da, propan-2-ol ne
+- Enantiomera
+  - enake skalarne lastnosti v akiralnem okolju
+  - nasprotna rotacija; racemat $1 : 1$ ne vrti
+- Specifična rotacija
+  - $[\alpha] = \alpha/(l \cdot c)$, $l$ v dm, $c$ v g/mL
+  - $\mathrm{ee} = [\alpha]/[\alpha]_{\text{čist}}$, $x_S = (1 + \mathrm{ee})/2$
+  - pazi: predznak $(+)/(-)$ ni R/S
+- Konfiguracija R in S
+  - CIP: vrstno število, nato prva razlika trojic
+  - skupina 4 stran: v smeri urinega kazalca R
+  - zamenjava dveh skupin obrne konfiguracijo
+- Diastereomeri
+  - največ $2^n$ stereoizomerov
+  - obrat vseh centrov: enantiomer; dela: diastereomer
+  - različne fizikalne lastnosti, tudi *cis* in *trans*
+- Spojine mezo
+  - notranja zrcalna ravnina, optično neaktivna
+  - vinska kislina: $3$ stereoizomeri, ne $4$

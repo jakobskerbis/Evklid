@@ -46,7 +46,7 @@ Ko števila zapišemo različno, jih pred primerjavo prevedemo v isto obliko: vs
 
 **3. Seštevanje in odštevanje.** Pravila za predznake so ista kot pri celih številih. Pri enakih predznakih absolutni vrednosti seštejemo, pri različnih odštejemo manjšo od večje in vzamemo predznak tistega z večjo absolutno vrednostjo. Odštevanje je prištevanje nasprotnega števila.
 
-Primer z decimalnimi števili: jutranjih $-2{,}4\,^\circ\mathrm{C}$ se segreje za $5{,}1$, torej $-2{,}4 + 5{,}1 = 2{,}7$. Pri ulomkih najprej poiščemo **skupni imenovalec**, nato računamo s števci:
+Primer z decimalnimi števili: z jutranjih $-2{,}4\,^\circ\mathrm{C}$ se segreje za $5{,}1$, torej $-2{,}4 + 5{,}1 = 2{,}7$. Pri ulomkih najprej poiščemo **skupni imenovalec**, nato računamo s števci:
 
 $$\frac{a}{c} + \frac{b}{c} = \frac{a + b}{c}$$
 

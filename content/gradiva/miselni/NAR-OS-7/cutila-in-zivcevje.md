@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dražljaj in odziv
+  - dražljaj: svetloba, zvok, vonj, dotik
+  - odziv: gib mišice ali izločanje žleze
+- Pot sporočila
+  - čutnice → čutilni živec → osrednje živčevje
+  - nato gibalni živec → mišica
+- Nevron
+  - živčna celica z dolgim podaljškom
+  - signal $1$ do $100\,\mathrm{m/s}$
+- Refleks
+  - prek hrbtenjače, brez razmišljanja
+  - umik od vročega, kolenski refleks
+  - bolečino začutiš šele pozneje
+- Čutila človeka
+  - oko: paličice in čepki
+  - uho: zvok in ravnotežje
+  - jezik pet okusov, nos vonj
+  - koža: dotik, toplota, bolečina
+- Živčevje živali
+  - trdoživnjak: živčna mreža
+  - deževnik, žuželke: trebušnjača
+  - pobočnica, ultrazvok, zaznava toplote
+- Reakcijski čas
+  - ravnilo: $20\,\mathrm{cm}$ je $0{,}20\,\mathrm{s}$
+  - $t = \dfrac{s}{v}$, $s = v \cdot t$

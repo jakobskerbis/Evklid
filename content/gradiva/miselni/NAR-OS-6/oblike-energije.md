@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Energija se ne porabi
+  - napaka: energija izgine
+  - Joule: gibanje segreje vodo
+- Energija in enota
+  - zmožnost premakniti, segreti, osvetliti
+  - joule (J), $1\,\mathrm{kJ} = 1000\,\mathrm{J}$
+- Oblike energije
+  - gibalna, potencialna, prožnostna, kemijska
+  - električna, svetloba, toplota
+- Pretvorbe
+  - tek: kemijska → gibalna + toplota
+  - $E_\mathrm{prej} = E_\mathrm{potem}$
+  - »porabljeno« je toplota v okolici
+- Sonce kot vir
+  - hrana, veter, reke, fosilna goriva
+  - izjeme: uran, toplota Zemlje, plimovanje
+- Obnovljivi viri
+  - Sonce, veter, voda, les
+- Neobnovljivi viri
+  - premog, nafta, zemeljski plin, uran

@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dve spremenljivki
+  - enota da par $(x_i, y_i)$
+  - številska ali opisna spremenljivka
+- Razsevni diagram
+  - vsaka enota je ena točka
+  - točk ne povezujemo s črto
+- Vrste povezanosti
+  - pozitivna: točke se dvigajo
+  - negativna: točke se spuščajo
+  - močna, če so blizu premice
+- Povezanost ni vzrok
+  - tretja spremenljivka, npr. vročina
+  - štorklje in rojstva
+- Zbiranje podatkov
+  - populacija in reprezentativen vzorec
+  - merjenje, opazovanje, anketa, obstoječi viri
+- Primerjava skupin
+  - opisna in številska: sredini skupin
+  - suhi $27{,}5$ °C, deževni $21{,}25$ °C
+- Statistična naloga
+  - vprašanje, zbiranje, urejanje, analiza
+  - prikaz in interpretacija z omejitvami

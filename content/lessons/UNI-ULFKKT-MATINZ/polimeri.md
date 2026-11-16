@@ -77,7 +77,7 @@ Plastenka. Pri hitrem ohlajanju verige nimajo časa, da bi se zložile, zato ost
 
 Čista kovina se pri segrevanju stali pri eni sami temperaturi. Pri polimerih sta pomembni dve:
 
-**Definicija.** **Temperatura steklastega prehoda** $T_g$ je temperatura, pod katero so segmenti verig v amorfnih področjih zamrznjeni (polimer je trd in krhek kot steklo), nad njo pa se lahko segmenti vrtijo okoli vezi (polimer je usnjat ali gumijast). Pri $T_g$ se skokovito spremenita toplotna kapaciteta in temperaturni razteznostni koeficient, modul pa pade za dva do tri velikostne rede. **Tališče** $T_m$ je temperatura, pri kateri se stalijo kristalna področja; amorfni polimer ga nima.
+**Definicija.** **Temperatura steklastega prehoda** $T_g$ je temperatura, pod katero so segmenti verig v amorfnih področjih zamrznjeni (polimer je trd in krhek kot steklo), nad njo pa se lahko segmenti vrtijo okoli vezi (polimer je usnjat ali gumijast). Pri $T_g$ se skokovito spremenita toplotna kapaciteta in temperaturni razteznostni koeficient, modul pa pade za okoli tri velikostne rede. **Tališče** $T_m$ je temperatura, pri kateri se stalijo kristalna področja; amorfni polimer ga nima.
 
 Pri mnogih polimerih je $T_g$ (v kelvinih) med polovico in dvema tretjinama $T_m$. Primeri: PE $T_g \approx -120\,^\circ\mathrm{C}$, $T_m \approx 135\,^\circ\mathrm{C}$; PP $-10$ in $165\,^\circ\mathrm{C}$; PET $75$ in $255\,^\circ\mathrm{C}$; PS (ataktni) $T_g \approx 100\,^\circ\mathrm{C}$ brez tališča; PVC $T_g \approx 80\,^\circ\mathrm{C}$. PE je pri sobni temperaturi nad $T_g$, zato je žilav in upogljiv; PS je pod $T_g$, zato je trd in krhek kot lonček za jogurt.
 
@@ -113,13 +113,13 @@ Iz enačbe za $G$ razloži uganko iz uvoda: zakaj se raztegnjen gumijast trak pr
 $G$ je sorazmeren s temperaturo $T$. Ko trak segrejemo, se sila pri isti dolžini poveča; ker utež ostane enaka, se trak skrči, dokler se sila ne izenači s težo. Toplotno gibanje verige bolj zvija in povečuje njihovo entropijo. Pri jeklu ni tega učinka, ker je njegova elastičnost energijska.
 :::
 
-**Druge lastnosti.** Polimeri so dobri električni in toplotni izolatorji ($\lambda$ okoli $0{,}2\,\mathrm{W/(m\,K)}$), imajo okoli desetkrat večji temperaturni raztezek od jekla, so kemijsko odporni, a jih razgrajujejo UV svetloba, kisik pri povišani temperaturi in nekatera topila; večina gori. Lastnosti prilagodimo z **dodatki**: mehčala (PVC za kable), stabilizatorji proti UV, polnila in vlakna (steklena vlakna v PA).
+**Druge lastnosti.** Polimeri so dobri električni in toplotni izolatorji (toplotna prevodnost okoli $0{,}2\,\mathrm{W/(m\,K)}$), imajo okoli desetkrat večji temperaturni raztezek od jekla, so kemijsko odporni, a jih razgrajujejo UV svetloba, kisik pri povišani temperaturi in nekatera topila; večina gori. Lastnosti prilagodimo z **dodatki**: mehčala (PVC za kable), stabilizatorji proti UV, polnila in vlakna (steklena vlakna v PA).
 
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
 
-Proizvajalec cevi kupuje polietilen s številskim povprečjem molske mase $140\,000\,\mathrm{g/mol}$. Kolikšna je povprečna stopnja polimerizacije? Koliko ponavljajočih se enot ima povprečna veriga PVC s $M_n = 100\,000\,\mathrm{g/mol}$? Molske mase: $\mathrm{C}$ $12{,}011\,\mathrm{g/mol}$; $\mathrm{H}$ $1{,}008\,\mathrm{g/mol}$; $\mathrm{Cl}$ $35{,}45\,\mathrm{g/mol}$.
+Proizvajalec cevi kupuje polietilen s številskim povprečjem molske mase $140\,000\,\mathrm{g/mol}$. Kolikšna je povprečna stopnja polimerizacije? Koliko ponavljajočih se enot ima povprečna veriga PVC z $M_n = 100\,000\,\mathrm{g/mol}$? Molske mase: $\mathrm{C}$ $12{,}011\,\mathrm{g/mol}$; $\mathrm{H}$ $1{,}008\,\mathrm{g/mol}$; $\mathrm{Cl}$ $35{,}45\,\mathrm{g/mol}$.
 
 **Podatki:** $M_n(\mathrm{PE}) = 140\,000\,\mathrm{g/mol}$, $M_n(\mathrm{PVC}) = 100\,000\,\mathrm{g/mol}$, ponavljajoči se enoti $\mathrm{C_2H_4}$ in $\mathrm{C_2H_3Cl}$, $M(\mathrm{C}) = 12{,}011\,\mathrm{g/mol}$, $M(\mathrm{H}) = 1{,}008\,\mathrm{g/mol}$, $M(\mathrm{Cl}) = 35{,}45\,\mathrm{g/mol}$
 **Iščemo:** stopnji polimerizacije $n_\mathrm{PE}$ in $n_\mathrm{PVC}$
@@ -274,30 +274,67 @@ Utemelji razliko med termoplasti, duromeri in elastomeri na ravni zgradbe verig.
 
 Štiri arhitekture verig:
 
-```
- linearna     ~~~~~~~~~~~~~~~~~~
- razvejena    ~~~~~~~~~~~~~~~~~~
-                  \~~~    \~~~
- zamrežena    ~~~~~~+~~~~~~~~~~~
-                    |
-              ~~~~~~+~~~~~+~~~~~
-                          |
-              ~~~~~~~~~~~~+~~~~~
- mrežasta     gosto: + na vsakih
-              nekaj atomih
-```
+:::risba skica
+opis: Štiri sheme verig, od zgoraj navzdol. Linearna: ena sama cikcakasta veriga brez vej. Razvejena: glavna veriga z dvema kratkima stranskima vejama. Zamrežena: tri verige, sosednji sta ponekod povezani s kovalentno vezjo (štiri vozlišča, označena s pikami). Mrežasta: gosta mreža, vozlišče na vsakih nekaj atomih.
+območje: 0; 0 .. 16; 12
+napis: 0,3; 11 | linearna | desno
+črta: 5; 11,15 -> 5,5; 10,85 -> 6; 11,15 -> 6,5; 10,85 -> 7; 11,15 -> 7,5; 10,85 -> 8; 11,15 -> 8,5; 10,85 -> 9; 11,15 -> 9,5; 10,85 -> 10; 11,15 -> 10,5; 10,85 -> 11; 11,15 -> 11,5; 10,85 -> 12; 11,15 -> 12,5; 10,85 -> 13; 11,15 -> 13,5; 10,85 -> 14; 11,15 -> 14,5; 10,85 -> 15; 11,15 | modra
+napis: 0,3; 9 | razvejena | desno
+črta: 5; 9,15 -> 5,5; 8,85 -> 6; 9,15 -> 6,5; 8,85 -> 7; 9,15 -> 7,5; 8,85 -> 8; 9,15 -> 8,5; 8,85 -> 9; 9,15 -> 9,5; 8,85 -> 10; 9,15 -> 10,5; 8,85 -> 11; 9,15 -> 11,5; 8,85 -> 12; 9,15 -> 12,5; 8,85 -> 13; 9,15 -> 13,5; 8,85 -> 14; 9,15 -> 14,5; 8,85 -> 15; 9,15 | modra
+črta: 7,5; 8,85 -> 7,9; 8,4 -> 8,4; 8,5 -> 8,8; 8,05 -> 9,3; 8,15 | modra
+črta: 11,5; 8,85 -> 11,9; 8,4 -> 12,4; 8,5 -> 12,8; 8,05 -> 13,3; 8,15 | modra
+napis: 0,3; 5,6 | zamrežena | desno
+črta: 5; 6,85 -> 5,5; 6,55 -> 6; 6,85 -> 6,5; 6,55 -> 7; 6,85 -> 7,5; 6,55 -> 8; 6,85 -> 8,5; 6,55 -> 9; 6,85 -> 9,5; 6,55 -> 10; 6,85 -> 10,5; 6,55 -> 11; 6,85 -> 11,5; 6,55 -> 12; 6,85 -> 12,5; 6,55 -> 13; 6,85 -> 13,5; 6,55 -> 14; 6,85 -> 14,5; 6,55 -> 15; 6,85 | modra
+črta: 5; 5,45 -> 5,5; 5,75 -> 6; 5,45 -> 6,5; 5,75 -> 7; 5,45 -> 7,5; 5,75 -> 8; 5,45 -> 8,5; 5,75 -> 9; 5,45 -> 9,5; 5,75 -> 10; 5,45 -> 10,5; 5,75 -> 11; 5,45 -> 11,5; 5,75 -> 12; 5,45 -> 12,5; 5,75 -> 13; 5,45 -> 13,5; 5,75 -> 14; 5,45 -> 14,5; 5,75 -> 15; 5,45 | modra
+črta: 5; 4,65 -> 5,5; 4,35 -> 6; 4,65 -> 6,5; 4,35 -> 7; 4,65 -> 7,5; 4,35 -> 8; 4,65 -> 8,5; 4,35 -> 9; 4,65 -> 9,5; 4,35 -> 10; 4,65 -> 10,5; 4,35 -> 11; 4,65 -> 11,5; 4,35 -> 12; 4,65 -> 12,5; 4,35 -> 13; 4,65 -> 13,5; 4,35 -> 14; 4,65 -> 14,5; 4,35 -> 15; 4,65 | modra
+črta: 7,5; 6,55 -> 7,5; 5,75 | oranžna debelo
+točka: 7,5; 6,55
+točka: 7,5; 5,75
+črta: 12,5; 6,55 -> 12,5; 5,75 | oranžna debelo
+točka: 12,5; 6,55
+točka: 12,5; 5,75
+črta: 9; 5,45 -> 9; 4,65 | oranžna debelo
+točka: 9; 5,45
+točka: 9; 4,65
+črta: 14; 5,45 -> 14; 4,65 | oranžna debelo
+točka: 14; 5,45
+točka: 14; 4,65
+napis: 0,3; 1,75 | mrežasta | desno
+črta: 5; 0,7 -> 15; 0,7 | modra
+črta: 5; 1,4 -> 15; 1,4 | modra
+črta: 5; 2,1 -> 15; 2,1 | modra
+črta: 5; 2,8 -> 15; 2,8 | modra
+črta: 5,5; 0,7 -> 5,5; 2,8 | oranžna
+črta: 6,5; 0,7 -> 6,5; 2,8 | oranžna
+črta: 7,5; 0,7 -> 7,5; 2,8 | oranžna
+črta: 8,5; 0,7 -> 8,5; 2,8 | oranžna
+črta: 9,5; 0,7 -> 9,5; 2,8 | oranžna
+črta: 10,5; 0,7 -> 10,5; 2,8 | oranžna
+črta: 11,5; 0,7 -> 11,5; 2,8 | oranžna
+črta: 12,5; 0,7 -> 12,5; 2,8 | oranžna
+črta: 13,5; 0,7 -> 13,5; 2,8 | oranžna
+črta: 14,5; 0,7 -> 14,5; 2,8 | oranžna
+podnapis: Oranžne črte so kovalentne vezi med verigami (vozlišča)
+:::
 
 Modul amorfnega polimera pri segrevanju (logaritemska os):
 
-```
- log E
-  |######  steklasto
-  |      #
-  |       # (T_g)
-  |        ######## gumijasto
-  |                #  tok
-  +-----------------#----> T
-```
+:::risba graf
+opis: Graf modula E amorfnega polimera v odvisnosti od temperature T, navpična os je logaritemska. Pri nizki temperaturi je steklasto območje z modulom okoli 3 GPa. Pri temperaturi steklastega prehoda modul strmo pade za okoli tri velikostne rede na gumijasti plato pri okoli 1 MPa. Pri še višji temperaturi krivulja termoplasta strmo pada v viskozni tok. Črtkana vodoravna črta kaže zamrežen polimer, ki ostane na platoju.
+x: 0 .. 10 | 1 | T
+y: 3 .. 10 | 1 | log E
+oznake: ne
+oznakax: 3 | T_g
+oznakay: 9,5 | 3 GPa
+oznakay: 6 | 1 MPa
+f: 9.5 - 1.75*(1 + tanh((x-3)/0.35)) - 0.35*ln(1 + exp((x-8)/0.25)) | modra debelo
+črta: 3; 3 -> 3; 10 | črtkano siva
+črta: 7; 6 -> 10; 6 | črtkano oranžna
+napis: 1,3; 9,5 | steklasto | pod
+napis: 5,5; 6 | gumijasti plato | nad
+napis: 9,2; 4,6 | tok | desno
+napis: 8,9; 6 | zamrežen | nad | oranžna
+:::
 
 Zamrežen polimer (elastomer) ostane na vodoravnem gumijastem delu, termoplast se pri višji temperaturi spusti v tok, duromer pa ima tudi gumijasti del zelo visoko, ker ga držijo goste vezi.
 
@@ -305,7 +342,7 @@ Zamrežen polimer (elastomer) ostane na vodoravnem gumijastem delu, termoplast s
 
 **Cevi za vodo in plin.** Cevi iz PE-HD (PE 100) dimenzioniramo po **najmanjši zahtevani trdnosti** po $50$ letih pri $20\,^\circ\mathrm{C}$, ki jo določijo s preizkusi lezenja pri več temperaturah in ekstrapolacijo. Zato je dovoljeni tlak cevi občutno nižji, kot bi kazala kratkotrajna natezna trdnost.
 
-**Brizganje in kalupi.** Delno kristalinični termoplasti se pri ohlajanju bolj skrčijo (PP, PA okoli $1$ do $2\,\%$) kot amorfni (PS, PC okoli $0{,}5\,\%$), zato morajo biti kalupi za njih večji. Hitrost ohlajanja v kalupu določa kristaliničnost in s tem togost izdelka.
+**Brizganje in kalupi.** Delno kristalinični termoplasti se pri ohlajanju bolj skrčijo (PP, PA okoli $1$ do $2\,\%$) kot amorfni (PS, PC okoli $0{,}5\,\%$), zato morajo biti kalupi zanje večji. Hitrost ohlajanja v kalupu določa kristaliničnost in s tem togost izdelka.
 
 **Kompozitne konstrukcije.** Lopatice vetrnic, deli letal in čolni so iz epoksidne ali poliestrske smole s steklenimi ali ogljikovimi vlakni. Duromerna matrica drži vlakna in prenaša obremenitev nanje; temperatura uporabe mora biti precej pod $T_g$ utrjene smole, ki jo kontrolirajo z diferenčno dinamično kalorimetrijo (DSC).
 
@@ -327,7 +364,7 @@ Zamrežen polimer (elastomer) ostane na vodoravnem gumijastem delu, termoplast s
 + Pri $T_g$ postanejo segmenti verig v amorfnih področjih gibljivi in modul močno pade.
 - Popolnoma kristalen polimer ima izrazitejši $T_g$ kot amorfen.
 ~ Steklasti prehod je lastnost amorfne faze; več kristaliničnosti pomeni šibkejši prehod, popolnoma kristalen polimer ga ne bi imel.
-> Pod $T_g$ so segmenti zamrznjeni in polimer je steklast; nad njim se lahko vrtijo okoli vezi, modul pade za dva do tri velikostne rede.
+> Pod $T_g$ so segmenti zamrznjeni in polimer je steklast; nad njim se lahko vrtijo okoli vezi, modul pade za okoli tri velikostne rede.
 
 ? Polipropilen ima molsko maso ponavljajoče enote $42{,}08\,\mathrm{g/mol}$. Kolikšna je stopnja polimerizacije vzorca z $M_n = 210\,000\,\mathrm{g/mol}$?
 - okoli $8{,}8 \cdot 10^6$

@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Matrični zapis sistema
+  - $A\vec{x} = \vec{b}$, $A$ kvadratna
+  - $\vec{b} = x_1\vec{a}_1 + \cdots + x_n\vec{a}_n$
+- Izvor iz eliminacije
+  - $2 \times 2$: $(a_{11}a_{22} - a_{12}a_{21})\,x_1 = b_1a_{22} - a_{12}b_2$
+  - Cramer prebere rezultat korakov
+- Matrika $A_i$
+  - $i$-ti stolpec zamenjaš z $\vec{b}$
+  - napaka: zamenjana vrstica
+- Cramerjevo pravilo
+  - $x_i = \dfrac{\det A_i}{\det A}$
+  - pogoj $\det A \neq 0$
+  - napaka: obrnjen ulomek
+- Dokaz
+  - linearnost determinante v stolpcu
+  - enaka stolpca: determinanta $0$
+  - $\det A_i = x_i \det A$
+- Ničelna determinanta
+  - pravilo ne pove ničesar
+  - rešitve ni ali neskončno
+  - odloči eliminacija ali rang
+- Zveza z inverzom
+  - $A^{-1} = \dfrac{1}{\det A}\operatorname{adj} A$
+  - $\vec{x} = A^{-1}\vec{b}$ po komponentah
+- Kdaj uporabiti
+  - majhni sistemi, parametri, ena neznanka
+  - cena: $n + 1$ determinant reda $n$

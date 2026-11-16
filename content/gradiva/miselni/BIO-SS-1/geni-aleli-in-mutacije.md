@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Gen in lokus
+  - odsek DNA z navodilom za beljakovino
+  - stalno mesto na kromosomu, ABO na 9. kromosomu
+- Aleli
+  - različice istega gena: A, B, 0
+  - dva alela, ker so kromosomi v parih
+- Homozigot in heterozigot
+  - AA ali 00: homozigot
+  - A0: heterozigot, en gen v dveh alelih
+- Genotip, fenotip, okolje
+  - genotip in okolje skupaj določata fenotip
+  - hortenzija: kisla zemlja modro, bazična rožnato
+- Genske mutacije
+  - zamenjava, vstavitev, izbris baze
+  - tiha, druga aminokislina ali stop kodon
+  - izbris ene baze premakne bralni okvir
+- Kromosomske in genomske
+  - delecija, duplikacija, inverzija, translokacija
+  - genomska: $47$ kromosomov pri trisomiji 21
+- Mutageni
+  - UV, kozmično sevanje, tobačni dim, virusi
+  - deduje se le mutacija v spolni celici

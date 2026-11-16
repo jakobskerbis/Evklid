@@ -57,12 +57,12 @@ $$\frac{E_1}{E_2} = \frac{\varepsilon_{r2}}{\varepsilon_{r1}}.$$
 Polje je večje v snovi z manjšo dielektričnostjo.
 
 :::premisli
-V izolaciji z $\varepsilon_r = 4$ je majhen zračni mehurček, sploščen pravokotno na polje. Napoveš, ali je polje v mehurčku manjše, enako ali večje kot v izolaciji? Zakaj je to za visokonapetostne kable nevarno?
+V izolaciji z $\varepsilon_r = 4$ je majhen zračni mehurček, sploščen pravokotno na polje. Napovej, ali je polje v mehurčku manjše, enako ali večje kot v izolaciji. Zakaj je to za visokonapetostne kable nevarno?
 ---
 Večje, približno štirikrat: $D$ je zvezen, $\varepsilon_r$ zraka je $1$. Zrak se prebije pri okoli $3\,\mathrm{MV/m}$, veliko prej kot trdna izolacija. V mehurčku nastajajo **delne razelektritve**, ki izolacijo počasi razjedajo, dokler kabel ne odpove.
 :::
 
-**6. Vezave in povezovanje nabitih kondenzatorjev.** Vzporedno $C = C_1 + C_2$, zaporedno $\frac{1}{C} = \frac{1}{C_1} + \frac{1}{C_2}$. Dokaz: vzporedna kondenzatorja imata isto napetost, naboja se seštejeta, $Q = C_1U + C_2U$; zaporedna nosita isti naboj (srednji otok je nevtralen), napetosti se seštejeta, $U = Q/C_1 + Q/C_2$. Dve zaporedno vezani kapacitivnosti sta **kapacitivni delilnik**: oba nosita isti $Q$, zato je napetost na prvem
+**6. Vezave in povezovanje nabitih kondenzatorjev.** Vzporedno $C = C_1 + C_2$, zaporedno $\frac{1}{C} = \frac{1}{C_1} + \frac{1}{C_2}$. Dokaz: vzporedna kondenzatorja imata isto napetost, naboja se seštejeta, $Q = C_1U + C_2U$; zaporedna nosita isti naboj (srednji otok je nevtralen), napetosti se seštejeta, $U = Q/C_1 + Q/C_2$. Dve zaporedno vezani kapacitivnosti sta **kapacitivni delilnik**: oba kondenzatorja nosita isti $Q$, zato je napetost na prvem
 $$U_1 = U\frac{C_2}{C_1 + C_2}.$$
 Večja napetost je na *manjši* kapacitivnosti.
 
@@ -198,7 +198,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Odgovori na vprašanje iz uvoda: kabel z zunanjim polmerom $b = 8{,}0\,\mathrm{mm}$, polietilen z $\varepsilon_r = 2{,}3$ in dopustnim poljem $E_{\text{dop}} = 10\,\mathrm{MV/m}$. (a) Pri katerem $a$ je dopustna napetost največja in kolikšna je? (b) Primerjaj z $a = 1{,}0\,\mathrm{mm}$ in $a = 2{,}0\,\mathrm{mm}$. (c) Kolikšni sta pri optimalnem $a$ kapacitivnost na meter in energija na meter pri največji napetosti?
+Odgovori na vprašanje iz uvoda: kabel z notranjim polmerom zunanjega vodnika $b = 8{,}0\,\mathrm{mm}$, polietilen z $\varepsilon_r = 2{,}3$ in dopustnim poljem $E_{\text{dop}} = 10\,\mathrm{MV/m}$. (a) Pri katerem $a$ je dopustna napetost največja in kolikšna je? (b) Primerjaj z $a = 1{,}0\,\mathrm{mm}$ in $a = 2{,}0\,\mathrm{mm}$. (c) Kolikšni sta pri optimalnem $a$ kapacitivnost na meter in energija na meter pri največji napetosti?
 
 **Rešitev:**
 
@@ -242,39 +242,65 @@ Kondenzator $C_1 = 2{,}0\,\mu\mathrm{F}$ je nabit na $U_1 = 300\,\mathrm{V}$, ko
 
 Prerez koaksialnega kabla in potek polja:
 
-```
-     zunanji vodnik
-    .-------------.
-   /      |        \
-  |   --( a )--     |
-   \      |        /
-    '-------------'
-  silnice: radialno
-```
+:::risba skica
+opis: Prečni prerez koaksialnega kabla. V sredini je notranji vodnik s polmerom a, okoli njega soosno zunanji vodnik s polmerom b. Silnice električnega polja so ravne in radialne: osem puščic kaže od notranjega vodnika proti zunanjemu (narisano za pozitivno nabit notranji vodnik).
+območje: -5; -5 .. 5; 5,6
+krog: 0; 0 | 4 | debelo
+krog: 0; 0 | 1,3 | siva polno
+puščica: 1,3; 0 -> 3,8; 0 | | | modra
+puščica: 0,92; 0,92 -> 2,69; 2,69 | | | modra
+puščica: 0; 1,3 -> 0; 3,8 | | | modra
+puščica: -0,92; 0,92 -> -2,69; 2,69 | | | modra
+puščica: -1,3; 0 -> -3,8; 0 | | | modra
+puščica: -0,92; -0,92 -> -2,69; -2,69 | | | modra
+puščica: 0; -1,3 -> 0; -3,8 | | | modra
+puščica: 0,92; -0,92 -> 2,69; -2,69 | | | modra
+napis: 0; 0 | a | sredina
+napis: 0; 4,7 | zunanji vodnik (polmer b) | sredina
+napis: 0; -4,6 | silnice: radialno | sredina | modra
+:::
 
-```
-E
-|*
-| *
-|  *.
-|    '*..
-|        ''**--
-+--+------------+--> r
-   a            b
-```
+:::risba graf
+opis: Graf poljske jakosti E v odvisnosti od polmera r med vodnikoma, narisan za b = 3a. Pri r = a je polje največje (E max), nato pada kot 1/r: pri r = 2a je enako polovici največje vrednosti, pri r = b = 3a tretjini. Za r manjši od a in večji od b krivulje ni.
+x: 0 .. 4 | 1 | r
+y: 0 .. 1,2 | 0,5 | E
+oznake: ne
+oznakax: 1 | a
+oznakax: 2 | 2a
+oznakax: 3 | b
+oznakay: 1 | E_{max}
+f: 1/x | debelo | 1 .. 3
+črta: 1; 0 -> 1; 1 | črtkano siva
+črta: 0; 1 -> 1; 1 | črtkano siva
+črta: 2; 0 -> 2; 0,5 | črtkano siva
+črta: 0; 0,5 -> 2; 0,5 | črtkano siva
+črta: 3; 0 -> 3; 0,33 | črtkano siva
+točka: 1; 1
+točka: 2; 0,5
+točka: 3; 0,33
+napis: 0,05; 0,5 | E_{max}/2 | nad desno
+napis: 2,3; 0,62 | E ∝ 1/r | desno
+:::
 
 Polje pada kot $1/r$: pri dvakratnem polmeru je pol manjše. Najmočnejše je tik ob notranjem vodniku, zato tam izolacija »poči« prva.
 
 Sonda za nivo iz primera 2:
 
-```
-     |  |  sonda
- ____|__|__________
-|    |  |   zrak   |
-|~~~~|~~|~~~~~~~~~~| gladina
-|    |  |   olje   | h
-|____|__|__________|
-```
+:::risba skica
+opis: Navpični prerez rezervoarja s koaksialno sondo. Sonda (notranja palica in cev okoli nje) sega od vrha do dna rezervoarja. Spodnji del rezervoarja in sonde je do gladine na višini h napolnjen z oljem, nad gladino je zrak.
+območje: 0; 0 .. 10; 7,4
+pravokotnik: 1; 0,5 .. 9; 3 | modra
+črta: 1; 5,5 -> 1; 0,5 -> 9; 0,5 -> 9; 5,5 -> 1; 5,5
+črta: 1; 3 -> 9; 3 | modra debelo
+črta: 4,2; 0,5 -> 4,2; 6,5
+črta: 5,8; 0,5 -> 5,8; 6,5
+črta: 5; 0,5 -> 5; 6,5 | debelo
+napis: 5; 6,9 | sonda | sredina
+napis: 7,5; 4,6 | zrak | sredina
+napis: 7,5; 1,7 | olje | sredina
+napis: 7,5; 3,1 | gladina | nad | modra
+puščica: 2,5; 0,5 -> 2,5; 3 | h | levo
+:::
 
 Zgornji in spodnji del sonde sta dva vzporedna kondenzatorja z enakim $C'$, a različno dielektričnostjo.
 

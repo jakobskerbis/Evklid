@@ -34,8 +34,8 @@ export default function narisi(host) {
     napis(g, O[0] + R / 2, O[1] + 16, "r", "druga", { "text-anchor": "middle" });
     if (alfa > 0) napis(g, ...T(alfa / 2, R + 12).map((v, i) => (i ? Math.min(H - 4, Math.max(14, v + 5)) : v)), "l", "izbor", { "text-anchor": "middle" });
     S.cipi([
-      { barva: "druga", oznaka: "r", vrednost: st(r, 1) },
-      { barva: "ploskev", oznaka: "\\alpha", vrednost: `${st(alfa, 0)}°` },
+      { barva: "druga", oznaka: "r", vrednost: st(r, 2) },
+      { barva: "ploskev", oznaka: "\\alpha", vrednost: `${st(alfa, 2)}°` },
       { barva: "izbor", oznaka: "l = \\frac{\\pi r \\alpha}{180^\\circ}", vrednost: vr(q.l, 2) },
       { barva: "ploskev", oznaka: "S = \\frac{\\pi r^2 \\alpha}{360^\\circ}", vrednost: vr(q.S, 2) },
     ]);

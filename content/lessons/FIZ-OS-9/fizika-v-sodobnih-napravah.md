@@ -159,7 +159,7 @@ $A_\mathrm{k} = 2\,\mathrm{kW} \cdot 5\,\mathrm{h} = 10\,\mathrm{kWh}$. Število
 - **Hitrost zvoka pri radijskem signalu.** Radijski valovi so elektromagnetno valovanje kot svetloba. Popravek: pri GPS vedno $c = 300\,000\,\mathrm{km/s}$ in pazi, da hitrost pomnožiš s časom, ne deliš.
 - **»Laser je zelo močna svetilka.«** Laser v predvajalniku je šibkejši od žepne svetilke. Posebna je njegova svetloba: ene barve in v ozkem snopu. Popravek: laser loči od žarnice ena barva in ozek snop, ne moč.
 - **»Večja sončna celica da večjo napetost.«** Napetost ene celice je odvisna od snovi, okoli $0{,}5\,\mathrm{V}$. Večja celica ujame več fotonov in da večji tok. Popravek: za večjo napetost celice veži zaporedno, $U = N \cdot U_1$.
-- **»Reaktor da tok kot baterija.«** Uran tok ne poganja neposredno. Popravek: cepitev jeder da toploto, para vrti turbino, šele generator z magnetom in tuljavami da tok.
+- **»Reaktor da tok kot baterija.«** Uran toka ne poganja neposredno. Popravek: cepitev jeder da toploto, para vrti turbino, šele generator z magnetom in tuljavami da tok.
 
 ## Povzetek
 

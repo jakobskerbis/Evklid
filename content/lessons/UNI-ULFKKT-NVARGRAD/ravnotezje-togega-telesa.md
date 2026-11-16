@@ -63,18 +63,44 @@ Pomična podpora prepreči le premik pravokotno na podlago, nepomična členkast
 
 Na skicah podpore rišemo z dogovorjenimi znaki (spodaj nosilec iz Primera 3: členek v $A$ z reakcijama $A_x$ in $A_y$, valjček v $B$, prost konec $C$; pod njim togo vpetje z reakcijami $A_x$, $A_y$ in $M_A$):
 
-```
-  ^ A_y         ^ B
-  |             |
-->o=============o=====C
- /\            /\
-////          o  o
-              ////
-
-togo vpetje:
- |//|=========
- |//|
-```
+:::risba skica
+opis: Zgoraj vodoravni nosilec od A prek B do prostega konca C. V A je nepomični členek, narisan kot trikotnik na šrafirani podlagi, z reakcijama A x (vodoravno) in A y (navpično navzgor). V B je pomična podpora, trikotnik na dveh valjčkih nad šrafirano podlago, z eno navpično reakcijo B. Spodaj togo vpetje: nosilec vstopa v šrafirano steno, v vpetju delujejo reakciji A x in A y ter moment M A, narisan kot ukrivljena puščica.
+območje: -2,6; -7,2 .. 9,2; 2,2
+črta: 0; 0 -> 8; 0 | debelo
+lik: 0; 0 -> -0,5; -0,9 -> 0,5; -0,9
+črta: -0,9; -0,9 -> 0,9; -0,9 | debelo
+črta: -0,6; -0,9 -> -0,9; -1,3 | siva
+črta: -0,2; -0,9 -> -0,5; -1,3 | siva
+črta: 0,2; -0,9 -> -0,1; -1,3 | siva
+črta: 0,6; -0,9 -> 0,3; -1,3 | siva
+lik: 6; 0 -> 5,5; -0,7 -> 6,5; -0,7
+krog: 5,72; -0,9 | 0,2
+krog: 6,28; -0,9 | 0,2
+črta: 5,1; -1,1 -> 6,9; -1,1 | debelo
+črta: 5,4; -1,1 -> 5,1; -1,5 | siva
+črta: 5,8; -1,1 -> 5,5; -1,5 | siva
+črta: 6,2; -1,1 -> 5,9; -1,5 | siva
+črta: 6,6; -1,1 -> 6,3; -1,5 | siva
+puščica: -1,7; 0 -> -0,15; 0 | A_x | nad | oranžna
+puščica: 0; 0,2 -> 0; 1,7 | A_y | desno | oranžna
+puščica: 6; 0,2 -> 6; 1,7 | B | desno | oranžna
+napis: 0; -1,4 | A | pod
+napis: 6; -1,6 | B | pod
+točka: 8; 0 | C | desno
+napis: 3,4; 0,2 | členek in valjček | nad
+črta: 0; -6,2 -> 0; -4,2 | debelo
+črta: -0,8; -6,2 -> 0; -5,7 | siva
+črta: -0,8; -5,7 -> 0; -5,2 | siva
+črta: -0,8; -5,2 -> 0; -4,7 | siva
+črta: -0,8; -4,7 -> 0; -4,2 | siva
+črta: 0; -5,2 -> 6; -5,2 | debelo
+puščica: -2,4; -5,2 -> -0,95; -5,2 | A_x | nad | oranžna
+puščica: 0,4; -5 -> 0,4; -3,5 | A_y | desno | oranžna
+črta: 1,65; -5,81 -> 2,12; -5,89 -> 2,54; -5,65 -> 2,7; -5,2 -> 2,54; -4,75 -> 2,12; -4,51 -> 1,65; -4,59 | puščica oranžna
+napis: 2,8; -4,6 | M_A | desno | oranžna
+napis: 0; -6,3 | A | pod
+napis: 4,5; -5,4 | togo vpetje | pod
+:::
 
 Trikotnik s šrafirano podlago je nepomični členek (dve reakciji), trikotnik na valjčkih je pomična podpora (ena reakcija, pravokotna na podlago), šrafirana stena, v katero nosilec vstopa, je togo vpetje (dve sili in moment).
 
@@ -158,7 +184,7 @@ $F_q = q\,l$ pri $l/2$; $\sum F_x = 0$, $\sum F_y = 0$, $\sum M_A = 0$; dvojica 
 
 ### Primer 3 (težji)
 
-Nosilec $ACB$ s previsom ima nepomično členkasto podporo $A$ pri $x = 0$, pomično podporo $B$ pri $x = 6{,}0\,\mathrm{m}$ in prost konec $C$ pri $x = 8{,}0\,\mathrm{m}$. Na odseku $AB$ deluje trikotna obtežba, ki raste od $0$ pri $A$ do $3{,}0\,\mathrm{kN/m}$ pri $B$. V točki $C$ deluje sila $4{,}0\,\mathrm{kN}$, usmerjena navzdol in v desno pod kotom $60^\circ$ glede na vodoravnico, pri $x = 3{,}0\,\mathrm{m}$ pa dvojica $5{,}0\,\mathrm{kN\,m}$ v smeri urnega kazalca. Določi reakcije in jih preveri z neodvisno enačbo.
+Nosilec $ABC$ s previsom ima nepomično členkasto podporo $A$ pri $x = 0$, pomično podporo $B$ pri $x = 6{,}0\,\mathrm{m}$ in prost konec $C$ pri $x = 8{,}0\,\mathrm{m}$. Na odseku $AB$ deluje trikotna obtežba, ki raste od $0$ pri $A$ do $3{,}0\,\mathrm{kN/m}$ pri $B$. V točki $C$ deluje sila $4{,}0\,\mathrm{kN}$, usmerjena navzdol in v desno pod kotom $60^\circ$ glede na vodoravnico, pri $x = 3{,}0\,\mathrm{m}$ pa dvojica $5{,}0\,\mathrm{kN\,m}$ v smeri urnega kazalca. Določi reakcije in jih preveri z neodvisno enačbo.
 
 **Podatki:** $l_{AB} = 6{,}0\,\mathrm{m}$, $x_C = 8{,}0\,\mathrm{m}$; trikotna obtežba $q_0 = 3{,}0\,\mathrm{kN/m}$ pri $B$; $F_C = 4{,}0\,\mathrm{kN}$ pod $60^\circ$ navzdol in v desno; $M = -5{,}0\,\mathrm{kN\,m}$
 **Iščemo:** $A_x$, $A_y$, $B$
@@ -311,7 +337,7 @@ Prostoležeči nosilec razpona $8{,}0\,\mathrm{m}$ nosi dve sili: $12\,\mathrm{k
 
 $$\sum F_x = 0, \quad \sum F_y = 0, \quad \sum F_z = 0, \quad \sum M_x = 0, \quad \sum M_y = 0, \quad \sum M_z = 0.$$
 
-Momente računamo z vektorskim produktom $\vec{M} = \vec{r}\times\vec{F}$ glede na izbrano točko, momentne enačbe pa lahko zapišemo tudi glede na poljubne osi (ne nujno koordinatne), če so neodvisne. Prostorske podpore: kroglični členek (3 sile), cilindrični ležaj (2 sili pravokotno na os, lahko še 2 momenta), togo vpetje (3 sile in 3 momenti), vrv ali nihajna palica (1 sila v svoji smeri). Telo je statično določeno pri šestih pravilno razporejenih reakcijah. Primer: plošča na treh navpičnih nogah je pri navpični obtežbi določena (tri enačbe $\sum F_z$, $\sum M_x$, $\sum M_y$), miza s štirimi nogami pa je enkrat nedoločena – zato štirinoga miza na neravnih tleh majava.
+Momente računamo z vektorskim produktom $\vec{M} = \vec{r}\times\vec{F}$ glede na izbrano točko, momentne enačbe pa lahko zapišemo tudi glede na poljubne osi (ne nujno koordinatne), če so neodvisne. Prostorske podpore: kroglični členek (3 sile), cilindrični ležaj (2 sili pravokotno na os, lahko še 2 momenta), togo vpetje (3 sile in 3 momenti), vrv ali nihajna palica (1 sila v svoji smeri). Telo je statično določeno pri šestih pravilno razporejenih reakcijah. Primer: plošča na treh navpičnih nogah je pri navpični obtežbi določena (tri enačbe $\sum F_z$, $\sum M_x$, $\sum M_y$), miza s štirimi nogami pa je enkrat nedoločena – zato je štirinoga miza na neravnih tleh majava.
 
 **Ravnotežje in stabilnost.** Ravnotežje je lahko **stabilno** (po majhnem odmiku se telo vrne), **labilno** (odmik se poveča) ali **indiferentno**. Pri telesu na podlagi je merilo lega težišča: prevrnitev nastopi, ko nosilka rezultante teže in zunanjih sil pade iz podporne ploskve. Varnost proti prevrnitvi izrazimo z razmerjem stabilizirajočega in prevračalnega momenta glede na rob prevrnitve.
 
@@ -335,7 +361,7 @@ Momente računamo z vektorskim produktom $\vec{M} = \vec{r}\times\vec{F}$ glede 
 + $9{,}0\,\mathrm{kN}$
 > $A_y = F\,b/l = 12 \cdot 6{,}0/8{,}0\,\mathrm{kN} = 9{,}0\,\mathrm{kN}$, $B = 3{,}0\,\mathrm{kN}$; skupaj $12\,\mathrm{kN}$.
 
-? Na konec vpete konzole obesiš breme, nato ga premakneš na mesto dvakrat bolj oddaljeno od zidu. Kaj se zgodi z reakcijami vpetja?
+? Na sredino vpete konzole obesiš breme, nato ga premakneš na prosti konec, dvakrat dlje od zidu. Kaj se zgodi z reakcijami vpetja?
 + Navpična reakcija ostane enaka, moment vpetja se podvoji.
 - Obe reakciji se podvojita.
 ~ Navpična reakcija uravnoteži težo, ki se ni spremenila. Podvoji se le ročica in z njo moment.

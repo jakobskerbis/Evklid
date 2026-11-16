@@ -113,7 +113,7 @@ Po popustu $25\,\%$ stanejo kopačke $63\,\text{€}$. Koliko so stale pred popu
 **Iščemo:** prvotno ceno $o$
 
 :::formula
-Po popustu plačamo $(100 - p)\,\%$ osnove.
+Po popustu $25\,\%$ plačamo $p = (100 - 25)\,\% = 75\,\%$ osnove.
 
 $o = \dfrac{d \cdot 100}{p}$
 :::

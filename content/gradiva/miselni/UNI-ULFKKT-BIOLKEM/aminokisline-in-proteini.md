@@ -1,0 +1,35 @@
+---
+avtor: AI
+stanje: osnutek
+---
+
+- Zgradba aminokisline
+  - $\mathrm{C_\alpha}$: $-\mathrm{NH_2}$, $-\mathrm{COOH}$, H, stranska veriga $R$
+  - $20$ standardnih, oblika L; glicin ni kiralen
+  - nepolarne, polarne nenabite, kisle, bazične
+- Naboj in pH
+  - pod $\mathrm{p}K_\mathrm{a}$ skupina nosi proton
+  - pri $\mathrm{pH}\ 7$ ion dvojček
+  - napaka: »nad $\mathrm{p}K_\mathrm{a}$ protonirana«
+- Henderson-Hasselbalch
+  - $\mathrm{pH} = \mathrm{p}K_\mathrm{a} + \log([\mathrm{A^-}]/[\mathrm{HA}])$
+  - $\alpha = 1/(1 + 10^{\,\mathrm{p}K_\mathrm{a} - \mathrm{pH}})$
+  - His, $\mathrm{p}K_R = 6{,}0$: pri $\mathrm{pH}\ 7$ protoniranih $9{,}1\,\%$
+- Izoelektrična točka
+  - $\mathrm{pI} = \tfrac12(\mathrm{p}K_\text{pred} + \mathrm{p}K_\text{za})$
+  - Gly $5{,}97$, Asp $2{,}77$, Lys $9{,}74$
+  - napaka: »povprečje vseh treh $\mathrm{p}K$«
+- Elektroforeza
+  - $\mathrm{pH} < \mathrm{pI}$: pozitivna, potuje h katodi
+  - $\mathrm{pH} > \mathrm{pI}$: negativna, potuje k anodi
+- Peptidna vez
+  - resonanca: ravninska, skoraj vedno trans
+  - smer od N-konca do C-konca
+  - vrtenje le okoli $\varphi$ in $\psi$
+- Ravni zgradbe
+  - α-vijačnica: $n$ in $n+4$; $3{,}6$ ostanka na zavoj
+  - terciarna: hidrofobni učinek, ionske vezi, disulfidi
+  - kvartarna: več podenot
+- Denaturacija
+  - podre prostorsko zgradbo, zaporedje ostane
+  - Anfinsen: zaporedje določa obliko

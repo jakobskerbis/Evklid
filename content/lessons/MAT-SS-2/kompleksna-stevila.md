@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: kompleksna
 avtor: AI
 ---
@@ -18,8 +18,8 @@ Na zemljevidu ima vsaka točka dve koordinati, vzhod–zahod in sever–jug. Če
 |---|---|
 | $3$ vzhodno, $4$ severno | $3 + 4i$ |
 | $2$ zahodno, $1$ južno | $-2 - i$ |
-| $5$ vzhodno, na vodoravni osi | $5$ |
-| $3$ severno, na navpični osi | $3i$ |
+| le $5$ vzhodno | $5$ |
+| le $3$ severno | $3i$ |
 
 Zdaj isto s simboli. **Kompleksno število** je $z = a + bi$, kjer sta $a$ in $b$ realni števili. Število $a$ je **realni del** ($\mathrm{Re}\,z = a$), $b$ pa **imaginarni del** ($\mathrm{Im}\,z = b$). Pozor: imaginarni del je realno število $b$, ne $bi$. Vodoravna os je **realna os**, navpična **imaginarna os**, vsa ravnina pa **kompleksna** ali **Gaussova ravnina**. Množico kompleksnih števil označimo z $\mathbb{C}$.
 
@@ -31,9 +31,9 @@ Zdaj isto s simboli. **Kompleksno število** je $z = a + bi$, kjer sta $a$ in $b
 
 $$i^2 = -1$$
 
-Število $i$ imenujemo **imaginarna enota**. Ni realno, saj je kvadrat vsakega realnega števila nenegativen. Po štirih zasukih spet gledaš proti vzhodu, zato se potence števila $i$ ponavljajo s periodo $4$:
+Število $i$ imenujemo **imaginarna enota**. Ni realno, saj je kvadrat vsakega realnega števila nenegativen. Po štirih zasukih spet gledaš proti vzhodu, zato se potence števila $i$ ponavljajo s periodo $4$. Odloča ostanek $n$ pri deljenju s $4$:
 
-| ostanek $n$ pri deljenju s $4$ | $i^n$ | smer |
+| ostanek $n$ | $i^n$ | smer |
 |---|---|---|
 | $0$ | $1$ | vzhod |
 | $1$ | $i$ | sever |
@@ -49,6 +49,8 @@ Proti jugu. Ker je $27 = 6 \cdot 4 + 3$, šest polnih krogov ničesar ne spremen
 **3. Seštevanje je premik za premikom.** Greš najprej za $3 + 4i$, nato za $-1 + 2i$ ($1$ zahodno in $2$ severno). Končaš v točki $2 + 6i$. Na sliki puščico drugega premika prestaviš na konec prve. Računsko posebej seštejemo realna in posebej imaginarna dela:
 
 $$(a + bi) \pm (c + di) = (a \pm c) + (b \pm d)\,i$$
+
+**Grafično.** Števili narišemo kot puščici iz izhodišča. Puščici $z_1$ in $z_2$ napenjata paralelogram, vsota $z_1 + z_2$ pa je njegova diagonala iz izhodišča (pravilo paralelograma). Enako dobimo, če puščico $z_2$ prestavimo na konec puščice $z_1$. Razlika je vsota z nasprotnim številom: $z_1 - z_2 = z_1 + (-z_2)$. Število $-z_2$ je zrcalna slika $z_2$ čez izhodišče. Puščica $z_1 - z_2$ je vzporedna daljici od točke $z_2$ do točke $z_1$ in enako dolga, zato je $|z_1 - z_2|$ razdalja med točkama. Risba je v primeru 1.
 
 **4. Množenje.** Ker je $i$ število, množimo kot dvočlenika, vsak člen z vsakim, nato $i^2$ zamenjamo z $-1$:
 
@@ -86,19 +88,29 @@ $$\frac{a + bi}{c + di} = \frac{(a + bi)(c - di)}{c^2 + d^2}$$
 
 To je isti postopek kot racionalizacija imenovalca s konjugiranim izrazom pri korenih.
 
+**Obratna vrednost.** Obratna vrednost števila $z \ne 0$ je število, ki da v produktu z $z$ število $1$. Označimo jo z $\dfrac{1}{z}$, torej $z \cdot \dfrac{1}{z} = 1$. Izračunamo jo kot vsak količnik: razširimo s $\bar{z}$ in imenovalec postane $z \cdot \bar{z} = a^2 + b^2$:
+
+$$\frac{1}{a + bi} = \frac{a - bi}{a^2 + b^2}$$
+
+Na primer $\dfrac{1}{3 + 4i} = \dfrac{3 - 4i}{25} = \dfrac{3}{25} - \dfrac{4}{25}\,i$. Preizkus: $(3 + 4i)(3 - 4i) = 9 + 16 = 25$, deljeno s $25$ je $1$. Posebej je $\dfrac{1}{i} = -i$, saj je $i \cdot (-i) = -i^2 = 1$. Pozor: $\dfrac{1}{3 + 4i}$ ni $\dfrac{1}{3} + \dfrac{1}{4}\,i$, ulomka ne smeš razdeliti po členih imenovalca.
+
 V simulaciji spodaj (»Kompleksna števila v ravnini«) izberi množenje in točko $w$ postavi v $(0, 1)$, torej $w = i$. Premikaj točko $z$ in opazuj: $z \cdot w$ je vedno $z$, zasukan za pravi kot v levo, z enako absolutno vrednostjo. Nato izberi $\bar{z}$ in poglej zrcaljenje čez realno os.
+
+**8. Kvadratne enačbe s kompleksnimi rešitvami.** Enačba $x^2 = -9$ v realnih številih nima rešitve, v kompleksnih ima dve: $x_{1,2} = \pm 3i$, saj je $(3i)^2 = (-3i)^2 = 9i^2 = -9$. Tako rešimo vsako kvadratno enačbo z realnimi koeficienti, pri kateri po dopolnitvi do popolnega kvadrata na desni ostane negativno število. Ker je $(x - 3)^2 = x^2 - 6x + 9$, enačbo $x^2 - 6x + 13 = 0$ zapišemo kot $(x - 3)^2 + 4 = 0$, torej $(x - 3)^2 = -4$. Od tod je $x - 3 = 2i$ ali $x - 3 = -2i$.
+
+Rešitvi $x_{1,2} = 3 \pm 2i$ sta konjugirani, $x_2 = \bar{x}_1$, v ravnini zrcalni čez realno os. Tako je pri vsaki kvadratni enačbi z realnimi koeficienti, ki nima realnih rešitev. Vsota in produkt konjugiranih števil sta realna: $(3 + 2i) + (3 - 2i) = 6$ in $(3 + 2i)(3 - 2i) = 9 + 4 = 13$. Zato ima produkt $(x - 3 - 2i)(x - 3 + 2i) = x^2 - 6x + 13$ realne koeficiente. Splošni obrazec za rešitve spoznaš v lekciji o kvadratni enačbi.
 
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
 
-Dani sta števili $z_1 = 3 + 2i$ in $z_2 = 1 - 4i$. Izračunaj $z_1 + z_2$, $z_1 - z_2$ in $z_1 \cdot z_2$.
+Dani sta števili $z_1 = 3 + 2i$ in $z_2 = 1 - 4i$. Izračunaj $z_1 + z_2$, $z_1 - z_2$ in $z_1 \cdot z_2$. Vsoto in razliko določi še grafično.
 
 **Podatki:** $z_1 = 3 + 2i$, $z_2 = 1 - 4i$
-**Iščemo:** vsoto $z_1 + z_2$, razliko $z_1 - z_2$ in produkt $z_1 \cdot z_2$
+**Iščemo:** vsoto $z_1 + z_2$, razliko $z_1 - z_2$ (računsko in grafično) in produkt $z_1 \cdot z_2$
 
 :::formula
-$(a + bi) \pm (c + di) = (a \pm c) + (b \pm d)i$; množimo kot dvočlenika in upoštevamo $i^2 = -1$
+$(a + bi) \pm (c + di) = (a \pm c) + (b \pm d)i$; množimo kot dvočlenika in upoštevamo $i^2 = -1$; grafično: pravilo paralelograma, $z_1 - z_2 = z_1 + (-z_2)$
 :::
 
 **Rešitev:**
@@ -106,7 +118,28 @@ $(a + bi) \pm (c + di) = (a \pm c) + (b \pm d)i$; množimo kot dvočlenika in up
 1. Vsota: $(3 + 2i) + (1 - 4i) = (3 + 1) + (2 - 4)i = 4 - 2i$.
 2. Razlika: $(3 + 2i) - (1 - 4i) = (3 - 1) + (2 + 4)i = 2 + 6i$.
 3. Produkt: $(3 + 2i)(1 - 4i) = 3 - 12i + 2i - 8i^2 = 3 - 10i + 8 = 11 - 10i$.
-4. Odgovor: $z_1 + z_2 = 4 - 2i$, $z_1 - z_2 = 2 + 6i$ in $z_1 \cdot z_2 = 11 - 10i$.
+4. Grafično: puščici $z_1$ in $z_2$ napenjata paralelogram, njegova diagonala iz izhodišča se konča v točki $4 - 2i$. Za razliko narišemo $-z_2 = -1 + 4i$ in s puščico $z_1$ napnemo drugi paralelogram. Njegova diagonala se konča v točki $2 + 6i$. Oba rezultata se ujemata z računom.
+
+:::risba graf
+opis: Kompleksna ravnina. Modri puščici iz izhodišča kažeta v z₁ = 3 + 2i in z₂ = 1 − 4i, oranžna v −z₂ = −1 + 4i. Črtkani paralelogram z oglišči 0, z₁, 4 − 2i in z₂ ima zeleno diagonalo do z₁ + z₂ = 4 − 2i. Črtkani paralelogram z oglišči 0, −z₂, 2 + 6i in z₁ ima rdečo diagonalo do z₁ − z₂ = 2 + 6i.
+x: -3 .. 6 | 1 | Re
+y: -5 .. 7 | 1 | Im
+enako: da
+črta: 3; 2 -> 4; -2 -> 1; -4 | siva črtkano
+črta: -1; 4 -> 2; 6 -> 3; 2 | siva črtkano
+puščica: 0; 0 -> 3; 2 | | | modra
+puščica: 0; 0 -> 1; -4 | | | modra
+puščica: 0; 0 -> -1; 4 | | | oranžna
+puščica: 0; 0 -> 4; -2 | | | zelena
+puščica: 0; 0 -> 2; 6 | | | rdeča
+točka: 3; 2 | z_1 | desno
+točka: 1; -4 | z_2 | desno
+točka: -1; 4 | −z_2 | levo
+točka: 4; -2 | z_1 + z_2 | desno
+točka: 2; 6 | z_1 − z_2 | desno
+:::
+
+5. Odgovor: $z_1 + z_2 = 4 - 2i$, $z_1 - z_2 = 2 + 6i$ in $z_1 \cdot z_2 = 11 - 10i$.
 
 ### Primer 2 (srednji)
 
@@ -189,9 +222,92 @@ Iz druge enačbe je $a = 2b - 1$. Vstavimo v prvo: $4(2b - 1) - b = 10$, torej $
 - Seštevamo in odštevamo ločeno realna in imaginarna dela (premik za premikom); množimo kot dvočlenika in upoštevamo $i^2 = -1$. Množenje z $i$ zasuka točko za pravi kot v levo.
 - Potence $i$ se ponavljajo s periodo $4$: $i, -1, -i, 1$.
 - Konjugirano število $\bar{z} = a - bi$ je zrcalna slika čez realno os; $z \cdot \bar{z} = a^2 + b^2$.
-- Deljenje: ulomek razširimo s številom, konjugiranim imenovalcu.
+- Deljenje: ulomek razširimo s številom, konjugiranim imenovalcu. Obratna vrednost: $\dfrac{1}{a + bi} = \dfrac{a - bi}{a^2 + b^2}$.
+- Grafično: vsota je diagonala paralelograma s stranicama $z_1$ in $z_2$; $z_1 - z_2 = z_1 + (-z_2)$.
+- Kvadratna enačba z realnimi koeficienti brez realnih rešitev ima dve konjugirani kompleksni rešitvi.
 - Absolutna vrednost: $|z| = \sqrt{a^2 + b^2}$ je razdalja točke $(a, b)$ od izhodišča v kompleksni ravnini.
 - Enakost: $a + bi = c + di$ natanko tedaj, ko je $a = c$ in $b = d$.
+
+## Ponovitev
+
+**Formule**
+- $i^2 = -1$, $z = a + bi$, $\mathrm{Re}\,z = a$, $\mathrm{Im}\,z = b$ (na pamet)
+- $\bar{z} = a - bi$, $\;z \cdot \bar{z} = a^2 + b^2$ (na pamet)
+- $|z| = \sqrt{a^2 + b^2}$ (na pamet)
+- $\dfrac{1}{a + bi} = \dfrac{a - bi}{a^2 + b^2}$ (na pamet)
+- potence $i$ se ponavljajo s periodo $4$: $i, -1, -i, 1$ (na pamet)
+
+**Postopek**
+1. Seštevaj ločeno realna in imaginarna dela.
+2. Množi kot dvočlenika in zamenjaj $i^2$ z $-1$.
+3. Pri deljenju razširi ulomek s številom, konjugiranim imenovalcu.
+4. Rezultat zapiši v obliki $a + bi$.
+5. Pri enačbi izenači realna dela in imaginarna dela.
+
+**Pazi na**
+- $i^2 = -1$, ne $1$: zato je $-8i^2 = +8$.
+- $\mathrm{Im}\,z$ je realno število brez $i$: za $4 - 7i$ je $-7$.
+- Konjugiraš le imaginarni del: $\overline{3 + 2i} = 3 - 2i$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Dano je število $z = 2 + i^{23}$. Izračunajte obratno vrednost $\dfrac{1}{z}$ in jo zapišite v obliki $a + bi$.
+
+**Rešitev:**
+
+1. Ker je $23 = 5 \cdot 4 + 3$, je $i^{23} = \left(i^4\right)^5 \cdot i^3 = 1 \cdot (-i) = -i$. Torej je $z = 2 - i$.
+2. Ulomek razširimo s številom, konjugiranim imenovalcu: $\dfrac{1}{2 - i} = \dfrac{2 + i}{(2 - i)(2 + i)}$, imenovalec je $2^2 + 1^2 = 5$.
+3. $\dfrac{1}{z} = \dfrac{2 + i}{5} = \dfrac{2}{5} + \dfrac{1}{5}\,i$.
+4. Odgovor: $\dfrac{1}{z} = \dfrac{2}{5} + \dfrac{1}{5}\,i$.
+
+**Točkovanje:** 1 točka za $i^{23} = -i$ (oziroma $z = 2 - i$), 1 točka za razširitev s številom $2 + i$ in imenovalec $5$, 1 točka za $\frac{2}{5} + \frac{1}{5}\,i$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je enačba $x^2 - 4x + 13 = 0$.
+
+a) Rešite enačbo v množici kompleksnih števil. (2 točki)
+b) Rešitev s pozitivnim imaginarnim delom označite z $z_1$, drugo z $z_2$. Opišite, kje v kompleksni ravnini ležita in kako sta povezani, ter izračunajte njuni absolutni vrednosti. (2 točki)
+c) Izračunajte količnik $\dfrac{z_1}{z_2}$ v obliki $a + bi$ in njegovo absolutno vrednost. (3 točke)
+
+**Rešitev:**
+
+1. a) Diskriminanta: $D = (-4)^2 - 4 \cdot 1 \cdot 13 = 16 - 52 = -36$, zato je $\sqrt{D} = \sqrt{-36} = 6i$.
+2. a) $x_{1,2} = \dfrac{4 \pm 6i}{2} = 2 \pm 3i$.
+3. b) $z_1 = 2 + 3i$ je točka $(2, 3)$, $z_2 = 2 - 3i$ je točka $(2, -3)$. Števili sta konjugirani, $z_2 = \bar{z}_1$, zato sta točki zrcalni glede na realno os.
+4. b) $|z_1| = |z_2| = \sqrt{2^2 + 3^2} = \sqrt{13}$; zrcaljenje razdalje od izhodišča ne spremeni.
+5. c) Ulomek razširimo s številom $2 + 3i$, ki je konjugirano imenovalcu: števec $(2 + 3i)^2 = 4 + 12i + 9i^2 = -5 + 12i$, imenovalec $(2 - 3i)(2 + 3i) = 4 + 9 = 13$.
+6. c) $\dfrac{z_1}{z_2} = \dfrac{-5 + 12i}{13} = -\dfrac{5}{13} + \dfrac{12}{13}\,i$.
+7. c) $\left|\dfrac{z_1}{z_2}\right| = \dfrac{\sqrt{25 + 144}}{13} = \dfrac{13}{13} = 1$. To se ujema z $\dfrac{|z_1|}{|z_2|} = \dfrac{\sqrt{13}}{\sqrt{13}} = 1$.
+8. Odgovor: $z_1 = 2 + 3i$, $z_2 = 2 - 3i$; točki sta zrcalni glede na realno os, $|z_1| = |z_2| = \sqrt{13}$; $\dfrac{z_1}{z_2} = -\dfrac{5}{13} + \dfrac{12}{13}\,i$ z absolutno vrednostjo $1$.
+
+**Točkovanje:** a) 1 točka za $D = -36$, 1 točka za rešitvi $2 \pm 3i$; b) 1 točka za lego točk in zrcaljenje čez realno os (konjugirani števili), 1 točka za $|z_1| = |z_2| = \sqrt{13}$; c) 1 točka za razširitev s številom $2 + 3i$ in imenovalec $13$, 1 točka za $-\frac{5}{13} + \frac{12}{13}\,i$, 1 točka za absolutno vrednost $1$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je konjugirano število kompleksnega števila $z = a + bi$, kaj pomeni v kompleksni ravnini in koliko je produkt $z \cdot \bar{z}$?
+---
+Konjugirano število je $\bar{z} = a - bi$: realni del ostane, imaginarni del spremeni predznak. V kompleksni ravnini je $\bar{z}$ zrcalna slika točke $z$ čez realno os. Produkt je $z \cdot \bar{z} = a^2 + b^2$, torej realno nenegativno število, enako $|z|^2$. Zato pri deljenju ulomek razširimo s številom, konjugiranim imenovalcu, da imenovalec postane realen.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji pravilo za računanje potenc imaginarne enote $i^n$, kjer je $n$ naravno število.
+---
+Po definiciji je $i^1 = i$ in $i^2 = -1$. Od tod je $i^3 = i^2 \cdot i = -i$ in $i^4 = \left(i^2\right)^2 = 1$. Ker je $i^4 = 1$, za $n = 4k + r$ velja $i^n = \left(i^4\right)^k \cdot i^r = i^r$, zato se potence ponavljajo s periodo $4$. Vrednost $i^n$ je odvisna le od ostanka $r$ pri deljenju $n$ s $4$: ostankom $0, 1, 2, 3$ pripadajo vrednosti $1, i, -1, -i$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pojasni, zakaj vpeljemo kompleksna števila, in navedi primer kvadratne enačbe z realnimi koeficienti, ki ima rešitve le v množici kompleksnih števil.
+---
+Kvadrat vsakega realnega števila je nenegativen, zato enačba $x^2 = -1$ v realnih številih nima rešitve. Vpeljemo imaginarno enoto $i$ z lastnostjo $i^2 = -1$ in kompleksna števila $a + bi$, v katerih ima vsaka kvadratna enačba rešitev. Primer je enačba $x^2 + 4 = 0$ z rešitvama $x = 2i$ in $x = -2i$. Kvadratna enačba z realnimi koeficienti in negativno diskriminanto ima vedno dve konjugirani kompleksni rešitvi.
+:::
 
 ## Drugače: Z analogijo
 
@@ -273,6 +389,35 @@ Pari oblike $(a, 0)$ se obnašajo natanko kot realna števila, par $(0, 1)$ pa o
 + $10\,\text{km}$
 > $|-6 + 8i| = \sqrt{(-6)^2 + 8^2} = \sqrt{36 + 64} = \sqrt{100} = 10$, torej $10\,\text{km}$.
 
+? Z risbe odčitaj števili $z_1$ in $z_2$. Koliko je imaginarni del razlike $z_1 - z_2$?
+:::risba graf
+opis: Kompleksna ravnina z mrežo. Točka z₁ leži 2 enoti desno in 3 enote nad izhodiščem, točka z₂ leži 4 enote desno in 1 enoto pod izhodiščem. Iz izhodišča do obeh točk vodita puščici.
+x: -1 .. 5 | 1 | Re
+y: -2 .. 4 | 1 | Im
+enako: da
+puščica: 0; 0 -> 2; 3 | | | modra
+puščica: 0; 0 -> 4; -1 | | | modra
+točka: 2; 3 | z_1 | desno
+točka: 4; -1 | z_2 | pod
+:::
+= 4 | 0
+~ -4 | Izračunal si $z_2 - z_1$. Pri razliki $z_1 - z_2$ od $z_1$ odštejemo $z_2$.
+~ 2 | To je imaginarni del vsote, $3 + (-1)$. Pri razliki odšteješ: $3 - (-1) = 4$.
+> Z risbe: $z_1 = 2 + 3i$, $z_2 = 4 - i$. Razlika je $z_1 - z_2 = -2 + 4i$, zato je imaginarni del $4$. Grafično: puščica od $z_2$ do $z_1$ gre $2$ enoti levo in $4$ enote navzgor.
+
+? (brez računala) Obratno vrednost števila $z = 1 - 2i$ zapiši v obliki $a + bi$. Koliko je $b$?
+= 0,4
+~ -0,4 | V števec si napisal $z$ namesto konjugiranega števila $\bar{z} = 1 + 2i$.
+~ 2 | Pozabil si deliti z $z \cdot \bar{z} = 1 + 4 = 5$.
+~ -0,5 | Ulomek si razdelil po členih, $\dfrac{1}{1} + \dfrac{1}{-2}\,i$. Tako obratne vrednosti ne dobiš.
+> $\dfrac{1}{1 - 2i} = \dfrac{1 + 2i}{(1 - 2i)(1 + 2i)} = \dfrac{1 + 2i}{5} = \dfrac{1}{5} + \dfrac{2}{5}\,i$, torej $b = 0{,}4$.
+
+? (brez računala) Kvadratna enačba $x^2 + px + q = 0$ z realnima koeficientoma $p$ in $q$ ima rešitev $x_1 = 2 + 5i$. Koliko je $q$?
+= 29 | 0
+~ -21 | Računal si $(2 + 5i)(2 - 5i) = 4 - 25$, kot da bi bilo $i^2 = 1$. Pravilno je $4 - 25i^2 = 4 + 25$.
+~ -4 | To je koeficient $p$ (enačba je $x^2 - 4x + 29 = 0$). Sprašujemo po prostem členu $q$.
+> Ker sta koeficienta realna, je druga rešitev konjugirana, $x_2 = 2 - 5i$. Velja $(x - 2 - 5i)(x - 2 + 5i) = x^2 - 4x + 29$, zato je $q = (2 + 5i)(2 - 5i) = 2^2 + 5^2 = 29$.
+
 :::simboli
 i | imaginarna enota | i^2 = -1 | |
 z | kompleksno število | z = a + bi | |
@@ -282,4 +427,38 @@ b | imaginarni del | b = \mathrm{Im}\,z | | realno število, ne $bi$
 c | realni del drugega števila | | |
 d | imaginarni del drugega števila | | |
 z_1, z_2 | kompleksni števili (v primeru 3 premika) | | | pri deljenju $z_2 \ne 0$
+w | drugo kompleksno število: v primeru 2 količnik, v simulaciji drugi faktor | | |
+n | eksponent potence $i^n$ | | | naravno število
+k | količnik pri deljenju eksponenta $n$ s $4$ | n = 4k + r | |
+r | ostanek pri deljenju eksponenta $n$ s $4$ | | | $0$, $1$, $2$ ali $3$
+x | neznanka kvadratne enačbe | | |
+x_1, x_2 | rešitvi kvadratne enačbe | | | pri realnih koeficientih in nerealnih rešitvah je $x_2 = \bar{x}_1$
+p, q | realna koeficienta kvadratne enačbe $x^2 + px + q = 0$ | | | $q = x_1 x_2$
+D | diskriminanta kvadratne enačbe | | | v enačbi $x^2 - 4x + 13 = 0$ je $D = -36$
 :::
+
+<<RACUN
+vrednost: I^23 | -I
+enako: 1/(2-I) | 2/5+I/5
+vrednost: (-4)^2-4*1*13 | -36
+enako: (x-2-3*I)*(x-2+3*I) | x^2-4*x+13
+vrednost: (4+sqrt(-36))/2 | 2+3*I
+enako: (2+3*I)^2 | -5+12*I
+enako: (2+3*I)/(2-3*I) | -5/13+12*I/13
+vrednost: abs(2+3*I) | sqrt(13)
+vrednost: abs(-5/13+12*I/13) | 1
+enako: (x-2*I)*(x+2*I) | x^2+4
+enako: (3+2*I)+(1-4*I) | 4-2*I
+enako: (3+2*I)-(1-4*I) | 2+6*I
+enako: (3+2*I)+(-1+4*I) | 2+6*I
+enako: 1/(3+4*I) | 3/25-4*I/25
+enako: 1/I | -I
+enako: (x-3)^2 | x^2-6*x+9
+enako: (x-3)^2+4 | x^2-6*x+13
+vrednost: (3+2*I)^2-6*(3+2*I)+13 | 0
+vrednost: (3*I)^2 | -9
+enako: (x-3-2*I)*(x-3+2*I) | x^2-6*x+13
+enako: (2+3*I)-(4-I) | -2+4*I
+enako: 1/(1-2*I) | 1/5+2*I/5
+enako: (x-2-5*I)*(x-2+5*I) | x^2-4*x+29
+>>

@@ -32,7 +32,7 @@ Zato zaokroži bolj fino, navzgor na pol evra: $1{,}5 + 1{,}5 + 2{,}5 + 5 + 3 + 
 
 Iz Tininega računa izluščimo tri pravila.
 
-**1. Zaokrožuj v smer, ki te ščiti.** Če vse zaokrožiš navzgor, dobiš **zgornjo mejo**: prava vrednost ni večja od nje. Če vse zaokrožiš navzdol, dobiš **spodnjo mejo**. Pri vprašanju »ali je dovolj« potrebuješ zgornjo mejo. Če je ta pod zneskom v denarnici, si varen.
+**1. Zaokrožuj v smer, ki te ščiti.** Če pri vsoti vse zaokrožiš navzgor, dobiš **zgornjo mejo**: prava vrednost ni večja od nje. Če vse zaokrožiš navzdol, dobiš **spodnjo mejo**. Pri vprašanju »ali je dovolj« potrebuješ zgornjo mejo. Če je ta pod zneskom v denarnici, si varen.
 
 **2. Natančnost izberi glede na vprašanje.** Groba ocena $21$ € je bila preblizu meje $20$ €, zato ni odločila. Ko je ocena blizu meje, zaokroži bolj fino.
 
@@ -103,7 +103,7 @@ cena kilograma $= \dfrac{\text{cena}}{\text{masa}}$; vsako število zaokroži na
 
 ### Primer 2: kateri odgovor je najbližji
 
-Kateri od števil $1$, $10$, $100$, $1000$ je najbližji vrednosti izraza $\dfrac{19{,}8 \cdot 0{,}51}{0{,}099}$?
+Katero od števil $1$, $10$, $100$, $1000$ je najbližje vrednosti izraza $\dfrac{19{,}8 \cdot 0{,}51}{0{,}099}$?
 
 **Podatki:** izraz $\dfrac{19{,}8 \cdot 0{,}51}{0{,}099}$; ponujeni odgovori $1$, $10$, $100$, $1000$
 **Iščemo:** najbližji ponujeni odgovor
@@ -118,7 +118,7 @@ vsako število zaokroži na eno veljavno števko; deliti z $0{,}1$ pomeni množi
 2. Števec: $20 \cdot 0{,}5 = 10$.
 3. Deljenje z $0{,}1$ je množenje z $10$: $10 \cdot 10 = 100$.
 4. Vsako število smo spremenili le za nekaj odstotkov, ponujeni odgovori pa so narazen za faktor $10$. Izbira je zato varna.
-5. Odgovor: najbližji je $100$. Natančna vrednost je $102$.
+5. Odgovor: najbližje je $100$. Natančna vrednost je $102$.
 
 ### Primer 3 (težji): milijon evrov v centih
 
@@ -213,7 +213,7 @@ Napaka za faktor $2$ te pusti v istem nadstropju ali v sosednjem stanovanju. Nap
 ~ Mleko res stane okoli evra za liter, ocena je smiselna.
 > Kilogram jabolk stane nekaj evrov, ne nekaj sto. Ocena je zgrešena za približno dva reda velikosti.
 
-? Kateri od števil $20$, $200$, $2000$, $20\,000$ je najbližji vrednosti izraza $\dfrac{0{,}52 \cdot 397}{0{,}098}$?
+? Katero od števil $20$, $200$, $2000$, $20\,000$ je najbližje vrednosti izraza $\dfrac{0{,}52 \cdot 397}{0{,}098}$?
 - $20$
 ~ Deljenje z $0{,}1$ si naredil kot deljenje z $10$. Deljenje s številom, manjšim od 1, rezultat poveča.
 - $200$

@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Foton
+  - $W_f = h\nu = hc/\lambda$, $p = h/\lambda$
+  - $hc \approx 1240\,\mathrm{eV\,nm}$; pri $500\,\mathrm{nm}$ je $2{,}48\,\mathrm{eV}$
+  - število fotonov na sekundo $P/W_f$
+- Fotoefekt
+  - $W_{k,\max} = h\nu - A_i$, en foton enemu elektronu
+  - mejna frekvenca $\nu_0 = A_i/h$, $\lambda_0 = hc/A_i$
+  - pazi: jakost da več elektronov, ne hitrejših
+- Zaporna napetost
+  - $e_0U_z = W_{k,\max}$
+  - premica $U_z(\nu)$: naklon $h/e_0$, odsek $-A_i/e_0$
+- De Brogliejeva valovna dolžina
+  - $\lambda = h/p = h/\sqrt{2mW_k}$, energija v joulih
+  - elektron: $\lambda \approx 1{,}23\,\mathrm{nm}/\sqrt{U/\mathrm{V}}$
+  - pazi: $W = hc/\lambda$ velja le za fotone
+- Energijski nivoji
+  - $h\nu = W_m - W_n$, zato črtast spekter
+  - hladen plin absorbira le iz osnovnega stanja
+- Vodikov atom
+  - $W_n = -13{,}6\,\mathrm{eV}/n^2$, ionizacija $13{,}6\,\mathrm{eV}$
+  - $1/\lambda = R_\infty(1/n^2 - 1/m^2)$, $R_\infty = 1{,}097 \cdot 10^7\,\mathrm{m^{-1}}$
+  - Lyman UV, Balmer vidno ($656\,\mathrm{nm}$), Paschen IR
+- Bohrov model
+  - $m_evr = n\hbar$, na stacionarnem tiru ne seva
+  - $r_n = n^2 \cdot 0{,}0529\,\mathrm{nm}$

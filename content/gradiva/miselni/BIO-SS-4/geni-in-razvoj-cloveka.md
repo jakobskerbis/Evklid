@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Diferenciacija
+  - isti geni, drugačno branje
+  - transkripcijski dejavniki, kromatin, metilacija
+  - napaka: »celica zavrže gene«
+- Matične celice
+  - totipotentna zigota, pluripotentne zarodne matične celice
+  - multipotentne krvotvorne celice
+- Določanje spola
+  - XX ali XY, gen SRY
+  - spol določi semenčica, $P = \frac{1}{2}$
+- Vezano na X
+  - sin dobi X od matere
+  - prenašalka $X^DX^d$
+- Rak
+  - plin (onkogeni) in zavora (supresorji)
+  - več mutacij, $N = 2^n$
+- Kloni
+  - jedrni prenos, ovca Dolly
+  - mitohondrijska DNA od darovalke jajčne celice
+- Genska diagnostika
+  - kariotip, PCR, sekvenciranje
+  - odkrije prenašalce

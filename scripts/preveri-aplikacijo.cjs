@@ -628,14 +628,15 @@ async function chat(p, label) {
   await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
   await settle(p, 300);
   await screen(p, `klepet-${label}`);
-  // Ulomki, vsote in integrali s tipk (j, 4. 11.): predogled nad poljem jih izriše kot formulo.
+  // Ulomki, vsote in integrali s tipk (j, 4. 11.; 14. 11.: izris kar v polju, brez surovega zapisa).
   await p.fill("#input", "Koliko je (3)/(4) + ∑_(n=1)^(5) n in ∫_(0)^(1) (x^(2)) dx?");
-  await expectVisible(p, "#formula-preview .katex .mfrac", "predogled ulomka nad poljem");
-  if (!(await p.locator("#formula-preview .katex .mop").count())) throw new Error("vsota ali integral nista izrisana v predogledu");
+  await expectVisible(p, "#composer .vnos-izris .katex .mfrac", "ulomek izrisan v polju");
+  if (!(await p.locator("#composer .vnos-izris .katex .mop").count())) throw new Error("vsota ali integral nista izrisana v polju");
+  if (!(await p.evaluate(() => document.querySelector("#input").classList.contains("vnos-izrisan")))) throw new Error("surov zapis je viden v polju");
   await screen(p, `klepet-formule-${label}`);
   await p.fill("#input", "");
-  await p.waitForFunction(() => document.querySelector("#formula-preview")?.hidden, null, { timeout: 3000 }).catch(() => {
-    throw new Error("predogled ostane po praznjenju polja");
+  await p.waitForFunction(() => document.querySelector("#composer .vnos-izris")?.hidden, null, { timeout: 3000 }).catch(() => {
+    throw new Error("izris ostane po praznjenju polja");
   });
   // Način v glavi se zamenja kar tam (j, 4. 11.): »Celotna rešitev«, nato nazaj na »Vodenje«.
   for (const want of ["Celotna rešitev", "Vodenje"]) {
@@ -705,6 +706,17 @@ async function chat(p, label) {
   }
 }
 
+// Mehurček inštruktorja: imena delov kalkulatorja, ki jih prekrije (prazno, če je skrit ali nič ne prekrije).
+const covers = () => {
+  const b = document.getElementById("chat-bubble");
+  if (!b || b.hidden) return "";
+  const r = b.getBoundingClientRect();
+  return [...document.querySelectorAll("#view-graph :is(.calc-modes, .sc-keys, .sc-entry, .gc-panel, .gc-zoom)")]
+    .filter((el) => el.offsetParent)
+    .filter((el) => { const q = el.getBoundingClientRect(); return r.left < q.right && r.right > q.left && r.top < q.bottom && r.bottom > q.top; })
+    .map((el) => el.className.split(" ")[0])
+    .join(", ");
+};
 async function calculator(p, label) {
   await tab(p, "graph");
   await expectVisible(p, "#view-graph #graph-slot > *", "kalkulator");
@@ -712,9 +724,44 @@ async function calculator(p, label) {
     await click(p, `#view-graph [data-calc-mode="${mode}"]`, { wait: 400 });
     const empty = await p.locator("#graph-slot").evaluate((s) => !s.innerText.trim() && !s.querySelector("canvas,svg"));
     if (empty) throw new Error(`kalkulator »${mode}« je prazen`);
+    // Mehurček inštruktorja (po pogovoru) ne prekrije tipk, vnosa ali seznama grafa (okna.js KEEP_CLEAR, pilot 14. 11. 2026).
+    const covered = await p.evaluate(covers);
+    if (covered) throw new Error(`mehurček inštruktorja prekrije ${covered} v kalkulatorju »${mode}«`);
     await screen(p, `kalkulator-${mode}-${label}`);
+    // Telefon ležeče: tipke so čez ves zaslon, zato se mehurček skrije namesto da bi pokril tipko (j 14. 11. 2026).
+    if (mode === "sci" && p.viewportSize().width < 760) {
+      const size = p.viewportSize();
+      await p.setViewportSize({ width: size.height, height: size.width });
+      let lez;
+      try {
+        await settle(p, 300);
+        lez = await p.evaluate(covers);
+      } finally {
+        await p.setViewportSize(size);
+        await settle(p, 300);
+      }
+      if (lez) throw new Error(`mehurček inštruktorja ležeče prekrije ${lez} v kalkulatorju`);
+    }
   }
   // Znanstveni: izračun.
+  await click(p, '#view-graph [data-calc-mode="sci"]', { wait: 300 });
+  // Tipka Nazaj ob odprti plošči funkcij (⋯) in ob povečanem grafu (telefon) zapre samo to plast, kalkulator ostane
+  // (j, 14. 11. 2026). Klik prek DOM, kot drugje v tem pregledu.
+  const layers = [
+    ["sci", '#view-graph .sc-key[data-ins="#more"]', "#view-graph .sc.sc-panel-open", "plošča funkcij"],
+    ["graph", '#view-graph [data-act="expand"]', "#view-graph .gc.gc-full", "povečan graf"],
+  ];
+  for (const [mode, btn, open, what] of layers) {
+    await click(p, `#view-graph [data-calc-mode="${mode}"]`, { wait: 400 });
+    if (!(await p.locator(btn).isVisible())) continue; // gumb za povečan graf je samo na ozkem zaslonu
+    await p.locator(btn).evaluate((b) => b.click());
+    await settle(p, 200);
+    if (!(await p.locator(open).count())) throw new Error(`ni se odprla plast »${what}«`);
+    await p.goBack();
+    await settle(p, 300);
+    if ((await currentView(p)) !== "view-graph") throw new Error(`tipka Nazaj ob odprti plasti »${what}« zapre kalkulator (${await currentView(p)})`);
+    if (await p.locator(open).count()) throw new Error(`tipka Nazaj ne zapre plasti »${what}«`);
+  }
   await click(p, '#view-graph [data-calc-mode="sci"]', { wait: 300 });
 }
 
@@ -1011,7 +1058,9 @@ async function examsView(p, label) {
   await p.waitForTimeout(200);
   if (await p.locator(".pv").count()) throw new Error("Esc ne zapre prenesene pole");
   await p.setViewportSize(size);
-  // Izbira pol po korakih: krušne drobtine vrnejo korak, izbira ga zapre.
+  // Pole sledijo čipom na vrhu; »Druge pretekle pole« odpre izbiro po korakih (drobtine vrnejo korak, izbira ga zapre).
+  if (await p.locator("#exam-papers .lp-opt").count()) throw new Error("pri polah je še drug izbirnik šole/izpita");
+  await click(p, "#exam-papers [data-pp-other]", { wait: 200 });
   await click(p, "#exam-papers .lp-crumb[data-pp-step=\"exam\"]", { wait: 200 });
   await expectVisible(p, "#exam-papers .lp-opt", "izbira izpita pri polah");
   await click(p, "#exam-papers .lp-opt", { wait: 200 });
@@ -1412,8 +1461,10 @@ async function uciPhone(p) {
     const over = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     if (over > 1) throw new Error(`Uči se → ${v}: vodoravno drsenje (${over} px)`);
   }
-  await expectVisible(p, "#view-3d .uci-3d-card", "kartice 3D sveta", 8000);
+  await expectVisible(p, "#view-3d .uci-3d-veja", "veje drevesa 3D sveta", 8000);
   await screen(p, "uci-3d");
+  await click(p, '#view-3d .uci-3d-veja[data-pot="matematika"]', { wait: 300 });
+  await expectVisible(p, "#view-3d .uci-3d-card", "modeli v veji Matematika", 8000);
   await click(p, "#view-3d .uci-3d-card", { wait: 300 });
   // Okvir je istega izvora in si deli glavno nit: gradnja prizora (swiftshader) lahko za nekaj sekund ustavi strani.
   await p.locator(".uci-3d-full iframe").waitFor({ state: "attached", timeout: 20000 }).catch(async () => {
@@ -1455,7 +1506,7 @@ async function uciPhone(p) {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
     return f;
   });
-  if (!/^\/3d\?vgrajeno=1#[a-z0-9]+(-[a-z0-9]+)*$/.test(src)) throw new Error(`»Poglej v 3D« v lekciji ne odpre modela (${src || "brez okvirja"})`);
+  if (!/^\/3d\?vgrajeno=1#[a-z0-9]+(-[a-z0-9]+)*(\?[\w%.-]+=[\w%.-]+(&[\w%.-]+=[\w%.-]+)*)?$/.test(src)) throw new Error(`»Poglej v 3D« v lekciji ne odpre modela (${src || "brez okvirja"})`);
   if (await p.locator(".uci-3d-full").count()) throw new Error("Esc ne zapre 3D modela iz lekcije");
   await closeLesson();
   await uciTb("FIZ-OS-8/gostota");
@@ -1529,7 +1580,7 @@ async function phone(browser, app) {
       await p.goBack();
       await settle(p, 300);
       const now = await currentView(p);
-      if (now !== "view-me" && v !== "graph") throw new Error(`tipka Nazaj z »${v}« vodi na ${now} namesto na »Jaz«`);
+      if (now !== "view-me") throw new Error(`tipka Nazaj z »${v}« vodi na ${now} namesto na »Jaz«`);
     });
   }
   await step(p, "tel-naloga", async () => {

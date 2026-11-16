@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Rastni vršički
+  - rast le v meristemih; primarna v dolžino
+  - delitev, nato podaljševanje celic
+  - napaka: žebelj v deblu se ne dviga
+- Sekundarna rast
+  - kambij: navznoter les, navzven ličje
+  - letnica: svetel in temen pas, eno leto
+  - starost $L = \dfrac{r}{d}$, oba v mm
+- Cvet
+  - prašniki s pelodom
+  - pestič: brazda, vrat, plodnica
+- Opraševanje
+  - pelod na brazdo, veter ali živali
+  - oploditev šele po pelodni cevi
+  - plodnica postane plod, zasnova seme
+- Seme in kalitev
+  - lupina, kalček, zaloga hrane
+  - voda, kisik, toplota; svetloba ni nujna
+  - kalivost $k = \dfrac{N_\mathrm{k}}{N}$
+- Razširjanje semen
+  - veter: regrat, javor
+  - živali: češnja, repinec; voda: kokos
+- Vegetativno razmnoževanje
+  - pritlike, gomolji, čebulice, potaknjenci, cepljenje
+  - potomci so kloni

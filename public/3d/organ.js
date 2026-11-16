@@ -10,7 +10,7 @@ import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { mergeGeometries } from "/vendor/three/examples/jsm/utils/BufferGeometryUtils.js";
 import { THREE } from "./scena.js";
 import { seznamDatotek } from "./modeli.js";
-import { prostorOrgana } from "./organ-prostor.js";
+import { prostorOrgana, brezPregrad } from "./organ-prostor.js";
 
 const BAZA = new URL("./modeli/organi-3d/", import.meta.url).href;
 const scene = new Map(); // url → Promise<THREE.Group> (surova scena glTF)
@@ -116,12 +116,16 @@ function pripravi(url, napredek) {
         const del = v.userData?.del || "";
         const k = `${del}|${tkivo}|${stranImena(ime)}`;
         if (!skupine.has(k)) skupine.set(k, { del, tkivo, stran: stranImena(ime), geos: [], vozlisca: [] });
+        if (v.userData?.stik) skupine.get(k).stik = true;
         skupine.get(k).geos.push(ploskaKopija(o));
         skupine.get(k).vozlisca.push(ime);
       });
       const kosi = [...skupine.values()].map((s) => {
         const geo = s.geos.length === 1 ? s.geos[0] : mergeGeometries(s.geos, false);
         if (s.geos.length > 1) for (const g of s.geos) g.dispose();
+        // deli iste žile s steno (extras »stik«): brez pregrade na stiku, sicer se v prerezu vidi črtkan drugi obroč
+        const brez = s.stik && s.geos.length > 1 ? brezPregrad(geo.attributes.position.array, geo.index.array) : null;
+        if (brez) geo.setIndex(new THREE.BufferAttribute(brez, 1));
         return { del: s.del, tkivo: s.tkivo, stran: s.stran, geo, vozlisca: s.vozlisca };
       });
       const box = new THREE.Box3();
@@ -413,9 +417,10 @@ function mreznicaGLSL(t, merilo, izh) {
 // obroč. sarenica: { sredisce, os (smer naprej), polmer } v metrih; vlakna (število), barve venecBarva, robBarva.
 function sarenicaGLSL(t, merilo, izh) {
   const z = t.sarenica;
-  const v3 = (a, k = merilo) => `vec3( ${a.map((x, i) => fl(+((k === 1 ? x : x - izh[i]) * k).toFixed(5))).join(", ")} )`;
+  // smer: vektor smeri (brez izhodišča in merila), sicer točka v prostoru organa
+  const v3 = (a, smer = false) => `vec3( ${a.map((x, i) => fl(+(smer ? x : (x - izh[i]) * merilo).toFixed(5))).join(", ")} )`;
   return `{
-          vec3 iA = normalize( ${v3(z.os, 1)} );
+          vec3 iA = normalize( ${v3(z.os, true)} );
           vec3 iD = vOrgPos - ${v3(z.sredisce)}; iD -= iA * dot( iD, iA );
           float iR = length( iD ) / ${fl(+(z.polmer * merilo).toFixed(5))};
           vec3 iB = normalize( cross( iA, abs( iA.y ) < 0.9 ? vec3( 0.0, 1.0, 0.0 ) : vec3( 1.0, 0.0, 0.0 ) ) );

@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Primer v koordinatah
+  - $A(0; 0)$, $B(8; 0)$, $C(2; 6)$
+  - $O$, $T$, $V$ imajo vse $y = 2$
+- Simetrale stranic
+  - središče očrtane krožnice $O$
+  - enako oddaljeno od oglišč, polmer $R$
+  - iz dveh enakosti sledi tretja: tri premice skozi eno točko
+  - pravokotni: $O$ na sredini hipotenuze
+- Simetrale kotov
+  - središče včrtane krožnice $S$
+  - $P = r \cdot s$, $s$ je polobseg
+  - napaka: cel obseg namesto polobsega
+- Težiščnice
+  - težišče deli v razmerju $2 : 1$
+  - koordinate: povprečje oglišč
+- Višine
+  - višinska točka $V$
+  - topokotni: $V$ zunaj, onkraj topega kota
+  - višine so simetrale večjega trikotnika
+- Eulerjeva premica
+  - $V$, $T$, $O$ na eni premici
+  - $|VT| = 2\,|TO|$
+  - $S$ na njej le pri enakokrakem
+- Uporabna razdalja
+  - $|AV| = 2\,|OM_a|$
+  - $R = 5$, $a = 8$ da $|AV| = 6$

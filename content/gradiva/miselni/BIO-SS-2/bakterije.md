@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Bakterijska celica
+  - nukleoid s krožno DNA, plazmidi
+  - stena iz peptidoglikana, kapsula, biček
+  - napaka: »brez jedra pomeni brez DNA«
+- Delitev
+  - nespolno, potomki genetsko enaki
+  - $N = N_0 \cdot 2^n$, $n = \dfrac{t}{t_g}$
+  - napaka: linearno $N_0 \cdot 2 \cdot n$
+- Konjugacija in endospore
+  - plazmid prek mostička k drugi bakteriji
+  - endospora preživi vretje in vesolje
+- Presnovna raznolikost
+  - fotoavtotrofi: cianobakterije
+  - kemoavtotrofi: vrelci, nitrifikacija
+  - heterotrofi: razkrojevalci, zajedavci, simbionti
+- Vezava dušika
+  - $\mathrm{N_2}$ v $\mathrm{NH_3}$ z nitrogenazo
+  - *Rhizobium* v gomoljčkih metuljnic
+- Pomen
+  - razkroj, kroženje snovi, kisik
+  - jogurt, črevesna flora, inzulin
+  - patogeni: salmonela, tetanus
+- Antibiotiki
+  - napadajo steno ali bakterijske ribosome
+  - na viruse ne delujejo
+  - odpornost z naravnim izborom

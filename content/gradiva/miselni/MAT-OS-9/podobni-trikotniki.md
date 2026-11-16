@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enaka oblika
+  - koti ostanejo enaki
+  - velikost se lahko spremeni
+- Razmerje podobnosti
+  - $k = \dfrac{a'}{a} = \dfrac{b'}{b} = \dfrac{c'}{c}$
+  - $k > 1$ povečava, $k < 1$ pomanjšava
+- Ustrezne stranice
+  - nasproti skladnih kotov
+  - uredi po velikosti
+- Izreki
+  - KK, SSS, SKS, SsK
+  - KK: tretji kot $180^\circ - \alpha - \beta$
+- Množenje, ne seštevanje
+  - $3, 4, 5 \to 6, 8, 10$
+  - napaka: prišteti isto število
+- Obseg
+  - $o' = k \cdot o$
+  - ne $k^2$
+- Merjenje s senco
+  - $\dfrac{h}{h_p} = \dfrac{s}{s_p}$
+  - steber: $9\,\text{m}$

@@ -135,6 +135,7 @@ test("helpers: pass prices (j 2026-11-04, 75 % rule), pass length, grace period,
 
 test("aktivacijske kode v bazi: skrbnik ustvari in izklopi kodo, koda določa profile in model", async () => {
   process.env.EVKLID_ADMIN_EMAILS = "skrbnik@kod.si";
+  process.env.EVKLID_PROMO_CODE = "EVKLID3X"; // A2: koda je vklopljena samo z nastavitvijo
   try {
     await withServer(async ({ client, stripe, store }) => {
       const admin = client();
@@ -170,7 +171,7 @@ test("aktivacijske kode v bazi: skrbnik ustvari in izklopi kodo, koda določa pr
       assert.equal(off.status, 400);
       assert.match(off.body.error, /ni veljavna/);
       const { createPromo, promoConfig } = await import("../server/accounts/promo.js");
-      createPromo(store.db, promoConfig({}));
+      createPromo(store.db, promoConfig({ EVKLID_PROMO_CODE: "EVKLID3X" }));
       assert.equal(store.db.prepare("SELECT active FROM promo_codes WHERE code = 'EVKLID3X'").get().active, 0);
       // Koda, ki je ni več v .env (ali EVKLID_PROMO_CODE=off), se ob zagonu izklopi.
       store.db.prepare("UPDATE promo_codes SET active = 1 WHERE code = 'EVKLID3X'").run();
@@ -181,6 +182,7 @@ test("aktivacijske kode v bazi: skrbnik ustvari in izklopi kodo, koda določa pr
     });
   } finally {
     delete process.env.EVKLID_ADMIN_EMAILS;
+    delete process.env.EVKLID_PROMO_CODE;
   }
 });
 

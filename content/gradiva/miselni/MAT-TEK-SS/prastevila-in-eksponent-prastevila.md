@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kolikokrat deli
+  - $v_p(n)$: največji $k$, da $p^k \mid n$
+  - $v_2(40) = 3$, ker $40 = 2^3 \cdot 5$
+- Pravila valuacije
+  - produkt: $v_p(ab) = v_p(a) + v_p(b)$
+  - vsota: le $v_p(a + b) \ge \min(v_p(a), v_p(b))$
+- Ničle na koncu
+  - desetiške: $\min(v_2, v_5)$, pri $n!$ kar $v_5(n!)$
+  - dvojiške: $v_2(n)$
+- Legendrova formula
+  - $v_p(n!) = \lfloor n/p \rfloor + \lfloor n/p^2 \rfloor + \dots$
+  - $25!$: $5 + 1 = 6$ ničel
+  - napaka: pozabljena druga plast
+- Sestavljena osnova
+  - razcepi: $12 = 2^2 \cdot 3$
+  - odloči najstrožji pogoj: $12^{22} \mid 50!$
+- Dvig eksponenta
+  - $v_p(a^n - b^n) = v_p(a - b) + v_p(n)$
+  - pogoji: $p$ liho, $p \mid a - b$, $p \nmid ab$
+- Izjema za dvojko
+  - sod $n$: dodaj $v_2(a + b) - 1$
+  - $v_2(3^{64} - 1) = 8$

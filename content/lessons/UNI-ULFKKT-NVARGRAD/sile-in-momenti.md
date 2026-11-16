@@ -134,7 +134,7 @@ Prvi primer: da. Ista sila $8\,\mathrm{kN}$, premaknjena vzporedno za $d = 12/8 
 
 ### Primer 1 (lažji)
 
-Pri vaji za kolenske iztegovalke ima pacient na gležnju utež s težo $30\,\mathrm{N}$, ki je od kolenskega sklepa oddaljena $0{,}40\,\mathrm{m}$. Kolikšen je moment teže uteži glede na koleno, ko je goleň vodoravna, ko je $30^\circ$ pod vodoravnico in ko visi navpično?
+Pri vaji za kolenske iztegovalke ima pacient na gležnju utež s težo $30\,\mathrm{N}$, ki je od kolenskega sklepa oddaljena $0{,}40\,\mathrm{m}$. Kolikšen je moment teže uteži glede na koleno, ko je golen vodoravna, ko je $30^\circ$ pod vodoravnico in ko visi navpično?
 
 **Podatki:** $F = 30\,\mathrm{N}$ (navpično navzdol), $r = 0{,}40\,\mathrm{m}$, kot golenice glede na vodoravnico $\beta = 0^\circ$, $30^\circ$, $90^\circ$
 **Iščemo:** moment $M$ glede na koleno v vseh treh legah
@@ -146,10 +146,10 @@ $M = F\,d$, ročica $d = r\cos\beta$ (vodoravna razdalja od kolena do navpične 
 **Rešitev:**
 
 1. Sila je navpična, zato je ročica vodoravna razdalja od kolena do uteži, ne razdalja vzdolž golenice.
-2. Vodoravna goleň: $d = 0{,}40\,\mathrm{m}$, $M = 30 \cdot 0{,}40\,\mathrm{N\,m} = 12\,\mathrm{N\,m}$.
+2. Vodoravna golen: $d = 0{,}40\,\mathrm{m}$, $M = 30 \cdot 0{,}40\,\mathrm{N\,m} = 12\,\mathrm{N\,m}$.
 3. Pri $30^\circ$: $d = 0{,}40\,\mathrm{m}\cdot\cos 30^\circ \approx 0{,}346\,\mathrm{m}$, $M \approx 30\,\mathrm{N}\cdot 0{,}346\,\mathrm{m} \approx 10{,}4\,\mathrm{N\,m}$.
-4. Navpična goleň: nosilka teže gre skozi koleno, $d = 0$, zato $M = 0$.
-5. Smer: utež vleče goleň navzdol, torej v smeri upogiba kolena; kolenske iztegovalke morajo dati nasprotno enak moment.
+4. Navpična golen: nosilka teže gre skozi koleno, $d = 0$, zato $M = 0$.
+5. Smer: utež vleče golen navzdol, torej v smeri upogiba kolena; kolenske iztegovalke morajo dati nasprotno enak moment.
 6. Odgovor: moment je $12\,\mathrm{N\,m}$ pri vodoravni goleni, približno $10{,}4\,\mathrm{N\,m}$ pri $30^\circ$ in nič pri navpični. Sila je ves čas enaka, moment pa se spreminja z ročico – zato je vaja najtežja pri iztegnjeni nogi.
 
 ### Primer 2
@@ -197,7 +197,7 @@ $F_q = q\,l_q$ v sredini odseka; $F_{Rx} = \sum F_{ix}$, $F_{Ry} = \sum F_{iy}$;
 3. Rezultanta: $F_{Rx} \approx -4{,}33\,\mathrm{kN}$, $F_{Ry} = -10 - 12 - 2{,}5 = -24{,}5\,\mathrm{kN}$.
 4. Momenti glede na $A$ (vsa prijemališča imajo $y = 0$, zato vodoravne komponente nimajo momenta, Varignonov izrek): $M_{RA} = 2{,}0 \cdot (-10) + 4{,}5 \cdot (-12) + 6{,}0 \cdot (-2{,}5) + 6{,}0 = -83\,\mathrm{kN\,m}$.
 5. Redukcija na $A$: sila $(-4{,}33; -24{,}5)\,\mathrm{kN}$ in dvojica $-83\,\mathrm{kN\,m}$ (v smeri urnega kazalca).
-6. Velikost rezultante: $F_R = \sqrt{4{,}33^2 + 24{,}5^2}\,\mathrm{kN} \approx 24{,}9\,\mathrm{kN}$; s vodoravnico oklepa kot $\arctan(24{,}5/4{,}33) \approx 80{,}0^\circ$ in kaže navzdol in v levo.
+6. Velikost rezultante: $F_R = \sqrt{4{,}33^2 + 24{,}5^2}\,\mathrm{kN} \approx 24{,}9\,\mathrm{kN}$; z vodoravnico oklepa kot $\arctan(24{,}5/4{,}33) \approx 80{,}0^\circ$ in kaže navzdol in v levo.
 7. Ker $F_R \neq 0$, sistem nadomesti ena sila. Njena nosilka seka os nosilca v točki $(x_R, 0)$, za katero mora biti moment rezultante glede na $A$ enak $M_{RA}$: $x_R F_{Ry} = M_{RA}$, torej $x_R = -83/(-24{,}5)\,\mathrm{m} \approx 3{,}39\,\mathrm{m}$.
 8. Preizkus smisla: večina obtežbe je desno od sredine nosilca ($12\,\mathrm{kN}$ pri $4{,}5\,\mathrm{m}$), dvojica v nasprotni smeri urnega kazalca pa rezultanto premakne nekoliko proti $A$. Vrednost med $2$ in $4{,}5\,\mathrm{m}$ je smiselna.
 9. Odgovor: sistem je enakovreden sili približno $24{,}9\,\mathrm{kN}$, ki kaže navzdol in v levo pod kotom $80^\circ$ glede na vodoravnico; njena nosilka seka os nosilca $3{,}39\,\mathrm{m}$ od $A$. Redukcija na $A$ da isto silo in dvojico $-83\,\mathrm{kN\,m}$.
@@ -297,25 +297,50 @@ Pravokotna plošča ima oglišča $O(0; 0)$, $A(4; 0)$, $B(4; 3)$ in $C(0; 3)$, 
 
 ## Drugače: Na sliki
 
-Nosilec iz Primera 3, gledan od strani (merilo: štirje znaki na meter; puščice so sile, $q$ je enakomerna obtežba, sila $5\,\mathrm{kN}$ v $B$ kaže poševno navzdol in v levo, dvojica $+6\,\mathrm{kN\,m}$ ni narisana):
+Nosilec iz Primera 3, gledan od strani (puščice so sile, $q$ je enakomerna obtežba, sila $5\,\mathrm{kN}$ v $B$ kaže poševno navzdol in v levo, dvojica $+6\,\mathrm{kN\,m}$ ni narisana):
 
-```
-      10 kN  q = 4 kN/m
-        |   |  |  |  |  |  /
-        v   v  v  v  v  v v
-A=======*===*===========B
-0      2,0 3,0        6,0
-```
+:::risba skica
+opis: Vodoravni nosilec od A pri 0 do B pri 6,0 m. Pri 2,0 m deluje navpično navzdol sila 10 kN. Od 3,0 m do 6,0 m deluje navzdol enakomerna obtežba q = 4 kN/m, narisana kot vrsta enakih puščic pod skupno črto. V B prijemlje sila 5 kN, ki kaže poševno navzdol in v levo pod kotom 30° pod vodoravnico.
+območje: -0,9; -1,1 .. 8,3; 2,5
+črta: 0; 0 -> 6; 0 | debelo
+puščica: 2; 1,7 -> 2; 0 | 10 kN | levo | oranžna
+črta: 3; 1 -> 6; 1 | modra
+puščica: 3; 1 -> 3; 0 | | | modra
+puščica: 3,75; 1 -> 3,75; 0 | | | modra
+puščica: 4,5; 1 -> 4,5; 0 | | | modra
+puščica: 5,25; 1 -> 5,25; 0 | | | modra
+puščica: 6; 1 -> 6; 0 | | | modra
+napis: 4,5; 1,1 | q = 4 kN/m | nad | modra
+puščica: 7,39; 0,8 -> 6; 0 | | | oranžna
+napis: 7,39; 0,85 | 5 kN | nad | oranžna
+črta: 0; -0,12 -> 0; 0,12
+črta: 2; 0 -> 2; -0,12
+črta: 3; 0 -> 3; -0,12
+črta: 6; -0,12 -> 6; 0,12
+napis: 0; 0 | A | levo
+napis: 6,3; -0,05 | B | desno
+napis: 0; -0,2 | 0 | pod
+napis: 2; -0,2 | 2,0 | pod
+napis: 3; -0,2 | 3,0 | pod
+napis: 6; -0,2 | 6,0 m | pod
+:::
 
 Isti sistem po redukciji na $A$: ena sila $24{,}9\,\mathrm{kN}$ v točki $A$ in dvojica $-83\,\mathrm{kN\,m}$. Po premiku rezultante ostane ena sama puščica pod kotom $80^\circ$ glede na vodoravnico, ki seka os pri $3{,}39\,\mathrm{m}$; dvojice ni več:
 
-```
-          24,9 kN
-               /
-              v
-A=============*=========B
-0           3,39      6,0
-```
+:::risba skica
+opis: Isti nosilec od A pri 0 do B pri 6,0 m z eno samo silo 24,9 kN. Sila kaže navzdol in malo v levo pod kotom 80° glede na vodoravnico, njena nosilka seka os nosilca 3,39 m od A. Dvojice ni.
+območje: -0,9; -1,1 .. 8,3; 2,5
+črta: 0; 0 -> 6; 0 | debelo
+puščica: 3,737; 1,97 -> 3,39; 0 | 24,9 kN | desno | oranžna
+črta: 0; -0,12 -> 0; 0,12
+črta: 3,39; 0 -> 3,39; -0,12
+črta: 6; -0,12 -> 6; 0,12
+napis: 0; 0 | A | levo
+napis: 6; 0 | B | desno
+napis: 0; -0,2 | 0 | pod
+napis: 3,39; -0,2 | 3,39 | pod
+napis: 6; -0,2 | 6,0 m | pod
+:::
 
 Izvirni sistem, redukcija na $A$ in ena sama sila opisujejo **isto obremenitev togega telesa**. Za notranje sile v nosilcu (kasneje: upogibni momenti) pa niso enake – redukcija velja le za učinek na telo kot celoto.
 
@@ -371,7 +396,7 @@ Izvirni sistem, redukcija na $A$ in ena sama sila opisujejo **isto obremenitev t
 > Če točko premaknemo, se momenta obeh sil spremenita za nasprotno enaka zneska, ker sta sili nasprotno enaki. Ostane $\overrightarrow{BA}\times\vec{F}$ z velikostjo $F\,d$.
 
 ? Momentni ključ je nastavljen na $60\,\mathrm{N\,m}$. Na kolikšni razdalji od osi vijaka moraš pravokotno pritisniti s silo $150\,\mathrm{N}$, da ključ »klikne«?
-- $9{,}0\,\mathrm{m}$
+- $9000\,\mathrm{m}$
 ~ Silo in moment si pomnožil. Ročica je kvocient momenta in sile.
 + $0{,}40\,\mathrm{m}$
 - $2{,}5\,\mathrm{m}$

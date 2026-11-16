@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: linearna
 avtor: AI
 ---
@@ -46,6 +46,21 @@ točka: 3; 11 | (3, 11) | desno
 - $k < 0$: funkcija je **padajoča** (premica gre navzdol).
 - $k = 0$: funkcija je **konstantna** $y = n$, premica je vodoravna.
 - Večja ko je $|k|$, strmejša je premica.
+
+Na sliki je $k = 1$ in $n = 2$; v aplikaciji ju lahko spreminjaš z drsnikoma pod sliko. Črtkana stopnica kaže smerni koeficient: ko greš od točke $(0, n)$ za $1$ v desno, se premica dvigne za $k$ (pri negativnem $k$ se spusti).
+
+:::risba graf
+opis: Graf premice y = kx + n v koordinatnem sistemu od −6 do 6 na obeh oseh. V aplikaciji se z drsnikoma spreminjata smerni koeficient k od −3 do 3 in začetna vrednost n od −3 do 3. Izbrano je k = {k} in n = {n}: premica seka os y v točki (0, {n}), črtkana stopnica gre od te točke za 1 v desno in nato za k do premice.
+x: -6 .. 6
+y: -6 .. 6
+enako: da
+drsnik: k | -3 .. 3 | 0,5 | 1 | smerni koeficient k
+drsnik: n | -3 .. 3 | 1 | 2 | začetna vrednost n
+f: k*x + n
+črta: 0; n -> 1; n -> 1; k + n | oranžna črtkano
+točka: 0; n | (0, {n}) | levo | oranžna
+podnapis: y = kx + n pri k = {k} in n = {n}
+:::
 
 V simulaciji spodaj (»Graf funkcije y = kx + n«) pusti $n = 5$ in pomikaj $k$ od $2$ do $-2$. Opazi, da se premica vrti okoli točke $(0, 5)$ in da je pri $k = 0$ vodoravna.
 
@@ -100,7 +115,7 @@ $f(x) = kx + n$, presečišče z osjo $y$ je $(0, n)$; ničla: $f(x_0) = 0$
 
 ### Primer 2: funkcija iz dveh točk
 
-Premica poteka skozi točki $A(1, 5)$ in $B(4, -1)$. Zapiši enačbo funkcije.
+Premica poteka skozi točki $A(1, 5)$ in $B(4, -1)$. Zapiši enačbo funkcije in izračunaj njeno ničlo.
 
 **Podatki:** $A(1, 5)$, $B(4, -1)$
 **Iščemo:** enačbo $y = kx + n$ in ničlo $x_0$
@@ -160,6 +175,87 @@ Odštejemo $3$: $1{,}2x = 24$. Delimo z $1{,}2$: $x = 20$. Preizkus: $1{,}2 \cdo
 - Ničla: $x_0 = -\dfrac{n}{k}$ (za $k \ne 0$), presečišče z osjo $x$.
 - Vedno preveri z vstavljanjem v funkcijo.
 
+## Ponovitev
+
+**Formule**
+- $f(x) = kx + n$, začetna vrednost $n$: točka $(0, n)$ (na pamet)
+- $k = \frac{y_2 - y_1}{x_2 - x_1}$ (na pamet)
+- $k > 0$ narašča, $k < 0$ pada, $k = 0$ konstantna (na pamet)
+- Ničla: $x_0 = -\frac{n}{k}$, $k \ne 0$ (na pamet)
+
+**Postopek**
+1. Iz dveh točk izračunaj $k$.
+2. Vstavi eno točko v $y = kx + n$ in izračunaj $n$.
+3. Ničlo dobiš iz $f(x) = 0$.
+4. Nariši premico skozi $(0, n)$ in $(x_0, 0)$.
+5. Preveri z vstavljanjem obeh točk.
+
+**Pazi na**
+- $k$ je število ob $x$, $n$ prosti člen: pri $y = -4x + 1$ je $k = -4$.
+- Razlika $y$ je v števcu: $k = \frac{y_2 - y_1}{x_2 - x_1}$.
+- Ničla leži na osi $x$: postavi $f(x) = 0$, ne vzemi $n$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Dana je linearna funkcija $f(x) = -\dfrac{2}{3}x + 4$. Izračunajte ničlo funkcije in ploščino trikotnika, ki ga graf funkcije oklepa s koordinatnima osema.
+
+**Rešitev:**
+
+1. Ničla: $-\dfrac{2}{3}x + 4 = 0$, torej $\dfrac{2}{3}x = 4$ in $x_0 = 6$. Graf seka os $x$ v točki $(6, 0)$.
+2. Začetna vrednost je $n = 4$, zato graf seka os $y$ v točki $(0, 4)$.
+3. Trikotnik z oglišči $(0, 0)$, $(6, 0)$ in $(0, 4)$ je pravokoten, kateti merita $6$ in $4$: $P = \dfrac{6 \cdot 4}{2} = 12$.
+4. Odgovor: ničla je $x_0 = 6$, ploščina trikotnika je $12$ kvadratnih enot.
+
+**Točkovanje:** 1 točka za ničlo $x_0 = 6$, 1 točka za presečišče z osjo $y$ v $(0, 4)$, 1 točka za ploščino $12$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Avtomobil ima ob začetku vožnje v rezervoarju $48$ litrov goriva in porabi $6{,}4$ litra goriva na $100\,\text{km}$. Količina goriva $y$ v rezervoarju (v litrih) je linearna funkcija prevožene poti $x$ (v kilometrih).
+
+a) Zapišite predpis te funkcije in pojasnite, kaj pomeni njen smerni koeficient. (2 točki)
+b) Koliko goriva ostane v rezervoarju po $285\,\text{km}$ vožnje? Rezultat zaokrožite na desetinko litra. (1 točka)
+c) Opozorilna lučka zasveti, ko je v rezervoarju še $7$ litrov goriva. Po koliko kilometrih vožnje zasveti? Rezultat zaokrožite na cel kilometer. (2 točki)
+d) Izračunajte ničlo funkcije in pojasnite njen pomen. Zapišite, za katere vrednosti $x$ je model smiseln. (2 točki)
+
+**Rešitev:**
+
+1. a) Na vsak kilometer se količina goriva zmanjša za $\dfrac{6{,}4}{100} = 0{,}064$ litra, zato je $k = -0{,}064$. Začetna količina je $n = 48$.
+2. a) Predpis: $y = -0{,}064x + 48$. Smerni koeficient pove, da se količina goriva z vsakim prevoženim kilometrom zmanjša za $0{,}064$ litra.
+3. b) $y = -0{,}064 \cdot 285 + 48 = -18{,}24 + 48 = 29{,}76$, torej približno $29{,}8$ litra.
+4. c) $-0{,}064x + 48 = 7$, torej $0{,}064x = 41$ in $x = 640{,}625$.
+5. c) Lučka zasveti po približno $641\,\text{km}$ vožnje.
+6. d) $-0{,}064x + 48 = 0$, torej $x_0 = \dfrac{48}{0{,}064} = 750$. Po $750\,\text{km}$ je rezervoar prazen.
+7. d) Prevožena pot ni negativna, količina goriva pa tudi ne, zato je model smiseln za $0 \le x \le 750$.
+8. Odgovor: $y = -0{,}064x + 48$; po $285\,\text{km}$ ostane približno $29{,}8$ litra; lučka zasveti po približno $641\,\text{km}$; ničla $750$ pomeni prazen rezervoar, model velja za $x \in [0, 750]$.
+
+**Točkovanje:** a) 1 točka za predpis $y = -0{,}064x + 48$, 1 točka za pomen smernega koeficienta (poraba na kilometer); b) 1 točka za $29{,}8$ litra; c) 1 točka za enačbo $-0{,}064x + 48 = 7$, 1 točka za $641\,\text{km}$; d) 1 točka za ničlo $750$ z razlago, 1 točka za interval $[0, 750]$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Definiraj linearno funkcijo in pojasni pomen koeficientov $k$ in $n$ v njenem predpisu.
+---
+Linearna funkcija je funkcija s predpisom $f(x) = kx + n$, kjer sta $k$ in $n$ realni števili, njen graf pa je premica. Smerni koeficient $k$ pove, za koliko se vrednost funkcije spremeni, ko se $x$ poveča za $1$. Pri $k > 0$ funkcija narašča, pri $k < 0$ pada, pri $k = 0$ je konstantna. Začetna vrednost $n$ je vrednost funkcije pri $x = 0$, zato graf seka os $y$ v točki $(0, n)$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Dokaži, da je za poljubni točki grafa linearne funkcije z različnima abscisama količnik $\dfrac{y_2 - y_1}{x_2 - x_1}$ enak smernemu koeficientu.
+---
+Točki na grafu funkcije $f(x) = kx + n$ imata koordinati $(x_1, kx_1 + n)$ in $(x_2, kx_2 + n)$. Razlika ordinat je $(kx_2 + n) - (kx_1 + n) = k(x_2 - x_1)$, saj se $n$ odšteje. Ker je $x_2 \ne x_1$, smemo deliti z $x_2 - x_1$ in dobimo količnik $k$. Količnik je torej za vsak par točk enak, zato smerni koeficient izračunamo iz katerih koli dveh točk grafa.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kdaj ima linearna funkcija ničlo? Navedi primer linearne funkcije brez ničle in pojasni, zakaj je nima.
+---
+Ničla je rešitev enačbe $kx + n = 0$. Pri $k \ne 0$ ima funkcija natanko eno ničlo $x_0 = -\dfrac{n}{k}$, kjer graf seka os $x$. Pri $k = 0$ in $n \ne 0$ ničle ni: funkcija $f(x) = 3$ ima na primer povsod vrednost $3$, njen graf je vodoravna premica, vzporedna osi $x$. Pri $k = 0$ in $n = 0$ je vsako realno število ničla.
+:::
+
 ## Drugače: Na sliki
 
 V demonstraciji »Graf funkcije $y = kx + n$« zgoraj spreminjaj drsnika za $k$ in $n$ ter opazuj premico.
@@ -174,7 +270,7 @@ Simulacija spodaj (»Graf funkcije y = kx + n«) ti omogoča, da premice razisku
 
 ## Drugače: Iz vsakdanjega življenja
 
-Predstavljaj si, da imaš na prepaidni kartici $10\,\text{€}$ in vsak dan porabiš $2\,\text{€}$. Stanje po $x$ dneh je
+Predstavljaj si, da imaš na predplačniški kartici $10\,\text{€}$ in vsak dan porabiš $2\,\text{€}$. Stanje po $x$ dneh je
 
 $$y = -2x + 10.$$
 
@@ -204,7 +300,7 @@ Recept za risanje grafa in iskanje ničle pri $f(x) = -\tfrac{1}{2}x + 3$.
 
 ## Drugače: Bolj natančno
 
-**Zakaj je graf premica in zakaj $k$ ne zavisi od izbire točk?**
+**Zakaj je graf premica in zakaj $k$ ni odvisen od izbire točk?**
 
 Vzemimo dve poljubni točki na grafu: $A(x_1, kx_1 + n)$ in $B(x_2, kx_2 + n)$. Izračunajmo količnik sprememb:
 
@@ -216,24 +312,19 @@ Razmerje je za **vsak** par točk enako $k$. To je prav lastnost premice: konsta
 
 ## Preveri se
 
-? Katera je ničla funkcije $f(x) = 3x - 12$?
-- $x = -4$
-~ Napačen predznak: $-12$ na desni postane $+12$, zato $3x = 12$ in $x = 4$.
-+ $x = 4$
-- $x = -12$
-~ To je $n$, presečišče z osjo $y$, ne ničla. Ničla je pri $f(x) = 0$.
-- $x = 12$
-~ Pozabil si deliti s $3$: iz $3x = 12$ sledi $x = 4$.
+? (brez računala) Izračunaj ničlo funkcije $f(x) = 3x - 12$. Vpiši vrednost $x$.
+= 4 | 0,01
+~ -4 | Napačen predznak: $-12$ na desni postane $+12$, zato $3x = 12$ in $x = 4$.
+~ -12 | To je $n$, presečišče z osjo $y$, ne ničla. Ničla je pri $f(x) = 0$.
+~ 12 | Pozabil si deliti s $3$: iz $3x = 12$ sledi $x = 4$.
 > Rešimo $3x - 12 = 0$, torej $3x = 12$ in $x = 4$. Vrednost $-12$ je presečišče z osjo $y$ ($f(0) = -12$), ne ničla.
 
-? Premica poteka skozi točki $(2, 1)$ in $(5, 7)$. Kolikšen je smerni koeficient?
-- $k = \dfrac{1}{2}$
-~ Obrnjen ulomek: razlika $x$ ne sodi v števec. $k = \dfrac{y_2 - y_1}{x_2 - x_1}$.
-- $k = 3$
-~ To je samo razlika $x$ ($5 - 2$). Spremembo $y$ moraš deliti z njo.
-+ $k = 2$
-- $k = -2$
-~ Razliki si odštel v različnem vrstnem redu. Ko $x$ raste, raste tudi $y$, zato je $k > 0$.
+? (brez računala) Premica poteka skozi točki $(2, 1)$ in $(5, 7)$. Kolikšen je smerni koeficient $k$?
+= 2 | 0,01
+~ 0,5 | Obrnjen ulomek: razlika $x$ ne sodi v števec. $k = \dfrac{y_2 - y_1}{x_2 - x_1}$.
+~ 3 | To je samo razlika $x$ ($5 - 2$). Spremembo $y$ moraš deliti z njo.
+~ 6 | To je samo razlika $y$ ($7 - 1$). Deliti jo moraš še z razliko $x$.
+~ -2 | Razliki si odštel v različnem vrstnem redu. Ko $x$ raste, raste tudi $y$, zato je $k > 0$.
 > $k = \dfrac{7 - 1}{5 - 2} = \dfrac{6}{3} = 2$. Odgovor $\dfrac12$ je obrnjen ulomek, $-2$ pa bi veljal za padajočo funkcijo.
 
 ? Katera tabela vrednosti pri $x = 0$; $1$; $2$ sodi k funkciji $y = -4x + 1$?
@@ -272,3 +363,15 @@ x_1, x_2 | abscisi dveh točk grafa | | | x₁ ≠ x₂
 y_1, y_2 | ordinati dveh točk grafa | | |
 x_0 | ničla funkcije | x_0 = -\frac{n}{k} | | k ≠ 0; graf seka os x v (x₀, 0)
 :::
+
+<<RACUN
+resi: -2/3*x+4=0 | x | 6
+vrednost: 6*4/2 | 12
+vrednost: 6.4/100 | 0.064
+vrednost: -0.064*285+48 | 29.76
+resi: -0.064*x+48=7 | x | 640.625
+resi: -0.064*x+48=0 | x | 750
+vrednost: 48/0.064 | 750
+resi: 3*x-12=0 | x | 4
+vrednost: (7-1)/(5-2) | 2
+>>

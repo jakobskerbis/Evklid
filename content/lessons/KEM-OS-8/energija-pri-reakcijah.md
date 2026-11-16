@@ -104,10 +104,10 @@ $E_\mathrm{sprosti} = E_\mathrm{n} - E_\mathrm{t}$, če je $E_\mathrm{n} > E_\ma
 
 ### Primer 3 (težji): list in srna
 
-Bukov list za vsak gram glukoze (sladkorja), ki ga naredi s fotosintezo, sprejme od sonca $15{,}6\,\mathrm{kJ}$ energije. Čez dan naredi $2{,}5\,\mathrm{g}$ glukoze. Koliko energije sprejme? Srna list poje. Pri dihanju v njenih celicah glukoza reagira s kisikom in nastaneta ogljikov dioksid in voda, torej obratno kot pri fotosintezi. Koliko gramov glukoze mora srna porabiti, da dobi $78\,\mathrm{kJ}$ energije?
+Listi na bukovi veji za vsak gram glukoze (sladkorja), ki ga naredijo s fotosintezo, sprejmejo od sonca $15{,}6\,\mathrm{kJ}$ energije. Čez dan naredijo $2{,}5\,\mathrm{g}$ glukoze. Koliko energije sprejmejo? Srna liste poje. Pri dihanju v njenih celicah glukoza reagira s kisikom in nastaneta ogljikov dioksid in voda, torej obratno kot pri fotosintezi. Koliko gramov glukoze mora srna porabiti, da dobi $78\,\mathrm{kJ}$ energije?
 
 **Podatki:** $15{,}6\,\mathrm{kJ}$ na $1\,\mathrm{g}$ glukoze, $m = 2{,}5\,\mathrm{g}$, energija za srno $78\,\mathrm{kJ}$, dihanje je obratna reakcija fotosinteze
-**Iščemo:** energijo $E$, ki jo sprejme list, in maso glukoze za $78\,\mathrm{kJ}$
+**Iščemo:** energijo $E$, ki jo sprejmejo listi, in maso glukoze za $78\,\mathrm{kJ}$
 
 :::formula
 $E = m \cdot 15{,}6\,\dfrac{\mathrm{kJ}}{\mathrm{g}}$, obratno $m = \dfrac{E}{15{,}6\,\mathrm{kJ/g}}$
@@ -115,10 +115,10 @@ $E = m \cdot 15{,}6\,\dfrac{\mathrm{kJ}}{\mathrm{g}}$, obratno $m = \dfrac{E}{15
 
 **Rešitev:**
 
-1. Energija, ki jo sprejme list: $E = 2{,}5\,\mathrm{g} \cdot 15{,}6\,\mathrm{kJ/g} = 39\,\mathrm{kJ}$. Fotosinteza je endotermna, energija je zdaj shranjena v glukozi.
+1. Energija, ki jo sprejmejo listi: $E = 2{,}5\,\mathrm{g} \cdot 15{,}6\,\mathrm{kJ/g} = 39\,\mathrm{kJ}$. Fotosinteza je endotermna, energija je zdaj shranjena v glukozi.
 2. Obratna reakcija ima obraten tok energije: kar fotosinteza sprejme, dihanje sprosti. Zato dihanje sprosti $15{,}6\,\mathrm{kJ}$ na gram in je eksotermno.
 3. Masa za $78\,\mathrm{kJ}$: $m = \dfrac{78\,\mathrm{kJ}}{15{,}6\,\mathrm{kJ/g}} = 5\,\mathrm{g}$.
-4. Odgovor: list sprejme $39\,\mathrm{kJ}$. Srna mora za $78\,\mathrm{kJ}$ porabiti $5\,\mathrm{g}$ glukoze, torej toliko, kot sta jo čez dan naredila dva taka lista.
+4. Odgovor: listi sprejmejo $39\,\mathrm{kJ}$. Srna mora za $78\,\mathrm{kJ}$ porabiti $5\,\mathrm{g}$ glukoze, torej toliko, kot so jo čez dan naredili listi dveh takih vej.
 
 ### Primer 4: zdaj ti – strela v nevihti
 
@@ -234,6 +234,6 @@ E_\mathrm{t} | energija, porabljena za trganje vezi | | kJ
 E_\mathrm{n} | energija, sproščena ob nastanku vezi | | kJ
 E_\mathrm{sprosti} | energija, ki gre v okolico | E_\mathrm{sprosti} = E_\mathrm{n} - E_\mathrm{t} | kJ | eksotermna reakcija
 E_\mathrm{sprejme} | energija, ki jo reakcija vzame okolici | E_\mathrm{sprejme} = E_\mathrm{t} - E_\mathrm{n} | kJ | endotermna reakcija
-E | energija, ki jo sprejme list | E = m \cdot 15{,}6\,\mathrm{kJ/g} | kJ
+E | energija, ki jo sprejmejo listi | E = m \cdot 15{,}6\,\mathrm{kJ/g} | kJ
 m | masa glukoze | | g
 :::

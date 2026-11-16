@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Parcialni odvod
+  - $f_x = \frac{\partial f}{\partial x}$: druge spremenljivke so konstante
+  - primer: $f = x^2\sin y$, $f_x = 2x\sin y$
+  - Schwarz: zvezna mešana odvoda, $f_{xy} = f_{yx}$
+- Diferenciabilnost
+  - $f(a+h,b+k) = f + f_xh + f_yk + o(\sqrt{h^2+k^2})$
+  - zadostuje: $f_x$, $f_y$ zvezna
+  - pazi: obstoj $f_x$, $f_y$ ne zadošča
+- Tangentna ravnina
+  - $z = f(a,b) + f_x(x-a) + f_y(y-b)$
+- Totalni diferencial
+  - $\mathrm{d}f = f_x\,\mathrm{d}x + f_y\,\mathrm{d}y$
+  - največja napaka $\Delta f \le |f_x|\Delta x + |f_y|\Delta y$
+  - $f = Cx^my^n$: seštejejo se relativne napake, pomnožene z $|m|$, $|n|$
+- Gradient
+  - $\nabla f = (f_x, f_y)$, vektor
+  - smer najhitrejšega naraščanja, hitrost $|\nabla f|$
+  - pravokoten na nivojnico
+- Smerni odvod
+  - $\frac{\partial f}{\partial\vec u} = \nabla f\cdot\vec u$, $|\vec u| = 1$
+  - napaka: smer ni normirana
+- Verižno pravilo
+  - $\frac{\mathrm{d}z}{\mathrm{d}t} = f_x\dot x + f_y\dot y$
+  - plin: $\dot p = \frac{\partial p}{\partial T}\dot T + \frac{\partial p}{\partial V}\dot V$, enota $\mathrm{Pa/s}$
+- Implicitno odvajanje
+  - $y' = -\frac{F_x}{F_y}$, pogoj $F_y \neq 0$
