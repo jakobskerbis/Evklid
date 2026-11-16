@@ -31,6 +31,9 @@ export const RETENTION = {
   // j 2026-11-16: brez pogodbe 2 leti po zadnjem stiku, sklenjeno 10 let (računovodska listina).
   schoolOrderOpenDays: 730,
   schoolOrderWonDays: 3653,
+  // Soglasje plačnika ob nakupu (billing_consents, z e-naslovom plačnika) po izbrisu računa: dokaz soglasja.
+  // j 2026-11-16: 5 let po nakupu (splošni zastaralni rok, OZ 346).
+  billingConsentDays: 1826,
   // Potekle seje in odklepi profilov se izbrišejo takoj (niso več veljavni).
 };
 
@@ -189,6 +192,10 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
     const won = "(status = 'won' OR school_id IS NOT NULL)";
     const del = (cond, d) => (d ? Number(db.prepare(`DELETE FROM school_orders WHERE ${cond} AND updated_at < ?`).run(ago(d)).changes) : 0);
     out.schoolOrders = del(`NOT ${won}`, RETENTION.schoolOrderOpenDays) + del(won, RETENTION.schoolOrderWonDays);
+  }
+  if (RETENTION.billingConsentDays && hasTable(db, "billing_consents")) {
+    // Samo soglasja izbrisanih računov (parent_id NULL); pri obstoječem računu ostanejo, dokler je račun.
+    out.billingConsents = Number(db.prepare("DELETE FROM billing_consents WHERE parent_id IS NULL AND created_at < ?").run(ago(RETENTION.billingConsentDays)).changes);
   }
   ensureAuditTable(db);
   out.audit = Number(db.prepare("DELETE FROM audit_log WHERE at < ?").run(ago(RETENTION.auditDays)).changes);
