@@ -1374,6 +1374,7 @@
   },
   "credit.paid": "Ödeme başarılı. Ek sohbetler eklendi.",
   "credit.pending": "Ödemeyi hâlâ kontrol ediyoruz. Sohbetler, banka onayladığında eklenir.",
+  "credit.payTotal": "Toplam {price} ile devam et",
   "nav.games": "Oyunlar",
   "games.meSub": "Oynayarak öğrenme",
   "games.intro": "Oyna ve öğren: matematik, fizik, kimya, biyoloji ve daha fazlası için {n} oyun. Zorluk sana göre ayarlanır.",
@@ -4191,5 +4192,11 @@
   "ginv.joinTitle": "Evklid'e davet edildin",
   "ginv.joinIntro": "Evklid'i e-posta adresi olmadan, ücretsiz planla kullanabilirsin. İlerlemen yalnızca bu cihazda kalır; istediğin zaman hesap oluşturabilirsin.",
   "ginv.start": "E-postasız başla",
-  "ginv.invalid": "Bu davet artık geçerli değil (süresi doldu ya da kullanıldı). Bir hesap oluştur veya yeni bir bağlantı iste."
+  "ginv.invalid": "Bu davet artık geçerli değil (süresi doldu ya da kullanıldı). Bir hesap oluştur veya yeni bir bağlantı iste.",
+  "povabi.title": "Evklid'i bir arkadaşına göster",
+  "povabi.text": "Evklid sana yardımcı oluyorsa, bağlantıyı ders çalışan bir arkadaşına gönder.",
+  "povabi.reward": "Davet ettiğin aile abone olup ilk kez ödeme yaptığında, iki aile de bir ay ücretsiz kullanır.",
+  "povabi.later": "Şimdi değil",
+  "povabi.link": "Arkadaş için bağlantı",
+  "povabi.shareText": "Evklid ile öğreniyorum. Sen de dene:"
 }

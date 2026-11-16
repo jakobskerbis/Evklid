@@ -1,7 +1,8 @@
-node_modules/
+node_modules
 data/
 .env
 sim-results/
 .pylib/
 __pycache__/
 .ikone-drevo/
+.meritev/

@@ -4,6 +4,7 @@ import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, blindIndex, warn
 import { normCard } from "./flashcards.js";
 import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
 import { PHOTO_MAX_DAYS, dropFormerPhotos } from "./pilot-naloge.js";
+import { pocistiStare } from "./kopije.js";
 
 // Šifrirani stolpci (SEALED) in štetje neberljivih (encryptionStats) sta v crypto-polje.js: rabi ju tudi lahka nit
 // za nočni preizkus kopij (server/kopije-preizkus.js), ki ne sme naložiti tega modula in vsega, kar ta uvaža.
@@ -24,6 +25,8 @@ export const RETENTION = {
   unverifiedDays: 30,
   // Odpiranje delov aplikacije (točka B2, server/odpiranje-delov.js MAX_DNI): po toliko dneh brez odprtja.
   odpiranjeDni: 120,
+  // Predpomnjeni odgovori inštruktorja se uporabijo 30 dni (app.js), nato izbrišejo (docs/izbris-izvoz.md, najdba 4).
+  answerCacheDays: 30,
   // Potekle seje in odklepi profilov se izbrišejo takoj (niso več veljavni).
 };
 
@@ -169,6 +172,14 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
     out.pushLog = Number(db.prepare("DELETE FROM push_log WHERE period GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*' AND substr(period, 1, 10) < ?").run(ago(RETENTION.pushLogDays).slice(0, 10)).changes);
   }
   if (hasTable(db, "odpiranje_delov")) out.odpiranje = Number(db.prepare("DELETE FROM odpiranje_delov WHERE zadnji < ?").run(ago(RETENTION.odpiranjeDni).slice(0, 10)).changes);
+  if (hasTable(db, "answer_cache")) out.answerCache = Number(db.prepare("DELETE FROM answer_cache WHERE created_at < ?").run(ago(RETENTION.answerCacheDays)).changes);
+  // Rok hrambe varnostnih kopij na disku tudi z EVKLID_BACKUPS=0 (ko ne teče dnevna kopija): docs/izbris-izvoz.md.
+  try {
+    const file = db.prepare("PRAGMA database_list").all().find((r) => r.name === "main")?.file;
+    if (file) out.backups = pocistiStare(file, new Date(now));
+  } catch (e) {
+    log.error?.(`[evklid] čiščenje starih varnostnih kopij: ${e.message}`);
+  }
   ensureAuditTable(db);
   out.audit = Number(db.prepare("DELETE FROM audit_log WHERE at < ?").run(ago(RETENTION.auditDays)).changes);
   out.unverified = deleteStaleUnverified(db, { nowIso, before: ago(RETENTION.unverifiedDays) });

@@ -205,6 +205,7 @@ export default {
   "credit.est": { one: "približno {n} pogovor z inštruktorjem", two: "približno {n} pogovora z inštruktorjem", few: "približno {n} pogovori z inštruktorjem", other: "približno {n} pogovorov z inštruktorjem" },
   "credit.paid": "Plačilo je uspelo. Dodatni pogovori so pripisani.",
   "credit.pending": "Plačilo še preverjamo. Pogovori se pripišejo, ko banka potrdi plačilo.",
+  "credit.payTotal": "Nadaljuj za skupaj {price}",
   // kartice za ponavljanje (public/flashcards.js)
   "mode.cards": "Kartice",
   "mode.cardsSub": "Pomembna dejstva",
@@ -4190,4 +4191,11 @@ export default {
   "ginv.joinIntro": "Evklid lahko uporabljaš brez e-naslova, z brezplačnim paketom. Napredek ostane samo na tej napravi; račun lahko ustvariš kadar koli.",
   "ginv.start": "Začni brez e-naslova",
   "ginv.invalid": "Povabilo ne velja več (poteklo je ali je porabljeno). Ustvari račun ali prosi za novo povezavo.",
+  // povabilo po uspehu (public/povabi.js)
+  "povabi.title": "Pokaži Evklida prijatelju",
+  "povabi.text": "Če ti Evklid pomaga, pošlji povezavo prijatelju, ki se tudi uči.",
+  "povabi.reward": "Ko se družina, ki jo povabiš, naroči in prvič plača, obe družini dobita en mesec brezplačno.",
+  "povabi.later": "Ne zdaj",
+  "povabi.link": "Povezava za prijatelja",
+  "povabi.shareText": "Učim se z Evklidom. Poskusi še ti:",
 };

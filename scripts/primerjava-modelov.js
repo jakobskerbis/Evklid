@@ -289,8 +289,8 @@ const REAL_CAP = process.argv.includes("--resnicna-meja");
 // Samodejna meritev po objavi (--izid-json) ima svoj napredek, da ne pobriše ročne ponovitve, ki morda teče hkrati.
 const IZID_RAW = arg("izid-json", "");
 const PROGRESS = IZID_RAW ? `${path.resolve(root, IZID_RAW)}.napredek.json` : path.join(root, "data", SAMO.length ? "natancnost-ponovitve.json" : "natancnost-napredek.json");
-// Tedenska knjiga stroška vseh meritev (server/meritev-po-objavi.js): samodejna meritev se ne zažene, če bi skupaj z
-// ročnimi presegla 15 $ na teden. Vsak plačan odgovor se vpiše sproti, zato šteje tudi prekinjen zagon.
+// Tedenska knjiga stroška meritev v mapi baze (server/meritev-po-objavi.js): samodejna meritev se ne zažene, če bi
+// s porabo te knjige presegla 15 $ na teden (v GitHubu so v knjigi le samodejne meritve). Vsak plačan odgovor se vpiše sproti, zato šteje tudi prekinjen zagon.
 const knjiga = (usd) => {
   try {
     vpisiVKnjigo(knjigaFile(), usd, { vir: IZID_RAW ? "po-objavi" : "ročno" });

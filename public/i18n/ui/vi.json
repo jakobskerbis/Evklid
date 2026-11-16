@@ -1367,6 +1367,7 @@
   },
   "credit.paid": "Thanh toán thành công. Đã cộng thêm cuộc trò chuyện.",
   "credit.pending": "Chúng tôi vẫn đang kiểm tra thanh toán. Cuộc trò chuyện sẽ được cộng khi ngân hàng xác nhận.",
+  "credit.payTotal": "Tiếp tục với tổng cộng {price}",
   "nav.games": "Trò chơi",
   "games.meSub": "Học qua trò chơi",
   "games.intro": "Chơi và học: {n} trò chơi về toán, vật lý, hóa học, sinh học và nhiều môn khác. Độ khó tự điều chỉnh theo bạn.",
@@ -4165,5 +4166,11 @@
   "ginv.joinTitle": "Bạn được mời dùng Evklid",
   "ginv.joinIntro": "Bạn có thể dùng Evklid không cần địa chỉ email, với gói miễn phí. Tiến độ chỉ lưu trên thiết bị này; bạn có thể tạo tài khoản bất cứ lúc nào.",
   "ginv.start": "Bắt đầu không cần email",
-  "ginv.invalid": "Lời mời này không còn hiệu lực (đã hết hạn hoặc đã dùng hết). Hãy tạo tài khoản hoặc xin liên kết mới."
+  "ginv.invalid": "Lời mời này không còn hiệu lực (đã hết hạn hoặc đã dùng hết). Hãy tạo tài khoản hoặc xin liên kết mới.",
+  "povabi.title": "Giới thiệu Evklid cho bạn bè",
+  "povabi.text": "Nếu Evklid giúp được bạn, hãy gửi đường liên kết cho một người bạn cũng đang học.",
+  "povabi.reward": "Khi gia đình mà bạn mời đăng ký và thanh toán lần đầu, cả hai gia đình đều được miễn phí một tháng.",
+  "povabi.later": "Để sau",
+  "povabi.link": "Liên kết cho bạn bè",
+  "povabi.shareText": "Mình đang học với Evklid. Bạn thử xem nhé:"
 }

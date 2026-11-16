@@ -1374,6 +1374,7 @@
   },
   "credit.paid": "Sikeres fizetés. Az extra beszélgetéseket jóváírtuk.",
   "credit.pending": "Még ellenőrizzük a fizetést. A beszélgetéseket a banki megerősítés után írjuk jóvá.",
+  "credit.payTotal": "Tovább, összesen {price}",
   "nav.games": "Játékok",
   "games.meSub": "Tanulás játékkal",
   "games.intro": "Játssz és tanulj: {n} játék matekból, fizikából, kémiából, biológiából és más tárgyakból. A nehézség hozzád igazodik.",
@@ -4191,5 +4192,11 @@
   "ginv.joinTitle": "Meghívtak az Evklidbe",
   "ginv.joinIntro": "Az Evklidet e-mail-cím nélkül, az ingyenes csomaggal használhatod. A haladásod csak ezen az eszközön marad; fiókot bármikor létrehozhatsz.",
   "ginv.start": "Kezdés e-mail nélkül",
-  "ginv.invalid": "Ez a meghívó már nem érvényes (lejárt vagy elfogyott). Hozz létre fiókot, vagy kérj új linket."
+  "ginv.invalid": "Ez a meghívó már nem érvényes (lejárt vagy elfogyott). Hozz létre fiókot, vagy kérj új linket.",
+  "povabi.title": "Mutasd meg az Evklidet egy barátodnak",
+  "povabi.text": "Ha az Evklid segít neked, küldd el a linket egy barátodnak, aki szintén tanul.",
+  "povabi.reward": "Amikor egy általad meghívott család előfizet és először fizet, mindkét család egy hónapot ingyen kap.",
+  "povabi.later": "Most nem",
+  "povabi.link": "Link egy barátnak",
+  "povabi.shareText": "Az Evkliddel tanulok. Próbáld ki te is:"
 }

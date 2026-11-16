@@ -1394,6 +1394,7 @@
   },
   "credit.paid": "Płatność udana. Dodatkowe rozmowy zostały dodane.",
   "credit.pending": "Wciąż sprawdzamy płatność. Rozmowy zostaną dodane, gdy bank ją potwierdzi.",
+  "credit.payTotal": "Przejdź dalej za łącznie {price}",
   "nav.games": "Gry",
   "games.meSub": "Nauka przez zabawę",
   "games.intro": "Graj i ucz się: {n} gier z matematyki, fizyki, chemii, biologii i innych przedmiotów. Poziom dopasowuje się do ciebie.",
@@ -4261,5 +4262,11 @@
   "ginv.joinTitle": "Masz zaproszenie do Evklid",
   "ginv.joinIntro": "Możesz korzystać z Evklid bez adresu e-mail, w darmowym planie. Postępy zostają tylko na tym urządzeniu; konto możesz założyć w każdej chwili.",
   "ginv.start": "Zacznij bez e-maila",
-  "ginv.invalid": "To zaproszenie jest już nieważne (wygasło lub zostało wykorzystane). Załóż konto lub poproś o nowy link."
+  "ginv.invalid": "To zaproszenie jest już nieważne (wygasło lub zostało wykorzystane). Załóż konto lub poproś o nowy link.",
+  "povabi.title": "Pokaż Evklid znajomemu",
+  "povabi.text": "Jeśli Evklid ci pomaga, wyślij link znajomemu, który też się uczy.",
+  "povabi.reward": "Gdy rodzina, którą zaprosisz, wykupi subskrypcję i zapłaci po raz pierwszy, obie rodziny dostaną miesiąc za darmo.",
+  "povabi.later": "Nie teraz",
+  "povabi.link": "Link dla znajomego",
+  "povabi.shareText": "Uczę się z Evklidem. Spróbuj też:"
 }

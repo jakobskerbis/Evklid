@@ -1384,6 +1384,7 @@
   },
   "credit.paid": "Plaćanje je uspjelo. Dodatni razgovori su pripisani.",
   "credit.pending": "Plaćanje još provjeravamo. Razgovori se pripisuju kad banka potvrdi plaćanje.",
+  "credit.payTotal": "Nastavi za ukupno {price}",
   "nav.games": "Igre",
   "games.meSub": "Učenje kroz igru",
   "games.intro": "Igraj i uči: {n} igara iz matematike, fizike, hemije, biologije i drugih predmeta. Težina se prilagođava tebi.",
@@ -4225,5 +4226,11 @@
   "ginv.joinTitle": "Pozvan(a) si u Evklid",
   "ginv.joinIntro": "Evklid možeš koristiti bez e-mail adrese, s besplatnim paketom. Napredak ostaje samo na ovom uređaju; račun možeš napraviti bilo kada.",
   "ginv.start": "Počni bez e-maila",
-  "ginv.invalid": "Pozivnica više ne važi (istekla je ili je iskorištena). Napravi račun ili zatraži novi link."
+  "ginv.invalid": "Pozivnica više ne važi (istekla je ili je iskorištena). Napravi račun ili zatraži novi link.",
+  "povabi.title": "Pokaži Evklid prijatelju",
+  "povabi.text": "Ako ti Evklid pomaže, pošalji link prijatelju koji također uči.",
+  "povabi.reward": "Kada se porodica koju pozoveš pretplati i prvi put plati, obje porodice dobiju jedan mjesec besplatno.",
+  "povabi.later": "Ne sada",
+  "povabi.link": "Link za prijatelja",
+  "povabi.shareText": "Učim uz Evklid. Probaj i ti:"
 }
