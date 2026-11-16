@@ -343,7 +343,7 @@ T tkivo(vec2 p, float px) {
   // resice: listaste, različno visoke (350–650 µm) in široke, proti vrhu tanjše, upognjene; med njimi ozke reže
   float S = 128.0;
   float k0 = floor(p.x / S);
-  float dv = 1e3, vk = 0.0, vlx = 0.0;
+  float dv = 1e3, vk = 0.0, vlx = 0.0, vt = 0.0, vh = 54.0;
   for (int i = -1; i <= 1; i++) {
     float k = k0 + float(i);
     vec4 h = h42(vec2(k, 4.0));
@@ -354,14 +354,22 @@ T tkivo(vec2 p, float px) {
     float hw = (54.0 + 12.0 * (h.w - 0.5)) * (1.0 - 0.18 * t + 0.08 * sin(t * 6.0 + h.x * 6.0));
     float tip = yb + Hv - hw;
     float dd = p.y < tip ? abs(lx) - hw : length(vec2(lx, p.y - tip)) - hw;
-    if (dd < dv) { dv = dd; vk = k; vlx = lx; }
+    if (dd < dv) { dv = dd; vk = k; vlx = lx; vt = tip; vh = hw; }
   }
   dv -= 0.9 * max(0.0, yb + 26.0 - p.y);       // reža med resicama se navzdol zoži v ustje kripte
   {
     if (p.y > yb) {
       if (dv > 0.0) return prazno();
       if (dv > -30.0) {
-        T e = crevniEpitel(-dv, 30.0, p.y + 2000.0 * sign(vlx) + 500.0 * vk, vec2(-sign(vlx), 0.0), vec2(0.0, 1.0), 0.14, 0.0, vk + (vlx > 0.0 ? 0.5 : 0.0), p, px);
+        // ob strani resice so celice vodoravno zložene (lega vzdolž epitelija = višina); na zaobljenem vrhu radialno
+        // (lega = lok na polovici višine celic), sicer bi bil sistem celice ob vrhu izrojen (TEM: pasovi)
+        float sk = p.y; vec2 os = vec2(-sign(vlx), 0.0), tv = vec2(0.0, 1.0);
+        if (p.y > vt) {
+          vec2 n = normalize(vec2(vlx, p.y - vt) + vec2(0.0, 1e-4));
+          sk = vt + (1.5708 - atan(abs(vlx), p.y - vt)) * max(vh - 15.0, 10.0);
+          os = -n; tv = vlx > 0.0 ? vec2(-n.y, n.x) : vec2(n.y, -n.x);
+        }
+        T e = crevniEpitel(-dv, 30.0, sk + 2000.0 * sign(vlx) + 500.0 * vk, os, tv, 0.14, 0.0, vk + (vlx > 0.0 ? 0.5 : 0.0), p, px);
         if (e.snov != S_SLUZ && -dv < 1.6) e.dye = mix(e.dye, vec3(0.04, 0.6, 0.0), 0.7 * (1.0 - smoothstep(0.6, 1.6, -dv)));   // ščetkasti rob
         return e;
       }

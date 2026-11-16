@@ -100,7 +100,7 @@ T tkivo(vec2 p, float px) {
     T e = epitel(H - d, sk, H, 8.0, 0.4, C_ZLEZNA, v.id, w, -nv, px);
     vec2 pv = vec2(nv.y, -nv.x);
     vec2 jo = e.jc - e.cc;
-    float ac = (sk - dot(w - e.cc, pv)) / 50.0;
+    float ac = (e.cid.x - v.id.x + 0.5) * 8.0 / 50.0;    // kot sredine celice (epitel: cid = (i, 0) + v.id, širina 8)
     vec2 u = vec2(cos(ac), sin(ac));
     float xu = u.x * pv.y - u.y * pv.x;
     vec2 mq = qf + nv * (d - 0.5 * H);                     // točka na sredini višine celice (zvita ravnina, glede na folikel)
