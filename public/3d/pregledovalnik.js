@@ -1021,6 +1021,7 @@ export function odpriModel(el, mod, opts = {}) {
       naloziGLB: (pot, napredek) => import("./organ.js").then((m) => m.naloziGLB(new URL(pot, new URL("./modeli/", import.meta.url)).href, napredek)),
       organ: (ime) => import("./organ.js").then((m) => m.zgradiOrgan(ime, ctx)),
       napredek: (d) => nalaganje(d),
+      narisi: () => !unicen && kit.narisi(), // model zahteva novo sličico (npr. ko se teksture reza naložijo po prvem prerezu)
     };
     let r;
     try {

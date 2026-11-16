@@ -1,6 +1,7 @@
 // Delež stene za pokrov reza (docs/3d.md »Cut surface in any plane«): iz KONČNE mreže organa izračuna, kolikšen del
 // vsakega voksla leži v polnem tkivu, in ga zapiše kot sliko rezin ob GLB (R = stena: tkiva z `rezVolumen`, G = druga
-// polna telesa s pokrovom reza, npr. venčne žile v maščobi žleba, B prazen; <organ>-stena.png, telefon
+// polna telesa s pokrovom reza, npr. venčne žile v maščobi žleba (delež); R je predznačena razdalja do ploskve, glej
+// razdaljaStene; B = delež notranjih delov stene v votlinah; <organ>-stena.png, telefon
 // <organ>-stena-telefon.png, ker ima telefon svojo mrežo). organ.js (materialPokrova, vol.stena) z njo odloči, kje je
 // pokrov reza na globini ravnine. Prej je to odločala prostorska tekstura CT (dolžina vektorja vlaken), ki se z mrežo
 // ne ujema povsod (endokard, premaknjen v votlino, relief maščobe in trabekul): rob reza je bil stopničast, ob njem
@@ -115,6 +116,88 @@ export function delezStene(tri, { lo, korak, n }) {
   return { delez, zadetkov: st, negativnih };
 }
 
+// Predznačena razdalja do ploskve (j 16. 11.: »prerez ima nazobčan, valovit rob«). Delež voksla je ob ploskvi nasičen
+// že v enem vokslu, zato je bila izoploskev 0,5 po trilinearni interpolaciji v ravnini, ki ni poravnana z mrežo,
+// valovita (≈ 0,3 mm pri vokslu 1 mm, na zaslonu 1–2 piki). Razdalja je ob gladki ploskvi linearna, zato jo
+// interpolacija ohrani: rob pokrova je gladek pri isti velikosti slike. Zapis: 0,5 + razdalja / (2 · PAS), znotraj
+// tkiva > 0,5 (prag v organ.js ostane 0,5).
+export const PAS = 0.002; // m: razdalje se odrežejo pri ±PAS
+
+// Kvadrat razdalje točke p do trikotnika (a, b, c) (Ericson, Real-Time Collision Detection, 5.1.5).
+function razdalja2(px, py, pz, t, o) {
+  const ax = t[o], ay = t[o + 1], az = t[o + 2], abx = t[o + 3] - ax, aby = t[o + 4] - ay, abz = t[o + 5] - az, acx = t[o + 6] - ax, acy = t[o + 7] - ay, acz = t[o + 8] - az;
+  const apx = px - ax, apy = py - ay, apz = pz - az;
+  const d1 = abx * apx + aby * apy + abz * apz, d2 = acx * apx + acy * apy + acz * apz;
+  let u, w; // najbližja točka = a + u·ab + w·ac
+  if (d1 <= 0 && d2 <= 0) { u = 0; w = 0; }
+  else {
+    const bpx = apx - abx, bpy = apy - aby, bpz = apz - abz;
+    const d3 = abx * bpx + aby * bpy + abz * bpz, d4 = acx * bpx + acy * bpy + acz * bpz;
+    if (d3 >= 0 && d4 <= d3) { u = 1; w = 0; }
+    else {
+      const vc = d1 * d4 - d3 * d2;
+      if (vc <= 0 && d1 >= 0 && d3 <= 0) { u = d1 / (d1 - d3); w = 0; }
+      else {
+        const cpx = apx - acx, cpy = apy - acy, cpz = apz - acz;
+        const d5 = abx * cpx + aby * cpy + abz * cpz, d6 = acx * cpx + acy * cpy + acz * cpz;
+        if (d6 >= 0 && d5 <= d6) { u = 0; w = 1; }
+        else {
+          const vb = d5 * d2 - d1 * d6;
+          if (vb <= 0 && d2 >= 0 && d6 <= 0) { u = 0; w = d2 / (d2 - d6); }
+          else {
+            const va = d3 * d6 - d5 * d4;
+            if (va <= 0 && d4 - d3 >= 0 && d5 - d6 >= 0) { w = (d4 - d3) / (d4 - d3 + (d5 - d6)); u = 1 - w; }
+            else { const den = 1 / (va + vb + vc); u = vb * den; w = vc * den; }
+          }
+        }
+      }
+    }
+  }
+  const dx = apx - u * abx - w * acx, dy = apy - u * aby - w * acy, dz = apz - u * abz - w * acz;
+  return dx * dx + dy * dy + dz * dz;
+}
+
+// Predznačena razdalja središč vokslov do ploskve trikotnikov, odrezana pri ±PAS, zapisana kot 0,5 + d / (2 · PAS).
+// Predznak iz deleža voksla (16 žarkov z navitjem): en sam žarek skozi središče ob zgrešenem zadetku na robu trikotnika
+// obrne predznak vsej vrstici (črta lukenj v pokrovu).
+export function razdaljaStene(tri, mreza, delez = delezStene(tri, mreza).delez) {
+  const { lo, korak, n } = mreza;
+  const C = PAS * 1.001; // celica razpršilne mreže ≥ PAS: dovolj je 27 sosednjih celic
+  const m = n.map((x) => Math.ceil((x * korak) / C) + 1);
+  const celice = new Map();
+  for (let t = 0; t < tri.length; t += 9) {
+    const od = [0, 0, 0], dok = [0, 0, 0];
+    for (let c = 0; c < 3; c++) {
+      od[c] = Math.max(0, Math.floor((Math.min(tri[t + c], tri[t + 3 + c], tri[t + 6 + c]) - lo[c]) / C));
+      dok[c] = Math.min(m[c] - 1, Math.floor((Math.max(tri[t + c], tri[t + 3 + c], tri[t + 6 + c]) - lo[c]) / C));
+    }
+    for (let z = od[2]; z <= dok[2]; z++) for (let y = od[1]; y <= dok[1]; y++) for (let x = od[0]; x <= dok[0]; x++) {
+      const k = (z * m[1] + y) * m[0] + x;
+      let s = celice.get(k);
+      if (!s) celice.set(k, (s = []));
+      s.push(t);
+    }
+  }
+  const out = new Float32Array(n[0] * n[1] * n[2]);
+  const P2 = PAS * PAS;
+  for (let k = 0; k < n[2]; k++) for (let j = 0; j < n[1]; j++) for (let i = 0; i < n[0]; i++) {
+    const px = lo[0] + (i + 0.5) * korak, py = lo[1] + (j + 0.5) * korak, pz = lo[2] + (k + 0.5) * korak;
+    const cx = Math.floor((px - lo[0]) / C), cy = Math.floor((py - lo[1]) / C), cz = Math.floor((pz - lo[2]) / C);
+    let d2 = P2;
+    for (let z = cz - 1; z <= cz + 1; z++) for (let y = cy - 1; y <= cy + 1; y++) for (let x = cx - 1; x <= cx + 1; x++) {
+      if (x < 0 || y < 0 || z < 0 || x >= m[0] || y >= m[1] || z >= m[2]) continue;
+      const s = celice.get((z * m[1] + y) * m[0] + x);
+      if (s) for (const t of s) { const d = razdalja2(px, py, pz, tri, t); if (d < d2) d2 = d; }
+    }
+    const q = (k * n[1] + j) * n[0] + i;
+    // 64 stopenj (korak 0,06 mm) namesto 256: slika je za četrtino manjša, rob ostane gladek; stopnje ne prečkajo praga
+    // 0,5 (127 → 126, 128 → 130)
+    const b = Math.round(255 * Math.min(1, Math.max(0, 0.5 + ((delez[q] > 0.5 ? 1 : -1) * Math.sqrt(d2)) / (2 * PAS))));
+    out[q] = (b > 0 && b < 255 ? (b >> 2) * 4 + 2 : b) / 255;
+  }
+  return out;
+}
+
 // Rezine z enim vokslom roba (kot <organ>-volumen.png): slika ploscice[0] × ploscice[1] ploščic velikosti (nx + 2) × (ny + 2).
 // kanali: [delež R, delež G] (Float32Array ali null).
 export function rezine(kanali, n) {
@@ -193,7 +276,9 @@ async function glavni() {
     }
     const r = delezStene(tri, mreza);
     const triB = brezMasce || votlo ? await trikotniki(path.join(MAPA, `${organ}${pripona}.glb`), jeBrezMasce) : [];
-    const s = rezine([r.delez, triDrugo.length ? delezStene(triDrugo, mreza).delez : null, triB.length ? delezStene(triB, mreza).delez : null], mreza.n);
+    // R: predznačena razdalja (gladek rob pokrova). G in B ostaneta delež: tanka žila, ki teče v ravnini reza, z deležem
+    // redko preseže 0,5 in jo pokrov stene prekrije; z razdaljo bi se v pokrovu odprla po vsej dolžini
+    const s = rezine([razdaljaStene(tri, mreza, r.delez), triDrugo.length ? delezStene(triDrugo, mreza).delez : null, triB.length ? delezStene(triB, mreza).delez : null], mreza.n);
     fs.writeFileSync(path.join(MAPA, meta[kljuc]), pngRGB(s.w, s.h, s.slika));
     mreza.ploscice = s.ploscice;
     let polnih = 0;

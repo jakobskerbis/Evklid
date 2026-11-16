@@ -1224,10 +1224,10 @@ export async function zgradiOrgan(ime, ctx = {}) {
     }
     // naslikane rezne ploskve: prenos šele ob prvem prerezu (celota jih ne potrebuje)
     if (rezi) {
-      for (const c of volCaka.splice(0)) new THREE.ImageLoader().load(`${BAZA}${c.pot}`, (img) => { c.tx.image = img; c.tx.needsUpdate = true; }, undefined, (e) => console.warn("organ: prostorska tekstura reza ni naložena", e));
+      for (const c of volCaka.splice(0)) new THREE.ImageLoader().load(`${BAZA}${c.pot}`, (img) => { c.tx.image = img; c.tx.needsUpdate = true; ctx.narisi?.(); }, undefined, (e) => console.warn("organ: prostorska tekstura reza ni naložena", e));
       for (const sl of slike) {
         if (sl.tex) continue;
-        sl.tex = new THREE.TextureLoader().load(`${BAZA}${sl.pot}`, (tx) => (sl.uniform.value = tx), undefined, (e) => console.warn("organ: slika reza ni naložena", e));
+        sl.tex = new THREE.TextureLoader().load(`${BAZA}${sl.pot}`, (tx) => { sl.uniform.value = tx; ctx.narisi?.(); }, undefined, (e) => console.warn("organ: slika reza ni naložena", e));
         sl.tex.colorSpace = THREE.SRGBColorSpace;
         sl.tex.flipY = false; // vrstica 0 slike = največji y ravnine (senčilnik bere 1 − y)
       }
