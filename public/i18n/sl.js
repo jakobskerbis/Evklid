@@ -2992,6 +2992,16 @@ export default {
   "block.hintParent": "Za več vprašanj naj starš izbere naročnino v zavihku Račun.",
   // Polnoleten učenec (18+, npr. študent): naročnino izbere sam (server/accounts/index.js moreHintCode).
   "block.hintAdult": "Za več vprašanj izberi naročnino v zavihku Račun.",
+  // Kartica ob porabljenih brezplačnih vprašanjih (public/meja-placilo.js).
+  "meja.label": "Brezplačna vprašanja so porabljena",
+  "meja.sub": "Z naročnino dobiš:",
+  "meja.price": "{price} na mesec",
+  "meja.more": "Več vprašanj za inštruktorja vsak dan in vsak mesec",
+  "meja.deep": "Podrobnejše razlage",
+  "meja.lessons": "Interaktivni deli lekcij v vseh temah tvoje stopnje",
+  "meja.btnParent": "Pošlji povezavo staršu",
+  "meja.btnAdult": "Izberi naročnino",
+  "meja.practice": "Vadi naprej v Vadnici",
   "school.planNote": "Nižja cena za profil s šolsko licenco: šola že plača šolske predmete, Osebno doda vse ostale predmete in ravni, več vprašanj inštruktorju in podrobnejše razlage.",
   "pay.linkLabel": "Povezava za plačilo",
   "payp.passNote": "Enkratno plačilo, brez naročnine. Paket se sam izteče.",
