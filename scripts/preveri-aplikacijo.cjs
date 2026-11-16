@@ -422,16 +422,30 @@ async function closeTour(p, how, timeout = 5000) {
   if (!(tv >= 1)) throw new Error(`vodič ni shranjen v profilu (tour_version ${tv})`);
 }
 
-// tour: kako zapreti vodič; stran: »drug pogled« = takoj po vprašalniku odpre Učbenik, vodič pa
-// mora počakati na vrnitev na Učno pot (ne sme se odpreti čez drug pogled).
-async function onboard(p, name, levelSteps, { interests = false, tour = "preskoci", away = false } = {}) {
+// Nov profil (j, 15. 11. 2026): po uvodu takoj Učna pot z »Začni trening«, brez vprašalnika zanimanj,
+// vodiča in kartice mnenja (ta pride od drugega dne). Vprašalnik in vodič pridejo po prvi rešeni nalogi (intro).
+async function onboard(p, name, levelSteps) {
   await expectVisible(p, "#onboard-form", "obrazec za nov profil", 10000);
   await p.fill('#onboard-form input[name="name"]', name);
   for (const val of levelSteps) await click(p, `#onboard-form .lp-opt[data-val="${val}"]`);
   await screen(p, `uvod-${name}`);
   await click(p, '#onboard-form button[type="submit"]', { wait: 300 });
-  // Vprašalnik kotička zanimanj (ob prvem zagonu profila).
-  await expectVisible(p, ".iq-wrap .iq", "vprašalnik zanimanj", 8000);
+  await expectVisible(p, "#view-path #xp-card .hero", "učna pot", 8000);
+  await settle(p, 1200);
+  if (await p.locator(".iq-wrap").count()) throw new Error("vprašalnik zanimanj pred prvo nalogo");
+  if (await p.locator("#tour").isVisible()) throw new Error("vodič pred prvo nalogo");
+  if (await p.locator("#feedback-card").isVisible()) throw new Error("kartica mnenja že prvi dan");
+  await screen(p, `pot-${name}`);
+}
+
+// Po prvi rešeni nalogi, ob prihodu na Učno pot: vprašalnik zanimanj, nato kratek vodič.
+// tour: kako zapreti vodič; away: takoj po vprašalniku odpre Učbenik, vodič pa mora počakati na
+// vrnitev na Učno pot (ne sme se odpreti čez drug pogled).
+async function intro(p, name, { interests = false, tour = "preskoci", away = false } = {}) {
+  await expectVisible(p, ".iq-wrap .iq", "vprašalnik zanimanj po prvi nalogi", 8000);
+  // Gumba vprašalnika sta vidna brez drsenja (noga prilepljena na dno okna).
+  const off = await p.evaluate(() => [...document.querySelectorAll(".iq-wrap .iq-actions button")].some((b) => { const r = b.getBoundingClientRect(); return r.bottom > innerHeight + 1 || r.top < 0; }));
+  if (off) throw new Error("gumba vprašalnika zanimanj nista vidna v oknu");
   await screen(p, `zanimanja-${name}`);
   if (interests) {
     await click(p, '.iq-wrap [data-int="space"]');
@@ -457,9 +471,11 @@ async function onboard(p, name, levelSteps, { interests = false, tour = "preskoc
     if (await p.locator("#tour").isVisible()) throw new Error("vodič se je odprl čez drug pogled");
     await tab(p, "path");
   }
+  await expectVisible(p, "#tour", "vodič po prvi nalogi", 5000);
+  const steps = (await p.locator("#tour .tour-step").innerText()).trim();
+  if (!/^1 \/ 3$/.test(steps)) throw new Error(`prvi vodič nima 3 korakov (${steps})`);
   await closeTour(p, tour);
   await expectVisible(p, "#view-path #xp-card .hero", "učna pot");
-  await screen(p, `pot-${name}`);
 }
 
 // Odgovor na nalogo prek vmesnika: izbira ali vpis.
@@ -1334,8 +1350,9 @@ async function desktop(browser, app) {
   const p = await newPage(browser, false, "pc", app.base);
   p.db = app.db;
   await p.goto(app.base + "/");
-  await step(p, "uvod-OS", () => onboard(p, "Ana", ["OSNOVNA_SOLA", "8. razred"], { interests: true, tour: "vse" }));
+  await step(p, "uvod-OS", () => onboard(p, "Ana", ["OSNOVNA_SOLA", "8. razred"]));
   await step(p, "naloga", () => practiceTopic(p, app.db));
+  await step(p, "zanimanja-vodic", () => intro(p, "Ana", { interests: true, tour: "vse" }));
   await step(p, "dnevni-trening", async () => {
     await click(p, "#xp-card [data-daily]", { wait: 400 });
     await expectVisible(p, "#practice .task, #practice .result, #practice p", "dnevni trening");
@@ -1392,15 +1409,23 @@ async function desktop(browser, app) {
   });
   // Drugi in tretji profil: »Dodaj profil« iz menija profila.
   for (const [name, levels, lbl, opts] of [
-    ["Bor", ["SREDNJA_SOLA", "2. letnik", "VR"], "SS", { tour: "esc", away: true }],
-    ["Cene", ["UNIVERZA", "UL", "UL-FMF", "UL-FMF-MAT", "1. letnik"], "UNI", { tour: "preskoci" }],
+    ["Bor", ["SREDNJA_SOLA", "2. letnik", "VR"], "SS", { intro: true, tour: "esc", away: true }],
+    ["Cene", ["UNIVERZA", "UL", "UL-FMF", "UL-FMF-MAT", "1. letnik"], "UNI", {}],
   ]) {
     await step(p, `nov-profil-${lbl}`, async () => {
       await click(p, "#profile-btn");
       await click(p, '#profile-pop [data-act="add"]', { wait: 300 });
       await p.fill('#new-student-form input[name="name"]', name);
       await click(p, '#new-student-form button[type="submit"]', { wait: 400 });
-      await onboard(p, name, levels, opts);
+      await onboard(p, name, levels);
+      // Prva rešena naloga brez klikanja skozi temo: oznaka v profilu (kot jo shrani odgovor), nato osvežitev.
+      if (opts.intro) {
+        await p.evaluate(async () => {
+          await fetch(`/api/students/${localStorage.getItem("studentId")}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings: { first_task: 1 } }) });
+        });
+        await p.reload();
+        await intro(p, name, opts);
+      }
     });
     await step(p, `pot-${lbl}`, async () => {
       await click(p, "#xp-card .next-row[data-open]", { wait: 300 });
@@ -1821,10 +1846,11 @@ async function accounts(browser, app) {
     await p.check('#child-form input[name="consent"]');
     await screen(p, "otrok");
     await click(p, '#child-form button[type="submit"]', { wait: 600 });
-    await expectVisible(p, ".iq-wrap .iq", "vprašalnik zanimanj otroka", 8000);
-    await click(p, ".iq-wrap [data-iq=skip]", { wait: 300 });
-    await closeTour(p, "preskoci");
-    await expectVisible(p, "#view-path #xp-card .hero", "učna pot otroka");
+    // Pred prvo nalogo ni vprašalnika zanimanj in vodiča (j, 15. 11. 2026).
+    await expectVisible(p, "#view-path #xp-card .hero", "učna pot otroka", 8000);
+    await settle(p, 1200);
+    if (await p.locator(".iq-wrap").count()) throw new Error("vprašalnik zanimanj otroka pred prvo nalogo");
+    if (await p.locator("#tour").isVisible()) throw new Error("vodič otroka pred prvo nalogo");
     await screen(p, "pot-otroka");
   });
   await step(p, "racun", async () => {

@@ -35,7 +35,7 @@ test("B2 splet: odprti deli aplikacije se zabeležijo enkrat na dan", opts, asyn
     await p.evaluate((id) => localStorage.setItem("studentId", String(id)), id);
     await p.goto(base + "/");
     await p.waitForSelector('.tab[data-view="chat"]', { state: "attached", timeout: 60000 });
-    await p.waitForSelector(".iq-wrap [data-iq=skip]", { timeout: 10000 }).then((b) => b.click()).catch(() => {});
+    await p.waitForSelector("#view-path #xp-card .hero", { timeout: 60000 }); // profil izbran, Učna pot izrisana (prej je to počakal vprašalnik zanimanj)
     const klik = (sel) => p.evaluate((sel) => document.querySelector(sel).click(), sel);
     const deli = () => store.db.prepare("SELECT del, dni FROM odpiranje_delov WHERE student_id = ? ORDER BY del").all(id).map((r) => `${r.del}:${r.dni}`);
     await klik('.tab[data-view="chat"]');

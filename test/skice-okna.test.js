@@ -45,7 +45,7 @@ async function odpriSkico(base, mode) {
   await p.evaluate((id) => localStorage.setItem("studentId", String(id)), id);
   await p.goto(base + "/");
   await p.waitForSelector('.topbar .tab[data-view="graph"]', { state: "attached", timeout: 60000 });
-  await p.waitForSelector(".iq-wrap [data-iq=skip]", { timeout: 15000 }).then((b) => b.click()).catch(() => {});
+  await p.waitForSelector("#view-path #xp-card .hero", { timeout: 60000 }); // profil izbran, Učna pot izrisana (prej je to počakal vprašalnik zanimanj)
   await p.evaluate(() => document.querySelector('.topbar .tab[data-view="graph"]').click());
   await p.waitForSelector('#view-graph [data-calc-mode="formulas"]', { state: "attached", timeout: 60000 });
   await p.evaluate(() => document.querySelector('#view-graph [data-calc-mode="formulas"]').click());

@@ -7,7 +7,7 @@ import { commandName, parseCommand } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
-import { pomanjsaj } from "../sirina.js";
+import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -512,6 +512,16 @@ export function createScientific(root, opts) {
       tex = caretTex(entry.base, input.selectionStart ?? text.length);
     } catch {}
     prev.innerHTML = tex ? entryHtml(tex) : "";
+    // dolg vnos se najprej malo pomanjša (do 80 %); šele nato se pomika, kazalec pa ostane viden
+    const k = prev.querySelector(".katex");
+    if (!k) return;
+    pomanjsaj(k, prev.clientWidth, () => prev.scrollWidth);
+    const c = prev.querySelector(".sc-caret");
+    if (c && prev.scrollWidth > prev.clientWidth + 1) {
+      const pr = prev.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      if (cr.left < pr.left + 8) prev.scrollLeft -= pr.left + 8 - cr.left;
+      else if (cr.right > pr.right - 8) prev.scrollLeft += cr.right - pr.right + 8;
+    }
   }
   // Dotik na lep zapis: položaj v besedilu iz izrisa (merilne točke na vseh mestih kazalca), ne iz prosojnega polja.
   function caretFromPoint(x, y) {
@@ -689,10 +699,28 @@ export function createScientific(root, opts) {
         </div>`;
       })
       .join("");
-    // matrika se ne prelomi: preširok rezultat najprej malo pomanjšamo (do 80 %, sirina.js), šele nato se pomika
-    hist.querySelectorAll(".sc-h-res").forEach((b) => b.querySelector(".mtable") && pomanjsaj(b, b.clientWidth, () => b.scrollWidth));
+    razporedi();
     if (scroll) hist.scrollTop = hist.scrollHeight;
   }
+
+  // Formule v zgodovini se razporedijo po vidni širini (j 14. 11. 2026): kar gre v vrstico, ostane v eni vrstici,
+  // predolgo se zloži pri = (in pred + in −), nato malo pomanjša (do 80 %, sirina.js); pomika se le še ogromen izraz.
+  // Kalkulator to naredi sam enkrat ob izrisu in ob spremembi širine (splošni opazovalec iz sirina.js ga izpusti:
+  // vrstica zgodovine je široka toliko kot formula, zato je zlaganje utripalo).
+  let sirinaZgodovine = 0;
+  function razporedi() {
+    const vrsta = hist.querySelector(".sc-h-row");
+    if (!vrsta) return;
+    sirinaZgodovine = Math.round(hist.getBoundingClientRect().width);
+    const w = vrsta.clientWidth - 12; // notranji rob gumba (graph.css: padding 2px 6px)
+    hist.querySelectorAll(".sc-h-expr, .sc-h-res, .sc-h-note").forEach((b) => {
+      for (const k of b.querySelectorAll(".katex")) if (!k.parentElement.closest(".katex")) prilagodiSirini(k, w);
+    });
+  }
+  if (typeof ResizeObserver !== "undefined")
+    new ResizeObserver(() => {
+      if (Math.round(hist.getBoundingClientRect().width) !== sirinaZgodovine) requestAnimationFrame(() => renderHistory(false));
+    }).observe(hist);
 
   // Zgodovina ostane pri dnu, ko se prostor spremeni (tipkovnica, vnosna vrstica): sicer plošča prekrije zadnji gumb (Kopiraj).
   let priDnu = true;
