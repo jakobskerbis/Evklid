@@ -103,7 +103,9 @@ async function useEra(id) {
 if (typeof document !== "undefined" && typeof window !== "undefined") {
   // Ikone, ki jih je strežnik poslal že izrisane (data-zg, server/vstopna-stran.js), ob zgodovinskem slogu ostanejo
   // skrite, dokler ni znan nabor ikon obdobja (style.css), da privzeta ikona ne utripne pred ikono obdobja.
-  useEra(document.documentElement.dataset.era || "").finally(() => document.documentElement.setAttribute("data-ikone", ""));
+  const ikone = () => document.documentElement.setAttribute("data-ikone", "");
+  useEra(document.documentElement.dataset.era || "").finally(ikone);
+  setTimeout(ikone, 1500); // počasno omrežje: ikone obdobja zamenjajo privzete, ko pridejo
   window.addEventListener("evklid:era", (e) => useEra(e.detail || ""));
 }
 `;

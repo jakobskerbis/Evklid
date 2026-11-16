@@ -369,13 +369,14 @@ test("utripanje ob odprtju (j 16. 11. 2026): samodejna osvežitev po objavi enkr
   // app.js: zastavica tik pred osvežitvijo, modul posnetka naložen prej (zapis ob pagehide).
   const app = read("public/app.js");
   assert.match(app, /sessionStorage\.setItem\(ZACETEK\?\.PRENOS \|\| "evklid\.posnetek-prenos", "1"\);\n\s*\} catch \{\}\n\s*location\.reload\(\);/);
-  assert.match(app, /if \(!shotMod\) await Promise\.race\(\[loadShot\(\), /);
+  assert.match(app, /const shot = shotMod \? null : loadShot\(\);[^\n]*\n\s*const v = await serverVersion\(\);/);
+  assert.match(app, /if \(!shotMod && shot\) await Promise\.race\(\[shot, /);
   assert.equal(z.api.PRENOS, PRENOS);
 });
 
 test("utripanje ob odprtju (j 16. 11. 2026): zgornja vrstica iz posnetka takoj, ob pozabi() nazaj", () => {
   const hd = { u: "0,00 €", x: "120", k: "3", c: "", i: "A", n: "Ana" };
-  const z = zacetek({ zapis: ZAS, posnetek: POS({ hd }) });
+  const z = zacetek({ zapis: ZAS, posnetek: POS({ hd, t: Date.now() - 1000 }) });
   const g = z.glava;
   assert.equal(g["#usage-meter b"].textContent, "0,00 €");
   assert.equal(g["#usage-meter"].hidden, false, "poraba vidna kot ob zadnjem obisku");
@@ -388,6 +389,19 @@ test("utripanje ob odprtju (j 16. 11. 2026): zgornja vrstica iz posnetka takoj, 
   assert.equal(g["#usage-meter"].hidden, true);
   assert.equal(g["#usage-meter b"].textContent, "0 €");
   assert.equal(g["#xp-total"].textContent, "121");
+  // Po koncu zagona je glava app.js: poznejši pozabi() (npr. izbira zaklenjenega profila) je ne spremeni.
+  const zk = zacetek({ zapis: ZAS, posnetek: POS({ hd, t: Date.now() - 1000 }) });
+  zk.api.konec();
+  zk.api.pozabi();
+  assert.equal(zk.glava["#profile-btn .pm-name"].textContent, "Ana");
+  // Poraba »danes« iz posnetka prejšnjega dne se ne pokaže.
+  const vceraj = zacetek({ zapis: ZAS, posnetek: POS({ hd, t: Date.now() - 11 * H }) });
+  const isti = new Date(Date.now() - 11 * H).toDateString() === new Date().toDateString();
+  assert.equal(vceraj.glava["#usage-meter"].hidden, !isti);
+  // Odjava, ugotovljena pred razčlenjeno lupino: posnetek in glava se ne pokažeta.
+  const odj = zacetek({ zapis: ZAS, posnetek: POS({ hd }), brezVrstice: true });
+  odj.api.pozabi();
+  assert.equal(odj.glava["#profile-btn .pm-name"].textContent, "");
   // Neveljaven posnetek (druga različica) ali predolgo / nenavadno besedilo: glava ostane, kot je.
   const z2 = zacetek({ zapis: ZAS, posnetek: POS({ hd, r: "a1" }), app: "a2" });
   assert.equal(z2.glava["#profile-btn .pm-name"].textContent, "");
@@ -427,7 +441,7 @@ test("hiter zagon (pregled #560 A2, A3, B1, B4): po odjavi in med zaklepom app.j
   assert.match(app, /autoGrow\(\);\n\s*startDone\(\);[^\n]*\n\s*box\.focus\(\);/);
   // B4: neposlano besedilo ali tekmovanje se preveri tudi po klicu različice in tik pred osvežitvijo.
   assert.match(app, /const v = await serverVersion\(\);\n[^\n]*\n\s*if \(!v \|\| v === appVersion \|\| busy\(\)\) return;/);
-  assert.match(app, /if \(pageApp\) await dropStaleCopies\(v\);\n(\s*\/\/[^\n]*\n)*\s*if \(!shotMod\) await [^\n]*\n\s*if \(busy\(\)\) return;/);
+  assert.match(app, /if \(pageApp\) await dropStaleCopies\(v\);\n(\s*\/\/[^\n]*\n)*\s*if \(!shotMod && shot\) await [^\n]*\n\s*if \(busy\(\)\) return;/);
 });
 
 test("hiter zagon: klici zagona stečejo že v <head>, app.js jih prevzame enkrat; aplikacija izve za prvi izris", async () => {

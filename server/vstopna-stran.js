@@ -23,6 +23,7 @@ const META = "evklid-app";
 // osveži in utripne«): prej jih je dopolnil šele app.js (hydrateIcons), zato so se glava, spodnja vrstica in pasici
 // ob vsakem odprtju za pol sekunde ali več pokazale brez ikon, nato pa poskočile. Isti izris kot icons.js icon();
 // data-zg: ob zgodovinskem slogu ostane skrita do ikon obdobja (style.css), kot prej. Neznano ime ostane <i>.
+// icons.js se naloži ob zagonu strežnika: nove oblike ikon (scripts/build-icons.js) veljajo po ponovnem zagonu.
 const ICON = /<i data-icon="([a-z0-9-]+)"><\/i>/g;
 export const withIcons = (html) =>
   html.replace(ICON, (m, name) => {

@@ -25,7 +25,9 @@
     sessionStorage.removeItem(PRENOS);
   } catch (e) {}
   var html = document.documentElement;
+  var prej = [];
   function konec() {
+    prej = [];
     html.removeAttribute("data-zacetek");
     html.removeAttribute("data-zacetek-pod");
     var p = document.querySelectorAll("main[data-posnetek]");
@@ -33,7 +35,6 @@
   }
   var pozabljen = false;
   var zaprto = false;
-  var prej = [];
   function pozabi() {
     pozabljen = true;
     zaprto = true;
@@ -196,6 +197,7 @@
         m.setAttribute("data-posnetek", "");
         m.setAttribute("aria-hidden", "true");
         m.inert = true;
+        if (pozabljen) pos = kasneje = null;
         napolni(pos);
       }
       pred.parentNode.insertBefore(m, pred);
@@ -209,7 +211,7 @@
       var tb = p && typeof p.tb === "string" && IME.test(p.tb) ? p.tb : "";
       var tabs = bar ? bar.querySelectorAll(".tab") : [];
       for (var j = 0; tb && j < tabs.length; j++) tabs[j].classList.toggle("active", tabs[j].getAttribute("data-view") === tb);
-      if (!p || glavaZa === p) return;
+      if (!p || glavaZa === p || pozabljen) return;
       glavaZa = p;
       var b = p && Array.isArray(p.b) ? p.b : [];
       for (var k = 0; k < b.length; k++) {
@@ -218,7 +220,7 @@
       }
       var hd = p && p.hd && typeof p.hd === "object" ? p.hd : null;
       if (hd) {
-        glava("#usage-meter", "#usage-meter b", hd.u, true);
+        if (new Date(Number(p.t)).toDateString() === new Date().toDateString()) glava("#usage-meter", "#usage-meter b", hd.u, true);
         glava(null, "#xp-total", hd.x);
         glava(null, "#xp-streak", hd.k);
         glava("#goal-chip", "#goal-chip b", hd.c, true);

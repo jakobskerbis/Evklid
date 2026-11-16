@@ -33,7 +33,8 @@ test("vstopna stran: neznano ime ikone ostane <i> (dopolni ga app.js kot prej)",
 test("zgodovinski slog: strežnikove ikone počakajo ikone obdobja (brez utripa privzete ikone)", () => {
   assert.match(read("public/style.css"), /html\[data-era\]:not\(\[data-ikone\]\) body > :not\(main\[data-posnetek\]\) svg\.i\[data-zg\] \{ visibility: hidden; \}/);
   // icons.js je ustvarjen s scripts/build-icons.js: oba imata isto vrstico.
-  const line = 'useEra(document.documentElement.dataset.era || "").finally(() => document.documentElement.setAttribute("data-ikone", ""));';
-  assert.ok(read("public/icons.js").includes(line));
-  assert.ok(read("scripts/build-icons.js").includes(line));
+  for (const line of ['useEra(document.documentElement.dataset.era || "").finally(ikone);', "setTimeout(ikone, 1500);"]) {
+    assert.ok(read("public/icons.js").includes(line), line);
+    assert.ok(read("scripts/build-icons.js").includes(line), line);
+  }
 });
