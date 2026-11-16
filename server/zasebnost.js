@@ -177,7 +177,9 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
   try {
     const file = db.prepare("PRAGMA database_list").all().find((r) => r.name === "main")?.file;
     if (file) out.backups = pocistiStare(file, new Date(now));
-  } catch {}
+  } catch (e) {
+    log.error?.(`[evklid] čiščenje starih varnostnih kopij: ${e.message}`);
+  }
   ensureAuditTable(db);
   out.audit = Number(db.prepare("DELETE FROM audit_log WHERE at < ?").run(ago(RETENTION.auditDays)).changes);
   out.unverified = deleteStaleUnverified(db, { nowIso, before: ago(RETENTION.unverifiedDays) });

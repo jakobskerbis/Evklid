@@ -68,7 +68,8 @@ Izgubi se vse, kar se je zgodilo po izbrani kopiji.
 2. Počakaj na prvi zagon. **Ta korak je obvezen:** `obnovi-kopijo.js` brez obstoječe baze napiše »Baze … ni« in
    ne naredi ničesar; prvi zagon ustvari prazno bazo.
 3. Kopija:
-   - iz R2: `node scripts/obnovi-kopijo.js --oblak` (seznam), nato `node scripts/obnovi-kopijo.js --oblak-prenesi <LLLL-MM-DD>`;
+   - iz R2: `node scripts/obnovi-kopijo.js --oblak` (seznam), nato `node scripts/obnovi-kopijo.js --oblak-prenesi <LLLL-MM-DD>`
+     (prenesena kopija, starejša od 22 dni, se ob naslednjem dnevnem čiščenju pobriše: obnovi takoj ali jo prenesi znova);
      kopija dobi ime `<datum>-0000`;
    - ali, če stara storitev še obstaja in je odpovedal samo disk: v stari storitvi Render → Disks → Restore
      snapshot (cel disk, nato samo Restart; koraki 1, 2 in 4 odpadejo).
