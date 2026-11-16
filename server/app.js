@@ -1154,6 +1154,7 @@ export function createApp(store, opts = {}) {
       const verdictReserve = checkReserveUsd(MODEL_MID, `${prevTutorText}${text}${result.text || ""}`);
       if (claim && !codeVerdict && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used && liveReviewOn() && needsVerdictReview({ answer: stripMeta(result.text), lite, spentToday: () => usage.kindToday("sodba") }) && hold.take(verdictReserve)) {
         verdictChecked = true;
+        send("phase", { phase: "check" }); // učenec vidi »Preverjam račun …« (public/app.js), dokler sodba ni preverjena
         try {
           const rv = await reviewVerdict({ context: prevTutorText, student: text, answer: stripMeta(result.text), createFn: opts.reviewCreateFn, usage, studentId: student.id });
           extraCost += rv.cost;
@@ -1207,6 +1208,7 @@ export function createApp(store, opts = {}) {
         const hadBlock = hasClaimBlock(result.text);
         let claimRes = null;
         if (!issue && hadBlock && !controller.signal.aborted) {
+          send("phase", { phase: "check" });
           claimRes = await checkAnswerClaims(result.text);
           if (claimRes.issue) issue = claimRes.issue;
           claimFailed = claimRes.failed.length > 0;
@@ -1234,6 +1236,7 @@ export function createApp(store, opts = {}) {
           noteReviewSkip(store.db, stopnja, "meja_ucenca");
         }
         if (pool?.held > 0) {
+          send("phase", { phase: "check" });
           try {
             const rv = await reviewAnswer({ question: text, answer: plain, createFn: opts.reviewCreateFn, usage, studentId: student.id, kind: reviewKindFor(risky), signal: controller.signal });
             extraCost += rv.cost;
@@ -1253,6 +1256,7 @@ export function createApp(store, opts = {}) {
         const fixMode = fixModeFor(mode);
         const fixReserve = callMaxUsd(modeParams(fixMode).model, Buffer.byteLength(plain + (issue || ""), "utf8") + 3000, modeParams(fixMode).max_tokens);
         if (issue && liveFixOn() && hold.take(fixReserve)) {
+          send("phase", { phase: "check" });
           try {
             const c = await correction({ streamFn, mode, answer: plain, issue, language: student.settings.language || "sl", signal: controller.signal });
             extraCost += usage.log(student.id, c.model || modeParams(c.mode).model, c.usage || {}, "popravek");
