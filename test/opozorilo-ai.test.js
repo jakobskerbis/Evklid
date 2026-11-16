@@ -20,7 +20,7 @@ function postar({ napaka = false } = {}) {
 
 test("strošek AI: pod mejo nič, nad mejo en e-mail na dan skrbnikom, javno stanje brez zneska", async () => {
   const store = openDb(":memory:");
-  let vsota = 1.2;
+  let vsota = 2.49;
   let ura = new Date("2026-11-16T09:00:00Z");
   const mailer = postar();
   const env = { EVKLID_ADMIN_EMAILS: "skrbnik@primer.si, drugi@primer.si", EVKLID_OPOZORILO_AI_USD: "2,5" };
@@ -41,18 +41,38 @@ test("strošek AI: pod mejo nič, nad mejo en e-mail na dan skrbnikom, javno sta
   assert.deepEqual(javno, { nadMejo: true, od: "2026-11-16T10:10:00.000Z" });
   assert.doesNotMatch(JSON.stringify(javno), /2[.,]7|2[.,]5/);
 
-  // Isti dan ne pošlje znova, tudi ko poraba raste.
-  vsota = 9;
-  ura = new Date("2026-11-16T15:00:00Z");
+  // Isti dan ne pošlje znova, ko poraba raste pod 3-kratnik meje; pri 3-kratniku še enkrat (in Straža spet pade).
+  vsota = 7.4;
+  ura = new Date("2026-11-16T12:00:00Z");
   await a.run();
   assert.equal(mailer.poslano.length, 2);
   assert.equal(a.status().od, "2026-11-16T10:10:00.000Z");
+  vsota = 7.5;
+  ura = new Date("2026-11-16T15:00:00Z");
+  await a.run();
+  assert.equal(mailer.poslano.length, 4);
+  assert.match(mailer.poslano[2].subject, /ŠE VEDNO RASTE.*7,50 \$/);
+  assert.equal(a.status().od, "2026-11-16T15:00:00.000Z");
+  vsota = 40;
+  ura = new Date("2026-11-16T18:00:00Z");
+  await a.run();
+  assert.equal(mailer.poslano.length, 4, "največ dva e-maila na dan");
 
   // Nov dan (UTC): znova, ko je nad mejo.
   ura = new Date("2026-11-17T00:20:00Z");
+  vsota = 3;
   await a.run();
-  assert.equal(mailer.poslano.length, 4);
+  assert.equal(mailer.poslano.length, 6);
   assert.equal(a.status().od, "2026-11-17T00:20:00.000Z");
+  // j mejo med dnem dvigne (Render se znova zažene): ko je presežena nova meja, novo opozorilo.
+  env.EVKLID_OPOZORILO_AI_USD = "5";
+  await a.run();
+  assert.equal(mailer.poslano.length, 6, "pod novo mejo nič");
+  vsota = 5.2;
+  ura = new Date("2026-11-17T09:00:00Z");
+  await a.run();
+  assert.equal(mailer.poslano.length, 8);
+  assert.equal(a.status().od, "2026-11-17T09:00:00.000Z");
 });
 
 test("strošek AI: neuspela e-pošta se ponovi, brez nastavitve ne; meja 0 izklopi", async () => {
@@ -64,6 +84,9 @@ test("strošek AI: neuspela e-pošta se ponovi, brez nastavitve ne; meja 0 izklo
   const a = startAiCostAlert(store.db, { todayTotal: () => 4 }, { scheduler: false, env, mailer: slab, log: { error: (m) => napake.push(m) }, now: ura });
   assert.equal((await a.run()).poslano, false);
   assert.equal((await a.run()).poskusov, 2); // ponovno ob naslednjem pregledu
+  for (let i = 0; i < 6; i++) await a.run();
+  assert.equal((await a.run()).poskusov, 6, "največ 6 poskusov na dan");
+  assert.ok(a.status().od, "Straža ve, od kdaj (opozori samo eno uro)");
   assert.ok(napake.every((m) => !m.includes("a@b.si")), "e-naslov ne gre v dnevnik");
   // Privzeta meja 3 $ (4 $ je nad njo).
   assert.equal(mejaUsd({}), PRIVZETA_MEJA_USD);
@@ -73,6 +96,7 @@ test("strošek AI: neuspela e-pošta se ponovi, brez nastavitve ne; meja 0 izklo
   const b = startAiCostAlert(store2.db, { todayTotal: () => 4 }, { scheduler: false, env: {}, mailer: postar(), log: tiho, now: ura });
   assert.equal((await b.run()).koncano, true); // ni naslovov: ponovitev nič ne spremeni
   assert.equal((await b.run()).poskusov, 1);
+  assert.equal(b.status().od, "2026-11-16T10:00:00.000Z", "brez e-pošte Straža ve, od kdaj, in ne pada ves dan");
 
   const c = startAiCostAlert(openDb(":memory:").db, { todayTotal: () => 100 }, { scheduler: false, env: { EVKLID_OPOZORILO_AI_USD: "0" }, mailer: postar(), log: tiho, now: ura });
   assert.equal(await c.run(), null);
@@ -111,6 +135,8 @@ test("straža: stanje, ki traja ves dan, podre Stražo samo eno uro po dogodku",
   assert.match(presojaStanja({ ...osnova, preverjanjeKopij: { datum: "2026-11-16", ok: false, ob: "2026-11-16T11:10:00Z" } }, now).napake[0], /preizkus obnove/);
   assert.deepEqual(presojaStanja({ ...osnova, preverjanjeKopij: { datum: "2026-11-16", ok: false, ob: "2026-11-16T04:40:00Z" } }, now).napake, []);
   assert.deepEqual(presojaStanja({ ...osnova, preverjanjeKopij: { datum: "2026-11-16", ok: true, ob: "2026-11-16T11:10:00Z" } }, now).napake, []);
+  // Prehodna napaka (strežnik ponovi čez 10 min brez alarma): tudi Straža ne pade.
+  assert.deepEqual(presojaStanja({ ...osnova, preverjanjeKopij: { datum: "2026-11-16", ok: false, ob: "2026-11-16T11:10:00Z", koncano: false } }, now).napake, []);
 
   // E-pošta: Resend ali omrežje → napaka; en napačen naslov (422) ali uspeh po napaki → ne.
   const posta = (razlog, zadnjaNapaka = "2026-11-16T11:50:00Z", zadnjiUspeh = "2026-11-16T10:00:00Z") => ({ ...osnova, posta: { nastavljena: true, zadnjaNapaka, zadnjiUspeh, razlog } });

@@ -19,7 +19,7 @@ async function dobi(pot) {
 
 // Stanje strežnika (/healthz/stanje) → { napake, opozorila }. Napaka podre Stražo (GitHub pošlje e-pošto), opozorilo se
 // samo izpiše. Stanja, ki trajajo ves dan (strošek AI nad mejo, neuspel nočni preizkus kopije, neuspela e-pošta),
-// so napaka samo eno uro po dogodku, da Straža ob vsakem zagonu (vsakih 15 min) ne pošilja nove e-pošte
+// so napaka samo eno uro po dogodku (do 4 zagoni Straže, torej do 4 e-pošte GitHuba), nato samo opozorilo
 // (docs/spremljanje.md). Strežnik sam pošlje skrbniku e-pošto za strošek AI in preizkus kopije.
 export const SVEZE_MS = 60 * 60 * 1000;
 export function presojaStanja(j, now = Date.now()) {
@@ -38,7 +38,7 @@ export function presojaStanja(j, now = Date.now()) {
     else opozorila.push("strošek AI danes je nad mejo opozorila (že javljeno)");
   }
   const pk = j.preverjanjeKopij;
-  if (pk && pk.ok === false) {
+  if (pk && pk.ok === false && pk.koncano !== false) {
     if (sveze(pk.ob)) napake.push(`nočni preizkus obnove iz kopije (${pk.datum}) ni uspel`);
     else opozorila.push(`nočni preizkus obnove iz kopije (${pk.datum}) ni uspel (že javljeno)`);
   }

@@ -40,10 +40,11 @@ const corrupt = (file) => {
   fs.closeSync(fd);
 };
 
-// Javno stanje ima še čas preizkusa (ob), da Straža opozori samo enkrat (docs/spremljanje.md).
+// Javno stanje ima še čas preizkusa (ob) in koncano, da Straža opozori samo enkrat in ne ob prehodni napaki.
 const brezOb = (s) => {
   assert.match(s.ob, /^\d{4}-\d\d-\d\dT/);
-  const { ob, ...ostalo } = s;
+  assert.equal(typeof s.koncano, "boolean");
+  const { ob, koncano, ...ostalo } = s;
   return ostalo;
 };
 

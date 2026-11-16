@@ -1,7 +1,9 @@
 // Opozorilo o dnevnem strošku AI (6. korak priprave na pilot, docs/spremljanje.md). Vsakih 10 min sešteje današnjo
 // porabo AI vseh učencev in aplikacije (usage_dnevno, dan po UTC kot v Števcu porabe). Ko preseže mejo
-// EVKLID_OPOZORILO_AI_USD (privzeto 3 $; 0 ali manj = izklopljeno), pošlje naslovom iz EVKLID_ADMIN_EMAILS največ en
-// e-mail na dan (ob neuspehu poskusi znova ob naslednjem pregledu). Nič ne ustavi: meje AI ostanejo, kot so.
+// EVKLID_OPOZORILO_AI_USD (privzeto 3 $; 0 ali manj = izklopljeno), pošlje naslovom iz EVKLID_ADMIN_EMAILS e-mail
+// (ob neuspehu poskusi znova ob naslednjem pregledu); še enega, ko poraba istega dne doseže VISOKO-kratnik meje ali
+// ko j mejo med dnem spremeni in je nova presežena. Nič ne ustavi: meje AI ostanejo, kot so.
+// Strošek meritve po objavi (server/meritev-po-objavi.js) ima svojo knjigo in tu ni štet.
 // Javno na /healthz/stanje (aiStrosek) je samo, ali je meja danes presežena in od kdaj, brez zneska; Straža
 // (scripts/straza.mjs) ob novem preseganju pade, da opozorilo pride tudi po GitHubu.
 import { BRAND } from "./brand.js";
@@ -11,6 +13,7 @@ import { emailList } from "./accounts/pilot-meja.js";
 const KV_KEY = "opozorilo_ai";
 const MIN = 60 * 1000;
 export const PRIVZETA_MEJA_USD = 3;
+export const VISOKO = 3; // drugo opozorilo istega dne pri 3-kratniku meje
 
 export function mejaUsd(env = process.env) {
   const raw = env.EVKLID_OPOZORILO_AI_USD;
@@ -21,17 +24,19 @@ export function mejaUsd(env = process.env) {
 
 const usd = (v) => `${(Math.round(v * 100) / 100).toFixed(2).replace(".", ",")} $`;
 
-export function opozoriloEmail(dan, porabljeno, meja) {
-  const subject = `${BRAND.name}: strošek AI danes ${usd(porabljeno)} (meja opozorila ${usd(meja)})`;
+const NAVODILA = `https://github.com/${BRAND.repo}/blob/main/docs/spremljanje.md`;
+
+export function opozoriloEmail(dan, porabljeno, meja, visoko = false) {
+  const subject = `${BRAND.name}: ${visoko ? "ŠE VEDNO RASTE – " : ""}strošek AI danes ${usd(porabljeno)} (meja opozorila ${usd(meja)})`;
   const steps = [
-    "Poglej Števec porabe (skrbnik → Poraba): kdo in kaj porablja.",
+    "Poglej merilnik »Poraba AI« v zgornji vrstici aplikacije (kot skrbnik; zneski so tam v €): kdo in kaj porablja.",
     "Meje AI na učenca in račun delujejo naprej; to je samo opozorilo, nič se ne ustavi.",
     "Mejo opozorila spremeniš v Render → Environment: EVKLID_OPOZORILO_AI_USD (0 = izklop).",
   ];
-  const text = `Današnja poraba AI (${dan}, UTC) je ${usd(porabljeno)}, kar je nad mejo opozorila ${usd(meja)}.\n\n${steps.map((s) => `- ${s}`).join("\n")}\n\nNavodila: docs/spremljanje.md`;
+  const text = `Današnja poraba AI (${dan}, UTC) je ${usd(porabljeno)}, kar je nad mejo opozorila ${usd(meja)}.\n\n${steps.map((s) => `- ${s}`).join("\n")}\n\nNavodila: ${NAVODILA}`;
   const html = layout(
     "Strošek AI danes nad mejo",
-    `<p>Današnja poraba AI (${esc(dan)}, UTC) je <b>${esc(usd(porabljeno))}</b>, kar je nad mejo opozorila ${esc(usd(meja))}.</p><ul>${steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ul><p>Navodila: docs/spremljanje.md</p>`,
+    `<p>Današnja poraba AI (${esc(dan)}, UTC) je <b>${esc(usd(porabljeno))}</b>, kar je nad mejo opozorila ${esc(usd(meja))}.</p><ul>${steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ul><p>Navodila: <a href="${esc(NAVODILA)}">docs/spremljanje.md</a></p>`,
   );
   return { subject, text, html };
 }
@@ -61,7 +66,7 @@ export function startAiCostAlert(db, usage, { scheduler = true, mock = false, en
   let busy = false;
 
   // "poslano" | "napaka" (Resend ni sprejel nobenega: znova ob naslednjem pregledu) | "ni nastavljeno"
-  async function notify(dan, vsota, meja) {
+  async function notify(dan, vsota, meja, visoko) {
     const to = emailList(env.EVKLID_ADMIN_EMAILS);
     const m = mailer ?? new Mailer({ fetchFn });
     if (!to.length || !m.enabled) {
@@ -71,7 +76,7 @@ export function startAiCostAlert(db, usage, { scheduler = true, mock = false, en
     let sent = 0;
     for (const addr of to) {
       try {
-        await m.send({ to: addr, ...opozoriloEmail(dan, vsota, meja) });
+        await m.send({ to: addr, ...opozoriloEmail(dan, vsota, meja, visoko) });
         sent++;
       } catch (e) {
         log.error?.(`[evklid] opozorilo o strošku AI: e-pošta skrbniku ni uspela (${String(e.message).replace(/[^\s<>"']+@[^\s<>"']+/g, "…")})`);
@@ -90,11 +95,14 @@ export function startAiCostAlert(db, usage, { scheduler = true, mock = false, en
       const vsota = porabljeno();
       if (vsota < meja) return null;
       const prev = kvGet();
-      const state = prev?.dan === dan ? prev : { dan, od: now().toISOString(), poslano: false, poskusov: 0 };
+      const nov = (stopnja) => ({ dan, meja, stopnja, od: now().toISOString(), poslano: false, poskusov: 0 });
+      // Nov dan ali spremenjena meja: novo opozorilo. Isti dan pri VISOKO-kratniku meje: še eno (enkrat).
+      let state = prev?.dan === dan && prev.meja === meja ? prev : nov(1);
+      if (state.stopnja === 1 && vsota >= meja * VISOKO) state = nov(2);
       if (!state.poslano && state.koncano !== true) {
         log.error?.(`[evklid] OPOZORILO: strošek AI danes (${dan}, UTC) ${usd(vsota)} je nad mejo ${usd(meja)}`);
         state.poskusov = (state.poskusov || 0) + 1;
-        const r = await notify(dan, vsota, meja); // največ en e-mail na dan
+        const r = await notify(dan, vsota, meja, state.stopnja === 2); // največ dva e-maila na dan
         if (r === "poslano") state.poslano = true;
         else if (r === "ni nastavljeno" || state.poskusov >= 6) state.koncano = true; // ponovitev nič ne spremeni
       }
