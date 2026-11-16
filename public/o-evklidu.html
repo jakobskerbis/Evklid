@@ -60,8 +60,8 @@
       .about-faq { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
       .about-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 4vw, 64px); align-items: start; }
     }
-    @media (min-width: 860px) { .about-top { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    @media (min-width: 560px) and (max-width: 859px) { .about-top > :last-child { grid-column: 1 / -1; } }
+    @media (min-width: 860px) { .about-adv { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 560px) and (max-width: 859px) { .about-adv > :last-child { grid-column: 1 / -1; } }
     @media (min-width: 860px) { .about-who { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     @media (min-width: 560px) and (max-width: 859px) { .about-who { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 559px) {
@@ -149,7 +149,7 @@
 
     <section class="land-sec" aria-labelledby="h-top">
       <h2 id="h-top">Na kratko</h2>
-      <ul class="land-grid land-feats about-top">
+      <ul class="land-grid land-feats about-adv">
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:badge-check}}</span><h3>Program preveri račune</h3><p>Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah v plačljivih paketih odgovor pregleda še zmogljivejši model. <a href="/zakaj-evklid">Kako to deluje in kaj smo izmerili</a></p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:clipboard-check}}</span><h3>Matura z inštruktorjem</h3><p>Pretekle pole mature in Evklidove pole v slogu mature. Pri vsaki nalogi inštruktor z namigi vodi do rešitve.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:lock}}</span><h3>Varno za otroke</h3><p>Brez oglasov in sledilnikov. Ni klepeta z drugimi uporabniki, na tedenski lestvici so vidni samo vzdevki.</p></li>
