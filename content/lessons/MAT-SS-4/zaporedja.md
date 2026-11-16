@@ -201,7 +201,7 @@ Oba ulomka gresta proti $0$, zato je $\lim\limits_{n \to \infty} a_n = \dfrac{2 
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Zaporedje je podano rekurzivno: $a_1 = 3$ in $a_{n+1} = 2a_n - 1$. Zapiši člene $a_2$, $a_3$ in $a_4$. Ali je število $129$ člen tega zaporedja? Če je, zapiši, kateri člen je.
+Zaporedje je podano rekurzivno: $a_1 = 3$ in $a_{n+1} = 2a_n - 1$. Zapišite člene $a_2$, $a_3$ in $a_4$. Ali je število $129$ člen tega zaporedja? Če je, zapišite, kateri člen je.
 
 **Rešitev:**
 
@@ -215,9 +215,9 @@ Zaporedje je podano rekurzivno: $a_1 = 3$ in $a_{n+1} = 2a_n - 1$. Zapiši člen
 
 Dano je zaporedje s splošnim členom $a_n = \dfrac{2n + 5}{n + 1}$.
 
-a) Izračunaj prve tri člene zaporedja. (1 točka)
-b) Dokaži, da je zaporedje strogo padajoče. (2 točki)
-c) Utemelji, da je zaporedje omejeno, in izračunaj njegovo limito. (2 točki)
+a) Izračunajte prve tri člene zaporedja. (1 točka)
+b) Dokažite, da je zaporedje strogo padajoče. (2 točki)
+c) Utemeljite, da je zaporedje omejeno, in izračunajte njegovo limito. (2 točki)
 d) Koliko členov zaporedja leži zunaj okolice limite s polmerom $\varepsilon = 0{,}05$? (2 točki)
 
 **Rešitev:**
@@ -311,7 +311,7 @@ Limita je ena sama: če bi imelo zaporedje limiti $L_1 \ne L_2$, bi izbrali $\va
 > Delimo z $n^2$: $\dfrac{5 - \frac{2}{n^2}}{2 + \frac{1}{n}} \to \dfrac{5}{2} = 2{,}5$. Števec raste čez vse meje, a enako hitro tudi imenovalec, zato limita obstaja.
 
 ? Prvo uro poti zaradi gneče prevoziš le $60\,\text{km}$, nato vsako uro $90\,\text{km}$. Povprečna hitrost po $n$ urah je $v_n = 90 - \dfrac{30}{n}$ (v km/h) in ima limito $90\,\text{km/h}$. Od katere ure naprej je za manj kot $2\,\text{km/h}$ pod limito? Vpiši $n$.
-= 16
+= 16 | 0
 ~ 15 | Pri $n = 15$ je razlika $\dfrac{30}{15} = 2$, kar ni manj kot $2$. Rob okolice ne spada v okolico.
 ~ 60 | To je $30 \cdot 2$. Iz $\dfrac{30}{n} < 2$ sledi $n > \dfrac{30}{2}$, ne $n > 30 \cdot 2$.
 > $|v_n - 90| = \dfrac{30}{n} < 2$ velja za $n > 15$, torej od $n = 16$ naprej.

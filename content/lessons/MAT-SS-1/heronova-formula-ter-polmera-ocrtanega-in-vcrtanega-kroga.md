@@ -202,7 +202,7 @@ $r = \dfrac{30}{15} = 2\,\text{km}$ in $R = \dfrac{5 \cdot 12 \cdot 13}{4 \cdot 
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Trikotnik ima stranice $a = 25\,\text{cm}$, $b = 29\,\text{cm}$ in $c = 6\,\text{cm}$. Izračunaj višino $v_c$ na stranico $c$.
+Trikotnik ima stranice $a = 25\,\text{cm}$, $b = 29\,\text{cm}$ in $c = 6\,\text{cm}$. Izračunajte višino $v_c$ na stranico $c$.
 
 **Rešitev:**
 
@@ -217,10 +217,10 @@ Trikotnik ima stranice $a = 25\,\text{cm}$, $b = 29\,\text{cm}$ in $c = 6\,\text
 
 Trikotno jadro ima stranice $a = 3{,}2\,\text{m}$, $b = 4{,}5\,\text{m}$ in $c = 5{,}1\,\text{m}$.
 
-a) Izračunaj ploščino jadra. Rezultat zaokroži na stotinko kvadratnega metra. (2 točki)
-b) Na jadro želijo našiti čim večji okrogel znak. Izračunaj njegov polmer. Rezultat zaokroži na centimeter. (2 točki)
-c) Izračunaj polmer jadru očrtane krožnice. Rezultat zaokroži na centimeter. (2 točki)
-d) Utemelji, ali središče očrtane krožnice leži znotraj jadra. (1 točka)
+a) Izračunajte ploščino jadra. Rezultat zaokrožite na stotinko kvadratnega metra. (2 točki)
+b) Na jadro želijo našiti čim večji okrogel znak. Izračunajte njegov polmer. Rezultat zaokrožite na centimeter. (2 točki)
+c) Izračunajte polmer jadru očrtane krožnice. Rezultat zaokrožite na centimeter. (2 točki)
+d) Utemeljite, ali središče očrtane krožnice leži znotraj jadra. (1 točka)
 
 **Rešitev:**
 
@@ -291,7 +291,7 @@ Kontrola z višino: višina $12$ na stranico $14$ jo razdeli na $5$ in $9$, saj 
 > $\dfrac{ab}{2}$ velja le, če sta $a$ in $b$ kateti pravokotnega trikotnika.
 
 ? Vse tri stranice trikotnika podvojimo. Kolikokrat se poveča ploščina?
-= 4
+= 4 | 0
 ~ 2 | Podvojijo se dolžine, ploščina pa raste s kvadratom: $2^2 = 4$.
 ~ 16 | Pod korenom se res pojavi faktor $16$, a ploščina je koren tega: $\sqrt{16} = 4$.
 ~ 8 | Faktor $8$ velja za prostornino teles, ne za ploščino.

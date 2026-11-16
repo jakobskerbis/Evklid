@@ -48,11 +48,9 @@ Obe sta sodi. $|-x| = |x|$ in $(-x)^4 = x^4$, ker sodo število minusov da plus.
 
 Ali je funkcija surjektivna, je odvisno od izbire množice $B$. Babičina funkcija $f\colon \mathbb{N} \to \mathbb{N}$ je injektivna, surjektivna pa ne, ker vrednosti $120$ ne doseže. Funkcija s predpisom $f(x) = x^2$ pri različnih $A$ in $B$:
 
-| $f\colon A \to B$ | injektivna | surjektivna | bijektivna |
-|---|---|---|---|
-| $\mathbb{R} \to \mathbb{R}$ | ne | ne ($-1$ ni vrednost) | ne |
-| $\mathbb{R} \to [0, \infty)$ | ne | da | ne |
-| $[0, \infty) \to [0, \infty)$ | da | da | da |
+- $\mathbb{R} \to \mathbb{R}$: ni injektivna, ni surjektivna ($-1$ ni vrednost), ni bijektivna;
+- $\mathbb{R} \to [0, \infty)$: ni injektivna, je surjektivna, ni bijektivna;
+- $[0, \infty) \to [0, \infty)$: je injektivna, surjektivna in bijektivna.
 
 Funkcija $x^3$ je kot $\mathbb{R} \to \mathbb{R}$ bijektivna. Če za $B$ vzamemo zalogo vrednosti $Z_f$, je vsaka funkcija surjektivna. Zato je vsaka injektivna funkcija kot $f\colon D_f \to Z_f$ bijektivna.
 
@@ -237,7 +235,7 @@ Na obeh straneh enačbe naredimo isto operacijo. Ko je na vsaki strani en sam ul
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Dana je funkcija $f(x) = x^4 - 2x^2 + 3$. Ugotovi, ali je $f$ soda, liha ali ni ne soda ne liha, in ali je na $\mathbb{R}$ injektivna. Oba odgovora utemelji.
+Dana je funkcija $f(x) = x^4 - 2x^2 + 3$. Ugotovite, ali je $f$ soda, liha ali ni ne soda ne liha, in ali je na $\mathbb{R}$ injektivna. Oba odgovora utemeljite.
 
 **Rešitev:**
 
@@ -252,10 +250,10 @@ Dana je funkcija $f(x) = x^4 - 2x^2 + 3$. Ugotovi, ali je $f$ soda, liha ali ni 
 
 Dani sta funkciji $f(x) = 2x - 3$ in $g(x) = x^2 + 1$, obe definirani na $\mathbb{R}$.
 
-a) Izračunaj $(g \circ f)(1)$ in $(f \circ g)(1)$. (2 točki)
-b) Zapiši predpis $(g \circ f)(x)$ v razviti obliki in reši enačbo $(g \circ f)(x) = 10$. (2 točki)
-c) Utemelji, da funkcija $g \circ f$ na $\mathbb{R}$ nima inverzne funkcije. (1 točka)
-d) Zapiši predpis inverzne funkcije $f^{-1}$ in pokaži, da je $f^{-1}(f(x)) = x$ za vsak realni $x$. (2 točki)
+a) Izračunajte $(g \circ f)(1)$ in $(f \circ g)(1)$. (2 točki)
+b) Zapišite predpis $(g \circ f)(x)$ v razviti obliki in rešite enačbo $(g \circ f)(x) = 10$. (2 točki)
+c) Utemeljite, da funkcija $g \circ f$ na $\mathbb{R}$ nima inverzne funkcije. (1 točka)
+d) Zapišite predpis inverzne funkcije $f^{-1}$ in pokažite, da je $f^{-1}(f(x)) = x$ za vsak realni $x$. (2 točki)
 
 **Rešitev:**
 

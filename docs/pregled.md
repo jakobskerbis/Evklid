@@ -106,9 +106,10 @@ public step (teacher pilot, open beta).
 - **Iskalnik hroščev** (`scripts/najdi-hrosce.mjs`, posel `hrosci` v `.github/workflows/testi.yml`, j 2026-11-15): ob
   vsakem PR in združitvi v main poišče podvojene ključe v predmetih v `server/`, `public/`, `scripts/`, `sim/`
   in v prevodih (`public/i18n/sl.js`, `public/i18n/ui/*.json`). Ročno: `node scripts/najdi-hrosce.mjs`.
-- **Straža** (`.github/workflows/straza.yml`, `scripts/straza.mjs`): vsakih 15 min in po delovnem toku »Render«
+- **Straža** (`.github/workflows/straza.yml`, `scripts/straza.mjs`): po urniku (GitHub ga zažene na ~5–10 ur; izpad javi UptimeRobot, docs/spremljanje.md) in po delovnem toku »Render«
   preveri živo spletišče (domena iz `brand.json`): `/healthz`, `/healthz/stanje`, domačo stran, `app.js`, JSON
   3D atlasa in `/api/config`. Samo GET, brez prijave, računov, AI in pisanja. 20 s na preizkus, ob napaki en
   ponovni poskus čez 30 s. Če preizkus ne uspe, delovni tok pade, GitHub pošlje e-pošto, v dnevniku pa je slovenski
   povzetek. Ročno: Actions > Straža > Run workflow, ali `node scripts/straza.mjs`. Javnih vsebinskih API-jev
-  (lekcije, formule) brez prijave ni, zato so preverjene le statične datoteke in `/api/config`.
+  (lekcije, formule) brez prijave ni, zato so preverjene le statične datoteke in `/api/config`. Kaj v
+  `/healthz/stanje` podre Stražo (strošek AI, preizkus kopije, e-pošta, pomnilnik): `docs/spremljanje.md`.

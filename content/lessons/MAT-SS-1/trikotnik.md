@@ -34,12 +34,14 @@ $$a < b + c, \qquad b < a + c, \qquad c < a + b$$
 
 **5. Skladnost.** Pri daljicah je skladnost preprosta: dve daljici sta skladni, če sta enako dolgi, dva kota, če sta enako velika. Trikotnik pa ima šest podatkov, tri stranice in tri kote. Trikotnika sta **skladna** ($\triangle ABC \cong \triangle A_1B_1C_1$), če se ujemata v vseh stranicah in vseh kotih, torej ju lahko s premikom, vrtenjem in morda zrcaljenjem prekrijemo. Za dokaz ni treba preveriti vseh šestih podatkov. Dovolj je eden od izrekov:
 
-| Izrek | Ujemanje v | Opomba |
-|---|---|---|
-| SSS | vseh treh stranicah | |
-| SKS | dveh stranicah in kotu med njima | kot mora biti med stranicama |
-| KSK | stranici in obeh kotih ob njej | |
-| SsK | dveh stranicah in kotu nasproti **daljše** od njiju | kot nasproti krajše stranice ne zadošča |
+| Izrek | Ujemanje v |
+|---|---|
+| SSS | vseh treh stranicah |
+| SKS | dveh stranicah in kotu med njima |
+| KSK | stranici in obeh kotih ob njej |
+| SsK | dveh stranicah in kotu nasproti **daljše** od njiju |
+
+Pri SsK kot nasproti krajše stranice ne zadošča.
 
 Pri ujemanju moramo paziti, katera oglišča si ustrezajo. Skladnost zapišemo tako, da ustrezni oglišči stojita na istem mestu: $\triangle ABC \cong \triangle FDE$ pomeni $A \leftrightarrow F$, $B \leftrightarrow D$, $C \leftrightarrow E$.
 
@@ -53,12 +55,10 @@ Ne nujno. Trije koti ne povedo ničesar o velikosti: posnetek trikotnika na zasl
 
 Simetrala stranice in višina sta obe pravokotni na stranico, a simetrala gre skozi sredino stranice, višina pa skozi nasprotno oglišče. Težiščnica in višina obe izhajata iz oglišča, a težiščnica gre do sredine nasprotne stranice, višina pa nanjo pade pod pravim kotom.
 
-| Daljica oziroma premica | Presečišče | Lastnost presečišča |
-|---|---|---|
-| simetrale stranic | središče $O$ očrtane krožnice | enako oddaljeno od vseh treh oglišč, razdalja je polmer $R$ |
-| simetrale kotov | središče $I$ včrtane krožnice | enako oddaljeno od vseh treh stranic, razdalja je polmer $r$ |
-| težiščnice (oglišče do sredine nasprotne stranice) | težišče $T$ | deli vsako težiščnico v razmerju $2:1$ od oglišča |
-| nosilke višin (pravokotnic iz oglišča na nosilko nasprotne stranice) | višinska točka $V$ | |
+- simetrale stranic: presečišče je središče $O$ očrtane krožnice, enako oddaljeno od vseh treh oglišč, razdalja je polmer $R$;
+- simetrale kotov: središče $I$ včrtane krožnice, enako oddaljeno od vseh treh stranic, razdalja je polmer $r$;
+- težiščnice (oglišče do sredine nasprotne stranice): težišče $T$, deli vsako težiščnico v razmerju $2:1$ od oglišča;
+- nosilke višin (pravokotnic iz oglišča na nosilko nasprotne stranice): višinska točka $V$.
 
 To, da se tri premice iste vrste vedno sekajo v eni točki, ni samoumevno (dokaz za simetrale stranic je v »Bolj natančno«). V simulaciji spodaj »Značilne točke trikotnika« vleci eno oglišče, dokler kot pri njem ne postane top, in opazuj, katere točke zapustijo trikotnik.
 
@@ -264,7 +264,7 @@ Zunanji kot $\varphi' = 180^\circ - \varphi = \dfrac{360^\circ}{n}$; $\;d_n = \d
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Zunanji kot pri oglišču $C$ trikotnika $ABC$ meri $126^\circ$. Notranji kot $\alpha$ je za $18^\circ$ večji od notranjega kota $\beta$. Izračunaj vse tri notranje kote trikotnika in utemelji, katera stranica trikotnika je najdaljša.
+Zunanji kot pri oglišču $C$ trikotnika $ABC$ meri $126^\circ$. Notranji kot $\alpha$ je za $18^\circ$ večji od notranjega kota $\beta$. Izračunajte vse tri notranje kote trikotnika in utemeljite, katera stranica trikotnika je najdaljša.
 
 **Rešitev:**
 
@@ -280,10 +280,10 @@ Zunanji kot pri oglišču $C$ trikotnika $ABC$ meri $126^\circ$. Notranji kot $\
 
 Enakokraki trikotnik $ABC$ ima osnovnico $c = |AB| = 10\,\text{cm}$ in kraka $a = b = 7\,\text{cm}$. Točka $D$ je razpolovišče osnovnice $AB$.
 
-a) Izračunaj višino $v_c$ in ploščino trikotnika. Rezultata zaokroži na stotinko. (2 točki)
-b) Utemelji, ali je kot $\gamma$ pri vrhu $C$ oster, pravi ali top, in ugotovi, ali središče $O$ očrtane krožnice leži znotraj trikotnika. (2 točki)
-c) Izračunaj polmer $r$ včrtane krožnice. Rezultat zaokroži na stotinko centimetra. (2 točki)
-d) Izračunaj razdaljo težišča $T$ od vrha $C$. Rezultat zaokroži na stotinko centimetra. (2 točki)
+a) Izračunajte višino $v_c$ in ploščino trikotnika. Rezultata zaokrožite na stotinko. (2 točki)
+b) Utemeljite, ali je kot $\gamma$ pri vrhu $C$ oster, pravi ali top, in ugotovite, ali središče $O$ očrtane krožnice leži znotraj trikotnika. (2 točki)
+c) Izračunajte polmer $r$ včrtane krožnice. Rezultat zaokrožite na stotinko centimetra. (2 točki)
+d) Izračunajte razdaljo težišča $T$ od vrha $C$. Rezultat zaokrožite na stotinko centimetra. (2 točki)
 
 **Rešitev:**
 
@@ -329,13 +329,11 @@ Točke simetrale daljice so natanko tiste, ki so enako oddaljene od njenih kraji
 
 V simulaciji spodaj »Trikotnik: stranice in koti« vleci oglišče $C$ proti daljici $AB$. Kot $\gamma$ raste proti $180^\circ$, kota $\alpha$ in $\beta$ padata proti $0^\circ$, vsota pa ves čas kaže $180^\circ$. Hkrati vidiš trikotniško neenakost: ko je $C$ skoraj na daljici, je $a + b$ le malo večje od $c$.
 
-V simulaciji »Značilne točke trikotnika« spreminjaj obliko trikotnika in primerjaj s tabelo.
+V simulaciji »Značilne točke trikotnika« spreminjaj obliko trikotnika in primerjaj s seznamom ($O$ je središče očrtane krožnice, $V$ višinska točka):
 
-| Vrsta trikotnika | $O$ (očrtana) | $V$ (višinska točka) |
-|---|---|---|
-| ostrokotni | znotraj | znotraj |
-| pravokotni | sredina hipotenuze | oglišče pravega kota |
-| topokotni | zunaj | zunaj |
+- ostrokotni: $O$ in $V$ sta znotraj;
+- pravokotni: $O$ je na sredini hipotenuze, $V$ v oglišču pravega kota;
+- topokotni: $O$ in $V$ sta zunaj.
 
 ## Drugače: Iz vsakdanjega življenja
 
@@ -392,7 +390,7 @@ V simulaciji »Značilne točke trikotnika« spreminjaj obliko trikotnika in pri
 > Točke simetrale stranice so enako oddaljene od njenih krajišč, zato je presečišče simetral (središče očrtane krožnice) enako oddaljeno od vseh treh računalnikov.
 
 ? (brez računala) Koliko diagonal ima osemkotnik?
-= 20
+= 20 | 0
 ~ 40 | To je $8 \cdot 5$: vsako diagonalo si štel dvakrat, enkrat z vsakega krajišča. Deli še z $2$.
 ~ 28 | To so vse daljice med oglišči, $\frac{8 \cdot 7}{2}$. Mednje spada tudi $8$ stranic, ki niso diagonale.
 ~ 5 | Toliko diagonal gre iz enega oglišča ($8 - 3$). Oglišč pa je $8$.

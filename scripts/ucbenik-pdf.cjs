@@ -182,6 +182,89 @@ function optimizePdf(buf) {
   }
 }
 
+// Cel predmet z več kot PDF_BOOK_MAX_LESSONS lekcijami: sestavi ga pypdf iz PDF-jev razredov (Chromium ga v enem
+// kosu ne izriše). Zaznamki (vsak razred ena veja) in povezave kazal razredov ostanejo. Vrne Buffer ali vrže napako.
+// Ob spremembi sestave ali pregleda povečaj PDF_MERGE_VERSION (server/ucbenik-pdf.js).
+const MERGE_PY = `
+import sys
+from pypdf import PdfWriter
+out, title, *ins = sys.argv[1:]
+w = PdfWriter()
+for f in ins:
+    w.append(f)
+if hasattr(w, "compress_identical_objects"):
+    w.compress_identical_objects()
+w.add_metadata({"/Title": title})
+with open(out, "wb") as fh:
+    w.write(fh)
+`;
+function mergePdfs(bufs, title) {
+  const { spawnSync } = require("node:child_process");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-zdruzi-"));
+  try {
+    const ins = bufs.map((b, i) => {
+      const f = path.join(dir, `${i}.pdf`);
+      fs.writeFileSync(f, b);
+      return f;
+    });
+    const out = path.join(dir, "out.pdf");
+    const r = spawnSync("python3", ["-I", "-c", MERGE_PY, out, title, ...ins], { encoding: "utf8", timeout: 600_000, maxBuffer: 16e6 });
+    if (r.error || r.status !== 0 || !fs.existsSync(out)) throw new Error(`pypdf ni uspel: ${(r.error?.message || r.stderr || "").trim().split("\n").pop()}`);
+    return fs.readFileSync(out);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+// PDF razreda za sestavljen predmet: iz te izdelave (mapa out) ali že objavljen (prenos iz izdaje, preverjen SHA-256).
+async function partPdf(e, out, url) {
+  const local = path.join(out, e.file);
+  let buf = fs.existsSync(local) ? fs.readFileSync(local) : null;
+  for (let poskus = 1; !buf; poskus++) {
+    try {
+      const r = await fetch(`${url}/${e.file}`, { redirect: "follow", signal: AbortSignal.timeout(120_000) });
+      if (!r.ok) throw new Error(`${e.file}: HTTP ${r.status}`);
+      buf = Buffer.from(await r.arrayBuffer());
+    } catch (err) {
+      if (poskus >= 3) throw err;
+      await new Promise((ok) => setTimeout(ok, poskus * 5000));
+    }
+  }
+  if (crypto.createHash("sha256").update(buf).digest("hex") !== e.sha256) throw new Error(`${e.file}: SHA-256 se ne ujema`);
+  return buf;
+}
+
+// Pregled sestavljenega PDF-ja: velikost, qpdf --check (optimizePdf), število strani in zaznamek za vsak razred.
+async function checkMerged(buf, parts, maxBytes) {
+  const errors = [];
+  if (buf.length > maxBytes) errors.push(`velikost ${(buf.length / 1e6).toFixed(1)} MB presega mejo ${(maxBytes / 1e6).toFixed(0)} MB`);
+  const doc = await openPdf(buf);
+  const pages = doc.numPages;
+  const want = parts.reduce((n, e) => n + (e.pages || 0), 0);
+  if (want && pages !== want) errors.push(`ima ${pages} strani, razredi skupaj ${want}`);
+  const outline = (await doc.getOutline()) || [];
+  if (outline.length !== parts.length) errors.push(`zaznamkov na vrhu ${outline.length}, razredov ${parts.length}`);
+  outline.forEach((o, i) => parts[i]?.title && !norm(parts[i].title).startsWith(norm(o.title)) && errors.push(`zaznamek ${i + 1} »${o.title}« ni razred »${parts[i].title}«`));
+  // Kazalo vsakega razreda (prve strani njegovega dela): vse povezave morajo voditi v isti razred.
+  let start = 0;
+  for (const e of parts) {
+    let links = 0;
+    for (let i = start + 1; i <= Math.min(start + 8, pages); i++) {
+      const anns = (await (await doc.getPage(i)).getAnnotations()).filter((a) => a.subtype === "Link" && a.dest);
+      for (const a of anns) {
+        const to = await destPage(doc, a.dest);
+        links++;
+        if (!to || to <= start || to > start + (e.pages || pages)) errors.push(`povezava na strani ${i} vodi na ${to ?? "nič"} (razred ${e.title || e.file})`);
+      }
+    }
+    if (!links) errors.push(`kazalo razreda ${e.title || e.file} nima povezav`);
+    start += e.pages || 0;
+  }
+  await doc.loadingTask.destroy();
+  errors.splice(12);
+  return { errors, pages };
+}
+
 // Začetna stran vsake lekcije (iz zaznamkov PDF, ki nastanejo iz naslovov h2); null, če zaznamka ni.
 async function lessonStarts(doc, dom) {
   const flat = [];
@@ -448,7 +531,9 @@ async function main() {
   } catch {}
   if (existing) for (const [id, e] of Object.entries(prev)) if (!existing.has(e.file)) delete prev[id];
   fs.mkdirSync(out, { recursive: true });
-  const targets = cfg.pdfTargets().filter((t) => (!only || only.includes(t.id)) && (!kinds || kinds.includes(t.kind)));
+  // Sestavljeni predmeti (zdruzi) na koncu: potrebujejo že izdelane PDF-je razredov.
+  const targets = cfg.pdfTargets().filter((t) => (!only || only.includes(t.id)) && (!kinds || kinds.includes(t.kind))).sort((a, b) => !!a.zdruzi - !!b.zdruzi);
+  const releaseUrl = process.env.EVKLID_PDF_URL || `https://github.com/${BRAND.repo}/releases/download/${process.env.OZNAKA || cfg.PDF_TAG}`;
   if (only) for (const id of only) if (!targets.some((t) => t.id === id)) throw new Error(`neznan PDF: ${id}`);
   const { chromium } = require("playwright");
   const server = await startServer();
@@ -469,6 +554,32 @@ async function main() {
       }
       const t0 = Date.now();
       let res;
+      if (t.zdruzi) {
+        try {
+          const parts = t.zdruzi.map((k) => {
+            const e = files[k] || (prev[k]?.hash === cfg.pdfHash(k) ? prev[k] : null);
+            if (!e) throw new Error(`PDF razreda ${k} ni izdelan`);
+            return e;
+          });
+          const title = cfg.pdfDownloadName(t.key).replace(/^[^-]+ - /, "").replace(/\.pdf$/, "");
+          const merged = mergePdfs(await Promise.all(parts.map((e) => partPdf(e, out, releaseUrl))), title);
+          const small = optimizePdf(merged);
+          const buf = small || merged;
+          const { errors, pages } = await checkMerged(buf, parts, cfg.PDF_BOOK_MAX_BYTES);
+          if (!small && strict) errors.push("qpdf ni nameščen ali ni uspel (stiskanje in linearizacija)");
+          const file = `${t.base}.${hash}.pdf`;
+          res = { id: t.id, vrsta: t.kind, file, hash, bytes: buf.length, pages, lessons: t.lessons, zdruzi: t.zdruzi, ms: Date.now() - t0, errors };
+          fs.writeFileSync(path.join(out, (errors.length ? "NAPAKA-" : "") + file), buf);
+          if (!errors.length) files[t.id] = { file, hash, bytes: buf.length, sha256: crypto.createHash("sha256").update(buf).digest("hex"), pages, lessons: t.lessons, title };
+        } catch (e) {
+          res = { id: t.id, vrsta: t.kind, hash, ms: Date.now() - t0, errors: [`sestava ni uspela: ${e.message}`] };
+        }
+        res.stanje = res.errors.length ? "NAPAKA" : "izdelan";
+        if (res.errors.length) failed++;
+        report.push(res);
+        console.log(`${res.stanje.padEnd(8)} ${t.id} (sestavljen iz ${t.zdruzi.join(", ")}) · ${res.pages ?? "?"} strani · ${res.bytes ? (res.bytes / 1e6).toFixed(2) : "?"} MB · ${(res.ms / 1000).toFixed(1)} s${res.errors.length ? `\n   - ${res.errors.join("\n   - ")}` : ""}`);
+        continue;
+      }
       try {
         // Če prelom strani odreže košček vrstice (redko: vrh črke ali formule iz prve vrstice naslednje strani),
         // poskusi znova z vsebino lekcij, zamaknjeno za nekaj pik, da prelomi padejo drugam.
@@ -509,5 +620,5 @@ async function main() {
   process.exitCode = failed ? 1 : 0;
 }
 
-module.exports = { PAGE_W, PAGE_H, sparseEndings, findSlivers, optimizePdf, checkPdf, renderPdf, startServer, servePdfFonts, READ_DOM };
+module.exports = { PAGE_W, PAGE_H, mergePdfs, checkMerged, sparseEndings, findSlivers, optimizePdf, checkPdf, renderPdf, startServer, servePdfFonts, READ_DOM };
 if (require.main === module) main().catch((e) => (console.error(e), process.exit(1)));

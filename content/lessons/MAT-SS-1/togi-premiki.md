@@ -32,6 +32,30 @@ Nobene. Vsaka točka se premakne za isto dolžino $|PQ| > 0$, zato nobena ne ost
 - čez os $x$: $(x, y) \mapsto (x, -y)$,
 - čez os $y$: $(x, y) \mapsto (-x, y)$.
 
+Čez simetrali kvadrantov koordinati zamenjata mesti:
+
+- čez premico $y = x$ (simetrala lihih kvadrantov): $(x, y) \mapsto (y, x)$,
+- čez premico $y = -x$ (simetrala sodih kvadrantov): $(x, y) \mapsto (-y, -x)$.
+
+Zakaj? Vzemi točko $P(t, t)$ na premici $y = x$. Njena razdalja do $T(x, y)$ in do $T'(y, x)$ se izračuna iz istih dveh razlik, $x - t$ in $y - t$, le v obratnem vrstnem redu. Vsaka točka premice $y = x$ je zato enako daleč od $T$ in $T'$, torej je premica simetrala daljice $TT'$. Čez $y = -x$ dobiš enako kot čez $y = x$ in nato še čez $O$. Zgled: $T(4, 1)$ ima čez $y = x$ sliko $T_1(1, 4)$, čez $y = -x$ pa $T_2(-1, -4)$.
+
+:::risba graf
+opis: Premici y = x in y = −x sta črtkani in se sekata v izhodišču. Točka T(4, 1) ima pri zrcaljenju čez y = x sliko T₁(1, 4), pri zrcaljenju čez y = −x pa sliko T₂(−1, −4). Sivi daljici TT₁ in TT₂ sta pravokotni na premico, čez katero zrcalimo, in ta premica ju razpolavlja.
+x: -5 .. 5 | 1 | x
+y: -5 .. 5 | 1 | y
+enako: da
+f: x | oranžna črtkano
+f: -x | zelena črtkano
+črta: 4; 1 -> 1; 4 | siva
+črta: 4; 1 -> -1; -4 | siva
+točka: 4; 1 | T | desno
+točka: 1; 4 | T_1 | levo
+točka: -1; -4 | T_2 | levo
+napis: 4; 4,6 | y = x | levo | oranžna
+napis: -4; 4,6 | y = −x | desno | zelena
+podnapis: Zrcaljenje točke T čez premici y = x in y = −x
+:::
+
 **5. Zrcaljenje čez točko (središčna simetrija).** Določa ga točka $S$, **središče**. Točka $S$ je razpolovišče daljice $TT'$. Čez izhodišče $O$ se spremenita predznaka obeh koordinat: $(x, y) \mapsto (-x, -y)$. Čez točko $S(x_S, y_S)$ greš od $T$ do $S$ in še enkrat enako daleč naprej, zato $x' = x_S + (x_S - x)$:
 
 $$x' = 2x_S - x \qquad y' = 2y_S - y$$
@@ -75,12 +99,10 @@ Preizkus: $T(3, 1)$ iz prvega kvadranta preide v $T'(-1, 3)$ v drugem kvadrantu,
 
 Potiskanje po mizi je vzporedni premik, vrtenje je vrtež. Oba orientacijo **ohranita**. Obračanje papirja je zrcaljenje čez premico, ki orientacijo **obrne**.
 
-| Premik | Določa ga | Primer | Orientacija |
-|---|---|---|---|
-| vzporedni premik | $\overrightarrow{PQ}$ ali $(p, q)$ | $(x + p, y + q)$ | ohrani |
-| zrcaljenje čez premico | os $s$ | os $x$: $(x, -y)$ | obrne |
-| zrcaljenje čez točko | središče $S$ | $O$: $(-x, -y)$ | ohrani |
-| vrtež | $S$, $\varphi$, smer | $90^\circ$: $(-y, x)$ | ohrani |
+- **vzporedni premik**: določa ga $\overrightarrow{PQ}$ ali $(p, q)$; slika točke je $(x + p, y + q)$; orientacijo ohrani.
+- **zrcaljenje čez premico**: določa ga os $s$; čez os $x$ je slika $(x, -y)$; orientacijo obrne.
+- **zrcaljenje čez točko**: določa ga središče $S$; čez $O$ je slika $(-x, -y)$; orientacijo ohrani.
+- **vrtež**: določajo ga $S$, $\varphi$ in smer; za $90^\circ$ okoli $O$ je slika $(-y, x)$; orientacijo ohrani.
 
 **8. Skladnost.** Lika sta skladna, če enega s togim premikom (ali z več zaporednimi) preslikamo na drugega. Izreki SSS, SKS, KSK in SsK povedo, kdaj tak premik obstaja. Skladna trikotnika z enako orientacijo preslikaš z vzporednim premikom ali vrtežem. Pri nasprotni orientaciji potrebuješ tudi zrcaljenje čez premico.
 
@@ -215,7 +237,7 @@ $Z_2(-3, 5)$. V primerjavi z $Z(3, -5)$ sta obe koordinati nasprotni: $(x, y) \m
 
 - Togi premik ohranja razdalje in kote; slika lika je z njim skladen lik.
 - Vzporedni premik za $(p, q)$: $(x, y) \mapsto (x + p, y + q)$; nobena točka ne ostane na mestu.
-- Zrcaljenje čez premico: os je simetrala daljice $TT'$. Čez os $x$: $(x, -y)$, čez os $y$: $(-x, y)$.
+- Zrcaljenje čez premico: os je simetrala daljice $TT'$. Čez os $x$: $(x, -y)$, čez os $y$: $(-x, y)$, čez $y = x$: $(y, x)$, čez $y = -x$: $(-y, -x)$.
 - Zrcaljenje čez točko $S$: $S$ je razpolovišče $TT'$; čez $O$: $(-x, -y)$; to je vrtež za $180^\circ$.
 - Vrtež okoli $S$ za kot $\varphi$; pozitivna smer je nasprotna urinemu kazalcu. Za $90^\circ$ okoli $O$: $(x, y) \mapsto (-y, x)$.
 - Zrcaljenje čez premico obrne orientacijo trikotnika; premik, vrtež in zrcaljenje čez točko jo ohranijo.
@@ -246,7 +268,7 @@ $Z_2(-3, 5)$. V primerjavi z $Z(3, -5)$ sta obe koordinati nasprotni: $(x, y) \m
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Pri zrcaljenju čez točko $S$ se točka $A(-3, 5)$ preslika v točko $A'(7, -1)$. Določi središče $S$ in sliko točke $B(2, 4)$ pri istem zrcaljenju.
+Pri zrcaljenju čez točko $S$ se točka $A(-3, 5)$ preslika v točko $A'(7, -1)$. Določite središče $S$ in sliko točke $B(2, 4)$ pri istem zrcaljenju.
 
 **Rešitev:**
 
@@ -261,9 +283,9 @@ Pri zrcaljenju čez točko $S$ se točka $A(-3, 5)$ preslika v točko $A'(7, -1)
 
 Trikotnik $ABC$ ima oglišča $A(2, 1)$, $B(5, 2)$ in $C(3, 4)$.
 
-a) Trikotnik $ABC$ zavrti okoli izhodišča za $90^\circ$ v pozitivni smeri. Zapiši oglišča slike $A'B'C'$. (2 točki)
-b) Trikotnik $A'B'C'$ zrcali čez os $y$. Zapiši oglišča slike $A''B''C''$. (2 točki)
-c) Zapiši predpis, ki točko $T(x, y)$ preslika naravnost v njeno končno sliko $T''$. Utemelji, ali bi trikotnik $A''B''C''$ lahko dobil iz trikotnika $ABC$ samo z vzporednimi premiki in vrteži. (2 točki)
+a) Trikotnik $ABC$ zavrtite okoli izhodišča za $90^\circ$ v pozitivni smeri. Zapišite oglišča slike $A'B'C'$. (2 točki)
+b) Trikotnik $A'B'C'$ zrcalite čez os $y$. Zapišite oglišča slike $A''B''C''$. (2 točki)
+c) Zapišite predpis, ki točko $T(x, y)$ preslika naravnost v njeno končno sliko $T''$. Utemeljite, ali bi trikotnik $A''B''C''$ lahko dobili iz trikotnika $ABC$ samo z vzporednimi premiki in vrteži. (2 točki)
 
 **Rešitev:**
 
@@ -371,21 +393,28 @@ točka: -1; -4 | C_3 | pod
 > Vsako zrcaljenje čez premico orientacijo obrne, dvakrat obrnjena je spet prvotna. Končno sliko bi zato dobil tudi s premikom ali vrtežem.
 
 ? (brez računala) Točko $T(-3, 4)$ zavrtimo okoli izhodišča za $90^\circ$ v pozitivni smeri. Kolikšna je abscisa slike $T'$?
-= -4
+= -4 | 0
 ~ 4 | To je vrtež v smeri urinega kazalca: $(y, -x) = (4, 3)$. Pozitivna smer je nasprotna.
 ~ 3 | To je zrcaljenje čez izhodišče $(3, -4)$, vrtež za $180^\circ$, ne za $90^\circ$.
 ~ -3 | Abscisa se pri vrtežu ne ohrani: nova abscisa je nasprotna vrednost stare ordinate.
 > $(x, y) \mapsto (-y, x)$ da $T'(-4, -3)$. Iz drugega kvadranta smo se pomaknili v tretjega, torej nasproti urinemu kazalcu.
 
+? (brez računala) Točko $T(2, -5)$ zrcalimo čez premico $y = -x$. Kolikšna je ordinata slike $T'$?
+= -2 | 0
+~ 2 | To je zrcaljenje čez premico $y = x$: $(y, x) = (-5, 2)$. Čez $y = -x$ koordinati zamenjata mesti in obe spremenita predznak.
+~ 5 | To je zrcaljenje čez izhodišče: $(-x, -y) = (-2, 5)$. Koordinati morata še zamenjati mesti.
+~ -5 | Ordinata se ne ohrani; $(-2, -5)$ bi dobil z zrcaljenjem čez os $y$.
+> $(x, y) \mapsto (-y, -x)$ da $T'(5, -2)$. Preizkus: razpolovišče daljice $TT'$ je $(3{,}5; -3{,}5)$ in leži na premici $y = -x$.
+
 ? Nina zrcali točko $A(3, -2)$ čez točko $S(1, 1)$. Zapisala je:
 | Korak | Ninin zapis |
 |---|---|
-| 1 | $S$ je razpolovišče daljice $AA'$. |
+| 1 | $S$ je razpolovišče $AA'$. |
 | 2 | $x' = 2 \cdot 1 - 3 = -1$ |
 | 3 | $y' = 2 \cdot 1 - 2 = 0$ |
 | 4 | $A'(-1, 0)$ |
 Poišči napačni korak, ga popravi in vpiši le pravilno ordinato $y'$.
-= 4
+= 4 | 0
 ~ 0 | To je Ninin rezultat. V 3. koraku je izgubila oklepaj: odšteti mora $-2$, ne $2$.
 ~ -4 | Odšteto je v napačnem vrstnem redu: $y - 2y_S = -2 - 2 = -4$. Prav je $y' = 2y_S - y = 2 \cdot 1 - (-2) = 4$.
 ~ 2 | To je le nasprotna ordinata, kot pri zrcaljenju čez os $x$. Središče ni $O$, zato velja $y' = 2y_S - y$.
@@ -416,6 +445,8 @@ vrednost: (-3+7)/2 | 2
 vrednost: (5+(-1))/2 | 2
 vrednost: 2*2-2 | 2
 vrednost: 2*2-4 | 0
+vrednost: (2+5)/2 | 3.5
+vrednost: (-5-2)/2 | -3.5
 >>
 
 :::simboli

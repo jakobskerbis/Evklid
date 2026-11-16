@@ -18,8 +18,8 @@ Na zemljevidu ima vsaka točka dve koordinati, vzhod–zahod in sever–jug. Če
 |---|---|
 | $3$ vzhodno, $4$ severno | $3 + 4i$ |
 | $2$ zahodno, $1$ južno | $-2 - i$ |
-| $5$ vzhodno, na vodoravni osi | $5$ |
-| $3$ severno, na navpični osi | $3i$ |
+| le $5$ vzhodno | $5$ |
+| le $3$ severno | $3i$ |
 
 Zdaj isto s simboli. **Kompleksno število** je $z = a + bi$, kjer sta $a$ in $b$ realni števili. Število $a$ je **realni del** ($\mathrm{Re}\,z = a$), $b$ pa **imaginarni del** ($\mathrm{Im}\,z = b$). Pozor: imaginarni del je realno število $b$, ne $bi$. Vodoravna os je **realna os**, navpična **imaginarna os**, vsa ravnina pa **kompleksna** ali **Gaussova ravnina**. Množico kompleksnih števil označimo z $\mathbb{C}$.
 
@@ -31,9 +31,9 @@ Zdaj isto s simboli. **Kompleksno število** je $z = a + bi$, kjer sta $a$ in $b
 
 $$i^2 = -1$$
 
-Število $i$ imenujemo **imaginarna enota**. Ni realno, saj je kvadrat vsakega realnega števila nenegativen. Po štirih zasukih spet gledaš proti vzhodu, zato se potence števila $i$ ponavljajo s periodo $4$:
+Število $i$ imenujemo **imaginarna enota**. Ni realno, saj je kvadrat vsakega realnega števila nenegativen. Po štirih zasukih spet gledaš proti vzhodu, zato se potence števila $i$ ponavljajo s periodo $4$. Odloča ostanek $n$ pri deljenju s $4$:
 
-| ostanek $n$ pri deljenju s $4$ | $i^n$ | smer |
+| ostanek $n$ | $i^n$ | smer |
 |---|---|---|
 | $0$ | $1$ | vzhod |
 | $1$ | $i$ | sever |
@@ -253,7 +253,7 @@ Iz druge enačbe je $a = 2b - 1$. Vstavimo v prvo: $4(2b - 1) - b = 10$, torej $
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Dano je število $z = 2 + i^{23}$. Izračunaj obratno vrednost $\dfrac{1}{z}$ in jo zapiši v obliki $a + bi$.
+Dano je število $z = 2 + i^{23}$. Izračunajte obratno vrednost $\dfrac{1}{z}$ in jo zapišite v obliki $a + bi$.
 
 **Rešitev:**
 
@@ -268,9 +268,9 @@ Dano je število $z = 2 + i^{23}$. Izračunaj obratno vrednost $\dfrac{1}{z}$ in
 
 Dana je enačba $x^2 - 4x + 13 = 0$.
 
-a) Reši enačbo v množici kompleksnih števil. (2 točki)
-b) Rešitev s pozitivnim imaginarnim delom označi z $z_1$, drugo z $z_2$. Opiši, kje v kompleksni ravnini ležita in kako sta povezani, ter izračunaj njuni absolutni vrednosti. (2 točki)
-c) Izračunaj količnik $\dfrac{z_1}{z_2}$ v obliki $a + bi$ in njegovo absolutno vrednost. (3 točke)
+a) Rešite enačbo v množici kompleksnih števil. (2 točki)
+b) Rešitev s pozitivnim imaginarnim delom označite z $z_1$, drugo z $z_2$. Opišite, kje v kompleksni ravnini ležita in kako sta povezani, ter izračunajte njuni absolutni vrednosti. (2 točki)
+c) Izračunajte količnik $\dfrac{z_1}{z_2}$ v obliki $a + bi$ in njegovo absolutno vrednost. (3 točke)
 
 **Rešitev:**
 
@@ -400,7 +400,7 @@ puščica: 0; 0 -> 4; -1 | | | modra
 točka: 2; 3 | z_1 | desno
 točka: 4; -1 | z_2 | pod
 :::
-= 4
+= 4 | 0
 ~ -4 | Izračunal si $z_2 - z_1$. Pri razliki $z_1 - z_2$ od $z_1$ odštejemo $z_2$.
 ~ 2 | To je imaginarni del vsote, $3 + (-1)$. Pri razliki odšteješ: $3 - (-1) = 4$.
 > Z risbe: $z_1 = 2 + 3i$, $z_2 = 4 - i$. Razlika je $z_1 - z_2 = -2 + 4i$, zato je imaginarni del $4$. Grafično: puščica od $z_2$ do $z_1$ gre $2$ enoti levo in $4$ enote navzgor.
@@ -413,7 +413,7 @@ točka: 4; -1 | z_2 | pod
 > $\dfrac{1}{1 - 2i} = \dfrac{1 + 2i}{(1 - 2i)(1 + 2i)} = \dfrac{1 + 2i}{5} = \dfrac{1}{5} + \dfrac{2}{5}\,i$, torej $b = 0{,}4$.
 
 ? (brez računala) Kvadratna enačba $x^2 + px + q = 0$ z realnima koeficientoma $p$ in $q$ ima rešitev $x_1 = 2 + 5i$. Koliko je $q$?
-= 29
+= 29 | 0
 ~ -21 | Računal si $(2 + 5i)(2 - 5i) = 4 - 25$, kot da bi bilo $i^2 = 1$. Pravilno je $4 - 25i^2 = 4 + 25$.
 ~ -4 | To je koeficient $p$ (enačba je $x^2 - 4x + 29 = 0$). Sprašujemo po prostem členu $q$.
 > Ker sta koeficienta realna, je druga rešitev konjugirana, $x_2 = 2 - 5i$. Velja $(x - 2 - 5i)(x - 2 + 5i) = x^2 - 4x + 29$, zato je $q = (2 + 5i)(2 - 5i) = 2^2 + 5^2 = 29$.

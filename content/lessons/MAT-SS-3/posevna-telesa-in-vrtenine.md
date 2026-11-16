@@ -15,7 +15,7 @@ V nedeljo spečeš $16$ palačink s premerom $20\,\mathrm{cm}$, vsaka je debela 
 
 **1. Nagnjen kup.** Palačinke so tanki valji. Pri pokončnem kupu jih je $16$, vsaka z enako ploščino. Pri nagnjenem kupu jih je spet $16$, vsaka ima isto ploščino, le zamaknjene so. Če jih zamakneš v cik-cak, se spet nič ne spremeni.
 
-| Kup ($16$ plasti) | Ploščina plasti | Višina |
+| Kup | Ploščina | Višina |
 |---|---|---|
 | pokončen | $100\pi\,\mathrm{cm^2}$ | $8\,\mathrm{cm}$ |
 | nagnjen | $100\pi\,\mathrm{cm^2}$ | $8\,\mathrm{cm}$ |
@@ -221,9 +221,9 @@ $V_{stožec} = \frac{\pi \cdot 16 \cdot 3}{3} = 16\pi\,\mathrm{cm^3}$, zato $V =
 
 Poševna prizma ima za osnovno ploskev enakostranični trikotnik s stranico $4\,\mathrm{cm}$. Stranski robovi so dolgi $6\,\mathrm{cm}$ in z ravnino osnovne ploskve oklepajo kot $60^\circ$.
 
-a) Izračunaj višino prizme. (2 točki)
-b) Izračunaj prostornino prizme. (2 točki)
-c) Pokončna prizma ima isto osnovno ploskev in enako dolge stranske robove kot dana poševna prizma. Izračunaj razmerje prostornin poševne in pokončne prizme. (2 točki)
+a) Izračunajte višino prizme. (2 točki)
+b) Izračunajte prostornino prizme. (2 točki)
+c) Pokončna prizma ima isto osnovno ploskev in enako dolge stranske robove kot dana poševna prizma. Izračunajte razmerje prostornin poševne in pokončne prizme. (2 točki)
 
 **Rešitev:**
 
@@ -239,12 +239,12 @@ c) Pokončna prizma ima isto osnovno ploskev in enako dolge stranske robove kot 
 
 ### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
 
-Trikotnik $ABC$ ima stranici $AB = 10\,\mathrm{cm}$ in $AC = 7\,\mathrm{cm}$ ter kot $\angle BAC = 40^\circ$. Vmesnih rezultatov ne zaokrožuj.
+Trikotnik $ABC$ ima stranici $AB = 10\,\mathrm{cm}$ in $AC = 7\,\mathrm{cm}$ ter kot $\angle BAC = 40^\circ$. Vmesnih rezultatov ne zaokrožujte.
 
-a) Izračunaj dolžino stranice $BC$. Zaokroži na dve decimalki. (2 točki)
-b) Trikotnik zavrtimo okoli premice $AB$. Opiši nastalo vrtenino, utemelji, da nožišče višine iz $C$ leži na stranici $AB$, in izračunaj polmer vrtenine na dve decimalki. (3 točke)
-c) Izračunaj prostornino in površino te vrtenine. Zaokroži na eno decimalko. (3 točke)
-d) Trikotnik zavrtimo še okoli premice skozi $C$, ki je vzporedna z $AB$. Opiši nastalo vrtenino in pokaži, da ima dvakrat večjo prostornino kot vrtenina iz dela b). (2 točki)
+a) Izračunajte dolžino stranice $BC$. Zaokrožite na dve decimalki. (2 točki)
+b) Trikotnik zavrtimo okoli premice $AB$. Opišite nastalo vrtenino, utemeljite, da nožišče višine iz $C$ leži na stranici $AB$, in izračunajte polmer vrtenine na dve decimalki. (3 točke)
+c) Izračunajte prostornino in površino te vrtenine. Zaokrožite na eno decimalko. (3 točke)
+d) Trikotnik zavrtimo še okoli premice skozi $C$, ki je vzporedna z $AB$. Opišite nastalo vrtenino in pokažite, da ima dvakrat večjo prostornino kot vrtenina iz dela b). (2 točki)
 
 **Rešitev:**
 
@@ -341,7 +341,7 @@ napis: 0,5; 2,5 | 4 cm | levo
 > $v = 10 \cdot \frac{1}{2} = 5\,\mathrm{cm}$, $V \approx 3 \cdot 25 \cdot 5 = 375\,\mathrm{cm^3}$ (natančno $125\pi \approx 393\,\mathrm{cm^3}$).
 
 ? (brez računala) Pravokotni trikotnik zavrtimo okoli katete dolžine $8\,\mathrm{cm}$. Nastali stožec ima prostornino $96\pi\,\mathrm{cm^3}$. Kolikšna je druga kateta?
-= 6 cm
+= 6 cm | 0
 ~ 3,46 | Pozabil si na $\frac{1}{3}$ v formuli za prostornino stožca.
 ~ 36 | To je $r^2$. Na koncu še koreni.
 > Druga kateta je polmer: $\frac{\pi r^2 \cdot 8}{3} = 96\pi$, zato $r^2 = 36$ in $r = 6\,\mathrm{cm}$.

@@ -39,24 +39,22 @@ Poveča se, a za malo (na približno $54\,\%$). Novi človek prinese $23$ novih 
 3. **Račun.** Produkt ulomkov je isti račun kot $\frac{V_{365}^{23}}{365^{23}}$, le po delih.
 4. **Smiselnost.** Rezultat je med $0$ in $1$. Ker je presenetljiv, smo ga podprli še s štetjem parov.
 
-Isti štirje koraki delujejo pri vsaki mešani nalogi. Najtežji je drugi: iz besed naloge prepoznati orodje. Pomaga ti ta preglednica.
+Isti štirje koraki delujejo pri vsaki mešani nalogi. Najtežji je drugi: iz besed naloge prepoznati orodje. Pomaga ti ta seznam: levo od puščice je, kar piše v besedilu, desno orodje in zapis.
 
-| v besedilu piše | orodje in zapis |
-|---|---|
-| največ, najmanj, najvišja točka | odvod, $f'(x) = 0$ |
-| naklon tangente, hitrost spreminjanja | odvod v točki, $k = f'(x_0)$ |
-| ploščina pod grafom, pot iz hitrosti | določeni integral $\int_a^b f(x)\,dx$ |
-| na koliko načinov, koliko tekem | kombinatorika: $n!$, $V_n^k$, $\binom{n}{k}$ |
-| vsaj eden, vsaj dva | nasprotni dogodek, $1 - P(\overline{A})$ |
-| vsako leto za $p\,\%$ | geometrijsko zaporedje, $a_n = a_1 q^{n-1}$ |
-| tipična vrednost, razpršenost | statistika: $\bar x$, $\mathrm{Me}$, $\sigma$ |
-| kje se grafa sekata | sistem enačb, $f(x) = g(x)$ |
-| podvoji se, razpolovi se | eksponentna enačba in logaritem, $q^t = 2$ ali $q^t = \frac{1}{2}$ |
-| kot med vektorjema | skalarni produkt in dolžini vektorjev |
-| razdalja od premice | pravokotnica skozi točko, razdalja do projekcije |
-| ničle polinoma | razcep ali Hornerjev algoritem, $p(x) = 0$ |
-| se dotika | diskriminanta, pogoj $D = 0$ |
-| stranica nasproti kota | kosinusni izrek |
+- »največ, najmanj, najvišja točka« → odvod, $f'(x) = 0$
+- »naklon tangente, hitrost spreminjanja« → odvod v točki, $k = f'(x_0)$
+- »ploščina pod grafom, pot iz hitrosti« → določeni integral $\int_a^b f(x)\,dx$
+- »na koliko načinov, koliko tekem« → kombinatorika: $n!$, $V_n^k$, $\binom{n}{k}$
+- »vsaj eden, vsaj dva« → nasprotni dogodek, $1 - P(\overline{A})$
+- »vsako leto za $p\,\%$« → geometrijsko zaporedje, $a_n = a_1 q^{n-1}$
+- »tipična vrednost, razpršenost« → statistika: $\bar x$, $\mathrm{Me}$, $\sigma$
+- »kje se grafa sekata« → sistem enačb, $f(x) = g(x)$
+- »podvoji se, razpolovi se« → eksponentna enačba in logaritem, $q^t = 2$ ali $q^t = \frac{1}{2}$
+- »kot med vektorjema« → skalarni produkt in dolžini vektorjev
+- »razdalja od premice« → pravokotnica skozi točko, razdalja do projekcije
+- »ničle polinoma« → razcep ali Hornerjev algoritem, $p(x) = 0$
+- »se dotika« → diskriminanta, pogoj $D = 0$
+- »stranica nasproti kota« → kosinusni izrek
 
 Večkoračna naloga je **veriga** takih orodij. Primer: »Žoga leti po tiru $h(t)$. Kdaj je najvišje in kdaj pade na tla?« Prvi del je odvod, drugi kvadratna enačba iz 1. letnika. Vsak člen verige reši posebej in rezultat prvega zapiši, preden začneš drugega.
 
@@ -198,7 +196,7 @@ $S_6 \approx 13\,604$ vstopnic v šestih sezonah.
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-V vrečki je $5$ rdečih in $3$ modre kroglice. Hkrati naključno izvlečemo dve kroglici. Izračunaj verjetnost, da sta kroglici različnih barv.
+V vrečki je $5$ rdečih in $3$ modre kroglice. Hkrati naključno izvlečemo dve kroglici. Izračunajte verjetnost, da sta kroglici različnih barv.
 
 **Rešitev:**
 
@@ -213,11 +211,11 @@ V vrečki je $5$ rdečih in $3$ modre kroglice. Hkrati naključno izvlečemo dve
 
 Dani sta funkcija $f(x) = -x^2 + 4x$ in premica $p$ z enačbo $y = x$.
 
-a) Izračunaj ničli funkcije $f$ in koordinate presečišč grafa funkcije $f$ s premico $p$. (2 točki)
+a) Izračunajte ničli funkcije $f$ in koordinate presečišč grafa funkcije $f$ s premico $p$. (2 točki)
 
-b) Zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $x_0 = 1$. (2 točki)
+b) Zapišite enačbo tangente na graf funkcije $f$ v točki z absciso $x_0 = 1$. (2 točki)
 
-c) Izračunaj ploščino lika, ki ga omejujeta graf funkcije $f$ in premica $p$. (3 točke)
+c) Izračunajte ploščino lika, ki ga omejujeta graf funkcije $f$ in premica $p$. (3 točke)
 
 **Rešitev:**
 
@@ -235,13 +233,13 @@ c) Izračunaj ploščino lika, ki ga omejujeta graf funkcije $f$ in premica $p$.
 
 Verjetnost, da je naključno izbrana žarnica iz neke tovarne pokvarjena, je $0{,}04$. Žarnice so pokvarjene neodvisno druga od druge.
 
-a) V škatli je $10$ žarnic. Izračunaj verjetnost, da je pokvarjena natanko ena. Rezultat zaokroži na štiri decimalna mesta. (2 točki)
+a) V škatli je $10$ žarnic. Izračunajte verjetnost, da je pokvarjena natanko ena. Rezultat zaokrožite na štiri decimalna mesta. (2 točki)
 
-b) Izračunaj verjetnost, da je med $10$ žarnicami v škatli vsaj ena pokvarjena. Rezultat zaokroži na štiri decimalna mesta. (2 točki)
+b) Izračunajte verjetnost, da je med $10$ žarnicami v škatli vsaj ena pokvarjena. Rezultat zaokrožite na štiri decimalna mesta. (2 točki)
 
 c) Najmanj koliko žarnic mora biti v škatli, da je verjetnost, da je vsaj ena pokvarjena, večja od $0{,}5$? (3 točke)
 
-d) Kontrolor preizkuša žarnice eno za drugo. Verjetnost, da je prva pokvarjena žarnica šele $k$-ta preizkušena, je $p_k = 0{,}04 \cdot 0{,}96^{k-1}$. Utemelji, da so $p_1, p_2, p_3, \ldots$ členi geometrijskega zaporedja, izračunaj vsoto $p_1 + p_2 + \dots + p_{10}$ in pojasni, zakaj je enaka rezultatu iz b). (3 točke)
+d) Kontrolor preizkuša žarnice eno za drugo. Verjetnost, da je prva pokvarjena žarnica šele $k$-ta preizkušena, je $p_k = 0{,}04 \cdot 0{,}96^{k-1}$. Utemeljite, da so $p_1, p_2, p_3, \ldots$ členi geometrijskega zaporedja, izračunajte vsoto $p_1 + p_2 + \dots + p_{10}$ in pojasnite, zakaj je enaka rezultatu iz b). (3 točke)
 
 **Rešitev:**
 

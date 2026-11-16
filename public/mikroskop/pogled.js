@@ -2,7 +2,7 @@
 // največjih povečavah model molekul (sonda izmeri snov in membrano v središču). Brez DOM, a potrebuje upodobitev za sondo.
 import { matrikaBarvil, BARVANJA } from "./barvila.js";
 import { uniformeMolekul } from "./molekule-vrste.js";
-import { OBJEKTIVI, OKULAR, vidnoPolje, zamegljenost, svetlost, kontrast, lomSvetlobe, TEM_LOCLJIVOST, SEM_LOCLJIVOST, utezModela } from "./optika.js";
+import { OBJEKTIVI, OKULAR, vidnoPolje, zamegljenost, svetlost, kontrast, lomSvetlobe, TEM_LOCLJIVOST, SEM_LOCLJIVOST, utezModela, svetlostSnopa } from "./optika.js";
 
 export const ZACETNO = {
   nacin: "svetloba", // ali "sem" (vrstični) ali "tem" (presevni elektronski mikroskop)
@@ -107,7 +107,7 @@ export function izracunajPogled(upo, preparat, s, n, { hitro = false } = {}) {
       debelina: barv.moc,
       sigma: Math.min(sigma, 38),
       mol,
-      svetlost: tem || sem ? 0.9 + 0.5 * s.zarnica : svetlost(obj, s.zarnica, s.zaslonka, s.olje),
+      svetlost: tem || sem ? svetlostSnopa(s.zarnica) : svetlost(obj, s.zarnica, s.zaslonka, s.olje),
       kontrast: tem ? 1.15 : sem ? 1.0 : kontrast(s.zaslonka),
       topla: tem || sem ? 0 : Math.max(0, 0.55 - s.zarnica * 0.6),
       // šum: SEM pri šibkem snopu bolj šumi (manj elektronov na točko)

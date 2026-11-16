@@ -199,7 +199,7 @@ $\dfrac{4 \cdot \sqrt{4}}{8} = \dfrac{4 \cdot 2}{8} = 1$. Preverjanje v prvotnem
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izraz $\sqrt[3]{2} \cdot \sqrt[4]{8}$ zapiši kot potenco števila $2$ z racionalnim eksponentom. Nato ga zapiši kot produkt celega števila in korena.
+Izraz $\sqrt[3]{2} \cdot \sqrt[4]{8}$ zapišite kot potenco števila $2$ z racionalnim eksponentom. Nato ga zapišite kot produkt celega števila in korena.
 
 **Rešitev:**
 
@@ -214,9 +214,9 @@ Izraz $\sqrt[3]{2} \cdot \sqrt[4]{8}$ zapiši kot potenco števila $2$ z raciona
 
 Srčni utrip mirujočega sesalca ocenimo z modelom $f = 240 \cdot M^{-\frac{1}{4}}$, kjer je $M$ masa živali v kilogramih, $f$ pa utrip v udarcih na minuto.
 
-a) Izračunaj utrip mačke z maso $4\,\mathrm{kg}$. Rezultat zaokroži na celo število. (2 točki)
-b) Kolikšna je po modelu masa živali z utripom $50$ udarcev na minuto? Rezultat zaokroži na cel kilogram. (2 točki)
-c) Za koliko odstotkov je po modelu utrip živali z desetkrat večjo maso manjši od utripa lažje živali? Rezultat zaokroži na desetinko odstotka. (2 točki)
+a) Izračunajte utrip mačke z maso $4\,\mathrm{kg}$. Rezultat zaokrožite na celo število. (2 točki)
+b) Kolikšna je po modelu masa živali z utripom $50$ udarcev na minuto? Rezultat zaokrožite na cel kilogram. (2 točki)
+c) Za koliko odstotkov je po modelu utrip živali z desetkrat večjo maso manjši od utripa lažje živali? Rezultat zaokrožite na desetinko odstotka. (2 točki)
 
 **Rešitev:**
 

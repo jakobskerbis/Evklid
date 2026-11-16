@@ -467,10 +467,13 @@ T tkivo(vec2 p, float px) {
   vec3 zel = vec3(0.04, 0.5, 0.0), rde = vec3(0.85, 0.06, 0.0);
   if (g < 3.0) { t.snov = S_LIPID; t.dye = vec3(0.35, 0.08, 0.0); return t; }
   float th = atan(p.y, p.x);
+  // središče celice (TEM: sistem organelov) mora biti v celici stalno; pri celicah v polarnih koordinatah ga dobimo iz
+  // odmika v (lok, polmer) s smerema tT (po obodu) in tR (navzven); v.c = p bi dal vsem točkam celice isti sistem
+  vec2 tR = vec2(cos(th), sin(th)), tT = vec2(-tR.y, tR.x);
   if (g < 18.0) {                                                    // povrhnjica
     float s = th * 1500.0 / 15.0;
     float lx = abs(fract(s) - 0.5) * 15.0;
-    Vor v; v.id = vec2(floor(s), 1.0); v.c = p; v.rob = min(7.5 - lx, min(g - 3.0, 18.0 - g) + 0.6); v.nb = vec2(1.0, 0.0); v.d = 0.0;
+    Vor v; v.id = vec2(floor(s), 1.0); v.c = p - tT * (fract(s) - 0.5) * 15.0 + tR * (g - 10.5); v.rob = min(7.5 - lx, min(g - 3.0, 18.0 - g) + 0.6); v.nb = vec2(1.0, 0.0); v.d = 0.0;
     return rCelica(v, p, 0.7, zel, px);
   }
   if (g < 90.0) {                                                    // kolenhim: odebeljeni vogali
@@ -491,14 +494,14 @@ T tkivo(vec2 p, float px) {
       if (t.snov != S_STENA) { t.snov = S_CITO; t.dye = zel * (h42(v.id).x < 0.4 ? 0.8 : 0.35); }
       return t;
     }
-    if (rr > 28.0) { Vor v = vor(vec2(s, rr), 6.0, vec2(1.0, 0.35), 0.0, 0.3); v.c = p; return rCelica(v, p, 0.4, zel, px); }   // kambij
+    if (rr > 28.0) { Vor v = vor(vec2(s, rr), 6.0, vec2(1.0, 0.35), 0.0, 0.3); vec2 o = vec2(s, rr) - v.c; v.c = p - o.x * tT - o.y * tR; return rCelica(v, p, 0.4, zel, px); }   // kambij
     vec4 x = krogci(p, 34.0, 9.0, 17.0, 0.7, 87.0);                 // ksilem
     if (x.x < 0.0) { t.snov = S_PRAZNO; t.meja = -x.x; return t; }
     if (x.x < 2.6) { vec2 dq = p - x.yz; t.snov = S_STENA; t.smer = normalize(vec2(-dq.y, dq.x) + 1e-4); t.r1 = x.x; t.dye = rde * 1.1; return t; }
     Vor v = vor(p, 7.0, vec2(1.0), 0.0, 0.75);
     return rCelica(v, p, 1.3, rde * 0.85, px);
   }
-  if (abs(rr - 36.0) < 8.0 && r < 1300.0) { Vor v = vor(vec2(s, rr), 6.0, vec2(1.0, 0.35), 0.0, 0.3); v.c = p; return rCelica(v, p, 0.4, zel, px); }   // medsnopični kambij
+  if (abs(rr - 36.0) < 8.0 && r < 1300.0) { Vor v = vor(vec2(s, rr), 6.0, vec2(1.0, 0.35), 0.0, 0.3); vec2 o = vec2(s, rr) - v.c; v.c = p - o.x * tT - o.y * tR; return rCelica(v, p, 0.4, zel, px); }   // medsnopični kambij
   // skorja, strženovi trakovi in stržen: parenhim z medceličnimi prostori
   float vel = r > 1210.0 ? 38.0 : (r > 950.0 ? 30.0 : 70.0);
   Vor v = vor(p, vel, vec2(1.0), 0.0, 0.85);
@@ -563,38 +566,47 @@ export const bakterije = {
   sredisceBlizu: [0, 0],
   imena: { 7: "bakterija" },
   snovi: { 11: "celična stena bakterije" },
-  isci: "Pri 1000× z oljem poišči vijolične koke v grozdih in rožnate paličke. Pri TEM primerjaj steni: debelo pri grampozitivnih, dve membrani pri gramnegativnih.",
+  isci: "Pri 1000× z oljem poišči vijolične koke v grozdih in rožnate paličke. Pri TEM primerjaj steni: debelo pri grampozitivnih, dve membrani pri gramnegativnih. SEM barv ne zazna (slika je črno-bela, vzorec je prevlečen s tanko plastjo zlata), zato tam bakterije ločiš le po obliki: okrogle koke in paličke.",
   glsl: "#define SEM_PROSTE\n" + MIKROB_TEM + /* glsl */ `
+// Gostota grozdov v točki c. Obstoj koka ali paličke se odloči v njenem središču (ne v točki p), sicer meja grozda
+// odreže kroglo ali paličko po ravni črti (pri SEM so bile vidne polkrogle in ploske odrezane ploskve; j, 15. 11. 2026).
+float grozdV(vec2 c) { return smoothstep(0.6, 0.7, fbm(c / 14.0, 3)); }
 T tkivo(vec2 p, float px) {
   T t = prazno();
   if (odsek(p, vec2(500.0, 350.0), 59.0) > 0.0) return t;
   t.dye = vec3(0.0, 0.04 * sumL(p, 3.0, px), 0.0);
-  float grozd = smoothstep(0.6, 0.7, fbm(p / 14.0, 3));
-  if (grozd > 0.0) {
-    vec4 k = krogci(p, 1.05, 0.46, 0.52, 0.92 * grozd, 81.0);
-    if (k.x < px) {
-      T b = mikrob(k.x, 0.032, k.yz, vec2(k.w, 1.0), C_BAKTERIJA, 1.0);
-      b.dye = vec3(1.35 * pokrij(k.x, px), 0.0, 0.0);
-      if (k.x < 0.0) return b;
-      t.dye = mix(t.dye, b.dye, pokrij(k.x, px));
-    }
+  // stafilokoki: mreža 1,1 µm z zmernim zamikom; sosednji koki se večinoma dotikajo, redki pari se prekrivajo kot pri delitvi (diplokoki)
+  vec2 n = floor(p / 1.1);
+  vec4 k = vec4(1e3);
+  for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) {
+    vec2 kk = n + vec2(i, j);
+    vec4 h = h42(kk + 81.0);
+    vec2 c = (kk + 0.5 + 0.45 * (h.xy - 0.5)) * 1.1;
+    float d = length(p - c) - mix(0.42, 0.48, h.w);
+    if (d >= min(k.x, px) || h.z > 0.92 * grozdV(c)) continue; // grozdV le za koke, ki lahko pokrijejo p
+    k = vec4(d, c, h.w + kk.x * 7.0 + kk.y * 13.0);
   }
-  vec2 n = floor(p / 3.5);
+  if (k.x < px) {
+    T b = mikrob(k.x, 0.032, k.yz, vec2(k.w, 1.0), C_BAKTERIJA, 1.0);
+    // tudi pas glajenja ob robu (0 < d < px) vrne bakterijo: SEM tam vidi rob krogle na stekelcu, ne tkiva
+    b.dye = mix(t.dye, vec3(1.35, 0.0, 0.0), pokrij(k.x, px));
+    return b;
+  }
   float best = 1e3; vec2 bc = vec2(0.0); vec2 bid = vec2(0.0);
+  n = floor(p / 3.5);
   for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) {
     vec2 kk = n + vec2(i, j);
     vec4 h = h42(kk + 91.0);
-    if (h.z > 0.5 * (1.0 - grozd)) continue;
     vec2 c = (kk + 0.5 + 0.6 * (h.xy - 0.5)) * 3.5;
     vec2 z = rot(h.w * 6.2832) * (p - c);
     float d = sdKapsula(z, 0.55 + 0.45 * h.x, 0.31);
-    if (d < best) { best = d; bc = c; bid = kk; }
+    if (d >= min(best, px) || h.z > 0.5 * (1.0 - grozdV(c))) continue;
+    best = d; bc = c; bid = kk;
   }
   if (best < px) {
     T b = mikrob(best, 0.022, bc, bid, C_BAKTERIJA, 2.0);
-    b.dye = vec3(0.0, 1.0 * pokrij(best, px), 0.0);
-    if (best < 0.0) return b;
-    t.dye = mix(t.dye, b.dye, pokrij(best, px));
+    b.dye = mix(t.dye, vec3(0.0, 1.0, 0.0), pokrij(best, px));
+    return b;
   }
   return t;
 }`,

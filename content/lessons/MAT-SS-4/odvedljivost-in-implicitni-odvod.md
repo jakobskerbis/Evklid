@@ -43,12 +43,10 @@ V simulaciji spodaj izberi $x^2$, postavi $x_0 = 1$ in zmanjšuj $h$. Opazi, kak
 
 **2. Štirje znaki na grafu.** Točke, kjer funkcija ni odvedljiva, na grafu prepoznaš po obliki.
 
-| oblika | primer | tangenta |
-|---|---|---|
-| vogal | $\lvert x \rvert$ pri $0$ | dva različna kraka |
-| ost | $\sqrt[3]{x^2}$ pri $0$ | kraka se stikata navpično |
-| navpična tangenta | $\sqrt[3]{x}$ pri $0$ | navpična premica |
-| nezveznost | skok, luknja, pol | ni je |
+- **Vogal**, primer $\lvert x \rvert$ pri $0$. Tangenta: dva različna kraka.
+- **Ost**, primer $\sqrt[3]{x^2}$ pri $0$. Tangenta: kraka se stikata navpično.
+- **Navpična tangenta**, primer $\sqrt[3]{x}$ pri $0$. Tangenta: navpična premica.
+- **Nezveznost**, primer skok, luknja, pol. Tangenta: ni je.
 
 Pri osti in navpični tangenti je graf v tej točki strm kot stena. Kaj to pomeni za diferenčni količnik, preveri sam.
 
@@ -255,7 +253,7 @@ $k = -\frac{2 + 2}{1 + 4} = -\frac{4}{5} = -0{,}8$. Tangenta: $y - 2 = -0{,}8(x 
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Nariši graf funkcije $f(x) = \lvert x + 1 \rvert + \lvert x - 2 \rvert$ in iz grafa ugotovi, v katerih točkah $f$ ni odvedljiva. Odgovor utemelji.
+Narišite graf funkcije $f(x) = \lvert x + 1 \rvert + \lvert x - 2 \rvert$ in iz grafa ugotovite, v katerih točkah $f$ ni odvedljiva. Odgovor utemeljite.
 
 **Rešitev:**
 
@@ -270,9 +268,9 @@ Nariši graf funkcije $f(x) = \lvert x + 1 \rvert + \lvert x - 2 \rvert$ in iz g
 
 Dana je funkcija $f(x) = (x + 1)\,\lvert x - 1 \rvert$.
 
-a) Zapiši predpis funkcije $f$ brez absolutne vrednosti in nariši njen graf. (2 točki)
-b) Utemelji, da je $f$ v točki $x = 1$ zvezna, ni pa odvedljiva. Pri tem uporabi odvoda obeh kosov v $x = 1$. (2 točki)
-c) Z definicijo odvoda pokaži, da je funkcija $g(x) = (x - 1)\,\lvert x - 1 \rvert$ v točki $x = 1$ odvedljiva, in zapiši $g'(1)$. (2 točki)
+a) Zapišite predpis funkcije $f$ brez absolutne vrednosti in narišite njen graf. (2 točki)
+b) Utemeljite, da je $f$ v točki $x = 1$ zvezna, ni pa odvedljiva. Pri tem uporabite odvoda obeh kosov v $x = 1$. (2 točki)
+c) Z definicijo odvoda pokažite, da je funkcija $g(x) = (x - 1)\,\lvert x - 1 \rvert$ v točki $x = 1$ odvedljiva, in zapišite $g'(1)$. (2 točki)
 
 **Rešitev:**
 
@@ -290,10 +288,10 @@ c) Z definicijo odvoda pokaži, da je funkcija $g(x) = (x - 1)\,\lvert x - 1 \rv
 
 Krivulja $K$ ima enačbo $x^2 - xy + y^2 = 12$.
 
-a) Z implicitnim odvajanjem izrazi $y'$ s spremenljivkama $x$ in $y$. (2 točki)
-b) Zapiši enačbi tangente in normale na $K$ v točki $A(-2, 2)$. (3 točke)
-c) Poišči vse točke na $K$, v katerih je tangenta vodoravna. (3 točke)
-d) Točka $B(4, 2)$ leži na $K$. Pojasni, kaj formula iz a) pove o tangenti v $B$, in zapiši enačbo te tangente. (2 točki)
+a) Z implicitnim odvajanjem izrazite $y'$ s spremenljivkama $x$ in $y$. (2 točki)
+b) Zapišite enačbi tangente in normale na $K$ v točki $A(-2, 2)$. (3 točke)
+c) Poiščite vse točke na $K$, v katerih je tangenta vodoravna. (3 točke)
+d) Točka $B(4, 2)$ leži na $K$. Pojasnite, kaj formula iz a) pove o tangenti v $B$, in zapišite enačbo te tangente. (2 točki)
 
 **Rešitev:**
 

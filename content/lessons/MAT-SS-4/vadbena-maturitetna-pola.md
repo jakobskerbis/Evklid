@@ -28,16 +28,16 @@ Na osnovni ravni ima pola $60$ točk. Prvi del je $8$ **kratkih nalog** (vsaka d
 
 **2. Koliko časa ima ena točka.** Razdeli čas pole tako, kot so razdeljene točke, in poglej, koliko minut pride na točko v vsakem delu:
 
-| del | točke | min | min/točko |
-|---|---|---|---|
-| kratke | $20$ | $30$ | $1{,}5$ |
-| krajše | $40$ | $60$ | $1{,}5$ |
-| dve dolgi | $20$ | $30$ | $1{,}5$ |
-| cela pola | $60$ | $90$ | $1{,}5$ |
+| del | točke | min |
+|---|---|---|
+| kratke | $20$ | $30$ |
+| krajše | $40$ | $60$ |
+| dve dolgi | $20$ | $30$ |
+| cela pola | $60$ | $90$ |
 
 (»Dve dolgi« sta strukturirani nalogi po $9$ do $11$ točk, ki ju imaš samo na višji ravni.)
 
-V vsaki vrstici je enako: $90 : 60 = 1{,}5$. To je **pravilo minute in pol**. Naloga s $k$ točkami naj ti vzame približno
+V vsaki vrstici pride na točko enako minut, $1{,}5$: $30 : 20 = 60 : 40 = 90 : 60 = 1{,}5$. To je **pravilo minute in pol**. Naloga s $k$ točkami naj ti vzame približno
 
 $$m = 1{,}5 \cdot k$$
 
@@ -68,11 +68,9 @@ Ker so točke v njih najbolj varne: so kratke, pogosto zahtevajo eno orodje, zat
 
 **4. Kako točkuje ocenjevalec.** Poglej, kako so točkovane tri rešitve iste kratke naloge »Reši enačbo $\log_3 (x - 1) = 2$« (2 točki). Točkovnik da $1$ točko za zapis $x - 1 = 3^2$ in $1$ točko za $x = 10$.
 
-| dijak | zapis | točke |
-|---|---|---|
-| Ana | $x - 1 = 9$, zato $x = 10$ | $2$ |
-| Bor | samo »$x = 10$« | do $1$ |
-| Cene | $x - 1 = 3^2$, zato $x = 11$ | $1$ |
+- **Ana** zapiše $x - 1 = 9$, zato $x = 10$: $2$ točki.
+- **Bor** zapiše samo »$x = 10$«: do $1$ točke.
+- **Cene** zapiše $x - 1 = 3^2$, zato $x = 11$: $1$ točka.
 
 Kaj opaziš? Točke ne stojijo pri končnem številu, ampak pri **korakih**. Navodila na poli zahtevajo, da je pot do rezultata jasno zapisana z vmesnimi računi in sklepi, zato Bor s pravilnim rezultatom brez poti izgubi večino točk ali vse. Cene se je zmotil v zadnjem računu, a nastavek je pravilen in ga ocenjevalec točkuje.
 
@@ -89,16 +87,14 @@ Pri delu a) dobiš napačen rezultat in ga uporabiš pri delu b). Napovej: ali s
 Pogosto ne. Če je postopek pri b) pravilen in si napačni rezultat iz a) uporabil dosledno, ocenjevalec navadno prizna točke za postopek, izgubiš pa točko za končni rezultat. Zato tudi z napačnim a) vedno nadaljuj.
 :::
 
-**5. Iz besed v orodje.** Na poli 1 vsaka naloga poveže dve ali tri poglavja. Ključne besede iz prvih treh letnikov:
+**5. Iz besed v orodje.** Na poli 1 vsaka naloga poveže dve ali tri poglavja. Ključne besede iz prvih treh letnikov (levo od puščice je, kar piše v besedilu, desno orodje in zapis):
 
-| v besedilu piše | orodje | zapis |
-|---|---|---|
-| presečišče | enačba | $f(x) = g(x)$ |
-| $\log_a x$ | pogoj | $x > 0$ |
-| natančno | krožnica | $\sin 60° = \tfrac{\sqrt{3}}{2}$ |
-| pravokotna | produkt | $\vec a \cdot \vec b = 0$ |
-| deljiv | ostanek | $p(a) = 0$ |
-| pol | ulomek | $q(x) = 0$ |
+- »presečišče« → enačba, $f(x) = g(x)$
+- »$\log_a x$« → pogoj, $x > 0$
+- »natančno« → krožnica, $\sin 60° = \tfrac{\sqrt{3}}{2}$
+- »pravokotna« → produkt, $\vec a \cdot \vec b = 0$
+- »deljiv« → ostanek, $p(a) = 0$
+- »pol« → ulomek, $q(x) = 0$
 
 Krajše oznake: »krožnica« je enotska krožnica, »produkt« skalarni produkt, »ostanek« izrek o ostanku (polinom $p$ je deljiv z $x - a$ natanko tedaj, ko je $p(a) = 0$), $q$ pa imenovalec racionalne funkcije.
 
@@ -223,7 +219,7 @@ Pola 1: $90$ minut, brez računala, s prilogo s formulami. Na osnovni ravni reš
 
 ### Naloga 1: kratka naloga, 2 točki, pola 1 (brez računala)
 
-Reši enačbo $2^{3x - 1} = 4^{x + 1}$.
+Rešite enačbo $2^{3x - 1} = 4^{x + 1}$.
 
 **Rešitev:** (potence + eksponentna enačba)
 
@@ -236,7 +232,7 @@ Reši enačbo $2^{3x - 1} = 4^{x + 1}$.
 
 ### Naloga 2: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izračunaj koordinate presečišč grafa funkcije $f(x) = x^2 - 2x - 3$ z grafom linearne funkcije $g(x) = x + 1$.
+Izračunajte koordinate presečišč grafa funkcije $f(x) = x^2 - 2x - 3$ z grafom linearne funkcije $g(x) = x + 1$.
 
 **Rešitev:** (linearna funkcija + kvadratna enačba)
 
@@ -249,7 +245,7 @@ Izračunaj koordinate presečišč grafa funkcije $f(x) = x^2 - 2x - 3$ z grafom
 
 ### Naloga 3: kratka naloga, 2 točki, pola 1 (brez računala)
 
-Izračunaj natančno vrednost izraza $\dfrac{\sin 120°}{1 - \cos 150°}$. Rezultat zapiši brez korena v imenovalcu.
+Izračunajte natančno vrednost izraza $\dfrac{\sin 120°}{1 - \cos 150°}$. Rezultat zapišite brez korena v imenovalcu.
 
 **Rešitev:** (kotne funkcije poljubnega kota + koreni)
 
@@ -262,7 +258,7 @@ Izračunaj natančno vrednost izraza $\dfrac{\sin 120°}{1 - \cos 150°}$. Rezul
 
 ### Naloga 4: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Polinom $p(x) = x^3 + ax^2 - 4x - 4$ je deljiv z $x - 2$. Določi $a$ in vse ničle polinoma $p$.
+Polinom $p(x) = x^3 + ax^2 - 4x - 4$ je deljiv z $x - 2$. Določite $a$ in vse ničle polinoma $p$.
 
 **Rešitev:** (polinomi + razstavljanje)
 
@@ -275,7 +271,7 @@ Polinom $p(x) = x^3 + ax^2 - 4x - 4$ je deljiv z $x - 2$. Določi $a$ in vse ni�
 
 ### Naloga 5: kratka naloga, 2 točki, pola 1 (brez računala)
 
-V aritmetičnem zaporedju je $a_3 = 7$ in $a_8 = 22$. Izračunaj prvi člen in diferenco zaporedja.
+V aritmetičnem zaporedju je $a_3 = 7$ in $a_8 = 22$. Izračunajte prvi člen in diferenco zaporedja.
 
 **Rešitev:** (aritmetično zaporedje + sistem linearnih enačb)
 
@@ -301,7 +297,7 @@ Za katere vrednosti parametra $m$ sta vektorja $\vec a = (m, 2, -1)$ in $\vec b 
 
 ### Naloga 7: kratka naloga, 2 točki, pola 1 (brez računala)
 
-Izračunaj limito $\lim\limits_{x \to 3} \dfrac{x^2 - 9}{x^2 - 3x}$.
+Izračunajte limito $\lim\limits_{x \to 3} \dfrac{x^2 - 9}{x^2 - 3x}$.
 
 **Rešitev:** (razstavljanje + limita funkcije)
 
@@ -331,8 +327,8 @@ b) Koliko jih je deljivih s $4$? (2 točki)
 
 Dana je funkcija $f(x) = \log_2 (x + 2)$.
 
-a) Zapiši definicijsko območje funkcije $f$ in izračunaj njeno ničlo. (2 točki)
-b) Reši enačbo $\log_2 (x + 2) + \log_2 (x - 2) = 5$. (3 točke)
+a) Zapišite definicijsko območje funkcije $f$ in izračunajte njeno ničlo. (2 točki)
+b) Rešite enačbo $\log_2 (x + 2) + \log_2 (x - 2) = 5$. (3 točke)
 c) Za katere $x$ je $f(x) < 3$? (1 točka)
 
 **Rešitev:** (logaritemska funkcija + kvadratna enačba + linearna neenačba)
@@ -351,8 +347,8 @@ c) Za katere $x$ je $f(x) < 3$? (1 točka)
 
 Dana je funkcija $f(x) = \dfrac{2x^2 - 2}{x^2 - 4}$.
 
-a) Izračunaj ničle, pole in začetno vrednost funkcije $f$. (3 točke)
-b) Zapiši enačbo vodoravne asimptote in pokaži, da je graf funkcije ne seka. (2 točki)
+a) Izračunajte ničle, pole in začetno vrednost funkcije $f$. (3 točke)
+b) Zapišite enačbo vodoravne asimptote in pokažite, da je graf funkcije ne seka. (2 točki)
 c) Za katere $x$ je $f(x) = \frac{5}{2}$? (2 točki)
 
 **Rešitev:** (razstavljanje + racionalna funkcija + racionalna enačba)
@@ -371,9 +367,9 @@ c) Za katere $x$ je $f(x) = \frac{5}{2}$? (2 točki)
 
 Dana je funkcija $f(x) = x^3 - 3x^2 - 9x + 5$.
 
-a) Izračunaj stacionarni točki funkcije $f$ in določi njuno vrsto. (4 točke)
-b) Zapiši intervale, na katerih funkcija $f$ narašča. (1 točka)
-c) Zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $x_0 = 0$. (2 točki)
+a) Izračunajte stacionarni točki funkcije $f$ in določite njuno vrsto. (4 točke)
+b) Zapišite intervale, na katerih funkcija $f$ narašča. (1 točka)
+c) Zapišite enačbo tangente na graf funkcije $f$ v točki z absciso $x_0 = 0$. (2 točki)
 
 **Rešitev:** (polinom + odvod + kvadratna enačba)
 
@@ -391,7 +387,7 @@ c) Zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $x_0 = 0$. (
 Gozdar sadi mlade smreke v vrste. V prvo vrsto posadi $2$ smreki, v vsako naslednjo $3$ več kot v prejšnjo.
 
 a) Koliko smrek posadi v deseto vrsto? (1 točka)
-b) Pokaži, da je v prvih $n$ vrstah skupaj $\dfrac{n(3n + 1)}{2}$ smrek. (2 točki)
+b) Pokažite, da je v prvih $n$ vrstah skupaj $\dfrac{n(3n + 1)}{2}$ smrek. (2 točki)
 c) Gozdar ima $155$ sadik in porabi vse. Koliko vrst zasadi? (3 točke)
 
 **Rešitev:** (aritmetično zaporedje + kvadratna enačba)
@@ -409,10 +405,10 @@ c) Gozdar ima $155$ sadik in porabi vse. Koliko vrst zasadi? (3 točke)
 
 Dane so točke $A(1, 2, 0)$, $B(2, 3, 0)$ in $C(1, 3, 1)$.
 
-a) Zapiši vektorja $\vec{AB}$ in $\vec{AC}$ ter izračunaj njuni dolžini. (2 točki)
-b) Izračunaj kot $\alpha$ med vektorjema $\vec{AB}$ in $\vec{AC}$. (2 točki)
-c) Pokaži, da je trikotnik $ABC$ enakostraničen. (1 točka)
-d) Določi točko $D$, da bo štirikotnik $ABDC$ paralelogram. (2 točki)
+a) Zapišite vektorja $\vec{AB}$ in $\vec{AC}$ ter izračunajte njuni dolžini. (2 točki)
+b) Izračunajte kot $\alpha$ med vektorjema $\vec{AB}$ in $\vec{AC}$. (2 točki)
+c) Pokažite, da je trikotnik $ABC$ enakostraničen. (1 točka)
+d) Določite točko $D$, da bo štirikotnik $ABDC$ paralelogram. (2 točki)
 
 **Rešitev:** (vektorji + skalarni produkt + kotne funkcije posebnih kotov)
 
@@ -428,10 +424,10 @@ d) Določi točko $D$, da bo štirikotnik $ABDC$ paralelogram. (2 točki)
 
 Dan je izraz $\left(x^2 - \dfrac{2}{x}\right)^6$, $x \neq 0$.
 
-a) Zapiši splošni člen razvoja tako, da spremenljivka $x$ v njem nastopa v eni sami potenci. (2 točki)
-b) Izračunaj člen razvoja, ki ne vsebuje $x$. (2 točki)
-c) Izračunaj koeficient pri $x^3$. (2 točki)
-d) Izračunaj vsoto vseh koeficientov razvoja. (1 točka)
+a) Zapišite splošni člen razvoja tako, da spremenljivka $x$ v njem nastopa v eni sami potenci. (2 točki)
+b) Izračunajte člen razvoja, ki ne vsebuje $x$. (2 točki)
+c) Izračunajte koeficient pri $x^3$. (2 točki)
+d) Izračunajte vsoto vseh koeficientov razvoja. (1 točka)
 
 **Rešitev:** (binomski izrek + potence)
 
@@ -447,9 +443,9 @@ d) Izračunaj vsoto vseh koeficientov razvoja. (1 točka)
 
 Dani sta funkciji $f(x) = \sin x$ in $g(x) = \sin 2x$ na intervalu $[0, \pi]$.
 
-a) Reši enačbo $\sin 2x = \sin x$ na intervalu $[0, \pi]$. (3 točke)
+a) Rešite enačbo $\sin 2x = \sin x$ na intervalu $[0, \pi]$. (3 točke)
 b) Na katerem delu intervala $[0, \pi]$ leži graf funkcije $g$ nad grafom funkcije $f$? (2 točki)
-c) Izračunaj ploščino lika, ki ga grafa funkcij $f$ in $g$ omejujeta na intervalu $[0, \pi]$. (5 točk)
+c) Izračunajte ploščino lika, ki ga grafa funkcij $f$ in $g$ omejujeta na intervalu $[0, \pi]$. (5 točk)
 
 **Rešitev:** (kotne funkcije dvojnega kota + trigonometrijska enačba + določeni integral)
 
@@ -470,9 +466,9 @@ c) Izračunaj ploščino lika, ki ga grafa funkcij $f$ in $g$ omejujeta na inter
 
 Dano je zaporedje s splošnim členom $a_n = \dfrac{2n + 1}{n + 3}$, $n \in \mathbb{N}$.
 
-a) Izračunaj limito zaporedja. (2 točki)
-b) Dokaži, da je zaporedje naraščajoče. (3 točke)
-c) Pokaži, da je zaporedje omejeno, in zapiši natančno spodnjo mejo ter eno zgornjo mejo. (2 točki)
+a) Izračunajte limito zaporedja. (2 točki)
+b) Dokažite, da je zaporedje naraščajoče. (3 točke)
+c) Pokažite, da je zaporedje omejeno, in zapišite natančno spodnjo mejo ter eno zgornjo mejo. (2 točki)
 d) Od katerega člena naprej se členi zaporedja od limite razlikujejo za manj kot $0{,}01$? (3 točke)
 
 **Rešitev:** (zaporedja + limita + ulomljeni izrazi in neenačba)
@@ -492,7 +488,7 @@ Pola 2: $90$ minut, z osnovnim računalom (brez grafičnega in programirljivega)
 
 ### Naloga 17: kratka naloga, 3 točke, pola 2 (z računalom)
 
-Lestev, dolga $4{,}5\,\text{m}$, je prislonjena ob navpično steno. Njen spodnji konec je na vodoravnih tleh $1{,}4\,\text{m}$ od stene. Izračunaj kot med lestvijo in tlemi (zaokroži na desetinko stopinje) in višino, do katere seže lestev ob steni (zaokroži na centimeter).
+Lestev, dolga $4{,}5\,\text{m}$, je prislonjena ob navpično steno. Njen spodnji konec je na vodoravnih tleh $1{,}4\,\text{m}$ od stene. Izračunajte kot med lestvijo in tlemi (zaokrožite na desetinko stopinje) in višino, do katere seže lestev ob steni (zaokrožite na centimeter).
 
 **Rešitev:**
 
@@ -505,7 +501,7 @@ Lestev, dolga $4{,}5\,\text{m}$, je prislonjena ob navpično steno. Njen spodnji
 
 ### Naloga 18: kratka naloga, 2 točki, pola 2 (z računalom)
 
-Mesto je imelo leta $2020$ $12\,400$ prebivalcev, leta $2025$ pa $13\,900$. Predpostavi, da število prebivalcev raste eksponentno po zakonu $N(t) = 12\,400 \cdot a^t$, kjer je $t$ število let od leta $2020$. Izračunaj $a$ (zaokroži na pet decimalnih mest) in napovej število prebivalcev leta $2035$ (zaokroži na celo število).
+Mesto je imelo leta $2020$ $12\,400$ prebivalcev, leta $2025$ pa $13\,900$. Predpostavite, da število prebivalcev raste eksponentno po zakonu $N(t) = 12\,400 \cdot a^t$, kjer je $t$ število let od leta $2020$. Izračunajte $a$ (zaokrožite na pet decimalnih mest) in napovejte število prebivalcev leta $2035$ (zaokrožite na celo število).
 
 **Rešitev:**
 
@@ -520,9 +516,9 @@ Mesto je imelo leta $2020$ $12\,400$ prebivalcev, leta $2025$ pa $13\,900$. Pred
 
 Kislost raztopine merimo s $\text{pH} = -\log c$, kjer je $c$ koncentracija vodikovih ionov v $\text{mol/l}$.
 
-a) Izračunaj pH raztopine s koncentracijo $c = 3{,}2 \cdot 10^{-5}\,\text{mol/l}$. Rezultat zaokroži na dve decimalni mesti. (1 točka)
+a) Izračunajte pH raztopine s koncentracijo $c = 3{,}2 \cdot 10^{-5}\,\text{mol/l}$. Rezultat zaokrožite na dve decimalni mesti. (1 točka)
 
-b) Raztopino razredčimo, da se pH poveča za $1{,}5$. Kolikokrat se zmanjša koncentracija in kolikšna je nova koncentracija? Faktor zaokroži na eno decimalno mesto, koncentracijo zapiši v obliki $a \cdot 10^{k}$ z $a$ na dve decimalni mesti. (2 točki)
+b) Raztopino razredčimo, da se pH poveča za $1{,}5$. Kolikokrat se zmanjša koncentracija in kolikšna je nova koncentracija? Faktor zaokrožite na eno decimalno mesto, koncentracijo zapišite v obliki $a \cdot 10^{k}$ z $a$ na dve decimalni mesti. (2 točki)
 
 **Rešitev:**
 
@@ -535,7 +531,7 @@ b) Raztopino razredčimo, da se pH poveča za $1{,}5$. Kolikokrat se zmanjša ko
 
 ### Naloga 20: kratka naloga, 2 točki, pola 2 (z računalom)
 
-Maja je osem dni zapored štela sklece, ki jih je naredila: $12$, $15$, $11$, $18$, $14$, $16$, $13$, $19$. Izračunaj aritmetično sredino $\bar x$ in standardni odklon $\sigma$ teh osmih podatkov (vsoto kvadratov odklonov deli s številom podatkov $N = 8$; zaokroži na dve decimalni mesti) ter ugotovi, koliko podatkov leži na intervalu $(\bar x - \sigma, \bar x + \sigma)$.
+Maja je osem dni zapored štela sklece, ki jih je naredila: $12$, $15$, $11$, $18$, $14$, $16$, $13$, $19$. Izračunajte aritmetično sredino $\bar x$ in standardni odklon $\sigma$ teh osmih podatkov (vsoto kvadratov odklonov delite s številom podatkov $N = 8$; zaokrožite na dve decimalni mesti) ter ugotovite, koliko podatkov leži na intervalu $(\bar x - \sigma, \bar x + \sigma)$.
 
 **Rešitev:**
 
@@ -545,11 +541,11 @@ Maja je osem dni zapored štela sklece, ki jih je naredila: $12$, $15$, $11$, $1
 4. Interval je $(12{,}12; 17{,}38)$ (realna števila in intervali). V njem ležijo podatki $13$, $14$, $15$ in $16$, torej $4$ podatki.
 5. Odgovor: $\bar x = 14{,}75$, $\sigma \approx 2{,}63$, na intervalu so $4$ podatki.
 
-**Točkovanje:** 1 točka za $\bar x = 14{,}75$ in $\sigma \approx 2{,}63$; 1 točka za interval in $4$ podatke. Z odklonom $2{,}82$ (deljenje z $N - 1$) bi bilo na intervalu $5$ podatkov, zato pazi, katero tipko uporabiš.
+**Točkovanje:** 1 točka za $\bar x = 14{,}75$ in $\sigma \approx 2{,}63$; 1 točka za interval in $4$ podatke. Odklon $2{,}82$ (deljenje z $N - 1$) ne dobi prve točke; če z njim pravilno določiš interval in $5$ podatkov, druga točka za postopek ostane.
 
 ### Naloga 21: kratka naloga, 3 točke, pola 2 (z računalom)
 
-Pravilni devetkotnik je včrtan v krog s polmerom $5\,\text{cm}$. Izračunaj dolžino stranice in ploščino devetkotnika ter kolikšen odstotek ploščine kroga pokriva devetkotnik. Vse rezultate zaokroži na dve decimalni mesti.
+Pravilni devetkotnik je včrtan v krog s polmerom $5\,\text{cm}$. Izračunajte dolžino stranice in ploščino devetkotnika ter kolikšen odstotek ploščine kroga pokriva devetkotnik. Vse rezultate zaokrožite na dve decimalni mesti.
 
 **Rešitev:**
 
@@ -563,7 +559,7 @@ Pravilni devetkotnik je včrtan v krog s polmerom $5\,\text{cm}$. Izračunaj dol
 
 ### Naloga 22: kratka naloga, 2 točki, pola 2 (z računalom)
 
-V pravokotniku $ABCD$ s stranicama $|AB| = 8\,\text{cm}$ in $|BC| = 5\,\text{cm}$ naključno izberemo točko. Izračunaj verjetnost, da je točka od oglišča $A$ ali od oglišča $C$ oddaljena manj kot $3\,\text{cm}$. Rezultat zaokroži na štiri decimalna mesta.
+V pravokotniku $ABCD$ s stranicama $|AB| = 8\,\text{cm}$ in $|BC| = 5\,\text{cm}$ naključno izberemo točko. Izračunajte verjetnost, da je točka od oglišča $A$ ali od oglišča $C$ oddaljena manj kot $3\,\text{cm}$. Rezultat zaokrožite na štiri decimalna mesta.
 
 **Rešitev:**
 
@@ -576,7 +572,7 @@ V pravokotniku $ABCD$ s stranicama $|AB| = 8\,\text{cm}$ in $|BC| = 5\,\text{cm}
 
 ### Naloga 23: kratka naloga, 3 točke, pola 2 (z računalom)
 
-Dana je elipsa z enačbo $\dfrac{x^2}{16} + \dfrac{y^2}{9} = 1$. Točka $T$ leži na elipsi v prvem kvadrantu in ima absciso $2$. Izračunaj koordinate gorišč $F_1$ in $F_2$, razdalji $|F_1T|$ in $|F_2T|$ ter velikost kota $\angle F_1TF_2$. Razdalji zaokroži na dve decimalni mesti, kot na desetinko stopinje.
+Dana je elipsa z enačbo $\dfrac{x^2}{16} + \dfrac{y^2}{9} = 1$. Točka $T$ leži na elipsi v prvem kvadrantu in ima absciso $2$. Izračunajte koordinate gorišč $F_1$ in $F_2$, razdalji $|F_1T|$ in $|F_2T|$ ter velikost kota $\angle F_1TF_2$. Razdalji zaokrožite na dve decimalni mesti, kot na desetinko stopinje.
 
 **Rešitev:**
 
@@ -592,7 +588,7 @@ Dana je elipsa z enačbo $\dfrac{x^2}{16} + \dfrac{y^2}{9} = 1$. Točka $T$ lež
 
 ### Naloga 24: kratka naloga, 2 točki, pola 2 (z računalom)
 
-Pločevinka valjaste oblike ima prostornino $0{,}5\,\text{l}$ in višino $11\,\text{cm}$. Izračunaj polmer osnovne ploskve (zaokroži na milimeter) in površino pločevinke (zaokroži na kvadratni centimeter).
+Pločevinka valjaste oblike ima prostornino $0{,}5\,\text{l}$ in višino $11\,\text{cm}$. Izračunajte polmer osnovne ploskve (zaokrožite na milimeter) in površino pločevinke (zaokrožite na kvadratni centimeter).
 
 **Rešitev:**
 
@@ -606,13 +602,13 @@ Pločevinka valjaste oblike ima prostornino $0{,}5\,\text{l}$ in višino $11\,\t
 
 Zemljišče ima obliko trikotnika $ABC$ z $|AB| = 85\,\text{m}$, $|AC| = 62\,\text{m}$ in $\angle BAC = 58^\circ$.
 
-a) Izračunaj dolžino stranice $BC$. Rezultat zaokroži na decimeter. (2 točki)
+a) Izračunajte dolžino stranice $BC$. Rezultat zaokrožite na decimeter. (2 točki)
 
-b) Izračunaj velikost kota $\angle ABC$. Rezultat zaokroži na desetinko stopinje. (2 točki)
+b) Izračunajte velikost kota $\angle ABC$. Rezultat zaokrožite na desetinko stopinje. (2 točki)
 
-c) Izračunaj ploščino zemljišča v arih ($1\,\text{a} = 100\,\text{m}^2$). Rezultat zaokroži na dve decimalni mesti. (2 točki)
+c) Izračunajte ploščino zemljišča v arih ($1\,\text{a} = 100\,\text{m}^2$). Rezultat zaokrožite na dve decimalni mesti. (2 točki)
 
-d) Izračunaj razdaljo od oglišča $A$ do stranice $BC$. Rezultat zaokroži na decimeter. (1 točka)
+d) Izračunajte razdaljo od oglišča $A$ do stranice $BC$. Rezultat zaokrožite na decimeter. (1 točka)
 
 **Rešitev:**
 
@@ -630,11 +626,11 @@ Temperatura čaja v skodelici se ravna po zakonu $T(t) = 22 + 68 \cdot e^{-kt}$,
 
 a) Kolikšna je bila začetna temperatura čaja? (1 točka)
 
-b) Izračunaj konstanto $k$. Rezultat zaokroži na štiri decimalna mesta. (2 točki)
+b) Izračunajte konstanto $k$. Rezultat zaokrožite na štiri decimalna mesta. (2 točki)
 
-c) Po koliko minutah se čaj ohladi na $40\,^\circ\text{C}$? Rezultat zaokroži na desetinko minute. (2 točki)
+c) Po koliko minutah se čaj ohladi na $40\,^\circ\text{C}$? Rezultat zaokrožite na desetinko minute. (2 točki)
 
-d) Izračunaj hitrost spreminjanja temperature ob času $t = 0$. Rezultat zaokroži na dve decimalni mesti. (1 točka)
+d) Izračunajte hitrost spreminjanja temperature ob času $t = 0$. Rezultat zaokrožite na dve decimalni mesti. (1 točka)
 
 **Rešitev:**
 
@@ -651,13 +647,13 @@ d) Izračunaj hitrost spreminjanja temperature ob času $t = 0$. Rezultat zaokro
 
 Prečni prerez namakalnega kanala opisuje parabola $y = 0{,}08x^2 - 2$ med njenima ničlama (enote na obeh oseh so metri, os $x$ je gladina vode, ko je kanal poln). Kanal je dolg $250\,\text{m}$.
 
-a) Izračunaj širino kanala ob gladini in njegovo največjo globino. (1 točka)
+a) Izračunajte širino kanala ob gladini in njegovo največjo globino. (1 točka)
 
-b) Z določenim integralom izračunaj ploščino prečnega prereza kanala. Rezultat zaokroži na dve decimalni mesti. (3 točke)
+b) Z določenim integralom izračunajte ploščino prečnega prereza kanala. Rezultat zaokrožite na dve decimalni mesti. (3 točke)
 
-c) Koliko kubičnih metrov vode je v polnem kanalu? Rezultat zaokroži na kubični meter. (1 točka)
+c) Koliko kubičnih metrov vode je v polnem kanalu? Rezultat zaokrožite na kubični meter. (1 točka)
 
-d) Izračunaj kot, ki ga brežina kanala oklepa z vodoravnico na robu kanala. Rezultat zaokroži na desetinko stopinje. (2 točki)
+d) Izračunajte kot, ki ga brežina kanala oklepa z vodoravnico na robu kanala. Rezultat zaokrožite na desetinko stopinje. (2 točki)
 
 **Rešitev:**
 
@@ -672,13 +668,13 @@ d) Izračunaj kot, ki ga brežina kanala oklepa z vodoravnico na robu kanala. Re
 
 ### Naloga 28: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
 
-V vrečki je $20$ enako velikih semen paradižnika: $14$ semen rdeče sorte in $6$ semen rumene sorte. Na slepo vzameš hkrati $4$ semena. Vse verjetnosti zaokroži na štiri decimalna mesta.
+V vrečki je $20$ enako velikih semen paradižnika: $14$ semen rdeče sorte in $6$ semen rumene sorte. Na slepo vzamete hkrati $4$ semena. Vse verjetnosti zaokrožite na štiri decimalna mesta.
 
-a) Izračunaj verjetnost, da so vsa štiri semena rdeče sorte. (2 točki)
+a) Izračunajte verjetnost, da so vsa štiri semena rdeče sorte. (2 točki)
 
-b) Izračunaj verjetnost, da je med njimi natanko eno seme rumene sorte. (2 točki)
+b) Izračunajte verjetnost, da je med njimi natanko eno seme rumene sorte. (2 točki)
 
-c) Izračunaj verjetnost, da sta med njimi vsaj dve semeni rumene sorte. (2 točki)
+c) Izračunajte verjetnost, da sta med njimi vsaj dve semeni rumene sorte. (2 točki)
 
 **Rešitev:**
 
@@ -693,13 +689,13 @@ c) Izračunaj verjetnost, da sta med njimi vsaj dve semeni rumene sorte. (2 toč
 
 ### Naloga 29: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
 
-Pokončni stožec ima stranico $s = 20\,\text{cm}$. Višino stožca označi s $h$.
+Pokončni stožec ima stranico $s = 20\,\text{cm}$. Višino stožca označite s $h$.
 
-a) Izrazi prostornino stožca kot funkcijo spremenljivke $h$ in zapiši, za katere $h$ ima naloga smisel. (2 točki)
+a) Izrazite prostornino stožca kot funkcijo spremenljivke $h$ in zapišite, za katere $h$ ima naloga smisel. (2 točki)
 
-b) Izračunaj $h$, pri katerem je prostornina stožca največja, in utemelji, da gre za maksimum. Rezultat zaokroži na dve decimalni mesti. (3 točke)
+b) Izračunajte $h$, pri katerem je prostornina stožca največja, in utemeljite, da gre za maksimum. Rezultat zaokrožite na dve decimalni mesti. (3 točke)
 
-c) Izračunaj največjo prostornino (zaokroži na kubični centimeter) in kot ob vrhu osnega preseka tega stožca (zaokroži na desetinko stopinje). (2 točki)
+c) Izračunajte največjo prostornino (zaokrožite na kubični centimeter) in kot ob vrhu osnega preseka tega stožca (zaokrožite na desetinko stopinje). (2 točki)
 
 **Rešitev:**
 
@@ -717,13 +713,13 @@ c) Izračunaj največjo prostornino (zaokroži na kubični centimeter) in kot ob
 
 Banka obrestuje vloge z letno obrestno mero $3{,}2\,\%$ (obrestno obrestovanje).
 
-a) Na banko vložiš $8000\,\text{€}$ in pustiš obresti pripisovati letno. Koliko imaš na računu po $6$ letih? Rezultat zaokroži na cent. (1 točka)
+a) Na banko vložite $8000\,\text{€}$ in pustite obresti pripisovati letno. Koliko imate na računu po $6$ letih? Rezultat zaokrožite na cent. (1 točka)
 
-b) Izračunaj konformno mesečno obrestno mero. Rezultat v odstotkih zaokroži na štiri decimalna mesta. (2 točki)
+b) Izračunajte konformno mesečno obrestno mero. Rezultat v odstotkih zaokrožite na štiri decimalna mesta. (2 točki)
 
 c) Po koliko celih letih se vloga iz a) prvič vsaj podvoji, če se obresti pripisujejo letno? (2 točki)
 
-d) Namesto enkratne vloge vsak mesec na koncu meseca vložiš $100\,\text{€}$, obresti se pripisujejo mesečno po konformni obrestni meri iz b). Koliko imaš na računu takoj po $72$. vlogi? Rezultat zaokroži na cent. (2 točki)
+d) Namesto enkratne vloge vsak mesec na koncu meseca vložite $100\,\text{€}$, obresti se pripisujejo mesečno po konformni obrestni meri iz b). Koliko imate na računu takoj po $72$. vlogi? Rezultat zaokrožite na cent. (2 točki)
 
 **Rešitev:**
 
@@ -741,13 +737,13 @@ d) Namesto enkratne vloge vsak mesec na koncu meseca vložiš $100\,\text{€}$,
 
 Dani sta krožnica $K$ z enačbo $x^2 + y^2 - 6x - 4y - 12 = 0$ in premica $p$ z enačbo $x - 3y + 8 = 0$.
 
-a) Izračunaj koordinate središča $S$ in polmer krožnice $K$. (2 točki)
+a) Izračunajte koordinate središča $S$ in polmer krožnice $K$. (2 točki)
 
-b) Izračunaj presečišči $A$ in $B$ premice $p$ s krožnico $K$ (točka $A$ naj ima večjo absciso). (2 točki)
+b) Izračunajte presečišči $A$ in $B$ premice $p$ s krožnico $K$ (točka $A$ naj ima večjo absciso). (2 točki)
 
-c) S skalarnim produktom izračunaj središčni kot $\angle ASB$ (zaokroži na stotinko stopinje) in ploščino manjšega krožnega odseka, ki ga premica $p$ odreže od kroga (zaokroži na dve decimalni mesti). (3 točke)
+c) S skalarnim produktom izračunajte središčni kot $\angle ASB$ (zaokrožite na stotinko stopinje) in ploščino manjšega krožnega odseka, ki ga premica $p$ odreže od kroga (zaokrožite na dve decimalni mesti). (3 točke)
 
-d) Zapiši enačbo tangente $t$ na krožnico $K$ v točki $A$ in izračunaj kot med tangento $t$ in premico $p$ (zaokroži na stotinko stopinje). Primerjaj ga s kotom iz c). (3 točke)
+d) Zapišite enačbo tangente $t$ na krožnico $K$ v točki $A$ in izračunajte kot med tangento $t$ in premico $p$ (zaokrožite na stotinko stopinje). Primerjajte ga s kotom iz c). (3 točke)
 
 **Rešitev:**
 
@@ -769,11 +765,11 @@ d) Zapiši enačbo tangente $t$ na krožnico $K$ v točki $A$ in izračunaj kot 
 
 Koncentracijo zdravila v krvi $t$ ur po zaužitju opisuje funkcija $c(t) = 10t \cdot e^{-0{,}5t}$ (v $\text{mg/l}$), $t \ge 0$.
 
-a) Kdaj je koncentracija največja in koliko znaša? Utemelji, da gre za maksimum. Koncentracijo zaokroži na dve decimalni mesti. (3 točke)
+a) Kdaj je koncentracija največja in koliko znaša? Utemeljite, da gre za maksimum. Koncentracijo zaokrožite na dve decimalni mesti. (3 točke)
 
-b) Zdravilo deluje, dokler je koncentracija vsaj $2\,\text{mg/l}$. Pokaži, da koncentracija pade pod to mejo nekje med $t = 7$ in $t = 8$, in interval z dvema korakoma bisekcije zoži. Vrednosti funkcije zaokroži na tri decimalna mesta. (3 točke)
+b) Zdravilo deluje, dokler je koncentracija vsaj $2\,\text{mg/l}$. Pokažite, da koncentracija pade pod to mejo nekje med $t = 7$ in $t = 8$, in interval z dvema korakoma bisekcije zožite. Vrednosti funkcije zaokrožite na tri decimalna mesta. (3 točke)
 
-c) Povprečna koncentracija v prvih $6$ urah je $\bar c = \dfrac{1}{6} \int_0^6 c(t)\,dt$. Izračunaj jo. Rezultat zaokroži na dve decimalni mesti. (4 točke)
+c) Povprečna koncentracija v prvih $6$ urah je $\bar c = \dfrac{1}{6} \int_0^6 c(t)\,dt$. Izračunajte jo. Rezultat zaokrožite na dve decimalni mesti. (4 točke)
 
 **Rešitev:**
 
@@ -883,7 +879,7 @@ stolpec: Naloga 4 | 5
 > Naloga 2 ima po pravilu $1{,}5 \cdot 3 = 4{,}5$ minute, Luka je porabil $14$, več kot trikrat toliko. Po pravilu preskoka bi jo moral označiti že po $9$ minutah.
 
 ? (brez računala) Alge na jezeru vsakih $5$ dni podvojijo pokrito površino. Danes pokrivajo $3\,\mathrm{m^2}$. Čez koliko dni bodo pokrivale $48\,\mathrm{m^2}$?
-= 20 dni
+= 20 dni | 0
 ~ 4 | To je število podvojitev ($2^4 = 16$); vsaka traja $5$ dni.
 ~ 80 | Pomnožil si faktor $16$ s $5$; podvojitev je samo $4$, ker je $2^4 = 16$.
 > Enačba $3 \cdot 2^{t/5} = 48$ da $2^{t/5} = 16 = 2^4$, torej $\frac{t}{5} = 4$ in $t = 20$ dni.

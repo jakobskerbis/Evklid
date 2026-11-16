@@ -245,8 +245,8 @@ Dan je sistem enačb
 
 $$\begin{cases} x + y + 2z = 6 & (1)\\ 2x - y + z = 9 & (2)\\ 3x + 2y - z = 5 & (3) \end{cases}$$
 
-a) Reši sistem z Gaussovo metodo in naredi preizkus. (4 točke)
-b) Tretjo enačbo nadomestimo z enačbo $3x + 3z = 15$, prvi dve ostaneta. Pokaži, da ima novi sistem neskončno mnogo rešitev, in vse rešitve zapiši s parametrom. (3 točke)
+a) Rešite sistem z Gaussovo metodo in naredite preizkus. (4 točke)
+b) Tretjo enačbo nadomestimo z enačbo $3x + 3z = 15$, prvi dve ostaneta. Pokažite, da ima novi sistem neskončno mnogo rešitev, in vse rešitve zapišite s parametrom. (3 točke)
 
 **Rešitev:**
 
@@ -268,9 +268,9 @@ b) Tretjo enačbo nadomestimo z enačbo $3x + 3z = 15$, prvi dve ostaneta. Poka�
 
 Dijaki za dobrodelno stojnico pripravijo $x$ pladnjev peciva in $y$ pladnjev sendvičev. Na stojnico gre največ $9$ pladnjev. Za pladenj peciva porabijo $2$ uri dela, za pladenj sendvičev $1$ uro, na voljo pa imajo največ $14$ ur. Sendvičev morajo pripraviti vsaj $2$ pladnja, peciva pa več kot nič.
 
-a) Zapiši sistem neenačb za $x$ in $y$, ki opisuje te pogoje. (2 točki)
-b) V koordinatnem sistemu nariši območje rešitev sistema. Označi, kateri robovi so polni in kateri črtkani. (3 točke)
-c) Izračunaj koordinate oglišč območja. Katera oglišča niso rešitve sistema? (2 točki)
+a) Zapišite sistem neenačb za $x$ in $y$, ki opisuje te pogoje. (2 točki)
+b) V koordinatnem sistemu narišite območje rešitev sistema. Označite, kateri robovi so polni in kateri črtkani. (3 točke)
+c) Izračunajte koordinate oglišč območja. Katera oglišča niso rešitve sistema? (2 točki)
 d) Ali lahko pripravijo $5$ pladnjev peciva in $3$ pladnje sendvičev? Koliko največ pladnjev sendvičev lahko pripravijo, če spečejo $4$ pladnje peciva? (3 točke)
 
 **Rešitev:**
@@ -395,14 +395,14 @@ napis: 2; 3,5 | y = x | levo | rdeča
 > Pri $\le$ so točke na premici $y = x$ rešitve, zato rob rišemo polno. Stran polravnine ostane enaka.
 
 ? (brez računala) Reši sistem $x + y + z = 4$, $x + 2y + 3z = 9$, $x - y + 2z = 4$. Koliko je $z$?
-= 2
+= 2 | 0
 ~ 3,6 | Pri drugi minus prva si odštel le levi strani; desno je $9 - 4 = 5$.
 ~ 2,8 | Pri tretji minus prva si pozabil odšteti desni strani; desno je $4 - 4 = 0$.
 ~ 1 | To je $x$ (ali $y$). Vprašanje sprašuje po $z$.
 > Druga minus prva: $y + 2z = 5$. Tretja minus prva: $-2y + z = 0$. Novi tretji prištejemo dvakratnik nove druge: $5z = 10$, $z = 2$; nato $y = 1$, $x = 1$.
 
 ? Koliko celih števil reši sistem $2x + 1 > -5$ in $4 - x \ge 1$?
-= 6
+= 6 | 0
 ~ 7 | Šteješ tudi $-3$, a pri $x > -3$ ta ni rešitev.
 ~ 5 | Izpustil si $3$, a pri $x \le 3$ ta je rešitev.
 > $2x > -6$ da $x > -3$; $-x \ge -3$ da $x \le 3$ (znak se obrne). Presek je $(-3, 3]$: cela števila $-2, -1, 0, 1, 2, 3$, torej $6$.

@@ -17,12 +17,12 @@ Prva uganka pelje do **stopničastih funkcij**, po katerih se računajo tudi par
 
 **1. Staro in novo: premica proti stopnicam.** Cena moke je premo sorazmerna z maso. Dvakrat več moke stane dvakrat več, graf je neprekinjena premica. Število štručk se obnaša drugače. Dolgo ostaja enako, nato naenkrat poskoči za $1$:
 
-| masa testa $m$ | število štručk $n$ |
+| masa testa $m$ v g | štručke $n$ |
 |---|---|
-| $0 \le m < 300\,\mathrm{g}$ | $0$ |
-| $300\,\mathrm{g} \le m < 600\,\mathrm{g}$ | $1$ |
-| $600\,\mathrm{g} \le m < 900\,\mathrm{g}$ | $2$ |
-| $900\,\mathrm{g} \le m < 1200\,\mathrm{g}$ | $3$ |
+| $0 \le m < 300$ | $0$ |
+| $300 \le m < 600$ | $1$ |
+| $600 \le m < 900$ | $2$ |
+| $900 \le m < 1200$ | $3$ |
 
 Funkcija, ki je na zaporednih intervalih stalna, med njimi pa skoči, je **stopničasta funkcija**. Graf so vodoravne daljice, stopnice.
 
@@ -105,11 +105,9 @@ $$|a| = -a, \quad \text{če je } a < 0$$
 
 Izraz $|x - 1|$ spremeni obliko pri $x = 1$, kjer je $x - 1 = 0$. Izraz $|x + 2|$ jo spremeni pri $x = -2$. Ti dve točki razdelita realno os na tri intervale. Na vsakem odstranimo absolutni vrednosti:
 
-| $x$ | $\lvert x - 1 \rvert$ | $\lvert x + 2 \rvert$ | $f(x)$ |
-|---|---|---|---|
-| $x < -2$ | $1 - x$ | $-x - 2$ | $-2x - 1$ |
-| $-2 \le x < 1$ | $1 - x$ | $x + 2$ | $3$ |
-| $x \ge 1$ | $x - 1$ | $x + 2$ | $2x + 1$ |
+- $x < -2$: $\lvert x - 1 \rvert = 1 - x$ in $\lvert x + 2 \rvert = -x - 2$, zato je $f(x) = -2x - 1$;
+- $-2 \le x < 1$: $\lvert x - 1 \rvert = 1 - x$ in $\lvert x + 2 \rvert = x + 2$, zato je $f(x) = 3$;
+- $x \ge 1$: $\lvert x - 1 \rvert = x - 1$ in $\lvert x + 2 \rvert = x + 2$, zato je $f(x) = 2x + 1$.
 
 Graf ni »V«, ampak korito z ravnim dnom:
 
@@ -342,7 +340,7 @@ Iz $x^2 - 4 = 3$ sledi $x^2 = 7$, torej $x = -\sqrt{7}$ ali $x = \sqrt{7}$ ($\sq
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Določi vsa realna števila $x$, za katera velja $\left\lfloor \dfrac{x + 1}{2} \right\rfloor = -1$. Rešitev zapiši z intervalom.
+Določite vsa realna števila $x$, za katera velja $\left\lfloor \dfrac{x + 1}{2} \right\rfloor = -1$. Rešitev zapišite z intervalom.
 
 **Rešitev:**
 
@@ -358,8 +356,8 @@ Določi vsa realna števila $x$, za katera velja $\left\lfloor \dfrac{x + 1}{2} 
 Izposoja električnega skiroja stane $1\,\text{€}$ za odklepanje in še $0{,}50\,\text{€}$ za vsakih začetih $10$ minut vožnje. Vožnja traja največ $40$ minut. Cena vožnje, ki traja $s$ minut, je $K(s)$, pri čemer je $0 < s \le 40$.
 
 a) Koliko stane vožnja, dolga $10$ minut, in koliko vožnja, dolga $25$ minut? (2 točki)
-b) Zapiši $K(s)$ po intervalih in nariši graf funkcije $K$. Pazi na krajišča stopnic. (3 točke)
-c) Sošolec trdi, da ceno opisuje predpis $K(s) = 1 + 0{,}5\left(\left\lfloor \dfrac{s}{10} \right\rfloor + 1\right)$. Pokaži, da ima pri $s = 25$ prav, pri $s = 10$ pa ne, in zapiši vse $s$, pri katerih predpis da napačno ceno. (2 točki)
+b) Zapišite $K(s)$ po intervalih in narišite graf funkcije $K$. Pazite na krajišča stopnic. (3 točke)
+c) Sošolec trdi, da ceno opisuje predpis $K(s) = 1 + 0{,}5\left(\left\lfloor \dfrac{s}{10} \right\rfloor + 1\right)$. Pokažite, da ima pri $s = 25$ prav, pri $s = 10$ pa ne, in zapišite vse $s$, pri katerih predpis da napačno ceno. (2 točki)
 
 **Rešitev:**
 
@@ -406,10 +404,10 @@ podnapis: Cena vožnje s skirojem: polna pika na desnem koncu stopnice
 
 Dana je funkcija $f(x) = |x + 1| - |x - 3|$.
 
-a) Zapiši predpis funkcije $f$ po primerih, brez absolutnih vrednosti. (3 točke)
-b) Nariši graf funkcije $f$ ter zapiši njeno ničlo in zalogo vrednosti. (2 točki)
-c) Reši neenačbo $f(x) > 2$. (2 točki)
-d) Zapiši predpis funkcije $y = |f(x)|$ po primerih. Reši enačbo $|f(x)| = 2$ in ugotovi, koliko rešitev ima enačba $|f(x)| = 4$. (3 točke)
+a) Zapišite predpis funkcije $f$ po primerih, brez absolutnih vrednosti. (3 točke)
+b) Narišite graf funkcije $f$ ter zapišite njeno ničlo in zalogo vrednosti. (2 točki)
+c) Rešite neenačbo $f(x) > 2$. (2 točki)
+d) Zapišite predpis funkcije $y = |f(x)|$ po primerih. Rešite enačbo $|f(x)| = 2$ in ugotovite, koliko rešitev ima enačba $|f(x)| = 4$. (3 točke)
 
 **Rešitev:**
 
@@ -516,7 +514,7 @@ točka: 2; 3
 točka: 5; 4
 točka: 10; 6
 :::
-= 9 €
+= 9 € | 0
 ~ 10 | Paket z maso $2\,\mathrm{kg}$ si prebral na višji stopnici. Pri $m = 2$ je tam prazen krožec, polna pika je na stopnici $3\,\text{€}$.
 ~ 7 | Paket z maso $5{,}2\,\mathrm{kg}$ si prebral na stopnici $4\,\text{€}$. Ta se konča pri $5\,\mathrm{kg}$; $5{,}2\,\mathrm{kg}$ je že na stopnici $6\,\text{€}$.
 ~ 8 | Oba paketa si prebral na stopnici $4\,\text{€}$. Pri $2\,\mathrm{kg}$ je polna pika spodaj ($3\,\text{€}$), $5{,}2\,\mathrm{kg}$ pa je nad $5\,\mathrm{kg}$ ($6\,\text{€}$).
@@ -548,7 +546,7 @@ točka: 10; 6
 > $g(x) = |2x - 4|$ je »V« s temenom $(2, 0)$. $h(x) = 2|x| - 4$ je »V« s temenom $(0, -4)$, saj je za $x \ge 0$ to premica $2x - 4$, leva polovica pa njena zrcalna slika čez os $y$.
 
 ? (brez računala) Izračunaj $\lfloor -3{,}7 \rfloor + \lfloor 3{,}7 \rfloor$.
-= -1
+= -1 | 0
 ~ 0 | Odrezal si decimalke ($-3 + 3$) ali zaokrožil na najbližje celo število ($-4 + 4$). Celi del vedno zaokroži navzdol: $\lfloor -3{,}7 \rfloor = -4$, ker je $-3$ večje od $-3{,}7$.
 ~ 1 | Obe števili si zaokrožil navzgor ($-3 + 4$). Celi del zaokroži navzdol: $\lfloor -3{,}7 \rfloor = -4$, $\lfloor 3{,}7 \rfloor = 3$.
 > $\lfloor -3{,}7 \rfloor = -4$ in $\lfloor 3{,}7 \rfloor = 3$, vsota je $-1$.

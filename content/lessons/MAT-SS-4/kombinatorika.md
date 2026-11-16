@@ -58,14 +58,12 @@ Kaj je večje: $\binom{7}{3}$ ali $\binom{7}{4}$? Odgovori brez računanja.
 Enaka sta, oba sta $35$. Ko izbereš $3$ kraje, ki jih boš obiskal, si s tem hkrati izbral $4$ kraje, ki jih ne boš. Vsakemu izboru treh ustreza natanko en izbor štirih.
 :::
 
-**5. Kako izbrati pravo formulo.** Pred računanjem odgovori na tri vprašanja.
+**5. Kako izbrati pravo formulo.** Pred računanjem odgovori na tri vprašanja: ali uporabiš vse elemente, ali je vrstni red pomemben in ali se elementi ponavljajo.
 
-| Vsi elementi? | Vrstni red pomemben? | Ponavljanje? | Formula |
-|---|---|---|---|
-| da | da | ne | $P_n = n!$ |
-| ne | da | ne | $V_n^k$ |
-| ne | da | da | $n^k$ |
-| ne | ne | ne | $\binom{n}{k}$ |
+- vsi elementi, vrstni red pomemben, brez ponavljanja: $P_n = n!$
+- ne vsi, vrstni red pomemben, brez ponavljanja: $V_n^k$
+- ne vsi, vrstni red pomemben, s ponavljanjem: $n^k$
+- ne vsi, vrstni red ni pomemben, brez ponavljanja: $\binom{n}{k}$
 
 V simulaciji spodaj (»Permutacije, variacije in kombinacije«) izberi način »Izbiranje«, nastavi $n = 5$ in $k = 3$, nato vklapljaj in izklapljaj stikalo »vrstni red je pomemben«. Opazi, da število pade s $60$ na $10$, natanko za faktor $3! = 6$.
 
@@ -316,11 +314,10 @@ Ko s prijatelji izbirate, katere $3$ od $7$ znamenitosti v Rimu boste obiskali v
 > $6! = 720$, $7! = 7 \cdot 6! = 5040$. Novi kraj lahko vstaviš na $7$ mest v vsakem od starih vrstnih redov.
 
 ? Ključavnica na kovčku ima $4$ kolesca, na vsakem so števke od $0$ do $9$. Koliko različnih kod lahko nastaviš?
-= 10000
+= 10000 | 0
 ~ 5040 | To je $10 \cdot 9 \cdot 8 \cdot 7$, kot da se števke ne smejo ponavljati. Koda $1111$ pa je povsem dovoljena.
 ~ 210 | To je $\binom{10}{4}$, kot da vrstni red ni pomemben. Koda $1234$ ni ista kot $4321$.
 ~ 40 | To je $4 \cdot 10$, seštevanje možnosti kolesc. Kolesca so zaporedne izbire, zato možnosti množiš.
-~ 10 | Če si vpisal »10.000«: pika pri vpisu pomeni decimalno vejico, zato se prebere kot $10$. Tisočice loči s presledkom ($10\,000$) ali pa jih ne loči.
 > Vsako kolesce ima $10$ možnosti, vrstni red je pomemben in ponavljanje je dovoljeno: $10^4 = 10\,000$ kod.
 
 ? Iz skupine $10$ popotnikov izberejo tri: prvi nosi zemljevid, drugi kompas, tretji GPS-napravo. Na koliko načinov lahko razdelijo naloge?
@@ -334,7 +331,7 @@ Ko s prijatelji izbirate, katere $3$ od $7$ znamenitosti v Rimu boste obiskali v
 > Izbiramo $3$ od $10$, vrstni red je pomemben, brez ponavljanja: $V_{10}^3 = 10 \cdot 9 \cdot 8 = 720$.
 
 ? (brez računala) Koliko različnih besed (tudi takih brez pomena) dobiš s premetavanjem vseh črk besede MAMA?
-= 6
+= 6 | 0
 ~ 24 | To je $4!$, kot da bi bile vse črke različne. Zamenjava obeh M ali obeh A ne da nove besede.
 ~ 12 | Delil si le z $2!$ za eno črko. Ponovita se dve črki, M in A, zato deliš z $2! \cdot 2!$.
 > Permutacije s ponavljanjem: $\frac{4!}{2! \cdot 2!} = \frac{24}{4} = 6$ (AAMM, AMAM, AMMA, MAAM, MAMA, MMAA).

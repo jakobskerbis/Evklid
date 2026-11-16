@@ -154,14 +154,12 @@ Graf $|x|$ se ne spremeni, ker je $|x|$ soda funkcija: $|-x| = |x|$, graf je že
 
 Vse preslikave na enem mestu:
 
-| Predpis | $(x, y)$ gre v | Učinek |
-|---|---|---|
-| $f(x) + q$ | $(x,\ y + q)$ | premik navpično |
-| $f(x - p)$ | $(x + p,\ y)$ | premik vodoravno |
-| $-f(x)$ | $(x,\ -y)$ | zrcaljenje čez os $x$ |
-| $f(-x)$ | $(-x,\ y)$ | zrcaljenje čez os $y$ |
-| $a \cdot f(x)$ | $(x,\ ay)$ | razteg navpično |
-| $f(kx)$ | $\left(\frac{x}{k},\ y\right)$ | skrčitev vodoravno |
+- $f(x) + q$: $(x, y) \to (x,\ y + q)$, premik navpično;
+- $f(x - p)$: $(x, y) \to (x + p,\ y)$, premik vodoravno;
+- $-f(x)$: $(x, y) \to (x,\ -y)$, zrcaljenje čez os $x$;
+- $f(-x)$: $(x, y) \to (-x,\ y)$, zrcaljenje čez os $y$;
+- $a \cdot f(x)$: $(x, y) \to (x,\ ay)$, razteg navpično;
+- $f(kx)$: $(x, y) \to \left(\frac{x}{k},\ y\right)$, skrčitev vodoravno.
 
 Sprememba zunaj $f$ deluje navpično in tako, kot piše. Sprememba pri $x$ deluje vodoravno in obratno.
 
@@ -361,7 +359,7 @@ Enačba je $5 = a \cdot 2^2 - 3$, torej $4a = 8$, $a = 2$ in $g(x) = 2(x + 2)^2 
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Graf funkcije $f(x) = \sqrt{x}$ najprej premaknemo za $4$ enote v levo, nato ga zrcalimo čez os $x$ in ga na koncu premaknemo za $3$ enote navzgor. Zapiši predpis dobljene funkcije $g$, njeno definicijsko območje in zalogo vrednosti.
+Graf funkcije $f(x) = \sqrt{x}$ najprej premaknemo za $4$ enote v levo, nato ga zrcalimo čez os $x$ in ga na koncu premaknemo za $3$ enote navzgor. Zapišite predpis dobljene funkcije $g$, njeno definicijsko območje in zalogo vrednosti.
 
 **Rešitev:**
 
@@ -376,10 +374,10 @@ Graf funkcije $f(x) = \sqrt{x}$ najprej premaknemo za $4$ enote v levo, nato ga 
 
 Dana je funkcija $g(x) = \frac{1}{2}(x - 4)^2 - 2$.
 
-a) Opiši, s katerimi preslikavami dobimo graf funkcije $g$ iz grafa funkcije $y = x^2$, in zapiši teme parabole. (2 točki)
-b) Izračunaj ničli funkcije $g$ in presečišče njenega grafa z osjo $y$. (2 točki)
-c) Zapiši zalogo vrednosti funkcije $g$. (1 točka)
-d) Graf funkcije $g$ zrcalimo čez os $y$. Zapiši predpis funkcije, ki ima za graf dobljeno krivuljo, in teme njenega grafa. (2 točki)
+a) Opišite, s katerimi preslikavami dobimo graf funkcije $g$ iz grafa funkcije $y = x^2$, in zapišite teme parabole. (2 točki)
+b) Izračunajte ničli funkcije $g$ in presečišče njenega grafa z osjo $y$. (2 točki)
+c) Zapišite zalogo vrednosti funkcije $g$. (1 točka)
+d) Graf funkcije $g$ zrcalimo čez os $y$. Zapišite predpis funkcije, ki ima za graf dobljeno krivuljo, in teme njenega grafa. (2 točki)
 
 **Rešitev:**
 
@@ -398,10 +396,10 @@ d) Graf funkcije $g$ zrcalimo čez os $y$. Zapiši predpis funkcije, ki ima za g
 
 Dana je funkcija $f(x) = 2|x - 1| - 4$.
 
-a) Opiši, kako dobimo graf funkcije $f$ iz grafa $y = |x|$, in zapiši teme grafa. (2 točki)
-b) Izračunaj ničli funkcije $f$ in vrednost $f(0)$ ter zapiši zalogo vrednosti $Z_f$. (3 točke)
-c) Naj bo $g(x) = f(2x)$. Zapiši predpis funkcije $g$, teme njenega grafa in njeni ničli. (2 točki)
-d) Reši neenačbo $f(x) \le x - 1$. (3 točke)
+a) Opišite, kako dobimo graf funkcije $f$ iz grafa $y = |x|$, in zapišite teme grafa. (2 točki)
+b) Izračunajte ničli funkcije $f$ in vrednost $f(0)$ ter zapišite zalogo vrednosti $Z_f$. (3 točke)
+c) Naj bo $g(x) = f(2x)$. Zapišite predpis funkcije $g$, teme njenega grafa in njeni ničli. (2 točki)
+d) Rešite neenačbo $f(x) \le x - 1$. (3 točke)
 
 **Rešitev:**
 

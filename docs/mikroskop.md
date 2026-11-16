@@ -3,7 +3,8 @@
 Virtualni mikroskop od 40× do 50 000 000× (j, 12. 11. 2026: »Naj ima povečavo do 50000000«, »TEM«, »Naj bo možno vsako
 tkivo v 3D svetu pogledati z mikroskopom«). Trije načini (j, 13. 11. 2026: »optični, elektronski in TEM«): svetlobni
 mikroskop do 1000×, vrstični elektronski mikroskop (SEM, površina) od 40× do 300 000× in presevni elektronski mikroskop
-(TEM, rezina) do 50 000 000×. Ob drsniku povečave sta gumba − in + (tap en korak, držanje ponavlja).
+(TEM, rezina) do uporabnih 5 000 000×, z vklopljenimi »Molekulami v barvah« do 50 000 000× (j, 16. 11. 2026). Ob
+drsniku povečave sta gumba − in + (tap en korak, držanje ponavlja).
 
 ## Kje je
 
@@ -49,6 +50,18 @@ struktura atlasa in vsak model svoj preparat.
 - TEM: rezina 70 nm, kontrast s težkimi kovinami, ločljivost biološkega vzorca ≈ 1–2 nm. Nad ~800 000× se slika
   postopoma prelije v model molekul in atomov; vmesnik to jasno pove (besedilo pod podatki), ker TEM posameznih
   molekul v mehkem tkivu ne loči. Pri kosti in zobu visokoločljivi TEM res pokaže mrežo kristala hidroksiapatita.
+- Uporabna povečava TEM (j, 16. 11. 2026, `TEM_MAX` v `optika.js`): ločljivost rezine d ≈ 1,5 nm omejuje vzorec, ne
+  elektronska optika, zato je nad neko povečavo slika le še večja, ne bolj podrobna (prazna povečava). Meja: čez vidno
+  polje naj bo vsaj ~20 ločljivih točk, torej vidno polje ≥ 20 · 1,5 nm = 30 nm in M ≤ 160 mm / 30 nm ≈ 5,3 · 10⁶;
+  zaokroženo navzdol 5 000 000× (vidno polje 32 nm ≈ 21 točk, membrana 7–8 nm je še 5 točk). Pri 50 000 000× (3,2 nm)
+  sta čez polje le še dve točki in slika je enakomerno siva (j je to javil s posnetkom zaslona). Model molekul je poln že
+  od ~2 400 000×. Brez »Molekul v barvah« drsnik, gumb + in prsti segajo do 5 000 000×; blizu meje (od 3 500 000×) se pod
+  nadzorom TEM pokaže namig `mk.temLimit`. Z barvami ostane pot do 50 000 000× (atomi, `raven` »atomi« pod 12 nm), ker je
+  to ponazoritev, ne posnetek; ob izklopu barv se povečava spusti na 5 000 000×.
+- Snop TEM in SEM (`svetlostSnopa`): ista vrednost kot lučka (`s.zarnica`). Zaslon sveti sorazmerno s tokom elektronov;
+  kamera nad 30 % toka s časom osvetlitve drži sliko skoraj enako svetlo (0,9 + 0,5 · snop, privzetih 70 % in samodejna
+  lučka 37–100 % sta kot prej). Pod 30 % svetlost pada sorazmerno s tokom, 0 % je črno. Šum izstrelkov: upodobi.js doda
+  šum · √svetlosti, zato je relativni šum ∝ 1/√toka in je šibka slika bolj zrnata; SEM ima še dodaten šum ob šibkem snopu.
 
 - SEM: povečava se nanaša na sliko širine 127 mm; ločljivost ≈ 3 nm (zlata prevleka); globinska ostrina
   D = 2 · (0,1 mm / M) / α z α = 5 mrad, torej mnogo večja kot pri svetlobnem mikroskopu. Svetlost je ponazoritev

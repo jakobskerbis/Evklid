@@ -175,6 +175,7 @@ export const ZNACILNO = {
 };
 // Točka (µm) blizu začetne sredine, kjer je značilna snov vsaj ~1 µm od roba (pri virusih ~20 nm), da je na ravni molekul
 // vidna le ona. Izračunano z mrežo sond (docs/mikroskop.md »Molekule«); ob spremembi oblike preparata jo preračunaj.
+// Tanko črevo: enterocit ob strani resice (prej stik resic s kripto, kjer se plasti stikata v ravnih šivih; j 16. 11. 2026).
 export const ZNACILNA_TOCKA = {
   kri: [899.9, -0.1], "skeletna-misica": [-0.1, -0.1], "srcna-misica": [-0.1, -0.1], "gladka-misica": [-1.9, 59.6],
   "virus-t4": [-0.042, 0.09], "virus-sars": [0.246, -0.006], "virus-hiv": [-1.206, 2.334], bakterije: [-5.4, -28.9],
@@ -182,7 +183,7 @@ export const ZNACILNA_TOCKA = {
   reza: [0.1, -5.1], jetra: [-0.4, -0.4], bezgavka: [3.1, 1.6], jajcnik: [8.1, -8.9], modo: [-8.1, -7.1],
   zleza: [-29.1, -31.9], scitnica: [-0.9, 2.1], koza: [29.9, 283.9], zivec: [-14.6, -973.1],
   "bela-snov": [-30.1, -31.9], "mali-mozgani": [-4.9, -4.9], pljuca: [7.4, -16.6], sapnik: [-0.1, 1150.9],
-  zelodec: [-0.9, 899.9], "tanko-crevo": [2.1, 399.6], "debelo-crevo": [10.6, 802.4], mehur: [-3.4, 1182.6],
+  zelodec: [-0.9, 899.9], "tanko-crevo": [18, 700], "debelo-crevo": [10.6, 802.4], mehur: [-3.4, 1182.6],
   arterija: [-739.3, 507.3], vena: [1122.8, 558.3], zob: [-15.4, 346.6],
 };
 // virusi (r1 v celice.js): 1 SARS-CoV-2, 2 HIV, 3 T4 (3,0 glava, 3,1 rep, 3,2 vlakna)

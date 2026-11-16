@@ -84,14 +84,13 @@ V simulaciji spodaj (»Od enotske krožnice do grafa«) počasi povečuj kot od 
 
 *Preveri:* ali je $4\pi$ tudi perioda sinusa? *Odgovor:* je, ker sta to dva obrata, a ni osnovna perioda.
 
-**3. Lastnosti osnovnih grafov.**
+**3. Lastnosti osnovnih grafov.** Obe funkciji imata zalogo vrednosti $[-1, 1]$. Tabela pove, pri katerih $x$ je vrednost $0$ (ničle), $1$ (maksimum) in $-1$ (minimum):
 
 | | $\sin x$ | $\cos x$ |
 |---|---|---|
-| zaloga vrednosti | $[-1, 1]$ | $[-1, 1]$ |
-| ničle | $k\pi$ | $\frac{\pi}{2} + k\pi$ |
-| maksimum $1$ pri | $\frac{\pi}{2} + 2k\pi$ | $2k\pi$ |
-| minimum $-1$ pri | $\frac{3\pi}{2} + 2k\pi$ | $\pi + 2k\pi$ |
+| $y = 0$ | $k\pi$ | $\frac{\pi}{2} + k\pi$ |
+| $y = 1$ | $\frac{\pi}{2} + 2k\pi$ | $2k\pi$ |
+| $y = -1$ | $\frac{3\pi}{2} + 2k\pi$ | $\pi + 2k\pi$ |
 
 Tu je $k$ poljubno celo število. Graf kosinusa ima enako obliko kot graf sinusa, le premaknjen je za $\frac{\pi}{2}$ v levo: vrh ima pri $0$, sinus pa šele pri $\frac{\pi}{2}$.
 
@@ -242,10 +241,10 @@ $$f(x) = A\sin\big(b(x - c)\big) + d$$
 |---|---|---|
 | $A$ | višina | amplituda $\lvert A\rvert$ |
 | $b$ | širina | $T = \frac{2\pi}{\lvert b\rvert}$ |
-| $c$ | premik levo–desno | za $c$ v desno |
-| $d$ | premik gor–dol | srednja črta $y = d$ |
+| $c$ | levo–desno | za $c$ v desno |
+| $d$ | gor–dol | za $d$ navzgor |
 
-Največja vrednost funkcije je $d + |A|$, najmanjša $d - |A|$. Če je $A < 0$, se graf zrcali čez srednjo črto.
+Srednja črta grafa je $y = d$. Največja vrednost funkcije je $d + |A|$, najmanjša $d - |A|$. Če je $A < 0$, se graf zrcali čez srednjo črto.
 
 V simulaciji spodaj (»Graf A sin(b(x − c)) + d«) spreminjaj vse štiri hkrati. Nastavi $b = 2$ in $c = \frac{\pi}{4}$: kolikšna je perioda in kje se začne val? *Odgovor:* perioda je $\pi$, val se začne pri $x = \frac{\pi}{4}$.
 
@@ -417,7 +416,7 @@ $b = \frac{2\pi}{4} = \frac{\pi}{2}$. Val se začne na srednji črti pri $x = 1$
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Zapiši predpis funkcije oblike $f(x) = A\cos(bx) + d$, kjer sta $A > 0$ in $b > 0$, ki ima zalogo vrednosti $[-1, 5]$ in osnovno periodo $\frac{2\pi}{3}$.
+Zapišite predpis funkcije oblike $f(x) = A\cos(bx) + d$, kjer sta $A > 0$ in $b > 0$, ki ima zalogo vrednosti $[-1, 5]$ in osnovno periodo $\frac{2\pi}{3}$.
 
 **Rešitev:**
 
@@ -432,10 +431,10 @@ Zapiši predpis funkcije oblike $f(x) = A\cos(bx) + d$, kjer sta $A > 0$ in $b >
 
 Dana je funkcija $f(x) = 2\cos\left(2x - \frac{\pi}{3}\right) - 1$.
 
-a) Zapiši $f$ v obliki $f(x) = A\cos\big(b(x - c)\big) + d$ ter določi amplitudo in osnovno periodo. (2 točki)
-b) Izračunaj presečišče grafa funkcije $f$ z osjo $y$ in zapiši zalogo vrednosti funkcije. (2 točki)
-c) Določi, pri katerih $x \in [0, \pi]$ ima $f$ največjo in najmanjšo vrednost, in ti vrednosti zapiši. (2 točki)
-d) Nariši graf funkcije $f$ na intervalu $[0, \pi]$. (2 točki)
+a) Zapišite $f$ v obliki $f(x) = A\cos\big(b(x - c)\big) + d$ ter določite amplitudo in osnovno periodo. (2 točki)
+b) Izračunajte presečišče grafa funkcije $f$ z osjo $y$ in zapišite zalogo vrednosti funkcije. (2 točki)
+c) Določite, pri katerih $x \in [0, \pi]$ ima $f$ največjo in najmanjšo vrednost, in ti vrednosti zapišite. (2 točki)
+d) Narišite graf funkcije $f$ na intervalu $[0, \pi]$. (2 točki)
 
 **Rešitev:**
 
@@ -477,8 +476,8 @@ podnapis: f(x) = 2 cos(2x − π/3) − 1 na [0, π] okoli srednje črte y = −
 
 Globina morja v pristanišču se zaradi plimovanja spreminja približno sinusno. Nekega dne je bila ob 3.00 oseka z najmanjšo globino $1{,}8\,\text{m}$, naslednja plima z največjo globino $6{,}2\,\text{m}$ pa ob 9.12. Globino opišemo s funkcijo $h(t) = A\sin\big(b(t - c)\big) + d$, kjer je $t$ čas v urah po polnoči.
 
-a) Določi $A > 0$, $b > 0$, $d$ in najmanjši pozitivni $c$. (4 točke)
-b) Izračunaj globino morja ob 14.00. Rezultat zaokroži na centimeter. (2 točki)
+a) Določite $A > 0$, $b > 0$, $d$ in najmanjši pozitivni $c$. (4 točke)
+b) Izračunajte globino morja ob 14.00. Rezultat zaokrožite na centimeter. (2 točki)
 c) Ob kateri uri (na minuto natančno) je ta dan naslednja oseka in ob kateri naslednja plima? (2 točki)
 d) Ladja sme v pristanišče, kadar je globina vsaj $4\,\text{m}$. Med katerima urama v času med oseko ob 3.00 in naslednjo oseko sme ladja v pristanišče? (2 točki)
 

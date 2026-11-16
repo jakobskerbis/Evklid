@@ -98,13 +98,13 @@ f: arctan(x) | modra debelo
 
 **6. Pregled.** Vse tri funkcije na enem mestu:
 
-| | $\arcsin x$ | $\arccos x$ | $\arctan x$ |
-|---|---|---|---|
-| $D$ | $[-1, 1]$ | $[-1, 1]$ | $\mathbb{R}$ |
-| $Z$ | $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$ | $[0, \pi]$ | $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ |
-| potek | narašča | pada | narašča |
-| simetrija | liha | nobena | liha |
-| asimptoti | ni | ni | $y = \pm\frac{\pi}{2}$ |
+| | $D$ | $Z$ |
+|---|---|---|
+| $\arcsin x$ | $[-1, 1]$ | $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$ |
+| $\arccos x$ | $[-1, 1]$ | $[0, \pi]$ |
+| $\arctan x$ | $\mathbb{R}$ | $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ |
+
+Arkus sinus in arkus tangens naraščata in sta lihi funkciji. Arkus kosinus pada in ni ne sod ne lih. Asimptoti $y = \pm\frac{\pi}{2}$ ima le arkus tangens.
 
 **7. Past pri sestavljanju.** Če najprej vzameš arkus in nato sinus, dobiš vedno začetno število:
 
@@ -264,9 +264,9 @@ $\frac{2\pi}{3}$. Velja $\cos\frac{2\pi}{3} = -\frac12$ in $\frac{2\pi}{3}$ lež
 
 Dana je funkcija $f(x) = 2\arccos\frac{x}{2} - \pi$.
 
-a) Določi definicijsko območje $D_f$ in zalogo vrednosti $Z_f$ funkcije $f$. (2 točki)
-b) Izračunaj ničlo funkcije $f$ in reši enačbo $f(x) = \frac{\pi}{3}$. (3 točke)
-c) Skiciraj graf funkcije $f$. (2 točki)
+a) Določite definicijsko območje $D_f$ in zalogo vrednosti $Z_f$ funkcije $f$. (2 točki)
+b) Izračunajte ničlo funkcije $f$ in rešite enačbo $f(x) = \frac{\pi}{3}$. (3 točke)
+c) Skicirajte graf funkcije $f$. (2 točki)
 
 **Rešitev:**
 
@@ -301,9 +301,9 @@ točka: 2; -3,1416
 
 Utež, obešena na vzmet, niha navpično nad mizo. Njena višina nad mizo je $t$ milisekund po začetku merjenja enaka $h(t) = 30 - 25\cos\frac{\pi t}{300}$ milimetrov. Ob $t = 0$ je utež v najnižji legi.
 
-a) Izračunaj, na kateri višini je utež $100\,\text{ms}$ po začetku merjenja, in koliko časa traja en nihaj. (2 točki)
-b) Svetlobni senzor zazna utež, kadar je ta vsaj $40\,\text{mm}$ nad mizo. Koliko časa v enem nihaju senzor zaznava utež? Rezultat zaokroži na celo milisekundo. (4 točke)
-c) V prvi polovici nihaja ($0 \le t \le 300$) se utež dviga. Za ta del gibanja izrazi čas $t$ z višino $h$ ter zapiši definicijsko območje in zalogo vrednosti dobljene funkcije. (4 točke)
+a) Izračunajte, na kateri višini je utež $100\,\text{ms}$ po začetku merjenja, in koliko časa traja en nihaj. (2 točki)
+b) Svetlobni senzor zazna utež, kadar je ta vsaj $40\,\text{mm}$ nad mizo. Koliko časa v enem nihaju senzor zaznava utež? Rezultat zaokrožite na celo milisekundo. (4 točke)
+c) V prvi polovici nihaja ($0 \le t \le 300$) se utež dviga. Za ta del gibanja izrazite čas $t$ z višino $h$ ter zapišite definicijsko območje in zalogo vrednosti dobljene funkcije. (4 točke)
 
 **Rešitev:**
 
@@ -381,7 +381,7 @@ Preizkus: v vsaki vrstici je vsota $\frac{\pi}{2}$. Velja $\arcsin x + \arccos x
 ## Preveri se
 
 ? Tri od teh vrednosti so enake, ena izstopa: $\arcsin\frac12$, $\arccos\frac{\sqrt3}{2}$, $\arctan\frac{\sqrt3}{3}$, $\arccos\frac12$. Izračunaj jih (brez računala) in vpiši v stopinjah tisto, ki izstopa.
-= 60
+= 60 | 0
 ~ 30 | To je skupna vrednost ostalih treh, $\frac{\pi}{6}$. Izstopa $\arccos\frac12$.
 ~ 1,05 | To je $\frac{\pi}{3}$ v radianih. Vprašanje zahteva stopinje.
 > Prve tri so $\frac{\pi}{6} = 30°$. Izstopa $\arccos\frac12 = \frac{\pi}{3} = 60°$, ker je $\cos 60° = \frac12$.

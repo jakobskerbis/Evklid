@@ -23,7 +23,7 @@ Dobimo enačbo brez korena: $x + 6 = x^2$, urejeno $x^2 - x - 6 = 0$. Tričlen r
 
 **2. Preizkus.** Obe števili vstavimo v *prvotno* enačbo:
 
-| $x$ | levo: $\sqrt{x+6}$ | desno | velja? |
+| $x$ | levo | desno | velja? |
 |---|---|---|---|
 | $3$ | $\sqrt{9} = 3$ | $3$ | da |
 | $-2$ | $\sqrt{4} = 2$ | $-2$ | ne |
@@ -211,7 +211,7 @@ Ostane $x = 1$. Preizkus: $\sqrt{4} = 2$ in $1 + 1 = 2$. Kandidat $x = -4$ ne iz
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-V realnih številih reši enačbo $(x - 1)^4 = 625$. Z razstavljanjem utemelji, da drugih realnih rešitev ni.
+V realnih številih rešite enačbo $(x - 1)^4 = 625$. Z razstavljanjem utemeljite, da drugih realnih rešitev ni.
 
 **Rešitev:**
 
@@ -224,7 +224,7 @@ V realnih številih reši enačbo $(x - 1)^4 = 625$. Z razstavljanjem utemelji, 
 
 ### Naloga 2 (višja raven): krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
 
-V realnih številih reši enačbe:
+V realnih številih rešite enačbe:
 
 a) $\sqrt[3]{x^2 - 9} = -2$ (3 točke)
 b) $\sqrt{x^2 - 9} = -2$ (1 točka)
@@ -246,9 +246,9 @@ c) $\sqrt{x^2 - 9} = x - 1$ (2 točki)
 
 Dani sta funkciji $f(x) = \sqrt{x + 5}$ in $g(x) = 1 + \sqrt{x - 2}$.
 
-a) Zapiši definicijski območji funkcij $f$ in $g$ ter interval, na katerem sta definirani obe. (2 točki)
-b) Izračunaj koordinati presečišča grafov funkcij $f$ in $g$. (5 točk)
-c) Izračunaj presečišče grafa funkcije $f$ s premico $y = x - 1$. Pojasni, zakaj enega od kandidatov izločiš. (3 točke)
+a) Zapišite definicijski območji funkcij $f$ in $g$ ter interval, na katerem sta definirani obe. (2 točki)
+b) Izračunajte koordinati presečišča grafov funkcij $f$ in $g$. (5 točk)
+c) Izračunajte presečišče grafa funkcije $f$ s premico $y = x - 1$. Pojasnite, zakaj enega od kandidatov izločite. (3 točke)
 
 **Rešitev:**
 
@@ -347,7 +347,7 @@ točka: -1; -1 | (−1, −1) | desno | siva
 > Po kvadriranju dobiš enačbo $x + 2 = x^2$ s kandidatoma $2$ in $-1$. Na sliki je $-1$ presečišče s črtkano krivuljo, zato ga preizkus izloči.
 
 ? (brez računala) Reši enačbo $\sqrt{2x + 7} = x + 2$. Vpiši rešitev.
-= 1
+= 1 | 0
 ~ -3 | Število $-3$ je navidezna rešitev: desna stran je $-1$, koren pa $\sqrt{1} = 1$. Naredi preizkus ali preveri pogoj $x + 2 \ge 0$.
 > Kvadriranje da enačbo $x^2 + 2x - 3 = 0$, razstavljeno $(x + 3)(x - 1) = 0$. Pogoj $x \ge -2$ izloči $-3$. Preizkus za $1$: $\sqrt{9} = 3 = 1 + 2$.
 

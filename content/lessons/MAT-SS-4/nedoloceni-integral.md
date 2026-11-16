@@ -15,9 +15,9 @@ Prizora sta si na videz tuja: enkrat glasnost, drugič udarci. Skrivata pa isto 
 
 ## Razlaga
 
-**Nazaj od odvoda.** Pri vsaki vrstici spodaj je znan odvod, iščemo funkcijo, ki ima ta odvod. Ugibamo, nato preverimo z odvajanjem:
+**Nazaj od odvoda.** Pri vsaki vrstici spodaj je znan odvod $f(x)$, iščemo funkcijo $F(x)$, ki ima ta odvod. Ugibamo, nato preverimo z odvajanjem ($F'(x)$):
 
-| znan odvod $f(x)$ | funkcija $F(x)$ | preverba $F'(x)$ |
+| $f(x)$ | $F(x)$ | $F'(x)$ |
 |---|---|---|
 | $8$ | $8x$ | $8$ ✓ |
 | $2x$ | $x^2$ | $2x$ ✓ |
@@ -52,9 +52,9 @@ Bobnar iz uvoda: število udarcev $N(t)$ ima odvod $60 + 12t$, zato je $N(t) = 6
 | $\dfrac{1}{x}$ | $\ln\lvert x\rvert + C$ | $x \ne 0$ |
 | $e^x$ | $e^x + C$ | |
 | $\cos x$ | $\sin x + C$ | |
-| $\sin x$ | $-\cos x + C$ | pazi na minus |
+| $\sin x$ | $-\cos x + C$ | |
 
-Za potence lahko zapišemo tudi formulo:
+Pri $\sin x$ pazi na minus. Za potence lahko zapišemo tudi formulo:
 
 $$\int x^n\,dx = \frac{x^{n+1}}{n+1} + C$$
 
@@ -210,7 +210,7 @@ $\int u^4\,du = \dfrac{u^5}{5} + C$, torej $\dfrac{(x^3 - 2)^5}{5} + C$. Preverb
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izračunaj $\int \left(\dfrac{3}{x^2} - \dfrac{2}{x} + 4\cos x\right) dx$ za $x \ne 0$.
+Izračunajte $\int \left(\dfrac{3}{x^2} - \dfrac{2}{x} + 4\cos x\right) dx$ za $x \ne 0$.
 
 **Rešitev:**
 
@@ -225,11 +225,11 @@ Izračunaj $\int \left(\dfrac{3}{x^2} - \dfrac{2}{x} + 4\cos x\right) dx$ za $x 
 
 Za funkcijo $f$ velja $f'(x) = 3x^2 - 6x$, njen graf pa poteka skozi točko $T(1, 2)$.
 
-a) Zapiši predpis funkcije $f$. (2 točki)
+a) Zapišite predpis funkcije $f$. (2 točki)
 
-b) Izračunaj ničle funkcije $f$. (2 točki)
+b) Izračunajte ničle funkcije $f$. (2 točki)
 
-c) Izračunaj koordinate lokalnih ekstremov funkcije $f$ in za vsakega utemelji, ali je lokalni maksimum ali lokalni minimum. (2 točki)
+c) Izračunajte koordinate lokalnih ekstremov funkcije $f$ in za vsakega utemeljite, ali je lokalni maksimum ali lokalni minimum. (2 točki)
 
 **Rešitev:**
 
@@ -247,13 +247,13 @@ c) Izračunaj koordinate lokalnih ekstremov funkcije $f$ in za vsakega utemelji,
 
 Dana je funkcija $f(x) = x\sqrt{x^2 + 9}$.
 
-a) Z uvedbo nove spremenljivke izračunaj $\int f(x)\,dx$. (3 točke)
+a) Z uvedbo nove spremenljivke izračunajte $\int f(x)\,dx$. (3 točke)
 
-b) Poišči tisto primitivno funkcijo $F$ funkcije $f$, za katero je $F(0) = 0$, in izračunaj $F(4)$. (3 točke)
+b) Poiščite tisto primitivno funkcijo $F$ funkcije $f$, za katero je $F(0) = 0$, in izračunajte $F(4)$. (3 točke)
 
-c) Izračunaj $\int \sin^2 x\,\cos x\,dx$. (2 točki)
+c) Izračunajte $\int \sin^2 x\,\cos x\,dx$. (2 točki)
 
-d) Izračunaj $\int \dfrac{2x + 3}{x^2 + 3x + 5}\,dx$ in utemelji, zakaj v rezultatu absolutna vrednost ni potrebna. (2 točki)
+d) Izračunajte $\int \dfrac{2x + 3}{x^2 + 3x + 5}\,dx$ in utemeljite, zakaj v rezultatu absolutna vrednost ni potrebna. (2 točki)
 
 **Rešitev:**
 
@@ -347,7 +347,7 @@ Enako pri kilometrskem števcu: hitrost avtomobila pove, koliko kilometrov doda�
 > $\int x^2\,dx = \dfrac{x^3}{3}$ in $\int \dfrac{1}{x}\,dx = \ln\lvert x\rvert$; konstanto dodamo enkrat.
 
 ? (brez računala) Bobnar začne s tempom $80$ udarcev na minuto in pospešuje, tempo je $80 + 20t$ ($t$ v minutah). Koliko udarcev odigra v prvih $3$ minutah?
-= 330
+= 330 | 0
 ~ 140 | To je tempo ob $t = 3$, torej hitrost, ne število udarcev.
 ~ 420 | To dobiš, če ves čas računaš s končnim tempom ($140 \cdot 3$) ali pri $20t$ pozabiš deliti z $2$. Tempo je na začetku manjši.
 > $N(t) = 80t + 10t^2 + C$, $N(0) = 0$ da $C = 0$; $N(3) = 240 + 90 = 330$.

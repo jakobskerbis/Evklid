@@ -27,10 +27,8 @@ $$p(x) = a_n x^n + a_{n-1}x^{n-1} + \dots + a_1 x + a_0, \quad a_n \ne 0.$$
 
 **Polinomska funkcija.** Funkcija, ki vsakemu realnemu številu $x$ priredi vrednost polinoma $p(x)$, je **polinomska funkcija**. Dve že dobro poznaš:
 
-| funkcija | zapis | stopnja | vodilni koeficient | prosti člen |
-|---|---|---|---|---|
-| linearna ($k \ne 0$) | $kx + n$ | $1$ | smerni koeficient $k$ | začetna vrednost $n$ |
-| kvadratna ($a \ne 0$) | $ax^2 + bx + c$ | $2$ | $a$ | $c$ |
+- **Linearna** $kx + n$ ($k \ne 0$): stopnja $1$, vodilni koeficient je smerni koeficient $k$, prosti člen je začetna vrednost $n$.
+- **Kvadratna** $ax^2 + bx + c$ ($a \ne 0$): stopnja $2$, vodilni koeficient $a$, prosti člen $c$.
 
 Konstantna funkcija $p(x) = a_0$ z $a_0 \ne 0$ je polinom stopnje $0$. Linearna in kvadratna funkcija sta torej posebna primera polinomske funkcije. Vse, kar velja za polinome, velja tudi zanju: polinom stopnje $1$ ima eno ničlo, polinom stopnje $2$ največ dve.
 
@@ -46,11 +44,9 @@ Tu je $p$ deljenec, $q$ delitelj, $k$ količnik in $r$ ostanek, ki ima nižjo st
 
 Razdelimo $(2x^3 - 3x^2 + 4x - 5) : (x - 2)$. V vsakem koraku delimo le vodilna člena, pomnožimo nazaj in odštejemo:
 
-| korak | vodilna člena | pomnožimo z $x - 2$ | ostane |
-|---|---|---|---|
-| 1 | $2x^3 : x = 2x^2$ | $2x^3 - 4x^2$ | $x^2 + 4x - 5$ |
-| 2 | $x^2 : x = x$ | $x^2 - 2x$ | $6x - 5$ |
-| 3 | $6x : x = 6$ | $6x - 12$ | $7$ |
+1. $2x^3 : x = 2x^2$. Pomnožimo z $x - 2$: $2x^3 - 4x^2$. Ostane $x^2 + 4x - 5$.
+2. $x^2 : x = x$. Pomnožimo z $x - 2$: $x^2 - 2x$. Ostane $6x - 5$.
+3. $6x : x = 6$. Pomnožimo z $x - 2$: $6x - 12$. Ostane $7$.
 
 Količnik je $k(x) = 2x^2 + x + 6$, ostanek $r = 7$. Ustavimo se, ko ima to, kar ostane, nižjo stopnjo od delitelja.
 
@@ -253,7 +249,7 @@ $p(x) = (x - z_1)(x - z_2)(x - z_3)$; pri realnih koeficientih je z $z$ ničla t
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Določi realno število $m$ tako, da bo polinom $p(x) = x^3 + mx^2 - 4x + 12$ deljiv z $x - 2$. Nato zapiši količnik pri tem deljenju.
+Določite realno število $m$ tako, da bo polinom $p(x) = x^3 + mx^2 - 4x + 12$ deljiv z $x - 2$. Nato zapišite količnik pri tem deljenju.
 
 **Rešitev:**
 
@@ -268,9 +264,9 @@ Določi realno število $m$ tako, da bo polinom $p(x) = x^3 + mx^2 - 4x + 12$ de
 
 Dan je polinom $p(x) = 2x^3 - 3x^2 - 11x + 6$.
 
-a) Pokaži, da je število $3$ ničla polinoma $p$. (1 točka)
-b) Razcepi $p$ na linearne faktorje in zapiši vse njegove ničle. (3 točke)
-c) Določi količnik in ostanek pri deljenju polinoma $p$ s polinomom $x^2 - 1$. (3 točke)
+a) Pokažite, da je število $3$ ničla polinoma $p$. (1 točka)
+b) Razcepite $p$ na linearne faktorje in zapišite vse njegove ničle. (3 točke)
+c) Določite količnik in ostanek pri deljenju polinoma $p$ s polinomom $x^2 - 1$. (3 točke)
 
 **Rešitev:**
 
@@ -289,9 +285,9 @@ c) Določi količnik in ostanek pri deljenju polinoma $p$ s polinomom $x^2 - 1$.
 
 Iz pravokotnega kosa kartona z merama $16\,\mathrm{cm}$ in $10\,\mathrm{cm}$ v vseh štirih vogalih izrežemo enake kvadrate s stranico $x$ (v centimetrih) in robove zapognemo navzgor. Nastane odprta škatla.
 
-a) Zapiši prostornino škatle $V(x)$ kot polinom v razviti obliki in določi, za katere $x$ ima naloga smisel. (3 točke)
-b) Določi vse $x$, pri katerih ima škatla prostornino $144\,\mathrm{cm^3}$. (5 točk)
-c) Z razcepom iz b) zapiši $V(x) - 144$ kot produkt linearnih faktorjev in utemelji, da nobena takšna škatla nima prostornine, večje od $144\,\mathrm{cm^3}$. (2 točki)
+a) Zapišite prostornino škatle $V(x)$ kot polinom v razviti obliki in določite, za katere $x$ ima naloga smisel. (3 točke)
+b) Določite vse $x$, pri katerih ima škatla prostornino $144\,\mathrm{cm^3}$. (5 točk)
+c) Z razcepom iz b) zapišite $V(x) - 144$ kot produkt linearnih faktorjev in utemeljite, da nobena takšna škatla nima prostornine, večje od $144\,\mathrm{cm^3}$. (2 točki)
 
 **Rešitev:**
 
@@ -334,14 +330,14 @@ Primer je $p(x) = x^3 + x = x(x^2 + 1)$: faktor $x^2 + 1$ je vedno pozitiven, za
 
 ## Drugače: Na sliki
 
-Nariši graf $f(t) = (t - 1)(t - 2)(t - 3)$ in zraven tabelo predznakov:
+Nariši graf $f(t) = (t - 1)(t - 2)(t - 3)$ in zraven tabelo predznakov (v srednjem stolpcu so po vrsti predznaki faktorjev $t - 1$, $t - 2$ in $t - 3$):
 
-| interval | $t - 1$ | $t - 2$ | $t - 3$ |
-|---|---|---|---|
-| $t < 1$ | $-$ | $-$ | $-$ |
-| $1 < t < 2$ | $+$ | $-$ | $-$ |
-| $2 < t < 3$ | $+$ | $+$ | $-$ |
-| $t > 3$ | $+$ | $+$ | $+$ |
+| interval | predznaki | $f(t)$ |
+|---|---|---|
+| $t < 1$ | $-\ -\ -$ | $-$ |
+| $1 < t < 2$ | $+\ -\ -$ | $+$ |
+| $2 < t < 3$ | $+\ +\ -$ | $-$ |
+| $t > 3$ | $+\ +\ +$ | $+$ |
 
 Produkt je zaporedoma negativen, pozitiven, negativen in pozitiven. Graf torej prihaja od spodaj, pri $1$ preseka os $t$ navzgor, pri $2$ navzdol in pri $3$ spet navzgor. Vsak faktor $t - a$ je na sliki eno presečišče z osjo pri $t = a$. Ko s Hornerjem odcepiš faktor, z grafa »odstraniš« eno presečišče, preostale ničle pa ostanejo na istih mestih.
 
@@ -402,13 +398,13 @@ Produkt je zaporedoma negativen, pozitiven, negativen in pozitiven. Graf torej p
 > Ničle so $2$, $3$ in $-3$; v poštev prideta le nenegativni.
 
 ? (brez računala) Kolikšna je stopnja polinomske funkcije $p(x) = (2x - 1)^2 - 4x^2$?
-= 1
+= 1 | 0
 ~ 2 | Kvadrat binoma da $4x^2 - 4x + 1$, člen $4x^2$ pa se odšteje. Ostane $-4x + 1$.
 ~ 4 | Stopnje se pri kvadriranju ne seštevajo tako: $(2x - 1)^2$ je stopnje $2$, ne $4$.
 > $p(x) = 4x^2 - 4x + 1 - 4x^2 = -4x + 1$. To je linearna funkcija, torej polinomska funkcija stopnje $1$.
 
 ? Polinom četrte stopnje z realnimi koeficienti ima ničli $1 + 2i$ in $-3i$. Koliko realnih ničel ima?
-= 0
+= 0 | 0
 ~ 2 | Pozabil si na konjugirani števili: ničli sta tudi $1 - 2i$ in $3i$. To so že štiri ničle.
 ~ 1 | Polinom četrte stopnje ima natanko štiri kompleksne ničle, štete s stopnjo; vse štiri so že znane.
 > Pri realnih koeficientih sta ničli tudi $1 - 2i$ in $3i$. Polinom stopnje $4$ ima natanko štiri ničle, zato realnih ni.

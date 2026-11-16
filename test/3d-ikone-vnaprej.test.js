@@ -64,7 +64,6 @@ test("Uči se → 3D svet: ikone podvej vnaprej, dotik na vejo pokaže ikone tak
     );
     await p.evaluate((id) => localStorage.setItem("studentId", String(id)), id);
     await p.goto(base + "/?pogled=3d");
-    await p.waitForSelector(".iq-wrap [data-iq=skip]", { timeout: 8000 }).then((b) => b.click()).catch(() => {});
     await p.waitForSelector("#uci-3d-content .uci-3d-veja img", { timeout: 15000 });
     const prva = await p.locator("#uci-3d-content .uci-3d-veja[data-pot]").first();
     const pot = await prva.getAttribute("data-pot");

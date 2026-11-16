@@ -16,11 +16,9 @@ Pri gradnji in obrti takšna pravila uporabljajo vsak dan. Koliko ploščic gre 
 
 **1. Vsota kotov.** Trije učenci so s kotomerom izmerili kote svojih štirikotnikov:
 
-| Štirikotnik | Izmerjeni koti | Vsota |
-|---|---|---|
-| poljuben | $88^\circ$, $97^\circ$, $104^\circ$, $70^\circ$ | $359^\circ$ |
-| paralelogram | $120^\circ$, $60^\circ$, $119^\circ$, $62^\circ$ | $361^\circ$ |
-| kvadrat | $90^\circ$, $90^\circ$, $90^\circ$, $90^\circ$ | $360^\circ$ |
+- poljuben štirikotnik: $88^\circ + 97^\circ + 104^\circ + 70^\circ = 359^\circ$;
+- paralelogram: $120^\circ + 60^\circ + 119^\circ + 62^\circ = 361^\circ$;
+- kvadrat: $90^\circ + 90^\circ + 90^\circ + 90^\circ = 360^\circ$.
 
 Vsote se razlikujejo le za stopinjo, kar je napaka merjenja. Vzorec je jasen. Štirikotnik $ABCD$ ima štiri oglišča, štiri stranice in dve **diagonali** ($e = AC$, $f = BD$). Diagonala $AC$ ga razreže na dva trikotnika, vsak ima vsoto kotov $180^\circ$, zato velja za vsak štirikotnik:
 
@@ -28,14 +26,14 @@ $$\alpha + \beta + \gamma + \delta = 360^\circ$$
 
 **2. Vrste štirikotnikov in njihove lastnosti.** Lik prepoznaš po stranicah, še bolj zanesljivo pa po diagonalah. V simulaciji spodaj »Štirikotniki« po vrsti izberi paralelogram, pravokotnik in romb ter opazuj diagonali. Pri vseh treh se razpolavljata. Pri pravokotniku sta poleg tega enako dolgi, pri rombu pa se sekata pod pravim kotom.
 
-| Lik | Definicija | Lastnosti |
-|---|---|---|
-| **paralelogram** | oba para nasprotnih stranic vzporedna | nasprotni stranici sta enaki, nasprotna kota enaka, sosednja kota se dopolnjujeta do $180^\circ$, diagonali se razpolavljata |
-| **pravokotnik** | paralelogram s pravimi koti | diagonali sta enako dolgi |
-| **romb** | paralelogram z enakimi stranicami | diagonali sta pravokotni in razpolavljata kote |
-| **kvadrat** | pravokotnik z enakimi stranicami (hkrati romb) | ima vse lastnosti pravokotnika in romba |
-| **trapez** | vsaj en par vzporednih stranic (osnovnici $a$, $c$, kraka $b$, $d$) | srednjica (daljica med središčema krakov) je vzporedna osnovnicama; enakokraki trapez ima enaka kraka in enako dolgi diagonali |
-| **deltoid** | dva para sosednjih enakih stranic | diagonali sta pravokotni, ena diagonala je simetrala druge |
+Za vsak lik je najprej definicija, nato lastnosti:
+
+- **paralelogram**: oba para nasprotnih stranic vzporedna. Nasprotni stranici sta enaki, nasprotna kota enaka, sosednja kota se dopolnjujeta do $180^\circ$, diagonali se razpolavljata.
+- **pravokotnik**: paralelogram s pravimi koti. Diagonali sta enako dolgi.
+- **romb**: paralelogram z enakimi stranicami. Diagonali sta pravokotni in razpolavljata kote.
+- **kvadrat**: pravokotnik z enakimi stranicami (hkrati romb). Ima vse lastnosti pravokotnika in romba.
+- **trapez**: vsaj en par vzporednih stranic (osnovnici $a$, $c$, kraka $b$, $d$). Srednjica (daljica med središčema krakov) je vzporedna osnovnicama; enakokraki trapez ima enaka kraka in enako dolgi diagonali.
+- **deltoid**: dva para sosednjih enakih stranic. Diagonali sta pravokotni, ena diagonala je simetrala druge.
 
 Lastnosti so »podedovane«: vsak kvadrat je romb, vsak romb je paralelogram, paralelogram pa ni nujno pravokotnik. Kar velja za vsak paralelogram, zato velja tudi za pravokotnik, romb in kvadrat, ne da bi to dokazoval znova.
 
@@ -47,14 +45,16 @@ Ker sta oba para nasprotnih letev enako dolga, je okvir paralelogram (štirikotn
 
 **3. Ploščine in obsegi štirikotnikov.** Višina $v_a$ je pravokotna razdalja med osnovnico $a$ in nasprotno stranico. Iz papirnatega paralelograma ob eni poševni stranici odreži pravokotni trikotnik, ki ga odseče višina, in ga prilepi na drugo stran. Dobiš pravokotnik z enako osnovnico $a$ in s stranico $v_a$, zato je ploščina paralelograma $a \cdot v_a$. Dva enaka trapeza, enega obrnjenega, sestavita paralelogram z osnovnico $a + c$, zato ima trapez polovico njegove ploščine. Ker sta diagonali pravokotni, romb in deltoid zapolnita natanko polovico pravokotnika s stranicama $e$ in $f$, ki ju oklepa.
 
-| Lik | Ploščina | Obseg |
-|---|---|---|
-| pravokotnik | $S = a \cdot b$ | $o = 2(a + b)$ |
-| kvadrat | $S = a^2$ | $o = 4a$ |
-| paralelogram | $S = a \cdot v_a$ | $o = 2(a + b)$ |
-| romb | $S = \dfrac{e \cdot f}{2}$ ali $a \cdot v$ | $o = 4a$ |
-| trapez | $S = \dfrac{(a + c)\, v}{2}$ | $o = a + b + c + d$ |
-| deltoid | $S = \dfrac{e \cdot f}{2}$ | $o = 2(a + b)$ |
+| Lik | Ploščina |
+|---|---|
+| pravokotnik | $S = a \cdot b$ |
+| kvadrat | $S = a^2$ |
+| paralelogram | $S = a \cdot v_a$ |
+| romb | $S = \dfrac{e \cdot f}{2}$ ali $a \cdot v$ |
+| trapez | $S = \dfrac{(a + c)\, v}{2}$ |
+| deltoid | $S = \dfrac{e \cdot f}{2}$ |
+
+Obseg: pravokotnik, paralelogram in deltoid imajo $o = 2(a + b)$, kvadrat in romb $o = 4a$, trapez $o = a + b + c + d$.
 
 Višina $v$ je pravokotna razdalja med nasprotnima stranicama (osnovnicama), ne dolžina kraka. Srednjica trapeza je $m = \dfrac{a + c}{2}$, zato je $S = m \cdot v$. Diagonala kvadrata je $d = a\sqrt{2}$, diagonala pravokotnika $d = \sqrt{a^2 + b^2}$ (Pitagorov izrek). V rombu se diagonali sekata pod pravim kotom in razpolavljata, zato s Pitagorovim izrekom iz $\dfrac{e}{2}$ in $\dfrac{f}{2}$ izračunaš stranico: $a^2 = \left(\dfrac{e}{2}\right)^2 + \left(\dfrac{f}{2}\right)^2$.
 
@@ -219,7 +219,7 @@ $d = \sqrt{48100} \approx 219{,}3\,\text{cm}$. Obe diagonali morata meriti pribl
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Štirikotnik $ABCD$ je včrtan v krožnico s središčem $S$, njegova diagonala $AC$ je premer krožnice. Kot $\angle BAC$ meri $34^\circ$, središčni kot $\angle CSD$ pa $76^\circ$. Izračunaj vse štiri notranje kote štirikotnika $ABCD$.
+Štirikotnik $ABCD$ je včrtan v krožnico s središčem $S$, njegova diagonala $AC$ je premer krožnice. Kot $\angle BAC$ meri $34^\circ$, središčni kot $\angle CSD$ pa $76^\circ$. Izračunajte vse štiri notranje kote štirikotnika $ABCD$.
 
 **Rešitev:**
 
@@ -235,9 +235,9 @@ $d = \sqrt{48100} \approx 219{,}3\,\text{cm}$. Obe diagonali morata meriti pribl
 
 Enakokraki trapez $ABCD$ je včrtan v krožnico s središčem $S$ in polmerom $r = 13\,\text{cm}$. Osnovnici merita $a = |AB| = 24\,\text{cm}$ in $c = |CD| = 10\,\text{cm}$, središče $S$ leži med osnovnicama. Točki $E$ in $F$ sta razpolovišči osnovnic $AB$ in $CD$.
 
-a) Izračunaj razdalji $|SE|$ in $|SF|$ ter višino trapeza. (2 točki)
-b) Izračunaj krak in obseg trapeza. Rezultata zaokroži na stotinko centimetra. (2 točki)
-c) Kolikšen delež ploščine kroga pokriva trapez? Rezultat zapiši v odstotkih in ga zaokroži na desetinko odstotka. (3 točke)
+a) Izračunajte razdalji $|SE|$ in $|SF|$ ter višino trapeza. (2 točki)
+b) Izračunajte krak in obseg trapeza. Rezultata zaokrožite na stotinko centimetra. (2 točki)
+c) Kolikšen delež ploščine kroga pokriva trapez? Rezultat zapišite v odstotkih in ga zaokrožite na desetinko odstotka. (3 točke)
 
 **Rešitev:**
 

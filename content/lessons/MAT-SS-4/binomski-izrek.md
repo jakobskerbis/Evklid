@@ -254,7 +254,7 @@ $\binom{5}{2} \cdot 8 \cdot 1 = 10 \cdot 8 = 80$. Predznak je pozitiven, ker je 
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Z binomskim izrekom izračunaj $(1+\sqrt{2})^4$ in rezultat zapiši v obliki $a + b\sqrt{2}$, kjer sta $a$ in $b$ celi števili.
+Z binomskim izrekom izračunajte $(1+\sqrt{2})^4$ in rezultat zapišite v obliki $a + b\sqrt{2}$, kjer sta $a$ in $b$ celi števili.
 
 **Rešitev:**
 
@@ -268,9 +268,9 @@ Z binomskim izrekom izračunaj $(1+\sqrt{2})^4$ in rezultat zapiši v obliki $a 
 
 V razvoju potence $(1 + 2x)^n$, kjer je $n$ naravno število, je koeficient pri $x^2$ enak $112$.
 
-a) Izračunaj $n$. (3 točke)
-b) Zapiši, koliko členov ima razvoj, in izračunaj njegov srednji člen. (2 točki)
-c) Izračunaj vsoto vseh koeficientov razvoja. (2 točki)
+a) Izračunajte $n$. (3 točke)
+b) Zapišite, koliko členov ima razvoj, in izračunajte njegov srednji člen. (2 točki)
+c) Izračunajte vsoto vseh koeficientov razvoja. (2 točki)
 
 **Rešitev:**
 
@@ -368,14 +368,14 @@ napis: 2,6; 2,5 | C | desno
 > $(a-b)^6 = a^6 - 6a^5b + 15a^4b^2 - 20a^3b^3 + 15a^2b^4 - 6ab^5 + b^6$: predznaki se izmenjujejo.
 
 ? (brez računala) Koliko je koeficient pri $x^3$ v razvoju $(x+3)^5$?
-= 90
+= 90 | 0
 ~ 10 | To je samo $\binom{5}{2}$. Koeficient vsebuje še $3^2 = 9$.
 ~ 30 | Število $3$ je treba kvadrirati: člen je $\binom{5}{2}x^3 \cdot 3^2$.
 ~ 270 | Vzel si $k = 3$. Pri $x^3$ je potenca drugega člena $5 - 3 = 2$.
 > $x^3$ pomeni $5 - k = 3$, torej $k = 2$: $\binom{5}{2} \cdot 3^2 = 10 \cdot 9 = 90$.
 
 ? Izračunaj člen brez $x$ v razvoju $\left(2x - \frac{1}{x}\right)^6$.
-= -160
+= -160 | 0
 ~ 160 | Pri $k = 3$ je $(-1)^3 = -1$, zato je člen negativen.
 ~ 20 | Pozabil si potenco $2^3 = 8$ in predznak: potenciraš cel člen $2x$.
 ~ -20 | Pozabil si, da $2$ iz $2x$ potenciraš: $(2x)^3 = 8x^3$.

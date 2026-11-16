@@ -272,6 +272,9 @@ oblika nalog po *Predmetnem izpitnem katalogu za splošno maturo*, povzetek v `d
 - `### Naloga N: <vrsta> naloga, K točk, pola 1 (brez računala)` ali `… pola 2 (z računalom)`; osnovna raven: kratka
   naloga (do 3 točke) in krajša strukturirana (5–8 točk); kjer katalog preverja tudi višjo raven, še
   `### Naloga 3 (višja raven): strukturirana naloga, 9–11 točk, …`. Naloge za polo 1 so rešljive na roke.
+- Besedilo naloge (do `**Rešitev:**`) vika kot na maturi (»Izračunajte …«, »Rezultat zaokrožite …«; j, 15. 11.
+  2026); rešitev, točkovanje in ustna vprašanja tikajo kot vsa lekcija.
+- Standardni odklon se računa z N (formula na prilogi, tipka σn ali σx), ne z N − 1.
 - Vsaka naloga ima `**Rešitev:**` (popolna, v aplikaciji skrita za gumbom) in vrstico `**Točkovanje:** …`.
 - 2–3 `### Ustno vprašanje N` z blokom `:::premisli` (vprašanje, `---`, vzorčni odgovor); gredo tudi v »Vprašaj me«.
 - Razdelek se ne šteje v mejo 2800 besed. `check-lesson.js` opozori, če manjka ali mu kaj manjka.
