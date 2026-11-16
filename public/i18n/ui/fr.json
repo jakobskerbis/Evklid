@@ -3388,6 +3388,7 @@
   "mk.defocus": "Défocalisation",
   "mk.beam": "Faisceau d’électrons",
   "mk.colors": "Molécules en couleur",
+  "mk.temLimit": "Ici, la coupe ne montre plus de détails : active Molécules en couleur.",
   "mk.fieldOfView": "Champ de vision",
   "mk.resolution": "Résolution",
   "mk.rayleigh": "{d} (Rayleigh)",

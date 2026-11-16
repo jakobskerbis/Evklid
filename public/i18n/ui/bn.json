@@ -3385,6 +3385,7 @@
   "mk.defocus": "ডিফোকাস",
   "mk.beam": "ইলেকট্রন রশ্মি",
   "mk.colors": "রঙিন অণু",
+  "mk.temLimit": "এখানে ছেদ আর কোনো খুঁটিনাটি দেখায় না – রঙিন অণু চালু করো।",
   "mk.fieldOfView": "দৃষ্টিক্ষেত্র",
   "mk.resolution": "বিভেদন ক্ষমতা",
   "mk.rayleigh": "{d} (Rayleigh)",

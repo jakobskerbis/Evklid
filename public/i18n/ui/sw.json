@@ -3385,6 +3385,7 @@
   "mk.defocus": "Kutolenga",
   "mk.beam": "Mwali wa elektroni",
   "mk.colors": "Molekuli kwa rangi",
+  "mk.temLimit": "Kipande hakionyeshi maelezo zaidi hapa – washa Molekuli kwa rangi.",
   "mk.fieldOfView": "Uga wa kuona",
   "mk.resolution": "Uwezo wa kutenganisha",
   "mk.rayleigh": "{d} (Rayleigh)",

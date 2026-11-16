@@ -3420,6 +3420,7 @@
   "mk.defocus": "Defocalizare",
   "mk.beam": "Fascicul de electroni",
   "mk.colors": "Molecule colorate",
+  "mk.temLimit": "Aici secțiunea nu mai arată alte detalii – activează Molecule colorate.",
   "mk.fieldOfView": "Câmp vizual",
   "mk.resolution": "Rezoluție",
   "mk.rayleigh": "{d} (Rayleigh)",

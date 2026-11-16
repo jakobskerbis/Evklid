@@ -3360,6 +3360,7 @@
   "mk.defocus": "디포커스",
   "mk.beam": "전자빔",
   "mk.colors": "분자를 컬러로",
+  "mk.temLimit": "여기서는 절편이 더 이상 세부를 보여 주지 않아요. ‘분자를 컬러로’를 켜 보세요.",
   "mk.fieldOfView": "시야",
   "mk.resolution": "분해능",
   "mk.rayleigh": "{d} (Rayleigh)",

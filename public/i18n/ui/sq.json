@@ -3387,6 +3387,7 @@
   "mk.defocus": "Defokusimi",
   "mk.beam": "Tufa e elektroneve",
   "mk.colors": "Molekula me ngjyra",
+  "mk.temLimit": "Prerja këtu nuk tregon më detaje – ndiz Molekula me ngjyra.",
   "mk.fieldOfView": "Fusha e pamjes",
   "mk.resolution": "Rezolucioni",
   "mk.rayleigh": "{d} (Rayleigh)",

@@ -3388,6 +3388,7 @@
   "mk.defocus": "Desenfoque",
   "mk.beam": "Haz de electrones",
   "mk.colors": "Moléculas en color",
+  "mk.temLimit": "Aquí el corte ya no muestra más detalles: activa Moléculas en color.",
   "mk.fieldOfView": "Campo de visión",
   "mk.resolution": "Resolución",
   "mk.rayleigh": "{d} (Rayleigh)",
