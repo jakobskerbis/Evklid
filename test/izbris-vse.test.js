@@ -302,6 +302,7 @@ const DOVOLJENO = {
   pilot_mnenja_prenehalo: "naključna oznaka mnenja brez osebnih podatkov, da skrbnik umakne objavljeno mnenje",
   schools: "šola ostane; created_by postane NULL",
   school_licences: "licenca šole (sedeži, predmeti, veljavnost) ostane s šolo; ni podatkov računa",
+  ai_school_use: "poraba AI, ki je šla pod mejo šole, ostane šoli (student_id → NULL)",
   school_orders: "naročilo šole iz obrazca za šole (kontakt šole, ne računa) ostane s šolo",
   class_assignments: "naloga, ki jo je učitelj dal v razredu drugega učitelja, ostane razredu (created_by → NULL)",
 };
@@ -311,10 +312,7 @@ const POVEZANO = {
   guest_invites: "povabilo gostov ustvari skrbnik aplikacije (created_by = id skrbnika)",
 };
 // Najdbe koraka 5 (15. 11. 2026), zapisane za j in ne popravljene: po popravku jih odstrani od tu.
-const ZNANO = {
-  ai_school_use: "knjiga porabe AI šole obdrži id izbrisanega profila (student_id ni tuji ključ; id se lahko ponovno uporabi)",
-  "kv:varnost_#-#-#_#": "dnevni števec varnostnih pregledov profila (server/nujno.js) ostane do naslednjega dne",
-};
+const ZNANO = {};
 
 test("izbris računa: v nobeni tabeli ne ostane nič, kar kaže na račun, njegove profile ali njihova besedila", { timeout: 60_000 }, async () => {
   await withServer(async (ctx) => {
@@ -364,6 +362,7 @@ const PROFIL_OSTANE = {
   profile_changes: "dnevnik dodajanja in brisanja profilov za omejitev zlorab (id profila brez podatkov)",
   app_links: "povezava za odpiranje aplikacije (poteče, izbriše se po 1 dnevu)",
   ai_holds: POVEZANO.ai_holds,
+  ai_school_use: DOVOLJENO.ai_school_use,
   ...ZNANO,
 };
 // Od teh ostane id profila (brez drugih podatkov profila).
@@ -385,7 +384,7 @@ test("izbris profila: ne ostane nič od profila, račun in drugi profil ostaneta
     // (CASCADE), preveri jo test izbrisa računa.
     db.prepare("DELETE FROM profile_passwords WHERE student_id = ?").run(gre);
     // Tabele, kjer vrstice profila ostanejo računu (student_id → NULL): po izbrisu jih račun obdrži vse.
-    const ostanejo = Object.keys(PROFIL_OSTANE).filter((t) => !(t in PROFIL_ID));
+    const ostanejo = Object.keys(PROFIL_OSTANE).filter((t) => !(t in PROFIL_ID) && t !== "ai_school_use"); // ta ostane šoli, ne računu
     const brez = (m) => Object.fromEntries(Object.entries(m).filter(([t]) => !["profile_changes", "students", ...ostanejo].includes(t)));
     const racun = brez(steviloRacuna(db, parent, [ostane], gre));
     const vse = steviloRacuna(db, parent, [ostane, gre]);

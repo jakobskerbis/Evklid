@@ -250,6 +250,7 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
     to: today,
     days: n,
     schoolId: schoolId || null,
+    funnel: accountFunnel(db, { from, today, active, counted, adminEmails, schoolId }),
     newProfiles: cohort.length,
     activation,
     d1,
@@ -260,6 +261,87 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
     usageBySource,
     weeks: weekRows,
     sources,
+  };
+}
+
+// Lijak računov (j 2026-11-15, 1. korak načrta »od povezave do prve naloge«): registracija → potrjen e-naslov →
+// prva rešena naloga (v 24 urah in v 7 dneh) → vrnitev 3.–6. dan → vrnitev 7.–13. dan → plačilo.
+// Kohorta so računi, ustvarjeni v obdobju; vsak šteje z vsemi svojimi profili, dnevi se štejejo od registracije.
+// Vse se izračuna iz podatkov, ki jih baza že ima: nič novega se ne shrani (brez e-naslovov, imen, IP in zneskov),
+// poročilo vrne samo števila. Plačilo se samo bere (server/accounts/ in plačila ostanejo nespremenjeni): res plačan
+// račun naročnine (kv ai_paid_<račun>), plačan paket pred testom, plačan dokup AI ali aktivna naročnina v trgovini.
+// Brez skrbnikov, gostov in šolskih poročil (null, ker šolski učenci niso prišli z registracijo).
+// Račun šteje v delež šele, ko je njegovo okno celo minilo (sicer bi mlad račun znižal delež).
+export const D3_WINDOW = [3, 6];
+export const D7_WINDOW = [7, 13];
+
+function accountFunnel(db, { from, today, active, counted, adminEmails, schoolId }) {
+  if (schoolId || !hasTable(db, "parents")) return null;
+  const pcols = new Set(db.prepare("PRAGMA table_info(parents)").all().map((c) => c.name));
+  const scols = new Set(db.prepare("PRAGMA table_info(students)").all().map((c) => c.name));
+  if (!scols.has("parent_id")) return null;
+  const emails = new Set(adminEmails.map((e) => String(e).trim().toLowerCase()).filter(Boolean));
+  const accounts = db
+    .prepare(
+      `SELECT id, lower(email) AS email, is_admin, ${pcols.has("is_guest") ? "is_guest" : "0 AS is_guest"}, email_verified_at,
+         created_at, substr(created_at, 1, 10) AS d0,
+         ${pcols.has("sub_provider") ? "sub_provider" : "NULL AS sub_provider"}, sub_status
+       FROM parents WHERE created_at >= ? AND substr(created_at, 1, 10) <= ?`,
+    )
+    .all(from, today)
+    .filter((p) => !p.is_admin && !p.is_guest && !emails.has(p.email));
+
+  const kids = new Map(); // račun → profili
+  const byKid = db.prepare("SELECT id FROM students WHERE parent_id = ?");
+  for (const p of accounts) kids.set(p.id, byKid.all(p.id).map((r) => r.id).filter(counted));
+
+  const solvedBefore = db.prepare(
+    `SELECT 1 FROM tasks WHERE student_id = ? AND solved = 1 AND created_at >= ? AND created_at < datetime(?, ?) LIMIT 1`,
+  );
+  const taskWithin = (p, days) => kids.get(p.id).some((s) => !!solvedBefore.get(s, p.created_at, p.created_at, `+${days} day`));
+  const backOn = (p, [lo, hi]) =>
+    kids.get(p.id).some((s) => [...(active.get(s) || [])].some((d) => {
+      const k = dayDiff(d, p.d0);
+      return k >= lo && k <= hi;
+    }));
+
+  const paidKv = hasTable(db, "kv") ? db.prepare("SELECT value FROM kv WHERE key = ?") : null;
+  const paidPass = hasTable(db, "passes")
+    ? db.prepare("SELECT 1 FROM passes WHERE parent_id = ? AND payment_id IS NOT NULL AND status IN ('active', 'expired', 'refunded', 'disputed') LIMIT 1")
+    : null;
+  const paidCredit = hasTable(db, "ai_credit_buys") ? db.prepare("SELECT 1 FROM ai_credit_buys WHERE parent_id = ? AND paid_at IS NOT NULL LIMIT 1") : null;
+  // Testni nakupi v trgovini (Sandbox, testni računi) niso denar.
+  const sandboxBuy = hasTable(db, "store_subscriptions")
+    ? db.prepare("SELECT 1 FROM store_subscriptions WHERE parent_id = ? AND environment = 'Sandbox' LIMIT 1")
+    : null;
+  const paidInvoice = (id) => {
+    try {
+      const rows = JSON.parse(paidKv?.get(`ai_paid_${id}`)?.value || "[]");
+      return Array.isArray(rows) && rows.some((r) => Number(r?.cents) > 0 || Number(r?.eur) > 0);
+    } catch {
+      return false;
+    }
+  };
+  const paid = (p) =>
+    paidInvoice(p.id) ||
+    !!paidPass?.get(p.id) ||
+    !!paidCredit?.get(p.id) ||
+    (["apple", "google"].includes(p.sub_provider) && ["active", "past_due", "canceled"].includes(p.sub_status) && !sandboxBuy?.get(p.id));
+
+  const share = (list, ok) => {
+    const eligible = list.length;
+    const returned = list.filter(ok).length;
+    return { eligible, returned, pct: eligible ? Math.round((returned / eligible) * 1000) / 1000 : null };
+  };
+  const age = (p) => dayDiff(today, p.d0);
+  return {
+    registered: accounts.length,
+    verified: share(accounts, (p) => !!p.email_verified_at),
+    task24: share(accounts, (p) => taskWithin(p, 1)),
+    task7: share(accounts, (p) => taskWithin(p, 7)),
+    d3: share(accounts.filter((p) => age(p) >= D3_WINDOW[1]), (p) => backOn(p, D3_WINDOW)),
+    d7: share(accounts.filter((p) => age(p) >= D7_WINDOW[1]), (p) => backOn(p, D7_WINDOW)),
+    paid: share(accounts, paid),
   };
 }
 

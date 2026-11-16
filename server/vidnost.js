@@ -25,7 +25,9 @@ export const ORIGIN = `https://${BRAND.domain}`;
 export const ABOUT_PATH = "/o-evklidu";
 export const WHY_PATH = "/zakaj-evklid";
 // Javne strani za iskalnike (brez prijave, brez osebnih podatkov). Garancija je še osnutek, zato je ni tu.
-export const PUBLIC_PAGES = ["/", ABOUT_PATH, WHY_PATH, "/starsi.html", "/sole", "/prenesi", "/zasebnost.html", "/pogoji.html"];
+export const PUBLIC_PAGES = ["/", ABOUT_PATH, WHY_PATH, "/starsi.html", "/sole", "/prenesi", "/zasebnost.html"];
+// Osnutki do pregleda pravnika (j 2026-11-16): stran deluje in je povezana v nogi, v zemljevidu strani in llms.txt je ni (meta robots noindex).
+export const DRAFT_PAGES = ["/pogoji.html"];
 // Zasebne poti: API, plačilna stran s kodo, prijava testne različice, stanje strežnika, datoteke aplikacije za prenos.
 export const PRIVATE_PATHS = ["/api/", "/placaj.html", "/prijava", "/healthz", "/gradiva/", "/prenesi/"];
 
@@ -149,7 +151,7 @@ export function llmsTxt(measurement) {
 ${f.accAny ? `- Izmerjena natančnost. ${f.accSentence} Natančnosti drugih orodij nismo merili. Podrobno: ${ORIGIN}${WHY_PATH}\n` : ""}- Učbenik s kratkimi lekcijami, učna pot po razredih, vaje z vedno novimi številkami, simulacije, laboratorij, 3D atlas, več kot 30 učnih iger.
 - Priprava na NPZ in maturo s preteklimi izpitnimi polami ter naloge v slogu tekmovanj.
 - Naprave: spletni brskalnik in aplikacija za Android.
-- Cena: ${f.trialDays} dni brezplačno brez kartice; nato brezplačni paket (${f.freeDaily} vprašanj inštruktorju na dan) ali naročnina: osnovna šola ${f.osM} na mesec (${f.osY} na leto), srednja šola ${f.ssM} (${f.ssY}), fakulteta ${f.faksM} (${f.faksY}), družina (2–4 profili) ${f.famM} (${f.famY}). Učiteljski račun je brezplačen. ${f.name} je plačljiva aplikacija z brezplačnim paketom; ni odprtokodni ali študentski projekt.
+- Cena: ${f.trialDays} dni brezplačno brez kartice; nato brezplačni paket (${f.freeDaily} vprašanj inštruktorju na dan) ali naročnina: osnovna šola ${f.osM} na mesec (${f.osY} na leto), srednja šola ${f.ssM} (${f.ssY}), fakulteta ${f.faksM} (${f.faksY}), družina (2–4 profili) ${f.famM} (${f.famY}), družina s študentom (2–4 profili) ${f.famsM} (${f.famsY}). Učiteljski račun je brezplačen. ${f.name} je plačljiva aplikacija z brezplačnim paketom; ni odprtokodni ali študentski projekt.
 - Zasebnost: brez oglasov, podatkov ne prodajamo; strežnik in baza podatkov sta v EU (Frankfurt). Anthropic (ZDA) podatkov ne uporablja za učenje modelov. Podrobno: ${ORIGIN}/zasebnost.html
 
 ## Facts (English)
@@ -173,7 +175,6 @@ ${f.accAny ? `- Measured accuracy. ${f.accSentenceEn} Other tools were not measu
 - [Za učitelje in šole](${ORIGIN}/sole)
 - [Aplikacija za telefon](${ORIGIN}/prenesi)
 - [Varstvo osebnih podatkov](${ORIGIN}/zasebnost.html)
-- [Splošni pogoji uporabe](${ORIGIN}/pogoji.html)
 `;
 }
 

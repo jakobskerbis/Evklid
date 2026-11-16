@@ -2,6 +2,7 @@
 // vrednostmi (okno nad pogovorom), 3D model ali del telesa, lekcija v učbeniku, igra za snov, formula iz zbirke,
 // premičen graf in preprosta skica kar v sporočilu. Pogovor ostane odprt: okno poskusa se zapre z ×, Esc ali Nazaj.
 import { mountSim } from "./sim/index.js";
+import { zadrziFokus } from "./fokus-okna.js";
 
 let D = null; // { t, icon, escapeHtml, renderMath, openLesson, open3d, openGames, openLab, openFormulas, openGraph }
 export function initOpen(deps) {
@@ -68,8 +69,9 @@ let simOpen = null;
 export const simOverlayOpen = () => !!simOpen;
 export function closeSimOverlay() {
   if (!simOpen) return false;
-  const { box, from, onKey } = simOpen;
+  const { box, from, onKey, sprosti } = simOpen;
   simOpen = null;
+  sprosti({ vrni: false });
   document.removeEventListener("keydown", onKey, true);
   box.remove();
   document.body.classList.remove("open-sim-on");
@@ -105,10 +107,9 @@ async function openSim(x, from) {
     closeSimOverlay();
   };
   document.addEventListener("keydown", onKey, true);
-  simOpen = { box, from, onKey };
   document.body.append(box);
+  simOpen = { box, from, onKey, sprosti: zadrziFokus(box, { zacetni: close, prej: from }) };
   document.body.classList.add("open-sim-on");
-  close.focus();
   const ok = await mountSim(x.id, body, x.opts || {});
   if (!ok) body.replaceChildren(el("p", "muted", D.t("open.failed")));
   else if (x.set) applySet(body, x.set);

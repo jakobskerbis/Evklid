@@ -467,10 +467,13 @@ T tkivo(vec2 p, float px) {
   vec3 zel = vec3(0.04, 0.5, 0.0), rde = vec3(0.85, 0.06, 0.0);
   if (g < 3.0) { t.snov = S_LIPID; t.dye = vec3(0.35, 0.08, 0.0); return t; }
   float th = atan(p.y, p.x);
+  // središče celice (TEM: sistem organelov) mora biti v celici stalno; pri celicah v polarnih koordinatah ga dobimo iz
+  // odmika v (lok, polmer) s smerema tT (po obodu) in tR (navzven); v.c = p bi dal vsem točkam celice isti sistem
+  vec2 tR = vec2(cos(th), sin(th)), tT = vec2(-tR.y, tR.x);
   if (g < 18.0) {                                                    // povrhnjica
     float s = th * 1500.0 / 15.0;
     float lx = abs(fract(s) - 0.5) * 15.0;
-    Vor v; v.id = vec2(floor(s), 1.0); v.c = p; v.rob = min(7.5 - lx, min(g - 3.0, 18.0 - g) + 0.6); v.nb = vec2(1.0, 0.0); v.d = 0.0;
+    Vor v; v.id = vec2(floor(s), 1.0); v.c = p - tT * (fract(s) - 0.5) * 15.0 + tR * (g - 10.5); v.rob = min(7.5 - lx, min(g - 3.0, 18.0 - g) + 0.6); v.nb = vec2(1.0, 0.0); v.d = 0.0;
     return rCelica(v, p, 0.7, zel, px);
   }
   if (g < 90.0) {                                                    // kolenhim: odebeljeni vogali
@@ -491,14 +494,14 @@ T tkivo(vec2 p, float px) {
       if (t.snov != S_STENA) { t.snov = S_CITO; t.dye = zel * (h42(v.id).x < 0.4 ? 0.8 : 0.35); }
       return t;
     }
-    if (rr > 28.0) { Vor v = vor(vec2(s, rr), 6.0, vec2(1.0, 0.35), 0.0, 0.3); v.c = p; return rCelica(v, p, 0.4, zel, px); }   // kambij
+    if (rr > 28.0) { Vor v = vor(vec2(s, rr), 6.0, vec2(1.0, 0.35), 0.0, 0.3); vec2 o = vec2(s, rr) - v.c; v.c = p - o.x * tT - o.y * tR; return rCelica(v, p, 0.4, zel, px); }   // kambij
     vec4 x = krogci(p, 34.0, 9.0, 17.0, 0.7, 87.0);                 // ksilem
     if (x.x < 0.0) { t.snov = S_PRAZNO; t.meja = -x.x; return t; }
     if (x.x < 2.6) { vec2 dq = p - x.yz; t.snov = S_STENA; t.smer = normalize(vec2(-dq.y, dq.x) + 1e-4); t.r1 = x.x; t.dye = rde * 1.1; return t; }
     Vor v = vor(p, 7.0, vec2(1.0), 0.0, 0.75);
     return rCelica(v, p, 1.3, rde * 0.85, px);
   }
-  if (abs(rr - 36.0) < 8.0 && r < 1300.0) { Vor v = vor(vec2(s, rr), 6.0, vec2(1.0, 0.35), 0.0, 0.3); v.c = p; return rCelica(v, p, 0.4, zel, px); }   // medsnopični kambij
+  if (abs(rr - 36.0) < 8.0 && r < 1300.0) { Vor v = vor(vec2(s, rr), 6.0, vec2(1.0, 0.35), 0.0, 0.3); vec2 o = vec2(s, rr) - v.c; v.c = p - o.x * tT - o.y * tR; return rCelica(v, p, 0.4, zel, px); }   // medsnopični kambij
   // skorja, strženovi trakovi in stržen: parenhim z medceličnimi prostori
   float vel = r > 1210.0 ? 38.0 : (r > 950.0 ? 30.0 : 70.0);
   Vor v = vor(p, vel, vec2(1.0), 0.0, 0.85);

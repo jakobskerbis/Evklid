@@ -442,7 +442,7 @@ body.graph-open { overflow: hidden; }
 .pse-lg i { background: color-mix(in srgb, var(--c) 45%, var(--surface)); }
 
 /* formule */
-.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 24px; display: flex; flex-direction: column; gap: 12px; }
+.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 88px; display: flex; flex-direction: column; gap: 12px; }
 .fm-bar { padding-top: 12px; }
 /* kazalo poglavij ostane na vrhu, ko se pomikaš po zbirki */
 .fm-sel { display: flex; flex-wrap: wrap; gap: 8px 12px; justify-content: center; }
@@ -476,7 +476,7 @@ body.graph-open { overflow: hidden; }
 /* zelo ozek telefon: »Mathématiques« in »Mathematics« sta preširoka za tri predmete v vrstici */
 @media (max-width: 360px) { .fm-sel .seg > button { padding: 6px 6px !important; } }
 @media (max-width: 600px) {
-  .fm-wrap { padding: 0 12px 20px; }
+  .fm-wrap { padding: 0 12px 88px; } /* prostor za gumb ob zadnji formuli */
   .fm-sel .seg { width: 100%; }
   .fm-sel .seg > button { min-height: 36px; padding: 6px 10px !important; }
   .fm-body .fm-sec { padding: 14px 16px; }
@@ -686,8 +686,19 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .md-table .fm-skica-row > td { padding: 4px 0 12px; white-space: normal; background: none; }
 /* Široka tabela se na telefonu pomika vstran: skica je široka kot vidni del tabele in ostane na mestu. */
 .md-table-wrap:has(.fm-skica-row) { container-type: inline-size; }
-/* Rob tabele (2 × 1 px) ne sme povzročiti pomika; na računalniku skica tabele ne razširi. */
-.fm-skica-row .fm-skica { width: min(calc(100cqw - 2px), 460px); position: sticky; left: 0; }
+/* Rob tabele (2 × 1 px) ne sme povzročiti pomika. */
+.fm-skica-row .fm-skica { width: calc(100cqw - 2px); position: sticky; left: 0; }
+/* Prostor na tablici in računalniku (j, 15. 11. 2026, iPad: tabela likov je ostala ozka, desno prazno): tabela s skico
+   zasede vso širino razdelka, ob dovolj prostora je skica levo, čipi, drsniki in navodilo pa desno ob njej. */
+.fm-sec .md-table-wrap > table:has(.fm-skica-row) { width: 100%; }
+.fm-skica { container-type: inline-size; }
+/* Na široki skici (nad telefonom) vrednost drsnika ne sme sloneti ob rob kartice. */
+@container (min-width: 480px) { .fm-skica > .sk { padding-inline-end: 12px; } }
+@container (min-width: 720px) {
+  .fm-skica > .sk { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); grid-template-rows: auto auto auto 1fr; column-gap: 20px; align-items: start; padding-inline-end: 12px; }
+  .fm-skica > .sk > .sk-frame { grid-column: 1; grid-row: 1 / -1; }
+  .fm-skica > .sk > :not(.sk-frame) { grid-column: 2; }
+}
 .sk { --sk-bg: #10131f; --sk-line: rgb(255 255 255 / 0.16); --sk-glavna: #f4f5fb; --sk-ploskev: #8f8cff; --sk-izbor: #f5c542; --sk-druga: #4fd18b; --sk-napaka: #ff6b6b; --sk-pt: #4f8cff;
   display: grid; gap: 10px; margin: 6px 0 4px; }
 .sk-frame { background: var(--sk-bg); border: 1px solid var(--sk-line); border-radius: 14px; padding: 6px; }
