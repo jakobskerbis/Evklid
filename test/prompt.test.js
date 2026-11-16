@@ -203,7 +203,8 @@ test("pressure and threats: own situation in the cached part; extortion gets the
     assert.match(row, re);
   }
   assert.ok(row.length < 900, `točka naj ostane kratka (${row.length} znakov)`);
-  // »Pritisk in grožnje« doda 690 znakov predpomnjenega dela (54 225 po krogu 8 → 54 915; ~200 predpomnjenih žetonov).
+  // »Pritisk in grožnje« doda 788 znakov predpomnjenega dela (54 225 po krogu 8 → 55 013; ~230 predpomnjenih žetonov;
+  // j 16. 11.: Samarijan za odrasle, flag=distress le ob izsiljevanju/ustrahovanju).
   const fixed = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8").split(SPLIT_MARKER)[0];
-  assert.ok(fixed.length < 54225 + 750, `stalni del ${fixed.length} znakov`);
+  assert.ok(fixed.length < 54225 + 850, `stalni del ${fixed.length} znakov`);
 });
