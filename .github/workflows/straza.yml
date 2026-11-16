@@ -1,4 +1,4 @@
-# Straža: vsakih 15 min preveri živo spletišče (samo GET, brez prijave, brez AI, brez pisanja).
+# Straža: po urniku (15 min; GitHub ga v praksi zažene na ~5–10 ur, zato je izpad na UptimeRobot) preveri živo spletišče (samo GET, brez prijave, brez AI, brez pisanja).
 # Če kaj ne deluje, delovni tok pade in GitHub pošlje e-pošto lastniku. Pregled: docs/pregled.md (»Samodejni pregledi brez AI«).
 # Po objavi na Renderju (delovni tok »Render«) se sproži še en pregled; takrat strežnik ~1 min ne odgovarja,
 # zato skript ob napaki po 30 s poskusi še enkrat.
