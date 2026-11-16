@@ -387,3 +387,16 @@ test("XP summary: level progress, today's XP and the daily goal from the profile
   store.updateStudent(s.id, { settings: { xp_goal: 77 } });
   assert.equal(p.xpSummary(s.id).goal, 50, "neznan cilj → privzeti");
 });
+
+test("XP summary: ownTotal ne šteje XP nalog pilota; first_task se shrani samo kot 1", () => {
+  const { store, p, s } = setup();
+  p.award(s.id, [[20, "pilot: feature"]]);
+  let x = p.xpSummary(s.id);
+  assert.deepEqual([x.total, x.ownTotal], [20, 0]);
+  p.award(s.id, [[10, "pravilno"]]);
+  x = p.xpSummary(s.id);
+  assert.deepEqual([x.total, x.ownTotal], [30, 10]);
+  assert.equal(store.updateStudent(s.id, { settings: { first_task: 1 } }).settings.first_task, 1);
+  assert.equal(store.updateStudent(s.id, { settings: { subject: "MAT" } }).settings.first_task, 1, "ostane ob drugih spremembah");
+  assert.equal(store.updateStudent(s.id, { settings: { first_task: "da" } }).settings.first_task, undefined, "neveljavna vrednost se zavrže");
+});

@@ -359,6 +359,14 @@ function prilagodiFormulo(k, w, meri, visoka = Infinity) {
   return k;
 }
 
+// Formula v delu strani, ki svojo postavitev ureja sam (znanstveni kalkulator, j 14. 11. 2026: »naj se čim bolje
+// razporedijo po vidnem zaslonu«): enkratna prilagoditev širini w brez opazovalca strani. Kar gre v vrstico, ostane
+// nespremenjeno; predolgo se zloži pri enačajih (in pred + in −), nato pomanjša do MIN. Vrne (morda novo) formulo.
+export function prilagodiSirini(k, w) {
+  if (!k?.isConnected || !(w > 0)) return k;
+  return prilagodiFormulo(k, w, (x) => Math.max(x.getBoundingClientRect().width, x.scrollWidth));
+}
+
 // Zadnja rešitev za formulo: ob premiku drsnika simulacija izriše isto formulo z drugimi števkami. Ključ je širina
 // in TeX s števkami, zamenjanimi z 0 (števke so v KaTeX enako široke, zato je taka formula enako široka).
 const resitve = new Map();
@@ -564,7 +572,7 @@ function blok(k) {
 
 // Kje se prilagodi formula k: njena prikazana formula, okvir s formulo ali vrstica z besedilom (v učbeniku
 // odstavek, drugje najbližji blokovni starš; ne v poljih za vnos, SVG in tabelah).
-function mestoFormule(k) {
+export function mestoFormule(k) {
   if (k.parentElement?.closest(".katex")) return null;
   const d = k.closest(".katex-display");
   if (d) return d.parentElement?.closest(".katex-display, table, .md-vod") ? null : d;
@@ -573,7 +581,10 @@ function mestoFormule(k) {
   // .sk-chip: oznaka okna s podatki pod skico ima stalno postavitev (graph.css), ne zlagamo je in ne pomikamo.
   // .md-vod: vodoravna tabela (public/vodoravna-tabela.js) je tabela v stolpcih; formule v njej ostanejo v polni velikosti.
   // .k3-izpis: izpis 3D modela prelomi KaTeX sam (vsaka formula v svoji vrstici), enako v aplikaciji in na strani /3d.
-  if (k.closest("table, .md-vod, svg, math-field, textarea, input, [contenteditable], .sk-chip, .k3-izpis")) return null;
+  // .sc: znanstveni kalkulator ima svojo postavitev (vrstica zgodovine in vnos se pomikata vstran, matriko pomanjša
+  // sam). Zlaganje je tam formulo v zgodovini ob vsaki spremembi velikosti zložilo in razložilo (utripanje), vnos pa
+  // znova izrisalo brez oznake kazalca (rdeč »\htmlClass«; j 14. 11. 2026).
+  if (k.closest("table, .md-vod, svg, math-field, textarea, input, [contenteditable], .sk-chip, .k3-izpis, .sc")) return null;
   if (k.closest(".textbook")) return k.parentElement?.closest(VRSTE) || null;
   return blok(k);
 }
