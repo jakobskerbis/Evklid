@@ -15,7 +15,7 @@ plačila, brez novih funkcij. Vsak korak ima svoj PR, teste, ki tečejo v CI ob 
 | 3. Meja stroška AI | #744, #748 | Vzporedni klici ne presežejo meje stroška (dva profila hkrati, skupni delež Družine); 30 hkratnih vprašanj ne preseže dnevne meje vprašanj; rezerva pokrije najdražji odgovor; dodan ali izbrisan profil ne ponastavi klicev v teku | `test/meja-ai-napad.test.js`, `test/meja-ai-nov-profil.test.js` | opisi v testih in PR #744, #748; meje: `docs/stroski-ai.md` |
 | 4. Plačila Stripe (testni način) | #749 | Naročnina: nakup, podaljšanje, neuspelo plačilo, preklic, vračilo, spor. Paket pred testom, dokup in darilna koda: nakup, vračilo, spor. Podpisani webhooki, dvojni dogodki | `test/stripe-poti.test.js` in drugi testi plačil (preglednica v `docs/placila-poti.md`) | `docs/placila-poti.md` |
 | 5. Izbris in izvoz računa | #758, #763 | Po izbrisu računa ali profila v nobeni od 108 tabel in v `kv` ne ostane nič, kar kaže nanj; izvoz vsebuje vsako tabelo z vrsticami računa; ročne kopije največ 22 dni | `test/izbris-vse.test.js`, `test/kopije.test.js`, `test/varnost.test.js`, `test/pilot-naloge.test.js` | `docs/izbris-izvoz.md`, `docs/varnost-podatkov.md` |
-| 6. Spremljanje in opozorila | #767 | Straža vsakih 15 min od zunaj; e-pošta skrbniku ob dnevnem strošku AI nad mejo in ob neuspelem preizkusu kopije | `test/opozorilo-ai.test.js`, `test/kopije-preveri.test.js` | `docs/spremljanje.md` |
+| 6. Spremljanje in opozorila | #767 | Straža od zunaj po vsaki objavi in po urniku (GitHub ga zažene na ~5–10 ur), UptimeRobot vsakih 5 min; e-pošta skrbniku ob dnevnem strošku AI nad mejo in ob neuspelem preizkusu kopije | `test/opozorilo-ai.test.js`, `test/kopije-preveri.test.js` | `docs/spremljanje.md` |
 
 Vsi testi tečejo v delovnem toku **Testi** (`.github/workflows/testi.yml`, posli `testi`, `preveri`, `hrosci`) ob
 vsakem PR in vsaki spremembi `main`. Zadnji zagon na `main` pred tem dokumentom: uspešen (Actions → Testi).
@@ -49,10 +49,11 @@ Kako preveriš sam: odpri https://evklid.app/healthz/stanje v brskalniku ali pog
 | 6 | Zadnja sprememba vrstice `cron` v `straza.yml` mora biti tvoja | GitHub → straza.yml → History | Samodejni alarmi gredo tistemu, ki jo je zadnji spremenil | `docs/spremljanje.md` |
 | 7 | Preveri `EVKLID_ADMIN_EMAILS` in Resend (`RESEND_API_KEY`) | Render → Environment | Sicer strežnik e-pošte o strošku AI in kopiji ne pošlje | `docs/spremljanje.md` |
 | 8 | Pobriši `data/povratne-informacije-povzetek.md` in `data/povratne-informacije.json`, če obstajata | Render → Shell | Lahko vsebujeta imena in mnenja, izbris računa ju ne doseže | `docs/izbris-izvoz.md` (7) |
+| 8a | Zunanji nadzor UptimeRobot na `https://evklid.app/healthz`, vsakih 5 min, e-pošta | uptimerobot.com (brezplačen račun) | Stražo GitHub zažene le na nekaj ur; izpad mora priti v minutah | `docs/spremljanje.md` |
 | 9 | Mesečna meja porabe | Anthropic Console → Settings → Limits | Varovalka zunaj aplikacije (šteje tudi meritve po objavi) | `docs/spremljanje.md` |
 | 10 | Po prvem tednu nastavi `EVKLID_OPOZORILO_AI_USD` malo nad običajno dnevno porabo | Render → Environment | Privzetih 3 $ je ocena | `docs/spremljanje.md` |
 
-Ko so 1–8 narejene (z 1a), je Evklid z vidika tehnike pripravljen za povabila. 9 in 10 sta priporočeni.
+Ko so 1–8 narejene (z 1a in 8a), je Evklid z vidika tehnike pripravljen za povabila. 9 in 10 sta priporočeni.
 
 ## Znano, a ne popravljeno
 
@@ -78,10 +79,9 @@ Za pilot nobena ni ovira; vse so zapisane, da se odloči j.
 - Strošek meritve po objavi ni v opozorilu o strošku AI; ima svojo mejo (`server/meritev-po-objavi.js`).
 
 **Spremljanje** (`docs/spremljanje.md`, »Česar ni«)
-- GitHub lahko zagon Straže zamakne za nekaj minut.
+- GitHub zagon Straže po urniku zamakne za ure: izpad javi UptimeRobot, strošek AI in kopijo strežnik po e-pošti,
+  napako e-pošte pa nihče (enkrat na teden poglej `posta` v `/healthz/stanje`).
 - Po 60 dneh brez sprememb v repozitoriju GitHub Stražo izklopi; takrat jo znova vklopi.
 
 **Repozitorij**
-- Od #475 je v `main` datoteka `node_modules`, ki kaže na neobstoječo mapo (sporočilo #755 napačno pravi, da je
-  odstranjena). Render jo ob gradnji (`npm ci`) zamenja, zato objava deluje; na novi lokalni kopiji kode pa testi padejo, dokler je ne pobrišeš (`rm node_modules`, nato
-  `npm ci`). Popravek je ena vrstica v ločenem PR.
+- Povezava `node_modules`, ki je bila v `main` od #475, je odstranjena (#769).
