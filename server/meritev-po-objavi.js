@@ -1,20 +1,26 @@
-// Samodejna ciljna meritev natančnosti po vsaki objavi na Render (j 2026-11-12).
-// Isto, kar je prej j ročno zagnal v Render Shell:
+// Samodejna ciljna meritev natančnosti po vsaki spremembi lekcij ali prompta v main (j 2026-11-12).
+// Od 16. 11. 2026 teče v GitHubu (.github/workflows/meritev-po-objavi.yml, scripts/meritev-po-objavi.mjs), ne več na
+// strežniku: na Render starter (512 MB) sta strežnik in meritev skupaj presegla mejo in Render je strežnik med pilotom
+// ponovno zagnal (j 16. 11.: »Meritev v GitHub«). Isto, kar je prej j ročno zagnal v Render Shell:
 //   node scripts/primerjava-modelov.js --s-preverjanjem --samo <id> --ponovi 4 --pogoj s --max-usd 1
 // samo za lekcije, ki jih je ta objava spremenila (in za primere zadnjega kroga natančnosti, če se je spremenil
-// prompt ali sprotno preverjanje). Izid bere skrbnik na GET /api/admin/meritev-po-objavi.
+// prompt ali sprotno preverjanje). Izid je v povzetku zagona v GitHubu (Actions > Meritev po objavi); stara zgodovina
+// z Renderja ostane na GET /api/admin/meritev-po-objavi.
 //
 // STROŠEK AI – varovalke (vse v odlociZagon in zaženi, vsaka s testom v test/meritev-po-objavi.test.js):
 //   1. največ MAX_ZAGON_USD (1 $) na zagon: skripta dobi --max-usd 1 in se sama ustavi pred mejo;
-//   2. največ MAX_TEDEN_USD (15 $) na teden ISO (UTC) za VSE meritve, ročne in samodejne: vsak plačan odgovor meritve
-//      (primerjava-modelov.js) se sproti vpiše v knjigo <mapa baze>/meritve-strosek.jsonl; tedenska poraba = knjiga +
+//   2. največ MAX_TEDEN_USD (15 $) na teden ISO (UTC) za samodejne meritve: vsak plačan odgovor meritve
+//      (primerjava-modelov.js) se sproti vpiše v knjigo <mapa baze>/meritve-strosek.jsonl (v GitHubu v predpomnilniku
+//      Actions; ročne meritve na Renderju ali računalniku pišejo v svojo knjigo); tedenska poraba = knjiga +
 //      rezervacije samodejnih zagonov. Pred zagonom se rezervira cel 1 $; zagon se zavrne, če bi presegel 15 $. Po koncu
 //      rezervacija odpade (dejanski strošek je v knjigi); če proces pade ali ga objava ustavi, ostane rezerviran cel 1 $;
-//   3. največ en zagon na objavo (RENDER_GIT_COMMIT); objava se zapiše PRED zagonom, zato ponovni zagon strežnika
-//      iste objave (sesutje, ponovni zagon) meritve ne ponovi;
-//   4. le na Render z EVKLID_MERITEV_PO_OBJAVI=1 (render.yaml), nikoli lokalno, v CI, v testih ali v preizkusnem načinu;
+//   3. največ en zagon na commit (GITHUB_SHA); commit se zapiše PRED zagonom, zato ponovni zagon istega commita meritve
+//      ne ponovi;
+//   4. le v GitHub Actions z EVKLID_MERITEV_PO_OBJAVI=1 in ključem (delovni tok), nikoli na strežniku (Render),
+//      lokalno, v testih ali v preizkusnem načinu;
 //   5. brez spremenjenih lekcij ali prompta ni zagona (in ni stroška).
-// Stanje: <mapa baze>/meritev-po-objavi.json (na Render /var/data), dnevniki zagonov v <mapa baze>/meritve-po-objavi/.
+// Stanje: <mapa baze>/meritev-po-objavi.json, dnevniki zagonov v <mapa baze>/meritve-po-objavi/ (v GitHubu mapa .meritev
+// v predpomnilniku Actions; dnevniki tudi kot artefakt zagona).
 // Učenčevih podatkov tu ni: meritev uporablja rešene primere iz lekcij in izmišljenega učenca v pomnilniški bazi.
 import "./env.js";
 import fs from "node:fs";
@@ -29,6 +35,8 @@ export const MAX_ZAGON_USD = 1;
 export const MAX_TEDEN_USD = 15;
 export const MAX_PRIMEROV = 4; // id-jev na zagon (vsak 4×): več se v 1 $ ne izide za uravnotežen izid
 export const PONOVI = 4;
+// Znesek z decimalno vejico za besedila, ki jih bere človek (povzetek zagona, dnevnik).
+const dec = (x) => Number(x).toFixed(2).replace(".", ",");
 const ZGODOVINA = 30; // zadnjih zagonov v stanju
 const DNEVNIKI = 20; // zadnjih dnevnikov na disku
 
@@ -75,13 +83,13 @@ export function isoTeden(d = new Date()) {
   return `${leto}-W${String(teden).padStart(2, "0")}`;
 }
 
-// Ali sme ta proces sploh kdaj zagnati meritev (le Render z izrecnim vklopom).
+// Ali sme ta proces sploh kdaj zagnati meritev: le v GitHub Actions z izrecnim vklopom, nikoli na strežniku.
 export function vklopljeno(env = process.env, { mock = false } = {}) {
   if (env.EVKLID_MERITEV_PO_OBJAVI !== "1") return false;
-  if (!env.RENDER) return false; // Render nastavi RENDER=true; lokalno in v CI ga ni
-  if (env.CI || env.GITHUB_ACTIONS) return false;
+  if (env.GITHUB_ACTIONS !== "true") return false; // lokalno in na strežniku ga ni
+  if (env.RENDER) return false; // strežnik z učenci: nikoli (meja 512 MB)
   if (env.NODE_ENV === "test") return false;
-  if (mock || !env.ANTHROPIC_API_KEY) return false;
+  if (mock || env.EVKLID_MOCK === "1" || !env.ANTHROPIC_API_KEY) return false;
   return true;
 }
 
@@ -126,14 +134,14 @@ export function porabaTedna(stanje, teden) {
 }
 
 // Ali sme ta objava zagnati meritev. Vrne { ok, razlog }.
-// knjiga: poraba tedna iz knjige vseh meritev (tudi ročnih).
+// knjiga: poraba tedna iz knjige stroška (v GitHubu le samodejne meritve; ročne pišejo v svojo knjigo).
 export function odlociZagon(stanje, { objava, teden, idji, knjiga = 0, maxZagon = MAX_ZAGON_USD, maxTeden = MAX_TEDEN_USD }) {
   if (!objava) return { ok: false, razlog: "neznana objava" };
   if ((stanje.objave || []).includes(objava)) return { ok: false, razlog: "ta objava je že obdelana (največ en zagon na objavo)" };
   if (!idji.length) return { ok: false, razlog: "objava ni spremenila merljivih lekcij ne prompta" };
   const poraba = porabaTedna(stanje, teden) + knjiga;
   if (!(poraba + maxZagon <= maxTeden + 1e-9)) // tudi NaN ali Infinity (neberljiva knjiga) zavrne
-    return { ok: false, razlog: `tedenska meja: porabljeno ${poraba.toFixed(2)} $ od ${maxTeden} $, zagon rezervira ${maxZagon} $` };
+    return { ok: false, razlog: `tedenska meja: porabljeno ${dec(poraba)} $ od ${maxTeden} $, zagon rezervira ${maxZagon} $` };
   return { ok: true, razlog: "" };
 }
 
@@ -163,17 +171,21 @@ function zapisiStanje(file, s) {
 function zaženiSkripto({ idji, maxUsd, izidFile, logFile, root }) {
   return new Promise((resolve) => {
     const fd = fs.openSync(logFile, "a");
-    // Meja kopice: Render starter ima 512 MB za strežnik in meritev skupaj; ob rasti naj pade meritev, ne strežnik z učenci.
-    const args = ["--disable-warning=ExperimentalWarning", "--max-old-space-size=256", "scripts/primerjava-modelov.js", "--s-preverjanjem", "--samo", idji.join(","), "--ponovi", String(PONOVI), "--pogoj", "s", "--max-usd", String(maxUsd), "--izid-json", izidFile];
+    // Meja kopice: varovalka pred uhajanjem pomnilnika (stroj GitHub ima dovolj pomnilnika; meritev ni več ob strežniku).
+    const args = ["--disable-warning=ExperimentalWarning", "--max-old-space-size=1024", "scripts/primerjava-modelov.js", "--s-preverjanjem", "--samo", idji.join(","), "--ponovi", String(PONOVI), "--pogoj", "s", "--max-usd", String(maxUsd), "--izid-json", izidFile];
     const child = spawn(process.execPath, args, { cwd: root, stdio: ["ignore", fd, fd], env: { ...process.env, EVKLID_MERITEV_PO_OBJAVI: "0" } });
     try {
       os.setPriority(child.pid, 19);
     } catch {}
     child.unref();
-    // Ob izhodu strežnika (objava, SIGTERM) se ustavi tudi meritev: nič več klicev AI; rezervacija 1 $ ostane šteta.
+    // Ob izhodu starša (preklic zagona) se ustavi tudi meritev: nič več klicev AI; rezervacija 1 $ ostane šteta.
     const ubij = () => child.kill("SIGTERM");
+    // Preklic v GitHubu pošlje SIGINT/SIGTERM, ob katerih Node dogodka »exit« ne sproži: ustavi otroka tudi takrat.
+    const ubijInKoncaj = () => (ubij(), process.exit(130));
     process.once("exit", ubij);
-    const konec = (r) => (process.off("exit", ubij), fs.closeSync(fd), resolve(r));
+    process.once("SIGINT", ubijInKoncaj);
+    process.once("SIGTERM", ubijInKoncaj);
+    const konec = (r) => (process.off("exit", ubij), process.off("SIGINT", ubijInKoncaj), process.off("SIGTERM", ubijInKoncaj), fs.closeSync(fd), resolve(r));
     child.on("error", (e) => konec({ code: -1, napaka: String(e?.message || e) }));
     child.on("exit", (code) => konec({ code }));
   });
@@ -199,11 +211,11 @@ export async function zaženi({
   }
   const teden = isoTeden(now());
   if (stanje.teden !== teden) Object.assign(stanje, { teden, porabljeno_usd: 0 });
-  // Zagon, ki ga je prekinila prejšnja objava: rezervacija (cel 1 $) ostane štet.
+  // Prekinjen prejšnji zagon: rezervacija (cel 1 $) ostane šteta.
   for (const z of stanje.zgodovina || []) if (z.stanje === "teče") Object.assign(z, { stanje: "prekinjeno", strosek_usd: z.rezervirano_usd });
 
   const zdaj = odtisi(root);
-  const objava = env.RENDER_GIT_COMMIT || `odtis-${crypto.createHash("sha1").update(JSON.stringify(zdaj)).digest("hex").slice(0, 12)}`;
+  const objava = env.GITHUB_SHA || env.RENDER_GIT_COMMIT || `odtis-${crypto.createHash("sha1").update(JSON.stringify(zdaj)).digest("hex").slice(0, 12)}`;
   if ((stanje.objave || []).includes(objava)) {
     zapisiStanje(file, stanje);
     return { ok: false, razlog: "ta objava je že obdelana (največ en zagon na objavo)" };
@@ -217,7 +229,7 @@ export async function zaženi({
   const idji = izberiIdje(poti, { krog, merljiv: jeMerljiv });
   const odl = prvic ? { ok: false, razlog: "prvi zagon: shranjeno izhodišče za primerjavo naslednjih objav" } : odlociZagon(stanje, { objava, teden, idji, knjiga: porabaKnjige(knjiga, teden) });
 
-  // Objava je obdelana že zdaj (pred zagonom): ponovni zagon strežnika iste objave ne meri znova.
+  // Commit je obdelan že zdaj (pred zagonom): ponovni zagon istega commita ne meri znova.
   stanje.objave = [...(stanje.objave || []), objava].slice(-50);
   stanje.odtisi = zdaj;
   const vnos = { cas: now().toISOString(), objava: objava.slice(0, 12), teden, spremenjenih: poti.length, idji, stanje: odl.ok ? "teče" : "preskočeno", razlog: odl.razlog };
@@ -237,7 +249,7 @@ export async function zaženi({
   const ime = `${vnos.cas.replace(/[:.]/g, "-")}-${vnos.objava}`;
   const izidFile = path.join(mapa, `${ime}.json`);
   vnos.dnevnik = `${ime}.log`;
-  log(`[evklid] meritev po objavi: ${idji.join(", ")} (${PONOVI}×, največ ${MAX_ZAGON_USD} $; ta teden že ${(stanje.porabljeno_usd - MAX_ZAGON_USD + porabaKnjige(knjiga, teden)).toFixed(2)} $)`);
+  log(`[evklid] meritev po objavi: ${idji.join(", ")} (${PONOVI}×, največ ${MAX_ZAGON_USD} $; ta teden že ${dec(stanje.porabljeno_usd - MAX_ZAGON_USD + porabaKnjige(knjiga, teden))} $)`);
   const r = await zagon({ idji, maxUsd: MAX_ZAGON_USD, izidFile, logFile: path.join(mapa, vnos.dnevnik), root });
 
   // Rezervacija odpade le, če je skripta zapisala izid (njen strošek je že v knjigi); sicer ostane cel 1 $.
@@ -255,7 +267,7 @@ export async function zaženi({
   zapisiStanje(file, s2);
   fs.rmSync(`${izidFile}.napredek.json`, { force: true }); // odgovori modela; povzetek je v izidu
   pocistiDnevnike(mapa);
-  log(`[evklid] meritev po objavi: ${v2.stanje}, strošek ${v2.strosek_usd} $; ta teden ${(porabaTedna(s2, teden) + porabaKnjige(knjiga, teden)).toFixed(2)} $ od ${MAX_TEDEN_USD} $`);
+  log(`[evklid] meritev po objavi: ${v2.stanje}, strošek ${dec(v2.strosek_usd)} $; ta teden ${dec(porabaTedna(s2, teden) + porabaKnjige(knjiga, teden))} $ od ${MAX_TEDEN_USD} $`);
   return { ok: true, vnos: v2 };
 }
 
@@ -284,18 +296,6 @@ async function privzetoMerljiv(root) {
   };
 }
 
-// Ob zagonu strežnika: čez nekaj minut (EVKLID_MERITEV_ZAMIK_MIN, privzeto 5) v ozadju, da ne tekmuje z učenci ob zagonu.
-export function nacrtujMeritevPoObjavi({ env = process.env, mock = false, log = console.log } = {}) {
-  if (!vklopljeno(env, { mock })) return false;
-  const min = Number(env.EVKLID_MERITEV_ZAMIK_MIN);
-  const zamik = (Number.isFinite(min) && min >= 0 ? min : 5) * 60_000;
-  setTimeout(() => {
-    // Vse v try: zavrnjena obljuba iz setTimeout bi ustavila strežnik.
-    zaženi({ env, log }).catch((e) => console.warn(`[evklid] meritev po objavi: ${e?.message || e}`));
-  }, zamik).unref();
-  return true;
-}
-
 // Skrbnik: GET /api/admin/meritev-po-objavi (besedilo) ali ?json=1. Brez prijave skrbnika 403.
 // Znesek za skrbnika: decimalna vejica; neberljiva knjiga (Infinity) ni »Infinity $«.
 const usd = (x) => (Number.isFinite(Number(x)) ? `${Number(x).toFixed(2).replace(".", ",")} $` : "neznano (knjiga stroška ni berljiva, zagon se ne zažene)");
@@ -303,7 +303,7 @@ export function povzetekBesedilo(s, { knjiga = 0 } = {}) {
   const teden = isoTeden();
   const vrstice = [
     "Meritev natančnosti po objavi",
-    `Ta teden (${teden}, UTC): ${usd(porabaTedna(s, teden) + knjiga)} od ${MAX_TEDEN_USD} $ (vse meritve, tudi ročne); en zagon največ ${MAX_ZAGON_USD} $.`,
+    `Ta teden (${teden}, UTC): ${usd(porabaTedna(s, teden) + knjiga)} od ${MAX_TEDEN_USD} $ (vse meritve v tej knjigi stroška); en zagon največ ${MAX_ZAGON_USD} $.`,
     "",
   ];
   const zg = s.zgodovina || [];
@@ -331,6 +331,7 @@ export function mountMeritevPoObjavi(app, { isAdmin, file = () => stateFile(), k
     const { odtisi: _o, objave: _b, ...javno } = s;
     res.set("Cache-Control", "no-store");
     if (req.query.json) return res.json({ ...javno, pokvarjeno_stanje: !prebrano, porabljeno_ta_teden_usd: porabaTedna(s, isoTeden()) + k, meja_zagon_usd: MAX_ZAGON_USD, meja_teden_usd: MAX_TEDEN_USD });
-    res.type("text/plain; charset=utf-8").send((prebrano ? "" : "POZOR: stanje meritve je pokvarjeno, samodejna meritev se ne zažene.\n") + povzetekBesedilo(s, { knjiga: k }));
+    const opomba = "Od 16. 11. 2026 meritev teče v GitHubu (Actions > Meritev po objavi); tu je zgodovina zagonov na strežniku.\n\n";
+    res.type("text/plain; charset=utf-8").send(opomba + (prebrano ? "" : "POZOR: stanje meritve je pokvarjeno.\n") + povzetekBesedilo(s, { knjiga: k }));
   });
 }

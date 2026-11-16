@@ -26,7 +26,7 @@ Ko natipkaš `ls -l *.csv`, program `ls` nikoli ne vidi zvezdice. Lupina vrstico
 
 Program `ls` torej dobi argumente `-l`, `kopija.csv`, `meritve.csv`. Preizkus:
 
-```
+```bash
 echo *.csv
 # izpis: kopija.csv meritve.csv
 echo '*.csv'
@@ -63,17 +63,18 @@ Pomembna posledica: brisanje datoteke je sprememba *imenika*. Datoteko brez prav
 
 Vsak proces ob zagonu dobi tri **opisnike datotek** (številke odprtih tokov):
 
-```
-         0 stdin
-            |
-            v
-       +---------+
-       | proces  |--1 stdout->
-       +---------+
-            |
-         2 stderr
-            v
-```
+:::risba skica
+opis: Pravokotnik z napisom proces. Od zgoraj vanj vodi puščica z oznako 0 stdin. Iz njega v desno vodi puščica z oznako 1 stdout, navzdol pa puščica z oznako 2 stderr.
+območje: 0; 10 .. 308; 172
+enota: 1
+napis: 154; 160 | 0 stdin | sredina
+puščica: 154; 150 -> 154; 112
+pravokotnik: 104; 72 .. 204; 110 | modra
+napis: 154; 91 | proces | sredina | debelo
+puščica: 204; 91 -> 288; 91 | 1 stdout | nad
+puščica: 154; 72 -> 154; 34
+napis: 154; 22 | 2 stderr | sredina
+:::
 
 Privzeto je $0$ tipkovnica, $1$ in $2$ pa zaslon. **Preusmeritve** spremenijo, kam kaže opisnik, *preden* se program zažene:
 
@@ -104,7 +105,7 @@ Nič, datoteka je prazna. Lupina najprej uredi preusmeritev in datoteko izprazni
 
 Vsi primeri uporabljajo datoteko `meritve.csv` z izmišljenimi dnevnimi meritvami treh vremenskih postaj (glava in $11$ vrstic):
 
-```
+```text
 datum,postaja,tmax,padavine
 2025-07-01,Ljubljana,31.2,0.0
 2025-07-01,Koper,30.4,0.0
@@ -144,7 +145,7 @@ Skupina za podnebne podatke ima datoteko `meritve.csv` in skripto `uvoz.sh`. Las
 
 Predvidi vsebino datotek po ukazih in nato preveri (datoteka `ni.csv` ne obstaja):
 
-```
+```bash
 echo prva > a.txt
 echo druga > a.txt
 echo tretja >> a.txt
@@ -185,7 +186,7 @@ Iz `meritve.csv` ugotovi: (a) koliko meritev ima vsaka postaja, urejeno po štev
 
 1. (a) Izberemo polje 2, uredimo (ker `uniq` združi le *sosednje* enake vrstice), preštejemo in uredimo po številu:
 
-```
+```bash
 tail -n +2 meritve.csv |
   cut -d, -f2 | sort |
   uniq -c | sort -nr
@@ -195,7 +196,7 @@ tail -n +2 meritve.csv |
 
 2. (b) Urejamo cele vrstice po tretjem polju:
 
-```
+```bash
 tail -n +2 meritve.csv |
   sort -t, -k3 -nr |
   head -n 3
@@ -205,7 +206,7 @@ tail -n +2 meritve.csv |
 
 3. (c) Vroč dan je vrstica, kjer se tretje polje začne s `3` in ima dve števki pred piko. Ker so vse vrednosti pod $40$, zadošča vzorec `,3[0-9]\.[0-9],`:
 
-```
+```bash
 grep -E ',3[0-9]\.[0-9],' \
   meritve.csv | cut -d, -f2 |
   sort | uniq -c | sort -nr
@@ -251,7 +252,7 @@ Kaj prebere `sort` in kako je prav?
 - Lupina vrstico razčleni na besede, naredi razširitve (`~`, <code>&#36;IME</code>, <code>&#36;(…)</code>, `*`, `?`, `[…]`), uredi preusmeritve in zažene program.
 - Pravice `rwx` za lastnika, skupino in ostale; osmiško $r = 4$, $w = 2$, $x = 1$; `x` na imeniku pomeni vstop; umask odvzame bite od `666` oziroma `777`.
 - Opisniki: $0$ stdin, $1$ stdout, $2$ stderr. `>` izprazni, `>>` doda, `2>` napake, `> f 2>&1` oboje; preusmeritve od leve proti desni.
-- Cev `a | b` poveže stdout z stdin, procesa tečeta hkrati; filtri `grep`, `cut`, `sort`, `uniq -c`, `wc`, `head`, `tail`.
+- Cev `a | b` poveže stdout s stdin, procesa tečeta hkrati; filtri `grep`, `cut`, `sort`, `uniq -c`, `wc`, `head`, `tail`.
 - Izhodni status v <code>&#36;?</code>, $0$ je uspeh; `&&` in `||`; status cevi je status zadnjega ukaza.
 
 ## Za izpit
@@ -268,7 +269,7 @@ Znati moraš povedati:
 
 V imeniku so `meritve.csv` (kot zgoraj) in nobena datoteka `manjka.csv`. Datoteka `porocilo.txt` na začetku ne obstaja. Izvedemo:
 
-```
+```bash
 grep -q Kredarica meritve.csv &&
   echo "ok" || echo "manjka" \
   >> porocilo.txt 2>&1
@@ -308,18 +309,39 @@ Natančno opiši, kako bash obdela vrstico `ls -l ~/podatki/*.csv > seznam.txt 2
 3. Preusmeritve od leve proti desni: opisnik $1$ se odpre na `seznam.txt` (datoteka se izprazni); `2>&1` naredi opisnik $2$ kopijo opisnika $1$, torej tudi `seznam.txt`.
 4. Lupina zažene `ls` z argumenti `-l` in razširjenimi imeni. `ls` sam ne vidi ne `~`, ne `*`, ne preusmeritev.
 5. Pri `2>&1 > seznam.txt` se najprej $2$ kopira na trenutni cilj $1$, to je zaslon; šele nato $1$ kaže na datoteko. Napake gredo na zaslon, seznam v datoteko.
-6. Brisanje: `rm` spremeni imenik `podatki` (odstrani vnos), zato je potreben `w` in `x` na `~/podatki` ter `x` na vseh imenikih nad njim. Pravice datoteke same niso pomembne (`rm` le vpraša, če datoteka nima `w`). Izjema je imenik z lepljivim bitom (`t`, npr. `/tmp`): tam sme datoteko izbrisati le njen lastnik ali lastnik imenika.
+6. Brisanje: `rm` spremeni imenik `podatki` (odstrani vnos), zato sta potrebna `w` in `x` na `~/podatki` ter `x` na vseh imenikih nad njim. Pravice datoteke same niso pomembne (`rm` le vpraša, če datoteka nima `w`). Izjema je imenik z lepljivim bitom (`t`, npr. `/tmp`): tam sme datoteko izbrisati le njen lastnik ali lastnik imenika.
 
 ## Drugače: Na sliki
 
 Cev si predstavljaj kot tekoči trak v sortirnici.
 
-```
-datoteka -> [tail] -> [grep]
-  12          11        8
-  -> [cut] -> [sort -u] -> [wc]
-       8          4         "4"
-```
+:::risba skica
+opis: Cev kot tekoči trak v dveh vrstah. Zgornja vrsta: datoteka, puščica v postajo tail, puščica v postajo grep. Trak se nadaljuje v spodnjo vrsto: postaja cut, puščica v postajo sort -u, puščica v postajo wc. Pod vsako postajo je število vrstic, ki jo zapustijo: datoteka 12, tail 11, grep 8, cut 8, sort -u 4, wc izpiše "4".
+območje: 0; 14 .. 308; 172
+enota: 1
+napis: 40; 150 | datoteka | sredina
+puščica: 76; 150 -> 118; 150
+pravokotnik: 120; 134 .. 180; 166 | modra
+napis: 150; 150 | tail | sredina
+puščica: 180; 150 -> 218; 150
+pravokotnik: 220; 134 .. 280; 166 | modra
+napis: 250; 150 | grep | sredina
+napis: 40; 120 | 12 | sredina
+napis: 150; 120 | 11 | sredina
+napis: 250; 120 | 8 | sredina
+črta: 280; 150 -> 298; 150 -> 298; 98 -> 10; 98 -> 10; 60 -> 28; 60 | puščica
+pravokotnik: 30; 44 .. 90; 76 | modra
+napis: 60; 60 | cut | sredina
+puščica: 90; 60 -> 128; 60
+pravokotnik: 130; 44 .. 210; 76 | modra
+napis: 170; 60 | sort -u | sredina
+puščica: 210; 60 -> 248; 60
+pravokotnik: 250; 44 .. 300; 76 | modra
+napis: 275; 60 | wc | sredina
+napis: 60; 28 | 8 | sredina
+napis: 170; 28 | 4 | sredina
+napis: 275; 28 | "4" | sredina
+:::
 
 Pod vsako postajo traku je število vrstic, ki jo zapustijo (podatki iz Naloge 1). Vsi delavci delajo hkrati: `grep` ne čaka, da `tail` konča, temveč pobira vrstice, takoj ko prispejo. Izjema je `sort`: urediti ne more, dokler ne vidi zadnje vrstice, zato vse zbere in šele nato pošlje naprej. Stderr je stranski izhod ob vsakem delavcu, ki se ne priključi na trak.
 

@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
-  OBJEKTIVI, MIN_M, MAX_M, SVETLOBNI_MAX, vidnoPolje, locljivost, globinskaOstrina, zamegljenost, raven, utezModela, merilce,
+  OBJEKTIVI, MIN_M, MAX_M, TEM_MAX, TEM_LOCLJIVOST, svetlostSnopa, svetlost, SVETLOBNI_MAX, vidnoPolje, locljivost, globinskaOstrina, zamegljenost, raven, utezModela, merilce,
   oznakaDolzine, oznakaPovecave, SEM_MAX, SEM_LOCLJIVOST, globinskaOstrinaSem,
 } from "../public/mikroskop/optika.js";
 import { BARVANJA, matrikaBarvil } from "../public/mikroskop/barvila.js";
@@ -28,6 +28,39 @@ test("mikroskop: povečava od 40× do 50 000 000×, svetlobni do 1000×", () => 
   assert.equal(OBJEKTIVI.filter((o) => o.olje).length, 1);
   assert.equal(povecava({ ...ZACETNO, nacin: "svetloba", objektiv: 3 }), 1000);
   assert.equal(oznakaPovecave(5e7), "50 000 000×");
+});
+
+test("mikroskop: TEM brez barv le do uporabne povečave (~20 ločljivih točk čez vidno polje)", () => {
+  assert.equal(TEM_MAX, 5_000_000);
+  assert.ok(TEM_MAX < MAX_M && TEM_MAX > SEM_MAX);
+  const tocke = vidnoPolje(TEM_MAX, "tem") / TEM_LOCLJIVOST;
+  assert.ok(Math.abs(vidnoPolje(TEM_MAX, "tem") - 0.032) < 1e-12);
+  assert.ok(tocke >= 20 && tocke < 25, `${tocke} točk`);
+  assert.ok(vidnoPolje(MAX_M, "tem") / TEM_LOCLJIVOST < 3); // pri 50 000 000× le še dve točki: prazna povečava
+  assert.equal(utezModela(TEM_MAX), 1); // model molekul je pri meji že poln
+  assert.equal(oznakaPovecave(TEM_MAX), "5 000 000×");
+  const ui = fs.readFileSync(path.join(ROOT, "public", "mikroskop", "mikroskop.js"), "utf8");
+  assert.match(ui, /temMax = \(\) => \(s\.barve \? MAX_M : TEM_MAX\)/);
+  assert.ok(sl["mk.temLimit"]);
+});
+
+test("mikroskop: snop 0 % je črn, šibek snop temen, privzeti in samodejni kot prej", () => {
+  assert.equal(svetlostSnopa(0), 0);
+  for (const e of [0.3, 0.365, 0.5, 0.7, 0.9, 1]) assert.ok(Math.abs(svetlostSnopa(e) - (0.9 + 0.5 * e)) < 1e-12, `${e}`);
+  assert.ok(svetlostSnopa(0.05) < 0.2 && svetlostSnopa(0.1) < 0.35);
+  for (let e = 0; e < 1; e += 0.01) assert.ok(svetlostSnopa(e + 0.01) > svetlostSnopa(e));
+  const prep = { id: "kri", barvanje: "he" };
+  const v = (nacin, zarnica) => izracunajPogled(null, prep, { ...ZACETNO, nacin, m: 20000, zarnica }, 256, { hitro: true }).v;
+  for (const nacin of ["tem", "sem"]) {
+    assert.equal(v(nacin, 0).svetlost, 0, nacin);
+    assert.ok(Math.abs(v(nacin, ZACETNO.zarnica).svetlost - 1.25) < 1e-12, nacin);
+  }
+  assert.ok(v("sem", 0.1).sum > v("sem", 0.7).sum); // SEM: manj elektronov, več šuma
+  // lučka svetlobnega mikroskopa: ista vrednost, 0 je temno, samodejna lučka (mikroskop.js) da svetlo podlago
+  assert.equal(v("svetloba", 0).svetlost, 0);
+  const obj = OBJEKTIVI[ZACETNO.objektiv];
+  const auto = Math.max(0.05, Math.min(1, 0.95 / svetlost(obj, 1, ZACETNO.zaslonka, false)));
+  assert.ok(Math.abs(v("svetloba", auto).svetlost - 0.95) < 1e-9);
 });
 
 test("mikroskop: optika se ujema z učbeniškimi vrednostmi", () => {

@@ -11,7 +11,7 @@ stanje: osnutek
 - Nefron
   - glomerul in Bowmanova kapsula
   - proksimalni tubul vrne glukozo
-  - Henlejeva zanka, distalni tubul, zbiralca
+  - Henlejeva zanka, distalni tubul, zbiralce
 - Dve arterioli
   - aferentna, glomerul, eferentna
   - visok tlak žene filtracijo

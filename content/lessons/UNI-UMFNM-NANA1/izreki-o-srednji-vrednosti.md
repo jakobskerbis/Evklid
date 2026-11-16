@@ -154,7 +154,7 @@ $f^{(5)}(x) = (x+5)\,e^x$, zato $f^{(5)}(0) = 5 \cdot e^0 = 5$. Formulo $f^{(n)}
 
 ## Pogoste napake
 
-- **Izrek brez preverjenih pogojev.** »$|x|$ ima na $[-1,1]$ enaki krajišči, torej je nekje $f' = 0$.« Napačno, ker $|x|$ v $0$ ni odvedljiva. Pred uporabo vedno preveri zveznost na $[a,b]$ in odvedljivost na $(a,b)$.
+- **Izrek brez preverjenih pogojev.** »$|x|$ ima v krajiščih intervala $[-1,1]$ enaki vrednosti, torej je nekje $f' = 0$.« Napačno, ker $|x|$ v $0$ ni odvedljiva. Pred uporabo vedno preveri zveznost na $[a,b]$ in odvedljivost na $(a,b)$.
 - **$\xi$ je sredina intervala.** Izrek pove le, da $\xi$ obstaja. Za $x^3$ na $[0,3]$ je $\xi = \sqrt 3$, ne $1{,}5$. Točko izračunaš iz enačbe $f'(\xi) = \frac{f(b)-f(a)}{b-a}$.
 - **$f'(c) = 0$ pomeni ekstrem.** Velja le obrat. Pri $x^3$ v $0$ je odvod $0$, ekstrema ni. Ničla odvoda je le kandidat.
 - **Diferencial je točna sprememba.** $\mathrm{d}f$ je sprememba po tangenti, $\Delta f$ po grafu. Za $x^2$ v $3$ pri $\mathrm{d}x = 0{,}1$ je $\mathrm{d}f = 0{,}6$, $\Delta f = 0{,}61$. Pri majhnih $\mathrm{d}x$ sta blizu, enaka pa nista.
@@ -169,17 +169,82 @@ $f^{(5)}(x) = (x+5)\,e^x$, zato $f^{(5)}(0) = 5 \cdot e^0 = 5$. Formulo $f^{(n)}
 - Diferencial $\mathrm{d}f = f'(x)\,\mathrm{d}x$ je linearni približek spremembe $\Delta f$.
 - Višji odvodi: $f^{(n)} = (f^{(n-1)})'$; $s''$ je pospešek.
 
+## Za izpit
+
+Znati moraš povedati:
+- Fermatov izrek (potrebni pogoj za lokalni ekstrem odvedljive funkcije v notranji točki) in protiprimer za obrat, $x^3$ v $0$;
+- Rollov in Lagrangeov izrek z vsemi pogoji (zveznost na $[a,b]$, odvedljivost na $(a,b)$, pri Rollovem še $f(a) = f(b)$) ter protiprimer za vsak izpuščeni pogoj;
+- dokaz Rollovega izreka (maksimum in minimum zvezne funkcije na $[a,b]$, nato Fermat) in izpeljavo Lagrangeovega izreka iz Rollovega s pomožno funkcijo $g$;
+- posledice Lagrangeovega izreka z dokazom: $f' = 0 \Rightarrow f$ konstantna, $f' > 0 \Rightarrow f$ strogo narašča, $|f'| \le M \Rightarrow |f(y)-f(x)| \le M|y-x|$;
+- definicijo diferenciala $\mathrm{d}f = f'(x)\,\mathrm{d}x$, razliko med $\mathrm{d}f$ in $\Delta f$ ter oceno napake meritve z njim;
+- definicijo višjih odvodov $f^{(n)} = \big(f^{(n-1)}\big)'$ in Leibnizovo formulo za $(fg)^{(n)}$.
+
+### Naloga 1
+
+Naj bo $f(x) = \sqrt{x}$. (a) Poišči točko $\xi$ iz Lagrangeovega izreka na intervalu $[100, 121]$. (b) Z Lagrangeovim izrekom dokaži, da je $10 + \frac{1}{11} < \sqrt{102} < 10 + \frac{1}{10}$. (c) Oceni $\sqrt{102}$ z diferencialom v točki $x = 100$ in s predznakom $f''$ utemelji, ali je ocena prevelika ali premajhna.
+
+**Rešitev:**
+
+1. Pogoji: $f$ je zvezna na $[100,121]$ in odvedljiva na $(100,121)$, $f'(x) = \dfrac{1}{2\sqrt{x}}$.
+2. (a) Naklon sekante: $\dfrac{\sqrt{121}-\sqrt{100}}{121-100} = \dfrac{11 - 10}{21} = \dfrac{1}{21}$.
+3. Iz $\dfrac{1}{2\sqrt{\xi}} = \dfrac{1}{21}$ sledi $\sqrt{\xi} = 10{,}5$, torej $\xi = 10{,}5^2 = 110{,}25$. Točka leži v $(100,121)$ in ni sredina intervala $110{,}5$.
+4. (b) Lagrange na $[100,102]$: obstaja $\xi \in (100,102)$, da je $\sqrt{102} - 10 = \dfrac{1}{2\sqrt{\xi}}\cdot 2 = \dfrac{1}{\sqrt{\xi}}$.
+5. Ker je $100 < \xi < 102 < 121$, je $10 < \sqrt{\xi} < 11$, zato $\dfrac{1}{11} < \dfrac{1}{\sqrt{\xi}} < \dfrac{1}{10}$. Od tod $10 + \dfrac{1}{11} < \sqrt{102} < 10 + \dfrac{1}{10}$, torej $10{,}0909 < \sqrt{102} < 10{,}1$.
+6. (c) Diferencial: $\mathrm{d}f = f'(100)\,\mathrm{d}x = \dfrac{1}{20}\cdot 2 = 0{,}1$, zato $\sqrt{102} \approx 10{,}1$.
+7. Drugi odvod: $f''(x) = -\dfrac{1}{4}x^{-3/2} < 0$, torej $f'$ pada. Za $\xi > 100$ je $f'(\xi) < f'(100)$, zato je $\Delta f = f'(\xi)\cdot 2 < f'(100)\cdot 2 = \mathrm{d}f$: graf leži pod tangento.
+8. Odgovor: $\xi = 110{,}25$; ocena z diferencialom $10{,}1$ je prevelika (to je ravno zgornja meja iz (b)), točna vrednost je $\sqrt{102} = 10{,}0995\ldots$, napaka je približno $0{,}0005$.
+
+### Naloga 2
+
+Natančno navedi Lagrangeov izrek in ga izpelji iz Rollovega izreka. Nato s po enim protiprimerom utemelji, da ne smemo izpustiti niti zveznosti na zaprtem intervalu niti odvedljivosti na odprtem intervalu.
+
+**Rešitev:**
+
+1. Izrek: če je $f$ zvezna na $[a,b]$ in odvedljiva na $(a,b)$, obstaja $\xi \in (a,b)$, da je $f'(\xi) = \dfrac{f(b)-f(a)}{b-a}$.
+2. Izpeljava: naj bo $k = \dfrac{f(b)-f(a)}{b-a}$ in $g(x) = f(x) - f(a) - k\,(x-a)$. Od $f$ smo odšteli sekanto.
+3. $g$ je zvezna na $[a,b]$ in odvedljiva na $(a,b)$, ker je razlika funkcije $f$ in linearne funkcije.
+4. Krajišči: $g(a) = 0$ in $g(b) = f(b) - f(a) - k\,(b-a) = 0$, torej $g(a) = g(b)$.
+5. Po Rollovem izreku obstaja $\xi \in (a,b)$ z $g'(\xi) = 0$. Ker je $g'(x) = f'(x) - k$, je $f'(\xi) = k$.
+6. Brez odvedljivosti: $f(x) = |x|$ na $[-1,1]$ je zvezna, naklon sekante je $\dfrac{1-1}{2} = 0$, a $f'(x) = \pm 1$ za $x \ne 0$ in v $0$ odvoda ni. Točke $\xi$ ni.
+7. Brez zveznosti v krajišču: $f(x) = x$ za $0 \le x < 1$ in $f(1) = 0$. Funkcija je odvedljiva na $(0,1)$ z $f' = 1$, naklon sekante pa je $\dfrac{0-0}{1} = 0$. Točke $\xi$ ni.
+8. Sklep: nobenega od pogojev ne smemo izpustiti, sicer sklep izreka v splošnem ne velja.
+
+### Naloga 3
+
+Dokaži, da ima enačba $x^5 + 5x - 3 = 0$ natanko eno realno rešitev, in utemelji, da leži na intervalu $(0{,}5;\ 0{,}6)$.
+
+**Rešitev:**
+
+1. Naj bo $f(x) = x^5 + 5x - 3$. To je polinom, zato je zvezen in odvedljiv na vsej realni osi.
+2. Obstoj: $f(0{,}5) = 0{,}03125 + 2{,}5 - 3 = -0{,}46875 < 0$ in $f(0{,}6) = 0{,}07776 + 3 - 3 = 0{,}07776 > 0$. Zvezna funkcija, ki na krajiščih intervala spremeni predznak, ima na $(0{,}5;\ 0{,}6)$ vsaj eno ničlo.
+3. Enoličnost: denimo, da sta ničli dve, $x_1 < x_2$. Potem je $f(x_1) = f(x_2) = 0$ in po Rollovem izreku obstaja $\xi \in (x_1, x_2)$ z $f'(\xi) = 0$.
+4. Toda $f'(x) = 5x^4 + 5 \ge 5 > 0$ za vsak $x$. To je protislovje, zato dveh ničel ni.
+5. Isto pove posledica Lagrangeovega izreka: ker je $f' > 0$ povsod, $f$ strogo narašča in vsako vrednost zavzame največ enkrat.
+6. Odgovor: enačba ima natanko eno realno rešitev in ta leži med $0{,}5$ in $0{,}6$.
+
 ## Drugače: Na sliki
 
 Nariši graf $f$ na $[a,b]$ in poveži krajišča z ravnilom; to je sekanta. Zdaj ravnilo vzporedno premikaj navzgor ali navzdol, ne da bi ga zasukal. Ko se ga graf zadnjič še dotika, se ga dotakne v točki $\xi$: tam je ravnilo tangenta.
 
-```
-          tangenta v ξ (ravnilo, premaknjeno)
-        ______•______
-       /      ξ      \__
-      •- - - - - - - - - -•
-      a    sekanta        b
-```
+:::risba graf
+opis: Graf funkcije nad intervalom od a do b. Črtkana sekanta povezuje krajišči grafa (a, f(a)) in (b, f(b)). Nad njo je vzporedna premica, ki se grafa dotakne v eni sami točki nad ξ: to je tangenta v ξ. Točka ξ leži bliže a kot b, ni sredina intervala.
+x: 0 .. 5 | 1
+y: 0 .. 5 | 1
+enako: da
+oznake: ne
+oznakax: 0 | a
+oznakax: 1 | ξ
+oznakax: 4 | b
+f: 2*sqrt(x) | modra | 0 .. 4
+črta: 0; 0 -> 4; 4 | črtkano siva
+črta: 0; 1 -> 3,8; 4,8 | oranžna
+črta: 1; 0 -> 1; 2 | črtkano siva
+točka: 0; 0
+točka: 4; 4
+točka: 1; 2
+napis: 2,9; 2,6 | sekanta | desno | siva
+napis: 2,4; 3,9 | tangenta v ξ | levo | oranžna
+:::
 
 Zgoraj: črtkana sekanta in nad njo ista smer, ki se grafa dotakne v $\xi$.
 
@@ -261,15 +326,15 @@ f' | odvod funkcije f
 a, b | krajišči intervala
 \xi | vmesna točka na (a, b) | | | točk ξ je lahko več
 x | neodvisna spremenljivka | | | dx = Δx je njen prirastek
-g | pomožna funkcija v dokazu | g(x) = f(x) - f(a) - k\,(x-a) | | pri Cauchyjevem izreku druga funkcija
+g | pomožna funkcija v dokazu | g(x) = f(x) - f(a) - k\,(x-a) | | pri Cauchyjevem izreku druga funkcija; v Primeru 1 težni pospešek na Luni
 g' | odvod funkcije g
 k | naklon sekante skozi krajišči | k = \frac{f(b)-f(a)}{b-a} | | v Leibnizovi formuli indeks vsote
 n | red odvoda
 V | prostornina krogle | V(r) = \frac{4}{3}\pi r^3 | km^3
 V' | odvod prostornine po polmeru | V'(r) = 4\pi r^2 | km^2 | enak površini krogle
 r | polmer Lune | | km | dr = 2 km je negotovost
-v | hitrost rakete | | m/s | v (uv)' = u'v + uv' druga funkcija
-v' | pospešek rakete | v' = s'' | m/s^2
+v | hitrost sonde | | m/s | v (uv)' = u'v + uv' druga funkcija
+v' | pospešek sonde | v' = s'' | m/s^2
 s'' | drugi odvod poti (pospešek) | | m/s^2
 T | čas pospeševanja | | s
 u | funkcija v pravilu za odvod produkta

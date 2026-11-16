@@ -41,7 +41,7 @@ profilov), e-naslov starša (prijava), `answer_cache` (skupni preverjeni odgovor
 2. V Render nastavi `EVKLID_DATA_KEY=<nov>` in `EVKLID_DATA_KEYS_OLD=star:<prejšnji>` (več starih: z vejico).
 3. Ob zagonu strežnik vse vrstice znova zašifrira z novim ključem.
 4. Ko `--preveri` ne pokaže več vrstic »s starim ključem«, `EVKLID_DATA_KEYS_OLD` odstrani. Stari ključ hrani še
-   toliko časa, kolikor se hranijo varnostne kopije: 7 dni na disku, 30 dni zunaj Renderja (kopije zunaj so
+   toliko časa, kolikor se hranijo varnostne kopije: 7 dni na disku (ročne do 22 dni), 30 dni zunaj Renderja (kopije zunaj so
    šifrirane s ključem, izpeljanim iz `EVKLID_DATA_KEY`; brez starega ključa se jih ne da odpreti).
 
 Ključ zamenjaj takoj, če je kdaj prišel v napačne roke (in sledi kriznemu načrtu).
@@ -58,6 +58,8 @@ Vse vrednosti so v `server/zasebnost.js` (`RETENTION`); čiščenje teče ob zag
 | Potekle seje in odklepi profilov | izbrisani takoj po poteku |
 | Dnevnik e-pošte (preprečuje dvojna sporočila) | 1 leto |
 | Dnevnik obvestil na telefon | 90 dni |
+| Predpomnjen splošen odgovor inštruktorja (`answer_cache`, brez imena učenca) | 30 dni |
+| Ročna varnostna kopija baze (`obnovi-kopijo.js --zdaj`) | zadnje 3, največ 22 dni (`server/kopije.js`; + 7 dni posnetka diska = 30); dnevne 7 dni; baza pred obnovo 14 dni |
 | Dnevnik dostopov | 1 leto |
 | Plačilo Stripa, ki ga ni mogoče pripisati računu (`kv` `stripe_unmatched:*`: id-ji Stripa, znesek, razlog, `parent_uid`; brez e-naslova) | 365 dni, nato izbris (`server/zasebnost.js` `runRetention`) |
 | Račun brez potrjenega e-naslova, brez profilov, plačil in seje | 30 dni |

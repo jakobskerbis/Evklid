@@ -19,14 +19,23 @@ $$\sigma_{\bar X} = \frac{\sigma}{\sqrt n},$$
 
 čemur pravimo **standardna napaka**. Na številski premici:
 
-```
-2,5 %   95 % povprečij   2,5 %
-----|---------|---------|----
-    L         μ         U
-
-L = μ − 1,96·σ/√n
-U = μ + 1,96·σ/√n
-```
+:::risba graf
+opis: Zvonasta krivulja porazdelitve vzorčnih povprečij nad številsko premico. Sredina je pri μ, meji sta L = μ − 1,96·σ/√n levo in U = μ + 1,96·σ/√n desno. Med L in U leži 95 % povprečij, levo od L 2,5 % in desno od U 2,5 %.
+x: -4 .. 4 | 1 | povprečje
+y: 0 .. 1,2 | 0,5 | gostota
+oznake: ne
+oznakax: -1,96 | L
+oznakax: 0 | μ
+oznakax: 1,96 | U
+f: exp(-x^2/2) | debelo
+črta: -1,96; 0 -> -1,96; 0,146 | črtkano siva
+črta: 1,96; 0 -> 1,96; 0,146 | črtkano siva
+črta: 0; 0 -> 0; 1 | črtkano siva
+napis: 0,12; 0,3 | 95 % | desno
+napis: -3; 0,25 | 2,5 %
+napis: 3; 0,25 | 2,5 %
+podnapis: L = μ − 1,96·σ/√n, U = μ + 1,96·σ/√n
+:::
 
 Če so meritve normalno porazdeljene, je $\bar X$ normalen; po centralnem limitnem izreku je približno normalen tudi pri drugih porazdelitvah, če je $n$ dovolj velik (praktično $n \gtrsim 30$). Med mejama $L$ in $U$ na skici, $\mu - 1{,}96\,\sigma/\sqrt n$ in $\mu + 1{,}96\,\sigma/\sqrt n$, pade $95\,\%$ povprečij.
 
@@ -280,7 +289,7 @@ Dva termometra primerjamo na šestih vzorcih; razlike (termometer A minus termom
 3. Kvadrati odmikov: $0$; $0{,}04$; $0{,}01$; $0{,}01$; $0{,}04$; $0$, vsota $0{,}10$; $s_d = \sqrt{0{,}10/5} \approx 0{,}141\,\mathrm{K}$.
 4. $t = 0{,}30/(0{,}141/\sqrt 6) \approx 0{,}30/0{,}0577 \approx 5{,}20$.
 5. $|t| = 5{,}20 > 2{,}571$: $H_0$ zavrnemo. $95\,\%$ interval za $\mu_d$ je $0{,}30 \pm 2{,}571 \cdot 0{,}0577 \approx 0{,}30 \pm 0{,}15$, torej $[0{,}15; 0{,}45]\,\mathrm{K}$.
-6. Parni test odstrani razlike med vzorci (en je toplejši, drugi hladnejši), ki bi pri primerjavi neodvisnih vzorcev povečale razpršenost in skrile majhen sistematični odmik.
+6. Parni test odstrani razlike med vzorci (eden je toplejši, drugi hladnejši), ki bi pri primerjavi neodvisnih vzorcev povečale razpršenost in skrile majhen sistematični odmik.
 7. Odgovor: termometer A kaže sistematično višje, za okoli $0{,}3\,\mathrm{K}$ (med $0{,}15$ in $0{,}45\,\mathrm{K}$).
 
 ## Drugače: Z analogijo
@@ -309,7 +318,7 @@ Pet meritev upora: $99{,}6$; $100{,}4$; $100{,}1$; $99{,}8$ in $100{,}6\,\Omega$
 6. **Testna statistika:** $t = (100{,}1 - 100{,}0)/0{,}184 \approx 0{,}54$.
 7. **Odločitev:** $|t| = 0{,}54 < 2{,}776$, $H_0$ ne zavrnemo.
 8. **Interval:** $100{,}1 \pm 2{,}776 \cdot 0{,}184 \approx 100{,}1 \pm 0{,}51$, torej $[99{,}59; 100{,}61]\,\Omega$; vsebuje $100{,}0$, kar se ujema z odločitvijo.
-9. **Pomen:** podatki ne kažejo odstopanja, a interval je širok – z le petimi meritvami bi zlahka spregledali tudi odstopanje $0{,}4\,\Omega$ (to je le okoli $2{,}2$ standardni napaki, manj od kritične vrednosti $2{,}776$).
+9. **Pomen:** podatki ne kažejo odstopanja, a interval je širok – z le petimi meritvami bi zlahka spregledali tudi odstopanje $0{,}4\,\Omega$ (to je le okoli $2{,}2$ standardne napake, manj od kritične vrednosti $2{,}776$).
 
 ## Preveri se
 

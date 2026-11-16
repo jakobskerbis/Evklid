@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Organska snov tal
+  - odmrli ostanki; ornica $1$–$5\,\%$, šota nad $30\,\%$
+  - $\mathrm{OST} \approx 1{,}72 \cdot C_\mathrm{org}$
+  - pazi: $C_\mathrm{org}$ ni že OST
+- Humus ob glini
+  - temna, amorfna, obstojna snov
+  - KIK $150$–$300\,\mathrm{cmol(+)/kg}$, naboj odvisen od pH
+  - fulvokisline, huminske kisline, humin
+- Mineralizacija
+  - do $\mathrm{CO_2}$, $\mathrm{NH_4^+}$, $\mathrm{NO_3^-}$; sprošča hranila
+  - amonifikacija, nato nitrifikacija
+- Humifikacija
+  - obstojne humusne snovi; zadrži C in N
+  - po letu v humusu desetina do tretjina ogljika
+- Razmerje C/N
+  - $\mathrm{C/N} = \dfrac{m_\mathrm{C}}{m_\mathrm{N}}$, prag okrog $25$
+  - kompost $10$–$15$, slama $60$–$100$, žagovina $300$–$600$
+  - mešanica: seštej mase, ne povpreči razmerij
+- Imobilizacija
+  - biomasa C/N $8$, vgradi tretjino ogljika
+  - $m_\mathrm{N,iz\ tal} = m_\mathrm{N,potrebni} - m_\mathrm{N,sproščeni}$
+  - začasna: C/N ostanka pada
+- Šotna tla
+  - brez kisika razkroj zastane
+  - po izsušitvi mineralizacija in posedanje

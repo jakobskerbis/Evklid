@@ -19,7 +19,7 @@ Jekel je več tisoč. Kdor zna brati oznake, iz risbe razbere lastnosti, iz kata
 4. Število za simboli je delež prvega elementa, pomnožen s faktorjem. Za krom je faktor $4$, zato $\frac{4}{4} = 1\,\%\ \mathrm{Cr}$. Molibden nima števila: njegov delež je majhen in v oznaki ni podan.
 5. Številska oznaka istega jekla je **1.7225**. Prva enica pomeni jeklo, naslednji dve števki skupino, zadnji dve zaporedno številko.
 
-Ogljik $0{,}42\,\%$ omogoča kaljenje, krom in molibden povečata prekaljivost. Tako jeklo kalimo in popuščamo (**poboljšamo**) za gredi, vijake in zobnike. Iz petih znakov smo dobili sestavo in uporabo. Zdaj pravila posplošimo.
+Ogljik $0{,}42\,\%$ omogoča kaljenje, krom in molibden povečata prekaljivost. Tako jeklo kalimo in popuščamo (**poboljšamo**) za gredi, vijake in zobnike. Iz ene kratke oznake smo dobili sestavo in uporabo. Zdaj pravila posplošimo.
 
 **Definicija.** **Jeklo** je zlitina železa z ogljikom, ki ima manj kot okoli $2\,\%$ ogljika (natančneje $2{,}06\,\%$ po diagramu železo–cementit; v anglosaških virih $2{,}11\,\%$) in je preoblikovalna. **Litina** ima več ogljika, običajno $2{,}5$ do $4\,\%$; ne kujemo je, temveč ulivamo.
 
@@ -55,7 +55,7 @@ Med strojna jekla sodijo še **poboljšana** jekla ($0{,}3$ do $0{,}5\,\%$ C, na
 **Orodna jekla** potrebujejo trdoto in odpornost proti obrabi, zato imajo več ogljika in karbidotvornih elementov.
 - Za delo v hladnem: X153CrMoV12 (1.2379), za rezila in štance.
 - Za delo v vročem: X40CrMoV5-1 (1.2344), za kalupe za tlačno litje, ker ohrani trdnost pri visoki temperaturi.
-- Hitrorezna: HS6-5-2 (1.3343), za svedre in rezkarje; trdota ostane tudi pri rdečem žaru rezalnega roba.
+- Hitrorezna: HS6-5-2 (1.3339), za svedre in rezkarje; trdota ostane tudi pri rdečem žaru rezalnega roba.
 
 **Nerjavna jekla** (SIST EN 10088) imajo vsaj $10{,}5\,\%$ kroma in največ $1{,}2\,\%$ ogljika. Krom na površini tvori tanko plast kromovega oksida, ki se ob poškodbi sama obnovi (**pasivacija**). Po mikrostrukturi:
 - **avstenitna**, X5CrNi18-10 (1.4301): nikelj ohrani ploskovno centrirano mrežo, jeklo je žilavo, nemagnetno, dobro varivo, a se ne da kaliti;
@@ -70,14 +70,42 @@ Med strojna jekla sodijo še **poboljšana** jekla ($0{,}3$ do $0{,}5\,\%$ C, na
 
 Skica pod mikroskopom (grafit je temen):
 
-```
-  siva (GJL)     nodularna (GJS)
-  ~~  ~  ~~       o   o   o
-   ~ ~~  ~          o   o
-  ~~  ~ ~~        o   o   o
-  lamele:          kroglice:
-  ostri robovi     brez robov
-```
+:::risba skica
+opis: Dve polji pod mikroskopom, grafit je temen. Levo siva litina (GJL): grafit v tankih, različno obrnjenih lamelah z ostrimi konicami. Desno nodularna litina (GJS): grafit v ločenih okroglih kroglicah brez robov.
+območje: 0; 0 .. 32; 16,5
+pravokotnik: 1; 4,5 .. 15; 14 | ozadje
+pravokotnik: 17; 4,5 .. 31; 14 | ozadje
+lik: 1,5; 11,45 -> 2,84; 12,44 -> 4,5; 12,55 -> 2,99; 12,03 | polno
+lik: 5,94; 13,05 -> 7,27; 12,69 -> 8,06; 11,55 -> 7,02; 12,32 | polno
+lik: 10,8; 10,79 -> 11,09; 12,23 -> 12,2; 13,21 -> 11,47; 12,02 | polno
+lik: 12,34; 10,81 -> 13,62; 10,95 -> 14,66; 10,19 -> 13,51; 10,53 | polno
+lik: 3,54; 11,15 -> 4,86; 10,3 -> 5,46; 8,85 -> 4,52; 10,02 | polno
+lik: 6,83; 9,5 -> 8,42; 10,26 -> 10,17; 10,1 -> 8,49; 9,83 | polno
+lik: 1,74; 7,05 -> 2,53; 8,19 -> 3,86; 8,55 -> 2,78; 7,82 | polno
+lik: 5,18; 7,98 -> 6,66; 7,94 -> 7,82; 7,02 -> 6,51; 7,53 | polno
+lik: 10,19; 6,44 -> 10,05; 7,72 -> 10,81; 8,76 -> 10,47; 7,61 | polno
+lik: 12,08; 7,92 -> 13,33; 7,33 -> 13,92; 6,08 -> 13,02; 7,02 | polno
+lik: 3,11; 5,88 -> 4,46; 6,47 -> 5,89; 6,12 -> 4,5; 6,03 | polno
+lik: 8,6; 6,59 -> 9,41; 6,14 -> 9,4; 5,21 -> 9,03; 5,92 | polno
+krog: 19; 12,5 | 0,55 | polno
+krog: 23,5; 12,8 | 0,55 | polno
+krog: 28,5; 12,3 | 0,55 | polno
+krog: 21,2; 10,3 | 0,55 | polno
+krog: 26; 10,5 | 0,55 | polno
+krog: 29,5; 9,6 | 0,55 | polno
+krog: 18,8; 8 | 0,55 | polno
+krog: 23,6; 8,2 | 0,55 | polno
+krog: 27,8; 7,6 | 0,55 | polno
+krog: 20,8; 6 | 0,55 | polno
+krog: 25,2; 6 | 0,55 | polno
+krog: 29,6; 5,8 | 0,55 | polno
+napis: 8; 15,3 | siva (GJL) | sredina | debelo
+napis: 24; 15,3 | nodularna (GJS) | sredina | debelo
+napis: 8; 3,2 | lamele:
+napis: 8; 1,4 | ostri robovi
+napis: 24; 3,2 | kroglice:
+napis: 24; 1,4 | brez robov
+:::
 
 :::premisli
 Siva in nodularna litina imata lahko enako sestavo. Kaj se zgodi z nateznim raztezkom, če lamele grafita spremenimo v kroglice, in zakaj?
@@ -122,7 +150,7 @@ Nizkolegirano: $\%\mathrm{C} = \frac{\text{prvo število}}{100}$, delež element
 2. 42CrMo4: $0{,}42\,\%$ C, $1\,\%$ Cr, nekaj Mo. Poboljšano jeklo za gredi.
 3. X5CrNi18-10: črka X, zato $0{,}05\,\%$ C, $18\,\%$ Cr, $10\,\%$ Ni. Avstenitno nerjavno jeklo (1.4301), primerno za stik s hrano.
 4. HS6-5-2: hitrorezno jeklo s $6\,\%$ W, $5\,\%$ Mo, $2\,\%$ V (krom okoli $4\,\%$ v oznaki ni zapisan).
-5. Odgovor: cementacijsko, poboljšano, avstenitno nerjavno in hitrorezno jeklo; od zobnika do svedra raste delež legirnih elementov, ker raste zahteva po trdoti ali odpornosti.
+5. Odgovor: cementacijsko, poboljšano, avstenitno nerjavno in hitrorezno jeklo; pri pokrovu in svedru je delež legirnih elementov veliko večji kot pri zobniku in gredi, ker je večja zahteva po korozijski odpornosti ali po trdoti v vročem.
 
 ### Primer 3 (težji, izpitna raven): varivost dveh jekel
 
@@ -170,7 +198,7 @@ $\mathrm{CE}_\mathrm{L} \approx 3{,}4 + 0{,}733 = 4{,}13\,\%$, kar je pod $4{,}3
 
 ## Pogoste napake
 
-- **»Število v S235 je ogljik.«** Pri skupini 1 število pomeni najmanjšo mejo tečenja v $\mathrm{MPa}$, ne sestave. Ogljik je stokratnik prvega števila le pri skupini 2 (C45, 42CrMo4).
+- **»Število v S235 je ogljik.«** Pri skupini 1 število pomeni najmanjšo mejo tečenja v $\mathrm{MPa}$, ne sestave. Prvo število je stokratnik deleža ogljika le pri skupini 2 (C45, 42CrMo4).
 - **Faktor pozabljen.** Kdor iz 42CrMo4 prebere »$4\,\%$ kroma«, pozabi deliti s faktorjem $4$; prav je $1\,\%$. Pri X-oznakah faktorjev ni.
 - **»Nerjavno jeklo ne rjavi nikoli.«** Pasivna plast se poškoduje v kloridih (morska voda, sol za posipanje) ali v rezah in špranjah. Za morje izberemo jeklo z molibdenom (X2CrNiMo17-12-2) ali dupleks.
 - **»Siva litina je trdna, ker je trda.«** Trdota ni trdnost v nategu. Lamelni grafit dela zareze, zato je siva litina v nategu krhka; za udarne obremenitve izberemo nodularno litino.
@@ -215,7 +243,7 @@ Utemelji, zakaj je X5CrNi18-10 nerjavno, nemagnetno in ga ni mogoče utrditi s k
 
 **Rešitev:**
 
-1. Obe jekli imata več kot $10{,}5\,\%$ kroma (18 oziroma 13 %), zato na površini nastane pasivna plast kromovega oksida: obe sta nerjavni.
+1. Obe jekli imata več kot $10{,}5\,\%$ kroma ($18$ oziroma $13\,\%$), zato na površini nastane pasivna plast kromovega oksida: obe sta nerjavni.
 2. X5CrNi18-10 ima $10\,\%$ niklja. Nikelj stabilizira avstenit (ploskovno centrirana kubična mreža) do sobne temperature. Avstenit je paramagneten, zato jeklo ni magnetno.
 3. Ker ostane avstenitno pri vseh temperaturah, ob ohlajanju ni premene v martenzit; poleg tega ima le $0{,}05\,\%$ C. Kaljenje ga ne utrdi; utrdimo ga lahko le s hladnim preoblikovanjem.
 4. X20Cr13 nima niklja, pri visoki temperaturi je avstenitno, pri sobni pa feritno-karbidno. Ob hitrem ohlajanju avstenit preide v martenzit; $0{,}20\,\%$ C da dovolj trdote.

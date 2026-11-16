@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Newtonov zakon viskoznosti
+  - $\tau = \mu \dfrac{\mathrm{d}v}{\mathrm{d}y}$, $\tau$ v Pa
+  - newtonska tekočina: $\mu$ neodvisna od strižne hitrosti
+  - med ploščama: $F = \mu S \dfrac{v_0}{\delta}$
+- Dinamična in kinematična viskoznost
+  - $\mu$ v $\mathrm{Pa \cdot s}$, $1\,\mathrm{cP} = 1\,\mathrm{mPa \cdot s}$
+  - $\nu = \dfrac{\mu}{\rho}$ v $\mathrm{m^2/s}$
+  - napaka: $\nu$ vstavljena namesto $\mu$
+- Vpliv temperature
+  - kapljevinam viskoznost pada
+  - plinom raste: prenos gibalne količine
+- Reynoldsovo število
+  - $\mathrm{Re} = \dfrac{\rho v D}{\mu} = \dfrac{v D}{\nu}$, brez enote
+  - vztrajnostne sile proti viskoznim
+  - iz pretoka: $\mathrm{Re} = \dfrac{4 \rho Q}{\pi \mu D}$
+- Režimi v cevi
+  - laminarno: $\mathrm{Re} < 2100$
+  - prehodno: $2100$ do $4000$
+  - turbulentno: $\mathrm{Re} > 4000$
+- Profil hitrosti
+  - laminarno parabola, $v_\mathrm{max} = 2 \bar v$
+  - turbulentno skoraj raven, $\bar v \approx 0{,}8\, v_\mathrm{max}$
+- Hagen-Poiseuillov zakon
+  - $\Delta p = \dfrac{32 \mu L \bar v}{D^2}$
+  - velja le za laminarni tok
+  - voda, $D = 1\,\mathrm{cm}$: laminarno pod $1\,\mathrm{L/min}$

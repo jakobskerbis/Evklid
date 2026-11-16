@@ -5,10 +5,11 @@
 import { icon, hydrateIcons } from "../icons.js";
 import { t } from "../i18n.js";
 import { jeOs } from "../stopnja.js";
-import { solve, analyze, prep, tex as exprTex, parseTask } from "./solvecore.js";
+import { solve, analyze, prep, tex as exprTex, parseTask, izvorOznak, oznakaGrafa } from "./solvecore.js";
 import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
 import { answerParts } from "./odgovor.js";
+import { plottableFromText } from "../graph/math.js";
 
 let D = null; // { api, getStudent, toast, escapeHtml, askTutor, openGraph }
 const fresh = () => ({
@@ -765,8 +766,24 @@ function fromAi(sol) {
     answer: { tex: sol.answer_tex },
     methods: sol.methods.map((m, i) => ({ id: `ai${i}`, name: m.name, steps: m.steps.map((s) => ({ title: s.title, tex: s.tex, whyText: s.why })) })),
     verified: !!sol.verified,
-    graph: null,
+    graph: graphOfProblem(sol.problem_tex, S.text),
   };
+}
+
+// Naloge, ki jih reši AI: če je v besedilu funkcija ali krivulja (f(x) = …, y = …), jo narišemo kot v kalkulatorju.
+// Besedilo (\text{kot, pod katerim …}) in vejice med deli odstranimo, da ostane samo zapis za risanje.
+function graphOfProblem(tex, text) {
+  const clean = (s) =>
+    String(s || "")
+      .replace(/\\(text|mathrm|textrm|mbox)\s*\{[^{}]*\}/g, "\\quad ")
+      .replace(/,\s*(?:\\[ ,;:!]|\\q?quad|~)\s*|,\s+/g, " \\quad "); // ne decimalne vejice (2,5 ali 2{,}5)
+  for (const src of [tex, text]) {
+    try {
+      const exprs = plottableFromText(`$${clean(src)}$`);
+      if (exprs.length) return { exprs };
+    } catch {}
+  }
+  return null;
 }
 
 function renderSolution(box) {
@@ -787,6 +804,7 @@ function renderSolution(box) {
   const m = r.methods[Math.min(S.method, r.methods.length - 1)];
   const steps = m.steps;
   const shown = Math.min(S.shown, steps.length);
+  const izvori = izvorOznak(steps, r.problemTex);
   const badge = r.verified
     ? `<span class="scan-badge ok" title="${esc(t("scan.verifiedTip"))}">${icon("badge-check")}${esc(r.ai ? t("scan.aiVerified") : t("scan.verified"))}</span>`
     : `<span class="scan-badge warn">${icon("info")}${esc(t("scan.aiUnverified"))}</span>`;
@@ -799,7 +817,7 @@ function renderSolution(box) {
     ${r.methods.length > 1 ? `<div class="scan-methods"><span class="scan-label">${esc(t("scan.method"))}</span><div class="seg" role="tablist">${r.methods.map((mm, i) => `<button type="button" role="tab" data-method="${i}" class="${i === S.method ? "active" : ""}" aria-selected="${i === S.method}">${esc(mm.name || t(`scan.m.${mm.id}`))}</button>`).join("")}</div></div>` : ""}
     <section class="scan-steps" aria-label="${esc(t("scan.steps"))}">
       <h2 class="scan-h2">${esc(t("scan.steps"))}</h2>
-      <ol>${steps.slice(0, shown).map((s, i) => stepHtml(s, i)).join("")}</ol>
+      <ol>${steps.slice(0, shown).map((s, i) => stepHtml(s, i, izvori[i])).join("")}</ol>
       ${
         shown < steps.length
           ? `<div class="scan-actions scan-more"><button type="button" class="text-btn" data-act="all">${esc(t("scan.all"))}</button><button type="button" class="primary" data-act="next">${icon("arrow-right")}${esc(t("scan.next"))} <span class="muted">${shown}/${steps.length}</span></button></div>`
@@ -815,14 +833,19 @@ function renderSolution(box) {
     </div>
     ${S.ai?.loading ? `<div class="card scan-ai-state"><span class="spinner"></span><p>${esc(t("scan.solvingAi"))}</p></div>` : S.ai?.error ? `<p class="scan-err">${esc(S.ai.error)}</p>` : ""}`;
   bindSolution(box);
-  if (r.graph) drawGraph(box.querySelector(".scan-graph-host"), r.graph);
+  if (r.graph) drawGraph(box.querySelector(".scan-graph-host"), r.graph, oznakaGrafa(r));
 }
 
-function stepHtml(s, i) {
+// from: vrstica, na katero uporabimo operacijo iz oznake (»x² < 4   / −4«); rezultat je pod njo (solvecore izvorOznak).
+function stepHtml(s, i, from) {
   const why = s.why || s.whyText || s.whyTex;
   return `<li class="scan-step" style="--i:${i}">
     <div class="scan-step-head"><span class="scan-step-n" aria-hidden="true">${i + 1}</span><p class="scan-step-title"><span class="sr-only">${esc(t("scan.stepN", { n: i + 1 }))}: </span>${tr(s.title)}</p></div>
-    <div class="scan-step-math">${math(s.tex, true)}${s.note ? `<span class="scan-step-note">${math(s.note)}</span>` : ""}</div>
+    ${
+      s.note && from
+        ? `<div class="scan-step-math scan-step-izvor"><div class="scan-step-from">${math(`\\displaystyle ${from}`)}<span class="scan-step-note">${math(s.note)}</span></div>${math(s.tex, true)}</div>`
+        : `<div class="scan-step-math">${math(s.tex, true)}${s.note ? `<span class="scan-step-note">${math(s.note)}</span>` : ""}</div>`
+    }
     <div class="scan-step-actions">
       ${why ? `<button type="button" class="text-btn" data-why="${i}" aria-expanded="false">${icon("lightbulb")}${esc(t("scan.why"))}</button>` : ""}
       <button type="button" class="text-btn" data-ask="${i}">${icon("message-circle")}${esc(t("scan.askStep"))}</button>
@@ -889,7 +912,8 @@ function bindSolution(box) {
 
 // ---------- graf in številska premica ----------
 
-async function drawGraph(host, g) {
+// oznaka: rešitev naloge na grafu (interval ali točke na osi x, kot na številski premici; solvecore oznakaGrafa)
+async function drawGraph(host, g, oznaka = null) {
   if (!host) return;
   try {
     const [{ GraphView }, { buildModel, emptyState }] = await Promise.all([import("../graph/plot.js"), import("../graph/model.js")]);
@@ -903,7 +927,8 @@ async function drawGraph(host, g) {
       getModel: () => model,
       label: (k) => t(`gc.poi.${k}`),
       fmt: (v) => String(Math.round(v * 1000) / 1000).replace(".", ","),
-      axisFmt: (v, d) => v.toFixed(Math.max(0, d)).replace(".", ","),
+      axisFmt: (v, d) => v.toFixed(Math.max(0, d)).replace(".", ",").replace(/^-/, "−"),
+      oznaka,
     });
     graphView.canvas.setAttribute("aria-label", t("scan.graph"));
     const v = graphView.fitBounds?.();

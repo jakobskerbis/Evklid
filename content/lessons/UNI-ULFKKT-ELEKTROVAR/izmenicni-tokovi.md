@@ -164,7 +164,7 @@ $C = \dfrac{Q_C}{2\pi f U^2} = \dfrac{1312}{2\pi \cdot 50 \cdot 230^2}\,\mathrm{
 - Reaktanci: $X_L = \omega L$ (tok zaostaja $90^\circ$), $X_C = 1/(\omega C)$ (tok prehiteva $90^\circ$).
 - Impedanca: $Z = \sqrt{R^2 + (X_L - X_C)^2}$, $I = U/Z$, $\cos\varphi = R/Z$.
 - Moči: $P = UI\cos\varphi$ (W), $Q = UI\sin\varphi$ (var), $S = UI$ (VA), $S^2 = P^2 + Q^2$.
-- Kompenzacija: vzporedni kondenzator zmanjša $Q$ in tok, $P$ ostane enak.
+- Kompenzacija: vzporedni kondenzator zmanjša $Q$ in tok, $P$ ostane enaka.
 
 ## Za izpit
 

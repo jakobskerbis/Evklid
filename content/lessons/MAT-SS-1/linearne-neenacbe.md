@@ -24,7 +24,7 @@ Tudi tu dobimo **množico rešitev**, ki jo zapišemo kot **interval**. Pri line
 
 *Hitro preveri:* ali je $4x + 1 \ge 0$ linearna neenačba? (Da: $x$ je v prvi potenci.)
 
-**2. Rešitev** je vsako število, ki neenačbo spremeni v resničen izrek. Pri $x + 1 > 3$ so rešitve $2{,}5$; $3$; $10$ … in sicer vsa števila, večja od $2$. Rešitev je torej neskončno mnogo.
+**2. Rešitev** je vsako število, ki neenačbo spremeni v pravilno izjavo. Pri $x + 1 > 3$ so rešitve $2{,}5$; $3$; $10$ … in sicer vsa števila, večja od $2$. Rešitev je torej neskončno mnogo.
 
 *Hitro preveri:* ali je $x = 2$ rešitev neenačbe $x + 1 > 3$? (Ne: $3 > 3$ ne drži.)
 
@@ -46,12 +46,14 @@ $x = -5$ je rešitev, ker $5 > 3$. $x = 0$ ni, ker $0 > 3$ ne drži. Rešitve so
 
 **4. Zapis rešitve kot interval.** Množico rešitev zapišemo na številski premici in z intervalom:
 
-| Neenačba | Interval | Pomen |
-|---|---|---|
-| $x > a$ | $(a, \infty)$ | od $a$ naprej, brez $a$ |
-| $x \ge a$ | $[a, \infty)$ | od $a$ naprej, z $a$ |
-| $x < a$ | $(-\infty, a)$ | do $a$, brez $a$ |
-| $x \le a$ | $(-\infty, a]$ | do $a$, z $a$ |
+| Neenačba | Interval |
+|---|---|
+| $x > a$ | $(a, \infty)$ |
+| $x \ge a$ | $[a, \infty)$ |
+| $x < a$ | $(-\infty, a)$ |
+| $x \le a$ | $(-\infty, a]$ |
+
+Prva dva intervala segata od $a$ naprej, zadnja dva do $a$.
 
 - **Oklepaj** $($ ali $)$ pomeni, da krajišče **ni** v množici (pri strogih znakih $<$, $>$). Na številski premici ga narišemo kot **prazen krožec**.
 - **Oglati oklepaj** $[$ ali $]$ pomeni, da krajišče **je** v množici (pri $\le$, $\ge$). Narišemo ga kot **poln krožec**.
@@ -59,7 +61,7 @@ $x = -5$ je rešitev, ker $5 > 3$. $x = 0$ ni, ker $0 > 3$ ne drži. Rešitve so
 
 *Hitro preveri:* kako zapišeš $x \le 7$? ($(-\infty, 7]$.)
 
-**5. Poseben primer.** Pri neenačbi $0 \cdot x < 5$ ali $0 \cdot x > 5$ po poenostavitvi nastane neenačba brez $x$. Če je resnična, je rešitev vsako realno število $(-\infty, \infty)$; če ni, rešitev ni (prazna množica).
+**5. Poseben primer.** Včasih členi z $x$ pri poenostavitvi odpadejo in ostane neenačba brez $x$, na primer $0 \cdot x < 5$ ali $0 \cdot x > 5$. Če je resnična, je rešitev vsako realno število $(-\infty, \infty)$; če ni, rešitev ni (prazna množica).
 
 :::premisli
 Ima neenačba $2x + 1 < 2x - 3$ kakšno rešitev? Napovej, preden poenostaviš.
@@ -168,6 +170,111 @@ Delimo z $-2$, zato se znak obrne: $x \le -5$. Interval je $(-\infty, -5]$, kraj
 - Rešitev zapišemo kot interval: okrogel oklepaj pri strogi neenačbi in pri $\pm\infty$, oglati oklepaj pri $\le$, $\ge$.
 - Pri besedilnih nalogah upoštevamo še smiselnost rešitve (npr. $x \ge 0$).
 
+## Ponovitev
+
+**Formule**
+- Prištevanje, odštevanje: znak ostane (na pamet)
+- Množenje ali deljenje z $c > 0$: znak ostane (na pamet)
+- Z $c < 0$ se znak obrne: $-2x < 6 \Rightarrow x > -3$ (na pamet)
+- $x > 4$: $(4, \infty)$; $x \le 4$: $(-\infty, 4]$ (na pamet)
+
+**Postopek**
+1. Odpri oklepaje in odpravi ulomke.
+2. Člene z $x$ zberi na eni strani.
+3. Deli s koeficientom; pri negativnem obrni znak.
+4. Rešitev zapiši kot interval in jo nariši na številsko premico.
+5. Pri besedilni nalogi upoštevaj smiselnost (npr. $x \ge 0$, cela števila).
+
+**Pazi na**
+- Pri deljenju z negativnim številom obrni znak.
+- Okrogel oklepaj pri $<$, $>$ in $\pm\infty$, oglati pri $\le$, $\ge$.
+- Interval piši od manjšega k večjemu: $x > 4$ je $(4, \infty)$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Rešite neenačbo $\dfrac{x - 1}{3} - \dfrac{x + 2}{2} \ge \dfrac{x}{6} - 1$ in rešitev zapišite z intervalom.
+
+**Rešitev:**
+
+1. Pomnožimo s pozitivnim številom $6$, znak ostane: $2(x - 1) - 3(x + 2) \ge x - 6$.
+2. Odpremo oklepaje: $2x - 2 - 3x - 6 \ge x - 6$, torej $-x - 8 \ge x - 6$ in $-2x \ge 2$.
+3. Delimo z negativnim številom $-2$, zato se znak obrne: $x \le -1$.
+4. Preizkus: pri $x = -1$ je leva stran $-\dfrac{2}{3} - \dfrac{1}{2} = -\dfrac{7}{6}$ in desna $-\dfrac{1}{6} - 1 = -\dfrac{7}{6}$, zato je $-1$ rešitev. Pri $x = 0$ dobimo $-\dfrac{1}{3} - 1 = -\dfrac{4}{3}$, kar ni večje ali enako $-1$, zato $0$ ni rešitev.
+5. Odgovor: $x \in (-\infty, -1]$.
+
+**Točkovanje:** 1 točka za neenačbo brez ulomkov, 1 točka za $-2x \ge 2$ ali enakovredno neenačbo, 1 točka za $x \le -1$ z obrnjenim znakom in interval $(-\infty, -1]$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
+
+Podjetje izdeluje majice s potiskom. Mesečni stalni stroški so $1350\,\text{€}$, izdelava ene majice stane $4{,}20\,\text{€}$, majico pa prodajo za $11{,}70\,\text{€}$. Z $x$ označimo število majic, ki jih v mesecu izdelajo in prodajo.
+
+a) Zapišite izraz za mesečni dobiček v odvisnosti od $x$. (1 točka)
+b) Zapišite in rešite neenačbo, s katero ugotovite, najmanj koliko majic mora podjetje prodati, da bo dobiček pozitiven. (2 točki)
+c) Najmanj koliko majic mora podjetje prodati, da bo dobiček znašal vsaj $20\,\%$ prihodka od prodaje? Mejo izračunajte na dve decimalni mesti natančno in odgovor utemeljite. (3 točke)
+
+**Rešitev:**
+
+1. a) Prihodek je $11{,}70x$, stroški so $1350 + 4{,}20x$. Dobiček je $11{,}70x - 4{,}20x - 1350 = 7{,}50x - 1350$ (v evrih).
+2. b) $7{,}50x - 1350 > 0$, torej $7{,}50x > 1350$. Delimo s pozitivnim številom, znak ostane: $x > 180$.
+3. b) Pri $180$ majicah je dobiček $0\,\text{€}$, zato mora podjetje prodati najmanj $181$ majic.
+4. c) $20\,\%$ prihodka je $0{,}2 \cdot 11{,}70x = 2{,}34x$. Neenačba: $7{,}50x - 1350 \ge 2{,}34x$.
+5. c) $5{,}16x \ge 1350$, torej $x \ge \dfrac{1350}{5{,}16} = 261{,}627\ldots \approx 261{,}63$.
+6. c) Število majic je celo, zato je najmanjše tako število $262$. Preizkus: pri $262$ majicah je dobiček $7{,}50 \cdot 262 - 1350 = 615\,\text{€}$, $20\,\%$ prihodka pa $2{,}34 \cdot 262 = 613{,}08\,\text{€}$. Pri $261$ majicah je dobiček $607{,}50\,\text{€}$, kar je manj od $2{,}34 \cdot 261 = 610{,}74\,\text{€}$.
+7. Odgovor: a) dobiček je $7{,}50x - 1350$ evrov; b) najmanj $181$ majic; c) najmanj $262$ majic.
+
+**Točkovanje:** a) 1 točka za izraz $7{,}50x - 1350$; b) 1 točka za neenačbo in $x > 180$, 1 točka za odgovor $181$ majic; c) 1 točka za neenačbo $7{,}50x - 1350 \ge 2{,}34x$; 1 točka za mejo $261{,}63$; 1 točka za odgovor $262$ majic z utemeljitvijo, zakaj zaokrožimo navzgor.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dani sta linearni funkciji $f(x) = \dfrac{x + 7}{2}$ in $g(x) = \dfrac{4x - 2}{3}$.
+
+a) Rešite neenačbo $f(x) \ge g(x)$ in rešitev zapišite z intervalom. (3 točke)
+b) Pojasnite, kaj rešitev iz a) pove o legi grafov funkcij $f$ in $g$. (1 točka)
+c) Za katera števila $x$ sta vrednosti obeh funkcij pozitivni? (2 točki)
+d) Zapišite množico števil $x$, ki izpolnjujejo pogoja iz a) in c) hkrati. (1 točka)
+e) Določite realni parameter $p$ tako, da bo množica rešitev neenačbe $f(x) \ge g(x) + p$ enaka $(-\infty, 2]$. (3 točke)
+
+**Rešitev:**
+
+1. a) Pomnožimo s $6$: $3(x + 7) \ge 2(4x - 2)$, torej $3x + 21 \ge 8x - 4$.
+2. a) Uredimo: $-5x \ge -25$. Delimo z negativnim številom $-5$ in znak obrnemo: $x \le 5$, torej $x \in (-\infty, 5]$.
+3. b) Pri $x = 5$ je $f(5) = g(5) = 6$, zato se grafa sekata v točki $(5, 6)$. Levo od presečišča leži graf funkcije $f$ nad grafom funkcije $g$, desno od njega pa pod njim.
+4. c) $f(x) > 0$ velja za $x + 7 > 0$, torej $x > -7$. $g(x) > 0$ velja za $4x - 2 > 0$, torej $x > \dfrac{1}{2}$.
+5. c) Obe vrednosti sta pozitivni, ko velja oboje, torej za $x > \dfrac{1}{2}$ oziroma $x \in \left(\dfrac{1}{2}, \infty\right)$.
+6. d) Presek intervalov $(-\infty, 5]$ in $\left(\dfrac{1}{2}, \infty\right)$ je $\left(\dfrac{1}{2}, 5\right]$.
+7. e) Pomnožimo s $6$: $3x + 21 \ge 8x - 4 + 6p$, torej $-5x \ge 6p - 25$ in po deljenju z $-5$ (znak se obrne) $x \le \dfrac{25 - 6p}{5}$.
+8. e) Zahtevamo $\dfrac{25 - 6p}{5} = 2$, torej $25 - 6p = 10$ in $p = \dfrac{5}{2}$.
+9. e) Preizkus: $f(2) = \dfrac{9}{2}$ in $g(2) + \dfrac{5}{2} = 2 + \dfrac{5}{2} = \dfrac{9}{2}$, zato je $2$ krajišče intervala rešitev.
+10. Odgovor: a) $(-\infty, 5]$; b) za $x \le 5$ graf funkcije $f$ leži nad grafom funkcije $g$ ali ga seka, presečišče je $(5, 6)$; c) $\left(\dfrac{1}{2}, \infty\right)$; d) $\left(\dfrac{1}{2}, 5\right]$; e) $p = \dfrac{5}{2}$.
+
+**Točkovanje:** a) 1 točka za neenačbo brez ulomkov, 1 točka za $-5x \ge -25$, 1 točka za $x \le 5$ z obrnjenim znakom in interval $(-\infty, 5]$; b) 1 točka za pojasnilo s presečiščem $(5, 6)$; c) 1 točka za $x > -7$, 1 točka za $x > \dfrac{1}{2}$ in skupni interval; d) 1 točka za $\left(\dfrac{1}{2}, 5\right]$; e) 1 točka za $x \le \dfrac{25 - 6p}{5}$, 1 točka za enačbo $\dfrac{25 - 6p}{5} = 2$, 1 točka za $p = \dfrac{5}{2}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Katera preoblikovanja linearne neenačbe so ekvivalentna? Dokaži, da se pri množenju z negativnim številom znak neenačbe obrne.
+---
+Na obeh straneh smemo prišteti ali odšteti isto število in obe strani pomnožiti ali deliti z istim pozitivnim številom, ne da bi se znak spremenil. Pri množenju ali deljenju z negativnim številom se znak obrne. Za dokaz vzemimo $a < b$ in $c < 0$. Tedaj je $b - a > 0$, zato je produkt $c(b - a)$ negativen. Iz $cb - ca < 0$ sledi $cb < ca$, torej $ca > cb$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kako zapišemo množico rešitev linearne neenačbe z intervalom? Pojasni pomen okroglega in oglatega oklepaja ter navedi primer.
+---
+Rešitev linearne neenačbe je navadno neskončna množica števil, ki jo zapišemo kot interval. Oglati oklepaj pomeni, da krajišče pripada množici, kar je pri znakih $\le$ in $\ge$. Okrogli oklepaj pomeni, da krajišče ne pripada množici, kar je pri znakih $<$ in $>$; pri $\infty$ in $-\infty$ je oklepaj vedno okrogel. Rešitev neenačbe $x \le 3$ je na primer interval $(-\infty, 3]$, rešitev neenačbe $x > 3$ pa interval $(3, \infty)$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer linearne neenačbe brez rešitve in primer neenačbe, ki jo reši vsako realno število, ter pojasni, kako to prepoznaš.
+---
+Če se pri poenostavljanju členi z $x$ odštejejo, ostane neenačba brez neznanke, ki je resnična ali neresnična. Pri neenačbi $x + 2 < x$ po odštevanju $x$ dobimo $2 < 0$, kar ni res, zato neenačba nima rešitve. Pri neenačbi $x + 2 > x$ dobimo $2 > 0$, kar je vedno res, zato jo reši vsako realno število. Množica rešitev je v prvem primeru prazna, v drugem pa je to interval $(-\infty, \infty)$.
+:::
+
 ## Drugače: Na sliki
 
 Na številski premici je rešitev neenačbe **del premice**, ki ga pobarvamo.
@@ -267,24 +374,50 @@ Samo števila, manjša od $-3$, ustrezajo, kar se ujema z rešitvijo. Če bi zna
 ~ Ta da $x \le 5$, torej $(-\infty, 5]$: zaradi $\ge$ je $5$ vključen, oklepaj bi bil oglat.
 > Odštejemo $7$: $-x > -5$. Delimo z $-1$ in obrnemo znak: $x < 5$. Znak je strog, zato je $5$ izključen.
 
-? Mizar reže letev dolžine $250\,\text{cm}$ na kose po $32\,\text{cm}$ (širino reza zanemari). Oceni brez kalkulatorja: koliko celih kosov največ dobi?
-- $8$
-~ $250 : 32 \approx 7{,}8$; zaokrožiš navzgor, a $8 \cdot 32 = 256\,\text{cm}$ je že več od $250\,\text{cm}$.
-+ $7$
-- $7{,}8$
-~ To je meja $x \le 7{,}8\ldots$ iz neenačbe, kosi pa so celi. Vzameš največje celo število v intervalu.
+? (brez računala) Mizar reže letev dolžine $250\,\text{cm}$ na kose po $32\,\text{cm}$ (širino reza zanemari). Koliko celih kosov največ dobi?
+= 7 | 0
+~ 7,8 | To je meja $x \le 7{,}8\ldots$ iz neenačbe, kosi pa so celi. Vzameš največje celo število v intervalu.
+~ 8 | $250 : 32 \approx 7{,}8$; zaokrožil si navzgor, a $8 \cdot 32 = 256\,\text{cm}$ je že več od $250\,\text{cm}$.
 > Neenačba $32x \le 250$ da $x \le 7{,}8\ldots$ Ocena: $7 \cdot 32 = 224 \le 250$, $8 \cdot 32 = 256 > 250$. Največ $7$ kosov.
 
-? Zidar zida steno, ki sme biti visoka največ $2{,}4\,\text{m}$. Temelj je visok $0{,}3\,\text{m}$, vsaka vrsta zidakov z malto $0{,}2\,\text{m}$. Koliko vrst $x$ največ lahko sezida?
-- $12$
-~ To je $2{,}4 : 0{,}2$: pozabil si odšteti temelj. Neenačba je $0{,}3 + 0{,}2x \le 2{,}4$.
-- $11$
-~ Iz $x \le 10{,}5$ si zaokrožil navzgor. Pri $11$ vrstah bi bila stena $2{,}5\,\text{m}$, kar je preveč.
-+ $10$
+? (brez računala) Zidar zida steno, ki sme biti visoka največ $2{,}4\,\text{m}$. Temelj je visok $0{,}3\,\text{m}$, vsaka vrsta zidakov z malto $0{,}2\,\text{m}$. Koliko vrst $x$ največ lahko sezida?
+= 10 | 0
+~ 10,5 | To je meja $x \le 10{,}5$ iz neenačbe, vrste pa so cele. Vzameš največje celo število v intervalu.
+~ 12 | To je $2{,}4 : 0{,}2$: pozabil si odšteti temelj. Neenačba je $0{,}3 + 0{,}2x \le 2{,}4$.
+~ 11 | Iz $x \le 10{,}5$ si zaokrožil navzgor. Pri $11$ vrstah bi bila stena $2{,}5\,\text{m}$, kar je preveč.
 > $0{,}3 + 0{,}2x \le 2{,}4$, odštejemo $0{,}3$: $0{,}2x \le 2{,}1$, delimo z $0{,}2$: $x \le 10{,}5$. Vrste so cele, zato največ $10$.
 
 :::simboli
 x | neznanka (v besedilnih nalogah število letev) | | |
-a | koeficient pri $x$ | | | njegov predznak odloči, ali se znak obrne
-b | število na desni strani | | |
+a | koeficient pri $x$ | | | njegov predznak odloči, ali se znak obrne; v preglednici intervalov je $a$ krajišče
+b | število na desni strani neenačbe $ax < b$ | | | v obliki $ax + b < c$ je $b$ prosti člen na levi
+c | število na desni strani neenačbe $ax + b < c$ | | | v dokazu obrnitve znaka negativno število, s katerim množimo
+f, g | linearni funkciji | | |
+p | parameter | | | dano realno število
 :::
+
+<<RACUN
+neenacba: (x-1)/3-(x+2)/2>=x/6-1 | x | (-oo, -1]
+neenacba: -2*x>=2 | x | (-oo, -1]
+vrednost: (-1-1)/3-(-1+2)/2 | -7/6
+vrednost: -1/6-1 | -7/6
+enako: 11.7*x-4.2*x-1350 | 7.5*x-1350
+neenacba: 7.5*x-1350>0 | x | (180, oo)
+neenacba: 15/2*x-1350>=234/100*x | x | [11250/43, oo)
+vrednost: 1350/5.16 | 261.63
+vrednost: 7.5*262-1350 | 615
+vrednost: 2.34*262 | 613.08
+vrednost: 7.5*261-1350 | 607.5
+vrednost: 2.34*261 | 610.74
+neenacba: (x+7)/2>=(4*x-2)/3 | x | (-oo, 5]
+vrednost: (5+7)/2 | 6
+vrednost: (4*5-2)/3 | 6
+neenacba: (x+7)/2>0 | x | (-7, oo)
+neenacba: (4*x-2)/3>0 | x | (1/2, oo)
+neenacba: (x+7)/2>=(4*x-2)/3+5/2 | x | (-oo, 2]
+resi: (25-6*p)/5=2 | p | 5/2
+neenacba: x+2<x | x | none
+neenacba: x+2>x | x | (-oo, oo)
+neenacba: 32*x<=250 | x | (-oo, 125/16]
+neenacba: 0.3+0.2*x<=2.4 | x | (-oo, 21/2]
+>>

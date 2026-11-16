@@ -13,7 +13,7 @@ Ugodne in vse izide štejemo s kombinatoriko. Pri jajcih pa se zgodita *dve stva
 
 ## Razlaga
 
-**1. Dogodki.** Poskus ima množico možnih izidov, imenujemo jo **vzorčni prostor**. **Dogodek** je skupina izidov (podmnožica). Pri metu kocke je dogodek $A$: »padlo je sodo število« $= \{2, 4, 6\}$. Dogodek z enim samim izidom, na primer »padla je šestica« $= \{6\}$, je **elementarni dogodek**.
+**1. Dogodki.** **Poskus** je dejanje z naključnim izidom (met kocke). Množica njegovih možnih izidov je **vzorčni prostor**. **Dogodek** je skupina izidov (podmnožica). Pri metu kocke je dogodek $A$: »padlo je sodo število« $= \{2, 4, 6\}$. Dogodek z enim samim izidom, na primer »padla je šestica« $= \{6\}$, je **elementarni dogodek**.
 
 - **Gotov dogodek** se zgodi vedno: $P = 1$.
 - **Nemogoč dogodek** se ne zgodi nikoli: $P = 0$.
@@ -224,6 +224,28 @@ $P(A \mid N) = \dfrac{0{,}012}{0{,}032} = \dfrac{12}{32} = \dfrac{3}{8} = 0{,}37
 - Produkt (višja raven): $P(A \cdot B) = P(B) \cdot P(A \mid B)$. Pri neodvisnih dogodkih $P(A \cdot B) = P(A) \cdot P(B)$.
 - (višja raven) Pri nalogah s koraki si pomagaj z drevesom: verjetnosti vzdolž poti množimo, verjetnosti različnih poti, ki vodijo do istega dogodka, seštevamo.
 
+## Ponovitev
+
+**Formule**
+- $P(A) = \frac{m}{n}$ (na pamet)
+- $P(\overline{A}) = 1 - P(A)$ (na pamet)
+- $P(A + B) = P(A) + P(B) - P(A \cdot B)$ (na pamet)
+- (višja raven) $P(A \mid B) = \frac{P(A \cdot B)}{P(B)}$ (na pamet)
+- (višja raven) $P(A \cdot B) = P(B) \cdot P(A \mid B)$ (na pamet)
+- (višja raven) neodvisna: $P(A \cdot B) = P(A) \cdot P(B)$ (na pamet)
+
+**Postopek**
+1. Zapiši izide in dogodek z besedami.
+2. Pri enako verjetnih izidih štej: $P(A) = \frac{m}{n}$.
+3. »Ali« je vsota (odštej presek), »in« je produkt.
+4. Pri »vsaj« računaj z nasprotnim dogodkom.
+5. (višja raven) Pri korakih nariši drevo: vzdolž poti množi, poti do istega dogodka seštej.
+
+**Pazi na**
+- Pri združljivih dogodkih odštej $P(A \cdot B)$; rezultat nad $1$ je napaka.
+- (višja raven) Brez vračanja je drugi faktor pogojna verjetnost: $\frac{10}{12} \cdot \frac{9}{11}$.
+- (višja raven) Pri $P(A \mid B)$ deli s $P(B)$, ne z vsemi izidi.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
@@ -345,14 +367,11 @@ $$P(A \mid B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(
 ~ To je matematična verjetnost: $13$ ugodnih od $52$ enako verjetnih izidov.
 > Ocena sošolca temelji na občutku in izkušnjah, ne na štetju izidov ali ponavljanju poskusa.
 
-? Za dogodka $A$ in $B$ velja $P(A) = 0{,}5$, $P(B) = 0{,}4$ in $P(A + B) = 0{,}6$. Kolikšna je $P(A \cdot B)$?
-- $0{,}2$
-~ To je $P(A) \cdot P(B)$, kar velja le za neodvisna dogodka. Tu ne veš, da sta neodvisna, zato uporabi formulo za vsoto.
-- $0$
-~ Nič bi bilo pri nezdružljivih dogodkih, a takrat bi bila $P(A + B) = 0{,}9$, ne $0{,}6$.
-+ $0{,}3$
-- $0{,}9$
-~ To je $P(A) + P(B)$. Produkt $A \cdot B$ pomeni »oba hkrati« in ne more biti verjetnejši od $A$ samega.
+? Za dogodka $A$ in $B$ velja $P(A) = 0{,}5$, $P(B) = 0{,}4$ in $P(A + B) = 0{,}6$. Kolikšna je $P(A \cdot B)$? Vpiši kot decimalno število.
+= 0,3 | 0,01
+~ 0,2 | To je $P(A) \cdot P(B)$, kar velja le za neodvisna dogodka. Tu ne veš, da sta neodvisna, zato uporabi formulo za vsoto.
+~ 0,9 | To je $P(A) + P(B)$. Produkt $A \cdot B$ pomeni »oba hkrati« in ne more biti verjetnejši od $A$ samega.
+~ 0,0 | Nič bi bilo pri nezdružljivih dogodkih, a takrat bi bila $P(A + B) = 0{,}9$, ne $0{,}6$.
 > Iz $P(A + B) = P(A) + P(B) - P(A \cdot B)$ sledi $P(A \cdot B) = 0{,}5 + 0{,}4 - 0{,}6 = 0{,}3$.
 
 ? (višja raven) Za dogodka $A$ in $B$ velja $P(A) = 0{,}6$, $P(B) = 0{,}4$ in $P(A \cdot B) = 0{,}12$. Kolikšna je $P(A \mid B)$?

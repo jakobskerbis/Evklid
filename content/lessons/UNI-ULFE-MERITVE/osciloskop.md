@@ -30,15 +30,26 @@ kjer sta $y$ in $x$ odčitka v razdelkih. Iz periode dobimo frekvenco $f = 1/T$.
 
 Iz napetosti od temena do temena $U_{pp}$ dobimo temensko vrednost $U_p = U_{pp}/2$. Za sinusni signal je efektivna vrednost $U_p/\sqrt{2}$, za druge oblike pa ne: zato sodobni osciloskopi efektivno vrednost računajo iz vzorcev.
 
-```
- |<---- 10 razdelkov ---->|
- +------------------------+
- |  .-.     .-.     .-.   |
- |-*---\---/---\---/---\--|
- |      '-'     '-'     '-|
- +------------------------+
- * prožitev: nivo in naklon
-```
+:::risba graf
+opis: Zaslon osciloskopa z mrežo 10 razdelkov vodoravno in 8 navpično. Na njem sta dve periodi sinusnega signala: ena perioda traja 5 razdelkov, od dna do vrha pa signal sega čez 4,6 razdelka (2,3 razdelka nad in pod sredino zaslona). Vodoravna črtkana črta na sredini je nivo proženja. Točka proženja je na levem robu zaslona, kjer signal prečka nivo navzgor (naraščajoči naklon).
+x: 0 .. 10 | 1 | x (razdelki)
+y: 0 .. 8 | 1 | y (razdelki)
+višina: 260
+f: 4 + 2,3*sin(2*pi*x/5) | modra
+črta: 0; 4 -> 10; 4 | črtkano oranžna
+puščica: 8,1; 6,7 -> 8,1; 4,1 | | | oranžna
+napis: 8,1; 6,8 | nivo proženja | nad | oranžna
+puščica: 1,1; 7,6 -> 0,4; 5,2 | | | oranžna
+napis: 1,15; 7,6 | naraščajoči naklon | desno | oranžna
+točka: 0; 4 | prožitev | pod desno | oranžna
+puščica: 0; 0,8 -> 5; 0,8
+črta: 5; 0,5 -> 5; 1,1
+napis: 2,8; 0,8 | perioda: 5 razdelkov | nad
+črta: 1,25; 6,3 -> 3,75; 6,3 | črtkano siva
+puščica: 3,75; 1,7 -> 3,75; 6,3
+napis: 3,75; 6,4 | 4,6 razdelka | nad
+podnapis: Zaslon z 10 × 8 razdelki; prožitev določata nivo in naklon
+:::
 
 ### Proženje: zakaj slika stoji
 
@@ -99,7 +110,7 @@ Daljše okno da finejšo ločljivost. Če v okno ne pade celo število period, s
 Pravokotni signal z amplitudo $A$ ima v spektru le lihe harmonske komponente z amplitudami $4A/(n\pi)$: $1{,}27\,A$; $0{,}42\,A$; $0{,}25\,A$ … V časovnem prikazu vidimo obliko, v frekvenčnem sestavo.
 
 :::premisli
-Zapis s $10\,000$ vzorci in $f_s = 100\,\mathrm{kS/s}$ ima ločljivost $10\,\mathrm{Hz}$. Ali bi z $10$-krat večjo vzorčevalno frekvenco (pri enakem $N$) bolje ločili brnenje pri $50\,\mathrm{Hz}$ od $60\,\mathrm{Hz}$?
+Zapis z $10\,000$ vzorci in $f_s = 100\,\mathrm{kS/s}$ ima ločljivost $10\,\mathrm{Hz}$. Ali bi z $10$-krat večjo vzorčevalno frekvenco (pri enakem $N$) bolje ločili brnenje pri $50\,\mathrm{Hz}$ od $60\,\mathrm{Hz}$?
 ---
 Ne, slabše. $\Delta f = f_s/N$ bi narasla na $100\,\mathrm{Hz}$, ker bi okno trajalo le $10\,\mathrm{ms}$. Višja $f_s$ razširi prikaz navzgor, ločljivost pa določa le dolžina okna.
 :::
@@ -243,9 +254,9 @@ Izpelji čas vzpona sistema prvega reda in pokaži, da je $t_r \approx 0{,}35/B$
 2. Odziv na enotsko stopnico je $1 - \mathrm{e}^{-t/\tau}$. Vrednost $0{,}1$ doseže pri $t_1 = \tau\ln(10/9)$, vrednost $0{,}9$ pri $t_2 = \tau\ln 10$.
 3. $t_r = t_2 - t_1 = \tau\ln 9 \approx 2{,}197\,\tau$.
 4. Vstavimo $\tau = 1/(2\pi B)$: $t_r = \ln 9/(2\pi B) \approx 0{,}350/B$.
-5. Naj bo $t_s = k\,t_o$. Relativna napaka je $t_m/t_s - 1 = \sqrt{1 + 1/k^2} - 1$.
-6. Pogoj $\sqrt{1 + 1/k^2} \le 1{,}05$ da $1/k^2 \le 1{,}1025 - 1 = 0{,}1025$, torej $k \ge 3{,}12$.
-7. Preverba: pri $k = 3$ je napaka $5{,}4\,\%$, pri $k = 5$ pa $2{,}0\,\%$.
+5. Naj bo $t_s = q\,t_o$. Relativna napaka je $t_m/t_s - 1 = \sqrt{1 + 1/q^2} - 1$.
+6. Pogoj $\sqrt{1 + 1/q^2} \le 1{,}05$ da $1/q^2 \le 1{,}1025 - 1 = 0{,}1025$, torej $q \ge 3{,}12$.
+7. Preverba: pri $q = 3$ je napaka $5{,}4\,\%$, pri $q = 5$ pa $2{,}0\,\%$.
 8. Odgovor: $t_r = \ln 9/(2\pi B) \approx 0{,}35/B$; osciloskop mora biti vsaj okoli $3$-krat hitrejši od signala za napako do $5\,\%$, za napako okoli $2\,\%$ pa $5$-krat.
 
 ## Drugače: Z analogijo
@@ -258,7 +269,7 @@ Pasovna širina je kot vztrajnost kazalca: težak kazalec ne sledi hitrim sunkom
 
 ## Drugače: Bolj natančno
 
-**Lissajousove krivulje.** V načinu XY en kanal odklanja vodoravno, drugi navpično. Za dva sinusa iste frekvence z amplitudama $A$ in $B$ ter faznim zamikom $\varphi$ nastane elipsa. Kjer seka navpično os, je $y_0 = B\sin\varphi$, zato $\sin\varphi = y_0/B$. Pri razmerju frekvenc $2:1$ nastane osmica; število dotikov z vodoravnim in navpičnim robom da razmerje frekvenc.
+**Lissajousove krivulje.** V načinu XY en kanal odklanja vodoravno, drugi navpično. Za dva sinusa iste frekvence z amplitudama $A_x$ in $A_y$ ter faznim zamikom $\varphi$ nastane elipsa. Kjer seka navpično os, je $y_0 = A_y\sin\varphi$, zato $\sin\varphi = y_0/A_y$. Pri razmerju frekvenc $2:1$ nastane osmica; število dotikov z vodoravnim in navpičnim robom da razmerje frekvenc.
 
 **Efektivna vrednost iz vzorcev.** Digitalni osciloskop računa $U_{ef} = \sqrt{\frac{1}{N}\sum u_i^2}$ prek celega števila period. Če okno ne zajame celih period, je rezultat malo napačen; zato osciloskop ponudi izračun »po ciklih«.
 

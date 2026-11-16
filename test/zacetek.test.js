@@ -12,7 +12,7 @@ const H = 60 * 60 * 1000;
 
 // public/zacetek.js je navaden skript v <head>: zaženemo ga z lažnim oknom in majhno lažno stranjo (spodnja
 // vrstica, prvi pogled, pasici), da vidimo, kaj vstavi in katere klice začne.
-function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori = {}, brezVrstice = false, lastnik, profili, jezik, app } = {}) {
+function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori = {}, brezVrstice = false, lastnik, profili, jezik, app, seja } = {}) {
   const store = new Map();
   if (jezik) store.set("evklid.lang", jezik);
   if (lastnik != null) store.set("evklid.offline.owner", JSON.stringify(lastnik));
@@ -56,12 +56,17 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
   const prvi = Object.assign(el("main"), { id: "view-auth", parentNode: parent });
   const pasici = { "mock-banner": el("div"), "test-notice": el("div") };
   const zadnji = () => vstavljeno.at(-1)?.el;
+  // Zgornja vrstica (poraba, XP, dnevi, cilj, začetnica, ime): besedila iz posnetka (zacetek.js glava).
+  const glava = {};
+  for (const [sel, txt, skrit] of [["#usage-meter", "", true], ["#usage-meter b", "0 €"], ["#xp-total", "0"], ["#xp-streak", "0"], ["#goal-chip", "", true], ["#goal-chip b", ""], ["#profile-btn .pm-avatar", ""], ["#profile-btn .pm-name", ""]])
+    glava[sel] = { textContent: txt, hidden: !!skrit };
+  const sessionStorage = seja ? { getItem: (k) => seja.get(k) ?? null, removeItem: (k) => seja.delete(k) } : undefined;
   const document = {
     documentElement: { setAttribute: (k, v) => (attrs[k] = v), removeAttribute: (k) => delete attrs[k], hasAttribute: (k) => k in attrs },
     getElementById: (id) => (id === "tabbar" ? (brezVrstice ? null : bar) : pasici[id] || null),
     createElement: el,
     importNode: (c) => ({ __h: c.__h }),
-    querySelector: (q) => (q === 'meta[name="evklid-app"]' ? (app ? { getAttribute: () => app } : null) : q === "body > main" ? prvi : /data-posnetek/.test(q) ? (zadnji() && !zadnji().removed && !(q.includes(":not(.zagon-okostje)") && /zagon-okostje/.test(zadnji().className)) ? zadnji() : null) : null),
+    querySelector: (q) => glava[q] || (q === 'meta[name="evklid-app"]' ? (app ? { getAttribute: () => app } : null) : q === "body > main" ? prvi : /data-posnetek/.test(q) ? (zadnji() && !zadnji().removed && !(q.includes(":not(.zagon-okostje)") && /zagon-okostje/.test(zadnji().className)) ? zadnji() : null) : null),
     querySelectorAll: (q) => (/data-posnetek/.test(q) && zadnji() ? [zadnji()] : []),
     addEventListener: () => {},
     readyState: "loading",
@@ -76,6 +81,7 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
   const ctx = {
     window,
     localStorage: { getItem: (k) => store.get(k) ?? null, removeItem: (k) => store.delete(k) },
+    ...(sessionStorage ? { sessionStorage } : {}),
     location: { search },
     URLSearchParams,
     document,
@@ -86,7 +92,7 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
     clearTimeout: (id) => id && (timers[id - 1].cleared = true),
   };
   vm.runInNewContext(read("public/zacetek.js"), ctx);
-  return { api: window.evklidZacetek, attr: attrs["data-zacetek"], attrs, timers, vstavljeno, zadnji, klici, sporocila, store, tabs, pasici };
+  return { api: window.evklidZacetek, attr: attrs["data-zacetek"], attrs, timers, vstavljeno, zadnji, klici, sporocila, store, tabs, pasici, glava };
 }
 
 test("zadnji zaslon velja do 12 ur; pozneje, ob pokvarjenem zapisu ali uri iz prihodnosti se odpre Učna pot", () => {
@@ -310,7 +316,7 @@ test("hiter zagon, zasebnost (pregled #560): posnetek takoj le za isti račun in
 test("hiter zagon (pregled #560 B2): vnaprejšnji klic brez lastnega roka – klic, ki še teče, prevzame app.js", async () => {
   const z = zacetek({ zapis: ZAS, odgovori: { "/api/config": "visi", "/api/account/status": { enabled: false } } });
   assert.equal(z.api.ROK, undefined);
-  assert.deepEqual(z.timers.map((x) => x.ms), [8000], "samo varovalo zagona, nobenega roka za klice");
+  assert.deepEqual(z.timers.map((x) => x.ms), [8000, 3000], "samo varovali zagona in lupine, nobenega roka za klice");
   const cfg = z.api.vnaprej("/api/config");
   assert.ok(cfg && typeof cfg.then === "function", "klic, ki še teče, gre app.js (ni prekinjen)");
   let konec = false;
@@ -352,6 +358,70 @@ test("hiter zagon (pregled #560 B3): posnetek drugega jezika ali druge različic
   assert.match(read("public/posnetek.js"), /const r = document\.querySelector\('meta\[name="evklid-app"\]'\)\?\.content \|\| "";/);
 });
 
+test("utripanje ob odprtju (j 16. 11. 2026): samodejna osvežitev po objavi enkrat pokaže posnetek prejšnje različice", () => {
+  const PRENOS = "evklid.posnetek-prenos";
+  const seja = new Map([[PRENOS, "1"]]);
+  const z = zacetek({ zapis: ZAS, posnetek: POS({ r: "a1" }), app: "a2", seja });
+  assert.equal(z.zadnji().innerHTML, "<p>zdravo</p>", "isti zaslon namesto okostja");
+  assert.equal(seja.has(PRENOS), false, "dovoljenje velja samo za to odprtje");
+  assert.match(zacetek({ zapis: ZAS, posnetek: POS({ r: "a1" }), app: "a2", seja }).zadnji().className, /zagon-okostje/, "naslednje odprtje kot prej");
+  assert.match(zacetek({ zapis: ZAS, posnetek: POS({ r: "a1" }), app: "a2", seja: new Map([[PRENOS, "x"]]) }).zadnji().className, /zagon-okostje/);
+  // app.js: zastavica tik pred osvežitvijo, modul posnetka naložen prej (zapis ob pagehide).
+  const app = read("public/app.js");
+  assert.match(app, /sessionStorage\.setItem\(ZACETEK\?\.PRENOS \|\| "evklid\.posnetek-prenos", "1"\);\n\s*\} catch \{\}\n\s*location\.reload\(\);/);
+  assert.match(app, /const shot = shotMod \? null : loadShot\(\);[^\n]*\n\s*const v = await serverVersion\(\);/);
+  assert.match(app, /if \(!shotMod && shot\) await Promise\.race\(\[shot, /);
+  assert.equal(z.api.PRENOS, PRENOS);
+});
+
+test("utripanje ob odprtju (j 16. 11. 2026): zgornja vrstica iz posnetka takoj, ob pozabi() nazaj", () => {
+  const hd = { u: "0,00 €", x: "120", k: "3", c: "", i: "A", n: "Ana" };
+  const z = zacetek({ zapis: ZAS, posnetek: POS({ hd, t: Date.now() - 1000 }) });
+  const g = z.glava;
+  assert.equal(g["#usage-meter b"].textContent, "0,00 €");
+  assert.equal(g["#usage-meter"].hidden, false, "poraba vidna kot ob zadnjem obisku");
+  assert.equal(g["#goal-chip"].hidden, true, "prazno: ostane skrito");
+  assert.deepEqual([g["#xp-total"].textContent, g["#xp-streak"].textContent, g["#profile-btn .pm-avatar"].textContent, g["#profile-btn .pm-name"].textContent], ["120", "3", "A", "Ana"]);
+  // app.js je medtem že vpisal svoje (XP): pozabi() vrne samo tisto, kar je še iz posnetka.
+  g["#xp-total"].textContent = "121";
+  z.api.pozabi();
+  assert.equal(g["#profile-btn .pm-name"].textContent, "", "ime z naprave izgine (odjava, zaklep)");
+  assert.equal(g["#usage-meter"].hidden, true);
+  assert.equal(g["#usage-meter b"].textContent, "0 €");
+  assert.equal(g["#xp-total"].textContent, "121");
+  // Po koncu zagona je glava app.js: poznejši pozabi() (npr. izbira zaklenjenega profila) je ne spremeni.
+  const zk = zacetek({ zapis: ZAS, posnetek: POS({ hd, t: Date.now() - 1000 }) });
+  zk.api.konec();
+  zk.api.pozabi();
+  assert.equal(zk.glava["#profile-btn .pm-name"].textContent, "Ana");
+  // Poraba »danes« iz posnetka prejšnjega dne se ne pokaže.
+  const vceraj = zacetek({ zapis: ZAS, posnetek: POS({ hd, t: Date.now() - 11 * H }) });
+  const isti = new Date(Date.now() - 11 * H).toDateString() === new Date().toDateString();
+  assert.equal(vceraj.glava["#usage-meter"].hidden, !isti);
+  // Odjava, ugotovljena pred razčlenjeno lupino: posnetek in glava se ne pokažeta.
+  const odj = zacetek({ zapis: ZAS, posnetek: POS({ hd }), brezVrstice: true });
+  odj.api.pozabi();
+  assert.equal(odj.glava["#profile-btn .pm-name"].textContent, "");
+  // Neveljaven posnetek (druga različica) ali predolgo / nenavadno besedilo: glava ostane, kot je.
+  const z2 = zacetek({ zapis: ZAS, posnetek: POS({ hd, r: "a1" }), app: "a2" });
+  assert.equal(z2.glava["#profile-btn .pm-name"].textContent, "");
+  const z3 = zacetek({ zapis: ZAS, posnetek: POS({ hd: { n: "x".repeat(61), x: 5 } }) });
+  assert.equal(z3.glava["#profile-btn .pm-name"].textContent, "");
+  assert.equal(z3.glava["#xp-total"].textContent, "0");
+  // Posnetek zapiše glavo (public/posnetek.js).
+  assert.match(read("public/posnetek.js"), /hd: glava\(\), h \}/);
+});
+
+test("utripanje ob odprtju (j 16. 11. 2026): stran se ne izriše po kosih, dokler lupina ni razčlenjena", () => {
+  const z = zacetek({ zapis: ZAS, posnetek: POS() });
+  assert.equal("data-zacetek-lupina" in z.attrs, false, "spodnja vrstica je že tu: lupina vidna");
+  const brez = zacetek({ zapis: ZAS, posnetek: POS(), brezVrstice: true });
+  assert.equal("data-zacetek-lupina" in brez.attrs, true, "brez spodnje vrstice še skrita");
+  brez.timers.find((x) => x.ms === 3000).fn();
+  assert.equal("data-zacetek-lupina" in brez.attrs, false, "varovalo 3 s");
+  assert.match(read("public/style.css"), /html\[data-zacetek-lupina\] body \{ visibility: hidden; \}/);
+});
+
 test("hiter zagon (pregled #560 A2, A3, B1, B4): po odjavi in med zaklepom app.js posnetka ne zapiše znova", () => {
   const z = zacetek({ zapis: ZAS });
   assert.equal(z.api.lahkoShrani(), true);
@@ -371,7 +441,7 @@ test("hiter zagon (pregled #560 A2, A3, B1, B4): po odjavi in med zaklepom app.j
   assert.match(app, /autoGrow\(\);\n\s*startDone\(\);[^\n]*\n\s*box\.focus\(\);/);
   // B4: neposlano besedilo ali tekmovanje se preveri tudi po klicu različice in tik pred osvežitvijo.
   assert.match(app, /const v = await serverVersion\(\);\n[^\n]*\n\s*if \(!v \|\| v === appVersion \|\| busy\(\)\) return;/);
-  assert.match(app, /if \(pageApp\) await dropStaleCopies\(v\);\n\s*if \(busy\(\)\) return;/);
+  assert.match(app, /if \(pageApp\) await dropStaleCopies\(v\);\n(\s*\/\/[^\n]*\n)*\s*if \(!shotMod && shot\) await [^\n]*\n\s*if \(busy\(\)\) return;/);
 });
 
 test("hiter zagon: klici zagona stečejo že v <head>, app.js jih prevzame enkrat; aplikacija izve za prvi izris", async () => {

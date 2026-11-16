@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Topnost
+  - $s$ v $\mathrm{mol/L}$, nasičena raztopina
+  - težko topno: pod $0{,}01\,\mathrm{mol/L}$
+- Topnostni produkt
+  - $K_\mathrm{sp} = [\mathrm{A}]^m[\mathrm{B}]^n$, trdne snovi ni
+  - odvisen le od temperature
+  - $\mathrm{AgCl}$: $K_\mathrm{sp} = 1{,}8 \cdot 10^{-10}$
+- Zveza s topnostjo
+  - $K_\mathrm{sp} = m^m n^n\,s^{m+n}$
+  - $\mathrm{AB}$: $s^2$, $\mathrm{AB_2}$: $4s^3$, $\mathrm{A_3B_2}$: $108\,s^5$
+  - različnih tipov ne primerjaj po $K_\mathrm{sp}$
+- Ionski produkt
+  - $Q > K_\mathrm{sp}$: nastaja oborina
+  - $Q < K_\mathrm{sp}$: nenasičeno, oborine ni
+  - napaka: »$Q$ brez razredčenja ob mešanju«
+- Skupni ion
+  - topnost se zmanjša, za $\mathrm{AB}_n$: $s \approx K_\mathrm{sp}/c^n$
+  - $\mathrm{CaF_2}$ v $\mathrm{NaF}$: okoli $550$-krat manj
+  - $K_\mathrm{sp}$ ostane enak
+- pH in kompleksi
+  - bazičen anion: v kislem bolj topno
+  - $\mathrm{AgCl}$ v amoniaku: $\mathrm{[Ag(NH_3)_2]^+}$
+- Selektivno obarjanje
+  - prva sol, ki doseže $K_\mathrm{sp}$
+  - kvantitativno: ostane manj kot $0{,}1\,\%$
+- Gravimetrija
+  - obarjanje, zorenje, filtriranje, spiranje, žarjenje, tehtanje
+  - faktor: $a\,M(\text{iskane snovi})/(b\,M(\text{tehtalne oblike}))$
+  - spiraj s skupnim ionom, ne z vodo

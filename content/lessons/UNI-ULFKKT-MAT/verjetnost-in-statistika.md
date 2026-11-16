@@ -27,7 +27,7 @@ $$P(A \cup B) = P(A) + P(B) - P(A \cap B).$$
 
 Pri enako verjetnih izidih je **klasična** verjetnost $P(A) = \frac{\text{število ugodnih izidov}}{\text{število vseh izidov}}$. Če je $P(B) > 0$, je **pogojna verjetnost** $P(A \mid B) = \frac{P(A \cap B)}{P(B)}$. Dogodka sta **neodvisna**, če je $P(A \cap B) = P(A)\,P(B)$; pri $P(B) > 0$ je to isto kot $P(A \mid B) = P(A)$.
 
-**2. Slučajna spremenljivka.** **Slučajna spremenljivka** $X$ vsakemu izidu priredi število: število vzklilih semen, maso tablete, število razpadov v eni sekundi. Je **diskretna**, če zavzame le števne vrednosti $x_1, x_2, \dots$ z verjetnostmi $p_i = P(X = x_i)$, $\sum p_i = 1$. Je **zvezna**, če jo opiše **gostota** $f(x) \ge 0$ z $\int_{-\infty}^{\infty} f(x)\,dx = 1$; tedaj je $P(a \le X \le b) = \int_a^b f(x)\,dx$.
+**2. Slučajna spremenljivka.** **Slučajna spremenljivka** $X$ vsakemu izidu priredi število: število vzklilih semen, maso tablete, število razpadov v eni sekundi. Je **diskretna**, če zavzame le končno ali števno mnogo vrednosti $x_1, x_2, \dots$ z verjetnostmi $p_i = P(X = x_i)$, $\sum p_i = 1$. Je **zvezna**, če jo opiše **gostota** $f(x) \ge 0$ z $\int_{-\infty}^{\infty} f(x)\,dx = 1$; tedaj je $P(a \le X \le b) = \int_a^b f(x)\,dx$.
 
 **3. Pričakovana vrednost in varianca.** **Pričakovana vrednost** je teoretično povprečje:
 
@@ -55,7 +55,7 @@ $$P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k = 0, 1, 2, \dots, \qquad
 Res: $E(X) = \sum_{k \ge 1} k\,\frac{\lambda^k e^{-\lambda}}{k!} = \lambda \sum_{k \ge 1} \frac{\lambda^{k-1} e^{-\lambda}}{(k - 1)!} = \lambda$, ker je zadnja vsota vsota vseh verjetnosti.
 - **Normalna (Gaussova) porazdelitev** $N(\mu, \sigma)$ z gostoto
 $$f(x) = \frac{1}{\sigma\sqrt{2\pi}}\, e^{-\frac{(x - \mu)^2}{2\sigma^2}}.$$
-Graf je zvonasta krivulja, simetrična okoli $\mu$. Z **standardizacijo** $Z = \frac{X - \mu}{\sigma}$ dobimo standardno normalno porazdelitev $N(0, 1)$, katere porazdelitvena funkcija $\Phi(z) = P(Z \le z)$ je tabelirana. Po pravilih iz točke 3 je $E(Z) = 0$ in $D(Z) = 1$. Ker je $X \le b$ natanko tedaj, ko je $Z \le \frac{b - \mu}{\sigma}$, je $P(a \le X \le b) = \Phi\big(\frac{b - \mu}{\sigma}\big) - \Phi\big(\frac{a - \mu}{\sigma}\big)$ in zaradi simetrije zvona $\Phi(-z) = 1 - \Phi(z)$. Velja **pravilo 68–95–99,7**: na intervalu $\mu \pm \sigma$ leži približno $68\,\%$, na $\mu \pm 2\sigma$ približno $95\,\%$ in na $\mu \pm 3\sigma$ približno $99{,}7\,\%$ vrednosti.
+Graf je zvonasta krivulja, simetrična okoli $\mu$. S **standardizacijo** $Z = \frac{X - \mu}{\sigma}$ dobimo standardno normalno porazdelitev $N(0, 1)$, katere porazdelitvena funkcija $\Phi(z) = P(Z \le z)$ je tabelirana. Po pravilih iz točke 3 je $E(Z) = 0$ in $D(Z) = 1$. Ker je $X \le b$ natanko tedaj, ko je $Z \le \frac{b - \mu}{\sigma}$, je $P(a \le X \le b) = \Phi\big(\frac{b - \mu}{\sigma}\big) - \Phi\big(\frac{a - \mu}{\sigma}\big)$ in zaradi simetrije zvona $\Phi(-z) = 1 - \Phi(z)$. Velja **pravilo 68–95–99,7**: na intervalu $\mu \pm \sigma$ leži približno $68\,\%$, na $\mu \pm 2\sigma$ približno $95\,\%$ in na $\mu \pm 3\sigma$ približno $99{,}7\,\%$ vrednosti.
 
 Normalna porazdelitev je tako pomembna zaradi **centralnega limitnega izreka**. Naj bodo $X_1, \dots, X_n$ neodvisne in enako porazdeljene z $E(X_i) = \mu$ in končno varianco $D(X_i) = \sigma^2$, njihovo povprečje pa je $\bar X = \frac{1}{n}\sum X_i$. Potem za vsak $z$ velja $P\Big(\frac{\bar X - \mu}{\sigma/\sqrt n} \le z\Big) \to \Phi(z)$, ko gre $n \to \infty$. Vsota (in povprečje) mnogih neodvisnih slučajnih vplivov je torej približno normalno porazdeljena, ne glede na porazdelitev posameznih vplivov. Zato so meritve pogosto normalno razpršene okoli prave vrednosti.
 
@@ -128,7 +128,7 @@ $X \sim B(n, p)$: $P(X = k) = \binom{n}{k} p^k (1 - p)^{n - k}$, $E(X) = np$, $\
 2. $P(X = 8) = \binom{10}{8} \cdot 0{,}8^8 \cdot 0{,}2^2 = 45 \cdot 0{,}16777 \cdot 0{,}04 = 0{,}302$.
 3. $P(X = 9) = \binom{10}{9} \cdot 0{,}8^9 \cdot 0{,}2 = 10 \cdot 0{,}13422 \cdot 0{,}2 = 0{,}268$.
 4. $P(X = 10) = 0{,}8^{10} = 0{,}107$.
-5. $P(X \ge 9) = 0{,}268 + 0{,}107 = 0{,}376$.
+5. $P(X \ge 9) = 0{,}2684 + 0{,}1074 = 0{,}3758 \approx 0{,}376$.
 6. $E(X) = 10 \cdot 0{,}8 = 8$ semen, $\sigma = \sqrt{10 \cdot 0{,}8 \cdot 0{,}2} = \sqrt{1{,}6} = 1{,}26$ semena.
 7. Odgovor: natanko $8$ semen vzklije z verjetnostjo $0{,}302$, vsaj $9$ z verjetnostjo $0{,}376$; v povprečju vzklije $8$ semen s standardnim odklonom $1{,}26$.
 
@@ -166,7 +166,7 @@ $k = \frac{\sum (x_i - \bar x)(y_i - \bar y)}{\sum (x_i - \bar x)^2}$, $n = \bar
 - **»Vsaj« izračunan kot »natanko«.** $P(X \ge 9) = P(X = 9) + P(X = 10)$. Pri »vsaj en« je hitreje $1 - P(X = 0)$.
 - **Verjetnost točke pri zvezni spremenljivki.** Za zvezno $X$ je $P(X = a) = 0$; smiselna je le verjetnost intervala.
 - **Napovedovanje zunaj območja meritev.** Umeritvena premica velja le med najmanjšo in največjo umeritveno koncentracijo; pri večjih koncentracijah odvisnost pogosto ni več linearna.
-- **Velik $r$ pomeni vzročnost.** Število štorkelj in rojstev v regijah sta lahko korelirana, ker oboje raste z velikostjo regije.
+- **Velik $r$ pomeni vzročnost.** Število štorkelj in število rojstev v regijah sta lahko korelirani, ker oboje raste z velikostjo regije.
 
 ## Povzetek
 

@@ -101,7 +101,7 @@ Razmerje $\kappa = C_p/C_V$ (adiabatni eksponent) je $5/3 \approx 1{,}67$ za eno
 
 ### Primer 1 (lažji)
 
-Za alpinistično odpravo na osemtisočak napolnijo jeklenko s prostornino $20\,\mathrm{L}$; vsebuje kisik pod tlakom $150\,\mathrm{bar}$ pri temperaturi $20\,^\circ\mathrm{C}$. Kolikšna sta množina in masa kisika? Kolikšno prostornino bi ta kisik zavzel pri $0\,^\circ\mathrm{C}$ in $101{,}325\,\mathrm{kPa}$? Kisik obravnavaj kot idealni plin.
+Za bazni tabor alpinistične odprave na osemtisočak napolnijo jeklenko s prostornino $20\,\mathrm{L}$; vsebuje kisik pod tlakom $150\,\mathrm{bar}$ pri temperaturi $20\,^\circ\mathrm{C}$. Kolikšna sta množina in masa kisika? Kolikšno prostornino bi ta kisik zavzel pri $0\,^\circ\mathrm{C}$ in $101{,}325\,\mathrm{kPa}$? Kisik obravnavaj kot idealni plin.
 
 **Podatki:** $V = 20\,\mathrm{L} = 0{,}020\,\mathrm{m^3}$, $p = 150\,\mathrm{bar} = 1{,}50 \cdot 10^7\,\mathrm{Pa}$, $T = 293{,}15\,\mathrm{K}$, $M(\mathrm{O_2}) = 32\,\mathrm{g/mol}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$; normalni pogoji $T_0 = 273{,}15\,\mathrm{K}$, $p_0 = 101\,325\,\mathrm{Pa}$
 **Iščemo:** množino $n$, maso $m$, prostornino $V_0$ pri normalnih pogojih
@@ -238,14 +238,30 @@ Natančno navedi ekviparticijski izrek s pogoji. Izpelji molski toplotni kapacit
 
 Kroglice v škatli letijo v vse smeri; milijarde drobnih sunkov ob stene na sekundo se zlijejo v enakomeren tlak.
 
-```
- +---------------------------+
- |  o->      <-o     o       |
- |      o          ^         |  <- vsak odboj od stene
- |   v    o->      o     <-o |     prenese 2 m0 v_x
- |         o          o      |
- +---------------------------+
-```
+:::risba skica
+opis: Pravokotna škatla z osmimi molekulami, narisanimi kot krogci. Puščice ob njih kažejo v različne smeri: gibanje je naključno. Ena molekula leti proti desni steni; ob vsakem odboju od stene ji preda gibalno količino 2 m₀ vₓ.
+območje: 0; -1,2 .. 16; 6,5
+pravokotnik: 1; 1 .. 11; 5,5 | debelo
+krog: 2; 4,6 | 0,15 | polno modra
+puščica: 2,15; 4,6 -> 3,15; 4,6
+krog: 6; 4,6 | 0,15 | polno modra
+puščica: 5,85; 4,6 -> 4,85; 4,6
+krog: 8; 4,4 | 0,15 | polno modra
+puščica: 8; 4,25 -> 8; 3,25
+krog: 3; 3,6 | 0,15 | polno modra
+puščica: 3,11; 3,71 -> 3,81; 4,41
+krog: 2,2; 2 | 0,15 | polno modra
+puščica: 2,2; 1,85 -> 2,2; 1,25
+krog: 4,5; 2,6 | 0,15 | polno modra
+puščica: 4,65; 2,6 -> 5,65; 2,6
+krog: 7; 1,8 | 0,15 | polno modra
+puščica: 6,89; 1,91 -> 6,19; 2,61
+krog: 9,4; 3 | 0,15 | polno oranžna
+puščica: 9,55; 3 -> 10,85; 3 | v_x | nad | oranžna
+puščica: 12,8; 0,8 -> 11,15; 2,8
+napis: 12,4; 0,2 | odboj od stene | sredina
+napis: 12,4; -0,7 | preda 2 m_0 v_x | sredina
+:::
 
 - Pol manjša škatla (enaka $T$): dvakrat pogostejši udarci, dvakratni tlak.
 - Toplejši plin: udarci so močnejši **in** pogostejši, zato $p \propto \langle v^2\rangle \propto T$.
@@ -260,7 +276,7 @@ V diagramu $p(V)$ so izoterme hiperbole $p = nRT/V$; izoterma pri višji tempera
 
 **Osmozni tlak.** Za razredčene raztopine velja van 't Hoffova enačba $\Pi = cRT$ (oblika plinske enačbe $p = \frac{n}{V}RT$); z osmometrijo določajo molske mase polimerov in beljakovin.
 
-**Ločevanje izotopov in difuzija.** Hitrost izlivanja plina skozi drobne pore je sorazmerna z $v_{\text{ef}} \propto 1/\sqrt{M}$. Pri plinastem $\mathrm{UF_6}$ se izotopa urana razlikujeta le za faktor $\sqrt{352/349} \approx 1{,}004$, zato so difuzijske obogatitvene naprave potrebovale več sto zaporednih stopenj.
+**Ločevanje izotopov in difuzija.** Hitrost izlivanja plina skozi drobne pore je sorazmerna z $v_{\text{ef}} \propto 1/\sqrt{M}$. Pri plinastem $\mathrm{UF_6}$ se hitrosti molekul z izotopoma urana razlikujeta le za faktor $\sqrt{352/349} \approx 1{,}004$, zato so difuzijske obogatitvene naprave potrebovale več kot tisoč zaporednih stopenj.
 
 ## Drugače: Korak za korakom s številkami
 

@@ -285,3 +285,15 @@ test("without accounts the teacher page still works with keyed classes", async (
     server.close();
   }
 });
+
+test("ime šole (vidijo ga učenci razredov): brez kontaktov, kot ime razreda (#491)", async () => {
+  await withServer(async ({ client, store, register }) => {
+    const t = client();
+    await register(t, "ucitelj-ime@sola.si");
+    const bad = await t("/api/schools", { method: "POST", body: { name: "OŠ Prule snap: ana_12" } });
+    assert.equal(bad.status, 400);
+    assert.equal(bad.body.code, "lg.nameContact");
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM schools").get().n, 0);
+    assert.equal((await t("/api/schools", { method: "POST", body: { name: "SC Velenje" } })).status, 201);
+  });
+});

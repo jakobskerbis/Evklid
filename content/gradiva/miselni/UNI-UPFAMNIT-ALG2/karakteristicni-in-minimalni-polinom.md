@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Karakteristični polinom
+  - $p_A(\lambda) = \det(\lambda I - A)$, moničen, stopnje $n$
+  - $2 \times 2$: $\lambda^2 - (\operatorname{sl} A)\lambda + \det A$
+  - ničle so lastne vrednosti
+- Cayley-Hamiltonov izrek
+  - $p_A(A) = 0$ za vsako matriko
+  - napaka: »dokaz« z $\det(AI - A)$
+- Nižanje potenc
+  - $A^2 = 1{,}1A - 0{,}28I$, zato $A^3 = 0{,}93A - 0{,}308I$
+  - $A^{-1}$ iz $p_A(A) = 0$, če $\det A \ne 0$
+- Minimalni polinom
+  - moničen, najmanjše stopnje, $m_A(A) = 0$
+  - deli $p_A$, ima iste ničle
+- Iskanje $m_A$
+  - kandidati: delitelji $p_A$ z vsemi ničlami
+  - preverjaj od najnižje stopnje
+- Diagonalizabilnost
+  - $m_A$ ima same enostavne ničle
+  - isti $p_A$, različen $m_A$: $B$ in $C$
+  - ponovljena ničla $p_A$ še ne odloča

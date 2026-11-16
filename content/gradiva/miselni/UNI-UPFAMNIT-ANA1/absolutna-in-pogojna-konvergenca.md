@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lukova vrsta
+  - $\sum \frac{(-1)^{n+1}}{n} = \ln 2 \approx 0{,}693$
+  - preurejena da $\frac32 \ln 2 \approx 1{,}040$
+- Absolutna konvergenca
+  - $\sum |a_n|$ konvergira
+  - iz nje sledi konvergenca $\sum a_n$
+  - obrat ne velja
+- Pogojna konvergenca
+  - $\sum a_n$ konvergira, $\sum |a_n|$ divergira
+  - pozitivni in negativni del oba neskončna
+- Kriteriji za nenegativne člene
+  - primerjalni: $0 \le a_n \le b_n$
+  - kvocientni, korenski: $q < 1$ konvergira
+  - pazi: pri $q = 1$ ne odločita
+- Znane vrste
+  - $\sum q^n$ konvergira za $|q| < 1$
+  - $\sum \frac{1}{n^p}$ konvergira za $p > 1$
+- Leibnizov kriterij
+  - $a_n$ pada proti $0$
+  - $|S - S_n| \le a_{n+1}$
+  - pazi: samo $a_n \to 0$ ni dovolj
+- Preureditve
+  - absolutna: vsota se ne spremeni (Dirichlet)
+  - pogojna: poljubna vsota ali divergenca (Riemann)

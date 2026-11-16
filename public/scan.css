@@ -99,6 +99,11 @@
 [dir="rtl"] .scan-step-math .katex-display > .katex, [dir="rtl"] .scan-why .katex-display > .katex { text-align: right; }
 [dir="rtl"] .scan-step-math .katex-display, [dir="rtl"] .scan-why .katex-display { text-align: right; }
 .scan-step-note { flex: none; color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+/* oznaka ob vrstici, na katero jo uporabimo (bledo), rezultat pod njo (j 14. 11. 2026) */
+.scan-step-izvor { flex-direction: column; align-items: flex-start; gap: 0; }
+.scan-step-izvor > .katex-display { margin-top: 0.2em; }
+.scan-step-from { display: flex; align-items: baseline; gap: 12px; color: var(--muted); padding-top: 0.4em; }
+.scan-step-from > .katex { font-size: 1.1em; }
 .scan-step-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; padding-inline-start: 38px; }
 .scan-step-actions .text-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
 .scan-step-actions .i { width: 16px; height: 16px; }
@@ -112,6 +117,7 @@
   .scan-why { margin-inline-start: 0; }
   .scan-actions > button { flex: 1 1 auto; justify-content: center; }
   .scan-step-math { flex-wrap: wrap; gap: 0 12px; }
+  .scan-step-izvor { flex-wrap: nowrap; }
   .scan-step-math .katex, .scan-why .katex { font-size: 1.02em; }
 }
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -23,7 +23,7 @@ Dobimo enačbo brez korena: $x + 6 = x^2$, urejeno $x^2 - x - 6 = 0$. Tričlen r
 
 **2. Preizkus.** Obe števili vstavimo v *prvotno* enačbo:
 
-| $x$ | levo: $\sqrt{x+6}$ | desno | velja? |
+| $x$ | levo | desno | velja? |
 |---|---|---|---|
 | $3$ | $\sqrt{9} = 3$ | $3$ | da |
 | $-2$ | $\sqrt{4} = 2$ | $-2$ | ne |
@@ -77,7 +77,7 @@ Ne izgine. Leva stran je vsota: $(\sqrt{x} + 1)^2 = x + 2\sqrt{x} + 1$. Dvojni z
 **7. Enačbe $x^n = a$ (osnovna in višja raven).** Ta del matura preverja na obeh ravneh. Preprosto enačbo s potenco rešimo na dva načina.
 
 - **S korenjenjem.** Pri lihem $n$ ima enačba eno rešitev, $x = \sqrt[n]{a}$, tudi za negativen $a$: enačba $x^3 = 8$ da $x = \sqrt[3]{8} = 2$, enačba $x^3 = -27$ da $x = -3$. Pri sodem $n$ in $a > 0$ sta rešitvi dve, $x = \pm\sqrt[n]{a}$: enačba $x^4 = 16$ da $x = 2$ ali $x = -2$. Pri sodem $n$ in $a < 0$ realne rešitve ni.
-- **Z razstavljanjem.** Vse prenesemo na levo in razstavimo. Za razliko kubov velja $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$ (preveriš z množenjem). Enačba $x^3 - 8 = 0$ postane $(x - 2)(x^2 + 2x + 4) = 0$. Drugi faktor dopolnimo do popolnega kvadrata: $x^2 + 2x + 4 = (x + 1)^2 + 3 \ge 3$, zato ni nikoli nič, zato je $x = 2$ edina rešitev. Enačba $x^4 - 16 = 0$ postane $(x^2 - 4)(x^2 + 4) = 0$, po še eni razliki kvadratov $(x - 2)(x + 2)(x^2 + 4) = 0$, kar da $x = 2$ in $x = -2$.
+- **Z razstavljanjem.** Vse prenesemo na levo in razstavimo. Za razliko kubov velja $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$ (preveriš z množenjem). Enačba $x^3 - 8 = 0$ postane $(x - 2)(x^2 + 2x + 4) = 0$. Drugi faktor dopolnimo do popolnega kvadrata: $x^2 + 2x + 4 = (x + 1)^2 + 3 \ge 3$, torej ni nikoli nič in je $x = 2$ edina rešitev. Enačba $x^4 - 16 = 0$ postane $(x^2 - 4)(x^2 + 4) = 0$, po še eni razliki kvadratov $(x - 2)(x + 2)(x^2 + 4) = 0$, kar da $x = 2$ in $x = -2$.
 
 Oba načina dasta iste rešitve. Razstavljanje pokaže, *zakaj* ima soda potenca dve rešitvi: razlika kvadratov da faktorja $x - 2$ in $x + 2$.
 
@@ -186,6 +186,109 @@ Ostane $x = 1$. Preizkus: $\sqrt{4} = 2$ in $1 + 1 = 2$. Kandidat $x = -4$ ne iz
 - Enačba $x^n = a$: pri lihem $n$ je $x = \sqrt[n]{a}$; pri sodem $n$ in $a > 0$ je $x = \pm\sqrt[n]{a}$; pri sodem $n$ in $a < 0$ ni realne rešitve. Isto dobiš z razstavljanjem.
 - Pri nalogi z besedilom rezultat razloži: kandidat, ki nima smisla (negativna površina), odpade.
 
+## Ponovitev
+
+**Formule**
+- $\sqrt{A} = B$: pogoja $A \ge 0$ in $B \ge 0$ (na pamet)
+- $\sqrt{A} = B \;\Rightarrow\; A = B^2$, nato preizkus (na pamet)
+- $(a + b)^2 = a^2 + 2ab + b^2$ (na pamet)
+- $x^n = a$, lihi $n$: $x = \sqrt[n]{a}$ (na pamet)
+- $x^n = a$, sodi $n$, $a > 0$: $x = \pm\sqrt[n]{a}$ (na pamet)
+
+**Postopek**
+1. Osami koren na eni strani enačbe.
+2. Zapiši pogoja $A \ge 0$ in $B \ge 0$.
+3. Kvadriraj obe strani in reši dobljeno enačbo.
+4. Pri dveh korenih osami drugi koren in kvadriraj še enkrat.
+5. Vsakega kandidata preveri v prvotni enačbi.
+
+**Pazi na**
+- Ne kvadriraj po členih: najprej osami koren, pri kvadratu vsote ne pozabi dvojnega zmnožka.
+- Kvadriranje doda navidezne rešitve, zato je preizkus obvezen.
+- Pogoj $A \ge 0$ ni dovolj: tudi druga stran mora biti $B \ge 0$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+V realnih številih rešite enačbo $(x - 1)^4 = 625$. Z razstavljanjem utemeljite, da drugih realnih rešitev ni.
+
+**Rešitev:**
+
+1. Eksponent $4$ je sod in $625 > 0$, zato je $x - 1 = \sqrt[4]{625} = 5$ ali $x - 1 = -\sqrt[4]{625} = -5$.
+2. Od tod je $x = 6$ ali $x = -4$.
+3. Razstavimo po razliki kvadratov. Z oznako $u = (x - 1)^2$ je $u^2 - 625 = (u - 25)(u + 25)$, prvi faktor pa je spet razlika kvadratov: $(x - 1)^2 - 25 = (x - 6)(x + 4)$. Zato je $(x - 1)^4 - 625 = (x - 6)(x + 4)\left((x - 1)^2 + 25\right)$. Faktor $(x - 1)^2 + 25 \ge 25$ ni nikoli nič, zato drugih realnih rešitev ni.
+4. Odgovor: $x = 6$ ali $x = -4$.
+
+**Točkovanje:** 1 točka za $x - 1 = 5$ ali $x - 1 = -5$ (oba predznaka), 1 točka za $x = 6$ in $x = -4$, 1 točka za razstavljanje z utemeljitvijo, da faktor $(x - 1)^2 + 25$ ni nikoli nič.
+
+### Naloga 2 (višja raven): krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+V realnih številih rešite enačbe:
+
+a) $\sqrt[3]{x^2 - 9} = -2$ (3 točke)
+b) $\sqrt{x^2 - 9} = -2$ (1 točka)
+c) $\sqrt{x^2 - 9} = x - 1$ (2 točki)
+
+**Rešitev:**
+
+1. a) Kubični koren obstaja za vsako realno število, kubiranje pa je ekvivalentno preoblikovanje, ker iz $a^3 = b^3$ sledi $a = b$. Kubiramo: $x^2 - 9 = (-2)^3 = -8$.
+2. a) Od tod je $x^2 = 1$, torej $x = 1$ ali $x = -1$.
+3. a) Preizkus: pri obeh je $x^2 - 9 = -8$ in $\sqrt[3]{-8} = -2$. Obe števili sta rešitvi.
+4. b) Kvadratni koren je vedno nenegativen, zato ne more biti enak $-2$. Enačba nima rešitve. (Kvadriranje bi dalo kandidata $x = \pm\sqrt{13}$, ki ju preizkus izloči.)
+5. c) Pogoja: $x^2 - 9 \ge 0$ in $x - 1 \ge 0$; skupaj velja $x \ge 3$.
+6. c) Kvadriramo: $x^2 - 9 = x^2 - 2x + 1$, torej $2x = 10$ in $x = 5$. Število $5$ izpolni pogoj; preizkus: $\sqrt{25 - 9} = \sqrt{16} = 4 = 5 - 1$.
+7. Odgovor: a) $x = 1$ ali $x = -1$; b) enačba nima realne rešitve; c) $x = 5$.
+
+**Točkovanje:** a) 1 točka za kubiranje v $x^2 - 9 = -8$, 1 točka za $x = \pm 1$, 1 točka za utemeljitev, da sta obe števili rešitvi (preizkus ali ekvivalentnost kubiranja); b) 1 točka za utemeljitev, da rešitve ni; c) 1 točka za pogoj in enačbo $2x = 10$ po kvadriranju, 1 točka za $x = 5$ s preizkusom.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dani sta funkciji $f(x) = \sqrt{x + 5}$ in $g(x) = 1 + \sqrt{x - 2}$.
+
+a) Zapišite definicijski območji funkcij $f$ in $g$ ter interval, na katerem sta definirani obe. (2 točki)
+b) Izračunajte koordinati presečišča grafov funkcij $f$ in $g$. (5 točk)
+c) Izračunajte presečišče grafa funkcije $f$ s premico $y = x - 1$. Pojasnite, zakaj enega od kandidatov izločite. (3 točke)
+
+**Rešitev:**
+
+1. a) Korenjenca morata biti nenegativna: $x + 5 \ge 0$ da $D_f = [-5, \infty)$, $x - 2 \ge 0$ da $D_g = [2, \infty)$.
+2. a) Obe funkciji sta definirani na preseku $[2, \infty)$.
+3. b) Rešujemo $\sqrt{x + 5} = 1 + \sqrt{x - 2}$ za $x \ge 2$. Prvi koren je osamljen, desna stran je pozitivna, zato nov pogoj ne nastane.
+4. b) Kvadriramo, desno po obrazcu za kvadrat vsote: $x + 5 = 1 + 2\sqrt{x - 2} + x - 2$, urejeno $6 = 2\sqrt{x - 2}$ oziroma $\sqrt{x - 2} = 3$.
+5. b) Kvadriramo še enkrat: $x - 2 = 9$, torej $x = 11$.
+6. b) $f(11) = \sqrt{16} = 4$ in $g(11) = 1 + \sqrt{9} = 4$; preizkus se ujema. Presečišče je $P(11, 4)$.
+7. c) Rešujemo $\sqrt{x + 5} = x - 1$. Pogoja: $x + 5 \ge 0$ in $x - 1 \ge 0$, skupaj $x \ge 1$.
+8. c) Kvadriramo: $x + 5 = x^2 - 2x + 1$, urejeno $x^2 - 3x - 4 = 0$, razstavljeno $(x - 4)(x + 1) = 0$. Kandidata sta $x = 4$ in $x = -1$.
+9. c) Kandidat $-1$ ne izpolni pogoja $x \ge 1$: pri njem je $\sqrt{4} = 2$, desna stran pa $-2$. To je presečišče premice s krivuljo $y = -\sqrt{x + 5}$, zato je navidezna rešitev. Za $x = 4$ je $\sqrt{9} = 3 = 4 - 1$.
+10. Odgovor: $D_f = [-5, \infty)$, $D_g = [2, \infty)$, obe sta definirani na $[2, \infty)$; grafa $f$ in $g$ se sekata v $P(11, 4)$; graf $f$ seka premico $y = x - 1$ v točki $(4, 3)$, kandidat $x = -1$ je navidezen.
+
+**Točkovanje:** a) 1 točka za $D_f$ in $D_g$, 1 točka za interval $[2, \infty)$; b) 1 točka za enačbo s pogojem $x \ge 2$, 1 točka za pravilno prvo kvadriranje z dvojnim zmnožkom, 1 točka za $\sqrt{x - 2} = 3$, 1 točka za $x = 11$, 1 točka za ordinato $4$ (presečišče $P(11, 4)$); c) 1 točka za kvadratno enačbo $x^2 - 3x - 4 = 0$, 1 točka za kandidata $4$ in $-1$, 1 točka za izločitev $-1$ z utemeljitvijo in presečišče $(4, 3)$.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Pojasni, zakaj pri reševanju iracionalne enačbe s kvadriranjem lahko dobimo navidezne rešitve in kako jih izločimo.
+---
+Iz $a = b$ vedno sledi $a^2 = b^2$, iz $a^2 = b^2$ pa le $a = b$ ali $a = -b$. Kvadriranje zato ni ekvivalentno preoblikovanje: rešitev ne izgubi, lahko pa doda nove. Enačba $A = B^2$, ki jo dobimo iz $\sqrt{A} = B$, reši tudi enačbo $-\sqrt{A} = B$, zato so njene rešitve le kandidati. Navidezne rešitve izločimo s pogojem $B \ge 0$ ali s preizkusom v prvotni enačbi.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Navedi primer iracionalne enačbe brez realne rešitve, pri kateri kvadriranje vseeno da kandidata, in pojasni, zakaj ta ni rešitev.
+---
+Primer je enačba $\sqrt{2x + 1} = -x - 1$. Po kvadriranju dobimo $2x + 1 = x^2 + 2x + 1$, torej $x^2 = 0$ in kandidata $x = 0$. Preizkus da na levi strani $\sqrt{1} = 1$, na desni pa $-1$, zato $0$ ni rešitev. Že pogoja $2x + 1 \ge 0$ in $-x - 1 \ge 0$ zahtevata $x \ge -\frac{1}{2}$ in $x \le -1$, kar se izključuje, zato enačba nima rešitve.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Primerjaj reševanje enačbe $x^n = a$ s korenjenjem in z razstavljanjem ter pojasni, koliko realnih rešitev ima glede na $n$ in $a$.
+---
+Pri lihem $n$ ima enačba eno rešitev $x = \sqrt[n]{a}$, tudi za negativen $a$. Pri sodem $n$ in $a > 0$ ima dve rešitvi $x = \pm\sqrt[n]{a}$, pri $a = 0$ le rešitev $x = 0$, pri sodem $n$ in $a < 0$ pa realne rešitve ni. Pri razstavljanju vse prenesemo na levo stran, na primer $x^4 - 81 = (x^2 - 9)(x^2 + 9) = (x - 3)(x + 3)(x^2 + 9)$. Faktor $x^2 + 9$ ni nikoli nič, zato sta rešitvi $3$ in $-3$, enako kot s korenjenjem $x = \pm\sqrt[4]{81}$. Razstavljanje pokaže, zakaj ima soda potenca dve rešitvi: razlika kvadratov da faktorja $x - 3$ in $x + 3$.
+:::
+
 ## Drugače: Z analogijo
 
 Pomisli na **presejalni test** v zdravstvu. Test ujame vse bolne, a ob njih včasih označi tudi zdrave (lažno pozitivni). Zato vsak pozitiven izid preveri še potrditveni test.
@@ -244,7 +347,7 @@ točka: -1; -1 | (−1, −1) | desno | siva
 > Po kvadriranju dobiš enačbo $x + 2 = x^2$ s kandidatoma $2$ in $-1$. Na sliki je $-1$ presečišče s črtkano krivuljo, zato ga preizkus izloči.
 
 ? (brez računala) Reši enačbo $\sqrt{2x + 7} = x + 2$. Vpiši rešitev.
-= 1
+= 1 | 0
 ~ -3 | Število $-3$ je navidezna rešitev: desna stran je $-1$, koren pa $\sqrt{1} = 1$. Naredi preizkus ali preveri pogoj $x + 2 \ge 0$.
 > Kvadriranje da enačbo $x^2 + 2x - 3 = 0$, razstavljeno $(x + 3)(x - 1) = 0$. Pogoj $x \ge -2$ izloči $-3$. Preizkus za $1$: $\sqrt{9} = 3 = 1 + 2$.
 
@@ -266,6 +369,8 @@ B | izraz na drugi strani enačbe | | | pogoj $B \ge 0$
 p, q | člena vsote, ki jo kvadriramo | | |
 n | eksponent v enačbi $x^n = a$ | | | naravno število
 a | desna stran enačbe $x^n = a$ | | |
+f | korenska funkcija | f(x) = \sqrt{x + 5} |
+g | korenska funkcija, premaknjena navzgor | g(x) = 1 + \sqrt{x - 2} |
 :::
 
 <<RACUN
@@ -285,4 +390,19 @@ resi: sqrt(x+2)=x | x | 2
 resi: sqrt(2*x+7)=x+2 | x | 1
 resi: sqrt(160*m/3600)=1.6 | m | 57.6
 resi: x-1=(-2)^3 | x | -7
+resi: (x-1)^4=625 | x | -4, 6
+enako: ((x-1)^2-25)*((x-1)^2+25) | (x-1)^4-625
+enako: (x-6)*(x+4) | (x-1)^2-25
+resi: x^2-9=(-2)^3 | x | -1, 1
+resi: sqrt(x^2-9)=-2 | x | none
+resi: x^2-9=4 | x | -sqrt(13), sqrt(13)
+resi: sqrt(x^2-9)=x-1 | x | 5
+resi: sqrt(x+5)=1+sqrt(x-2) | x | 11
+vrednost: sqrt(11+5) | 4
+vrednost: 1+sqrt(11-2) | 4
+resi: sqrt(x+5)=x-1 | x | 4
+resi: x^2-3*x-4=0 | x | -1, 4
+resi: sqrt(2*x+1)=-x-1 | x | none
+resi: x^4=81 | x | -3, 3
+enako: (x-3)*(x+3)*(x^2+9) | x^4-81
 >>

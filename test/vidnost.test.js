@@ -96,6 +96,7 @@ test("robots.txt, sitemap.xml in llms.txt: vsebina", () => {
   assert.match(llms, /je slovenska aplikacija/);
   assert.match(llms, /Ni povezana s projekti z imenom »Euclid«/);
   assert.match(llms, /is not related to projects named "Euclid"/);
+  assert.ok(llms.includes(`družina s študentom (2–4 profili) ${eur(FAMILY_PRICES.druzina_student.month)} (${eur(FAMILY_PRICES.druzina_student.year)})`), "Družina s študentom v llms.txt");
   assert.ok(llms.includes(eur(LEVEL_PRICES.OS.month)) && llms.includes("9.99 EUR") && llms.includes(`${TRIAL_DAYS} dni brezplačno`));
   // Ime ponudnika modela (j, 10. 11. 2026): slovensko in angleško.
   assert.ok(llms.includes("pripravijo modeli Claude podjetja Anthropic") && llms.includes("Anthropic's Claude models"));
@@ -167,7 +168,9 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.equal(updateDoc(doc, m), doc, "docs/stroski-ai.md: node scripts/primerjava-modelov.js --iz-json <zadnja meritev>");
 
   // Primer na strani je resničen: reševalnik reši enačbo in učenčev napačni rezultat označi kot napačen.
-  assert.ok(text.includes("»Reši enačbo 3x + 5 = 20.«") && text.includes("Program enačbo reši sam: x = 5."));
+  // Od 16. 11. 2026 kot oblački pogovora (učenec predlaga x = 6, inštruktor vpraša, učenec popravi na x = 5).
+  assert.ok(text.includes("Reši enačbo 3x + 5 = 20. Mislim, da je x = 6.") && text.includes("Program enačbo reši sam: x = 5."));
+  assert.ok(text.includes("koliko je 3 · 6 + 5?") && text.includes("3 · 6 + 5 = 23") && text.includes("3x = 15, zato x = 5") && text.includes("3 · 5 + 5 = 20"));
   const pre = presolve("Reši enačbo 3x + 5 = 20.", { first: true });
   assert.equal(pre.problems[0].answer, "x = 5");
   assert.match(claimNote("x = 6", pre), /WRONG/);
@@ -177,15 +180,15 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.ok(text.includes("Pri nekaterih nalogah (na primer tekmovanja, fakulteta) odgovor v plačljivih paketih, do dnevne meje, pregleda še zmogljivejši model."));
 
   // Kaj dobite: cene, preizkus, brezplačni paket in jeziki iz kode.
-  for (const c of [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina]) {
+  for (const c of [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina, FAMILY_PRICES.druzina_student]) {
     assert.ok(html.includes(`<td>${eur(c.month)} na mesec ali ${eur(c.year)} na leto</td>`), `cena ${c.month}`);
   }
   assert.ok(html.includes(`<td>${TRIAL_DAYS} dni, brez kartice</td>`) && html.includes("<td>10 vprašanj inštruktorju na dan</td>") && html.includes("vmesnik v 33 jezikih"));
-  const known = [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina].flatMap((c) => [eur(c.month), eur(c.year)]);
+  const known = [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina, FAMILY_PRICES.druzina_student].flatMap((c) => [eur(c.month), eur(c.year)]);
   for (const [x] of text.matchAll(/\d+(?:,\d+)? €/g)) assert.ok(known.includes(x), x);
 
   // Pošteno: česa Evklid še ne zna.
-  for (const s of ["Česa Evklid (še) ne zna", "Aplikacije še ni v trgovinah Google Play in App Store", "Umetna inteligenca se lahko zmoti pri razlagi", "drugih predmetov ne pokriva"]) assert.ok(text.includes(s), s);
+  for (const s of ["Česa Evklid (še) ne zna", "Aplikacije še ni v trgovinah Google Play in App Store", "Pri besedni razlagi se umetna inteligenca lahko zmoti", "drugih predmetov ne pokriva"]) assert.ok(text.includes(s), s);
   // Primerjalno oglaševanje (j 10. 11.: brez imen tekmecev): brez imen, cen in slabosti tekmecev. Edino tuje ime je
   // Tudi splošni klepetalniki niso imenovani; imen modelov na strani ni.
   assert.ok(!/Photomath|Khan|Gemini|Copilot|Astra|Duolingo|Brainly|Mathway|Wolfram|Socratic|Claude|Haiku|Sonnet|Opus|ChatGPT|OpenAI|GPT|Grok|Perplexity|DeepSeek|Mistral/i.test(text + html.split("<body>")[0]), "brez imen tekmecev in modelov");
@@ -353,4 +356,30 @@ test("strežnik: prave vrste vsebine, stran /o-evklidu in povezava s pristajalne
   const land = readFileSync(new URL("../public/pristajalna.js", import.meta.url), "utf8");
   assert.ok(land.includes('<a href="/o-evklidu">${esc(t("land.what"))}</a>'), "povezava v nogi pristajalne strani");
   assert.ok(land.includes('<a href="/zakaj-evklid">${esc(t("land.why"))}</a>'), "povezava na Zakaj Evklid v nogi pristajalne strani");
+});
+
+// j 2026-11-15: vse javne strani za obiskovalce so videti enako, kot je nastavljen telefon (svetlo ali temno), ne v
+// slogu, ki ga je kdo izbral v aplikaciji (theme.js). Temne barve so prepis :root.dark iz style.css.
+test("javne strani (Za starše, Za šole, Zasebnost) imajo videz po napravi, brez theme.js", () => {
+  const read = (f) => readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8");
+  const decls = (block) => block.split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("/*"));
+  const appDark = read("style.css").match(/:root\.dark \{\n([\s\S]*?)\n\}/)[1];
+  const pageDark = read("videz-naprave.css").match(/@media \(prefers-color-scheme: dark\) \{\s*:root \{\n([\s\S]*?)\n\s*\}/)[1];
+  assert.deepEqual(decls(pageDark), decls(appDark), "temne barve = :root.dark v public/style.css");
+  for (const f of ["starsi.html", "sole.html", "zasebnost.html"]) {
+    const html = read(f);
+    assert.ok(!html.includes("theme.js"), f);
+    assert.ok(html.includes('<meta name="color-scheme" content="light dark">') && html.includes('href="/videz-naprave.css"'), f);
+    assert.ok(html.includes("matematiko, fiziko, kemijo, biologijo in naravoslovje"), f);
+  }
+  // Obvestilo »Vaš otrok bi rad …« samo po povezavi, ki jo pošlje otrok (?prosnja=1), ne s klikom na »Za starše«.
+  assert.match(read("starsi.html"), /<p class="ask" id="ask" hidden>/);
+  assert.match(read("starsi.js"), /if \(q\.has\("prosnja"\) \|\| ime\) document\.getElementById\("ask"\)\.hidden = false;/);
+  assert.ok(read("account.js").includes("/starsi.html?${name ? `ime=${encodeURIComponent(name)}&` : \"\"}prosnja=1"), "povezava v prošnji otroka");
+  for (const href of ['href="/starsi.html?prosnja=1" target="_blank">${esc(t("birth.parents"))}', 'href: "/starsi.html?prosnja=1", target: "_blank", textContent: t("guest.parentLink")'])
+    assert.ok(read("account.js").includes(href), href);
+  // V aplikaciji (WebView) brez dvojnega odmika, enako kot theme.js.
+  const app = read("v-aplikaciji.js").match(/\(function \(\) \{[\s\S]*\}\)\(\);/)[0];
+  assert.ok(read("theme.js").includes(app), "v-aplikaciji.js = blok iz theme.js");
+  for (const f of ["starsi.html", "sole.html", "zasebnost.html"]) assert.ok(read(f).includes('<script src="/v-aplikaciji.js"></script>'), f);
 });

@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kromosomski kompleti
+  - homologa: od matere in očeta
+  - človek: $2n = 46$, gameta $n = 23$
+- Faze cikla
+  - G1 → S → G2 → M
+  - S: DNA $2c \to 4c$, kromosomov enako
+  - sestrski kromatidi drži kohezin
+- Štetje kromosomov
+  - štejemo po centromerah
+  - G2: $46$ kromosomov, $92$ kromatid
+  - napaka: »kromatide šteti kot kromosome«
+- Mitoza
+  - separaza razreže kohezin v anafazi
+  - dve enaki celici, $2n$
+- Mejoza
+  - ena S faza, dve delitvi
+  - I loči homologe, II sestrske kromatide
+  - bivalent, prekrižanje, hiazma
+- Neodvisno razporejanje
+  - $2^n$ gamet, človek $2^{23} = 8\,388\,608$
+  - nerazdružitev: gameta z $n \pm 1$
+- Kontrolne točke
+  - G1/S: p53 → p21 zavre CDK
+  - G2/M: CDK1 s ciklinom B
+  - vreteno: APC/C, sekurin, separaza
+- Trajanje faz
+  - $t_{\mathrm{faza}} \approx \dfrac{N_{\mathrm{faza}}}{N} \cdot T$
+  - mitotski indeks $N_{\mathrm{M}}/N$

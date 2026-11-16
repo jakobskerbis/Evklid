@@ -341,3 +341,12 @@ test("stolpci: napis najvišjega stolpca ne prekrije imena osi (6000 pri osi do 
   // Napis vrednosti (osnovnica) mora biti vsaj za višino črk (14) pod osnovnico imena osi.
   assert.ok(vrh.length && Math.min(...vrh) - ime[0] >= 14, `ime osi y=${ime[0]}, napis 6000 y=${vrh}`);
 });
+
+test("slike iz znakov: ograje ``` se parijo po vrsti, blok z oznako jezika ni slika", async () => {
+  const { untaggedFences } = await import("../server/lesson-check.js");
+  const md = "```vb\nx = 1\n```\n\n| a | b |\n|---|---|\n| 1 | 2 |\n\n```vb\ny = 2\n```\n\n```\n[A] --> [B]\n```\n";
+  assert.deepEqual(untaggedFences(md), ["[A] --> [B]"]);
+  const warns = (src) => checkLessonSource(src, "x").warnings.filter((w) => /Slike iz znakov/.test(w));
+  assert.equal(warns("# T\n\n```vb\nx = 1\n```\n\n| a | b |\n|---|---|\n\n```vb\ny = 2\n```\n").length, 0);
+  assert.equal(warns("# T\n\n```\n[A] --> [B]\n```\n").length, 1);
+});

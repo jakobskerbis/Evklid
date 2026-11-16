@@ -42,14 +42,16 @@ Prvi del nikoli ni negativen: to je energija, ki teče samo k bremenu. Drugi del
 
 Velja $S^2 = P^2 + Q^2$. Moči tvorijo pravokotni **trikotnik moči**:
 
-```
-          /|
-      S  / |
-        /  | Q
-       / φ |
-      +----+
-        P
-```
+:::risba skica
+opis: Pravokotni trikotnik moči. Vodoravna kateta je delovna moč P, navpična kateta na desni je jalova moč Q, hipotenuza je navidezna moč S. Kot med P in S v levem oglišču je fazni kot φ.
+območje: -1; -1 .. 6; 3,8
+lik: 0; 0 -> 4; 0 -> 4; 3 | modra
+pravikot: 4; 0 | 0; 0 | 4; 3
+napis: 2; -0,15 | P | pod
+napis: 4,2; 1,5 | Q | desno
+napis: 1,9; 1,6 | S | nad levo
+napis: 1; 0,32 | φ | sredina
+:::
 
 :::premisli
 Na upor, tuljavo in kondenzator priključimo isto napetost. Pri katerem elementu je trenutna moč kdaj negativna in kaj to fizikalno pomeni?

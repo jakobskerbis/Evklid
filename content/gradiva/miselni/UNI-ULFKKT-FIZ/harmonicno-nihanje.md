@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Osnovni pojmi
+  - amplituda $x_0$, nihajni čas $t_0$
+  - $\nu = 1/t_0$ v $\mathrm{Hz}$, $\omega = 2\pi\nu$
+- Harmonična sila
+  - $F = -kx$, $\ddot{x} + \omega_0^2x = 0$, $\omega_0 = \sqrt{k/m}$
+  - rešitev $x = x_0\cos(\omega_0t + \delta)$
+  - $x_0$ in $\delta$ iz $x(0)$ in $v(0)$
+- Hitrost in pospešek
+  - $v_{\max} = \omega_0x_0$ v ravnovesni legi
+  - $a_{\max} = \omega_0^2x_0$ v skrajni legi
+  - $t_0$ ni odvisen od amplitude
+- Nihalo na vzmeti
+  - $t_0 = 2\pi\sqrt{m/k}$
+  - vzporedno $k = k_1 + k_2$, zaporedno $1/k = 1/k_1 + 1/k_2$
+- Matematično nihalo
+  - $t_0 = 2\pi\sqrt{l/g}$, neodvisno od mase
+  - velja za majhne odklone, $\sin\varphi \approx \varphi$
+- Energija
+  - $W = \tfrac{1}{2}kx_0^2 = \tfrac{1}{2}mv_{\max}^2$
+  - $v = \pm\omega_0\sqrt{x_0^2 - x^2}$
+- Dušeno nihanje
+  - $\ddot{x} + 2\beta\dot{x} + \omega_0^2x = 0$, $\beta = b/(2m)$
+  - šibko: amplituda $\propto e^{-\beta t}$, $t_{1/2} = \ln 2/\beta$
+  - kritično pri $\beta = \omega_0$
+- Resonanca
+  - največja amplituda pri $\omega_v = \sqrt{\omega_0^2 - 2\beta^2}$
+  - šibkejše dušenje, višji vrh

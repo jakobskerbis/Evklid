@@ -62,6 +62,7 @@ export function setUciTab(name) {
 /** Izris vidnega zavihka (ob prikazu pogleda »Uči se« v glavnem delu ali v premičnem oknu). */
 export function showUci() {
   setUciTab(tab);
+  if (tab !== "3d") ikoneVrhaVnaprej();
   D?.odprto?.(tab === "textbook" ? "lekcije" : tab === "lab" ? "laboratorij" : "svet3d"); // B2: odprtje dela (public/app.js)
   if (tab === "textbook") return D?.showTextbook();
   if (tab === "lab") return D?.showLab();
@@ -73,6 +74,15 @@ export function initUci(deps) {
   globalThis.addEventListener?.("evklid:era", obSlogu);
   const row = $(".uci-tabs");
   if (!row) return;
+  // Višina plavajočega preklopnika (uci.css): toliko prostora dobi začetek zavihka; skrit preklopnik (odprta lekcija
+  // na telefonu) meri 0. Ponovno ob spremembi velikosti (jezik z daljšimi imeni, obrat zaslona).
+  const head = row.closest(".uci-head");
+  const view = head?.closest(".uci-view");
+  if (head && view) {
+    const meri = () => view.style.setProperty("--uci-head-h", `${head.offsetHeight}px`);
+    meri();
+    if (typeof ResizeObserver === "function") new ResizeObserver(meri).observe(head);
+  }
   row.addEventListener("click", (e) => {
     const b = e.target.closest("[data-uci-tab]");
     if (!b || b.dataset.uciTab === tab) return;
@@ -166,6 +176,19 @@ function nastaviPot(v) {
   paneOf("3d")?.scrollTo?.({ top: 0 });
 }
 
+// Ob odprtju »Uči se« na drugem zavihku: v mirnem trenutku ikone prve ravni 3D sveta (pet slik), da je prehod na
+// zavihek 3D svet takoj cel (j, 15. 11. 2026). Enkrat na sejo in slog (ikoneVnaprej si zapomni naložene).
+function ikoneVrhaVnaprej() {
+  setTimeout(() => {
+    import("./3d/drevo.js")
+      .then((d) => {
+        drevoMod ||= d;
+        d.ikoneVnaprej([{ otroci: d.DREVO }], document.documentElement.dataset.style || "");
+      })
+      .catch(() => {});
+  }, 1500);
+}
+
 async function show3d() {
   const box = document.getElementById("uci-3d-content");
   if (!box) return;
@@ -181,7 +204,7 @@ async function show3d() {
     box.innerHTML = `<p class="muted">${esc(t("a3.loadError"))}</p>`;
     return;
   }
-  const { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje } = drevoMod;
+  const { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, ikoneVnaprej } = drevoMod;
   const poId = new Map(modeli.map((m) => [m.id, m]));
   const obstaja = new Set([...poId.keys(), "atlas"]);
   const veje = poPoti(pot);
@@ -214,7 +237,9 @@ async function show3d() {
   let telo;
   if (zdaj?.modeli) telo = `<div class="uci-3d-grid">${zdaj.modeli.map((id) => poId.get(id)).filter(Boolean).map(kartica).join("")}</div>`;
   else {
-    telo = `<div class="uci-3d-drevo">${(zdaj ? zdaj.otroci : DREVO).filter((v) => modeliVeje(v, obstaja).length).map(veja).join("")}</div>`;
+    const vidne = (zdaj ? zdaj.otroci : DREVO).filter((v) => modeliVeje(v, obstaja).length);
+    telo = `<div class="uci-3d-drevo">${vidne.map(veja).join("")}</div>`;
+    ikoneVnaprej(vidne, slog, obstaja); // dotik na vejo: njene podveje že z ikonami
     if (!zdaj) {
       telo += `<a class="uci-3d-mikroskop" href="/3d#mikroskop" data-k3="mikroskop" data-k3-title="${esc(t("mk.title"))}">${icon("microscope") || ""}<span>${esc(t("mk.start"))}</span></a>`;
       const vDrevesu = vsiModeliDrevesa();

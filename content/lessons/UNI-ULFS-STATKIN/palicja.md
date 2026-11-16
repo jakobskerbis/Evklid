@@ -112,25 +112,51 @@ vozlišče $C$: $\sum F_x = 0$, $\sum F_y = 0$; smer palice $(x_j - x_i;\ y_j - 
 2. Smeri od $C$ proti drugemu krajišču: proti $A$ je $(-1; 0)$; proti $B$ je $(-2{,}0; -1{,}5)/2{,}5 = (-0{,}8; -0{,}6)$, ker je $l_{BC} = \sqrt{2{,}0^2 + 1{,}5^2}\,\mathrm{m} = 2{,}5\,\mathrm{m}$.
 3. Navpično: $-6{,}0 - 0{,}6\,S_{BC} = 0$, torej $S_{BC} = -10\,\mathrm{kN}$.
 4. Vodoravno: $-S_{AC} - 0{,}8\,S_{BC} = 0$, torej $S_{AC} = -0{,}8 \cdot (-10)\,\mathrm{kN} = 8{,}0\,\mathrm{kN}$.
-5. Odgovor: zgornja palica je napeta s $8{,}0\,\mathrm{kN}$ (vleče vozlišče k steni), spodnja je stisnjena z $10\,\mathrm{kN}$ (potiska vozlišče stran od stene). Obe sili sta večji od teže table, ker je spodnja palica položna.
+5. Odgovor: zgornja palica je napeta z $8{,}0\,\mathrm{kN}$ (vleče vozlišče k steni), spodnja je stisnjena z $10\,\mathrm{kN}$ (potiska vozlišče stran od stene). Obe sili sta večji od teže table, ker je spodnja palica položna.
 
 ### Primer 2
 
 Prattovo paličje ima spodnja vozlišča $L_0(0; 0)$, $L_1(3; 0)$, $L_2(6; 0)$, $L_3(9; 0)$, $L_4(12; 0)$ in zgornja $U_1(3; 4)$, $U_2(6; 4)$, $U_3(9; 4)$ (v metrih). Palice: spodnji pas $L_0L_1$, $L_1L_2$, $L_2L_3$, $L_3L_4$; zgornji pas $U_1U_2$, $U_2U_3$; krajni palici $L_0U_1$ in $U_3L_4$; vertikale $U_1L_1$, $U_2L_2$, $U_3L_3$; diagonali $U_1L_2$ in $U_3L_2$. V $L_0$ je nepomična, v $L_4$ pomična podpora. V vozliščih $L_1$, $L_2$, $L_3$ visi po $12\,\mathrm{kN}$. Preveri statično določenost, poišči ničelno palico in izračunaj sile v levi polovici.
 
-```
-        U1      U2      U3
-        o-------o-------o
-      / | \     |     / | \
-    /   |   \   |   /   |   \
-  /     |     \ | /     |     \
-o-------o-------o-------o-------o
-L0      L1      L2      L3      L4
-/\      v       v       v       ()
-       12 kN   12 kN   12 kN
-```
+:::risba skica
+opis: Prattovo paličje. Spodnji pas ima vozlišča L0, L1, L2, L3, L4 na razdaljah po 3 m, zgornji pas vozlišča U1, U2, U3 na višini 4 m nad L1, L2, L3. Krajni poševni palici sta L0U1 in U3L4, vertikale U1L1, U2L2, U3L3, diagonali U1L2 in U3L2 se stikata v L2. V L0 je nepomična podpora (trikotnik na šrafirani podlagi), v L4 pomična (trikotnik na valjčkih). V L1, L2 in L3 visi breme 12 kN navzdol.
+območje: -1,9; -3,2 .. 13,9; 5,1
+črta: 0; 0 -> 12; 0 | debelo
+črta: 3; 4 -> 9; 4 | debelo
+črta: 0; 0 -> 3; 4 | debelo
+črta: 9; 4 -> 12; 0 | debelo
+črta: 3; 4 -> 3; 0
+črta: 6; 4 -> 6; 0
+črta: 9; 4 -> 9; 0
+črta: 3; 4 -> 6; 0
+črta: 9; 4 -> 6; 0
+lik: 0; 0 -> -0,55; -0,9 -> 0,55; -0,9
+črta: -0,9; -0,9 -> 0,9; -0,9 | debelo
+črta: -0,6; -0,9 -> -0,9; -1,3 | siva
+črta: -0,1; -0,9 -> -0,4; -1,3 | siva
+črta: 0,4; -0,9 -> 0,1; -1,3 | siva
+črta: 0,9; -0,9 -> 0,6; -1,3 | siva
+lik: 12; 0 -> 11,45; -0,7 -> 12,55; -0,7
+krog: 11,7; -0,9 | 0,2
+krog: 12,3; -0,9 | 0,2
+črta: 11,1; -1,1 -> 12,9; -1,1 | debelo
+puščica: 3; 0 -> 3; -1,7 | | | oranžna
+puščica: 6; 0 -> 6; -1,7 | | | oranžna
+puščica: 9; 0 -> 9; -1,7 | | | oranžna
+napis: 3; -1,8 | 12 kN | pod | oranžna
+napis: 6; -1,8 | 12 kN | pod | oranžna
+napis: 9; -1,8 | 12 kN | pod | oranžna
+točka: 0; 0 | L_0 | levo
+točka: 3; 0 | L_1 | pod desno
+točka: 6; 0 | L_2 | pod desno
+točka: 9; 0 | L_3 | pod desno
+točka: 12; 0 | L_4 | desno
+točka: 3; 4 | U_1 | nad levo
+točka: 6; 4 | U_2 | nad levo
+točka: 9; 4 | U_3 | nad desno
+:::
 
-Polja so široka $3\,\mathrm{m}$, visoka $4\,\mathrm{m}$; $/\backslash$ je nepomična, $()$ pomična podpora, bremena visijo v spodnjih vozliščih.
+Polja so široka $3\,\mathrm{m}$, visoka $4\,\mathrm{m}$; trikotnik na šrafirani podlagi je nepomična, trikotnik na valjčkih pomična podpora, bremena visijo v spodnjih vozliščih.
 
 **Podatki:** koordinate vozlišč in palice zgoraj; $F = 12\,\mathrm{kN}$ navzdol v $L_1$, $L_2$, $L_3$; podpori $L_0$ (nepomična), $L_4$ (pomična)
 **Iščemo:** $2v = p + r$?, ničelne palice, $S_{L_0U_1}$, $S_{L_0L_1}$, $S_{U_1L_1}$, $S_{L_1L_2}$, $S_{U_1L_2}$, $S_{U_1U_2}$
@@ -278,7 +304,7 @@ Razlika od mreže: vrvica prenese le nateg, palica pa tudi tlak. Zato so paličj
 
 **Matrična oblika.** Enačbe vseh vozlišč zapišemo kot linearni sistem $\mathbf{A}\,\mathbf{s} = -\mathbf{f}$: vektor $\mathbf{s}$ vsebuje $p$ osnih sil in $r$ reakcij, $\mathbf{f}$ zunanje sile v vozliščih ($2v$ komponent), matrika $\mathbf{A}$ pa smerne kosinuse palic. Paličje je statično določeno natanko tedaj, ko je $\mathbf{A}$ kvadratna ($2v = p + r$) in obrnljiva ($\det\mathbf{A} \neq 0$). Geometrijska spremenljivost se pokaže kot $\det\mathbf{A} = 0$, čeprav je štetje pravilno. Tako paličja računajo programi za statiko; metoda vozlišč na roke je le zaporedno reševanje tega sistema.
 
-**Statično nedoločena paličja.** Pri $2v < p + r$ ima sistem neskončno rešitev, prava pa je tista, pri kateri se raztezki palic ($\Delta l = Sl/(EA)$, Hookov zakon za palico) ujemajo s skupnimi premiki vozlišč. To vodi v metodo pomikov, osnovo metode končnih elementov.
+**Statično nedoločena paličja.** Pri $2v < p + r$ ima sistem neskončno mnogo rešitev, prava pa je tista, pri kateri se raztezki palic ($\Delta l = Sl/(EA)$, Hookov zakon za palico) ujemajo s skupnimi premiki vozlišč. To vodi v metodo pomikov, osnovo metode končnih elementov.
 
 **Prostorska paličja.** Stolpi daljnovodov in strešne mreže so prostorska paličja: vsako vozlišče da tri enačbe, pogoj je $3v = p + r$, za togo podprto telo potrebujemo vsaj šest reakcij.
 
@@ -286,7 +312,7 @@ Razlika od mreže: vrvica prenese le nateg, palica pa tudi tlak. Zato so paličj
 
 ## Drugače: Uporaba v stroki
 
-**Mostovi in merjenje.** Na paličnih mostovih so na izbrane palice nalepljeni merilni lističi, ki merijo specifično deformacijo. Iz nje z Hookovim zakonom in prerezom palice izračunamo osno silo in jo primerjamo s silo, ki jo za znano obtežbo (npr. preizkusni tovornjak) da metoda prereza. Če se meritev in račun ne ujemata, je morda poškodovano vozlišče ali je palica popustila. Sistemi za stalni nadzor zbirajo take podatke ves čas in opozorijo na odstopanja.
+**Mostovi in merjenje.** Na paličnih mostovih so na izbrane palice nalepljeni merilni lističi, ki merijo specifično deformacijo. Iz nje s Hookovim zakonom in prerezom palice izračunamo osno silo in jo primerjamo s silo, ki jo za znano obtežbo (npr. preizkusni tovornjak) da metoda prereza. Če se meritev in račun ne ujemata, je morda poškodovano vozlišče ali je palica popustila. Sistemi za stalni nadzor zbirajo take podatke ves čas in opozorijo na odstopanja.
 
 **Strehe in hale.** Strešna paličja iz lesa ali jekla so pogosto enostavna paličja iz trikotnikov. Projektant najprej določi sile v palicah za lastno težo, sneg in veter (tudi srk, ki obrne predznake), nato tlačene palice dimenzionira na uklon, natezne na nosilnost prereza in spojev. Ničelne palice pri eni kombinaciji obtežbe so pri drugi pogosto merodajne.
 

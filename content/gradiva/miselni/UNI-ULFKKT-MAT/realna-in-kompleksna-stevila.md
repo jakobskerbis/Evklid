@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Številske množice
+  - $\mathbb N \subset \mathbb Z \subset \mathbb Q \subset \mathbb R \subset \mathbb C$
+  - $\sqrt 2$ ni racionalno (dokaz s protislovjem)
+- Polnost realnih števil
+  - supremum: najmanjša zgornja meja
+  - $\sup\,(0,1) = 1$, maksimuma ni
+  - $|a+b| \le |a| + |b|$
+- Algebrska oblika
+  - $z = a + bi$, $i^2 = -1$
+  - $\bar z = a - bi$, $|z| = \sqrt{a^2+b^2}$
+  - deljenje: razširi s konjugiranim imenovalcem
+- Polarna oblika
+  - $z = r(\cos\varphi + i\sin\varphi) = re^{i\varphi}$
+  - napaka: »kvadrant argumenta iz $\tan\varphi$«
+  - množenje: modula zmnoži, argumenta seštej
+- Potence
+  - de Moivre: $z^n = r^ne^{in\varphi}$
+  - primer: $(1 + i\sqrt3)^6 = 64$
+- Koreni
+  - $w_k = \sqrt[n]{r}\,e^{i\frac{\varphi+2k\pi}{n}}$, $k = 0,\dots,n-1$
+  - oglišča pravilnega $n$-kotnika
+  - $z^3 = -8$: $-2$, $1 \pm i\sqrt3$
+- Osnovni izrek algebre
+  - polinom stopnje $n \ge 1$ ima $n$ ničel z večkratnostjo
+  - realni koeficienti: ničle v konjugiranih parih

@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Definicija odvoda
+  - $f'(x_0) = \lim_{h\to 0}\frac{f(x_0+h)-f(x_0)}{h}$
+  - naklon tangente, trenutna hitrost spreminjanja
+  - enota: enota funkcije na enoto spremenljivke
+- Odvedljivost in zveznost
+  - odvedljiva funkcija je zvezna
+  - obrat ne velja: $|x|$ v $0$
+- Tabela odvodov
+  - $(x^r)' = rx^{r-1}$, $(e^x)' = e^x$, $(\ln x)' = \frac1x$
+  - $(\sin x)' = \cos x$ le v radianih
+  - napaka: »$(a^x)' = xa^{x-1}$« – pravilno $a^x\ln a$
+- Pravila odvajanja
+  - $(fg)' = f'g + fg'$
+  - $\left(\frac fg\right)' = \frac{f'g - fg'}{g^2}$, $g \neq 0$
+- Verižno pravilo
+  - $(f(g(x)))' = f'(g(x))\,g'(x)$
+  - primer: $(\sin 3x)' = 3\cos 3x$
+  - implicitno: $x^2+y^2=25$ da $y' = -\frac xy$
+- Odvod inverzne funkcije
+  - $(f^{-1})'(y) = \frac{1}{f'(x)}$, pogoj $f'(x) \neq 0$
+  - $(\arctan x)' = \frac{1}{1+x^2}$
+- Tangenta in normala
+  - $y = f(x_0) + f'(x_0)(x - x_0)$
+  - normala: smerni koeficient $-\frac{1}{f'(x_0)}$
+- Linearni približek
+  - $f(x_0+h) \approx f(x_0) + f'(x_0)h$
+  - diferencial $df = f'(x_0)\,dx$, širjenje napak

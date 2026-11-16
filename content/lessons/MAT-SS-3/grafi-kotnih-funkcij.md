@@ -84,14 +84,13 @@ V simulaciji spodaj (»Od enotske krožnice do grafa«) počasi povečuj kot od 
 
 *Preveri:* ali je $4\pi$ tudi perioda sinusa? *Odgovor:* je, ker sta to dva obrata, a ni osnovna perioda.
 
-**3. Lastnosti osnovnih grafov.**
+**3. Lastnosti osnovnih grafov.** Obe funkciji imata zalogo vrednosti $[-1, 1]$. Tabela pove, pri katerih $x$ je vrednost $0$ (ničle), $1$ (maksimum) in $-1$ (minimum):
 
 | | $\sin x$ | $\cos x$ |
 |---|---|---|
-| zaloga vrednosti | $[-1, 1]$ | $[-1, 1]$ |
-| ničle | $k\pi$ | $\frac{\pi}{2} + k\pi$ |
-| maksimum $1$ pri | $\frac{\pi}{2} + 2k\pi$ | $2k\pi$ |
-| minimum $-1$ pri | $\frac{3\pi}{2} + 2k\pi$ | $\pi + 2k\pi$ |
+| $y = 0$ | $k\pi$ | $\frac{\pi}{2} + k\pi$ |
+| $y = 1$ | $\frac{\pi}{2} + 2k\pi$ | $2k\pi$ |
+| $y = -1$ | $\frac{3\pi}{2} + 2k\pi$ | $\pi + 2k\pi$ |
 
 Tu je $k$ poljubno celo število. Graf kosinusa ima enako obliko kot graf sinusa, le premaknjen je za $\frac{\pi}{2}$ v levo: vrh ima pri $0$, sinus pa šele pri $\frac{\pi}{2}$.
 
@@ -242,10 +241,10 @@ $$f(x) = A\sin\big(b(x - c)\big) + d$$
 |---|---|---|
 | $A$ | višina | amplituda $\lvert A\rvert$ |
 | $b$ | širina | $T = \frac{2\pi}{\lvert b\rvert}$ |
-| $c$ | premik levo–desno | za $c$ v desno |
-| $d$ | premik gor–dol | srednja črta $y = d$ |
+| $c$ | levo–desno | za $c$ v desno |
+| $d$ | gor–dol | za $d$ navzgor |
 
-Največja vrednost funkcije je $d + |A|$, najmanjša $d - |A|$. Če je $A < 0$, se graf zrcali čez srednjo črto.
+Srednja črta grafa je $y = d$. Največja vrednost funkcije je $d + |A|$, najmanjša $d - |A|$. Če je $A < 0$, se graf zrcali čez srednjo črto.
 
 V simulaciji spodaj (»Graf A sin(b(x − c)) + d«) spreminjaj vse štiri hkrati. Nastavi $b = 2$ in $c = \frac{\pi}{4}$: kolikšna je perioda in kje se začne val? *Odgovor:* perioda je $\pi$, val se začne pri $x = \frac{\pi}{4}$.
 
@@ -392,6 +391,134 @@ $b = \frac{2\pi}{4} = \frac{\pi}{2}$. Val se začne na srednji črti pri $x = 1$
 - Zaloga vrednosti: $[d - |A|,\ d + |A|]$.
 - Pred branjem premika izpostavi $b$: $\sin(bx - p) = \sin\big(b(x - \frac{p}{b})\big)$.
 
+## Ponovitev
+
+**Formule**
+- $f(x) = A\sin\big(b(x - c)\big) + d$ (na pamet)
+- Amplituda $|A|$, perioda $T = \frac{2\pi}{|b|}$ (na pamet)
+- $\tan(bx)$: perioda $\frac{\pi}{|b|}$ (na pamet)
+- $Z_f = [d - |A|,\ d + |A|]$ (na pamet)
+- Ničle: $\sin x = 0$ pri $x = k\pi$, $\cos x = 0$ pri $x = \frac{\pi}{2} + k\pi$ (na pamet)
+
+**Postopek**
+1. Izpostavi $b$: $2x - \frac{\pi}{3} = 2\left(x - \frac{\pi}{6}\right)$.
+2. Odčitaj $A$, $b$, $c$ in $d$.
+3. Izračunaj amplitudo, periodo in zalogo vrednosti.
+4. Nariši srednjo črto $y = d$ in začetek vala premakni v $x = c$.
+5. Periodo razdeli na četrtine in vriši vrhove, dna in točke na srednji črti.
+
+**Pazi na**
+- Perioda se deli: pri $\sin 2x$ je $T = \pi$, ne $4\pi$.
+- $\sin\left(x - \frac{\pi}{3}\right)$ je premaknjen v desno, ne v levo.
+- Amplitudo meri od srednje črte $y = d$, ne od osi $x$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Zapišite predpis funkcije oblike $f(x) = A\cos(bx) + d$, kjer sta $A > 0$ in $b > 0$, ki ima zalogo vrednosti $[-1, 5]$ in osnovno periodo $\frac{2\pi}{3}$.
+
+**Rešitev:**
+
+1. Srednja črta je na sredini zaloge vrednosti: $d = \frac{5 + (-1)}{2} = 2$.
+2. Amplituda je polovica razlike med največjo in najmanjšo vrednostjo: $A = \frac{5 - (-1)}{2} = 3$.
+3. Iz $T = \frac{2\pi}{b} = \frac{2\pi}{3}$ sledi $b = 3$.
+4. Odgovor: $f(x) = 3\cos 3x + 2$.
+
+**Točkovanje:** 1 točka za $d = 2$, 1 točka za $A = 3$, 1 točka za $b = 3$ in zapisan predpis $f(x) = 3\cos 3x + 2$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = 2\cos\left(2x - \frac{\pi}{3}\right) - 1$.
+
+a) Zapišite $f$ v obliki $f(x) = A\cos\big(b(x - c)\big) + d$ ter določite amplitudo in osnovno periodo. (2 točki)
+b) Izračunajte presečišče grafa funkcije $f$ z osjo $y$ in zapišite zalogo vrednosti funkcije. (2 točki)
+c) Določite, pri katerih $x \in [0, \pi]$ ima $f$ največjo in najmanjšo vrednost, in ti vrednosti zapišite. (2 točki)
+d) Narišite graf funkcije $f$ na intervalu $[0, \pi]$. (2 točki)
+
+**Rešitev:**
+
+1. a) Izpostavimo $2$: $2x - \frac{\pi}{3} = 2\left(x - \frac{\pi}{6}\right)$, torej $f(x) = 2\cos\left(2\left(x - \frac{\pi}{6}\right)\right) - 1$ z $A = 2$, $b = 2$, $c = \frac{\pi}{6}$ in $d = -1$.
+2. a) Amplituda je $|A| = 2$, osnovna perioda pa $T = \frac{2\pi}{2} = \pi$.
+3. b) $f(0) = 2\cos\left(-\frac{\pi}{3}\right) - 1 = 2 \cdot \frac12 - 1 = 0$, zato graf seka os $y$ v točki $(0, 0)$.
+4. b) $Z_f = [-1 - 2,\ -1 + 2] = [-3, 1]$.
+5. c) Največjo vrednost $1$ ima $f$ tam, kjer je kosinus enak $1$: $2\left(x - \frac{\pi}{6}\right) = 0$, torej $x = \frac{\pi}{6}$. Naslednji maksimum je eno periodo kasneje, pri $\frac{7\pi}{6} > \pi$.
+6. c) Najmanjšo vrednost $-3$ ima $f$ tam, kjer je kosinus enak $-1$: $2\left(x - \frac{\pi}{6}\right) = \pi$, torej $x = \frac{2\pi}{3}$.
+7. d) Kosinusni val se začne v vrhu pri $x = c = \frac{\pi}{6}$; značilne točke so narazen za četrtino periode, $\frac{\pi}{4}$. To so vrh $\left(\frac{\pi}{6}, 1\right)$, točka na srednji črti $\left(\frac{5\pi}{12}, -1\right)$, dno $\left(\frac{2\pi}{3}, -3\right)$ in točka na srednji črti $\left(\frac{11\pi}{12}, -1\right)$. Robni točki sta $(0, 0)$ in $(\pi, 0)$, ker je $f(\pi) = 2\cos\frac{5\pi}{3} - 1 = 0$; graf seka os $x$ še pri $\frac{\pi}{3}$.
+
+:::risba graf
+opis: Graf funkcije f(x) = 2 cos(2x − π/3) − 1 na intervalu od 0 do π. Črtkana srednja črta je y = −1. Graf gre iz izhodišča do vrha (π/6; 1), skozi (π/3; 0) in (5π/12; −1) do dna (2π/3; −3), nato skozi (11π/12; −1) do točke (π; 0).
+x: -0,3 .. 3,5 | 0,5236 | x
+y: -3,5 .. 1,5 | 1 | y
+oznake: ne
+oznakax: 0,5236 | π/6
+oznakax: 2,0944 | 2π/3
+oznakax: 3,1416 | π
+oznakay: -3 | −3
+oznakay: -1 | −1
+oznakay: 1 | 1
+črta: -0,3; -1 -> 3,5; -1 | oranžna črtkano
+f: 2*cos(2*x - pi/3) - 1 | modra | 0 .. 3,1416
+točka: 0; 0
+točka: 0,5236; 1 | vrh | nad
+točka: 1,309; -1
+točka: 2,0944; -3 | dno | pod
+točka: 2,8798; -1
+točka: 3,1416; 0
+podnapis: f(x) = 2 cos(2x − π/3) − 1 na [0, π] okoli srednje črte y = −1
+:::
+
+8. Odgovor: a) $f(x) = 2\cos\left(2\left(x - \frac{\pi}{6}\right)\right) - 1$, amplituda $2$, perioda $\pi$; b) presečišče $(0, 0)$, $Z_f = [-3, 1]$; c) največja vrednost $1$ pri $x = \frac{\pi}{6}$, najmanjša $-3$ pri $x = \frac{2\pi}{3}$; d) graf je na sliki.
+
+**Točkovanje:** a) 1 točka za zapis z izpostavljenim $2$ in $c = \frac{\pi}{6}$, $d = -1$, 1 točka za amplitudo $2$ in periodo $\pi$; b) 1 točka za presečišče $(0, 0)$, 1 točka za $Z_f = [-3, 1]$; c) 1 točka za maksimum $1$ pri $\frac{\pi}{6}$, 1 točka za minimum $-3$ pri $\frac{2\pi}{3}$; d) 1 točka za srednjo črto in pravilno postavljene značilne točke, 1 točka za pravilno obliko vala na celem intervalu $[0, \pi]$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Globina morja v pristanišču se zaradi plimovanja spreminja približno sinusno. Nekega dne je bila ob 3.00 oseka z najmanjšo globino $1{,}8\,\text{m}$, naslednja plima z največjo globino $6{,}2\,\text{m}$ pa ob 9.12. Globino opišemo s funkcijo $h(t) = A\sin\big(b(t - c)\big) + d$, kjer je $t$ čas v urah po polnoči.
+
+a) Določite $A > 0$, $b > 0$, $d$ in najmanjši pozitivni $c$. (4 točke)
+b) Izračunajte globino morja ob 14.00. Rezultat zaokrožite na centimeter. (2 točki)
+c) Ob kateri uri (na minuto natančno) je ta dan naslednja oseka in ob kateri naslednja plima? (2 točki)
+d) Ladja sme v pristanišče, kadar je globina vsaj $4\,\text{m}$. Med katerima urama v času med oseko ob 3.00 in naslednjo oseko sme ladja v pristanišče? (2 točki)
+
+**Rešitev:**
+
+1. a) Srednja črta je na sredini med najmanjšo in največjo globino: $d = \frac{6{,}2 + 1{,}8}{2} = 4$.
+2. a) Amplituda je polovica razlike: $A = \frac{6{,}2 - 1{,}8}{2} = 2{,}2$.
+3. a) Ura 9.12 je $t = 9{,}2$, ker je $12\,\text{min} = 0{,}2\,\text{h}$. Od oseke do plime mine pol periode, $9{,}2 - 3 = 6{,}2$, zato je $T = 12{,}4\,\text{h}$ in $b = \frac{2\pi}{12{,}4} = \frac{\pi}{6{,}2} \approx 0{,}5067$.
+4. a) Sinusni val se začne na srednji črti, ko funkcija narašča. To je na sredini med oseko in plimo: $c = \frac{3 + 9{,}2}{2} = 6{,}1$. Prejšnji tak trenutek je eno periodo prej, pri negativnem času, zato je $c = 6{,}1$ najmanjši pozitivni premik. Model je $h(t) = 2{,}2\sin\left(\frac{\pi}{6{,}2}(t - 6{,}1)\right) + 4$.
+5. b) $h(14) = 2{,}2\sin\left(\frac{\pi}{6{,}2} \cdot 7{,}9\right) + 4$. Računalo mora biti v načinu RAD: argument je približno $4{,}00300$ in $\sin 4{,}00300 \approx -0{,}758758$.
+6. b) $h(14) \approx 2{,}2 \cdot (-0{,}758758) + 4 \approx 2{,}33073$, globina je približno $2{,}33\,\text{m}$.
+7. c) Oseke si sledijo na eno periodo: $3 + 12{,}4 = 15{,}4$, kar je ura 15.24. Tudi plime si sledijo na eno periodo: $9{,}2 + 12{,}4 = 21{,}6$, kar je ura 21.36.
+8. d) Globina je $4\,\text{m}$ na srednji črti. Funkcija gre skozi srednjo črto navzgor pri $t = c = 6{,}1$ (ura 6.06) in navzdol pol periode kasneje, pri $6{,}1 + 6{,}2 = 12{,}3$ (ura 12.18). Med tema trenutkoma je val nad srednjo črto (vmes je plima ob 9.12).
+9. Odgovor: a) $A = 2{,}2$, $b = \frac{\pi}{6{,}2} \approx 0{,}507$, $c = 6{,}1$, $d = 4$; b) približno $2{,}33\,\text{m}$; c) naslednja oseka ob 15.24, naslednja plima ob 21.36; d) med 6.06 in 12.18.
+
+**Točkovanje:** a) 1 točka za $d = 4$; 1 točka za $A = 2{,}2$; 1 točka za $b = \frac{\pi}{6{,}2}$ (perioda $12{,}4\,\text{h}$); 1 točka za $c = 6{,}1$. b) 1 točka za pravilno vstavljen $t = 14$ in računanje v radianih; 1 točka za $2{,}33\,\text{m}$. c) 1 točka za oseko ob 15.24; 1 točka za plimo ob 21.36. d) 1 točka za ugotovitev, da je $4\,\text{m}$ srednja črta, in čas 6.06; 1 točka za čas 12.18.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kdaj je funkcija periodična in kaj je njena osnovna perioda? Navedi osnovne periode sinusa, kosinusa in tangensa.
+---
+Funkcija $f$ je periodična, če obstaja tako število $T > 0$, da za vsak $x$ iz definicijskega območja velja $f(x + T) = f(x)$. Najmanjše tako pozitivno število je osnovna perioda. Sinus in kosinus imata osnovno periodo $2\pi$, ker se točka na enotski krožnici po polnem obratu vrne na isto mesto. Tangens ima osnovno periodo $\pi$, ker po pol obrata sinus in kosinus oba zamenjata predznak, njun količnik pa ostane enak.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji, zakaj ima funkcija $g(x) = \sin(bx)$, kjer je $b \neq 0$, osnovno periodo $\frac{2\pi}{|b|}$.
+---
+Iščemo najmanjše pozitivno število $T$, za katero velja $\sin\big(b(x + T)\big) = \sin(bx)$ za vsak $x$. Ker je $b(x + T) = bx + bT$, se argument sinusa pri tem poveča za $bT$. Sinus ima pri vsakem argumentu in pri argumentu, povečanem za $bT$, enako vrednost natanko takrat, ko je $bT$ večkratnik osnovne periode $2\pi$. Najmanjši pozitivni tak $T$ dobimo iz $|b|T = 2\pi$, torej je $T = \frac{2\pi}{|b|}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Opiši, kako iz grafa funkcije $y = \sin x$ dobimo graf funkcije $f(x) = A\sin\big(b(x - c)\big) + d$, in pojasni pomen števil $A$, $b$, $c$ in $d$.
+---
+Število $b$ graf skrči ali raztegne v smeri osi $x$, tako da je osnovna perioda $\frac{2\pi}{|b|}$. Število $c$ graf premakne v smeri osi $x$, pri $c > 0$ v desno; če je predpis zapisan kot $\sin(bx - p)$, moramo $b$ najprej izpostaviti in dobimo $c = \frac{p}{b}$. Število $A$ graf raztegne v smeri osi $y$, amplituda je $|A|$, pri $A < 0$ pa se graf še zrcali. Število $d$ graf premakne v smeri osi $y$, premica $y = d$ je srednja črta, zaloga vrednosti pa je $[d - |A|, d + |A|]$.
+:::
+
 ## Drugače: Na sliki
 
 Graf sinusa si predstavljaj kot val, ki ga narišeš s petimi točkami na eno periodo: **ničla, vrh, ničla, dno, ničla** (pri premaknjenem valu so namesto ničel točke na srednji črti). Razdalja med zaporednima točkama je vedno četrtina periode.
@@ -477,7 +604,7 @@ točka: 5; 4
 ~ Premik prebereš šele iz oblike $2(x - c)$. Brez izpostavljanja dobiš $\frac{\pi}{3}$, kar je dvakrat preveč.
 > $2x - \frac{\pi}{3} = 2\left(x - \frac{\pi}{6}\right)$, zato je $c = \frac{\pi}{6}$: premik za $\frac{\pi}{6}$ v desno. Korak (1) je pravilen.
 
-? Lučka za obvestila na telefonu »diha«: njena svetlost je $s(t) = 40\cos(\pi t) + 50$ (v odstotkih, $t$ v sekundah). Kolikšna je najmanjša svetlost lučke?
+? (brez računala) Lučka za obvestila na telefonu »diha«: njena svetlost je $s(t) = 40\cos(\pi t) + 50$ (v odstotkih, $t$ v sekundah). Kolikšna je najmanjša svetlost lučke?
 = 10 % | 0,5
 ~ -40 | Prezrl si premik $d = 50$: ves val je dvignjen za $50$. Negativne svetlosti ni.
 ~ 50 | To je srednja črta. Val niha za $40$ nad njo in za $40$ pod njo.
@@ -506,6 +633,29 @@ enako: 3*sin(pi/2*(x-1))+2 | 3*cos(pi/2*(x-2))+2
 enako: 2*x-pi/3 | 2*(x-pi/6)
 enako: cos(x) | sin(x+pi/2)
 vrednost: 50-40 | 10
+vrednost: (5+(-1))/2 | 2
+vrednost: (5-(-1))/2 | 3
+resi: 2*pi/b=2*pi/3 | b | 3
+enako: 2*cos(2*x-pi/3)-1 | 2*cos(2*(x-pi/6))-1
+vrednost: 2*cos(-pi/3)-1 | 0
+vrednost: 2*cos(2*pi/6-pi/3)-1 | 1
+vrednost: 2*cos(2*2*pi/3-pi/3)-1 | -3
+vrednost: 2*cos(2*5*pi/12-pi/3)-1 | -1
+vrednost: 2*cos(2*11*pi/12-pi/3)-1 | -1
+vrednost: 2*cos(2*pi/3-pi/3)-1 | 0
+vrednost: 2*cos(2*pi-pi/3)-1 | 0
+vrednost: (6.2+1.8)/2 | 4
+vrednost: (6.2-1.8)/2 | 2.2
+vrednost: 2*pi/12.4 | 0.5067
+vrednost: (3+9.2)/2 | 6.1
+vrednost: pi/6.2*(14-6.1) | 4.00300
+vrednost: sin(pi/6.2*(14-6.1)) | -0.758758
+vrednost: 2.2*sin(pi/6.2*(14-6.1))+4 | 2.33
+vrednost: 2.2*sin(pi/6.2*(9.2-6.1))+4 | 6.2
+vrednost: 2.2*sin(pi/6.2*(3-6.1))+4 | 1.8
+vrednost: 3+12.4 | 15.4
+vrednost: 9.2+12.4 | 21.6
+vrednost: 6.1+6.2 | 12.3
 >>
 
 :::simboli
@@ -520,9 +670,10 @@ Z_f | zaloga vrednosti funkcije | Z_f = [d - \lvert A \rvert,\ d + \lvert A \rve
 u | argument sinusa | | |
 k | poljubno celo število | | |
 D | dolžina dneva | D(t) = A\sin\big(b(t - c)\big) + d | h |
-t | zaporedni dan v letu | | | v kvizu čas v sekundah
+t | zaporedni dan v letu | | | v kvizu čas v sekundah, v nalogi o plimovanju čas v urah po polnoči
 D_{\max} | dolžina najdaljšega dneva | | h |
 D_{\min} | dolžina najkrajšega dneva | | h |
+h | globina morja v pristanišču | h(t) = A\sin\big(b(t - c)\big) + d | m | v nalogi o plimovanju
 g | druga funkcija za primerjavo | | |
 p | število, odšteto v oklepaju | p = b \cdot c | | premik je $c = \frac{p}{b}$
 P | točka na enotski krožnici | | |

@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sinusna napetost
+  - $u = U_\mathrm{m}\sin\omega t$, $\omega = 2\pi f$
+  - $50\,\mathrm{Hz}$: $\omega \approx 314\,\mathrm{s^{-1}}$, $T = 20\,\mathrm{ms}$
+- Efektivna vrednost
+  - $U = U_\mathrm{m}/\sqrt{2}$, velja le za sinus
+  - $230\,\mathrm{V}$ efektivno, vrh $325\,\mathrm{V}$
+- Kazalci
+  - dolžina efektivna vrednost, kot faza
+  - fazni kot $\varphi$ med $U$ in $I$
+- Reaktanci
+  - $X_L = \omega L$, tok zaostaja $90^\circ$
+  - $X_C = 1/(\omega C)$, tok prehiteva $90^\circ$
+  - enota $\Omega$; $X_C$ s frekvenco pada
+- Impedanca
+  - $Z = \sqrt{R^2 + (X_L - X_C)^2}$, $I = U/Z$
+  - $\cos\varphi = R/Z$; napaka: »$Z = R + X_L$«
+  - resonanca $\omega_0 = 1/\sqrt{LC}$, $Z = R$
+- Tri moči
+  - $P = UI\cos\varphi$ v $\mathrm{W}$, šteje števec
+  - $Q = UI\sin\varphi$ v $\mathrm{var}$, $S = UI$ v $\mathrm{VA}$
+  - $S^2 = P^2 + Q^2$; $UI$ ni delovna moč
+- Kompenzacija
+  - vzporedni kondenzator, $Q_C = \omega C U^2$
+  - $Q_C = P(\tan\varphi_1 - \tan\varphi_2)$, $P$ ostane
+  - primer: $53\,\mu\mathrm{F}$, tok z $8$ na $5{,}9\,\mathrm{A}$

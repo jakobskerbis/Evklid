@@ -127,7 +127,7 @@ const GENS = [
   // ================= anuitete =================
   {
     id: P + "anuitete",
-    topics: [T("anuitete-in-amortizacijski-nacrt")],
+    topics: [T("anuitete-in-amortizacijski-nacrt"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const nm = name(r);
       const p = r.pick(PS);
@@ -330,7 +330,7 @@ const GENS = [
   // ================= zvezne funkcije in bisekcija =================
   {
     id: P + "bisekcija",
-    topics: [T("zvezne-funkcije-in-bisekcija")],
+    topics: [T("zvezne-funkcije-in-bisekcija"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -537,7 +537,7 @@ const GENS = [
   // ================= odvedljivost in implicitni odvod =================
   {
     id: P + "odvedljivost",
-    topics: [T("odvedljivost-in-implicitni-odvod")],
+    topics: [T("odvedljivost-in-implicitni-odvod"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         if (r.next() < 0.55) {
@@ -757,7 +757,7 @@ const GENS = [
   // ================= drugi odvod, prevoj, konveksnost =================
   {
     id: P + "drugi-odvod",
-    topics: [T("drugi-odvod-prevoj-in-konveksnost")],
+    topics: [T("drugi-odvod-prevoj-in-konveksnost"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       // kubična funkcija z ničlama odvoda r1 < r2 (r1 + r2 sodo)
       const cubic = () => {
@@ -942,7 +942,7 @@ const GENS = [
   // ================= per partes in racionalne funkcije =================
   {
     id: P + "integrali",
-    topics: [T("integracija-per-partes-in-racionalnih-funkcij")],
+    topics: [T("integracija-per-partes-in-racionalnih-funkcij"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       // razcep (px + q)/((x − a)(x − b)) = A/(x − a) + B/(x − b) s celimi A, B
       const pf = () => {
@@ -1138,7 +1138,7 @@ const GENS = [
   // ================= binomski izrek =================
   {
     id: P + "binomski-izrek",
-    topics: [T("binomski-izrek")],
+    topics: [T("binomski-izrek"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -1319,7 +1319,7 @@ const GENS = [
   // ================= zaporedje neodvisnih poskusov =================
   {
     id: P + "bernoulli",
-    topics: [T("zaporedje-neodvisnih-poskusov")],
+    topics: [T("zaporedje-neodvisnih-poskusov"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const nm = name(r);
       const ctx = r.pick(BER);
@@ -1522,7 +1522,7 @@ const GENS = [
   // ================= statistična naloga =================
   {
     id: P + "statisticna-naloga",
-    topics: [T("statisticna-naloga")],
+    topics: [T("statisticna-naloga"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const nm = name(r);
       const SAMPLES = [

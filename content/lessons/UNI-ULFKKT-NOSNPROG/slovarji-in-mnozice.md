@@ -36,7 +36,7 @@ Ker slovar išče po ključu, `stevec[0]` ne pomeni »prvi par«. Python išče 
 :::premisli
 Pisanje v nov ključ par doda, branje manjkajočega ključa pa javi napako. Slovar je prazen: `stevec = {}`. Ali vrstica `stevec["A"] = stevec["A"] + 1` naredi `{"A": 1}`? Zakaj?
 ---
-Python javi `KeyError`. Desna stran se izračuna najprej, ključa `"A"` pa še ni, zato ga ni mogoče prebrati. Prvo pojavitev moraš zapisati z `stevec["A"] = 1`.
+Python javi `KeyError`. Desna stran se izračuna najprej, ključa `"A"` pa še ni, zato ga ni mogoče prebrati. Prvo pojavitev moraš zapisati s `stevec["A"] = 1`.
 :::
 
 **Od primera do postopka.** Črtice na papirju pretvorimo v zanko. Za vsak element vprašamo isto, kar se je spraševala sestra: »Ali vrstico za to skupino že imam?«
@@ -248,8 +248,8 @@ Natančno navedi načelo vključitev in izključitev za dve končni množici in 
 3. Za tri množice uporabimo izrek na $a \cup b$ in $c$: $|a \cup b \cup c| = |a \cup b| + |c| - |(a \cup b) \cap c|$.
 4. Po distributivnosti je $(a \cup b) \cap c = (a \cap c) \cup (b \cap c)$, presek teh dveh pa je $a \cap b \cap c$. Izrek da $|(a \cup b) \cap c| = |a \cap c| + |b \cap c| - |a \cap b \cap c|$.
 5. Vstavimo še $|a \cup b| = |a| + |b| - |a \cap b|$: $|a \cup b \cup c| = |a| + |b| + |c| - |a \cap b| - |a \cap c| - |b \cap c| + |a \cap b \cap c|$.
-6. Preverba: vse tri množice imajo po $2$ elementa, vsi paroma preseki in trojni presek so {Na}. Formula da $2 + 2 + 2 - 1 - 1 - 1 + 1 = 4$, neposredno pa je unija {Na, K, Cl, Ca}, prav tako $4$ elementi.
-7. Odgovor: $|a \cup b \cup c|$ je vsota velikosti, zmanjšana za paroma preseke in povečana za trojni presek; za vzorce dobimo $4$ različne ione.
+6. Preverba: vse tri množice imajo po $2$ elementa, vsi preseki parov in trojni presek so {Na}. Formula da $2 + 2 + 2 - 1 - 1 - 1 + 1 = 4$, neposredno pa je unija {Na, K, Cl, Ca}, prav tako $4$ elementi.
+7. Odgovor: $|a \cup b \cup c|$ je vsota velikosti, zmanjšana za preseke parov in povečana za trojni presek; za vzorce dobimo $4$ različne ione.
 
 ## Drugače: Z analogijo
 
@@ -287,7 +287,7 @@ Operacije nad množicami imajo tudi metode: `a.union(b)`, `a.intersection(b)`, `
 + Python javi `KeyError`, ker ključa `"A"` še ni.
 - `stevec` ostane prazen, napake ni.
 ~ Python neuspele operacije ne preskoči tiho: ustavi se z napako.
-> Prvo pojavitev zapiši z `stevec["A"] = 1` ali uporabi `stevec.get("A", 0) + 1`.
+> Prvo pojavitev zapiši s `stevec["A"] = 1` ali uporabi `stevec.get("A", 0) + 1`.
 
 ? `s = ["kašelj", "vročina", "kašelj", "kašelj", "glavobol", "vročina", "kašelj"]` in `stevec` je slovar pojavitev iz `s`. Kaj izpiše `print(len(s), len(set(s)), stevec["kašelj"])`?
 - `7 7 4`
@@ -316,6 +316,6 @@ Operacije nad množicami imajo tudi metode: `a.union(b)`, `a.intersection(b)`, `
 > Unija je {penicilin, aspirin, lateks, oreščki}: $3 + 2 - 1 = 4$.
 
 :::simboli
-a | prva množica (Pythonov set) | | | |a| pomeni len(a)
+a | prva množica (Pythonov set) | | | število elementov $\lvert a \rvert$ je len(a)
 b | druga množica (Pythonov set) | | |
 :::

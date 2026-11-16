@@ -23,18 +23,34 @@ Kost tudi ni povsod enaka. Na zunanji strani je **kompaktna (zbita) kostnina**, 
 
 **2. Slika dolge kosti.** Stegnenico v mislih prerežimo po dolgem in jo preberimo od enega konca do drugega:
 
-```
-sklepni hrustanec
-EPIFIZA        gobasta kostnina + rdeči mozeg
-epifizna ploščica (pri otroku hrustanec)
-METAFIZA
-DIAFIZA        debela kompaktna stena,
-               v sredini mozgovna votlina (rumeni mozeg)
-METAFIZA
-epifizna ploščica
-EPIFIZA
-sklepni hrustanec
-```
+:::risba skica
+opis: Vzdolžni prerez dolge kosti od enega konca do drugega. Na vrhu je sklepni hrustanec, pod njim epifiza z gobasto kostnino in rdečim mozgom, nato epifizna ploščica (pri otroku hrustanec), metafiza in dolga diafiza z debelo kompaktno steno in mozgovno votlino v sredini (rumeni mozeg). Proti drugemu koncu si v obratnem vrstnem redu sledijo metafiza, epifizna ploščica, epifiza in sklepni hrustanec.
+območje: 0; 5 .. 300; 355
+pravokotnik: 15; 290 .. 85; 340 | ozadje
+lik: 15; 290 -> 85; 290 -> 70; 250 -> 30; 250 | ozadje
+pravokotnik: 30; 110 .. 70; 250 | siva polno
+pravokotnik: 40; 120 .. 60; 240 | ozadje
+lik: 30; 110 -> 70; 110 -> 85; 70 -> 15; 70 | ozadje
+pravokotnik: 15; 20 .. 85; 70 | ozadje
+črta: 15; 340 -> 85; 340 | modra debelo
+črta: 15; 20 -> 85; 20 | modra debelo
+črta: 15; 290 -> 85; 290 | modra črtkano debelo
+črta: 15; 70 -> 85; 70 | modra črtkano debelo
+napis: 100; 342 | sklepni hrustanec | desno
+napis: 100; 324 | epifiza: gobasta kostnina | desno | debelo
+napis: 100; 308 | in rdeči mozeg | desno
+napis: 100; 290 | epifizna ploščica | desno
+napis: 100; 274 | (pri otroku hrustanec) | desno
+napis: 100; 256 | metafiza | desno | debelo
+napis: 100; 204 | diafiza: | desno | debelo
+napis: 100; 188 | debela kompaktna stena, | desno
+napis: 100; 172 | v sredini mozgovna votlina | desno
+napis: 100; 156 | (rumeni mozeg) | desno
+napis: 100; 92 | metafiza | desno | debelo
+napis: 100; 70 | epifizna ploščica | desno
+napis: 100; 45 | epifiza | desno | debelo
+napis: 100; 18 | sklepni hrustanec | desno
+:::
 
 Telo kosti je **diafiza**, konca sta **epifizi**, prehod je **metafiza**. Zunaj kost, razen sklepnih ploskev, pokriva **pokostnica** (periost), močna vezivna ovojnica z žilami in živci. Ta boli, ko se udariš v golen. Sklepne ploskve pokriva **sklepni hrustanec**, gladek in brez žil.
 
@@ -179,6 +195,59 @@ $n = 4 + 60 + 2 + 60 = 126$ kosti. Cena je $126 \cdot 0{,}60 = 75{,}60$ €. Sku
 - Okostje odraslega ima $206$ kosti: aksialni skelet $80$ (lobanja, koščice, podjezičnica, hrbtenica, prsni koš), apendikularni $126$ (obroča in udi).
 - Stiki kosti: vezivni (šivi), hrustančni (medvretenčna ploščica, simfiza), sinovialni sklepi s sklepno votlino, ovojnico in sklepno tekočino; kostna zrast pri križnici.
 - Sinovialni sklepi po obliki: kroglasti ($3$ osi), jajčasti in sedlasti ($2$), tečajasti in vrtilni ($1$), ravni (drsenje).
+
+## Za izpit
+
+Znati moraš povedati:
+- celice kosti z vlogami (osteoblasti, osteociti, osteoklasti) in sestavo medceličnine: hidroksiapatit za trdnost, kolagen za prožnost;
+- zgradbo dolge kosti: diafiza, metafiza, epifiza, epifizna ploščica, pokostnica, sklepni hrustanec, kompaktna kostnina z osteoni, gobasta kostnina, rdeči in rumeni mozeg;
+- vrste kosti po obliki s po enim primerom;
+- delitev $206$ kosti na aksialni skelet ($80$) in apendikularni skelet ($126$) s številom kosti po delih;
+- vrste stikov (vezivni, hrustančni, sinovialni, kostna zrast) s primeri in dele sinovialnega sklepa;
+- oblike sinovialnih sklepov s primeri in številom osi.
+
+### Naloga 1
+
+Arheologi v grobu najdejo eno okostje in preštejejo kose. Lobanja: vseh $22$ kosti, slušnih koščic in podjezičnice ni. Hrbtenica: $24$ ločenih vretenc, križnica v $5$ še nezraščenih kosih, trtice ni. Prsni koš: vseh $25$ kosti. Apendikularni del je popoln, le da manjkajo vse kosti leve roke distalno od podlakti, obe pogačici in $5$ prstnic desnega stopala. Kost, najdeno v več delih, štejejo kot en kos, le križnico štejejo po kosih. (a) Koliko kosov so našli? (b) Koliko od $206$ kosti odraslega okostja je zastopanih v aksialnem in koliko v apendikularnem delu ter kolikšen delež je to skupaj? (c) Kaj nezraščena križnica pove o starosti in kaj bi pričakoval na koncih stegnenice?
+
+**Rešitev:**
+
+1. Aksialni del po kosteh odraslega: lobanja $22$, slušne koščice $0$, podjezičnica $0$. Hrbtenica: $24$ vretenc in križnica, ki jo štejemo kot $1$ kost, torej $24 + 1 = 25$ od $26$. Prsni koš $25$.
+2. Aksialno zastopanih: $22 + 25 + 25 = 72$ od $80$ kosti. Manjka $6 + 1 + 1 = 8$ kosti (koščice, podjezičnica, trtica).
+3. Leva roka distalno od podlakti: $8$ zapestnic, $5$ dlančnic in $14$ prstnic, torej $8 + 5 + 14 = 27$ kosti.
+4. Apendikularno manjka $27 + 2 + 5 = 34$ kosti, zastopanih je $126 - 34 = 92$.
+5. Skupaj zastopanih: $72 + 92 = 164$ kosti, delež $\frac{164}{206} \approx 0{,}796$, torej okoli $80\,\%$.
+6. Število kosov: križnica je v $5$ kosih namesto v enem, zato je kosov $164 - 1 + 5 = 168$.
+7. Starost: križnica nastane s kostno zrastjo petih vretenc. Ker ta še niso zrasla, okostje pripada otroku ali mladostniku. Na koncih stegnenice zato pričakujemo še odprti epifizni ploščici: epifizi sta od metafiz ločeni, ker je bil vmes hrustanec, ki se v grobu ne ohrani.
+8. Odgovor: našli so $168$ kosov, ki zastopajo $164$ od $206$ kosti ($72$ aksialnih in $92$ apendikularnih), to je okoli $80\,\%$ okostja. Oseba še ni končala rasti.
+
+### Naloga 2
+
+Natančno navedi, iz česa je kostna medceličnina, in utemelji, zakaj kost potrebuje obe sestavini. Nato utemelji, zakaj se kost odraslega lahko debeli in zaraste po zlomu, v dolžino pa ne raste več.
+
+**Rešitev:**
+
+1. Sestava: približno dve tretjini suhe mase kosti sta kalcijev fosfat v obliki hidroksiapatita, preostanek so večinoma kolagenska vlakna.
+2. Vloga mineralov: dajejo trdnost. Kost brez mineralov, na primer po namakanju v kisu, obdrži obliko, a se upogiba kot guma.
+3. Vloga kolagena: daje prožnost. Kost brez kolagena je krhka kot kreda in se pri udarcu zdrobi.
+4. Sklep: kost mora hkrati nositi težo in prenesti sunke, zato potrebuje trdno in prožno sestavino skupaj.
+5. Rast v dolžino: poteka v epifizni ploščici med epifizo in metafizo. Hrustanec se tam množi in se nato spreminja v kost. Po puberteti ploščica okosteni, ostane le kostna črta, rastnega hrustanca ni več.
+6. Debelitev in celjenje: kost ostane živo tkivo. Osteoblasti iz pokostnice dodajajo kostnino od zunaj in po zlomu zgradijo kostni kalus. Osteoklasti kostnino razgrajujejo in od znotraj širijo mozgovno votlino. Za to epifizna ploščica ni potrebna.
+7. Odgovor: dolžino določa rastni hrustanec, ki ga odrasel nima več; debelino in obnovo določata osteoblasti in osteoklasti, ki delujejo vse življenje.
+
+### Naloga 3
+
+Natančno navedi dele sinovialnega sklepa in utemelji, zakaj medvretenčna ploščica in šiv nista sinovialna sklepa. Nato določi skupno število osi korenskega sklepa palca in sklepa med njegovima prstnicama ter rezultat primerjaj s sklepi med tremi prstnicami kazalca.
+
+**Rešitev:**
+
+1. Sinovialni sklep ima sklepni ploskvi, pokriti s sklepnim hrustancem, sklepno votlino med njima, sklepno ovojnico okoli votline in na njeni notranji strani sinovialno membrano, ki izloča sklepno tekočino. Tekočina maže hrustanec in ga hrani.
+2. Medvretenčna ploščica je hrustančni stik: med vretencema je hrustanec, votline ni. Vsak tak stik se premakne le malo.
+3. Šiv je vezivni stik: robova lobanjskih kosti povezuje čvrsto vezivo, votline ni in gibanja skoraj ni.
+4. Merilo je torej to, kaj je med kostmi: votlina s tekočino, hrustanec ali vezivo.
+5. Palec: korenski sklep je sedlast, ima $2$ osi. Sklep med prstnicama je tečajast, ima $1$ os. Skupaj $2 + 1 = 3$ osi.
+6. Kazalec: tri prstnice imajo med seboj $2$ tečajasta sklepa, vsak z $1$ osjo, skupaj $1 + 1 = 2$ osi.
+7. Odgovor: korenski sklep palca in sklep med njegovima prstnicama imata skupaj $3$ osi, sklepa med prstnicami kazalca pa $2$. Sedlasti sklep palcu omogoča gibanje v dveh ravninah, tečajasti sklepi pa le upogib in izteg.
 
 ## Drugače: Kot zgodba
 

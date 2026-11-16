@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tabela
+  - en strnjen blok pomnilnika
+  - naslov $=$ začetek $+\; i \cdot$ velikost
+  - vstavljanje na začetek premakne vseh $n$
+- Povezan seznam
+  - vozlišče ima podatek in kazalec
+  - glava kaže na prvo, zadnje ima ∅
+  - do $k$-tega vozlišča $k$ korakov
+- Prevezovanje kazalcev
+  - na začetek: najprej novo vozlišče, nato glava
+  - brisanje: najprej preveži predhodnika, nato sprosti
+- Alokacija pomnilnika
+  - vozlišče dobi pomnilnik s kopice
+  - sprosti se ročno ali s smetarjem
+  - pazi: seznam ni varčnejši od tabele
+- Sklad
+  - LIFO, potisni in vzemi na vrhu
+  - vrh je glava seznama
+- Vrsta
+  - FIFO, dodaj zadaj, vzemi spredaj
+  - kazalca na začetek in na konec
+- Drevo
+  - koren, starš, otroci, listi
+  - višina je število povezav do najglobljega lista
+  - dvojiško drevo: vozlišče ima največ $2$ otroka

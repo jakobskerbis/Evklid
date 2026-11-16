@@ -19,13 +19,13 @@ Z isto idejo izračunaš tudi prostornino žoge za ragbi, stožca ali pokala, ki
 
 Interval razdelimo na $n$ enako širokih delov, vsak je širok $\Delta x = \frac{1}{n}$. Nad vsakim delom narišemo pravokotnik. Parabola na $[0, 1]$ narašča. Če zato višino vzamemo na levem robu dela, so vsi pravokotniki pod krivuljo: njihova skupna ploščina je **spodnja vsota**. Če jo vzamemo na desnem robu, segajo čez krivuljo: to je **zgornja vsota**. Prava ploščina je vedno nekje vmes.
 
-| $n$ | spodnja vsota | zgornja vsota | razlika |
-|---|---|---|---|
-| $4$ | $0{,}21875$ | $0{,}46875$ | $0{,}25$ |
-| $10$ | $0{,}285$ | $0{,}385$ | $0{,}1$ |
-| $100$ | $0{,}32835$ | $0{,}33835$ | $0{,}01$ |
+| $n$ | spodnja | zgornja |
+|---|---|---|
+| $4$ | $0{,}21875$ | $0{,}46875$ |
+| $10$ | $0{,}285$ | $0{,}385$ |
+| $100$ | $0{,}32835$ | $0{,}33835$ |
 
-Obe vsoti se stiskata k istemu številu, $\frac{1}{3}$. Lik pod parabolo zavzema natanko tretjino kvadrata. To je odkril že Arhimed, skoraj dva tisoč let pred iznajdbo odvoda.
+Razlika med vsotama je po vrsti $0{,}25$; $0{,}1$ in $0{,}01$. Obe vsoti se stiskata k istemu številu, $\frac{1}{3}$. Lik pod parabolo zavzema natanko tretjino kvadrata. To je odkril že Arhimed, skoraj dva tisoč let pred iznajdbo odvoda.
 
 :::premisli
 Razlika med zgornjo in spodnjo vsoto je bila $0{,}25$; $0{,}1$ in $0{,}01$. Kolikšna bo pri $n = 1000$? Zakaj se tako lepo zmanjšuje?
@@ -194,11 +194,31 @@ $\int_0^{30} \frac{x^2}{9}\,dx = \frac{x^3}{27}\Big|_0^{30} = \frac{27000}{27} =
 - (višja raven) Prostornina vrtenine okoli osi $x$: $V = \pi \int_a^b f(x)^2\,dx$.
 - Pot je integral hitrosti po času: $s = \int_{t_1}^{t_2} v(t)\,dt$.
 
+## Ponovitev
+
+**Formule**
+- $\int_a^b f(x)\,dx = F(b) - F(a)$ (na pamet)
+- $\int_b^a f\,dx = -\int_a^b f\,dx$ (na pamet)
+- $\int_a^b f\,dx + \int_b^c f\,dx = \int_a^c f\,dx$ (na pamet)
+- Med krivuljama: $\int_a^b (g - f)\,dx$, $g$ zgoraj (na pamet)
+- $V = \pi \int_a^b f(x)^2\,dx$ (priloga, višja raven)
+
+**Postopek**
+1. Poišči ničle funkcije oziroma presečišča grafov.
+2. Interval razdeli v ničlah in poišči primitivno funkcijo $F$.
+3. Na vsakem delu izračunaj $F(b) - F(a)$.
+4. Za ploščino seštej absolutne vrednosti delov.
+
+**Pazi na**
+- Integral ni ploščina, če graf prečka os: deli pod osjo štejejo z minusom.
+- Vedno zgornja minus spodnja meja; $F(0)$ ni vedno $0$, izračunaj ga.
+- Med krivuljama odštej višji graf minus nižji; pri $V$ je $f$ na kvadrat.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izračunaj $\int_0^{\pi/2} (3\sin x + 2\cos x)\,dx$.
+Izračunajte $\int_0^{\pi/2} (3\sin x + 2\cos x)\,dx$.
 
 **Rešitev:**
 
@@ -213,11 +233,11 @@ Izračunaj $\int_0^{\pi/2} (3\sin x + 2\cos x)\,dx$.
 
 Dani sta funkciji $g(x) = 4 - x^2$ in $f(x) = x + 2$.
 
-a) Izračunaj koordinate presečišč grafov funkcij $f$ in $g$. (2 točki)
+a) Izračunajte koordinate presečišč grafov funkcij $f$ in $g$. (2 točki)
 
-b) Izračunaj ploščino lika, ki ga omejujeta grafa funkcij $f$ in $g$. (3 točke)
+b) Izračunajte ploščino lika, ki ga omejujeta grafa funkcij $f$ in $g$. (3 točke)
 
-c) Izračunaj ploščino lika, ki ga omejujeta graf funkcije $g$ in os $x$. Kolikšen delež te ploščine zavzema lik iz b)? (3 točke)
+c) Izračunajte ploščino lika, ki ga omejujeta graf funkcije $g$ in os $x$. Kolikšen delež te ploščine zavzema lik iz b)? (3 točke)
 
 **Rešitev:**
 
@@ -236,13 +256,13 @@ c) Izračunaj ploščino lika, ki ga omejujeta graf funkcije $g$ in os $x$. Koli
 
 Notranjost posode ima obliko vrtenine, ki nastane, ko graf funkcije $f(x) = \frac{12}{\sqrt{x}}$ na intervalu $[4, 16]$ zavrtimo okoli osi $x$. Enota na obeh oseh je $1\,\mathrm{cm}$.
 
-a) Izračunaj polmera obeh krožnih robov posode in njeno višino. (1 točka)
+a) Izračunajte polmera obeh krožnih robov posode in njeno višino. (1 točka)
 
-b) Izračunaj prostornino posode. Rezultat zaokroži na cele kubične centimetre. (4 točke)
+b) Izračunajte prostornino posode. Rezultat zaokrožite na cele kubične centimetre. (4 točke)
 
-c) Določi število $c$, za katero ima del posode med $x = 4$ in $x = c$ natanko polovico celotne prostornine. (3 točke)
+c) Določite število $c$, za katero ima del posode med $x = 4$ in $x = c$ natanko polovico celotne prostornine. (3 točke)
 
-d) Izračunaj ploščino osnega preseka posode, to je lika med grafoma funkcij $f$ in $-f$ na intervalu $[4, 16]$. (2 točki)
+d) Izračunajte ploščino osnega preseka posode, to je lika med grafoma funkcij $f$ in $-f$ na intervalu $[4, 16]$. (2 točki)
 
 **Rešitev:**
 
@@ -325,14 +345,11 @@ Podobno računa aplikacija za kolesarjenje porabljeno energijo: moč v vatih kra
 ~ Osemkrat bi se povečala, če bi podvojil tudi dolžino telesa (vse tri mere). Tu se dolžina ne spremeni.
 > $V = \pi \int_a^b \bigl(2f(x)\bigr)^2\,dx = 4\pi \int_a^b f(x)^2\,dx$: vsaka rezina ima dvakrat večji polmer, zato štirikrat večjo ploskev.
 
-? Koliko je $\int_1^3 2x\,dx$?
-- $-8$
-~ Odšteval si v napačnem vrstnem redu, $F(1) - F(3)$. Pravilno je zgornja minus spodnja.
-- $9$
-~ To je le $F(3)$. Odšteti moraš še vrednost pri spodnji meji, $F(1) = 1$.
-+ $8$
-- $4$
-~ To je pravokotnik z višino $f(1) = 2$ in širino $2$. Funkcija pa na intervalu raste, zato je lik večji.
+? (brez računala) Koliko je $\int_1^3 2x\,dx$?
+= 8 | 0,01
+~ -8 | Odšteval si v napačnem vrstnem redu, $F(1) - F(3)$. Pravilno je zgornja minus spodnja.
+~ 9 | To je le $F(3)$. Odšteti moraš še vrednost pri spodnji meji, $F(1) = 1$.
+~ 4 | To je pravokotnik z višino $f(1) = 2$ in širino $2$. Funkcija pa na intervalu raste, zato je lik večji.
 > $F(x) = x^2$, zato $\int_1^3 2x\,dx = 9 - 1 = 8$.
 
 ? Kolikšna je ploščina lika med grafom $f(x) = x^2 - 1$ in osjo $x$ na intervalu $[0, 2]$?
@@ -345,8 +362,8 @@ Podobno računa aplikacija za kolesarjenje porabljeno energijo: moč v vatih kra
 ~ To je samo integral na $[0, 1]$, ki je negativen. Ploščina ne more biti negativna.
 > Ničla je $x = 1$. $\int_0^1 (x^2 - 1)\,dx = -\frac{2}{3}$, $\int_1^2 (x^2 - 1)\,dx = \frac{4}{3}$. Ploščina je $\frac{2}{3} + \frac{4}{3} = 2$.
 
-? Znano je $\int_0^4 f(x)\,dx = 10$ in $\int_0^1 f(x)\,dx = 3$. Koliko je $\int_4^1 f(x)\,dx$?
-= -7
+? (brez računala) Znano je $\int_0^4 f(x)\,dx = 10$ in $\int_0^1 f(x)\,dx = 3$. Koliko je $\int_4^1 f(x)\,dx$?
+= -7 | 0,01
 ~ 7 | To je $\int_1^4 f(x)\,dx$. Meji sta zamenjani, zato se spremeni predznak.
 ~ 13 | Integralov ne seštej: iz $\int_0^1 f\,dx + \int_1^4 f\,dx = \int_0^4 f\,dx$ sledi $\int_1^4 f\,dx = 10 - 3$.
 ~ -13 | Integralov ne seštej: najprej odštej $10 - 3$, nato zamenjaj predznak.

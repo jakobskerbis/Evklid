@@ -22,17 +22,17 @@ krajših strukturiranih nalog (5–8 točk, skupaj 40). Višja raven: na vsaki p
 
 ## Povzetek pokritosti
 
-Postavk (vsebin in ciljev): 513. Pokrito (»da«): 448, delno: 60, manjka: 0, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 78, delno 9, manjka 0).
+Postavk (vsebin in ciljev): 513. Pokrito (»da«): 508, delno: 0, manjka: 0, snov OŠ: 5. Od tega samo višja raven: 87 postavk (da 87, delno 0, manjka 0).
 
-Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka. Postavke z opombo »C3« so dopolnjene z novimi lekcijami ali dopolnitvami lekcij (točka C3, vsi štirje letniki: 14. 11. 2026); opomba »C4« pomeni dopolnitev ob nalogah za maturo, opomba »C3b« pa dopolnitev prej delno pokritih postavk v obstoječih lekcijah.
+Pokritost sta ocenila dva pregledovalca (Opus) z branjem lekcij (13. 11. 2026); »delno« pove, kaj manjka. Postavke z opombo »C3« so dopolnjene z novimi lekcijami ali dopolnitvami lekcij (točka C3, vsi štirje letniki: 14. 11. 2026); opomba »C4« pomeni dopolnitev ob nalogah za maturo, opomba »C3b« pa dopolnitev prej delno pokritih postavk v obstoječih lekcijah (za ekstremalne probleme s kvadratno funkcijo z novo lekcijo).
 
 ### Manjka
 
-Nobena postavka kataloga ne manjka več: zadnje so dopolnjene v točki C3 (14. 11. 2026).
+Nobena postavka kataloga ne manjka več: zadnje so dopolnjene v točki C3 (14. 11. 2026). Tudi delno pokritih postavk ni več: dopolnjene so v točki C3b (14. 11. 2026).
 
 ## Oznaka višje ravni v lekcijah
 
-Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, primera ali razdelka »Drugače« oznako »(višja raven)« (`**5. Enačbe s parametrom (višja raven).**`, `### Primer 3 (težji, višja raven)`, `## Drugače: Kot zgodba (višja raven)`). Vprašanje v »Preveri se«, alineja ali odstavek se začne z »(višja raven)«. Lekcija, ki je v celoti snov višje ravni (`MAT-SS-4/matematicna-indukcija`), ima to zapisano v prvi vrstici. Normalna porazdelitev je po katalogu 2026 za obe ravni, zato v `MAT-SS-4/statistika` nima oznake. Ustno spraševanje oznako izpusti (`server/ustno.js`, `brezOznakeRavni`).
+Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, primera ali razdelka »Drugače« oznako »(višja raven)« (`**6. Enačbe s parametrom (višja raven).**`, `### Primer 3 (težji, višja raven)`, `## Drugače: Kot zgodba (višja raven)`). Vprašanje v »Preveri se«, alineja ali odstavek se začne z »(višja raven)«. Lekcija, ki je v celoti snov višje ravni (`MAT-SS-4/matematicna-indukcija`), ima to zapisano v prvi vrstici. Normalna porazdelitev je po katalogu 2026 za obe ravni, zato v `MAT-SS-4/statistika` nima oznake. Ustno spraševanje oznako izpusti (`server/ustno.js`, `brezOznakeRavni`).
 
 ## Po sklopih
 
@@ -83,7 +83,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| Računske operacije in njihove lastnosti | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | delno – zakoni (zamenljivost, združevalnost) niso izrecno navedeni |
+| Računske operacije in njihove lastnosti | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | da – C3b (14. 11. 2026) |
 | Praštevila in sestavljena števila | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | da |
 | Matematična indukcija | **VR** | `MAT-SS-4/matematicna-indukcija` | da – cela lekcija |
 | Desetiški mestni zapis | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | OŠ – uporabljen pri merilih deljivosti (7316 = 73·100 + 16) |
@@ -98,7 +98,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | pozna pomen naravnih števil in razloge za vpeljavo celih števil ter primere njihove uporabe | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | da |
-| uporablja računske operacije v množici naravnih in celih števil in na primerih utemelji njihove lastnosti | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | delno – lastnosti operacij niso utemeljene na primerih |
+| uporablja računske operacije v množici naravnih in celih števil in na primerih utemelji njihove lastnosti | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | da – C3b (14. 11. 2026) |
 | predstavi naravna in cela števila na številski premici | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | da |
 | induktivno sklepa, posplošuje, posplošitev dokaže ali ovrže in dokazuje z matematično indukcijo | **VR** | `MAT-SS-4/matematicna-indukcija` | da – posploševanje (Primer 3) in ovržba (vprašanja) vključeni |
 | uporablja desetiški mestni zapis celega števila | OR+VR | `MAT-SS-1/naravna-in-cela-stevila` | OŠ |
@@ -115,7 +115,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| Računske operacije in njihove lastnosti | OR+VR | `MAT-SS-1/racionalna-stevila` | delno – zakoni računskih operacij niso izrecno navedeni |
+| Računske operacije in njihove lastnosti | OR+VR | `MAT-SS-1/racionalna-stevila` | da – C3b (14. 11. 2026) |
 | Desetiški zapis racionalnih števil | OR+VR | `MAT-SS-1/racionalna-stevila` | da |
 | Deleži in odstotki | OR+VR | `MAT-SS-1/racionalna-stevila`, `MAT-SS-4/obrestni-racun` | da – C3b (14. 11. 2026) |
 | Procentni račun | OR+VR | `MAT-SS-4/obrestni-racun` | da – C3b (14. 11. 2026) |
@@ -139,7 +139,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Intervali | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da |
 | Končni decimalni približki | OR+VR | `MAT-SS-1/realna-stevila-in-intervali`, `MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka` | da – C3 (14. 11. 2026) |
 | Absolutna vrednost realnega števila in njene lastnosti | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da |
-| Enačbe z absolutno vrednostjo | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | delno – pravilo \|x−c\| = r razloženo, brez rešenega primera ali naloge |
+| Enačbe z absolutno vrednostjo | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da – C3b (14. 11. 2026) |
 | Neenačbe z absolutno vrednostjo | **VR** | `MAT-SS-1/realna-stevila-in-intervali` | da – blok 5, Primer 3, oba Drugače, vprašanji |
 | Absolutna in relativna napaka | OR+VR | `MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka` | da – C3 (14. 11. 2026) |
 
@@ -147,11 +147,11 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 |---|---|---|---|
 | pozna in utemelji razloge za vpeljavo realnih števil | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da |
 | navede nekaj primerov iracionalnih števil | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da |
-| konstruira nekatere kvadratne korene kot primere iracionalnih števil z uporabo Pitagorovega izreka | OR+VR | `MAT-SS-1/realna-stevila-in-intervali`, `MAT-SS-2/koreni` | delno – le √2 kot diagonala; konstrukcije drugih korenov ni |
+| konstruira nekatere kvadratne korene kot primere iracionalnih števil z uporabo Pitagorovega izreka | OR+VR | `MAT-SS-2/koreni`, `MAT-SS-1/realna-stevila-in-intervali` | da – C3b (14. 11. 2026) |
 | interpretira številsko premico kot realno os | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da |
 | zaokrožuje decimalna števila | OR+VR | `MAT-SS-1/osnovni-geometrijski-pojmi` | OŠ – zaokroževanje le mimogrede (vprašanje o stopinjah) |
 | poveže geometrijsko in analitično predstavitev absolutne vrednosti realnih števil | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da |
-| poenostavlja izraze z absolutno vrednostjo ter reši preproste enačbe | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | delno – izrazi s spremenljivko in reševanje enačb brez primerov |
+| poenostavlja izraze z absolutno vrednostjo ter reši preproste enačbe | OR+VR | `MAT-SS-1/realna-stevila-in-intervali` | da – C3b (14. 11. 2026) |
 | reši preproste neenačbe z absolutno vrednostjo realnih števil | **VR** | `MAT-SS-1/realna-stevila-in-intervali` | da |
 | primerja pomen absolutne in relativne napake ter oceni absolutno in relativno napako vsote, razlike, produkta in kvocienta dveh podatkov | OR+VR | `MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka` | da – C3 (14. 11. 2026) |
 
@@ -174,7 +174,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | poišče povezavo med analitičnim in geometrijskim pomenom konjugiranega števila | OR+VR | `MAT-SS-2/kompleksna-stevila` | da |
 | poišče povezavo med analitičnim in geometrijskim pomenom absolutne vrednosti kompleksnega števila | OR+VR | `MAT-SS-2/kompleksna-stevila` | da |
 | izpelje in uporablja pravilo za deljenje kompleksnih števil | OR+VR | `MAT-SS-2/kompleksna-stevila` | da |
-| izračuna obratno vrednost kompleksnega števila | OR+VR | `MAT-SS-2/kompleksna-stevila` | delno – 1/z ni posebej obravnavan, le splošno deljenje |
+| izračuna obratno vrednost kompleksnega števila | OR+VR | `MAT-SS-2/kompleksna-stevila` | da – C3b (14. 11. 2026) |
 | poišče tudi kompleksne rešitve enačbe | OR+VR | `MAT-SS-2/kvadratna-enacba` | da – D < 0 in x² = −9 |
 
 
@@ -188,14 +188,14 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Računanje z ulomki | OR+VR | `MAT-SS-1/ulomljeni-izrazi` | da |
 | Enačbe in neenačbe | OR+VR | `MAT-SS-1/linearne-enacbe`, `MAT-SS-1/linearne-neenacbe` | da |
 | Linearna enačba | OR+VR | `MAT-SS-1/linearne-enacbe` | da |
-| Razcepna enačba | OR+VR | `MAT-SS-2/kvadratna-enacba`, `MAT-SS-1/razstavljanje-izrazov` | delno – le omemba »produkt je 0« in x(ax + b) = 0 |
+| Razcepna enačba | OR+VR | `MAT-SS-2/kvadratna-enacba`, `MAT-SS-1/razstavljanje-izrazov` | da – C3b (14. 11. 2026) |
 | Linearna enačba s parametrom | **VR** | `MAT-SS-1/linearne-enacbe` | da – parameter mimogrede tudi v Drugače: Na sliki, Kot zgodba, Bolj natančno |
 | Linearna neenačba | OR+VR | `MAT-SS-1/linearne-neenacbe` | da |
 | Linearna neenačba s parametrom | **VR** | `MAT-SS-1/enacbe-neenacbe-in-sistemi-s-parametrom` | da – C3 (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| primerja in razlikuje zapis in pomen izraza in enačbe ter spremenljivke in neznanke | OR+VR | `MAT-SS-1/algebrski-izrazi`, `MAT-SS-1/linearne-enacbe` | delno – izraz/enačba in spremenljivka/neznanka nista izrecno primerjana |
+| primerja in razlikuje zapis in pomen izraza in enačbe ter spremenljivke in neznanke | OR+VR | `MAT-SS-1/algebrski-izrazi`, `MAT-SS-1/linearne-enacbe` | da – C3b (14. 11. 2026) |
 | sešteva in množi algebrske izraze | OR+VR | `MAT-SS-1/algebrski-izrazi` | da |
 | uporablja in utemelji pravili za kvadrat in kub dvočlenika | OR+VR | `MAT-SS-1/algebrski-izrazi` | da |
 | s pomočjo Pascalovega trikotnika določi pravila za višje potence dvočlenika in jih tudi uporablja | OR+VR | `MAT-SS-4/binomski-izrek` | da – C3 (14. 11. 2026) |
@@ -204,8 +204,8 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | računa z algebrskimi ulomki (vse štiri računske operacije in izrazi z oklepaji) | OR+VR | `MAT-SS-1/ulomljeni-izrazi` | da |
 | uporablja pravila za tvorbo ekvivalentnih enačb in enačbe spretno rešuje | OR+VR | `MAT-SS-1/linearne-enacbe` | da |
 | prepozna in reši linearno enačbo | OR+VR | `MAT-SS-1/linearne-enacbe` | da |
-| prepozna in reši razcepne enačbe | OR+VR | `MAT-SS-2/kvadratna-enacba` | delno – ni posebne razlage ali vaj za razcepne enačbe |
-| spretno izraža neznanke iz različnih fizikalnih ali kemijskih enačb | OR+VR | `MAT-SS-1/sistemi-linearnih-enacb`, `MAT-SS-2/funkcije-in-njihove-lastnosti` | delno – izražanje iz formul le mimogrede (Fahrenheit); ni vaj s fizikalnimi formulami |
+| prepozna in reši razcepne enačbe | OR+VR | `MAT-SS-2/kvadratna-enacba` | da – C3b (14. 11. 2026) |
+| spretno izraža neznanke iz različnih fizikalnih ali kemijskih enačb | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | da – C3b (14. 11. 2026) |
 | obravnava linearne enačbe s parametrom | **VR** | `MAT-SS-1/linearne-enacbe` | da |
 | uporablja pravila za tvorbo ekvivalentnih neenačb ter korake reševanja neenačb utemelji | OR+VR | `MAT-SS-1/linearne-neenacbe` | da |
 | prepozna in reši linearno neenačbo | OR+VR | `MAT-SS-1/linearne-neenacbe` | da |
@@ -228,12 +228,12 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | utemelji in uporablja pravila za računanje s potencami s celim eksponentom in jih primerja s pravili za potence z naravnim eksponentom | OR+VR | `MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti` | da |
 | razloži pomen zapisov a⁻¹ in a⁻ⁿ | OR+VR | `MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti` | da |
 | uporablja pravila za računanje s kvadratnimi koreni | OR+VR | `MAT-SS-2/koreni` | da |
-| reši kvadratno enačbo x² = a, a > 0, z razstavljanjem in s korenjenjem | OR+VR | `MAT-SS-2/kvadratna-enacba` | delno – korenjenje da; reševanje z razstavljanjem (razlika kvadratov) ni prikazano |
+| reši kvadratno enačbo x² = a, a > 0, z razstavljanjem in s korenjenjem | OR+VR | `MAT-SS-2/kvadratna-enacba` | da – C3b (14. 11. 2026) |
 | primerja in utemeljuje reševanje preprostih enačb xⁿ = a (a ∈ ℝ, n ∈ ℕ) v množici realnih števil s korenjenjem in z razstavljanjem | OR+VR | `MAT-SS-2/koreni`, `MAT-SS-2/iracionalne-enacbe` | da – C3 (14. 11. 2026) |
 | razloži in uporablja zvezo √(x²) = \|x\| | OR+VR | `MAT-SS-2/koreni` | da |
-| računa kubične korene realnih števil natančno (na pamet) in z računalom | OR+VR | `MAT-SS-2/koreni` | delno – na pamet da; računanje z računalom ni prikazano |
+| računa kubične korene realnih števil natančno (na pamet) in z računalom | OR+VR | `MAT-SS-2/koreni` | da – C3b (14. 11. 2026) |
 | razlikuje med določilnimi pogoji za obstoj n-tega korena realnega števila (glede na korenski eksponent in korenjenec) | OR+VR | `MAT-SS-2/koreni` | da |
-| spretno uporablja računalo za računanje n-tih korenov | OR+VR | `MAT-SS-2/koreni` | delno – uporaba računala za n-te korene ni prikazana |
+| spretno uporablja računalo za računanje n-tih korenov | OR+VR | `MAT-SS-2/koreni` | da – C3b (14. 11. 2026) |
 | preoblikuje zapis n-tega korena v zapis potence z racionalnim eksponentom | OR+VR | `MAT-SS-2/potence-z-racionalnimi-eksponenti` | da |
 | povezuje in primerja reševanje nalog z n-timi koreni z reševanjem s potencami z racionalnim eksponentom | OR+VR | `MAT-SS-2/potence-z-racionalnimi-eksponenti` | da |
 | prepozna iracionalno enačbo ter reši in utemelji korake pri reševanju iracionalnih enačb in interpretira rezultate | **VR** | `MAT-SS-2/iracionalne-enacbe` | da – C3 (14. 11. 2026) |
@@ -246,14 +246,14 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Točke, premice in krožnice v ravnini | OR+VR | `MAT-SS-1/osnovni-geometrijski-pojmi`, `MAT-SS-1/stirikotniki-in-krog` | da |
 | Razdalja, daljica, nosilka daljice, simetrala, poltrak, kot | OR+VR | `MAT-SS-1/osnovni-geometrijski-pojmi` | da – izraz »nosilka« ni uporabljen |
 | Vrste kotov in odnosi med koti | OR+VR | `MAT-SS-1/osnovni-geometrijski-pojmi` | da |
-| Trikotnik, večkotnik | OR+VR | `MAT-SS-1/trikotnik` | delno – večkotniki (vsota kotov, diagonale n-kotnika) manjkajo |
+| Trikotnik, večkotnik | OR+VR | `MAT-SS-1/trikotnik` | da – C3b (14. 11. 2026) |
 | Znamenite točke trikotnika | OR+VR | `MAT-SS-1/trikotnik` | da |
 | Togi premiki in skladnost | OR+VR | `MAT-SS-1/trikotnik`, `MAT-SS-1/togi-premiki` | da – C3 (14. 11. 2026) |
 | Vzporedni premik, zrcaljenje, vrtež, orientacija trikotnika | OR+VR | `MAT-SS-1/togi-premiki` | da – C3 (14. 11. 2026) |
-| Pravokotna projekcija | OR+VR | `MAT-SS-1/osnovni-geometrijski-pojmi`, `MAT-SS-3/skalarni-produkt` | delno – le razdalja točke od premice in projekcija vektorja |
+| Pravokotna projekcija | OR+VR | `MAT-SS-1/osnovni-geometrijski-pojmi`, `MAT-SS-3/skalarni-produkt`, `MAT-SS-3/premice-in-ravnine-v-prostoru` | da – C3b (14. 11. 2026) |
 | Središčni in obodni koti | OR+VR | `MAT-SS-1/stirikotniki-in-krog` | da |
 | Kot v polkrogu | OR+VR | `MAT-SS-1/trikotnik`, `MAT-SS-1/stirikotniki-in-krog` | da – Talesov izrek |
-| Središčni razteg, podobnost | OR+VR | `MAT-SS-2/podobnost` | delno – podobnost da; središčni razteg manjka |
+| Središčni razteg, podobnost | OR+VR | `MAT-SS-2/podobnost` | da – C3b (14. 11. 2026) |
 | Izreki v pravokotnem trikotniku | OR+VR | `MAT-SS-2/podobnost`, `MAT-SS-1/trikotnik` | da – Pitagorov, Evklidov, višinski izrek |
 | Paralelogram, romb, trapez | OR+VR | `MAT-SS-1/stirikotniki-in-krog` | da |
 | Načrtovalne naloge | OR+VR | `MAT-SS-1/nacrtovalne-naloge` | da – C3 (14. 11. 2026) |
@@ -275,7 +275,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | (načrta geometrijske like) tudi s programi za dinamično geometrijo | **VR** | `MAT-SS-1/nacrtovalne-naloge` | da – C3 (14. 11. 2026) |
 | usvoji in uporablja zveze med stranicami in koti v poljubnem trikotniku, pri tem uporablja kosinusni in sinusni izrek | OR+VR | `MAT-SS-3/sinusni-in-kosinusni-izrek` | da |
 | preiskuje geometrijske probleme z uporabo IKT | OR+VR | `MAT-SS-1/trikotnik`, `MAT-SS-1/stirikotniki-in-krog`, `MAT-SS-1/osnovni-geometrijski-pojmi` | da – simulacije za raziskovanje (značilne točke, obodni kot) |
-| razvije predstave o odnosih med točkami, premicami in ravninami v prostoru | OR+VR | `MAT-SS-3/povrsina-in-prostornina-teles`, `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | delno – odnosi premic in ravnin v prostoru niso obravnavani |
+| razvije predstave o odnosih med točkami, premicami in ravninami v prostoru | OR+VR | `MAT-SS-3/premice-in-ravnine-v-prostoru` | da – C3b (14. 11. 2026) |
 
 
 ### 4.7 Geometrijski liki in telesa
@@ -286,7 +286,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Polmer trikotniku včrtanega in očrtanega kroga | OR+VR | `MAT-SS-1/trikotnik`, `MAT-SS-3/sinusni-in-kosinusni-izrek` | da – r = S/s, 2R iz sinusnega izreka |
 | Geometrijska telesa: prizma, valj, piramida, stožec, krogla | OR+VR | `MAT-SS-3/povrsina-in-prostornina-teles` | da |
 | Površina in prostornina pokončne prizme, valja, piramide, stožca in krogle | OR+VR | `MAT-SS-3/povrsina-in-prostornina-teles` | da |
-| Cavalierijevo pravilo | **VR** | `MAT-SS-3/povrsina-in-prostornina-teles` | delno – le v Drugače: Bolj natančno; brez naloge |
+| Cavalierijevo pravilo | **VR** | `MAT-SS-3/posevna-telesa-in-vrtenine`, `MAT-SS-3/povrsina-in-prostornina-teles` | da – C3b (14. 11. 2026) |
 | Poševna telesa | **VR** | `MAT-SS-3/posevna-telesa-in-vrtenine` | da – C3 (14. 11. 2026) |
 | Vrtenine | **VR** | `MAT-SS-4/doloceni-integral`, `MAT-SS-3/posevna-telesa-in-vrtenine` | da – C3 (14. 11. 2026) |
 | Geometrijski matematični problemi | OR+VR | `MAT-SS-3/povrsina-in-prostornina-teles` | da |
@@ -298,7 +298,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | kritično oceni in presodi dobljene vrednosti ter pazi na merske enote | OR+VR | `MAT-SS-3/povrsina-in-prostornina-teles` | da |
 | uporabi usvojeno znanje ravninske geometrije ter rešuje probleme v povezavi s polmerom trikotniku včrtanega in očrtanega kroga | OR+VR | `MAT-SS-1/trikotnik` | da |
 | opiše geometrijsko telo | OR+VR | `MAT-SS-3/povrsina-in-prostornina-teles` | da |
-| uporabi usvojeno znanje kotnih funkcij in geometrije na modelih geometrijskih teles | OR+VR | `MAT-SS-3/povrsina-in-prostornina-teles` | delno – v telesih le Pitagorov izrek, kotnih funkcij ni |
+| uporabi usvojeno znanje kotnih funkcij in geometrije na modelih geometrijskih teles | OR+VR | `MAT-SS-3/povrsina-in-prostornina-teles` | da – C3b (14. 11. 2026) |
 | rešuje geometrijske probleme v povezavi s površino in prostornino teles ter kritično oceni in presodi dobljene rezultate ter merske enote | OR+VR | `MAT-SS-3/povrsina-in-prostornina-teles` | da |
 | rešuje geometrijske probleme s poševnimi telesi | **VR** | `MAT-SS-3/posevna-telesa-in-vrtenine` | da – C3 (14. 11. 2026) |
 | določi os vrtenja in analizira nastalo vrtenino glede na izbiro osi | **VR** | `MAT-SS-3/posevna-telesa-in-vrtenine` | da – C3 (14. 11. 2026) |
@@ -315,14 +315,14 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Opredelitev vektorjev | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | da |
 | Seštevanje, množenje s skalarjem (sile) – grafična interpretacija | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | da |
 | Kolinearnost, koplanarnost – grafična interpretacija | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru`, `MAT-SS-3/vektorji-v-geometriji` | da – C3 (14. 11. 2026) |
-| Razvoj vektorjev po bazi (razstavljanje sile na komponente), pravokotna projekcija – grafična interpretacija | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru`, `MAT-SS-3/skalarni-produkt` | delno – grafično razstavljanje sile na dani smeri ni prikazano |
+| Razvoj vektorjev po bazi (razstavljanje sile na komponente), pravokotna projekcija – grafična interpretacija | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru`, `MAT-SS-3/skalarni-produkt` | da – C3b (14. 11. 2026) |
 | Linearna kombinacija vektorjev | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | da |
 | Linearna neodvisnost vektorjev | **VR** | `MAT-SS-3/vektorji-v-geometriji` | da – C3 (14. 11. 2026) |
-| Baza v ravnini in prostoru | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | delno – le standardna baza i, j, k v Bolj natančno |
-| Pravokotni koordinatni sistem v ravnini in prostoru; krajevni vektor točke | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | delno – krajevni vektor točke ni vpeljan |
+| Baza v ravnini in prostoru | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | da – C3b (14. 11. 2026) |
+| Pravokotni koordinatni sistem v ravnini in prostoru; krajevni vektor točke | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | da – C3b (14. 11. 2026) |
 | Zapis vektorja s koordinatami (komponentami) | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | da |
 | Računske operacije z vektorji, zapisanimi s koordinatami (komponentami) | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | da |
-| Pravokotna projekcija vektorja na drug vektor | OR+VR | `MAT-SS-3/skalarni-produkt` | delno – le »senca« \|b\|cosφ; brez računa projekcije v primeru |
+| Pravokotna projekcija vektorja na drug vektor | OR+VR | `MAT-SS-3/skalarni-produkt` | da – C3b (14. 11. 2026) |
 | Skalarni produkt, kot med vektorjema in dolžina vektorja | OR+VR | `MAT-SS-3/skalarni-produkt`, `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | da |
 | Uporaba vektorskega računa v trikotniku in paralelogramu, razmerja, težišče | **VR** | `MAT-SS-3/vektorji-v-geometriji` | da – C3 (14. 11. 2026) |
 | Povezava med skalarnim produktom in kosinusnim izrekom | OR+VR | `MAT-SS-3/skalarni-produkt` | da – C3 (14. 11. 2026) |
@@ -334,23 +334,23 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | presodi kolinearnost in koplanarnost vektorjev | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru`, `MAT-SS-3/vektorji-v-geometriji` | da – C3 (14. 11. 2026) |
 | presodi linearno neodvisnost vektorjev | **VR** | `MAT-SS-3/vektorji-v-geometriji` | da – C3 (14. 11. 2026) |
 | računa z vektorji, zapisanimi s koordinatami (komponentami) | OR+VR | `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | da |
-| izračuna kot med vektorjema, dolžino vektorja in pravokotno projekcijo vektorja | OR+VR | `MAT-SS-3/skalarni-produkt` | delno – kot in dolžina da; projekcija brez naloge |
+| izračuna kot med vektorjema, dolžino vektorja in pravokotno projekcijo vektorja | OR+VR | `MAT-SS-3/skalarni-produkt` | da – C3b (14. 11. 2026) |
 | utemelji pravokotnost in vzporednost vektorjev | OR+VR | `MAT-SS-3/skalarni-produkt`, `MAT-SS-3/vektorji-v-ravnini-in-prostoru` | da |
-| razume pravokotnost v prostoru | OR+VR | `MAT-SS-3/skalarni-produkt` | delno – le skalarni produkt v 3D; pravokotnost premic/ravnin ne |
+| razume pravokotnost v prostoru | OR+VR | `MAT-SS-3/skalarni-produkt`, `MAT-SS-3/premice-in-ravnine-v-prostoru` | da – C3b (14. 11. 2026) |
 
 
 ### 4.9 Pravokotni koordinatni sistem v ravnini
 
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| Množice točk v ravnini | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | delno – le kvadranti; območja ob pogojih (x ≥ a, \|y\| < b) manjkajo |
+| Množice točk v ravnini | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da – C3b (14. 11. 2026) |
 | Razdalja med točkama v koordinatni ravnini | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da |
 | Ploščina trikotnika | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | uporablja pravokotni koordinatni sistem v ravnini | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da |
-| odčita in nariše množico točk v koordinatni ravnini ob danih pogojih | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | delno – risanje množic točk ob pogojih manjka |
+| odčita in nariše množico točk v koordinatni ravnini ob danih pogojih | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da – C3b (14. 11. 2026) |
 | uporablja zvezo med urejenimi pari števil in točkami na ravnini | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da |
 | izračuna razdaljo med točkama, izračuna ploščino trikotnika ter uporabi formuli v matematičnih problemih | OR+VR | `MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini` | da |
 
@@ -360,7 +360,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | Definicija funkcije | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | da |
-| Definicija realne funkcije in lastnosti realnih funkcij realne spremenljivke (injektivnost, surjektivnost, bijektivnost, naraščanje, padanje, sodost, lihost …) | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | delno – surjektivnost in bijektivnost manjkata |
+| Definicija realne funkcije in lastnosti realnih funkcij realne spremenljivke (injektivnost, surjektivnost, bijektivnost, naraščanje, padanje, sodost, lihost …) | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | da – C3b (14. 11. 2026) |
 | Sestavljene funkcije (kompozitum) funkcij | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | da |
 | Inverzna funkcija | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | da |
 | Transformacije v ravnini | OR+VR | `MAT-SS-2/transformacije-grafov` | da |
@@ -373,7 +373,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | usvoji in uporablja pojem funkcije | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | da |
-| usvoji in uporablja pojme: definicijsko območje in zaloga vrednosti funkcije, injektivna, surjektivna, bijektivna funkcija | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | delno – surjektivnost in bijektivnost manjkata |
+| usvoji in uporablja pojme: definicijsko območje in zaloga vrednosti funkcije, injektivna, surjektivna, bijektivna funkcija | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | da – C3b (14. 11. 2026) |
 | nariše, analizira graf funkcije s pomočjo vzporednega premika in raztega | OR+VR | `MAT-SS-2/transformacije-grafov` | da |
 | uporablja vzporedni premik, zrcaljenja in raztege pri reševanju problemskih nalog | OR+VR | `MAT-SS-2/transformacije-grafov` | da |
 | ugotovi obstoj inverzne funkcije na preprostih primerih, zapiše njen predpis in nariše graf inverzne funkcije k dani funkciji | OR+VR | `MAT-SS-2/funkcije-in-njihove-lastnosti` | da |
@@ -430,9 +430,9 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| prepozna potenčno odvisnost in jo razlikuje od drugih odvisnosti (premosorazmernost …) | OR+VR | `MAT-SS-2/potencna-in-korenska-funkcija` | delno – ni primerjave s premim sorazmerjem; le kviz s tabelo vrednosti |
+| prepozna potenčno odvisnost in jo razlikuje od drugih odvisnosti (premosorazmernost …) | OR+VR | `MAT-SS-2/potencna-in-korenska-funkcija` | da – C3b (14. 11. 2026) |
 | nariše in analizira graf potenčne funkcije s pomočjo transformacij | OR+VR | `MAT-SS-2/potencna-in-korenska-funkcija`, `MAT-SS-2/transformacije-grafov` | da |
-| zapiše in modelira realistične pojave s potenčno funkcijo in jih kritično izbere | OR+VR | `MAT-SS-2/potencna-in-korenska-funkcija` | delno – le podani geometrijski modeli; kritične izbire modela ni |
+| zapiše in modelira realistične pojave s potenčno funkcijo in jih kritično izbere | OR+VR | `MAT-SS-2/potencna-in-korenska-funkcija` | da – C3b (14. 11. 2026) |
 
 
 ### 4.10.3 Korenska funkcija
@@ -452,7 +452,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 |---|---|---|---|
 | Definicija, lastnosti in graf kvadratne funkcije | OR+VR | `MAT-SS-2/kvadratna-funkcija` | da |
 | Načini podajanja predpisa kvadratne funkcije | OR+VR | `MAT-SS-2/kvadratna-funkcija` | da |
-| Uporaba kvadratne funkcije – ekstremalni problemi | **VR** | `MAT-SS-2/kvadratna-funkcija`, `MAT-SS-4/uporaba-odvoda` | delno – le teme v Primerih 2–3; sestavljanje funkcije šele v uporaba-odvoda Primer 3 |
+| Uporaba kvadratne funkcije – ekstremalni problemi | **VR** | `MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo`, `MAT-SS-2/kvadratna-funkcija`, `MAT-SS-4/uporaba-odvoda` | da – C3b (14. 11. 2026) |
 | Viètovi pravili | OR+VR | `MAT-SS-2/kvadratna-enacba` | da |
 | Kvadratna enačba | OR+VR | `MAT-SS-2/kvadratna-enacba` | da |
 | Presečišče parabole in premice | OR+VR | `MAT-SS-2/kvadratna-funkcija`, `MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb` | da – C3 (14. 11. 2026) |
@@ -477,7 +477,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 |---|---|---|---|
 | Definicija, lastnosti in graf eksponentne funkcije | OR+VR | `MAT-SS-2/eksponentna-funkcija` | da |
 | Eksponentne enačbe | OR+VR | `MAT-SS-2/eksponentne-enacbe` | da |
-| Grafično reševanje eksponentne neenačbe | **VR** | `MAT-SS-2/eksponentna-funkcija`, `MAT-SS-2/eksponentne-enacbe` | delno – le »kje je g(x) < 0« v Primeru 4; grafična metoda ni razložena |
+| Grafično reševanje eksponentne neenačbe | **VR** | `MAT-SS-2/eksponentna-funkcija`, `MAT-SS-2/eksponentne-enacbe` | da – C3b (14. 11. 2026) |
 | Eksponentna rast | OR+VR | `MAT-SS-2/eksponentna-funkcija` | da |
 | Modeliranje realističnih pojavov z eksponentno funkcijo | OR+VR | `MAT-SS-2/eksponentna-funkcija`, `MAT-SS-2/eksponentne-enacbe`, `MAT-SS-2/logaritem` | da |
 
@@ -487,7 +487,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | pozna in uporablja lastnosti eksponentne funkcije | OR+VR | `MAT-SS-2/eksponentna-funkcija` | da |
 | nariše graf eksponentne funkcije | OR+VR | `MAT-SS-2/eksponentna-funkcija` | da |
 | uporabi vzporedne premike in raztege grafa eksponentne funkcije | OR+VR | `MAT-SS-2/eksponentna-funkcija`, `MAT-SS-2/transformacije-grafov` | da |
-| primerja potenčno in eksponentno rast | OR+VR | `MAT-SS-2/eksponentna-funkcija` | delno – le v Pogostih napakah (2^x proti x²) in kvizu |
+| primerja potenčno in eksponentno rast | OR+VR | `MAT-SS-2/eksponentna-funkcija` | da – C3b (14. 11. 2026) |
 | prepozna in reši eksponentne enačbe | OR+VR | `MAT-SS-2/eksponentne-enacbe` | da |
 | zapiše in modelira primere iz vsakdanjega življenja z eksponentno funkcijo | OR+VR | `MAT-SS-2/eksponentna-funkcija`, `MAT-SS-2/eksponentne-enacbe` | da |
 
@@ -501,20 +501,20 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Desetiški in naravni logaritem | OR+VR | `MAT-SS-2/logaritem` | da |
 | Prehod k novi osnovi | **VR** | `MAT-SS-2/logaritem` | da – blok 6 (višja raven); Primer 3 b) ga uporablja |
 | Logaritemske enačbe | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe` | da |
-| Branje logaritemske skale | **VR** | `MAT-SS-2/logaritem` | delno – pH in decibeli; branje logaritemske skale na osi grafa manjka |
-| Modeliranje primerov iz vsakdanjega življenja z logaritemsko funkcijo | **VR** | `MAT-SS-2/logaritem`, `MAT-SS-2/logaritemska-funkcija-in-enacbe` | delno – modeli podani (uglaševalnik, pH, dB); sestavljanja modela ni |
+| Branje logaritemske skale | **VR** | `MAT-SS-2/logaritem` | da – C3b (14. 11. 2026) |
+| Modeliranje primerov iz vsakdanjega življenja z logaritemsko funkcijo | **VR** | `MAT-SS-2/logaritem`, `MAT-SS-2/logaritemska-funkcija-in-enacbe` | da – C3b (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | pozna in uporablja lastnosti logaritemske funkcije | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe` | da |
 | nariše graf logaritemske funkcije | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe` | da |
 | uporablja zvezo med eksponentno in logaritemsko funkcijo | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe`, `MAT-SS-2/logaritem` | da |
-| uporabi vzporedne premike in raztege grafa logaritemske funkcije | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe`, `MAT-SS-2/transformacije-grafov` | delno – le premiki; raztegi logaritemske funkcije niso obravnavani |
+| uporabi vzporedne premike in raztege grafa logaritemske funkcije | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe`, `MAT-SS-2/transformacije-grafov` | da – C3b (14. 11. 2026) |
 | uporablja pravila za računanje z logaritmi | OR+VR | `MAT-SS-2/logaritem` | da |
-| spozna število e in naravni logaritem | OR+VR | `MAT-SS-2/eksponentna-funkcija`, `MAT-SS-2/logaritem` | delno – e in ln le definirana; ni izvora števila e ne vaj |
+| spozna število e in naravni logaritem | OR+VR | `MAT-SS-2/eksponentna-funkcija`, `MAT-SS-2/logaritem` | da – C3b (14. 11. 2026) |
 | prepozna in reši logaritemske enačbe | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe` | da |
-| primerja eksponentno in logaritemsko rast | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe` | delno – le omemba počasnega naraščanja; neposredne primerjave z eksponentno ni |
-| zapiše in modelira primere iz vsakdanjega življenja z logaritemsko funkcijo | **VR** | `MAT-SS-2/logaritem`, `MAT-SS-2/logaritemska-funkcija-in-enacbe` | delno – modeli podani; sestavljanja logaritemskega modela ni |
+| primerja eksponentno in logaritemsko rast | OR+VR | `MAT-SS-2/logaritemska-funkcija-in-enacbe` | da – C3b (14. 11. 2026) |
+| zapiše in modelira primere iz vsakdanjega življenja z logaritemsko funkcijo | **VR** | `MAT-SS-2/logaritem`, `MAT-SS-2/logaritemska-funkcija-in-enacbe` | da – C3b (14. 11. 2026) |
 
 
 ### 4.10.7 Polinomska funkcija
@@ -525,17 +525,17 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Računske operacije s polinomi | OR+VR | `MAT-SS-1/algebrski-izrazi`, `MAT-SS-3/polinomi` | da – seštevanje, množenje v algebrski-izrazi; deljenje v polinomi |
 | Osnovni izrek o deljenju polinomov | OR+VR | `MAT-SS-3/polinomi` | da |
 | Ničle polinomske funkcije | OR+VR | `MAT-SS-3/polinomi`, `MAT-SS-3/graf-polinoma` | da |
-| Osnovni izrek algebre in posledice | OR+VR | `MAT-SS-3/polinomi` | delno – le »največ n ničel« v Bolj natančno; osnovni izrek algebre ni naveden |
+| Osnovni izrek algebre in posledice | OR+VR | `MAT-SS-3/polinomi` | da – C3b (14. 11. 2026) |
 | Hornerjev algoritem | OR+VR | `MAT-SS-3/polinomi` | da |
 | Analiza grafa polinomske funkcije | OR+VR | `MAT-SS-3/graf-polinoma` | da |
 | Polinomske enačbe | OR+VR | `MAT-SS-3/polinomi` | da |
 | Polinomske neenačbe | OR+VR | `MAT-SS-3/graf-polinoma` | da |
 | Metoda bisekcije | **VR** | `MAT-SS-4/zvezne-funkcije-in-bisekcija` | da – C3 (14. 11. 2026) |
-| Modeliranje realističnih pojavov s polinomi | **VR** | `MAT-SS-3/graf-polinoma`, `MAT-SS-3/polinomi` | delno – modeli podani (temperatura, jezero, sonda); sestavljanje modela manjka |
+| Modeliranje realističnih pojavov s polinomi | **VR** | `MAT-SS-3/graf-polinoma`, `MAT-SS-3/polinomi` | da – C3b (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| linearno in kvadratno funkcijo prepozna kot posebna primera polinomske funkcije | OR+VR | `MAT-SS-3/polinomi` | delno – ni izrecne povezave z linearno in kvadratno funkcijo |
+| linearno in kvadratno funkcijo prepozna kot posebna primera polinomske funkcije | OR+VR | `MAT-SS-3/polinomi` | da – C3b (14. 11. 2026) |
 | računa s polinomi | OR+VR | `MAT-SS-1/algebrski-izrazi`, `MAT-SS-3/polinomi` | da |
 | uporablja osnovni izrek o deljenju polinomov | OR+VR | `MAT-SS-3/polinomi` | da |
 | uporablja izrek o deljenju polinoma z linearnim polinomom | OR+VR | `MAT-SS-3/polinomi` | da |
@@ -552,14 +552,14 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 |---|---|---|---|
 | Definicija, lastnosti in graf racionalne funkcije | OR+VR | `MAT-SS-3/racionalne-funkcije` | da |
 | Ničle, poli in asimptote | OR+VR | `MAT-SS-3/racionalne-funkcije` | da |
-| Racionalne enačbe | OR+VR | `MAT-SS-3/racionalne-funkcije` | delno – le Primer 3 in kviz; postopek reševanja ni razložen |
+| Racionalne enačbe | OR+VR | `MAT-SS-3/racionalne-funkcije` | da – C3b (14. 11. 2026) |
 | Racionalne neenačbe | **VR** | `MAT-SS-3/racionalne-neenacbe` | da – C3 (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
 | pozna in uporablja lastnosti racionalnih funkcij | OR+VR | `MAT-SS-3/racionalne-funkcije` | da |
 | nariše in interpretira graf racionalne funkcije | OR+VR | `MAT-SS-3/racionalne-funkcije` | da |
-| reši racionalne enačbe | OR+VR | `MAT-SS-3/racionalne-funkcije` | delno – le Primer 3 in kviz; postopek reševanja ni razložen |
+| reši racionalne enačbe | OR+VR | `MAT-SS-3/racionalne-funkcije` | da – C3b (14. 11. 2026) |
 | reši racionalne neenačbe | **VR** | `MAT-SS-3/racionalne-neenacbe` | da – C3 (14. 11. 2026) |
 
 
@@ -574,7 +574,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Adicijski izreki | OR+VR | `MAT-SS-3/adicijski-izreki` | da |
 | Problemske naloge | OR+VR | `MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku`, `MAT-SS-3/sinusni-in-kosinusni-izrek`, `MAT-SS-3/adicijski-izreki` | da |
 | Faktorizacija in razčlenitev produkta | **VR** | `MAT-SS-3/adicijski-izreki` | da – C3 (14. 11. 2026) |
-| Računanje vrednosti krožnih funkcij | OR+VR | `MAT-SS-3/trigonometrijske-enacbe` | delno – definiran le arcsin; arccos in arctan le uporabljena |
+| Računanje vrednosti krožnih funkcij | OR+VR | `MAT-SS-3/trigonometrijske-enacbe`, `MAT-SS-3/krozne-funkcije` | da – C3b (14. 11. 2026) |
 | Grafi in lastnosti krožnih funkcij | **VR** | `MAT-SS-3/krozne-funkcije` | da – C3 (14. 11. 2026) |
 | Trigonometrijske enačbe | OR+VR | `MAT-SS-3/trigonometrijske-enacbe` | da |
 | Kotne funkcije v tehniki in naravoslovju | **VR** | `MAT-SS-3/grafi-kotnih-funkcij`, `MAT-SS-3/trigonometrijske-enacbe` | da – dolžina dneva, izmenična napetost; mešano z OR, brez oznake |
@@ -595,7 +595,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | uporablja kotne funkcije dvojnih kotov pri trigonometrijskih enačbah in problemskih nalogah | OR+VR | `MAT-SS-3/trigonometrijske-enacbe`, `MAT-SS-3/adicijski-izreki` | da |
 | uporablja kotne funkcije polovičnih kotov pri trigonometrijskih enačbah in problemskih nalogah | **VR** | `MAT-SS-3/trigonometrijske-enacbe` | da – C3 (14. 11. 2026) |
 | faktorizira izraze in jih zna uporabiti pri enačbah | **VR** | `MAT-SS-3/trigonometrijske-enacbe` | da – C3 (14. 11. 2026) |
-| računa vrednosti krožnih funkcij | OR+VR | `MAT-SS-3/trigonometrijske-enacbe`, `MAT-SS-3/skalarni-produkt` | delno – arkus le prek kalkulatorja; arccos, arctan niso definirani |
+| računa vrednosti krožnih funkcij | OR+VR | `MAT-SS-3/trigonometrijske-enacbe`, `MAT-SS-3/krozne-funkcije`, `MAT-SS-3/skalarni-produkt` | da – C3b (14. 11. 2026) |
 | skicira graf krožne funkcije | **VR** | `MAT-SS-3/krozne-funkcije` | da – C3 (14. 11. 2026) |
 | reši trigonometrijsko enačbo | OR+VR | `MAT-SS-3/trigonometrijske-enacbe` | da |
 | interpretira in analizira analitične rešitve glede na dani problem | OR+VR | `MAT-SS-3/trigonometrijske-enacbe` | da |
@@ -607,7 +607,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| Algebrski zapis krivulj II. reda | OR+VR | `MAT-SS-3/kroznica`, `MAT-SS-3/elipsa-hiperbola-parabola` | delno – splošna enačba 2. stopnje ni obravnavana; le splošna oblika krožnice |
+| Algebrski zapis krivulj II. reda | OR+VR | `MAT-SS-3/kroznica`, `MAT-SS-3/elipsa-hiperbola-parabola` | da – C3b (14. 11. 2026) |
 | Krožnica v središčni in premaknjeni legi | OR+VR | `MAT-SS-3/kroznica` | da |
 | Elipsa v središčni in premaknjeni legi | OR+VR | `MAT-SS-3/elipsa-hiperbola-parabola`, `MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente` | da – C3 (14. 11. 2026) |
 | Hiperbola v središčni legi | OR+VR | `MAT-SS-3/elipsa-hiperbola-parabola` | da |
@@ -623,13 +623,13 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | izpelje enačbe elipse iz enačbe krožnice z raztegom vzdolž izbrane osi | **VR** | `MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente` | da – C3 (14. 11. 2026) |
 | analizira enačbo in grafično predstavi krožnice in elipse v središčni in v premaknjeni legi | OR+VR | `MAT-SS-3/kroznica`, `MAT-SS-3/elipsa-hiperbola-parabola`, `MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente` | da – C3 (14. 11. 2026) |
 | analizira enačbo in grafično predstavi hiperbole in parabole v temenski legi | OR+VR | `MAT-SS-3/elipsa-hiperbola-parabola` | da |
-| analizira različne oblike enačbe parabole | OR+VR | `MAT-SS-3/elipsa-hiperbola-parabola` | delno – le y² = 2px in x² = 2py; druge smeri odprtosti manjkajo |
-| konstruira stožnice | **VR** | `MAT-SS-3/elipsa-hiperbola-parabola` | delno – le elipsa z vrvico; konstrukcije hiperbole in parabole manjkajo |
-| nariše stožnico tudi z uporabo primernega računalniškega programa | **VR** | `MAT-SS-3/elipsa-hiperbola-parabola` | delno – simulacija le za opazovanje vsote razdalj, ne za risanje stožnic |
+| analizira različne oblike enačbe parabole | OR+VR | `MAT-SS-3/elipsa-hiperbola-parabola` | da – C3b (14. 11. 2026) |
+| konstruira stožnice | **VR** | `MAT-SS-3/elipsa-hiperbola-parabola` | da – C3b (14. 11. 2026) |
+| nariše stožnico tudi z uporabo primernega računalniškega programa | **VR** | `MAT-SS-3/elipsa-hiperbola-parabola` | da – C3b (14. 11. 2026) |
 | analizira grafično predstavitev hiperbole in parabole v premaknjeni legi | **VR** | `MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente` | da – C3 (14. 11. 2026) |
 | analizira enačbo hiperbole in parabole v premaknjeni legi | **VR** | `MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente` | da – C3 (14. 11. 2026) |
 | analitično in grafično obravnava tangento stožnice | **VR** | `MAT-SS-3/kroznica`, `MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente` | da – C3 (14. 11. 2026) |
-| analitično in grafično določi presečišča stožnice s premico in določi presečišča stožnic v središčni legi | OR+VR | `MAT-SS-3/kroznica` | delno – le premica–krožnica; druge stožnice s premico in med sabo manjkajo |
+| analitično in grafično določi presečišča stožnice s premico in določi presečišča stožnic v središčni legi | OR+VR | `MAT-SS-3/kroznica`, `MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente` | da – C3b (14. 11. 2026) |
 | utemelji smiselnost rezultatov pri analitični obravnavi presečišč | OR+VR | `MAT-SS-3/kroznica` | da |
 | rešuje problemske naloge (stožnice) | **VR** | `MAT-SS-3/elipsa-hiperbola-parabola`, `MAT-SS-3/kroznica` | da – Primera 3, 4 (ogledalo, antena); mešano z OR, brez oznake |
 
@@ -766,7 +766,7 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 | Pogojna verjetnost | **VR** | `MAT-SS-4/verjetnost` | da |
 | Verjetnost produkta, neodvisna dogodka | **VR** | `MAT-SS-4/verjetnost`, `MAT-SS-4/mesane-maturitetne-naloge` | da |
 | Zaporedje neodvisnih poskusov | **VR** | `MAT-SS-4/verjetnost`, `MAT-SS-4/mesane-maturitetne-naloge`, `MAT-SS-4/zaporedje-neodvisnih-poskusov` | da – C3 (14. 11. 2026) |
-| Normalna porazdelitev | OR+VR | `MAT-SS-4/statistika` | da – v lekciji napačno označena kot višja raven |
+| Normalna porazdelitev | OR+VR | `MAT-SS-4/statistika` | da |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
@@ -784,26 +784,26 @@ Del lekcije, ki ga katalog preverja samo na višji ravni, ima v naslovu bloka, p
 
 | Vsebina | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| Osnovni statistični pojmi | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – vzorec in populacija le v Bolj natančno |
-| Vrste podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – le omemba kategorij v povratni informaciji kviza |
+| Osnovni statistični pojmi | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – C3b (14. 11. 2026) |
+| Vrste podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – C3b (14. 11. 2026) |
 | Zbiranje podatkov | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 | Urejanje in strukturiranje podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – frekvenčna tabela, razredi, razredna sredina |
-| Prikazovanje podatkov (stolpčni, pozicijski, tortni diagram, histogram, razsevni diagram, linijski in krivuljni diagram, škatla z brki) | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | delno – manjkajo pozicijski, razsevni, linijski in krivuljni diagram |
+| Prikazovanje podatkov (stolpčni, pozicijski, tortni diagram, histogram, razsevni diagram, linijski in krivuljni diagram, škatla z brki) | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika`, `MAT-SS-4/statisticna-naloga` | da – C3b (14. 11. 2026) |
 | Aritmetična sredina, mediana, modus | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | Variacijski razmik, standardni odklon, medčetrtinski razmik | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | Statistična naloga | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 
 | Cilj (kandidat …) | Raven | Lekcija | Pokritost |
 |---|---|---|---|
-| loči med preučevano značilnostjo (spremenljivko), enoto, vrednostjo spremenljivke, vzorcem, populacijo | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – vzorec, populacija le v Bolj natančno; brez vaj |
-| prepozna preučevano značilnost enote | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – le definicija spremenljivke; brez vaj |
-| razlikuje med opisnimi ali kvalitativnimi podatki, vrstnimi ali ordinalnimi ter številskimi ali kvantitativnimi podatki | OR+VR | `MAT-SS-1/obdelava-podatkov` | delno – vrste podatkov (opisni, vrstni, številski) niso razložene |
+| loči med preučevano značilnostjo (spremenljivko), enoto, vrednostjo spremenljivke, vzorcem, populacijo | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – C3b (14. 11. 2026) |
+| prepozna preučevano značilnost enote | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – C3b (14. 11. 2026) |
+| razlikuje med opisnimi ali kvalitativnimi podatki, vrstnimi ali ordinalnimi ter številskimi ali kvantitativnimi podatki | OR+VR | `MAT-SS-1/obdelava-podatkov` | da – C3b (14. 11. 2026) |
 | zbere podatke, jih uredi in strukturira | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 | izbere ustrezni diagram za prikaz podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov` | da |
 | bere, izdela in interpretira statistične diagrame | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | razvija kritični odnos do interpretacije rezultatov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da – splošni cilj; kviza o plačah in povprečni porabi |
 | pozna in uporablja različne načine povzemanja podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
-| izbere primeren način povzemanja podatkov glede na vrsto podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | delno – izbira glede na osamelce; izbira glede na vrsto podatkov manjka |
+| izbere primeren način povzemanja podatkov glede na vrsto podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da – C3b (14. 11. 2026) |
 | izračuna, oceni in interpretira srednjo vrednost, modus in mediano kot mere osredinjenosti podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |
 | ocenjuje preproste povezave med statističnimi spremenljivkami | OR+VR | `MAT-SS-4/statisticna-naloga` | da – C3 (14. 11. 2026) |
 | izračuna, oceni in interpretira variacijski razmik, standardni odklon in medčetrtinski razmik kot mere razpršenosti podatkov | OR+VR | `MAT-SS-1/obdelava-podatkov`, `MAT-SS-4/statistika` | da |

@@ -13,7 +13,7 @@ Pri hoji, teku ali padcu se stegnenica upogiba, ne le stiska. Enako velja za zob
 
 ## Razlaga
 
-**1. Ali zadošča kar $\sigma = F/A$?** Pri osni obremenitvi je napetost po preseku enakomerna, $\sigma = F/A$. Mamljivo je enako uporabiti tudi tu. Potem bi štela le površina preseka: odvzem materiala iz sredine kosti bi jo vedno oslabil, oblika pa ne bi bila pomembna.
+**1. Ali zadošča kar $\sigma = F/A$?** Pri osni obremenitvi je napetost po preseku enakomerna, $\sigma = F/A$. Kaj, če isto formulo uporabimo tudi tu? Potem bi štela le površina preseka: odvzem materiala iz sredine kosti bi jo vedno oslabil, oblika pa ne bi bila pomembna.
 
 Odgovor da plastično ravnilo, široko $30\,\mathrm{mm}$ in debelo $2\,\mathrm{mm}$. Vpnemo ga v mizo, da gleda $150\,\mathrm{mm}$ čez rob, in na konec pritisnemo s prstom s silo $5\,\mathrm{N}$. Po $F/A$ je $\sigma = \dfrac{5\,\mathrm{N}}{60\,\mathrm{mm^2}} \approx 0{,}08\,\mathrm{MPa}$. To je premalo, da bi plastika sploh opazila. Ravnilo pa se vidno upogne in ob malo večji sili poči. Pravilni račun spodaj da $37{,}5\,\mathrm{MPa}$, kar je $450$-krat več. Račun $F/A$ torej zgreši bistvo.
 
@@ -174,8 +174,8 @@ Lesen prostoležeči nosilec razpona $4\,\mathrm{m}$ (podpori $A$ levo in $B$ de
 3. Na $x > 1\,\mathrm{m}$: $T = 1{,}5 - 3(x - 1)$, kar je nič pri $x = 1{,}5\,\mathrm{m}$. Ker je $\mathrm{d}M/\mathrm{d}x = T$, ima moment tam maksimum: to je nevarni prerez (ne pod silo).
 4. $M(1{,}5) = 10{,}5 \cdot 1{,}5 - 3 \cdot 1{,}5^2/2 - 6 \cdot 0{,}5 = 9{,}375\,\mathrm{kN\,m}$. Za primerjavo pod silo: $M(1) = 10{,}5 - 1{,}5 = 9\,\mathrm{kN\,m}$.
 5. Potreben odpornostni moment: $W \ge M_\mathrm{max}/\sigma_\mathrm{dop} = 9{,}375 \cdot 10^6/10\,\mathrm{mm^3} = 937\,500\,\mathrm{mm^3}$.
-6. Pri $h = 2b$ je $W = b(2b)^2/6 = 2b^3/3$, zato $b^3 \ge 1{,}406 \cdot 10^6\,\mathrm{mm^3}$ in $b \ge 112\,\mathrm{mm}$, $h \ge 224\,\mathrm{mm}$.
-7. Odgovor: $A = 10{,}5\,\mathrm{kN}$, $B = 7{,}5\,\mathrm{kN}$; nevarni prerez je $1{,}5\,\mathrm{m}$ od $A$, kjer je $M_\mathrm{max} = 9{,}375\,\mathrm{kN\,m}$; presek mora biti vsaj $112 \times 224\,\mathrm{mm}$ (npr. $120 \times 240\,\mathrm{mm}$).
+6. Pri $h = 2b$ je $W = b(2b)^2/6 = 2b^3/3$, zato $b^3 \ge 1{,}406 \cdot 10^6\,\mathrm{mm^3}$ in $b \ge 112{,}04\,\mathrm{mm}$, $h \ge 224{,}07\,\mathrm{mm}$.
+7. Odgovor: $A = 10{,}5\,\mathrm{kN}$, $B = 7{,}5\,\mathrm{kN}$; nevarni prerez je $1{,}5\,\mathrm{m}$ od $A$, kjer je $M_\mathrm{max} = 9{,}375\,\mathrm{kN\,m}$; presek mora biti malo več kot $112 \times 224\,\mathrm{mm}$ (npr. $120 \times 240\,\mathrm{mm}$).
 
 ### Naloga 2
 

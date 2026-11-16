@@ -11,7 +11,7 @@ stanje: osnutek
   - ni izomorfna začetnemu odseku
   - izomorfizem je en sam
 - Ordinali
-  - tranzitivna množica, urejena z $\in$
+  - tranzitivna množica, dobro urejena z $\in$
   - naslednik $\alpha \cup \{\alpha\}$, limitni $\omega$
 - Transfinitna indukcija
   - začetni korak, naslednik, limita

@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Menjava generacij
+  - sporofit $2n$ tvori spore, gametofit $n$ gamete
+  - mejoza da spore, ne gamet
+- Prevladujoča generacija
+  - mahovi: gametofit
+  - praprotnice in semenke: sporofit
+- Cvet
+  - čaša, venec, prašniki, pestič
+  - pestič: brazda, vrat, plodnica s semenskimi zasnovami
+- Moški gametofit
+  - pelodno zrno: vegetativna in generativna celica
+  - generativna celica da dve semenski celici
+- Ženski gametofit
+  - zarodni mešiček: $7$ celic, $8$ jeder
+  - jajčna celica, sinergidi, antipode, polarni jedri
+- Opraševanje
+  - prenos peloda na brazdo: veter, žuželke
+  - samonezdružljivost: potrebna druga sorta
+  - pazi: opraševanje še ni oploditev
+- Dvojna oploditev
+  - pelodna cev: $t = t_\mathrm{k} + \frac{s}{v}$
+  - zigota $2n$, endosperm $3n$

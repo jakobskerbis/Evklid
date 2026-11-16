@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Osrednje in obkrajno
+  - OŽ: možgani in hrbtenjača
+  - PŽ: $12 + 31$ parov živcev, prepleti, gangliji
+  - napaka: »možganski živci so del OŽ«
+- Aferentno in eferentno
+  - aferentno proti OŽ, čutilno
+  - eferentno od OŽ, gibalno
+- Deli možganov
+  - veliki možgani: štirje režnji, skorja
+  - medmožgani: talamus, hipotalamus
+  - deblo in mali možgani
+- Ovojnice in likvor
+  - trda opna, pajčevnica, mehka opna
+  - likvor med pajčevnico in mehko opno
+- Hrbtenjača
+  - do $\mathrm{L1}$–$\mathrm{L2}$, niže konjski rep
+  - siva snov znotraj, bela zunaj
+  - zadnji rog čutilni, sprednji gibalni
+- Križanje proge
+  - v podaljšani hrbtenjači
+  - leva polobla vodi desno stran
+- Prepleti
+  - vratni, pazdušni, ledveni, križni
+  - prsni živci: medrebrni, brez prepleta
+- Avtonomno živčevje
+  - simpatikus: prsni in zgornji ledveni segmenti
+  - parasimpatikus: deblo in križni segmenti

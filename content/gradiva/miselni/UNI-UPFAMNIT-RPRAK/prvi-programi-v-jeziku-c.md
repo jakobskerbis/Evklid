@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prevajanje
+  - predprocesor, prevajalnik, povezovalnik
+  - `gcc -Wall -o igra igra.c`, nato `./igra`
+  - napaka: sprememba brez ponovnega prevajanja
+- Zgradba programa
+  - `#include <stdio.h>`, začetek v `main`
+  - `return 0` vrne lupini uspeh
+  - napaka ustavi prevod, opozorilo ne
+- Tipi spremenljivk
+  - `int` `%d`, `double` `%f`, `char` `%c`
+  - deklaracija pred uporabo
+  - lokalna brez začetne vrednosti: naključna
+- Celoštevilsko deljenje
+  - `7 / 2` je `3`, `7 % 2` je `1`
+  - popravek: `(double) a / b`
+- Zanke
+  - `for (začetek; pogoj; korak)`
+  - `i <= 5` da $5$ obhodov, `i < 5` le $4$
+  - `while (pogoj)` ponavlja, dokler velja
+- Funkcije
+  - tip vrnjene vrednosti, parametri, `return`
+  - `void`: ne vrne ničesar
+  - prototip nad `main`
+- Podajanje po vrednosti
+  - funkcija dobi kopijo argumenta
+  - popravek: `a = podvoji(a);`

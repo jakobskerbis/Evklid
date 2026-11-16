@@ -50,12 +50,12 @@ $$\text{število v skupini} = \frac{\text{kot}}{360^\circ} \cdot \text{število 
 
 **Risanje po korakih.** Najprej izračunaj kote za vse skupine in preveri, da je njihova vsota $360^\circ$. S šestilom nariši krog in vanj en polmer, na primer navpično navzgor. Ob tem polmeru s kotomerom odmeri prvi kot in nariši drugi polmer. Naslednji kot odmeriš od **novega** polmera, ne od začetnega. Tako nadaljuješ okoli kroga. Vsak izsek označi z imenom skupine in s številom ali odstotkom, ne samo z barvo.
 
-V simulaciji spodaj (Tortni prikaz) izberi »Tortni«. Nato s tipko $+$ povečaj število glasov za hruško z $2$ na $8$. Opazuj izsek za jabolko: njegovih glasov je še vedno $7$, kot pa se zmanjša s $105^\circ$ na $84^\circ$.
+V simulaciji spodaj (Tortni prikaz) izberi »Tortni«. Nato z gumbom $+$ povečaj število glasov za hruško z $2$ na $8$. Opazuj izsek za jabolko: njegovih glasov je še vedno $7$, kot pa se zmanjša s $105^\circ$ na $84^\circ$.
 
 :::premisli
 Zakaj se je izsek za jabolko zmanjšal, čeprav ima jabolko še vedno $7$ glasov?
 ---
-Ker se je povečalo število vseh glasov, z $24$ na $30$. Jabolko ima zdaj manjši del celote: $\frac{7}{30}$ namesto $\frac{7}{24}$. Tortni prikaz kaže delež, ne števila samega.
+Ker se je povečalo število vseh glasov, s $24$ na $30$. Jabolko ima zdaj manjši del celote: $\frac{7}{30}$ namesto $\frac{7}{24}$. Tortni prikaz kaže delež, ne števila samega.
 :::
 
 ## Rešeni primeri
@@ -183,7 +183,7 @@ Na sejmu domače obrti je rezbar prodal $50$ izdelkov: $20$ skled, $15$ žlic, $
 
 ## Drugače: Kot zgodba
 
-Mizar Ivo izdeluje okroglo mizo z vzorcem iz treh vrst lesa. Na delavnici ima $12$ enakih deščic: $6$ orehovih, $4$ javorjeve in $2$ češnjevi. Vse hoče uporabiti, mizna plošča pa mora biti cela, brez lukenj.
+Mizar Ivo izdeluje okroglo mizo z vzorcem iz treh vrst lesa. V delavnici ima $12$ enakih deščic: $6$ orehovih, $4$ javorjeve in $2$ češnjevi. Vse hoče uporabiti, mizna plošča pa mora biti cela, brez lukenj.
 
 Ivo razmišlja: »Če je vsaka deščica enak kos plošče, razrežem krog na $12$ enakih klinov. Ves krog je $360^\circ$, en klin torej $360^\circ : 12 = 30^\circ$.«
 

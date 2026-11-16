@@ -21,9 +21,9 @@ Ali ima prav? Za kuharja ni vseeno: če se olje v nekem trenutku segreva hitro, 
 
 $$\frac{T(4 + h) - T(4)}{h}$$
 
-Temu ulomku rečemo **diferenčni količnik**. Izračunajmo ga za vedno krajše razmike $h$:
+Temu ulomku rečemo **diferenčni količnik**. Izračunajmo ga za vedno krajše razmike $h$ ($h$ v minutah, $T$ v $^\circ$C, povprečna hitrost v $^\circ$C/min):
 
-| $h$ [min] | $T(4 + h)$ [$^\circ$C] | povprečna hitrost [$^\circ$C/min] |
+| $h$ | $T(4 + h)$ | hitrost |
 |---|---|---|
 | $1$ | $95$ | $11$ |
 | $0{,}1$ | $85{,}19$ | $11{,}9$ |
@@ -243,11 +243,33 @@ $f'(x) = 3(x^2 + 1)^2 \cdot 2x = 6x(x^2 + 1)^2$. Pri $x = 1$: $6 \cdot 1 \cdot 2
 - Najprej odvajaj, nato vstavi točko. $f' > 0$: funkcija narašča, $f' < 0$: pada.
 - (višja raven) Pravila izpeljemo iz definicije (pri produktu v števcu prištejemo in odštejemo $f(a)\,g(a + h)$), iz pravil pa nove odvode, npr. $(\tan x)' = \frac{1}{\cos^2 x}$, $(\cot x)' = -\frac{1}{\sin^2 x}$, $(2^x)' = 2^x \ln 2$.
 
+## Ponovitev
+
+**Formule**
+- $f'(a) = \lim\limits_{h \to 0} \frac{f(a + h) - f(a)}{h}$ (na pamet)
+- $(x^n)' = n x^{n-1}$, $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$ (na pamet)
+- $(e^x)' = e^x$, $(\ln x)' = \frac{1}{x}$ (na pamet)
+- $(f g)' = f' g + f g'$ (na pamet)
+- $\left(\frac{f}{g}\right)' = \frac{f' g - f g'}{g^2}$ (na pamet)
+- $\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$ (na pamet)
+
+**Postopek**
+1. Prepoznaj obliko: vsota, produkt, kvocient ali sestavljena funkcija.
+2. Uporabi ustrezno pravilo; konstanta ima odvod $0$.
+3. Pri sestavljeni funkciji pomnoži še z notranjim odvodom.
+4. Šele nato vstavi točko: $f'(a)$ je smerni koeficient tangente.
+5. Predznak $f'$ pove, kje funkcija narašča ($f' > 0$) in kje pada.
+
+**Pazi na**
+- Produkt: $(x^2 \sin x)' = 2x \sin x + x^2 \cos x$, ne $2x \cos x$.
+- Kvocient: v števcu $f' g - f g'$ v tem vrstnem redu, spodaj $g^2$.
+- Ne pozabi notranjega odvoda: $\bigl((x^2 + 1)^3\bigr)' = 3(x^2 + 1)^2 \cdot 2x$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Odvajaj funkcijo $f(x) = x^2 e^{2x}$ in določi vse $x$, za katere je $f'(x) = 0$.
+Odvajajte funkcijo $f(x) = x^2 e^{2x}$ in določite vse $x$, za katere je $f'(x) = 0$.
 
 **Rešitev:**
 
@@ -262,9 +284,9 @@ Odvajaj funkcijo $f(x) = x^2 e^{2x}$ in določi vse $x$, za katere je $f'(x) = 0
 
 Dana je funkcija $f(x) = \dfrac{4}{x}$.
 
-a) Izračunaj diferenčni količnik funkcije $f$ na intervalu $[1, 4]$ in pojasni, kaj to število pomeni na grafu funkcije. (2 točki)
-b) Po definiciji odvoda izračunaj $f'(2)$. (3 točke)
-c) Zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $2$. V kakšni legi sta ta tangenta in sekanta skozi točki grafa z abscisama $1$ in $4$? Odgovor utemelji. (2 točki)
+a) Izračunajte diferenčni količnik funkcije $f$ na intervalu $[1, 4]$ in pojasnite, kaj to število pomeni na grafu funkcije. (2 točki)
+b) Po definiciji odvoda izračunajte $f'(2)$. (3 točke)
+c) Zapišite enačbo tangente na graf funkcije $f$ v točki z absciso $2$. V kakšni legi sta ta tangenta in sekanta skozi točki grafa z abscisama $1$ in $4$? Odgovor utemeljite. (2 točki)
 
 **Rešitev:**
 
@@ -280,10 +302,10 @@ c) Zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $2$. V kakš
 
 ### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
 
-a) Z definicijo odvoda pokaži, da za $x > 0$ velja $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$. (3 točke)
-b) Iz odvodov funkcij $\sin x$ in $\cos x$ izpelji, da za $\cos x \ne -1$ velja $\left(\dfrac{\sin x}{1 + \cos x}\right)' = \dfrac{1}{1 + \cos x}$. (3 točke)
-c) Izračunaj $f'(4)$ za funkcijo $f(x) = \sqrt{x^2 + 9}$. (2 točki)
-d) Poišči vse točke na grafu funkcije $g(x) = \tan x$, $-\frac{\pi}{2} < x < \frac{\pi}{2}$, v katerih ima tangenta smerni koeficient $4$. (2 točki)
+a) Z definicijo odvoda pokažite, da za $x > 0$ velja $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$. (3 točke)
+b) Iz odvodov funkcij $\sin x$ in $\cos x$ izpeljite, da za $\cos x \ne -1$ velja $\left(\dfrac{\sin x}{1 + \cos x}\right)' = \dfrac{1}{1 + \cos x}$. (3 točke)
+c) Izračunajte $f'(4)$ za funkcijo $f(x) = \sqrt{x^2 + 9}$. (2 točki)
+d) Poiščite vse točke na grafu funkcije $g(x) = \tan x$, $-\frac{\pi}{2} < x < \frac{\pi}{2}$, v katerih ima tangenta smerni koeficient $4$. (2 točki)
 
 **Rešitev:**
 
@@ -325,7 +347,7 @@ Diferenčni količnik vsote je $\frac{(f + g)(a + h) - (f + g)(a)}{h}$. Členi s
 
 ## Drugače: Korak za korakom s številkami
 
-Odvod funkcije $f(x) = x^3$ v točki $a = 2$ lahko »ujameš« s kalkulatorjem.
+Odvod funkcije $f(x) = x^3$ v točki $a = 2$ lahko »ujameš« z računalom.
 
 1. Izračunaj $f(2) = 8$.
 2. Izberi $h = 0{,}1$: $f(2{,}1) = 9{,}261$, diferenčni količnik je $\dfrac{9{,}261 - 8}{0{,}1} = 12{,}61$.
@@ -358,14 +380,11 @@ Vajenec čez nekaj minut pokaže termometer: »Zdaj se skoraj ne segreva več.«
 ~ To je povprečna hitrost na razmiku $h = 1$. Odvod je limita takih količnikov, ko gre $h \to 0$.
 > Odvod je limita smernih koeficientov sekant, ko gre $h \to 0$, torej smerni koeficient tangente.
 
-? Koliko je $f'(1)$ za $f(x) = 4x^3 - 2x + 7$?
-- $9$
-~ To je $f(1) = 4 - 2 + 7$. Vrednost funkcije ni odvod.
-- $17$
-~ Konstanta $7$ je ostala. Njen odvod je $0$.
-- $0$
-~ Tako dobiš, če najprej vstaviš $x = 1$ in nato odvajaš število. Najprej odvajaj, nato vstavi.
-+ $10$
+? (brez računala) Koliko je $f'(1)$ za $f(x) = 4x^3 - 2x + 7$?
+= 10 | 0,01
+~ 9 | To je $f(1) = 4 - 2 + 7$. Vrednost funkcije ni odvod.
+~ 17 | Konstanta $7$ je ostala. Njen odvod je $0$.
+~ 0 | Tako dobiš, če najprej vstaviš $x = 1$ in nato odvajaš število. Najprej odvajaj, nato vstavi.
 > $f'(x) = 12x^2 - 2$, zato je $f'(1) = 12 - 2 = 10$.
 
 ? Ana je zapisala: $(x^2 \sin x)' = 2x \cos x$. Kje je napaka?
@@ -402,7 +421,7 @@ Vajenec čez nekaj minut pokaže termometer: »Zdaj se skoraj ne segreva več.«
 ~ To ne velja: že pri $x \cdot x$ dobiš $1 \cdot 1 = 1$, pravi odvod pa je $2x$.
 > Prvi faktor gre proti $f'(a)$. Odvedljiva funkcija je zvezna, zato gre $g(a + h)$ proti $g(a)$. Limita produkta je produkt limit.
 
-? (višja raven) (brez računala) Iz odvoda funkcije $\cos x$ s pravilom za kvocient izpelji odvod funkcije $f(x) = \dfrac{1}{\cos x}$. Koliko je $f'\!\left(\frac{\pi}{6}\right)$?
+? (višja raven) (brez računala) Iz odvoda funkcije $\cos x$ s pravilom za kvocient izpelji odvod funkcije $f(x) = \dfrac{1}{\cos x}$. Koliko je $f'\!\left(\frac{\pi}{6}\right)$? Zaokroži na dve decimalki.
 = 0,67 | 0,01
 ~ -0,67 | Odvod kosinusa je $-\sin x$, zato je števec $0 \cdot \cos x - 1 \cdot (-\sin x) = \sin x$, brez minusa.
 ~ 0,58 | To je $\frac{\sin x}{\cos x}$. V imenovalcu je $\cos^2 x$, kvadrat imenovalca.

@@ -163,37 +163,103 @@ Zunanja pot: Fas-ligand se je vezal na receptor smrti Fas, ta je aktiviral kaspa
 - Notranja pot: p53 → Bax → citokrom c → apoptosom → kaspaza 9 → kaspaza 3. Zunanja pot: Fas → kaspaza 8 → kaspaza 3. Bcl-2 apoptozo zavira.
 - Pri odraslem z apoptozo odmre okoli $6 \cdot 10^{10}$ celic na dan.
 
+## Za izpit
+
+Znati moraš povedati:
+- razliko med prenosom snovi in prenosom sporočila ter definicije pojmov ligand, receptor, prvi in sekundarni obveščevalec;
+- zakaj topnost liganda določa lego receptorja in kako hitro deluje znotrajcelični receptor v primerjavi z membranskim;
+- tri skupine membranskih receptorjev s primerom in mehanizmom vsake;
+- poti $\mathrm{G_s}$ → adenilat-ciklaza → cAMP → PKA in $\mathrm{G_q}$ → fosfolipaza C → IP₃, DAG → $\mathrm{Ca^{2+}}$, PKC ter tri načine ugašanja signala;
+- zakaj se števila v kaskadi množijo in kako izračunaš ojačitev;
+- razlike med apoptozo in nekrozo ter korake notranje in zunanje poti apoptoze z vlogo p53, Bax, Bcl-2 in kaspaz.
+
+### Naloga 1
+
+Jetrna celica ima na površini $4000$ receptorjev za adrenalin. Pri dani koncentraciji hormona je zasedenih $5\,\%$ receptorjev. Vsak zaseden receptor aktivira $10$ G-proteinov $\mathrm{G_s}$, vsak G-protein vklopi eno adenilat-ciklazo. Ciklaza izdeluje $100$ molekul cAMP na sekundo, dokler G-protein ne hidrolizira svojega GTP, kar se zgodi povprečno po $10\,\mathrm{s}$. Prostornina celice je $4 \cdot 10^{-12}\,\mathrm{L}$, Avogadrovo število je $6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$. Razgradnjo cAMP zanemari. (a) Koliko molekul cAMP nastane? (b) Za koliko se zviša koncentracija cAMP v celici? (c) Največ koliko katalitičnih podenot PKA lahko ta cAMP aktivira? (d) Mutacija v $\mathrm{G_s}$ upočasni hidrolizo GTP, tako da ciklaza dela povprečno $60\,\mathrm{s}$. Kolikšna sta zdaj število molekul in koncentracija cAMP? Kateri korak ugašanja je odpovedal?
+
+**Rešitev:**
+
+1. Zasedenih receptorjev: $4000 \cdot 0{,}05 = 200$.
+2. Aktivnih G-proteinov in s tem ciklaz: $200 \cdot 10 = 2000$.
+3. (a) Molekul cAMP: $2000 \cdot 100 \cdot 10 = 2\,000\,000$, torej $2 \cdot 10^6$.
+4. (b) Množina: $\dfrac{2 \cdot 10^6}{6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}} \approx 3{,}32 \cdot 10^{-18}\,\mathrm{mol}$.
+5. Koncentracija: $\dfrac{3{,}32 \cdot 10^{-18}\,\mathrm{mol}}{4 \cdot 10^{-12}\,\mathrm{L}} \approx 8{,}3 \cdot 10^{-7}\,\mathrm{mol/L}$, to je okoli $0{,}83\,\mathrm{\mu mol/L}$.
+6. (c) Za eno podenoto PKA sta potrebni $2$ molekuli cAMP: $2\,000\,000 / 2 = 1\,000\,000$ podenot.
+7. (d) Čas delovanja ciklaze je $6$-krat daljši: $2000 \cdot 100 \cdot 60 = 12\,000\,000$ molekul, koncentracija $6 \cdot 0{,}83 \approx 5{,}0\,\mathrm{\mu mol/L}$.
+8. Odgovor: nastane $2 \cdot 10^6$ molekul cAMP, koncentracija se zviša za okoli $0{,}83\,\mathrm{\mu mol/L}$, aktivira se največ $10^6$ podenot PKA. Pri mutaciji nastane $1{,}2 \cdot 10^7$ molekul (okoli $5\,\mathrm{\mu mol/L}$). Odpovedalo je prvo ugašanje, lastna GTPazna aktivnost G-proteina; fosfodiesteraza in fosfataze delujejo, a ciklaze ne ustavijo.
+
+### Naloga 2
+
+Natančno navedi korake notranje in zunanje poti apoptoze. Nato utemelji, ali lahko celica ubijalka uniči tumorsko celico, ki ima okvarjen gen za p53 in izdeluje preveč beljakovine Bcl-2.
+
+**Rešitev:**
+
+1. Notranja pot: poškodba DNA aktivira p53. Ta najprej ustavi celični cikel v G1, pri prevelikih poškodbah pa vklopi beljakovine Bax.
+2. Mitohondrij sprosti citokrom c, ki z Apaf-1 sestavi apoptosom. Apoptosom aktivira kaspazo 9, ta pa izvršilni kaspazi 3 in 7.
+3. Zunanja pot: Fas-ligand na celici ubijalki se veže na receptor smrti Fas na tarčni celici. Receptor aktivira kaspazo 8, ta pa kaspazo 3.
+4. Obe poti se združita pri izvršilnih kaspazah, ki razgradijo celične beljakovine. Sledijo zgostitev kromatina, razrez DNA, apoptotska telesca in fosfatidilserin na zunanji strani membrane.
+5. Tumorska celica: brez p53 poškodba DNA ne vklopi Bax, presežek Bcl-2 pa mitohondrijsko pot dodatno zavira. Notranja pot je torej zaprta na dveh mestih.
+6. Zunanja pot ne potrebuje ne p53 ne mitohondrija: Fas → kaspaza 8 → kaspaza 3. Če ima celica receptor Fas in delujoče kaspaze, jo celica ubijalka lahko uniči.
+7. Sklep: da, po zunanji poti. Okvari p53 in Bcl-2 celico zaščitita pred »samomorom« po poškodbi DNA, ne pa pred ukazom od zunaj.
+
+### Naloga 3
+
+Kofein v visokih koncentracijah zavira fosfodiesterazo. Utemelji, ali kofein učinek adrenalina na jetrno celico okrepi ali oslabi. Nato utemelji, kaj se zgodi s cAMP, če se hkrati z adrenalinom na isto celico veže ligand, katerega receptor aktivira $\mathrm{G_i}$.
+
+**Rešitev:**
+
+1. Adrenalin prek receptorja in $\mathrm{G_s}$ vklopi adenilat-ciklazo, ta iz ATP dela cAMP, cAMP aktivira PKA.
+2. Količino cAMP določata nastajanje (ciklaza) in razgradnja (fosfodiesteraza).
+3. Kofein upočasni razgradnjo. Pri enakem nastajanju se cAMP nabere više in ostane dlje, PKA je dlje aktivna.
+4. Kofein torej učinek adrenalina okrepi in podaljša, čeprav se sam na adrenalinski receptor ne veže. Signal je še vedno odvisen od liganda: brez aktivne ciklaze nastaja le malo cAMP.
+5. $\mathrm{G_i}$ adenilat-ciklazo zavira. Ista ciklaza dobi hkrati ukaz za vklop ($\mathrm{G_s}$) in za izklop ($\mathrm{G_i}$), zato nastane manj cAMP kot pri samem adrenalinu.
+6. Sklep: raven cAMP je vsota nasprotnih vplivov. Celica odziv uravnava na dveh mestih, pri nastajanju in pri razgradnji sekundarnega obveščevalca.
+
 ## Drugače: Na sliki
 
 Kaskado cAMP si nariši kot drevo, ki se navzdol širi:
 
-```
-          adrenalin (1)
-              |
-        receptor (1)
-       /  /  ...  \  \
-   G-proteini (10)
-          |
-   adenilat-ciklaze (10)
-          |
-   cAMP (1000)
-          |
-   podenote PKA (500)
-          |
-   encimi (5000)
-          |
-   produkt (5 000 000)
-```
+:::risba skica
+opis: Kaskada cAMP kot drevo, ki se navzdol širi. Od zgoraj navzdol si sledijo: adrenalin (1 molekula), receptor (1), G-proteini (10), adenilat-ciklaze (10), cAMP (1000), podenote PKA (500), encimi (5000), produkt (5 000 000). Vsaka stopnja je pas, ki je tem širši, čim več je molekul; širine niso v merilu. Puščice kažejo od vsake stopnje k naslednji.
+območje: 0; 0 .. 34; 25
+pravokotnik: 6,5; 22,2 .. 7,5; 23,8 | modra polno
+črta: 7; 22,2 -> 7; 20,8 | puščica
+napis: 14,5; 23 | adrenalin (1) | desno
+pravokotnik: 6,5; 19,2 .. 7,5; 20,8 | modra polno
+črta: 7; 19,2 -> 7; 17,8 | puščica
+napis: 14,5; 20 | receptor (1) | desno
+pravokotnik: 5,65; 16,2 .. 8,35; 17,8 | modra polno
+črta: 7; 16,2 -> 7; 14,8 | puščica
+napis: 14,5; 17 | G-proteini (10) | desno
+pravokotnik: 5,65; 13,2 .. 8,35; 14,8 | modra polno
+črta: 7; 13,2 -> 7; 11,8 | puščica
+napis: 14,5; 14 | adenilat-ciklaze (10) | desno
+pravokotnik: 3,95; 10,2 .. 10,05; 11,8 | modra polno
+črta: 7; 10,2 -> 7; 8,8 | puščica
+napis: 14,5; 11 | cAMP (1000) | desno
+pravokotnik: 4,21; 7,2 .. 9,79; 8,8 | modra polno
+črta: 7; 7,2 -> 7; 5,8 | puščica
+napis: 14,5; 8 | podenote PKA (500) | desno
+pravokotnik: 3,36; 4,2 .. 10,64; 5,8 | modra polno
+črta: 7; 4,2 -> 7; 2,8 | puščica
+napis: 14,5; 5 | encimi (5000) | desno
+pravokotnik: 0,81; 1,2 .. 13,19; 2,8 | modra polno
+napis: 14,5; 2 | produkt (5 000 000) | desno
+:::
 
-Vsaka vrstica je širša od prejšnje. Fosfodiesteraza je kot škarje, ki drevo ob koncu odrežejo pri cAMP.
+Drevo se navzdol širi, le pri PKA se zoži, ker vsako sproščeno podenoto sprostita dve molekuli cAMP. Fosfodiesteraza je kot škarje, ki drevo ob koncu odrežejo pri cAMP.
 
 Apoptozo nariši v štirih sličicah: (1) okrogla celica, (2) manjša celica z zgoščenim jedrom, (3) celica z mehurčki na površini, (4) kup majhnih kroglic, ki jih obda makrofag. Nekroza ima le dve: (1) celica, (2) večja celica, iz katere v okolico brizga vsebina.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Receptor kot domofon.** Obiskovalec (ligand) ne vstopi v blok. Pritisne na točno določen gumb (receptor), v stanovanju zazvoni (sekundarni obveščevalec), stanovalec pa vstane in odpre (odziv celice). Napačen gumb ne sproži ničesar: specifičnost receptorja. Hormon s ključem, ki gre skozi zid (steroid), pa pride kar do vrat stanovanja, to je do jedra.
+**Tarče zdravil.** Približno tretjina odobrenih zdravil deluje na receptorje, sklopljene z G-proteinom. Salbutamol pri astmi aktivira adrenalinski receptor beta2 v bronhih (prek $\mathrm{G_s}$ in cAMP se gladko mišičje sprosti), zaviralci beta pa sorodni receptor beta1 na srcu zasedejo in ga ne aktivirajo. Pri iskanju novih učinkovin v laboratoriju zato v celicah merijo sekundarne obveščevalce, najpogosteje cAMP in $\mathrm{Ca^{2+}}$.
 
-**Apoptoza kot nadzorovano rušenje.** Staro stavbo lahko podrejo načrtno: najprej izklopijo elektriko, odpeljejo pohištvo, stavba se sesede sama vase, gradbinci odpeljejo ruševine. Sosednje hiše ostanejo cele. To je apoptoza. Če pa stavba eksplodira zaradi plina, se razleti na vse strani in poškoduje sosede. To je nekroza z vnetjem.
+**Merjenje apoptoze.** V celični kulturi apoptozo dokažejo z aneksinom V, beljakovino, ki se veže na fosfatidilserin na zunanji strani membrane. Dodajo še barvilo, ki vstopi le skozi poškodovano membrano. S pretočnim citometrom nato ločijo žive, zgodnje apoptotske ter pozno apoptotske ali nekrotične celice. Drugi testi merijo aktivnost kaspaze 3 ali pokažejo razrezano DNA.
+
+**Bioreaktor.** Celice, ki izdelujejo terapevtska protitelesa, ob pomanjkanju hranil odmirajo z apoptozo. Biotehnologi jim zato vstavijo gen za Bcl-2 ali sorodno beljakovino, da kultura dlje živi in nastane več produkta.
+
+**Zdravljenje raka.** Nekatere levkemije preživijo, ker izdelujejo preveč Bcl-2. Zdravilo venetoklaks Bcl-2 zavre in rakavim celicam vrne notranjo pot apoptoze.
 
 ## Preveri se
 

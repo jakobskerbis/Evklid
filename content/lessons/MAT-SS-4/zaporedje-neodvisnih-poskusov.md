@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -177,16 +177,38 @@ $P_5(5) = 0{,}8^5 = 0{,}32768$, skupaj $0{,}4096 + 0{,}32768 = 0{,}73728$. Sprej
 - Vse verjetnosti $P_n(0)$ do $P_n(n)$ so členi razvoja $(q+p)^n$, zato je njihova vsota $1$.
 - Pri vlečenju brez vračanja formula ne velja.
 
+## Ponovitev
+
+*(višja raven)*
+
+**Formule**
+- $q = 1 - p$ (na pamet)
+- $P_n(k) = \binom{n}{k}p^k q^{n-k}$ (priloga, višja raven)
+- vsaj en uspeh: $1 - q^n$ (na pamet)
+- $P_n(0) + P_n(1) + \dots + P_n(n) = 1$ (na pamet)
+
+**Postopek**
+1. Preveri pogoje: isti poskus $n$-krat, dva izida, neodvisni poskusi, vsakič isti $p$.
+2. Določi $n$, $k$, $p$ in $q = 1 - p$.
+3. Za natanko $k$ uspehov vstavi v Bernoullijevo formulo.
+4. Pri »vsaj« in »največ« izberi krajšo pot: seštej ali uporabi nasprotni dogodek.
+5. Brez vračanja računaj s kombinacijami, ne z Bernoullijevo formulo.
+
+**Pazi na**
+- Ne pozabi $\binom{n}{k}$: šteje vse poteke s $k$ uspehi.
+- »Vsaj en« je $1 - q^n$, ne $n \cdot p$.
+- Nasprotje »vsaj $2$« je »največ $1$«, ne »največ $2$«.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
 
 Lokostrelec zadene tarčo z verjetnostjo $\frac{2}{3}$, izidi strelov so med seboj neodvisni. Na tarčo ustreli $4$-krat.
 
-a) Utemelji, zakaj lahko uporabimo Bernoullijevo formulo, in zapiši $n$, $p$ in $q$. (1 točka)
-b) Izračunaj verjetnost, da tarčo zadene natanko dvakrat. (2 točki)
-c) Izračunaj verjetnost, da tarčo zadene vsaj enkrat. (2 točki)
-d) Izračunaj verjetnost, da tarčo zadene vsaj trikrat. (2 točki)
+a) Utemeljite, zakaj lahko uporabimo Bernoullijevo formulo, in zapišite $n$, $p$ in $q$. (1 točka)
+b) Izračunajte verjetnost, da tarčo zadene natanko dvakrat. (2 točki)
+c) Izračunajte verjetnost, da tarčo zadene vsaj enkrat. (2 točki)
+d) Izračunajte verjetnost, da tarčo zadene vsaj trikrat. (2 točki)
 
 **Rešitev:**
 
@@ -201,12 +223,12 @@ d) Izračunaj verjetnost, da tarčo zadene vsaj trikrat. (2 točki)
 
 ### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
 
-Stroj izdela izdelek z napako z verjetnostjo $0{,}04$, neodvisno od drugih izdelkov. Izdelke pakirajo v škatle po $20$. Trgovina škatlo vrne, če sta v njej vsaj $2$ izdelka z napako. Rezultate zaokroži na štiri decimalna mesta.
+Stroj izdela izdelek z napako z verjetnostjo $0{,}04$, neodvisno od drugih izdelkov. Izdelke pakirajo v škatle po $20$. Trgovina škatlo vrne, če sta v njej vsaj $2$ izdelka z napako. Rezultate zaokrožite na štiri decimalna mesta.
 
-a) Izračunaj verjetnost, da v škatli ni nobenega izdelka z napako. (2 točki)
-b) Izračunaj verjetnost, da sta v škatli natanko $2$ izdelka z napako. (2 točki)
-c) Izračunaj verjetnost, da trgovina škatlo vrne. (3 točke)
-d) Trgovina prejme $5$ škatel. Izračunaj verjetnost, da ne vrne nobene od njih. (3 točke)
+a) Izračunajte verjetnost, da v škatli ni nobenega izdelka z napako. (2 točki)
+b) Izračunajte verjetnost, da sta v škatli natanko $2$ izdelka z napako. (2 točki)
+c) Izračunajte verjetnost, da trgovina škatlo vrne. (3 točke)
+d) Trgovina prejme $5$ škatel. Izračunajte verjetnost, da ne vrne nobene od njih. (3 točke)
 
 **Rešitev:**
 
@@ -255,7 +277,7 @@ Naj bo $X$ število uspehov v $n$ neodvisnih poskusih. Dogodki $X = 0$, $X = 1$,
 
 $$P(X = k) = \binom{n}{k}p^k q^{n-k}$$
 
-Po binomskem izreku je $\sum_{k=0}^{n} P(X = k) = (p+q)^n = 1$, kar potrdi, da smo zajeli vse izide. Takemu $X$ pravimo, da je **binomsko porazdeljen**. Najbolj verjetna vrednost leži blizu $n \cdot p$: pri Maji je $5 \cdot 0{,}8 = 4$ in res je $P_5(4) = 0{,}4096$ največja od vseh verjetnosti $P_5(k)$. Več o tem boš srečal pri statistiki.
+Po binomskem izreku je $\sum_{k=0}^{n} P(X = k) = (p+q)^n = 1$, kar potrdi, da smo zajeli vse izide. Takemu $X$ pravimo, da je **binomsko porazdeljen**. Najbolj verjetna vrednost leži blizu $n \cdot p$: pri Maji je $5 \cdot 0{,}8 = 4$ in res je $P_5(4) = 0{,}4096$ največja od vseh verjetnosti $P_5(k)$. Več o tem boš srečal pri študiju statistike.
 
 ## Preveri se
 
@@ -276,12 +298,12 @@ Po binomskem izreku je $\sum_{k=0}^{n} P(X = k) = (p+q)^n = 1$, kar potrdi, da s
 > $q^5 = 0{,}03$, zato $q^{10} = (q^5)^2 = 0{,}03^2 = 0{,}0009$. Več poskusov naredi popoln neuspeh mnogo manj verjeten.
 
 ? Rok računa, kolikšna je verjetnost vsaj $2$ uspehov v $4$ poskusih, če je $p = 0{,}3$. V katerem koraku je napaka?
-| korak | Rokov zapis |
+| | Rokov zapis |
 |---|---|
-| (1) | nasprotni dogodek je »največ $1$ uspeh« |
+| (1) | nasprotni dogodek: »največ $1$ uspeh« |
 | (2) | $P_4(0) = 0{,}7^4 = 0{,}2401$ |
 | (3) | $P_4(1) = 0{,}3 \cdot 0{,}7^3 = 0{,}1029$ |
-| (4) | $P = 1 - 0{,}2401 - 0{,}1029 = 0{,}657$ |
+| (4) | $1 - 0{,}2401 - 0{,}1029 = 0{,}657$ |
 - V koraku (1).
 ~ Nasprotje dogodka »vsaj $2$« so izidi $k = 0$ in $k = 1$, torej res »največ $1$«.
 - V koraku (2).
@@ -299,7 +321,7 @@ Po binomskem izreku je $\sum_{k=0}^{n} P(X = k) = (p+q)^n = 1$, kar potrdi, da s
 5. Rezultat odštej od $1$.
 > Najprej preveriš, ali formula sploh velja, nato podatke, nasprotni dogodek, njegovo verjetnost in na koncu $1 - q^n$.
 
-? S seznama predvajanja naključno izberemo $4$ skladbe; vsaka je v duru z verjetnostjo $p = 0{,}5$. Na risbi so verjetnosti $P_4(k)$, da je v duru natanko $k$ skladb. Z risbe odčitaj in izračunaj verjetnost, da so vsaj $3$ v duru.
+? Radio zapored predvaja $4$ skladbe; vsaka je, neodvisno od drugih, v duru z verjetnostjo $p = 0{,}5$. Na risbi so verjetnosti $P_4(k)$, da je v duru natanko $k$ skladb. Z risbe odčitaj in izračunaj verjetnost, da so vsaj $3$ v duru.
 :::risba stolpci
 opis: Stolpčni prikaz verjetnosti P₄(k) v odstotkih za p = 0,5. k = 0: 6,25 %; k = 1: 25 %; k = 2: 37,5 %; k = 3: 25 %; k = 4: 6,25 %.
 podnapis: Verjetnost k uspehov v 4 poskusih (p = 0,5)
@@ -311,7 +333,7 @@ stolpec: k = 2 | 37,5
 stolpec: k = 3 | 25
 stolpec: k = 4 | 6,25
 :::
-= 0,3125 | 0,0001
+= 0,3125 | 0,005
 ~ 0,25 | To je samo $k = 3$. »Vsaj $3$« pomeni še $k = 4$.
 ~ 0,6875 | To je $k = 2$, $3$ in $4$, torej »vsaj $2$«.
 ~ 0,0625 | To je samo $k = 4$. Prišteti moraš še $k = 3$.

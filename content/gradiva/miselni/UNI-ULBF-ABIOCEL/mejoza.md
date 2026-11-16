@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Homologni kromosomi
+  - isti geni, eden materin, eden očetov
+  - diploidna $2n$, haploidna $n$; človek $2n = 46$
+- Profaza I
+  - sinapsa: homologa tvorita bivalent (tetrado)
+  - prekrižanje med nesestrskima kromatidama, hiazme
+- Mejoza I
+  - ločijo se homologi: $2n \to n$, redukcijska
+  - sestrski kromatidi ostaneta skupaj
+  - napaka: »mejoza je le mitoza dvakrat«
+- Mejoza II
+  - brez faze S, ločijo se kromatide
+  - ekvacijska: $n \to n$, štiri haploidne celice
+- Količina DNA
+  - $2C \to 4C \to 2C \to 1C$
+  - kromosome štej po centromerah
+- Rekombinacija
+  - neodvisna razporeditev: $2^n$ kombinacij
+  - človek: $2^{23} \approx 8{,}4 \cdot 10^6$
+  - prekrižanje premeša alele znotraj kromosoma
+- Nerazdružitev
+  - gamete $n + 1$ in $n - 1$
+  - aneuploidija, npr. trisomija 21
+- Pomen
+  - stalno število kromosomov skozi generacije
+  - genetska raznolikost potomcev

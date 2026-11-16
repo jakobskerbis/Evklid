@@ -6,7 +6,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Pri matematiki zbereš $17$ od $20$ točk, pri fiziki $21$ od $25$. Pri fiziki imaš več točk. Je bil zato tudi rezultat boljši? Primerjati moraš ulomka $\dfrac{17}{20}$ in $\dfrac{21}{25}$.
+Pri matematiki zbereš $17$ od $20$ točk, pri angleščini $21$ od $25$. Pri angleščini imaš več točk. Je bil zato tudi rezultat boljši? Primerjati moraš ulomka $\dfrac{17}{20}$ in $\dfrac{21}{25}$.
 
 Podobno vprašanje se pojavi v vesolju. Na Luni bi ti osebna tehtnica pokazala približno $\dfrac{1}{6}$ tega, kar kaže doma, na Marsu približno $\dfrac{3}{8}$. Kje bi bil »lažji«? Števec $3$ je večji od $1$, a tudi imenovalec $8$ je večji od $6$. Samo s pogledom na števila odgovora ne vidiš.
 
@@ -41,7 +41,7 @@ Večji je $\dfrac{2}{5}$. Oba vzameta po $2$ dela, a celota, razrezana na $5$ de
 
 Primer: $\dfrac{3}{4}$ in $\dfrac{5}{6}$. Najmanjši skupni večkratnik števil $4$ in $6$ je $12$; krajše pišemo $v(4, 6) = 12$. Velja $\dfrac{3}{4} = \dfrac{9}{12}$ in $\dfrac{5}{6} = \dfrac{10}{12}$. Ker je $9 < 10$, je $\dfrac{3}{4} < \dfrac{5}{6}$.
 
-*Preizkus:* zdaj lahko odgovoriš na vprašanji z začetka. Ker je $v(6, 8) = 24$, je $\dfrac{1}{6} = \dfrac{4}{24}$ in $\dfrac{3}{8} = \dfrac{9}{24}$, torej $\dfrac{1}{6} < \dfrac{3}{8}$: na Luni si lažji. Pri testih je $v(20, 25) = 100$: $\dfrac{17}{20} = \dfrac{85}{100}$ in $\dfrac{21}{25} = \dfrac{84}{100}$. Matematika je šla malo bolje, čeprav imaš pri fiziki več točk.
+*Preizkus:* zdaj lahko odgovoriš na vprašanji z začetka. Ker je $v(6, 8) = 24$, je $\dfrac{1}{6} = \dfrac{4}{24}$ in $\dfrac{3}{8} = \dfrac{9}{24}$, torej $\dfrac{1}{6} < \dfrac{3}{8}$: na Luni si lažji. Pri testih je $v(20, 25) = 100$: $\dfrac{17}{20} = \dfrac{85}{100}$ in $\dfrac{21}{25} = \dfrac{84}{100}$. Matematika je šla malo bolje, čeprav imaš pri angleščini več točk.
 
 **4. Primerjava z $1$ in z $\dfrac{1}{2}$.** Včasih odgovor najdemo brez računanja:
 
@@ -65,7 +65,7 @@ Da. $2 \cdot 5 = 10 < 12$, zato je $\dfrac{5}{12} < \dfrac{1}{2}$. $2 \cdot 4 = 
 
 *Preizkus:* ali je $\dfrac{6}{8} = \dfrac{9}{12}$? (Da, oba sta enaka $\dfrac{18}{24}$.)
 
-**6. Urejanje ulomkov.** Več ulomkov uredimo po velikosti tako, da jih razširimo na **skupni imenovalec vseh** imenovalcev, uredimo števce in ulomke zapišemo z znaki $<$ (naraščajoče, od najmanjšega) ali $>$ (padajoče, od največjega).
+**6. Urejanje ulomkov.** Več ulomkov uredimo po velikosti tako, da jih razširimo na **skupni imenovalec vseh** ulomkov, uredimo števce in ulomke zapišemo z znaki $<$ (naraščajoče, od najmanjšega) ali $>$ (padajoče, od največjega).
 
 *Preizkus:* uredi naraščajoče $\dfrac{1}{2}$, $\dfrac{1}{3}$ in $\dfrac{1}{4}$. ($\dfrac{1}{4} < \dfrac{1}{3} < \dfrac{1}{2}$: števci so enaki, večji imenovalec da manjši ulomek.)
 

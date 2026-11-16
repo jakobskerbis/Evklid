@@ -451,13 +451,21 @@ function hitro(mesta) {
 // sosedov, v vrstici, ki se prelomi, pa vsa vrstica (sosed gre v naslednjo vrstico).
 function prostor(el) {
   const cs = getComputedStyle(el);
+  // Vrstični element (odstavek v odzivu »Pravilno! …« ima display: inline) nima svoje širine: clientWidth je 0,
+  // offsetWidth pa dolžina besedila, zato bi spodnji račun od prostora odštel kar ves odstavek in vsako formulo
+  // v njem naredil drsno (j 14. 11. 2026). Njegov prostor je prostor bloka, v katerem stoji.
+  if (cs.display === "inline" && el.parentElement && el.parentElement !== document.body) return prostor(el.parentElement);
   const px = (v) => parseFloat(v) || 0;
   const rob = px(cs.paddingLeft) + px(cs.paddingRight);
   const cw = el.clientWidth - rob;
   const p = el.parentElement;
   const ps = p && getComputedStyle(p);
   const vFlex = !!ps && /flex$/.test(ps.display) && !ps.flexDirection.startsWith("column");
-  if (!vFlex && !el.matches(".msg, .bubble, .fx-pop") && !/^inline/.test(cs.display) && !/^(?:fixed|absolute)$/.test(cs.position)) return cw;
+  // Odstavek v mehurčku, ki se skrči na vsebino (klepet), je širok le toliko kot njegova najširša vrstica: formula, ki je
+  // v odstavku sama, bi bila zato vedno »preširoka« za ločilo in zložena v stolpec (j 15. 11. 2026: »x²« zgoraj, »− 5x + 6«
+  // in »= 0« pod njim). Njegov prostor je prostor mehurčka.
+  const vMehurcku = !!p?.closest(".msg, .bubble, .fx-pop");
+  if (!vFlex && !vMehurcku && !el.matches(".msg, .bubble, .fx-pop") && !/^inline/.test(cs.display) && !/^(?:fixed|absolute)$/.test(cs.position)) return cw;
   let pw = p && p !== document.body ? prostor(p) : innerWidth;
   if (vFlex && ps.flexWrap === "nowrap") {
     const gap = px(ps.columnGap);

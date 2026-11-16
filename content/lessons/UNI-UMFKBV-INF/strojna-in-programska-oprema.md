@@ -20,7 +20,7 @@ Odgovori so v zgradbi računalnika. Ko jih poznaš, znaš izbrati primeren raču
 
 Brez recepta kuhar ne ve, kaj skuhati; brez kuhinje recept nič ne skuha. Enako velja za računalnik. Od tu naprej gradimo na razlikah med kuhinjo in računalnikom.
 
-**Procesor: kuhar, ki zna le drobne gibe.** **Procesor** (CPE, centralna procesna enota, angl. *CPU*) izvaja ukaze. Ima **aritmetično-logično enoto**, ki računa in primerja, in **krmilno enoto**, ki jemlje ukaze po vrsti in jih izvaja. Za vsak ukaz ponavlja isti krog: ukaz prevzame, ga razbere, ga izvede. Prva razlika s kuharjem: procesor ne razume »prepraži čebulo«. Pozna le zelo preproste ukaze, npr. »seštej dve števili« ali »skoči na drug ukaz«. Druga razlika: hitrost. Procesor ima notranjo uro, ki enakomerno »utripa«; en utrip je **takt**, v vsakem procesor opravi korak ukaza. Procesor s taktom $3\,\text{GHz}$ naredi $3$ milijarde taktov v sekundi, v eni milisekundi torej $3 \cdot 10^{6}$.
+**Procesor: kuhar, ki zna le drobne gibe.** **Procesor** (CPE, centralna procesna enota, angl. *CPU*) izvaja ukaze. Ima **aritmetično-logično enoto**, ki računa in primerja, in **krmilno enoto**, ki jemlje ukaze po vrsti in jih izvaja. Za vsak ukaz ponavlja isti krog: ukaz prevzame, ga razbere, ga izvede. Prva razlika s kuharjem: procesor ne razume »prepraži čebulo«. Pozna le zelo preproste ukaze, npr. »seštej dve števili« ali »skoči na drug ukaz«. Druga razlika: hitrost. Procesor ima notranjo uro, ki enakomerno »utripa«; en utrip je **takt**, v vsakem procesor opravi korak ukaza. Procesor s frekvenco takta $3\,\text{GHz}$ naredi $3$ milijarde taktov v sekundi, v eni milisekundi torej $3 \cdot 10^{6}$.
 
 **Pomnilnik: pult in shramba.** Kuhar ne kuha iz shrambe, ampak sestavine najprej prinese na pult. Tudi računalnik ima dve vrsti hrambe:
 
@@ -101,7 +101,7 @@ $t = \dfrac{\text{količina podatkov}}{\text{hitrost branja}}$
 1. Pretvorimo v MB: $1{,}2\,\text{GB} = 1200\,\text{MB}$, ker je hitrost podana v MB/s.
 2. Trdi disk: $t = \dfrac{1200\,\text{MB}}{150\,\text{MB/s}} = 8\,\text{s}$.
 3. SSD: $t = \dfrac{1200\,\text{MB}}{600\,\text{MB/s}} = 2\,\text{s}$.
-4. Odgovor: s trdega diska čakamo $8\,\text{s}$, s SSD le $2\,\text{s}$, torej štirikrat manj.
+4. Odgovor: s trdega diska čakamo $8\,\text{s}$, z SSD le $2\,\text{s}$, torej štirikrat manj.
 
 ### Primer 3 (težji): kako OS deli procesor
 
@@ -162,38 +162,96 @@ Prosto je $4 - 1{,}5 - 0{,}3 = 2{,}2$ gigabajta. $\dfrac{2{,}2}{0{,}8} = 2{,}75$
 - Procesor razume le strojno kodo. Višje jezike prevede prevajalnik (vnaprej) ali tolmač (sproti).
 - Čas prenosa: $t = \dfrac{\text{količina}}{\text{hitrost}}$, z enakimi enotami.
 
+## Za izpit
+
+Znati moraš povedati:
+- razliko med strojno in programsko opremo ter med sistemsko in aplikacijsko programsko opremo, vsako s primerom;
+- dela procesorja (krmilna enota, aritmetično-logična enota), krog »prevzemi, razberi, izvedi« ter kaj sta takt in frekvenca takta;
+- razlike med RAM-om in shrambo (hitrost, obstojnost ob izklopu, velikost) in zakaj se program pred izvajanjem naloži v RAM;
+- naloge operacijskega sistema ter kaj sta časovna rezina in gonilnik;
+- kaj so strojna koda, zbirni jezik in višji programski jezik ter razliko med prevajalnikom in tolmačem;
+- zvezi $t = \dfrac{\text{količina}}{\text{hitrost}}$ in krog $= n \cdot$ rezina, z enakimi enotami.
+
+### Naloga 1
+
+Brezpilotni letalnik nad vinogradom posname $1200$ fotografij po $25\,\text{MB}$ na pomnilniško kartico z $32\,\text{GB}$ ($1\,\text{GB} = 1000\,\text{MB}$). (a) Koliko prostora na kartici ostane? (b) Bralnik kartic bere s hitrostjo $80\,\text{MB/s}$. Koliko časa traja prenos vseh fotografij na SSD? (c) Računalnik ima $16\,\text{GB}$ RAM-a. Operacijski sistem porabi $3\,\text{GB}$, program za obdelavo slik $2{,}5\,\text{GB}$, vsaka odprta fotografija pa v RAM-u zavzame $150\,\text{MB}$. Koliko fotografij ima program lahko hkrati odprtih? (d) Obdelava ene skupine fotografij potrebuje $90\,\text{s}$ procesorskega časa. Na enem procesorskem jedru tečejo poleg nje še trije programi, vsi izmenično dobivajo rezine po $20\,\text{ms}$. Koliko časa traja obdelava skupine? Koliko taktov opravi procesor s frekvenco takta $3\,\text{GHz}$ v eni rezini?
+
+**Rešitev:**
+
+1. Vse fotografije skupaj: $1200 \cdot 25 = 30000$ megabajtov, to je $30\,\text{GB}$.
+2. Na kartici ostane $32 - 30 = 2$ gigabajta.
+3. Prenos: $t = \dfrac{30000\,\text{MB}}{80\,\text{MB/s}} = 375\,\text{s}$, to je $6\,\text{min}$ in $15\,\text{s}$.
+4. Za fotografije je v RAM-u prosto $16 - 3 - 2{,}5 = 10{,}5$ gigabajta, to je $10500\,\text{MB}$.
+5. Hkrati odprtih fotografij: $\dfrac{10500}{150} = 70$.
+6. En krog štirih programov traja $4 \cdot 20 = 80$ milisekund; obdelava v njem dobi eno rezino, torej $20\,\text{ms}$ procesorja.
+7. Za $90\,\text{s} = 90000\,\text{ms}$ procesorskega časa potrebuje $\dfrac{90000}{20} = 4500$ rezin, torej $4500$ krogov.
+8. Trajanje: $4500 \cdot 80 = 360000$ milisekund, to je $360\,\text{s}$ ali $6\,\text{min}$. Obdelava dobi četrtino procesorja, zato traja štirikrat dlje kot $90\,\text{s}$.
+9. V eni rezini ($20\,\text{ms} = 0{,}02\,\text{s}$) procesor opravi $3 \cdot 10^{9} \cdot 0{,}02 = 6 \cdot 10^{7}$ taktov.
+10. Odgovor: na kartici ostane $2\,\text{GB}$, prenos traja $375\,\text{s}$, hkrati je lahko odprtih $70$ fotografij, obdelava skupine traja okoli $6\,\text{min}$, v eni rezini pa procesor opravi $6 \cdot 10^{7}$ taktov.
+
+### Naloga 2
+
+Isti izračun povprečnega pridelka je napisan enkrat v jeziku C in enkrat v Pythonu. Natančno navedi, po kateri poti pride vsak od programov od izvorne kode do izvajanja na procesorju, in utemelji, katero programsko opremo mora imeti računalnik, na katerem želiš program samo pognati.
+
+**Rešitev:**
+
+1. Izhodišče: procesor razume le strojno kodo, zaporedja ničel in enic, ki pomenijo njegove preproste ukaze. Stavka v višjem jeziku ne more izvesti neposredno.
+2. C: prevajalnik prevede ves program vnaprej v strojno kodo. Nastane izvršljiva datoteka, ki je shranjena v shrambi.
+3. Ob zagonu operacijski sistem izvršljivo datoteko naloži iz shrambe v RAM in ji dodeli časovne rezine; procesor njene ukaze prevzema, razbira in izvaja.
+4. Python: prevoda vnaprej ni. Tolmač bere izvorno kodo sproti, stavek za stavkom, in vsak stavek takoj izvede. Na procesorju teče tolmač, ki je sam program v strojni kodi.
+5. Za program v C zato na računalniku zadošča izvršljiva datoteka (in operacijski sistem); prevajalnika ne potrebuješ več, ker je svoje delo opravil vnaprej.
+6. Za program v Pythonu mora biti na računalniku nameščen tolmač, ker se prevajanje dogaja med izvajanjem, ob vsakem zagonu znova.
+7. Sklep: v obeh primerih procesor izvaja strojno kodo; razlika je v tem, kdaj nastane (vnaprej ali sproti) in kateri program jo priskrbi.
+
+### Naloga 3
+
+Utemelji, ali drži trditev: »Če v računalniku trdi disk zamenjamo z SSD, se program, ki je že naložen v RAM in samo računa, izvaja hitreje.«
+
+**Rešitev:**
+
+1. Shramba hrani programe in podatke trajno; pred izvajanjem se program naloži v RAM, ker je shramba za procesor prepočasna.
+2. Hitrejša shramba skrajša nalaganje: po $t = \dfrac{\text{količina}}{\text{hitrost}}$ je čas obratno sorazmeren s hitrostjo branja. Program velikosti $1200\,\text{MB}$ se s trdega diska pri $150\,\text{MB/s}$ nalaga $8\,\text{s}$, z SSD pri $600\,\text{MB/s}$ pa $2\,\text{s}$.
+3. Ko je program v RAM-u, procesor ukaze in podatke jemlje iz RAM-a. Hitrost računanja določata frekvenca takta in delež časovnih rezin, ki jih programu dodeli operacijski sistem; shramba v tem ne sodeluje.
+4. Izjemi: program med delom bere ali zapisuje datoteke; ali pa RAM-a zmanjka in mora operacijski sistem dele programov umikati iz RAM-a v shrambo in jih brati nazaj. Takrat hitrost shrambe spet vpliva.
+5. Sklep: trditev v splošnem ne drži. SSD pospeši zagon, nalaganje in shranjevanje, ne pa računanja programa, ki je že v celoti v RAM-u.
+
 ## Drugače: Na sliki
 
 Računalnik si nariši kot torto v plasteh, od spodaj navzgor:
 
-```
-   [ ti, uporabnik ]
- ------------------------
- | aplikacije          |  recepti, preglednica
- ------------------------
- | operacijski sistem  |  razporeja, deli RAM
- ------------------------
- | strojna oprema      |  CPE, RAM, SSD, V/I
- ------------------------
-```
+:::risba skica
+opis: Tri plasti kot trije enako široki pravokotniki, zloženi drug na drugega. Spodaj je strojna oprema (CPE, RAM, SSD, V/I), nad njo operacijski sistem (razporeja, deli RAM), nad njim aplikacije (recepti, preglednica). Nad zgornjo plastjo si ti, uporabnik. Puščica kaže od uporabnika k aplikacijam.
+območje: 0; 0 .. 20; 8,5
+pravokotnik: 0,5; 0,5 .. 9,5; 2,5 | siva
+pravokotnik: 0,5; 2,5 .. 9,5; 4,5 | modra
+pravokotnik: 0,5; 4,5 .. 9,5; 6,5 | oranžna
+napis: 5; 1,5 | strojna oprema | sredina | debelo
+napis: 5; 3,5 | operacijski sistem | sredina | debelo
+napis: 5; 5,5 | aplikacije | sredina | debelo
+napis: 5; 7,9 | ti, uporabnik | sredina
+puščica: 5; 7,4 -> 5; 6,6
+napis: 10; 1,5 | CPE, RAM, SSD, V/I | desno
+napis: 10; 3,5 | razporeja, deli RAM | desno
+napis: 10; 5,5 | recepti, preglednica | desno
+:::
 
 Vsaka plast govori le s sosednjima. Aplikacija ne krmili diska sama, ampak prosi OS, OS pa prek gonilnika krmili disk.
 
 V spodnji plasti si predstavljaj procesor na sredini. Levo od njega je RAM, povezan s širokim, kratkim hodnikom (hitro). Še bolj levo je shramba, povezana z ožjim hodnikom (počasneje). Zgoraj so vrata za vhod (tipkovnica, senzor), spodaj vrata za izhod (zaslon). Vsi podatki iz shrambe gredo do procesorja čez RAM.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Kaj se zgodi, ko na telefonu tapneš ikono kamere?
+Kaj se zgodi, ko vremenska postaja v sadovnjaku pošlje meritev in jo agronom odpre v pisarni?
 
-1. Zaslon na dotik (vhodna naprava) zazna dotik in sporoči koordinate.
-2. Operacijski sistem ugotovi, da si zadel ikono kamere.
-3. OS poišče aplikacijo v shrambi in jo naloži v RAM, če je tam še ni.
-4. OS aplikaciji dodeli časovne rezine procesorja.
-5. Aplikacija prek OS in gonilnika vklopi kamero (vhodna naprava).
-6. Procesor obdeluje sliko, zaslon (izhodna naprava) jo pokaže.
-7. Ko pritisneš sprožilec, se fotografija iz RAM-a zapiše v shrambo. Šele zdaj je varna, tudi če se baterija izprazni.
+1. Senzorji temperature, vlage zraka in omočenosti listov (vhodne naprave) vsakih $10$ minut izmerijo vrednosti, to je $6 \cdot 24 = 144$ meritev na dan.
+2. Majhen procesor v postaji izvaja program, ki vrednosti prebere, jih za hip drži v RAM-u in zapiše v shrambo postaje. Zato meritve ostanejo tudi, če zmanjka toka.
+3. Postaja meritve pošlje v pisarniški računalnik. Tam operacijski sistem prek gonilnika omrežne naprave sprejme podatke in jih zapiše v datoteko na SSD.
+4. Agronom odpre program za napoved škrlupa. Operacijski sistem ga iz shrambe naloži v RAM in mu dodeli časovne rezine procesorja.
+5. Program je napisan v Pythonu ali R, zato ga izvaja tolmač. Datoteko z meritvami prebere v RAM in procesor iz temperature in omočenosti listov izračuna nevarnost okužbe.
+6. Zaslon (izhodna naprava) pokaže graf in opozorilo, tiskalnik izpiše priporočilo za škropljenje.
+7. Ko agronom izračun shrani, se rezultat iz RAM-a zapiše v shrambo. Šele zdaj ga lahko pošlje naprej ali naslednje leto primerja z novimi meritvami.
 
-V tem zaporedju so vsi deli lekcije: vhod, OS, shramba, RAM, procesor, izhod.
+V tem zaporedju so vsi deli lekcije: vhod, procesor, RAM, shramba, operacijski sistem z gonilniki, programski jezik, izhod. Enako pot imajo podatki s tehtnice v laboratoriju, iz molznega robota ali s terminala v traktorju.
 
 ## Preveri se
 
@@ -207,12 +265,12 @@ V tem zaporedju so vsi deli lekcije: vhod, OS, shramba, RAM, procesor, izhod.
 ~ Ista naprava ne more biti hkrati začasna in trajna; trajna hramba je SSD ali trdi disk.
 > RAM je delovni pult (hiter, začasen), SSD je shramba (počasnejša, trajna).
 
-? Igra velikosti $3\,\text{GB}$ se nalaga s SSD-ja s hitrostjo $500\,\text{MB/s}$. Približno koliko traja nalaganje?
+? Igra velikosti $3\,\text{GB}$ se nalaga z SSD-ja s hitrostjo $500\,\text{MB/s}$. Približno koliko traja nalaganje?
 - približno $0{,}006\,\text{s}$
 ~ Tako dobiš, če deliš $3$ s $500$ brez pretvorbe GB v MB.
 + približno $6\,\text{s}$
 - približno $170\,\text{s}$
-~ To je $500 : 3$, deljenje v obratni smeri. Čas je količina deljena s hitrostjo.
+~ To je $500 : 3$, deljenje v obratni smeri. Čas je količina, deljena s hitrostjo.
 - približno $1500\,\text{s}$
 ~ Časa ne dobiš z množenjem ($3000 \cdot 0{,}5$), ampak z deljenjem količine s hitrostjo.
 > $3\,\text{GB} = 3000\,\text{MB}$, $t = \dfrac{3000\,\text{MB}}{500\,\text{MB/s}} = 6\,\text{s}$.

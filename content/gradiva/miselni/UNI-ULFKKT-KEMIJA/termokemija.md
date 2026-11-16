@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sistem in prvi zakon
+  - $\Delta U = q + w$, prejeto je pozitivno
+  - $U$ funkcija stanja, $q$ in $w$ ne
+  - stalna prostornina: $\Delta U = q_V$
+- Entalpija
+  - $H = U + pV$, pri stalnem tlaku $\Delta H = q_p$
+  - $\Delta H < 0$ eksotermno, $\Delta H > 0$ endotermno
+- Termokemijska enačba
+  - agregatna stanja in $\Delta_\mathrm{r}H^\circ$ v $\mathrm{kJ/mol}$
+  - obrat: $-\Delta H$, množenje: $k\,\Delta H$
+  - standardno stanje: $p^\circ = 1\,\mathrm{bar}$
+- Hessov zakon
+  - $\Delta H_\text{celotna} = \Delta H_1 + \Delta H_2 + \dots$
+  - primer: $-393{,}5 + 283{,}0 = -110{,}5\,\mathrm{kJ/mol}$
+  - napaka: »obrneš enačbo, predznaka ne«
+- Tvorbene entalpije
+  - nastanek $1\,\mathrm{mol}$ spojine iz elementov
+  - $\Delta_\mathrm{r}H^\circ = \sum \nu\,\Delta_\mathrm{f}H^\circ(\text{prod.}) - \sum \nu\,\Delta_\mathrm{f}H^\circ(\text{reakt.})$
+  - element v standardnem stanju: $\Delta_\mathrm{f}H^\circ = 0$
+- Kalorimetrija
+  - $q = m\,c_p\,\Delta T$, bomba: $q = C\,\Delta T$
+  - $\Delta H = -q/n$, segrevanje pomeni $\Delta H < 0$
+- Zveza z notranjo energijo
+  - $\Delta H = \Delta U + \Delta n_\mathrm{g}RT$
+  - $RT = 2{,}48\,\mathrm{kJ/mol}$ pri $298\,\mathrm{K}$
+  - etanol: $\Delta n_\mathrm{g} = -1$, popravek $-2{,}5\,\mathrm{kJ/mol}$

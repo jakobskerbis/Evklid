@@ -150,27 +150,97 @@ $\Delta E_0' = 0{,}82 + 0{,}42 = 1{,}24\,\mathrm{V}$, $\Delta G_0' = -8 \cdot 96
 - Fotosinteza: energija iz svetlobe; oksigena (voda, nastaja $\mathrm{O_2}$) ali anoksigena.
 - $\Delta G_0' = -nF\Delta E_0'$, $\Delta E_0' = E_0'(\text{sprejemnik}) - E_0'(\text{darovalec})$.
 
+## Za izpit
+
+Znati moraš povedati:
+- tri vprašanja, s katerimi opišeš vsako presnovo (vir energije, darovalec elektronov, končni sprejemnik elektronov), in pomen oznak kemo-/foto-, organo-/lito-, avto-/heterotrof;
+- razliko med fosforilacijo na ravni substrata in oksidativno fosforilacijo ter kje pri prokariontih leži veriga za prenos elektronov;
+- definicijo fermentacije: brez zunanjega sprejemnika in brez verige, $\mathrm{NADH}$ odda elektrone organskemu produktu, da se obnovi $\mathrm{NAD^+}$;
+- razliko med fermentacijo in anaerobnim dihanjem ter primere sprejemnikov pri anaerobnem dihanju;
+- enačbo $\Delta G_0' = -n\,F\,\Delta E_0'$ s pomenom vseh količin in pravilom $\Delta E_0' = E_0'(\text{sprejemnik}) - E_0'(\text{darovalec})$;
+- razliko med oksigeno in anoksigeno fotosintezo (darovalec elektronov, produkt).
+
+### Naloga 1
+
+Kemolitotrofna bakterija iz morskega sedimenta oksidira vodik ($E_0'(2\mathrm{H^+/H_2}) = -0{,}42\,\mathrm{V}$, $n = 2$ na molekulo $\mathrm{H_2}$). Na voljo ima lahko tri sprejemnike: $\mathrm{O_2}$ ($+0{,}82\,\mathrm{V}$), $\mathrm{NO_3^-}$ ($+0{,}42\,\mathrm{V}$) in $\mathrm{SO_4^{2-}}$ ($-0{,}22\,\mathrm{V}$). Vzemi $F = 96{,}485\,\mathrm{kJ/(V\cdot mol)}$. (a) Izračunaj $\Delta G_0'$ na mol $\mathrm{H_2}$ za vsak sprejemnik. (b) Koliko molov $\mathrm{H_2}$ mora bakterija oksidirati s sulfatom, da sprosti toliko energije kot z $1\,\mathrm{mol}$ $\mathrm{H_2}$ in kisikom? (c) V poskusu se pri oksidaciji $0{,}50\,\mathrm{mol}$ $\mathrm{H_2}$ sprosti $81{,}0\,\mathrm{kJ}$. Kateri sprejemnik je bakterija uporabila? (d) V kakšnem vrstnem redu bo bakterija porabljala sprejemnike, če so na začetku na voljo vsi trije?
+
+**Rešitev:**
+
+1. Kisik: $\Delta E_0' = 0{,}82 + 0{,}42 = 1{,}24\,\mathrm{V}$, $\Delta G_0' = -2 \cdot 96{,}485 \cdot 1{,}24 \approx -239{,}3\,\mathrm{kJ/mol}$.
+2. Nitrat: $\Delta E_0' = 0{,}42 + 0{,}42 = 0{,}84\,\mathrm{V}$, $\Delta G_0' = -2 \cdot 96{,}485 \cdot 0{,}84 \approx -162{,}1\,\mathrm{kJ/mol}$.
+3. Sulfat: $\Delta E_0' = -0{,}22 + 0{,}42 = 0{,}20\,\mathrm{V}$, $\Delta G_0' = -2 \cdot 96{,}485 \cdot 0{,}20 \approx -38{,}6\,\mathrm{kJ/mol}$.
+4. Enaka energija: $\dfrac{239{,}3}{38{,}6} \approx 6{,}2$. S sulfatom mora oksidirati $6{,}2\,\mathrm{mol}$ $\mathrm{H_2}$. Ker sta $n$ in $F$ enaka, je to kar razmerje potencialnih razlik: $\dfrac{1{,}24}{0{,}20} = 6{,}2$.
+5. Neznani sprejemnik: na mol $\mathrm{H_2}$ se sprosti $\dfrac{81{,}0}{0{,}50} = 162\,\mathrm{kJ}$, torej $\Delta G_0' = -162\,\mathrm{kJ/mol}$.
+6. $\Delta E_0' = \dfrac{162}{2 \cdot 96{,}485} \approx 0{,}84\,\mathrm{V}$.
+7. $E_0'(\text{sprejemnik}) = \Delta E_0' + E_0'(\text{darovalec}) = 0{,}84 - 0{,}42 = 0{,}42\,\mathrm{V}$. To je par $\mathrm{NO_3^-/NO_2^-}$.
+8. Vrstni red: najprej $\mathrm{O_2}$, nato $\mathrm{NO_3^-}$, nazadnje $\mathrm{SO_4^{2-}}$, torej od najvišjega $E_0'$ proti najnižjemu, ker večji padec elektronov da več energije za ATP.
+9. Odgovor: (a) $-239{,}3$; $-162{,}1$ in $-38{,}6\,\mathrm{kJ/mol}$; (b) $6{,}2\,\mathrm{mol}$; (c) nitrat, gre za anaerobno dihanje; (d) kisik, nitrat, sulfat.
+
+### Naloga 2
+
+Natančno navedi razlike med fermentacijo in anaerobnim dihanjem ter utemelji, zakaj fermentacija iz iste glukoze da veliko manj ATP. Zakaj trditev »brez kisika celica vedno fermentira« ne drži?
+
+**Rešitev:**
+
+1. Končni sprejemnik elektronov: pri fermentaciji je to organska molekula iz same celice (piruvat ali produkt, ki iz njega nastane). Pri anaerobnem dihanju je zunanji sprejemnik, ki ni kisik: $\mathrm{NO_3^-}$, $\mathrm{SO_4^{2-}}$, $\mathrm{Fe^{3+}}$, fumarat ali $\mathrm{CO_2}$.
+2. Veriga za prenos elektronov: fermentacija je nima in protonskega gradienta ne ustvarja. Pri anaerobnem dihanju veriga v citoplazemski membrani in ATP-sintaza delujeta enako kot pri aerobnem dihanju.
+3. Nastanek ATP: pri fermentaciji le fosforilacija na ravni substrata v glikolizi ($2$ ATP na glukozo). Pri anaerobnem dihanju poteka še oksidativna fosforilacija.
+4. Usoda $\mathrm{NADH}$: pri fermentaciji odda elektrone organskemu produktu samo zato, da se obnovi $\mathrm{NAD^+}$ in glikoliza teče naprej; ta korak ne da ATP. Pri dihanju $\mathrm{NADH}$ odda elektrone verigi in njihov padec proti sprejemniku poganja črpanje protonov.
+5. Produkti: fermentacija izloča delno oksidirane organske snovi (mlečna kislina, etanol, ocetna kislina), v katerih ostane večina energije glukoze. Dihanje glukozo razgradi do $\mathrm{CO_2}$.
+6. Utemeljitev izkoristka: pri fermentaciji elektroni ostanejo skoraj na isti »višini« redoks lestvice, saj sprejemnik nastane iz same glukoze. Pri dihanju padejo za $\Delta E_0'$ do zunanjega sprejemnika in sprosti se $\Delta G_0' = -n\,F\,\Delta E_0'$, na primer okoli $-143\,\mathrm{kJ}$ na mol $\mathrm{NADH}$ z nitratom.
+7. Trditev ne drži, ker sta brez kisika mogoči dve poti. Odloča vprašanje, ali ima celica zunanji sprejemnik in verigo. *E. coli* brez kisika, a z nitratom, diha anaerobno; fermentira šele, ko zunanjega sprejemnika ni.
+
+### Naloga 3
+
+Z redoks lestvico utemelji, ali lahko prenos elektronov poteka sam od sebe: (a) z $\mathrm{NADH}$ na sulfat ($2$ elektrona), (b) s $\mathrm{H_2S}$ na $\mathrm{NAD^+}$ ($2$ elektrona). (c) Bakterija oksidira $\mathrm{H_2S}$ do sulfata s kisikom ($8$ elektronov), ogljik dobi iz $\mathrm{CO_2}$. Izračunaj $\Delta G_0'$ na mol $\mathrm{H_2S}$ in bakterijo opiši s tremi vprašanji. (d) Od kod dobi energijo za korak (b) škrlatna žveplova bakterija? Podatki: $E_0'(\mathrm{NAD^+/NADH}) = -0{,}32\,\mathrm{V}$, $E_0'(\mathrm{SO_4^{2-}/H_2S}) = -0{,}22\,\mathrm{V}$, $E_0'(\mathrm{O_2/H_2O}) = +0{,}82\,\mathrm{V}$, $F = 96{,}485\,\mathrm{kJ/(V\cdot mol)}$.
+
+**Rešitev:**
+
+1. (a) Darovalec je $\mathrm{NADH}$, sprejemnik sulfat: $\Delta E_0' = -0{,}22 + 0{,}32 = 0{,}10\,\mathrm{V}$.
+2. $\Delta G_0' = -2 \cdot 96{,}485 \cdot 0{,}10 \approx -19{,}3\,\mathrm{kJ/mol}$. Vrednost je negativna, prenos poteka sam od sebe, a sprosti malo energije.
+3. (b) Zdaj je darovalec $\mathrm{H_2S}$, sprejemnik $\mathrm{NAD^+}$: $\Delta E_0' = -0{,}32 + 0{,}22 = -0{,}10\,\mathrm{V}$.
+4. $\Delta G_0' = -2 \cdot 96{,}485 \cdot (-0{,}10) \approx +19{,}3\,\mathrm{kJ/mol}$. Vrednost je pozitivna: elektroni bi morali »navkreber«, zato prenos sam od sebe ne poteka.
+5. (c) Darovalec $\mathrm{H_2S}$, sprejemnik kisik: $\Delta E_0' = 0{,}82 + 0{,}22 = 1{,}04\,\mathrm{V}$.
+6. $\Delta G_0' = -8 \cdot 96{,}485 \cdot 1{,}04 \approx -802{,}8\,\mathrm{kJ}$ na mol $\mathrm{H_2S}$.
+7. Tri vprašanja: energija iz kemične reakcije (kemotrof), darovalec je anorganski $\mathrm{H_2S}$ (litotrof), končni sprejemnik je $\mathrm{O_2}$ (aerobno dihanje). Ogljik iz $\mathrm{CO_2}$ pomeni avtotrof. Bakterija je kemolitoavtotrof.
+8. (d) Škrlatna žveplova bakterija je fototrof z anoksigeno fotosintezo. Energijo prinese svetloba, ki v bakterioklorofilu vzbudi elektron; darovalec elektronov je $\mathrm{H_2S}$, kisik ne nastaja.
+9. Odgovor: (a) poteka, $-19{,}3\,\mathrm{kJ/mol}$; (b) ne poteka, $+19{,}3\,\mathrm{kJ/mol}$; (c) $-802{,}8\,\mathrm{kJ}$ na mol $\mathrm{H_2S}$, kemolitoavtotrof z aerobnim dihanjem; (d) iz svetlobe.
+
 ## Drugače: Na sliki
 
-Predstavljaj si navpično merilo nadmorske višine. Spodaj, pri $-0{,}42\,\mathrm{V}$, je vodik. Malo višje, pri $-0{,}32\,\mathrm{V}$, je $\mathrm{NADH}$. Na vrhu, pri $+0{,}82\,\mathrm{V}$, je kisik.
+Predstavljaj si navpično merilo nadmorske višine. Zgoraj, pri $-0{,}42\,\mathrm{V}$, je vodik. Malo nižje, pri $-0{,}32\,\mathrm{V}$, je $\mathrm{NADH}$. Na dnu, pri $+0{,}82\,\mathrm{V}$, je kisik.
 
-```
-+0,82  O2      ← vrh: največji padec
-+0,42  NO3-
--0,22  SO4 2-
--0,32  NADH
--0,42  H2      ← dno: najmočnejši darovalec
-```
+:::risba skica
+opis: Navpično merilo redoks potenciala, najbolj negativna vrednost je na vrhu. Od zgoraj navzdol: −0,42 V vodik H₂ (vrh, najmočnejši darovalec), −0,32 V NADH, −0,22 V sulfat SO₄²⁻, +0,42 V nitrat NO₃⁻, +0,82 V kisik O₂ (dno, največji padec).
+območje: 0; 0 .. 308; 310
+enota: 1
+črta: 70; 304 -> 70; 6 | debelo
+črta: 64; 295 -> 76; 295
+črta: 64; 272,5 -> 76; 272,5
+črta: 64; 250 -> 76; 250
+črta: 64; 106 -> 76; 106
+črta: 64; 16 -> 76; 16
+napis: 62; 295 | −0,42 V | levo
+napis: 62; 272,5 | −0,32 V | levo
+napis: 62; 250 | −0,22 V | levo
+napis: 62; 106 | +0,42 V | levo
+napis: 62; 16 | +0,82 V | levo
+napis: 78; 295 | H_2 (vrh: najmočnejši darovalec) | desno
+napis: 78; 272,5 | NADH | desno
+napis: 78; 250 | SO_4^{2−} | desno
+napis: 78; 106 | NO_3^− | desno
+napis: 78; 16 | O_2 (dno: največji padec) | desno
+:::
 
 Elektron je kot kamen, ki ga spustiš z darovalca do sprejemnika. Več kot je višinskih metrov med njima, več energije se sprosti. Na tej sliki vidiš vse oblike presnove:
 
-- aerobno dihanje: od $\mathrm{NADH}$ do vrha,
+- aerobno dihanje: od $\mathrm{NADH}$ do dna,
 - anaerobno dihanje: od $\mathrm{NADH}$ do vmesne postaje,
 - kemolitotrofija: kamen spustiš z drugega mesta, na primer z vodika,
 - fermentacija: kamen ostane skoraj na isti višini, ker sprejemnik nastane iz same glukoze,
 - fotosinteza: svetloba kamen najprej dvigne, nato pade.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
 - **Kruh, vino in jogurt** so izdelki fermentacije. Kvasovke glukozo pretvorijo v etanol in $\mathrm{CO_2}$, mlečnokislinske bakterije v mlečno kislino.
 - **Čistilna naprava** odstranjuje nitrat z denitrifikacijo: bakterije z nitratom dihajo in ga pretvorijo v plin $\mathrm{N_2}$.
@@ -224,7 +294,7 @@ Elektron je kot kamen, ki ga spustiš z darovalca do sprejemnika. Več kot je vi
 > Nitrat je končni sprejemnik elektronov in se reducira do $\mathrm{N_2}$. To je denitrifikacija, oblika anaerobnega dihanja.
 
 :::simboli
-\Delta G_0' | standardna sprememba proste entalpije | \Delta G_0' = -n\,F\,\Delta E_0' | kJ/mol | negativna: reakcija sprošča energijo
+\Delta G_0' | standardna sprememba proste energije (proste entalpije) | \Delta G_0' = -n\,F\,\Delta E_0' | kJ/mol | negativna: reakcija sprošča energijo
 n | število prenesenih elektronov | | –
 F | Faradayeva konstanta | | kJ/(V mol) | 96,485 kJ/(V mol)
 \Delta E_0' | razlika standardnih redoks potencialov | \Delta E_0' = E_0'(\text{sprejemnik}) - E_0'(\text{darovalec}) | V | večja razlika, več energije
