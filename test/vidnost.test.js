@@ -42,11 +42,21 @@ test("vstopna stran: naslov, opis, canonical, Open Graph in Twitter", () => {
   assert.equal(meta(index, "property", "og:site_name"), BRAND.name);
   assert.equal(meta(index, "property", "og:locale"), "sl_SI");
   assert.ok(meta(index, "property", "og:title") && meta(index, "property", "og:description") && meta(index, "property", "og:image"));
-  assert.equal(meta(index, "name", "twitter:card"), "summary");
+  assert.equal(meta(index, "name", "twitter:card"), "summary_large_image");
+  // Slika za predogled 1200 × 630 (scripts/og-slika.cjs) obstaja; ni del prvega odprtja (test/hitrost-proracun.test.js).
+  const og = meta(index, "property", "og:image");
+  assert.ok(og.startsWith(`${ORIGIN}/`) && existsSync(new URL(`../public${og.slice(ORIGIN.length)}`, import.meta.url)), og);
+  assert.equal(meta(index, "name", "twitter:image"), og);
+  assert.equal(meta(index, "property", "og:image:width"), "1200");
+  assert.equal(meta(index, "property", "og:image:height"), "630");
+  assert.ok(!/Euclid/.test(meta(index, "property", "og:image:alt")));
   assert.ok(!/hreflang/.test(index), "aplikacija nima jezikovnih naslovov URL, zato brez hreflang");
   // Brez JavaScripta (pomočniki AI strani ne izrišejo) ostane kratek opis in povezava na /o-evklidu.
   const noscript = index.match(/<noscript>([\s\S]*?)<\/noscript>/)[1];
   assert.ok(noscript.includes('href="/o-evklidu"') && noscript.includes(BRAND.domain));
+  // Iskalniki in predogledi brez JavaScripta vidijo sporočilo vstopne strani (#750), ne lupine aplikacije.
+  assert.ok(noscript.includes(`<h1>Ko se pri domači nalogi zatakne, ti ${BRAND.name} pokaže naslednji korak.</h1>`) && noscript.includes("Za gimnazijo, vse šolsko leto."));
+  assert.ok(/body > :not\(noscript\) \{ display: none !important; \}/.test(noscript));
   // Povezave v <noscript> ne smejo kazati na datoteke v public/: server/startup-files.js bi jih štel k prvemu odprtju.
   for (const [, href] of noscript.matchAll(/href="([^"]+)"/g)) assert.ok(!existsSync(new URL(`../public${href}`, import.meta.url)), href);
 });
