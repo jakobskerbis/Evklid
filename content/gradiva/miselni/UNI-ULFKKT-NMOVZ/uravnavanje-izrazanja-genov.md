@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enak genom
+  - celice se razlikujejo po izraženih genih
+  - konstitutivni in uravnavani geni
+  - glavno stikalo je prepisovanje
+- Operon
+  - promotor, operator, strukturni geni
+  - ena policistronska mRNA
+  - *lacI* leži zunaj operona
+- Negativni nadzor *lac*
+  - represor na operatorju ustavi prepis
+  - alolaktoza je induktor
+  - napaka: »laktoza se veže na DNA«
+- Cis in trans
+  - $lacI^-$ recesivna, represor deluje trans
+  - $O^c$ cis-dominantna
+  - $lacI^s$ dominantna, neinducibilen fenotip
+- Pozitivni nadzor
+  - malo glukoze: več cAMP, CAP–cAMP
+  - močan prepis: laktoza da, glukoza ne
+  - model: represor $1000$-krat, CAP $50$-krat
+- Represibilni *trp*
+  - triptofan je korepresor
+  - veliko triptofana: operon zaprt
+- Evkarionti
+  - splošni dejavniki, zaporedje TATA
+  - aktivatorji na ojačevalcih, represorji na utiševalcih
+  - kombinacijski nadzor
+- HIF in EPO
+  - malo kisika: HIF se kopiči
+  - več prepisa gena za EPO

@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Fizikalna sprememba
+  - snov ostane ista
+  - taljenje, izparevanje, raztapljanje
+  - struna se napne
+- Kemijska sprememba
+  - nastane nova snov
+  - reaktanti → produkti
+- Znaki reakcije
+  - plin, nova barva, svetloba
+  - napaka: mehurčki pri vrenju so voda
+- Gorenje
+  - hitra reakcija s kisikom
+  - gorivo, kisik, visoka temperatura
+  - pokrita sveča ugasne
+- Rjavenje
+  - železo, kisik in voda → rja
+  - sol pospeši, barva in olje zaščitita
+- Ohranitev mase
+  - zaprta posoda: $m_\text{po} = m_\text{pred}$
+  - plin uide: masa na tehtnici pade
+  - vezani kisik: masa naraste

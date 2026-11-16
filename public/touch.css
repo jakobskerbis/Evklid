@@ -134,6 +134,15 @@
   }
   body.tb-peek > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { transform: translateY(calc(var(--tb-step-pb) - 12px - var(--tabbar-h, 0px))); }
 }
+/* ---------- Spodnja vrstica se po 3 s neuporabe skrije (j, 2026-11-14; public/noga.js) ----------
+   Na zaslonih, kjer je vrstica v postavitvi (Učna pot, Uči se, Tekmovanja, Jaz …): body.tb-mir jo pritrdi pod spodnji
+   rob (vsebina dobi njen prostor), body.tb-vraca jo ob uporabi pripelje nazaj (0,22 s), nato je spet v postavitvi.
+   Zasloni za branje zgoraj imajo močnejše pravilo (--tb-y) in ostanejo po starem. Med vodičem (kaže na zavihke) je
+   vrstica vedno na mestu. */
+@media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
+  body:is(.tb-mir, .tb-vraca):not(:has(> #tour:not([hidden]))) > .tabbar { position: fixed; inset-inline: 0; bottom: 0; z-index: 30; transition: transform 0.22s ease; }
+  body.tb-mir:not(:has(> #tour:not([hidden]))) > .tabbar { transform: translateY(100%); visibility: hidden; transition: transform 0.22s ease, visibility 0s linear 0.22s; }
+}
 @media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper { transition: none !important; } }
 
 /* Pogled je lahko v spodnji vrstici (npr. Tekmovanja ali NPZ in matura): takrat brez »← Jaz«. */
@@ -149,4 +158,21 @@
 @media (hover: none) {
   #conversation-list li { gap: 12px; }
   #conversation-list li button { opacity: 0.8; min-width: 40px; min-height: 40px !important; margin-block: -8px; display: inline-flex; align-items: center; justify-content: center; }
+}
+
+/* ---------- odziv na dotik (j 6. 11. 2026: »da bo Evklid deloval bolj odzivno«) ----------
+   - brez zakasnitve dotika in povečave ob dvojnem tapu na vsem, kar se tapne (:where = brez prednosti,
+     zato lastna pravila, npr. touch-action: none na platnih in drsnikih, ostanejo),
+   - vidna povratna informacija takoj ob pritisku (< 50 ms): rahel pritisk (scale, ločen od transform,
+     zato se ne tepe z obstoječimi premiki gumbov). Gumbi z lastnim :active (tipkovnica, kalkulator, igre)
+     ga ne dobijo še enkrat. Ob »manj gibanja« (prefers-reduced-motion) brez pomika, samo potemnitev. */
+:where(button, a[href], summary, label, select, [role="button"], [role="tab"], [role="link"], [role="menuitem"], [role="option"], .tab, .node) {
+  touch-action: manipulation;
+}
+:where(button, summary, [role="button"], [role="tab"], [role="menuitem"], [role="option"], .tab):not(:disabled, [aria-disabled="true"], .tk-k, .sc-key, .gm-tile, .gm-btn, .gm-key, .gm-me, .choice, .primary, .modes button):active {
+  scale: 0.97;
+  filter: brightness(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(button, summary, [role="button"], [role="tab"], [role="menuitem"], [role="option"], .tab):active { scale: none; }
 }

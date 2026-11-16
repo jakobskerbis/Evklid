@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Skalarni produkt
+  - $\langle x, y \rangle = x_1 y_1 + \dots + x_n y_n$, rezultat je število
+  - simetričen, linearen, pozitivno definiten
+  - polinomi: $\langle p, q \rangle = \int_0^1 p\,q\,dx$
+- Norma
+  - $\|v\| = \sqrt{\langle v, v \rangle}$, primer $\|(3, 4)\| = 5$
+  - $\|\alpha v\| = |\alpha|\,\|v\|$, norma ni linearna
+- Cauchy-Schwarz in kot
+  - $|\langle u, v \rangle| \le \|u\|\,\|v\|$
+  - $\cos\varphi = \frac{\langle u, v \rangle}{\|u\|\,\|v\|}$
+- Ortogonalnost
+  - $u \perp v \iff \langle u, v \rangle = 0$
+  - Pitagora: $\|u + v\|^2 = \|u\|^2 + \|v\|^2$
+  - ortogonalni neničelni vektorji so neodvisni
+- Projekcija na vektor
+  - $\operatorname{proj}_u v = \frac{\langle v, u \rangle}{\langle u, u \rangle}\,u$
+  - napaka: deljenje z $\|u\|$ namesto z $\|u\|^2$
+  - ostanek $v - p$ je pravokoten na $u$
+- Projekcija na podprostor
+  - vsota projekcij po ortogonalni bazi $W$
+  - najbližja točka podprostora
+- Gram-Schmidtov postopek
+  - $u_m = v_m - \sum_{j<m} \operatorname{proj}_{u_j} v_m$
+  - odštevaj projekcije na $u_j$, ne na $v_j$
+  - na koncu normiraj: $e_m = u_m / \|u_m\|$

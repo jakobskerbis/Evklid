@@ -38,7 +38,7 @@ Iz $c \sim a$ in $c \sim b$ po simetriji dobimo $a \sim c$ in $c \sim b$, po tra
 
 **4. Urejenost.** Relacija, ki je refleksivna, antisimetrična in tranzitivna, je **delna urejenost**. Običajno jo označimo z $\preceq$. Primera: $\le$ na $\mathbb{R}$ in $\subseteq$ na $\mathcal{P}(A)$. Če sta poleg tega poljubna dva elementa **primerljiva** ($a \preceq b$ ali $b \preceq a$), je urejenost **linearna**. Relacija $\le$ na $\mathbb{R}$ je linearna. Relacija »deli« na $\{1, 2, 3, 4, 6, 12\}$ je delna, ni pa linearna: $4 \nmid 6$ in $6 \nmid 4$.
 
-**5. Funkcija.** **Funkcija** $f: A \to B$ je relacija $f \subseteq A \times B$, pri kateri ima vsak $a \in A$ *natanko en* $b \in B$ s $(a, b) \in f$. Ta $b$ označimo s $f(a)$. Množica $A$ je **domena**, $B$ **kodomena**, $f(A) = \{f(a) ;\ a \in A\}$ je **zaloga vrednosti** (slika). Na puščičnem diagramu iz vsake točke v $A$ izhaja natanko ena puščica.
+**5. Funkcija.** **Funkcija** $f: A \to B$ je relacija med $A$ in $B$, torej $f \subseteq A \times B$, pri kateri ima vsak $a \in A$ *natanko en* $b \in B$ s $(a, b) \in f$. Ta $b$ označimo s $f(a)$. Množica $A$ je **domena**, $B$ **kodomena**, $f(A) = \{f(a) ;\ a \in A\}$ je **zaloga vrednosti** (slika). Na puščičnem diagramu iz vsake točke v $A$ izhaja natanko ena puščica.
 
 Funkcija $f$ je:
 
@@ -152,6 +152,62 @@ Nesurjektivni sta le konstantni funkciji (vse v $a$ ali vse v $b$), torej $2$. S
 - Injektivna: $f(a_1) = f(a_2) \Rightarrow a_1 = a_2$. Surjektivna: $f(A) = B$. Bijektivna: oboje, ima inverz.
 - Lastnosti funkcije so odvisne od domene in kodomene, ne le od formule.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicije refleksivnosti, simetričnosti, antisimetričnosti in tranzitivnosti s kvantifikatorji ter za vsako primer relacije, ki lastnosti nima;
+- definicijo ekvivalenčne relacije, ekvivalenčnega razreda in faktorske množice ter dokaz, da sta dva razreda enaka ali disjunktna;
+- definicijo delne in linearne urejenosti ter primer delne urejenosti, ki ni linearna;
+- definicijo funkcije kot relacije ter razliko med kodomeno in zalogo vrednosti;
+- definicije injektivnosti, surjektivnosti in bijektivnosti ter kako vsako dokažeš ali ovržeš;
+- zakaj so lastnosti funkcije odvisne od domene in kodomene, ne le od formule.
+
+### Naloga 1
+
+Na $\mathbb{Z}$ definiramo $x \sim y \iff 5 \mid (x^2 - y^2)$. (a) Dokaži, da je $\sim$ ekvivalenčna relacija. (b) Določi vse ekvivalenčne razrede. (c) Ali sta $13$ in $-8$ v istem razredu? (d) Ali je $\sim$ ista relacija kot »$x$ in $y$ imata isti ostanek pri deljenju s $5$«?
+
+**Rešitev:**
+
+1. Refleksivnost: $x^2 - x^2 = 0 = 5 \cdot 0$, torej $x \sim x$.
+2. Simetričnost: iz $x^2 - y^2 = 5k$ sledi $y^2 - x^2 = 5 \cdot (-k)$, torej $y \sim x$.
+3. Tranzitivnost: iz $x^2 - y^2 = 5k$ in $y^2 - z^2 = 5l$ s seštevanjem dobimo $x^2 - z^2 = 5(k + l)$, torej $x \sim z$. Relacija je ekvivalenčna.
+4. Zapišemo $x = 5q + r$, $r \in \{0, 1, 2, 3, 4\}$. Potem je $x^2 = 5(5q^2 + 2qr) + r^2$, zato ima $x^2$ pri deljenju s $5$ isti ostanek kot $r^2$.
+5. Ostanki kvadratov: $0^2 = 0$, $1^2 = 1$, $2^2 = 4$, $3^2 = 9 = 5 + 4$, $4^2 = 16 = 15 + 1$. Za $r = 0, 1, 2, 3, 4$ so ostanki $0, 1, 4, 4, 1$.
+6. Velja $x \sim y$ natanko tedaj, ko imata $x^2$ in $y^2$ isti ostanek. Razredi so zato trije: $[0]$ so števila z ostankom $0$, $[1]$ števila z ostankom $1$ ali $4$, $[2]$ števila z ostankom $2$ ali $3$.
+7. Preverimo: $13 = 5 \cdot 2 + 3$ in $-8 = 5 \cdot (-2) + 2$. Ostanka $3$ in $2$ sta v istem razredu. Kontrola: $13^2 - (-8)^2 = 169 - 64 = 105 = 5 \cdot 21$.
+8. Relaciji nista isti: $2 \sim 3$, ker je $2^2 - 3^2 = -5$, a $2$ in $3$ nimata istega ostanka. Relacija »isti ostanek« ima $5$ razredov, $\sim$ pa $3$.
+9. Odgovor: $\sim$ je ekvivalenca s tremi razredi $[0]$, $[1]$, $[2]$; $13$ in $-8$ sta oba v $[2]$; relacija ni ista kot »isti ostanek pri deljenju s $5$«.
+
+### Naloga 2
+
+Naj bo $A = \{1, 2, 3, 4\}$ in $B = \{a, b, c\}$. (a) Koliko je vseh funkcij $A \to B$, koliko je injektivnih in koliko surjektivnih? (b) Odgovori na ista vprašanja za funkcije $B \to A$.
+
+**Rešitev:**
+
+1. Vseh funkcij $A \to B$: vsak od štirih elementov izbere eno od treh slik, zato jih je $3^4 = 81$.
+2. Injektivnih $A \to B$ ni: štirje elementi gredo v tri, zato dva dobita isto sliko.
+3. Surjektivne $A \to B$: od vseh odštejemo tiste, ki zgrešijo kak element $B$. Funkcij, ki zgrešijo izbrani element, je $2^4 = 16$, izbrani element pa je lahko vsak od treh.
+4. Funkcije, ki zgrešijo dva elementa, so konstantne in smo jih odšteli dvakrat. Take so $3$, zato jih enkrat prištejemo nazaj.
+5. Surjektivnih je $81 - 3 \cdot 16 + 3 = 36$.
+6. Vseh funkcij $B \to A$ je $4^3 = 64$.
+7. Injektivne $B \to A$: $a$ ima $4$ možne slike, $b$ še $3$, $c$ še $2$, torej $4 \cdot 3 \cdot 2 = 24$.
+8. Surjektivnih $B \to A$ ni: trije elementi imajo največ tri različne slike, $A$ pa ima štiri elemente.
+9. Odgovor: $A \to B$: $81$ vseh, $0$ injektivnih, $36$ surjektivnih. $B \to A$: $64$ vseh, $24$ injektivnih, $0$ surjektivnih.
+
+### Naloga 3
+
+Natančno navedi definiciji injektivne in surjektivne funkcije. Naj bosta $f: A \to B$ in $g: B \to C$ funkciji, $g \circ f: A \to C$ pa njun kompozitum, $(g \circ f)(a) = g(f(a))$. Dokaži: če je $g \circ f$ injektiven, je $f$ injektivna. Utemelji, ali mora biti tedaj injektivna tudi $g$.
+
+**Rešitev:**
+
+1. Funkcija $f: A \to B$ je injektivna, če za vse $a_1, a_2 \in A$ velja $f(a_1) = f(a_2) \Rightarrow a_1 = a_2$.
+2. Funkcija $f: A \to B$ je surjektivna, če velja $\forall b \in B\ \exists a \in A:\ f(a) = b$, torej $f(A) = B$.
+3. Dokaz: naj bo $g \circ f$ injektiven in $f(a_1) = f(a_2)$. Na obeh straneh uporabimo $g$: $g(f(a_1)) = g(f(a_2))$.
+4. To pomeni $(g \circ f)(a_1) = (g \circ f)(a_2)$. Ker je $g \circ f$ injektiven, sledi $a_1 = a_2$. Torej je $f$ injektivna.
+5. Funkcija $g$ ni nujno injektivna. Protiprimer: $A = \{1\}$, $B = \{a, b\}$, $C = \{1\}$, $f(1) = a$, $g(a) = g(b) = 1$.
+6. Kompozitum $g \circ f: \{1\} \to \{1\}$ je identiteta, torej injektiven. Funkcija $g$ pa ni injektivna, ker je $g(a) = g(b)$ in $a \neq b$.
+7. Sklep: iz injektivnosti $g \circ f$ sledi injektivnost $f$, ne pa $g$. Funkcija $g$ mora biti injektivna le na zalogi vrednosti $f(A)$; element $B$ zunaj nje sme zlepiti s katerimkoli drugim.
+
 ## Drugače: Na sliki
 
 Relacijo na $\{1, 2, 3\}$ zapiši kot tabelo $3 \times 3$: vrstica je $a$, stolpec $b$, v celico napiši »da«, če je $a \,R\, b$. Za relacijo iz primera 1:
@@ -169,12 +225,12 @@ Relacijo na $\{1, 2, 3\}$ zapiši kot tabelo $3 \times 3$: vrstica je $a$, stolp
 
 Funkcijo nariši kot dva stolpca točk s puščicami iz levega v desnega. Štej puščice, ki *pridejo* v vsako desno točko: največ ena pomeni injektivno, vsaj ena surjektivno, natanko ena bijektivno.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Ekvivalenca:** razvrščanje perila po barvi. Vsak kos gre v en kup, kosi v istem kupu so »iste barve«. Kupi so ekvivalenčni razredi.
-- **Delna urejenost:** predpogoji predmetov. Analiza 1 je pred Analizo 2, a dva izbirna predmeta, ki nista povezana, nista primerljiva. Ne obstaja en sam pravi vrstni red, obstaja pa več dovoljenih.
-- **Injektivnost:** garderoba v gledališču. Vsak plašč dobi svojo številko; dva plašča na isti številki bi pomenila zmedo.
-- **Surjektivnost:** razporeditev študentov v skupine za vaje. Če ima vsaka skupina vsaj enega študenta, je razporeditev surjektivna. Če je študentov manj kot skupin, to ni mogoče.
+- **Ekvivalenca:** z njo matematik gradi nove objekte. Racionalna števila so razredi parov celih števil pri $(a, b) \sim (c, d) \iff ad = bc$, zato sta $\frac{1}{2}$ in $\frac{3}{6}$ isto število. V algebri in kriptografiji računamo z razredi ostankov $\mathbb{Z}_n$.
+- **Delna urejenost:** v računalništvu so odvisnosti med opravili ali programskimi paketi delna urejenost. Algoritem topološkega urejanja jo razširi v linearno, torej v vrstni red izvajanja. Takih vrstnih redov je navadno več.
+- **Injektivnost:** šifrirna funkcija mora biti injektivna, sicer dveh sporočil z isto šifro ne bi mogel razločiti. Zgoščevalna funkcija, ki poljubno dolga sporočila slika v $256$ bitov, ne more biti injektivna; zahtevamo le, da je trk težko najti.
+- **Surjektivnost:** v linearni algebri je sistem $A\vec{x} = \vec{b}$ rešljiv za vsak $\vec{b}$ natanko tedaj, ko je preslikava $\vec{x} \mapsto A\vec{x}$ surjektivna. Rešitev je enolična natanko tedaj, ko je preslikava injektivna.
 
 ## Drugače: Bolj natančno
 

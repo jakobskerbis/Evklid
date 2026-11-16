@@ -88,3 +88,27 @@ test("a simulation sits on the step whose text mentions it (j, 2. 11. 2026)", as
   const [ks] = demoSteps(st, [{ title: "Merjenje in merska napaka" }], L.sections.findIndex((s) => /rešen/i.test(s.title)));
   for (const k of ks) assert.match(st[k].md, /simulacij/i);
 });
+
+test("a figure stays on one step with the text before and after it (j, 15. 11. 2026)", () => {
+  const p = "Odstavek z nekaj besedami. ".repeat(20); // ~540 znakov
+  const fig = ":::risba premica\nod: -3\ndo: 3\n\nopis: Premica od −3 do 3.\n:::";
+  const md = [p, p, "Na sliki spodaj je premica.", fig, "Na sliki vidiš, da je −3 levo od 0.", p, p, p].join("\n\n");
+  assert.equal(mdBlocks(fig).length, 1, "blok risbe s prazno vrstico ostane cel");
+  const parts = splitSection(md, "explain");
+  const withFig = parts.filter((c) => c.includes(":::risba"));
+  assert.equal(withFig.length, 1);
+  assert.match(withFig[0], /Na sliki spodaj je premica\.\n\n:::risba[\s\S]*:::\n\nNa sliki vidiš/);
+  // Za »Premisli« tik pred sliko ne režemo.
+  const t2 = splitSection(`Uvod.\n\n${think}\n\n${fig}\n\nRazlaga slike.\n\n### Naprej\n\nB`, "explain");
+  assert.match(t2[0], /tb-think[\s\S]*:::risba[\s\S]*Razlaga slike\./);
+});
+
+test("in real lessons no step starts with a figure cut from its explanation", () => {
+  for (const id of ["MAT-OS-8/cela-stevila", "MAT-SS-3/graf-polinoma"]) {
+    const L = loadLesson(id);
+    for (const s of lessonSteps(L.sections, 0)) {
+      if (s.type !== "text" || !s.md.includes(":::risba")) continue;
+      assert.ok(!s.md.trim().endsWith(":::") || !s.md.trim().startsWith(":::"), `${id}: slika je sama na koraku`);
+    }
+  }
+});

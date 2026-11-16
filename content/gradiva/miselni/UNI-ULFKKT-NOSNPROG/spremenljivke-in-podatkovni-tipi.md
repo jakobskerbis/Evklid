@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ime in vrednost
+  - `ime = izraz`: najprej desna stran
+  - `=` prireja, `==` primerja
+  - `Starost` in `starost` sta različni imeni
+- Podatkovni tip
+  - množica vrednosti z operacijami
+  - `int`, `float`, `str`, `bool`
+  - tip pove `type(x)`
+- Števila
+  - `/` vedno vrne `float`
+  - `a == b * (a // b) + a % b`
+  - `-7 // 2` je `-4`, ne `-3`
+- Približni float
+  - točen le pri imenovalcu $2^k$
+  - `0.1 + 0.2` je `0.30000000000000004`
+- Nizi
+  - `+` stika, `*` ponavlja
+  - `"4" + "2"` je `'42'`
+  - niz in število: `TypeError`
+- Logične vrednosti
+  - `True`, `False` iz primerjav
+  - `bool("0")` je `True`
+- Pretvorbe
+  - `int(3.9)` je `3`, odreže proti $0$
+  - `int("3.5")` javi `ValueError`
+  - zaokroži `round`, ne `int`

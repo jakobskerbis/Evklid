@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Uspešen trk
+  - dovolj energije in prava usmerjenost
+  - napaka: vsak trk je reakcija
+- Aktivacijska energija
+  - $E_\mathrm{a}$: višina energijskega hriba nad reaktanti
+  - razkroj $\mathrm{H_2O_2}$: približno $75\,\mathrm{kJ/mol}$
+- Hitrost reakcije
+  - $v = \dfrac{|\Delta c|}{\Delta t}$, enota $\mathrm{mol/(L \cdot s)}$
+  - plin: prostornina na čas, $\mathrm{mL/s}$
+  - med reakcijo se manjša
+- Koncentracija in površina
+  - več delcev, več trkov
+  - kocka $2\,\mathrm{cm}$ na osem manjših: dvojna površina
+- Narava snovi
+  - različne vezi, različno visok hrib
+- Temperatura
+  - večji delež delcev z energijo vsaj $E_\mathrm{a}$
+  - pravilo $10\,^\circ\mathrm{C}$: hitrost se približno podvoji
+  - trkov je le okoli $2\,\%$ več
+- Katalizator
+  - nižja $E_\mathrm{a}$, s platino približno $49\,\mathrm{kJ/mol}$
+  - se ne porabi, produkta je enako
+  - encimi so biološki katalizatorji

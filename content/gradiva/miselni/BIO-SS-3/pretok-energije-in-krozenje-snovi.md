@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prehranjevalna veriga
+  - trava → kobilica → žaba → štorklja
+  - puščica kaže tok energije
+- Trofične ravni
+  - proizvajalci, potrošniki, razkrojevalci
+  - verige se prepletajo v splet
+- Primarna proizvodnja
+  - $P_\mathrm{n} = P_\mathrm{b} - D$, v kJ
+  - rastline vežejo manj kot $1\,\%$ svetlobe
+- Pravilo desetih odstotkov
+  - $\eta = \dfrac{E_{n+1}}{E_n} \approx 0{,}1$
+  - ostalo odide kot toplota
+- Energijska piramida
+  - vedno pokončna, piramida števil ne
+  - 4. raven dobi le $0{,}1\,\%$
+- Kroženje ogljika
+  - fotosinteza veže $\mathrm{CO_2}$ iz zraka
+  - dihanje, razkroj in gorenje ga vračajo
+- Kroženje vode
+  - izhlapevanje, transpiracija, kondenzacija, padavine
+- Snov kroži, energija teče
+  - napaka: razkrojevalci ne vračajo energije

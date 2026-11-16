@@ -27,7 +27,7 @@ Vsaka dodana utež podaljša vzmet za enakih $3\,\mathrm{cm}$. Dvakrat več ute�
 :::premisli
 Kolikšen bo raztezek, ko na vzmet obesimo pet enakih uteži? Ali bi lahko na isti način napovedal raztezek tudi za sto uteži? Napovej, preden pogledaš.
 ---
-$15\,\mathrm{cm}$. Vsaka utež doda $3\,\mathrm{cm}$, pet uteži pa $5 \cdot 3\,\mathrm{cm} = 15\,\mathrm{cm}$. To velja, dokler vzmeti ne raztegnemo preveč.
+$15\,\mathrm{cm}$. Vsaka utež doda $3\,\mathrm{cm}$, pet uteži pa $5 \cdot 3\,\mathrm{cm} = 15\,\mathrm{cm}$. Za sto uteži tako ne moremo napovedati: pravilo velja le, dokler vzmeti ne raztegnemo preveč.
 :::
 
 **2. Kaj je sila.** Vsaka utež vleče vzmet navzdol. Kadar eno telo deluje na drugo (ga vleče, potisne ali privlači), rečemo, da nanj deluje s **silo**. Sila je merilo za medsebojno delovanje teles. Označimo jo s črko $F$.
@@ -218,7 +218,7 @@ Zakon velja le do neke meje. Če vzmet preveč raztegneš, se trajno deformira i
 ~ Raztezek se je povečal za $4\,\mathrm{cm}$, a to ne pomeni, da se je sila povečala za $4\,\mathrm{N}$. Sorazmerje ne prišteva enakih razlik.
 + $5\,\mathrm{N}$
 - $20\,\mathrm{N}$
-~ To dobiš, če raztezek pomnožiš z $2\,\mathrm{cm}$ na newton. Raztezek na newton moraš z raztezkom deliti, ne množiti.
+~ To dobiš, če raztezek pomnožiš z $2\,\mathrm{cm}$ na newton. Raztezek moraš z raztezkom na newton deliti, ne množiti.
 > En newton raztegne vzmet za $6\,\mathrm{cm} : 3 = 2\,\mathrm{cm}$. Raztezek $10\,\mathrm{cm}$ ustreza sili $10\,\mathrm{cm} : 2\,\mathrm{cm/N} = 5\,\mathrm{N}$.
 
 ? Ribič obesi ščuko na silomer z lestvico do $50\,\mathrm{N}$. Med oznakama $20\,\mathrm{N}$ in $30\,\mathrm{N}$ je pet enakih razmikov. Kazalec je tri črtice za oznako $20\,\mathrm{N}$. S kolikšno silo ščuka vleče silomer?

@@ -36,7 +36,7 @@ Prostornina je pri vseh enaka, masa pa zelo različna. Masa enega kubičnega cen
 Večji kos je težji, a v zadnjem stolpcu je vedno isto število. Gostota je **lastnost snovi**, ne velikosti telesa. Zato lahko po gostoti ugotovimo, iz katere snovi je telo.
 
 :::premisli
-Koliko je masa železnega kosa s prostornino $4\,\text{cm}^3$? Napovej s pomočjo prve tabele.
+Kolikšna je masa železnega kosa s prostornino $4\,\text{cm}^3$? Napovej s pomočjo prve tabele.
 ---
 $31{,}6\,\text{g}$. En kubični centimeter železa ima $7{,}9\,\text{g}$, štirje imajo štirikrat toliko: $4 \cdot 7{,}9\,\text{g} = 31{,}6\,\text{g}$.
 :::

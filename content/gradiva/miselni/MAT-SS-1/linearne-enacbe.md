@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tehtnica
+  - na obeh straneh enako
+  - $3x + 250 = 430$ da $x = 60$
+- Ekvivalentne preoblike
+  - prištej, odštej isto
+  - množi z $k \ne 0$
+- Oklepaji
+  - minus spremeni oba predznaka
+  - $-(2x - 1) = -2x + 1$
+- Ulomki
+  - množi s skupnim imenovalcem
+  - pomnoži vsak člen, tudi celo število
+- Oblika $ax = b$
+  - $a \ne 0$: $x = \dfrac{b}{a}$
+  - $0 \cdot x = b \ne 0$: ni rešitve
+  - $0 \cdot x = 0$: vsa realna števila
+- Parameter
+  - $(a - 1)x = a - 1$
+  - primer $a = 1$ posebej
+- Preizkus
+  - vstavi v prvotno enačbo

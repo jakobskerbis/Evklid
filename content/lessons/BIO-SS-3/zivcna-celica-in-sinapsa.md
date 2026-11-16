@@ -31,19 +31,30 @@ Napetost med notranjostjo in zunanjostjo mirujoče celice je **mirovni potencial
 
 **3. Akcijski potencial.** Ko dražljaj dvigne potencial do **praga** (okoli $-55\,\mathrm{mV}$), se zgodi hitro zaporedje, ki traja okoli $1$ do $2\,\mathrm{ms}$:
 
-```
- mV
-+30 |      ●  vrh
-    |     / \
-  0 |----/---\-----------
-    |   /     \
--55 |··●·······\········· prag
-    | /         \
--70 |●           \     ●  mir
--80 |             ●···
-    +-------------------→ čas
-           (okoli 2 ms)
-```
+:::risba graf
+opis: Shema akcijskega potenciala: napetost membrane v milivoltih v odvisnosti od časa. Iz mirovanja pri −70 mV se potencial dvigne do praga −55 mV, nato strmo do vrha pri +30 mV, pade pod mirovni potencial do okoli −80 mV in se vrne na −70 mV. Od praga do vrnitve mine okoli 2 ms.
+x: 0 .. 3 | 1 | t [ms]
+y: -90 .. 40 | 10 | U [mV]
+višina: 240
+oznake: ne
+mreža: ne
+oznakax: 1 | 1
+oznakax: 2 | 2
+oznakax: 3 | 3
+oznakay: 30 | +30
+oznakay: 0 | 0
+oznakay: -55 | −55
+oznakay: -70 | −70
+oznakay: -80 | −80
+črta: 0; -55 -> 3; -55 | siva črtkano
+napis: 3; -55 | prag | nad levo | siva
+črta: 0; -70 -> 0,5; -55 -> 1; 30 -> 1,6; -80 -> 2,4; -70 -> 3; -70 | modra debelo
+točka: 1; 30 | vrh | desno
+točka: 0,5; -55 | | | siva
+točka: 1,6; -80 | | | oranžna
+točka: 2,4; -70 | mir | nad desno
+podnapis: Čas t v milisekundah, napetost U v milivoltih.
+:::
 
 1. **Depolarizacija:** odprejo se kanali za $\mathrm{Na^+}$. Natrij vdre v celico, notranjost postane pozitivna, do okoli $+30\,\mathrm{mV}$.
 2. **Repolarizacija:** kanali za $\mathrm{Na^+}$ se zaprejo, odprejo se kanali za $\mathrm{K^+}$. Kalij izstopi, potencial pade.

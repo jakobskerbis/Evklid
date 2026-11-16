@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mehanska prebava
+  - zobje, jezik, mišice želodca
+  - kosi manjši, snov ostane ista
+- Kemijska prebava: encimi
+  - beljakovine, ki razgradijo hranila
+  - vsak razgradi eno vrsto snovi
+  - vročina jih uniči: vrela slina ne deluje
+- Pot hrane
+  - usta, požiralnik, želodec
+  - tanko črevo, debelo črevo, danka
+  - amilaza v ustih, pepsin v želodcu
+- Jetra in trebušna slinavka
+  - hrana skozi njiju ne gre
+  - trebušna slinavka: encimi za vse tri
+  - žolč ni encim, razbije maščobe
+- Vsrkavanje
+  - v tankem črevesu, resice in mikrovili
+  - debelo črevo vsrka vodo
+- Uravnotežena prehrana
+  - pol zelenjave in sadja
+  - četrt žit, četrt beljakovin
+- Energija hrane
+  - $1$ g ogljikovih hidratov ali beljakovin: $17$ kJ
+  - $1$ g maščob: $37$ kJ
+  - sendvič: $510 + 370 + 204 = 1084$ kJ

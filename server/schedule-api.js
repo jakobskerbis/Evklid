@@ -13,10 +13,12 @@ import {
   scheduleSources,
   readTimetablePhoto,
   mergeImport,
+  photoModel,
 } from "./schedule.js";
+import { imageCallReserveUsd } from "./meje-ai.js";
 import { jeFaks } from "../public/stopnja.js";
 
-export function mountSchedule(app, store, { loadStudent, progress, usage, schedules = new Schedules(store.db), photoFn = readTimetablePhoto, fetchFn = fetch, lookup, modelCapFor = () => null } = {}) {
+export function mountSchedule(app, store, { loadStudent, progress, usage, schedules = new Schedules(store.db), photoFn = readTimetablePhoto, fetchFn = null /* samo testi; brez njega prenos .ics prek server/prenos-uporabnik.js */, lookup, modelCapFor = () => null } = {}) {
   // Pogled urnika + Priprava na test, usklajena z najbližjim testom.
   const view = (s) => {
     const v = scheduleView(schedules.get(s.id), s.settings);
@@ -68,6 +70,9 @@ export function mountSchedule(app, store, { loadStudent, progress, usage, schedu
     if (!m || m[2].length > 7 * 1024 * 1024) return res.status(400).json({ error: "Slika urnika manjka ali je prevelika." });
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
+    // Trda meja AI (server/meje-ai.js): najvišji strošek branja urnika (do 6000 izhodnih žetonov) pod mejo profila.
+    const hold = usage?.guard ? usage.guard(s.id, imageCallReserveUsd(photoModel(!!modelCapFor(s.id)), 6000)) : null;
+    if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
       const out = await photoFn({ imageBase64: m[2], mediaType: m[1], capped: !!modelCapFor(s.id) });
       if (out.mock) return res.json({ lessons: [], events: [], mock: true });
@@ -77,6 +82,8 @@ export function mountSchedule(app, store, { loadStudent, progress, usage, schedu
     } catch (err) {
       console.error("[evklid] branje urnika:", err?.message || err);
       res.status(502).json({ error: "Branje urnika trenutno ne deluje. Vpiši ga ročno." });
+    } finally {
+      hold?.release();
     }
   });
 
@@ -122,7 +129,7 @@ export function mountSchedule(app, store, { loadStudent, progress, usage, schedu
 
   app.get("/api/students/:id/schedule/sources", async (req, res) => {
     const s = loadStudent(req, res);
-    if (s) res.json({ sources: await scheduleSources({ fetchFn, settings: s.settings }) });
+    if (s) res.json({ sources: await scheduleSources({ fetchFn: fetchFn || fetch, settings: s.settings }) }); // stalen naslov FMF
   });
 
   // Kratka ponovitev pred uro / utrditev po uri za predmet iz urnika.

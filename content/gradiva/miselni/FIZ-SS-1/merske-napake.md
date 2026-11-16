@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Merska napaka
+  - vsaka meritev je negotova
+  - napaka ni zmota merilca
+- Povprečje
+  - najboljša ocena prave vrednosti
+  - $\bar{x} = \dfrac{x_1 + x_2 + \dots + x_n}{n}$
+- Absolutna napaka
+  - največje odstopanje od povprečja
+  - enaka enota kot količina
+  - nikoli manjša od najmanjšega razdelka merila
+- Zapis rezultata
+  - $h = (172{,}5 \pm 0{,}4)\,\text{cm}$
+  - napaka na eno veljavno mesto
+  - povprečje na isto decimalno mesto
+- Relativna napaka
+  - $\delta = \dfrac{\Delta x}{\bar{x}}$, brez enote
+  - $\dfrac{5\,\text{ml}}{250\,\text{ml}} = 0{,}02 = 2\,\%$
+- Primerjava natančnosti
+  - primerjaj relativne, ne absolutne napake
+  - isti razdelek, večja količina: manjša $\delta$
+  - brizga z razdelki $0{,}2\,\text{ml}$ pri $0{,}5\,\text{ml}$: $40\,\%$

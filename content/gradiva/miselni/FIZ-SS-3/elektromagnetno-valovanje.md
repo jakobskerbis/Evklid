@@ -19,4 +19,4 @@ stanje: osnutek
 - Spekter
   - radio, mikrovalovi, IR, vidna, UV, rentgen, gama
   - vidna svetloba: $380$–$750\,\mathrm{nm}$
-  - višja frekvenca, več energije
+  - višja frekvenca, več energije fotona

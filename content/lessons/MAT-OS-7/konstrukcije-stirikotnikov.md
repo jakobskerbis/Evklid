@@ -195,7 +195,7 @@ Diskusija ni formalnost. Pri ssk lahko lok seka krak kota v dveh točkah in dobi
 ~ Dva podatka zadoščata za pravokotnik ali romb, kjer lastnost lika poda obliko ali dolžino. Pri paralelogramu sta znani le zvezi $c = a$ in $d = b$.
 + $3$
 - $4$
-~ Štiri stranice niso potrebne, ker sta nasprotni stranici enaki; poleg tega bi brez kota ali diagonale oblika še vedno ne bi bila določena.
+~ Štiri stranice niso potrebne, ker sta nasprotni stranici enaki; poleg tega brez kota ali diagonale oblika še vedno ne bi bila določena.
 - $5$
 ~ Pet podatkov potrebuje splošni štirikotnik. Paralelogram ima lastnosti, ki dva podatka podarijo.
 > Npr. $a$, $b$ in $\alpha$: pomožni trikotnik $ABD$ po sks, nato $C$ iz lokov $|CD| = a$, $|BC| = b$.
@@ -241,5 +241,5 @@ d | stranica DA | | | pri trapezu drugi krak
 e | diagonala AC | |
 f | diagonala BD | |
 S | presečišče diagonal | | | pri rombu diagonali razpolavlja
-E | presečišče vzporednice skozi D z AB | | | pomožni trikotnik AED ima stranico AE = a − c
+E | presečišče AB in vzporednice s krakom BC skozi D | | | pomožni trikotnik AED ima stranico AE = a − c
 :::

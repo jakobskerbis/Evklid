@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zgradba sistema
+  - perioda = $n$ zunanje lupine
+  - skupina = enaka zunanja konfiguracija
+  - bloki $s$, $p$, $d$, $f$
+- Efektivni naboj jedra
+  - $Z_\mathrm{eff} = Z - S$
+  - Slater: $0{,}35$; $0{,}85$; $1{,}00$
+  - vzdolž periode $+0{,}65$ na element
+- Atomski polmer
+  - vzdolž periode se manjša
+  - navzdol se veča: nova lupina
+  - napaka: »več elektronov, večji atom«
+- Ionski polmer
+  - kation < atom < anion
+  - izoelektronska vrsta: večji $Z$, manjši delec
+  - $r(\mathrm{O^{2-}}) > r(\mathrm{F^-}) > r(\mathrm{Na^+})$
+- Ionizacijska energija
+  - $\mathrm{X(g) \to X^+(g) + e^-}$, enota $\mathrm{kJ/mol}$
+  - izjemi Be/B in N/O
+  - velik skok: število valenčnih elektronov
+- Elektronska afiniteta
+  - sproščena energija pri $\mathrm{X(g) + e^- \to X^-(g)}$
+  - največja pri halogenih, Cl okoli $349\,\mathrm{kJ/mol}$
+- Elektronegativnost
+  - Pauling: $(\chi_\mathrm{A} - \chi_\mathrm{B})^2 = \Delta/\mathrm{eV}$
+  - največja pri F, $\chi = 3{,}98$
+  - $\Delta\chi \gtrsim 1{,}7$: pretežno ionska vez
+- Kovinski značaj
+  - raste proti spodnjemu levemu kotu
+  - kovine: bazični oksidi, nekovine: kisli

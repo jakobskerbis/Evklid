@@ -39,7 +39,7 @@ Količino hormona telo drži v mejah z **negativno povratno zanko**. Pomisli na 
 
 *Preveri:* zakaj je na embalaži soli napis »jodirana«? *(Da dobimo dovolj joda za tiroksin.)*
 
-**5. Trebušna slinavka in inzulin.** **Trebušna slinavka** leži pod želodcem; ne zamenjaj je z žlezo slinavko v ustih. Je hkrati eksokrina (prebavni sok v dvanajstnik) in endokrina. Endokrini del so **Langerhansovi otočki**, drobne skupine celic, raztresene po žlezi. V njih so:
+**5. Trebušna slinavka in inzulin.** **Trebušna slinavka** leži za želodcem; ne zamenjaj je z žlezo slinavko v ustih. Je hkrati eksokrina (prebavni sok v dvanajstnik) in endokrina. Endokrini del so **Langerhansovi otočki**, drobne skupine celic, raztresene po žlezi. V njih so:
 
 - **celice beta**, ki izločajo **inzulin**: ta **zniža** koncentracijo glukoze v krvi, ker spodbudi celice (zlasti mišice, jetra, maščobno tkivo), da glukozo sprejmejo, jetra pa jo shranijo kot glikogen;
 - **celice alfa**, ki izločajo **glukagon**: ta **zviša** koncentracijo glukoze, ker jetra glikogen razgradijo in glukozo spustijo v kri.

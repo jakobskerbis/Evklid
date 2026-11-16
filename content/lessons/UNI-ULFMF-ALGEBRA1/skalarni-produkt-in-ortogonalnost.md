@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Na začetku 19. stoletja so astronomi izgubili komaj odkriti Ceres, ko je izginil v soju Sonca. Carl Friedrich Gauss je iz peščice netočnih meritev izračunal tir, ki se jim najbolj prilega, in Ceres so znova našli blizu mesta, ki ga je napovedal. Njegova metoda najmanjših kvadratov je v jeziku tega poglavja **ortogonalna projekcija**: izbere točko podprostora, ki je meritvam najbližja, tako kot konec sence poševne palice pod navpično svetilko leži na tleh najbliže njenemu vrhu. Enak račun danes potegne premico trenda skozi serijo bolnikovih meritev krvnega tlaka. Zanj potrebujemo dolžine in kote, ki jih vektorski prostor doslej ni poznal; prinese jih **skalarni produkt**. Iz njega dobimo normo, ortogonalnost, projekcije in Gram-Schmidtov postopek, ki iz poljubne baze naredi pravokotno.
+Na začetku 19. stoletja so astronomi izgubili komaj odkrito Cerero, ko je izginila v soju Sonca. Carl Friedrich Gauss je iz peščice netočnih meritev izračunal tir, ki se jim najbolj prilega, in Cerero so znova našli blizu mesta, ki ga je napovedal. Njegova metoda najmanjših kvadratov je v jeziku tega poglavja **ortogonalna projekcija**: izbere točko podprostora, ki je meritvam najbližja, tako kot konec sence poševne palice pod navpično svetilko leži na tleh najbliže njenemu vrhu. Enak račun danes potegne premico trenda skozi serijo bolnikovih meritev krvnega tlaka. Zanj potrebujemo dolžine in kote, ki jih vektorski prostor doslej ni poznal; prinese jih **skalarni produkt**. Iz njega dobimo normo, ortogonalnost, projekcije in Gram-Schmidtov postopek, ki iz poljubne baze naredi pravokotno.
 
 ## Razlaga
 
@@ -71,16 +71,20 @@ Da. Po množenju z $u_j$ vsi členi razen enega izginejo: $\alpha_j \langle u_j,
 
 ### Projekcija na vektor: deliti z $\|u\|$ ali z $\|u\|^2$?
 
-Prva misel je, da senco $v$ na $u$ dobimo tako, da $\langle v, u \rangle u$ delimo z dolžino $\|u\|$. Popravi jo en sam pogoj: ostanek mora biti pravokoten na $u$. Naj bo $u \ne 0$. Vektor $v$ razstavimo na del vzdolž $u$ in del, pravokoten na $u$. Slika v besedah:
+Prva misel je, da senco $v$ na $u$ dobimo tako, da $\langle v, u \rangle u$ delimo z dolžino $\|u\|$. Popravi jo en sam pogoj: ostanek mora biti pravokoten na $u$. Naj bo $u \ne 0$. Vektor $v$ razstavimo na del vzdolž $u$ in del, pravokoten na $u$. Na sliki:
 
-```
-        v
-       /|
-      / |  v − p   (pravokotno na u)
-     /  |
-    o---+--------> u
-      p
-```
+:::risba skica
+opis: Iz izhodišča o izhajata vodoravna puščica u in poševna puščica v. Iz konice vektorja v je spuščena črtkana pravokotnica na premico vektorja u. Od izhodišča do vznožja pravokotnice leži projekcija p, ki je del vzdolž u. Črtkana pravokotnica je ostanek v − p, ki z u oklepa pravi kot.
+območje: -1; -1,2 .. 9,5; 5
+puščica: 0; 0 -> 8; 0
+napis: 8; 0 | u | desno
+puščica: 0; 0 -> 3; 4 | v | levo
+puščica: 0; 0 -> 3; 0 | p | pod | oranžna debelo
+črta: 3; 0 -> 3; 4 | črtkano modra
+pravikot: 3; 0 | 8; 0 | 3; 4
+napis: 3,2; 2 | v − p (pravokotno na u) | desno
+točka: 0; 0 | o | pod levo
+:::
 
 Del vzdolž $u$ je $p = \lambda u$. Iz pogoja $\langle v - \lambda u, u \rangle = 0$ dobimo $\lambda = \dfrac{\langle v, u \rangle}{\langle u, u \rangle}$, torej
 
@@ -217,6 +221,68 @@ $\|u_2\|^2 = \int_0^1 \left(x - \tfrac12\right)^2 dx = \tfrac{1}{12}$, torej $\|
 - $\operatorname{proj}_u v = \dfrac{\langle v, u \rangle}{\langle u, u \rangle} u$; projekcija na $W$ je vsota takih členov po **ortogonalni** bazi in je najbližja točka $W$.
 - Gram-Schmidt: od $v_m$ odštej projekcije na že dobljene $u_1, \dots, u_{m-1}$, na koncu normiraj.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo skalarnega produkta (simetričnost, linearnost v prvem faktorju, pozitivna definitnost) in zgleda v $\mathbb{R}^n$ ter na polinomih;
+- definicijo norme in njene tri lastnosti; Cauchy-Schwarzevo neenakost z dokazom in pogojem za enakost; definicijo kota;
+- kaj sta ortogonalna in ortonormirana množica ter dokaz, da so ortogonalni neničelni vektorji linearno neodvisni;
+- formulo za projekcijo na vektor z izpeljavo iz pogoja $\langle v - \lambda u, u \rangle = 0$ in formulo za projekcijo na podprostor s pogojem (ortogonalna baza);
+- dokaz, da je ortogonalna projekcija najbližja točka podprostora;
+- Gram-Schmidtov postopek in zakaj je vsak novi vektor pravokoten na prejšnje.
+
+### Naloga 1
+
+V $\mathbb{R}^4$ s standardnim skalarnim produktom je $W = \operatorname{Lin}\{v_1, v_2, v_3\}$, $v_1 = (1, 1, 1, 1)$, $v_2 = (1, 1, 0, 0)$, $v_3 = (1, 0, 1, 0)$. (a) Poišči ortonormirano bazo podprostora $W$. (b) Izračunaj ortogonalno projekcijo točke $b = (1, 0, 0, 3)$ na $W$ in razdaljo $b$ do $W$. (c) Projekcijo zapiši kot linearno kombinacijo $v_1, v_2, v_3$ in poišči bazo $W^\perp$.
+
+**Rešitev:**
+
+1. $u_1 = v_1 = (1, 1, 1, 1)$, $\langle u_1, u_1 \rangle = 4$.
+2. $\langle v_2, u_1 \rangle = 2$, zato $u_2 = (1, 1, 0, 0) - \tfrac{2}{4}(1, 1, 1, 1) = \left(\tfrac12, \tfrac12, -\tfrac12, -\tfrac12\right)$. Ulomkov se znebimo: $u_2 = (1, 1, -1, -1)$, $\langle u_2, u_2 \rangle = 4$.
+3. $\langle v_3, u_1 \rangle = 2$ in $\langle v_3, u_2 \rangle = 1 + 0 - 1 + 0 = 0$, zato $u_3 = (1, 0, 1, 0) - \tfrac{2}{4}(1, 1, 1, 1) - 0 = \left(\tfrac12, -\tfrac12, \tfrac12, -\tfrac12\right)$. Vzamemo $u_3 = (1, -1, 1, -1)$, $\langle u_3, u_3 \rangle = 4$.
+4. Preizkus: $\langle u_1, u_2 \rangle = 1 + 1 - 1 - 1 = 0$, $\langle u_1, u_3 \rangle = 1 - 1 + 1 - 1 = 0$, $\langle u_2, u_3 \rangle = 1 - 1 - 1 + 1 = 0$.
+5. (a) Vse tri norme so $\sqrt4 = 2$, zato je ortonormirana baza $e_1 = \tfrac12(1, 1, 1, 1)$, $e_2 = \tfrac12(1, 1, -1, -1)$, $e_3 = \tfrac12(1, -1, 1, -1)$.
+6. (b) $\langle b, u_1 \rangle = 1 + 3 = 4$, $\langle b, u_2 \rangle = 1 - 3 = -2$, $\langle b, u_3 \rangle = 1 - 3 = -2$.
+7. $p = \tfrac{4}{4}u_1 - \tfrac{2}{4}u_2 - \tfrac{2}{4}u_3 = (1, 1, 1, 1) - \tfrac12(1, 1, -1, -1) - \tfrac12(1, -1, 1, -1) = (0, 1, 1, 2)$.
+8. Ostanek: $b - p = (1, -1, -1, 1)$. Preizkus: $\langle b - p, v_1 \rangle = 1 - 1 - 1 + 1 = 0$, $\langle b - p, v_2 \rangle = 1 - 1 = 0$, $\langle b - p, v_3 \rangle = 1 - 1 = 0$.
+9. Razdalja: $\|b - p\| = \sqrt{1 + 1 + 1 + 1} = 2$.
+10. (c) Iščemo $p = \alpha v_1 + \beta v_2 + \gamma v_3 = (\alpha + \beta + \gamma,\ \alpha + \beta,\ \alpha + \gamma,\ \alpha)$. Iz četrte komponente $\alpha = 2$, iz druge $\beta = 1 - 2 = -1$, iz tretje $\gamma = 1 - 2 = -1$; prva komponenta: $2 - 1 - 1 = 0$, se ujema. Torej $p = 2v_1 - v_2 - v_3$.
+11. $W^\perp$: ker je $\dim W = 3$ in $\mathbb{R}^4 = W \oplus W^\perp$, je $\dim W^\perp = 4 - 3 = 1$. Ostanek $b - p$ je neničeln in pravokoten na $W$, zato $W^\perp = \operatorname{Lin}\{(1, -1, -1, 1)\}$.
+12. Odgovor: ortonormirana baza je $e_1, e_2, e_3$ iz 5. koraka; $\operatorname{proj}_W b = (0, 1, 1, 2) = 2v_1 - v_2 - v_3$; razdalja je $2$; $W^\perp = \operatorname{Lin}\{(1, -1, -1, 1)\}$.
+
+### Naloga 2
+
+V prostoru polinomov stopnje največ $2$ s skalarnim produktom $\langle p, q \rangle = \int_0^1 p(x)\,q(x)\,dx$ poišči polinom $r$ stopnje največ $1$, ki je polinomu $f(x) = x^2$ najbližji, in izračunaj razdaljo $\|f - r\|$.
+
+**Rešitev:**
+
+1. Najbližja točka podprostora $W = \operatorname{Lin}\{1, x\}$ je ortogonalna projekcija $r = \operatorname{proj}_W f$. Baza $1, x$ ni ortogonalna, ker je $\langle 1, x \rangle = \tfrac12$, zato najprej Gram-Schmidt.
+2. $u_1 = 1$, $\langle u_1, u_1 \rangle = 1$. $u_2 = x - \dfrac{\langle x, 1 \rangle}{\langle 1, 1 \rangle} \cdot 1 = x - \tfrac12$, $\langle u_2, u_2 \rangle = \int_0^1 \left(x - \tfrac12\right)^2 dx = \tfrac{1}{12}$.
+3. $\langle f, u_1 \rangle = \int_0^1 x^2\,dx = \tfrac13$.
+4. $\langle f, u_2 \rangle = \int_0^1 x^2\left(x - \tfrac12\right) dx = \tfrac14 - \tfrac16 = \tfrac{1}{12}$.
+5. $r = \dfrac{1/3}{1} \cdot 1 + \dfrac{1/12}{1/12}\left(x - \tfrac12\right) = \tfrac13 + x - \tfrac12 = x - \tfrac16$.
+6. Ostanek: $f - r = x^2 - x + \tfrac16$. Preizkus pravokotnosti: $\int_0^1 \left(x^2 - x + \tfrac16\right) dx = \tfrac13 - \tfrac12 + \tfrac16 = 0$ in $\int_0^1 \left(x^3 - x^2 + \tfrac16 x\right) dx = \tfrac14 - \tfrac13 + \tfrac{1}{12} = 0$.
+7. Razdalja po Pitagori: $\|f - r\|^2 = \|f\|^2 - \|r\|^2$. Tu je $\|f\|^2 = \int_0^1 x^4\,dx = \tfrac15$ in $\|r\|^2 = \left(\tfrac13\right)^2 \cdot 1 + 1^2 \cdot \tfrac{1}{12} = \tfrac19 + \tfrac{1}{12} = \tfrac{7}{36}$.
+8. $\|f - r\|^2 = \tfrac15 - \tfrac{7}{36} = \tfrac{36 - 35}{180} = \tfrac{1}{180}$, torej $\|f - r\| = \tfrac{1}{\sqrt{180}} = \tfrac{1}{6\sqrt5} \approx 0{,}075$.
+9. Odgovor: najbližji polinom je $r(x) = x - \tfrac16$, razdalja je $\tfrac{1}{6\sqrt5} \approx 0{,}075$. Noben drug polinom stopnje največ $1$ nima manjšega $\int_0^1 \big(x^2 - r(x)\big)^2 dx$.
+
+### Naloga 3
+
+(a) Natančno navedi definicijo skalarnega produkta na realnem vektorskem prostoru in utemelji, ali predpisa $\langle x, y \rangle_1 = x_1 y_1 - x_1 y_2 - x_2 y_1 + 3 x_2 y_2$ in $\langle x, y \rangle_2 = x_1 y_1 - 2 x_1 y_2 - 2 x_2 y_1 + 3 x_2 y_2$ določata skalarni produkt na $\mathbb{R}^2$. (b) Natančno navedi Cauchy-Schwarzevo neenakost, jo dokaži in iz nje izpelji trikotniško neenakost.
+
+**Rešitev:**
+
+1. Definicija: skalarni produkt je preslikava $\langle \cdot, \cdot \rangle\colon V \times V \to \mathbb{R}$, ki je za vse $u, v, w \in V$ in $\alpha \in \mathbb{R}$ simetrična, $\langle u, v \rangle = \langle v, u \rangle$, linearna v prvem faktorju, $\langle \alpha u + w, v \rangle = \alpha \langle u, v \rangle + \langle w, v \rangle$, in pozitivno definitna, $\langle v, v \rangle \ge 0$ z enakostjo le za $v = 0$.
+2. Oba predpisa sta simetrična (zamenjava $x$ in $y$ ju ne spremeni) in linearna v $x$ (vsak člen vsebuje natanko eno komponento $x$ na prvo potenco). Odloča pozitivna definitnost.
+3. Prvi: $\langle x, x \rangle_1 = x_1^2 - 2x_1 x_2 + 3x_2^2 = (x_1 - x_2)^2 + 2x_2^2 \ge 0$. Enakost zahteva $x_2 = 0$ in $x_1 = x_2$, torej $x = 0$. Predpis **je** skalarni produkt.
+4. Drugi: $\langle x, x \rangle_2 = x_1^2 - 4x_1 x_2 + 3x_2^2 = (x_1 - 2x_2)^2 - x_2^2$. Za $x = (2, 1)$ dobimo $4 - 8 + 3 = -1 < 0$. Predpis **ni** skalarni produkt.
+5. Cauchy-Schwarz: v vektorskem prostoru s skalarnim produktom za vse $u, v$ velja $|\langle u, v \rangle| \le \|u\|\,\|v\|$; enakost velja natanko tedaj, ko sta $u$ in $v$ linearno odvisna.
+6. Dokaz: za $v = 0$ sta obe strani $0$. Naj bo $v \ne 0$. Za vsak $t \in \mathbb{R}$ je zaradi pozitivne definitnosti $0 \le \|u - tv\|^2 = \|u\|^2 - 2t\langle u, v \rangle + t^2\|v\|^2$.
+7. Na desni je kvadratni polinom v $t$ z vodilnim koeficientom $\|v\|^2 > 0$, ki ni nikjer negativen. Zato nima dveh različnih realnih ničel in njegova diskriminanta je $4\langle u, v \rangle^2 - 4\|u\|^2\|v\|^2 \le 0$. Od tod $\langle u, v \rangle^2 \le \|u\|^2\|v\|^2$ in po korenjenju trditev.
+8. Enakost: diskriminanta je $0$ natanko tedaj, ko ima polinom ničlo $t_0$, torej $\|u - t_0 v\| = 0$ in $u = t_0 v$.
+9. Trikotniška neenakost: $\|u + v\|^2 = \|u\|^2 + 2\langle u, v \rangle + \|v\|^2 \le \|u\|^2 + 2\|u\|\,\|v\| + \|v\|^2 = (\|u\| + \|v\|)^2$. Obe strani sta nenegativni, zato po korenjenju $\|u + v\| \le \|u\| + \|v\|$.
+10. Sklep: prvi predpis je skalarni produkt, drugi ne, ker ni pozitivno definiten; Cauchy-Schwarzeva neenakost sledi iz nenegativnosti $\|u - tv\|^2$, trikotniška pa iz nje.
+
 ## Drugače: Na sliki
 
 Nariši vektor $v$ kot puščico in premico skozi izhodišče v smeri $u$. Iz konice $v$ spusti pravokotnico na premico. Nastane pravokotni trikotnik:
@@ -259,7 +325,7 @@ $$\|v - w\|^2 = \|v - p\|^2 + \|p - w\|^2 \ge \|v - p\|^2,$$
 
 z enakostjo le za $w = p$. Projekcija je torej enolična in ni odvisna od izbire ortogonalne baze $W$.
 
-**Ortogonalni komplement.** $W^\perp = \{v : \langle v, w \rangle = 0 \text{ za vse } w \in W\}$ je podprostor. V končnorazsežnem prostoru je $V = W \oplus W^\perp$, saj je $v = \operatorname{proj}_W v + (v - \operatorname{proj}_W v)$. Preslikava $v \mapsto \operatorname{proj}_W v$ je linearna, velja $P^2 = P$, lastni vrednosti pa sta $1$ (na $W$) in $0$ (na $W^\perp$).
+**Ortogonalni komplement.** $W^\perp = \{v : \langle v, w \rangle = 0 \text{ za vse } w \in W\}$ je podprostor. V končnorazsežnem prostoru je $V = W \oplus W^\perp$, saj je $v = \operatorname{proj}_W v + (v - \operatorname{proj}_W v)$. Preslikava $P\colon v \mapsto \operatorname{proj}_W v$ je linearna, velja $P^2 = P$, lastni vrednosti pa sta $1$ (na $W$) in $0$ (na $W^\perp$).
 
 **Matrična oblika.** Če so stolpci matrike $Q$ ortonormirana baza $W \subseteq \mathbb{R}^n$, je matrika projekcije $Q Q^{\mathsf T}$. Gram-Schmidt v matrični obliki je razcep $A = QR$ z zgornjetrikotno $R$.
 
@@ -309,7 +375,7 @@ z enakostjo le za $w = p$. Projekcija je torej enolična in ni odvisna od izbire
 x, y | vektorja v ℝⁿ | | | v ⟨p, q⟩ je x spremenljivka polinomov
 x_1, x_2, x_n | komponente vektorja x
 y_1, y_2, y_n | komponente vektorja y
-p, q | polinoma stopnje največ 1 | | | v dokazu najbližje točke je p projekcija v na W
+p, q | polinoma v skalarnem produktu ⟨p, q⟩ | | | v primerih 2 in 3 ter v dokazu najbližje točke je p projekcija vektorja
 d | oznaka diferenciala (dx) v integralu
 u, v | vektorja prostora s skalarnim produktom
 w | poljuben vektor podprostora W
@@ -320,6 +386,6 @@ v_1, v_2 | vektorji začetne baze podprostora W
 e_m | normirani vektor ortonormirane baze | e_m = \frac{u_m}{\lVert u_m \rVert}
 j | indeks člena vsote
 k | razsežnost podprostora W (število baznih vektorjev)
-t | realni parameter v dokazu Cauchy-Schwarzove neenakosti
+t | realni parameter v dokazu Cauchy-Schwarzeve neenakosti
 b | dana točka, ki jo projiciramo na W
 :::

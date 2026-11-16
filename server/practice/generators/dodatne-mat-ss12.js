@@ -126,7 +126,7 @@ export const DODATNE_MAT_SS12 = [
   // ---------- 1. letnik ----------
   {
     id: "dod-mat-ss12-mnozice",
-    topics: ["MAT-SS-1/mnozice"],
+    topics: ["MAT-SS-1/mnozice", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const setTex = (s) => (s.length ? `\\{${s.join(", ")}\\}` : "\\emptyset");
       const ops = (A, B) => {
@@ -248,7 +248,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-deljivost",
-    topics: ["MAT-SS-1/naravna-in-cela-stevila"],
+    topics: ["MAT-SS-1/naravna-in-cela-stevila", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const DV = ["D(a, b) = \\text{zmnožek skupnih prafaktorjev z najmanjšimi eksponenti}", "v(a, b) = \\text{zmnožek vseh prafaktorjev z največjimi eksponenti}"];
       const pair = (lo, hi) => {
@@ -406,7 +406,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-racionalna",
-    topics: ["MAT-SS-1/racionalna-stevila"],
+    topics: ["MAT-SS-1/racionalna-stevila", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const fracR = (lo = 2, hi = 9, neg = true) => {
         let n;
@@ -566,7 +566,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-intervali",
-    topics: ["MAT-SS-1/realna-stevila-in-intervali"],
+    topics: ["MAT-SS-1/realna-stevila-in-intervali", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const ivTex = (l, lc, h, hc) => `${lc ? "[" : "("}${l}, ${h}${hc ? "]" : ")"}`;
       const intsIn = (l, lc, h, hc) => range(Math.ceil(l) - 1, Math.floor(h) + 1).filter((x) => (lc ? x >= l : x > l) && (hc ? x <= h : x < h));
@@ -712,7 +712,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-potence",
-    topics: ["MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti"],
+    topics: ["MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const RULES = ["a^m \\cdot a^n = a^{m + n}", "a^m : a^n = a^{m - n}", "(a^m)^n = a^{m \\cdot n}", "a^{-n} = \\dfrac{1}{a^n}"];
       if (level === 1) {
@@ -841,7 +841,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-algebrski",
-    topics: ["MAT-SS-1/algebrski-izrazi"],
+    topics: ["MAT-SS-1/algebrski-izrazi", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const SQ = ["(a + b)^2 = a^2 + 2ab + b^2", "(a - b)^2 = a^2 - 2ab + b^2"];
       const xT = (a) => (a === 1 ? "x" : `(${a}x)`);
@@ -945,7 +945,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-razstavljanje",
-    topics: ["MAT-SS-1/razstavljanje-izrazov"],
+    topics: ["MAT-SS-1/razstavljanje-izrazov", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const fac = (r1) => `(x ${sg(-r1)})`;
       if (level === 1) {
@@ -1110,7 +1110,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-ulomljeni",
-    topics: ["MAT-SS-1/ulomljeni-izrazi"],
+    topics: ["MAT-SS-1/ulomljeni-izrazi", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -1245,7 +1245,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-sistemi",
-    topics: ["MAT-SS-1/sistemi-linearnih-enacb"],
+    topics: ["MAT-SS-1/sistemi-linearnih-enacb", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const cf = (b) => (Math.abs(b) === 1 ? "" : Math.abs(b));
       if (level === 1) {
@@ -1393,7 +1393,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-koti",
-    topics: ["MAT-SS-1/osnovni-geometrijski-pojmi"],
+    topics: ["MAT-SS-1/osnovni-geometrijski-pojmi", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.pick(["komp", "supl", "sokot", "sovrsni"]);
@@ -1488,7 +1488,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-trikotnik",
-    topics: ["MAT-SS-1/trikotnik"],
+    topics: ["MAT-SS-1/trikotnik", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -1672,7 +1672,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-stirikotniki",
-    topics: ["MAT-SS-1/stirikotniki-in-krog"],
+    topics: ["MAT-SS-1/stirikotniki-in-krog", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const U = "cm^2";
       const area = (v, d, ms) => num(v, "cm²", d, ms, { unitAlternatives: ["cm2"] });
@@ -1834,7 +1834,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-podatki",
-    topics: ["MAT-SS-1/obdelava-podatkov"],
+    topics: ["MAT-SS-1/obdelava-podatkov", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const list = (v) => v.map((x) => `$${x}$`).join(", ");
       const dl = (v) => `x = ${v.join(";\\ ")}`;
@@ -1992,7 +1992,7 @@ export const DODATNE_MAT_SS12 = [
   // ---------- 2. letnik ----------
   {
     id: "dod-mat-ss12-koreni",
-    topics: ["MAT-SS-2/koreni"],
+    topics: ["MAT-SS-2/koreni", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const SF = [2, 3, 5, 6, 7, 10, 11];
       if (level === 1) {
@@ -2119,7 +2119,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-racionalni-eksponenti",
-    topics: ["MAT-SS-2/potence-z-racionalnimi-eksponenti"],
+    topics: ["MAT-SS-2/potence-z-racionalnimi-eksponenti", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const ex = (p, qq) => `\\frac{${Math.abs(p)}}{${qq}}`;
       const root = (p, qq) => (qq === 2 ? `\\sqrt{x${p === 1 ? "" : `^{${p}}`}}` : `\\sqrt[${qq}]{x${p === 1 ? "" : `^{${p}}`}}`);
@@ -2221,7 +2221,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-kompleksna",
-    topics: ["MAT-SS-2/kompleksna-stevila"],
+    topics: ["MAT-SS-2/kompleksna-stevila", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const zt = (a, b) => (a === 0 ? (b === 0 ? "0" : mono(b, "i")) : `${a}${b === 0 ? "" : b < 0 ? ` - ${mono(-b, "i")}` : ` + ${mono(b, "i")}`}`);
       const MUL = "(a + bi)(c + di) = (ac - bd) + (ad + bc)i";
@@ -2338,7 +2338,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-kvadratna-funkcija",
-    topics: ["MAT-SS-2/kvadratna-funkcija"],
+    topics: ["MAT-SS-2/kvadratna-funkcija", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const TEME = ["p = -\\dfrac{b}{2a}", "q = f(p) = -\\dfrac{D}{4a}"];
       if (level === 1) {
@@ -2458,7 +2458,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-kvadratna-enacba",
-    topics: ["MAT-SS-2/kvadratna-enacba"],
+    topics: ["MAT-SS-2/kvadratna-enacba", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const QF = "x_{1,2} = \\dfrac{-b \\pm \\sqrt{D}}{2a}, \\quad D = b^2 - 4ac";
       if (level === 1) {
@@ -2601,7 +2601,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-kvadratna-neenacba",
-    topics: ["MAT-SS-2/kvadratna-neenacba"],
+    topics: ["MAT-SS-2/kvadratna-neenacba", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         let p;
@@ -2707,7 +2707,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-eksponentna-funkcija",
-    topics: ["MAT-SS-2/eksponentna-funkcija"],
+    topics: ["MAT-SS-2/eksponentna-funkcija", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const BS = [[2, 1], [3, 1], [4, 1], [5, 1], [1, 2], [1, 3]];
       const bT = ([n, d]) => (d === 1 ? `${n}` : `\\left(${dfr(n, d)}\\right)`);
@@ -2819,7 +2819,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-eksponentne-enacbe",
-    topics: ["MAT-SS-2/eksponentne-enacbe"],
+    topics: ["MAT-SS-2/eksponentne-enacbe", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const RULE = "a^{m} = a^{n} \\iff m = n";
       const ef = (k, e) => (k === 1 ? e : k === -1 ? `-(${e})` : `${k}(${e})`);
@@ -2920,7 +2920,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-logaritem",
-    topics: ["MAT-SS-2/logaritem"],
+    topics: ["MAT-SS-2/logaritem", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const DEF = "\\log_a b = x \\iff a^x = b";
       const isPow = (n, b) => {
@@ -3077,7 +3077,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-logaritemska-enacba",
-    topics: ["MAT-SS-2/logaritemska-funkcija-in-enacbe"],
+    topics: ["MAT-SS-2/logaritemska-funkcija-in-enacbe", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const DEF = "\\log_a u = k \\iff u = a^k";
       const arg = (s) => (s === 0 ? "x" : `(x ${sg(s)})`);
@@ -3228,7 +3228,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-kotne-funkcije",
-    topics: ["MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku"],
+    topics: ["MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const TRIG = ["\\sin \\alpha = \\dfrac{a}{c}", "\\cos \\alpha = \\dfrac{b}{c}", "\\tan \\alpha = \\dfrac{a}{b}"];
       const sin = (x) => Math.sin(rad(x));

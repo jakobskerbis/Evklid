@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Topilo in topljenec
+  - topilo: v njem raztapljamo, navadno voda
+  - topljenec: sol, sladkor, ocetna kislina
+  - masa raztopine je vsota mas
+- Nasičena raztopina
+  - ne sprejme več topljenca
+  - ostanek leži na dnu
+  - nenasičena sprejme še nekaj
+- Topnost
+  - največ gramov snovi v $100\,\mathrm{g}$ vode
+  - sol $36\,\mathrm{g}$, sladkor okoli $200\,\mathrm{g}$ pri $20\,°\mathrm{C}$
+  - višja temperatura jo navadno poveča, mešanje le pospeši
+- Masni delež
+  - $w = \dfrac{m_\text{topljenca}}{m_\text{raztopine}}$
+  - deli z maso raztopine, ne vode
+  - $0{,}1 = 10\,\%$
+- Računanje z odstotki
+  - $0{,}9\,\% = 0{,}009$
+  - $m_\text{topljenca} = w \cdot m_\text{raztopine}$
+- Pametni nakup
+  - primerjaj ceno topljenca, ne steklenice
+  - esenca $25\,\%$ proti kisu $5\,\%$

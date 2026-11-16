@@ -101,6 +101,8 @@ export async function request(path: string, opts: Opts = {}) {
     accept: opts.stream ? "text/event-stream" : "application/json",
     "x-app-client": APP_HEADER,
     "x-app-device": device || "",
+    // Aplikacija zna vprašanja »Preveri se« z vpisom števila in razvrščanjem (server/textbook.js legacyClient).
+    "x-app-kviz": "2",
   };
   if (session) headers.authorization = `Bearer ${session}`;
   if (opts.body !== undefined) headers["content-type"] = "application/json";

@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dve vrsti dihanja
+  - pljučno: zrak v pljuča in izmenjava plinov
+  - celično: v mitohondrijih celic
+  - glukoza + kisik → ogljikov dioksid + voda + energija
+- Pot zraka
+  - nosna votlina, žrelo, grlo, sapnik
+  - sapnici, sapničice, pljučni mešički
+  - migetalke in sluz čistijo zrak
+- Vdih in izdih
+  - vdih: prepona se skrči, prsni koš se poveča
+  - izdih: mišice se sprostijo
+  - napaka: pljuča nimajo mišic
+- Izmenjava plinov
+  - difuzija v pljučnih mešičkih
+  - kisik $21\,\%$ v vdihanem, $16\,\%$ v izdihanem zraku
+  - ogljikov dioksid nastane v celicah, ne v pljučih
+- Količina zraka
+  - $V = n \cdot V_1$
+  - pri miru $15 \cdot 0{,}5\,\mathrm{L} = 7{,}5\,\mathrm{L}$ na minuto
+- Bolezni dihal
+  - prehlad, gripa, pljučnica, tuberkuloza so nalezljive
+  - astma ni nalezljiva
+- Kajenje
+  - katran ohromi migetalke
+  - ogljikov monoksid zasede hemoglobin
+  - nikotin zasvoji, tudi v e-cigaretah
+- Prva pomoč
+  - tujek: $5$ udarcev med lopatici, $5$ stisov trebuha
+  - ne diha: $112$, stisi prsnega koša, AED

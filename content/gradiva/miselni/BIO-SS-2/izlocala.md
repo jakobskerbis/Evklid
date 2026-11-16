@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Deaminacija
+  - jetra odcepijo $-\mathrm{NH_2}$ od aminokislin
+  - napaka: odvečne beljakovine gredo v mišice
+- Dušikovi odpadki
+  - amonijak: strupen, veliko vode, ribe
+  - sečnina: jetra, sesalci, zmerno vode
+  - sečna kislina: ptiči, plazilci, žuželke, skoraj brez vode
+- Izločala človeka
+  - ledvici, sečevoda, sečni mehur, sečnica
+  - izločajo tudi pljuča, koža, jetra
+- Nefron
+  - filtracija v glomerulu
+  - reabsorpcija v kanalčkih, sekrecija ionov
+  - napaka: ledvice poberejo samo odpadke
+- Količine na dan
+  - $V_\mathrm{f} = Q_\mathrm{f} \cdot t$, okoli $180\,\mathrm{L}$ filtrata
+  - okoli $1{,}5\,\mathrm{L}$ seča, vrne se več kot $99\,\%$
+- Osmoregulacija
+  - ADH poveča vračanje vode, manj seča
+  - alkohol zavre ADH
+- Ribe in voda
+  - sladkovodne ne pijejo, veliko razredčenega seča
+  - morske pijejo, sol izločajo skozi škrge

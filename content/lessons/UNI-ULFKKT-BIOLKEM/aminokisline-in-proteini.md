@@ -28,11 +28,22 @@ Po stranski verigi jih razvrstimo v štiri skupine:
 
 Najprej slika. Glicin ($\mathrm{p}K_1 = 2{,}34$, $\mathrm{p}K_2 = 9{,}60$) na številski premici pH:
 
-```
-pH:   0 ------ 2,34 ------------ 9,60 ------ 14
-oblika:  H3N+–COOH | H3N+–COO– | H2N–COO–
-naboj:      +1     |     0     |    –1
-```
+:::risba premica
+opis: Številska premica pH od 0 do 14 z mejama pri pK₁ = 2,34 in pK₂ = 9,60. Levo od 2,34 je oblika H₃N⁺–CH₂–COOH z nabojem +1, med 2,34 in 9,60 ion dvojček H₃N⁺–CH₂–COO⁻ z nabojem 0, desno od 9,60 oblika H₂N–CH₂–COO⁻ z nabojem −1.
+od: 0
+do: 14
+oznake: ne
+oznaka: 0 | 0
+oznaka: 2,34 | 2,34
+oznaka: 9,60 | 9,60
+oznaka: 14 | 14
+točka: 2,34 |
+točka: 9,60 |
+interval: 0 .. 2,34 | +1
+interval: 2,34 .. 9,60 | 0 (ion dvojček)
+interval: 9,60 .. 14 | −1
+podnapis: Oblike glicina od leve: H₃N⁺–CH₂–COOH (+1), H₃N⁺–CH₂–COO⁻ (0), H₂N–CH₂–COO⁻ (−1)
+:::
 
 Vsak $\mathrm{p}K$ je meja na premici. Levo od nje (pH pod $\mathrm{p}K_\mathrm{a}$) skupina večinoma *nosi* proton, desno ga je *oddala*. Pri vsakem $\mathrm{p}K$ je povprečni naboj natanko na sredi med sosednjima oblikama, npr. $+0{,}5$ pri $\mathrm{pH} = 2{,}34$.
 
@@ -44,7 +55,7 @@ Kislina $\mathrm{HA}$ odda proton in nastane konjugirana baza $\mathrm{A^-}$. Pr
 
 $$\mathrm{pH} = \mathrm{p}K_\mathrm{a} + \log\frac{[\mathrm{A^-}]}{[\mathrm{HA}]}$$
 
-*Izpeljava.* Konstanta kisline je $K_\mathrm{a} = \dfrac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]}$. Logaritmiramo in pomnožimo z $-1$: $-\log[\mathrm{H^+}] = -\log K_\mathrm{a} - \log\dfrac{[\mathrm{A^-}]}{[\mathrm{HA}]}$, kar je enačba zgoraj z $\mathrm{pH} = -\log[\mathrm{H^+}]$ in $\mathrm{p}K_\mathrm{a} = -\log K_\mathrm{a}$. Iz nje sledi delež deprotonirane oblike $\alpha = \dfrac{[\mathrm{A^-}]}{[\mathrm{HA}] + [\mathrm{A^-}]} = \dfrac{1}{1 + 10^{\,\mathrm{p}K_\mathrm{a} - \mathrm{pH}}}$. **Povprečni naboj** molekule je vsota prispevkov vseh skupin: kisla skupina prispeva $-\alpha$, bazična (npr. $-\mathrm{NH_3^+}$) pa $+(1 - \alpha)$.
+*Izpeljava.* Konstanta kisline je $K_\mathrm{a} = \dfrac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]}$. Logaritmiramo in pomnožimo z $-1$: $-\log[\mathrm{H^+}] = -\log K_\mathrm{a} + \log\dfrac{[\mathrm{A^-}]}{[\mathrm{HA}]}$, kar je enačba zgoraj z $\mathrm{pH} = -\log[\mathrm{H^+}]$ in $\mathrm{p}K_\mathrm{a} = -\log K_\mathrm{a}$. Iz nje sledi delež deprotonirane oblike $\alpha = \dfrac{[\mathrm{A^-}]}{[\mathrm{HA}] + [\mathrm{A^-}]} = \dfrac{1}{1 + 10^{\,\mathrm{p}K_\mathrm{a} - \mathrm{pH}}}$. **Povprečni naboj** molekule je vsota prispevkov vseh skupin: kisla skupina prispeva $-\alpha$, bazična (npr. $-\mathrm{NH_3^+}$) pa $+(1 - \alpha)$.
 
 ### Izoelektrična točka
 
@@ -256,7 +267,7 @@ $$\frac{[\mathrm{H_2A}][\mathrm{H^+}]}{K_1} = \frac{K_R[\mathrm{H_2A}]}{[\mathrm
 
 Zato je pravilo »dva sosednja $\mathrm{p}K$« približek, ki je dober, kadar so ostale vrednosti $\mathrm{p}K$ daleč.
 
-**Puferska kapaciteta.** Aminokislina najbolje pufrira v območju $\mathrm{p}K \pm 1$, ne pri $\mathrm{pI}$. Med proteini v krvi pufrira predvsem hemoglobin s svojimi histidini, ker je njegov $\mathrm{p}K_R$ blizu $7$.
+**Puferska kapaciteta.** Aminokislina najbolje pufrira v območju $\mathrm{p}K \pm 1$, ne pri $\mathrm{pI}$. Med proteini v krvi pufrira predvsem hemoglobin s svojimi histidini, ker je njihov $\mathrm{p}K_R$ blizu $7$.
 
 **$\mathrm{p}K$ v proteinu.** Tabelirane vrednosti veljajo za proste aminokisline. V proteinu jih okolica premakne: v hidrofobnem žepu ali ob istoimenskem naboju je nabita oblika skupine manj ugodna. Tako ima npr. Lys v aktivnem mestu acetoacetat-dekarboksilaze $\mathrm{p}K$ okoli $6$.
 

@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vprašanje in napoved
+  - vprašanje, na katero odgovori merjenje
+  - napoved zapiši pred merjenjem
+- Spremenljivke
+  - neodvisna: spreminjaš jo sam
+  - odvisna: izmeriš jo
+  - kontrolirane enake; spreminjaj eno samo
+- Ponovljene meritve
+  - povprečje $\bar{x} = \dfrac{x_1 + \dots + x_n}{n}$
+  - odstopanje: največja razlika od povprečja
+  - zapis $(1{,}52 \pm 0{,}09)\,\mathrm{s}$
+- Tabela
+  - oznaka in enota v glavi stolpca
+  - neodvisna spremenljivka v prvem stolpcu
+- Graf
+  - neodvisna na vodoravni osi
+  - premica najboljšega ujemanja, ne lomljena črta
+  - ukrivljen graf zravnaj, npr. $T^2$ namesto $T$
+- Strmina
+  - $k = \dfrac{y_B - y_A}{x_B - x_A}$
+  - dve oddaljeni točki na premici
+  - z enoto, npr. $1{,}2\,\mathrm{cm}$ dežja
+- Sklep
+  - odgovori na vprašanje s števili
+  - razlika pod odstopanjem ni dokaz
+  - ne napoveduj daleč zunaj merjenega območja

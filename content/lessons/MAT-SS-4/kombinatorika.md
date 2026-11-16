@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -11,7 +11,7 @@ Deset krajev se ne zdi veliko, zato je rezultat na prvi pogled nemogoč. Pa ni: 
 
 ## Razlaga
 
-**1. Drevo možnosti.** Iz Ljubljane v Maribor lahko greš z vlakom, avtobusom ali avtom. Iz Maribora v Gradec pa z vlakom ali avtobusom. Nariši drevo: iz začetne točke izhajajo tri veje (prevoz do Maribora), iz konca vsake veje še dve (prevoz do Gradca). Na koncu drevesa je $3 \cdot 2 = 6$ listov, vsak list je ena celotna pot.
+**1. Drevo možnosti.** Iz Ljubljane v Maribor lahko greš z vlakom, avtobusom ali avtom. Iz Maribora v Gradec pa z vlakom ali avtobusom. Nariši **kombinatorično drevo**: iz začetne točke izhajajo tri veje (prevoz do Maribora), iz konca vsake veje še dve (prevoz do Gradca). Na koncu drevesa je $3 \cdot 2 = 6$ listov, vsak list je ena celotna pot.
 
 To je **osnovni izrek kombinatorike** (pravilo produkta): če izbiro opraviš v več zaporednih korakih in ima prvi korak $m$ možnosti, drugi pa $n$ možnosti, je vseh izbir $m \cdot n$. Pri več korakih množiš naprej.
 
@@ -48,7 +48,7 @@ $$^{(p)}V_n^k = n^k$$
 
 **4. Kombinacije.** Zdaj te vrstni red ne zanima: le odločiš se, katere $3$ kraje od $7$ boš obiskal. V tabeli zgoraj je vseh $6$ vrstic en sam izbor, {Bled, Bohinj, Kr. Gora}. Tako vsak izbor treh krajev med $210$ variacijami nastopi $3! = 6$-krat. Izborov je torej $\frac{210}{6} = 35$.
 
-Neurejeni izbor $k$ različnih elementov izmed $n$ je **kombinacija** $k$-tega razreda iz $n$ elementov. Število kombinacij je **binomski koeficient** $\binom{n}{k}$ (beri »$n$ nad $k$«):
+Neurejeni izbor $k$ različnih elementov izmed $n$ je **kombinacija** $k$-tega razreda iz $n$ elementov. Število kombinacij je **binomski simbol** (binomski koeficient) $\binom{n}{k}$ (beri »$n$ nad $k$«):
 
 $$C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!}$$
 
@@ -58,16 +58,20 @@ Kaj je večje: $\binom{7}{3}$ ali $\binom{7}{4}$? Odgovori brez računanja.
 Enaka sta, oba sta $35$. Ko izbereš $3$ kraje, ki jih boš obiskal, si s tem hkrati izbral $4$ kraje, ki jih ne boš. Vsakemu izboru treh ustreza natanko en izbor štirih.
 :::
 
-**5. Kako izbrati pravo formulo.** Pred računanjem odgovori na tri vprašanja.
+**5. Kako izbrati pravo formulo.** Pred računanjem odgovori na tri vprašanja: ali uporabiš vse elemente, ali je vrstni red pomemben in ali se elementi ponavljajo.
 
-| Vsi elementi? | Vrstni red pomemben? | Ponavljanje? | Formula |
-|---|---|---|---|
-| da | da | ne | $P_n = n!$ |
-| ne | da | ne | $V_n^k$ |
-| ne | da | da | $n^k$ |
-| ne | ne | ne | $\binom{n}{k}$ |
+- vsi elementi, vrstni red pomemben, brez ponavljanja: $P_n = n!$
+- ne vsi, vrstni red pomemben, brez ponavljanja: $V_n^k$
+- ne vsi, vrstni red pomemben, s ponavljanjem: $n^k$
+- ne vsi, vrstni red ni pomemben, brez ponavljanja: $\binom{n}{k}$
 
 V simulaciji spodaj (»Permutacije, variacije in kombinacije«) izberi način »Izbiranje«, nastavi $n = 5$ in $k = 3$, nato vklapljaj in izklapljaj stikalo »vrstni red je pomemben«. Opazi, da število pade s $60$ na $10$, natanko za faktor $3! = 6$.
+
+**6. Pravilo vsote.** Doslej si izbiral eno *in* nato še drugo. Včasih pa izbereš le eno *ali* drugo: za vikend greš v gore (med $4$ kraji) ali na morje (med $3$ kraji). Izletov je $4 + 3 = 7$, ne $4 \cdot 3$. To je **pravilo vsote**: če se možnosti razdelijo na primere, ki se ne prekrivajo (noben izid ni v dveh primerih hkrati), in ima prvi primer $m$ možnosti, drugi pa $n$, je vseh možnosti $m + n$. Pravili se pogosto združita: gesel iz $2$ ali $3$ črk (izmed $26$, s ponavljanjem) je $26^2 + 26^3 = 676 + 17\,576 = 18\,252$.
+
+**7. Permutacije s ponavljanjem.** Koliko različnih besed dobiš s premetavanjem črk besede ANA? Če bi bili črki A različni (A₁ in A₂), bi bilo $3! = 6$ razvrstitev. A₁NA₂ in A₂NA₁ pa sta ista beseda, zato smo vsako besedo šteli $2! = 2$-krat. Besed je $\frac{3!}{2!} = 3$: ANA, AAN, NAA. Če je med $n$ elementi $k_1$ enakih prve vrste, $k_2$ enakih druge vrste … in $k_r$ enakih zadnje vrste ($k_1 + k_2 + \dots + k_r = n$), je različnih razvrstitev
+
+$$P_n^{k_1, k_2, \ldots, k_r} = \frac{n!}{k_1!\,k_2! \cdots k_r!}$$
 
 ## Rešeni primeri
 
@@ -148,9 +152,28 @@ Koliko je $n$?
 $n = 10$, ker je $10 \cdot 9 = 90$. Preizkus: $\binom{10}{2} = \frac{10 \cdot 9}{2} = 45$. Kvadratna enačba $n^2 - n - 90 = 0$ ima še rešitev $n = -9$, ki ni smiselna.
 :::
 
+### Primer 5: besede iz črk besede POPOTNIK
+
+Koliko različnih besed (tudi takih brez pomena) lahko sestaviš iz vseh osmih črk besede POPOTNIK?
+
+**Podatki:** $n = 8$ črk; P nastopi $2$-krat, O $2$-krat, T, N, I in K po enkrat
+**Iščemo:** število različnih razvrstitev črk
+
+:::formula
+$P_n^{k_1, k_2, \ldots, k_r} = \frac{n!}{k_1!\,k_2! \cdots k_r!}$
+:::
+
+**Rešitev:**
+
+1. Razvrščamo vse črke, vrstni red je pomemben, nekatere črke so enake: permutacije s ponavljanjem.
+2. Če bi bile vse črke različne, bi bilo $8! = 40\,320$ razvrstitev.
+3. Zamenjava obeh P ali obeh O ne da nove besede, zato delimo z $2! \cdot 2! = 4$ (črka, ki nastopi enkrat, da $1! = 1$).
+4. $\frac{8!}{2! \cdot 2!} = \frac{40\,320}{4} = 10\,080$.
+5. Odgovor: sestaviš lahko $10\,080$ različnih besed.
+
 ## Pogoste napake
 
-- **Vrstni red »na občutek«.** »Izbiram 3 kraje od 7, torej $7 \cdot 6 \cdot 5$.« Ta račun šteje Bled–Bohinj–Piran in Piran–Bohinj–Bled kot dva izbora. Vprašaj se: ali dobim nekaj drugega, če zamenjam dva izbrana elementa? Če ne, deli z $k!$ oziroma uporabi $\binom{n}{k}$.
+- **Vrstni red »na občutek«.** »Izbiram 3 kraje od 7, torej $7 \cdot 6 \cdot 5$.« Ta račun šteje Bled–Bohinj–Piran in Piran–Bohinj–Bled kot dva izbora. Vprašaj se: ali dobim nekaj drugega, če zamenjam dva izbrana elementa? Če ne, deli s $k!$ oziroma uporabi $\binom{n}{k}$.
 - **Seštevanje namesto množenja.** V Primeru 3 bi kdo zapisal $20 + 6 = 26$. Seštevaš le, kadar izbereš eno ali drugo možnost; kadar izbiraš eno in drugo zaporedoma, množiš.
 - **Ponavljanje, ki ga ni (ali ga je).** Ključavnica na kovčku s štirimi kolesci ima $10^4$ kod, ker se števke smejo ponoviti ($0007$ je dovoljena koda). Pri obiskih krajev pa kraja, ki si ga že obiskal, ne izbiraš znova, zato je možnosti vsakič ena manj.
 - **$0! = 0$.** Potem bi bil $\binom{5}{5} = \frac{5!}{5! \cdot 0!}$ deljenje z nič. Velja $0! = 1$, zato je $\binom{5}{5} = 1$: vseh pet izbereš na en sam način.
@@ -163,7 +186,88 @@ $n = 10$, ker je $10 \cdot 9 = 90$. Preizkus: $\binom{10}{2} = \frac{10 \cdot 9}
 - Variacije ($k$ od $n$, vrstni red pomemben): $V_n^k = \frac{n!}{(n-k)!}$; s ponavljanjem $n^k$.
 - Kombinacije ($k$ od $n$, vrstni red ni pomemben): $C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!} = \frac{V_n^k}{k!}$.
 - Velja $\binom{n}{k} = \binom{n}{n-k}$.
+- Pravilo vsote: izbereš eno *ali* drugo iz primerov, ki se ne prekrivajo ($m$ in $n$ možnosti), vseh možnosti je $m + n$.
+- Permutacije s ponavljanjem ($n$ elementov, $k_1, \ldots, k_r$ enakih po vrstah): $P_n^{k_1, \ldots, k_r} = \frac{n!}{k_1! \cdots k_r!}$.
 - Pred računanjem vprašaj: vsi ali le nekateri? Je vrstni red pomemben? Je ponavljanje dovoljeno?
+
+## Ponovitev
+
+**Formule**
+- Zaporedne izbire $m \cdot n$, ločeni primeri $m + n$ (na pamet)
+- $P_n = n!$, $0! = 1$ (na pamet)
+- $V_n^k = \frac{n!}{(n-k)!}$, s ponavljanjem $n^k$ (na pamet)
+- $C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!}$ (na pamet)
+- $P_n^{k_1, \ldots, k_r} = \frac{n!}{k_1! \cdots k_r!}$ (na pamet)
+
+**Postopek**
+1. Vprašaj se: vsi ali le nekateri elementi?
+2. Je vrstni red pomemben? Je ponavljanje dovoljeno?
+3. Izberi permutacije, variacije ali kombinacije.
+4. Zaporedne izbire (in) množi, ločene primere (ali) seštej.
+
+**Pazi na**
+- Če zamenjava dveh izbranih ne da nič novega, uporabi $\binom{n}{k}$.
+- Pri ponavljanju (koda $0007$) je možnosti $n^k$, brez njega vsakič ena manj.
+- $0! = 1$; v $\binom{n}{k}$ ne pozabi $(n-k)!$ v imenovalcu.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Koliko štirimestnih naravnih števil lahko zapišemo s števkami $0$, $1$, $2$, $3$, $4$ in $5$, če se nobena števka v številu ne ponovi?
+
+**Rešitev:**
+
+1. Na prvem mestu ne sme stati $0$, zato prvo števko izberemo na $5$ načinov.
+2. Za drugo mesto ostane $5$ števk (zdaj tudi $0$), za tretje $4$ in za četrto $3$.
+3. Po osnovnem izreku kombinatorike možnosti zmnožimo: $5 \cdot 5 \cdot 4 \cdot 3 = 300$.
+4. Odgovor: zapišemo lahko $300$ štirimestnih števil.
+
+**Točkovanje:** 1 točka za ugotovitev, da ima prvo mesto le $5$ možnosti (brez ničle), 1 točka za $5 \cdot 4 \cdot 3$ možnosti na ostalih mestih in množenje po osnovnem izreku, 1 točka za pravilen rezultat $300$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+V razredu je $14$ dijakov: $8$ fantov in $6$ deklet.
+
+a) Na koliko načinov lahko izberejo tričlansko delegacijo za šolski parlament? (2 točki)
+b) Koliko je tričlanskih delegacij, v katerih sta natanko dve dekleti? (2 točki)
+c) Koliko je tričlanskih delegacij, v katerih je vsaj eno dekle? (2 točki)
+d) Na koliko načinov lahko izmed vseh dijakov izberejo predsednika, namestnika predsednika in blagajnika razreda, če ima vsak dijak največ eno funkcijo in mora biti predsednik dekle? (2 točki)
+
+**Rešitev:**
+
+1. a) V delegaciji vrstni red ni pomemben, zato gre za kombinacije: $\binom{14}{3} = \frac{14 \cdot 13 \cdot 12}{3 \cdot 2 \cdot 1} = 364$.
+2. b) Dve dekleti izmed $6$ izberemo na $\binom{6}{2} = 15$ načinov, enega fanta izmed $8$ na $8$ načinov. Po osnovnem izreku je delegacij $15 \cdot 8 = 120$.
+3. c) Delegacij brez deklet (samo fantje) je $\binom{8}{3} = \frac{8 \cdot 7 \cdot 6}{3 \cdot 2 \cdot 1} = 56$, zato je delegacij z vsaj enim dekletom $364 - 56 = 308$.
+4. c) Preizkus s pravilom vsote (natanko $1$, $2$ ali $3$ dekleta): $6 \cdot \binom{8}{2} + 120 + \binom{6}{3} = 6 \cdot 28 + 120 + 20 = 308$.
+5. d) Predsednika izberemo izmed $6$ deklet na $6$ načinov. Preostali funkciji sta različni, zato je vrstni red pomemben, ponavljanja ni: namestnika in blagajnika izmed preostalih $13$ dijakov izberemo na $V_{13}^2 = 13 \cdot 12 = 156$ načinov. Po osnovnem izreku je načinov $6 \cdot 156 = 936$.
+6. Odgovor: a) $364$ delegacij, b) $120$ delegacij, c) $308$ delegacij, d) $936$ načinov.
+
+**Točkovanje:** a) 1 točka za prepoznavo kombinacij ($\binom{14}{3}$), 1 točka za $364$; b) 1 točka za zapis $\binom{6}{2} \cdot \binom{8}{1}$ (množenje obeh izborov), 1 točka za $120$; c) 1 točka za odštetje delegacij brez deklet ($\binom{8}{3} = 56$) ali za razdelitev na primere, 1 točka za $308$; d) 1 točka za zapis $6 \cdot 13 \cdot 12$ (predsednik izmed deklet, nato variacije brez ponavljanja), 1 točka za $936$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je variacija $k$-tega razreda iz $n$ elementov in kako izračunamo število variacij brez ponavljanja in s ponavljanjem?
+---
+Variacija $k$-tega razreda iz $n$ elementov je urejen izbor $k$ elementov izmed $n$ elementov, pri katerem je vrstni red pomemben. Če se elementi ne smejo ponavljati (takrat je $k \le n$), je variacij $V_n^k = n(n-1)\cdots(n-k+1) = \frac{n!}{(n-k)!}$. Če se elementi smejo ponavljati, je pri vsakem od $k$ izborov na voljo vseh $n$ elementov, zato je variacij $n^k$. Obe formuli sledita iz osnovnega izreka kombinatorike, saj izbiramo element za elementom in možnosti množimo.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji formulo za število kombinacij $k$-tega razreda iz $n$ elementov iz števila variacij.
+---
+Kombinacija je neurejen izbor $k$ različnih elementov izmed $n$, variacija pa urejen izbor. Elemente vsake kombinacije lahko uredimo na $k!$ načinov, zato iz vsake kombinacije nastane natanko $k!$ različnih variacij. Velja torej $V_n^k = k! \cdot C_n^k$. Od tod sledi $C_n^k = \frac{V_n^k}{k!} = \frac{n!}{k!\,(n-k)!} = \binom{n}{k}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer uporabe pravila vsote in primer uporabe osnovnega izreka kombinatorike ter pojasni razliko med njima.
+---
+Pravilo vsote uporabimo, kadar izberemo eno ali drugo možnost iz primerov, ki se ne prekrivajo, in takrat števila možnosti seštejemo. Primer je izbira ene knjige, ki je roman ali strip: možnosti je toliko, kolikor je romanov in stripov skupaj. Osnovni izrek uporabimo, kadar izbiro opravimo v zaporednih korakih, in takrat števila možnosti zmnožimo. Primer je izbira enega romana in enega stripa: možnosti je toliko, kolikor je zmnožek števila romanov in števila stripov.
+:::
 
 ## Drugače: Z analogijo
 
@@ -210,13 +314,10 @@ Ko s prijatelji izbirate, katere $3$ od $7$ znamenitosti v Rimu boste obiskali v
 > $6! = 720$, $7! = 7 \cdot 6! = 5040$. Novi kraj lahko vstaviš na $7$ mest v vsakem od starih vrstnih redov.
 
 ? Ključavnica na kovčku ima $4$ kolesca, na vsakem so števke od $0$ do $9$. Koliko različnih kod lahko nastaviš?
-- $5040$
-~ To je $10 \cdot 9 \cdot 8 \cdot 7$, kot da se števke ne smejo ponavljati. Koda $1111$ pa je povsem dovoljena.
-- $210$
-~ To je $\binom{10}{4}$, kot da vrstni red ni pomemben. Koda $1234$ ni ista kot $4321$.
-+ $10\,000$
-- $40$
-~ To je $4 \cdot 10$, seštevanje možnosti kolesc. Kolesca so zaporedne izbire, zato možnosti množiš.
+= 10000 | 0
+~ 5040 | To je $10 \cdot 9 \cdot 8 \cdot 7$, kot da se števke ne smejo ponavljati. Koda $1111$ pa je povsem dovoljena.
+~ 210 | To je $\binom{10}{4}$, kot da vrstni red ni pomemben. Koda $1234$ ni ista kot $4321$.
+~ 40 | To je $4 \cdot 10$, seštevanje možnosti kolesc. Kolesca so zaporedne izbire, zato možnosti množiš.
 > Vsako kolesce ima $10$ možnosti, vrstni red je pomemben in ponavljanje je dovoljeno: $10^4 = 10\,000$ kod.
 
 ? Iz skupine $10$ popotnikov izberejo tri: prvi nosi zemljevid, drugi kompas, tretji GPS-napravo. Na koliko načinov lahko razdelijo naloge?
@@ -229,6 +330,20 @@ Ko s prijatelji izbirate, katere $3$ od $7$ znamenitosti v Rimu boste obiskali v
 ~ To je $10 \cdot 3$. Pri vsaki nalogi izbiraš izmed preostalih popotnikov in možnosti množiš.
 > Izbiramo $3$ od $10$, vrstni red je pomemben, brez ponavljanja: $V_{10}^3 = 10 \cdot 9 \cdot 8 = 720$.
 
+? (brez računala) Koliko različnih besed (tudi takih brez pomena) dobiš s premetavanjem vseh črk besede MAMA?
+= 6 | 0
+~ 24 | To je $4!$, kot da bi bile vse črke različne. Zamenjava obeh M ali obeh A ne da nove besede.
+~ 12 | Delil si le z $2!$ za eno črko. Ponovita se dve črki, M in A, zato deliš z $2! \cdot 2!$.
+> Permutacije s ponavljanjem: $\frac{4!}{2! \cdot 2!} = \frac{24}{4} = 6$ (AAMM, AMAM, AMMA, MAAM, MAMA, MMAA).
+
+? Slaščičarna ponuja $5$ vrst sladoleda in $3$ vrste tort. Privoščiš si eno sladico: kepico sladoleda ali kos torte. Koliko možnosti imaš?
+- $15$
+~ Tako bi bilo, če bi vzel sladoled in torto (osnovni izrek). Tu izbereš le eno ali drugo.
++ $8$
+- $2$
+~ To je število primerov (sladoled ali torta), ne število možnosti v njiju.
+> Pravilo vsote: primera se ne prekrivata, zato možnosti seštejemo: $5 + 3 = 8$.
+
 :::simboli
 n | število vseh elementov | | | v primerih število krajev
 k | število izbranih elementov (razred) | | | $k \le n$
@@ -237,4 +352,25 @@ V_n | število variacij $V_n^k$ ($k$ od $n$, vrstni red pomemben) | V_n^k = \fra
 p | oznaka »s ponavljanjem« v $^{(p)}V_n^k$ | ^{(p)}V_n^k = n^k | | elementi se smejo ponavljati
 C_n | število kombinacij $C_n^k$ ($k$ od $n$, vrstni red ni pomemben) | C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!} | | $\binom{n}{k}$ beremo »$n$ nad $k$«
 P_5 | število vrstnih redov petih krajev | P_5 = 5! | |
+m | število možnosti prvega koraka oziroma primera | | |
+k_1, k_2, k_r | število enakih elementov posamezne vrste | | | $k_1 + k_2 + \dots + k_r = n$
 :::
+
+<<RACUN
+vrednost: 4+3 | 7
+vrednost: 26^2+26^3 | 18252
+vrednost: factorial(3)/factorial(2) | 3
+vrednost: factorial(8) | 40320
+vrednost: factorial(8)/(factorial(2)*factorial(2)) | 10080
+vrednost: factorial(6)/factorial(3)^2*factorial(4)/factorial(2)^2 | 120
+resi: n*(n-1)/2=45 | n | -9, 10
+vrednost: 5*5*4*3 | 300
+vrednost: factorial(14)/(factorial(3)*factorial(11)) | 364
+vrednost: factorial(6)/(factorial(2)*factorial(4))*8 | 120
+vrednost: factorial(8)/(factorial(3)*factorial(5)) | 56
+vrednost: 364-56 | 308
+vrednost: 6*28+120+20 | 308
+vrednost: 6*13*12 | 936
+vrednost: factorial(4)/(factorial(2)*factorial(2)) | 6
+vrednost: 5+3 | 8
+>>

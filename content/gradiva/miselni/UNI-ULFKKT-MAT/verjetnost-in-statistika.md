@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Verjetnost dogodka
+  - $P(A \cup B) = P(A) + P(B) - P(A \cap B)$
+  - pogojna: $P(A \mid B) = \frac{P(A \cap B)}{P(B)}$
+  - neodvisnost: $P(A \cap B) = P(A)P(B)$
+- Slučajna spremenljivka
+  - diskretna: $p_i = P(X = x_i)$, $\sum p_i = 1$
+  - zvezna: gostota $f$, $P(X = a) = 0$
+- Pričakovana vrednost, varianca
+  - $E(X) = \sum x_ip_i$, $D(X) = E(X^2) - \mu^2$
+  - $D(aX + b) = a^2D(X)$
+  - $\sigma$ ima isto enoto kot $X$
+- Porazdelitve
+  - binomska: $\binom{n}{k}p^k(1 - p)^{n - k}$, $E = np$
+  - Poissonova: $\frac{\lambda^ke^{-\lambda}}{k!}$, $E = \sigma^2 = \lambda$
+  - normalna: $Z = \frac{X - \mu}{\sigma}$, pravilo $68$–$95$–$99{,}7$
+- Centralni limitni izrek
+  - povprečje mnogih neodvisnih vplivov približno normalno
+  - $D(\bar X) = \frac{\sigma^2}{n}$
+- Vzorec
+  - $s^2 = \frac{1}{n - 1}\sum (x_i - \bar x)^2$
+  - standardna napaka $s_{\bar x} = \frac{s}{\sqrt n}$
+  - napaka: deljenje z $n$ namesto $n - 1$
+- Linearna regresija
+  - $k = \frac{S_{xy}}{S_{xx}}$, $n = \bar y - k\bar x$
+  - premica gre skozi $(\bar x, \bar y)$
+  - $r^2$: pojasnjeni delež, korelacija ni vzročnost

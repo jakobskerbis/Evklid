@@ -11,7 +11,7 @@ Ročno ni treba narediti nič.
 | Ob vsakem zagonu (`zagon-windows.bat`, `telefon-windows.bat`, bližnjica, samodejni zagon) | Najprej se prenese najnovejša različica, nato se aplikacija zažene. |
 | Med tekom, vsakih 15 minut | Preveri GitHub (en majhen klic). Če je kaj novega: prenese, namesti nove knjižnice (če se je spremenil `package.json`), počaka na miren trenutek (nihče ne čaka na odgovor inštruktorja, največ 20 minut) in strežnik znova zažene. Povezava za telefon ostane ista. |
 | Ob ponovnem zagonu strežnika | Baza se sama prilagodi novi različici (`server/db.js`), lekcije in naloge se naložijo na novo. |
-| Telefon ali brskalnik, ki je bil odprt | Ko teče nova različica, se stran tiho osveži: ko se aplikacija vrne v ospredje (vsaj 1 minuto v ozadju) ali po 10 minutah brez dotika. Nikoli med tekmovanjem ali ko je v polju napisano, a neposlano besedilo. Nove datoteke pridejo same (service worker najprej vpraša strežnik), nove knjižnice dobijo nov predpomnilnik. |
+| Telefon ali brskalnik, ki je bil odprt | Ko teče nova različica, se stran tiho osveži: ko se aplikacija vrne v ospredje (vsaj 1 minuto v ozadju) ali po 10 minutah brez dotika. Nikoli med tekmovanjem ali ko je v polju napisano, a neposlano besedilo. Izjema: stran, odprta pred manj kot 30 s (ali dobljena iz predpomnilnika, ker je omrežje zamujalo), se osveži takoj. Nove datoteke pridejo same: service worker datoteke aplikacije iste različice odpre takoj iz predpomnilnika (brez čakanja na omrežje), ob novi različici pa vsako najprej vpraša strežnik; vsak odgovor strežnika pove različico datotek (glava `X-Evklid-App`). Stara stran do osvežitve dobiva datoteke svoje različice: service worker si zapomni različico vsake strani, ki jo je naložil, stran, ki je ne pozna (po menjavi ali ponovnem zagonu service workerja), pa enkrat vpraša (do 0,4 s). Kratko okno ostane le, če je kopija stare različice že pobrisana (osvežitev sledi). Na domačem strežniku se nova različica datotek pokaže v nekaj sekundah po zapisu, še preden se strežnik znova zažene. Nove knjižnice dobijo nov predpomnilnik. |
 
 Kaj ostane nedotaknjeno: `.env` (ključi, geslo, ngrok), mapa `data/` (učenci, napredek,
 dnevnik) in `node_modules/`. Pobrišejo se samo datoteke, ki jih je prinesla prejšnja
@@ -34,7 +34,7 @@ Ob vsaki združitvi v `main` GitHub zažene preverbo, ki počaka na miren trenut
 5 minut; novejša združitev jo zamenja. Urnik vsako uro je le rezerva, ker GitHub urnike pogosto zamakne za ure
 (`.github/workflows/render-posodobitev.yml`,
 pravila v `scripts/render-objava.js`; v `render.yaml` je `autoDeploy: false`). Ponovni zagon s trajnim
-diskom pomeni približno minuto izpada, zato:
+diskom pomeni približno minuto izpada, zato (začasno do nedelje 15. 11. 2026 00:00, začetka pilota, se vsaka združitev objavi takoj, `TAKOJ_DO` v `scripts/render-objava.js`; j, 14. 11.):
 
 | Stanje | Kdaj se objavi |
 |---|---|
@@ -54,6 +54,17 @@ variables > Actions kot skrivnost `RENDER_DEPLOY_HOOK`.
 |---|---|
 | `EVKLID_POSODOBITEV_MINUTE=15` | Kako pogosto preveri (v minutah). |
 | `EVKLID_POSODOBITEV=0` | Izklopi samodejne posodobitve. |
+| `EVKLID_GITHUB_TOKEN=` | Samo če je repozitorij na GitHubu zaseben. Brez ključa posodobitve zasebnega repozitorija ne delujejo (v oknu piše, kaj vpisati). |
+
+### Ključ za zaseben repozitorij
+
+1. GitHub → klikni svojo sliko → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token.
+2. Repository access: **Only select repositories** → samo `Evklid`.
+3. Permissions → Repository permissions → **Contents: Read-only**. Nič drugega.
+4. Ključ kopiraj v `.env` na vsakem računalniku z Evklidom: `EVKLID_GITHUB_TOKEN=github_pat_…`.
+5. Preden poteče, naredi novega in ga zamenjaj v `.env`.
+
+Ključ gre samo v glavo zahteve za GitHub (pri git prek `GIT_CONFIG_*` v okolju), nikoli v ukaz ali izpis.
 
 ## Kako deluje (za razvijalce)
 
@@ -68,4 +79,9 @@ variables > Actions kot skrivnost `RENDER_DEPLOY_HOOK`.
 - Zagonske datoteke `.bat`/`.command` imajo oznako `EVKLID-SAMOPOSODOBITEV`: dolgi ukazi so v
   eni vrstici z `exit /b` (Mac: vse v funkciji `main`), zato jih posodobitev lahko prepiše med
   tekom. Datoteke brez oznake (stare različice) med tekom ne prepiše.
-- `server/razlicica.js`: različica za `/healthz/stanje` in ime predpomnilnika v `/sw.js`.
+- `server/razlicica.js`: različica za `/healthz/stanje`, ime predpomnilnika v `/sw.js` in `staticVersion()`
+  (commit + prstni odtis mape `public/`, izračun ob zagonu strežnika) = `APP` v `/sw.js`: kopija datoteke
+  aplikacije, ki jo je shranila ista `APP`, se odpre brez omrežja; API in strani strežnika gredo vedno najprej
+  na omrežje (`test/sw-hitrost.test.js`).
+- `server/vstopna-stran.js`: `index.html` z `<link rel="modulepreload">` za vse module prvega odprtja
+  (seznam iz `server/startup-files.js`), proračun velikosti v `test/hitrost-proracun.test.js`.

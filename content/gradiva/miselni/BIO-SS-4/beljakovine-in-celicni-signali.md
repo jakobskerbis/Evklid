@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zgradba beljakovin
+  - primarna, sekundarna, terciarna, kvartarna
+  - $n$ aminokislin, $n - 1$ peptidnih vezi
+  - hemoglobin: štiri verige
+- Oblika in delovanje
+  - srpastocelična anemija: ena zamenjana aminokislina
+  - denaturacija podre obliko, zaporedje ostane
+- Fosforilacija
+  - kinaza prenese fosfat z ATP
+  - fosfataza fosfat odstrani
+  - napaka: fosforilacija vedno vklopi encim
+- Receptorji
+  - hidrofilni hormoni: receptor v membrani
+  - lipofilni hormoni: receptor v citoplazmi ali jedru
+- G-beljakovina in cAMP
+  - GDP zamenja za GTP, vklopi adenilat-ciklazo
+  - ATP → cAMP → PKA
+  - izklop: GTP v GDP, fosfodiesteraza
+- Kalcij
+  - v citoplazmi okoli $0{,}1\,\mu\mathrm{mol/L}$
+  - $r = \dfrac{c_{\mathrm{zunaj}}}{c_{\mathrm{znotraj}}}$
+  - veže se na kalmodulin
+- Ojačanje signala
+  - faktorje stopenj množimo
+  - malo adrenalina, ogromno glukoze

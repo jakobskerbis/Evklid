@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Znaki odnosov
+  - $+$ pridobi, $-$ izgubi, $0$ nič
+- Tekmovanje
+  - $-/-$, isti omejeni vir
+  - kreša s pšenico: $d = \dfrac{m_0 - m}{m_0}$
+  - napaka: tekmovanje ni boj
+- Plenilstvo
+  - $+/-$, plen ubit in pojeden
+  - plenilec in plen nihata z zamikom
+- Zajedavstvo
+  - $+/-$, gostitelj ostane živ
+  - zunanji (klop), notranji (trakulja)
+- Mutualizem
+  - $+/+$: čmrlj in paradižnik
+  - bakterije v vampu krave
+- Simbioza
+  - tesno, dolgotrajno sobivanje
+  - lišaj, mikoriza (jurček in smreka)
+  - napaka: ne pomeni vedno koristi obema
+- Ločevanje niš
+  - enaka niša: ena vrsta izpodrine drugo
+  - ptice pevke v različnih delih krošnje

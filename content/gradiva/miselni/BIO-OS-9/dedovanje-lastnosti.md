@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Gen in alel
+  - gen: navodilo za lastnost
+  - alel: ena različica, npr. $A$ ali $a$
+  - vsak gen dvakrat, od mame in očeta
+- Homozigot in heterozigot
+  - homozigot: $AA$ ali $aa$
+  - heterozigot: $Aa$
+- Dominantno in recesivno
+  - dominantni alel se pokaže že enkrat
+  - recesivni le v paru $aa$
+  - napaka: dominanten ne pomeni pogost
+- Genotip in fenotip
+  - genotip: zapis alelov, npr. $Aa$
+  - fenotip: vidna lastnost, rumeno seme
+  - $AA$ in $Aa$ imata enak fenotip
+- Križanje
+  - spolna celica nosi en alel
+  - $Aa \times Aa$: fenotipi $3 : 1$
+  - $Aa \times aa$: $1 : 1$
+- Vmesno dedovanje
+  - noben alel ni dominanten
+  - rdeča × bela = rožnata
+- Vpliv okolja
+  - kalčki v temi bledi, na oknu zeleni
+  - spremembe zaradi okolja se ne dedujejo

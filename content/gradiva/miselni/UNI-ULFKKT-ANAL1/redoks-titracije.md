@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prenos elektronov
+  - reducent odda, oksidant sprejme elektrone
+  - $z_\mathrm{red}\,n(\text{reducent}) = z_\mathrm{ox}\,n(\text{oksidant})$
+  - napaka: »razmerje je vedno $1:1$«
+- Nernstova enačba
+  - $E = E^\circ + \frac{0{,}0592\ \mathrm{V}}{n}\log\frac{[\mathrm{ox}]}{[\mathrm{red}]}$
+  - pri polovici titracije $E = E^\circ$
+  - višji $E^\circ$: močnejši oksidant
+- Ekvivalentna točka
+  - $E_\mathrm{EP} = \frac{E^\circ_\mathrm{Fe} + 5E^\circ_\mathrm{Mn}}{6} \approx 1{,}39\ \mathrm{V}$
+  - $\log K = \frac{z\,\Delta E^\circ}{0{,}0592\ \mathrm{V}}$
+  - krivulja nesimetrična, točka bližje $1{,}51\ \mathrm{V}$
+- Indikatorji
+  - samoindikator: $\mathrm{KMnO_4}$, trajno rožnato
+  - specifični: škrob z jodom, modro
+  - redoks indikator: feroin
+- Manganometrija
+  - $n(\mathrm{Fe^{2+}}) = 5\,n(\mathrm{MnO_4^-})$
+  - nakisamo s $\mathrm{H_2SO_4}$, ne s $\mathrm{HCl}$
+  - umerjanje z oksalatom $2:5$, $60$–$70\,^\circ\mathrm{C}$
+- Jodometrija
+  - oksidant in prebitek $\mathrm{KI}$ sprostita $\mathrm{I_2}$
+  - $n(\mathrm{S_2O_3^{2-}}) = 2\,n(\mathrm{I_2})$
+  - škrob šele pri bledo rumeni barvi
+- Jodimetrija
+  - titrant je jod, analit reducent
+  - primer: vitamin C
+- Kisik po Winklerju
+  - $n(\mathrm{O_2}) = n(\mathrm{S_2O_3^{2-}})/4$
+  - napaka: deljenje z $2$

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Riemannova vsota
+  - $\sum f(\xi_i)\, \Delta x_i$, limita je $\int_a^b f(x)\, dx$
+  - zvezna funkcija na $[a, b]$ je integrabilna
+  - ploščina s predznakom
+- Lastnosti
+  - linearnost, aditivnost, monotonost
+  - $\int_b^a f\, dx = -\int_a^b f\, dx$
+- Povprečna vrednost
+  - $\bar f = \frac{1}{b - a} \int_a^b f(x)\, dx$
+  - zvezna $f$ jo doseže v nekem $\xi$
+- Osnovni izrek analize
+  - $\frac{d}{dx} \int_a^x f(t)\, dt = f(x)$
+  - za zvezno $f$ je integral s spremenljivo mejo primitivna funkcija
+- Newton-Leibniz
+  - $\int_a^b f(x)\, dx = F(b) - F(a)$
+  - pri substituciji zamenjaj tudi meji
+  - napaka: integral čez pol
+- Ploščina med grafoma
+  - $S = \int_a^b (f - g)\, dx$, $f \ge g$
+  - meji sta presečišči grafov
+  - pod osjo vzemi absolutno vrednost
+- Vrtenina
+  - $V = \pi \int_a^b f(x)^2\, dx$
+  - napaka: pozabljen kvadrat

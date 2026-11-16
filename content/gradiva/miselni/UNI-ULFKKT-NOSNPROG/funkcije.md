@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Definicija in klic
+  - `def ime(parametri):` le shrani recept
+  - telo se izvede ob vsakem klicu
+- Okvir klica
+  - vsak klic dobi nov, prazen okvir
+  - po koncu klica okvir izgine
+- Parameter in argument
+  - argumenti se priredijo po vrsti
+  - privzeta vrednost: `def f(x, n=2)`
+  - napačno število argumentov: `TypeError`
+- Lokalne spremenljivke
+  - zunaj funkcije: `NameError`
+  - prirejanje parametru ne spremeni zunanje spremenljivke
+- Pravilo dosega
+  - iskanje: lokalno, zunanje funkcije, globalno, vgrajeno
+  - `x = x + 1` brez parametra: `UnboundLocalError`
+- Vračanje vrednosti
+  - `return` takoj konča klic
+  - brez `return` funkcija vrne `None`
+  - pogosta napaka: `print` namesto `return`
+- Seznam kot argument
+  - `sez.append(x)` spremeni tudi zunanji seznam
+  - `sez = [...]` ustvari le lokalno ime

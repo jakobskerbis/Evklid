@@ -32,7 +32,8 @@ const count = (s, re) => (s.match(re) || []).length;
 
 test("tabela iz odgovora inštruktorja je prava tabela z razredom md-table", () => {
   const html = renderRich(REPLY);
-  assert.match(html, /<div class="md-table-wrap"><table class="md-table">/);
+  // Tabela s 3+ stolpci ima imena stolpcev v celicah (zložljiva na telefonu, public/vodoravna-tabela.js).
+  assert.match(html, /<div class="md-table-wrap"><table class="md-table md-stolpci">/);
   assert.equal(count(html, /<th[ >]/g), 4);
   assert.equal(count(html, /<td[ >]/g), 16);
   assert.ok(!html.includes("|"), "v izrisu ni ostala nobena navpična črta");
@@ -47,7 +48,7 @@ test("stolpci s števili in formulami so na sredini, besedilni levo", () => {
   const head = html.match(/<thead>[\s\S]*?<\/thead>/)[0];
   assert.match(head, /<th>ime<\/th>/);
   assert.equal(count(head, /align="center"/g), 2);
-  assert.match(html, /<td>Ana<\/td>/);
+  assert.match(html, /<td data-label="ime">Ana<\/td>/);
   // Poravnava, ki jo zapiše avtor, ostane.
   const own = renderRich("| a | b |\n|:--|--:|\n| 1 | 2 |");
   assert.match(own, /<td align="left">1<\/td>/);
@@ -130,7 +131,7 @@ test("videz tabel je skupen v vsej aplikaciji (style.css), tudi v temnem načinu
 test("stolpec z dolgim besedilom se sme prelomiti, formule ne", () => {
   const html = renderRich("| Korak | Kaj naredimo | Rezultat |\n|---|---|---|\n| 1 | Odpravimo ulomke: vse pomnožimo s $4$ (skupni imenovalec) | $2x + 12 = x + 20$ |");
   assert.match(html, /<th class="wrap">Kaj naredimo<\/th>/);
-  assert.match(html, /<td align="center">1<\/td>/);
+  assert.match(html, /<td align="center" data-label="Korak">1<\/td>/);
   assert.equal(count(html, /class="wrap"/g), 2);
 });
 

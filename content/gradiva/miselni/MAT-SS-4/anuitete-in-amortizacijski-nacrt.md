@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ostanek dolga
+  - vsako leto $D_k = D_{k-1} \cdot r - a$
+  - ugibanje obroka pusti dolg ali preplačilo
+- Ekvivalenca glavnic
+  - zneske primerjaj na isti trenutek
+  - naprej $\cdot r^k$, nazaj $: r^k$
+  - napaka: seštevanje zneskov iz različnih let
+- Anuiteta
+  - $a = G_0 \cdot \frac{r^n (r - 1)}{r^n - 1}$
+  - $4000$ €, $5\,\%$, $4$ leta: $a \approx 1128{,}05$ €
+  - $r^n$ ne zaokroži prezgodaj
+- Amortizacijski načrt
+  - obresti $o_k = D_{k-1} \cdot \frac{p}{100}$
+  - razdolžnina $R_k = a - o_k$
+  - zadnja vrstica: $D_n = 0$
+- Potek odplačila
+  - obresti padajo, razdolžnine rastejo
+  - vsota razdolžnin je posojilo
+- Preostanek naenkrat
+  - $D_k = G_0 r^k - a \cdot \frac{r^k - 1}{r - 1}$
+  - preizkus: preostale anuitete, preračunane nazaj

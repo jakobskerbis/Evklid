@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- DNA v jedru
+  - niti iz jagod s špiritom
+  - pred delitvijo zvita v kromosome
+- Nukleotidi
+  - štirje znaki: A, T, C, G
+  - pomen je v zaporedju, kot črke
+- Dvojna vijačnica
+  - pari vedno A–T in C–G
+  - delež A enak deležu T
+- Gen
+  - odsek z navodilom za eno beljakovino
+  - celica bere po tri nukleotide
+- Enak zapis
+  - vsa bitja: isti nukleotidi, iste trojke
+  - bakterija izdela človeški inzulin
+- Geni staršev
+  - 46 kromosomov: 23 od mame, 23 od očeta
+  - napaka: »deklice od mame, dečki od očeta«

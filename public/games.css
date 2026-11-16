@@ -176,7 +176,8 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-timer i { display: block; height: 100%; background: linear-gradient(90deg, #f97316, #facc15); transform-origin: left; }
 .gm-stage { position: relative; flex: 1; min-height: 0; touch-action: none; user-select: none; -webkit-user-select: none; }
 .gm-stage canvas { display: block; touch-action: none; outline: none; }
-.gm-stage::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: repeating-linear-gradient(transparent 0 3px, rgba(0, 0, 0, 0.05) 3px 4px); }
+/* Okvir prizora v barvi teme (tekstura sveta, svetloba in vinjeta pridejo iz games/slog.js; vrstic čez prizor ni več: šle so čez številke). */
+.gm-stage::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 38%, transparent), inset 0 12px 22px -14px rgba(0, 0, 0, 0.55); }
 .gm-overlay { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: 16px; background: rgba(10, 15, 30, 0.45); overflow-y: auto; }
 .gm-overlay[hidden] { display: none; }
 .gm-card { width: min(440px, 100%); padding: 22px; border: 3px solid var(--gm-ink); border-radius: 22px; background: var(--surface); color: var(--text); box-shadow: 0 6px 0 var(--gm-ink), var(--shadow-lg); text-align: center; }
@@ -328,7 +329,7 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 }
 /* Oznaka »Novo« (tedenske posodobitve; isNew/isNewDate v public/avatar.js). Tudi za nove vrste iger. */
 .gm-item, .zb-card, .gm-fresh-item { position: relative; }
-.gm-new { position: absolute; top: -8px; left: -8px; z-index: 1; padding: 1px 7px; border-radius: 99px; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em; color: #fff; background: #16a34a; border: 2px solid var(--surface, #fff); pointer-events: none; }
+.gm-new { position: absolute; top: -8px; left: -8px; z-index: 1; padding: 1px 7px; border-radius: 99px; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em; color: #fff; background: #15803d; border: 2px solid var(--surface, #fff); pointer-events: none; } /* #15803d: bel napis 5,0 : 1 (AA); #16a34a je bil 3,3 : 1 */
 .gm-new-dot { display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 50%; background: #16a34a; vertical-align: middle; }
 /* nova vrsta igre: ploščica ima overflow: hidden, zato oznaka znotraj, desno od ikone vrste igre */
 .gm-tile > .gm-new { top: 10px; left: auto; inset-inline-start: 46px; }
@@ -380,7 +381,7 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-calm .gm-btn { border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 10px; background: rgba(255, 255, 255, 0.16); box-shadow: none; }
 .gm-calm .gm-btn:active { transform: none; box-shadow: none; }
 .gm-calm .gm-timer { border-bottom: 0; }
-.gm-calm .gm-stage::after { display: none; }
+.gm-calm .gm-stage::after { background: none; }
 .gm-calm :is(.gm-card, .gm-me) { border: 1px solid var(--border); border-radius: var(--radius, 16px); box-shadow: var(--shadow-lg); }
 .gm-calm .gm-card .primary.big { border: 0; border-radius: var(--radius-sm, 12px); box-shadow: none; background-image: none; text-shadow: none; }
 .gm-calm .gm-card .primary.big:active { transform: none; }

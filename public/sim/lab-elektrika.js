@@ -1,7 +1,7 @@
 // Virtualni laboratorij, elektrika: zaporedna in vzporedna vezava (lab-vezava), prevodnost snovi (lab-prevodnost).
 // Modeli: lab-model-elektrika.js. Deli kroga (merilnik, upornik, žarnica) so isti kot pri Ohmovem zakonu (lab-fiz.js).
 import { h, s, fmt, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, rez } from "./lab.js";
 import { drawMeter, drawResistor, drawLamp } from "./lab-fiz.js";
 import { AM_RANGES, VM_RANGES, NAPAJALNIK, UPOR, makeMeter, meterRead, fuseRate, rng } from "./lab-model.js";
 import { VezBench, VEZ_DELI, MATERIALI, tester, POENOSTAVITVE_ELEKTRIKA } from "./lab-model-elektrika.js";
@@ -134,7 +134,7 @@ export function labVezava(el) {
       if (has(set.U, ["glavni", "1", "2"])) li.push(`<i>U</i>₁ + <i>U</i>₂ = <b>${V(set.U[1] + set.U[2])}</b>, <i>U</i> = <b>${V(set.U.glavni)}</b>`);
     }
     const Rp = rPts.get(sig());
-    if (Rp) li.push(`Skupna upornost: <i>U</i>/<i>I</i> = <b>${fmt(Rp[1], Rp[1] >= 100 ? 0 : 1)} Ω</b>, iz oznak na upornikih izračunaš ${fmt(Rp[0], Rp[0] >= 100 ? 0 : 1)} Ω (upori ±5 %).`);
+    if (Rp) li.push(`Skupna upornost: ${tex(String.raw`\frac{U}{I} = ${rez(fmt(Rp[1], Rp[1] >= 100 ? 0 : 1), "Ω")}`)}, iz oznak na upornikih izračunaš ${fmt(Rp[0], Rp[0] >= 100 ? 0 : 1)} Ω (upori ±5 %).`);
     summary.innerHTML = `<p><b>To vezje (${vezName()}, ${fixed(B.U0, 1)} V):</b></p><ul>${li.map((x) => `<li>${x}</li>`).join("")}</ul>`;
   }
   function redrawGraph() {
@@ -160,7 +160,7 @@ export function labVezava(el) {
       qBox.append(conclusion({
         text: "Kaj velja za tokove pri vzporedni vezavi?",
         options: [
-          { t: "Tok v glavnem vodu je enak vsoti tokov v vejah; skozi manjši upor teče večji tok.", ok: true, why: "Naboj se v razcepišču ne izgubi (1. Kirchhoffov zakon): <i>I</i> = <i>I</i>₁ + <i>I</i>₂. Napetost na vseh vejah je enaka, zato je <i>I</i><sub>i</sub> = <i>U</i>/<i>R</i><sub>i</sub>, skupna upornost pa je manjša od najmanjše. Če je izmerjena vsota <i>I</i>₁ + <i>I</i>₂ za malenkost (~1 %) večja od <i>I</i>, to ni napaka zakona: ampermeter ima upor ~1 Ω, ki tok v glavnem vodu zmanjša nekoliko bolj kot tok v posamezni veji, k temu pa prišteješ še napako merilnika." },
+          { t: "Tok v glavnem vodu je enak vsoti tokov v vejah; skozi manjši upor teče večji tok.", ok: true, why: `Naboj se v razcepišču ne izgubi (1. Kirchhoffov zakon): <i>I</i> = <i>I</i>₁ + <i>I</i>₂. Napetost na vseh vejah je enaka, zato je ${tex(String.raw`I_i = \frac{U}{R_i}`)}, skupna upornost pa je manjša od najmanjše. Če je izmerjena vsota <i>I</i>₁ + <i>I</i>₂ za malenkost (~1 %) večja od <i>I</i>, to ni napaka zakona: ampermeter ima upor ~1 Ω, ki tok v glavnem vodu zmanjša nekoliko bolj kot tok v posamezni veji, k temu pa prišteješ še napako merilnika.` },
           { t: "Tok je v vseh vejah in v glavnem vodu enak.", ok: false, why: "Tako je pri zaporedni vezavi. Pri vzporedni se tok razdeli med veje." },
           { t: "Skupna upornost je vsota uporov.", ok: false, why: "Vsota velja za zaporedno vezavo. Vzporedno dodan upornik odpre novo pot toku, zato je skupna upornost manjša: 1/<i>R</i> = 1/<i>R</i>₁ + 1/<i>R</i>₂." },
         ],

@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Notranji upor
+  - $U = U_g - I R_i$
+  - neobremenjen vir kaže $U_g$
+  - kratki stik: $I = \frac{U_g}{R_i}$
+- Zančno pravilo
+  - vsota sprememb potenciala po zanki je nič
+  - ohranitev energije
+  - upornik v smeri toka: $-IR$
+- Pravilo vozlišča
+  - tokovi v vozlišče enaki tokovom iz njega
+  - ohranitev naboja
+- Postopek
+  - označi tokove, $n - 1$ vozlišč
+  - manjkajoče enačbe iz zank
+  - negativen tok teče obratno
+- Dva vira
+  - šibkejši vir se lahko polni
+  - napaka: napetosti virov vedno seštevaš
+- Moč
+  - $P = U I = I^2 R$, enota $\mathrm{W}$
+  - največja pri $R = R_i$, izkoristek $50\,\%$
+  - upora z zmnožkom $R_i^2$: enaka moč

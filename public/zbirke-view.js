@@ -97,7 +97,7 @@ function condition(x, id) {
 
 // Predmeti za zavihek: zbirka ali pass (sezonski predmeti trenutne sezone + prejšnje, ki jih imaš).
 function tabItems() {
-  if (tab !== "pass") return KNOWLEDGE.filter((x) => x.collection === tab).map((x) => x.id);
+  if (tab !== "pass") return KNOWLEDGE.filter((x) => x.collection === tab && (!x.hidden || ownedSet().has(x.id))).map((x) => x.id);
   return PASS_REWARDS.map((r) => `${r.id}~${data.pass.season}`);
 }
 
@@ -155,7 +155,7 @@ export function earnedWhere(id, row) {
   const x = itemOf(id);
   if (!x || !row) return "";
   if (row.topic) return t("zb.fromTopic", { topic: row.topic.path ? `${row.topic.name} (${row.topic.path})` : row.topic.name });
-  const src = { pass: () => t("zb.fromPass", { season: seasonLabel(variantOf(id)) }), set: () => t("zb.fromSet"), xp: () => t(x.collection === "pot" ? "zb.fromXp" : "zb.fromXpAt", { xp: num(x.need?.xp) }), league: () => t("zb.fromLeague"), games: () => t("zb.fromGames") };
+  const src = { pass: () => t("zb.fromPass", { season: seasonLabel(variantOf(id)) }), set: () => t("zb.fromSet"), xp: () => t(x.collection === "pot" ? "zb.fromXp" : "zb.fromXpAt", { xp: num(x.need?.xp) }), league: () => t("zb.fromLeague"), games: () => t("zb.fromGames"), pilot: () => t("zb.fromPilot") };
   return src[row.source]?.() || "";
 }
 
@@ -204,7 +204,7 @@ function render(focus = null) {
   if (!root || !data) return;
   const keep = focus || focusKey(document.activeElement);
   const own = ownedSet();
-  const counts = Object.fromEntries(COLLECTIONS.map((c) => [c.id, KNOWLEDGE.filter((x) => x.collection === c.id)]));
+  const counts = Object.fromEntries(COLLECTIONS.map((c) => [c.id, KNOWLEDGE.filter((x) => x.collection === c.id && (!x.hidden || own.has(x.id)))]));
   const tabs = [...COLLECTIONS.map((c) => ({ id: c.id, label: itemName(c, lang()), ic: c.icon, n: counts[c.id].filter((x) => own.has(x.id)).length, of: counts[c.id].length })), { id: "pass", label: t("zb.pass"), ic: "award" }];
   if (!tabs.some((x) => x.id === tab)) tab = "pse";
   const earlier = tab === "pass" ? data.items.filter((i) => itemOf(i.id)?.collection === "pass" && variantOf(i.id) !== data.pass.season).map((i) => i.id) : [];

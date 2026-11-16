@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enaki deli
+  - Štirje neenaki kosi niso četrtine
+- Števec in imenovalec
+  - Imenovalec poimenuje, števec šteje
+  - $\dfrac{3}{5}$ beremo »tri petine«
+  - Imenovalec ni nikoli $0$
+- Ulomek na liku
+  - Razdeli na $b$ enakih delov, pobarvaj $a$
+- Številska premica
+  - Enoto od $0$ do $1$ razdeli na $b$ delov
+  - Štej dele, ne črtic
+- Velikost dela
+  - Večji imenovalec pomeni manjši del
+  - $\dfrac{1}{8}$ pice je manj kot $\dfrac{1}{4}$
+- Nepravi ulomek
+  - Števec je večji ali enak imenovalcu
+  - $\dfrac{7}{4} = 1\dfrac{3}{4}$
+- Ulomek količine
+  - Deli z imenovalcem, množi s števcem
+  - $\dfrac{3}{4}$ od $20\,€$ je $15\,€$

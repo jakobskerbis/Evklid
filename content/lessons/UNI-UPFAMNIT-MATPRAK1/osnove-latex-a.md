@@ -168,7 +168,7 @@ V seminarski nalogi želiš izpis:
 > **Literatura:** [1] R. L. Graham, D. E. Knuth, O. Patashnik, *Concrete Mathematics*, Addison-Wesley, 1994.
 
 **Podatki:** besedilo izreka, dokaza in stavka, vir (avtorji, naslov, založba, leto); številki »1« pri izreku in viru naj nastaneta sami
-**Iščemo:** vrstico v preambuli in kodo za telo
+**Iščemo:** vrstici v preambuli in kodo za telo
 
 :::formula
 `\newtheorem{izrek}{Izrek}` v preambuli; okolji `izrek` in `proof`; `\label` + `\ref`; `\bibitem` + `\cite`.
@@ -199,7 +199,7 @@ enaka 5050~&#92;cite{gkp}.
 &#92;end{thebibliography}
 </code></pre>
 
-6. Odgovor: ena vrstica v preambuli in štirje gradniki v telesu (izrek, dokaz, sklic, viri); po dveh prevajanjih se izpišeta »Izrek 1« in »[1]«.
+6. Odgovor: dve vrstici v preambuli in štirje gradniki v telesu (izrek, dokaz, sklic, viri); po dveh prevajanjih se izpišeta »Izrek 1« in »[1]«.
 
 ### Primer 4 – zdaj ti: popravi sošolčevo kodo
 
@@ -235,46 +235,199 @@ Kakšna je celotna popravljena koda?
 
 - LaTeX je jezik oznak: pišeš izvorno datoteko `.tex`, program jo prevede v PDF.
 - Struktura: v preambuli `\documentclass` in paketi (`babel`, `amsmath`, `amsthm`), vsebina med `\begin{document}` in `\end{document}`; `\section` oštevilči sam.
-- Matematični način: formula v vrstici med dvema dolarjema, izpostavljena v svoji vrstici; presledki se ne upoštevajo, `^` in `_` delujeta na en znak, zato oklepaji; funkcije z `\sin`, `\log`; decimalna vejica `{,}`; besedilo z `\text`.
+- Matematični način: formula v vrstici med dvema dolarjema, izpostavljena v svoji vrstici; presledki se ne upoštevajo, `^` in `_` delujeta na en znak, zato oklepaji; funkcije s `\sin`, `\log`; decimalna vejica `{,}`; besedilo s `\text`.
 - Okolja `\begin{...}` ... `\end{...}`: `itemize`, `enumerate`, `equation` (s številko), `align`, izreki z `\newtheorem`, `proof`.
 - Sklici: `\label` + `\ref` ali `\eqref`; viri: `thebibliography`, `\bibitem` + `\cite`. Za pravilne številke prevedi dvakrat.
+
+## Za izpit
+
+Znati moraš povedati:
+- kaj je preambula in kaj telo dokumenta ter kaj naredijo `\documentclass`, `\usepackage` in `\newtheorem`;
+- razliko med formulo v vrstici, izpostavljeno formulo med <code>&#92;[</code> in <code>&#92;]</code> ter okoljem `equation`;
+- pravila matematičnega načina: presledki, poševne črke, `^` in `_` na en znak, funkcije kot ukazi, `\text`, decimalna vejica `{,}`;
+- kako deluje par `\label` in `\ref` oziroma `\eqref` ter zakaj sta potrebni dve prevajanji (datoteka `.aux`);
+- kako z `\bibitem` in `\cite` nastane oštevilčen seznam virov;
+- pravilo o zapiranju gnezdenih okolij.
+
+### Naloga 1
+
+Dan je celoten dokument:
+
+<pre><code>&#92;documentclass{article}
+&#92;usepackage[slovene]{babel}
+&#92;usepackage{amsmath, amsthm}
+&#92;newtheorem{izrek}{Izrek}
+&#92;begin{document}
+&#92;section{Uvod}
+V razdelku~&#92;ref{sec:vsote} dokažemo izrek~&#92;ref{izr:lihi}.
+&#92;section{Vsote}&#92;label{sec:vsote}
+&#92;subsection{Vsota naravnih števil}
+&#92;begin{equation}
+  &#92;sum&#95;{k=1}^{n} k = &#92;frac{n(n+1)}{2} &#92;label{eq:gauss}
+&#92;end{equation}
+&#92;subsection{Vsota lihih števil}
+&#92;begin{izrek}&#92;label{izr:lihi}
+Za vsako naravno število &#36;n&#36; velja
+&#92;begin{equation}
+  &#92;sum&#95;{k=1}^{n} (2k-1) = n^2. &#92;label{eq:lihi}
+&#92;end{equation}
+&#92;end{izrek}
+&#92;begin{proof}
+Po &#92;eqref{eq:gauss} je vsota enaka
+&#36;2 &#92;cdot &#92;frac{n(n+1)}{2} - n = n^2&#36;.
+&#92;end{proof}
+Za &#36;n = 20&#36; iz &#92;eqref{eq:lihi} dobimo &#36;400&#36;,
+iz &#92;eqref{eq:gaus} pa &#36;210&#36;~&#92;cite{gkp}.
+
+&#92;begin{thebibliography}{9}
+&#92;bibitem{knuth} D.~E.~Knuth, &#92;emph{The &#92;TeX book},
+  Addison-Wesley, 1986.
+&#92;bibitem{gkp} R.~L.~Graham, D.~E.~Knuth, O.~Patashnik,
+  &#92;emph{Concrete Mathematics}, Addison-Wesley, 1994.
+&#92;end{thebibliography}
+&#92;end{document}
+</code></pre>
+
+(a) Dokument prevedeš dvakrat. Zapiši, kaj se izpiše na mestu vsakega od sklicev `\ref`, `\eqref` in `\cite`, po vrsti, kot stojijo v datoteki. (b) Eden od sklicev je napačen tudi po poljubno mnogo prevajanjih. Kateri in zakaj? (c) Napako iz (b) popraviš, med razdelka Uvod in Vsote vstaviš nov `\section{Oznake}`, takoj za `\subsection{Vsota naravnih števil}` pa novo okolje `equation`. Kaj se po dveh prevajanjih izpiše na mestih istih sklicev? (d) Preveri vrednosti $400$ in $210$ v zadnjem stavku.
+
+**Rešitev:**
+
+1. Razdelki: Uvod dobi številko $1$, Vsote $2$, podrazdelka $2.1$ in $2.2$. Oznaka `sec:vsote` stoji za `\section{Vsote}`, zato pomeni $2$.
+2. Enačbe se štejejo po vrsti skozi ves dokument: `eq:gauss` je $(1)$, `eq:lihi` je $(2)$. Izreki imajo svoj števec: `izr:lihi` je izrek $1$, čeprav je v njem enačba $(2)$.
+3. Vira se oštevilčita po vrsti v seznamu: `knuth` je [1], `gkp` je [2].
+4. (a) Po vrsti se izpiše: »V razdelku 2 dokažemo izrek 1«, »Po (1) je vsota enaka«, »iz (2) dobimo«, »iz (??) pa«, »[2]«.
+5. (b) Napačen je `\eqref{eq:gaus}`: oznake s tem imenom ni, ker se enačba imenuje `eq:gauss`. V datoteki `.aux` take oznake ni, zato ostane »??« ne glede na število prevajanj. Popravek: `\eqref{eq:gauss}`.
+6. (c) Razdelek Vsote postane $3$. Nova enačba dobi številko $(1)$, zato je `eq:gauss` zdaj $(2)$ in `eq:lihi` $(3)$. Izrek ostane $1$, vir `gkp` ostane [2], ker se števca izrekov in virov nista spremenila.
+7. Izpis po spremembi: »V razdelku 3 dokažemo izrek 1«, »Po (2) je vsota enaka«, »iz (3) dobimo«, »iz (2) pa«, »[2]«.
+8. (d) Vsota prvih $20$ lihih števil je $20^2 = 400$. Vsota števil od $1$ do $20$ je $\frac{20 \cdot 21}{2} = 210$. Obe vrednosti sta pravilni.
+9. Odgovor: pred spremembo $2$, $1$, $(1)$, $(2)$, $(??)$, [2]; po spremembi $3$, $1$, $(2)$, $(3)$, $(2)$, [2]. V izvorni datoteki ni bilo treba popraviti nobene številke, le napačno ime oznake.
+
+### Naloga 2
+
+Natančno razloži, zakaj sta za pravilne sklice potrebni dve prevajanji. Nato utemelji, kaj se izpiše na mestu sklica `\eqref{eq:energija}`, če v dokument, ki je bil že dvakrat preveden in v katerem ima ta enačba številko $(3)$, pred njo vstaviš novo oštevilčeno enačbo in ga prevedeš samo enkrat.
+
+**Rešitev:**
+
+1. LaTeX bere izvorno datoteko enkrat, od začetka proti koncu. Številko enačbe določi šele, ko pride do njenega okolja `equation`.
+2. Sklic lahko stoji pred oznako. Takrat LaTeX številke še ne pozna, zato je ne more izpisati iz tega, kar je že prebral.
+3. Rešitev je pomožna datoteka `.aux`. Med prevajanjem LaTeX vanjo zapiše vsak par oznaka → številka. Na začetku naslednjega prevajanja jo prebere in sklice izpiše iz nje.
+4. Prvo prevajanje: datoteke `.aux` še ni, zato vsi sklici pokažejo »??«, pari pa se zapišejo. Drugo prevajanje: sklici se izpišejo iz `.aux`, številke so pravilne.
+5. Sklic torej vedno pokaže stanje iz **prejšnjega** prevajanja.
+6. V vprašanju: v datoteki `.aux` iz prejšnjega prevajanja piše `eq:energija` → $3$. Pri enem prevajanju po vstavitvi LaTeX prebere to staro vrednost, zato sklic izpiše $(3)$, ob enačbi pa že stoji nova številka $(4)$.
+7. Odgovor: izpiše se zastarela številka $(3)$, ne »??«. Sklic zdaj kaže na drugo enačbo, tisto, ki ima po novem številko $(3)$, kar je nevarnejše od »??«, ker napake ne opaziš. Šele drugo prevajanje da $(4)$. Po vsaki spremembi številčenja zato prevedi dvakrat.
+
+### Naloga 3
+
+Sošolka ti pošlje del naloge, ki se ne prevede:
+
+<pre><code>&#92;begin{enumerate}
+&#92;item Naj bo &#36;a&#95;12 = 2,5&#36; in &#36;f(x) = sin x^10&#36;.
+&#92;item Ker je &#36;f(0) = 0 po definiciji&#36;, uporabimo enačbo (1):
+&#92;begin{equation}
+  4 &#92;cdot a&#95;{12} = 10 &#92;label{eq:produkt}
+&#92;end{enumerate}
+&#92;end{equation}
+</code></pre>
+
+Želeni izpis je oštevilčen seznam z dvema točkama; v drugi je oštevilčena enačba $4 \cdot a_{12} = 10$, na katero se sklicuje besedilo. (a) Poišči vse napake in zapiši popravljeno kodo. (b) Utemelji, katera napaka prepreči prevajanje in katere pokvarijo le videz. (c) Preveri, ali enačba velja za dano vrednost $a_{12}$.
+
+**Rešitev:**
+
+1. <code>&#36;a&#95;12&#36;</code> da $a_12$: v indeks gre le en znak. Pravilno <code>&#36;a&#95;{12}&#36;</code>.
+2. <code>&#36;2,5&#36;</code> da $2,5$ s presledkom za vejico. Pravilno <code>&#36;2{,}5&#36;</code>.
+3. <code>&#36;sin x^10&#36;</code> da $sin x^10$: ime funkcije je poševno kot produkt spremenljivk, na potenci je le enica. Pravilno <code>&#36;&#92;sin x^{10}&#36;</code>.
+4. Besedilo »po definiciji« stoji med dolarjema, zato se izpiše poševno in brez presledkov. Dolar zapremo za <code>f(0) = 0</code>.
+5. Ročno zapisana »(1)« ne sledi spremembam številčenja. Pravilno `\eqref{eq:produkt}`, pred njim nedeljivi presledek `~`.
+6. Okolji sta zaprti v napačnem vrstnem redu: `equation` je odprt zadnji, zato ga moramo zapreti prvega, šele nato `enumerate`.
+7. (a) Popravljena koda:
+
+<pre><code>&#92;begin{enumerate}
+&#92;item Naj bo &#36;a&#95;{12} = 2{,}5&#36; in &#36;f(x) = &#92;sin x^{10}&#36;.
+&#92;item Ker je &#36;f(0) = 0&#36; po definiciji, uporabimo
+enačbo~&#92;eqref{eq:produkt}:
+&#92;begin{equation}
+  4 &#92;cdot a&#95;{12} = 10 &#92;label{eq:produkt}
+&#92;end{equation}
+&#92;end{enumerate}
+</code></pre>
+
+8. (b) Prevajanje prepreči le napaka iz koraka 6: LaTeX ob `\end{enumerate}` ugotovi, da je odprto okolje `equation`, in javi napako. Napake iz korakov 1 do 5 se prevedejo brez opozorila; pokvarijo videz (koraki 1 do 4) ali zanesljivost sklica (korak 5), zato jih moraš poiskati sam v PDF-ju.
+9. (c) $4 \cdot 2{,}5 = 10$, enačba velja.
+10. Odgovor: sedem popravkov (indeks, decimalna vejica, `\sin`, potenca, besedilo zunaj dolarjev, sklic z `\eqref`, vrstni red `\end`); prevajanje ustavi samo napačno gnezdenje.
 
 ## Drugače: Na sliki
 
 Pot od izvorne datoteke do PDF-ja:
 
-```
-naloga.tex
-   │  1. prevajanje
-   ├──► naloga.aux  (oznaka → številka)
-   └──► naloga.pdf  (sklici: ??)
-
-naloga.tex + naloga.aux
-   │  2. prevajanje
-   └──► naloga.pdf  (sklici: 1, 2, …)
-```
+:::risba skica
+opis: Zgoraj prvo prevajanje: iz datoteke naloga.tex vodita dve puščici, ena v datoteko naloga.aux, kjer so zapisani pari oznaka in številka, druga v naloga.pdf, kjer so sklici še izpisani kot dva vprašaja. Spodaj drugo prevajanje: iz datotek naloga.tex in naloga.aux vodita puščici v naloga.pdf, kjer so sklici prave številke 1, 2 in tako naprej.
+območje: 0; 0 .. 20; 13
+pravokotnik: 0,3; 9 .. 5,9; 10,5 | modra
+napis: 3,1; 9,75 | naloga.tex | sredina | debelo
+napis: 3,1; 10,7 | 1. prevajanje | nad
+pravokotnik: 11; 10,3 .. 19,5; 12,7 | oranžna
+napis: 15,25; 11,95 | naloga.aux | sredina | debelo
+napis: 15,25; 11,05 | oznaka → številka | sredina
+pravokotnik: 11; 6,8 .. 19,5; 9,2 | siva
+napis: 15,25; 8,45 | naloga.pdf | sredina | debelo
+napis: 15,25; 7,55 | sklici: ?? | sredina
+puščica: 5,9; 9,75 -> 11; 11,5
+puščica: 5,9; 9,75 -> 11; 8
+črta: 0,3; 6,1 -> 19,5; 6,1 | črtkano siva
+pravokotnik: 0,3; 2,9 .. 5,9; 4,4 | modra
+napis: 3,1; 3,65 | naloga.tex | sredina | debelo
+napis: 3,1; 4,6 | 2. prevajanje | nad
+pravokotnik: 0,3; 0,4 .. 5,9; 1,9 | oranžna
+napis: 3,1; 1,15 | naloga.aux | sredina | debelo
+pravokotnik: 11; 1,2 .. 19,5; 3,6 | zelena
+napis: 15,25; 2,85 | naloga.pdf | sredina | debelo
+napis: 15,25; 1,95 | sklici: 1, 2, … | sredina
+puščica: 5,9; 3,65 -> 11; 2,8
+puščica: 5,9; 1,15 -> 11; 2
+podnapis: Prvo prevajanje zapiše oznake v naloga.aux, drugo jih prebere in izpiše številke.
+:::
 
 Zgradba dokumenta kot drevo:
 
-```
-preambula: documentclass, paketi,
-           newtheorem
-document
- ├─ section Uvod
- ├─ section Energija baterije
- │   ├─ equation (1)  ← label
- │   └─ izrek 1       ← label
- └─ thebibliography
-     └─ bibitem [1]   ← cite
-```
+:::risba skica
+opis: Drevo dokumenta. Na vrhu je preambula z documentclass, paketi in newtheorem. Pod njo je document s tremi vejami: section Uvod, section Energija baterije in thebibliography. Veja Energija baterije ima dva lista, equation (1) in izrek 1, na oba kaže puščica z napisom label. Veja thebibliography ima list bibitem [1], nanj kaže puščica z napisom cite.
+območje: 0; 0 .. 20; 10
+napis: 0,5; 9,3 | preambula | desno | debelo
+napis: 6; 9,3 | documentclass, paketi, | desno
+napis: 6; 8,5 | newtheorem | desno
+napis: 0,5; 7,3 | document | desno | debelo
+črta: 1; 6,9 -> 1; 2,3
+črta: 1; 6,3 -> 1,8; 6,3
+napis: 2; 6,3 | section Uvod | desno
+črta: 1; 5,3 -> 1,8; 5,3
+napis: 2; 5,3 | section Energija baterije | desno
+črta: 3; 4,9 -> 3; 3,3
+črta: 3; 4,3 -> 3,8; 4,3
+napis: 4; 4,3 | equation (1) | desno
+puščica: 14; 4,3 -> 10,5; 4,3 | | | oranžna
+napis: 14,2; 4,3 | label | desno | oranžna
+črta: 3; 3,3 -> 3,8; 3,3
+napis: 4; 3,3 | izrek 1 | desno
+puščica: 14; 3,3 -> 10,5; 3,3 | | | oranžna
+napis: 14,2; 3,3 | label | desno | oranžna
+črta: 1; 2,3 -> 1,8; 2,3
+napis: 2; 2,3 | thebibliography | desno
+črta: 3; 1,9 -> 3; 1,3 -> 3,8; 1,3
+napis: 4; 1,3 | bibitem [1] | desno
+puščica: 14; 1,3 -> 10,5; 1,3 | | | oranžna
+napis: 14,2; 1,3 | cite | desno | oranžna
+podnapis: Zgradba dokumenta kot drevo; puščice kažejo mesta, kjer je pripeto ime.
+:::
 
-Puščica »←« pomeni: tu je pripeto ime, ki ga `\ref` ali `\cite` prevede v številko.
+Oranžna puščica v levo pomeni: tu je pripeto ime, ki ga `\ref` ali `\cite` prevede v številko.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Ko kličeš mamo, izbereš stik »Mama«, številke ne tipkaš. Če mama zamenja številko, popraviš en stik in vsi klici še vedno pridejo do nje.
+Matematik raziskovalec članek odda v izvorni obliki `.tex`: strežnik arXiv ga prevede sam, revije pa imajo svoj razred dokumenta. Ko revija zahteva drugačen videz, zamenjaš vrstico `\documentclass` v preambuli, telo pa ostane enako.
 
-Z oznakami v LaTeX-u je enako. `\label{eq:energija}` je ime stika, številka enačbe je telefonska številka. V besedilu »kličeš« ime z `\eqref{eq:energija}`, LaTeX pa poišče trenutno številko. Ko dodaš novo enačbo, se številke premaknejo, tvoji sklici pa ostanejo pravilni. Pri viru je `\cite{gkp}` ime stika, [1] pa njegova trenutna številka v seznamu.
+Članek s $40$ oštevilčenimi enačbami, $12$ izreki in $30$ viri piše več soavtorjev hkrati. Recenzent zahteva novo lemo na začetku: številke se premaknejo, a ker so vsi sklici zapisani z `\ref`, `\eqref` in `\cite`, sta dovolj dve prevajanji. Ročno bi moral pregledati vsak sklic posebej. O imenih oznak se soavtorji zato dogovorijo vnaprej (`eq:`, `izr:`, `lem:`).
+
+Podatke o virih matematiki prevzamejo iz zbirk MathSciNet in zbMATH, ki za vsak članek ponujata zapis za datoteko `.bib`. Tudi diplomsko nalogo na fakulteti oddaš v predlogi, ki je v resnici pripravljena preambula.
 
 ## Preveri se
 

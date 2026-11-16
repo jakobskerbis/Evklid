@@ -991,6 +991,12 @@ export function createScientific(root, opts) {
       showPanel(null);
       refresh();
     },
+    /** Tipka Nazaj (app.js calcBack): odprta plošča funkcij ali konstant se zapre, kalkulator ostane. */
+    back() {
+      if (!root.classList.contains("sc-panel-open")) return false;
+      showPanel(null);
+      return true;
+    },
     insert,
     get state() {
       return st;

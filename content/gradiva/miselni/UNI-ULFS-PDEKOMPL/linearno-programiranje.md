@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Model
+  - namenska funkcija $z = 5x + 3y \to \max$
+  - omejitve so linearne neenačbe, $x, y \ge 0$
+  - pazi: produkt $xy$ ni dovoljen
+- Dopustno območje
+  - presek polravnin, konveksen mnogokotnik
+  - oglišča: presečišča mejnih premic
+- Grafična rešitev
+  - nivojnice $5x + 3y = c$, pravokotne na gradient
+  - optimum v oglišču $(4, 2)$, $z = 26$
+  - vzporedna nivojnica: optimalen cel rob
+- Simpleksna metoda
+  - dopolnilni spremenljivki $s_1 = 6 - x - y$, $s_2 \ge 0$
+  - vstop: pozitiven koeficient v vrstici $z$
+  - izstop: najmanjši količnik
+- Konec simpleksa
+  - vsi koeficienti nebaznih $\le 0$
+  - $z = 26 - s_1 - 2s_2$
+  - napaka: »ustaviš se v $(5, 0)$«
+- Dualni problem
+  - $w = 6u + 10v \to \min$, matrika transponirana
+  - šibka dualnost $z \le w$, krepka $z = w$
+  - napaka: koeficienti iz vrstice namesto stolpca
+- Komplementarnost
+  - $x_j > 0$: dualna omejitev je enakost
+  - neporabljen vir: senčna cena $0$
+- Senčne cene
+  - $u = 1$ €/kg, $v = 2$ €/h
+  - veljajo do zamenjave aktivne omejitve

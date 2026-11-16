@@ -85,7 +85,7 @@ Alkan: $\mathrm{C_nH_{2n+2}}$; $n = \dfrac{m}{M}$
 
 **Rešitev:**
 
-1. Z $4$ ogljiki: $2 \cdot 4 + 2 = 10$ vodikov, formula je $\mathrm{C_4H_{10}}$.
+1. S $4$ ogljiki: $2 \cdot 4 + 2 = 10$ vodikov, formula je $\mathrm{C_4H_{10}}$.
 2. Molska masa: $M = 4 \cdot 12 + 10 \cdot 1 = 58\,\mathrm{g/mol}$.
 3. Množina: $n = \dfrac{290\,\mathrm{g}}{58\,\mathrm{g/mol}} = 5{,}0\,\mathrm{mol}$.
 4. Odgovor: butan je $\mathrm{C_4H_{10}}$; v kartuši je $5{,}0\,\mathrm{mol}$ butana, en mol butana te torej stane $0{,}58\,€$.
@@ -132,7 +132,7 @@ V $100\,\mathrm{g}$ snovi: $n = \dfrac{m}{M}$ za vsak element, nato razmerje del
 
 Aroma v sadnih bombonih je pogosto ester. Iz $6{,}0\,\mathrm{g}$ etanojske kisline in dovolj etanola pripravimo etil etanoat. Kolikšna je največja masa estra, ki lahko nastane?
 
-**Podatki:** $m(\mathrm{CH_3COOH}) = 6{,}0\,\mathrm{g}$, etanol v prebitku, $M(\mathrm{CH_3COOH}) = 60\,\mathrm{g/mol}$, ester $\mathrm{CH_3COOCH_2CH_3}$ ($\mathrm{C_4H_8O_2}$)
+**Podatki:** $m(\mathrm{CH_3COOH}) = 6{,}0\,\mathrm{g}$, etanol v prebitku, $M(\mathrm{CH_3COOH}) = 60\,\mathrm{g/mol}$, ester $\mathrm{CH_3COOCH_2CH_3}$ ($\mathrm{C_4H_8O_2}$), $M(\mathrm{C}) = 12\,\mathrm{g/mol}$, $M(\mathrm{H}) = 1\,\mathrm{g/mol}$, $M(\mathrm{O}) = 16\,\mathrm{g/mol}$
 **Iščemo:** največjo maso estra
 
 :::formula

@@ -165,7 +165,7 @@ $m(\text{sladkor}) = 0{,}08 \cdot 200\,\text{g} = 16\,\text{g}$, $m(\text{voda})
 Predstavljaj si bučko z vodo, v kateri plavajo modre pikice. Vsaka pikica je delec topljenca.
 
 - Če v isto prostornino dodaš več pikic, je raztopina **bolj koncentrirana** (koncentracija se poveča).
-- Če pikice pustiš in dodaš vodo, se razporedijo po večji prostornini. Je jih enako veliko kot prej, vendar so bolj razredčene (koncentracija se zmanjša).
+- Če pikice pustiš in dodaš vodo, se razporedijo po večji prostornini. Pikic je enako veliko kot prej, vendar so bolj narazen (koncentracija se zmanjša).
 
 V simulaciji spodaj (»Koncentracija raztopine«) lahko to opaziš: spreminjaj množino topljenca in prostornino raztopine ter opazuj prikazano koncentracijo. Ko prostornino podvojiš, se koncentracija prepolovi. Ko podvojiš količino topljenca pri isti prostornini, se podvoji tudi koncentracija.
 

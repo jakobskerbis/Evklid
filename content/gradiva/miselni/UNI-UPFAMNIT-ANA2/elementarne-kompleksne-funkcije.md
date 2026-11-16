@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Definicija z vrsto
+  - $e^{z} = \sum \frac{z^{n}}{n!}$, $z \in \mathbb{C}$
+  - konvergira absolutno za vsak kompleksni $z$
+- Eulerjeva formula
+  - $e^{ix} = \cos x + i\sin x$
+  - točka na enotski krožnici, kot v radianih
+  - $e^{i\pi} = -1$, $e^{i\pi/2} = i$
+- Splošen eksponent
+  - $e^{x+iy} = e^{x}(\cos y + i\sin y)$
+  - velikost $|e^{z}| = e^{\operatorname{Re} z}$, smer $\operatorname{Im} z$
+  - napaka: »$e^{x+iy} = e^{x} + e^{iy}$«
+- Lastnosti
+  - $e^{z+w} = e^{z}e^{w}$
+  - $e^{z} \neq 0$, a ni vedno pozitiven
+  - perioda $2\pi i$, ni injektivna
+- Kosinus in sinus
+  - $\cos z = \frac{e^{iz}+e^{-iz}}{2}$, $\sin z = \frac{e^{iz}-e^{-iz}}{2i}$
+  - nista omejena: $\cos i \approx 1{,}543$
+  - adicijski izreki iz $e^{i(a+b)} = e^{ia}e^{ib}$
+- Logaritem
+  - $w = \ln|z| + i(\varphi + 2k\pi)$, $z \neq 0$
+  - večličen; glavna veja $\varphi \in (-\pi, \pi]$
+  - $e^{z} = -2$: $z = \ln 2 + i(2k+1)\pi$

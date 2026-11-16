@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Primer s premerom
+  - enakokraki trikotnik $OPB$
+  - zunanji kot je vsota dveh enakih
+- Obodni kot
+  - $\varphi = \frac{\omega}{2}$
+  - napaka: obodni enak središčnemu
+- Isti lok
+  - vsi obodni koti enaki
+  - drugi lok: $180^\circ - \varphi$
+- Talesov izrek
+  - kot nad premerom je $90^\circ$
+  - dva prava kota pomenita krožnico
+- Tetivni štirikotnik
+  - nasprotna kota: $\alpha + \gamma = 180^\circ$
+  - napaka: seštevati sosednja kota
+- Pogoji tetivnosti
+  - zunanji kot enak nasprotnemu notranjemu
+  - enaka kota nad stranico z iste strani
+- Lovljenje kotov
+  - kote prenašaj prek tetiv
+  - višine: $ABDE$ tetiven, $\angle CDE = \angle A$

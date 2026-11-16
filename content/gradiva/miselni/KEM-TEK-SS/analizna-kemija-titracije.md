@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Titracija šteje množino
+  - $n_\mathrm{T} = c_\mathrm{T} \cdot V_\mathrm{T}$
+  - šibka kislina porabi enako baze kot močna
+- Točka ekvivalence
+  - $n_\mathrm{A} = \dfrac{a}{t} \cdot n_\mathrm{T}$
+  - stehiometrična, ne nujno pH 7
+- Izbira indikatorja
+  - šibka kislina: fenolftalein, pH okoli $8{,}7$
+  - šibka baza: metiloranž, pH okoli $5{,}3$
+  - napaka: prezgodnja končna točka
+- Redoks titracija
+  - $\mathrm{MnO_4^-} : \mathrm{Fe^{2+}} = 1 : 5$
+  - nakisaj z $\mathrm{H_2SO_4}$, ne s HCl
+  - permanganat je sam indikator
+- Alikvot in redčenje
+  - $f = \dfrac{V_\mathrm{b}}{V_\mathrm{p}}$
+  - napaka: rezultat velja le za alikvot
+- Enote
+  - $V$ v litrih pri $n = c \cdot V$
+  - mL se pokrajšajo le v razmerju

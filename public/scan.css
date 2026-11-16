@@ -89,7 +89,7 @@
 .scan-methods .seg { max-width: 100%; }
 
 .scan-steps ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.scan-step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; animation: fade-up 0.25s ease both; }
+.scan-step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; animation: fade-up 0.18s ease both; }
 .scan-step-head { display: flex; gap: 10px; align-items: flex-start; }
 .scan-step-n { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--accent-text, #fff); font-weight: 800; font-size: 0.9rem; }
 .scan-step-title { margin: 3px 0 0; font-weight: 600; line-height: 1.45; }

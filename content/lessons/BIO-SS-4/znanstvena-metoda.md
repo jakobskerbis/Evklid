@@ -95,7 +95,7 @@ Kvantitativen podatek je izmerjena ali prešteta količina (povprečje ima smise
 
 Ali nočni način zaslona skrajša čas do zaspanja? Dvanajst prostovoljcev naključno razdelijo v dve skupini po šest. Vsi pred spanjem pol ure berejo isto besedilo na enakem telefonu pri enaki svetlosti. Skupina A ima vklopljen nočni način, skupina B ne. Časi do zaspanja v minutah: A: $14, 18, 16, 20, 12, 16$; B: $22, 18, 24, 20, 26, 22$. Določi spremenljivke in primerjaj povprečja.
 
-**Podatki:** $2$ skupini po $6$ oseb; enako besedilo, telefon, svetlost in čas branja; A z nočnim načinom, B brez; časi A in B, kot so našteti zgoraj
+**Podatki:** $2$ skupini po $6$ oseb; enako besedilo, telefon, svetlost in čas branja; A z nočnim načinom, B brez; časi A: $14, 18, 16, 20, 12, 16\,\text{min}$; časi B: $22, 18, 24, 20, 26, 22\,\text{min}$
 **Iščemo:** neodvisno, odvisno in kontrolirane spremenljivke, kontrolno skupino, povprečna časa in njuno razliko
 
 :::formula

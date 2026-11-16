@@ -3,6 +3,7 @@
 // Strežnik: server/schools.js (šole, naloge, licence) in server/leagues.js (razredi, lestvice).
 import { icon, hydrateIcons } from "./icons.js";
 import { t, locale, applyI18n } from "./i18n.js";
+import { zavrzi } from "./odgovor.js";
 import { openPrintable } from "./gradiva.js";
 import { hostQuiz } from "./kviz.js";
 
@@ -269,7 +270,7 @@ async function loadOverview(card, c) {
   $("[data-export]", body).addEventListener("click", async () => {
     const key = keyOf(c.code);
     const r = await fetch(`/api/teacher/classes/${encodeURIComponent(c.code)}/export.csv`, { headers: key ? { "X-Teacher-Key": key } : {} });
-    if (!r.ok) return toast(t("common.error", { status: r.status }));
+    if (!r.ok) return zavrzi(r), toast(t("common.error", { status: r.status }));
     const a = document.createElement("a");
     a.href = URL.createObjectURL(await r.blob());
     a.download = `${c.name.replace(/[^\p{L}\p{N}]+/gu, "-")}.csv`;

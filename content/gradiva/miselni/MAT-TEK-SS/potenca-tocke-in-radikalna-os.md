@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Produkt razdalj
+  - vsaka premica skozi $P$: isti $PA \cdot PB$
+  - razdalji vedno od $P$, ne $PA \cdot AB$
+- Potenca točke
+  - $p(P) = OP^2 - r^2$
+  - zunaj pozitivna, na krožnici $0$, znotraj negativna
+- Tangenta
+  - $PT^2 = OP^2 - r^2$
+  - polmer je pravokoten na tangento
+- Sekajoči se tetivi
+  - znotraj: $PA \cdot PB = r^2 - OP^2$
+  - premer skozi razpolovišče tetive da polmer
+- Obrat izreka
+  - enaka produkta: štiri točke na krožnici
+- Radikalna os
+  - točke z enako potenco na dve krožnici
+  - pravokotna na $O_1O_2$, simetrala le pri $r_1 = r_2$
+  - sekajoči se krožnici: premica skozi presečišči
+- Radikalno središče
+  - tri osi se sekajo v eni točki
+  - tangente na vse tri enako dolge

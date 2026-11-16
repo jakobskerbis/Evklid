@@ -113,7 +113,7 @@ for (const extra of [{ EVKLID_ACCOUNTS: "1" }, { EVKLID_PASSWORD: "geslo-za-test
     try {
       const url = `http://127.0.0.1:${port}/api/kozmetika/export`;
       const get = (auth) => fetch(url, { headers: { "X-Forwarded-For": "1.2.3.4", ...(auth ? { Authorization: auth } : {}) } }).then((r) => r.status);
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 150; i++) {
         try {
           await fetch(`http://127.0.0.1:${port}/healthz`);
           break;

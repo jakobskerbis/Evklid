@@ -2,11 +2,15 @@
 // Uporabljata ga scripts/check-lesson.js in testi.
 import katex from "katex";
 import { parseLesson, expandFormulaBlocks } from "./textbook.js";
+import { drawingErrors, DRAW_RE } from "./risbe.js";
+import { parseAnswerLine } from "../public/preveri-se.js";
 import { getTopic } from "./curriculum.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { checkIdentities } from "./lesson-identity.js";
 import { najdiNastevanja } from "./nastevanje.js";
 import { SYMBOLS_BLOCK_RE, parseSymbolsBlock, symbolsIn, SYMBOLS, SUBJECT_TABLES } from "../public/formula-data.js";
+
+export const LESSON_STATES = ["osnutek", "preverjeno", "pregledano"];
 
 const REQUIRED = [
   [/^zakaj/i, "Zakaj se tega učimo"],
@@ -19,6 +23,23 @@ const REQUIRED = [
 // Vrne { errors, warnings } za vir lekcije. topicId je neobvezen (preveri obstoj teme).
 const STOCK_PHRASES = [/\bV tej lekciji\b/, /\bse bomo naučili\b/, /\bPoglejmo si\b/, /\bKot vemo\b/, /\bKot vidimo\b/];
 
+// Vsebina blokov ``` brez oznake jezika. Ograje se parijo po vrsti, zato zapiralna ograja bloka z oznako
+// (```python … ```) ne odpre novega bloka.
+export function untaggedFences(body) {
+  const out = [];
+  let open = null, lines = [];
+  for (const line of body.split(/\r?\n/)) {
+    const m = /^```(.*)$/.exec(line);
+    if (open === null) {
+      if (m) { open = m[1].trim(); lines = []; }
+    } else if (m && !m[1].trim()) {
+      if (!open) out.push(lines.join("\n"));
+      open = null;
+    } else lines.push(line);
+  }
+  return out;
+}
+
 export function checkLessonSource(src, topicId) {
   const errors = [];
   const warnings = [];
@@ -29,9 +50,16 @@ export function checkLessonSource(src, topicId) {
   const lesson = parseLesson(src);
   const { meta, sections, alternatives, checks } = lesson;
 
-  if (!meta.stanje) err("v glavi manjka »stanje: osnutek« ali »stanje: pregledano«");
-  else if (!/^(osnutek|pregledano)$/.test(meta.stanje)) err(`stanje »${meta.stanje}« ni osnutek ali pregledano`);
+  // Stanja (j 2026-11-13): osnutek → preverjeno (račune sta preverila program in AI) → pregledano (pregledal človek).
+  if (!meta.stanje) err("v glavi manjka »stanje: osnutek«, »stanje: preverjeno« ali »stanje: pregledano«");
+  else if (!LESSON_STATES.includes(meta.stanje)) err(`stanje »${meta.stanje}« ni osnutek, preverjeno ali pregledano`);
   if (/opus|sonnet|haiku|fable|claude|gpt/i.test(meta.avtor || "")) err("v glavi ne navajaj imena modela, piši »avtor: AI«");
+  // »pregledal:« je ime učitelja (človeka), ki je lekcijo pregledal; AI tu ni pregledovalec.
+  // Meje besed po Unicode (\b je samo ASCII: »Ana Čaić« bi sicer veljala za AI).
+  if (/(?<![\p{L}\p{N}])(ai|opus|sonnet|haiku|fable|claude|gpt|program)(?![\p{L}\p{N}])/iu.test(meta.pregledal || "")) err("»pregledal:« je samo za človeka; pregled AI je stanje »preverjeno«");
+  if (meta.pregledal != null && !meta.pregledal) warn("polje »pregledal:« je prazno");
+  if (meta.stanje === "pregledano" && !meta.pregledal) warn("lekcija s stanjem »pregledano« naj ima v glavi »pregledal: <ime učitelja>«");
+  if (meta.pregledal && meta.stanje !== "pregledano") warn("lekcija ima »pregledal:«, stanje pa ni »pregledano«");
 
   for (const [re, name] of REQUIRED) if (!sections.some((s) => re.test(s.title))) err(`manjka razdelek »## ${name}«`);
   if (alternatives.length < 2) err(`premalo razdelkov »## Drugače: …« (${alternatives.length}, vsaj 2)`);
@@ -52,6 +80,53 @@ export function checkLessonSource(src, topicId) {
     if (alternatives.some((a) => /vsakdanjega/i.test(a.title))) warn("fakultetna lekcija: namesto »Drugače: Iz vsakdanjega življenja« napiši »Drugače: Uporaba v stroki«");
   }
 
+  // Maturitetna zgradba (j, 13. 11. 2026, točki C4 in C5): lekcija MAT-SS-* ima za »Povzetek« razdelek »## Za maturo«
+  // z nalogami v obliki in točkovanju kataloga (»### Naloga …« z oznako pole in točkami, »**Rešitev:**«, ki je v aplikaciji
+  // skrita za gumbom, in »**Točkovanje:**«) ter 2–3 »### Ustno vprašanje« z blokom »:::premisli« (vzorčni odgovor gre
+  // tudi v »Vprašaj me«). Opozorilo, ne napaka, dokler razdelka nimajo vse lekcije.
+  if (/^MAT-SS-/.test(topicId || "")) {
+    const za = sections.find((s) => /^za maturo/i.test(s.title));
+    if (!za) warn("maturitetna lekcija: manjka razdelek »## Za maturo« (naloge z oznako pole, točkami in skrito rešitvijo; 2–3 ustna vprašanja)");
+    else {
+      const parts = za.md.split(/^### +/m).slice(1);
+      const tasks = parts.filter((t) => /^naloga/i.test(t));
+      const oral = parts.filter((t) => /^ustno vprašanje/i.test(t));
+      if (tasks.length < 2) warn(`»Za maturo«: potrebni sta vsaj 2 nalogi z naslovom »### Naloga …« (${tasks.length})`);
+      for (const t of tasks) {
+        const title = t.split("\n")[0].trim();
+        if (!/pola 1 \(brez računala\)|pola 2 \(z računalom\)/.test(title)) warn(`»Za maturo«, »${title}«: v naslovu manjka »pola 1 (brez računala)« ali »pola 2 (z računalom)«`);
+        if (!/\d\s+točk/.test(title)) warn(`»Za maturo«, »${title}«: v naslovu manjka število točk (npr. »6 točk«)`);
+        if (!/^\*\*Rešitev:\*\*/m.test(t)) warn(`»Za maturo«, »${title}«: manjka celotna rešitev za »**Rešitev:**« (v aplikaciji skrita za gumbom)`);
+        if (!/^\*\*Točkovanje:\*\*/m.test(t)) warn(`»Za maturo«, »${title}«: manjka vrstica »**Točkovanje:** …« (za kaj se dajejo točke)`);
+      }
+      if (oral.length < 2 || oral.length > 3) warn(`»Za maturo«: priporočena so 2–3 »### Ustno vprašanje …« (${oral.length})`);
+      for (const t of oral) {
+        if (!/^[ \t]*:::[ \t]*premisli[ \t]*\n[\s\S]*?\n[ \t]*---[ \t]*\n[\s\S]*?\n[ \t]*:::/m.test(t)) warn(`»Za maturo«, »${t.split("\n")[0].trim()}«: vprašanje in vzorčni odgovor zapiši v blok »:::premisli« (vprašanje, »---«, odgovor)`);
+      }
+    }
+    // Kratka ponovitev na en zaslon telefona (j, 15. 11. 2026, točka C8): »## Ponovitev« pred »Za maturo« s tremi deli
+    // »**Formule**« (vsaka z oznako, ali je na prilogi pole ali jo moraš znati na pamet), »**Postopek**« (koraki) in
+    // »**Pazi na**« (natanko 3 najpogostejše napake). Opozorilo, ne napaka, dokler je nimajo vse lekcije.
+    const pon = sections.find((s) => /^ponovitev/i.test(s.title));
+    if (!pon) warn("maturitetna lekcija: manjka razdelek »## Ponovitev« (formule z oznako priloge, postopek, 3 napake; en zaslon telefona)");
+    else {
+      const part = (label) => (pon.md.split(new RegExp(`^\\*\\*${label}\\*\\*[ \\t]*$`, "m"))[1] || "").split(/^\*\*[^*\n]+\*\*[ \t]*$/m)[0];
+      const items = (md, re) => md.replace(/\n[ \t]+(?![-\d])/g, " ").split("\n").filter((l) => re.test(l)); // samo alineje na vrhu, nadaljevalne vrstice združene
+      for (const label of ["Formule", "Postopek", "Pazi na"]) if (!new RegExp(`^\\*\\*${label}\\*\\*[ \\t]*$`, "m").test(pon.md)) warn(`»Ponovitev«: manjka vrstica »**${label}**«`);
+      const formule = items(part("Formule"), /^- /);
+      if (!formule.length) warn("»Ponovitev«: pod »**Formule**« ni nobene alineje");
+      for (const f of formule) if (!/\((priloga|priloga, višja raven|na pamet)\)[ .]*$/.test(f)) warn(`»Ponovitev«, formula »${f.trim().slice(2, 60)}«: na koncu manjka oznaka »(priloga)«, »(priloga, višja raven)« ali »(na pamet)«`);
+      const koraki = items(part("Postopek"), /^\d+\. /);
+      if (koraki.length < 2 || koraki.length > 6) warn(`»Ponovitev«: pod »**Postopek**« naj bo 2–6 oštevilčenih korakov (${koraki.length})`);
+      const napake = items(part("Pazi na"), /^- /);
+      if (napake.length !== 3) warn(`»Ponovitev«: pod »**Pazi na**« naj bodo natanko 3 napake (${napake.length})`);
+      const w = pon.md.replace(/\$[^$]*\$/g, " ").split(/\s+/).filter(Boolean).length;
+      if (w > 170) warn(`»Ponovitev« je predolga za en zaslon telefona (${w} besed brez formul, največ 170)`);
+      const iPon = sections.indexOf(pon), iZa = sections.findIndex((s) => /^za maturo/i.test(s.title)), iPov = sections.findIndex((s) => /^povzetek/i.test(s.title));
+      if ((iZa >= 0 && iPon > iZa) || (iPov >= 0 && iPon < iPov)) warn("»Ponovitev« naj stoji za »Povzetek« in pred »Za maturo«");
+    }
+  }
+
   // Rešeni primeri: vsak ### Primer ima Podatki, Iščemo in blok :::formula.
   const ex = sections.find((s) => /^rešen/i.test(s.title));
   if (ex) {
@@ -68,37 +143,85 @@ export function checkLessonSource(src, topicId) {
 
   // Bloki s formulo morajo biti zaprti.
   const body = src.replace(/^---\n[\s\S]*?\n---\n?/, "");
+  // Brez razdelkov »Za maturo« (naloge in ustna vprašanja) in »Ponovitev« (C8): za štetje besed in vmesnih vprašanj v razlagi.
+  const bodyLesson = body.replace(/^## +(?:za maturo|ponovitev)\b[^\n]*\n[\s\S]*?(?=^## |(?![\s\S]))/gim, "");
   const stripped = expandFormulaBlocks(body, "plain");
+  for (const e of drawingErrors(body)) err(e);
+  // Slika iz znakov v bloku ``` brez oznake jezika je v aplikaciji in PDF videti kot surov izpis (j, 10. 11. 2026).
+  const ascii = untaggedFences(body).filter((b) => /[■●○▲▼│┌└├─═█▓▒░]|\|-{2,}|-{3,}\||<-{2,}|-{2,}>/.test(b)).length;
+  if (ascii) warn(`Slike iz znakov v blokih (${ascii}): \`\`\` – zamenjaj jih z risbo »:::risba« (content/lessons/README.md, razdelek Risbe)`);
   if (/^[ \t]*:::/m.test(stripped)) err("nezaprt ali napačno zapisan blok »:::formula … :::« ali »:::premisli … :::« (vsak začetek in konec v svoji vrstici)");
   // Merila docs/kakovost.md §1: vmesna vprašanja v razlagi in razlaga vsakega napačnega odgovora.
-  const thinks = body.match(/^[ \t]*:::[ \t]*premisli[ \t]*$/gm) || [];
+  const thinks = bodyLesson.match(/^[ \t]*:::[ \t]*premisli[ \t]*$/gm) || [];
   if (thinks.length < 2) warn(`v razlagi sta priporočeni 2 vmesni vprašanji »:::premisli« (${thinks.length})`);
-  const noWhy = checks.reduce((n, c) => n + c.options.filter((_, i) => i !== c.correct && !c.optionWhy?.[i]).length, 0);
+  const noWhy = checks.reduce((n, c) => n + (c.type ? 0 : c.options.filter((_, i) => i !== c.correct && !c.optionWhy?.[i]).length), 0);
   if (checks.length && noWhy) warn(`${noWhy} napačnih možnosti v »Preveri se« nima razlage »~ …«`);
 
-  // Kviz: vsako vprašanje natanko en »+«, vsaj 3 možnosti, brez ponavljanja.
+  // Kviz (content/lessons/README.md, »Preveri se«): izbira – natanko en »+«, vsaj 3 možnosti, brez ponavljanja;
+  // vpiši število – natanko en »= vrednost | toleranca«, »~ vrednost | zakaj«; razvrsti – 3 do 6 vrstic »1.« … po vrsti.
+  // Risba »:::risba« sme stati v besedilu vprašanja (pred prvim odgovorom); drugi bloki »:::« (simboli) se preskočijo.
   const quizMd = body.split(/^## +/m).find((p) => /^preveri se/i.test(p)) || "";
   const qs = [];
+  let block = null; // "risba" | "drugo" | null
   for (const raw of quizMd.split("\n").slice(1)) {
     const line = raw.trim();
+    if (block) {
+      if (line === ":::") block = null;
+      continue;
+    }
     if (!line) continue;
-    if (line[0] === "?") qs.push({ q: line.slice(1).trim(), plus: 0, opts: [] });
-    else if (!qs.length) continue;
+    const cur = qs[qs.length - 1];
+    if (/^:::/.test(line)) {
+      block = /^:::[ \t]*risba\b/.test(line) ? "risba" : "drugo";
+      if (block === "risba" && cur && (cur.opts.length || cur.eq.length || cur.items.length)) cur.late = true;
+      continue;
+    }
+    if (line[0] === "?") qs.push({ q: line.slice(1).trim(), plus: 0, opts: [], eq: [], tilde: [], items: [], late: false });
+    else if (!cur) continue;
     else if (line[0] === "+" || line[0] === "-") {
-      const cur = qs[qs.length - 1];
       if (line[0] === "+") cur.plus++;
       cur.opts.push(line.slice(1).trim().replace(/\s+/g, " ").toLowerCase());
-    }
+    } else if (line[0] === "=") cur.eq.push(line.slice(1).trim());
+    else if (line[0] === "~") {
+      if (!cur.opts.length) cur.tilde.push(line.slice(1).trim());
+    } else if (line[0] !== ">" && !cur.opts.length && !cur.eq.length && /^\d+\.\s/.test(line)) cur.items.push(line);
   }
   if (qs.length < 3) err(`v »Preveri se« so potrebna vsaj 3 vprašanja (${qs.length})`);
   qs.forEach((q, i) => {
     const n = i + 1;
+    const kinds = [q.opts.length && "izbira (+/-)", q.eq.length && "število (=)", q.items.length && !q.opts.length && "razvrsti (1. 2. …)"].filter(Boolean);
+    if (kinds.length > 1) return err(`vprašanje ${n}: mešane vrste odgovorov (${kinds.join(", ")}); vsako vprašanje ima eno vrsto`);
+    if (q.late) err(`vprašanje ${n}: risba »:::risba« mora stati v besedilu vprašanja, pred prvim odgovorom`);
+    if (q.eq.length) {
+      if (q.eq.length !== 1) err(`vprašanje ${n}: natanko ena vrstica »= vrednost | toleranca« (zdaj ${q.eq.length})`);
+      const a = parseAnswerLine(q.eq[0]);
+      if (!a) err(`vprašanje ${n}: »= ${q.eq[0]}« ni število (zapis: »= 2,30« ali »= 2,5 m/s | 0,1«; decimalna vejica, brez $)`);
+      for (const w of q.tilde) {
+        const [v, ...why] = w.split("|");
+        const x = parseAnswerLine(v);
+        if (!x) err(`vprašanje ${n}: »~ ${w}« potrebuje obliko »~ napačna vrednost | zakaj« (vrednost kot število)`);
+        else if (!why.join("|").trim()) err(`vprašanje ${n}: »~ ${v.trim()}« nima razlage za »|«`);
+        else if (a && Math.abs(x.value - a.value) <= a.tol) err(`vprašanje ${n}: napačna vrednost »~ ${v.trim()}« je znotraj tolerance pravilnega odgovora`);
+      }
+      return;
+    }
+    if (q.items.length && !q.opts.length) {
+      if (q.items.length < 3 || q.items.length > 6) err(`vprašanje ${n}: razvrsti potrebuje 3 do 6 elementov (zdaj ${q.items.length})`);
+      q.items.forEach((it, k) => {
+        if (Number(/^(\d+)\./.exec(it)[1]) !== k + 1) err(`vprašanje ${n}: elementi razvrščanja so oštevilčeni po vrsti 1., 2., 3. … (»${it.slice(0, 30)}«)`);
+      });
+      const texts = q.items.map((it) => it.replace(/^\d+\.\s*/, "").replace(/\s+/g, " ").toLowerCase());
+      if (new Set(texts).size !== texts.length) err(`vprašanje ${n}: elementi razvrščanja se ponavljajo`);
+      if (texts.some((x) => !x)) err(`vprašanje ${n}: prazen element razvrščanja`);
+      if (q.tilde.length) err(`vprašanje ${n}: vrstice »~« pri razvrščanju niso mogoče (razlago napiši v »>«)`);
+      return;
+    }
     if (q.plus !== 1) err(`vprašanje ${n}: natanko en pravilen odgovor »+« (zdaj ${q.plus})`);
     if (q.opts.length < 3) err(`vprašanje ${n}: vsaj 3 možnosti (zdaj ${q.opts.length})`);
     if (new Set(q.opts).size !== q.opts.length) err(`vprašanje ${n}: možnosti se ponavljajo`);
     if (q.opts.some((o) => !o)) err(`vprašanje ${n}: prazna možnost`);
   });
-  if (checks.length !== qs.length) err("nekaterih vprašanj v »Preveri se« ni mogoče prebrati (oblika ? - + >)");
+  if (checks.length !== qs.length) err("nekaterih vprašanj v »Preveri se« ni mogoče prebrati (oblika ? - + = 1. ~ >)");
 
   // LaTeX: vsaka formula se mora izrisati, $ v vrstici v parih.
   const lines = body.split("\n");
@@ -131,7 +254,9 @@ export function checkLessonSource(src, topicId) {
   if (/\bPhET\b/.test(body)) err("v besedilu ne omenjaj PhET; napiši »interaktivna simulacija spodaj«");
   if (/\.{3}\s*$/m.test(body.replace(/\$[^$]*\$/g, ""))) warn("vrstica se konča s »...« (nedokončano besedilo?)");
 
-  const words = body.replace(SYMBOLS_BLOCK_RE, "").replace(/\$[^$]*\$/g, " ").split(/\s+/).filter(Boolean).length;
+  // Vrstice risb (:::risba) niso besedilo lekcije.
+  // Razdelka »Za maturo« (naloge in rešitve) ne štejemo: meja velja za razlago, kot pri »Za izpit« ima lekcija nalog več.
+  const words = bodyLesson.replace(SYMBOLS_BLOCK_RE, "").replace(DRAW_RE, " ").replace(/\$[^$]*\$/g, " ").split(/\s+/).filter(Boolean).length;
   // Šablonski stavki naredijo lekcije enolične (j, 29. 10. 2026: lekcije ne smejo biti monotone).
   const stock = STOCK_PHRASES.filter((re) => re.test(body)).map((re) => `»${re.source.replace(/\\b|\\s\+/g, " ").trim()}«`);
   if (stock.length) warn(`šablonski stavek ${stock.join(", ")}: začni s situacijo, vprašanjem ali poskusom`);

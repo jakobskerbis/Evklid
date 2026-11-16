@@ -2,6 +2,9 @@
 // Vsaka simulacija je funkcija (el, opts) => void, ki vse nariše v el.
 // Barve jemljemo iz CSS spremenljivk, da delujejo v svetli in temni temi.
 
+import { okrasi, vstavi } from "./materiali.js";
+import { napisPoskusa } from "./napis-poskusa.js";
+
 export const NS = "http://www.w3.org/2000/svg";
 
 // Število s slovensko decimalno vejico.
@@ -50,6 +53,8 @@ export function s(tag, attrs = {}, parent, text) {
     }
   } else if (text != null) el.textContent = text;
   if (parent) parent.append(el);
+  // materiali laboratorija (steklo, tekočina, kovina, miza …): okras po razredu, glej materiali.js
+  if (parent && (attrs?.class || attrs?.fill)) okrasi(el, attrs.class, attrs.fill);
   return el;
 }
 
@@ -57,6 +62,7 @@ let uid = 0;
 export function svgBox(w, hgt, cls = "") {
   const svg = s("svg", { viewBox: `0 0 ${w} ${hgt}`, class: `demo-svg ${cls}`, role: "img" });
   svg.uid = `s${++uid}`;
+  if (cls.includes("lab-")) vstavi(); // ozadje in materiali laboratorija (slog in <defs> enkrat na stran)
   return svg;
 }
 
@@ -214,7 +220,11 @@ export const values = (list) =>
   `<div class="demo-values">${list.map(([label, v]) => `<div class="demo-val"><span>${label}</span><b>${v}</b></div>`).join("")}</div>`;
 export const readout = () => h("div", { class: "demo-readout", "aria-live": "polite" });
 export const stage = (...kids) => h("div", { class: "demo-stage" }, ...kids);
-export const tryIt = (text) => (text ? h("p", { class: "demo-try" }, h("b", {}, "Poskusi: "), text) : null);
+// »Preizkusi: …« (niz) ali »Razmisli: …« ({ razmisli: "…" }); pravilo v napis-poskusa.js.
+export const tryIt = (x) => {
+  const n = napisPoskusa(x);
+  return n ? h("p", { class: "demo-try", "data-vrsta": n.vrsta }, h("b", {}, `${n.napis} `), n.besedilo) : null;
+};
 
 // Animacija, ki se ustavi, ko simulacija ni več na strani.
 // Vrne { play(), pause(), toggle(), running }.

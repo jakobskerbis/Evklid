@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kislo, bazično, nevtralno
+  - kislo: kis, limonin sok
+  - bazično: milo, apno, čistilo za odtoke
+  - nevtralno: čista voda
+- Indikatorji
+  - rdeče zelje: rdeče v kislem, modro ali zeleno v bazičnem
+  - modri lakmus pordeči v kislem
+  - rdeči lakmus pomodri v bazičnem
+- Lestvica pH
+  - od $0$ do $14$, $7$ je nevtralno
+  - pod $7$ kislo, nad $7$ bazično
+  - napaka: večji pH ni bolj kislo
+- Merjenje pH
+  - zeljni sok le oceni
+  - univerzalni papir na celo število
+  - pH-meter na desetinko
+- Varnost
+  - malta in cement: pH okoli $12$
+  - rokavice in zaščitna očala
+- Nevtralizacija
+  - kislina in baza se izničita
+  - pH se približa $7$
+  - voda pH le približa $7$

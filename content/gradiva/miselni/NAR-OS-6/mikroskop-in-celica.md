@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Celica, enota živega
+  - vsa živa bitja so iz celic
+  - tudi les, pluta, trstični jeziček
+  - napaka: »kar ni živo, ni iz celic«
+- Deli mikroskopa
+  - okular, objektivi na revolverju
+  - mizica, makrovijak, mikrovijak, svetilo
+- Povečava
+  - $P = P_\mathrm{ok} \cdot P_\mathrm{ob}$
+  - $10 \cdot 40 = 400$, ne $50$
+- Resnična velikost
+  - $d = \dfrac{d_\mathrm{s}}{P}$
+  - $25\,\mathrm{mm}$ pri povečavi $100$ je $0{,}25\,\mathrm{mm}$
+- Delo z mikroskopom
+  - začni pri najmanjšem objektivu
+  - pri velikem le mikrovijak
+  - slika je obrnjena
+- Preparat
+  - kapljica vode, povrhnjica čebule
+  - krovno stekelce spusti postrani
+- Rastlinska celica
+  - stena, membrana, citoplazma, jedro
+  - velika vakuola, zeleni kloroplasti
+- Živalska celica
+  - nima stene, kloroplastov, velike vakuole

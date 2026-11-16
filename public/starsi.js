@@ -6,12 +6,15 @@
   var href = "/?starsi=1" + (ime ? "&ime=" + encodeURIComponent(ime) : "");
   document.getElementById("cta").href = href;
   document.getElementById("cta2").href = href;
+  // Obvestilo »Vaš otrok bi rad uporabljal Evklid« samo, če je starš prišel po povezavi, ki mu jo je poslal otrok
+  // (account.js, e-pošta: ?prosnja=1), ne s klikom na »Za starše« (j 2026-11-15).
+  if (q.has("prosnja") || ime) document.getElementById("ask").hidden = false;
   if (ime) {
     document.getElementById("ask").textContent = ime + " bi rad(a) uporabljal(a) Evklid. Otroci, mlajši od 15 let, v Sloveniji ne morejo sami privoliti v obdelavo osebnih podatkov, zato je potrebno vaše soglasje. Na tej strani je vse, kar potrebujete za odločitev.";
   }
   var region = ((navigator.language || "").split("-")[1] || "").toUpperCase();
   fetch("/api/account/prices" + (region ? "?country=" + region : ""))
-    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (r) { return import("/odgovor.js").then(function (m) { return m.jsonAliNic(r); }); })
     .then(function (d) {
       if (!d) return;
       var zero = ["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"].indexOf(d.currency) >= 0;
