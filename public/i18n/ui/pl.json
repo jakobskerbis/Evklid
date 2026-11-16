@@ -197,7 +197,7 @@
     "other": "{n} punktu"
   },
   "task.phCoef": "np. 2, 1, 2",
-  "task.phUnit": "liczba i jednostka, np. 12,5 {unit}",
+  "task.phUnit": "liczba i jednostka",
   "task.phResult": "wpisz wynik",
   "task.write": "Pisz",
   "task.writeTitle": "Wpisywanie palcem lub myszą: klawisze lub pismo odręczne",

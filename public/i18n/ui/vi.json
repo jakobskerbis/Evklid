@@ -182,7 +182,7 @@
     "other": "{n} điểm"
   },
   "task.phCoef": "vd. 2, 1, 2",
-  "task.phUnit": "số và đơn vị, vd. 12,5 {unit}",
+  "task.phUnit": "số và đơn vị",
   "task.phResult": "nhập kết quả",
   "task.write": "Viết",
   "task.writeTitle": "Nhập bằng ngón tay hoặc chuột: bàn phím số hoặc chữ viết tay",

@@ -197,7 +197,7 @@
     "other": "{n} bodů"
   },
   "task.phCoef": "např. 2, 1, 2",
-  "task.phUnit": "číslo a jednotka, např. 12,5 {unit}",
+  "task.phUnit": "číslo a jednotka",
   "task.phResult": "zadej výsledek",
   "task.write": "Psát",
   "task.writeTitle": "Zadávání prstem nebo myší: klávesy nebo psaní rukou",

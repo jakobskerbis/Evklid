@@ -187,7 +187,7 @@
     "other": "{n} pont"
   },
   "task.phCoef": "pl. 2, 1, 2",
-  "task.phUnit": "szám és mértékegység, pl. 12,5 {unit}",
+  "task.phUnit": "szám és mértékegység",
   "task.phResult": "írd be az eredményt",
   "task.write": "Írás",
   "task.writeTitle": "Bevitel ujjal vagy egérrel: billentyűk vagy kézírás",

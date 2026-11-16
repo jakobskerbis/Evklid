@@ -187,7 +187,7 @@
     "other": "{n} امتیاز"
   },
   "task.phCoef": "مثلاً 2، 1، 2",
-  "task.phUnit": "عدد و یکا، مثلاً 12.5 {unit}",
+  "task.phUnit": "عدد و یکا",
   "task.phResult": "جوابت را وارد کن",
   "task.write": "نوشتن",
   "task.writeTitle": "ورود با انگشت یا ماوس: صفحه‌کلید یا دست‌خط",

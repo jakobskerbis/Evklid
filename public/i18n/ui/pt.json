@@ -187,7 +187,7 @@
     "other": "{n} pontos"
   },
   "task.phCoef": "p. ex. 2, 1, 2",
-  "task.phUnit": "número e unidade, p. ex. 12,5 {unit}",
+  "task.phUnit": "número e unidade",
   "task.phResult": "escreve o resultado",
   "task.write": "Escrever",
   "task.writeTitle": "Introdução com o dedo ou o rato: teclas ou escrita à mão",

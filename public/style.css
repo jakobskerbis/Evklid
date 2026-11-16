@@ -912,7 +912,7 @@ label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
 .pad[data-tab="draw"] .pad-draw { display: block; }
 .pad-units { display: flex; gap: 6px; }
 .pad-units:empty { display: none; }
-.pad-units button { min-height: 44px; padding: 6px 14px; border-radius: 12px; }
+.pad-units select { min-height: 44px; padding: 6px 10px; border-radius: 12px; max-width: 9em; }
 .draw-tools { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
 .draw-tools button { padding: 6px 12px; border-radius: 10px; }
 .draw-tools button.on { outline: 2px solid var(--accent); }

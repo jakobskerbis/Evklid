@@ -182,7 +182,7 @@
     "other": "{n} 点"
   },
   "task.phCoef": "例：2, 1, 2",
-  "task.phUnit": "数値と単位、例：12.5 {unit}",
+  "task.phUnit": "数値と単位",
   "task.phResult": "答えを入力",
   "task.write": "手書き",
   "task.writeTitle": "指やマウスで入力：テンキーまたは手書き",

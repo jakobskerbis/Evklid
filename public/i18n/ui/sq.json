@@ -187,7 +187,7 @@
     "other": "{n} pikë"
   },
   "task.phCoef": "p.sh. 2, 1, 2",
-  "task.phUnit": "numri dhe njësia, p.sh. 12,5 {unit}",
+  "task.phUnit": "numri dhe njësia",
   "task.phResult": "shkruaj rezultatin",
   "task.write": "Shkruaj",
   "task.writeTitle": "Hyrje me gisht ose maus: tastierë ose shkrim dore",

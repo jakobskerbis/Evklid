@@ -182,7 +182,7 @@
     "other": "{n}점"
   },
   "task.phCoef": "예: 2, 1, 2",
-  "task.phUnit": "숫자와 단위, 예: 12.5 {unit}",
+  "task.phUnit": "숫자와 단위",
   "task.phResult": "답을 입력하세요",
   "task.write": "쓰기",
   "task.writeTitle": "손가락이나 마우스로 입력: 숫자 키패드 또는 손글씨",

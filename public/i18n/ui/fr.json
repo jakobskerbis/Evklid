@@ -187,7 +187,7 @@
     "other": "{n} points"
   },
   "task.phCoef": "p. ex. 2, 1, 2",
-  "task.phUnit": "nombre et unité, p. ex. 12,5 {unit}",
+  "task.phUnit": "nombre et unité",
   "task.phResult": "écris le résultat",
   "task.write": "Écrire",
   "task.writeTitle": "Saisie au doigt ou à la souris : clavier ou écriture manuscrite",

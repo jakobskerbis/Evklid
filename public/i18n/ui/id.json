@@ -182,7 +182,7 @@
     "other": "{n} poin"
   },
   "task.phCoef": "mis. 2, 1, 2",
-  "task.phUnit": "angka dan satuan, mis. 12,5 {unit}",
+  "task.phUnit": "angka dan satuan",
   "task.phResult": "tulis jawabanmu",
   "task.write": "Tulis",
   "task.writeTitle": "Input dengan jari atau mouse: papan angka atau tulisan tangan",

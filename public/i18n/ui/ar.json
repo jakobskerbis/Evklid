@@ -207,7 +207,7 @@
     "other": "{n} نقطة"
   },
   "task.phCoef": "مثلًا 2، 1، 2",
-  "task.phUnit": "رقم ووحدة، مثلًا 12.5 {unit}",
+  "task.phUnit": "رقم ووحدة",
   "task.phResult": "اكتب الناتج",
   "task.write": "اكتب",
   "task.writeTitle": "الإدخال بالإصبع أو الفأرة: لوحة أرقام أو خط اليد",

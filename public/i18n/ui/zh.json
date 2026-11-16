@@ -182,7 +182,7 @@
     "other": "{n} 分"
   },
   "task.phCoef": "例如 2, 1, 2",
-  "task.phUnit": "数值和单位，例如 12.5 {unit}",
+  "task.phUnit": "数值和单位",
   "task.phResult": "输入答案",
   "task.write": "手写",
   "task.writeTitle": "用手指或鼠标输入：数字键盘或手写",

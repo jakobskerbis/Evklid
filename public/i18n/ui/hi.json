@@ -187,7 +187,7 @@
     "other": "{n} अंक"
   },
   "task.phCoef": "जैसे 2, 1, 2",
-  "task.phUnit": "संख्या और इकाई, जैसे 12.5 {unit}",
+  "task.phUnit": "संख्या और इकाई",
   "task.phResult": "अपना उत्तर लिखो",
   "task.write": "लिखो",
   "task.writeTitle": "उँगली या माउस से इनपुट: कीपैड या हस्तलिखित",

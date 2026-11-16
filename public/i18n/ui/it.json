@@ -187,7 +187,7 @@
     "other": "{n} punti"
   },
   "task.phCoef": "es. 2, 1, 2",
-  "task.phUnit": "numero e unità, es. 12,5 {unit}",
+  "task.phUnit": "numero e unità",
   "task.phResult": "inserisci il risultato",
   "task.write": "Scrivi",
   "task.writeTitle": "Inserimento con dito o mouse: tasti o scrittura a mano",

@@ -187,7 +187,7 @@
     "other": "{n} puan"
   },
   "task.phCoef": "ör. 2, 1, 2",
-  "task.phUnit": "sayı ve birim, ör. 12,5 {unit}",
+  "task.phUnit": "sayı ve birim",
   "task.phResult": "cevabını yaz",
   "task.write": "Yaz",
   "task.writeTitle": "Parmak veya fareyle giriş: tuş takımı veya el yazısı",

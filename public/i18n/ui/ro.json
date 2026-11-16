@@ -192,7 +192,7 @@
     "other": "{n} de puncte"
   },
   "task.phCoef": "de ex. 2, 1, 2",
-  "task.phUnit": "număr și unitate, de ex. 12,5 {unit}",
+  "task.phUnit": "număr și unitate",
   "task.phResult": "scrie rezultatul",
   "task.write": "Scrie",
   "task.writeTitle": "Introducere cu degetul sau mouse-ul: tastatură sau scris de mână",

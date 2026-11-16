@@ -187,7 +187,7 @@
     "other": "{n} পয়েন্ট"
   },
   "task.phCoef": "যেমন 2, 1, 2",
-  "task.phUnit": "সংখ্যা ও একক, যেমন 12.5 {unit}",
+  "task.phUnit": "সংখ্যা ও একক",
   "task.phResult": "তোমার উত্তর লেখো",
   "task.write": "লেখো",
   "task.writeTitle": "আঙুল বা মাউস দিয়ে ইনপুট: কীপ্যাড বা হাতের লেখা",

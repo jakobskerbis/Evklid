@@ -197,7 +197,7 @@
     "other": "{n} bodov"
   },
   "task.phCoef": "napr. 2, 1, 2",
-  "task.phUnit": "číslo a jednotka, napr. 12,5 {unit}",
+  "task.phUnit": "číslo a jednotka",
   "task.phResult": "zadaj výsledok",
   "task.write": "Písať",
   "task.writeTitle": "Zadávanie prstom alebo myšou: klávesnica alebo rukopis",

@@ -326,7 +326,7 @@ export default {
   "task.showFormula": "Pokaži formulo",
   "task.points": { one: "{n} točka", two: "{n} točki", few: "{n} točke", other: "{n} točk" },
   "task.phCoef": "npr. 2, 1, 2",
-  "task.phUnit": "število in enota, npr. 12,5 {unit}",
+  "task.phUnit": "število in enota",
   "task.phResult": "vpiši rezultat",
   "task.write": "Piši",
   "task.writeTitle": "Vnos s prstom ali miško: tipke ali pisanje",

@@ -187,7 +187,7 @@
     "other": "pointi {n}"
   },
   "task.phCoef": "mf. 2, 1, 2",
-  "task.phUnit": "namba na kipimo, mf. 12.5 {unit}",
+  "task.phUnit": "namba na kipimo",
   "task.phResult": "andika jibu lako",
   "task.write": "Andika",
   "task.writeTitle": "Ingiza kwa kidole au kipanya: vitufe au mwandiko",

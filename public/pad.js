@@ -4,6 +4,7 @@
 import { icon } from "./icons.js";
 import { t as tr, currentLang } from "./i18n.js";
 import { configureKeyboard, openKeyboard, hideKeyboard, keyboardOpenFor, keyboardPrefs, initKeyboard } from "./tipkovnica.js";
+import { unitChoices } from "./enote-izbira.js";
 
 const LS_KEY = "evklid.pad";
 const prefs = (() => {
@@ -70,9 +71,8 @@ function build() {
     closePad();
   });
   pad.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => setTab(b.dataset.tab)));
-  pad.querySelector(".pad-units").addEventListener("click", (e) => {
-    const b = e.target.closest("button");
-    if (b) press(" " + b.dataset.u);
+  pad.querySelector(".pad-units").addEventListener("change", (e) => {
+    if (e.target.matches("select")) setUnit(e.target.value);
   });
   pad.querySelector(".pad-check").addEventListener("click", submit);
   ink = createInk(pad.querySelector("canvas.ink"));
@@ -114,18 +114,27 @@ function showTask() {
   requestAnimationFrame(() => card?.scrollIntoView({ block: "start" }));
 }
 
+// Enota na koncu odgovora, če je ena od ponujenih (»1,25 V« → »V«), sicer "".
+const chosenUnit = (v) => (cur?.units || []).filter((u) => String(v).trimEnd().endsWith(" " + u)).sort((a, b) => b.length - a.length)[0] || "";
+
 function syncValue() {
   if (!cur) return;
   const v = cur.input.value;
   const span = pad.querySelector(".pad-value");
   span.textContent = v || cur.input.placeholder || "";
   span.classList.toggle("ph", !v);
+  const sel = pad.querySelector(".pad-unit");
+  if (sel) sel.value = chosenUnit(v);
 }
 
-function press(unit) {
+// Izbira enote: zamenja prejšnjo enoto (tudi »N s«, »kg m/s«); prazna izbira jo odstrani.
+function setUnit(unit) {
   if (!cur) return;
-  // Zamenjaj morebitno prejšnjo enoto.
-  cur.input.value = cur.input.value.replace(/\s+[^\d\s,./−-][^\s]*$/, "").trimEnd() + unit;
+  const v = cur.input.value.trimEnd();
+  const old = chosenUnit(v);
+  const num = old ? v.slice(0, -old.length).trimEnd() : v.replace(/\s+[^\d\s,./−-][^\s]*$/, "").trimEnd();
+  cur.input.value = unit ? `${num} ${unit}`.trimStart() : num;
+  cur.input.dispatchEvent(new Event("input", { bubbles: true }));
   syncValue();
 }
 
@@ -209,8 +218,12 @@ export function attachPad(opts) {
   cur = opts;
   ink.clear(true);
   pad.querySelector(".read-result").innerHTML = "";
-  const units = opts.task.unit ? [opts.task.unit] : [];
-  pad.querySelector(".pad-units").innerHTML = units.map((u) => `<button type="button" data-u="${escapeHtml(u)}">${escapeHtml(u)}</button>`).join("");
+  // Enota je del odgovora: privzeto ni izbrana, ponudba je več enot predmeta po abecedi (enote-izbira.js).
+  const units = unitChoices(opts.task.unit, { subject: opts.task.topicId || opts.subject, seed: opts.task.text });
+  cur.units = units;
+  pad.querySelector(".pad-units").innerHTML = units.length
+    ? `<select class="pad-unit" aria-label="${escapeHtml(tr("fx.unit"))}"><option value="">${escapeHtml(tr("fx.unit"))}</option>${units.map((u) => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join("")}</select>`
+    : "";
   const kem = opts.subject === "KEM";
   configureKeyboard(opts.input, {
     math: true,
