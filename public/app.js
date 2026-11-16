@@ -1,6 +1,7 @@
 // Evklid – odjemalec (brez ogrodja).
 import { fetchThroughRestart as fetchRetry } from "./restart-retry.js";
 import { jsonAliNic } from "./odgovor.js";
+import { zadrziFokus } from "./fokus-okna.js";
 import { attachPad, closePad, openPad, padIsSheet } from "./pad.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
@@ -12,6 +13,7 @@ import { dialectsFor } from "./dialects.js";
 
 hydrateIcons();
 import { initAccount, prefetchAccountStatus, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { povabiPoUspehu } from "./povabi.js";
 import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
@@ -223,9 +225,22 @@ const topicSubject = (tp) => tp?.subject || (/^UNI-/.test(tp?.id || "") ? null :
 const topicGlossary = () => (currentView === "topic" && state.topicFx ? state.topic?.symbols : null);
 // Ime teme in sklopa: dvoumna črka dobi pomen iz slovarja le, če se tema ujema (x₁ je ničla le pri kvadratni enačbi).
 const topicScope = (tp) => (tp ? [tp.name, tp.unit].filter(Boolean).join(" · ") : "");
+// Naloga v seriji iz več tem (ponavljanje, dnevni izziv, tekmovanje): tema in predmet naloge sama (task.topicId),
+// ne zadnje odprte teme; sicer bi bil P pri verjetnosti spet »površina« (pregled 463-2, §5.6).
+let taskFx = null; // { view, scope, subject }
+const taskFxNow = () => (taskFx && currentView !== "topic" && currentView === taskFx.view ? taskFx : null);
+function setTaskFx(task) {
+  if (!task?.topicId) return (taskFx = null);
+  const tp = topicCache.get(task.topicId);
+  taskFx = {
+    view: currentView,
+    scope: tp ? topicScope(tp) : task.topicName || "",
+    subject: topicSubject(tp || { id: task.topicId }) || null,
+  };
+}
 setFormulaSubject(
-  () => subjectWithGlossary(topicSubject(state.topic) || state.student?.settings?.subject || "MAT", topicGlossary()),
-  () => (currentView === "topic" ? topicScope(state.topic) : ""),
+  () => subjectWithGlossary(taskFxNow()?.subject || topicSubject(state.topic) || state.student?.settings?.subject || "MAT", topicGlossary()),
+  () => (currentView === "topic" ? topicScope(state.topic) : taskFxNow()?.scope || ""),
 );
 // Razlaga teme in »Bistvo«: črke imajo pomen iz lekcije te teme (:::simboli), sicer iz slovarja predmeta.
 const topicRich = (tp, text) => withFormulaSubject(topicSubject(tp) || state.student?.settings?.subject || "MAT", () => renderRich(text), tp?.symbols, topicScope(tp));
@@ -1959,6 +1974,7 @@ const RELOADED = "evklid.osvezeno";
 async function reloadIfNewer(once = false) {
   const busy = () => state.contestTimer || unsentText();
   if (!appVersion || busy()) return;
+  const shot = shotMod ? null : loadShot(); // vzporedno s klicem različice (posnetek ob pagehide)
   const v = await serverVersion();
   // Med klicem je lahko začel pisati (B4).
   if (!v || v === appVersion || busy()) return;
@@ -1968,11 +1984,16 @@ async function reloadIfNewer(once = false) {
     return; // brez sessionStorage ne tvegamo zanke
   }
   if (pageApp) await dropStaleCopies(v);
+  // Posnetek tega zaslona se zapiše ob pagehide (saveSnapshot): modul mora biti že naložen (največ 1,5 s čakanja).
+  if (!shotMod && shot) await Promise.race([shot, new Promise((ok) => setTimeout(ok, 1500))]);
   if (busy()) return;
   // Brez reg.update(): osvežitev sama preveri sw.js; klic med že tekočo namestitvijo je v Chromiumu zataknil novi
   // service worker ali izgubil osvežitev (pregled B2 P2-4).
   try {
     if (once) sessionStorage.setItem(RELOADED, v); // šele tik pred osvežitvijo
+    // Nova stran ob tej osvežitvi pokaže posnetek tega zaslona, čeprav je iz prejšnje različice (public/zacetek.js
+    // PRENOS): sicer se je po vsaki objavi zaslon izpraznil v okostje in nato izrisal znova (j 16. 11. 2026, utripanje).
+    sessionStorage.setItem(ZACETEK?.PRENOS || "evklid.posnetek-prenos", "1");
   } catch {}
   location.reload();
 }
@@ -3446,6 +3467,7 @@ function choiceHtml(task, o, fx = true) {
 }
 
 function renderTask(task, ctx) {
+  setTaskFx(task);
   showSideExplanation(task, ctx);
   const box = $("#practice");
   // Tekmovalna imena težavnosti (težja, zahtevna, izziv) samo pri slovenskih tekmovanjih, ne pri izpitih.
@@ -3464,7 +3486,7 @@ function renderTask(task, ctx) {
     const ph =
       task.inputHint ||
       (task.answerType === "coefficients" ? t("task.phCoef") : task.unit ? t("task.phUnit", { unit: task.unit }) : t("task.phResult"));
-    input = `<form class="answer-row"><input id="answer" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
+    input = `<form class="answer-row"><input id="answer" aria-label="${escapeHtml(t("games.yourAnswer"))}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
   }
   const calcBtn = ["contest", "placement", "pretest"].includes(ctx.mode) ? "" : `<button type="button" class="ghost task-calc icon-only" title="${escapeHtml(t("nav.graph"))}" aria-label="${escapeHtml(t("nav.graph"))}">${icon("calculator")}</button>`;
   const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span>${ctx.total ? `<span class="contest-count">${ctx.index} / ${ctx.total}</span>` : ""}</div>` : "";
@@ -3585,7 +3607,7 @@ function workHtml() {
   return `<div class="work">
     <button type="button" class="work-toggle" aria-expanded="false">${icon("notebook-pen")}<span>${t("task.work")}</span>${icon("chevron-down")}</button>
     <div class="work-body" hidden>
-      <textarea class="work-text" rows="3" spellcheck="false" placeholder="${escapeHtml(t("task.workPh"))}"></textarea>
+      <textarea class="work-text" rows="3" spellcheck="false" aria-label="${escapeHtml(t("task.work"))}" placeholder="${escapeHtml(t("task.workPh"))}"></textarea>
       <button type="button" class="ghost small icon-only work-sym" aria-pressed="false" title="${escapeHtml(t("chat.symbols"))}" aria-label="${escapeHtml(t("chat.symbols"))}">${icon("sigma")}</button>
     </div>
   </div>`;
@@ -3768,6 +3790,7 @@ async function checkTask(task, ctx, value) {
       html += `<div class="card result ${p.passed ? "celebrate" : ""}">${p.passed ? `<div class="result-icon">${icon("award")}</div>` : ""}<h2>${p.passed ? t("placement.passed") : t("placement.notYet")}</h2>
         <p>${t("placement.score", { correct: p.correct, total: p.total })}${p.passed ? (p.xp ? ` +${p.xp.gained} XP` : "") : t("placement.startFirst")}</p>${r.unlocked ? unlockedHtml(r.unlocked) : ""}
         <button class="primary big" id="fb-back">${t("result.toPath")}</button></div>`;
+      if (p.passed) html += `<div class="povabi-slot"></div>`;
     } else html += next();
   } else if (r.closed) {
     html = `<div class="fb ${r.correct ? "ok" : "bad"}">${icon(r.correct ? "circle-check" : "circle-x")}<span>${r.correct ? t("task.correct") : t("task.wrong")}</span></div>${closedNote}
@@ -3782,6 +3805,8 @@ async function checkTask(task, ctx, value) {
       ${r.selfExplain ? `<div class="fb info">${icon("circle-help")}<span>${escapeHtml(r.selfExplain)}</span></div>` : ""}
       ${r.offline ? "" : tutorRow(task.id)}`;
     html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next();
+    // Osvojena tema: povabilo po končani nalogi; med serijo (trening, priprava na test) šele, ko je serija končana.
+    if (r.mastered && !r.offline && (ctx.mode === "practice" || r.next?.finished)) html += `<div class="povabi-slot"></div>`;
   } else {
     html = `<div class="fb bad shake">${icon("circle-x")}<span>${escapeHtml(fbText(r) || t("task.wrong"))}</span></div>
       ${mistakeHtml(r.mistake)}
@@ -3798,6 +3823,8 @@ async function checkTask(task, ctx, value) {
     }
   }
   fb.innerHTML = html;
+  const sid = state.student?.id;
+  if (accountsOn()) povabiPoUspehu(fb.querySelector(".povabi-slot"), { api, profileId: sid, toast, alive: () => state.student?.id === sid });
   // Nov XP (pravilno, opravljen preizkus znanja, konec treninga): zgornji znesek se animira, ob novi ravni čestitka.
   if (!r.offline && (r.correct || r.xp || r.placement?.xp || r.next?.xp)) refreshXp();
   // Ko je naloga zaključena, plošča izgine, da sta razlaga in gumb »Naprej« vidna.
@@ -4516,8 +4543,10 @@ function startTour() {
     box.querySelector('[data-tour="back"]').hidden = i === 0;
     box.querySelector('[data-tour="next"]').focus({ preventScroll: true });
   };
+  let sprosti = null;
   const end = () => {
     box.hidden = true;
+    sprosti?.();
     startTour.end = null;
     document.removeEventListener("keydown", onKey);
     try {
@@ -4544,6 +4573,7 @@ function startTour() {
   document.addEventListener("keydown", onKey);
   startTour.end = end;
   box.hidden = false;
+  sprosti = zadrziFokus(box, { zacetni: box.querySelector('[data-tour="next"]') });
   show();
 }
 // Vsak profil vidi vodič enkrat, ob prvi uporabi (tudi star profil, ki je videl le kratek ogled).
@@ -4781,11 +4811,14 @@ function showGraph() {
   return setCalcMode(calcMode);
 }
 /** Odpre kalkulator čez cel zaslon. mode: "sci" | "graph" | "units"; exprs: izrazi za graf. */
+let calcFokus = null; // sprosti() fokusa v oknu kalkulatorja (fokus-okna.js)
 async function openCalcOverlay({ mode = calcMode, exprs = [], backLabel = t("nav.back") } = {}) {
   $("#graph-close-label").textContent = backLabel;
   $("#graph-close").setAttribute("aria-label", backLabel);
-  if ($("#graph-overlay").hidden) overlayOpened();
+  const zaprt = $("#graph-overlay").hidden;
+  if (zaprt) overlayOpened();
   $("#graph-overlay").hidden = false;
+  if (zaprt) calcFokus = zadrziFokus($("#graph-overlay"), { zacetni: $("#graph-close") });
   document.body.classList.add("graph-open");
   const tool = await setCalcMode(mode);
   if (mode === "graph" && exprs.length) tool.show(exprs);
@@ -4797,6 +4830,8 @@ function closeCalcOverlay({ fromBack = false } = {}) {
   if (!calcOverlayOpen()) return;
   if (!fromBack) overlayClosed();
   $("#graph-overlay").hidden = true;
+  calcFokus?.();
+  calcFokus = null;
   document.body.classList.remove("graph-open");
   hideKeyboard();
   $("#graph-overlay-body").replaceChildren();

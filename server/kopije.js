@@ -1,6 +1,6 @@
 // Dnevne varnostne kopije baze in obnova iz kopije (docs/objava.md → »Varnostna kopija«).
 // Kopija: enkrat na dan VACUUM INTO v <mapa baze>/kopije/<ime>-LLLL-MM-DD.db (datum UTC), zadnjih 7;
-// ročna (scripts/obnovi-kopijo.js --zdaj) ima še uro, <ime>-LLLL-MM-DD-UUMM.db, zadnje 3.
+// ročna (scripts/obnovi-kopijo.js --zdaj) ima še uro, <ime>-LLLL-MM-DD-UUMM.db, zadnje 3 in največ MANUAL_MAX_DAYS dni.
 // Obnova: scripts/obnovi-kopijo.js pripravi <mapa baze>/obnovi.db; ob naslednjem zagonu (v 1 uri) jo
 // applyPendingRestore() (server/index.js) postavi na mesto baze, staro bazo pa shrani kot <baza>.pred-obnovo-<čas>.
 // Pogovori ostanejo v kopiji šifrirani (EVKLID_DATA_KEY), zato je za obnovo potreben isti ključ.
@@ -10,8 +10,12 @@ import { DatabaseSync } from "node:sqlite";
 
 export const KEEP_DAYS = 7;
 export const KEEP_MANUAL = 3;
+// Ročna kopija (tudi prenesena iz R2) se pobriše po 22 dneh, četudi je med zadnjimi tremi: zasebnost.html §5 obljublja
+// izbris iz varnostnih kopij najpozneje v 30 dneh. Posnetek diska pri Renderju (z mapo kopije) ostane še 7 dni, čiščenje
+// pa teče enkrat na dan (dnevna kopija in dnevno čiščenje po rokih hrambe): 22 + 7 + 1 = 30.
+export const MANUAL_MAX_DAYS = 22;
 export const RESTORE_TTL_MS = 60 * 60 * 1000; // pripravljena obnova velja 1 uro, nato se ne uporabi več
-const SAVED_DAYS = 14; // .pred-obnovo-* (za razveljavitev obnove) se pobrišejo po 14 dneh
+const SAVED_DAYS = 14; // .pred-obnovo-* (za razveljavitev obnove) se pobrišejo po 14 dneh (+ 7 dni posnetka diska)
 const HOUR = 60 * 60 * 1000;
 const MB = 1024 * 1024;
 
@@ -65,15 +69,43 @@ export function withoutPilotPhotos(file) {
   }
 }
 
-// Pobriše dnevne kopije nad keepDaily in ročne nad keepManual (najstarejše najprej) ter ostanke .tmp.
-function prune(dbFile, keepDaily, keepManual) {
+// Pobriše dnevne kopije nad keepDaily, ročne nad keepManual (najstarejše najprej) in ročne, starejše od
+// MANUAL_MAX_DAYS, ter ostanke .tmp.
+export function prune(dbFile, keepDaily, keepManual, now = new Date()) {
   const list = listBackups(dbFile);
-  for (const b of [...list.filter((x) => !x.manual).slice(keepDaily), ...list.filter((x) => x.manual).slice(keepManual)]) fs.rmSync(b.file, { force: true });
+  const manual = list.filter((x) => x.manual);
+  for (const b of [...list.filter((x) => !x.manual).slice(keepDaily), ...manual.slice(keepManual)]) fs.rmSync(b.file, { force: true });
+  pocistiStare(dbFile, now);
   const dir = backupDir(dbFile);
   // Ostanki prekinjenih kopij (starejši od 1 ure; mlajšega morda prav zdaj piše druga kopija).
   if (fs.existsSync(dir))
     for (const n of fs.readdirSync(dir))
       if (n.endsWith(".db.tmp") && Date.now() - fs.statSync(path.join(dir, n)).mtimeMs > HOUR) fs.rmSync(path.join(dir, n), { force: true });
+}
+
+/**
+ * Rok hrambe kopij ne glede na EVKLID_BACKUPS (kliče se ob kopiji, ob zagonu in v dnevnem čiščenju, server/zasebnost.js):
+ * ročne kopije starejše od MANUAL_MAX_DAYS (po datumu v imenu), shranjene baze pred obnovo ter potekle in pokvarjene
+ * obnove starejše od SAVED_DAYS. Vrne število pobrisanih datotek.
+ */
+export function pocistiStare(dbFile, now = new Date()) {
+  if (!dbFile || dbFile === ":memory:") return 0;
+  let n = 0;
+  const meja = day(new Date(now.getTime() - MANUAL_MAX_DAYS * 864e5));
+  for (const b of listBackups(dbFile))
+    if (b.manual && b.date.slice(0, 10) <= meja) {
+      fs.rmSync(b.file, { force: true });
+      n++;
+    }
+  const dir = path.dirname(path.resolve(dbFile));
+  const leftover = (x) => x.startsWith(`${path.basename(dbFile)}.pred-obnovo-`) || /^obnovi\.db\.(potekla|pokvarjena)$/.test(x);
+  if (fs.existsSync(dir))
+    for (const x of fs.readdirSync(dir))
+      if (leftover(x) && now - fs.statSync(path.join(dir, x)).mtimeMs > SAVED_DAYS * 24 * HOUR) {
+        fs.rmSync(path.join(dir, x), { force: true });
+        n++;
+      }
+  return n;
 }
 
 /**
@@ -86,7 +118,7 @@ export function makeBackup(db, dbFile, { now = new Date(), keep = KEEP_DAYS, man
   const name = manual ? `${day(now)}-${now.toISOString().slice(11, 16).replace(":", "")}` : day(now);
   const file = path.join(dir, `${stem(dbFile)}-${name}.db`);
   if (fs.existsSync(file)) return { made: false, reason: manual ? "kopija s to uro že obstaja" : "danes že narejena", file };
-  prune(dbFile, manual ? keep : keep - 1, manual ? KEEP_MANUAL - 1 : KEEP_MANUAL);
+  prune(dbFile, manual ? keep : keep - 1, manual ? KEEP_MANUAL - 1 : KEEP_MANUAL, now);
   // Disk (Render: 1 GB) ne sme biti poln: kopija potrebuje vsaj dvakratno velikost baze prostora.
   const size = fs.existsSync(dbFile) ? fs.statSync(dbFile).size : 0;
   const need = size * 2 + 20 * MB;
@@ -167,12 +199,7 @@ function moveDb(from, to) {
  */
 export function applyPendingRestore(dbFile, { log = console, now = new Date() } = {}) {
   if (!dbFile || dbFile === ":memory:") return null;
-  const dir = path.dirname(path.resolve(dbFile));
-  // Shranjene baze pred obnovo ter potekle in pokvarjene obnove po 14 dneh (disk ima 1 GB).
-  const leftover = (n) => n.startsWith(`${path.basename(dbFile)}.pred-obnovo-`) || /^obnovi\.db\.(potekla|pokvarjena)$/.test(n);
-  if (fs.existsSync(dir))
-    for (const n of fs.readdirSync(dir))
-      if (leftover(n) && now - fs.statSync(path.join(dir, n)).mtimeMs > SAVED_DAYS * 24 * HOUR) fs.rmSync(path.join(dir, n), { force: true });
+  pocistiStare(dbFile, now);
   const src = restoreFile(dbFile);
   if (!fs.existsSync(src)) return null;
   if (now - fs.statSync(src).mtimeMs > RESTORE_TTL_MS) {
