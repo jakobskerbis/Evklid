@@ -4072,6 +4072,7 @@ export default {
   "land.sch.t": "Za učitelje in šole",
   "land.app.go": "Prenesi aplikacijo",
   "land.privacy": "Zasebnost",
+  "land.terms": "Pogoji uporabe",
   "land.what": "Kaj je Evklid?",
   "land.why": "Zakaj Evklid?",
   "open.group": "Odpri v aplikaciji",
