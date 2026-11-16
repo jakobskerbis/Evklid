@@ -6,7 +6,8 @@ const SHOT_MAX = 250000; // znakov; večji pogled dobi ob odprtju okostje
 // Pred zapisom gre HTML skozi DOMPurify (kot ostala vsebina); brez knjižnice posnetka ni. Ob odprtju ga zacetek.js
 // očisti še enkrat (ociscen) in razčleni v <template>.
 // Klepet (pogled »chat«) in okno nujne pomoči posnetka nimata (j 10. 11. 2026): pogovori z inštruktorjem ne ostanejo na
-// napravi (public/zasebnost.html). Zapis ima jezik vmesnika (g) in različico aplikacije (r): drugačna ob odprtju → okostje.
+// napravi (public/zasebnost.html). Zapis ima jezik vmesnika (g) in različico aplikacije (r): drugačna ob odprtju → okostje
+// (razen enkrat po samodejni osvežitvi na novo različico, app.js reloadIfNewer).
 // key: ključ v localStorage; rec: zapis zadnjega zaslona { v, t, s, l, p } (app.js rememberScreen) ali nič;
 // meta: { a: lastnik naprave, z: profil z geslom } ali null (zaklenjen profil, profil brez gesla: posnetka ni).
 export function shrani(key, rec, meta) {
@@ -44,10 +45,26 @@ export function shrani(key, rec, meta) {
     g = localStorage.getItem("evklid.lang") || ""; // public/i18n.js; enako bere public/zacetek.js
   } catch {}
   const r = document.querySelector('meta[name="evklid-app"]')?.content || "";
-  const shot = { ...rec, g, r, a: meta.a ?? null, z: meta.z ? 1 : 0, c: el.className, tb: document.querySelector("#tabbar .tab.active")?.dataset.view || "", b, h };
+  const shot = { ...rec, g, r, a: meta.a ?? null, z: meta.z ? 1 : 0, c: el.className, tb: document.querySelector("#tabbar .tab.active")?.dataset.view || "", b, hd: glava(), h };
   try {
     localStorage.setItem(key, JSON.stringify(shot));
   } catch {
     drop(); // poln pomnilnik naprave: brez posnetka (ob odprtju okostje)
   }
+}
+
+// Besedila v zgornji vrstici (poraba, XP, dnevi zapored, cilj, začetnica in ime profila): zacetek.js jih ob odprtju
+// vpiše takoj, da glava ne poskoči, ko app.js naloži prave vrednosti (j 16. 11. 2026, utripanje ob odprtju).
+// Prazen niz: element je bil skrit.
+function glava() {
+  const txt = (sel) => (document.querySelector(sel)?.textContent || "").trim().slice(0, 60);
+  const shown = (sel) => document.querySelector(sel)?.hidden === false;
+  return {
+    u: shown("#usage-meter") ? txt("#usage-meter b") : "",
+    x: txt("#xp-total"),
+    k: txt("#xp-streak"),
+    c: shown("#goal-chip") ? txt("#goal-chip b") : "",
+    i: txt("#profile-btn .pm-avatar"),
+    n: txt("#profile-btn .pm-name"),
+  };
 }

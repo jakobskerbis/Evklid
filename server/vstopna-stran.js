@@ -12,15 +12,28 @@ import zlib from "node:zlib";
 import crypto from "node:crypto";
 import { startupFiles } from "./startup-files.js";
 import { pickEncoding } from "./compress.js";
+import { icon } from "../public/icons.js";
 
 // Navadni (ne-modulski) <script src> v index.html: teh ne nalagamo kot modul.
 const CLASSIC = /<script(?![^>]*type="module")[^>]*\ssrc="([^"?#]+)/g;
 
 const META = "evklid-app";
 
+// Ikone lupine (<i data-icon="ime"></i>) pošljemo že izrisane (j 16. 11. 2026: »vedno ko odprem evklida se zaslon
+// osveži in utripne«): prej jih je dopolnil šele app.js (hydrateIcons), zato so se glava, spodnja vrstica in pasici
+// ob vsakem odprtju za pol sekunde ali več pokazale brez ikon, nato pa poskočile. Isti izris kot icons.js icon();
+// data-zg: ob zgodovinskem slogu ostane skrita do ikon obdobja (style.css), kot prej. Neznano ime ostane <i>.
+// icons.js se naloži ob zagonu strežnika: nove oblike ikon (scripts/build-icons.js) veljajo po ponovnem zagonu.
+const ICON = /<i data-icon="([a-z0-9-]+)"><\/i>/g;
+export const withIcons = (html) =>
+  html.replace(ICON, (m, name) => {
+    const svg = icon(name);
+    return svg.endsWith('aria-hidden="true"></svg>') ? m : svg.replace("<svg ", "<svg data-zg ");
+  });
+
 export function entryHtml(publicDir, { version = "", preload = true } = {}) {
   const file = path.join(publicDir, "index.html");
-  const html = fs.readFileSync(file, "utf8");
+  const html = withIcons(fs.readFileSync(file, "utf8"));
   const classic = new Set([...html.matchAll(CLASSIC)].map((m) => "/" + m[1].replace(/^\.?\//, "")));
   const mods = startupFiles(publicDir, "index.html").filter((u) => u.endsWith(".js") && !u.startsWith("/vendor/") && !classic.has(u));
   const head = [];

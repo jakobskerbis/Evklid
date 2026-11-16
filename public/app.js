@@ -1961,6 +1961,7 @@ const RELOADED = "evklid.osvezeno";
 async function reloadIfNewer(once = false) {
   const busy = () => state.contestTimer || unsentText();
   if (!appVersion || busy()) return;
+  const shot = shotMod ? null : loadShot(); // vzporedno s klicem različice (posnetek ob pagehide)
   const v = await serverVersion();
   // Med klicem je lahko začel pisati (B4).
   if (!v || v === appVersion || busy()) return;
@@ -1970,11 +1971,16 @@ async function reloadIfNewer(once = false) {
     return; // brez sessionStorage ne tvegamo zanke
   }
   if (pageApp) await dropStaleCopies(v);
+  // Posnetek tega zaslona se zapiše ob pagehide (saveSnapshot): modul mora biti že naložen (največ 1,5 s čakanja).
+  if (!shotMod && shot) await Promise.race([shot, new Promise((ok) => setTimeout(ok, 1500))]);
   if (busy()) return;
   // Brez reg.update(): osvežitev sama preveri sw.js; klic med že tekočo namestitvijo je v Chromiumu zataknil novi
   // service worker ali izgubil osvežitev (pregled B2 P2-4).
   try {
     if (once) sessionStorage.setItem(RELOADED, v); // šele tik pred osvežitvijo
+    // Nova stran ob tej osvežitvi pokaže posnetek tega zaslona, čeprav je iz prejšnje različice (public/zacetek.js
+    // PRENOS): sicer se je po vsaki objavi zaslon izpraznil v okostje in nato izrisal znova (j 16. 11. 2026, utripanje).
+    sessionStorage.setItem(ZACETEK?.PRENOS || "evklid.posnetek-prenos", "1");
   } catch {}
   location.reload();
 }
