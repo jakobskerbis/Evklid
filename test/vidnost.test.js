@@ -167,7 +167,9 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.equal(updateDoc(doc, m), doc, "docs/stroski-ai.md: node scripts/primerjava-modelov.js --iz-json <zadnja meritev>");
 
   // Primer na strani je resničen: reševalnik reši enačbo in učenčev napačni rezultat označi kot napačen.
-  assert.ok(text.includes("»Reši enačbo 3x + 5 = 20.«") && text.includes("Program enačbo reši sam: x = 5."));
+  // Od 16. 11. 2026 kot oblački pogovora (učenec predlaga x = 6, inštruktor vpraša, učenec popravi na x = 5).
+  assert.ok(text.includes("Reši enačbo 3x + 5 = 20. Mislim, da je x = 6.") && text.includes("Program enačbo reši sam: x = 5."));
+  assert.ok(text.includes("koliko je 3 · 6 + 5?") && text.includes("3 · 6 + 5 = 23") && text.includes("3x = 15, zato x = 5") && text.includes("3 · 5 + 5 = 20"));
   const pre = presolve("Reši enačbo 3x + 5 = 20.", { first: true });
   assert.equal(pre.problems[0].answer, "x = 5");
   assert.match(claimNote("x = 6", pre), /WRONG/);
