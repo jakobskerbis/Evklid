@@ -17,26 +17,14 @@
    "lise": 0.3,
    "liseBarva": "#b06468",
    "relief": 0.5,
-   "senca": 0.25,
+   "senca": 0.08,
    "sencaBarva": "#6a2a30",
    "rez": "#c96f6c",
-   "aoTekstura": 0.6,
    "mapa": false,
    "detajl": true,
    "lise2": 0.45,
    "lise2Barva": "#a38d94",
    "lise2F": 34,
-   "celice": [
-    {
-     "mera": 0.012,
-     "moc": 0.5,
-     "stena": "#8a7780",
-     "sirina": 0.045,
-     "ton": 0.16,
-     "zvitost": 0.7,
-     "relief": 0.00012
-    }
-   ],
    "rezPresek": {
     "vrsta": 0,
     "polno": true,
@@ -64,7 +52,23 @@
      "ton": 0.12,
      "zvitost": 0.7
     }
-   ]
+   ],
+   "aoPbr": 0.18,
+   "lakSenca": 1,
+   "normala": 0,
+   "celice": [
+    {
+     "mera": 0.012,
+     "moc": 0.5,
+     "stena": "#8a7780",
+     "sirina": 0.045,
+     "ton": 0.16,
+     "zvitost": 0.7,
+     "relief": 0.00012
+    }
+   ],
+   "orm": false,
+   "aoTekstura": 0.6
   },
   "dihalna": {
    "hrap": 0.34,
@@ -85,13 +89,7 @@
    "aoTekstura": 0.5,
    "rezSum": 0.4,
    "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7d5a52",
-    "rob": 0.0008,
-    "robBarva": "#eadcc6",
-    "stena": 0.0018
-   }
+   "brezReza": true
   },
   "pljucna-arterija": {
    "hrap": 0.36,

@@ -241,7 +241,7 @@ function ohraniSencilnik(m) {
 }
 
 // t = nastavitve tkiva iz JSON: barva, hrap (hrapavost), lak, lakHrap, sijaj (sheen), sijajBarva, rob (presevnost ob
-// robu), robBarva, ao (moč zapečene sence 0–1), aoExp (kontrast sence, privzeto 1,6), zrno (barvna zrnatost), relief, f (frekvenca šuma v enotah organa),
+// robu), robBarva, ao (moč zapečene sence 0–1), aoExp (kontrast sence, privzeto 1,6), lakSenca (lak oslabi v zasenčenih kotanjah, 0–1), zrno (barvna zrnatost), relief, f (frekvenca šuma v enotah organa),
 // lise (velike tople lise), prosojnost (1 = neprozorno), fresnel (prozorno spredaj, mlečno ob robu), dvostransko,
 // znotraj (iz dela v »deli«, ne iz tkiva: cev z enojno steno, npr. aorta; vidna z obeh strani, notranjost pomnožena s tem faktorjem, brez pokrova reza in presevnosti),
 // prepustnost (transmission, samo visoka), masca/mascaBarva (rumena maščoba v brazdah, kjer je zapečena senca globoka), senca/sencaBarva (topel temnejši
@@ -304,7 +304,9 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
     const osnova = brezMape ? t.barva || "#cccccc" : t.odtenek || "#ffffff";
     m.color.set(osnova);
     m.userData.pbrBarva = osnova; // pogledi (uporabi) ohranijo odtenek namesto barve tkiva
-    if (tex.orm) {
+    // orm: false: tkivo ne bere pečene mape sence in hrapavosti (hrapavost in lak iz JSON). Za tkiva, kjer ima mapa
+    // nepečene (črne) lise: hrapavost 0 je tam zrcalila okolje kot sivo steklo (spodnja režnja pljuč, j 16. 11.).
+    if (tex.orm && t.orm !== false) {
       m.aoMap = tex.orm; // R: senca okolice (Cycles, z žarki po vsem organu)
       m.aoMapIntensity = t.aoTekstura ?? 1;
       m.roughnessMap = tex.orm; // G: hrapavost (maščoba bolj mat, endokard in zaklopke bolj sijoči)
@@ -354,6 +356,12 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       .replace("#include <begin_vertex>", "#include <begin_vertex>\nvOrgPos = position;");
     sh.fragmentShader = sh.fragmentShader
       .replace("#include <common>", `#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;\n${GLSL_SUM}${celice ? GLSL_CEL : ""}`)
+      // lakSenca (0–1): v zasenčenih kotanjah (pečena senca okolice) vlažni lak oslabi. Navzdol obrnjene kotanje (spodnja
+      // ploskev pljuč, mediastinalna stran brez srca) so sicer zrcalile temno dno okolja: sive »steklene« lise (j 16. 11.).
+      .replace(
+        "#include <lights_physical_fragment>",
+        `#include <lights_physical_fragment>${t.lakSenca ? `\n#ifdef USE_CLEARCOAT\nmaterial.clearcoat *= mix( 1.0, smoothstep( 0.35, 0.9, vOrgAO ), ${fl(t.lakSenca)} );\n#endif` : ""}`,
+      )
       .replace(
         "#include <color_fragment>",
         `float orgAO = mix( 1.0, pow( vOrgAO, ${fl(t.aoExp ?? 1.6)} ), ${fl(ao)} );
@@ -433,7 +441,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         #include <opaque_fragment>`,
       );
   };
-  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
+  m.customProgramCacheKey = () => `org-${t.lakSenca || 0}${t.orm === false ? "brezOrm" : ""}-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
   return ohraniSencilnik(m);
 }
 
