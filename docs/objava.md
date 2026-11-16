@@ -50,12 +50,13 @@ PDF razreda, poglavja in celega predmeta se ne izdela več na telefonu. Ob vsaki
 - `EVKLID_FREE_POOL_USD=10` – brezplačni paket: vsi brezplačni učenci skupaj porabijo največ 10 $ (≈ 8,7 €) na mesec, nato do 1. v mesecu samo Vadnica in lekcije.
 - `EVKLID_FREE_STUDENT_USD=0.2` – brezplačni paket: največ 0,2 $ na brezplačnega učenca na mesec.
 - `EVKLID_MONTHLY_BUDGET_USD=50` – opozorilo v dnevniku pri 80 % porabe.
-- `EVKLID_MERITEV_PO_OBJAVI=1` – 5 min po vsaki objavi ciljna meritev natančnosti lekcij, ki jih je objava spremenila
-  (ob spremembi prompta ali sprotnega preverjanja še primeri zadnjega kroga iz `docs/spremembe-prompta.md`), 4×, s preverjanjem.
-  Največ 1 $ na zagon, 15 $ na teden (ISO, UTC) skupaj z ročnimi meritvami (knjiga `/var/data/meritve-strosek.jsonl`, ki jo
-  piše `primerjava-modelov.js` ob vsakem plačanem odgovoru), en zagon na objavo; brez sprememb ni zagona. Izid: prijavljen skrbnik odpre
-  `/api/admin/meritev-po-objavi` (`?json=1` za JSON); stanje in dnevniki v `/var/data/meritev-po-objavi.json` in
-  `/var/data/meritve-po-objavi/`. Koda: `server/meritev-po-objavi.js`. `0` izklopi.
+- Ciljna meritev natančnosti po spremembi lekcij ali prompta **ne teče več na strežniku** (16. 11. 2026: strežnik in meritev
+  skupaj sta presegla 512 MB paketa Starter in Render je strežnik ponovno zagnal). Teče v GitHubu ob vsaki združitvi v main,
+  ki spremeni lekcije ali prompt: `.github/workflows/meritev-po-objavi.yml` (koda `scripts/meritev-po-objavi.mjs`,
+  `server/meritev-po-objavi.js`). Največ 1 $ na zagon, 15 $ na teden (ISO, UTC), en zagon na commit; brez sprememb ni zagona.
+  Potrebuje skrivnost `ANTHROPIC_API_KEY` v GitHubu (Settings > Secrets and variables > Actions). Izid: Actions > Meritev po
+  objavi > zagon (povzetek in artefakt z dnevnikom). `EVKLID_MERITEV_PO_OBJAVI` v Render → Environment lahko izbrišeš;
+  strežnik je ne bere več. `/api/admin/meritev-po-objavi` kaže le še staro zgodovino s strežnika.
 
 Vse lahko spremeniš v Render → Environment.
 

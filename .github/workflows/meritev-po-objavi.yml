@@ -1,0 +1,68 @@
+# Ciljna meritev natančnosti po vsaki spremembi lekcij ali prompta v main (prej 5 min po objavi na strežniku).
+# Od 16. 11. 2026 teče tu, ne na Renderju: strežnik (~250–350 MB) in meritev skupaj sta presegla mejo 512 MB
+# in Render je strežnik med pilotom ponovno zagnal (j 16. 11.: »Meritev v GitHub«).
+# Koda in varovalke stroška: scripts/meritev-po-objavi.mjs, server/meritev-po-objavi.js (največ 1 $ na zagon,
+# 15 $ na teden, en zagon na commit; brez spremenjenih merljivih lekcij ali prompta ni zagona in ni stroška).
+# Stanje (zadnji odtisi lekcij, tedenska knjiga stroška) je v predpomnilniku Actions (mapa .meritev).
+# Potrebuje skrivnost ANTHROPIC_API_KEY (Settings > Secrets and variables > Actions); brez nje ne naredi nič.
+# Izid: Actions > Meritev po objavi > zagon (povzetek), dnevnik kot artefakt.
+# Skrivnost dobi le push v main in ročni zagon (nikoli PR iz forka, nikoli pull_request_target).
+name: Meritev po objavi
+on:
+  push:
+    branches: [main]
+    paths:
+      - "content/lessons/**"
+      - "prompts/system_prompt.md"
+      - "server/prompt.js"
+      - "server/live-check.js"
+  workflow_dispatch:
+permissions:
+  contents: read
+# Zagoni drug za drugim (skupno stanje in tedenska knjiga); čakajoči novejši zamenja starejšega čakajočega,
+# in ker se primerja z zadnjim izmerjenim stanjem, ujame tudi spremembe preskočenega.
+concurrency:
+  group: meritev-po-objavi
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  meritev:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      # Namesti tudi SymPy (postinstall), ki ga meritev s preverjanjem potrebuje.
+      - run: npm ci --omit=dev --no-audit --no-fund
+        timeout-minutes: 10
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .meritev
+          key: meritev-po-objavi-${{ github.run_id }}
+          restore-keys: meritev-po-objavi-
+      - name: Meritev
+        env:
+          EVKLID_MERITEV_PO_OBJAVI: "1"
+          EVKLID_DB: ${{ github.workspace }}/.meritev/evklid.db
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node --disable-warning=ExperimentalWarning scripts/meritev-po-objavi.mjs
+      # always(): tudi ob napaki ali preklicu ostane zapisana rezervacija in poraba tedna.
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: always()
+        with:
+          path: .meritev
+          key: meritev-po-objavi-${{ github.run_id }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: meritev-dnevnik
+          path: .meritev/meritve-po-objavi/*.log
+          if-no-files-found: ignore
+          retention-days: 30
