@@ -6,7 +6,7 @@ import fs from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import {
-  zaženi, odlociZagon, izberiIdje, idjiKroga, isoTeden, vklopljeno, porabaTedna, preberiStanje, nacrtujMeritevPoObjavi,
+  zaženi, odlociZagon, izberiIdje, idjiKroga, isoTeden, vklopljeno, porabaTedna, preberiStanje,
   vpisiVKnjigo, porabaKnjige,
   MAX_ZAGON_USD, MAX_TEDEN_USD, MAX_PRIMEROV, PONOVI,
 } from "../server/meritev-po-objavi.js";
@@ -40,22 +40,27 @@ function lazniZagon(strosek, { code = 0, now = new Date("2026-11-12T10:00:00Z") 
   return fn;
 }
 
-const env = (commit) => ({ RENDER_GIT_COMMIT: commit });
+const env = (commit) => ({ GITHUB_SHA: commit });
 const ura = (iso) => () => new Date(iso);
 const vse = () => true;
 
-test("vklop: le na Render z EVKLID_MERITEV_PO_OBJAVI=1 in ključem; nikoli lokalno, v CI, v testih ali v preizkusnem načinu", () => {
-  const ok = { EVKLID_MERITEV_PO_OBJAVI: "1", RENDER: "true", ANTHROPIC_API_KEY: "sk" };
+test("vklop: le v GitHub Actions z EVKLID_MERITEV_PO_OBJAVI=1 in ključem; nikoli na strežniku, lokalno, v testih ali v preizkusnem načinu", () => {
+  const ok = { EVKLID_MERITEV_PO_OBJAVI: "1", GITHUB_ACTIONS: "true", ANTHROPIC_API_KEY: "sk" };
   assert.equal(vklopljeno(ok), true);
   assert.equal(vklopljeno({ ...ok, EVKLID_MERITEV_PO_OBJAVI: "0" }), false);
-  assert.equal(vklopljeno({ ...ok, RENDER: "" }), false, "lokalno (ni RENDER)");
-  assert.equal(vklopljeno({ ...ok, CI: "true" }), false);
-  assert.equal(vklopljeno({ ...ok, GITHUB_ACTIONS: "true" }), false);
+  assert.equal(vklopljeno({ ...ok, GITHUB_ACTIONS: "" }), false, "lokalno (ni GitHub Actions)");
+  assert.equal(vklopljeno({ ...ok, RENDER: "true" }), false, "strežnik na Renderju: nikoli");
+  assert.equal(vklopljeno({ EVKLID_MERITEV_PO_OBJAVI: "1", RENDER: "true", ANTHROPIC_API_KEY: "sk" }), false, "stari vklop na Renderju ne velja več");
   assert.equal(vklopljeno({ ...ok, NODE_ENV: "test" }), false);
+  assert.equal(vklopljeno({ ...ok, EVKLID_MOCK: "1" }), false);
   assert.equal(vklopljeno({ ...ok, ANTHROPIC_API_KEY: "" }), false);
   assert.equal(vklopljeno(ok, { mock: true }), false);
-  // Ta testni proces (brez RENDER) ne načrtuje ničesar.
-  assert.equal(nacrtujMeritevPoObjavi({ env: { EVKLID_MERITEV_PO_OBJAVI: "1" } }), false);
+});
+
+test("strežnik meritve ne zažene (meja 512 MB na Renderju, 16. 11. 2026)", () => {
+  const src = fs.readFileSync(new URL("../server/index.js", import.meta.url), "utf8");
+  assert.doesNotMatch(src, /from "\.\/meritev-po-objavi\.js"/);
+  assert.doesNotMatch(src, /zaženi\(|primerjava-modelov/);
 });
 
 test("teden ISO (UTC): ponedeljek–nedelja, prelom leta", () => {
@@ -191,7 +196,7 @@ test("zaženi: ročne meritve iz iste knjige štejejo v tedensko mejo 15 $", asy
   w("content/lessons/MAT-OS-7/a.md", "a2");
   const r = await zaženi({ ...o, env: env("c1") });
   assert.equal(r.ok, false);
-  assert.match(r.razlog, /tedenska meja: porabljeno 14\.20/);
+  assert.match(r.razlog, /tedenska meja: porabljeno 14,20/);
   assert.equal(zagon.klici.length, 0);
   // Neberljiva knjiga (npr. mapa namesto datoteke) zavrne zagon.
   assert.equal(porabaKnjige(path.dirname(knjiga), "2026-W46"), Infinity);
@@ -219,10 +224,12 @@ test("zaženi: pokvarjeno stanje → ni zagona, datoteka ostane nespremenjena (n
 test("GET /api/admin/meritev-po-objavi: skrbnik vidi povzetek (besedilo in JSON brez odtisov), drugi 403", async () => {
   const { root, w, file, knjiga } = repo();
   process.env.EVKLID_DB = path.join(path.dirname(file), "evklid.db");
-  const o = { root, file, knjiga, merljiv: vse, log() {}, now: ura("2026-11-12T10:00:00Z") };
-  await zaženi({ ...o, env: env("c0"), zagon: lazniZagon(0) });
+  // Končna točka računa »ta teden« po pravi uri, zato tudi zagon v testu teče zdaj (sicer test pade v naslednjem tednu).
+  const zdaj = new Date();
+  const o = { root, file, knjiga, merljiv: vse, log() {}, now: () => zdaj };
+  await zaženi({ ...o, env: env("c0"), zagon: lazniZagon(0, { now: zdaj }) });
   w("content/lessons/MAT-OS-7/a.md", "a2");
-  await zaženi({ ...o, env: env("abc1234567890"), zagon: lazniZagon(0.5) });
+  await zaženi({ ...o, env: env("abc1234567890"), zagon: lazniZagon(0.5, { now: zdaj }) });
   const { openDb } = await import("../server/db.js");
   const { createApp } = await import("../server/app.js");
   const app = createApp(openDb(":memory:"), { accounts: false, scheduler: false, backups: false });
@@ -246,4 +253,28 @@ test("GET /api/admin/meritev-po-objavi: skrbnik vidi povzetek (besedilo in JSON 
     server.close();
     delete process.env.EVKLID_DB;
   }
+});
+
+test("skripta v GitHubu: brez ključa ne naredi nič in nič ne zapiše", async () => {
+  const { spawnSync } = await import("node:child_process");
+  const dir = fs.mkdtempSync(path.join(tmpdir(), "meritev-ci-"));
+  const env = { ...process.env, GITHUB_ACTIONS: "true", EVKLID_MERITEV_PO_OBJAVI: "1", ANTHROPIC_API_KEY: "", EVKLID_DB: path.join(dir, "evklid.db"), NODE_ENV: "" };
+  delete env.GITHUB_STEP_SUMMARY;
+  const r = spawnSync(process.execPath, ["--disable-warning=ExperimentalWarning", new URL("../scripts/meritev-po-objavi.mjs", import.meta.url).pathname], { env, encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /izklopljena/);
+  assert.deepEqual(fs.readdirSync(dir), [], "ni stanja ne knjige");
+});
+
+test("delovni tok: le main, brez PR, skrivnost le v koraku meritve, stanje se shrani vedno", () => {
+  const y = fs.readFileSync(new URL("../.github/workflows/meritev-po-objavi.yml", import.meta.url), "utf8");
+  assert.doesNotMatch(y, /^\s+pull_request(_target)?:/m);
+  assert.match(y, /if: github\.ref == 'refs\/heads\/main'/);
+  assert.equal((y.match(/secrets\./g) || []).length, 1);
+  assert.match(y, /cache\/save@[^\n]+\n\s+if: always\(\)/);
+  const kljuci = [...y.matchAll(/^\s+key: (.+)$/gm)].map((m) => m[1]);
+  assert.equal(kljuci.length, 2);
+  assert.equal(kljuci[0], kljuci[1], "restore in save z istim ključem");
+  assert.match(y, /restore-keys: meritev-po-objavi-\n/);
+  assert.ok(kljuci[0].startsWith("meritev-po-objavi-"));
 });

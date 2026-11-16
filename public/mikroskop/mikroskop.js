@@ -1,11 +1,11 @@
 // Virtualni mikroskop (docs/mikroskop.md): svetlobni mikroskop s štirimi objektivi (4×, 10×, 40×, 100× z oljem), grobim
-// in finim vijakom, lučko in zaslonko, nad 1000× presevni elektronski mikroskop (TEM) do 50 000 000× (j, 12. 11. 2026),
-// pri največjih povečavah model molekul in atomov. Odpre ga stran /3d (#mikroskop?p=<id>, gumb »Poglej z mikroskopom«
+// in finim vijakom, lučko in zaslonko, nad 1000× presevni elektronski mikroskop (TEM) do uporabnih 5 000 000×, z »Molekulami
+// v barvah« do 50 000 000× (j, 12. in 16. 11. 2026), pri največjih povečavah model molekul in atomov. Odpre ga stran /3d (#mikroskop?p=<id>, gumb »Poglej z mikroskopom«
 // pri tkivih 3D sveta) in laboratorij (pogon simulacij »lab-mikroskop«). Besedila vsebine so slovenska kot pri 3D modelih.
 import { MOL, ELEMENTI, ZNACILNO, ZNACILNA_TOCKA, elementiMolekule } from "./molekule-vrste.js";
 import { ustvariUpodobitev } from "./upodobi.js";
 import { izracunajPogled, ZACETNO, povecava, najblizjaMolekula, fino } from "./pogled.js";
-import { svetlost, OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, SEM_MAX, vidnoPolje, locljivost, globinskaOstrina, globinskaOstrinaSem, merilce, oznakaDolzine, oznakaPovecave, utezModela, raven } from "./optika.js";
+import { svetlost, OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, TEM_MAX, SEM_MAX, vidnoPolje, locljivost, globinskaOstrina, globinskaOstrinaSem, merilce, oznakaDolzine, oznakaPovecave, utezModela, raven } from "./optika.js";
 import { BARVANJA } from "./barvila.js";
 import { PREPARATI, SKUPINE, ZACETNI, naloziPreparat } from "./preparati/index.js";
 import { t } from "/i18n.js";
@@ -217,16 +217,18 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   bTem.innerHTML = `<b>TEM</b><small>${t("mk.section")}</small>`;
   bTem.addEventListener("click", () => {
     if (s.nacin === "tem") return;
-    const m = omeji(Math.max(5000, povecava(s) * 5), MIN_M, MAX_M);
+    const m = omeji(Math.max(5000, povecava(s) * 5), MIN_M, temMax());
     s.nacin = "tem"; // pred iskanjem: sonda pri TEM ne zvija rezine, kot je ne slika
     kTkivu(true);
     s.m = m;
     narisi();
   });
   revolver.append(bTem);
-  // drsnik je logaritemski; pri SEM sega do SEM_MAX, sicer (svetloba in TEM skupaj) do MAX_M
+  // drsnik je logaritemski; pri SEM sega do SEM_MAX, sicer (svetloba in TEM skupaj) do uporabne povečave TEM (TEM_MAX,
+  // optika.js), z »Molekulami v barvah« pa do MAX_M (ponazoritev molekul in atomov)
   const zvezno = () => s.nacin === "tem" || s.nacin === "sem";
-  const najvec = () => (s.nacin === "sem" ? SEM_MAX : MAX_M);
+  const temMax = () => (s.barve ? MAX_M : TEM_MAX);
+  const najvec = () => (s.nacin === "sem" ? SEM_MAX : temMax());
   const logMin = Math.log(MIN_M);
   const izU = (u) => Math.exp(logMin + u * (Math.log(najvec()) - logMin));
   const vU = (m) => (Math.log(m) - logMin) / (Math.log(najvec()) - logMin);
@@ -330,9 +332,13 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   bBarve.innerHTML = `${ikona("sun")}<span>${t("mk.colors")}</span>`;
   bBarve.addEventListener("click", () => {
     s.barve = !s.barve;
+    if (s.nacin === "tem" && s.m > temMax()) s.m = temMax(); // brez barv le do uporabne povečave
     narisi();
   });
-  secTem.append(dDefokus.el, dSvetlost.el, bBarve);
+  // nad uporabno povečavo rezina ne da več podrobnosti (TEM_MAX, optika.js): namig za model molekul
+  const namig = mk("p", "mk-opozorilo");
+  namig.hidden = true;
+  secTem.append(dDefokus.el, dSvetlost.el, bBarve, namig);
 
   const secSem = sekcija(t("mk.sem"));
   const dSnopSem = drsnik(t("mk.beam"), { min: 0, max: 1, vrednost: s.zarnica, prikaz: (v) => `${dec(v * 100)} %`, ob: (v) => ((s.zarnica = v), narisi()) });
@@ -464,7 +470,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
       s.m = m < MIN_M * 1.01 ? MIN_M : m > SEM_MAX * 0.99 ? SEM_MAX : m;
       return narisi({ izDrsnika });
     }
-    m = omeji(m, MIN_M, MAX_M);
+    m = m > temMax() * 0.99 ? temMax() : omeji(m, MIN_M, temMax());
     if (m > SVETLOBNI_MAX * 1.05) {
       if (s.nacin !== "tem") {
         s.nacin = "tem";
@@ -921,6 +927,8 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     opozorilo.textContent = brezOlja ? t("mk.noOil") : oljeBrezPotrebe ? t("mk.oilNotNeeded") : "";
     const utez = tem ? utezModela(m) : 0;
     bBarve.hidden = utez <= 0;
+    namig.hidden = !(tem && !s.barve && m >= TEM_MAX * 0.7);
+    namig.textContent = namig.hidden ? "" : t("mk.temLimit");
     znacka.textContent = `${oznakaPovecave(m)} · ${tem ? "TEM" : sem ? "SEM" : t("mk.badgeObjective", { m: obj.m })}`;
     const vp = vidnoPolje(m, s.nacin);
     const vrstice = [
@@ -985,7 +993,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
       rocno = false;
       const c = cilj && !ciljPorabljen ? cilj : null;
       ciljPorabljen = true;
-      const m0 = Math.min(MAX_M, Math.max(MIN_M, c?.m || p.zacetek?.m || 40));
+      const m0 = Math.min(temMax(), Math.max(MIN_M, c?.m || p.zacetek?.m || 40));
       if (m0 > SVETLOBNI_MAX) {
         s.nacin = "tem";
         s.m = m0;

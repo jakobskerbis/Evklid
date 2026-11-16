@@ -262,7 +262,11 @@ test("roki hrambe: stare fotografije, potekle seje, nepotrjeni računi brez poda
     db.prepare("UPDATE students SET parent_id = ? WHERE id = ?").run(kept, kid.id);
     store.createConversation(kid.id);
     db.prepare("INSERT INTO parent_sessions (token_hash, parent_id, expires_at) VALUES ('t', ?, '2000-01-01T00:00:00.000Z')").run(parent.id);
+    // Predpomnjen odgovor se uporablja 30 dni, nato izbriše (docs/izbris-izvoz.md, najdba 4).
+    db.prepare("INSERT INTO answer_cache (key, text, created_at) VALUES ('star', 'x', datetime('now','-31 days')), ('nov', 'y', datetime('now','-29 days'))").run();
     const out = runRetention(db, { log: {} });
+    assert.equal(out.answerCache, 1);
+    assert.deepEqual(db.prepare("SELECT key FROM answer_cache WHERE key IN ('star','nov')").all().map((r) => r.key), ["nov"]);
     assert.equal(out.images, 1);
     assert.equal(out.unverified, 1);
     assert.ok(out.sessions >= 1);

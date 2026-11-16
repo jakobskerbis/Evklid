@@ -15,6 +15,7 @@
   <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="vendor/instrument-sans/index.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/predstavitev.css">
   <link rel="stylesheet" href="/videz-naprave.css">
   <link rel="stylesheet" href="tipkovnica.css">
   <style>
@@ -75,7 +76,16 @@
 </head>
 <body>
 <main class="doc" data-pilot-full="{{pilot.full}}">
-  <p><a href="/">← {{name}}</a></p>
+  <header class="mkt-top">
+    <a class="mkt-brand" href="/" aria-label="Evklid – na začetno stran"><img src="/icons/favicon.svg?v=kristal" alt="" width="28" height="28"><span class="mkt-name">Evkli<span>d</span></span></a>
+    <nav class="mkt-nav" aria-label="Glavni meni">
+      <a href="/zakaj-evklid">Zakaj Evklid</a>
+      <a href="/o-evklidu#cene">Cene</a>
+      <a href="/starsi.html">Za starše</a>
+      <a href="/sole" aria-current="page">Za šole</a>
+    </nav>
+    <a class="mkt-cta" href="/">Preizkusite brezplačno</a>
+  </header>
   <p class="who">Za ravnatelje, učitelje in računovodstvo</p>
   <h1>{{name}} za šole</h1>
   <p class="lead">Inštruktor AI za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu. Učitelj odpre razred, dodeli teme in vidi, kako razred napreduje. Šola plača z e-računom prek UJP.</p>
