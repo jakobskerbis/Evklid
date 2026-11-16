@@ -8,7 +8,7 @@ Splošno o kopijah: [objava.md → Varnostna kopija](objava.md#varnostna-kopija)
 
 | Kopija | Kje | Stanje |
 |---|---|---|
-| Dnevna kopija baze (7 dni) + ročne (3) | Render disk, `/var/data/kopije` | deluje (`kopije.kopij` 7, nočni preizkus `preverjanjeKopij.ok` true) |
+| Dnevna kopija baze (7 dni) + ročne (zadnje 3, največ 22 dni) | Render disk, `/var/data/kopije` | deluje (`kopije.kopij` 7, nočni preizkus `preverjanjeKopij.ok` true) |
 | Posnetek celega diska (7 dni) | Render → Disks | samodejno, Render |
 | Šifrirana kopija zunaj Renderja | Cloudflare R2 | **ni nastavljena** (`kopijeZunaj` null) |
 

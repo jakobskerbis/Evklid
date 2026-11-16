@@ -285,7 +285,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
     CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);`);
   if (!hadSchoolUse) db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES ('ai_school_ledger_start', datetime('now'))").run();
   // Izbrisan profil (docs/izbris-izvoz.md, najdba 2): poraba ostane šoli, brez id profila (id dobi lahko nov profil).
-  // Enkratno še za profile, izbrisane pred sprožilcem.
+  // Ob zagonu še za profile, izbrisane pred sprožilcem (brez takih vrstic ne zapiše nič).
   db.exec(`CREATE TRIGGER IF NOT EXISTS ai_school_use_student_delete AFTER DELETE ON students BEGIN
       UPDATE ai_school_use SET student_id = NULL WHERE student_id = OLD.id;
     END;

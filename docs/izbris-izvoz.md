@@ -21,7 +21,7 @@ Ostane brez povezave na račun (stolpci računa so `NULL`):
 | `gifts`, `podari_fund`, `referral_rewards`, `store_subscriptions` | zapis plačila za vračilo in obračun |
 | `guarantees` | garancija: e-naslov samo zgoščen, 10 let (zasebnost.html §5) |
 | `audit_log` | dnevnik dostopov, 1 leto |
-| `answer_cache` | splošen odgovor inštruktorja brez imena učenca, deljen med učenci (uporabi se 30 dni; glej najdbe) |
+| `answer_cache` | splošen odgovor inštruktorja brez imena učenca, deljen med učenci (uporabi se in hrani 30 dni) |
 | `pilot_mnenja_prenehalo` | naključna oznaka mnenja, da skrbnik umakne objavo |
 | `schools`, `class_assignments` | šola in naloga v razredu drugega učitelja ostaneta, avtor postane `NULL` |
 | `ai_school_use` | poraba AI, ki je šla pod mejo šole, ostane šoli (`student_id` = `NULL`) |
@@ -51,16 +51,18 @@ Izbrisani podatki ostanejo v kopijah, dokler kopije ne potečejo:
 - dnevna kopija na disku: 7 dni;
 - posnetek diska pri Renderju: 7 dni;
 - šifrirana kopija v R2 (ko bo nastavljena): 30 dni (`EVKLID_KOPIJE_OBLAK_DNI`);
-- **ročne kopije** (`obnovi-kopijo.js --zdaj`, tudi prenesene iz R2): zadnje 3, nobena pa ne starejša od 28 dni
-  (pobriše jih dnevna ali naslednja ročna kopija; 2 dni rezerve do obljubljenih 30 dni). Z `EVKLID_BACKUPS=0` se ne
-  briše nič samodejno.
+- **ročne kopije** (`obnovi-kopijo.js --zdaj`, tudi prenesene iz R2): zadnje 3, nobena pa ne starejša od 22 dni
+  (22 + 7 dni posnetka diska + 1 dan do čiščenja = 30). Pobriše jih dnevna kopija, ročna kopija, zagon strežnika ali
+  dnevno čiščenje po rokih hrambe (tudi z `EVKLID_BACKUPS=0`);
+- **baza pred obnovo** (`<baza>.pred-obnovo-*`, za razveljavitev obnove): 14 dni (+ 7 dni posnetka diska).
 
 ## Najdbe (zapisano 15. 11. 2026)
 
 Popravljeno 16. 11. 2026 (j je izbral »vse v bazi«; test vsake je v oklepaju):
 
-1. Ročne varnostne kopije so imele samo omejitev števila: zdaj se pobrišejo po 28 dneh (`server/kopije.js`
-   `MANUAL_MAX_DAYS`; `test/kopije.test.js`).
+1. Ročne varnostne kopije so imele samo omejitev števila: zdaj se pobrišejo po 22 dneh (`server/kopije.js`
+   `MANUAL_MAX_DAYS`, `pocistiStare`), tudi z `EVKLID_BACKUPS=0`; tudi baza pred obnovo se zdaj briše v dnevnem
+   čiščenju, ne samo ob zagonu (`test/kopije.test.js`).
 2. Knjiga porabe AI šole (`ai_school_use`) je obdržala id izbrisanega profila: sprožilec ob izbrisu profila ga nastavi
    na `NULL`, ob zagonu enkrat še za prej izbrisane (`server/db.js`; `test/izbris-vse.test.js`).
 3. Ena pokvarjena vrstica je skrila ves razdelek `pilot` v izvozu: vsak del je zdaj posebej, pokvarjen seznam težav
@@ -87,6 +89,8 @@ Zunaj baze (pregled 3; test jih ne vidi):
 9. **Stranka v Stripu ostane.** Izbris računa prekliče naročnino, stranke (e-naslov, ime, id računa v metapodatkih) pa
    ne izbriše, tudi po opuščenem nakupu. Za pilot opomba (nakupi pilotnih računov so zaprti).
 10. **R2:** kopije, starejše od 30 dni, se brišejo samo ob uspešnem nalaganju; če nalaganje odpove, ostanejo. Kopija,
-    prenesena iz R2 (`--oblak-prenesi`), je ročna kopija in spada pod točko 1.
+    prenesena iz R2 (`--oblak-prenesi`), je ročna kopija in spada pod točko 1 (ker ima datum izvirne kopije, se lahko
+    pobriše že naslednji dan; pred obnovo jo po potrebi prenesi znova). Rok 30 dni nima rezerve: kopija se pobriše ob
+    prvem nalaganju po 30 dneh. Predlog: privzeto 28 dni (`EVKLID_KOPIJE_OBLAK_DNI`), ko bo R2 nastavljen.
 11. **Resend** hrani poslana sporočila (tudi ime otroka v opomniku cilja in tedenskem poročilu) po svojih pravilih;
     brez nastavljenega Resenda gre zadeva sporočila v dnevnik Renderja.
