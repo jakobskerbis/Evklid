@@ -24,6 +24,7 @@ const fresh = () => ({
   ai: null, // { loading, error }
   note: null, // obvestilo nad poljem (npr. brez povezave)
   given: [], // podatki naloge s fotografije (točka, asimptota …), gredo k AI rešitvi
+  sought: "", // iskano (»kot, pod katerim graf seka os x«): ni podatek, zato ne izklopi lastnega reševalnika
   quality: null, // težava fotografije (blur | dark | glare), ki jo zaznamo na napravi pred branjem
   shot: null, // zadnja prebrana fotografija (samo v pomnilniku; za pilot se shrani le ob soglasju)
 });
@@ -64,7 +65,10 @@ const dollars = (tx) => {
   return s ? `$${s}$` : "";
 };
 // naloga za klepet: pri besedilni nalogi je S.text le »P=?«, zato inštruktor dobi še dane podatke
-const problemForChat = () => (S.given.length ? `${S.text} (${S.given.map(dollars).join(", ")})` : S.text);
+const problemForChat = () => {
+  const extra = [...S.given.map(dollars), ...(S.sought ? [`${t("scan.sought")}: ${dollars(S.sought)}`] : [])];
+  return extra.length ? `${S.text} (${extra.join(", ")})` : S.text;
+};
 // odgovor: ena formula prikazno; seznam dejstev po eno v vrstico, v besedilni velikosti, da se dolgo dejstvo prelomi
 function answerTex(tex) {
   const parts = answerParts(tex);
@@ -106,6 +110,7 @@ export function showScan({ text = null, goal = null } = {}) {
     S.text = text;
     S.problems = [];
     S.given = [];
+    S.sought = "";
     S.goal = goal; // npr. »factor« iz kalkulatorja (razstavi)
     return solveNow();
   }
@@ -203,6 +208,7 @@ function renderCapture(box) {
     S.text = "";
     S.problems = [];
     S.given = [];
+    S.sought = "";
     S.note = null;
     S.mode = "confirm";
     render();
@@ -226,6 +232,7 @@ function renderCapture(box) {
       S.goal = h.goal || null;
       S.problems = [];
       S.given = Array.isArray(h.given) ? h.given.filter((g) => typeof g === "string").slice(0, 10) : [];
+      S.sought = typeof h.sought === "string" ? h.sought.slice(0, 160) : "";
       solveNow();
     }),
   );
@@ -516,6 +523,7 @@ async function readImage(dataUrl) {
       S.note = t("scan.mock");
       S.problems = [];
       S.given = [];
+      S.sought = "";
       S.text = "";
       S.mode = "confirm";
       return render();
@@ -525,6 +533,7 @@ async function readImage(dataUrl) {
     if (!S.problems.length && pilotTask && S.readOk) {
       // Pilot: tudi neuspešno branje oceni (»Prebrano narobe«), zato ostanemo na prepisu.
       S.given = [];
+      S.sought = "";
       S.text = "";
       S.note = t("scan.readFail");
       S.mode = "confirm";
@@ -532,6 +541,7 @@ async function readImage(dataUrl) {
     }
     if (!S.problems.length) {
       S.given = [];
+      S.sought = "";
       D.toast(t("scan.readFail"));
       S.mode = "crop";
       return render();
@@ -539,6 +549,7 @@ async function readImage(dataUrl) {
     S.note = null;
     S.text = S.problems[0].text;
     S.given = S.problems[0].given || [];
+    S.sought = S.problems[0].sought || "";
     S.goal = S.problems[0].goal || null;
     S.mode = "confirm";
     render();
@@ -560,6 +571,7 @@ function renderConfirm(box) {
     <div class="card scan-confirm">
       ${S.problems.length ? `<p class="scan-label">${esc(t("scan.readAs"))}</p>` : ""}
       <div class="scan-preview" aria-live="polite"></div>
+      ${S.sought ? `<p class="scan-given scan-sought"><span class="scan-label">${esc(t("scan.sought"))}</span><span class="scan-given-item">${math(S.sought)}</span></p>` : ""}
       ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item">${math(g)}</span>`).join("")}</p>` : ""}
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <div class="scan-input-row">
@@ -583,7 +595,8 @@ function renderConfirm(box) {
     if (!input.value.trim()) {
       // izbrisana naloga: podatki prejšnje ne smejo k novi, vpisani
       S.given = [];
-      box.querySelector(".scan-given")?.remove();
+      S.sought = "";
+      box.querySelectorAll(".scan-given").forEach((el) => el.remove());
       return (prev.innerHTML = "");
     }
     if (info.type === "error") {
@@ -614,6 +627,7 @@ function renderConfirm(box) {
       const p = S.problems[Number(b.dataset.pick)];
       S.text = p.text;
       S.given = p.given || [];
+      S.sought = p.sought || "";
       S.goal = p.goal || null;
       render();
     }),
@@ -711,6 +725,7 @@ async function solveAi() {
   const text = prep(S.text);
   const body = S.goal === "zeros" ? { text: `${text}=0`, goal: "solve" } : { text, goal: S.goal || null };
   if (S.given.length) body.given = S.given;
+  if (S.sought) body.sought = S.sought;
   try {
     const out = await D.api(`/api/students/${sid()}/scan/solve`, { method: "POST", body });
     if (seq !== aiSeq || S.mode !== "solution") return;
@@ -861,6 +876,7 @@ function bindSolution(box) {
     S.result = null;
     S.problems = [];
     S.given = [];
+    S.sought = "";
     S.text = "";
     S.goal = null;
     frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
@@ -955,7 +971,7 @@ function history() {
 }
 function remember(r) {
   const h = history().filter((x) => x.text !== S.text || x.goal !== (S.goal || null));
-  h.unshift({ text: S.text, goal: S.goal || null, ...(S.given.length ? { given: S.given } : {}), tex: r.problemTex, answer: r.answer?.key ? null : r.answer?.tex, at: Date.now() });
+  h.unshift({ text: S.text, goal: S.goal || null, ...(S.given.length ? { given: S.given } : {}), ...(S.sought ? { sought: S.sought } : {}), tex: r.problemTex, answer: r.answer?.key ? null : r.answer?.tex, at: Date.now() });
   try {
     localStorage.setItem(HIST(), JSON.stringify(h.slice(0, 12)));
   } catch {}

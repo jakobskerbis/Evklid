@@ -2569,6 +2569,7 @@
   "scan.offline": "Kamu perlu koneksi untuk membaca foto. Kamu bisa mengetik soalnya, aku bisa menyelesaikannya tanpa koneksi.",
   "scan.readAs": "Yang kubaca",
   "scan.given": "Diketahui",
+  "scan.sought": "Ditanya",
   "scan.pick": "Ada beberapa soal di gambar. Pilih satu:",
   "scan.inputLabel": "Soal (perbaiki kalau ada yang salah kubaca)",
   "scan.typeLabel": "Soal",

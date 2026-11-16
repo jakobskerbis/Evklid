@@ -2592,6 +2592,7 @@
   "scan.offline": "Para ler uma fotografia precisas de ligação. Podes escrever o exercício: resolvo-o mesmo sem ligação.",
   "scan.readAs": "Li",
   "scan.given": "Dados",
+  "scan.sought": "Pede-se",
   "scan.pick": "Há vários exercícios na imagem. Escolhe um:",
   "scan.inputLabel": "Exercício (corrige-o se eu tiver lido algo mal)",
   "scan.typeLabel": "Exercício",

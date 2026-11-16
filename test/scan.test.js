@@ -5,7 +5,8 @@ import path from "node:path";
 import SL from "../public/i18n/sl.js";
 import { solve, analyze, prep, splitSystem, texToText } from "../public/scan/solvecore.js";
 import { verifyAi } from "../public/scan/verify.js";
-import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, READ_PROMPT, readLangLine } from "../server/scan.js";
+import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, solveWithAi, READ_PROMPT, readLangLine } from "../server/scan.js";
+import { setClient } from "../server/claude.js";
 import { answerParts } from "../public/scan/odgovor.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
@@ -368,6 +369,76 @@ test("AI answer as a list of facts is shown one fact per line (j's screenshot 4.
 test("photo reading writes the words of the data in the app language and keeps what is asked apart", () => {
   assert.match(readLangLine("sl"), /slovenščina/);
   assert.match(readLangLine("de"), /German/);
-  assert.match(READ_PROMPT, /never data/);
-  assert.match(READ_PROMPT, /Iskano:/);
+  assert.match(readLangLine("sl"), /"given" and "sought"/);
+  assert.match(READ_PROMPT, /"sought": what the task asks you to find is never data/);
+  assert.match(READ_PROMPT, /leave "sought" empty/);
+  assert.match(READ_PROMPT, /with the meaning of the page/);
+  assert.doesNotMatch(READ_PROMPT, /in the words of the page|Iskano:|last item of "given"/);
+  assert.match(READ_PROMPT, /"given":\["\.\.\."\],"sought":"\.\.\."/);
+});
+
+// j 16. 11. 2026: »to ni podatek« – iskano je svoje polje, ne element given.
+test("cleanProblems keeps sought apart from given and limits it like a given item", () => {
+  const [p] = cleanProblems([{ text: "f(x)=x^2-4", tex: "f", sought: "  \\text{kot, pod katerim\n graf seka os x} " }]);
+  assert.equal(p.sought, "\\text{kot, pod katerim graf seka os x}");
+  assert.equal(p.given, undefined); // brez pravih podatkov ostane given prazen → lastni reševalnik in SymPy
+  assert.equal(cleanProblems([{ text: "x=1", sought: "x".repeat(300) }])[0].sought.length, 160);
+  for (const bad of [undefined, "", "   ", 7, ["a"]]) assert.equal("sought" in cleanProblems([{ text: "x=1", sought: bad }])[0], false);
+  // starejši odgovor brez sought deluje kot prej
+  assert.deepEqual(cleanProblems([{ text: "P=?", tex: "P", given: ["a = 3"] }])[0], { text: "P=?", tex: "P", goal: null, given: ["a = 3"] });
+  assert.match(solvePrompt("f(x)=x^2-4", "slovenščina", null, null, [], "\\text{kot}"), /asks to find.*\\text\{kot\}/);
+  assert.doesNotMatch(solvePrompt("x=1", "slovenščina"), /asks to find/);
+});
+
+test("AI solve: sought alone keeps the check and retry on (given switches them off) and reaches the prompt", async () => {
+  const prevKey = process.env.ANTHROPIC_API_KEY;
+  const prevMock = process.env.EVKLID_MOCK;
+  process.env.ANTHROPIC_API_KEY = "test-ni-pravi";
+  delete process.env.EVKLID_MOCK;
+  const prompts = [];
+  // napačna rešitev x=5 za x+1=3: s preverjanjem (given prazen) sledi ponovitev, brez njega ne
+  setClient({
+    messages: {
+      create: async (req) => (prompts.push(req.messages[0].content), {
+        content: [{ type: "text", text: JSON.stringify({ kind: "equation", variable: "x", problem_tex: "x+1=3", answer_tex: "x=5", solutions: ["5"], methods: [{ name: "a", steps: [{ title: "t", tex: "x=5", why: "w" }] }] }) }],
+        usage: { input_tokens: 10, output_tokens: 10 },
+        model: "m",
+      }),
+    },
+  });
+  try {
+    const a = await solveWithAi({ text: "x+1=3", sought: "\\text{rešitev}" });
+    assert.equal(prompts.length, 2, "sought ne sme izklopiti preverjanja");
+    assert.equal(a.solution.verified, false);
+    assert.match(prompts[0], /asks to find.*\\text\{rešitev\}/);
+    prompts.length = 0;
+    await solveWithAi({ text: "x+1=3", given: ["a = 3"] });
+    assert.equal(prompts.length, 1, "pri podatkih preverjanje ne odloča (kot pred #700)");
+  } finally {
+    setClient(null);
+    if (prevKey === undefined) delete process.env.ANTHROPIC_API_KEY;
+    else process.env.ANTHROPIC_API_KEY = prevKey;
+    if (prevMock !== undefined) process.env.EVKLID_MOCK = prevMock;
+  }
+});
+
+test("API: scan read passes the app language to readFn and sought to solveFn", async () => {
+  const img = "data:image/jpeg;base64," + Buffer.from("x").toString("base64");
+  const langs = [];
+  const scanReadFn = async ({ lang }) => (langs.push(lang), { problems: [{ text: "x^2-4=0", tex: "x", goal: null, sought: "\\text{Ničle}" }], usage: null, model: "m" });
+  const seen = [];
+  const scanSolveFn = async (args) => (seen.push(args), { solution: { kind: "equation", methods: [{ name: "a", steps: [{ title: "t", tex: "x", why: "" }] }] }, usage: [], model: "m" });
+  await withApp({ scanReadFn, scanSolveFn }, async ({ req }) => {
+    const s = (await req("POST", "/api/students", { name: "Ana", settings: { curriculum_level: "1. letnik", language: "hr" } })).body;
+    const read = await req("POST", `/api/students/${s.id}/scan/read`, { image: img });
+    assert.deepEqual(langs, ["hr"]);
+    assert.equal(read.body.problems[0].sought, "\\text{Ničle}");
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x^2-4=0", sought: " \\text{Ničle} " })).status, 200);
+    assert.equal(seen[0].sought, "\\text{Ničle}");
+    assert.deepEqual(seen[0].given, []);
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1" })).status, 200);
+    assert.equal(seen[1].sought, "");
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1", sought: 5 })).status, 400);
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1", sought: "x".repeat(200) })).status, 400);
+  });
 });

@@ -2611,6 +2611,7 @@
   "scan.offline": "Za čitanje fotografije trebaš vezu. Zadatak možeš upisati, riješit ću ga i bez veze.",
   "scan.readAs": "Pročitao sam",
   "scan.given": "Zadano",
+  "scan.sought": "Traži se",
   "scan.pick": "Na slici je više zadataka. Odaberi jedan:",
   "scan.inputLabel": "Zadatak (ispravi ga ako sam nešto krivo pročitao)",
   "scan.typeLabel": "Zadatak",

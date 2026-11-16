@@ -2588,6 +2588,7 @@
   "scan.offline": "Para leer una foto necesitas conexión. Puedes escribir el ejercicio: lo resuelvo también sin conexión.",
   "scan.readAs": "He leído",
   "scan.given": "Datos",
+  "scan.sought": "Incógnita",
   "scan.pick": "Hay varios ejercicios en la imagen. Elige uno:",
   "scan.inputLabel": "Ejercicio (corrígelo si he leído algo mal)",
   "scan.typeLabel": "Ejercicio",

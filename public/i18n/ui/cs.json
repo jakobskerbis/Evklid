@@ -2635,6 +2635,7 @@
   "scan.offline": "Ke čtení fotky potřebuješ připojení. Úlohu můžeš napsat, vyřeším ji i bez připojení.",
   "scan.readAs": "Přečetl jsem",
   "scan.given": "Dáno",
+  "scan.sought": "Určit",
   "scan.pick": "Na obrázku je víc úloh. Vyber jednu:",
   "scan.inputLabel": "Úloha (oprav ji, pokud jsem něco přečetl špatně)",
   "scan.typeLabel": "Úloha",
