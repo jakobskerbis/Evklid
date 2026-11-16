@@ -20,14 +20,16 @@ const D3 = path.join(ROOT, "public", "3d");
 const json = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8"));
 const IDS = new Set(PREPARATI.map((p) => p.id));
 
-test("mikroskop: povečava od 40× do 50 000 000×, svetlobni do 1000×", () => {
+test("mikroskop: povečava od 40× do 100 000 000×, svetlobni do 1000×", () => {
   assert.equal(MIN_M, 40);
-  assert.equal(MAX_M, 50_000_000);
+  assert.equal(MAX_M, 100_000_000);
   assert.equal(SVETLOBNI_MAX, 1000);
   assert.deepEqual(OBJEKTIVI.map((o) => o.m), [4, 10, 40, 100]);
   assert.equal(OBJEKTIVI.filter((o) => o.olje).length, 1);
   assert.equal(povecava({ ...ZACETNO, nacin: "svetloba", objektiv: 3 }), 1000);
   assert.equal(oznakaPovecave(5e7), "50 000 000×");
+  assert.equal(oznakaPovecave(MAX_M), "100 000 000×");
+  assert.ok(vidnoPolje(MAX_M, "tem") > 0.0015 && vidnoPolje(MAX_M, "tem") < 0.002); // 1,6 nm: nekaj atomov čez polje
 });
 
 test("mikroskop: TEM brez barv le do uporabne povečave (~20 ločljivih točk čez vidno polje)", () => {
@@ -36,7 +38,7 @@ test("mikroskop: TEM brez barv le do uporabne povečave (~20 ločljivih točk č
   const tocke = vidnoPolje(TEM_MAX, "tem") / TEM_LOCLJIVOST;
   assert.ok(Math.abs(vidnoPolje(TEM_MAX, "tem") - 0.032) < 1e-12);
   assert.ok(tocke >= 20 && tocke < 25, `${tocke} točk`);
-  assert.ok(vidnoPolje(MAX_M, "tem") / TEM_LOCLJIVOST < 3); // pri 50 000 000× le še dve točki: prazna povečava
+  assert.ok(vidnoPolje(MAX_M, "tem") / TEM_LOCLJIVOST < 3); // pri 100 000 000× le še ena točka: prazna povečava
   assert.equal(utezModela(TEM_MAX), 1); // model molekul je pri meji že poln
   assert.equal(oznakaPovecave(TEM_MAX), "5 000 000×");
   const ui = fs.readFileSync(path.join(ROOT, "public", "mikroskop", "mikroskop.js"), "utf8");
@@ -218,7 +220,7 @@ test("mikroskop: vsak del celice odpre svoj pogled (preparat, povečava, snov po
     for (const d of ["jedro", "jedrce", "mitohondrij", "membrana", "citoplazma", "ribosomi", "neznan-del"]) {
       const v = pogled(m, d);
       assert.ok(IDS.has(v.p), `${m}/${d} → ${v.p}`);
-      assert.ok(v.m >= 40 && v.m <= 5e7 && v.snov?.length, `${m}/${d}: ${JSON.stringify(v)}`);
+      assert.ok(v.m >= 40 && v.m <= MAX_M && v.snov?.length, `${m}/${d}: ${JSON.stringify(v)}`);
     }
   }
   // deli organov iz GLB ostanejo pri svojem preparatu
@@ -241,7 +243,7 @@ test("mikroskop: pogled dela ostane v isti skupini živih bitij", () => {
       for (const [, del] of vir.matchAll(vzorec)) {
         if (del === id) continue;
         const v = pogledDela(id, del);
-        assert.ok(IDS.has(v.p) && v.m >= 40 && v.m <= 5e7, `${id}/${del}: ${JSON.stringify(v)}`);
+        assert.ok(IDS.has(v.p) && v.m >= 40 && v.m <= MAX_M, `${id}/${del}: ${JSON.stringify(v)}`);
         if (RASTLINSKI.has(osnova)) assert.ok(RASTLINSKI.has(v.p), `${id}/${del} → ${v.p}`);
         if (MIKROBNI.has(osnova)) assert.equal(v.p, osnova, `${id}/${del} → ${v.p}`);
         preverjenih++;

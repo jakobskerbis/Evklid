@@ -3584,7 +3584,7 @@ export default {
   "mk.title": "Mikroskop",
   "mk.open": "Poglej z mikroskopom",
   "mk.start": "Odpri mikroskop",
-  "mk.hub": "Svetlobni in elektronski mikroskop: celice, tkiva, rastline in mikrobi od 40× do 50 000 000×, vse do molekul in atomov.",
+  "mk.hub": "Svetlobni in elektronski mikroskop: celice, tkiva, rastline in mikrobi od 40× do 100 000 000×, vse do molekul in atomov.",
   "mk.specimens": "Preparati",
   "mk.search": "Išči preparat",
   "mk.group.celice": "Celice in mikrobi",

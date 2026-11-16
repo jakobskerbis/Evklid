@@ -1,6 +1,6 @@
 // Virtualni mikroskop (docs/mikroskop.md): svetlobni mikroskop s štirimi objektivi (4×, 10×, 40×, 100× z oljem), grobim
 // in finim vijakom, lučko in zaslonko, nad 1000× presevni elektronski mikroskop (TEM) do uporabnih 5 000 000×, z »Molekulami
-// v barvah« do 50 000 000× (j, 12. in 16. 11. 2026), pri največjih povečavah model molekul in atomov. Odpre ga stran /3d (#mikroskop?p=<id>, gumb »Poglej z mikroskopom«
+// v barvah« do 100 000 000× (j, 12. in 16. 11. 2026), pri največjih povečavah model molekul in atomov. Odpre ga stran /3d (#mikroskop?p=<id>, gumb »Poglej z mikroskopom«
 // pri tkivih 3D sveta) in laboratorij (pogon simulacij »lab-mikroskop«). Besedila vsebine so slovenska kot pri 3D modelih.
 import { MOL, ELEMENTI, ZNACILNO, ZNACILNA_TOCKA, elementiMolekule } from "./molekule-vrste.js";
 import { ustvariUpodobitev } from "./upodobi.js";

@@ -1,9 +1,10 @@
 # Mikroskop
 
-Virtualni mikroskop od 40× do 50 000 000× (j, 12. 11. 2026: »Naj ima povečavo do 50000000«, »TEM«, »Naj bo možno vsako
+Virtualni mikroskop od 40× do 100 000 000× (j, 12. 11. 2026: »Naj ima povečavo do 50000000«; 16. 11. 2026: »naj ima
+mikroskop do 100 milijonsko povecavo«, »TEM«, »Naj bo možno vsako
 tkivo v 3D svetu pogledati z mikroskopom«). Trije načini (j, 13. 11. 2026: »optični, elektronski in TEM«): svetlobni
 mikroskop do 1000×, vrstični elektronski mikroskop (SEM, površina) od 40× do 300 000× in presevni elektronski mikroskop
-(TEM, rezina) do uporabnih 5 000 000×, z vklopljenimi »Molekulami v barvah« do 50 000 000× (j, 16. 11. 2026). Ob
+(TEM, rezina) do uporabnih 5 000 000×, z vklopljenimi »Molekulami v barvah« do 100 000 000× (j, 16. 11. 2026). Ob
 drsniku povečave sta gumba − in + (tap en korak, držanje ponavlja).
 
 ## Kje je
@@ -56,7 +57,8 @@ struktura atlasa in vsak model svoj preparat.
   zaokroženo navzdol 5 000 000× (vidno polje 32 nm ≈ 21 točk, membrana 7–8 nm je še 5 točk). Pri 50 000 000× (3,2 nm)
   sta čez polje le še dve točki in slika je enakomerno siva (j je to javil s posnetkom zaslona). Model molekul je poln že
   od ~2 400 000×. Brez »Molekul v barvah« drsnik, gumb + in prsti segajo do 5 000 000×; blizu meje (od 3 500 000×) se pod
-  nadzorom TEM pokaže namig `mk.temLimit`. Z barvami ostane pot do 50 000 000× (atomi, `raven` »atomi« pod 12 nm), ker je
+  nadzorom TEM pokaže namig `mk.temLimit`. Z barvami ostane pot do 100 000 000× (`MAX_M`; vidno polje 1,6 nm, čez sliko ~6–10 atomov, ki so
+  krogle v barvah CPK; v beljakovinah so atomi naključni v mreži 0,16 nm, ne iz zgradbe PDB; `raven` »atomi« pod 12 nm), ker je
   to ponazoritev, ne posnetek; ob izklopu barv se povečava spusti na 5 000 000×.
 - Snop TEM in SEM (`svetlostSnopa`): ista vrednost kot lučka (`s.zarnica`). Zaslon sveti sorazmerno s tokom elektronov;
   kamera nad 30 % toka s časom osvetlitve drži sliko skoraj enako svetlo (0,9 + 0,5 · snop, privzetih 70 % in samodejna
