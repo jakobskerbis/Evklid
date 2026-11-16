@@ -408,7 +408,7 @@ test("javne strani: kaj doda naročnina, matura, vprašanja staršev, noga podst
   const starsi = read("starsi.html");
   assert.equal((starsi.match(/<details>/g) || []).length, 5);
   const st = text(starsi);
-  for (const s of ["Odgovorov inštruktorja Evklid ne bere na glas", "Nastavitve za omejitev časa uporabe Evklid nima", "nikoli samo rezultata", "okoli 15 minut"]) assert.ok(st.includes(s), s);
+  for (const s of ["Odgovorov inštruktorja Evklid ne bere na glas", "Omejitve časa uporabe Evklid nima", "nikoli samo rezultata", "okoli 15 minut"]) assert.ok(st.includes(s), s);
   assert.ok(!/\b(tvoj\w*|tebe|moraš|vprašaš)\b/i.test(st), "vikanje");
   // Noga na podstraneh in na /o-evklidu, /zakaj-evklid: povezave na vse javne strani.
   for (const html of [read("starsi.html"), read("sole.html"), read("zasebnost.html"), read("garancija.html"), aboutPage(), whyPage()]) {
