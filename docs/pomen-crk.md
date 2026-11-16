@@ -69,7 +69,7 @@ klikljivih črk manj (varna smer).
 | D (MAT) | diskriminanta | b² − 4ac, √D; tema kvadratna | oglišče D, definicijsko območje |
 | k (MAT) | smerni koeficient | y = k x + n; tema premica, linearna funkcija | indeks, celo število (kπ), binomski simbol, zaporedje, lekcija o linearnih enačbah ali sistemih (množitelj ±k) |
 | n (MAT) | začetna vrednost | y = k x + n v isti formuli ali povedi (j, pregled 463: ne vsak n v temi) | naravno število, n-ti koren, mnogokotnik, razmerje m : n |
-| p, q (MAT) | koordinati temena / središča | (x − p)² + (y − q)² → središče S(p, q); y = a(x − p)² + q, tema teme/temenska oblika → teme | verjetnost, praštevilo, premik grafa f(x − p) + q, stožnice (y² = 2px) |
+| p, q (MAT) | koordinati temena / središča / premika grafa | (x − p)² + (y − q)² → središče S(p, q); (x − p)² (temenska oblika y = a(x − p)² + q), tema teme/temenska oblika → teme; (x − p) v log, ln, √, sin/cos, eksponentu, ulomku, \|x − p\|, f(x − p) → vodoravni premik (asimptota x = p pri log in ulomku); + q na koncu formule s tako funkcijo → navpični premik (j, 16. 11. 2026: v log_a(x − p) + q je bil q »ordinata temena«) | verjetnost (p + q = 1), praštevilo, količnik q zaporedja, stožnice (y² = 2px), 1/(x − p)² ni teme; teme po temi ne velja v temah o logaritmih, eksponentni, korenski, racionalni, kotnih funkcijah, premikih |
 | r, d (MAT) | polmer, premer | π v formuli ali tema krog/valj/stožec/krogla | `dx`, integral, vsota, limita, kotne funkcije, »okrog«; d kot razdalja (sekanta, tangenta) |
 | o, S, P, V, v (MAT) | obseg, ploščina, površina, prostornina, višina | `X =` in geometrijska tema | vsota S, S v stopinjah (vsota kotov), verjetnost P (met kocke), hitrost v |
 | e (MAT) | Eulerjevo število | e^…, ln, exp, lim | linearna ekscentričnost (e² = a² − b², ε = e/a) |
@@ -85,11 +85,14 @@ klikljivih črk manj (varna smer).
 | a (FIZ) | pospešek | F = m a, v = v₀ + a t, a = v²/r, F/m, enota m/s²; tema gibanje, sile, kroženje | razdalja predmeta (leče), rob kvadra, mrežni parameter, ročica (torzija), stranica preseka |
 | c (FIZ) | hitrost svetlobe (valovanja) | c = λν, mc², hc; tema svetloba, valovanje, zvok, optika | rob kvadra; c_p ne podeduje; specifična toplota ima svojo različico (Q =, ΔT) |
 | t (FIZ, KEM, BIO) | čas / temperatura v °C | °C: T = t + 273, število s °C za = ali ≈; sicer čas (BIO le z enoto časa) | Δt = 300 °C / hitrost je čas |
-| E, T (FIZ) | energija, temperatura | privzeto | modul elastičnosti in navor v mehaniki trdnin (torzija, upogib, nosilci) |
+| E, T (FIZ) | energija, temperatura | privzeto | modul elastičnosti in navor v mehaniki trdnin (torzija, upogib, nosilci); E pri električnem polju (E = F/e, E = U/d, F = eE, tema električno polje, kondenzator) |
+| U, R, I, C, Q, λ (FIZ) | napetost, upor, tok, kapaciteta, toplota, valovna dolžina | privzeto | ΔU, notranja energija, termodinamika; R v p V = n R T, plin, polmer Zemlje/planeta; I jakost zvoka/svetlobe, vztrajnost; C toplotna kapaciteta (ΔT); Q = C U, Q = I t, kondenzator, elektrostatika; λ razpadna konstanta (e^{−λt}, razpad, radioaktivnost) — tam črka ni klikljiva (16. 11. 2026) |
+| h (FIZ) | Planckova konstanta / višina | h ν, h f, h c, h/… → Planck; sicer višina | višina ne velja v temah foton, fotoefekt, kvant, sevanje, spekter |
 | B, G (FIZ) | gostota magnetnega polja, gibalna količina | formula (Φ = B S, G = m v), enota T, tema magnetizem / trki | podpora nosilca, teža G, gravitacijska konstanta, Gibbsova energija ΔG |
 | S (FIZ) | ploščina | privzeto | ΔS (entropija) |
 | p, n (KEM) | tlak, množina snovi | p privzeto; n z enoto mol, n = m/M, m = n M ali privzeto | proton p⁺, nevtron n⁰, orbitala np², lupina n = 4, n = 10 meritev, n = 0, 1, 2, kromosomi |
 | Q (KEM) | reakcijski kvocient / toplota | Q < K, Q = K, Q = [ … ] → kvocient; sicer toplota | – |
+| c (KEM) | množinska koncentracija | privzeto | Q = m c ΔT, specifična toplota, kalorimetrija (16. 11. 2026) |
 | R, S, w (KEM) | plinska konstanta, entropija, masni delež | R T, −ΔH/R; ΔS, T ΔS; w = m/…; ustrezna tema | R_f, R_s, natezna trdnost R_m; substrat [S]; širina vrha w |
 | črke iz kemije (BIO) | m, n, c, V, T, t, ΔG | le z enoto ali formulo; oznake z indeksom (K_a, N_A …) ostanejo | p = 0,05 (p-vrednost), Vv (alel), 4n (garnitura), w = W/W_max (fitnes), R = p/q |
 | H, F, G, ξ (MAT) | – (ni v slovarju) | samo definicija v besedilu ali oznake lekcije | primitivni funkciji F, G, vmesna točka ξ |
