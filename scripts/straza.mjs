@@ -38,7 +38,7 @@ export function presojaStanja(j, now = Date.now()) {
     else opozorila.push("strošek AI danes je nad mejo opozorila (že javljeno)");
   }
   const pk = j.preverjanjeKopij;
-  if (pk && pk.ok === false && pk.koncano !== false) {
+  if (pk && pk.ok === false && !pk.prehodna) {
     if (sveze(pk.ob)) napake.push(`nočni preizkus obnove iz kopije (${pk.datum}) ni uspel`);
     else opozorila.push(`nočni preizkus obnove iz kopije (${pk.datum}) ni uspel (že javljeno)`);
   }

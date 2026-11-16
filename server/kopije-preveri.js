@@ -130,6 +130,7 @@ export function startBackupChecks(db, dbFile, { scheduler = true, mock = false, 
         // Shramba zunaj strežnika morda le trenutno ni dosegljiva: še en poskus ob naslednjem pregledu, brez alarma.
         log.warn?.(`[evklid] preizkus varnostne kopije: ${r.napake.join("; ")}; ponovim čez 10 min`);
         state.koncano = false;
+        state.prehodna = true;
       } else {
         log.error?.(`[evklid] NAPAKA: preizkus varnostne kopije ni uspel: ${r.napake.join("; ")}`);
         if (state.poslano !== date) {
@@ -161,8 +162,9 @@ export function startBackupChecks(db, dbFile, { scheduler = true, mock = false, 
   const status = () => {
     if (off) return null;
     const s = db.isOpen === false ? null : kvGet();
-    // ob: čas preizkusa (Straža opozori enkrat); koncano: false = prehodna napaka, ponovitev čez 10 min (brez alarma).
-    return s ? { datum: s.datum, ok: s.ok, ob: s.ob ?? null, koncano: s.koncano !== false } : null;
+    // ob: čas preizkusa (Straža opozori enkrat); prehodna: shramba zunaj trenutno nedosegljiva, tihi ponovni poskus čez
+    // 10 min (Straža ne pade). Neuspel e-mail o pravi napaki ni prehoden (Straža pade).
+    return s ? { datum: s.datum, ok: s.ok, ob: s.ob ?? null, prehodna: s.koncano === false && !!s.prehodna } : null;
   };
   return { status, run, tick };
 }

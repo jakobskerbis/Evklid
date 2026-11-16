@@ -136,7 +136,8 @@ test("straža: stanje, ki traja ves dan, podre Stražo samo eno uro po dogodku",
   assert.deepEqual(presojaStanja({ ...osnova, preverjanjeKopij: { datum: "2026-11-16", ok: false, ob: "2026-11-16T04:40:00Z" } }, now).napake, []);
   assert.deepEqual(presojaStanja({ ...osnova, preverjanjeKopij: { datum: "2026-11-16", ok: true, ob: "2026-11-16T11:10:00Z" } }, now).napake, []);
   // Prehodna napaka (strežnik ponovi čez 10 min brez alarma): tudi Straža ne pade.
-  assert.deepEqual(presojaStanja({ ...osnova, preverjanjeKopij: { datum: "2026-11-16", ok: false, ob: "2026-11-16T11:10:00Z", koncano: false } }, now).napake, []);
+  assert.deepEqual(presojaStanja({ ...osnova, preverjanjeKopij: { datum: "2026-11-16", ok: false, ob: "2026-11-16T11:10:00Z", prehodna: true } }, now).napake, []);
+  assert.equal(presojaStanja({ ...osnova, preverjanjeKopij: { datum: "2026-11-16", ok: false, ob: "2026-11-16T11:10:00Z", prehodna: false } }, now).napake.length, 1);
 
   // E-pošta: Resend ali omrežje → napaka; en napačen naslov (422) ali uspeh po napaki → ne.
   const posta = (razlog, zadnjaNapaka = "2026-11-16T11:50:00Z", zadnjiUspeh = "2026-11-16T10:00:00Z") => ({ ...osnova, posta: { nastavljena: true, zadnjaNapaka, zadnjiUspeh, razlog } });

@@ -40,11 +40,11 @@ const corrupt = (file) => {
   fs.closeSync(fd);
 };
 
-// Javno stanje ima še čas preizkusa (ob) in koncano, da Straža opozori samo enkrat in ne ob prehodni napaki.
+// Javno stanje ima še čas preizkusa (ob) in prehodna, da Straža opozori samo enkrat in ne ob prehodni napaki.
 const brezOb = (s) => {
   assert.match(s.ob, /^\d{4}-\d\d-\d\dT/);
-  assert.equal(typeof s.koncano, "boolean");
-  const { ob, koncano, ...ostalo } = s;
+  assert.equal(typeof s.prehodna, "boolean");
+  const { ob, prehodna, ...ostalo } = s;
   return ostalo;
 };
 
@@ -125,6 +125,7 @@ test("preverjanje kopij: e-mail ne gre skozi → dan ni opravljen, ponovi ob nas
   const r1 = await checks.tick();
   assert.equal(r1.koncano, false);
   assert.equal(r1.poslano, null);
+  assert.equal(checks.status().prehodna, false, "prava napaka z neuspelim e-mailom: Straža mora pasti");
   s.mailer.fail = false;
   const r2 = await checks.tick();
   assert.equal(r2.poslano, "2026-11-09");
@@ -148,11 +149,13 @@ test("preverjanje kopij: shramba zunaj trenutno nedosegljiva → en tihi ponovni
   const checks = startBackupChecks(s.store.db, s.file, { scheduler: false, log: s.log, now: () => NOW, env: { ...ENV, ...CLOUD }, mailer: s.mailer, fetchFn, worker: false });
   const r1 = await checks.tick();
   assert.equal(r1.koncano, false);
+  assert.equal(checks.status().prehodna, true);
   assert.equal(s.mailer.sent.length, 0);
   assert.equal(s.logs.error.length, 0);
   assert.equal(s.logs.warn.length, 1);
   const r2 = await checks.tick();
   assert.equal(r2.koncano, true);
+  assert.equal(checks.status().prehodna, false);
   assert.equal(s.mailer.sent.length, 2);
   assert.match(s.mailer.sent[0].text, /seznama kopij zunaj strežnika ni bilo mogoče dobiti/);
   s.done();
