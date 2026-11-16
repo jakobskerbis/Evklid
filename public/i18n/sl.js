@@ -2997,7 +2997,7 @@ export default {
   "meja.sub": "Z naročnino dobiš:",
   "meja.price": "{price} na mesec",
   "meja.more": "Več vprašanj za inštruktorja vsak dan in vsak mesec",
-  "meja.deep": "Podrobnejše razlage z zmogljivejšim modelom",
+  "meja.deep": "Podrobnejše razlage",
   "meja.lessons": "Interaktivni deli lekcij v vseh temah tvoje stopnje",
   "meja.btnParent": "Pošlji povezavo staršu",
   "meja.btnAdult": "Izberi naročnino",

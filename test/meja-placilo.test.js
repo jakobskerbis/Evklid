@@ -136,8 +136,8 @@ test("cena v valuti brez decimalk (XOF) ni 100-krat prenizka", () => {
 
 test("seznam ne obljublja »bolj premišljenih« razlag (meja.deep)", () => {
   const html = limitCardHtml(limitVariant({ body: daily("block.hintAdult"), status: status(), prices }), daily("block.hintAdult"));
-  assert.match(html, /Podrobnejše razlage z zmogljivejšim modelom/);
-  assert.doesNotMatch(html, /premišljen/);
+  assert.match(html, /Podrobnejše razlage/);
+  assert.doesNotMatch(html, /premišljen|model/); // učencem ne govorimo o modelih (test/besedila.test.js)
 });
 
 test("naročnina (tudi pretekla) v drugi valuti kot cenik: kartica brez cene, gumb ostane", () => {
