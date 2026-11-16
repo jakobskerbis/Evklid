@@ -16,13 +16,17 @@ const BAD = ["snap: ana123", "Dodaj me na Insta", "piši 041 123 456", "+386 41 
   "ana at gmail dot com", "ana(a)gmail", "Siol ana", "hotmail ana", "outlook ana", "yahoo ana",
   "youtube ana", "yt: ana", "x.com/ana", "twitter ana", "skype ana", "line ana", "ig ana", "discord ana#1234",
   // Pregled 3: cirilske/grške črke v latinski besedi, manjkajoče končnice.
-  "inst\u0430 ana", "sn\u0430p ana", "y\u043eutube ana", "youtu.be/x", "ana.ai"];
+  "inst\u0430 ana", "sn\u0430p ana", "y\u043eutube ana", "youtu.be/x", "ana.ai",
+  // Pregled 4: poševnica (041/123-456), mobilna brez ničle, »dot«/»pika« z besedo, {at}, manjkajoče končnice, ig_/tt:, tik-tok.
+  "041/123-456", "041/123 456", "01/234-56-78", "41 123 456", "ana dot com", "ana at sola dot si", "ana pika si", "ana{at}x", "linktr.ee/ana", "ana.online", "ana.dev", "ana.fr", "tik-tok ana", "whats-app", "ig_ana", "tt: ana"];
 const OK = ["8.b", "Matematiki 2025/26", "Razred 2025 2026", "Prijatelji", "Ekipa 7.a", "Fizika 9", "Instrumenti", "Snaga", "Diskretna matematika", "Igralci", "Tigri", "Šah 1 2 3", "Messi fans",
   "STEAM 8.a", "Steam ekipa", "2025/2026 7.a", "Razred 2025/2026", "OŠ Ig 7.a", "Matematični krožek", "Atom", "Pika in Nik", "Ekipa 7.a, 7.b in 7.c",
   // Pregled 3: šolsko leto z vezajem/pomišljajem/presledkom, ŠC brez strešice, kraj Ig, šumniki za piko, cirilica in grščina.
   "2025-2026 7.a", "2025.-2026. 3.b", "Šk. l. 2025–2026 9.b", "Odeljenje 7-3 2025-2026", "2025 2026 8.b", "SC Velenje", "Ig 7.b", "Gimn. Ruše", "8. Mešana skupina", "2. Sičevo",
   "\u041f\u0443\u0442\u043d\u0438\u0446\u0438 7", "\u041e\u0434\u0435\u0459\u0435\u045a\u0435 8-2", "\u03a4\u03ac\u03be\u03b7 7\u03b1",
-  "\u0915\u0915\u094d\u0937\u093e \u096d", "\u0627\u0644\u0635\u0641 \u0667\u0628", "\u06a9\u0644\u0627\u0633\u200c\u0647\u0641\u062a\u0645"];
+  "\u0915\u0915\u094d\u0937\u093e \u096d", "\u0627\u0644\u0635\u0641 \u0667\u0628", "\u06a9\u0644\u0627\u0633\u200c\u0647\u0641\u062a\u0645",
+  // Pregled 4: datumi, ulomki in število učencev niso telefon.
+  "Razred 7.b, 12. 11. 2025", "Kviz 30.11.2025", "7.a 41 učencev", "Fizika 1/2", "9.a/9.b 2025/26", "Tekmovanje 2025/26 - 1/8 finala", "Pika si"];
 
 test("ime skupine: kontakti zavrnjeni, navadna imena razredov in skupin ne", () => {
   assert.deepEqual(BAD.filter((n) => !nameHasContact(n)), []);
