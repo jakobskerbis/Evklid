@@ -1374,6 +1374,7 @@
   },
   "credit.paid": "Zahlung erfolgreich. Die zusätzlichen Gespräche wurden gutgeschrieben.",
   "credit.pending": "Wir prüfen die Zahlung noch. Die Gespräche werden gutgeschrieben, sobald die Bank sie bestätigt.",
+  "credit.payTotal": "Weiter für insgesamt {price}",
   "nav.games": "Spiele",
   "games.meSub": "Lernen mit Spielen",
   "games.intro": "Spielen und lernen: {n} Spiele für Mathe, Physik, Chemie, Biologie und mehr. Die Schwierigkeit passt sich dir an.",

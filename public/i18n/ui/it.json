@@ -1374,6 +1374,7 @@
   },
   "credit.paid": "Pagamento riuscito. Le conversazioni extra sono state accreditate.",
   "credit.pending": "Stiamo ancora verificando il pagamento. Le conversazioni vengono accreditate quando la banca lo conferma.",
+  "credit.payTotal": "Continua per {price} in totale",
   "nav.games": "Giochi",
   "games.meSub": "Imparare giocando",
   "games.intro": "Gioca e impara: {n} giochi di matematica, fisica, chimica, biologia e altro. La difficoltà si adatta a te.",

@@ -1374,6 +1374,7 @@
   },
   "credit.paid": "Pagesa u krye. Bisedat shtesë u shtuan.",
   "credit.pending": "Po e kontrollojmë ende pagesën. Bisedat shtohen kur banka ta konfirmojë.",
+  "credit.payTotal": "Vazhdo për gjithsej {price}",
   "nav.games": "Lojëra",
   "games.meSub": "Të mësuarit me lojëra",
   "games.intro": "Luaj dhe mëso: {n} lojëra për matematikë, fizikë, kimi, biologji e më shumë. Vështirësia përshtatet me ty.",

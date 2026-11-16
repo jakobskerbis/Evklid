@@ -1367,6 +1367,7 @@
   },
   "credit.paid": "付款成功。额外对话已到账。",
   "credit.pending": "我们仍在核实付款。银行确认后对话即到账。",
+  "credit.payTotal": "继续，共计 {price}",
   "nav.games": "游戏",
   "games.meSub": "在游戏中学习",
   "games.intro": "边玩边学：{n} 个数学、物理、化学、生物等科目的游戏。难度会随你调整。",

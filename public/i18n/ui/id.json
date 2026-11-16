@@ -1367,6 +1367,7 @@
   },
   "credit.paid": "Pembayaran berhasil. Percakapan tambahan sudah ditambahkan.",
   "credit.pending": "Kami masih memeriksa pembayaran. Percakapan ditambahkan setelah bank mengonfirmasi.",
+  "credit.payTotal": "Lanjut dengan total {price}",
   "nav.games": "Permainan",
   "games.meSub": "Belajar sambil bermain",
   "games.intro": "Bermain dan belajar: {n} game untuk matematika, fisika, kimia, biologi, dan lainnya. Tingkat kesulitan menyesuaikan denganmu.",

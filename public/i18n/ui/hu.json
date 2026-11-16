@@ -1374,6 +1374,7 @@
   },
   "credit.paid": "Sikeres fizetés. Az extra beszélgetéseket jóváírtuk.",
   "credit.pending": "Még ellenőrizzük a fizetést. A beszélgetéseket a banki megerősítés után írjuk jóvá.",
+  "credit.payTotal": "Tovább, összesen {price}",
   "nav.games": "Játékok",
   "games.meSub": "Tanulás játékkal",
   "games.intro": "Játssz és tanulj: {n} játék matekból, fizikából, kémiából, biológiából és más tárgyakból. A nehézség hozzád igazodik.",

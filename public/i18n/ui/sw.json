@@ -1374,6 +1374,7 @@
   },
   "credit.paid": "Malipo yamefaulu. Mazungumzo ya ziada yameongezwa.",
   "credit.pending": "Bado tunathibitisha malipo. Mazungumzo yataongezwa benki ikithibitisha.",
+  "credit.payTotal": "Endelea kwa jumla ya {price}",
   "nav.games": "Michezo",
   "games.meSub": "Kujifunza kwa michezo",
   "games.intro": "Cheza na ujifunze: michezo {n} ya hisabati, fizikia, kemia, biolojia na mengine. Ugumu unajirekebisha kwako.",

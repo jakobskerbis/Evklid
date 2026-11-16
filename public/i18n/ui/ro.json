@@ -1384,6 +1384,7 @@
   },
   "credit.paid": "Plata a reușit. Conversațiile suplimentare au fost adăugate.",
   "credit.pending": "Încă verificăm plata. Conversațiile se adaugă după ce banca o confirmă.",
+  "credit.payTotal": "Continuă pentru {price} în total",
   "nav.games": "Jocuri",
   "games.meSub": "Învățare prin joacă",
   "games.intro": "Joacă și învață: {n} jocuri de matematică, fizică, chimie, biologie și altele. Dificultatea se adaptează la tine.",

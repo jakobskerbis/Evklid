@@ -1374,6 +1374,7 @@
   },
   "credit.paid": "Ödeme başarılı. Ek sohbetler eklendi.",
   "credit.pending": "Ödemeyi hâlâ kontrol ediyoruz. Sohbetler, banka onayladığında eklenir.",
+  "credit.payTotal": "Toplam {price} ile devam et",
   "nav.games": "Oyunlar",
   "games.meSub": "Oynayarak öğrenme",
   "games.intro": "Oyna ve öğren: matematik, fizik, kimya, biyoloji ve daha fazlası için {n} oyun. Zorluk sana göre ayarlanır.",

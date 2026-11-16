@@ -1394,6 +1394,7 @@
   },
   "credit.paid": "Platba proběhla. Další rozhovory byly připsány.",
   "credit.pending": "Platbu ještě ověřujeme. Rozhovory se připíšou, jakmile ji banka potvrdí.",
+  "credit.payTotal": "Pokračovat za celkem {price}",
   "nav.games": "Hry",
   "games.meSub": "Učení hrou",
   "games.intro": "Hraj a uč se: {n} her z matematiky, fyziky, chemie, biologie a dalších předmětů. Obtížnost se ti přizpůsobí.",

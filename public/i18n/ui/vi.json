@@ -1367,6 +1367,7 @@
   },
   "credit.paid": "Thanh toán thành công. Đã cộng thêm cuộc trò chuyện.",
   "credit.pending": "Chúng tôi vẫn đang kiểm tra thanh toán. Cuộc trò chuyện sẽ được cộng khi ngân hàng xác nhận.",
+  "credit.payTotal": "Tiếp tục với tổng cộng {price}",
   "nav.games": "Trò chơi",
   "games.meSub": "Học qua trò chơi",
   "games.intro": "Chơi và học: {n} trò chơi về toán, vật lý, hóa học, sinh học và nhiều môn khác. Độ khó tự điều chỉnh theo bạn.",
