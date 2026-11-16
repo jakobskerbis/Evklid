@@ -395,7 +395,7 @@ test("javne strani: kaj doda naročnina, matura, vprašanja staršev, noga podst
   assert.ok(about.includes(`Brezplačni paket ima ${freeDailyQuestions()} vprašanj inštruktorju na dan, naročnina pa ${personalDailyQuestions("SS")} in podrobnejše razlage.`));
   assert.ok(about.includes(`${personalDailyQuestions("OS")} vprašanj inštruktorju na dan namesto ${freeDailyQuestions()} (na fakulteti ${personalDailyQuestions("FAKS")}).`));
   assert.ok(about.includes("Kaj doda naročnina"));
-  for (const s of ["od 1. do 9. razreda", "vsi letniki in matura, tudi snov osnovne šole", "2–4 profili, osnovna in srednja šola", "2–4 profili, tudi fakulteta", "Priprava na maturo iz matematike, fizike, kemije in biologije", "Celotno rešitev pokaže le, če jo otrok izrecno zahteva"])
+  for (const s of ["od 1. do 9. razreda", "vsi letniki in matura, tudi snov osnovne šole", "2–4 profili, osnovna in srednja šola", "2–4 profili, tudi fakulteta", "Priprava na maturo iz matematike, fizike, kemije in biologije", "Celotno rešitev pokaže le, če jo otrok izrecno zahteva", "novo stopnjo odprto takoj in brez doplačila do konca plačanega obdobja. O novi ceni vas obvestimo 30 dni pred podaljšanjem."])
     assert.ok(about.includes(s), s);
   // Brez obljub, ki jih koda ne drži: naročnina ni neomejena.
   assert.ok(!/neomejen\w* vprašanj|brez dnevne (meje|zapore)/i.test(about));
