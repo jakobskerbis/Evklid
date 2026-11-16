@@ -137,8 +137,8 @@ details .card { margin-top: 8px; }
 .gar-card summary, .podari-card summary { padding: 10px 0; cursor: pointer; font-weight: 600; }
 .gar-card .form label.check input, .podari-card .form label.check input { min-height: 0; padding: 0; }
 
-/* Pristajalna stran za nove obiskovalce pred prijavo (pristajalna.js, j 2026-11-04). Čez vso širino:
-   uvod z zgledom pogovora, nato kartice v stolpcih (telefon 1, tablica 2, računalnik 3–4). */
+/* Pristajalna stran za nove obiskovalce pred prijavo (pristajalna.js, j 2026-11-04; en gumb, j 2026-11-15).
+   Čez vso širino: uvod z zgledom pogovora, nato trije dokazi v stolpcih (telefon 1, računalnik 3). */
 .land { display: flex; flex-direction: column; gap: clamp(32px, 5vw, 64px); }
 .land h2 { font-size: clamp(1.4rem, 2.4vw, 2rem); margin: 0 0 16px; }
 .land h3 { font-size: 1.1rem; margin: 12px 0 6px; }
@@ -148,20 +148,22 @@ details .card { margin-top: 8px; }
   display: grid; gap: 28px; align-items: center; padding: clamp(24px, 4vw, 56px);
   border-radius: var(--radius); color: #fff; background: linear-gradient(135deg, var(--hero-a), var(--hero-b));
 }
-.land-hero h1 { color: #fff; font-size: clamp(2rem, 4.2vw, 3.6rem); line-height: 1.08; font-weight: 900; margin: 10px 0 16px; overflow-wrap: anywhere; }
+.land-hero h1 { color: #fff; font-size: clamp(2rem, 3.6vw, 3.2rem); line-height: 1.1; font-weight: 900; margin: 10px 0 16px; overflow-wrap: anywhere; text-wrap: balance; }
 .land-eyebrow { margin: 0; font-weight: 700; opacity: 0.92; }
 .land-lead { margin: 0 0 24px; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.5; max-width: 62ch; }
 .land-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-.land-actions a { min-height: 48px; padding: 12px 24px; font-size: 1.05rem; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.land-actions a { min-height: 48px; padding: 12px 28px; font-size: 1.05rem; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .land-hero .land-actions a.btn-primary { background: #fff; color: var(--hero-a); box-shadow: 0 var(--press) 0 rgb(0 0 0 / 0.2); }
-.land-hero .land-actions a.btn-secondary { background: transparent; color: #fff; border-color: rgb(255 255 255 / 0.7); }
-.land-actions a:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
-/* Obroba fokusa mora biti vidna na ozadju okrog gumba, ne na gumbu: na prelivu bela, v spodnjem pasu modra */
-.land-hero .land-actions a:focus-visible { outline-color: #fff; }
-.land-cta .land-actions a:focus-visible { outline-color: var(--accent); }
-.land-trial { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; font-weight: 600; }
+/* Obroba fokusa mora biti vidna na ozadju okrog gumba, ne na gumbu: na prelivu bela */
+.land-actions a:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+/* Prijava je navadna povezava pod gumbom, ne drugi gumb (en gumb na strani) */
+.land-login { margin: 12px 0 0; }
+.land-login a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; display: inline-flex; align-items: center; min-height: 40px; padding: 0 4px; margin: -8px -4px; }
+.land-login a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 4px; }
+.land-trial { display: flex; align-items: center; gap: 8px; margin: 12px 0 0; font-weight: 600; }
 .land-trial svg { width: 18px; height: 18px; flex: none; }
-/* Pas pri vrhu: garancija (samo ko jo strežnik oglašuje) in tri dejstva; čez vso širino, na telefonu v stolpcu */
+.land-age { margin: 6px 0 0; font-size: 0.92rem; opacity: 0.92; }
+/* Pas pri vrhu: garancija, samo ko jo strežnik oglašuje */
 .land-top { display: flex; flex-direction: column; gap: 10px; margin-bottom: calc(-1 * clamp(16px, 3.5vw, 44px)); }
 .land-gar { display: flex; align-items: center; gap: 14px; margin: 0; padding: 14px 18px; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid var(--accent); line-height: 1.45; }
 .land-gar-ic { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--accent); color: var(--accent-text); }
@@ -169,15 +171,6 @@ details .card { margin-top: 8px; }
 .land-gar-text { min-width: 0; overflow-wrap: anywhere; }
 .land-gar b { display: block; font-size: 1.1rem; }
 .land-gar a { font-weight: 700; white-space: nowrap; display: inline-block; padding: 8px 0; margin: -8px 0; }
-.land-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px 16px; grid-template-columns: minmax(0, 1fr); font-weight: 700; }
-.land-facts li { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.land-facts svg { flex: none; width: 18px; height: 18px; color: var(--accent); }
-@media (min-width: 700px) {
-  .land-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0 4px; }
-  .land-facts li { justify-content: center; text-align: center; }
-  .land-facts li:first-child { justify-content: flex-start; }
-  .land-facts li:last-child { justify-content: flex-end; }
-}
 /* Zgled pogovora: učenec desno, inštruktor levo (v RTL zrcaljeno) */
 .land-demo { margin: 0; padding: 16px; border-radius: var(--radius); background: var(--surface); color: var(--text); box-shadow: 0 20px 50px rgb(0 0 0 / 0.25); min-width: 0; }
 .land-demo figcaption { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border); }
@@ -189,23 +182,11 @@ details .card { margin-top: 8px; }
 .land-msg.me { align-self: flex-end; background: var(--accent); color: var(--accent-text); border-end-end-radius: 4px; }
 .land-msg.tutor { align-self: flex-start; background: var(--surface-2); border-end-start-radius: 4px; }
 @keyframes land-in { from { opacity: 0; transform: translateY(6px); } }
-/* Kartice */
+/* Trije dokazi */
 .land-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
 .land-grid > .card { padding: 20px; display: flex; flex-direction: column; min-width: 0; }
 .land-ic { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); }
 .land-ic svg { width: 22px; height: 22px; }
-.land-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-top: auto !important; padding-top: 14px; }
-.land-price b { font-size: 1.25rem; color: var(--text); }
-.land-note { margin: 12px 0 0; color: var(--muted); }
-.land-grid > .land-step { flex-direction: row; gap: 14px; align-items: flex-start; }
-.land-step h3 { margin-top: 6px; }
-.land-num { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-text); font-weight: 800; font-size: 1.1rem; }
-.land-more a { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin-top: auto; padding-top: 8px; font-weight: 700; text-decoration: none; }
-.land-more a svg { width: 18px; height: 18px; }
-[dir="rtl"] .land-more a svg { transform: scaleX(-1); }
-.land-cta { text-align: center; padding: clamp(28px, 4vw, 48px) var(--rob-strani); border-radius: var(--radius); background: var(--accent-soft); }
-.land-cta .land-actions, .land-cta .land-trial { justify-content: center; }
-.land-cta .land-actions a.btn-secondary { background: var(--surface); }
 .land-foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; font-size: 0.92rem; }
 .land-foot a { min-height: 40px; display: inline-flex; align-items: center; }
 @media (max-width: 520px) {
@@ -213,26 +194,34 @@ details .card { margin-top: 8px; }
 }
 /* Telefon: ikona levo od naslova in opisa, da je kartic na zaslonu več */
 @media (max-width: 559px) {
-  .land-grid > .land-feat, .land-grid > .land-level, .land-grid > .land-more { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 14px; padding: 16px; }
-  .land-feat > *:not(.land-ic), .land-level > *:not(.land-ic), .land-more > *:not(.land-ic) { grid-column: 2; }
-  .land-feat .land-ic, .land-level .land-ic, .land-more .land-ic { grid-row: 1 / span 2; width: 40px; height: 40px; }
-  .land-feat h3, .land-level h3, .land-more h3 { margin: 0 0 4px; }
-  .land-hero h1 { font-size: 2rem; }
-}
-@media (min-width: 560px) {
-  .land-feats, .land-mores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-/* Tablica: tretja kartica »Za starše / šole / aplikacija« sama v vrsti zapolni vso širino */
-@media (min-width: 560px) and (max-width: 859px) {
-  .land-mores > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .land-grid > .land-proof { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 14px; padding: 16px; }
+  .land-proof > *:not(.land-ic) { grid-column: 2; }
+  .land-proof .land-ic { grid-row: 1 / span 2; width: 40px; height: 40px; }
+  .land-proof h3 { margin: 0 0 4px; }
+  .land-hero { padding: 22px 20px; }
+  .land-hero h1 { font-size: 1.75rem; margin: 8px 0 12px; }
+  .land-lead { font-size: 1.02rem; margin-bottom: 18px; }
 }
 @media (min-width: 860px) {
-  .land-levels, .land-steps, .land-mores { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .land-proofs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (min-width: 900px) {
   .land-hero { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(32px, 4vw, 64px); }
 }
-@media (min-width: 1100px) {
-  .land-feats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+/* Razredi, ki jih še uporabljata /o-evklidu in /zakaj-evklid (pristajalna stran jih ne): kartice zmožnosti in stopenj, opomba, spodnji poziv */
+.land-hero .land-actions a.btn-secondary { background: transparent; color: #fff; border-color: rgb(255 255 255 / 0.7); }
+.land-note { margin: 12px 0 0; color: var(--muted); }
+.land-cta { text-align: center; padding: clamp(28px, 4vw, 48px) var(--rob-strani); border-radius: var(--radius); background: var(--accent-soft); }
+.land-cta .land-actions, .land-cta .land-trial { justify-content: center; }
+.land-cta .land-actions a.btn-secondary { background: var(--surface); }
+.land-cta .land-actions a:focus-visible { outline-color: var(--accent); }
+@media (max-width: 559px) {
+  .land-grid > .land-feat, .land-grid > .land-level { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 14px; padding: 16px; }
+  .land-feat > *:not(.land-ic), .land-level > *:not(.land-ic) { grid-column: 2; }
+  .land-feat .land-ic, .land-level .land-ic { grid-row: 1 / span 2; width: 40px; height: 40px; }
+  .land-feat h3, .land-level h3 { margin: 0 0 4px; }
 }
+@media (min-width: 560px) { .land-feats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 860px) { .land-levels { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .land-feats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 #view-auth h1[tabindex="-1"]:focus { outline: none; } /* fokus ob menjavi zaslona prijave je samo za bralnik zaslona */
