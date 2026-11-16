@@ -8,12 +8,15 @@ import { fileURLToPath } from "node:url";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { BRAND } from "../server/brand.js";
+import { startupFiles } from "../server/startup-files.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS } from "../server/accounts/plans.js";
 import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, PUBLIC_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
 import { presolve, claimNote } from "../server/live-check.js";
 import { latestMeasurement, measurementError, pctText, slDate, summarize, tableMd, updateDoc, finalNumbers, codeResult, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
 
 const index = readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
+// Pristajalna stran brez JavaScripta: blok med oznakama scripts/pristajalna-noscript.js (ne <noscript> s slogom v glavi).
+const landingNoscript = () => index.slice(index.indexOf("<!-- pristajalna-noscript: začetek"), index.indexOf("<!-- pristajalna-noscript: konec"));
 const meta = (html, attr, name) => html.match(new RegExp(`<meta ${attr}="${name}" content="([^"]*)"`))?.[1];
 const textOf = (html) => html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ").replace(/\s+/g, " ");
 const ldBlocks = (html) => [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
@@ -44,11 +47,12 @@ test("vstopna stran: naslov, opis, canonical, Open Graph in Twitter", () => {
   assert.ok(meta(index, "property", "og:title") && meta(index, "property", "og:description") && meta(index, "property", "og:image"));
   assert.equal(meta(index, "name", "twitter:card"), "summary");
   assert.ok(!/hreflang/.test(index), "aplikacija nima jezikovnih naslovov URL, zato brez hreflang");
-  // Brez JavaScripta (pomočniki AI strani ne izrišejo) ostane kratek opis in povezava na /o-evklidu.
-  const noscript = index.match(/<noscript>([\s\S]*?)<\/noscript>/)[1];
+  // Brez JavaScripta (pomočniki AI strani ne izrišejo) je pristajalna stran s povezavo na /o-evklidu (scripts/pristajalna-noscript.js).
+  const noscript = landingNoscript();
   assert.ok(noscript.includes('href="/o-evklidu"') && noscript.includes(BRAND.domain));
-  // Povezave v <noscript> ne smejo kazati na datoteke v public/: server/startup-files.js bi jih štel k prvemu odprtju.
-  for (const [, href] of noscript.matchAll(/href="([^"]+)"/g)) assert.ok(!existsSync(new URL(`../public${href}`, import.meta.url)), href);
+  // Povezave v <noscript> (npr. /starsi.html) server/startup-files.js ne šteje k prvemu odprtju.
+  const first = startupFiles(fileURLToPath(new URL("../public/", import.meta.url)).replace(/\/$/, ""), "index.html");
+  for (const [, href] of noscript.matchAll(/href="(\/[^"]+)"/g)) assert.ok(!first.includes(href), href);
 });
 
 test("schema.org v vstopni strani se ujema s cenikom in jeziki vmesnika", () => {
@@ -206,7 +210,7 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   for (const [, id] of html.matchAll(/href="#([\w-]+)"/g)) assert.ok(html.includes(`id="${id}"`), `sidro ${id}`);
   // Povezave na stran: /o-evklidu, vstopna stran brez JavaScripta, llms.txt (z isto meritvijo).
   assert.ok(aboutPage().includes('<a href="/zakaj-evklid">Zakaj Evklid</a>'));
-  assert.ok(index.match(/<noscript>([\s\S]*?)<\/noscript>/)[1].includes('href="/zakaj-evklid"'));
+  assert.ok(landingNoscript().includes('href="/zakaj-evklid"'));
   const llms = llmsTxt();
   assert.ok(llms.includes(`[Zakaj Evklid](${ORIGIN}/zakaj-evklid)`) && llms.includes(accuracy().sentence) && llms.includes(accuracy().sentenceEn));
   assert.ok(llms.includes("Natančnosti drugih orodij nismo merili.") && llms.includes("Other tools were not measured.") && !/\d+ od \d+ rešenih/.test(llms));

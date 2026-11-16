@@ -36,6 +36,8 @@ export function startupFiles(publicDir, entry = "index.html", later = []) {
     return [];
   }
   urls.add("/");
+  // <noscript> (pristajalna stran brez JavaScripta) brskalnik z JavaScriptom ne izriše: njene povezave niso prvo odprtje.
+  html = html.replace(/<noscript>[\s\S]*?<\/noscript>/g, "");
   for (const m of html.matchAll(LOCAL)) {
     const ref = m[1].replace(/^\.\//, "");
     const url = ref.startsWith("/") ? ref : "/" + ref;

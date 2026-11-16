@@ -3902,7 +3902,7 @@
   "land.why": "Why Evklid?",
   "land.provider": "{app} is developed and run by {name}",
   "land.contact": "Contact",
-  "land.noJs": "To sign up or sign in in the browser, turn on JavaScript.",
+  "land.noJs": "Turn on JavaScript in your browser to sign up or sign in.",
   "pay.perStudyYear": "academic year",
   "pay.yearPerMonth": "≈ {price} / month (10 months)",
   "pay.secureCancel": "Payment is processed securely by Stripe. You can cancel your subscription at any time.",
