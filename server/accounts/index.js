@@ -862,7 +862,7 @@ export function mountAccounts(app, store, opts = {}) {
   // Meja velja že, ko ne ostane prostora niti za najcenejši klic (trda meja, server/meje-ai.js).
   function freeBudgetInfo(studentId) {
     const need = aiUsage.minCallUsd();
-    const room = (c) => c.usd - c.spent - (aiUsage.inflight.get(c.key) || 0);
+    const room = (c) => c.usd - c.spent - aiUsage.inflightOf(c);
     for (const c of freeCaps(studentId)) if (room(c) < need) return freeBlock(studentId, c.code);
     return null;
   }
