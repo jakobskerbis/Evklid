@@ -102,7 +102,10 @@ Nad ~800 000× (TEM) se slika prelije v ponazoritev molekul, ki jih v izbranem p
   upodobi.js hrani zadnjih 8 programov (`kljucMolekul`); prevedejo se v ozadju (KHR_parallel_shader_compile). Ko je
   utež molekul 1 (od ~2 400 000×), preparata v polni ločljivosti ne rišemo (molekule ga povsem prekrijejo): predogled
   takoj pokaže molekule v nižji ločljivosti, nato se sloj nariše po pasovih (prvi pas 4 vrstice, nato ~25 ms na pas),
-  da telefon ne zamrzne in grafika ne preseže časovne meje. Po izgubi grafike (`webglcontextlost`) se mikroskop obnovi sam.
+  da telefon ne zamrzne in grafika ne preseže časovne meje. Na namizju (j, 16. 11. 2026: »na racunalniku molekule se
+  vedno niso izrisane«) je splošni program pri 1920 × 1080 po 90 s narisal šele četrtino sloja; s specializiranim so
+  molekule vidne v ~1 s (`test/mikroskop.test.js`). Merilnik časa: Playwright, 360 px s 4× upočasnjenim procesorjem in
+  1280 px, programska grafika (SwiftShader); prava grafična kartica je hitrejša. Po izgubi grafike (`webglcontextlost`) se mikroskop obnovi sam.
 - Gladki ER (`S_GER`, 32): mreža cevk (premer ~45 nm) brez ribosomov, dve prepleteni izočrti šuma; največ v hepatocitih
   (skupaj z glikogenom), v maščobnih celicah in enterocitih; membrana s citokromom P450.
 

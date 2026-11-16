@@ -376,3 +376,21 @@ test("mikroskop: pri atomih se sredina premakne na najbližjo molekulo, ne ostan
     assert.ok(f > 100 && f < 3900, `${x} µm → ${f} nm`);
   }
 });
+
+// j, 16. 11. 2026: »na racunalniku molekule se vedno niso izrisane«. Splošni program molekul (vseh 37 prizorov v eni
+// verigi) se je na namizju prevajal ~20 s in risal ~65 µs na točko: pri 1920 × 1080 je bila po 90 s narisana šele
+// četrtina sloja, ob vsakem premiku pa se je začel znova. Sloj molekul mora risati program, specializiran za pogled.
+test("mikroskop: sloj molekul riše program za en pogled, ne splošnega s 37 prizori", async () => {
+  const upo = fs.readFileSync(path.join(ROOT, "public", "mikroskop", "upodobi.js"), "utf8");
+  assert.doesNotMatch(upo, /import \{[^}]*\bMOLEKULE\b[^}]*\} from "\.\/molekule\.js"/, "upodobi.js ne prevaja splošnega programa");
+  assert.match(upo, /programVzporedno\(gl, molekuleZa\(/);
+  const mod = await import("../public/mikroskop/molekule.js");
+  assert.equal(typeof mod.molekuleZa, "function");
+  const veje = (src) => [...src.matchAll(/^  (?:\} else )?if \(P == (.*)\) \{$/gm)].length;
+  assert.ok(veje(mod.MOLEKULE) > 20);
+  const kode = [...mod.MOLEKULE.matchAll(/^#define P_[A-Z0-9_]+ (\d+)$/gm)].map((m) => +m[1]);
+  for (const pA of kode) assert.ok(veje(mod.molekuleZa({ pA, pB: kode[0], mem: true, memVrsta: 0, atomi: false })) <= 2, `prizor ${pA}`);
+  // ko molekule povsem prekrijejo preparat (utež 1), se preparat v polni ločljivosti ne riše
+  const ui = fs.readFileSync(path.join(ROOT, "public", "mikroskop", "mikroskop.js"), "utf8");
+  assert.match(ui, /const rabiP = kljuc !== pKljuc && !skrit;/);
+});
