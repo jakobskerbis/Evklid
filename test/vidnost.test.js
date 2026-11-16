@@ -314,7 +314,7 @@ test("brez uporabne meritve strani delujejo: razdelek z meritvijo se skrije, ni�
   }
   // /o-evklidu in pristajalna stran: ista zožena trditev o preverjanju kot na /zakaj-evklid (pregled #555).
   const about = textOf(aboutPage());
-  assert.ok(about.includes("Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah odgovor pregleda še zmogljivejši model."));
+  assert.ok(about.includes("Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah v plačljivih paketih odgovor pregleda še zmogljivejši model."));
   assert.ok(!/Številke (torej )?(in rezultate )?izračuna program|ne umetna inteligenca/.test(about));
   assert.ok(readFileSync(new URL("../public/i18n/sl.js", import.meta.url), "utf8").includes('"land.f2.d": "Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah gre odgovor še skozi dodaten pregled."'));
 });
