@@ -178,10 +178,6 @@ details .card { margin-top: 8px; }
   .land-facts li:first-child { justify-content: flex-start; }
   .land-facts li:last-child { justify-content: flex-end; }
 }
-/* Pas zaupanja pod dejstvi (zunanji pregled 16. 11. 2026): povezava na obvestilo o zasebnosti */
-.land-trust { margin: 0; font-size: 0.9rem; font-weight: 600; }
-.land-trust a { color: var(--muted); display: inline-block; padding: 6px 0; }
-@media (min-width: 700px) { .land-trust { padding: 0 4px; } }
 /* Zgled pogovora: učenec desno, inštruktor levo (v RTL zrcaljeno) */
 .land-demo { margin: 0; padding: 16px; border-radius: var(--radius); background: var(--surface); color: var(--text); box-shadow: 0 20px 50px rgb(0 0 0 / 0.25); min-width: 0; }
 .land-demo figcaption { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border); }

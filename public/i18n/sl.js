@@ -4080,7 +4080,6 @@ export default {
   "land.fact1": "Račune preveri program",
   "land.fact2": "Po slovenskem učnem načrtu",
   "land.fact3": "Brez oglasov",
-  "land.trust": "Baza podatkov v EU (Frankfurt) · Brez oglasov in sledilnikov · Podatki se ne uporabljajo za učenje umetne inteligence",
   "land.howTitle": "Kako začneš",
   "land.s1.t": "Ustvari račun",
   "land.s1.d": "Z e-naslovom in geslom.",

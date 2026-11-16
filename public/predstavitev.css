@@ -1,5 +1,5 @@
 /* Javne strani za obiskovalce (Zakaj Evklid, O Evklidu, Za starše, Za šole, Garancija): enak zgornji meni in pas
-   zaupanja (zunanji pregled 16. 11. 2026, osnutek do potrditve j). Barve iz spremenljivk strani, zato tudi v temnem načinu. */
+   zaupanja (zunanji pregled 16. 11. 2026). Barve iz spremenljivk strani, zato tudi v temnem načinu. */
 .mkt-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 14px; }
 .mkt-brand { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text); font-weight: 800; font-size: 1.2rem; text-decoration: none; }
 .mkt-brand img { width: 28px; height: 28px; border-radius: 8px; }
@@ -16,6 +16,6 @@
 .mkt-trust { list-style: none; margin: 0 0 16px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); font-size: 0.92rem; font-weight: 600; line-height: 1.6; }
 /* Vrstica v besedilu (inline): pika ostane na koncu vrstice, ko se pas na telefonu prelomi. */
 .mkt-trust li { display: inline; }
-.mkt-trust li:not(:last-child)::after { content: " · "; color: var(--muted); white-space: pre; }
+.mkt-trust li:not(:last-child)::after { content: "\00a0·"; color: var(--muted); }
 .mkt-trust a { color: var(--accent); }
 .mkt-name span { color: var(--accent); }

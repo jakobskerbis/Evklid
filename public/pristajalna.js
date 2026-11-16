@@ -92,7 +92,6 @@ export function landingHtml({ name, prices = null, money = (x) => String(x) } = 
     <section class="land-top">
       ${gar}
       <ul class="land-facts">${facts}</ul>
-      <p class="land-trust"><a href="/zasebnost.html">${esc(t("land.trust"))}</a></p>
     </section>
     <section class="land-hero">
       <div class="land-hero-text">
