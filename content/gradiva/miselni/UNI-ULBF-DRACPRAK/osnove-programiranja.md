@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Spremenljivka
+  - poimenovana škatla z eno vrednostjo
+  - `Dim tocke As Integer`
+  - tipi: `Integer`, `Long`, `Double`, `String`, `Boolean`
+- Prireditev
+  - `x = x + 3`: izračunaj desno, shrani levo
+  - stara vrednost se izgubi
+  - `b = a` prepiše vrednost, ne povezave
+- Pogojni stavek
+  - `If … ElseIf … Else … End If`
+  - izvede se prva veja, ki drži
+  - napaka: »širši pogoj pred ožjim«
+- Zanka For
+  - `For i = a To b`: $b - a + 1$ ponovitev
+  - po zanki je števec $b + 1$
+- Zanka Do While
+  - neznano število ponovitev, do prazne celice
+  - pazi: brez `i = i + 1` se ne ustavi
+- Makro
+  - `Sub ime() … End Sub`, datoteka `.xlsm`
+  - `Cells(i, 2).Value`, `Range("D1").Value`
+  - Ctrl + Z ga ne razveljavi
+- Tabela sledenja
+  - vrednosti spremenljivk po vsaki ponovitvi
+  - napaka je v prvi drugačni vrstici

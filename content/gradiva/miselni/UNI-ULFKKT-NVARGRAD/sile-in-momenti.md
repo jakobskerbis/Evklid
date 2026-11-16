@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sila kot vektor
+  - komponente $F_x = F\cos\alpha$, $F_y = F\sin\alpha$
+  - rezultanta $\vec{F}_R = \sum\vec{F}_i$
+- Nosilka sile
+  - premik po nosilki učinka ne spremeni
+  - vzporedni premik spremeni vrtilni učinek
+- Moment sile
+  - $M_O = F\,d$, ročica pravokotno na nosilko
+  - v ravnini $M_O = xF_y - yF_x$
+  - napaka: razdalja do prijemališča namesto ročice
+- Varignonov izrek
+  - moment rezultante je vsota momentov komponent
+- Dvojica sil
+  - rezultanta nič, moment $F\,d$
+  - enak glede na vsako točko
+- Redukcija sistema
+  - sila v $A$ = sila v $O$ + dvojica
+  - nosilka rezultante $xF_{Ry} - yF_{Rx} = M_{RO}$
+- Porazdeljena obtežba
+  - rezultanta je ploščina diagrama
+  - enakomerna na sredini, trikotna na tretjini

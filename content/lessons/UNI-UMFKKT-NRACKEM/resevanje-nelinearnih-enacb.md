@@ -196,6 +196,67 @@ $t_2 = 0{,}2 - \dfrac{-0{,}19033}{8{,}14354} \approx 0{,}2 + 0{,}02337 \approx 0
 - Ustavitveni pogoj: popravek oziroma širina intervala pod toleranco in največje število korakov.
 - Primer: zdravilo s $c(t) = 10\,t\,e^{-t/2}$ deluje od približno $0{,}22\,\mathrm{h}$ do $7{,}15\,\mathrm{h}$ po zaužitju.
 
+## Za izpit
+
+Znati moraš povedati:
+- kaj je nelinearna enačba in zakaj jo prevedemo na iskanje ničle $f(x) = 0$;
+- Bolzanov izrek (izrek o vmesnih vrednostih) s pogojema: $f$ zvezna na $[a, b]$ in $f(a)\,f(b) < 0$; zakaj obrat ne velja;
+- postopek bisekcije, širino intervala $\frac{b-a}{2^n}$ po $n$ korakih in izračun potrebnega števila korakov za dano toleranco;
+- izpeljavo Newtonove formule $x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}$ iz enačbe tangente ter primere, ko metoda odpove ($f'(x_n) \approx 0$, slab začetni približek);
+- pomen linearne in kvadratične konvergence ($e_{n+1} \approx C\,e_n^2$) ter zakaj je pri večkratni ničli Newtonova metoda le linearna;
+- ustavitveni pogoj: toleranca $\varepsilon$ in največje število korakov.
+
+### Naloga 1
+
+Ogljikov dioksid je pri $T = 350\,\mathrm{K}$ in $p = 50\,\mathrm{bar}$. Njegovo molsko prostornino $V$ (v $\mathrm{L/mol}$) določa van der Waalsova enačba
+
+$$\left(p + \frac{a_{\mathrm{w}}}{V^2}\right)(V - b_{\mathrm{w}}) = RT,$$
+
+kjer je $a_{\mathrm{w}} = 3{,}640\,\mathrm{L^2\,bar/mol^2}$, $b_{\mathrm{w}} = 0{,}04267\,\mathrm{L/mol}$ in $R = 0{,}083145\,\mathrm{L\,bar/(mol\,K)}$. (a) Enačbo zapiši kot $f(V) = 0$ in izračunaj $f'(V)$. (b) Za začetni približek vzemi molsko prostornino idealnega plina in naredi dva Newtonova koraka; rezultat zaokroži na štiri decimalke. (c) Izračunaj kompresijski faktor $Z = \frac{pV}{RT}$ in povej, kaj pomeni. (d) Koliko korakov bisekcije na intervalu $[0{,}4;\ 0{,}6]$ bi potreboval, da bi bila širina intervala največ $10^{-4}\,\mathrm{L/mol}$?
+
+**Rešitev:**
+
+1. Funkcija: $f(V) = \left(p + \frac{a_{\mathrm{w}}}{V^2}\right)(V - b_{\mathrm{w}}) - RT$. Zmnožimo: $f(V) = pV - pb_{\mathrm{w}} + \frac{a_{\mathrm{w}}}{V} - \frac{a_{\mathrm{w}}b_{\mathrm{w}}}{V^2} - RT$.
+2. Odvod: $f'(V) = p - \frac{a_{\mathrm{w}}}{V^2} + \frac{2a_{\mathrm{w}}b_{\mathrm{w}}}{V^3}$, kjer je $2a_{\mathrm{w}}b_{\mathrm{w}} = 2 \cdot 3{,}640 \cdot 0{,}04267 \approx 0{,}31064$.
+3. Desna stran: $RT = 0{,}083145 \cdot 350 \approx 29{,}1008\,\mathrm{L\,bar/mol}$.
+4. Začetni približek (idealni plin): $V_0 = \frac{RT}{p} = \frac{29{,}1008}{50} \approx 0{,}5820\,\mathrm{L/mol}$.
+5. Prvi korak: $f(0{,}5820) \approx 3{,}6615$, $f'(0{,}5820) \approx 40{,}830$, količnik $\approx 0{,}08968$, zato $V_1 \approx 0{,}5820 - 0{,}08968 = 0{,}49232 \approx 0{,}4923$.
+6. Drugi korak: $f(0{,}4923) \approx 0{,}13375$, $f'(0{,}4923) \approx 37{,}585$, količnik $\approx 0{,}00356$, zato $V_2 \approx 0{,}4923 - 0{,}00356 = 0{,}48874 \approx 0{,}4887$.
+7. Preverimo: $f(0{,}4887) \approx -0{,}0013$, naslednji popravek bi bil le še okoli $3 \cdot 10^{-5}$, zato se četrta decimalka ne spremeni. Popravki padajo kot $0{,}09$; $0{,}004$; $0{,}00003$: kvadratična konvergenca.
+8. Kompresijski faktor: $Z = \frac{50 \cdot 0{,}4887}{29{,}1008} \approx 0{,}840$. Ker je $Z < 1$, je prostornina realnega plina za približno $16\,\%$ manjša od idealne: pri teh pogojih prevladajo privlačne sile med molekulami (člen $\frac{a_{\mathrm{w}}}{V^2}$).
+9. Bisekcija: $f(0{,}4) \approx -3{,}105$ in $f(0{,}6) \approx +4{,}401$, predznaka sta različna. Zahtevamo $\frac{0{,}2}{2^n} \le 10^{-4}$, torej $2^n \ge 2000$. Ker je $2^{10} = 1024$ premalo in $2^{11} = 2048$ dovolj, je $n = 11$.
+10. Odgovor: $V \approx 0{,}4887\,\mathrm{L/mol}$, $Z \approx 0{,}84$; Newton potrebuje $2$ koraka, bisekcija za enako natančnost $11$.
+
+### Naloga 2
+
+Izpelji Newtonovo iteracijsko formulo iz enačbe tangente. Nato natančno navedi pogoje, pod katerimi bisekcija zagotovo konvergira, in oceno napake po $n$ korakih ter utemelji, zakaj Newtonova metoda takega zagotovila nima.
+
+**Rešitev:**
+
+1. Tangenta na graf $f$ v točki $(x_n, f(x_n))$ ima enačbo $y = f(x_n) + f'(x_n)\,(x - x_n)$.
+2. Novi približek $x_{n+1}$ je presečišče tangente z osjo $x$, torej $y = 0$: $0 = f(x_n) + f'(x_n)\,(x_{n+1} - x_n)$.
+3. Če je $f'(x_n) \ne 0$, delimo: $x_{n+1} - x_n = -\frac{f(x_n)}{f'(x_n)}$, torej $x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}$.
+4. Bisekcija: če je $f$ zvezna na $[a, b]$ in je $f(a)\,f(b) < 0$, po Bolzanovem izreku obstaja ničla $r \in (a, b)$. V vsakem koraku obdržimo polovico, na kateri se predznak še menja, zato pogoja veljata tudi na novem intervalu in ničla ostane ujeta.
+5. Ocena napake: po $n$ korakih je širina intervala $\frac{b-a}{2^n}$, njegova sredina pa je od ničle oddaljena največ $\frac{b-a}{2^{n+1}}$. Ta meja gre proti $0$, zato bisekcija konvergira za vsako tako funkcijo, in sicer linearno.
+6. Newton nima ujetega intervala: približek je odvisen le od tangente v eni točki. Če je $f'(x_n) = 0$, tangenta osi ne seka in formula deli z nič; če je $f'(x_n)$ majhen, približek odleti daleč in lahko konvergira k drugi ničli ali sploh ne.
+7. Sklep: kvadratična konvergenca Newtonove metode je zagotovljena le v dovolj majhni okolici enostavne ničle ($f'(r) \ne 0$, $f$ dvakrat zvezno odvedljiva). Zato program potrebuje največje število korakov, začetni približek pa pogosto poiščemo z bisekcijo.
+
+### Naloga 3
+
+(a) Za $f(x) = x^2 - 2$ pokaži, da Newtonovi približki zadoščajo $x_{n+1} - \sqrt{2} = \frac{(x_n - \sqrt{2})^2}{2x_n}$. Z $x_0 = 1{,}5$ izračunaj $x_1$ in $x_2$ ter njuni napaki. (b) Za $g(x) = x^2$ pokaži, da je konvergenca le linearna, in izračunaj, koliko korakov iz $x_0 = 1$ potrebuješ za napako največ $10^{-6}$. Utemelji razliko.
+
+**Rešitev:**
+
+1. Za $f(x) = x^2 - 2$ je $f'(x) = 2x$, zato $x_{n+1} = x_n - \frac{x_n^2 - 2}{2x_n} = \frac{x_n^2 + 2}{2x_n}$.
+2. Odštejemo $\sqrt{2}$: $x_{n+1} - \sqrt{2} = \frac{x_n^2 - 2\sqrt{2}\,x_n + 2}{2x_n} = \frac{(x_n - \sqrt{2})^2}{2x_n}$. Nova napaka je sorazmerna s kvadratom stare, kar je kvadratična konvergenca s $C \approx \frac{1}{2\sqrt{2}} \approx 0{,}354$.
+3. Začetna napaka: $e_0 = 1{,}5 - \sqrt{2} \approx 0{,}0858$.
+4. Prvi korak: $x_1 = \frac{1{,}5^2 + 2}{2 \cdot 1{,}5} = \frac{4{,}25}{3} \approx 1{,}416667$, napaka $e_1 \approx 0{,}00245$. Preverimo: $\frac{0{,}0858^2}{3} \approx 0{,}00245$.
+5. Drugi korak: $x_2 = \frac{577}{408} \approx 1{,}4142157$, napaka $e_2 \approx 2{,}1 \cdot 10^{-6}$. Naslednja bi bila že $1{,}6 \cdot 10^{-12}$: eksponent se vsakič približno podvoji.
+6. Za $g(x) = x^2$ je $g'(x) = 2x$, zato $x_{n+1} = x_n - \frac{x_n^2}{2x_n} = \frac{x_n}{2}$. Ničla je $r = 0$, torej $e_{n+1} = \frac{1}{2}\,e_n$: napaka se le razpolavlja, konvergenca je linearna, enako počasna kot pri bisekciji.
+7. Število korakov: $e_n = \frac{1}{2^n} \le 10^{-6}$, torej $2^n \ge 10^6$. Ker je $2^{19} = 524\,288$ premalo in $2^{20} = 1\,048\,576$ dovolj, je $n = 20$.
+8. Utemeljitev: $\sqrt{2}$ je enostavna ničla, $f'(\sqrt{2}) = 2\sqrt{2} \ne 0$. Pri $g$ je $r = 0$ dvojna ničla in $g'(0) = 0$; ulomek $\frac{g(x_n)}{g'(x_n)}$ ima blizu ničle majhen števec in majhen imenovalec, zato se kvadratična konvergenca izgubi.
+9. Odgovor: pri $x^2 - 2$ sta napaki $0{,}00245$ in $2{,}1 \cdot 10^{-6}$ (dva koraka), pri $x^2$ pa za napako $10^{-6}$ potrebuješ $20$ korakov.
+
 ## Drugače: Kot zgodba
 
 Na urgenci dežurata dve specializantki, Maja in Nina. Primarij jima naroči, naj ugotovita, kdaj bo zdravilo nehalo delovati.
@@ -244,7 +305,7 @@ za neki $\xi_n$ med $x_n$ in $r$. Zato obstaja okolica ničle, v kateri metoda k
 + Približki so se ustalili: zadnji popravek je bil manjši od izbrane tolerance.
 - Funkcija ima na krajiščih intervala različna predznaka.
 ~ To je začetni pogoj za bisekcijo, ne pomen konvergence. Newton sploh ne dela z intervalom.
-- Zanka je izvedla vseh dovoljenih korakov.
+- Zanka je izvedla vse dovoljene korake.
 ~ Ravno nasprotno: če zmanjka korakov, metoda ni konvergirala in program javi napako.
 > Konvergenca pomeni, da se zaporedje približkov približuje ničli; v programu to prepoznamo po tem, da je popravek $|x_{n+1} - x_n|$ padel pod toleranco.
 
@@ -274,9 +335,9 @@ za neki $\xi_n$ med $x_n$ in $r$. Zato obstaja okolica ničle, v kateri metoda k
 
 ? Bisekcijo začnemo na $[0, 1]$. Koliko korakov potrebujemo, da je širina intervala največ $0{,}001$?
 - $3$
-~ En korak ne prinese cele decimalke, le razpolovi interval. Za decimalko je treba okoli $3{,}3$ korakov.
+~ En korak ne prinese cele decimalke, le razpolovi interval. Za decimalko je treba okoli $3{,}3$ koraka.
 - $1000$
-~ To bi bilo tabeliranje s korakom $0{,}001$. Bisekcija vsakič prepolovi interval, zato raste eksponentno $2^n$.
+~ To bi bilo tabeliranje s korakom $0{,}001$. Bisekcija vsakič prepolovi interval, zato natančnost raste eksponentno, kot $2^n$.
 + $10$
 > $2^n \ge \frac{1}{0{,}001} = 1000$. Ker je $2^9 = 512$ premalo in $2^{10} = 1024$ dovolj, je $n = 10$.
 
@@ -297,4 +358,10 @@ a, b | krajišči intervala z ničlo | | | f(a) in f(b) imata različna predznak
 m | sredina intervala (bisekcija) | m = \frac{a+b}{2}
 n | število korakov (zaporedna številka približka)
 \varepsilon | toleranca (dovoljena napaka) | | | ustavitveni pogoj
+V | molska prostornina plina (Za izpit) | | L/mol
+p | tlak plina | | bar
+T | temperatura plina | | K
+R | splošna plinska konstanta | | L bar/(mol K) | R = 0,083145 L bar/(mol K)
+Z | kompresijski faktor | Z = \frac{pV}{RT} | | Z = 1 za idealni plin
+a_{\mathrm{w}}, b_{\mathrm{w}} | van der Waalsovi konstanti plina (Za izpit) | | | za CO₂: 3,640 L² bar/mol² in 0,04267 L/mol
 :::

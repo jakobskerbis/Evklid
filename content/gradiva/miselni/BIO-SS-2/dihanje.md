@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mrtvi prostor
+  - zrak v dihalnih poteh, okoli $0{,}15\,\mathrm{L}$
+  - $V_\mathrm{A} = f \cdot (V_\mathrm{d} - V_\mathrm{mp})$
+  - globlje dihanje je učinkovitejše od plitkega
+- Ventilacija
+  - prepona se skrči, tlak v pljučih pade
+  - mirni izdih je pasiven
+  - napaka: pljuča sama vsrkajo zrak
+- Pot zraka
+  - nos, žrelo, grlo, sapnik, sapnici
+  - bronhioli do pljučnih mehurčkov
+- Difuzija plinov
+  - od višjega k nižjemu delnemu tlaku
+  - $J \propto \dfrac{A \cdot \Delta p}{d}$
+- Pljučni mehurčki
+  - okoli $70\,\mathrm{m^2}$ površine
+  - tanka, vlažna pregrada
+- Škrge in vzdušnice
+  - škrge: protitok vode in krvi
+  - vzdušnice vodijo zrak naravnost do celic
+- Bolezni dihal
+  - astma zoži bronhiole
+  - emfizem zmanjša površino
+  - pljučnica odebeli pregrado

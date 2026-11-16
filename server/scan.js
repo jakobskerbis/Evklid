@@ -6,6 +6,38 @@
 // (public/scan/verify.js); nepreverjena se pokaže z opozorilom, nikoli kot »preverjeno«.
 import { getClient, isMockMode, quickParams, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
 import { verifyAi } from "../public/scan/verify.js";
+import { prep, splitSystem } from "../public/scan/solvecore.js";
+import { casCheck } from "./cas.js";
+
+// AI rešitev preverita dve neodvisni kodi: numerična (public/scan/verify.js) in SymPy (server/cas.js).
+// SymPy je odločilen, kadar se odloči (true/false); kadar ne zna (null), velja numerično preverjanje.
+// Ujame tudi rešitve izven numeričnega iskanja (|x| > 10⁶) in točne vrednosti (√2 proti 1,414).
+// Pri nalogi s podatki (given) je besedilo le predloga s parametri: tam SymPy ne odloča.
+export async function verifyAiFull(text, sol, { cas = true } = {}) {
+  const num = verifyAi(text, sol);
+  const c = cas ? await casScan(text, sol).catch(() => ({ ok: null })) : { ok: null };
+  if (c.ok === true) return { verified: true, reason: null };
+  if (c.ok === false) return { verified: false, reason: num.reason === "missing" ? "missing" : "wrong", missing: num.missing || [], cas: c.why };
+  return num;
+}
+
+async function casScan(text, sol) {
+  const v = /^[a-zA-Z]$/.test(sol?.variable || "") ? sol.variable : "x";
+  const sols = (sol?.solutions || []).map((x) => String(x).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "").trim()).filter(Boolean);
+  if (sol?.kind === "equation") return casCheck("solve", [prep(text), v, sols.length ? sols.join(", ") : "none"]);
+  if (sol?.kind === "system") {
+    const eqs = (splitSystem(text) || String(text).split(/;|\n/).filter((x) => x.includes("="))).map((e) => prep(e));
+    const names = [...new Set(eqs.join(" ").match(/\b[a-z]\b/g) || [])].filter((n) => n !== "e");
+    if (!eqs.length || (sol.solutions || []).length !== 1) return { ok: null };
+    return casCheck("solve", [eqs.join(", "), names.join(", "), String(sol.solutions[0]).replace(/;/g, ",")]);
+  }
+  if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [prep(text), prep(sol.value)]);
+  if (sol?.kind === "derivative" && sol.value) {
+    const f = String(text).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, "");
+    return casCheck("diff", [prep(f), v, prep(sol.value)]);
+  }
+  return { ok: null };
+}
 import { languagePrompt } from "./prompt.js";
 import { imageCallReserveUsd, callMaxUsd } from "./meje-ai.js";
 
@@ -162,11 +194,11 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }
   };
   let out = await ask(null);
   let usage = [out.usage];
-  let check = out.sol ? verifyAi(text, out.sol) : { verified: false, reason: "parse" };
+  let check = out.sol ? await verifyAiFull(text, out.sol, { cas: !given.length }) : { verified: false, reason: "parse" };
   // Ena ponovitev, kadar preverjanje pokaže napačno ali manjkajočo rešitev. Pri nalogi s podatki (parametri)
   // preverjanje vidi le predlogo f(x) = …, zato ponovitve ne sproži (rešitev ostane označena kot nepreverjena).
   if (out.sol && !given.length && !check.verified && (check.reason === "wrong" || check.reason === "missing")) {
-    const fb = check.reason === "missing" ? `x ≈ ${check.missing.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation` : "substituting your result back does not give the original";
+    const fb = check.cas ? `an exact check says: ${check.cas}` : check.reason === "missing" ? `x ≈ ${check.missing.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation` : "substituting your result back does not give the original";
     // Napaka ponovitve (529, povezava) ne sme odnesti plačanega prvega klica (pregled #462 L3): ostane prva rešitev.
     let again = null;
     try {
@@ -176,7 +208,7 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }
     }
     if (again) {
       usage.push(again.usage);
-      const c2 = again.sol ? verifyAi(text, again.sol) : { verified: false };
+      const c2 = again.sol ? await verifyAiFull(text, again.sol, { cas: !given.length }) : { verified: false };
       if (again.sol && (c2.verified || !out.sol)) {
         out = again;
         check = c2;

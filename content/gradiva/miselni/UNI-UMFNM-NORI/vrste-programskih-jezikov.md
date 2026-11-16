@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lestvica jezikov
+  - spodaj procesor, zgoraj človek
+  - ena vrstica višje, več vrstic nižje
+- Strojni jezik
+  - dvojiški ukazi, npr. `0010 1110`
+  - vsaka družina procesorjev svoj nabor
+- Zbirni jezik
+  - mnemoniki LOAD, ADD, STORE
+  - ena vrstica je en strojni ukaz
+  - zbirnik, neprenosljiv
+- Višji jeziki
+  - C, Java, Python: kako
+  - prevajalnik vnaprej, tolmač sproti
+  - bajtna koda in JIT
+- Četrta generacija
+  - deklarativno: kaj želim
+  - SQL `SELECT … WHERE …`
+  - ozko področje
+- Izbira jezika
+  - nadzor in hitrost: nižje
+  - hitro pisanje, prenos: višje
+  - napaka: višja generacija ni vedno boljša

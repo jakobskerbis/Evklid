@@ -60,11 +60,21 @@ Prosti elektroni prevajajo tok in toploto. Plasti kationov lahko drsijo druga ob
 
 Kako polarna je vez, pove $\Delta\mathrm{EN}$. Predstavljaj si cesto s kilometrskimi kamni:
 
-```
-ΔEN: 0 —— 0,4 ——————— 1,7 ——————— 3,3
-   nepolarna  polarna      ionska
-             kovalentna
-```
+:::risba premica
+opis: Številska premica za razliko elektronegativnosti ΔEN od 0 do 3,3 z mejama 0,4 in 1,7. Od 0 do 0,4 je nepolarna kovalentna vez, od 0,4 do 1,7 polarna kovalentna vez, od 1,7 do 3,3 ionska vez.
+od: 0
+do: 3,3
+korak: 0,1
+oznake: ne
+oznaka: 0 | 0
+oznaka: 0,4 | 0,4
+oznaka: 1,7 | 1,7
+oznaka: 3,3 | 3,3
+interval: 0 .. 0,4 | nepolarna | zelena
+interval: 0,4 .. 1,7 | polarna | modra
+interval: 1,7 .. 3,3 | ionska | oranžna
+podnapis: Razlika elektronegativnosti ΔEN. Nepolarna in polarna vez sta kovalentni.
+:::
 
 Meji $0{,}4$ in $1{,}7$ sta dogovorjeni, prehod je zvezen. Ionska vez je skrajno polarna vez: par je tako močno na eni strani, da elektron preide k drugemu atomu. V simulaciji spodaj »Polarnost vezi in elektronegativnost« izberi vodik in mu zapored dodaj fluor, klor, brom in jod. Opazuj, kako se $\Delta\mathrm{EN}$ manjša in se par pomika proti sredini. Pri $\mathrm{HF}$ ($\Delta\mathrm{EN} \approx 1{,}8$) simulacija pokaže ionsko vez, čeprav je $\mathrm{HF}$ molekula s polarno kovalentno vezjo: meja $1{,}7$ je le dogovor.
 

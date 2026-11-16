@@ -145,9 +145,9 @@ export default async function narisi(host, { potem } = {}) {
   // Drsniki so skoraj zvezni: τ se pripne na 0° (krožnica) in na 90° − α (parabola), h na 0 (skozi vrh),
   // ko so manj kot pol stopinje oz. 0,05 stran, sicer bi teh posebnih presekov z drsnikom ne mogel zadeti.
   const pripni = (v, cilji, d) => cilji.find((c) => Math.abs(v - c) < d) ?? v;
-  const sTau = polje(S.drsnik({ label: "naklon τ (°)", min: 0, max: 90, step: 1, value: tau, digits: 1, barva: "izbor", onInput: (v) => (ustavi(), (tau = pripni(v, [0, 90 - alfa], 0.5)), tau !== v && sTau.set(tau, true), posodobi()) }), 0, 90, 0.1, 1);
+  const sTau = polje(S.drsnik({ label: "naklon τ (°)", min: 0, max: 90, step: 1, value: tau, digits: 1, barva: "izbor", onInput: (v) => (ustavi(), (tau = pripni(v, [0, 90 - alfa], 0.5)), tau !== v && sTau.set(tau, true), posodobi()) }), 0, 90, 0.01, 2);
   const sH = polje(S.drsnik({ label: "višina h", min: -1, max: 1, step: 0.1, value: hh, digits: 2, barva: "ploskev", onInput: (v) => (ustavi(), (hh = pripni(v, [0], 0.05)), hh !== v && sH.set(hh, true), posodobi()) }), -1, 1, 0.01, 2);
-  const sA = polje(S.drsnik({ label: "polovični kot α (°)", min: 15, max: 60, step: 1, value: alfa, digits: 1, barva: "ploskev", onInput: (v) => (ustavi(), (alfa = pripni(v, [90 - tau], 0.5)), alfa !== v && sA.set(alfa, true), gotovo && zgradiStozec(), posodobi()) }), 15, 60, 0.1, 1);
+  const sA = polje(S.drsnik({ label: "polovični kot α (°)", min: 15, max: 60, step: 1, value: alfa, digits: 1, barva: "ploskev", onInput: (v) => (ustavi(), (alfa = pripni(v, [90 - tau], 0.5)), alfa !== v && sA.set(alfa, true), gotovo && zgradiStozec(), posodobi()) }), 15, 60, 0.01, 2);
 
   cipi(); // oznaka in čipi že med nalaganjem Three.js
 
@@ -165,7 +165,7 @@ export default async function narisi(host, { potem } = {}) {
     napis.textContent = v.toUpperCase();
     seg.set(hh === 0 || skoziVrh(tau, hh) ? "Skozi vrh" : VRSTE.find((x) => x.toLowerCase() === v) || "", true);
     S.cipi([
-      { barva: "izbor", oznaka: `\\tau ${znak} 90^\\circ - \\alpha`, vrednost: `${st(tau, 1)}° ${znak} ${st(90 - alfa, 1)}°` },
+      { barva: "izbor", oznaka: `\\tau ${znak} 90^\\circ - \\alpha`, vrednost: `${st(tau, 2)}° ${znak} ${st(90 - alfa, 2)}°` },
       { barva: "glavna", oznaka: "e = \\frac{\\sin \\tau}{\\cos \\alpha}", vrednost: skoziVrh(tau, hh) ? "–" : vr(e, 3) },
     ]);
   }

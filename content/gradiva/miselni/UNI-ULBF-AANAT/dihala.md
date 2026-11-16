@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prevodni in respiracijski del
+  - nos do končnih bronhiolov: brez izmenjave
+  - mrtvi prostor okoli $150\,\mathrm{mL}$
+- Zgornja dihalna pot
+  - tri nosne školjke, obnosne votline
+  - žrelo: nosni, ustni, grlni del
+  - grlo $\mathrm{C3}$–$\mathrm{C6}$, poklopec, glasilna špranja
+- Sapnik in bronha
+  - C-hrustanci, karina v višini $\mathrm{T4}$–$\mathrm{T5}$
+  - desni bronh kratek, širok, strm
+- Pljučni krili
+  - desno $3$ režnji, levo $2$ in lingula
+  - segment: svoj bronh in arterija
+  - hilus: bronh, arterija, dve veni
+- Alveole
+  - pnevmociti I in II, surfaktant
+  - pregrada okoli $0{,}5\,\mathrm{\mu m}$
+- Plevra in meje
+  - pljuča $6$–$8$–$10$, plevra $8$–$10$–$12$
+  - rebrno-prepončni recesus
+- Torakocenteza
+  - nad zgornjim robom spodnjega rebra
+  - medrebrni snop ob spodnjem robu rebra

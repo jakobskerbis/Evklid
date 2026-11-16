@@ -18,10 +18,9 @@ import { fileURLToPath } from "node:url";
 import { DatabaseSync } from "node:sqlite";
 import { BRAND } from "../server/brand.js";
 import { listBackups, checkFile, makeBackup, restoreFile, savedBeforeRestore } from "../server/kopije.js";
-import { encryptionStats } from "../server/zasebnost.js";
+import { verifyBackup } from "../server/kopije-preizkus.js";
 import { cloudConfig, listCloud, uploadBackup, downloadBackup } from "../server/kopije-oblak.js";
 
-const TABLES = ["parents", "students", "conversations", "messages", "events", "tasks"];
 const HELP = `Uporaba:
   node scripts/obnovi-kopijo.js               seznam kopij
   node scripts/obnovi-kopijo.js --zdaj        kopija takoj
@@ -33,40 +32,8 @@ const HELP = `Uporaba:
   node scripts/obnovi-kopijo.js --oblak-zdaj  takoj naloži najnovejšo kopijo v shrambo zunaj strežnika
   node scripts/obnovi-kopijo.js --oblak-prenesi LLLL-MM-DD   prenese kopijo od zunaj (nato obnova z LLLL-MM-DD-0000)`;
 
-/** Preizkus obnove: kopija je cela, pogovori berljivi s sedanjim ključem, števila vrstic v primerjavi z bazo. */
-export function verifyBackup(dbFile, backupFile) {
-  const out = { file: backupFile, ok: true, notes: [], counts: {}, unreadable: 0 };
-  const integrity = checkFile(backupFile);
-  if (integrity !== "ok") return { ...out, ok: false, notes: [`kopija ni cela: ${integrity}`] };
-  const live = new DatabaseSync(dbFile, { readOnly: true });
-  const copy = new DatabaseSync(backupFile, { readOnly: true });
-  try {
-    const names = (db) => new Set(db.prepare("SELECT name FROM sqlite_master WHERE type = 'table'").all().map((r) => r.name));
-    const liveTables = names(live);
-    const copyTables = names(copy);
-    const missing = [...liveTables].filter((t) => !copyTables.has(t));
-    // Tabela, ki jo je dodala novejša različica po kopiji, se ob zagonu ustvari sama.
-    if (missing.length) out.notes.push(`tabele, ki jih kopija še nima (nastanejo ob zagonu): ${missing.join(", ")}`);
-    for (const t of TABLES.filter((x) => liveTables.has(x) && copyTables.has(x))) {
-      const n = (db) => db.prepare(`SELECT COUNT(*) AS n FROM "${t}"`).get().n;
-      out.counts[t] = { kopija: n(copy), baza: n(live) };
-    }
-    if (!Object.keys(out.counts).length) {
-      out.ok = false;
-      out.notes.push("v kopiji ni nobene od glavnih tabel");
-    }
-    // Šifrirani pogovori: s sedanjim EVKLID_DATA_KEY (in EVKLID_DATA_KEYS_OLD) jih je treba znati prebrati.
-    out.unreadable = encryptionStats(copy).reduce((a, s) => a + s.unreadable, 0);
-    if (out.unreadable) {
-      out.ok = false;
-      out.notes.push(`${out.unreadable} šifriranih vrstic se s sedanjim ključem ne da prebrati (EVKLID_DATA_KEY, docs/varnost-podatkov.md)`);
-    }
-  } finally {
-    live.close();
-    copy.close();
-  }
-  return out;
-}
+// Preizkus obnove je v server/kopije-preizkus.js (isti strežnik požene vsako noč, server/kopije-preveri.js); izvoz ostane za teste.
+export { verifyBackup };
 
 /** Pripravi obnovo: kopijo prekopira v obnovi.db (strežnik jo uporabi ob zagonu v naslednji uri). */
 export function prepareRestore(dbFile, backupFile) {

@@ -62,7 +62,7 @@ export default function narisi(host) {
       if (S.svg.lastChild !== tocka) S.svg.append(tocka); // točka ostane nad likom (premik bi ji vzel fokus)
     }
     S.cipi([
-      { barva: "izbor", oznaka: "\\alpha", vrednost: `${st(q.alfa, 1)}°` },
+      { barva: "izbor", oznaka: "\\alpha", vrednost: `${st(q.alfa, 2)}°` },
       { barva: "ploskev", oznaka: "\\sin\\alpha = \\frac{a}{c}", vrednost: `${st(q.a)} : 5 ≈\u00a0${st(q.sin, 3)}` },
       { barva: "druga", oznaka: "\\cos\\alpha = \\frac{b}{c}", vrednost: `${st(q.b)} : 5 ≈\u00a0${st(q.cos, 3)}` },
       { barva: "glavna", oznaka: "\\tan\\alpha = \\frac{a}{b}", vrednost: `${st(q.a)} : ${st(q.b)} ≈\u00a0${st(q.tan, 3)}` },

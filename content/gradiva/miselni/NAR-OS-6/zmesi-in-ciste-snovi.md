@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Čista snov
+  - ena snov, stalne lastnosti
+  - destilirana voda, zlato, silicij
+- Zmes
+  - dve ali več snovi
+  - sestavine ohranijo lastnosti
+- Heterogena zmes
+  - sestavine razločiš, vsaj z mikroskopom
+  - olje in voda, granit, mleko
+- Homogena zmes
+  - povsod enaka sestava
+  - zrak, zlitine (spajka)
+- Raztopina
+  - topljenec v topilu
+  - $m_\mathrm{raztopine} = m_\mathrm{topila} + m_\mathrm{topljenca}$
+  - več topljenca: bolj koncentrirana
+- Prepoznavanje
+  - napaka: prozorno pomeni čisto
+  - po izhlapevanju ostane trden topljenec

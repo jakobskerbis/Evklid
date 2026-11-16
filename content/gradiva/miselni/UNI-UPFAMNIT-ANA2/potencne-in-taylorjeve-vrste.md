@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Delne vsote
+  - $T_n(1) = \sum_{k \le n} \frac{1}{k!} \to e$
+  - $T_7(1) \approx 2{,}7183$
+- Konvergenčni polmer
+  - $|x-a| < R$: absolutna konvergenca
+  - $|x-a| > R$: divergenca
+  - krajišči $a \pm R$ preveri posebej
+- Računanje polmera
+  - $\frac{1}{R} = \limsup \sqrt[n]{|a_n|}$
+  - $R = \lim \left|\frac{a_n}{a_{n+1}}\right|$, če limita obstaja
+  - $\sum \frac{x^{n}}{n\,3^{n}}$: $R = 3$, interval $[-3, 3)$
+- Računanje po členih
+  - odvajanje in integriranje ohranita $R$
+  - $\arctan x = \sum (-1)^{n}\frac{x^{2n+1}}{2n+1}$
+- Taylorjeva vrsta
+  - $a_n = \frac{f^{(n)}(a)}{n!}$
+  - napaka: pozabljen $n!$
+  - $a = 0$: Maclaurinova vrsta
+- Lagrangeov ostanek
+  - $\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}$
+  - enakost le, če gre ostanek proti $0$
+  - protiprimer $e^{-1/x^{2}}$
+- Znane vrste
+  - $e^{x}$, $\sin x$, $\cos x$: $R = \infty$
+  - $\frac{1}{1-x}$, $\ln(1+x)$, $(1+x)^{\alpha}$: $R = 1$
+- Kompleksni pogled
+  - območje konvergence je krog $|z-a| < R$
+  - $\frac{1}{1+x^{2}}$: pola $\pm i$, $R = 1$

@@ -228,7 +228,7 @@ export function piramida(el) {
       slider({ label: "prenos na višjo raven", min: 5, max: 20, step: 1, value: eff, unit: "%", onInput: (v) => ((eff = v), draw()) }),
     ],
     out,
-    tryText: "Zakaj so prehranjevalne verige redko daljše od štirih ali petih členov? Zakaj je za ljudi učinkoviteje jesti rastline kot meso?",
+    tryText: { razmisli: "Zakaj so prehranjevalne verige redko daljše od štirih ali petih členov? Zakaj je za ljudi učinkoviteje jesti rastline kot meso?" },
   });
 }
 
@@ -323,7 +323,7 @@ export function encim(el, { mode = "temp" } = {}) {
     stage: svg,
     controls: ctl,
     out,
-    tryText: mode === "ph" ? "Zakaj pepsin v tankem črevesu preneha delovati?" : mode === "substrat" ? "Kako bi pospešil reakcijo, ko so vsa aktivna mesta zasedena?" : "Zakaj kuhan krompir ne razgradi vodikovega peroksida, surov pa ga?",
+    tryText: mode === "ph" ? { razmisli: "Zakaj pepsin v tankem črevesu preneha delovati?" } : mode === "substrat" ? { razmisli: "Kako bi pospešil reakcijo, ko so vsa aktivna mesta zasedena?" } : { razmisli: "Zakaj kuhan krompir ne razgradi vodikovega peroksida, surov pa ga?" },
   });
 }
 
@@ -387,7 +387,7 @@ export function osmoza(el, { cell = "zival" } = {}) {
       slider({ label: "koncentracija NaCl zunaj", min: 0, max: 5, step: 0.1, value: c, unit: "%", onInput: (v) => ((c = v), draw()) }),
     ],
     out,
-    tryText: "Zakaj bolnikom v žilo dajemo 0,9-odstotno fiziološko raztopino, ne čiste vode? Zakaj solata v slanem prelivu oveni?",
+    tryText: { razmisli: "Zakaj bolnikom v žilo dajemo 0,9-odstotno fiziološko raztopino, ne čiste vode? Zakaj solata v slanem prelivu oveni?" },
   });
 }
 

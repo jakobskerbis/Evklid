@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Štirje tokovi
+  - rodnost in priseljevanje večata populacijo
+  - smrtnost in odseljevanje jo manjšata
+  - $\Delta N = R - S + P - O$
+- Naravni prirastek
+  - $R - S$, lahko negativen
+  - Slovenija: raste zaradi priseljevanja
+- Delež na osebek
+  - rodnost $b = \dfrac{R}{N}$, smrtnost $m = \dfrac{S}{N}$
+  - prirast $r = b - m$
+- Gostota
+  - osebki na enoto prostora
+  - velika gostota: več tekmovanja in bolezni
+- Starostna piramida
+  - široka osnova: rast
+  - zvon: ustaljena; ozka osnova: upad
+- Eksponentna rast
+  - krivulja J, vsako leto isti delež
+  - $N_t = N_0 \cdot (1 + r)^{t}$, kot obresti
+- Logistična rast
+  - krivulja S do nosilne zmogljivosti $K$
+  - napaka: pri $K$ se razmnoževanje ne ustavi
+- Nihanje
+  - vreme deluje ne glede na gostoto
+  - ris in zajec: cikli okoli $10$ let

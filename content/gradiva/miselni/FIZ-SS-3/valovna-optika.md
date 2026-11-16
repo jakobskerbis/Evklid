@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Žarki ali valovi
+  - žarki zadoščajo pri odprtinah, veliko večjih od $\lambda$
+  - vidna svetloba $380$–$750\,\mathrm{nm}$
+- Uklon
+  - $\sin\varphi_1 = \dfrac{\lambda}{b}$
+  - ožja reža, širši pas
+- Interferenca dveh rež
+  - ojačitev pri $d \sin\varphi = N\lambda$
+  - razmik pasov $\Delta x = \dfrac{\lambda L}{d}$
+  - pri rdeči pasovi bolj razmaknjeni kot pri modri
+- Uklonska mrežica
+  - ozki svetli pasovi, mavrica iz bele
+  - red obstaja le, če $\dfrac{N\lambda}{d} \le 1$
+  - zgoščenka, DVD
+- Polarizacija
+  - svetloba je prečno valovanje, zvok ne
+  - polarizator prepusti polovico nepolarizirane
+- Malusov zakon
+  - $j = j_0 \cos^2\theta$
+  - pri $90^\circ$ temno: zaslon telefona

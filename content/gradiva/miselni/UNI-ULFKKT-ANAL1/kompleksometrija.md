@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kompleks in ligand
+  - ligand podari elektronski par kovinskemu ionu
+  - $\mathrm{NH_3}$ je enovezen ligand
+- Konstanta tvorbe
+  - $K_f = \frac{[\mathrm{ML}]}{[\mathrm{M}][\mathrm{L}]}$
+  - $\beta_n = K_1 K_2 \cdots K_n$
+  - stopenjsko vezanje: ni ostrega skoka
+- EDTA
+  - šestvezni ligand, kelat
+  - vedno $1:1$: $n(\mathrm{M}) = n(\mathrm{EDTA})$
+  - napaka: »razmerje po naboju iona«
+- Delež $\mathrm{Y^{4-}}$
+  - kovino veže le $\mathrm{Y^{4-}}$
+  - $\alpha_{\mathrm{Y^{4-}}}$: pH 6 $1{,}8 \cdot 10^{-5}$, pH 10 $0{,}30$
+- Pogojna konstanta
+  - $\log K'_f = \log K_f + \log \alpha_{\mathrm{Y^{4-}}}$
+  - pogoj: $\log(c\,K'_f) \geq 6$
+  - napaka: deljenje z $\alpha$ namesto množenja
+- Kovinski indikator
+  - EBT: vinsko rdeča v modro
+  - kovino veže šibkeje kot EDTA
+- Trdota vode
+  - pH 10, pufer $\mathrm{NH_3/NH_4Cl}$: Ca + Mg
+  - pH okoli $12{,}5$: le Ca, Mg iz razlike

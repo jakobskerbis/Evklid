@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Pred nekaj sto leti je trgovec s blagom dolžino meril s svojo roko. Ena takih enot je bil **laket**, pri nas **vatel**: približno dolžina od komolca do konca prstov. Poznali so še **palec**, **čevelj** in **korak**. Težava je očitna. Roke in noge niso pri vseh ljudeh enako dolge. Vatel v enem mestu ni bil enak vatlu v drugem. Kupci in prodajalci so se prepirali, koliko blaga so v resnici dobili.
+Pred nekaj sto leti je trgovec z blagom dolžino meril s svojo roko. Ena takih enot je bil **laket**, pri nas **vatel**: približno dolžina od komolca do konca prstov. Poznali so še **palec**, **čevelj** in **korak**. Težava je očitna. Roke in noge niso pri vseh ljudeh enako dolge. Vatel v enem mestu ni bil enak vatlu v drugem. Kupci in prodajalci so se prepirali, koliko blaga so v resnici dobili.
 
 Konec 18. stoletja so v Franciji zato uvedli novo enoto, **meter**. Razdaljo od severnega tečaja do ekvatorja so si zamislili razdeljeno na deset milijonov enakih delov. En tak del je meter. Nihče ga ni nosil na svojem telesu, zato je bil za vse enak. Iz metra so izpeljali še enote za prostornino in maso. Leta 1875 se je o skupnih enotah dogovorilo več držav, danes jih uporablja skoraj ves svet.
 
@@ -64,7 +64,7 @@ Na vsakem merilu je **najmanjši razdelek**: najmanjša razdalja med dvema črti
 Pri temperaturi predpon ne uporabljamo.
 
 :::premisli
-V bidon naliješ pol vode s $20\,{}^\circ\mathrm{C}$ in pol vode s $40\,{}^\circ\mathrm{C}$. Ali bo voda v bidonu imela $60\,{}^\circ\mathrm{C}$? Če ne, koliko približno?
+V bidon naliješ pol vode z $20\,{}^\circ\mathrm{C}$ in pol vode s $40\,{}^\circ\mathrm{C}$. Ali bo voda v bidonu imela $60\,{}^\circ\mathrm{C}$? Če ne, koliko približno?
 ---
 Ne. Topla voda segreje hladno, hladna ohladi toplo. Temperatura mešanice je med obema, pri enakih količinah približno $30\,{}^\circ\mathrm{C}$. Mase in prostornine se seštejejo, temperature ne.
 :::
@@ -190,7 +190,7 @@ Enote, ki jih uporabljamo v naravoslovju, sestavljajo **mednarodni sistem enot (
 ~ Termometer kaže temperaturo tistega, česar se dotika. Rob na soncu ni voda.
 - Termometer pokaže nižjo temperaturo, ker je zrak hladnejši od vode.
 ~ Na soncu se rob in zrak ob njem segrejeta. Termometer kaže temperaturo okolice, ki je lahko celo višja od temperature vode.
-> Termometer mora biti potopljen v vodo in počakamo, da se kazalec ustali. Šele takrat kaže temperaturo vode.
+> Termometer mora biti potopljen v vodo in počakamo, da se odčitek ustali. Šele takrat kaže temperaturo vode.
 
 ? Pri pretvorbi višine košarkarja $1{,}8\,\mathrm{m}$ v centimetre je Nejc pisal: **1.** $1\,\mathrm{m} = 100\,\mathrm{cm}$. **2.** Ker gremo v manjšo enoto, delimo. **3.** $1{,}8 : 100 = 0{,}018$, torej $0{,}018\,\mathrm{cm}$. Kateri korak je napačen?
 - Korak 1

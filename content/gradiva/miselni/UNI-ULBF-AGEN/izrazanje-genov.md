@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Verigi gena
+  - matrična se bere $3' \to 5'$
+  - mRNA ima zaporedje kodirajoče, U namesto T
+- Transkripcija
+  - promotor, iniciacija, elongacija, terminacija
+  - RNA-polimeraza brez začetnega oligonukleotida
+- Obdelava pre-mRNA
+  - kapa, poli(A)-rep, izrezovanje intronov
+  - alternativno izrezovanje: več beljakovin
+- Genski kod
+  - $4^3 = 64$ kodonov, 3 stop
+  - AUG začetek, kod izrojen
+  - napaka: štetje od začetka mRNA
+- Translacija
+  - tRNA z antikodonom, sintetaze
+  - mesta A, P, E
+  - 4 energijsko bogate vezi na peptidno vez
+- Mutacije
+  - tiha, smiselna, nesmiselna
+  - vstavitev premakne bralni okvir
+- Računi
+  - aminokislin $=$ kodonov $- 1$
+  - UTR in introni se ne prevedejo

@@ -128,7 +128,7 @@ const GENS = [
   // ---------------- 3. letnik ----------------
   {
     id: P + "kotne-funkcije-poljubnega-kota",
-    topics: [T(3, "kotne-funkcije-poljubnega-kota")],
+    topics: [T(3, "kotne-funkcije-poljubnega-kota"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 3);
@@ -240,7 +240,7 @@ const GENS = [
   },
   {
     id: P + "grafi-kotnih-funkcij",
-    topics: [T(3, "grafi-kotnih-funkcij")],
+    topics: [T(3, "grafi-kotnih-funkcij"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       // bx v TeX za b = bn/bd
       const bx = (bn, bd) => (bd === 1 ? `${bn === 1 ? "" : bn}x` : `\\frac{${bn === 1 ? "" : bn}x}{${bd}}`);
@@ -352,7 +352,7 @@ const GENS = [
   },
   {
     id: P + "adicijski-izreki",
-    topics: [T(3, "adicijski-izreki")],
+    topics: [T(3, "adicijski-izreki"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const [a, b, c] = r.pick(TRIPLES);
@@ -460,7 +460,7 @@ const GENS = [
   },
   {
     id: P + "adicijski-preoblikovanje",
-    topics: [T(3, "adicijski-izreki")],
+    topics: [T(3, "adicijski-izreki"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const items = [
@@ -548,7 +548,7 @@ const GENS = [
   },
   {
     id: P + "trigonometrijske-enacbe",
-    topics: [T(3, "trigonometrijske-enacbe")],
+    topics: [T(3, "trigonometrijske-enacbe"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const F = { sin: (x) => Math.sin(x * DEG), cos: (x) => Math.cos(x * DEG), tan: (x) => Math.tan(x * DEG) };
       const VALS = {
@@ -700,7 +700,7 @@ const GENS = [
   },
   {
     id: P + "sinusni-in-kosinusni-izrek",
-    topics: [T(3, "sinusni-in-kosinusni-izrek")],
+    topics: [T(3, "sinusni-in-kosinusni-izrek"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const S = (x) => Math.sin(x * DEG);
       const Co = (x) => Math.cos(x * DEG);
@@ -861,7 +861,7 @@ const GENS = [
   },
   {
     id: P + "vektorji",
-    topics: [T(3, "vektorji-v-ravnini-in-prostoru")],
+    topics: [T(3, "vektorji-v-ravnini-in-prostoru"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const ORD = ["prva", "druga", "tretja"];
       const cv = (m, sym, first) => `${m < 0 ? (first ? "-" : " - ") : first ? "" : " + "}${Math.abs(m) === 1 ? "" : Math.abs(m)}\\vec ${sym}`;
@@ -1004,7 +1004,7 @@ const GENS = [
   },
   {
     id: P + "skalarni-produkt",
-    topics: [T(3, "skalarni-produkt")],
+    topics: [T(3, "skalarni-produkt"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const rv = (dim, lo = -5, hi = 6) => Array.from({ length: dim }, () => r.int(lo, hi));
       const ang = (a, b) => Math.acos(dot(a, b) / (norm(a) * norm(b))) / DEG;
@@ -1130,7 +1130,7 @@ const GENS = [
   },
   {
     id: P + "polinomi",
-    topics: [T(3, "polinomi")],
+    topics: [T(3, "polinomi"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const coefs = (deg) => {
         const cs = [r.nonZero(-3, 4)];
@@ -1241,7 +1241,7 @@ const GENS = [
   },
   {
     id: P + "graf-polinoma",
-    topics: [T(3, "graf-polinoma")],
+    topics: [T(3, "graf-polinoma"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const distinct = (k, lo, hi) => {
         const out = [];
@@ -1425,7 +1425,7 @@ const GENS = [
   },
   {
     id: P + "racionalne-funkcije",
-    topics: [T(3, "racionalne-funkcije")],
+    topics: [T(3, "racionalne-funkcije"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const c = r.pick([1, 1, 2, 3]);
@@ -1559,7 +1559,7 @@ const GENS = [
   },
   {
     id: P + "kroznica",
-    topics: [T(3, "kroznica")],
+    topics: [T(3, "kroznica"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const circ = (p, q, R2) => `${p === 0 ? "x^2" : `${lin(p)}^2`} + ${q === 0 ? "y^2" : `${lin(q, "y")}^2`} = ${R2}`;
       const LINES = [[0, 1, 1], [1, 0, 1], [3, 4, 5], [4, -3, 5], [3, -4, 5], [4, 3, 5], [5, 12, 13]];
@@ -1703,7 +1703,7 @@ const GENS = [
   },
   {
     id: P + "elipsa-hiperbola-parabola",
-    topics: [T(3, "elipsa-hiperbola-parabola")],
+    topics: [T(3, "elipsa-hiperbola-parabola"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const conic = (A2, B2, minus = false) => `\\dfrac{x^2}{${A2}} ${minus ? "-" : "+"} \\dfrac{y^2}{${B2}} = 1`;
       if (level === 1) {
@@ -1861,7 +1861,7 @@ const GENS = [
   // ---------------- 4. letnik ----------------
   {
     id: P + "zaporedja",
-    topics: [T(4, "zaporedja")],
+    topics: [T(4, "zaporedja"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       // a_n = (a n + b) / (c n + d), imenovalec pozitiven za n ≥ 1
       const seq = () => {
@@ -1966,7 +1966,7 @@ const GENS = [
   },
   {
     id: P + "aritmeticno-in-geometrijsko-zaporedje",
-    topics: [T(4, "aritmeticno-in-geometrijsko-zaporedje")],
+    topics: [T(4, "aritmeticno-in-geometrijsko-zaporedje"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const three = (a1, step, geo) => [a1, geo ? a1 * step : a1 + step, geo ? a1 * step * step : a1 + 2 * step];
       const first3 = (a1, step, geo) => three(a1, step, geo).join(", ");
@@ -2121,7 +2121,7 @@ const GENS = [
   },
   {
     id: P + "geometrijska-vrsta",
-    topics: [T(4, "geometrijska-vrsta")],
+    topics: [T(4, "geometrijska-vrsta"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const QS = [[1, 2], [1, 3], [2, 3], [-1, 2], [1, 4], [3, 4], [-1, 3], [2, 5], [-2, 3], [3, 5]];
       if (level === 1) {
@@ -2262,7 +2262,7 @@ const GENS = [
   },
   {
     id: P + "obrestni-racun",
-    topics: [T(4, "obrestni-racun")],
+    topics: [T(4, "obrestni-racun"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const G = r.int(5, 200) * 100;
       const p = r.pick([1.5, 2, 2.5, 3, 3.5, 4, 1.8, 2.2, 4.5]);
@@ -2381,7 +2381,7 @@ const GENS = [
   },
   {
     id: P + "limita-in-zveznost-funkcije",
-    topics: [T(4, "limita-in-zveznost-funkcije")],
+    topics: [T(4, "limita-in-zveznost-funkcije"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const twoRoots = () => {
         const a = r.nonZero(-5, 5);
@@ -2492,7 +2492,7 @@ const GENS = [
   },
   {
     id: P + "odvod",
-    topics: [T(4, "odvod")],
+    topics: [T(4, "odvod"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         if (r.next() < 0.55) {
@@ -2653,7 +2653,7 @@ const GENS = [
   },
   {
     id: P + "uporaba-odvoda-tangenta-ekstremi",
-    topics: [T(4, "uporaba-odvoda")],
+    topics: [T(4, "uporaba-odvoda"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         if (r.next() < 0.55) {
@@ -2768,7 +2768,7 @@ const GENS = [
   },
   {
     id: P + "uporaba-odvoda-ekstremalni-problemi",
-    topics: [T(4, "uporaba-odvoda")],
+    topics: [T(4, "uporaba-odvoda"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const who = name(r);
       if (level === 1) {
@@ -2867,7 +2867,7 @@ const GENS = [
   },
   {
     id: P + "nedoloceni-integral",
-    topics: [T(4, "nedoloceni-integral")],
+    topics: [T(4, "nedoloceni-integral"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         if (r.next() < 0.5) {
@@ -2986,7 +2986,7 @@ const GENS = [
   },
   {
     id: P + "doloceni-integral",
-    topics: [T(4, "doloceni-integral")],
+    topics: [T(4, "doloceni-integral"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const ap = (x, d) => (Math.abs(x - roundHalfUp(x, d)) < 1e-9 ? "=" : "\\approx");
       if (level === 1) {
@@ -3108,7 +3108,7 @@ const GENS = [
   },
   {
     id: P + "kombinatorika",
-    topics: [T(4, "kombinatorika")],
+    topics: [T(4, "kombinatorika"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const who = name(r);
       if (level === 1) {
@@ -3263,7 +3263,7 @@ const GENS = [
   },
   {
     id: P + "statistika",
-    topics: [T(4, "statistika")],
+    topics: [T(4, "statistika"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const who = name(r);
       const ap = (x, d) => (Math.abs(x - roundHalfUp(x, d)) < 1e-9 ? "=" : "\\approx");
@@ -3447,7 +3447,7 @@ const GENS = [
   },
   {
     id: P + "mesane-maturitetne-naloge",
-    topics: [T(4, "mesane-maturitetne-naloge")],
+    topics: [T(4, "mesane-maturitetne-naloge"), "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const who = name(r);
       const ap = (x, d) => (Math.abs(x - roundHalfUp(x, d)) < 1e-9 ? "=" : "\\approx");

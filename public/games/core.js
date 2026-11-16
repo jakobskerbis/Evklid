@@ -2,6 +2,7 @@
 // prilagajanje težavnosti, učinki in zvok. Vsaka igra (engine) samo riše in odloča, kaj je zadetek.
 import { makeQuestion, shuffle, gameLang } from "./topics.js";
 import { icon } from "../icons.js";
+import { ustvariSlog } from "./slog.js";
 
 const SOUND_KEY = "evklid.gameSound";
 const PACE_KEY = "evklid.gamePace";
@@ -130,6 +131,9 @@ export function runGame(host, opts) {
   }
   // dodatna naloga iste snovi (za igre, ki pokažejo več nalog hkrati, ali vzorec za tipke igre)
   G.ask = (tier = G.tier) => drawQuestion(tier);
+  // skupni slog (slog.js): barve teme, svetloba, tekstura sveta, sence, delci; igre ga dobijo kot G.slog
+  G.g = g;
+  G.slog = ustvariSlog(G, canvas, engine, host.querySelector(".gm-play"));
   const eng = engine.create(G);
   // Zgodba: poglavje se odklene na vsakih CHAPTER_EVERY pravilnih odgovorov.
   const story = () => engine.story?.[gameLang()] || engine.story?.en || [];
@@ -244,14 +248,8 @@ export function runGame(host, opts) {
   G.miss = (x, y) => G.answer(false, x, y);
 
   // ---------- učinki ----------
-  G.burst = (x, y, color, n = 14) => {
-    if (G.reduced) n = Math.min(n, 5);
-    for (let i = 0; i < n; i++) {
-      const a = Math.random() * Math.PI * 2, s = 60 + Math.random() * 180;
-      G.fx.push({ k: "p", x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0.6 + Math.random() * 0.3, max: 0.9, color, r: 2 + Math.random() * 3 });
-    }
-  };
-  G.float = (x, y, text, color, size = 22, life = 1) => G.fx.push({ k: "t", x, y, text, color, size, life, max: life });
+  G.burst = (x, y, color, n = 14) => G.slog.burst(x, y, color, n);
+  G.float = (x, y, text, color, size = 22, life = 1) => G.slog.float(x, y, text, color, size, life);
   G.shake = (a) => {
     if (!G.reduced) G.shakeT = Math.max(G.shakeT, a);
   };
@@ -261,34 +259,7 @@ export function runGame(host, opts) {
   G.rr = (...a) => roundRect(g, ...a);
   G.g = g;
 
-  function drawFx(dt) {
-    for (const p of G.fx) {
-      p.life -= dt;
-      if (p.k === "p") {
-        p.x += p.vx * dt;
-        p.y += p.vy * dt;
-        p.vy += 300 * dt;
-        g.globalAlpha = Math.max(0, p.life / p.max);
-        g.fillStyle = p.color;
-        g.beginPath();
-        g.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        g.fill();
-      } else {
-        p.y -= 40 * dt;
-        g.globalAlpha = Math.max(0, Math.min(1, p.life * 2));
-        g.lineWidth = 4;
-        g.strokeStyle = "rgba(255,255,255,0.9)";
-        g.font = `900 ${p.size}px Nunito, system-ui, sans-serif`;
-        g.textAlign = "center";
-        g.textBaseline = "middle";
-        g.strokeText(p.text, p.x, p.y);
-        g.fillStyle = p.color;
-        g.fillText(p.text, p.x, p.y);
-      }
-    }
-    g.globalAlpha = 1;
-    G.fx = G.fx.filter((p) => p.life > 0);
-  }
+  const drawFx = (dt) => G.slog.drawFx(dt);
 
   // ---------- HUD ----------
   function hud() {
@@ -309,8 +280,16 @@ export function runGame(host, opts) {
     canvas.style.width = `${G.W}px`;
     canvas.style.height = `${G.H}px`;
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    G.slog.resize();
     eng.resize?.();
   }
+  // menjava sloga ali svetlo/temno med igro: barve teme se preberejo znova
+  let temaCas = 0;
+  const temaMo = new MutationObserver(() => {
+    clearTimeout(temaCas);
+    temaCas = setTimeout(() => host.isConnected && G.slog.resize(), 200);
+  });
+  temaMo.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-era", "data-style", "style"] });
   const ro = new ResizeObserver(resize);
   ro.observe(stage);
 
@@ -345,8 +324,9 @@ export function runGame(host, opts) {
       g.translate((Math.random() - 0.5) * G.shakeT, (Math.random() - 0.5) * G.shakeT);
     }
     eng.draw(g);
-    drawFx(G.running && !G.paused ? dt : 0);
     g.restore();
+    G.slog.po();
+    drawFx(G.running && !G.paused ? dt : 0);
   }
 
   // ---------- vnos ----------
@@ -548,6 +528,7 @@ export function runGame(host, opts) {
     destroy() {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      temaMo.disconnect();
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("keyup", onKey);
       document.removeEventListener("visibilitychange", onVis);

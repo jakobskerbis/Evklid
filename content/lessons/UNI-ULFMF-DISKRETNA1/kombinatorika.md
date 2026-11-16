@@ -38,13 +38,26 @@ Enako, $35$. Izbrati $4$ tone, ki zazvenijo, je isto kot izbrati $3$ tone, ki os
 
 **4. Pascalov trikotnik in ritmi.** Takt ima $4$ dobe, na vsaki je udarec ali premor. Ritmov z natanko $k$ udarci je $\binom{4}{k}$: izberemo, na katerih dobah so udarci. Zapiši te številke za takte z $0, 1, 2, 3, 4$ dobami v trikotnik:
 
-```
-        1
-       1 1
-      1 2 1
-     1 3 3 1
-    1 4 6 4 1
-```
+:::risba skica
+opis: Pascalov trikotnik s petimi vrsticami. Vrstice od zgoraj navzdol: 1; 1, 1; 1, 2, 1; 1, 3, 3, 1; 1, 4, 6, 4, 1. Vsako število stoji pod sredino med dvema številoma nad njim in je njuna vsota.
+območje: -5; -4,7 .. 5; 0,7
+enota: 30
+napis: 0; 0 | 1 | sredina
+napis: -1; -1 | 1 | sredina
+napis: 1; -1 | 1 | sredina
+napis: -2; -2 | 1 | sredina
+napis: 0; -2 | 2 | sredina
+napis: 2; -2 | 1 | sredina
+napis: -3; -3 | 1 | sredina
+napis: -1; -3 | 3 | sredina
+napis: 1; -3 | 3 | sredina
+napis: 3; -3 | 1 | sredina
+napis: -4; -4 | 1 | sredina
+napis: -2; -4 | 4 | sredina
+napis: 0; -4 | 6 | sredina
+napis: 2; -4 | 4 | sredina
+napis: 4; -4 | 1 | sredina
+:::
 
 Vsako število je vsota dveh nad njim. Razlog vidiš na ritmu: ritmi s $k$ udarci na $n$ dobah imajo na zadnji dobi bodisi udarec (preostalih $k-1$ udarcev je na $n-1$ dobah) bodisi premor (vseh $k$ je na $n-1$ dobah). Zato
 $$\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}.$$
@@ -125,9 +138,9 @@ komplement in vključitve-izključitve: $|\overline{A} \cap \overline{B}| = N - 
 
 ### Primer 4: zdaj ti
 
-Takt ima $8$ osmink, na vsaki je udarec ali premor. Koliko ritmov ima natanko $3$ udarce, če mora biti na prvi osmini udarec?
+Takt ima $8$ osmink, na vsaki je udarec ali premor. Koliko ritmov ima natanko $3$ udarce, če mora biti na prvi osminki udarec?
 
-**Podatki:** $8$ osmink, natanko $3$ udarci, prva osmina je udarec
+**Podatki:** $8$ osmink, natanko $3$ udarci, prva osminka je udarec
 **Iščemo:** število ritmov
 
 :::formula
@@ -136,7 +149,7 @@ $\binom{n}{k}$: izbira $k$ mest izmed $n$ prostih
 
 **Rešitev:**
 
-1. Prvi udarec je že postavljen, prosta mesta so preostale $7$ osmine.
+1. Prvi udarec je že postavljen, prostih je preostalih $7$ osmink.
 2. Na njih razporedimo še $2$ udarca, vrstni red udarcev ne šteje.
 3. Izračunaj sam, nato preveri:
 
@@ -162,6 +175,63 @@ $\binom{7}{2} = \frac{7 \cdot 6}{2} = 21$. Brez pogoja bi jih bilo $\binom{8}{3}
 - Vključitve in izključitve: $|A \cup B| = |A| + |B| - |A \cap B|$; pri treh množicah še $+|A \cap B \cap C|$.
 - Pogosto je lažje šteti komplement.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- pravilo produkta s pogojem (število možnosti druge izbire ni odvisno od prve) in kdaj namesto množenja seštevamo;
+- definicije permutacije, variacije in kombinacije ter formule $n!$, $\frac{n!}{(n-k)!}$, $n^k$ in $\binom{n}{k} = \frac{n!}{k!\,(n-k)!}$ z izpeljavo (deljenje s $k!$);
+- simetrijo $\binom{n}{k} = \binom{n}{n-k}$ in Pascalovo enakost $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$ s kombinatoričnim dokazom;
+- binomski izrek z dokazom ter posledici $\sum_k \binom{n}{k} = 2^n$ in $\sum_k (-1)^k \binom{n}{k} = 0$ za $n \ge 1$;
+- načelo vključitev in izključitev za dve, tri in $n$ množic, dokaz s štetjem prispevkov in uporabo na komplementu.
+
+### Naloga 1
+
+Laboratorij označuje vzorce s kodami dolžine $6$ iz črk A, C, G, T; črke se lahko ponavljajo. (a) Koliko kod vsebuje vsako od štirih črk vsaj enkrat? (b) Koliko kod ima natanko dve črki A, ki nista sosednji? (c) Koliko kod vsebuje vse štiri črke in ima natanko dve črki A?
+
+**Rešitev:**
+
+1. (a) Štejemo komplement. Naj bo $A_i$ množica kod, v katerih manjka $i$-ta črka, $i = 1, \ldots, 4$. Iščemo $N - |A_1 \cup A_2 \cup A_3 \cup A_4|$, unijo pa razpišemo z vključitvami in izključitvami za štiri množice.
+2. Vseh kod: $N = 4^6 = 4096$.
+3. Če manjka $j$ izbranih črk, je kod $(4 - j)^6$, izbir manjkajočih črk pa $\binom{4}{j}$. Členi: $\binom{4}{1} \cdot 3^6 = 4 \cdot 729 = 2916$, $\binom{4}{2} \cdot 2^6 = 6 \cdot 64 = 384$, $\binom{4}{3} \cdot 1^6 = 4$, $\binom{4}{4} \cdot 0^6 = 0$.
+4. Kod z vsemi štirimi črkami: $4096 - 2916 + 384 - 4 = 1560$.
+5. (b) Najprej izberemo mesti za A. Vseh parov mest je $\binom{6}{2} = 15$, sosednjih parov je $5$, torej nesosednjih $15 - 5 = 10$.
+6. Na preostalih $4$ mestih je katerakoli od črk C, G, T: $3^4 = 81$. Po pravilu produkta: $10 \cdot 81 = 810$.
+7. (c) Mesti za A izberemo na $\binom{6}{2} = 15$ načinov. Na preostalih $4$ mestih morajo biti C, G in T vsaka vsaj enkrat. Vključitve in izključitve za tri množice: $3^4 - 3 \cdot 2^4 + 3 \cdot 1^4 = 81 - 48 + 3 = 36$.
+8. Skupaj: $15 \cdot 36 = 540$.
+9. Odgovor: (a) $1560$ kod, (b) $810$ kod, (c) $540$ kod.
+
+### Naloga 2
+
+Natančno navedi Pascalovo enakost in binomski izrek ter oba dokaži. Nato iz binomskega izreka izpelji, koliko podmnožic ima množica z $n$ elementi, in utemelji, ali ima za $n \ge 1$ enako mnogo podmnožic sode in lihe moči.
+
+**Rešitev:**
+
+1. Pascalova enakost: za cela $n \ge 1$ in $1 \le k \le n - 1$ velja $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$.
+2. Kombinatorični dokaz: leva stran šteje $k$-elementne podmnožice množice $\{1, \ldots, n\}$. Tistih, ki vsebujejo element $n$, je $\binom{n-1}{k-1}$ (preostalih $k - 1$ elementov izberemo izmed $n - 1$); tistih, ki ga ne vsebujejo, je $\binom{n-1}{k}$. Skupini sta ločeni in skupaj dasta vse, zato seštejemo.
+3. Računski dokaz: $\frac{(n-1)!}{(k-1)!\,(n-k)!} + \frac{(n-1)!}{k!\,(n-k-1)!} = \frac{(n-1)!\,\big(k + (n - k)\big)}{k!\,(n-k)!} = \frac{n!}{k!\,(n-k)!}$.
+4. Binomski izrek: za poljubni števili $a$, $b$ in celo $n \ge 0$ velja $(a + b)^n = \sum_{k=0}^{n} \binom{n}{k} a^k b^{n-k}$.
+5. Dokaz: v produktu $(a + b)(a + b) \cdots (a + b)$ z $n$ oklepaji dobimo vsak člen tako, da iz vsakega oklepaja vzamemo $a$ ali $b$. Člen $a^k b^{n-k}$ nastane natanko takrat, ko $a$ vzamemo iz $k$ oklepajev; izbir teh oklepajev je $\binom{n}{k}$, kar je koeficient člena.
+6. Število podmnožic: pri $a = b = 1$ je $\sum_{k=0}^{n} \binom{n}{k} = 2^n$. Ker je $\binom{n}{k}$ število podmnožic moči $k$, ima množica z $n$ elementi $2^n$ podmnožic.
+7. Sode in lihe: pri $a = -1$, $b = 1$ je $\sum_{k=0}^{n} (-1)^k \binom{n}{k} = 0^n = 0$ za $n \ge 1$. Vsota koeficientov pri sodih $k$ je zato enaka vsoti pri lihih $k$.
+8. Sklep: za $n \ge 1$ je podmnožic sode moči toliko kot podmnožic lihe moči, po $2^{n-1}$. Za $n = 0$ trditev ne velja: prazna množica ima eno samo podmnožico, ta je sode moči.
+
+### Naloga 3
+
+(a) Določi koeficient pri $x^5$ v razvoju $(2x - 3)^8$. (b) Koliko naravnih števil od $1$ do $2520$ ni deljivih z nobenim od števil $4$, $6$ in $10$?
+
+**Rešitev:**
+
+1. (a) Po binomskem izreku z $a = 2x$, $b = -3$, $n = 8$ je člen z $x^5$ enak $\binom{8}{5} (2x)^5 (-3)^3$.
+2. $\binom{8}{5} = \binom{8}{3} = \frac{8 \cdot 7 \cdot 6}{6} = 56$, $2^5 = 32$, $(-3)^3 = -27$.
+3. Koeficient: $56 \cdot 32 \cdot (-27) = -48384$.
+4. (b) Naj bodo $A$, $B$, $C$ množice števil od $1$ do $2520$, deljivih s $4$, $6$ oziroma $10$. Število je v preseku natanko takrat, ko je deljivo z najmanjšim skupnim večkratnikom: $v(4, 6) = 12$, $v(4, 10) = 20$, $v(6, 10) = 30$, $v(4, 6, 10) = 60$. (Pogosta napaka je deliti s produkti $24$, $40$, $60$.)
+5. Vsa ta števila delijo $2520$, zato: $|A| = \frac{2520}{4} = 630$, $|B| = \frac{2520}{6} = 420$, $|C| = \frac{2520}{10} = 252$.
+6. Preseki: $|A \cap B| = \frac{2520}{12} = 210$, $|A \cap C| = \frac{2520}{20} = 126$, $|B \cap C| = \frac{2520}{30} = 84$, $|A \cap B \cap C| = \frac{2520}{60} = 42$.
+7. Unija: $630 + 420 + 252 - 210 - 126 - 84 + 42 = 924$.
+8. Komplement: $2520 - 924 = 1596$.
+9. Odgovor: (a) koeficient je $-48\,384$; (b) z nobenim od števil $4$, $6$, $10$ ni deljivih $1596$ števil.
+
 ## Drugače: Z analogijo
 
 Predstavljaj si mešalno mizo s $7$ drsniki.
@@ -170,9 +240,9 @@ Predstavljaj si mešalno mizo s $7$ drsniki.
 - **Akord** je, kot da hkrati dvigneš tri drsnike in posnameš eno samo sliko mize. Na sliki ne vidiš, kateri je bil dvignjen prvi, zato šteješ le *katere*, ne *v katerem redu*: $\binom{7}{3}$.
 - **Vključitve in izključitve** so kot dva mikrofona, ki oba ujameta isti glas. V posnetku ga slišiš dvakrat glasneje, zato ga moraš enkrat odšteti.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Seznam predvajanja s $4$ pesmimi, ki jih želiš zaslišati vse: $4! = 24$ vrstnih redov. Če izmed $10$ priljubljenih pesmi izbereš $4$ za ples in vrstni red ni pomemben, je izbir $\binom{10}{4} = 210$. Če pa je vrstni red pomemben, jih je $10 \cdot 9 \cdot 8 \cdot 7 = 5040$, kar je $4! = 24$-krat več. Ključno vprašanje je vedno isto: ali je izid zaporedje ali množica?
+V kriptografiji z istimi formulami oceniš velikost prostora ključev. Geslo iz $8$ znakov nad abecedo z $62$ znaki (velike in male črke, števke) je urejen izbor s ponavljanjem: $62^8 \approx 2{,}2 \cdot 10^{14}$ možnosti. V teoriji kodiranja šteješ vzorce napak, kjer je pomembno le, *kateri* biti so napačni: v bloku s $23$ biti je $\binom{23}{3} = 1771$ vzorcev s tremi napakami. Vzorcev z največ tremi napakami je $1 + 23 + 253 + 1771 = 2048 = 2^{11}$, kar je natanko toliko, kolikor različnih sindromov ima binarna Golayeva koda z $11$ kontrolnimi biti; zato popravi vse take napake. Ključno vprašanje je vedno isto: ali je izid zaporedje ali množica?
 
 ## Drugače: Bolj natančno
 
@@ -233,7 +303,7 @@ m | število možnosti prve izbire | | | v dokazu: v koliko množicah leži elem
 a, b | člena binoma
 A, B, C | končne množice (dogodki, ki jih štejemo)
 A_i | i-ta množica v načelu vključitev in izključitev
-\bar{A}, \bar{B} | komplementa množic A in B | \lvert \bar{A} \cap \bar{B} \rvert = N - \lvert A \cup B \rvert
+\overline{A}, \overline{B} | komplementa množic A in B | \lvert \overline{A} \cap \overline{B} \rvert = N - \lvert A \cup B \rvert
 N | število vseh elementov (vseh možnosti)
 I | neprazna podmnožica indeksov {1, …, n}
 i, j | indeksa množic

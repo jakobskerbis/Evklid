@@ -169,6 +169,64 @@ $E_k \approx 3{,}356 \cdot 9{,}00 \cdot 10^{16}\,\mathrm{J} \approx 3{,}02 \cdot
 - Sočasnost je relativna; dogodkom, ki se ne morejo vzročno povezati, se lahko vrstni red obrne.
 - $p = \gamma m v$, $E = \gamma m c^2$, $E_0 = mc^2$, $E_k = (\gamma - 1)mc^2$, $E^2 = (pc)^2 + (mc^2)^2$; za foton $E = pc$.
 
+## Za izpit
+
+Znati moraš povedati:
+- obe Einsteinovi načeli in definicijo inercialnega sistema, dogodka, lastnega časa in lastne dolžine;
+- Lorentzove transformacije za sistem $S'$, ki se giblje s hitrostjo $v$ v smeri $+x$, obratne transformacije in limito $v \ll c$;
+- izpeljavo podaljšanja časa s svetlobno uro in izpeljavo $\gamma$ iz zahteve, da je hitrost svetlobe v obeh sistemih $c$;
+- izpeljavo krčenja dolžin in relativnosti sočasnosti iz Lorentzovih transformacij, z navedbo, kateri dogodki so sočasni v katerem sistemu;
+- izraze za $p$, $E$, $E_0$ in $E_k$, zvezo $E^2 = (pc)^2 + (mc^2)^2$, njeno limito za delec brez mase in klasično limito $E_k \approx \tfrac12 mv^2$;
+- invarianti $c^2\Delta t^2 - \Delta x^2$ in $E^2 - (pc)^2$ ter transformacijo para $(E/c,\,p)$.
+
+### Naloga 1
+
+Mirujoč nabit pion ($m_\pi c^2 = 139{,}57\,\mathrm{MeV}$) razpade v mion ($m_\mu c^2 = 105{,}66\,\mathrm{MeV}$) in nevtrino, katerega maso zanemarimo. Povprečni lastni življenjski čas miona je $\tau_\mu = 2{,}197\,\mathrm{\mu s}$, $c = 3{,}00 \cdot 10^8\,\mathrm{m/s}$. (a) Izračunaj gibalno količino, celotno in kinetično energijo ter hitrost miona. (b) Kolikšno pot v povprečju preleti tak mion, preden razpade? (c) Pion naj se pred razpadom giblje s hitrostjo $0{,}9\,c$ glede na laboratorij. Kolikšno energijo ima mion v laboratoriju, če v sistemu piona odleti naprej, in kolikšno, če odleti nazaj? Kolikšna je povprečna pot miona, ki odleti naprej?
+
+**Rešitev:**
+
+1. V sistemu piona je skupna gibalna količina nič, zato imata mion in nevtrino enako veliki in nasprotni gibalni količini $p$. Nevtrino brez mase ima energijo $E_\nu = pc$.
+2. Ohranitev energije: $m_\pi c^2 = E_\mu + pc$, torej $E_\mu = m_\pi c^2 - pc$. To vstavimo v $E_\mu^2 = (pc)^2 + (m_\mu c^2)^2$. Člen $(pc)^2$ se pokrajša in ostane $pc = \dfrac{(m_\pi c^2)^2 - (m_\mu c^2)^2}{2\,m_\pi c^2}$.
+3. $pc = \dfrac{139{,}57^2 - 105{,}66^2}{2 \cdot 139{,}57} \approx 29{,}79\,\mathrm{MeV}$, torej $p \approx 29{,}79\,\mathrm{MeV}/c$.
+4. $E_\mu = 139{,}57 - 29{,}79 = 109{,}78\,\mathrm{MeV}$ in $E_k = 109{,}78 - 105{,}66 = 4{,}12\,\mathrm{MeV}$.
+5. Iz $p = \gamma m v$ in $E = \gamma m c^2$ sledi $v/c = pc/E$. Za mion je $v/c = 29{,}79 / 109{,}78 \approx 0{,}271$ in $\gamma = 109{,}78 / 105{,}66 \approx 1{,}039$.
+6. V laboratoriju mion živi $\gamma\tau_\mu$ in v tem času preleti $s = \gamma v \tau_\mu = \dfrac{pc}{m_\mu c^2}\,c\,\tau_\mu$. Ker je $c\,\tau_\mu = 3{,}00 \cdot 10^8 \cdot 2{,}197 \cdot 10^{-6} \approx 659{,}1\,\mathrm{m}$, je $s = \dfrac{29{,}79}{105{,}66} \cdot 659{,}1 \approx 185{,}8\,\mathrm{m}$.
+7. Za (c) je sistem piona $S'$, ki se giblje z $v = 0{,}9\,c$, $\gamma = 1/\sqrt{1 - 0{,}81} \approx 2{,}294$. Iz obratne transformacije para $(E/c,\,p)$ dobimo $E = \gamma\,(E' + v p')$, kjer je $v p' = 0{,}9 \cdot 29{,}79 \approx 26{,}81\,\mathrm{MeV}$.
+8. Mion naprej ($p' = +p$): $E \approx 2{,}294 \cdot (109{,}78 + 26{,}81) \approx 313{,}3\,\mathrm{MeV}$. Mion nazaj ($p' = -p$): $E \approx 2{,}294 \cdot (109{,}78 - 26{,}81) \approx 190{,}3\,\mathrm{MeV}$.
+9. Gibalna količina miona, ki odleti naprej: $pc = \gamma\,(p'c + \tfrac{v}{c} E') \approx 2{,}294 \cdot (29{,}79 + 0{,}9 \cdot 109{,}78) \approx 295{,}0\,\mathrm{MeV}$. Preverba: $\sqrt{313{,}3^2 - 295{,}0^2} \approx 105{,}5\,\mathrm{MeV}$, kar se do zaokrožitve ujema z $m_\mu c^2$.
+10. Povprečna pot: $s = \dfrac{295{,}0}{105{,}66} \cdot 659{,}1 \approx 1840\,\mathrm{m}$.
+11. Odgovor: (a) $p \approx 29{,}79\,\mathrm{MeV}/c$, $E_\mu \approx 109{,}78\,\mathrm{MeV}$, $E_k \approx 4{,}12\,\mathrm{MeV}$, $v \approx 0{,}271\,c$; (b) $s \approx 186\,\mathrm{m}$; (c) energija miona je med $190\,\mathrm{MeV}$ (nazaj) in $313\,\mathrm{MeV}$ (naprej), mion naprej v povprečju preleti okoli $1{,}84\,\mathrm{km}$.
+
+### Naloga 2
+
+Ladja z lastno dolžino $L_0 = 600\,\mathrm{m}$ leti mimo postaje s hitrostjo $0{,}8\,c$ v smeri $+x$. Ko je rep ladje ob izhodišču postaje ($x = x' = 0$, $t = t' = 0$), iz repa proti nosu odleti svetlobni blisk, se na nosu odbije in se vrne v rep. Vzemi $c = 3{,}00 \cdot 10^8\,\mathrm{m/s}$. (a) Zapiši koordinate dogodkov »odboj na nosu« in »vrnitev v rep« v sistemu ladje. (b) Z Lorentzovimi transformacijami izračunaj koordinate obeh dogodkov v sistemu postaje. (c) Rezultat preveri z neposrednim računom v sistemu postaje. (d) Utemelji, za kateri časovni razmik velja $\Delta t = \gamma\,\Delta t'$ in za katerega ne.
+
+**Rešitev:**
+
+1. V sistemu ladje $S'$ ladja miruje, rep je pri $x' = 0$, nos pri $x' = 600\,\mathrm{m}$. Blisk do nosa potrebuje $t'_1 = \dfrac{600}{3{,}00 \cdot 10^8}\,\mathrm{s} = 2{,}00\,\mathrm{\mu s}$, nazaj prav toliko. Odboj: $(x'_1, t'_1) = (600\,\mathrm{m};\ 2{,}00\,\mathrm{\mu s})$. Vrnitev: $(x'_2, t'_2) = (0;\ 4{,}00\,\mathrm{\mu s})$.
+2. Pri $v = 0{,}8\,c$ je $\gamma = 1/\sqrt{1 - 0{,}64} = 1/0{,}6 \approx 1{,}667$. Obratni transformaciji sta $x = \gamma\,(x' + v t')$ in $t = \gamma\,(t' + v x'/c^2)$.
+3. Odboj: $v t'_1 = 0{,}8 \cdot 600 = 480\,\mathrm{m}$, zato $x_1 = \dfrac{600 + 480}{0{,}6} = 1800\,\mathrm{m}$. Člen $v x'_1/c^2 = 0{,}8 \cdot 2{,}00 = 1{,}60\,\mathrm{\mu s}$, zato $t_1 = \dfrac{2{,}00 + 1{,}60}{0{,}6} = 6{,}00\,\mathrm{\mu s}$.
+4. Vrnitev: $v t'_2 = 0{,}8 \cdot 1200 = 960\,\mathrm{m}$, zato $x_2 = \dfrac{0 + 960}{0{,}6} = 1600\,\mathrm{m}$ in $t_2 = \dfrac{4{,}00 + 0}{0{,}6} \approx 6{,}67\,\mathrm{\mu s}$.
+5. Neposredno v sistemu postaje: ladja je skrčena na $L = 600 \cdot 0{,}6 = 360\,\mathrm{m}$. Blisk dohiteva nos z relativno hitrostjo $c - v = 0{,}2\,c$: $t_1 = \dfrac{360}{0{,}2 \cdot 3{,}00 \cdot 10^8}\,\mathrm{s} = 6{,}00\,\mathrm{\mu s}$. Nazaj se blisk in rep približujeta s $c + v = 1{,}8\,c$: $\dfrac{360}{1{,}8 \cdot 3{,}00 \cdot 10^8}\,\mathrm{s} \approx 0{,}67\,\mathrm{\mu s}$. Skupaj $6{,}67\,\mathrm{\mu s}$, enako kot v koraku 4.
+6. Še preverba lege: odboj je pri $x_1 = c\,t_1 = 3{,}00 \cdot 10^8 \cdot 6{,}00 \cdot 10^{-6} = 1800\,\mathrm{m}$, rep pa je ob $t_2$ pri $x_2 = v\,t_2 = 0{,}8 \cdot 3{,}00 \cdot 10^8 \cdot 6{,}67 \cdot 10^{-6} \approx 1600\,\mathrm{m}$. Oboje se ujema.
+7. Odhod in vrnitev bliska se v $S'$ zgodita na istem mestu (v repu), zato je $4{,}00\,\mathrm{\mu s}$ lastni čas in velja $t_2 = \gamma\,t'_2 = 1{,}667 \cdot 4{,}00 \approx 6{,}67\,\mathrm{\mu s}$. Odhod in odboj pa sta v $S'$ na različnih mestih ($\Delta x' = 600\,\mathrm{m}$). Tu prispeva še člen $v\,\Delta x'/c^2$ in dobimo $6{,}00\,\mathrm{\mu s}$ namesto $\gamma \cdot 2{,}00 \approx 3{,}33\,\mathrm{\mu s}$.
+8. Odgovor: v sistemu postaje je odboj pri $x_1 = 1800\,\mathrm{m}$ ob $t_1 = 6{,}00\,\mathrm{\mu s}$, vrnitev pri $x_2 = 1600\,\mathrm{m}$ ob $t_2 \approx 6{,}67\,\mathrm{\mu s}$. Zveza $\Delta t = \gamma\,\Delta t'$ velja le za dogodka, ki sta v $S'$ na istem mestu.
+
+### Naloga 3
+
+Iz Lorentzovih transformacij izpelji podaljšanje časa in krčenje dolžin. Pri vsaki izpeljavi natančno navedi, katera dogodka primerjaš in kateri pogoj zanju velja, ter utemelji, zakaj se ura »upočasni« za faktor $\gamma$, palica pa »skrajša« za isti faktor, čeprav v obeh primerih uporabiš iste enačbe.
+
+**Rešitev:**
+
+1. Ker so transformacije linearne, veljajo tudi za razlike koordinat dveh dogodkov: $\Delta x' = \gamma\,(\Delta x - v\,\Delta t)$, $\Delta t' = \gamma\,(\Delta t - v\,\Delta x/c^2)$, obratno pa $\Delta x = \gamma\,(\Delta x' + v\,\Delta t')$ in $\Delta t = \gamma\,(\Delta t' + v\,\Delta x'/c^2)$.
+2. Podaljšanje časa. Ura miruje v $S'$. Dogodka sta dva zaporedna tika te ure. Pogoj: zgodita se na istem mestu v $S'$, $\Delta x' = 0$, in $\Delta t' = \Delta\tau$ je lastni čas.
+3. Iz obratne enačbe za čas sledi $\Delta t = \gamma\,(\Delta\tau + 0) = \gamma\,\Delta\tau$. V $S$ se tika zgodita na različnih mestih, $\Delta x = \gamma v\,\Delta\tau$, zato ju $S$ izmeri z dvema svojima usklajenima urama.
+4. Krčenje dolžin. Palica miruje v $S'$ vzdolž osi $x'$, njena lastna dolžina je $L_0 = \Delta x'$. Dolžino gibajoče se palice v $S$ določimo tako, da legi obeh koncev odčitamo ob istem času v $S$. Dogodka sta torej »odčitek levega konca« in »odčitek desnega konca«. Pogoj: $\Delta t = 0$, in $L = \Delta x$.
+5. Iz $\Delta x' = \gamma\,(\Delta x - v\,\Delta t)$ sledi $L_0 = \gamma\,L$, torej $L = L_0/\gamma$. Ker palica v $S'$ miruje, ni pomembno, da odčitka v $S'$ nista sočasna: $\Delta t' = -\gamma\,v\,L/c^2 \neq 0$.
+6. Utemeljitev razlike. Enačbe so iste, pogoja pa različna. Pri uri je razmik med dogodkoma nič v prostoru sistema, v katerem ura miruje ($\Delta x' = 0$). Pri palici je razmik nič v času sistema, v katerem se palica giblje ($\Delta t = 0$). Zato je v prvem primeru količina iz mirovnega sistema ($\Delta\tau$) najmanjša, v drugem ($L_0$) največja.
+7. Preverba z invarianto: za tika ure je $c^2\Delta t^2 - \Delta x^2 = \gamma^2 (c^2 - v^2)\,\Delta\tau^2 = c^2\Delta\tau^2$, enako kot v $S'$.
+8. Sklep: $\Delta t = \gamma\,\Delta\tau$ velja za dogodka na istem mestu v mirovnem sistemu ure; $L = L_0/\gamma$ velja za sočasna odčitka koncev v sistemu, v katerem se palica giblje. Pri krčenju dolžin je ključna relativnost sočasnosti (člen $v x/c^2$), pri podaljšanju časa pa ta člen odpade, ker sta dogodka na istem mestu ($\Delta x' = 0$).
+
 ## Drugače: Z analogijo
 
 Vzemi dva zemljevida istega mesta. Na prvem os $y$ kaže proti severu, drugi je zasukan za $30°$. Isti vogal ima na kartah različni koordinati, razdalja med dvema vogaloma $\sqrt{\Delta x^2 + \Delta y^2}$ pa je na obeh enaka. Zasuk premeša $x$ in $y$, razdaljo pa ohrani.
@@ -231,7 +289,7 @@ Invarianta je $E^2 - (pc)^2 = (mc^2)^2$, analog intervala. Zato je masa delca en
 ~ To je celotna energija $\gamma m c^2$; mirovne energije nisi odštel.
 > $\gamma = 1{,}25$, $E_k = (\gamma - 1)\,mc^2 = 0{,}25 \cdot 938{,}3\,\mathrm{MeV} \approx 234{,}6\,\mathrm{MeV}$.
 
-? Ladja leti mimo Zemlje s $0{,}8\,c$. Dogodek ima v zemeljskem sistemu $x = 2$ svetlobni leti in $t = 5$ let. Ob katerem času $t'$ se zgodi v sistemu ladje?
+? Ladja leti mimo Zemlje z $0{,}8\,c$. Dogodek ima v zemeljskem sistemu $x = 2$ svetlobni leti in $t = 5$ let. Ob katerem času $t'$ se zgodi v sistemu ladje?
 - $8{,}33$ leta
 ~ To je $\gamma t$: izpustil si člen $v x / c^2$, kot da bi bila sočasnost absolutna.
 - $3{,}00$ leta

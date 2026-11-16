@@ -134,14 +134,14 @@ Iz racionalne formule najprej molekulska, nato $M = x \cdot M(\mathrm{C}) + y \c
 
 **Rešitev:**
 
-1. Iz racionalne formule preštejemo atome. Ogljikov je $4$, vodikovih $3 + 2 + 2 + 3 = 10$. Molekulska formula je $\mathrm{C_4H_{10}}$.
+1. Iz racionalne formule preštejemo atome. Ogljikov je $4$, vodikov $3 + 2 + 2 + 3 = 10$. Molekulska formula je $\mathrm{C_4H_{10}}$.
 2. Molska masa, z upoštevanjem indeksov: $4 \cdot 12 + 10 \cdot 1 = 58$, torej $M = 58\,\mathrm{g/mol}$.
 3. Množina: $n = \dfrac{230\,\mathrm{g}}{58\,\mathrm{g/mol}} \approx 3{,}97\,\mathrm{mol}$.
 4. Odgovor: v kartuši je približno $3{,}97\,\mathrm{mol}$ butana.
 
 ### Primer 4: zdaj ti
 
-V drugem kampu Nika najde kartušo z napisom »izobutan« in formulo $\mathrm{CH_3{-}CH(CH_3){-}CH_3}$. Skupina $\mathrm{(CH_3)}$ v oklepaju visi s srednjega ogljika vstran. Kolikšna je molekulska formula? Ali je to isti plin kot butan?
+V drugem kampu Nika najde kartušo z napisom »izobutan« in formulo $\mathrm{CH_3{-}CH(CH_3){-}CH_3}$. Skupina $\mathrm{(CH_3)}$ v oklepaju visi s srednjega ogljika vstran. Kakšna je molekulska formula? Ali je to isti plin kot butan?
 
 **Podatki:** racionalna formula $\mathrm{CH_3{-}CH(CH_3){-}CH_3}$, srednji C je vezan na tri atome C
 **Iščemo:** molekulsko formulo in primerjavo z butanom
@@ -157,7 +157,7 @@ Preštej atome C in H po skupinah; molekulska formula $\mathrm{C}_x\mathrm{H}_y$
 3. Preštej vodike po skupinah in primerjaj z butanom.
 
 :::premisli
-Kolikšna je molekulska formula izobutana in ali je to isti plin kot butan?
+Kakšna je molekulska formula izobutana in ali je to isti plin kot butan?
 ---
 Vodikov je $3 + 1 + 3 + 3 = 10$, molekulska formula je $\mathrm{C_4H_{10}}$, enaka kot pri butanu. Vendar je zemljevid drugačen: veriga je razvejana. Gre za drugo snov z drugačnimi lastnostmi, ki ima le enako molekulsko formulo. Zgolj zapis $\mathrm{C_4H_{10}}$ torej Niki še ne pove, kateri plin kupuje.
 :::

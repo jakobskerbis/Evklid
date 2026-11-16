@@ -180,7 +180,7 @@ $v = \sqrt{2W_p/m} = \sqrt{2 \cdot 1{,}0\,\mathrm{J}/0{,}50\,\mathrm{kg}} = 2{,}
 ## Pogoste napake
 
 - **Ohranitev energije pri neprožnem trku.** Pri trku se vedno ohranja gibalna količina, kinetična energija pa le pri prožnem trku. Pri balističnem nihalu je treba trk in nihanje obravnavati ločeno.
-- **Gibalna količina kot skalar.** $\vec{G}$ je vektor. Žoga z $5\,\mathrm{m/s}$, ki se odbije nazaj z $5\,\mathrm{m/s}$, spremeni gibalno količino za $2mv$, ne za nič.
+- **Gibalna količina kot skalar.** $\vec{G}$ je vektor. Žoga s $5\,\mathrm{m/s}$, ki se odbije nazaj s $5\,\mathrm{m/s}$, spremeni gibalno količino za $2mv$, ne za nič.
 - **Delo normalne sile ali radialne sile.** Sila, pravokotna na premik, ne opravi dela, četudi je velika.
 - **Pozabljeno delo trenja.** Trenje opravi delo $-F_{tr}s$, odvisno od dolžine poti, ne od višinske razlike.
 - **Izrek o kinetični energiji le z eno silo.** V izrek gre delo **vseh** sil na telo (ali delo rezultante), ne le delo sile, ki jo omenja naloga.

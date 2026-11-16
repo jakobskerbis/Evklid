@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Štetje brez izpisovanja
+  - tedenskih zapisov vremena je $3^7 = 2187$
+  - načela dajo število ali obstoj
+- Načelo produkta
+  - $|A \times B| = |A| \cdot |B|$, zaporedni koraki »in nato«
+  - zaporedij dolžine $k$ iz $n$ simbolov je $n^k$
+  - napaka: »zamenjaš osnovo in eksponent«
+- Načelo vsote
+  - $|A \cup B| = |A| + |B|$, izbira »ali«
+  - velja le za disjunktni množici
+  - poti na vrh: $(3 + 2) \cdot 4 = 20$
+- Dvojno preštevanje
+  - iste pare štejemo po vrsticah in stolpcih
+  - $\sum_v \deg v = 2|E|$, vsota stopenj je soda
+  - napaka: pozabiš deliti z $2$
+- Dirichletovo načelo
+  - $n > k$: neki predal ima dva predmeta
+  - posplošitev: vsaj $\left\lceil \frac{n}{k} \right\rceil$ predmetov
+  - pove, da predal obstaja, ne kateri
+- Tipične pasti
+  - $n = k$ ponovitve ne zagotovi
+  - $\left\lfloor \frac{n}{k} \right\rfloor$ namesto $\left\lceil \frac{n}{k} \right\rceil$
+  - za $r$ v predalu: $k(r - 1) + 1$ predmetov

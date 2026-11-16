@@ -31,7 +31,7 @@ Med obema skupinama teče v periodnem sistemu stopničasta črta od bora do asta
 
 Kovine zavzemajo levo in srednji del tabele, nekovine desni zgornji kot, polkovine so tanek pas med njimi.
 
-**3. Zakaj se lastnosti spreminjajo urejeno.** Vzemimo 3. periodo. Od natrija do klora se v jedru vsakič doda en proton, nov elektron pa gre v isto, tretjo lupino. Jedro z večjim nabojem zunanje elektrone močneje privlači. Posledice prikazuje tabela z dvema novima količinama. **Ionizacijska energija** je energija, potrebna, da atomu v plinastem stanju odtrgamo najšibkeje vezan elektron. **Elektronegativnost** pove, kako močno atom v vezi privlači skupni elektronski par.
+**3. Zakaj se lastnosti spreminjajo urejeno.** Vzemimo 3. periodo. Od natrija do klora se v jedru vsakič doda en proton, nov elektron pa gre v isto, tretjo lupino. Jedro z večjim nabojem zunanje elektrone močneje privlači. Posledice prikazuje tabela z dvema količinama, ki ju poznaš iz 1. letnika. **Ionizacijska energija** je energija, potrebna, da atomu v plinastem stanju odtrgamo najšibkeje vezan elektron. **Elektronegativnost** pove, kako močno atom v vezi privlači skupni elektronski par.
 
 | Element | Polmer atoma [pm] | 1. ionizacijska energija [kJ/mol] | Elektronegativnost |
 |---|---|---|---|
@@ -150,7 +150,7 @@ $n = \dfrac{m}{M}$, $c = \dfrac{n}{V}$; za $\mathrm{Ca(OH)_2}$ velja $[\mathrm{O
 
 Natrijev oksid z maso $0{,}124\,\text{g}$ raztopimo v vodi in razredčimo do $2{,}0\,\text{L}$. Kolikšen je pH pri $25\,^\circ\mathrm{C}$? Molska masa $\mathrm{Na_2O}$ je $62\,\text{g/mol}$.
 
-**Podatki:** $m = 0{,}124\,\text{g}$, $M = 62\,\text{g/mol}$, $V = 2{,}0\,\text{L}$
+**Podatki:** $m = 0{,}124\,\text{g}$, $M = 62\,\text{g/mol}$, $V = 2{,}0\,\text{L}$, $t = 25\,^\circ\mathrm{C}$
 **Iščemo:** $\mathrm{pH}$
 
 :::formula

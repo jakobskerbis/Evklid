@@ -47,7 +47,7 @@ pH se je zniževal, ker je vsaka kapljica kisline odvzela nekaj ionov $\mathrm{O
 | žveplova $\mathrm{H_2SO_4}$ | sulfat $\mathrm{SO_4^{2-}}$ | kalijev sulfat $\mathrm{K_2SO_4}$ |
 | dušikova $\mathrm{HNO_3}$ | nitrat $\mathrm{NO_3^-}$ | kalijev nitrat $\mathrm{KNO_3}$ |
 
-Formulo soli zapišeš s križnim pravilom: naboj enega iona postane indeks drugega. Skupina $\mathrm{SO_4}$ ostane cela, njenih indeksov ne spreminjaš.
+Formulo soli zapišeš s križnim pravilom: naboj enega iona postane indeks drugega, nato indeksa skrajšaš na najmanjše celo razmerje ($\mathrm{Ca^{2+}}$ + $\mathrm{SO_4^{2-}}$ → $\mathrm{Ca_2(SO_4)_2}$ → okrajšamo → $\mathrm{CaSO_4}$, en ion na en ion). Na koncu preveri vsoto nabojev: $1 \cdot 2 + 1 \cdot (-2) = 0$. Skupina $\mathrm{SO_4}$ ostane cela, njenih indeksov ne spreminjaš.
 
 **6. Cela enačba.** Splošna shema je:
 
@@ -99,7 +99,7 @@ kislina + baza $\longrightarrow$ sol + voda; en $\mathrm{H^+}$ potrebuje en $\ma
 
 **Rešitev:**
 
-1. Kation baze je $\mathrm{K^+}$, anion kisline $\mathrm{SO_4^{2-}}$. Po križnem pravilu: $\mathrm{K_2SO_4}$, kalijev sulfat.
+1. Kation baze je $\mathrm{K^+}$, anion kisline $\mathrm{SO_4^{2-}}$. Po križnem pravilu: $\mathrm{K_2SO_4}$, kalijev sulfat. Preverba: $2 \cdot 1 + 1 \cdot (-2) = 0$.
 2. Kislina ima dva vodika, torej odda dva iona $\mathrm{H^+}$. Za vsakega potrebujemo en $\mathrm{OH^-}$, zato pišemo $2\,\mathrm{KOH}$. Nastaneta dve molekuli vode.
 3. Enačba: $\mathrm{H_2SO_4 + 2\,KOH \longrightarrow K_2SO_4 + 2\,H_2O}$.
 4. Štejemo kisik: levo $4 + 2 \cdot 1 = 6$, desno $4 + 2 \cdot 1 = 6$. Vodik: levo $2 + 2 = 4$, desno $2 \cdot 2 = 4$. Kalij $2$ in žveplo $1$ se tudi ujemata.
@@ -160,7 +160,7 @@ $\mathrm{HNO_3 + KOH \longrightarrow KNO_3 + H_2O}$. Kislina ima en vodik, baza 
 - Nevtralizacija je reakcija kisline z bazo: kislina + baza $\longrightarrow$ sol + voda.
 - Bistvo: $\mathrm{H^+ + OH^- \longrightarrow H_2O}$ (natančneje $\mathrm{H_3O^+}$ in $\mathrm{OH^-}$ dasta vodo).
 - Sol je ionska spojina iz kationa kovine (iz baze) in aniona kisline (iz kisline).
-- Anioni: klorid $\mathrm{Cl^-}$, sulfat $\mathrm{SO_4^{2-}}$, nitrat $\mathrm{NO_3^-}$; formula soli po križnem pravilu.
+- Anioni: klorid $\mathrm{Cl^-}$, sulfat $\mathrm{SO_4^{2-}}$, nitrat $\mathrm{NO_3^-}$; formula soli po križnem pravilu, indeksa nato skrajšaj ($\mathrm{CaSO_4}$, ne $\mathrm{Ca_2(SO_4)_2}$).
 - Vsak $\mathrm{H^+}$ potrebuje en $\mathrm{OH^-}$ in da eno molekulo vode; enačbo urejamo s koeficienti.
 - Pri točno ujemajočih se količinah močne kisline in baze je $\mathrm{pH} = 7$; nevtralizacija je eksotermna.
 

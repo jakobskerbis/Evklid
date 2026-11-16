@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Meritev vodi do zakona
+  - tok sorazmeren z $\Delta T$ in $A$
+  - tok obratno sorazmeren z debelino
+- Fourierov zakon
+  - $q_x = -\lambda\frac{\mathrm{d}T}{\mathrm{d}x}$
+  - toplota teče proti nižji temperaturi
+  - $\lambda$ v W/(m K), izolira ujet zrak
+- Ravna stena
+  - stacionarno, brez virov: linearen profil
+  - $\Phi = \frac{\lambda A\Delta T}{d}$
+- Toplotni upor
+  - $R_t = \frac{d}{\lambda A}$ v K/W
+  - analogija z Ohmovim zakonom
+- Zaporedne in vzporedne plasti
+  - zaporedno: upori se seštejejo
+  - padec temperature sorazmeren z uporom
+  - napaka: seštevati prevodnosti
+- Valj in krogla
+  - $R_c = \frac{\ln(r_2/r_1)}{2\pi\lambda L}$
+  - profil logaritemski, ne linearen
+  - krogla: ploščina $4\pi r_1r_2$

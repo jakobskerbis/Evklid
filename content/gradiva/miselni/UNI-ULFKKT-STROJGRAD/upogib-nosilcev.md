@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Notranji sili
+  - prečna sila $T$, upogibni moment $M$
+  - $M > 0$: spodnja vlakna v nategu
+  - napaka: »napetost iz $F/A$«
+- Konzola
+  - sila na koncu: $T = F$, $|M| = F a$, $M < 0$
+  - $M_\mathrm{max} = FL$ ob vpetju, ne pod silo
+- Prostoležeči nosilec
+  - sila na sredini: $T = \pm F/2$, $M_\mathrm{max} = FL/4$
+  - enakomerna $q$: $M_\mathrm{max} = qL^2/8$
+- Diferencialni zvezi
+  - $\mathrm{d}T/\mathrm{d}x = -q$, $\mathrm{d}M/\mathrm{d}x = T$
+  - ekstrem $M$, kjer $T$ zamenja predznak
+- Navierova enačba
+  - $\sigma = My/I$, $I = \int_A y^2\,\mathrm{d}A$
+  - nevtralna os skozi težišče, tam $\sigma = 0$
+  - pogoj: ravni prerezi, linearno elastičen material
+- Odpornostni moment
+  - $\sigma_\mathrm{max} = M/W$, $W = I/(h/2)$, enota $\mathrm{mm^3}$
+  - pravokotnik $W = bh^2/6$, krog $W = \pi d^3/32$
+  - ravnilo: $750\,\mathrm{N\,mm}/20\,\mathrm{mm^3} = 37{,}5\,\mathrm{MPa}$
+- Oblika preseka
+  - cev $W = \pi(D^4 - d^4)/(32D)$
+  - material daleč od nevtralne osi nosi največ
+  - napaka: »$M$ v $\mathrm{N\,m}$, $W$ v $\mathrm{mm^3}$«

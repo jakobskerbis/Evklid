@@ -313,7 +313,7 @@ Stereocenter je **volan**: steber je vez do skupine 4 in kaže stran od tebe, na
 > Dva stereocentra in brez simetrije: $2^2 = 4$, to sta dva para enantiomerov.
 
 :::simboli
-\alpha | izmerjeni kot zasuka ravnine polarizirane svetlobe | | ° | + desno, − levo; [α] = α/(l c) je specifična sučnost
+\alpha | izmerjeni kot zasuka ravnine polarizirane svetlobe | | ° | + desno, − levo; [α] = α/(l c) je specifična rotacija
 l | dolžina kivete | | dm |
 c | masna koncentracija | | g/mL |
 w_{RR}, w_{SS} | masna deleža (2R,3R)- in (2S,3S)-oblike | | – | v Primeru 3

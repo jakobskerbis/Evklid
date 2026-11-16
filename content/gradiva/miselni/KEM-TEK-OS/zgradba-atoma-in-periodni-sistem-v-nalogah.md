@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Delci atoma
+  - protoni določajo element
+  - atom: elektronov toliko kot protonov
+- Lupine
+  - polnjenje 2, 8, 8
+  - zunanji elektroni odločajo o reakcijah
+- Periodni sistem kot zemljevid
+  - perioda = število lupin
+  - skupina = zunanji elektroni (zadnja števka)
+- Trendi
+  - navzdol po skupini atom raste
+  - v desno po periodi se manjša
+  - kovinski značaj raste navzdol in levo
+- Ioni
+  - kovine oddajo: $\mathrm{Mg^{2+}}$
+  - nekovine sprejmejo: $\mathrm{S^{2-}}$
+  - $n_e = Z - q$
+- Izotopi
+  - enako protonov, različno nevtronov
+  - $N = A - Z$
+  - napaka: $A$ je število nevtronov
+- Relativna atomska masa
+  - uteženo povprečje: $A_r = x_1 \cdot A_1 + x_2 \cdot A_2$
+  - klor: $0{,}75 \cdot 35 + 0{,}25 \cdot 37 = 35{,}5$
+  - napaka: navadno povprečje 36

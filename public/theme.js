@@ -1,9 +1,9 @@
 // Svetli/temni način in lastne barve. Navaden skript v <head>, da se barve nastavijo pred prvim izrisom.
 // Nastavitve so shranjene na tej napravi (localStorage "evklid.theme"):
-//   { style: "cist" | "igriv" | "temen" | ključ iz ERAS (zgodovinski slogi), mode: "system" | "light" | "dark", accent: "#rrggbb" | null,
+//   { style: "cist" | "igriv" | ključ iz ERAS (zgodovinski slogi), mode: "system" | "light" | "dark", accent: "#rrggbb" | null,
 //     light: { bg, surface, menu, text } | null, dark: { … } | null }
-// Slog (docs/oblikovanje.md): Čist (privzeto, Instrument Sans, umirjen), Igriv (Nunito, zaobljen, topel),
-// Temen (IBM Plex Sans, vedno temen, metin poudarek) in zgodovinski slogi iz tabele ERAS spodaj (Antični,
+// Slog (docs/oblikovanje.md): Čist (privzeto, Instrument Sans, umirjen), Igriv (Nunito, zaobljen, topel)
+// in zgodovinski slogi iz tabele ERAS spodaj (Antični,
 // Renesansa, Hiša modrosti, Indija …). Slog nastavi data-style na <html> (pisava, oblike)
 // in osnovne barve; lastne barve uporabnika veljajo nad njimi.
 // Iz teh nekaj barv izračunamo vse ostale (robove, sivo besedilo, poudarke …) in pri tem
@@ -38,6 +38,22 @@
     r.classList.add("v-aplikaciji");
     r.style.setProperty("--varno-zg", "0px");
     r.style.setProperty("--varno-sp", "0px");
+  } catch {}
+})();
+
+// Aplikacija (WebView) in nameščena spletna aplikacija nimata gumba za povečavo: nehoten poteg z dvema prstoma je
+// zaslon za nekaj odstotkov povečal in ostal tak. Glava je nato ob drsenju napol zdrsnila z zaslona, spodnji vrstici
+// so se odrezali napisi, ob desnem in spodnjem robu pa sta bila vidna drsnika (j 2026-11-15). Tam strani ne
+// povečujemo (sprememba ob zagonu povečavo tudi ponastavi); velikost pisave ostane po nastavitvi telefona.
+// V brskalniku povečava ostane (dostopnost).
+(function () {
+  try {
+    const app = / EvklidApp\//.test(navigator.userAgent) || (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+    const vp = document.querySelector('meta[name="viewport"]');
+    if (!app || !vp || /maximum-scale/.test(vp.content)) return;
+    // Izvirnik za pregledovalnik izpitnih pol (paper-viewer.js): tam drobni tisk A4 berejo s povečavo s prsti.
+    vp.setAttribute("data-izvirno", vp.content);
+    vp.setAttribute("content", vp.content + ", minimum-scale=1, maximum-scale=1, user-scalable=no");
   } catch {}
 })();
 
@@ -200,7 +216,7 @@
       },
     },
   };
-  const STYLES = ["cist", "igriv", "temen", ...Object.keys(ERAS)];
+  const STYLES = ["cist", "igriv", ...Object.keys(ERAS)];
   // Osnovne barve slogov. Čist je enak privzetim barvam v style.css (brez izračuna).
   const BASES = {
     cist: {
@@ -210,10 +226,6 @@
     igriv: {
       light: { bg: "#fff6ea", surface: "#ffffff", menu: "#ffffff", text: "#1f1a2e", accent: "#6a3bd6" },
       dark: { bg: "#17121f", surface: "#211a2e", menu: "#211a2e", text: "#efeaf8", accent: "#a98bff" },
-    },
-    temen: {
-      light: { bg: "#0d1117", surface: "#151b23", menu: "#151b23", text: "#e6eaf0", accent: "#4cd3a4" },
-      dark: { bg: "#0d1117", surface: "#151b23", menu: "#151b23", text: "#e6eaf0", accent: "#4cd3a4" },
     },
   };
   for (const [k, e] of Object.entries(ERAS)) BASES[k] = { light: e.light, dark: e.dark };
@@ -327,6 +339,8 @@
   function load() {
     try {
       const s = JSON.parse(localStorage.getItem(KEY) || "{}");
+      // Slog »Temen« je odstranjen (j, 12. 11.: isto kot način Temno): kdor ga je imel, dobi Čist v temnem načinu.
+      if (s.style === "temen") Object.assign(s, { style: "cist", mode: "dark" });
       return { style: STYLES.includes(s.style) ? s.style : "cist", mode: ["light", "dark", "system"].includes(s.mode) ? s.mode : "system", accent: hexToRgb(s.accent) ? s.accent : null, light: s.light || null, dark: s.dark || null };
     } catch {
       return { style: "cist", mode: "system", accent: null, light: null, dark: null };
@@ -337,7 +351,7 @@
     apply(s);
     window.dispatchEvent(new CustomEvent("evklid:theme", { detail: s }));
   }
-  const isDarkMode = (s) => s.style === "temen" || s.mode === "dark" || (s.mode === "system" && mq.matches);
+  const isDarkMode = (s) => s.mode === "dark" || (s.mode === "system" && mq.matches);
 
   // Iz nekaj izbranih barv izračuna vse spremenljivke. Vrne null, če ni lastnih barv.
   function compute(s) {
@@ -644,4 +658,27 @@
   const c = navigator.connection;
   const auto = !!(c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || "")));
   if (saved === "1" || (saved === null && auto)) document.documentElement.classList.add("lite");
+})();
+
+// Pisava besedila izbranega sloga takoj (preload), ne šele ko brskalnik prebere CSS: besedilo se ne
+// preriše z drugo pisavo pozneje (brez premikov postavitve). Samo Čist/Igriv (zgodovinski slogi imajo
+// isto pisavo besedila kot Čist) in nikoli v lahkem načinu (tam spletne pisave sploh ni).
+(function () {
+  try {
+    const r = document.documentElement;
+    if (r.classList.contains("lite") || !document.head || !/^\/(index\.html)?$/.test(location.pathname)) return; // samo aplikacija
+    // Pod service workerjem pisava pride iz predpomnilnika takoj; preload bi jo le prenesel dvakrat in Chromium
+    // javi »preloaded but not used« (pregled PR #481 B2 P3-1).
+    if (navigator.serviceWorker?.controller) return;
+    const pkg = { igriv: "nunito" }[r.dataset.style] || "instrument-sans";
+    for (const sub of ["latin", "latin-ext"]) {
+      const l = document.createElement("link");
+      l.rel = "preload";
+      l.as = "font";
+      l.type = "font/woff2";
+      l.crossOrigin = "anonymous";
+      l.href = `/vendor/${pkg}/files/${pkg}-${sub}-wght-normal.woff2`;
+      document.head.append(l);
+    }
+  } catch {}
 })();

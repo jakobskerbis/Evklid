@@ -143,7 +143,7 @@ Iz $\rho = \dfrac{n\,M}{a^3 N_\mathrm{A}}$ izrazimo $n = \dfrac{\rho\, a^3 N_\ma
 
 ### Primer 4: zdaj ti – vrzeli v vročem aluminiju
 
-Aluminij pri vlivanju posod segrejemo na $600\,^\circ\mathrm{C}$. Energija za nastanek vrzeli je $0{,}68\,\mathrm{eV}$. Kolikšen delež mest v mreži je prazen?
+Kos čistega aluminija segrejemo na $600\,^\circ\mathrm{C}$, tik pod tališče ($660\,^\circ\mathrm{C}$). Energija za nastanek vrzeli je $0{,}68\,\mathrm{eV}$. Kolikšen delež mest v mreži je prazen?
 
 **Podatki:** $T = 600\,^\circ\mathrm{C}$, $Q_\mathrm{v} = 0{,}68\,\mathrm{eV}$, $k = 8{,}617\cdot10^{-5}\,\mathrm{eV/K}$
 **Iščemo:** delež vrzeli $N_\mathrm{v}/N$
@@ -225,15 +225,30 @@ Natančno definiraj delež zapolnjenosti in dokaži, da je za preprosto kubično
 
 ## Drugače: Na sliki
 
-Prerez skozi ploskev celice FCC (● je središče atoma):
+Prerez skozi ploskev celice FCC (kvadrat s stranico $a$, krogi so atomi s polmerom $R$):
 
-```
-●───────●
-│ ╲     │
-│   ●   │
-│     ╲ │
-●───────●
-```
+:::risba skica
+opis: Kvadratna ploskev celice FCC s stranico a. V vsakem oglišču in v središču ploskve je središče atoma; atomi so krogi s polmerom R. Po diagonali se krogi dotikajo: od oglišča do roba prvega kroga je R, čez srednji krog 2R, do nasprotnega oglišča še R, skupaj 4R = a√2. Po robu kvadrata se ogliščna kroga ne dotikata, med njima je reža.
+območje: -2; -2 .. 6; 6
+krog: 0; 0 | 1,41 | siva
+krog: 4; 0 | 1,41 | siva
+krog: 0; 4 | 1,41 | siva
+krog: 4; 4 | 1,41 | siva
+krog: 2; 2 | 1,41 | siva
+pravokotnik: 0; 0 .. 4; 4 | debelo
+črta: 0; 4 -> 4; 0 | modra debelo
+točka: 0; 0
+točka: 4; 0
+točka: 0; 4
+točka: 4; 4
+točka: 2; 2
+napis: 0,7; 3,65 | R | desno | modra
+napis: 2; 2 | 2R | desno | modra
+napis: 3,4; 0,95 | R | desno | modra
+napis: 2; 0 | a | pod
+napis: 2; 4 | reža | nad
+podnapis: Po diagonali ploskve: R + 2R + R = 4R = a√2
+:::
 
 Po diagonali se vrstijo: polovica ogliščnega atoma ($R$), cel atom na ploskvi ($2R$) in polovica drugega ogliščnega atoma ($R$). Skupaj $4R = a\sqrt2$. Po robu kocke se atoma ne dotikata, med njima je reža.
 

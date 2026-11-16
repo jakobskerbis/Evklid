@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Jeklo in litina
+  - meja okoli $2{,}06\,\%$ C
+  - jeklo preoblikujemo, litino ulivamo
+- Oznake po uporabi
+  - S235JR: $R_\mathrm{e} \ge 235\,\mathrm{MPa}$
+  - JR, J0, J2: $27\,\mathrm{J}$ pri $20$, $0$, $-20\,°\mathrm{C}$
+- Oznake po sestavi
+  - C45: $0{,}45\,\%$ C
+  - 42CrMo4: faktor $4$, torej $1\,\%$ Cr
+  - X5CrNi18-10: dejanski deleži
+- Konstrukcijska in strojna
+  - varivost: $\mathrm{CE} \le 0{,}45$
+  - poboljšana in cementacijska jekla
+- Orodna jekla
+  - delo v hladnem, v vročem
+  - hitrorezna HS6-5-2
+- Nerjavna jekla
+  - vsaj $10{,}5\,\%$ Cr, pasivna plast
+  - avstenitna, feritna, martenzitna, dupleks
+- Litine
+  - siva GJL: lamele, krhka v nategu
+  - nodularna GJS: kroglice, žilava

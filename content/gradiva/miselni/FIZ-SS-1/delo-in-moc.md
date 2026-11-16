@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Delo
+  - $A = F\,s$, sila v smeri premika
+  - enota $1\,\mathrm{J} = 1\,\mathrm{N\,m}$
+  - ploščina pod grafom $F(s)$
+- Sila pod kotom
+  - $A = F\,s\cos\alpha$
+  - $\alpha$ je kot med silo in premikom
+  - kalkulator v stopinjah
+- Predznak dela
+  - $\alpha = 90^\circ$: delo nič
+  - trenje: negativno delo
+  - brez premika ni dela
+- Več sil
+  - skupno delo je vsota del s predznaki
+  - $200\,\mathrm{J} - 120\,\mathrm{J} = 80\,\mathrm{J}$
+- Dviganje
+  - enakomerno: $F = m\,g$
+  - napaka: masa namesto teže
+- Moč
+  - $P = \dfrac{A}{t}$, enota $\mathrm{W} = \mathrm{J/s}$
+  - enako delo, krajši čas: večja moč
+  - $1\,\mathrm{KM} \approx 736\,\mathrm{W}$
+- Stalna hitrost
+  - $P = F\,v$
+- Delo iz moči
+  - $A = P\,t$
+  - $1\,\mathrm{kWh} = 3{,}6 \cdot 10^6\,\mathrm{J}$

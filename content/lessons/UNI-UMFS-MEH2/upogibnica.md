@@ -19,7 +19,7 @@ $$\varphi = w'$$
 
 Zasuki so v praksi majhni, zato je nagib kar kot v radianih.
 
-*Preizkus:* kolikšen je zasuk tam, kjer je poves največji? *(Nič: tangenta je tam vodoravna.)*
+*Preizkus:* kolikšen je zasuk tam, kjer je poves nosilca na dveh podporah med podporama največji? *(Nič: tangenta je tam vodoravna.)*
 
 **Blok 2: ukrivljenost iz upogiba.** Pri upogibu si izpeljal, da se vlakno na razdalji $y$ od nevtralne osi raztegne za $\varepsilon = y/\rho$, kjer je $\rho$ polmer ukrivljenosti. Hookov zakon da $\sigma = E\varepsilon = E y/\rho$, iz upogiba pa poznaš $\sigma = M y / I$. Izenačimo in dobimo
 
@@ -46,7 +46,7 @@ Največja je ob vpetju, kjer je $\lvert M \rvert = F L$ največji. Na prostem ko
 | podpora | $w$ | $w'$ | $M$ |
 |---|---|---|---|
 | togo vpetje | 0 | 0 | ni znan |
-| členkasta podpora | 0 | ni znan | 0 |
+| členkasta podpora na koncu | 0 | ni znan | 0 |
 | prosti konec | ni znan | ni znan | 0 |
 
 *Preizkus:* katera dva pogoja uporabiš pri nosilcu na dveh členkastih podporah, pri $x = 0$ in $x = L$? *(Iz tabele: $w(0) = 0$ in $w(L) = 0$; zasuka na členkih nista znana.)*
@@ -122,7 +122,7 @@ Odgovor: nosilec se na sredini povesi za približno $3{,}65\,\mathrm{mm}$, ob po
 
 ### Primer 3: drog z instrumentom na Luni
 
-Na pristajalniku na Luni bo vodoravni aluminijast drog ($E = 70\,\mathrm{GPa}$), dolg $L = 2\,\mathrm{m}$, na koncu nosil kamero z maso $m = 12\,\mathrm{kg}$. Na Luni je $g_L = 1{,}62\,\mathrm{m/s^2}$. Konec se sme povesiti največ $w_{\max} = 1\,\mathrm{mm}$. Kolikšen najmanj mora biti $I$? Lastno težo droga zanemari.
+Na pristajalniku na Luni bo vodoravni, na enem koncu togo vpet aluminijast drog ($E = 70\,\mathrm{GPa}$), dolg $L = 2\,\mathrm{m}$, na koncu nosil kamero z maso $m = 12\,\mathrm{kg}$. Na Luni je $g_L = 1{,}62\,\mathrm{m/s^2}$. Konec se sme povesiti največ $w_{\max} = 1\,\mathrm{mm}$. Kolikšen najmanj mora biti $I$? Lastno težo droga zanemari.
 
 **Podatki:** $E = 7 \cdot 10^{10}\,\mathrm{Pa}$, $L = 2\,\mathrm{m}$, $m = 12\,\mathrm{kg}$, $g_L = 1{,}62\,\mathrm{m/s^2}$, $w_{\max} = 0{,}001\,\mathrm{m}$
 **Iščemo:** najmanjši $I$ in poves na Zemlji
@@ -161,6 +161,65 @@ Poves je premo sorazmeren s silo, ta pa z $g$. Razmerje je $9{,}81/1{,}62 \appro
 - Prostoležeči nosilec z $q$: $w(L/2) = 5 q L^4/(384 E I)$, $\varphi(0) = q L^3/(24 E I)$.
 - Poves je sorazmeren z obtežbo in obratno sorazmeren z $E I$; z dolžino raste s potenco.
 
+## Za izpit
+
+Znati moraš povedati:
+- definiciji povesa $w(x)$ in zasuka $\varphi = w'$ z dogovorom o predznaku;
+- zvezo $1/\rho = M/(E I)$ z izpeljavo in pomen upogibne togosti $E I$;
+- diferencialno enačbo upogibnice $E I\, w'' = -M(x)$, njen predznak in predpostavko majhnih zasukov;
+- robne pogoje za togo vpetje, členkasto podporo in prosti konec ter pogoj $w' = 0$ na simetrijski osi;
+- izpeljavo $w_{\max} = F L^3/(3 E I)$ in $\varphi_{\max} = F L^2/(2 E I)$ za konzolo ter $w(L/2) = 5 q L^4/(384 E I)$ za prostoležeči nosilec;
+- načelo superpozicije in zakaj velja.
+
+### Naloga 1
+
+Vodoravna aluminijasta cev ($E = 70\,\mathrm{GPa}$, $I = 4{,}32 \cdot 10^{-8}\,\mathrm{m^4}$) dolžine $L = 1{,}5\,\mathrm{m}$ je na levem koncu togo vpeta. Obremenjujeta jo lastna teža $q = 6\,\mathrm{N/m}$ in merilnik na prostem koncu s težo $F = 10\,\mathrm{N}$. (a) Z integracijo upogibnice izpelji poves in zasuk prostega konca zaradi same enakomerne obtežbe $q$. (b) Izračunaj skupni poves in zasuk prostega konca. (c) Kolikšen bi moral biti najmanj $I$, da poves konca ne preseže $3\,\mathrm{mm}$?
+
+**Rešitev:**
+
+1. Os $x$ teče od vpetja. Desno od prereza $x$ leži obtežba $q(L - x)$ s prijemališčem na razdalji $\dfrac{L - x}{2}$, zato je $M(x) = -\dfrac{q (L - x)^2}{2}$ (napeta so zgornja vlakna).
+2. Enačba upogibnice: $E I\, w'' = \dfrac{q (L - x)^2}{2}$.
+3. Prva integracija: $E I\, w' = -\dfrac{q (L - x)^3}{6} + C_1$. Iz $w'(0) = 0$ sledi $C_1 = \dfrac{q L^3}{6}$.
+4. Druga integracija: $E I\, w = \dfrac{q (L - x)^4}{24} + \dfrac{q L^3}{6}\,x + C_2$. Iz $w(0) = 0$ sledi $C_2 = -\dfrac{q L^4}{24}$.
+5. Pri $x = L$: $E I\, w = \dfrac{q L^4}{6} - \dfrac{q L^4}{24} = \dfrac{q L^4}{8}$ in $E I\, w' = \dfrac{q L^3}{6}$. Torej $w_q = \dfrac{q L^4}{8 E I}$ in $\varphi_q = \dfrac{q L^3}{6 E I}$.
+6. Upogibna togost: $E I = 7 \cdot 10^{10} \cdot 4{,}32 \cdot 10^{-8} = 3024\,\mathrm{N\,m^2}$.
+7. Lastna teža: $w_q = \dfrac{6 \cdot 5{,}0625}{8 \cdot 3024} \approx 0{,}00126\,\mathrm{m}$, kjer je $1{,}5^4 = 5{,}0625$; $\varphi_q = \dfrac{6 \cdot 3{,}375}{6 \cdot 3024} \approx 0{,}00112\,\mathrm{rad}$.
+8. Merilnik: $w_F = \dfrac{10 \cdot 3{,}375}{3 \cdot 3024} \approx 0{,}00372\,\mathrm{m}$ in $\varphi_F = \dfrac{10 \cdot 2{,}25}{2 \cdot 3024} \approx 0{,}00372\,\mathrm{rad}$.
+9. Enačba je linearna, zato prispevka seštejemo: $w = 0{,}00126 + 0{,}00372 = 0{,}00498\,\mathrm{m}$ in $\varphi = 0{,}00112 + 0{,}00372 = 0{,}00484\,\mathrm{rad}$.
+10. Poves je obratno sorazmeren z $I$: $I_{\min} = 4{,}32 \cdot 10^{-8} \cdot \dfrac{4{,}98}{3} \approx 7{,}17 \cdot 10^{-8}\,\mathrm{m^4}$.
+11. Odgovor: (a) $w_q = \dfrac{q L^4}{8 E I}$, $\varphi_q = \dfrac{q L^3}{6 E I}$; (b) konec se povesi za približno $4{,}98\,\mathrm{mm}$ in zasuka za $0{,}00484\,\mathrm{rad}$, četrtino povesa prispeva lastna teža; (c) $I \ge 7{,}17 \cdot 10^{-8}\,\mathrm{m^4}$.
+
+### Naloga 2
+
+Izpelji diferencialno enačbo upogibnice. Natančno navedi predpostavke, pri katerih velja, in utemelji predznak v njej. Nato utemelji, zakaj pri prostoležečem nosilcu ne smeš uporabiti pogoja $w'(0) = 0$.
+
+**Rešitev:**
+
+1. Pri upogibu se vlakno na razdalji $y$ od nevtralne osi raztegne za $\varepsilon = \dfrac{y}{\rho}$. Hookov zakon da $\sigma = E\varepsilon = \dfrac{E y}{\rho}$.
+2. Iz upogiba velja $\sigma = \dfrac{M y}{I}$. Izenačimo: $\dfrac{E y}{\rho} = \dfrac{M y}{I}$, torej $\dfrac{1}{\rho} = \dfrac{M}{E I}$.
+3. Za položno krivuljo (majhni zasuki, $w'^2 \ll 1$) je ukrivljenost $\dfrac{1}{\rho} \approx \lvert w'' \rvert$.
+4. Predznak: pozitiven $M$ napenja spodnja vlakna, nosilec se usloči kot skleda: sredina je nižje od krajev. Ker $w$ štejemo navzdol, ima $w(x)$ tam največjo vrednost, torej $w'' < 0$. Zato $E I\, w'' = -M(x)$.
+5. Predpostavke: ravni prečni prerezi ostanejo ravni in pravokotni na upognjeno os (od tod $\varepsilon = y/\rho$), material je linearno elastičen (velja Hookov zakon), zasuki so majhni, poves povzroča samo upogibni moment, $w$ je pozitiven navzdol in $M$ pozitiven, če napenja spodnja vlakna.
+6. Dve integraciji prineseta konstanti $C_1$ in $C_2$, ki ju določita robna pogoja. Na togem vpetju sta preprečena premik in zasuk: $w = 0$, $w' = 0$.
+7. Členkasta podpora prepreči samo premik, zasuk pa dopušča in momenta ne prenese: velja $w = 0$ (in $M = 0$), $w'$ ni znan. Pri prostoležečem nosilcu sta zato pogoja $w(0) = 0$ in $w(L) = 0$.
+8. Kdor postavi $w'(0) = 0$, v resnici računa nosilec, ki je levo togo vpet. Pri enakomerni obtežbi je pravi zasuk ob podpori $\varphi(0) = \dfrac{q L^3}{24 E I} \ne 0$; tangenta je vodoravna na sredini, na simetrijski osi.
+
+### Naloga 3
+
+Prostoležeči jekleni nosilec ($E = 210\,\mathrm{GPa}$, $I = 8{,}69 \cdot 10^{-6}\,\mathrm{m^4}$) dolžine $L = 4\,\mathrm{m}$ nosi na sredini silo $F = 6\,\mathrm{kN}$. (a) Z integracijo upogibnice izpelji poves pod silo in zasuk ob podpori. (b) Izračunaj oba. (c) Kolikokrat manjši bi bil poves na sredini, če bi isto breme enakomerno razporedili po vsej dolžini?
+
+**Rešitev:**
+
+1. Reakciji sta $\dfrac{F}{2}$. Za levo polovico, $0 \le x \le \dfrac{L}{2}$, je $M(x) = \dfrac{F x}{2}$.
+2. Enačba upogibnice: $E I\, w'' = -\dfrac{F x}{2}$. Velja le na levi polovici, ker ima $M(x)$ pod silo lom.
+3. Prva integracija: $E I\, w' = -\dfrac{F x^2}{4} + C_1$. Nosilec in obtežba sta simetrična, zato je $w'(L/2) = 0$ in $C_1 = \dfrac{F L^2}{16}$.
+4. Druga integracija: $E I\, w = -\dfrac{F x^3}{12} + \dfrac{F L^2}{16}\,x + C_2$. Iz $w(0) = 0$ sledi $C_2 = 0$.
+5. Pri $x = \dfrac{L}{2}$: $E I\, w = -\dfrac{F L^3}{96} + \dfrac{F L^3}{32} = \dfrac{F L^3}{48}$. Zasuk ob podpori: $\varphi(0) = \dfrac{C_1}{E I} = \dfrac{F L^2}{16 E I}$.
+6. $E I = 2{,}1 \cdot 10^{11} \cdot 8{,}69 \cdot 10^{-6} = 1{,}8249 \cdot 10^{6}\,\mathrm{N\,m^2}$.
+7. $w = \dfrac{6000 \cdot 64}{48 \cdot 1{,}8249 \cdot 10^{6}} \approx 0{,}00438\,\mathrm{m}$ in $\varphi(0) = \dfrac{6000 \cdot 16}{16 \cdot 1{,}8249 \cdot 10^{6}} \approx 0{,}00329\,\mathrm{rad}$.
+8. Enakomerno razporejeno breme pomeni $q = \dfrac{F}{L}$, torej $w = \dfrac{5 q L^4}{384 E I} = \dfrac{5 F L^3}{384 E I}$. Razmerje: $\dfrac{F L^3}{48 E I} : \dfrac{5 F L^3}{384 E I} = \dfrac{384}{5 \cdot 48} = 1{,}6$.
+9. Odgovor: (a) $w(L/2) = \dfrac{F L^3}{48 E I}$, $\varphi(0) = \dfrac{F L^2}{16 E I}$; (b) približno $4{,}38\,\mathrm{mm}$ in $0{,}00329\,\mathrm{rad}$; (c) poves bi bil $1{,}6$-krat manjši, približno $2{,}74\,\mathrm{mm}$.
+
 ## Drugače: Na sliki
 
 Predstavljaj si konzolo antene od vpetja (levo) do prostega konca (desno) in pod njo štiri diagrame, enega pod drugim:
@@ -170,7 +229,7 @@ Predstavljaj si konzolo antene od vpetja (levo) do prostega konca (desno) in pod
 3. **Zasuk** $w'$: parabola, ki začne pri nič ob vpetju in se na koncu zravna pri $\varphi_{\max}$.
 4. **Poves** $w$: kubična krivulja, ki začne vodoravno in je čedalje bolj strma.
 
-Vsak diagram je ploščina pod prejšnjim. Poves vzdolž konzole, v deležih $w_{\max}$:
+Zasuk in poves sta vsak ploščina pod prejšnjim diagramom. Poves vzdolž konzole, v deležih $w_{\max}$:
 
 | $x/L$ | $w/w_{\max}$ |
 |---|---|
@@ -237,7 +296,7 @@ Enačba je linearna, zato velja **superpozicija**: poves zaradi več bremen je v
 ~ Razlika je majhna, a ni nič: $0{,}8^3 = 0{,}512$, kar je malo več kot $0{,}5$.
 > $w \propto L^3 / I$: dvojni $I$ da $0{,}5$, dolžina $0{,}8\,L$ pa $0{,}512$. Dvojni $I$ je malenkost boljši.
 
-? Skakalna deska v bazenu je konzola. Potapljač stoji najprej na koncu deske, nato na njeni polovici. Kolikšen del prvega povesa (pod njim na koncu) je poves pod njegovimi nogami v drugem primeru?
+? Skakalna deska v bazenu je konzola. Skakalec stoji najprej na koncu deske, nato na njeni polovici. Kolikšen del prvega povesa (pod njim na koncu) je poves pod njegovimi nogami v drugem primeru?
 - Polovica
 ~ Poves ni linearen v dolžini ročice; tako bi bilo le, če bi bil sorazmeren z $L$.
 - Četrtina

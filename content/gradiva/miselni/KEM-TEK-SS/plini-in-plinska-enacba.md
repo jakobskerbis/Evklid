@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Avogadrov zakon
+  - enaka prostornina, enako število delcev
+  - velja pri enakih $T$ in $p$
+- Molski volumen
+  - $V_m = \dfrac{V}{n}$
+  - $22{,}4\,\mathrm{L/mol}$ pri $0\,\mathrm{°C}$
+  - $24{,}5\,\mathrm{L/mol}$ pri $25\,\mathrm{°C}$
+- Kelvini
+  - $T = t + 273{,}15$
+  - napaka: stopinje Celzija v enačbi
+- Splošna plinska enačba
+  - $pV = nRT$
+  - $R = 8{,}314\,\mathrm{kPa \cdot L/(mol \cdot K)}$
+  - tlak absolutni, ne nadtlak
+- Stalna množina plina
+  - $\dfrac{p_1 V_1}{T_1} = \dfrac{p_2 V_2}{T_2}$
+  - žoga na mrazu je mehkejša
+- Gostota plina
+  - $\rho = \dfrac{pM}{RT}$
+  - vlažen zrak je lažji od suhega
+- Zmesi plinov
+  - $p_i = x_i \, p$
+  - delni tlaki se seštejejo
+  - $\bar{M} = x_1 M_1 + x_2 M_2$

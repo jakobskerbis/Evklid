@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Naloge in sistem
+  - pritrditev, sprejem vode, zaloga
+  - brez listov, kolenc in brstov
+  - glavni sistem dvokaličnic, šopasti enokaličnic
+- Cone vršička
+  - čepica, delitev, podaljševanje, laski
+  - statoliti v čepici zaznajo težnost
+  - povečanje površine $k = \dfrac{A_\mathrm{K} + n \cdot A_\mathrm{L}}{A_\mathrm{K}}$
+- Primarna zgradba
+  - rizodermis, skorja, endoderm, centralni cilinder
+  - radialni snop: ksilem in floem izmenično
+  - dvokaličnice $2$–$5$ krakov, enokaličnice stržen
+- Endoderm
+  - Casparyjev trak zapre apoplast
+  - voda gre naprej skozi membrano
+- Stranske korenine
+  - endogeno, iz pericikla
+  - lasek je ena celica, ne korenina
+- Sekundarna zgradba
+  - kambij: ksilem navznoter, floem navzven
+  - felogen iz pericikla, periderm, skorja odpade
+  - obroči pese niso letnice
+- Metamorfoze
+  - založne, oporne, zračne, dihalne, haustoriji, krčilne
+  - krompir je stebelni gomolj, batata koreninski

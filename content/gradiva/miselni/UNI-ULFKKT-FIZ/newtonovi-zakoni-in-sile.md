@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Newtonovi zakoni
+  - prvi: inercialni sistem, vsota sil nič
+  - drugi: $\sum \vec{F} = \mathrm{d}\vec{G}/\mathrm{d}t = m\vec{a}$
+  - tretji: sili delujeta na različni telesi
+- Postopek reševanja
+  - telo, diagram sil, osi, komponente
+  - preveri enote in mejne primere
+- Sile v diagramu
+  - teža $F_g = mg$, vrv, vzmet $F = -kx$
+  - na klancu $F_N = mg\cos\alpha$, ne $mg$
+- Trenje
+  - lepenje: $F_l \le k_l F_N$, le največja vrednost
+  - kinetično: $F_{tr} = k_t F_N$, običajno $k_t < k_l$
+  - klanec: miruje, če $\tan\alpha \le k_l$
+- Kroženje
+  - $a_r = v^2/r = \omega^2 r$ proti središču
+  - $F_r = mv^2/r$ je rezultanta pravih sil
+  - napaka: »centrifugalna sila v diagramu«
+- Gravitacija
+  - $F = Gm_1m_2/r^2$, $r$ med središčema
+  - $g = GM_Z/R_Z^2 \approx 9{,}8\,\mathrm{m/s^2}$
+- Krožni tir
+  - $v = \sqrt{GM/r}$, neodvisno od mase satelita
+  - $T^2 = 4\pi^2 r^3/(GM)$

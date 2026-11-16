@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Formalni naboj
+  - ogljik tvori štiri vezi
+  - $\mathrm{FN} = V - N - \tfrac{1}{2}B$
+  - vsota je enaka naboju delca
+- Hibridizacija
+  - sterična številka: sosedje in nevezani pari
+  - $4, 3, 2$ skupine: $sp^3$ ($109{,}5^\circ$), $sp^2$ ($120^\circ$), $sp$ ($180^\circ$)
+  - $\cos\theta = -1/\lambda$, delež $s$ je $1/(1 + \lambda)$
+- Vezi $\sigma$ in $\pi$
+  - dvojna $\sigma + \pi$, trojna $\sigma + 2\pi$
+  - $\mathrm{C{-}C}$ $154\,\mathrm{pm}$, $\mathrm{C{=}C}$ $134\,\mathrm{pm}$, $\mathrm{C{\equiv}C}$ $120\,\mathrm{pm}$
+  - okoli dvojne vezi ni vrtenja
+- Polarnost vezi
+  - $\mathrm{C^{\delta+}{-}O^{\delta-}}$, vez $\mathrm{C{-}H}$ skoraj nepolarna
+  - $\mathrm{O{-}H}$, $\mathrm{N{-}H}$: vodikove vezi, višje vrelišče
+- Resonanca
+  - premikamo le elektrone $\pi$ in nevezane pare
+  - hibrid, ne ravnotežje: $\leftrightarrow$ ni $\rightleftharpoons$
+  - benzen: vse vezi $139\,\mathrm{pm}$; amidni dušik $sp^2$
+- Hückelovo pravilo
+  - cikličen, ravninski, popolnoma konjugiran sistem
+  - $4k + 2$ aromatski, $4k$ antiaromatski
+- Funkcionalne skupine
+  - določajo razred in značilne reakcije
+  - karbonilne ločimo po sosedih skupine $\mathrm{C{=}O}$
+  - pazi: fenol ni alkohol
+- Stopnja nenasičenosti
+  - $\mathrm{SN} = \frac{2c + 2 + n - h - x}{2}$
+  - obroči in vezi $\pi$; kisik ne vpliva
+  - paracetamol $\mathrm{C_8H_9NO_2}$: $\mathrm{SN} = 5$

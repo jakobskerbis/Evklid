@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Predikat in domena
+  - $P(x)$ postane izjava šele z vrednostjo $x$
+  - resničnost odvisna od domene $D$
+- Kvantifikatorja
+  - $\forall x\, P(x)$: velja za vsak $x \in D$
+  - $\exists x\, P(x)$: zadošča ena priča
+  - končna domena: dolga $\wedge$ oziroma $\vee$
+- Prosta in vezana spremenljivka
+  - v $\exists y\,(x < y)$ je $y$ vezana, $x$ prosta
+- Omejeni kvantifikatorji
+  - $\forall x \in A$: $x \in A \Rightarrow P(x)$
+  - $\exists x \in A$: $x \in A \wedge P(x)$
+  - napaka: »implikacija pri $\exists$«
+- Negacija
+  - $\neg\, \forall x\, P \sim \exists x\, \neg P$
+  - $\neg\, \forall x\,(P \Rightarrow Q) \sim \exists x\,(P \wedge \neg Q)$
+  - domena se ne zanika
+- Več kvantifikatorjev
+  - vsak se obrne, vrstni red ostane
+  - $\exists y\, \forall x\, P \models \forall x\, \exists y\, P$, obrat ne
+  - protiprimer: $y > x$ na $\mathbb{N}$
+- Dokazovanje
+  - $\forall$ ovržeš s protiprimerom
+  - $\exists$ dokažeš s pričo

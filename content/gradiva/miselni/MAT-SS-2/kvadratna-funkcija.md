@@ -14,12 +14,14 @@ stanje: osnutek
 - Teme iz splošne
   - $p = -\dfrac{b}{2a}$, $q = f(p)$
   - simetrijska os $x = p$
+  - enaki vrednosti ob 12.00 in 16.00: os ob 14.00
 - Ničle
   - $(x - p)^2 = -\dfrac{q}{a}$, nato $\pm$
   - $a$ in $q$ različnih predznakov: dve
+  - $q = 0$: ena; enakih predznakov: nobene
 - Ničelna oblika
   - $f(x) = a(x - x_1)(x - x_2)$
   - samo pri realnih ničlah
 - Lastnosti grafa
   - zaloga vrednosti $[q, \infty)$ za $a > 0$
-  - temperatura dneva: vrh ob 14.00
+  - $a > 0$: pada do $p$, nato narašča

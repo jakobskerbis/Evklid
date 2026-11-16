@@ -22,7 +22,7 @@ const PAGES = {
   "/t-calc.html": `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/graph.css"><link rel="stylesheet" href="/tipkovnica.css"><div id="g" style="height:600px"></div><button id="ven" style="position:fixed;top:0;left:0;z-index:9999;width:44px;height:44px">x</button>
 <script type="module">
 import { createCalculator } from "/graph/calc.js";
-window.calc = createCalculator(document.getElementById("g"), { t: (k) => k, icon: () => "", locale: () => "sl", storageKey: () => "t-calc", studentId: () => "", toast() {}, askTutor() {} });
+window.calc = createCalculator(document.getElementById("g"), { t: (k) => k, icon: () => "", locale: () => "sl", storageKey: () => new URLSearchParams(location.search).get("k") || "t-calc", studentId: () => "", toast() {}, askTutor() {} });
 window.ready = true;
 </script>`,
   "/t-dd.html": `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/tipkovnica.css">
@@ -133,6 +133,89 @@ test("touch-browser checks", { skip }, async (t) => {
     assert.equal(await jp.getAttribute(".gc-input", "inputmode"), "none");
     assert.deepEqual(errors, []);
     await jp.close();
+  });
+
+  await t.test("tipkovnica se zapre ob tapu zunaj polja in tipkovnice; blur, drsenje in tipke jo ne zaprejo (#247)", async () => {
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto(`${base}/t-calc.html?k=tip-zunaj`); // lasten ključ: brez izraza iz prejšnjega podtesta
+    await page.waitForFunction(() => window.ready);
+    const kb = "#tipkovnica";
+    const hidden = () => page.evaluate(() => document.querySelector("#tipkovnica").hidden);
+    await page.tap(".gc-input");
+    await page.waitForSelector(`${kb}:not([hidden])`);
+    // izguba fokusa sama ne zapre (#247)
+    await page.evaluate(() => document.querySelector(".gc-input").blur());
+    await page.waitForTimeout(100);
+    assert.equal(await hidden(), false, "blur ne zapre");
+    // dotik tipke na tipkovnici in preklop plasti ne zapreta
+    await page.locator(`${kb} .tk-tab`, { hasText: "ABC" }).tap();
+    await page.waitForSelector(`${kb} .tk-rows[data-layer="abc"]`);
+    await page.waitForTimeout(100);
+    assert.equal(await hidden(), false, "tipka na tipkovnici ne zapre");
+    // tap na polje samo ne zapre
+    await page.tap(".gc-input");
+    await page.waitForTimeout(100);
+    assert.equal(await hidden(), false, "tap na polje ne zapre");
+    // drsenje strani (premik prsta zunaj polja) ne zapre
+    const cdp = await ctx.newCDPSession(page);
+    await cdp.send("Input.synthesizeScrollGesture", { x: 180, y: 120, yDistance: -60, gestureSourceType: "touch" });
+    await page.waitForTimeout(200);
+    assert.equal(await hidden(), false, "drsenje ne zapre");
+    // pravi tap zunaj zapre
+    await page.tap("#ven");
+    await page.waitForSelector(kb, { state: "hidden" });
+    // ponovno odpiranje deluje, tap zunaj spet zapre
+    await page.tap(".gc-input");
+    await page.waitForSelector(`${kb}:not([hidden])`);
+    await page.tap("#ven");
+    await page.waitForSelector(kb, { state: "hidden" });
+    // tap na oznako odprtega polja je ne zapre
+    await page.tap(".gc-input");
+    await page.waitForSelector(`${kb}:not([hidden])`);
+    await page.evaluate(() => {
+      const f = document.querySelector(".gc-input");
+      f.id ||= "gc-in-test";
+      const l = document.createElement("label");
+      l.htmlFor = f.id;
+      l.id = "oznaka";
+      l.textContent = "oznaka";
+      l.style.cssText = "position:fixed;top:60px;left:0;z-index:9999;width:80px;height:44px;background:#eee";
+      document.body.append(l);
+    });
+    await page.tap("#oznaka");
+    await page.waitForTimeout(250);
+    assert.equal(await hidden(), false, "tap na oznako polja ne zapre");
+    // gumb, ki polje le ponovno fokusira (Pošlji v klepetu), tipkovnice ne zapre
+    await page.evaluate(() => {
+      const f = document.querySelector(".gc-input");
+      const b = document.createElement("button");
+      b.id = "fokus";
+      b.textContent = "f";
+      b.style.cssText = "position:fixed;top:120px;left:0;z-index:9999;width:44px;height:44px";
+      b.addEventListener("click", () => f.focus());
+      document.body.append(b);
+      f.blur();
+    });
+    await page.tap("#fokus");
+    await page.waitForTimeout(300);
+    assert.equal(await hidden(), false, "gumb, ki ponovno fokusira polje, ne zapre");
+    // iPhone: tap na neklikljiv element brez click-a (le pointerdown + pointerup) zapre; premik ne
+    const ptrTap = (dx) =>
+      page.evaluate((dx) => {
+        const el = document.querySelector("#g");
+        const o = { bubbles: true, composed: true, pointerType: "touch", pointerId: 7, isPrimary: true, clientX: 200, clientY: 300 };
+        el.dispatchEvent(new PointerEvent("pointerdown", o));
+        el.dispatchEvent(new PointerEvent("pointerup", { ...o, clientX: 200 + dx }));
+      }, dx);
+    await ptrTap(40);
+    await page.waitForTimeout(250);
+    assert.equal(await hidden(), false, "pointerup po premiku (drsenje) ne zapre");
+    await ptrTap(2);
+    await page.waitForSelector(kb, { state: "hidden" });
+    assert.deepEqual(errors, []);
+    await page.close();
   });
 
   await t.test("long dropdown opens over its button with the chosen item in the search box", async () => {

@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Štetje s črticami
+  - Peta črtica prečrta štiri: peterček
+  - Peterčke štejemo po pet
+- Preglednica
+  - Kategorija in število
+  - Vrstica Skupaj je preizkus: $9 + 6 + 5 = 20$
+- Stolpčni prikaz
+  - Višina stolpca je število
+  - Os se začne pri $0$
+  - Enako široki stolpci
+- Merilo
+  - $\text{višina} = \text{vrednost} : \text{merilo}$
+  - $\text{vrednost} = \text{višina} \cdot \text{merilo}$
+  - Napaka: šteti kvadratke brez merila
+- Črtični prikaz
+  - Tanke črtice s piko na vrhu
+  - Bere se kot stolpčni
+- Povezani vrhovi
+  - Samo za podatke po času
+  - Dviga se: narašča; vodoravno: enako
+- Branje prikaza
+  - Naslov, osi, enota, merilo
+  - Za koliko več: odštevanje

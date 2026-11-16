@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Grupa
+  - zaprtost, asociativnost, enota, inverzi
+  - $(ab)^{-1} = b^{-1}a^{-1}$
+  - primeri: $\mathbb Z$, $\mathrm{GL}_n$, $\mathbb Z_n$
+- Red elementa
+  - najmanjši $k$ z $a^k = e$
+  - ciklična grupa $\langle g \rangle$
+- Podgrupa
+  - kriterij $ab^{-1} \in H$
+  - $\mathrm{SO}(n) \le \mathrm O(n) \le \mathrm{GL}_n$
+- Lagrangeov izrek
+  - odseki $aH$ razdelijo $G$
+  - $\lvert H \rvert$ deli $\lvert G \rvert$
+  - napaka: obrat ne velja ($A_4$)
+- Permutacije
+  - $S_n$ ima $n!$ elementov
+  - red je $\operatorname{nzv}$ dolžin ciklov
+  - cikel dolžine $k$: $k - 1$ transpozicij
+- Homomorfizem
+  - $f(ab) = f(a)f(b)$, $f(e) = e$
+  - injektiven natanko pri trivialnem jedru
+  - $\det$ z jedrom $\mathrm{SL}_n$
+- Simetrija v biologiji
+  - ikozaedrska grupa reda $60$
+  - kapsida s $60$ podenotami

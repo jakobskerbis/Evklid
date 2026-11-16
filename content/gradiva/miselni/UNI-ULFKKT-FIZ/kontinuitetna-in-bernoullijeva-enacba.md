@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tlak in gostota
+  - $p = F/S$, $1\,\mathrm{bar} = 10^5\,\mathrm{Pa}$
+  - $\rho = m/V$, voda $1000\,\mathrm{kg/m^3}$
+- Hidrostatski tlak
+  - $p = p_0 + \rho g h$, šteje le globina
+  - nadtlak $\rho g h$, absolutni tlak s $p_0$
+  - Pascal: $F_2 = F_1 S_2/S_1$
+- Vzgon
+  - $F_{vz} = \rho_{\text{tek}}\,g\,V_{\text{pot}}$
+  - plavanje: potopljeni delež $\rho_{\text{telo}}/\rho_{\text{tek}}$
+- Idealna tekočina
+  - nestisljiva, neviskozna, stacionaren tok
+  - tokovnice in tokovna cev
+- Kontinuitetna enačba
+  - $\Phi_V = Sv$, enota $\mathrm{m^3/s}$
+  - $S_1v_1 = S_2v_2$, ohranitev mase
+  - $v \propto 1/d^2$, ne $1/d$
+- Bernoullijeva enačba
+  - $p + \tfrac{1}{2}\rho v^2 + \rho g z = \text{konst.}$
+  - vzdolž tokovnice, ohranitev energije
+  - večja hitrost, manjši tlak
+- Posledice
+  - Torricelli: $v = \sqrt{2gh}$
+  - Venturi: $\Delta p = \tfrac{1}{2}\rho(v_2^2 - v_1^2)$

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -51,12 +51,10 @@ Izrek velja za vsako stranico; črke le zamenjaš: $a^2 = b^2 + c^2 - 2bc\cos\al
 
 **Kateri izrek izbrati.** Odloči se po tem, kaj poznaš:
 
-| poznaš | začni s | opomba |
-|---|---|---|
-| tri stranice | kosinusnim | kot iz $\cos$ |
-| dve stranici in kot med njima | kosinusnim | najprej tretja stranica |
-| stranico in dva kota | sinusnim | tretji kot iz $180^\circ$ |
-| dve stranici in kot nasproti ene | sinusnim | lahko sta dve rešitvi |
+- tri stranice → kosinusni izrek (kot iz $\cos$);
+- dve stranici in kot med njima → kosinusni izrek (najprej tretja stranica);
+- stranico in dva kota → sinusni izrek (tretji kot iz $180^\circ$);
+- dve stranici in kot nasproti ene → sinusni izrek (lahko sta dve rešitvi).
 
 **Past pri sinusu.** Kadar s sinusnim izrekom iščeš kot, dobiš njegov sinus. Iz lekcije o trigonometrijskih enačbah veš, da ima $\sin x = 0{,}9$ med $0^\circ$ in $180^\circ$ dve rešitvi: $x \approx 64{,}2^\circ$ in $x \approx 115{,}8^\circ$. Kalkulator pokaže le prvo. Trikotnik lahko obstaja z obema kotoma, le z enim ali z nobenim. Zato za vsakega kandidata preveri, ali je njegova vsota z znanim kotom manjša od $180^\circ$.
 
@@ -176,6 +174,84 @@ $\cos\kappa = \dfrac{5{,}76 + 9{,}61 - 12{,}25}{14{,}88} = \dfrac{3{,}12}{14{,}8
 - Kot iz sinusa ima lahko dve vrednosti, $x$ in $180^\circ - x$. Kot iz kosinusa je en sam.
 - Nasproti največjega kota leži najdaljša stranica; top kot je lahko le tam.
 
+## Ponovitev
+
+**Formule**
+- $\dfrac{a}{\sin\alpha} = \dfrac{b}{\sin\beta} = \dfrac{c}{\sin\gamma} = 2R$ (na pamet)
+- $c^2 = a^2 + b^2 - 2ab\cos\gamma$ (na pamet)
+- $\cos\gamma = \dfrac{a^2 + b^2 - c^2}{2ab}$ (na pamet)
+- $\sin x = \sin(180^\circ - x)$ (na pamet)
+
+**Postopek**
+1. Skiciraj trikotnik in vsako stranico poveži z nasprotnim kotom.
+2. Če poznaš cel par (stranica in nasprotni kot), uporabi sinusni izrek.
+3. Pri treh stranicah ali dveh stranicah z vmesnim kotom uporabi kosinusni izrek.
+4. Pri kotu iz sinusa preveri oba kandidata, $x$ in $180^\circ - x$.
+5. Tretji kot izračunaj iz vsote kotov $180^\circ$.
+
+**Pazi na**
+- V sinusnem izreku stoji stranica le z nasprotnim kotom.
+- Iz sinusa sta lahko dva kota; preveri tudi topega.
+- Kosinusni izrek da $c^2$: na koncu koreni.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Stranice trikotnika merijo $3\,\mathrm{cm}$, $5\,\mathrm{cm}$ in $7\,\mathrm{cm}$. Izračunajte največji notranji kot trikotnika.
+
+**Rešitev:**
+
+1. Največji kot leži nasproti najdaljše stranice. Označimo $a = 3\,\mathrm{cm}$, $b = 5\,\mathrm{cm}$, $c = 7\,\mathrm{cm}$; iščemo kot $\gamma$.
+2. Po kosinusnem izreku: $\cos\gamma = \dfrac{a^2 + b^2 - c^2}{2ab} = \dfrac{9 + 25 - 49}{30} = \dfrac{-15}{30} = -\dfrac{1}{2}$.
+3. Med $0^\circ$ in $180^\circ$ ima kosinus $-\frac{1}{2}$ le kot $120^\circ$.
+4. Odgovor: največji kot trikotnika meri $120^\circ$.
+
+**Točkovanje:** 1 točka za izbiro kota nasproti najdaljše stranice, 1 točka za pravilno vstavljen kosinusni izrek ($\cos\gamma = -\frac{1}{2}$), 1 točka za $\gamma = 120^\circ$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
+
+Parcela ima obliko trikotnika $ABC$. Velja $|AB| = 85\,\mathrm{m}$, $|AC| = 62\,\mathrm{m}$, notranji kot pri oglišču $A$ pa meri $74^\circ$.
+
+a) Izračunajte dolžino stranice $BC$. Rezultat zaokrožite na decimeter. (2 točki)
+b) Izračunajte notranji kot pri oglišču $B$. Rezultat zaokrožite na stotinko stopinje. (2 točki)
+c) Okoli parcele želijo speljati krožno pot, ki gre skozi vsa tri oglišča. Izračunajte polmer te krožnice. Rezultat zaokrožite na decimeter. (2 točki)
+
+**Rešitev:**
+
+1. a) Oznake: $c = 85\,\mathrm{m}$, $b = 62\,\mathrm{m}$, $\alpha = 74^\circ$; iščemo $a = |BC|$. Znani sta dve stranici in kot med njima, zato uporabimo kosinusni izrek.
+2. a) $a^2 = b^2 + c^2 - 2bc\cos\alpha = 3844 + 7225 - 10540\cos 74^\circ \approx 8163{,}78\,\mathrm{m^2}$, torej $a \approx 90{,}354\,\mathrm{m} \approx 90{,}4\,\mathrm{m}$.
+3. b) Iščemo $\beta$, ki leži nasproti $b = 62\,\mathrm{m}$. Ta stranica ni najdaljša, zato je $\beta$ oster in sinusni izrek da en sam kot.
+4. b) $\sin\beta = \dfrac{b\sin\alpha}{a} \approx \dfrac{62 \cdot 0{,}96126}{90{,}354} \approx 0{,}65961$, zato $\beta \approx 41{,}270^\circ \approx 41{,}27^\circ$.
+5. c) Krožnica skozi vsa tri oglišča je očrtana krožnica. Iz sinusnega izreka $2R = \dfrac{a}{\sin\alpha}$ sledi $R = \dfrac{90{,}354\,\mathrm{m}}{2\sin 74^\circ} \approx 46{,}997\,\mathrm{m}$.
+6. Odgovor: a) $|BC| \approx 90{,}4\,\mathrm{m}$; b) kot pri $B$ meri približno $41{,}27^\circ$; c) polmer krožne poti je približno $47{,}0\,\mathrm{m}$.
+
+**Točkovanje:** a) 1 točka za pravilno vstavljen kosinusni izrek, 1 točka za $90{,}4\,\mathrm{m}$; b) 1 točka za sinusni izrek s pravim parom, 1 točka za $41{,}27^\circ$ (z zaokroženim $a = 90{,}4\,\mathrm{m}$ dobimo $41{,}24^\circ$, kar se tudi prizna); c) 1 točka za zvezo $2R = \frac{a}{\sin\alpha}$ (ali z drugim parom), 1 točka za $R \approx 47{,}0\,\mathrm{m}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Zapiši sinusni izrek in ga dokaži z višino trikotnika.
+---
+Sinusni izrek pravi, da v vsakem trikotniku velja $\frac{a}{\sin\alpha} = \frac{b}{\sin\beta} = \frac{c}{\sin\gamma} = 2R$, kjer je $R$ polmer očrtane krožnice. Višina $v_c$ iz oglišča $C$ razdeli trikotnik na dva pravokotna trikotnika, zato je $v_c = b\sin\alpha$ in $v_c = a\sin\beta$. Iz $b\sin\alpha = a\sin\beta$ po deljenju s $\sin\alpha\sin\beta$ dobimo $\frac{a}{\sin\alpha} = \frac{b}{\sin\beta}$. Z višino iz drugega oglišča enako pokažemo enakost še za par $c$ in $\gamma$; da je skupno razmerje enako $2R$, pa dokažemo posebej z obodnim kotom v očrtani krožnici. Pri topem kotu pade višina zunaj trikotnika, sklep pa ostane, ker je $\sin(180^\circ - \alpha) = \sin\alpha$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kako se glasi kosinusni izrek in kako z njim ugotovimo, ali je kot trikotnika oster, pravi ali top?
+---
+Kosinusni izrek pravi $c^2 = a^2 + b^2 - 2ab\cos\gamma$, kjer je $\gamma$ kot med stranicama $a$ in $b$. Kot $\gamma$ je pravi natanko tedaj, ko je $\cos\gamma = 0$ oziroma $c^2 = a^2 + b^2$, takrat izrek preide v Pitagorov izrek. Če je $c^2 < a^2 + b^2$, je $\cos\gamma > 0$ in je kot $\gamma$ oster. Če je $c^2 > a^2 + b^2$, je $\cos\gamma < 0$ in je kot $\gamma$ top.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pojasni, zakaj lahko pri danih dveh stranicah in kotu nasproti ene od njiju dobimo dva različna trikotnika.
+---
+Neznani kot izračunamo s sinusnim izrekom, ta pa da le njegov sinus. Med $0^\circ$ in $180^\circ$ imata enak sinus kota $x$ in $180^\circ - x$, zato sta kandidata dva. Trikotnik obstaja z vsakim kandidatom, pri katerem je vsota z danim kotom manjša od $180^\circ$. Če dani kot leži nasproti daljše od obeh danih stranic, je iskani kot nasproti krajše stranice in zato oster, tako da je trikotnik en sam.
+:::
+
 ## Drugače: Z analogijo
 
 **Kosinusni izrek je šestilo.** Kraka šestila imata stalni dolžini $a$ in $b$. Ko šestilo zapiraš, se konici bližata; ko ga odpiraš, se oddaljujeta. Pri pravem kotu je razdalja točno takšna, kot jo da Pitagorov izrek. Člen $-2ab\cos\gamma$ pove, koliko »zapiranje« pod $90^\circ$ odvzame ali »odpiranje« čez $90^\circ$ doda.
@@ -212,14 +288,11 @@ $\cos\kappa = \dfrac{5{,}76 + 9{,}61 - 12{,}25}{14{,}88} = \dfrac{3{,}12}{14{,}8
 ~ Stranica ni sorazmerna s kotom. Spreminja se po kosinusnem izreku, ne linearno.
 > Pri $\gamma = 120^\circ$ je $\cos\gamma < 0$, zato je $c^2 = a^2 + b^2 + 2ab \cdot 0{,}5$, kar je več kot pri $60^\circ$. Šestilo je bolj odprto, konici sta dlje.
 
-? V trikotniku je $a = 5\,\mathrm{cm}$, $b = 7\,\mathrm{cm}$ in $\gamma = 60^\circ$. Koliko meri $c$?
-- $8{,}60\,\mathrm{cm}$
-~ To je $\sqrt{25 + 49}$, Pitagorov izrek. Trikotnik ni pravokoten, zato manjka popravek $-2ab\cos\gamma$.
-+ $6{,}24\,\mathrm{cm}$
-- $10{,}44\,\mathrm{cm}$
-~ Tako dobiš, če popravek prišteješ: $\sqrt{74 + 35}$. Pri ostrem kotu se popravek odšteje.
-- $39\,\mathrm{cm}$
-~ To je $c^2$. Na koncu moraš še koreniti.
+? V trikotniku je $a = 5\,\mathrm{cm}$, $b = 7\,\mathrm{cm}$ in $\gamma = 60^\circ$. Koliko meri $c$? Vpiši v centimetrih, zaokroženo na dve decimalki.
+= 6,24 cm | 0,01
+~ 8,60 | To je $\sqrt{25 + 49}$, Pitagorov izrek. Trikotnik ni pravokoten, zato manjka popravek $-2ab\cos\gamma$.
+~ 10,44 | Tako dobiš, če popravek prišteješ: $\sqrt{74 + 35}$. Pri ostrem kotu se popravek odšteje.
+~ 39 | To je $c^2$. Na koncu moraš še koreniti.
 > $c^2 = 25 + 49 - 2 \cdot 5 \cdot 7 \cdot 0{,}5 = 39$, torej $c = \sqrt{39}\,\mathrm{cm} \approx 6{,}24\,\mathrm{cm}$.
 
 ? Luka išče kot $\alpha$ v trikotniku z $a = 9\,\mathrm{cm}$, $b = 5\,\mathrm{cm}$ in $\beta = 30^\circ$. Korak 1: $\dfrac{a}{\sin\alpha} = \dfrac{b}{\sin\beta}$. Korak 2: $\sin\alpha = \dfrac{9 \cdot 0{,}5}{5} = 0{,}9$. Korak 3: $\alpha \approx 64{,}2^\circ$, in to je edina rešitev. Kateri korak je napačen?
@@ -240,7 +313,25 @@ $\cos\kappa = \dfrac{5{,}76 + 9{,}61 - 12{,}25}{14{,}88} = \dfrac{3{,}12}{14{,}8
 + $4{,}55\,\mathrm{km}$
 - $3{,}61\,\mathrm{km}$
 ~ To je $\sqrt{9 + 4}$, Pitagorov izrek. Velja le za zavoj za $90^\circ$.
-> Notranji kot je $180^\circ - 50^\circ = 130^\circ$. Torej $d^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $d \approx 4{,}55\,\mathrm{km}$.
+> Notranji kot je $180^\circ - 50^\circ = 130^\circ$. Torej $c^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $c \approx 4{,}55\,\mathrm{km}$.
+
+? (brez računala) V trikotniku je $a = 7\,\mathrm{cm}$, $b = 8\,\mathrm{cm}$ in $\gamma = 120^\circ$. Koliko centimetrov meri $c$?
+= 13 cm | 0,01
+~ 7,55 | Vzel si $\cos 120^\circ = 0{,}5$. Kot je top, zato je $\cos 120^\circ = -0{,}5$ in se popravek $2ab \cdot 0{,}5$ prišteje.
+~ 10,63 | To je $\sqrt{49 + 64}$, Pitagorov izrek. Trikotnik ni pravokoten, zato manjka popravek $-2ab\cos\gamma$.
+~ 169 | To je $c^2$. Na koncu moraš še koreniti.
+> $c^2 = 49 + 64 - 2 \cdot 7 \cdot 8 \cdot \left(-\frac{1}{2}\right) = 113 + 56 = 169$, torej $c = 13\,\mathrm{cm}$.
+
+<<RACUN
+vrednost: (3^2+5^2-7^2)/(2*3*5) | -1/2
+vrednost: acos(-1/2)*180/pi | 120
+vrednost: 85^2+62^2-2*85*62*cos(74°) | 8163.78
+vrednost: sqrt(85^2+62^2-2*85*62*cos(74°)) | 90.35
+vrednost: 62*sin(74°)/sqrt(85^2+62^2-2*85*62*cos(74°)) | 0.6596
+vrednost: asin(62*sin(74°)/sqrt(85^2+62^2-2*85*62*cos(74°)))*180/pi | 41.27
+vrednost: sqrt(85^2+62^2-2*85*62*cos(74°))/(2*sin(74°)) | 47.00
+vrednost: asin(62*sin(74°)/90.4)*180/pi | 41.24
+>>
 
 :::simboli
 a, b, c | stranice trikotnika | | | $a$ leži nasproti oglišča $A$ itd.
@@ -254,7 +345,7 @@ d | razdalja igralca do bližje vratnice | | m | stranica nasproti $D$
 l | razdalja igralca do daljne vratnice | | m | stranica nasproti $L$
 p | širina vrat | | m | stranica nasproti $P$
 \kappa | največji kot orientacijske proge | \cos\kappa = \frac{x^2 + y^2 - z^2}{2xy} | ° | pri točki $K_1$
-x | odsek od starta $S$ do $K_1$ | | km |
+x | odsek od starta $S$ do $K_1$ (primer 4) | | km | pri pasti s sinusom je $x$ kot v stopinjah
 y | odsek od $K_1$ do $K_2$ | | km |
 z | odsek od $K_2$ nazaj do $S$ | | km | najdaljša stranica
 :::

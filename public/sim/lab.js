@@ -57,6 +57,8 @@ export function dataTable(cols, { empty = "Še ni meritev. Odčitaj merilnik in 
   // quiet: samodejni zapis (vsakih 30 s) premakne le okvir tabele, ne cele strani, da stran ne skače med delom.
   el.add = (r, { quiet = false } = {}) => (rows.push(r), draw(), quiet ? (el.scrollTop = el.scrollHeight) : el.querySelector("tbody tr:last-child")?.scrollIntoView?.({ block: "nearest" }));
   el.clear = () => ((rows.length = 0), draw());
+  // Besedilo prazne tabele po korakih poskusa: »Še ni meritev. Natoči …« ne sme ostati, ko je voda že v posodi.
+  el.setEmpty = (text) => { if (none.textContent !== text) none.textContent = text; };
   el.rows = rows;
   draw();
   return el;
@@ -71,24 +73,37 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
   // Legenda je hkrati vklop in izklop: vsaka vrsta meritev, njena premica in mreža (public/sim/prikaz.js za ostale grafe).
   const legend = h("figcaption", { class: "lab-legend", role: "group" });
   wrap.append(legend);
-  let A = null, last = [];
+  let A = null, last = [], legSig = "";
   const off = new Set();
   wrap.setAxes = (ax) => Object.assign(opts, ax);
   const opts = { x, y };
-  const chip = (key, sym, text) =>
-    h("button", { type: "button", class: "lab-leg layer-chip", "data-layer": key, "aria-pressed": String(!off.has(key)), onclick: () => {
-      off.has(key) ? off.delete(key) : off.add(key);
-      wrap.draw(last);
-      // draw legendo nariše znova: fokus ostane na istem gumbu (tipkovnica)
-      [...legend.children].find((c) => c.dataset.layer === key)?.focus();
-    } }, sym, text);
+  // Gumbi legende nimajo svojih poslušalcev (klik posluša stalna legenda) in se narišejo znova le, ko se spremenijo:
+  // graf se med poskusom riše vsako sličico, nov gumb na zaslonu ob dotiku pa Safari na iPadu in iPhonu vzame kot
+  // meni ob lebdenju in klika ne pošlje, tudi ne drugim gumbom na strani (scripts/gumbi-na-dotik.cjs).
+  legend.addEventListener("click", (ev) => {
+    const key = ev.target.closest?.("button[data-layer]")?.dataset.layer;
+    if (key == null) return;
+    off.has(key) ? off.delete(key) : off.add(key);
+    wrap.draw(last);
+    // draw legendo nariše znova: fokus ostane na istem gumbu (tipkovnica)
+    [...legend.children].find((c) => c.dataset.layer === key)?.focus();
+  });
+  const chip = (key, sym, text) => ({ key, sym, text });
+  const chipEl = ({ key, sym, text }) =>
+    h("button", { type: "button", class: "lab-leg layer-chip", "data-layer": key, "aria-pressed": String(!off.has(key)) }, h("i", { class: sym, "aria-hidden": "true" }), text);
   wrap.draw = (series = []) => {
     last = series;
     svg.replaceChildren();
-    A = axes(svg, { W, H, x: opts.x, y: opts.y, pad: 38, padT: 14, padR: 14, origin, xLabel, yLabel, xStep: opts.xStep ?? xStep, yStep: opts.yStep ?? yStep, grid: !off.has("grid") });
+    A = axes(svg, { W, H, x: opts.x, y: opts.y, pad: 38, padT: 26, padR: 26, origin, xLabel, yLabel: opts.yLabel ?? yLabel, xStep: opts.xStep ?? xStep, yStep: opts.yStep ?? yStep, grid: !off.has("grid") });
+    // Puščici osi segata čez zadnjo oznako (sicer se »60« dotika puščice in napisa T [°C]); napisa osi sta ob konici.
+    const [axX, axY] = A.g.querySelectorAll(".axis"), [lbX, lbY] = A.g.querySelectorAll(".axis-label");
+    axX?.setAttribute("x2", A.R + 18);
+    axY?.setAttribute("y2", A.T - 18);
+    lbX?.setAttribute("x", A.R + 18);
+    lbY?.setAttribute("y", A.T - 6);
     const inside = ([px, py]) => px >= A.x0 && px <= A.x1 && py >= A.y0 && py <= A.y1;
-    legend.replaceChildren();
     legend.setAttribute("aria-label", t("sim.layers"));
+    const chips = [];
     series.forEach((S, i) => {
       const id = S.id ?? S.label ?? i;
       if (S.line && !off.has(`fit:${id}`)) {
@@ -99,21 +114,40 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
         }
         if (pts.length > 1) s("polyline", { points: pts.join(" "), class: `lab-fit stroke-${S.cls}` }, svg);
       }
-      if (!off.has(`pt:${id}`))
-        for (const p of S.pts) {
-          if (!inside(p)) continue;
-          const cx = A.X(p[0]), cy = A.Y(p[1]);
+      if (!off.has(`pt:${id}`)) {
+        // Gosto zapisane meritve (samodejni zapis vsaki 2 s): vsaka točka ima obrobo v barvi podlage, zato bi se
+        // prekrivajoče točke zlile v temno packo. Tedaj nariše črto skozi vse meritve in točko le na ~14 px.
+        // Le časovni niz (x ne pada, brez lastne premice): ročne meritve v poljubnem vrstnem redu (I(U), Hooke) ostanejo vse
+        // vidne, brez cikcak črte po vrstnem redu zapisa in brez črte čez črtkano premico.
+        const vis = S.pts.filter(inside), drawn = [];
+        const niz = !S.line && vis.every((p, i) => !i || p[0] >= vis[i - 1][0]);
+        for (const p of vis) {
+          const cx = A.X(p[0]), cy = A.Y(p[1]), q = drawn[drawn.length - 1];
+          if (!niz || !q || Math.hypot(cx - q[0], cy - q[1]) >= 14) drawn.push([cx, cy]);
+        }
+        if (vis.length) {
+          const z = [A.X(vis[vis.length - 1][0]), A.Y(vis[vis.length - 1][1])], q = drawn[drawn.length - 1];
+          if (q[0] !== z[0] || q[1] !== z[1]) Math.hypot(z[0] - q[0], z[1] - q[1]) < 9 ? (drawn[drawn.length - 1] = z) : drawn.push(z); // zadnja meritev je vedno vidna
+        }
+        if (drawn.length < vis.length && vis.length > 1) s("polyline", { points: vis.map((p) => `${A.X(p[0]).toFixed(1)},${A.Y(p[1]).toFixed(1)}`).join(" "), class: `lab-trace stroke-${S.cls}` }, svg);
+        for (const [cx, cy] of drawn) {
           if (S.shape === "^") s("path", { d: `M${cx},${cy - 6} L${cx + 5.5},${cy + 4} L${cx - 5.5},${cy + 4} Z`, class: `lab-pt fill-${S.cls}` }, svg);
           else s("circle", { cx, cy, r: 4.5, class: `lab-pt fill-${S.cls}` }, svg);
         }
+      }
       const clipped = S.pts.filter((p) => !inside(p)).length;
       if (!S.label) return;
       // Samo premica brez točk (npr. izračunana vrednost): en gumb z imenom, brez praznega gumba za točke.
-      if (S.line && !S.pts.length) return legend.append(chip(`fit:${id}`, h("i", { class: `lab-sym line bg-${S.cls}`, "aria-hidden": "true" }), S.label));
-      legend.append(chip(`pt:${id}`, h("i", { class: `lab-sym ${S.shape === "^" ? "tri" : "dot"} bg-${S.cls}`, "aria-hidden": "true" }), S.label + (clipped ? ` (${clipped} izven grafa)` : "")));
-      if (S.line) legend.append(chip(`fit:${id}`, h("i", { class: `lab-sym line bg-${S.cls}`, "aria-hidden": "true" }), t("sim.layer.fit", { name: S.label })));
+      if (S.line && !S.pts.length) return chips.push(chip(`fit:${id}`, `lab-sym line bg-${S.cls}`, S.label));
+      chips.push(chip(`pt:${id}`, `lab-sym ${S.shape === "^" ? "tri" : "dot"} bg-${S.cls}`, S.label + (clipped ? ` (${clipped} izven grafa)` : "")));
+      if (S.line) chips.push(chip(`fit:${id}`, `lab-sym line bg-${S.cls}`, t("sim.layer.fit", { name: S.label })));
     });
-    if (legend.children.length) legend.append(chip("grid", h("i", { class: "layer-sw sw-grid", "aria-hidden": "true" }), t("sim.layer.grid")));
+    if (chips.length) chips.push(chip("grid", "layer-sw sw-grid", t("sim.layer.grid")));
+    const sig = JSON.stringify([chips, [...off]]);
+    if (sig !== legSig) {
+      legSig = sig;
+      legend.replaceChildren(...chips.map(chipEl));
+    }
   };
   wrap.draw();
   return wrap;
@@ -200,6 +234,58 @@ export function pripni(el) {
   });
   stage.prepend(btn);
   set(pinRead());
+  // »Povečaj risbo«: risba z merilniki čez ves zaslon (vrhnja plast brskalnika), cela vidna; ležeča električna shema se na pokončnem
+  // telefonu obrne za 90°, njeni napisi ostanejo pokonci. Zapre jo isti gumb, Esc ali tipka Nazaj
+  // (app.js → backStep klikne gumb). Odprta je pogovorno okno (role=dialog), ostala stran je medtem neodzivna (inert).
+  let zapriPovecavo = () => {};
+  if (typeof stage.showPopover === "function") {
+    const zoom = h("button", { type: "button", class: "lab-zoom", "aria-label": t("sim.lab.zoom"), title: t("sim.lab.zoom"), "aria-pressed": "false", html: icon("maximize-2") });
+    let mirni = [], prejFokus = null, straza = 0;
+    const ozadje = (on) => {
+      for (const x of mirni) x.inert = false;
+      mirni = [];
+      if (!on) return;
+      for (let a = stage; a.parentElement; a = a.parentElement) for (const b of a.parentElement.children) if (b !== a && !b.inert && b.localName !== "script" && b.localName !== "style") (b.inert = true), mirni.push(b);
+    };
+    const povecaj = (on) => {
+      if (on === stage.classList.contains("lab-povecano")) return;
+      try {
+        if (on) (stage.setAttribute("popover", "manual"), stage.showPopover());
+        else (stage.hidePopover(), stage.removeAttribute("popover"));
+      } catch {
+        stage.removeAttribute("popover");
+        on = false;
+      }
+      stage.classList.toggle("lab-povecano", on);
+      // Obrne se le električna shema (napisi se zavrtijo nazaj pokonci); prizor na mizi (steklovina, tekočine) ostane
+      // pokonci in cel na zaslonu, ker bi bil na boku fizikalno napačen. Večji je, ko učenec telefon obrne ležeče.
+      stage.classList.toggle("lab-lezi", on && !!stage.querySelector("svg.lab-circuit") && (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1) >= 1.25);
+      for (const [k, v] of [["role", "dialog"], ["aria-modal", "true"], ["aria-label", t("sim.lab.zoom")]]) on ? stage.setAttribute(k, v) : stage.removeAttribute(k);
+      ozadje(on);
+      // Poskus lahko izgine med odprto povečavo (drug pogled, »Ponastavi«, ukaz inštruktorja): ozadje ne sme ostati neodzivno.
+      clearInterval(straza);
+      if (on) straza = setInterval(() => (el.isConnected && stage.isConnected && el._labPin === gen) || zapriPovecavo(), 300);
+      zoom.setAttribute("aria-pressed", String(on));
+      zoom.innerHTML = icon(on ? "minimize-2" : "maximize-2");
+      if (on) (prejFokus = document.activeElement), zoom.focus({ preventScroll: true });
+      else if (prejFokus?.isConnected && prejFokus !== document.body) prejFokus.focus({ preventScroll: true });
+      else zoom.focus({ preventScroll: true });
+      upd();
+    };
+    zapriPovecavo = () => {
+      clearInterval(straza);
+      ozadje(false);
+      if (stage.isConnected) povecaj(false);
+    };
+    zoom.addEventListener("click", () => povecaj(!stage.classList.contains("lab-povecano")));
+    stage.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape" || !stage.classList.contains("lab-povecano")) return;
+      e.stopPropagation();
+      e.preventDefault();
+      povecaj(false);
+    });
+    btn.after(zoom);
+  }
 
   // Drsni del, v katerem je poskus (pogled aplikacije, stranski stolpec lekcije ali stran sama).
   const scroller = () => {
@@ -233,12 +319,12 @@ export function pripni(el) {
     put(el, "--lab-pin-h", pin && !beside ? `${Math.round(sr.height + 8)}px` : null);
     if (!pin || !svg || !okno) return put(stage, "--lab-risba-h", null);
     const gap = parseFloat(getComputedStyle(stage).top) + (sc ? parseFloat(getComputedStyle(sc).paddingTop) || 0 : 0);
-    // telefon in tablica ~45 %, z miško (npr. stranski stolpec lekcije na računalniku) ~60 %: tam se drsi s kolescem
-    // pokončna risba (titracija: bireta in povečan menisk) je pri isti višini ozka, zato dobi malo več višine (~52 %)
+    // telefon in tablica ~50 % (j, 10. 11. 2026: risba naj bo večja; prej 45 %), z miško (npr. stranski stolpec lekcije na računalniku) ~60 %: tam se drsi s kolescem
+    // pokončna risba (titracija: bireta in povečan menisk) je pri isti višini ozka, zato dobi malo več višine (~58 %)
     const tall = (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1.4) < 0.95;
     // široka risba na širokem zaslonu (zgoraj, merilniki desno od nje): ~45 % vidne višine, ne glede na miško
     const vrh = !beside && el.classList.contains("lab-siroka") && top.clientWidth >= 800;
-    const total = beside ? okno - Math.max(0, gap) - 6 : okno * (vrh || matchMedia("(pointer: coarse)").matches ? (tall ? 0.52 : 0.45) : 0.6);
+    const total = beside ? okno - Math.max(0, gap) - 6 : okno * (vrh || matchMedia("(pointer: coarse)").matches ? (tall ? 0.58 : 0.5) : 0.6);
     // ob merilnikih je višina pripetega dela višina risbe in odmikov (merilniki ne štejejo, sicer bi se risba zibala)
     const rest = vrh ? 18 : sr.height - svg.getBoundingClientRect().height;
     put(stage, "--lab-risba-h", `${Math.round(Math.max(beside ? 100 : 110, total - rest))}px`);
@@ -261,6 +347,7 @@ export function pripni(el) {
   const onResize = () => (later(), setTimeout(() => reveal(focused()), 60));
   const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(later) : null;
   function off() {
+    zapriPovecavo();
     if (el._labOff === off) el._labOff = null;
     cancelAnimationFrame(raf);
     raf = 0;
@@ -293,3 +380,12 @@ export const fixed = (x, d) => {
   return t.replace(".", ",").replace("-", "−");
 };
 export { tex };
+// Formule v besedilu poskusov so KaTeX s pravimi ulomki (j, 12. 11. 2026: »Popravi take formule povsod«), ne
+// <i>T</i> = (…)/(…) v besedilu, ki se lomi sredi izraza. Formula ostane v eni vrstici, ko gre; sicer jo sirina.js
+// prelomi pri =; nikoli ne drsi. Enota za številom: en("°C"), en("J/(kg·K)"); krepki rezultat: rez(fixed(x, 1), "°C").
+// Enote so stalni zapisi iz kode (ne vnos): vsak znak, ki v LaTeX ni sam zase (tudi \ { } $ _ ^ ~ # &), dobi svoj zapis.
+const ENOTA = { " ": "\\,", "%": "\\%", "°": "{}^\\circ ", "·": "\\cdot ", "²": "^2", "³": "^3", "⁻¹": "^{-1}", "Ω": "\\Omega ", "\\": "\\backslash ", "{": "\\{", "}": "\\}", "$": "\\$", _: "\\_", "^": "\\hat{}", "~": "\\sim ", "#": "\\#", "&": "\\&" };
+const enTex = (u) => String(u).replace(/⁻¹|[ %°·²³Ω\\{}$_^~#&]/g, (c) => ENOTA[c]);
+export const en = (u) => `\\,\\mathrm{${enTex(u)}}`;
+// Število, ki ga ni (fmt da »–«), je v formuli \text{–}; µ v enoti ne gre (KaTeX ga piše ležeče): enoto z µ napiši za formulo.
+export const rez = (x, u) => `\\mathbf{${String(x).replace("–", "\\text{–}")}${u ? `\\,${enTex(u)}` : ""}}`;

@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lupina razčleni vrstico
+  - besede, razširitve, preusmeritve, zagon
+  - zvezdico razširi lupina, ne ukaz
+  - enojni narekovaji ustavijo razširitve
+- Pravice
+  - lastnik, skupina, ostali
+  - osmiško $r = 4$, $w = 2$, $x = 1$
+  - `x` na imeniku pomeni vstop
+- Umask
+  - odvzame bite od 666 ali 777
+  - `umask 022` da 644 in 755
+- Opisniki
+  - 0 stdin, 1 stdout, 2 stderr
+  - `>` izprazni, `>>` doda
+  - `> f 2>&1` od leve proti desni
+- Cevi in filtri
+  - procesa tečeta hkrati
+  - `grep`, `cut`, `sort`, `uniq -c`, `wc`
+  - `uniq` potrebuje urejen vhod
+- Izhodni status
+  - 0 pomeni uspeh
+  - `&&` in `||`
+  - cev vrne status zadnjega ukaza

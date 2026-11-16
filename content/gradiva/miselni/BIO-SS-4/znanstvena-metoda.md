@@ -23,7 +23,7 @@ stanje: osnutek
   - primer: *Helicobacter pylori* in razjeda
 - Recenzija
   - neodvisni strokovnjaki pred objavo
-  - ne zagotovi resnice; utrdi jo ponovljivost
+  - ne zagotovi resnice; rezultat utrdi ponovljivost
 - Verodostojnost vira
   - avtor, recenzija, metode in podatki
   - korist avtorja, izvirnik ali povzetek

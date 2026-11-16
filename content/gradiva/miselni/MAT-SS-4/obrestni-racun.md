@@ -2,6 +2,9 @@
 avtor: AI
 stanje: osnutek
 ---
+- Procentni račun
+  - $d = \dfrac{C \cdot p}{100}$
+  - zaporedne spremembe množimo s faktorji
 - Obresti in obrestna mera
   - $o = \dfrac{G_0 \cdot p}{100}$
   - $5\,\%$ od $400\,\text{€}$ je $20\,\text{€}$
@@ -19,6 +22,9 @@ stanje: osnutek
 - Računanje nazaj
   - $G_0 = \dfrac{G_n}{r^n}$
   - napaka: odštevanje odstotkov od končnega zneska
+- Relativna in konformna mera
+  - relativna $p_r = \frac{p}{m}$: v letu več kot letni pripis
+  - konformna $r_m = \sqrt[m]{r}$: enako kot letni pripis
 - Pasti pri računanju
   - $r = 1{,}04$, ne $1{,}4$
   - potenciraj, ne množi z $n$

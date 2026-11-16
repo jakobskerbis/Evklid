@@ -263,7 +263,7 @@ a | števka desetic (v trimestnem številu stotic) | | | od 1 do 9
 b | števka enic (v trimestnem številu desetic) | | | od 0 do 9
 c | števka enic trimestnega števila | | | od 0 do 9
 a_0 | števka enic | | |
-a_1 | števka desetic | | | drugje: prvi člen aritmetičnega zaporedja
+a_1 | števka desetic | | | drugje: prvi člen zaporedja s stalno razliko
 a_k | števka na najvišjem mestu | | | njeno mesto ima vrednost 10ᵏ
 k | mesto najvišje števke | | | drugje: dolžina ponavljajočega se vzorca
 n | zaporedna številka člena (dneva) | | |

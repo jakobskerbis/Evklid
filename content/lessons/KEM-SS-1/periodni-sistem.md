@@ -19,9 +19,16 @@ Periodni sistem je več kot seznam elementov. Njegova razporeditev je **zemljevi
 
 **2. Valenčni elektroni.** To so elektroni v zunanji lupini. Za glavne skupine velja:
 
-| Skupina | 1 | 2 | 13 | 14 | 15 | 16 | 17 | 18 |
-|---|---|---|---|---|---|---|---|---|
-| Število valenčnih elektronov | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 (He: 2) |
+| Skupina | Število valenčnih elektronov |
+|---|---|
+| 1 | 1 |
+| 2 | 2 |
+| 13 | 3 |
+| 14 | 4 |
+| 15 | 5 |
+| 16 | 6 |
+| 17 | 7 |
+| 18 | 8 (He: 2) |
 
 **3. Periodične lastnosti.** To so lastnosti, ki se z naraščajočim $Z$ ponavljajo v podobnih vzorcih. Pomembne so tri:
 
@@ -54,9 +61,11 @@ V simulaciji spodaj »Periodne lastnosti elementov« izberi lastnost »atomski p
 
 Približne vrednosti za nekaj elementov:
 
-| Element | H | Li | C | N | O | F | Na | Mg | Al | Si | P | S | Cl |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| $\mathrm{EN}$ | 2,2 | 1,0 | 2,6 | 3,0 | 3,4 | 4,0 | 0,9 | 1,3 | 1,6 | 1,9 | 2,2 | 2,6 | 3,2 |
+| Perioda | Elementi ($\mathrm{EN}$) |
+|---|---|
+| 1. | H (2,2) |
+| 2. | Li (1,0), C (2,6), N (3,0), O (3,4), F (4,0) |
+| 3. | Na (0,9), Mg (1,3), Al (1,6), Si (1,9), P (2,2), S (2,6), Cl (3,2) |
 
 **7. Elektronegativnost in vrsta vezi.** Razliko elektronegativnosti $\Delta\mathrm{EN} = |\mathrm{EN}_1 - \mathrm{EN}_2|$ uporabimo za grobo oceno vezi. Meje so orientacijske:
 
@@ -161,7 +170,7 @@ Bolj polarna je vez $\mathrm{O{-}H}$ ($1{,}2 > 0{,}8$). Obe vezi sta polarni kov
 ## Pogoste napake
 
 - **Zamenjava smeri trenda.** Elektronegativnost raste *proti desni in navzgor*. Najbolj elektronegativen je fluor (zgoraj desno, brez žlahtnih plinov), ne cezij ali francij.
-- **»Več elektronov, večji atom.«** Napačno: »$\mathrm{Cl}$ ima več elektronov kot $\mathrm{Na}$, zato je večji.« V isti periodi se število lupin ne spremeni, naboj jedra pa raste, zato se atom manjša. O polmeru odloča predvsem število lupin, šele nato naboj jedra.
+- **»Več elektronov, večji atom.«** Napačno: »$\mathrm{Cl}$ ima več elektronov kot $\mathrm{Na}$, zato je večji.« V isti periodi se število lupin ne spremeni, naboj jedra pa raste, zato se atom manjša. V isti skupini o polmeru odloča število lupin, v isti periodi pa naboj jedra.
 - **Mešanje polmera in elektronegativnosti.** Po periodi se polmer *manjša*, elektronegativnost pa *veča*. Trenda sta nasprotna, zato ju ne prenašaj z ene lastnosti na drugo.
 - **Napačno razmišljanje o številu lupin.** Številka periode pove število lupin, številka skupine pa (pri glavnih skupinah) število valenčnih elektronov, ne obratno. Pri skupinah 13 do 18 je število valenčnih elektronov številka skupine minus $10$.
 - **Pozabljena absolutna vrednost pri $\Delta\mathrm{EN}$.** Napačno: »$1{,}3 - 3{,}4 = -2{,}1$ je manj od nič, torej je vez nepolarna.« Razlika je vedno pozitivna: $\Delta\mathrm{EN} = |\mathrm{EN}_1 - \mathrm{EN}_2|$; vrstni red atomov ni pomemben.
@@ -205,19 +214,26 @@ Recept za primerjavo dveh elementov:
 
 Primer s številkami za 2. periodo:
 
-| Element | Li | Be | B | C | N | O | F |
-|---|---|---|---|---|---|---|---|
-| Skupina | 1 | 2 | 13 | 14 | 15 | 16 | 17 |
-| Valenčni elektroni | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-| $\mathrm{EN}$ | 1,0 | 1,6 | 2,0 | 2,6 | 3,0 | 3,4 | 4,0 |
+| Element | Skupina | Valenčni elektroni | $\mathrm{EN}$ |
+|---|---|---|---|
+| Li | 1 | 1 | 1,0 |
+| Be | 2 | 2 | 1,6 |
+| B | 13 | 3 | 2,0 |
+| C | 14 | 4 | 2,6 |
+| N | 15 | 5 | 3,0 |
+| O | 16 | 6 | 3,4 |
+| F | 17 | 7 | 4,0 |
 
 Vidiš, da elektronegativnost od litija do fluora stalno raste, in da se z vsakim korakom doda en valenčni elektron.
 
 Še primer za 17. skupino (halogeni):
 
-| Element | F | Cl | Br | I |
-|---|---|---|---|---|
-| $\mathrm{EN}$ | 4,0 | 3,2 | 3,0 | 2,7 |
+| Element | $\mathrm{EN}$ |
+|---|---|
+| F | 4,0 |
+| Cl | 3,2 |
+| Br | 3,0 |
+| I | 2,7 |
 
 Navzdol po skupini elektronegativnost pada.
 
@@ -268,7 +284,7 @@ Paulingova lestvica je zasnovana tako, da elektronegativnost povezuje z energijo
 + $\mathrm{H{-}F}$
 - $\mathrm{H{-}Cl}$
 ~ Klor je večji atom, a polarnost določa razlika elektronegativnosti: $1{,}0$ pri $\mathrm{H{-}Cl}$ proti $1{,}8$ pri $\mathrm{H{-}F}$.
-> $\Delta\mathrm{EN}$ za $\mathrm{H{-}H}$ je $0$, za $\mathrm{H{-}Cl}$ je $3{,}2 - 2{,}2 = 1{,}0$, za $\mathrm{H{-}F}$ pa $4{,}0 - 2{,}2 = 1{,}8$. Največja razlika pomeni najbolj polarno vez.
+> $\Delta\mathrm{EN}$ za $\mathrm{H{-}H}$ je $0$, za $\mathrm{H{-}Cl}$ je $3{,}2 - 2{,}2 = 1{,}0$, za $\mathrm{H{-}F}$ pa $4{,}0 - 2{,}2 = 1{,}8$. Največja razlika pomeni najbolj polarno vez. Čeprav je $1{,}8$ malo nad orientacijsko mejo $1{,}7$, je vez v $\mathrm{HF}$ še vedno polarna kovalentna (atoma sta nekovini); meja je le groba ocena.
 
 ? Kakšna je vez med magnezijem ($\mathrm{EN} = 1{,}3$) in kisikom ($\mathrm{EN} = 3{,}4$) v $\mathrm{MgO}$?
 + Ionska.

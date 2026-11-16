@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Etologija
+  - kako vedenje nastane in zakaj se je ohranilo
+  - Lorenz, Tinbergen, von Frisch
+  - prirojeno ali naučeno vedenje
+- Refleks
+  - umik roke z vroče ponve
+  - receptor, hrbtenjača, mišica, brez možganov
+- Ustaljeni vzorec vedenja
+  - gos kotali jajce do konca
+  - napaka: vsako prirojeno vedenje je refleks
+- Ključni dražljaj
+  - rdeča pika na kljunu galeba
+  - mačko k lovu sproži zamašek, ki beži
+- Nagon in motivacija
+  - sita mačka ostane na kavču
+  - iskalno vedenje, nato končno dejanje
+- Taksije in kineze
+  - taksija usmerjena: mušica h kisu
+  - kineza neusmerjena: mokrica upočasni
+  - delež časa: $\dfrac{4}{4 + 1} = 80\,\%$
+- Učenje
+  - habituacija, vtisnjenje, vpogled, posnemanje
+  - klasično: dražljaj z dražljajem
+  - operantno: vedenje s posledico

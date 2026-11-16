@@ -180,3 +180,97 @@ export function toTex(src) {
 
 /** Ali besedilo vsebuje zapis, ki se izriše kot formula. */
 export const hasFormula = (src) => splitFormulas(src).some((p) => "tex" in p);
+
+// ---------- urejanje zapisa v polju, ki ga pokaže kot formulo (public/predogled-vnosa.js) ----------
+// Polje za odgovor pokaže ulomek, koren, potenco kot formulo, vrednost pa ostane zapis v vrstici, npr. π()/(). Kazalec
+// sme stati le tam, kjer znak, ki ga učenec vpiše, formule ne podre: v števcu, v imenovalcu, pred ulomkom, za njim,
+// ne pa med »)/(«. ⌫ na takem znaku formule ne razbije v surov zapis.
+
+const OZNAKA = ""; // zasebni znak Unicode: tu stoji kazalec
+
+/** Mesta (0 … dolžina), kjer sme stati kazalec: vstavljen znak tam ne spremeni zgradbe formule. */
+export function varnaMesta(src) {
+  const s = String(src ?? "");
+  const ref = toTex(s);
+  const out = [];
+  for (let p = 0; p <= s.length; p++) {
+    if (p > 0 && p < s.length && /[\uDC00-\uDFFF]/.test(s[p])) continue; // sredi para nadomestnih znakov
+    if (toTex(s.slice(0, p) + OZNAKA + s.slice(p)).split(OZNAKA).join("") === ref) out.push(p);
+  }
+  return out;
+}
+
+/** Zapis z oznako kazalca na mestu p (za izris): deli kot splitFormulas, oznaka je znak OZNAKA. */
+export function delisKazalcem(src, p) {
+  const s = String(src ?? "");
+  return splitFormulas(p == null ? s : s.slice(0, p) + OZNAKA + s.slice(p));
+}
+export { OZNAKA };
+
+// Ulomki, koreni, potence, indeksi in integrali s tipk: { od, do, reze: [[začetek, konec], …] } (konec ni vključen).
+function zgradbe(s) {
+  const out = [];
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === "(") {
+      const j = closeAt(s, i);
+      if (j > 0 && s[j] === "/" && s[j + 1] === "(") {
+        const k = closeAt(s, j + 1);
+        if (k > 0) out.push({ od: i, do: k, reze: [[i + 1, j - 1], [j + 2, k - 1]] });
+      }
+      // Telo integrala: ∫ (x) dx, ∫_(0)^(1) (x) dx
+      const d = j > 0 ? s.slice(j).match(/^\s*d[a-zA-Z](?![\p{L}])/u) : null;
+      if (d && /∫(?:[_^]\([^()]*\))*\s*$/.test(s.slice(0, i))) {
+        out.push({ od: i, do: j + d[0].length, reze: [[i + 1, j - 1]] });
+      }
+    } else if ((ROOT[c] || c === "^" || c === "_" || c === "∫") && s[i + 1] === "(") {
+      const j = closeAt(s, i + 1);
+      if (j < 0) continue;
+      const reze = [];
+      let a = i + 2;
+      let depth = 0;
+      for (let x = i + 2; x < j - 1; x++) {
+        if (s[x] === "(") depth++;
+        else if (s[x] === ")") depth--;
+        else if (c === "∫" && s[x] === ";" && depth === 0) {
+          reze.push([a, x]);
+          a = x + 1;
+        }
+      }
+      reze.push([a, j - 1]);
+      out.push({ od: i, do: j, reze });
+    }
+  }
+  return out;
+}
+
+/**
+ * ⌫ na mestu p v zapisu formule. Znak zgradbe (oklepaj, »/«, »√«, »^«) se ne zbriše posamič: prazna zgradba (»()/()«)
+ * izgine cela, sicer kazalec skoči v prejšnje mesto (iz imenovalca na konec števca). null: navaden ⌫.
+ */
+/** Delete (tipka Del) na mestu p: znak zgradbe se ne zbriše posamič; prazna zgradba izgine, sicer kazalec v naslednje
+ * mesto (iz števca v imenovalec). null: navaden Delete. */
+export function brisiNaprej(src, p) {
+  const s = String(src ?? "");
+  if (p >= s.length || !hasFormula(s)) return null;
+  const z = zgradbe(s)
+    .filter((g) => g.od <= p && p < g.do && !g.reze.some(([a, b]) => a <= p && p < b))
+    .sort((a, b) => a.do - a.od - (b.do - b.od))[0];
+  if (!z) return null;
+  if (z.reze.every(([a, b]) => !s.slice(a, b).trim())) return { value: s.slice(0, z.od) + s.slice(z.do), caret: z.od };
+  const nasl = z.reze.find(([a]) => a > p);
+  return { value: s, caret: nasl ? nasl[0] : z.do };
+}
+
+export function brisiNazaj(src, p) {
+  const s = String(src ?? "");
+  const i = p - 1;
+  if (i < 0 || !hasFormula(s)) return null;
+  const z = zgradbe(s)
+    .filter((g) => g.od <= i && i < g.do && !g.reze.some(([a, b]) => a <= i && i < b))
+    .sort((a, b) => a.do - a.od - (b.do - b.od))[0];
+  if (!z) return null;
+  if (z.reze.every(([a, b]) => !s.slice(a, b).trim())) return { value: s.slice(0, z.od) + s.slice(z.do), caret: z.od };
+  const prej = z.reze.filter(([, b]) => b <= i).pop();
+  return { value: s, caret: prej ? prej[1] : z.od };
+}

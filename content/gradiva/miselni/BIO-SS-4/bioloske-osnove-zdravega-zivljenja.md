@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Esencialne snovi
+  - telo jih ne zna narediti
+  - $9$ aminokislin, omega-3 in omega-6
+  - napaka: esencialno ne pomeni najpomembnejše
+- Energija hrane
+  - ogljikovi hidrati in beljakovine $17\,\mathrm{kJ/g}$
+  - maščobe $37\,\mathrm{kJ/g}$
+  - $1\,\mathrm{kcal} \approx 4{,}2\,\mathrm{kJ}$
+- Uravnotežen krožnik
+  - polovica zelenjava in sadje
+  - maščobe do $30\,\%$ energije
+- Vitamini
+  - B in C: topni v vodi
+  - A, D, E, K: shranjujejo se
+  - D nastaja v koži ob soncu
+- Maščobe
+  - nasičene trdne, nenasičene tekoče
+  - trans maščobe so najslabše
+- Holesterol
+  - nujen za membrane in hormone
+  - LDL dostavlja v tkiva, ateroskleroza
+  - HDL vrača v jetra
+- Gibanje
+  - $E = 4{,}2 \cdot \mathrm{MET} \cdot m \cdot t$
+  - aerobno dolgo, anaerobno kratko
+  - mladi vsaj $60$ minut na dan
+- Zdrav slog
+  - $8$ do $10$ ur spanja
+  - brez kajenja in alkohola

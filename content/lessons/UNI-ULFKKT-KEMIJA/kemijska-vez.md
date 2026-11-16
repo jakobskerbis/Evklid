@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Sladkor se v suhi ponvi stopi v karamelo, sol pa ostane trdna do $801\,^\circ\mathrm{C}$. V vodi se raztopita oba, olje pa ne. Ugani: kaj imata sol in sladkor skupnega, da se topita v vodi, in kaj ju loči? Ključ do uganke sta **kemijska vez** in **sile med molekulami**.
+Sladkor se v suhi ponvi stali v karamelo, sol pa ostane trdna do $801\,^\circ\mathrm{C}$. V vodi se raztopita oba, olje pa ne. Ugani: kaj imata sol in sladkor skupnega, da se raztapljata v vodi, in kaj ju loči? Ključ do uganke sta **kemijska vez** in **sile med molekulami**.
 
 Iz **elektronegativnosti** sklepamo na vrsto vezi, z modelom **VSEPR** in **hibridizacijo** na obliko molekule, iz oblike in polarnosti pa na **medmolekulske sile**, ki določajo vrelišče, topnost in zgradbo DNA in beljakovin.
 
@@ -27,7 +27,7 @@ Meje niso ostre: prehod od kovalentne do ionske vezi je zvezen.
 
 Atom z nizko ionizacijsko energijo (kovina) odda elektrone, atom z visoko elektronsko afiniteto (nekovina) jih sprejme. Nastali kationi in anioni se privlačijo z električno silo v vse smeri, zato ne tvorijo molekul, ampak **ionsko kristalno mrežo**. Moč mreže opisuje **mrežna entalpija** $\Delta H_{\mathrm{mr}}$: sprememba entalpije pri nastanku enega mola kristala iz plinastih ionov, npr. $\mathrm{Na^+(g) + Cl^-(g) \to NaCl(s)}$. Je negativna; njena absolutna vrednost je **mrežna energija**. Iz Coulombovega zakona $E = \frac{z_+ z_- e^2}{4\pi\varepsilon_0 r}$ ($z_+$, $z_-$: nabojni števili ionov, $r$: razdalja, $e$: osnovni naboj) sledi, da je $|\Delta H_{\mathrm{mr}}|$ pri enakem tipu mreže približno sorazmerna z $\frac{|z_+ z_-|}{r_+ + r_-}$: večja naboja in manjša iona dasta trdnejšo mrežo (in višje tališče). Ionske snovi so trde, krhke, v talini in raztopini prevajajo električni tok.
 
-**Born-Haberjev cikel.** Mrežne entalpije ne moremo izmeriti. Ker je entalpija funkcija stanja, je po **Hessovem zakonu** tvorbena entalpija enaka vsoti entalpij poti prek plinastih ionov. Za spojino $\mathrm{MX}$ iz kovine $\mathrm{M(s)}$ in dvoatomnega $\mathrm{X_2(g)}$:
+**Born-Haberjev cikel.** Mrežne entalpije ne moremo neposredno izmeriti. Ker je entalpija funkcija stanja, je po **Hessovem zakonu** tvorbena entalpija enaka vsoti entalpij poti prek plinastih ionov. Za spojino $\mathrm{MX}$ iz kovine $\mathrm{M(s)}$ in dvoatomnega $\mathrm{X_2(g)}$:
 
 $$\Delta H_f^\circ = \Delta H_{\mathrm{sub}}(\mathrm{M}) + I(\mathrm{M}) + \tfrac{1}{2}D(\mathrm{X_2}) + \Delta H_{\mathrm{ea}}(\mathrm{X}) + \Delta H_{\mathrm{mr}},$$
 
@@ -319,7 +319,7 @@ D | disociacijska energija vezi | | kJ/mol | pri X₂ uporabimo ½D
 \sigma_{2s}, \sigma_{2p} | vezni molekulski orbitali sigma | | | z * protivezni
 \pi_{2p} | vezni molekulski orbitali pi | | | z * protivezni
 \mathrm{FN} | formalni naboj atoma | \mathrm{FN} = (\text{valenčni } e^-) - (\text{nevezni } e^-) - \tfrac{1}{2}(\text{vezni } e^-) | – | najboljša struktura ima naboje čim bližje nič
-e | elektron | | | v Paulingovi oceni je e osnova naravnega logaritma
+e | elektron | | | v Coulombovem zakonu je e osnovni naboj, v Paulingovi oceni osnova naravnega logaritma
 n_{\text{vezni}} | število elektronov v veznih orbitalah | | –
 n_{\text{protivezni}} | število elektronov v protiveznih orbitalah | | –
 \chi | elektronegativnost | | –

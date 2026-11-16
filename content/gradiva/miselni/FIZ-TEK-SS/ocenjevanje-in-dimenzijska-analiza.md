@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ocenjevanje
+  - razbij na faktorje in zmnoži
+  - srce na dan: $70\,\mathrm{mL} \cdot 70 \cdot 1440 \approx 7 \cdot 10^3\,\mathrm{L}$
+  - napake faktorjev se delno izničijo
+- Red velikosti
+  - $a \cdot 10^n$: pri $a \ge 3{,}16$ red $10^{n+1}$
+  - med mejama geometrijska sredina
+  - napaka: »dva reda« je stokrat, ne dvakrat
+- Dimenzije
+  - osnovne: L, M, T (I, Θ)
+  - tlak $\mathrm{M\,L^{-1}\,T^{-2}}$, sila $\mathrm{M\,L\,T^{-2}}$
+  - seštevaš le enake dimenzije
+- Ujemanje ni dokaz
+  - konstante $\frac{1}{2}$, $2\pi$ so nevidne
+  - $s = a t^2$ ima prave enote, a je napačna
+- Izpeljava formule
+  - nastavek $C\,l^a m^b g^c$
+  - izenači eksponente pri M, L, T
+  - nihalo: $t_0 \propto \sqrt{l/g}$
+- Pretok skozi žilo
+  - $Q \propto r^4$
+  - $20\,\%$ ožja žila: pretok $41\,\%$
+- Preverjanje rezultata
+  - dimenzija in red velikosti
+  - mejni primeri, npr. $R \to 0$
+  - smer: daljše nihalo, daljši nihajni čas

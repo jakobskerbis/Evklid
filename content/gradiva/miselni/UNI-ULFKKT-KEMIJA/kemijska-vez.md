@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Elektronegativnost in vrsta vezi
+  - $\Delta\chi < 0{,}4$ nepolarna, nad $1{,}7$ ionska
+  - vmes polarna kovalentna: $\delta^+$, $\delta^-$
+- Ionska vez
+  - mrežna entalpija: večji naboji, manjši ioni
+  - Born-Haberjev cikel po Hessovem zakonu
+- Lewisove strukture
+  - $\mathrm{FN}$ = valenčni − nevezni − $\tfrac{1}{2}$ vezni
+  - resonanca: delokalizirani $\pi$, povprečni red vezi
+- Model VSEPR
+  - $2$, $3$, $4$ skupine: $180^\circ$; $120^\circ$; $109{,}5^\circ$
+  - nevezni pari stisnejo kote: $\mathrm{NH_3}$, $\mathrm{H_2O}$
+  - večkratna vez šteje kot ena skupina
+- Hibridizacija
+  - $sp$, $sp^2$, $sp^3$ za $2$, $3$, $4$ skupine
+  - dvojna vez $\sigma + \pi$, trojna $\sigma + 2\pi$
+- Polarnost molekule
+  - vektorska vsota dipolov, $\mu = q d$
+  - $\mathrm{CO_2}$, $\mathrm{CCl_4}$: polarne vezi, nepolarna molekula
+- Molekulske orbitale
+  - red vezi $\tfrac{1}{2}(n_{\text{vezni}} - n_{\text{protivezni}})$
+  - $\mathrm{O_2}$: nesparjena elektrona, paramagneten
+- Medmolekulske sile
+  - disperzijske, dipol-dipol, vodikova vez
+  - vodikova vez: H na $\mathrm{F}$, $\mathrm{O}$, $\mathrm{N}$
+  - določajo vrelišče in topnost

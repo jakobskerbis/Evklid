@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Le ostanek šteje
+  - zadnja števka je ostanek pri deljenju z $10$
+  - dan v tednu je ostanek pri deljenju s $7$
+- Kongruenca
+  - $a \equiv b \pmod{m}$ pomeni $m \mid a - b$
+  - $-13 \equiv 2 \pmod{5}$, ostanek med $0$ in $m - 1$
+- Računska pravila
+  - seštevamo, odštevamo, množimo, potenciramo
+  - krajšamo s $k$ le pri $D(k, m) = 1$
+  - napaka: iz $6x \equiv 6y \pmod{9}$ sklepati $x \equiv y \pmod{9}$
+- Ostanki potenc
+  - $7^n$ po modulu $10$: $7, 9, 3, 1$
+  - eksponent delimo s periodo, ne z modulom
+  - ostanku $0$ ustreza zadnji člen periode
+- Kvadratni ostanki
+  - po modulu $4$ le $0$ in $1$
+  - kvadrat se ne konča z $2, 3, 7, 8$
+- Dokaz brez rešitev
+  - enačbo pogledamo po primernem modulu
+  - $x^2 \equiv 3 \pmod{5}$ nima rešitev

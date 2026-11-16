@@ -24,3 +24,6 @@ stanje: osnutek
 - Prepoznavanje vrste
   - razliko ali količnik preveri pri vseh parih
   - iz $2, 4$ vrste še ne veš
+- Zaporedje po vzorcu
+  - razlike, količniki, zveza z indeksom $n$
+  - domnevo za $a_n$ preveri pri vseh danih členih

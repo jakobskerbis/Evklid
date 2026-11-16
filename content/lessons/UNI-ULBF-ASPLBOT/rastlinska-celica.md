@@ -27,7 +27,7 @@ Oba prizora skrivata isto zamisel: **mehka vsebina pritiska na trden, a prožen 
 
 Vakuola zavzame v odrasli celici do $90\,\%$ prostornine. Citoplazma s plastidi je zato le tanka plast ob steni.
 
-**2. Celična stena.** Celuloza je dolga veriga glukoznih enot. Več sto verig se poveže v vlakence, **mikrofibrilo**. Mikrofibrile so vpete v gel iz hemiceluloz in pektinov, podobno kot jeklene palice v betonu. Mlada celica ima le **primarno steno**, ki se med rastjo še raztegne. Ko celica neha rasti, nekatere celice od znotraj naložijo **sekundarno steno**, pogosto prepojeno z ligninom. Lignin je trd in vodoodporen; les je skoraj samo sekundarna stena odmrlih celic.
+**2. Celična stena.** Celuloza je dolga veriga glukoznih enot. Nekaj deset verig se poveže v vlakence, **mikrofibrilo**. Mikrofibrile so vpete v gel iz hemiceluloz in pektinov, podobno kot jeklene palice v betonu. Mlada celica ima le **primarno steno**, ki se med rastjo še raztegne. Ko celica neha rasti, nekatere celice od znotraj naložijo **sekundarno steno**, pogosto prepojeno z ligninom. Lignin je trd in vodoodporen; les je skoraj samo sekundarna stena odmrlih celic.
 
 Stena prepušča vodo in majhne raztopljene snovi; sosednje celice povezujejo tanki kanali citoplazme, **plazmodezme**. Selektivna meja je membrana pod steno.
 
@@ -168,9 +168,62 @@ $\Psi_\mathrm{p} = 0 - (-0{,}8\,\mathrm{MPa}) = 0{,}8\,\mathrm{MPa}$. Razmerje: 
 - Rastlinsko celico od živalske ločijo celična stena, velika osrednja vakuola in plastidi.
 - Celična stena: srednja lamela (pektini), primarna stena (celulozne mikrofibrile v gelu hemiceluloz in pektinov), v nekaterih celicah sekundarna stena z ligninom; sosednje celice povezujejo plazmodezme. Stena je prepustna, selektivna je membrana.
 - Vakuola (tonoplast, celični sok) zavzame do $90\,\%$ celice, z osmozo vpija vodo in ustvari turgor; hrani zaloge, barvila, odpadne snovi in razgrajuje dele celice.
-- Izguba vode: turgor pade, rastlina oveni, ob hujši izgubi plazmoliza.
+- Izguba vode: turgor pade, rastlina oveni; v bolj koncentrirani zunanji raztopini plazmoliza.
 - Plastidi imajo dvojno membrano in lastno DNA, nastanejo iz proplastidov: kloroplasti (fotosinteza, tilakoidi, grana, stroma), kromoplasti (karotenoidi), amiloplasti (škrob), etioplasti (v temi).
 - $\Psi = \Psi_\mathrm{s} + \Psi_\mathrm{p}$; voda teče od višjega k nižjemu $\Psi$; čista voda ima $\Psi = 0$; $\Psi_\mathrm{s} \approx -cRT$.
+
+## Za izpit
+
+Znati moraš povedati:
+- plasti celične stene od zunaj navznoter (srednja lamela, primarna in sekundarna stena) z njihovo sestavo ter razliko med primarno in sekundarno steno;
+- zakaj je stena prepustna, selektivna pa membrana, in kaj so plazmodezme;
+- definicije: osmoza, turgorski tlak, turgescentna celica, plazmoliza, deplazmoliza;
+- zgradbo in naloge vakuole (tonoplast, celični sok);
+- skupne lastnosti plastidov, štiri vrste z nalogami, pretvorbe med njimi in zgradbo kloroplasta (stroma, tilakoidi, grana);
+- zvezi $\Psi = \Psi_\mathrm{s} + \Psi_\mathrm{p}$ in $\Psi_\mathrm{s} \approx -cRT$ s predznaki, pravilo o smeri toka vode in pogoj za ravnovesje.
+
+### Naloga 1
+
+Koščke povrhnjice rdeče čebule za pol ure potopiš v raztopine saharoze pri $22\,^\circ\mathrm{C}$. V raztopini s koncentracijo $0{,}35\,\mathrm{mol/L}$ protoplast ravno začne odstopati od stene: celica je z raztopino v ravnovesju, njen turgor je $0$. (a) Kolikšen je osmotski potencial celice v tem stanju? (b) Isto celico preneseš v destilirano vodo. Prostornina protoplasta se poveča za $10\,\%$, množina raztopljenih snovi v njem ostane enaka. Kolikšna sta osmotski potencial in turgor v novem ravnovesju? (c) Celica iz vprašanja (b) meji na celico, ki ima $\Psi_\mathrm{s} = -0{,}70\,\mathrm{MPa}$ in $\Psi_\mathrm{p} = 0{,}30\,\mathrm{MPa}$. V katero smer teče voda med njima? Utemelji, zakaj smeri ne smeš napovedati samo iz osmotskih potencialov.
+
+**Rešitev:**
+
+1. Raztopina saharoze nima tlaka, zato je njen vodni potencial enak osmotskemu. $c = 0{,}35\,\mathrm{mol/L} = 350\,\mathrm{mol/m^3}$, $T = 22 + 273 = 295\,\mathrm{K}$.
+2. $R T = 8{,}314 \cdot 295 \approx 2453\,\mathrm{J/mol}$, zato $\Psi_\mathrm{zunaj} = -350 \cdot 2453 = -858\,550\,\mathrm{Pa} \approx -0{,}86\,\mathrm{MPa}$.
+3. V ravnovesju je $\Psi_\mathrm{celica} = \Psi_\mathrm{zunaj}$. Ker je $\Psi_\mathrm{p} = 0$, je $\Psi_\mathrm{s} = \Psi_\mathrm{celica} = -0{,}86\,\mathrm{MPa}$. To je odgovor (a).
+4. V vodi se ista množina snovi razporedi po $1{,}10$-krat večji prostornini, zato je koncentracija $1{,}10$-krat manjša. Ker je $\Psi_\mathrm{s}$ sorazmeren s koncentracijo, je novi $\Psi_\mathrm{s} = \dfrac{-0{,}86}{1{,}10} \approx -0{,}78\,\mathrm{MPa}$.
+5. Destilirana voda ima $\Psi = 0$. V ravnovesju je $\Psi_\mathrm{s} + \Psi_\mathrm{p} = 0$, zato $\Psi_\mathrm{p} = 0 - (-0{,}78) = 0{,}78\,\mathrm{MPa}$. To je odgovor (b).
+6. Prva celica ima $\Psi = 0$. Sosednja ima $\Psi = -0{,}70 + 0{,}30 = -0{,}40\,\mathrm{MPa}$.
+7. Ker je $0 > -0{,}40$, voda teče iz prve celice v sosednjo. Če bi primerjal samo osmotska potenciala ($-0{,}78 < -0{,}70$), bi napovedal obratno smer. O smeri odloča celotni $\Psi$: visok turgor prve celice izniči ves vlek njenih raztopljenih snovi.
+8. Odgovor: (a) $\Psi_\mathrm{s} \approx -0{,}86\,\mathrm{MPa}$; (b) $\Psi_\mathrm{s} \approx -0{,}78\,\mathrm{MPa}$ in $\Psi_\mathrm{p} \approx 0{,}78\,\mathrm{MPa}$; (c) voda teče iz prve celice v sosednjo, čeprav ima prva bolj koncentriran celični sok.
+
+### Naloga 2
+
+Natančno navedi plasti, ki jih prečkaš od sosednje celice do vakuole v celici s sekundarno steno, in pri vsaki povej, iz česa je. Nato utemelji, zakaj pri plazmolizi stena ostane na mestu in s čim je zapolnjen prostor med steno in protoplastom.
+
+**Rešitev:**
+
+1. Srednja lamela: pektini; zlepi sosednji celici in je obema skupna.
+2. Primarna stena: celulozne mikrofibrile v gelu hemiceluloz in pektinov; nastane med rastjo in je raztegljiva.
+3. Sekundarna stena: celuloza, pogosto prepojena z ligninom; celica jo naloži od znotraj, ko neha rasti.
+4. Celična membrana: lipidi in beljakovine; selektivna meja celice.
+5. Citoplazma s plastidi, nato tonoplast (membrana vakuole) in vakuola s celičnim sokom.
+6. Pri plazmolizi voda odteka, ker je $\Psi$ zunanje raztopine nižji od $\Psi$ celice. Prostornina protoplasta se zmanjša, turgor pade na nič in protoplast odstopi od stene.
+7. Stena ostane na mestu, ker je toga: oblike ji ne daje tlak vsebine, temveč mikrofibrile (in lignin).
+8. Stena je prepustna za vodo in majhne raztopljene snovi, membrana pa je selektivna. Zunanja raztopina zato pride skozi steno do membrane in zapolni vmesni prostor. Pojav je povraten: v vodi sledi deplazmoliza.
+
+### Naloga 3
+
+Utemelji, ali drži trditev: »Kloroplasti, kromoplasti in amiloplasti so tri nepovezane vrste organelov, vsaka s svojim izvorom.« Navedi dva primera, ki tvojo utemeljitev podpirata.
+
+**Rešitev:**
+
+1. Trditev ne drži. Vsi plastidi nastanejo iz proplastidov v tvornih celicah.
+2. Skupna zgradba kaže na skupen izvor: vsi imajo dvojno membrano in lastno krožno DNA.
+3. V katero vrsto se plastid razvije, je odvisno od tkiva in svetlobe: v listu kloroplast, v gomolju amiloplast, v zrelem plodu kromoplast, v temi etioplast.
+4. Vrste se pretvarjajo. Prvi primer: med zorenjem paradižnika se kloroplasti spremenijo v kromoplaste, klorofil izgine in ostanejo karotenoidi.
+5. Drugi primer: gomolj krompirja na svetlobi ozeleni, ker se del amiloplastov pretvori v kloroplaste. Podobno etioplasti kalčka na svetlobi v nekaj urah ozelenijo.
+6. Sklep: plastidi so ena družina organelov v različnih razvojnih stanjih, ne ločene vrste.
 
 ## Drugače: Z analogijo
 
@@ -185,17 +238,17 @@ Plastidi so kot večnamenska športna dvorana. Ista dvorana je danes košarkarsk
 
 Meja primerjave: tlak v celici je okrog desetkrat večji kot v žogi.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Ovela solata** v skledi hladne vode čez pol ure spet postane hrustljava. Celice z osmozo vpijejo vodo in turgor se vrne.
-- **Osoljena solata** se hitro sesede: sol izvleče vodo iz celic, kot gnojilo v primeru 3.
-- **Rdeča pesa** v hladni vodi vodo le rahlo obarva, saj barvilo izteče le iz prerezanih celic; med kuhanjem pa se obarva vsa voda. Rdeče barvilo je v vakuoli; vročina uniči tonoplast in membrano, zato barvilo izteče.
-- **Paradižnik, ki zori na polici,** se iz zelenega spremeni v rdečega: kloroplasti postanejo kromoplasti.
-- **Bombažna majica in papir** sta skoraj čista celuloza iz celičnih sten. **Les** je sekundarna stena z ligninom; zato je trd in počasi gnije.
+- **Namakanje po meritvi.** Agronom v nasadu ali vinogradu izmeri vodni potencial lista s tlačno komoro: odrezan list zapre v komoro in zvišuje tlak plina, dokler se na prerezu peclja ne pokaže sok. Pred zoro izmerjena vrednost nad $-0{,}2\,\mathrm{MPa}$ pomeni dobro preskrbo z vodo, pod približno $-0{,}6\,\mathrm{MPa}$ pa hudo sušo.
+- **Gnojenje z namakanjem.** V rastlinjaku nadzirajo električno prevodnost hranilne raztopine, ker pove, koliko soli je v njej. Preveč soli zniža $\Psi$ raztopine in korenine težje črpajo vodo, kot v primeru 3. Enako deluje zasoljena zemlja.
+- **Izolacija protoplastov.** V biotehnološkem laboratoriju celično steno razgradijo z encimi celulazami in pektinazami. Goli protoplast bi v vodi počil, zato delajo v raztopini manitola s koncentracijo okrog $0{,}5\,\mathrm{mol/L}$ ($\Psi_\mathrm{s}$ okrog $-1{,}2\,\mathrm{MPa}$).
+- **Živilska tehnologija.** Zorenje paradižnika v skladišču sprožijo z etilenom: kloroplasti postanejo kromoplasti. Barvilo rdeče pese je v vakuoli, zato ga pridobivajo tako, da pese zmeljejo in stisnejo: pri tem se tonoplast in membrana raztrgata.
+- **Les, papir in tekstil.** Bombažno vlakno je skoraj čista celuloza celične stene. Les je sekundarna stena z ligninom, zato je trd in počasi gnije. V tovarni celuloze lignin kemično odstranijo, da ostanejo celulozna vlakna za papir.
 
 ## Preveri se
 
-? Med dolgim vročim turnirjem trava ob robu igrišča oveni. Pod mikroskopom vidiš, da se je vsebina celic odmaknila od celične stene, stena pa je ostala na mestu. Kako se imenuje ta pojav?
+? Travo ob robu igrišča pomotoma zalijejo s premočno raztopino gnojila in oveni. Pod mikroskopom vidiš, da se je vsebina celic odmaknila od celične stene, stena pa je ostala na mestu. Kako se imenuje ta pojav?
 - turgor
 ~ Turgor je tlak vsebine na steno. Tu je vsebina od stene odstopila, turgorja ni več.
 + plazmoliza

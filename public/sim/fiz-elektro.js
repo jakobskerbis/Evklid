@@ -151,7 +151,7 @@ function drgnjenje(el) {
     stage: [svg],
     controls: [buttons(button("Podrgni balon ob pulover", () => ((moved = Math.min(24, moved + 4)), draw()), "primary small"), button("Razelektri", () => ((moved = 0), draw())))],
     out,
-    tryText: "Zakaj se nabit balon prime stene, čeprav stena ni nabita?",
+    tryText: { razmisli: "Zakaj se nabit balon prime stene, čeprav stena ni nabita?" },
   });
   draw();
 }

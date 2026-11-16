@@ -16,7 +16,7 @@ V sobi izmeriš približno tole:
 
 V hladilniku je barva po istem času segla manj globoko. Nihče ni mešal, žele se ne pretaka, barva pa vseeno potuje. Temu pravimo **difuzija**: delci se zaradi naključnega gibanja razširijo iz kraja z veliko koncentracijo proti kraju z majhno.
 
-Enako se dogaja v kamninah, a neprimerno počasneje. Kristali granata v metamorfnih kamninah imajo plasti različne sestave, ki se po milijonih let le delno zabrišejo; iz tega geologi razberejo, kako hitro se je kamnina ohlajala. V tehniki z difuzijo kalimo zobnike (cementacija), spajkamo kovine in razumemo, zakaj se jeklo s časom »stara«. Za vse to potrebujemo dve stvari: koliko snovi prehaja (Fickova zakona) in kako hitro se to zgodi pri dani temperaturi (aktivacijska energija).
+Enako se dogaja v kamninah, a neprimerno počasneje. Kristali granata v metamorfnih kamninah imajo plasti različne sestave, ki se po milijonih let le delno zabrišejo; iz tega geologi razberejo, kako hitro se je kamnina ohlajala. V tehniki z difuzijo površinsko utrjujemo zobnike (cementacija), spajkamo kovine in razumemo, zakaj se jeklo s časom »stara«. Za vse to potrebujemo dve stvari: koliko snovi prehaja (Fickova zakona) in kako hitro se to zgodi pri dani temperaturi (aktivacijska energija).
 
 ## Razlaga
 
@@ -37,13 +37,13 @@ Približno $12\,\mathrm{mm}$. Ko se čas poveča štirikrat, se globina le podvo
 
 $$J = -D\,\frac{dC}{dx}$$
 
-To je **1. Fickov zakon**. Sorazmernostni faktor $D$ je **difuzijski koeficient** v $\mathrm{m^2/s}$: pove, kako lahkotno se snov giblje skozi material. Minus pove smer: snov teče *navzdol* po koncentraciji, od več proti manj. Kadar se koncentracije s časom ne spreminjajo (**stacionarno stanje**), na primer pri plinu, ki ves čas prehaja skozi steno cevi, je profil $C(x)$ v steni premica: skozi vsako plast stene mora teči enak tok, zato je gradient povsod enak.
+To je **1. Fickov zakon**. Sorazmernostni faktor $D$ je **difuzijski koeficient** v $\mathrm{m^2/s}$: pove, kako lahkotno se snov giblje skozi material. Minus pove smer: snov teče *navzdol* po koncentraciji, od več proti manj. Kadar se koncentracije s časom ne spreminjajo (**stacionarno stanje**), na primer pri plinu, ki ves čas prehaja skozi ravno steno posode, je profil $C(x)$ v steni pri stalnem $D$ premica: skozi vsako plast stene mora teči enak tok, zato je gradient povsod enak.
 
-**3. Kaj, ko se profil spreminja? 2. Fickov zakon.** Pri cementaciji ali v želeju se koncentracija na vsakem mestu s časom spreminja. Takrat velja **2. Fickov zakon**:
+**3. Kaj, ko se profil spreminja? 2. Fickov zakon.** Pri cementaciji ali v želeju se koncentracija na vsakem mestu s časom spreminja. Takrat velja **2. Fickov zakon** (za $D$, ki ni odvisen od koncentracije):
 
 $$\frac{\partial C}{\partial t} = D\,\frac{\partial^2 C}{\partial x^2}$$
 
-Desna stran meri ukrivljenost profila: kjer je profil močno ukrivljen, se koncentracija spreminja najhitreje, na premici pa se ne spreminja. Za pogost primer, ko je na površini ves čas enaka koncentracija $C_s$, v notranjosti pa je bila na začetku $C_0$, je rešitev:
+Desna stran meri ukrivljenost profila: kjer je profil močno ukrivljen, se koncentracija spreminja najhitreje, na premici pa se ne spreminja. Za pogost primer debelega kosa (difuzija ne doseže druge strani), ko je na površini ves čas enaka koncentracija $C_s$, v notranjosti pa je bila na začetku $C_0$, je rešitev:
 
 $$\frac{C_x - C_0}{C_s - C_0} = 1 - \mathrm{erf}\left(\frac{x}{2\sqrt{D t}}\right)$$
 
@@ -179,6 +179,63 @@ $x = 5 \cdot 10^{-4}\,\mathrm{m}$, $x^2 = 2{,}5 \cdot 10^{-7}\,\mathrm{m^2}$, $4
 - Značilna globina $x \approx \sqrt{Dt}$: dvakratna globina zahteva štirikratni čas.
 - $D = D_0\, e^{-Q/(RT)}$, $T$ v kelvinih, $Q$ v $\mathrm{J/mol}$; aktivacijska energija $Q$ je energija za skok, zato $D$ s temperaturo raste eksponentno.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo difuzije ter razliko med vakančno in intersticijsko difuzijo (kateri atomi, katera je hitrejša in zakaj);
+- 1. Fickov zakon $J = -D\,\dfrac{dC}{dx}$ s pomenom in enotami vseh količin ter pomenom minusa;
+- 2. Fickov zakon, njegovo rešitev s funkcijo napake in pogoje zanjo (debel kos, stalna $C_s$, začetna $C_0$, $D$ neodvisen od koncentracije);
+- izpeljavo, da je profil v stacionarnem stanju premica in da globina raste s $\sqrt{t}$;
+- enačbo $D = D_0\, e^{-Q/(RT)}$, pomen aktivacijske energije $Q$ in izpeljavo razmerja $D_1/D_2$;
+- kako iz premice $\ln D$ v odvisnosti od $\dfrac{1}{T}$ dobiš $Q$ in $D_0$.
+
+### Naloga 1
+
+Za difuzijo ogljika v avstenitu so izmerili $D = 5{,}9 \cdot 10^{-12}\,\mathrm{m^2/s}$ pri $900\,^\circ\mathrm{C}$ in $D = 5{,}4 \cdot 10^{-11}\,\mathrm{m^2/s}$ pri $1100\,^\circ\mathrm{C}$. (a) Določi aktivacijsko energijo $Q$. (b) Določi $D_0$. (c) Izračunaj $D$ pri $950\,^\circ\mathrm{C}$. (d) Gred iz jekla z $0{,}20\,\%$ ogljika cementiramo pri $950\,^\circ\mathrm{C}$; atmosfera drži na površini $1{,}20\,\%$ ogljika. Koliko časa traja, da je v globini $0{,}8\,\mathrm{mm}$ ogljika $0{,}60\,\%$? Uporabi tabelo funkcije napake iz razlage in $R = 8{,}314\,\mathrm{J/(mol\,K)}$.
+
+**Rešitev:**
+
+1. V kelvine: $T_1 = 1173{,}15\,\mathrm{K}$, $T_2 = 1373{,}15\,\mathrm{K}$.
+2. Enačbi $\ln D = \ln D_0 - \dfrac{Q}{RT}$ pri obeh temperaturah odštejemo, $D_0$ odpade: $\ln\dfrac{D_2}{D_1} = \dfrac{Q}{R}\left(\dfrac{1}{T_1} - \dfrac{1}{T_2}\right)$.
+3. Leva stran: $\dfrac{D_2}{D_1} = \dfrac{5{,}4 \cdot 10^{-11}}{5{,}9 \cdot 10^{-12}} = 9{,}153$, $\ln 9{,}153 = 2{,}214$.
+4. Razlika obratnih vrednosti: $1/1173{,}15 - 1/1373{,}15 = 1{,}2415 \cdot 10^{-4}\,\mathrm{K^{-1}}$.
+5. $Q = \dfrac{8{,}314 \cdot 2{,}214}{1{,}2415 \cdot 10^{-4}} \approx 148\,300\,\mathrm{J/mol}$, zaokroženo $Q \approx 148\,\mathrm{kJ/mol}$.
+6. $D_0$ iz meritve pri $900\,^\circ\mathrm{C}$: $\dfrac{Q}{RT_1} = \dfrac{148\,000}{8{,}314 \cdot 1173{,}15} = 15{,}17$, $e^{-15{,}17} = 2{,}58 \cdot 10^{-7}$, zato $D_0 = \dfrac{5{,}9 \cdot 10^{-12}}{2{,}58 \cdot 10^{-7}} \approx 2{,}3 \cdot 10^{-5}\,\mathrm{m^2/s}$.
+7. Pri $950\,^\circ\mathrm{C}$ je $T = 1223{,}15\,\mathrm{K}$: $\dfrac{Q}{RT} = \dfrac{148\,000}{8{,}314 \cdot 1223{,}15} = 14{,}55$, $e^{-14{,}55} = 4{,}80 \cdot 10^{-7}$, $D = 2{,}3 \cdot 10^{-5} \cdot 4{,}80 \cdot 10^{-7} \approx 1{,}10 \cdot 10^{-11}\,\mathrm{m^2/s}$.
+8. Cementacija: $\dfrac{C_x - C_0}{C_s - C_0} = \dfrac{0{,}60 - 0{,}20}{1{,}20 - 0{,}20} = 0{,}40$, torej $\mathrm{erf}(z) = 1 - 0{,}40 = 0{,}60$; iz tabele $z \approx 0{,}6$.
+9. Iz $z = \dfrac{x}{2\sqrt{Dt}}$ sledi $t = \dfrac{x^2}{4 D z^2}$. Z $x = 8 \cdot 10^{-4}\,\mathrm{m}$ je $x^2 = 6{,}4 \cdot 10^{-7}\,\mathrm{m^2}$ in $4 D z^2 = 4 \cdot 1{,}10 \cdot 10^{-11} \cdot 0{,}36 = 1{,}584 \cdot 10^{-11}\,\mathrm{m^2/s}$.
+10. $t = \dfrac{6{,}4 \cdot 10^{-7}}{1{,}584 \cdot 10^{-11}} \approx 4{,}04 \cdot 10^4\,\mathrm{s}$, kar je približno $11{,}2\,\mathrm{h}$.
+11. Odgovor: $Q \approx 148\,\mathrm{kJ/mol}$, $D_0 \approx 2{,}3 \cdot 10^{-5}\,\mathrm{m^2/s}$, $D(950\,^\circ\mathrm{C}) \approx 1{,}1 \cdot 10^{-11}\,\mathrm{m^2/s}$; cementacija traja okoli $11\,\mathrm{h}$.
+
+### Naloga 2
+
+Izpelji iz Fickovih zakonov: (a) da je v stacionarnem stanju pri stalnem $D$ profil koncentracije v ravni steni premica in da je tok $J = -D\,\dfrac{C_2 - C_1}{x_2 - x_1}$; (b) da se globina, v kateri je pri cementaciji dosežena izbrana koncentracija, povečuje sorazmerno s $\sqrt{t}$. Pri (b) navedi pogoje, pri katerih rešitev velja.
+
+**Rešitev:**
+
+1. Stacionarno stanje pomeni, da se koncentracija nikjer ne spreminja s časom: $\dfrac{\partial C}{\partial t} = 0$.
+2. Iz 2. Fickovega zakona sledi $D\,\dfrac{d^2 C}{dx^2} = 0$; ker $D$ ni nič, je $\dfrac{d^2 C}{dx^2} = 0$.
+3. Funkcija z drugim odvodom nič je premica: $C(x) = a x + b$, njen odvod $\dfrac{dC}{dx} = a$ je povsod enak.
+4. Premica gre skozi točki $(x_1, C_1)$ in $(x_2, C_2)$, zato je $a = \dfrac{C_2 - C_1}{x_2 - x_1}$. Po 1. Fickovem zakonu je $J = -D\,\dfrac{C_2 - C_1}{x_2 - x_1}$, enak v vsaki plasti stene.
+5. Za (b) veljajo pogoji: kos je debel (difuzija ne doseže druge strani), na površini je ves čas $C_s$, na začetku je povsod $C_0$, $D$ ni odvisen od koncentracije. Takrat je $\dfrac{C_x - C_0}{C_s - C_0} = 1 - \mathrm{erf}(z)$ z $z = \dfrac{x}{2\sqrt{Dt}}$.
+6. Izbrana koncentracija $C_x$ določa levo stran, ta pa natanko eno vrednost $z$, ker funkcija napake z $z$ samo narašča.
+7. Iz $z = \dfrac{x}{2\sqrt{Dt}}$ sledi $x = 2 z \sqrt{D t}$. Pri stalnih $z$ in $D$ je $x$ sorazmeren s $\sqrt{t}$, zato $\dfrac{x_2}{x_1} = \sqrt{\dfrac{t_2}{t_1}}$.
+8. Sklep: v stacionarnem stanju je gradient povsod enak in tok stalen; pri nestacionarni difuziji v debel kos dvakratna globina zahteva štirikratni čas.
+
+### Naloga 3
+
+Zobnike cementiramo $4\,\mathrm{h}$ pri $900\,^\circ\mathrm{C}$. Naročnik želi dvakrat globlji sloj. Tehnolog predlaga: »Pri isti temperaturi cementirajmo $8\,\mathrm{h}$.« Utemelji, ali predlog drži. Nato izračunaj, pri kateri temperaturi bi dvakratno globino dosegli v nespremenjenih $4\,\mathrm{h}$ ($Q = 148\,\mathrm{kJ/mol}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$).
+
+**Rešitev:**
+
+1. Globina izbrane koncentracije je $x = 2 z \sqrt{D t}$, torej pri isti temperaturi sorazmerna s $\sqrt{t}$.
+2. Pri dvakratnem času se globina poveča za faktor $\sqrt{2} \approx 1{,}41$, torej le za $41\,\%$. Predlog ne drži; pri $900\,^\circ\mathrm{C}$ bi potrebovali $4 \cdot 4 = 16\,\mathrm{h}$.
+3. Pri enakem času mora biti produkt $D t$ štirikrat večji, torej $\dfrac{D_2}{D_1} = 4$.
+4. Iz $\dfrac{D_2}{D_1} = e^{\frac{Q}{R}\left(\frac{1}{T_1} - \frac{1}{T_2}\right)}$ sledi $\dfrac{1}{T_2} = \dfrac{1}{T_1} - \dfrac{R \ln 4}{Q}$.
+5. $T_1 = 1173{,}15\,\mathrm{K}$, $\dfrac{1}{T_1} = 8{,}524 \cdot 10^{-4}\,\mathrm{K^{-1}}$; $\dfrac{R \ln 4}{Q} = \dfrac{8{,}314 \cdot 1{,}386}{148\,000} = 7{,}79 \cdot 10^{-5}\,\mathrm{K^{-1}}$.
+6. $\dfrac{1}{T_2} = 8{,}524 \cdot 10^{-4} - 0{,}779 \cdot 10^{-4} = 7{,}745 \cdot 10^{-4}\,\mathrm{K^{-1}}$, zato $T_2 \approx 1291\,\mathrm{K}$, kar je približno $1018\,^\circ\mathrm{C}$.
+7. Odgovor: podvojitev časa da le $1{,}41$-krat globlji sloj. Dvakratno globino v $4\,\mathrm{h}$ dosežemo pri okoli $1020\,^\circ\mathrm{C}$; dvig temperature za približno $120\,^\circ\mathrm{C}$ nadomesti štirikratni čas.
+
 ## Drugače: Na sliki
 
 Če enačbo $D = D_0\, e^{-Q/(RT)}$ logaritmiraš, dobiš
@@ -192,11 +249,14 @@ Nariši graf: na vodoravno os $\dfrac{1}{T}$, na navpično $\ln D$. Meritve pri 
 
 Za profil koncentracije pa si nariši os $x$ v globino. Pri cementaciji je na začetku profil stopnica: zgoraj $C_s$, spodaj $C_0$. S časom se stopnica zaobli in »razmaže« v globino; točka s koncentracijo na sredini med $C_s$ in $C_0$ se pomika navzdol vedno počasneje, sorazmerno s $\sqrt{t}$.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Pomisli na gnečo na smučišču po sneženju. Na eni strani parkirišča je polno ljudi, na drugi skoraj nikogar. Nihče nikogar ne usmerja, a ker se vsak naključno premika, se ljudje sčasoma razporedijo: več jih gre iz gneče na prazno kot obratno. To je 1. Fickov zakon: tok je tem večji, čim večja je razlika v gneči na kratki razdalji.
+V strojništvu z difuzijo namerno spreminjamo sestavo površine ali odpravljamo napake v zgradbi.
 
-V trdnem je gneča še hujša: vsak stoji na svoji ploščici in lahko stopi le na sosednjo prazno ploščico (vakanca). Pozimi, ko vsi drgetajo od mraza in se komaj premikajo, gre to zelo počasi. Ko se ogreje, vsi bolj poskakujejo in prazna mesta se hitreje polnijo. Majhen otrok pa se lahko splazi kar med nogami odraslih (intersticija) in pride najdlje.
+- **Cementacija.** Zobnik iz jekla z okoli $0{,}2\,\%$ ogljika je več ur pri $900$ do $950\,^\circ\mathrm{C}$ v atmosferi, ki na površini drži okoli $0{,}8\,\%$ ogljika. Nastane $0{,}5$ do $1{,}5\,\mathrm{mm}$ globok sloj, ki je po kaljenju trd, jedro pa ostane žilavo. Globino tehnolog nastavi s časom: $x \approx \sqrt{Dt}$.
+- **Nitriranje.** Dušik vnašamo pri $500$ do $550\,^\circ\mathrm{C}$. Ker je $D$ pri tej temperaturi majhen, sloj $0{,}3\,\mathrm{mm}$ nastaja več deset ur, del pa se pri tem skoraj ne zvije.
+- **Homogenizacijsko žarjenje.** V ulitku so mangan, krom in nikelj neenakomerno razporejeni. Ti atomi difundirajo vakančno in imajo velik $Q$, zato ulitek žarimo deset in več ur pri $1100$ do $1200\,^\circ\mathrm{C}$.
+- **Odstranjevanje vodika.** Vijake visoke trdnosti po galvanskem cinkanju nekaj ur žarimo pri okoli $200\,^\circ\mathrm{C}$. Majhen intersticijski vodik že pri tej temperaturi izdifundira iz jekla; sicer bi vijak pod obremenitvijo krhko počil.
 
 ## Preveri se
 
@@ -217,7 +277,7 @@ V trdnem je gneča še hujša: vsak stoji na svoji ploščici in lahko stopi le 
 > V stacionarnem stanju se koncentracija nikjer ne spreminja s časom, zato je profil premica: na vsak milimeter enak padec, tu $0{,}3\,\mathrm{kg/m^3}$.
 
 ? Zakaj ogljik v železu difundira mnogo hitreje kot železovi atomi sami?
-- Ker je ogljik lažji, zato se pri isti temperaturi giblje hitreje kot v plinu.
+- Ker je ogljik lažji, zato se pri isti temperaturi giblje hitreje, tako kot v plinu.
 ~ Atomi v trdnem ne letijo prosto kot v plinu. Odloča, ali ima atom kam skočiti in koliko energije za to potrebuje.
 + Ker je majhen in skače po intersticijah, ki jih je veliko, z manjšo aktivacijsko energijo; železo mora čakati na vakanco.
 - Ker ima ogljik večjo koncentracijo kot železo.
