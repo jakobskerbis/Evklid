@@ -219,10 +219,12 @@ test("zaženi: pokvarjeno stanje → ni zagona, datoteka ostane nespremenjena (n
 test("GET /api/admin/meritev-po-objavi: skrbnik vidi povzetek (besedilo in JSON brez odtisov), drugi 403", async () => {
   const { root, w, file, knjiga } = repo();
   process.env.EVKLID_DB = path.join(path.dirname(file), "evklid.db");
-  const o = { root, file, knjiga, merljiv: vse, log() {}, now: ura("2026-11-12T10:00:00Z") };
-  await zaženi({ ...o, env: env("c0"), zagon: lazniZagon(0) });
+  // Končna točka računa »ta teden« po pravi uri, zato tudi zagon v testu teče zdaj (sicer test pade v naslednjem tednu).
+  const zdaj = new Date();
+  const o = { root, file, knjiga, merljiv: vse, log() {}, now: () => zdaj };
+  await zaženi({ ...o, env: env("c0"), zagon: lazniZagon(0, { now: zdaj }) });
   w("content/lessons/MAT-OS-7/a.md", "a2");
-  await zaženi({ ...o, env: env("abc1234567890"), zagon: lazniZagon(0.5) });
+  await zaženi({ ...o, env: env("abc1234567890"), zagon: lazniZagon(0.5, { now: zdaj }) });
   const { openDb } = await import("../server/db.js");
   const { createApp } = await import("../server/app.js");
   const app = createApp(openDb(":memory:"), { accounts: false, scheduler: false, backups: false });
