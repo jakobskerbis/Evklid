@@ -1,5 +1,17 @@
 // Stran za starše (starsi.html); ločena datoteka zaradi politike CSP (brez vrinjenih skript).
 // Ime otroka iz povezave (?ime=Miha) in cene v lokalni valuti s strežnika.
+// Prihranek letnega paketa glede na 12 mesečnih plačil, za pare [mesečno, letno] v najmanjši enoti valute.
+// Razpon od najmanjšega do največjega, oba navzdol na cel odstotek (nikoli preveč); brez prihranka prazen niz.
+// Zunaj samodejne funkcije, da ga test/starsi-prihranek.test.js lahko preizkusi.
+function prihranekStarsi(pairs) {
+  var lo = Infinity, hi = 0;
+  pairs.forEach(function (mp) {
+    var m = mp[0], y = mp[1];
+    if (m > 0 && y > 0) { var p = Math.floor((1 - y / (12 * m)) * 100); lo = Math.min(lo, p); hi = Math.max(hi, p); }
+  });
+  return lo > 0 && isFinite(lo) ? " (prihranite " + (hi > lo ? "od " + lo + " do " + hi : lo) + "\u00a0%)" : "";
+}
+
 (function () {
   var q = new URLSearchParams(location.search);
   var ime = (q.get("ime") || "").trim().slice(0, 40);
@@ -40,12 +52,9 @@
         // (zunanji pregled 16. 11.: OŠ 17,4 %, Družina s študentom 19,9 %), zato razpon od najmanjšega do največjega,
         // oba navzdol na cel odstotek (nikoli preveč), kot pay.save v account.js.
         var amt = function (level, family, interval) { var x = d.plans.find(function (pl) { return pl.level === level && !!pl.family === family && pl.interval === interval; }); return x ? x.amount : 0; };
-        var lo = Infinity, hi = 0;
-        [["OS", false], ["SS", false], ["FAKS", false], ["SS", true], ["FAKS", true]].forEach(function (k) {
-          var m = amt(k[0], k[1], "month"), y = amt(k[0], k[1], "year");
-          if (m > 0 && y > 0) { var p = Math.floor((1 - y / (12 * m)) * 100); lo = Math.min(lo, p); hi = Math.max(hi, p); }
-        });
-        var save = lo > 0 && isFinite(lo) ? " (prihranite " + (hi > lo ? "od " + lo + " do " + hi : lo) + " %)" : "";
+        var save = prihranekStarsi([["OS", false], ["SS", false], ["FAKS", false], ["SS", true], ["FAKS", true]].map(function (k) {
+          return [amt(k[0], k[1], "month"), amt(k[0], k[1], "year")];
+        }));
         document.getElementById("plan-year").innerHTML = "Za celo leto" + save + ": <b>" + lv("OS", false, "year") + "</b> (osnovna šola), <b>" + lv("SS", false, "year") + "</b> (srednja šola), <b>" + lv("FAKS", false, "year") + "</b> (fakulteta). Družina <b>" + lv("SS", true, "year") + "</b>, s študentom <b>" + lv("FAKS", true, "year") + "</b>.";
         return;
       }

@@ -96,6 +96,7 @@ test("robots.txt, sitemap.xml in llms.txt: vsebina", () => {
   assert.match(llms, /je slovenska aplikacija/);
   assert.match(llms, /Ni povezana s projekti z imenom »Euclid«/);
   assert.match(llms, /is not related to projects named "Euclid"/);
+  assert.ok(llms.includes(`družina s študentom (2–4 profili) ${eur(FAMILY_PRICES.druzina_student.month)} (${eur(FAMILY_PRICES.druzina_student.year)})`), "Družina s študentom v llms.txt");
   assert.ok(llms.includes(eur(LEVEL_PRICES.OS.month)) && llms.includes("9.99 EUR") && llms.includes(`${TRIAL_DAYS} dni brezplačno`));
   // Ime ponudnika modela (j, 10. 11. 2026): slovensko in angleško.
   assert.ok(llms.includes("pripravijo modeli Claude podjetja Anthropic") && llms.includes("Anthropic's Claude models"));

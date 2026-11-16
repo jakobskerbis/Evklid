@@ -5,7 +5,7 @@ import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { pilotReport } from "../server/pilot.js";
 import { SCHOOL_LICENCE_PRICES } from "../server/schools.js";
-import { validateOrder, predracunHtml, CONSENT_TEXT } from "../server/sole.js";
+import { validateOrder, predracunHtml, CONSENT_TEXT, questionsWord, firstDays } from "../server/sole.js";
 import { BRAND } from "../server/brand.js";
 import { createRequire } from "node:module";
 
@@ -262,4 +262,9 @@ test("predračun: brez vrinjenih skript, gumb Natisni pod CSP odpre tiskanje", {
     await browser.close();
     server.close();
   }
+});
+
+test("stran /sole: slovenske množinske oblike za ustno spraševanje in dneve preizkusa", () => {
+  assert.deepEqual([1, 2, 3, 5].map(questionsWord), ["1 vprašanje", "2 vprašanji", "3 vprašanja", "5 vprašanj"]);
+  assert.deepEqual([1, 2, 3, 5, 7].map(firstDays), ["prvi dan", "prva 2 dneva", "prvi 3 dnevi", "prvih 5 dni", "prvih 7 dni"]);
 });

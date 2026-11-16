@@ -125,6 +125,15 @@ export function validateOrder(b, now = new Date()) {
   return { order: out };
 }
 
+// Slovenske dvojinske in množinske oblike (docs/besedila.md §4): 1 vprašanje, 2 vprašanji, 3 vprašanja, 5 vprašanj.
+const forms = (n, [one, two, few, many]) => {
+  const m = Math.abs(n) % 100;
+  return m === 1 ? one : m === 2 ? two : m === 3 || m === 4 ? few : many;
+};
+export const questionsWord = (n) => `${n} ${forms(n, ["vprašanje", "vprašanji", "vprašanja", "vprašanj"])}`;
+// »prvih 7 dni«, »prva 2 dneva«, »prvi 3 dnevi«, »prvi dan«.
+export const firstDays = (n) => (n === 1 ? "prvi dan" : `${forms(n, ["prvi", "prva", "prvi", "prvih"])} ${n} ${forms(n, ["dan", "dneva", "dnevi", "dni"])}`);
+
 // Stran /sole: statična datoteka, v katero strežnik vstavi cene in ime aplikacije (eno mesto za cene).
 // pilot: ali je pilotna cena še na voljo (prvih 10 šol); ko ni, stran pilotnega paketa ne pokaže.
 export function solePage({ pilot = true } = {}) {
@@ -140,9 +149,9 @@ export function solePage({ pilot = true } = {}) {
     "podari.months": String(PODARI_MONTHS),
     dailyQuestions: schoolDailyQuestions() > 0 ? `do ${schoolDailyQuestions()} vprašanj inštruktorju na dan` : "neomejeno število vprašanj inštruktorju",
     // Kaj ima učenec brez licence (vprašanje »Ali lahko najprej preizkusimo?«) in koliko vprašanj šteje ustno spraševanje.
-    trialDays: String(TRIAL_DAYS),
+    trialDays: firstDays(TRIAL_DAYS),
     freeDaily: String(freeDailyQuestions()),
-    ustnoQuestions: String(USTNO_QUESTIONS),
+    ustnoQuestions: questionsWord(USTNO_QUESTIONS),
     consent: CONSENT_TEXT,
     maxStudents: String(ORDER_LIMITS.maxStudents),
     maxNote: String(ORDER_LIMITS.maxNote),
@@ -201,7 +210,7 @@ export function predracunHtml(o, now = new Date()) {
 <p>Datum izdaje: ${esc(issued)} · Rok plačila: ${PAYMENT_DAYS} dni (do ${esc(due)})</p>
 <div class="cols">
   <div class="box"><h2>Prodajalec</h2><table>
-    ${row("Naziv", env("NAME"))}${row("Naslov", env("ADDRESS"))}${row("ID za DDV / davčna št.", env("TAX_ID"))}${row("TRR (IBAN)", env("IBAN"))}
+    ${row("Naziv", env("NAME"))}${row("Naslov", env("ADDRESS"))}${row("Davčna številka", env("TAX_ID"))}${row("TRR (IBAN)", env("IBAN"))}
   </table></div>
   <div class="box"><h2>Kupec</h2><table>
     ${row("Šola", o.school_name)}${row("Naslov", o.address)}${row("Matična številka", o.registration_no)}${row("Davčna številka", o.tax_id)}${o.budget_user ? row("Šifra PU", o.budget_code) : ""}${row("Kontakt", `${o.contact_name}, ${o.email}${o.phone ? `, ${o.phone}` : ""}`)}

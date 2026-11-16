@@ -26,4 +26,5 @@
 .doc .mkt-chat ol li { margin: 0; }
 .mkt-chat .land-msg { max-width: 85%; padding: 10px 14px; border-radius: 16px; line-height: 1.4; overflow-wrap: anywhere; }
 .mkt-chat .land-msg.me { align-self: flex-end; background: var(--accent); color: var(--accent-text); border-end-end-radius: 4px; }
+.mkt-chat .eq { white-space: nowrap; }
 .mkt-chat .land-msg.tutor { align-self: flex-start; background: var(--surface-2); color: var(--text); border-end-start-radius: 4px; }
