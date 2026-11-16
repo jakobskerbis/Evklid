@@ -1,0 +1,21 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tabela
+  - indeksi od $0$ do `length - 1`
+  - dolžina je stalna
+- Sklic
+  - `b = a` ne kopira
+  - kopija: `a.clone()`
+- Vzorci na tabelah
+  - vsota, največji z indeksom
+  - štetje, linearno iskanje
+- Dvodimenzionalna tabela
+  - `m[i][j]`, vrstica in stolpec
+  - vrstični zapis $i \cdot s + j$
+- Nizi
+  - `length()`, `charAt`, `substring`, `split`
+  - nespremenljivi, sestavljaj s `StringBuilder`
+- Primerjava nizov
+  - vsebina z `equals`, ne z `==`

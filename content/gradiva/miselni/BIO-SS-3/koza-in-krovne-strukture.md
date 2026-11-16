@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Koža je organ
+  - največji organ, okoli $1{,}8\,\mathrm{m^2}$
+  - napaka: »koža je le ovojnica«
+- Povrhnjica
+  - kalitvena plast: celice se delijo
+  - keratin, roženi sloj, odpadanje v okoli 4 tednih
+  - brez krvnih žil
+- Usnjica in podkožje
+  - vezivo, žile, čutnice, znojnice, lojnice
+  - podkožje: maščoba, izolacija
+- Naloge kože
+  - zaščita, uravnavanje temperature, čutilo
+  - izločanje znoja, nastanek vitamina D
+- UV-sevanje
+  - UVB: opekline, poškodbe DNA
+  - UVA: globlje v usnjico, staranje kože
+  - melanin iz melanocitov vpija UV
+- Zaščitni faktor SPF
+  - $p = \dfrac{1}{\mathrm{SPF}}$; SPF 50 prepusti $2\,\%$
+  - le pri $2\,\mathrm{mg/cm^2}$, obnavljaj
+- Druge živali
+  - členonožci: hitinski oklep, levitev
+  - dvoživke: vlažna koža, dihanje
+  - plazilci luske, ptiči perje, sesalci dlaka

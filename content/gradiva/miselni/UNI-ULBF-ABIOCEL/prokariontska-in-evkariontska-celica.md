@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prokariontska celica
+  - brez jedra, DNA v nukleoidu
+  - krožen kromosom, plazmidi, ribosomi $70\mathrm{S}$
+  - bakterije in arheje, $0{,}5$ do $5\,\mu\mathrm{m}$
+- Evkariontska celica
+  - jedro z dvojno ovojnico, linearni kromosomi
+  - ER, Golgijev aparat, mitohondriji, citoskelet
+  - ribosomi $80\mathrm{S}$, $10$ do $100\,\mu\mathrm{m}$
+- Skupno vsem celicam
+  - membrana, citoplazma, ribosomi, DNA
+  - napaka: »brez jedra ni DNA«
+- Svedberg
+  - meri hitrost usedanja v centrifugi
+  - $50\mathrm{S}$ in $30\mathrm{S}$ tvorita $70\mathrm{S}$
+- Površina in prostornina
+  - kocka: $P/V = 6/a$
+  - $10$-krat daljša celica: $1000$-krat večja prostornina
+  - notranje membrane dodajo površino
+- Endosimbiontska teorija
+  - mitohondrij iz aerobne bakterije
+  - kloroplast iz cianobakterije
+- Dokazi
+  - dvojna membrana, krožna DNA, ribosomi $70\mathrm{S}$
+  - delitev na dvoje, velikost okoli $1\,\mu\mathrm{m}$
+  - geni podobni bakterijskim, večina danes v jedru

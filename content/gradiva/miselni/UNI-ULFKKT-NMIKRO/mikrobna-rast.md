@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Binarna cepitev
+  - vsaka generacija pomnoži število z $2$
+  - napaka: prištevanje namesto množenja
+- Eksponentna rast
+  - $N = N_0 \cdot 2^n$, $n = t/g$
+  - $64$-krat več celic pomeni $6$ generacij
+- Generacijski čas
+  - $n = \dfrac{\log N - \log N_0}{\log 2}$, $g = t/n$
+  - $\mu = \dfrac{\ln 2}{g}$, enota $\mathrm{h^{-1}}$
+  - *E. coli* pri $37\,^\circ\mathrm{C}$ okoli $20\,\mathrm{min}$
+- Rastna krivulja
+  - $\log N$ proti $t$ v zaprti kulturi
+  - lag, eksponentna, stacionarna faza, odmiranje
+  - formula velja le v eksponentni fazi
+- Lag faza
+  - celice tvorijo encime, se ne delijo
+  - $t_\mathrm{lag}$: podaljšana premica seka $\log N_0$
+- Gojišča
+  - tekoče, poltrdno, trdno; agar je strdilo
+  - kompleksno ali sintetično
+  - selektivno, diferencialno, obogatitveno; MacConkeyjev agar
+- Štetje kolonij
+  - $\dfrac{K}{V \cdot D}$, enota CFU/mL
+  - štej plošče s $30$ do $300$ kolonijami

@@ -142,14 +142,14 @@ export function wireLessonReport(btn, { api, studentId, topic, step, toast }) {
 }
 
 /** Skrbnik v klepetu: opis napake, zraven gredo zadnja sporočila pogovora. */
-export function openAdminBug(anchor, { api, studentId, conversationId, view, toast, onClose }) {
+export function openAdminBug(anchor, { api, studentId, conversationId, view, toast, onClose, thanks = null, ask = null }) {
   const box = reportBox({
-    ask: t("bug.ask"),
+    ask: ask || t("bug.ask"),
     notePh: t("bug.notePh"),
     needNote: true,
     onSend: async ({ note }) => {
       await api(`/api/students/${studentId}/bug`, { method: "POST", body: { note, conversation_id: (typeof conversationId === "function" ? conversationId() : conversationId) || undefined, view, ...deviceInfo() } });
-      toast(t("bug.thanks"), "check");
+      toast(thanks || t("bug.thanks"), "check");
       onClose?.();
     },
     onClose,
@@ -211,6 +211,7 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
       (r) => `<li class="adm-rep${r.status === "fixed" ? " fixed" : ""}" data-kind="${esc(r.kind)}" data-id="${esc(r.id)}">
         <div class="adm-rep-head">${icon(KIND_ICON[r.kind] || "flag")}<b>${esc(reportTitle(r))}</b>${reasonText(r) ? `<span class="pill">${esc(reasonText(r))}</span>` : ""}</div>
         <small class="muted" dir="auto">${esc(r.created_at)} UTC${r.device ? ` · ${esc(r.device)}` : ""}</small>
+        ${r.status === "in_review" && r.pr_url ? `<a class="adm-rep-pr" href="${esc(r.pr_url)}" target="_blank" rel="noopener">${icon("clipboard-check")}<span>${esc(t("adm.rep.inReview", { n: r.pr }))}</span></a>` : ""}
         ${r.note ? `<p class="adm-rep-note" dir="auto">${esc(r.note)}</p>` : ""}
         ${shownBlock(r)}
         ${r.question || r.raw || r.answer || r.context ? `<details><summary>${esc(t("adm.rep.more"))}</summary>${r.question ? `<p dir="auto"><b>${esc(t("adm.rep.question"))}</b> ${esc(r.question)}</p>` : ""}${r.raw || r.answer ? `<p><b>${esc(t("adm.rep.raw"))}</b></p><pre dir="auto">${esc(r.raw || r.answer)}</pre>` : ""}${r.context ? `<pre dir="auto">${esc(r.context)}</pre>` : ""}</details>` : ""}

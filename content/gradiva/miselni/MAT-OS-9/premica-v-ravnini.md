@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dve meritvi
+  - dve točki določata premico
+  - rover: $(2, 50)$ in $(6, 110)$
+- Smerni koeficient
+  - $k = \dfrac{y_2 - y_1}{x_2 - x_1}$
+  - sprememba $y$ v števcu
+  - napaka: obrnjen ulomek
+- Začetna vrednost
+  - vstavi točko v $y = kx + n$
+  - $n$ ni kar koordinata $y$ točke
+- Preizkus
+  - druga točka mora ustrezati enačbi
+- Navpična premica
+  - $x_1 = x_2$: zapis $x = x_1$
+  - nima smernega koeficienta
+- Vzporednost
+  - $k_1 = k_2$
+  - različna $n$: ni skupne točke
+  - enak $n$: ista premica
+- Vzporednica skozi točko
+  - $k$ prepiši, $n$ izračunaj
+  - $C(1, 4)$: $y = -x + 5$

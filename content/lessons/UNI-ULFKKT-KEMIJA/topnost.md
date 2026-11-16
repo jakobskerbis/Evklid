@@ -178,7 +178,7 @@ $Q = 1{,}0 \cdot 10^{-6}$ je približno $9000$-krat večji od $K_\mathrm{sp} = 1
 - **Mešanje raztopin brez razredčenja.** Ko zmešamo $100\,\mathrm{mL}$ in $100\,\mathrm{mL}$, se koncentraciji obeh raztopin razpolovita. $Q$ računamo z razredčenimi koncentracijami.
 - **$K_\mathrm{sp}$ se ne spremeni s skupnim ionom.** Spremeni se topnost, $K_\mathrm{sp}$ ostane enak (odvisen je le od temperature).
 - **Spiranje z vodo.** Oborine v gravimetriji ne spiramo s preveč čiste vode; uporabimo malo tekočine z elektrolitom ali skupnim ionom, sicer del oborine izgubimo ali pa preide v koloidno stanje in gre skozi filter.
-- **Gravimetrični faktor.** Pri izračunu mase iskane snovi pomnožimo maso oborine z razmerjem molskih mas, ne le z masnim deležem, in upoštevamo število atomov (npr. $\mathrm{Fe_2O_3}$ vsebuje dva atoma Fe: $m(\mathrm{Fe}) = m(\mathrm{Fe_2O_3}) \cdot 2M(\mathrm{Fe})/M(\mathrm{Fe_2O_3})$).
+- **Gravimetrični faktor.** Pri izračunu mase iskane snovi pomnožimo maso oborine z razmerjem molskih mas in pri tem upoštevamo število atomov (npr. $\mathrm{Fe_2O_3}$ vsebuje dva atoma Fe: $m(\mathrm{Fe}) = m(\mathrm{Fe_2O_3}) \cdot 2M(\mathrm{Fe})/M(\mathrm{Fe_2O_3})$).
 
 ## Povzetek
 
@@ -230,12 +230,23 @@ Natančno navedi zvezo med topnostnim produktom in topnostjo soli $\mathrm{A}_m\
 
 Nasičeno raztopino si predstavljaj kot kristal na dnu čaše, iz katerega ioni stalno odhajajo v raztopino, iz raztopine pa se enako hitro vračajo nanj:
 
-```
-        raztopina:   Ag+    Cl-      Ag+
-                        Cl-     Ag+     Cl-
-                     ↑ raztapljanje   ↓ obarjanje
-        ===============[ AgCl(s) ]===============
-```
+:::risba skica
+opis: Čaša z nasičeno raztopino. Na dnu leži kristal AgCl(s). V raztopini nad njim so trije ioni Ag⁺ in trije ioni Cl⁻. Puščica navzgor od kristala je označena z raztapljanje, puščica navzdol h kristalu z obarjanje; v ravnotežju sta oba procesa enako hitra.
+območje: 0; 0 .. 12; 6,4
+črta: 1; 6 -> 1; 0,5 -> 11; 0,5 -> 11; 6 | debelo
+črta: 1; 5,3 -> 11; 5,3 | modra črtkano
+pravokotnik: 4; 0,5 .. 8; 1,4 | siva
+napis: 6; 0,95 | AgCl(s) | sredina
+puščica: 5; 1,5 -> 5; 2,7 | raztapljanje | levo | oranžna
+puščica: 7; 2,7 -> 7; 1,5 | obarjanje | desno | modra
+napis: 2,4; 4,5 | Ag⁺ | sredina
+napis: 4; 3,7 | Cl⁻ | sredina
+napis: 5,6; 4,6 | Ag⁺ | sredina
+napis: 6,4; 3,5 | Cl⁻ | sredina
+napis: 8,2; 4,4 | Cl⁻ | sredina
+napis: 9,7; 3,6 | Ag⁺ | sredina
+podnapis: Nasičena raztopina: raztapljanje in obarjanje potekata enako hitro
+:::
 
 Pri $Q < K_\mathrm{sp}$ je »odhajanje« hitrejše in kristal se manjša. Pri $Q > K_\mathrm{sp}$ je »vračanje« hitrejše in kristal raste (nastaja oborina).
 

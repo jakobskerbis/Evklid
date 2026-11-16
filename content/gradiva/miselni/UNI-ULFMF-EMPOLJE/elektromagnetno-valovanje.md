@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Valovna enačba
+  - iz Maxwellovih enačb brez nabojev
+  - $c = 1/\sqrt{\mu_0\varepsilon_0}$, v snovi $c/n$
+- Ravni val
+  - $\vec{E} \perp \vec{B} \perp \vec{k}$, v fazi
+  - $B_0 = E_0/c$, $\omega = ck$
+- Energija
+  - $w = \varepsilon_0E^2$, pol in pol
+- Poyntingov vektor
+  - $\vec{S} = \vec{E}\times\vec{B}/\mu_0$
+  - $I = \tfrac12\varepsilon_0cE_0^2$, napaka: $I \propto E_0$
+- Tlak sevanja
+  - $I/c$ vpito, $2I/c$ odbito
+  - sončno jadro
+- Odboj in lom
+  - $n_1\sin\alpha = n_2\sin\beta$
+  - $R = ((n_1 - n_2)/(n_1 + n_2))^2$
+- Totalni odboj
+  - $\sin\alpha_m = n_2/n_1$, optično vlakno
+  - Brewster $\tan\alpha_B = n_2/n_1$

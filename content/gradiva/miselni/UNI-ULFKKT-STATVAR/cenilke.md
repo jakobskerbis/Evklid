@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Cenilka in ocena
+  - $\hat\theta = T(X_1, \dots, X_n)$ je slučajna spremenljivka
+  - ocena: ena vrednost, npr. $61$
+- Pristranskost
+  - $b(\hat\theta) = E(\hat\theta) - \theta$
+  - nepristranska: $E(\hat\theta) = \theta$ za vsak $\theta$
+  - pazi: nepristranska ni isto kot točna
+- Vzorčno povprečje
+  - $E(\bar X) = \mu$, $D(\bar X) = \sigma^2/n$
+  - neodvisnost potrebna le za disperzijo
+- Največje verjetje
+  - $L(\theta) = \prod f(x_i;\theta)$, $\ell = \ln L$
+  - reši $\ell'(\theta) = 0$, preveri robove
+  - $L$ ni verjetnost parametra
+- Znane cenilke MLE
+  - Bernoulli $\hat p = k/n$, Poisson $\hat\lambda = \bar x$
+  - invariantnost: $e^{-\hat\lambda}$ oceni $P(X = 0)$
+- Vzorčna disperzija
+  - MLE deli z $n$: $E(\hat\sigma^2) = \frac{n-1}{n}\sigma^2$
+  - nepristranska $s^2$ deli z $n-1$
+- Tombola
+  - MLE je največja številka $M$, podcenjuje
+  - nepristranska $\hat N = M\frac{k+1}{k} - 1$
+- Kakovost cenilke
+  - $\mathrm{MSE} = D(\hat\theta) + b(\hat\theta)^2$
+  - dosledna, če gre $\mathrm{MSE} \to 0$

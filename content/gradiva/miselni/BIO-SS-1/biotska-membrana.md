@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zgradba membrane
+  - fosfolipidni dvosloj, repi v sredini
+  - beljakovine, holesterol, glikokaliks
+  - model tekočega mozaika
+- Izbirna prepustnost
+  - $\mathrm{O_2}$, $\mathrm{CO_2}$ neposredno skozi dvosloj
+  - ioni in glukoza skozi beljakovine
+  - napaka: membrana ni sito
+- Difuzija
+  - od večje k manjši koncentraciji
+  - brez ATP, tudi olajšana difuzija
+- Osmoza
+  - voda k večji koncentraciji topljenca
+  - hipotonično: voda v celico
+  - hipertonično: plazmoliza ali skrčenje
+- Aktivni transport
+  - proti gradientu, porablja ATP
+  - natrijeva-kalijeva črpalka
+- Velikost celice
+  - $\dfrac{S}{V} = \dfrac{6}{a}$
+  - večja celica, manjše razmerje

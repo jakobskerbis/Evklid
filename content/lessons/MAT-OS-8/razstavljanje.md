@@ -179,14 +179,17 @@ $-6x^2 - 15x = -3x(2x + 5)$. Preverimo: $-3x \cdot 2x = -6x^2$ in $-3x \cdot 5 =
 
 Pravokotnik z višino $4x$ razdelimo navpično na dva dela:
 
-```
-        2x            3
-  +-------------+--------+
-  |             |        |
-4x|    8x²      |  12x   |
-  |             |        |
-  +-------------+--------+
-```
+:::risba skica
+opis: Pravokotnik z višino 4x je navpično razdeljen na dva dela. Levi del je širok 2x in ima ploščino 8x², desni je širok 3 in ima ploščino 12x.
+območje: 0; 0 .. 10; 5,2
+pravokotnik: 1,4; 0,4 .. 6,4; 4,4
+pravokotnik: 6,4; 0,4 .. 9,4; 4,4 | oranžna
+napis: 3,9; 4,4 | 2x | nad
+napis: 7,9; 4,4 | 3 | nad
+napis: 1,4; 2,4 | 4x | levo
+napis: 3,9; 2,4 | 8x^2 | sredina | debelo
+napis: 7,9; 2,4 | 12x | sredina | debelo
+:::
 
 Levi del je širok $2x$ in ima ploščino $4x \cdot 2x = 8x^2$. Desni del je širok $3$ in ima ploščino $4x \cdot 3 = 12x$. Skupaj je to $8x^2 + 12x$.
 
@@ -220,13 +223,13 @@ $$12x + 18 = 2 \cdot 3 \cdot (2x + 3) = 6(2x + 3)$$
 ~ Širini ležita druga ob drugi, zato ju seštejemo, ne zmnožimo.
 > Oba dela imata višino $5$, skupna širina je $x + 4$, zato je ploščina $5(x + 4) = 5x + 20$.
 
-? Oceni brez natančnega računanja: koliko je približno $49 \cdot 13 + 49 \cdot 7$?
-- približno $70$
+? Izračunaj na pamet z izpostavljanjem: koliko je $49 \cdot 13 + 49 \cdot 7$?
+- $69$
 ~ To je vsota $49 + 13 + 7$. Med členi je množenje, ne seštevanje.
-+ približno $1000$
-- približno $4500$
++ $980$
+- $4459$
 ~ To je $49 \cdot 13 \cdot 7$. Po izpostavljanju števili $13$ in $7$ v oklepaju seštejemo, ne zmnožimo.
-> Izpostavimo $49$: $49 \cdot (13 + 7) = 49 \cdot 20 = 980$, kar je približno $1000$.
+> Izpostavimo $49$: $49 \cdot (13 + 7) = 49 \cdot 20 = 980$.
 
 ? Zakaj zapis $12x + 18 = 2(6x + 9)$ še ni končano razstavljanje?
 - Ker enakost ni pravilna.

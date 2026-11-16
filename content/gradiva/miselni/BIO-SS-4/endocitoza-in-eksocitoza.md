@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vezikli
+  - membranski mehurčki za prenos snovi
+  - snov ne prečka lipidnega dvosloja
+- Eksocitoza
+  - vezikel se zlije s celično membrano
+  - membrana se poveča
+  - primer: inzulin, živčni prenašalec
+- Endocitoza
+  - fagocitoza, pinocitoza, receptorsko posredovana (LDL)
+  - membrana se zmanjša, porabi ATP
+- Endomembranski sistem
+  - jedrna ovojnica, ER, Golgi, lizosomi, vezikli
+  - poskus s pulzom in lovom
+- Pot beljakovine za izločanje
+  - zrnati ER → Golgi (cis → trans) → zrnce
+  - napaka: Golgi sestavlja beljakovine
+- Lizosomi
+  - prebavni encimi pri $\mathrm{pH} \approx 5$
+  - razgradijo zajeto bakterijo
+- Vrste izločanja
+  - stalno: obnova membrane
+  - uravnavano: po signalu $\mathrm{Ca^{2+}}$
+- Ravnovesje membrane
+  - endocitoza vrne membrano, ki jo doda eksocitoza
+  - $S = 4\pi r^2$, sorazmerna z $d^2$
+  - trikrat večji premer: devetkrat več membrane

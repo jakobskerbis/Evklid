@@ -1,5 +1,5 @@
-// Nove vrste gradiv ob lekciji (docs/gradiva.md): povzetek na eni strani z miselnim vzorcem,
-// zvočni povzetek in delovni list za tisk z rešitvami. Vse je narejeno iz že pregledanih lekcij
+// Nove vrste gradiv ob lekciji (docs/gradiva.md): povzetek na eni strani z miselnim vzorcem
+// in delovni list za tisk z rešitvami. Vse je narejeno iz že pregledanih lekcij
 // in generatorjev nalog, zato ne stane nič in ne potrebuje nove vsebine.
 // Kdo kaj dobi, odloča ena funkcija (canUse) po pravicah iz server/placila/pravice.js:
 // šolska licenca za teme svojih predmetov in razredov, Evklid Osebno za vse.
@@ -8,8 +8,8 @@ import path from "node:path";
 import { getTopic, getPath } from "./curriculum.js";
 import { loadLesson } from "./textbook.js";
 import { renderMd, shell } from "./textbook-print.js";
+import { createPageCache, lessonVersion } from "./tisk-predpomnilnik.js";
 import { generateTask, hasGenerator, optionsAreTex } from "./practice/index.js";
-import { speakMarkdown } from "./govor.js";
 import { GRADIVA_DIR, hasGradivo, gradivoPage, videoFor } from "./gradiva-vsebina.js";
 import { weakTopicsFor } from "./weaknesses.js";
 
@@ -17,7 +17,6 @@ import { weakTopicsFor } from "./weaknesses.js";
 // Ostalo velja za šolsko licenco (šolski predmeti) in Evklid Osebno (vsi predmeti).
 export const VRSTE = {
   povzetek: { icon: "file-text", free: true },
-  zvok: { icon: "volume-2", free: true },
   "delovni-list": { icon: "clipboard-check", free: false },
   // Napisana gradiva (server/gradiva-vsebina.js): samo, kjer datoteka obstaja.
   video: { icon: "play", free: false },
@@ -92,7 +91,7 @@ export function summaryParts(topicId) {
   return {
     topic: t,
     pathLabel: getPath(t.path)?.label || "",
-    status: lesson.status,
+    status: lesson.meta?.stanje || "osnutek",
     povzetek,
     authored: !!authored,
     branches: authored || items.slice(0, 8).map(branchOf),
@@ -122,7 +121,7 @@ export function mindMapHtml(center, branches) {
 const SUMMARY_CSS = `
   .one { font: 10pt/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   .one h1 { font-size: 1.45rem; margin: 2px 0 0; }
-  .one h2 { font-size: 1rem; margin: 10px 0 4px; color: #2f6fed; border-bottom: 2px solid #dde2ec; padding-bottom: 2px; }
+  .one h2 { font-size: 1rem; margin: 10px 0 4px; color: #2353d1; border-bottom: 2px solid #dde2ec; padding-bottom: 2px; }
   .one ul { margin: 4px 0; padding-left: 18px; } .one li { margin: 2px 0; }
   .mm { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(64px, auto); gap: 10px; margin: 8px 0 4px; }
   .mm-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
@@ -130,7 +129,7 @@ const SUMMARY_CSS = `
   .mm-cell { display: flex; align-items: center; justify-content: center; z-index: 1; min-width: 0; }
   .mm-node { background: #fff; border: 2px solid #c9d3ea; border-radius: 12px; padding: 6px 9px; font-size: 0.86rem; line-height: 1.3; text-align: center; max-width: 100%; overflow-wrap: anywhere; }
   .mm-node b { display: block; color: #1c2233; } .mm-node span { color: #3a4257; }
-  .mm-center { background: #2f6fed; border-color: #2f6fed; color: #fff; font-weight: 800; font-size: 1.05rem; padding: 12px 14px; }
+  .mm-center { background: #2f6fed; border-color: #2353d1; color: #fff; font-weight: 800; font-size: 1.05rem; padding: 12px 14px; }
   .one .cols { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
   .one .fbox { border: 1px solid #c9d3ea; background: #f3f6fc; border-radius: 8px; padding: 2px 10px 6px; }
   .one .fbox p { margin: 6px 0; }
@@ -142,6 +141,20 @@ const SUMMARY_CSS = `
   }
   @media print { .one { font-size: 9.5pt; } .one, .mm { break-inside: avoid; } }
 `;
+
+// Podpis povzetka za predpomnilnik: datum, različica lekcije in čas spremembe napisanega miselnega vzorca.
+export function summarySignature(topicId) {
+  const t = getTopic(topicId);
+  const lesson = t && loadLesson(topicId);
+  if (!lesson) return null;
+  let mapMtime = 0;
+  if (/^[A-Z0-9-]+\/[a-z0-9-]+$/.test(topicId)) {
+    try {
+      mapMtime = fs.statSync(path.join(GRADIVA_DIR, "miselni", `${topicId}.md`), { throwIfNoEntry: false })?.mtimeMs || 0;
+    } catch {}
+  }
+  return `${today()}|${lessonVersion(lesson)}|${mapMtime}`;
+}
 
 export function summaryPage(topicId) {
   const p = summaryParts(topicId);
@@ -163,16 +176,6 @@ export function summaryPage(topicId) {
     ${p.status !== "pregledano" ? `<p class="muted small">Narejeno iz lekcije, ki jo še pregleduje učitelj.</p>` : ""}
   </section>`;
   return shell(`${t.name} · povzetek`, content, SUMMARY_CSS);
-}
-
-// --- zvočni povzetek ---
-
-export function audioSummary(topicId) {
-  const p = summaryParts(topicId);
-  if (!p) return null;
-  const formulas = p.formulas.length ? `\nFormule.\n${p.formulas.map((f) => speakMarkdown(f)).join("\n")}` : "";
-  const text = `Povzetek: ${p.topic.name}.\n${speakMarkdown(p.povzetek)}${formulas}`;
-  return { topic: p.topic.id, title: p.topic.name, lang: "sl-SI", text, parts: text.split("\n").filter(Boolean) };
 }
 
 // --- delovni list ---
@@ -319,10 +322,13 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
   };
 
   // Povzetek na eni strani je besedilo učbenika: za vse, brez prijave (kot /ucbenik).
-  app.get("/gradiva/povzetek/:path/:topic", (req, res) => {
-    const html = summaryPage(`${req.params.path}/${req.params.topic}`);
-    if (!html) return res.status(404).send("Za to temo povzetka še ni.");
-    res.type("html").send(html);
+  // Predpomnjen po različici lekcije in miselnega vzorca (server/tisk-predpomnilnik.js).
+  const summaries = createPageCache({ maxBytes: 8 * 1024 * 1024 });
+  app.get("/gradiva/povzetek/:path/:topic", (req, res, next) => {
+    const id = `${req.params.path}/${req.params.topic}`;
+    const page = summaries.get(id, summarySignature(id), () => summaryPage(id));
+    if (!page) return res.status(404).send("Za to temo povzetka še ni.");
+    summaries.send(req, res, page).catch(next);
   });
 
   // Katera gradiva ima tema in katera so učencu odklenjena.
@@ -334,7 +340,7 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
     const items = [];
     if (summaryParts(t.id)) {
       const [p, slug] = t.id.split("/");
-      items.push({ vrsta: "povzetek", url: `/gradiva/povzetek/${p}/${slug}` }, { vrsta: "zvok" });
+      items.push({ vrsta: "povzetek", url: `/gradiva/povzetek/${p}/${slug}` });
     }
     if (hasGenerator(t.id)) items.push({ vrsta: "delovni-list" });
     for (const v of ["video", "poskus", "projekt"]) if (hasGradivo(v, t.id)) items.push({ vrsta: v });
@@ -347,16 +353,6 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
     if (!s) return;
     const topics = weakTopicIds(store.db, s.id, 3, s).map((id) => ({ id, name: getTopic(id).name }));
     res.json({ topics, locked: !canUse(s, "delovni-list") });
-  });
-
-  app.get("/api/students/:id/gradiva/zvok", (req, res) => {
-    const s = loadStudent(req, res);
-    if (!s) return;
-    const t = topicOf(req, res);
-    if (!t) return;
-    const a = audioSummary(t.id);
-    if (!a) return res.status(404).json({ error: "Za to temo povzetka še ni." });
-    res.json(a);
   });
 
   // Domači poskus ali projekt: stran za tisk (odjemalec jo odpre v novem oknu).

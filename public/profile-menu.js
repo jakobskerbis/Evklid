@@ -108,8 +108,6 @@ function render() {
     ${others}
     ${item("add", "user-plus", t("pm.add"))}
     ${item("zbirke", "award", t("zb.title"))}
-    ${item("feedback", "message-square-heart", t("nav.feedback"))}
-    ${item("settings", "settings", t("nav.settings"))}
     ${accounts ? item("account", "user", t("nav.account")) : ""}
     ${accounts ? `<div class="pm-sep" role="separator"></div>${item("logout", "log-out", t("pm.logout"))}` : ""}`;
   mountSubjectSwitch($("#profile-pop .subj-sw"), { onPicked: () => close(true) });
@@ -128,8 +126,9 @@ function onPick(e) {
   }
   close();
   const act = b.dataset.act;
-  // Zbirke in mnenje sta na računalniku dosegljiva tu (na telefonu tudi pod »Jaz«).
-  if (act === "settings" || act === "zbirke" || act === "feedback") return D.showView(act);
+  // Zbirke so na računalniku dosegljive samo tu (na telefonu tudi pod »Jaz«). Nastavitve in Povratne informacije
+  // so zavihka (telefon: »Jaz«), zato jih meni ne ponavlja (j, 12. 11.).
+  if (act === "zbirke") return D.showView(act);
   if (act === "account") return $("#account-tab")?.click();
   if (act === "logout") return D.logout();
   if (act === "add") {

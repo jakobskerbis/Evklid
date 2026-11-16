@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Past množenja
+  - $\frac{1}{x} < 1$ ni isto kot $x > 1$
+  - pri negativnem $x$ se znak obrne
+- Na eno stran
+  - na desni ostane $0$
+  - en ulomek $\dfrac{p(x)}{q(x)}$
+- Ničle in poli
+  - ničle iz števca, poli iz imenovalca
+  - razstavi oba polinoma
+- Tabela predznakov
+  - vrstice intervali, stolpci faktorji
+  - eno testno število na interval
+- Krajišča
+  - pri $\le$, $\ge$ ničle vključene
+  - poli nikoli
+- Soda stopnja
+  - predznak se ne zamenja
+  - $\frac{(x-2)^2}{x^2-9} < 0$: točka $2$ izpade
+- Povezava z grafom
+  - $f(x) > 0$: graf nad osjo $x$

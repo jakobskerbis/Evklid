@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tri vrste ogrodja
+  - notranje okostje: riba, ptič, človek
+  - zunanji oklep: rak, hrošč; levitev
+  - hidrostatično: deževnik, polž slinar
+- Kost je živa
+  - celice, žile, kostni mozeg
+  - sklep, vezi, hrustanec; $206$ kosti
+  - opora, zaščita, gibanje
+- Mišice samo vlečejo
+  - skrčijo se, tetiva potegne kost
+  - pari: dvoglava upogne, troglava iztegne
+  - napaka: mišica ne potiska
+- Gibanje v vodi
+  - voda nosi, a močno zavira
+  - vretenasta oblika, trup in rep
+  - plavuti usmerjajo
+- Gibanje na kopnem
+  - okostje nosi vso težo
+  - skoki, plazenje, mišično stopalo
+- Gibanje v zraku
+  - krila, perje, votle kosti
+  - močne prsne mišice: piščančji file
+- Računanje deležev
+  - $d = \dfrac{\text{del}}{\text{celota}} \cdot 100\,\%$
+  - kosti v bedrih: $200$ od $800\,\mathrm{g}$ je $25\,\%$

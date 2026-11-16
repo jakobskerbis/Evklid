@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Naravni izbor
+  - variabilnost, dednost, različen razmnoževalni uspeh
+  - različica obstaja že pred antibiotikom
+  - napaka: »bakterije se navadijo«
+- Evolucija populacije
+  - sprememba pogostosti alelov skozi generacije
+  - izbor, genski zdrs, mutacije, pretok genov
+- Hardy–Weinbergov zakon
+  - genotipi $p^2 : 2pq : q^2$
+  - velika populacija, naključno parjenje, brez izbora
+  - $q^2 = 0{,}16$ da $2pq = 0{,}48$
+- Fitnes
+  - $w = W/W_\mathrm{max}$, najuspešnejši ima $1$
+  - plodni potomci, ne moč
+  - vedno vezan na okolje
+- Enačba izbora
+  - $p' = \dfrac{p\,w_R}{p\,w_R + q\,w_S}$
+  - razmerje $p/q$ se množi z $w_R/w_S$
+  - velja za haploidne organizme
+- Vrsta in speciacija
+  - razmnoževalna izolacija: prezigotna, postzigotna
+  - alopatrična: fizična ovira
+  - simpatrična: poliploidija, triploid neploden
+- Filogenetsko drevo
+  - sorodnost po najmlajšem skupnem vozlišču
+  - klad: prednik in vsi potomci
+  - UPGMA: najbližji par, vozlišče na $d/2$
+- Molekulska ura
+  - $d = 2rLt$, faktor $2$ za obe liniji
+  - $t = t_\text{ref} \cdot d/d_\text{ref}$

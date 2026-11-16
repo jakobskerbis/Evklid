@@ -1,5 +1,7 @@
 // Pogon simulacij »3d-<id>« (public/sim/index.js): lekcija vklopi kateri koli model iz kode (docs/3d.md) z
 // mountSim("3d-celica-zivalska", el, { zacetek: { … } }). Ta datoteka je majhna; prizor in three se naložita šele tu.
+import { napisPoskusa } from "../sim/napis-poskusa.js";
+
 const CSS = "/3d/3d.css";
 
 export function sim3d(el, opts = {}) {
@@ -12,16 +14,18 @@ export function sim3d(el, opts = {}) {
   const p = document.createElement("p");
   p.className = "muted";
   el.append(p);
-  // »Poskusi: …« (docs/kakovost.md §3) pod pregledovalnikom kot pri drugih simulacijah: besedilo iz vnosa v katalogu
-  // (opts.poskusi, za temo), sicer iz modela (info.poskusi).
+  // »Preizkusi: …« ali »Razmisli: …« (docs/kakovost.md §3, public/sim/napis-poskusa.js) pod pregledovalnikom kot pri
+  // drugih simulacijah: besedilo iz vnosa v katalogu (opts.poskusi, za temo), sicer iz modela (info.poskusi).
   let poskusi = null;
-  const dodajPoskusi = (besedilo) => {
-    if (!besedilo || poskusi) return;
+  const dodajPoskusi = (x) => {
+    const n = napisPoskusa(x);
+    if (!n || poskusi) return;
     poskusi = document.createElement("p");
     poskusi.className = "demo-try";
+    poskusi.dataset.vrsta = n.vrsta;
     const b = document.createElement("b");
-    b.textContent = "Poskusi: ";
-    poskusi.append(b, besedilo);
+    b.textContent = `${n.napis} `;
+    poskusi.append(b, n.besedilo);
     el.append(poskusi);
   };
   dodajPoskusi(opts.poskusi);

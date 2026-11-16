@@ -43,6 +43,8 @@ const NAMES = [
   "coins",
   // 3D atlas in modeli (public/3d/)
   "ellipsis", "eye-off", "scissors", "box", "bone", "rotate-3d", "focus",
+  // varnostni odgovor (public/nujno.js): gumbi za klic
+  "phone",
 ];
 const dir = path.join("node_modules", "lucide-static", "icons");
 const out = {};

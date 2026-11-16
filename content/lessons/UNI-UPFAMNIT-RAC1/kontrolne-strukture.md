@@ -88,14 +88,33 @@ Izrek Böhma in Jacopinija pove: **vsak algoritem lahko zapišemo samo z zapored
 
 Iz tega izhaja način dela, ki mu rečemo **strukturna dekompozicija** (razčlenitev od zgoraj navzdol). Nalogo najprej razdeliš na nekaj velikih korakov. Vsak korak nato razčleniš naprej, dokler vsak del ni en sam gradnik. Primer za »koliko ur zdrži telefon z varčevalnim načinom« (primer 3 spodaj):
 
-```
-izračunaj čas delovanja
-├─ nastavi b = 100, ure = 0   (zaporedje)
-├─ dokler je b > 0            (ponavljanje)
-│  ├─ izberi porabo           (izbira)
-│  └─ povečaj ure
-└─ izpiši ure
-```
+:::risba skica
+opis: Drevo razčlenitve od zgoraj navzdol. Na vrhu je naloga »izračunaj čas delovanja«. Iz nje izhajajo trije koraki: »nastavi b = 100, ure = 0« (zaporedje), »dokler je b > 0« (ponavljanje) in »izpiši ure«. Korak »dokler je b > 0« se razčleni naprej na »izberi porabo« (izbira) in »povečaj ure«.
+območje: 0; 0 .. 20; 13
+pravokotnik: 0,5; 11,3 .. 12; 12,7 | ozadje
+napis: 6,25; 12 | izračunaj čas delovanja
+črta: 1,25; 11,3 -> 1,25; 2 | debelo
+črta: 1,25; 10 -> 2,5; 10 | debelo
+črta: 1,25; 8 -> 2,5; 8 | debelo
+črta: 1,25; 2 -> 2,5; 2 | debelo
+pravokotnik: 2,5; 9,3 .. 14; 10,7 | ozadje
+napis: 8,25; 10 | nastavi b = 100, ure = 0
+napis: 14,4; 10 | zaporedje | desno | siva
+pravokotnik: 2,5; 7,3 .. 14; 8,7 | ozadje
+napis: 8,25; 8 | dokler je b > 0
+napis: 14,4; 8 | ponavljanje | desno | siva
+črta: 3,75; 7,3 -> 3,75; 4 | debelo
+črta: 3,75; 6 -> 5; 6 | debelo
+črta: 3,75; 4 -> 5; 4 | debelo
+pravokotnik: 5; 5,3 .. 14; 6,7 | ozadje
+napis: 9,5; 6 | izberi porabo
+napis: 14,4; 6 | izbira | desno | siva
+pravokotnik: 5; 3,3 .. 14; 4,7 | ozadje
+napis: 9,5; 4 | povečaj ure
+pravokotnik: 2,5; 1,3 .. 14; 2,7 | ozadje
+napis: 8,25; 2 | izpiši ure
+podnapis: Strukturna dekompozicija: vsak list drevesa je en gradnik
+:::
 
 ## Rešeni primeri
 
@@ -145,7 +164,7 @@ Zapis `t += 15` pomeni `t = t + 15`. Koliko obvestil pošlje? Koliko bi jih, če
 **Iščemo:** število obhodov zanke
 
 :::formula
-Obhod se izvede za vsako vrednost števca, pri kateri je pogoj resničen. Število obhodov $= \dfrac{\text{zadnja} - \text{prva}}{\text{korak}} + 1$, kjer sta prva in zadnja vrednost števca, pri katerih je pogoj še resničen.
+Obhod se izvede za vsako vrednost števca, pri kateri je pogoj resničen. Velja $\text{število~obhodov} = \dfrac{\text{zadnja} - \text{prva}}{\text{korak}} + 1$, kjer sta prva in zadnja vrednost števca, pri katerih je pogoj še resničen.
 :::
 
 **Rešitev:**
@@ -225,7 +244,7 @@ Koliko je `s` in koliko `preneseno`, ko se zanka konča? Zakaj `preneseno` ni na
 - **Za ena preveč ali premalo.** »Od 8.00 do 10.00 vsakih 15 minut je $120 : 15 = 8$ obvestil.« Pozabiš prvo vrednost ali zamešaš `<` in `<=`. Popravek: izpiši prve in zadnje vrednosti števca in preveri pogoj na meji.
 - **Zanka, ki se ne konča.** `while (b > 0) { ure++; }` se vrti v nedogled, ker se `b` v telesu ne spremeni. Pogoj se ne preverja »sam od sebe«: nekaj v telesu ga mora premakniti proti `false`. Popravek: pri vsaki zanki poišči vrstico, ki spremeni spremenljivko iz pogoja.
 - **Napačen vrstni red v verigi.** Če zapišeš najprej `if (b <= 20)` in šele nato `else if (b <= 5)`, pri $3$ odstotkih dobiš »varčevanje«, ker se izvede le prva resnična veja. Popravek: v verigi postavi ožje pogoje pred širše.
-- **Prirejanje namesto primerjave.** `if (b = 20)` ne vpraša, ali je `b` enak $20$, ampak mu prireja $20$; v Javi to ni pogoj. Popravek: primerjava je `==`.
+- **Prirejanje namesto primerjave.** `if (b = 20)` ne vpraša, ali je `b` enak $20$, ampak mu prireja $20$; v Javi to ni pogoj (rezultat ni tipa `boolean`), zato prevajalnik javi napako. Popravek: primerjava je `==`.
 
 ## Povzetek
 
@@ -234,6 +253,106 @@ Koliko je `s` in koliko `preneseno`, ko se zanka konča? Zakaj `preneseno` ni na
 - `while` ponavlja telo, dokler je pogoj resničen; pogoj preveri pred vsakim obhodom.
 - `for` je zanka s števcem: začetek, pogoj, sprememba. Število obhodov $= \frac{\text{zadnja} - \text{prva}}{\text{korak}} + 1$; mejo (`<` ali `<=`) vedno preveri.
 - Vsak algoritem je sestavljen iz zaporedja, izbire in ponavljanja; strukturna dekompozicija nalogo razčleni od zgoraj navzdol do teh gradnikov.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- kaj je pogoj in kako se izvedejo `if`, `if`–`else` in veriga `else if` (izvede se le prva veja z resničnim pogojem);
+- kako se izvede zanka `while` (pogoj se preveri pred vsakim obhodom, zato je obhodov lahko tudi nič) in kateri trije deli sestavljajo glavo zanke `for`;
+- kako zanko `for` prepišeš v `while` in obratno;
+- formulo za število obhodov zanke s števcem in kako nanjo vpliva meja `<` ali `<=`;
+- kdaj se zanka konča: telo mora spremenljivko iz pogoja premikati proti vrednosti, pri kateri je pogoj neresničen;
+- izrek Böhma in Jacopinija ter postopek strukturne dekompozicije.
+
+### Naloga 1
+
+Dan je program z gnezdenima zankama. Operator `%` vrne ostanek pri celoštevilskem deljenju.
+
+```java
+int stevec = 0;
+for (int i = 1; i <= 20; i += 3) {
+    for (int j = i; j < 20; j += 5) {
+        if ((i + j) % 2 == 0) {
+            stevec++;
+        }
+    }
+}
+```
+
+(a) Koliko obhodov naredi zunanja zanka? (b) Kolikokrat se skupaj preveri pogoj v stavku `if`? (c) Koliko je `stevec` po koncu programa? Odgovore utemelji z računom, ne le s sledenjem.
+
+**Rešitev:**
+
+1. Zunanji števec zavzame vrednosti $1, 4, 7, 10, 13, 16, 19$; pri $22$ pogoj `i <= 20` ni več resničen. Obhodov je $\dfrac{19 - 1}{3} + 1 = 7$.
+2. Notranja zanka se začne pri $j = i$ in teče po $5$, dokler je $j < 20$. Za vsak $i$ izpišemo vrednosti $j$:
+
+| $i$ | vrednosti $j$ | obhodov | $i + j$ je sodo pri |
+|---|---|---|---|
+| $1$ | $1, 6, 11, 16$ | $4$ | $j = 1, 11$ |
+| $4$ | $4, 9, 14, 19$ | $4$ | $j = 4, 14$ |
+| $7$ | $7, 12, 17$ | $3$ | $j = 7, 17$ |
+| $10$ | $10, 15$ | $2$ | $j = 10$ |
+| $13$ | $13, 18$ | $2$ | $j = 13$ |
+| $16$ | $16$ | $1$ | $j = 16$ |
+| $19$ | $19$ | $1$ | $j = 19$ |
+
+3. Pogoj v `if` se preveri enkrat v vsakem obhodu notranje zanke, skupaj $4 + 4 + 3 + 2 + 2 + 1 + 1 = 17$-krat.
+4. V $m$-tem obhodu notranje zanke (štejemo od $m = 0$) je $j = i + 5m$, zato je $i + j = 2i + 5m$. Ker je $2i$ sodo, je vsota soda natanko takrat, ko je $m$ sod: šteje prvi, tretji, peti … obhod.
+5. Od $4$ obhodov sta taka $2$, od $3$ obhodov $2$, od $2$ obhodov $1$, od $1$ obhoda $1$. Skupaj $2 + 2 + 2 + 1 + 1 + 1 + 1 = 10$.
+6. Odgovor: (a) $7$ obhodov, (b) pogoj se preveri $17$-krat, (c) `stevec` je $10$.
+
+### Naloga 2
+
+Izpelji število obhodov zanke `for (int t = a; t < b; t += k)` za poljubna cela števila $a$, $b$ in $k > 0$. Zanko najprej prepiši v `while`. Nato povej, kako se rezultat spremeni, če v pogoju piše `<=`, in natančno navedi, kdaj se števili obhodov razlikujeta. Oboje preveri pri $a = 3$, $k = 7$ za $b = 50$ in $b = 52$.
+
+**Rešitev:**
+
+1. Enakovredna zanka `while` (edina razlika: števec `t` je tu viden tudi za zanko):
+
+```java
+int t = a;
+while (t < b) {
+    // telo
+    t += k;
+}
+```
+
+2. Po $m$ obhodih je $t = a + m \cdot k$. Naslednji obhod se izvede natanko takrat, ko je $a + m \cdot k < b$.
+3. Če je $a \ge b$, je pogoj neresničen že na začetku in obhodov je $0$.
+4. Če je $a < b$, je število obhodov najmanjši $m$, pri katerem je $a + m \cdot k \ge b$, torej $m \ge \dfrac{b - a}{k}$. Najmanjše tako celo število je $\left\lceil \dfrac{b - a}{k} \right\rceil$ (zaokroženo navzgor).
+5. Pri pogoju `t <= b` in $a \le b$ iščemo najmanjši $m$, pri katerem je $a + m \cdot k > b$, torej $m > \dfrac{b - a}{k}$. To je $\left\lfloor \dfrac{b - a}{k} \right\rfloor + 1$. To je formula iz lekcije, saj je zadnja vrednost števca $a + \left\lfloor \dfrac{b - a}{k} \right\rfloor \cdot k$.
+6. Števili se razlikujeta natanko takrat, ko je $a \le b$ in $k$ deli $b - a$: tedaj števec zadene mejo $b$ in `<=` naredi en obhod več. Sicer sta enaki.
+7. Preverimo. Pri $b = 50$ je $\dfrac{50 - 3}{7} = \dfrac{47}{7} \approx 6{,}71$: z `<` je obhodov $7$, z `<=` pa $6 + 1 = 7$ (števec $3, 10, \ldots, 45$). Pri $b = 52$ je $\dfrac{52 - 3}{7} = 7$: z `<` je obhodov $7$, z `<=` pa $7 + 1 = 8$ (zadnji pri $t = 52$).
+8. Odgovor: z `<` je obhodov $\left\lceil \frac{b - a}{k} \right\rceil$ (pri $a < b$, sicer $0$), z `<=` pa $\left\lfloor \frac{b - a}{k} \right\rfloor + 1$ (pri $a \le b$, sicer $0$); razlika $1$ nastane le, ko $k$ deli $b - a$.
+
+### Naloga 3
+
+Dana je zanka, v kateri je `N` celo število, $N \ge 1$:
+
+```java
+int n = N, k = 0;
+while (n > 1) {
+    if (n % 2 == 0) {
+        n = n / 2;
+    } else {
+        n = n - 1;
+    }
+    k++;
+}
+```
+
+(a) Sledi programu za $N = 27$ in povej končni `k`. (b) Utemelji, da se zanka konča za vsak $N \ge 1$. (c) Utemelji, da je obhodov največ $2 \log_2 N$. (d) Katere od treh osnovnih gradnikov vsebuje program in kako so gnezdeni?
+
+**Rešitev:**
+
+1. Sledenje: $27 \to 26 \to 13 \to 12 \to 6 \to 3 \to 2 \to 1$. To je $7$ obhodov, zato je `k` enak $7$.
+2. Ustavitev: v telo pridemo le pri $n \ge 2$. Če je $n$ sod, je $\dfrac{n}{2} < n$ in $\dfrac{n}{2} \ge 1$. Če je $n$ lih, je $n \ge 3$ in $n - 1 \ge 2$. V obeh primerih se $n$ strogo zmanjša in ostane celo število, ki je vsaj $1$.
+3. Strogo padajoče zaporedje celih števil, ki so vsaj $1$, ne more biti neskončno. Zato $n$ po končno mnogo obhodih doseže $1$, pogoj `n > 1` postane neresničen in zanka se konča. Pri $N = 1$ je obhodov $0$.
+4. Meja: po odštevanju je $n$ sod, zato dve odštevanji nikoli ne sledita zaporedoma; v vsakih dveh zaporednih obhodih je vsaj eno razpolavljanje.
+5. Razpolavljanj je največ $\log_2 N$, ker vsako $n$ vsaj razpolovi, $n$ pa ne pade pod $1$. Odštevanj je največ toliko kot razpolavljanj, ker vsakemu odštevanju sledi razpolavljanje (po odštevanju je $n \ge 2$ in sod). Obhodov je zato največ $2 \log_2 N$; pri $N = 27$ je to približno $9{,}5$, dejansko jih je $7$.
+6. Gradniki: zaporedje (nastavitev `n` in `k`, v telesu izbira in nato `k++`), ponavljanje (`while`) in v njem gnezdena izbira (`if`–`else`). Po izreku Böhma in Jacopinija drugih gradnikov ne potrebujemo.
+7. Odgovor: (a) `k` je $7$; (b) zanka se konča, ker se $n$ v vsakem obhodu strogo zmanjša in ostane vsaj $1$; (c) obhodov je največ $2 \log_2 N$; (d) zaporedje, v njem ponavljanje, v ponavljanju izbira.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -320,7 +439,7 @@ Paketov je veliko, a Jure nima stotih enakih listkov, le enega: »Dokler je v ko
 \text{prva} | prva vrednost števca, pri kateri je pogoj resničen | | |
 \text{zadnja} | zadnja vrednost števca, pri kateri je pogoj še resničen | | | odvisna od meje < ali <=
 \text{korak} | sprememba števca v enem obhodu | | |
-\text{število obhodov} | število obhodov zanke for | \text{število obhodov} = \dfrac{\text{zadnja} - \text{prva}}{\text{korak}} + 1 | – |
+\text{število~obhodov} | število obhodov zanke for | \text{število~obhodov} = \dfrac{\text{zadnja} - \text{prva}}{\text{korak}} + 1 | – |
 t | čas (števec zanke) | | min |
 b | stanje baterije | | \% |
 b_1, b_2 | stanji baterije v primeru | | \% | v primeru $20\,\%$ in $3\,\%$

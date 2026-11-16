@@ -6,224 +6,257 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Poglej se v ogledalo. Tvoja leva roka v ogledalu je videti kot desna, vendar je slika enako velika kot ti in je enako daleč za ogledalom, kot si ti pred njim. Ogledalo naredi točno to, čemur v matematiki pravimo **zrcaljenje**.
+Ana v trgovini z oblačili pomerja jakno in v ogledalu garderobe pogleda listek s ceno. Napis $49\,€$ je v ogledalu obrnjen. Slika listka je enako velika kot listek in se zdi toliko za ogledalom, kolikor je listek pred njim. Za pultom prodajalec zlaga majico: prepogne jo po sredini in levi rokav se natančno prekrije z desnim.
 
-Simetrijo srečaš na vsakem koraku: metulj ima obe krili enaki, črka A je na levi enaka kot na desni, odsev dreves v mirnem jezeru je skoraj kot prava krošnja. Arhitekti, oblikovalci in obrtniki jo uporabljajo, da so stvari lepe in uravnotežene. Tudi v naravi je pogosta.
+Prizora sta videti različna, skrivata pa isto idejo. V obeh je ena črta (ogledalo, pregib). Vsaka točka ima na drugi strani črte svoj par, ki je od črte enako daleč kot točka sama. Temu v matematiki rečemo **zrcaljenje čez premico**. Majica, ki se ob pregibu prekrije sama s seboj, je **simetričen lik**.
 
-V tej lekciji se naučiš, kako točko in lik **zrcalimo čez premico**, in kako prepoznamo **simetrične like**. Pri tem boš uporabljal tisto, kar že znaš iz konstrukcij: pravokotnico in simetralo daljice.
+Zrcaljenje potrebuješ, ko rišeš vzorec ali logotip, ki mora biti na obeh straneh enak, in ko preverjaš, ali je lik pravilno narisan. Pomagata ti pravokotnica in simetrala daljice iz osnovnih konstrukcij.
 
 ## Razlaga
 
-**1. Zrcaljenje točke čez premico.** Izberemo premico $o$, ki ji rečemo **os zrcaljenja** (ogledalo). Točki $A$ priredimo točko $A'$ (beremo »A črtica«), imenujemo jo **zrcalna slika** točke $A$, tako da je $o$ **simetrala daljice** $AA'$. To pomeni:
+**1. Kaj kaže slika.** Na kvadratni mreži je navpična premica $o$. Levo od nje je trikotnik $ABC$, desno njegova zrcalna slika $A'B'C'$ (beremo »A črtica, B črtica, C črtica«).
 
-- daljica $AA'$ je **pravokotna** na os $o$,
-- os $o$ razpolovi daljico $AA'$, zato sta $A$ in $A'$ **enako oddaljeni od osi**, vsaka na svoji strani.
+:::risba skica
+opis: Kvadratna mreža z navpično osjo o na sredini. Levo od osi je trikotnik ABC: A je 4 kvadratke levo od osi, B 1 kvadratek, C 3 kvadratke. Desno je zrcalna slika A'B'C': A' je 4 kvadratke desno od osi, B' 1 kvadratek, C' 3 kvadratke, vsaka v isti vrstici kot izvirnik. Črtkane vodoravne daljice AA', BB' in CC' sekajo os pod pravim kotom.
+območje: 0; 0 .. 10; 5
+mreža: da
+črta: 5; 0 -> 5; 5 | debelo
+črta: 1; 1 -> 9; 1 | črtkano
+črta: 4; 2 -> 6; 2 | črtkano
+črta: 2; 4 -> 8; 4 | črtkano
+lik: 1; 1 -> 4; 2 -> 2; 4 | modra
+lik: 9; 1 -> 6; 2 -> 8; 4 | oranžna
+pravikot: 5; 1 | 9; 1 | 5; 2
+točka: 1; 1 | A | pod
+točka: 4; 2 | B | desno
+točka: 2; 4 | C | nad
+točka: 9; 1 | A' | pod
+točka: 6; 2 | B' | levo
+točka: 8; 4 | C' | nad
+napis: 5; 4,7 | o | desno
+:::
 
-Če točka $A$ leži na osi, se zrcali sama vase: $A' = A$.
+Preštej kvadratke. Oglišče $A$ je $4$ kvadratke levo od osi, $A'$ pa $4$ kvadratke desno, v isti vrstici. Pri $B$ in $B'$ je razdalja do osi $1$ kvadratek, pri $C$ in $C'$ pa $3$. Črtkane daljice $AA'$, $BB'$ in $CC'$ so vodoravne, os je navpična. Os jih seka pod pravim kotom, vsako točno na njeni sredini.
 
-Če je razdalja točke od osi enaka $d$, je razdalja med točko in njeno sliko enaka dvojni razdalji od osi:
+**2. Zrcaljenje točke.** Premici $o$ rečemo **os zrcaljenja**. Točka $A'$ je **zrcalna slika** točke $A$, če je os $o$ simetrala daljice $AA'$. To pomeni dvoje:
+
+- daljica $AA'$ je **pravokotna** na os,
+- os jo razpolovi, zato sta $A$ in $A'$ **enako daleč od osi**, vsaka na svoji strani.
+
+Točka, ki leži na osi, je sama sebi slika: $A' = A$.
+
+:::premisli
+Oglišče $C$ premaknemo za $1$ kvadratek bliže osi, v isti vrstici. Kam se premakne $C'$? Koliko kvadratkov bo zdaj dolga daljica $CC'$?
+---
+Tudi $C'$ se premakne za $1$ kvadratek bliže osi, ker mora biti od nje enako daleč kot $C$. Obe točki sta zdaj $2$ kvadratka od osi, zato je $CC'$ dolga $2 + 2 = 4$ kvadratke namesto $6$.
+:::
+
+**3. Konstrukcija brez mreže.** Na praznem listu točko zrcalimo s pravokotnico:
+
+1. Skozi $A$ konstruiraj pravokotnico na os $o$. Presečišče z osjo označi $F$.
+2. Šestilo zapiči v $F$ in ga razpri do $A$.
+3. Na drugi strani osi nariši lok. Kjer seka pravokotnico, je $A'$.
+
+Lik zrcalimo oglišče za ogliščem. Slike nato povežemo v enakem vrstnem redu: $A'B'$, $B'C'$ in $C'A'$.
+
+**4. Kaj se ohrani.** Zrcalna slika je **skladna** z izvirnikom: ima enako obliko in velikost. Ohranijo se dolžine stranic, velikosti kotov, obseg in ploščina. Spremenita se le lega in **smer obhoda**, to je smer, v kateri si oglišča sledijo, ko jih obhodimo po vrsti. Na sliki gre $A \to B \to C$ v nasprotni smeri urnega kazalca, $A' \to B' \to C'$ pa v smeri urnega kazalca. Zato je odsev leve rokavice videti kot desna rokavica.
+
+**5. Simetrični liki.** Lik je **osno simetričen**, če obstaja premica, čez katero ga zrcalimo in dobimo spet isti lik. Taki premici rečemo **simetrijska os**. Če lik po njej prepogneš, se polovici natančno prekrijeta, kot rokava zložene majice. Lik ima lahko več osi ali nobene:
+
+| Lik | Število osi |
+|---|---|
+| daljica | $2$ |
+| kot | $1$ |
+| raznostranični trikotnik | $0$ |
+| enakokraki trikotnik | $1$ |
+| enakostranični trikotnik | $3$ |
+| pravokotnik | $2$ |
+| kvadrat | $4$ |
+| krog | neskončno |
+
+Enakokraki trikotnik tu ni enakostraničen, pravokotnik pa ni kvadrat. Osi daljice sta njena simetrala in premica, na kateri leži. Os kota je njegova simetrala, os enakokrakega trikotnika simetrala osnovnice. Osi enakostraničnega trikotnika so simetrale vseh treh stranic. Osi pravokotnika gresta skozi sredini nasprotnih stranic, kvadrat ima poleg teh dveh še obe diagonali. Pri krogu je os vsaka premica skozi središče.
+
+Tudi črke so liki. Črka **A** (brez okraskov) ima $1$ os, navpično. Črka **H** ima $2$ osi, črka **F** nobene.
+
+:::premisli
+Zakaj diagonala pravokotnika, ki ni kvadrat, ni njegova simetrijska os, diagonala kvadrata pa je?
+---
+Zrcaljenje ohrani dolžine. Čez diagonalo bi se daljša stranica preslikala na krajšo, kar ni mogoče, zato vogal po prepogibu štrli čez lik. Pri kvadratu sta stranici enako dolgi, zato se polovici prekrijeta.
+:::
+
+**6. Zapis s simboli.** Vrnimo se k zrcaljenju ene točke. Če je točka od osi oddaljena $d$, je njena slika od osi oddaljena $d' = d$. Razdalja med točko in sliko je dvakrat večja:
 
 $$\lvert AA'\rvert = 2d$$
 
-**2. Kako točko zrcalimo, korak za korakom.**
+Za točko $A$ na sliki je $d = 4$ kvadratke, zato je $\lvert AA'\rvert = 2 \cdot 4 = 8$ kvadratkov.
 
-1. Skozi $A$ konstruiraj pravokotnico na os $o$. Presečišče z osjo označi $F$.
-2. Z ravnilom ali šestilom odmeri razdaljo $\lvert FA\rvert$.
-3. Isto razdaljo nanesi od $F$ po pravokotnici na **drugo stran** osi. Dobiš točko $A'$.
-
-Namesto merjenja lahko uporabiš šestilo: zapiči ga v $F$, razpon nastavi do točke $A$ in nariši lok na drugi strani osi. Kjer lok seka pravokotnico, je $A'$.
-
-**3. Zrcaljenje lika.** Lik sestavljajo točke. Če ima lik oglišča, zrcalimo vsako oglišče posebej in nato slike povežemo v enakem vrstnem redu. Na primer za trikotnik $ABC$ dobimo $A'B'C'$. Najprej zrcalimo $A$ v $A'$, nato $B$ v $B'$ in $C$ v $C'$, na koncu narišemo stranice $A'B'$, $B'C'$ in $C'A'$.
-
-**4. Kaj se pri zrcaljenju ohrani.** Zrcalna slika lika je lik, ki je enak izvirniku, torej *skladen*. Ohranijo se:
-
-- dolžine daljic: $\lvert A'B'\rvert = \lvert AB\rvert$,
-- velikosti kotov,
-- obseg in ploščina lika.
-
-Spremeni se samo **položaj** in **smer obhoda**: če oglišča $A, B, C$ izvirnika sledijo drug drugemu v smeri urnega kazalca, slika sledi v nasprotni smeri. Zato je zrcalna slika leve rokavice desna rokavica, ki je ne moremo preprosto »zasukati« v levo.
-
-**5. Simetrični liki.** Lik je **osno simetričen** (zrcalno simetričen), če obstaja premica, ki ga zrcali nazaj vase. Tej premici pravimo **simetrijska os**. Če lik po osi prepogneš, se obe polovici natančno prekrijeta.
-
-Lik ima lahko več simetrijskih osi, ali pa nobene:
-
-| Lik | Število simetrijskih osi |
-|---|---|
-| raznostranični trikotnik (vse stranice različne) | $0$ |
-| enakokraki trikotnik | $1$ |
-| enakostranični trikotnik | $3$ |
-| pravokotnik (ki ni kvadrat) | $2$ |
-| kvadrat | $4$ |
-| krog | neskončno mnogo (vsaka premica skozi središče) |
-
-Primeri črk (pisanih brez okraskov): črka **A** ima $1$ os (navpična), črka **H** ima $2$ osi, črka **F** nima nobene.
-
-Osi pravokotnika sta premici skozi sredini nasprotnih stranic. Diagonali pravokotnika nista osi. Osi kvadrata so ti dve ter obe diagonali.
-
-**6. Os je lahko poljubno obrnjena.** Do zdaj smo si osi predstavljali kot navpične ali vodoravne črte. Os je lahko tudi poševna in zrcaljenje deluje enako: zmeraj merimo razdaljo *pravokotno* na os.
-
-Zrcaljenje si oglej v interaktivni simulaciji spodaj (**Zrcaljenje čez os in središčna simetrija**): premikaj oglišča trikotnika in opazuj, kako se premikajo oglišča slike. Preklopiš lahko tudi na poševno os.
+**7. Poševna os.** Os je lahko tudi poševna. Razdaljo do nje še vedno merimo pravokotno na os, ne vodoravno. V simulaciji spodaj (**Zrcaljenje čez os in središčna simetrija**) izberi »Poševna os« in povleci točko $A$ čisto na os. Opazi, da se $A'$ združi z $A$ in da daljica $AA'$ ves čas ostaja pravokotna na os. Gumb »Središčna« kaže središčno simetrijo, ki se je boš učil pozneje.
 
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
 
-Točka $A$ je od osi zrcaljenja $o$ oddaljena $3\,\text{cm}$. Kje leži njena zrcalna slika $A'$ in kolikšna je razdalja $\lvert AA'\rvert$?
+Oblikovalka riše simetričen logotip za trgovino s čevlji. Narisala je levo polovico, os je navpična. Konica pete, točka $A$, je od osi oddaljena $3\,\text{cm}$. Kje mora narisati njeno sliko $A'$ in kako daleč bo $A'$ od $A$?
 
-**Podatki:** razdalja točke $A$ od osi $o$ je $d = 3\,\text{cm}$
-**Iščemo:** položaj točke $A'$ in dolžino $\lvert AA'\rvert$
+**Podatki:** os $o$ je navpična; razdalja točke $A$ od osi $d = 3\,\text{cm}$
+**Iščemo:** lego točke $A'$ in dolžino $\lvert AA'\rvert$
 
 :::formula
-Razdalja slike od osi je enaka razdalji izvirnika: $d' = d$. Razdalja med točko in sliko: $\lvert AA'\rvert = 2d$.
+$d' = d$ in $\lvert AA'\rvert = 2d$
 :::
 
 **Rešitev:**
 
-1. Točka $A'$ leži na pravokotnici skozi $A$ na os, na drugi strani osi.
-2. Razdalja $A'$ od osi je enaka kot pri $A$, torej $3\,\text{cm}$.
-3. $\lvert AA'\rvert = 3\,\text{cm} + 3\,\text{cm} = 6\,\text{cm}$. Z drugim računom: $2 \cdot 3\,\text{cm} = 6\,\text{cm}$.
-4. Odgovor: slika $A'$ je na drugi strani osi, $3\,\text{cm}$ od nje; razdalja $\lvert AA'\rvert$ je $6\,\text{cm}$.
+1. Skozi $A$ potegne pravokotnico na os, ker leži $A'$ na njej.
+2. Točko $A'$ nariše na drugi strani osi, $d' = 3\,\text{cm}$ od nje, ker sta točka in slika enako daleč od osi.
+3. $\lvert AA'\rvert = 2 \cdot 3\,\text{cm} = 6\,\text{cm}$, ker sta na poti od $A$ do $A'$ dve enaki razdalji do osi.
+4. Odgovor: $A'$ je na drugi strani osi, $3\,\text{cm}$ od nje, na pravokotnici skozi $A$; od $A$ je oddaljena $6\,\text{cm}$.
 
 ### Primer 2 (srednji)
 
-Trikotnik $ABC$ leži na levi strani navpične osi $o$. Točka $A$ je od osi oddaljena $2\,\text{cm}$, točka $B$ $5\,\text{cm}$, točka $C$ $2\,\text{cm}$. Stranice merijo $\lvert AB\rvert = 3\,\text{cm}$, $\lvert AC\rvert = 4\,\text{cm}$ in $\lvert BC\rvert = 5\,\text{cm}$. Stranica $AC$ je vzporedna z osjo, stranica $AB$ je pravokotna nanjo. Trikotnik prezrcalimo čez os $o$. Kje ležijo oglišča slike $A'B'C'$ in kolikšen je obseg slike?
+Na levi polovici izložbe je nalepka v obliki trikotnika $ABC$. Na desno polovico želijo njeno zrcalno sliko čez navpično os $o$ (rob med polovicama). Oglišči $A$ in $C$ sta od osi oddaljeni $2\,\text{cm}$, oglišče $B$ pa $5\,\text{cm}$. Stranice merijo $\lvert AB\rvert = 3\,\text{cm}$, $\lvert AC\rvert = 4\,\text{cm}$ in $\lvert BC\rvert = 5\,\text{cm}$. Kako daleč od osi bodo oglišča slike, kako daleč bo vsako oglišče od svoje slike in koliko centimetrov traku potrebujejo za obrobo slike?
 
-**Podatki:** razdalje od osi: $d_A = 2\,\text{cm}$, $d_B = 5\,\text{cm}$, $d_C = 2\,\text{cm}$; stranice $\lvert AB\rvert = 3\,\text{cm}$, $\lvert AC\rvert = 4\,\text{cm}$, $\lvert BC\rvert = 5\,\text{cm}$; $AC$ je vzporedna z osjo, $AB$ je pravokotna nanjo; os $o$ je navpična, trikotnik je na levi strani osi
-**Iščemo:** razdalje oglišč slike od osi, dolžine $\lvert AA'\rvert$, $\lvert BB'\rvert$, $\lvert CC'\rvert$ in obseg trikotnika $A'B'C'$
+**Podatki:** $d_A = 2\,\text{cm}$, $d_B = 5\,\text{cm}$, $d_C = 2\,\text{cm}$; $\lvert AB\rvert = 3\,\text{cm}$, $\lvert AC\rvert = 4\,\text{cm}$, $\lvert BC\rvert = 5\,\text{cm}$; os je navpična, trikotnik je levo od nje
+**Iščemo:** razdalje oglišč slike od osi, $\lvert AA'\rvert$, $\lvert BB'\rvert$, $\lvert CC'\rvert$ in obseg trikotnika $A'B'C'$
 
 :::formula
-$d' = d$, $\lvert XX'\rvert = 2d$, $\lvert A'B'\rvert = \lvert AB\rvert$ (zrcaljenje ohranja dolžine)
+$d' = d$, $\lvert XX'\rvert = 2d$ in $\lvert A'B'\rvert = \lvert AB\rvert$ (zrcaljenje ohranja dolžine)
 :::
 
 **Rešitev:**
 
-1. Slike oglišč ležijo na desni strani osi, vsaka enako daleč od osi kot izvirnik: $A'$ in $C'$ po $2\,\text{cm}$, $B'$ $5\,\text{cm}$.
-2. Razdalje med točko in sliko: $\lvert AA'\rvert = 2 \cdot 2\,\text{cm} = 4\,\text{cm}$, $\lvert BB'\rvert = 2 \cdot 5\,\text{cm} = 10\,\text{cm}$, $\lvert CC'\rvert = 2 \cdot 2\,\text{cm} = 4\,\text{cm}$.
-3. Zrcaljenje ohranja dolžine, zato: $\lvert A'B'\rvert = 3\,\text{cm}$, $\lvert A'C'\rvert = 4\,\text{cm}$, $\lvert B'C'\rvert = 5\,\text{cm}$.
-4. Obseg slike: $3\,\text{cm} + 4\,\text{cm} + 5\,\text{cm} = 12\,\text{cm}$. Obseg izvirnika je prav tako $12\,\text{cm}$.
-5. Odgovor: oglišča slike so na desni strani osi, $A'$ in $C'$ po $2\,\text{cm}$ ter $B'$ $5\,\text{cm}$ od nje; $\lvert AA'\rvert = 4\,\text{cm}$, $\lvert BB'\rvert = 10\,\text{cm}$, $\lvert CC'\rvert = 4\,\text{cm}$; obseg slike je $12\,\text{cm}$.
+1. Slike so desno od osi, enako daleč kot izvirniki: $A'$ in $C'$ po $2\,\text{cm}$, $B'$ $5\,\text{cm}$.
+2. Razdalje do slik so dvojne: $\lvert AA'\rvert = 2 \cdot 2\,\text{cm} = 4\,\text{cm}$, $\lvert BB'\rvert = 2 \cdot 5\,\text{cm} = 10\,\text{cm}$, $\lvert CC'\rvert = 2 \cdot 2\,\text{cm} = 4\,\text{cm}$.
+3. Zrcaljenje ohranja dolžine, zato ima slika stranice $3\,\text{cm}$, $4\,\text{cm}$ in $5\,\text{cm}$.
+4. Obseg slike: $3\,\text{cm} + 4\,\text{cm} + 5\,\text{cm} = 12\,\text{cm}$, enako kot obseg izvirnika.
+5. Odgovor: $A'$ in $C'$ sta $2\,\text{cm}$, $B'$ pa $5\,\text{cm}$ desno od osi; $\lvert AA'\rvert = \lvert CC'\rvert = 4\,\text{cm}$, $\lvert BB'\rvert = 10\,\text{cm}$. Za obrobo potrebujejo $12\,\text{cm}$ traku.
 
 ### Primer 3 (težji)
 
-Točka $A$ in njena zrcalna slika $A'$ sta oddaljeni $10\,\text{cm}$. Osi zrcaljenja ne vidimo. Kako jo najdemo? Kolikšna je razdalja točke $A$ od osi? Na osi leži točka $T$, ki je od $A$ oddaljena $6\,\text{cm}$. Kolikšna je razdalja $\lvert TA'\rvert$?
+Na papirnati vrečki trgovine je simetričen logotip, os pa ni narisana. Točka $A$ in njena slika $A'$ sta $10\,\text{cm}$ narazen. Točka $T$ leži na osi in je od $A$ oddaljena $6\,\text{cm}$. Kako najdeš os? Kako daleč je $A$ od osi? Koliko meri $\lvert TA'\rvert$?
 
-**Podatki:** $\lvert AA'\rvert = 10\,\text{cm}$; točka $T$ leži na osi; $\lvert TA\rvert = 6\,\text{cm}$
-**Iščemo:** konstrukcijo osi, razdaljo $A$ od osi in dolžino $\lvert TA'\rvert$
+**Podatki:** $\lvert AA'\rvert = 10\,\text{cm}$; $T$ leži na osi; $\lvert TA\rvert = 6\,\text{cm}$
+**Iščemo:** konstrukcijo osi, razdaljo $d$ točke $A$ od osi, dolžino $\lvert TA'\rvert$
 
 :::formula
-Os zrcaljenja je simetrala daljice $AA'$. Vsaka točka simetrale je enako oddaljena od $A$ in $A'$.
+Os je simetrala daljice $AA'$. Vsaka točka simetrale je enako oddaljena od $A$ in $A'$: $\lvert TA'\rvert = \lvert TA\rvert$.
 :::
 
 **Rešitev:**
 
-1. Os je simetrala daljice $AA'$. Konstruiramo jo s šestilom: polmer izberemo večji od $10\,\text{cm} : 2 = 5\,\text{cm}$, npr. $7\,\text{cm}$, narišemo loka okoli $A$ in $A'$ ter povežemo presečišči.
-2. Razpolovišče daljice $AA'$ leži na osi. Razdalja točke $A$ od osi je $10\,\text{cm} : 2 = 5\,\text{cm}$ (preveri: $5\,\text{cm} + 5\,\text{cm} = 10\,\text{cm}$).
-3. Točka $T$ leži na simetrali, torej je enako oddaljena od $A$ in $A'$. Zato je $\lvert TA'\rvert = \lvert TA\rvert = 6\,\text{cm}$.
-4. Odgovor: os je simetrala daljice $AA'$; točka $A$ je od nje oddaljena $5\,\text{cm}$; $\lvert TA'\rvert = 6\,\text{cm}$.
+1. Os je simetrala daljice $AA'$, ker je tako določena zrcalna slika (razdelek 2). Narišemo loka z enakim polmerom okrog $A$ in $A'$, večjim od $10\,\text{cm} : 2 = 5\,\text{cm}$, npr. $7\,\text{cm}$, in povežemo presečišči.
+2. Os razpolovi daljico $AA'$, zato je $d = 10\,\text{cm} : 2 = 5\,\text{cm}$.
+3. Zdaj ti: koliko meri $\lvert TA'\rvert$? Ne meri, utemelji z lego točke $T$.
+
+:::premisli
+Koliko meri $\lvert TA'\rvert$? Zakaj ti ni treba vedeti, kje točno na osi leži $T$?
+---
+$\lvert TA'\rvert = 6\,\text{cm}$. Točka $T$ leži na simetrali daljice $AA'$, zato je od $A'$ enako daleč kot od $A$. Odgovor: os je simetrala daljice $AA'$, točka $A$ je od nje oddaljena $5\,\text{cm}$, $\lvert TA'\rvert = 6\,\text{cm}$.
+:::
 
 ## Pogoste napake
 
-- **Razdaljo do osi merimo poševno.** Če od točke do osi merimo pod drugim kotom kot $90^\circ$, slika ne leži na pravem mestu. Pravilno: razdaljo vedno merimo vzdolž *pravokotnice* na os, ki jo najprej konstruiramo.
-- **Slika ostane na isti strani osi.** Če narišeš sliko na isti strani, nisi zrcalil, ampak si lik le premaknil. Pravilno: slika leži na *drugi* strani osi, enako daleč kot izvirnik. Če točka leži na osi, ostane na mestu.
-- **Mislimo, da je vsak lik simetričen.** Raznostranični trikotnik nima nobene osi. Pri pravokotniku, ki ni kvadrat, diagonali nista osi, ker se lik po diagonali ne prekrije. Pravilno: preskusi s prepogibom; polovici se morata natančno ujeti. Pravokotnik ima dve osi (skozi sredini nasprotnih stranic).
-- **Napačno štetje osi.** Kvadrat ima $4$ osi, ne $2$: poleg dveh premic skozi sredine stranic sta osi tudi obe diagonali. Pravilno: preveri vse možne premice, ki gredo skozi središče lika.
-- **Zrcalno sliko zamenjamo z zasukom.** Pri zrcaljenju se zamenja smer obhoda, pri zasuku pa ne. Pravilno: črka F, zrcaljena čez navpično os, je »obrnjena«, ne samo zasukana.
+- **Razdaljo do osi merimo poševno.** Pri poševni osi učenec meri vodoravno ali »na oko«, zato slika pade na napačno mesto. Razdalja do premice je razdalja po pravokotnici. Pravilno: najprej konstruiraj pravokotnico skozi točko, nato meri po njej.
+- **Slika ostane na isti strani osi.** Kdor nariše sliko na isti strani, je lik le premaknil. Os mora razpoloviti daljico $AA'$, zato sta točka in slika na nasprotnih straneh. Pravilno: sliko nanesi na drugo stran, enako daleč od osi.
+- **Razdalja do slike je enaka razdalji do osi.** Pri točki $3\,\text{cm}$ od osi učenec reče, da je slika $3\,\text{cm}$ od točke. To je le pol poti: do osi je $d$, od osi do slike še enkrat $d$. Pravilno: $\lvert AA'\rvert = 2d$.
+- **Napačno štetje osi.** Učenec misli, da sta diagonali pravokotnika osi, kvadratu pa pripiše le $2$ osi. Po diagonali pravokotnika se polovici ne prekrijeta, ker sta sosednji stranici različno dolgi; pri kvadratu se. Pravilno: vsako premico preskusi s prepogibom. Pravokotnik ima $2$ osi, kvadrat $4$.
+- **Zrcalno sliko zamenjamo z zasukom.** Učenec zrcaljeno črko F obrne nazaj z vrtenjem v ravnini, a to ne gre: zrcaljenje zamenja smer obhoda, zasuk ne. Pravilno: zrcaljenja ne moreš nadomestiti z vrtenjem lika na listu.
 
 ## Povzetek
 
-- Zrcaljenje čez premico $o$: točki $A$ priredimo $A'$, tako da je $o$ simetrala daljice $AA'$.
-- Daljica $AA'$ je pravokotna na os, $A$ in $A'$ sta enako oddaljeni od osi: $d' = d$, $\lvert AA'\rvert = 2d$.
-- Točka na osi se preslika sama vase.
-- Zrcalna slika lika je skladna izvirniku: ohrani dolžine, kote, obseg in ploščino. Spremeni se smer obhoda.
-- Lik je osno simetričen, če ima simetrijsko os, to je premico, ki ga zrcali vase.
-- Število osi: enakostranični trikotnik $3$, kvadrat $4$, pravokotnik $2$, enakokraki trikotnik $1$, raznostranični trikotnik $0$, krog neskončno.
+- Zrcaljenje čez premico $o$: točki $A$ priredimo $A'$ tako, da je $o$ simetrala daljice $AA'$.
+- Daljica $AA'$ je pravokotna na os, točka in slika sta enako daleč od osi: $d' = d$, $\lvert AA'\rvert = 2d$. Točka na osi je sama sebi slika.
+- Konstrukcija: pravokotnica skozi točko, razdaljo do osi preneseš na drugo stran. Lik zrcalimo oglišče za ogliščem.
+- Slika je skladna z izvirnikom (dolžine, koti, obseg, ploščina), smer obhoda se obrne.
+- Lik je osno simetričen, če ga zrcaljenje čez neko premico (simetrijsko os) preslika vase.
+- Število osi: daljica $2$, kot $1$, raznostranični trikotnik $0$, enakokraki $1$, enakostranični $3$, pravokotnik $2$, kvadrat $4$, krog neskončno.
 
-## Drugače: Na sliki
+## Drugače: Z analogijo
 
-Predstavljaj si vodoravno črto na sredini lista, to je os $o$. Nad njo je narisan trikotnik s tremi oglišči. Pod črto je njegov odsev, kot da bi gledal v mirno vodo.
+Os zrcaljenja je kot mreža na odbojkarskem igrišču, točke pa so kot igralci. Vsak igralec ima na drugi strani mreže svoj »zrcalni« par:
 
-Opazuj tri stvari:
+- par stoji točno nasproti, tako da bi bila črta med njima pravokotna na mrežo;
+- od mreže je oddaljen prav toliko kot igralec;
+- igralec, ki bi stal točno na črti mreže, bi bil sam svoj par.
 
-- Vsako oglišče nad črto ima pod črto svojega »dvojčka«. Če ju povežeš z navpično daljico, ta seka os pod pravim kotom, sredina daljice pa leži točno na osi.
-- Oglišče, ki je najvišje nad osjo, je v odsevu najgloblje pod njo.
-- Če oglišče leži na črti, nima dvojčka, ker ostane na mestu.
-
-V interaktivni simulaciji spodaj premikaš oglišča trikotnika, slika pa se ves čas premika z njimi. Poskusi povleči oglišče na os: njegova slika se mu pridruži.
-
-Pri simetričnem liku, na primer metulju, se slika prekrije z izvirnikom: leva polovica je odsev desne.
+Če se igralec umakne en korak nazaj, se mora tudi par umakniti en korak. Razdalja med njima se poveča za dva koraka, to je $\lvert AA'\rvert = 2d$. Simetrična postavitev je tista, pri kateri je razpored igralcev na eni strani natančen odsev razporeda na drugi.
 
 ## Drugače: Iz vsakdanjega življenja
 
-Simetrijo preskusiš kar s papirjem.
+- **Prepogib:** list prepogni na pol, nariši polovico srca in izreži. Ko ga razgrneš, je srce simetrično, pregib pa je simetrijska os.
+- **Ogledalo:** ogledalo postavi pokončno na premico čez lik. Če je premica simetrijska os, v ogledalu vidiš cel lik.
+- **Izložba:** napis na steklu trgovine od znotraj bereš zrcalno. Črke so zrcaljene čez navpično os.
+- **Reševalno vozilo:** napis spredaj je zrcaljen, da ga voznik pred njim v vzvratnem ogledalu prebere pravilno.
+- **Jezero:** gladina je os, odsev gore je enako velik, a obrnjen na glavo.
 
-- **Prepogib:** list prepogni na pol, nariši polovico srca ali metulja in izreži. Ko razgrneš, dobiš simetričen lik, pregib pa je simetrijska os.
-- **Ogledalo:** ogledalo postavi na os lika, pravokotno na list, in poglej. Če je lik simetričen, v ogledalu vidiš celoten lik.
-- **Jezero:** gore v jezeru imajo odsev. Gladina vode je os, odsev je zrcalna slika, enako velik, a obrnjen na glavo.
-
-Pomisli še na napis na reševalnem vozilu: črke so zrcaljene čez navpično os, da jih voznik pred njim v vzvratnem ogledalu prebere pravilno.
-
-Pri tem velja: zrcaljenje ne spremeni velikosti. Tvoj odsev v ogledalu ni večji ali manjši od tebe, le leva in desna stran sta zamenjani.
-
-## Drugače: Korak za korakom s številkami
-
-Prezrcalimo trikotnik $ABC$ čez navpično os $o$. Oglišča so na levi, razdalje od osi so:
-
-| Oglišče | Razdalja od osi | Razdalja slike od osi | $\lvert XX'\rvert$ |
-|---|---|---|---|
-| $A$ | $1\,\text{cm}$ | $1\,\text{cm}$ | $2\,\text{cm}$ |
-| $B$ | $3\,\text{cm}$ | $3\,\text{cm}$ | $6\,\text{cm}$ |
-| $C$ | $2\,\text{cm}$ | $2\,\text{cm}$ | $4\,\text{cm}$ |
-
-Postopek za vsako oglišče:
-
-1. Skozi oglišče konstruiraj pravokotnico na os.
-2. Odmeri razdaljo do osi, npr. za $B$: $3\,\text{cm}$.
-3. Isto razdaljo nanesi na drugo stran, dobiš $B'$.
-4. Preveri: $\lvert BB'\rvert = 3\,\text{cm} + 3\,\text{cm} = 6\,\text{cm}$.
-
-Ko imaš $A'$, $B'$ in $C'$, jih poveži. Preveri še z merjenjem, da je $\lvert A'B'\rvert = \lvert AB\rvert$. Če se dolžini ne ujemata, si se nekje zmotil pri merjenju razdalj od osi.
-
-## Drugače: Bolj natančno
-
-Zrcaljenje je **preslikava**: vsaki točki ravnine priredi natanko eno točko. Dvakratno zrcaljenje čez isto os vrne točko na izhodišče: če je $A'$ slika točke $A$, je slika točke $A'$ spet točka $A$.
-
-Zrcaljenje ohranja razdalje med točkami, zato je slika lika skladna izvirniku. Zaradi tega ohrani tudi kote, obseg in ploščino.
-
-Osno simetričen lik pomeni natančno to: njegova zrcalna slika čez neko premico $s$ je ta isti lik. Simetrijska os je torej premica, ki jo lik »sprejme«.
-
-**Za radovedne.** Interaktivna simulacija spodaj prikazuje tudi **središčno simetrijo**: točko $A$ zrcalimo čez točko $O$ tako, da je $O$ razpolovišče daljice $AA'$. Lik je središčno simetričen, če se po zasuku za $180^\circ$ okoli središča $O$ prekrije sam s seboj. Takšna je na primer črka H ali kvadrat. Podrobneje se je boš učil kasneje.
+Zrcaljenje nikoli ne spremeni velikosti. Tvoj odsev ni ne večji ne manjši od tebe, zamenjani sta le levo in desno.
 
 ## Preveri se
 
-? Točka je od osi zrcaljenja oddaljena $4{,}5\,\text{cm}$. Kako daleč je od svoje zrcalne slike?
-- $4{,}5\,\text{cm}$
-- $2{,}25\,\text{cm}$
-+ $9\,\text{cm}$
-> Slika je na drugi strani osi, prav tako $4{,}5\,\text{cm}$ od nje. Razdalja med njima je $4{,}5\,\text{cm} + 4{,}5\,\text{cm} = 9\,\text{cm}$.
+? Prodajalec prepogne majico tako, da se polovici natančno prekrijeta. Kako imenujemo pregib?
++ simetrijska os majice
+- zrcalna slika majice
+~ Zrcalna slika je lik, ki ga dobimo z zrcaljenjem, ne premica, čez katero zrcalimo.
+- diagonala majice
+~ Diagonala povezuje nasprotni oglišči. Pri pravokotniku se polovici po diagonali sploh ne prekrijeta.
+> Premica, po kateri se polovici lika ob prepogibu natančno prekrijeta, je simetrijska os.
 
-? Koliko simetrijskih osi ima kvadrat?
-- $1$
-- $2$
-+ $4$
-> Kvadrat ima dve osi skozi sredine nasprotnih stranic in še obe diagonali, skupaj $4$.
+? Razvrsti like od tistega z najmanj simetrijskimi osmi do tistega z največ.
+1. raznostranični trikotnik
+2. enakokraki trikotnik (ni enakostraničen)
+3. pravokotnik (ni kvadrat)
+4. enakostranični trikotnik
+5. kvadrat
+> Osi je po vrsti $0$, $1$, $2$, $3$ in $4$. Pravokotnik nima osi po diagonalah, kvadrat jih ima.
 
-? Kateri lik nima nobene simetrijske osi?
-- enakostranični trikotnik
-- krog
-+ raznostranični trikotnik (vse tri stranice različno dolge)
-> Pri raznostraničnem trikotniku se po nobeni premici ne moreta prekriti obe polovici. Enakostranični trikotnik ima $3$ osi, krog jih ima neskončno mnogo.
+? Točka $A$ je od osi oddaljena $2\,\text{cm}$. Kaj se zgodi, če jo odmaknemo od osi še za $1\,\text{cm}$ (po pravokotnici)?
+- Slika $A'$ ostane na mestu, $\lvert AA'\rvert$ se poveča za $1\,\text{cm}$.
+~ Slika mora biti od osi vedno enako daleč kot točka, zato se premakne tudi ona.
++ Tudi $A'$ se odmakne za $1\,\text{cm}$, $\lvert AA'\rvert$ se poveča za $2\,\text{cm}$.
+- Slika $A'$ se približa osi za $1\,\text{cm}$.
+~ Točka in slika sta vedno enako daleč od osi; ko se ena oddalji, se oddalji tudi druga.
+> Prej: $d = 2\,\text{cm}$, $\lvert AA'\rvert = 4\,\text{cm}$. Potem: $d = 3\,\text{cm}$, $\lvert AA'\rvert = 6\,\text{cm}$, kar je $2\,\text{cm}$ več.
 
-? Točka $A'$ je zrcalna slika točke $A$ čez os $o$. Katera trditev drži?
-+ Os $o$ je simetrala daljice $AA'$.
-- Os $o$ je vzporedna z daljico $AA'$.
-- Točka $A'$ leži na isti strani osi kot $A$.
-> Daljica $AA'$ je pravokotna na os in os jo razpolovi. Točka $A'$ je zato na drugi strani osi, enako daleč kot $A$.
+? Listek s ceno visi $4{,}5\,\text{cm}$ pred ravnim ogledalom. Koliko centimetrov je listek oddaljen od svoje slike v ogledalu?
+= 9 cm | 0,1
+~ 4,5 | To je le razdalja do ogledala. Slika je za ogledalom še enkrat toliko.
+~ 2,25 | Razdaljo si razpolovil, a slika je dvakrat dlje, ne pol tako daleč.
+> Slika je $4{,}5\,\text{cm}$ za ogledalom, zato je razdalja $2 \cdot 4{,}5\,\text{cm} = 9\,\text{cm}$.
+
+? Na mreži sta točka $A$ in njena zrcalna slika $A'$. Os ni narisana. Koliko kvadratkov od točke $A$ leži os?
+:::risba skica
+opis: Kvadratna mreža. Točka A in točka A' sta v isti vrstici, A' je 6 kvadratkov desno od A. Med njima je črtkana vodoravna daljica.
+območje: 0; 0 .. 10; 5
+mreža: da
+črta: 2; 3 -> 8; 3 | črtkano
+točka: 2; 3 | A | nad
+točka: 8; 3 | A' | nad
+:::
+- $6$
+~ To je razdalja od $A$ do $A'$. Os jo razpolovi.
++ $3$
+- $8$
+~ Prebral si lego točke $A'$ na mreži, ne razdalje od $A$.
+> Med $A$ in $A'$ je $6$ kvadratkov. Os je simetrala daljice $AA'$, zato je od $A$ oddaljena $6 : 2 = 3$ kvadratke.
+
+<<RACUN
+vrednost: 2*4 | 8
+vrednost: 2+2 | 4
+vrednost: 2*3 | 6
+vrednost: 2*2 | 4
+vrednost: 2*5 | 10
+vrednost: 3+4+5 | 12
+vrednost: 10/2 | 5
+vrednost: 2*4.5 | 9
+vrednost: 6/2 | 3
+>>
 
 :::simboli
-A, B | točki, ki ju zrcalimo | | | A' (A črtica) je zrcalna slika točke A
-X | poljubno oglišče lika | | | X' je njegova zrcalna slika
-d | razdalja točke od osi zrcaljenja | | | razdalja med točko in sliko je 2d
-d' | razdalja zrcalne slike od osi | d' = d | | zrcaljenje ohranja razdalje
-A', B' | zrcalni sliki točk A in B | | | beremo »A črtica«
-X' | zrcalna slika oglišča X | |
+A | točka, ki jo zrcalimo | | |
+B, B' | oglišče $B$ in njegova slika | | |
+A' | zrcalna slika točke $A$ | | | beremo »A črtica«
+X, X' | poljubno oglišče in njegova slika | | |
+T | točka na osi zrcaljenja | | | $\lvert TA'\rvert = \lvert TA\rvert$
+d | razdalja točke od osi | | | razdalja med točko in sliko je $2d$
+d' | razdalja slike od osi | d' = d | |
 :::

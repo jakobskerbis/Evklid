@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Množice
+  - $A \cup B$, $A \cap B$, $A \setminus B$
+  - $\mathbb{N} \subseteq \mathbb{Z} \subseteq \mathbb{Q} \subseteq \mathbb{R}$
+- Zgornja in spodnja meja
+  - $a \le M$ za vsak $a \in A$
+  - $[0, 1)$: zgornje meje so vsa števila $\ge 1$
+- Supremum in infimum
+  - najmanjša zgornja, največja spodnja meja
+  - $\max A$ le, če $\sup A \in A$
+  - napaka: »$\sup [0, 1)$ ne obstaja«
+- Pogoj z epsilonom
+  - za vsak $\varepsilon > 0$ obstaja $a > M - \varepsilon$
+  - $\{1 - \tfrac1n\}$: izberi $n > \tfrac1\varepsilon$
+- Aksiom o polnosti
+  - neprazna, navzgor omejena: ima $\sup$ v $\mathbb{R}$
+  - v $\mathbb{Q}$ ne velja: $x^2 < 2$
+  - $\inf A = -\sup(-A)$
+- Arhimedska lastnost
+  - $\mathbb{N}$ ni navzgor omejena
+  - $\inf\{\tfrac1n\} = 0$
+- Matematična indukcija
+  - baza $T(n_0)$, korak $T(n) \Rightarrow T(n+1)$
+  - $2^n > n^2$ za $n \ge 5$
+  - napaka: korak brez baze

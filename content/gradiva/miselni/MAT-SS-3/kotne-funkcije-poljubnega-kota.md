@@ -18,7 +18,7 @@ stanje: osnutek
 - Osnovna zveza
   - $\sin^2\alpha + \cos^2\alpha = 1$
   - vrednosti med $-1$ in $1$
-- Periodičnost
+- Koti nad $360^\circ$
   - $\sin(\alpha + 360^\circ) = \sin\alpha$
 - Radian
   - $\pi\,\text{rad} = 180^\circ$

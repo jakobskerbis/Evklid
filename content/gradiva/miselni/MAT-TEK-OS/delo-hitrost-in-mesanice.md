@@ -15,7 +15,7 @@ stanje: osnutek
   - čas $t = \dfrac{d}{v_1 + v_2}$
 - Dohitevanje
   - razmik se manjša za $v_1 - v_2$
-  - upoštevaj zamik štarta
+  - upoštevaj zamik začetka
 - Mešanice
   - seštevaj kilograme snovi, ne odstotkov
   - delež je snov deljeno s celoto

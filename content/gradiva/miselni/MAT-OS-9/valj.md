@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Deli valja
+  - dve skladni krožni osnovni ploskvi, plašč
+  - polmer $r$, višina $v$
+- Prostornina
+  - $V = \pi r^2 v$, v $\text{cm}^3$
+  - dvakrat večji $r$ da štirikrat večjo $V$
+  - napaka: premer namesto polmera
+- Razvit plašč
+  - pravokotnik $2\pi r$ krat $v$
+  - $\mathrm{pl} = 2\pi r v$
+- Površina
+  - $P = 2O + \mathrm{pl}$
+  - napaka: samo ena osnovna ploskev
+- Vrtenina
+  - pravokotnik zavrtimo okoli stranice
+  - stranica ob osi je $v$, sosednja je $r$
+- Osni presek
+  - pravokotnik $2r$ krat $v$
+  - enakostranični valj: $v = 2r$
+- Litri
+  - $1\,\text{l} = 1000\,\text{cm}^3$

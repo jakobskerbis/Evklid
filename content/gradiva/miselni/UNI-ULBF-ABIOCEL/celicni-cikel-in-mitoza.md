@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Faze cikla
+  - G1, S, G2, M; izstop v G0
+  - DNA v fazi S: $2C \to 4C$
+- Mitoza
+  - profaza, prometafaza, metafaza
+  - anafaza: separaza razcepi kohezin
+  - telofaza: nova jedrna ovojnica
+- Citokineza
+  - živali: kontraktilni obroč, brazda
+  - rastline: fragmoplast, celična plošča
+- Ciklini in CDK
+  - ciklin B s CDK1 za mitozo
+- Kontrolne točke
+  - G1/S: Rb, E2F, p53, p21
+  - G2/M: podvojena, nepoškodovana DNA
+  - vreteno: vsi kinetohori pripeti
+- Merjenje faz
+  - $I_\mathrm{M} = \frac{N_\mathrm{M}}{N}$, $t_\mathrm{f} \approx f T$
+  - $N = N_0 \cdot 2^{t/T}$
+  - citometer: $2C$, S, $4C$

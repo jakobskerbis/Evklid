@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Stara definicija
+  - kislina v vodi da $\mathrm{H^+}$, baza $\mathrm{OH^-}$
+  - ne pojasni $\mathrm{NH_3}$ in reakcij brez vode
+- Prenos protona
+  - kislina je donor protona
+  - baza je akceptor protona
+  - $\mathrm{H^+}$ se v vodi veže v $\mathrm{H_3O^+}$
+- Baza brez OH
+  - dovolj je nevezni elektronski par
+  - $\mathrm{NH_3}$ sprejme proton od vode
+  - Jupiter: $\mathrm{NH_3} + \mathrm{H_2S}$ brez vode
+- Amfoterne snovi
+  - voda: ob $\mathrm{HCl}$ baza, ob $\mathrm{NH_3}$ kislina
+  - tudi $\mathrm{HCO_3^-}$ in $\mathrm{HS^-}$
+- Konjugirani pari
+  - razlika en proton, npr. $\mathrm{NH_4^+}/\mathrm{NH_3}$
+  - v vsaki reakciji dva para
+  - napaka: par iz obeh reaktantov
+- Naboj pri prenosu
+  - kislina minus $\mathrm{H^+}$: naboj za 1 nižji
+  - $\mathrm{HPO_4^{2-}} \to \mathrm{PO_4^{3-}}$
+- Moč para
+  - močna kislina, zelo šibka konjugirana baza
+  - $\mathrm{Cl^-}$ skoraj ne sprejme protona

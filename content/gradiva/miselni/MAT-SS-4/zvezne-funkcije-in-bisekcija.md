@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Skok pokvari sklep
+  - račun: $-30$ € → $+50$ €, nikoli $0$ €
+  - najprej preveri zveznost na $[a, b]$
+- Izrek o ničli
+  - $f(a) \cdot f(b) < 0$ ⇒ ničla na $(a, b)$
+  - vsaj ena ničla, lahko več
+  - napaka: enaka predznaka, torej ni ničle
+- Vmesne vrednosti
+  - zavzame vse med $f(a)$ in $f(b)$
+  - števec na črpalki pokaže vsak znesek
+- Najmanjša in največja vrednost
+  - samo na zaprtem intervalu
+  - $f(x) = x$ na $(0, 1)$ nima največje
+- Bisekcija
+  - sredina $c = \frac{a + b}{2}$
+  - obdrži polovico z različnima predznakoma
+  - dolžina po $n$ korakih $\frac{b - a}{2^n}$
+- Natančnost
+  - krajišči se zaokrožita enako
+  - $[2, 3]$ do $0{,}01$: $7$ korakov
+- Tehnologija
+  - tabela vrednosti s korakom $0{,}1$, nato $0{,}01$
+  - program za grafe: ukaz za ničlo
+  - presečišče je ničla razlike $f - g$

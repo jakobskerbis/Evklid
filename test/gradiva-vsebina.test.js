@@ -68,7 +68,7 @@ test("HTTP: written materials are listed and served", async () => {
   try {
     const s = store.createStudent("Ana");
     const list = await (await fetch(`${base}/api/students/${s.id}/gradiva?topic=${OHM}`)).json();
-    assert.deepEqual(list.items.map((x) => x.vrsta), ["povzetek", "zvok", "delovni-list", "video", "poskus", "projekt"]);
+    assert.deepEqual(list.items.map((x) => x.vrsta), ["povzetek", "delovni-list", "video", "poskus", "projekt"]);
     let r = await fetch(`${base}/api/students/${s.id}/gradiva/stran?vrsta=poskus&topic=${OHM}`);
     assert.equal(r.status, 200);
     assert.equal((await fetch(`${base}/api/students/${s.id}/gradiva/stran?vrsta=video&topic=${OHM}`)).status, 400);

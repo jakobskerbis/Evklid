@@ -54,7 +54,7 @@ V ozki cevi je gladina vode ukrivljena navzdol. Tej ukrivljenosti rečemo **meni
 
 Steklovina je umerjena pri $20\,^\circ\mathrm{C}$; vroča tekočina v merilni bučki da napačen volumen.
 
-**Filtracija: filter za kavo proti filtrirnemu papirju.** Filtracija loči trdno snov od tekočine. Trdno, ki ostane na filtru, je **oborina**; tekočina, ki steče skozi, je **filtrat**. Tako kot pri kavi gredo raztopljene snovi skozi. Zato je bil filtrat iz luže bister, a ni bil čist: bel rob na krožniku so bile raztopljene soli. Enako naredijo tla z deževnico. Pesek zadrži delce, raztopljeni minerali pa pridejo v podtalnico in v mineralno vodo.
+**Filtracija: filter za kavo proti filtrirnemu papirju.** Filtracija loči trdno snov od tekočine. Trdna snov, ki ostane na filtru, je **oborina**; tekočina, ki steče skozi, je **filtrat**. Tako kot pri kavi gredo raztopljene snovi skozi. Zato je bil filtrat iz luže bister, a ni bil čist: bel rob na krožniku so bile raztopljene soli. Enako naredijo tla z deževnico. Pesek zadrži delce, raztopljeni minerali pa pridejo v podtalnico in v mineralno vodo.
 
 V laboratoriju izberemo eno od dveh poti:
 
@@ -146,10 +146,10 @@ Masa vode: $m_\mathrm{v} = \dfrac{m(\mathrm{KNO_3})}{169} \cdot 100\,\mathrm{g}$
 2. Pri $20\,^\circ\mathrm{C}$ ostane raztopljeno: $0{,}316 \cdot 26{,}6 \approx 8{,}4$, torej $8{,}4\,\mathrm{g}$ $\mathrm{KNO_3}$.
 3. Izkristalizira: $45 - 8{,}4 = 36{,}6$, torej $36{,}6\,\mathrm{g}$.
 4. Izkoristek: $\dfrac{36{,}6}{45} \cdot 100\,\% \approx 81\,\%$. Isto da izrek o največjem izkoristku: $1 - \dfrac{31{,}6}{169} \approx 0{,}81$.
-5. V $26{,}6\,\mathrm{g}$ vode se pri $20\,^\circ\mathrm{C}$ raztopi do $0{,}359 \cdot 26{,}6 \approx 9{,}5\,\mathrm{g}$ $\mathrm{NaCl}$. Imamo ga le $5\,\mathrm{g}$, zato ostane raztopljen v matičnici. To je tudi odgovor na obratno vprašanje: vzorec sme vsebovati največ okoli $9{,}5\,\mathrm{g}$ $\mathrm{NaCl}$.
+5. V $26{,}6\,\mathrm{g}$ vode se pri $20\,^\circ\mathrm{C}$ raztopi do $0{,}359 \cdot 26{,}63 \approx 9{,}6\,\mathrm{g}$ $\mathrm{NaCl}$. Imamo ga le $5\,\mathrm{g}$, zato ostane raztopljen v matičnici. To je tudi odgovor na obratno vprašanje: vzorec sme vsebovati največ okoli $9{,}6\,\mathrm{g}$ $\mathrm{NaCl}$.
 6. (c) Vode je $1{,}20 \cdot 26{,}6 \approx 31{,}9\,\mathrm{g}$. Raztopljenega ostane $0{,}316 \cdot 31{,}9 \approx 10{,}1\,\mathrm{g}$ $\mathrm{KNO_3}$, izkristalizira $45 - 10{,}1 = 34{,}9\,\mathrm{g}$.
 7. Izkoristek: $\dfrac{34{,}9}{45} \cdot 100\,\% \approx 78\,\%$. Vsak gram odvečne vode zadrži $0{,}316\,\mathrm{g}$ produkta v matičnici.
-8. Odgovor: dobimo okoli $36{,}6\,\mathrm{g}$ čistega $\mathrm{KNO_3}$ z izkoristkom $81\,\%$; $\mathrm{NaCl}$ ostane v raztopini, dokler ga ni več kot okoli $9{,}5\,\mathrm{g}$; z $20\,\%$ več vode izkoristek pade na okoli $78\,\%$.
+8. Odgovor: dobimo okoli $36{,}6\,\mathrm{g}$ čistega $\mathrm{KNO_3}$ z izkoristkom $81\,\%$; $\mathrm{NaCl}$ ostane v raztopini, dokler ga ni več kot okoli $9{,}6\,\mathrm{g}$; z $20\,\%$ več vode izkoristek pade na okoli $78\,\%$.
 
 ### Primer 4: zdaj ti – koliko je deževalo?
 
@@ -235,15 +235,25 @@ Natančno definiraj topnost in izkoristek prekristalizacije. Navedi pogoje in iz
 
 Sesalna filtracija od zgoraj navzdol:
 
-```
-  Büchnerjev lij (nuča)
-  + ploščat filtrirni papir
-         │
-  gumijasto tesnilo
-         │
-  sesalna buča ──── cev ──── vodna črpalka
-  (filtrat)
-```
+:::risba skica
+opis: Sesalna filtracija od zgoraj navzdol. Zgoraj je Büchnerjev lij (nuča), na njegovem dnu leži ploščat filtrirni papir. Cev lija gre skozi gumijasto tesnilo v vrat sesalne buče, v kateri se zbira filtrat. Stranski nastavek buče je s cevjo povezan z vodno črpalko.
+območje: 0; 0 .. 24; 12
+lik: 5; 7,5 -> 5; 6 -> 2; 1 -> 10; 1 -> 7; 6 -> 7; 7,5 | ozadje zaprto
+lik: 2; 1 -> 10; 1 -> 9,1; 2,5 -> 2,9; 2,5 | modra
+pravokotnik: 5,6; 5 .. 6,4; 9,5 | ozadje
+pravokotnik: 4,8; 7,5 .. 7,2; 8,2 | siva
+pravokotnik: 3; 9,5 .. 9; 11,5 | ozadje
+črta: 3,2; 9,7 -> 8,8; 9,7 | debelo oranžna
+črta: 7; 6,4 -> 14,6; 6,4 | debelo
+pravokotnik: 14,6; 5,4 .. 23,6; 7,4 | ozadje
+napis: 19,1; 6,4 | vodna črpalka | sredina
+napis: 11; 6,2 | cev | pod
+napis: 9,4; 11,2 | Büchnerjev lij (nuča) | desno
+napis: 9,4; 9,9 | ploščat filtrirni papir | desno
+napis: 7,6; 8,3 | gumijasto tesnilo | desno
+napis: 9,6; 3,6 | sesalna buča | desno
+napis: 6; 1,7 | filtrat | sredina
+:::
 
 Papir pokrije luknjice nuče, a ne sega na stene; navlažimo ga, da se prisesa. Na koncu najprej odklopimo cev, nato zapremo vodo, sicer voda vdre v bučo.
 

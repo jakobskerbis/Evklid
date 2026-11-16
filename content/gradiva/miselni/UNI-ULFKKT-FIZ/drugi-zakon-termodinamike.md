@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Smer procesov
+  - povratne spremembe so idealizacija
+  - Clausius: toplota ne teče sama na toplejše
+  - Kelvin-Planck: toplote enega rezervoarja ni mogoče vse pretvoriti v delo
+- Toplotni stroj
+  - $A' = Q_1 - Q_2$
+  - $\eta = 1 - Q_2/Q_1 < 1$
+- Carnotov izkoristek
+  - $\eta_C = 1 - T_2/T_1$, temperature v $\mathrm{K}$
+  - Carnotov izrek: $\eta \le \eta_C$
+  - primer: $600\,\mathrm{K}$ in $300\,\mathrm{K}$ da $50\,\%$
+- Hladilnik in toplotna črpalka
+  - $\varepsilon_h = Q_2/A \le \dfrac{T_2}{T_1 - T_2}$
+  - $\varepsilon_g = Q_1/A = \varepsilon_h + 1$
+  - obe števili lahko presežeta $1$
+- Entropija
+  - $\Delta S = \int\delta Q_{\text{rev}}/T$, enota $\mathrm{J/K}$
+  - izotermno $Q/T$, segrevanje $mc\ln(T_2/T_1)$
+  - funkcija stanja: zamišljena povratna pot
+- Naraščanje entropije
+  - izoliran sistem: $\Delta S \ge 0$
+  - sistemu lahko pade, skupna ne pade
+- Mikroskopski pomen
+  - $S = k_B\ln\Omega$
+  - prosta ekspanzija na dvojno prostornino: $\Delta S = nR\ln 2$

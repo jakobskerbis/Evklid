@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Primitivna funkcija
+  - $F' = f$ na intervalu, $\int f\,dx = F + C$
+  - dve se razlikujeta za konstanto (Lagrangeov izrek)
+  - napaka: pozabljen $C$
+- Tabelni integrali
+  - $\int x^n\,dx = \frac{x^{n+1}}{n+1} + C$, $n \neq -1$
+  - $\int \frac{dx}{x} = \ln|x| + C$
+  - $\int f(ax+b)\,dx = \frac1a F(ax+b) + C$
+- Substitucija
+  - $t = g(x)$, $dt = g'(x)\,dx$
+  - $\int \frac{g'}{g}\,dx = \ln|g| + C$
+  - napaka: »$dx$ ostane nespremenjen«
+- Integracija po delih
+  - $\int u\,dv = uv - \int v\,du$
+  - $u$: logaritem, arkus, nato polinom
+  - krožni primer $\int e^x\sin x\,dx$ da enačbo
+- Racionalne funkcije
+  - deljenje, razcep imenovalca, parcialni ulomki
+  - $\int \frac{dx}{x^2+a^2} = \frac1a\arctan\frac xa + C$
+  - nerazcepen kvadratni faktor: števec $Bx + C$
+- Izbira metode
+  - tabelni, substitucija, po delih, parcialni ulomki
+  - $\sin^2 x = \frac{1-\cos 2x}{2}$
+  - rezultat preveri z odvajanjem

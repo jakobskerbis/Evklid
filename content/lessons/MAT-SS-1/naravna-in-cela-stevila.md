@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -13,13 +13,46 @@ Deljivost, praštevila, največji skupni delitelj $D$ in najmanjši skupni večk
 
 ## Razlaga
 
-**1. Naravna števila.** Množico naravnih števil pišemo $\mathbb{N} = \{1, 2, 3, \dots\}$, z ničlo pa $\mathbb{N}_0 = \{0, 1, 2, 3, \dots\}$. Vsota in produkt dveh naravnih števil sta spet naravni števili, razlika pa ne vedno: $3 - 5$ ni naravno število.
+**1. Naravna števila.** Množico naravnih števil pišemo $\mathbb{N} = \{1, 2, 3, \dots\}$, z ničlo pa $\mathbb{N}_0 = \{0, 1, 2, 3, \dots\}$. Vsota in produkt dveh naravnih števil sta spet naravni števili, razlika pa ne vedno: $3 - 5$ ni naravno število. Z naravnimi števili **štejemo** (v razredu je $28$ dijakov) in **urejamo** po vrsti ($3.$ mesto na tekmi).
 
 *Preveri:* Ali je $0$ naravno število? (Ne, $0 \in \mathbb{N}_0$, $0 \notin \mathbb{N}$.)
 
-**2. Cela števila.** Množica celih števil je $\mathbb{Z} = \{\dots, -3, -2, -1, 0, 1, 2, 3, \dots\}$ in velja $\mathbb{N} \subset \mathbb{N}_0 \subset \mathbb{Z}$. Vsako celo število $a$ ima nasprotno število $-a$, za katero je $a + (-a) = 0$. **Absolutna vrednost** $|a|$ je razdalja števila $a$ od $0$ na številski premici, na primer $|-5| = 5$. V $\mathbb{Z}$ lahko vedno seštevamo, odštevamo in množimo, deliti pa ne vedno ($7 : 2$ ni celo število). Odštevanje je prištevanje nasprotnega števila: $a - (-b) = a + b$. Produkt dveh števil z enakim predznakom je pozitiven, z različnima predznakoma pa negativen.
+**2. Cela števila.** Množica celih števil je $\mathbb{Z} = \{\dots, -3, -2, -1, 0, 1, 2, 3, \dots\}$ in velja $\mathbb{N} \subset \mathbb{N}_0 \subset \mathbb{Z}$.
+
+Cela števila vpeljemo iz dveh razlogov. Računski razlog: v $\mathbb{N}$ odštevanje ne uspe vedno, enačba $x + 5 = 3$ nima naravne rešitve, v $\mathbb{Z}$ pa ima rešitev $x = -2$. Praktični razlog: mnoge količine merimo od izbrane ničle v dve smeri. Temperatura $-6\,°\text{C}$ je pod lediščem, stanje na računu $-40$ € je dolg, $-2$. nadstropje garaže je pod pritličjem, gladina Mrtvega morja leži približno $430\,\text{m}$ pod morsko gladino (nadmorska višina $-430\,\text{m}$).
+
+Vsako celo število $a$ ima nasprotno število $-a$, za katero je $a + (-a) = 0$. **Absolutna vrednost** $|a|$ je razdalja števila $a$ od $0$ na številski premici, na primer $|-5| = 5$. Na **številski premici** izberemo točko $0$ in enoto. Pozitivna števila nanašamo v desno, negativna v levo. Nasprotni števili ležita na različnih straneh ničle, enako daleč od nje:
+
+:::risba premica
+opis: Številska premica s celimi števili od −6 do 6. Označeni sta točki −4 in 4. Loka iz 0 kažeta, da sta obe od 0 oddaljeni za 4 enote, −4 v levo in 4 v desno.
+od: -6
+do: 6
+točka: -4 | | modra
+točka: 4 | | modra
+skok: 0 -> -4 | 4 enote
+skok: 0 -> 4 | 4 enote
+:::
+
+Od dveh celih števil je večje tisto, ki leži bolj desno, zato je $-5 < -2$. V $\mathbb{Z}$ lahko vedno seštevamo, odštevamo in množimo, deliti pa ne vedno ($7 : 2$ ni celo število). Odštevanje je prištevanje nasprotnega števila: $a - (-b) = a + b$. Produkt dveh števil z enakim predznakom je pozitiven, z različnima predznakoma pa negativen.
 
 *Preveri:* Koliko je $|-7| + (-7)$? ($7 + (-7) = 0$.)
+
+**Zakoni računskih operacij.** Za vsa cela števila $a$, $b$ in $c$ (torej tudi za naravna) velja:
+
+- zamenljivost (komutativnost): $a + b = b + a$ in $a \cdot b = b \cdot a$,
+- združevalnost (asociativnost): $(a + b) + c = a + (b + c)$ in $(a \cdot b) \cdot c = a \cdot (b \cdot c)$,
+- nevtralna elementa: $a + 0 = a$ in $a \cdot 1 = a$,
+- **razčlenitev** (distributivnost), ki povezuje seštevanje in množenje: $a \cdot (b + c) = a \cdot b + a \cdot c$.
+
+Zakone utemeljimo na primerih. Pike v pravokotniku s $3$ vrsticami po $4$ pike lahko preštejemo tudi po stolpcih: $4$ stolpci po $3$ pike. Zato je $3 \cdot 4 = 4 \cdot 3$. Pravokotnik $6 \times 13$ razrežemo na $6 \times 10$ in $6 \times 3$, zato je $6 \cdot 13 = 6 \cdot 10 + 6 \cdot 3 = 78$. Enako se izide z negativnimi števili: $(-7) + 12 = 12 + (-7) = 5$, $\big((-2) \cdot 5\big) \cdot 7 = -70 = (-2) \cdot (5 \cdot 7)$ in $(-4) \cdot (10 + 3) = -40 + (-12) = -52 = (-4) \cdot 13$.
+
+Odštevanje in deljenje nista ne zamenljivi ne združevalni. Za vsako trditev zadošča en protiprimer: $5 - 3 = 2$, a $3 - 5 = -2$; $8 : 2 = 4$, a $2 : 8$ ni celo število; $(10 - 4) - 3 = 3$, a $10 - (4 - 3) = 9$; $(24 : 4) : 2 = 3$, a $24 : (4 : 2) = 12$. Zato razliko raje zapišemo kot vsoto z nasprotnim številom, za katero zakoni veljajo: $10 - 4 - 3 = 10 + (-4) + (-3)$.
+
+:::premisli
+Zakaj je $(-1) \cdot (-1) = 1$? Izračunaj $(-1) \cdot \big(1 + (-1)\big)$ na dva načina.
+---
+Ker je $1 + (-1) = 0$, je izraz enak $0$. Po razčlenitvi je enak $(-1) \cdot 1 + (-1) \cdot (-1) = -1 + (-1) \cdot (-1)$. Iz $-1 + (-1) \cdot (-1) = 0$ sledi $(-1) \cdot (-1) = 1$. Pravilo »minus krat minus je plus« je torej posledica zakonov.
+:::
 
 **3. Deljivost.** Celo število $a \neq 0$ **deli** celo število $b$, zapisano $a \mid b$, če obstaja tako celo število $k$, da je $b = k \cdot a$. Pravimo tudi, da je $a$ *delitelj* števila $b$ in da je $b$ *večkratnik* števila $a$. Na primer $4 \mid 28$, ker je $28 = 7 \cdot 4$, in $-3 \mid 12$, ker je $12 = (-4) \cdot (-3)$, medtem ko $7 \nmid 30$. Veljajo naslednje lastnosti:
 
@@ -31,16 +64,16 @@ Deljivost, praštevila, največji skupni delitelj $D$ in najmanjši skupni večk
 
 **4. Merila za deljivost.**
 
-| Delitelj | Merilo | Primer |
-|---|---|---|
-| $2$ | zadnja števka je $0, 2, 4, 6$ ali $8$ | $1\,358$ |
-| $3$ | vsota števk je deljiva s $3$ | $4\,521$ ($4+5+2+1=12$) |
-| $4$ | zadnji dve števki tvorita število, deljivo s $4$ | $7\,316$ ($16 = 4 \cdot 4$) |
-| $5$ | zadnja števka je $0$ ali $5$ | $2\,045$ |
-| $6$ | deljivo z $2$ in s $3$ | $1\,332$ |
-| $8$ | zadnje tri števke tvorijo število, deljivo z $8$ | $5\,120$ ($120 = 8 \cdot 15$) |
-| $9$ | vsota števk je deljiva z $9$ | $6\,354$ ($6+3+5+4=18$) |
-| $10$ | zadnja števka je $0$ | $830$ |
+| Delitelj | Merilo in primer |
+|---|---|
+| $2$ | zadnja števka je $0, 2, 4, 6$ ali $8$; npr. $1\,358$ |
+| $3$ | vsota števk je deljiva s $3$; npr. $4\,521$ ($4+5+2+1=12$) |
+| $4$ | zadnji dve števki tvorita število, deljivo s $4$; npr. $7\,316$ ($16 = 4 \cdot 4$) |
+| $5$ | zadnja števka je $0$ ali $5$; npr. $2\,045$ |
+| $6$ | deljivo z $2$ in s $3$; npr. $1\,332$ |
+| $8$ | zadnje tri števke tvorijo število, deljivo z $8$; npr. $5\,120$ ($120 = 8 \cdot 15$) |
+| $9$ | vsota števk je deljiva z $9$; npr. $6\,354$ ($6+3+5+4=18$) |
+| $10$ | zadnja števka je $0$; npr. $830$ |
 
 :::premisli
 Zakaj je za deljivost s $4$ dovolj pogledati zadnji dve števki?
@@ -60,7 +93,7 @@ Na primer $47 = 9 \cdot 5 + 2$ in $-17 = (-4) \cdot 5 + 3$. Število $b$ deli $a
 
 **6. Praštevila in razcep.** Naravno število $p > 1$ je **praštevilo**, če ima natanko dva pozitivna delitelja, $1$ in $p$. Naravno število, večje od $1$, ki ni praštevilo, je **sestavljeno**. Število $1$ ni ne praštevilo ne sestavljeno število. Število $2$ je edino sodo praštevilo. Praštevila do $50$ so: $2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47$.
 
-Ali je $n$ praštevilo, preveriš tako, da poskusiš deliti s praštevili $p$, za katera je $p^2 \le n$. Če je namreč $n = a \cdot b$ z $1 < a \le b$, je $a^2 \le a \cdot b = n$. Sestavljeno število ima torej delitelj $a$ z $a^2 \le n$, in tak delitelj ima tudi vsak prafaktor števila $a$.
+Ali je $n$ praštevilo, preveriš tako, da poskusiš deliti s praštevili $p$, za katera je $p^2 \le n$. Če je namreč $n = a \cdot b$ z $1 < a \le b$, je $a^2 \le a \cdot b = n$. Sestavljeno število ima torej delitelj $a$ z $a^2 \le n$, in tak delitelj je tudi vsak prafaktor števila $a$.
 
 **Osnovni izrek aritmetike:** vsako naravno število $n > 1$ je produkt praštevil, in to na en sam način (do vrstnega reda faktorjev). Na primer $360 = 2 \cdot 2 \cdot 2 \cdot 3 \cdot 3 \cdot 5 = 2^3 \cdot 3^2 \cdot 5$. Praštevil je neskončno mnogo.
 
@@ -72,7 +105,7 @@ Iz razcepa na prafaktorje dobiš:
 
 - $D(a, b)$ je produkt prafaktorjev, ki nastopajo v *obeh* številih, vsakega z *manjšim* eksponentom,
 - $v(a, b)$ je produkt *vseh* prafaktorjev, ki nastopajo v vsaj enem številu, vsakega z *večjim* eksponentom,
-- za naravni števili $a$ in $b$ velja $D(a, b) \cdot v(a, b) = a \cdot b$.
+- (višja raven) za naravni števili $a$ in $b$ velja $D(a, b) \cdot v(a, b) = a \cdot b$.
 
 Zdaj znaš rešiti uganko s škržati. Števili $13$ in $17$ sta različni praštevili, zato sta tuji in $v(13, 17) = 13 \cdot 17 = 221$. Obe vrsti se spet pojavita hkrati leta $2024 + 221 = 2245$.
 
@@ -82,7 +115,7 @@ Denimo, da se plenilec škržatov množično pojavi vsaka $4$ leta. Napovej: kak
 Ujemanje se ponovi po $v$ obeh ciklov. Ker $4 \mid 16$, je $v(4, 16) = 16$: plenilec bi bil tam ob vsakem pojavu škržatov. Ker sta $4$ in $17$ tuji, je $v(4, 17) = 68$: plenilec bi ujel šele vsak četrti pojav. Praštevilski cikel se torej redko ujame s krajšimi cikli. To je ena od razlag biologov, ni pa dokončno potrjena.
 :::
 
-**8. Evklidov algoritem.** Če je $a = q \cdot b + r$, je $D(a, b) = D(b, r)$: vsak skupni delitelj števil $a$ in $b$ deli tudi $r = a - q \cdot b$ (dokaz je v razdelku »Bolj natančno«). Deljenje z ostankom zato ponavljamo, dokler ne dobimo ostanka $0$. Zadnji ostanek, ki ni $0$, je $D(a, b)$. Na primer: $48 = 2 \cdot 18 + 12$, $18 = 1 \cdot 12 + 6$, $12 = 2 \cdot 6 + 0$, zato je $D(48, 18) = 6$.
+**8. Evklidov algoritem (višja raven).** Če je $a = q \cdot b + r$, je $D(a, b) = D(b, r)$: vsak skupni delitelj števil $a$ in $b$ deli tudi $r = a - q \cdot b$ (dokaz je v razdelku »Bolj natančno«). Deljenje z ostankom zato ponavljamo, dokler ne dobimo ostanka $0$. Zadnji ostanek, ki ni $0$, je $D(a, b)$. Na primer: $48 = 2 \cdot 18 + 12$, $18 = 1 \cdot 12 + 6$, $12 = 2 \cdot 6 + 0$, zato je $D(48, 18) = 6$.
 
 V simulaciji spodaj (»Evklidov algoritem s kvadrati«) nastavi $a = 48$ in $b = 18$. Iz pravokotnika $48 \times 18$ se odrežeta dva kvadrata s stranico $18$, nato en s stranico $12$ in na koncu dva s stranico $6$. Opazi: stranica zadnjega kvadrata je $D(48, 18) = 6$.
 
@@ -92,7 +125,7 @@ V simulaciji spodaj (»Evklidov algoritem s kvadrati«) nastavi $a = 48$ in $b =
 
 ### Primer 1 (lažji)
 
-S merili za deljivost ugotovi, s katerimi od števil $2$, $3$, $4$, $5$ in $9$ je deljivo število $4\,536$.
+Z merili za deljivost ugotovi, s katerimi od števil $2$, $3$, $4$, $5$ in $9$ je deljivo število $4\,536$.
 
 **Podatki:** število $4\,536$; preverjamo delitelje $2$, $3$, $4$, $5$ in $9$
 **Iščemo:** katera od števil $2$, $3$, $4$, $5$, $9$ delijo število $4\,536$
@@ -148,7 +181,7 @@ Gozdarji bodo na poseko posadili sadike smreke. Če jih razporedijo v vrste po $
 5. Preverimo: $123 = 30 \cdot 4 + 3$, $123 = 24 \cdot 5 + 3$, $123 = 20 \cdot 6 + 3$.
 6. Odgovor: gozdarji imajo najmanj $123$ sadik.
 
-### Primer 4 – zdaj ti
+### Primer 4 (višja raven) – zdaj ti
 
 Z Evklidovim algoritmom določi $D(1071, 462)$, nato še $v(1071, 462)$.
 
@@ -171,6 +204,24 @@ Kolikšna sta $D(1071, 462)$ in $v(1071, 462)$?
 $147 = 7 \cdot 21 + 0$, zato je $D(1071, 462) = 21$. Res je $1\,071 = 21 \cdot 51$ in $462 = 21 \cdot 22$. Ker je $1\,071 : 21 = 51$, je $v = \dfrac{1\,071 \cdot 462}{21} = 51 \cdot 462 = 23\,562$.
 :::
 
+### Primer 5: Spretno računanje z zakoni
+
+Brez računala izračunaj $A = (-25) \cdot 37 \cdot 4$, $B = (-38) + 57 + (-62) + 43$ in $C = (-19) \cdot 99$. Pri vsakem koraku navedi zakon, ki ga uporabiš.
+
+**Podatki:** $A = (-25) \cdot 37 \cdot 4$, $B = (-38) + 57 + (-62) + 43$, $C = (-19) \cdot 99$
+**Iščemo:** vrednosti $A$, $B$ in $C$ ter uporabljene zakone
+
+:::formula
+$a + b = b + a$, $\; a \cdot b = b \cdot a$, $\; (a + b) + c = a + (b + c)$, $\; (a \cdot b) \cdot c = a \cdot (b \cdot c)$, $\; a \cdot (b + c) = a \cdot b + a \cdot c$
+:::
+
+**Rešitev:**
+
+1. $A$: z zamenljivostjo zamenjamo faktorja $37$ in $4$, z združevalnostjo najprej zmnožimo $(-25) \cdot 4$: $A = \big((-25) \cdot 4\big) \cdot 37 = (-100) \cdot 37 = -3\,700$.
+2. $B$: z zamenljivostjo in združevalnostjo seštevanja združimo seštevance v okrogla števila: $B = \big((-38) + (-62)\big) + (57 + 43) = -100 + 100 = 0$.
+3. $C$: zapišemo $99 = 100 + (-1)$ in uporabimo razčlenitev: $C = (-19) \cdot 100 + (-19) \cdot (-1) = -1\,900 + 19 = -1\,881$.
+4. Odgovor: $A = -3\,700$, $B = 0$ in $C = -1\,881$.
+
 ## Pogoste napake
 
 - **»Število 1 je praštevilo« in »vsa liha števila so praštevila«.** Razlog: praštevilo mora imeti natanko dva pozitivna delitelja, število $1$ ima en sam delitelj, število $9$ pa tri ($1$, $3$ in $9$). Pravilno: preštej delitelje. Liha števila $9$, $15$ in $21$ so sestavljena.
@@ -182,12 +233,118 @@ $147 = 7 \cdot 21 + 0$, zato je $D(1071, 462) = 21$. Res je $1\,071 = 21 \cdot 5
 ## Povzetek
 
 - $\mathbb{N} = \{1, 2, 3, \dots\}$, $\mathbb{N}_0 = \mathbb{N} \cup \{0\}$, $\mathbb{Z} = \{\dots, -2, -1, 0, 1, 2, \dots\}$ in $\mathbb{N} \subset \mathbb{N}_0 \subset \mathbb{Z}$.
+- Seštevanje in množenje sta zamenljivi in združevalni, povezuje ju razčlenitev $a \cdot (b + c) = a \cdot b + a \cdot c$. Odštevanje in deljenje nista zamenljivi.
 - $a \mid b$ pomeni, da obstaja celo število $k$ z $b = k \cdot a$. Če $a \mid b$ in $a \mid c$, potem $a \mid (b \pm c)$.
 - Merila: $2$ (zadnja števka), $3$ in $9$ (vsota števk), $4$ (zadnji dve števki), $5$ (zadnja števka), $8$ (zadnje tri števke). Sestavljeno merilo (npr. za $6$) velja le za tuja delitelja.
 - Deljenje z ostankom: $a = q \cdot b + r$ z $0 \le r < b$.
 - Praštevilo ima natanko dva pozitivna delitelja; $1$ ni praštevilo. Vsako število $n > 1$ je na en sam način produkt praštevil.
-- $D(a, b)$: skupni prafaktorji z manjšim eksponentom. $v(a, b)$: vsi prafaktorji z večjim eksponentom. Velja $D(a, b) \cdot v(a, b) = a \cdot b$.
-- Evklidov algoritem: $D(a, b) = D(b, r)$, ponavljamo do ostanka $0$.
+- $D(a, b)$: skupni prafaktorji z manjšim eksponentom. $v(a, b)$: vsi prafaktorji z večjim eksponentom. (Višja raven) velja $D(a, b) \cdot v(a, b) = a \cdot b$.
+- (višja raven) Evklidov algoritem: $D(a, b) = D(b, r)$, ponavljamo do ostanka $0$.
+
+## Ponovitev
+
+**Formule**
+- $a \mid b$: obstaja celo število $k$ z $b = k \cdot a$ (na pamet)
+- $a = q \cdot b + r$ z $0 \le r < b$ (na pamet)
+- merila: $2$, $5$ zadnja števka; $4$ zadnji dve; $8$ zadnje tri; $3$, $9$ vsota števk (na pamet)
+- $D(a, b)$: skupni prafaktorji z manjšim eksponentom (na pamet)
+- $v(a, b)$: vsi prafaktorji z večjim eksponentom (na pamet)
+- višja raven: $D(a, b) \cdot v(a, b) = a \cdot b$ in $D(a, b) = D(b, r)$ (na pamet)
+
+**Postopek**
+1. Obe števili razcepi na prafaktorje (deli po merilih z $2$, $3$, $5$, …).
+2. Razcepa zapiši s potencami.
+3. Sestavi $D(a, b)$ in $v(a, b)$ po pravilu zgoraj.
+4. Preveri: $D \cdot v = a \cdot b$.
+
+**Pazi na**
+- $1$ ni praštevilo in liha števila niso vsa praštevila: $9 = 3 \cdot 3$.
+- Sestavljeno merilo velja le za tuja delitelja: iz deljivosti z $2$ in $4$ ne sledi deljivost z $8$.
+- Ostanek je med $0$ in $b - 1$: $-17 = (-4) \cdot 5 + 3$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+V petmestnem številu $\overline{531x2}$ je $x$ neznana števka. Določite $x$ tako, da bo število deljivo s $36$. Odgovor utemeljite.
+
+**Rešitev:**
+
+1. Velja $36 = 4 \cdot 9$, števili $4$ in $9$ sta tuji. Število je zato deljivo s $36$ natanko tedaj, ko je deljivo s $4$ in z $9$.
+2. Deljivost s $4$: zadnji dve števki tvorita število $\overline{x2}$. Med števili $02, 12, 22, \dots, 92$ so s $4$ deljiva $12$, $32$, $52$, $72$ in $92$, zato mora biti $x$ liha števka.
+3. Deljivost z $9$: vsota števk $5 + 3 + 1 + x + 2 = 11 + x$ mora biti deljiva z $9$. Ker je $0 \le x \le 9$, je to le pri $11 + x = 18$, torej $x = 7$. Števka $7$ je liha, zato ustreza tudi pogoju iz 2. koraka.
+4. Odgovor: $x = 7$. Res je $53\,172 = 36 \cdot 1\,477$.
+
+**Točkovanje:** 1 točka za razstavitev $36 = 4 \cdot 9$ na tuja faktorja, 1 točka za pravilno uporabo obeh meril (zadnji dve števki, vsota števk), 1 točka za $x = 7$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Pravokotna tla merijo $336\,\text{cm} \times 210\,\text{cm}$. Prekriti jih želimo z enakimi kvadratnimi ploščicami brez rezanja. Stranica ploščice naj meri celo število centimetrov in naj bo čim večja.
+
+a) Števili $336$ in $210$ razcepite na prafaktorje. (2 točki)
+b) Določite največjo možno stranico ploščice in utemeljite, zakaj je to največji skupni delitelj. (2 točki)
+c) Koliko takih ploščic potrebujemo? (1 točka)
+d) V trgovini imajo le ploščice s stranico $40\,\text{cm}$. Ob daljši stranici tal položimo v vrsto čim več celih ploščic. Zapišite deljenje števila $336$ s $40$ z ostankom in odgovorite, koliko celih ploščic gre v vrsto in koliko centimetrov ostane nepokritih. (2 točki)
+
+**Rešitev:**
+
+1. a) $336 = 2 \cdot 168 = 2 \cdot 2 \cdot 84 = 2 \cdot 2 \cdot 2 \cdot 42 = 2 \cdot 2 \cdot 2 \cdot 2 \cdot 21 = 2^4 \cdot 3 \cdot 7$.
+2. a) $210 = 2 \cdot 105 = 2 \cdot 3 \cdot 35 = 2 \cdot 3 \cdot 5 \cdot 7$.
+3. b) Stranica ploščice mora brez ostanka deliti obe stranici tal, torej je skupni delitelj števil $336$ in $210$. Ker naj bo čim večja, je to $D(336, 210)$.
+4. b) Skupni prafaktorji z manjšim eksponentom: $D(336, 210) = 2 \cdot 3 \cdot 7 = 42$. Stranica ploščice meri $42\,\text{cm}$.
+5. c) Ob daljši stranici je $336 : 42 = 8$ ploščic, ob krajši $210 : 42 = 5$ ploščic. Skupaj je to $8 \cdot 5 = 40$ ploščic.
+6. d) $336 = 8 \cdot 40 + 16$, ostanek $16$ je med $0$ in $40$.
+7. Odgovor: stranica ploščice meri največ $42\,\text{cm}$, potrebujemo $40$ ploščic. S ploščicami s stranico $40\,\text{cm}$ gre v vrsto $8$ celih ploščic, nepokritih ostane $16\,\text{cm}$.
+
+**Točkovanje:** a) 1 točka za razcep $336 = 2^4 \cdot 3 \cdot 7$, 1 točka za razcep $210 = 2 \cdot 3 \cdot 5 \cdot 7$; b) 1 točka za utemeljitev, da je stranica največji skupni delitelj, 1 točka za $42\,\text{cm}$; c) 1 točka za $40$ ploščic; d) 1 točka za zapis $336 = 8 \cdot 40 + 16$, 1 točka za odgovor ($8$ ploščic, $16\,\text{cm}$).
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Zobnika s $154$ in $126$ zobmi sta v stiku. Na vsakem zobniku označimo en zob. Na začetku se označena zoba dotikata. Ko se zobnika vrtita, gre skozi stično točko na obeh zobnikih enako število zob.
+
+a) Z Evklidovim algoritmom določite $D(154, 126)$. (3 točke)
+b) Z zvezo $D(a, b) \cdot v(a, b) = a \cdot b$ izračunajte $v(154, 126)$. (2 točki)
+c) Po koliko obratih večjega zobnika se označena zoba prvič spet dotakneta? Koliko obratov naredi do takrat manjši zobnik? (2 točki)
+d) Manjši zobnik zamenjamo z zobnikom, ki ima $z$ zob, kjer je $20 < z < 154$. Določite vse $z$, pri katerih se označena zoba prvič spet dotakneta natanko po $2$ obratih večjega zobnika. (3 točke)
+
+**Rešitev:**
+
+1. a) $154 = 1 \cdot 126 + 28$, nadaljujemo s $126$ in $28$.
+2. a) $126 = 4 \cdot 28 + 14$, ker je $4 \cdot 28 = 112$. Nadaljujemo z $28$ in $14$.
+3. a) $28 = 2 \cdot 14 + 0$. Zadnji ostanek, ki ni $0$, je $14$, zato je $D(154, 126) = 14$.
+4. b) $v(154, 126) = \dfrac{154 \cdot 126}{14} = 11 \cdot 126 = 1\,386$.
+5. c) Označena zoba se spet dotakneta, ko je skozi stično točko šlo število zob, ki je večkratnik števila $154$ in števila $126$. Prvič se to zgodi po $v(154, 126) = 1\,386$ zobeh.
+6. c) Večji zobnik naredi $1\,386 : 154 = 9$ obratov, manjši pa $1\,386 : 126 = 11$ obratov.
+7. d) Po $2$ obratih večjega zobnika gre skozi stično točko $2 \cdot 154 = 308$ zob. Označena zoba se prvič spet dotakneta po teh $2$ obratih natanko tedaj, ko je $v(154, z) = 308$.
+8. d) Razcepa: $154 = 2 \cdot 7 \cdot 11$ in $308 = 2^2 \cdot 7 \cdot 11$. Število $z$ deli svoj večkratnik $v(154, z) = 308$. Faktor $2^2$ v $v$ lahko prispeva le $z$, ker ima $154$ en sam faktor $2$, zato je $z$ deljiv s $4$.
+9. d) Delitelji števila $308$, deljivi s $4$, so $4$, $28$, $44$ in $308$. Pogoju $20 < z < 154$ ustrezata $z = 28 = 2^2 \cdot 7$ in $z = 44 = 2^2 \cdot 11$. Preverba: $v(154, 28) = 2^2 \cdot 7 \cdot 11 = 308$ in $v(154, 44) = 2^2 \cdot 7 \cdot 11 = 308$.
+10. Odgovor: $D(154, 126) = 14$, $v(154, 126) = 1\,386$; zoba se spet dotakneta po $9$ obratih večjega in $11$ obratih manjšega zobnika; novi zobnik ima $28$ ali $44$ zob.
+
+**Točkovanje:** a) 1 točka za $154 = 1 \cdot 126 + 28$, 1 točka za koraka $126 = 4 \cdot 28 + 14$ in $28 = 2 \cdot 14 + 0$, 1 točka za $D = 14$; b) 1 točka za nastavek $v = \dfrac{154 \cdot 126}{14}$, 1 točka za $1\,386$; c) 1 točka za $9$ obratov večjega, 1 točka za $11$ obratov manjšega zobnika; d) 1 točka za pogoj $v(154, z) = 308$, 1 točka za sklep, da $z$ deli $308$ in je deljiv s $4$ (ali za enakovreden sklep po drugi poti, npr. iz $D(154, z) \cdot 308 = 154 \cdot z$ sledi $z = 2 \cdot D(154, z)$, nato preverba kandidatov), 1 točka za $z = 28$ in $z = 44$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj pomeni zapis $a \mid b$ za celi števili $a$ in $b$? Naštej lastnosti relacije deljivosti in eno od njih utemelji.
+---
+Za celi števili $a \neq 0$ in $b$ zapis $a \mid b$ pomeni, da obstaja tako celo število $k$, da je $b = k \cdot a$. Za vsak $a \neq 0$ velja $a \mid a$ in $a \mid 0$, število $1$ pa deli vsako celo število. Če $a \mid b$ in $b \mid c$, potem $a \mid c$. Če $a \mid b$ in $a \mid c$, potem $a \mid (b + c)$, ker iz $b = k \cdot a$ in $c = l \cdot a$ sledi $b + c = (k + l) \cdot a$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Dokaži izrek, da je praštevil neskončno mnogo.
+---
+Dokazujemo s protislovjem: denimo, da je praštevil le končno mnogo, $p_1, p_2, \dots, p_n$. Tvorimo število $N = p_1 \cdot p_2 \cdots p_n + 1$. Pri deljenju z vsakim od praštevil $p_i$ da $N$ ostanek $1$, zato ga nobeno od njih ne deli. Ker je $N > 1$, ima $N$ vsaj en prafaktor, ta pa ni nobeno od števil $p_1, \dots, p_n$. To je protislovje, zato je praštevil neskončno mnogo.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Opiši Evklidov algoritem za iskanje največjega skupnega delitelja in utemelji, zakaj deluje.
+---
+Število $a$ delimo z ostankom s $b$, tako da je $a = q \cdot b + r$ in $0 \le r < b$, nato na enak način delimo $b$ z $r$ in postopek ponavljamo z zadnjima številoma. Zadnji ostanek, ki ni enak $0$, je $D(a, b)$. Algoritem deluje, ker je $D(a, b) = D(b, r)$: vsak skupni delitelj števil $a$ in $b$ deli $r = a - q \cdot b$, vsak skupni delitelj števil $b$ in $r$ pa deli $a = q \cdot b + r$. Ostanki so nenegativni in se strogo manjšajo, zato po končno mnogo korakih dobimo ostanek $0$.
+:::
 
 ## Drugače: Na sliki
 
@@ -197,13 +354,13 @@ Zdaj še Vennov diagram za delitelje števil $12$ in $18$. Samo v levem krogu (d
 
 ## Drugače: Bolj natančno
 
-**Zakaj Evklidov algoritem deluje.** Naj bo $a = q \cdot b + r$. Vsak skupni delitelj števil $a$ in $b$ deli tudi $r = a - q \cdot b$. Vsak skupni delitelj števil $b$ in $r$ deli tudi $a = q \cdot b + r$. Števili $a$, $b$ in števili $b$, $r$ imata torej iste skupne delitelje, zato tudi isti največji skupni delitelj. Ostanki padajo, zato po končno mnogo korakih pridemo do $0$.
+**Zakaj Evklidov algoritem deluje (višja raven).** Naj bo $a = q \cdot b + r$. Vsak skupni delitelj števil $a$ in $b$ deli tudi $r = a - q \cdot b$. Vsak skupni delitelj števil $b$ in $r$ deli tudi $a = q \cdot b + r$. Števili $a$, $b$ in števili $b$, $r$ imata torej iste skupne delitelje, zato tudi isti največji skupni delitelj. Ostanki padajo, zato po končno mnogo korakih pridemo do $0$.
 
 **Praštevil je neskončno mnogo.** Denimo, da jih je končno mnogo: $p_1, p_2, \dots, p_n$. Poglej število $N = p_1 \cdot p_2 \cdots p_n + 1$. Pri deljenju z vsakim $p_i$ da ostanek $1$, torej ga nobeno od njih ne deli. Toda $N > 1$ ima nek prafaktor, ki je praštevilo, a ni nobeno od $p_1, \dots, p_n$. To je protislovje.
 
 **Merilo za $9$.** Ker je $1\,000 = 999 + 1$, $100 = 99 + 1$ in $10 = 9 + 1$, je $4\,536 = (4 \cdot 999 + 5 \cdot 99 + 3 \cdot 9) + (4 + 5 + 3 + 6)$. Prvi oklepaj je deljiv z $9$, zato odloča le vsota števk. Enako velja za $3$.
 
-**Zakaj $D \cdot v = a \cdot b$.** Če ima praštevilo v $a$ in $b$ eksponenta $\alpha$ in $\beta$, ima v $D$ manjšega, v $v$ pa večjega od njiju. Skupaj dasta $\alpha + \beta$, kot v produktu $a \cdot b$.
+**Zakaj $D \cdot v = a \cdot b$ (višja raven).** Če ima praštevilo v $a$ in $b$ eksponenta $\alpha$ in $\beta$, ima v $D$ manjšega, v $v$ pa večjega od njiju. Skupaj dasta $\alpha + \beta$, kot v produktu $a \cdot b$.
 
 ## Preveri se
 
@@ -217,12 +374,10 @@ Zdaj še Vennov diagram za delitelje števil $12$ in $18$. Samo v levem krogu (d
 + Število $59$ je praštevilo.
 > Praštevila $p$ s $p^2 \le 59$ so $2$, $3$, $5$ in $7$. Nobeno ne deli $59$, zato je $59$ praštevilo.
 
-? Koliko je $D(48, 36)$?
-- $6$
-~ $6$ je skupni delitelj, a ne največji: tudi $12$ deli obe števili.
-+ $12$
-- $144$
-~ To je $v(48, 36) = 2^4 \cdot 3^2$: vzel si večja eksponenta. Pri $D$ vzameš manjša.
+? (brez računala) Koliko je $D(48, 36)$?
+= 12 | 0
+~ 6 | $6$ je skupni delitelj, a ne največji: tudi $12$ deli obe števili.
+~ 144 | To je $v(48, 36) = 2^4 \cdot 3^2$: vzel si večja eksponenta. Pri $D$ vzameš manjša.
 > $48 = 2^4 \cdot 3$ in $36 = 2^2 \cdot 3^2$. Skupna prafaktorja z manjšima eksponentoma dasta $D = 2^2 \cdot 3 = 12$.
 
 ? Nika je računala $v(12, 18)$: »$12 = 2^2 \cdot 3$, $18 = 2 \cdot 3^2$, zato je $v = 2 \cdot 3 = 6$.« Kje je napaka?
@@ -251,13 +406,59 @@ Zdaj še Vennov diagram za delitelje števil $12$ in $18$. Samo v levem krogu (d
 + Ob 13.00.
 > $15 = 3 \cdot 5$ in $20 = 2^2 \cdot 5$, zato je $v(15, 20) = 2^2 \cdot 3 \cdot 5 = 60$ minut, torej ena ura.
 
+? (brez računala) Z razčlenitvijo izračunaj $(-23) \cdot 101$.
+= -2323 | 0
+~ -2300 | Pomnožil si le s $100$. Ker je $101 = 100 + 1$, prištej še $(-23) \cdot 1$.
+~ 2323 | Produkt negativnega in pozitivnega števila je negativen.
+> $(-23) \cdot 101 = (-23) \cdot 100 + (-23) \cdot 1 = -2\,300 + (-23) = -2\,323$.
+
+<<RACUN
+vrednost: (-25)*37*4 | -3700
+vrednost: (-38)+57+(-62)+43 | 0
+vrednost: (-19)*99 | -1881
+vrednost: (-19)*100+(-19)*(-1) | -1881
+vrednost: (-23)*101 | -2323
+vrednost: 6*10+6*3 | 78
+vrednost: (-4)*(10+3) | -52
+vrednost: (-2)*(5*7) | -70
+vrednost: (-7)+12 | 5
+vrednost: 8/2 | 4
+vrednost: (10-4)-3 | 3
+vrednost: 10-(4-3) | 9
+vrednost: (24/4)/2 | 3
+vrednost: 24/(4/2) | 12
+vrednost: 5+3+1+7+2 | 18
+vrednost: 72/4 | 18
+vrednost: 53172/36 | 1477
+vrednost: 2^4*3*7 | 336
+vrednost: 2*3*5*7 | 210
+vrednost: gcd(336, 210) | 42
+vrednost: (336/42)*(210/42) | 40
+vrednost: 8*40+16 | 336
+vrednost: 154-1*126 | 28
+vrednost: 126-4*28 | 14
+vrednost: gcd(154, 126) | 14
+vrednost: 154*126/14 | 1386
+vrednost: lcm(154, 126) | 1386
+vrednost: 1386/154 | 9
+vrednost: 1386/126 | 11
+vrednost: 2*154 | 308
+vrednost: lcm(154, 28) | 308
+vrednost: lcm(154, 44) | 308
+vrednost: gcd(48, 36) | 12
+vrednost: lcm(48, 36) | 144
+>>
+
 :::simboli
 a | celo število; pri $a \mid b$ delitelj, pri deljenju z ostankom deljenec | a = q \cdot b + r | |
 b | celo število; pri $a \mid b$ večkratnik, pri deljenju z ostankom delitelj (naravno število) | | |
+c | celo število (v zakonih računskih operacij in pri deljivosti) | | |
 q | količnik | | |
 r | ostanek | | | $0 \le r < b$
 D | največji skupni delitelj | | | $D \cdot v = a \cdot b$
 v | najmanjši skupni večkratnik | v = \dfrac{a \cdot b}{D} | |
 n | naravno število; v Primeru 3 število sadik | n = q \cdot d + 3 | | v Primeru 3 ostanek $3$ pri deljenju s $4$, $5$ in $6$
 d | delitelj ($4$, $5$ ali $6$) | | |
+x | neznana števka (Za maturo, naloga 1) | | | $0 \le x \le 9$
+z | število zob novega zobnika (Za maturo, naloga 3) | | |
 :::

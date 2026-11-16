@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Rast z več celicami
+  - celice ostanejo majhne
+  - napaka: »celice se napihnejo«
+- Meja rasti celice
+  - prostornina raste hitreje kot površina
+  - kocka: $P = 6 \cdot a^2$, $V = a^3$
+- Podvojitev DNA
+  - pred delitvijo, v jedru
+  - kromosom z dvema kopijama, oblika X
+- Mitoza
+  - kromosomi na sredini, kopiji narazen
+  - dve hčerinski celici z enako DNA
+  - človek: obe po $46$ kromosomov
+- Iz ene celice celo telo
+  - oplojena jajčna celica se deli
+  - $N = 2^n$, po $5$ krogih $32$
+- Rast in obnova tkiv
+  - koža, celjenje ran, kosti
+  - vršički korenin pri rastlinah
+  - živčne celice se skoraj ne delijo

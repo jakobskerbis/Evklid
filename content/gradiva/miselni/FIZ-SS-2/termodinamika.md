@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Delo plina
+  - $A = p\,\Delta V$ pri stalnem tlaku
+  - litre pretvori v $\mathrm{m^3}$
+  - ploščina pod črto v diagramu $p$–$V$
+- Prvi zakon
+  - $\Delta W_n = Q - A$
+  - razpenjanje: $A > 0$, stiskanje: $A < 0$
+  - tlačilka se pri stiskanju segreje
+- Toplotni stroj
+  - deluje v krogih
+  - $Q_1 = A + Q_2$
+  - brez hladnejšega telesa ne deluje
+- Izkoristek
+  - $\eta = \dfrac{A}{Q_1}$, brez enote
+  - avtomobilski motor okoli $30\,\%$
+  - napaka: deliti s $Q_2$
+- Carnotova meja
+  - $\eta_{\max} = 1 - \dfrac{T_2}{T_1}$
+  - temperature v kelvinih
+  - $100\,\%$ ni mogoče

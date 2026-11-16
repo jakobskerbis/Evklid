@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prepustnost
+  - $T = I/I_0$, med $0$ in $1$
+  - plasti se množijo: $0{,}7^3 = 0{,}343$
+- Absorbanca
+  - $A = -\log_{10} T = \log_{10}(I_0/I)$
+  - pazi: $A = 0{,}30$ ni $30\,\%$ vpite
+- Beer-Lambertov zakon
+  - $A = \varepsilon\, b\, c$; $\varepsilon$ v $\mathrm{L\,mol^{-1}\,cm^{-1}}$
+  - iz $\mathrm{d}I = -k\,c\,I\,\mathrm{d}x$; $\varepsilon = k/\ln 10$
+  - monokromatska svetloba, razredčena raztopina, brez ravnotežij
+- Aditivnost in odstopanja
+  - $A(\lambda) = b\sum_i \varepsilon_i(\lambda)\,c_i$; dve snovi, dve $\lambda$
+  - sipana svetloba zniža izmerjeno $A$
+- Umeritvena premica
+  - standardi, linearno do $A \approx 1$
+  - razredči; $\gamma_0 = f \cdot \gamma$, $f = V_2/V_1$
+- UV-VIS
+  - molekule, široki vrhovi, merimo pri $\lambda_{\max}$
+  - vir, monokromator, kiveta, detektor
+  - UV: kremenova kiveta
+- AAS
+  - prosti atomi: plamen ali grafitna kiveta
+  - črte široke okoli $0{,}005\,\mathrm{nm}$
+  - votla katodna žarnica za vsak element

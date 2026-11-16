@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zgradba jedra
+  - protoni in nevtroni, skupaj nukleoni
+  - zapis ${}^{A}_{Z}\mathrm{X}$: masno število zgoraj, vrstno spodaj
+  - izotopi: enak $Z$, različno nevtronov
+- Razpad alfa
+  - odleti ${}^{4}_{2}\mathrm{He}$, masno število $-4$, $Z - 2$
+  - ustavi ga list papirja
+- Razpad beta
+  - nevtron v proton in elektron, $Z + 1$
+  - napaka: elektron ni iz ovojnice
+- Sevanje gama
+  - foton z energijo okoli MeV
+  - element ostane isti
+- Razpolovni čas
+  - $N = N_0 \cdot 2^{-t/t_{1/2}}$
+  - četrtina pomeni dva razpolovna časa
+  - aktivnost v Bq, klikanje števca
+- Vezavna energija
+  - $W_v = \Delta m \, c^2$
+  - helij-4: $28{,}4\,\mathrm{MeV}$; $7{,}1\,\mathrm{MeV}$ na nukleon
+  - najtrdneje vezano železo
+- Cepitev in zlivanje
+  - uran-235: okoli $200\,\mathrm{MeV}$ na cepitev
+  - zvezde: vodik v helij

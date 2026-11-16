@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dovoljena stanja
+  - struna in elektron: le določena stanja
+  - napaka: elektron na tirnici kot planet
+- Kvantna števila
+  - $n \ge 1$, $0 \le l \le n - 1$
+  - $-l \le m_l \le l$, $m_s = \pm\frac{1}{2}$
+  - orbitala $2d$ ne obstaja
+- Kapaciteta lupine
+  - podlupina ima $2l + 1$ orbital
+  - lupina: $n^2$ orbital, $2n^2$ elektronov
+- Efektivni naboj jedra
+  - $Z_\mathrm{ef} \approx Z - S$
+  - Na: $Z_\mathrm{ef} \approx 1$, Cl: $Z_\mathrm{ef} \approx 7$
+- Prva ionizacijska energija
+  - raste po periodi, pada po skupini
+  - zarezi: B pod Be, O pod N
+  - enota kJ/mol
+- Zaporedne ionizacijske energije
+  - največji skok šteje valenčne elektrone
+  - Al: skok med 3. in 4.
+- Elektronegativnost
+  - raste desno in navzgor, F največja
+  - $|\chi_\mathrm{A} - \chi_\mathrm{B}| = \sqrt{\Delta / 96{,}5\,\mathrm{kJ/mol}}$
+  - napaka: pozabljen koren

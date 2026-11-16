@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Keramika
+  - oksidi, karbidi, nitridi, silikati
+  - ionske in kovalentne vezi
+- Zgradba ionske keramike
+  - električna nevtralnost, npr. $\mathrm{Al_2O_3}$
+  - razmerje $\dfrac{r_\mathrm{K}}{r_\mathrm{A}}$ določa koordinacijo
+  - silikati iz tetraedrov $\mathrm{SiO_4}$
+- Krhkost
+  - dislokacije se ne gibljejo
+  - $\sigma_\mathrm{c} = \dfrac{K_\mathrm{Ic}}{Y\sqrt{\pi a}}$
+  - napaka: trdota ni žilavost
+- Tlak in poroznost
+  - tlačna trdnost okoli desetkrat večja
+  - pore znižajo trdnost, zato sintranje
+- Kompoziti
+  - matrica in ojačitev
+  - delčni, vlaknasti, strukturni
+  - PMC, MMC, CMC
+- Pravilo mešanic
+  - vzdolž $E_\parallel = E_\mathrm{v}V_\mathrm{v} + E_\mathrm{m}V_\mathrm{m}$
+  - prečno harmonično, blizu matrice
+  - kritična dolžina $l_\mathrm{c} = \dfrac{\sigma_\mathrm{v}d}{2\tau_\mathrm{c}}$

@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prenos elektronov
+  - reducent odda $\mathrm{e^-}$, se oksidira
+  - oksidant sprejme $\mathrm{e^-}$, se reducira
+- Urejanje s polreakcijami
+  - O z $\mathrm{H_2O}$, H z $\mathrm{H^+}$
+  - oddani elektroni = sprejeti elektroni
+  - preveri atome in naboj
+- Bazično okolje
+  - $\mathrm{H^+}$ nevtraliziraj z $\mathrm{OH^-}$
+- Galvanski člen
+  - anoda: oksidacija, negativni pol
+  - katoda: redukcija, pozitivni pol
+  - solni most ohranja nevtralnost
+- Standardni potencial
+  - vodikova elektroda: $0{,}00\,\mathrm{V}$
+  - večji $E^\circ$: močnejši oksidant
+- Napetost člena
+  - $\Delta E^\circ = E^\circ_\mathrm{katoda} - E^\circ_\mathrm{anoda}$
+  - $\Delta E^\circ > 0$: reakcija poteka sama
+  - napaka: množenje $E^\circ$ s koeficientom

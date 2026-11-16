@@ -1,30 +1,34 @@
 // Evklid – odjemalec (brez ogrodja).
 import { fetchThroughRestart as fetchRetry } from "./restart-retry.js";
+import { jsonAliNic } from "./odgovor.js";
 import { attachPad, closePad, openPad, padIsSheet } from "./pad.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion } from "./i18n.js";
 import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba } from "./nujno.js";
 import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
 hydrateIcons();
-import { initAccount, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { initAccount, prefetchAccountStatus, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { povabiPoUspehu } from "./povabi.js";
 import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
+import { nastaviNogo } from "./noga.js";
 import { initOkna, isFloating, openWindow, closeWindow, focusWindow, refreshBubble, chatReply, restoreWindows, windowsOn, tabHint, floatingViews, syncTabbarH } from "./okna.js";
 import { initProfileMenu, refreshProfileButton, closeProfileMenu } from "./profile-menu.js";
 import { initQuickStart, closeQuickStart } from "./quick-start.js";
 import { openPrintable, stopReading } from "./gradiva.js";
 import { initSubjectSwitch } from "./subject-switch.js";
-import { initTextbook, showTextbook, openLesson, textbookBack, openTextbookLower } from "./textbook.js";
+import { initTextbook, showTextbook, openLesson, textbookBack, openTextbookLower, openLessonId } from "./textbook.js";
 import { loadLeague } from "./leagues.js";
 import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
+import { createIzrisBlokov, enIzrisNaSlicico } from "./izpis-toka.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
 import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
-import { attachMic } from "./speech.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
@@ -71,7 +75,9 @@ import { initFullscreen } from "./fullscreen.js";
 import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
 import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./schedule.js";
 import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
-import { initScan, showScan, leaveScan, scanBack } from "./scan/scan.js";
+import { initScan, showScan, leaveScan, scanBack, startPilotScan } from "./scan/scan.js";
+import { initPilot, loadPilot, showPilot, scanTask, isPilotMember } from "./pilot-naloge.js";
+import { initAnketa, preveriAnketo } from "./anketa-teden.js";
 import { initLab, showLab, labBack, openLabExperiment } from "./laboratorij.js";
 import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, UCI_TABS } from "./uci-se.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
@@ -94,6 +100,10 @@ import { GUIDE } from "./vodic.js";
 import { initOpen, addOpen, simOverlayOpen, closeSimOverlay } from "./odpri.js";
 
 const $ = (sel) => document.querySelector(sel);
+// Delo ob nedejavnosti glavne niti (priprava naslednjih zaslonov), da ne zakasni dotikov.
+const whenIdle = (fn, timeout = 2000) => (window.requestIdleCallback ? requestIdleCallback(() => fn(), { timeout }) : setTimeout(fn, 200));
+// Gradnja vnaprej (kalkulator, orodja) samo, ko se učenec ni dotaknil zaslona vsaj 0,8 s: dolga naloga ne zakasni tapa.
+const whenQuiet = (fn) => whenIdle(() => (Date.now() - lastInput < 800 ? setTimeout(() => whenQuiet(fn), 400) : fn()));
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
 // Za zagon brez povezave še seznam profilov (osebni odgovori API niso v predpomnilniku, P7).
 const fromPack = (url, opts) => (state.student ? offlineApi(state.student.id, url, opts) : undefined) ?? offlineBootApi(url, opts);
@@ -143,11 +153,29 @@ const serverError = (err, status) => {
   return hint && hint !== err.hint ? `${own} ${hint}` : own;
 };
 
+// Klici v teku (zaporedna številka): konec zagona počaka, da se prvi pogled napolni, preden zamenja posnetek
+// zadnjega zaslona (finishStart).
+let apiSeq = 0;
+const apiOpen = new Set();
 const api = async (url, opts = {}) => {
+  const id = ++apiSeq;
+  apiOpen.add(id);
+  try {
+    return await apiCall(url, opts);
+  } finally {
+    apiOpen.delete(id);
+  }
+};
+const apiCall = async (url, opts = {}) => {
+  // Klic, ki ga je zagon že začel v <head> (public/zacetek.js): enkrat, samo uspešen odgovor; sicer običajna pot.
+  if (!opts.method && !opts.body) {
+    const early = await window.evklidZacetek?.vnaprej?.(url);
+    if (early != null) return early;
+  }
   if (/\/tasks\/off-/.test(url)) {
     const local = fromPack(url, opts);
     if (local !== undefined) return local;
-    throw new Error(t("off.noConnection"));
+    throw Object.assign(new Error(t("off.noConnection")), { offline: true });
   }
   const res = await fetchThroughRestart(url, {
     ...opts,
@@ -158,7 +186,8 @@ const api = async (url, opts = {}) => {
     const local = fromPack(url, opts);
     if (local !== undefined) return local;
     // Gostitelj odgovori, naš strežnik pa ne (npr. med objavo nove različice): ne pišemo »Ni povezave z internetom«.
-    throw new Error(!res || navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy"));
+    // offline: sporočilo je že prevedeno in pove, ali manjka povezava ali odgovor strežnika (npr. 502 med objavo).
+    throw Object.assign(new Error(!res || navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy")), { offline: true });
   }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -246,6 +275,7 @@ function showView(name) {
     leaveUci(); // atlas ali model čez cel zaslon (3D svet)
   }
   syncHistory(name);
+  if (currentView === "chat" && name !== "chat" && !isFloating("chat")) leaveChat(); // odhod iz inštruktorja: od tu teče 10 min
   if (name !== currentView) prevView = currentView;
   currentView = name;
   syncCompetitionTab();
@@ -254,8 +284,9 @@ function showView(name) {
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === name));
   // Na telefonu so Napredek, Lige, Nastavitve in Račun pod zavihkom »Jaz«.
   if (meView(name)) $('#tabbar [data-view="me"]').classList.add("active");
+  pinSnapshot(); // posnetek zadnjega zaslona (zagon) ostane na svojem mestu, pravi pogled se pripravi pod njim
   document.querySelectorAll(".view").forEach((v) => {
-    if (!v.classList.contains("in-okno")) v.hidden = v.id !== `view-${name}`;
+    if (!v.classList.contains("in-okno") && !v.hasAttribute("data-posnetek")) v.hidden = v.id !== `view-${name}`;
   });
   initView(name);
   if (away("scan")) leaveScan();
@@ -268,9 +299,148 @@ function showView(name) {
   refreshBubble();
   peekBar(false);
   window.scrollTo(0, 0);
+  if (!startHold) startDone();
+  rememberScreen();
+  snapshotSoon();
+}
+// Zadnji zaslon (j 2026-11-10, public/zacetek.js): ob naslednjem odprtju aplikacije se odpre ta pogled (z odprto
+// lekcijo Učbenika ali temo), če od zadnjega obiska ni minilo več kot 12 ur. Zapis se osveži ob vsaki menjavi
+// pogleda in ko stran izgine z zaslona (čas zadnjega obiska, lekcija, odprta med branjem kazala).
+const ZACETEK = window.evklidZacetek || null;
+let startRec = ZACETEK?.beri() ?? null; // prebrano pred prvim showView, ki zapis prepiše
+let startHold = true; // do konca zagona (start) Učna pot ostane skrita: vmesni showView("path") ne sme utripniti
+// Konec zagona: oznaki na <html> in posnetek zadnjega zaslona izginejo skupaj, pravi pogled se pokaže v istem izrisu.
+const startShot = () => document.querySelector("main[data-posnetek]");
+const startDone = () => {
+  if (ZACETEK?.konec) return ZACETEK.konec();
+  document.documentElement.removeAttribute("data-zacetek");
+};
+// Posnetek pripnemo na njegovo mesto, pravi pogled se pod njim izriše neviden (style.css html[data-zacetek-pod]).
+function pinSnapshot() {
+  const shot = startShot();
+  const root = document.documentElement;
+  if (!shot || root.hasAttribute("data-zacetek-pod")) return;
+  const r = shot.getBoundingClientRect();
+  Object.assign(shot.style, { top: `${r.top + scrollY}px`, left: `${r.left + scrollX}px`, width: `${r.width}px`, height: `${r.height}px` });
+  root.setAttribute("data-zacetek-pod", "");
+}
+// Posnetek zamenjamo, ko so klici pogleda končani in se 120 ms ni spremenil, najpozneje po 2,5 s (dotik zavihka takoj).
+// mark: zadnji klic pred zadnjim zaslonom (Učne poti pod njim ne čakamo); null: čakamo vse.
+function finishStart(mark = null) {
+  startHold = false;
+  // Modul posnetka vnaprej (v miru): ob pagehide se ne naloži več pravočasno.
+  setTimeout(() => (window.requestIdleCallback || setTimeout)(loadShot), 1500);
+  if (!startShot()) return startDone();
+  const last = apiSeq;
+  const mine = (id) => mark == null || (id > mark && id <= last);
+  const view = document.getElementById(`view-${currentView}`);
+  const t0 = performance.now();
+  let changed = t0;
+  const mo = view && new MutationObserver(() => (changed = performance.now()));
+  mo?.observe(view, { childList: true, subtree: true, characterData: true });
+  const check = () => {
+    if (!startShot()) return mo?.disconnect();
+    const now = performance.now();
+    if (now - t0 <= 2500 && ([...apiOpen].some(mine) || now - changed < 120)) return setTimeout(check, 40);
+    mo?.disconnect();
+    startDone();
+  };
+  setTimeout(check, 40);
+}
+// Po clearPrivate (odjava, 401) in med zaklepom do naslednje izbire profila (znova) brez zapisa (pregled #560 A2, A3).
+const shotClosed = () => ZACETEK?.lahkoShrani?.() === false;
+function rememberScreen() {
+  if (!ZACETEK || shotClosed() || !state.student || ["onboard", "auth", "account"].includes(currentView) || document.body.classList.contains("auth-mode")) return;
+  const rec = { v: currentView, t: Date.now(), s: state.student.id };
+  if (currentView === "uci" && uciTab() === "textbook" && openLessonId()) rec.l = openLessonId();
+  if (currentView === "topic" && state.topicFx && state.topic?.id) rec.p = state.topic.id;
+  localStorageSet(ZACETEK.KEY, JSON.stringify(rec));
+  return rec;
+}
+// Posnetek zadnjega zaslona za hiter zagon (public/posnetek.js, naložen po zagonu; zacetek.js ga pokaže ob odprtju).
+let shotMod = null;
+const loadShot = () => import("./posnetek.js").then((m) => (shotMod = m)).catch(() => null);
+// a = lastnik naprave, z = profil z geslom (zacetek.js počaka strežnik); zaklenjen ali brez gesla: null (izbris).
+function shotMeta() {
+  const s = state.student;
+  if (!s || s.locked || (accountsOn() && s.needs_password)) return null;
+  return { a: localStorageGet(ZACETEK.OWNER || "evklid.offline.owner"), z: s.needs_password === false ? 1 : 0 };
+}
+// Tudi ne ob oknu zaklepa (423) ali ko na napravi ni več izbran ta profil.
+const shotAllowed = () =>
+  !shotClosed() && !document.getElementById("lock-overlay") && !!state.student && localStorageGet("studentId") === String(state.student.id) && !startHold && !startShot();
+function saveSnapshot() {
+  if (shotClosed()) return;
+  const rec = rememberScreen();
+  if (!ZACETEK?.POSNETEK || !shotAllowed()) return;
+  if (shotMod) shotMod.shrani(ZACETEK.POSNETEK, rec, shotMeta());
+  else loadShot().then((m) => m && shotAllowed() && m.shrani(ZACETEK.POSNETEK, rememberScreen(), shotMeta()));
+}
+function dropOtherShot(id) {
+  if (!ZACETEK?.POSNETEK) return;
+  let shot = null;
+  try {
+    shot = JSON.parse(localStorageGet(ZACETEK.POSNETEK) || "null");
+  } catch {}
+  if (shot && String(shot.s) !== String(id)) localStorageRemove(ZACETEK.POSNETEK);
+}
+// Med uporabo: nekaj sekund po menjavi pogleda (telefon lahko aplikacijo v ozadju ustavi brez dogodka).
+let shotTimer = 0;
+function snapshotSoon() {
+  clearTimeout(shotTimer);
+  shotTimer = setTimeout(() => (window.requestIdleCallback || setTimeout)(() => document.visibilityState === "visible" && saveSnapshot()), 4000);
+}
+// Zaslon za odprtje: zapis istega profila, mlajši od 12 ur, in pogled, ki ga ta profil ima; sicer null (Učna pot).
+function startScreen() {
+  const rec = startRec;
+  const v = ZACETEK?.izberi(rec, Date.now());
+  if (!v || v === "path" || !state.student || Number(rec.s) !== state.student.id) return null;
+  if (v === "topic") return typeof rec.p === "string" && rec.p ? { v, p: rec.p } : null;
+  if (!document.querySelector(`.tab[data-view="${v}"]:not([hidden]), #view-me [data-go="${v}"]:not([hidden])`) || !document.getElementById(`view-${v}`)) return null;
+  return { v, l: v === "uci" && uciTab() === "textbook" && typeof rec.l === "string" ? rec.l : null };
+}
+async function openStartScreen(z) {
+  if (z.v === "topic") {
+    try {
+      await openTopic(z.p);
+    } catch {} // brez povezave ali tema ne obstaja več: ostane Učna pot
+    return;
+  }
+  if (z.l) openLesson(z.l);
+  else showView(z.v);
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden" && (currentView === "chat" || isFloating("chat"))) leaveChat();
+  if (document.visibilityState === "hidden") return saveSnapshot();
+  // Vrnitev iz ozadja z odprtim inštruktorjem: pravilo »10 min zunaj« (freshChatIfStale) velja tudi tu (j, 14. 11. 2026).
+  if (currentView === "chat" || isFloating("chat")) freshChatIfStale();
+  // Nameščena aplikacija, ki je v ozadju ostala odprta več kot 12 ur: Učna pot, kot ob novem odprtju.
+  const installed = matchMedia("(display-mode: standalone)").matches || / EvklidApp\//.test(navigator.userAgent);
+  // Tekmovanje z uro ali neposlano besedilo (klepet, odgovor) ostaneta na zaslonu.
+  const busy = state.contestTimer || unsentText();
+  if (installed && !busy && hiddenAt && Date.now() - hiddenAt > (ZACETEK?.MAX ?? Infinity) && state.student && currentView !== "path" && !document.body.classList.contains("auth-mode")) showView("path");
+});
+window.addEventListener("pagehide", saveSnapshot);
+// Točka B2 (pilot): odprtje dela aplikacije se zabeleži na strežniku (server/odpiranje-delov.js) največ enkrat na dan,
+// del in profil; strežnik hrani samo prvi in zadnji dan ter število dni. Brez povezave ali 5xx: poskusi ob naslednjem odprtju.
+const DEL_POGLEDA = { chat: "instruktor", topic: "vadnica", cards: "vadnica", exams: "vadnica", competition: "vadnica", games: "igre" };
+const odprtoDanes = new Set();
+let brezStetja = false; // zadnji zaslon in okna, obnovljena ob zagonu, niso odprtje (učenec jih ni odprl sam)
+function odprto(del) {
+  const id = state.student?.id;
+  if (!id || !del || brezStetja) return;
+  const k = `${id}:${del}:${new Date().toISOString().slice(0, 10)}`;
+  if (odprtoDanes.has(k)) return;
+  odprtoDanes.add(k);
+  const ne = () => odprtoDanes.delete(k);
+  fetch(`/api/students/${id}/odprto`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ del }), keepalive: true })
+    .then((r) => r.ok || r.status < 500 || ne()) // 4xx (npr. profil odprt drugje) se ne popravi s ponovitvijo
+    .catch(ne);
 }
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.
 function initView(name) {
+  odprto(DEL_POGLEDA[name]);
+  if (name === "chat") freshChatIfStale();
   if (name === "me") renderMe();
   if (name === "settings") {
     fillSettingsForm();
@@ -282,10 +452,14 @@ function initView(name) {
   if (name === "uci") showUci();
   if (name === "scan") showScan();
   if (name === "league") loadLeague(state.student.id);
-  if (name === "path") loadPath();
+  if (name === "path") {
+    loadPath();
+    preveriAnketo(); // B3: anketa po 7 dneh (public/anketa-teden.js)
+  }
   if (name === "competition") (regionalExams() ? loadExams() : loadCompetition());
   if (name === "exams") loadExams();
   if (name === "feedback") showFeedback();
+  if (name === "pilot") showPilot();
   if (name === "games") showGames();
   if (name === "zbirke") {
     showZbirke(zbOpen.item, zbOpen.from);
@@ -303,7 +477,8 @@ function initView(name) {
 // nazaj gor) ali kolešček gor jo pokaže (body.tb-peek), poteg navzgor jo spet skrije; v lekciji Učbenika samo ob
 // robu (lessonEdge) ali ko drsenje udari v vrh ali dno. Med pisanjem (odprta tipkovnica) se ne pokaže. Na vseh teh zaslonih je v glavi gumb Nazaj.
 const tabbarEl = $("#tabbar");
-const barAuto = () => !!tabbarEl && getComputedStyle(tabbarEl).position === "fixed";
+// Vrstica, ki je zaradi neuporabe (body.tb-mir) ali vrnitve iz nje (tb-vraca) pritrjena, ni zaslon za branje (noga.js).
+const barAuto = () => !!tabbarEl && !document.body.matches(".tb-mir, .tb-vraca") && getComputedStyle(tabbarEl).position === "fixed";
 const typing = () => !!document.activeElement?.matches?.('textarea, [contenteditable="true"], input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"])');
 const NO_SWIPE = "#tabbar, canvas, input[type=range], .pad, .graph-slot, .demo, .okno, .tour";
 function peekBar(on) {
@@ -367,21 +542,36 @@ document.addEventListener("scroll", (e) => {
 document.addEventListener("focusin", () => document.body.classList.contains("tb-peek") && typing() && peekBar(false));
 // Odprta lekcija v Učbeniku (vrstica se umakne) ali nazaj na kazalo: pogled ostane isti, vsebina se zamenja.
 new MutationObserver(() => { lessonTop = null; peekBar(false); }).observe($("#view-textbook"), { childList: true });
+// Po 3 s neuporabe se vrstica skrije (j 2026-11-14, 3 s od 2026-11-15), kjer ni že drugače določeno (public/noga.js).
+nastaviNogo({ bar: tabbarEl, sync: syncTabbarH, skrijPokukano: () => peekBar(false) });
 $("#chat-back").addEventListener("click", () => showView(!["chat", "onboard", "auth"].includes(prevView) && !isFloating(prevView) ? prevView : "path"));
 
 // Zavihek pogleda v premičnem oknu okno le prinese v ospredje (branje, vnos in drsenje v njem ostanejo).
 document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => (isFloating(t.dataset.view) ? focusWindow(t.dataset.view) : showView(t.dataset.view))));
 
-// Tipka Nazaj (Android, aplikacija na začetnem zaslonu, brskalnik): brez tega bi tipka Nazaj
-// v nameščeni aplikaciji takoj zaprla Evklid. Zgodovina ima dve ravni: Učna pot (0) in
-// trenutni pogled (1). Nazaj najprej zapre odprto okno (kalkulator, navodila) ali lekcijo,
-// s podstrani »Jaz« (Nastavitve, Napredek …) vodi na »Jaz«, sicer na Učno pot.
+// Tipka Nazaj (Android, aplikacija na začetnem zaslonu, APK, brskalnik) gre po plasteh (j 2026-11-10):
+// okno ali tipkovnica → podstran (lekcija, poskus, igra) → seznam → … → Učna pot; na Učni poti sta za izhod
+// potrebna dva pritiska (ob prvem obvestilo). Zgodovina ima tri ravni in se ne nabira:
+//   0  vstop (zapis brskalnika, history.state brez »stm«); od tu Nazaj zapusti aplikacijo,
+//   1  Učna pot ({ stm: 2 }, »varovalo«): Nazaj z nje pride na raven 0, kjer pokažemo obvestilo,
+//   2  trenutni pogled ali okno na Učni poti ({ stm: 1, v }).
+// Vsak pritisk Nazaj je popstate; po njem zapis, s katerega smo prišli, postavimo nazaj (keep / ensureGuard).
+// APK (mobile/src/app/web.tsx) gre nazaj po isti zgodovini (goBack), zato tam ni treba ničesar spreminjati.
 let currentView = "path";
 let prevView = "path"; // za gumb Nazaj v glavi klepeta (telefon)
 let fromBack = false;
 let skipPop = 0;
 let overlayEntry = false; // zapis v zgodovini samo za okno, odprto na Učni poti
+let exitTimer = 0; // teče po prvem pritisku Nazaj na Učni poti: drugi pritisk v tem času zapre aplikacijo
+const EXIT_MS = 3500; // toliko je vidno tudi obvestilo (toast)
 const atTop = () => history.state?.stm !== 1;
+const atEntry = () => history.state?.stm == null; // raven 0
+// Varovalo pod Učno potjo: brez njega bi prvi pritisk Nazaj na Učni poti zaprl aplikacijo brez obvestila.
+function ensureGuard() {
+  clearTimeout(exitTimer);
+  exitTimer = 0;
+  if (atEntry()) history.pushState({ stm: 2 }, "");
+}
 function syncHistory(name) {
   if (fromBack) return;
   if (name === "path") {
@@ -391,9 +581,10 @@ function syncHistory(name) {
       skipPop++;
       overlayEntry = false;
       history.back();
-    }
+    } else if (!skipPop) ensureGuard();
     return;
   }
+  ensureGuard();
   const entry = { stm: 1, v: name };
   if (atTop()) history.pushState(entry, "");
   else history.replaceState(entry, "");
@@ -401,6 +592,7 @@ function syncHistory(name) {
 // Okno se je odprlo: na Učni poti dodamo zapis, da ga tipka Nazaj zapre namesto aplikacije.
 function overlayOpened() {
   if (currentView === "path" && atTop()) {
+    ensureGuard();
     history.pushState({ stm: 1, v: "path" }, "");
     overlayEntry = true;
   }
@@ -413,59 +605,137 @@ function overlayClosed() {
   }
   overlayEntry = false;
 }
-window.addEventListener("popstate", () => {
-  // Pred prijavo (pristajalna stran, prijava, registracija) Nazaj ureja account.js.
-  if (document.body.classList.contains("auth-mode")) return;
-  if (skipPop) {
-    skipPop--;
-    // Medtem odprt drug pogled (npr. takoj po zagonu) dobi svoj zapis, da Nazaj ne zapre aplikacije.
-    if (!skipPop && currentView !== "path" && atTop()) history.pushState({ stm: 1, v: currentView }, "");
-    return;
+// Odprto okno <dialog> (kviz, video, namestitev …): kot Esc. Okno, ki zaprtje ureja samo (cancel), odloči samo.
+function closeTopDialog() {
+  const dlg = [...document.querySelectorAll("dialog[open]")].pop();
+  if (!dlg) return false;
+  if (dlg.dispatchEvent(new Event("cancel", { cancelable: true }))) dlg.close();
+  return true;
+}
+// Majhna okna, ki jih zapre Esc (meni porabe, izbira predmeta, spustni seznam, ogled predmeta zbirke …): Nazaj
+// pošlje Esc in pogleda, ali se je na strani kaj zaprlo. Polja za pisanje ga ne dobijo (tam Esc briše vnos).
+function closeByEsc() {
+  const sig = () => [document.querySelectorAll("[hidden]").length, document.querySelectorAll("body *").length, document.querySelectorAll(".open, [open], [aria-expanded='true']").length].join();
+  const before = sig();
+  const ev = new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true });
+  document.body.dispatchEvent(ev);
+  return ev.defaultPrevented || sig() !== before;
+}
+// Telefon: spodnja vrstica je v postavitvi, tudi ko se na zaslonu za branje (klepet, tema, kalkulator) umakne. Takrat je
+// position: fixed (touch.css) in offsetParent je vedno null, zato beremo display.
+const tabbarShown = () => getComputedStyle($("#tabbar")).display !== "none";
+// En korak Nazaj: zapre najvišjo plast ali odpre pogled nad trenutnim. Vrne false, ko na Učni poti ni česa zapreti.
+function backStep(wasOverlay) {
+  // Okna in meniji: Nazaj jih le zapre, pogled ostane.
+  if (closeTopDialog()) return true;
+  // »Povečaj risbo« v poskusu (public/sim/lab.js): vrhnja plast nad vsem, Nazaj jo zapre in poskus ostane odprt.
+  const povecava = document.querySelector(".demo-stage.lab-povecano .lab-zoom");
+  if (povecava) {
+    povecava.click();
+    return true;
   }
-  const wasOverlay = overlayEntry;
-  overlayEntry = false;
-  const keep = () => currentView !== "path" && history.pushState({ stm: 1, v: currentView }, "");
-  // Odprt meni (klobuk ali profil) Nazaj le zapre, pogled ostane.
-  // Okno pomena črke (formula-info.js) Nazaj le zapre.
-  if (closeFormulaPop() || closePaperViewer() || closeOurPaper() || closeQuickStart() || closeProfileMenu()) return keep();
+  // Okno pomena črke (formula-info.js), pola, meni pod klobukom ali profilom.
+  if (closeFormulaPop() || closePaperViewer() || closeOurPaper() || closeQuickStart() || closeProfileMenu()) return true;
   if (installSheetOpen()) {
     closeInstallSheet({ fromBack: true });
-    return keep();
+    return true;
   }
+  if (document.querySelector(".razpri")) {
+    closeFull({ dismiss: true }); // okno s celim besedilom (public/razpri.js)
+    return true;
+  }
+  // Evklidova tipkovnica (public/tipkovnica.js) in plošča za risanje čez cel zaslon (public/pad.js).
+  if (keyboardOpenFor()) {
+    hideKeyboard({ blur: true });
+    return true;
+  }
+  if (padIsSheet()) {
+    closePad();
+    return true;
+  }
+  // Kalkulator čez cel zaslon: najprej plast v njem (plošča funkcij ali konstant, meni vrstice grafa, povečan graf), nato okno.
   if (calcOverlayOpen()) {
-    closeCalcOverlay({ fromBack: true });
-    return keep();
+    if (!calcBack()) closeCalcOverlay({ fromBack: true });
+    return true;
   }
-  if (cornerBack()) return keep();
+  if (cornerBack()) return true;
   // Poskus, ki ga je odprl inštruktor (okno nad pogovorom, public/odpri.js).
   if (simOverlayOpen()) {
     closeSimOverlay();
-    return keep();
+    return true;
   }
   // 3D čez cel zaslon (»Uči se« → 3D svet ali povezava iz lekcije) tudi, ko je »Uči se« v premičnem oknu nad drugim pogledom.
   if (isOpen3d()) {
     leaveUci();
-    return keep();
+    return true;
   }
-  if (wasOverlay && currentView === "path") return;
+  if (wasOverlay && currentView === "path") return true;
   if ($("#tour") && !$("#tour").hidden) {
     startTour.end?.(); // Nazaj zapre vodič (kot Esc ali »Preskoči«)
-    return keep();
+    return true;
   }
-  if (currentView === "uci" && uciBack({ textbookBack, labBack })) return keep();
-  if (currentView === "games" && gamesBack()) return keep();
-  if (currentView === "scan" && scanBack()) return keep();
-  const subMe = meView(currentView) && !["me", "graph"].includes(currentView);
-  if (subMe && $("#tabbar").offsetParent) return showView("me"); // telefon: nazaj na »Jaz«
+  if ($(".sidebar").classList.contains("open") && $("#toggle-sidebar").offsetParent && tabbarShown()) {
+    setSidebar(false); // seznam pogovorov na telefonu
+    return true;
+  }
+  // Plast v pogledu Kalkulator; šele za 3D in drugimi plastmi, ki ga prekrijejo.
+  if (currentView === "graph" && calcBack()) return true;
+  // Podstran pogleda: lekcija → kazalo, poskus → seznam, igra → seznam iger …
+  if (currentView === "uci" && uciBack({ textbookBack, labBack })) return true;
+  if (currentView === "games" && gamesBack()) return true;
+  if (currentView === "scan" && scanBack()) return true;
+  if (closeByEsc()) return true;
+  if (currentView === "path") return false;
+  const subMe = meView(currentView) && currentView !== "me";
+  // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
+  // Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
+  const up = subMe && tabbarShown() ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
+  if (up !== "path") {
+    showView(up); // zapis v zgodovini doda showView (syncHistory)
+    return true;
+  }
   fromBack = true;
   try {
     showView("path");
   } finally {
     fromBack = false;
   }
+  return true;
+}
+window.addEventListener("popstate", () => {
+  // Pred prijavo (pristajalna stran, prijava, registracija) Nazaj ureja account.js.
+  if (document.body.classList.contains("auth-mode")) return;
+  if (skipPop) {
+    skipPop--;
+    if (skipPop) return;
+    ensureGuard();
+    // Medtem odprt drug pogled (npr. takoj po zagonu) dobi svoj zapis, da Nazaj ne zapre aplikacije.
+    if (currentView !== "path" && atTop()) history.pushState({ stm: 1, v: currentView }, "");
+    return;
+  }
+  // Naprej (brskalnik) na zapis pogleda: pogledov ne obnavljamo iz zgodovine, zato se vrnemo.
+  if (!atTop()) {
+    skipPop++;
+    history.back();
+    return;
+  }
+  const wasOverlay = overlayEntry;
+  overlayEntry = false;
+  const entry = atEntry(); // Nazaj z ravni Učne poti (sicer z ravni pogleda)
+  if (backStep(wasOverlay)) {
+    ensureGuard();
+    if (currentView !== "path" && atTop()) history.pushState({ stm: 1, v: currentView }, "");
+    return;
+  }
+  // Učna pot, nič odprtega. Z ravni pogleda (zastarel zapis) samo ostanemo; z ravni Učne poti je to prvi pritisk
+  // za izhod: zapis varovala vrnemo šele čez EXIT_MS, zato drugi pritisk do takrat zapusti aplikacijo.
+  if (!entry) return;
+  toast(t("nav.exitAgain"), "log-out");
+  clearTimeout(exitTimer);
+  exitTimer = setTimeout(ensureGuard, EXIT_MS);
 });
 
-const ME_VIEWS = ["me", "progress", "league", "settings", "account", "feedback", "graph", "games", "corner", "schedule", "zbirke", "scan"];
+const ME_VIEWS = ["me", "progress", "league", "settings", "account", "feedback", "graph", "games", "corner", "schedule", "zbirke", "scan", "pilot"];
 // Četrto mesto spodnje vrstice: Laboratorij ali »NPZ in matura« (ko je cilj NPZ/matura); kar ni tam, je pod »Jaz«.
 const meView = (name) => ME_VIEWS.includes(name) || (!!name && offTabbarViews().includes(name));
 // Zbirke in učni pass: odpre pogled, po želji s predmetom v pogledu »preglej« (from = pogled za Nazaj).
@@ -498,7 +768,8 @@ function renderMe() {
   loadMeOverview();
 }
 // Pregled na strani Jaz (j, 4. 11. 2026: prazen spodnji del strani naj bo izkoriščen): koledar aktivnosti,
-// »Nadaljuj« (današnji trening, Učna pot, Inštruktor) in prihodnji testi iz Urnika.
+// »Nadaljuj« (današnji trening) in prihodnji testi iz Urnika. Brez povezav, ki so tik ob njem že na zaslonu
+// (j, 12. 11.): Učna pot in Inštruktor sta v spodnji vrstici, Napredek in Urnik v seznamu nad pregledom.
 async function loadMeOverview() {
   const box = $("#me-overview");
   const id = state.student?.id;
@@ -514,19 +785,17 @@ async function loadMeOverview() {
     `<button type="button" class="list-row" data-me="${go}"><span class="ic">${icon(ic)}</span><span class="lr-text"><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</span>${icon("chevron-right")}</button>`;
   box.innerHTML = `
     <div class="card me-akt">
-      <div class="me-ov-head"><h2>${t("akt.title")}</h2><button type="button" class="text-btn" data-me="progress">${t("nav.progress")}</button></div>
+      <div class="me-ov-head"><h2>${t("akt.title")}</h2></div>
       ${heatmapHtml(p?.xpDays || [])}
     </div>
     <div class="card me-next">
       <h2>${t("qs.title")}</h2>
       <div class="list-card">
         ${row("daily", "zap", t("daily.title"), t("daily.about"))}
-        ${row("path", "map", t("nav.path"))}
-        ${row("chat", "message-circle", t("nav.chat"))}
       </div>
     </div>
     <div class="card me-tests">
-      <div class="me-ov-head"><h2>${t("sch.upcoming")}</h2><button type="button" class="text-btn" data-me="schedule">${t("sch.title")}</button></div>
+      <div class="me-ov-head"><h2>${t("sch.upcoming")}</h2></div>
       ${
         events.length
           ? `<div class="list-card">${events
@@ -692,6 +961,7 @@ async function selectStudent(id) {
   // Uporabnik lahko namesto tega izbere drug profil; seznam se nato naloži znova (stanje zaklepa profilov se je lahko spremenilo).
   // Brez povezave s strežnikom (shranjena kopija) računi niso vklopljeni: odpremo profil za vadbo brez gesla,
   // zaklenjenega pa ne (zanj ni shranjenih nastavitev).
+  if (target?.locked || (target && accountsOn() && target.needs_password)) ZACETEK?.pozabi?.(); // zaklenjen profil: posnetek njegovega zaslona izgine
   if (target && accountsOn() && (target.locked || target.needs_password)) return loadStudents(await openProfileLock(target, state.students));
   if (target?.locked) {
     const open = state.students.find((s) => !s.locked);
@@ -700,6 +970,8 @@ async function selectStudent(id) {
     $("#student-select").value = open.id;
     return selectStudent(open.id);
   }
+  dropOtherShot(target?.id); // menjava profila: posnetek zaslona prejšnjega profila izgine takoj
+  if (target) ZACETEK?.znova?.(); // izbran odklenjen profil: zapis zadnjega zaslona in posnetka spet velja
   state.student = target;
   state.aiOut = false; // delež drugega profila ne skrije »Razloži podrobneje« (osveži ga naslednji odgovor)
   keptPaper = null;
@@ -723,7 +995,9 @@ async function selectStudent(id) {
   sendOffline();
   state.conversationId = null;
   await loadConversations();
-  if (state.conversations.length) await openConversation(state.conversations[0].id);
+  // Nov pogovor ob odprtju (j 2026-11-14): zadnji pogovor samo, če je bil učenec v inštruktorju pred manj kot 10 min.
+  const keep = chatKeepId();
+  if (keep) await openConversation(keep, { mark: false });
   else renderEmptyChat();
   if (!$("#view-settings").hidden) fillSettingsForm();
   if (!$("#view-progress").hidden) loadProgress();
@@ -744,6 +1018,7 @@ async function selectStudent(id) {
   for (const v of floatingViews()) if (!["settings", "progress", "league", "scan", "path", "exams", "competition", "games"].includes(v)) v === "account" ? renderAccount() : initView(v);
   refreshProfileButton();
   refreshXp();
+  loadPilot(); // naloge za člane pilota (vrstica v Jaz, obvestilo ob prvi prijavi)
   // Vprašalnik kotička zanimanj: profil, ki ga še ni izpolnil, ga dobi ob zagonu (enkrat).
   state.interestsAsk = maybeAskInterests();
 }
@@ -830,8 +1105,7 @@ function renderEmptyChat() {
   $("#messages").querySelectorAll("[data-idea]").forEach((b) =>
     b.addEventListener("click", () => {
       if (!$("#input").value.trim() && !state.image) return send(b.dataset.idea);
-      $("#input").value = b.dataset.idea;
-      $("#input").focus();
+      fillInput(b.dataset.idea);
     }),
   );
   renderState(null);
@@ -851,7 +1125,9 @@ window.addEventListener("evklid:era", templeParts);
 function renderState(convState) {
   const s = state.student.settings;
   const subject = convState?.subject || s.subject;
-  const mode = convState?.mode || s.solving_mode;
+  // Izbira načina kaže nastavitev, ki jo spreminja, ne načina zadnjega odgovora (META): sicer je po
+  // zamenjavi v glavi spet pisalo »Vodenje«, čeprav je bila nastavitev že celotna rešitev (j 14. 11.).
+  const mode = s.solving_mode || "A";
   const program = isUni(s) ? programsCache().find((p) => p.id === s.study_program)?.label : null;
   // Predmet, način in letnik se zamenjajo kar v glavi (izbirni seznam), program je le napis.
   const pick = (key, label, options) =>
@@ -937,10 +1213,69 @@ async function setChatFx(conv) {
 }
 const chatRich = (text) => withFormulaSubject(state.chatFx?.subject || state.student?.settings?.subject || "MAT", () => renderRich(text), state.chatFx?.symbols, topicScope(state.chatFx?.topic));
 
-async function openConversation(id) {
+// Nov pogovor v inštruktorju (j 2026-11-14): ko je učenec 10 min ali več zunaj inštruktorja (tudi z zaprto
+// aplikacijo) ali je medtem odprl drugo temo, kot je tema pogovora, se inštruktor odpre na novem pogovoru.
+// Stari pogovori ostanejo v seznamu »Pogovori«; nedokončano vprašanje v polju se nikoli ne izgubi.
+const CHAT_FRESH_MS = 10 * 60 * 1000;
+const chatSeenKey = () => `evklid.chatSeen.${state.student?.id}`;
+const chatTopicKey = () => `evklid.chatTopic.${state.student?.id}`;
+const readRec = (k) => {
+  try {
+    return JSON.parse(localStorageGet(k) || "null");
+  } catch {
+    return null;
+  }
+};
+// Učenec je (bil) v inštruktorju: čas in odprti pogovor.
+function markChat() {
+  if (state.student) localStorageSet(chatSeenKey(), JSON.stringify({ t: Date.now(), conv: state.conversationId }));
+}
+// Odprta tema (učna pot, lekcija): za pravilo »druga tema«.
+function markTopic(id) {
+  if (state.student && id) localStorageSet(chatTopicKey(), JSON.stringify({ id, t: Date.now() }));
+}
+// Ali pogovor po pravilu ostane (zadnji obisk pred manj kot 10 min in vmes ni bila odprta druga tema).
+function chatStillFresh(convTopic) {
+  const seen = readRec(chatSeenKey());
+  if (!seen || !(Date.now() - seen.t < CHAT_FRESH_MS)) return false;
+  const tp = readRec(chatTopicKey());
+  return !(convTopic && tp && tp.t >= seen.t && tp.id !== convTopic);
+}
+// Ob zagonu: id pogovora, ki naj ostane odprt, ali null (nov pogovor).
+function chatKeepId() {
+  const seen = readRec(chatSeenKey());
+  const conv = seen?.conv && state.conversations.find((c) => c.id === seen.conv);
+  return conv && chatStillFresh(conv.path_topic ?? null) ? conv.id : null;
+}
+// Inštruktor se prikaže: zastarel pogovor zamenja nov (razen z nedokončanim besedilom v polju ali med odgovorom).
+// Samo ob vrnitvi (chatAway): klik zavihka ali okna, ko je učenec že v inštruktorju, pogovora ne zamenja.
+let chatAway = true;
+function leaveChat() {
+  markChat();
+  chatAway = true;
+}
+function freshChatIfStale() {
+  if (!state.student) return; // profil se še nalaga
+  const back = chatAway;
+  chatAway = false;
+  if (!state.conversationId) return; // nov pogovor je že odprt
+  if (!back || state.sending || $("#input")?.value.trim()) return markChat();
+  if (!chatStillFresh(state.convTopic)) {
+    state.conversationId = null;
+    state.convTopic = null;
+    state.chatFx = null;
+    renderConversationList();
+    renderEmptyChat();
+    refreshBubble();
+  }
+  markChat();
+}
+
+async function openConversation(id, { mark = true } = {}) {
   const conv = await api(`/api/conversations/${id}`);
   state.conversationId = conv.id;
   state.convTopic = conv.topic?.id || null;
+  if (mark) markChat();
   await setChatFx(conv);
   if (state.conversationId !== conv.id) return; // medtem odprt drug pogovor
   $("#chat-title").textContent = conv.title;
@@ -968,6 +1303,10 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && $(".sidebar").classList.contains("open")) setSidebar(false);
 });
 
+let bugAdmin = false;
+function syncBugButton() {
+  $("#chat-bug").hidden = !(bugAdmin || isPilotMember());
+}
 $("#chat-bug").addEventListener("click", (e) => {
   const btn = e.currentTarget;
   const open = $("#view-chat .bug-box");
@@ -979,6 +1318,8 @@ $("#chat-bug").addEventListener("click", (e) => {
     conversationId: () => state.conversationId,
     view: "chat",
     toast,
+    thanks: bugAdmin ? null : t("pn.bugThanks"), // »najdeš jo v Računu« velja samo za skrbnika
+    ask: bugAdmin ? null : t("pn.bugAsk"), // član pilota: kdo vidi sporočila, ki gredo zraven
     onClose: () => {
       btn.setAttribute("aria-expanded", "false");
       btn.focus();
@@ -1027,15 +1368,42 @@ function addMessage(role, text, hasImage = false, info = null) {
   return el;
 }
 
-async function send(text, { deep = false } = {}) {
+// Ustno spraševanje (public/ustno/ustno.js, naloži se ob odprtju).
+const openUstno = (src) => state.student && import("./ustno/ustno.js").then((m) => m.odpri(src, { api, student: state.student, renderRich, openLesson, topic: state.chatFx?.topic?.id }));
+document.addEventListener("click", (e) => (e = e.target.closest?.("[data-ustno]")) && openUstno(e.dataset.ustno));
+async function send(text, { deep = false, image: attached = null } = {}) {
   if (state.sending) return;
-  const image = state.image;
+  if (!attached && !state.image && /^\s*vprašaj me\b/i.test(text)) return ($("#input").value = ""), openUstno({ besedilo: text });
+  // Samodejno sestavljeno sporočilo (Razloži, Vprašaj o temi, izbire …) ni iz polja: učenčev osnutek in
+  // fotografija v polju ostaneta (ne pošljemo ju zraven in ju ne pobrišemo). Slika samodejnega sporočila
+  // (izrez naloge iz pole) pride kot attached.
+  const fromInput = !attached && ($("#input").value.trim() || "") === (text || "").trim();
+  const image = attached || (fromInput ? state.image : null);
   if (!text && !image) return;
-  // Izklopljen klepet (EVKLID_CHAT_OFF): nič ne pošljemo, vprašanje in fotografija ostaneta.
-  if (!$("#chat-off").hidden) return;
+  // Izklopljen klepet (EVKLID_CHAT_OFF): nič ne pošljemo, vprašanje in fotografija ostaneta. Varnostni
+  // odgovor pa se pokaže tudi zdaj (lokalni zaznavalnik, strošek 0; pregled A V3).
+  if (!$("#chat-off").hidden) {
+    const n = lokalnoNujno(text);
+    if (n) addNujno(n, { meja: true });
+    return;
+  }
   let userEl = null;
   let bubble = null;
   let pacer = null;
+  // Varnostni odgovor (public/nujno.js) največ enkrat na sporočilo: lokalni zaznavalnik takoj ob pošiljanju,
+  // nato strežnik (AI pregled čez mejo). meja: učenec ni dobil odgovora → opomba »ne šteje se med vprašanja«.
+  let nujnoEl = null;
+  const showNujno = (n, opts = {}) => {
+    if (nujnoEl) {
+      if (opts.meja) {
+        nujnoEl.querySelector(".nujno-opomba").textContent = t(opomba(nujnoEl._st, true));
+        nujnoNaVrh(nujnoEl);
+      }
+      return;
+    }
+    // Izsiljevanje prepozna vmesnik sam iz besedila (tudi, ko vrsto pošlje AI pregled).
+    if (n?.vrsta) nujnoEl = addNujno({ ...n, izs: izsiljevanje(text) }, opts);
+  };
   state.sending = true;
   $("#send").disabled = true;
   state.pacer?.skip();
@@ -1049,21 +1417,33 @@ async function send(text, { deep = false } = {}) {
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
     const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
     document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
+    const nacin = fromInput && state.dictated ? "glas" : undefined; // narekovano z mikrofonom (strežnik preveri stikalo starša)
     userEl = addMessage("user", text, !!image);
-    $("#input").value = "";
-    autoGrow();
-    clearImage();
+    if (fromInput) {
+      $("#input").value = "";
+      autoGrow();
+      clearImage();
+      state.dictated = false;
+    }
 
     bubble = addMessage("assistant", "");
     bubble.classList.add("typing");
+    // Takoj, brez čakanja na strežnik (objava nove različice, počasen AI pregled): pregled A V4.
+    // Blažje okno »pogovor« (posredna stiska) počaka na strežnik, ki lahko pošlje močnejšo vrsto.
+    const takoj = lokalnoNujno(text);
+    if (takoj?.vrsta !== "pogovor") showNujno(takoj, { before: bubble });
     const box = $("#messages");
-    const paint = (shown) => {
+    // D5: med izpisom dokončani bloki iz predpomnilnika in največ en izris na sličico; končni izris cel in takoj.
+    const izrisBlokov = createIzrisBlokov(chatRich);
+    const paint = enIzrisNaSlicico((shown, koncno) => {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-      bubble.innerHTML = chatRich(streamSafe(shown)) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
+      bubble.innerHTML = (koncno ? chatRich(shown) : izrisBlokov(streamSafe(shown))) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
       prilagodiZdaj(); // dolgo enačbo zloži že zdaj, da pomik na dno šteje njeno pravo višino
       if (atBottom) box.scrollTop = box.scrollHeight;
-    };
-    paint("");
+      // Varnostno okno ostane v celoti vidno: izpis odgovora ga ne potisne nad zgornji rob (pregled B2).
+      if (atBottom && nujnoEl?.isConnected) box.scrollTop = Math.min(box.scrollTop, box.scrollTop + nujnoEl.getBoundingClientRect().top - box.getBoundingClientRect().top - 8);
+    });
+    paint("", true);
     // Odgovor se izpisuje z berljivim tempom; dotik sporočila pokaže vse naenkrat.
     pacer = createPacer(currentPace(), paint);
     state.pacer = pacer;
@@ -1074,7 +1454,7 @@ async function send(text, { deep = false } = {}) {
     const res = await fetchThroughRestart(`/api/conversations/${state.conversationId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, deep, lite: liteActive(), device: deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined }),
+      body: JSON.stringify({ text, deep, nacin, lite: liteActive(), device: deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined }),
     });
     if (!res) {
       bubble.remove();
@@ -1083,9 +1463,12 @@ async function send(text, { deep = false } = {}) {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       bubble.remove();
+      // Zavrnitev (meja porabe, izklopljen klepet, strežnik ne odgovarja): najprej varnostni odgovor, če je nujno.
+      showNujno(err.nujno || lokalnoNujno(text), { meja: true });
       if (serverDown(res)) throw new Error(t("off.serverBusy"));
       if (err.chat_off) throw Object.assign(new Error(t("chat.off")), { chatOff: true });
-      throw new Error(serverError(err, res.status));
+      // Meja porabe (429, limit): sporočilo je »poslano« (ostane v oblačku), polje ostane prazno.
+      throw Object.assign(new Error(serverError(err, res.status)), { limit: res.status === 429 && err.limit === true });
     }
 
     if (paperCtx && state.paperCtx === paperCtx) state.paperCtx = null; // strežnik ga je shranil s sporočilom
@@ -1101,6 +1484,8 @@ async function send(text, { deep = false } = {}) {
         if (d.stage === "out") state.aiOut = true;
       },
       delta: (d) => pacer.push(d.text),
+      // Pod mejo: varnostni odgovor nad odgovorom inštruktorja (ga ne ustavi).
+      nujno: (d) => showNujno(d, { before: bubble }),
       cards: (d) => (cardsData = d),
       // Inštruktor je spremenil nastavitve (server/chat-settings.js).
       settings: (d) => {
@@ -1116,6 +1501,8 @@ async function send(text, { deep = false } = {}) {
       mastered: (d) => toast(d.unlocked?.length ? `${t("chat.mastered", { topic: d.topic })} ${unlockedText(d.unlocked)}` : t("chat.mastered", { topic: d.topic }), "trophy"),
       done: (d) => {
         doneData = d;
+        // Strežnik ni poslal okna, lokalni zaznavalnik pa je našel nujnost: lokalno okno.
+        if (!nujnoEl && takoj) showNujno(takoj, { before: bubble });
         // Ves delež podrobnih razlag porabljen (strežnik, ai_out): gumba »Razloži podrobneje« ne kažemo več.
         state.aiOut = !!d.ai_out;
         // Predmet pogovora, ki ga je inštruktor pravkar določil (nov pogovor brez teme): formule v tem in naslednjih odgovorih.
@@ -1128,10 +1515,11 @@ async function send(text, { deep = false } = {}) {
         if (d.title) $("#chat-title").textContent = d.title;
       },
       error: (d) => {
+        showNujno(d.nujno || lokalnoNujno(text), { before: bubble, meja: true });
         bubble.classList.add("error");
         pacer.finish(d.error);
         pacer.skip();
-        if (state.conversationId === sentTo) $("#input").value = text; // vrni besedilo za ponovni poskus
+        if (state.conversationId === sentTo && !deep) restoreDraft(text, image); // vrni besedilo za ponovni poskus
       },
     });
     pacer.finish();
@@ -1176,13 +1564,14 @@ async function send(text, { deep = false } = {}) {
       bubble.removeAttribute("title");
       if (!bubble.textContent.trim()) bubble.remove();
     }
+    // Brez povezave ali prekinjen odgovor: lokalni zaznavalnik (strošek 0).
+    if (text) showNujno(lokalnoNujno(text), { meja: true });
     // Izklopljen klepet: samo obvestilo nad poljem, vprašanje ostane v polju.
     if (err.chatOff) {
       userEl?.remove();
       if (!$("#messages .msg")) renderEmptyChat(); // prazen pogovor spet pokaže pozdrav in predloge
       $("#chat-off").hidden = false;
-      $("#input").value = text;
-      autoGrow();
+      if (!deep) restoreDraft(text, image);
       return;
     }
     // Prekinjena povezava (npr. med objavo nove različice) je TypeError z »network error« v angleščini: učenec
@@ -1190,11 +1579,103 @@ async function send(text, { deep = false } = {}) {
     const dropped = err instanceof TypeError && /^(network ?error|failed to fetch|load failed|networkerror)/i.test(err.message);
     if (!dropped) console.error(err);
     addMessage("assistant", dropped ? t("off.serverBusy") : err.message, false, { error: true });
-    $("#input").value = text;
-    autoGrow();
+    // Neuspelo pošiljanje (omrežje, strežnik): besedilo in fotografija se vrneta v polje, da se ne izgubita.
+    // Meja porabe: ne (sporočilo ostane v oblačku, polje prazno).
+    // »Razloži podrobneje« (deep) se ne vrne v polje (kot mobilna): ponovno pošiljanje bi šlo kot navadno vprašanje.
+    if (!err.limit && !deep) restoreDraft(text, image);
   } finally {
     state.sending = false;
     $("#send").disabled = false;
+    if (currentView === "chat" || isFloating("chat")) markChat(); // učenec je v pogovoru: 10 min teče od zdaj
+  }
+}
+
+// --- varnostni odgovor (public/nujno.js, besedila potrdil j 6. 11.) ---
+// Lokalni zaznavalnik v brskalniku: brez povezave in kot rezerva, ko strežnik ne pošlje vrste.
+function lokalnoNujno(text) {
+  const vrsta = zaznajNujno(text);
+  return vrsta ? { vrsta, izs: izsiljevanje(text) } : null;
+}
+// Okno na vrh vidnega dela klepeta, razen če je učenec seznam sam odmaknil navzgor (pregled B2).
+function nujnoNaVrh(el) {
+  const box = $("#messages");
+  if (!el?.isConnected || el._odmaknjen?.()) return;
+  el.scrollIntoView?.({ block: "start" });
+}
+// Številke v besedilu krepko (kartica: **112**), pregled B.
+function krepke(html, p) {
+  const nums = [p.sos, p.policija, p.otroci, p.odrasli, p.stevilka].filter(Boolean).sort((a, b) => b.length - a.length);
+  if (!nums.length) return html;
+  const re = new RegExp(`(?<![0-9])(${nums.map((x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(?![0-9])`, "g");
+  return html.replace(re, "<strong>$1</strong>");
+}
+// Okno z varnostnim odgovorom: ni napaka, se zapre (×), inštruktorja ne ustavi. before: nad tem mehurčkom.
+// meja: učenec ni dobil odgovora inštruktorja (opomba, da se ne šteje med vprašanja).
+function addNujno(n, { before = null, meja = false } = {}) {
+  const box = $("#messages");
+  box.querySelector(".empty")?.remove();
+  const el = document.createElement("section");
+  el.className = `msg nujno-card nujno-${n.vrsta}`;
+  el.setAttribute("role", "alert");
+  // Bralnik zaslona prebere naslov in vsebino (aria-labelledby, ne aria-label: pregled B2).
+  const hid = `nujno-h-${Date.now()}`;
+  el.setAttribute("aria-labelledby", hid);
+  // Številke vedno tu: strežnik ne pozna države naprave (učenec brez izbrane države, telefon v HR …).
+  const st = stevilke(state.student?.settings, drzavaNaprave());
+  // Parameter [ključ, parametri] (ure, splošno ime linije) najprej prevedemo.
+  const tr = ([k, p]) => t(k, Object.fromEntries(Object.entries(izoliraj(p)).map(([a, v]) => [a, Array.isArray(v) ? t(v[0], v[1]) : v ?? ""])));
+  const [head, ...rest] = vrstice(n.vrsta, st, { izsiljevanje: !!n.izs });
+  const calls = klici(n.vrsta, st).filter(Boolean);
+  el.innerHTML =
+    `<button type="button" class="nujno-zapri" aria-label="${escapeHtml(t("nujno.zapri"))}">${icon("x")}</button>` +
+    `<h3 id="${hid}">${escapeHtml(tr(head))}</h3>` +
+    rest.map((v) => `<p>${krepke(escapeHtml(tr(v)), v[1])}</p>`).join("") +
+    `<div class="nujno-klici">${calls.map((c) => `<a class="nujno-klic" href="${telHref(c)}">${icon("phone")} ${escapeHtml(t("nujno.klic", izoliraj({ n: c })))}</a>`).join("")}</div>` +
+    `<p class="nujno-opomba">${escapeHtml(t(opomba(st, meja)))}</p>`;
+  el._st = st;
+  // Po zaprtju fokus v polje za vnos (samo z miško in tipkovnico: na telefonu se tipkovnica ne odpre sama).
+  const zapri = () => {
+    el.remove();
+    if (!matchMedia("(hover: none)").matches) $("#input")?.focus();
+  };
+  el.querySelector(".nujno-zapri").addEventListener("click", zapri);
+  // Esc zapre okno, ko je fokus v njem (pregled B).
+  el.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") zapri();
+  });
+  // Učenec je seznam sam pomaknil navzgor (bere starejša sporočila): okna ne vlečemo na vrh.
+  const top0 = box.scrollTop;
+  const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  el._odmaknjen = () => !atBottom && box.scrollTop < top0 - 40;
+  if (before?.isConnected) box.insertBefore(el, before);
+  else box.appendChild(el);
+  nujnoNaVrh(el);
+  return el;
+}
+
+// Pripravljeno vprašanje (kalkulator, skener, 3D, kotiček, predlog) v polje: učenčevega osnutka ne prepiše,
+// ampak ga doda na konec v novi vrstici (j, 6. 11.: nikoli izgube vnosa).
+function fillInput(text) {
+  const box = $("#input");
+  const typed = box.value.replace(/\s+$/, "");
+  box.value = typed ? `${typed}\n\n${text}` : text;
+  autoGrow();
+  box.focus();
+  box.setSelectionRange?.(box.value.length, box.value.length);
+}
+
+// Besedilo neuspelega sporočila nazaj v polje; osnutka, ki ga je učenec medtem (ali že prej) napisal, ne prepiše.
+// (Pri sporočilu iz polja je polje ob pošiljanju izpraznjeno; kar je v njem zdaj, je nov osnutek.)
+function restoreDraft(text, image) {
+  const box = $("#input");
+  if (text && !box.value.trim()) {
+    box.value = text;
+    autoGrow();
+  }
+  if (image && !state.image) {
+    state.image = image;
+    $("#image-preview img").src = image.url;
+    $("#image-preview").hidden = false;
   }
 }
 
@@ -1248,19 +1729,16 @@ const input = $("#input");
 // Če besedilo ne gre več v polje, se samodejno pokaže v večjem oknu (public/razpri.js). Zadnja sporočila
 // ostanejo vidna nad poljem.
 function autoGrow(stick, again) {
-  // Predogled formul nad poljem: (3)/(4) se pokaže kot ulomek, preden ga pošlješ.
-  const pv = $("#formula-preview");
-  const show = hasFormula(input.value);
-  if (show) pv.innerHTML = renderUserText(input.value);
-  pv.hidden = !show;
   const box = $("#messages");
   const atBottom = typeof stick === "boolean" ? stick : box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   const max = Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
   input.style.maxHeight = `${max}px`;
   input.style.height = "auto";
-  const h = input.scrollHeight;
+  // Formule (ulomek, koren …) se izrišejo kar v polju (public/predogled-vnosa.js): višina po izrisu, ne po surovem zapisu.
+  const izris = input.classList.contains("vnos-izrisan") ? Number(input.dataset.izrisVisina) || 0 : 0;
+  const h = izris || input.scrollHeight;
   input.style.height = `${Math.min(h, max)}px`;
-  input.style.overflowY = h > max ? "auto" : "hidden";
+  input.style.overflowY = h > max && !izris ? "auto" : "hidden";
   // Telefon: daljše besedilo dobi celo širino vrstice, gumbi gredo pod polje (nazaj šele, ko je polje prazno).
   const row = input.closest(".composer-row");
   const multi = h > 60 || (row.classList.contains("multi") && !!input.value);
@@ -1275,6 +1753,7 @@ function autoGrow(stick, again) {
 }
 attachPrettify(input); // x^2 → x², 3/4 → ³⁄₄, sqrt → √ že med pisanjem (pred autoGrow, ki izmeri novo besedilo)
 input.addEventListener("input", autoGrow);
+input.addEventListener("vnos-izris-visina", () => autoGrow());
 // Ozko polje (telefon): namig se ne odreže sredi besede (»Napiši nalogo a«), ampak za zadnjo celo besedo
 // (»Napiši nalogo …«). Celoten namig ostane v polju, ko je prostora dovolj; nov namig (jezik, način) se izmeri znova.
 {
@@ -1333,12 +1812,31 @@ $("#composer").addEventListener("submit", (e) => {
   send(input.value.trim());
 });
 
-// Glasovni vnos (brskalnik, sl-SI) in napredna tipkovnica s simboli.
-attachMic($("#mic-btn"), input, { onMessage: (m) => toast(m, "mic"), onChange: autoGrow });
+// Glasovni vnos (brskalnik, sl-SI): public/speech.js se naloži po zagonu (ni del prvega odprtja). Za mlajše od 15 let
+// le s stikalom starša v Računu (j 10. 11.); nacin "glas" ob pošiljanju preveri tudi strežnik. Tipkanje dela vedno.
+const glasOk = {};
+const glasZa = (id) => api(`/api/students/${id}/ustno`).then((r) => (glasOk[id] = r?.glas?.dovoljen !== false), () => true);
+whenIdle(() =>
+  import("./speech.js").then((m) =>
+    m.attachMic($("#mic-btn"), input, {
+      onMessage: (msg) => toast(msg, "mic"),
+      onChange: () => ((state.dictated = true), autoGrow()),
+      allowed: () => {
+        const id = state.student?.id;
+        if (!id) return true;
+        const p = glasZa(id);
+        return id in glasOk ? glasOk[id] : p;
+      },
+      onBlocked: () => import("./ustno/ustno.js").then(async (u) => (await u.loadDicts(), toast(u.tt("u.glasStarsKlepet"), "mic"))),
+    }),
+  ),
+);
+// Napredna tipkovnica s simboli.
 // Evklidova tipkovnica (public/tipkovnica.js): na dotik za vsa polja, Σ jo odpre na plasti simbolov (tudi na računalniku).
 initKeyboard();
 initSirina();
 initDrsniki();
+document.addEventListener("input", (e) => hasFormula(e.target.value || "") && import("./predogled-vnosa.js").then((m) => m.initPredogledVnosa(e.target)), true);
 setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapter });
 mountKeyboardSettings($("#tipkovnica-card"));
 configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx: TUTOR_CHIPS });
@@ -1413,7 +1911,11 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
 // Samodejna posodobitev (docs/posodobitve.md): ko strežnik teče z novejšo različico, se stran
 // tiho osveži, a samo, ko to učenca ne zmoti: ob vrnitvi v aplikacijo (vsaj 1 minuto v ozadju)
 // ali po 10 minutah brez dotika, nikoli med tekmovanjem ali z napisanim, a neposlanim besedilom.
-let appVersion = null;
+// Različica, ki jo stran res izvaja: iz vstopne strani (<meta name="evklid-app">, server/vstopna-stran.js), ne s
+// strežnika ob zagonu – stran je lahko prišla iz predpomnilnika, strežnik pa že teče z novo (PR #481, pregled 1).
+// Brez oznake (stara stran) kot prej: različica strežnika ob zagonu.
+const pageApp = document.querySelector('meta[name="evklid-app"]')?.content || null;
+let appVersion = pageApp;
 let hiddenAt = 0;
 let lastInput = Date.now();
 for (const ev of ["pointerdown", "keydown", "input", "wheel", "touchstart"]) {
@@ -1421,22 +1923,71 @@ for (const ev of ["pointerdown", "keydown", "input", "wheel", "touchstart"]) {
 }
 const serverVersion = () =>
   fetch("/healthz/stanje", { cache: "no-store" })
-    .then((r) => (r.ok ? r.json() : null))
-    .then((s) => s?.razlicica || null)
+    .then((r) => jsonAliNic(r))
+    .then((s) => (pageApp ? s?.datoteke : s?.razlicica) || null)
     .catch(() => null);
 const unsentText = () =>
   [...document.querySelectorAll("textarea, input[type=text], input[type=search], input:not([type])")].some(
     (el) => el.offsetParent !== null && !el.readOnly && el.value.trim() && el.value !== el.defaultValue,
   );
-async function reloadIfNewer() {
-  if (!appVersion || state.contestTimer || unsentText()) return;
+// Service worker pobriše kopije stare različice (public/sw.js »app-stale«), da osvežitev ne dobi znova stare strani.
+function dropStaleCopies(v) {
+  const sw = navigator.serviceWorker?.controller;
+  if (!sw) return Promise.resolve();
+  return new Promise((done) => {
+    const ch = new MessageChannel();
+    ch.port1.onmessage = () => done();
+    setTimeout(done, 1500);
+    sw.postMessage({ type: "app-stale", app: v }, [ch.port2]);
+  });
+}
+// once: osveži samo, če ta zavihek za to različico še ni bil osvežen (brez zanke osveževanja). Oznaka se zapiše
+// šele tik pred osvežitvijo, ko so tekmovanje in neposlano besedilo že preverjeni (pregled B2 P2-1).
+const RELOADED = "evklid.osvezeno";
+async function reloadIfNewer(once = false) {
+  const busy = () => state.contestTimer || unsentText();
+  if (!appVersion || busy()) return;
   const v = await serverVersion();
-  if (!v || v === appVersion) return;
-  const reg = await navigator.serviceWorker?.getRegistration?.().catch(() => null);
-  await reg?.update?.().catch(() => null); // nov service worker (nove knjižnice) pred osvežitvijo
+  // Med klicem je lahko začel pisati (B4).
+  if (!v || v === appVersion || busy()) return;
+  try {
+    if (once && sessionStorage.getItem(RELOADED) === v) return;
+  } catch {
+    return; // brez sessionStorage ne tvegamo zanke
+  }
+  if (pageApp) await dropStaleCopies(v);
+  if (busy()) return;
+  // Brez reg.update(): osvežitev sama preveri sw.js; klic med že tekočo namestitvijo je v Chromiumu zataknil novi
+  // service worker ali izgubil osvežitev (pregled B2 P2-4).
+  try {
+    if (once) sessionStorage.setItem(RELOADED, v); // šele tik pred osvežitvijo
+  } catch {}
   location.reload();
 }
-serverVersion().then((v) => (appVersion = v));
+// Stara stran iz predpomnilnika (npr. počasno omrežje), strežnik pa že ima novo različico: osvežimo takoj, preden
+// učenec odpre zaslon, ki bi naložil modul nove različice. Do osvežitve service worker tej strani daje lene module
+// njene različice (sporočilo »page-app«, public/sw.js).
+const reloadOnceFor = () => reloadIfNewer(true);
+// Service worker izve, katero različico izvaja ta stran (ob zagonu in ob vsaki menjavi service workerja).
+const tellPage = () => pageApp && navigator.serviceWorker?.controller?.postMessage({ type: "page-app", app: pageApp });
+tellPage();
+navigator.serviceWorker?.addEventListener?.("controllerchange", tellPage);
+// Service worker, ki te strani ni naložil (po menjavi ali ponovnem zagonu), vpraša, katero različico izvaja.
+navigator.serviceWorker?.addEventListener?.("message", (e) => e.data?.type === "which-app" && tellPage());
+navigator.serviceWorker?.startMessages?.();
+if (pageApp)
+  serverVersion().then((v) => {
+    if (v && v !== pageApp) reloadOnceFor();
+  });
+else serverVersion().then((v) => (appVersion = v));
+// Nov service worker sporoči svojo različico (public/sw.js ob activate): stara stran se osveži takoj samo, če je
+// komaj odprta (prvih 30 s); sicer ob običajni priložnosti spodaj (vrnitev po ≥ 1 min, 10 minut miru), da se
+// stanje (graf, izbira, branje) ne izgubi med delom (pregled A2 P2-2). Do takrat ji SW daje module njene različice.
+navigator.serviceWorker?.addEventListener?.("message", (e) => {
+  if (e.data?.type !== "app-version" || !pageApp || !e.data.app || e.data.app === pageApp) return;
+  tellPage();
+  if (performance.now() < 30 * 1000) reloadOnceFor();
+});
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") {
     hiddenAt = Date.now();
@@ -1533,16 +2084,30 @@ async function subjectChoices() {
 async function pickSubject(item) {
   const uni = isUni(state.student.settings);
   const settings = uni ? { study_course: item.id, subject: item.subject || state.student.settings.subject } : { subject: item.id, study_course: "" };
-  const updated = await api(`/api/students/${state.student.id}`, { method: "PUT", body: { settings } });
-  studentUpdated(updated);
+  // Optimistično (j 6. 11. 2026: odziven Evklid): izbira, glava in obvestilo takoj, shranjevanje na strežnik
+  // v ozadju (meni se zapre brez čakanja). Podatke zaslona naložimo po shranjevanju (strežnik jih bere po
+  // shranjenem predmetu); ob napaki se vrne prejšnji predmet in pokaže napaka.
+  const prev = state.student;
+  const save = api(`/api/students/${prev.id}`, { method: "PUT", body: { settings } });
+  studentUpdated({ ...prev, settings: { ...prev.settings, ...settings } });
   toast(`${t("set.subject")}: ${item.label}`, "check");
-  // Odprt zaslon pokaže novi predmet takoj.
-  if (currentView === "path") loadPath();
-  else if (currentView === "uci") showUci(); // učbenik, poskusi in 3D svet po novem predmetu
-  else if (currentView === "me") renderMe();
-  else if (currentView === "exams") loadExams();
-  else if (currentView === "competition") regionalExams() ? loadExams() : loadCompetition();
-  else if (currentView === "cards") showFlashcards();
+  save.then(
+    (updated) => {
+      studentUpdated(updated);
+      if (state.student?.id !== prev.id) return;
+      // Odprt zaslon pokaže novi predmet.
+      if (currentView === "path") loadPath();
+      else if (currentView === "uci") showUci(); // učbenik, poskusi in 3D svet po novem predmetu
+      else if (currentView === "me") renderMe();
+      else if (currentView === "exams") loadExams();
+      else if (currentView === "competition") regionalExams() ? loadExams() : loadCompetition();
+      else if (currentView === "cards") showFlashcards();
+    },
+    (err) => {
+      if (state.student?.id === prev.id) studentUpdated({ ...state.student, settings: prev.settings });
+      toast(err?.message || String(err));
+    },
+  );
 }
 
 async function fillCourseOptions() {
@@ -1569,9 +2134,7 @@ function fillDialectOptions(f, s) {
   f.dialect.value = list.some((d) => d.id === s.dialect) ? s.dialect : "";
 }
 
-function fillLevelOptions(track) {
-  // Fakulteta in regijski šolski sistemi: brez slovenskih tekmovanj (NPZ, matura, olimpijade).
-  $("#track-row").hidden = track === "UNIVERZA" || isRegional($("#settings-form").school_system.value);
+function fillLevelOptions() {
   fillSubjectOptions();
   fillGoalFields();
 }
@@ -1602,7 +2165,7 @@ async function fillSettingsForm() {
   f.name.value = state.student.name;
   fillDeleteCard();
   const programs = await loadPrograms(api);
-  for (const key of ["track", "personality_setting"]) f[key].value = s[key];
+  f.personality_setting.value = s.personality_setting;
   f.data_mode.value = s.data_mode || "auto";
   f.games.checked = !gamesOn(s);
   f.xp_goal.value = String(s.xp_goal || 50);
@@ -1611,13 +2174,13 @@ async function fillSettingsForm() {
   f.study_course.innerHTML = "";
   f.school_system.innerHTML = schoolSystemOptions(s.school_system || "SI");
   if (!levelPicker) {
-    levelPicker = mountLevelPicker($("#settings-level"), f, { programs, settings: s, onChange: (_, track) => fillLevelOptions(track) });
+    levelPicker = mountLevelPicker($("#settings-level"), f, { programs, settings: s, onChange: () => fillLevelOptions() });
     f.school_system.addEventListener("change", () => levelPicker.setSystem(f.school_system.value));
   } else levelPicker.set(s);
   f.querySelector(`input[name=solving_mode][value=${s.solving_mode}]`).checked = true;
   f.manual_weaknesses.value = state.student.manual_weaknesses.join(", ");
   fillGoalFields(true);
-  fillLevelOptions(s.educational_track);
+  fillLevelOptions();
   if (state.pickUniversity) {
     state.pickUniversity = false;
     levelPicker.set({ ...s, educational_track: "UNIVERZA", study_program: "", curriculum_level: "" });
@@ -1661,7 +2224,6 @@ $("#settings-form").addEventListener("submit", async (e) => {
         ...(f.educational_track.value === "UNIVERZA"
           ? { study_course: f.study_course.value, subject: f.study_course.selectedOptions[0]?.dataset.subject || state.student.settings.subject }
           : { subject: f.subject.value, study_course: "" }),
-        track: isRegional(f.school_system.value) ? "REGULAR" : f.track.value,
         educational_track: f.educational_track.value,
         study_program: f.educational_track.value === "UNIVERZA" ? f.study_program.value : "",
         curriculum_level: f.curriculum_level.value,
@@ -2187,6 +2749,11 @@ function localStorageSet(k, v) {
     localStorage.setItem(k, v);
   } catch {}
 }
+function localStorageRemove(k) {
+  try {
+    localStorage.removeItem(k);
+  } catch {}
+}
 
 // ---------- učna pot ----------
 
@@ -2221,7 +2788,6 @@ async function refreshXp() {
   const card = $("#xp-card .xp-stats");
   if (card) card.innerHTML = xpStatsHtml(x, prev);
   if (!$("#view-me").hidden) paintMeLevel();
-  state.leaderboard = x.leaderboard;
   refreshModes();
   return x;
 }
@@ -2356,16 +2922,22 @@ document.querySelectorAll("#modebar [data-mode]").forEach((b) =>
   }),
 );
 
+const pathsCache = new Map(); // /api/paths?… -> seznam poti (javni podatki, enaki za vse)
 async function loadPath(key = state.pathKey) {
   // Šola (OŠ/SŠ): učna pot je vedno za razred/letnik iz profila; nižje razrede ima Učbenik (j, 1. 11.).
   // Fakulteta: izbira med predmeti študijskega programa ostane.
   const uni = isUni(state.student.settings);
   const q = uni && key ? `?key=${encodeURIComponent(key)}` : "";
-  const p = await api(`/api/students/${state.student.id}/path${q}`);
-  const content = $("#path-content");
-  if (uni) await loadPrograms(api);
   const sys = state.student.settings.school_system || "SI";
-  const paths = await api(uni ? `/api/paths?program=${encodeURIComponent(state.student.settings.study_program)}` : `/api/paths?subject=${state.student.settings.subject}&system=${encodeURIComponent(sys)}`);
+  // Učna pot, seznam poti in programi hkrati (prej drug za drugim: trije čakanji na strežnik ob vsakem odprtju
+  // domačega zaslona); seznam poti je enak za vse in se v seji ne spremeni (j, 15. 11. 2026: »vse takoj«).
+  const pathsUrl = uni ? `/api/paths?program=${encodeURIComponent(state.student.settings.study_program)}` : `/api/paths?subject=${state.student.settings.subject}&system=${encodeURIComponent(sys)}`;
+  const [p, , paths] = await Promise.all([
+    api(`/api/students/${state.student.id}/path${q}`),
+    uni ? loadPrograms(api) : null,
+    pathsCache.get(pathsUrl) || api(pathsUrl).then((list) => (Array.isArray(list) && pathsCache.set(pathsUrl, list), list)),
+  ]);
+  const content = $("#path-content");
   const pathName = (x) => escapeHtml(x.label.replace(/ \((?:UL|UM|UP|UNG) [A-Z]+\)$/, ""));
   const opt = (x) => `<option value="${x.key}" ${x.key === p.key ? "selected" : ""}>${pathName(x)}${uni && x.key === p.defaultKey ? t("path.mySubject") : ""}</option>`;
   const own = uni ? null : paths.find((x) => x.key === p.key);
@@ -2582,6 +3154,7 @@ async function openTopic(topicId) {
   state.topic = tp;
   state.topicFx = true;
   showView("topic");
+  markTopic(tp?.id || topicId); // po showView: tema, odprta iz pogovora, je za odhodom iz inštruktorja
   // Pogled teme se drsi sam in si zapomni mesto: nova tema se vedno odpre na vrhu (»Nova snov« drugič, #view-topic).
   const vt = $("#view-topic");
   if (vt) vt.scrollTop = 0;
@@ -2882,7 +3455,7 @@ function renderTask(task, ctx) {
     input = `<form class="answer-row"><input id="answer" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
   }
   const calcBtn = ["contest", "placement", "pretest"].includes(ctx.mode) ? "" : `<button type="button" class="ghost task-calc icon-only" title="${escapeHtml(t("nav.graph"))}" aria-label="${escapeHtml(t("nav.graph"))}">${icon("calculator")}</button>`;
-  const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span></div>` : "";
+  const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span>${ctx.total ? `<span class="contest-count">${ctx.index} / ${ctx.total}</span>` : ""}</div>` : "";
   const penalty = ctx.mode === "contest" && task.penalty ? `<span class="pts neg">${t("exam.penaltyPts", { n: String(task.penalty).replace("-", "−") })}</span>` : "";
   const hintLadder = task.hintSteps > 0 && !["contest", "placement", "pretest"].includes(ctx.mode);
   const pretestHead =
@@ -3183,6 +3756,7 @@ async function checkTask(task, ctx, value) {
       html += `<div class="card result ${p.passed ? "celebrate" : ""}">${p.passed ? `<div class="result-icon">${icon("award")}</div>` : ""}<h2>${p.passed ? t("placement.passed") : t("placement.notYet")}</h2>
         <p>${t("placement.score", { correct: p.correct, total: p.total })}${p.passed ? (p.xp ? ` +${p.xp.gained} XP` : "") : t("placement.startFirst")}</p>${r.unlocked ? unlockedHtml(r.unlocked) : ""}
         <button class="primary big" id="fb-back">${t("result.toPath")}</button></div>`;
+      if (p.passed) html += `<div class="povabi-slot"></div>`;
     } else html += next();
   } else if (r.closed) {
     html = `<div class="fb ${r.correct ? "ok" : "bad"}">${icon(r.correct ? "circle-check" : "circle-x")}<span>${r.correct ? t("task.correct") : t("task.wrong")}</span></div>${closedNote}
@@ -3197,6 +3771,8 @@ async function checkTask(task, ctx, value) {
       ${r.selfExplain ? `<div class="fb info">${icon("circle-help")}<span>${escapeHtml(r.selfExplain)}</span></div>` : ""}
       ${r.offline ? "" : tutorRow(task.id)}`;
     html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next();
+    // Osvojena tema: povabilo po končani nalogi; med serijo (trening, priprava na test) šele, ko je serija končana.
+    if (r.mastered && !r.offline && (ctx.mode === "practice" || r.next?.finished)) html += `<div class="povabi-slot"></div>`;
   } else {
     html = `<div class="fb bad shake">${icon("circle-x")}<span>${escapeHtml(fbText(r) || t("task.wrong"))}</span></div>
       ${mistakeHtml(r.mistake)}
@@ -3213,6 +3789,8 @@ async function checkTask(task, ctx, value) {
     }
   }
   fb.innerHTML = html;
+  const sid = state.student?.id;
+  if (accountsOn()) povabiPoUspehu(fb.querySelector(".povabi-slot"), { api, profileId: sid, toast, alive: () => state.student?.id === sid });
   // Nov XP (pravilno, opravljen preizkus znanja, konec treninga): zgornji znesek se animira, ob novi ravni čestitka.
   if (!r.offline && (r.correct || r.xp || r.placement?.xp || r.next?.xp)) refreshXp();
   // Ko je naloga zaključena, plošča izgine, da sta razlaga in gumb »Naprej« vidna.
@@ -3507,6 +4085,7 @@ async function showPapers(c) {
   const level = /VR/.test(String(s.curriculum_level || "")) ? "VR" : "OR";
   mountPapers(slot, papers, { track: s.educational_track, exam: c.exam, subject: c.subject, level }, {
     subjectName: (k) => SUBJECT_NAMES[k] || k,
+    follow: true,
     onTutor: paperTutor,
     onOurs: openOurs,
     onLocal: (entry, file, subjectName) => openLocalPaper(entry, file, subjectName),
@@ -3530,10 +4109,7 @@ async function paperTutor(entry, subjectName) {
     await newTutorChat();
     const paper = paperLabel(entry, subjectName);
     state.paperCtx = { conv: state.conversationId, paper };
-    const box = $("#input");
-    box.value = `${t("pp.tutorMsg", { paper })} `;
-    autoGrow();
-    box.focus();
+    fillInput(`${t("pp.tutorMsg", { paper })} `);
   } catch (err) {
     toast(err.message);
   } finally {
@@ -3621,14 +4197,11 @@ async function paperTask(entry, subjectName, task) {
   paperBusy = true;
   try {
     await newTutorChat();
-    state.image = task.image;
-    $("#image-preview img").src = task.image.url;
-    $("#image-preview").hidden = false;
     const paper = paperLabel(entry, subjectName);
     const head = task.label ? t("pp.taskMsg", { paper, n: task.label }) : t("pp.boxMsg", { paper, page: task.page });
     const text = String(task.text || "").slice(0, 1500).trim();
     state.paperCtx = { conv: state.conversationId, paper, task: task.label || "", page: task.label ? 0 : task.page, fromPdf: !!text };
-    await send(text ? `${head}\n\n${text}` : head);
+    await send(text ? `${head}\n\n${text}` : head, { image: task.image });
   } catch (err) {
     toast(err.message);
   } finally {
@@ -3711,6 +4284,7 @@ function startContestTimer(sessionId, deadline) {
   const tick = () => {
     const el = $("#contest-timer");
     const ms = deadline - Date.now();
+    if (!el?.offsetParent) glavaMedTestom(false);
     if (el) {
       el.querySelector("b").textContent = leftText(deadline);
       el.classList.toggle("warn", ms <= 300000);
@@ -3731,6 +4305,54 @@ function leftText(deadline) {
 function stopContestTimer() {
   if (state.contestTimer) clearInterval(state.contestTimer);
   state.contestTimer = null;
+  glavaMedTestom(false);
+}
+
+// Med testom na telefonu (j 2026-11-15): pomik navzdol skrije zgornjo vrstico (timer se pripne na njeno mesto),
+// pomik navzgor ali vrh strani jo vrne. Samo v pogledu, ki ima timer; competition.css → body.glava-skrita.
+// Skrita vrstica podaljša pogled; brskalnik ob dnu zato sam zmanjša scrollTop. Da to ni videti kot pomik navzgor
+// (utripanje), po vsakem preklopu 300 ms ne beremo pomika, ob dnu ga ne štejemo za »gor«, kratke naloge pa glave ne skrijejo.
+let glavaZaklep = 0;
+function glavaMedTestom(skrij) {
+  const bar = document.querySelector(".topbar");
+  const zdaj = document.body.classList.contains("glava-skrita");
+  if (!!skrij === zdaj) return;
+  if (skrij && bar) document.body.style.setProperty("--glava-h", `${bar.offsetHeight}px`);
+  document.body.classList.toggle("glava-skrita", !!skrij);
+  glavaZaklep = skrij ? Date.now() + 300 : 0;
+}
+{
+  const zadnji = new WeakMap();
+  document.addEventListener(
+    "scroll",
+    (e) => {
+      const box = e.target;
+      if (!(box instanceof Element) || !box.querySelector("#contest-timer")) return;
+      const y = box.scrollTop;
+      if (Date.now() < glavaZaklep || !zadnji.has(box)) return void zadnji.set(box, y);
+      const prej = zadnji.get(box);
+      const max = box.scrollHeight - box.clientHeight;
+      const glavaH = parseFloat(document.body.style.getPropertyValue("--glava-h")) || 64;
+      const skrita = document.body.classList.contains("glava-skrita");
+      if (y < 0 || y > max) return; // odboj na robu (iPhone)
+      if (y < 12) glavaMedTestom(false);
+      else if (y > prej + 6) {
+        if (!skrita && max > (document.querySelector(".topbar")?.offsetHeight || 64) + 120) glavaMedTestom(true);
+      } else if (y < prej - 6) {
+        if (y < max - glavaH) glavaMedTestom(false);
+      } else return;
+      zadnji.set(box, Date.now() < glavaZaklep ? box.scrollTop : y);
+    },
+    { capture: true, passive: true },
+  );
+  // Samo sprememba širine (obrat, drugo okno); višino spreminja tudi naslovna vrstica brskalnika med pomikom.
+  let sirina = innerWidth;
+  const pokazi = () => {
+    if (innerWidth !== sirina) glavaMedTestom(false);
+    sirina = innerWidth;
+  };
+  addEventListener("resize", pokazi, { passive: true });
+  addEventListener("orientationchange", pokazi);
 }
 
 function showContestResult(c, timeUp = false) {
@@ -3845,7 +4467,7 @@ const TOUR = [
   { sel: '.tab[data-view="progress"]', title: "nav.progress", text: "tour.progressText" },
   { sel: '.tab[data-view="league"]', title: "nav.league", text: "tour.leagueText" },
   { sel: '.tab[data-view="settings"]', title: "nav.settings", text: "tour.settingsText" },
-  { sel: '.tab[data-view="feedback"]', title: "nav.feedbackShort", text: "tour.feedbackText" },
+  { sel: '.tab[data-view="feedback"]', title: "nav.feedback", text: "tour.feedbackText" },
   { sel: '#tabbar [data-view="me"]', title: "nav.me", text: "tour.meText2" },
   { sel: "#profile-btn", title: "tour.profile", text: "tour.profileText" },
   { title: "tour.end", text: "tour.endText" },
@@ -3967,15 +4589,25 @@ try {
 } catch {}
 const calcTools = {};
 let calcP = null; // grafični kalkulator
+let calcShownTool = null; // orodje, ki je trenutno prikazano (za tipko Nazaj)
 function calcOverlayOpen() {
   return !$("#graph-overlay").hidden;
+}
+// Tipka Nazaj ali Esc: odprto ploščo ali meni v prikazanem orodju zapre orodje samo (back() v sci.js, calc.js).
+function calcBack() {
+  const tool = calcShownTool;
+  if (!tool?.back || !(calcOverlayOpen() || currentView === "graph")) return false;
+  return !!tool.root.isConnected && !tool.root.hidden && !!tool.back();
 }
 function calcSlot() {
   return calcOverlayOpen() ? $("#graph-overlay-body") : $("#graph-slot");
 }
 
 function graphCalc() {
-  calcP ||= import("./graph/calc.js").then(({ createCalculator }) => {
+  calcP ||= import("./graph/calc.js").catch((e) => {
+    calcP = null; // neuspel prenos (brez povezave): naslednji dotik poskusi znova
+    throw e;
+  }).then(({ createCalculator }) => {
     const host = document.createElement("div");
     host.id = "graph-host";
     queueMicrotask(() => makeSplitter(host, splitOpts("gc")));
@@ -3990,10 +4622,7 @@ function graphCalc() {
       askTutor: (text) => {
         closeCalcOverlay();
         showView("chat");
-        const box = $("#input");
-        box.value = text;
-        autoGrow();
-        box.focus();
+        fillInput(text);
       },
     });
   });
@@ -4021,7 +4650,10 @@ async function insertIntoCalc(text, o) {
 }
 function calcTool(mode) {
   if (mode === "graph") return graphCalc();
-  calcTools[mode] ||= (mode === "sci" ? import("./graph/sci.js") : import("./graph/tools.js")).then((m) => {
+  calcTools[mode] ||= (mode === "sci" ? import("./graph/sci.js") : import("./graph/tools.js")).catch((e) => {
+    delete calcTools[mode]; // neuspel prenos (brez povezave): naslednji dotik poskusi znova
+    throw e;
+  }).then((m) => {
     const host = document.createElement("div");
     if (mode === "sci") queueMicrotask(() => makeSplitter(host, splitOpts("sc")));
     const base = { t, icon, locale, onInsert: insertIntoCalc };
@@ -4070,10 +4702,67 @@ async function setCalcMode(mode) {
   }
   if (mode === "formulas" || mode === "tools") tool.reload();
   if (mode === "sci") tool.adapt?.();
-  const slot = calcSlot();
-  if (tool.root.parentElement !== slot) slot.replaceChildren(tool.root);
+  // Velik razdelek (pripravljen list formul ima ~6000 elementov), ki še ni bil prikazan: najprej slika z izbranim
+  // gumbom (takojšen odziv na tap), razdelek v naslednji sliki (prva postavitev lista sicer zadrži odziv).
+  if (!calcShown.has(tool.root) && tool.root.getElementsByTagName("*").length > 2000) {
+    await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
+    if (calcMode !== mode) return;
+  }
+  calcShown.add(tool.root);
+  calcShownTool = tool;
+  showCalcRoot(calcSlot(), tool.root);
   tool.resize?.();
+  refreshBubble(); // mehurček inštruktorja se umakne s tipk ali seznama tega orodja (okna.js KEEP_CLEAR)
+  prebuildCalc();
   return tool;
+}
+function prefetchNext() {
+  if (navigator.connection?.saveData || document.documentElement.classList.contains("lite") || !state.student) return;
+  const steps = [
+    () => calcTool(calcMode === "formulas" ? "sci" : calcMode),
+    () => import("./graph/sci.js"),
+    () => import("./graph/tools.js"),
+    () => import("./graph/calc.js"),
+    () => import("./3d/modeli.js"),
+    // 3D pregledovalnik (stran /3d v okvirju) in three.js: samo v predpomnilnik service workerja, brez izvajanja,
+    // da se prvi model odpre brez čakanja na omrežje.
+    () =>
+      navigator.serviceWorker?.controller?.postMessage({
+        type: "precache",
+        urls: ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"],
+      }),
+  ];
+  const next = () => {
+    const f = steps.shift();
+    if (f) Promise.resolve().then(f).catch(() => null).then(() => whenQuiet(next));
+  };
+  next();
+}
+// Vsa odprta orodja ostanejo v pomnilniku in na strani (skrita): preklop Znanstveni/Grafični/Orodja/PSE/Formule
+// je takojšen in ohrani vnos, graf in izbiro (j 6. 11. 2026). Prikažemo izbrano, ostala skrijemo.
+const calcShown = new WeakSet(); // razdelki kalkulatorja, ki so bili že prikazani
+function showCalcRoot(slot, root) {
+  if (root.parentElement !== slot) slot.append(root);
+  for (const el of slot.children) el.hidden = el !== root;
+}
+// Ko je kalkulator odprt, se ob nedejavnosti pripravijo še ostala orodja (eno za drugim), da je tudi prvi preklop takojšen.
+let calcPrebuilt = false;
+function prebuildCalc() {
+  if (calcPrebuilt) return;
+  calcPrebuilt = true;
+  const rest = CALC_MODES.filter((m) => !calcTools[m] && !(m === "graph" && calcP));
+  const next = () => {
+    const m = rest.shift();
+    if (!m) return;
+    // Formule potrebujejo strežnik: v lahkem načinu jih naložimo šele ob tapu.
+    if (m === "formulas" && document.documentElement.classList.contains("lite")) return next();
+    // Formule: ob nedejavnosti še prenos in izris učenčevega lista v skrito orodje (ne ob varčevanju s podatki
+    // in ne na telefonu z malo pomnilnika, ≤ 2 GB: skrit list doda ~8000 vozlišč DOM; pregled PR #481).
+    const lowMem = navigator.deviceMemory > 0 && navigator.deviceMemory <= 2;
+    const prep = (tool) => (m === "formulas" && tool && !navigator.connection?.saveData && !lowMem ? new Promise((r) => whenQuiet(() => Promise.resolve(tool.prepare?.()).catch(() => null).then(r))) : null);
+    whenQuiet(() => Promise.resolve(calcTool(m)).then(prep).catch(() => null).then(() => whenQuiet(next)));
+  };
+  whenQuiet(next);
 }
 document.querySelectorAll(".calc-modes").forEach((seg) =>
   seg.addEventListener("click", (e) => {
@@ -4108,7 +4797,7 @@ function closeCalcOverlay({ fromBack = false } = {}) {
 }
 $("#graph-close").addEventListener("click", () => closeCalcOverlay());
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && calcOverlayOpen() && !document.querySelector(".gc-pop:not([hidden])")) closeCalcOverlay();
+  if (e.key === "Escape" && calcOverlayOpen() && !e.defaultPrevented && !calcBack()) closeCalcOverlay();
 });
 // gumbi »Kalkulator« v Učni poti, vadnici in Inštruktorju
 document.querySelectorAll(".calc-open").forEach((b) =>
@@ -4209,6 +4898,7 @@ initOkna({
   showView,
   initView: (name) => (name === "account" ? renderAccount() : initView(name)),
   leaveView: (name) => {
+    if (name === "chat" && currentView !== "chat") leaveChat(); // zaprto okno inštruktorja: od tu teče 10 min
     if (name === "uci") {
       stopReading();
       leaveUci();
@@ -4303,12 +4993,43 @@ initScan({
   getStudent: () => state.student,
   askTutor: (text) => {
     showView("chat");
-    const box = $("#input");
-    box.value = text;
-    autoGrow();
-    box.focus();
+    fillInput(text);
   },
   openGraph: (exprs) => openGraphOverlay(exprs, t("scan.nav")),
+});
+// Mnenje člana pilota (public/mnenje.js): Jaz → »Povej mnenje«, vprašanje največ enkrat na teden. Modul se naloži
+// šele, ko je profil član pilota ali je kot bivši član dal dovoljenje za objavo (`published`, odgovor /pilot: opinion),
+// da ga lahko prekliče (GDPR čl. 7(3)); ne ob prvem odprtju. Ob menjavi na profil brez pilota vrstico skrije.
+let opinionP = null;
+function syncOpinion(member, published = false) {
+  if (!member && !published && !opinionP) return;
+  opinionP ||= import("./mnenje.js").then((m) => {
+    m.initOpinion({ api, toast, getStudent: () => state.student });
+    return m;
+  });
+  opinionP.then((m) => m.loadOpinion()).catch(() => (opinionP = null));
+}
+// Naloge za člane pilota (public/pilot-naloge.js): Jaz → »Pomagaj izboljšati Evklid«.
+// Anketa po 7 dneh (točka B3, public/anketa-teden.js): samo na Učni poti.
+initAnketa({ api, toast, getStudent: () => state.student, currentView: () => currentView, floatingViews });
+initPilot({
+  api,
+  toast,
+  refreshXp,
+  getStudent: () => state.student,
+  showView,
+  hasExams: () => siExams(),
+  startScan: (cond) => {
+    startPilotScan(scanTask(cond));
+    showView("scan");
+  },
+  onMember: (member, published) => {
+    syncBugButton();
+    syncOpinion(member, published);
+  },
+  // Preizkus znanja v pilotu: besedilo naloge in izbire kot v vadnici (brez klikljivih formul).
+  renderRich: (text) => renderRich(text),
+  choiceHtml: (task, o) => choiceHtml(task, o, false),
 });
 // Laboratorij (public/laboratorij.js): vsi virtualni poskusi; »Odpri temo v učbeniku« odpre lekcijo.
 initLab({ api, escapeHtml, getStudent: () => state.student, openLesson });
@@ -4319,12 +5040,10 @@ initUci({
   showTextbook,
   showLab,
   stopReading,
+  odprto,
   askTutor: (text) => {
     showView("chat");
-    const box = $("#input");
-    box.value = text;
-    autoGrow();
-    box.focus();
+    fillInput(text);
   },
   onOverlay: (open) => (open ? overlayOpened() : overlayClosed()),
 });
@@ -4379,13 +5098,16 @@ initFullscreen();
 initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
 
 (async () => {
+  prefetchAccountStatus(); // vzporedno s config (account.js)
   const cfg = await api("/api/config");
   saveConfig(cfg); // za zagon brez povezave (brez skrbniških zastavic, public/offline.js)
   $("#mock-banner").hidden = !cfg.mock;
   initTestNotice(cfg.test_notice, { showView });
   $("#chat-off").hidden = !cfg.chat_off;
   // Skrbnik: »Prijavi napako« v glavi klepeta (napaka v aplikaciji ali pri inštruktorju, public/prijave.js).
-  $("#chat-bug").hidden = !cfg.admin;
+  // Člani pilota jo vidijo tudi (public/pilot-naloge.js).
+  bugAdmin = !!cfg.admin;
+  syncBugButton();
   initFeedback({ api, getStudent: () => state.student, showView, toast, currentLang }, cfg);
   initGames({ api, getStudent: () => state.student, setStudent: studentUpdated, toast: (m, ic = "check") => toast(m, ic), refreshXp, currentLang });
   // Igre v ozadju, ko se je stran že odprla (zavihek Igre se nato odpre takoj); ne ob »Skrij igre« in ne ob varčevanju s podatki.
@@ -4394,6 +5116,9 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     if ((state.student && !gamesOn(state.student.settings)) || navigator.connection?.saveData) return;
     loadGames().catch(() => {});
   }), 3000);
+  // Takojšnje odpiranje (j 6. 11. 2026): ob nedejavnosti po odprtju se pripravijo verjetni naslednji zasloni.
+  // Kalkulator (zadnje uporabljeno orodje) se zgradi v pomnilniku, moduli ostalih orodij in 3D sveta se le prenesejo.
+  setTimeout(() => whenQuiet(prefetchNext), 2500);
   // Dotik zavihka Igre (ali vrstice v »Jaz«) začne nalaganje že pred klikom.
   document.addEventListener("pointerdown", (e) => {
     if (!gamesMod && e.target.closest?.('[data-view="games"], [data-go="games"]')) loadGames().catch(() => {});
@@ -4406,33 +5131,63 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     toast: (m) => toast(m, "check"),
     askTutor: (text) => {
       showView("chat");
-      const box = $("#input");
-      box.value = text;
-      autoGrow();
-      box.focus();
+      fillInput(text);
     },
   });
   // Starševski računi (account.js): prijava, potrditev, prvi otrok.
   let first = true;
   const start = async (o) => {
     // Prijava brez ponovnega nalaganja strani: /api/config pred prijavo še ni vedel, da je to skrbnik.
-    if (!cfg.admin) api("/api/config").then((c) => ($("#chat-bug").hidden = !c.admin)).catch(() => {});
+    if (!cfg.admin)
+      api("/api/config")
+        .then((c) => {
+          bugAdmin = !!c.admin;
+          syncBugButton();
+        })
+        .catch(() => {});
     await loadStudents();
     if (first) initUsageMeter({ escapeHtml, showView, toast });
     else refreshUsageMeter();
+    // Prvo odprtje: bližnjica (?pogled=) ali zadnji zaslon (≤ 12 ur); Učna pot se pripravi pod njim.
+    const z = first && !o?.keepView && !START_VIEW ? startScreen() : null;
     if (!o?.keepView) showView("path");
+    const mark = apiSeq; // klici do sem so od profila in Učne poti
+    const other = z || (first && START_VIEW && !o?.keepView);
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
+    if (z) {
+      brezStetja = true;
+      try {
+        await openStartScreen(z);
+      } finally {
+        brezStetja = false;
+      }
+    }
+    finishStart(other ? mark : null);
     if (first && START_ASK && !o?.keepView) {
       const box = $("#input");
       box.value = START_ASK;
       autoGrow();
+      startDone(); // viden pogled, sicer fokus ne gre v polje (B1)
       box.focus();
     }
-    if (first) restoreWindows();
+    if (first) {
+      brezStetja = true;
+      try {
+        restoreWindows();
+      } finally {
+        brezStetja = false;
+      }
+    }
     first = false;
   };
   captureSource(); // oznaka vira iz povezave (public/vir.js), pred prijavo, ki lahko preusmeri
   if (await initAccount({ onReady: start })) await start();
+  else {
+    // Prijava ali pristajalna stran: po prijavi se odpre Učna pot, ne zadnji zaslon pred odjavo.
+    startRec = null;
+    startHold = false;
+    startDone();
+  }
 })().catch(bootFailed);
 
 // Strežnik ni dosegljiv ob odprtju (računalnik ugasnjen, stara povezava): namesto prazne strani
@@ -4445,6 +5200,8 @@ const serverReach = () =>
     .catch(() => "down");
 async function bootFailed(err) {
   console.error(err);
+  startHold = false;
+  startDone();
   if (document.getElementById("boot-down") || (await serverReach()) === "ok") return;
   const box = document.createElement("div");
   box.id = "boot-down";

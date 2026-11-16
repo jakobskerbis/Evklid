@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Monosaharidi
+  - glukoza in fruktoza $\mathrm{C_6H_{12}O_6}$, izomera
+  - skupine $\mathrm{{-}OH}$: topni, sladki
+  - glukoza reducira Fehlingov reagent
+- Glikozidna vez
+  - kondenzacija, odcepi se voda
+  - saharoza $180 + 180 - 18 = 342\,\mathrm{g/mol}$
+  - škrob, glikogen, celuloza
+  - hidroliza je obratna reakcija
+- Trigliceridi
+  - estri glicerola in treh maščobnih kislin
+  - nasičene trdne, nenasičene tekoče
+  - niso polimeri; z $\mathrm{NaOH}$ milo
+- Peptidna vez
+  - $\mathrm{{-}CO{-}NH{-}}$ med aminokislinama
+  - beljakovine vsebujejo tudi N (in S)
+  - napaka: pozabiti odšteti vodo
+- Ravni zgradbe
+  - primarna: zaporedje aminokislin
+  - sekundarna, terciarna, kvaterna: oblika
+- Denaturacija
+  - toplota, kislina, težke kovine
+  - peptidne vezi ostanejo
+- Energija hrane
+  - ogljikovi hidrati, beljakovine $17\,\mathrm{kJ/g}$
+  - maščobe $37\,\mathrm{kJ/g}$: malo kisika
+  - $m = \dfrac{E}{e}$

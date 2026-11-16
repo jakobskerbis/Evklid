@@ -5,7 +5,7 @@
 // 2) v pravem brskalniku (Playwright WebKit iPad, ležeče in pokončno, ter Chromium tablica, če sta
 //    nameščena): menjava sl → sr-Latn → ar (RTL) → de → sl in prvo nalaganje v jeziku naprave; prevodi
 //    zamujajo (počasna povezava), stran se mora vseeno izrisati v celoti (ikone, obrazec, brez napak).
-import test from "node:test";
+import test, { before } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import http from "node:http";
@@ -51,14 +51,17 @@ test("every page starts its modules through zagon.js, and the listed modules exi
   assert.match(i18n, /export const ready = /);
 });
 
-test("main page asks the browser to fetch all first-load modules at once (Link: modulepreload)", async () => {
+// En sam način vnaprejšnjega nalaganja: <link rel="modulepreload"> v vstopni strani (server/vstopna-stran.js),
+// brez dvojnika v glavi Link (PR #481 + #472).
+test("main page asks the browser to fetch all first-load modules at once (modulepreload)", async () => {
   const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, warn() {}, info() {} } });
   const server = app.listen(0);
   try {
     const res = await fetch(`http://127.0.0.1:${server.address().port}/`);
-    const links = (res.headers.get("link") || "").split(", ");
-    for (const u of ["/zagon.js", "/app.js", "/i18n.js", "/i18n/sl.js", "/dropdown.js", "/appearance.js"]) assert.ok(links.includes(`<${u}>; rel=modulepreload`), u);
-    assert.ok(!links.some((l) => l.includes("/vendor/") || l.includes("/theme.js")), "klasične skripte niso moduli");
+    const html = await res.text();
+    for (const u of ["/zagon.js", "/app.js", "/i18n.js", "/i18n/sl.js", "/dropdown.js", "/appearance.js"]) assert.ok(html.includes(`<link rel="modulepreload" href="${u}">`), u);
+    assert.ok(!/modulepreload" href="[^"]*(\/vendor\/|\/theme\.js)/.test(html), "klasične skripte niso moduli");
+    assert.ok(!/modulepreload/.test(res.headers.get("link") || ""), "samo en način (HTML), ne še glava Link");
   } finally {
     server.close();
   }
@@ -77,8 +80,13 @@ async function launch(kind) {
     return null;
   }
 }
-const webkit = await launch("webkit");
-const chromium = await launch("chromium");
+// Brskalnika se zaženeta v before(): vsi testi se registrirajo sinhrono (sicer jih --test-force-exit izpusti).
+let webkit = null;
+let chromium = null;
+before(async () => {
+  webkit = await launch("webkit");
+  chromium = await launch("chromium");
+});
 
 async function withApp(fn) {
   const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, warn() {}, info() {} } });
@@ -105,8 +113,9 @@ const DEVICES = [
   ["chromium", "Galaxy Tab S4"],
 ];
 for (const [kind, dev] of DEVICES) {
-  const browser = kind === "webkit" ? webkit : chromium;
-  test(`language switch reloads fully: ${kind} ${dev}`, { skip: browser ? false : `Playwright ${kind} ni nameščen` }, async () => {
+  test(`language switch reloads fully: ${kind} ${dev}`, async (t) => {
+    const browser = kind === "webkit" ? webkit : chromium;
+    if (!browser) return t.skip(`Playwright ${kind} ni nameščen`);
     await withApp(async (base) => {
       // Prvo nalaganje v jeziku naprave (nemščina), prevodi zamujajo 800 ms.
       const ctx = await browser.newContext({ ...pw.devices[dev], locale: "de-DE", serviceWorkers: "block" });
@@ -151,8 +160,10 @@ function serveFixtures() {
   });
   return new Promise((ok) => server.listen(0, "127.0.0.1", () => ok(server)));
 }
-for (const [kind, browser] of [["webkit", webkit], ["chromium", chromium]]) {
-  test(`zagon.js: a failing module does not stop the next ones (${kind})`, { skip: browser ? false : `Playwright ${kind} ni nameščen` }, async () => {
+for (const kind of ["webkit", "chromium"]) {
+  test(`zagon.js: a failing module does not stop the next ones (${kind})`, async (t) => {
+    const browser = kind === "webkit" ? webkit : chromium;
+    if (!browser) return t.skip(`Playwright ${kind} ni nameščen`);
     const server = await serveFixtures();
     const ctx = await browser.newContext({ locale: "en-US", timezoneId: "America/New_York" });
     try {

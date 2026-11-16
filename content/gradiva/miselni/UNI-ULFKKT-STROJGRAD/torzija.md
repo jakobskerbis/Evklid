@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Strig
+  - $\tau = G\gamma$, jeklo $G = 80\,\mathrm{GPa}$
+  - $\gamma = \rho\varphi/L$, kot v radianih
+- Razporeditev napetosti
+  - $\tau = T\rho/J$, na osi nič
+  - pazi: $\tau = T/A$ ne velja
+  - krhka snov poči pod $45^\circ$ zaradi natega
+- Polarni vztrajnostni moment
+  - krog $J = \pi d^4/32$, enota $\mathrm{mm^4}$
+  - cev $J = \pi(D^4 - d^4)/32$
+  - $J = 2I$, ne zamenjaj z $I$
+- Največja napetost
+  - $\tau_{\max} = \dfrac{16T}{\pi d^3} = T/W_\mathrm{p}$
+  - $d$ je premer, ne polmer
+- Kot zasuka
+  - $\varphi = \dfrac{TL}{GJ}$, togost $GJ$
+  - v stopinje s $180^\circ/\pi$
+- Dimenzioniranje
+  - $\tau_{\max} \le \tau_\mathrm{dop}$ in $\varphi/L \le \theta_\mathrm{dop}$
+  - navor iz moči: $T = \dfrac{P}{2\pi n}$
+  - $\tau_{\max} \propto 1/d^3$, $\varphi \propto 1/d^4$
+- Votla gred
+  - sredica nosi malo, prispeva malo k $J$
+  - pri enaki masi prenese večji navor
+- Obojestransko vpeta gred
+  - $T_A = \dfrac{Tb}{a+b}$, $T_B = \dfrac{Ta}{a+b}$

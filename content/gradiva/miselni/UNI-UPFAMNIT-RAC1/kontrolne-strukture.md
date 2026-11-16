@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pogoj
+  - logični izraz: `true` ali `false`
+  - primerjava `==`, ne prirejanje `=`
+- Pogojni stavek
+  - `if` izbere blok, `else` je neobvezen
+  - veriga `else if`: le prva resnična veja
+  - ožje pogoje postavi pred širše
+- Zanka while
+  - pogoj se preveri pred vsakim obhodom
+  - telo mora spreminjati spremenljivko iz pogoja
+  - $100 \to 70 \to 40 \to 10 \to -20$: preskoči mejo
+- Zanka for
+  - glava: začetek, pogoj, sprememba števca
+  - število obhodov $= \frac{\text{zadnja} - \text{prva}}{\text{korak}} + 1$
+  - `<` ali `<=`: napaka za ena
+- Gnezdenje
+  - izbira v zanki: `while` z `if` v telesu
+  - primer: baterija zdrži $8 + 4 = 12$ ur
+- Trije gradniki
+  - zaporedje, izbira, ponavljanje
+  - izrek Böhma in Jacopinija: zadoščajo za vsak algoritem
+- Strukturna dekompozicija
+  - nalogo razčleni od zgoraj navzdol
+  - konec, ko je vsak del en gradnik

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ekološki dejavniki
+  - abiotski: temperatura, svetloba, kisik, pH, slanost
+  - biotski: plenilci, zajedavci, tekmeci, hrana
+  - napaka: pH kože ni biotski dejavnik
+- Krivulja strpnosti
+  - minimum, optimum, maksimum
+  - E. coli: $8$, $37$ in $48\,^\circ\mathrm{C}$
+  - optimum ni nujno na sredini
+- Območje strpnosti
+  - širina $\Delta T = T_{\max} - T_{\min}$
+  - zunaj območja ni rasti, nato propad
+- Omejitveni dejavnik
+  - najbližje robu območja
+  - tetanus: kisik; sol pri mesu
+- Generalisti in specialisti
+  - generalist: Listeria, od $0$ do $45\,^\circ\mathrm{C}$
+  - specialist: gonokok, uš, postrv
+  - specialisti so kazalci onesnaženosti
+- Prilagoditve
+  - dedne, nastanejo z naravnim izborom
+  - aklimatizacija: alpinist dobi več rdečih krvničk
+- Ekološka niša
+  - skupek vseh območij strpnosti in odnosov
+  - uresničena niša je ožja od temeljne

@@ -177,7 +177,7 @@ $\tau = RC$, $U_C(t) = U_0\,e^{-t/\tau}$
 :::premisli
 Kolikšna je napetost na kondenzatorju po $3{,}0\,\mathrm{s}$?
 ---
-$U_C = 12\,\mathrm{V} \cdot e^{-1{,}36} \approx 12\,\mathrm{V} \cdot 0{,}256 \approx 3{,}1\,\mathrm{V}$. Ker je $3{,}0\,\mathrm{s}$ nekaj več kot $\tau$, je ostalo nekaj manj kot $37\,\%$ začetne napetosti.
+$U_C = 12\,\mathrm{V} \cdot e^{-1{,}36} \approx 12\,\mathrm{V} \cdot 0{,}256 \approx 3{,}1\,\mathrm{V}$. Ker je $3{,}0\,\mathrm{s}$ nekaj več kot $\tau$, je ostalo manj kot $37\,\%$ začetne napetosti, okoli $26\,\%$.
 :::
 
 ## Pogoste napake
@@ -239,17 +239,39 @@ Izpelji diferencialno enačbo za polnjenje praznega kondenzatorja s kapaciteto $
 
 Vezje iz Primera 2 (vozlišče $A$ zgoraj, $B$ spodaj):
 
-```
-  A o-------------o-------------o
-    |             |             |
-   [R1]          [R3]          [R2]
-    |             |             |
-   (+)            |            (+)
-   U1             |            U2
-   (-)            |            (-)
-    |             |             |
-  B o-------------o-------------o
-```
+:::risba skica
+opis: Vezje iz Primera 2 s tremi navpičnimi vejami med vozliščema A (zgornja žica) in B (spodnja žica). Leva veja: upor R₁ = 2,0 Ω in pod njim vir U₁ = 12 V, pozitivni pol (daljša plošča) je obrnjen proti A. Srednja veja: samo upor R₃ = 6,0 Ω. Desna veja: upor R₂ = 4,0 Ω in pod njim vir U₂ = 6,0 V, pozitivni pol proti A. Izbrane smeri tokov: I₁ in I₂ navzgor proti A, I₃ skozi srednji upor navzdol.
+območje: -3,5; -1,5 .. 23; 11,5
+črta: 2; 10 -> 18; 10
+črta: 2; 0 -> 18; 0
+črta: 2; 10 -> 2; 8
+črta: 2; 6 -> 2; 3,5
+črta: 2; 2,5 -> 2; 0
+črta: 10; 10 -> 10; 6
+črta: 10; 4 -> 10; 0
+črta: 18; 10 -> 18; 8
+črta: 18; 6 -> 18; 3,5
+črta: 18; 2,5 -> 18; 0
+pravokotnik: 1,4; 6 .. 2,6; 8 | ozadje
+pravokotnik: 9,4; 4 .. 10,6; 6 | ozadje
+pravokotnik: 17,4; 6 .. 18,6; 8 | ozadje
+črta: 1; 3,5 -> 3; 3,5 | debelo
+črta: 1,5; 2,5 -> 2,5; 2,5 | debelo
+črta: 17; 3,5 -> 19; 3,5 | debelo
+črta: 17,5; 2,5 -> 18,5; 2,5 | debelo
+napis: 1,2; 7 | R_1 | levo
+napis: 10,8; 5 | R_3 | desno
+napis: 18,8; 7 | R_2 | desno
+napis: 0,8; 3 | U_1 | levo
+napis: 19,2; 3 | U_2 | desno
+napis: 3,2; 3,9 | + | desno
+napis: 16,8; 3,9 | + | levo
+puščica: 3,2; 4,6 -> 3,2; 6,6 | I_1 | desno
+puščica: 11,6; 9,2 -> 11,6; 7,2 | I_3 | desno
+puščica: 16,8; 4,6 -> 16,8; 6,6 | I_2 | levo
+točka: 10; 10 | A | nad
+točka: 10; 0 | B | pod
+:::
 
 Vsaka navpična črta je veja z enim tokom. Zanka »levo + sredina« vsebuje $U_1$, $R_1$ in $R_3$, zanka »desno + sredina« pa $U_2$, $R_2$ in $R_3$.
 
@@ -269,7 +291,7 @@ Tangenta na krivuljo $U_C(t)$ v izhodišču seka asimptoto ravno pri $t = \tau$:
 
 **Celična membrana kot RC vezje.** Lipidni dvosloj je tanek izolator med prevodnima raztopinama, torej kondenzator s specifično kapaciteto okoli $1\,\mu\mathrm{F/cm^2}$. Ionski kanali so upori vzporedno z njim (mirujoča membrana: reda $1\,\mathrm{k}\Omega\,\mathrm{cm^2}$), zato je $\tau \approx 1\,\mathrm{ms}$. Gonilne napetosti so Nernstovi potenciali, mirovni potencial pa dobimo s Kirchhoffovimi zakoni za veje s kanali za $\mathrm{K^+}$, $\mathrm{Na^+}$ in $\mathrm{Cl^-}$.
 
-**Konduktometrija.** Prevodnost raztopine je sorazmerna s koncentracijo in gibljivostjo ionov. Pri titraciji močne kisline z bazo najprej pada (hitri $\mathrm{H_3O^+}$ zamenjajo počasnejši kationi), za ekvivalentno točko spet narašča. Merilnik uporablja izmenično napetost, da se elektrodi ne polarizirata.
+**Konduktometrija.** Prevodnost raztopine je sorazmerna s koncentracijo in gibljivostjo ionov. Pri titraciji močne kisline z bazo najprej pada (hitre ione $\mathrm{H_3O^+}$ zamenjajo počasnejši kationi baze), za ekvivalentno točko spet narašča. Merilnik uporablja izmenično napetost, da se elektrodi ne polarizirata.
 
 **Merilni instrumenti.** Voltmeter z notranjim uporom $10\,\mathrm{M}\Omega$ na uporu $1\,\mathrm{M}\Omega$ tvori vzporedno vezavo z $0{,}91\,\mathrm{M}\Omega$ in meritev popači; pri pH-elektrodi z uporom stekla reda $100\,\mathrm{M}\Omega$ zato potrebujemo merilnik z vhodnim uporom nad $10^{12}\,\Omega$.
 
@@ -339,8 +361,10 @@ Q | električni naboj | | C | na kondenzatorju Q = CU
 t | čas | | s
 n | število nosilcev naboja na enoto prostornine | | m^{-3}
 e_0 | osnovni naboj | | C | 1,602 · 10⁻¹⁹ C
-v | hitrost potovanja nosilcev naboja | v = \frac{I}{n e_0 S} | m/s | zelo majhna, reda mm/s
+v | hitrost potovanja nosilcev naboja | v = \frac{I}{n e_0 S} | m/s | zelo majhna, reda 0,1 mm/s
 S | presek vodnika | | m^2
+j | gostota električnega toka | j = \frac{I}{S} | A/m^2
+\sigma | specifična prevodnost snovi | \sigma = \frac{1}{\zeta} | 1/(Ω m)
 U | električna napetost | U = RI | V
 U_1, U_2 | gonilni napetosti virov v vezju | | V
 U_C | napetost na kondenzatorju | U_C = \frac{Q}{C} | V | pri polnjenju $U_C = U_g(1 - e^{-t/\tau})$

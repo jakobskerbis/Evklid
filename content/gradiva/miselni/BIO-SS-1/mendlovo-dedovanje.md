@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ni mešanja
+  - F₁ vijolična, v F₂ se bela vrne
+  - Mendel: $705$ vijoličnih, $224$ belih
+- Dominantno in recesivno
+  - $Vv$ je vijoličen, $v$ se pokaže le kot $vv$
+  - dominanten ne pomeni pogostejši
+- Zakon cepitve
+  - gameta dobi en alel vsakega gena
+  - napaka: gameta $Aa$
+- Punnettov kvadrat
+  - $p = \frac{k}{m}$, pričakovano $E = p \cdot N$
+  - $Aa \times Aa$: genotipi $1 : 2 : 1$, fenotipi $3 : 1$
+  - testno križanje $Aa \times aa$ da $1 : 1$
+- Dihibridno križanje
+  - $AaBb$ da gamete $AB$, $Ab$, $aB$, $ab$
+  - $p = p_1 \cdot p_2$, razmerje $9 : 3 : 3 : 1$
+- Nepopolna dominanca
+  - nočna lepotica: $Rr$ rožnata
+  - $Rr \times Rr$ da $1 : 2 : 1$
+- Vsak potomec znova
+  - pri $Ss \times Ss$ za vsakega otroka $\frac{1}{4}$
+  - razmerje ni urnik

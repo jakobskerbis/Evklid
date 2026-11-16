@@ -202,7 +202,7 @@ Vsa izgubljena potencialna energija se je torej pojavila kot $\frac{m v^2}{2}$. 
 ~ Obe sta odvisni tudi od mase: težje kladivo pri isti hitrosti ali višini opravi več dela.
 > $W_k = \dfrac{m v^2}{2}$ vsebuje maso in hitrost, $W_p = m g h$ pa maso, $g$ in višino.
 
-? Žebelj se zabije globlje, če kladivo zamahneš dvakrat hitreje. Zakaj se kinetična energija kladiva pri tem početveri?
+? Žebelj se zabije globlje, če s kladivom zamahneš dvakrat hitreje. Zakaj se kinetična energija kladiva pri tem početveri?
 - Se ne početveri, ampak le podvoji.
 ~ To bi veljalo, če hitrost v formuli ne bi bila kvadrirana.
 + Ker je hitrost v formuli kvadrirana: $2^2 = 4$.

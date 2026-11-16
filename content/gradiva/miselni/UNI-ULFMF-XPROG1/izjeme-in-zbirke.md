@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Izjema
+  - objekt, ki opisuje napako med izvajanjem
+  - potuje h klicočim metodam do `catch`
+  - neujeta: konec programa, sled klicev
+- Blok try–catch–finally
+  - izjema preskoči preostanek bloka `try`
+  - `catch` ujame tip in podrazrede
+  - `finally` se izvede vedno
+- Metanje izjem
+  - `throw new IllegalArgumentException(...)` prekine metodo
+  - preverjene: `catch` ali `throws` (npr. `IOException`)
+  - nepreverjene: podrazredi `RuntimeException`
+- Seznam ArrayList
+  - `add`, `add(i, x)`, `get(i)`, `size()`
+  - pazi: `remove(1)` briše indeks, ne vrednosti
+  - `add(0, x)` je $O(n)$, `get(i)` je $O(1)$
+- Slovar HashMap
+  - pari ključ → vrednost, ključ enoličen
+  - `put` prepiše, `get` vrne `null`
+  - štetje: `put(k, getOrDefault(k, 0) + 1)`
+- Generiki
+  - `List<String>`: tipi preverjeni ob prevajanju
+  - `List<Integer>`, ne `List<int>`
+  - lasten razred `Par<A, B>`

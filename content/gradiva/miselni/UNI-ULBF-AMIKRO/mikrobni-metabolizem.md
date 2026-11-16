@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tri vprašanja
+  - vir energije, darovalec, končni sprejemnik
+  - vir ogljika: avtotrof $\mathrm{CO_2}$, heterotrof organsko
+- Aerobno dihanje
+  - $\mathrm{NADH}$, veriga, protoni, ATP-sintaza
+  - sprejemnik $\mathrm{O_2}$, do $38$ ATP na glukozo
+- Fermentacija
+  - brez verige in zunanjega sprejemnika
+  - $2$ ATP na glukozo, na ravni substrata
+  - $\mathrm{NADH}$ odda elektrone piruvatu, obnovi se $\mathrm{NAD^+}$
+- Anaerobno dihanje
+  - ista veriga, sprejemnik $\mathrm{NO_3^-}$, $\mathrm{SO_4^{2-}}$, $\mathrm{Fe^{3+}}$
+  - pazi: anaerobno ni vedno fermentacija
+- Redoks lestvica
+  - $\Delta G_0' = -n\,F\,\Delta E_0'$, enota $\mathrm{kJ/mol}$
+  - $\Delta E_0'$: sprejemnik minus darovalec
+  - $\mathrm{NADH}$ na $\mathrm{O_2}$: $1{,}14\,\mathrm{V}$; $-220\,\mathrm{kJ/mol}$
+- Kemolitotrofija
+  - darovalec $\mathrm{H_2}$, $\mathrm{H_2S}$, $\mathrm{NH_3}$, $\mathrm{Fe^{2+}}$
+  - ogljik večinoma iz $\mathrm{CO_2}$, ne iz kamnin
+- Fotosinteza
+  - oksigena: darovalec voda, nastaja $\mathrm{O_2}$
+  - anoksigena: darovalec $\mathrm{H_2S}$, brez kisika

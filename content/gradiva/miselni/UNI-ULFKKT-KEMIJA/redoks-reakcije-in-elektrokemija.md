@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Oksidacija in redukcija
+  - oksidacija odda $\mathrm{e^-}$, redukcija jih sprejme
+  - oksidant se reducira, reducent oksidira
+- Oksidacijsko število
+  - vsota je enaka naboju delca
+  - $\mathrm{SO_4^{2-}}$: $x(\mathrm{S}) = +6$
+  - izjeme: peroksidi $-1$, hidridi $-1$
+- Metoda polreakcij
+  - O z $\mathrm{H_2O}$, H z $\mathrm{H^+}$, naboj z $\mathrm{e^-}$
+  - v bazičnem dodaj $\mathrm{OH^-}$ na obe strani
+  - napaka: pozabljen preizkus naboja
+- Galvanski člen
+  - anoda: oksidacija, pol $-$; katoda: redukcija, pol $+$
+  - solni most ohranja nevtralnost raztopin
+  - $\mathrm{Zn\,|\,Zn^{2+}\,||\,Cu^{2+}\,|\,Cu}$
+- Standardni potencial
+  - polreakcija kot redukcija, vodikova elektroda $0\,\mathrm{V}$
+  - večji $E^\circ$: močnejši oksidant
+  - $E^\circ_\text{člena} = E^\circ_\text{katode} - E^\circ_\text{anode}$
+- Spontanost
+  - $\Delta_\mathrm{r}G^\circ = -zFE^\circ$, spontano pri $E > 0$
+  - $E^\circ$ ne množimo s koeficienti
+- Nernstova enačba
+  - $E = E^\circ - \frac{0{,}0592\,\mathrm{V}}{z}\log Q$
+  - ravnotežje: $\log K = zE^\circ/0{,}0592\,\mathrm{V}$
+- Elektroliza
+  - $m = ItM/(zF)$, $F = 96\,485\,\mathrm{C/mol}$
+  - napaka: čas v minutah namesto v sekundah

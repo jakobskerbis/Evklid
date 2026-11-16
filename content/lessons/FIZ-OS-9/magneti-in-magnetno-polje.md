@@ -13,7 +13,7 @@ Na videz sta to dve povsem različni stvari. V resnici se v obeh zgodi isto: mag
 
 ## Razlaga
 
-**Dva pola.** Vzemi paličasti magnet in ga obesi na nitko, da se lahko prosto vrti. Vedno se umiri tako, da en konec kaže proti severu. Ta konec imenujemo **severni pol** magneta, drugega **južni pol**. Na šolskih magnetih je severni pol pogosto pobarvan rdeče in označen s črko S, južni pa z J. Pola sta na koncih, tam magnet najmočneje privlači.
+**Dva pola.** Vzemi paličasti magnet in ga obesi na nitko, da se lahko prosto vrti. Vedno se umiri tako, da en konec kaže proti severu. Ta konec imenujemo **severni pol** magneta, drugega **južni pol**. Na šolskih magnetih je severni pol pogosto pobarvan rdeče in označen s črko N (angleško *north*), južni pa z S (*south*). Pola sta na koncih, tam magnet najmočneje privlači.
 
 Ko dva magneta približaš, se zgodi eno od dvojega:
 
@@ -27,13 +27,13 @@ Kratko: **istoimenska pola se odbijata, raznoimenska se privlačita.** Podobno j
 
 **Kaj magnet privlači.** Magnet privlači železo, jeklo, nikelj in kobalt. Takim snovem pravimo **feromagnetne snovi**. Aluminija, bakra, lesa, plastike ali papirja ne privlači. Papir mu tudi ne preprečuje delovanja: sila deluje skozenj, zato razglednica ostane na hladilniku.
 
-**Slika polja.** Na paličasti magnet položi list papirja in nanj nasuj železne opilke. Ko po papirju rahlo potrkaš, se opilke uredijo v črte. Opis slike:
+**Slika polja.** Na paličasti magnet položi list papirja in nanj nasuj železne opilke. Ko po papirju rahlo potrkaš, se opilki uredijo v črte. Opis slike:
 
 - črte izhajajo iz severnega pola, se v lokih ukrivijo okoli magneta in vstopijo v južni pol;
 - ob obeh polih so črte zelo goste, ob sredini magneta in daleč stran redke;
 - nobeni dve črti se ne sekata.
 
-Prostoru okoli magneta, kjer magnet deluje s silo na železo ali na drug magnet, rečemo **magnetno polje**. Črte, ki jih pokažejo opilke, so **magnetne silnice**. Kjer so silnice gostejše, je polje močnejše. Zunaj magneta silnice po dogovoru kažejo od severnega proti južnemu polu.
+Prostoru okoli magneta, kjer magnet deluje s silo na železo ali na drug magnet, rečemo **magnetno polje**. Črte, ki jih pokažejo opilki, so **magnetne silnice**. Kjer so silnice gostejše, je polje močnejše. Zunaj magneta silnice po dogovoru kažejo od severnega proti južnemu polu.
 
 **Kompas.** Igla kompasa je majhen, lahek magnet, ki se lahko vrti. V magnetnem polju se postavi vzdolž silnice. Njen severni konec kaže v smer silnice. Zato s kompasom »rišeš« polje: premikaš ga okoli magneta in si zapisuješ, kam kaže igla.
 
@@ -123,7 +123,7 @@ $\alpha_\mathrm{k} = \alpha_\mathrm{z} - \delta$
 
 1. Igla kaže $5^\circ$ vzhodneje od geografskega severa, zato je smer proti vrhu od igle oddaljena za $5^\circ$ manj.
 2. $\alpha_\mathrm{k} = 62 - 5 = 57$, torej $57^\circ$.
-3. Preverimo smiselnost: razlika je majhna, a na $2\,\mathrm{km}$ poti bi te že zanesla za približno $170\,\mathrm{m}$ vstran.
+3. Preverimo smiselnost: razlika je majhna, a na $2\,\mathrm{km}$ poti bi te že zanesla za približno $175\,\mathrm{m}$ vstran.
 4. Odgovor: na kompasu nastaviš $57^\circ$.
 
 ### Primer 4: zdaj ti

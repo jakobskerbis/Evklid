@@ -7,7 +7,7 @@ avtor: AI
 
 V trgovini kupiš tri enake zvezke in en svinčnik za 1,20 €. Plačaš 7,20 €. Koliko stane en zvezek? Verjetno boš to izračunal kar na pamet: od 7,20 € odšteješ svinčnik in ostanek razdeliš na tri dele, torej zvezek stane 2 €. Ko pa so podatki bolj prepleteni (starosti, ki se s časom spreminjajo, stranice, ki so odvisne ena od druge), ugibanje ne gre več.
 
-Linearne enačbe že znaš reševati. V tej lekciji se naučiš drugega, pogosto težjega dela: kako iz besedila **sestaviš** enačbo. To je most med matematiko in resničnim svetom. Inženirji, ekonomisti in fiziki vsak dan prevajajo opise v enačbe.
+Linearne enačbe že znaš reševati. Zdaj se naučiš drugega, pogosto težjega dela: kako iz besedila **sestaviš** enačbo. To je most med matematiko in resničnim svetom. Inženirji, ekonomisti in fiziki vsak dan prevajajo opise v enačbe.
 
 ## Razlaga
 
@@ -174,11 +174,30 @@ $3x = 69$, $x = 23$. Števila so $23$, $24$ in $25$. Preizkus: $23 + 24 + 25 = 7
 
 Količine si lahko predstaviš s **trakovi** enake dolžine. En trak pomeni neznanko $x$.
 
-```
-Ana:    [ x ]
-Bor:    [ x ][ x ][ x ]
-Skupaj: [ x ][ x ][ x ][ x ] = 36
-```
+:::risba skica
+opis: Trakovi enake dolžine, vsak pomeni x. Ana ima en trak, Bor tri trakove, skupaj so štirje trakovi, ki merijo 36.
+območje: 0; 0 .. 9; 3,3
+napis: 0,1; 2,7 | Ana: | desno
+napis: 0,1; 1,65 | Bor: | desno
+napis: 0,1; 0,6 | Skupaj: | desno
+pravokotnik: 2; 2,35 .. 3; 3,05
+pravokotnik: 2; 1,3 .. 3; 2 | oranžna
+pravokotnik: 3; 1,3 .. 4; 2 | oranžna
+pravokotnik: 4; 1,3 .. 5; 2 | oranžna
+pravokotnik: 2; 0,25 .. 3; 0,95
+pravokotnik: 3; 0,25 .. 4; 0,95 | oranžna
+pravokotnik: 4; 0,25 .. 5; 0,95 | oranžna
+pravokotnik: 5; 0,25 .. 6; 0,95 | oranžna
+napis: 2,5; 2,7 | x
+napis: 2,5; 1,65 | x
+napis: 3,5; 1,65 | x
+napis: 4,5; 1,65 | x
+napis: 2,5; 0,6 | x
+napis: 3,5; 0,6 | x
+napis: 4,5; 0,6 | x
+napis: 5,5; 0,6 | x
+napis: 6,1; 0,6 | = 36 | desno | debelo
+:::
 
 Bor ima trikrat toliko kot Ana, zato ima tri trakove. Skupaj so štirje trakovi, ki merijo $36$. En trak je torej $36 : 4 = 9$. To je natanko enačba $4x = 36$.
 
@@ -188,7 +207,7 @@ Pri pravokotniku iz primera 2 si nariši obe stranici kot trakova. Dolžina je t
 
 Taksi zaračuna 3 € ob vstopu in 1,20 € za vsak prevožen kilometer. Za vožnjo si plačal 15 €. Koliko kilometrov si prevozil?
 
-Razmišljaj kot pri računu v trgovini. Del zneska je stalen (3 €), del pa je odvisen od kilometrov. Če s $x$ označiš število kilometrov, je cena
+Razmišljaj kot pri računu v trgovini. Del zneska je stalen (3 €), del pa je odvisen od kilometrov. Če z $x$ označiš število kilometrov, je cena
 
 $$3 + 1{,}2x = 15$$
 

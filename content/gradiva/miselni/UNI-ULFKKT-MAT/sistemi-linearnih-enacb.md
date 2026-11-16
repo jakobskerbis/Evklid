@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zapis sistema
+  - $A\vec{x} = \vec{b}$, razširjena matrika $[A \mid \vec{b}]$
+  - homogen: $\vec{b} = \vec{0}$, vedno rešitev $\vec{x} = \vec{0}$
+- Vrstične operacije
+  - zamenjava, množenje z $\lambda \neq 0$, prištevanje večkratnika
+  - množice rešitev ne spremenijo
+  - napaka: množenje vrstice z $0$
+- Gaussova eliminacija
+  - stopničasta oblika, pod pivoti ničle
+  - obratno vstavljanje od spodaj navzgor
+  - Gauss-Jordan: pivoti $1$, nad njimi ničle
+- Rang
+  - število pivotov v stopničasti obliki
+  - $\operatorname{rang} A \le \min(m, n)$
+- Kronecker-Capelli
+  - rešljiv $\iff \operatorname{rang}[A \mid \vec{b}] = \operatorname{rang} A$
+  - $r = n$: ena rešitev; $r < n$: $n - r$ parametrov
+  - vrstica $[0 \; 0 \; 0 \mid c]$, $c \neq 0$: protislovje
+- Zgradba rešitev
+  - $\vec{x} = \vec{x}_p + \vec{x}_h$
+  - vezane neznanke v stolpcih s pivoti, ostale proste
+- Kvadratni sistem
+  - $\det A \neq 0$: natanko ena rešitev $A^{-1}\vec{b}$
+  - Cramer: $x_i = \frac{\det A_i}{\det A}$
+- Parametrični sistem
+  - primer $a = 2$ obravnavaj posebej
+  - $a = 2$, $b = 3$: rešitve $(-3 + 7t,\ 2 - 3t,\ t)$

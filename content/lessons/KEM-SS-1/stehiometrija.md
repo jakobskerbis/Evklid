@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že znaš uravnotežiti kemijsko enačbo in izračunati množino snovi iz mase: $n = \dfrac{m}{M}$. Znaš tudi, da koeficienti v enačbi povedo, v kakšnem razmerju delci reagirajo.
+Že znaš urediti kemijsko enačbo in izračunati množino snovi iz mase: $n = \dfrac{m}{M}$. Znaš tudi, da koeficienti v enačbi povedo, v kakšnem razmerju delci reagirajo.
 
 Stehiometrija združi vse troje in odgovori na praktična vprašanja:
 
@@ -17,7 +17,7 @@ Brez teh izračunov ne gre v laboratoriju, v farmaciji ali v industriji gnojil. 
 
 ## Razlaga
 
-**1. Kaj pove enačba.** Koeficienti v uravnoteženi enačbi povedo razmerje **množin** (ne mas!). Za enačbo
+**1. Kaj pove enačba.** Koeficienti v urejeni enačbi povedo razmerje **množin** (ne mas!). Za enačbo
 
 $$2\,\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\,\mathrm{H_2O}$$
 
@@ -35,7 +35,7 @@ $$\frac{n(\mathrm{B})}{n(\mathrm{A})} = \frac{\nu(\mathrm{B})}{\nu(\mathrm{A})}$
 
 **3. Postopek računanja iz enačbe** (vedno enak):
 
-1. Zapiši **uravnoteženo** enačbo.
+1. Zapiši **urejeno** enačbo.
 2. Podano maso pretvori v množino: $n = m / M$.
 3. Z razmerjem koeficientov izračunaj množino iskane snovi.
 4. Množino pretvori v maso: $m = n \cdot M$.
@@ -66,7 +66,7 @@ Koliko gramov vode nastane pri popolnem zgorevanju $4{,}0\,\text{g}$ vodika?
 
 $$2\,\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\,\mathrm{H_2O}$$
 
-**Podatki:** $m(\mathrm{H_2}) = 4{,}0\,\text{g}$, enačba $2\,\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\,\mathrm{H_2O}$, kisika je dovolj (zgorevanje je popolno)
+**Podatki:** $m(\mathrm{H_2}) = 4{,}0\,\text{g}$, enačba $2\,\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\,\mathrm{H_2O}$, kisika je dovolj (zgorevanje je popolno); $A_\mathrm{r}(\mathrm{H}) = 1$, $A_\mathrm{r}(\mathrm{O}) = 16$
 **Iščemo:** maso vode $m(\mathrm{H_2O})$
 
 :::formula
@@ -79,7 +79,7 @@ $m = n \cdot M$
 
 **Rešitev:**
 
-1. Enačba je že uravnotežena. To preverimo najprej, ker brez tega razmerje koeficientov ne bi bilo pravilno.
+1. Enačba je že urejena. To preverimo najprej, ker brez tega razmerje koeficientov ne bi bilo pravilno.
 2. Maso vodika pretvorimo v množino, ker enačba govori o množinah: $M(\mathrm{H_2}) = 2\,\text{g/mol}$, zato $n(\mathrm{H_2}) = \dfrac{4{,}0\,\text{g}}{2\,\text{g/mol}} = 2{,}0\,\text{mol}$.
 3. Razmerje koeficientov $\mathrm{H_2} : \mathrm{H_2O} = 2 : 2$, zato je $n(\mathrm{H_2O}) = 2{,}0\,\text{mol}$.
 4. Množino pretvorimo v maso, ker nas zanima masa: $M(\mathrm{H_2O}) = 2 \cdot 1 + 16 = 18\,\text{g/mol}$, zato $m(\mathrm{H_2O}) = 2{,}0\,\text{mol} \cdot 18\,\text{g/mol} = 36\,\text{g}$.
@@ -93,7 +93,7 @@ $$\mathrm{CaCO_3} \rightarrow \mathrm{CaO} + \mathrm{CO_2}$$
 
 Koliko gramov žganega apna ($\mathrm{CaO}$) in koliko gramov $\mathrm{CO_2}$ nastane iz $50\,\text{g}$ $\mathrm{CaCO_3}$?
 
-**Podatki:** $m(\mathrm{CaCO_3}) = 50\,\text{g}$, enačba $\mathrm{CaCO_3} \rightarrow \mathrm{CaO} + \mathrm{CO_2}$
+**Podatki:** $m(\mathrm{CaCO_3}) = 50\,\text{g}$, enačba $\mathrm{CaCO_3} \rightarrow \mathrm{CaO} + \mathrm{CO_2}$; $A_\mathrm{r}(\mathrm{Ca}) = 40$, $A_\mathrm{r}(\mathrm{C}) = 12$, $A_\mathrm{r}(\mathrm{O}) = 16$
 **Iščemo:** $m(\mathrm{CaO})$ in $m(\mathrm{CO_2})$
 
 :::formula
@@ -121,7 +121,7 @@ $$2\,\mathrm{Mg} + \mathrm{O_2} \rightarrow 2\,\mathrm{MgO}$$
 
 Koliko gramov $\mathrm{MgO}$ nastane in koliko katerega reaktanta ostane?
 
-**Podatki:** $m(\mathrm{Mg}) = 12\,\text{g}$, $m(\mathrm{O_2}) = 10\,\text{g}$, enačba $2\,\mathrm{Mg} + \mathrm{O_2} \rightarrow 2\,\mathrm{MgO}$
+**Podatki:** $m(\mathrm{Mg}) = 12\,\text{g}$, $m(\mathrm{O_2}) = 10\,\text{g}$, enačba $2\,\mathrm{Mg} + \mathrm{O_2} \rightarrow 2\,\mathrm{MgO}$; $A_\mathrm{r}(\mathrm{Mg}) = 24$, $A_\mathrm{r}(\mathrm{O}) = 16$
 **Iščemo:** $m(\mathrm{MgO})$ in maso prebitnega reaktanta, ki ostane
 
 :::formula
@@ -146,7 +146,7 @@ $n(\text{ostanek}) = n(\text{začetna}) - n(\text{porabljena})$
 
 Natrij reagira s klorom v prebitku: $2\,\mathrm{Na} + \mathrm{Cl_2} \rightarrow 2\,\mathrm{NaCl}$. Koliko gramov natrijevega klorida nastane iz $4{,}6\,\text{g}$ natrija?
 
-**Podatki:** $m(\mathrm{Na}) = 4{,}6\,\text{g}$, klor je v prebitku, enačba $2\,\mathrm{Na} + \mathrm{Cl_2} \rightarrow 2\,\mathrm{NaCl}$
+**Podatki:** $m(\mathrm{Na}) = 4{,}6\,\text{g}$, klor je v prebitku, enačba $2\,\mathrm{Na} + \mathrm{Cl_2} \rightarrow 2\,\mathrm{NaCl}$; $A_\mathrm{r}(\mathrm{Na}) = 23$, $A_\mathrm{r}(\mathrm{Cl}) = 35{,}5$
 **Iščemo:** $m(\mathrm{NaCl})$
 
 :::formula
@@ -177,7 +177,7 @@ $M(\mathrm{NaCl}) = 23 + 35{,}5 = 58{,}5\,\text{g/mol}$, zato $m(\mathrm{NaCl}) 
 ## Povzetek
 
 - Koeficienti v enačbi so razmerje **množin** snovi.
-- Postopek: uravnotežena enačba, $m \to n$, razmerje koeficientov, $n \to m$.
+- Postopek: urejena enačba, $m \to n$, razmerje koeficientov, $n \to m$.
 - Omejitveni reaktant ima najmanjši količnik $n/\nu$ in določa količino produkta.
 - Prebitni reaktant se ne porabi do konca. Ostanek je začetna množina minus porabljena.
 - Preveri z ohranitvijo mase: masa reaktantov (porabljenih in ostanka) je enaka masi produktov (in ostanka).
@@ -249,7 +249,7 @@ Ker se atomi pri reakciji ne ustvarjajo in ne uničujejo, je vsota mas vseh snov
 
 ## Preveri se
 
-? Kaj povedo koeficienti v uravnoteženi kemijski enačbi?
+? Kaj povedo koeficienti v urejeni kemijski enačbi?
 - Razmerje mas snovi, ki reagirajo in nastanejo.
 ~ Koeficienti veljajo za delce oziroma mole. $2\,\text{g}$ vodika ne reagira z $1\,\text{g}$ kisika, ker imajo moli različnih snovi različne mase.
 + Razmerje množin (molov) snovi, ki reagirajo in nastanejo.

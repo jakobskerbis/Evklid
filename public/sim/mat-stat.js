@@ -67,7 +67,7 @@ export function diagram(el, { type = "stolpcni" } = {}) {
     stage: [h("div", { class: "demo-seg-wrap" }, segmented({ options: [["stolpcni", "Stolpčni"], ["figurni", "Figurni"], ["crtni", "Črtni"], ["tortni", "Tortni"]], value: type, onChange: (v) => ((type = v), draw()) })), svg],
     extra: editor,
     out,
-    tryText: "Isti podatki v štirih prikazih. Iz katerega najhitreje vidiš, kaj je najbolj priljubljeno? Iz katerega delež celote?",
+    tryText: { razmisli: "Isti podatki v štirih prikazih. Iz katerega najhitreje vidiš, kaj je najbolj priljubljeno? Iz katerega delež celote?" },
   });
   draw();
 }

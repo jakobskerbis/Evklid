@@ -4,7 +4,8 @@
     var box = document.getElementById("podari");
     if (!box || !window.fetch) return;
     fetch("/api/podari")
-      .then(function (r) { return r.ok ? r.json() : null; })
+      // Brez računov je odgovor 404: telo zavržemo, sicer brskalnik zahteve ne zaključi (stran ne doseže »networkidle«).
+      .then(function (r) { if (r.ok) return r.json(); try { r.body && r.body.cancel(); } catch (e) {} return null; })
       .then(function (s) {
         if (!s || typeof s.donated_months !== "number") return;
         var months = (s.donated_months || 0) + (s.evklid_months || 0);

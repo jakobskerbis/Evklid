@@ -45,7 +45,7 @@ Pri dopolnjevanju je ključno, da kotni trikotniki skupaj z likom natanko zapoln
 :::premisli
 Kvadrat na mreži je nagnjen, njegova oglišča pa ležijo na stranicah okvira $4 \times 4$. Sošolec trdi, da tak kvadrat zaradi poševnih stranic pokrije več kot $16$ kvadratkov. Ima prav? Zakaj?
 ---
-Ne more biti. Lik leži v celoti v okviru, zato je njegova ploščina okvir minus kotni trikotniki, torej manj kot $16$. Kotni trikotniki imajo vedno pozitivno ploščino.
+Nima prav. Lik leži v celoti v okviru, zato je njegova ploščina okvir minus kotni trikotniki, torej manj kot $16$. Kotni trikotniki imajo vedno pozitivno ploščino.
 :::
 
 **Simulacija spodaj** (»Ploščine z razrezom«): izberi paralelogram in počasi premikaj drsnik. Opazuj, da odrezani trikotnik na drugi strani zapolni natanko praznino. Nato izberi trapez in opazi, da dva enaka trapeza sestavita paralelogram, zato je trapez **polovica** tega paralelograma.
@@ -140,7 +140,7 @@ $16 - 4 \cdot 1{,}5 = 16 - 6 = 10$, torej $10\,\text{cm}^2$. Ploščina ni kvadr
 - **Štetje vseh dotaknjenih kvadratkov.** »Lik se dotika $22$ kvadratkov, torej ima ploščino $22$.« Delni kvadratki niso celi, zato je tako štetje vedno preveliko. Popravek: razreži ali dopolni, da dobiš samo cele kvadratke in polovice pravokotnikov.
 - **Enak obseg pomeni enako ploščino (ali obratno).** Pri razrezu in premiku se obseg spremeni, ploščina pa ne. Poševna ureznina B ima večji obseg kot kvadratna rana A, a enako ploščino. Popravek: ploščino in obseg vedno računaj ločeno.
 - **Pozabljena polovica.** Kotni trikotnik s katetama $5$ in $1$ vzameš kot $5$ namesto $2{,}5$. Potem odšteješ preveč in dobiš premajhno (lahko celo negativno) ploščino. Popravek: vsak kotni trikotnik je *polovica* pravokotnika.
-- **Poševna stranica kot višina.** Pri paralelogramu pomnožiš osnovnico s poševno stranico. Višina je navpična razdalja med vzporednima stranicama. Popravek: višino preberi kot število vrstic mreže med stranicama.
+- **Poševna stranica kot višina.** Pri paralelogramu pomnožiš osnovnico s poševno stranico. Višina je pravokotna razdalja med vzporednima stranicama. Popravek: višino preberi kot število vrstic mreže med stranicama.
 - **»Brez lege točke se ne da.«** V Primeru 3 se zdi, da je odgovor odvisen od lege $P$. Vsota višin do nasprotnih stranic je stalna, zato je tudi vsota ploščin stalna.
 
 ## Povzetek
@@ -174,7 +174,7 @@ Trikotnik z oglišči $(0, 0)$, $(6, 2)$ in $(2, 5)$:
 7. Vsota kotnih trikotnikov: $6 + 6 + 5 = 17$.
 8. Ploščina: $30 - 17 = 13$.
 
-Ko je eno oglišče v kotu okvira, so kotni trikotniki natanko trije. Če se lik okvira dotika drugače, nariši sliko in preveri, ali morda ostane še majhen pravokotnik, ki ga moraš prav tako odšteti.
+Ko je eno oglišče v kotu okvira, drugi dve pa na njegovih stranicah, so kotni trikotniki natanko trije. Če se lik okvira dotika drugače, nariši sliko in preveri, ali morda ostane še majhen pravokotnik, ki ga moraš prav tako odšteti.
 
 ## Preveri se
 

@@ -22,5 +22,5 @@ stanje: osnutek
   - majhna anoda ob veliki katodi je najslabša
 - Vrste korozije
   - enakomerna, galvanska, jamičasta, špranjska
-  - interkristalna (senzibilizacija), selektivna (decinkacija)
+  - interkristalna (senzibilizacija), selektivna (razcinkanje)
   - napetostna, erozijska

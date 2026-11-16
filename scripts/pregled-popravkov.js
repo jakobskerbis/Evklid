@@ -59,7 +59,7 @@ function fixStart(text) {
 const kinds = db
   .prepare(
     `SELECT kind, COUNT(*) AS n, COALESCE(SUM(cost_usd),0) AS usd FROM usage
-     WHERE kind IN ('chat','boost','popravek','preverjanje','sodba') AND created_at >= datetime('now', ?) GROUP BY kind`,
+     WHERE kind IN ('chat','boost','popravek','preverjanje','preverjanje-sola','sodba') AND created_at >= datetime('now', ?) GROUP BY kind`,
   )
   .all(since);
 const by = Object.fromEntries(kinds.map((k) => [k.kind, k]));
@@ -68,7 +68,7 @@ const answers = (by.chat?.n || 0) + (by.boost?.n || 0);
 console.log(`Živa kontrola, zadnjih ${DAYS} dni (UTC):`);
 console.log(`  odgovori inštruktorja ${answers} (${(((by.chat?.usd || 0) + (by.boost?.usd || 0))).toFixed(3)} $)`);
 // Klic popravka je zapisan tudi, ko model odgovori »OK« (brez popravka) in ob ponovnem odgovoru po napačni sodbi.
-console.log(`  klici popravka ${fmt("popravek")} · pregledi s Sonnetom ${fmt("preverjanje")} · pregledi sodb ${fmt("sodba")}`);
+console.log(`  klici popravka ${fmt("popravek")} · pregledi s Sonnetom ${fmt("preverjanje")} · pri SŠ/OŠ ${fmt("preverjanje-sola")} · pregledi sodb ${fmt("sodba")}`);
 
 // Odgovori z vidnim popravkom (»Popravek:« v besedilu za prikaz) in vprašanje učenca pred njimi.
 const rows = db

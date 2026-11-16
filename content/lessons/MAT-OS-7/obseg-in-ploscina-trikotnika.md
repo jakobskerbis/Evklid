@@ -64,7 +64,7 @@ Osnovnica ostane ista, vrh pa je ves čas enako visoko nad njo, zato se višina 
 
 ### Primer 1: trikotna ruta
 
-Trikotna ruta iz omarice za prvo pomoč je pravokotni trikotnik. Kateti merita $96\,\text{cm}$, hipotenuza $136\,\text{cm}$. Koliko traku potrebuješ, da ruto obrobiš, in koliko blaga je v njej?
+Trikotna ruta iz omarice za prvo pomoč je pravokotni trikotnik. Kateti merita $96\,\text{cm}$, hipotenuza približno $136\,\text{cm}$. Koliko traku potrebuješ, da ruto obrobiš, in koliko blaga je v njej?
 
 **Podatki:** kateti $a = 96\,\text{cm}$, $b = 96\,\text{cm}$, hipotenuza $c = 136\,\text{cm}$
 **Iščemo:** obseg $o$ (trak) in ploščino $p$ (blago)

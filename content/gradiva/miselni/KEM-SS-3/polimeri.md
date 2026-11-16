@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Monomer in polimer
+  - polimer: veriga ponavljajočih se enot
+  - $n = \dfrac{M_\mathrm{p}}{M_\mathrm{e}}$, stopnja polimerizacije
+- Adicijska polimerizacija
+  - monomer z dvojno vezjo $\mathrm{C{=}C}$
+  - $\mathrm{CH_2{=}CHX} \rightarrow \mathrm{{-}[CH_2{-}CHX]_n{-}}$
+  - napaka: dvojna vez v enoti
+- Brez stranskega produkta
+  - enota ima formulo monomera
+  - atomska ekonomičnost $100\,\%$
+- Polikondenzacija
+  - dve funkcionalni skupini na monomer
+  - ob vsaki vezi odcep vode
+  - etanol verigo zaključi
+- Poliamidi in poliestri
+  - najlon: diamin + dikarboksilna kislina
+  - PET: diol + dikarboksilna kislina
+  - beljakovine so naravni poliamidi
+- Masa enote
+  - najlon $116 + 146 - 2 \cdot 18 = 226\,\mathrm{g/mol}$
+  - PET $192\,\mathrm{g/mol}$
+- Razgradnja
+  - poliestre in poliamide hidroliziramo
+  - polieten v naravi ostane

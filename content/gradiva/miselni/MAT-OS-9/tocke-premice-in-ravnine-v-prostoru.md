@@ -8,7 +8,7 @@ stanje: osnutek
   - Mimobežni: ne v isti ravnini, na primer $AB$, $CG$
 - Določitev ravnine
   - Tri točke, ki niso na eni premici
-  - Trinožnik ne maja, stol s štirimi nogami lahko
+  - Trinožnik se ne maje, stol s štirimi nogami se lahko
 - Premica in ravnina
   - Leži v ravnini, vzporedna ali jo prebada
   - Prebodišče: edina skupna točka

@@ -104,7 +104,7 @@ $W_f = \dfrac{hc}{\lambda}$
 
 Mikrovalovna pečica seva mikrovalove s frekvenco $2{,}45\,\mathrm{GHz}$ in močjo $800\,\mathrm{W}$. Kolikšna je energija enega fotona in koliko fotonov pečica izseva v sekundi? Ali lahko izbijejo elektrone iz kovinske stene pečice z izstopnim delom okoli $4{,}5\,\mathrm{eV}$?
 
-**Podatki:** $\nu = 2{,}45\,\mathrm{GHz}$, $P = 800\,\mathrm{W}$, $t = 1\,\mathrm{s}$, $A_i \approx 4{,}5\,\mathrm{eV}$, $h = 6{,}63\cdot10^{-34}\,\mathrm{J\,s}$
+**Podatki:** $\nu = 2{,}45\,\mathrm{GHz}$, $P = 800\,\mathrm{W}$, $t = 1\,\mathrm{s}$, $A_i \approx 4{,}5\,\mathrm{eV}$, $h = 6{,}63\cdot10^{-34}\,\mathrm{J\,s}$, $1\,\mathrm{eV} = 1{,}60\cdot10^{-19}\,\mathrm{J}$
 **Iščemo:** energijo fotona $W_f$, število fotonov $N$ v eni sekundi
 
 :::formula
@@ -124,7 +124,7 @@ $W_f = h\nu$, $\quad N = \dfrac{P\,t}{W_f}$
 
 Pladenj je prevlečen s cinkom z izstopnim delom $4{,}3\,\mathrm{eV}$. Kolikšna je največja valovna dolžina svetlobe, ki še izbije elektrone? Kolikšna je največja kinetična energija elektronov, ki jih izbije UV-svetilka iz primera 1?
 
-**Podatki:** $A_i = 4{,}3\,\mathrm{eV}$, $W_f = 4{,}89\,\mathrm{eV}$ (iz primera 1), $hc = 1{,}99\cdot10^{-25}\,\mathrm{J\,m}$, $1\,\mathrm{eV} = 1{,}60\cdot10^{-19}\,\mathrm{J}$
+**Podatki:** $A_i = 4{,}3\,\mathrm{eV}$, $\lambda = 254\,\mathrm{nm}$ in $W_f = 4{,}89\,\mathrm{eV}$ (iz primera 1), $hc = 1{,}99\cdot10^{-25}\,\mathrm{J\,m}$, $1\,\mathrm{eV} = 1{,}60\cdot10^{-19}\,\mathrm{J}$
 **Iščemo:** mejno valovno dolžino $\lambda_m$ in največjo kinetično energijo $W_k$
 
 :::formula

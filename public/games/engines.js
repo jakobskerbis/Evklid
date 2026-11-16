@@ -139,27 +139,41 @@ export const meteor = {
         for (const s of stars) {
           g.globalAlpha = 0.4 + s.s / 3;
           g.fillRect(s.x, s.y, s.s, s.s);
+          if (s.s > 1.5) G.slog.sij(s.x, s.y, 7, "#c7d2fe", 0.5, true);
         }
         g.globalAlpha = 1;
         // planet v ozadju (barva se zamenja s poglavjem)
         const pr = Math.min(G.W, G.H) * 0.16;
         g.save();
         g.translate(G.W * 0.82, G.H * 0.22);
+        G.slog.sij(0, 0, pr * 1.5, pl, 0.16);
         g.fillStyle = pl;
         g.beginPath();
         g.arc(0, 0, pr, 0, 7);
         g.fill();
         ink(g, 4);
-        g.fillStyle = "rgba(255,255,255,0.25)";
+        // senčna stran planeta in svetel rob atmosfere proti svetlobi
+        g.save();
         g.beginPath();
-        g.arc(-pr * 0.35, -pr * 0.35, pr * 0.35, 0, 7);
-        g.fill();
+        g.arc(0, 0, pr - 2, 0, 7);
+        g.clip();
+        g.fillStyle = "rgba(20,10,50,0.3)";
+        g.beginPath();
+        g.arc(pr * 0.45, pr * 0.4, pr * 1.05, 0, 7);
+        g.arc(0, 0, pr * 1.2, 0, 7, true);
+        g.fill("evenodd");
+        g.restore();
+        g.lineWidth = 2.5;
+        g.strokeStyle = "rgba(255,255,255,0.6)";
+        g.beginPath();
+        g.arc(0, 0, pr - 3.5, 3.5, 5.2);
+        g.stroke();
         g.beginPath();
         g.ellipse(0, 0, pr * 1.6, pr * 0.35, -0.35, 0.2, Math.PI - 0.2);
         ink(g, 4);
         g.restore();
         // ščit
-        g.strokeStyle = "rgba(103,232,249,0.55)";
+        g.strokeStyle = "rgba(103,232,249,0.7)";
         g.lineWidth = 3;
         g.setLineDash([10, 8]);
         g.beginPath();
@@ -187,14 +201,27 @@ export const meteor = {
             g[i ? "lineTo" : "moveTo"](Math.cos(a) * r.r * k, Math.sin(a) * r.r * k);
           });
           g.closePath();
+          g.rotate(-r.rot); // svetloba vedno od zgoraj levo, tudi ko se meteor vrti
           g.fillStyle = "#c08457";
           g.fill();
           ink(g, 4);
-          g.fillStyle = "rgba(124,74,36,0.35)";
-          [[-0.4, -0.35, 0.18], [0.35, 0.3, 0.14], [0.3, -0.45, 0.1]].forEach(([cx, cy, cr]) => {
+          g.rotate(r.rot);
+          g.fillStyle = "rgba(92,52,22,0.4)";
+          // kraterji: temno dno, osvetljen spodnji desni rob (svetloba pada od zgoraj levo), senca pod zgornjim robom
+          [[-0.4, -0.35, 0.18], [0.35, 0.3, 0.14], [0.3, -0.45, 0.1], [-0.15, 0.42, 0.08]].forEach(([cx, cy, cr]) => {
+            g.fillStyle = "rgba(92,52,22,0.45)";
             g.beginPath();
             g.arc(cx * r.r, cy * r.r, cr * r.r, 0, Math.PI * 2);
             g.fill();
+            g.lineWidth = 1.6;
+            g.strokeStyle = "rgba(255,226,190,0.55)";
+            g.beginPath();
+            g.arc(cx * r.r, cy * r.r, cr * r.r, 0.1 - r.rot, 1.9 - r.rot);
+            g.stroke();
+            g.strokeStyle = "rgba(40,20,8,0.5)";
+            g.beginPath();
+            g.arc(cx * r.r, cy * r.r, cr * r.r, 3.3 - r.rot, 5 - r.rot);
+            g.stroke();
           });
           g.rotate(-r.rot);
           g.fillStyle = "#fffbeb";
@@ -210,21 +237,28 @@ export const meteor = {
           g.strokeStyle = "#67e8f9";
           g.lineWidth = 4;
           g.globalAlpha = laser.life / 0.18;
+          G.slog.sij(laser.x, laser.y, 46, "#67e8f9");
+          g.lineCap = "round";
           g.beginPath();
           g.moveTo(ship.x, sy - 16);
           g.lineTo(laser.x, laser.y);
           g.stroke();
+          g.strokeStyle = "#ecfeff";
+          g.lineWidth = 1.5;
+          g.stroke();
+          g.lineCap = "butt";
           g.globalAlpha = 1;
         }
         g.save();
         g.translate(ship.x, sy);
+        G.slog.sij(0, 18, 22, "#fb923c", 0.8);
         g.fillStyle = "#f97316";
         g.beginPath();
         g.moveTo(-7, 14);
         g.lineTo(0, 22 + Math.sin(G.time * 30) * 4);
         g.lineTo(7, 14);
         g.fill();
-        g.fillStyle = "#e0e7ff";
+        g.fillStyle = G.slog.preliv("#e0e7ff", -20, 14, 0.3);
         g.beginPath();
         g.moveTo(0, -20);
         g.lineTo(18, 14);
@@ -344,7 +378,7 @@ export const balloons = {
           g.fill();
         }
         // trava
-        g.fillStyle = gr;
+        g.fillStyle = G.slog.preliv(gr, G.H - 18, G.H + 6, 0.16);
         g.fillRect(-20, G.H - 18, G.W + 40, 40);
         g.beginPath();
         g.moveTo(-20, G.H - 18);
@@ -364,15 +398,26 @@ export const balloons = {
           g.ellipse(x, b.y, b.r, b.r * 1.15, 0, 0, Math.PI * 2);
           g.fill();
           ink(g, 3);
+          g.fillStyle = b.color;
           g.beginPath();
           g.moveTo(x - 6, b.y + b.r * 1.15 + 6);
           g.lineTo(x + 6, b.y + b.r * 1.15 + 6);
           g.lineTo(x, b.y + b.r * 1.1);
           g.fill();
-          g.fillStyle = "rgba(255,255,255,0.55)";
+          g.fillStyle = "rgba(255,255,255,0.6)";
           g.beginPath();
           g.ellipse(x - b.r * 0.4, b.y - b.r * 0.5, b.r * 0.18, b.r * 0.3, -0.5, 0, Math.PI * 2);
           g.fill();
+          // odsev okna spodaj desno in svetlejši rob (svetloba prosojne gume)
+          g.fillStyle = "rgba(255,255,255,0.22)";
+          g.beginPath();
+          g.ellipse(x + b.r * 0.42, b.y + b.r * 0.55, b.r * 0.12, b.r * 0.2, -0.6, 0, Math.PI * 2);
+          g.fill();
+          g.strokeStyle = "rgba(255,255,255,0.35)";
+          g.lineWidth = 2;
+          g.beginPath();
+          g.ellipse(x, b.y, b.r - 4, b.r * 1.15 - 4, 0, 0.3, 1.5);
+          g.stroke();
           if (b.focus) {
             g.strokeStyle = "#1e3a8a";
             g.lineWidth = 3;
@@ -518,10 +563,7 @@ export const runner = {
         }
         // tekač
         const y = py(), bob = Math.sin(G.time * 16) * 3;
-        g.fillStyle = "rgba(0,0,0,0.18)";
-        g.beginPath();
-        g.ellipse(px, y + 26, 18, 6, 0, 0, 7);
-        g.fill();
+        G.slog.senca(px, y + 26, 24, 8, 0.5);
         g.strokeStyle = "#1e3a8a";
         g.lineWidth = 6;
         g.lineCap = "round";
@@ -532,7 +574,7 @@ export const runner = {
         g.moveTo(px, y + 8 + bob);
         g.lineTo(px + leg, y + 24);
         g.stroke();
-        g.fillStyle = "#2563eb";
+        g.fillStyle = G.slog.preliv("#2563eb", y - 14, y + 12, 0.25);
         G.rr(px - 12, y - 14 + bob, 24, 26, 10);
         g.fill();
         ink(g, 3);

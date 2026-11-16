@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,14 +15,10 @@ Druga pot je hitrejša, ker smo razliko zapisali kot **produkt**. Temu rečemo *
 
 **1. Kaj pomeni razstaviti.** Pri algebrskih izrazih si odpiral oklepaje in iz produkta dobil vsoto. Razstavljanje je ista enakost, prebrana v nasprotno smer. Podobno je razcepu števila na prafaktorje:
 
-| | Množenje | Razstavljanje |
-|---|---|---|
-| smer | produkt → vsota | vsota → produkt |
-| pri številih | $7 \cdot 13 = 91$ | $91 = 7 \cdot 13$ |
-| pri izrazih | $3x(x + 2) = 3x^2 + 6x$ | $3x^2 + 6x = 3x(x + 2)$ |
-| postopek | vedno isti (vsak člen z vsakim) | iščemo vzorec, več poti |
+- **Množenje**: produkt → vsota; pri številih $7 \cdot 13 = 91$, pri izrazih $3x(x + 2) = 3x^2 + 6x$; postopek je vedno isti (vsak člen z vsakim).
+- **Razstavljanje**: vsota → produkt; pri številih $91 = 7 \cdot 13$, pri izrazih $3x^2 + 6x = 3x(x + 2)$; iščemo vzorec, poti je več.
 
-Razlika je v zadnji vrstici: množiti znaš vedno, pri razstavljanju pa moraš prepoznati, kateri vzorec izraz skriva. Razstaviti izraz pomeni zapisati ga kot produkt faktorjev. Razcep je **popoln**, ko nobenega faktorja ni več mogoče razstaviti naprej. Pravilnost vedno preveriš s preizkusom: faktorje zmnožiš in moraš dobiti prvotni izraz.
+Razlika je v postopku: množiti znaš vedno, pri razstavljanju pa moraš prepoznati, kateri vzorec izraz skriva. Razstaviti izraz pomeni zapisati ga kot produkt faktorjev. Razcep je **popoln**, ko nobenega faktorja ni več mogoče razstaviti naprej. Pravilnost vedno preveriš s preizkusom: faktorje zmnožiš in moraš dobiti prvotni izraz.
 
 **2. Izpostavljanje skupnega faktorja.** Distributivnostni zakon $ab + ac = a(b + c)$ preberemo v obratni smeri. Postopek:
 
@@ -46,11 +42,9 @@ $$ax + ay + bx + by = a(x+y) + b(x+y) = (a+b)(x+y).$$
 
 **3. Obrazci za razstavljanje.** Znane obrazce iz algebrskih izrazov preberi od desne proti levi:
 
-| Kakšen je izraz | Obrazec | Primer |
-|---|---|---|
-| dva člena, med njima minus, oba kvadrata | $a^2 - b^2 = (a-b)(a+b)$ | $9x^2 - 16 = (3x-4)(3x+4)$ |
-| trije členi, kvadrat vsote | $a^2 + 2ab + b^2 = (a+b)^2$ | $x^2 + 10x + 25 = (x+5)^2$ |
-| trije členi, kvadrat razlike | $a^2 - 2ab + b^2 = (a-b)^2$ | $4x^2 - 12x + 9 = (2x-3)^2$ |
+- dva člena, med njima minus, oba kvadrata: $a^2 - b^2 = (a-b)(a+b)$, npr. $9x^2 - 16 = (3x-4)(3x+4)$;
+- trije členi, kvadrat vsote: $a^2 + 2ab + b^2 = (a+b)^2$, npr. $x^2 + 10x + 25 = (x+5)^2$;
+- trije členi, kvadrat razlike: $a^2 - 2ab + b^2 = (a-b)^2$, npr. $4x^2 - 12x + 9 = (2x-3)^2$.
 
 Pri razliki kvadratov je pomembno, da prepoznaš kvadrata: $9x^2 = (3x)^2$ in $16 = 4^2$. Vsote kvadratov $x^2 + b^2$ (z znakom plus, $b \neq 0$) ni mogoče razstaviti v produkt $(x + m)(x + n)$ z realnima številoma $m$ in $n$.
 
@@ -64,11 +58,9 @@ $$a + b = p \qquad \text{in} \qquad a \cdot b = q,$$
 
 in potem je $x^2 + px + q = (x+a)(x+b)$. Najprej zapiši vse pare celih faktorjev števila $q$, nato med njimi poišči par z vsoto $p$. Predznaka ti pomagata zožiti iskanje:
 
-| Predznak $q$ | Predznak $p$ | Predznaka iskanih števil |
-|---|---|---|
-| $q > 0$ | $p > 0$ | obe števili sta pozitivni |
-| $q > 0$ | $p < 0$ | obe števili sta negativni |
-| $q < 0$ | poljuben | števili imata različna predznaka; če je $p \neq 0$, ima večje po absolutni vrednosti enak predznak kot $p$ |
+- $q > 0$ in $p > 0$: obe števili sta pozitivni;
+- $q > 0$ in $p < 0$: obe števili sta negativni;
+- $q < 0$ (pri poljubnem $p$): števili imata različna predznaka; če je $p \neq 0$, ima večje po absolutni vrednosti enak predznak kot $p$.
 
 Primer: $x^2 + 7x + 12$. Iščemo števili z vsoto $7$ in produktom $12$. Pari faktorjev števila $12$ so $1\cdot12$, $2\cdot6$, $3\cdot4$. Vsoto $7$ ima par $3$ in $4$, zato je $x^2 + 7x + 12 = (x+3)(x+4)$. Če takega para ni, tričlenika s celimi števili ne moremo razstaviti.
 
@@ -88,6 +80,12 @@ Obe sta negativni. Produkt $12$ je pozitiven, zato imata števili enak predznak.
 2. Preštej člene v oklepaju. Dva člena: poskusi razliko kvadratov. Trije: popolni kvadrat ali Vietovo pravilo. Štirje: združi po skupinah.
 3. Vsak nastali faktor preglej, ali ga je mogoče razstaviti naprej.
 4. Naredi preizkus z množenjem.
+
+**6. Razcepna enačba.** Razcep pomaga tudi pri enačbah. Produkt je enak $0$ natanko tedaj, ko je enak $0$ vsaj en faktor: iz $A \cdot B = 0$ sledi $A = 0$ ali $B = 0$. Enačba je **razcepna**, če jo lahko zapišemo tako, da je na desni $0$, na levi pa produkt faktorjev. Rešiš jo v treh korakih: vse člene prenesi na levo, levo stran razstavi, vsak faktor izenači z $0$.
+
+Primer: $x^3 = x^2 + 6x$. Na levo: $x^3 - x^2 - 6x = 0$. Izpostavimo $x$: $x(x^2 - x - 6) = 0$. Števili z vsoto $-1$ in produktom $-6$ sta $2$ in $-3$, zato je $x(x + 2)(x - 3) = 0$. Rešitve so $x_1 = 0$, $x_2 = -2$ in $x_3 = 3$. Preizkus pri $x = 3$: leva stran je $27$, desna $9 + 18 = 27$.
+
+Pazi na dve pasti. Enačbe ne deli z $x$, ker bi izgubil rešitev $x = 0$. Sklep »vsaj en faktor je $0$« velja le, ko je produkt $0$: iz $x(x + 2) = 15$ ne sledi $x = 15$. Najprej zapiši $x^2 + 2x - 15 = 0$, torej $(x + 5)(x - 3) = 0$ in $x_1 = -5$, $x_2 = 3$. Več razcepnih enačb, tudi takih, kjer člene združiš v pare, rešuješ pri kvadratni enačbi.
 
 ## Rešeni primeri
 
@@ -194,6 +192,88 @@ Prvi oklepaj je $x + 3 - x + 3 = 6$, drugi $2x$, zato je razlika $6 \cdot 2x = 1
 - Popolni kvadrat: $a^2 \pm 2ab + b^2 = (a \pm b)^2$.
 - Vietovo pravilo: $x^2 + px + q = (x+a)(x+b)$, kjer je $a + b = p$ in $a \cdot b = q$.
 - Vrstni red: skupni faktor, nato obrazec glede na število členov, nato preglej vse faktorje in na koncu preizkus.
+- Razcepna enačba: vse na levo, levo stran razstavi, vsak faktor izenači z $0$ (produkt je $0$ natanko tedaj, ko je $0$ vsaj en faktor).
+
+## Ponovitev
+
+**Formule**
+- $ab + ac = a(b + c)$ (na pamet)
+- $ax + ay + bx + by = (a + b)(x + y)$ (na pamet)
+- $a^2 - b^2 = (a - b)(a + b)$ (na pamet)
+- $a^2 \pm 2ab + b^2 = (a \pm b)^2$ (na pamet)
+- $x^2 + px + q = (x + a)(x + b)$, $a + b = p$, $a \cdot b = q$ (na pamet)
+
+**Postopek**
+1. Izpostavi največji skupni faktor.
+2. Preštej člene: dva – razlika kvadratov; trije – popolni kvadrat ali Vieta; štirje – po skupinah.
+3. Preglej vse faktorje in razstavljaj naprej.
+4. Preizkus: faktorje zmnoži nazaj.
+5. Pri razcepni enačbi vsak faktor izenači z $0$.
+
+**Pazi na**
+- Pri izpostavljanju ostane $1$: $4x^2 + 4x = 4x(x + 1)$.
+- Ko izpostaviš $-x$, obrni predznake: $-x^2 + 4x = -x(x - 4)$.
+- Pri Vieti preveri vsoto in produkt: $x^2 - 5x + 6 = (x - 2)(x - 3)$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Razstavite do konca izraz $x^4 - 13x^2 + 36$.
+
+**Rešitev:**
+
+1. Izraz je tričlenik v $x^2$: iščemo števili z vsoto $-13$ in zmnožkom $36$. To sta $-4$ in $-9$, zato je $x^4 - 13x^2 + 36 = (x^2 - 4)(x^2 - 9)$.
+2. Oba faktorja sta razliki kvadratov: $x^2 - 4 = (x - 2)(x + 2)$ in $x^2 - 9 = (x - 3)(x + 3)$.
+3. Preizkus pri $x = 1$: izvirni izraz je $1 - 13 + 36 = 24$, razcep pa $(-1) \cdot 3 \cdot (-2) \cdot 4 = 24$.
+4. Odgovor: $x^4 - 13x^2 + 36 = (x - 2)(x + 2)(x - 3)(x + 3)$.
+
+**Točkovanje:** 1 točka za razcep $(x^2 - 4)(x^2 - 9)$ po Vietovem pravilu, 1 točka za uporabo razlike kvadratov na obeh faktorjih, 1 točka za popoln razcep $(x - 2)(x + 2)(x - 3)(x + 3)$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dan je izraz $x^3 - 2x^2 - 4x + 8$.
+
+a) Izraz razstavite do konca; enake faktorje zapišite kot potenco. (3 točke)
+b) Rešite enačbo $x^3 - 2x^2 - 4x + 8 = 0$. (2 točki)
+c) S pomočjo razcepa brez računala izračunajte vrednost izraza pri $x = 52$. (2 točki)
+
+**Rešitev:**
+
+1. a) Združimo prva dva in zadnja dva člena: $x^2(x - 2) - 4(x - 2)$.
+2. a) Izpostavimo skupni faktor $x - 2$: $(x - 2)(x^2 - 4)$.
+3. a) Drugi faktor je razlika kvadratov, $x^2 - 4 = (x - 2)(x + 2)$, zato je izraz enak $(x - 2)(x - 2)(x + 2) = (x - 2)^2(x + 2)$. Preizkus pri $x = 1$: $1 - 2 - 4 + 8 = 3$ in $(-1)^2 \cdot 3 = 3$.
+4. b) Enačba je $(x - 2)^2(x + 2) = 0$. Produkt je enak $0$ natanko takrat, ko je vsaj en faktor enak $0$.
+5. b) Iz $x - 2 = 0$ dobimo $x_1 = 2$ (faktor $x - 2$ nastopa dvakrat, a da isto rešitev), iz $x + 2 = 0$ pa $x_2 = -2$.
+6. c) Pri $x = 52$ je $x - 2 = 50$ in $x + 2 = 54$, zato je vrednost $50^2 \cdot 54 = 2500 \cdot 54$.
+7. c) $2500 \cdot 54 = 2500 \cdot 50 + 2500 \cdot 4 = 125\,000 + 10\,000 = 135\,000$.
+8. Odgovor: $x^3 - 2x^2 - 4x + 8 = (x - 2)^2(x + 2)$; rešitvi enačbe sta $2$ in $-2$; pri $x = 52$ je vrednost izraza $135\,000$.
+
+**Točkovanje:** a) 1 točka za združevanje v pare $x^2(x - 2) - 4(x - 2)$, 1 točka za $(x - 2)(x^2 - 4)$, 1 točka za popoln razcep $(x - 2)^2(x + 2)$; b) 1 točka za utemeljitev, da je produkt $0$, ko je vsaj en faktor $0$, 1 točka za obe rešitvi $2$ in $-2$; c) 1 točka za zmnožek $50^2 \cdot 54$, 1 točka za rezultat $135\,000$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj pomeni razstaviti algebrski izraz in kdaj je razcep popoln?
+---
+Razstaviti izraz pomeni zapisati ga kot produkt faktorjev. Razstavljanje je obratna pot od množenja, zato pravilnost preverimo tako, da faktorje zmnožimo in dobimo prvotni izraz. Razcep je popoln, ko nobenega faktorja ni več mogoče razstaviti naprej. Zato najprej izpostavimo največji skupni faktor in nato vsak nastali faktor preverimo, ali se da še razstaviti.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji Vietovo pravilo za razstavljanje tričlenika $x^2 + px + q$ in pojasni, kako si pri iskanju števil pomagaš s predznakoma $p$ in $q$.
+---
+Če zmnožimo $(x + a)(x + b)$, dobimo $x^2 + (a + b)x + ab$. Tričlenik $x^2 + px + q$ je zato enak $(x + a)(x + b)$, če velja $a + b = p$ in $a \cdot b = q$. Če je $q > 0$, imata števili enak predznak, in sicer predznak števila $p$. Če je $q < 0$, imata števili različna predznaka, in če je $p \neq 0$, ima predznak števila $p$ tisto, ki je po absolutni vrednosti večje.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Dokaži, da izraza $x^2 + c$, kjer je $c > 0$, ne moremo razstaviti v produkt $(x + a)(x + b)$ z realnima številoma $a$ in $b$.
+---
+Denimo, da bi za vsak $x$ veljalo $x^2 + c = (x + a)(x + b)$. Pri $x = -a$ je desna stran enaka $0$, ker je prvi faktor enak $0$. Leva stran je pri $x = -a$ enaka $a^2 + c$, kar je pozitivno, ker je $a^2 \ge 0$ in $c > 0$. To je protislovje, zato takega razcepa z realnima številoma ni.
+:::
 
 ## Drugače: Na sliki
 
@@ -226,7 +306,7 @@ Vsota ploščin je $x^2 + 4x + 3x + 12 = x^2 + 7x + 12$. Srednji člen je nastal
 
 | Korak | Kaj naredimo | Rezultat |
 |---|---|---|
-| 1 | Izpostavimo $4x$ (koeficienta sta $4$ in $36$, $D = 4$; $x$ z najmanjšim eksponentom $1$) | $4x(x^2 - 9)$ |
+| 1 | Izpostavimo $4x$ (koeficienta sta $4$ in $36$, $D(4, 36) = 4$; $x$ z najmanjšim eksponentom $1$) | $4x(x^2 - 9)$ |
 | 2 | Drugi faktor je razlika kvadratov $x^2 - 3^2$ | $4x(x-3)(x+3)$ |
 | 3 | Preizkus pri $x = 2$: prvotni izraz $4 \cdot 8 - 72 = -40$, razcep $4 \cdot 2 \cdot (-1) \cdot 5 = -40$ | enako |
 
@@ -263,14 +343,11 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 ~ Produkt $1 \cdot 10 = 10$ je pravi, vsota pa je $11$. Srednji del bi bil $11x$.
 > Iščemo števili z vsoto $7$ in produktom $10$: to sta $2$ in $5$. Deli $2x + 5x = 7x$ dajo srednji člen, del $2 \cdot 5 = 10$ prosti člen.
 
-? Brez kalkulatorja: koliko je $x^2 + 4x + 4$ pri $x = 98$?
-- $9\,608$
-~ To je $98^2 + 2^2$. Izraz je $(x + 2)^2$, ta pa ni enak $x^2 + 4$, ker ima še srednji člen $4x$.
-- $9\,600$
-~ To je $(98 - 2)(98 + 2)$, razlika kvadratov. Tu sta oba predznaka plus, zato je to kvadrat vsote.
-- $9\,604$
-~ To je samo $98^2$. Pozabil si člena $4x + 4$.
-+ $10\,000$
+? (brez računala) Koliko je $x^2 + 4x + 4$ pri $x = 98$?
+= 10000 | 0
+~ 9608 | To je $98^2 + 2^2$. Izraz je $(x + 2)^2$, ta pa ni enak $x^2 + 4$, ker ima še srednji člen $4x$.
+~ 9600 | To je $(98 - 2)(98 + 2)$, razlika kvadratov. Tu sta oba predznaka plus, zato je to kvadrat vsote.
+~ 9604 | To je samo $98^2$. Pozabil si člena $4x + 4$.
 > $x^2 + 4x + 4 = (x + 2)^2$, pri $x = 98$ je to $100^2 = 10\,000$.
 
 ? Zakaj izraza $x^2 + 9$ ne moremo razstaviti v $(x + a)(x + b)$ z realnima $a$ in $b$?
@@ -293,7 +370,7 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 ~ Sešteti moraš števili s predznakoma, $-3 + 5 = 2$, ne $3 + 5$.
 > $(x - 3)(x + 5) = x^2 + 5x - 3x - 15 = x^2 + 2x - 15$.
 
-? Pravokotna njiva ima ploščino $(x^2 - x - 12)\,\mathrm{m}^2$, ena stranica meri $(x + 3)\,\mathrm{m}$. Koliko meri druga?
+? Pravokotna njiva ima ploščino $(x^2 - x - 12)\,\mathrm{m}^2$, kjer je $x > 4$, ena stranica meri $(x + 3)\,\mathrm{m}$. Koliko meri druga?
 - $(x + 4)\,\mathrm{m}$
 ~ Preveril si le $3 \cdot 4 = 12$ brez predznaka. $(x + 3)(x + 4) = x^2 + 7x + 12$.
 - $(x - 2)\,\mathrm{m}$
@@ -301,10 +378,41 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 + $(x - 4)\,\mathrm{m}$
 > Iščemo $b$ z $3 + b = -1$ in $3 \cdot b = -12$, torej $b = -4$. Preizkus: $(x + 3)(x - 4) = x^2 - x - 12$.
 
+? (brez računala) Vpiši največjo rešitev enačbe $x^2 - 3x = 28$.
+= 7 | 0
+~ 31 | Iz $x(x - 3) = 28$ si sklepal $x = 28$ ali $x - 3 = 28$. Sklep »vsaj en faktor je $0$« velja le, ko je na desni $0$.
+~ 4 | Števili $-4$ in $7$ imata vsoto $3$, ne $-3$. Pravi sta $4$ in $-7$, zato je $(x + 4)(x - 7) = 0$.
+> Na levo: $x^2 - 3x - 28 = 0$. Števili z vsoto $-3$ in produktom $-28$ sta $4$ in $-7$, zato je $(x + 4)(x - 7) = 0$. Rešitvi sta $-4$ in $7$, večja je $7$.
+
+<<RACUN
+enako: x^4-13*x^2+36 | (x^2-4)*(x^2-9)
+enako: x^4-13*x^2+36 | (x-2)*(x+2)*(x-3)*(x+3)
+vrednost: 1-13+36 | 24
+enako: x^3-2*x^2-4*x+8 | (x-2)*(x^2-4)
+enako: x^3-2*x^2-4*x+8 | (x-2)^2*(x+2)
+vrednost: 1-2-4+8 | 3
+resi: x^3-2*x^2-4*x+8=0 | x | -2, 2
+vrednost: 2500*54 | 135000
+vrednost: 52^3-2*52^2-4*52+8 | 135000
+vrednost: 50^2*54 | 135000
+enako: x^3-x^2-6*x | x*(x+2)*(x-3)
+resi: x^3=x^2+6*x | x | -2, 0, 3
+vrednost: 3^2+6*3 | 27
+enako: x^2+2*x-15 | (x+5)*(x-3)
+resi: x*(x+2)=15 | x | -5, 3
+enako: x^2-3*x-28 | (x+4)*(x-7)
+resi: x^2-3*x=28 | x | -4, 7
+vrednost: 7*(7-3) | 28
+vrednost: 28+3 | 31
+vrednost: -4+7 | 3
+>>
+
 :::simboli
-x, y | spremenljivki | | |
-a, b | števili z vsoto $p$ in zmnožkom $q$ (Vietovo pravilo) | | | v $ab + ac$ je $a$ skupni faktor, v $a^2 - b^2$ osnovi
-c, d | členi v oklepaju po izpostavljanju | | |
+x, y | spremenljivki | | | v razcepni enačbi (6. točka razlage) je $x$ neznanka
+x_1, x_2, x_3 | rešitve razcepne enačbe | | |
+A, B | faktorja produkta v razcepni enačbi | | | iz $A \cdot B = 0$ sledi $A = 0$ ali $B = 0$
+a, b | števili z vsoto $p$ in zmnožkom $q$ (Vietovo pravilo) | | | v $ab + ac$ je $a$ skupni faktor, v $a^2 - b^2$ osnovi, v primeru 1 spremenljivki
+c, d | členi v oklepaju po izpostavljanju | | | v $x^2 + c$ je $c$ pozitivno število
 p | koeficient pri $x$ v tričleniku | p = a + b | |
 q | prosti člen tričlenika | q = a \cdot b | |
 :::

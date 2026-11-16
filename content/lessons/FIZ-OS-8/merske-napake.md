@@ -41,13 +41,24 @@ Za krožek: $\bar{t} = \dfrac{210{,}5\,\text{s}}{5} = 42{,}1\,\text{s}$.
 
 **Slika na številski premici.** Meritve narišemo kot pike:
 
-```
-  Tim   Ana      Maja     Žan   Lea
-  41,6  41,8     42,1     42,4  42,6
-───•─────•────────•────────•─────•──── t [s]
-                  ↑
-             povprečje
-```
+:::risba premica
+opis: Številska premica za čas v sekundah od 41,5 do 42,7. Pike so meritve: Tim 41,6, Ana 41,8, Maja 42,1, Žan 42,4, Lea 42,6. Majina meritev je enaka povprečju 42,1 s.
+od: 41,5
+do: 42,7
+korak: 0,1
+oznake: ne
+oznaka: 41,6 | 41,6
+oznaka: 41,8 | 41,8
+oznaka: 42,1 | 42,1
+oznaka: 42,4 | 42,4
+oznaka: 42,6 | 42,6
+točka: 41,6 | Tim
+točka: 41,8 | Ana
+točka: 42,1 | Maja | oranžna
+točka: 42,4 | Žan
+točka: 42,6 | Lea
+podnapis: Čas t v sekundah. Oranžna pika (Maja, 42,1 s) leži točno na povprečju.
+:::
 
 Pike se gnetejo okoli povprečja. Najbolj oddaljeni sta Tim in Lea, oba za $0{,}5\,\text{s}$.
 
@@ -157,7 +168,7 @@ $d_4 = 154{,}0\,\text{mm} - 115{,}7\,\text{mm} = 38{,}3\,\text{mm}$. Preizkus: $
 - **»Ena meritev je prava, druge so napačne.«** Tako je mislil Žan. Napako ima vsaka meritev, tudi najbolj skrbna, zato nobena ni »prava«. Najboljši približek je povprečje vseh.
 - **»Več decimalk pomeni bolj natančno.«** Kalkulator da $58{,}16$ ali $42{,}1333$, a štoparica s človeškim prstom ne meri na stotinke sekunde. Povprečje zaokroži na natančnost meritev.
 - **»Vse meritve gredo v povprečje.«** Meritev, ki je očitno pokvarjena (prepozno ustavljena štoparica, napačno odčitan razdelek), povprečje močno premakne. Grobo napako najprej izloči.
-- **»Povprečje odpravi vse napake.«** Odpravi le naključne, ki gredo enkrat gor, enkrat dol. Če vsi merijo z ravnilom, ki ima obrabljen začetek, so vse dolžine prekratke, in povprečje je prekratko prav tako.
+- **»Povprečje odpravi vse napake.«** Odpravi le naključne, ki gredo enkrat gor, enkrat dol. Če vsi merijo z ravnilom, ki ima obrabljen začetek, so vse dolžine predolge, in povprečje je predolgo prav tako.
 
 ## Povzetek
 
@@ -180,7 +191,7 @@ Recept za vsako ponovljeno meritev, na primeru časov $12{,}4$; $12{,}7$; $12{,}
 
 ## Drugače: Kot zgodba
 
-Leta 1676 je danski astronom Ole Rømer opazoval Io, Jupitrovo luno. Io vsakih nekaj dni zaide v senco Jupitra in »ugasne«. Rømer je zapisoval čase teh mrkov, noč za nočjo.
+Leta 1676 je danski astronom Ole Rømer opazoval Io, Jupitrovo luno. Io vsaka slaba dva dneva zaide v senco Jupitra in »ugasne«. Rømer je zapisoval čase teh mrkov, noč za nočjo.
 
 Ni se zanesel na eno opazovanje. Vedel je, da se lahko zmoti za kakšno minuto: oblak, nemirna slika v teleskopu, utrujene oči. Zato je mrke opazoval znova in znova in primerjal množico zapisov.
 

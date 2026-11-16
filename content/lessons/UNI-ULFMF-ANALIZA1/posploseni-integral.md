@@ -45,7 +45,7 @@ $$\int_1^\infty \frac{dx}{x^p} \ \text{konvergira} \iff p > 1 .$$
 
 ### Neskončno visok lik
 
-Nariši še $y = \frac{1}{\sqrt x}$ na $(0, 1]$. Krivulja je zvezna, a ob osi $y$ se dvigne čez vse meje: lik je tokrat neskončno visok, ne dolg. Točki, kjer funkcija ni omejena (tu $x = 0$), rečemo **singularnost**. Ideja je enaka kot pri zastavici: od singularnosti se odmaknemo za $\varepsilon > 0$ in pošljemo $\varepsilon \to 0^+$:
+Nariši še $y = \frac{1}{\sqrt x}$ na $(0, 1]$. Krivulja je zvezna, a ob osi $y$ se dvigne čez vse meje: lik je tokrat neskončno visok, ne dolg. Točki, v okolici katere funkcija ni omejena (tu $x = 0$), rečemo **singularnost**. Ideja je enaka kot pri zastavici: od singularnosti se odmaknemo za $\varepsilon > 0$ in pošljemo $\varepsilon \to 0^+$:
 
 $$\int_a^b f(x)\,dx = \lim_{\varepsilon \to 0^+} \int_{a+\varepsilon}^b f(x)\,dx ,$$
 
@@ -167,7 +167,7 @@ $\int_1^b e^{-x}\,dx = e^{-1} - e^{-b} \to e^{-1} = \frac1e \approx 0{,}368$. In
 
 ## Pogoste napake
 
-- **Singularnost v notranjosti spregledaš.** Napačno: $\int_{-1}^1 \frac{dx}{x^2} = \left[-\frac1x\right]_{-1}^1 = -2$. Negativna ploščina pozitivne funkcije je že znak, da je nekaj narobe. Newton-Leibnizova formula velja le, če je funkcija na celem intervalu zvezna. Pravilno: razdeli v $0$; $\int_0^1 \frac{dx}{x^2}$ divergira, zato divergira ves integral.
+- **Singularnost v notranjosti spregledaš.** Napačno: $\int_{-1}^1 \frac{dx}{x^2} = \left[-\frac1x\right]_{-1}^1 = -2$. Negativna ploščina pozitivne funkcije je že znak, da je nekaj narobe. Newton-Leibnizove formule ne smemo uporabiti, če funkcija na intervalu ni omejena (zadošča pa, da je na celem zaprtem intervalu zvezna). Pravilno: razdeli v $0$; $\int_0^1 \frac{dx}{x^2}$ divergira, zato divergira ves integral.
 - **Simetrična limita.** Napačno: $\int_{-\infty}^\infty x\,dx = \lim_{a\to\infty}\int_{-a}^a x\,dx = 0$. Meji morata iti v neskončnost neodvisno. Pravilno: $\int_0^\infty x\,dx$ divergira, zato divergira ves integral.
 - **»Funkcija gre proti 0, torej integral konvergira.«** Pogoj ni zadosten: $\frac1x \to 0$, a $\int_1^\infty \frac{dx}{x}$ divergira. Pravilno: primerjaj s $\frac1{x^p}$ in preveri, ali je $p > 1$.
 - **Zamenjaš smer pravila za potence.** Pri $\infty$ konvergira za $p > 1$, pri $0$ pa za $p < 1$. Kdor si zapomni samo »$p > 1$«, napačno sklepa, da $\int_0^1 \frac{dx}{\sqrt x}$ divergira. Pravilno: pri $0$ želimo, da funkcija ne raste prehitro, torej majhen $p$.
@@ -181,6 +181,57 @@ $\int_1^b e^{-x}\,dx = e^{-1} - e^{-b} \to e^{-1} = \frac1e \approx 0{,}368$. In
 - Singularnost v notranjosti ali dve neskončni meji: integral razdelimo; konvergira le, če konvergira vsak del posebej (meji neodvisno).
 - Primerjalni kriterij za $0 \leq f \leq g$: iz konvergence $\int g$ sledi konvergenca $\int f$, iz divergence $\int f$ divergenca $\int g$.
 - Pogoj $f(x) \to 0$ ni dovolj za konvergenco.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo posplošenega integrala na neomejenem intervalu in pri singularnosti na robu (kot limito) ter kaj pomeni, da konvergira ali divergira;
+- kako ravnamo pri singularnosti v notranjosti in pri dveh neskončnih mejah (razdelitev, meji neodvisno) in zakaj simetrična limita ni dovolj;
+- pravilo za potence z izpeljavo: $\int_1^\infty \frac{dx}{x^p}$ konvergira natanko za $p > 1$, $\int_0^1 \frac{dx}{x^p}$ natanko za $p < 1$;
+- primerjalni kriterij z vsemi predpostavkami ($0 \le f \le g$) in njegov dokaz;
+- protiprimer, da $f(x) \to 0$ ne zadošča za konvergenco;
+- pojma absolutna in pogojna konvergenca s primerom $\int_1^\infty \frac{\sin x}{x}\,dx$.
+
+### Naloga 1
+
+Izračunaj $\displaystyle\int_0^\infty \frac{dx}{\sqrt x\,(1+x)}$, če konvergira.
+
+**Rešitev:**
+
+1. Težavi sta dve: singularnost v $x = 0$ (integrand tam ni omejen) in neskončna zgornja meja. Integral razdelimo v točki $1$: $\int_0^1 + \int_1^\infty$.
+2. Primitivna funkcija: s substitucijo $x = u^2$, $dx = 2u\,du$ dobimo $\int \dfrac{2u\,du}{u(1+u^2)} = 2\operatorname{arctg} u + C = 2\operatorname{arctg}\sqrt x + C$.
+3. Prvi del: $\int_\varepsilon^1 \dfrac{dx}{\sqrt x\,(1+x)} = 2\operatorname{arctg} 1 - 2\operatorname{arctg}\sqrt\varepsilon = \dfrac\pi2 - 2\operatorname{arctg}\sqrt\varepsilon \to \dfrac\pi2$, ko $\varepsilon \to 0^+$.
+4. Drugi del: $\int_1^b \dfrac{dx}{\sqrt x\,(1+x)} = 2\operatorname{arctg}\sqrt b - \dfrac\pi2 \to 2 \cdot \dfrac\pi2 - \dfrac\pi2 = \dfrac\pi2$, ko $b \to \infty$.
+5. Oba dela konvergirata, zato konvergira ves integral: $\dfrac\pi2 + \dfrac\pi2 = \pi$.
+6. Odgovor: integral konvergira in je enak $\pi \approx 3{,}14$.
+
+### Naloga 2
+
+Določi vse $p \in \mathbb{R}$, za katere konvergira $\displaystyle\int_0^\infty \frac{dx}{x^p(1+x)}$. Uporabi primerjalni kriterij in pravilo za potence.
+
+**Rešitev:**
+
+1. Integrand $f(x) = \dfrac{1}{x^p(1+x)}$ je na $(0, \infty)$ pozitiven in zvezen. Integral razdelimo v točki $1$; konvergira natanko tedaj, ko konvergirata oba dela.
+2. Na $(0, 1]$ je $1 \le 1 + x \le 2$, zato $\dfrac{1}{2x^p} \le f(x) \le \dfrac{1}{x^p}$.
+3. Če je $p < 1$, $\int_0^1 \dfrac{dx}{x^p}$ konvergira, zato po primerjalnem kriteriju konvergira $\int_0^1 f$. Če je $p \ge 1$, $\int_0^1 \dfrac{dx}{2x^p}$ divergira, zato divergira tudi $\int_0^1 f$. Prvi del torej konvergira natanko za $p < 1$.
+4. Na $[1, \infty)$ je $x \le 1 + x \le 2x$, zato $\dfrac{1}{2x^{p+1}} \le f(x) \le \dfrac{1}{x^{p+1}}$.
+5. Če je $p + 1 > 1$, $\int_1^\infty \dfrac{dx}{x^{p+1}}$ konvergira, zato konvergira $\int_1^\infty f$. Če je $p + 1 \le 1$, $\int_1^\infty \dfrac{dx}{2x^{p+1}}$ divergira, zato divergira $\int_1^\infty f$. Drugi del torej konvergira natanko za $p > 0$.
+6. Oba pogoja skupaj: $0 < p < 1$.
+7. Odgovor: integral konvergira natanko za $0 < p < 1$. Preizkus: $p = \frac12$ je v tem intervalu in po nalogi 1 je integral enak $\pi$.
+
+### Naloga 3
+
+Natančno navedi primerjalni kriterij za integrale na $[a, \infty)$ in ga dokaži. Nato utemelji, ali smemo predpostavko $f \ge 0$ izpustiti, torej zahtevati le $f(x) \le g(x)$.
+
+**Rešitev:**
+
+1. Izrek: naj bosta $f$ in $g$ integrabilni na vsakem $[a, b]$ in $0 \le f(x) \le g(x)$ za vse $x \ge a$. Če $\int_a^\infty g$ konvergira, konvergira tudi $\int_a^\infty f$ in velja $\int_a^\infty f \le \int_a^\infty g$. Enakovredno: če $\int_a^\infty f$ divergira, divergira tudi $\int_a^\infty g$.
+2. Dokaz: označimo $F(b) = \int_a^b f(x)\,dx$. Ker je $f \ge 0$, je $F$ naraščajoča: za $b < b'$ je $F(b') - F(b) = \int_b^{b'} f \ge 0$.
+3. $F$ je navzgor omejena: $F(b) \le \int_a^b g \le \int_a^\infty g$. Druga neenakost velja, ker je zaradi $g \ge 0$ tudi $b \mapsto \int_a^b g$ naraščajoča in zato ne preseže svoje limite.
+4. Množica vrednosti $\{F(b) : b \ge a\}$ je neprazna in navzgor omejena, zato ima po aksiomu o polnosti supremum $s$. Za vsak $\varepsilon > 0$ obstaja $b_0$ z $F(b_0) > s - \varepsilon$; ker $F$ narašča, je $s - \varepsilon < F(b) \le s$ za vse $b \ge b_0$. Torej $\lim_{b\to\infty} F(b) = s$ in integral $\int_a^\infty f$ konvergira. Iz $F(b) \le \int_a^\infty g$ sledi še $s \le \int_a^\infty g$.
+5. Predpostavke $f \ge 0$ ne smemo izpustiti. Protiprimer: $f(x) = -1$, $g(x) = 0$ na $[1, \infty)$. Velja $f \le g$ in $\int_1^\infty g = 0$ konvergira, a $\int_1^b f = -(b - 1) \to -\infty$, torej $\int_1^\infty f$ divergira.
+6. Sklep: nenegativnost zagotovi, da je $F$ naraščajoča; brez nje omejenost navzgor ne da limite. Za funkcije spremenljivega predznaka zato primerjamo $|f|$ in uporabimo absolutno konvergenco.
 
 ## Drugače: Na sliki
 

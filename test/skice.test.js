@@ -675,9 +675,10 @@ test("presek stožca: gumb Elipsa da zaprto elipso za vsak α", async () => {
   assert.equal(krivulja(25, 30, 0.8, { pol: 2.5 }).odseki.length, 1);
 });
 
-test("skice: drsniki so vsaj 10000-krat drobnejši od koraka; samo celoštevilski n ostanejo celi (j 2026-11-04)", () => {
+test("skice: drsniki se premikajo po 1/10000 in kažejo stotinke (j 2026-11-12); samo celoštevilski n ostanejo celi", () => {
   const skica = fs.readFileSync(new URL("../public/skice/skica.js", import.meta.url), "utf8");
-  assert.match(skica, /fino: zvezno \? 10000 : 0/);
+  assert.match(skica, /const fino = zvezno \? Math\.max\(1, Math\.round\(opts\.step \/ 1e-4\)\) : 0;/);
+  assert.match(skica, /opts\.digits = Math\.max\(opts\.digits \?\? 0, 2\)/);
   const kit = fs.readFileSync(new URL("../public/sim/kit.js", import.meta.url), "utf8");
   assert.match(kit, /step: fino \? Number\(\(step \/ fino\)/);
   const dir = new URL("../public/skice/", import.meta.url);

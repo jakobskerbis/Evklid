@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lipidni dvosloj
+  - amfipatični fosfolipidi, okoli $5\,\mathrm{nm}$
+  - drži ga hidrofobni učinek
+- Tekoči mozaik
+  - integralne, periferne, zasidrane beljakovine
+  - poskus Fryea in Edidina
+  - flip-flop redek, asimetrija
+- Fluidnost
+  - temperatura in nenasičeni repi
+  - holesterol blaži
+- Prepustnost
+  - plini hitro, ioni skoraj nič
+- Transport
+  - olajšana difuzija se nasiči
+  - črpalka: $3\,\mathrm{Na^+}$ ven, $2\,\mathrm{K^+}$ noter
+  - sekundarni: SGLT1 z gradientom $\mathrm{Na^+}$
+- Osmoza
+  - $c_\mathrm{osm} = i\,c$, $\Pi = c_\mathrm{osm} R T$
+  - napaka: izoosmotsko ni vedno izotonično
+- Prostornina celice
+  - $V = b + (V_0 - b)\,\frac{c_0}{c}$
+  - hemoliza pri okoli $0{,}4\,\%$ NaCl

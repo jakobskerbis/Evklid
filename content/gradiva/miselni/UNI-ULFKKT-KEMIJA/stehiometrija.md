@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Množina snovi
+  - $N = n\,N_\mathrm{A}$, enota mol
+  - $N_\mathrm{A} = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$
+- Molska masa
+  - $n = m/M$, enota $\mathrm{g/mol}$
+  - $M(\mathrm{H_2O}) = 18{,}02\,\mathrm{g/mol}$
+- Masni delež elementa
+  - $w(\mathrm{X}) = N(\mathrm{X})\,A_\mathrm{r}(\mathrm{X})/M_\mathrm{r}$
+  - voda: $w(\mathrm{H}) \approx 0{,}112$
+- Stehiometrični koeficienti
+  - $n(\mathrm{A})/\nu_\mathrm{A} = n(\mathrm{B})/\nu_\mathrm{B}$
+  - reakcijski obseg: $n_i = n_{i,0} + \nu_i\,\xi$
+  - napaka: »koeficienti kot razmerje mas«
+- Pot računa
+  - masa → množina → množina → masa
+  - plini $n = pV/(RT)$, raztopine $n = cV$
+- Omejujoči reaktant
+  - najmanjši $n/\nu$, drugi so v presežku
+  - $\xi_\text{max} = \min n_{i,0}/|\nu_i|$
+- Izkoristek
+  - $\eta = m_\text{dejanska}/m_\text{teoretična} \cdot 100\,\%$
+  - stopnje se množijo: $0{,}8^3 \approx 51\,\%$
+  - nad $100\,\%$: vlažen ali nečist produkt
+- Empirična formula
+  - množine elementov deli z najmanjšo
+  - molekulska: $k = M/M_\text{emp}$
+  - sežig: kisik iz razlike mas

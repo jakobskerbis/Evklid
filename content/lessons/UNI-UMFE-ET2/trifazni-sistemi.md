@@ -71,7 +71,7 @@ Pri zvezdi na primer vstaviš $U_{\mathrm{f}} = U_{\mathrm{m}}/\sqrt{3}$ in $I_{
 
 Podobno sta jalova moč $Q = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} \sin\varphi$ in navidezna moč $S = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}}$. Kot $\varphi$ je tudi tu kot impedance ene faze bremena. To je kot med fazno napetostjo in faznim tokom, ne med $U_{\mathrm{m}}$ in $I_{\mathrm{v}}$.
 
-Še ena razlika od enofaznega kroga je pomembna v praksi. Trenutne moči treh faz se seštejejo v *stalno* vrednost, $p(t) = P$. Motor zato ne trese, kar je pri pogonu teleskopa zelo dobrodošlo. Za isto moč potrebuješ tudi manj bakra kot pri treh ločenih enofaznih krogih.
+Še ena razlika od enofaznega kroga je pomembna v praksi. Trenutne moči treh faz se seštejejo v *stalno* vrednost, $p(t) = P$. Motor se zato ne trese, kar je pri pogonu teleskopa zelo dobrodošlo. Za isto moč potrebuješ tudi manj bakra kot pri treh ločenih enofaznih krogih.
 
 ## Rešeni primeri
 
@@ -175,6 +175,65 @@ $U_{\mathrm{m}} = \sqrt{3} \cdot 115\,\mathrm V \approx 199\,\mathrm V$ (zato na
 - Isto breme v trikotu ima trikrat večjo moč kot v zvezdi.
 - Pri simetričnem bremenu je tok v ničelnem vodniku nič, trenutna moč pa je stalna.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo simetričnega trifaznega sistema s kazalci in zakaj je vsota treh faznih napetosti nič;
+- definiciji fazne in medfazne napetosti ter izpeljavo $U_{\mathrm{m}} = \sqrt{3}\, U_{\mathrm{f}}$ iz razlike kazalcev;
+- zveze med napetostjo bremena, tokom bremena in tokom v vodniku pri vezavi v zvezdo in v trikot;
+- izraze za $P$, $Q$ in $S$ simetričnega bremena s faznimi in z medfaznimi vrednostmi ter kaj je kot $\varphi$;
+- zakaj ima isto breme v trikotu trikrat večjo moč kot v zvezdi;
+- kdaj je tok v ničelnem vodniku nič in zakaj je trenutna moč simetričnega bremena stalna.
+
+### Naloga 1
+
+Na zbiralke lastne rabe elektrarne z medfazno napetostjo $400\,\mathrm V$ sta priključeni dve simetrični bremeni. Motor črpalke je vezan v trikot, impedanca enega navitja ima velikost $30\,\Omega$ in faktor moči $0{,}8$ (induktivno). Grelnik je vezan v zvezdo in ima tri upore po $32\,\Omega$. a) Izračunaj tok v vodniku ter delovno in jalovo moč vsakega bremena. b) Izračunaj skupno delovno, jalovo in navidezno moč, skupni tok v dovodnem vodniku in skupni faktor moči. Zakaj skupni tok ni vsota tokov obeh bremen? c) Kolikšna bi bila tok v vodniku in delovna moč motorja, če bi ista navitja vezali v zvezdo?
+
+**Rešitev:**
+
+1. a) Motor v trikotu: navitje dobi $U_{\mathrm{f}} = 400\,\mathrm V$, zato $I_{\mathrm{f}} = \dfrac{400\,\mathrm V}{30\,\Omega} \approx 13{,}33\,\mathrm A$ in $I_{\mathrm{v}} = \sqrt{3} \cdot 13{,}33\,\mathrm A \approx 23{,}09\,\mathrm A$.
+2. Moč motorja: $P_1 = 3 \cdot 400\,\mathrm V \cdot 13{,}33\,\mathrm A \cdot 0{,}8 \approx 12800\,\mathrm W$. Ker je $\sin\varphi = \sqrt{1 - 0{,}8^2} = 0{,}6$, je $Q_1 = 3 \cdot 400 \cdot 13{,}33 \cdot 0{,}6\,\mathrm{var} \approx 9600\,\mathrm{var}$.
+3. Grelnik v zvezdi: upor dobi $U_{\mathrm{f}} = \dfrac{400\,\mathrm V}{\sqrt{3}} \approx 230{,}94\,\mathrm V$, zato $I_{\mathrm{v}} = I_{\mathrm{f}} = \dfrac{230{,}94\,\mathrm V}{32\,\Omega} \approx 7{,}217\,\mathrm A$.
+4. Moč grelnika: $P_2 = 3 \cdot 230{,}94\,\mathrm V \cdot 7{,}217\,\mathrm A \approx 5000\,\mathrm W$, $Q_2 = 0$ (čisti upori).
+5. b) Delovni in jalovi moči se seštejeta vsaka zase: $P = 12800\,\mathrm W + 5000\,\mathrm W = 17800\,\mathrm W$, $Q = 9600\,\mathrm{var}$.
+6. Navidezna moč: $S = \sqrt{17800^2 + 9600^2}\,\mathrm{VA} \approx 20224\,\mathrm{VA}$.
+7. Skupni tok v vodniku: $I_{\mathrm{v}} = \dfrac{S}{\sqrt{3}\, U_{\mathrm{m}}} = \dfrac{20224\,\mathrm{VA}}{\sqrt{3} \cdot 400\,\mathrm V} \approx 29{,}19\,\mathrm A$.
+8. Skupni faktor moči: $\cos\varphi = \dfrac{17800}{20224} \approx 0{,}880$.
+9. Vsota velikosti tokov bi bila $23{,}09\,\mathrm A + 7{,}217\,\mathrm A \approx 30{,}31\,\mathrm A$. Tokova sta kazalca: tok grelnika je v fazi s fazno napetostjo, tok motorja zaostaja za $\arccos 0{,}8 \approx 36{,}9^\circ$, zato je velikost vsote manjša.
+10. c) V zvezdi navitje dobi $230{,}94\,\mathrm V$: $I_{\mathrm{v}} = I_{\mathrm{f}} = \dfrac{230{,}94\,\mathrm V}{30\,\Omega} \approx 7{,}698\,\mathrm A$ in $P = 3 \cdot 230{,}94\,\mathrm V \cdot 7{,}698\,\mathrm A \cdot 0{,}8 \approx 4267\,\mathrm W$.
+11. Odgovor: motor $23{,}1\,\mathrm A$; $12{,}8\,\mathrm{kW}$; $9{,}6\,\mathrm{kvar}$. Grelnik $7{,}22\,\mathrm A$; $5{,}0\,\mathrm{kW}$. Skupaj $P = 17{,}8\,\mathrm{kW}$, $Q = 9{,}6\,\mathrm{kvar}$, $S \approx 20{,}2\,\mathrm{kVA}$, $I_{\mathrm{v}} \approx 29{,}2\,\mathrm A$, $\cos\varphi \approx 0{,}88$. Motor v zvezdi bi imel tretjino toka v vodniku ($7{,}70\,\mathrm A$) in tretjino moči ($4{,}27\,\mathrm{kW}$).
+
+### Naloga 2
+
+Izpelji zvezo med medfazno in fazno napetostjo simetričnega trifaznega sistema. Nato utemelji, da izraz $P = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} \cos\varphi$ velja za simetrično breme v zvezdi in v trikotu, in natančno navedi, kateri kot je $\varphi$.
+
+**Rešitev:**
+
+1. Fazni napetosti sta $\underline{U}_1 = U_{\mathrm{f}} \angle 0^\circ$ in $\underline{U}_2 = U_{\mathrm{f}} \angle -120^\circ$. Medfazna napetost je razlika kazalcev: $\underline{U}_{12} = \underline{U}_1 - \underline{U}_2$.
+2. Kazalca sta kraka enakokrakega trikotnika s kotom $120^\circ$ ob vrhu, razlika je njegova osnovnica. Kota ob osnovnici sta $30^\circ$, zato je osnovnica dolga $2 U_{\mathrm{f}} \cos 30^\circ = \sqrt{3}\, U_{\mathrm{f}}$.
+3. Enako s kompleksnim računom: $1 - \left(-\tfrac{1}{2} - \mathrm j \tfrac{\sqrt{3}}{2}\right) = \tfrac{3}{2} + \mathrm j \tfrac{\sqrt{3}}{2}$, velikost je $\sqrt{\tfrac{9}{4} + \tfrac{3}{4}} = \sqrt{3}$. Torej $U_{\mathrm{m}} = \sqrt{3}\, U_{\mathrm{f}}$, kazalec $\underline{U}_{12}$ pa prehiteva $\underline{U}_1$ za $30^\circ$.
+4. Vsaka faza simetričnega bremena prejme $U_{\mathrm{f}} I_{\mathrm{f}} \cos\varphi$, kjer sta $U_{\mathrm{f}}$ in $I_{\mathrm{f}}$ napetost in tok ene impedance. Skupaj: $P = 3\, U_{\mathrm{f}} I_{\mathrm{f}} \cos\varphi$.
+5. Zvezda: $U_{\mathrm{f}} = U_{\mathrm{m}}/\sqrt{3}$ in $I_{\mathrm{f}} = I_{\mathrm{v}}$, zato $P = 3 \cdot \dfrac{U_{\mathrm{m}}}{\sqrt{3}} \cdot I_{\mathrm{v}} \cos\varphi = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} \cos\varphi$.
+6. Trikot: $U_{\mathrm{f}} = U_{\mathrm{m}}$ in $I_{\mathrm{f}} = I_{\mathrm{v}}/\sqrt{3}$, zato $P = 3 \cdot U_{\mathrm{m}} \cdot \dfrac{I_{\mathrm{v}}}{\sqrt{3}} \cos\varphi = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} \cos\varphi$.
+7. Odgovor: $U_{\mathrm{m}} = \sqrt{3}\, U_{\mathrm{f}}$; izraz za moč je pri obeh vezavah enak, ker je faktor $\sqrt{3}$ enkrat pri napetosti in drugič pri toku. Kot $\varphi$ je kot impedance ene faze bremena, to je kot med napetostjo in tokom iste impedance. Ni kot med $U_{\mathrm{m}}$ in $I_{\mathrm{v}}$, ker je med njima pri simetričnem bremenu dodaten zamik $30^\circ$.
+
+### Naloga 3
+
+Na omrežje $230/400\,\mathrm V$ z ničelnim vodnikom so v zvezdo vezani trije grelniki: v prvi in drugi fazi po $23\,\Omega$, v tretji $46\,\Omega$. Računaj s fazno napetostjo $230\,\mathrm V$. a) Izračunaj tokove v faznih vodnikih in tok v ničelnem vodniku. b) Izračunaj skupno moč. c) Utemelji, zakaj je pri treh enakih grelnikih tok v ničelnem vodniku nič.
+
+**Rešitev:**
+
+1. a) Ničelni vodnik drži zvezdišče bremena na potencialu zvezdišča vira, zato vsak grelnik dobi $230\,\mathrm V$: $I_1 = I_2 = \dfrac{230\,\mathrm V}{23\,\Omega} = 10\,\mathrm A$, $I_3 = \dfrac{230\,\mathrm V}{46\,\Omega} = 5\,\mathrm A$.
+2. Grelniki so upori, zato je vsak tok v fazi s svojo fazno napetostjo: $\underline{I}_1 = 10\,\mathrm A \angle 0^\circ$, $\underline{I}_2 = 10\,\mathrm A \angle -120^\circ$, $\underline{I}_3 = 5\,\mathrm A \angle 120^\circ$.
+3. V komponentah: $\underline{I}_1 = 10\,\mathrm A$, $\underline{I}_2 = (-5 - \mathrm j\, 8{,}66)\,\mathrm A$, $\underline{I}_3 = (-2{,}5 + \mathrm j\, 4{,}33)\,\mathrm A$.
+4. Tok v ničelnem vodniku je vsota kazalcev: $\underline{I}_{\mathrm N} = (10 - 5 - 2{,}5)\,\mathrm A + \mathrm j\,(-8{,}66 + 4{,}33)\,\mathrm A = (2{,}5 - \mathrm j\, 4{,}33)\,\mathrm A$.
+5. Velikost: $I_{\mathrm N} = \sqrt{2{,}5^2 + 4{,}33^2}\,\mathrm A \approx 5\,\mathrm A$, kot $-60^\circ$.
+6. Hitrejša pot: $\underline{I}_3$ zapišemo kot $10\,\mathrm A \angle 120^\circ - 5\,\mathrm A \angle 120^\circ$. Trije enaki tokovi po $10\,\mathrm A$ dajo vsoto nič, ostane $-5\,\mathrm A \angle 120^\circ = 5\,\mathrm A \angle -60^\circ$.
+7. b) Bremena niso enaka, zato moči faz seštejemo posebej: $P = 230\,\mathrm V \cdot 10\,\mathrm A + 230\,\mathrm V \cdot 10\,\mathrm A + 230\,\mathrm V \cdot 5\,\mathrm A = 5750\,\mathrm W$. Izraz $\sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} \cos\varphi$ tu ne velja, ker tokovi v vodnikih niso enaki.
+8. c) Pri enakih grelnikih so tokovi enako veliki in zamaknjeni za $120^\circ$. Taki kazalci tvorijo enakostranični trikotnik, zato je njihova vsota nič: $1 + \left(-\tfrac{1}{2} - \mathrm j \tfrac{\sqrt{3}}{2}\right) + \left(-\tfrac{1}{2} + \mathrm j \tfrac{\sqrt{3}}{2}\right) = 0$.
+9. Odgovor: v faznih vodnikih teče $10\,\mathrm A$, $10\,\mathrm A$ in $5\,\mathrm A$, v ničelnem vodniku $5\,\mathrm A$ (ne $25\,\mathrm A$ in ne nič); skupna moč je $5{,}75\,\mathrm{kW}$. Tok v ničelnem vodniku je vsota kazalcev in je nič samo pri simetričnem bremenu.
+
 ## Drugače: Na sliki
 
 Predstavljaj si uro s tremi enako dolgimi kazalci. Prvi kaže na $12$, drugi na $4$, tretji na $8$. To so fazne napetosti $\underline{U}_1$, $\underline{U}_2$ in $\underline{U}_3$. Vsi trije se vrtijo skupaj, z enako hitrostjo, zato se slika ne spremeni.
@@ -185,11 +244,11 @@ Predstavljaj si uro s tremi enako dolgimi kazalci. Prvi kaže na $12$, drugi na 
 
 Obe vezavi lahko narišeš kar s črkama. Zvezda je črka Y: trije kraki se srečajo v sredini, v zvezdišču, vsak krak je eno breme. Trikot je trikotnik: vsaka stranica je eno breme, oglišča so priključena na fazne vodnike.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Vrtiljak.** Trije otroci potiskajo vrtiljak in vsak potisne ob drugem času, eden za drugim. Vrtiljak se vrti enakomerno. En sam otrok bi ga potiskal sunkovito. Tako se trenutne moči treh faz dopolnijo v stalno moč.
-- **Hišni priključek.** Doma imaš običajno tri faze, na primer $3 \times 25\,\mathrm A$. Vtičnice so priključene med eno fazo in ničlo, zato je v njih $230\,\mathrm V$. Rdeča trifazna vtičnica v delavnici ima med faznimi kontakti $400\,\mathrm V$. Električni štedilnik pogosto razdeli kuhalne plošče na različne faze, da je obremenitev bolj simetrična.
-- **Tablica motorja.** Na motorju piše »$\Delta/\mathrm Y$ $230/400\,\mathrm V$«. To pomeni, da navitje prenese $230\,\mathrm V$. Na omrežju $400\,\mathrm V$ ga zato vežeš v zvezdo. Večji motorji z navitjem za $400\,\mathrm V$ (tablica $\Delta$ $400\,\mathrm V$) se zaženejo v zvezdi in nato preklopijo v trikot, da je zagonski tok manjši.
+- **Generator v elektrarni.** Navitja sinhronskega generatorja so vezana v zvezdo. Generator hidroelektrarne z navidezno močjo $50\,\mathrm{MVA}$ in medfazno napetostjo $10{,}5\,\mathrm{kV}$ daje v vsak vodnik tok $I_{\mathrm{v}} = S/(\sqrt{3}\, U_{\mathrm{m}}) \approx 2750\,\mathrm A$. Ker je trenutna moč simetričnega sistema stalna, je navor na gredi turbine enakomeren in agregat se ne trese.
+- **Distribucijski transformator.** Transformator $20/0{,}4\,\mathrm{kV}$ z močjo $630\,\mathrm{kVA}$ ima visokonapetostno navitje v trikotu in nizkonapetostno v zvezdi. Zvezdišče je ozemljeno in iz njega izhaja ničelni vodnik, zato imajo enofazni odjemalci $230\,\mathrm V$, trifazni pa $400\,\mathrm V$. Nazivni tok je na nizkonapetostni strani okoli $909\,\mathrm A$, na strani $20\,\mathrm{kV}$ le okoli $18\,\mathrm A$. Enofazne odjemalce projektant razporedi čim bolj enakomerno po fazah, da je tok v ničelnem vodniku majhen.
+- **Zagon zvezda–trikot.** Motor črpalke z močjo $15\,\mathrm{kW}$ in tablico »$\Delta$ $400\,\mathrm V$« ima nazivni tok okoli $28\,\mathrm A$. Ob neposrednem vklopu v trikotu bi iz omrežja potegnil približno šestkratnik, okoli $170\,\mathrm A$. Zato ga zaženemo v zvezdi: navitje dobi $230\,\mathrm V$, tok v vodniku in navor sta trikrat manjša (okoli $57\,\mathrm A$). Ko se motor zavrti, ga stikala preklopijo v trikot. Motor s tablico »$\Delta/\mathrm Y$ $230/400\,\mathrm V$« pa na omrežju $400\,\mathrm V$ ostane v zvezdi, ker njegovo navitje prenese le $230\,\mathrm V$.
 
 ## Drugače: Bolj natančno
 
@@ -258,7 +317,7 @@ I_{\mathrm{v}} | tok v vodniku | | A | v trikotu $\sqrt{3}\, I_{\mathrm{f}}$
 P | delovna moč | P = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} \cos\varphi | W
 Q | jalova moč | Q = S \sin\varphi | var
 S | navidezna moč | S = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} | VA
-\varphi | kot impedance bremena | | – | med $U_{\mathrm{f}}$ in $I_{\mathrm{f}}$
+\varphi | kot impedance bremena | | ° | med $U_{\mathrm{f}}$ in $I_{\mathrm{f}}$
 R | upor grelnega elementa | | \Omega
 Z | impedanca ene faze bremena | | \Omega | kazalec $\underline{Z}$, velikost $\lvert\underline{Z}\rvert$
 u_k | trenutna napetost faze $k$ | | V | $k = 0, 1, 2$

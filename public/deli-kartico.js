@@ -22,7 +22,7 @@ export function shareCardModel(d) {
     .slice(0, SHOW_MAX)
     .map((id) => ({ id, rarity: itemRarity(itemOf(id)) }));
   const collections = COLLECTIONS.map((c) => {
-    const all = KNOWLEDGE.filter((x) => x.collection === c.id);
+    const all = KNOWLEDGE.filter((x) => x.collection === c.id && (!x.hidden || owned.has(x.id))); // skrita značka (Pilot) šteje samo lastniku
     return { id: c.id, n: all.filter((x) => owned.has(x.id)).length, of: all.length };
   });
   const tier = Number(d?.pass?.tier) || 0;

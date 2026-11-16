@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Gostota magnetnega polja
+  - vektor $\vec{B}$, enota $1\,\mathrm{T} = 1\,\mathrm{V\,s/m^2}$
+  - Zemlja okoli $50\,\mu\mathrm{T}$
+- Lorentzova sila
+  - $\vec{F} = q\,\vec{v} \times \vec{B}$, pravokotna na $\vec{v}$ in $\vec{B}$
+  - ne opravlja dela, spremeni le smer
+  - kroženje: $r = mv/(|q|B)$, $\omega = |q|B/m$
+- Sila na vodnik
+  - $\vec{F} = I\,\vec{l} \times \vec{B}$, $F = IlB\sin\theta$
+  - vzporedna vodnika: $F/l = \mu_0I_1I_2/(2\pi r)$
+- Amperov zakon
+  - $\oint\vec{B} \cdot \mathrm{d}\vec{s} = \mu_0I$, stacionarni tokovi
+  - raven vodnik $B = \mu_0I/(2\pi r)$, ne $1/r^2$
+  - dolga tuljava $B = \mu_0NI/l$
+- Magnetni pretok
+  - $\Phi_m = BS\cos\theta$, enota $1\,\mathrm{Wb} = 1\,\mathrm{V\,s}$
+  - $\theta$ je kot med poljem in normalo
+- Indukcijski zakon
+  - $U_i = -N\,\mathrm{d}\Phi_m/\mathrm{d}t$
+  - napetost da sprememba pretoka, ne pretok
+  - Lenz: inducirani tok nasprotuje spremembi
+- Gibajoča se palica
+  - $U_i = Blv$
+  - magnetna sila zavira gibanje palice
+- Generator, transformator, samoindukcija
+  - $U_i = NBS\omega\sin\omega t$
+  - $U_2/U_1 = N_2/N_1$
+  - $U_i = -L\,\mathrm{d}I/\mathrm{d}t$, enota $\mathrm{H}$

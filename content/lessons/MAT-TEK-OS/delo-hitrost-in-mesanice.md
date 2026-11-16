@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Sošolec Žan je prepričan: »Mojster Jure poploščiči kopalnico v $6$ urah, njegov vajenec v $12$ urah. Če delata skupaj, bosta potrebovala povprečje, torej $9$ ur.«
+Sošolec Žan je prepričan: »Mojster Jure obloži kopalnico s ploščicami v $6$ urah, njegov vajenec v $12$ urah. Če delata skupaj, bosta potrebovala povprečje, torej $9$ ur.«
 
 Nekaj tu ne gre skupaj. Po Žanovem računu bi vajenec mojstra le oviral, saj Jure sam konča že v $6$ urah. Dva delavca pa vendar naredita več kot eden. Do konca lekcije bomo Žanu natančno povedali, koliko časa bosta potrebovala in kje je zgrešil.
 
@@ -13,7 +13,7 @@ Enaka past se skriva v nalogah o povprečni hitrosti, o srečevanju in o mešanj
 
 ## Razlaga
 
-Žanovo trditev preverimo kar z razpredelnico. Jure vsako uro poploščiči $\dfrac{1}{6}$ kopalnice, vajenec $\dfrac{1}{12}$.
+Žanovo trditev preverimo kar z razpredelnico. Jure vsako uro obloži $\dfrac{1}{6}$ kopalnice, vajenec $\dfrac{1}{12}$.
 
 | čas | Jure | vajenec | skupaj |
 |---|---|---|---|
@@ -30,7 +30,7 @@ $$\frac{1}{t} = \frac{1}{t_1} + \frac{1}{t_2}$$
 Tu sta $t_1$ in $t_2$ časa posameznikov, $t$ pa čas, ko delata skupaj.
 
 :::premisli
-Ekipi se pridruži še drugi vajenec, prav tako s $12$ urami. Napovej: koliko časa bodo zdaj potrebovali trije?
+Ekipi se pridruži še drugi vajenec, prav tako z $12$ urami. Napovej: koliko časa bodo zdaj potrebovali trije?
 ---
 $\dfrac{1}{6} + \dfrac{1}{12} + \dfrac{1}{12} = \dfrac{4}{12} = \dfrac{1}{3}$ kopalnice na uro, torej $3$ ure. Vsak nov delavec skrajša čas, tudi počasen.
 :::
@@ -170,7 +170,7 @@ Vsako od štirih vrst rešiš z istim receptom: najprej poišči količino, ki s
 
 ## Drugače: Kot zgodba
 
-Nekega jutra mojster Jure in vajenec prideta v hišo, kjer naj poploščičita kopalnico. Jure ve, da bi sam delal $6$ ur. Na steno nariše dvanajst enakih pasov. »Jaz bom vsako uro naredil dva pasova, ti enega. Skupaj trije na uro.« Po štirih urah je vseh dvanajst pasov pokritih. Vajenec se čudi: »Žan je rekel devet ur!«
+Nekega jutra mojster Jure in vajenec prideta v hišo, kjer naj kopalnico obložita s ploščicami. Jure ve, da bi sam delal $6$ ur. Na steno nariše dvanajst enakih pasov. »Jaz bom vsako uro naredil dva pasova, ti enega. Skupaj trije na uro.« Po štirih urah je vseh dvanajst pasov pokritih. Vajenec se čudi: »Žan je rekel devet ur!«
 
 Popoldne vajenec s kombijem odpelje ostanke na deponijo. Tja vozi hitro, nazaj v gneči počasi. Opazi, da mu počasni del vzame več ur. Zato povprečna hitrost ni na sredini, ampak bližje počasni.
 
@@ -227,5 +227,8 @@ d | dolžina jarka | | m |
 v_A, v_B | hitrosti kopanja bagrov A in B | | m/h |
 s_A | dolžina, ki jo izkoplje bager A | s_A = v_A \cdot t | m |
 x | masa dodanega cementa | | kg |
+m | masa suhe mešanice pred dodajanjem | | kg |
+v_1, v_2 | hitrosti dveh udeležencev ali hitrosti na delih poti | | km/h |
+s | pot | | km | v $v_\mathrm{p} = \dfrac{s}{t}$ celotna pot (tam je $t$ celotni čas); v Primeru 4 pot v eno smer
 v_\mathrm{p} | povprečna hitrost | v_\mathrm{p} = \frac{\text{celotna pot}}{\text{celotni čas}} | km/h |
 :::

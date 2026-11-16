@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mreža in celica
+  - mreža in baza dasta kristalno strukturo
+  - kubična celica: mrežni parameter $a$
+- Štetje atomov
+  - oglišče $\tfrac18$, rob $\tfrac14$, ploskev $\tfrac12$
+  - pazi: fcc nima $Z = 14$
+- Kubične celice
+  - sc: $Z = 1$, $a = 2r$, KŠ 6
+  - bcc: $Z = 2$, $a\sqrt3 = 4r$, KŠ 8
+  - fcc: $Z = 4$, $a\sqrt2 = 4r$, KŠ 12
+- Gostota zloga
+  - $f = \dfrac{Z \cdot \tfrac43\pi r^3}{a^3}$
+  - sc $0{,}524$, bcc $0{,}680$, fcc $0{,}740$
+- Gostota snovi
+  - $\rho = \dfrac{ZM}{N_\mathrm{A}a^3}$, enota $\mathrm{g/cm^3}$
+  - $1\,\mathrm{pm} = 10^{-10}\,\mathrm{cm}$
+- Braggov zakon
+  - $n\lambda = 2d\sin\theta$
+  - $d_{hkl} = a/\sqrt{h^2+k^2+l^2}$
+- Razmerje polmerov
+  - meje $0{,}225$; $0{,}414$; $0{,}732$ za KŠ 4, 6, 8
+  - predpostavka: toge krogle, ionska vez
+- NaCl in CsCl
+  - fcc: $N$ oktaedrskih, $2N$ tetraedrskih lukenj
+  - NaCl: $Z = 4$, $a = 2(r_+ + r_-)$
+  - CsCl: $Z = 1$, ni bcc

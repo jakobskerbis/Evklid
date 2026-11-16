@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Fermatov izrek
+  - notranji ekstrem: $f'(c) = 0$
+  - obrat ne velja: $x^3$ v $0$
+- Rollov izrek
+  - zvezna na $[a,b]$, odvedljiva na $(a,b)$, $f(a) = f(b)$
+  - obstaja $\xi$ z $f'(\xi) = 0$
+  - protiprimer brez odvedljivosti: $|x|$ na $[-1,1]$
+- Lagrangeov izrek
+  - $f'(\xi) = \frac{f(b)-f(a)}{b-a}$
+  - tangenta v $\xi$ vzporedna sekanti
+  - $\xi$ ni nujno sredina: $x^3$ na $[0,3]$, $\xi = \sqrt 3$
+- Posledice
+  - $f' = 0$: konstanta; $f' > 0$: strogo narašča
+  - $|f'| \le M$: $|f(y)-f(x)| \le M|y-x|$
+  - ena ničla: Rolle in $f' \ne 0$
+- Diferencial
+  - $\mathrm{d}f = f'(x)\,\mathrm{d}x$, sprememba po tangenti
+  - $\sqrt{4{,}1} \approx 2 + 0{,}025$
+  - napaka krogle: $\frac{\mathrm{d}V}{V} = \frac{3\,\mathrm{d}r}{r}$
+- Višji odvodi
+  - $f^{(n)} = (f^{(n-1)})'$, $s''$ je pospešek
+  - $(x e^x)^{(n)} = (x+n)\,e^x$
+  - pazi: $f'' \ne (f')^2$

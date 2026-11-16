@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Povprečje
+  - $\bar x = \frac{1}{n}\sum x_i$
+  - vsota odmikov od $\bar x$ je $0$
+  - najmanjša vsota kvadratov odmikov
+- Standardni odklon
+  - $s = \sqrt{\frac{\sum (x_i - \bar x)^2}{n-1}}$
+  - $\mathrm{RSD} = \frac{s}{\bar x} \cdot 100\,\%$
+  - napaka: deljenje z $n$
+- Negotovost povprečja
+  - $s/\sqrt n$ pada z več meritvami
+  - $s$ ostane lastnost metode
+- Interval zaupanja
+  - $\mu = \bar x \pm \frac{t\,s}{\sqrt n}$
+  - $t$ za $n-1$ prostostnih stopenj
+  - 95 %: $n=3$ $4{,}303$, $n=5$ $2{,}776$
+- Natančnost in pravilnost
+  - natančnost: raztros $s$, naključne napake
+  - pravilnost: odmik $\bar x$ od prave vrednosti
+  - ponovitve ne odpravijo sistematske napake
+- Značilne števke
+  - vodilne ničle ne štejejo
+  - seštevanje: decimalna mesta; množenje: značilne števke
+  - negotovost na eno števko, zaokroži na koncu
+- t-test
+  - $t_\mathrm{izr} = \frac{|\bar x - \mu_0|\sqrt n}{s}$
+  - $t_\mathrm{izr} > t$: sistematska napaka

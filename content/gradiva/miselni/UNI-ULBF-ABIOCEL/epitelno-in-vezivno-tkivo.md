@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tkivo
+  - celice in zunajcelični matriks
+  - napaka: »tkivo je le kup celic«
+- Epitel
+  - polarne celice na bazalni lamini
+  - brez žil, prehrana z difuzijo
+  - tesni stiki, dezmosomi, hemidezmosomi
+- Poimenovanje epitela
+  - število plasti in oblika vrhnjih celic
+  - večvrstni: vse celice na bazalni lamini
+  - koža: večskladni ploščati poroženevajoči
+- Žleze
+  - eksokrine po izvodilu, endokrine v kri
+  - merokrino, apokrino, holokrino
+- Zunajcelični matriks
+  - kolagen I, II, III, IV; elastin
+  - glikozaminoglikani vežejo vodo
+  - glicin–X–Y, vitamin C za hidroksiprolin
+- Hrustanec
+  - kolagen II in agrekan, brez žil
+  - hondrociti v lakunah, izogene skupine
+  - hialini, elastični, vlaknati
+- Kost
+  - kolagen I in hidroksiapatit
+  - osteoblasti, osteociti, osteoklasti
+  - osteon: stena $\frac{200 - 50}{2} = 75\,\mathrm{\mu m}$
+- Zakostenevanje in prenova
+  - intramembransko, enhondralno
+  - prenova okoli $10\,\%$ okostja na leto

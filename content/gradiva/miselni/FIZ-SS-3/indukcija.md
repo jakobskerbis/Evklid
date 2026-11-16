@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Šteje sprememba
+  - mirujoč magnet ne inducira ničesar
+  - napaka: »močan magnet požene tok«
+- Magnetni pretok
+  - $\Phi = B S$, polje pravokotno na zanko
+  - enota $\mathrm{Wb} = \mathrm{V\,s}$
+- Indukcijski zakon
+  - $U_i = N \dfrac{\Delta \Phi}{\Delta t}$
+  - hitrejša sprememba, več ovojev: večja napetost
+- Lenzovo pravilo
+  - inducirani tok nasprotuje spremembi pretoka
+  - magnet noter: odboj; magnet ven: privlak
+  - posledica ohranitve energije
+- Transformator
+  - $\dfrac{U_2}{U_1} = \dfrac{N_2}{N_1}$
+  - idealni: $U_1 I_1 = U_2 I_2$
+  - deluje le z izmenično napetostjo
+- Medicina
+  - magnetna stimulacija: kratek sunek, velika napetost
+  - polžev vsadek dobi energijo skozi kožo
