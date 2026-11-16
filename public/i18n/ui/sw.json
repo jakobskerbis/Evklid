@@ -2588,6 +2588,7 @@
   "scan.offline": "Unahitaji mtandao ili kusoma picha. Unaweza kuandika swali, nitalitatua hata bila mtandao.",
   "scan.readAs": "Nimesoma",
   "scan.given": "Imetolewa",
+  "scan.sought": "Inatakiwa",
   "scan.pick": "Kuna maswali kadhaa kwenye picha. Chagua moja:",
   "scan.inputLabel": "Swali (rekebisha kama nimesoma kitu vibaya)",
   "scan.typeLabel": "Zoezi",

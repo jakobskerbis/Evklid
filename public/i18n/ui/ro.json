@@ -2612,6 +2612,7 @@
   "scan.offline": "Ca să citesc o fotografie, ai nevoie de conexiune. Poți scrie exercițiul: îl rezolv și fără conexiune.",
   "scan.readAs": "Am citit",
   "scan.given": "Se dă",
+  "scan.sought": "Se cere",
   "scan.pick": "În imagine sunt mai multe exerciții. Alege unul:",
   "scan.inputLabel": "Exercițiu (corectează-l dacă am citit ceva greșit)",
   "scan.typeLabel": "Sarcina",
