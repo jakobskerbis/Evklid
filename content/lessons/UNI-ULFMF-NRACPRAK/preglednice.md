@@ -152,7 +152,7 @@ Za rob terase potrebuješ $18\,\text{m}$ letve. Letve prodajajo le cele, po $2{,
 
 **Rešitev:**
 
-1. $\dfrac{18}{2{,}5} = 7{,}2$ letve. Sedem letev ni dovolj, del letve pa ne moreš kupiti.
+1. $\dfrac{18}{2{,}5} = 7{,}2$ letve. Sedem letev ni dovolj, dela letve pa ne moreš kupiti.
 2. Zato zaokrožimo navzgor, ne po pravilih zaokroževanja.
 3. Dokončaj sam, nato preveri:
 
@@ -178,6 +178,63 @@ Koliko letev kupiš in koliko plačaš?
 - Mediana je neobčutljiva za posamezne skrajne podatke, povprečje ni.
 - Raztreseni (XY) graf za dve številski količini, stolpčni za kategorije, tortni za dele celote. Osi z naslovi in enotami.
 - Decimalna vejica v podatkih; v celico vpisuj formule, ne izračunanih števil.
+
+## Za izpit
+
+Znati moraš povedati:
+- kaj so naslov celice, območje in sklic ter da se formula začne z `=`;
+- pravilo relativnega sklica pri kopiranju ter razliko med relativnim, absolutnim in mešanim sklicem;
+- definicije povprečja, mediane (pri lihem in sodem $n$) in vzorčnega standardnega odklona s formulo;
+- zakaj `STDEV.S` deli z $n - 1$ in kdaj uporabiš `STDEV.P`;
+- zakaj je mediana neobčutljiva za posamezne skrajne podatke, povprečje pa ne;
+- katero vrsto grafa izbereš za dve številski količini, za kategorije in za dele celote.
+
+### Naloga 1
+
+Osem študentov je s štoparico izmerilo nihajni čas istega nihala (v s): $2{,}04$; $1{,}98$; $2{,}01$; $2{,}07$; $1{,}95$; $2{,}02$; $1{,}99$; $2{,}10$. Meritve so v `B2:B9`. (a) Izračunaj, kaj vrnejo `=AVERAGE(B2:B9)`, `=MEDIAN(B2:B9)` in `=STDEV.S(B2:B9)`. (b) Deveti študent je štoparico ustavil prepozno in v `B10` vpisal $2{,}90\,\text{s}$. Izračunaj iste tri vrednosti za `B2:B10`. (c) Katera vrednost se je spremenila najmanj in katera najbolj? Kaj sporočiš kot rezultat meritve?
+
+**Rešitev:**
+
+1. Vsota osmih meritev: $2{,}04 + 1{,}98 + 2{,}01 + 2{,}07 + 1{,}95 + 2{,}02 + 1{,}99 + 2{,}10 = 16{,}16$. Povprečje: $\dfrac{16{,}16}{8} = 2{,}02\,\text{s}$.
+2. Po velikosti: $1{,}95$; $1{,}98$; $1{,}99$; $2{,}01$; $2{,}02$; $2{,}04$; $2{,}07$; $2{,}10$. Pri sodem $n$ vzamemo četrti in peti podatek: mediana je $\dfrac{2{,}01 + 2{,}02}{2} = 2{,}015\,\text{s}$.
+3. Odmiki od povprečja (v vrstnem redu meritev): $0{,}02$; $-0{,}04$; $-0{,}01$; $0{,}05$; $-0{,}07$; $0$; $-0{,}03$; $0{,}08$. Njihova vsota je $0$, kar potrdi povprečje.
+4. Vsota kvadratov odmikov: $0{,}0004 + 0{,}0016 + 0{,}0001 + 0{,}0025 + 0{,}0049 + 0 + 0{,}0009 + 0{,}0064 = 0{,}0168$.
+5. Standardni odklon: $s = \sqrt{\dfrac{0{,}0168}{7}} = \sqrt{0{,}0024} \approx 0{,}049\,\text{s}$.
+6. Z deveto meritvijo je vsota $16{,}16 + 2{,}90 = 19{,}06$, povprečje pa $\dfrac{19{,}06}{9} \approx 2{,}118\,\text{s}$.
+7. Devet podatkov ima srednjega na petem mestu po velikosti. Nova meritev je največja, zato je peti podatek $2{,}02$: mediana je $2{,}02\,\text{s}$.
+8. Vsota kvadratov odmikov od novega povprečja je približno $0{,}7052$; večino prispeva deveta meritev, $(2{,}90 - 2{,}118)^2 \approx 0{,}612$. Standardni odklon: $s = \sqrt{\dfrac{0{,}7052}{8}} \approx 0{,}297\,\text{s}$.
+9. Primerjava: mediana se je spremenila za $2{,}02 - 2{,}015 = 0{,}005\,\text{s}$, povprečje za $2{,}118 - 2{,}02 = 0{,}098\,\text{s}$ (dva prejšnja standardna odklona), standardni odklon pa se je povečal približno šestkrat, $\dfrac{0{,}297}{0{,}049} \approx 6{,}1$.
+10. Odgovor: (a) $2{,}02\,\text{s}$; $2{,}015\,\text{s}$ in $\approx 0{,}049\,\text{s}$; (b) $\approx 2{,}118\,\text{s}$; $2{,}02\,\text{s}$ in $\approx 0{,}297\,\text{s}$; (c) najmanj se spremeni mediana, najbolj standardni odklon. Velika razlika med povprečjem in mediano opozori na napačno meritev: preveriš jo, izločiš in sporočiš $2{,}02\,\text{s}$ s standardnim odklonom $0{,}05\,\text{s}$.
+
+### Naloga 2
+
+V `A2:A5` so količine ($2$; $5$; $10$; $20$ kosov), v `B1:D1` cene za kos ($3{,}50$; $5{,}20$; $8{,}90$ €), v `G1` popust $15\,\%$. Celice `H1:I1` in `G2:I5` so prazne. V `B2` vpišeš <code>=&#36;A2*B&#36;1*(1-&#36;G&#36;1)</code> in formulo skopiraš čez `B2:D5`. (a) Katera formula je v `D4` in kolikšna je njena vrednost? (b) Sošolec je v `B2` vpisal <code>=&#36;A2*B&#36;1*(1-G1)</code>. Katera formula je po kopiranju v `D4`, kolikšna je njena vrednost in v katerih celicah območja `B2:D5` je rezultat pravilen? (c) Utemelji, ali bi za kopiranje samo navzdol, v `B3:B5`, zadoščal sklic <code>G&#36;1</code>.
+
+**Rešitev:**
+
+1. Od `B2` do `D4` se formula premakne za $2$ stolpca desno in $2$ vrstici navzdol. Premakne se le tisti del sklica, pred katerim ni znaka <code>&#36;</code>.
+2. V <code>&#36;A2</code> je zaklenjen stolpec, vrstica se premakne: <code>&#36;A4</code>. V <code>B&#36;1</code> je zaklenjena vrstica, stolpec se premakne: <code>D&#36;1</code>. <code>&#36;G&#36;1</code> ostane.
+3. (a) V `D4` je <code>=&#36;A4*D&#36;1*(1-&#36;G&#36;1)</code>. Vrednost: $10 \cdot 8{,}9 \cdot (1 - 0{,}15) = 75{,}65$ €.
+4. (b) Relativni sklic `G1` se premakne za $2$ stolpca in $2$ vrstici, v `I3`. V `D4` je <code>=&#36;A4*D&#36;1*(1-I3)</code>.
+5. Celica `I3` je prazna in šteje kot $0$: $10 \cdot 8{,}9 \cdot (1 - 0) = 89$ €. To je cena brez popusta, za $89 - 75{,}65 = 13{,}35$ € previsoka. Preglednica ne javi napake.
+6. Sklic kaže na `G1` samo v celici `B2`. V vseh drugih celicah območja se premakne v eno od praznih celic `G2:I5` ali `H1:I1`, zato je pravilen le rezultat v `B2`, to je $1$ od $3 \cdot 4 = 12$ celic.
+7. (c) Pri kopiranju navzdol se spreminja le številka vrstice, zato <code>G&#36;1</code> zadošča: v `B5` je <code>=&#36;A5*B&#36;1*(1-G&#36;1)</code>, $20 \cdot 3{,}5 \cdot 0{,}85 = 59{,}5$ €. Pri kopiranju v desno bi se `G` premaknil v `H`, zato je za celo tabelo potreben <code>&#36;G&#36;1</code>.
+8. Odgovor: (a) <code>=&#36;A4*D&#36;1*(1-&#36;G&#36;1)</code>, $75{,}65$ €; (b) <code>=&#36;A4*D&#36;1*(1-I3)</code>, $89$ €, pravilna je le celica `B2`; (c) da, za kopiranje samo navzdol zadošča zaklenjena vrstica.
+
+### Naloga 3
+
+Dokaži, da je vsota odmikov podatkov od njihovega povprečja enaka $0$. S tem utemelji, zakaj `STDEV.S` deli z $n - 1$ in ne z $n$. Kdaj uporabiš `STDEV.P` in kolikšno vrednost vrne za pet meritev deske iz razlage?
+
+**Rešitev:**
+
+1. Po definiciji je $\bar{x} = \dfrac{x_1 + \dots + x_n}{n}$, torej $\sum_{i=1}^{n} x_i = n\bar{x}$.
+2. Vsota odmikov: $\sum_{i=1}^{n}(x_i - \bar{x}) = \sum_{i=1}^{n} x_i - n\bar{x} = n\bar{x} - n\bar{x} = 0$.
+3. Odmike torej veže ena enačba: če jih poznaš $n - 1$, je zadnji določen. Prostih je le $n - 1$ odmikov.
+4. Za poljubno število $a$ velja $\sum_i (x_i - a)^2 = \sum_i (x_i - \bar{x})^2 + n(\bar{x} - a)^2$, ker mešani člen $2(\bar{x} - a)\sum_i (x_i - \bar{x})$ po koraku 2 odpade. Vsota kvadratov odmikov je zato najmanjša prav pri $a = \bar{x}$.
+5. Prava srednja vrednost populacije je neznana in se od $\bar{x}$ praviloma razlikuje. Vsota kvadratov odmikov od $\bar{x}$ je zato manjša ali enaka vsoti kvadratov odmikov od prave srednje vrednosti: če bi delili z $n$, bi razpršenost v povprečju podcenili.
+6. Deljenje z $n - 1$ to natanko popravi: pričakovana vrednost $s^2$ je varianca populacije. Zato `STDEV.S` uporabiš za vzorec (nekaj meritev iste količine).
+7. `STDEV.P` deli z $n$ in velja, kadar so podatki vsa populacija, ne le vzorec. Za pet meritev deske je vsota kvadratov odmikov $0{,}26$: `STDEV.P` vrne $\sqrt{\dfrac{0{,}26}{5}} \approx 0{,}228\,\text{cm}$, `STDEV.S` pa $\sqrt{\dfrac{0{,}26}{4}} \approx 0{,}255\,\text{cm}$.
+8. Sklep: vsota odmikov je $0$, zato je prostih $n - 1$ odmikov; `STDEV.S` deli z $n - 1$, `STDEV.P` z $n$ in pri istih podatkih vrne manjšo vrednost.
 
 ## Drugače: Korak za korakom s številkami
 

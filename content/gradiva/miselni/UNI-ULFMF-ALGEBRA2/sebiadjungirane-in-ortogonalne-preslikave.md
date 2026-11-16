@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Adjungiranka
+  - $\langle Ax, y\rangle = \langle x, A^*y\rangle$
+  - v ortonormirani bazi $A^* = A^T$
+- Ortogonalna preslikava
+  - $Q^TQ = I$, ohranja dolžine in kote
+  - $\det Q = \pm 1$: vrtenje ali zrcaljenje
+  - pazi: pravokotni stolpci niso dovolj, morajo biti enotski
+- Sebiadjungirana preslikava
+  - $A^T = A$, kompleksno hermitska
+  - lastne vrednosti so realne
+  - lastni vektorji različnih lastnih vrednosti so pravokotni
+- Spektralni izrek
+  - $A = QDQ^T$, stolpci $Q$ so lastni vektorji
+  - $A = \lambda_1 q_1q_1^T + \dots + \lambda_n q_nq_n^T$
+  - velja natanko za simetrične realne matrike
+- Kvadratna forma
+  - $q = x^TAx$, mešani koeficient razpolovi
+  - glavne osi: $q = \sum \lambda_i u_i^2$
+  - elipsa $q = c$: polosi $\sqrt{c/\lambda_i}$
+- Definitnost
+  - pozitivno definitna: vse $\lambda_i > 0$
+  - pri $2 \times 2$: $\det A > 0$ in $\operatorname{sl} A > 0$
+  - različna predznaka: nedefinitna, hiperbola

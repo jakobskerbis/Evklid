@@ -1,0 +1,331 @@
+{
+ "shema": 1,
+ "datum": "2026-11-10",
+ "vrsta": "aplikacija",
+ "meja_pregledov": "brez",
+ "pari": {
+  "bolje": 4,
+  "slabse": 7,
+  "napaka_v_obeh": 1,
+  "brez_napake_v_obeh": 79
+ },
+ "primeri": 91,
+ "izpusceni": 7,
+ "ocenjevalec": "claude-opus-5-5 (model AI)",
+ "vprasanje": "Kako rešim to nalogo? Pokaži mi rešitev po korakih in končni rezultat.\n\n<naloga>",
+ "vrstice": [
+  {
+   "kljuc": "brez",
+   "ime": "Sam model, brez preverjanja",
+   "ime_en": "Model alone, without the program check",
+   "primeri": 91,
+   "napake": 5,
+   "manjse_napake": 25,
+   "pravilno": 61,
+   "rezultat_podan": 86,
+   "rezultat_podan_pct": 95,
+   "po_stopnjah": {
+    "osnovna šola": {
+     "primeri": 30,
+     "napake": 1
+    },
+    "srednja šola": {
+     "primeri": 25,
+     "napake": 1
+    },
+    "fakulteta": {
+     "primeri": 22,
+     "napake": 2
+    },
+    "tekmovanja": {
+     "primeri": 14,
+     "napake": 1
+    }
+   },
+   "vrste_napak": {
+    "dodatna_vaja": 2,
+    "trditev": 3
+   },
+   "koda_neujemanje": 6,
+   "popravki": 0,
+   "pregledi": 0,
+   "modeli": {
+    "claude-haiku-5-5": 91
+   },
+   "usd_na_odgovor": 0.00228
+  },
+  {
+   "kljuc": "s",
+   "ime": "Cel Evklidov odgovor, s preverjanjem",
+   "ime_en": "Evklid's full answer, with the program check",
+   "primeri": 91,
+   "napake": 8,
+   "manjse_napake": 23,
+   "pravilno": 60,
+   "rezultat_podan": 88,
+   "rezultat_podan_pct": 97,
+   "po_stopnjah": {
+    "osnovna šola": {
+     "primeri": 30,
+     "napake": 3
+    },
+    "srednja šola": {
+     "primeri": 25,
+     "napake": 1
+    },
+    "fakulteta": {
+     "primeri": 22,
+     "napake": 3
+    },
+    "tekmovanja": {
+     "primeri": 14,
+     "napake": 1
+    }
+   },
+   "vrste_napak": {
+    "koncni_rezultat": 1,
+    "dodatna_vaja": 3,
+    "racun_vmes": 1,
+    "trditev": 3
+   },
+   "koda_neujemanje": 5,
+   "popravki": 1,
+   "pregledi": 4,
+   "modeli": {
+    "claude-haiku-5-5": 91
+   },
+   "usd_na_odgovor": 0.00241
+  }
+ ],
+ "strosek_usd": {
+  "aplikacija": 0.48,
+  "ocenjevalec": 3.67,
+  "skupaj": 4.16
+ },
+ "trajanje_min": 73,
+ "opombe": [
+  "Isti primeri v obeh pogojih; vsak odgovor je nastal s svojim klicem modela, zato je del razlike šum: isti model na isto nalogo ne odgovori vedno enako. Polje »pari« pove, pri koliko primerih se je ocena spremenila v vsako smer (bolje: napaka samo brez preverjanja; slabše: napaka samo s preverjanjem).",
+  "Napaka = ocena »napaka« (napačen rezultat, formula ali trditev). Manjše napake so štete posebej. Odgovor, ki učenca samo vodi z vprašanji in rezultata ne pove, šteje brez napake (delež odgovorov s podanim rezultatom: rezultat_podan_pct).",
+  "Pot: POST /api/conversations/:id/messages (pravi klepet), nov učenec in pogovor s temo lekcije za vsak primer, model po stopnji kot pri plačljivem paketu.",
+  "Brez predpomnilnika odgovorov, brez nadgradenj po mesečnem proračunu in BREZ dnevne meje za pregled z zmogljivejšim modelom (v aplikaciji 0,30 $ na dan za vse učence skupaj; ko je porabljena, pregleda ni).",
+  "Ocenjevalec je model AI (primerja z rešitvijo iz lekcije), ne človek."
+ ],
+ "napake": [
+  {
+   "id": "FIZ-SS-2/notranja-energija-in-toplota",
+   "stopnja": "srednja šola",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Vsi trije odseki, računi in končni rezultat 87 800 J so pravilni; dodatna vaja je smiselno zastavljena, tipkarske napake pa ne vplivajo na strokovno pravilnost."
+  },
+  {
+   "id": "FIZ-SS-2/notranja-energija-in-toplota",
+   "stopnja": "srednja šola",
+   "pogoj": "s",
+   "ocena": "manjsa_napaka",
+   "vrsta": "racun_vmes",
+   "koda": false,
+   "razlog": "Izračun in končni rezultat 87 800 J sta pravilna, le delež taljenja (66 800 / 87 800 ≈ 76 %) je opisan kot »skoraj 80 %«, kar je nekoliko nenatančno."
+  },
+  {
+   "id": "KEM-OS-8/kovalentna-vez",
+   "stopnja": "osnovna šola",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "koncni_rezultat",
+   "koda": null,
+   "razlog": "Napako z vrstnim številom (8 − 7 = 3) inštruktor na koncu sam popravi, a zapisana Lewisova formula :N̈≡N̈: kaže na vsakem atomu dva nevezna para (4 nevezne elektrone), kar nasprotuje lastnemu besedilu in pravilni formuli :N≡N: z enim neveznim parom."
+  },
+  {
+   "id": "BIO-OS-8/biologija-in-raziskovanje",
+   "stopnja": "osnovna šola",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "dodatna_vaja",
+   "koda": null,
+   "razlog": "Glavna rešitev je pravilna, dodana vaja pa je slabo zastavljena: »srčna mišica« in »srčno tkivo« sta na isti (tkivni) ravni, ravni celice pa ni, zato naloga nima enoznačne pravilne razvrstitve in lahko učenca zavede."
+  },
+  {
+   "id": "BIO-OS-8/biologija-in-raziskovanje",
+   "stopnja": "osnovna šola",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "dodatna_vaja",
+   "koda": null,
+   "razlog": "Rešitev naloge je pravilna, vendar dodatna vaja nima pojma na ravni celice, saj sta »srčna mišica« in »srčno mišično tkivo« praktično ista raven, zato je vaja nejasna in bi učenca lahko zavedla."
+  },
+  {
+   "id": "UNI-ULBF-AANAT/secila-in-spolovila",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "manjsa_napaka",
+   "vrsta": "trditev",
+   "koda": false,
+   "razlog": "Vsi računi in rezultati so pravilni, vendar preverba netočno trdi, da se G ujema z »dano vrednostjo 125 mL/min«, čeprav naloga G ne podaja in je to izračunana vrednost."
+  },
+  {
+   "id": "UNI-ULBF-AANAT/secila-in-spolovila",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Vsi rezultati (G = 125 mL/min, f ≈ 0,21, izločenih 125 mg/min, U_g = 125 mg/mL, prag 3,0 mg/mL) in vmesni računi se ujemajo z uradno rešitvijo; nerodno označevanje splošnega očistka s simbolom G sledeči stavek razjasni (G = C_kr), zato ni zavajajoče."
+  },
+  {
+   "id": "UNI-ULFS-STATKIN/trenje",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "trditev",
+   "koda": null,
+   "razlog": "Končni rezultat je pravilen, vendar je trditev v preverbi napačna: če bi bilo 250 m dolžina po poti, bi bila vodoravna dolžina krajša (≈245 m) in naklon večji, ne manjši."
+  },
+  {
+   "id": "BIO-OS-8/celica-pod-mikroskopom",
+   "stopnja": "osnovna šola",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "dodatna_vaja",
+   "koda": true,
+   "razlog": "Izračun 0,25 mm = 250 μm je pravilen, a dodana vaja vodi do bakterije, dolge 300 μm, kar je za približno dva velikostna reda preveč, saj so bakterije običajno velike le nekaj mikrometrov; to bi učenca naučilo napačne predstave o velikosti bakterij."
+  },
+  {
+   "id": "UNI-ULFKKT-ANAL1/kislinsko-bazne-titracije",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Odgovor je odrezan sredi drugega koraka, a vse podano je pravilno: stehiometrija 1:1, c(CH3COOH) = 0,1680 mol/L, skupni volumen 26,80 mL in c(Ac⁻) = 6,27·10⁻² mol/L."
+  },
+  {
+   "id": "KEM-SS-2/lastnosti-elementov-v-periodnem-sistemu",
+   "stopnja": "srednja šola",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "dodatna_vaja",
+   "koda": true,
+   "razlog": "Izračun pH = 12 je pravilen, dodatna vaja pa je kemijsko napačna: 0,40 g MgO se v 0,50 L vode ne raztopi, ker je Mg(OH)₂ zelo slabo topen, zato bi učenec po vzoru CaO dobil nerealen pH ≈ 12,6."
+  },
+  {
+   "id": "MAT-TEK-OS/logicne-naloge-in-sklepanje",
+   "stopnja": "tekmovanja",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "racun_vmes",
+   "koda": null,
+   "razlog": "V 2. koraku (krivka Kaja) inštruktor izpusti Ninino izjavo, ki je tedaj resnična (Kajina izjava je lažna), zato napačno trdi, da sta resnični dve izjavi, v resnici so tri; končni rezultat Luka je kljub temu pravilen."
+  },
+  {
+   "id": "KEM-SS-2/elementi-v-bioloskih-sistemih",
+   "stopnja": "srednja šola",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "trditev",
+   "koda": true,
+   "razlog": "Račun (0,877 mg ≈ 0,88 mg) in sklep, da reakcija ni redoks, sta pravilna, vendar je definicija v »Zapomni si« napačna: redoks reakcija ne zahteva spremembe oksidacijskih števil vsaj dveh elementov, saj se pri disproporcionaciji spremeni oksidacijsko število le enega elementa; poleg tega je masa FeS "
+  },
+  {
+   "id": "UNI-ULFKKT-ORG1/alkani-alkeni-in-alkini",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "manjsa_napaka",
+   "vrsta": "koncni_rezultat",
+   "koda": false,
+   "razlog": "Inštruktor je za klor vzel relativno hitrost 3,6 namesto 3,8, zato dobi 54,5 % in 45,5 % namesto 56 % in 44 %. Ker je opozoril, da se vrednosti v učbenikih razlikujejo, so pa bromiranje, meja r ≥ 27 in izbira broma pravilni, gre za manjšo napako."
+  },
+  {
+   "id": "UNI-ULBF-AMIKRO/mikrobni-metabolizem",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "dodatna_vaja",
+   "koda": true,
+   "razlog": "Glavna rešitev je pravilna (190 in 10 molekul glukoze, razmerje 19 : 1), dodana vaja pa anaerobnemu dihanju z nitratom pripiše le 4 ATP na glukozo; ker tudi to dihanje uporablja verigo za prenos elektronov, je donos bistveno večji, zato podatek učenca biološko zavaja."
+  },
+  {
+   "id": "MAT-TEK-OS/stetje-poti-in-likov",
+   "stopnja": "tekmovanja",
+   "pogoj": "brez",
+   "ocena": "napaka",
+   "vrsta": "trditev",
+   "koda": false,
+   "razlog": "Inštruktor napačno trdi, da so med 3 daljicami iz vrha že stranici VB in VC, čeprav so te 3 notranje daljice, zato je črt skozi vrh 5 in je pravilni rezultat C(5,2)·3 = 30, ne 9."
+  },
+  {
+   "id": "UNI-ULFMF-NRACPRAK/preglednice",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Povprečje 117,23 cm in mediana 120,2 cm sta pravilno izračunana, odločitev za rez po mediani s preverbo napačne meritve 102,4 cm pa je pravilno utemeljena."
+  },
+  {
+   "id": "FIZ-SS-1/prosti-pad-in-navpicni-met",
+   "stopnja": "srednja šola",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Kvadratna enačba, izbira pozitivne rešitve t ≈ 3,5 s, hitrost ob padcu 24,3 m/s navzdol in obe preverbi (energijska in časovna, 1,02 s + 2,48 s) so pravilni in se ujemajo z uradno rešitvijo."
+  },
+  {
+   "id": "UNI-UPFAMNIT-RAC1/povezane-strukture",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "trditev",
+   "koda": true,
+   "razlog": "Inštruktor pravilno izračuna 3000, 1000 premikov in 2 spremembi kazalcev, na koncu pa trdi, da je indeksiranje od 1 in bi bil naslov 2996, kar je v nasprotju z nalogo in prejšnjim izračunom ter bi učenca zavedlo."
+  },
+  {
+   "id": "UNI-ULFKKT-ANORG/kristalne-strukture",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Vsi rezultati so pravilni: a ≈ 564 pm, r(Na⁺) ≈ 101 pm, razmerje 0,56 ustreza KŠ 6 in f ≈ 0,65; tudi razlaga, zakaj je f manjši od 0,74 (razmaknjeni anioni, r⁻ bi moral biti 199 pm, sami anioni zasedajo ≈ 0,55), je strokovno pravilna."
+  },
+  {
+   "id": "UNI-ULFKKT-ANORG/kristalne-strukture",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "trditev",
+   "koda": true,
+   "razlog": "Računi in rezultati so pravilni (a ≈ 564 pm, r₊ ≈ 101 pm, razmerje 0,56, f ≈ 0,65), pojasnilo pa trdi, da so oktaedrske luknje v NaCl le delno zapolnjene z manjšimi Na⁺; v resnici so zapolnjene vse, Na⁺ pa je večji od luknje in zato razmakne fcc anionov."
+  },
+  {
+   "id": "UNI-ULFMF-NUVPROG/razredi-in-objekti",
+   "stopnja": "fakulteta",
+   "pogoj": "brez",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Koda razreda je pravilna, izračun obsega po povečavi (28) se ujema z uradno rešitvijo, preverba in dodatna vaja sta strokovno brezhibni."
+  },
+  {
+   "id": "UNI-ULFMF-NUVPROG/razredi-in-objekti",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "pravilno",
+   "vrsta": "ni",
+   "koda": false,
+   "razlog": "Koda razreda je pravilna in rezultat 28 se ujema z uradno rešitvijo; razlaga in preverba sta točni, dodatna vaja pa je smiselno zastavljena."
+  },
+  {
+   "id": "UNI-ULFKKT-BIOLKEM/aminokisline-in-proteini",
+   "stopnja": "fakulteta",
+   "pogoj": "s",
+   "ocena": "napaka",
+   "vrsta": "trditev",
+   "koda": true,
+   "razlog": "Trditev, da je nevtralna oblika tista, pri kateri sta obe kislini že odcepljeni, amino skupina pa ne, je napačna: taka oblika ima naboj −1 (kar inštruktor v 2. delu tudi sam izračuna), v nevtralni obliki pa je odcepljena le α-COOH, medtem ko so številčni rezultati pravilni."
+  }
+ ]
+}

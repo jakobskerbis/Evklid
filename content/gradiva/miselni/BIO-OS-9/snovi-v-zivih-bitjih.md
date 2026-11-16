@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Isti elementi
+  - živo in neživo iz istih atomov
+  - C, H, O, N, P, S nad $95\,\%$ mase
+- Ogljikovo ogrodje
+  - verige in obroči iz C
+  - organske snovi zoglenijo, sol in pesek ne
+- Voda in soli
+  - anorganski snovi iz okolja
+  - človek okoli $60\,\%$ vode, gobe $90\,\%$
+  - kalcij v kosteh, železo v krvi
+- Ogljikovi hidrati
+  - C, H, O; glukoza, škrob, celuloza
+  - hitra energija, $17\,\mathrm{kJ/g}$
+- Maščobe
+  - C, H, O z malo kisika
+  - zaloga, $37\,\mathrm{kJ/g}$; polh, selivke
+- Beljakovine in DNA
+  - beljakovine imajo še N, pogosto S
+  - DNA ima še P, nosi dedni zapis
+- Presnova
+  - fotosinteza gradi glukozo iz $\mathrm{CO_2}$
+  - celično dihanje sprosti energijo
+  - napaka: rastlina dobi maso iz zemlje

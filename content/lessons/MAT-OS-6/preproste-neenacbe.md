@@ -60,10 +60,20 @@ Ne. Zdaj je pogoj $x + 2 < 9$. Pri $x = 7$ dobimo $9 < 9$, kar ne drži. Rešitv
 
 Na številski premici to vidiš takole. Za $x + 2 \le 9$ poln krožec (●) pomeni rešitev, prazen (○) pa število, ki ni rešitev:
 
-```
- 1  2  3  4  5  6  7  8  9
- ●  ●  ●  ●  ●  ●  ●  ○  ○
-```
+:::risba premica
+opis: Številska premica od 1 do 9 za neenačbo x + 2 ≤ 9. Števila od 1 do 7 imajo poln krožec (so rešitve), 8 in 9 prazen krožec (nista rešitvi).
+od: 1
+do: 9
+točka: 1
+točka: 2
+točka: 3
+točka: 4
+točka: 5
+točka: 6
+točka: 7
+točka: 8 | | prazna
+točka: 9 | | prazna
+:::
 
 V simulaciji spodaj »Neenačba na številski premici« nastavi $a = 1$, $b = 2$, znak $\le$ in $c = 9$. Premikaj »preizkusi x« od $6$ do $8$ in beri, kdaj se izpis zamenja iz »je rešitev« v »ni rešitev«. Premica pokaže tudi števila med celimi, mi beremo le naravna.
 
@@ -160,7 +170,7 @@ Je, ker je $24 : 3 = 8 \le 8$. Pot je lahko dolga od $1$ do $24\,\text{km}$: $\{
 - **Meja pri $<$ in $\le$.** Pri $x + 2 < 9$ učenec napiše tudi $7$, ker ga je dobil v računu. Pri znaku $<$ meja ne spada zraven, saj $9 < 9$ ne drži. Mejo vedno vstavi in preveri.
 - **Napačna stran.** Pri $x + 3 > 10$ učenec našteje $1, 2, \dots, 6$, ker je navajen, da so rešitve pod mejo. Znak $>$ zahteva večje vrednosti. Vstavi eno število pod mejo in poglej, ali neenačba drži.
 - **Zaokroževanje navzdol.** Pri $25 \cdot x \ge 110$ učenec iz $4{,}4$ naredi $4$. Toda $25 \cdot 4 = 100$ je premalo. Kadar meja ni naravno število, preveri obe sosednji naravni števili.
-- **Ničla med rešitvami.** Pri $x + 5 < 12$ učenec začne z $0$. Ničla ni naravno število, zato množica rešitev začne z $1$.
+- **Ničla med rešitvami.** Pri $x + 5 < 12$ učenec začne z $0$. Ničla ni naravno število, zato se množica rešitev začne z $1$.
 
 ## Povzetek
 

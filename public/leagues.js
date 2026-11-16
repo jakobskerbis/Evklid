@@ -4,6 +4,7 @@ import { avatarSvg, itemOf, itemName, itemRarity, wear } from "./avatar.js";
 import { DRAW } from "./zbirke.js";
 import { t, currentLang, locale } from "./i18n.js";
 import { nameHasContact } from "./ime-skupine.js";
+import { zavrzi } from "./odgovor.js";
 import { quizCardHtml, playQuiz } from "./kviz.js";
 import { itemThumb, earnedWhere } from "./zbirke-view.js";
 const $ = (sel) => document.querySelector(sel);
@@ -272,7 +273,7 @@ export async function loadLeague(studentId) {
   root.querySelectorAll("[data-export]").forEach((b) =>
     b.addEventListener("click", async () => {
       const r = await fetch(`/api/students/${studentId}/school-export`);
-      if (!r.ok) return toast(t("lg.error", { status: r.status }));
+      if (!r.ok) return zavrzi(r), toast(t("lg.error", { status: r.status }));
       const a = document.createElement("a");
       a.href = URL.createObjectURL(await r.blob());
       a.download = "evklid-napredek.json";

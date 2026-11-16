@@ -24,3 +24,6 @@ stanje: osnutek
 - Elementarne funkcije
   - $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$
   - $(e^x)' = e^x$, $(\ln x)' = \frac{1}{x}$
+- Izpeljave (višja raven)
+  - pravila iz definicije odvoda
+  - $(\tan x)' = \frac{1}{\cos^2 x}$, $(a^x)' = a^x \ln a$

@@ -36,6 +36,9 @@ const ANIMALS = ["Ris", "Sokol", "Delfin", "Medved", "Lisjak", "Volk", "Jež", "
 const NICK_RE = new RegExp(`^(${ADJ.join("|")}) (${ANIMALS.join("|")}) ([1-9][0-9]?)$`);
 
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // brez 0/O in 1/I
+// XP iz nalog za pilot (server/pilot-naloge.js, razlog »pilot: …«) šteje samo na profilu, ne v ligah (j, 6. 11.).
+const NOT_PILOT = "COALESCE(reason, '') NOT LIKE 'pilot:%'";
+const NOT_PILOT_X = "COALESCE(x.reason, '') NOT LIKE 'pilot:%'";
 const pick = (arr) => arr[crypto.randomInt(arr.length)];
 
 export function randomNickname() {
@@ -136,6 +139,8 @@ export class Leagues {
         joined_at TEXT NOT NULL DEFAULT (datetime('now')),
         PRIMARY KEY (class_id, student_id)
       );
+      -- D1: razredi enega učenca (lestvica, sporočilo, lekcija); primarni ključ se začne s class_id.
+      CREATE INDEX IF NOT EXISTS idx_class_members_student ON class_members(student_id);
     `);
     const cols = this.db.prepare("PRAGMA table_info(classes)").all().map((c) => c.name);
     if (!cols.includes("owner_parent_id")) this.db.exec("ALTER TABLE classes ADD COLUMN owner_parent_id INTEGER");
@@ -178,7 +183,7 @@ export class Leagues {
     const rows = this.db
       .prepare(
         `SELECT student_id, COALESCE(SUM(amount),0) AS xp FROM xp_events
-         WHERE student_id IN (${studentIds.map(() => "?").join(",")}) AND created_at >= ? AND created_at < ?
+         WHERE student_id IN (${studentIds.map(() => "?").join(",")}) AND created_at >= ? AND created_at < ? AND ${NOT_PILOT}
          GROUP BY student_id`,
       )
       .all(...studentIds, from, to);
@@ -200,7 +205,7 @@ export class Leagues {
       const active = this.db
         .prepare(
           `SELECT DISTINCT x.student_id AS id FROM xp_events x
-           WHERE x.created_at >= ? AND x.created_at < ? AND x.amount > 0
+           WHERE x.created_at >= ? AND x.created_at < ? AND x.amount > 0 AND ${NOT_PILOT_X}
              AND NOT EXISTS (SELECT 1 FROM league_members m WHERE m.student_id = x.student_id AND m.week = ?)
            ORDER BY x.student_id`,
         )
@@ -266,7 +271,7 @@ export class Leagues {
         `SELECT x.student_id, p.nickname, SUM(x.amount) AS xp, MIN(x.created_at) AS first FROM xp_events x
          JOIN league_profiles p ON p.student_id = x.student_id
          JOIN students s ON s.id = x.student_id
-         WHERE x.created_at >= ? AND x.created_at < ? AND ${STAGE_SQL} = ?
+         WHERE x.created_at >= ? AND x.created_at < ? AND ${STAGE_SQL} = ? AND ${NOT_PILOT_X}
          GROUP BY x.student_id HAVING xp > 0 ORDER BY xp DESC, first, x.student_id`,
       )
       .all(from, to, stage);
@@ -466,7 +471,7 @@ export class Leagues {
     const total = new Map(
       ids.length
         ? this.db
-            .prepare(`SELECT student_id, SUM(amount) AS xp FROM xp_events WHERE student_id IN (${ids.map(() => "?").join(",")}) GROUP BY student_id`)
+            .prepare(`SELECT student_id, SUM(amount) AS xp FROM xp_events WHERE student_id IN (${ids.map(() => "?").join(",")}) AND ${NOT_PILOT} GROUP BY student_id`)
             .all(...ids)
             .map((r) => [r.student_id, r.xp])
         : [],

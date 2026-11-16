@@ -60,6 +60,9 @@ export const NOTES = {
 
 // Razlogi, zakaj inštruktor ne odgovori (blockInfo). Enako besedilo je v public/i18n/sl.js pod istim ključem.
 // topupPrompt: true (poziv k dokupu), "birth" (dokup šele po vpisu datuma rojstva) ali false → pripona kode zavrnitve.
+// Današnji dan (UTC) kot razpon nad created_at: indeks (created_at) ali (student_id, created_at) se uporabi; z
+// date(created_at) = date('now') bi SQLite izračunal datum za vsako vrstico tabele (D2, meritev 13. 11.).
+const DANES = "created_at >= date('now') AND created_at < date('now', '+1 day')";
 const tpSuffix = (tp) => (tp === "birth" ? "Birth" : tp ? "Topup" : "");
 export const BLOCK_TEXT = {
   "block.daily": "Današnja vprašanja za inštruktorja so porabljena ({n} na dan). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
@@ -122,6 +125,15 @@ export class Usage {
     this.blockFor = (studentId, code) => ({ error: BLOCK_TEXT[code], code });
     // Začetek obdobja meje zajamčenega paketa (ISO) ali null = koledarski mesec (j 2026-11-06, pregled #462).
     this.periodOf = () => null;
+    // Lastnik (server/accounts/pilot-meja.js): brez meje inštruktorja (brez trde meje, dnevnih meja in zaustavitve
+    // proračuna); poraba se še vedno zapiše (log).
+    this.unlimitedOf = () => false;
+    // Poraba prejšnjih računov istega člana pilota (accounts/index.js pilotPriorSpent, pregled #477 B1).
+    this.priorSpentOf = () => 0;
+    // Član pilota (accounts/index.js): ob meji besedilo brez »obdobja paketa« (block.shareOut, pregled #477 B3 P3-1).
+    this.pilotOf = () => false;
+    // Ob prvi rezervaciji klica AI za profil (accounts/index.js: zaklep stopnje pilota ob prvi porabi v mesecu, #477).
+    this.onUse = null;
     this.onLog = null;
     this.inflight = new Map();
   }
@@ -130,7 +142,11 @@ export class Usage {
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
   // totalOf: vrednost paketa (meja + brezplačni rep) v $ ali null; trda meja ni nikoli višja (capsFor).
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf } = {}) {
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf, unlimitedOf, priorSpentOf, pilotOf, onUse } = {}) {
+    if (onUse) this.onUse = onUse;
+    if (unlimitedOf) this.unlimitedOf = unlimitedOf;
+    if (priorSpentOf) this.priorSpentOf = priorSpentOf;
+    if (pilotOf) this.pilotOf = pilotOf;
     if (minCall) this.minCall = minCall;
     if (blockFor) this.blockFor = blockFor;
     if (creditOverOf) this.creditOverOf = creditOverOf;
@@ -175,8 +191,17 @@ export class Usage {
     this.kvSet(k, Math.round(((Number(this.kvGet(k)) || 0) + v) * 100) / 100);
     return true;
   }
+  // Skupna poraba vseh učencev (D7): iz dnevnih vsot usage_dnevno (server/db.js), ne iz vseh vrstic usage.
+  // Brez tabele (baza, odprta mimo openDb) iz usage kot prej.
+  vsotaOd(od) {
+    if (this.dnevno === undefined) this.dnevno = !!this.db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'usage_dnevno'").get();
+    const q = this.dnevno
+      ? "SELECT COALESCE(SUM(usd),0) AS s FROM usage_dnevno WHERE dan >= date('now', ?)"
+      : "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now', ?)";
+    return this.db.prepare(q).get(od).s;
+  }
   todayTotal() {
-    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now')").get().s;
+    return this.vsotaOd("start of day");
   }
   // Poraba iz skupnega proračuna ta mesec (brez porabe iz dokupljenega kredita), za učenca ali vse.
   baseSpent(studentId = null) {
@@ -188,7 +213,8 @@ export class Usage {
     const now = Date.now();
     if (!this.shareCache || now - this.shareCache.at > SHARE_TTL_MS) {
       const ids = this.db
-        .prepare("SELECT DISTINCT student_id AS id FROM usage WHERE student_id IS NOT NULL AND kind NOT IN ('reuse','hint') AND created_at >= datetime('now','-30 days')")
+        // INDEXED BY (D1): samo zadnjih 30 dni, ne vsa zgodovina prek idx_usage_student.
+        .prepare("SELECT DISTINCT student_id AS id FROM usage INDEXED BY idx_usage WHERE student_id IS NOT NULL AND kind NOT IN ('reuse','hint') AND created_at >= datetime('now','-30 days')")
         .all()
         .map((r) => r.id);
       let sum = 0;
@@ -249,7 +275,7 @@ export class Usage {
       // Poraba šteje po obdobju paketa (naročnina: od začetka plačanega obdobja, ne koledarski mesec), brez porabe
       // iz kredita; poraba izbrisanih profilov računa šteje (izbris in nov profil meje ne ponastavita).
       const since = this.periodStart(studentId);
-      const spent = (group || [studentId]).reduce((t, id) => t + this.spentSince(id, since), 0) + this.orphanSpent(owner, since);
+      const spent = (group || [studentId]).reduce((t, id) => t + this.spentSince(id, since), 0) + this.orphanSpent(owner, since) + (this.priorSpentOf(studentId, since) || 0);
       return { ...base, spent, group, pool: !!group, allowance: detailedShare(g), ceiling: g, guaranteed: true };
     }
     const pool = state.cap ? Math.max(0, state.cap - this.reservedUsd(studentId)) : 0;
@@ -307,10 +333,12 @@ export class Usage {
     }
     if (!state.cap) return { mode, boosted: false, saved: false, level: state.level };
     const sb = sb0;
+    // Lastnik (brez meje) ima prednost kot naročnik pod deležem, a nikoli ni »blizu svojega dela«.
+    const unlimited = this.unlimitedOf(studentId);
     // Naročnik pod zajamčenim deležem ima prednost: skupni proračun ga ne spusti pod običajno raven.
-    if (sb.guaranteed && state.level < 1) return { mode, boosted: false, saved: false, level: state.level };
+    if ((sb.guaranteed || unlimited) && state.level < 1) return { mode, boosted: false, saved: false, level: state.level };
     // Tudi pri porabi iz dokupljenega kredita brez nadgradnje: kupljeni pogovori so ocenjeni za običajne modele.
-    const near = sb.spent >= sb.allowance * SHARE_SOFT;
+    const near = !unlimited && sb.spent >= sb.allowance * SHARE_SOFT;
     return { ...budgetMode(mode, { level: state.level, maxTier, lite, overShare: near }), level: state.level };
   }
   // API račun nima dobroimetja (napaka 400): nekaj minut ne kličemo, učenec dobi jasno sporočilo.
@@ -362,6 +390,8 @@ export class Usage {
   // Del stroška nad deležem učenca (ali nad skupnim proračunom) gre iz dokupljenega kredita računa.
   chargeCredit(studentId, cost) {
     if (!this.credits || studentId == null || !(cost > 0)) return;
+    // Lastnik (unlimitedOf) je brez meje: nič »nad mejo«, zato kredit ostane nedotaknjen (poraba se še zapiše).
+    if (this.unlimitedOf(studentId)) return;
     // Meja brezplačnega paketa ob kreditu ne velja (accounts/index.js), zato tam plača kredit ves strošek, tudi brez proračuna.
     const free = !!this.freeOver(studentId);
     const state = this.budgetState();
@@ -382,17 +412,23 @@ export class Usage {
     if (take > 0) this.credits.use(sb.owner, studentId, Math.round(take * 1e6) / 1e6);
   }
   // Poraba ene vrste (npr. "verify") danes, v USD.
+  // Število zapisov teh vrst danes za učenca (npr. pregledi, server/live-check.js LIVE_REVIEW_PER_PUPIL).
+  kindsCountToday(studentId, kinds) {
+    if (!kinds.length) return 0;
+    return this.db.prepare(`SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind IN (${kinds.map(() => "?").join(",")}) AND created_at >= date('now')`).get(studentId, ...kinds).n;
+  }
   kindToday(kind) {
     return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE kind = ? AND created_at >= date('now')").get(kind).s;
   }
   monthTotal(studentId = null) {
-    const q = `SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month')${studentId ? " AND student_id = ?" : ""}`;
-    return studentId ? this.db.prepare(q).get(studentId).s : this.db.prepare(q).get().s;
+    if (!studentId) return this.vsotaOd("start of month");
+    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month') AND student_id = ?").get(studentId).s;
   }
   // Število odgovorov zmogljivejšega modela danes; prekinjeni odgovori štejejo (sicer bi prekinitev obšla dnevno mejo).
+  // D2: »danes« kot razpon nad created_at (ne date(created_at) = …), da poizvedba uporabi indeks, ne bere cele tabele.
   deepToday(studentId, deepModel) {
     return this.db
-      .prepare("SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind IN ('chat', 'prekinjeno') AND model LIKE ? AND date(created_at) = date('now')")
+      .prepare(`SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind IN ('chat', 'prekinjeno') AND model LIKE ? AND ${DANES}`)
       .get(studentId, `%${String(deepModel).replace(/^claude-/, "").split("-")[0]}%`).n;
   }
   // Ali je imetnik aktivacijske kode dosegel skrito omejitev Opusa (danes ali ta mesec).
@@ -424,6 +460,7 @@ export class Usage {
       const daily = LIMITS.dailyDeep();
       // Prva podrobna razlaga na faksu je Sonnet: dnevna meja šteje odgovore Sonneta, tudi brez računov (deepModel Opus).
       const counted = uniMid ? MODEL_MID : deepModel;
+      if (this.unlimitedOf(studentId)) return { mode: capped || uniMid ? "mid" : "deep", note: null };
       if (daily && this.deepToday(studentId, counted) >= daily) return { mode: "think", note: NOTES.dailyDeep(daily) };
       // S proračunom: blizu svojega dela proračuna (brez dokupljenega kredita); brez njega mehka meja v $.
       const state = this.budgetState();
@@ -485,7 +522,13 @@ export class Usage {
   }
   // Razlog za odgovor 429: { error, code, params? }. code je ključ i18n (public/i18n/sl.js »block.*«), da ga
   // odjemalec pokaže v jeziku vmesnika; error ostane slovensko besedilo (rezerva, če ključa ni).
+  // Koda ob porabljeni meji paketa: pilot »Ta mesec … 1. v mesecu« (nima obdobja paketa), sicer block.freeTail*.
+  tailCode(studentId) {
+    return this.pilotOf(studentId) ? "block.shareOut" : `block.freeTail${tpSuffix(this.topupPrompt(studentId))}`;
+  }
   blockInfo(studentId) {
+    // Lastnik: ustavi ga le prazno dobroimetje API (takrat ne odgovori nihče).
+    if (this.unlimitedOf(studentId)) return this.creditOut() ? this.blockFor(studentId, "block.creditOut") : null;
     const daily = LIMITS.dailyQuestions();
     if (daily && this.questionsToday(studentId) >= daily) {
       return { error: BLOCK_TEXT["block.daily"].replace("{n}", daily), code: "block.daily", params: { n: daily } };
@@ -496,7 +539,7 @@ export class Usage {
     const state = this.budgetState();
     // topupPrompt: true (poziv k dokupu), "birth" (dokup šele po vpisu datuma rojstva) ali false.
     const tail = tpSuffix;
-    if (this.overFreeTail(studentId, state)) return out(`block.freeTail${tail(this.topupPrompt(studentId))}`);
+    if (this.overFreeTail(studentId, state)) return out(this.tailCode(studentId));
     if (state.cap) {
       if (!this.overShare(studentId, state)) {
         const hard = this.hardBlock(studentId);
@@ -540,6 +583,7 @@ export class Usage {
   // Meje, ki veljajo za naslednji klic profila: { key, usd, spent, code }. Naročnina, darilo, preizkus, koda in bonus:
   // vsa vrednost paketa (meja + brezplačni rep) + dokupljeni kredit; ostalo iz računov (capsOf).
   capsFor(studentId, state = this.budgetState()) {
+    if (studentId != null && this.unlimitedOf(studentId)) return [];
     const caps = [];
     const sb = this.studentBudget(studentId, state);
     if (sb.guaranteed) {
@@ -548,7 +592,7 @@ export class Usage {
         key: sb.group ? `pool:${[...sb.group].sort((a, b) => a - b).join(",")}` : `s:${studentId}`,
         usd: Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, this.totalOf(studentId) ?? Infinity) + Math.max(0, sb.credit || 0),
         spent: sb.spent,
-        code: `block.freeTail${tpSuffix(this.topupPrompt(studentId))}`,
+        code: this.tailCode(studentId),
       });
     }
     for (const c of [].concat(this.capsOf(studentId) || [])) if (c && Number.isFinite(c.usd)) caps.push(c);
@@ -625,6 +669,12 @@ export class Usage {
       take(usd) {
         if (!(usd >= 0)) return false;
         if (self.headroom(studentId, capsFn()) < usd) return false;
+        // Klic AI gre naprej: zaklep stopnje pilota nastopi zdaj, ob prvi porabi v mesecu (j 2026-11-10), ne ob pogledu.
+        if (studentId != null && usd > 0 && self.onUse) {
+          try {
+            self.onUse(studentId);
+          } catch {}
+        }
         add(usd);
         return true;
       },
@@ -679,7 +729,7 @@ export class Usage {
   }
   summary() {
     const month = "u.created_at >= date('now','start of month')";
-    const today = "date(u.created_at) = date('now')";
+    const today = DANES.replaceAll("created_at", "u.created_at");
     const rows = this.db
       .prepare(
         `SELECT s.id, s.name, COUNT(CASE WHEN u.kind NOT IN ('reuse','hint') THEN 1 END) AS calls,
@@ -756,6 +806,8 @@ export class Usage {
   // Za starše: poraba otroka ta mesec kot delež mesečne omejitve (brez zneskov).
   // Naročnik (zajamčeni delež): odstotek in preostale podrobne razlage; inštruktor se ne ustavi (hitri način).
   studentMonth(studentId) {
+    // Lastnik: brez meje, zato brez odstotka in opozoril.
+    if (this.unlimitedOf(studentId)) return { percent: null, soft_reached: false, hard_reached: false, unlimited: true };
     const state = this.budgetState();
     const a = this.allowance(studentId, state);
     if (a.guaranteed) {

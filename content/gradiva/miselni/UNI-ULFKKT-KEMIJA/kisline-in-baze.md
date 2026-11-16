@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Brønsted-Lowryjeva definicija
+  - kislina donor, baza akceptor protona
+  - konjugirani par $\mathrm{HA/A^-}$; voda amfoterna
+- Avtoprotoliza in pH
+  - $K_w = [\mathrm{H_3O^+}][\mathrm{OH^-}] = 1{,}0 \cdot 10^{-14}$ pri $25\,^\circ\mathrm{C}$
+  - $\mathrm{pH} = -\log[\mathrm{H_3O^+}]$, $\mathrm{pH} + \mathrm{pOH} = 14{,}00$
+  - ena enota pH: desetkratna koncentracija
+- Močne kisline in baze
+  - $[\mathrm{H_3O^+}] = c$, $[\mathrm{OH^-}] = zc$
+  - $\mathrm{Ba(OH)_2}$: $z = 2$
+- Šibke kisline
+  - $K_a = \frac{x^2}{c - x}$, $[\mathrm{H_3O^+}] \approx \sqrt{K_a c}$
+  - približek preveri: $x$ pod $5\,\%$ od $c$
+  - Ostwald: $\alpha \approx \sqrt{K_a/c}$, z redčenjem raste
+- Šibke baze
+  - $[\mathrm{OH^-}] \approx \sqrt{K_b c}$, nato $\mathrm{pH} = 14 - \mathrm{pOH}$
+  - $K_a \cdot K_b = K_w$
+- Pufri
+  - šibka kislina in konjugirana baza
+  - $\mathrm{pH} = \mathrm{p}K_a + \log\frac{n(\mathrm{A^-})}{n(\mathrm{HA})}$
+  - uporaben pri $\mathrm{p}K_a \pm 1$
+- Dodatek kisline ali baze
+  - $\mathrm{HA + OH^- \to A^- + H_2O}$
+  - kapaciteta raste s koncentracijama
+  - pazi: $\mathrm{HCl}$ in $\mathrm{NaCl}$ nista pufer

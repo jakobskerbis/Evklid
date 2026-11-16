@@ -1,5 +1,5 @@
 // Pregled vseh simulacij iz kataloga na telefonski širini (360 px) po merilih docs/kakovost.md §3:
-// napake v konzoli, vodoravno drsenje, oznake kontrol, tipkovnica za vlečne elemente, »Poskusi«, »Ponastavi«,
+// napake v konzoli, vodoravno drsenje, oznake kontrol, tipkovnica za vlečne elemente, »Preizkusi:«/»Razmisli:«, »Ponastavi«,
 // drsnik, poravnan z osjo (kit.axisSlider): ročica je pri min, sredini in max navpično pod oznako na osi (≤ 2 px, 360 in 1280 px).
 // Zagon: node scripts/preveri-simulacije.cjs [SIM_FILTER='^3d-' za del]   (potrebuje Playwright s Chromiumom; zažene strežnik na vratih 3998)
 const { spawn } = require("node:child_process");
@@ -97,7 +97,7 @@ const PORT = 3998;
     const r = await p.evaluate((i) => mountOne(i), i);
     const issues = [];
     if (r.overflow) issues.push(`širša od zaslona za ${r.overflow} px`);
-    if (!r.tryText) issues.push("brez »Poskusi«");
+    if (!r.tryText) issues.push("brez »Preizkusi:«/»Razmisli:«");
     if (!r.reset) issues.push("brez »Ponastavi«");
     if (r.unlabeled) issues.push(`${r.unlabeled} kontrol brez oznake`);
     if (r.dragNoKey) issues.push(`${r.dragNoKey} vlečnih elementov brez tipkovnice`);

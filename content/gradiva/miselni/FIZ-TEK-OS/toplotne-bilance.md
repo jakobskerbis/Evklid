@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Segrevanje
+  - $Q = m c \Delta T$, enota J
+  - voda: $c = 4200\,\mathrm{J/(kg\,K)}$
+- Toplotna bilanca
+  - oddana toplota je enaka prejeti
+  - vsako telo od svoje začetne do končne temperature
+- Mešanje vode
+  - $T_z = \dfrac{m_1 T_1 + m_2 T_2}{m_1 + m_2}$
+  - napaka: navadno povprečje pri različnih masah
+  - vzvod: bližje večji masi
+- Taljenje ledu
+  - $Q_t = m_l q_t$, $q_t = 336\,\mathrm{kJ/kg}$
+  - kot segrevanje vode za $80\,^\circ\mathrm{C}$
+  - staljena voda se še segreva
+- Preverjanje taljenja
+  - primerjaj toploto vode do $0\,^\circ\mathrm{C}$
+  - premalo toplote: končno $0\,^\circ\mathrm{C}$
+- Kalorimeter
+  - posoda prejme $C \Delta T$
+  - napaka: pozabljen $C$, premajhen $c$

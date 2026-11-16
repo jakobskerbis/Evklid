@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vzajemni privlak
+  - vsako telo privlači vsako drugo
+  - sili enako veliki, nasprotno usmerjeni
+- Gravitacijski zakon
+  - $F_g = G\,\dfrac{m_1 m_2}{r^2}$, enota $\mathrm{N}$
+  - $G = 6{,}67 \cdot 10^{-11}\,\mathrm{N\,m^2/kg^2}$
+- Kvadrat razdalje
+  - dvakrat dlje, štirikrat manjša sila
+  - Luna: $60\,R_Z$, pospešek $3600$-krat manjši
+- Razdalja od središča
+  - $r = R_Z + h$
+  - napaka: vstaviti samo višino
+- Težni pospešek
+  - $g = \dfrac{G M}{r^2}$
+  - Zemlja $9{,}81\,\mathrm{m/s^2}$, Luna $1{,}62\,\mathrm{m/s^2}$
+- Krožni tir
+  - gravitacija je centripetalna sila
+  - $v = \sqrt{\dfrac{G M}{r}}$, masa satelita se pokrajša
+- Obhodni čas
+  - $t_0 = \dfrac{2\pi r}{v}$; višje je daljši
+  - ISS $93\,\mathrm{min}$, geostacionarni $23\,\mathrm{h}\,56\,\mathrm{min}$
+  - $\dfrac{t_0^2}{r^3}$ enak okoli istega telesa

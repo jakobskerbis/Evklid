@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tehtanje
+  - analitska tehtnica: $d = 0{,}0001\,\mathrm{g}$
+  - tariraj; toplega predmeta ne tehtaj
+- Negotovost tehtanja
+  - $\delta = \Delta m/m$, najmanjša zatehta $d/\delta_\mathrm{max}$
+  - razlika dveh odčitkov: največ $2\Delta m$
+- Merjenje volumna
+  - bučka »In«, pipeta in bireta »Ex«
+  - spodnji rob meniskusa, oko v višini oznake
+  - umerjanje: $V = m/\rho(T)$, $\rho = 0{,}9982\,\mathrm{g/mL}$
+- Filtracija
+  - oborina ostane na filtru, filtrat steče skozi
+  - gravitacijska za filtrat, sesalna za kristale
+  - pazi: bister filtrat ni nujno čist
+- Prekristalizacija
+  - najmanj vročega topila, vroča filtracija
+  - počasno hlajenje, spiranje z mrzlim topilom
+  - nečistoče ostanejo v matičnici
+- Izkoristek
+  - $\eta_\mathrm{max} = 1 - S(T_2)/S(T_1)$
+  - $\mathrm{KNO_3}$ okoli $0{,}81$, $\mathrm{NaCl}$ le $0{,}084$
+  - več topila, manjši izkoristek

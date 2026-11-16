@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Reakcija tal
+  - $\mathrm{pH} = -\log [\mathrm{H^+}]$, ena enota je desetkrat
+  - v vodi $1 : 2{,}5$ ali v $\mathrm{CaCl_2}$
+  - karbonati nevtralizirajo kislino, nastaja $\mathrm{CO_2}$
+- Kationska izmenjava
+  - negativen naboj gline in humusa
+  - korenina odda $\mathrm{H^+}$, sprejme $\mathrm{Ca^{2+}}$
+- KIK
+  - enota $\text{cmol(+)/kg}$, šteje naboje
+  - $\mathrm{KIK} \approx w_\mathrm{g}\,\mathrm{KIK_g} + w_\mathrm{OS}\,\mathrm{KIK_{OS}}$
+  - humus $150$–$300$, smektit $80$–$120$, kaolinit $3$–$15$
+- Bazična nasičenost
+  - $V = \dfrac{\mathrm{Ca + Mg + K + Na}}{\mathrm{KIK}} \cdot 100\,\%$
+  - nad $50\,\%$ evtrična, pod distrična tla
+  - pazi: velika KIK še ni rodovitnost
+- Kisli kationi
+  - vezava: $\mathrm{Al^{3+} > H^+ > Ca^{2+} > Mg^{2+} > K^+ > Na^+}$
+  - pod pH $5$ strupen aluminij
+- Organska snov
+  - $w_\mathrm{OS} \approx 1{,}724 \cdot w_{C_\mathrm{org}}$
+  - $\mathrm{C : N}$ nad $25$: počasen razkroj
+- Dostopnost hranil
+  - zaloge: minerali, izmenjalna mesta, raztopina
+  - fosfor najbolje pri pH $6$ do $7$
+  - železo v kislem, molibden v bazičnem

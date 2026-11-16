@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -46,7 +46,7 @@ $$f(x) = \frac{p(x)}{q(x)}$$
 
 Tu $q$ ni ničelni polinom. Definirana je povsod razen v ničlah imenovalca.
 
-**Ničle, poli in luknje.** Najprej števec in imenovalec razcepi ter okrajšaj skupne faktorje. Po krajšanju so ničle funkcije ničle števca, poli pa ničle imenovalca. Če je $c$ ničla obeh, faktor $(x - c)$ okrajšaš; namesto pola ostane v grafu le prazna točka, **luknja**. Funkcija tam še vedno ni definirana.
+**Ničle, poli in luknje.** Najprej števec in imenovalec razcepi ter okrajšaj skupne faktorje. Po krajšanju so ničle funkcije ničle števca, poli pa ničle imenovalca. Če je $c$ ničla obeh, faktor $(x - c)$ okrajšaš. Če ga po krajšanju v imenovalcu ni več, namesto pola ostane v grafu le prazna točka, **luknja**. Funkcija tam še vedno ni definirana.
 
 **Stopnja pola.** Če je v imenovalcu faktor $(x - c)^m$, je $c$ pol stopnje $m$. Velja isto kot pri ničlah polinoma: pri lihi stopnji ima graf na obeh straneh pola nasproten predznak (ena veja $+\infty$, druga $-\infty$), pri sodi stopnji gresta obe veji v isto smer.
 
@@ -62,11 +62,9 @@ $$f(x) = k(x) + \frac{r(x)}{q(x)}$$
 
 Ulomek $\frac{r(x)}{q(x)}$ gre za velike $|x|$ proti $0$, zato se graf bliža grafu količnika $k$. Za vodoravno asimptoto zadošča primerjava stopenj:
 
-| stopnji | asimptota | primer |
-|---|---|---|
-| števec nižji | $y = 0$ | $\frac{5}{x + 4}$ |
-| enaki | $y = \frac{a_n}{b_n}$ | $\frac{6x}{x + 3}$: $y = 6$ |
-| števec višji za $1$ | poševna $y = k(x)$ | $\frac{x^2 + 1}{x}$: $y = x$ |
+- Števec nižje stopnje: $y = 0$, npr. $\frac{5}{x + 4}$.
+- Enaki stopnji: $y = \frac{a_n}{b_n}$, npr. $\frac{6x}{x + 3}$ ima $y = 6$.
+- Števec višji za $1$: poševna asimptota $y = k(x)$, npr. $\frac{x^2 + 1}{x}$ ima $y = x$.
 
 Tu sta $a_n$ in $b_n$ vodilna koeficienta števca in imenovalca. Če je števec višji za $2$ ali več, se graf daleč zunaj obnaša kot polinom $k$, asimptote v obliki premice pa ni.
 
@@ -78,7 +76,20 @@ Lahko. Asimptota je $y = 2$ (enaki stopnji, $\frac{2}{1}$), in $h(-1) = \frac{2 
 
 **Postopek.** (1) Definicijsko območje. (2) Razcep in krajšanje, luknje. (3) Ničle in poli s stopnjami. (4) Asimptote. (5) Presečišče z osjo $y$, $f(0)$, in predznaki na intervalih med ničlami in poli. (6) Skica.
 
-Preveri se še v simulaciji »Racionalna funkcija: poli in asimptote«. Premikaj ničlo proti polu, dokler je ne postaviš točno nanj. Kaj se zgodi z grafom in z navpično asimptoto? Nato nastavi stopnjo pola na $2$ in opazuj, kam gresta veji ob polu in kam se premakne vodoravna asimptota.
+Preveri se še v simulaciji »Racionalna funkcija: poli in asimptote«. Premikaj ničlo proti polu, dokler je ne postaviš točno nanj. Kaj se zgodi z grafom in z navpično asimptoto? Nato ničlo spet odmakni od pola, nastavi stopnjo pola na $2$ in opazuj, kam gresta veji ob polu in kam se premakne vodoravna asimptota.
+
+**Racionalne enačbe.** Enačbi, v kateri neznanka nastopa v imenovalcu, rečemo **racionalna enačba**. Vprašanje iz uvoda obrnimo: s kolikšno hitrostjo $v$ moraš sestopiti, da bo povprečna hitrost $5\,\mathrm{km/h}$? Rešiti moramo $\dfrac{6v}{v + 3} = 5$.
+
+1. *Pogoji.* Z ničlo ne smemo deliti, zato $v + 3 \ne 0$, torej $v \ne -3$. Pogoje zapiši, preden karkoli preoblikuješ.
+2. *Odpravimo ulomke.* Obe strani pomnožimo s skupnim imenovalcem $v + 3$: $6v = 5(v + 3) = 5v + 15$.
+3. *Rešimo* enačbo brez ulomkov: $v = 15$.
+4. *Preizkus.* Število $15$ ustreza pogoju $v \ne -3$. Res: $\frac{6 \cdot 15}{18} = 5$. Sestopiti moraš s hitrostjo $15\,\mathrm{km/h}$.
+
+Pri več ulomkih vse imenovalce najprej razcepi. **Najmanjši skupni imenovalec** vsebuje vsak faktor tolikokrat, kolikorkrat se največkrat pojavi v enem imenovalcu. Pogoji izločijo ničle vseh imenovalcev. Preostala realna števila tvorijo definicijsko območje enačbe.
+
+Zakaj je preizkus nujen? Množenje z izrazom, ki je lahko enak $0$, ni ekvivalentno preoblikovanje. Pomnožena enačba ima vse rešitve prvotne, lahko pa še kakšno več. Število, ki reši pomnoženo enačbo, a je ničla kakega imenovalca, je **navidezna rešitev** in jo zavržemo. Primer: $\dfrac{x}{x - 2} = \dfrac{2}{x - 2}$, pogoj $x \ne 2$. Po množenju z $x - 2$ dobimo $x = 2$, kar pogoj prepoveduje. Enačba nima rešitve. Na grafu vidiš isto: razlika leve in desne strani je $\frac{x - 2}{x - 2}$, torej premica $y = 1$ z luknjo pri $x = 2$, ki osi $x$ nikjer ne seka.
+
+Tudi uganka iz uvoda je racionalna enačba. Iz $\dfrac{6v}{v + 3} = 6$ po množenju dobimo $6v = 6v + 18$, torej $0 = 18$. To ne velja za noben $v$, zato povprečja $6\,\mathrm{km/h}$ res ne dosežeš: $y = 6$ je vodoravna asimptota, ki je graf nikjer ne doseže.
 
 ## Rešeni primeri
 
@@ -149,6 +160,27 @@ Kolikšna je hitrost $v$?
 $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora biti večja od $3\,\mathrm{km/h}$, zato je $v = 9\,\mathrm{km/h}$. Preizkus: $t(9) = \dfrac{216}{72} = 3\,\mathrm{h}$.
 :::
 
+### Primer 4: racionalna enačba z navidezno rešitvijo
+
+Reši enačbo $\dfrac{x}{x - 1} - \dfrac{2}{x + 1} = \dfrac{4}{x^2 - 1}$.
+
+**Podatki:** enačba $\dfrac{x}{x - 1} - \dfrac{2}{x + 1} = \dfrac{4}{x^2 - 1}$
+**Iščemo:** vse realne rešitve
+
+:::formula
+Pogoji: imenovalci $\ne 0$; obe strani pomnožimo z najmanjšim skupnim imenovalcem; preizkus s pogoji
+:::
+
+**Rešitev:**
+
+1. Razcep: $x^2 - 1 = (x - 1)(x + 1)$. Najmanjši skupni imenovalec je $(x - 1)(x + 1)$.
+2. Pogoji: $x \ne 1$ in $x \ne -1$.
+3. Pomnožimo s $(x - 1)(x + 1)$: $x(x + 1) - 2(x - 1) = 4$.
+4. Odpravimo oklepaje: $x^2 + x - 2x + 2 = 4$, torej $x^2 - x - 2 = 0$.
+5. Razcep: $(x - 2)(x + 1) = 0$, kandidata sta $x = 2$ in $x = -1$.
+6. Preizkus s pogoji: $x = -1$ je ničla imenovalca, zato je navidezna rešitev. Za $x = 2$: leva stran je $\frac{2}{1} - \frac{2}{3} = \frac{4}{3}$, desna $\frac{4}{3}$.
+7. Odgovor: enačba ima eno rešitev, $x = 2$.
+
 ## Pogoste napake
 
 - **Pol zamenjaš z ničlo.** Pri $f(x) = \dfrac{x - 5}{x + 2}$ kdo reče, da je pol $5$. Ničle dá števec, pole imenovalec: ničla je $5$, pol $-2$.
@@ -156,6 +188,7 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 - **Asimptota iz prostih členov ali vedno $y = 0$.** Pri $\dfrac{3x + 1}{x - 2}$ asimptota ni $y = -\frac{1}{2}$ (prosta člena) in ne $y = 0$, ampak $y = 3$. Pri enakih stopnjah deliš vodilna koeficienta.
 - **»Graf asimptote nikoli ne seka.«** To velja za navpično, kjer funkcija ni definirana. Vodoravno lahko seka, kot $h(-1) = 2$ v razlagi.
 - **Rešitev enačbe brez smisla v nalogi.** Pri čolnu je $v = -1$ rešitev enačbe, ne pa naloge. Vedno preveri, katere vrednosti dovoljuje vsebina.
+- **Brez pogojev pri racionalni enačbi.** V primeru 4 kvadratna enačba da tudi $x = -1$, ki pa je ničla imenovalca. Popravek: pogoje zapiši na začetku in vsako rešitev na koncu preveri z njimi.
 
 ## Povzetek
 
@@ -164,6 +197,90 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 - Pol lihe stopnje: veji na nasprotnih straneh; pol sode stopnje: obe v isto smer. Pri polu je navpična asimptota.
 - Vodoravna asimptota: števec nižji $\Rightarrow y = 0$; enaki stopnji $\Rightarrow y = \frac{a_n}{b_n}$; števec višji za $1$ $\Rightarrow$ poševna asimptota (količnik pri deljenju).
 - Graf vodoravno asimptoto lahko seka, navpične nikoli.
+- Racionalna enačba: pogoji (imenovalci $\ne 0$), množenje z najmanjšim skupnim imenovalcem, rešitev, preizkus. Kandidat, ki je ničla kakega imenovalca, je navidezna rešitev.
+
+## Ponovitev
+
+**Formule**
+- $f(x) = \dfrac{p(x)}{q(x)}$, $D_f$: vsi $x$ s $q(x) \ne 0$ (na pamet)
+- po krajšanju: ničle iz $p$, poli iz $q$ (na pamet)
+- števec nižje stopnje: vodoravna asimptota $y = 0$ (na pamet)
+- enaki stopnji: vodoravna asimptota $y = \frac{a_n}{b_n}$ (na pamet)
+- števec višji za $1$: poševna asimptota $y = k(x)$, $k$ je količnik $p : q$ (na pamet)
+
+**Postopek**
+1. Določi definicijsko območje.
+2. Števec in imenovalec razcepi in okrajšaj; skupni faktor da luknjo.
+3. Poišči ničle in pole s stopnjami.
+4. Določi asimptote.
+5. Izračunaj $f(0)$ in predznake na intervalih ter skiciraj graf.
+6. Pri racionalni enačbi zapiši pogoje in vsako rešitev preveri z njimi.
+
+**Pazi na**
+- Ničle dá števec, pole imenovalec.
+- Najprej okrajšaj: okrajšan faktor da luknjo, ne pola.
+- Pri enakih stopnjah deliš vodilna koeficienta, ne prostih členov.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Zapišite enačbi obeh asimptot grafa funkcije $f(x) = \dfrac{x^2 - 3x + 4}{x - 1}$.
+
+**Rešitev:**
+
+1. Imenovalec je enak $0$ pri $x = 1$. Števec tam ni $0$, saj je $1 - 3 + 4 = 2$, zato je $x = 1$ pol in premica $x = 1$ navpična asimptota.
+2. Števec delimo z imenovalcem: količnik je $x - 2$, ostanek $2$, saj je $x^2 - 3x + 4 = (x - 1)(x - 2) + 2$. Torej je $f(x) = x - 2 + \dfrac{2}{x - 1}$.
+3. Ulomek $\dfrac{2}{x - 1}$ gre za velike $|x|$ proti $0$, zato se graf bliža premici $y = x - 2$. Asimptota je poševna, ker je stopnja števca za $1$ višja od stopnje imenovalca.
+4. Odgovor: navpična asimptota je $x = 1$, poševna asimptota je $y = x - 2$.
+
+**Točkovanje:** 1 točka za navpično asimptoto $x = 1$, 1 točka za deljenje (količnik $x - 2$ in ostanek $2$), 1 točka za poševno asimptoto $y = x - 2$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = \dfrac{x^2 - 4x + 3}{x^2 - 2x}$.
+
+a) Zapišite definicijsko območje funkcije $f$ ter izračunajte njene ničle in pole. (2 točki)
+b) Zapišite enačbe vseh asimptot grafa funkcije $f$. (2 točki)
+c) Izračunajte koordinati točke, v kateri graf funkcije $f$ seka svojo vodoravno asimptoto. (2 točki)
+d) Narišite graf funkcije $f$. (2 točki)
+
+**Rešitev:**
+
+1. a) Razcepimo: $x^2 - 4x + 3 = (x - 1)(x - 3)$ in $x^2 - 2x = x(x - 2)$. Skupnega faktorja ni, zato krajšati ni kaj.
+2. a) Imenovalec je $0$ pri $x = 0$ in $x = 2$, zato je $D_f = \mathbb{R} \setminus \{0, 2\}$. Ničli sta $x = 1$ in $x = 3$, pola $x = 0$ in $x = 2$, oba stopnje $1$.
+3. b) Navpični asimptoti sta $x = 0$ in $x = 2$. Števec in imenovalec imata stopnjo $2$ in vodilna koeficienta $1$ in $1$, zato je vodoravna asimptota $y = \frac{1}{1} = 1$.
+4. c) Rešimo enačbo $\dfrac{x^2 - 4x + 3}{x^2 - 2x} = 1$. Za $x \in D_f$ jo pomnožimo z $x^2 - 2x$ in dobimo $x^2 - 4x + 3 = x^2 - 2x$.
+5. c) Kvadratna člena se odštejeta: $-2x = -3$, torej $x = \frac{3}{2}$. To število je v $D_f$, zato je presečišče $\left(\frac{3}{2}, 1\right)$.
+6. d) Predznaki na intervalih (testna števila $-1$, $\frac{1}{2}$, $\frac{3}{2}$, $\frac{5}{2}$, $4$): $f$ je pozitivna na $(-\infty, 0)$, $(1, 2)$ in $(3, \infty)$, negativna na $(0, 1)$ in $(2, 3)$. Z osjo $y$ se graf ne seka, ker je $0$ pol.
+7. d) Oba pola sta lihe stopnje, zato graf ob vsakem zamenja predznak. Leva veja leži nad premico $y = 1$, se ji daleč levo bliža od zgoraj in se ob $x = 0$ dviga v $+\infty$. Srednja veja pride iz $-\infty$ desno od $x = 0$, gre skozi $(1, 0)$ in $\left(\frac{3}{2}, 1\right)$ ter se ob $x = 2$ dviga v $+\infty$. Desna veja pride iz $-\infty$ desno od $x = 2$, gre skozi $(3, 0)$ in se od spodaj bliža premici $y = 1$.
+8. Odgovor: $D_f = \mathbb{R} \setminus \{0, 2\}$, ničli $1$ in $3$, pola $0$ in $2$; asimptote $x = 0$, $x = 2$ in $y = 1$; graf seka vodoravno asimptoto v točki $\left(\frac{3}{2}, 1\right)$.
+
+**Točkovanje:** a) 1 točka za $D_f$, 1 točka za ničli in pola; b) 1 točka za navpični asimptoti, 1 točka za vodoravno asimptoto $y = 1$; c) 1 točka za enačbo $f(x) = 1$, preoblikovano v $x^2 - 4x + 3 = x^2 - 2x$, 1 točka za točko $\left(\frac{3}{2}, 1\right)$; d) 1 točka za pravilen potek vej ob polih in asimptotah, 1 točka za ničle, presečišče z asimptoto in pravilne predznake.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je racionalna funkcija in kako določimo njeno definicijsko območje, ničle in pole?
+---
+Racionalna funkcija je količnik dveh polinomov $f(x) = \frac{p(x)}{q(x)}$, kjer $q$ ni ničelni polinom. Definirana je za vsa realna števila razen ničel imenovalca. Ko števec in imenovalec razcepimo in okrajšamo skupne faktorje, so ničle funkcije ničle števca, poli pa ničle imenovalca. Če se faktor $(x - c)$ iz imenovalca povsem okrajša, ima graf pri $x = c$ luknjo in ne pola.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Pojasni, kako iz stopenj števca in imenovalca racionalne funkcije določiš njeno vodoravno ali poševno asimptoto.
+---
+Števec delimo z imenovalcem in dobimo $f(x) = k(x) + \frac{r(x)}{q(x)}$, kjer ima ostanek $r$ nižjo stopnjo kot imenovalec $q$. Ulomek $\frac{r(x)}{q(x)}$ gre za velike $|x|$ proti $0$, zato se graf funkcije bliža grafu količnika $k$. Če ima števec nižjo stopnjo kot imenovalec, je asimptota $y = 0$. Pri enakih stopnjah je asimptota $y = \frac{a_n}{b_n}$, kjer sta $a_n$ in $b_n$ vodilna koeficienta števca in imenovalca. Če je stopnja števca za $1$ višja, je asimptota poševna premica $y = k(x)$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer racionalne funkcije, pri kateri ničla imenovalca ni pol, in pojasni, kaj je tam na grafu.
+---
+Primer je $f(x) = \frac{x^2 - 1}{x - 1}$, ki pri $x = 1$ ni definirana. Po krajšanju je $f(x) = x + 1$ za $x \ne 1$, faktor $(x - 1)$ v imenovalcu torej ne ostane. Graf je premica $y = x + 1$ brez točke $(1, 2)$, ki ji rečemo luknja. Pol z navpično asimptoto bi nastal le, če bi ničla imenovalca ostala tudi po krajšanju.
+:::
 
 ## Drugače: Z analogijo
 
@@ -188,7 +305,7 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 ~ To bi bila ničla funkcije. Ničle dá števec, $v = 3$ pa je ničla imenovalca.
 + Funkcija tam ni definirana, za $v$ tik nad $3$ pa čas raste čez vse meje.
 - Pri $v = 3$ graf seka svojo vodoravno asimptoto.
-~ Vodoravna asimptota je $t = 0$; pol je navpična premica $v = 3$, kjer funkcija sploh ni definirana.
+~ Vodoravna asimptota je $t = 0$; pri polu $v = 3$ je navpična asimptota, tam pa funkcija sploh ni definirana.
 > Pol je ničla imenovalca, ki se ne okrajša: imenovalec gre proti $0$, količnik pa po absolutni vrednosti čez vse meje.
 
 ? Uredi funkcije po vrednosti vodoravne asimptote od najmanjše do največje: $f(x) = \dfrac{3x + 1}{x - 2}$, $g(x) = \dfrac{x^2}{2x^2 + 1}$, $h(x) = \dfrac{5}{x + 4}$.
@@ -207,7 +324,7 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 ~ Števec je $0$ le pri $x = 1$, tam pa je $0$ tudi imenovalec. Drugod je ulomek enak $1$.
 > Števec in imenovalec imata isti faktor $(x - 1)$. Po krajšanju ostane $f(x) = 1$, ki pa pri $x = 1$ ni definirana: luknja namesto pola.
 
-? Taksi zaračuna $4\,€$ ob vstopu in $0{,}80\,€$ na kilometer. Cena na kilometer za vožnjo $x$ kilometrov je $c(x) = \dfrac{4 + 0{,}8x}{x}$. Kateri vrednosti se bliža pri zelo dolgih vožnjah?
+? Taksi zaračuna $4\,€$ ob vstopu in $0{,}80\,€$ na kilometer. Cena na kilometer za vožnjo $x$ kilometrov je $\dfrac{4 + 0{,}8x}{x}$ (v evrih). Kateri vrednosti se bliža pri zelo dolgih vožnjah?
 - $4\,€$
 ~ To je vstopnina. Pri dolgi vožnji se razdeli na veliko kilometrov, zato njen delež na kilometer pada proti $0$.
 - $0\,€$
@@ -217,13 +334,35 @@ $v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora bi
 ~ To je cena na kilometer pri vožnji $1\,\mathrm{km}$, ne pri dolgih vožnjah.
 > Stopnji števca in imenovalca sta $1$, vodilna koeficienta $0{,}8$ in $1$, zato je asimptota $y = 0{,}8$.
 
-? Čoln pluje $20\,\mathrm{km}$ proti toku reke, ki teče s $4\,\mathrm{km/h}$. Čas je $t(v) = \dfrac{20}{v - 4}$. Pri kateri hitrosti $v$ čoln v mirni vodi porabi $2\,\mathrm{h}$?
-- $10\,\mathrm{km/h}$
-~ To je $v - 4$, hitrost čolna glede na breg. Prišteti moraš še hitrost reke.
-+ $14\,\mathrm{km/h}$
-- $44\,\mathrm{km/h}$
-~ To je $20 \cdot 2 + 4$. Iz $\frac{20}{v - 4} = 2$ sledi $v - 4 = \frac{20}{2}$, ne $20 \cdot 2$.
+? Čoln pluje $20\,\mathrm{km}$ proti toku reke, ki teče s $4\,\mathrm{km/h}$. Čas je $t(v) = \dfrac{20}{v - 4}$. Pri kateri hitrosti $v$ čoln v mirni vodi porabi $2\,\mathrm{h}$? Vpiši jo v $\mathrm{km/h}$.
+= 14 km/h | 0,01
+~ 10 | To je $v - 4$, hitrost čolna glede na breg. Prišteti moraš še hitrost reke.
+~ 44 | To je $20 \cdot 2 + 4$. Iz $\frac{20}{v - 4} = 2$ sledi $v - 4 = \frac{20}{2}$, ne $20 \cdot 2$.
 > $\dfrac{20}{v - 4} = 2$, torej $v - 4 = 10$ in $v = 14\,\mathrm{km/h}$.
+
+? (brez računala) Reši enačbo $\dfrac{x}{x - 3} - \dfrac{1}{x} = \dfrac{3}{x^2 - 3x}$. Vpiši njeno rešitev.
+= 1 | 0
+~ 0 | Število $0$ reši pomnoženo enačbo $x^2 - x = 0$, a je ničla imenovalcev $x$ in $x^2 - 3x$: navidezna rešitev.
+~ 3 | Pri $x = 3$ je imenovalec $x - 3$ enak $0$. Pogoja sta $x \ne 0$ in $x \ne 3$.
+> Pogoja: $x \ne 0$, $x \ne 3$. Množimo z $x(x - 3)$: $x^2 - (x - 3) = 3$, torej $x^2 - x = 0$ in $x = 0$ ali $x = 1$. Število $0$ je ničla imenovalca, ostane $x = 1$.
+
+<<RACUN
+resi: 6*v/(v+3)=5 | v | 15
+resi: x/(x-2)=2/(x-2) | x | none
+resi: 6*v/(v+3)=6 | v | none
+resi: x/(x-1)-2/(x+1)=4/(x^2-1) | x | 2
+resi: x^2-x-2=0 | x | -1, 2
+resi: x/(x-3)-1/x=3/(x^2-3*x) | x | 1
+resi: x^2-x=0 | x | 0, 1
+enako: (x^2-3*x+4)/(x-1) | x-2+2/(x-1)
+limita: (x^2-3*x+4)/(x-1)-(x-2) | x | oo | 0
+enako: (x^2-4*x+3)/(x^2-2*x) | (x-1)*(x-3)/(x*(x-2))
+resi: x^2-4*x+3=0 | x | 1, 3
+resi: x^2-2*x=0 | x | 0, 2
+limita: (x^2-4*x+3)/(x^2-2*x) | x | oo | 1
+resi: (x^2-4*x+3)/(x^2-2*x)=1 | x | 3/2
+enako: (x^2-1)/(x-1) | x+1
+>>
 
 :::simboli
 \bar v | povprečna hitrost na poti tja in nazaj | \bar v = \frac{6v}{v + 3} | km/h
@@ -233,13 +372,13 @@ x | neodvisna spremenljivka | |
 y | vrednost funkcije (os $y$), v enačbi asimptote | |
 p | polinom v števcu | |
 q | polinom v imenovalcu | |
-k | količnik pri deljenju $p$ s $q$ | | | njegov graf je asimptota
+k | količnik pri deljenju $p$ s $q$ | | | če je stopnje največ $1$, je njegov graf asimptota
 r | ostanek pri deljenju $p$ s $q$ | | | stopnja manjša od stopnje $q$
 a_n | vodilni koeficient števca | |
 b_n | vodilni koeficient imenovalca | |
-c | ničla imenovalca | q(c) = 0 | | pol; če je tudi ničla števca, luknja
+c | ničla imenovalca | q(c) = 0 | | pol; če se faktor $(x - c)$ iz imenovalca povsem okrajša, luknja
 m | stopnja pola $c$ | | | eksponent faktorja $(x - c)^m$ v imenovalcu
-t | skupni čas plovbe | t(v) = \frac{24v}{v^2 - 9} | h
+t | čas plovbe | t(v) = \frac{24v}{v^2 - 9} | h | zveza velja za skupni čas tja in nazaj v primeru 3
 s | pot v eno smer | | km
 u | hitrost reke | | km/h
 :::

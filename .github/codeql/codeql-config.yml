@@ -1,0 +1,16 @@
+# Nastavitev CodeQL (.github/workflows/codeql.yml): preskoči velike ustvarjene podatke in tuje knjižnice.
+name: Evklid CodeQL
+queries:
+  - uses: security-extended
+paths-ignore:
+  - server/university-extra.js
+  - server/practice/generators
+  - server/exam-papers-si.js
+  - public/i18n
+  - public/games/subjects
+  - public/3d/modeli
+  - public/vendor
+  - "**/node_modules"
+  - "**/*.min.js"
+  - mobile/node_modules
+  - test

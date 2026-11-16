@@ -8,6 +8,10 @@
 // - Most za deljenje slike (public/deli-most.js): stran pošlje PNG (»Deli zbirko«), aplikacija ga zapiše v
 //   predpomnilnik in odpre sistemski meni za deljenje (expo-sharing). Zastavica window.EvklidNative pove strani,
 //   da ta gradnja most ima; starejši APK je nima, zato tam gumb ostane skrit.
+// - Zagonski zaslon (vrtavka na barvi aplikacije) ostane, dokler stran ne javi prvega izrisa vsebine (sporočilo
+//   »izris«, public/zacetek.js): učenec ne vidi belega ali napol naloženega spletnega pogleda. Stran ga javi že ob
+//   prvem izrisu (posnetek zadnjega zaslona), torej prej kot konec nalaganja; brez sporočila (starejši strežnik,
+//   stran z napako) ga kot prej umakne konec nalaganja.
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, BackHandler, Linking, Platform, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
@@ -175,12 +179,19 @@ export default function Web() {
             style={{ flex: 1, backgroundColor: th.bg }}
             applicationNameForUserAgent={`EvklidApp/${Constants.expoConfig?.version ?? "1"}`}
             originWhitelist={["*"]}
+            // Povezave target=_blank (PDF učbenika) na Androidu pridejo sem, ne v onShouldStartLoadWithRequest.
+            onOpenWindow={(e: { nativeEvent: { targetUrl: string } }) => {
+              const u = e.nativeEvent.targetUrl;
+              if (/^https?:/.test(u)) WebBrowser.openBrowserAsync(u).catch(() => {});
+            }}
             injectedJavaScriptBeforeContentLoaded={NATIVE_FLAG_JS + studentJs(student?.id ?? null)}
             injectedJavaScript={BAR_JS}
             onMessage={(e: { nativeEvent: { data: string; url?: string } }) => {
               try {
                 const m = JSON.parse(e.nativeEvent.data);
                 if (m?.t === "bar") setBar({ top: String(m.top || ""), bottom: String(m.bottom || "") });
+                // Prvi izris strani Evklida: zagonski zaslon se umakne (med čakanjem na strežnik ne).
+                else if (m?.t === "izris" && !waitTimer.current && (e.nativeEvent.url === ORIGIN || e.nativeEvent.url?.startsWith(ORIGIN + "/"))) setLoading(false);
                 // Deljenje slike samo s strani Evklida (druge strani WebView odpre v brskalniku, a za vsak primer).
                 else if (m?.type === "evklid:share-image" && (e.nativeEvent.url === ORIGIN || e.nativeEvent.url?.startsWith(ORIGIN + "/")))
                   shareImage(m).then((r) => ref.current?.injectJavaScript(shareResultJs(r)));
@@ -193,12 +204,15 @@ export default function Web() {
             }}
             onShouldStartLoadWithRequest={(req: { url: string; isTopFrame?: boolean }) => {
               if (req.isTopFrame === false) return true;
-              if (req.url.startsWith(ORIGIN + "/") || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
-              if (/^https?:/.test(req.url)) WebBrowser.openBrowserAsync(req.url).catch(() => {});
+              if ((req.url.startsWith(ORIGIN + "/") && !(req.url.startsWith(ORIGIN + "/ucbenik/") || req.url.startsWith(ORIGIN + "/ucbenik-pdf/"))) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
+              // Učbenik za tisk/PDF (/ucbenik/… in vnaprej izdelan /ucbenik-pdf/…): WebView ne zna shraniti PDF-ja, zato ga odpre sistemski brskalnik.
+              if ((req.url.startsWith(ORIGIN + "/ucbenik/") || req.url.startsWith(ORIGIN + "/ucbenik-pdf/"))) WebBrowser.openBrowserAsync(req.url).catch(() => {});
+              else if (/^https?:/.test(req.url)) WebBrowser.openBrowserAsync(req.url).catch(() => {});
               // mailto: (zasebnost, povabilo staršem), tel: … odpre sistem (originWhitelist "*" jih ne odpre sam).
               else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});
               return false;
             }}
+            // Rezerva za sporočilo »izris« (starejši strežnik brez sporočila, stran z napako): konec nalaganja.
             onLoadEnd={() => !waitTimer.current && setLoading(false)}
             // onLoad (ne onLoadEnd): na iOS onLoadEnd pride tudi ob napaki povezave, z URL-jem "".
             onLoad={(e: { nativeEvent: { url: string } }) => {

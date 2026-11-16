@@ -51,7 +51,9 @@ async function setMode(m) {
   const tl = await tool(m);
   if (mode !== m) return tl;
   if (m === "tools") tl.reload?.();
-  if (tl.root.parentElement !== slot) slot.replaceChildren(tl.root);
+  // orodja ostanejo v pomnilniku in na strani (skrita): preklop je takojšen in ohrani vnos (kot app.js showCalcRoot)
+  if (tl.root.parentElement !== slot) slot.append(tl.root);
+  for (const el of slot.children) el.hidden = el !== tl.root;
   tl.resize?.();
   return tl;
 }

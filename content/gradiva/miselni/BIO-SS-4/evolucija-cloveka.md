@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Skupni prednik
+  - pred 6 do 7 milijoni let
+  - napaka: človek izhaja iz šimpanza
+  - kromosom 2: zlitje, $2n = 48$ proti $2n = 46$
+- Hominidi in človečnjaki
+  - hominidi: velike opice in človek
+  - človečnjaki: naša veja po ločitvi od šimpanza
+  - grmovje, ne lestvica
+- Najprej pokončna hoja
+  - Lucy: $450\,\mathrm{cm^3}$, hodila po dveh nogah
+  - mozaična evolucija
+- Razvoj možganov
+  - $\dfrac{1350}{450} = 3$-krat večji kot pri Lucy
+  - $2\,\%$ mase, $20\,\%$ energije
+  - orodja, meso, ogenj, dolgo otroštvo
+- Umetni izbor
+  - merilo postavi človek: pes, zelje, koruza
+  - ne ustvari novih alelov
+- Kulturna evolucija
+  - prenos z učenjem, neprimerno hitrejša
+  - obstojna laktaza: kultura izbira gene
+- Sodobni način življenja
+  - neskladje: kratkovidnost, debelost, sladkorna bolezen
+  - evolucija se nadaljuje

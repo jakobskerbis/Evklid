@@ -167,7 +167,7 @@ $K$ je konveksna, če $tx + (1-t)y \in K$ za vse $x, y \in K$, $t \in [0, 1]$
 
 **Rešitev:**
 
-1. Za protiprimer zadošča en par točk in en $t$. Vzemi točki $u = (2, 0)$ in $v = (-2, 0)$; obe ležita v $P$, ker je pri obeh $x^2 + y^2 = 4$.
+1. Za protiprimer zadošča en par točk in en $t$. Vzemi točki $(2, 0)$ in $(-2, 0)$; obe ležita v $P$, ker je pri obeh $x^2 + y^2 = 4$.
 2. Vzemi $t = \tfrac12$, izračunaj razpolovišče in preveri, ali leži v $P$.
 
 :::premisli
@@ -178,7 +178,7 @@ Razpolovišče je $(0, 0)$, kjer je $x^2 + y^2 = 0 < 1$, torej $(0, 0) \notin P$
 
 ## Pogoste napake
 
-- **»$\|A\|_2$ je največja lastna vrednost $A$.«** To velja le za simetrične matrike. Za $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ sta obe lastni vrednosti $1$, a $\|A\|_2 = \tfrac{1 + \sqrt5}{2} \approx 1{,}618$. Prava pot je prek $A^{\mathsf T}A$.
+- **»$\|A\|_2$ je največja lastna vrednost $A$.«** Za simetrične matrike je $\|A\|_2$ res največja absolutna vrednost lastne vrednosti, v splošnem pa ne. Za $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ sta obe lastni vrednosti $1$, a $\|A\|_2 = \tfrac{1 + \sqrt5}{2} \approx 1{,}618$. Prava pot je prek $A^{\mathsf T}A$.
 - **Zamenjava stolpcev in vrstic.** $\|A\|_1$ je največja vsota po stolpcih, $\|A\|_\infty$ po vrsticah. Pomnilo: indeks $1$ stoji pokonci kot stolpec.
 - **»$\det Q = \pm 1$, torej je izometrija.«** Matrika $\operatorname{diag}(2, \tfrac12)$ ima determinanto $1$, a vektor $(1, 0)$ podaljša na dolžino $2$. Odloča pogoj $Q^{\mathsf T}Q = I$.
 - **»Vsaka izometrija je linearna.«** Premik $x \mapsto x + b$ ohranja razdalje, izhodišča pa ne. Splošna izometrija je $Qx + b$.
@@ -192,23 +192,92 @@ Razpolovišče je $(0, 0)$, kjer je $x^2 + y^2 = 0 < 1$, torej $(0, 0) \notin P$
 - Inducirana norma matrike: $\|A\| = \max \|Ax\|/\|x\|$; $\|A\|_1$ po stolpcih, $\|A\|_\infty$ po vrsticah, $\|A\|_2 = \sqrt{\lambda_{\max}(A^{\mathsf T}A)}$.
 - Izometrije $\mathbb{R}^n$: $x \mapsto Qx + b$, $Q^{\mathsf T}Q = I$. V $\mathbb{R}^2$ rotacije in zrcaljenja; v $\mathbb{R}^3$ rotacije okrog osi ($\det = 1$, os je lastni vektor za $1$, $\operatorname{sl} Q = 1 + 2\cos\varphi$) in rotacije z zrcaljenjem ($\det = -1$).
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo norme (tri aksiome) in norme $\|\cdot\|_1$, $\|\cdot\|_2$, $\|\cdot\|_\infty$ na $\mathbb{R}^n$ z neenakostjo $\|x\|_\infty \le \|x\|_2 \le \|x\|_1$;
+- definicijo konveksne množice in dokaz, da je enotska krogla vsake norme konveksna;
+- definicijo inducirane norme matrike, formule za $\|A\|_1$, $\|A\|_\infty$, $\|A\|_2$ in izpeljavo $\|A\|_2 = \sqrt{\lambda_{\max}(A^{\mathsf T}A)}$ s spektralnim izrekom;
+- definicijo izometrije, izrek $f(x) = Qx + b$ s $Q^{\mathsf T}Q = I$ ter razvrstitev v $\mathbb{R}^2$ in $\mathbb{R}^3$ po $\det Q$;
+- kako določiš os in kot rotacije v $\mathbb{R}^3$ ter zakaj os vedno obstaja;
+- paralelogramsko pravilo in ekvivalentnost norm v končnorazsežnem prostoru.
+
+### Naloga 1
+
+Zasuk satelita opiše matrika
+$$Q = \frac{1}{7}\begin{pmatrix} 3 & 2 & 6 \\ 6 & -3 & -2 \\ 2 & 6 & -3 \end{pmatrix}.$$
+(a) Pokaži, da je $Q$ rotacija, ter določi os in kot zasuka. (b) Izračunaj $\|Q\|_1$, $\|Q\|_2$ in $\|Q\|_\infty$. (c) Antena je pred zasukom v točki $x = (7, 0, 0)\,\mathrm{m}$. Izračunaj $Qx$ ter primerjaj $\|x\|_2$ z $\|Qx\|_2$ in $\|x\|_1$ z $\|Qx\|_1$. Kaj sklepaš?
+
+**Rešitev:**
+
+1. Naj bo $M = 7Q$. Kvadrati dolžin stolpcev $M$: $9 + 36 + 4 = 49$, $4 + 9 + 36 = 49$, $36 + 4 + 9 = 49$. Stolpci $Q$ imajo torej dolžino $\tfrac17\sqrt{49} = 1$.
+2. Skalarni produkti stolpcev $M$: $6 - 18 + 12 = 0$, $18 - 12 - 6 = 0$, $12 + 6 - 18 = 0$. Zato $Q^{\mathsf T}Q = I$.
+3. $\det M = 3(9 + 12) - 2(-18 + 4) + 6(36 + 6) = 63 + 28 + 252 = 343$, zato $\det Q = \tfrac{343}{7^3} = 1$. $Q$ je rotacija.
+4. Os: rešimo $(M - 7I)v = 0$, to je $-4v_1 + 2v_2 + 6v_3 = 0$, $6v_1 - 10v_2 - 2v_3 = 0$, $2v_1 + 6v_2 - 10v_3 = 0$. Eliminacija da $v_1 = 2v_3$ in $v_2 = v_3$, torej $v = (2, 1, 1)$.
+5. Kot: $\operatorname{sl} Q = \tfrac{3 - 3 - 3}{7} = -\tfrac37$, zato $1 + 2\cos\varphi = -\tfrac37$ in $\cos\varphi = -\tfrac57$, $\varphi \approx 135{,}6^\circ$.
+6. Vsota absolutnih vrednosti v vsakem stolpcu in v vsaki vrstici $M$ je $11$ (npr. $3 + 6 + 2$ in $3 + 2 + 6$), zato $\|Q\|_1 = \|Q\|_\infty = \tfrac{11}{7} \approx 1{,}57$.
+7. $Q^{\mathsf T}Q = I$ ima edino lastno vrednost $1$, zato $\|Q\|_2 = \sqrt{1} = 1$.
+8. $Qx$ je $7$-kratnik prvega stolpca $Q$: $Qx = (3, 6, 2)\,\mathrm{m}$.
+9. $\|x\|_2 = 7\,\mathrm{m}$ in $\|Qx\|_2 = \sqrt{9 + 36 + 4} = 7\,\mathrm{m}$; $\|x\|_1 = 7\,\mathrm{m}$, $\|Qx\|_1 = 3 + 6 + 2 = 11\,\mathrm{m}$.
+10. Odgovor: $Q$ je rotacija za približno $135{,}6^\circ$ okrog osi v smeri $(2, 1, 1)$; $\|Q\|_1 = \|Q\|_\infty = \tfrac{11}{7}$, $\|Q\|_2 = 1$. Rotacija ohranja normo $\|\cdot\|_2$, norme $\|\cdot\|_1$ pa ne: pri $x = (7, 0, 0)$ jo poveča s $7$ na $11\,\mathrm{m}$, kar je natanko meja $\|Q\|_1\|x\|_1 = \tfrac{11}{7} \cdot 7$. Ali je preslikava izometrija, je torej odvisno od izbrane norme.
+
+### Naloga 2
+
+Natančno navedi definicijo inducirane norme matrike. Dokaži, da za vsako inducirano normo velja $\|AB\| \le \|A\|\,\|B\|$ in da je $|\lambda| \le \|A\|$ za vsako realno lastno vrednost $\lambda$ matrike $A$. Utemelji, ali je Frobeniusova norma inducirana, če je $n \ge 2$.
+
+**Rešitev:**
+
+1. Definicija: za normo $\|\cdot\|$ na $\mathbb{R}^n$ je $\|A\| = \max\limits_{x \ne 0} \dfrac{\|Ax\|}{\|x\|}$. Od tod $\|Ax\| \le \|A\|\,\|x\|$ za vsak $x$ (pri $x = 0$ velja enakost).
+2. Produkt: za vsak $x$ dvakrat uporabimo to neenakost: $\|ABx\| = \|A(Bx)\| \le \|A\|\,\|Bx\| \le \|A\|\,\|B\|\,\|x\|$.
+3. Za $x \ne 0$ delimo z $\|x\|$: $\dfrac{\|ABx\|}{\|x\|} \le \|A\|\,\|B\|$. Meja velja za vse $x \ne 0$, torej tudi za maksimum: $\|AB\| \le \|A\|\,\|B\|$.
+4. Lastna vrednost: naj bo $Av = \lambda v$, $v \ne 0$. Po homogenosti je $\|Av\| = \|\lambda v\| = |\lambda|\,\|v\|$.
+5. Zato $\dfrac{\|Av\|}{\|v\|} = |\lambda|$. Maksimum po vseh $x \ne 0$ je vsaj tolikšen, torej $\|A\| \ge |\lambda|$.
+6. Enakost ne velja vedno: $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ ima edino lastno vrednost $1$, a $\|A\|_2 = \tfrac{1 + \sqrt5}{2} \approx 1{,}618$.
+7. Frobeniusova norma: za vsako inducirano normo je $\|I\| = \max \tfrac{\|x\|}{\|x\|} = 1$. Toda $\|I\|_F = \sqrt{n}$, ker ima $I$ natanko $n$ enic.
+8. Odgovor: obe neenakosti sledita iz $\|Ax\| \le \|A\|\,\|x\|$ in homogenosti. Za $n \ge 2$ je $\|I\|_F = \sqrt{n} > 1$, zato Frobeniusova norma ni inducirana z nobeno vektorsko normo.
+
+### Naloga 3
+
+Na $\mathbb{R}^2$ je dan izraz $N(x) = 2|x_1| + 3|x_2|$. (a) Dokaži, da je $N$ norma. (b) Opiši njeno enotsko kroglo. (c) Določi največji $c$ in najmanjši $C$, za katera velja $c\,\|x\|_2 \le N(x) \le C\,\|x\|_2$ za vse $x \in \mathbb{R}^2$. (d) Utemelji, ali $N$ izvira iz skalarnega produkta.
+
+**Rešitev:**
+
+1. Pozitivnost: $N(x) \ge 0$ in $N(x) = 0$ natanko tedaj, ko $|x_1| = |x_2| = 0$, torej $x = 0$.
+2. Homogenost: $N(\alpha x) = 2|\alpha x_1| + 3|\alpha x_2| = |\alpha|\,N(x)$.
+3. Trikotniška neenakost: iz $|x_i + y_i| \le |x_i| + |y_i|$ sledi $N(x + y) \le 2|x_1| + 2|y_1| + 3|x_2| + 3|y_2| = N(x) + N(y)$. $N$ je norma.
+4. Enotska krogla $2|x_1| + 3|x_2| \le 1$ je romb z oglišči $(\pm\tfrac12, 0)$ in $(0, \pm\tfrac13)$; kot krogla norme je konveksna.
+5. Zgornja meja: po Cauchy-Schwarzovi neenakosti za vektorja $(2, 3)$ in $(|x_1|, |x_2|)$ je $N(x) \le \sqrt{4 + 9}\,\|x\|_2 = \sqrt{13}\,\|x\|_2$. Enakost pri $x = (2, 3)$: $N(x) = 4 + 9 = 13 = \sqrt{13} \cdot \sqrt{13}$. Zato $C = \sqrt{13} \approx 3{,}61$.
+6. Spodnja meja: $N(x) \ge 2|x_1| + 2|x_2| = 2\|x\|_1 \ge 2\|x\|_2$. Enakost pri $x = (1, 0)$: $N(x) = 2 = 2\|x\|_2$. Zato $c = 2$.
+7. Paralelogramsko pravilo za $x = (1, 0)$, $y = (0, 1)$: $N(x + y) = N(x - y) = 5$, leva stran je $25 + 25 = 50$; desna je $2 \cdot 2^2 + 2 \cdot 3^2 = 26$.
+8. Odgovor: $N$ je norma z enotsko kroglo v obliki romba z oglišči $(\pm\tfrac12, 0)$, $(0, \pm\tfrac13)$; velja $2\|x\|_2 \le N(x) \le \sqrt{13}\,\|x\|_2$ in mej ni mogoče izboljšati. Ker $50 \ne 26$, $N$ ne izvira iz skalarnega produkta.
+
 ## Drugače: Na sliki
 
 Nariši vse tri enotske krogle v isti koordinatni sistem:
 
-```
-   +-----*-----+
-   |   /   \   |
-   | /       \ |
-   *     o     *
-   | \       / |
-   |   \   /   |
-   +-----*-----+
-```
+:::risba skica
+opis: Tri enotske krogle v isti ravnini s središčem v izhodišču. Zunanji kvadrat z oglišči (1, 1), (−1, 1), (−1, −1) in (1, −1) je krogla norme neskončno. Vanj je včrtan krog s polmerom 1, krogla norme 2. V krog je včrtan romb z oglišči (1, 0), (0, 1), (−1, 0) in (0, −1), krogla norme 1. Krog se dotika kvadrata v ogliščih romba.
+območje: -1,6; -2,3 .. 1,6; 1,6
+enota: 90
+črta: -1,5; 0 -> 1,5; 0 | siva puščica
+črta: 0; -1,3 -> 0; 1,5 | siva puščica
+lik: 1; 1 -> -1; 1 -> -1; -1 -> 1; -1 | modra
+krog: 0; 0 | 1 | zelena
+lik: 1; 0 -> 0; 1 -> -1; 0 -> 0; -1 | oranžna črtkano
+točka: 1; 0 | (1, 0) | pod desno
+točka: 0; 1 | (0, 1) | nad desno
+točka: -1; 0 | (−1, 0) | pod levo
+točka: 0; -1 | (0, −1) | pod desno
+točka: 1; 1 | (1, 1) | nad desno
+napis: -1,2; -1,6 | kvadrat: norma ∞ | desno | modra
+napis: -1,2; -1,9 | krog: norma 2 | desno | zelena
+napis: -1,2; -2,2 | črtkani romb: norma 1 | desno | oranžna
+podnapis: Romb je včrtan krogu, krog je včrtan kvadratu.
+:::
 
-- Zunanji okvir s kotički $+$ je kvadrat $\|x\|_\infty \le 1$.
-- Poševne črte so romb $\|x\|_1 \le 1$ z oglišči $*$ v $(\pm 1, 0)$ in $(0, \pm 1)$.
-- Krog $\|x\|_2 \le 1$ ni narisan: poteka skozi štiri točke $*$ in leži med rombom in kvadratom.
+- Zunanji kvadrat z oglišči v $(\pm 1, \pm 1)$ je krogla $\|x\|_\infty \le 1$.
+- Črtkani romb z oglišči v $(\pm 1, 0)$ in $(0, \pm 1)$ je krogla $\|x\|_1 \le 1$.
+- Krog $\|x\|_2 \le 1$ poteka skozi štiri oglišča romba in leži med rombom in kvadratom.
 
 Nobena krogla nima vdolbine; daljica med dvema njenima točkama nikoli ne gre ven. To je konveksnost.
 

@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pregrade
+  - koža, sluznice, migetalke
+  - lizocim v solzah, želodčna kislina
+- Nespecifična obramba
+  - vnetje: histamin razširi žile
+  - fagociti požrejo vse tujke
+  - hitra, a brez spomina
+- Specifična obramba
+  - limfociti prepoznajo en antigen
+  - prvi stik: odziv po 1–2 tednih
+  - spominske celice: drugi odziv hitrejši
+- Protitelesa
+  - beljakovine Y iz plazmatk
+  - zlepijo in označijo, ubijejo fagociti
+- Celice T
+  - ubijalke uničijo okužene celice
+  - pomagalke usmerjajo limfocite B in T
+- Imunizacija
+  - aktivna: cepivo, zaščita po tednih, za leta
+  - pasivna: imunoglobulin, takoj, tedne
+  - $c = c_0 \cdot \left(\dfrac{1}{2}\right)^{n}$
+- Napake obrambe
+  - alergija: IgE, mastociti, šele po senzibilizaciji
+  - avtoimunost: napad na lastne celice
+- AIDS
+  - HIV uniči celice T pomagalke
+  - oportunistične okužbe, ne virus sam

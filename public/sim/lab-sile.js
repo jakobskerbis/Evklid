@@ -1,7 +1,7 @@
 // Virtualni laboratorij, »Silomer in uteži«: Hookov zakon (lab-hooke), gostota (lab-gostota), vzgon (lab-vzgon),
 // hidrostatični tlak z manometrom (lab-tlak). Modeli: lab-model-sile.js (brez DOM). Odčitki analognih skal so v povečavi (lupa).
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
 import {
   HookeBench, GostotaBench, VzgonBench, TlakBench, VZMETI, VZMET, VZORCI, TEKOCINE, VALJ, VALJ_PREREZ, VZOREC_PREREZ, VALJI,
   SILOMER, MANOMETER, G_SOLA, G_LJ, naklonSkoziIzhodisce, fmtSila, POENOSTAVITVE_SILE,
@@ -161,7 +161,7 @@ export function labHooke(el) {
     for (const [name, pts] of skupaj(meas, "g")) {
       if (pts.filter(([x]) => x > 0.05).length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), id = Object.keys(VZMETI).find((i) => VZMETI[i].name.startsWith(name));
-      out.push(`<p><b>${name} vzmet</b>: <i>k</i> = <i>F</i>/<i>x</i> ≈ ${fixed(k, 3)}${nb}N/cm = <b>${fixed(k * 100, 1)}${nb}N/m</b> (naklon premice skozi izhodišče; na vzmeti piše ${VZMETI[id].k}${nb}N/m ±${nb}5${nb}%).</p>`);
+      out.push(`<p><b>${name} vzmet</b>: ${tex(String.raw`k = \frac{F}{x} \approx ${fixed(k, 3)}${en("N/cm")} = ${rez(fixed(k * 100, 1), "N/m")}`)} (naklon premice skozi izhodišče; na vzmeti piše ${VZMETI[id].k}${nb}N/m ±${nb}5${nb}%).</p>`);
     }
     calc.innerHTML = out.join("");
     const max = Math.max(0, ...[...skupaj(meas, "g").values()].map((p) => p.filter(([x]) => x > 0.05).length));
@@ -171,7 +171,7 @@ export function labHooke(el) {
         text: "Kaj velja za podaljšek vzmeti, dokler je ne obremeniš prek meje prožnosti?",
         options: [
           { t: "Podaljšek je sorazmeren s silo: dvakrat večja sila, dvakrat večji podaljšek.", ok: true, why: "Točke ležijo na premici skozi izhodišče: <i>F</i> = <i>k x</i> (Hookov zakon). Naklon premice je prožnostni koeficient <i>k</i>. Prek meje prožnosti to ne velja več, vzmet se trajno raztegne." },
-          { t: "Vse vzmeti se pri isti sili podaljšajo enako.", ok: false, why: "Trda vzmet ima večji <i>k</i>, zato se pri isti sili podaljša manj kot mehka: <i>x</i> = <i>F</i>/<i>k</i>." },
+          { t: "Vse vzmeti se pri isti sili podaljšajo enako.", ok: false, why: `Trda vzmet ima večji <i>k</i>, zato se pri isti sili podaljša manj kot mehka: ${tex(String.raw`x = \frac{F}{k}`)}.` },
           { t: "Podaljšek raste s kvadratom sile.", ok: false, why: "Potem točke ne bi ležale na premici, ampak na krivulji, ki se vse bolj vzpenja. Meritve kažejo premico." },
           { t: "Vzmet z večjim prožnostnim koeficientom se pri isti sili bolj podaljša.", ok: false, why: "Obratno: <i>k</i> pove, koliko sile potrebuješ za podaljšek 1 m. Večji <i>k</i> pomeni trdo vzmet in manjši podaljšek." },
         ],
@@ -276,7 +276,7 @@ export function labGostota(el) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table,
       h("h4", { class: "lab-h" }, "Graf m(V)"), graph, calc, qBox,
-      notes(POENOSTAVITVE_SILE.gostota, "Gostota ρ = <i>m</i>/<i>V</i>; 1 mL = 1 cm³. Tabela pri 20 °C: aluminij 2,70, baker 8,96, voda 0,998, etanol 0,789 g/cm³ (CRC Handbook); jeklo 7,85, medenina 8,47, PVC 1,38, granit 2,65, smreka 0,45, sončnično olje 0,92 g/cm³ (Engineering ToolBox); slana voda s 4 % soli 1,027 g/cm³ (CRC). Merilni valj razreda B ±1 mL (ISO 4788), tehtnica ±0,1 g. Ocene: menisk, mehurček, velikost valja."),
+      notes(POENOSTAVITVE_SILE.gostota, `Gostota ${tex(String.raw`\rho = \frac{m}{V}`)}; 1 mL = 1 cm³. Tabela pri 20 °C: aluminij 2,70, baker 8,96, voda 0,998, etanol 0,789 g/cm³ (CRC Handbook); jeklo 7,85, medenina 8,47, PVC 1,38, granit 2,65, smreka 0,45, sončnično olje 0,92 g/cm³ (Engineering ToolBox); slana voda s 4 % soli 1,027 g/cm³ (CRC). Merilni valj razreda B ±1 mL (ISO 4788), tehtnica ±0,1 g. Ocene: menisk, mehurček, velikost valja.`),
     ],
     tryText: "Izmeri gostoto treh aluminijastih vzorcev različnih velikosti in jih nariši na graf m(V). Nato poskusi z lesom: kaj se zgodi, če ga ne potisneš pod gladino? Izmeri še gostoto olja in etanola.",
   });
@@ -363,14 +363,14 @@ export function labGostota(el) {
   function sync() {
     const out = [];
     for (const [name, pts] of skupaj(meas, "g")) out.push(`<li>${name}: naklon premice ${fixed(naklonSkoziIzhodisce(pts), 2)}${nb}g/cm³${pts.length > 1 ? ` (${pts.length} vzorci)` : ""}</li>`);
-    calc.innerHTML = out.length ? `<p>Gostota je naklon premice skozi izhodišče: ρ = <i>m</i>/<i>V</i>.</p><ul>${out.join("")}</ul>` : "";
+    calc.innerHTML = out.length ? `<p>Gostota je naklon premice skozi izhodišče: ${tex(String.raw`\rho = \frac{m}{V}`)}.</p><ul>${out.join("")}</ul>` : "";
     if (meas.length >= 3 && !asked) {
       asked = true;
       qBox.append(conclusion({
         text: "Kaj pove graf <i>m</i>(<i>V</i>) za vzorce iz iste snovi?",
         options: [
-          { t: "Točke ležijo na premici skozi izhodišče; naklon premice je gostota snovi, ki je enaka za majhen in velik kos.", ok: true, why: "Dvakrat večji kos ima dvakrat večjo maso, zato je <i>m</i>/<i>V</i> stalno. To razmerje je gostota; od velikosti kosa ni odvisna, od snovi pa." },
-          { t: "Večji kos iste snovi ima večjo gostoto.", ok: false, why: "Večji kos ima večjo maso in večjo prostornino, razmerje <i>m</i>/<i>V</i> pa ostane enako." },
+          { t: "Točke ležijo na premici skozi izhodišče; naklon premice je gostota snovi, ki je enaka za majhen in velik kos.", ok: true, why: `Dvakrat večji kos ima dvakrat večjo maso, zato je ${tex(String.raw`\frac{m}{V}`)} stalno. To razmerje je gostota; od velikosti kosa ni odvisna, od snovi pa.` },
+          { t: "Večji kos iste snovi ima večjo gostoto.", ok: false, why: `Večji kos ima večjo maso in večjo prostornino, razmerje ${tex(String.raw`\frac{m}{V}`)} pa ostane enako.` },
           { t: "Majhen kos lesa plava, velik kos istega lesa pa potone.", ok: false, why: "Gostota ni odvisna od velikosti kosa. Les plava, ker ima manjšo <b>gostoto</b> od vode; to velja za majhen in za velik kos, čeprav je velik kos težji od vode v valju." },
           { t: "Prostornine vzorca ne moremo izmeriti, ker ni kocka.", ok: false, why: "Z izpodrivanjem vode izmeriš prostornino telesa poljubne oblike: <i>V</i> = <i>V</i>₂ − <i>V</i>₁, tudi za nepravilen kamen." },
         ],
@@ -665,7 +665,7 @@ export function labTlak(el) {
     for (const [name, pts] of skupaj(meas, "g")) {
       if (!pts.some(([x]) => x > 1)) continue;
       const k = naklonSkoziIzhodisce(pts);
-      out.push(`<li>${name}: Δ<i>h</i>/<i>h</i> ≈ ${fixed(k / 10, 3)} → ρ ≈ ρ<sub>vode</sub> · Δ<i>h</i>/<i>h</i> = <b>${fixed((MANOMETER.rho * k) / 10, 2)}${nb}g/cm³</b></li>`);
+      out.push(`<li>${name}: ${tex(String.raw`\frac{\Delta h}{h} \approx ${fixed(k / 10, 3)}`)} → ${tex(String.raw`\rho \approx \rho_\text{vode} \cdot \frac{\Delta h}{h} = ${rez(fixed((MANOMETER.rho * k) / 10, 2), "g/cm³")}`)}</li>`);
     }
     calc.innerHTML = out.length ? `<p>Ker je v manometru voda, je ρ<sub>tek</sub> <i>h</i> = ρ<sub>vode</sub> Δ<i>h</i>:</p><ul>${out.join("")}</ul>` : "";
     if (meas.length >= 4 && !asked) {

@@ -65,7 +65,7 @@ $$A = Q D Q^T.$$
 
 V stolpcih $Q$ so ortonormirani lastni vektorji, na diagonali $D$ pripadajoče lastne vrednosti. Od desne proti levi: $Q^T$ zasuka, $D$ raztegne vzdolž osi, $Q$ zasuka nazaj. Obrat velja tudi: če je $A = QDQ^T$, je $A^T = QD^TQ^T = A$. Realna matrika je torej ortogonalno diagonalizabilna natanko tedaj, ko je simetrična. Kompleksna verzija: hermitska matrika je $UDU^*$ z unitarno $U$ in realno $D$.
 
-Ista formula v obliki vsote projekcij: $A = \lambda_1 q_1 q_1^T + \dots + \lambda_n q_n q_n^T$.
+Ista formula v obliki vsote projekcij, kjer so $q_1, \dots, q_n$ stolpci $Q$: $A = \lambda_1 q_1 q_1^T + \dots + \lambda_n q_n q_n^T$.
 
 *Preveri:* koliko je $Q^{-1}$ v spektralnem razcepu? (Odgovor: $Q^T$, ker je $Q$ ortogonalna.)
 
@@ -181,10 +181,10 @@ $\lambda^2 - 2\lambda - 8 = (\lambda - 4)(\lambda + 2)$, torej $\lambda_1 = 4$, 
 ## Pogoste napake
 
 - **»Pravokotni stolpci že pomenijo ortogonalno matriko.«** Pozabiš na dolžine. Matrika $\begin{pmatrix}1&-1\\1&1\end{pmatrix}$ ima pravokotna stolpca, a vsako dolžino poveča za $\sqrt2$. Popravek: stolpci morajo biti *ortonormirani*, preveri $Q^TQ = I$.
-- **»Spektralni izrek velja za vsako diagonalizabilno matriko.«** Matrika $\begin{pmatrix}1&1\\0&2\end{pmatrix}$ je diagonalizabilna, a lastna vektorja $(1,0)$ in $(1,1)$ nista pravokotna. Pravokotnost dokažemo z $\langle Ax, y\rangle = \langle x, Ay\rangle$, kar velja samo za simetrične. Popravek: ortonormirana lastna baza obstaja natanko pri simetričnih (realno) oz. hermitskih (kompleksno) matrikah.
+- **»Spektralni izrek velja za vsako diagonalizabilno matriko.«** Matrika $\begin{pmatrix}1&1\\0&2\end{pmatrix}$ je diagonalizabilna, a lastna vektorja $(1,0)$ in $(1,1)$ nista pravokotna. Pravokotnost dokažemo z $\langle Ax, y\rangle = \langle x, Ay\rangle$, kar velja samo za simetrične. Popravek: ortonormirana lastna baza obstaja natanko pri simetričnih matrikah (realno); v kompleksnem natanko pri normalnih, med katerimi so hermitske.
 - **Cel mešani koeficient na obe mesti.** Za $5x^2 + 4xy + 2y^2$ napišeš $\begin{pmatrix}5&4\\4&2\end{pmatrix}$, kar da $5x^2 + 8xy + 2y^2$. Popravek: koeficient pri $xy$ razdeli na pol, ker se v $x^TAx$ pojavi dvakrat.
 - **Definitnost iz predznakov elementov.** »Vsi elementi $\begin{pmatrix}1&3\\3&1\end{pmatrix}$ so pozitivni, torej je pozitivno definitna.« A $q(1,-1) = -4$. Popravek: odločajo lastne vrednosti (pri $2\times2$: $\det > 0$ in sled $> 0$), ne posamezni elementi.
-- **»Ortogonalna pomeni vrtenje.«** Tudi zrcaljenje ohranja dolžine in kote, njegova determinanta je $-1$. Popravek: ortogonalna je vsaka $Q$ z $Q^TQ = I$; vrtenje so tiste z $\det Q = 1$.
+- **»Ortogonalna pomeni vrtenje.«** Tudi zrcaljenje ohranja dolžine in kote, njegova determinanta je $-1$. Popravek: ortogonalna je vsaka $Q$ s $Q^TQ = I$; vrtenje so tiste z $\det Q = 1$.
 
 ## Povzetek
 
@@ -194,6 +194,69 @@ $\lambda^2 - 2\lambda - 8 = (\lambda - 4)(\lambda + 2)$, torej $\lambda_1 = 4$, 
 - Spektralni izrek: $A = QDQ^T$ z ortogonalno $Q$ iz lastnih vektorjev in realno diagonalno $D$.
 - Kvadratna forma $q = x^TAx$ (mešani koeficient razpolovi); v glavnih oseh $q = \sum \lambda_i u_i^2$, polosi elipse $q = c$ sta $\sqrt{c/\lambda_i}$.
 - Pozitivno definitna natanko tedaj, ko so vse lastne vrednosti pozitivne.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo adjungirane, sebiadjungirane in ortogonalne preslikave ter njihove matrike v ortonormirani bazi ($A^T$, $A^T = A$, $Q^TQ = I$),
+- lastnosti ortogonalnih matrik: ohranjanje dolžin in kotov, ortonormirani stolpci, $\det Q = \pm 1$,
+- dokaz, da so lastne vrednosti sebiadjungirane preslikave realne in lastni vektorji za različne lastne vrednosti pravokotni,
+- spektralni izrek ($A = QDQ^T$) z dokazom z indukcijo in obrat (ortogonalno diagonalizabilna realna matrika je simetrična),
+- zapis kvadratne forme s simetrično matriko, prehod na glavne osi in polosi elipse $q = c$,
+- definicijo pozitivne definitnosti in kriterij z lastnimi vrednostmi (pri $2 \times 2$ z determinanto in sledjo).
+
+### Naloga 1
+
+Dana je kvadratna forma $q(x, y, z) = x^2 + 2y^2 + 3z^2 - 4xy - 4yz$ na $\mathbb{R}^3$. (a) Zapiši njeno simetrično matriko $A$ in poišči ortogonalno $Q$ ter diagonalno $D$, da je $A = QDQ^T$. (b) Zapiši formo v glavnih oseh in določi njeno definitnost. (c) Kolikšna sta največja in najmanjša vrednost $q$ na enotski sferi $x^2 + y^2 + z^2 = 1$ in kje sta doseženi?
+
+**Rešitev:**
+
+1. Mešana koeficienta razpolovimo: pri $xy$ je $-4$, pri $yz$ je $-4$, pri $xz$ je $0$. Torej $A = \begin{pmatrix}1&-2&0\\-2&2&-2\\0&-2&3\end{pmatrix}$.
+2. Karakteristični polinom z razvojem po prvi vrstici: $\det(A - \lambda I) = (1 - \lambda)\bigl[(2 - \lambda)(3 - \lambda) - 4\bigr] + 2\bigl[-2(3 - \lambda)\bigr] = (1 - \lambda)(\lambda^2 - 5\lambda + 2) - 4(3 - \lambda)$.
+3. Uredimo: $-\lambda^3 + 6\lambda^2 - 3\lambda - 10$. Ničlo $\lambda = -1$ uganemo ($1 + 6 + 3 - 10 = 0$) in delimo: $-(\lambda + 1)(\lambda^2 - 7\lambda + 10) = -(\lambda + 1)(\lambda - 2)(\lambda - 5)$.
+4. Lastne vrednosti: $\lambda_1 = -1$, $\lambda_2 = 2$, $\lambda_3 = 5$. Preizkus: vsota $6$ je enaka sledi $1 + 2 + 3$.
+5. $\lambda_1 = -1$: sistem $(A + I)v = 0$ da $2v_1 - 2v_2 = 0$ in $-2v_2 + 4v_3 = 0$, torej $v = (2, 2, 1)$. Preizkus: $A(2, 2, 1) = (-2, -2, -1)$.
+6. $\lambda_2 = 2$: sistem $(A - 2I)v = 0$ da $-v_1 - 2v_2 = 0$ in $-2v_2 + v_3 = 0$, torej $v = (2, -1, -2)$. Preizkus: $A(2, -1, -2) = (4, -2, -4)$.
+7. $\lambda_3 = 5$: sistem $(A - 5I)v = 0$ da $-4v_1 - 2v_2 = 0$ in $-2v_2 - 2v_3 = 0$, torej $v = (1, -2, 2)$. Preizkus: $A(1, -2, 2) = (5, -10, 10)$.
+8. Vektorji so paroma pravokotni: $4 - 2 - 2 = 0$, $2 - 4 + 2 = 0$, $2 + 2 - 4 = 0$. Vsak ima dolžino $\sqrt{4 + 4 + 1} = 3$, zato jih delimo s $3$:
+
+$$Q = \tfrac13\begin{pmatrix}2&2&1\\2&-1&-2\\1&-2&2\end{pmatrix}, \quad D = \begin{pmatrix}-1&0&0\\0&2&0\\0&0&5\end{pmatrix}.$$
+
+9. (b) V koordinatah $u = Q^Tx$ je $q = -u_1^2 + 2u_2^2 + 5u_3^2$. Lastne vrednosti imajo različne predznake, zato je forma nedefinitna; na primer $q(2, 2, 1) = 4 + 8 + 3 - 16 - 8 = -9 < 0$ in $q(0, 0, 1) = 3 > 0$.
+10. (c) Ker je $Q$ ortogonalna, je $u_1^2 + u_2^2 + u_3^2 = x^2 + y^2 + z^2 = 1$. Zato je $q = -u_1^2 + 2u_2^2 + 5u_3^2 \leq 5(u_1^2 + u_2^2 + u_3^2) = 5$, enakost velja pri $u = (0, 0, \pm 1)$. Enako je $q \geq -(u_1^2 + u_2^2 + u_3^2) = -1$, enakost pri $u = (\pm 1, 0, 0)$.
+11. Odgovor: $A = QDQ^T$ s $Q$ in $D$ iz koraka 8; $q = -u_1^2 + 2u_2^2 + 5u_3^2$ je nedefinitna; na enotski sferi je največja vrednost $5$ v točkah $\pm\tfrac13(1, -2, 2)$, najmanjša $-1$ v točkah $\pm\tfrac13(2, 2, 1)$.
+
+### Naloga 2
+
+Natančno navedi definicijo sebiadjungirane in ortogonalne preslikave ter spektralni izrek. Dokaži: (a) vse lastne vrednosti realne simetrične matrike so realne; (b) lastna vektorja za različni lastni vrednosti sta pravokotna; (c) realna lastna vrednost ortogonalne matrike je $1$ ali $-1$. (d) Utemelji, ali je produkt dveh simetričnih matrik vedno simetričen.
+
+**Rešitev:**
+
+1. Definiciji: $A$ je sebiadjungirana, če je $\langle Ax, y\rangle = \langle x, Ay\rangle$ za vse $x, y$ (v ortonormirani bazi $A^T = A$). $Q$ je ortogonalna, če je $\langle Qx, Qy\rangle = \langle x, y\rangle$ za vse $x, y$ (matrično $Q^TQ = I$).
+2. Spektralni izrek: za vsako sebiadjungirano preslikavo $A$ na končnorazsežnem realnem prostoru s skalarnim produktom obstaja ortonormirana baza iz lastnih vektorjev; matrično $A = QDQ^T$ z ortogonalno $Q$ in realno diagonalno $D$.
+3. (a) Naj bo $Az = \lambda z$ s kompleksnima $\lambda$ in $z \neq 0$. Ker je $A$ realna in simetrična, je $\overline{z}^{\,T}Az = \overline{(Az)}^{\,T}z$. Leva stran je $\lambda\,\overline{z}^{\,T}z$, desna $\overline{\lambda}\,\overline{z}^{\,T}z$.
+4. Ker je $\overline{z}^{\,T}z = \|z\|^2 > 0$, sledi $\lambda = \overline{\lambda}$, torej $\lambda \in \mathbb{R}$.
+5. (b) Naj bo $Ax = \lambda x$, $Ay = \mu y$, $\lambda \neq \mu$. Potem $\lambda\langle x, y\rangle = \langle Ax, y\rangle = \langle x, Ay\rangle = \mu\langle x, y\rangle$, torej $(\lambda - \mu)\langle x, y\rangle = 0$ in $\langle x, y\rangle = 0$.
+6. (c) Naj bo $Qx = \lambda x$, $x \neq 0$, $\lambda \in \mathbb{R}$. Ortogonalna preslikava ohranja dolžine: $\|x\|^2 = \langle Qx, Qx\rangle = \lambda^2\|x\|^2$. Ker je $\|x\| \neq 0$, je $\lambda^2 = 1$ in $\lambda = \pm 1$.
+7. (d) Ne. Za simetrični $A$ in $B$ je $(AB)^T = B^TA^T = BA$, zato je $AB$ simetrična natanko tedaj, ko $A$ in $B$ komutirata.
+8. Protiprimer: $A = \begin{pmatrix}1&0\\0&2\end{pmatrix}$, $B = \begin{pmatrix}0&1\\1&0\end{pmatrix}$. Tedaj je $AB = \begin{pmatrix}0&1\\2&0\end{pmatrix}$, kar ni simetrična matrika.
+9. Odgovor: (a) in (b) sledita iz $\langle Ax, y\rangle = \langle x, Ay\rangle$, (c) iz ohranjanja dolžin; produkt simetričnih matrik je simetričen natanko tedaj, ko matriki komutirata.
+
+### Naloga 3
+
+Za realen parameter $a$ je dana forma $q_a(x, y, z) = x^2 + y^2 + z^2 + 2a(xy + xz + yz)$. (a) Poišči lastne vrednosti njene matrike in ortogonalno bazo iz lastnih vektorjev. (b) Za katere $a$ je forma pozitivno definitna? (c) Pri $a = -\tfrac12$ poišči vse vektorje, za katere je $q_a = 0$.
+
+**Rešitev:**
+
+1. Matrika forme (mešane koeficiente $2a$ razpolovimo): $A = \begin{pmatrix}1&a&a\\a&1&a\\a&a&1\end{pmatrix}$.
+2. Vsota vsake vrstice je $1 + 2a$, zato je $A(1, 1, 1) = (1 + 2a)(1, 1, 1)$: lastna vrednost $\lambda_1 = 1 + 2a$.
+3. $A(1, -1, 0) = (1 - a,\ a - 1,\ 0) = (1 - a)(1, -1, 0)$: lastna vrednost $\lambda_2 = 1 - a$.
+4. $A(1, 1, -2) = (1 + a - 2a,\ a + 1 - 2a,\ 2a - 2) = (1 - a)(1, 1, -2)$: spet $1 - a$, torej je ta lastna vrednost dvojna. Preizkus s sledjo: $(1 + 2a) + 2(1 - a) = 3$.
+5. Vektorji $(1, 1, 1)$, $(1, -1, 0)$, $(1, 1, -2)$ so paroma pravokotni: $1 - 1 + 0 = 0$, $1 + 1 - 2 = 0$, $1 - 1 + 0 = 0$. Po normiranju (dolžine $\sqrt3$, $\sqrt2$, $\sqrt6$) so stolpci ortogonalne $Q$. Pri $a = 0$ je $A = I$ in je vsak vektor lasten.
+6. (b) V glavnih oseh: $q_a = (1 + 2a)u_1^2 + (1 - a)(u_2^2 + u_3^2)$. Forma je pozitivno definitna natanko tedaj, ko je $1 + 2a > 0$ in $1 - a > 0$, torej za $-\tfrac12 < a < 1$.
+7. (c) Pri $a = -\tfrac12$ je $\lambda_1 = 0$ in $\lambda_2 = \lambda_3 = \tfrac32$, zato $q_a = \tfrac32(u_2^2 + u_3^2)$. To je nič natanko pri $u_2 = u_3 = 0$, torej za vektorje v smeri prve glavne osi.
+8. Odgovor: lastne vrednosti so $1 + 2a$ (lastni vektor $(1, 1, 1)$) in dvojna $1 - a$ (lastna vektorja $(1, -1, 0)$ in $(1, 1, -2)$); forma je pozitivno definitna za $-\tfrac12 < a < 1$; pri $a = -\tfrac12$ je $q_a = 0$ natanko za vektorje $t(1, 1, 1)$, $t \in \mathbb{R}$.
 
 ## Drugače: Na sliki
 
@@ -235,7 +298,7 @@ Za pozitivno definitno kvadratno formo velja ista slika obrnjeno: nivojnice $q =
 ~ To naredi ortogonalna preslikava. Simetrična z lastnima vrednostma $3$ in $1$ dolžine spremeni.
 > Spektralni izrek: $A = QDQ^T$. Zasuk, raztezek za $3$ in $1$ vzdolž pravokotnih osi, zasuk nazaj. Krog postane elipsa s pravokotnima osema.
 
-? Oceni brez računanja: koliko je približno večja lastna vrednost matrike $\begin{pmatrix}4&0{,}1\\0{,}1&1\end{pmatrix}$?
+? Oceni brez računanja: kolikšna je približno večja izmed lastnih vrednosti matrike $\begin{pmatrix}4&0{,}1\\0{,}1&1\end{pmatrix}$?
 - Približno $4{,}1$.
 ~ Izvendiagonalnega elementa ne prištejemo kar diagonali. Popravek je približno $\dfrac{0{,}1^2}{4 - 1}$, torej zelo majhen.
 + Približno $4$.
@@ -285,6 +348,7 @@ I | identična (enotska) matrika
 \lambda, \mu | lastni vrednosti preslikave A | \det(A - \lambda I) = 0 | | λ₁, …, λₙ na diagonali D
 D | diagonalna matrika lastnih vrednosti
 q | kvadratna forma | q = x^TAx
+q_1, q_n | ortonormirani lastni vektorji (stolpci Q)
 u_1, u_2, u_n | koordinate v glavnih oseh (lastni bazi)
 c | vrednost kvadratne forme na krivulji q = c | | | v ax² + bxy + cy² pa koeficient
 :::

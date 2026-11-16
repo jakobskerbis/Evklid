@@ -46,7 +46,7 @@ V simulaciji spodaj (»Tlak na ploskev in tlak v tekočini«) izberi opeko in jo
 :::premisli
 Stena hiše je debela $30\,\mathrm{cm}$, betonski pas pod njo (temelj) pa je širok $60\,\mathrm{cm}$. Napovej: kolikokrat manjši je tlak na zemljo, kot bi bil, če bi stena stala kar na zemlji? Zakaj je to gradbenikom pomembno?
 ---
-Teža stene in strehe se na temelju porazdeli po dvakrat večji ploskvi, zato je tlak na zemljo približno pol manjši. Zemlja manj popusti in hiša se manj poseda.
+Teža stene in strehe se na temelju porazdeli po dvakrat večji ploskvi, zato je tlak na zemljo približno dvakrat manjši. Zemlja manj popusti in hiša se manj poseda.
 :::
 
 **4. Tekočine pritiskajo v vse smeri.** Voda v rezervoarju zaradi svoje teže pritiska na dno, pa tudi na stene in na vsak predmet v njej. Ta tlak deluje **v vseh smereh** in vedno pravokotno na ploskev, ki se je tekočina dotika. Na isti globini je tlak povsod enak, z globino pa narašča.

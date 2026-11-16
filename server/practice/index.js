@@ -9,6 +9,11 @@ import { UNI_GENERATORS } from "./generators/uni.js";
 import { DODATNE_MAT_OS } from "./generators/dodatne-mat-os.js";
 import { DODATNE_MAT_SS12 } from "./generators/dodatne-mat-ss12.js";
 import { DODATNE_MAT_SS34 } from "./generators/dodatne-mat-ss34.js";
+import { MATURA_MAT_SS4 } from "./generators/matura-mat-ss4.js";
+import { MATURA_MAT_SS3 } from "./generators/matura-mat-ss3.js";
+import { MATURA_MAT_SS2 } from "./generators/matura-mat-ss2.js";
+import { MATURA_MAT_SS1_GEO } from "./generators/matura-mat-ss1-geo.js";
+import { MATURA_MAT_SS1 } from "./generators/matura-mat-ss1.js";
 import { DODATNE_OS_FIZ_KEM } from "./generators/dodatne-os-fiz-kem.js";
 import { DODATNE_FIZ_SS } from "./generators/dodatne-fiz-ss.js";
 import { DODATNE_KEM_SS } from "./generators/dodatne-kem-ss.js";
@@ -42,6 +47,11 @@ export const GENERATORS = [
   ...DODATNE_MAT_OS,
   ...DODATNE_MAT_SS12,
   ...DODATNE_MAT_SS34,
+  ...MATURA_MAT_SS1,
+  ...MATURA_MAT_SS1_GEO,
+  ...MATURA_MAT_SS2,
+  ...MATURA_MAT_SS3,
+  ...MATURA_MAT_SS4,
   ...DODATNE_OS_FIZ_KEM,
   ...DODATNE_FIZ_SS,
   ...DODATNE_KEM_SS,

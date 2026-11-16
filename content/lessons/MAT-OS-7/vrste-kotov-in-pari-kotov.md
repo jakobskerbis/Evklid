@@ -36,7 +36,7 @@ Skupaj dajo $360^\circ$, poln obrat okoli križišča. Iz tega primera zdaj izlu
 | pravi | $90^\circ$ |
 | topi | med $90^\circ$ in $180^\circ$ |
 | iztegnjeni | $180^\circ$ (kraka tvorita premico) |
-| izbočeni | med $180^\circ$ in $360^\circ$ |
+| udrti | med $180^\circ$ in $360^\circ$ |
 | polni | $360^\circ$ |
 
 Ob križišču sta torej nastala dva ostra in dva topa kota.
@@ -168,7 +168,7 @@ $\beta = 180^\circ - 47^\circ = 133^\circ$. Rezultat je res topi kot, kar se uje
 
 ## Povzetek
 
-- Vrste kotov: ostri ($<90^\circ$), pravi ($90^\circ$), topi ($90^\circ$ do $180^\circ$), iztegnjeni ($180^\circ$), izbočeni ($180^\circ$ do $360^\circ$), polni ($360^\circ$).
+- Vrste kotov: ostri ($<90^\circ$), pravi ($90^\circ$), topi ($90^\circ$ do $180^\circ$), iztegnjeni ($180^\circ$), udrti ($180^\circ$ do $360^\circ$), polni ($360^\circ$).
 - **Sokota**: sosednja kota, katerih druga kraka ležita na premici; $\alpha + \beta = 180^\circ$.
 - **Sovršna kota**: nasprotna kota ob preseku dveh premic; sta enaka.
 - **Kota z vzporednimi kraki**: oba ostra ali oba topa, potem sta enaka. En ostri in en topi, potem je $\alpha + \beta = 180^\circ$.
@@ -195,7 +195,7 @@ Obe vsoti sta enaki, zato je $\alpha + \beta = \beta + \gamma$. Na obeh straneh 
 **Natančnejše pravilo za vzporedne krake.** Vsak krak ima smer. Primerjaj smeri istoležnih krakov obeh kotov:
 
 - oba kraka kažeta v isto smer ali oba v nasprotno smer: kota sta enaka;
-- en krak kaže v isto, drugi v nasprotno smer: kota sta sokota, $\alpha + \beta = 180^\circ$.
+- en krak kaže v isto, drugi v nasprotno smer: kota skupaj merita $180^\circ$, $\alpha + \beta = 180^\circ$.
 
 Sovršna kota sta poseben primer: oba kraka kažeta v nasprotno smer, zato sta enaka. Pravilo »iste vrste, različnih vrst« je krajša oblika tega pravila. Pri dveh pravih kotih veljata obe zvezi hkrati. Strog dokaz uporablja kote ob vzporednicah, ki jih boš spoznal pozneje.
 
@@ -208,7 +208,7 @@ Sovršna kota sta poseben primer: oba kraka kažeta v nasprotno smer, zato sta e
 - komplementarna kota
 ~ Komplementarna kota skupaj dasta $90^\circ$. Pri križišču to ni nujno res.
 - iztegnjena kota
-~ Iztegnjeni kot meri $180^\circ$, njegova kraka tvorita premico. Kot med cestama, ki se sekata, je manjši.
+~ Iztegnjeni kot meri $180^\circ$, njegova kraka tvorita premico. Kot med cesto in progo, ki se sekata, je manjši.
 > Nasprotna kota ob presečišču dveh premic sta sovršna. Kraka enega sta podaljška krakov drugega, zato sta enaka.
 
 ? Kot meri $50^\circ$. Uredi po velikosti od najmanjšega: njegov sokot $S$, sovršni kot $V$ in komplementarni kot $K$.
@@ -248,7 +248,7 @@ Sovršna kota sta poseben primer: oba kraka kažeta v nasprotno smer, zato sta e
 ~ To je komplementarni kot ($90^\circ - 70^\circ$). Topi kot mora biti večji od $90^\circ$.
 + $110^\circ$
 - $290^\circ$
-~ To je $360^\circ - 70^\circ$, izbočeni kot, ne topi.
+~ To je $360^\circ - 70^\circ$, udrti kot, ne topi.
 > Kota sta različnih vrst, zato je $\alpha + \beta = 180^\circ$ in $\beta = 180^\circ - 70^\circ = 110^\circ$.
 
 :::simboli

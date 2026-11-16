@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Glivna celica
+  - evkariont, stena iz hitina
+  - brez kloroplastov, rezerva glikogen
+  - bližje živalim kot rastlinam
+- Zunanja prebava
+  - encimi ven, vsrkajo raztopljene snovi
+  - hife sestavljajo micelij
+- Kvasovke
+  - enocelične, brstenje, $N = N_0 \cdot 2^n$
+  - vrenje: etanol in $\mathrm{CO_2}$
+- Plesni in gobe
+  - plesen: micelij s trosi
+  - goba je le trosnjak
+  - napaka: odrezana plesen, hife ostanejo
+- Načini življenja
+  - razkrojevalci lesa
+  - zajedavci: kožne glivice, kandidoza
+- Lišaji in mikoriza
+  - lišaj: gliva in alga
+  - mikoriza: hife ob koreninah, voda in fosfor
+- Pomen za človeka
+  - kruh, pivo, siri, penicilin
+  - strupene gobe, mikotoksini
+- Zdravljenje
+  - antimikotik, ne antibiotik
+  - noht: $t = \dfrac{l}{v}$

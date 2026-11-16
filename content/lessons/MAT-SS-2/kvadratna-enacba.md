@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: graf
 avtor: AI
 ---
@@ -25,11 +25,28 @@ $$ax^2 + bx + c = 0, \qquad a, b, c \in \mathbb{R},\ a \ne 0.$$
 **2. Nepopolne enačbe.** Če je $b = 0$ ali $c = 0$, obrazca ne potrebuješ.
 
 - $c = 0$: izpostavi $x$. Iz $ax^2 + bx = 0$ sledi $x(ax + b) = 0$, torej $x_1 = 0$ in $x_2 = -\dfrac{b}{a}$.
-- $b = 0$: iz $ax^2 + c = 0$ sledi $x^2 = -\dfrac{c}{a}$. Če je desna stran pozitivna, korenimo: enačba $x^2 = 9$ da $x_{1,2} = \pm 3$. Če je negativna, sta rešitvi kompleksni: enačba $x^2 = -9$ da $x_{1,2} = \pm 3i$.
+- $b = 0$: iz $ax^2 + c = 0$ sledi $x^2 = -\dfrac{c}{a}$. Če je desna stran negativna, sta rešitvi kompleksni: enačba $x^2 = -9$ da $x_{1,2} = \pm 3i$. Če je pozitivna, ima enačba obliko $x^2 = k$ s $k > 0$.
+
+Enačbo $x^2 = k$, kjer je $k > 0$, rešiš na dva načina:
+
+- **s korenjenjem**: $x_{1,2} = \pm\sqrt{k}$; enačba $x^2 = 9$ da $x_{1,2} = \pm 3$;
+- **z razstavljanjem**: $k$ prenesi na levo in uporabi razliko kvadratov, $x^2 - k = (x - \sqrt{k})(x + \sqrt{k})$. Enačba $x^2 - 9 = 0$ postane $(x - 3)(x + 3) = 0$, torej $x_1 = 3$ ali $x_2 = -3$.
+
+Razcep pokaže, od kod pride $\pm$: vsak faktor da svojo rešitev, zato negativne ne izgubiš. Gre tudi, kadar $k$ ni popoln kvadrat: $x^2 - 5 = (x - \sqrt{5})(x + \sqrt{5})$, rešitvi sta $\pm\sqrt{5}$.
 
 *Preveri:* reši $x^2 = 5x$. (Iz $x(x - 5) = 0$ sledi $x_1 = 0$ in $x_2 = 5$; z $x$ ne deli.)
 
-**3. Diskriminanta in obrazec.** Za vsako kvadratno enačbo izračunamo **diskriminanto**
+**3. Razcepne enačbe.** Ideja iz 2. točke deluje tudi pri enačbah višje stopnje. Enačba je **razcepna**, če jo lahko preoblikujemo tako, da je na desni $0$, na levi pa produkt faktorjev. Rešimo jo s pravilom: produkt je enak $0$ natanko tedaj, ko je enak $0$ vsaj en faktor. Iz $A \cdot B = 0$ torej sledi $A = 0$ ali $B = 0$.
+
+1. Vse člene prenesi na levo, da je na desni $0$.
+2. Levo stran razstavi: izpostavi skupni faktor, uporabi razliko kvadratov, Vietovo pravilo ali združi člene v pare.
+3. Vsak faktor izenači z $0$ in reši dobljene enostavnejše enačbe.
+
+Vzemimo enačbo $x^3 = 4x$. Na levo: $x^3 - 4x = 0$. Izpostavimo $x$ in dobimo $x(x^2 - 4) = 0$, z razliko kvadratov pa $x(x - 2)(x + 2) = 0$. Rešitve so $x_1 = 0$, $x_2 = 2$ in $x_3 = -2$. Enačba tretje stopnje ima torej lahko tri rešitve, samo z obrazcem za kvadratno enačbo pa je ne bi rešil.
+
+*Preveri:* reši $(x + 1)(x^2 - 9) = 0$. (Iz $x + 1 = 0$ ali $x^2 - 9 = 0$ sledi $x_1 = -1$, $x_2 = 3$ in $x_3 = -3$.)
+
+**4. Diskriminanta in obrazec.** Za vsako kvadratno enačbo izračunamo **diskriminanto**
 
 $$D = b^2 - 4ac$$
 
@@ -53,19 +70,17 @@ Ali žoga doseže $1{,}5\,\text{m}$? Napovej predznak diskriminante enačbe $4{,
 Ne doseže. $D = 24{,}01 - 4 \cdot 4{,}9 \cdot 1{,}5 = 24{,}01 - 29{,}4 = -5{,}39 < 0$, zato realnega časa ni. Žoga se dvigne le do približno $1{,}2\,\text{m}$.
 :::
 
-**4. Kaj pove diskriminanta.**
+**5. Kaj pove diskriminanta.** Pove, kakšne so rešitve in kako graf $f(x) = ax^2 + bx + c$ leži glede na os $x$:
 
-| Diskriminanta | Rešitve | Graf $f(x) = ax^2 + bx + c$ |
-|---|---|---|
-| $D > 0$ | dve različni realni | seka os $x$ v dveh točkah |
-| $D = 0$ | ena dvojna realna, $x_1 = x_2 = -\dfrac{b}{2a}$ | teme leži na osi $x$ |
-| $D < 0$ | dve konjugirano kompleksni | ne seka osi $x$ |
+- $D > 0$: dve različni realni rešitvi, graf seka os $x$ v dveh točkah;
+- $D = 0$: ena dvojna realna rešitev $x_1 = x_2 = -\dfrac{b}{2a}$, teme leži na osi $x$;
+- $D < 0$: dve konjugirano kompleksni rešitvi, graf ne seka osi $x$.
 
-V simulaciji spodaj (»Kvadratna enačba in diskriminanta«) spreminjaj samo $c$. Parabola se premika gor in dol. Opazuj, pri kateri vrednosti $c$ se teme ravno dotakne osi $x$: tam je $D = 0$.
+V simulaciji spodaj (»Kvadratna enačba in diskriminanta«) nastavi $a = 1$ in $b = -2$, nato spreminjaj samo $c$. Parabola se premika gor in dol. Opazuj, pri kateri vrednosti $c$ se teme ravno dotakne osi $x$: tam je $D = 0$.
 
 *Preveri:* koliko realnih rešitev ima $x^2 - 6x + 9 = 0$? ($D = 36 - 36 = 0$: ena dvojna, $x = 3$.)
 
-**5. Negativna diskriminanta.** Pri $D < 0$ realnih rešitev ni, v kompleksnih pa sta dve. Negativno število $D$ ima kvadratna korena $\pm i\sqrt{-D}$, saj je $\left(i\sqrt{-D}\right)^2 = i^2 \cdot (-D) = D$. Zato
+**6. Negativna diskriminanta.** Pri $D < 0$ realnih rešitev ni, v kompleksnih pa sta dve. Negativno število $D$ ima kvadratna korena $\pm i\sqrt{-D}$, saj je $\left(i\sqrt{-D}\right)^2 = i^2 \cdot (-D) = D$. Zato
 
 $$x_{1,2} = \frac{-b \pm i\sqrt{-D}}{2a}.$$
 
@@ -73,7 +88,7 @@ Rešitvi se razlikujeta le v predznaku imaginarnega dela, torej sta konjugirani 
 
 *Preveri:* reši $x^2 + 2x + 5 = 0$. ($D = -16$, $x_{1,2} = \dfrac{-2 \pm 4i}{2} = -1 \pm 2i$.)
 
-**6. Vietovi formuli.** Za rešitvi $x_1$ in $x_2$ enačbe $ax^2 + bx + c = 0$ velja
+**7. Vietovi formuli.** Za rešitvi $x_1$ in $x_2$ enačbe $ax^2 + bx + c = 0$ velja
 
 $$x_1 + x_2 = -\frac{b}{a}, \qquad x_1 \cdot x_2 = \frac{c}{a}.$$
 
@@ -92,7 +107,7 @@ Rešitvi sta $3$ in $7$. Po Vietu iščeš dve števili z vsoto $10$ in produkto
 
 *Preveri:* katera enačba z vodilnim koeficientom $1$ ima rešitvi $1$ in $4$? ($x^2 - 5x + 4 = 0$.)
 
-**7. Postopek reševanja.** Enačbo preoblikuj v splošno obliko, preberi $a$, $b$, $c$, izračunaj $D$, iz predznaka $D$ ugotovi vrsto rešitev, uporabi obrazec in preveri z Vietovima formulama.
+**8. Postopek reševanja.** Enačbo preoblikuj v splošno obliko, preberi $a$, $b$, $c$, izračunaj $D$, iz predznaka $D$ ugotovi vrsto rešitev, uporabi obrazec in preveri z Vietovima formulama. Če levo stran znaš hitro razstaviti, je razcep pogosto krajša pot.
 
 ## Rešeni primeri
 
@@ -178,12 +193,34 @@ Kolikšen je produkt $x_1^2 x_2^2$ in katera je iskana enačba?
 $x_1^2 x_2^2 = (x_1 x_2)^2 = 3^2 = 9$, zato je enačba $y^2 - 43y + 9 = 0$. Preverjanje s približki: $x_1 \approx 6{,}54$ in $x_2 \approx 0{,}46$, torej $x_1^2 \approx 42{,}79$ in $x_2^2 \approx 0{,}21$; vsota je $43$, produkt približno $9$.
 :::
 
+### Primer 5: razcepna enačba tretje stopnje
+
+Reši enačbo $x^3 - 2x^2 = 9x - 18$.
+
+**Podatki:** enačba $x^3 - 2x^2 = 9x - 18$
+**Iščemo:** vse rešitve $x$
+
+:::formula
+Iz $A \cdot B = 0$ sledi $A = 0$ ali $B = 0$; $\; x^2 - k = (x - \sqrt{k})(x + \sqrt{k})$
+:::
+
+**Rešitev:**
+
+1. Vse člene prenesemo na levo: $x^3 - 2x^2 - 9x + 18 = 0$.
+2. Skupnega faktorja vseh štirih členov ni, zato jih združimo v pare: $x^2(x - 2) - 9(x - 2) = 0$.
+3. Izpostavimo skupni faktor $x - 2$: $(x - 2)(x^2 - 9) = 0$.
+4. Drugi faktor razstavimo kot razliko kvadratov: $(x - 2)(x - 3)(x + 3) = 0$. (Enačbo $x^2 - 9 = 0$ bi lahko rešili tudi s korenjenjem, $x = \pm 3$.)
+5. Vsak faktor izenačimo z $0$: $x_1 = 2$, $x_2 = 3$ in $x_3 = -3$.
+6. Preverjanje za $x = -3$: leva stran je $-27 - 18 = -45$, desna $-27 - 18 = -45$. Za $x = 3$ sta obe strani enaki $9$, za $x = 2$ pa obe $0$.
+7. Odgovor: rešitve enačbe so $x_1 = 2$, $x_2 = 3$ in $x_3 = -3$.
+
 ## Pogoste napake
 
 - **Koeficienti iz enačbe, ki ni v splošni obliki.** Pri $x^2 = 3x + 4$ ni $c = 4$. Razlog: obrazec velja le za obliko $ax^2 + bx + c = 0$. Pravilno: najprej prenesi vse na levo, $x^2 - 3x - 4 = 0$, šele nato preberi $a = 1$, $b = -3$, $c = -4$.
 - **Napaka s predznakom pri $b^2$ in $-b$.** Pri $b = -3$ je $b^2 = (-3)^2 = 9$, ne $-9$, in $-b = 3$. Razlog: kvadrat negativnega števila je pozitiven. Pravilno: negativen $b$ vedno vstavi v oklepaj.
 - **Ulomkova črta le pod korenom.** Zapis $-b \pm \dfrac{\sqrt{D}}{2a}$ je napačen. Razlog: z $2a$ delimo celoten števec. Pravilno: $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$.
 - **Deljenje z neznanko.** Iz $x^2 = 3x$ nekateri delijo z $x$ in dobijo samo $x = 3$. Razlog: z $x$ smemo deliti le, če $x \ne 0$, zato rešitev $x = 0$ izgubiš. Pravilno: $x^2 - 3x = 0$, $x(x - 3) = 0$, $x_1 = 0$, $x_2 = 3$.
+- **Razcep, ko na desni ni $0$.** Iz $(x - 1)(x - 2) = 6$ ne sledi $x - 1 = 6$ ali $x - 2 = 6$ (napačno). Razlog: sklep »vsaj en faktor je $0$« velja le, kadar je produkt enak $0$; produkt $6$ dobiš na neskončno načinov. Pravilno: najprej $x^2 - 3x - 4 = 0$, nato $(x - 4)(x + 1) = 0$, torej $x_1 = 4$ in $x_2 = -1$.
 - **Vietova formula brez minusa** in sklep »ni rešitve«. Vsota rešitev je $-\dfrac{b}{a}$, ne $\dfrac{b}{a}$. Pri $D < 0$ pa ni res, da enačba nima rešitev: v $\mathbb{R}$ jih nima, v $\mathbb{C}$ ima dve konjugirani.
 
 ## Povzetek
@@ -191,9 +228,116 @@ $x_1^2 x_2^2 = (x_1 x_2)^2 = 3^2 = 9$, zato je enačba $y^2 - 43y + 9 = 0$. Prev
 - Kvadratna enačba: $ax^2 + bx + c = 0$, $a \ne 0$; rešitve so ničle funkcije $f(x) = ax^2 + bx + c$.
 - Diskriminanta $D = b^2 - 4ac$; rešitve $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$.
 - $D > 0$: dve različni realni rešitvi; $D = 0$: ena dvojna realna; $D < 0$: dve konjugirano kompleksni.
-- Nepopolne enačbe rešuj z izpostavljanjem ($c = 0$) ali s korenjenjem ($b = 0$), ne deli z $x$.
+- Nepopolne enačbe rešuj z izpostavljanjem ($c = 0$) ali s korenjenjem ($b = 0$), ne deli z $x$. Enačbo $x^2 = k$, $k > 0$, rešiš s korenjenjem ali z razcepom $(x - \sqrt{k})(x + \sqrt{k}) = 0$.
+- Razcepna enačba: vse na levo, levo stran razstavi, vsak faktor izenači z $0$. Tako rešiš tudi enačbe višje stopnje.
 - Vietovi formuli: $x_1 + x_2 = -\dfrac{b}{a}$, $x_1 x_2 = \dfrac{c}{a}$.
 - Razcep: $ax^2 + bx + c = a(x - x_1)(x - x_2)$; enačba z rešitvama $x_1$, $x_2$: $x^2 - (x_1 + x_2)x + x_1 x_2 = 0$.
+
+## Ponovitev
+
+**Formule**
+- $D = b^2 - 4ac$ (na pamet)
+- $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$ (na pamet)
+- $x_1 + x_2 = -\dfrac{b}{a}$, $\;x_1 x_2 = \dfrac{c}{a}$ (na pamet)
+- $ax^2 + bx + c = a(x - x_1)(x - x_2)$ (na pamet)
+
+**Postopek**
+1. Prenesi vse na levo: $ax^2 + bx + c = 0$.
+2. Preberi $a$, $b$ in $c$ s predznaki.
+3. Nepopolno enačbo reši z izpostavljanjem ali s korenjenjem.
+4. Če gre, levo stran razstavi in vsak faktor izenači z $0$.
+5. Sicer izračunaj $D$ in rešitvi z obrazcem; pri $D < 0$ realnih rešitev ni.
+
+**Pazi na**
+- Koeficiente bereš šele iz splošne oblike z $0$ na desni.
+- Negativen $b$ vstavi v oklepaj: $(-3)^2 = 9$.
+- Ne deli z $x$: izpostavi in ohrani rešitev $x = 0$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Rešite enačbo $(x - 3)^2 = 2x - 6$.
+
+**Rešitev:**
+
+1. Desno stran zapišemo kot $2x - 6 = 2(x - 3)$ in vse prenesemo na levo: $(x - 3)^2 - 2(x - 3) = 0$.
+2. Izpostavimo skupni faktor $x - 3$: $(x - 3)(x - 3 - 2) = 0$, torej $(x - 3)(x - 5) = 0$.
+3. Produkt je enak $0$, ko je enak $0$ vsaj en faktor: $x_1 = 3$ ali $x_2 = 5$. Z $x - 3$ ne smemo deliti, ker bi izgubili rešitev $x = 3$.
+4. Preverjanje: za $x = 3$ sta obe strani enaki $0$, za $x = 5$ pa obe enaki $4$.
+5. Odgovor: rešitvi sta $x_1 = 3$ in $x_2 = 5$.
+
+**Točkovanje:** 1 točka za zapis z ničlo na desni (ali splošno obliko $x^2 - 8x + 15 = 0$), 1 točka za razcep $(x - 3)(x - 5) = 0$, 1 točka za obe rešitvi.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je enačba $x^2 - 6x + c = 0$, kjer je $c$ realno število.
+
+a) Za katere vrednosti $c$ ima enačba dve različni realni rešitvi? (2 točki)
+b) Ena rešitev enačbe je $x_1 = 2$. Brez obrazca za rešitve določite drugo rešitev $x_2$ in število $c$. (2 točki)
+c) Naj bo $c = 13$. Rešite enačbo v množici kompleksnih števil in rešitvi preverite z Vietovima formulama. (3 točke)
+
+**Rešitev:**
+
+1. a) Diskriminanta je $D = (-6)^2 - 4 \cdot 1 \cdot c = 36 - 4c$.
+2. a) Dve različni realni rešitvi sta pri $D > 0$: iz $36 - 4c > 0$ sledi $c < 9$.
+3. b) Po Vietu je $x_1 + x_2 = 6$, zato $x_2 = 6 - 2 = 4$.
+4. b) Prav tako je $x_1 x_2 = c$, zato $c = 2 \cdot 4 = 8$. Preverjanje: $2^2 - 6 \cdot 2 + 8 = 0$.
+5. c) $D = 36 - 52 = -16 < 0$, zato realnih rešitev ni; $\sqrt{-D} = 4$.
+6. c) $x_{1,2} = \dfrac{6 \pm 4i}{2} = 3 \pm 2i$.
+7. c) Vsota: $(3 + 2i) + (3 - 2i) = 6 = -\dfrac{-6}{1}$. Produkt: $(3 + 2i)(3 - 2i) = 9 + 4 = 13 = \dfrac{13}{1}$.
+8. Odgovor: a) $c < 9$; b) $x_2 = 4$, $c = 8$; c) $x_{1,2} = 3 \pm 2i$.
+
+**Točkovanje:** a) 1 točka za $D = 36 - 4c$, 1 točka za $c < 9$; b) 1 točka za $x_2 = 4$, 1 točka za $c = 8$; c) 1 točka za $D = -16$, 1 točka za rešitvi $3 \pm 2i$, 1 točka za preverjanje vsote in produkta.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Sliko z merami $40\,\text{cm} \times 30\,\text{cm}$ obdamo s paspartujem (kartonskim robom), ki je na vseh štirih straneh širok $x$ centimetrov.
+
+a) Pokažite, da je ploščina paspartuja (brez slike) $P(x) = 4x^2 + 140x$ v $\text{cm}^2$. (2 točki)
+b) Kako širok mora biti paspartu, da je njegova ploščina enaka ploščini slike? Rezultat zaokrožite na milimeter. (3 točke)
+c) Utemeljite, da funkcija $P$ na intervalu $[0, \infty)$ narašča, in od tod sklepajte, da ima enačba $P(x) = S$ za vsako pozitivno število $S$ natanko eno pozitivno rešitev. (2 točki)
+d) Druga slika ima enako ploščino, a mere $60\,\text{cm} \times 20\,\text{cm}$. Kako širok paspartu potrebuje, da je njegova ploščina enaka ploščini slike? Rezultat zaokrožite na milimeter in pojasnite, zakaj je paspartu ožji kot pri prvi sliki. (3 točke)
+
+**Rešitev:**
+
+1. a) Zunanji meri sta $40 + 2x$ in $30 + 2x$, zato je ploščina celotnega pravokotnika $(40 + 2x)(30 + 2x) = 4x^2 + 140x + 1200$.
+2. a) Odštejemo ploščino slike $1200\,\text{cm}^2$: $P(x) = 4x^2 + 140x$.
+3. b) Enačba $4x^2 + 140x = 1200$ po deljenju s $4$: $x^2 + 35x - 300 = 0$.
+4. b) $D = 35^2 + 4 \cdot 300 = 2425$, $x_{1,2} = \dfrac{-35 \pm \sqrt{2425}}{2}$, torej $x_1 \approx 7{,}1221$ in $x_2 \approx -42{,}1221$.
+5. b) Širina ne more biti negativna, zato ustreza le $x_1 \approx 7{,}1\,\text{cm}$.
+6. c) Graf funkcije $P$ je parabola, odprta navzgor ($4 > 0$), s temenom pri $x = -\dfrac{140}{2 \cdot 4} = -17{,}5$. Desno od temena funkcija narašča, zato narašča na vsem intervalu $[0, \infty)$.
+7. c) Ker je $P(0) = 0$ in $P$ na $[0, \infty)$ narašča čez vse meje, zavzame vsako pozitivno vrednost $S$ pri natanko enem $x > 0$. (Enako sledi iz Vietovih formul: rešitvi enačbe $4x^2 + 140x - S = 0$ imata produkt $-\dfrac{S}{4} < 0$, zato je natanko ena pozitivna.)
+8. d) Ploščina paspartuja je zdaj $(60 + 2x)(20 + 2x) - 1200 = 4x^2 + 160x$. Enačba $4x^2 + 160x = 1200$ da $x^2 + 40x - 300 = 0$.
+9. d) $D = 1600 + 1200 = 2800$, pozitivna rešitev je $x = \dfrac{-40 + \sqrt{2800}}{2} \approx 6{,}4575$, torej $x \approx 6{,}5\,\text{cm}$.
+10. d) Linearni člen ploščine paspartuja je obseg slike krat $x$: $140x$ pri prvi in $160x$ pri drugi sliki. Podolgovata slika ima pri enaki ploščini večji obseg, zato da vsak centimeter širine več kartona in zadošča ožji paspartu.
+11. Odgovor: b) približno $7{,}1\,\text{cm}$; d) približno $6{,}5\,\text{cm}$, ker ima druga slika večji obseg.
+
+**Točkovanje:** a) 1 točka za zunanji meri $40 + 2x$ in $30 + 2x$, 1 točka za $P(x) = 4x^2 + 140x$; b) 1 točka za enačbo v splošni obliki, 1 točka za rešitvi (vrednost pred zaokrožitvijo), 1 točka za $x \approx 7{,}1\,\text{cm}$ z izločitvijo negativne rešitve; c) 1 točka za teme pri $x = -17{,}5$ in naraščanje funkcije $P$ na $[0, \infty)$, 1 točka za sklep o natanko eni pozitivni rešitvi (priznamo tudi utemeljitev z Vietovima formulama); d) 1 točka za enačbo $x^2 + 40x - 300 = 0$, 1 točka za $x \approx 6{,}5\,\text{cm}$ in 1 točka za utemeljitev z obsegom.
+
+### Ustno vprašanje 1
+
+:::premisli
+Izpelji obrazec za rešitvi kvadratne enačbe $ax^2 + bx + c = 0$ z dopolnjevanjem do popolnega kvadrata.
+---
+Enačbo delimo z $a \ne 0$ in dobimo $x^2 + \frac{b}{a}x + \frac{c}{a} = 0$. Levo stran dopolnimo do popolnega kvadrata in dobimo $\left(x + \frac{b}{2a}\right)^2 = \frac{b^2 - 4ac}{4a^2}$. Ker je $4a^2 > 0$, ima desna stran predznak diskriminante $D = b^2 - 4ac$. Pri $D \ge 0$ korenimo in dobimo $x + \frac{b}{2a} = \pm \frac{\sqrt{D}}{2a}$, torej $x_{1,2} = \frac{-b \pm \sqrt{D}}{2a}$. Pri $D < 0$ korenimo v kompleksnih številih in dobimo $x_{1,2} = \frac{-b \pm i\sqrt{-D}}{2a}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Zapiši Vietovi formuli za rešitvi kvadratne enačbe in ju dokaži.
+---
+Za rešitvi $x_1$ in $x_2$ enačbe $ax^2 + bx + c = 0$ velja $x_1 + x_2 = -\frac{b}{a}$ in $x_1 x_2 = \frac{c}{a}$. Rešitvi sta $\frac{-b + \sqrt{D}}{2a}$ in $\frac{-b - \sqrt{D}}{2a}$, zato se pri seštevanju korena odštejeta in vsota je $\frac{-2b}{2a} = -\frac{b}{a}$. Pri množenju uporabimo razliko kvadratov in dobimo $\frac{b^2 - D}{4a^2} = \frac{4ac}{4a^2} = \frac{c}{a}$. Formuli veljata tudi za dvojno rešitev in za kompleksni rešitvi.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer kvadratne enačbe, ki nima realnih rešitev, in pojasni, kakšne rešitve ima v kompleksnih številih.
+---
+Primer je enačba $x^2 + 4 = 0$ z diskriminanto $D = -16 < 0$. Kvadrat realnega števila ni negativen, zato realne rešitve ni. V kompleksnih številih sta rešitvi $x_{1,2} = \pm 2i$, saj je $(2i)^2 = -4$. Pri $D < 0$ sta rešitvi enačbe z realnimi koeficienti vedno konjugirani kompleksni števili.
+:::
 
 ## Drugače: Na sliki
 
@@ -264,13 +408,17 @@ $$x_1 x_2 = \frac{(-b)^2 - D}{4a^2} = \frac{b^2 - b^2 + 4ac}{4a^2} = \frac{c}{a}
 ~ Produkt rešitev je $2 \cdot (-5) = -10$, ne $10$.
 > Vsota rešitev je $-3$, produkt $-10$, zato $x^2 - (-3)x + (-10) = x^2 + 3x - 10 = 0$.
 
-? Na Marsu je težni pospešek $3{,}72\,\text{m/s}^2$. Kamen, vržen navpično navzgor s hitrostjo $10\,\text{m/s}$, je po času $t$ na višini $h(t) = 10t - 1{,}86t^2$ metrov. Ali doseže $15\,\text{m}$?
-- Da, dvakrat, saj ima vsaka kvadratna enačba dve rešitvi.
-~ Dve rešitvi ima v $\mathbb{C}$, čas pa mora biti realen. Pri $D < 0$ realnega časa ni.
-- Da, enkrat, ker je to njegova najvišja točka.
-~ Najvišja točka bi pomenila $D = 0$, tu pa je $D$ negativen.
-+ Ne, ker ima enačba $1{,}86t^2 - 10t + 15 = 0$ negativno diskriminanto.
+? Na Marsu je težni pospešek $3{,}72\,\text{m/s}^2$. Kamen, vržen navpično navzgor s hitrostjo $10\,\text{m/s}$, je po času $t$ na višini $h(t) = 10t - 1{,}86t^2$ metrov. Kolikokrat med letom je na višini $15\,\text{m}$? Vpiši število.
+= 0 | 0
+~ 2 | Enačba $1{,}86t^2 - 10t + 15 = 0$ ima dve rešitvi le v $\mathbb{C}$, čas pa mora biti realen. Pri $D < 0$ realnega časa ni.
+~ 1 | Ena sama višina (najvišja točka) bi pomenila $D = 0$, tu pa je $D$ negativen.
 > $D = 10^2 - 4 \cdot 1{,}86 \cdot 15 = 100 - 111{,}6 = -11{,}6 < 0$. Realnega časa ni; kamen se dvigne le do približno $13{,}4\,\text{m}$.
+
+? (brez računala) Koliko realnih rešitev ima enačba $x^3 = 16x$?
+= 3 | 0
+~ 2 | Izgubil si eno rešitev: z $x$ si delil in izpustil $x = 0$, ali pa si pri $x^2 = 16$ pozabil na $-4$.
+~ 1 | Dobil si le $x = 4$: z $x$ si delil in pri korenjenju pozabil na $\pm$.
+> Na levo: $x^3 - 16x = 0$, razcep $x(x - 4)(x + 4) = 0$. Rešitve so $0$, $4$ in $-4$.
 
 :::simboli
 a | vodilni koeficient (pri $x^2$) | | | $a \ne 0$
@@ -280,6 +428,9 @@ x | neznanka | | |
 D | diskriminanta | D = b^2 - 4ac | | $D > 0$: dve realni, $D = 0$: ena dvojna, $D < 0$: kompleksni
 x_{1,2} | rešitvi kvadratne enačbe | x_{1,2} = \frac{-b \pm \sqrt{D}}{2a} | |
 x_1, x_2 | prva in druga rešitev | | | $x_1 + x_2 = -\frac{b}{a}$, $x_1 x_2 = \frac{c}{a}$
+x_3 | tretja rešitev razcepne enačbe | | |
+k | desna stran enačbe $x^2 = k$ | | | $k > 0$: rešitvi $\pm\sqrt{k}$
+A, B | faktorja produkta v razcepni enačbi | | | iz $A \cdot B = 0$ sledi $A = 0$ ali $B = 0$
 i | imaginarna enota | i^2 = -1 | |
 y | neznanka nove enačbe | | |
 y_1, y_2 | rešitvi nove enačbe | | |
@@ -290,4 +441,41 @@ h_1 | dana višina | | m
 h_2 | višina, za katero preverjamo, ali je dosežena | | m
 v_0 | začetna hitrost | | m/s
 g | težni pospešek | | m/s^2 | na Luni $1{,}62\,\mathrm{m/s^2}$
+P | ploščina paspartuja | P(x) = 4x^2 + 140x | cm^2 | v nalogi za maturo; $x$ je širina paspartuja v cm
+S | dana ploščina paspartuja | | cm^2 | v nalogi za maturo
 :::
+
+<<RACUN
+resi: (x-3)^2=2*x-6 | x | 3, 5
+enako: (x-3)^2-2*(x-3) | (x-3)*(x-5)
+neenacba: 36-4*c>0 | c | (-oo, 9)
+resi: 2^2-6*2+c=0 | c | 8
+resi: x^2-6*x+8=0 | x | 2, 4
+vrednost: 36-4*13 | -16
+vrednost: (3+2*I)^2-6*(3+2*I)+13 | 0
+vrednost: (3-2*I)^2-6*(3-2*I)+13 | 0
+vrednost: (3+2*I)*(3-2*I) | 13
+vrednost: (3+2*I)+(3-2*I) | 6
+enako: (40+2*x)*(30+2*x)-1200 | 4*x^2+140*x
+resi: 4*x^2+140*x=1200 | x | -35/2-5*sqrt(97)/2, -35/2+5*sqrt(97)/2
+vrednost: (-35+sqrt(2425))/2 | 7.1221
+vrednost: (-35-sqrt(2425))/2 | -42.1221
+vrednost: -140/(2*4) | -17.5
+enako: (60+2*x)*(20+2*x)-1200 | 4*x^2+160*x
+resi: x^2+40*x-300=0 | x | -20-10*sqrt(7), -20+10*sqrt(7)
+vrednost: (-40+sqrt(2800))/2 | 6.4575
+vrednost: (2*I)^2+4 | 0
+vrednost: (-2*I)^2+4 | 0
+resi: x^2=9 | x | -3, 3
+resi: x^2=5 | x | -sqrt(5), sqrt(5)
+enako: (x-sqrt(5))*(x+sqrt(5)) | x^2-5
+resi: x^3=4*x | x | -2, 0, 2
+resi: (x+1)*(x^2-9)=0 | x | -3, -1, 3
+resi: x^3-2*x^2=9*x-18 | x | -3, 2, 3
+enako: x^2*(x-2)-9*(x-2) | x^3-2*x^2-9*x+18
+enako: (x-2)*(x-3)*(x+3) | x^3-2*x^2-9*x+18
+vrednost: (-3)^3-2*(-3)^2 | -45
+vrednost: 9*(-3)-18 | -45
+resi: (x-1)*(x-2)=6 | x | -1, 4
+resi: x^3=16*x | x | -4, 0, 4
+>>

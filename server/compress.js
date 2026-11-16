@@ -22,11 +22,16 @@ const TYPES = {
 };
 const MIN_SIZE = 1024;
 
-// Izbere kodiranje iz glave Accept-Encoding (brotli ima prednost).
+// Izbere kodiranje iz glave Accept-Encoding (brotli ima prednost). »q=0« pomeni »ne« (RFC 9110 §12.5.3).
 export function pickEncoding(header = "") {
-  const h = String(header).toLowerCase();
-  if (/\bbr\b/.test(h)) return "br";
-  if (/\bgzip\b/.test(h)) return "gzip";
+  const ok = new Set();
+  for (const part of String(header).toLowerCase().split(",")) {
+    const [name, ...params] = part.split(";").map((x) => x.trim());
+    const q = params.find((x) => x.startsWith("q="));
+    if (name && !(q && Number(q.slice(2)) === 0)) ok.add(name);
+  }
+  if (ok.has("br")) return "br";
+  if (ok.has("gzip")) return "gzip";
   return null;
 }
 
@@ -140,7 +145,9 @@ export function compressedJson() {
       if (body.length < MIN_SIZE || res.headersSent) return plain(obj);
       // Hitrejša raven za sprotno stiskanje.
       const out = enc === "br" ? zlib.brotliCompressSync(body, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } }) : zlib.gzipSync(body, { level: 6 });
-      res.setHeader("Vary", "Accept-Encoding");
+      // Dopolni (ne zamenja) Vary, ki ga je nastavila pot (lekcija: x-app-kviz, server/app.js).
+      if (typeof res.vary === "function") res.vary("Accept-Encoding");
+      else res.setHeader("Vary", "Accept-Encoding");
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       res.setHeader("Content-Encoding", enc);
       res.setHeader("Content-Length", out.length);

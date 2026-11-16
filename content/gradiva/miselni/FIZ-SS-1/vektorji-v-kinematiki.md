@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vektor
+  - velikost in smer, puščica
+  - hitrost je vektor
+- Sestavljanje hitrosti
+  - ista smer: $v_1 + v_2$
+  - nasprotna smer: $\lvert v_1 - v_2 \rvert$
+  - pravokotno: $v = \sqrt{v_1^2 + v_2^2}$
+- Prečkanje reke
+  - čas $t = \dfrac{d}{v_1}$, tok ga ne spremeni
+  - zanos $s = v_2 t$
+  - $1{,}5\,\mathrm{m/s}$ in $0{,}8\,\mathrm{m/s}$ dasta $1{,}7\,\mathrm{m/s}$
+- Neodvisni komponenti
+  - ena ne vpliva na drugo
+  - kovanca padeta hkrati
+- Vodoravni met
+  - vodoravno: $v_x = v_0$, $x = v_0 t$
+  - navpično prosti pad: $v_y = g t$
+  - tir je parabola
+- Čas in domet
+  - $t = \sqrt{\dfrac{2h}{g}}$, brez $v_0$
+  - domet $x = v_0 t$
+- Hitrost ob padcu
+  - $v = \sqrt{v_0^2 + (g t)^2}$
+  - napaka: $v_0 + g t$

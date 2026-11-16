@@ -97,12 +97,17 @@ function Textbook({ seg }: { seg: React.ReactNode }) {
   useEffect(() => {
     const query = q.trim();
     if (query.length < 2) return setHits(null);
+    // Odgovor starejše poizvedbe (počasnejši) ne sme prepisati zadetkov novejše ali praznega polja.
+    let alive = true;
     const timer = setTimeout(() => {
       api<Hit[]>(`/api/textbook/search?q=${encodeURIComponent(query)}&system=${encodeURIComponent(student.settings?.school_system || "SI")}`)
-        .then(setHits)
-        .catch(() => setHits([]));
+        .then((h) => alive && setHits(h))
+        .catch(() => alive && setHits([]));
     }, 300);
-    return () => clearTimeout(timer);
+    return () => {
+      alive = false;
+      clearTimeout(timer);
+    };
   }, [q, student.settings?.school_system]);
 
   // Preklopnik ostane tudi med nalaganjem in ob napaki (brez povezave): drugače zavihka ni mogoče zamenjati.

@@ -63,18 +63,11 @@ Model zdravila je diagonalizabilen. V bazi lastnih vektorjev razpade na dva neod
 
 **Shema postopka** (od podatkov do sklepa):
 
-```
-A
-→ p_A = det(λI − A)
-→ razcep na linearne faktorje
-→ kandidati za m_A
-  (delitelji z vsemi ničlami)
-→ najnižji kandidat q, q(A) = 0:
-  to je m_A
-→ same enostavne ničle?
-  da: diagonalizabilna
-  ne: ni diagonalizabilna
-```
+1. Iz matrike $A$ izračunaj $p_A = \det(\lambda I - A)$.
+2. Polinom $p_A$ razcepi na linearne faktorje.
+3. Zapiši kandidate za $m_A$: delitelje $p_A$, ki imajo vse njegove ničle.
+4. Preverjaj kandidate od najnižje stopnje navzgor. Prvi kandidat $q$ s $q(A) = 0$ je $m_A$.
+5. Če ima $m_A$ same enostavne ničle, je $A$ diagonalizabilna; sicer ni.
 
 :::premisli
 Matrika $3 \times 3$ ima $p_A = (\lambda - 1)(\lambda - 2)(\lambda - 5)$. Ali moraš sploh računati $m_A$, da veš, ali je diagonalizabilna?
@@ -108,7 +101,7 @@ Za $2 \times 2$: $p_M(\lambda) = \lambda^2 - (\operatorname{sl} M)\lambda + \det
 
 Primerjaj matriki
 $$B = \begin{pmatrix} 2 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 3 \end{pmatrix}, \quad C = \begin{pmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 3 \end{pmatrix}.$$
-Določi minimalna polinoma in ugotovi, kateri je diagonalizabilna.
+Določi minimalna polinoma in ugotovi, katera je diagonalizabilna.
 
 **Podatki:** matriki $B$ in $C$ zgoraj
 **Iščemo:** $m_B$, $m_C$ in diagonalizabilnost
@@ -174,8 +167,8 @@ $D - 2I = \begin{pmatrix} -1 & 1 \\ -1 & 1 \end{pmatrix} \ne 0$, zato $m_D = (\l
 - **»Isti karakteristični polinom, isto obnašanje.«** Primer 2 pokaže, da $B$ in $C$ delita $p$, a je le $C$ diagonalizabilna. Polinom $p_A$ pove lastne vrednosti, ne pa, kako so lastni vektorji razporejeni. Odloča $m_A$.
 - **»Ponovljena lastna vrednost pomeni, da matrika ni diagonalizabilna.«** Identiteta ima $p = (\lambda - 1)^n$ in je diagonalna. Ponovljena ničla v $p_A$ je le opozorilo, da je treba izračunati $m_A$.
 - **»Dokaz« z $\det(AI - A) = 0$.** Mešaš število in matriko. Pravi dokaz je v razdelku »Bolj natančno«.
-- **Minimalni polinom brez kakšne lastne vrednosti.** Kdo za $B$ predlaga $m_B = (\lambda - 2)^2$, ker »$3$ je tako ali tako enostavna«. Vendar ima $m_A$ vedno vse ničle $p_A$; $(B - 2I)^2 \ne 0$, saj je element $(3,3)$ enak $1$.
-- **Napačen predznak pri $2 \times 2$.** Prosti člen je $+\det A$, linearni člen je $-\operatorname{sl} A$. Kdo zamenja predznak, dobi napačne lastne vrednosti.
+- **Minimalni polinom brez kakšne lastne vrednosti.** Nekdo za $B$ predlaga $m_B = (\lambda - 2)^2$, ker »$3$ je tako ali tako enostavna«. Vendar ima $m_A$ vedno vse ničle $p_A$; $(B - 2I)^2 \ne 0$, saj je element $(3,3)$ enak $1$.
+- **Napačen predznak pri $2 \times 2$.** Prosti člen je $+\det A$, linearni člen je $-\operatorname{sl} A$. Kdor zamenja predznak, dobi napačne lastne vrednosti.
 
 ## Povzetek
 
@@ -184,6 +177,66 @@ $D - 2I = \begin{pmatrix} -1 & 1 \\ -1 & 1 \end{pmatrix} \ne 0$, zato $m_D = (\l
 - Minimalni polinom $m_A$: moničen, najmanjše stopnje, $m_A(A) = 0$. Deli $p_A$ in ima iste ničle.
 - $A$ je diagonalizabilna natanko tedaj, ko ima $m_A$ same enostavne ničle (in razpade na linearne faktorje).
 - Isti $p_A$ ne zagotavlja iste diagonalizabilnosti.
+
+## Za izpit
+
+Znati moraš povedati:
+- definicijo karakterističnega polinoma $p_A(\lambda) = \det(\lambda I - A)$, zakaj je moničen stopnje $n$ in kaj je algebraična večkratnost;
+- Cayley-Hamiltonov izrek $p_A(A) = 0$, njegov dokaz s prirejenko in zakaj »dokaz« z $\det(AI - A)$ ni veljaven;
+- definicijo minimalnega polinoma ter dokaza, da $m_A$ deli vsak polinom $q$ s $q(A) = 0$ in da ima iste ničle kot $p_A$;
+- kriterij: $A$ je diagonalizabilna natanko tedaj, ko $m_A$ razpade na različne linearne faktorje (z idejo dokaza v obe smeri);
+- kako s Cayley-Hamiltonovim izrekom znižaš potenco $A^k$ in izraziš $A^{-1}$.
+
+### Naloga 1
+
+Dana je matrika
+$$A = \begin{pmatrix} 2 & 1 & -1 \\ 1 & 2 & -1 \\ 1 & 1 & 0 \end{pmatrix}.$$
+(a) Izračunaj $p_A$ in $m_A$ ter ugotovi, ali je $A$ diagonalizabilna. (b) Brez Gaussove eliminacije izrazi $A^{-1}$. (c) Brez množenja matrik izračunaj $A^5$.
+
+**Rešitev:**
+
+1. Razvoj $\det(\lambda I - A)$ da $p_A(\lambda) = \lambda^3 - 4\lambda^2 + 5\lambda - 2$. Preverba: koeficient pri $\lambda^2$ je $-\operatorname{sl} A = -(2 + 2 + 0) = -4$, prosti člen je $-\det A = -2$.
+2. Ničla $\lambda = 1$: $1 - 4 + 5 - 2 = 0$. Deljenje z $\lambda - 1$ da $\lambda^2 - 3\lambda + 2 = (\lambda - 1)(\lambda - 2)$, zato $p_A = (\lambda - 1)^2(\lambda - 2)$.
+3. Kandidata za $m_A$ sta $(\lambda - 1)(\lambda - 2)$ in $(\lambda - 1)^2(\lambda - 2)$.
+4. $A - I = \begin{pmatrix} 1 & 1 & -1 \\ 1 & 1 & -1 \\ 1 & 1 & -1 \end{pmatrix}$ in $A - 2I = \begin{pmatrix} 0 & 1 & -1 \\ 1 & 0 & -1 \\ 1 & 1 & -2 \end{pmatrix}$. Vsaka vrstica produkta je vsota prve in druge vrstice $A - 2I$, zmanjšana za tretjo: $(0 + 1 - 1,\ 1 + 0 - 1,\ -1 - 1 + 2) = (0, 0, 0)$.
+5. Torej $(A - I)(A - 2I) = 0$ in $m_A = (\lambda - 1)(\lambda - 2)$. Ničli sta enostavni, zato je $A$ diagonalizabilna, čeprav ima $p_A$ dvojno ničlo.
+6. Iz $m_A(A) = 0$ sledi $A^2 = 3A - 2I$. Preuredimo: $A(3I - A) = 2I$, zato $A^{-1} = \dfrac{1}{2}(3I - A) = \dfrac{1}{2}\begin{pmatrix} 1 & -1 & 1 \\ -1 & 1 & 1 \\ -1 & -1 & 3 \end{pmatrix}$.
+7. Znižujemo potence: $A^3 = 3A^2 - 2A = 3(3A - 2I) - 2A = 7A - 6I$.
+8. $A^4 = 7A^2 - 6A = 7(3A - 2I) - 6A = 15A - 14I$.
+9. $A^5 = 15A^2 - 14A = 15(3A - 2I) - 14A = 31A - 30I$.
+10. Odgovor: $p_A = (\lambda - 1)^2(\lambda - 2)$, $m_A = (\lambda - 1)(\lambda - 2)$, $A$ je diagonalizabilna, $A^{-1} = \frac{1}{2}(3I - A)$ in $A^5 = 31A - 30I = \begin{pmatrix} 32 & 31 & -31 \\ 31 & 32 & -31 \\ 31 & 31 & -30 \end{pmatrix}$. Ker je $m_A$ stopnje $2$, zadošča že kombinacija $A$ in $I$; s $p_A$ bi potreboval še $A^2$.
+
+### Naloga 2
+
+Natančno navedi definicijo minimalnega polinoma matrike $A$. Dokaži, da $m_A$ deli vsak polinom $q$ s $q(A) = 0$ in da je vsaka lastna vrednost matrike $A$ ničla $m_A$. Nato utemelji, ali obstaja realna matrika $A$ velikosti $3 \times 3$ z $A^3 = A$, ki ni diagonalizabilna.
+
+**Rešitev:**
+
+1. Definicija: $m_A$ je moničen polinom najmanjše stopnje, za katerega je $m_A(A) = 0$. Obstaja, ker je po Cayley-Hamiltonovem izreku $p_A(A) = 0$.
+2. Deljivost: naj bo $q(A) = 0$. Delimo z ostankom: $q = s\,m_A + r$, kjer je $r = 0$ ali $\deg r < \deg m_A$.
+3. Vstavimo $A$: $r(A) = q(A) - s(A)\,m_A(A) = 0$. Če bi bil $r \ne 0$, bi ga delili z vodilnim koeficientom in dobili moničen polinom nižje stopnje od $m_A$, ki uniči $A$. To nasprotuje minimalnosti, zato $r = 0$ in $m_A$ deli $q$.
+4. Ničle: naj bo $Av = \mu v$, $v \ne 0$. Potem $A^k v = \mu^k v$ za vsak $k$, zato $m_A(A)v = m_A(\mu)v$.
+5. Leva stran je $0$, ker je $m_A(A) = 0$. Ker $v \ne 0$, je $m_A(\mu) = 0$.
+6. Uporaba: iz $A^3 = A$ sledi $q(A) = 0$ za $q(\lambda) = \lambda^3 - \lambda = \lambda(\lambda - 1)(\lambda + 1)$.
+7. Po koraku 3 $m_A$ deli $q$. Polinom $q$ ima tri različne realne ničle, zato je vsak njegov delitelj produkt različnih linearnih faktorjev.
+8. Odgovor: taka matrika ne obstaja. Minimalni polinom $m_A$ razpade na različne linearne faktorje, zato je po kriteriju vsaka matrika z $A^3 = A$ diagonalizabilna; njene lastne vrednosti so med števili $0$, $1$ in $-1$.
+
+### Naloga 3
+
+Za realno število $b$ je dana matrika
+$$A_b = \begin{pmatrix} 1 & 0 & 1 \\ 0 & 1 & 2 \\ 0 & 0 & b \end{pmatrix}.$$
+Za vsak $b$ določi minimalni polinom in utemelji, za katere $b$ je $A_b$ diagonalizabilna.
+
+**Rešitev:**
+
+1. Matrika je zgornje trikotna, zato $p_{A_b} = (\lambda - 1)^2(\lambda - b)$.
+2. Primer $b \ne 1$: kandidata za minimalni polinom sta $(\lambda - 1)(\lambda - b)$ in $(\lambda - 1)^2(\lambda - b)$.
+3. $A_b - I = \begin{pmatrix} 0 & 0 & 1 \\ 0 & 0 & 2 \\ 0 & 0 & b - 1 \end{pmatrix}$ ima od nič različen le tretji stolpec, $A_b - bI = \begin{pmatrix} 1 - b & 0 & 1 \\ 0 & 1 - b & 2 \\ 0 & 0 & 0 \end{pmatrix}$ pa ima ničelno tretjo vrstico.
+4. Vsaka vrstica produkta $(A_b - I)(A_b - bI)$ je večkratnik tretje vrstice $A_b - bI$, torej ničelna. Zato $m_{A_b} = (\lambda - 1)(\lambda - b)$ in $A_b$ je diagonalizabilna.
+5. Primer $b = 1$: $p_{A_1} = (\lambda - 1)^3$, kandidati so $\lambda - 1$, $(\lambda - 1)^2$ in $(\lambda - 1)^3$.
+6. $A_1 - I = \begin{pmatrix} 0 & 0 & 1 \\ 0 & 0 & 2 \\ 0 & 0 & 0 \end{pmatrix} \ne 0$, zato $\lambda - 1$ odpade. Po enakem sklepu kot v koraku 4 je $(A_1 - I)^2 = 0$, ker ima $A_1 - I$ ničelno tretjo vrstico.
+7. Torej $m_{A_1} = (\lambda - 1)^2$; ničla je dvojna in $A_1$ ni diagonalizabilna.
+8. Odgovor: $A_b$ je diagonalizabilna natanko za $b \ne 1$, takrat je $m_{A_b} = (\lambda - 1)(\lambda - b)$; pri $b = 1$ je $m_{A_1} = (\lambda - 1)^2$. Dvojna ničla $1$ v $p_{A_b}$ torej sama ne odloča.
 
 ## Drugače: Z analogijo
 
@@ -267,4 +320,5 @@ p | karakteristični polinom
 D | matrika, katere diagonalizabilnost preverjamo
 p_D | karakteristični polinom matrike D | p_D(\lambda) = \lambda^2 - (\operatorname{sl} D)\lambda + \det D
 m_D | minimalni polinom matrike D
+b | realni parameter v matriki iz izpitne naloge
 :::

@@ -30,13 +30,13 @@ Zemljina os je glede na tirnico nagnjena za približno $23{,}5^\circ$ in kaže v
 
 *Preveri:* Kaj traja dlje: en obrat Zemlje okoli osi ali ena pot okoli Sonca? *(Pot okoli Sonca, $365$-krat dlje.)*
 
-**3. Luna kroži okoli Zemlje.** Luna je Zemljin naravni satelit. Okoli Zemlje obkroži v približno $27$ dneh, oddaljena je približno $384\,000\,\mathrm{km}$. Luna ne sveti sama. Je osvetljeno telo: odbija sončno svetlobo, tako kot jabolko na mizi odbija svetlobo kuhinjske luči.
+**3. Luna kroži okoli Zemlje.** Luna je Zemljin naravni satelit. Zemljo obkroži v približno $27$ dneh, oddaljena je približno $384\,000\,\mathrm{km}$. Luna ne sveti sama. Je osvetljeno telo: odbija sončno svetlobo, tako kot jabolko na mizi odbija svetlobo kuhinjske luči.
 
 Sonce zato vedno osvetljuje *polovico* Lune, tisto, ki gleda proti Soncu. Druga polovica je temna.
 
 *Preveri:* Kaj bi videli, če bi Sonce nenadoma ugasnilo? *(Luna bi izginila z neba, ker bi nehala odbijati svetlobo.)*
 
-**4. Lunine mene.** Iz Zemlje vidimo različno velik del osvetljene polovice. Odvisno je od tega, kje na svoji poti je Luna. Tem oblikam pravimo **Lunine mene**. Pot štejemo od mlaja naprej, v smeri, v kateri Luna kroži (risbo najdeš spodaj v razdelku »Na sliki«).
+**4. Lunine mene.** Z Zemlje vidimo različno velik del osvetljene polovice. Odvisno je od tega, kje na svoji poti je Luna. Tem oblikam pravimo **Lunine mene**. Pot štejemo od mlaja naprej, v smeri, v kateri Luna kroži (risbo najdeš spodaj v razdelku »Na sliki«).
 
 | Mena | Kje je Luna | Kaj vidimo | Kdaj je najvišje |
 |---|---|---|---|
@@ -185,7 +185,7 @@ Pogled od zgoraj, nad severnim polom. Sonce sveti z desne, Luna kroži v nasprot
           zadnji krajec
 ```
 
-Z je Zemlja, L je Luna na štirih mestih poti. Vedno je osvetljena desna polovica Lune, proti Soncu. S Zemlje:
+Z je Zemlja, L je Luna na štirih mestih poti. Vedno je osvetljena desna polovica Lune, proti Soncu. Z Zemlje:
 
 - **mlaj**: gledaš proti Soncu, vidiš temno stran;
 - **prvi krajec**: vidiš pol svetle, pol temne strani;
@@ -196,9 +196,9 @@ Poskusi v temni kuhinji: prižgi le luč nad štedilnikom, jabolko na vilici dr�
 
 ## Drugače: Bolj natančno
 
-- **Dva Lunina meseca.** Luna obkroži Zemljo v $27{,}3$ dneh, glede na zvezde. Od ščipa do ščipa pa mine $29{,}5$ dni. Razlika nastane, ker se Zemlja med tem premakne po svoji poti okoli Sonca in mora Luna narediti še malo več kot cel krog, da je spet nasproti Sonca.
+- **Dva Lunina meseca.** Luna obkroži Zemljo v $27{,}3$ dneh, glede na zvezde. Od ščipa do ščipa pa mine $29{,}5$ dni. Razlika nastane, ker se Zemlja med tem premakne po svoji poti okoli Sonca in mora Luna narediti še malo več kot cel krog, da je spet nasproti Soncu.
 - **Ista stran Lune.** Luna se okoli svoje osi zavrti v enakem času, kot obkroži Zemljo. Zato je k nam obrnjena vedno ista stran.
-- **Srečno naključje velikosti.** Sonce ima približno $400$-krat večji premer kot Luna in je približno $400$-krat dlje. Zato sta na nebu videti skoraj enako veliki in Luna lahko natanko pokrije Sonce. Ker Lunina razdalja niha, je včasih malo predaleč: takrat ob mrku okoli Lune ostane svetel obroč (kolobarni mrk).
+- **Srečno naključje velikosti.** Sonce ima približno $400$-krat večji premer kot Luna in je približno $400$-krat dlje. Zato sta na nebu videti skoraj enako velika in Luna lahko natanko pokrije Sonce. Ker Lunina razdalja niha, je včasih malo predaleč: takrat ob mrku okoli Lune ostane svetel obroč (kolobarni mrk).
 
 ## Preveri se
 
@@ -210,7 +210,7 @@ Poskusi v temni kuhinji: prižgi le luč nad štedilnikom, jabolko na vilici dr�
 ~ Zemljina senca pade na Luno le ob Luninem mrku. Mene nastanejo, ker vidimo različno velik del osvetljene polovice.
 - Sončev mrk je lahko le ob ščipu.
 ~ Za Sončev mrk mora Luna stati med Soncem in Zemljo, to je ob mlaju. Ob ščipu je Luna na drugi strani Zemlje.
-> Za Lunin mrk mora biti Zemlja med Soncem in Luno; tedaj je Luna nasproti Sonca, torej je ščip.
+> Za Lunin mrk mora biti Zemlja med Soncem in Luno; tedaj je Luna nasproti Soncu, torej je ščip.
 
 ? Sonce je točno na jugu. Čez koliko ur se bo Zemlja zavrtela za $90^\circ$?
 - $3{,}75\,\mathrm{h}$
@@ -233,7 +233,7 @@ Poskusi v temni kuhinji: prižgi le luč nad štedilnikom, jabolko na vilici dr�
 ~ Velikost Sonca ne pomaga: Lunina senca na Zemlji je majhna, popoln Sončev mrk vidiš le v ozkem pasu.
 + Lunin, ker ga vidijo vsi, ki imajo takrat noč.
 - Oba enako, ker sta Luna in Sonce na nebu enako velika.
-~ Na nebu sta res videti enako veliki, a sence nista: Lunina senca pokrije le majhen del Zemlje.
+~ Na nebu sta res videti enako velika, a sence nista: Lunina senca pokrije le majhen del Zemlje.
 > Pri Luninem mrku potemni Luna sama, zato ga vidi vsak, ki ima Luno nad obzorjem. Pri Sončevem mrku moraš biti v Lunini senci, ki je majhna.
 
 ? Po zahodu Sonca med pomivanjem posode vidiš skozi okno nizko na zahodu ozek srp Lune. Kakšna bo Luna čez približno teden dni?

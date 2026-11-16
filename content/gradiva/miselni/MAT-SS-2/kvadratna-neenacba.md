@@ -15,7 +15,7 @@ stanje: osnutek
   - $f(x) > 0$: graf nad osjo $x$
 - Intervali
   - $a > 0$: $f(x) < 0$ za $x \in (x_1, x_2)$
-  - oster znak $( \;)$, neoster $[\;]$
+  - strog znak $( \;)$, nestrog $[\;]$
 - Brez ničel
   - $D < 0$: povsod predznak $a$
   - napaka: »ni rešitve« velja le za enačbo

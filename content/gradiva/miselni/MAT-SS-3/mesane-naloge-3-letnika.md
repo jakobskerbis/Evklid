@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pekač iz pločevine
+  - $V(x) = x(30 - 2x)^2$, $0 < x < 15$
+  - liter pri $x = 10$ ali $x \approx 1{,}34$
+- Število presečišč
+  - rešitve sistema so skupne točke
+  - $D = 0$: premica je tangenta
+- Besede v orodja
+  - »kot med«: skalarni produkt
+  - »polmer očrtanega«: sinusni izrek
+- Kot iz koordinat
+  - $\cos\alpha = \frac{\vec a \cdot \vec b}{\lvert\vec a\rvert\,\lvert\vec b\rvert}$
+  - napaka: pozabljeni dolžini
+- Racionalna neenačba (višja raven)
+  - vse na eno stran, tabela predznakov
+  - napaka: množenje z imenovalcem
+- Podobna telesa
+  - prostornina s $k^3$
+  - pol višine stožca: osmina prostornine
+- Veriga mešane naloge
+  - neznanka in omejitve, prevod v enačbo
+  - račun po poglavjih, izbor rešitev
+- Izbor rešitev
+  - Horner, nato kvadratni faktor
+  - geometrija izloči $x \approx 18{,}66$

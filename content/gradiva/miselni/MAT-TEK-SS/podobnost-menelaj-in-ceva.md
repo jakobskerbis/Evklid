@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Podobnost
+  - koti enaki, dolžine krat $k$
+  - ploščine krat $k^2$, napaka: krat $k$
+- Orodja za razmerja
+  - vzporednica da podobna trikotnika
+  - skupna višina: ploščini kot osnovnici
+- Obhod v krogu
+  - $B \to D \to C \to E \to A \to F \to B$
+  - napaka: $\frac{BD}{BC}$ namesto $\frac{BD}{DC}$
+- Cevov izrek
+  - sočasne cevijane: zmnožek razmerij $1$
+  - dokaz s ploščinami
+- Menelajev izrek
+  - kolinearne točke: zmnožek razmerij $1$
+  - ena ali tri točke na podaljških
+- Kombiniranje izrekov
+  - pomožni trikotnik in transverzala
+  - $Q$ deli $BC$ od zunaj kot $D$ od znotraj

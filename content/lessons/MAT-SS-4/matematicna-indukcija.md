@@ -1,9 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
+
+*(višja raven) Matematično indukcijo matura preverja samo na višji ravni.*
 
 V 16. stoletju je sicilijanski matematik Francesco Maurolico dokazoval lastnosti naravnih števil, med njimi to, da je vsota prvih lihih števil vedno popoln kvadrat. Ni se zadovoljil s tem, da je pravilo preveril za nekaj primerov. Pokazal je, da iz veljavnosti za eno število sledi veljavnost za naslednje. Stoletje kasneje je Blaise Pascal na enak način dokazoval lastnosti svojega trikotnika, ime **matematična indukcija** pa se je uveljavilo šele v 19. stoletju.
 
@@ -27,7 +29,7 @@ Desna stran je $(n + 1)^2$. Torej trditev velja tudi za $n + 1$. S stožci: kvad
 
 **Zakaj to zadošča.** Velja za $1$. Ker velja za $1$, velja za $2$. Ker velja za $2$, velja za $3$. In tako naprej brez konca: vsako naravno število dosežemo v končno mnogo korakih.
 
-**Splošni postopek.** Dokaz z **matematično indukcijo** ima dva dela:
+**Splošni postopek.** Dokaz z **matematično indukcijo** (rečemo ji tudi **popolna indukcija**) ima dva dela:
 
 1. **Baza indukcije:** preverimo, da $P(1)$ drži.
 2. **Indukcijski korak:** predpostavimo, da $P(n)$ drži za neko naravno število $n$ (to je **indukcijska predpostavka**), in iz tega izpeljemo $P(n + 1)$.
@@ -156,6 +158,94 @@ $H_{n + 1} = 2(2^n - 1) + 1 = 2^{n + 1} - 2 + 1 = 2^{n + 1} - 1$, kar je $P(n + 
 - Neenakosti: uporabimo predpostavko, nato pokažemo še pomožno neenakost; baza je tam, kjer korak začne veljati.
 - Nekaj preverjenih primerov ni dokaz.
 
+## Ponovitev
+
+**Formule**
+- Baza: preveri $P(n_0)$, običajno $n_0 = 1$ (na pamet)
+- Korak: iz $P(n)$ izpelji $P(n + 1)$ za vsak $n \ge n_0$ (na pamet)
+
+**Postopek**
+1. Zapiši trditev $P(n)$ in preveri bazo $P(n_0)$.
+2. Zapiši predpostavko $P(n)$ in cilj $P(n + 1)$.
+3. Izraz za $n + 1$ preoblikuj, da se pojavi izraz iz $P(n)$: pri vsoti loči $(n + 1)$-ti člen, pri deljivosti izraz za $n$ plus večkratnik delitelja.
+4. Ta del zamenjaj po predpostavki.
+5. Pridi do $P(n + 1)$ in zapiši sklep.
+
+**Pazi na**
+- Baze ne izpusti; postavi jo tam, od koder korak deluje.
+- Korak gre od $P(n)$ k $P(n + 1)$; ne začni s $P(n + 1)$.
+- Predpostavko res uporabi, sicer nisi ničesar dokazal.
+
+## Za maturo
+
+### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Zaporedje je podano rekurzivno: $a_1 = 2$ in $a_{n+1} = 3a_n - 2$ za vsako naravno število $n$.
+
+a) Izračunajte člene $a_2$, $a_3$, $a_4$ in $a_5$ ter postavite domnevo o splošnem členu $a_n$. (2 točki)
+b) Domnevo dokažite z matematično indukcijo. (3 točke)
+c) Kateri člen zaporedja je enak $730$? (2 točki)
+
+**Rešitev:**
+
+1. a) $a_2 = 3 \cdot 2 - 2 = 4$, $a_3 = 3 \cdot 4 - 2 = 10$, $a_4 = 3 \cdot 10 - 2 = 28$, $a_5 = 3 \cdot 28 - 2 = 82$.
+2. a) Če od členov odštejemo $1$, dobimo $1, 3, 9, 27, 81$, to so potence števila $3$. Domneva: $a_n = 3^{n-1} + 1$.
+3. b) Baza, $n = 1$: $3^0 + 1 = 2 = a_1$. Drži.
+4. b) Predpostavka: za neko naravno število $n$ velja $a_n = 3^{n-1} + 1$. Cilj: $a_{n+1} = 3^n + 1$.
+5. b) Po rekurzivnem pravilu in predpostavki je $a_{n+1} = 3a_n - 2 = 3\left(3^{n-1} + 1\right) - 2 = 3^n + 1$, kar je cilj. Po načelu matematične indukcije domneva velja za vsa naravna števila.
+6. c) Rešimo enačbo $3^{n-1} + 1 = 730$: $3^{n-1} = 729 = 3^6$, torej $n - 1 = 6$ in $n = 7$.
+7. Odgovor: a) $a_2 = 4$, $a_3 = 10$, $a_4 = 28$, $a_5 = 82$, domneva $a_n = 3^{n-1} + 1$; b) domneva je dokazana; c) $730$ je sedmi člen.
+
+**Točkovanje:** a) 1 točka za člene $4, 10, 28, 82$, 1 točka za domnevo $a_n = 3^{n-1} + 1$; b) 1 točka za bazo, 1 točka za zapis predpostavke in cilja, 1 točka za korak z uporabo predpostavke in sklep; c) 1 točka za enačbo $3^{n-1} = 729$, 1 točka za odgovor $n = 7$.
+
+### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Za vsako naravno število $n$ je $S_n = \dfrac{1}{1 \cdot 2} + \dfrac{1}{2 \cdot 3} + \ldots + \dfrac{1}{n(n + 1)}$.
+
+a) Izračunajte $S_1$, $S_2$ in $S_3$ ter postavite domnevo o vrednosti $S_n$. (2 točki)
+b) Domnevo iz a) dokažite z matematično indukcijo. (3 točke)
+c) Izračunajte vsoto vrste $\dfrac{1}{1 \cdot 2} + \dfrac{1}{2 \cdot 3} + \dfrac{1}{3 \cdot 4} + \ldots$ in določite najmanjši $n$, pri katerem se $S_n$ od vsote vrste razlikuje za manj kot $0{,}01$. (3 točke)
+d) Za vsoto $T_n = \dfrac{1}{1 \cdot 3} + \dfrac{1}{2 \cdot 4} + \ldots + \dfrac{1}{n(n + 2)}$ velja $T_1 = \dfrac{1}{3} = \dfrac{1}{1 + 2}$. Dijak zato po zgledu domneve iz a) sklepa, da je $T_n = \dfrac{n}{n + 2}$ za vsak $n$. Ovrzite to domnevo. (2 točki)
+
+**Rešitev:**
+
+1. a) $S_1 = \dfrac{1}{2}$, $S_2 = \dfrac{1}{2} + \dfrac{1}{6} = \dfrac{2}{3}$, $S_3 = \dfrac{2}{3} + \dfrac{1}{12} = \dfrac{3}{4}$. Domneva: $S_n = \dfrac{n}{n + 1}$.
+2. b) Baza, $n = 1$: $S_1 = \dfrac{1}{2} = \dfrac{1}{1 + 1}$. Drži.
+3. b) Predpostavka: za neki $n$ velja $S_n = \dfrac{n}{n + 1}$. Cilj: $S_{n+1} = \dfrac{n + 1}{n + 2}$.
+4. b) Vsoti prištejemo naslednji člen in uporabimo predpostavko: $S_{n+1} = S_n + \dfrac{1}{(n + 1)(n + 2)} = \dfrac{n}{n + 1} + \dfrac{1}{(n + 1)(n + 2)} = \dfrac{n^2 + 2n + 1}{(n + 1)(n + 2)} = \dfrac{(n + 1)^2}{(n + 1)(n + 2)} = \dfrac{n + 1}{n + 2}$. To je cilj, zato domneva po indukciji velja za vsak $n$.
+5. c) Vsota vrste je limita zaporedja delnih vsot: $S = \lim\limits_{n \to \infty} \dfrac{n}{n + 1} = \lim\limits_{n \to \infty} \dfrac{1}{1 + \frac{1}{n}} = 1$.
+6. c) Razlika do vsote je $1 - S_n = 1 - \dfrac{n}{n + 1} = \dfrac{1}{n + 1}$. Pogoj $\dfrac{1}{n + 1} < 0{,}01$ da $n + 1 > 100$, torej $n > 99$.
+7. c) Najmanjši tak $n$ je $100$. Pri $n = 99$ je razlika natanko $0{,}01$, kar ni manj kot $0{,}01$.
+8. d) $T_2 = \dfrac{1}{3} + \dfrac{1}{8} = \dfrac{11}{24}$, domneva pa napove $T_2 = \dfrac{2}{2 + 2} = \dfrac{1}{2} = \dfrac{12}{24}$.
+9. d) Ker je $\dfrac{11}{24} \ne \dfrac{1}{2}$, je $n = 2$ protiprimer in domneva ne drži. Veljavnost pri $n = 1$ je le baza, brez koraka pa ni dokaza.
+10. Odgovor: a) $S_n = \dfrac{n}{n + 1}$; b) domneva je dokazana; c) vsota vrste je $1$, najmanjši $n$ je $100$; d) domneva ne drži, protiprimer je $n = 2$.
+
+**Točkovanje:** a) 1 točka za vsote $\dfrac{1}{2}$, $\dfrac{2}{3}$ in $\dfrac{3}{4}$, 1 točka za domnevo $S_n = \dfrac{n}{n + 1}$; b) 1 točka za bazo, 1 točka za prištevanje člena $\dfrac{1}{(n + 1)(n + 2)}$ z uporabo predpostavke, 1 točka za preoblikovanje do $\dfrac{n + 1}{n + 2}$ in sklep; c) 1 točka za vsoto vrste $1$ kot limito delnih vsot, 1 točka za neenačbo $\dfrac{1}{n + 1} < \dfrac{1}{100}$, 1 točka za odgovor $n = 100$; d) 1 točka za $T_2 = \dfrac{11}{24}$, 1 točka za primerjavo z $\dfrac{1}{2}$ in sklep, da domneva ne drži.
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Opiši načelo matematične indukcije in pojasni, zakaj potrebujemo bazo in indukcijski korak.
+---
+Z matematično indukcijo dokazujemo trditve $P(n)$, ki naj veljajo za vsa naravna števila $n \ge n_0$. V bazi preverimo, da drži $P(n_0)$, običajno $P(1)$. V indukcijskem koraku predpostavimo, da $P(n)$ drži za neko naravno število $n$, in iz tega izpeljemo $P(n + 1)$. Baza zagotovi začetek, korak pa prenos na naslednje število, zato trditev velja za $n_0$, $n_0 + 1$, $n_0 + 2$ in tako naprej. Brez baze korak ne dokaže ničesar, brez koraka pa trditev velja le za preverjene primere.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Z matematično indukcijo dokaži, da za vsako naravno število $n$ velja $1 + 2 + 2^2 + \ldots + 2^{n-1} = 2^n - 1$.
+---
+Baza: za $n = 1$ je leva stran $1$ in desna $2^1 - 1 = 1$, zato trditev drži. Predpostavimo, da za neko naravno število $n$ velja $1 + 2 + \ldots + 2^{n-1} = 2^n - 1$. Vsoti za $n + 1$ prištejemo naslednji člen $2^n$ in po predpostavki dobimo $2^n - 1 + 2^n = 2 \cdot 2^n - 1 = 2^{n+1} - 1$. To je trditev za $n + 1$, zato po načelu matematične indukcije velja za vsa naravna števila.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Navedi primer trditve, ki velja šele od nekega naravnega števila naprej, in pojasni, kako jo dokažemo z indukcijo.
+---
+Primer je neenakost $n! > 2^n$, ki velja za vse $n \ge 4$, za $n = 3$ pa ne, saj je $3! = 6 < 8$. Bazo preverimo pri $n = 4$, kjer je $4! = 24 > 16 = 2^4$. V koraku predpostavimo $n! > 2^n$ za neki $n \ge 4$ in dobimo $(n + 1)! = (n + 1) \cdot n! > (n + 1) \cdot 2^n > 2 \cdot 2^n = 2^{n+1}$. Pri tem smo uporabili $n + 1 > 2$, kar za $n \ge 4$ drži, zato iz baze in koraka sledi, da neenakost velja za vse $n \ge 4$.
+:::
+
 ## Drugače: Z analogijo
 
 Predstavljaj si plezalno steno z oprimki v enakih razmikih. Plezalec doseže vsak oprimek, če veljata dve stvari: doseže prvega s tal in iz vsakega lahko doseže naslednjega. Prvo je baza, drugo indukcijski korak.
@@ -180,16 +270,13 @@ Predstavljaj si plezalno steno z oprimki v enakih razmikih. Plezalec doseže vsa
 + Preverjanje trditve za sto naključno izbranih števil.
 - Izpeljava trditve za $n + 1$ iz trditve za $n$.
 ~ To je indukcijski korak, osrednji del dokaza.
-> Preverjanje primerov je koristno za domnevo, ni pa del dokaza: tudi sto pravilnih primerov ne zagotovi sto prvega.
+> Preverjanje primerov je koristno za domnevo, ni pa del dokaza: tudi sto pravilnih primerov ne zagotovi stoprvega.
 
-? Koliko potez najmanj potrebuješ za Hanojski stolp s $7$ ploščicami?
-- $128$
-~ To je $2^7$; pozabil si odšteti $1$. Za eno ploščico je $2^1 = 2$, potrebuješ pa le $1$ potezo.
-+ $127$
-- $49$
-~ To je $7^2$. Število potez se z vsako ploščico približno podvoji, ne raste kot kvadrat.
-- $14$
-~ To je $2 \cdot 7$. Velja $H_{n + 1} = 2H_n + 1$, zato se število potez podvaja, ne prišteva.
+? (brez računala) Koliko potez najmanj potrebuješ za Hanojski stolp s $7$ ploščicami?
+= 127 | 0
+~ 128 | To je $2^7$; pozabil si odšteti $1$. Za eno ploščico je $2^1 = 2$, potrebuješ pa le $1$ potezo.
+~ 49 | To je $7^2$. Število potez se z vsako ploščico približno podvoji, ne raste kot kvadrat.
+~ 14 | To je $2 \cdot 7$. Velja $H_{n + 1} = 2H_n + 1$, zato se število potez podvaja, ne prišteva.
 > $H_7 = 2^7 - 1 = 127$.
 
 ? Za trditev $2^n > n^2$ velja baza pri $n = 5$, korak pa je dokazan za vse $n \ge 3$. Kaj sledi?
@@ -210,13 +297,31 @@ Predstavljaj si plezalno steno z oprimki v enakih razmikih. Plezalec doseže vsa
 ~ Predpostavka za en $n$ je del vsake indukcije; napačna je šele, če z njo začnemo pri $n + 1$.
 > Brez baze korak ne dokaže ničesar. Pravilna formula je $\frac{n(n + 1)}{2}$.
 
-? Na tekmovanju v podiranju domin postavijo $500$ domin. Vsaka padajoča podre naslednjo, le med $120.$ in $121.$ je razmik prevelik. Podrejo prvo. Katere padejo?
-- Vse, ker padec vsake podre naslednjo.
-~ Korak ne velja pri $120 \to 121$, zato se veriga tam pretrga.
-+ Domine od $1.$ do $120.$
-- Nobena, ker korak ne velja povsod.
-~ Prva pade, korak pa velja pri vseh prehodih do $120.$ domine, zato padejo vse do te vrzeli.
-> Indukcija potrebuje korak za vsak $n$; kjer manjka, se veriga ustavi.
+? Na tekmovanju v podiranju domin postavijo $500$ domin. Vsaka padajoča podre naslednjo, le med $120.$ in $121.$ je razmik prevelik. Podrejo prvo. Koliko domin pade?
+= 120 | 0
+~ 500 | Ne padejo vse: korak ne velja pri $120 \to 121$, zato se veriga tam pretrga.
+~ 0 | Prva pade, korak pa velja pri vseh prehodih do $120.$ domine, zato padejo vse do te vrzeli.
+~ 121 | Prehod $120 \to 121$ je ravno tisti, kjer korak ne velja: $120.$ domina pade, a $121.$ ne podre, zato ta ostane pokonci.
+> Padejo domine od $1.$ do $120.$ Indukcija potrebuje korak za vsak $n$; kjer manjka, se veriga ustavi.
+
+<<RACUN
+vrednost: 3*2-2 | 4
+vrednost: 3*4-2 | 10
+vrednost: 3*10-2 | 28
+vrednost: 3*28-2 | 82
+enako: 3*(3^(n-1)+1)-2 | 3^n+1
+resi: 3^(n-1)+1=730 | n | 7
+vrednost: 1/2+1/6 | 2/3
+vrednost: 1/2+1/6+1/12 | 3/4
+enako: n/(n+1)+1/((n+1)*(n+2)) | (n+1)/(n+2)
+limita: n/(n+1) | n | oo | 1
+enako: 1-n/(n+1) | 1/(n+1)
+resi: 1/(n+1)=1/100 | n | 99
+vrednost: 1/3+1/8 | 11/24
+vrednost: 2/(2+2) | 1/2
+enako: 2^n-1+2^n | 2^(n+1)-1
+vrednost: factorial(4) | 24
+>>
 
 :::simboli
 n | naravno število | | | $n \in \mathbb{N}$

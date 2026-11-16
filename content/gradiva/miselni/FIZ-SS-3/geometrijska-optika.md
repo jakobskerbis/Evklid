@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Odboj
+  - odbojni kot enak vpadnemu, $\alpha' = \alpha$
+  - kote merimo od pravokotnice
+- Lomni količnik
+  - $n = \dfrac{c_0}{c}$
+  - voda $1{,}33$, steklo okoli $1{,}5$
+- Lomni zakon
+  - $n_1 \sin\alpha = n_2 \sin\beta$
+  - napaka: kota nista sorazmerna
+  - v optično gostejšo snov: k pravokotnici
+- Popolni odboj
+  - $\sin\alpha_m = \dfrac{n_2}{n_1}$, voda–zrak $48{,}8^\circ$
+  - samo pri prehodu v manjši $n$
+  - optična vlakna, briljant
+- Zbiralna leča
+  - gorišče $F$, goriščna razdalja $f$
+  - trije značilni žarki
+- Enačba leče
+  - $\dfrac{1}{f} = \dfrac{1}{a} + \dfrac{1}{b}$
+  - povečava $\dfrac{S}{P} = \dfrac{b}{a}$
+- Vrste slik
+  - predmet dlje od $2f$: manjša, realna
+  - predmet bližje od $f$: navidezna (lupa)

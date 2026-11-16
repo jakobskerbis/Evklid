@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Značilnosti živega
+  - celice, hranjenje in dihanje, rast
+  - razmnoževanje, odzivanje, izločanje
+  - telefon se odziva, a ni živ
+- Pet kraljestev
+  - bakterije, protisti, glive, rastline, živali
+  - vprašaj po jedru in načinu hranjenja
+- Glive
+  - brez klorofila, hrano vsrkavajo, razkrajajo
+  - jurček, plesen, kvasovke
+  - napaka: gobe niso rastline
+- Bakterije
+  - ena celica brez jedra
+  - delitev podvoji število: $1, 2, 4, 8$
+  - koristne: jogurt, prebava
+- Protisti
+  - večinoma ena celica z jedrom
+  - ameba, paramecij, evglena s klorofilom
+- Mikroorganizmi
+  - vidni le z mikroskopom
+  - skupina po velikosti, ne kraljestvo
+  - $d_s = P \cdot d$
+- Virusi
+  - niso celice, množijo se le v celicah drugih organizmov

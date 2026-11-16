@@ -2457,7 +2457,7 @@ export const DODATNE_MAT_OS = [
           `Za testo potrebujemo $${a}0\\ \\mathrm{g}$ sladkorja in $${b}0\\ \\mathrm{g}$ moke. Zapiši okrajšano razmerje sladkor : moka.`,
         ]);
         return T({
-          text: `${text} Odgovor zapiši kot ulomek (razmerje 2 : 3 zapišeš 2/3).`,
+          text: `${text} Odgovor zapiši kot razmerje $a : b$ (npr. $2 : 3$) ali kot ulomek (npr. 2/3).`,
           answer: frac(p, q),
           hint: "Oba člena razmerja deli z njunim največjim skupnim deliteljem.",
           given: [text.includes("mathrm{g}") ? `\\text{razmerje} = ${a}0 : ${b}0` : `\\text{razmerje} = ${a} : ${b}`],
@@ -2511,7 +2511,7 @@ export const DODATNE_MAT_OS = [
             q = (b * f) / gg;
           } while (a >= b * f || q === 1 || p === q || q > 60);
           return T({
-            text: `Okrajšaj razmerje $${a}\\ \\mathrm{${su}} : ${b}\\ \\mathrm{${bu}}$ do konca. Odgovor zapiši kot ulomek (razmerje 2 : 3 zapišeš 2/3).`,
+            text: `Okrajšaj razmerje $${a}\\ \\mathrm{${su}} : ${b}\\ \\mathrm{${bu}}$ do konca. Odgovor zapiši kot razmerje $a : b$ (npr. $2 : 3$) ali kot ulomek (npr. 2/3).`,
             answer: frac(p, q),
             hint: `Najprej oba člena zapiši v isti enoti: $1\\ \\mathrm{${bu}} = ${f}\\ \\mathrm{${su}}$.`,
             given: [`\\text{razmerje} = ${a}\\ \\mathrm{${su}} : ${b}\\ \\mathrm{${bu}}`],

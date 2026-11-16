@@ -5,9 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Na telefonu imaš aplikacijo, ki pokaže, kje je Mednarodna vesoljska postaja (ISS). Postaja kroži okoli Zemlje približno $400\,\text{km}$ nad površjem in en obhod naredi v $90$ minutah. Zvečer jo $15$ minut opazuješ, kako drsi čez nebo. Koliko kilometrov je v tem času preletela?
+Na telefonu imaš aplikacijo, ki pokaže, kje je Mednarodna vesoljska postaja (ISS). Postaja kroži okoli Zemlje približno $400\,\text{km}$ nad površjem in en obhod naredi v $90$ minutah. Zvečer jo v aplikaciji $15$ minut spremljaš, kako drsi nad Zemljo. Koliko kilometrov je v tem času preletela?
 
-Cel krog bi znal izračunati: to je obseg. Postaja pa je v četrt ure preletela le **del** kroga. Tak del krožnice se imenuje **krožni lok**. Ko boš znal izračunati lok, boš vprašanje rešil v Primeru 3. Po isti poti izračunaš tudi ploščino dela kroga: kos torte, pahljačo ali ploskev, ki jo prebriše brisalec na avtu.
+Cel krog bi znal izračunati: to je obseg. Postaja pa je v četrt ure preletela le **del** kroga. Tak del krožnice se imenuje **krožni lok**. Ko boš znal izračunati lok, boš vprašanje rešil v Primeru 3. Po isti poti izračunaš tudi ploščino dela kroga: kos torte, pahljačo ali ploskev, ki jo prebriše kazalec na uri.
 
 ## Razlaga
 
@@ -145,7 +145,7 @@ $\alpha = \dfrac{1}{4} \cdot 360^\circ = 90^\circ$. Ploščina kroga je $3{,}14 
 - **Zamenjana obseg in ploščina.** Za lok vzame $\pi r^2$, za izsek $2\pi r$. Lok je črta, izsek ploskev, zato lok pripada obsegu, izsek ploščini. Preveri enoto: lok v $\text{cm}$, izsek v $\text{cm}^2$.
 - **Premer namesto polmera.** Če naloga da premer $d$ in ga učenec vstavi kot $r$, dobi dvakrat daljši lok in štirikrat večji izsek. Najprej izračunaj $r = d : 2$.
 - **»Dvakrat večji polmer, dvakrat večji izsek.«** V ploščini je polmer kvadriran, zato pri istem kotu dvakrat večji polmer da štirikrat večji izsek. Le lok se podaljša dvakrat.
-- **Polni kot $180^\circ$.** Kdor deli s $180^\circ$, dobi dvakrat predolg lok, pri iskanju kota pa polovico pravega kota. $180^\circ$ je iztegnjeni kot, pol kroga; polni kot meri $360^\circ$.
+- **Polni kot $180^\circ$.** Kdor deli s $180^\circ$, dobi dvakrat predolg lok, pri iskanju kota pa polovico pravilnega kota. $180^\circ$ je iztegnjeni kot, pol kroga; polni kot meri $360^\circ$.
 
 ## Povzetek
 

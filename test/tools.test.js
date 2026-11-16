@@ -357,6 +357,15 @@ test("zbirka formul prek API", async () => {
     assert.equal(body.key, "KEM-OS");
     assert.ok(body.md.length > 100);
     for (const k of ["MAT-UNI", "FIZ-UNI", "KEM-UNI"]) assert.equal((await fetch(`${base}/api/formulas?book=${k}`)).status, 200);
+    // Tekmovalni učbeniki (MAT-TEK, FIZ-TEK, KEM-TEK) imajo svoj list, razdeljen na razdelke z oznakami.
+    for (const k of ["MAT-TEK", "FIZ-TEK", "KEM-TEK"]) {
+      const tek = await fetch(`${base}/api/formulas?book=${k}`);
+      assert.equal(tek.status, 200, k);
+      const json = await tek.json();
+      assert.equal(json.key, k);
+      assert.ok(json.sections.length >= 5 && json.sections.every((s) => s.symbols.length), k);
+      assert.ok(!json.md.includes(":::simboli"), k);
+    }
     assert.equal((await fetch(`${base}/api/formulas?book=../x`)).status, 404);
     assert.equal((await fetch(`${base}/api/formulas?book=ZGO-OS`)).status, 404);
   } finally {

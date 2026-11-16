@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lepenje
+  - $|F| \le \mu_\mathrm{l} N$, telo miruje
+  - $F$ je neznanka iz ravnotežja
+  - napaka: »$F = \mu_\mathrm{l} N$ vedno«
+- Drsno trenje
+  - $F = \mu_\mathrm{t} N$, nasproti relativni hitrosti
+  - običajno $\mu_\mathrm{t} < \mu_\mathrm{l}$
+- Smer trenja
+  - nasproti težnji drsenja
+  - negativen rezultat: obratna smer
+- Normalna sila
+  - klanec: $N = G\cos\alpha$
+  - poševni vlek: $N = G - P\sin\beta$
+  - napaka: »$N = G$ povsod«
+- Mejni kot lepenja
+  - mirovanje: $\tan\alpha \le \mu_\mathrm{l}$
+  - $\varphi_\mathrm{l} = \arctan\mu_\mathrm{l}$, teža se pokrajša
+  - naklon $12\,\%$: $\tan\alpha = 0{,}12$
+- Postopek reševanja
+  - predpostavi mirovanje, izračunaj $F$ in $N$
+  - preveri mejo $\mu_\mathrm{l} N$
+  - na meji zdrsa: $F = \mu_\mathrm{l} N$
+- Stožec trenja
+  - reakcija znotraj polovičnega kota $\varphi_\mathrm{l}$
+  - več stikov: določeno šele v mejnem stanju
+  - visoko telo: zdrs ali prevrnitev
+- Meje modela
+  - stična ploščina ne vpliva
+  - $\mu$ odvisen od hitrosti, vlage, temperature

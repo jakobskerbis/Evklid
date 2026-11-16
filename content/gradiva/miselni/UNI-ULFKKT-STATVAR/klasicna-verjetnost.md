@@ -1,0 +1,21 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Klasična verjetnost
+  - $P(A) = |A|/|\Omega|$
+  - $P(A \cup B) = P(A) + P(B) - P(A \cap B)$
+- Kombinatorika
+  - urejeno s ponavljanjem $n^k$
+  - neurejeno brez ponavljanja $\binom{n}{k}$
+- Pogojna verjetnost
+  - $P(A \mid B) = P(A \cap B)/P(B)$
+  - pogoj skrči prostor izidov
+- Popolna verjetnost
+  - $P(A) = \sum P(H_i)P(A \mid H_i)$
+- Bayesova formula
+  - obrne pogoj: $P(H_k \mid A)$
+  - test 99 %, bolan le 2 %
+- Neodvisnost
+  - $P(A \cap B) = P(A)P(B)$
+  - nezdružljivo ni neodvisno

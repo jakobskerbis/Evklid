@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Taylorjeva vrsta
+  - $\sum \frac{f^{(n)}(a)}{n!}(x - a)^n$
+  - delne vsote so Taylorjevi polinomi
+- Enakost s funkcijo
+  - natanko tedaj, ko $R_n \to 0$
+  - omejeni odvodi zadoščajo, ker $\frac{r^n}{n!} \to 0$
+  - protiprimer $\mathrm{e}^{-1/x^2}$
+- Razvoji za vse x
+  - $\mathrm{e}^x = \sum \frac{x^n}{n!}$
+  - sinus lihe potence, kosinus sode
+- Logaritem in binom
+  - $\ln(1 + x)$ na $(-1, 1]$
+  - $(1 + x)^\alpha$ za $|x| < 1$
+  - zunaj intervala vrsta divergira
+- Enoličnost
+  - vstavljaj, odvajaj, integriraj znane vrste
+  - $f^{(n)}(a) = n!\,c_n$
+- Ocena napake
+  - Lagrange: $\frac{M|x - a|^{n+1}}{(n+1)!}$
+  - alternirajoča: prvi izpuščeni člen
+  - daleč od roba hitra konvergenca

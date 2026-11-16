@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Metoda
+  - glava: tip vrnjene vrednosti, ime, parametri
+  - telo v zavitih oklepajih, `void` nič ne vrne
+  - primer: `itm(60, 1.65)` vrne približno $22{,}04$
+- Parametri in argumenti
+  - argumenti gredo v parametre po položaju
+  - zamenjan vrstni red: nesmiseln rezultat brez opozorila
+- Podajanje po vrednosti
+  - parameter je nova spremenljivka s kopijo argumenta
+  - `povecaj(utrip)` pusti `utrip` pri $70$
+  - popravek: `utrip = povecaj(utrip);`
+- Vrnitev vrednosti
+  - `return` konča metodo in vrne vrednost
+  - izpis na zaslon ni vrnitev
+- Doseg
+  - lokalna spremenljivka: od deklaracije do konca bloka
+  - enaki imeni v dveh metodah: različni spremenljivki
+- Rekurzija
+  - osnovni primer in rekurzivni korak
+  - $\text{kofein}(n) = \frac{\text{kofein}(n-1)}{2}$, $\text{kofein}(0) = 400$
+  - brez približevanja osnovnemu primeru: `StackOverflowError`
+- Klicni sklad
+  - vsak klic ima svoj okvir in svoj $n$
+  - `celice(6)`: $6 + 1 = 7$ klicev
+- Dokaz z indukcijo
+  - osnovni primer, indukcijski korak, ustavitev
+  - $\text{kofein}(n) = \frac{400}{2^n}$ za $n \ge 0$

@@ -178,7 +178,7 @@ V simulaciji spodaj »Dušikove organske spojine« uvrsti spojine v skupine. Pri
 ## Drugače: Iz vsakdanjega življenja
 
 - **Ribe ob morju.** Bakterije v mrtvih ribah tvorijo trimetilamin, ki hlapi in smrdi. Limonin sok ga spremeni v sol, ki ne hlapi, zato vonj oslabi.
-- **Gnitje.** Ko razpadajo beljakovine mrtvih živali, nastaneta diamina putrescin in kadaverin. Njun vonj privablja muhe in nekatere rastline z vonjem po mrhovini.
+- **Gnitje.** Ko razpadajo beljakovine mrtvih živali, nastaneta diamina putrescin in kadaverin. Njun vonj privablja muhe. Z vonjem po mrhovini jih vabijo tudi nekatere rastline.
 - **Hlev in travnik.** Sesalci izločajo odvečni dušik kot sečnino. Encim ureaza v tleh jo razgradi v amoniak in $\mathrm{CO_2}$, zato v hlevu in po gnojenju travnika zaudarja po amoniaku.
 - **Beljakovine v listu.** Vsaka beljakovina je veriga aminokislin, ki so povezane z amidnimi (peptidnimi) vezmi. Te so obstojne, ker amidni dušik ni bazičen in ne reagira z vsako kislino.
 - **Pajkova mreža in svila.** Sta beljakovini, torej verigi z amidnimi vezmi. Najlon, ki ga je človek naredil po tem zgledu, je poliamid.
@@ -230,7 +230,7 @@ V simulaciji spodaj »Dušikove organske spojine« uvrsti spojine v skupine. Pri
 ~ Glicin se v vodi le preuredi v dipolarni ion. Glavna dušikova spojina v urinu sesalcev je sečnina.
 + Iz sečnine, ki jo encim ureaza razgradi v amoniak in $\mathrm{CO_2}$.
 - Iz dušika $\mathrm{N_2}$ iz zraka, ki se veže na gnojnico.
-~ $\mathrm{N_2}$ ima trojno vez in s gnojnico ne reagira. Amoniak nastane iz spojine, ki je že v urinu.
+~ $\mathrm{N_2}$ ima trojno vez in z gnojnico ne reagira. Amoniak nastane iz spojine, ki je že v urinu.
 - Iz trimetilamina, ki je glavna sestavina urina.
 ~ Trimetilamin nastaja v ribah, ki razpadajo, in ni glavna dušikova spojina urina.
 > Sečnina $\mathrm{(NH_2)_2CO}$ je amid. Bakterijski encim ureaza jo hidrolizira: $\mathrm{(NH_2)_2CO + H_2O \rightarrow 2\,NH_3 + CO_2}$.

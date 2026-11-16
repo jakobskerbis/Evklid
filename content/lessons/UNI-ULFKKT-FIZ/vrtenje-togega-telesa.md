@@ -155,7 +155,7 @@ $J_1\omega_1 = J_2\omega_2$, $\omega = 2\pi\nu$, $W_k = \tfrac{1}{2}J\omega^2 = 
 
 **Rešitev:**
 
-1. Teža in sila ležaja imata nosilke vzdolž osi ali skozi njo, zato nimata navora okoli navpične osi. Vrtilna količina se ohranja.
+1. Teža in sila ležaja sta vzporedni z osjo ali imata nosilko skozi njo, zato nimata navora okoli navpične osi. Vrtilna količina se ohranja.
 2. $\nu_2 = \nu_1 J_1/J_2 = 0{,}50\,\mathrm{s^{-1}} \cdot 6{,}0/2{,}0 = 1{,}5\,\mathrm{s^{-1}}$.
 3. Za energijo potrebujemo kotni hitrosti v $\mathrm{s^{-1}}$, ne obratov na sekundo: $\omega_1 = 2\pi \cdot 0{,}50\,\mathrm{s^{-1}} = \pi\,\mathrm{s^{-1}} \approx 3{,}14\,\mathrm{s^{-1}}$, $\omega_2 = 3\pi\,\mathrm{s^{-1}} \approx 9{,}42\,\mathrm{s^{-1}}$.
 4. $W_{k1} = \tfrac{1}{2} \cdot 6{,}0 \cdot 3{,}14^2\,\mathrm{J} \approx 29{,}6\,\mathrm{J}$, $W_{k2} = \tfrac{1}{2} \cdot 2{,}0 \cdot 9{,}42^2\,\mathrm{J} \approx 88{,}8\,\mathrm{J}$.
@@ -260,13 +260,19 @@ Izpelji hitrost, ki jo ima telo z maso $m$, polmerom $R$ in vztrajnostnim moment
 
 Vrata gledamo od zgoraj. Tečaji so os, sila deluje na kljuko:
 
-```
-  os (tečaji)
-   O=========================[kljuka]
-   |<------------- r -------------->|
-                                    ^
-                                    | F (pravokotno: največji navor)
-```
+:::risba skica
+opis: Vrata od zgoraj kot vodoravna debela črta. Na levem koncu je os (tečaji), na desnem kljuka. Razdalja od osi do kljuke je označena z r. Na kljuko deluje sila F pravokotno na vrata; med vrati in silo je označen pravi kot. Pri pravokotni sili je navor največji.
+območje: -1,5; -3,6 .. 11; 2
+črta: 0; 0 -> 8; 0 | debelo
+točka: 0; 0 | os (tečaji) | pod
+točka: 8; 0 | kljuka | desno
+puščica: 4; 1 -> 8; 1
+puščica: 4; 1 -> 0; 1
+napis: 4; 1,5 | r | sredina
+puščica: 8; -2,8 -> 8; -0,15 | F | desno | oranžna
+pravikot: 8; 0 | 0; 0 | 8; -2,8
+napis: 7; -3,2 | pravokotno: največji navor | sredina
+:::
 
 Če silo nagnemo proti tečajem, se ročica (pravokotna razdalja od osi do nosilke sile) skrajša in vrata se odpirajo težje. Če pritisnemo ob tečajih, je ročica skoraj nič in vrata se ne premaknejo.
 

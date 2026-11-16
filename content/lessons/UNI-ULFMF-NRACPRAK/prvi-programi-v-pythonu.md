@@ -50,7 +50,7 @@ Kaj je skupno vsem trem? Koliko števil da `range(2, 6)` in katero število manj
 Začetno število je vključeno, končno ni. `range(2, 6)` da $6 - 2 = 4$ števila, manjka $6$. Torej `range(4, 7)` izpiše `4 5 6`. Če začetka ne napišeš, se šteje od $0$.
 :::
 
-To je pravilo: **`range(a, b)` da cela števila od $a$ do $b - 1$, skupaj $b - a$ števil.** `range(n)` je kratko za `range(0, n)` in da natanko $n$ ponovitev.
+To je pravilo: **`range(a, b)` da cela števila od $a$ do $b - 1$, skupaj $b - a$ števil (če je $a < b$; sicer je obseg prazen).** `range(n)` je kratko za `range(0, n)` in da natanko $n$ ponovitev.
 
 Zanka lahko gre tudi skozi **seznam** (vrednosti v oglatih oklepajih, ločene z vejicami):
 
@@ -208,6 +208,110 @@ Vrne $3$. Baterija gre $80 \to 55 \to 30 \to 5$. Ko je $5$, pogoj $5 \geq 20$ ne
 - Telo zanke ali funkcije je zamaknjeno za $4$ presledke.
 - `def ime(parametri):` definira funkcijo; `return` vrne rezultat, `print` ga le pokaže. Brez `return` funkcija vrne `None`.
 - Program poženeš v ukazni vrstici z `python3 ime.py`.
+
+## Za izpit
+
+Znati moraš povedati:
+- kaj naredi prireditev `x = izraz` (najprej se izračuna desna stran s starimi vrednostmi, nato se rezultat shrani pod ime) in zakaj `b = a` shrani le trenutno vrednost;
+- katera števila da `range(a, b)` in `range(n)`, koliko jih je in kdaj je obseg prazen;
+- vzorec akumulatorja: začetna vrednost pred zanko, prištevanje v telesu, uporaba rezultata po zanki;
+- razliko med zankama `for` in `while` ter kdaj se zanka `while` ne izvede nikoli ali teče v nedogled;
+- kako zamik določa telo zanke in funkcije;
+- razliko med `print` in `return`, med parametrom in argumentom ter kaj vrne funkcija brez `return`.
+
+### Naloga 1
+
+Funkcija šteje, kolikokrat je treba napolniti predplačniško kartico. Vsak dan se stanje na njej zmanjša za `poraba` evrov (kartica dovoli tudi negativno stanje); vsakič, ko stanje pade pod $20$ evrov, ga polnjenje dvigne za $60$ evrov.
+
+```python
+def polnjenja(zacetek, poraba, dni):
+    stanje = zacetek
+    n = 0
+    for dan in range(dni):
+        stanje = stanje - poraba
+        while stanje < 20:
+            stanje = stanje + 60
+            n = n + 1
+    return n
+```
+
+(a) S tabelo vrednosti določi, kaj vrne klic `polnjenja(100, 35, 7)`. (b) Kaj vrne `polnjenja(100, 35, 0)`? (c) Kaj vrne `polnjenja(100, 130, 2)` in kolikokrat se pri tem klicu preveri pogoj zanke `while`? (d) Kaj bi vrnil klic iz (a), če bi bila vrstica `n = n + 1` zamaknjena le za $8$ presledkov, enako kot `while`?
+
+**Rešitev:**
+
+1. Klic (a): `stanje` je $100$, `n` je $0$, `dan` dobi vrednosti $0, 1, \ldots, 6$, torej $7$ ponovitev.
+2. `dan` je $0$: $100 - 35 = 65$; pogoj $65 < 20$ ne velja, `while` se ne izvede. `dan` je $1$: $65 - 35 = 30$, spet brez polnjenja.
+3. `dan` je $2$: $30 - 35 = -5$; pogoj velja, $-5 + 60 = 55$, `n` je $1$. Pogoj $55 < 20$ ne velja več.
+4. `dan` je $3$: $55 - 35 = 20$. Pogoj $20 < 20$ ne velja (stroga neenakost), polnjenja ni.
+5. `dan` je $4$: $20 - 35 = -15$, nato $-15 + 60 = 45$, `n` je $2$. `dan` je $5$: $45 - 35 = 10$, nato $10 + 60 = 70$, `n` je $3$.
+6. `dan` je $6$: $70 - 35 = 35$, brez polnjenja. Zanka `for` se konča, funkcija vrne $3$.
+7. Klic (b): `range(0)` je prazen obseg, telo zanke `for` se ne izvede nikoli. Vrne se začetna vrednost akumulatorja, $0$.
+8. Klic (c), `dan` je $0$: $100 - 130 = -30$; $-30 + 60 = 30$, `n` je $1$. Pogoj je bil preverjen dvakrat (enkrat resničen, enkrat neresničen).
+9. Klic (c), `dan` je $1$: $30 - 130 = -100$; $-100 + 60 = -40$, `n` je $2$; $-40 + 60 = 20$, `n` je $3$. Pogoj je bil preverjen trikrat (dvakrat resničen, enkrat neresničen).
+10. Skupaj pri (c): funkcija vrne $3$, pogoj se preveri $2 + 3 = 5$-krat. Zanka `while` v enem dnevu lahko teče večkrat, česar z enim samim polnjenjem na dan ne bi dosegli.
+11. Del (d): vrstica z $8$ presledki ni več v telesu zanke `while`, je pa še v telesu zanke `for`. Izvede se enkrat v vsaki ponovitvi `for`, ne glede na polnjenje, zato klic vrne število dni, $7$.
+12. Odgovor: (a) $3$, (b) $0$, (c) $3$ in $5$ preverjanj pogoja, (d) $7$.
+
+### Naloga 2
+
+Natančno navedi, katera števila da `range(a, b)` za celi števili $a$ in $b$ ter koliko jih je. Nato zanko
+
+```python
+for i in range(a, b):
+    s = s + i
+```
+
+zapiši z zanko `while` in z njo utemelji, da se telo izvede natanko $(b - a)$-krat, če je $a < b$, in nikoli, če je $a \geq b$. Kolikokrat se izvede telo pri `range(3, 3)` in pri `range(7, 2)`?
+
+**Rešitev:**
+
+1. `range(a, b)` da cela števila $a, a + 1, \ldots, b - 1$. Začetek je vključen, konec ni. Če je $a < b$, je števil $b - a$; če je $a \geq b$, je obseg prazen.
+2. Enakovreden zapis z `while`: števec nastavimo pred zanko, pogoj je stroga neenakost, števec povečamo na koncu telesa.
+
+```python
+i = a
+while i < b:
+    s = s + i
+    i = i + 1
+```
+
+3. Utemeljitev za $a < b$: pred prvo ponovitvijo je `i` enak $a$. Vsaka ponovitev poveča `i` natanko za $1$, zato je po $k$ ponovitvah `i` enak $a + k$.
+4. Telo se izvede, dokler velja $a + k < b$, torej za $k = 0, 1, \ldots, b - a - 1$. To je $b - a$ vrednosti. Po $(b - a)$-ti ponovitvi je `i` enak $b$, pogoj $b < b$ ne velja in zanka se konča.
+5. V telesu ima `i` zaporedoma vrednosti $a, a + 1, \ldots, b - 1$, natanko tiste iz točke 1. Zato zanki izračunata isti `s`.
+6. Utemeljitev za $a \geq b$: pogoj $a < b$ ne velja že ob prvem preverjanju, telo se ne izvede nikoli. To se ujema s praznim obsegom.
+7. `range(3, 3)`: $3 < 3$ ne velja, $0$ ponovitev. `range(7, 2)`: $7 < 2$ ne velja, $0$ ponovitev (in ne $-5$ ali $5$).
+8. Pozor na razliko: če v zapisu z `while` pozabiš vrstico `i = i + 1`, pogoj ostane resničen in zanka teče v nedogled. Pri `for` se to ne more zgoditi, ker števec vodi `range`.
+
+### Naloga 3
+
+Program naj bi izpisal vsoto ocen, povečano za $1$, in dvakratnik vtipkanega števila. Uporabnik vtipka `12`.
+
+```python
+def vsota(ocene):
+    v = 0
+    for x in ocene:
+        v = v + x
+    print(v)
+
+p = vsota([6, 9, 10, 7])
+print(p)
+n = input()
+print(n + n)
+print(p + 1)
+```
+
+Natančno navedi, kaj se izpiše, v kateri vrstici se program ustavi z napako, in utemelji vsak izpis. Nato program popravi.
+
+**Rešitev:**
+
+1. Klic `vsota([6, 9, 10, 7])`: akumulator `v` raste $6$, $15$, $25$, $32$. Vrstica `print(v)` ni zamaknjena v telo zanke, zato se izvede enkrat in izpiše `32`.
+2. Funkcija nima `return`, zato klic vrne `None`. Prireditev shrani `None` pod ime `p`; `print(p)` izpiše `None`.
+3. `input()` vrne vtipkano kot besedilo, `n` je `"12"`. Znak `+` besedili zlepi, zato `print(n + n)` izpiše `1212`, ne `24`.
+4. `p + 1` pomeni `None + 1`. Tega Python ne zna izračunati, program se ustavi z napako v zadnji vrstici. Izpis do takrat: `32`, `None`, `1212`, vsak v svoji vrstici.
+5. Popravek funkcije: zadnjo vrstico zamenjamo z `return v`. Potem je `p` enak $32$ in funkcija sama ne izpiše ničesar.
+6. Popravek branja: `n = int(input())`. Potem je `n` celo število $12$ in $12 + 12 = 24$.
+7. Popravljeni program izpiše `32` (iz `print(p)`), `24` in `33`, ker je $32 + 1 = 33$.
+8. Sklep: `print` vrednost le pokaže, `return` jo preda klicatelju; tip vrednosti določa, kaj pomeni `+`.
 
 ## Drugače: Korak za korakom s številkami
 

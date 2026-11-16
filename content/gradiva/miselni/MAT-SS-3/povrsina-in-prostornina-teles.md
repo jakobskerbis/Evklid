@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Površina in prostornina
+  - površina: vsota ploščin mejnih ploskev, v $\text{cm}^2$
+  - prostornina: koliko prostora zavzema, v $\text{cm}^3$
+  - $1\,\text{dm}^3 = 1\,\text{l}$
+- Prizma in valj
+  - $V = S \cdot v$, valj: $S = \pi r^2$
+  - $P = 2S + S_p$, plašč valja $2\pi r v$
+  - napaka: pozabljeno dno ali pokrov
+- Piramida in stožec
+  - $V = \dfrac{S \cdot v}{3}$: tretjina prizme oziroma valja
+  - $P = S + S_p$, plašč stožca $\pi r s$
+  - napaka: pozabljen faktor $\frac{1}{3}$
+- Poševne razdalje
+  - stranica stožca $s = \sqrt{r^2 + v^2}$
+  - piramida: $v_s^2 = v^2 + \left(\frac{a}{2}\right)^2$
+  - napaka: $v$ namesto $s$ v plašču
+- Krogla
+  - $P = 4\pi r^2$, $V = \dfrac{4\pi r^3}{3}$
+  - dvakrat večji polmer: površina $4$-krat, prostornina $8$-krat
+  - napaka: premer namesto polmera
+- Sestavljena telesa
+  - vsak del posebej, nato seštej
+  - štej le ploskve, ki so res zunaj
+  - primer: kornet s polkroglo sladoleda

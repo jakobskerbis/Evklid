@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zaokroževanje
+  - prva odvržena števka $0$–$4$ navzdol, $5$–$9$ navzgor
+  - $\pi \approx 3{,}142$, $\sqrt{2} \approx 1{,}414$
+  - vedno iz izvirnega števila, ne v korakih
+- Zaokroževanje na mesta
+  - $2864 \approx 2900$ na stotice
+  - odrezana mesta nadomesti z ničlami
+- Absolutna napaka
+  - $\Delta x = |\bar{x} - x|$, enota količine
+  - meritev $x = \bar{x} \pm \Delta x$ je interval
+- Relativna napaka
+  - $\delta x = \dfrac{\Delta x}{|x|}$, brez enote, v odstotkih
+  - z njo primerjamo natančnost meritev
+- Vsota in razlika
+  - absolutni napaki seštej
+  - $(42 \pm 1) - (35 \pm 1) = 7 \pm 2$
+  - razlika podobnih števil: velika relativna napaka
+- Produkt in količnik
+  - relativni napaki približno seštej
+  - $\delta S \approx \delta a + \delta b$, $\delta v \approx \delta s + \delta t$
+  - ocena: izpusti kotiček $\Delta a \cdot \Delta b$

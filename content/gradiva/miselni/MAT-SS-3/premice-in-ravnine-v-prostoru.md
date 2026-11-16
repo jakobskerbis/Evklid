@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kocka kot model
+  - spodnja $ABCD$, zgornja $EFGH$
+  - skriti robovi črtkano
+- Lega dveh premic
+  - sekajoči, vzporedni, mimobežni
+  - mimobežni: ni skupne točke, ni skupne ravnine
+  - $AB$ in $CG$: pravokotni mimobežnici
+- Premica in ravnina
+  - leži v njej, jo seka ali je vzporedna
+  - dve ravnini: vzporedni ali se sekata v premici
+- Pravokotnica na ravnino
+  - pravokotna na dve sekajoči se premici
+  - napaka: ena premica ni dovolj
+- Pravokotna projekcija
+  - nožišče pravokotnice iz točke
+  - projekcija $AG$ je $AC$
+  - $p = l\cos\varphi$, nikoli daljša od $l$
+- Kot z ravnino
+  - kot med premico in projekcijo
+  - $\tan\varphi = \frac{v}{p}$
+  - kocka: $\approx 35{,}26^\circ$
+- Množice točk (VR)
+  - od dveh točk: simetralna ravnina
+  - od točke: sfera; od premice: valjasta ploskev

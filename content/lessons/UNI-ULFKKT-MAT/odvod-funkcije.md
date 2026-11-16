@@ -47,9 +47,9 @@ Obratno ne velja: $f(x) = |x|$ je zvezna v $0$, a leva limita diferenčnega kvoc
 | $c$ (konstanta) | $0$ |
 | $x^r$ ($r \in \mathbb{R}$) | $r x^{r-1}$ |
 | $e^x$ | $e^x$ |
-| $a^x$ | $a^x \ln a$ |
+| $a^x$ ($a > 0$) | $a^x \ln a$ |
 | $\ln x$ | $\frac{1}{x}$ |
-| $\log_a x$ | $\frac{1}{x \ln a}$ |
+| $\log_a x$ ($a > 0$, $a \neq 1$) | $\frac{1}{x \ln a}$ |
 | $\sin x$ | $\cos x$ |
 | $\cos x$ | $-\sin x$ |
 | $\tan x$ | $\frac{1}{\cos^2 x}$ |

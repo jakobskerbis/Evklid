@@ -36,7 +36,7 @@ Konstanta $C$ je **integracijska konstanta**. Vsak rezultat lahko preverimo z od
 | $x^n$, $n \neq -1$ | $\frac{x^{n+1}}{n + 1} + C$ |
 | $\frac{1}{x}$ | $\ln|x| + C$ |
 | $e^x$ | $e^x + C$ |
-| $a^x$ | $\frac{a^x}{\ln a} + C$ |
+| $a^x$, $a > 0$, $a \neq 1$ | $\frac{a^x}{\ln a} + C$ |
 | $\sin x$ | $-\cos x + C$ |
 | $\cos x$ | $\sin x + C$ |
 | $\frac{1}{\cos^2 x}$ | $\tan x + C$ |
@@ -342,7 +342,7 @@ u | faktor, ki ga odvajamo (integracija po delih) | | | du = u′ dx
 v | funkcija, ki jo dobimo z integriranjem dv | v = \int dv | |
 a | realna konstanta (ničla imenovalca x − a) | | | v aˣ osnova potence, a > 0
 b | druga ničla imenovalca (x − b) | | | v f(ax + b) prosti člen
-k | stopnja (večkratnost) faktorja (x − a)ᵏ | | | naravno število, k ≥ 2
+k | stopnja (večkratnost) faktorja (x − a)ᵏ | | | naravno število; pri integralu potence k ≥ 2
 n | eksponent potence | | | n ≠ −1
 p | polinom v števcu racionalne funkcije | | | v x² + px + q koeficient
 r | ostanek pri deljenju polinomov (števec prave racionalne funkcije) | | |

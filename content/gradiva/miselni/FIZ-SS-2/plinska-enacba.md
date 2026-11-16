@@ -3,27 +3,29 @@ avtor: AI
 stanje: osnutek
 ---
 - Stanje plina
-  - $p$ v Pa, $V$ v $\mathrm{m^3}$, $T$ v K
+  - $p$ v Pa, $V$ v $\mathrm{m^3}$, $T$ v K, $n$ v mol
   - $1\,\mathrm{L} = 10^{-3}\,\mathrm{m^3}$
-- Stalna temperatura
+- Stalna temperatura (izotermna)
   - $p_1 V_1 = p_2 V_2$
   - mehurček z dna jezera se napihne
-- Stalni tlak
+- Stalni tlak (izobarna)
   - $\dfrac{V_1}{T_1} = \dfrac{V_2}{T_2}$
   - balon v mrazu se skrči
-- Stalna prostornina
+- Stalna prostornina (izohorna)
   - $\dfrac{p_1}{T_1} = \dfrac{p_2}{T_2}$
   - guma zjutraj mehkejša
+  - pravi tlak = nadtlak + zunanji tlak
 - Združeni zakon
   - $\dfrac{p_1 V_1}{T_1} = \dfrac{p_2 V_2}{T_2}$
   - vremenski balon na višini
 - Plinska enačba
   - $pV = nRT$, $R = 8{,}31\,\mathrm{J/(mol\,K)}$
   - $n = \dfrac{m}{M}$
-  - napaka: kPa ali litri v enačbi
+  - v $pV = nRT$: Pa in $\mathrm{m^3}$
 - Idealni plin
   - molekule kot točke, le trki
   - odstopa blizu utekočinjenja
 - Absolutna temperatura
-  - $T = t + 273\,\mathrm{K}$
+  - $0\,^\circ\mathrm{C} = 273\,\mathrm{K}$
+  - absolutna ničla: $-273\,^\circ\mathrm{C}$
   - podvojeni °C ne pomenijo podvojitve

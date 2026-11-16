@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ester ni sol
+  - alkohol ne odda $\mathrm{OH^-}$, ni baza
+  - sol nastane le z bazo, npr. $\mathrm{NaOH}$
+- Karboksilna skupina
+  - $\mathrm{{-}COOH}$, ime -ojska kislina
+  - derivati: $\mathrm{{-}OH}$ zamenja druga skupina (ester, amid)
+  - šibka kislina: $\mathrm{CH_3COOH + NaOH \to CH_3COONa + H_2O}$
+- Esterifikacija
+  - $\mathrm{R{-}COOH + R'{-}OH \rightleftharpoons R{-}COO{-}R' + H_2O}$
+  - kislina odda $\mathrm{{-}OH}$, alkohol vodik
+  - katalizator konc. $\mathrm{H_2SO_4}$, ravnotežje
+- Ime estra
+  - alkil iz alkohola + kislina na -oat
+  - etil butanoat diši po ananasu
+  - napaka: ime brati po vrstnem redu formule
+- Lastnosti estrov
+  - brez vodikovih vezi, nižje vrelišče od kislin
+  - sadni vonj, slabo topni v vodi
+- Hidroliza
+  - obratna esterifikaciji
+  - z $\mathrm{NaOH}$ do konca: sol + alkohol (umiljenje)
+- Amidi
+  - $\mathrm{R{-}CONH_2}$, končnica -amid (etanamid)
+  - nastanejo iz amonijeve soli s segrevanjem
+  - niso bazični; z $\mathrm{NaOH}$ dajo amoniak
+- Izkoristek
+  - $m = \eta \cdot m_{\mathrm{teor}}$
+  - obratno vprašanje: deli z $\eta$

@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Poševno telo
+  - robovi niso pravokotni na osnovno ploskev
+  - nagnjen kup palačink
+- Cavalierijevo načelo
+  - enaki prerezi, enaka prostornina
+  - površina se lahko spremeni
+- Prostornina poševnih teles
+  - prizma, valj: $V = O\,v$
+  - piramida, stožec: $V = \frac{O\,v}{3}$
+- Višina, ne rob
+  - $v = s\sin\alpha$
+  - napaka: $s$ namesto $v$
+- Vrtenine
+  - pravokotnik okoli stranice: valj
+  - trikotnik okoli katete: stožec
+  - okoli hipotenuze: dvojni stožec
+- Polmer in višina
+  - na osi je višina
+  - razdalja od osi je polmer
+  - dvojni stožec: $r = \frac{a\,b}{c}$
+- Računanje vrtenin
+  - sestavi iz valjev in stožcev
+  - notranjih ploskev ne štej

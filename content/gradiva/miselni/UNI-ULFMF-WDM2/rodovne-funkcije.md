@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Navadna rodovna funkcija
+  - $A(x) = \sum a_n x^n$, formalna vrsta
+  - produkt: $\sum a_k b_{n-k}$
+  - neoznačeni objekti, same enice $\frac{1}{1-x}$
+- Označeni objekti
+  - mesta v kodi so razločljiva
+  - navadni produkt nima faktorja $\binom{n}{k}$
+- Eksponentna rodovna funkcija
+  - $\hat A(x) = \sum a_n \frac{x^n}{n!}$
+  - produkt: $\sum \binom{n}{k} a_k b_{n-k}$
+  - $a_n = n! \cdot [x^n]$, ne pozabi $n!$
+- Gradniki
+  - poljubno $e^x$, vsaj en $e^x - 1$
+  - sodo $\cosh x$, liho $\sinh x$
+  - kode iz A, B, C, sodo mnogo A: $\frac{3^n + 1}{2}$
+- Dyckove poti
+  - $n$ dvigov, $n$ spustov, nikoli pod tla
+  - razbitje pri prvi vrnitvi: G $P_1$ D $P_2$
+- Catalanova rekurzija
+  - $C_n = \sum_{k=0}^{n-1} C_k C_{n-1-k}$, $C_0 = 1$
+  - $C(x) = 1 + x\,C(x)^2$
+  - minus pred korenom: $\frac{1-\sqrt{1-4x}}{2x}$
+- Zaključena oblika
+  - $C_n = \frac{1}{n+1}\binom{2n}{n}$
+  - $1, 1, 2, 5, 14, 42, 132$
+  - oklepaji, triangulacije, nekrižna rokovanja
