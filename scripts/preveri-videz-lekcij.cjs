@@ -78,7 +78,6 @@ async function page(browser, base, phone) {
   await p.click('#onboard-form button[type="submit"]');
   await p.waitForSelector(".iq-wrap [data-iq=skip]", { timeout: 8000 }).then(() => p.click(".iq-wrap [data-iq=skip]")).catch(() => {});
   await p.waitForSelector("#tour", { timeout: 5000 }).then(() => p.click('#tour [data-tour="skip"]')).catch(() => {});
-  await p.evaluate(() => localStorage.setItem("tb-steps", "0"));
   if (process.env.VIDEZ_DEBUG) await p.screenshot({ path: process.env.VIDEZ_DEBUG });
   return p;
 }
@@ -98,6 +97,8 @@ function measure() {
   };
   const root = document.querySelector("#view-textbook");
   if (!root) return [{ kind: "napaka", detail: "lekcija se ni odprla" }];
+  // Lekcija je vedno po korakih: za meritev pokažemo vse korake hkrati.
+  root.querySelectorAll(".tb-step[hidden]").forEach((s) => (s.hidden = false));
   // Razlaga drugače: odpri vse zavihke ni potrebno; preveri, kar je izrisano.
   root.querySelectorAll(".katex-error").forEach((e) => add("katex", e, e.title || e.textContent.slice(0, 80)));
   // KaTeX nariše znak korena s črto kot SVG v .hide-tail; če ga tuj CSS skrči, črta nad korenom manjka.

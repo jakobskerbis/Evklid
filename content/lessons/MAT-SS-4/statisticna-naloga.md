@@ -28,13 +28,10 @@ Tu nismo opazovali ene količine, ampak dve hkrati in iskali, kako sta **povezan
 
 **1. Ena spremenljivka proti dvema.** Pri statistiki si imel eno **spremenljivko**, na primer samo temperaturo osmih večerov. Izračunal si sredino, mediano, standardni odklon in narisal histogram. Večer je bil **statistična enota**, temperatura njena lastnost.
 
-Zdaj vsaka enota prinese dve vrednosti: večer ima temperaturo $x$ in število cvrkov $y$. Razlike so v tabeli:
+Zdaj vsaka enota prinese dve vrednosti: večer ima temperaturo $x$ in število cvrkov $y$. Razlike:
 
-| | ena spremenljivka | dve spremenljivki |
-|---|---|---|
-| podatek | število $x_i$ | par $(x_i, y_i)$ |
-| prikaz | histogram, škatla z brki | razsevni diagram |
-| vprašanje | kje je sredina, kako so razpršeni | ali se $y$ spreminja z $x$ |
+- **Ena spremenljivka.** Podatek je število $x_i$, prikaz histogram ali škatla z brki, vprašanje pa, kje je sredina in kako so podatki razpršeni.
+- **Dve spremenljivki.** Podatek je par $(x_i, y_i)$, prikaz razsevni diagram, vprašanje pa, ali se $y$ spreminja z $x$.
 
 Spremenljivka je **številska**, če so vrednosti števila (temperatura, število cvrkov), in **opisna**, če so vrednosti besede (vreme: sončno, oblačno, deževno).
 
@@ -177,11 +174,32 @@ Povezanost je negativna in precej močna: ob vetrovnejših dneh je bilo v povpre
 - Pri opisni in številski spremenljivki primerjamo sredini (in mediani) skupin.
 - Povezanost ni dokaz vzroka; v interpretaciji navedi omejitve.
 
+## Ponovitev
+
+**Formule**
+- $\bar x = \frac{x_1 + x_2 + \dots + x_N}{N}$ (na pamet)
+- $\mathrm{Me}$: srednji podatek urejenega niza (na pamet)
+- enota v razsevnem diagramu je točka $(x_i, y_i)$ (na pamet)
+- korelacijski koeficient je med $-1$ in $1$; blizu $1$ ali $-1$: močna povezanost, blizu $0$: je ni (na pamet)
+
+**Postopek**
+1. Postavi merljivo preiskovalno vprašanje.
+2. Določi populacijo in reprezentativen vzorec.
+3. Zberi podatke in jih uredi v tabelo.
+4. Dve številski spremenljivki prikaži z razsevnim diagramom; pri opisni primerjaj $\bar x$ in $\mathrm{Me}$ skupin.
+5. Opiši povezanost: pozitivna ali negativna, močna ali šibka.
+6. Interpretiraj in navedi omejitve.
+
+**Pazi na**
+- Povezanost ni dokaz vzroka; zapiši »sta povezani«.
+- Sklep velja le za populacijo, ki jo vzorec res predstavlja.
+- Točk v razsevnem diagramu ne povezuj s črto.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Šola ima $600$ dijakov. Ana želi raziskati, ali dijaki šole, ki se v šolo vozijo s kolesom, v povprečju spijo dlje od tistih, ki se vozijo z avtobusom. Anketirala je $40$ dijakov prvih letnikov. Zapiši populacijo in vzorec, navedi obe spremenljivki z njuno vrsto (številska ali opisna) in utemelji, ali je vzorec reprezentativen.
+Šola ima $600$ dijakov. Ana želi raziskati, ali dijaki šole, ki se v šolo vozijo s kolesom, v povprečju spijo dlje od tistih, ki se vozijo z avtobusom. Anketirala je $40$ dijakov prvih letnikov. Zapišite populacijo in vzorec, navedite obe spremenljivki z njuno vrsto (številska ali opisna) in utemeljite, ali je vzorec reprezentativen.
 
 **Rešitev:**
 
@@ -196,7 +214,7 @@ Povezanost je negativna in precej močna: ob vetrovnejših dneh je bilo v povpre
 
 Žan preiskuje vprašanje »Ali dijaki, ki več ur na teden trenirajo šport, v povprečju spijo dlje?« Deset dijakov mu je povedalo, koliko ur na teden trenirajo ($x$) in koliko ur na noč povprečno spijo ($y$):
 
-| dijak | $x$ (h na teden) | $y$ (h na noč) |
+| dijak | $x$ [h] | $y$ [h] |
 |---|---|---|
 | 1 | $2$ | $7{,}0$ |
 | 2 | $0$ | $6{,}5$ |
@@ -209,11 +227,11 @@ Povezanost je negativna in precej močna: ob vetrovnejših dneh je bilo v povpre
 | 9 | $4$ | $7{,}1$ |
 | 10 | $12$ | $8{,}3$ |
 
-a) Kateri prikaz je primeren za te podatke? Uredi podatke po $x$ in opiši vrsto in moč povezanosti med $x$ in $y$. (2 točki)
+a) Kateri prikaz je primeren za te podatke? Uredite podatke po $x$ in opišite vrsto in moč povezanosti med $x$ in $y$. (2 točki)
 
-b) Dijake razdeli v dve skupini: tiste, ki trenirajo največ $4$ ure na teden, in tiste, ki trenirajo več kot $4$ ure. Izračunaj aritmetično sredino $y$ v vsaki skupini in razliko sredin izrazi v minutah. (3 točke)
+b) Dijake razdelite v dve skupini: tiste, ki trenirajo največ $4$ ure na teden, in tiste, ki trenirajo več kot $4$ ure. Izračunajte aritmetično sredino $y$ v vsaki skupini in razliko sredin izrazite v minutah. (3 točke)
 
-c) Odgovori na Žanovo vprašanje in navedi eno omejitev preiskave. Pojasni, zakaj iz podatkov ne smemo skleniti, da trening povzroči daljši spanec. (2 točki)
+c) Odgovorite na Žanovo vprašanje in navedite eno omejitev preiskave. Pojasnite, zakaj iz podatkov ne smemo skleniti, da trening povzroči daljši spanec. (2 točki)
 
 **Rešitev:**
 
@@ -321,7 +339,7 @@ točka: 12; 27
 > Vzorec mora predstavljati populacijo. Člani planinskega krožka gredo v naravo pogosteje, zato je $9{,}2$ ure precenjeno.
 
 ? (brez računala) Na štiri sončne dni so na cvetovih lipe našteli $30$, $34$, $26$ in $30$ čebel, na štiri oblačne $12$, $18$, $14$ in $16$. Za koliko čebel je povprečje sončnih dni večje od povprečja oblačnih?
-= 15
+= 15 | 0
 ~ 60 | Odštel si vsoti ($120 - 60$). Primerjaj sredini: najprej deli vsako vsoto s $4$.
 ~ 2 | To je količnik sredin ($30 : 15$). Vprašanje je, za koliko je večje, torej razlika.
 > $\bar x_{\text{sonce}} = \frac{120}{4} = 30$, $\bar x_{\text{oblačno}} = \frac{60}{4} = 15$, razlika $15$ čebel.

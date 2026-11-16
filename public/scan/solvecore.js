@@ -2226,6 +2226,54 @@ export function solve(text, { goal = null, complex = false } = {}) {
   }
 }
 
+// Korak z oznako operacije (»/ −4«, »/ : 2«): oznaka v zvezku stoji ob vrstici, NA katero jo uporabimo, rezultat pa
+// pod njo (j 14. 11. 2026). Za vsak tak korak vrne to vrstico: zadnjo prejšnjo enačbo ali neenačbo (ne pogoja x ≠ 0,
+// ne seznama »a = 1, b = 0«), sicer nalogo. Velja tudi za korake AI.
+const VRSTICA = /(?:^|[^\\a-zA-Z])(?:=|<|>)|\\(?:le|ge|leq|geq)(?![a-zA-Z])/;
+const NI_VRSTICA = /\\(?:ne|neq|quad|qquad|text|in|notin|Rightarrow|implies)(?![a-zA-Z])|,\\[;:,]|\\begin\{(?:cases|array|aligned)/;
+export function izvorOznak(steps, start) {
+  let prej = start || null;
+  return (steps || []).map((s) => {
+    const from = s?.note ? prej : null;
+    const t = typeof s?.tex === "string" ? s.tex : "";
+    if (VRSTICA.test(t) && !NI_VRSTICA.test(t)) prej = t;
+    return from;
+  });
+}
+
+// Kaj na grafu označimo kot rešitev naloge (j 14. 11. 2026: »povsod, kjer rešitev zahteva interval oz. točko«):
+// neenačba → intervali s številske premice, enačba → ničle ali presečišča (x-koordinate). null: ničesar.
+export function oznakaGrafa(r) {
+  // sistem: rešitev je točka v ravnini (graf jo že kaže), ne vrednosti na osi x (y = 1 ni x = 1)
+  if (!r?.graph || r.kind === "system" || r.graph.vars) return null;
+  const num = (e) => (e == null ? null : typeof e.num === "function" ? e.num() : Number(e.num));
+  if (r.numberLine) {
+    const intervals = (r.numberLine.intervals || [])
+      .map((iv) => (iv.point ? { point: num(iv.point) } : { lo: num(iv.lo), hi: num(iv.hi), loClosed: !!iv.loClosed, hiClosed: !!iv.hiClosed }))
+      .filter((iv) => [iv.point, iv.lo, iv.hi].every((x) => x == null || Number.isFinite(x)));
+    return intervals.length ? { intervals } : null;
+  }
+  let xs = (r.graph.xs || []).filter(Number.isFinite);
+  if (!xs.length && typeof r.answer?.tex === "string" && !r.answer.key) xs = resitveIzTex(r.answer.tex);
+  return xs.length ? { points: xs, curves: (r.graph.exprs || []).length > 1 } : null;
+}
+// »x = 2«, »x_{1} = -3,\quad x_{2} = \frac{1}{2}«, »x = 2{,}5« → števila (drugo, npr. koreni, vrne prazno).
+function resitveIzTex(t) {
+  const out = [];
+  let ime = null;
+  for (const del of t.split(/,\s*\\quad|\\quad|;/)) {
+    const m = /^\s*([a-zA-Z])(?:_\{?\d+\}?)?\s*=\s*(.+?)\s*$/.exec(del);
+    if (!m || (ime && m[1] !== ime)) return [];
+    ime = m[1];
+    const d = m[2].replace(/\{,\}/g, ".").replace(/\s+/g, "");
+    const f = /^(-?)\\[dt]?frac\{(\d+(?:\.\d+)?)\}\{(\d+(?:\.\d+)?)\}$/.exec(d);
+    const v = f ? (f[1] ? -1 : 1) * (Number(f[2]) / Number(f[3])) : /^-?\d+(?:\.\d+)?$/.test(d) ? Number(d) : NaN;
+    if (!Number.isFinite(v)) return [];
+    out.push(v);
+  }
+  return out;
+}
+
 // Za preverjanje AI rešitev (server in vmesnik): ali vrednost reši enačbo?
 export function satisfies(eqText, env) {
   try {

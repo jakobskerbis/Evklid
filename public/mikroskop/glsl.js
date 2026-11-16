@@ -360,7 +360,8 @@ T acinus(vec2 p, float s, float serozni, float seme, float px) {
   t.snov = S_CITO; t.tip = C_ZLEZNA; t.cid = vec2(i, 0.0) + v.id * 7.0;
   t.meja = min(v.rob - rez, 6.283 * rq / n * (0.5 - abs(fract(a * n) - 0.5)));
   float Rb = rq + v.rob;
-  t.cc = c + smer * Rb * 0.6; t.jc = c + smer * Rb * (serozni > 0.5 ? 0.72 : 0.9);
+  // središče celice (TEM: sistem organelov) mora biti v celici stalno; Rb se v vogalih acinusa spreminja s točko
+  t.cc = c + smer * 0.3 * s; t.jc = c + smer * Rb * (serozni > 0.5 ? 0.72 : 0.9);
   float meja = crta(t.meja, 0.18, px);
   if (serozni > 0.5) {
     // bazalno bazofilna (zrnati ER), apikalno eozinofilna zrnca zimogena
@@ -924,7 +925,9 @@ float semVisina(T t, vec2 p, float px) {
     // mikrobi (mikrob v celice.js) imajo v smer.x razdaljo do površine; meja je lahko do vakuole ali jedra
     bool mikr = t.tip == C_BAKTERIJA || t.tip == C_KVASOVKA;
     float dm = mikr ? -t.smer.x : t.meja;
-    float W = t.tip == C_BAKTERIJA ? 0.5 : max(dm + length(p - t.cc), 0.3);
+    // W = polovična širina celice: palička (ovojnica Gram–, t.r1 = 2) 0,31 µm, sicer polmer iz središča (kok, kvasovka …);
+    // z napačnim W je imela palička vzdolžno gubo, kok pa konico na vrhu
+    float W = t.tip == C_BAKTERIJA && t.r1 > 1.5 && t.r1 < 2.5 ? 0.31 : max(dm + length(p - t.cc), 0.3);
     float m = min(max(dm, 0.0), W);
     return -0.9 + 0.3 * sumL(p, 70.0, px) + 0.9 * sqrt(max(m * (2.0 * W - m), 0.0)) + 0.06 * sumL(p, 0.35, px) + zrno;
   } else if (t.meja < 100.0) {

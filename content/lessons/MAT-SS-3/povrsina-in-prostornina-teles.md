@@ -59,22 +59,24 @@ Osemkrat, ker je v prostornini $r^3$ in $2^3 = 8$. Zrno s premerom $4\,\text{cm}
 
 **7. Primerjava v tabeli.** Vsako novo telo se od starega sorodnika razlikuje v eni stvari.
 
-| Telo | Prostornina | Razlika |
-|---|---|---|
-| piramida | $\frac{1}{3}$ prizme | vrh, ne ploskev |
-| stožec | $\frac{1}{3}$ valja | vrh, ne krog |
-| krogla | $\frac{2}{3}$ valja | brez plašča |
+| Telo | Prostornina |
+|---|---|
+| piramida | $\frac{1}{3}$ prizme |
+| stožec | $\frac{1}{3}$ valja |
+| krogla | $\frac{2}{3}$ valja |
 
-Pri piramidi in stožcu primerjava velja le pri isti osnovni ploskvi in isti višini. Kroglo primerjamo z valjem, ki ima enak polmer in višino $v = 2r$.
+Piramida ima zgoraj vrh namesto ploskve, stožec vrh namesto kroga, krogla pa nima plašča. Pri piramidi in stožcu primerjava velja le pri isti osnovni ploskvi in isti višini. Kroglo primerjamo z valjem, ki ima enak polmer in višino $v = 2r$.
 
 **8. Koti v telesih.** Naloga pogosto ne da višine, ampak kot, na primer naklon strehe. Takrat v telesu poiščemo pravokotni trikotnik in uporabimo kotne funkcije. Kot med premico in ravnino poznaš iz lekcije o premicah in ravninah v prostoru: je kot med premico in njeno pravokotno projekcijo.
 
 Pri pravilni štiristrani piramidi z osnovnim robom $a$ pade višina $v$ v središče kvadrata. Od tam vodita po osnovni ploskvi dve pomembni daljici: do sredine roba in do oglišča. Vsaka je kateta pravokotnega trikotnika, katerega druga kateta je $v$:
 
-| kateta v osnovni ploskvi | hipotenuza | kot ob osnovni ploskvi |
+| kateta | hipotenuza | kot |
 |---|---|---|
-| $\frac{a}{2}$ (do sredine roba) | $v_s$ | $\alpha$: naklon stranske ploskve |
-| $\frac{a\sqrt{2}}{2}$ (do oglišča) | stranski rob $l$ | $\varphi$: naklon stranskega roba |
+| $\frac{a}{2}$ | $v_s$ | $\alpha$ |
+| $\frac{a\sqrt{2}}{2}$ | $l$ | $\varphi$ |
+
+Kateta $\frac{a}{2}$ seže do sredine roba, $\frac{a\sqrt{2}}{2}$ do oglišča, $l$ je stranski rob. Kot ob osnovni ploskvi je v prvem trikotniku naklon stranske ploskve $\alpha$, v drugem naklon stranskega roba $\varphi$.
 
 Naklon stranske ploskve je kot med dvema ravninama. Merimo ga med daljicama, ki sta obe pravokotni na skupni osnovni rob: v osnovni ploskvi je to $\frac{a}{2}$, v stranski ploskvi $v_s$. Zato v njem nastopa $v_s$, ne stranski rob. Iz tabele preberemo $\tan\alpha = \frac{2v}{a}$ in $\tan\varphi = \frac{2v}{a\sqrt{2}}$. Ker je polovica diagonale daljša od polovice roba, je stranski rob vedno položnejši od stranske ploskve: $\varphi < \alpha$.
 
@@ -216,11 +218,33 @@ Opazi: rob je položnejši od ploskve ($50{,}8^\circ < 60^\circ$), ker je njegov
 - Pri sestavljenih telesih računaj posebej vsak del in pazi, katere ploskve so res zunaj.
 - Kote v telesih računaš v pravokotnih trikotnikih z višino: naklon stranske ploskve s $\frac{a}{2}$ in $v_s$, naklon stranskega roba s polovico diagonale, naklon stranice stožca z $r$ in $s$.
 
+## Ponovitev
+
+**Formule**
+- prizma: $P = 2S + S_p$, $V = S\,v$ (na pamet)
+- piramida: $P = S + S_p$, $V = \dfrac{S\,v}{3}$ (na pamet)
+- valj: $P = 2\pi r(r+v)$, $V = \pi r^2 v$ (na pamet)
+- stožec: $P = \pi r(r+s)$, $V = \dfrac{\pi r^2 v}{3}$ (na pamet)
+- stožec: $s = \sqrt{r^2+v^2}$ (na pamet)
+- krogla: $P = 4\pi r^2$, $V = \dfrac{4\pi r^3}{3}$ (priloga)
+
+**Postopek**
+1. Skiciraj telo in označi dane količine.
+2. Manjkajočo višino ali stranico ($s$, $v_s$) izračunaj s Pitagorovim izrekom v pravokotnem trikotniku.
+3. Izračunaj ploščino osnovne ploskve in plašča.
+4. Vstavi v formulo; pri sestavljenem telesu računaj vsak del posebej.
+5. Pri površini seštej le ploskve, ki so res zunaj.
+
+**Pazi na**
+- Pri piramidi in stožcu deli s $3$.
+- Plašč stožca je $\pi r s$ s stranico $s$, ne z višino $v$.
+- Premer najprej razpolovi, šele nato vstavi $r$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Valj ima višino enako premeru osnovne ploskve in prostornino $54\pi\,\text{cm}^3$. Izračunaj njegovo površino.
+Valj ima višino enako premeru osnovne ploskve in prostornino $54\pi\,\text{cm}^3$. Izračunajte njegovo površino.
 
 **Rešitev:**
 
@@ -235,10 +259,10 @@ Valj ima višino enako premeru osnovne ploskve in prostornino $54\pi\,\text{cm}^
 
 Silos ima obliko valja s premerom $4\,\text{m}$ in višino $9\,\text{m}$. Pokriva ga streha v obliki stožca z enako osnovno ploskvijo kot valj. Stranica strehe oklepa z ravnino osnovne ploskve kot $35^\circ$.
 
-a) Izračunaj višino strehe in dolžino njene stranice. Zaokroži na centimeter. (2 točki)
-b) Izračunaj prostornino celotnega silosa. Zaokroži na desetinko $\text{m}^3$. (2 točki)
-c) S pločevino prekrijemo plašč valja in streho, dno je betonsko. Koliko $\text{m}^2$ pločevine potrebujemo? Zaokroži navzgor na cel $\text{m}^2$. (2 točki)
-d) Valjasti del silosa je do vrha napolnjen z žitom z gostoto $750\,\text{kg/m}^3$. Koliko ton žita je v silosu? Zaokroži na desetinko tone. (1 točka)
+a) Izračunajte višino strehe in dolžino njene stranice. Zaokrožite na centimeter. (2 točki)
+b) Izračunajte prostornino celotnega silosa. Zaokrožite na desetinko $\text{m}^3$. (2 točki)
+c) S pločevino prekrijemo plašč valja in streho, dno je betonsko. Koliko $\text{m}^2$ pločevine potrebujemo? Zaokrožite navzgor na cel $\text{m}^2$. (2 točki)
+d) Valjasti del silosa je do vrha napolnjen z žitom z gostoto $750\,\text{kg/m}^3$. Koliko ton žita je v silosu? Zaokrožite na desetinko tone. (1 točka)
 
 **Rešitev:**
 
@@ -257,10 +281,10 @@ d) Valjasti del silosa je do vrha napolnjen z žitom z gostoto $750\,\text{kg/m}
 
 Pokončni stožec ima polmer osnovne ploskve $r = 6\,\text{cm}$ in višino $v = 8\,\text{cm}$.
 
-a) Izračunaj površino in prostornino stožca. (2 točki)
-b) V stožec včrtamo kroglo, ki se dotika osnovne ploskve in plašča. Opiši osni prerez, utemelji, kje leži središče krogle, in izračunaj njen polmer $\rho$. (4 točke)
+a) Izračunajte površino in prostornino stožca. (2 točki)
+b) V stožec včrtamo kroglo, ki se dotika osnovne ploskve in plašča. Opišite osni prerez, utemeljite, kje leži središče krogle, in izračunajte njen polmer $\rho$. (4 točke)
 c) Kolikšen delež prostornine stožca zavzame krogla? (2 točki)
-d) Vrh stožca premaknemo vzporedno z osnovno ploskvijo, tako da nastane poševni stožec z isto osnovno ploskvijo in isto višino. Kolikšna je njegova prostornina? Utemelji s Cavalierijevim načelom. (2 točki)
+d) Vrh stožca premaknemo vzporedno z osnovno ploskvijo, tako da nastane poševni stožec z isto osnovno ploskvijo in isto višino. Kolikšna je njegova prostornina? Utemeljite s Cavalierijevim načelom. (2 točki)
 
 **Rešitev:**
 

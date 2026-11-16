@@ -1,6 +1,7 @@
 // Evklid – odjemalec (brez ogrodja).
 import { fetchThroughRestart as fetchRetry } from "./restart-retry.js";
 import { jsonAliNic } from "./odgovor.js";
+import { zadrziFokus } from "./fokus-okna.js";
 import { attachPad, closePad, openPad, padIsSheet } from "./pad.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
@@ -12,6 +13,7 @@ import { dialectsFor } from "./dialects.js";
 
 hydrateIcons();
 import { initAccount, prefetchAccountStatus, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { povabiPoUspehu } from "./povabi.js";
 import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
@@ -222,9 +224,22 @@ const topicSubject = (tp) => tp?.subject || (/^UNI-/.test(tp?.id || "") ? null :
 const topicGlossary = () => (currentView === "topic" && state.topicFx ? state.topic?.symbols : null);
 // Ime teme in sklopa: dvoumna črka dobi pomen iz slovarja le, če se tema ujema (x₁ je ničla le pri kvadratni enačbi).
 const topicScope = (tp) => (tp ? [tp.name, tp.unit].filter(Boolean).join(" · ") : "");
+// Naloga v seriji iz več tem (ponavljanje, dnevni izziv, tekmovanje): tema in predmet naloge sama (task.topicId),
+// ne zadnje odprte teme; sicer bi bil P pri verjetnosti spet »površina« (pregled 463-2, §5.6).
+let taskFx = null; // { view, scope, subject }
+const taskFxNow = () => (taskFx && currentView !== "topic" && currentView === taskFx.view ? taskFx : null);
+function setTaskFx(task) {
+  if (!task?.topicId) return (taskFx = null);
+  const tp = topicCache.get(task.topicId);
+  taskFx = {
+    view: currentView,
+    scope: tp ? topicScope(tp) : task.topicName || "",
+    subject: topicSubject(tp || { id: task.topicId }) || null,
+  };
+}
 setFormulaSubject(
-  () => subjectWithGlossary(topicSubject(state.topic) || state.student?.settings?.subject || "MAT", topicGlossary()),
-  () => (currentView === "topic" ? topicScope(state.topic) : ""),
+  () => subjectWithGlossary(taskFxNow()?.subject || topicSubject(state.topic) || state.student?.settings?.subject || "MAT", topicGlossary()),
+  () => (currentView === "topic" ? topicScope(state.topic) : taskFxNow()?.scope || ""),
 );
 // Razlaga teme in »Bistvo«: črke imajo pomen iz lekcije te teme (:::simboli), sicer iz slovarja predmeta.
 const topicRich = (tp, text) => withFormulaSubject(topicSubject(tp) || state.student?.settings?.subject || "MAT", () => renderRich(text), tp?.symbols, topicScope(tp));
@@ -1946,6 +1961,7 @@ const RELOADED = "evklid.osvezeno";
 async function reloadIfNewer(once = false) {
   const busy = () => state.contestTimer || unsentText();
   if (!appVersion || busy()) return;
+  const shot = shotMod ? null : loadShot(); // vzporedno s klicem različice (posnetek ob pagehide)
   const v = await serverVersion();
   // Med klicem je lahko začel pisati (B4).
   if (!v || v === appVersion || busy()) return;
@@ -1955,11 +1971,16 @@ async function reloadIfNewer(once = false) {
     return; // brez sessionStorage ne tvegamo zanke
   }
   if (pageApp) await dropStaleCopies(v);
+  // Posnetek tega zaslona se zapiše ob pagehide (saveSnapshot): modul mora biti že naložen (največ 1,5 s čakanja).
+  if (!shotMod && shot) await Promise.race([shot, new Promise((ok) => setTimeout(ok, 1500))]);
   if (busy()) return;
   // Brez reg.update(): osvežitev sama preveri sw.js; klic med že tekočo namestitvijo je v Chromiumu zataknil novi
   // service worker ali izgubil osvežitev (pregled B2 P2-4).
   try {
     if (once) sessionStorage.setItem(RELOADED, v); // šele tik pred osvežitvijo
+    // Nova stran ob tej osvežitvi pokaže posnetek tega zaslona, čeprav je iz prejšnje različice (public/zacetek.js
+    // PRENOS): sicer se je po vsaki objavi zaslon izpraznil v okostje in nato izrisal znova (j 16. 11. 2026, utripanje).
+    sessionStorage.setItem(ZACETEK?.PRENOS || "evklid.posnetek-prenos", "1");
   } catch {}
   location.reload();
 }
@@ -2921,16 +2942,22 @@ document.querySelectorAll("#modebar [data-mode]").forEach((b) =>
   }),
 );
 
+const pathsCache = new Map(); // /api/paths?… -> seznam poti (javni podatki, enaki za vse)
 async function loadPath(key = state.pathKey) {
   // Šola (OŠ/SŠ): učna pot je vedno za razred/letnik iz profila; nižje razrede ima Učbenik (j, 1. 11.).
   // Fakulteta: izbira med predmeti študijskega programa ostane.
   const uni = isUni(state.student.settings);
   const q = uni && key ? `?key=${encodeURIComponent(key)}` : "";
-  const p = await api(`/api/students/${state.student.id}/path${q}`);
-  const content = $("#path-content");
-  if (uni) await loadPrograms(api);
   const sys = state.student.settings.school_system || "SI";
-  const paths = await api(uni ? `/api/paths?program=${encodeURIComponent(state.student.settings.study_program)}` : `/api/paths?subject=${state.student.settings.subject}&system=${encodeURIComponent(sys)}`);
+  // Učna pot, seznam poti in programi hkrati (prej drug za drugim: trije čakanji na strežnik ob vsakem odprtju
+  // domačega zaslona); seznam poti je enak za vse in se v seji ne spremeni (j, 15. 11. 2026: »vse takoj«).
+  const pathsUrl = uni ? `/api/paths?program=${encodeURIComponent(state.student.settings.study_program)}` : `/api/paths?subject=${state.student.settings.subject}&system=${encodeURIComponent(sys)}`;
+  const [p, , paths] = await Promise.all([
+    api(`/api/students/${state.student.id}/path${q}`),
+    uni ? loadPrograms(api) : null,
+    pathsCache.get(pathsUrl) || api(pathsUrl).then((list) => (Array.isArray(list) && pathsCache.set(pathsUrl, list), list)),
+  ]);
+  const content = $("#path-content");
   const pathName = (x) => escapeHtml(x.label.replace(/ \((?:UL|UM|UP|UNG) [A-Z]+\)$/, ""));
   const opt = (x) => `<option value="${x.key}" ${x.key === p.key ? "selected" : ""}>${pathName(x)}${uni && x.key === p.defaultKey ? t("path.mySubject") : ""}</option>`;
   const own = uni ? null : paths.find((x) => x.key === p.key);
@@ -3427,6 +3454,7 @@ function choiceHtml(task, o, fx = true) {
 }
 
 function renderTask(task, ctx) {
+  setTaskFx(task);
   showSideExplanation(task, ctx);
   const box = $("#practice");
   // Tekmovalna imena težavnosti (težja, zahtevna, izziv) samo pri slovenskih tekmovanjih, ne pri izpitih.
@@ -3445,10 +3473,10 @@ function renderTask(task, ctx) {
     const ph =
       task.inputHint ||
       (task.answerType === "coefficients" ? t("task.phCoef") : task.unit ? t("task.phUnit", { unit: task.unit }) : t("task.phResult"));
-    input = `<form class="answer-row"><input id="answer" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
+    input = `<form class="answer-row"><input id="answer" aria-label="${escapeHtml(t("games.yourAnswer"))}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
   }
   const calcBtn = ["contest", "placement", "pretest"].includes(ctx.mode) ? "" : `<button type="button" class="ghost task-calc icon-only" title="${escapeHtml(t("nav.graph"))}" aria-label="${escapeHtml(t("nav.graph"))}">${icon("calculator")}</button>`;
-  const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span></div>` : "";
+  const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span>${ctx.total ? `<span class="contest-count">${ctx.index} / ${ctx.total}</span>` : ""}</div>` : "";
   const penalty = ctx.mode === "contest" && task.penalty ? `<span class="pts neg">${t("exam.penaltyPts", { n: String(task.penalty).replace("-", "−") })}</span>` : "";
   const hintLadder = task.hintSteps > 0 && !["contest", "placement", "pretest"].includes(ctx.mode);
   const pretestHead =
@@ -3566,7 +3594,7 @@ function workHtml() {
   return `<div class="work">
     <button type="button" class="work-toggle" aria-expanded="false">${icon("notebook-pen")}<span>${t("task.work")}</span>${icon("chevron-down")}</button>
     <div class="work-body" hidden>
-      <textarea class="work-text" rows="3" spellcheck="false" placeholder="${escapeHtml(t("task.workPh"))}"></textarea>
+      <textarea class="work-text" rows="3" spellcheck="false" aria-label="${escapeHtml(t("task.work"))}" placeholder="${escapeHtml(t("task.workPh"))}"></textarea>
       <button type="button" class="ghost small icon-only work-sym" aria-pressed="false" title="${escapeHtml(t("chat.symbols"))}" aria-label="${escapeHtml(t("chat.symbols"))}">${icon("sigma")}</button>
     </div>
   </div>`;
@@ -3749,6 +3777,7 @@ async function checkTask(task, ctx, value) {
       html += `<div class="card result ${p.passed ? "celebrate" : ""}">${p.passed ? `<div class="result-icon">${icon("award")}</div>` : ""}<h2>${p.passed ? t("placement.passed") : t("placement.notYet")}</h2>
         <p>${t("placement.score", { correct: p.correct, total: p.total })}${p.passed ? (p.xp ? ` +${p.xp.gained} XP` : "") : t("placement.startFirst")}</p>${r.unlocked ? unlockedHtml(r.unlocked) : ""}
         <button class="primary big" id="fb-back">${t("result.toPath")}</button></div>`;
+      if (p.passed) html += `<div class="povabi-slot"></div>`;
     } else html += next();
   } else if (r.closed) {
     html = `<div class="fb ${r.correct ? "ok" : "bad"}">${icon(r.correct ? "circle-check" : "circle-x")}<span>${r.correct ? t("task.correct") : t("task.wrong")}</span></div>${closedNote}
@@ -3763,6 +3792,8 @@ async function checkTask(task, ctx, value) {
       ${r.selfExplain ? `<div class="fb info">${icon("circle-help")}<span>${escapeHtml(r.selfExplain)}</span></div>` : ""}
       ${r.offline ? "" : tutorRow(task.id)}`;
     html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next();
+    // Osvojena tema: povabilo po končani nalogi; med serijo (trening, priprava na test) šele, ko je serija končana.
+    if (r.mastered && !r.offline && (ctx.mode === "practice" || r.next?.finished)) html += `<div class="povabi-slot"></div>`;
   } else {
     html = `<div class="fb bad shake">${icon("circle-x")}<span>${escapeHtml(fbText(r) || t("task.wrong"))}</span></div>
       ${mistakeHtml(r.mistake)}
@@ -3779,6 +3810,8 @@ async function checkTask(task, ctx, value) {
     }
   }
   fb.innerHTML = html;
+  const sid = state.student?.id;
+  if (accountsOn()) povabiPoUspehu(fb.querySelector(".povabi-slot"), { api, profileId: sid, toast, alive: () => state.student?.id === sid });
   // Nov XP (pravilno, opravljen preizkus znanja, konec treninga): zgornji znesek se animira, ob novi ravni čestitka.
   if (!r.offline && (r.correct || r.xp || r.placement?.xp || r.next?.xp)) refreshXp();
   // Ko je naloga zaključena, plošča izgine, da sta razlaga in gumb »Naprej« vidna.
@@ -4272,6 +4305,7 @@ function startContestTimer(sessionId, deadline) {
   const tick = () => {
     const el = $("#contest-timer");
     const ms = deadline - Date.now();
+    if (!el?.offsetParent) glavaMedTestom(false);
     if (el) {
       el.querySelector("b").textContent = leftText(deadline);
       el.classList.toggle("warn", ms <= 300000);
@@ -4292,6 +4326,54 @@ function leftText(deadline) {
 function stopContestTimer() {
   if (state.contestTimer) clearInterval(state.contestTimer);
   state.contestTimer = null;
+  glavaMedTestom(false);
+}
+
+// Med testom na telefonu (j 2026-11-15): pomik navzdol skrije zgornjo vrstico (timer se pripne na njeno mesto),
+// pomik navzgor ali vrh strani jo vrne. Samo v pogledu, ki ima timer; competition.css → body.glava-skrita.
+// Skrita vrstica podaljša pogled; brskalnik ob dnu zato sam zmanjša scrollTop. Da to ni videti kot pomik navzgor
+// (utripanje), po vsakem preklopu 300 ms ne beremo pomika, ob dnu ga ne štejemo za »gor«, kratke naloge pa glave ne skrijejo.
+let glavaZaklep = 0;
+function glavaMedTestom(skrij) {
+  const bar = document.querySelector(".topbar");
+  const zdaj = document.body.classList.contains("glava-skrita");
+  if (!!skrij === zdaj) return;
+  if (skrij && bar) document.body.style.setProperty("--glava-h", `${bar.offsetHeight}px`);
+  document.body.classList.toggle("glava-skrita", !!skrij);
+  glavaZaklep = skrij ? Date.now() + 300 : 0;
+}
+{
+  const zadnji = new WeakMap();
+  document.addEventListener(
+    "scroll",
+    (e) => {
+      const box = e.target;
+      if (!(box instanceof Element) || !box.querySelector("#contest-timer")) return;
+      const y = box.scrollTop;
+      if (Date.now() < glavaZaklep || !zadnji.has(box)) return void zadnji.set(box, y);
+      const prej = zadnji.get(box);
+      const max = box.scrollHeight - box.clientHeight;
+      const glavaH = parseFloat(document.body.style.getPropertyValue("--glava-h")) || 64;
+      const skrita = document.body.classList.contains("glava-skrita");
+      if (y < 0 || y > max) return; // odboj na robu (iPhone)
+      if (y < 12) glavaMedTestom(false);
+      else if (y > prej + 6) {
+        if (!skrita && max > (document.querySelector(".topbar")?.offsetHeight || 64) + 120) glavaMedTestom(true);
+      } else if (y < prej - 6) {
+        if (y < max - glavaH) glavaMedTestom(false);
+      } else return;
+      zadnji.set(box, Date.now() < glavaZaklep ? box.scrollTop : y);
+    },
+    { capture: true, passive: true },
+  );
+  // Samo sprememba širine (obrat, drugo okno); višino spreminja tudi naslovna vrstica brskalnika med pomikom.
+  let sirina = innerWidth;
+  const pokazi = () => {
+    if (innerWidth !== sirina) glavaMedTestom(false);
+    sirina = innerWidth;
+  };
+  addEventListener("resize", pokazi, { passive: true });
+  addEventListener("orientationchange", pokazi);
 }
 
 function showContestResult(c, timeUp = false) {
@@ -4448,8 +4530,10 @@ function startTour() {
     box.querySelector('[data-tour="back"]').hidden = i === 0;
     box.querySelector('[data-tour="next"]').focus({ preventScroll: true });
   };
+  let sprosti = null;
   const end = () => {
     box.hidden = true;
+    sprosti?.();
     startTour.end = null;
     document.removeEventListener("keydown", onKey);
     try {
@@ -4476,6 +4560,7 @@ function startTour() {
   document.addEventListener("keydown", onKey);
   startTour.end = end;
   box.hidden = false;
+  sprosti = zadrziFokus(box, { zacetni: box.querySelector('[data-tour="next"]') });
   show();
 }
 // Vsak profil vidi vodič enkrat, ob prvi uporabi (tudi star profil, ki je videl le kratek ogled).
@@ -4713,11 +4798,14 @@ function showGraph() {
   return setCalcMode(calcMode);
 }
 /** Odpre kalkulator čez cel zaslon. mode: "sci" | "graph" | "units"; exprs: izrazi za graf. */
+let calcFokus = null; // sprosti() fokusa v oknu kalkulatorja (fokus-okna.js)
 async function openCalcOverlay({ mode = calcMode, exprs = [], backLabel = t("nav.back") } = {}) {
   $("#graph-close-label").textContent = backLabel;
   $("#graph-close").setAttribute("aria-label", backLabel);
-  if ($("#graph-overlay").hidden) overlayOpened();
+  const zaprt = $("#graph-overlay").hidden;
+  if (zaprt) overlayOpened();
   $("#graph-overlay").hidden = false;
+  if (zaprt) calcFokus = zadrziFokus($("#graph-overlay"), { zacetni: $("#graph-close") });
   document.body.classList.add("graph-open");
   const tool = await setCalcMode(mode);
   if (mode === "graph" && exprs.length) tool.show(exprs);
@@ -4729,6 +4817,8 @@ function closeCalcOverlay({ fromBack = false } = {}) {
   if (!calcOverlayOpen()) return;
   if (!fromBack) overlayClosed();
   $("#graph-overlay").hidden = true;
+  calcFokus?.();
+  calcFokus = null;
   document.body.classList.remove("graph-open");
   hideKeyboard();
   $("#graph-overlay-body").replaceChildren();

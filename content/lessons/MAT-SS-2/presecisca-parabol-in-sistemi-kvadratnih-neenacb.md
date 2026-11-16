@@ -40,11 +40,9 @@ To je kvadratna enačba. Število njenih rešitev pove njena diskriminanta
 
 $$D = (b - k)^2 - 4a(c - n)$$
 
-| $D$ | presečišča | premica je |
-|---|---|---|
-| $D > 0$ | dve | sekanta |
-| $D = 0$ | eno (dotikališče) | tangenta |
-| $D < 0$ | nobenega | mimobežnica |
+- $D > 0$: dve presečišči, premica je sekanta;
+- $D = 0$: eno presečišče (dotikališče), premica je tangenta;
+- $D < 0$: nobenega presečišča, premica je mimobežnica.
 
 Pri Lari je $a = -0{,}1$, $b - k = 1{,}5$ in $c - n = 0$, zato je $D = 1{,}5^2 - 0 = 2{,}25 > 0$ in pobočje je sekanta parabole. Za vsako absciso izračunamo še ordinato, ker je presečišče točka, ne število.
 
@@ -204,11 +202,32 @@ $x \in (-2, 0]$. Del $[4, \infty)$ ne seka intervala $(-2, 3)$. Število $0$ je 
 - Ničle parabole so le presečišča z osjo $x$.
 - (višja raven) Sistem kvadratnih neenačb: reši vsako neenačbo posebej (skica parabole), rešitve nariši na isto številsko premico in vzemi presek. Krajišča vključi samo, če ju vključita obe neenačbi.
 
+## Ponovitev
+
+**Formule**
+- Presečišča: $f(x) = g(x)$ (na pamet)
+- S premico $y = kx + n$: $ax^2 + (b - k)x + (c - n) = 0$ (na pamet)
+- $D = (b - k)^2 - 4a(c - n)$ (na pamet)
+- $D > 0$ sekanta, $D = 0$ tangenta, $D < 0$ mimobežnica (na pamet)
+
+**Postopek**
+1. Izenači $f(x) = g(x)$ in vse prenesi na eno stran.
+2. Reši enačbo; pri enakem $a$ je linearna.
+3. Ordinato izračunaj iz preprostejše funkcije in jo preveri na drugi.
+4. Presečišča zapiši kot točke $(x, y)$.
+5. Za lego premice izračunaj $D$: sekanta, tangenta ali mimobežnica.
+6. (višja raven) Sistem neenačb: reši vsako s skico parabole in vzemi presek.
+
+**Pazi na**
+- Ničle so le presečišča z osjo $x$; za drug graf izenači $f(x) = g(x)$.
+- $D$ izračunaj šele po prenosu na eno stran, ne iz parabole same.
+- Presečišče je točka: izračunaj še ordinato.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izračunaj koordinati presečišč parabole $y = 2x^2 + x - 3$ in premice $y = 3x + 1$.
+Izračunajte koordinati presečišč parabole $y = 2x^2 + x - 3$ in premice $y = 3x + 1$.
 
 **Rešitev:**
 
@@ -223,10 +242,10 @@ Izračunaj koordinati presečišč parabole $y = 2x^2 + x - 3$ in premice $y = 3
 
 Dani sta funkciji $f(x) = x^2 - 4x + 3$ in $g(x) = -x^2 + 2x + 3$.
 
-a) Izračunaj presečišči grafov funkcij $f$ in $g$. (2 točki)
-b) V istem koordinatnem sistemu nariši grafa obeh funkcij. Označi ničle in temeni. (2 točki)
-c) Z grafa preberi, za katere $x$ leži graf funkcije $f$ pod grafom funkcije $g$. (1 točka)
-d) Določi število $n$ tako, da bo premica $y = 4x + n$ tangenta grafa funkcije $f$, in izračunaj dotikališče. (2 točki)
+a) Izračunajte presečišči grafov funkcij $f$ in $g$. (2 točki)
+b) V istem koordinatnem sistemu narišite grafa obeh funkcij. Označite ničle in temeni. (2 točki)
+c) Z grafa preberite, za katere $x$ leži graf funkcije $f$ pod grafom funkcije $g$. (1 točka)
+d) Določite število $n$ tako, da bo premica $y = 4x + n$ tangenta grafa funkcije $f$, in izračunajte dotikališče. (2 točki)
 
 **Rešitev:**
 
@@ -245,10 +264,10 @@ d) Določi število $n$ tako, da bo premica $y = 4x + n$ tangenta grafa funkcije
 
 Dani sta funkciji $f(x) = x^2 - 4$ in $g(x) = -x^2 + 2x + 8$.
 
-a) Izračunaj presečišči grafov funkcij $f$ in $g$. (2 točki)
-b) V istem koordinatnem sistemu nariši grafa obeh funkcij. Označi ničle, temeni in presečišči. (2 točki)
-c) Reši sistem neenačb $f(x) < 0$ in $g(x) \ge 5$. (3 točke)
-d) Poišči vse $x$, za katere velja $0 \le f(x) \le g(x)$, in rezultat pojasni z grafom. (3 točke)
+a) Izračunajte presečišči grafov funkcij $f$ in $g$. (2 točki)
+b) V istem koordinatnem sistemu narišite grafa obeh funkcij. Označite ničle, temeni in presečišči. (2 točki)
+c) Rešite sistem neenačb $f(x) < 0$ in $g(x) \ge 5$. (3 točke)
+d) Poiščite vse $x$, za katere velja $0 \le f(x) \le g(x)$, in rezultat pojasnite z grafom. (3 točke)
 
 **Rešitev:**
 
@@ -340,7 +359,7 @@ točka: 3 | 3
 > Enačba $x^2 - x - 2 = 0$ ima $D = 9 > 0$, zato je $y = x + 2$ sekanta (presečišči $(-1, 1)$ in $(2, 4)$). Ostale tri so tangente.
 
 ? (brez računala) Parabola $y = x^2 - 3x + 1$ in premica $y = 2x - 3$ se sekata v dveh točkah. Vpiši ordinato tiste, ki ima večjo absciso.
-= 5
+= 5 | 0
 ~ 4 | To je abscisa $x = 4$. Presečišče je točka: ordinato dobiš z vstavljanjem v enačbo premice, $2 \cdot 4 - 3 = 5$.
 ~ -1 | To je ordinata presečišča z manjšo absciso, $x = 1$.
 > Enačba $x^2 - 5x + 4 = 0$ ima rešitvi $1$ in $4$. Pri $x = 4$ je $y = 2 \cdot 4 - 3 = 5$; preverba na paraboli: $16 - 12 + 1 = 5$.
@@ -355,7 +374,7 @@ f: x^2 | modra
 f: 2*x + n | oranžna
 podnapis: Parabola y = x² in premica y = 2x + n pri n = {n}
 :::
-= -1
+= -1 | 0
 ~ 1 | Pri prenašanju si zamenjal predznak. Enačba je $x^2 - 2x - n = 0$, zato je $D = 4 + 4n$.
 ~ 0 | Pri $n = 0$ ima premica s parabolo še dve skupni točki, $(0, 0)$ in $(2, 4)$.
 > Enačba $x^2 = 2x + n$ oziroma $x^2 - 2x - n = 0$ ima $D = 4 + 4n$. Presečišči se zlijeta pri $D = 0$, torej $n = -1$; tedaj je premica tangenta z dotikališčem $(1, 1)$.

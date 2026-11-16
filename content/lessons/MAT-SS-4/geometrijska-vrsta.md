@@ -15,9 +15,9 @@ Napako razkrije **geometrijska vrsta**: vsota neskončno mnogo členov je lahko 
 
 **Najprej en primer do konca.** Recimo, da Ahil teče s hitrostjo $10\,\mathrm{m/s}$, želva pa s hitrostjo $1\,\mathrm{m/s}$ (za želvo zelo velikodušno). Želva ima $100\,\mathrm{m}$ prednosti. Medtem ko Ahil preteče $100\,\mathrm{m}$, želva prehodi $10\,\mathrm{m}$. Ko Ahil preteče še teh $10\,\mathrm{m}$, je želva $1\,\mathrm{m}$ naprej.
 
-Vsak naslednji odsek je desetina prejšnjega. Ahilovi odseki so torej geometrijsko zaporedje s prvim členom $a_1 = 100\,\mathrm{m}$ in količnikom $q = \frac{1}{10}$. Seštevajmo jih enega za drugim:
+Vsak naslednji odsek je desetina prejšnjega. Ahilovi odseki so torej geometrijsko zaporedje s prvim členom $a_1 = 100\,\mathrm{m}$ in količnikom $q = \frac{1}{10}$. Seštevajmo jih enega za drugim ($a_n$ je $n$-ti odsek, $S_n$ skupna pot po $n$ odsekih):
 
-| odsekov $n$ | dodani odsek [m] | skupna pot $S_n$ [m] |
+| $n$ | $a_n$ [m] | $S_n$ [m] |
 |---|---|---|
 | 1 | 100 | 100 |
 | 2 | 10 | 110 |
@@ -168,11 +168,30 @@ $S = \dfrac{0{,}36}{0{,}99} = \dfrac{36}{99} = \dfrac{4}{11}$. Preizkus: $4 : 11
 - Negativen $q$: delne vsote skačejo okoli vsote. Pri $1 - q$ pazi na predznak.
 - Uporaba: Zenonov paradoks, pot odbijajoče se žoge, periodična decimalna števila kot ulomki.
 
+## Ponovitev
+
+**Formule**
+- $q = \frac{a_2}{a_1}$ (na pamet)
+- $S_n = a_1 \cdot \frac{q^n - 1}{q - 1}$, $q \ne 1$ (priloga)
+- Konvergenca natanko pri $|q| < 1$ (na pamet)
+- $S = \frac{a_1}{1 - q}$ pri $|q| < 1$ (na pamet)
+
+**Postopek**
+1. Zapiši vrsto; pri žogi najprej nariši pot.
+2. Določi $a_1$ in $q = \frac{a_2}{a_1}$.
+3. Preveri $|q| < 1$; sicer vrsta divergira.
+4. Izračunaj $S = \frac{a_1}{1 - q}$ in ulomek okrajšaj.
+
+**Pazi na**
+- Formulo $S = \frac{a_1}{1 - q}$ uporabi le pri $|q| < 1$.
+- Negativen $q$ vstavi v oklepaju: pri $q = -\frac{1}{2}$ je $1 - q = \frac{3}{2}$.
+- Žoga vsako višino po odboju prepotuje dvakrat.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Periodično decimalno število $1{,}2\overline{7}$ zapiši z vsoto geometrijske vrste in ga nato zapiši z okrajšanim ulomkom.
+Periodično decimalno število $1{,}2\overline{7}$ zapišite z vsoto geometrijske vrste in ga nato zapišite z okrajšanim ulomkom.
 
 **Rešitev:**
 
@@ -188,9 +207,9 @@ Periodično decimalno število $1{,}2\overline{7}$ zapiši z vsoto geometrijske 
 Dana je vrsta $3 + 3(x - 2) + 3(x - 2)^2 + 3(x - 2)^3 + \ldots$, kjer je $x$ realno število.
 
 a) Za katera realna števila $x$ vrsta konvergira? (2 točki)
-b) Izračunaj vsoto vrste pri $x = \dfrac{3}{2}$. (2 točki)
+b) Izračunajte vsoto vrste pri $x = \dfrac{3}{2}$. (2 točki)
 c) Za kateri $x$ je vsota vrste enaka $4$? (2 točki)
-d) Ali obstaja tak $x$, da je vsota vrste enaka $1$? Utemelji. (2 točki)
+d) Ali obstaja tak $x$, da je vsota vrste enaka $1$? Utemeljite. (2 točki)
 
 **Rešitev:**
 

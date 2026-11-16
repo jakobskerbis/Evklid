@@ -41,7 +41,7 @@ V simulaciji spodaj »Potenčne funkcije s celim eksponentom« zamenjaj eksponen
 
 $$x^{-n} = \frac{1}{x^n}$$
 
-Deliti z $0$ ne smemo, zato je $D_f = \mathbb{R} \setminus \{0\}$. Ko je $x$ blizu $0$, je $x^n$ po absolutni vrednosti zelo majhen, ulomek pa zelo velik: graf se ob osi $y$ dviga (pri lihem $n$ levo od nje spušča) čez vse meje. Ko se $x$ oddaljuje od $0$, gre vrednost proti $0$. Graf je **hiperbola** z dvema vejama. Premici, ki se jima veji poljubno približata, sta **asimptoti**: tukaj os $x$ ($y = 0$) in os $y$ ($x = 0$).
+Deliti z $0$ ne smemo, zato je $D_f = \mathbb{R} \setminus \{0\}$. Ko je $x$ blizu $0$, je $x^n$ po absolutni vrednosti zelo majhen, ulomek pa zelo velik: graf se ob osi $y$ dviga (pri lihem $n$ levo od nje spušča) čez vse meje. Ko se $x$ oddaljuje od $0$, gre vrednost proti $0$. Graf je **hiperbola** z dvema vejama. Premici, ki se jima veji poljubno približata, sta **asimptoti**: os $x$ ($y = 0$) in os $y$ ($x = 0$).
 
 Tudi tu odloča parnost eksponenta:
 
@@ -74,7 +74,7 @@ $$c \cdot (2x)^n = 2^n \cdot c \cdot x^n$$
 
 Pri premem sorazmerju se $y$ le podvoji, pri $V = a^3$ se poveča $8$-krat, pri $y = c \cdot x^{-2}$ pa pade na četrtino.
 
-Iz tabele potenčno odvisnost prepoznaš po stalnem količniku. Pri premem sorazmerju je stalen količnik $\frac{y}{x}$, pri potenčni odvisnosti z eksponentom $n$ pa količnik $\frac{y}{x^n}$. Mizar izdela lesene kocke z robom $1$, $2$ in $3\,\mathrm{dm}$, ki tehtajo $0{,}6$; $4{,}8$ in $16{,}2\,\mathrm{kg}$. Količniki $\frac{m}{a}$ so $0{,}6$; $2{,}4$ in $5{,}4$, torej masa ni premo sorazmerna z robom. Količniki $\frac{m}{a^3}$ pa so vsi enaki $0{,}6$: masa je potenčno odvisna od roba, $m = 0{,}6 \cdot a^3$ (rob v dm, masa v kg).
+Iz tabele potenčno odvisnost prepoznaš po stalnem količniku. Pri premem sorazmerju je stalen $\frac{y}{x}$, pri potenčni odvisnosti z eksponentom $n$ pa $\frac{y}{x^n}$. Mizar izdela lesene kocke z robom $1$, $2$ in $3\,\mathrm{dm}$, ki tehtajo $0{,}6$; $4{,}8$ in $16{,}2\,\mathrm{kg}$. Količniki $\frac{m}{a}$ so $0{,}6$; $2{,}4$ in $5{,}4$, torej masa ni premo sorazmerna z robom. Količniki $\frac{m}{a^3}$ pa so vsi enaki $0{,}6$: masa je potenčno odvisna od roba, $m = 0{,}6 \cdot a^3$ (rob v dm, masa v kg).
 
 Pozor: skozi $(0, 0)$ gre graf vsake potence $x^n$ z $n \ge 1$, a le pri $n = 1$ je to premica.
 
@@ -84,7 +84,7 @@ Pozor: skozi $(0, 0)$ gre graf vsake potence $x^n$ z $n \ge 1$, a le pri $n = 1$
 2. **Koeficient.** Iz enega para podatkov izračunamo $c = \dfrac{y}{x^n}$.
 3. **Kritična presoja.** Model preverimo na *vseh* podatkih, ne le na tistih, iz katerih smo ga postavili. Premislimo, ali so napovedi smiselne: negativna dolžina ali masa pomeni, da model odpove. Zapišemo še, da velja le za razmere, v katerih smo merili.
 
-Skozi dve točki gre premica, pa tudi parabola in še marsikatera krivulja, zato dve meritvi ne zadoščata za izbiro modela. Izberemo model, ki se ujema z vsemi podatki in ima smisel, kot v Primeru 5.
+Skozi dve točki gre premica, pa tudi parabola in marsikatera krivulja, zato dve meritvi ne zadoščata za izbiro modela. Izberemo model, ki se ujema z vsemi podatki in ima smisel, kot v Primeru 5.
 
 ## Rešeni primeri
 
@@ -231,9 +231,13 @@ Graf $y = a \cdot (x - p)^n + q$: graf $x^n$ raztegnemo s faktorjem $a$ v smeri 
 8. Odgovor: hiperbola s središčem $(1, -1)$ in asimptotama $x = 1$, $y = -1$; $D_f = \mathbb{R} \setminus \{1\}$, $Z_f = \mathbb{R} \setminus \{-1\}$, ničla $x = 3$, presečišče z osjo $y$ je $(0, -3)$, funkcija pada na obeh intervalih.
 
 :::risba graf
-opis: Graf funkcije f(x) = 2/(x − 1) − 1 za x od −4 do 6. Črtkani premici sta asimptoti x = 1 in y = −1, sekata se v središču (1, −1). Leva veja leži levo spodaj od središča in gre skozi točki (−1, −2) in (0, −3). Desna veja leži desno zgoraj, gre skozi točki (2, 1) in (3, 0) in se na desni približuje asimptoti y = −1 od zgoraj.
+opis: Graf funkcije f(x) = 2/(x − 1) − 1 za x od −4 do 6. Tanka siva krivulja je osnovna hiperbola y = 2/x z asimptotama na oseh in središčem v izhodišču. Siva puščica kaže premik središča iz (0, 0) v (1, −1), za 1 v desno in za 1 navzdol. Črtkani premici sta asimptoti x = 1 in y = −1, sekata se v središču (1, −1). Leva veja leži levo spodaj od središča in gre skozi točki (−1, −2) in (0, −3). Desna veja leži desno zgoraj, gre skozi točki (2, 1) in (3, 0) in se na desni približuje asimptoti y = −1 od zgoraj.
 x: -4 .. 6 | 1 | x
 y: -6 .. 5 | 1 | y
+f: 2/x | siva | -2,8 .. -0,35
+f: 2/x | siva | 0,42 .. 2,8
+napis: -0,1; 4,5 | y = 2/x | levo | siva
+puščica: 0; 0 -> 1; -1 | | | siva
 f: 2/(x-1) - 1 | modra debelo | -4 .. 0,59
 f: 2/(x-1) - 1 | modra debelo | 1,36 .. 6
 črta: 1; -6 -> 1; 5 | oranžna črtkano
@@ -243,7 +247,7 @@ točka: -1; -2 | (−1, −2) | levo
 točka: 0; -3 | (0, −3) | levo
 točka: 2; 1 | (2, 1) | nad desno
 točka: 3; 0 | (3, 0) | nad desno
-podnapis: Hiperbola y = 2/(x − 1) − 1 s središčem (1, −1); črtkani premici sta asimptoti.
+podnapis: Siva hiperbola y = 2/x, premaknjena za 1 v desno in za 1 navzdol, da hiperbolo y = 2/(x − 1) − 1 s središčem (1, −1); črtkani premici sta asimptoti.
 :::
 
 ## Pogoste napake
@@ -265,11 +269,32 @@ podnapis: Hiperbola y = 2/(x − 1) − 1 s središčem (1, −1); črtkani prem
 - $y = a \cdot (x - p)^n + q$: $(0, 0)$ preide v $(p, q)$; pri $n < 0$ imata asimptoti enačbi $x = p$ in $y = q$.
 - $y = c \cdot x^n$: količnik $\frac{y}{x^n}$ je stalen, podvojeni $x$ pomnoži $y$ z $2^n$; premo sorazmerje ima $n = 1$. Model preveri na vseh podatkih.
 
+## Ponovitev
+
+**Formule**
+- $x^{-n} = \frac{1}{x^n}$, $x \ne 0$ (na pamet)
+- $\sqrt[n]{x}$ je inverz od $x^n$; pri sodem $n$ le za $x \ge 0$ (na pamet)
+- $\sqrt{x^2} = |x|$ (na pamet)
+- $y = a \cdot (x - p)^n + q$: $(0, 0)$ preide v $(p, q)$ (na pamet)
+- $y = c \cdot x^n$: podvojeni $x$ pomnoži $y$ z $2^n$ (na pamet)
+
+**Postopek**
+1. Preveri, ali je eksponent $n$ sod ali lih, pozitiven ali negativen.
+2. Nariši osnovni graf skozi $(1, 1)$ in $(-1, 1)$ oziroma $(-1, -1)$.
+3. Premakni ga tako, da $(0, 0)$ preide v $(p, q)$.
+4. Pri $n < 0$ vriši asimptoti $x = p$ in $y = q$.
+5. Odčitaj definicijsko območje, zalogo vrednosti, sodost ali lihost in monotonost.
+
+**Pazi na**
+- $2^{-2} = \frac{1}{4}$, ne $-4$: negativni eksponent da obratno vrednost.
+- Skozi $(-1, 1)$ gre graf le pri sodem $n$, pri lihem skozi $(-1, -1)$.
+- $\sqrt{x^2} = |x|$, ne $x$; $\sqrt[3]{-8} = -2$ obstaja.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Dana je funkcija $g(x) = (x - 1)^{-2} + 2$. Zapiši njeno definicijsko območje, zalogo vrednosti in enačbi obeh asimptot.
+Dana je funkcija $g(x) = (x - 1)^{-2} + 2$. Zapišite njeno definicijsko območje, zalogo vrednosti in enačbi obeh asimptot.
 
 **Rešitev:**
 
@@ -285,14 +310,17 @@ Dana je funkcija $g(x) = (x - 1)^{-2} + 2$. Zapiši njeno definicijsko območje,
 
 Dijaki so merili nihajni čas $T$ nihala v odvisnosti od dolžine vrvice $l$. Izmerjene čase so zaokrožili na desetinko sekunde:
 
-| $l$ (m) | $0{,}25$ | $1{,}00$ | $2{,}25$ | $4{,}00$ |
-|---|---|---|---|---|
-| $T$ (s) | $1{,}0$ | $2{,}0$ | $3{,}0$ | $4{,}0$ |
+| $l$ (m) | $T$ (s) |
+|---|---|
+| $0{,}25$ | $1{,}0$ |
+| $1{,}00$ | $2{,}0$ |
+| $2{,}25$ | $3{,}0$ |
+| $4{,}00$ | $4{,}0$ |
 
-a) Utemelji, da nihajni čas ni premo sorazmeren z dolžino vrvice. (2 točki)
-b) Pokaži, da podatki ustrezajo modelu $T = c \cdot \sqrt{l}$, in določi konstanto $c$. (2 točki)
-c) Po modelu izračunaj nihajni čas nihala z dolžino $1{,}5\,\mathrm{m}$. Rezultat zaokroži na stotinko sekunde. (1 točka)
-d) Iz modela izrazi $l$ kot funkcijo $T$ in izračunaj dolžino nihala z nihajnim časom $1{,}5\,\mathrm{s}$. Rezultat zaokroži na centimeter. (2 točki)
+a) Utemeljite, da nihajni čas ni premo sorazmeren z dolžino vrvice. (2 točki)
+b) Pokažite, da podatki ustrezajo modelu $T = c \cdot \sqrt{l}$, in določite konstanto $c$. (2 točki)
+c) Po modelu izračunajte nihajni čas nihala z dolžino $1{,}5\,\mathrm{m}$. Rezultat zaokrožite na stotinko sekunde. (1 točka)
+d) Iz modela izrazite $l$ kot funkcijo $T$ in izračunajte dolžino nihala z nihajnim časom $1{,}5\,\mathrm{s}$. Rezultat zaokrožite na centimeter. (2 točki)
 
 **Rešitev:**
 
@@ -404,7 +432,7 @@ Naslednji teden naročnik kupi $20\,\mathrm{m^2}$ ploščic po akciji in vpraša
 > $V = a^3$, zato $(3a)^3 = 27a^3$.
 
 ? (brez računala) Med količinama velja potenčna odvisnost $y = c \cdot x^n$. Pri $x = 1$, $2$ in $4$ so vrednosti $y = 3$, $24$ in $192$. Vpiši eksponent $n$.
-= 3
+= 3 | 0
 ~ 8 | $8$ je faktor, s katerim se $y$ pomnoži, ko $x$ podvojiš. Ta faktor je $2^n$, eksponent pa je $n$.
 ~ 1 | Pri $n = 1$ bi bilo premo sorazmerje: $y$ bi se ob podvojitvi $x$ le podvojil, tu pa se poveča $8$-krat.
 > Ko se $x$ podvoji, se $y$ poveča $8$-krat: $\frac{24}{3} = \frac{192}{24} = 8 = 2^3$. Zato je $n = 3$ in $c = 3$, odvisnost je $y = 3x^3$.
@@ -419,7 +447,7 @@ točka: 2; 1
 točka: 1; 0
 točka: 3; 2
 :::
-= 9
+= 9 | 0
 ~ 217 | Predznak: središče $(2, 1)$ pomeni premik za $2$ v desno, torej $p = 2$ in predpis $(x - 2)^3 + 1$, ne $(x + 2)^3 + 1$.
 ~ 29 | Zamenjana sta $p$ in $q$: $p$ je abscisa središča ($2$), $q$ njegova ordinata ($1$).
 ~ 7 | Premik za $1$ navzgor pomeni $+1$, ne $-1$.

@@ -8,21 +8,27 @@ const MIN = 350; // krajšega kosa ne odrežemo (razen pred naslovom ali za »Pr
 const opens = (s) => (s.match(/<(div|details)\b/g) || []).length;
 const closes = (s) => (s.match(/<\/(div|details)>/g) || []).length;
 const dollars = (s) => (s.match(/\$\$/g) || []).length;
+// Bloki :::risba / :::formula …: začetek »:::ime«, konec vrstica »:::«.
+const fenceOpens = (s) => (s.match(/^[ \t]*:::[A-Za-zčšžČŠŽ]/gm) || []).length;
+const fenceCloses = (s) => (s.match(/^[ \t]*:::[ \t]*$/gm) || []).length;
 
-// Odstavki, ločeni s prazno vrstico; HTML bloki (Premisli, formula) in $$…$$ ostanejo celi.
+// Odstavki, ločeni s prazno vrstico; HTML bloki (Premisli, formula), $$…$$ in :::bloki ostanejo celi.
 export function mdBlocks(md) {
   const out = [];
   let cur = "";
   let depth = 0;
   let math = 0;
+  let fence = 0;
   for (const part of String(md ?? "").split(/\n[ \t]*\n/)) {
     cur = cur ? `${cur}\n\n${part}` : part;
     depth += opens(part) - closes(part);
     math += dollars(part);
-    if (depth <= 0 && math % 2 === 0) {
+    fence += fenceOpens(part) - fenceCloses(part);
+    if (depth <= 0 && math % 2 === 0 && fence <= 0) {
       if (cur.trim()) out.push(cur);
       cur = "";
       depth = 0;
+      fence = 0;
     }
   }
   if (cur.trim()) out.push(cur);
@@ -37,13 +43,19 @@ const kindOf = (title) =>
   : /povzetek/i.test(title) ? "summary"
   : "other";
 
+// Slika (:::risba) in besedilo okoli nje so na istem koraku (j, 15. 11. 2026): odstavek pred sliko in
+// odstavek za njo ostaneta ob sliki; nov korak se lahko začne šele za tem (ali pri naslovu ###).
+export const isFigure = (b) => /^\s*:::risba\b/.test(b);
+const FIG = 300; // znakov: koliko »prostora« šteje slika (zapis podatkov risbe ni besedilo za branje)
+const size = (b) => (isFigure(b) ? FIG : b.length);
+
 // Kosi enega razdelka. Primeri ostanejo celi (en primer = en korak), razlaga se deli
-// pri naslovih ###, za vsakim »Premisli« in pri predolgih kosih.
+// pri naslovih ###, za vsakim »Premisli« in pri predolgih kosih, nikoli pa tik pred sliko ali tik za njo.
 export function splitSection(md, kind) {
   if (kind === "why" || kind === "mistakes" || kind === "summary") return [String(md ?? "")].filter((x) => x.trim());
   const chunks = [];
   let cur = [];
-  const len = () => cur.join("\n\n").length;
+  const len = () => cur.reduce((n, b) => n + size(b) + 2, 0);
   const flush = () => {
     if (cur.length) chunks.push(cur.join("\n\n"));
     cur = [];
@@ -54,15 +66,19 @@ export function splitSection(md, kind) {
   const point = (b) => /^\s*\*\*\d+\.\s/.test(b);
   const numbered = kind !== "examples" && blocks.some(point);
   let think = false;
-  for (const b of blocks) {
+  for (const [i, b] of blocks.entries()) {
     const heading = /^###\s/.test(b.trimStart());
-    const long = cur.length && len() >= MIN && len() + b.length > LONG;
+    // Ob sliki ne režemo: slika gre k odstavku pred njo, odstavek za sliko pa k sliki.
+    const glued = isFigure(b) || (i > 0 && isFigure(blocks[i - 1]) && cur.length > 0);
+    const long = cur.length && len() >= MIN && len() + size(b) > LONG;
     if (heading && cur.length) flush();
+    else if (glued) {} // ostane na istem koraku
     else if (numbered) { if (point(b) && cur.length && (think || long)) flush(); }
     else if (kind !== "examples" && long && !/^\s*[|>-]/.test(b)) flush();
     if (!cur.length) think = false;
     cur.push(b);
-    if (b.includes('class="tb-think"') && kind !== "examples") { if (numbered) think = true; else flush(); }
+    // »Premisli« tik pred sliko: slika in njena razlaga sta odgovor nanj, zato ne režemo.
+    if (b.includes('class="tb-think"') && kind !== "examples" && !isFigure(blocks[i + 1] || "")) { if (numbered) think = true; else flush(); }
   }
   flush();
   return chunks;

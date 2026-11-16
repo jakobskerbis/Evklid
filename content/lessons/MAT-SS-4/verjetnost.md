@@ -224,6 +224,28 @@ $P(A \mid N) = \dfrac{0{,}012}{0{,}032} = \dfrac{12}{32} = \dfrac{3}{8} = 0{,}37
 - Produkt (višja raven): $P(A \cdot B) = P(B) \cdot P(A \mid B)$. Pri neodvisnih dogodkih $P(A \cdot B) = P(A) \cdot P(B)$.
 - (višja raven) Pri nalogah s koraki si pomagaj z drevesom: verjetnosti vzdolž poti množimo, verjetnosti različnih poti, ki vodijo do istega dogodka, seštevamo.
 
+## Ponovitev
+
+**Formule**
+- $P(A) = \frac{m}{n}$ (na pamet)
+- $P(\overline{A}) = 1 - P(A)$ (na pamet)
+- $P(A + B) = P(A) + P(B) - P(A \cdot B)$ (na pamet)
+- (višja raven) $P(A \mid B) = \frac{P(A \cdot B)}{P(B)}$ (na pamet)
+- (višja raven) $P(A \cdot B) = P(B) \cdot P(A \mid B)$ (na pamet)
+- (višja raven) neodvisna: $P(A \cdot B) = P(A) \cdot P(B)$ (na pamet)
+
+**Postopek**
+1. Zapiši izide in dogodek z besedami.
+2. Pri enako verjetnih izidih štej: $P(A) = \frac{m}{n}$.
+3. »Ali« je vsota (odštej presek), »in« je produkt.
+4. Pri »vsaj« računaj z nasprotnim dogodkom.
+5. (višja raven) Pri korakih nariši drevo: vzdolž poti množi, poti do istega dogodka seštej.
+
+**Pazi na**
+- Pri združljivih dogodkih odštej $P(A \cdot B)$; rezultat nad $1$ je napaka.
+- (višja raven) Brez vračanja je drugi faktor pogojna verjetnost: $\frac{10}{12} \cdot \frac{9}{11}$.
+- (višja raven) Pri $P(A \mid B)$ deli s $P(B)$, ne z vsemi izidi.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)

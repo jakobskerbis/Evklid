@@ -175,11 +175,31 @@ Odštejemo $3$: $1{,}2x = 24$. Delimo z $1{,}2$: $x = 20$. Preizkus: $1{,}2 \cdo
 - Ničla: $x_0 = -\dfrac{n}{k}$ (za $k \ne 0$), presečišče z osjo $x$.
 - Vedno preveri z vstavljanjem v funkcijo.
 
+## Ponovitev
+
+**Formule**
+- $f(x) = kx + n$, začetna vrednost $n$: točka $(0, n)$ (na pamet)
+- $k = \frac{y_2 - y_1}{x_2 - x_1}$ (na pamet)
+- $k > 0$ narašča, $k < 0$ pada, $k = 0$ konstantna (na pamet)
+- Ničla: $x_0 = -\frac{n}{k}$, $k \ne 0$ (na pamet)
+
+**Postopek**
+1. Iz dveh točk izračunaj $k$.
+2. Vstavi eno točko v $y = kx + n$ in izračunaj $n$.
+3. Ničlo dobiš iz $f(x) = 0$.
+4. Nariši premico skozi $(0, n)$ in $(x_0, 0)$.
+5. Preveri z vstavljanjem obeh točk.
+
+**Pazi na**
+- $k$ je število ob $x$, $n$ prosti člen: pri $y = -4x + 1$ je $k = -4$.
+- Razlika $y$ je v števcu: $k = \frac{y_2 - y_1}{x_2 - x_1}$.
+- Ničla leži na osi $x$: postavi $f(x) = 0$, ne vzemi $n$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Dana je linearna funkcija $f(x) = -\dfrac{2}{3}x + 4$. Izračunaj ničlo funkcije in ploščino trikotnika, ki ga graf funkcije oklepa s koordinatnima osema.
+Dana je linearna funkcija $f(x) = -\dfrac{2}{3}x + 4$. Izračunajte ničlo funkcije in ploščino trikotnika, ki ga graf funkcije oklepa s koordinatnima osema.
 
 **Rešitev:**
 
@@ -194,10 +214,10 @@ Dana je linearna funkcija $f(x) = -\dfrac{2}{3}x + 4$. Izračunaj ničlo funkcij
 
 Avtomobil ima ob začetku vožnje v rezervoarju $48$ litrov goriva in porabi $6{,}4$ litra goriva na $100\,\text{km}$. Količina goriva $y$ v rezervoarju (v litrih) je linearna funkcija prevožene poti $x$ (v kilometrih).
 
-a) Zapiši predpis te funkcije in pojasni, kaj pomeni njen smerni koeficient. (2 točki)
-b) Koliko goriva ostane v rezervoarju po $285\,\text{km}$ vožnje? Rezultat zaokroži na desetinko litra. (1 točka)
-c) Opozorilna lučka zasveti, ko je v rezervoarju še $7$ litrov goriva. Po koliko kilometrih vožnje zasveti? Rezultat zaokroži na cel kilometer. (2 točki)
-d) Izračunaj ničlo funkcije in pojasni njen pomen. Zapiši, za katere vrednosti $x$ je model smiseln. (2 točki)
+a) Zapišite predpis te funkcije in pojasnite, kaj pomeni njen smerni koeficient. (2 točki)
+b) Koliko goriva ostane v rezervoarju po $285\,\text{km}$ vožnje? Rezultat zaokrožite na desetinko litra. (1 točka)
+c) Opozorilna lučka zasveti, ko je v rezervoarju še $7$ litrov goriva. Po koliko kilometrih vožnje zasveti? Rezultat zaokrožite na cel kilometer. (2 točki)
+d) Izračunajte ničlo funkcije in pojasnite njen pomen. Zapišite, za katere vrednosti $x$ je model smiseln. (2 točki)
 
 **Rešitev:**
 

@@ -285,6 +285,17 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
     CREATE INDEX IF NOT EXISTS idx_school_use ON ai_school_use(school_id, created_at);
     CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);`);
   if (!hadSchoolUse) db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES ('ai_school_ledger_start', datetime('now'))").run();
+  // Izbrisan profil (docs/izbris-izvoz.md, najdba 2): poraba ostane šoli, brez id profila (id dobi lahko nov profil).
+  // Ob zagonu še za profile, izbrisane pred sprožilcem (brez takih vrstic ne zapiše nič).
+  db.exec(`CREATE TRIGGER IF NOT EXISTS ai_school_use_student_delete AFTER DELETE ON students BEGIN
+      UPDATE ai_school_use SET student_id = NULL WHERE student_id = OLD.id;
+    END;
+    UPDATE ai_school_use SET student_id = NULL WHERE student_id IS NOT NULL AND student_id NOT IN (SELECT id FROM students);
+    -- Dnevni števec varnostnih pregledov profila (server/nujno.js, varnost_<dan>_<id>; najdba 5): nov profil z istim id
+    -- ga ne podeduje.
+    CREATE TRIGGER IF NOT EXISTS kv_student_delete AFTER DELETE ON students BEGIN
+      DELETE FROM kv WHERE key GLOB 'varnost_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_' || OLD.id;
+    END;`);
   // Migracija: nova tabela dobi današnja vprašanja iz obstoječih pogovorov, da se števec ob posodobitvi ne ponastavi.
   const hadQuestionLog = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'question_log'").get();
   db.exec(`CREATE TABLE IF NOT EXISTS question_log (

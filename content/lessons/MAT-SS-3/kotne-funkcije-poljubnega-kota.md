@@ -30,9 +30,8 @@ Primerjaj staro in novo definicijo:
 | kot | ostri | poljuben |
 | $\sin\alpha$ | $\frac{\text{nasprotna}}{\text{hipotenuza}}$ | $y$ točke $T$ |
 | $\cos\alpha$ | $\frac{\text{priležna}}{\text{hipotenuza}}$ | $x$ točke $T$ |
-| predznak | vedno $+$ | od lege $T$ |
 
-Razlika je v zadnji vrstici. Dolžina stranice ne more biti negativna, koordinata pa lahko je.
+Razlika je v predznaku. V trikotniku sta sinus in kosinus vedno pozitivna, na krožnici je predznak odvisen od lege $T$. Dolžina stranice ne more biti negativna, koordinata pa lahko je.
 
 **3. Posebni koti.** Na oseh točko $T$ preberemo kar iz slike:
 
@@ -55,10 +54,10 @@ Točka $T$ leži levo od osi $y$ in nad osjo $x$. Zato je $\cos 120^\circ < 0$ i
 
 | kvadrant | $\sin$ | $\cos$ | $\tan$ |
 |---|---|---|---|
-| I. ($0^\circ$ do $90^\circ$) | $+$ | $+$ | $+$ |
-| II. ($90^\circ$ do $180^\circ$) | $+$ | $-$ | $-$ |
-| III. ($180^\circ$ do $270^\circ$) | $-$ | $-$ | $+$ |
-| IV. ($270^\circ$ do $360^\circ$) | $-$ | $+$ | $-$ |
+| I. $0^\circ$–$90^\circ$ | $+$ | $+$ | $+$ |
+| II. $90^\circ$–$180^\circ$ | $+$ | $-$ | $-$ |
+| III. $180^\circ$–$270^\circ$ | $-$ | $-$ | $+$ |
+| IV. $270^\circ$–$360^\circ$ | $-$ | $+$ | $-$ |
 
 **5. Pripadajoči ostri kot.** Kot $150^\circ$ je za $30^\circ$ oddaljen od negativnega poltraka osi $x$. Ta ostri kot med gibljivim krakom in osjo $x$ imenujemo **pripadajoči ostri kot**. Točka za $150^\circ$ je zrcalna slika točke za $30^\circ$ čez os $y$. Zato je $\sin 150^\circ = \sin 30^\circ = \frac12$ in $\cos 150^\circ = -\cos 30^\circ = -\frac{\sqrt3}{2}$. Velja splošno: **absolutno vrednost** dobiš iz pripadajočega ostrega kota, **predznak** pa iz kvadranta.
 
@@ -195,11 +194,31 @@ V II. kvadrantu je kosinus negativen, zato $\cos\alpha = -\frac45$. Potem je $\t
 - Kota $\alpha$ in $\alpha + 360^\circ$ imata enake vrednosti kotnih funkcij.
 - $\pi\,\text{rad} = 180^\circ$, $1\,\text{rad} \approx 57{,}3^\circ$; pretvorba z $\dfrac{\pi}{180^\circ}$ oziroma $\dfrac{180^\circ}{\pi}$.
 
+## Ponovitev
+
+**Formule**
+- Na enotski krožnici: $T(\cos\alpha, \sin\alpha)$ (na pamet)
+- $\tan\alpha = \frac{\sin\alpha}{\cos\alpha}$ za $\cos\alpha \ne 0$ (na pamet)
+- $\sin^2\alpha + \cos^2\alpha = 1$ (na pamet)
+- $\pi\,\text{rad} = 180^\circ$, $1\,\text{rad} \approx 57{,}3^\circ$ (na pamet)
+
+**Postopek**
+1. Kot v radianih pretvori v stopinje: $\frac{7\pi}{6} = 210^\circ$.
+2. Odštej večkratnike $360^\circ$.
+3. Določi kvadrant in pripadajoči ostri kot.
+4. Absolutno vrednost vzemi pri pripadajočem ostrem kotu.
+5. Predznak določi iz kvadranta.
+
+**Pazi na**
+- Predznak je iz kvadranta: $\cos 120^\circ = -\frac12$, ne $\frac12$.
+- $1\,\text{rad} \approx 57{,}3^\circ$: kot $2$ je v II. kvadrantu.
+- Kalkulator: za stopinje DEG, za radiane RAD.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Brez uporabe računala izračunaj natančno vrednost izraza $\sin\frac{7\pi}{4} \cdot \cos\frac{3\pi}{4} - \tan\frac{8\pi}{3}$.
+Brez uporabe računala izračunajte natančno vrednost izraza $\sin\frac{7\pi}{4} \cdot \cos\frac{3\pi}{4} - \tan\frac{8\pi}{3}$.
 
 **Rešitev:**
 
@@ -215,9 +234,9 @@ Brez uporabe računala izračunaj natančno vrednost izraza $\sin\frac{7\pi}{4} 
 
 Gibljivi krak kota $\alpha$, $0 \le \alpha < 2\pi$, seka enotsko krožnico v točki $T\left(-\frac{5}{13}, y\right)$, ki leži pod osjo $x$.
 
-a) Izračunaj $y$ ter zapiši $\cos\alpha$ in $\sin\alpha$. (2 točki)
-b) Določi, v katerem kvadrantu leži kot $\alpha$, in izračunaj $\tan\alpha$. (2 točki)
-c) Točka $S$ je zrcalna slika točke $T$ čez os $x$. Gibljivi krak kota $\beta$, $0 \le \beta < 2\pi$, seka enotsko krožnico v točki $S$. Zapiši koordinati točke $S$, izrazi $\beta$ z $\alpha$ ter zapiši $\sin\beta$ in $\cos\beta$. (3 točke)
+a) Izračunajte $y$ ter zapišite $\cos\alpha$ in $\sin\alpha$. (2 točki)
+b) Določite, v katerem kvadrantu leži kot $\alpha$, in izračunajte $\tan\alpha$. (2 točki)
+c) Točka $S$ je zrcalna slika točke $T$ čez os $x$. Gibljivi krak kota $\beta$, $0 \le \beta < 2\pi$, seka enotsko krožnico v točki $S$. Zapišite koordinati točke $S$, izrazite $\beta$ z $\alpha$ ter zapišite $\sin\beta$ in $\cos\beta$. (3 točke)
 
 **Rešitev:**
 

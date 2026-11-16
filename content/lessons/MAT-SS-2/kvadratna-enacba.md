@@ -70,13 +70,11 @@ Ali žoga doseže $1{,}5\,\text{m}$? Napovej predznak diskriminante enačbe $4{,
 Ne doseže. $D = 24{,}01 - 4 \cdot 4{,}9 \cdot 1{,}5 = 24{,}01 - 29{,}4 = -5{,}39 < 0$, zato realnega časa ni. Žoga se dvigne le do približno $1{,}2\,\text{m}$.
 :::
 
-**5. Kaj pove diskriminanta.**
+**5. Kaj pove diskriminanta.** Pove, kakšne so rešitve in kako graf $f(x) = ax^2 + bx + c$ leži glede na os $x$:
 
-| Diskriminanta | Rešitve | Graf $f(x) = ax^2 + bx + c$ |
-|---|---|---|
-| $D > 0$ | dve različni realni | seka os $x$ v dveh točkah |
-| $D = 0$ | ena dvojna realna, $x_1 = x_2 = -\dfrac{b}{2a}$ | teme leži na osi $x$ |
-| $D < 0$ | dve konjugirano kompleksni | ne seka osi $x$ |
+- $D > 0$: dve različni realni rešitvi, graf seka os $x$ v dveh točkah;
+- $D = 0$: ena dvojna realna rešitev $x_1 = x_2 = -\dfrac{b}{2a}$, teme leži na osi $x$;
+- $D < 0$: dve konjugirano kompleksni rešitvi, graf ne seka osi $x$.
 
 V simulaciji spodaj (»Kvadratna enačba in diskriminanta«) nastavi $a = 1$ in $b = -2$, nato spreminjaj samo $c$. Parabola se premika gor in dol. Opazuj, pri kateri vrednosti $c$ se teme ravno dotakne osi $x$: tam je $D = 0$.
 
@@ -235,11 +233,31 @@ Iz $A \cdot B = 0$ sledi $A = 0$ ali $B = 0$; $\; x^2 - k = (x - \sqrt{k})(x + \
 - Vietovi formuli: $x_1 + x_2 = -\dfrac{b}{a}$, $x_1 x_2 = \dfrac{c}{a}$.
 - Razcep: $ax^2 + bx + c = a(x - x_1)(x - x_2)$; enačba z rešitvama $x_1$, $x_2$: $x^2 - (x_1 + x_2)x + x_1 x_2 = 0$.
 
+## Ponovitev
+
+**Formule**
+- $D = b^2 - 4ac$ (na pamet)
+- $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$ (na pamet)
+- $x_1 + x_2 = -\dfrac{b}{a}$, $\;x_1 x_2 = \dfrac{c}{a}$ (na pamet)
+- $ax^2 + bx + c = a(x - x_1)(x - x_2)$ (na pamet)
+
+**Postopek**
+1. Prenesi vse na levo: $ax^2 + bx + c = 0$.
+2. Preberi $a$, $b$ in $c$ s predznaki.
+3. Nepopolno enačbo reši z izpostavljanjem ali s korenjenjem.
+4. Če gre, levo stran razstavi in vsak faktor izenači z $0$.
+5. Sicer izračunaj $D$ in rešitvi z obrazcem; pri $D < 0$ realnih rešitev ni.
+
+**Pazi na**
+- Koeficiente bereš šele iz splošne oblike z $0$ na desni.
+- Negativen $b$ vstavi v oklepaj: $(-3)^2 = 9$.
+- Ne deli z $x$: izpostavi in ohrani rešitev $x = 0$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši enačbo $(x - 3)^2 = 2x - 6$.
+Rešite enačbo $(x - 3)^2 = 2x - 6$.
 
 **Rešitev:**
 
@@ -256,8 +274,8 @@ Reši enačbo $(x - 3)^2 = 2x - 6$.
 Dana je enačba $x^2 - 6x + c = 0$, kjer je $c$ realno število.
 
 a) Za katere vrednosti $c$ ima enačba dve različni realni rešitvi? (2 točki)
-b) Ena rešitev enačbe je $x_1 = 2$. Brez obrazca za rešitve določi drugo rešitev $x_2$ in število $c$. (2 točki)
-c) Naj bo $c = 13$. Reši enačbo v množici kompleksnih števil in rešitvi preveri z Vietovima formulama. (3 točke)
+b) Ena rešitev enačbe je $x_1 = 2$. Brez obrazca za rešitve določite drugo rešitev $x_2$ in število $c$. (2 točki)
+c) Naj bo $c = 13$. Rešite enačbo v množici kompleksnih števil in rešitvi preverite z Vietovima formulama. (3 točke)
 
 **Rešitev:**
 
@@ -276,10 +294,10 @@ c) Naj bo $c = 13$. Reši enačbo v množici kompleksnih števil in rešitvi pre
 
 Sliko z merami $40\,\text{cm} \times 30\,\text{cm}$ obdamo s paspartujem (kartonskim robom), ki je na vseh štirih straneh širok $x$ centimetrov.
 
-a) Pokaži, da je ploščina paspartuja (brez slike) $P(x) = 4x^2 + 140x$ v $\text{cm}^2$. (2 točki)
-b) Kako širok mora biti paspartu, da je njegova ploščina enaka ploščini slike? Rezultat zaokroži na milimeter. (3 točke)
-c) Utemelji, da funkcija $P$ na intervalu $[0, \infty)$ narašča, in od tod sklepaj, da ima enačba $P(x) = S$ za vsako pozitivno število $S$ natanko eno pozitivno rešitev. (2 točki)
-d) Druga slika ima enako ploščino, a mere $60\,\text{cm} \times 20\,\text{cm}$. Kako širok paspartu potrebuje, da je njegova ploščina enaka ploščini slike? Rezultat zaokroži na milimeter in pojasni, zakaj je paspartu ožji kot pri prvi sliki. (3 točke)
+a) Pokažite, da je ploščina paspartuja (brez slike) $P(x) = 4x^2 + 140x$ v $\text{cm}^2$. (2 točki)
+b) Kako širok mora biti paspartu, da je njegova ploščina enaka ploščini slike? Rezultat zaokrožite na milimeter. (3 točke)
+c) Utemeljite, da funkcija $P$ na intervalu $[0, \infty)$ narašča, in od tod sklepajte, da ima enačba $P(x) = S$ za vsako pozitivno število $S$ natanko eno pozitivno rešitev. (2 točki)
+d) Druga slika ima enako ploščino, a mere $60\,\text{cm} \times 20\,\text{cm}$. Kako širok paspartu potrebuje, da je njegova ploščina enaka ploščini slike? Rezultat zaokrožite na milimeter in pojasnite, zakaj je paspartu ožji kot pri prvi sliki. (3 točke)
 
 **Rešitev:**
 
@@ -391,13 +409,13 @@ $$x_1 x_2 = \frac{(-b)^2 - D}{4a^2} = \frac{b^2 - b^2 + 4ac}{4a^2} = \frac{c}{a}
 > Vsota rešitev je $-3$, produkt $-10$, zato $x^2 - (-3)x + (-10) = x^2 + 3x - 10 = 0$.
 
 ? Na Marsu je težni pospešek $3{,}72\,\text{m/s}^2$. Kamen, vržen navpično navzgor s hitrostjo $10\,\text{m/s}$, je po času $t$ na višini $h(t) = 10t - 1{,}86t^2$ metrov. Kolikokrat med letom je na višini $15\,\text{m}$? Vpiši število.
-= 0
+= 0 | 0
 ~ 2 | Enačba $1{,}86t^2 - 10t + 15 = 0$ ima dve rešitvi le v $\mathbb{C}$, čas pa mora biti realen. Pri $D < 0$ realnega časa ni.
 ~ 1 | Ena sama višina (najvišja točka) bi pomenila $D = 0$, tu pa je $D$ negativen.
 > $D = 10^2 - 4 \cdot 1{,}86 \cdot 15 = 100 - 111{,}6 = -11{,}6 < 0$. Realnega časa ni; kamen se dvigne le do približno $13{,}4\,\text{m}$.
 
 ? (brez računala) Koliko realnih rešitev ima enačba $x^3 = 16x$?
-= 3
+= 3 | 0
 ~ 2 | Izgubil si eno rešitev: z $x$ si delil in izpustil $x = 0$, ali pa si pri $x^2 = 16$ pozabil na $-4$.
 ~ 1 | Dobil si le $x = 4$: z $x$ si delil in pri korenjenju pozabil na $\pm$.
 > Na levo: $x^3 - 16x = 0$, razcep $x(x - 4)(x + 4) = 0$. Rešitve so $0$, $4$ in $-4$.

@@ -218,11 +218,33 @@ $\alpha = \tan^{-1} \dfrac{4}{3} \approx 53{,}13^\circ$, zato $\varphi = 90^\cir
 - Naklonski kot: $k = \tan\alpha$, $0^\circ \le \alpha < 180^\circ$; na računalu $\tan^{-1}$ v stopinjah (DEG).
 - Kot med premicama: $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$, $0^\circ \le \varphi \le 90^\circ$; pri navpični premici uporabi naklonska kota.
 
+## Ponovitev
+
+**Formule**
+- $k = \frac{y_2 - y_1}{x_2 - x_1} = \tan\alpha$ (na pamet)
+- $y - y_1 = k(x - x_1)$ (na pamet)
+- $y = kx + n$; $ax + by + c = 0$: $k = -\frac{a}{b}$ (na pamet)
+- $\frac{x}{m} + \frac{y}{n} = 1$, $m$, $n$ odseka na oseh (na pamet)
+- Vzporedni $k_1 = k_2$, pravokotni $k_1 k_2 = -1$ (na pamet)
+- $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$ (na pamet)
+
+**Postopek**
+1. Izračunaj $k$ iz dveh točk ali ga preberi iz enačbe.
+2. Za vzporednico ali pravokotnico vzemi $k_2 = k_1$ ali $k_2 = -\frac{1}{k_1}$.
+3. Zapiši $y - y_1 = k(x - x_1)$ in preoblikuj v zahtevano obliko.
+4. Za kot: izračunaj $\tan\varphi$ ali naklonska kota ($\tan^{-1}$ v DEG).
+5. Preveri, da je $0^\circ \le \varphi \le 90^\circ$.
+
+**Pazi na**
+- Pri $3x - 4y + 12 = 0$ je $k = -\frac{a}{b} = \frac{3}{4}$, ne $3$.
+- Odseka dobiš z deljenjem z desno stranjo: $2x + 3y = 6 \to \frac{x}{3} + \frac{y}{2} = 1$.
+- Pravokotnica: obratna vrednost s spremenjenim predznakom, $k_1 k_2 = -1$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Premica gre skozi točko $T(2, 3)$ in je vzporedna premici $3x + 2y - 1 = 0$. Zapiši njeno enačbo v odsekovni obliki.
+Premica gre skozi točko $T(2, 3)$ in je vzporedna premici $3x + 2y - 1 = 0$. Zapišite njeno enačbo v odsekovni obliki.
 
 **Rešitev:**
 
@@ -237,9 +259,9 @@ Premica gre skozi točko $T(2, 3)$ in je vzporedna premici $3x + 2y - 1 = 0$. Za
 
 Dan je trikotnik z oglišči $A(-2, 1)$, $B(4, 4)$ in $C(3, -3)$.
 
-a) Zapiši enačbi premic $AB$ in $AC$ v splošni obliki. (2 točki)
-b) Izračunaj naklonski kot premice $AC$. Rezultat zaokroži na stotinko stopinje. (2 točki)
-c) Izračunaj notranji kot trikotnika pri oglišču $A$. Rezultat zaokroži na stotinko stopinje. (3 točke)
+a) Zapišite enačbi premic $AB$ in $AC$ v splošni obliki. (2 točki)
+b) Izračunajte naklonski kot premice $AC$. Rezultat zaokrožite na stotinko stopinje. (2 točki)
+c) Izračunajte notranji kot trikotnika pri oglišču $A$. Rezultat zaokrožite na stotinko stopinje. (3 točke)
 
 **Rešitev:**
 
@@ -352,7 +374,7 @@ točka: 0; 2 | B | desno
 > $k = -\dfrac{a}{2} = 3$, torej $a = -6$. Premica je $-6x + 2y - 6 = 0$ oziroma $y = 3x + 3$.
 
 ? (brez računala) Mizar ima na skici dve letvi, ki ležita na premicah $y = x$ in $y = \sqrt{3}\,x$. Kolikšen kot v stopinjah oklepata letvi? Uporabi tabelo naklonskih kotov iz razlage.
-= 15 °
+= 15 ° | 0
 ~ 105 | Naklonska kota si seštel. Kot med premicama je razlika.
 ~ 75 | To je $180^\circ - 105^\circ$; najprej si kota napačno seštel.
 ~ 60 | To je samo naklonski kot druge letve.

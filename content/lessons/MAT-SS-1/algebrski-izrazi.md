@@ -38,14 +38,14 @@ Na primer $(2x + 3)(x - 5) = 2x^2 - 10x + 3x - 15 = 2x^2 - 7x - 15$. Če ima prv
 
 **6. Kvadrat dvočlenika.** Vrnimo se k pekaču. Primerjajmo kvadrat vsote z vsoto kvadratov pri nekaj parih števil:
 
-| $a + b$ | $(a + b)^2$ | $a^2 + b^2$ | razlika |
-|---|---|---|---|
-| $3 + 2$ | $25$ | $13$ | $12$ |
-| $5 + 1$ | $36$ | $26$ | $10$ |
-| $4 + 3$ | $49$ | $25$ | $24$ |
-| $20 + 5$ | $625$ | $425$ | $200$ |
+| $a + b$ | $(a + b)^2$ | $a^2 + b^2$ |
+|---|---|---|
+| $3 + 2$ | $25$ | $13$ |
+| $5 + 1$ | $36$ | $26$ |
+| $4 + 3$ | $49$ | $25$ |
+| $20 + 5$ | $625$ | $425$ |
 
-Razlika ni naključna. Pri $3 + 2$ je $12 = 2 \cdot 3 \cdot 2$, pri $5 + 1$ je $10 = 2 \cdot 5 \cdot 1$. Preveri, da enak vzorec velja tudi v drugih dveh vrsticah.
+Razlike med drugim in tretjim stolpcem so po vrsti $12$, $10$, $24$ in $200$. Niso naključne. Pri $3 + 2$ je $12 = 2 \cdot 3 \cdot 2$, pri $5 + 1$ je $10 = 2 \cdot 5 \cdot 1$. Preveri, da enak vzorec velja tudi v drugih dveh vrsticah.
 
 :::premisli
 Kateri vzorec vidiš v razlikah? Po njem napovej razliko $(10 + 3)^2 - (10^2 + 3^2)$, preden računaš. Nato preveri.
@@ -57,8 +57,10 @@ Razlika je torej vedno $2ab$. Zakaj ravno $2ab$? Kvadrat s stranico $a + b$ (dno
 
 | | $a$ | $b$ |
 |---|---|---|
-| $a$ | kvadrat $a^2$ | pravokotnik $ab$ |
-| $b$ | pravokotnik $ab$ | kvadrat $b^2$ |
+| $a$ | $a^2$ | $ab$ |
+| $b$ | $ab$ | $b^2$ |
+
+Dobimo dva kvadrata, $a^2$ in $b^2$, ter dva pravokotnika $ab$.
 
 Isto da račun: $(a + b)^2 = (a + b)(a + b) = a^2 + ab + ba + b^2$. Ker je $ba = ab$, velja pravilo za **kvadrat dvočlenika**:
 
@@ -92,13 +94,17 @@ Plošče so $3 \cdot 3 \cdot 1$, skupaj $3 \cdot 9 = 27$ kock. Palčke so $3 \cd
 
 **9. Pregled.**
 
-| Izraz | Ime | Rezultat |
-|---|---|---|
-| $(a + b)^2$ | kvadrat vsote | $a^2 + 2ab + b^2$ |
-| $(a - b)^2$ | kvadrat razlike | $a^2 - 2ab + b^2$ |
-| $(a + b)(a - b)$ | zmnožek vsote in razlike | $a^2 - b^2$ |
-| $(a + b)^3$ | kub vsote | $a^3 + 3a^2b + 3ab^2 + b^3$ |
-| $(a - b)^3$ | kub razlike | $a^3 - 3a^2b + 3ab^2 - b^3$ |
+| Izraz | Rezultat |
+|---|---|
+| $(a + b)^2$ | $a^2 + 2ab + b^2$ |
+| $(a - b)^2$ | $a^2 - 2ab + b^2$ |
+| $(a + b)(a - b)$ | $a^2 - b^2$ |
+
+Po vrsti so to kvadrat vsote, kvadrat razlike ter zmnožek vsote in razlike. Kub vsote in kub razlike:
+
+$$(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$$
+
+$$(a - b)^3 = a^3 - 3a^2b + 3ab^2 - b^3$$
 
 Črki $a$ in $b$ lahko nadomestimo s poljubnima izrazoma, tudi z enočlenikoma: pri $(2x - 5)^2$ je $a = 2x$ in $b = 5$.
 
@@ -189,11 +195,30 @@ $6 \cdot 100 - 12 \cdot 10 + 8 = 600 - 120 + 8 = 488$. Preizkus: $1000 - 512 = 4
 - Kub dvočlenika: $(a \pm b)^3 = a^3 \pm 3a^2b + 3ab^2 \pm b^3$, koeficienti so $1, 3, 3, 1$.
 - Razvit izraz preveri tako, da v oba izraza vstaviš isto majhno število, ki ni $0$.
 
+## Ponovitev
+
+**Formule**
+- $(a + b)(c + d) = ac + ad + bc + bd$ (na pamet)
+- $(a \pm b)^2 = a^2 \pm 2ab + b^2$ (na pamet)
+- $(a + b)(a - b) = a^2 - b^2$ (na pamet)
+- $(a \pm b)^3 = a^3 \pm 3a^2b + 3ab^2 \pm b^3$ (na pamet)
+
+**Postopek**
+1. Razvij kvadrate in kube dvočlenikov po formulah.
+2. Odpravi oklepaje: vsak člen z vsakim, minus pred oklepajem obrne vse predznake.
+3. Združi podobne člene (enak spremenljivi del).
+4. Preveri: v začetni in končni izraz vstavi isto majhno število, ki ni $0$.
+
+**Pazi na**
+- $(a + b)^2 \ne a^2 + b^2$: ne pozabi mešanega člena $2ab$.
+- Pri $(x - 3)^2$ je minus le pri srednjem členu: $x^2 - 6x + 9$.
+- Seštevaš samo podobne člene: $3x + 2x^2$ ostane tak, $3x \cdot 2x = 6x^2$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Poenostavi izraz $(x + 2)^3 - x(x + 3)^2$.
+Poenostavite izraz $(x + 2)^3 - x(x + 3)^2$.
 
 **Rešitev:**
 
@@ -209,9 +234,9 @@ Poenostavi izraz $(x + 2)^3 - x(x + 3)^2$.
 
 Kvader ima robove dolge $x$, $x + 2$ in $x - 2$ centimetrov, pri čemer je $x > 2$.
 
-a) Prostornino kvadra zapiši kot mnogočlenik. (2 točki)
-b) Površino kvadra zapiši kot mnogočlenik. (2 točki)
-c) Kocka ima rob $x + 1$ centimetrov. Kot mnogočlenik zapiši, za koliko je prostornina kocke večja od prostornine kvadra, in rezultat preveri pri $x = 5$. (3 točke)
+a) Prostornino kvadra zapišite kot mnogočlenik. (2 točki)
+b) Površino kvadra zapišite kot mnogočlenik. (2 točki)
+c) Kocka ima rob $x + 1$ centimetrov. Kot mnogočlenik zapišite, za koliko je prostornina kocke večja od prostornine kvadra, in rezultat preverite pri $x = 5$. (3 točke)
 
 **Rešitev:**
 
@@ -254,14 +279,12 @@ Algebrski izraz je zapis iz števil, spremenljivk in računskih operacij brez en
 
 Razvijmo $(2x - 5)^2$ po korakih in rezultat preverimo.
 
-| Korak | Kaj naredim | Rezultat |
-|---|---|---|
-| 1 | Prepoznam kvadrat razlike $(a - b)^2$ in določim člena | $a = 2x$, $b = 5$ |
-| 2 | Kvadriram prvi člen | $(2x)^2 = 4x^2$ |
-| 3 | Dvakratni zmnožek obeh členov, predznak minus | $-2 \cdot 2x \cdot 5 = -20x$ |
-| 4 | Kvadriram drugi člen (predznak je vedno plus) | $5^2 = 25$ |
-| 5 | Sestavim vse tri člene | $4x^2 - 20x + 25$ |
-| 6 | Preizkus pri $x = 3$ | $(6 - 5)^2 = 1$ in $36 - 60 + 25 = 1$ |
+1. Prepoznam kvadrat razlike $(a - b)^2$ in določim člena: $a = 2x$, $b = 5$.
+2. Kvadriram prvi člen: $(2x)^2 = 4x^2$.
+3. Dvakratni zmnožek obeh členov, predznak minus: $-2 \cdot 2x \cdot 5 = -20x$.
+4. Kvadriram drugi člen (predznak je vedno plus): $5^2 = 25$.
+5. Sestavim vse tri člene: $4x^2 - 20x + 25$.
+6. Preizkus pri $x = 3$: $(6 - 5)^2 = 1$ in $36 - 60 + 25 = 1$.
 
 Pri kubu je postopek podoben. Za $(x - 1)^3$ je $a = x$ in $b = 1$. Zapišemo koeficiente $1, 3, 3, 1$ in predznake $+, -, +, -$. Potence prvega člena so $x^3, x^2, x, 1$, potence drugega pa $1$ povsod, saj je $1^k = 1$. Dobimo $x^3 - 3x^2 + 3x - 1$. Preizkus pri $x = 2$: leva stran je $(2 - 1)^3 = 1$, desna pa $8 - 12 + 6 - 1 = 1$.
 
@@ -286,7 +309,7 @@ Vajenka zapiše še s črkami. Stari pekač ima stranico $a$, podaljšek je $b$.
 > Deli so kvadrat $x \cdot x$, dva pravokotnika $x \cdot 3$ in kvadratek $3 \cdot 3$. Skupaj $(x + 3)^2 = x^2 + 6x + 9$.
 
 ? (brez računala) Izračunaj $98^2$ s pomočjo $(100 - 2)^2$.
-= 9604
+= 9604 | 0
 ~ 9996 | To je $100^2 - 2^2$, kot da bi bil kvadrat razlike enak razliki kvadratov. Manjka člen $-2 \cdot 100 \cdot 2$.
 ~ 10004 | To je $100^2 + 2^2$. Ker je $98 < 100$, mora biti $98^2$ manj kot $10\,000$.
 ~ 9600 | Pravilno si odštel $400$, pozabil pa si prišteti kvadrat drugega člena $2^2 = 4$.
@@ -323,7 +346,7 @@ Vajenka zapiše še s črkami. Stari pekač ima stranico $a$, podaljšek je $b$.
 > Dodati moraš $(n + 1)^3 - n^3 = 3n^2 + 3n + 1$: tri plošče $n \cdot n$, tri palčke dolžine $n$ in eno kocko v kotu. Pri $n = 2$ je to $12 + 6 + 1 = 19$, res $27 - 8 = 19$.
 
 ? (brez računala) Izračunaj $103 \cdot 97$ s pomočjo zmnožka vsote in razlike $(100 + 3)(100 - 3)$.
-= 9991
+= 9991 | 0
 ~ 10009 | To je $100^2 + 3^2$. Pri zmnožku vsote in razlike se srednja člena uničita, kvadrata pa se odštejeta: $a^2 - b^2$.
 ~ 9997 | Odštel si $3$ namesto $3^2 = 9$. Drugi člen moraš kvadrirati.
 > $(100 + 3)(100 - 3) = 100^2 - 3^2 = 10\,000 - 9 = 9991$.

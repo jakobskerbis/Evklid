@@ -199,11 +199,30 @@ $c = d\tan 60^\circ = 5\sqrt{3} \approx 8{,}66\,\mathrm{cm}$.
 - Telesna diagonala kocke oklepa z osnovno ploskvijo kot $\approx 35{,}26^\circ$, ne glede na rob.
 - (višja raven) Enako oddaljene od dveh točk: simetralna ravnina; od točke: sfera; od premice: valjasta ploskev.
 
+## Ponovitev
+
+**Formule**
+- premica $\perp$ ravnina $\iff$ premica $\perp$ dve sekajoči se premici ravnine (na pamet)
+- daljica $l$, projekcija $p$, razdalja $v$ krajišča od ravnine: $\sin\varphi = \frac{v}{l}$, $\cos\varphi = \frac{p}{l}$, $\tan\varphi = \frac{v}{p}$ (na pamet)
+- projekcija: $p = l\cos\varphi$ (na pamet)
+
+**Postopek**
+1. Skiciraj telo in označi premico ter ravnino.
+2. Iz zgornjega krajišča spusti pravokotnico na ravnino in poišči nožišče.
+3. Poveži nožišče s presečiščem premice in ravnine: to je projekcija.
+4. V pravokotnem trikotniku daljica–projekcija–razdalja izračunaj manjkajoče stranice.
+5. Kot $\varphi$ izračunaj s $\sin$, $\cos$ ali $\tan$.
+
+**Pazi na**
+- Premici, ki se ne sekata, sta lahko mimobežni: preveri, ali ležita v isti ravnini.
+- Ena pravokotnica ne zadošča: premica mora biti pravokotna na dve sekajoči se premici ravnine.
+- Projekcija $AG$ na $ABCD$ je diagonala $AC$, ne rob $AB$: najprej poišči nožišče ($G \to C$).
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Pravilna štiristrana piramida ima osnovni rob $6\,\mathrm{cm}$ in stranski rob $6\,\mathrm{cm}$. Izračunaj kot med stranskim robom in ravnino osnovne ploskve.
+Pravilna štiristrana piramida ima osnovni rob $6\,\mathrm{cm}$ in stranski rob $6\,\mathrm{cm}$. Izračunajte kot med stranskim robom in ravnino osnovne ploskve.
 
 **Rešitev:**
 
@@ -216,11 +235,11 @@ Pravilna štiristrana piramida ima osnovni rob $6\,\mathrm{cm}$ in stranski rob 
 
 ### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
 
-Kvader $ABCDEFGH$ ima osnovno ploskev $ABCD$ in robove $AB = 12\,\mathrm{cm}$, $BC = 4\,\mathrm{cm}$ in $AE = 3\,\mathrm{cm}$; oglišča $E$, $F$, $G$, $H$ ležijo po vrsti nad $A$, $B$, $C$, $D$. Kote zaokroži na stotinko stopinje.
+Kvader $ABCDEFGH$ ima osnovno ploskev $ABCD$ in robove $AB = 12\,\mathrm{cm}$, $BC = 4\,\mathrm{cm}$ in $AE = 3\,\mathrm{cm}$; oglišča $E$, $F$, $G$, $H$ ležijo po vrsti nad $A$, $B$, $C$, $D$. Kote zaokrožite na stotinko stopinje.
 
-a) Zapiši vse robove kvadra, ki so z robom $AE$ mimobežni. (2 točki)
-b) Izračunaj kot med telesno diagonalo $AG$ in ravnino $ABCD$. (2 točki)
-c) Izračunaj kot med telesno diagonalo $AG$ in ravnino stranske ploskve $ABFE$. (3 točke)
+a) Zapišite vse robove kvadra, ki so z robom $AE$ mimobežni. (2 točki)
+b) Izračunajte kot med telesno diagonalo $AG$ in ravnino $ABCD$. (2 točki)
+c) Izračunajte kot med telesno diagonalo $AG$ in ravnino stranske ploskve $ABFE$. (3 točke)
 
 **Rešitev:**
 
@@ -238,10 +257,10 @@ c) Izračunaj kot med telesno diagonalo $AG$ in ravnino stranske ploskve $ABFE$.
 
 Kocka $ABCDEFGH$ ima rob $4\,\mathrm{cm}$, osnovno ploskev $ABCD$ in oglišča $E$, $F$, $G$, $H$ po vrsti nad $A$, $B$, $C$, $D$. Točka $S$ je središče osnovne ploskve.
 
-a) Utemelji, da je premica $BD$ pravokotna na ravnino $ACGE$. (3 točke)
-b) Opiši množico vseh točk prostora, ki so enako oddaljene od vseh štirih oglišč osnovne ploskve $A$, $B$, $C$ in $D$, in odgovor utemelji. (2 točki)
-c) Opiši množico vseh točk prostora, ki so od premice $AE$ oddaljene $4\,\mathrm{cm}$. Katera oglišča kocke ležijo v tej množici? (2 točki)
-d) Izračunaj kot med diagonalo $BG$ stranske ploskve $BCGF$ in ravnino $ACGE$. (3 točke)
+a) Utemeljite, da je premica $BD$ pravokotna na ravnino $ACGE$. (3 točke)
+b) Opišite množico vseh točk prostora, ki so enako oddaljene od vseh štirih oglišč osnovne ploskve $A$, $B$, $C$ in $D$, in odgovor utemeljite. (2 točki)
+c) Opišite množico vseh točk prostora, ki so od premice $AE$ oddaljene $4\,\mathrm{cm}$. Katera oglišča kocke ležijo v tej množici? (2 točki)
+d) Izračunajte kot med diagonalo $BG$ stranske ploskve $BCGF$ in ravnino $ACGE$. (3 točke)
 
 **Rešitev:**
 
@@ -352,7 +371,7 @@ točka: 2,1; 5,7 | H | nad
 > Diagonala osnovne ploskve je $\sqrt{6^2 + 8^2} = 10\,\mathrm{dm}$, enako kot višina. Zato je $\tan\varphi = \frac{10}{10} = 1$ in $\varphi = 45^\circ$.
 
 ? (višja raven) Koliko oglišč kocke $ABCDEFGH$ leži na simetralni ravnini daljice $AC$?
-= 4
+= 4 | 0
 ~ 2 | Našel si le $B$ in $D$, kot da gre za simetralo v ravnini $ABCD$. Simetralna ravnina je pravokotna na $AC$ in sega tudi navzgor, zato vsebuje še $F$ in $H$.
 ~ 0 | Oglišča $B$ in $D$ sta od $A$ in $C$ enako oddaljena (rob $a$), zato ležita na simetralni ravnini.
 > Simetralna ravnina daljice $AC$ gre skozi razpolovišče in je pravokotna na $AC$. To je ravnina $BDHF$: oglišča $B$, $D$, $F$, $H$ so enako oddaljena od $A$ in $C$.

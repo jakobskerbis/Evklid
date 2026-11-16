@@ -20,9 +20,9 @@ Enako vprašanje se skriva v ograji, s katero želiš ograditi čim večji prost
 | | Doslej | Zdaj |
 |---|---|---|
 | predpis | dan | iz besedila |
-| dovoljeni $x$ | vsi realni | po besedilu |
-| ekstrem | v temenu | teme ali krajišče |
-| odgovor | število $q$ | mere z enoto |
+| $x$ | $\mathbb{R}$ | po besedilu |
+| ekstrem | teme | tudi krajišče |
+| odgovor | $q$ | mere z enoto |
 
 **2. Predpis iz besedila.** Začnimo z nalogo brez zgodbe: vsota dveh števil je $20$. Kdaj je njun zmnožek največji? Najprej poskusimo s številkami.
 
@@ -219,15 +219,38 @@ $x^2 + 8x = (x + 4)^2 - 16$, teme je $T(-4, -16)$. Števili sta $-4$ in $4$, naj
 - Med pravokotniki z enakim obsegom ima največjo ploščino kvadrat. Pri ograji ob steni je stranica ob steni dvakrat daljša od drugih dveh.
 - Odgovor so mere, cena ali čas z enoto, ne le vrednost $q$.
 
+## Ponovitev
+
+*(višja raven)*
+
+**Formule**
+- teme: $p = -\dfrac{b}{2a}$, $q = f(p)$ (na pamet)
+- temenska oblika $f(x) = a(x - p)^2 + q$ (na pamet)
+- $a < 0$: maksimum $q$; $a > 0$: minimum $q$ (na pamet)
+- na $[m, n]$: primerjaj $f(p)$, $f(m)$, $f(n)$ (na pamet)
+
+**Postopek**
+1. Nariši skico in vsako dolžino zapiši z $x$.
+2. Z zvezo (obseg, vsota, ograja) izrazi drugo količino z $x$.
+3. Sestavi kvadratno funkcijo in iz besedila zapiši območje za $x$.
+4. Izračunaj teme in preveri, ali leži v območju.
+5. Če ne, izračunaj vrednosti v krajiščih.
+6. Odgovori z merami in enoto, ne le z $q$.
+
+**Pazi na**
+- Teme upoštevaj le, če leži v območju; sicer je ekstrem v krajišču.
+- Pri obsegu $40\,\text{m}$ sta stranici $x$ in $20 - x$, ne $40 - x$.
+- Pri $a > 0$ je v temenu minimum, ne maksimum.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
 
 Mali rastlinjak ima obliko kvadra s kvadratnim dnom. Vseh $12$ robov je iz aluminijastega profila, ki ga je skupaj $6\,\text{m}$. Štiri stranske ploskve in zgornja ploskev so iz stekla, dno ni. Rob dna označimo z $x$, višino rastlinjaka s $h$, oboje v metrih, ploščino stekla pa z $S$.
 
-a) Izrazi $h$ z $x$, pokaži, da je $S(x) = -7x^2 + 6x$, in zapiši, za katere $x$ je model smiseln. (3 točke)
-b) Izračunaj $x$, pri katerem je stekla največ, in to ploščino. Rezultata zaokroži na dve decimalki. (2 točki)
-c) Rastlinjak mora stati na okenski polici, globoki $35\,\text{cm}$, zato je $x \le 0{,}35$. Izračunaj zdaj največjo ploščino stekla in višino rastlinjaka. (2 točki)
+a) Izrazite $h$ z $x$, pokažite, da je $S(x) = -7x^2 + 6x$, in zapišite, za katere $x$ je model smiseln. (3 točke)
+b) Izračunajte $x$, pri katerem je stekla največ, in to ploščino. Rezultata zaokrožite na dve decimalki. (2 točki)
+c) Rastlinjak mora stati na okenski polici, globoki $35\,\text{cm}$, zato je $x \le 0{,}35$. Izračunajte zdaj največjo ploščino stekla in višino rastlinjaka. (2 točki)
 
 **Rešitev:**
 
@@ -246,8 +269,8 @@ c) Rastlinjak mora stati na okenski polici, globoki $35\,\text{cm}$, zato je $x 
 
 Dve ravni cesti se sekata pod pravim kotom v križišču $K$. Ob času $t = 0$ je kolesar A $10\,\text{km}$ severno od $K$ in pelje proti $K$ s stalno hitrostjo $12\,\text{km/h}$. Kolesar B je ob času $t = 0$ v $K$ in pelje proti vzhodu s stalno hitrostjo $16\,\text{km/h}$. Čas $t$ merimo v urah, razdaljo med kolesarjema $d$ v kilometrih.
 
-a) Pokaži, da je $d^2 = 400t^2 - 240t + 100$, in zapiši interval časov od začetka, dokler kolesar A ne pride do križišča. (3 točke)
-b) Kdaj sta si kolesarja najbližje in kolikšna je takrat razdalja med njima? Utemelji, zakaj zadošča poiskati najmanjšo vrednost $d^2$. (3 točke)
+a) Pokažite, da je $d^2 = 400t^2 - 240t + 100$, in zapišite interval časov od začetka, dokler kolesar A ne pride do križišča. (3 točke)
+b) Kdaj sta si kolesarja najbližje in kolikšna je takrat razdalja med njima? Utemeljite, zakaj zadošča poiskati najmanjšo vrednost $d^2$. (3 točke)
 c) Kdaj sta kolesarja spet $10\,\text{km}$ narazen, tako kot ob začetku? (2 točki)
 d) Kolesar A po $12$ minutah zavije s ceste. Kolikšna je najmanjša razdalja med kolesarjema od $t = 0$ do tega trenutka? (2 točki)
 
@@ -360,7 +383,7 @@ točka: 8; 64 | T(8, 64) | nad
 > Interval $[2, 6]$ leži levo od temena, kjer parabola, odprta navzdol, narašča. Največji zaslužek je v desnem krajišču: $Z(6) = 60$.
 
 ? (brez računala) Med vsemi pravokotniki z istim obsegom ima največji ploščino $81\,\text{cm}^2$. Kolikšen je ta obseg?
-= 36 cm
+= 36 cm | 0
 ~ 18 | To je vsota dolžine in širine, $9 + 9$, torej polovica obsega. Obseg šteje vsako stranico dvakrat.
 ~ 20,25 | Ploščino si delil s $4$. Največjo ploščino ima kvadrat, njegova stranica je $\sqrt{81} = 9$.
 ~ 9 | To je stranica kvadrata, ne obseg.

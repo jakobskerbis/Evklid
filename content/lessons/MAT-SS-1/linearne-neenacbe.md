@@ -46,12 +46,14 @@ $x = -5$ je rešitev, ker $5 > 3$. $x = 0$ ni, ker $0 > 3$ ne drži. Rešitve so
 
 **4. Zapis rešitve kot interval.** Množico rešitev zapišemo na številski premici in z intervalom:
 
-| Neenačba | Interval | Pomen |
-|---|---|---|
-| $x > a$ | $(a, \infty)$ | od $a$ naprej, brez $a$ |
-| $x \ge a$ | $[a, \infty)$ | od $a$ naprej, z $a$ |
-| $x < a$ | $(-\infty, a)$ | do $a$, brez $a$ |
-| $x \le a$ | $(-\infty, a]$ | do $a$, z $a$ |
+| Neenačba | Interval |
+|---|---|
+| $x > a$ | $(a, \infty)$ |
+| $x \ge a$ | $[a, \infty)$ |
+| $x < a$ | $(-\infty, a)$ |
+| $x \le a$ | $(-\infty, a]$ |
+
+Prva dva intervala segata od $a$ naprej, zadnja dva do $a$.
 
 - **Oklepaj** $($ ali $)$ pomeni, da krajišče **ni** v množici (pri strogih znakih $<$, $>$). Na številski premici ga narišemo kot **prazen krožec**.
 - **Oglati oklepaj** $[$ ali $]$ pomeni, da krajišče **je** v množici (pri $\le$, $\ge$). Narišemo ga kot **poln krožec**.
@@ -168,11 +170,31 @@ Delimo z $-2$, zato se znak obrne: $x \le -5$. Interval je $(-\infty, -5]$, kraj
 - Rešitev zapišemo kot interval: okrogel oklepaj pri strogi neenačbi in pri $\pm\infty$, oglati oklepaj pri $\le$, $\ge$.
 - Pri besedilnih nalogah upoštevamo še smiselnost rešitve (npr. $x \ge 0$).
 
+## Ponovitev
+
+**Formule**
+- Prištevanje, odštevanje: znak ostane (na pamet)
+- Množenje ali deljenje z $c > 0$: znak ostane (na pamet)
+- Z $c < 0$ se znak obrne: $-2x < 6 \Rightarrow x > -3$ (na pamet)
+- $x > 4$: $(4, \infty)$; $x \le 4$: $(-\infty, 4]$ (na pamet)
+
+**Postopek**
+1. Odpri oklepaje in odpravi ulomke.
+2. Člene z $x$ zberi na eni strani.
+3. Deli s koeficientom; pri negativnem obrni znak.
+4. Rešitev zapiši kot interval in jo nariši na številsko premico.
+5. Pri besedilni nalogi upoštevaj smiselnost (npr. $x \ge 0$, cela števila).
+
+**Pazi na**
+- Pri deljenju z negativnim številom obrni znak.
+- Okrogel oklepaj pri $<$, $>$ in $\pm\infty$, oglati pri $\le$, $\ge$.
+- Interval piši od manjšega k večjemu: $x > 4$ je $(4, \infty)$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši neenačbo $\dfrac{x - 1}{3} - \dfrac{x + 2}{2} \ge \dfrac{x}{6} - 1$ in rešitev zapiši z intervalom.
+Rešite neenačbo $\dfrac{x - 1}{3} - \dfrac{x + 2}{2} \ge \dfrac{x}{6} - 1$ in rešitev zapišite z intervalom.
 
 **Rešitev:**
 
@@ -188,9 +210,9 @@ Reši neenačbo $\dfrac{x - 1}{3} - \dfrac{x + 2}{2} \ge \dfrac{x}{6} - 1$ in re
 
 Podjetje izdeluje majice s potiskom. Mesečni stalni stroški so $1350\,\text{€}$, izdelava ene majice stane $4{,}20\,\text{€}$, majico pa prodajo za $11{,}70\,\text{€}$. Z $x$ označimo število majic, ki jih v mesecu izdelajo in prodajo.
 
-a) Zapiši izraz za mesečni dobiček v odvisnosti od $x$. (1 točka)
-b) Zapiši in reši neenačbo, s katero ugotoviš, najmanj koliko majic mora podjetje prodati, da bo dobiček pozitiven. (2 točki)
-c) Najmanj koliko majic mora podjetje prodati, da bo dobiček znašal vsaj $20\,\%$ prihodka od prodaje? Mejo izračunaj na dve decimalni mesti natančno in odgovor utemelji. (3 točke)
+a) Zapišite izraz za mesečni dobiček v odvisnosti od $x$. (1 točka)
+b) Zapišite in rešite neenačbo, s katero ugotovite, najmanj koliko majic mora podjetje prodati, da bo dobiček pozitiven. (2 točki)
+c) Najmanj koliko majic mora podjetje prodati, da bo dobiček znašal vsaj $20\,\%$ prihodka od prodaje? Mejo izračunajte na dve decimalni mesti natančno in odgovor utemeljite. (3 točke)
 
 **Rešitev:**
 
@@ -208,11 +230,11 @@ c) Najmanj koliko majic mora podjetje prodati, da bo dobiček znašal vsaj $20\,
 
 Dani sta linearni funkciji $f(x) = \dfrac{x + 7}{2}$ in $g(x) = \dfrac{4x - 2}{3}$.
 
-a) Reši neenačbo $f(x) \ge g(x)$ in rešitev zapiši z intervalom. (3 točke)
-b) Pojasni, kaj rešitev iz a) pove o legi grafov funkcij $f$ in $g$. (1 točka)
+a) Rešite neenačbo $f(x) \ge g(x)$ in rešitev zapišite z intervalom. (3 točke)
+b) Pojasnite, kaj rešitev iz a) pove o legi grafov funkcij $f$ in $g$. (1 točka)
 c) Za katera števila $x$ sta vrednosti obeh funkcij pozitivni? (2 točki)
-d) Zapiši množico števil $x$, ki izpolnjujejo pogoja iz a) in c) hkrati. (1 točka)
-e) Določi realni parameter $p$ tako, da bo množica rešitev neenačbe $f(x) \ge g(x) + p$ enaka $(-\infty, 2]$. (3 točke)
+d) Zapišite množico števil $x$, ki izpolnjujejo pogoja iz a) in c) hkrati. (1 točka)
+e) Določite realni parameter $p$ tako, da bo množica rešitev neenačbe $f(x) \ge g(x) + p$ enaka $(-\infty, 2]$. (3 točke)
 
 **Rešitev:**
 

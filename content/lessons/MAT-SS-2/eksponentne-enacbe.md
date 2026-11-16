@@ -223,11 +223,32 @@ podnapis: a) krivulja je pod padajočo premico za x < 2; b) pod premico y = x + 
 - Iz $a^u = b^u$ za različni pozitivni osnovi sledi $u = 0$.
 - Vsako rešitev preveri s preizkusom v prvotni enačbi.
 
+## Ponovitev
+
+**Formule**
+- $a^{u} = a^{v} \iff u = v$ ($a > 0$, $a \ne 1$) (na pamet)
+- $\dfrac{1}{a^n} = a^{-n}$, $\sqrt[n]{a^m} = a^{\frac{m}{n}}$ (na pamet)
+- $(a^m)^n = a^{mn}$, $a^{x+n} = a^n \cdot a^x$ (na pamet)
+- $a^x = c$ s $c \le 0$ nima rešitve (na pamet)
+- $a^u = b^u$, $a \ne b$ $\Rightarrow$ $u = 0$ (na pamet)
+
+**Postopek**
+1. Obe strani zapiši kot potenci z isto osnovo, npr. $\dfrac{1}{8} = 2^{-3}$.
+2. Pri vsoti potenc z isto osnovo izpostavi skupni faktor $a^x$.
+3. Če nastopata $a^{2x}$ in $a^x$, vpelji $t = a^x$ s pogojem $t > 0$.
+4. Izenači eksponenta in reši dobljeno enačbo.
+5. Vsako rešitev preveri v prvotni enačbi.
+
+**Pazi na**
+- Eksponenta izenači le pri enakih osnovah, zato najprej $4^{x-1} = 2^{2x-2}$.
+- Vsota v eksponentu je produkt potenc: $2^{x+3} = 8 \cdot 2^x$, ne $2^x + 2^3$.
+- Pri $t = a^x$ zavrzi vrednosti $t \le 0$: $3^x = -3$ nima rešitve.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši enačbo $\sqrt{27^{x}} = \dfrac{9^{x+1}}{3}$.
+Rešite enačbo $\sqrt{27^{x}} = \dfrac{9^{x+1}}{3}$.
 
 **Rešitev:**
 
@@ -243,9 +264,9 @@ Reši enačbo $\sqrt{27^{x}} = \dfrac{9^{x+1}}{3}$.
 
 Dana je funkcija $f(x) = 4^x - 6 \cdot 2^x + 8$.
 
-a) Izračunaj presečišče grafa funkcije $f$ z osjo $y$. (1 točka)
-b) Izračunaj ničli funkcije $f$. (3 točke)
-c) Reši enačbo $f(x) = 24$. (3 točke)
+a) Izračunajte presečišče grafa funkcije $f$ z osjo $y$. (1 točka)
+b) Izračunajte ničli funkcije $f$. (3 točke)
+c) Rešite enačbo $f(x) = 24$. (3 točke)
 
 **Rešitev:**
 
@@ -267,7 +288,7 @@ V laboratoriju gojijo dve kulturi bakterij. Po $x$ urah je v prvi kulturi $A(x) 
 a) Koliko bakterij je v vsaki kulturi na začetku? (1 točka)
 b) Po koliko urah je v obeh kulturah enako število bakterij? Koliko jih je takrat v vsaki? (3 točke)
 c) Po koliko urah je v obeh kulturah skupaj $9600$ bakterij? (3 točke)
-d) Za $x$ od $0$ do $4$ skiciraj grafa funkcij $A$ in $B$ v istem koordinatnem sistemu. Z grafa razberi, kdaj je v drugi kulturi več bakterij kot v prvi, in odgovor utemelji z računom. (3 točke)
+d) Za $x$ od $0$ do $4$ skicirajte grafa funkcij $A$ in $B$ v istem koordinatnem sistemu. Z grafa razberite, kdaj je v drugi kulturi več bakterij kot v prvi, in odgovor utemeljite z računom. (3 točke)
 
 **Rešitev:**
 
@@ -394,7 +415,7 @@ Opazi, da je kvadratna enačba za $t$ le vmesni korak. Dokler ne izračunaš $x$
 > Enačba $2^x = -1$ nima rešitve, ker je $2^x > 0$. Vrednost $t = -1$ je treba zavreči, ne pa iz nje izpeljati $x = -1$. Edina rešitev je $x = 2$; preizkus: $16 - 12 - 4 = 0$.
 
 ? (brez računala) Žogo spustimo z višine $4\,\mathrm{m}$. Po vsakem odboju se dvigne do polovice prejšnje višine, zato po $n$ odbojih doseže $4 \cdot \left(\frac{1}{2}\right)^n$ metrov. Po katerem odboju se dvigne le še do $0{,}5\,\mathrm{m}$? Vpiši število odbojev $n$.
-= 3
+= 3 | 0
 ~ 8 | Število $8$ je razmerje $4 : 0{,}5$, ne število razpolovitev. Iz enačbe $\left(\frac{1}{2}\right)^n = \frac{1}{8}$ sledi $n = 3$, ker je $8 = 2^3$.
 ~ 7 | To bi veljalo, če bi žoga ob vsakem odboju izgubila stalnih $0{,}5\,\mathrm{m}$. Višina se razpolavlja, ne zmanjšuje za stalno razliko.
 ~ 4 | Števila $4$; $2$; $1$; $0{,}5$ so štiri, a prvo je začetna višina, ne odboj. Razpolovitve so le tri.

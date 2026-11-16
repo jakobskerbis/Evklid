@@ -53,10 +53,11 @@ Kaj naredi $k$ s puščico:
 
 | $k$ | dolžina | usmerjenost |
 |---|---|---|
-| $k > 1$ | se poveča | ostane |
-| $0 < k < 1$ | se zmanjša | ostane |
-| $k = 0$ | $0$ (ničelni vektor $\vec 0$) | – |
+| $k > 0$ | $k$-krat | ostane |
+| $k = 0$ | $0$ | – |
 | $k < 0$ | $\lvert k\rvert$-krat | se obrne |
+
+Pri $k > 1$ se dolžina poveča, pri $0 < k < 1$ zmanjša. Pri $k = 0$ dobimo ničelni vektor $\vec 0$.
 
 Vektor $(-1)\vec a = -\vec a$ je **nasprotni vektor**: enako dolg, kaže v obratno stran. Z njim odštevamo: $\vec a - \vec b = \vec a + (-\vec b)$.
 
@@ -219,11 +220,32 @@ $\vec F = k\vec a + m\vec b$, po komponentah: $k a_x + m b_x = F_x$ in $k a_y + 
 - Krajevni vektor $\vec r_T = \overrightarrow{OT}$ ima za komponente koordinate točke $T$; $\overrightarrow{AB} = \vec r_B - \vec r_A$.
 - Bazo ravnine tvorita dva nekolinearna vektorja, bazo prostora trije nekoplanarni. Razstavljanje sile na dani smeri je razvoj po bazi (paralelogram).
 
+## Ponovitev
+
+**Formule**
+- $\vec a + \vec b = (a_x + b_x,\ a_y + b_y,\ a_z + b_z)$ (na pamet)
+- $k\vec a = (ka_x,\ ka_y,\ ka_z)$ (na pamet)
+- $|\vec a| = \sqrt{a_x^2 + a_y^2 + a_z^2}$ (na pamet)
+- $|k\vec a| = |k| \cdot |\vec a|$ (na pamet)
+- $\overrightarrow{AB} = \vec r_B - \vec r_A$ (na pamet)
+- kolinearna: $\vec b = k\vec a$ (na pamet)
+
+**Postopek**
+1. Zapiši krajevne vektorje točk ali vektorje po komponentah.
+2. Seštej, odštej ali pomnoži s številom po komponentah.
+3. Iz dobljenih komponent izračunaj dolžino.
+4. Pri kolinearnosti ali razvoju po bazi zapiši enačbo po komponentah in reši sistem.
+
+**Pazi na**
+- $|\vec a + \vec b| \ne |\vec a| + |\vec b|$: najprej seštej komponente, nato računaj dolžino.
+- S številom $k$ pomnoži vsako komponento.
+- Negativne komponente piši v oklepaju: $6 - (-1) = 7$, ne $5$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Vektorja $\vec a = (2, p, -3)$ in $\vec b = (q, 6, 9)$ sta kolinearna. Izračunaj števili $p$ in $q$.
+Vektorja $\vec a = (2, p, -3)$ in $\vec b = (q, 6, 9)$ sta kolinearna. Izračunajte števili $p$ in $q$.
 
 **Rešitev:**
 
@@ -239,10 +261,10 @@ Vektorja $\vec a = (2, p, -3)$ in $\vec b = (q, 6, 9)$ sta kolinearna. Izračuna
 
 Dane so točke $A(1, 0, 2)$, $B(3, 2, 3)$ in $C(1, 3, 5)$.
 
-a) Izračunaj vektorja $\overrightarrow{AB}$ in $\overrightarrow{BC}$. (1 točka)
-b) Določi koordinate točke $D$, da bo štirikotnik $ABCD$ paralelogram. (2 točki)
-c) Izračunaj dolžini stranic $AB$ in $BC$ ter dolžino diagonale $AC$. Utemelji, da je paralelogram $ABCD$ kvadrat. (3 točke)
-d) Dana je še točka $E(3, 5, 6)$. Zapiši vektor $\overrightarrow{AE}$ kot linearno kombinacijo vektorjev $\overrightarrow{AB}$ in $\overrightarrow{BC}$ ter utemelji, da točka $E$ leži v ravnini paralelograma $ABCD$. (2 točki)
+a) Izračunajte vektorja $\overrightarrow{AB}$ in $\overrightarrow{BC}$. (1 točka)
+b) Določite koordinate točke $D$, da bo štirikotnik $ABCD$ paralelogram. (2 točki)
+c) Izračunajte dolžini stranic $AB$ in $BC$ ter dolžino diagonale $AC$. Utemeljite, da je paralelogram $ABCD$ kvadrat. (3 točke)
+d) Dana je še točka $E(3, 5, 6)$. Zapišite vektor $\overrightarrow{AE}$ kot linearno kombinacijo vektorjev $\overrightarrow{AB}$ in $\overrightarrow{BC}$ ter utemeljite, da točka $E$ leži v ravnini paralelograma $ABCD$. (2 točki)
 
 **Rešitev:**
 
@@ -362,13 +384,13 @@ Vsa sledijo iz pravil za realna števila, ker računamo po komponentah.
 > $\vec v = (2;\ 1{,}5)\,\mathrm{m/s}$, zato je $|\vec v| = \sqrt{2^2 + 1{,}5^2} = \sqrt{6{,}25} = 2{,}5\,\mathrm{m/s}$.
 
 ? (brez računala) Točki imata koordinati $A(2, -1, 3)$ in $B(5, 3, 3)$. Kolikšna je razdalja med njima, torej $|\overrightarrow{AB}|$?
-= 5
+= 5 | 0
 ~ 9,43 | Krajevna vektorja si seštel. Vektor $\overrightarrow{AB}$ je razlika $\vec r_B - \vec r_A$.
 ~ 6,56 | To je dolžina krajevnega vektorja točke $B$, torej razdalja $B$ od izhodišča.
 > $\overrightarrow{AB} = \vec r_B - \vec r_A = (3, 4, 0)$, zato je $|\overrightarrow{AB}| = \sqrt{9 + 16 + 0} = 5$.
 
 ? Silo $\vec F = (8, 1)\,\mathrm{N}$ razstavimo na smeri baznih vektorjev $\vec a = (2, 1)$ in $\vec b = (1, -1)$, torej $\vec F = k\vec a + m\vec b$. Koliko je $k$?
-= 3
+= 3 | 0
 ~ 2 | To je $m$, koeficient pred $\vec b$. Iz $2k + m = 8$ in $k - m = 1$ sledi $3k = 9$.
 > Po komponentah: $2k + m = 8$ in $k - m = 1$. Seštejemo: $3k = 9$, torej $k = 3$ in $m = 2$. Preizkus: $3 \cdot (2, 1) + 2 \cdot (1, -1) = (8, 1)$.
 

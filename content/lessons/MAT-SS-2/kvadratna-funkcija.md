@@ -338,11 +338,32 @@ Iz $2(x - 3)^2 = 2$ sledi $(x - 3)^2 = 1$ in $x - 3 = \pm 1$, torej $x_1 = 2$ in
 - Zaloga vrednosti: $[q, \infty)$ za $a > 0$, $(-\infty, q]$ za $a < 0$.
 - Ničli (in vsak par enako visokih točk) ležita simetrično glede na os: $p = \dfrac{x_1 + x_2}{2}$. Za $a > 0$ funkcija pada do $p$, nato narašča; za $a < 0$ obratno.
 
+## Ponovitev
+
+**Formule**
+- $f(x) = a(x - p)^2 + q$, teme $T(p, q)$ (na pamet)
+- $p = -\dfrac{b}{2a}$, $\;q = f(p)$ (na pamet)
+- $f(x) = a(x - x_1)(x - x_2)$ (na pamet)
+- $p = \dfrac{x_1 + x_2}{2}$ (na pamet)
+- $a > 0$: $Z_f = [q, \infty)$; $a < 0$: $Z_f = (-\infty, q]$ (na pamet)
+
+**Postopek**
+1. Iz predznaka $a$ ugotovi, ali je parabola odprta navzgor ali navzdol.
+2. Izračunaj teme: $p$ in $q = f(p)$.
+3. Ničle dobiš iz enačbe $f(x) = 0$.
+4. Presečišče z osjo $y$ je $(0, c)$.
+5. Nariši parabolo in zapiši zalogo vrednosti.
+
+**Pazi na**
+- V $(x + 3)^2$ je $p = -3$: v temenski obliki stoji $x - p$.
+- $c$ je vrednost pri $x = 0$, ne v temenu: $q = f(p)$.
+- V $p = -\dfrac{b}{2a}$ vstavi $b$ s predznakom v oklepaju.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Graf kvadratne funkcije $f$ seka os $x$ v točkah $(-1, 0)$ in $(5, 0)$, os $y$ pa v točki $(0, 10)$. Zapiši predpis funkcije $f$ v splošni obliki.
+Graf kvadratne funkcije $f$ seka os $x$ v točkah $(-1, 0)$ in $(5, 0)$, os $y$ pa v točki $(0, 10)$. Zapišite predpis funkcije $f$ v splošni obliki.
 
 **Rešitev:**
 
@@ -357,9 +378,9 @@ Graf kvadratne funkcije $f$ seka os $x$ v točkah $(-1, 0)$ in $(5, 0)$, os $y$ 
 
 Dana je funkcija $f(x) = -x^2 - 2x + 3$.
 
-a) Izračunaj koordinati temena in zapiši predpis funkcije v temenski obliki. (2 točki)
-b) Izračunaj ničli in presečišče grafa z osjo $y$. Nato nariši graf funkcije $f$. (3 točke)
-c) Zapiši zalogo vrednosti funkcije $f$ in interval, na katerem funkcija narašča. (2 točki)
+a) Izračunajte koordinati temena in zapišite predpis funkcije v temenski obliki. (2 točki)
+b) Izračunajte ničli in presečišče grafa z osjo $y$. Nato narišite graf funkcije $f$. (3 točke)
+c) Zapišite zalogo vrednosti funkcije $f$ in interval, na katerem funkcija narašča. (2 točki)
 
 **Rešitev:**
 
@@ -378,10 +399,10 @@ c) Zapiši zalogo vrednosti funkcije $f$ in interval, na katerem funkcija naraš
 
 Kmet želi ob ravnem zidu hleva z $120\,\text{m}$ ograje ograditi pravokoten pašnik. Ob zidu ograje ne postavi. Pašnik s pregrado, ki je pravokotna na zid, razdeli na dva dela; tudi pregrada je iz iste ograje. Z $x$ označimo dolžino stranice pašnika, ki je pravokotna na zid, v metrih.
 
-a) Pokaži, da je ploščina pašnika $P(x) = -3x^2 + 120x$ (v $\text{m}^2$), in zapiši, za katere $x$ je model smiseln. (3 točke)
-b) Določi mere pašnika z največjo ploščino in to ploščino. (3 točke)
-c) Pri katerih $x$ je ploščina pašnika $900\,\text{m}^2$? Zapiši mere obeh takih pašnikov. (2 točki)
-d) Nariši graf funkcije $P$ na intervalu, kjer je model smiseln, in z grafa preberi, za katere $x$ je ploščina vsaj $900\,\text{m}^2$. (2 točki)
+a) Pokažite, da je ploščina pašnika $P(x) = -3x^2 + 120x$ (v $\text{m}^2$), in zapišite, za katere $x$ je model smiseln. (3 točke)
+b) Določite mere pašnika z največjo ploščino in to ploščino. (3 točke)
+c) Pri katerih $x$ je ploščina pašnika $900\,\text{m}^2$? Zapišite mere obeh takih pašnikov. (2 točki)
+d) Narišite graf funkcije $P$ na intervalu, kjer je model smiseln, in z grafa preberite, za katere $x$ je ploščina vsaj $900\,\text{m}^2$. (2 točki)
 
 **Rešitev:**
 

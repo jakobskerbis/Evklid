@@ -59,7 +59,7 @@ $$S_{AB}\left(\frac{x_A + x_B}{2},\ \frac{y_A + y_B}{2}\right)$$
 
 **Ploščina trikotnika.** Vzemi trikotnik z oglišči $A(1, 1)$, $B(6, 2)$ in $C(3, 5)$. Okrog njega nariši najmanjši pravokotnik s stranicami, vzporednimi osema. Sega od $x = 1$ do $x = 6$ in od $y = 1$ do $y = 5$, zato ima ploščino $5 \cdot 4 = 20$. Iz pravokotnika odrežemo tri pravokotne trikotnike ob robu. Pravi kot ima vsak v enem od oglišč pravokotnika, $(6, 1)$, $(6, 5)$ ali $(1, 5)$:
 
-| odrezani trikotnik | kateti | ploščina |
+| trikotnik | kateti | ploščina |
 |---|---|---|
 | pod $AB$ | $5$ in $1$ | $2{,}5$ |
 | desno od $BC$ | $3$ in $3$ | $4{,}5$ |
@@ -288,11 +288,31 @@ Večina napak ni v formulah, ampak v predznakih in vrstnem redu.
 - Množica točk ob pogojih: $x \ge a$ je polravnina, $|y| < b$ pas $-b < y < b$; pri »in« vzamemo presek, pri »ali« unijo. Rob z $\le$, $\ge$ je poln, z $<$, $>$ črtkan.
 - Negativne koordinate piši v oklepaje.
 
+## Ponovitev
+
+**Formule**
+- $d(A, B) = \sqrt{(x_B - x_A)^2 + (y_B - y_A)^2}$ (na pamet)
+- $S_{AB}\left(\frac{x_A + x_B}{2}, \frac{y_A + y_B}{2}\right)$ (na pamet)
+- $x_B = 2x_S - x_A$, $y_B = 2y_S - y_A$ (na pamet)
+- $S = \frac{1}{2}|u_1 v_2 - u_2 v_1|$; $u$, $v$ sta premika od $A$ do $B$ in do $C$; priloga jo zapiše s koordinatami oglišč (priloga)
+- $S = 0$: točke so kolinearne (na pamet)
+
+**Postopek**
+1. Nariši točke; negativne koordinate piši v oklepaje.
+2. Izračunaj razlike koordinat, npr. $x_B - x_A$ in $y_B - y_A$.
+3. Vstavi v formulo za razdaljo, razpolovišče ali ploščino.
+4. Ploščino preveri: očrtan pravokotnik minus trije robni trikotniki.
+
+**Pazi na**
+- Odštevanje negativne koordinate: $4 - (-2) = 6$, ne $2$.
+- Razdalja ni vsota katet: uporabi Pitagorov izrek.
+- Ploščina trikotnika je polovica absolutne vrednosti $u_1 v_2 - u_2 v_1$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Točki $A(2, -1)$ in $B(x_B, 5)$ sta $10$ enot narazen. Izračunaj vse možne vrednosti $x_B$.
+Točki $A(2, -1)$ in $B(x_B, 5)$ sta $10$ enot narazen. Izračunajte vse možne vrednosti $x_B$.
 
 **Rešitev:**
 
@@ -307,9 +327,9 @@ Točki $A(2, -1)$ in $B(x_B, 5)$ sta $10$ enot narazen. Izračunaj vse možne vr
 
 Dane so točke $A(-1, -3)$, $B(7, 3)$ in $C(-3, 8)$.
 
-a) Izračunaj dolžino daljice $AB$ in koordinati njenega razpolovišča $S_{AB}$. (2 točki)
-b) Pokaži, da je trikotnik $ABC$ enakokrak z osnovnico $AB$. (2 točki)
-c) Izračunaj ploščino trikotnika $ABC$ in iz nje dolžino višine na stranico $AB$. (2 točki)
+a) Izračunajte dolžino daljice $AB$ in koordinati njenega razpolovišča $S_{AB}$. (2 točki)
+b) Pokažite, da je trikotnik $ABC$ enakokrak z osnovnico $AB$. (2 točki)
+c) Izračunajte ploščino trikotnika $ABC$ in iz nje dolžino višine na stranico $AB$. (2 točki)
 
 **Rešitev:**
 
@@ -433,7 +453,7 @@ napis: 1; 2 | x = 1 | desno
 > Pas leži med navpičnicama, zato je pogoj za $x$. Levi rob je črtkan ($x > -2$), desni poln ($x \le 1$).
 
 ? (brez računala) Koliko točk s celoštevilskima koordinatama leži v množici točk z $-1 \le x < 3$ in $|y| < 2$?
-= 12
+= 12 | 0
 ~ 25 | Štel si vse robove: $x = 3$ ne spada zraven ($x < 3$), prav tako ne $y = \pm 2$ ($|y| < 2$).
 ~ 20 | Štel si tudi $y = -2$ in $y = 2$. Pri $|y| < 2$ so dovoljeni le $y = -1, 0, 1$.
 ~ 15 | Štel si tudi $x = 3$, a pogoj je $x < 3$. Prva koordinata je lahko $-1$, $0$, $1$ ali $2$.

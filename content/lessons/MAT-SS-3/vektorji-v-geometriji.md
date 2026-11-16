@@ -73,11 +73,9 @@ Ničelni vektor dobiš samo tako, da oba vzameš nič krat. Sicer sta **linearno
 
 Dva vektorja sta odvisna natanko tedaj, ko sta kolinearna. Trije so odvisni natanko tedaj, ko so koplanarni:
 
-| Število vektorjev | v ravnini | v prostoru |
-|---|---|---|
-| dva | neodvisna, če nista kolinearna | neodvisna, če nista kolinearna |
-| trije | vedno odvisni | neodvisni, če niso koplanarni |
-| štirje | vedno odvisni | vedno odvisni |
+- **Dva** vektorja sta v ravnini in v prostoru neodvisna, če nista kolinearna.
+- **Trije** so v ravnini vedno odvisni, v prostoru neodvisni, če niso koplanarni.
+- **Štirje** so v ravnini in v prostoru vedno odvisni.
 
 Ključna posledica: če sta $\vec a$ in $\vec b$ neodvisna in je $\alpha\vec a + \beta\vec b = \gamma\vec a + \delta\vec b$, potem je $\alpha = \gamma$ in $\beta = \delta$. Odštejemo namreč desno stran in dobimo $(\alpha - \gamma)\vec a + (\beta - \delta)\vec b = \vec 0$, kar je pri neodvisnih vektorjih mogoče le z ničelnima koeficientoma. Zapis z neodvisnima vektorjema je en sam, zato smemo **primerjati koeficiente**.
 
@@ -237,11 +235,32 @@ Drži: $3\beta = 3 \cdot 3 = 9$. Torej je $\vec c = 2\vec a + 3\vec b$ in vsi tr
 - (višja raven) Delilno razmerje $AD : DB = m : n$: $\vec r_D = \frac{n\vec r_A + m\vec r_B}{m + n}$; razpolovišče $\frac{\vec r_A + \vec r_B}{2}$; težišče $\frac{\vec r_A + \vec r_B + \vec r_C}{3}$, deli težiščnico $2 : 1$.
 - (višja raven) Naloga »v kakšnem razmerju se sekata«: izberi neodvisna bazna vektorja, isti vektor zapiši na dva načina, primerjaj koeficiente. Diagonali paralelograma se razpolavljata.
 
+## Ponovitev
+
+**Formule**
+- $\overrightarrow{AB} = \vec r_B - \vec r_A$ (na pamet)
+- kolinearna: $\vec b = k\vec a$; točke na premici: $\overrightarrow{AC} = k\,\overrightarrow{AB}$ (na pamet)
+- koplanarni: $\vec c = \alpha\vec a + \beta\vec b$ (na pamet)
+- (višja raven) $AD : DB = m : n$: $\vec r_D = \frac{n\vec r_A + m\vec r_B}{m + n}$ (na pamet)
+- (višja raven) težišče: $\vec r_T = \frac{\vec r_A + \vec r_B + \vec r_C}{3}$ (na pamet)
+
+**Postopek**
+1. Iz koordinat točk izračunaj vektorje s skupnim začetkom, npr. $\overrightarrow{AB}$ in $\overrightarrow{AC}$.
+2. Preveri, ali je en vektor večkratnik drugega (enaka razmerja komponent).
+3. Če je, so točke na premici; sicer vektorja napenjata ravnino.
+4. (višja raven) Pri razmerju sekanja isti vektor zapiši na dva načina z neodvisnima baznima vektorjema.
+5. (višja raven) Primerjaj koeficiente in reši sistem.
+
+**Pazi na**
+- $\overrightarrow{AB} = k\,\overrightarrow{CD}$ pomeni le vzporedni premici; za točke vzemi skupni začetek.
+- Dva vektorja napenjata ravnino le, če nista kolinearna.
+- (višja raven) Bližja točka ima večjo utež: pri $1 : 2$ je $\vec r_D = \frac{2\vec r_A + \vec r_B}{3}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Dane so točke $A(1, -2, 3)$, $B(3, 1, 2)$ in $C(p, 7, q)$. Določi števili $p$ in $q$ tako, da bodo točke $A$, $B$ in $C$ ležale na isti premici.
+Dane so točke $A(1, -2, 3)$, $B(3, 1, 2)$ in $C(p, 7, q)$. Določite števili $p$ in $q$ tako, da bodo točke $A$, $B$ in $C$ ležale na isti premici.
 
 **Rešitev:**
 
@@ -256,9 +275,9 @@ Dane so točke $A(1, -2, 3)$, $B(3, 1, 2)$ in $C(p, 7, q)$. Določi števili $p$
 
 Dana sta vektorja $\vec a = (1, 0, 2)$ in $\vec b = (2, 1, -1)$.
 
-a) Vektor $\vec d = (4, 1, 3)$ zapiši kot linearno kombinacijo vektorjev $\vec a$ in $\vec b$. (2 točki)
-b) Določi število $u$ tako, da bodo vektorji $\vec a$, $\vec b$ in $\vec c = (u, 3, 1)$ koplanarni. (2 točki)
-c) Utemelji, ali so vektorji $\vec a$, $\vec b$ in $\vec e = (0, 1, 1)$ koplanarni. (2 točki)
+a) Vektor $\vec d = (4, 1, 3)$ zapišite kot linearno kombinacijo vektorjev $\vec a$ in $\vec b$. (2 točki)
+b) Določite število $u$ tako, da bodo vektorji $\vec a$, $\vec b$ in $\vec c = (u, 3, 1)$ koplanarni. (2 točki)
+c) Utemeljite, ali so vektorji $\vec a$, $\vec b$ in $\vec e = (0, 1, 1)$ koplanarni. (2 točki)
 
 **Rešitev:**
 
@@ -276,10 +295,10 @@ c) Utemelji, ali so vektorji $\vec a$, $\vec b$ in $\vec e = (0, 1, 1)$ koplanar
 
 V trikotniku $ABC$ leži točka $D$ na stranici $AB$ tako, da je $AD : DB = 1 : 2$. Točka $M$ je razpolovišče stranice $AC$. Daljici $CD$ in $BM$ se sekata v točki $Q$. Označimo $\vec a = \overrightarrow{AB}$ in $\vec b = \overrightarrow{AC}$.
 
-a) Vektorja $\overrightarrow{CD}$ in $\overrightarrow{BM}$ izrazi z $\vec a$ in $\vec b$. (2 točki)
-b) Utemelji, zakaj sta $\vec a$ in $\vec b$ linearno neodvisna, in zapiši $\overrightarrow{AQ}$ na dva načina, z neznanima deležema $\lambda$ in $\mu$, kjer je $\overrightarrow{CQ} = \lambda\,\overrightarrow{CD}$ in $\overrightarrow{BQ} = \mu\,\overrightarrow{BM}$. (3 točke)
-c) Izračunaj, v kakšnem razmerju točka $Q$ deli daljico $CD$ in v kakšnem daljico $BM$. (3 točke)
-d) Oglišča trikotnika so $A(0, 0)$, $B(10, 5)$ in $C(5, 10)$. Izračunaj koordinati točke $Q$ in težišča $T$ trikotnika ter utemelji, ali je $Q$ težišče. (2 točki)
+a) Vektorja $\overrightarrow{CD}$ in $\overrightarrow{BM}$ izrazite z $\vec a$ in $\vec b$. (2 točki)
+b) Utemeljite, zakaj sta $\vec a$ in $\vec b$ linearno neodvisna, in zapišite $\overrightarrow{AQ}$ na dva načina, z neznanima deležema $\lambda$ in $\mu$, kjer je $\overrightarrow{CQ} = \lambda\,\overrightarrow{CD}$ in $\overrightarrow{BQ} = \mu\,\overrightarrow{BM}$. (3 točke)
+c) Izračunajte, v kakšnem razmerju točka $Q$ deli daljico $CD$ in v kakšnem daljico $BM$. (3 točke)
+d) Oglišča trikotnika so $A(0, 0)$, $B(10, 5)$ in $C(5, 10)$. Izračunajte koordinati točke $Q$ in težišča $T$ trikotnika ter utemeljite, ali je $Q$ težišče. (2 točki)
 
 **Rešitev:**
 
@@ -367,13 +386,13 @@ točka: 0; 0 | O | levo
 > $\vec b = (4, 2) = 2\vec a$, zato je $\alpha\vec a + \beta\vec b = (\alpha + 2\beta)\vec a$. Vsi konci ležijo na eni premici.
 
 ? (višja raven) (brez računala) Trikotnik ima oglišča $A(2, -1)$, $B(5, 3)$ in $C(-1, 7)$. Koliko je druga koordinata ($y$) njegovega težišča?
-= 3
+= 3 | 0
 ~ 4,5 | Delil si z $2$ kot pri razpolovišču. Pri težišču povprečiš tri oglišča, zato deliš s $3$.
 ~ 9 | To je le vsota $-1 + 3 + 7$. Deliti jo moraš s $3$.
 > $y_T = \frac{-1 + 3 + 7}{3} = 3$. Prva koordinata je $x_T = \frac{2 + 5 - 1}{3} = 2$.
 
 ? Ladja pluje v smeri $\vec a = (2, -3)$. Druga ladja pluje vzporedno z njo v smeri $\vec b = (p, 6)$. Koliko je $p$?
-= -4
+= -4 | 0
 ~ 4 | Spregledal si predznak. Iz $6 = -3k$ je $k = -2$, druga ladja pluje v nasprotno smer.
 ~ -1 | Razmerje si pri eni komponenti obrnil: $\frac{p}{2} = \frac{-3}{6}$. Pravilno je $\frac{p}{2} = \frac{6}{-3}$.
 > Vzporedna smer pomeni $\vec b = k\vec a$. Iz druge komponente $6 = -3k$ dobiš $k = -2$, zato $p = 2 \cdot (-2) = -4$.

@@ -64,16 +64,16 @@ Ker je $1 + (-1) = 0$, je izraz enak $0$. Po razčlenitvi je enak $(-1) \cdot 1 
 
 **4. Merila za deljivost.**
 
-| Delitelj | Merilo | Primer |
-|---|---|---|
-| $2$ | zadnja števka je $0, 2, 4, 6$ ali $8$ | $1\,358$ |
-| $3$ | vsota števk je deljiva s $3$ | $4\,521$ ($4+5+2+1=12$) |
-| $4$ | zadnji dve števki tvorita število, deljivo s $4$ | $7\,316$ ($16 = 4 \cdot 4$) |
-| $5$ | zadnja števka je $0$ ali $5$ | $2\,045$ |
-| $6$ | deljivo z $2$ in s $3$ | $1\,332$ |
-| $8$ | zadnje tri števke tvorijo število, deljivo z $8$ | $5\,120$ ($120 = 8 \cdot 15$) |
-| $9$ | vsota števk je deljiva z $9$ | $6\,354$ ($6+3+5+4=18$) |
-| $10$ | zadnja števka je $0$ | $830$ |
+| Delitelj | Merilo in primer |
+|---|---|
+| $2$ | zadnja števka je $0, 2, 4, 6$ ali $8$; npr. $1\,358$ |
+| $3$ | vsota števk je deljiva s $3$; npr. $4\,521$ ($4+5+2+1=12$) |
+| $4$ | zadnji dve števki tvorita število, deljivo s $4$; npr. $7\,316$ ($16 = 4 \cdot 4$) |
+| $5$ | zadnja števka je $0$ ali $5$; npr. $2\,045$ |
+| $6$ | deljivo z $2$ in s $3$; npr. $1\,332$ |
+| $8$ | zadnje tri števke tvorijo število, deljivo z $8$; npr. $5\,120$ ($120 = 8 \cdot 15$) |
+| $9$ | vsota števk je deljiva z $9$; npr. $6\,354$ ($6+3+5+4=18$) |
+| $10$ | zadnja števka je $0$; npr. $830$ |
 
 :::premisli
 Zakaj je za deljivost s $4$ dovolj pogledati zadnji dve števki?
@@ -241,11 +241,32 @@ $a + b = b + a$, $\; a \cdot b = b \cdot a$, $\; (a + b) + c = a + (b + c)$, $\;
 - $D(a, b)$: skupni prafaktorji z manjšim eksponentom. $v(a, b)$: vsi prafaktorji z večjim eksponentom. (Višja raven) velja $D(a, b) \cdot v(a, b) = a \cdot b$.
 - (višja raven) Evklidov algoritem: $D(a, b) = D(b, r)$, ponavljamo do ostanka $0$.
 
+## Ponovitev
+
+**Formule**
+- $a \mid b$: obstaja celo število $k$ z $b = k \cdot a$ (na pamet)
+- $a = q \cdot b + r$ z $0 \le r < b$ (na pamet)
+- merila: $2$, $5$ zadnja števka; $4$ zadnji dve; $8$ zadnje tri; $3$, $9$ vsota števk (na pamet)
+- $D(a, b)$: skupni prafaktorji z manjšim eksponentom (na pamet)
+- $v(a, b)$: vsi prafaktorji z večjim eksponentom (na pamet)
+- višja raven: $D(a, b) \cdot v(a, b) = a \cdot b$ in $D(a, b) = D(b, r)$ (na pamet)
+
+**Postopek**
+1. Obe števili razcepi na prafaktorje (deli po merilih z $2$, $3$, $5$, …).
+2. Razcepa zapiši s potencami.
+3. Sestavi $D(a, b)$ in $v(a, b)$ po pravilu zgoraj.
+4. Preveri: $D \cdot v = a \cdot b$.
+
+**Pazi na**
+- $1$ ni praštevilo in liha števila niso vsa praštevila: $9 = 3 \cdot 3$.
+- Sestavljeno merilo velja le za tuja delitelja: iz deljivosti z $2$ in $4$ ne sledi deljivost z $8$.
+- Ostanek je med $0$ in $b - 1$: $-17 = (-4) \cdot 5 + 3$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-V petmestnem številu $\overline{531x2}$ je $x$ neznana števka. Določi $x$ tako, da bo število deljivo s $36$. Odgovor utemelji.
+V petmestnem številu $\overline{531x2}$ je $x$ neznana števka. Določite $x$ tako, da bo število deljivo s $36$. Odgovor utemeljite.
 
 **Rešitev:**
 
@@ -260,10 +281,10 @@ V petmestnem številu $\overline{531x2}$ je $x$ neznana števka. Določi $x$ tak
 
 Pravokotna tla merijo $336\,\text{cm} \times 210\,\text{cm}$. Prekriti jih želimo z enakimi kvadratnimi ploščicami brez rezanja. Stranica ploščice naj meri celo število centimetrov in naj bo čim večja.
 
-a) Števili $336$ in $210$ razcepi na prafaktorje. (2 točki)
-b) Določi največjo možno stranico ploščice in utemelji, zakaj je to največji skupni delitelj. (2 točki)
+a) Števili $336$ in $210$ razcepite na prafaktorje. (2 točki)
+b) Določite največjo možno stranico ploščice in utemeljite, zakaj je to največji skupni delitelj. (2 točki)
 c) Koliko takih ploščic potrebujemo? (1 točka)
-d) V trgovini imajo le ploščice s stranico $40\,\text{cm}$. Ob daljši stranici tal položimo v vrsto čim več celih ploščic. Zapiši deljenje števila $336$ s $40$ z ostankom in odgovori, koliko celih ploščic gre v vrsto in koliko centimetrov ostane nepokritih. (2 točki)
+d) V trgovini imajo le ploščice s stranico $40\,\text{cm}$. Ob daljši stranici tal položimo v vrsto čim več celih ploščic. Zapišite deljenje števila $336$ s $40$ z ostankom in odgovorite, koliko celih ploščic gre v vrsto in koliko centimetrov ostane nepokritih. (2 točki)
 
 **Rešitev:**
 
@@ -281,10 +302,10 @@ d) V trgovini imajo le ploščice s stranico $40\,\text{cm}$. Ob daljši stranic
 
 Zobnika s $154$ in $126$ zobmi sta v stiku. Na vsakem zobniku označimo en zob. Na začetku se označena zoba dotikata. Ko se zobnika vrtita, gre skozi stično točko na obeh zobnikih enako število zob.
 
-a) Z Evklidovim algoritmom določi $D(154, 126)$. (3 točke)
-b) Z zvezo $D(a, b) \cdot v(a, b) = a \cdot b$ izračunaj $v(154, 126)$. (2 točki)
+a) Z Evklidovim algoritmom določite $D(154, 126)$. (3 točke)
+b) Z zvezo $D(a, b) \cdot v(a, b) = a \cdot b$ izračunajte $v(154, 126)$. (2 točki)
 c) Po koliko obratih večjega zobnika se označena zoba prvič spet dotakneta? Koliko obratov naredi do takrat manjši zobnik? (2 točki)
-d) Manjši zobnik zamenjamo z zobnikom, ki ima $z$ zob, kjer je $20 < z < 154$. Določi vse $z$, pri katerih se označena zoba prvič spet dotakneta natanko po $2$ obratih večjega zobnika. (3 točke)
+d) Manjši zobnik zamenjamo z zobnikom, ki ima $z$ zob, kjer je $20 < z < 154$. Določite vse $z$, pri katerih se označena zoba prvič spet dotakneta natanko po $2$ obratih večjega zobnika. (3 točke)
 
 **Rešitev:**
 
@@ -354,7 +375,7 @@ Zdaj še Vennov diagram za delitelje števil $12$ in $18$. Samo v levem krogu (d
 > Praštevila $p$ s $p^2 \le 59$ so $2$, $3$, $5$ in $7$. Nobeno ne deli $59$, zato je $59$ praštevilo.
 
 ? (brez računala) Koliko je $D(48, 36)$?
-= 12
+= 12 | 0
 ~ 6 | $6$ je skupni delitelj, a ne največji: tudi $12$ deli obe števili.
 ~ 144 | To je $v(48, 36) = 2^4 \cdot 3^2$: vzel si večja eksponenta. Pri $D$ vzameš manjša.
 > $48 = 2^4 \cdot 3$ in $36 = 2^2 \cdot 3^2$. Skupna prafaktorja z manjšima eksponentoma dasta $D = 2^2 \cdot 3 = 12$.
@@ -386,7 +407,7 @@ Zdaj še Vennov diagram za delitelje števil $12$ in $18$. Samo v levem krogu (d
 > $15 = 3 \cdot 5$ in $20 = 2^2 \cdot 5$, zato je $v(15, 20) = 2^2 \cdot 3 \cdot 5 = 60$ minut, torej ena ura.
 
 ? (brez računala) Z razčlenitvijo izračunaj $(-23) \cdot 101$.
-= -2323
+= -2323 | 0
 ~ -2300 | Pomnožil si le s $100$. Ker je $101 = 100 + 1$, prištej še $(-23) \cdot 1$.
 ~ 2323 | Produkt negativnega in pozitivnega števila je negativen.
 > $(-23) \cdot 101 = (-23) \cdot 100 + (-23) \cdot 1 = -2\,300 + (-23) = -2\,323$.

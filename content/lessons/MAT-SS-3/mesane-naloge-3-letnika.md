@@ -11,9 +11,9 @@ Vprašanje je iz kuhinje, odgovor pa iz treh poglavij 3. letnika. Prostornina kv
 
 ## Razlaga
 
-**Poskusi nekaj vrednosti.** Pekač ima višino $x$, dno pa je kvadrat s stranico $30 - 2x$ (z vsake strani odrežeš $x$). Izračunajmo prostornino za nekaj izbir:
+**Poskusi nekaj vrednosti.** Pekač ima višino $x$, dno pa je kvadrat s stranico $a = 30 - 2x$ (z vsake strani odrežeš $x$). Izračunajmo prostornino za nekaj izbir:
 
-| $x$ [cm] | stranica dna [cm] | $V$ [$\mathrm{cm^3}$] |
+| $x$ [cm] | $a$ [cm] | $V$ [$\mathrm{cm^3}$] |
 |---|---|---|
 | $1$ | $28$ | $784$ |
 | $2$ | $26$ | $1352$ |
@@ -55,18 +55,16 @@ Pri $n = 4$ je $D = 0$. Napovej, kje se premica dotika krožnice, preden računa
 Tangenta je pravokotna na polmer v dotikališču. Polmer leži na premici $y = -x$ skozi središče, ki je pravokotna na $y = x + 4$. Iz $-x = x + 4$ dobiš $x = -2$ in $y = 2$, točka $(-2, 2)$. Račun potrdi: pri $D = 0$ je $x = -\frac{2n}{4} = -2$.
 :::
 
-Pri vsaki mešani nalogi se postopek ponovi: poišči, kaj je neznanka, in zapiši omejitve; prevedi besede v enačbo ali vektor; reši z orodjem tistega poglavja; z omejitvami izberi smiselne rešitve. Katero orodje kliče besedilo, pove ta preglednica za snov 3. letnika:
+Pri vsaki mešani nalogi se postopek ponovi: poišči, kaj je neznanka, in zapiši omejitve; prevedi besede v enačbo ali vektor; reši z orodjem tistega poglavja; z omejitvami izberi smiselne rešitve. Katero orodje kliče besedilo, pove ta seznam za snov 3. letnika (v besedilu piše → orodje in zapis):
 
-| v besedilu piše | orodje in zapis |
-|---|---|
-| kot med vektorjema | skalarni produkt, $\cos\varphi = \frac{\vec a \cdot \vec b}{\lvert\vec a\rvert\,\lvert\vec b\rvert}$ |
-| pravokotna | skalarni produkt $\vec a \cdot \vec b = 0$ |
-| nasproti kota | kosinusni ali sinusni izrek |
-| očrtani krog | sinusni izrek, $\frac{a}{\sin\alpha} = 2R$ |
-| se dotika, tangenta | diskriminanta, pogoj $D = 0$ |
-| presečišča krivulj | sistem, nato enačba $f(x) = g(x)$ |
-| kje je pozitivna | ničle, poli, tabela predznakov |
-| koliko gre noter | prostornina, $V = S v$ ali $\frac{S v}{3}$ |
+- »kot med vektorjema« → skalarni produkt, $\cos\varphi = \frac{\vec a \cdot \vec b}{\lvert\vec a\rvert\,\lvert\vec b\rvert}$
+- »pravokotna« → skalarni produkt $\vec a \cdot \vec b = 0$
+- »nasproti kota« → kosinusni ali sinusni izrek
+- »očrtani krog« → sinusni izrek, $\frac{a}{\sin\alpha} = 2R$
+- »se dotika«, »tangenta« → diskriminanta, pogoj $D = 0$
+- »presečišča krivulj« → sistem, nato enačba $f(x) = g(x)$
+- »kje je pozitivna« → ničle, poli, tabela predznakov
+- »koliko gre noter« → prostornina, $V = S v$ ali $\frac{S v}{3}$
 
 V simulaciji spodaj (Zbirka simulacij za maturo) odpri Kotne funkcije in povleci kot čez $90^\circ$. Opazi, da kosinus postane negativen: zato negativen skalarni produkt dveh vektorjev pomeni top kot med njima.
 
@@ -174,11 +172,32 @@ $x = \frac{20 \pm \sqrt{400 - 100}}{2} = 10 \pm 5\sqrt{3}$, torej $x \approx 1{,
 - Polinom tretje stopnje z znano ničlo $x_0$ deliš z $x - x_0$ (Horner) in rešiš kvadratni faktor.
 - Podobna telesa: prostornina se spremeni s $k^3$.
 
+## Ponovitev
+
+**Formule**
+- $\cos\varphi = \frac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$ (na pamet)
+- Pravokotnost: $\vec a \cdot \vec b = 0$ (na pamet)
+- $S = \frac{1}{2}ab\sin\gamma$ (na pamet)
+- Tangenta: diskriminanta $D = 0$ (na pamet)
+- Podobna telesa: ploščine s $k^2$, prostornine s $k^3$ (na pamet)
+
+**Postopek**
+1. Določi neznanko in zapiši omejitve, na primer $0 < x < 15$.
+2. Besedilo prevedi v enačbo, sistem ali vektor.
+3. Izberi orodje: »pravokotna« da skalarni produkt, »tangenta« $D = 0$.
+4. Reši; pri polinomu z znano ničlo $x_0$ deli z $x - x_0$.
+5. Z omejitvami izberi smiselne rešitve in zapiši odgovor.
+
+**Pazi na**
+- Skalarni produkt deli s produktom dolžin; kosinus je med $-1$ in $1$.
+- Omejitve uporabi na koncu: ničla $18{,}66$ za pekač ne pride v poštev.
+- Stožec, napolnjen do polovice višine, je poln le do osmine ($k^3$).
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-V trikotniku je stranica $a = 6\,\mathrm{cm}$, kot nasproti nje pa $\alpha = 30^\circ$. Izračunaj polmer trikotniku očrtanega kroga in ploščino tega kroga. (sinusni izrek + ploščina kroga)
+V trikotniku je stranica $a = 6\,\mathrm{cm}$, kot nasproti nje pa $\alpha = 30^\circ$. Izračunajte polmer trikotniku očrtanega kroga in ploščino tega kroga. (sinusni izrek + ploščina kroga)
 
 **Rešitev:**
 
@@ -193,11 +212,11 @@ V trikotniku je stranica $a = 6\,\mathrm{cm}$, kot nasproti nje pa $\alpha = 30^
 
 Dan je polinom $p(x) = 2x^3 - x^2 - 2x + 1$. (polinomi + polinomska neenačba + trigonometrijska enačba)
 
-a) Razstavi polinom in zapiši njegove ničle. (2 točki)
+a) Razstavite polinom in zapišite njegove ničle. (2 točki)
 
-b) Reši neenačbo $p(x) < 0$. (2 točki)
+b) Rešite neenačbo $p(x) < 0$. (2 točki)
 
-c) Reši enačbo $p(\cos x) = 0$ na intervalu $[0, 2\pi)$. (3 točke)
+c) Rešite enačbo $p(\cos x) = 0$ na intervalu $[0, 2\pi)$. (3 točke)
 
 **Rešitev:**
 
@@ -215,11 +234,11 @@ c) Reši enačbo $p(\cos x) = 0$ na intervalu $[0, 2\pi)$. (3 točke)
 
 Pravilna štiristrana piramida ima osnovni rob $a = 6\,\mathrm{cm}$ in stranski rob $s = 8\,\mathrm{cm}$. (geometrija v prostoru + kotne funkcije + prostornina teles)
 
-a) Izračunaj višino piramide. Rezultat zaokroži na dve decimalki. (2 točki)
+a) Izračunajte višino piramide. Rezultat zaokrožite na dve decimalki. (2 točki)
 
-b) Izračunaj kot med stranskim robom in osnovno ploskvijo. Rezultat zaokroži na dve decimalki. (2 točki)
+b) Izračunajte kot med stranskim robom in osnovno ploskvijo. Rezultat zaokrožite na dve decimalki. (2 točki)
 
-c) Izračunaj prostornino piramide. Rezultat zaokroži na dve decimalki. (2 točki)
+c) Izračunajte prostornino piramide. Rezultat zaokrožite na dve decimalki. (2 točki)
 
 **Rešitev:**
 
@@ -235,15 +254,15 @@ c) Izračunaj prostornino piramide. Rezultat zaokroži na dve decimalki. (2 toč
 
 Dana je krožnica $K$ z enačbo $x^2 + y^2 - 6x - 4y + 8 = 0$ in premica $p$ z enačbo $y = x$. (krožnica + kvadratna enačba + skalarni produkt + tangenta + ploščina trikotnika)
 
-a) Določi središče $S$ in polmer krožnice. (2 točki)
+a) Določite središče $S$ in polmer krožnice. (2 točki)
 
-b) Izračunaj presečišči $A$ in $B$ krožnice s premico $p$, pri čemer ima $A$ manjšo absciso. (2 točki)
+b) Izračunajte presečišči $A$ in $B$ krožnice s premico $p$, pri čemer ima $A$ manjšo absciso. (2 točki)
 
-c) Izračunaj $\cos\angle ASB$. (2 točki)
+c) Izračunajte $\cos\angle ASB$. (2 točki)
 
-d) Zapiši enačbo tangente na krožnico v točki $A$. (2 točki)
+d) Zapišite enačbo tangente na krožnico v točki $A$. (2 točki)
 
-e) Izračunaj ploščino trikotnika $ASB$. (2 točki)
+e) Izračunajte ploščino trikotnika $ASB$. (2 točki)
 
 **Rešitev:**
 

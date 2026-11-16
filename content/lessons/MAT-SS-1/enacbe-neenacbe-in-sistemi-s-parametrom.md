@@ -27,7 +27,7 @@ Ista neenačba je zahtevala tri različne korake: deljenje z obratom znaka, delj
 
 **2. Splošno: neenačba $ax > b$.** Črka $a$ je zdaj parameter. Deliti smemo le z $a \neq 0$, pri negativnem $a$ pa se znak obrne:
 
-| pogoj | rešitev neenačbe $ax > b$ |
+| pogoj | rešitev |
 |---|---|
 | $a > 0$ | $x > \frac{b}{a}$ |
 | $a < 0$ | $x < \frac{b}{a}$ (znak obrnjen) |
@@ -81,11 +81,9 @@ podnapis: Premici sistema pri m = {m}
 
 Ko enačbe sistema združimo v eno enačbo $Ax = B$ (tu $A = -(m-2)(m+1)$, $B = m - 2$), se število rešitev in lega premic ujemata:
 
-| rešitve | premici | $Ax = B$ |
-|---|---|---|
-| ena | se sekata | $A \neq 0$ |
-| nobene | vzporedni | $A = 0$, $B \neq 0$ |
-| neskončno | sovpadata | $A = 0$, $B = 0$ |
+- $A \neq 0$: ena rešitev, premici se sekata;
+- $A = 0$, $B \neq 0$: nobene rešitve, premici sta vzporedni;
+- $A = 0$, $B = 0$: neskončno rešitev, premici sovpadata.
 
 :::premisli
 Posebni vrednosti $m = 2$ in $m = -1$ bi lahko našel brez izenačevanja, le s pogledom na enačbi sistema. Kako? In kako potem ločiš, ali premici sovpadata ali sta vzporedni?
@@ -199,14 +197,34 @@ Za $a > 0$ delimo s pozitivnim številom in znak ostane: $t \le \dfrac{15}{a}$. 
 - Sistem dveh linearnih enačb s parametrom prevedemo na enačbo $Ax = B$ s parametrom: ena rešitev (premici se sekata), nobene (vzporedni), neskončno (sovpadata).
 - Rezultat preverimo z vstavitvijo ene konkretne vrednosti parametra.
 
+## Ponovitev
+
+**Formule**
+- $ax > b$, $a > 0$: $x > \frac{b}{a}$; $a < 0$: $x < \frac{b}{a}$ (na pamet)
+- $ax > b$, $a = 0$: preveri $0 > b$ (vsi $x$ ali noben) (na pamet)
+- $ax = b$, $a \ne 0$: ena rešitev $x = \frac{b}{a}$ (na pamet)
+- $0 \cdot x = b$: $b \ne 0$ nobene, $b = 0$ vsi $x \in \mathbb{R}$ (na pamet)
+
+**Postopek**
+1. Preoblikuj v $ax = b$ ali $ax > b$ (pri sistemu v $Ax = B$).
+2. Poišči vrednosti parametra, pri katerih je koeficient $a$ enak $0$.
+3. Te vrednosti vstavi in reši neposredno.
+4. Za $a > 0$ in $a < 0$ deli posebej, pri $a < 0$ obrni znak.
+5. Rešitev zapiši po primerih; preveri z eno konkretno vrednostjo.
+
+**Pazi na**
+- Z izrazom s parametrom deli šele, ko izločiš primer $a = 0$.
+- Pri negativnem deljitelju se znak neenačbe obrne.
+- $0 = 0$ pomeni vsak $x$ (premici sovpadata), $0 = 8$ pa nobene rešitve.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
 
 Dana je neenačba $m(x - 1) \ge 3x - 6$ z neznanko $x$ in realnim parametrom $m$.
 
-a) Reši neenačbo za $m = 0$. (1 točka)
-b) Reši neenačbo za vse vrednosti parametra $m$. (4 točke)
+a) Rešite neenačbo za $m = 0$. (1 točka)
+b) Rešite neenačbo za vse vrednosti parametra $m$. (4 točke)
 c) Za katere vrednosti $m$ je število $0$ rešitev neenačbe? (1 točka)
 
 **Rešitev:**
@@ -230,10 +248,10 @@ $$\begin{cases} (m + 1)x + 2y = 3 \\ 4x + (m - 1)y = m \end{cases}$$
 
 z neznankama $x$, $y$ in realnim parametrom $m$.
 
-a) Reši sistem za $m = 0$. (2 točki)
-b) Iz sistema izloči $y$ in pokaži, da velja $(m^2 - 9)x = m - 3$. (2 točki)
-c) Za katere vrednosti $m$ ima sistem natanko eno rešitev, za katere nobene in za katere neskončno rešitev? Za vsak primer opiši lego premic. (3 točke)
-d) Kadar je rešitev ena sama, jo izrazi s parametrom $m$. (2 točki)
+a) Rešite sistem za $m = 0$. (2 točki)
+b) Iz sistema izločite $y$ in pokažite, da velja $(m^2 - 9)x = m - 3$. (2 točki)
+c) Za katere vrednosti $m$ ima sistem natanko eno rešitev, za katere nobene in za katere neskončno rešitev? Za vsak primer opišite lego premic. (3 točke)
+d) Kadar je rešitev ena sama, jo izrazite s parametrom $m$. (2 točki)
 e) Za katero vrednost $m$ leži rešitev sistema na premici $y = 2x$? (1 točka)
 
 **Rešitev:**
@@ -313,7 +331,7 @@ f: 0*x + 1 | modra
 f: -2*x + 3 | oranžna črtkano | -0,5 .. 2,5
 točka: 1; 1 | (1, 1) | nad
 :::
-= -2
+= -2 | 0
 ~ 0,5 | To je pogoj za pravokotnost ($k_1 k_2 = -1$). Rešitve ni, ko sta premici vzporedni: $k_1 = k_2$.
 ~ 2 | Smerni koeficient oranžne premice je $-2$, ne $2$.
 ~ 0 | Pri $m = 0$ (na sliki) se premici sekata v $(1, 1)$, rešitev je ena.
@@ -335,7 +353,7 @@ Kateri korak je napačen?
 > Za $m < 3$ je $m - 3$ negativen, zato se znak obrne: $x > 1$. Pravilno: za $m > 3$ je $x < 1$, za $m < 3$ je $x > 1$.
 
 ? (brez računala) Za katero vrednost parametra $m$ sistem $2x + my = 1$, $4x + 6y = 5$ nima rešitve?
-= 3
+= 3 | 0
 ~ -3 | Predznak: smerna koeficienta sta $-\dfrac{2}{m}$ in $-\dfrac{2}{3}$, enaka sta pri $m = 3$.
 ~ -1,33 | To je pogoj za pravokotnost. Rešitve ni pri vzporednih premicah.
 ~ 1,33 | Razmerje je obrnjeno. Pogoj je $2 \cdot 6 = 4 \cdot m$.

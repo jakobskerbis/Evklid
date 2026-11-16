@@ -127,14 +127,14 @@ Tabela ima $2^2 = 4$ vrstice. $X \Rightarrow Y$ je N le pri $X$ = P, $Y$ = N.
 **Rešitev:**
 
 1. Dve izjavi pomenita 4 vrstice: PP, PN, NP, NN.
-2. Najprej notranji del $A \wedge B$, nato implikacijo s posledico $A$:
+2. Najprej notranji del $A \wedge B$ (po vrsticah P, N, N, N), nato implikacijo s posledico $A$:
 
-| $A$ | $B$ | $A \wedge B$ | $(A \wedge B) \Rightarrow A$ |
-|---|---|---|---|
-| P | P | P | P |
-| P | N | N | P |
-| N | P | N | P |
-| N | N | N | P |
+| $A$ | $B$ | $(A \wedge B) \Rightarrow A$ |
+|---|---|---|
+| P | P | P |
+| P | N | P |
+| N | P | P |
+| N | N | P |
 
 3. Predpostavka $A \wedge B$ je pravilna le v prvi vrstici, tam pa je pravilna tudi posledica $A$. V ostalih vrsticah je predpostavka N, zato je implikacija P.
 4. Odgovor: zadnji stolpec ima same P, zato je $(A \wedge B) \Rightarrow A$ tavtologija.
@@ -200,11 +200,32 @@ V vrstici PN je $\neg B$ = P, v NP je $\neg A$ = P, v NN sta obe P. Disjunkcija 
 - Enakovredni izjavi ($\equiv$) se ujemata v vseh vrsticah: $A \Rightarrow B \equiv \neg B \Rightarrow \neg A \equiv \neg A \vee B$; obrat $B \Rightarrow A$ ni enakovreden.
 - De Morgan: $\neg(A \wedge B) \equiv \neg A \vee \neg B$ in $\neg(A \vee B) \equiv \neg A \wedge \neg B$.
 
+## Ponovitev
+
+**Formule**
+- $A \wedge B$ je P le, ko sta obe P (na pamet)
+- $A \vee B$ je N le, ko sta obe N (vključni »ali«) (na pamet)
+- $A \Rightarrow B$ je N le pri $A$ = P, $B$ = N (na pamet)
+- $A \Leftrightarrow B$ je P, ko imata enako vrednost (na pamet)
+- $A \Rightarrow B \equiv \neg B \Rightarrow \neg A \equiv \neg A \vee B$ (na pamet)
+- $\neg(A \wedge B) \equiv \neg A \vee \neg B$, $\neg(A \vee B) \equiv \neg A \wedge \neg B$ (na pamet)
+
+**Postopek**
+1. Za $n$ izjav napiši tabelo z $2^n$ vrsticami.
+2. Dodaj stolpec za vsak delni izraz, od notranjih oklepajev navzven.
+3. Stolpce izpolni po pravilih veznikov.
+4. Vse P: tavtologija; vse N: protislovje; enaka stolpca: enakovredni izjavi.
+
+**Pazi na**
+- Negacija »vsi so« je »vsaj en ni«, ne »noben ni«.
+- Implikacija z nepravilno predpostavko je pravilna.
+- Obrat $B \Rightarrow A$ ni enakovreden $A \Rightarrow B$; enakovredna je le kontrapozicija.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izjavi $A$ in $C$ sta nepravilni, izjava $B$ pa je pravilna. Določi logično vrednost izjave $\neg A \wedge B \Rightarrow C \vee \neg B$.
+Izjavi $A$ in $C$ sta nepravilni, izjava $B$ pa je pravilna. Določite logično vrednost izjave $\neg A \wedge B \Rightarrow C \vee \neg B$.
 
 **Rešitev:**
 
@@ -220,21 +241,21 @@ Izjavi $A$ in $C$ sta nepravilni, izjava $B$ pa je pravilna. Določi logično vr
 
 Naj bosta $A$ in $B$ poljubni izjavi.
 
-a) Sestavi pravilnostno tabelo za izjavi $\neg(A \Rightarrow B)$ in $A \wedge \neg B$. (2 točki)
-b) Ali sta izjavi iz a) enakovredni? Odgovor utemelji. (1 točka)
-c) Naj bo $A$ izjava »Piha močan veter«, $B$ pa izjava »Trajekt ostane v pristanišču«. Z besedami zapiši izjavo $A \Rightarrow B$ in njeno negacijo, pri čemer v negaciji ne uporabiš besed »ni res, da«. (2 točki)
-d) Ali je izjava $(A \Rightarrow B) \vee (B \Rightarrow A)$ tavtologija? Odgovor utemelji. (2 točki)
+a) Sestavite pravilnostno tabelo za izjavi $\neg(A \Rightarrow B)$ in $A \wedge \neg B$. (2 točki)
+b) Ali sta izjavi iz a) enakovredni? Odgovor utemeljite. (1 točka)
+c) Naj bo $A$ izjava »Piha močan veter«, $B$ pa izjava »Trajekt ostane v pristanišču«. Z besedami zapišite izjavo $A \Rightarrow B$ in njeno negacijo, pri čemer v negaciji ne uporabite besed »ni res, da«. (2 točki)
+d) Ali je izjava $(A \Rightarrow B) \vee (B \Rightarrow A)$ tavtologija? Odgovor utemeljite. (2 točki)
 
 **Rešitev:**
 
 1. a) Tabela ima $2^2 = 4$ vrstice. Implikacija $A \Rightarrow B$ je nepravilna le v vrstici $A$ = P, $B$ = N (po vrsticah P, N, P, P), zato je $\neg(A \Rightarrow B)$ pravilna le v tej vrstici. Negacija $\neg B$ je po vrsticah N, P, N, P, zato je $A \wedge \neg B$ pravilna le pri $A$ = P, $B$ = N:
 
-| $A$ | $B$ | $\neg(A \Rightarrow B)$ | $A \wedge \neg B$ |
-|---|---|---|---|
-| P | P | N | N |
-| P | N | P | P |
-| N | P | N | N |
-| N | N | N | N |
+| $A$, $B$ | $\neg(A \Rightarrow B)$ | $A \wedge \neg B$ |
+|---|---|---|
+| PP | N | N |
+| PN | P | P |
+| NP | N | N |
+| NN | N | N |
 
 2. b) Stolpca izjav $\neg(A \Rightarrow B)$ in $A \wedge \neg B$ se ujemata v vseh štirih vrsticah (N, P, N, N), zato sta izjavi enakovredni: $\neg(A \Rightarrow B) \equiv A \wedge \neg B$.
 3. c) Implikacija $A \Rightarrow B$: »Če piha močan veter, trajekt ostane v pristanišču.«
@@ -316,7 +337,7 @@ Implikacijo si nariši kot tabelo s štirimi polji in prečrtaj samo polje »$A$
 > Implikacija je kot obljuba: prelomljena je samo, če predpostavka drži, posledica pa ne.
 
 ? (brez računala) Koliko vrstic ima pravilnostna tabela izjave $(A \wedge B) \Rightarrow C$?
-= 8
+= 8 | 0
 ~ 6 | To je $2 \cdot 3$. Vsaka izjava število vrstic podvoji, zato računaš $2^3$, ne $2 \cdot 3$.
 ~ 3 | Preštel si samo izjave. Vrstic je toliko, kolikor je vseh kombinacij vrednosti.
 ~ 4 | Štiri vrstice ima tabela z dvema izjavama. Tu so tri: $A$, $B$ in $C$.
@@ -351,7 +372,7 @@ Implikacijo si nariši kot tabelo s štirimi polji in prečrtaj samo polje »$A$
 > Implikacija je nepravilna samo pri predpostavki P in posledici N: Luka brusi (P), očal nima (N).
 
 ? (brez računala) V koliko vrsticah pravilnostne tabele je izjava $(A \vee B) \Rightarrow C$ nepravilna?
-= 3
+= 3 | 0
 ~ 1 | Upošteval si le vrstico $A$ = P, $B$ = P. Disjunkcija $A \vee B$ je pravilna v treh od štirih kombinacij $A$ in $B$.
 ~ 4 | To so vse vrstice s $C$ = N. Pri $A$ = N in $B$ = N je predpostavka nepravilna, zato je implikacija tam pravilna.
 ~ 5 | To je število vrstic, v katerih je izjava pravilna. Vprašanje sprašuje po nepravilnih.

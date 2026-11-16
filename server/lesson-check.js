@@ -104,6 +104,27 @@ export function checkLessonSource(src, topicId) {
         if (!/^[ \t]*:::[ \t]*premisli[ \t]*\n[\s\S]*?\n[ \t]*---[ \t]*\n[\s\S]*?\n[ \t]*:::/m.test(t)) warn(`»Za maturo«, »${t.split("\n")[0].trim()}«: vprašanje in vzorčni odgovor zapiši v blok »:::premisli« (vprašanje, »---«, odgovor)`);
       }
     }
+    // Kratka ponovitev na en zaslon telefona (j, 15. 11. 2026, točka C8): »## Ponovitev« pred »Za maturo« s tremi deli
+    // »**Formule**« (vsaka z oznako, ali je na prilogi pole ali jo moraš znati na pamet), »**Postopek**« (koraki) in
+    // »**Pazi na**« (natanko 3 najpogostejše napake). Opozorilo, ne napaka, dokler je nimajo vse lekcije.
+    const pon = sections.find((s) => /^ponovitev/i.test(s.title));
+    if (!pon) warn("maturitetna lekcija: manjka razdelek »## Ponovitev« (formule z oznako priloge, postopek, 3 napake; en zaslon telefona)");
+    else {
+      const part = (label) => (pon.md.split(new RegExp(`^\\*\\*${label}\\*\\*[ \\t]*$`, "m"))[1] || "").split(/^\*\*[^*\n]+\*\*[ \t]*$/m)[0];
+      const items = (md, re) => md.replace(/\n[ \t]+(?![-\d])/g, " ").split("\n").filter((l) => re.test(l)); // samo alineje na vrhu, nadaljevalne vrstice združene
+      for (const label of ["Formule", "Postopek", "Pazi na"]) if (!new RegExp(`^\\*\\*${label}\\*\\*[ \\t]*$`, "m").test(pon.md)) warn(`»Ponovitev«: manjka vrstica »**${label}**«`);
+      const formule = items(part("Formule"), /^- /);
+      if (!formule.length) warn("»Ponovitev«: pod »**Formule**« ni nobene alineje");
+      for (const f of formule) if (!/\((priloga|priloga, višja raven|na pamet)\)[ .]*$/.test(f)) warn(`»Ponovitev«, formula »${f.trim().slice(2, 60)}«: na koncu manjka oznaka »(priloga)«, »(priloga, višja raven)« ali »(na pamet)«`);
+      const koraki = items(part("Postopek"), /^\d+\. /);
+      if (koraki.length < 2 || koraki.length > 6) warn(`»Ponovitev«: pod »**Postopek**« naj bo 2–6 oštevilčenih korakov (${koraki.length})`);
+      const napake = items(part("Pazi na"), /^- /);
+      if (napake.length !== 3) warn(`»Ponovitev«: pod »**Pazi na**« naj bodo natanko 3 napake (${napake.length})`);
+      const w = pon.md.replace(/\$[^$]*\$/g, " ").split(/\s+/).filter(Boolean).length;
+      if (w > 170) warn(`»Ponovitev« je predolga za en zaslon telefona (${w} besed brez formul, največ 170)`);
+      const iPon = sections.indexOf(pon), iZa = sections.findIndex((s) => /^za maturo/i.test(s.title)), iPov = sections.findIndex((s) => /^povzetek/i.test(s.title));
+      if ((iZa >= 0 && iPon > iZa) || (iPov >= 0 && iPon < iPov)) warn("»Ponovitev« naj stoji za »Povzetek« in pred »Za maturo«");
+    }
   }
 
   // Rešeni primeri: vsak ### Primer ima Podatki, Iščemo in blok :::formula.
@@ -122,8 +143,8 @@ export function checkLessonSource(src, topicId) {
 
   // Bloki s formulo morajo biti zaprti.
   const body = src.replace(/^---\n[\s\S]*?\n---\n?/, "");
-  // Brez razdelka »Za maturo« (naloge in ustna vprašanja): za štetje besed in vmesnih vprašanj v razlagi.
-  const bodyLesson = body.replace(/^## +za maturo\b[^\n]*\n[\s\S]*?(?=^## |(?![\s\S]))/im, "");
+  // Brez razdelkov »Za maturo« (naloge in ustna vprašanja) in »Ponovitev« (C8): za štetje besed in vmesnih vprašanj v razlagi.
+  const bodyLesson = body.replace(/^## +(?:za maturo|ponovitev)\b[^\n]*\n[\s\S]*?(?=^## |(?![\s\S]))/gim, "");
   const stripped = expandFormulaBlocks(body, "plain");
   for (const e of drawingErrors(body)) err(e);
   // Slika iz znakov v bloku ``` brez oznake jezika je v aplikaciji in PDF videti kot surov izpis (j, 10. 11. 2026).

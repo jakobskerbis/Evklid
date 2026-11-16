@@ -230,7 +230,7 @@ T tkivo(vec2 p, float px) {
   if (as.x < px) {
     float k = pokrij(as.x, px);
     t.dye.x = mix(t.dye.x, 0.55 * kromatin(z - as.yz, vec2(as.w), px), k);
-    if (as.x < 0.0) { t.snov = S_JEDRO; t.tip = C_GLIJA; t.jedro = as.x; t.cid = vec2(as.w, 12.0); t.meja = -as.x; }
+    if (as.x < 0.0) { t.snov = S_JEDRO; t.tip = C_GLIJA; t.jedro = as.x; t.jc = p - (z - as.yz); t.cc = t.jc; t.cid = vec2(as.w, 12.0); t.meja = -as.x; }
     return t;
   }
   if (g.z < 0.75 * smoothstep(0.42, 0.5, sum(vec2(z.x / 70.0, i * 1.7)))) {
@@ -241,7 +241,8 @@ T tkivo(vec2 p, float px) {
     if (dj < px) {
       float k = pokrij(dj, px);
       t.dye.x = mix(t.dye.x, 1.2 * kromatin(q, g.xy, px), k);
-      if (dj < 0.0) { t.snov = S_JEDRO; t.tip = C_GLIJA; t.jedro = dj; t.jc = p - (z - (oc + q - q)); t.cc = t.jc; t.cid = vec2(j, i); t.meja = 1.5 - dj; }
+      // središče jedra mora biti v jedru stalno (p − q), sicer TEM nariše kromatin v pasovih
+      if (dj < 0.0) { t.snov = S_JEDRO; t.tip = C_GLIJA; t.jedro = dj; t.jc = p - q; t.cc = t.jc; t.cid = vec2(j, i); t.meja = 1.5 - dj; }
     }
   }
   return t;

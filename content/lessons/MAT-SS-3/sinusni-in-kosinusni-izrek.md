@@ -51,12 +51,10 @@ Izrek velja za vsako stranico; črke le zamenjaš: $a^2 = b^2 + c^2 - 2bc\cos\al
 
 **Kateri izrek izbrati.** Odloči se po tem, kaj poznaš:
 
-| poznaš | začni s | opomba |
-|---|---|---|
-| tri stranice | kosinusnim | kot iz $\cos$ |
-| dve stranici in kot med njima | kosinusnim | najprej tretja stranica |
-| stranico in dva kota | sinusnim | tretji kot iz $180^\circ$ |
-| dve stranici in kot nasproti ene | sinusnim | lahko sta dve rešitvi |
+- tri stranice → kosinusni izrek (kot iz $\cos$);
+- dve stranici in kot med njima → kosinusni izrek (najprej tretja stranica);
+- stranico in dva kota → sinusni izrek (tretji kot iz $180^\circ$);
+- dve stranici in kot nasproti ene → sinusni izrek (lahko sta dve rešitvi).
 
 **Past pri sinusu.** Kadar s sinusnim izrekom iščeš kot, dobiš njegov sinus. Iz lekcije o trigonometrijskih enačbah veš, da ima $\sin x = 0{,}9$ med $0^\circ$ in $180^\circ$ dve rešitvi: $x \approx 64{,}2^\circ$ in $x \approx 115{,}8^\circ$. Kalkulator pokaže le prvo. Trikotnik lahko obstaja z obema kotoma, le z enim ali z nobenim. Zato za vsakega kandidata preveri, ali je njegova vsota z znanim kotom manjša od $180^\circ$.
 
@@ -176,11 +174,31 @@ $\cos\kappa = \dfrac{5{,}76 + 9{,}61 - 12{,}25}{14{,}88} = \dfrac{3{,}12}{14{,}8
 - Kot iz sinusa ima lahko dve vrednosti, $x$ in $180^\circ - x$. Kot iz kosinusa je en sam.
 - Nasproti največjega kota leži najdaljša stranica; top kot je lahko le tam.
 
+## Ponovitev
+
+**Formule**
+- $\dfrac{a}{\sin\alpha} = \dfrac{b}{\sin\beta} = \dfrac{c}{\sin\gamma} = 2R$ (na pamet)
+- $c^2 = a^2 + b^2 - 2ab\cos\gamma$ (na pamet)
+- $\cos\gamma = \dfrac{a^2 + b^2 - c^2}{2ab}$ (na pamet)
+- $\sin x = \sin(180^\circ - x)$ (na pamet)
+
+**Postopek**
+1. Skiciraj trikotnik in vsako stranico poveži z nasprotnim kotom.
+2. Če poznaš cel par (stranica in nasprotni kot), uporabi sinusni izrek.
+3. Pri treh stranicah ali dveh stranicah z vmesnim kotom uporabi kosinusni izrek.
+4. Pri kotu iz sinusa preveri oba kandidata, $x$ in $180^\circ - x$.
+5. Tretji kot izračunaj iz vsote kotov $180^\circ$.
+
+**Pazi na**
+- V sinusnem izreku stoji stranica le z nasprotnim kotom.
+- Iz sinusa sta lahko dva kota; preveri tudi topega.
+- Kosinusni izrek da $c^2$: na koncu koreni.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Stranice trikotnika merijo $3\,\mathrm{cm}$, $5\,\mathrm{cm}$ in $7\,\mathrm{cm}$. Izračunaj največji notranji kot trikotnika.
+Stranice trikotnika merijo $3\,\mathrm{cm}$, $5\,\mathrm{cm}$ in $7\,\mathrm{cm}$. Izračunajte največji notranji kot trikotnika.
 
 **Rešitev:**
 
@@ -195,9 +213,9 @@ Stranice trikotnika merijo $3\,\mathrm{cm}$, $5\,\mathrm{cm}$ in $7\,\mathrm{cm}
 
 Parcela ima obliko trikotnika $ABC$. Velja $|AB| = 85\,\mathrm{m}$, $|AC| = 62\,\mathrm{m}$, notranji kot pri oglišču $A$ pa meri $74^\circ$.
 
-a) Izračunaj dolžino stranice $BC$. Rezultat zaokroži na decimeter. (2 točki)
-b) Izračunaj notranji kot pri oglišču $B$. Rezultat zaokroži na stotinko stopinje. (2 točki)
-c) Okoli parcele želijo speljati krožno pot, ki gre skozi vsa tri oglišča. Izračunaj polmer te krožnice. Rezultat zaokroži na decimeter. (2 točki)
+a) Izračunajte dolžino stranice $BC$. Rezultat zaokrožite na decimeter. (2 točki)
+b) Izračunajte notranji kot pri oglišču $B$. Rezultat zaokrožite na stotinko stopinje. (2 točki)
+c) Okoli parcele želijo speljati krožno pot, ki gre skozi vsa tri oglišča. Izračunajte polmer te krožnice. Rezultat zaokrožite na decimeter. (2 točki)
 
 **Rešitev:**
 

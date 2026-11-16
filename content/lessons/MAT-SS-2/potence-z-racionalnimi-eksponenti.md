@@ -175,11 +175,31 @@ $\dfrac{4 \cdot \sqrt{4}}{8} = \dfrac{4 \cdot 2}{8} = 1$. Preverjanje v prvotnem
 - Pravila: $a^r a^s = a^{r+s}$, $a^r : a^s = a^{r-s}$, $(a^r)^s = a^{rs}$, $(ab)^r = a^r b^r$.
 - Korene pretvori v potence, uporabi pravila in rezultat zapiši nazaj s korenom.
 
+## Ponovitev
+
+**Formule**
+- $a^{\frac{m}{n}} = \sqrt[n]{a^m} = \left(\sqrt[n]{a}\right)^m$, $a > 0$ (na pamet)
+- $a^{-\frac{m}{n}} = \dfrac{1}{a^{\frac{m}{n}}}$ (na pamet)
+- $a^r a^s = a^{r+s}$, $\;a^r : a^s = a^{r-s}$ (na pamet)
+- $(a^r)^s = a^{rs}$, $\;(ab)^r = a^r b^r$ (na pamet)
+
+**Postopek**
+1. Korene pretvori v potence: imenovalec je stopnja korena.
+2. Uporabi pravila za potence z isto osnovo.
+3. Negativni eksponent zapiši kot obratno vrednost.
+4. Rezultat zapiši nazaj s korenom.
+5. Pri negativni osnovi ostani pri korenu: $\sqrt[3]{-27} = -3$, ne $(-27)^{\frac{1}{3}}$.
+
+**Pazi na**
+- Ulomek v eksponentu ni deljenje: $8^{\frac{1}{3}} = \sqrt[3]{8} = 2$.
+- Negativni eksponent da obratno vrednost: $25^{-\frac{1}{2}} = \dfrac{1}{5}$.
+- Imenovalec je stopnja korena: $a^{\frac{2}{3}} = \sqrt[3]{a^2}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izraz $\sqrt[3]{2} \cdot \sqrt[4]{8}$ zapiši kot potenco števila $2$ z racionalnim eksponentom. Nato ga zapiši kot produkt celega števila in korena.
+Izraz $\sqrt[3]{2} \cdot \sqrt[4]{8}$ zapišite kot potenco števila $2$ z racionalnim eksponentom. Nato ga zapišite kot produkt celega števila in korena.
 
 **Rešitev:**
 
@@ -194,9 +214,9 @@ Izraz $\sqrt[3]{2} \cdot \sqrt[4]{8}$ zapiši kot potenco števila $2$ z raciona
 
 Srčni utrip mirujočega sesalca ocenimo z modelom $f = 240 \cdot M^{-\frac{1}{4}}$, kjer je $M$ masa živali v kilogramih, $f$ pa utrip v udarcih na minuto.
 
-a) Izračunaj utrip mačke z maso $4\,\mathrm{kg}$. Rezultat zaokroži na celo število. (2 točki)
-b) Kolikšna je po modelu masa živali z utripom $50$ udarcev na minuto? Rezultat zaokroži na cel kilogram. (2 točki)
-c) Za koliko odstotkov je po modelu utrip živali z desetkrat večjo maso manjši od utripa lažje živali? Rezultat zaokroži na desetinko odstotka. (2 točki)
+a) Izračunajte utrip mačke z maso $4\,\mathrm{kg}$. Rezultat zaokrožite na celo število. (2 točki)
+b) Kolikšna je po modelu masa živali z utripom $50$ udarcev na minuto? Rezultat zaokrožite na cel kilogram. (2 točki)
+c) Za koliko odstotkov je po modelu utrip živali z desetkrat večjo maso manjši od utripa lažje živali? Rezultat zaokrožite na desetinko odstotka. (2 točki)
 
 **Rešitev:**
 

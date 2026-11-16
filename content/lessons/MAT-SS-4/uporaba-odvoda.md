@@ -13,9 +13,9 @@ Kje je ta cena in kako jo najdemo brez ugibanja? Odgovor da odvod. Iz njega razb
 
 ## Razlaga
 
-**Tabela namesto formule.** Naj bo $x$ cena rogljička v evrih. Vsak evro podražitve odžene $200$ kupcev ($20$ na vsakih $10$ centov), zato je prodanih $300 - 200(x - 1) = 500 - 200x$ kosov. Prihodek je cena krat število kosov:
+**Tabela namesto formule.** Naj bo $x$ cena rogljička v evrih. Vsak evro podražitve odžene $200$ kupcev ($20$ na vsakih $10$ centov), zato je prodanih $300 - 200(x - 1) = 500 - 200x$ kosov. Prihodek je cena krat število kosov (cena in prihodek v evrih):
 
-| cena $x$ [€] | prodanih kosov | prihodek [€] |
+| cena $x$ | kosov | prihodek |
 |---|---|---|
 | $1{,}00$ | $300$ | $300{,}00$ |
 | $1{,}10$ | $280$ | $308{,}00$ |
@@ -122,13 +122,13 @@ $f'(x) > 0$: narašča, $f'(x) < 0$: pada; ekstrem, kjer $f'$ zamenja predznak
 
 1. Odvod: $f'(x) = 3x^2 - 6x - 9 = 3(x + 1)(x - 3)$.
 2. Stacionarni točki sta $x_1 = -1$ in $x_2 = 3$, ker je tam eden od faktorjev enak $0$.
-3. Predznak preverimo s po eno testno točko na vsakem intervalu:
+3. Predznak preverimo s po eno testno točko na vsakem intervalu, po vrsti $-2$, $0$ in $4$:
 
-| interval | testna točka | $f'$ | $f$ |
-|---|---|---|---|
-| $(-\infty, -1)$ | $-2$ | $15 > 0$ | narašča |
-| $(-1, 3)$ | $0$ | $-9 < 0$ | pada |
-| $(3, \infty)$ | $4$ | $15 > 0$ | narašča |
+| interval | $f'$ | $f$ |
+|---|---|---|
+| $(-\infty, -1)$ | $15 > 0$ | narašča |
+| $(-1, 3)$ | $-9 < 0$ | pada |
+| $(3, \infty)$ | $15 > 0$ | narašča |
 
 4. Pri $-1$ se predznak zamenja iz $+$ v $-$: lokalni maksimum $f(-1) = -1 - 3 + 9 + 2 = 7$.
 5. Pri $3$ se zamenja iz $-$ v $+$: lokalni minimum $f(3) = 27 - 27 - 27 + 2 = -25$.
@@ -216,11 +216,32 @@ $k_n = -\frac{1}{f'(a)}$; $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\rig
 - Vrednost ekstrema dobiš z vstavljanjem v $f$.
 - Ekstremalni problem: sestavi funkcijo ene spremenljivke, določi smiselni interval, reši $f' = 0$, preveri predznak in robove, odgovori v stavku z enotami.
 
+## Ponovitev
+
+**Formule**
+- tangenta: $y = f(a) + f'(a)(x - a)$ (na pamet)
+- normala: $k_n = -\frac{1}{f'(a)}$, $f'(a) \ne 0$ (na pamet)
+- $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$ (na pamet)
+- $f' > 0$: narašča, $f' < 0$: pada (na pamet)
+- ekstrem: $f'(a) = 0$ in $f'$ zamenja predznak (na pamet)
+
+**Postopek**
+1. Sestavi funkcijo ene spremenljivke.
+2. Določi smiselni interval.
+3. Reši $f'(x) = 0$.
+4. Preveri predznak $f'$ levo in desno ter vrednosti na robovih.
+5. Najdeno točko vstavi v $f$ in odgovori v stavku z enotami.
+
+**Pazi na**
+- $f'(a) = 0$ še ni ekstrem ($x^3$ pri $0$); preveri menjavo predznaka.
+- V tangenti je smerni koeficient število $f'(a)$, ne $f'(x)$.
+- Absciso vstavi v $f$, ne v $f'$; vrednost primerjaj še z vrednostma na robovih.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Na grafu funkcije $f(x) = x^2 - 4x + 5$ poišči točko, v kateri je tangenta vzporedna s premico $y = 2x - 1$, in zapiši enačbo te tangente.
+Na grafu funkcije $f(x) = x^2 - 4x + 5$ poiščite točko, v kateri je tangenta vzporedna s premico $y = 2x - 1$, in zapišite enačbo te tangente.
 
 **Rešitev:**
 
@@ -235,9 +256,9 @@ Na grafu funkcije $f(x) = x^2 - 4x + 5$ poišči točko, v kateri je tangenta vz
 
 Dana je funkcija $f(x) = x^3 - 6x^2 + 9x$.
 
-a) Izračunaj ničle funkcije $f$. (2 točki)
-b) Določi intervale naraščanja in padanja ter lokalne ekstreme funkcije $f$. (3 točke)
-c) Nariši graf funkcije $f$. (2 točki)
+a) Izračunajte ničle funkcije $f$. (2 točki)
+b) Določite intervale naraščanja in padanja ter lokalne ekstreme funkcije $f$. (3 točke)
+c) Narišite graf funkcije $f$. (2 točki)
 
 **Rešitev:**
 
@@ -255,9 +276,9 @@ c) Nariši graf funkcije $f$. (2 točki)
 
 Iz pločevine izdelujejo valjaste posode brez pokrova s prostornino $2$ litra. Dno je iz debelejše pločevine: kvadratni decimeter pločevine za dno stane $0{,}60\,€$, za plašč pa $0{,}30\,€$. Polmer dna označimo z $r$ (v decimetrih).
 
-a) Pokaži, da stroški pločevine za eno posodo v evrih znašajo $C(r) = 0{,}6\pi r^2 + \dfrac{1{,}2}{r}$, $r > 0$. (3 točke)
-b) Izračunaj polmer dna, pri katerem so stroški najmanjši, in utemelji, da so pri tem polmeru res najmanjši. Polmer zaokroži na milimeter. (4 točke)
-c) Izračunaj višino te posode (na milimeter) in najmanjše stroške (na cent). Kaj ugotoviš, ko višino primerjaš s premerom dna? (3 točke)
+a) Pokažite, da stroški pločevine za eno posodo v evrih znašajo $C(r) = 0{,}6\pi r^2 + \dfrac{1{,}2}{r}$, $r > 0$. (3 točke)
+b) Izračunajte polmer dna, pri katerem so stroški najmanjši, in utemeljite, da so pri tem polmeru res najmanjši. Polmer zaokrožite na milimeter. (4 točke)
+c) Izračunajte višino te posode (na milimeter) in najmanjše stroške (na cent). Kaj ugotovite, ko višino primerjate s premerom dna? (3 točke)
 
 **Rešitev:**
 

@@ -221,11 +221,33 @@ $\sin\alpha + \sin\beta = 2\sin\dfrac{\alpha + \beta}{2}\cos\dfrac{\alpha - \bet
 - Kotnih funkcij ne krajšaj, ampak izpostavi.
 - (višja raven) Vsoto sinusov ali kosinusov spremeni v produkt in vsak faktor izenači z $0$. Pri kotih $x$ in $\frac{x}{2}$ vse zapiši s polovičnim kotom ($1 + \cos x = 2\cos^2\frac{x}{2}$).
 
+## Ponovitev
+
+**Formule**
+- $\sin x = a$: $x = x_1 + k \cdot 360^\circ$ (na pamet)
+- ali $x = 180^\circ - x_1 + k \cdot 360^\circ$ (na pamet)
+- $\cos x = a$: $x = \pm x_1 + k \cdot 360^\circ$ (na pamet)
+- $\tan x = a$: $x = x_1 + k \cdot 180^\circ$ (na pamet)
+- $|a| > 1$: $\sin x = a$ in $\cos x = a$ nimata rešitev (na pamet)
+- (višja raven) $\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$ (priloga, višja raven)
+
+**Postopek**
+1. Enačbo preoblikuj v obliko $\sin x = a$, $\cos x = a$ ali $\tan x = a$; skupni faktor izpostavi.
+2. Preveri, ali je $|a| \le 1$ (pri sinusu in kosinusu).
+3. S kalkulatorjem izračunaj osnovno rešitev $x_1$ ($\arcsin a$, $\arccos a$ ali $\arctan a$).
+4. Dopiši drugo družino in periodo, $k \in \mathbb{Z}$.
+5. Pri $\sin(bx) = a$ reši za $bx$, nato deli z $b$; izberi rešitve na danem intervalu.
+
+**Pazi na**
+- Dopiši drugo rešitev: $180^\circ - x_1$ pri sinusu, $-x_1$ pri kosinusu.
+- Perioda je $360^\circ$ pri sinusu in kosinusu, $180^\circ$ le pri tangensu.
+- Ne deli s $\cos x$ ali $\sin x$: izpostavi, sicer izgubiš rešitve.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši enačbo $2\cos\left(x - \dfrac{\pi}{6}\right) = 1$ na intervalu $[0, 2\pi)$.
+Rešite enačbo $2\cos\left(x - \dfrac{\pi}{6}\right) = 1$ na intervalu $[0, 2\pi)$.
 
 **Rešitev:**
 
@@ -240,9 +262,9 @@ Reši enačbo $2\cos\left(x - \dfrac{\pi}{6}\right) = 1$ na intervalu $[0, 2\pi)
 
 Sedež panoramskega kolesa je na višini $h = 20 - 18\cos x$ metrov nad tlemi, kjer je $x$ kot, za katerega se je kolo zavrtelo, odkar je bil sedež najnižje. Kolo se vrti enakomerno in naredi en obrat v $12$ minutah.
 
-a) Na kateri višini je sedež, ko se kolo zavrti za $135^\circ$? Rezultat zaokroži na centimeter. (1 točka)
-b) Pri katerih kotih $x$ v prvem obratu, $0^\circ \le x < 360^\circ$, je sedež na višini $26\,\mathrm{m}$? Kota zaokroži na stotinko stopinje. (3 točke)
-c) Koliko časa v enem obratu je sedež više od $26\,\mathrm{m}$? Rezultat zaokroži na sekundo. (2 točki)
+a) Na kateri višini je sedež, ko se kolo zavrti za $135^\circ$? Rezultat zaokrožite na centimeter. (1 točka)
+b) Pri katerih kotih $x$ v prvem obratu, $0^\circ \le x < 360^\circ$, je sedež na višini $26\,\mathrm{m}$? Kota zaokrožite na stotinko stopinje. (3 točke)
+c) Koliko časa v enem obratu je sedež više od $26\,\mathrm{m}$? Rezultat zaokrožite na sekundo. (2 točki)
 
 **Rešitev:**
 
@@ -258,9 +280,9 @@ c) Koliko časa v enem obratu je sedež više od $26\,\mathrm{m}$? Rezultat zaok
 
 ### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
 
-a) Z adicijskima izrekoma pokaži, da za vsak $x$ velja $\cos 3x + \cos x = 2\cos 2x\cos x$. (2 točki)
-b) Reši enačbo $\cos 3x + \cos x = \cos 2x$ na intervalu $[0^\circ, 360^\circ)$. (3 točke)
-c) Zvezo iz a) uporabi za kot $\dfrac{x}{2}$ in z zapisom s polovičnim kotom reši enačbo $\cos\dfrac{3x}{2} + \cos\dfrac{x}{2} = 1 + \cos x$ na intervalu $[0^\circ, 720^\circ)$. (5 točk)
+a) Z adicijskima izrekoma pokažite, da za vsak $x$ velja $\cos 3x + \cos x = 2\cos 2x\cos x$. (2 točki)
+b) Rešite enačbo $\cos 3x + \cos x = \cos 2x$ na intervalu $[0^\circ, 360^\circ)$. (3 točke)
+c) Zvezo iz a) uporabite za kot $\dfrac{x}{2}$ in z zapisom s polovičnim kotom rešite enačbo $\cos\dfrac{3x}{2} + \cos\dfrac{x}{2} = 1 + \cos x$ na intervalu $[0^\circ, 720^\circ)$. (5 točk)
 
 **Rešitev:**
 
@@ -371,14 +393,14 @@ Drugi popravek: doda še kot $180^\circ - 30^\circ = 150^\circ$. Zdaj telefon za
 > $\sin x = -0{,}5$ da $x = 210^\circ$, $330^\circ$, $570^\circ$, $690^\circ$. Deljeno s $30^\circ$ na sekundo: $7$, $11$, $19$ in $23\,\text{s}$.
 
 ? (brez računala) Izračunaj $\arccos\left(-\dfrac{\sqrt{3}}{2}\right)$. Rezultat vpiši v stopinjah.
-= 150
+= 150 | 0
 ~ -30 | Arkus kosinus nikoli ne vrne negativnega kota. Vrne kot med $0^\circ$ in $180^\circ$.
 ~ 30 | Kosinus kota $30^\circ$ je pozitiven, $\frac{\sqrt{3}}{2}$. Za negativno vrednost potrebuješ kot v II. kvadrantu.
 ~ 210 | Tudi $\cos 210^\circ = -\frac{\sqrt{3}}{2}$, a $210^\circ$ ni med $0^\circ$ in $180^\circ$.
 > $\cos 30^\circ = \frac{\sqrt{3}}{2}$, zato je $\arccos\left(-\frac{\sqrt{3}}{2}\right) = 180^\circ - 30^\circ = 150^\circ$.
 
 ? (brez računala) Kolikšna je najmanjša pozitivna rešitev enačbe $\tan x = -1$? Vpiši jo v stopinjah.
-= 135
+= 135 | 0
 ~ -45 | To je osnovna rešitev $\arctan(-1)$, ki ni pozitivna. Prištej periodo tangensa $180^\circ$.
 ~ 315 | Tudi $315^\circ$ je rešitev, a ni najmanjša: tangens ima periodo $180^\circ$, zato je rešitev že $-45^\circ + 180^\circ$.
 ~ 45 | Pri $45^\circ$ je tangens $1$, ne $-1$. Negativen je v II. in IV. kvadrantu.

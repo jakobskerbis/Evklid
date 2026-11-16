@@ -32,14 +32,12 @@ Na primer $75^\circ = 60^\circ + 15^\circ$: načrtaj $60^\circ$, ob njegovem kra
 
 **4. Kje leži manjkajoče oglišče?** Pri trikotniku pogosto najprej narišeš $AB = c$. Oglišče $C$ je nato presečišče dveh množic točk, ki ustrezata danima podatkoma:
 
-| Dani podatek | Točka $C$ leži na |
-|---|---|
-| stranica $a = \lvert BC \rvert$ | krožnici $k(B, a)$ |
-| stranica $b = \lvert AC \rvert$ | krožnici $k(A, b)$ |
-| kot $\alpha$ | kraku kota $\alpha$ z vrhom $A$ |
-| višina $v_c$ | vzporednici z $AB$ na razdalji $v_c$ |
-| težiščnica $t_c$ | krožnici s središčem v razpolovišču $AB$ in polmerom $t_c$ |
-| polmer $R$ očrtanega kroga | krožnici s polmerom $R$, ki ima središče na simetrali $AB$ in gre skozi $A$ |
+- stranica $a = \lvert BC \rvert$: $C$ leži na krožnici $k(B, a)$;
+- stranica $b = \lvert AC \rvert$: $C$ leži na krožnici $k(A, b)$;
+- kot $\alpha$: $C$ leži na kraku kota $\alpha$ z vrhom $A$;
+- višina $v_c$: $C$ leži na vzporednici z $AB$ na razdalji $v_c$;
+- težiščnica $t_c$: $C$ leži na krožnici s središčem v razpolovišču $AB$ in polmerom $t_c$;
+- polmer $R$ očrtanega kroga: $C$ leži na krožnici s polmerom $R$, ki ima središče na simetrali $AB$ in gre skozi $A$.
 
 **5. Diskusija.** Vrnimo se k Niki: $c = 6\,\mathrm{cm}$, $\alpha = 30^\circ$, $a$ spreminjamo. Naj bo $D$ nožišče pravokotnice iz $B$ na krak. Trikotnik $ABD$ (kota $30^\circ$ in $90^\circ$) je polovica enakostraničnega trikotnika s stranico $c$, zato je razdalja $d = |BD| = \frac{c}{2} = 3\,\mathrm{cm}$.
 
@@ -214,11 +212,32 @@ $D$ je presečišče krožnic $k(A, 3\,\mathrm{cm})$ in $k(C, 5\,\mathrm{cm})$ n
 - Diskusija: SSS zahteva $|a - b| < c < a + b$, KSK pa $\alpha + \beta < 180^\circ$; dve stranici in kot nasproti krajše dasta 0, 1 ali 2 rešitvi.
 - (višja raven) V programu za dinamično geometrijo dober načrt prestane test vlečenja; z drsnikom preveriš število rešitev.
 
+## Ponovitev
+
+**Formule**
+- SSS: $|a - b| < c < a + b$ (na pamet)
+- KSK: $\alpha + \beta < 180^\circ$ (na pamet)
+- oglišče je presečišče dveh množic točk, npr. $k(B, a)$ in krak kota (na pamet)
+- višina $v_c$: $C$ leži na vzporednici k $AB$ na razdalji $v_c$ (na pamet)
+- dve stranici in kot nasproti krajše: 0, 1 ali 2 rešitvi (na pamet)
+
+**Postopek**
+1. Nariši skico in nanjo vpiši dane podatke (analiza).
+2. Ugotovi, katero oglišče dobiš kot presečišče dveh množic točk.
+3. Zapiši opis načrtovanja po korakih.
+4. Načrtaj z ravnilom in šestilom.
+5. V diskusiji zapiši pogoje in število rešitev.
+
+**Pazi na**
+- Skica, opis in diskusija so obvezni: brez njih izgubiš točke tudi pri natančni risbi.
+- Trikotniška neenakost je stroga: pri $a + b = c$ trikotnika ni.
+- Višina ni stranica: $v_c$ ne nanašaj na krak kota, $C$ leži na vzporednici.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Z ravnilom in šestilom načrtaj kot $105^\circ$. Zapiši opis načrtovanja, iz katerega je razvidno, zakaj kot meri $105^\circ$.
+Z ravnilom in šestilom načrtajte kot $105^\circ$. Zapišite opis načrtovanja, iz katerega je razvidno, zakaj kot meri $105^\circ$.
 
 **Rešitev:**
 
@@ -235,9 +254,9 @@ Z ravnilom in šestilom načrtaj kot $105^\circ$. Zapiši opis načrtovanja, iz 
 Trikotnik $ABC$ je določen s podatki $c = |AB| = 6\,\mathrm{cm}$, $v_c = 3\,\mathrm{cm}$ in $t_c = 5\,\mathrm{cm}$ ($t_c$ je težiščnica iz oglišča $C$). Točka $M$ je razpolovišče stranice $AB$.
 
 a) Na katerih dveh množicah točk leži oglišče $C$? (2 točki)
-b) Zapiši opis načrtovanja trikotnika. (2 točki)
-c) Izvedi diskusijo: koliko rešitev ima naloga pri danih podatkih in kako je število rešitev pri $c = 6\,\mathrm{cm}$ in $v_c = 3\,\mathrm{cm}$ odvisno od dolžine $t_c$? (2 točki)
-d) Za lego oglišča $C$, ki je bliže točki $B$ kot točki $A$, izračunaj dolžini stranic $a = |BC|$ in $b = |AC|$. (2 točki)
+b) Zapišite opis načrtovanja trikotnika. (2 točki)
+c) Izvedite diskusijo: koliko rešitev ima naloga pri danih podatkih in kako je število rešitev pri $c = 6\,\mathrm{cm}$ in $v_c = 3\,\mathrm{cm}$ odvisno od dolžine $t_c$? (2 točki)
+d) Za lego oglišča $C$, ki je bliže točki $B$ kot točki $A$, izračunajte dolžini stranic $a = |BC|$ in $b = |AC|$. (2 točki)
 
 **Rešitev:**
 
@@ -257,11 +276,11 @@ d) Za lego oglišča $C$, ki je bliže točki $B$ kot točki $A$, izračunaj dol
 
 V programu za dinamično geometrijo načrtujemo trikotnik $ABC$ s podatki $c = |AB| = 8\,\mathrm{cm}$ in $\alpha = 45^\circ$; dolžino stranice $a = |BC|$ spreminjamo z drsnikom.
 
-a) Opiši načrtovanje v programu tako, da bo načrt prestal test vlečenja: katera orodja uporabiš in katere točke so načrtane iz drugih. (2 točki)
-b) Naj bo $D$ nožišče pravokotnice iz $B$ na krak kota $\alpha$. Izračunaj razdaljo $d = |BD|$. (2 točki)
-c) Izvedi diskusijo: koliko trikotnikov dobimo v odvisnosti od dolžine $a$? (3 točke)
-d) Drsnik nastavimo na $a = 2\sqrt{10}\,\mathrm{cm}$. Izračunaj razdalji obeh mogočih leg oglišča $C$ od točke $A$. (2 točki)
-e) Sošolec je točko $C$ postavil na oko v presečišče kraka in krožnice ter z njo narisal trikotnik. Pojasni, kaj se zgodi, ko premakne drsnik, in zakaj. (1 točka)
+a) Opišite načrtovanje v programu tako, da bo načrt prestal test vlečenja: katera orodja uporabite in katere točke so načrtane iz drugih. (2 točki)
+b) Naj bo $D$ nožišče pravokotnice iz $B$ na krak kota $\alpha$. Izračunajte razdaljo $d = |BD|$. (2 točki)
+c) Izvedite diskusijo: koliko trikotnikov dobimo v odvisnosti od dolžine $a$? (3 točke)
+d) Drsnik nastavimo na $a = 2\sqrt{10}\,\mathrm{cm}$. Izračunajte razdalji obeh mogočih leg oglišča $C$ od točke $A$. (2 točki)
+e) Sošolec je točko $C$ postavil na oko v presečišče kraka in krožnice ter z njo narisal trikotnik. Pojasnite, kaj se zgodi, ko premakne drsnik, in zakaj. (1 točka)
 
 **Rešitev:**
 
@@ -351,7 +370,7 @@ napis: 7,4; 1,2 | 4 | desno
 > Kot ne leži med stranicama in je nasproti krajše. Razdalja $B$ od kraka je $4\,\mathrm{cm}$; ker je $4 < 6 < 8$, sta rešitvi dve.
 
 ? (brez računala) Dve stranici trikotnika merita $4\,\mathrm{cm}$ in $9\,\mathrm{cm}$. Največ koliko centimetrov sme meriti tretja stranica, če je njena dolžina celo število?
-= 12 cm
+= 12 cm | 0
 ~ 13 | Pri $c = 4 + 9 = 13$ se loka dotakneta na daljici: to ni trikotnik. Neenakost je stroga.
 ~ 6 | To je najmanjša možna celoštevilska dolžina ($c > 9 - 4 = 5$), vprašanje pa sprašuje po največji.
 ~ 5 | To je razlika stranic, spodnja meja, ki je tretja stranica ne sme doseči.
@@ -389,7 +408,7 @@ napis: 1,6; 0,45 | 30° | sredina
 | 2 | $k(B, a)$ seka krak le, če je $a \ge d$. |
 | 3 | Ker je $a < c$, ima naloga dve rešitvi. |
 V katerem koraku je napaka? Vpiši, koliko rešitev ima naloga v resnici.
-= 0
+= 0 | 0
 ~ 2 | To je Timov sklep iz 3. koraka. Pogoj $a < c$ ni dovolj: krožnica mora kraka sploh doseči, $a \ge d$.
 ~ 3 | To je številka napačnega koraka; vpisati moraš število rešitev, teh pa ni.
 ~ 1 | Ena rešitev bi bila pri $a = d = 4\,\mathrm{cm}$ (dotik) ali pri $a \ge c$. Tu je $a = 3\,\mathrm{cm} < 4\,\mathrm{cm}$.

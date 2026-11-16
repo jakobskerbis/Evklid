@@ -78,12 +78,12 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-pdf
-      - name: Chromium, poppler-utils (pdftoppm za pregled prelomov strani) in qpdf (stiskanje, linearizacija)
+      - name: Chromium, poppler-utils (pdftoppm za pregled prelomov strani), qpdf (stiskanje, linearizacija) in pypdf (sestava velikih predmetov)
         timeout-minutes: 30
         run: |
           for poskus in 1 2 3; do
-            if timeout -k 10 9m npx playwright install --with-deps chromium && sudo timeout 4m apt-get install -y -q poppler-utils qpdf; then
-              pdftoppm -v 2>&1 | head -1; qpdf --version | head -1
+            if timeout -k 10 9m npx playwright install --with-deps chromium && sudo timeout 4m apt-get install -y -q poppler-utils qpdf python3-pypdf; then
+              pdftoppm -v 2>&1 | head -1; qpdf --version | head -1; python3 -I -c "import pypdf; print(\"pypdf\", pypdf.__version__)"
               exit 0
             fi
             echo "::warning::Namestitev: poskus $poskus ni uspel"

@@ -42,14 +42,12 @@ Predpostavka $x \in \emptyset$ je za vsak $x$ nepravilna, implikacija z nepravil
 
 **4. Vennov diagram.** Univerzalno množico narišemo kot pravokotnik, vsako množico pa kot krog ali elipso v njem. Elementi so pike znotraj likov. Dva kroga, ki se delno prekrivata, razdelita pravokotnik na štiri območja: le v $A$, v obeh, le v $B$ in v nobeni od njiju.
 
-**5. Operacije z množicami.** Iz logike poznaš veznike $\wedge$ (in), $\vee$ (ali) in $\neg$ (ne). Operacije z množicami so zgrajene natanko iz njih. Element $x$ spada v novo množico, ko je pravilna izjava v tretjem stolpcu:
+**5. Operacije z množicami.** Iz logike poznaš veznike $\wedge$ (in), $\vee$ (ali) in $\neg$ (ne). Operacije z množicami so zgrajene natanko iz njih. Element $x$ spada v novo množico, ko je pravilna izjava za dvopičjem:
 
-| Operacija | Zapis | Pogoj za $x$ | Kateri elementi? |
-|---|---|---|---|
-| **Unija** | $A \cup B$ | $x \in A \vee x \in B$ | v $A$ ali v $B$ (ali v obeh) |
-| **Presek** | $A \cap B$ | $x \in A \wedge x \in B$ | v $A$ in hkrati v $B$ |
-| **Razlika** | $A \setminus B$ | $x \in A \wedge x \notin B$ | v $A$, ne pa v $B$ |
-| **Komplement** | $A^c$ | $x \in \mathcal{U} \wedge x \notin A$ | iz $\mathcal{U}$, niso v $A$ |
+- **Unija** $A \cup B$: $x \in A \vee x \in B$ (v $A$ ali v $B$, lahko v obeh).
+- **Presek** $A \cap B$: $x \in A \wedge x \in B$ (v $A$ in hkrati v $B$).
+- **Razlika** $A \setminus B$: $x \in A \wedge x \notin B$ (v $A$, ne pa v $B$).
+- **Komplement** $A^c$: $x \in \mathcal{U} \wedge x \notin A$ (iz $\mathcal{U}$, niso v $A$).
 
 Pri Ani in Bojanu je presek $\{\text{vreme}, \text{igra}\}$, unija ima $5$ elementov, razlika »Ana brez Bojana« pa je $\{\text{glasba}, \text{zemljevid}\}$.
 
@@ -168,6 +166,26 @@ $9 + 6 + 5 = 20$. Sodelovalo je $36$ dijakov, natanko eno vrsto aplikacij jih up
 - Moč unije: $|A \cup B| = |A| + |B| - |A \cap B|$.
 - Pri treh množicah izpolnjuješ Vennov diagram od sredine navzven.
 
+## Ponovitev
+
+**Formule**
+- $A \cup B$: v $A$ ali v $B$; $A \cap B$: v $A$ in v $B$ (na pamet)
+- $A \setminus B$: v $A$, ne v $B$; $A^c$: v $\mathcal{U}$, ne v $A$ (na pamet)
+- $|A \cup B| = |A| + |B| - |A \cap B|$ (na pamet)
+- višja raven: $(A \cup B)^c = A^c \cap B^c$ in $(A \cap B)^c = A^c \cup B^c$ (na pamet)
+- višja raven: množica z $n$ elementi ima $2^n$ podmnožic (na pamet)
+
+**Postopek**
+1. Določi univerzalno množico $\mathcal{U}$ in naštej elemente danih množic.
+2. Nariši Vennov diagram; pri treh množicah ga izpolnjuj od sredine navzven.
+3. Za vsak element preveri pogoj operacije (ali, in, ne).
+4. Iz diagrama preberi iskano množico ali število elementov.
+
+**Pazi na**
+- $\in$ ali $\subseteq$: levo je element ($2 \in A$) ali množica ($\{2\} \subseteq A$).
+- Presek ne štej dvakrat: $|A \cup B|$ ni $|A| + |B|$, presek odštej.
+- Komplement je odvisen od $\mathcal{U}$: najprej določi $\mathcal{U}$, nato izloči elemente $A$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
@@ -187,10 +205,10 @@ V razredu je $28$ dijakov. Košarko trenira $17$ dijakov, odbojko $12$, $4$ dija
 
 Univerzalna množica je $\mathcal{U} = \{1, 2, 3, \dots, 15\}$. Dani sta množici $A = \{x \in \mathcal{U} \mid x \text{ je praštevilo}\}$ in $B = \{x \in \mathcal{U} \mid x \text{ je liho število}\}$.
 
-a) Zapiši množici $A$ in $B$ z naštevanjem elementov. (2 točki)
-b) Nariši Vennov diagram množic $A$ in $B$ v $\mathcal{U}$ in vanj vpiši vse elemente množice $\mathcal{U}$. (2 točki)
-c) Z naštevanjem elementov zapiši množice $A \cap B$, $B \setminus A$ in $(A \cup B)^c$. (2 točki)
-d) Ali velja $A \subseteq B$? Odgovor utemelji. (1 točka)
+a) Zapišite množici $A$ in $B$ z naštevanjem elementov. (2 točki)
+b) Narišite Vennov diagram množic $A$ in $B$ v $\mathcal{U}$ in vanj vpišite vse elemente množice $\mathcal{U}$. (2 točki)
+c) Z naštevanjem elementov zapišite množice $A \cap B$, $B \setminus A$ in $(A \cup B)^c$. (2 točki)
+d) Ali velja $A \subseteq B$? Odgovor utemeljite. (1 točka)
 
 **Rešitev:**
 
@@ -208,10 +226,10 @@ d) Ali velja $A \subseteq B$? Odgovor utemelji. (1 točka)
 
 Univerzalna množica je $\mathcal{U} = \{1, 2, 3, \dots, 12\}$. Dane so množice $A = \{x \in \mathcal{U} \mid x \text{ deli } 12\}$, $B = \{x \in \mathcal{U} \mid x \text{ je sodo število}\}$ in $C = \{x \in \mathcal{U} \mid x < 6\}$.
 
-a) Z naštevanjem elementov zapiši množici $A \cap (B \cup C)$ in $(A \cap B) \cup (A \cap C)$ ter ju primerjaj. Katero pravilo za računanje z množicami potrjuje rezultat? (3 točke)
-b) S pravili za računanje z množicami poenostavi izraz $(A^c \cup B)^c$, nato dobljeno množico zapiši z naštevanjem elementov. (3 točke)
+a) Z naštevanjem elementov zapišite množici $A \cap (B \cup C)$ in $(A \cap B) \cup (A \cap C)$ ter ju primerjajte. Katero pravilo za računanje z množicami potrjuje rezultat? (3 točke)
+b) S pravili za računanje z množicami poenostavite izraz $(A^c \cup B)^c$, nato dobljeno množico zapišite z naštevanjem elementov. (3 točke)
 c) Koliko podmnožic ima množica $A$? Koliko izmed njih vsebuje število $12$? (2 točki)
-d) S formulo za moč unije treh množic izračunaj $|A \cup B \cup C|$. (2 točki)
+d) S formulo za moč unije treh množic izračunajte $|A \cup B \cup C|$. (2 točki)
 
 **Rešitev:**
 
@@ -256,12 +274,10 @@ De Morganovi pravili sta $(A \cup B)^c = A^c \cap B^c$ in $(A \cap B)^c = A^c \c
 
 Predstavljaj si pravokotnik, ki pomeni $\mathcal{U}$, in v njem dva kroga, ki se delno prekrivata. Krog levo je množica $A$, krog desno množica $B$. Pravokotnik se razdeli na štiri območja:
 
-| Območje na sliki | Kateri elementi so tam | Zapis |
-|---|---|---|
-| levi krog brez prekrivanja | v $A$, ne v $B$ | $A \setminus B$ |
-| prekrivanje (leča v sredini) | v obeh | $A \cap B$ |
-| desni krog brez prekrivanja | v $B$, ne v $A$ | $B \setminus A$ |
-| pravokotnik zunaj obeh krogov | v nobeni | $(A \cup B)^c$ |
+- levi krog brez prekrivanja: elementi v $A$, ne v $B$, zapis $A \setminus B$;
+- prekrivanje (leča v sredini): elementi v obeh, zapis $A \cap B$;
+- desni krog brez prekrivanja: elementi v $B$, ne v $A$, zapis $B \setminus A$;
+- pravokotnik zunaj obeh krogov: elementi v nobeni, zapis $(A \cup B)^c$.
 
 Vsaka operacija je pobarvanje nekaj teh območij. Unija pobarva oba kroga v celoti, to so tri območja. Presek pobarva samo lečo. Razlika $A \setminus B$ pobarva levi krog brez leče. Komplement $A^c$ pobarva vse, kar je zunaj levega kroga: desni krog brez leče in zunanje območje.
 
@@ -292,7 +308,7 @@ Galerija na telefonu deluje enako. »Letošnji videi« so presek dveh množic, �
 > Osenčeni so elementi, ki so v $A$, niso pa v $B$. To je razlika $A \setminus B = A \cap B^c$.
 
 ? (brez računala) V razredu je $30$ dijakov. Kolo ima $25$ dijakov, smuči $20$. Najmanj koliko dijakov ima oboje?
-= 15
+= 15 | 0
 ~ 0 | Množici bi bili lahko disjunktni le, če bi bilo $25 + 20$ največ $30$. Ker je $45 > 30$, se morata prekrivati.
 ~ 20 | To je največ, kolikor jih lahko ima oboje: tedaj ima vsak s smučmi tudi kolo.
 ~ 45 | To je $|A| + |B|$, ki presek šteje dvakrat. V razredu sploh ni $45$ dijakov.
@@ -319,7 +335,7 @@ Galerija na telefonu deluje enako. »Letošnji videi« so presek dveh množic, �
 > $B$ mora vsebovati $4$ in $5$ (zaradi unije) in $3$ (zaradi preseka), ne sme pa vsebovati $1$ in $2$. Torej $B = \{3, 4, 5\}$.
 
 ? (brez računala) Telefon ima v galeriji $120$ fotografij. Med priljubljene jih je označenih $45$, lokacijo jih ima $30$, oboje pa $12$. Koliko fotografij ni priljubljenih in nima lokacije?
-= 57
+= 57 | 0
 ~ 45 | Izračunal si $120 - 45 - 30$ in fotografije z obema oznakama odštel dvakrat.
 ~ 63 | To je število fotografij z vsaj eno oznako, torej unija. Vprašanje sprašuje po njenem komplementu.
 ~ 75 | To so fotografije, ki niso priljubljene. Med njimi jih ima nekaj lokacijo.

@@ -102,13 +102,13 @@ Oblika $\dfrac{p(x)}{q(x)} \ge 0$; ničle vključimo, pole izločimo.
 1. Prenesemo na eno stran: $\frac{x + 5}{x - 1} - 2 \ge 0$. Z $x - 1$ ne množimo, ker ne poznamo njegovega predznaka.
 2. En ulomek: $\frac{x + 5 - 2(x - 1)}{x - 1} = \frac{7 - x}{x - 1} \ge 0$.
 3. Ničla $x = 7$, pol $x = 1$.
-4. Tabela predznakov:
+4. Tabela predznakov (nad črto predznak števca, pod njo predznak imenovalca, za enačajem predznak ulomka):
 
-| interval | $7 - x$ | $x - 1$ | ulomek |
-|---|---|---|---|
-| $(-\infty, 1)$ | $+$ | $-$ | $-$ |
-| $(1, 7)$ | $+$ | $+$ | $+$ |
-| $(7, \infty)$ | $-$ | $+$ | $-$ |
+| interval | $\frac{7 - x}{x - 1}$ |
+|---|---|
+| $(-\infty, 1)$ | $\frac{+}{-} = -$ |
+| $(1, 7)$ | $\frac{+}{+} = +$ |
+| $(7, \infty)$ | $\frac{-}{+} = -$ |
 
 5. Ulomek je pozitiven na $(1, 7)$. Ničlo $7$ vključimo, ker velja $\ge$; pol $1$ izločimo.
 6. Preizkus: pri $x = 3$ je $\frac{8}{2} = 4 \ge 2$. Pri $x = 0$ je $\frac{5}{-1} = -5$, kar ni $\ge 2$, čeprav bi »pomnožena« neenačba ($x + 5 \ge 2x - 2$, torej $x \le 7$) število $0$ sprejela.
@@ -140,12 +140,12 @@ Razcep: $x^2 - 4x + 4 = (x - 2)^2$ in $x^2 - 9 = (x - 3)(x + 3)$; faktor sode st
 2. Ničla $x = 2$ je dvojna. Pola sta $x = -3$ in $x = 3$.
 3. Tabela predznakov (imenovalec obravnavamo kot celoto):
 
-| interval | $(x - 2)^2$ | $x^2 - 9$ | ulomek |
-|---|---|---|---|
-| $(-\infty, -3)$ | $+$ | $+$ | $+$ |
-| $(-3, 2)$ | $+$ | $-$ | $-$ |
-| $(2, 3)$ | $+$ | $-$ | $-$ |
-| $(3, \infty)$ | $+$ | $+$ | $+$ |
+| interval | $\frac{(x - 2)^2}{x^2 - 9}$ |
+|---|---|
+| $(-\infty, -3)$ | $\frac{+}{+} = +$ |
+| $(-3, 2)$ | $\frac{+}{-} = -$ |
+| $(2, 3)$ | $\frac{+}{-} = -$ |
+| $(3, \infty)$ | $\frac{+}{+} = +$ |
 
 4. Pri $x = 2$ se predznak ne zamenja, ker je ničla dvojna. Tam je ulomek $0$, kar ni $< 0$, zato $2$ izločimo.
 5. Odgovor: $x \in (-3, 2) \cup (2, 3)$.
@@ -168,11 +168,11 @@ $\dfrac{340}{340 - v} \ge \dfrac{17}{16}$
 3. Neenačba je $\frac{17v - 340}{16(340 - v)} \ge 0$. Ničla $v = 20$, pol $v = 340$.
 4. Tabela predznakov:
 
-| interval | $17v - 340$ | $16(340 - v)$ | ulomek |
-|---|---|---|---|
-| $(-\infty, 20)$ | $-$ | $+$ | $-$ |
-| $(20, 340)$ | $+$ | $+$ | $+$ |
-| $(340, \infty)$ | $+$ | $-$ | $-$ |
+| interval | $\frac{17v - 340}{16(340 - v)}$ |
+|---|---|
+| $(-\infty, 20)$ | $\frac{-}{+} = -$ |
+| $(20, 340)$ | $\frac{+}{+} = +$ |
+| $(340, \infty)$ | $\frac{+}{-} = -$ |
 
 5. Rešitev neenačbe je $[20, 340)$; vsa ta števila so pozitivna, zato pogoj $v \ge 0$ ne spremeni ničesar.
 6. Pretvorba: $20\,\mathrm{m/s} = 20 \cdot 3{,}6\,\mathrm{km/h} = 72\,\mathrm{km/h}$.
@@ -195,13 +195,13 @@ Na eno stran, skupni imenovalec $x(x + 2)$, nato tabela predznakov; neenačba je
 2. Števec razstavimo: $x^2 - x - 2 = (x - 2)(x + 1)$. Ničli sta $-1$ in $2$, pola $-2$ in $0$.
 3. Predznaka števca in imenovalca po intervalih:
 
-| interval | $(x - 2)(x + 1)$ | $x(x + 2)$ |
-|---|---|---|
-| $(-\infty, -2)$ | $+$ | $+$ |
-| $(-2, -1)$ | $+$ | $-$ |
-| $(-1, 0)$ | $-$ | $-$ |
-| $(0, 2)$ | $-$ | $+$ |
-| $(2, \infty)$ | $+$ | $+$ |
+| interval | $\frac{(x - 2)(x + 1)}{x(x + 2)}$ |
+|---|---|
+| $(-\infty, -2)$ | $\frac{+}{+}$ |
+| $(-2, -1)$ | $\frac{+}{-}$ |
+| $(-1, 0)$ | $\frac{-}{-}$ |
+| $(0, 2)$ | $\frac{-}{+}$ |
+| $(2, \infty)$ | $\frac{+}{+}$ |
 
 4. Določi sam predznak ulomka in zapiši rešitev.
 
@@ -228,15 +228,34 @@ Ulomek je pozitiven, kjer imata števec in imenovalec enak predznak: na $(-\inft
 - Pri $\le$, $\ge$ ničle vključimo, pri $<$, $>$ ne. Polov ne vključimo nikoli.
 - Rešitev $f(x) > 0$ so tisti $x$, kjer je graf racionalne funkcije nad osjo $x$.
 
+## Ponovitev
+
+**Formule**
+- oblika: $\dfrac{p(x)}{q(x)} > 0$ (ali $<$, $\ge$, $\le$), na desni $0$ (na pamet)
+- predznak se menja le v ničli ali polu lihe stopnje (na pamet)
+- $\le$, $\ge$: ničle vključi; poli nikoli (na pamet)
+
+**Postopek**
+1. Vse prenesi na eno stran, da je na drugi $0$.
+2. Zapiši levo stran kot en ulomek in razstavi števec ter imenovalec.
+3. Poišči ničle (števec) in pole (imenovalec).
+4. Sestavi tabelo predznakov po intervalih; za vsak faktor posebej.
+5. Izberi intervale z želenim predznakom; ničle vključi le pri $\le$, $\ge$.
+
+**Pazi na**
+- Ne množi z imenovalcem neznanega predznaka; uporabi tabelo predznakov.
+- Pri $\frac{x + 5}{x - 1} \ge 2$ najprej odštej $2$, šele nato sestavi tabelo.
+- Pol vedno ostane odprt, tudi pri nestrogi neenačbi.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
 
 Dani sta funkciji $g(x) = \dfrac{x + 3}{x - 1}$ in $h(x) = x + 3$.
 
-a) Izračunaj koordinate presečišč grafov funkcij $g$ in $h$. (2 točki)
-b) Reši neenačbo $g(x) \ge h(x)$. (4 točke)
-c) Zapiši vse $x$, pri katerih leži graf funkcije $g$ pod grafom funkcije $h$. (1 točka)
+a) Izračunajte koordinate presečišč grafov funkcij $g$ in $h$. (2 točki)
+b) Rešite neenačbo $g(x) \ge h(x)$. (4 točke)
+c) Zapišite vse $x$, pri katerih leži graf funkcije $g$ pod grafom funkcije $h$. (1 točka)
 
 **Rešitev:**
 
@@ -246,12 +265,12 @@ c) Zapiši vse $x$, pri katerih leži graf funkcije $g$ pod grafom funkcije $h$.
 4. b) En ulomek: $\dfrac{x + 3 - (x + 3)(x - 1)}{x - 1} = \dfrac{(x + 3)(2 - x)}{x - 1} \ge 0$. Ničli sta $-3$ in $2$, pol je $1$.
 5. b) Tabela predznakov:
 
-| interval | $(x + 3)(2 - x)$ | $x - 1$ | ulomek |
-|---|---|---|---|
-| $(-\infty, -3)$ | $-$ | $-$ | $+$ |
-| $(-3, 1)$ | $+$ | $-$ | $-$ |
-| $(1, 2)$ | $+$ | $+$ | $+$ |
-| $(2, \infty)$ | $-$ | $+$ | $-$ |
+| interval | $\frac{(x + 3)(2 - x)}{x - 1}$ |
+|---|---|
+| $(-\infty, -3)$ | $\frac{-}{-} = +$ |
+| $(-3, 1)$ | $\frac{+}{-} = -$ |
+| $(1, 2)$ | $\frac{+}{+} = +$ |
+| $(2, \infty)$ | $\frac{-}{+} = -$ |
 
 6. b) Ulomek je pozitiven na $(-\infty, -3)$ in $(1, 2)$. Ničli $-3$ in $2$ vključimo, ker velja $\ge$; pol $1$ izločimo. Rešitev: $x \in (-\infty, -3] \cup (1, 2]$.
 7. c) Graf $g$ leži pod grafom $h$, kjer je $g(x) < h(x)$, torej kjer je ulomek iz koraka 4 negativen. V $-3$ in $2$ sta vrednosti enaki, v $1$ funkcija $g$ ni definirana, zato so vsa krajišča odprta: $x \in (-3, 1) \cup (2, \infty)$.
@@ -263,10 +282,10 @@ c) Zapiši vse $x$, pri katerih leži graf funkcije $g$ pod grafom funkcije $h$.
 
 Koncentracija zdravila v krvi $t$ ur po zaužitju je $c(t) = \dfrac{30t}{t^2 + 9}$ (v $\mathrm{mg/L}$), $t \ge 0$.
 
-a) Izračunaj koncentracijo zdravila $1$ uro in $6$ ur po zaužitju. (2 točki)
-b) Zapiši enačbo vodoravne asimptote grafa funkcije $c$ in pojasni, kaj pove o koncentraciji. (2 točki)
-c) Zdravilo učinkuje, ko je koncentracija vsaj $2{,}5\,\mathrm{mg/L}$. Z reševanjem neenačbe določi, od kdaj do kdaj zdravilo učinkuje in koliko časa. Čase zaokroži na celo minuto. (4 točke)
-d) Z reševanjem neenačbe $c(t) \le 5$ utemelji, da koncentracija nikoli ne preseže $5\,\mathrm{mg/L}$, in zapiši, kdaj je enaka $5\,\mathrm{mg/L}$. (2 točki)
+a) Izračunajte koncentracijo zdravila $1$ uro in $6$ ur po zaužitju. (2 točki)
+b) Zapišite enačbo vodoravne asimptote grafa funkcije $c$ in pojasnite, kaj pove o koncentraciji. (2 točki)
+c) Zdravilo učinkuje, ko je koncentracija vsaj $2{,}5\,\mathrm{mg/L}$. Z reševanjem neenačbe določite, od kdaj do kdaj zdravilo učinkuje in koliko časa. Čase zaokrožite na celo minuto. (4 točke)
+d) Z reševanjem neenačbe $c(t) \le 5$ utemeljite, da koncentracija nikoli ne preseže $5\,\mathrm{mg/L}$, in zapišite, kdaj je enaka $5\,\mathrm{mg/L}$. (2 točki)
 
 **Rešitev:**
 
@@ -325,7 +344,7 @@ Pri Primeru 1 to da $(7 - x)(x - 1) \ge 0$ in $x \ne 1$. Parabola z ničlama $1$
 ## Preveri se
 
 ? (brez računala) Koliko celih števil reši neenačbo $\frac{x + 3}{x - 2} \le 0$?
-= 5
+= 5 | 0
 ~ 6 | Vključil si pol $2$. Tam je imenovalec $0$, ulomek ne obstaja.
 ~ 4 | Izpustil si ničlo $-3$. Pri $\le$ je ulomek $0$ dovoljen.
 > Ničla $-3$, pol $2$; ulomek je nepozitiven na $[-3, 2)$. Cela števila: $-3$, $-2$, $-1$, $0$, $1$.
@@ -358,7 +377,7 @@ točka: 1; 0 | 1 | pod
 > Graf se osi dotakne v dvojni ničli $1$ in ostane nad njo. Stroga neenačba izloči le točko, kjer je $f(x) = 0$.
 
 ? Rešitev neenačbe $\frac{x + 6}{x} \ge 4$ je interval $(0, b]$. Koliko je $b$?
-= 2
+= 2 | 0
 ~ -6 | Vzel si ničlo prvotnega števca $x + 6$. Najprej odštej $4$, šele nato iščeš ničlo.
 ~ 1,2 | Narobe si združil števec: $x + 6 - 4x = 6 - 3x$, ne $6 - 5x$.
 > $\frac{x + 6}{x} - 4 = \frac{6 - 3x}{x} \ge 0$. Ničla $2$ (vključena), pol $0$ (izločen), pozitivno med njima: $(0, 2]$.

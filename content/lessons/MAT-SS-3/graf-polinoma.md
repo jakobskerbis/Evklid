@@ -37,10 +37,8 @@ Tu je $x_1$ ničla stopnje $k_1$, $x_2$ ničla stopnje $k_2$ in tako naprej.
 
 Stopnja ničle odloči, kaj graf naredi ob njej. Faktor $(x - 1)^2$ je kvadrat, zato je levo in desno od $1$ pozitiven. Ob ničli stopnje $2$ se predznak polinoma torej ne spremeni: graf se osi $x$ le dotakne in se obrne nazaj. Faktor $(x - 1)$ ali $(x - 1)^3$ pa je levo od $1$ negativen, desno pozitiven. Predznak se zamenja in graf os seka.
 
-| stopnja ničle | graf ob ničli | predznak |
-|---|---|---|
-| liha ($1, 3, \dots$) | seka os $x$ | se zamenja |
-| soda ($2, 4, \dots$) | se dotakne osi $x$ | ostane enak |
+- Ničla lihe stopnje ($1, 3, \dots$): graf seka os $x$, predznak se zamenja.
+- Ničla sode stopnje ($2, 4, \dots$): graf se osi $x$ dotakne, predznak ostane enak.
 
 Pri stopnji $3$ ali več se graf ob ničli še splošči: dlje časa se drži tik ob osi.
 
@@ -58,9 +56,9 @@ Pod osjo. Med $-1$ in $1$ leži le ničla $0$, ta pa je stopnje $2$, zato se pre
 
 | $x$ | $p(x)$ | $x^3$ |
 |---|---|---|
-| $10$ | $5$ | $1000$ |
-| $100$ | $900\,005$ | $1\,000\,000$ |
-| $1000$ | $990\,000\,005$ | $1\,000\,000\,000$ |
+| $10$ | $5$ | $10^3$ |
+| $100$ | $900\,005$ | $10^6$ |
+| $1000$ | $990\,000\,005$ | $10^9$ |
 
 Pri $x = 10$ sta vrednosti še zelo različni, pri $x = 1000$ se razlikujeta le še za odstotek. Vodilni člen raste hitreje od vseh drugih in jih prevlada. Za polinom stopnje $n$ z vodilnim koeficientom $a_n$ zato velja
 
@@ -68,10 +66,12 @@ $$p(x) \approx a_n x^n \quad \text{za zelo velike } |x|.$$
 
 Kam gresta kraka grafa, določata le parnost stopnje $n$ in predznak $a_n$:
 
-| | $a_n > 0$ | $a_n < 0$ |
+| | levo | desno |
 |---|---|---|
-| $n$ sod | levo $+\infty$, desno $+\infty$ | levo $-\infty$, desno $-\infty$ |
-| $n$ lih | levo $-\infty$, desno $+\infty$ | levo $+\infty$, desno $-\infty$ |
+| $n$ sod, $a_n > 0$ | $+\infty$ | $+\infty$ |
+| $n$ sod, $a_n < 0$ | $-\infty$ | $-\infty$ |
+| $n$ lih, $a_n > 0$ | $-\infty$ | $+\infty$ |
+| $n$ lih, $a_n < 0$ | $+\infty$ | $-\infty$ |
 
 »Desno $+\infty$« pomeni: ko gre $x \to +\infty$, gre $p(x) \to +\infty$, graf se dviga čez vse meje. Pri sodi stopnji sta kraka na isti strani osi $x$, pri lihi na nasprotnih. Predznak $a_n$ vedno pove, kam gre desni krak.
 
@@ -213,11 +213,31 @@ $C(t) = a_3 t^3 + a_2 t^2 + a_1 t + a_0$; vsaka meritev $(t_i, C_i)$ da enačbo 
 - Za velike $|x|$ je $p(x) \approx a_n x^n$. Sod $n$: kraka na isti strani; lih $n$: na nasprotnih. Predznak $a_n$ pove smer desnega kraka.
 - Presečišče z osjo $y$ je $(0, p(0))$.
 
+## Ponovitev
+
+**Formule**
+- $p(x) = a\,(x - x_1)^{k_1}(x - x_2)^{k_2}\cdots$ (na pamet)
+- $k$ lih: graf seka os $x$; $k$ sod: se je dotakne (na pamet)
+- Za velike $|x|$: $p(x) \approx a_n x^n$ (na pamet)
+- Presečišče z osjo $y$: $(0, p(0))$ (na pamet)
+
+**Postopek**
+1. Polinom razcepi in odčitaj ničle z njihovimi stopnjami.
+2. Izračunaj $p(0)$.
+3. Iz $a_n x^n$ določi smer obeh krakov.
+4. Pri vsaki ničli odloči, ali graf seka os ali se je dotakne.
+5. Nariši graf od leve proti desni; dvom razreši s testno točko.
+
+**Pazi na**
+- Pri ničli sode stopnje se graf osi le dotakne, predznak ostane.
+- Predznaki se izmenjujejo le, če so vse ničle lihe stopnje.
+- Kraka določa člen z najvišjo potenco, ne prosti člen.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Reši neenačbo $x^3 - 4x^2 + 4x \le 0$.
+Rešite neenačbo $x^3 - 4x^2 + 4x \le 0$.
 
 **Rešitev:**
 
@@ -232,9 +252,9 @@ Reši neenačbo $x^3 - 4x^2 + 4x \le 0$.
 
 Dan je polinom $p(x) = -x^3 + 3x + 2$.
 
-a) Pokaži, da je število $2$ ničla polinoma $p$, in razcepi $p$ na linearne faktorje. (2 točki)
-b) Zapiši ničle polinoma $p$ z njihovimi stopnjami, presečišče grafa z osjo $y$ in obnašanje obeh krakov. Nato skiciraj graf polinoma $p$. (3 točke)
-c) Reši neenačbo $p(x) > 0$. (2 točki)
+a) Pokažite, da je število $2$ ničla polinoma $p$, in razcepite $p$ na linearne faktorje. (2 točki)
+b) Zapišite ničle polinoma $p$ z njihovimi stopnjami, presečišče grafa z osjo $y$ in obnašanje obeh krakov. Nato skicirajte graf polinoma $p$. (3 točke)
+c) Rešite neenačbo $p(x) > 0$. (2 točki)
 
 **Rešitev:**
 
@@ -252,11 +272,11 @@ c) Reši neenačbo $p(x) > 0$. (2 točki)
 
 Po močnem deževju se gladina zadrževalnika dvigne nad običajno višino. Odmik gladine od običajne višine $v$ (v centimetrih) $d$ dni po začetku dežja opišemo s polinomom tretje stopnje. Pri $d = 0$ je gladina na običajni višini. Pri $d = 8$ se vrne na običajno višino in graf se tam osi $d$ le dotakne. Pri $d = 2$ je bila gladina $36\,\mathrm{cm}$ nad običajno.
 
-a) Sestavi polinom $v(d)$, ki ustreza opisu. (3 točke)
+a) Sestavite polinom $v(d)$, ki ustreza opisu. (3 točke)
 b) Za koliko centimetrov je bila gladina nad običajno višino pri $d = 5$? (1 točka)
-c) Zapornica je odprta, kadar je gladina vsaj $32\,\mathrm{cm}$ nad običajno. Pokaži, da je $d = 4$ rešitev enačbe $v(d) = 32$, in poišči še njeni drugi rešitvi. (3 točke)
-d) Koliko časa je zapornica odprta? Rezultat zaokroži na celo uro. (2 točki)
-e) Pojasni, zakaj model ne velja za $d > 8$. (1 točka)
+c) Zapornica je odprta, kadar je gladina vsaj $32\,\mathrm{cm}$ nad običajno. Pokažite, da je $d = 4$ rešitev enačbe $v(d) = 32$, in poiščite še njeni drugi rešitvi. (3 točke)
+d) Koliko časa je zapornica odprta? Rezultat zaokrožite na celo uro. (2 točki)
+e) Pojasnite, zakaj model ne velja za $d > 8$. (1 točka)
 
 **Rešitev:**
 
@@ -387,7 +407,7 @@ Vsak ulomek v oklepaju ima v imenovalcu potenco $x$, zato gre proti $0$, ko $|x|
 > Za $t > 6$ je $(t - 6) > 0$ in $(t - 1)^2 > 0$, pred njima pa $-0{,}1$, zato $T < 0$; npr. $T(7) = -3{,}6\,^\circ\mathrm{C}$. Pri sodi ničli $1$ se predznak ne zamenja, zato je pred $t = 6$ temperatura nad lediščem.
 
 ? (višja raven) O ničlah ne vemo ničesar, imamo le meritve z različnimi časi. Najmanj koliko meritev potrebujemo, da enolično določimo model s polinomom četrte stopnje?
-= 5
+= 5 | 0
 ~ 4 | Polinom četrte stopnje ima pet koeficientov, od $a_4$ do $a_0$; vsaka meritev da le eno enačbo.
 > Neznanih koeficientov je $4 + 1 = 5$, zato potrebujemo pet enačb, torej pet meritev.
 

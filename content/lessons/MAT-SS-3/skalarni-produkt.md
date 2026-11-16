@@ -17,15 +17,15 @@ Situaciji sta si na videz tuji, skrivata pa isto vprašanje: **kolikšen del ene
 
 Dolžina sence je odvisna od kota. Za $\vec b$ dolžine $10$:
 
-| kot $\varphi$ | $\cos\varphi$ | senca | kam pade |
+| kot $\varphi$ | $\cos\varphi$ | senca | smer |
 |---|---|---|---|
-| $0^\circ$ | $1$ | $10$ | v celoti naprej |
+| $0^\circ$ | $1$ | $10$ | naprej |
 | $60^\circ$ | $0{,}5$ | $5$ | naprej |
 | $90^\circ$ | $0$ | $0$ | v točko |
 | $120^\circ$ | $-0{,}5$ | $-5$ | nazaj |
-| $180^\circ$ | $-1$ | $-10$ | v celoti nazaj |
+| $180^\circ$ | $-1$ | $-10$ | nazaj |
 
-Senca je torej $|\vec b|\cos\varphi$. Predznak pove smer: pri topem kotu pade senca za začetek, zato jo štejemo negativno.
+Pri $0^\circ$ in $180^\circ$ pade v senco ves $\vec b$. Senca je torej $|\vec b|\cos\varphi$. Predznak pove smer: pri topem kotu pade senca za začetek, zato jo štejemo negativno.
 
 **Skalarni produkt.** Senco pomnožimo še z dolžino $\vec a$:
 
@@ -246,6 +246,28 @@ $\vec F_a = \dfrac{\vec a \cdot \vec F}{|\vec a|^2}\,\vec a$, $\quad |\vec F_a| 
 - Pravokotna projekcija $\vec b$ na $\vec a$: $\vec b_a = \dfrac{\vec a \cdot \vec b}{|\vec a|^2}\,\vec a$, ostanek $\vec b - \vec b_a$ je pravokoten na $\vec a$.
 - Kosinusni izrek: iz $|\vec a - \vec b|^2 = |\vec a|^2 - 2\,\vec a \cdot \vec b + |\vec b|^2$ sledi $c^2 = a^2 + b^2 - 2ab\cos\gamma$.
 
+## Ponovitev
+
+**Formule**
+- $\vec a \cdot \vec b = |\vec a|\,|\vec b|\cos\varphi$ (na pamet)
+- $\vec a \cdot \vec b = a_x b_x + a_y b_y + a_z b_z$ (na pamet)
+- $\cos\varphi = \dfrac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$ (na pamet)
+- $\vec a \perp \vec b \iff \vec a \cdot \vec b = 0$ (na pamet)
+- $\vec a \cdot \vec a = |\vec a|^2$ (na pamet)
+- projekcija $\vec b$ na $\vec a$: $\vec b_a = \dfrac{\vec a \cdot \vec b}{|\vec a|^2}\,\vec a$ (na pamet)
+
+**Postopek**
+1. Zapiši vektorja s skupnim začetkom v vrhu iskanega kota.
+2. Izračunaj komponente in skalarni produkt po komponentah.
+3. Izračunaj dolžini obeh vektorjev.
+4. Deli produkt z dolžinama in dobiš $\cos\varphi$.
+5. Kot izračunaj z $\arccos$; pri pravokotnosti preveri $\vec a \cdot \vec b = 0$.
+
+**Pazi na**
+- Rezultat je število: komponente zmnoži in seštej.
+- Pri kotu z vrhom $B$ vzemi $\overrightarrow{BA}$ in $\overrightarrow{BC}$, ne $\overrightarrow{AB}$.
+- Za $\cos\varphi$ produkt deli z obema dolžinama.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
@@ -266,9 +288,9 @@ Za katera realna števila $n$ sta vektorja $\vec a = (n, 2, -1)$ in $\vec b = (n
 
 Dan je trikotnik z oglišči $A(1, -1, 2)$, $B(3, 0, 4)$ in $C(2, 3, 1)$.
 
-a) Izračunaj notranji kot $\alpha$ trikotnika pri oglišču $A$. Rezultat zaokroži na stotinko stopinje. (3 točke)
-b) Izračunaj dolžino pravokotne projekcije vektorja $\overrightarrow{AC}$ na vektor $\overrightarrow{AB}$ in zapiši to projekcijo kot vektor s komponentami. (3 točke)
-c) Izračunaj višino trikotnika na stranico $AB$ in ploščino trikotnika $ABC$. Rezultata zaokroži na dve decimalni mesti. (2 točki)
+a) Izračunajte notranji kot $\alpha$ trikotnika pri oglišču $A$. Rezultat zaokrožite na stotinko stopinje. (3 točke)
+b) Izračunajte dolžino pravokotne projekcije vektorja $\overrightarrow{AC}$ na vektor $\overrightarrow{AB}$ in zapišite to projekcijo kot vektor s komponentami. (3 točke)
+c) Izračunajte višino trikotnika na stranico $AB$ in ploščino trikotnika $ABC$. Rezultata zaokrožite na dve decimalni mesti. (2 točki)
 
 **Rešitev:**
 
@@ -362,14 +384,14 @@ Fiziki temu rečejo **delo** sile: $\vec F \cdot \vec s = |\vec F|\,|\vec s|\cos
 > $\vec a \cdot \vec b = -6$, $|\vec a| = 2\sqrt2$, $|\vec b| = 3$, $\cos\varphi = \dfrac{-6}{6\sqrt2} \approx -0{,}707$, zato $\varphi = 135^\circ$.
 
 ? (brez računala) Kolikšna je dolžina pravokotne projekcije vektorja $\vec b = (7, 1)$ na vektor $\vec a = (3, 4)$?
-= 5
+= 5 | 0
 ~ 25 | To je skalarni produkt $\vec a \cdot \vec b$. Dolžino projekcije dobiš, ko ga deliš z $|\vec a| = 5$.
 ~ 1 | Delil si z $|\vec a|^2 = 25$. Tako dobiš koeficient pred $\vec a$ v vektorju projekcije, ne dolžine.
 ~ 7,07 | To je dolžina vektorja $\vec b$. Projekcija je krajša, ker $\vec b$ ni vzporeden z $\vec a$.
 > $\vec a \cdot \vec b = 21 + 4 = 25$ in $|\vec a| = 5$, zato je dolžina projekcije $\frac{25}{5} = 5$. Projekcija je $\frac{25}{25}\vec a = (3, 4)$.
 
 ? Kocka ima oglišča $A(0, 0, 0)$, $B(4, 0, 0)$, $D(0, 4, 0)$ in $G(4, 4, 4)$. Telesna diagonala $AG$ in ploskovna diagonala $BD$ nimata skupne točke. Koliko je $\overrightarrow{AG} \cdot \overrightarrow{BD}$?
-= 0
+= 0 | 0
 ~ 32 | Za $\overrightarrow{BD}$ si sešel koordinati točk. Vektor od $B$ do $D$ je $D - B = (-4, 4, 0)$.
 > $\overrightarrow{AG} = (4, 4, 4)$ in $\overrightarrow{BD} = (-4, 4, 0)$, produkt je $-16 + 16 + 0 = 0$. Diagonali sta pravokotni mimobežnici.
 

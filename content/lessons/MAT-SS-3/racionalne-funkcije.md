@@ -62,11 +62,9 @@ $$f(x) = k(x) + \frac{r(x)}{q(x)}$$
 
 Ulomek $\frac{r(x)}{q(x)}$ gre za velike $|x|$ proti $0$, zato se graf bliža grafu količnika $k$. Za vodoravno asimptoto zadošča primerjava stopenj:
 
-| stopnji | asimptota | primer |
-|---|---|---|
-| števec nižji | $y = 0$ | $\frac{5}{x + 4}$ |
-| enaki | $y = \frac{a_n}{b_n}$ | $\frac{6x}{x + 3}$: $y = 6$ |
-| števec višji za $1$ | poševna $y = k(x)$ | $\frac{x^2 + 1}{x}$: $y = x$ |
+- Števec nižje stopnje: $y = 0$, npr. $\frac{5}{x + 4}$.
+- Enaki stopnji: $y = \frac{a_n}{b_n}$, npr. $\frac{6x}{x + 3}$ ima $y = 6$.
+- Števec višji za $1$: poševna asimptota $y = k(x)$, npr. $\frac{x^2 + 1}{x}$ ima $y = x$.
 
 Tu sta $a_n$ in $b_n$ vodilna koeficienta števca in imenovalca. Če je števec višji za $2$ ali več, se graf daleč zunaj obnaša kot polinom $k$, asimptote v obliki premice pa ni.
 
@@ -201,11 +199,33 @@ Pogoji: imenovalci $\ne 0$; obe strani pomnožimo z najmanjšim skupnim imenoval
 - Graf vodoravno asimptoto lahko seka, navpične nikoli.
 - Racionalna enačba: pogoji (imenovalci $\ne 0$), množenje z najmanjšim skupnim imenovalcem, rešitev, preizkus. Kandidat, ki je ničla kakega imenovalca, je navidezna rešitev.
 
+## Ponovitev
+
+**Formule**
+- $f(x) = \dfrac{p(x)}{q(x)}$, $D_f$: vsi $x$ s $q(x) \ne 0$ (na pamet)
+- po krajšanju: ničle iz $p$, poli iz $q$ (na pamet)
+- števec nižje stopnje: vodoravna asimptota $y = 0$ (na pamet)
+- enaki stopnji: vodoravna asimptota $y = \frac{a_n}{b_n}$ (na pamet)
+- števec višji za $1$: poševna asimptota $y = k(x)$, $k$ je količnik $p : q$ (na pamet)
+
+**Postopek**
+1. Določi definicijsko območje.
+2. Števec in imenovalec razcepi in okrajšaj; skupni faktor da luknjo.
+3. Poišči ničle in pole s stopnjami.
+4. Določi asimptote.
+5. Izračunaj $f(0)$ in predznake na intervalih ter skiciraj graf.
+6. Pri racionalni enačbi zapiši pogoje in vsako rešitev preveri z njimi.
+
+**Pazi na**
+- Ničle dá števec, pole imenovalec.
+- Najprej okrajšaj: okrajšan faktor da luknjo, ne pola.
+- Pri enakih stopnjah deliš vodilna koeficienta, ne prostih členov.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Zapiši enačbi obeh asimptot grafa funkcije $f(x) = \dfrac{x^2 - 3x + 4}{x - 1}$.
+Zapišite enačbi obeh asimptot grafa funkcije $f(x) = \dfrac{x^2 - 3x + 4}{x - 1}$.
 
 **Rešitev:**
 
@@ -220,10 +240,10 @@ Zapiši enačbi obeh asimptot grafa funkcije $f(x) = \dfrac{x^2 - 3x + 4}{x - 1}
 
 Dana je funkcija $f(x) = \dfrac{x^2 - 4x + 3}{x^2 - 2x}$.
 
-a) Zapiši definicijsko območje funkcije $f$ ter izračunaj njene ničle in pole. (2 točki)
-b) Zapiši enačbe vseh asimptot grafa funkcije $f$. (2 točki)
-c) Izračunaj koordinati točke, v kateri graf funkcije $f$ seka svojo vodoravno asimptoto. (2 točki)
-d) Nariši graf funkcije $f$. (2 točki)
+a) Zapišite definicijsko območje funkcije $f$ ter izračunajte njene ničle in pole. (2 točki)
+b) Zapišite enačbe vseh asimptot grafa funkcije $f$. (2 točki)
+c) Izračunajte koordinati točke, v kateri graf funkcije $f$ seka svojo vodoravno asimptoto. (2 točki)
+d) Narišite graf funkcije $f$. (2 točki)
 
 **Rešitev:**
 
@@ -321,7 +341,7 @@ Primer je $f(x) = \frac{x^2 - 1}{x - 1}$, ki pri $x = 1$ ni definirana. Po kraj�
 > $\dfrac{20}{v - 4} = 2$, torej $v - 4 = 10$ in $v = 14\,\mathrm{km/h}$.
 
 ? (brez računala) Reši enačbo $\dfrac{x}{x - 3} - \dfrac{1}{x} = \dfrac{3}{x^2 - 3x}$. Vpiši njeno rešitev.
-= 1
+= 1 | 0
 ~ 0 | Število $0$ reši pomnoženo enačbo $x^2 - x = 0$, a je ničla imenovalcev $x$ in $x^2 - 3x$: navidezna rešitev.
 ~ 3 | Pri $x = 3$ je imenovalec $x - 3$ enak $0$. Pogoja sta $x \ne 0$ in $x \ne 3$.
 > Pogoja: $x \ne 0$, $x \ne 3$. Množimo z $x(x - 3)$: $x^2 - (x - 3) = 3$, torej $x^2 - x = 0$ in $x = 0$ ali $x = 1$. Število $0$ je ničla imenovalca, ostane $x = 1$.

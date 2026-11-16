@@ -69,7 +69,7 @@ puščica: 3; 4 -> 3; 2,4
 puščica: -4; 3 -> -4; 1,8
 :::
 
-| točka na krožnici | točka po raztegu s faktorjem $\frac35$ |
+| na krožnici | po raztegu |
 |---|---|
 | $(0, 5)$ | $(0, 3)$ |
 | $(3, 4)$ | $(3; 2{,}4)$ |
@@ -108,14 +108,14 @@ $$(y - y_0)^2 = 2p(x - x_0)$$
 
 Gorišče je $F\left(x_0 + \frac{p}{2}, y_0\right)$, vodnica $x = x_0 - \frac{p}{2}$. Če zamenjaš vlogi $x$ in $y$, dobiš parabolo $(x - x_0)^2 = 2p(y - y_0)$, ki se odpira navzgor. To je graf kvadratne funkcije: iz $y = x^2 - 4x + 7$ dobiš $(x - 2)^2 = y - 3$, teme $(2, 3)$.
 
-Katero stožnico skriva splošna enačba, pove že pogled na kvadrate:
+Katero stožnico skriva splošna enačba, pove že pogled na kvadrata $x^2$ in $y^2$ v enačbi (hiperbola in parabola sta višja raven):
 
-| kvadrata v enačbi | stožnica |
+| $x^2$ in $y^2$ | stožnica |
 |---|---|
-| $x^2$ in $y^2$, enaka koeficienta | krožnica |
-| $x^2$ in $y^2$, enaka predznaka | elipsa |
-| $x^2$ in $y^2$, nasprotna predznaka | hiperbola (višja raven) |
-| samo eden od $x^2$, $y^2$ | parabola (višja raven) |
+| enaka koeficienta | krožnica |
+| enaka predznaka | elipsa |
+| nasprotna predznaka | hiperbola |
+| le eden od njiju | parabola |
 
 Po dopolnjevanju mora biti pri elipsi desna stran pozitivna, sicer krivulje ni, tako kot pri krožnici.
 
@@ -273,11 +273,33 @@ $0{,}2x - 0{,}4 + 0{,}4y + 1{,}2 = 1$, torej $0{,}2x + 0{,}4y = 0{,}2$ in po mno
 - Presečišča stožnice s premico: eno spremenljivko iz premice vstaviš v enačbo stožnice; vsaka rešitev da eno presečišče.
 - (višja raven) Tangenta v točki stožnice: en faktor vsakega kvadrata zamenjaš s koordinato točke. Tangenta z dano smerjo ali skozi zunanjo točko: vstaviš $y = kx + n$ in zahtevaš $D = 0$.
 
+## Ponovitev
+
+**Formule**
+- elipsa: $\frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1$ (na pamet)
+- elipsa: $e^2 = a^2 - b^2$ (priloga)
+- gorišči pri $a > b$: $(x_0 \pm e, y_0)$ (na pamet)
+- (višja raven) hiperbola: $e^2 = a^2 + b^2$ (priloga)
+- (višja raven) tangenta v točki $T_1$ stožnice: v vsakem kvadratu en faktor zamenjaj s koordinato $T_1$ (na pamet)
+- (višja raven) tangenta skozi zunanjo točko ali z dano smerjo: $y = kx + n$, $D = 0$ (na pamet)
+
+**Postopek**
+1. Člene z $x$ in z $y$ dopolni do popolnega kvadrata; dodano odštej, pomnoženo s koeficientom.
+2. Deli, da je na desni $1$.
+3. Preberi središče $S(x_0, y_0)$ ter polosi $a$ in $b$.
+4. Izračunaj $e$ in gorišči, premaknjeni za $S$.
+5. Za presečišča s premico eno spremenljivko vstavi v enačbo stožnice.
+
+**Pazi na**
+- Iz $(x + 2)^2$ preberi $x_0 = -2$, ne $2$.
+- Pri $4(y^2 + 2y)$ odštej $4 \cdot 1 = 4$, ne $1$.
+- Polosi preberi šele, ko je na desni $1$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Elipsa ima gorišči $F_1(-4, 2)$ in $F_2(2, 2)$, eno njeno teme pa je točka $(4, 2)$. Zapiši enačbo elipse.
+Elipsa ima gorišči $F_1(-4, 2)$ in $F_2(2, 2)$, eno njeno teme pa je točka $(4, 2)$. Zapišite enačbo elipse.
 
 **Rešitev:**
 
@@ -291,9 +313,9 @@ Elipsa ima gorišči $F_1(-4, 2)$ in $F_2(2, 2)$, eno njeno teme pa je točka $(
 
 Dana je krivulja z enačbo $25x^2 + 9y^2 - 50x + 36y - 164 = 0$.
 
-a) Pokaži, da je krivulja elipsa, ter določi njeno središče in polosi. (3 točke)
-b) Zapiši koordinate gorišč in vseh štirih temen ter elipso skiciraj. (2 točki)
-c) Skozi gorišče z večjo ordinato položimo premico, vzporedno z osjo $x$. Izračunaj dolžino tetive, ki jo elipsa odreže na tej premici. (2 točki)
+a) Pokažite, da je krivulja elipsa, ter določite njeno središče in polosi. (3 točke)
+b) Zapišite koordinate gorišč in vseh štirih temen ter elipso skicirajte. (2 točki)
+c) Skozi gorišče z večjo ordinato položimo premico, vzporedno z osjo $x$. Izračunajte dolžino tetive, ki jo elipsa odreže na tej premici. (2 točki)
 
 **Rešitev:**
 
@@ -312,10 +334,10 @@ c) Skozi gorišče z večjo ordinato položimo premico, vzporedno z osjo $x$. Iz
 
 Dana je krivulja z enačbo $8x^2 - y^2 + 32x + 2y + 23 = 0$.
 
-a) Pokaži, da je krivulja hiperbola, ter določi njeno središče, temeni in gorišči. (3 točke)
-b) Zapiši enačbi asimptot hiperbole. (1 točka)
-c) Točka $T_1$ na hiperboli ima absciso $1$ in ordinato, večjo od $1$. Izračunaj ordinato točke $T_1$ in zapiši enačbo tangente na hiperbolo v točki $T_1$. (3 točke)
-d) Določi enačbo druge tangente hiperbole, ki je vzporedna tangenti iz c), in izračunaj njeno dotikališče. (3 točke)
+a) Pokažite, da je krivulja hiperbola, ter določite njeno središče, temeni in gorišči. (3 točke)
+b) Zapišite enačbi asimptot hiperbole. (1 točka)
+c) Točka $T_1$ na hiperboli ima absciso $1$ in ordinato, večjo od $1$. Izračunajte ordinato točke $T_1$ in zapišite enačbo tangente na hiperbolo v točki $T_1$. (3 točke)
+d) Določite enačbo druge tangente hiperbole, ki je vzporedna tangenti iz c), in izračunajte njeno dotikališče. (3 točke)
 
 **Rešitev:**
 
@@ -402,19 +424,19 @@ točka: 0; 3
 > Z grafa: $a = 5$, $b = 3$, $e = \sqrt{25 - 9} = 4$. Desno gorišče je bilo $(4, 0)$, po premiku je $(-3 + 4, 2) = (1, 2)$.
 
 ? Enačbo $x^2 + 4y^2 - 6x + 8y + 9 = 0$ z dopolnjevanjem do popolnih kvadratov zapiši v obliki $(x - 3)^2 + 4(y + 1)^2 = c$. Vpiši $c$.
-= 4
+= 4 | 0
 ~ 1 | Pri $4(y^2 + 2y)$ si odštel le $1$. Ker $4(y + 1)^2 = 4y^2 + 8y + 4$, moraš odšteti $4$.
 ~ -22 | Pri prenosu na desno si obdržal predznaka: $-9$ in $-4$ na levi postaneta $+9$ in $+4$ na desni.
 > $(x^2 - 6x) + 4(y^2 + 2y) = -9$, nato $(x - 3)^2 - 9 + 4(y + 1)^2 - 4 = -9$, torej $c = -9 + 9 + 4 = 4$. Po deljenju s $4$: $\frac{(x - 3)^2}{4} + (y + 1)^2 = 1$, elipsa s središčem $(3, -1)$.
 
 ? Premica $x - 2y = 6$ seka elipso $x^2 + 4y^2 = 20$ v dveh točkah. Vpiši absciso tistega presečišča, ki je bližje osi $y$ (brez računala).
-= 2
+= 2 | 0
 ~ 4 | To je abscisa presečišča $(4, -1)$, ki je od osi $y$ dlje.
 ~ -2 | To je ordinata presečišča $(2, -2)$, ne abscisa.
 > Iz premice $x = 2y + 6$. Vstavimo: $(2y + 6)^2 + 4y^2 = 20$, torej $8y^2 + 24y + 16 = 0$ oziroma $y^2 + 3y + 2 = 0$. Rešitvi $y = -1$ in $y = -2$ dasta $x = 4$ in $x = 2$. Presečišči sta $(4, -1)$ in $(2, -2)$; bližje osi $y$ je $(2, -2)$.
 
 ? (višja raven) Premica $y = x + n$ je tangenta parabole $(y - 1)^2 = 4(x + 2)$. Vpiši $n$.
-= 4
+= 4 | 0
 ~ 3 | Premica skozi teme $(-2, 1)$ ni tangenta: parabolo seka še v eni točki.
 ~ -4 | Pri diskriminanti si zamenjal predznak. Iz $-16n + 64 = 0$ sledi $n = 4$.
 > Vstaviš $y = x + n$: $x^2 + (2n - 6)x + (n - 1)^2 - 8 = 0$. $D = (2n - 6)^2 - 4\big((n - 1)^2 - 8\big) = -16n + 64 = 0$, torej $n = 4$. Dotikališče je $(-1, 3)$.

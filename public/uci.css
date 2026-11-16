@@ -4,6 +4,10 @@
    zavihek se pomika do vrha pogleda, --uci-head-h (višina preklopnika, uci-se.js) mu doda prostor na začetku. */
 .uci-view { display: flex; flex-direction: column; min-width: 0; position: relative; }
 .uci-head { position: absolute; inset: 0 0 auto; z-index: 4; display: flex; justify-content: center; padding: 16px 16px 0; pointer-events: none; }
+/* Pas s preklopnikom je neprosojen do spodnjega roba gumbov (j 2026-11-15): vsebina, ki se pomika pod njim, se ne
+   vidi med glavo in gumbi ali ob njih. Pod gumbi se izgubi v kratkem prehodu, ne z ostrim robom. */
+.uci-head { background: var(--bg); }
+.uci-head::after { content: ""; position: absolute; inset: 100% 0 auto; height: 14px; background: linear-gradient(var(--bg), transparent); pointer-events: none; }
 .uci-head > .seg { pointer-events: auto; box-shadow: 0 4px 16px rgb(0 0 0 / 0.22); }
 .uci-pane { flex: 1; min-height: 0; scroll-padding-top: var(--uci-head-h, 0px); }
 .uci-pane.narrow { padding-top: calc(var(--uci-head-h, 0px) + 18px); }
@@ -17,7 +21,7 @@
 /* Uvodna vrstica pod preklopnikom na istem mestu v vseh treh zavihkih (brez zgornjega roba odstavka). */
 .uci-view .tb-head > h1 + p { margin-top: 0; }
 @media (max-width: 760px) {
-  .uci-head { padding: 12px 16px 0; }
+  .uci-head { padding: 8px 16px 0; }
   .uci-pane.narrow { padding-top: calc(var(--uci-head-h, 0px) + 14px); }
   /* Preklopnik čez celo širino brez vodoravnega drsenja tudi v daljših jezikih (»Kitabu cha kiada«, »Phòng thí
      nghiệm«): ime iz več besed gre v dve vrstici, posamezna beseda se ne lomi. */

@@ -41,13 +41,13 @@ Enačba krožnice je enačba druge stopnje v $x$ in $y$, zato krožnico imenujem
 
 **4. Kje leži točka.** Koordinate točke vstaviš v levo stran središčne oblike in rezultat primerjaš z $r^2$. Manj pomeni, da je točka znotraj kroga. Enako pomeni, da leži na krožnici. Več pomeni, da je zunaj.
 
-**5. Premica in krožnica.** Premica in krožnica imata lahko dve, eno ali nobene skupne točke. Skupne točke so rešitve sistema obeh enačb. Iz enačbe premice izraziš $y$ in ga vstaviš v enačbo krožnice. Dobiš kvadratno enačbo za $x$. Njena diskriminanta pove lego, ne da bi enačbo sploh rešil. Isto pove razdalja $d$ od središča do premice, ki jo primerjaš s polmerom $r$:
+**5. Premica in krožnica.** Premica in krožnica imata lahko dve, eno ali nobene skupne točke. Skupne točke so rešitve sistema obeh enačb. Iz enačbe premice izraziš $y$ in ga vstaviš v enačbo krožnice. Dobiš kvadratno enačbo za $x$. Njena diskriminanta $D$ pove lego, ne da bi enačbo sploh rešil. Isto pove razdalja $d$ od središča do premice, ki jo primerjaš s polmerom $r$:
 
-| diskriminanta | premica | $d$ in $r$ |
+| $D$ | premica | $d$ in $r$ |
 |---|---|---|
-| $> 0$ | sekanta | $d < r$ |
-| $= 0$ | tangenta | $d = r$ |
-| $< 0$ | mimobežnica | $d > r$ |
+| $D > 0$ | sekanta | $d < r$ |
+| $D = 0$ | tangenta | $d = r$ |
+| $D < 0$ | mimobežnica | $d > r$ |
 
 Sekanta ima s krožnico dve skupni točki, tangenta eno, mimobežnica nobene.
 
@@ -205,11 +205,32 @@ točka: -3; 4 | P_2 | levo
 - Tangenta je pravokotna na polmer v dotikališču.
 - Krožnica je krivulja drugega reda. Presečišča z drugo krivuljo dobiš kot rešitve sistema; vsako rešitev preveri (pri $x^2 < 0$ ni točke).
 
+## Ponovitev
+
+**Formule**
+- $(x - p)^2 + (y - q)^2 = r^2$, središče $S(p, q)$ (na pamet)
+- $x^2 + y^2 + Dx + Ey + F = 0$ (na pamet)
+- $r^2 = \frac{D^2}{4} + \frac{E^2}{4} - F$ (na pamet)
+- Lega točke: levo stran primerjaj z $r^2$ (na pamet)
+- Lega premice: diskriminanta $> 0$ sekanta, $= 0$ tangenta, $< 0$ mimobežnica (na pamet)
+
+**Postopek**
+1. Člene z $x$ in z $y$ dopolni do popolnih kvadratov.
+2. Dodane prištevke odštej in prenesi na desno.
+3. Odčitaj $S(p, q)$ z obrnjenima predznakoma in $r$ kot koren desne strani.
+4. Za lego premice jo vstavi v krožnico in izračunaj diskriminanto.
+5. Presečišča izračunaj iz sistema in vsako preveri.
+
+**Pazi na**
+- $(x + 2)^2$ pomeni $p = -2$: središče je $S(-2, 3)$, ne $S(2, -3)$.
+- Na desni je $r^2$: pri $9$ je $r = 3$.
+- Pri dopolnjevanju odštej dodano: $x^2 - 6x = (x - 3)^2 - 9$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Daljica $AB$ s krajiščema $A(-1, 4)$ in $B(5, -4)$ je premer krožnice. Zapiši enačbo krožnice v središčni obliki.
+Daljica $AB$ s krajiščema $A(-1, 4)$ in $B(5, -4)$ je premer krožnice. Zapišite enačbo krožnice v središčni obliki.
 
 **Rešitev:**
 
@@ -223,9 +244,9 @@ Daljica $AB$ s krajiščema $A(-1, 4)$ in $B(5, -4)$ je premer krožnice. Zapiš
 
 Dani sta krožnica z enačbo $x^2 + y^2 + 4x - 2y - 20 = 0$ in premica z enačbo $x + y = 4$.
 
-a) Določi središče $S$ in polmer krožnice. (2 točki)
-b) Izračunaj presečišči $P_1$ in $P_2$ krožnice in premice. (3 točke)
-c) Izračunaj ploščino trikotnika $S P_1 P_2$. (2 točki)
+a) Določite središče $S$ in polmer krožnice. (2 točki)
+b) Izračunajte presečišči $P_1$ in $P_2$ krožnice in premice. (3 točke)
+c) Izračunajte ploščino trikotnika $S P_1 P_2$. (2 točki)
 
 **Rešitev:**
 
@@ -244,10 +265,10 @@ c) Izračunaj ploščino trikotnika $S P_1 P_2$. (2 točki)
 
 Dani sta krožnica z enačbo $x^2 + y^2 - 2x + 4y - 20 = 0$ in točka $A(8, -1)$.
 
-a) Določi središče $S$ in polmer krožnice ter pokaži, da točka $A$ leži zunaj krožnice. (2 točki)
-b) Pokaži, da točka $T(4, 2)$ leži na krožnici. Zapiši enačbo tangente na krožnico v točki $T$ in preveri, da gre skozi točko $A$. (3 točke)
-c) Iz točke $A$ poteka še ena tangenta na krožnico. Zapiši njeno enačbo in izračunaj njeno dotikališče $B$. (3 točke)
-d) Utemelji, da sta tangenti iz točke $A$ pravokotni, in izračunaj ploščino štirikotnika $ATSB$. (2 točki)
+a) Določite središče $S$ in polmer krožnice ter pokažite, da točka $A$ leži zunaj krožnice. (2 točki)
+b) Pokažite, da točka $T(4, 2)$ leži na krožnici. Zapišite enačbo tangente na krožnico v točki $T$ in preverite, da gre skozi točko $A$. (3 točke)
+c) Iz točke $A$ poteka še ena tangenta na krožnico. Zapišite njeno enačbo in izračunajte njeno dotikališče $B$. (3 točke)
+d) Utemeljite, da sta tangenti iz točke $A$ pravokotni, in izračunajte ploščino štirikotnika $ATSB$. (2 točki)
 
 **Rešitev:**
 
@@ -363,7 +384,7 @@ Naloga: lega premice $y = x + 1$ in krožnice $x^2 + y^2 = 13$.
 > Kmetija je $\sqrt{8} \approx 2{,}83\,\mathrm{km}$ od vzletišča, torej znotraj kroga z enačbo roba $x^2 + y^2 = 9$.
 
 ? (brez računala) Koliko skupnih točk imata krožnica $x^2 + y^2 = 25$ in hiperbola $y = \frac{12}{x}$? Vpiši število.
-= 4
+= 4 | 0
 ~ 2 | Upošteval si le pozitivna $x$. Za $x = -3$ in $x = -4$ dobiš točki na drugi veji hiperbole.
 ~ 0 | Kvadratna enačba za $x^2$ ima rešitvi $9$ in $16$, obe pozitivni.
 > Vstavimo $y = \frac{12}{x}$ in pomnožimo z $x^2$: $x^4 - 25x^2 + 144 = 0$, torej $x^2 = 9$ ali $x^2 = 16$. Točke so $(3, 4)$, $(4, 3)$, $(-3, -4)$ in $(-4, -3)$.

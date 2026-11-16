@@ -23,11 +23,9 @@ $$a^n = \underbrace{a \cdot a \cdot \ldots \cdot a}_{n\ \text{faktorjev}}$$
 
 **2. Predznak potence.** Predznak vrednosti potence določita osnova in eksponent:
 
-| Osnova | Eksponent | Predznak potence | Primer |
-|---|---|---|---|
-| pozitivna | poljuben | pozitiven | $2^3 = 8$ |
-| negativna | sod | pozitiven | $(-2)^4 = 16$ |
-| negativna | lih | negativen | $(-2)^3 = -8$ |
+- pozitivna osnova, poljuben eksponent: potenca je pozitivna, npr. $2^3 = 8$;
+- negativna osnova, sod eksponent: potenca je pozitivna, npr. $(-2)^4 = 16$;
+- negativna osnova, lih eksponent: potenca je negativna, npr. $(-2)^3 = -8$.
 
 Pazi na oklepaje. Pri $(-2)^4$ je osnova $-2$ in rezultat je $16$. Pri $-2^4$ potenciramo samo število $2$, minus pa je predznak rezultata: $-2^4 = -(2^4) = -16$. Vrstni red računskih operacij je: oklepaji, potenciranje, množenje in deljenje, nazadnje seštevanje in odštevanje. Na primer $3 + 2 \cdot 4^2 = 3 + 2 \cdot 16 = 35$.
 
@@ -39,13 +37,11 @@ Obe sta $-1$. Pri $(-1)^{2025}$ je osnova negativna, eksponent pa lih. Pri $-1^{
 
 **3. Pravila za naravne eksponente.** Izračunajmo najprej en primer, $2^3 \cdot 2^2$. Prva potenca ima tri faktorje, druga dva, skupaj jih je pet: $(2 \cdot 2 \cdot 2) \cdot (2 \cdot 2) = 2^5$. Eksponenta sta se seštela. Na podoben način izpeljemo ostala pravila. Za $a \neq 0$, $b \neq 0$ ter naravni števili $m$ in $n$ velja:
 
-| Pravilo | Zapis | Primer |
-|---|---|---|
-| množenje potenc z isto osnovo | $a^m \cdot a^n = a^{m+n}$ | $3^4 \cdot 3^2 = 3^6$ |
-| deljenje potenc z isto osnovo ($m > n$) | $a^m : a^n = a^{m-n}$ | $5^7 : 5^4 = 5^3$ |
-| potenca potence | $(a^m)^n = a^{m \cdot n}$ | $(2^3)^2 = 2^6$ |
-| potenca zmnožka | $(a \cdot b)^n = a^n \cdot b^n$ | $(2 \cdot 5)^3 = 2^3 \cdot 5^3$ |
-| potenca količnika | $\left(\dfrac{a}{b}\right)^n = \dfrac{a^n}{b^n}$ | $\left(\dfrac{3}{2}\right)^2 = \dfrac{9}{4}$ |
+- **množenje potenc z isto osnovo**: $a^m \cdot a^n = a^{m+n}$, npr. $3^4 \cdot 3^2 = 3^6$;
+- **deljenje potenc z isto osnovo** ($m > n$): $a^m : a^n = a^{m-n}$, npr. $5^7 : 5^4 = 5^3$;
+- **potenca potence**: $(a^m)^n = a^{m \cdot n}$, npr. $(2^3)^2 = 2^6$;
+- **potenca zmnožka**: $(a \cdot b)^n = a^n \cdot b^n$, npr. $(2 \cdot 5)^3 = 2^3 \cdot 5^3$;
+- **potenca količnika**: $\left(\dfrac{a}{b}\right)^n = \dfrac{a^n}{b^n}$, npr. $\left(\dfrac{3}{2}\right)^2 = \dfrac{9}{4}$.
 
 Pravili za množenje in deljenje veljata samo, kadar imata potenci **isto osnovo**. Če osnovi nista enaki, ju najprej zapišemo kot potenci iste osnove, na primer $4 = 2^2$, $8 = 2^3$, $9 = 3^2$, $27 = 3^3$. Za vsoto in razliko potenc takega pravila ni: $a^m + a^n$ v splošnem ne moremo zapisati kot eno potenco, $(a + b)^n$ pa ni enako $a^n + b^n$.
 
@@ -191,11 +187,33 @@ $2^{-2} = \dfrac{1}{4}$, $(a^4)^{-2} = a^{-8}$ in $(b^{-3})^{-2} = b^6$, torej $
 - Pravila veljajo za vsa cela števila $m$ in $n$, osnove pa morajo biti različne od $0$. Izraz $0^0$ ni definiran.
 - Znanstveni zapis: $a \cdot 10^n$ z $1 \le a < 10$ in celim $n$.
 
+## Ponovitev
+
+**Formule**
+- $a^m \cdot a^n = a^{m+n}$, $a^m : a^n = a^{m-n}$ (na pamet)
+- $(a^m)^n = a^{m \cdot n}$ (na pamet)
+- $(a \cdot b)^n = a^n \cdot b^n$, $\left(\frac{a}{b}\right)^n = \frac{a^n}{b^n}$ (na pamet)
+- $a^0 = 1$ in $a^{-n} = \frac{1}{a^n}$ za $a \neq 0$ (na pamet)
+- $\left(\frac{a}{b}\right)^{-n} = \left(\frac{b}{a}\right)^n$ (na pamet)
+- znanstveni zapis: $a \cdot 10^n$ z $1 \le a < 10$ (na pamet)
+
+**Postopek**
+1. Vse osnove zapiši kot potence iste osnove.
+2. Uporabi pravili za potenco potence in potenco zmnožka.
+3. Pri množenju eksponente seštej, pri deljenju odštej.
+4. Rezultat zapiši brez negativnih eksponentov.
+5. Preizkusi z majhnim številom.
+
+**Pazi na**
+- Minus brez oklepaja ni del osnove: $-3^2 = -9$, $(-3)^2 = 9$.
+- Pri množenju eksponente seštevaš, množiš jih le pri potenci potence: $2^3 \cdot 2^4 = 2^7$.
+- Negativni eksponent da obratno vrednost, ne negativnega števila: $2^{-3} = \frac{1}{8}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Poenostavi izraz $\dfrac{(x^{-2}y^3)^2 \cdot x^5}{(xy^{-1})^3}$ in rezultat zapiši brez negativnih eksponentov. Velja $x \neq 0$ in $y \neq 0$.
+Poenostavite izraz $\dfrac{(x^{-2}y^3)^2 \cdot x^5}{(xy^{-1})^3}$ in rezultat zapišite brez negativnih eksponentov. Velja $x \neq 0$ in $y \neq 0$.
 
 **Rešitev:**
 
@@ -210,11 +228,11 @@ Poenostavi izraz $\dfrac{(x^{-2}y^3)^2 \cdot x^5}{(xy^{-1})^3}$ in rezultat zapi
 
 ### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
 
-Odrasel človek ima približno $5{,}2\,\text{L}$ krvi. V $1\,\text{mm}^3$ krvi je povprečno $4{,}8 \cdot 10^6$ rdečih krvničk, premer ene krvničke pa je približno $7{,}6 \cdot 10^{-6}\,\text{m}$. Pri računanju uporabljaj nezaokrožene vmesne rezultate.
+Odrasel človek ima približno $5{,}2\,\text{L}$ krvi. V $1\,\text{mm}^3$ krvi je povprečno $4{,}8 \cdot 10^6$ rdečih krvničk, premer ene krvničke pa je približno $7{,}6 \cdot 10^{-6}\,\text{m}$. Pri računanju uporabljajte nezaokrožene vmesne rezultate.
 
-a) Prostornino krvi $V$ izrazi v kubičnih milimetrih in jo zapiši v znanstvenem zapisu. (2 točki)
-b) Izračunaj število rdečih krvničk $K$ v krvi tega človeka. Rezultat zapiši v znanstvenem zapisu, število pred potenco zaokroži na eno decimalno mesto. (2 točki)
-c) Krvničke postavimo v vrsto eno ob drugo. Izračunaj dolžino vrste $s$ v kilometrih (v znanstvenem zapisu, na eno decimalno mesto) in ugotovi, kolikokrat je vrsta daljša od obsega Zemlje, ki meri približno $4{,}0 \cdot 10^4\,\text{km}$. Razmerje zaokroži na celo število. (2 točki)
+a) Prostornino krvi $V$ izrazite v kubičnih milimetrih in jo zapišite v znanstvenem zapisu. (2 točki)
+b) Izračunajte število rdečih krvničk $K$ v krvi tega človeka. Rezultat zapišite v znanstvenem zapisu, število pred potenco zaokrožite na eno decimalno mesto. (2 točki)
+c) Krvničke postavimo v vrsto eno ob drugo. Izračunajte dolžino vrste $s$ v kilometrih (v znanstvenem zapisu, na eno decimalno mesto) in ugotovite, kolikokrat je vrsta daljša od obsega Zemlje, ki meri približno $4{,}0 \cdot 10^4\,\text{km}$. Razmerje zaokrožite na celo število. (2 točki)
 
 **Rešitev:**
 

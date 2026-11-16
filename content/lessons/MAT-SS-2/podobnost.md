@@ -27,7 +27,7 @@ Podobnost najlažje razumeš ob **skladnosti**, ki jo poznaš iz osnovne šole. 
 |---|---|---|
 | koti | enaki | enaki |
 | stranice | enake | $k$-krat daljše |
-| ploščina | enaka | $k^2$-krat večja |
+| ploščina | enaka | $k^2$-kratna |
 | zapis | $\cong$ | $\sim$ |
 
 **2. Ustrezne stranice.** Ustrezni stranici ležita nasproti enakih kotov. Najkrajša stranica prvega trikotnika ustreza najkrajši stranici drugega.
@@ -248,11 +248,32 @@ $x' = x_S + k\,(x - x_S)$, $\;y' = y_S + k\,(y - y_S)$; ploščina slike je $k^2
 - Središčni razteg s središčem $S$ in koeficientom $k \ne 0$: $|ST'| = |k| \cdot |ST|$; pri $k < 0$ je $T'$ na drugi strani $S$. Slika je podobna liku s koeficientom $|k|$, ploščina se pomnoži s $k^2$.
 - Pri nalogah najprej nariši skico, označi enake kote in šele nato zapiši sorazmerje.
 
+## Ponovitev
+
+**Formule**
+- $\dfrac{a'}{a} = \dfrac{b'}{b} = \dfrac{c'}{c} = k$ (na pamet)
+- razmerje ploščin je $k^2$ (na pamet)
+- $a^2 = c \cdot c_a$, $\;b^2 = c \cdot c_b$ (priloga)
+- $v_c^2 = c_a \cdot c_b$ (priloga)
+- središčni razteg: $|ST'| = |k| \cdot |ST|$ (na pamet)
+
+**Postopek**
+1. Nariši skico in označi enake kote.
+2. Podobnost utemelji s KK, SSS, SKS ali SSK.
+3. Poveži ustrezni stranici in izračunaj $k$.
+4. Zapiši sorazmerje v istem vrstnem redu na obeh straneh.
+5. Izračunaj neznano dolžino; pri ploščinah uporabi $k^2$.
+
+**Pazi na**
+- Povezuj stranici nasproti enakih kotov.
+- Ploščina se pomnoži s $k^2$, ne s $k$.
+- Pri Evklidovem in višinskem izreku na koncu še koreni.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-V trikotniku $ABC$ vzporednica s stranico $AB$ seka stranico $AC$ v točki $M$ in stranico $BC$ v točki $N$. Velja $|CM| = 4\,\text{cm}$ in $|MA| = 2\,\text{cm}$, ploščina trikotnika $MNC$ pa je $12\,\text{cm}^2$. Izračunaj ploščino trapeza $ABNM$.
+V trikotniku $ABC$ vzporednica s stranico $AB$ seka stranico $AC$ v točki $M$ in stranico $BC$ v točki $N$. Velja $|CM| = 4\,\text{cm}$ in $|MA| = 2\,\text{cm}$, ploščina trikotnika $MNC$ pa je $12\,\text{cm}^2$. Izračunajte ploščino trapeza $ABNM$.
 
 **Rešitev:**
 
@@ -268,9 +289,9 @@ V trikotniku $ABC$ vzporednica s stranico $AB$ seka stranico $AC$ v točki $M$ i
 
 V pravokotnem trikotniku $ABC$ s pravim kotom pri $C$ je $D$ nožišče višine iz oglišča $C$ na hipotenuzo. Višina meri $|CD| = 6\,\text{cm}$, odsek hipotenuze pa $|DB| = 3\,\text{cm}$.
 
-a) Izračunaj dolžino odseka $|AD|$ in dolžino hipotenuze $|AB|$. (2 točki)
-b) Izračunaj dolžini katet $a = |BC|$ in $b = |AC|$. Rezultata zapiši s poenostavljenima korenoma. (2 točki)
-c) Utemelji, da sta trikotnika $ACD$ in $CBD$ podobna. Izračunaj koeficient podobnosti $k = \dfrac{|AC|}{|CB|}$ in razmerje ploščin trikotnikov $ACD$ in $CBD$. (3 točke)
+a) Izračunajte dolžino odseka $|AD|$ in dolžino hipotenuze $|AB|$. (2 točki)
+b) Izračunajte dolžini katet $a = |BC|$ in $b = |AC|$. Rezultata zapišite s poenostavljenima korenoma. (2 točki)
+c) Utemeljite, da sta trikotnika $ACD$ in $CBD$ podobna. Izračunajte koeficient podobnosti $k = \dfrac{|AC|}{|CB|}$ in razmerje ploščin trikotnikov $ACD$ in $CBD$. (3 točke)
 
 **Rešitev:**
 
@@ -407,14 +428,14 @@ $$a^2 + b^2 = c \cdot c_a + c \cdot c_b = c\,(c_a + c_b) = c \cdot c = c^2.$$
 > Najprej hipotenuza $c = 4 + 21 = 25\,\text{cm}$, nato Evklidov izrek $a^2 = 25 \cdot 4 = 100$, torej $a = 10\,\text{cm}$.
 
 ? (brez računala) Središčni razteg s središčem $S(1, 2)$ in koeficientom $k = -2$ preslika točko $T(3, 5)$ v točko $T'$. Koliko je prva koordinata (abscisa) točke $T'$?
-= -3
+= -3 | 0
 ~ 5 | Vzel si $k = 2$. Pri negativnem $k$ leži $T'$ na drugi strani središča.
 ~ -6 | Raztegnil si iz izhodišča, $-2 \cdot 3$. Odmik meriš od središča $S$.
 ~ -4 | Če si izračunal $-2 \cdot (3 - 1)$, je to le pomnoženi odmik, prišteti mu moraš še $x_S = 1$. Če si izračunal drugo koordinato $y' = -4$: sprašujemo po prvi, $x'$.
 > $x' = 1 + (-2) \cdot (3 - 1) = 1 - 4 = -3$. (Druga koordinata: $y' = 2 + (-2) \cdot (5 - 2) = -4$, torej $T'(-3, -4)$.)
 
 ? Lik s ploščino $5\,\text{cm}^2$ preslikamo s središčnim raztegom s koeficientom $k = -3$. Kolikšna je ploščina slike?
-= 45 cm²
+= 45 cm² | 0
 ~ -45 | Ploščina ni negativna. Razmerje ploščin je $k^2 = (-3)^2 = 9$.
 ~ 15 | Dolžine se pomnožijo s $|k| = 3$, ploščina pa s $k^2 = 9$.
 > Slika je podobna liku s koeficientom $|k| = 3$, zato je njena ploščina $9 \cdot 5\,\text{cm}^2 = 45\,\text{cm}^2$.

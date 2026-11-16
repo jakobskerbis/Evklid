@@ -206,11 +206,33 @@ $31$ je prvi faktor, drugi faktor pa je $33 = 3 \cdot 11$. Torej je $1023 = 3 \c
 - (višja raven) $a^2 + b^2$ in $a^4 + b^4$ nimata faktorja $a \pm b$. Uporaba: krajšanje ulomkov, npr. $\dfrac{x^5 - 1}{x - 1}$.
 - Pri razliki sodih potenc najprej razlika kvadratov ($x^6 - 1$). Deljivost: $2^{10} - 1 = 31 \cdot 33$, $1001 = 7 \cdot 11 \cdot 13$.
 
+## Ponovitev
+
+**Formule**
+- $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$ (priloga)
+- $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$ (priloga)
+- $a^2 - b^2 = (a - b)(a + b)$ (na pamet)
+- $a^n - b^n = (a - b)(a^{n-1} + \ldots + b^{n-1})$ (priloga, višja raven)
+- $a^n + b^n = (a + b)(a^{n-1} - \ldots + b^{n-1})$ le za lih $n$ (priloga, višja raven)
+
+**Postopek**
+1. Najprej izpostavi skupni faktor.
+2. Prepoznaj kube in zapiši $a$ in $b$, npr. $8x^3 = (2x)^3$, $27 = 3^3$.
+3. Pri sodem eksponentu začni z razliko kvadratov.
+4. Vstavi v obrazec: v prvem oklepaju znak naloge, srednji člen nasproten, zadnji vedno plus.
+5. Drugi oklepaj $a^2 \pm ab + b^2$ pusti, z realnimi števili se ne razstavi naprej.
+6. Preveri z množenjem.
+
+**Pazi na**
+- $a^3 + b^3 \neq (a + b)^3$: prav je $(a + b)(a^2 - ab + b^2)$.
+- Srednji člen je $ab$ z nasprotnim znakom, ne $2ab$: $x^3 + 8 = (x + 2)(x^2 - 2x + 4)$.
+- Nedokončan razcep: $x^6 - 1$ razstavi najprej kot razliko kvadratov $(x^3 - 1)(x^3 + 1)$, nato vsak oklepaj s kubi.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Razstavi izraz $(x + 1)^3 - 8$ in drugi faktor zapiši kot urejen tričlenik.
+Razstavite izraz $(x + 1)^3 - 8$ in drugi faktor zapišite kot urejen tričlenik.
 
 **Rešitev:**
 
@@ -226,9 +248,9 @@ Razstavi izraz $(x + 1)^3 - 8$ in drugi faktor zapiši kot urejen tričlenik.
 
 Dana sta izraza $A = 8x^3 + 1$ in $B = 4x^2 - 1$.
 
-a) Razstavi izraz $A$. (2 točki)
-b) Razstavi izraz $B$ in zapiši skupni faktor izrazov $A$ in $B$. (2 točki)
-c) Okrajšaj ulomek $\dfrac{A}{B}$, zapiši, za katere $x$ je definiran, in izračunaj njegovo vrednost pri $x = 2$. (2 točki)
+a) Razstavite izraz $A$. (2 točki)
+b) Razstavite izraz $B$ in zapišite skupni faktor izrazov $A$ in $B$. (2 točki)
+c) Okrajšajte ulomek $\dfrac{A}{B}$, zapišite, za katere $x$ je definiran, in izračunajte njegovo vrednost pri $x = 2$. (2 točki)
 
 **Rešitev:**
 
@@ -246,11 +268,11 @@ c) Okrajšaj ulomek $\dfrac{A}{B}$, zapiši, za katere $x$ je definiran, in izra
 
 Obravnavamo izraze oblike $x^n - 2^n$ in $x^n + 2^n$, kjer je $n$ naravno število.
 
-a) Razstavi izraz $x^5 - 32$ na linearni faktor in faktor četrte stopnje. (2 točki)
-b) Razstavi izraz $x^5 + 32$ na linearni faktor in faktor četrte stopnje. (2 točki)
-c) Z razcepoma iz a) in b) brez računanja potenc utemelji, da sta števili $7^5 - 32$ in $3^5 + 32$ deljivi s $5$. (2 točki)
-d) Razstavi izraz $x^8 - 256$ na štiri faktorje s celimi koeficienti. (2 točki)
-e) Utemelji, da $x - 2$ in $x + 2$ nista faktorja izraza $x^4 + 16$. (2 točki)
+a) Razstavite izraz $x^5 - 32$ na linearni faktor in faktor četrte stopnje. (2 točki)
+b) Razstavite izraz $x^5 + 32$ na linearni faktor in faktor četrte stopnje. (2 točki)
+c) Z razcepoma iz a) in b) brez računanja potenc utemeljite, da sta števili $7^5 - 32$ in $3^5 + 32$ deljivi s $5$. (2 točki)
+d) Razstavite izraz $x^8 - 256$ na štiri faktorje s celimi koeficienti. (2 točki)
+e) Utemeljite, da $x - 2$ in $x + 2$ nista faktorja izraza $x^4 + 16$. (2 točki)
 
 **Rešitev:**
 
@@ -322,7 +344,7 @@ Podobno razlika kubov $999 = 10^3 - 1 = 9 \cdot 111$ pove, da je $999$ deljivo s
 > $9$ ni kub celega števila, zato $x^3 + 9$ ne razstavimo s celimi koeficienti. Ostali trije so: $8 = 2^3$, $27 = 3^3$, $64a^3 = (4a)^3$.
 
 ? (brez računala) Z razliko kubov izračunaj $13^3 - 12^3$.
-= 469
+= 469 | 0
 ~ 1 | To je $(13 - 12)^3$. Razlika kubov ni kub razlike.
 ~ 625 | Drugi oklepaj si zapisal kot $(13 + 12)^2$. Srednji člen je $13 \cdot 12$, ne $2 \cdot 13 \cdot 12$.
 ~ 25 | Drugi oklepaj si zapisal kot $13 + 12$, kot pri razliki kvadratov. Drugi oklepaj je $13^2 + 13 \cdot 12 + 12^2$.
@@ -338,15 +360,14 @@ Podobno razlika kubov $999 = 10^3 - 1 = 9 \cdot 111$ pove, da je $999$ deljivo s
 
 ? Ana razstavlja $x^6 - 64$ v štirih korakih:
 
-| korak | zapis |
-|---|---|
-| 1 | $x^6 - 64 = (x^3 - 8)(x^3 + 8)$ |
-| 2 | $x^3 - 8 = (x - 2)(x^2 + 2x + 4)$ |
-| 3 | $x^3 + 8 = (x + 2)(x^2 + 2x + 4)$ |
-| 4 | $x^6 - 64 = (x - 2)(x^2 + 2x + 4)(x + 2)(x^2 + 2x + 4)$ |
+Korak 1: $x^6 - 64 = (x^3 - 8)(x^3 + 8)$
+Korak 2: $x^3 - 8 = (x - 2)(x^2 + 2x + 4)$
+Korak 3: $x^3 + 8 = (x + 2)(x^2 + 2x + 4)$
+Korak 4: $x^6 - 64 = (x - 2)(x^2 + 2x + 4) \cdot {}$
+$\qquad {} \cdot (x + 2)(x^2 + 2x + 4)$
 
 Vpiši številko koraka, v katerem je prva napaka.
-= 3
+= 3 | 0
 ~ 1 | Korak 1 je pravilen: $x^6 - 64 = (x^3)^2 - 8^2$ je razlika kvadratov.
 ~ 2 | Korak 2 je pravilen: pri razliki kubov so v drugem oklepaju sami plusi.
 ~ 4 | Korak 4 le prepiše prejšnja koraka; napaka je nastala že prej.

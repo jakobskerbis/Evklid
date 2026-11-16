@@ -56,8 +56,9 @@ T propria(vec2 p, float px) {
 // Stena kripte (cevaste žleze črevesa): q glede na os kripte, rl svetlina, R zunanji polmer, sk lega vzdolž stene,
 // vrc delež vrčastih celic. Vrčaste celice: okrogel do jajčast svetel kelih s penasto sluzjo v svetlinski polovici,
 // stisnjeno temno jedro ob bazi; enterociti/kolonociti: rožnata citoplazma, podolgovato jedro ob bazi.
-T crevniEpitel(float dl, float H, float sk, vec2 os, float vrc, float paneth, float seme, vec2 p, float px) {
-  // dl: globina od svetline (0) do baze (H), sk: lega vzdolž epitelija, os: smer od svetline proti bazi
+T crevniEpitel(float dl, float H, float sk, vec2 os, vec2 tv, float vrc, float paneth, float seme, vec2 p, float px) {
+  // dl: globina od svetline (0) do baze (H), sk: lega vzdolž epitelija, os: smer od svetline proti bazi, tv: smer, v
+  // kateri raste sk (obe v ravnini preparata)
   float w = 9.0;
   float su = (sk + 0.4 * w * (sum(vec2(sk / 27.0, seme)) - 0.5) + 0.25 * w * (sum(vec2(sk / 8.0, dl / 7.0) + seme * 3.0) - 0.5)) / w;
   float ci = floor(su);
@@ -67,7 +68,9 @@ T crevniEpitel(float dl, float H, float sk, vec2 os, float vrc, float paneth, fl
   float ls = (fract(su) - 0.5) * w;
   T t = prazno();
   t.snov = S_CITO; t.tip = C_RESICE; t.cid = cid; t.meja = min(lat, min(dl, H - dl));
-  t.cc = p - os * (dl - 0.5 * H); t.jc = t.cc;
+  // središče celice in jedra: TEM riše organele in kromatin v sistemu celice (q = p − cc); brez bočnega odmika ls bi bil
+  // ta sistem le globina, organeli pa raztegnjeni v pasove (j 16. 11. 2026: tanko črevo pri 7 150× na telefonu)
+  t.cc = p - os * (dl - 0.5 * H) - tv * ls; t.jc = t.cc;
   float meja = crta(lat, 0.25, px) * (1.0 - smoothstep(0.6, 1.4, px));
   bool vc = hc.x < vrc;
   if (hc.x > 1.0 - paneth) {
@@ -79,7 +82,7 @@ T crevniEpitel(float dl, float H, float sk, vec2 os, float vrc, float paneth, fl
     t.dye.y += 0.35 * (1.0 - smoothstep(0.45, 0.62, dl / H)) * smoothstep(0.6, 1.2, px);
     vec2 jq = vec2(dl - 0.8 * H, ls);
     float dj = length(jq) - 2.6;
-    t.jedro = dj;
+    t.jedro = dj; t.jc = p - os * jq.x - tv * jq.y;
     float jk = pokrij(dj, px);
     t.dye.x = mix(t.dye.x, 0.95 * kromatin(jq, hc.zw, px), jk);
     if (jk > 0.5) t.snov = S_JEDRO;
@@ -99,7 +102,7 @@ T crevniEpitel(float dl, float H, float sk, vec2 os, float vrc, float paneth, fl
     t.dye = vec3(0.1, 0.36, 0.0);
     vec2 jq = vec2(dl - 0.86 * H, ls);
     float dj = sdElipsa(jq, vec2(1.3, 2.4));
-    t.jedro = dj;
+    t.jedro = dj; t.jc = p - os * jq.x - tv * jq.y;
     float jk = pokrij(dj, px);
     t.dye.x = mix(t.dye.x, 1.1, jk);
     if (jk > 0.5) t.snov = S_JEDRO;
@@ -107,7 +110,7 @@ T crevniEpitel(float dl, float H, float sk, vec2 os, float vrc, float paneth, fl
     t.dye = vec3(0.09 + 0.05 * hc.y, 0.4 + 0.08 * sumL(p, 2.0, px), 0.0);
     vec2 jq = vec2(dl - (0.66 + 0.12 * hc.z) * H, ls - (hc.w - 0.5) * 1.5);
     float dj = sdElipsa(jq, vec2(4.0, 1.7)) + 0.12 * (sum(jq * 1.4 + hc.zw * 9.0) - 0.5);
-    t.jedro = dj;
+    t.jedro = dj; t.jc = p - os * jq.x - tv * jq.y;
     float jk = pokrij(dj, px);
     t.dye.x = mix(t.dye.x, 0.95 * kromatin(jq, hc.zw, px), jk);
     if (jk > 0.5) t.snov = S_JEDRO;
@@ -116,9 +119,12 @@ T crevniEpitel(float dl, float H, float sk, vec2 os, float vrc, float paneth, fl
   t.dye.y += 0.15 * crta(H - dl, 0.4, px);       // bazalna membrana
   return t;
 }
+// Smeri v kripti: q je v sistemu kripte (x vodoravno, y globina, ki raste navzdol, torej −y preparata); sk raste z
+// globino oz. s kotom atan(q.y, |q.x|)·sign(q.x). Obe smeri prevedemo v ravnino preparata.
+vec2 osKripte(vec2 q) { vec2 n = q / max(length(q), 1e-3); return vec2(n.x, -n.y); }
+vec2 tvKripte(vec2 q) { vec2 n = q / max(length(q), 1e-3); return vec2(-n.y, -n.x); }
 T kripta(vec2 q, float rl, float R, float sk, float vrc, float seme, vec2 p, float px) {
-  float rq = length(q);
-  return crevniEpitel(rq - rl, R - rl, sk, q / max(rq, 1e-3), vrc, 0.0, seme, p, px);
+  return crevniEpitel(length(q) - rl, R - rl, sk, osKripte(q), tvKripte(q), vrc, 0.0, seme, p, px);
 }
 // Prizmatski epitelij z vrčastimi celicami (delež vrc): d globina, s lega vzdolž površine.
 T prizmatski(float d, float s, float H, float vrc, vec2 p, vec2 os, float resice, float px) {
@@ -270,10 +276,12 @@ T tkivo(vec2 p, float px) {
     cid = cv.id + bk * 13.0; lat = cv.rob; qv = p - cv.c;
   }
   vec4 hc = h42(cid + 17.0);
-  vec2 os = bq / max(rq, 1e-3);
+  // smeri v ravnini preparata (osKripte, tvKripte); bs raste z globino na obeh straneh cevke
+  vec2 os = osKripte(bq), tv = sign(bq.x) * tvKripte(bq);
   T t = prazno();
   t.snov = S_CITO; t.tip = C_ZLEZNA; t.cid = cid; t.meja = min(lat, -best);
-  t.cc = p - os * (dl - 0.5 * H); t.jc = t.cc;
+  // središče celice v celici stalno, sicer TEM nariše organele kot pasove (glej crevniEpitel)
+  t.cc = kapa > 0.5 ? p - qv : p - os * (dl - 0.5 * H) - tv * (fract(su) - 0.5) * w; t.jc = t.cc;
   float meja = max(crta(lat, 0.3, px), crta(-best, 0.35, px));
   bool parietalna = hc.x < mix(0.5, 0.2, dno) * (1.0 - 0.6 * zg);
   // parietalna celica je okrogla do trikotna in se izboči proti bazi; v vogalih traku so sosednje (glavne) celice,
@@ -303,6 +311,7 @@ T tkivo(vec2 p, float px) {
   }
   vec2 ql = kapa > 0.5 ? qv - (hc.zw - 0.5) * 2.0 : vec2(dl - jd * H - (hc.z - 0.5) * 2.0, (fract(su) - 0.5) * w - (hc.w - 0.5) * 2.0);
   float dj = sdElipsa(ql, jr) + 0.12 * (sum(ql * 1.4 + hc.zw * 9.0) - 0.5);
+  t.jc = kapa > 0.5 ? p - ql : p - os * ql.x - tv * ql.y;
   vec3 jdv = vec3(dj, ql);
   // vsaka celica je malo drugače obarvana, meje so tanke svetle črte
   t.dye *= 0.92 + 0.16 * hc.y;   // manjše razlike med sosednjimi celicami: ni »šahovnice«
@@ -334,7 +343,7 @@ T tkivo(vec2 p, float px) {
   // resice: listaste, različno visoke (350–650 µm) in široke, proti vrhu tanjše, upognjene; med njimi ozke reže
   float S = 128.0;
   float k0 = floor(p.x / S);
-  float dv = 1e3, vk = 0.0, vlx = 0.0;
+  float dv = 1e3, vk = 0.0, vlx = 0.0, vt = 0.0, vh = 54.0;
   for (int i = -1; i <= 1; i++) {
     float k = k0 + float(i);
     vec4 h = h42(vec2(k, 4.0));
@@ -345,14 +354,22 @@ T tkivo(vec2 p, float px) {
     float hw = (54.0 + 12.0 * (h.w - 0.5)) * (1.0 - 0.18 * t + 0.08 * sin(t * 6.0 + h.x * 6.0));
     float tip = yb + Hv - hw;
     float dd = p.y < tip ? abs(lx) - hw : length(vec2(lx, p.y - tip)) - hw;
-    if (dd < dv) { dv = dd; vk = k; vlx = lx; }
+    if (dd < dv) { dv = dd; vk = k; vlx = lx; vt = tip; vh = hw; }
   }
   dv -= 0.9 * max(0.0, yb + 26.0 - p.y);       // reža med resicama se navzdol zoži v ustje kripte
   {
     if (p.y > yb) {
       if (dv > 0.0) return prazno();
       if (dv > -30.0) {
-        T e = crevniEpitel(-dv, 30.0, p.y + 2000.0 * sign(vlx) + 500.0 * vk, vec2(-sign(vlx), 0.0), 0.14, 0.0, vk + (vlx > 0.0 ? 0.5 : 0.0), p, px);
+        // ob strani resice so celice vodoravno zložene (lega vzdolž epitelija = višina); na zaobljenem vrhu radialno
+        // (lega = lok na polovici višine celic), sicer bi bil sistem celice ob vrhu izrojen (TEM: pasovi)
+        float sk = p.y; vec2 os = vec2(-sign(vlx), 0.0), tv = vec2(0.0, 1.0);
+        if (p.y > vt) {
+          vec2 n = normalize(vec2(vlx, p.y - vt) + vec2(0.0, 1e-4));
+          sk = vt + (1.5708 - atan(abs(vlx), p.y - vt)) * max(vh - 15.0, 10.0);
+          os = -n; tv = vlx > 0.0 ? vec2(-n.y, n.x) : vec2(n.y, -n.x);
+        }
+        T e = crevniEpitel(-dv, 30.0, sk + 2000.0 * sign(vlx) + 500.0 * vk, os, tv, 0.14, 0.0, vk + (vlx > 0.0 ? 0.5 : 0.0), p, px);
         if (e.snov != S_SLUZ && -dv < 1.6) e.dye = mix(e.dye, vec3(0.04, 0.6, 0.0), 0.7 * (1.0 - smoothstep(0.6, 1.6, -dv)));   // ščetkasti rob
         return e;
       }
@@ -393,7 +410,7 @@ T tkivo(vec2 p, float px) {
       float rl = (mod(bk, 2.0) > 0.5 ? 1.5 + 2.0 * smoothstep(0.3, 0.8, sum(vec2(bk * 1.3, d / 50.0))) : 0.0) + 4.0 * smoothstep(40.0, 0.0, d);
       if (rq < rl) { T t = prazno(); t.snov = S_SLUZ; t.dye = vec3(0.06, 0.08, 0.0); return t; }
       float dno = smoothstep(bL - 70.0, bL - 20.0, d);
-      return crevniEpitel(rq - rl, bR - rl, bs * sign(bq.x) + 300.0, bq / max(rq, 1e-3), 0.18 * (1.0 - dno), 0.55 * dno, bk + (bq.x > 0.0 ? 0.5 : 0.0), p, px);
+      return crevniEpitel(rq - rl, bR - rl, bs * sign(bq.x) + 300.0, osKripte(bq), tvKripte(bq), 0.18 * (1.0 - dno), 0.55 * dno, bk + (bq.x > 0.0 ? 0.5 : 0.0), p, px);
     }
     return propria(p, px);
   }
