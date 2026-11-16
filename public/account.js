@@ -899,7 +899,7 @@ function renderVerify() {
       if (status.logged_in && !status.parent.verified && !status.parent.guest) return say(t("verify.notYet"));
       if (await route()) await onReadyCb?.();
     } catch (err) {
-      say(err.message);
+      say(err instanceof TypeError ? t("lock.offline") : err.message);
     } finally {
       btn.disabled = false;
     }
@@ -926,7 +926,7 @@ function renderVerify() {
       tick();
     } catch (err) {
       resend.disabled = false;
-      say(err.message);
+      say(err instanceof TypeError ? t("lock.offline") : err.message);
     }
   });
   $("#verify-logout").addEventListener("click", logout);
