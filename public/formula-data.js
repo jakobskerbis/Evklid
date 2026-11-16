@@ -18,7 +18,7 @@ const MUL = "\\s*(?:\\\\cdot|\\\\times|\\\\[,;: ])?\\s*";
 const NUM_UNIT = "\\s*=\\s*[\\d\\s{},.]+(?:\\\\[,;!: ])?\\s*(?:\\\\(?:mathrm|text|rm)\\s*\\{\\s*)?";
 // Temperatura v °C: T = t + 273, t₁ = 37 °C (t tu ni čas; pregled 463 §4).
 // Število z °C neposredno za = ali ≈ (ne Δt = 300 °C / hitrost, kar je čas).
-const CELZIJ = "t\\s*\\+\\s*273|t\\s*/\\s*\\{?\\}?\\s*\\^?\\s*\\\\circ|(?:=|\\\\approx)\\s*-?\\s*[\\d{},.\\s]+\\\\?,?\\s*\\^?\\s*\\{?\\s*\\\\circ|(?:=|\\\\approx)\\s*-?\\s*[\\d{},.\\s]+°";
+const CELZIJ = "t\\s*\\+\\s*273|t\\s*/\\s*\\{?\\}?\\s*\\^?\\s*\\\\circ|(?:=|\\\\approx)\\s*-?\\s*[\\d{},.\\s]+\\\\?,?\\s*\\^?\\s*\\{?\\s*\\\\circ\\s*\\}?(?:\\s|\\\\[,;!: ])*(?:\\\\(?:mathrm|text|rm)\\s*\\{\\s*)?C\\b|(?:=|\\\\approx)\\s*-?\\s*[\\d{},.\\s]+°\\s*C\\b";
 const T_CELZIJ = { ctx: CELZIJ, n: "temperatura (v °C)", en: "temperature (in °C)", r: "T = t + 273{,}15" };
 // p⁺ (proton) in n⁰ (nevtron) nista tlak in množina snovi.
 const DELEC = "p\\s*\\^\\s*\\{?\\s*\\+|n\\s*\\^\\s*\\{?\\s*0";

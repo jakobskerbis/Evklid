@@ -30,6 +30,7 @@ test("fizika: F, a, c, t, E, A, T, B, G, S po kontekstu", () => {
   none("FIZ", "Gostota", "Kvader: $V = a \\cdot b \\cdot c$.", "a");
   has("FIZ", "Temperatura in raztezanje", "Velja $T = t + 273\\,\\mathrm{K}$.", "t", /temperatura/);
   has("FIZ", "Plinska enačba", "Pri $t_1 = 37\\,^\\circ\\mathrm{C}$ je plin topel.", "t", /temperatura/);
+  has("FIZ", "Gibanje", "Pot: $t = 5\\,\\mathrm{s}$, kot $\\theta = 30^\\circ$.", "t", /čas/); // stopinje kota niso °C
   none("FIZ", "Torzija", "Ravnovesje: $T_A a = T_B b$.", "a");
   none("FIZ", "Torzija", "Ravnovesje: $T_A a = T_B b$.", "T_A");
   none("FIZ", "Torzija", "Raztezek palice je $FL/(EA)$.", "E");
