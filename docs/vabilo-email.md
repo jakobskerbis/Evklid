@@ -12,7 +12,7 @@ Pošlje j sam, vsakemu posebej. Pred pošiljanjem zamenjaj `KODA` (koda te osebe
 
 vabim te v pilot Evklida. Evklid je slovenski učni pomočnik za matematiko, fiziko, kemijo in biologijo z učno potjo, nalogami in inštruktorjem z umetno inteligenco.
 
-V pilotu imaš do vključno 15. decembra 2026 brezplačno inštruktorja z mejo plačanega paketa. Ne plačaš ničesar.
+V pilotu lahko do vključno 15. decembra 2026 inštruktorju brezplačno postaviš toliko vprašanj kot s plačano naročnino. Ne plačaš ničesar.
 
 Kako začneš:
 1. Odpri https://evklid.app/vabilo?koda=KODA

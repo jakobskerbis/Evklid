@@ -53,7 +53,9 @@ test("vabilo: telefon 360×740 – veljavna koda, gumb Ustvari račun, napačna 
     await p.goto(`${base}/vabilo?koda=gim-test1`);
     await p.waitForSelector(".vab-ok");
     const text = await p.locator(".vab-ok").innerText();
-    assert.match(text, /Dobrodošel\(a\) v pilotu!/);
+    assert.match(text, /Lepo, da si z nami!/);
+    assert.match(text, /Ko te dodamo v pilot/, "ugodnost šele po ročnem vpisu v pilot");
+    assert.doesNotMatch(text, /mejo plačanega paketa/);
     assert.match(text, /15\. 12\. 2026/, "datum konca pilota s strežnika");
     assert.match(text, /zavihku Jaz gumb »Povej mnenje«/);
     assert.match(text, /v pilot dodamo ročno/);

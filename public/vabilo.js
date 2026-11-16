@@ -65,7 +65,8 @@ async function check(code) {
   try {
     const res = await fetch("/api/vabilo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ koda: code }) });
     const r = await res.json().catch(() => ({}));
-    if (res.status === 429) return showBad("vab.tooMany");
+    // tooMany: preveč napačnih kod s tega naslova (15 min); busy: skupna meja napačnih kod, brez obljube časa.
+    if (res.status === 429) return showBad(r.busy ? "vab.busy" : "vab.tooMany");
     if (!res.ok) return showBad("vab.error");
     if (!r.ok) return showBad("vab.badText");
     remember(code.toLowerCase());

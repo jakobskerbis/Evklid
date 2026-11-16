@@ -3,16 +3,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { isInviteCode, inviteCodes, createInviteLimiter, LIMITS } from "../server/vabila.js";
+import express from "express";
+import { isInviteCode, inviteCodes, shortInviteCodes, createInviteLimiter, mountInviteApi, LIMITS, MIN_CODE } from "../server/vabila.js";
 import { createApp } from "../server/app.js";
 import { openDb } from "../server/db.js";
 
-const env = { EVKLID_VABILA: " Ana-7Q2k, MIHA_x9;  Pet3r \n", EVKLID_PILOT_DO: "2026-12-15" };
+const env = { EVKLID_VABILA: " Ana-7Q2k, MIHA_x9-ab;  Pet3r-123 \n", EVKLID_PILOT_DO: "2026-12-15" };
 
 test("vabila: veljavne in neveljavne kode, velike in male črke", () => {
-  assert.deepEqual(inviteCodes(env), ["ana-7q2k", "miha_x9", "pet3r"]);
-  for (const c of ["ana-7q2k", "ANA-7Q2K", "  Miha_X9 ", "pet3r"]) assert.equal(isInviteCode(c, env), true, c);
-  for (const c of ["ana", "ana-7q2k2", "", "   ", null, undefined, 42, {}, ["ana-7q2k"], "x".repeat(65), "ana-7q2k,miha_x9", "ana-7q2k miha_x9"])
+  assert.deepEqual(inviteCodes(env), ["ana-7q2k", "miha_x9-ab", "pet3r-123"]);
+  for (const c of ["ana-7q2k", "ANA-7Q2K", "  Miha_X9-AB ", "pet3r-123"]) assert.equal(isInviteCode(c, env), true, c);
+  for (const c of ["ana", "ana-7q2k2", "", "   ", null, undefined, 42, {}, ["ana-7q2k"], "x".repeat(65), "ana-7q2k,miha_x9-ab", "ana-7q2k miha_x9-ab"])
     assert.equal(isInviteCode(c, env), false, String(c));
 });
 
@@ -22,21 +23,49 @@ test("vabila: prazno ali manjkajoče okolje ne sprejme ničesar", () => {
     assert.equal(isInviteCode("", e), false);
     assert.equal(isInviteCode("ana", e), false);
   }
-  assert.deepEqual(inviteCodes({ EVKLID_VABILA: `ok ${"y".repeat(65)}` }), ["ok"], "predolga koda v okolju ne velja");
+  assert.deepEqual(inviteCodes({ EVKLID_VABILA: `ok-12345 ${"y".repeat(65)}` }), ["ok-12345"], "predolga koda v okolju ne velja");
 });
 
-test("vabila: omejevalnik na IP in skupaj za napačne kode", () => {
+test("vabila: kode krajše od 8 znakov ne veljajo, ob zagonu eno opozorilo brez kod", () => {
+  assert.equal(MIN_CODE, 8);
+  const e = { EVKLID_VABILA: "abc, 1234567 12345678 Dolga-koda1" };
+  assert.deepEqual(inviteCodes(e), ["12345678", "dolga-koda1"]);
+  assert.equal(shortInviteCodes(e), 2);
+  for (const c of ["abc", "1234567"]) assert.equal(isInviteCode(c, e), false, c);
+  assert.equal(isInviteCode("12345678", e), true);
+  const warns = [];
+  const log = { warn: (m) => warns.push(m) };
+  const app = express();
+  mountInviteApi(app, { env: e, log });
+  assert.equal(warns.length, 1);
+  assert.match(warns[0], /2 kod krajših od 8/);
+  assert.doesNotMatch(warns[0], /abc|1234567\b/);
+  mountInviteApi(express(), { env: { EVKLID_VABILA: "12345678" }, log });
+  assert.equal(warns.length, 1, "brez kratkih kod brez opozorila");
+});
+
+test("vabila: omejevalnik šteje samo napačne kode, na IP in skupaj", () => {
   let t = 0;
-  const lim = createInviteLimiter({ perIp: 3, windowMs: 1000, globalFails: 5, globalMs: 10000 }, () => t);
-  assert.ok(lim.take("a") && lim.take("a") && lim.take("a"));
-  assert.equal(lim.take("a"), false, "4. poskus z istega IP");
-  assert.equal(lim.take("b"), true, "drug IP");
+  const warns = [];
+  const lim = createInviteLimiter({ perIp: 3, windowMs: 1000, globalFails: 5, globalMs: 10000 }, () => t, { warn: (m) => warns.push(m) });
+  for (let i = 0; i < 50; i++) assert.equal(lim.blocked("a"), false, "uspešna preverjanja se ne štejejo");
+  lim.fail("a");
+  lim.fail("a");
+  assert.equal(lim.blocked("a"), false);
+  lim.fail("a");
+  assert.equal(lim.blocked("a"), "ip", "3 napačne z istega IP");
+  assert.equal(lim.blocked("b"), false, "drug IP");
   t = 1001;
-  assert.equal(lim.take("a"), true, "po oknu spet");
-  for (let i = 0; i < 5; i++) lim.fail();
-  assert.equal(lim.take("c"), false, "preveč napačnih kod skupaj");
+  assert.equal(lim.blocked("a"), false, "po oknu spet");
+  assert.equal(warns.length, 0);
+  lim.fail("b");
+  lim.fail("c");
+  assert.equal(lim.blocked("d"), "global", "preveč napačnih kod skupaj");
+  assert.equal(warns.length, 1, "opozorilo ob doseženi skupni meji");
+  lim.fail("e");
+  assert.equal(warns.length, 1, "enkrat na epizodo");
   t = 20000;
-  assert.equal(lim.take("c"), true);
+  assert.equal(lim.blocked("d"), false);
   assert.ok(LIMITS.perIp >= 5 && LIMITS.perIp <= 20, "privzeta meja na IP");
 });
 
@@ -74,7 +103,7 @@ test("vabila: POST /api/vabilo brez računov in z računi (brez prijave), samo d
         r = await post({ koda: "ugibam-123" });
         assert.equal(r.status, 200);
         assert.deepEqual(await r.json(), { ok: false }, "neveljavna: samo ok:false, brez namiga");
-        assert.deepEqual(await (await post({})).json(), { ok: false });
+        assert.equal((await post({})).status, 400, "brez kode: neveljaven zahtevek");
         assert.equal((await post("{ni json")).status, 400);
         assert.equal((await post({ koda: "x".repeat(5000) })).status, 400, "predolgo telo: 4xx, ne 5xx");
         // GET ne obstaja kot vir kod (ni seznama, koda ni v naslovu).
@@ -89,7 +118,20 @@ test("vabila: POST /api/vabilo brez računov in z računi (brez prijave), samo d
         assert.match(await page.text(), /id="vab-form"/);
       });
     }
-    // Omejitev: po LIMITS.perIp poskusih z istega naslova 429 (tudi za veljavno kodo).
+    // Uspešna preverjanja se ne štejejo: razred na istem omrežju odpre povezavo večkrat kot LIMITS.perIp.
+    await withApp({ accounts: false }, async ({ base, post }) => {
+      const h = { "cf-connecting-ip": "203.0.113.8" };
+      for (let i = 0; i < LIMITS.perIp * 2; i++) assert.equal((await post({ koda: i % 2 ? "pilot-a1" : "Pilot-B2" }, h)).status, 200, `odprtje ${i + 1}`);
+      // Neveljavni zahtevki (ne JSON objekt, koda ni besedilo) so 400 in se ne štejejo kot ugibanje.
+      for (let i = 0; i < LIMITS.perIp; i++) {
+        for (const body of [{ koda: 42 }, { koda: ["pilot-a1"] }, ["pilot-a1"], { koda: null }, { koda: "   " }, "null", '"pilot-a1"'])
+          assert.equal((await post(body, h)).status, 400, JSON.stringify(body));
+        const txt = await fetch(`${base}/api/vabilo`, { method: "POST", headers: { "content-type": "text/plain", ...h }, body: "pilot-a1" });
+        assert.equal(txt.status, 400, "text/plain");
+      }
+      assert.equal((await post({ koda: "pilot-a1" }, h)).status, 200, "po neveljavnih zahtevkih veljavna koda še dela");
+    });
+    // Omejitev: po LIMITS.perIp napačnih kodah z istega naslova 429 (tudi za veljavno kodo).
     await withApp({ accounts: false }, async ({ post }) => {
       const h = { "cf-connecting-ip": "203.0.113.9" };
       for (let i = 0; i < LIMITS.perIp; i++) assert.equal((await post({ koda: `napacna-${i}` }, h)).status, 200);
@@ -98,6 +140,27 @@ test("vabila: POST /api/vabilo brez računov in z računi (brez prijave), samo d
       assert.deepEqual(await r.json(), { ok: false, tooMany: true });
       assert.equal((await post({ koda: "pilot-a1" }, { "cf-connecting-ip": "203.0.113.10" })).status, 200, "drug naslov ni zaklenjen");
     });
+    // Skupna meja napačnih kod (razpršeno ugibanje): ločen odgovor busy (stran brez obljube časa), opozorilo v dnevniku.
+    {
+      const app = express();
+      const warns = [];
+      const log = { warn: (m) => warns.push(m) };
+      const limiter = createInviteLimiter({ perIp: 100, windowMs: 1000, globalFails: 3, globalMs: 60000 }, undefined, log);
+      mountInviteApi(app, { env: { EVKLID_VABILA: "pilot-a1" }, log, limiter });
+      const server = app.listen(0);
+      const url = `http://127.0.0.1:${server.address().port}/api/vabilo`;
+      const p = (koda, ip) => fetch(url, { method: "POST", headers: { "content-type": "application/json", "cf-connecting-ip": ip }, body: JSON.stringify({ koda }) });
+      try {
+        for (let i = 0; i < 3; i++) assert.equal((await p(`ugibam-${i}x`, `198.51.100.${i}`)).status, 200);
+        const r = await p("pilot-a1", "198.51.100.77");
+        assert.equal(r.status, 429);
+        assert.deepEqual(await r.json(), { ok: false, busy: true });
+        assert.equal(warns.length, 1);
+        assert.match(warns[0], /skupna meja/);
+      } finally {
+        server.close();
+      }
+    }
   } finally {
     console.warn = warn;
     console.log = log;
