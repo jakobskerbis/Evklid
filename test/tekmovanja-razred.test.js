@@ -191,6 +191,7 @@ test("tek-mladi-liki: število kvadratov v mreži (preštevanje vseh kvadratov)"
   };
   assert.deepEqual([brute(2, 5), brute(3, 4), brute(4, 4), brute(3, 3)], [14, 20, 30, 14]);
   const shapes = new Set();
+  const answers = new Set();
   for (const level of [2, 3]) {
     for (const year of [1, 2, 3, 4]) {
       for (let seed = 1; seed <= 60; seed++) {
@@ -198,11 +199,15 @@ test("tek-mladi-liki: število kvadratov v mreži (preštevanje vseh kvadratov)"
         assert.doesNotMatch(t.text, /na sliki/);
         const [, h, w] = t.text.match(/ima (\d+) vrst\S* in v vsaki vrsti \S+ (\d+) /).map(Number);
         shapes.add(`${w}x${h}`);
-        assert.equal(t.answer.value, brute(w, h), t.text);
+        // Drugo vprašanje na isti mreži: samo kvadrati iz 4 delov (2 vrsti po 2).
+        const only2 = /Koliko je kvadratov iz 4 /.test(t.text);
+        assert.equal(t.answer.value, only2 ? (w - 1) * (h - 1) : brute(w, h), t.text);
+        answers.add(t.answer.value);
       }
     }
   }
-  assert.ok(["5x2", "4x3", "3x4"].every((s) => shapes.has(s)), [...shapes].join(", "));
+  assert.ok(["5x2", "4x3", "3x4", "6x2", "2x6"].every((s) => shapes.has(s)), [...shapes].join(", "));
+  assert.ok(answers.size >= 10, [...answers].join(", "));
 });
 
 test("predlog s/z pred številom", async () => {
@@ -211,4 +216,94 @@ test("predlog s/z pred številom", async () => {
   const Z = [0, 1, 2, 8, 9, 10, 11, 12, 18, 19, 20, 21, 28, 80, 200, 800, 2000];
   for (const n of S) assert.equal(sz(n), "s", String(n));
   for (const n of Z) assert.equal(sz(n), "z", String(n));
+});
+
+test("tek-mladi-stevke: najmanjše in največje dvomestno število z vsoto števk (preštevanje)", async () => {
+  const { TEK_MAT_OS_MLADI } = await import("../server/practice/generators/tek-mat-os-mladi.js");
+  const { makeRng } = await import("../server/practice/rng.js");
+  const G = TEK_MAT_OS_MLADI.find((x) => x.id === "tek-mladi-stevke");
+  const seen = new Set();
+  for (const year of [1, 2, 3, 4]) {
+    for (let seed = 1; seed <= 80; seed++) {
+      const t = G.gen(2, makeRng(seed), G.topics[0], "sl", year);
+      const m = t.text.match(/(največje|najmanjše) dvomestno število, ki ima vsoto števk (\d+)/);
+      if (m) {
+        const fit = Array.from({ length: 90 }, (_, i) => i + 10).filter((x) => Math.floor(x / 10) + (x % 10) === Number(m[2]));
+        assert.equal(t.answer.value, m[1] === "največje" ? Math.max(...fit) : Math.min(...fit), t.text);
+        seen.add(m[1]);
+      }
+      const t3 = G.gen(3, makeRng(seed), G.topics[0], "sl", year);
+      const q = t3.text.match(/vsoto števk (\d+)(?: in so manjša od (\d+))?/);
+      if (q) {
+        const n = Array.from({ length: 90 }, (_, i) => i + 10).filter((x) => Math.floor(x / 10) + (x % 10) === Number(q[1]) && (!q[2] || x < Number(q[2]))).length;
+        assert.equal(t3.answer.value, n, t3.text);
+      } else {
+        // 1. razred, raven 3: vedno števka 1 (11 je v razponu, zato namig o dvojni števki drži).
+        assert.equal(year, 1, t3.text);
+        assert.match(t3.text, /od [1-9] do 1\d|od [1-9] do 20/);
+        assert.match(t3.text, /števko 1\?/);
+        assert.match(t3.solution, /11 \(dvakrat\)/);
+      }
+    }
+  }
+  assert.ok(seen.has("največje") && seen.has("najmanjše"), [...seen].join(", "));
+});
+
+// Brez povezave: naloga se ob sinhronizaciji ustvari z razredom ob izdaji paketa (offline_issued.year);
+// stari paketi (year NULL) z nalogo brez razreda, kot ob izdaji.
+test("brez povezave: menjava razreda pred sinhronizacijo, stari paketi brez razreda, migracija stolpca", async () => {
+  const { generateTask } = await import("../server/practice/index.js");
+  const { fmt, roundHalfUp } = await import("../server/practice/check.js");
+  const input = (a) => (a.type === "choice" ? String(a.index) : (a.decimals != null ? fmt(roundHalfUp(a.value, a.decimals), a.decimals) : fmt(a.value)) + (a.unit ? " " + a.unit : ""));
+  const store = openDb(":memory:");
+  const app = createApp(store, { streamFn: async () => ({ content: [], text: "", stopReason: "end_turn" }) });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const call = async (method, path, body) => (await fetch(base + path, { method, headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined })).json();
+  try {
+    const settings = { educational_track: "OSNOVNA_SOLA", curriculum_level: "3. razred", subject: "MAT" };
+    const s = await call("POST", "/api/students", { name: "Tim", settings });
+    const pack = await call("GET", `/api/students/${s.id}/offline-pack?path=MAT-TEK-OS`);
+    const items = Object.entries(pack.tasks).flatMap(([topic_id, list]) => list.map((t) => ({ topic_id, ...t })));
+    assert.ok(items.length >= 6, `nalog v paketu: ${items.length}`);
+    // Smiselnost: vsaj nekaj nalog je za 7. razred drugačnih (sicer test ne bi nič preveril).
+    assert.ok(items.some((t) => input(generateTask(t.topic_id, t.level, t.seed, "en", 7).answer) !== input(t.answer)));
+    const rows = store.db.prepare("SELECT year FROM offline_issued WHERE student_id = ?").all(s.id);
+    assert.ok(rows.length && rows.every((x) => x.year === 3), JSON.stringify(rows.slice(0, 3)));
+    // Polovica izdanih kot pred posodobitvijo (brez razreda): odgovor iz naloge brez razreda.
+    const old = items.filter((_, i) => i % 2 === 1);
+    for (const t of old) store.db.prepare("UPDATE offline_issued SET year = NULL WHERE student_id = ? AND topic_id = ? AND seed = ?").run(s.id, t.topic_id, t.seed);
+    await call("PUT", `/api/students/${s.id}`, { settings: { ...settings, curriculum_level: "7. razred" } });
+    const results = items.map((t, i) => ({
+      topic_id: t.topic_id,
+      level: t.level,
+      seed: t.seed,
+      answer: input(i % 2 === 1 ? generateTask(t.topic_id, t.level, t.seed, "en", null).answer : t.answer),
+    }));
+    const out = await call("POST", `/api/students/${s.id}/offline-sync`, { results });
+    assert.equal(out.synced, items.length, JSON.stringify(out));
+    assert.equal(out.correct, items.length, JSON.stringify(out));
+  } finally {
+    server.close();
+  }
+  // Obstoječa baza brez stolpca year: odpiranje ga doda, vrstice ostanejo.
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const path = await import("node:path");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-offline-"));
+  const file = path.join(dir, "stara.db");
+  try {
+    const a = openDb(file);
+    a.db.exec("PRAGMA foreign_keys = OFF");
+    a.db.prepare("INSERT INTO offline_issued (student_id, topic_id, seed, level) VALUES (1, 'MAT-TEK-OS/x', 5, 2)").run();
+    a.db.exec("ALTER TABLE offline_issued DROP COLUMN year");
+    a.db.close();
+    const b = openDb(file);
+    const cols = b.db.prepare("PRAGMA table_info(offline_issued)").all().map((c) => c.name);
+    assert.ok(cols.includes("year"), cols.join(", "));
+    assert.deepEqual({ ...b.db.prepare("SELECT seed, level, year FROM offline_issued").get() }, { seed: 5, level: 2, year: null });
+    b.db.close();
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });

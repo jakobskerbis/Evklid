@@ -5,7 +5,7 @@
 // do 100 za 2. in 3. ter do 1000 za 4. razred. V 1. in 2. razredu brez množenja (seštevamo), brez
 // »večkratnika« in »deljivosti«, ure samo cele in pol. Pravilen odgovor je izračunan s preštevanjem.
 import { NAMES, g, nOf, verbOf } from "../rng.js";
-import { num, DAYS, choiceAns, withMistakes, sz, cap } from "./tek-util.js";
+import { num, DAYS, choiceWhy, withMistakes, sz, cap } from "./tek-util.js";
 
 const T = (slug) => `MAT-TEK-OS/${slug}`;
 const Y = (year) => (Number.isInteger(year) ? year : 3);
@@ -30,6 +30,18 @@ const squaresBySize = (w, h) => {
   }
   return out;
 };
+// Napačni dnevi z razlago: za dan preveč (štel si danes), premalo, v napačno smer, nato drugi dnevi.
+const dayMistakes = (r, s, d, past) => {
+  const at = (k) => DAYS[(((s + k) % 7) + 7) % 7];
+  const dir = past ? -1 : 1;
+  const out = new Map();
+  const add = (day, why) => out.has(day) || out.set(day, why);
+  add(at(dir * (d + 1)), "Za en dan preveč: današnjega dne ne štej.");
+  add(at(dir * (d - 1)), "Za en dan premalo: preštej ostanek še enkrat, dan za dnem.");
+  add(at(-dir * d), past ? "Pred toliko dnevi gremo nazaj, ne naprej." : "Čez toliko dni gremo naprej, ne nazaj.");
+  for (const x of r.shuffle(DAYS)) add(x, "Cele tedne preskoči, potem pojdi dan za dnem.");
+  return [...out].filter(([x]) => x !== at(dir * d)).slice(0, 3);
+};
 // Predmeti za igro jemanja: oblike ob številu (1, 2, 3–4, 5+), tožilnik in orodnik množine, kraj.
 const OBJ = [
   { f: ["bonbon", "bonbona", "bonboni", "bonbonov"], acc: "bonbone", ins: "bonboni", from: "s krožnika", at: "Na krožniku" },
@@ -39,7 +51,7 @@ const OBJ = [
 ];
 // Vsi pari iz n stvari, označenih s črkami: »AB, AC, BC«.
 const pairs = (n) => {
-  const L = "ABCDEFGH".slice(0, n);
+  const L = "ABCDEFGHIJ".slice(0, n);
   const out = [];
   for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) out.push(L[i] + L[j]);
   return out;
@@ -67,7 +79,15 @@ export const TEK_MAT_OS_MLADI = [
       const right = kids[ask];
       return {
         text: `${list(kids.slice().sort())} se postavijo v vrsto po višini. Vemo:\n\n${facts.map((f) => `- ${f}`).join("\n")}\n\n${q}`,
-        answer: choiceAns(r, right, kids.filter((k) => k !== right)),
+        answer: choiceWhy(
+          r,
+          right,
+          kids.filter((k) => k !== right).map((k) => {
+            const i = kids.indexOf(k);
+            if (level === 3) return [k, i === 0 ? `${k} je ${g(k, "najvišji", "najvišja")}, ne ${g(k, "drugi", "druga")}.` : `Pred ${g(k, "njim", "njo")} ${i === 2 ? "sta v vrsti dva višja" : "so v vrsti trije višji"}.`];
+            return ask === 0 ? [k, `${kids[i - 1]} je ${vis(kids[i - 1])} od ${gen(k)}.`] : [k, `${kids[i + 1]} je ${niz(kids[i + 1])} od ${gen(k)}.`];
+          }),
+        ),
         hint: "Nariši črto in na vrh postavi tistega, ki je višji od nekoga, a od njega ni višji nihče.",
         data: false,
         formula: "\\text{če je A višji od B in B višji od C, je A višji od C}",
@@ -99,7 +119,10 @@ export const TEK_MAT_OS_MLADI = [
         const inRow = small ? `v vrsti ${row}` : `deljivo ${sz(m)} ${m}`;
         return {
           text: `${o.at} ${verbOf(n, "je", "sta", "so")} ${cnt(n)}. ${rule} Kdo zmaga, če ${oba(a, b)} igrata najbolje?`,
-          answer: choiceAns(r, right, [right === a ? b : a]),
+          answer: choiceWhy(r, right, [
+            [right === a ? b : a, v ? `${a} lahko pusti slab kup, zato ${b} ne more zmagati.` : `${a} začne pri slabem kupu: kar koli vzame, ${b} dopolni do ${m}.`],
+            ["Nihče ne more zagotovo zmagati.", "Igra se vedno konča in nekdo vzame zadnjega, zato eden od njiju lahko zagotovo zmaga."],
+          ]),
           hint: `Začni pri koncu. Kdo zmaga, če ${verbOf(m, "ostane", "ostaneta", "ostanejo")} ${cnt(m)} in je na potezi ${a}?`,
           data: false,
           formula: `\\text{slabi kupi: } ${m}, ${2 * m}, ${3 * m}, \\ldots`,
@@ -157,7 +180,8 @@ export const TEK_MAT_OS_MLADI = [
       if (y === 1 && (level === 3 || r.int(0, 1))) {
         let k, a, b, list;
         do {
-          k = r.int(0, 1) ? 1 : r.int(2, 9);
+          // Raven 3 (kolikokrat): števka 1, ker je 11 (dve enici) vedno med a ≤ 9 in b ≥ 11.
+          k = level === 3 || r.int(0, 1) ? 1 : r.int(2, 9);
           a = r.int(1, 9);
           b = r.int(11, 20);
           list = [];
@@ -167,7 +191,7 @@ export const TEK_MAT_OS_MLADI = [
           return {
             text: `${ime} zapiše vsa števila od ${a} do ${b}. Koliko teh števil ima števko ${k}?`,
             answer: num(list.length),
-            hint: `Pojdi po vrsti od ${a} do ${b} in pri vsakem številu poglej obe števki.`,
+            hint: `Pojdi po vrsti od ${a} do ${b} in pri vsakem številu poglej vse njegove števke.`,
             data: false,
             formula: `\\text{števila s števko } ${k}`,
             solution: `Števila od ${a} do ${b}, ki imajo števko ${k}: ${list.join(", ")}.\nTeh je ${list.length}.`,
@@ -176,30 +200,41 @@ export const TEK_MAT_OS_MLADI = [
         const times = list.reduce((s, x) => s + [...String(x)].filter((c) => c === String(k)).length, 0);
         return {
           text: `${ime} zapiše vsa števila od ${a} do ${b}. Kolikokrat zapiše števko ${k}?`,
-          answer: withMistakes(num(times), [[list.length, "Število 11 ima dve enici: vsako števko štej posebej."]]),
+          answer: withMistakes(num(times), [[list.length, "V številu 11 je števka 1 zapisana dvakrat: štej vsako posebej."]]),
           hint: `Pojdi po vrsti od ${a} do ${b}. Pazi na števila, v katerih je števka ${k} dvakrat.`,
           data: false,
           formula: `\\text{štej vsako števko } ${k}`,
           solution: `Števila s števko ${k}: ${list.map((x) => (x === 11 && k === 1 ? "11 (dvakrat)" : x)).join(", ")}.\nŠtevko ${k} zapiše ${times}-krat.`,
         };
       }
-      const s = y === 1 ? r.int(1, 10) : r.int(3, 15);
       if (level === 2) {
-        const t = Math.max(1, s - 9);
+        const s = y === 1 ? r.int(1, 10) : r.int(3, 15);
+        // Največje (od 2. razreda; v 1. bi bilo nad 20): desetice čim večje, največ 9.
+        const big = y >= 2 && r.int(0, 1) === 1;
+        const t = big ? Math.min(9, s) : Math.max(1, s - 9);
         const v = 10 * t + (s - t);
+        const sol = big
+          ? `Desetice naj bodo čim večje, a največ 9. ${s <= 9 ? `Desetica ${s}, enic 0` : `Desetica 9, enic $${s} - 9 = ${s - 9}$`}.`
+          : `Desetice naj bodo čim manjše, enice pa največ 9. ${t === 1 ? `Desetica 1, enic $${s} - 1 = ${s - 1}$` : `Z desetico ${t - 1} bi potrebovali ${s - t + 1} enic, kar je več kot 9. Desetica ${t}, enic ${s - t}`}.`;
         return {
-          text: `Katero je najmanjše dvomestno število, ki ima vsoto števk ${s}?`,
+          text: `${ime} išče ${big ? "največje" : "najmanjše"} dvomestno število, ki ima vsoto števk ${s}. Katero število je to?`,
           answer: num(v),
-          hint: "Prva števka (desetice) naj bo čim manjša.",
+          hint: `Prva števka (desetice) naj bo čim ${big ? "večja" : "manjša"}.`,
           data: false,
           formula: "\\text{dvomestno število} = \\text{desetice in enice}",
-          solution: `Desetice naj bodo čim manjše, enice pa največ 9. ${t === 1 ? `Desetica 1, enic $${s} - 1 = ${s - 1}$` : `Z desetico ${t - 1} bi rabili ${s - t + 1} enic, kar je več kot 9. Desetica ${t}, enic ${s - t}`}.\nŠtevilo je ${v}.`,
+          solution: `${sol}\nŠtevilo je ${v}.`,
         };
       }
-      const list = [];
-      for (let k = 10; k <= 99; k++) if (Math.floor(k / 10) + (k % 10) === s) list.push(k);
+      // Raven 3 od 2. razreda: koliko dvomestnih števil ima vsoto števk s (po želji manjših od lim).
+      let s, lim, list;
+      do {
+        s = r.int(3, 15);
+        lim = r.pick([null, 50, 60, 70, 80]);
+        list = [];
+        for (let k = 10; k <= 99; k++) if (Math.floor(k / 10) + (k % 10) === s && (!lim || k < lim)) list.push(k);
+      } while (list.length < 2);
       return {
-        text: `Koliko dvomestnih števil ima vsoto števk ${s}?`,
+        text: `${ime} išče dvomestna števila, ki imajo vsoto števk ${s}${lim ? ` in so manjša od ${lim}` : ""}. Koliko je takih števil?`,
         answer: num(list.length),
         hint: "Zapiši jih po vrsti: začni z deseticami 1, nato 2 …",
         data: false,
@@ -216,15 +251,16 @@ export const TEK_MAT_OS_MLADI = [
     gen(level, r, _topic, _lang, year) {
       const y = Y(year);
       if (level === 1) {
-        const n = r.int(3, y === 1 ? 6 : y === 2 ? 7 : 8);
+        const n = r.int(3, y === 1 ? 6 : y === 2 ? 8 : 10);
         const v = (n * (n - 1)) / 2;
         const sum = Array.from({ length: n - 1 }, (_, i) => n - 1 - i).join(" + ");
         const ctx = r.int(0, 2);
+        const ime = r.pick(NAMES);
         const kids = names(r, n);
         const ps = ctx === 1 ? kids.flatMap((p, i) => kids.slice(i + 1).map((q) => `${p}–${q}`)) : pairs(n);
         const C = [
           {
-            text: `Na rojstnem dnevu ${verbOf(n, "je", "sta", "so")} ${nOf(n, "otrok", "otroka", "otroci", "otrok")}. Vsak se z vsakim drugim rokuje natanko enkrat. Koliko rokovanj je bilo?`,
+            text: `${ime} ima rojstni dan. Na zabavi ${verbOf(n, "je", "sta", "so")} ${nOf(n, "otrok", "otroka", "otroci", "otrok")} (${g(ime, "on", "ona")} je ${g(ime, "eden", "ena")} od njih). Vsak se z vsakim drugim rokuje natanko enkrat. Koliko je vseh rokovanj?`,
             twice: "Vsako rokovanje si štel dvakrat (A z B in B z A je isto rokovanje).",
             hint: "Prvi otrok se rokuje z vsemi drugimi. Drugi še z vsemi, s katerimi se še ni rokoval …",
             sol: `Otroke označimo s črkami. Vsa rokovanja: ${ps.join(", ")}.`,
@@ -236,7 +272,7 @@ export const TEK_MAT_OS_MLADI = [
             sol: `Vse igre: ${ps.join(", ")}.`,
           },
           {
-            text: `Na turnirju ${verbOf(n, "je", "sta", "so")} ${nOf(n, "ekipa", "ekipi", "ekipe", "ekip")}. Vsaka ekipa igra z vsako drugo natanko enkrat. Koliko tekem odigrajo?`,
+            text: `${ime} je ${g(ime, "pripravil", "pripravila")} nogometni turnir. Na turnirju ${verbOf(n, "je", "sta", "so")} ${nOf(n, "ekipa", "ekipi", "ekipe", "ekip")}. Vsaka ekipa igra z vsako drugo natanko enkrat. Koliko tekem odigrajo?`,
             twice: "Vsako tekmo si štel dvakrat (A proti B in B proti A je ista tekma).",
             hint: "Prva ekipa igra z vsemi drugimi. Druga še z vsemi, s katerimi še ni igrala …",
             sol: `Ekipe označimo s črkami. Vse tekme: ${ps.join(", ")}.`,
@@ -253,7 +289,7 @@ export const TEK_MAT_OS_MLADI = [
       }
       // Mreža w stolpcev × h vrst; kvadrate vseh velikosti preštejemo (preverjeno s preštevanjem v testu).
       const L2 = [[2, 2], [3, 2], [2, 3], [4, 2], [2, 4], [3, 3]];
-      const L3 = y === 1 ? [[5, 2], [2, 5], [4, 3], [3, 4], [6, 2], [2, 6]] : [[5, 2], [2, 5], [4, 3], [3, 4], [4, 4], [5, 3], [3, 5]];
+      const L3 = y === 1 ? [[5, 2], [2, 5], [4, 3], [3, 4], [6, 2], [2, 6]] : [[5, 2], [2, 5], [4, 3], [3, 4], [6, 2], [2, 6], [4, 4], [5, 3], [3, 5]];
       const [w, h] = r.pick(level === 2 ? L2 : L3);
       const per = squaresBySize(w, h);
       const v = per.reduce((s, c) => s + c, 0);
@@ -266,10 +302,23 @@ export const TEK_MAT_OS_MLADI = [
       ]);
       const desc = `${nOf(h, "vrsto", "vrsti", "vrste", "vrst")} in v vsaki vrsti ${verbOf(w, "je", "sta", "so")} ${nOf(w, ...M.f)}`;
       const rows = per.map((c, i) => (i === 0 ? `Kvadratov iz ${M.one}: ${c}.` : `Kvadratov iz ${(i + 1) ** 2} ${M.gpl} (${nOf(i + 1, "vrsta", "vrsti", "vrste", "vrst")} po ${i + 1}): ${c}.`));
+      if (r.int(0, 1)) {
+        // Samo kvadrati iz 4 delov: v vsakem paru sosednjih vrst jih je w − 1.
+        const c = per[1];
+        const small = y <= 2;
+        return {
+          text: `${M.intro(desc)} Koliko je kvadratov iz 4 ${M.gpl} (2 vrsti po 2)? Kvadrati se lahko delno prekrivajo.`,
+          answer: withMistakes(num(c), [[Math.floor(w / 2) * Math.floor(h / 2), `Kvadrati se lahko prekrivajo: štej tudi tiste, ki si delijo nekaj ${M.gpl}.`], [w * h, `To so vsi deli. Iščeš kvadrate iz 4 ${M.gpl}.`]]),
+          hint: "Tak kvadrat leži v dveh sosednjih vrstah. Najprej preštej, koliko jih je v prvih dveh vrstah.",
+          data: false,
+          formula: small ? "\\text{seštej kvadrate v vseh parih sosednjih vrst}" : "\\text{kvadrati v paru vrst} \\cdot \\text{parov vrst}",
+          solution: `V dveh sosednjih vrstah ${verbOf(w - 1, "je", "sta", "so")} ${nOf(w - 1, "tak kvadrat", "taka kvadrata", "taki kvadrati", "takih kvadratov")}${w > 2 ? ": vsak naslednji je za en stolpec bolj desno" : ""}.\n${h === 2 ? `Vrsti sta samo dve, zato je kvadratov ${c}.` : `Parov sosednjih vrst je ${h - 1}: $${small ? rep(h - 1, w - 1) : `${h - 1} \\cdot ${w - 1}`} = ${c}$.`}`,
+        };
+      }
       const mistakes = [[w * h, `Prešteti moraš tudi večje kvadrate iz več ${M.gpl}.`]];
       if (per.length > 2) mistakes.push([v - per[per.length - 1], "Pozabil si na največje kvadrate."]);
       return {
-        text: `${M.intro(desc)} Koliko kvadratov vseh velikosti je v tej mreži? Štejejo tudi večji kvadrati, sestavljeni iz več ${M.gpl}.`,
+        text: `${M.intro(desc)} Koliko je vseh kvadratov, majhnih in večjih? Štejejo tudi večji kvadrati, sestavljeni iz več ${M.gpl}.`,
         answer: withMistakes(num(v), mistakes),
         hint: `Najprej preštej kvadrate iz ${M.one}, nato kvadrate iz 4 ${M.gpl} (2 vrsti po 2) in tako naprej.`,
         data: false,
@@ -300,7 +349,7 @@ export const TEK_MAT_OS_MLADI = [
         const bil = day.endsWith("a") ? "bila" : "bil";
         return {
           text,
-          answer: choiceAns(r, day, r.shuffle(DAYS.filter((x) => x !== day))),
+          answer: choiceWhy(r, day, dayMistakes(r, s, d, past)),
           hint: past ? "Pred 7 dnevi je bil isti dan v tednu kot danes." : "Čez 7 dni je spet isti dan v tednu.",
           data: false,
           formula: "\\text{vsakih 7 dni isti dan}",
@@ -311,7 +360,7 @@ export const TEK_MAT_OS_MLADI = [
       }
       if (level === 2) {
         // 1. in 2. razred: samo cele in pol ure (začetek ob x.00 ali x.30, traja pol ure ali uro).
-        const h = r.int(7, 16);
+        const h = r.int(7, y === 1 ? 11 : 16);
         const m = small ? r.pick([0, 30]) : r.int(0, 11) * 5;
         const dur = small ? r.pick([30, 60]) : r.int(y === 3 ? 3 : 5, y === 3 ? 11 : 17) * 5;
         const start = h * 60 + m, end = start + dur;
@@ -329,7 +378,7 @@ export const TEK_MAT_OS_MLADI = [
           const right = dur === 30 ? "pol ure" : "eno uro";
           return {
             text,
-            answer: choiceAns(r, right, ["pol ure", "eno uro", "uro in pol", "dve uri"]),
+            answer: choiceWhy(r, right, ["pol ure", "eno uro", "uro in pol", "dve uri"].map((o) => [o, `Od ${fmt(start)} do ${fmt(end)} je ${ura(dur)}, ne ${o}.`])),
             hint: "Od polne ure do pol je pol ure. Od pol do naslednje polne ure je še pol ure.",
             data: false,
             formula: "\\text{ena ura} = \\text{pol ure} + \\text{pol ure}",
@@ -372,7 +421,7 @@ export const TEK_MAT_OS_MLADI = [
         answer: withMistakes(num(v), [[x + (x + dx) + c, `Čez ${let_(c)} se postarata ${oba(a, b)}, zato vsoti prišteješ ${c} dvakrat.`]]),
         hint: `Najprej izračunaj, koliko je star${g(b, "", "a")} ${b} danes. Potem pomisli, da se postarata ${oba(a, b)}.`,
         data: false,
-        formula: "\\text{vsota čez } c \\text{ let} = \\text{vsota danes} + c + c",
+        formula: small ? "\\text{vsota čez nekaj let} = \\text{vsota danes} + \\text{leta prvega} + \\text{leta drugega}" : "\\text{vsota čez } c \\text{ let} = \\text{vsota danes} + c + c",
         solution: `${b} je danes ${g(b, "star", "stara")} $${x} + ${dx} = ${x + dx}$ ${letW(x + dx)}. Skupaj sta ${stara} $${x} + ${x + dx} = ${2 * x + dx}$ ${letW(2 * x + dx)}.\nČez ${let_(c)} se postarata ${oba(a, b)}: $${2 * x + dx} + ${c} + ${c} = ${v}$.`,
       };
     },

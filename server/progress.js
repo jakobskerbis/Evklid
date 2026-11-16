@@ -804,8 +804,9 @@ export class Progress {
       const xp = left > 0;
       left -= 1;
       if (!xp) noXp += 1;
-      // Razred ob izdaji (učenec ga je vmes lahko spremenil): ista naloga kot v paketu.
-      const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId), iss.year ?? this.taskYear(studentId));
+      // Razred ob izdaji (učenec ga je vmes lahko spremenil): ista naloga kot v paketu. NULL (paket izdan pred
+      // shranjevanjem razreda, ali učenec brez razreda) = naloga brez razreda, kot ob izdaji teh paketov.
+      const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId), iss.year);
       const id = this.saveTask(studentId, task, "practice");
       const out = this.answer(studentId, id, String(r.answer ?? "").slice(0, 200), { xp });
       synced += 1;
