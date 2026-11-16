@@ -307,7 +307,7 @@ Stric bi rad veliko škatlo še zavil v papir z logotipom trgovine. Maja seštej
 
 ? Kocka $A$ ima rob $3\,\text{cm}$, kocka $B$ pa $6\,\text{cm}$. Kaj velja?
 - Kocka $B$ ima dvakrat večjo površino in dvakrat večjo prostornino.
-~ To je Tilnova napaka: ploščina in prostornina ne rasteta tako kot rob.
+~ To je Tilnova napaka: površina in prostornina ne rasteta tako kot rob.
 + Kocka $B$ ima $4$-krat večjo površino in $8$-krat večjo prostornino.
 - Kocka $B$ ima $8$-krat večjo površino in $4$-krat večjo prostornino.
 ~ Zamenjal si: ploskev ima dve meri ($2 \cdot 2 = 4$), prostornina tri ($2 \cdot 2 \cdot 2 = 8$).

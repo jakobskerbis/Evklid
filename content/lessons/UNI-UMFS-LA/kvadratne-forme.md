@@ -302,7 +302,7 @@ C | kovariančna matrika vetra | | m^2/s^2
 \sigma | standardna deviacija | \sigma = \sqrt{\lambda} | m/s
 c | vrednost nivojnice ali ploskve | |
 J | matrika samih enic | |
-v, w | lastna vektorja | |
+v, w | lastna vektorja | | | v Primeru 2 sta $u$ in $v$ komponenti vetra
 \mu | druga lastna vrednost | |
 a | parameter forme | |
 :::

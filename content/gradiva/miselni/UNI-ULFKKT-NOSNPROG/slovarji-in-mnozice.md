@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Slovar
+  - pari `ključ: vrednost`, tip `dict`
+  - ključi različni in zgoščljivi
+  - `1`, `1.0`, `True` so isti ključ
+- Branje in pisanje
+  - `d[k] = v` doda ali prepiše
+  - manjkajoč ključ: `KeyError`
+  - `d.get(k, 0)` slovarja ne spremeni
+- Štetje pojavitev
+  - `stevec[s] = stevec.get(s, 0) + 1`
+  - vsota vrednosti je dolžina $n$
+  - napaka: »v zanki vedno `= 1`«
+- Množica
+  - vsak element enkrat, brez indeksov
+  - prazna je `set()`, ne `{}`
+  - `len(set(seznam))` šteje različne
+- Operacije nad množicami
+  - unija `a | b`, presek `a & b`
+  - razlika `a - b`, simetrična `a ^ b`
+  - `a <= b` pomeni $a \subseteq b$
+- Vključitve in izključitve
+  - $|a \cup b| = |a| + |b| - |a \cap b|$
+  - gripa in prehlad: $4 + 4 - 2 = 6$
+- Zgoščevalna tabela
+  - `hash(x)` določi mesto v pomnilniku
+  - `x in mnozica` v povprečju neodvisno od velikosti
+  - seznam kot ključ: `TypeError`

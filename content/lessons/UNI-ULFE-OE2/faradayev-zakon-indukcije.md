@@ -83,15 +83,22 @@ $$\Phi = \frac{\mu_0 i b}{2\pi} \ln\frac{r_2}{r_1}$$
 
 Skica (pogled od zgoraj, tok teče navzgor):
 
-```
- i ^      b
-   |   +-----+
-   |   |  x  |  B v zanko
-   |   |  x  |
-   |   +-----+
-   |<r1>
-   |<- r2 -->|
-```
+:::risba skica
+opis: Pogled od zgoraj. Levo je dolg raven vodnik, tok i teče navzgor. Desno od njega leži pravokotna zanka: njena bližja stranica je od vodnika oddaljena r₁, bolj oddaljena r₂, stranica dolžine b je vzporedna z vodnikom. Križci v zanki kažejo, da je polje B usmerjeno v zanko (v list).
+območje: 0; 0 .. 9,5; 7
+puščica: 1; 0,4 -> 1; 6,6 | i | levo | debelo
+pravokotnik: 3; 2,6 .. 6; 5,8 | modra
+napis: 4; 5 | × | sredina
+napis: 5; 5 | × | sredina
+napis: 4; 3,4 | × | sredina
+napis: 5; 3,4 | × | sredina
+napis: 4,5; 4,2 | B v zanko | sredina
+napis: 6,2; 4,2 | b | desno
+črta: 3; 2,6 -> 3; 1,5 | črtkano siva
+črta: 6; 2,6 -> 6; 0,7 | črtkano siva
+puščica: 1; 1,8 -> 3; 1,8 | r_1 | nad
+puščica: 1; 1 -> 6; 1 | r_2 | pod
+:::
 
 Ko se tok $i$ spreminja, se v zanki inducira napetost, sorazmerna z $\mathrm{d}i/\mathrm{d}t$. To je osnova presluha med kabli in merilnih tuljav za tok.
 
@@ -163,7 +170,7 @@ $\Psi = N\dfrac{\mu_0 i b}{2\pi} \ln\dfrac{r_2}{r_1}$, $\lvert u_i \rvert = \lef
 
 ### Primer 4 – zdaj ti
 
-Generator v laboratoriju ima tuljavo s $100$ ovoji in ploščino $0{,}020\,\mathrm{m^2}$, ki se vrti z $1500$ vrtljaji na minuto v homogenem polju $0{,}25\,\mathrm T$. Kolikšni sta amplituda in efektivna vrednost inducirane napetosti?
+Generator v laboratoriju ima tuljavo s $100$ ovoji in ploščino $0{,}020\,\mathrm{m^2}$, ki se vrti s $1500$ vrtljaji na minuto v homogenem polju $0{,}25\,\mathrm T$. Kolikšni sta amplituda in efektivna vrednost inducirane napetosti?
 
 **Podatki:** $N = 100$, $A = 0{,}020\,\mathrm{m^2}$, $n = 1500\,\mathrm{min^{-1}}$, $B = 0{,}25\,\mathrm T$
 **Iščemo:** $\hat u$ in $U$
@@ -249,7 +256,7 @@ Druga analogija je **viskozno trenje**. Pri palici na tirnicah je zaviralna sila
 ## Drugače: Uporaba v stroki
 
 - **Elektromagnetni merilnik pretoka.** Prevodna tekočina teče s hitrostjo $v$ skozi cev s premerom $d$ v polju $B$. Elektrodi na steni izmerita $u = B d v$. Merilnik nima gibljivih delov in ne ovira toka, zato ga uporabljajo v vodovodih in živilski industriji.
-- **Rogowskijeva tuljava.** Toroidna tuljava brez železnega jedra objema vodnik. Napetost je sorazmerna z $\mathrm{d}i/\mathrm{d}t$; integrator da tok. Meri tudi tokove več kiloamperov, ker se jedro ne more nasičiti.
+- **Rogowskijeva tuljava.** Toroidna tuljava brez železnega jedra objema vodnik. Napetost je sorazmerna z $\mathrm{d}i/\mathrm{d}t$; integrator da tok. Meri tudi tokove več kiloamperov, ker nima jedra, ki bi se nasičilo.
 - **Vrtinčni tokovi.** Jedra transformatorjev in motorjev so iz tankih izoliranih pločevin, da so zanke vrtinčnih tokov kratke in izgube majhne. Indukcijska plošča in zavore vlakov ter dvigal vrtinčne tokove izkoriščajo namerno.
 - **Neporušno preizkušanje.** Sonda z izmenično tuljavo inducira vrtinčne tokove v kovini. Razpoka jih preusmeri, kar spremeni impedanco sonde. Tako pregledujejo letalske dele in cevi toplotnih izmenjevalnikov.
 

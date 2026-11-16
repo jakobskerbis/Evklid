@@ -203,3 +203,10 @@ test("formulas in the scientific calculator are left to the calculator", () => {
   const k = { parentElement: { closest: () => null }, closest: (sel) => (sel.split(",").some((s) => s.trim() === ".sc") ? sc : null) };
   assert.equal(mestoFormule(k), null);
 });
+
+// j 2026-11-14: v odzivu »Pravilno! …« (odstavek z display: inline) je bila vsaka formula drsna in pomanjšana, čeprav je
+// bilo prostora dovolj: vrstični element nima clientWidth, zato je račun od prostora odštel ves odstavek.
+test("an inline paragraph (quiz feedback) measures the space of its block, not its own text", () => {
+  assert.match(pub("sirina.js"), /if \(cs\.display === "inline" && el\.parentElement && el\.parentElement !== document\.body\) return prostor\(el\.parentElement\);/);
+  assert.match(pub("textbook.css"), /\.tb-checks \.tb-why p \{ display: inline; \}/);
+});

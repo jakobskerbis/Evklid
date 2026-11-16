@@ -22,3 +22,7 @@ stanje: osnutek
   - rezine so tanki valji
   - $V = \pi \int_a^b f(x)^2\,dx$
   - napaka: pozabljen kvadrat
+- Lastnosti
+  - $\int_b^a f\,dx = -\int_a^b f\,dx$
+  - $\int_a^b f\,dx + \int_b^c f\,dx = \int_a^c f\,dx$
+  - integral vsote je vsota integralov

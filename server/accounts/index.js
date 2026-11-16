@@ -248,12 +248,11 @@ export function mountAccounts(app, store, opts = {}) {
     // Star račun brez datuma rojstva: aplikacija ga ob prijavi enkrat vpraša (need_birth), pozneje v zavihku Račun.
     birth_missing: !p.is_guest && !p.birth_date,
     need_birth: !p.is_guest && !p.birth_date && !p.birth_asked_at,
-    // Račun brez gesla (prijava z Apple): potrditev imetnika s kodo na e-pošto namesto gesla.
-    has_password: !String(p.password_hash || "").startsWith("none$"),
     // Politika zasebnosti se je spremenila po registraciji: aplikacija enkrat pokaže kratko obvestilo s povezavo.
     privacy_notice: !p.is_guest && (p.privacy_seen || p.privacy_version || "") < PRIVACY_VERSION ? PRIVACY_VERSION : null,
     verified: !!p.email_verified_at,
-    // Račun s prijavo z Apple nima gesla: splet za izvoz in izbris namesto gesla ponudi nastavitev gesla.
+    // Račun brez gesla (prijava z Apple): potrditev imetnika s kodo na e-pošto namesto gesla; splet za izvoz
+    // in izbris namesto gesla ponudi nastavitev gesla. (Prej je bil ključ zapisan dvakrat; veljal je ta, z gostom.)
     has_password: !p.is_guest && !String(p.password_hash || "").startsWith("none$"),
     // S kodo za skrbnika (A9) je nova seja vedno nepotrjena: odgovori prijave skrbniških delov ne obljubijo
     // (/api/account pove po seji).
@@ -863,7 +862,7 @@ export function mountAccounts(app, store, opts = {}) {
   // Meja velja že, ko ne ostane prostora niti za najcenejši klic (trda meja, server/meje-ai.js).
   function freeBudgetInfo(studentId) {
     const need = aiUsage.minCallUsd();
-    const room = (c) => c.usd - c.spent - (aiUsage.inflight.get(c.key) || 0);
+    const room = (c) => c.usd - c.spent - aiUsage.inflightOf(c);
     for (const c of freeCaps(studentId)) if (room(c) < need) return freeBlock(studentId, c.code);
     return null;
   }
@@ -1348,7 +1347,8 @@ export function mountAccounts(app, store, opts = {}) {
     inviteToThrottle.fail(email);
     inviteAllThrottle.fail("*");
     const name = String(req.body?.name || "").replace(/[^\p{L}\p{M} '-]/gu, "").replace(/\s+/g, " ").trim().slice(0, 30);
-    const url = `${baseUrl(req)}/starsi.html${name ? `?ime=${encodeURIComponent(name)}` : ""}`;
+    // »prosnja=1«: stran za starše pokaže obvestilo »Vaš otrok bi rad …« samo staršu, ki mu je otrok poslal povezavo.
+    const url = `${baseUrl(req)}/starsi.html?${name ? `ime=${encodeURIComponent(name)}&` : ""}prosnja=1`;
     const sent = await sendMail(email, parentInviteEmail(url, name));
     if (!sent) return res.status(502).json({ error: "Sporočila ni bilo mogoče poslati. Pošlji povezavo drugače.", mail: false });
     res.json({ ok: true });
@@ -1813,18 +1813,32 @@ export function mountAccounts(app, store, opts = {}) {
           }
         })(),
         // Naloge za člane pilota (server/pilot-naloge.js): ocene, opombe, anketa; sama fotografija (če je shranjena) je v data.other.pilot_photos.
+        // Vsak del posebej (docs/izbris-izvoz.md, najdba 3): manjkajoča tabela ali ena pokvarjena vrstica ne skrije ostalega.
         pilot: (() => {
-          try {
-            return {
-              scans: q("SELECT s.cond, s.ok, s.note, s.problems, s.created_at, (p.scan_id IS NOT NULL) AS photo_saved, p.created_at AS photo_at FROM pilot_scans s LEFT JOIN pilot_photos p ON p.scan_id = s.id WHERE s.student_id = ?", c.id).map(
-                (r) => ({ ...r, note: unseal(r.note), problems: r.problems ? JSON.parse(unseal(r.problems, "[]") || "[]") : [] }),
+          const del = (fn) => {
+            try {
+              return fn();
+            } catch {
+              return [];
+            }
+          };
+          const seznam = (v) => {
+            const t = unseal(v, "[]") || "[]";
+            try {
+              return JSON.parse(t);
+            } catch {
+              return t; // ni JSON: izvoz dobi besedilo, kot je shranjeno
+            }
+          };
+          return {
+            scans: del(() =>
+              q("SELECT s.cond, s.ok, s.note, s.problems, s.created_at, (p.scan_id IS NOT NULL) AS photo_saved, p.created_at AS photo_at FROM pilot_scans s LEFT JOIN pilot_photos p ON p.scan_id = s.id WHERE s.student_id = ?", c.id).map(
+                (r) => ({ ...r, note: unseal(r.note), problems: r.problems ? seznam(r.problems) : [] }),
               ),
-              features: q("SELECT feature, ok, note, created_at FROM pilot_features WHERE student_id = ?", c.id).map((r) => ({ ...r, note: unseal(r.note) })),
-              survey: q("SELECT answers, created_at FROM pilot_survey WHERE student_id = ?", c.id),
-            };
-          } catch {
-            return null;
-          }
+            ),
+            features: del(() => q("SELECT feature, ok, note, created_at FROM pilot_features WHERE student_id = ?", c.id).map((r) => ({ ...r, note: unseal(r.note) }))),
+            survey: del(() => q("SELECT answers, created_at FROM pilot_survey WHERE student_id = ?", c.id)),
+          };
         })(),
         // Mnenja člana pilota (server/pilot-mnenja.js): ocena, besedili, razred ali letnik in dovoljenje za objavo.
         pilot_opinions: (() => {

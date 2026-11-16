@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Dolgo so ljudje račune zapisovali z besedami: »k dvema prištej trikrat štiri«. Tak zapis je dolg, a ne more biti dvoumen. Ko so matematiki začeli pisati z znaki, so morali znake tudi izumiti. V 17. stoletju je angleški matematik William Oughtred za množenje uporabil križec $\times$. Nemški matematik Gottfried Wilhelm Leibniz je raje pisal piko, ker se mu je križec mešal s črko $x$, za deljenje pa je uporabljal dvopičje. Pri nas še danes pišemo $3 \cdot 4$ in $12 : 3$.
+Dolgo so ljudje račune zapisovali z besedami: »k dvema prištej trikrat štiri«. Tak zapis je dolg, a besede same povedo, kaj izračunaš najprej. Ko so matematiki začeli pisati z znaki, so morali znake tudi izumiti. V 17. stoletju je angleški matematik William Oughtred za množenje uporabil križec $\times$. Nemški matematik Gottfried Wilhelm Leibniz je raje pisal piko, ker se mu je križec mešal s črko $x$, za deljenje pa je uporabljal dvopičje. Pri nas še danes pišemo $3 \cdot 4$ in $12 : 3$.
 
 S kratkimi znaki pa je prišlo novo vprašanje. Kaj pomeni $2 + 3 \cdot 4$? Anja računa od leve: $2 + 3 = 5$, nato $5 \cdot 4 = 20$. Luka najprej pomnoži: $3 \cdot 4 = 12$, nato $2 + 12 = 14$. Če bi vsak bral po svoje, se ne bi razumeli ne ljudje ne računalniki. Zato velja **dogovor o vrstnem redu računskih operacij**. Po njem ima prav Luka.
 

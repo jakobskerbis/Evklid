@@ -82,7 +82,7 @@ Vsota kotov v trikotniku je $180^\circ$, zato je tretji kot $\gamma = 180^\circ 
 
 **7. Obseg.** Če je razmerje podobnosti $k$, so v razmerju $k$ vse ustrezne dolžine, torej tudi obsega: $o' = k \cdot o$. Pri nalepki in letaku je $o = 12\,\text{cm}$ in $o' = 24\,\text{cm}$.
 
-Preizkusi še sam: v simulaciji »Podobni trikotniki« premikaj drsnik $k$ med $0{,}5$ in $2$. Opazuj, da je vsaka stranica slike isto število krat daljša od ustrezne stranice prvotnega lika, oblika pa ostane enaka.
+Preizkusi še sam: v simulaciji »Podobni trikotniki« premikaj drsnik $k$ med $0{,}5$ in $2$. Opazuj, da je vsaka stranica slike $k$-kratnik ustrezne stranice prvotnega lika (pri $k < 1$ je krajša), oblika pa ostane enaka.
 
 ## Rešeni primeri
 
@@ -124,7 +124,7 @@ $k = \dfrac{a'}{a}$, nato $b' = k \cdot b$ in $c' = k \cdot c$
 4. Preizkus: $\dfrac{15}{6} = 2{,}5$ in $\dfrac{20}{8} = 2{,}5$ ✓.
 5. Odgovor: $b' = 15\,\text{cm}$ in $c' = 20\,\text{cm}$.
 
-### Primer 3 (težji): svetlobni trak okrog plakata
+### Primer 3 (težji): svetlobni trak okrog logotipa
 
 Trgovina naroči nov plakat z logotipom z nalepke ($3\,\text{cm}$, $4\,\text{cm}$, $5\,\text{cm}$). Najdaljša stranica logotipa na plakatu naj meri $150\,\text{cm}$. Rob logotipa obrobijo s svetlobnim trakom, ki stane $6\,€$ za meter. Koliko stane trak?
 
@@ -200,7 +200,7 @@ Ali kot recept. Če recept za palačinke za $4$ osebe preračunaš za $8$ oseb, 
 
 ## Drugače: Bolj natančno
 
-**Zakaj zadoščata dva kota (KK)?** Ko poznaš dva kota trikotnika, je tretji natanko določen: $\gamma = 180^\circ - \alpha - \beta$. Če imata dva trikotnika enaka dva kota, imata torej enake vse tri. Trikotniki z enakimi koti pa imajo isto obliko, saj je oblika trikotnika določena z njegovimi koti. Razlikujeta se lahko le v velikosti, zato so stranice sorazmerne.
+**Zakaj zadoščata dva kota (KK)?** Ko poznaš dva kota trikotnika, je tretji natanko določen: $\gamma = 180^\circ - \alpha - \beta$. Če imata dva trikotnika enaka dva kota, imata torej enake vse tri. Trikotniki z enakimi koti pa imajo isto obliko, saj je oblika trikotnika določena z njegovimi koti. Razlikujejo se lahko le v velikosti, zato so stranice sorazmerne.
 
 **Zakaj ni dovolj, da se ujemata samo dve razmerji?** Vzemimo trikotnik $4, 6, 8$. Drugi trikotnik ima prvi dve stranici $6$ in $9$, torej v razmerju $1{,}5$. Njegova tretja stranica ni nujno $12$. Lahko je tudi $13$; takrat je $\dfrac{13}{8} = 1{,}625$ in trikotnika nista podobna. Zato izreka SKS in SsK zahtevata še en podatek o kotu.
 

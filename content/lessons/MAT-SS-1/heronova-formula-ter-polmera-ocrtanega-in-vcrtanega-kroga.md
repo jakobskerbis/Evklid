@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -72,7 +72,7 @@ Zdaj lahko odgovorimo še na drugo vprašanje reševalcev. Oddajnik, enako oddal
 :::premisli
 Ali je lahko $R$ manjši od polovice najdaljše stranice? Zakaj?
 ---
-Ne more. Vsaka stranica je tetiva očrtane krožnice, tetiva pa ni nikoli daljša od premera $2R$. Zato je $R \ge \dfrac{c}{2}$ za najdaljšo stranico $c$; enakost velja le, ko je $c$ premer, torej pri pravokotnem trikotniku.
+Ne more. Vsaka stranica je tetiva očrtane krožnice (daljica med dvema točkama krožnice), tetiva pa ni nikoli daljša od premera $2R$. Zato je $R \ge \dfrac{c}{2}$ za najdaljšo stranico $c$. Enakost velja le, ko je $c$ premer, torej pri pravokotnem trikotniku.
 :::
 
 ## Rešeni primeri
@@ -178,6 +178,86 @@ $r = \dfrac{30}{15} = 2\,\text{km}$ in $R = \dfrac{5 \cdot 12 \cdot 13}{4 \cdot 
 - Preizkus s $3$, $4$, $5$: $S = 6$, $r = 1$, $R = 2{,}5 = \dfrac{c}{2}$.
 - Pri merilu najprej pretvori dolžine; ploščina se poveča s kvadratom merila.
 
+## Ponovitev
+
+**Formule**
+- $s = \frac{a + b + c}{2}$ (na pamet)
+- $S = \sqrt{s(s - a)(s - b)(s - c)}$ (priloga)
+- $r = \frac{S}{s}$ (priloga)
+- $R = \frac{abc}{4S}$ (priloga)
+
+**Postopek**
+1. Izračunaj polobseg $s$.
+2. Izračunaj $S$ s Heronovo formulo (ne pozabi korena).
+3. Polmer včrtane krožnice: $r = \frac{S}{s}$.
+4. Polmer očrtane krožnice: $R = \frac{abc}{4S}$.
+5. Preveri z razmislekom: $R > r$; pri $3$, $4$, $5$ je $S = 6$, $r = 1$.
+
+**Pazi na**
+- V formulo vstavi polobseg $s$, ne obseg $o$ (tudi pri $r$).
+- $s(s - a)(s - b)(s - c)$ je $S^2$: na koncu koreni.
+- $S = \frac{ab}{2}$ velja le za kateti; sicer uporabi Heronovo formulo.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Trikotnik ima stranice $a = 25\,\text{cm}$, $b = 29\,\text{cm}$ in $c = 6\,\text{cm}$. Izračunajte višino $v_c$ na stranico $c$.
+
+**Rešitev:**
+
+1. Polobseg: $s = \dfrac{25 + 29 + 6}{2}\,\text{cm} = 30\,\text{cm}$.
+2. Razlike so $s - a = 5\,\text{cm}$, $s - b = 1\,\text{cm}$ in $s - c = 24\,\text{cm}$, zato je po Heronovi formuli $S = \sqrt{30 \cdot 5 \cdot 1 \cdot 24}\,\text{cm}^2 = \sqrt{3600}\,\text{cm}^2 = 60\,\text{cm}^2$.
+3. Iz $S = \dfrac{c \cdot v_c}{2}$ sledi $v_c = \dfrac{2S}{c} = \dfrac{2 \cdot 60}{6}\,\text{cm} = 20\,\text{cm}$.
+4. Odgovor: višina na stranico $c$ meri $20\,\text{cm}$.
+
+**Točkovanje:** 1 točka za $s = 30\,\text{cm}$, 1 točka za $S = 60\,\text{cm}^2$, 1 točka za $v_c = 20\,\text{cm}$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Trikotno jadro ima stranice $a = 3{,}2\,\text{m}$, $b = 4{,}5\,\text{m}$ in $c = 5{,}1\,\text{m}$.
+
+a) Izračunajte ploščino jadra. Rezultat zaokrožite na stotinko kvadratnega metra. (2 točki)
+b) Na jadro želijo našiti čim večji okrogel znak. Izračunajte njegov polmer. Rezultat zaokrožite na centimeter. (2 točki)
+c) Izračunajte polmer jadru očrtane krožnice. Rezultat zaokrožite na centimeter. (2 točki)
+d) Utemeljite, ali središče očrtane krožnice leži znotraj jadra. (1 točka)
+
+**Rešitev:**
+
+1. a) Polobseg: $s = \dfrac{3{,}2 + 4{,}5 + 5{,}1}{2}\,\text{m} = 6{,}4\,\text{m}$.
+2. a) Razlike: $s - a = 3{,}2\,\text{m}$; $s - b = 1{,}9\,\text{m}$; $s - c = 1{,}3\,\text{m}$.
+3. a) $S = \sqrt{6{,}4 \cdot 3{,}2 \cdot 1{,}9 \cdot 1{,}3}\,\text{m}^2 = \sqrt{50{,}5856}\,\text{m}^2 \approx 7{,}1124\,\text{m}^2 \approx 7{,}11\,\text{m}^2$.
+4. b) Največji krog v trikotniku je včrtani krog: $r = \dfrac{S}{s} \approx \dfrac{7{,}1124}{6{,}4}\,\text{m} \approx 1{,}1113\,\text{m} \approx 1{,}11\,\text{m}$.
+5. c) $R = \dfrac{abc}{4S} \approx \dfrac{3{,}2 \cdot 4{,}5 \cdot 5{,}1}{4 \cdot 7{,}1124}\,\text{m} \approx \dfrac{73{,}44}{28{,}4494}\,\text{m} \approx 2{,}5814\,\text{m} \approx 2{,}58\,\text{m}$.
+6. d) Najdaljša stranica je $c$: $c^2 = 26{,}01 < a^2 + b^2 = 10{,}24 + 20{,}25 = 30{,}49$. Kot $\gamma$ nasproti najdaljše stranice je zato oster, druga dva kota sta manjša od njega. Jadro je ostrokoten trikotnik, zato središče očrtane krožnice leži znotraj jadra.
+7. Odgovor: a) jadro meri približno $7{,}11\,\text{m}^2$; b) znak ima lahko polmer približno $1{,}11\,\text{m}$; c) polmer očrtane krožnice je približno $2{,}58\,\text{m}$; d) središče očrtane krožnice leži znotraj jadra, ker je jadro ostrokotno.
+
+**Točkovanje:** a) 1 točka za $s = 6{,}4\,\text{m}$ in 1 točka za $S \approx 7{,}11\,\text{m}^2$; b) 1 točka za prepoznan včrtani krog in zvezo $r = \dfrac{S}{s}$, 1 točka za $r \approx 1{,}11\,\text{m}$; c) 1 točka za pravilno vstavljanje v $R = \dfrac{abc}{4S}$, 1 točka za $R \approx 2{,}58\,\text{m}$; d) 1 točka za utemeljitev, da je trikotnik ostrokoten, in sklep, da središče leži znotraj jadra.
+
+### Ustno vprašanje 1
+
+:::premisli
+Izpelji formulo $r = \dfrac{S}{s}$ za polmer trikotniku včrtane krožnice.
+---
+Središče $I$ včrtane krožnice je od vseh treh stranic oddaljeno za $r$. Ko $I$ povežemo z oglišči, trikotnik razpade na tri trikotnike z osnovnicami $a$, $b$, $c$ in skupno višino $r$. Ploščina trikotnika je vsota njihovih ploščin: $S = \dfrac{ar}{2} + \dfrac{br}{2} + \dfrac{cr}{2} = r \cdot \dfrac{a + b + c}{2} = r \cdot s$. Od tod sledi $r = \dfrac{S}{s}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Zapiši Heronovo formulo, pojasni oznake v njej in povej, kaj pokaže formula, če tri dolžine ne zadoščajo trikotniški neenakosti.
+---
+Heronova formula je $S = \sqrt{s(s - a)(s - b)(s - c)}$, kjer so $a$, $b$, $c$ stranice trikotnika in $s = \dfrac{a + b + c}{2}$ njegov polobseg. Z njo izračunamo ploščino trikotnika samo iz treh stranic, brez višine in kotov. Če je ena dolžina večja od vsote drugih dveh, je ustrezna razlika, na primer $s - c$, negativna in pod korenom je negativno število, zato trikotnik s temi stranicami ne obstaja. Če je ena dolžina enaka vsoti drugih dveh, dobimo $S = 0$, ker ležijo vse tri točke na isti premici.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer trikotnika, pri katerem je polmer očrtane krožnice enak polovici ene od stranic, in pojasni, zakaj je tako.
+---
+Primer je pravokotni trikotnik s stranicami $3$, $4$ in $5$: zanj je $S = 6$ in $R = \dfrac{3 \cdot 4 \cdot 5}{4 \cdot 6} = 2{,}5$, kar je polovica hipotenuze. Po Talesovem izreku leži oglišče pravega kota na krožnici, ki ima hipotenuzo za premer. Ta krožnica gre skozi vsa tri oglišča, zato je očrtana in velja $R = \dfrac{c}{2}$. Pri drugih trikotnikih je vsaka stranica tetiva, krajša od premera, zato je $R$ večji od polovice vsake stranice.
+:::
+
 ## Drugače: Kot zgodba
 
 V starem Egiptu je Nil vsako leto poplavil polja in izbrisal meje. Merilci so jih znova zakoličili z vrvmi. Dolžino vrvi med dvema količkoma je bilo lahko izmeriti, višino trikotne njive pa ne: treba bi bilo poiskati pravi kot sredi blatnega polja.
@@ -211,7 +291,7 @@ Kontrola z višino: višina $12$ na stranico $14$ jo razdeli na $5$ in $9$, saj 
 > $\dfrac{ab}{2}$ velja le, če sta $a$ in $b$ kateti pravokotnega trikotnika.
 
 ? Vse tri stranice trikotnika podvojimo. Kolikokrat se poveča ploščina?
-= 4
+= 4 | 0
 ~ 2 | Podvojijo se dolžine, ploščina pa raste s kvadratom: $2^2 = 4$.
 ~ 16 | Pod korenom se res pojavi faktor $16$, a ploščina je koren tega: $\sqrt{16} = 4$.
 ~ 8 | Faktor $8$ velja za prostornino teles, ne za ploščino.
@@ -289,4 +369,14 @@ vrednost: 13*14*15/(4*84) | 8.125
 vrednost: 84/21 | 4
 vrednost: sqrt(13^2-5^2) | 12
 vrednost: sqrt(15^2-9^2) | 12
+vrednost: (25+29+6)/2 | 30
+vrednost: sqrt(30*5*1*24) | 60
+vrednost: 2*60/6 | 20
+vrednost: (3.2+4.5+5.1)/2 | 6.4
+vrednost: 6.4*3.2*1.9*1.3 | 50.5856
+vrednost: sqrt(6.4*3.2*1.9*1.3) | 7.11
+vrednost: sqrt(6.4*3.2*1.9*1.3)/6.4 | 1.11
+vrednost: 3.2*4.5*5.1/(4*sqrt(6.4*3.2*1.9*1.3)) | 2.58
+vrednost: 3.2^2+4.5^2 | 30.49
+vrednost: 5.1^2 | 26.01
 >>

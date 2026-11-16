@@ -122,8 +122,8 @@ Torej so $\dfrac{3}{4}$ od $20\,€$ enake $15\,€$. Pravilo: delimo z imenoval
 
 Maja v trgovini kupi čokolado z $12$ enakimi kockami, razporejenimi v $3$ vrstice po $4$ kocke. Doma poje $5$ kock. Kolikšen del čokolade je pojedla in kolikšen del je ostal? Oba ulomka zapiši in ju preberi.
 
-**Podatki:** vseh enakih kock $12$ ($3$ vrstice po $4$ kocke), pojedanih kock $5$
-**Iščemo:** ulomek pojedanega dela in ulomek ostanka
+**Podatki:** vseh enakih kock $12$ ($3$ vrstice po $4$ kocke), pojedenih kock $5$
+**Iščemo:** ulomek pojedenega dela in ulomek ostanka
 
 :::formula
 $\dfrac{\text{število izbranih delov}}{\text{število vseh enakih delov}}$
@@ -132,9 +132,9 @@ $\dfrac{\text{število izbranih delov}}{\text{število vseh enakih delov}}$
 **Rešitev:**
 
 1. Celota je cela čokolada, razdeljena na $12$ enakih delov (kock), zato je imenovalec $12$.
-2. Maja je pojedla $5$ kock, zato je števec $5$. Pojedan del je $\dfrac{5}{12}$, beremo »pet dvanajstin«.
+2. Maja je pojedla $5$ kock, zato je števec $5$. Pojeden del je $\dfrac{5}{12}$, beremo »pet dvanajstin«.
 3. Ostalo je $12 - 5 = 7$ kock, zato je ostanek $\dfrac{7}{12}$, beremo »sedem dvanajstin«.
-4. Preverimo: pojedanih in ostalih kock je skupaj $5 + 7 = 12$, to je vsa čokolada.
+4. Preverimo: pojedenih in ostalih kock je skupaj $5 + 7 = 12$, to je vsa čokolada.
 5. Odgovor: Maja je pojedla $\dfrac{5}{12}$ čokolade, ostalo je $\dfrac{7}{12}$.
 
 ### Primer 2 (srednji)

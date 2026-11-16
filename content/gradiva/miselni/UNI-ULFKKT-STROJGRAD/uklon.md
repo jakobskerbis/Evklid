@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Uklon
+  - vitka stisnjena palica se izboči vstran
+  - odloča togost $EI$, ne trdnost
+  - napaka: »preveriš samo $\sigma = F/A$«
+- Kritična sila
+  - najmanjša sila z ukrivljeno ravnovesno lego
+  - $F < F_{kr}$ stabilno, $F > F_{kr}$ labilno
+- Eulerjeva formula
+  - $F_{kr} = \pi^2 E I/L^2$ za členkasto palico
+  - iz $w'' + k^2 w = 0$, $kL = n\pi$
+  - jeklo $d = 10\,\mathrm{mm}$, $L = 1\,\mathrm{m}$: $969\,\mathrm{N}$
+- Uklonska dolžina
+  - $L_u = \beta L$, $F_{kr} = \pi^2 E I/L_u^2$
+  - $\beta$: konzola $2$, členkasto $1$
+  - vpeto–členkasto $\approx 0{,}7$, vpeto–vpeto $0{,}5$
+- Šibkejša os
+  - vedno najmanjši $I$, krog $I = \pi d^4/64$
+  - napaka: polarni $J = 2I$ namesto $I$
+  - različne podpore: računaj obe smeri
+- Vitkost
+  - $\lambda = L_u/i$, $i = \sqrt{I/A}$
+  - $\sigma_{kr} = \pi^2 E/\lambda^2$
+- Veljavnost Eulerja
+  - $\lambda \ge \lambda_P = \pi\sqrt{E/\sigma_P}$, jeklo okoli $100$
+  - kratke palice: Tetmajer ali Evrokod 3
+- Kaj pomaga
+  - večji $I$ ali krajša $L_u$
+  - dražje jeklo ne: $E \approx 200\,\mathrm{GPa}$

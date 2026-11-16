@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zgradba pole
+  - $90$ minut, $60$ točk, priloga s formulami
+  - pola 1 brez računala, pola 2 z osnovnim računalom
+  - osnovna: $8$ kratkih ($20$) in $6$ krajših ($40$)
+  - višja: $6$ krajših in $2$ strukturirani po $9$–$11$
+- Minuta in pol
+  - $m = 1{,}5 \cdot k$ minut za $k$ točk
+  - z rezervo $15$ minut: $1{,}25$ minute na točko
+- Vrstni red
+  - najprej preleti polo: ✓, ?, ✗
+  - pravilo preskoka: po dvojnem času naprej
+- Točke za korake
+  - nastavek, vmesni rezultat, rezultat
+  - napaka: samo rezultat brez poti
+- Odgovor na vprašanje
+  - stavek z enoto: »ob 12. uri«, ne $t = 6$
+  - pola 2: zaokroži, kot zahteva naloga
+- Iz besed v orodje
+  - pravokotna: $\vec a \cdot \vec b = 0$
+  - deljiv z $x - a$: $p(a) = 0$
+- Preverjanje
+  - vstavi nazaj, preveri pogoje
+  - napaka: lažna rešitev (imenovalec $0$, logaritem)
+- Ko obtičiš
+  - zapiši podatke in nastavek
+  - del b) poskusi tudi brez a)

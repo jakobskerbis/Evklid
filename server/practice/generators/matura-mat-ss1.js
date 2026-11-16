@@ -74,7 +74,7 @@ const GENS = [
   // ---------------- kartezični produkt in potenčna množica ----------------
   {
     id: P + "kartezicni-produkt",
-    topics: [T("kartezicni-produkt-in-potencna-mnozica")],
+    topics: [T("kartezicni-produkt-in-potencna-mnozica"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const PF = "|A \\times B| = |A| \\cdot |B|";
       const PP = "|\\mathcal{P}(A)| = 2^{|A|}";
@@ -346,7 +346,7 @@ const GENS = [
   // ---------------- dvojiški sestav ----------------
   {
     id: P + "dvojiski-sestav",
-    topics: [T("dvojiski-stevilski-sestav")],
+    topics: [T("dvojiski-stevilski-sestav"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const FB = "a_k \\ldots a_1 a_0{}_{(2)} = a_k \\cdot 2^k + \\ldots + a_1 \\cdot 2 + a_0";
       const expand = (s) => {
@@ -559,7 +559,7 @@ const GENS = [
   // ---------------- približki ter absolutna in relativna napaka ----------------
   {
     id: P + "priblizki-napake",
-    topics: [T("priblizki-ter-absolutna-in-relativna-napaka")],
+    topics: [T("priblizki-ter-absolutna-in-relativna-napaka"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const FA = "\\Delta x = |\\bar{x} - x|";
       const FR = "\\delta x = \\frac{\\Delta x}{|x|} \\cdot 100\\ \\%";
@@ -842,7 +842,7 @@ const GENS = [
   // ---------------- razstavljanje vsote in razlike potenc ----------------
   {
     id: P + "vsota-razlika-potenc",
-    topics: [T("razstavljanje-vsote-in-razlike-potenc")],
+    topics: [T("razstavljanje-vsote-in-razlike-potenc"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const F3 = ["a^3 - b^3 = (a - b)(a^2 + ab + b^2)", "a^3 + b^3 = (a + b)(a^2 - ab + b^2)"];
       const px = (p) => (p === 1 ? "x" : `${p}x`);
@@ -1091,7 +1091,7 @@ const GENS = [
   // ---------------- enačbe, neenačbe in sistemi s parametrom ----------------
   {
     id: P + "parameter",
-    topics: [T("enacbe-neenacbe-in-sistemi-s-parametrom")],
+    topics: [T("enacbe-neenacbe-in-sistemi-s-parametrom"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const FE = ["ax = b,\\ a \\ne 0: x = \\frac{b}{a}", "a = 0,\\ b \\ne 0: \\text{ni rešitve}", "a = 0,\\ b = 0: x \\in \\mathbb{R}"];
       const FN = ["ax > b,\\ a > 0: x > \\frac{b}{a}", "ax > b,\\ a < 0: x < \\frac{b}{a}"];
@@ -1323,7 +1323,7 @@ const GENS = [
   // ---------------- Gaussova metoda in sistemi linearnih neenačb ----------------
   {
     id: P + "gauss-neenacbe",
-    topics: [T("gaussova-metoda-in-sistemi-linearnih-neenacb")],
+    topics: [T("gaussova-metoda-in-sistemi-linearnih-neenacb"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const FG = ["\\text{trikotna oblika: odstrani } x \\text{ iz 2. in 3. enačbe, nato } y \\text{ iz 3.}", "\\text{nato vstavljaj nazaj: } z \\to y \\to x"];
       // Gaussova eliminacija za sistem s celimi koeficienti, 1. enačba ima pri x koeficient 1.

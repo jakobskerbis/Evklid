@@ -1,16 +1,28 @@
 /* Uči se (#view-uci, public/uci-se.js): preklopnik Učbenik | Laboratorij | 3D svet nad zavihkom, ki se pomika sam.
-   Vsak zavihek je svoj drsni del (.narrow), zato preklopnik ostane na vrhu in vsak zavihek obdrži svoj položaj. */
-.uci-view { display: flex; flex-direction: column; min-width: 0; }
-.uci-head { flex: none; display: flex; justify-content: center; padding: 16px 16px 0; }
-.uci-pane { flex: 1; min-height: 0; }
-.uci-pane.narrow { padding-top: 18px; }
+   Vsak zavihek je svoj drsni del (.narrow), zato preklopnik ostane na vrhu in vsak zavihek obdrži svoj položaj.
+   Preklopnik plava nad zavihkom (j 2026-11-14: besedilo naj se ob pomikanju ne odreže že v vrstici z gumbi):
+   zavihek se pomika do vrha pogleda, --uci-head-h (višina preklopnika, uci-se.js) mu doda prostor na začetku. */
+.uci-view { display: flex; flex-direction: column; min-width: 0; position: relative; }
+.uci-head { position: absolute; inset: 0 0 auto; z-index: 4; display: flex; justify-content: center; padding: 16px 16px 0; pointer-events: none; }
+/* Pas s preklopnikom je neprosojen do spodnjega roba gumbov (j 2026-11-15): vsebina, ki se pomika pod njim, se ne
+   vidi med glavo in gumbi ali ob njih. Pod gumbi se izgubi v kratkem prehodu, ne z ostrim robom. */
+.uci-head { background: var(--bg); }
+.uci-head::after { content: ""; position: absolute; inset: 100% 0 auto; height: 14px; background: linear-gradient(var(--bg), transparent); pointer-events: none; }
+.uci-head > .seg { pointer-events: auto; box-shadow: 0 4px 16px rgb(0 0 0 / 0.22); }
+.uci-pane { flex: 1; min-height: 0; scroll-padding-top: var(--uci-head-h, 0px); }
+.uci-pane.narrow { padding-top: calc(var(--uci-head-h, 0px) + 18px); }
+/* Stranski del lekcije (graf), ki med pomikanjem obstane, se ustavi pod preklopnikom. */
+@media (min-width: 1200px), (min-width: 1000px) and (hover: none) and (pointer: coarse) {
+  .uci-view .tb-lesson-grid.has-side .tb-side { top: var(--uci-head-h, 0px); max-height: calc(100dvh - 120px - var(--uci-head-h, 0px)); }
+  .uci-view .tb-lesson-grid.has-side:has(+ .tb-stepper) .tb-side { max-height: calc(100dvh - 206px - var(--uci-head-h, 0px)); }
+}
 /* Ime zavihka je v preklopniku: naslov zavihka ostane le za bralnike zaslona. */
 .uci-view .tb-head > h1, .uci-view .lab-h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 /* Uvodna vrstica pod preklopnikom na istem mestu v vseh treh zavihkih (brez zgornjega roba odstavka). */
 .uci-view .tb-head > h1 + p { margin-top: 0; }
 @media (max-width: 760px) {
-  .uci-head { padding: 12px 16px 0; }
-  .uci-pane.narrow { padding-top: 14px; }
+  .uci-head { padding: 8px 16px 0; }
+  .uci-pane.narrow { padding-top: calc(var(--uci-head-h, 0px) + 14px); }
   /* Preklopnik čez celo širino brez vodoravnega drsenja tudi v daljših jezikih (»Kitabu cha kiada«, »Phòng thí
      nghiệm«): ime iz več besed gre v dve vrstici, posamezna beseda se ne lomi. */
   .uci-tabs > button { flex: 1 1 auto; min-width: min-content; white-space: normal; text-wrap: balance; line-height: 1.15; text-align: center; padding-inline: 10px !important; }

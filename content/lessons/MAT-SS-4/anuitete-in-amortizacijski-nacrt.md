@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -79,9 +79,9 @@ Ker $5\,\%$ obresti velja le za prvo leto od celih $4000$ €. Vsaka anuiteta zm
 - **razdolžnina** (del anuitete, ki zmanjša dolg): $R_k = a - o_k$,
 - nov ostanek dolga: $D_k = D_{k-1} - R_k$.
 
-Za teleskop ($a = 1128{,}05$ € v vsakem letu, zneski v evrih):
+Za teleskop ($a = 1128{,}05$ € v vsakem letu, zneski v evrih) so v vrstici leta $k$ obresti $o_k$, razdolžnina $R_k$ in ostanek $D_k$:
 
-| leto $k$ | obresti $o_k$ | razdolžnina $R_k$ | ostanek $D_k$ |
+| $k$ | $o_k$ | $R_k$ | $D_k$ |
 |---|---|---|---|
 | 0 | – | – | 4000,00 |
 | 1 | 200,00 | 928,05 | 3071,95 |
@@ -134,13 +134,13 @@ $o_k = D_{k-1} \cdot \dfrac{p}{100}$, $R_k = a - o_k$, $D_k = D_{k-1} - R_k$
 3. Tretje leto: $o_3 = 935{,}52 \cdot 0{,}04 \approx 37{,}42$, $R_3 = 972{,}94 - 37{,}42 = 935{,}52$. To je ravno $D_2$, zato je $D_3 = 0$.
 4. Preizkus: razdolžnine skupaj dajo posojilo, $864{,}94 + 899{,}54 + 935{,}52 = 2700$; obresti $108 + 73{,}40 + 37{,}42 = 218{,}82$ se ujemajo s primerom 1, kjer je $2918{,}82 - 2700 = 218{,}82$.
 
-| leto $k$ | $o_k$ | $R_k$ | $D_k$ |
-|---|---|---|---|
-| 1 | 108,00 | 864,94 | 1835,06 |
-| 2 | 73,40 | 899,54 | 935,52 |
-| 3 | 37,42 | 935,52 | 0,00 |
+5. Odgovor: načrt je v tabeli spodaj (vrstice so po vrsti leta $k = 1$, $2$ in $3$); dolg se po treh letih zapre natanko z $0$.
 
-5. Odgovor: načrt je v tabeli; dolg se po treh letih zapre natanko z $0$.
+| $o_k$ | $R_k$ | $D_k$ |
+|---|---|---|
+| 108,00 | 864,94 | 1835,06 |
+| 73,40 | 899,54 | 935,52 |
+| 37,42 | 935,52 | 0,00 |
 
 ### Primer 3 (težji): koliko si društvo lahko izposodi
 
@@ -201,11 +201,32 @@ $D_3 = 3811{,}2512 - 2418{,}4854 \approx 1392{,}77$ €. Preizkus: $\dfrac{759{,
 - Amortizacijski načrt: $o_k = D_{k-1} \cdot \frac{p}{100}$, $R_k = a - o_k$, $D_k = D_{k-1} - R_k$; zadnja vrstica se zapre z $D_n = 0$.
 - Obresti padajo, razdolžnine rastejo s faktorjem $r$; vsota razdolžnin je posojilo.
 
+## Ponovitev
+
+**Formule**
+- $r = 1 + \frac{p}{100}$ (na pamet)
+- $a = G_0 \cdot \frac{r^n (r - 1)}{r^n - 1}$ (na pamet)
+- $D_k = G_0 r^k - a \cdot \frac{r^k - 1}{r - 1}$ (na pamet)
+- $o_k = D_{k-1} \cdot \frac{p}{100}$, $R_k = a - o_k$ (na pamet)
+- $D_k = D_{k-1} - R_k$ (na pamet)
+
+**Postopek**
+1. Iz $p$ izračunaj $r$ in določi število obdobij $n$.
+2. Vsa plačila preračunaj na isti trenutek in zapiši enačbo ekvivalence.
+3. Iz nje izračunaj anuiteto $a$.
+4. V načrtu vsako leto izračunaj $o_k$, nato $R_k$ in $D_k$.
+5. Preveri: zadnja vrstica da $D_n = 0$, vsota razdolžnin je posojilo.
+
+**Pazi na**
+- Obresti računaj vsako leto od ostanka $D_{k-1}$, ne od celega posojila.
+- Pri anuitetah so obroki enaki, razdolžnine rastejo: posojila ne deli z $n$.
+- Ne zaokrožuj prezgodaj: na cente zaokroži šele zneske v načrtu.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Posojilo odplačujemo z letnimi anuitetami po $3630$ € pri letni obrestni meri $10\,\%$. Po plačilu 4. anuitete je ostanek dolga $6300$ €. Izračunaj obresti in razdolžnino v 5. letu ter ostanek dolga po 5. letu.
+Posojilo odplačujemo z letnimi anuitetami po $3630$ € pri letni obrestni meri $10\,\%$. Po plačilu 4. anuitete je ostanek dolga $6300$ €. Izračunajte obresti in razdolžnino v 5. letu ter ostanek dolga po 5. letu.
 
 **Rešitev:**
 
@@ -219,11 +240,11 @@ Posojilo odplačujemo z letnimi anuitetami po $3630$ € pri letni obrestni meri
 
 ### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
 
-Posojilo $15\,000$ € odplačujemo s petimi enakimi letnimi anuitetami; prvo plačamo leto po najemu. Letna obrestna mera je $4{,}5\,\%$, obrestovanje je letno. Zneske zaokroži na cente.
+Posojilo $15\,000$ € odplačujemo s petimi enakimi letnimi anuitetami; prvo plačamo leto po najemu. Letna obrestna mera je $4{,}5\,\%$, obrestovanje je letno. Zneske zaokrožite na cente.
 
-a) Izračunaj anuiteto. (2 točki)
-b) Sestavi prvi dve vrstici amortizacijskega načrta: obresti, razdolžnino in ostanek dolga za 1. in 2. leto. (3 točke)
-c) Banka ponudi tudi odlog: prvo od petih enakih anuitet plačamo šele dve leti po najemu, nato vsako leto po eno. Kolikšna bi bila tedaj anuiteta? Utemelji z načelom ekvivalence glavnic. (2 točki)
+a) Izračunajte anuiteto. (2 točki)
+b) Sestavite prvi dve vrstici amortizacijskega načrta: obresti, razdolžnino in ostanek dolga za 1. in 2. leto. (3 točke)
+c) Banka ponudi tudi odlog: prvo od petih enakih anuitet plačamo šele dve leti po najemu, nato vsako leto po eno. Kolikšna bi bila tedaj anuiteta? Utemeljite z načelom ekvivalence glavnic. (2 točki)
 
 **Rešitev:**
 
@@ -232,11 +253,13 @@ c) Banka ponudi tudi odlog: prvo od petih enakih anuitet plačamo šele dve leti
 3. b) 1. leto: $o_1 = 15\,000 \cdot 0{,}045 = 675$; $R_1 = 3416{,}87 - 675 = 2741{,}87$; $D_1 = 15\,000 - 2741{,}87 = 12\,258{,}13$.
 4. b) 2. leto: $o_2 = 12\,258{,}13 \cdot 0{,}045 \approx 551{,}62$; $R_2 = 3416{,}87 - 551{,}62 = 2865{,}25$; $D_2 = 12\,258{,}13 - 2865{,}25 = 9392{,}88$.
 
-| leto $k$ | $o_k$ | $R_k$ | $D_k$ |
-|---|---|---|---|
-| 0 | – | – | 15 000,00 |
-| 1 | 675,00 | 2741,87 | 12 258,13 |
-| 2 | 551,62 | 2865,25 | 9392,88 |
+Prvi dve leti načrta (vsako leto je tu en stolpec, na začetku je $D_0 = 15\,000$ €):
+
+| | 1. leto | 2. leto |
+|---|---|---|
+| $o_k$ | 675,00 | 551,62 |
+| $R_k$ | 2741,87 | 2865,25 |
+| $D_k$ | 12 258,13 | 9392,88 |
 
 5. c) Do konca 1. leta se posojilo le obrestuje in naraste na $15\,000 \cdot 1{,}045 = 15\,675$ €. Od tega trenutka naprej je položaj enak kot pri posojilu $15\,675$ € s petimi anuitetami, ki se začnejo leto pozneje.
 6. c) Po načelu ekvivalence glavnic je $a' = 15\,675 \cdot \dfrac{1{,}24618194 \cdot 0{,}045}{0{,}24618194} \approx 3570{,}63$, torej $3570{,}63$ € (to je $a \cdot 1{,}045$).

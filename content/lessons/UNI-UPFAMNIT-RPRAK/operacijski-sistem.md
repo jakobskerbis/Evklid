@@ -181,7 +181,7 @@ $n_\mathrm{b} = \left\lceil \dfrac{s}{B} \right\rceil$; zasedeno $= N\,n_\mathrm
 :::premisli
 Koliko je zasedenega in koliko neizkoriščenega prostora?
 ---
-Ena datoteka zasede $3 \cdot 4096 = 12\,288\,\mathrm{B}$, neizkoriščenih je $2288\,\mathrm{B}$. Vseh $1000$ zasede $12\,288\,000\,\mathrm{B}$ (okoli $12{,}3\,\mathrm{MB}$), od tega je okoli $2{,}3\,\mathrm{MB}$ ali $19\,\%$ neizkoriščeno. Pri mnogo majhnih datotekah je bolje meritve zbirati v manj večjih datotek.
+Ena datoteka zasede $3 \cdot 4096 = 12\,288\,\mathrm{B}$, neizkoriščenih je $2288\,\mathrm{B}$. Vseh $1000$ zasede $12\,288\,000\,\mathrm{B}$ (okoli $12{,}3\,\mathrm{MB}$), od tega je okoli $2{,}3\,\mathrm{MB}$ ali $19\,\%$ neizkoriščeno. Pri mnogih majhnih datotekah je bolje meritve zbirati v manj večjih datotek.
 :::
 
 ## Pogoste napake

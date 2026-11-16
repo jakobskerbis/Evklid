@@ -7,11 +7,14 @@
   <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
   <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
-  <script src="theme.js"></script>
+  <script src="/v-aplikaciji.js"></script>
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="vendor/instrument-sans/index.css">
-  <link rel="stylesheet" href="vendor/nunito/index.css">
-  <link rel="stylesheet" href="vendor/ibm-plex-sans/index.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/predstavitev.css">
+  <link rel="stylesheet" href="/videz-naprave.css">
   <link rel="stylesheet" href="tipkovnica.css">
   <style>
     body { display: block; }
@@ -26,14 +29,29 @@
 </head>
 <body>
 <div class="doc">
-  <p><a href="/">← Evklid</a></p>
+  <header class="mkt-top">
+    <a class="mkt-brand" href="/" aria-label="Evklid – na začetno stran"><img src="/icons/favicon.svg?v=kristal" alt="" width="28" height="28"><span class="mkt-name">Evkli<span>d</span></span></a>
+    <nav class="mkt-nav" aria-label="Glavni meni">
+      <a href="/zakaj-evklid">Zakaj Evklid</a>
+      <a href="/o-evklidu#cene">Cene</a>
+      <a href="/starsi.html" aria-current="page">Za starše</a>
+      <a href="/sole">Za šole</a>
+    </nav>
+    <a class="mkt-cta" href="/">Preizkusite brezplačno</a>
+  </header>
+  <ul class="mkt-trust" aria-label="Zasebnost na kratko">
+    <li>Strežnik in baza v EU (Frankfurt)</li>
+    <li>Brez oglasov in sledilnikov</li>
+    <li>Anthropic podatkov ne uporablja za učenje modelov</li>
+    <li><a href="/zasebnost.html">Več o zasebnosti</a></li>
+  </ul>
   <h1>Evklid za starše</h1>
-  <p class="ask" id="ask">Vaš otrok bi rad uporabljal Evklid. Ker je mlajši od starosti, pri kateri lahko sam privoli v obdelavo osebnih podatkov (v Sloveniji 15 let), potrebuje vaše soglasje. Na tej strani je vse, kar potrebujete za odločitev.</p>
+  <p class="ask" id="ask" hidden>Vaš otrok bi rad uporabljal Evklid. Ker je mlajši od starosti, pri kateri lahko sam privoli v obdelavo osebnih podatkov (v Sloveniji 15 let), potrebuje vaše soglasje. Na tej strani je vse, kar potrebujete za odločitev.</p>
   <p><a class="cta" id="cta" href="/?starsi=1">Ustvari račun in dodaj otroka</a></p>
 
   <h2>Kaj je Evklid</h2>
   <ul>
-    <li>Inštruktor AI za <b>matematiko, fiziko in kemijo</b> za osnovno in srednjo šolo ter fakulteto.</li>
+    <li>Inštruktor AI za <b>matematiko, fiziko, kemijo, biologijo in naravoslovje</b> za osnovno in srednjo šolo ter fakulteto.</li>
     <li><b>Učna pot</b> po slovenskem učnem načrtu: lekcije v učbeniku, naloge s takojšnjim preverjanjem in namigi, simulacije.</li>
     <li><b>Inštruktor</b> razloži snov korak za korakom in otroka vodi do rešitve. Otrok lahko fotografira nalogo iz zvezka.</li>
     <li>Ponavljanje v presledkih, vaje za preizkuse znanja, NPZ in maturo ter tekmovanja.</li>
@@ -52,6 +70,8 @@
     <tr><th>Vi</th><td>e-naslov, ime (neobvezno), datum rojstva, geslo (samo zgoščeno), soglasja, stanje naročnine. Kartico obdeluje Stripe, mi je ne vidimo.</td></tr>
     <tr><th>Otrok</th><td>ime ali vzdevek, letnica rojstva, šola in razred, pogovori z inštruktorjem, fotografije nalog, rešene naloge in napredek.</td></tr>
   </table>
+  <h3 id="fotografija">Kaj se zgodi s fotografijo naloge</h3>
+  <p>Ko otrok fotografira nalogo, fotografijo prebere model umetne inteligence podjetja Anthropic (ZDA), ki pripravi tudi odgovore inštruktorja. Po pogodbenih pogojih Anthropic teh podatkov ne uporablja za učenje modelov, prenos v ZDA pa poteka na podlagi okvira EU-ZDA za zasebnost podatkov ali standardnih pogodbenih klavzul Evropske komisije. Fotografijo hranimo največ, dokler imate račun: ko izbrišete otrokov profil ali račun, jo takoj izbrišemo iz baze, iz varnostnih kopij pa najpozneje v 30 dneh (<a href="/zasebnost.html">obvestilo o varstvu osebnih podatkov</a>).</p>
   <ul>
     <li>Podatkov ne prodajamo in jih ne uporabljamo za oglaševanje. Odgovore pripravi model AI podjetja Anthropic, ki teh podatkov ne uporablja za učenje modelov.</li>
     <li>Vse podatke lahko kadar koli prenesete (zavihek Račun) ali izbrišete. Z izbrisom profila prekličete soglasje.</li>

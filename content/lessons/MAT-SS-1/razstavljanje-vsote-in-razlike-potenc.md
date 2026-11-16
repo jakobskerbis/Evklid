@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -206,6 +206,112 @@ $31$ je prvi faktor, drugi faktor pa je $33 = 3 \cdot 11$. Torej je $1023 = 3 \c
 - (višja raven) $a^2 + b^2$ in $a^4 + b^4$ nimata faktorja $a \pm b$. Uporaba: krajšanje ulomkov, npr. $\dfrac{x^5 - 1}{x - 1}$.
 - Pri razliki sodih potenc najprej razlika kvadratov ($x^6 - 1$). Deljivost: $2^{10} - 1 = 31 \cdot 33$, $1001 = 7 \cdot 11 \cdot 13$.
 
+## Ponovitev
+
+**Formule**
+- $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$ (priloga)
+- $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$ (priloga)
+- $a^2 - b^2 = (a - b)(a + b)$ (na pamet)
+- $a^n - b^n = (a - b)(a^{n-1} + \ldots + b^{n-1})$ (priloga, višja raven)
+- $a^n + b^n = (a + b)(a^{n-1} - \ldots + b^{n-1})$ le za lih $n$ (priloga, višja raven)
+
+**Postopek**
+1. Najprej izpostavi skupni faktor.
+2. Prepoznaj kube in zapiši $a$ in $b$, npr. $8x^3 = (2x)^3$, $27 = 3^3$.
+3. Pri sodem eksponentu začni z razliko kvadratov.
+4. Vstavi v obrazec: v prvem oklepaju znak naloge, srednji člen nasproten, zadnji vedno plus.
+5. Drugi oklepaj $a^2 \pm ab + b^2$ pusti, z realnimi števili se ne razstavi naprej.
+6. Preveri z množenjem.
+
+**Pazi na**
+- $a^3 + b^3 \neq (a + b)^3$: prav je $(a + b)(a^2 - ab + b^2)$.
+- Srednji člen je $ab$ z nasprotnim znakom, ne $2ab$: $x^3 + 8 = (x + 2)(x^2 - 2x + 4)$.
+- Nedokončan razcep: $x^6 - 1$ razstavi najprej kot razliko kvadratov $(x^3 - 1)(x^3 + 1)$, nato vsak oklepaj s kubi.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Razstavite izraz $(x + 1)^3 - 8$ in drugi faktor zapišite kot urejen tričlenik.
+
+**Rešitev:**
+
+1. Izraz je razlika kubov $a^3 - b^3$, kjer je $a = x + 1$ in $b = 2$, saj je $8 = 2^3$.
+2. Po obrazcu: $(x + 1)^3 - 2^3 = \big[(x + 1) - 2\big]\big[(x + 1)^2 + 2(x + 1) + 4\big]$.
+3. Poenostavimo: prvi faktor je $x - 1$, drugi $x^2 + 2x + 1 + 2x + 2 + 4 = x^2 + 4x + 7$.
+4. Preizkus pri $x = 2$: izvirni izraz je $27 - 8 = 19$, razcep pa $1 \cdot (4 + 8 + 7) = 19$.
+5. Odgovor: $(x + 1)^3 - 8 = (x - 1)(x^2 + 4x + 7)$.
+
+**Točkovanje:** 1 točka za prepoznavo razlike kubov z $a = x + 1$ in $b = 2$, 1 točka za pravilno zapisan obrazec, 1 točka za poenostavljen razcep $(x - 1)(x^2 + 4x + 7)$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Dana sta izraza $A = 8x^3 + 1$ in $B = 4x^2 - 1$.
+
+a) Razstavite izraz $A$. (2 točki)
+b) Razstavite izraz $B$ in zapišite skupni faktor izrazov $A$ in $B$. (2 točki)
+c) Okrajšajte ulomek $\dfrac{A}{B}$, zapišite, za katere $x$ je definiran, in izračunajte njegovo vrednost pri $x = 2$. (2 točki)
+
+**Rešitev:**
+
+1. a) $8x^3 = (2x)^3$ in $1 = 1^3$, zato je $A$ vsota kubov: $A = (2x + 1)(4x^2 - 2x + 1)$.
+2. b) $4x^2 = (2x)^2$, zato je $B$ razlika kvadratov: $B = (2x - 1)(2x + 1)$.
+3. b) Skupni faktor je $2x + 1$.
+4. c) Ulomek je definiran, ko je $B \neq 0$, torej za $x \neq \dfrac{1}{2}$ in $x \neq -\dfrac{1}{2}$.
+5. c) Okrajšamo s skupnim faktorjem: $\dfrac{A}{B} = \dfrac{(2x + 1)(4x^2 - 2x + 1)}{(2x - 1)(2x + 1)} = \dfrac{4x^2 - 2x + 1}{2x - 1}$.
+6. c) Pri $x = 2$: $\dfrac{16 - 4 + 1}{3} = \dfrac{13}{3}$. Preizkus z izvirnim ulomkom: $\dfrac{64 + 1}{16 - 1} = \dfrac{65}{15} = \dfrac{13}{3}$.
+7. Odgovor: $A = (2x + 1)(4x^2 - 2x + 1)$, $B = (2x - 1)(2x + 1)$, skupni faktor je $2x + 1$; $\dfrac{A}{B} = \dfrac{4x^2 - 2x + 1}{2x - 1}$ za $x \neq \pm\dfrac{1}{2}$, pri $x = 2$ je vrednost $\dfrac{13}{3}$.
+
+**Točkovanje:** a) 1 točka za prepoznavo kubov $(2x)^3$ in $1^3$, 1 točka za razcep $(2x + 1)(4x^2 - 2x + 1)$; b) 1 točka za razcep $B$, 1 točka za skupni faktor $2x + 1$; c) 1 točka za okrajšan ulomek s pogojem $x \neq \pm\dfrac{1}{2}$, 1 točka za vrednost $\dfrac{13}{3}$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Obravnavamo izraze oblike $x^n - 2^n$ in $x^n + 2^n$, kjer je $n$ naravno število.
+
+a) Razstavite izraz $x^5 - 32$ na linearni faktor in faktor četrte stopnje. (2 točki)
+b) Razstavite izraz $x^5 + 32$ na linearni faktor in faktor četrte stopnje. (2 točki)
+c) Z razcepoma iz a) in b) brez računanja potenc utemeljite, da sta števili $7^5 - 32$ in $3^5 + 32$ deljivi s $5$. (2 točki)
+d) Razstavite izraz $x^8 - 256$ na štiri faktorje s celimi koeficienti. (2 točki)
+e) Utemeljite, da $x - 2$ in $x + 2$ nista faktorja izraza $x^4 + 16$. (2 točki)
+
+**Rešitev:**
+
+1. a) $32 = 2^5$, zato po obrazcu za $a^n - b^n$ z $a = x$, $b = 2$, $n = 5$: $x^5 - 32 = (x - 2)(x^4 + 2x^3 + 4x^2 + 8x + 16)$.
+2. b) Eksponent $5$ je lih, zato velja obrazec za vsoto lihih potenc z izmenjujočimi se znaki: $x^5 + 32 = (x + 2)(x^4 - 2x^3 + 4x^2 - 8x + 16)$.
+3. c) V razcep iz a) vstavimo $x = 7$: $7^5 - 32 = 5 \cdot (7^4 + 2 \cdot 7^3 + 4 \cdot 7^2 + 8 \cdot 7 + 16)$. Drugi faktor je celo število, zato je $7^5 - 32$ deljivo s $5$.
+4. c) V razcep iz b) vstavimo $x = 3$: $3^5 + 32 = 5 \cdot (3^4 - 2 \cdot 3^3 + 4 \cdot 3^2 - 8 \cdot 3 + 16)$. Drugi faktor je celo število, zato je tudi $3^5 + 32$ deljivo s $5$.
+5. d) Eksponent je sod, zato začnemo z razliko kvadratov: $x^8 - 256 = (x^4 - 16)(x^4 + 16)$.
+6. d) Nadaljujemo z razliko kvadratov: $x^4 - 16 = (x^2 - 4)(x^2 + 4) = (x - 2)(x + 2)(x^2 + 4)$. Torej $x^8 - 256 = (x - 2)(x + 2)(x^2 + 4)(x^4 + 16)$.
+7. e) Če bi bil $x - c$ faktor izraza, bi bila vrednost izraza pri $x = c$ enaka $0$, saj bi bil tedaj ta faktor $0$.
+8. e) Pri $x = 2$ in pri $x = -2$ je $x^4 + 16 = 16 + 16 = 32 \neq 0$, zato niti $x - 2$ niti $x + 2$ ni faktor izraza $x^4 + 16$.
+9. Odgovor: $x^5 - 32 = (x - 2)(x^4 + 2x^3 + 4x^2 + 8x + 16)$, $x^5 + 32 = (x + 2)(x^4 - 2x^3 + 4x^2 - 8x + 16)$, števili $7^5 - 32$ in $3^5 + 32$ imata faktor $5$, $x^8 - 256 = (x - 2)(x + 2)(x^2 + 4)(x^4 + 16)$, izraz $x^4 + 16$ pri $x = \pm 2$ ni enak $0$.
+
+**Točkovanje:** a) 1 točka za faktor $x - 2$, 1 točka za pravilen drugi faktor; b) 1 točka za faktor $x + 2$, 1 točka za drugi faktor s pravilnimi izmenjujočimi se znaki; c) 1 točka za utemeljitev deljivosti števila $7^5 - 32$, 1 točka za utemeljitev deljivosti števila $3^5 + 32$; d) 1 točka za $(x^4 - 16)(x^4 + 16)$, 1 točka za razcep na štiri faktorje; e) 1 točka za merilo (vrednost pri $x = \pm 2$ bi morala biti $0$), 1 točka za izračun $32 \neq 0$ in sklep.
+
+### Ustno vprašanje 1
+
+:::premisli
+Izpelji obrazec za razstavljanje razlike kubov $a^3 - b^3$ in iz njega še obrazec za vsoto kubov.
+---
+Velja $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$, kar potrdimo z množenjem: $a^3 + a^2b + ab^2 - a^2b - ab^2 - b^3 = a^3 - b^3$. Ker je $(-b)^3 = -b^3$, lahko vsoto zapišemo kot razliko $a^3 + b^3 = a^3 - (-b)^3$. V obrazec za razliko kubov vstavimo $-b$ namesto $b$ in dobimo $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$. Drugi faktor $a^2 \pm ab + b^2$ z realnimi števili ne razstavimo naprej.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+(višja raven) Zapiši obrazec za razstavljanje izraza $a^n - b^n$ za naravno število $n$ in ga utemelji z množenjem.
+---
+Velja $a^n - b^n = (a - b)(a^{n-1} + a^{n-2}b + \ldots + ab^{n-2} + b^{n-1})$. V drugem faktorju je $n$ členov, potence $a$ padajo, potence $b$ rastejo, vsi členi imajo znak plus. Ko drugi faktor pomnožimo z $a$, dobimo člene od $a^n$ do $ab^{n-1}$, ko ga pomnožimo z $-b$, pa člene od $-a^{n-1}b$ do $-b^n$. Vsi vmesni členi se v parih odštejejo, zato ostane le $a^n - b^n$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Pojasni, za katere naravne eksponente $n$ lahko izraz $a^n + b^n$ razstavimo s faktorjem $a + b$, in navedi primer, ko to ni mogoče.
+---
+Izraz $a^n + b^n$ ima faktor $a + b$, kadar je eksponent $n$ lih. Pri lihem $n$ je $(-b)^n = -b^n$, zato je $a^n + b^n = a^n - (-b)^n$ in obrazec za razliko potenc da $a^n + b^n = (a + b)(a^{n-1} - a^{n-2}b + \ldots - ab^{n-2} + b^{n-1})$. Če bi bil $a + b$ faktor, bi moral biti izraz enak $0$ pri $b = -a$. Pri sodem $n$ je $(-a)^n = a^n$, zato ima izraz pri $b = -a$ vrednost $2a^n$, ki za $a \neq 0$ ni $0$, in $a + b$ ni faktor; tak primer je $a^2 + b^2$, ki pri $a = 1$ in $b = -1$ da $2$.
+:::
+
 ## Drugače: Z analogijo (višja raven)
 
 Drugi oklepaj pri $a^n - b^n$ je kot dva glasova v zboru, ki se gibljeta v nasprotnih smereh. Sopran začne visoko ($a^{n-1}$) in se spušča po en ton, bas začne na dnu ($b^0$) in se dviga po en ton. Na vsakem koraku je vsota obeh »višin« (eksponentov) enaka $n - 1$:
@@ -238,7 +344,7 @@ Podobno razlika kubov $999 = 10^3 - 1 = 9 \cdot 111$ pove, da je $999$ deljivo s
 > $9$ ni kub celega števila, zato $x^3 + 9$ ne razstavimo s celimi koeficienti. Ostali trije so: $8 = 2^3$, $27 = 3^3$, $64a^3 = (4a)^3$.
 
 ? (brez računala) Z razliko kubov izračunaj $13^3 - 12^3$.
-= 469
+= 469 | 0
 ~ 1 | To je $(13 - 12)^3$. Razlika kubov ni kub razlike.
 ~ 625 | Drugi oklepaj si zapisal kot $(13 + 12)^2$. Srednji člen je $13 \cdot 12$, ne $2 \cdot 13 \cdot 12$.
 ~ 25 | Drugi oklepaj si zapisal kot $13 + 12$, kot pri razliki kvadratov. Drugi oklepaj je $13^2 + 13 \cdot 12 + 12^2$.
@@ -246,7 +352,7 @@ Podobno razlika kubov $999 = 10^3 - 1 = 9 \cdot 111$ pove, da je $999$ deljivo s
 
 ? (višja raven) Zakaj $a^4 + b^4$ ne razstavimo s faktorjem $a + b$?
 - Ker $4$ ni praštevilo.
-~ Odločilna je sodost eksponenta, ne praštevilskost. Tudi $a^9 + b^9$ (eksponent $9$ ni praštevilo) ima faktor $a + b$.
+~ Odločilno je, ali je eksponent sod, ne ali je praštevilo. Tudi $a^9 + b^9$ (eksponent $9$ ni praštevilo) ima faktor $a + b$.
 + Ker je $(-b)^4 = b^4$; pri $a = 1$, $b = -1$ je $a + b = 0$, izraz pa je $2$, zato $a + b$ ni faktor.
 - Ker vsote potenc nikoli ne razstavimo.
 ~ Vsoto lihih potenc razstavimo, npr. $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$.
@@ -254,15 +360,14 @@ Podobno razlika kubov $999 = 10^3 - 1 = 9 \cdot 111$ pove, da je $999$ deljivo s
 
 ? Ana razstavlja $x^6 - 64$ v štirih korakih:
 
-| korak | zapis |
-|---|---|
-| 1 | $x^6 - 64 = (x^3 - 8)(x^3 + 8)$ |
-| 2 | $x^3 - 8 = (x - 2)(x^2 + 2x + 4)$ |
-| 3 | $x^3 + 8 = (x + 2)(x^2 + 2x + 4)$ |
-| 4 | $x^6 - 64 = (x - 2)(x^2 + 2x + 4)(x + 2)(x^2 + 2x + 4)$ |
+Korak 1: $x^6 - 64 = (x^3 - 8)(x^3 + 8)$
+Korak 2: $x^3 - 8 = (x - 2)(x^2 + 2x + 4)$
+Korak 3: $x^3 + 8 = (x + 2)(x^2 + 2x + 4)$
+Korak 4: $x^6 - 64 = (x - 2)(x^2 + 2x + 4) \cdot {}$
+$\qquad {} \cdot (x + 2)(x^2 + 2x + 4)$
 
 Vpiši številko koraka, v katerem je prva napaka.
-= 3
+= 3 | 0
 ~ 1 | Korak 1 je pravilen: $x^6 - 64 = (x^3)^2 - 8^2$ je razlika kvadratov.
 ~ 2 | Korak 2 je pravilen: pri razliki kubov so v drugem oklepaju sami plusi.
 ~ 4 | Korak 4 le prepiše prejšnja koraka; napaka je nastala že prej.
@@ -294,6 +399,22 @@ vrednost: 13^3-12^3 | 469
 enako: x^6-64 | (x-2)*(x^2+2*x+4)*(x+2)*(x^2-2*x+4)
 enako: 3*x^4-3*x | 3*x*(x-1)*(x^2+x+1)
 vrednost: 7*11*13 | 1001
+enako: (x+1)^3-8 | (x-1)*(x^2+4*x+7)
+vrednost: 3^3-8 | 19
+enako: 8*x^3+1 | (2*x+1)*(4*x^2-2*x+1)
+enako: 4*x^2-1 | (2*x-1)*(2*x+1)
+enako: (8*x^3+1)/(4*x^2-1) | (4*x^2-2*x+1)/(2*x-1)
+vrednost: (4*2^2-2*2+1)/(2*2-1) | 13/3
+vrednost: (8*2^3+1)/(4*2^2-1) | 13/3
+enako: x^5-32 | (x-2)*(x^4+2*x^3+4*x^2+8*x+16)
+enako: x^5+32 | (x+2)*(x^4-2*x^3+4*x^2-8*x+16)
+vrednost: 7^5-32 | 5*3355
+vrednost: 7^4+2*7^3+4*7^2+8*7+16 | 3355
+vrednost: 3^5+32 | 5*55
+vrednost: 3^4-2*3^3+4*3^2-8*3+16 | 55
+enako: x^8-256 | (x^4-16)*(x^4+16)
+enako: x^8-256 | (x-2)*(x+2)*(x^2+4)*(x^4+16)
+vrednost: (-2)^4+16 | 32
 >>
 
 :::simboli
@@ -302,4 +423,6 @@ b | osnova druge potence | | | v Primeru 3 notranji rob kocke
 n | eksponent | | | naravno število
 x | spremenljivka | | |
 V | prostornina lesa | V = a^3 - b^3 | cm^3 |
+A, B | dana izraza, ki ju razstavimo in iz njiju sestavimo ulomek | A = 8x^3 + 1, B = 4x^2 - 1 | |
+c | število, pri katerem preverimo, ali je $x - c$ faktor | | |
 :::

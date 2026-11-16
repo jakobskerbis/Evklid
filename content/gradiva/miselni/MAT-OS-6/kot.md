@@ -6,7 +6,7 @@ stanje: osnutek
   - Daljša kraka ne pomenita večjega kota
   - Lupa ali povečava kota ne spremeni
 - Vrh in kraka
-  - Dva poltraka s skupnim krajiščem
+  - Dva poltraka s skupnim začetkom
   - $\angle AVB$: vrh je srednja črka
 - Stopinja
   - Polni kot meri $360^\circ$

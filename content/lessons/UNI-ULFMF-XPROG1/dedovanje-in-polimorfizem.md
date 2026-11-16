@@ -351,18 +351,29 @@ Natančno navedi pogoje za prekrivanje metode v Javi in pravilo dinamičnega pov
 
 Hierarhijo rišemo kot drevo. Puščica kaže od podrazreda k nadrazredu (»je«), črtkana puščica pomeni »implementira«.
 
-```
-        Object
-          ^
-       Nalozba  (abstraktna)
-       ^     ^
-Varcevanje  Obveznica
-
-  Obdavcljivo  (vmesnik)
-    ^      ^
-    :      :
-  Blago  Storitev
-```
+:::risba skica
+opis: Dve drevesi iz škatel. Zgoraj: Varcevanje in Obveznica imata vsaka polno puščico navzgor k abstraktnemu razredu Nalozba, ta pa puščico navzgor k Object. Spodaj: Blago in Storitev imata vsaka črtkano puščico navzgor k vmesniku Obdavcljivo.
+območje: 0; 0 .. 24; 19,5
+pravokotnik: 9; 17 .. 15; 19
+napis: 12; 18 | Object
+pravokotnik: 4,5; 13 .. 19,5; 15
+napis: 12; 14 | Nalozba (abstraktna)
+pravokotnik: 2,5; 9 .. 11,5; 11
+napis: 7; 10 | Varcevanje
+pravokotnik: 12,5; 9 .. 21,5; 11
+napis: 17; 10 | Obveznica
+puščica: 12; 15 -> 12; 17
+puščica: 7; 11 -> 9; 13
+puščica: 17; 11 -> 15; 13
+pravokotnik: 4,5; 4,5 .. 19,5; 6,5
+napis: 12; 5,5 | Obdavcljivo (vmesnik)
+pravokotnik: 3,5; 0,5 .. 10,5; 2,5
+napis: 7; 1,5 | Blago
+pravokotnik: 13,5; 0,5 .. 20,5; 2,5
+napis: 17; 1,5 | Storitev
+puščica: 7; 2,5 -> 9; 4,5 | | | črtkano
+puščica: 17; 2,5 -> 15; 4,5 | | | črtkano
+:::
 
 Klic `n.donos(5)` si predstavljaj kot iskanje od spodaj navzgor: začni pri razredu objekta in pojdi po puščicah, dokler ne najdeš metode z izbranim podpisom. Prevajalnik pa pogleda le škatlo statičnega tipa in vse nad njo.
 

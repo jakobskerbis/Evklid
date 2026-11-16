@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -118,15 +118,13 @@ Sredina intervala: $c = \dfrac{a + b}{2}$. Obdrži polovico, kjer imata vrednost
 **Rešitev:**
 
 1. Preverimo pogoj: $f(1) = -1 < 0$, $f(2) = 7 > 0$. Funkcija je zvezna, ničla je na $[1, 2]$.
-2. Računamo po korakih. Ker je $f(a) < 0$ in $f(b) > 0$, pri $f(c) > 0$ zamenjamo $b$, pri $f(c) < 0$ pa $a$.
+2. Računamo po korakih. Ker je $f(a) < 0$ in $f(b) > 0$, pri $f(c) > 0$ zamenjamo $b$, pri $f(c) < 0$ pa $a$. Pri vsakem koraku so zapisani interval $[a, b]$, sredina $c$ in $f(c)$:
 
-| korak | $[a, b]$ | $c$ | $f(c)$ |
-|---|---|---|---|
-| 1 | $[1; 2]$ | $1{,}5$ | $1{,}875 > 0$ |
-| 2 | $[1; 1{,}5]$ | $1{,}25$ | $\approx 0{,}203 > 0$ |
-| 3 | $[1; 1{,}25]$ | $1{,}125$ | $\approx -0{,}451 < 0$ |
-| 4 | $[1{,}125; 1{,}25]$ | $1{,}1875$ | $\approx -0{,}138 < 0$ |
-| 5 | $[1{,}1875; 1{,}25]$ | $1{,}21875$ | $\approx 0{,}029 > 0$ |
+- korak 1: $[1; 2]$, $c = 1{,}5$, $f(c) = 1{,}875 > 0$
+- korak 2: $[1; 1{,}5]$, $c = 1{,}25$, $f(c) \approx 0{,}203 > 0$
+- korak 3: $[1; 1{,}25]$, $c = 1{,}125$, $f(c) \approx -0{,}451 < 0$
+- korak 4: $[1{,}125; 1{,}25]$, $c = 1{,}1875$, $f(c) \approx -0{,}138 < 0$
+- korak 5: $[1{,}1875; 1{,}25]$, $c = 1{,}21875$, $f(c) \approx 0{,}029 > 0$
 
 3. Po petem koraku ostane interval $[1{,}1875; 1{,}21875]$, dolg $\frac{1}{32} = 0{,}03125$.
 4. Obe krajišči se na eno decimalko zaokrožita na $1{,}2$. Po četrtem koraku je bil interval $[1{,}1875; 1{,}25]$ in to še ni veljalo: $1{,}25$ bi dal $1{,}3$.
@@ -136,7 +134,7 @@ Sredina intervala: $c = \dfrac{a + b}{2}$. Obdrži polovico, kjer imata vrednost
 
 Prenosnik stane $1000$ €. Trgovina ponuja plačilo v treh letnih obrokih po $370$ €, prvi obrok čez eno leto. Kolikšna je letna obrestna mera $p$, na desetinko odstotka?
 
-**Podatki:** dolg $G_0 = 1000$ €, $3$ obroki po $a = 370$ € na koncu vsakega leta, obrestno obrestovanje
+**Podatki:** dolg $1000$ €, $3$ obroki po $370$ € na koncu vsakega leta, obrestno obrestovanje
 **Iščemo:** obrestno mero $p$ (na $0{,}1$ %)
 
 :::formula
@@ -194,15 +192,38 @@ $g(1{,}875) \approx -0{,}033 < 0$, zato je ničla na $(1{,}875; 1{,}88)$ in se z
 - Bisekcija: $c = \frac{a + b}{2}$, obdrži polovico z različnima predznakoma; po $n$ korakih je dolžina $\frac{b - a}{2^n}$.
 - S tehnologijo: tabela vrednosti s čedalje manjšim korakom ali ukaz za ničlo oz. presečišče v programu za grafe. Točka na krivulji ali presečišče = ničla razlike.
 
+## Ponovitev
+
+*(višja raven)*
+
+**Formule**
+- $f$ zvezna na $[a, b]$ in $f(a) \cdot f(b) < 0$ $\Rightarrow$ vsaj ena ničla na $(a, b)$ (na pamet)
+- zvezna na $[a, b]$ doseže najmanjšo in največjo vrednost (na pamet)
+- $c = \frac{a + b}{2}$ (na pamet)
+- dolžina po $n$ korakih: $\frac{b - a}{2^n}$ (na pamet)
+
+**Postopek**
+1. Presečišče ali točko na krivulji prevedi na ničlo razlike, npr. $f(x) - 2$.
+2. Preveri, da je $f$ na $[a, b]$ zvezna.
+3. Izračunaj $f(a)$ in $f(b)$ ter preveri, da imata različna predznaka.
+4. Izračunaj $c = \frac{a + b}{2}$ in $f(c)$.
+5. Obdrži polovico, na krajiščih katere sta predznaka različna.
+6. Ponavljaj, dokler se obe krajišči ne zaokrožita enako.
+
+**Pazi na**
+- Brez zveznosti izrek ne velja: $\frac{1}{x}$ na $[-1, 1]$ ničle nima.
+- Izrek zagotovi vsaj eno ničlo, ne natanko ene; enaka predznaka ne povesta ničesar.
+- Obdrži polovico z različnima predznakoma na krajiščih, ne tiste s $f(c) > 0$.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
 
 Dana je funkcija $f(x) = x^3 - 4x + 1$.
 
-a) Utemelji, da ima enačba $x^3 - 4x + 1 = 0$ natanko tri realne rešitve, in za vsako zapiši interval med zaporednima celima številoma, na katerem leži. (3 točke)
-b) Z dvema korakoma bisekcije, začenši na intervalu $[0, 1]$, zoži interval, na katerem leži ena od ničel. (2 točki)
-c) Utemelji, da $f$ na intervalu $[0, 2]$ doseže najmanjšo vrednost $m$, in pokaži, da je $m \le -2$. (2 točki)
+a) Utemeljite, da ima enačba $x^3 - 4x + 1 = 0$ natanko tri realne rešitve, in za vsako zapišite interval med zaporednima celima številoma, na katerem leži. (3 točke)
+b) Z dvema korakoma bisekcije, začenši na intervalu $[0, 1]$, zožite interval, na katerem leži ena od ničel. (2 točki)
+c) Utemeljite, da $f$ na intervalu $[0, 2]$ doseže najmanjšo vrednost $m$, in pokažite, da je $m \le -2$. (2 točki)
 
 **Rešitev:**
 
@@ -220,23 +241,21 @@ c) Utemelji, da $f$ na intervalu $[0, 2]$ doseže najmanjšo vrednost $m$, in po
 
 Dani sta krivulji $y = 2^x$ in $y = 3 - x^2$.
 
-a) Pokaži, da je $x = 1$ abscisa enega od presečišč krivulj, in zapiši funkcijo $h$, katere ničle so abscise vseh presečišč. (2 točki)
-b) Utemelji, da imata krivulji presečišče z absciso na intervalu $[-2, -1]$. (2 točki)
-c) Naredi tri korake bisekcije na intervalu $[-2, -1]$. Vrednosti funkcije zaokroži na tri decimalke. (3 točke)
-d) Z računalom (na primer s tabelo vrednosti) določi absciso tega presečišča, zaokroženo na dve decimalki. Zaokrožitev utemelji z vrednostmi funkcije $h$. (2 točki)
+a) Pokažite, da je $x = 1$ abscisa enega od presečišč krivulj, in zapišite funkcijo $h$, katere ničle so abscise vseh presečišč. (2 točki)
+b) Utemeljite, da imata krivulji presečišče z absciso na intervalu $[-2, -1]$. (2 točki)
+c) Naredite tri korake bisekcije na intervalu $[-2, -1]$. Vrednosti funkcije zaokrožite na tri decimalke. (3 točke)
+d) Z računalom (na primer s tabelo vrednosti) določite absciso tega presečišča, zaokroženo na dve decimalki. Zaokrožitev utemeljite z vrednostmi funkcije $h$. (2 točki)
 e) Koliko korakov bisekcije, začenši na $[-2, -1]$, najmanj potrebujemo, da bo interval krajši od $0{,}005$? (1 točka)
 
 **Rešitev:**
 
 1. a) Pri $x = 1$ je $2^1 = 2$ in $3 - 1^2 = 2$, zato je $T(1, 2)$ presečišče. Abscise presečišč so rešitve enačbe $2^x = 3 - x^2$, torej ničle funkcije $h(x) = 2^x + x^2 - 3$.
 2. b) $h$ je vsota zveznih funkcij, zato je zvezna. $h(-2) = 0{,}25 + 4 - 3 = 1{,}25 > 0$ in $h(-1) = 0{,}5 + 1 - 3 = -1{,}5 < 0$, zato ima $h$ po izreku o ničli na $(-2, -1)$ vsaj eno ničlo.
-3. c) Ker je $h(a) > 0$ in $h(b) < 0$, pri $h(c) < 0$ zamenjamo $b$, pri $h(c) > 0$ pa $a$.
+3. c) Ker je $h(a) > 0$ in $h(b) < 0$, pri $h(c) < 0$ zamenjamo $b$, pri $h(c) > 0$ pa $a$. Pri vsakem koraku so zapisani interval $[a, b]$, sredina $c$ in $h(c)$:
 
-| korak | $[a, b]$ | $c$ | $h(c)$ |
-|---|---|---|---|
-| 1 | $[-2; -1]$ | $-1{,}5$ | $\approx -0{,}396 < 0$ |
-| 2 | $[-2; -1{,}5]$ | $-1{,}75$ | $\approx 0{,}360 > 0$ |
-| 3 | $[-1{,}75; -1{,}5]$ | $-1{,}625$ | $\approx -0{,}035 < 0$ |
+- korak 1: $[-2; -1]$, $c = -1{,}5$, $h(c) \approx -0{,}396 < 0$
+- korak 2: $[-2; -1{,}5]$, $c = -1{,}75$, $h(c) \approx 0{,}360 > 0$
+- korak 3: $[-1{,}75; -1{,}5]$, $c = -1{,}625$, $h(c) \approx -0{,}035 < 0$
 
 4. c) Po tretjem koraku ostane interval $[-1{,}75; -1{,}625]$.
 5. d) Tabela s korakom $0{,}1$: $h(-1{,}7) \approx 0{,}198 > 0$ in $h(-1{,}6) \approx -0{,}110 < 0$. Tabela s korakom $0{,}01$: $h(-1{,}64) \approx 0{,}0105 > 0$ in $h(-1{,}63) \approx -0{,}0200 < 0$, zato je ničla na $(-1{,}64; -1{,}63)$.
@@ -330,7 +349,7 @@ točka: 4; 4 | (4, 4) | levo
 > Brez prvega koraka ne veš, ali ničla sploh obstaja. Koraki 2 do 4 se ponavljajo, zadnji pove, kdaj nehaš.
 
 ? (brez računala) Bisekcijo začneš na intervalu $[2, 3]$. Najmanj koliko korakov potrebuješ, da bo interval krajši od $0{,}01$?
-= 7
+= 7 | 0
 ~ 6 | Po $6$ korakih je dolžina $\frac{1}{64} \approx 0{,}016$, kar je še več od $0{,}01$.
 ~ 100 | Tako bi bilo, če bi interval vsakič skrajšal za stotinko. Bisekcija ga razpolovi.
 > Dolžina po $n$ korakih je $\frac{1}{2^n}$. Potrebuješ $2^n > 100$: $2^6 = 64$ je premalo, $2^7 = 128$ zadošča.
@@ -385,6 +404,8 @@ a, b | krajišči intervala | | |
 c | sredina intervala oz. ničla | c = \frac{a + b}{2} | |
 d_n | dolžina intervala po $n$ korakih | d_n = \frac{b - a}{2^n} | |
 n | število korakov bisekcije | | |
+m | najmanjša vrednost funkcije na $[a, b]$ | | |
+M | največja vrednost funkcije na $[a, b]$ | | |
 r | obrestovalni faktor | r = 1 + \frac{p}{100} | – |
 p | letna obrestna mera | | \% | v odstotkih
 g | pomožna funkcija, katere ničlo iščemo | g(x) = x^3 - 3x - 1 | |

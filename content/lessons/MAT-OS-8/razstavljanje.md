@@ -223,13 +223,13 @@ $$12x + 18 = 2 \cdot 3 \cdot (2x + 3) = 6(2x + 3)$$
 ~ Širini ležita druga ob drugi, zato ju seštejemo, ne zmnožimo.
 > Oba dela imata višino $5$, skupna širina je $x + 4$, zato je ploščina $5(x + 4) = 5x + 20$.
 
-? Oceni brez natančnega računanja: koliko je približno $49 \cdot 13 + 49 \cdot 7$?
-- približno $70$
+? Izračunaj na pamet z izpostavljanjem: koliko je $49 \cdot 13 + 49 \cdot 7$?
+- $69$
 ~ To je vsota $49 + 13 + 7$. Med členi je množenje, ne seštevanje.
-+ približno $1000$
-- približno $4500$
++ $980$
+- $4459$
 ~ To je $49 \cdot 13 \cdot 7$. Po izpostavljanju števili $13$ in $7$ v oklepaju seštejemo, ne zmnožimo.
-> Izpostavimo $49$: $49 \cdot (13 + 7) = 49 \cdot 20 = 980$, kar je približno $1000$.
+> Izpostavimo $49$: $49 \cdot (13 + 7) = 49 \cdot 20 = 980$.
 
 ? Zakaj zapis $12x + 18 = 2(6x + 9)$ še ni končano razstavljanje?
 - Ker enakost ni pravilna.

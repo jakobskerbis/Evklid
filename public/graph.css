@@ -446,7 +446,7 @@ body.graph-open { overflow: hidden; }
 .pse-lg i { background: color-mix(in srgb, var(--c) 45%, var(--surface)); }
 
 /* formule */
-.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 24px; display: flex; flex-direction: column; gap: 12px; }
+.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 88px; display: flex; flex-direction: column; gap: 12px; }
 .fm-bar { padding-top: 12px; }
 /* kazalo poglavij ostane na vrhu, ko se pomikaš po zbirki */
 .fm-sel { display: flex; flex-wrap: wrap; gap: 8px 12px; justify-content: center; }
@@ -480,7 +480,7 @@ body.graph-open { overflow: hidden; }
 /* zelo ozek telefon: »Mathématiques« in »Mathematics« sta preširoka za tri predmete v vrstici */
 @media (max-width: 360px) { .fm-sel .seg > button { padding: 6px 6px !important; } }
 @media (max-width: 600px) {
-  .fm-wrap { padding: 0 12px 20px; }
+  .fm-wrap { padding: 0 12px 88px; } /* prostor za gumb ob zadnji formuli */
   .fm-sel .seg { width: 100%; }
   .fm-sel .seg > button { min-height: 36px; padding: 6px 10px !important; }
   .fm-body .fm-sec { padding: 14px 16px; }

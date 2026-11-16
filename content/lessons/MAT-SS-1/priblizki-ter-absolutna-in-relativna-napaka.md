@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -17,10 +17,13 @@ Obakrat se je telefon zmotil za $0{,}3\,\mathrm{km}$. Pa je bila zmota enako hud
 
 Zaokrožimo tako, da pogledamo prvo števko, ki jo odvržemo. Če je $0$, $1$, $2$, $3$ ali $4$, zadnjo ohranjeno števko pustimo. Če je $5$ ali več, jo povečamo za $1$.
 
-| število | 1 decimalka | 2 decimalki | 3 decimalke |
-|---|---|---|---|
-| $\sqrt{2} = 1{,}41421\ldots$ | $1{,}4$ | $1{,}41$ | $1{,}414$ |
-| $\pi = 3{,}14159\ldots$ | $3{,}1$ | $3{,}14$ | $3{,}142$ |
+Za $\sqrt{2} = 1{,}41421\ldots$ in $\pi = 3{,}14159\ldots$ dobimo:
+
+| decimalke | $\sqrt{2}$ | $\pi$ |
+|---|---|---|
+| $1$ | $1{,}4$ | $3{,}1$ |
+| $2$ | $1{,}41$ | $3{,}14$ |
+| $3$ | $1{,}414$ | $3{,}142$ |
 
 Pri $\pi$ na tri decimalke je odvržena števka $5$, zato se $1$ poveča v $2$.
 
@@ -81,10 +84,8 @@ $$\delta(x \cdot y) \approx \delta x + \delta y \qquad \delta\!\left(\frac{x}{y}
 
 Pravilo je **ocena**, ne natančna enakost. Preverimo ga na travniku na oba načina:
 
-| način | spodnja meja | zgornja meja | napaka $S$ |
-|---|---|---|---|
-| natančno | $39{,}5 \cdot 24{,}5 = 967{,}75$ | $40{,}5 \cdot 25{,}5 = 1032{,}75$ | do $32{,}75\,\mathrm{m^2}$ |
-| ocena | $1000 - 32{,}5 = 967{,}5$ | $1000 + 32{,}5 = 1032{,}5$ | $32{,}5\,\mathrm{m^2}$ |
+- natančno: spodnja meja $39{,}5 \cdot 24{,}5 = 967{,}75$, zgornja meja $40{,}5 \cdot 25{,}5 = 1032{,}75$, napaka $S$ do $32{,}75\,\mathrm{m^2}$;
+- ocena: spodnja meja $1000 - 32{,}5 = 967{,}5$, zgornja meja $1000 + 32{,}5 = 1032{,}5$, napaka $S$ je $32{,}5\,\mathrm{m^2}$.
 
 Ocena: $\delta a + \delta b = \dfrac{0{,}5}{40} + \dfrac{0{,}5}{25} = 0{,}0325$, torej $3{,}25\,\%$ od $1000\,\mathrm{m^2}$, kar je $32{,}5\,\mathrm{m^2}$. Natančna meja je $1032{,}75 - 1000 = 32{,}75\,\mathrm{m^2}$. Razlika $0{,}25\,\mathrm{m^2}$ je ravno $0{,}5 \cdot 0{,}5$, majhen kotiček, ki ga ocena izpusti (glej »Drugače: Na sliki«).
 
@@ -198,6 +199,87 @@ $\delta S \approx \dfrac{1}{120} + \dfrac{1}{80} \approx 0{,}021 = 2{,}1\,\%$ in
 - Vsota in razlika: absolutni napaki se seštejeta. Razlika podobnih števil ima veliko relativno napako.
 - Produkt in količnik: relativni napaki se približno seštejeta (ocena; natančna meja je malo večja).
 
+## Ponovitev
+
+**Formule**
+- $\Delta x = |\bar{x} - x|$, $x = \bar{x} \pm \Delta x$ (na pamet)
+- $\delta x = \frac{\Delta x}{|x|} \approx \frac{\Delta x}{|\bar{x}|}$ (na pamet)
+- $\Delta(x \pm y) \le \Delta x + \Delta y$ (na pamet)
+- $\delta(x \cdot y) \approx \delta x + \delta y$, $\delta\left(\frac{x}{y}\right) \approx \delta x + \delta y$ (na pamet)
+
+**Postopek**
+1. Podatke zapiši kot $\bar{x} \pm \Delta x$.
+2. Pri vsoti ali razliki seštej absolutni napaki.
+3. Pri produktu ali količniku izračunaj relativni napaki in ju seštej.
+4. Relativno napako pomnoži z rezultatom, da dobiš absolutno.
+5. Zaokroži v enem koraku, iz izvirnega števila.
+
+**Pazi na**
+- Pri razliki napaki seštej, nikoli ne odštej.
+- Pri produktu ne seštevaj absolutnih napak, ampak relativne.
+- Natančnost meritev primerjaj z relativno napako, ne z absolutno.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Ulomek $\dfrac{2}{3}$ zaokrožite na dve decimalni mesti. Izračunajte absolutno napako tega približka (zapišite jo z ulomkom) in relativno napako v odstotkih.
+
+**Rešitev:**
+
+1. $\dfrac{2}{3} = 0{,}666\ldots$; prva odvržena števka je $6$, zato je približek $\bar{x} = 0{,}67$.
+2. $\Delta x = \left|0{,}67 - \dfrac{2}{3}\right| = \left|\dfrac{67}{100} - \dfrac{2}{3}\right| = \left|\dfrac{201 - 200}{300}\right| = \dfrac{1}{300}$.
+3. $\delta x = \dfrac{\Delta x}{|x|} = \dfrac{1}{300} : \dfrac{2}{3} = \dfrac{1}{300} \cdot \dfrac{3}{2} = \dfrac{1}{200} = 0{,}005 = 0{,}5\,\%$.
+4. Odgovor: $\dfrac{2}{3} \approx 0{,}67$, absolutna napaka je $\dfrac{1}{300}$, relativna napaka $0{,}5\,\%$.
+
+**Točkovanje:** 1 točka za približek $0{,}67$; 1 točka za absolutno napako $\dfrac{1}{300}$; 1 točka za relativno napako $0{,}5\,\%$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
+
+Pravokotna lesena plošča ima izmerjeni stranici $a = (2{,}40 \pm 0{,}01)\,\mathrm{m}$ in $b = (0{,}85 \pm 0{,}01)\,\mathrm{m}$, njena masa je $m = (30{,}6 \pm 0{,}2)\,\mathrm{kg}$. Absolutne napake zaokrožite na dve decimalni mesti, relativne napake zapišite v odstotkih in jih zaokrožite na dve decimalni mesti.
+
+a) Izračunajte obseg $o$ plošče in njegovo absolutno napako $\Delta o$. (2 točki)
+b) Izračunajte ploščino $S$ plošče ter ocenite njeno relativno napako $\delta S$ in absolutno napako $\Delta S$. (2 točki)
+c) Izračunajte maso enega kvadratnega metra plošče $q = \dfrac{m}{S}$ ter ocenite njeno relativno napako $\delta q$ in absolutno napako $\Delta q$. (2 točki)
+
+**Rešitev:**
+
+1. a) $o = 2a + 2b = 2 \cdot 2{,}40 + 2 \cdot 0{,}85 = 6{,}50\,\mathrm{m}$.
+2. a) Obseg je vsota štirih izmerjenih dolžin $a + a + b + b$, zato se absolutne napake seštejejo: $\Delta o = 0{,}01 \cdot 4 = 0{,}04\,\mathrm{m}$. Torej $o = (6{,}50 \pm 0{,}04)\,\mathrm{m}$.
+3. b) $S = 2{,}40 \cdot 0{,}85 = 2{,}04\,\mathrm{m^2}$.
+4. b) $\delta a = \dfrac{0{,}01}{2{,}40} \approx 0{,}004167$ in $\delta b = \dfrac{0{,}01}{0{,}85} \approx 0{,}011765$. Pri produktu se relativni napaki seštejeta: $\delta S \approx 0{,}015931 \approx 1{,}59\,\%$.
+5. b) $\Delta S \approx \delta S \cdot S \approx 0{,}015931 \cdot 2{,}04 \approx 0{,}0325\,\mathrm{m^2}$, zaokroženo $0{,}03\,\mathrm{m^2}$.
+6. c) $q = \dfrac{30{,}6}{2{,}04} = 15\,\mathrm{kg/m^2}$.
+7. c) $\delta m = \dfrac{0{,}2}{30{,}6} \approx 0{,}006536$. Pri količniku se relativni napaki seštejeta: $\delta q \approx \delta m + \delta S \approx 0{,}006536 + 0{,}015931 = 0{,}022467 \approx 2{,}25\,\%$.
+8. c) $\Delta q \approx \delta q \cdot q \approx 0{,}022467 \cdot 15 \approx 0{,}337\,\mathrm{kg/m^2}$, zaokroženo $0{,}34\,\mathrm{kg/m^2}$.
+9. Odgovor: $o = (6{,}50 \pm 0{,}04)\,\mathrm{m}$; $S = 2{,}04\,\mathrm{m^2}$, $\delta S \approx 1{,}59\,\%$, $\Delta S \approx 0{,}03\,\mathrm{m^2}$; $q = 15\,\mathrm{kg/m^2}$, $\delta q \approx 2{,}25\,\%$, $\Delta q \approx 0{,}34\,\mathrm{kg/m^2}$.
+
+**Točkovanje:** a) 1 točka za $o = 6{,}50\,\mathrm{m}$; 1 točka za $\Delta o = 0{,}04\,\mathrm{m}$ (seštevanje absolutnih napak). b) 1 točka za $\delta S \approx 1{,}59\,\%$ (seštevanje relativnih napak); 1 točka za $S = 2{,}04\,\mathrm{m^2}$ in $\Delta S \approx 0{,}03\,\mathrm{m^2}$. c) 1 točka za $q = 15\,\mathrm{kg/m^2}$ in $\delta q \approx 2{,}25\,\%$; 1 točka za $\Delta q \approx 0{,}34\,\mathrm{kg/m^2}$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj sta absolutna in relativna napaka približka in zakaj natančnost dveh meritev primerjamo z relativno napako?
+---
+Absolutna napaka je razdalja med približkom in točno vrednostjo, $\Delta x = |\bar{x} - x|$, in ima enoto količine. Relativna napaka je razmerje $\delta x = \dfrac{\Delta x}{|x|}$, ki ga pri meritvi računamo s približkom $|\bar{x}|$. Relativna napaka nima enote in jo pogosto zapišemo v odstotkih. Enaka absolutna napaka je pri majhni količini velik delež, pri veliki pa majhen. Zato natančnost primerjamo z relativno napako, ki pove, kolikšen delež količine predstavlja napaka.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji, zakaj se pri vsoti in pri razliki dveh izmerjenih količin absolutni napaki seštejeta.
+---
+Točni vrednosti ležita v intervalih $[\bar{x} - \Delta x, \bar{x} + \Delta x]$ in $[\bar{y} - \Delta y, \bar{y} + \Delta y]$. Vsota je največja, ko sta oba podatka na zgornji meji, in najmanjša, ko sta oba na spodnji, zato se od $\bar{x} + \bar{y}$ razlikuje največ za $\Delta x + \Delta y$. Razlika $x - y$ je največja, ko je $x$ na zgornji meji in $y$ na spodnji, in najmanjša v obratnem primeru, zato je tudi njena napaka največ $\Delta x + \Delta y$. Napaki se pri razliki ne odštejeta, ker se meritvi lahko zmotita v nasprotnih smereh.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Izpelji, zakaj je relativna napaka produkta dveh podatkov približno enaka vsoti njunih relativnih napak.
+---
+Največji vrednosti podatkov zapišemo kot $a(1 + \delta a)$ in $b(1 + \delta b)$. Njun produkt je $ab(1 + \delta a + \delta b + \delta a\,\delta b)$, zato je relativna napaka produkta $\delta a + \delta b + \delta a\,\delta b$. Pri majhnih relativnih napakah je produkt $\delta a\,\delta b$ zanemarljivo majhen. Zato velja $\delta(a \cdot b) \approx \delta a + \delta b$.
+:::
+
 ## Drugače: Na sliki
 
 Travnik s stranicama $a$ in $b$ narišimo skupaj s pasovoma, za katera se lahko podaljša, če sta stranici izmerjeni prekratko:
@@ -256,7 +338,7 @@ točka: 12,4 | izmerjeno
 
 ? Zakaj pri ploščini pravokotnika seštejemo relativni napaki stranic, ne absolutnih?
 - Ker je relativna napaka vedno manjša od absolutne.
-~ To ni res in ni razlog: $\delta x$ in $\Delta x$ imata različne enote, zato ju sploh ne primerjamo.
+~ To ni res in ni razlog: $\delta x$ je brez enote, $\Delta x$ pa ima enoto količine, zato ju sploh ne primerjamo.
 - Ker se pri produktu napake odštejejo.
 ~ Napake se v najslabšem primeru vedno povečajo, nikoli odštejejo.
 + Ker se napaka ene stranice pomnoži z drugo stranico; delež spremembe (relativna napaka) pa se približno sešteje.
@@ -304,6 +386,23 @@ vrednost: 0.5/24*100 | 2.1
 vrednost: 0.5/18*100 | 2.8
 vrednost: 0.2/0.5*100 | 40
 vrednost: 25*0.5 | 12.5
+enako: abs(67/100-2/3) | 1/300
+enako: (1/300)/(2/3) | 1/200
+vrednost: 1/200*100 | 0.5
+vrednost: 2*2.40+2*0.85 | 6.50
+vrednost: 4*0.01 | 0.04
+vrednost: 2.40*0.85 | 2.04
+vrednost: 0.01/2.40 | 0.004167
+vrednost: 0.01/0.85 | 0.011765
+vrednost: 0.01/2.40+0.01/0.85 | 0.015931
+vrednost: (0.01/2.40+0.01/0.85)*100 | 1.59
+vrednost: (0.01/2.40+0.01/0.85)*2.04 | 0.0325
+vrednost: 30.6/2.04 | 15
+vrednost: 0.2/30.6 | 0.006536
+vrednost: 0.2/30.6+0.01/2.40+0.01/0.85 | 0.022467
+vrednost: (0.2/30.6+0.01/2.40+0.01/0.85)*100 | 2.25
+vrednost: (0.2/30.6+0.01/2.40+0.01/0.85)*15 | 0.337
+vrednost: (0.2/30.6+0.01/2.40+0.01/0.85)*15 | 0.34
 >>
 
 :::simboli
@@ -329,4 +428,9 @@ t | čas | | s |
 \Delta s | absolutna napaka poti | | m |
 \Delta t | absolutna napaka časa | | s |
 \Delta v | absolutna napaka hitrosti | \Delta v \approx \delta v \cdot v | m/s |
+o | obseg pravokotnika | o = 2a + 2b | m |
+\Delta o | absolutna napaka obsega | | m |
+m | masa plošče | | kg |
+q | masa enega kvadratnega metra plošče | q = \frac{m}{S} | kg/m^2 |
+\Delta q | absolutna napaka mase kvadratnega metra | \Delta q \approx \delta q \cdot q | kg/m^2 |
 :::

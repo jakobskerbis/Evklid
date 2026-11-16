@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mreža in celica
+  - mrežni parameter $a$, $0{,}25$ do $0{,}5\,\mathrm{nm}$
+  - oglišče $\tfrac18$, ploskev $\tfrac12$, središče $1$
+- BCC
+  - $2$ atoma, KŠ $8$, $a\sqrt3 = 4R$
+  - zapolnjenost $\frac{\pi\sqrt3}{8} \approx 0{,}68$
+  - Fe-α, Cr, W
+- FCC in HCP
+  - FCC: $4$ atomi, KŠ $12$, $a\sqrt2 = 4R$
+  - zapolnjenost $\frac{\pi}{3\sqrt2} \approx 0{,}74$
+  - ABCABC je FCC, ABAB je HCP
+- Alotropija železa
+  - pri $912\,^\circ\mathrm{C}$ iz BCC v FCC
+  - avstenit ni feromagneten
+- Gostota iz zgradbe
+  - $\rho = \frac{nM}{a^3 N_\mathrm{A}}$
+  - napaka: $a$ v nm namesto v cm
+  - obratno: iz $\rho$ določiš $n$ in mrežo
+- Točkaste napake
+  - vrzeli: $\frac{N_\mathrm{v}}{N} = e^{-Q_\mathrm{v}/(kT)}$, $T$ v kelvinih
+  - substitucijski in intersticijski atomi
+- Dislokacije
+  - robna: $\vec b$ pravokoten na črto
+  - vijačna: $\vec b$ vzporeden s črto
+  - drsenje omogoča plastično deformacijo
+- Zrna in meje
+  - kristalne meje ustavljajo dislokacije
+  - drobno zrno pomeni večjo trdnost

@@ -191,8 +191,17 @@ export class Usage {
     this.kvSet(k, Math.round(((Number(this.kvGet(k)) || 0) + v) * 100) / 100);
     return true;
   }
+  // Skupna poraba vseh učencev (D7): iz dnevnih vsot usage_dnevno (server/db.js), ne iz vseh vrstic usage.
+  // Brez tabele (baza, odprta mimo openDb) iz usage kot prej.
+  vsotaOd(od) {
+    if (this.dnevno === undefined) this.dnevno = !!this.db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'usage_dnevno'").get();
+    const q = this.dnevno
+      ? "SELECT COALESCE(SUM(usd),0) AS s FROM usage_dnevno WHERE dan >= date('now', ?)"
+      : "SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now', ?)";
+    return this.db.prepare(q).get(od).s;
+  }
   todayTotal() {
-    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now')").get().s;
+    return this.vsotaOd("start of day");
   }
   // Poraba iz skupnega proračuna ta mesec (brez porabe iz dokupljenega kredita), za učenca ali vse.
   baseSpent(studentId = null) {
@@ -412,8 +421,8 @@ export class Usage {
     return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE kind = ? AND created_at >= date('now')").get(kind).s;
   }
   monthTotal(studentId = null) {
-    const q = `SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month')${studentId ? " AND student_id = ?" : ""}`;
-    return studentId ? this.db.prepare(q).get(studentId).s : this.db.prepare(q).get().s;
+    if (!studentId) return this.vsotaOd("start of month");
+    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month') AND student_id = ?").get(studentId).s;
   }
   // Število odgovorov zmogljivejšega modela danes; prekinjeni odgovori štejejo (sicer bi prekinitev obšla dnevno mejo).
   // D2: »danes« kot razpon nad created_at (ne date(created_at) = …), da poizvedba uporabi indeks, ne bere cele tabele.
@@ -581,6 +590,10 @@ export class Usage {
       const n = sb.group?.length || 1;
       caps.push({
         key: sb.group ? `pool:${[...sb.group].sort((a, b) => a - b).join(",")}` : `s:${studentId}`,
+        // Rezervacije v teku pod ključem računa: z dodanim ali izbrisanim profilom ostanejo štete (inflightOf). Račun ima
+        // največ eno zajamčeno mejo (Družina je en skupni delež); če bi jih imel več, bi se klici v teku šteli v vse
+        // (ustavi prej, nikoli čez mejo).
+        fly: sb.owner != null ? `g:${sb.owner}` : undefined,
         usd: Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, this.totalOf(studentId) ?? Infinity) + Math.max(0, sb.credit || 0),
         spent: sb.spent,
         code: this.tailCode(studentId),
@@ -589,10 +602,16 @@ export class Usage {
     for (const c of [].concat(this.capsOf(studentId) || [])) if (c && Number.isFinite(c.usd)) caps.push(c);
     return caps;
   }
+  // Rezervacije klicev v teku pod mejo c. Zajamčeni paket jih šteje pod ključem računa (c.fly = g:<račun>), ne pod
+  // c.key (s:<id> ali pool:<id,…>): ta se spremeni, ko račun doda ali izbriše profil, rezervacije klicev, ki so se
+  // začeli pod starim ključem, pa morajo šteti naprej (pilot korak 3, luknja v števcu).
+  inflightOf(c) {
+    return this.inflight.get(c.fly ?? c.key) || 0;
+  }
   // Prostor do najbližje meje v $ (poraba in rezervacije klicev v teku odštete); Infinity brez meje (brez računov).
   headroom(studentId, caps = this.capsFor(studentId)) {
     let h = Infinity;
-    for (const c of caps) h = Math.min(h, c.usd - (c.spent || 0) - (this.inflight.get(c.key) || 0));
+    for (const c of caps) h = Math.min(h, c.usd - (c.spent || 0) - this.inflightOf(c));
     return h;
   }
   // Najcenejši klic (hitri model, kratek način, ~30k vhodnih žetonov): brez prostora zanj je inštruktor ustavljen.
@@ -605,7 +624,7 @@ export class Usage {
     let cap = null;
     let room = Infinity;
     for (const c of caps) {
-      const r = c.usd - (c.spent || 0) - (this.inflight.get(c.key) || 0);
+      const r = c.usd - (c.spent || 0) - this.inflightOf(c);
       if (r < room) [cap, room] = [c, r];
     }
     return { cap, room };
@@ -615,7 +634,7 @@ export class Usage {
     const caps = this.capsFor(studentId);
     if (!caps.length) return null;
     const need = this.minCallUsd();
-    const c = caps.find((x) => x.usd - (x.spent || 0) - (this.inflight.get(x.key) || 0) < need);
+    const c = caps.find((x) => x.usd - (x.spent || 0) - this.inflightOf(x) < need);
     return c ? c.code || "block.monthLimit" : null;
   }
   // Ena rezervacija za en klic (skener, branje zapisa, urnik, anketa): hold ali null, če ne gre pod mejo.
@@ -643,7 +662,7 @@ export class Usage {
   // settle(rezervirano) jo sprosti, ko je strošek zapisan; release() sprosti vse ob koncu zahteve.
   // capsFn: meje, ki veljajo (privzeto meje profila); za strošek aplikacije npr. dnevni znesek preverjanja (appHold).
   hold(studentId, capsFn = () => this.capsFor(studentId)) {
-    const keys = capsFn().map((c) => c.key);
+    const keys = capsFn().map((c) => c.fly ?? c.key);
     const self = this;
     let held = 0;
     let row = null;

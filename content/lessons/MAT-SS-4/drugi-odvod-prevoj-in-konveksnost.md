@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -21,13 +21,13 @@ $$f''(x) = \bigl(f'(x)\bigr)'$$
 
 Za $f(x) = x^3$ je $f'(x) = 3x^2$ in $f''(x) = 6x$. Drugi odvod pove, kako hitro se spreminja naklon tangente. Pri raketi je $h'$ hitrost, $h''$ pa pospešek.
 
-**2. Trije grafi, en vzorec.** Primerjaj tri znane funkcije. Pri vsaki ravnilo (tangento) položi kamorkoli na graf in zapiši, ali je graf nad tangento ali pod njo.
+**2. Trije grafi, en vzorec.** Primerjaj tri znane funkcije. Pri vsaki ravnilo (tangento) položi kamorkoli na graf in zapiši, ali je graf nad tangento ali pod njo (od leve proti desni).
 
-| $f(x)$ | $f''(x)$ | graf glede na tangente |
+| $f(x)$ | $f''(x)$ | graf |
 |---|---|---|
 | $x^2$ | $2 > 0$ | nad |
 | $-x^2$ | $-2 < 0$ | pod |
-| $x^3$ | $6x$ | levo pod, desno nad |
+| $x^3$ | $6x$ | pod, nato nad |
 
 Kjer je $f''$ pozitiven, leži graf nad tangentami. Kjer je negativen, leži pod njimi. Zakaj? Pri $f'' > 0$ odvod $f'$ narašča, nakloni tangent se z večanjem $x$ večajo in graf se upogiba navzgor, stran od tangente.
 
@@ -183,15 +183,35 @@ $f''(1) = -e^{-1} < 0$, zato je v $x = 1$ maksimum $f(1) = e^{-1} \approx 0{,}37
 - Iskanje: $f''$, ničle $f''$, predznak na intervalih, ordinata $f(x_0)$.
 - Test ekstrema: $f'(a) = 0$ in $f''(a) > 0$ minimum, $f''(a) < 0$ maksimum, $f''(a) = 0$ ne odloči.
 
+## Ponovitev
+
+**Formule**
+- $f''(x) = \bigl(f'(x)\bigr)'$ (na pamet)
+- $f'' > 0$: konveksna ($\cup$); $f'' < 0$: konkavna ($\cap$) (na pamet)
+- Prevoj: $f''(x_0) = 0$ in $f''$ zamenja predznak (na pamet)
+- $f'(a) = 0$ in $f''(a) > 0$: minimum (na pamet)
+- $f'(a) = 0$ in $f''(a) < 0$: maksimum (na pamet)
+
+**Postopek**
+1. Izračunaj $f'$ in $f''$.
+2. Reši $f''(x) = 0$.
+3. Določi predznak $f''$ na intervalih med ničlami.
+4. Kjer $f''$ zamenja predznak in je $f(x_0)$ definirana, je prevoj $(x_0, f(x_0))$.
+
+**Pazi na**
+- Ničla $f''$ je le kandidatka: pri $x^4$ v $0$ prevoja ni.
+- Za prevoj rešiš $f''(x) = 0$, ne $f'(x) = 0$.
+- Naraščanje pove $f'$, konveksnost pa $f''$.
+
 ## Za maturo
 
 ### Naloga 1 (višja raven): krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
 
 Dana je funkcija $f(x) = x^4 - 4x^3 + 10$.
 
-a) Izračunaj $f'(x)$ in $f''(x)$. (2 točki)
-b) Določi intervale, na katerih je $f$ konveksna oziroma konkavna, in prevoje funkcije $f$. (3 točke)
-c) Poišči stacionarni točki funkcije $f$ in določi njuno vrsto. Pojasni, zakaj test z drugim odvodom v eni od njiju ne zadošča. (3 točke)
+a) Izračunajte $f'(x)$ in $f''(x)$. (2 točki)
+b) Določite intervale, na katerih je $f$ konveksna oziroma konkavna, in prevoje funkcije $f$. (3 točke)
+c) Poiščite stacionarni točki funkcije $f$ in določite njuno vrsto. Pojasnite, zakaj test z drugim odvodom v eni od njiju ne zadošča. (3 točke)
 
 **Rešitev:**
 
@@ -209,12 +229,12 @@ c) Poišči stacionarni točki funkcije $f$ in določi njuno vrsto. Pojasni, zak
 
 ### Naloga 2 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
 
-Dana je funkcija $f(x) = (x^2 - 3)\,e^x$. Rezultate, ki niso cela števila, zaokroži na dve decimalki.
+Dana je funkcija $f(x) = (x^2 - 3)\,e^x$. Rezultate, ki niso cela števila, zaokrožite na dve decimalki.
 
-a) Izračunaj $f'(x)$ in $f''(x)$ ter oba zapiši kot produkt polinoma in $e^x$. (2 točki)
-b) Poišči stacionarni točki funkcije $f$ in z drugim odvodom določi njuno vrsto. (3 točke)
-c) Izračunaj prevoja funkcije $f$ in utemelji, da sta res prevoja. (3 točke)
-d) Zapiši intervale, na katerih je $f$ konveksna oziroma konkavna. (2 točki)
+a) Izračunajte $f'(x)$ in $f''(x)$ ter oba zapišite kot produkt polinoma in $e^x$. (2 točki)
+b) Poiščite stacionarni točki funkcije $f$ in z drugim odvodom določite njuno vrsto. (3 točke)
+c) Izračunajte prevoja funkcije $f$ in utemeljite, da sta res prevoja. (3 točke)
+d) Zapišite intervale, na katerih je $f$ konveksna oziroma konkavna. (2 točki)
 
 **Rešitev:**
 
@@ -257,9 +277,9 @@ Naj bo $a$ stacionarna točka, torej $f'(a) = 0$. Če je $f''(a) > 0$, je v $a$ 
 
 ## Drugače: Korak za korakom s številkami
 
-Primerjaj $x^3$ in $x^4$ blizu točke $0$, kjer je pri obeh $f''(0) = 0$. Izračunaj drugi odvod malo levo in malo desno.
+Primerjaj $x^3$ in $x^4$ blizu točke $0$, kjer je pri obeh $f''(0) = 0$. Izračunaj drugi odvod malo levo in malo desno; $(x^3)'' = 6x$ in $(x^4)'' = 12x^2$.
 
-| $x$ | $(x^3)'' = 6x$ | $(x^4)'' = 12x^2$ |
+| $x$ | $(x^3)''$ | $(x^4)''$ |
 |---|---|---|
 | $-0{,}1$ | $-0{,}6$ | $0{,}12$ |
 | $0$ | $0$ | $0$ |
@@ -310,7 +330,7 @@ napis: 3,3; 4 | f′ | levo
 > Prevoj zahteva menjavo predznaka $f''$. Pri $x^4$ je $f''$ levo in desno od $0$ pozitiven, graf je povsod konveksen, v $0$ ima minimum.
 
 ? (brez računala) Za katero vrednost parametra $k$ ima funkcija $f(x) = x^3 + k x^2 + 1$ prevoj pri $x = 2$?
-= -6
+= -6 | 0
 ~ -3 | Rešil si $f'(2) = 0$ in dobil stacionarno točko. Za prevoj rešiš $f''(2) = 0$.
 ~ 6 | Predznak: iz $12 + 2k = 0$ sledi $k = -6$.
 > $f''(x) = 6x + 2k$. Iz $f''(2) = 12 + 2k = 0$ sledi $k = -6$. Takrat je $f''(x) = 6x - 12$, ki pri $x = 2$ res zamenja predznak.

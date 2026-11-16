@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+
+- Začetna hitrost
+  - $E + S \rightleftharpoons ES \rightarrow E + P$
+  - $v_0$: produkta še skoraj ni
+- Michaelis-Mentenova enačba
+  - $v_0 = \dfrac{V_\mathrm{max}[S]}{K_\mathrm{M} + [S]}$
+  - pogoji: $[S] \gg [E]_\mathrm{t}$, stacionarno stanje
+  - $[S] = 9K_\mathrm{M}$: šele $90\,\%$ $V_\mathrm{max}$
+- Konstanta $K_\mathrm{M}$
+  - $[S]$ pri $v_0 = V_\mathrm{max}/2$, enota mM
+  - $K_\mathrm{M} = (k_{-1} + k_2)/k_1$
+  - napaka: »velika $K_\mathrm{M}$ kot močna vezava«
+- Katalitska konstanta
+  - $V_\mathrm{max} = k_\mathrm{cat}[E]_\mathrm{t}$, $k_\mathrm{cat}$ v $\mathrm{s^{-1}}$
+  - učinkovitost $k_\mathrm{cat}/K_\mathrm{M}$
+  - več encima: $K_\mathrm{M}$ se ne spremeni
+- Dvojni recipročni diagram
+  - $\dfrac{1}{v_0} = \dfrac{K_\mathrm{M}}{V_\mathrm{max}}\cdot\dfrac{1}{[S]} + \dfrac{1}{V_\mathrm{max}}$
+  - odsek $1/V_\mathrm{max}$, presečišče $-1/K_\mathrm{M}$
+- Reverzibilna inhibicija
+  - $\alpha = 1 + [I]/K_\mathrm{i}$
+  - kompetitivna: $\alpha K_\mathrm{M}$, $V_\mathrm{max}$ ostane
+  - nekompetitivna: $V_\mathrm{max}/\alpha$, $K_\mathrm{M}$ ostane
+- Akompetitivna inhibicija
+  - veže se samo na $ES$
+  - $K_\mathrm{M}$ in $V_\mathrm{max}$ padeta za faktor $\alpha'$
+  - premice v diagramu vzporedne
+- Ireverzibilna inhibicija
+  - kovalentna vezava, encim trajno izklopljen
+  - aspirin acetilira serin ciklooksigenaze

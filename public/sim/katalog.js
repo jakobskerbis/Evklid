@@ -289,6 +289,7 @@ export const SIM_TOPICS = {
   "MAT-SS-2/kvadratna-enacba": ["graf", "Kvadratna enačba in diskriminanta", { preset: "kvadratna-enacba" }],
   "MAT-SS-2/kvadratna-neenacba": ["graf", "Kvadratna neenačba", { preset: "kvadratna-neenacba" }],
   "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb": ["graf", "Parabola in njena lega glede na os", { preset: "kvadratna-neenacba" }],
+  "MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo": ["graf", "Teme parabole: največja in najmanjša vrednost", { preset: "kvadratna" }],
   "MAT-SS-2/eksponentna-funkcija": ["graf", "Eksponentna funkcija", { preset: "eksponentna" }],
   "MAT-SS-2/eksponentne-enacbe": ["graf", "Eksponentna enačba grafično", { preset: "eksponentna-enacba" }],
   "MAT-SS-2/logaritem": ["graf", "Logaritem kot obratna funkcija", { preset: "logaritem" }],
@@ -341,6 +342,9 @@ export const SIM_TOPICS = {
   "MAT-SS-4/statistika": ["statistika", "Statistika: histogram in škatla z brki"],
   "MAT-SS-4/statisticna-naloga": ["statistika", "Obdelava zbranih podatkov"],
   "MAT-SS-4/mesane-maturitetne-naloge": ["zbirka", "Zbirka simulacij za maturo", { items: MATURA_MAT }],
+  "MAT-SS-4/vadbena-maturitetna-pola": ["zbirka", "Zbirka simulacij za maturo", { items: MATURA_MAT }],
+  "MAT-SS-2/mesane-naloge-1-in-2-letnika": ["zbirka", "Zbirka simulacij za maturo", { items: MATURA_MAT }],
+  "MAT-SS-3/mesane-naloge-3-letnika": ["zbirka", "Zbirka simulacij za maturo", { items: MATURA_MAT }],
   "MAT-SS-4/matematicna-indukcija": [["domine", "Domine: baza in indukcijski korak"], ["hanoi", "Hanojski stolpi: 2ⁿ − 1 potez"]],
   // ---------------------------------------------------------------- FIZ OŠ 8
   "FIZ-OS-8/fizikalne-kolicine-in-enote": ["enote", "Predpone in pretvarjanje enot", { set: "predpone", sets: ["predpone", "dolzina", "masa", "cas", "prostornina"] }],

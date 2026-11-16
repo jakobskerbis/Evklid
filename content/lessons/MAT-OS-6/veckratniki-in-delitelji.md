@@ -110,7 +110,7 @@ Večkratniki števila $b$: $b \cdot 1,\ b \cdot 2,\ b \cdot 3,\ \dots$; delitelj
 
 **Rešitev:**
 
-1. Število $7$ množimo s $1, 2, 3, 4, 5, 6$, ker so večkratniki števila iz poštevanke: $7, 14, 21, 28, 35, 42$.
+1. Število $7$ množimo z $1, 2, 3, 4, 5, 6$, ker so večkratniki števila iz poštevanke: $7, 14, 21, 28, 35, 42$.
 2. Delitelje števila $28$ iščemo v parih: $28 = 1 \cdot 28 = 2 \cdot 14 = 4 \cdot 7$.
 3. Števili $3$ in $5$ ne delita $28$ (ostanka $1$ in $3$), prav tako ne $6$. Delitelji, večji od $6$, imajo partnerja, manjšega od $6$, in te pare že imamo ($7$ s $4$, $14$ z $2$, $28$ z $1$). Zato končamo.
 4. Odgovor: $V_7 = \{7, 14, 21, 28, 35, 42, \dots\}$ in $D_{28} = \{1, 2, 4, 7, 14, 28\}$. Število $28$ je hkrati večkratnik števila $7$, $7$ pa delitelj števila $28$.

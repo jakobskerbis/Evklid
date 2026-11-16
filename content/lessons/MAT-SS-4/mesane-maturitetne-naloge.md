@@ -39,17 +39,22 @@ Poveča se, a za malo (na približno $54\,\%$). Novi človek prinese $23$ novih 
 3. **Račun.** Produkt ulomkov je isti račun kot $\frac{V_{365}^{23}}{365^{23}}$, le po delih.
 4. **Smiselnost.** Rezultat je med $0$ in $1$. Ker je presenetljiv, smo ga podprli še s štetjem parov.
 
-Isti štirje koraki delujejo pri vsaki mešani nalogi. Najtežji je drugi: iz besed naloge prepoznati orodje. Pomaga ti ta preglednica.
+Isti štirje koraki delujejo pri vsaki mešani nalogi. Najtežji je drugi: iz besed naloge prepoznati orodje. Pomaga ti ta seznam: levo od puščice je, kar piše v besedilu, desno orodje in zapis.
 
-| v besedilu piše | orodje | zapis |
-|---|---|---|
-| največ, najmanj, najvišja točka | odvod $= 0$ | $f'(x) = 0$ |
-| naklon tangente, hitrost spreminjanja | odvod v točki | $k = f'(x_0)$ |
-| ploščina pod grafom, pot iz hitrosti | določeni integral | $\int_a^b f(x)\,dx$ |
-| na koliko načinov, koliko tekem | kombinatorika | $n!$, $V_n^k$, $\binom{n}{k}$ |
-| vsaj eden, vsaj dva | nasprotni dogodek | $1 - P(\overline{A})$ |
-| vsako leto za $p\,\%$ | geometrijsko zaporedje | $a_n = a_1 q^{n-1}$ |
-| tipična vrednost, razpršenost | statistika | $\bar x$, $\mathrm{Me}$, $\sigma$ |
+- »največ, najmanj, najvišja točka« → odvod, $f'(x) = 0$
+- »naklon tangente, hitrost spreminjanja« → odvod v točki, $k = f'(x_0)$
+- »ploščina pod grafom, pot iz hitrosti« → določeni integral $\int_a^b f(x)\,dx$
+- »na koliko načinov, koliko tekem« → kombinatorika: $n!$, $V_n^k$, $\binom{n}{k}$
+- »vsaj eden, vsaj dva« → nasprotni dogodek, $1 - P(\overline{A})$
+- »vsako leto za $p\,\%$« → geometrijsko zaporedje, $a_n = a_1 q^{n-1}$
+- »tipična vrednost, razpršenost« → statistika: $\bar x$, $\mathrm{Me}$, $\sigma$
+- »kje se grafa sekata« → sistem enačb, $f(x) = g(x)$
+- »podvoji se, razpolovi se« → eksponentna enačba in logaritem, $q^t = 2$ ali $q^t = \frac{1}{2}$
+- »kot med vektorjema« → skalarni produkt in dolžini vektorjev
+- »razdalja od premice« → pravokotnica skozi točko, razdalja do projekcije
+- »ničle polinoma« → razcep ali Hornerjev algoritem, $p(x) = 0$
+- »se dotika« → diskriminanta, pogoj $D = 0$
+- »stranica nasproti kota« → kosinusni izrek
 
 Večkoračna naloga je **veriga** takih orodij. Primer: »Žoga leti po tiru $h(t)$. Kdaj je najvišje in kdaj pade na tla?« Prvi del je odvod, drugi kvadratna enačba iz 1. letnika. Vsak člen verige reši posebej in rezultat prvega zapiši, preden začneš drugega.
 
@@ -165,11 +170,33 @@ $S_6 \approx 13\,604$ vstopnic v šestih sezonah.
 - »Vsako leto za $p\,\%$« → $a_n = a_1 q^{n-1}$ in $S_n = a_1 \frac{q^n - 1}{q - 1}$.
 - Paradoks rojstnih dni: pri $23$ ljudeh je verjetnost skupnega rojstnega dne približno $0{,}507$.
 
+## Ponovitev
+
+**Formule**
+- $P(A) = 1 - P(\overline{A})$ (na pamet)
+- največ, najmanj: $f'(x) = 0$ (na pamet)
+- $V_n^k = \frac{n!}{(n-k)!}$ (na pamet)
+- $a_n = a_1 q^{n-1}$ (na pamet)
+- $S_n = a_1 \frac{q^n - 1}{q - 1}$, $q \ne 1$ (priloga)
+- pot iz hitrosti: $\int_a^b v(t)\,dt$ (na pamet)
+
+**Postopek**
+1. Poišči ključno besedo (»vsaj«, »največ«, »na koliko načinov«).
+2. Izberi orodje, ki ji ustreza.
+3. Vsak člen verige reši posebej in zapiši rezultat.
+4. Preveri smiselnost (verjetnost je med $0$ in $1$).
+5. Še enkrat preberi vprašanje in odgovori prav nanj.
+
+**Pazi na**
+- Pri »vsaj eden« verjetnosti ne seštevaj; računaj z nasprotnim dogodkom.
+- Iz $h'(t) = 0$ dobiš čas vrha; za višino izračunaj še $h(t)$.
+- Je vrstni red pomemben (doma in v gosteh)? Potem $V_n^k$, ne $\binom{n}{k}$.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-V vrečki je $5$ rdečih in $3$ modre kroglice. Hkrati naključno izvlečemo dve kroglici. Izračunaj verjetnost, da sta kroglici različnih barv.
+V vrečki je $5$ rdečih in $3$ modre kroglice. Hkrati naključno izvlečemo dve kroglici. Izračunajte verjetnost, da sta kroglici različnih barv.
 
 **Rešitev:**
 
@@ -184,11 +211,11 @@ V vrečki je $5$ rdečih in $3$ modre kroglice. Hkrati naključno izvlečemo dve
 
 Dani sta funkcija $f(x) = -x^2 + 4x$ in premica $p$ z enačbo $y = x$.
 
-a) Izračunaj ničli funkcije $f$ in koordinate presečišč grafa funkcije $f$ s premico $p$. (2 točki)
+a) Izračunajte ničli funkcije $f$ in koordinate presečišč grafa funkcije $f$ s premico $p$. (2 točki)
 
-b) Zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $x_0 = 1$. (2 točki)
+b) Zapišite enačbo tangente na graf funkcije $f$ v točki z absciso $x_0 = 1$. (2 točki)
 
-c) Izračunaj ploščino lika, ki ga omejujeta graf funkcije $f$ in premica $p$. (3 točke)
+c) Izračunajte ploščino lika, ki ga omejujeta graf funkcije $f$ in premica $p$. (3 točke)
 
 **Rešitev:**
 
@@ -206,13 +233,13 @@ c) Izračunaj ploščino lika, ki ga omejujeta graf funkcije $f$ in premica $p$.
 
 Verjetnost, da je naključno izbrana žarnica iz neke tovarne pokvarjena, je $0{,}04$. Žarnice so pokvarjene neodvisno druga od druge.
 
-a) V škatli je $10$ žarnic. Izračunaj verjetnost, da je pokvarjena natanko ena. Rezultat zaokroži na štiri decimalna mesta. (2 točki)
+a) V škatli je $10$ žarnic. Izračunajte verjetnost, da je pokvarjena natanko ena. Rezultat zaokrožite na štiri decimalna mesta. (2 točki)
 
-b) Izračunaj verjetnost, da je med $10$ žarnicami v škatli vsaj ena pokvarjena. Rezultat zaokroži na štiri decimalna mesta. (2 točki)
+b) Izračunajte verjetnost, da je med $10$ žarnicami v škatli vsaj ena pokvarjena. Rezultat zaokrožite na štiri decimalna mesta. (2 točki)
 
 c) Najmanj koliko žarnic mora biti v škatli, da je verjetnost, da je vsaj ena pokvarjena, večja od $0{,}5$? (3 točke)
 
-d) Kontrolor preizkuša žarnice eno za drugo. Verjetnost, da je prva pokvarjena žarnica šele $k$-ta preizkušena, je $p_k = 0{,}04 \cdot 0{,}96^{k-1}$. Utemelji, da so $p_1, p_2, p_3, \ldots$ členi geometrijskega zaporedja, izračunaj vsoto $p_1 + p_2 + \dots + p_{10}$ in pojasni, zakaj je enaka rezultatu iz b). (3 točke)
+d) Kontrolor preizkuša žarnice eno za drugo. Verjetnost, da je prva pokvarjena žarnica šele $k$-ta preizkušena, je $p_k = 0{,}04 \cdot 0{,}96^{k-1}$. Utemeljite, da so $p_1, p_2, p_3, \ldots$ členi geometrijskega zaporedja, izračunajte vsoto $p_1 + p_2 + \dots + p_{10}$ in pojasnite, zakaj je enaka rezultatu iz b). (3 točke)
 
 **Rešitev:**
 
@@ -303,20 +330,16 @@ Razlog je število parov $\binom{n}{2} = \frac{n(n-1)}{2}$, ki raste s kvadratom
 ~ Vsaka od $10$ novih ekip odigra več kot eno tekmo, kar $2 \cdot 19 = 38$ tekem.
 > $V_{20}^2 = 20 \cdot 19 = 380$, $V_{10}^2 = 10 \cdot 9 = 90$. Število tekem raste približno s kvadratom števila ekip.
 
-? (višja raven) Napadalec zadene enajstmetrovko z verjetnostjo $0{,}7$. Izvede dve neodvisni. Kolikšna je verjetnost, da zadene vsaj eno?
-- $1{,}4$
-~ To je $0{,}7 + 0{,}7$. Verjetnost ne more biti večja od $1$; dogodka nista nezdružljiva.
-- $0{,}49$
-~ To je verjetnost, da zadene **obe**, ne vsaj eno.
-+ $0{,}91$
+? (višja raven) Napadalec zadene enajstmetrovko z verjetnostjo $0{,}7$. Izvede dve neodvisni. Kolikšna je verjetnost, da zadene vsaj eno? Vpiši kot decimalno število.
+= 0,91 | 0,001
+~ 1,4 | To je $0{,}7 + 0{,}7$. Verjetnost ne more biti večja od $1$; dogodka nista nezdružljiva.
+~ 0,49 | To je verjetnost, da zadene **obe**, ne vsaj eno.
 > Nasprotni dogodek: zgreši obe, $0{,}3 \cdot 0{,}3 = 0{,}09$. Torej $1 - 0{,}09 = 0{,}91$.
 
-? Višina žoge je $h(t) = -5t^2 + 15t$ ($h$ v m, $t$ v s). Kolikšna je največja višina?
-- $1{,}5\,\mathrm{m}$
-~ $1{,}5$ je čas vrha v sekundah iz $h'(t) = -10t + 15 = 0$. Vstavi ga še v $h(t)$.
-- $22{,}5\,\mathrm{m}$
-~ To je le $15 \cdot 1{,}5$; pozabil si člen $-5t^2$.
-+ $11{,}25\,\mathrm{m}$
+? (brez računala) Višina žoge je $h(t) = -5t^2 + 15t$ ($h$ v m, $t$ v s). Kolikšna je največja višina (v metrih)?
+= 11,25 m | 0,01
+~ 1,5 | $1{,}5$ je čas vrha v sekundah iz $h'(t) = -10t + 15 = 0$. Vstavi ga še v $h(t)$.
+~ 22,5 | To je le $15 \cdot 1{,}5$; pozabil si člen $-5t^2$.
 > $h'(t) = -10t + 15 = 0$ da $t = 1{,}5\,\mathrm{s}$; $h(1{,}5) = -11{,}25 + 22{,}5 = 11{,}25\,\mathrm{m}$.
 
 :::simboli

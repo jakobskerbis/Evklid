@@ -48,7 +48,7 @@ $$\eta_C = 1 - \frac{T_2}{T_1}.$$
 
 *Dokaz.* Denimo, da je $\eta_X > \eta_C$. Stroja naj v ciklu opravita enako delo $A'$; X prejme toploto $Q_{1X} = A'/\eta_X$, C pa $Q_{1C} = A'/\eta_C > Q_{1X}$. Z delom stroja X poganjamo C obratno, kot hladilnik. Skupna naprava ne prejme dela, toplemu rezervoarju pa odda toploto $Q_{1C} - Q_{1X} > 0$, ki jo po prvem zakonu vzame hladnemu. To krši Clausiusovo obliko, zato $\eta_X \le \eta_C$. Če je povraten tudi X, vlogi zamenjamo in dobimo še $\eta_C \le \eta_X$. Ker so vsi povratni stroji enako dobri, velja $\eta_C$, izračunan za idealni plin, za vsako delovno snov.
 
-Izkoristek raste, čim večja je razlika temperatur. Temperature morajo biti v kelvinih.
+Izkoristek je tem večji, čim manjše je razmerje $T_2/T_1$. Temperature morajo biti v kelvinih.
 
 :::premisli
 Stroj deluje med $600\,\mathrm{K}$ in $300\,\mathrm{K}$. Kaj bolj poveča Carnotov izkoristek: topli rezervoar segreti za $100\,\mathrm{K}$ ali hladnega ohladiti za $100\,\mathrm{K}$?
@@ -61,7 +61,7 @@ Ohladiti hladnega: $1 - 200/600 \approx 67\,\%$, segreti toplega pa le $1 - 300/
 - **Hladilno število** hladilnika: $\varepsilon_h = Q_2/A$, največ $\dfrac{T_2}{T_1 - T_2}$.
 - **Grelno število** toplotne črpalke: $\varepsilon_g = Q_1/A$, največ $\dfrac{T_1}{T_1 - T_2}$.
 
-Najvišji vrednosti (po razmisleku kot pri Carnotovem izreku) da povratni (obrnjeni Carnotov) cikel, za katerega velja $Q_2/Q_1 = T_2/T_1$: $\varepsilon_h = \dfrac{Q_2}{Q_1 - Q_2} = \dfrac{T_2}{T_1 - T_2}$ in $\varepsilon_g = \dfrac{Q_1}{A} = \varepsilon_h + 1$. Obe števili sta lahko večji od $1$: s $1\,\mathrm{kJ}$ dela lahko v hišo prečrpamo več kot $1\,\mathrm{kJ}$ toplote.
+Najvišji vrednosti (po razmisleku kot pri Carnotovem izreku) da povratni (obrnjeni Carnotov) cikel, za katerega velja $Q_2/Q_1 = T_2/T_1$: $\varepsilon_h = \dfrac{Q_2}{Q_1 - Q_2} = \dfrac{T_2}{T_1 - T_2}$ in $\varepsilon_g = \dfrac{Q_1}{A} = \varepsilon_h + 1$. Obe števili sta lahko večji od $1$: z $1\,\mathrm{kJ}$ dela lahko v hišo prečrpamo več kot $1\,\mathrm{kJ}$ toplote.
 
 ### Entropija in njen pomen
 
@@ -323,11 +323,11 @@ T_k | končna (skupna) temperatura po mešanju | | K
 S | entropija | | J/K | funkcija stanja
 \Delta S | sprememba entropije | \Delta S = \int_1^2\frac{\delta Q_{\text{rev}}}{T} | J/K | ΔS = S₂ − S₁
 \Delta S_{\text{izol}} | sprememba entropije izoliranega sistema | | J/K | nikoli negativna
-\Delta S_1 | sprememba entropije pri taljenju ledu | \Delta S_1 = \frac{m q_t}{T_0} | J/K
-\Delta S_2 | sprememba entropije pri segrevanju vode | \Delta S_2 = m c \ln\frac{T_2}{T_0} | J/K
+\Delta S_1 | sprememba entropije pri taljenju ledu | \Delta S_1 = \frac{m q_t}{T_0} | J/K | v Primeru 2; v drugih primerih prvi del procesa
+\Delta S_2 | sprememba entropije pri segrevanju vode | \Delta S_2 = m c \ln\frac{T_2}{T_0} | J/K | v Primeru 2; v drugih primerih drugi del procesa
 \delta | neskončno majhna količina (nepopolni diferencial) | | | δQ ni sprememba funkcije stanja
 m | masa | | kg
-m_1, m_2 | masi toplejše in hladnejše vode | | kg
+m_1, m_2 | masi tople vode in ledu | | kg | v Primeru 3
 q_t | specifična talilna toplota | | J/kg | led: 334 kJ/kg
 c | specifična toplota | | J/(kg K) | voda: 4186 J/(kg K)
 :::

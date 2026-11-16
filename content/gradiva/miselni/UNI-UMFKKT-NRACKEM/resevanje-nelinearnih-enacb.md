@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Iskanje ničle
+  - enačbo zapišemo kot $f(x) = 0$
+  - zgled: $10\,t\,e^{-t/2} - 2 = 0$
+- Sprememba predznaka
+  - $f$ zvezna, $f(a)\,f(b) < 0$: vsaj ena ničla
+  - pazi: isti predznak ne izključi ničel
+- Bisekcija
+  - sredina $m = \frac{a+b}{2}$, obdrži polovico s spremembo predznaka
+  - širina po $n$ korakih: $\frac{b-a}{2^n}$
+  - zanesljiva, a počasna
+- Newtonova metoda
+  - $x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}$
+  - tangenta seka os v novem približku
+  - odpove pri $f'(x_n) \approx 0$
+- Konvergenca
+  - bisekcija linearna: $3{,}3$ koraka za decimalko
+  - Newton kvadratična: $e_{n+1} \approx C\,e_n^2$
+  - večkratna ničla: Newton le linearen
+- Ustavitveni pogoj
+  - popravek ali širina pod toleranco $\varepsilon$
+  - največje število korakov
+- Združitev metod
+  - bisekcija za interval, Newton za natančnost
+  - zdravilo deluje od $0{,}22\,\mathrm{h}$ do $7{,}15\,\mathrm{h}$

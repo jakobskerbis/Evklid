@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Definicija
+  - $A\vec{v} = \lambda\vec{v}$, $\vec{v} \neq \vec{0}$
+  - pomembna je smer: tudi $c\vec{v}$ je lastni vektor
+- Karakteristični polinom
+  - $p_A(\lambda) = \det(A - \lambda I) = 0$
+  - red $2$: $\lambda^2 - \operatorname{sl}(A)\,\lambda + \det A$
+  - preizkus: vsota je sled, produkt determinanta
+- Lastni podprostor
+  - reši $(A - \lambda I)\vec{v} = \vec{0}$, rešitve s parametri
+  - $E_\lambda = \ker(A - \lambda I)$
+- Večkratnosti
+  - $1 \le$ geometrična $\le$ algebraična
+  - pazi: dvojna ničla ne da nujno dveh vektorjev
+- Posebni primeri
+  - trikotna matrika: lastne vrednosti na diagonali
+  - obrnljiva natanko tedaj, ko $0$ ni lastna vrednost
+  - zasuk: $\cos\varphi \pm i\sin\varphi$, brez realnega vektorja
+- Diagonalizacija
+  - $A = PDP^{-1}$, stolpci $P$ so lastni vektorji
+  - pogoj: $n$ linearno neodvisnih lastnih vektorjev
+  - simetrična: $A = QDQ^T$, $Q$ ortogonalna
+- Uporaba
+  - $A^k = PD^kP^{-1}$
+  - sistem $\dot{\vec{x}} = A\vec{x}$
+  - Hückel za eten: $E = \alpha \pm \beta$

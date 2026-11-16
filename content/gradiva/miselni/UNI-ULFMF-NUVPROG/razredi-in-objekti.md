@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Razred in objekt
+  - razred je načrt, objekt primerek
+  - `list` je razred, `[1, 2]` objekt
+- Konstruktor
+  - `__init__(self, ...)` se pokliče sam
+  - objekt ustvari klic `Racun("Ana", 100)`
+  - napaka: »`return self` v `__init__`«
+- Atributi
+  - `self.stanje = stanje`, branje `a.stanje`
+  - vsak objekt ima svoje
+  - parameter `stanje` ni atribut `self.stanje`
+- Metode
+  - prvi parameter je vedno `self`
+  - `a.polozi(50)` pomeni `Racun.polozi(a, 50)`
+  - napaka: »`p.ploscina` brez oklepajev«
+- Ime in objekt
+  - `c = a` ne naredi kopije
+  - sprememba prek `c` vidna prek `a`
+- Atribut razreda
+  - zapisan v telesu razreda, skupen vsem
+  - slovar ustvari v `__init__`: `self.cene = {}`
+- Posebne metode
+  - `__str__` za `print`, `__eq__` za `==`
+  - atributi so v slovarju `a.__dict__`

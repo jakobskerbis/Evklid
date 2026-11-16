@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Živo tkivo
+  - osteoblasti gradijo, osteociti vzdržujejo, osteoklasti razgrajujejo
+  - hidroksiapatit: trdnost; kolagen: prožnost
+  - napaka: »kost je mrtva palica«
+- Dolga kost
+  - diafiza, metafiza, epifiza
+  - kompaktna kostnina z osteoni, gobasta z rdečim mozgom
+  - pokostnica zunaj, sklepni hrustanec na ploskvah
+- Rast
+  - epifizna ploščica: rast v dolžino
+  - po puberteti okosteni, kost se le debeli
+- Aksialni skelet
+  - $22 + 6 + 1 + 26 + 25 = 80$ kosti
+  - križnica je del hrbtenice
+- Apendikularni skelet
+  - $4 + 60 + 2 + 60 = 126$ kosti
+  - en ud: $30$ kosti
+  - skupaj $80 + 126 = 206$
+- Stiki kosti
+  - vezivni: šivi; hrustančni: medvretenčna ploščica, simfiza
+  - sinovialni: votlina, ovojnica, sklepna tekočina
+  - kostna zrast: križnica
+- Osi sinovialnih sklepov
+  - kroglasti $3$: rama, kolk
+  - jajčasti, sedlasti $2$; tečajasti, vrtilni $1$
+  - roka do zapestja: $3 + 1 + 1 + 2 = 7$

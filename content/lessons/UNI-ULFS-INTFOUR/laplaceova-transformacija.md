@@ -35,7 +35,7 @@ za tiste $s$, za katere posplošeni integral konvergira. Pišemo $F = \mathcal{L
 
 **Izrek (obstoj).** Če je $f$ odsekoma zvezna na $[0, \infty)$ in eksponentnega reda $a$, potem $F(s)$ obstaja (integral absolutno konvergira) za vse $s > a$, in velja $F(s) \to 0$, ko $s \to \infty$.
 
-**Dokaz.** Na $[0, t_0]$ je $f$ omejena, integral tam obstaja. Za $t \ge t_0$ je $|e^{-st}f(t)| \le Me^{-(s-a)t}$, in $\int_{t_0}^\infty Me^{-(s-a)t}\,dt = \frac{M e^{-(s-a)t_0}}{s - a}$ je končen pri $s > a$. Po primerjalnem kriteriju integral absolutno konvergira. Obe oceni gresta pri $s \to \infty$ proti $0$. $\square$
+**Dokaz.** Na $[0, t_0]$ je $f$ omejena, $|f| \le K$, zato integral tam obstaja in je pri $s > 0$ po absolutni vrednosti največ $\frac{K}{s}$. Za $t \ge t_0$ je $|e^{-st}f(t)| \le Me^{-(s-a)t}$, in $\int_{t_0}^\infty Me^{-(s-a)t}\,dt = \frac{M e^{-(s-a)t_0}}{s - a}$ je končen pri $s > a$. Po primerjalnem kriteriju integral absolutno konvergira. Obe oceni gresta pri $s \to \infty$ proti $0$. $\square$
 
 Polinomi, $e^{at}$, $\sin$ in $\cos$ so eksponentnega reda; $e^{t^2}$ ni, saj raste hitreje od vsake $e^{at}$.
 

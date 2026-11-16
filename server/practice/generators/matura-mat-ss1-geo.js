@@ -1154,10 +1154,10 @@ function nacrtL3(r) {
 // ================= generatorji =================
 const byLevel = (f1, f2, f3) => (level, r) => (level === 1 ? f1(r) : level === 2 ? f2(r) : f3(r));
 const GENS = [
-  { id: P + "enacbe-premice-in-kot-med-premicama", topics: [T("enacbe-premice-in-kot-med-premicama")], gen: byLevel(premicaL1, premicaL2, premicaL3) },
-  { id: P + "togi-premiki", topics: [T("togi-premiki")], gen: byLevel(togiL1, togiL2, togiL3) },
-  { id: P + "heronova-formula", topics: [T("heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga")], gen: byLevel(heronL1, heronL2, heronL3) },
-  { id: P + "nacrtovalne-naloge", topics: [T("nacrtovalne-naloge")], gen: byLevel(nacrtL1, nacrtL2, nacrtL3) },
+  { id: P + "enacbe-premice-in-kot-med-premicama", topics: [T("enacbe-premice-in-kot-med-premicama"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"], gen: byLevel(premicaL1, premicaL2, premicaL3) },
+  { id: P + "togi-premiki", topics: [T("togi-premiki"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"], gen: byLevel(togiL1, togiL2, togiL3) },
+  { id: P + "heronova-formula", topics: [T("heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"], gen: byLevel(heronL1, heronL2, heronL3) },
+  { id: P + "nacrtovalne-naloge", topics: [T("nacrtovalne-naloge"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"], gen: byLevel(nacrtL1, nacrtL2, nacrtL3) },
 ];
 
 export const MATURA_MAT_SS1_GEO = wrapGens(GENS);

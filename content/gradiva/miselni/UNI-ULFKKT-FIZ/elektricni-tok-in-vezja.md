@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Električni tok
+  - $I = \mathrm{d}Q/\mathrm{d}t$, enota $\mathrm{A}$
+  - $I = ne_0vS$, gostota $j = I/S$
+  - elektroni lezejo, polje se širi hitro
+- Ohmov zakon
+  - $U = RI$, enota $\Omega$
+  - žica: $R = \zeta l/S$
+- Moč
+  - $P = UI = I^2R = U^2/R$
+- Vir napetosti
+  - $U = U_g - IR_n$
+  - kratek stik: $I = U_g/R_n$
+- Vezave uporov
+  - zaporedno: $R = R_1 + R_2$
+  - vzporedno: $1/R = 1/R_1 + 1/R_2$
+  - $4\,\Omega$ in $12\,\Omega$ vzporedno: $3\,\Omega$
+- Kirchhoffova zakona
+  - vozlišče: $\sum I_k = 0$, ohranitev naboja
+  - zanka: $\sum U_{g,k} = \sum R_kI_k$
+  - negativen tok: nasprotna smer od izbrane
+- RC vezje
+  - $\tau = RC$, $1\,\mathrm{k}\Omega \cdot 1\,\mu\mathrm{F} = 1\,\mathrm{ms}$
+  - polnjenje: $Q = CU_g\left(1 - e^{-t/\tau}\right)$
+  - po $\tau$ napolnjen do $63\,\%$

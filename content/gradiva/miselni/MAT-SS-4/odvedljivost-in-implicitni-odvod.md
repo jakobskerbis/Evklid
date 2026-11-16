@@ -11,12 +11,13 @@ stanje: osnutek
   - napaka: odvod kot povprečje $0$
 - Ost in navpična tangenta
   - $\sqrt[3]{x^2}$ in $\sqrt[3]{x}$ v $0$
-  - diferenčni količnik raste čez vse meje
+  - diferenčni količnik ni omejen
 - Nezveznost
   - skok, luknja, pol
   - nezvezna ni nikoli odvedljiva
 - Odvedljiva je zvezna
   - višja raven
+  - v točki in na intervalu
   - obrat ne velja: $|x|$
 - Implicitni odvod
   - višja raven

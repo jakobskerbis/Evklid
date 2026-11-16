@@ -179,9 +179,67 @@ $f = \dfrac{\frac{8}{3}\pi r^3 \cdot 3\sqrt{3}}{64\,r^3} = \dfrac{\pi\sqrt{3}}{8
 - KPC: 2 atoma na celico, 8 sosedov, $a = \frac{4r}{\sqrt{3}}$, $f = 0{,}68$ (α-Fe, Cr, W).
 - KPloC: 4 atomi, 12 sosedov, $a = 2\sqrt{2}\,r$, $f = 0{,}74$ (Al, Cu, Au, γ-Fe). HGZ: 6 atomov, 12 sosedov, $f = 0{,}74$ (Zn, Mg, Ti).
 - Gostota iz mreže: $\rho = \frac{n M}{N_\mathrm{A} a^3}$.
-- Železo je alotropno: do $912\,^\circ\mathrm{C}$ KPC (ferit), nad tem KPloC (avstenit).
+- Železo je alotropno: do $912\,^\circ\mathrm{C}$ KPC (ferit), med $912$ in $1394\,^\circ\mathrm{C}$ KPloC (avstenit).
 - Napake: točkaste (praznine, intersticijski in substitucijski atomi), črtne (dislokacije), ploskovne (kristalne meje), prostorske (pore, vključki).
 - Plastična deformacija poteka z gibanjem dislokacij; vse, kar jih ovira, kovino utrdi.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije kristalne mreže, osnovne celice, mrežnega parametra, koordinacijskega števila in faktorja zapolnitve;
+- za KPC, KPloC in HGZ število atomov na celico, koordinacijsko število, faktor zapolnitve in po dva primera kovin;
+- izpeljavo zvez $a = \frac{4r}{\sqrt{3}}$ (KPC) in $a = 2\sqrt{2}\,r$ (KPloC) iz smeri, v kateri se atomi dotikajo;
+- izpeljavo enačbe $\rho = \frac{n M}{N_\mathrm{A} a^3}$ in izpeljavo faktorja zapolnitve za KPC in KPloC;
+- alotropne oblike železa s temperaturama premen $912\,^\circ\mathrm{C}$ in $1394\,^\circ\mathrm{C}$;
+- razvrstitev kristalnih napak po razsežnosti in vlogo dislokacij pri plastični deformaciji in utrjanju.
+
+### Naloga 1
+
+Palico iz čistega železa segrevamo. Tik pod $912\,^\circ\mathrm{C}$ ima železo mrežo KPC z $a_\mathrm{KPC} = 0{,}2903\,\mathrm{nm}$, tik nad to temperaturo pa mrežo KPloC z $a_\mathrm{KPloC} = 0{,}3647\,\mathrm{nm}$. Molska masa je $M = 55{,}85\,\mathrm{g/mol}$, $N_\mathrm{A} = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$. (a) Za koliko odstotkov se pri premeni spremeni prostornina in za koliko milimetrov dolžina palice, ki je pred premeno dolga $500\,\mathrm{mm}$? (b) Izračunaj gostoto železa tik pod premeno in tik nad njo. (c) Izračunaj polmer atoma v obeh mrežah in pojasni, zakaj je sprememba prostornine veliko manjša, kot jo napove model enako velikih trdih krogel.
+
+**Rešitev:**
+
+1. Število atomov se pri premeni ne spremeni, zato primerjamo prostornino na en atom, $\frac{a^3}{n}$.
+2. KPC ($n = 2$): $\dfrac{0{,}2903^3}{2}\,\mathrm{nm^3} \approx 0{,}012232\,\mathrm{nm^3}$.
+3. KPloC ($n = 4$): $\dfrac{0{,}3647^3}{4}\,\mathrm{nm^3} \approx 0{,}012127\,\mathrm{nm^3}$.
+4. Razmerje prostornin: $\dfrac{0{,}012127}{0{,}012232} \approx 0{,}9914$. Prostornina se zmanjša za približno $0{,}86\,\%$.
+5. Dolžina se spremeni s tretjim korenom tega razmerja: $\sqrt[3]{0{,}9914} \approx 0{,}9971$. Palica se skrči za približno $0{,}29\,\%$, to je za okoli $1{,}4\,\mathrm{mm}$.
+6. Gostota KPC: $a^3 \approx 2{,}4465 \cdot 10^{-23}\,\mathrm{cm^3}$, $N_\mathrm{A} \cdot a^3 \approx 14{,}73\,\mathrm{cm^3/mol}$, zato $\rho = \dfrac{2 \cdot 55{,}85}{14{,}73}\,\mathrm{g/cm^3} \approx 7{,}58\,\mathrm{g/cm^3}$.
+7. Gostota KPloC: $a^3 \approx 4{,}8507 \cdot 10^{-23}\,\mathrm{cm^3}$, $N_\mathrm{A} \cdot a^3 \approx 29{,}21\,\mathrm{cm^3/mol}$, zato $\rho = \dfrac{4 \cdot 55{,}85}{29{,}21}\,\mathrm{g/cm^3} \approx 7{,}65\,\mathrm{g/cm^3}$.
+8. Polmer atoma: v KPC $r = \dfrac{a\sqrt{3}}{4} \approx 0{,}1257\,\mathrm{nm}$, v KPloC $r = \dfrac{a\sqrt{2}}{4} \approx 0{,}1289\,\mathrm{nm}$.
+9. Pri enakem $r$ bi bilo razmerje prostornin enako razmerju faktorjev zapolnitve, $\dfrac{0{,}680}{0{,}740} \approx 0{,}919$, kar bi pomenilo skrček za okoli $8\,\%$. V resnici je polmer atoma v KPloC za okoli $2{,}6\,\%$ večji kot v KPC, ker je atom z 12 sosedi od vsakega nekoliko bolj oddaljen kot atom z 8 sosedi. To skoraj izniči učinek tesnejšega zlaganja.
+10. Odgovor: (a) prostornina se zmanjša za okoli $0{,}86\,\%$, palica se skrajša za okoli $1{,}4\,\mathrm{mm}$; (b) gostota naraste s $7{,}58$ na $7{,}65\,\mathrm{g/cm^3}$; (c) polmer je $0{,}1257\,\mathrm{nm}$ v KPC in $0{,}1289\,\mathrm{nm}$ v KPloC, zato model trdih krogel z enakim $r$ skrček močno preceni.
+
+### Naloga 2
+
+Izpelji zvezo med mrežnim parametrom $a$ in polmerom atoma $r$ za mreži KPC in KPloC. Nato izpelji faktor zapolnitve mreže KPloC in utemelji, zakaj ni odvisen od velikosti atoma.
+
+**Rešitev:**
+
+1. Model: atomi so trde krogle s polmerom $r$, ki se dotikajo v smeri, kjer so središča najbliže skupaj.
+2. KPC: središčni atom se dotika ogliščnih. Na telesni diagonali ležijo polmer ogliščnega atoma, premer središčnega in polmer nasprotnega ogliščnega atoma, skupaj $4r$.
+3. Telesna diagonala kocke: diagonala ploskve je $a\sqrt{2}$, z robom $a$ tvori pravokotni trikotnik, zato je $\sqrt{2a^2 + a^2} = a\sqrt{3}$. Iz $a\sqrt{3} = 4r$ sledi $a = \dfrac{4r}{\sqrt{3}}$.
+4. KPloC: atom na sredini ploskve se dotika štirih ogliščnih atomov iste ploskve. Na diagonali ploskve so spet štirje polmeri: $a\sqrt{2} = 4r$, torej $a = \dfrac{4r}{\sqrt{2}} = 2\sqrt{2}\,r$.
+5. Atomov na celico KPloC: $8 \cdot \frac{1}{8} + 6 \cdot \frac{1}{2} = 4$. Njihova prostornina je $4 \cdot \frac{4}{3}\pi r^3 = \frac{16}{3}\pi r^3$.
+6. Prostornina celice: $a^3 = (2\sqrt{2}\,r)^3 = 16\sqrt{2}\,r^3$.
+7. $f = \dfrac{\frac{16}{3}\pi r^3}{16\sqrt{2}\,r^3} = \dfrac{\pi}{3\sqrt{2}} \approx 0{,}740$.
+8. Utemeljitev: $a$ je sorazmeren z $r$, zato sta prostornina atomov in prostornina celice obe sorazmerni z $r^3$ in se $r$ pokrajša. Faktor zapolnitve je lastnost geometrije zlaganja, ne vrste atoma; zato imajo aluminij, baker in zlato enak $f = 0{,}74$.
+
+### Naloga 3
+
+Natančno navedi razvrstitev kristalnih napak po razsežnosti, za vsako skupino po en primer. Utemelji, zakaj je izmerjena meja plastičnosti kovin sto- do tisočkrat manjša od teoretične trdnosti popolnega kristala in zakaj legiranje, drobna zrna in hladno preoblikovanje kovino utrdijo.
+
+**Rešitev:**
+
+1. Točkaste napake (razsežnost 0): praznina, intersticijski atom (ogljik v železu), substitucijski atom (cink v bakru).
+2. Črtne napake (razsežnost 1): dislokacije. Robna je rob vrinjene polravnine atomov, pri vijačni so ravnine zasukane okoli dislokacijske črte.
+3. Ploskovne napake (razsežnost 2): kristalna meja med različno usmerjenima zrnoma, dvojčična meja.
+4. Prostorske napake (razsežnost 3): pore, razpoke, vključki oksidov ali sulfidov.
+5. Teoretična trdnost predpostavlja, da ravnina zdrsne čez sosednjo naenkrat, torej da se hkrati pretrgajo vse vezi v ravnini. V resničnem kristalu zdrs poteka z gibanjem dislokacije: naenkrat se pretrga in na novo sklene le ena vrsta vezi ob dislokacijski črti. Za to zadostuje veliko manjša napetost.
+6. Ko dislokacija preide čez kristal, je del nad drsno ravnino zamaknjen za en atomski razmik. Plastična deformacija je vsota zelo velikega števila takih zdrsov.
+7. Utrjanje pomeni oviranje gibanja dislokacij. Tuji atomi popačijo mrežo okoli sebe. Na kristalni meji se smer drsnih ravnin spremeni, zato se dislokacije ob njej ustavijo; drobna zrna pomenijo več mej. Pri hladnem preoblikovanju se dislokacije namnožijo in zapletejo med seboj.
+8. Sklep: trdnost kovine ne določa trdnost vezi, temveč gibljivost dislokacij. Utrjanje navadno zmanjša raztezljivost; izjema so drobna zrna, ki izboljšajo tudi žilavost.
 
 ## Drugače: Na sliki
 

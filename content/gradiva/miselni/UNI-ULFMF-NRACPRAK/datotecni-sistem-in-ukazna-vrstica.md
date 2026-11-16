@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Drevo imenikov
+  - koren `/`, domači imenik `~`
+  - `.` trenutni imenik, `..` starš
+- Trenutni imenik
+  - `pwd` izpiše, kje si
+  - `cd ..` gre eno raven višje
+- Absolutna in relativna pot
+  - absolutna se začne s `/`, velja povsod
+  - relativna: `../jupiter/lune.txt` iz `mars`
+  - pazi: `cd /slike` išče v korenu
+- Osnovni ukazi
+  - `ls`, `mkdir`, `cp`, `mv`, `rm`, `cat`
+  - oblika: ukaz, stikala, argumenti
+  - `rm` briše dokončno, brez koša
+- Vzorci
+  - `*` pomeni poljubno zaporedje znakov
+  - `mv *.fits surovi/` premakne vse posnetke
+- Skripta
+  - prva vrstica `#!/bin/bash`
+  - `bash uredi.sh` ali `chmod +x` in `./uredi.sh`
+  - ukazi tečejo v imeniku zagona

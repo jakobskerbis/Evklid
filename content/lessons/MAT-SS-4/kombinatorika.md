@@ -11,7 +11,7 @@ Deset krajev se ne zdi veliko, zato je rezultat na prvi pogled nemogoč. Pa ni: 
 
 ## Razlaga
 
-**1. Drevo možnosti.** Iz Ljubljane v Maribor lahko greš z vlakom, avtobusom ali avtom. Iz Maribora v Gradec pa z vlakom ali avtobusom. Nariši drevo: iz začetne točke izhajajo tri veje (prevoz do Maribora), iz konca vsake veje še dve (prevoz do Gradca). Na koncu drevesa je $3 \cdot 2 = 6$ listov, vsak list je ena celotna pot.
+**1. Drevo možnosti.** Iz Ljubljane v Maribor lahko greš z vlakom, avtobusom ali avtom. Iz Maribora v Gradec pa z vlakom ali avtobusom. Nariši **kombinatorično drevo**: iz začetne točke izhajajo tri veje (prevoz do Maribora), iz konca vsake veje še dve (prevoz do Gradca). Na koncu drevesa je $3 \cdot 2 = 6$ listov, vsak list je ena celotna pot.
 
 To je **osnovni izrek kombinatorike** (pravilo produkta): če izbiro opraviš v več zaporednih korakih in ima prvi korak $m$ možnosti, drugi pa $n$ možnosti, je vseh izbir $m \cdot n$. Pri več korakih množiš naprej.
 
@@ -48,7 +48,7 @@ $$^{(p)}V_n^k = n^k$$
 
 **4. Kombinacije.** Zdaj te vrstni red ne zanima: le odločiš se, katere $3$ kraje od $7$ boš obiskal. V tabeli zgoraj je vseh $6$ vrstic en sam izbor, {Bled, Bohinj, Kr. Gora}. Tako vsak izbor treh krajev med $210$ variacijami nastopi $3! = 6$-krat. Izborov je torej $\frac{210}{6} = 35$.
 
-Neurejeni izbor $k$ različnih elementov izmed $n$ je **kombinacija** $k$-tega razreda iz $n$ elementov. Število kombinacij je **binomski koeficient** $\binom{n}{k}$ (beri »$n$ nad $k$«):
+Neurejeni izbor $k$ različnih elementov izmed $n$ je **kombinacija** $k$-tega razreda iz $n$ elementov. Število kombinacij je **binomski simbol** (binomski koeficient) $\binom{n}{k}$ (beri »$n$ nad $k$«):
 
 $$C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!}$$
 
@@ -58,14 +58,12 @@ Kaj je večje: $\binom{7}{3}$ ali $\binom{7}{4}$? Odgovori brez računanja.
 Enaka sta, oba sta $35$. Ko izbereš $3$ kraje, ki jih boš obiskal, si s tem hkrati izbral $4$ kraje, ki jih ne boš. Vsakemu izboru treh ustreza natanko en izbor štirih.
 :::
 
-**5. Kako izbrati pravo formulo.** Pred računanjem odgovori na tri vprašanja.
+**5. Kako izbrati pravo formulo.** Pred računanjem odgovori na tri vprašanja: ali uporabiš vse elemente, ali je vrstni red pomemben in ali se elementi ponavljajo.
 
-| Vsi elementi? | Vrstni red pomemben? | Ponavljanje? | Formula |
-|---|---|---|---|
-| da | da | ne | $P_n = n!$ |
-| ne | da | ne | $V_n^k$ |
-| ne | da | da | $n^k$ |
-| ne | ne | ne | $\binom{n}{k}$ |
+- vsi elementi, vrstni red pomemben, brez ponavljanja: $P_n = n!$
+- ne vsi, vrstni red pomemben, brez ponavljanja: $V_n^k$
+- ne vsi, vrstni red pomemben, s ponavljanjem: $n^k$
+- ne vsi, vrstni red ni pomemben, brez ponavljanja: $\binom{n}{k}$
 
 V simulaciji spodaj (»Permutacije, variacije in kombinacije«) izberi način »Izbiranje«, nastavi $n = 5$ in $k = 3$, nato vklapljaj in izklapljaj stikalo »vrstni red je pomemben«. Opazi, da število pade s $60$ na $10$, natanko za faktor $3! = 6$.
 
@@ -175,7 +173,7 @@ $P_n^{k_1, k_2, \ldots, k_r} = \frac{n!}{k_1!\,k_2! \cdots k_r!}$
 
 ## Pogoste napake
 
-- **Vrstni red »na občutek«.** »Izbiram 3 kraje od 7, torej $7 \cdot 6 \cdot 5$.« Ta račun šteje Bled–Bohinj–Piran in Piran–Bohinj–Bled kot dva izbora. Vprašaj se: ali dobim nekaj drugega, če zamenjam dva izbrana elementa? Če ne, deli z $k!$ oziroma uporabi $\binom{n}{k}$.
+- **Vrstni red »na občutek«.** »Izbiram 3 kraje od 7, torej $7 \cdot 6 \cdot 5$.« Ta račun šteje Bled–Bohinj–Piran in Piran–Bohinj–Bled kot dva izbora. Vprašaj se: ali dobim nekaj drugega, če zamenjam dva izbrana elementa? Če ne, deli s $k!$ oziroma uporabi $\binom{n}{k}$.
 - **Seštevanje namesto množenja.** V Primeru 3 bi kdo zapisal $20 + 6 = 26$. Seštevaš le, kadar izbereš eno ali drugo možnost; kadar izbiraš eno in drugo zaporedoma, množiš.
 - **Ponavljanje, ki ga ni (ali ga je).** Ključavnica na kovčku s štirimi kolesci ima $10^4$ kod, ker se števke smejo ponoviti ($0007$ je dovoljena koda). Pri obiskih krajev pa kraja, ki si ga že obiskal, ne izbiraš znova, zato je možnosti vsakič ena manj.
 - **$0! = 0$.** Potem bi bil $\binom{5}{5} = \frac{5!}{5! \cdot 0!}$ deljenje z nič. Velja $0! = 1$, zato je $\binom{5}{5} = 1$: vseh pet izbereš na en sam način.
@@ -191,6 +189,26 @@ $P_n^{k_1, k_2, \ldots, k_r} = \frac{n!}{k_1!\,k_2! \cdots k_r!}$
 - Pravilo vsote: izbereš eno *ali* drugo iz primerov, ki se ne prekrivajo ($m$ in $n$ možnosti), vseh možnosti je $m + n$.
 - Permutacije s ponavljanjem ($n$ elementov, $k_1, \ldots, k_r$ enakih po vrstah): $P_n^{k_1, \ldots, k_r} = \frac{n!}{k_1! \cdots k_r!}$.
 - Pred računanjem vprašaj: vsi ali le nekateri? Je vrstni red pomemben? Je ponavljanje dovoljeno?
+
+## Ponovitev
+
+**Formule**
+- Zaporedne izbire $m \cdot n$, ločeni primeri $m + n$ (na pamet)
+- $P_n = n!$, $0! = 1$ (na pamet)
+- $V_n^k = \frac{n!}{(n-k)!}$, s ponavljanjem $n^k$ (na pamet)
+- $C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!}$ (na pamet)
+- $P_n^{k_1, \ldots, k_r} = \frac{n!}{k_1! \cdots k_r!}$ (na pamet)
+
+**Postopek**
+1. Vprašaj se: vsi ali le nekateri elementi?
+2. Je vrstni red pomemben? Je ponavljanje dovoljeno?
+3. Izberi permutacije, variacije ali kombinacije.
+4. Zaporedne izbire (in) množi, ločene primere (ali) seštej.
+
+**Pazi na**
+- Če zamenjava dveh izbranih ne da nič novega, uporabi $\binom{n}{k}$.
+- Pri ponavljanju (koda $0007$) je možnosti $n^k$, brez njega vsakič ena manj.
+- $0! = 1$; v $\binom{n}{k}$ ne pozabi $(n-k)!$ v imenovalcu.
 
 ## Za maturo
 
@@ -296,13 +314,10 @@ Ko s prijatelji izbirate, katere $3$ od $7$ znamenitosti v Rimu boste obiskali v
 > $6! = 720$, $7! = 7 \cdot 6! = 5040$. Novi kraj lahko vstaviš na $7$ mest v vsakem od starih vrstnih redov.
 
 ? Ključavnica na kovčku ima $4$ kolesca, na vsakem so števke od $0$ do $9$. Koliko različnih kod lahko nastaviš?
-- $5040$
-~ To je $10 \cdot 9 \cdot 8 \cdot 7$, kot da se števke ne smejo ponavljati. Koda $1111$ pa je povsem dovoljena.
-- $210$
-~ To je $\binom{10}{4}$, kot da vrstni red ni pomemben. Koda $1234$ ni ista kot $4321$.
-+ $10\,000$
-- $40$
-~ To je $4 \cdot 10$, seštevanje možnosti kolesc. Kolesca so zaporedne izbire, zato možnosti množiš.
+= 10000 | 0
+~ 5040 | To je $10 \cdot 9 \cdot 8 \cdot 7$, kot da se števke ne smejo ponavljati. Koda $1111$ pa je povsem dovoljena.
+~ 210 | To je $\binom{10}{4}$, kot da vrstni red ni pomemben. Koda $1234$ ni ista kot $4321$.
+~ 40 | To je $4 \cdot 10$, seštevanje možnosti kolesc. Kolesca so zaporedne izbire, zato možnosti množiš.
 > Vsako kolesce ima $10$ možnosti, vrstni red je pomemben in ponavljanje je dovoljeno: $10^4 = 10\,000$ kod.
 
 ? Iz skupine $10$ popotnikov izberejo tri: prvi nosi zemljevid, drugi kompas, tretji GPS-napravo. Na koliko načinov lahko razdelijo naloge?
@@ -314,6 +329,20 @@ Ko s prijatelji izbirate, katere $3$ od $7$ znamenitosti v Rimu boste obiskali v
 - $30$
 ~ To je $10 \cdot 3$. Pri vsaki nalogi izbiraš izmed preostalih popotnikov in možnosti množiš.
 > Izbiramo $3$ od $10$, vrstni red je pomemben, brez ponavljanja: $V_{10}^3 = 10 \cdot 9 \cdot 8 = 720$.
+
+? (brez računala) Koliko različnih besed (tudi takih brez pomena) dobiš s premetavanjem vseh črk besede MAMA?
+= 6 | 0
+~ 24 | To je $4!$, kot da bi bile vse črke različne. Zamenjava obeh M ali obeh A ne da nove besede.
+~ 12 | Delil si le z $2!$ za eno črko. Ponovita se dve črki, M in A, zato deliš z $2! \cdot 2!$.
+> Permutacije s ponavljanjem: $\frac{4!}{2! \cdot 2!} = \frac{24}{4} = 6$ (AAMM, AMAM, AMMA, MAAM, MAMA, MMAA).
+
+? Slaščičarna ponuja $5$ vrst sladoleda in $3$ vrste tort. Privoščiš si eno sladico: kepico sladoleda ali kos torte. Koliko možnosti imaš?
+- $15$
+~ Tako bi bilo, če bi vzel sladoled in torto (osnovni izrek). Tu izbereš le eno ali drugo.
++ $8$
+- $2$
+~ To je število primerov (sladoled ali torta), ne število možnosti v njiju.
+> Pravilo vsote: primera se ne prekrivata, zato možnosti seštejemo: $5 + 3 = 8$.
 
 :::simboli
 n | število vseh elementov | | | v primerih število krajev
@@ -342,4 +371,6 @@ vrednost: factorial(8)/(factorial(3)*factorial(5)) | 56
 vrednost: 364-56 | 308
 vrednost: 6*28+120+20 | 308
 vrednost: 6*13*12 | 936
+vrednost: factorial(4)/(factorial(2)*factorial(2)) | 6
+vrednost: 5+3 | 8
 >>

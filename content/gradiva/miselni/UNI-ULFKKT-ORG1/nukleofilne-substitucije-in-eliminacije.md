@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Igralci
+  - ogljik $\alpha$ je $\delta+$, vodik na ogljiku $\beta$
+  - nukleofil napade ogljik, baza vodik $\beta$
+  - številka v imenu: molekularnost počasnega koraka
+- Izstopajoča skupina
+  - šibka baza: $\mathrm{I^-} > \mathrm{Br^-} > \mathrm{Cl^-} \gg \mathrm{F^-}$
+  - alkohol šele protoniran: odide $\mathrm{H_2O}$
+- Mehanizem $\mathrm{S_N2}$
+  - en korak, hrbtni napad, inverzija
+  - $v = k[\mathrm{RX}][\mathrm{Nu}]$, v prebitku $k' = k[\mathrm{Nu}]_0$
+  - metil $>$ 1° $>$ 2°, 3° ne; aprotično topilo
+- Mehanizem $\mathrm{S_N1}$
+  - počasna ionizacija, ravninski karbokation, racemat
+  - $v = k[\mathrm{RX}]$, $t_{1/2} = \ln 2/k$
+  - 3° $>$ 2°; protično topilo, solvoliza, premestitve
+- Eliminacija E2
+  - $v = k[\mathrm{RX}][\mathrm{B}]$, močna baza, toplota
+  - $\mathrm{H}$ in $\mathrm{X}$ antiperiplanarna
+  - Zajcev; velika baza da Hofmannov produkt
+- Eliminacija E1
+  - isti karbokation kot $\mathrm{S_N1}$, $v = k[\mathrm{RX}]$
+  - višja temperatura: več alkena, $\Delta S > 0$
+- Odločanje
+  - najprej substrat, nato reagent, topilo, temperatura
+  - 1° z $\mathrm{OH^-}$: $\mathrm{S_N2}$; 3° z $\mathrm{OH^-}$: E2
+  - pazi: močnejši nukleofil ne pospeši $\mathrm{S_N1}$

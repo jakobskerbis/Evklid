@@ -813,7 +813,7 @@
    "o": "D"
   },
   "FIZ-OS-8/tlak#p0": {
-   "h": "256aa0a286c0",
+   "h": "822e7c20a3de",
    "o": "D"
   },
   "FIZ-OS-8/trenje-in-upor#p1": {
@@ -867,12 +867,12 @@
    "o": "D"
   },
   "FIZ-OS-9/moc-in-izkoristek#p1": {
-   "h": "afc4e51a1afd",
+   "h": "34e0e8e05435",
    "o": "D",
    "r": "izkoristek 20 % ni podan",
    "k": [
     "Delo je enako, a ga opraviš v krajšem času, zato je moč večja",
-    "Pri večji moči zato v vsaki sekundi nastane več toplote, kot je telo sproti odda okolici"
+    "Pri večji moči zato v vsaki sekundi nastane več toplote, kot jo telo sproti odda okolici"
    ]
   },
   "FIZ-OS-9/newtonovi-zakoni#p0": {
@@ -1309,7 +1309,7 @@
    "r": "vprašanje ne pove, katero enačbo"
   },
   "KEM-OS-8/nekovine#p0": {
-   "h": "4fff63818321",
+   "h": "c0764443d096",
    "o": "D"
   },
   "KEM-OS-8/nekovine#p1": {
@@ -1421,6 +1421,11 @@
   "KEM-OS-9/nafta-in-zemeljski-plin#p1": {
    "h": "f63a17bcdb82",
    "o": "D"
+  },
+  "KEM-OS-9/ogljik-in-organske-spojine#p2": {
+   "h": "b08e29d28707",
+   "o": "I",
+   "r": "formula izobutana ni podana, sklic na zemljevid iz lekcije"
   },
   "KEM-OS-9/ogljikovi-hidrati#p1": {
    "h": "3c49b5755029",
@@ -1829,7 +1834,7 @@
    "r": "sklic na diagram iz lekcije"
   },
   "MAT-OS-6/mnozice-in-diagrami#p1": {
-   "h": "abc8faceb944",
+   "h": "def683ec393e",
    "o": "D"
   },
   "MAT-OS-6/obseg-in-ploscina-pravokotnika-in-kvadrata#p0": {
@@ -1995,7 +2000,7 @@
    ]
   },
   "MAT-OS-7/tortni-prikaz#p1": {
-   "h": "f647c5073b67",
+   "h": "5efdf03406e2",
    "o": "I",
    "r": "sklic na anketo iz lekcije"
   },
@@ -2014,7 +2019,7 @@
    "r": "sklic na zgodbo z ulico in progo"
   },
   "MAT-OS-7/vrste-trikotnikov-in-notranji-koti#p0": {
-   "h": "50d996495c05",
+   "h": "f1e392238c2c",
    "o": "D"
   },
   "MAT-OS-7/znacilne-tocke-trikotnika#p0": {
@@ -2098,7 +2103,7 @@
    "o": "D"
   },
   "MAT-OS-9/besedilne-naloge#p1": {
-   "h": "d7706a49fa56",
+   "h": "c6a423eb15a3",
    "o": "D"
   },
   "MAT-OS-9/graf-linearne-funkcije#p0": {
@@ -2184,6 +2189,18 @@
    "o": "I",
    "r": "sklic na razlike iz lekcije"
   },
+  "MAT-SS-1/algebrski-izrazi#p3": {
+   "h": "fd28aa3bbcb4",
+   "o": "D"
+  },
+  "MAT-SS-1/algebrski-izrazi#p4": {
+   "h": "5aee5b8ab9fa",
+   "o": "D"
+  },
+  "MAT-SS-1/algebrski-izrazi#p5": {
+   "h": "5cd09e7bef18",
+   "o": "D"
+  },
   "MAT-SS-1/dvojiski-stevilski-sestav#p0": {
    "h": "93afb64c761c",
    "o": "I",
@@ -2191,6 +2208,14 @@
   },
   "MAT-SS-1/dvojiski-stevilski-sestav#p1": {
    "h": "2b1b0c5cc67d",
+   "o": "D"
+  },
+  "MAT-SS-1/dvojiski-stevilski-sestav#p3": {
+   "h": "9a1a55838eb6",
+   "o": "D"
+  },
+  "MAT-SS-1/dvojiski-stevilski-sestav#p4": {
+   "h": "0b3979e6fcf7",
    "o": "D"
   },
   "MAT-SS-1/enacbe-neenacbe-in-sistemi-s-parametrom#p0": {
@@ -2202,8 +2227,32 @@
    "o": "I",
    "r": "sklic na sistem enačb iz razlage lekcije"
   },
+  "MAT-SS-1/enacbe-neenacbe-in-sistemi-s-parametrom#p3": {
+   "h": "6fc6a7bef465",
+   "o": "D"
+  },
+  "MAT-SS-1/enacbe-neenacbe-in-sistemi-s-parametrom#p4": {
+   "h": "80da7adaa702",
+   "o": "D"
+  },
+  "MAT-SS-1/enacbe-neenacbe-in-sistemi-s-parametrom#p5": {
+   "h": "9dc9c8fc0959",
+   "o": "D"
+  },
   "MAT-SS-1/enacbe-premice-in-kot-med-premicama#p1": {
    "h": "3d67ba08cd5c",
+   "o": "D"
+  },
+  "MAT-SS-1/enacbe-premice-in-kot-med-premicama#p3": {
+   "h": "528528cefe13",
+   "o": "D"
+  },
+  "MAT-SS-1/enacbe-premice-in-kot-med-premicama#p4": {
+   "h": "54c212513f24",
+   "o": "D"
+  },
+  "MAT-SS-1/enacbe-premice-in-kot-med-premicama#p5": {
+   "h": "2e563db6d99c",
    "o": "D"
   },
   "MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb#p0": {
@@ -2224,13 +2273,37 @@
    "o": "I",
    "r": "nadaljevanje primera iz lekcije, samo ni razumljivo"
   },
+  "MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb#p3": {
+   "h": "b1a4b7252cdc",
+   "o": "D"
+  },
+  "MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb#p4": {
+   "h": "48300d27fda1",
+   "o": "D"
+  },
+  "MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb#p5": {
+   "h": "e85510402625",
+   "o": "D"
+  },
   "MAT-SS-1/heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga#p1": {
-   "h": "e19c050e1f82",
-   "o": "D",
-   "k": [
-    "Ne more. Vsaka stranica je tetiva očrtane krožnice, tetiva pa ni nikoli daljša od premera $2R$",
-    "Zato je $R \\ge \\dfrac{c}{2}$ za najdaljšo stranico $c$"
-   ]
+   "h": "1792a5833b11",
+   "o": "D"
+  },
+  "MAT-SS-1/heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga#p3": {
+   "h": "d498df438867",
+   "o": "D"
+  },
+  "MAT-SS-1/heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga#p4": {
+   "h": "35d8594ae722",
+   "o": "D"
+  },
+  "MAT-SS-1/heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga#p5": {
+   "h": "5c7c62595bb4",
+   "o": "D"
+  },
+  "MAT-SS-1/kartezicni-produkt-in-potencna-mnozica#p4": {
+   "h": "538d7a8e6ac8",
+   "o": "D"
   },
   "MAT-SS-1/linearna-funkcija#p0": {
    "h": "e1795da45718",
@@ -2242,8 +2315,28 @@
    "o": "D",
    "r": "obe funkciji sta podani v vprašanju"
   },
+  "MAT-SS-1/linearna-funkcija#p3": {
+   "h": "ebe094319181",
+   "o": "D"
+  },
+  "MAT-SS-1/linearna-funkcija#p4": {
+   "h": "0d6fda4a5369",
+   "o": "D"
+  },
+  "MAT-SS-1/linearna-funkcija#p5": {
+   "h": "a67c07d54c9a",
+   "o": "D"
+  },
   "MAT-SS-1/linearne-enacbe#p0": {
    "h": "2269aedfb70c",
+   "o": "D"
+  },
+  "MAT-SS-1/linearne-enacbe#p3": {
+   "h": "4b199332c7b8",
+   "o": "D"
+  },
+  "MAT-SS-1/linearne-enacbe#p5": {
+   "h": "31a2498f7a72",
    "o": "D"
   },
   "MAT-SS-1/linearne-neenacbe#p0": {
@@ -2259,6 +2352,18 @@
     "Interval je $(-\\infty, -5]$, krajišče $-5$ je vključeno"
    ]
   },
+  "MAT-SS-1/linearne-neenacbe#p3": {
+   "h": "ba2de2834836",
+   "o": "D"
+  },
+  "MAT-SS-1/linearne-neenacbe#p4": {
+   "h": "adc8ab81b26d",
+   "o": "D"
+  },
+  "MAT-SS-1/linearne-neenacbe#p5": {
+   "h": "64035c3370de",
+   "o": "D"
+  },
   "MAT-SS-1/mnozice#p0": {
    "h": "f0e45a63ead0",
    "o": "D"
@@ -2267,17 +2372,61 @@
    "h": "16bda8cd7171",
    "o": "D"
   },
+  "MAT-SS-1/mnozice#p3": {
+   "h": "d7b71ec9e376",
+   "o": "D"
+  },
+  "MAT-SS-1/mnozice#p4": {
+   "h": "2433edec554a",
+   "o": "D"
+  },
+  "MAT-SS-1/mnozice#p5": {
+   "h": "f36be20b426b",
+   "o": "D"
+  },
   "MAT-SS-1/nacrtovalne-naloge#p1": {
    "h": "becc071f6ac6",
    "o": "I",
    "r": "sklic na načrtovanje in sliko iz lekcije"
+  },
+  "MAT-SS-1/nacrtovalne-naloge#p3": {
+   "h": "94854c5b207d",
+   "o": "D"
+  },
+  "MAT-SS-1/nacrtovalne-naloge#p4": {
+   "h": "a610ae1eda51",
+   "o": "D"
+  },
+  "MAT-SS-1/nacrtovalne-naloge#p5": {
+   "h": "a8eba05b9bff",
+   "o": "D"
   },
   "MAT-SS-1/naravna-in-cela-stevila#p0": {
    "h": "f6058c06fc6a",
    "o": "D"
   },
   "MAT-SS-1/naravna-in-cela-stevila#p1": {
+   "h": "f6058c06fc6a",
+   "o": "D"
+  },
+  "MAT-SS-1/naravna-in-cela-stevila#p2": {
    "h": "1645ed1f6603",
+   "o": "D"
+  },
+  "MAT-SS-1/naravna-in-cela-stevila#p3": {
+   "h": "339bcf9ca894",
+   "o": "D"
+  },
+  "MAT-SS-1/naravna-in-cela-stevila#p4": {
+   "h": "339bcf9ca894",
+   "o": "D"
+  },
+  "MAT-SS-1/naravna-in-cela-stevila#p5": {
+   "h": "11a2a251e9a6",
+   "o": "D"
+  },
+  "MAT-SS-1/naravna-in-cela-stevila#p6": {
+   "h": "0e1dd785d3d3",
    "o": "D"
   },
   "MAT-SS-1/obdelava-podatkov#p0": {
@@ -2285,10 +2434,30 @@
    "o": "I",
    "r": "sklic na podatke o žepnini iz lekcije"
   },
+  "MAT-SS-1/obdelava-podatkov#p3": {
+   "h": "eaca96d657ec",
+   "o": "D"
+  },
+  "MAT-SS-1/obdelava-podatkov#p4": {
+   "h": "2fd4cbac0d9e",
+   "o": "D"
+  },
+  "MAT-SS-1/obdelava-podatkov#p5": {
+   "h": "203a2a686c22",
+   "o": "D"
+  },
   "MAT-SS-1/osnove-logike#p2": {
    "h": "c6ce26557213",
    "o": "I",
    "r": "izjavi nista podani"
+  },
+  "MAT-SS-1/osnove-logike#p4": {
+   "h": "acf2f74b4e6c",
+   "o": "D"
+  },
+  "MAT-SS-1/osnove-logike#p5": {
+   "h": "612a92cb64fd",
+   "o": "D"
   },
   "MAT-SS-1/osnovni-geometrijski-pojmi#p0": {
    "h": "560979387fa1",
@@ -2303,25 +2472,105 @@
     "Po obratu pravila bi enaka istoležna kota pomenila, da sta žici vzporedni, kar pa nista"
    ]
   },
+  "MAT-SS-1/osnovni-geometrijski-pojmi#p3": {
+   "h": "d65bcdba4dc6",
+   "o": "D"
+  },
+  "MAT-SS-1/osnovni-geometrijski-pojmi#p4": {
+   "h": "cff5dcfd3be4",
+   "o": "D"
+  },
+  "MAT-SS-1/osnovni-geometrijski-pojmi#p5": {
+   "h": "a060428ade19",
+   "o": "D"
+  },
   "MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti#p2": {
    "h": "5629e268d049",
    "o": "I",
    "r": "izraz ni podan"
   },
+  "MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti#p3": {
+   "h": "44d825e5c3a4",
+   "o": "D"
+  },
+  "MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti#p4": {
+   "h": "ae88b8037a9d",
+   "o": "D"
+  },
+  "MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti#p5": {
+   "h": "5693e3f6ad42",
+   "o": "D"
+  },
   "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p0": {
    "h": "496257bbd0a0",
+   "o": "D"
+  },
+  "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p2": {
+   "h": "26e8824ffb71",
+   "o": "D"
+  },
+  "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p3": {
+   "h": "3790627ced11",
+   "o": "D"
+  },
+  "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p4": {
+   "h": "3790627ced11",
+   "o": "D"
+  },
+  "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p5": {
+   "h": "39d3f21437cc",
+   "o": "D"
+  },
+  "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini#p6": {
+   "h": "a67c4c1ced42",
    "o": "D"
   },
   "MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka#p0": {
    "h": "af6e080f382a",
    "o": "D"
   },
+  "MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka#p3": {
+   "h": "d3efb06a2ab4",
+   "o": "D"
+  },
+  "MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka#p4": {
+   "h": "4c56034e6820",
+   "o": "D"
+  },
+  "MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka#p5": {
+   "h": "48f03e940594",
+   "o": "D"
+  },
   "MAT-SS-1/racionalna-stevila#p1": {
    "h": "b151147ef2b4",
    "o": "D"
   },
+  "MAT-SS-1/racionalna-stevila#p3": {
+   "h": "f76ba19c2f14",
+   "o": "D"
+  },
+  "MAT-SS-1/racionalna-stevila#p4": {
+   "h": "4eba116abb9e",
+   "o": "D"
+  },
+  "MAT-SS-1/racionalna-stevila#p5": {
+   "h": "1883047b686f",
+   "o": "D"
+  },
   "MAT-SS-1/razstavljanje-izrazov#p0": {
    "h": "61543b3017f0",
+   "o": "D"
+  },
+  "MAT-SS-1/razstavljanje-izrazov#p3": {
+   "h": "5d786ab6b109",
+   "o": "D"
+  },
+  "MAT-SS-1/razstavljanje-izrazov#p4": {
+   "h": "5951a7ed4329",
+   "o": "D"
+  },
+  "MAT-SS-1/razstavljanje-izrazov#p5": {
+   "h": "2cfdaac730c9",
    "o": "D"
   },
   "MAT-SS-1/razstavljanje-vsote-in-razlike-potenc#p1": {
@@ -2337,13 +2586,57 @@
    "o": "I",
    "r": "točkovnik se sklicuje na razcep $2^{10} - 1$ iz lekcije (»prvi faktor«)"
   },
+  "MAT-SS-1/razstavljanje-vsote-in-razlike-potenc#p3": {
+   "h": "77f2a29c707a",
+   "o": "D"
+  },
+  "MAT-SS-1/razstavljanje-vsote-in-razlike-potenc#p4": {
+   "h": "55fffe761a7f",
+   "o": "D"
+  },
+  "MAT-SS-1/razstavljanje-vsote-in-razlike-potenc#p5": {
+   "h": "a4b4e5d086d6",
+   "o": "D"
+  },
   "MAT-SS-1/realna-stevila-in-intervali#p2": {
    "h": "cd44d66a8196",
    "o": "I",
    "r": "merilo normalnega utripa ni podano"
   },
+  "MAT-SS-1/realna-stevila-in-intervali#p3": {
+   "h": "79edf0e9a829",
+   "o": "D"
+  },
+  "MAT-SS-1/realna-stevila-in-intervali#p4": {
+   "h": "fcd0155ff03c",
+   "o": "D"
+  },
+  "MAT-SS-1/realna-stevila-in-intervali#p5": {
+   "h": "ad250a051fe2",
+   "o": "D"
+  },
   "MAT-SS-1/sistemi-linearnih-enacb#p1": {
    "h": "22e77e7848fd",
+   "o": "D"
+  },
+  "MAT-SS-1/sistemi-linearnih-enacb#p4": {
+   "h": "3d6230c10a58",
+   "o": "D"
+  },
+  "MAT-SS-1/sistemi-linearnih-enacb#p5": {
+   "h": "0f1e37bed85e",
+   "o": "D"
+  },
+  "MAT-SS-1/stirikotniki-in-krog#p3": {
+   "h": "e2f6441dad16",
+   "o": "D"
+  },
+  "MAT-SS-1/stirikotniki-in-krog#p4": {
+   "h": "d8002235450c",
+   "o": "D"
+  },
+  "MAT-SS-1/stirikotniki-in-krog#p5": {
+   "h": "c4fac88cce2a",
    "o": "D"
   },
   "MAT-SS-1/togi-premiki#p0": {
@@ -2358,8 +2651,28 @@
     "Sliki sta različni, torej premika nista enaka"
    ]
   },
+  "MAT-SS-1/togi-premiki#p3": {
+   "h": "e497cc3c7794",
+   "o": "D"
+  },
+  "MAT-SS-1/togi-premiki#p4": {
+   "h": "f5932c124313",
+   "o": "D"
+  },
+  "MAT-SS-1/togi-premiki#p5": {
+   "h": "52e0af5054d8",
+   "o": "D"
+  },
   "MAT-SS-1/trikotnik#p0": {
    "h": "8e8ecade01a1",
+   "o": "D"
+  },
+  "MAT-SS-1/trikotnik#p4": {
+   "h": "420c7ca8f73c",
+   "o": "D"
+  },
+  "MAT-SS-1/trikotnik#p5": {
+   "h": "8451aadbead8",
    "o": "D"
   },
   "MAT-SS-1/ulomljeni-izrazi#p0": {
@@ -2367,7 +2680,19 @@
    "o": "D"
   },
   "MAT-SS-1/ulomljeni-izrazi#p1": {
-   "h": "16ad2710b1ad",
+   "h": "2a815d891e88",
+   "o": "D"
+  },
+  "MAT-SS-1/ulomljeni-izrazi#p3": {
+   "h": "b1bc47039a31",
+   "o": "D"
+  },
+  "MAT-SS-1/ulomljeni-izrazi#p4": {
+   "h": "11c5223213be",
+   "o": "D"
+  },
+  "MAT-SS-1/ulomljeni-izrazi#p5": {
+   "h": "3ea899801b75",
    "o": "D"
   },
   "MAT-SS-2/eksponentna-funkcija#p1": {
@@ -2379,12 +2704,70 @@
    "o": "I",
    "r": "funkcija g ni podana"
   },
+  "MAT-SS-2/eksponentna-funkcija#p3": {
+   "h": "495a307b877c",
+   "o": "D"
+  },
+  "MAT-SS-2/eksponentna-funkcija#p4": {
+   "h": "61e2bf60f10b",
+   "o": "D"
+  },
+  "MAT-SS-2/eksponentna-funkcija#p5": {
+   "h": "9424b4af084d",
+   "o": "D"
+  },
   "MAT-SS-2/eksponentne-enacbe#p1": {
    "h": "9ae27fd41af4",
    "o": "D"
   },
+  "MAT-SS-2/eksponentne-enacbe#p3": {
+   "h": "358da8b7a881",
+   "o": "D"
+  },
+  "MAT-SS-2/eksponentne-enacbe#p4": {
+   "h": "60c6acba2d09",
+   "o": "D"
+  },
+  "MAT-SS-2/eksponentne-enacbe#p5": {
+   "h": "493e22829749",
+   "o": "D"
+  },
+  "MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#p1": {
+   "h": "682f8d7b825b",
+   "o": "I",
+   "r": "sklic na pas 6 m iz razlage"
+  },
+  "MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#p2": {
+   "h": "943afc04392c",
+   "o": "I",
+   "r": "sklic na Primer 4 (števili z razliko 8)"
+  },
+  "MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#p3": {
+   "h": "e2ad79b61159",
+   "o": "D"
+  },
+  "MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#p4": {
+   "h": "cf418eacb398",
+   "o": "D"
+  },
+  "MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#p5": {
+   "h": "fb1275f91eb7",
+   "o": "D"
+  },
   "MAT-SS-2/funkcije-in-njihove-lastnosti#p1": {
    "h": "d17e86d20f84",
+   "o": "D"
+  },
+  "MAT-SS-2/funkcije-in-njihove-lastnosti#p3": {
+   "h": "818c0a153f5a",
+   "o": "D"
+  },
+  "MAT-SS-2/funkcije-in-njihove-lastnosti#p4": {
+   "h": "d5b789b3f436",
+   "o": "D"
+  },
+  "MAT-SS-2/funkcije-in-njihove-lastnosti#p5": {
+   "h": "2501606e6708",
    "o": "D"
   },
   "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#p0": {
@@ -2401,6 +2784,18 @@
     "Njena leva polovica je že zrcalna slika desne, zato zrcaljenje desne polovice da isti graf"
    ]
   },
+  "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#p3": {
+   "h": "c99e435af632",
+   "o": "D"
+  },
+  "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#p4": {
+   "h": "86d83629184d",
+   "o": "D"
+  },
+  "MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#p5": {
+   "h": "a4a257550cec",
+   "o": "D"
+  },
   "MAT-SS-2/iracionalne-enacbe#p0": {
    "h": "89cd692ee00f",
    "o": "I",
@@ -2410,8 +2805,28 @@
    "h": "e5bef783ee0c",
    "o": "D"
   },
+  "MAT-SS-2/iracionalne-enacbe#p3": {
+   "h": "e6a717563784",
+   "o": "D"
+  },
+  "MAT-SS-2/iracionalne-enacbe#p4": {
+   "h": "297656825828",
+   "o": "D"
+  },
+  "MAT-SS-2/kompleksna-stevila#p5": {
+   "h": "a13a23e7fa58",
+   "o": "D"
+  },
   "MAT-SS-2/koreni#p1": {
    "h": "ddb428c98211",
+   "o": "D"
+  },
+  "MAT-SS-2/koreni#p4": {
+   "h": "83545982c396",
+   "o": "D"
+  },
+  "MAT-SS-2/koreni#p5": {
+   "h": "a75eca13ddae",
    "o": "D"
   },
   "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#p0": {
@@ -2422,8 +2837,32 @@
    "h": "b1638b9dcd4c",
    "o": "D"
   },
+  "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#p3": {
+   "h": "357166ef64ad",
+   "o": "D"
+  },
+  "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#p4": {
+   "h": "c7f529a94e1c",
+   "o": "D"
+  },
+  "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#p5": {
+   "h": "c6f71716d860",
+   "o": "D"
+  },
   "MAT-SS-2/kvadratna-enacba#p1": {
    "h": "2ab78ced0ac9",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-enacba#p3": {
+   "h": "bcb63e054d12",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-enacba#p4": {
+   "h": "c707f9d4a71a",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-enacba#p5": {
+   "h": "5885a16fa4a6",
    "o": "D"
   },
   "MAT-SS-2/kvadratna-funkcija#p0": {
@@ -2439,19 +2878,116 @@
    "o": "I",
    "r": "funkcija ni podana"
   },
+  "MAT-SS-2/kvadratna-funkcija#p3": {
+   "h": "97d1a261226e",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-funkcija#p4": {
+   "h": "4b8248202a05",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-neenacba#p3": {
+   "h": "7c3c5542f0a6",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-neenacba#p4": {
+   "h": "472137fcf50e",
+   "o": "D"
+  },
+  "MAT-SS-2/kvadratna-neenacba#p5": {
+   "h": "10e128d74bc0",
+   "o": "D"
+  },
+  "MAT-SS-2/logaritem#p3": {
+   "h": "084436f78b1f",
+   "o": "D"
+  },
+  "MAT-SS-2/logaritem#p4": {
+   "h": "bf350a7884cc",
+   "o": "D"
+  },
+  "MAT-SS-2/logaritem#p5": {
+   "h": "51b6b6cd56aa",
+   "o": "D"
+  },
   "MAT-SS-2/logaritemska-funkcija-in-enacbe#p2": {
    "h": "bf37a36bd0b6",
    "o": "I",
    "r": "enačba ni podana"
   },
+  "MAT-SS-2/logaritemska-funkcija-in-enacbe#p3": {
+   "h": "63b3eaf159a9",
+   "o": "D"
+  },
+  "MAT-SS-2/logaritemska-funkcija-in-enacbe#p4": {
+   "h": "9f1a07cebecd",
+   "o": "D"
+  },
+  "MAT-SS-2/logaritemska-funkcija-in-enacbe#p5": {
+   "h": "a122a1116f8f",
+   "o": "D"
+  },
+  "MAT-SS-2/mesane-naloge-1-in-2-letnika#p1": {
+   "h": "0dcffc6a26b4",
+   "o": "I",
+   "r": "sklic na preglednico iz lekcije"
+  },
+  "MAT-SS-2/mesane-naloge-1-in-2-letnika#p3": {
+   "h": "5b3c0ca0fdd6",
+   "o": "D"
+  },
+  "MAT-SS-2/mesane-naloge-1-in-2-letnika#p4": {
+   "h": "3a6c08e7b232",
+   "o": "D"
+  },
+  "MAT-SS-2/mesane-naloge-1-in-2-letnika#p5": {
+   "h": "b639ae3f0a47",
+   "o": "D"
+  },
   "MAT-SS-2/podobnost#p0": {
    "h": "475ef8610349",
+   "o": "D"
+  },
+  "MAT-SS-2/podobnost#p3": {
+   "h": "0dae39556692",
+   "o": "D"
+  },
+  "MAT-SS-2/podobnost#p4": {
+   "h": "15fea58b1629",
+   "o": "D"
+  },
+  "MAT-SS-2/podobnost#p5": {
+   "h": "452bb49ca48f",
+   "o": "D"
+  },
+  "MAT-SS-2/potence-z-racionalnimi-eksponenti#p3": {
+   "h": "13fa1fc09d43",
+   "o": "D"
+  },
+  "MAT-SS-2/potence-z-racionalnimi-eksponenti#p4": {
+   "h": "7e5509975869",
+   "o": "D"
+  },
+  "MAT-SS-2/potence-z-racionalnimi-eksponenti#p5": {
+   "h": "11d70a900c7a",
    "o": "D"
   },
   "MAT-SS-2/potencna-in-korenska-funkcija#p1": {
    "h": "3c20dfbebc7b",
    "o": "D",
    "r": "Samostojno vprašanje; oba dela (kateri x in kaj storiti) pokrijejo vsi štirje pojmi."
+  },
+  "MAT-SS-2/potencna-in-korenska-funkcija#p3": {
+   "h": "52143f58549e",
+   "o": "D"
+  },
+  "MAT-SS-2/potencna-in-korenska-funkcija#p4": {
+   "h": "63417a4a4771",
+   "o": "D"
+  },
+  "MAT-SS-2/potencna-in-korenska-funkcija#p5": {
+   "h": "b9f385aad01f",
+   "o": "D"
   },
   "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p0": {
    "h": "5608ff8b236d",
@@ -2462,6 +2998,18 @@
    "h": "313299f5e2e9",
    "o": "D"
   },
+  "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p3": {
+   "h": "33ae0d19e7eb",
+   "o": "D"
+  },
+  "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p4": {
+   "h": "2d8c8a227442",
+   "o": "D"
+  },
+  "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p5": {
+   "h": "eb01dfedb28e",
+   "o": "D"
+  },
   "MAT-SS-2/transformacije-grafov#p0": {
    "h": "6eb30da6d32a",
    "o": "D"
@@ -2470,8 +3018,24 @@
    "h": "a7403ff37f4f",
    "o": "D"
   },
+  "MAT-SS-2/transformacije-grafov#p4": {
+   "h": "e2b2e9bf3422",
+   "o": "D"
+  },
   "MAT-SS-3/adicijski-izreki#p1": {
    "h": "59713dedf443",
+   "o": "D"
+  },
+  "MAT-SS-3/adicijski-izreki#p3": {
+   "h": "d893edaa38bb",
+   "o": "D"
+  },
+  "MAT-SS-3/adicijski-izreki#p4": {
+   "h": "cb8ce3f08591",
+   "o": "D"
+  },
+  "MAT-SS-3/adicijski-izreki#p5": {
+   "h": "89589784bc86",
    "o": "D"
   },
   "MAT-SS-3/elipsa-hiperbola-parabola#p0": {
@@ -2481,6 +3045,18 @@
   },
   "MAT-SS-3/elipsa-hiperbola-parabola#p1": {
    "h": "ac274372c2cc",
+   "o": "D"
+  },
+  "MAT-SS-3/elipsa-hiperbola-parabola#p3": {
+   "h": "e76ee42f2ba7",
+   "o": "D"
+  },
+  "MAT-SS-3/elipsa-hiperbola-parabola#p4": {
+   "h": "9e7dd0a8cf36",
+   "o": "D"
+  },
+  "MAT-SS-3/elipsa-hiperbola-parabola#p5": {
+   "h": "46799691c1c6",
    "o": "D"
   },
   "MAT-SS-3/graf-polinoma#p0": {
@@ -2496,12 +3072,48 @@
     "Vodilni člen je $-x^4$: stopnja $4$ je soda, vodilni koeficient $-1$ negativen"
    ]
   },
+  "MAT-SS-3/graf-polinoma#p3": {
+   "h": "005ff9691d15",
+   "o": "D"
+  },
+  "MAT-SS-3/graf-polinoma#p4": {
+   "h": "12041c5e9fc9",
+   "o": "D"
+  },
+  "MAT-SS-3/graf-polinoma#p5": {
+   "h": "63c8c9cfa89d",
+   "o": "D"
+  },
   "MAT-SS-3/grafi-kotnih-funkcij#p1": {
    "h": "999ed4bf4c8e",
    "o": "D"
   },
+  "MAT-SS-3/grafi-kotnih-funkcij#p3": {
+   "h": "42e667612436",
+   "o": "D"
+  },
+  "MAT-SS-3/grafi-kotnih-funkcij#p4": {
+   "h": "f0e7e74585f1",
+   "o": "D"
+  },
+  "MAT-SS-3/grafi-kotnih-funkcij#p5": {
+   "h": "ab7027df5926",
+   "o": "D"
+  },
   "MAT-SS-3/kotne-funkcije-poljubnega-kota#p0": {
    "h": "3403f6611fc4",
+   "o": "D"
+  },
+  "MAT-SS-3/kotne-funkcije-poljubnega-kota#p3": {
+   "h": "83107ceb1e8d",
+   "o": "D"
+  },
+  "MAT-SS-3/kotne-funkcije-poljubnega-kota#p4": {
+   "h": "34a6acd72918",
+   "o": "D"
+  },
+  "MAT-SS-3/kotne-funkcije-poljubnega-kota#p5": {
+   "h": "467fffddcaa0",
    "o": "D"
   },
   "MAT-SS-3/krozne-funkcije#p0": {
@@ -2510,6 +3122,18 @@
   },
   "MAT-SS-3/krozne-funkcije#p1": {
    "h": "aad990b25b96",
+   "o": "D"
+  },
+  "MAT-SS-3/krozne-funkcije#p3": {
+   "h": "460aaa56d80a",
+   "o": "D"
+  },
+  "MAT-SS-3/krozne-funkcije#p4": {
+   "h": "7ae6a14c6421",
+   "o": "D"
+  },
+  "MAT-SS-3/krozne-funkcije#p5": {
+   "h": "b20ae0256698",
    "o": "D"
   },
   "MAT-SS-3/kroznica#p0": {
@@ -2521,6 +3145,40 @@
    "o": "I",
    "r": "sklic na nalogo iz lekcije"
   },
+  "MAT-SS-3/kroznica#p3": {
+   "h": "c38ed17c87d8",
+   "o": "D"
+  },
+  "MAT-SS-3/kroznica#p4": {
+   "h": "106379039830",
+   "o": "D"
+  },
+  "MAT-SS-3/kroznica#p5": {
+   "h": "bffef9d97cf2",
+   "o": "D"
+  },
+  "MAT-SS-3/mesane-naloge-3-letnika#p0": {
+   "h": "2d318e8294b9",
+   "o": "I",
+   "r": "sklic na zgodbo iz lekcije (pekač)"
+  },
+  "MAT-SS-3/mesane-naloge-3-letnika#p1": {
+   "h": "7ab32c54deb7",
+   "o": "I",
+   "r": "sklic na prejšnji korak lekcije (n = 4)"
+  },
+  "MAT-SS-3/mesane-naloge-3-letnika#p3": {
+   "h": "6b78cf6b724a",
+   "o": "D"
+  },
+  "MAT-SS-3/mesane-naloge-3-letnika#p4": {
+   "h": "874335f6be80",
+   "o": "D"
+  },
+  "MAT-SS-3/mesane-naloge-3-letnika#p5": {
+   "h": "92e581c3b1f9",
+   "o": "D"
+  },
   "MAT-SS-3/polinomi#p1": {
    "h": "b622850ab0dc",
    "o": "D"
@@ -2529,6 +3187,18 @@
    "h": "f58a6daa414a",
    "o": "I",
    "r": "deljenje ni podano"
+  },
+  "MAT-SS-3/polinomi#p3": {
+   "h": "6c0c84286fb5",
+   "o": "D"
+  },
+  "MAT-SS-3/polinomi#p4": {
+   "h": "7343e5b17394",
+   "o": "D"
+  },
+  "MAT-SS-3/polinomi#p5": {
+   "h": "264f6d617a6f",
+   "o": "D"
   },
   "MAT-SS-3/posevna-telesa-in-vrtenine#p0": {
    "h": "4633a110a6f5",
@@ -2539,14 +3209,50 @@
    "h": "0b7410e44178",
    "o": "D"
   },
+  "MAT-SS-3/posevna-telesa-in-vrtenine#p3": {
+   "h": "99d015c0e5a1",
+   "o": "D"
+  },
+  "MAT-SS-3/posevna-telesa-in-vrtenine#p4": {
+   "h": "54cd357ea8b3",
+   "o": "D"
+  },
+  "MAT-SS-3/posevna-telesa-in-vrtenine#p5": {
+   "h": "2ec48048fb01",
+   "o": "D"
+  },
   "MAT-SS-3/povrsina-in-prostornina-teles#p0": {
    "h": "106468105879",
+   "o": "D"
+  },
+  "MAT-SS-3/povrsina-in-prostornina-teles#p3": {
+   "h": "7143405a6e1a",
+   "o": "D"
+  },
+  "MAT-SS-3/povrsina-in-prostornina-teles#p4": {
+   "h": "338314a151bd",
+   "o": "D"
+  },
+  "MAT-SS-3/povrsina-in-prostornina-teles#p5": {
+   "h": "c946d98e9b85",
    "o": "D"
   },
   "MAT-SS-3/premice-in-ravnine-v-prostoru#p0": {
    "h": "f0feef623692",
    "o": "I",
    "r": "»ena premica ni dovolj« se sklicuje na prejšnji odstavek lekcije"
+  },
+  "MAT-SS-3/premice-in-ravnine-v-prostoru#p3": {
+   "h": "f6421c406505",
+   "o": "D"
+  },
+  "MAT-SS-3/premice-in-ravnine-v-prostoru#p4": {
+   "h": "2b48485cc63d",
+   "o": "D"
+  },
+  "MAT-SS-3/premice-in-ravnine-v-prostoru#p5": {
+   "h": "63d229cbc845",
+   "o": "D"
   },
   "MAT-SS-3/racionalne-funkcije#p0": {
    "h": "4be5784578f7",
@@ -2556,8 +3262,20 @@
    "h": "41dcbf577f68",
    "o": "D"
   },
+  "MAT-SS-3/racionalne-funkcije#p3": {
+   "h": "6f37a0d32f15",
+   "o": "D"
+  },
+  "MAT-SS-3/racionalne-funkcije#p4": {
+   "h": "8de377cfeb03",
+   "o": "D"
+  },
+  "MAT-SS-3/racionalne-funkcije#p5": {
+   "h": "cf4fc2f5bbd0",
+   "o": "D"
+  },
   "MAT-SS-3/racionalne-neenacbe#p1": {
-   "h": "33144d8fea5a",
+   "h": "58d58c315c5f",
    "o": "D"
   },
   "MAT-SS-3/racionalne-neenacbe#p2": {
@@ -2565,13 +3283,45 @@
    "o": "I",
    "r": "ne pove, za kateri ulomek gre (primer iz lekcije)"
   },
+  "MAT-SS-3/racionalne-neenacbe#p4": {
+   "h": "8a4d3d210d46",
+   "o": "D"
+  },
+  "MAT-SS-3/racionalne-neenacbe#p5": {
+   "h": "7c24ff2854b0",
+   "o": "D"
+  },
   "MAT-SS-3/sinusni-in-kosinusni-izrek#p1": {
    "h": "1a97ad1a00c9",
    "o": "I",
    "r": "sklic na past iz lekcije"
   },
+  "MAT-SS-3/sinusni-in-kosinusni-izrek#p3": {
+   "h": "d885c4b300e7",
+   "o": "D"
+  },
+  "MAT-SS-3/sinusni-in-kosinusni-izrek#p4": {
+   "h": "8c74f69606a5",
+   "o": "D"
+  },
+  "MAT-SS-3/sinusni-in-kosinusni-izrek#p5": {
+   "h": "4478348250d7",
+   "o": "D"
+  },
   "MAT-SS-3/skalarni-produkt#p1": {
    "h": "8b3ea9f140ee",
+   "o": "D"
+  },
+  "MAT-SS-3/skalarni-produkt#p3": {
+   "h": "20cc33a1cdbd",
+   "o": "D"
+  },
+  "MAT-SS-3/skalarni-produkt#p4": {
+   "h": "9de9321c593f",
+   "o": "D"
+  },
+  "MAT-SS-3/skalarni-produkt#p5": {
+   "h": "1b5411ea4f53",
    "o": "D"
   },
   "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p0": {
@@ -2580,6 +3330,30 @@
   },
   "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p1": {
    "h": "a671c322442a",
+   "o": "D"
+  },
+  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p3": {
+   "h": "1806b4f8156a",
+   "o": "D"
+  },
+  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p4": {
+   "h": "d61ee8595ae2",
+   "o": "D"
+  },
+  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p5": {
+   "h": "53eb08b39c86",
+   "o": "D"
+  },
+  "MAT-SS-3/trigonometrijske-enacbe#p3": {
+   "h": "c05fc221b9a2",
+   "o": "D"
+  },
+  "MAT-SS-3/trigonometrijske-enacbe#p4": {
+   "h": "1f20dea4f89d",
+   "o": "D"
+  },
+  "MAT-SS-3/trigonometrijske-enacbe#p5": {
+   "h": "fb0069d6071a",
    "o": "D"
   },
   "MAT-SS-3/vektorji-v-geometriji#p0": {
@@ -2591,17 +3365,25 @@
    ]
   },
   "MAT-SS-3/vektorji-v-geometriji#p1": {
-   "h": "70a4733d19a2",
-   "o": "D",
-   "k": [
-    "Pri $\\vec b = 2\\vec a$ sta $3\\vec a + 1\\vec b$ in $5\\vec a + 0\\vec b$ oba enaka $5\\vec a$, koeficienti pa so različni",
-    "Primerjava bi dala nesmisel $3 = 5$"
-   ]
+   "h": "e8a9314de499",
+   "o": "D"
   },
   "MAT-SS-3/vektorji-v-geometriji#p2": {
    "h": "0c31b2164309",
    "o": "I",
    "r": "sklic na »tretjo enačbo« in let drona iz primera v lekciji"
+  },
+  "MAT-SS-3/vektorji-v-geometriji#p3": {
+   "h": "0022aeb147ba",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-geometriji#p4": {
+   "h": "feaeafd5bbbe",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-geometriji#p5": {
+   "h": "da19008e0a67",
+   "o": "D"
   },
   "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p0": {
    "h": "b61fa5c4b425",
@@ -2609,6 +3391,18 @@
   },
   "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p1": {
    "h": "256339ef08d0",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p3": {
+   "h": "6e8c40137e40",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p4": {
+   "h": "a0b5ab817a0e",
+   "o": "D"
+  },
+  "MAT-SS-3/vektorji-v-ravnini-in-prostoru#p5": {
+   "h": "54f542cd234d",
    "o": "D"
   },
   "MAT-SS-4/anuitete-in-amortizacijski-nacrt#p1": {
@@ -2946,6 +3740,23 @@
    "h": "c1208aa9afa7",
    "o": "D"
   },
+  "MAT-SS-4/vadbena-maturitetna-pola#p0": {
+   "h": "fe575f7f42bd",
+   "o": "I",
+   "r": "strategija pisanja pole, ne matematična vsebina"
+  },
+  "MAT-SS-4/vadbena-maturitetna-pola#p3": {
+   "h": "81c3f68a9533",
+   "o": "D"
+  },
+  "MAT-SS-4/vadbena-maturitetna-pola#p4": {
+   "h": "e6ee5b6ed723",
+   "o": "D"
+  },
+  "MAT-SS-4/vadbena-maturitetna-pola#p5": {
+   "h": "814267099522",
+   "o": "D"
+  },
   "MAT-SS-4/verjetnost#p0": {
    "h": "bae5548048fc",
    "o": "D"
@@ -3079,7 +3890,7 @@
    "r": "pojmi ne odgovarjajo na vprašano, pravokotnik 8 × 2 ni podan"
   },
   "MAT-TEK-OS/ploscine-z-razrezom-in-dopolnjevanjem#p1": {
-   "h": "ccfae60a9485",
+   "h": "44f1333e1540",
    "o": "D"
   },
   "MAT-TEK-OS/prastevila-in-delitelji-v-nalogah#p0": {
@@ -3549,8 +4360,9 @@
    "o": "D"
   },
   "UNI-ULBF-AANAT/anatomsko-izrazoslovje#p1": {
-   "h": "9dfcec8930ef",
-   "o": "D"
+   "h": "5c1789bd3a2b",
+   "o": "D",
+   "r": "enaka odločitev kot prej; odgovor zdaj najprej pove, kje se tekočina zbere"
   },
   "UNI-ULBF-AANAT/anatomsko-izrazoslovje#p2": {
    "h": "f3a4a765d96f",
@@ -3598,8 +4410,9 @@
    "o": "D"
   },
   "UNI-ULBF-AANAT/zivcevje#p1": {
-   "h": "b5ad362f0cd0",
-   "o": "D"
+   "h": "3232e58cc8f1",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULBF-AANAT/zivcevje#p2": {
    "h": "685a26eafed3",
@@ -3698,12 +4511,14 @@
    "o": "D"
   },
   "UNI-ULBF-AMIKRO/zgradba-prokariontske-celice#p0": {
-   "h": "3c1cc57a2b7e",
-   "o": "D"
+   "h": "0f89ee46fdc1",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULBF-AMIKRO/zgradba-prokariontske-celice#p1": {
-   "h": "0d869a708c84",
-   "o": "D"
+   "h": "b6c93a9c0e8e",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULBF-ASPLBOT/korenina#p0": {
    "h": "55a019c23b62",
@@ -3787,8 +4602,9 @@
    "r": "sklic na troje tal iz lekcije"
   },
   "UNI-ULBF-CSPLPOLJ/obdelava-tal#p0": {
-   "h": "01427d9a5fe5",
-   "o": "D"
+   "h": "1fd6b1c5d623",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULBF-CSPLPOLJ/obdelava-tal#p1": {
    "h": "f7f9e8d4fce5",
@@ -3816,12 +4632,14 @@
    "o": "D"
   },
   "UNI-ULFE-MERITVE/osciloskop#p1": {
-   "h": "1fb56f6bfe7b",
-   "o": "D"
+   "h": "89d1b86a6076",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULFE-OE1/kapacitivnost#p0": {
-   "h": "f54fd0d221a2",
-   "o": "D"
+   "h": "03facc9a266e",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULFE-OE1/kapacitivnost#p1": {
    "h": "aae5d06b16e6",
@@ -4083,8 +4901,9 @@
    "o": "D"
   },
   "UNI-ULFKKT-MAT/ekstremi-funkcij-vec-spremenljivk#p0": {
-   "h": "aed81ea191ae",
-   "o": "D"
+   "h": "d4c09887a47d",
+   "o": "D",
+   "r": "enaka odločitev kot prej; le jezikovni popravek"
   },
   "UNI-ULFKKT-MAT/ekstremi-funkcij-vec-spremenljivk#p1": {
    "h": "f81c068de21f",
@@ -4235,8 +5054,9 @@
    "r": "sklic na program iz lekcije"
   },
   "UNI-ULFKKT-NOSNPROG/slovarji-in-mnozice#p0": {
-   "h": "17edc21a971c",
-   "o": "D"
+   "h": "d43903c3efd9",
+   "o": "D",
+   "r": "kot prej; popravljen le predlog v odgovoru"
   },
   "UNI-ULFKKT-NOSNPROG/slovarji-in-mnozice#p1": {
    "h": "2b7fdf48f9db",
@@ -4307,7 +5127,7 @@
    "o": "D"
   },
   "UNI-ULFKKT-ORG1/aromatske-spojine#p2": {
-   "h": "b6a066973942",
+   "h": "3ad23cdf9221",
    "o": "I",
    "r": "reakcija ni podana"
   },
@@ -4639,8 +5459,9 @@
    "o": "D"
   },
   "UNI-ULFS-TERMO/krozni-procesi#p1": {
-   "h": "9dacf15b8ad0",
-   "o": "D"
+   "h": "db68c2a0aeb3",
+   "o": "D",
+   "r": "kot prej; le zapis Joulov"
   },
   "UNI-ULNTF-MMEHMAT/utrujanje-in-lezenje#p1": {
    "h": "fce596e131de",
@@ -4804,8 +5625,9 @@
    "o": "D"
   },
   "UNI-UMFS-MAT2/lahke-kovine#p1": {
-   "h": "bb7c2cb2b51e",
-   "o": "D"
+   "h": "67645857206c",
+   "o": "D",
+   "r": "kot prej; jasnejša ubeseditev vprašanja"
   },
   "UNI-UMFS-MAT2/vrste-jekel-in-litin#p0": {
    "h": "cc9c4f36d229",
@@ -4816,8 +5638,14 @@
    "o": "D"
   },
   "UNI-UMFS-MEH1/notranje-sile-v-nosilcih#p1": {
-   "h": "98e6de0dd6e5",
-   "o": "D"
+   "h": "781655654901",
+   "o": "D",
+   "r": "kot prej; dodani pojem o prečni sili ni vprašan",
+   "k": [
+    "V vpetju. Moment v prerezu je sila krat ročica do prereza",
+    "Pod silo je ročica nič, v vpetju pa je najdaljša, enaka dolžini konzole",
+    "Zato je v vpetju $|M|$ največji"
+   ]
   },
   "UNI-UMFS-MEH1/tezisce#p0": {
    "h": "94a16c9ded10",
@@ -4828,8 +5656,9 @@
    "o": "D"
   },
   "UNI-UMFS-MEH2/primerjalne-napetosti#p0": {
-   "h": "bc225fed3801",
-   "o": "D"
+   "h": "587f7e446396",
+   "o": "D",
+   "r": "kot prej; le spol besede špaget"
   },
   "UNI-UMFS-MEH2/ravninsko-napetostno-stanje#p0": {
    "h": "4112389cd1f2",

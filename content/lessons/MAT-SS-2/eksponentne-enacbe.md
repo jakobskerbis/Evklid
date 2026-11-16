@@ -68,6 +68,17 @@ Ker je $2^x$ vedno pozitivno, enačba $2^x = t$ s $t \le 0$ nima rešitve. Vsako
 
 Kaj pa enačba $2^x = 5$? Števila $5$ ne znamo zapisati kot potenco števila $2$ s preprostim eksponentom. Rešitev vseeno obstaja, graf jo pokaže blizu $x \approx 2{,}3$. Natančno jo bomo zapisali šele v naslednji lekciji.
 
+**11. Grafično reševanje eksponentne neenačbe (višja raven).** Neenačba ima namesto enačaja znak $<$, $>$, $\le$ ali $\ge$. Neenačbo $f(x) < g(x)$ rešimo grafično tako, da poiščemo vse $x$, pri katerih leži graf funkcije $f$ **pod** grafom funkcije $g$ (pri $f(x) > g(x)$ iščemo, kje leži **nad** njim). Postopek:
+
+1. Neenačbo zapiši v obliki $f(x) < g(x)$ (ali z drugim znakom neenakosti), kjer znaš narisati graf vsake strani (eksponentna funkcija, premica …).
+2. Oba grafa nariši v isti koordinatni sistem.
+3. Poišči presečišča grafov in njihove abscise **preveri z računom**: vstavi jih v obe strani. Odčitek z grafa je le približek.
+4. Odčitaj intervale, na katerih je graf $f$ pod grafom $g$ (pri $>$ in $\ge$ nad njim). Pri znaku $\le$ ali $\ge$ abscise presečišč vključi, pri $<$ ali $>$ ne.
+
+Najpreprostejši primer je $2^x < 8$. Naraščajoča krivulja $y = 2^x$ je pod premico $y = 8$ levo od presečišča $(3, 8)$, zato velja za $x < 3$. Padajoča krivulja $y = \left(\frac{1}{2}\right)^x$ pa je pod premico $y = 8$ desno od presečišča $(-3, 8)$, zato neenačbo $\left(\frac{1}{2}\right)^x < 8$ rešijo vsi $x > -3$. Smer odčitka je torej odvisna od tega, ali krivulja narašča ali pada.
+
+Grafična metoda je najbolj uporabna, kadar je na drugi strani neenačbe premica, na primer $2^x \le x + 1$. Take neenačbe računsko ne znamo rešiti, z grafom pa jih rešimo v nekaj korakih (Primer 5).
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
@@ -156,6 +167,43 @@ Po koliko krogih ostaneta finalista in koliko krogov ima turnir?
 Ker je $128 = 2^7$, je $\frac{1}{128} = \left(\frac{1}{2}\right)^7$ in $n = 7$. Preizkus: $256 \cdot \frac{1}{128} = 2$. Po $7$ krogih ostaneta finalista. Finale je še en krog, zato ima turnir $8$ krogov; po njem ostane $256 \cdot \left(\frac{1}{2}\right)^8 = 1$ zmagovalec.
 :::
 
+### Primer 5 (višja raven): neenačbi, rešeni z grafom
+
+Grafično reši neenačbi a) $2^x < 6 - x$ in b) $2^x \le x + 1$.
+
+**Podatki:** neenačba a) $2^x < 6 - x$, neenačba b) $2^x \le x + 1$
+**Iščemo:** vse $x$, ki rešijo neenačbo a), in vse, ki rešijo neenačbo b)
+
+:::formula
+Neenačbo $f(x) < g(x)$ rešijo abscise točk, v katerih je graf $f$ pod grafom $g$. Abscise presečišč preverimo z računom.
+:::
+
+**Rešitev:**
+
+1. Narišemo krivuljo $y = 2^x$ skozi točke $(-1; 0{,}5)$; $(0, 1)$; $(1, 2)$; $(2, 4)$ in $(3, 8)$ ter premici $y = 6 - x$ in $y = x + 1$.
+2. a) Krivulja seka premico $y = 6 - x$ v točki $(2, 4)$. Preizkus: $2^2 = 4$ in $6 - 2 = 4$. Krivulja narašča, premica pada, zato drugega presečišča ni.
+3. a) Levo od $x = 2$ je krivulja pod premico (pri $x = 0$ je $1 < 6$), desno nad njo. Znak $<$ je strog, zato $x = 2$ ni rešitev: rešitev je $x \in (-\infty, 2)$.
+4. b) Krivulja seka premico $y = x + 1$ v točkah $(0, 1)$ in $(1, 2)$. Preizkus: $2^0 = 1 = 0 + 1$ in $2^1 = 2 = 1 + 1$. Krivulja $y = 2^x$ je vse strmejša in se ukrivlja navzgor, zato jo premica seka največ v dveh točkah: tretjega presečišča ni.
+5. b) Med presečiščema je krivulja pod premico: pri $x = \frac{1}{2}$ je $2^{\frac{1}{2}} \approx 1{,}41 < 1{,}5$. Levo od $0$ in desno od $1$ je nad njo, na primer $2^{-1} = 0{,}5 > 0$ in $2^3 = 8 > 4$.
+6. b) Znak $\le$ dovoli tudi enakost, zato abscisi presečišč vključimo: rešitev je $x \in [0, 1]$.
+7. Odgovor: neenačbo a) rešijo vsi $x \in (-\infty, 2)$, neenačbo b) vsi $x \in [0, 1]$.
+
+:::risba graf
+opis: Krivulja y = 2ˣ (modra, polna) ter premici y = 6 − x (oranžna, padajoča) in y = x + 1 (zelena, črtkana, naraščajoča) za x od −2 do 4. Krivulja seka padajočo premico v točki (2, 4); levo od te točke je pod premico. Premico y = x + 1 seka v točkah (0, 1) in (1, 2); med njima je krivulja malo pod premico, levo in desno od njiju nad njo.
+x: -2 .. 4 | 1 | x
+y: -1 .. 9 | 1 | y
+f: 2^x | modra debelo | -2 .. 3
+f: 6 - x | oranžna | -2 .. 4
+f: x + 1 | zelena črtkano | -2 .. 4
+točka: 2; 4 | (2, 4) | desno
+točka: 0; 1 | (0, 1) | nad levo
+točka: 1; 2 | (1, 2) | pod desno
+napis: 2,3; 8,3 | y = 2^x | levo | modra
+napis: -1; 8,3 | y = 6 − x | sredina | oranžna
+napis: 3,4; 5,8 | y = x + 1 | sredina | zelena
+podnapis: a) krivulja je pod padajočo premico za x < 2; b) pod premico y = x + 1 je za x med 0 in 1.
+:::
+
 ## Pogoste napake
 
 - **Izenačevanje eksponentov pri različnih osnovah.** Iz $2^x = 4^{x-1}$ nekateri sklepajo $x = x - 1$ in zaključijo, da rešitve ni. Eksponenta smeš izenačiti le, ko sta osnovi enaki. Pravilno: $4^{x-1} = 2^{2x-2}$, zato je $x = 2x - 2$ in $x = 2$ (preizkus: $2^2 = 4 = 4^1$).
@@ -175,6 +223,111 @@ Ker je $128 = 2^7$, je $\frac{1}{128} = \left(\frac{1}{2}\right)^7$ in $n = 7$. 
 - Iz $a^u = b^u$ za različni pozitivni osnovi sledi $u = 0$.
 - Vsako rešitev preveri s preizkusom v prvotni enačbi.
 
+## Ponovitev
+
+**Formule**
+- $a^{u} = a^{v} \iff u = v$ ($a > 0$, $a \ne 1$) (na pamet)
+- $\dfrac{1}{a^n} = a^{-n}$, $\sqrt[n]{a^m} = a^{\frac{m}{n}}$ (na pamet)
+- $(a^m)^n = a^{mn}$, $a^{x+n} = a^n \cdot a^x$ (na pamet)
+- $a^x = c$ s $c \le 0$ nima rešitve (na pamet)
+- $a^u = b^u$, $a \ne b$ $\Rightarrow$ $u = 0$ (na pamet)
+
+**Postopek**
+1. Obe strani zapiši kot potenci z isto osnovo, npr. $\dfrac{1}{8} = 2^{-3}$.
+2. Pri vsoti potenc z isto osnovo izpostavi skupni faktor $a^x$.
+3. Če nastopata $a^{2x}$ in $a^x$, vpelji $t = a^x$ s pogojem $t > 0$.
+4. Izenači eksponenta in reši dobljeno enačbo.
+5. Vsako rešitev preveri v prvotni enačbi.
+
+**Pazi na**
+- Eksponenta izenači le pri enakih osnovah, zato najprej $4^{x-1} = 2^{2x-2}$.
+- Vsota v eksponentu je produkt potenc: $2^{x+3} = 8 \cdot 2^x$, ne $2^x + 2^3$.
+- Pri $t = a^x$ zavrzi vrednosti $t \le 0$: $3^x = -3$ nima rešitve.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Rešite enačbo $\sqrt{27^{x}} = \dfrac{9^{x+1}}{3}$.
+
+**Rešitev:**
+
+1. Levo stran zapišemo s potenco števila $3$: $\sqrt{27^x} = \left(3^{3x}\right)^{\frac{1}{2}} = 3^{\frac{3x}{2}}$.
+2. Desno stran zapišemo s potenco števila $3$: $\dfrac{9^{x+1}}{3} = \dfrac{3^{2x+2}}{3^1} = 3^{2x+1}$.
+3. Izenačimo eksponenta: $\dfrac{3x}{2} = 2x + 1$, torej $3x = 4x + 2$ in $x = -2$.
+4. Preizkus: $\sqrt{27^{-2}} = \sqrt{\dfrac{1}{729}} = \dfrac{1}{27}$ in $\dfrac{9^{-1}}{3} = \dfrac{1}{27}$.
+5. Odgovor: $x = -2$.
+
+**Točkovanje:** 1 točka za zapis leve strani kot $3^{\frac{3x}{2}}$; 1 točka za zapis desne strani kot $3^{2x+1}$; 1 točka za rešitev $x = -2$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = 4^x - 6 \cdot 2^x + 8$.
+
+a) Izračunajte presečišče grafa funkcije $f$ z osjo $y$. (1 točka)
+b) Izračunajte ničli funkcije $f$. (3 točke)
+c) Rešite enačbo $f(x) = 24$. (3 točke)
+
+**Rešitev:**
+
+1. a) $f(0) = 4^0 - 6 \cdot 2^0 + 8 = 1 - 6 + 8 = 3$, presečišče je točka $(0, 3)$.
+2. b) Ker je $4^x = \left(2^x\right)^2$, vpeljemo $t = 2^x$ s pogojem $t > 0$. Enačba $f(x) = 0$ se glasi $t^2 - 6t + 8 = 0$.
+3. b) Razcep $(t - 2)(t - 4) = 0$ da $t_1 = 2$ in $t_2 = 4$; obe vrednosti sta pozitivni.
+4. b) Iz $2^x = 2$ sledi $x_1 = 1$, iz $2^x = 4 = 2^2$ pa $x_2 = 2$.
+5. c) Enačba $f(x) = 24$ se s $t = 2^x$ glasi $t^2 - 6t + 8 = 24$, torej $t^2 - 6t - 16 = 0$.
+6. c) Razcep $(t - 8)(t + 2) = 0$ da $t_1 = 8$ in $t_2 = -2$. Vrednost $t_2 = -2$ zavržemo, ker je $2^x > 0$.
+7. c) Iz $2^x = 8 = 2^3$ sledi $x = 3$. Preizkus: $f(3) = 64 - 48 + 8 = 24$.
+8. Odgovor: a) $(0, 3)$; b) ničli sta $x_1 = 1$ in $x_2 = 2$; c) $x = 3$.
+
+**Točkovanje:** a) 1 točka za točko $(0, 3)$; b) 1 točka za kvadratno enačbo $t^2 - 6t + 8 = 0$; 1 točka za $t_1 = 2$ in $t_2 = 4$; 1 točka za ničli $x_1 = 1$ in $x_2 = 2$; c) 1 točka za enačbo $t^2 - 6t - 16 = 0$; 1 točka za zavrnjeno vrednost $t = -2$ z utemeljitvijo; 1 točka za $x = 3$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+V laboratoriju gojijo dve kulturi bakterij. Po $x$ urah je v prvi kulturi $A(x) = 200 \cdot 2^x$ bakterij, v drugi pa $B(x) = 25 \cdot 4^x$ bakterij.
+
+a) Koliko bakterij je v vsaki kulturi na začetku? (1 točka)
+b) Po koliko urah je v obeh kulturah enako število bakterij? Koliko jih je takrat v vsaki? (3 točke)
+c) Po koliko urah je v obeh kulturah skupaj $9600$ bakterij? (3 točke)
+d) Za $x$ od $0$ do $4$ skicirajte grafa funkcij $A$ in $B$ v istem koordinatnem sistemu. Z grafa razberite, kdaj je v drugi kulturi več bakterij kot v prvi, in odgovor utemeljite z računom. (3 točke)
+
+**Rešitev:**
+
+1. a) $A(0) = 200$ in $B(0) = 25$: na začetku je v prvi kulturi $200$, v drugi $25$ bakterij.
+2. b) Enačbo $200 \cdot 2^x = 25 \cdot 4^x$ delimo s $25 \cdot 2^x$ (ki ni $0$) in dobimo $8 = \dfrac{4^x}{2^x} = 2^x$.
+3. b) Iz $2^x = 2^3$ sledi $x = 3$. Takrat je $A(3) = 200 \cdot 8 = 1600$ in $B(3) = 25 \cdot 64 = 1600$.
+4. c) Enačba $200 \cdot 2^x + 25 \cdot 4^x = 9600$; delimo s $25$ in vpeljemo $t = 2^x$, $t > 0$: $t^2 + 8t - 384 = 0$.
+5. c) Diskriminanta je $D = 64 + 1536 = 1600$, zato je $t_{1,2} = \dfrac{-8 \pm 40}{2}$, torej $t_1 = 16$ in $t_2 = -24$. Vrednost $t_2 = -24$ zavržemo, ker je $2^x > 0$.
+6. c) Iz $2^x = 16 = 2^4$ sledi $x = 4$. Preizkus: $A(4) + B(4) = 3200 + 6400 = 9600$.
+7. d) Točke grafa $A$: $(0, 200)$, $(1, 400)$, $(2, 800)$, $(3, 1600)$, $(4, 3200)$; točke grafa $B$: $(0, 25)$, $(1, 100)$, $(2, 400)$, $(3, 1600)$, $(4, 6400)$. Grafa se sekata v točki $(3, 1600)$, desno od nje leži graf $B$ nad grafom $A$.
+8. d) Račun: neenačbo $25 \cdot 4^x > 200 \cdot 2^x$ delimo s pozitivnim številom $25 \cdot 2^x$ in dobimo $2^x > 8 = 2^3$. Ker je $2^x$ strogo naraščajoča, to velja natanko za $x > 3$.
+9. Odgovor: a) $200$ in $25$ bakterij; b) po $3$ urah, takrat jih je v vsaki $1600$; c) po $4$ urah; d) v drugi kulturi je več bakterij za $x > 3$, torej po treh urah.
+
+**Točkovanje:** a) 1 točka za $200$ in $25$; b) 1 točka za poenostavitev na $2^x = 8$; 1 točka za $x = 3$; 1 točka za $1600$ bakterij; c) 1 točka za kvadratno enačbo $t^2 + 8t - 384 = 0$ (ali enakovredno); 1 točka za $t = 16$ z zavrnjeno vrednostjo $t = -24$; 1 točka za $x = 4$; d) 1 točka za oba grafa s presečiščem $(3, 1600)$; 1 točka za prevedbo na $2^x > 8$; 1 točka za odgovor $x > 3$ z utemeljitvijo z naraščanjem funkcije $2^x$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Utemelji, zakaj iz enakosti $a^u = a^v$ sledi $u = v$, in povej, kateri pogoji za osnovo $a$ so pri tem potrebni.
+---
+Osnova mora biti pozitivna in različna od $1$, torej $a > 0$ in $a \ne 1$. Pri takih osnovah je funkcija $a^x$ strogo monotona: za $a > 1$ narašča, za $0 < a < 1$ pada. Strogo monotona funkcija nobene vrednosti ne zavzame dvakrat, zato iz $a^u = a^v$ sledi $u = v$. Pri $a = 1$ sklep ne velja, ker je $1^u = 1$ za vsak eksponent $u$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Opiši reševanje eksponentne enačbe z uvedbo nove spremenljivke in pojasni, katere rešitve pri tem zavržemo.
+---
+Novo spremenljivko uvedemo, kadar v enačbi nastopata $a^{2x}$ in $a^x$, saj je $a^{2x} = \left(a^x\right)^2$. Vpeljemo $t = a^x$ in dobimo kvadratno enačbo za $t$, ki jo rešimo. Ker je $a^x > 0$ za vsak $x$, zavržemo vse rešitve $t \le 0$. Za vsako pozitivno rešitev nato rešimo enačbo $a^x = t$ in rešitve preverimo v prvotni enačbi.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer eksponentne enačbe, ki nima realne rešitve, in pojasni, zakaj je nima.
+---
+Primer je enačba $3^x = -9$. Potenca s pozitivno osnovo je pozitivna pri vsakem realnem eksponentu. Zato $3^x$ ne more biti enako negativnemu številu in enačba nima rešitve. Enako velja za vsako enačbo $a^x = c$, kjer je $a > 0$ in $c \le 0$.
+:::
+
 ## Drugače: Na sliki
 
 Predstavljaj si graf funkcije $y = 2^x$ in nekaj njegovih točk:
@@ -191,7 +344,7 @@ Predstavljaj si graf funkcije $y = 2^x$ in nekaj njegovih točk:
 
 Reševati enačbo $2^x = 8$ pomeni na grafu poiskati točko, ki ima **višino** $8$, in prebrati njeno **absciso**. Nariši vodoravno premico $y = 8$: krivuljo seka natanko v eni točki, $(3, 8)$, zato je $x = 3$. Ker krivulja ves čas raste, presečišče ne more biti več kot eno; ker krivulja leži nad osjo $x$, premica $y = -4$ krivulje sploh ne seka, zato enačba $2^x = -4$ nima rešitve.
 
-Pri uvedbi nove spremenljivke si lahko predstavljaš dva koraka: najprej poiščeš višine $t$, ki rešijo kvadratno enačbo, nato pa za vsako pozitivno višino narišeš vodoravno premico in prebereš abscisi presečišč. Negativne višine na grafu sploh ne obstajajo. V interaktivni simulaciji spodaj premikaj vodoravno premico in opazuj, kje seka krivuljo.
+Pri uvedbi nove spremenljivke si lahko predstavljaš dva koraka: najprej poiščeš višine $t$, ki rešijo kvadratno enačbo, nato pa za vsako pozitivno višino narišeš vodoravno premico in prebereš absciso presečišča. Negativne višine na grafu sploh ne obstajajo. V interaktivni simulaciji spodaj premikaj vodoravno premico in opazuj, kje seka krivuljo.
 
 ## Drugače: Z analogijo
 
@@ -224,14 +377,11 @@ Opazi, da je kvadratna enačba za $t$ le vmesni korak. Dokler ne izračunaš $x$
 
 ## Preveri se
 
-? Reši enačbo $5^{x} = \dfrac{1}{25}$.
-- $x = 2$
-~ Ker je $25 = 5^2$, je $\frac{1}{25}$ obratna vrednost, zato potrebuje negativni eksponent: $\frac{1}{25} = 5^{-2}$.
-+ $x = -2$
-- $x = \dfrac{1}{2}$
-~ Ulomek v eksponentu pomeni koren: $5^{\frac{1}{2}} = \sqrt{5}$, ne $\frac{1}{25}$.
-- $x = -\dfrac{1}{2}$
-~ Tu sta zamešana koren in obratna vrednost: $5^{-\frac{1}{2}} = \frac{1}{\sqrt{5}}$, ne $\frac{1}{25}$.
+? (brez računala) Reši enačbo $5^{x} = \dfrac{1}{25}$. Vpiši $x$.
+= -2 | 0,01
+~ 2 | Ker je $25 = 5^2$, je $\frac{1}{25}$ obratna vrednost, zato potrebuje negativni eksponent: $\frac{1}{25} = 5^{-2}$.
+~ 0,5 | Ulomek v eksponentu pomeni koren: $5^{\frac{1}{2}} = \sqrt{5}$, ne $\frac{1}{25}$.
+~ -0,5 | Tu sta zamešana koren in obratna vrednost: $5^{-\frac{1}{2}} = \frac{1}{\sqrt{5}}$, ne $\frac{1}{25}$.
 > $\dfrac{1}{25} = \dfrac{1}{5^2} = 5^{-2}$, zato je $x = -2$. Obratna vrednost pomeni negativni eksponent.
 
 ? Kateri prvi korak pri reševanju enačbe $2^{x+2} + 2^x = 40$ je pravilen?
@@ -264,15 +414,30 @@ Opazi, da je kvadratna enačba za $t$ le vmesni korak. Dokler ne izračunaš $x$
 ~ Tudi ta korak je napačen, a le kot posledica koraka (3). Prva napaka je v koraku (3).
 > Enačba $2^x = -1$ nima rešitve, ker je $2^x > 0$. Vrednost $t = -1$ je treba zavreči, ne pa iz nje izpeljati $x = -1$. Edina rešitev je $x = 2$; preizkus: $16 - 12 - 4 = 0$.
 
-? Žogo spustimo z višine $4\,\mathrm{m}$. Po vsakem odboju se dvigne do polovice prejšnje višine, zato po $n$ odbojih doseže $4 \cdot \left(\frac{1}{2}\right)^n$ metrov. Po katerem odboju se dvigne le še do $0{,}5\,\mathrm{m}$?
-- po $8.$ odboju
-~ Število $8$ je razmerje $4 : 0{,}5$, ne število razpolovitev. Iz enačbe $\left(\frac{1}{2}\right)^n = \frac{1}{8}$ sledi $n = 3$, ker je $8 = 2^3$.
-- po $7.$ odboju
-~ To bi veljalo, če bi žoga ob vsakem odboju izgubila stalnih $0{,}5\,\mathrm{m}$. Višina se razpolavlja, ne zmanjšuje za stalno razliko.
-+ po $3.$ odboju
-- po $4.$ odboju
-~ Števila $4$; $2$; $1$; $0{,}5$ so štiri, a prvo je začetna višina, ne odboj. Razpolovitve so le tri.
+? (brez računala) Žogo spustimo z višine $4\,\mathrm{m}$. Po vsakem odboju se dvigne do polovice prejšnje višine, zato po $n$ odbojih doseže $4 \cdot \left(\frac{1}{2}\right)^n$ metrov. Po katerem odboju se dvigne le še do $0{,}5\,\mathrm{m}$? Vpiši število odbojev $n$.
+= 3 | 0
+~ 8 | Število $8$ je razmerje $4 : 0{,}5$, ne število razpolovitev. Iz enačbe $\left(\frac{1}{2}\right)^n = \frac{1}{8}$ sledi $n = 3$, ker je $8 = 2^3$.
+~ 7 | To bi veljalo, če bi žoga ob vsakem odboju izgubila stalnih $0{,}5\,\mathrm{m}$. Višina se razpolavlja, ne zmanjšuje za stalno razliko.
+~ 4 | Števila $4$; $2$; $1$; $0{,}5$ so štiri, a prvo je začetna višina, ne odboj. Razpolovitve so le tri.
 > Enačba $4 \cdot \left(\frac{1}{2}\right)^n = 0{,}5$ da $\left(\frac{1}{2}\right)^n = \frac{1}{8} = \left(\frac{1}{2}\right)^3$, zato je $n = 3$.
+
+? (višja raven) Na sliki sta grafa funkcij $y = \left(\frac{1}{2}\right)^x$ in $y = x + 3$. Katera množica je rešitev neenačbe $\left(\frac{1}{2}\right)^x \le x + 3$?
+:::risba graf
+opis: Padajoča krivulja y = (1/2)ˣ in naraščajoča premica y = x + 3 za x od −3 do 3. Sekata se v točki (−1, 2). Levo od te točke je krivulja nad premico, desno pod njo.
+x: -3 .. 3 | 1 | x
+y: -1 .. 8 | 1 | y
+f: 0.5^x | modra debelo
+f: x + 3 | oranžna
+točka: -1; 2 | (−1, 2) | levo
+:::
++ $[-1, \infty)$
+- $(-\infty, -1]$
+~ Tam je krivulja **nad** premico; to bi bila rešitev neenačbe z znakom $\ge$.
+- $(-1, \infty)$
+~ Znak $\le$ dovoli enakost, zato abscisa presečišča $-1$ sodi zraven.
+- $[2, \infty)$
+~ $2$ je ordinata presečišča. Rešitev beremo na osi $x$, abscisa presečišča je $-1$.
+> Preizkus presečišča: $\left(\frac{1}{2}\right)^{-1} = 2$ in $-1 + 3 = 2$. Desno od $x = -1$ je padajoča krivulja pod naraščajočo premico, zato je rešitev $x \in [-1, \infty)$.
 
 :::simboli
 a | osnova potence | | | $a > 0$, $a \ne 1$; v obrazcu za $t_{1,2}$ vodilni koeficient
@@ -284,4 +449,39 @@ t | nova neznanka | t = a^x | | $t > 0$, ker je $a^x > 0$
 t_{1,2} | rešitvi kvadratne enačbe za $t$ | t_{1,2} = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} | | negativno rešitev zavržemo
 b | linearni koeficient kvadratne enačbe za $t$ | | | v točki 8 druga osnova potence, v grafičnem pogledu desna stran $y = b$
 c | prosti člen kvadratne enačbe za $t$ | | | v enačbi $a^x = c$ desna stran
+D | diskriminanta kvadratne enačbe za $t$ | D = b^2 - 4ac | |
+f | funkcija (Za maturo, naloga 2) | f(x) = 4^x - 6 \cdot 2^x + 8 | | v točkah 10 in 11 leva stran enačbe oziroma neenačbe
+g | desna stran enačbe oziroma neenačbe (točki 10 in 11) | | |
+A, B | število bakterij v prvi in drugi kulturi po $x$ urah (Za maturo, naloga 3) | A(x) = 200 \cdot 2^x | | $B(x) = 25 \cdot 4^x$
 :::
+
+<<RACUN
+resi: sqrt(27^x)=9^(x+1)/3 | x | -2
+resi: 3*x/2=2*x+1 | x | -2
+vrednost: 9^(-1)/3 | 1/27
+vrednost: 4^0-6*2^0+8 | 3
+resi: t^2-6*t+8=0 | t | 2, 4
+resi: 4^x-6*2^x+8=0 | x | 1, 2
+resi: t^2-6*t-16=0 | t | -2, 8
+resi: 4^x-6*2^x+8=24 | x | 3
+vrednost: 4^3-6*2^3+8 | 24
+resi: 200*2^x=25*4^x | x | 3
+vrednost: 200*2^3 | 1600
+vrednost: 25*4^3 | 1600
+resi: t^2+8*t-384=0 | t | -24, 16
+resi: 200*2^x+25*4^x=9600 | x | 4
+vrednost: 200*2^4+25*4^4 | 9600
+neenacba: 25*4^x>200*2^x | x | (3, oo)
+neenacba: 2^x<8 | x | (-oo, 3)
+vrednost: (1/2)^(-3) | 8
+vrednost: 2^2 | 4
+vrednost: 6-2 | 4
+resi: 2^x=4 | x | 2
+vrednost: 2^0 | 1
+vrednost: 2^1 | 2
+vrednost: 2^(1/2) | 1.41
+vrednost: 2^(-1) | 0.5
+vrednost: 2^3 | 8
+vrednost: (1/2)^(-1) | 2
+vrednost: -1+3 | 2
+>>

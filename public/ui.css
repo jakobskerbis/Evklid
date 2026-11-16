@@ -229,6 +229,25 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
   .tb-lesson-grid.has-side:has(+ .tb-stepper) .tb-side { max-height: calc(100dvh - 206px); }
   .tb-side .demo-values { grid-template-columns: 1fr 1fr; }
   .tb-lesson-grid.has-side .tb-side .demo-svg { max-width: 100%; max-height: 46dvh; width: auto; display: block; margin: 0 auto; }
+  /* Tablica na dotik (iPad): poskus v lekciji pod besedilom koraka, ne ob strani (j 2026-11-14: »zdaj zakrijejo pol
+     ekrana na iPadu«). Računalnik z miško ostane v dveh stolpcih. !important: pravila zgoraj in v uci.css so močnejša. */
+  @media (hover: none) and (pointer: coarse) {
+    .tb-lesson-grid.has-side { display: block; }
+    .tb-lesson-grid.has-side .tb-side { position: static !important; max-height: none !important; overflow: visible !important; margin-top: 16px; }
+    /* Čim bolje zapolni zaslon (j 2026-11-14): slika čez vso širino in višje. */
+    .tb-lesson-grid.has-side .tb-side .demo-svg { max-height: 75dvh; width: 100%; }
+  }
+  /* Ležeča tablica: slika levo čim večja, gumbi, izbire in izračun desno ob njej (brez drsenja ob vsaki spremembi). */
+  @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+    /* Le z natanko eno sliko neposredno v preizkusu (več slik, npr. platno s prekrivnim platnom, ostane kot prej)
+       in ne v premičnem oknu (ozko). Brez razmika med vrsticami: slika sega čez vse vrstice desnega stolpca. */
+    .tb-lesson-grid.has-side:not(.okno-body *) .tb-demo-mount:has(> :is(.demo-stage, .demo-svg, canvas)):not(:has(> :is(.demo-stage, .demo-svg, canvas) ~ :is(.demo-stage, .demo-svg, canvas))) {
+      display: grid; grid-template-columns: minmax(0, 3fr) minmax(300px, 2fr); grid-auto-flow: row dense; gap: 0 28px; align-items: start;
+    }
+    .tb-lesson-grid.has-side:not(.okno-body *) .tb-demo-mount:has(> :is(.demo-stage, .demo-svg, canvas)):not(:has(> :is(.demo-stage, .demo-svg, canvas) ~ :is(.demo-stage, .demo-svg, canvas))) > :is(.demo-stage, .demo-svg, canvas) { grid-column: 1; grid-row: 1 / span 40; align-self: start; }
+    .tb-lesson-grid.has-side:not(.okno-body *) .tb-demo-mount:has(> :is(.demo-stage, .demo-svg, canvas)):not(:has(> :is(.demo-stage, .demo-svg, canvas) ~ :is(.demo-stage, .demo-svg, canvas))) > :not(.demo-stage, .demo-svg, canvas) { grid-column: 2; min-width: 0; margin-block: 0 12px; }
+    .tb-lesson-grid.has-side .tb-demo-mount > .demo-stage .demo-svg { max-height: 75dvh; }
+  }
 
   /* Kazalo učbenika: sklopi v stolpcih, kolikor jih gre v širino. */
   .tb-part { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 0 16px; align-items: start; }

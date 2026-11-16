@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { speakTex, speakMarkdown, zs } from "../server/govor.js";
-import { summaryParts, summaryPage, audioSummary, worksheetTasks, worksheetPage, answerHtml, branchOf, weakTopicIds } from "../server/gradiva.js";
+import { summaryParts, summaryPage, worksheetTasks, worksheetPage, answerHtml, branchOf, weakTopicIds } from "../server/gradiva.js";
 import { officialPapers } from "../server/exams.js";
 
 const OHM = "FIZ-OS-9/upor-in-ohmov-zakon";
@@ -72,14 +72,6 @@ test("one-page summary: mind map from the lesson summary, mistakes and formulas"
   assert.deepEqual(branchOf("Enota $a:b$ in več"), { label: "", detail: "Enota $a:b$ in več" });
 });
 
-test("audio summary is plain spoken text", () => {
-  const a = audioSummary(OHM);
-  assert.equal(a.lang, "sl-SI");
-  assert.match(a.parts[0], /^Povzetek: /);
-  assert.ok(!a.text.includes("$") && !a.text.includes("\\"));
-  assert.match(a.text, /I je enako U deljeno z R/);
-});
-
 test("worksheet: printable tasks, no tap-only figures, solutions with data and answer", () => {
   const tasks = worksheetTasks([OHM], 6, 42);
   assert.equal(tasks.length, 6);
@@ -102,7 +94,7 @@ test("past papers link to RIC, not copied", () => {
   assert.equal(officialPapers("JEE", "MAT"), null);
 });
 
-test("HTTP: list, audio, worksheet, weak topics", async () => {
+test("HTTP: list, worksheet, weak topics", async () => {
   const store = openDb(":memory:");
   const app = createApp(store);
   const server = app.listen(0);
@@ -112,13 +104,13 @@ test("HTTP: list, audio, worksheet, weak topics", async () => {
     const get = (p) => fetch(base + p);
     let r = await get(`/api/students/${s.id}/gradiva?topic=${OHM}`);
     const list = await r.json();
-    assert.deepEqual(list.items.map((x) => x.vrsta), ["povzetek", "zvok", "delovni-list"]);
+    assert.deepEqual(list.items.map((x) => x.vrsta), ["povzetek", "delovni-list"]);
     assert.ok(list.items.every((x) => !x.locked));
     assert.equal((await get(`/api/students/${s.id}/gradiva?topic=X/y`)).status, 404);
     assert.equal((await get(list.items[0].url)).status, 200);
     assert.equal((await get("/gradiva/povzetek/FIZ-OS-9/ne-obstaja")).status, 404);
-    r = await get(`/api/students/${s.id}/gradiva/zvok?topic=${OHM}`);
-    assert.ok((await r.json()).parts.length > 2);
+    // Zvočnega povzetka ni več (j, 15. 11. 2026).
+    assert.equal((await get(`/api/students/${s.id}/gradiva/zvok?topic=${OHM}`)).status, 404);
     r = await get(`/api/students/${s.id}/gradiva/delovni-list?topic=${OHM}&seme=7&n=3`);
     assert.equal(r.status, 200);
     assert.match(await r.text(), /koda lista 7/);

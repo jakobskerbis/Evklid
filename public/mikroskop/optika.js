@@ -19,7 +19,7 @@ export const OBJEKTIVI = [
 export const MIN_M = 40;
 export const SVETLOBNI_MAX = 1000; // 100× objektiv · 10× okular
 export const TEM_MIN = 1000;
-export const MAX_M = 5e7;
+export const MAX_M = 5e7; // le z vklopljenimi »Molekulami v barvah« (ponazoritev molekul in atomov, ne posnetek)
 
 // Premer vidnega polja (µm) pri skupni povečavi m.
 export function vidnoPolje(m, nacin = "svetloba") {
@@ -85,6 +85,21 @@ export function kontrast(zaslonka) {
 
 // TEM: ločljivost tanke biološke rezine je omejena z vzorcem (~1,5 nm), ne z elektronsko optiko.
 export const TEM_LOCLJIVOST = 0.0015; // µm
+// Uporabna povečava TEM (j, 16. 11. 2026): nad njo je povečava prazna, ker rezina ne da več podrobnosti. Slika ima še
+// smisel, dokler je čez vidno polje vsaj ~20 ločljivih točk (d = 1,5 nm): vidno polje ≥ 20 · 1,5 nm = 30 nm, torej
+// M ≤ 160 mm / 30 nm ≈ 5,3 · 10⁶. Zaokroženo navzdol na 5 000 000× (vidno polje 32 nm ≈ 21 točk; membrana 7–8 nm je še
+// 5 točk debela). Pri 50 000 000× (3,2 nm) sta čez polje le še dve točki, zato je slika enakomerno siva. Model molekul je
+// poln že od ~2 400 000× (utezModela). Višje (do MAX_M) gre le ponazoritev »Molekule v barvah«.
+export const TEM_MAX = 5e6;
+// Svetlost slike TEM in SEM iz jakosti snopa (0–1, ista vrednost kot lučka). Zaslon sveti sorazmerno s tokom elektronov,
+// kamera pa nad ~30 % toka s časom osvetlitve drži sliko skoraj enako svetlo (privzeto 70 % ostane kot prej, 0,9 + 0,5 · snop).
+// Pod 30 % je čas osvetlitve že najdaljši: svetlost pada sorazmerno s tokom do črne pri 0 %. Šum izstrelkov (manj elektronov
+// na točko) da upodobi.js (šum · √svetlosti, relativni šum ∝ 1/√toka); SEM ima še svoj šum ob šibkem snopu (pogled.js).
+export const SNOP_KAMERA = 0.3;
+export function svetlostSnopa(snop) {
+  const e = Math.max(0, Math.min(1, snop));
+  return (0.9 + 0.5 * e) * Math.min(1, e / SNOP_KAMERA);
+}
 // SEM: ločljivost ~3 nm (volframova katoda, biološki vzorec z zlato prevleko); šolski SEM gre do ~300 000×
 export const SEM_MAX = 300000;
 export const SEM_LOCLJIVOST = 0.003; // µm

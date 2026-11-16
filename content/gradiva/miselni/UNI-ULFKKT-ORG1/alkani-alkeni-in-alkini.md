@@ -1,0 +1,35 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vez σ in vez π
+  - alkan: le σ, reagira z radikali
+  - alken: elektroni $\pi$, nukleofil
+  - homoliza da radikala, heteroliza iona
+- Elektrofilna adicija HX
+  - počasi karbokation, nato hitro $\mathrm{Br^-}$
+  - stabilnost $3^\circ > 2^\circ > 1^\circ > \text{metil}$
+  - propen in $\mathrm{HBr}$: 2-bromopropan
+- Markovnikovo pravilo
+  - H na ogljik z več vodiki
+  - Hammond: stabilnejši kation, nižja $E_a$
+  - napaka: »halogen na ogljik z več vodiki«
+- Druge adicije
+  - $\mathrm{Br_2}$: bromonijev ion, anti
+  - $\mathrm{H_2}$ na Pt, Pd, Ni: syn
+  - $\mathrm{H_2O}/\mathrm{H^+}$: markovnikovski alkohol
+- Alkini
+  - adirajo dvakrat
+  - Lindlar: *cis*-alken; $\mathrm{Na}/\mathrm{NH_3}$: *trans*-alken
+  - hidratacija: enol, nato keton
+- Radikalsko halogeniranje
+  - iniciacija, propagacija, terminacija
+  - $\Delta H \approx \sum E(\text{pretrgane}) - \sum E(\text{nastale})$
+  - metan in klor: $-100\,\mathrm{kJ/mol}$
+- Selektivnost
+  - $\text{delež}_i = \dfrac{n_i r_i}{\sum_j n_j r_j}$
+  - klor $1 : 3{,}8 : 5$, brom $1 : 82 : 1600$
+  - propan: $56\,\%$ 2-kloro, $96{,}5\,\%$ 2-bromo
+- HBr s peroksidi
+  - prvi se veže $\mathrm{Br\cdot}$
+  - antimarkovnikovski produkt, samo $\mathrm{HBr}$

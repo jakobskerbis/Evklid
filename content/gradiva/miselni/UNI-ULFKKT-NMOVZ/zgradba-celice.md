@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Skupno vsem celicam
+  - membrana, citoplazma, DNA, ribosomi
+  - celična teorija: tri trditve
+- Prokarionti
+  - $0{,}5$–$5\,\mu\mathrm{m}$, brez jedra
+  - krožna DNA v nukleoidu, plazmidi
+  - ribosomi 70S, peptidoglikanska stena
+- Evkarionti
+  - $10$–$100\,\mu\mathrm{m}$, jedro in organeli
+  - ribosomi 80S v citoplazmi
+- Površina in prostornina
+  - krogla $\dfrac{S}{V} = \dfrac{3}{r}$, kocka $\dfrac{6}{a}$
+  - $k$-krat večja: $S/V$ $k$-krat manjše
+  - napaka: premer namesto polmera
+- Organeli
+  - dvojna membrana: jedro, mitohondrij, kloroplast
+  - enojna: ER, Golgi, lizosomi
+  - brez membrane: ribosomi, citoskelet
+- Endomembranski sistem
+  - zrnati ER → Golgi → membrana
+  - prenos v veziklih
+- Endosimbioza
+  - mitohondrij in kloroplast iz bakterij
+  - lastna krožna DNA, bakterijski ribosomi
+- Membrana
+  - fosfolipidni dvosloj okrog $5\,\mathrm{nm}$
+  - model tekočega mozaika
+  - selektivna prepustnost: $\mathrm{O_2}$ da, ioni ne

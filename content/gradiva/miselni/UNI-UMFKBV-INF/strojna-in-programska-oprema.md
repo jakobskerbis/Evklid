@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Strojna in programska oprema
+  - strojna: fizični deli
+  - programska: zaporedja ukazov
+- Procesor
+  - krmilna in aritmetično-logična enota
+  - krog: prevzemi, razberi, izvedi
+  - $3\,\text{GHz}$: $3 \cdot 10^{9}$ taktov na sekundo
+- RAM in shramba
+  - RAM: hiter, ob izklopu prazen
+  - shramba: počasnejša, trajna
+  - pazi: $128\,\text{GB}$ shrambe ni RAM
+- Čas nalaganja
+  - $t = \dfrac{\text{količina}}{\text{hitrost}}$, enota s
+  - najprej GB pretvori v MB
+- Vhod in izhod
+  - senzor, tipkovnica: vhod
+  - zaslon, tiskalnik: izhod
+  - vodila povezujejo dele
+- Operacijski sistem
+  - časovne rezine: krog $= n \cdot$ rezina
+  - deli RAM, upravlja datoteke, gonilniki
+  - sistemska in aplikacijska oprema
+- Programski jeziki
+  - procesor razume le strojno kodo
+  - prevajalnik: ves program vnaprej (C)
+  - tolmač: stavek za stavkom (Python)

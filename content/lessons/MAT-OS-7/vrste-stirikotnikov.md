@@ -162,7 +162,7 @@ V trapezu: $\alpha + \delta = 180^\circ$; v enakokrakem trapezu: $\beta = \alpha
 3. Vstavimo $\delta = 3\alpha$: $\alpha + 3\alpha = 180^\circ$, torej $4\alpha = 180^\circ$.
 4. Delimo s $4$: $\alpha = 45^\circ$.
 5. Potem je $\delta = 3 \cdot 45^\circ = 135^\circ$.
-6. Trapez je enakokraki, zato je $\beta = \alpha = 45^\circ$ in $\gamma = \delta = 135^\circ$.
+6. Trapez je enakokrak, zato je $\beta = \alpha = 45^\circ$ in $\gamma = \delta = 135^\circ$.
 7. Preverimo: $45^\circ + 45^\circ + 135^\circ + 135^\circ = 360^\circ$. ✓
 8. Odgovor: kota ob cesti $AB$ merita po $45^\circ$, kota ob cesti $CD$ pa po $135^\circ$.
 

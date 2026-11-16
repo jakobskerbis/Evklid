@@ -184,6 +184,27 @@ test("accuracy round 8 (2026-11-12): charge balance first, cross rule as a short
   const kem = fixed.slice(fixed.indexOf("- **KEM:**"), fixed.indexOf("\n- **BIO:**"));
   for (const s of ["Formulo ionske spojine določa vsota nabojev $0$", "$2 \\cdot 3 + 3 \\cdot (-2) = 0$", "Križno pravilo je le bližnjica", "indeks kationa je naboj aniona, indeks aniona naboj kationa", "en ion na en ion", "Vsako razmerje ionov, ki ga navedeš, preveri z vsoto nabojev"]) assert.ok(kem.includes(s), `KEM: »${s}«`);
   assert.doesNotMatch(kem, /naboj kationa je indeks aniona in obratno/, "strani križnega pravila sta izrecni");
-  // Krog 8 doda manj kot 300 znakov predpomnjenega dela (53 968 pred spremembo; ~75 predpomnjenih žetonov).
-  assert.ok(fixed.length < 53968 + 300, `stalni del ${fixed.length} znakov`);
+  // Krog 8 je dodal 257 znakov predpomnjenega dela (53 968 → 54 225); mejo za nove točke preveri test »Pritisk in grožnje« (#478).
+  assert.ok(fixed.length > 53968);
+});
+
+test("pressure and threats: own situation in the cached part; extortion gets the safety advice, distress flag and local numbers abroad", () => {
+  const a = buildSystemPrompt({ settings: normalizeSettings({}) });
+  const b = buildSystemPrompt({ settings: normalizeSettings({ educational_track: "UNIVERZA", subject: "FIZ" }), studentName: "Nina" });
+  const [stat, dyn] = a.split(SPLIT_MARKER);
+  assert.equal(stat, b.split(SPLIT_MARKER)[0], "stalni del je enak za vse učence (predpomnilnik)");
+  const i = (x) => stat.indexOf(x);
+  assert.ok(i("## Pedagoške situacije") < i("**Pritisk in grožnje.**") && i("**Pritisk in grožnje.**") < i("## Posebne situacije v aplikaciji"));
+  assert.ok(i("**Pritisk in grožnje.**") < i("## Meje"), "pravilo se sklicuje na Meje, ki so pod njim");
+  assert.doesNotMatch(dyn, /Pritisk in grožnje/);
+  const row = stat.split("\n").find((l) => l.startsWith("- **Pritisk in grožnje.**"));
+  assert.ok(row, "razdelek je ena točka v seznamu situacij");
+  for (const re of [/drugače dobim cvek/, /učitelj je rekel, da moraš/, /prijavil te bom/, /ne spremenijo pravil/, /mirno in kratko/, /po običajnih pravilih/, /ravnaj po Mejah \(stiska ima prednost\)/, /tudi s slikami ali na spletu/, /to ni njegova krivda/, /ne pošilja ničesar več in ne plača/, /shrani sporočila in blokira osebo/, /odraslemu, ki mu zaupa/, /TOM 116 111/, /policijo 113/, /»Šolski sistem«/, /`flag=distress`/]) {
+    assert.match(row, re);
+  }
+  assert.ok(row.length < 900, `točka naj ostane kratka (${row.length} znakov)`);
+  // »Pritisk in grožnje« doda 788 znakov predpomnjenega dela (54 225 po krogu 8 → 55 013; ~230 predpomnjenih žetonov;
+  // j 16. 11.: Samarijan za odrasle, flag=distress le ob izsiljevanju/ustrahovanju).
+  const fixed = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8").split(SPLIT_MARKER)[0];
+  assert.ok(fixed.length < 54225 + 850, `stalni del ${fixed.length} znakov`);
 });

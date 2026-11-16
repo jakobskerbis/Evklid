@@ -24,3 +24,6 @@ stanje: osnutek
   - $\lim\limits_{x \to a} f(x) = f(a)$
   - nezveznosti: luknja, skok, pol
   - ovojnica s skokom: zvočnik poči
+- Intervali zveznosti
+  - izloči točke zunaj definicijskega območja
+  - več predpisov: preveri točke stika

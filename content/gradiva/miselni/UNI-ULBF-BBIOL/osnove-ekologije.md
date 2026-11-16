@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ravni
+  - populacija, združba, ekosistem, biosfera
+  - ekosistem: združba in nežive razmere
+- Rast populacije
+  - $\mathrm{d}N/\mathrm{d}t = rN(1 - N/K)$
+  - največji prirast pri $N = K/2$
+  - nad $K$ populacija upada
+- Ulov in ponovni ulov
+  - $N = \dfrac{M \cdot C}{R}$
+  - napaka: obrnjen količnik $\dfrac{R \cdot C}{M}$
+  - oznake ostanejo, osebki se pomešajo
+- Odnosi v združbi
+  - tekmovanje, plenilstvo, zajedavstvo, mutualizem
+  - trofične ravni in razkrojevalci
+- Pretok energije
+  - na naslednjo raven okoli $10\,\%$
+  - preostanek odide kot toplota
+  - verige so redko daljše od $4$–$5$ členov
+- Kroženje snovi
+  - ogljik: fotosinteza, dihanje, razkroj
+  - dušik vežejo in sproščajo bakterije
+  - hranila omejijo produkcijo tropskega morja

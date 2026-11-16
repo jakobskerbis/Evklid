@@ -73,17 +73,24 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
   // Legenda je hkrati vklop in izklop: vsaka vrsta meritev, njena premica in mreža (public/sim/prikaz.js za ostale grafe).
   const legend = h("figcaption", { class: "lab-legend", role: "group" });
   wrap.append(legend);
-  let A = null, last = [];
+  let A = null, last = [], legSig = "";
   const off = new Set();
   wrap.setAxes = (ax) => Object.assign(opts, ax);
   const opts = { x, y };
-  const chip = (key, sym, text) =>
-    h("button", { type: "button", class: "lab-leg layer-chip", "data-layer": key, "aria-pressed": String(!off.has(key)), onclick: () => {
-      off.has(key) ? off.delete(key) : off.add(key);
-      wrap.draw(last);
-      // draw legendo nariše znova: fokus ostane na istem gumbu (tipkovnica)
-      [...legend.children].find((c) => c.dataset.layer === key)?.focus();
-    } }, sym, text);
+  // Gumbi legende nimajo svojih poslušalcev (klik posluša stalna legenda) in se narišejo znova le, ko se spremenijo:
+  // graf se med poskusom riše vsako sličico, nov gumb na zaslonu ob dotiku pa Safari na iPadu in iPhonu vzame kot
+  // meni ob lebdenju in klika ne pošlje, tudi ne drugim gumbom na strani (scripts/gumbi-na-dotik.cjs).
+  legend.addEventListener("click", (ev) => {
+    const key = ev.target.closest?.("button[data-layer]")?.dataset.layer;
+    if (key == null) return;
+    off.has(key) ? off.delete(key) : off.add(key);
+    wrap.draw(last);
+    // draw legendo nariše znova: fokus ostane na istem gumbu (tipkovnica)
+    [...legend.children].find((c) => c.dataset.layer === key)?.focus();
+  });
+  const chip = (key, sym, text) => ({ key, sym, text });
+  const chipEl = ({ key, sym, text }) =>
+    h("button", { type: "button", class: "lab-leg layer-chip", "data-layer": key, "aria-pressed": String(!off.has(key)) }, h("i", { class: sym, "aria-hidden": "true" }), text);
   wrap.draw = (series = []) => {
     last = series;
     svg.replaceChildren();
@@ -95,8 +102,8 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
     lbX?.setAttribute("x", A.R + 18);
     lbY?.setAttribute("y", A.T - 6);
     const inside = ([px, py]) => px >= A.x0 && px <= A.x1 && py >= A.y0 && py <= A.y1;
-    legend.replaceChildren();
     legend.setAttribute("aria-label", t("sim.layers"));
+    const chips = [];
     series.forEach((S, i) => {
       const id = S.id ?? S.label ?? i;
       if (S.line && !off.has(`fit:${id}`)) {
@@ -131,11 +138,16 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
       const clipped = S.pts.filter((p) => !inside(p)).length;
       if (!S.label) return;
       // Samo premica brez točk (npr. izračunana vrednost): en gumb z imenom, brez praznega gumba za točke.
-      if (S.line && !S.pts.length) return legend.append(chip(`fit:${id}`, h("i", { class: `lab-sym line bg-${S.cls}`, "aria-hidden": "true" }), S.label));
-      legend.append(chip(`pt:${id}`, h("i", { class: `lab-sym ${S.shape === "^" ? "tri" : "dot"} bg-${S.cls}`, "aria-hidden": "true" }), S.label + (clipped ? ` (${clipped} izven grafa)` : "")));
-      if (S.line) legend.append(chip(`fit:${id}`, h("i", { class: `lab-sym line bg-${S.cls}`, "aria-hidden": "true" }), t("sim.layer.fit", { name: S.label })));
+      if (S.line && !S.pts.length) return chips.push(chip(`fit:${id}`, `lab-sym line bg-${S.cls}`, S.label));
+      chips.push(chip(`pt:${id}`, `lab-sym ${S.shape === "^" ? "tri" : "dot"} bg-${S.cls}`, S.label + (clipped ? ` (${clipped} izven grafa)` : "")));
+      if (S.line) chips.push(chip(`fit:${id}`, `lab-sym line bg-${S.cls}`, t("sim.layer.fit", { name: S.label })));
     });
-    if (legend.children.length) legend.append(chip("grid", h("i", { class: "layer-sw sw-grid", "aria-hidden": "true" }), t("sim.layer.grid")));
+    if (chips.length) chips.push(chip("grid", "layer-sw sw-grid", t("sim.layer.grid")));
+    const sig = JSON.stringify([chips, [...off]]);
+    if (sig !== legSig) {
+      legSig = sig;
+      legend.replaceChildren(...chips.map(chipEl));
+    }
   };
   wrap.draw();
   return wrap;

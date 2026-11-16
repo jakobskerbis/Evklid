@@ -14,6 +14,7 @@ import { icon } from "./icons.js";
 import { GROUPS, symGroups, chemFormat, ELEMENT_SYMBOLS } from "./symbols.js";
 import { stopnja } from "./stopnja.js";
 import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
+import { brisiNazaj } from "./vnos-formul.js";
 import {
   layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, KEM_LETTERS, KEM_CHARGE, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
   fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
@@ -67,7 +68,8 @@ function configFor(field) {
 }
 const val = (v, field) => (typeof v === "function" ? v(field) : v);
 const orig = (f) => (origMode.has(f) ? origMode.get(f) : f.getAttribute("inputmode"));
-const textField = (el) => el?.closest?.("input, textarea, [contenteditable='true'], [contenteditable='']") || null;
+// Izris formule čez polje (public/predogled-vnosa.js) šteje kot polje samo.
+const textField = (el) => el?.closest?.(".vnos-izris")?.vnosPolje || el?.closest?.("input, textarea, [contenteditable='true'], [contenteditable='']") || null;
 const visible = (el) => !!el && el.isConnected && el.getClientRects().length > 0;
 
 // Polje dobi našo tipkovnico samo od sebe (dotik, nastavitev, ni »svoje« tipkovnice, ni telefonove za to polje).
@@ -635,6 +637,14 @@ function backspace(f) {
     return fire(f, "deleteContentBackward");
   }
   const [s, e] = r;
+  // Polje, ki zapis pokaže kot formulo: ⌫ na »)/(« ne razbije ulomka (prazen ulomek izgine cel, sicer skok v števec).
+  const z = s === e && f.classList.contains("vnos-izrisan") ? brisiNazaj(f.value, s) : null;
+  if (z) {
+    if (z.value === f.value) return f.setSelectionRange(z.caret, z.caret);
+    f.setRangeText("", z.caret, z.caret + f.value.length - z.value.length, "end");
+    f.setSelectionRange(z.caret, z.caret);
+    return fire(f, "deleteContentBackward");
+  }
   const out = deleteBack(f.value, s, e);
   if (out.value === f.value) return;
   f.setRangeText("", out.caret, e > s ? e : s, "end");
@@ -652,7 +662,8 @@ function deleteChunk(f, kind) {
     return document.execCommand("delete");
   }
   const r = sel(f);
-  if (!r || r[0] !== r[1]) return backspace(f);
+  // Polje s formulo (public/predogled-vnosa.js): »beseda« je ves zapis »(1)/(2« in bi pustila »)«; vsak tap je en ⌫.
+  if (!r || r[0] !== r[1] || f.classList.contains("vnos-izrisan")) return backspace(f);
   const from = kind === "word" ? wordsBack(f.value, r[0], 1) : sentenceBack(f.value, r[0]);
   if (from === r[0]) return;
   f.setRangeText("", from, r[0], "end");

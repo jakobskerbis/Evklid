@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -40,13 +40,11 @@ To je kvadratna enačba. Število njenih rešitev pove njena diskriminanta
 
 $$D = (b - k)^2 - 4a(c - n)$$
 
-| $D$ | presečišča | premica je |
-|---|---|---|
-| $D > 0$ | dve | sekanta |
-| $D = 0$ | eno (dotikališče) | tangenta |
-| $D < 0$ | nobenega | mimobežnica |
+- $D > 0$: dve presečišči, premica je sekanta;
+- $D = 0$: eno presečišče (dotikališče), premica je tangenta;
+- $D < 0$: nobenega presečišča, premica je mimobežnica.
 
-Pri Lari je $a = -0{,}1$, $b - k = 1{,}5$ in $c - n = 0$, zato je $D = 1{,}5^2 - 0 = 2{,}25 > 0$, zato je pobočje sekanta parabole. Za vsako absciso izračunamo še ordinato, ker je presečišče točka, ne število.
+Pri Lari je $a = -0{,}1$, $b - k = 1{,}5$ in $c - n = 0$, zato je $D = 1{,}5^2 - 0 = 2{,}25 > 0$ in pobočje je sekanta parabole. Za vsako absciso izračunamo še ordinato, ker je presečišče točka, ne število.
 
 :::premisli
 Laro zanima premica $y = 0{,}5x + n$, ki jo dvigujemo (večamo $n$). Kaj se dogaja s presečiščema in z diskriminanto? Napovej.
@@ -204,6 +202,112 @@ $x \in (-2, 0]$. Del $[4, \infty)$ ne seka intervala $(-2, 3)$. Število $0$ je 
 - Ničle parabole so le presečišča z osjo $x$.
 - (višja raven) Sistem kvadratnih neenačb: reši vsako neenačbo posebej (skica parabole), rešitve nariši na isto številsko premico in vzemi presek. Krajišča vključi samo, če ju vključita obe neenačbi.
 
+## Ponovitev
+
+**Formule**
+- Presečišča: $f(x) = g(x)$ (na pamet)
+- S premico $y = kx + n$: $ax^2 + (b - k)x + (c - n) = 0$ (na pamet)
+- $D = (b - k)^2 - 4a(c - n)$ (na pamet)
+- $D > 0$ sekanta, $D = 0$ tangenta, $D < 0$ mimobežnica (na pamet)
+
+**Postopek**
+1. Izenači $f(x) = g(x)$ in vse prenesi na eno stran.
+2. Reši enačbo; pri enakem $a$ je linearna.
+3. Ordinato izračunaj iz preprostejše funkcije in jo preveri na drugi.
+4. Presečišča zapiši kot točke $(x, y)$.
+5. Za lego premice izračunaj $D$: sekanta, tangenta ali mimobežnica.
+6. (višja raven) Sistem neenačb: reši vsako s skico parabole in vzemi presek.
+
+**Pazi na**
+- Ničle so le presečišča z osjo $x$; za drug graf izenači $f(x) = g(x)$.
+- $D$ izračunaj šele po prenosu na eno stran, ne iz parabole same.
+- Presečišče je točka: izračunaj še ordinato.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Izračunajte koordinati presečišč parabole $y = 2x^2 + x - 3$ in premice $y = 3x + 1$.
+
+**Rešitev:**
+
+1. Izenačimo desni strani: $2x^2 + x - 3 = 3x + 1$, torej $2x^2 - 2x - 4 = 0$ in po deljenju z $2$ enačba $x^2 - x - 2 = 0$.
+2. Razcep $(x - 2)(x + 1) = 0$ da $x_1 = -1$ in $x_2 = 2$.
+3. Ordinati iz enačbe premice: $3 \cdot (-1) + 1 = -2$ in $3 \cdot 2 + 1 = 7$. Preverba na paraboli: $2 - 1 - 3 = -2$ in $8 + 2 - 3 = 7$.
+4. Odgovor: presečišči sta $(-1, -2)$ in $(2, 7)$.
+
+**Točkovanje:** 1 točka za enačbo $x^2 - x - 2 = 0$ (ali $2x^2 - 2x - 4 = 0$), 1 točka za abscisi $-1$ in $2$, 1 točka za obe točki z ordinatama.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dani sta funkciji $f(x) = x^2 - 4x + 3$ in $g(x) = -x^2 + 2x + 3$.
+
+a) Izračunajte presečišči grafov funkcij $f$ in $g$. (2 točki)
+b) V istem koordinatnem sistemu narišite grafa obeh funkcij. Označite ničle in temeni. (2 točki)
+c) Z grafa preberite, za katere $x$ leži graf funkcije $f$ pod grafom funkcije $g$. (1 točka)
+d) Določite število $n$ tako, da bo premica $y = 4x + n$ tangenta grafa funkcije $f$, in izračunajte dotikališče. (2 točki)
+
+**Rešitev:**
+
+1. a) $x^2 - 4x + 3 = -x^2 + 2x + 3$ da $2x^2 - 6x = 0$, torej $2x(x - 3) = 0$ in $x = 0$ ali $x = 3$.
+2. a) $f(0) = 3$ in $f(3) = 9 - 12 + 3 = 0$, zato sta presečišči $(0, 3)$ in $(3, 0)$.
+3. b) Graf $f$: ničli $1$ in $3$, teme $(2, -1)$, ker je $f(2) = 4 - 8 + 3 = -1$; parabola je odprta navzgor.
+4. b) Graf $g$: iz $x^2 - 2x - 3 = 0$ ničli $-1$ in $3$, teme $(1, 4)$, ker je $g(1) = -1 + 2 + 3 = 4$; parabola je odprta navzdol.
+5. c) Med presečiščema je parabola $f$ pod parabolo $g$: $x \in (0, 3)$.
+6. d) $x^2 - 4x + 3 = 4x + n$ da $x^2 - 8x + 3 - n = 0$ z diskriminanto $D = 64 - 4(3 - n) = 52 + 4n$.
+7. d) Tangenta pomeni $D = 0$, torej $n = -13$. Dvojna rešitev je $x = \dfrac{8}{2} = 4$, ordinata $4 \cdot 4 - 13 = 3$; preverba: $f(4) = 16 - 16 + 3 = 3$.
+8. Odgovor: a) $(0, 3)$ in $(3, 0)$; c) $x \in (0, 3)$; d) $n = -13$, dotikališče $(4, 3)$.
+
+**Točkovanje:** a) 1 točka za abscisi $0$ in $3$, 1 točka za obe točki; b) 1 točka za graf $f$ (ničli, teme, smer), 1 točka za graf $g$ (ničli, teme, smer); c) 1 točka za $(0, 3)$; d) 1 točka za $n = -13$ iz pogoja $D = 0$, 1 točka za dotikališče $(4, 3)$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dani sta funkciji $f(x) = x^2 - 4$ in $g(x) = -x^2 + 2x + 8$.
+
+a) Izračunajte presečišči grafov funkcij $f$ in $g$. (2 točki)
+b) V istem koordinatnem sistemu narišite grafa obeh funkcij. Označite ničle, temeni in presečišči. (2 točki)
+c) Rešite sistem neenačb $f(x) < 0$ in $g(x) \ge 5$. (3 točke)
+d) Poiščite vse $x$, za katere velja $0 \le f(x) \le g(x)$, in rezultat pojasnite z grafom. (3 točke)
+
+**Rešitev:**
+
+1. a) $x^2 - 4 = -x^2 + 2x + 8$ da $2x^2 - 2x - 12 = 0$, torej $x^2 - x - 6 = 0$ in $(x - 3)(x + 2) = 0$: $x = -2$ ali $x = 3$.
+2. a) $f(-2) = 0$ in $f(3) = 5$, zato sta presečišči $(-2, 0)$ in $(3, 5)$.
+3. b) Graf $f$: ničli $-2$ in $2$, teme $(0, -4)$, odprt navzgor. Graf $g$: iz $x^2 - 2x - 8 = (x + 2)(x - 4) = 0$ ničli $-2$ in $4$, teme $(1, 9)$, odprt navzdol. Grafa se sekata v $(-2, 0)$ in $(3, 5)$.
+4. c) $f(x) < 0$: parabola $f$ je pod osjo med ničlama, $x \in (-2, 2)$.
+5. c) $g(x) \ge 5$: $-x^2 + 2x + 3 \ge 0$, torej $x^2 - 2x - 3 \le 0$ in $(x + 1)(x - 3) \le 0$, $x \in [-1, 3]$.
+6. c) Presek: $x \in [-1, 2)$. Število $-1$ je vključeno, ker velja $f(-1) = -3 < 0$ in $g(-1) = 5$; število $2$ ni, ker je $f(2) = 0$.
+7. d) $f(x) \ge 0$: zunaj ničel z njima, $x \in (-\infty, -2] \cup [2, \infty)$.
+8. d) $f(x) \le g(x)$: $x^2 - x - 6 \le 0$, $x \in [-2, 3]$ (med presečiščema grafov).
+9. d) Presek je $\{-2\} \cup [2, 3]$. Na grafu: parabola $f$ je na osi $x$ ali nad njo in hkrati na grafu $g$ ali pod njim le v skupni ničli $-2$ in na loku od ničle $2$ do presečišča $(3, 5)$.
+10. Odgovor: a) $(-2, 0)$ in $(3, 5)$; c) $[-1, 2)$; d) $\{-2\} \cup [2, 3]$.
+
+**Točkovanje:** a) 1 točka za abscisi $-2$ in $3$, 1 točka za obe točki; b) 1 točka za graf $f$, 1 točka za graf $g$ (ničle, teme, smer); c) 1 točka za $(-2, 2)$, 1 točka za $[-1, 3]$, 1 točka za presek $[-1, 2)$ s pravilnimi krajišči; d) 1 točka za $f(x) \ge 0$, 1 točka za $f(x) \le g(x)$, 1 točka za $\{-2\} \cup [2, 3]$ (tudi osamljena točka $-2$).
+
+### Ustno vprašanje 1
+
+:::premisli
+Pojasni, kako poiščemo presečišča parabole $y = ax^2 + bx + c$ in premice $y = kx + n$ in kaj o njih pove diskriminanta.
+---
+Presečišče leži na obeh grafih, zato izenačimo desni strani in dobimo kvadratno enačbo $ax^2 + (b - k)x + (c - n) = 0$. Njene rešitve so abscise presečišč, ordinate pa dobimo z vstavljanjem v enačbo premice. Pri $D > 0$ sta presečišči dve in premica je sekanta. Pri $D = 0$ je skupna točka ena in premica je tangenta. Pri $D < 0$ skupnih točk ni in premica je mimobežnica.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Navedi primer dveh parabol, ki imata natanko eno skupno točko, in pojasni, zakaj je tako.
+---
+Paraboli $y = x^2$ in $y = x^2 + 2x - 4$ imata natanko eno skupno točko. Ko izenačimo desni strani, se člen $x^2$ odšteje in ostane linearna enačba $2x - 4 = 0$ z edino rešitvijo $x = 2$. Skupna točka je $(2, 4)$. Paraboli z različnima vodilnima koeficientoma imata natanko eno skupno točko takrat, ko ima kvadratna enačba, ki jo dobimo z izenačenjem predpisov, diskriminanto $0$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Kaj je rešitev sistema kvadratnih neenačb in kako jo poiščemo?
+---
+Rešitev sistema so vsa realna števila, ki hkrati izpolnijo vse neenačbe sistema. Vsako neenačbo rešimo posebej s skico parabole in rešitev zapišemo z intervali. Rešitve narišemo na isto številsko premico in vzamemo njihov presek, ne unije. Krajišče spada v rešitev sistema le, če ga vključijo vse neenačbe.
+:::
+
 ## Drugače: Kot zgodba
 
 Lara se naslednji dan pogovarja z vzdrževalcem žičnice. »Kaj, če jeklenico spustimo?« vpraša. Skupaj si zamislita premico $y = 0{,}5x + n$ in jo počasi spuščata.
@@ -255,7 +359,7 @@ točka: 3 | 3
 > Enačba $x^2 - x - 2 = 0$ ima $D = 9 > 0$, zato je $y = x + 2$ sekanta (presečišči $(-1, 1)$ in $(2, 4)$). Ostale tri so tangente.
 
 ? (brez računala) Parabola $y = x^2 - 3x + 1$ in premica $y = 2x - 3$ se sekata v dveh točkah. Vpiši ordinato tiste, ki ima večjo absciso.
-= 5
+= 5 | 0
 ~ 4 | To je abscisa $x = 4$. Presečišče je točka: ordinato dobiš z vstavljanjem v enačbo premice, $2 \cdot 4 - 3 = 5$.
 ~ -1 | To je ordinata presečišča z manjšo absciso, $x = 1$.
 > Enačba $x^2 - 5x + 4 = 0$ ima rešitvi $1$ in $4$. Pri $x = 4$ je $y = 2 \cdot 4 - 3 = 5$; preverba na paraboli: $16 - 12 + 1 = 5$.
@@ -270,7 +374,7 @@ f: x^2 | modra
 f: 2*x + n | oranžna
 podnapis: Parabola y = x² in premica y = 2x + n pri n = {n}
 :::
-= -1
+= -1 | 0
 ~ 1 | Pri prenašanju si zamenjal predznak. Enačba je $x^2 - 2x - n = 0$, zato je $D = 4 + 4n$.
 ~ 0 | Pri $n = 0$ ima premica s parabolo še dve skupni točki, $(0, 0)$ in $(2, 4)$.
 > Enačba $x^2 = 2x + n$ oziroma $x^2 - 2x - n = 0$ ima $D = 4 + 4n$. Presečišči se zlijeta pri $D = 0$, torej $n = -1$; tedaj je premica tangenta z dotikališčem $(1, 1)$.
@@ -324,4 +428,25 @@ neenacba: x^2+x-2>0 | x | (-oo, -2) U (1, oo)
 resi: x^2-3*x+1=2*x-3 | x | 1, 4
 resi: 4+4*n=0 | n | -1
 neenacba: x^2-3*x>=0 | x | (-oo, 0] U [3, oo)
+resi: 2*x^2+x-3=3*x+1 | x | -1, 2
+vrednost: 3*(-1)+1 | -2
+vrednost: 3*2+1 | 7
+resi: x^2-4*x+3=-x^2+2*x+3 | x | 0, 3
+resi: x^2-4*x+3=0 | x | 1, 3
+vrednost: 2^2-4*2+3 | -1
+resi: -x^2+2*x+3=0 | x | -1, 3
+vrednost: -(1^2)+2*1+3 | 4
+neenacba: x^2-4*x+3<-x^2+2*x+3 | x | (0, 3)
+resi: 52+4*n=0 | n | -13
+resi: x^2-4*x+3=4*x-13 | x | 4
+vrednost: 4*4-13 | 3
+resi: x^2-4=-x^2+2*x+8 | x | -2, 3
+vrednost: 3^2-4 | 5
+resi: -x^2+2*x+8=0 | x | -2, 4
+vrednost: -(1^2)+2*1+8 | 9
+neenacba: x^2-4<0 | x | (-2, 2)
+neenacba: -x^2+2*x+8>=5 | x | [-1, 3]
+neenacba: x^2-4>=0 | x | (-oo, -2] U [2, oo)
+neenacba: x^2-4<=-x^2+2*x+8 | x | [-2, 3]
+resi: x^2=x^2+2*x-4 | x | 2
 >>

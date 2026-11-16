@@ -579,7 +579,7 @@ function renderLogin(mode = "login") {
 
 // Premlad za lasten račun: povezava za starše s vsemi podatki (kaj je Evklid, podatki, cena, soglasje).
 function renderAskParent(minAge) {
-  const linkFor = (name) => `${location.origin}/starsi.html${name ? `?ime=${encodeURIComponent(name)}` : ""}`;
+  const linkFor = (name) => `${location.origin}/starsi.html?${name ? `ime=${encodeURIComponent(name)}&` : ""}prosnja=1`; // prosnja: starsi.js pokaže obvestilo
   shell(`
     <h1>Vprašaj starše</h1>
     <p class="muted">${minAge ? `Za mlajše od ${minAge} let` : "Za mlajše učence"} račun ustvari starš ali skrbnik. Vpiši e-naslov starša in Evklid mu pošlje povezavo, ali pa mu jo pošlji sam(a). Tam piše, kaj je Evklid, katere podatke hranimo in koliko stane. Ko starš ustvari račun in doda tvoj profil, se lahko začneš učiti.</p>
@@ -603,7 +603,7 @@ function renderAskParent(minAge) {
   const link = () => linkFor(f.name.value.trim());
   const text = () => {
     const n = f.name.value.trim();
-    return `${n ? `${n} bi rad(a)` : "Rad(a) bi"} uporabljal(a) Evklid, AI inštruktorja za matematiko, fiziko in kemijo. Za to potrebujem tvoje dovoljenje:`;
+    return `${n ? `${n} bi rad(a)` : "Rad(a) bi"} uporabljal(a) Evklid, AI inštruktorja za matematiko, fiziko, kemijo, biologijo in naravoslovje. Za to potrebujem tvoje dovoljenje:`;
   };
   const mail = () => (location.href = `mailto:?subject=${encodeURIComponent("Evklid – prosim za dovoljenje")}&body=${encodeURIComponent(`${text()}\n${link()}`)}`);
   f.name.addEventListener("input", () => (f.link.value = link()));
@@ -825,7 +825,7 @@ function bindBirthForm(form, onDone) {
 // Mlajši od starosti digitalne privolitve: datum je shranjen, za soglasje pa velja pot prek staršev kot pri registraciji.
 const underAgeHtml = (minAge) => `<div class="birth-under" role="status">
       <p>${esc(t("birth.underAge", { age: minAge }))}</p>
-      <p><a href="/starsi.html" target="_blank">${esc(t("birth.parents"))}</a></p>
+      <p><a href="/starsi.html?prosnja=1" target="_blank">${esc(t("birth.parents"))}</a></p>
     </div>`;
 
 function renderBirth() {
@@ -1354,7 +1354,20 @@ function growthHtml(g, loc) {
       <tbody>${g.sources.map((s) => `<tr><td>${esc(src(s.vir))}</td><td>${nf(s.visits)}</td><td>${nf(s.profiles)}</td><td>${nf(s.firstTask)}</td><td>${s.d7Eligible ? `${nf(s.d7Returned)} / ${nf(s.d7Eligible)}` : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
     ${g.usageBySource?.length ? `<h4>${esc(t("rast.byUse"))}</h4><div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.active")}${th("rast.d1Col")}${th("rast.qCol")}${th("rast.aiCol")}</tr></thead>
       <tbody>${g.usageBySource.map((u) => `<tr><td>${esc(src(u.vir))}</td><td>${nf(u.active)}</td><td>${u.d1Eligible ? `${nf(u.d1Returned)} / ${nf(u.d1Eligible)}` : "–"}</td><td>${u.askerDays ? nf(u.questionsPerAskerDay) : "–"}</td><td>${u.aiUsers ? eurOf(u.aiEurPerUserMonth) : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
+    ${funnelHtml(g.funnel, nf, pct, of)}
     <p class="muted small">${esc(t("rast.note", { link: `\u2066${location.origin}/?vir=facebook\u2069` }))}</p>`;
+}
+
+// Lijak računov (server/rast.js accountFunnel): registracija → e-naslov → prva naloga → 3. in 7. dan → plačilo.
+function funnelHtml(f, nf, pct, of) {
+  if (!f) return "";
+  const li = (k, s) => `<li><b>${pct(s)}</b> ${esc(t(`rast.funnel.${k}`, of(s)))}</li>`;
+  return `<h4>${esc(t("rast.funnel.title"))}</h4>
+    <ul class="pilot-sum">
+      <li><b>${nf(f.registered)}</b> ${esc(t("rast.funnel.registered"))}</li>
+      ${li("verified", f.verified)}${li("task24", f.task24)}${li("task7", f.task7)}${li("d3", f.d3)}${li("d7", f.d7)}${li("paid", f.paid)}
+    </ul>
+    <p class="muted small">${esc(t("rast.funnel.note"))}</p>`;
 }
 
 // Skrbnik: naročila šol s strani /sole (server/sole.js): stanje, opomba, predračun za tisk.
@@ -1498,7 +1511,7 @@ function bindGuestForms(after) {
       btn.disabled = false;
       showError(f, err);
       if (err.data?.under_age) {
-        errorBox(f).append(" ", t("guest.parentHint"), " ", Object.assign(document.createElement("a"), { href: "/starsi.html", target: "_blank", textContent: t("guest.parentLink") }));
+        errorBox(f).append(" ", t("guest.parentHint"), " ", Object.assign(document.createElement("a"), { href: "/starsi.html?prosnja=1", target: "_blank", textContent: t("guest.parentLink") }));
       }
       if (err.data?.exists) {
         const login = $("#guest-login-form");

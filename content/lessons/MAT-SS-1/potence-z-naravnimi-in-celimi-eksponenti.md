@@ -23,11 +23,9 @@ $$a^n = \underbrace{a \cdot a \cdot \ldots \cdot a}_{n\ \text{faktorjev}}$$
 
 **2. Predznak potence.** Predznak vrednosti potence določita osnova in eksponent:
 
-| Osnova | Eksponent | Predznak potence | Primer |
-|---|---|---|---|
-| pozitivna | poljuben | pozitiven | $2^3 = 8$ |
-| negativna | sod | pozitiven | $(-2)^4 = 16$ |
-| negativna | lih | negativen | $(-2)^3 = -8$ |
+- pozitivna osnova, poljuben eksponent: potenca je pozitivna, npr. $2^3 = 8$;
+- negativna osnova, sod eksponent: potenca je pozitivna, npr. $(-2)^4 = 16$;
+- negativna osnova, lih eksponent: potenca je negativna, npr. $(-2)^3 = -8$.
 
 Pazi na oklepaje. Pri $(-2)^4$ je osnova $-2$ in rezultat je $16$. Pri $-2^4$ potenciramo samo število $2$, minus pa je predznak rezultata: $-2^4 = -(2^4) = -16$. Vrstni red računskih operacij je: oklepaji, potenciranje, množenje in deljenje, nazadnje seštevanje in odštevanje. Na primer $3 + 2 \cdot 4^2 = 3 + 2 \cdot 16 = 35$.
 
@@ -39,13 +37,11 @@ Obe sta $-1$. Pri $(-1)^{2025}$ je osnova negativna, eksponent pa lih. Pri $-1^{
 
 **3. Pravila za naravne eksponente.** Izračunajmo najprej en primer, $2^3 \cdot 2^2$. Prva potenca ima tri faktorje, druga dva, skupaj jih je pet: $(2 \cdot 2 \cdot 2) \cdot (2 \cdot 2) = 2^5$. Eksponenta sta se seštela. Na podoben način izpeljemo ostala pravila. Za $a \neq 0$, $b \neq 0$ ter naravni števili $m$ in $n$ velja:
 
-| Pravilo | Zapis | Primer |
-|---|---|---|
-| množenje potenc z isto osnovo | $a^m \cdot a^n = a^{m+n}$ | $3^4 \cdot 3^2 = 3^6$ |
-| deljenje potenc z isto osnovo ($m > n$) | $a^m : a^n = a^{m-n}$ | $5^7 : 5^4 = 5^3$ |
-| potenca potence | $(a^m)^n = a^{m \cdot n}$ | $(2^3)^2 = 2^6$ |
-| potenca zmnožka | $(a \cdot b)^n = a^n \cdot b^n$ | $(2 \cdot 5)^3 = 2^3 \cdot 5^3$ |
-| potenca količnika | $\left(\dfrac{a}{b}\right)^n = \dfrac{a^n}{b^n}$ | $\left(\dfrac{3}{2}\right)^2 = \dfrac{9}{4}$ |
+- **množenje potenc z isto osnovo**: $a^m \cdot a^n = a^{m+n}$, npr. $3^4 \cdot 3^2 = 3^6$;
+- **deljenje potenc z isto osnovo** ($m > n$): $a^m : a^n = a^{m-n}$, npr. $5^7 : 5^4 = 5^3$;
+- **potenca potence**: $(a^m)^n = a^{m \cdot n}$, npr. $(2^3)^2 = 2^6$;
+- **potenca zmnožka**: $(a \cdot b)^n = a^n \cdot b^n$, npr. $(2 \cdot 5)^3 = 2^3 \cdot 5^3$;
+- **potenca količnika**: $\left(\dfrac{a}{b}\right)^n = \dfrac{a^n}{b^n}$, npr. $\left(\dfrac{3}{2}\right)^2 = \dfrac{9}{4}$.
 
 Pravili za množenje in deljenje veljata samo, kadar imata potenci **isto osnovo**. Če osnovi nista enaki, ju najprej zapišemo kot potenci iste osnove, na primer $4 = 2^2$, $8 = 2^3$, $9 = 3^2$, $27 = 3^3$. Za vsoto in razliko potenc takega pravila ni: $a^m + a^n$ v splošnem ne moremo zapisati kot eno potenco, $(a + b)^n$ pa ni enako $a^n + b^n$.
 
@@ -55,7 +51,7 @@ Pravili za množenje in deljenje veljata samo, kadar imata potenci **isto osnovo
 
 $$a^{-n} = \frac{1}{a^n}.$$
 
-Razlog: izračunajmo $a^2 : a^5$. Po pravilu za deljenje je rezultat $a^{2-5} = a^{-3}$. Če pa ulomek $\dfrac{a \cdot a}{a \cdot a \cdot a \cdot a \cdot a}$ skrajšamo, dobimo $\dfrac{1}{a^3}$. Obe poti se ujemata, če je $a^{-3} = \dfrac{1}{a^3}$. Negativni eksponent torej **ne naredi števila negativnega**, ampak vzame obratno vrednost. Primeri: $2^{-3} = \dfrac{1}{8}$, $10^{-2} = \dfrac{1}{100} = 0{,}01$ in $(-2)^{-3} = \dfrac{1}{(-2)^3} = -\dfrac{1}{8}$.
+Razlog: izračunajmo $a^2 : a^5$. Po pravilu za deljenje je rezultat $a^{2-5} = a^{-3}$. Če pa ulomek $\dfrac{a \cdot a}{a \cdot a \cdot a \cdot a \cdot a}$ skrajšamo, dobimo $\dfrac{1}{a^3}$. Obe poti se ujemata, če je $a^{-3} = \dfrac{1}{a^3}$. Negativni eksponent torej **ne naredi števila negativnega**, ampak vzame obratno vrednost. Posebej je $a^{-1} = \dfrac{1}{a}$ obratna vrednost števila $a$. Primeri: $2^{-3} = \dfrac{1}{8}$, $10^{-2} = \dfrac{1}{100} = 0{,}01$ in $(-2)^{-3} = \dfrac{1}{(-2)^3} = -\dfrac{1}{8}$.
 
 Tabela nadaljuje vzorec s turnirja: vsak korak navzdol po eksponentu vrednost razpolovi.
 
@@ -191,6 +187,90 @@ $2^{-2} = \dfrac{1}{4}$, $(a^4)^{-2} = a^{-8}$ in $(b^{-3})^{-2} = b^6$, torej $
 - Pravila veljajo za vsa cela števila $m$ in $n$, osnove pa morajo biti različne od $0$. Izraz $0^0$ ni definiran.
 - Znanstveni zapis: $a \cdot 10^n$ z $1 \le a < 10$ in celim $n$.
 
+## Ponovitev
+
+**Formule**
+- $a^m \cdot a^n = a^{m+n}$, $a^m : a^n = a^{m-n}$ (na pamet)
+- $(a^m)^n = a^{m \cdot n}$ (na pamet)
+- $(a \cdot b)^n = a^n \cdot b^n$, $\left(\frac{a}{b}\right)^n = \frac{a^n}{b^n}$ (na pamet)
+- $a^0 = 1$ in $a^{-n} = \frac{1}{a^n}$ za $a \neq 0$ (na pamet)
+- $\left(\frac{a}{b}\right)^{-n} = \left(\frac{b}{a}\right)^n$ (na pamet)
+- znanstveni zapis: $a \cdot 10^n$ z $1 \le a < 10$ (na pamet)
+
+**Postopek**
+1. Vse osnove zapiši kot potence iste osnove.
+2. Uporabi pravili za potenco potence in potenco zmnožka.
+3. Pri množenju eksponente seštej, pri deljenju odštej.
+4. Rezultat zapiši brez negativnih eksponentov.
+5. Preizkusi z majhnim številom.
+
+**Pazi na**
+- Minus brez oklepaja ni del osnove: $-3^2 = -9$, $(-3)^2 = 9$.
+- Pri množenju eksponente seštevaš, množiš jih le pri potenci potence: $2^3 \cdot 2^4 = 2^7$.
+- Negativni eksponent da obratno vrednost, ne negativnega števila: $2^{-3} = \frac{1}{8}$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Poenostavite izraz $\dfrac{(x^{-2}y^3)^2 \cdot x^5}{(xy^{-1})^3}$ in rezultat zapišite brez negativnih eksponentov. Velja $x \neq 0$ in $y \neq 0$.
+
+**Rešitev:**
+
+1. Števec: po pravilih za potenco zmnožka in potenco potence je $(x^{-2}y^3)^2 = x^{-4}y^6$, zato je števec $x^{-4}y^6 \cdot x^5 = x^{-4+5}y^6 = xy^6$.
+2. Imenovalec: $(xy^{-1})^3 = x^3y^{-3}$.
+3. Deljenje potenc z isto osnovo: $\dfrac{xy^6}{x^3y^{-3}} = x^{1-3}y^{6-(-3)} = x^{-2}y^9$.
+4. Brez negativnih eksponentov: $x^{-2}y^9 = \dfrac{y^9}{x^2}$.
+5. Preizkus pri $x = 1$, $y = 2$: izvirni izraz je $\dfrac{8^2 \cdot 1}{\left(\frac{1}{2}\right)^3} = 64 \cdot 8 = 512$, rezultat pa $2^9 = 512$.
+6. Odgovor: $\dfrac{(x^{-2}y^3)^2 \cdot x^5}{(xy^{-1})^3} = \dfrac{y^9}{x^2}$.
+
+**Točkovanje:** 1 točka za pravilno potenciranje obeh oklepajev ($x^{-4}y^6$ in $x^3y^{-3}$), 1 točka za pravilno seštevanje in odštevanje eksponentov ($x^{-2}y^9$), 1 točka za rezultat $\dfrac{y^9}{x^2}$ brez negativnih eksponentov.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 2 (z računalom)
+
+Odrasel človek ima približno $5{,}2\,\text{L}$ krvi. V $1\,\text{mm}^3$ krvi je povprečno $4{,}8 \cdot 10^6$ rdečih krvničk, premer ene krvničke pa je približno $7{,}6 \cdot 10^{-6}\,\text{m}$. Pri računanju uporabljajte nezaokrožene vmesne rezultate.
+
+a) Prostornino krvi $V$ izrazite v kubičnih milimetrih in jo zapišite v znanstvenem zapisu. (2 točki)
+b) Izračunajte število rdečih krvničk $K$ v krvi tega človeka. Rezultat zapišite v znanstvenem zapisu, število pred potenco zaokrožite na eno decimalno mesto. (2 točki)
+c) Krvničke postavimo v vrsto eno ob drugo. Izračunajte dolžino vrste $s$ v kilometrih (v znanstvenem zapisu, na eno decimalno mesto) in ugotovite, kolikokrat je vrsta daljša od obsega Zemlje, ki meri približno $4{,}0 \cdot 10^4\,\text{km}$. Razmerje zaokrožite na celo število. (2 točki)
+
+**Rešitev:**
+
+1. a) $1\,\text{L} = 1\,\text{dm}^3$ in $1\,\text{dm} = 10^2\,\text{mm}$, zato je $1\,\text{dm}^3 = (10^2)^3\,\text{mm}^3 = 10^6\,\text{mm}^3$.
+2. a) $V = 5{,}2\,\text{dm}^3 = 5{,}2 \cdot 10^6\,\text{mm}^3$.
+3. b) $K = 5{,}2 \cdot 10^6 \cdot 4{,}8 \cdot 10^6 = (5{,}2 \cdot 4{,}8) \cdot 10^{6+6} = 24{,}96 \cdot 10^{12}$.
+4. b) Popravimo zapis: $24{,}96 \cdot 10^{12} = 2{,}496 \cdot 10^{13} \approx 2{,}5 \cdot 10^{13}$.
+5. c) $s = K \cdot d = 2{,}496 \cdot 10^{13} \cdot 7{,}6 \cdot 10^{-6}\,\text{m} = 18{,}9696 \cdot 10^{7}\,\text{m} = 1{,}89696 \cdot 10^{8}\,\text{m}$, kjer je $d$ premer krvničke.
+6. c) Ker je $1\,\text{km} = 10^3\,\text{m}$, je $s = 1{,}89696 \cdot 10^{5}\,\text{km} \approx 1{,}9 \cdot 10^5\,\text{km}$.
+7. c) Razmerje: $\dfrac{1{,}89696 \cdot 10^5}{4{,}0 \cdot 10^4} = 4{,}7424 \approx 5$.
+8. Odgovor: $V = 5{,}2 \cdot 10^6\,\text{mm}^3$, $K \approx 2{,}5 \cdot 10^{13}$, $s \approx 1{,}9 \cdot 10^5\,\text{km}$; vrsta je približno petkrat daljša od obsega Zemlje.
+
+**Točkovanje:** a) 1 točka za pretvorbo $1\,\text{dm}^3 = 10^6\,\text{mm}^3$, 1 točka za $V = 5{,}2 \cdot 10^6\,\text{mm}^3$; b) 1 točka za zmnožek s seštetima eksponentoma ($24{,}96 \cdot 10^{12}$), 1 točka za pravilen znanstveni zapis $2{,}5 \cdot 10^{13}$; c) 1 točka za $s \approx 1{,}9 \cdot 10^5\,\text{km}$, 1 točka za razmerje $5$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Zakaj za $a \neq 0$ definiramo $a^0 = 1$ in $a^{-n} = \dfrac{1}{a^n}$ in zakaj tega ne moremo narediti pri $a = 0$?
+---
+Ničto potenco in negativni eksponent definiramo tako, da pravila za računanje s potencami veljajo tudi za cele eksponente. Iz $a^n : a^n = a^{n-n} = a^0$ in iz tega, da je količnik dveh enakih števil enak $1$, sledi $a^0 = 1$. Iz $a^n \cdot a^{-n} = a^0 = 1$ sledi, da je $a^{-n}$ obratna vrednost potence $a^n$, torej $a^{-n} = \dfrac{1}{a^n}$. Pri $a = 0$ bi oba premisleka zahtevala deljenje z $0$, zato izraza $0^0$ in $0^{-n}$ nista definirana.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji pravilo za množenje potenc z isto osnovo in naravnima eksponentoma ter pojasni, zakaj podobnega pravila za vsoto potenc ni.
+---
+Potenca $a^m$ je zmnožek $m$ faktorjev $a$, potenca $a^n$ pa zmnožek $n$ faktorjev $a$. V zmnožku $a^m \cdot a^n$ je zato skupaj $m + n$ enakih faktorjev $a$, torej $a^m \cdot a^n = a^{m+n}$. Pri vsoti $a^m + a^n$ faktorjev ne združujemo, ampak seštevamo dve števili, zato vsote v splošnem ne moremo zapisati kot ene potence. Prav tako potenca vsote v splošnem ni vsota potenc, na primer $(1 + 1)^2 = 4$, $1^2 + 1^2 = 2$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer, ki pokaže, da izraza $(-a)^n$ in $-a^n$ nista vedno enaka, in pojasni, od česa je odvisen predznak potence z negativno osnovo.
+---
+Pri $(-2)^4$ je osnova $-2$ in vrednost je $16$, pri $-2^4$ pa potenciramo le število $2$ in dobimo $-16$. Potenciranje ima prednost pred predznakom minus, zato brez oklepaja minus ni del osnove. Potenca negativne osnove je pozitivna, če je eksponent sod, in negativna, če je eksponent lih. Pri lihem eksponentu sta izraza enaka, na primer $(-2)^3 = -2^3 = -8$.
+:::
+
 ## Drugače: Z analogijo
 
 Predstavljaj si stolpnico, v kateri je v vsakem nadstropju zapisana potenca števila $10$. V pritličju (nadstropje $0$) piše $10^0 = 1$. Vsako nadstropje navzgor pomnoži z $10$, zato v 3. nadstropju piše $10^3 = 1000$. Vsako nadstropje navzdol, v klet, deli z $10$, zato v 2. kleti (nadstropje $-2$) piše $10^{-2} = 0{,}01$.
@@ -260,23 +340,29 @@ Najpogostejša past je četrti korak: odštevanje negativnega eksponenta je pri�
 ~ Kvadrat bi bil $(2^n)^2 = 2^{2n}$: eksponent bi se podvojil, ne povečal za $1$.
 > $2^{n+1} = 2^n \cdot 2$, torej je igralcev dvakrat več, na primer $128$ namesto $64$.
 
-? Koliko je $\left(\dfrac{2}{5}\right)^{-2}$?
-- $\dfrac{4}{25}$
-~ Pozabiš obrniti ulomek. Negativni eksponent pomeni obratno vrednost.
-+ $\dfrac{25}{4}$
-- $-\dfrac{4}{25}$
-~ Negativni eksponent ne naredi rezultata negativnega, ulomek pa je treba obrniti.
-- $\dfrac{5}{2}$
-~ Ulomek si obrnil, a pozabil kvadrirati.
-> $\left(\dfrac{2}{5}\right)^{-2} = \left(\dfrac{5}{2}\right)^2 = \dfrac{25}{4}$.
+? (brez računala) Koliko je $\left(\dfrac{2}{5}\right)^{-2}$? Vpiši kot decimalno število.
+= 6,25 | 0,001
+~ 0,16 | Pozabiš obrniti ulomek: $\dfrac{4}{25} = 0{,}16$. Negativni eksponent pomeni obratno vrednost.
+~ -0,16 | Negativni eksponent ne naredi rezultata negativnega, ulomek pa je treba obrniti.
+~ 2,5 | Ulomek si obrnil, $\dfrac{5}{2} = 2{,}5$, a pozabil kvadrirati.
+> $\left(\dfrac{2}{5}\right)^{-2} = \left(\dfrac{5}{2}\right)^2 = \dfrac{25}{4} = 6{,}25$.
 
-? Koliko je $\dfrac{2^3 \cdot 2^{-5}}{2^{-4}}$?
-- $\dfrac{1}{64}$
-~ Pri deljenju odšteješ $-4$, kar je prištevanje: $-2 - (-4) = 2$, ne $-6$.
-+ $4$
-- $-4$
-~ Negativni eksponenti ne dajo negativnega rezultata: potenca pozitivne osnove je vedno pozitivna.
+? (brez računala) Koliko je $\dfrac{2^3 \cdot 2^{-5}}{2^{-4}}$?
+= 4 | 0,01
+~ 0,016 | To je $2^{-6} = \dfrac{1}{64} \approx 0{,}016$. Pri deljenju odšteješ $-4$, kar je prištevanje: $-2 - (-4) = 2$, ne $-6$.
+~ -4 | Negativni eksponenti ne dajo negativnega rezultata: potenca pozitivne osnove je vedno pozitivna.
 > Števec: $2^{3 + (-5)} = 2^{-2}$. Deljenje: $2^{-2 - (-4)} = 2^2 = 4$.
+
+<<RACUN
+enako: (x^(-2)*y^3)^2*x^5 | x*y^6
+enako: (x*y^(-1))^3 | x^3/y^3
+enako: (x^(-2)*y^3)^2*x^5/(x*y^(-1))^3 | y^9/x^2
+vrednost: (8^2*1)/(1/2)^3 | 512
+vrednost: 5.2*4.8 | 24.96
+vrednost: 5.2*10^6*4.8*10^6 | 2.496*10^13
+vrednost: 2.496*10^13*7.6*10^(-6) | 1.89696*10^8
+vrednost: 1.89696*10^5/(4.0*10^4) | 4.7424
+>>
 
 :::simboli
 a | osnova potence | | | v znanstvenem zapisu število z $1 \le a < 10$
@@ -286,4 +372,9 @@ m | eksponent druge potence | | |
 N | število žogic | | – |
 m_0 | masa ene žogice | | kg |
 M | skupna masa žogic | M = N \cdot m_0 | kg |
+V | prostornina krvi | | mm^3 |
+K | število rdečih krvničk | | – |
+d | premer rdeče krvničke | | m |
+s | dolžina vrste krvničk | s = K \cdot d | m | v odgovoru pretvorjena v km
+x, y | spremenljivki v izrazu s potencami | | | različni od 0
 :::

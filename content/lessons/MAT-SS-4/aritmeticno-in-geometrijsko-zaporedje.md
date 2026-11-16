@@ -77,7 +77,7 @@ Pri $q = 1$ so vsi členi enaki $a_1$, zato je $S_n = n \cdot a_1$.
 
 *Preveri:* koliko je $1 + 2 + 4 + 8 + 16$ po formuli? *(Odgovor: $\frac{2^5 - 1}{2 - 1} = 31$.)*
 
-V simulaciji spodaj (»Aritmetično in geometrijsko zaporedje«) primerjaj grafa obeh vrst zaporedij. Naloga: pri aritmetičnem zaporedju preveri, da točke $(n, a_n)$ ležijo na isti premici; pri geometrijskem zaporedju s količnikom večjim od $1$ opazi, da so razmiki med sosednjimi točkami vedno večji.
+V simulaciji spodaj (»Aritmetično in geometrijsko zaporedje«) primerjaj grafa obeh vrst zaporedij. Naloga: pri aritmetičnem zaporedju preveri, da točke $(n, a_n)$ ležijo na isti premici; pri geometrijskem zaporedju s količnikom, večjim od $1$, opazi, da so razmiki med sosednjimi točkami vedno večji.
 
 **7. Zaporedje po vzorcu.** Pri nalogi »nadaljuj zaporedje« iščemo pravilo, ki ga izpolnjujejo vsi dani členi. Iz nekaj primerov sklepamo na splošno pravilo: temu rečemo **induktivno sklepanje**. Pomagajo vprašanja po vrsti:
 
@@ -209,11 +209,31 @@ $S_6 = 3 \cdot \dfrac{2^6 - 1}{2 - 1} = 3 \cdot 63 = 189$. Preizkus: $3 + 6 + 12
 - Vrsto zaporedja določi šele, ko preveriš razliko oziroma količnik pri vseh danih parih.
 - Zaporedje po vzorcu: išči enake razlike, količnike, vzorec v razlikah ali zvezo z indeksom $n$; domnevo za $a_n$ preveri pri vseh danih členih.
 
+## Ponovitev
+
+**Formule**
+- $a_n = a_1 + (n - 1)d$ (na pamet)
+- $S_n = \frac{n}{2}(a_1 + a_n)$ (priloga)
+- $a_n = a_1 \cdot q^{n-1}$ (na pamet)
+- $S_n = a_1 \cdot \frac{q^n - 1}{q - 1}$, $q \ne 1$ (priloga)
+- $S_n = n\,a_1$ pri $q = 1$ (priloga)
+
+**Postopek**
+1. Preveri razliko oziroma količnik pri vseh danih parih in določi vrsto zaporedja.
+2. Znane podatke ($a_1$, $d$ ali $q$, $n$) vstavi v formulo za $a_n$ ali $S_n$.
+3. Iz enačbe ali sistema izračunaj neznanko.
+4. Rezultat preveri pri $n = 1$ in pri danih členih.
+
+**Pazi na**
+- Do $a_n$ je $n - 1$ korakov: $a_1 + (n - 1)d$ in $a_1 \cdot q^{n-1}$.
+- Padec za $20\,\%$ pomeni $q = 0{,}8$, rast za $5\,\%$ pa $q = 1{,}05$.
+- Gaussova formula $S_n = \frac{n}{2}(a_1 + a_n)$ velja le za aritmetično zaporedje.
+
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Med števili $7$ in $43$ vstavi osem števil tako, da vseh deset števil v tem vrstnem redu tvori aritmetično zaporedje. Zapiši vstavljena števila in izračunaj vsoto vseh desetih števil.
+Med števili $7$ in $43$ vstavite osem števil tako, da vseh deset števil v tem vrstnem redu tvori aritmetično zaporedje. Zapišite vstavljena števila in izračunajte vsoto vseh desetih števil.
 
 **Rešitev:**
 
@@ -228,10 +248,10 @@ Med števili $7$ in $43$ vstavi osem števil tako, da vseh deset števil v tem v
 
 Kolesarka se pripravlja na dirko. V prvem tednu priprav prevozi $120\,\text{km}$, nato vsak teden prevozi $8\,\%$ več kot v prejšnjem tednu.
 
-a) Koliko kilometrov prevozi v šestem tednu? Rezultat zaokroži na desetinko kilometra. (2 točki)
-b) Koliko kilometrov skupaj prevozi v prvih desetih tednih? Rezultat zaokroži na desetinko kilometra. (2 točki)
+a) Koliko kilometrov prevozi v šestem tednu? Rezultat zaokrožite na desetinko kilometra. (2 točki)
+b) Koliko kilometrov skupaj prevozi v prvih desetih tednih? Rezultat zaokrožite na desetinko kilometra. (2 točki)
 c) V katerem tednu prvič prevozi več kot $250\,\text{km}$? (2 točki)
-d) Njen sotekmovalec v prvem tednu prav tako prevozi $120\,\text{km}$, nato pa vsak teden $12\,\text{km}$ več kot v prejšnjem tednu. Kdo v prvih desetih tednih skupaj prevozi več in za koliko? Razliko zaokroži na desetinko kilometra. (2 točki)
+d) Njen sotekmovalec v prvem tednu prav tako prevozi $120\,\text{km}$, nato pa vsak teden $12\,\text{km}$ več kot v prejšnjem tednu. Kdo v prvih desetih tednih skupaj prevozi več in za koliko? Razliko zaokrožite na desetinko kilometra. (2 točki)
 
 **Rešitev:**
 
@@ -296,12 +316,10 @@ Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri
 ~ Absolutne vrednosti res rastejo, sami členi pa ne: $5, -10, 20, -40$. Zaporedje je alternirajoče.
 > Od $a_1$ do $a_n$ je $n - 1$ množenj s $q$; pri $n = 1$ formula da $a_1 \cdot q^0 = a_1$.
 
-? Aritmetično zaporedje ima $a_1 = 4$ in $d = 3$. Koliko je $a_{15}$?
-- $49$
-~ To je $4 + 15 \cdot 3$. Korakov je le $14$, ker prvi člen že imaš.
-+ $46$
-- $4 \cdot 3^{14}$
-~ Tako računaš pri geometrijskem zaporedju. Pri aritmetičnem diferenco prišteješ.
+? (brez računala) Aritmetično zaporedje ima $a_1 = 4$ in $d = 3$. Koliko je $a_{15}$?
+= 46 | 0
+~ 49 | To je $4 + 15 \cdot 3$. Korakov je le $14$, ker prvi člen že imaš.
+~ 19131876 | To je $4 \cdot 3^{14}$: tako računaš pri geometrijskem zaporedju. Pri aritmetičnem diferenco prišteješ.
 > $a_{15} = 4 + 14 \cdot 3 = 46$.
 
 ? Maja je vsoto $1 + 3 + 9 + 27 + 81$ izračunala takole: $\dfrac{5}{2} \cdot (1 + 81) = 205$. Kje je napaka?
@@ -331,7 +349,7 @@ Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri
 > Vrednosti tvorijo geometrijsko zaporedje s $q = 0{,}8$: po $3$ letih je vrtalnik vreden $500 \cdot 0{,}8^3 = 256\,\text{€}$.
 
 ? (brez računala) Nadaljuj zaporedje $1, 5, 11, 19, 29, \ldots$ po vzorcu. Koliko je šesti člen?
-= 41
+= 41 | 0
 ~ 39 | Razlike niso enake: $4, 6, 8, 10$. Vsaka je za $2$ večja od prejšnje, zato je naslednja $12$, ne $10$.
 ~ 58 | Zaporedje ni geometrijsko: $\frac{5}{1} \ne \frac{11}{5}$. Poglej razlike sosednjih členov.
 > Razlike so $4, 6, 8, 10$, naslednja je $12$: $a_6 = 29 + 12 = 41$. Splošni člen je $a_n = n^2 + n - 1$.

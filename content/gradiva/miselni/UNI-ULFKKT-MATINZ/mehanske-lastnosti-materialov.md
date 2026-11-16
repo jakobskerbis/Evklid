@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Natezni preizkus
+  - $\sigma = \frac{F}{S_0}$ v $\mathrm{MPa}$, $\varepsilon = \frac{\Delta L}{L_0}$
+  - napaka: $S = \pi d^2$ namesto $\frac{\pi d^2}{4}$
+- Prožnost
+  - Hookov zakon $\sigma = E\,\varepsilon$, enoosno
+  - jekla $E \approx 210\,\mathrm{GPa}$, obdelava ga ne spremeni
+  - $\Delta L = \frac{F L_0}{E S_0}$, $U_\mathrm{p} = \frac{R_e^2}{2E}$
+- Tečenje in trdnost
+  - $R_e$ ali $R_{p0,2}$: začetek trajne deformacije
+  - $R_m = \frac{F_{\max}}{S_0}$, vedno prvotni presek
+- Duktilnost
+  - $A = \frac{L_u - L_0}{L_0}$
+  - $Z = 1 - \frac{d_u^2}{d_0^2}$
+- Prava napetost
+  - $\sigma_\mathrm{p} = \sigma(1 + \varepsilon)$ do nastanka vratu
+  - po $R_m$ sila pada, prava napetost raste
+- Trdota
+  - Vickers, Brinell, Rockwell: vtiskovanje
+  - $\mathrm{HV} = 0{,}1891\,\frac{F}{d^2}$, $R_m \approx 3{,}3 \cdot \mathrm{HV}$
+- Udarna žilavost
+  - Charpy: $\mathrm{KV} = mg(h_1 - h_2)$ v $\mathrm{J}$
+  - BCC ima prehodno temperaturo, FCC ne
+  - kaljenje: trdo in krhko, zato popuščanje

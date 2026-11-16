@@ -17,9 +17,9 @@ Poskusi odgovoriti sam. Rešitev se pokaže sredi razlage, ko boš primerjal nek
 
 ## Razlaga
 
-**Štiri celice v eni tabeli.** Primerjaj črevesno bakterijo *Escherichia coli*, pekovski kvas, celico jeter in celico iz lista. Za vsako je naveden tipičen premer:
+**Štiri celice v eni tabeli.** Primerjaj črevesno bakterijo *Escherichia coli*, pekovski kvas, celico jeter in celico iz lista. Za vsako je navedena tipična velikost:
 
-| Celica | Premer | Jedro z ovojnico | Notranje membrane |
+| Celica | Velikost | Jedro z ovojnico | Notranje membrane |
 |---|---|---|---|
 | *E. coli* | $\approx 1\text{–}2\,\mu\mathrm{m}$ | ne | ne |
 | kvasovka | $\approx 5\text{–}10\,\mu\mathrm{m}$ | da | da |
@@ -112,7 +112,7 @@ za kroglo $\dfrac{S}{V} = \dfrac{3}{r}$
 
 1. Bakterija: $\dfrac{S}{V} = \dfrac{3}{0{,}5\,\mu\mathrm{m}} = 6\,\mu\mathrm{m}^{-1}$.
 2. Evkariontska celica: $\dfrac{S}{V} = \dfrac{3}{10\,\mu\mathrm{m}} = 0{,}3\,\mu\mathrm{m}^{-1}$.
-3. Razmerje: $\dfrac{6}{0{,}3} = 20$, kar je enako razmerju polmerov, ker je $S/V$ obratno sorazmeren z $r$.
+3. Razmerje: $\dfrac{6}{0{,}3} = 20$, kar je enako razmerju polmerov, ker je $S/V$ obratno sorazmerno z $r$.
 4. Odgovor: bakterija ima na enoto prostornine $20$-krat več površine kot evkariontska celica.
 
 ### Primer 3 (težji): koliko membran skriva celica jeter
