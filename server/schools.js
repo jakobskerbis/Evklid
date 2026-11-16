@@ -36,8 +36,8 @@ export const PILOT_SCHOOLS_MAX = 10;
 // ai_cap_usd_month skrbnika) ne preseže 25 % cene, ki jo šola plača na učenca (price_eur licence, sicer cenik).
 const EUR_PER_USD = 0.92; // kot COST.eurPerUsd v server/accounts/plans.js
 const AI_SHARE = 0.25; // kot AI_MAX_SHARE v server/accounts/plans.js
-// 25 % od cene BREZ DDV (j 2026-11-06, server/accounts/plans.js VAT_RATE). Status DDV šolskih cen še ni potrjen
-// (server/sole.js TODO), zato previdno: cena licence se šteje kot cena z DDV.
+// 25 % od cene BREZ DDV (j 2026-11-06, server/accounts/plans.js VAT_RATE). Izvajalec ni zavezanec za DDV (j 16. 11. 2026,
+// public/sole.html), izračun pa ostaja previden: cena licence se šteje kot cena z DDV (spremembo meje AI odobri j).
 const VAT = VAT_RATE;
 // Cena na učenca na leto, ki jo šola plača: vpisana cena licence, sicer cena paketa iz cenika.
 export const licencePriceEur = (lic) => (Number(lic?.price_eur) > 0 ? Number(lic.price_eur) : SCHOOL_LICENCE_PRICES[lic?.plan]?.eur || SCHOOL_LICENCE_PRICES.school.eur);

@@ -172,6 +172,7 @@ export class GraphView {
       minor: mix(text, bg, 0.06),
       axis: mix(text, bg, 0.88),
       poi: muted,
+      accent: read("--accent", "#2f9e44"),
       palette: PALETTE.map((p, i) => read(p, ["#c74440", "#2d70b3", "#388c46", "#6042a6", "#e8710a", "#1f2937", "#0e8a8a", "#c2367f"][i])),
     };
     return this.cCache;
@@ -201,13 +202,16 @@ export class GraphView {
     // najprej senčenje, nato krivulje, nazadnje točke
     for (const o of visible) if (o.kind === "region" || o.kind === "ineq-y" || o.kind === "ineq-x") this.safe(() => this.drawShade(ctx, o, C, W, H));
     for (const o of visible) if (o.src?.tools?.area) this.safe(() => this.drawArea(ctx, o, C));
-    if (st.axes !== false) this.drawAxes(ctx, W, H, C, st);
+    if (this.hooks.oznaka) this.safe(() => this.drawOznaka(ctx, C, W, H, "pas"));
+    if (st.axes !== false) this.drawAxes(ctx, W, H, C, st, "osi");
     for (const o of visible) this.safe(() => this.drawItem(ctx, o, C, W, H));
     for (const o of visible) if (o.src?.tools?.tangent != null) this.safe(() => this.drawTangent(ctx, o, C));
-    if (!exporting) {
-      this.drawPois(ctx, C, items);
-      this.drawTrace(ctx, C);
-    }
+    if (!exporting) this.drawPois(ctx, C, items);
+    // številke na oseh nad krivuljami in točkami (s svetlim robom), da jih nič ne prekrije (j 14. 11. 2026)
+    if (st.axes !== false) this.drawAxes(ctx, W, H, C, st, "stevilke");
+    // rešitev na osi x (krožci so na osi, številke pod njo: se ne prekrivajo)
+    if (this.hooks.oznaka) this.safe(() => this.drawOznaka(ctx, C, W, H, "os"));
+    if (!exporting) this.drawTrace(ctx, C);
     ctx.restore();
   }
 
@@ -264,7 +268,8 @@ export class GraphView {
     return niceStep(v.xmax - v.xmin, this.W);
   }
 
-  drawAxes(ctx, W, H, C, st) {
+  // del: "osi" (črti, puščici, oznaki x in y), "stevilke" (številke in črtice); brez: vse
+  drawAxes(ctx, W, H, C, st, del) {
     const v = this.view;
     const x0 = this.X(0);
     const y0 = this.Y(0);
@@ -275,6 +280,7 @@ export class GraphView {
     ctx.fillStyle = C.axis;
     ctx.lineWidth = 1.5;
     const arrows = st.arrows !== false;
+    const osi = del !== "stevilke";
     const head = (x, y, dx, dy) => {
       ctx.beginPath();
       ctx.moveTo(x, y);
@@ -283,14 +289,14 @@ export class GraphView {
       ctx.closePath();
       ctx.fill();
     };
-    if (y0 >= 0 && y0 <= H) {
+    if (osi && y0 >= 0 && y0 <= H) {
       ctx.beginPath();
       ctx.moveTo(0, Math.round(y0) + 0.5);
       ctx.lineTo(W - (arrows ? 3 : 0), Math.round(y0) + 0.5);
       ctx.stroke();
       if (arrows) head(W - 1, Math.round(y0) + 0.5, 1, 0);
     }
-    if (x0 >= 0 && x0 <= W) {
+    if (osi && x0 >= 0 && x0 <= W) {
       ctx.beginPath();
       ctx.moveTo(Math.round(x0) + 0.5, H);
       ctx.lineTo(Math.round(x0) + 0.5, arrows ? 3 : 0);
@@ -309,9 +315,9 @@ export class GraphView {
       ctx.fillStyle = C.text;
       ctx.fillText(text, x, y);
     };
-    if (y0 >= 0 && y0 <= H) halo(st.xLabel ?? "x", W - 8, y0 - 16, "right");
-    if (x0 >= 0 && x0 <= W) halo(st.yLabel ?? "y", x0 + 14, 12, "left");
-    if (st.numbers === false) return;
+    if (osi && y0 >= 0 && y0 <= H) halo(st.xLabel ?? "x", W - 8, y0 - 16, "right");
+    if (osi && x0 >= 0 && x0 <= W) halo(st.yLabel ?? "y", x0 + 14, 12, "left");
+    if (st.numbers === false || del === "osi") return;
     ctx.font = "600 12px 'Nunito Variable', Nunito, system-ui, sans-serif";
     const gx = this.xGrid(st);
     const gy = niceStep(v.ymax - v.ymin, H);
@@ -325,7 +331,8 @@ export class GraphView {
       if (px < 12 || px > W - 12) continue;
       const lab = gx.pi ? piLabel(Math.round(k * gx.pi * 12), 12) : fmt(k * gx.step, dx);
       halo(lab, px, below, "center");
-      // kratka črtica na osi
+      // kratka črtica na osi (ne pod krožcem rešitve: barva ozadja je lahko prosojna in črtica bi se videla skozi)
+      if (this.hooks.oznaka && this.oznakaXs().some((x) => Math.abs(this.X(x) - px) < 8)) continue;
       ctx.strokeStyle = C.axis;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
@@ -878,6 +885,86 @@ export class GraphView {
       } else merged.push({ ...p, types: [p.type] });
     }
     this.pois = merged.filter((p) => p.x >= v.xmin && p.x <= v.xmax && p.y >= v.ymin && p.y <= v.ymax);
+  }
+
+  // Rešitev naloge (skeniranje): hooks.oznaka = { intervals: [{ lo, hi, loClosed, hiClosed } | { point }] } ali
+  // { points: [x…], curves }. Del "pas": rahlo osenčen navpičen pas nad intervalom (pod krivuljami), del "os":
+  // odebeljen del osi x s polnimi ali praznimi krožci kot na številski premici (nad krivuljami).
+  oznakaXs() {
+    const o = this.hooks.oznaka || {};
+    const xs = [...(o.points || [])];
+    for (const iv of o.intervals || []) for (const x of [iv.point, iv.lo, iv.hi]) if (x != null) xs.push(x);
+    return xs;
+  }
+
+  drawOznaka(ctx, C, W, H, del) {
+    const o = this.hooks.oznaka;
+    const y0 = Math.min(Math.max(this.Y(0), 6), H - 6);
+    const X = (x) => (x == null ? null : this.X(x));
+    const ivs = o.intervals || [];
+    if (del === "pas") {
+      ctx.save();
+      ctx.globalAlpha = 0.14;
+      ctx.fillStyle = C.accent;
+      for (const iv of ivs) {
+        if (iv.point != null) continue;
+        const a = Math.max(0, X(iv.lo) ?? 0);
+        const b = Math.min(W, X(iv.hi) ?? W);
+        if (b > a) ctx.fillRect(a, 0, b - a, H);
+      }
+      ctx.restore();
+      if (o.points && o.curves) {
+        // enačba z dvema stranema: navpična črta skozi presečišče do osi x
+        ctx.save();
+        ctx.strokeStyle = C.accent;
+        ctx.globalAlpha = 0.6;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 5]);
+        for (const x of o.points) {
+          const px = Math.round(this.X(x)) + 0.5;
+          ctx.beginPath();
+          ctx.moveTo(px, 0);
+          ctx.lineTo(px, H);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      return;
+    }
+    const krog = (x, polno) => {
+      const px = this.X(x);
+      if (px < -8 || px > W + 8) return;
+      ctx.beginPath();
+      ctx.arc(px, y0, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = polno ? C.accent : C.bg;
+      ctx.fill();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = C.accent;
+      ctx.stroke();
+    };
+    ctx.save();
+    ctx.strokeStyle = C.accent;
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+    for (const iv of ivs) {
+      if (iv.point != null) continue;
+      const a = Math.max(0, X(iv.lo) ?? 0);
+      const b = Math.min(W, X(iv.hi) ?? W);
+      if (b <= a) continue;
+      ctx.beginPath();
+      ctx.moveTo(a, y0);
+      ctx.lineTo(b, y0);
+      ctx.stroke();
+    }
+    for (const iv of ivs) {
+      if (iv.point != null) krog(iv.point, true);
+      else {
+        if (iv.lo != null) krog(iv.lo, iv.loClosed);
+        if (iv.hi != null) krog(iv.hi, iv.hiClosed);
+      }
+    }
+    for (const x of o.points || []) krog(x, true);
+    ctx.restore();
   }
 
   drawPois(ctx, C, items) {

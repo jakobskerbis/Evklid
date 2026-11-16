@@ -72,6 +72,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Razloži ob izboru | označeno besedilo lekcije → inštruktor | S | naravno (meni izbora WebView) | ✓ narejeno |
 | Kalkulator | znanstveni, grafični, orodja, PSE (`public/graph/`) | M | WebView `/kalkulator` | ✓ narejeno med vajo; manjka še gumb v lekciji in klepetu |
 | 3D atlas in modeli | telo v 3D, kviz, modeli iz kode (`public/3d/`) | L | WebView `/3d` (`Web3D.tsx`), vstop v Uči se → 3D svet in v zavihku Jaz | ✓ narejeno; vstop iz lekcije (»Poglej v 3D«, simulacija `3d-<id>` v katalogu) je na spletu, v naravni lekciji še ne |
+| Potrditev e-naslova | »Sem potrdil(a)« pove »Še ni potrjeno …«, »Pošlji znova« pove, da velja samo nova povezava (`public/account.js` renderVerify) | S | naravno (`profiles.tsx` VerifyEmail) | ✓ narejeno (15. 11. 2026); zaslon za povezavo v drugem brskalniku (»Težave?«) je samo na spletu, ker se povezava iz e-pošte vedno odpre v brskalniku; mladoletni/polnoletni stavek o staršu aplikacija ne kaže |
 | Formule | zbirka formul (način Formule kalkulatorja) | S | dodati način `formulas` na `/kalkulator` (potrebuje `rich.js`, marked) | ✗ |
 | Klikljive črke v formulah | kartica s pomenom črke iz predmeta, razdelka in lekcije (`public/formula-info.js`; lekcije, razlaga teme z »Bistvom«, naloge, odgovori inštruktorja, list s formulami z oznakami razdelkov) | M | naravno: `RichText` označi črke (`annotateTex`), dotik pošlje kodo iz WebView, kartica (`public/formula-card.js`) se odpre kot spodnji list; predmet in oznake iz `FormulaCtx` (`useTopicFx`, `/api/topic`) | ✓ narejeno v lekciji, nalogah in klepetu; list s formulami čaka na način Formule (vrstica »Formule«) |
 | Moji grafi | shranjeni grafi na strežniku | S | `/kalkulator` s sejo aplikacije (žeton v glavi ali enkratna povezava kot `app-link.js`) | ✗ |
@@ -100,6 +101,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Skeniraj: po korakih | reševalnik po korakih (`public/scan/`); aplikacija pošlje fotografijo inštruktorju | M | WebView strani skeniranja ali naravni zaslon korakov | delno |
 | Govor | mikrofon v klepetu (`speech.js`) | M | naravna odvisnost (prepoznava govora) → nova gradnja APK | ✗ |
 | Učbenik za tisk | PDF učbenika (`/ucbenik`) | S | odpri v brskalniku (`WebBrowser`) | ✗ |
+| Pristajalna stran pred prijavo | eno sporočilo za gimnazijce, en gumb »Začni brezplačno«, prijava kot povezava, zgled pogovora in trije dokazi (`public/pristajalna.js`, j 15. 11. 2026) | S | naravno: naslov in en gumb nad prijavo v `sign-in.tsx` | ✗ aplikacija se odpre na naravni prijavi (`sign-in.tsx`: logotip, `mob.tagline`, »Prijava« in »Ustvari račun« kot dva gumba); pristajalne strani nima, ker jo namesti nekdo, ki je Evklid že izbral |
 
 - **Deljiva kartica zbirke** (»Deli zbirko«, public/deli-kartico.js): WebView ne podpira Web Share z datotekami
   ne prenosa slike, zato aplikacija deli prek mostu (`public/deli-most.js`, `mobile/src/app/web.tsx`):

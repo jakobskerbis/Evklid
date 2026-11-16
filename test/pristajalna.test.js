@@ -1,5 +1,5 @@
-// Pristajalna stran pred prijavo (public/pristajalna.js, j 2026-11-04): cene s strežnika po stopnjah,
-// vsi napisi prevedeni in pot do prijave ter registracije.
+// Pristajalna stran pred prijavo (public/pristajalna.js, j 2026-11-04; en gumb za gimnazijce, j 2026-11-15):
+// eno sporočilo, en gumb, brez cen in nepreverljivih trditev, vsi napisi prevedeni, pot do prijave in registracije.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -7,30 +7,64 @@ import { plansFor } from "../server/accounts/plans.js";
 
 // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
 globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
-const { landingHtml, levelPrices } = await import("../public/pristajalna.js");
+const { landingHtml } = await import("../public/pristajalna.js");
 // Uvozi so pred prvim testom: po njem bi jih --test-force-exit izpustil skupaj s testi.
 const { guaranteeAdvertised, GUARANTEE } = await import("../server/placila/garancija.js");
 const { default: SL } = await import("../public/i18n/sl.js");
-const money = (minor, cur) => `${minor / 100} ${cur}`;
 
-test("cene po stopnjah pridejo iz cenika (OŠ, SŠ, faks in družina)", () => {
+const KEYS = ["land.subjects", "land.title", "land.lead", "land.start", "land.haveAccount", "land.demoLabel", "land.proofTitle",
+  ...["q1", "a1", "q2", "a2", "q3", "a3"].map((k) => `land.demo.${k}`), ...[1, 2, 3].flatMap((n) => [`land.p${n}.t`, `land.p${n}.d`])];
+const primaries = (html) => (html.match(/class="btn-primary/g) || []).length;
+
+test("en gumb, prijava kot navadna povezava, brez cen in stopenj (j 2026-11-15)", () => {
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, min_age: 15 };
-  const lp = levelPrices(prices, money);
-  assert.deepEqual(lp.OS, { month: "9.99 EUR", year: "99 EUR" });
-  assert.deepEqual(lp.SS, { month: "13.99 EUR", year: "139 EUR" });
-  assert.deepEqual(lp.FAKS, { month: "19.99 EUR", year: "199 EUR" });
-  assert.equal(lp.family, "18.99 EUR");
-  const html = landingHtml({ name: "Evklid", prices, money });
-  assert.match(html, /13\.99 EUR na mesec/);
+  for (const html of [landingHtml({ name: "Evklid" }), landingHtml({ name: "Evklid", prices })]) {
+    assert.equal(primaries(html), 1, "natanko en glavni gumb");
+    assert.doesNotMatch(html, /btn-secondary|<button/);
+    assert.equal((html.match(/data-land="register"/g) || []).length, 1);
+    assert.match(html, /<p class="land-login">Že imaš račun\? <a href="#prijava" data-land="login">Prijava<\/a><\/p>/);
+    assert.doesNotMatch(html, /na mesec|na leto|€|EUR|land-level|land-feat|land-cta|land-facts|land-more/);
+    assert.doesNotMatch(html, /Račune preveri program|Brez oglasov/);
+    assert.match(html, /<h1>Ko se pri domači nalogi zatakne, ti Evklid pokaže naslednji korak\.<\/h1>/);
+    assert.match(html, /Za gimnazijo, vse šolsko leto\./);
+    assert.equal((html.match(/class="card land-proof"/g) || []).length, 3);
+    assert.equal((html.match(/class="land-msg /g) || []).length, 6);
+    assert.ok(html.indexOf('data-land="register"') < html.indexOf("land-demo"), "gumb je pred zgledom pogovora");
+  }
+  const html = landingHtml({ name: "Evklid", prices });
   assert.match(html, /7 dni brezplačno, brez kartice\./);
   assert.match(html, /Za mlajše od 15 let račun ustvari starš\./);
 });
 
-test("regijske cene brez stopnje: ena cena za vse stopnje, brez družine", () => {
-  const prices = { currency: "INR", plans: [{ seats: 1, interval: "month", amount: 49900 }, { seats: 1, interval: "year", amount: 499900 }, { seats: 2, interval: "month", amount: 79900 }] };
-  const lp = levelPrices(prices, money);
-  for (const l of ["OS", "SS", "FAKS"]) assert.deepEqual(lp[l], { month: "499 INR", year: "4999 INR" });
-  assert.equal(lp.family, "");
+test("zgled pogovora: x² − 5x + 6 = 0 z namigi, rešitvi in preizkus sta pravilni", () => {
+  assert.equal(SL["land.demo.q1"], "Kako rešim x² − 5x + 6 = 0?");
+  const f = (x) => x * x - 5 * x + 6;
+  for (const x of [2, 3]) assert.equal(f(x), 0);
+  assert.equal(2 * 3, 6);
+  assert.equal(2 + 3, 5);
+  assert.ok(SL["land.demo.a3"].includes("x = 3: " + "9 − 15 + 6 = 0 ✓".replace(/ /g, "\u00a0")), "preizkus brez preloma");
+  assert.equal(9 - 15 + 6, 0);
+  // Inštruktor rešitve ne izda prvi: prvi odgovor je vprašanje.
+  assert.match(SL["land.demo.a1"], /\?$/);
+});
+
+test("vsi napisi pristajalne strani so v vseh jezikih, prevedeni in z isto matematiko", async () => {
+  const { readdirSync } = await import("node:fs");
+  const dir = new URL("../public/i18n/ui/", import.meta.url);
+  const files = readdirSync(dir).filter((x) => x.endsWith(".json"));
+  assert.equal(files.length, 32);
+  for (const k of KEYS) assert.ok(SL[k], `sl: ${k}`);
+  for (const f of files) {
+    const d = JSON.parse(readFileSync(new URL(f, dir), "utf8"));
+    for (const k of KEYS) {
+      assert.ok(typeof d[k] === "string" && d[k].trim(), `${f}: ${k}`);
+      if (k !== "land.subjects") assert.notEqual(d[k], SL[k], `${f}: ${k} je ostal v slovenščini`);
+    }
+    assert.ok(d["land.demo.q1"].includes("x² − 5x + 6 = 0"), f);
+    assert.ok(d["land.demo.q2"].includes("(x − 2)(x − 3) = 0"), f);
+    assert.ok(d["land.demo.a3"].includes("9 − 15 + 6 = 0 ✓".replace(/ /g, "\u00a0")), f);
+    for (const old of ["land.fact1", "land.featTitle", "land.lvTitle", "land.perMonth", "land.ctaTitle"]) assert.equal(d[old], undefined, `${f}: ${old}`);
+  }
 });
 
 test("brez odgovora strežnika stran deluje brez cen in brez starosti", () => {
@@ -52,23 +86,18 @@ test("account.js: nov obiskovalec dobi pristajalno stran, znana naprava prijavo;
   assert.match(app, /popstate", \(\) => \{\n[^\n]*\n\s*if \(document\.body\.classList\.contains\("auth-mode"\)\) return;/);
 });
 
-// Pas pri vrhu (j 2026-11-10): tri dejstva vedno, garancija samo, ko jo strežnik oglašuje.
+// Pas pri vrhu (j 2026-11-10): garancija samo, ko jo strežnik oglašuje; dejstva so odstranjena (j 2026-11-15).
 
-test("pas pri vrhu: tri dejstva so vedno, garancije brez stikala ni", () => {
+test("pas pri vrhu: brez stikala garancije ni pasu", () => {
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, min_age: 15 };
-  for (const html of [landingHtml({ name: "Evklid" }), landingHtml({ name: "Evklid", prices, money })]) {
-    assert.match(html, /Račune preveri program</);
-    assert.doesNotMatch(html, /ne AI/);
-    assert.match(html, /Po slovenskem učnem načrtu/);
-    assert.match(html, /class="land-facts"[\s\S]*Brez oglasov/);
-    assert.doesNotMatch(html, /garancija\.html|land-gar|Boljša ocena/);
-    assert.ok(html.indexOf("land-top") < html.indexOf("land-hero"), "pas je nad uvodom");
+  for (const html of [landingHtml({ name: "Evklid" }), landingHtml({ name: "Evklid", prices })]) {
+    assert.doesNotMatch(html, /garancija\.html|land-gar|land-top|Boljša ocena/);
   }
 });
 
 test("pas pri vrhu: z oglašano garancijo pokaže obljubo, pogoje v eni vrstici in povezavo na pogoje", () => {
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, guarantee: { weeks: GUARANTEE.weeks, min_days: GUARANTEE.minDays, enroll_days: GUARANTEE.enrollDays } };
-  const html = landingHtml({ name: "Evklid", prices, money });
+  const html = landingHtml({ name: "Evklid", prices });
   assert.match(html, /class="land-gar"/);
   assert.match(html, /Boljša ocena ali vrnemo denar/);
   assert.match(html, /href="\/garancija\.html"/);
@@ -128,16 +157,4 @@ test("/api/account/prices: garancija samo ob vklopu in samo pri cenah v evrih", 
   assert.deepEqual((await get("sk_live_x", on)).guarantee, { weeks: 8, min_days: 3, enroll_days: 14 });
   const inr = await get("sk_live_x", on, "/api/account/prices?country=IN");
   if (inr.currency !== "EUR") assert.equal(inr.guarantee, undefined, "druga valuta: brez garancije");
-});
-
-test("prvo dejstvo brez »ne AI« v vseh jezikih (j 2026-11-10)", async () => {
-  const { readdirSync } = await import("node:fs");
-  const SLx = (await import("../public/i18n/sl.js")).default;
-  assert.equal(SLx["land.fact1"], "Račune preveri program");
-  const dir = new URL("../public/i18n/ui/", import.meta.url);
-  for (const f of readdirSync(dir).filter((x) => x.endsWith(".json"))) {
-    const v = JSON.parse(readFileSync(new URL(f, dir), "utf8"))["land.fact1"];
-    assert.ok(v && !/AI|KI|IA|MI|ИИ|ШІ|ذكاء|هوش|人工|인공/.test(v), `${f}: ${v}`);
-  }
-  assert.equal(JSON.parse(readFileSync(new URL("de.json", dir), "utf8"))["land.fact1"], "Berechnungen prüft ein Programm");
 });

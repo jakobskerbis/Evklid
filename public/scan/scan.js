@@ -5,10 +5,11 @@
 import { icon, hydrateIcons } from "../icons.js";
 import { t } from "../i18n.js";
 import { jeOs } from "../stopnja.js";
-import { solve, analyze, prep, tex as exprTex, parseTask } from "./solvecore.js";
+import { solve, analyze, prep, tex as exprTex, parseTask, izvorOznak, oznakaGrafa } from "./solvecore.js";
 import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
-import { answerParts } from "./odgovor.js";
+import { answerParts, soughtParts, soughtNeedsAi } from "./odgovor.js";
+import { plottableFromText } from "../graph/math.js";
 
 let D = null; // { api, getStudent, toast, escapeHtml, askTutor, openGraph }
 const fresh = () => ({
@@ -24,6 +25,7 @@ const fresh = () => ({
   ai: null, // { loading, error }
   note: null, // obvestilo nad poljem (npr. brez povezave)
   given: [], // podatki naloge s fotografije (točka, asimptota …), gredo k AI rešitvi
+  sought: "", // iskano (»kot, pod katerim graf seka os x«): ni podatek, zato ne izklopi lastnega reševalnika
   quality: null, // težava fotografije (blur | dark | glare), ki jo zaznamo na napravi pred branjem
   shot: null, // zadnja prebrana fotografija (samo v pomnilniku; za pilot se shrani le ob soglasju)
 });
@@ -64,7 +66,10 @@ const dollars = (tx) => {
   return s ? `$${s}$` : "";
 };
 // naloga za klepet: pri besedilni nalogi je S.text le »P=?«, zato inštruktor dobi še dane podatke
-const problemForChat = () => (S.given.length ? `${S.text} (${S.given.map(dollars).join(", ")})` : S.text);
+const problemForChat = () => {
+  const extra = [...S.given.map(dollars), ...(S.sought ? [`${t("scan.sought")}: ${dollars(S.sought)}`] : [])];
+  return extra.length ? `${S.text} (${extra.join(", ")})` : S.text;
+};
 // odgovor: ena formula prikazno; seznam dejstev po eno v vrstico, v besedilni velikosti, da se dolgo dejstvo prelomi
 function answerTex(tex) {
   const parts = answerParts(tex);
@@ -76,6 +81,11 @@ function math(tx, display = false) {
   } catch {
     return esc(tx);
   }
+}
+// iskano: besedilo kot navaden HTML (lomi se med besedami), ostanek kot formula
+function soughtHtml(src) {
+  const p = soughtParts(src);
+  return `<span class="scan-sought-item">${esc(p.text)}${p.text && p.math ? " " : ""}${p.math ? math(p.math) : ""}</span>`;
 }
 // besedilo z $…$ → HTML s formulami
 function rich(str) {
@@ -106,6 +116,7 @@ export function showScan({ text = null, goal = null } = {}) {
     S.text = text;
     S.problems = [];
     S.given = [];
+    S.sought = "";
     S.goal = goal; // npr. »factor« iz kalkulatorja (razstavi)
     return solveNow();
   }
@@ -203,6 +214,7 @@ function renderCapture(box) {
     S.text = "";
     S.problems = [];
     S.given = [];
+    S.sought = "";
     S.note = null;
     S.mode = "confirm";
     render();
@@ -226,6 +238,7 @@ function renderCapture(box) {
       S.goal = h.goal || null;
       S.problems = [];
       S.given = Array.isArray(h.given) ? h.given.filter((g) => typeof g === "string").slice(0, 10) : [];
+      S.sought = typeof h.sought === "string" ? h.sought.slice(0, 160) : "";
       solveNow();
     }),
   );
@@ -516,6 +529,7 @@ async function readImage(dataUrl) {
       S.note = t("scan.mock");
       S.problems = [];
       S.given = [];
+      S.sought = "";
       S.text = "";
       S.mode = "confirm";
       return render();
@@ -525,6 +539,7 @@ async function readImage(dataUrl) {
     if (!S.problems.length && pilotTask && S.readOk) {
       // Pilot: tudi neuspešno branje oceni (»Prebrano narobe«), zato ostanemo na prepisu.
       S.given = [];
+      S.sought = "";
       S.text = "";
       S.note = t("scan.readFail");
       S.mode = "confirm";
@@ -532,6 +547,7 @@ async function readImage(dataUrl) {
     }
     if (!S.problems.length) {
       S.given = [];
+      S.sought = "";
       D.toast(t("scan.readFail"));
       S.mode = "crop";
       return render();
@@ -539,6 +555,7 @@ async function readImage(dataUrl) {
     S.note = null;
     S.text = S.problems[0].text;
     S.given = S.problems[0].given || [];
+    S.sought = S.problems[0].sought || "";
     S.goal = S.problems[0].goal || null;
     S.mode = "confirm";
     render();
@@ -561,6 +578,7 @@ function renderConfirm(box) {
       ${S.problems.length ? `<p class="scan-label">${esc(t("scan.readAs"))}</p>` : ""}
       <div class="scan-preview" aria-live="polite"></div>
       ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item">${math(g)}</span>`).join("")}</p>` : ""}
+      ${S.sought ? `<p class="scan-given scan-sought"><span class="scan-label">${esc(t("scan.sought"))}</span>${soughtHtml(S.sought)}</p>` : ""}
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <div class="scan-input-row">
         <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(S.text)}">
@@ -583,7 +601,8 @@ function renderConfirm(box) {
     if (!input.value.trim()) {
       // izbrisana naloga: podatki prejšnje ne smejo k novi, vpisani
       S.given = [];
-      box.querySelector(".scan-given")?.remove();
+      S.sought = "";
+      box.querySelectorAll(".scan-given").forEach((el) => el.remove());
       return (prev.innerHTML = "");
     }
     if (info.type === "error") {
@@ -614,6 +633,7 @@ function renderConfirm(box) {
       const p = S.problems[Number(b.dataset.pick)];
       S.text = p.text;
       S.given = p.given || [];
+      S.sought = p.sought || "";
       S.goal = p.goal || null;
       render();
     }),
@@ -685,7 +705,9 @@ function bindPilotRate(box) {
 function solveNow() {
   const complex = !jeOs(D.getStudent()?.settings) || /SŠ|faks/i.test(D.getStudent()?.settings?.curriculum_level || "");
   // naloga s podatki (»določi a, b, c, če gre graf skozi T(7,2) …«): lastni reševalnik podatkov ne pozna, reši jo AI
-  const r = S.given.length ? { ok: false, goals: [] } : solve(S.text, { goal: S.goal, complex });
+  let r = S.given.length ? { ok: false, goals: [] } : solve(S.text, { goal: S.goal, complex });
+  // izraz z iskanim, ki ni poenostavitev (»teme«): lastni reševalnik bi ga le poenostavil, zato AI
+  if (soughtNeedsAi(r, { sought: S.sought, goal: S.goal })) r = { ok: false, goals: r.goals || [] };
   S.result = r.ok ? r : null;
   S.goals = r.goals || [];
   S.goal = r.goal || S.goal;
@@ -711,6 +733,7 @@ async function solveAi() {
   const text = prep(S.text);
   const body = S.goal === "zeros" ? { text: `${text}=0`, goal: "solve" } : { text, goal: S.goal || null };
   if (S.given.length) body.given = S.given;
+  if (S.sought) body.sought = S.sought;
   try {
     const out = await D.api(`/api/students/${sid()}/scan/solve`, { method: "POST", body });
     if (seq !== aiSeq || S.mode !== "solution") return;
@@ -750,8 +773,24 @@ function fromAi(sol) {
     answer: { tex: sol.answer_tex },
     methods: sol.methods.map((m, i) => ({ id: `ai${i}`, name: m.name, steps: m.steps.map((s) => ({ title: s.title, tex: s.tex, whyText: s.why })) })),
     verified: !!sol.verified,
-    graph: null,
+    graph: graphOfProblem(sol.problem_tex, S.text),
   };
+}
+
+// Naloge, ki jih reši AI: če je v besedilu funkcija ali krivulja (f(x) = …, y = …), jo narišemo kot v kalkulatorju.
+// Besedilo (\text{kot, pod katerim …}) in vejice med deli odstranimo, da ostane samo zapis za risanje.
+function graphOfProblem(tex, text) {
+  const clean = (s) =>
+    String(s || "")
+      .replace(/\\(text|mathrm|textrm|mbox)\s*\{[^{}]*\}/g, "\\quad ")
+      .replace(/,\s*(?:\\[ ,;:!]|\\q?quad|~)\s*|,\s+/g, " \\quad "); // ne decimalne vejice (2,5 ali 2{,}5)
+  for (const src of [tex, text]) {
+    try {
+      const exprs = plottableFromText(`$${clean(src)}$`);
+      if (exprs.length) return { exprs };
+    } catch {}
+  }
+  return null;
 }
 
 function renderSolution(box) {
@@ -772,6 +811,7 @@ function renderSolution(box) {
   const m = r.methods[Math.min(S.method, r.methods.length - 1)];
   const steps = m.steps;
   const shown = Math.min(S.shown, steps.length);
+  const izvori = izvorOznak(steps, r.problemTex);
   const badge = r.verified
     ? `<span class="scan-badge ok" title="${esc(t("scan.verifiedTip"))}">${icon("badge-check")}${esc(r.ai ? t("scan.aiVerified") : t("scan.verified"))}</span>`
     : `<span class="scan-badge warn">${icon("info")}${esc(t("scan.aiUnverified"))}</span>`;
@@ -784,7 +824,7 @@ function renderSolution(box) {
     ${r.methods.length > 1 ? `<div class="scan-methods"><span class="scan-label">${esc(t("scan.method"))}</span><div class="seg" role="tablist">${r.methods.map((mm, i) => `<button type="button" role="tab" data-method="${i}" class="${i === S.method ? "active" : ""}" aria-selected="${i === S.method}">${esc(mm.name || t(`scan.m.${mm.id}`))}</button>`).join("")}</div></div>` : ""}
     <section class="scan-steps" aria-label="${esc(t("scan.steps"))}">
       <h2 class="scan-h2">${esc(t("scan.steps"))}</h2>
-      <ol>${steps.slice(0, shown).map((s, i) => stepHtml(s, i)).join("")}</ol>
+      <ol>${steps.slice(0, shown).map((s, i) => stepHtml(s, i, izvori[i])).join("")}</ol>
       ${
         shown < steps.length
           ? `<div class="scan-actions scan-more"><button type="button" class="text-btn" data-act="all">${esc(t("scan.all"))}</button><button type="button" class="primary" data-act="next">${icon("arrow-right")}${esc(t("scan.next"))} <span class="muted">${shown}/${steps.length}</span></button></div>`
@@ -800,14 +840,19 @@ function renderSolution(box) {
     </div>
     ${S.ai?.loading ? `<div class="card scan-ai-state"><span class="spinner"></span><p>${esc(t("scan.solvingAi"))}</p></div>` : S.ai?.error ? `<p class="scan-err">${esc(S.ai.error)}</p>` : ""}`;
   bindSolution(box);
-  if (r.graph) drawGraph(box.querySelector(".scan-graph-host"), r.graph);
+  if (r.graph) drawGraph(box.querySelector(".scan-graph-host"), r.graph, oznakaGrafa(r));
 }
 
-function stepHtml(s, i) {
+// from: vrstica, na katero uporabimo operacijo iz oznake (»x² < 4   / −4«); rezultat je pod njo (solvecore izvorOznak).
+function stepHtml(s, i, from) {
   const why = s.why || s.whyText || s.whyTex;
   return `<li class="scan-step" style="--i:${i}">
     <div class="scan-step-head"><span class="scan-step-n" aria-hidden="true">${i + 1}</span><p class="scan-step-title"><span class="sr-only">${esc(t("scan.stepN", { n: i + 1 }))}: </span>${tr(s.title)}</p></div>
-    <div class="scan-step-math">${math(s.tex, true)}${s.note ? `<span class="scan-step-note">${math(s.note)}</span>` : ""}</div>
+    ${
+      s.note && from
+        ? `<div class="scan-step-math scan-step-izvor"><div class="scan-step-from">${math(`\\displaystyle ${from}`)}<span class="scan-step-note">${math(s.note)}</span></div>${math(s.tex, true)}</div>`
+        : `<div class="scan-step-math">${math(s.tex, true)}${s.note ? `<span class="scan-step-note">${math(s.note)}</span>` : ""}</div>`
+    }
     <div class="scan-step-actions">
       ${why ? `<button type="button" class="text-btn" data-why="${i}" aria-expanded="false">${icon("lightbulb")}${esc(t("scan.why"))}</button>` : ""}
       <button type="button" class="text-btn" data-ask="${i}">${icon("message-circle")}${esc(t("scan.askStep"))}</button>
@@ -861,6 +906,7 @@ function bindSolution(box) {
     S.result = null;
     S.problems = [];
     S.given = [];
+    S.sought = "";
     S.text = "";
     S.goal = null;
     frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
@@ -873,7 +919,8 @@ function bindSolution(box) {
 
 // ---------- graf in številska premica ----------
 
-async function drawGraph(host, g) {
+// oznaka: rešitev naloge na grafu (interval ali točke na osi x, kot na številski premici; solvecore oznakaGrafa)
+async function drawGraph(host, g, oznaka = null) {
   if (!host) return;
   try {
     const [{ GraphView }, { buildModel, emptyState }] = await Promise.all([import("../graph/plot.js"), import("../graph/model.js")]);
@@ -887,7 +934,8 @@ async function drawGraph(host, g) {
       getModel: () => model,
       label: (k) => t(`gc.poi.${k}`),
       fmt: (v) => String(Math.round(v * 1000) / 1000).replace(".", ","),
-      axisFmt: (v, d) => v.toFixed(Math.max(0, d)).replace(".", ","),
+      axisFmt: (v, d) => v.toFixed(Math.max(0, d)).replace(".", ",").replace(/^-/, "−"),
+      oznaka,
     });
     graphView.canvas.setAttribute("aria-label", t("scan.graph"));
     const v = graphView.fitBounds?.();
@@ -955,7 +1003,7 @@ function history() {
 }
 function remember(r) {
   const h = history().filter((x) => x.text !== S.text || x.goal !== (S.goal || null));
-  h.unshift({ text: S.text, goal: S.goal || null, ...(S.given.length ? { given: S.given } : {}), tex: r.problemTex, answer: r.answer?.key ? null : r.answer?.tex, at: Date.now() });
+  h.unshift({ text: S.text, goal: S.goal || null, ...(S.given.length ? { given: S.given } : {}), ...(S.sought ? { sought: S.sought } : {}), tex: r.problemTex, answer: r.answer?.key ? null : r.answer?.tex, at: Date.now() });
   try {
     localStorage.setItem(HIST(), JSON.stringify(h.slice(0, 12)));
   } catch {}
