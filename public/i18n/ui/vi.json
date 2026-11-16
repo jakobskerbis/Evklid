@@ -3360,6 +3360,7 @@
   "mk.defocus": "Lệch tiêu",
   "mk.beam": "Chùm electron",
   "mk.colors": "Phân tử có màu",
+  "mk.temLimit": "Ở đây lát cắt không cho thấy thêm chi tiết – hãy bật Phân tử có màu.",
   "mk.fieldOfView": "Trường nhìn",
   "mk.resolution": "Độ phân giải",
   "mk.rayleigh": "{d} (Rayleigh)",

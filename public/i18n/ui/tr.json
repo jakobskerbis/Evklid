@@ -3385,6 +3385,7 @@
   "mk.defocus": "Defokus",
   "mk.beam": "Elektron demeti",
   "mk.colors": "Renkli moleküller",
+  "mk.temLimit": "Kesit burada daha fazla ayrıntı göstermez – Renkli moleküller'i aç.",
   "mk.fieldOfView": "Görüş alanı",
   "mk.resolution": "Çözünürlük",
   "mk.rayleigh": "{d} (Rayleigh)",

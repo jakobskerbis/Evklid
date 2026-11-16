@@ -3418,6 +3418,7 @@
   "mk.defocus": "Defokus",
   "mk.beam": "Snop elektrona",
   "mk.colors": "Molekule u bojama",
+  "mk.temLimit": "Rez ovdje više ne pokazuje detalje – uključi Molekule u bojama.",
   "mk.fieldOfView": "Vidno polje",
   "mk.resolution": "Rezolucija",
   "mk.rayleigh": "{d} (Rayleigh)",

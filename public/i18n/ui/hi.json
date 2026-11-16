@@ -3385,6 +3385,7 @@
   "mk.defocus": "डीफ़ोकस",
   "mk.beam": "इलेक्ट्रॉन किरण-पुंज",
   "mk.colors": "रंगीन अणु",
+  "mk.temLimit": "यहाँ खंड और बारीकियाँ नहीं दिखाता – रंगीन अणु चालू करो।",
   "mk.fieldOfView": "दृष्टि क्षेत्र",
   "mk.resolution": "विभेदन क्षमता",
   "mk.rayleigh": "{d} (Rayleigh)",

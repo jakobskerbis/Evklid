@@ -3453,6 +3453,7 @@
   "mk.defocus": "Defokus",
   "mk.beam": "Wiązka elektronów",
   "mk.colors": "Cząsteczki w kolorze",
+  "mk.temLimit": "Skrawek nie pokazuje tu już więcej szczegółów – włącz Cząsteczki w kolorze.",
   "mk.fieldOfView": "Pole widzenia",
   "mk.resolution": "Zdolność rozdzielcza",
   "mk.rayleigh": "{d} (Rayleigh)",

@@ -3614,6 +3614,7 @@ export default {
   "mk.defocus": "Defokus",
   "mk.beam": "Snop elektronov",
   "mk.colors": "Molekule v barvah",
+  "mk.temLimit": "Rezina tu ne pokaže več podrobnosti – vklopi Molekule v barvah.",
   "mk.fieldOfView": "Vidno polje",
   "mk.resolution": "Ločljivost",
   "mk.rayleigh": "{d} (Rayleigh)",

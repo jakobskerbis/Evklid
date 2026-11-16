@@ -3360,6 +3360,7 @@
   "mk.defocus": "失焦",
   "mk.beam": "電子束",
   "mk.colors": "彩色分子",
+  "mk.temLimit": "切片在這裡已顯示不出更多細節，請開啟「彩色分子」。",
   "mk.fieldOfView": "視野",
   "mk.resolution": "解析度",
   "mk.rayleigh": "{d} (Rayleigh)",

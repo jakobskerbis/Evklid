@@ -3360,6 +3360,7 @@
   "mk.defocus": "Defokus",
   "mk.beam": "Berkas elektron",
   "mk.colors": "Molekul berwarna",
+  "mk.temLimit": "Irisan tidak lagi menunjukkan detail di sini – nyalakan Molekul berwarna.",
   "mk.fieldOfView": "Bidang pandang",
   "mk.resolution": "Resolusi",
   "mk.rayleigh": "{d} (Rayleigh)",

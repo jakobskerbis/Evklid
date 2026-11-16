@@ -3387,6 +3387,7 @@
   "mk.defocus": "Defocus",
   "mk.beam": "Electron beam",
   "mk.colors": "Molecules in colour",
+  "mk.temLimit": "The section shows no more detail here – turn on Molecules in colour.",
   "mk.fieldOfView": "Field of view",
   "mk.resolution": "Resolution",
   "mk.rayleigh": "{d} (Rayleigh)",

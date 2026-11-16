@@ -3451,6 +3451,7 @@
   "mk.defocus": "Defokus",
   "mk.beam": "Elektrónový zväzok",
   "mk.colors": "Molekuly vo farbách",
+  "mk.temLimit": "Rez tu už neukáže ďalšie podrobnosti – zapni Molekuly vo farbách.",
   "mk.fieldOfView": "Zorné pole",
   "mk.resolution": "Rozlíšenie",
   "mk.rayleigh": "{d} (Rayleigh)",

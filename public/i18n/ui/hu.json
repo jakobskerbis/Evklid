@@ -3385,6 +3385,7 @@
   "mk.defocus": "Defókusz",
   "mk.beam": "Elektronnyaláb",
   "mk.colors": "Színes molekulák",
+  "mk.temLimit": "A metszet itt már nem mutat több részletet – kapcsold be a Színes molekulákat.",
   "mk.fieldOfView": "Látómező",
   "mk.resolution": "Felbontás",
   "mk.rayleigh": "{d} (Rayleigh)",
