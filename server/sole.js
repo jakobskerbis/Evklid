@@ -10,6 +10,8 @@ import { BRAND } from "./brand.js";
 import { PLANS, SCHOOL_LICENCE_PRICES, PILOT_SCHOOLS_MAX, PILOT_HOLD_STATUSES, pilotPlaces, pilotOpenForOrder } from "./schools.js";
 import { schoolDailyQuestions } from "./placila/pravice.js";
 import { PODARI_MONTHS } from "./placila/podari.js";
+import { TRIAL_DAYS, freeDailyQuestions } from "./accounts/plans.js";
+import { USTNO_QUESTIONS } from "./ustno.js";
 
 export const ORDER_STATUSES = ["new", "contacted", "offer_sent", "won", "lost"];
 export const PLAN_LABELS = { class: "Licenca za razrede", school: "Cela šola", pilot: "Pilotna šola" };
@@ -137,6 +139,10 @@ export function solePage({ pilot = true } = {}) {
     "pilot.full": pilot ? "0" : "1",
     "podari.months": String(PODARI_MONTHS),
     dailyQuestions: schoolDailyQuestions() > 0 ? `do ${schoolDailyQuestions()} vprašanj inštruktorju na dan` : "neomejeno število vprašanj inštruktorju",
+    // Kaj ima učenec brez licence (vprašanje »Ali lahko najprej preizkusimo?«) in koliko vprašanj šteje ustno spraševanje.
+    trialDays: String(TRIAL_DAYS),
+    freeDaily: String(freeDailyQuestions()),
+    ustnoQuestions: String(USTNO_QUESTIONS),
     consent: CONSENT_TEXT,
     maxStudents: String(ORDER_LIMITS.maxStudents),
     maxNote: String(ORDER_LIMITS.maxNote),

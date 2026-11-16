@@ -81,7 +81,10 @@ test("/sole page, orders without accounts (local admin), status, predračun", as
     for (const p of Object.values(SCHOOL_LICENCE_PRICES)) assert.ok(new RegExp(`>${p.eur}\\s€<`).test(html), `cena ${p.eur}`);
     assert.ok(html.includes("na učenca na leto"));
     assert.ok(html.includes("UJP") && html.includes('id="order-form"') && html.includes('name="website"'));
-    assert.ok(!/DDV/.test(html), "na strani ni trditev o DDV");
+    // Status DDV: j 16. 11. 2026 potrdil, da ni zavezanec. Na strani sta samo ti dve potrjeni trditvi o DDV, nič drugega.
+    const vat = "Izvajalec ni zavezanec za DDV, zato DDV ni obračunan.";
+    assert.ok(html.includes(vat), "potrjena trditev o DDV");
+    assert.ok(!/DDV/.test(html.replace(vat, "").replace("Izvajalec ni zavezanec za DDV.", "")), "na strani ni drugih trditev o DDV");
     assert.equal((await fetch(`${base}/sole.html`, { headers: ua })).status, 200);
     await new Promise((r) => setTimeout(r, 20));
     assert.equal(pilotReport(store.db, { days: 1 }).totals.visits.sole, 2);

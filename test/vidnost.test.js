@@ -179,15 +179,15 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.ok(text.includes("Pri nekaterih nalogah (na primer tekmovanja, fakulteta) odgovor v plačljivih paketih, do dnevne meje, pregleda še zmogljivejši model."));
 
   // Kaj dobite: cene, preizkus, brezplačni paket in jeziki iz kode.
-  for (const c of [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina]) {
+  for (const c of [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina, FAMILY_PRICES.druzina_student]) {
     assert.ok(html.includes(`<td>${eur(c.month)} na mesec ali ${eur(c.year)} na leto</td>`), `cena ${c.month}`);
   }
   assert.ok(html.includes(`<td>${TRIAL_DAYS} dni, brez kartice</td>`) && html.includes("<td>10 vprašanj inštruktorju na dan</td>") && html.includes("vmesnik v 33 jezikih"));
-  const known = [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina].flatMap((c) => [eur(c.month), eur(c.year)]);
+  const known = [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina, FAMILY_PRICES.druzina_student].flatMap((c) => [eur(c.month), eur(c.year)]);
   for (const [x] of text.matchAll(/\d+(?:,\d+)? €/g)) assert.ok(known.includes(x), x);
 
   // Pošteno: česa Evklid še ne zna.
-  for (const s of ["Česa Evklid (še) ne zna", "Aplikacije še ni v trgovinah Google Play in App Store", "Umetna inteligenca se lahko zmoti pri razlagi", "drugih predmetov ne pokriva"]) assert.ok(text.includes(s), s);
+  for (const s of ["Česa Evklid (še) ne zna", "Aplikacije še ni v trgovinah Google Play in App Store", "Pri besedni razlagi se umetna inteligenca lahko zmoti", "drugih predmetov ne pokriva"]) assert.ok(text.includes(s), s);
   // Primerjalno oglaševanje (j 10. 11.: brez imen tekmecev): brez imen, cen in slabosti tekmecev. Edino tuje ime je
   // Tudi splošni klepetalniki niso imenovani; imen modelov na strani ni.
   assert.ok(!/Photomath|Khan|Gemini|Copilot|Astra|Duolingo|Brainly|Mathway|Wolfram|Socratic|Claude|Haiku|Sonnet|Opus|ChatGPT|OpenAI|GPT|Grok|Perplexity|DeepSeek|Mistral/i.test(text + html.split("<body>")[0]), "brez imen tekmecev in modelov");
