@@ -320,6 +320,32 @@ test("mikroskop: prizori molekul, membrane in značilna mesta se ujemajo s katal
   // shader: oklepaji v ravnovesju, uniforme, ki jih nastavi upodobi.js
   assert.equal((MOLEKULE.match(/\{/g) || []).length, (MOLEKULE.match(/\}/g) || []).length);
   for (const un of ["uPA", "uPB", "uMemVrsta", "uZun", "uBodice", "uBarvaMol", "uGostMol", "uAtMol", "uIdPass"]) assert.match(MOLEKULE, new RegExp(`uniform \\w+ ${un}\\b`), un);
+  // specializiran program za en pogled (hitrost, j 16. 11. 2026): le prizori strani A in B, izbrana membrana, vrste atomov
+  const { molekuleZa, kljucMolekul } = await import("../public/mikroskop/molekule.js");
+  const kode = [...MOLEKULE.matchAll(/^#define (P_[A-Z0-9_]+) (\d+)$/gm)].map((m) => [m[1], +m[2]]);
+  const veje = (src) => [...src.matchAll(/^  (?:\} else )?if \(P == (.*)\) \{$/gm)].map((m) => m[1]);
+  const vse = veje(MOLEKULE).join(" ");
+  for (const [ime] of kode) assert.match(vse, new RegExp(`\\b${ime}\\b`), `${ime}: veja v prizor()`);
+  for (const [ime, koda] of kode) {
+    for (const mem of [false, true]) {
+      const pB = kode[(koda * 7) % kode.length][1];
+      const src = molekuleZa({ pA: koda, pB, mem, memVrsta: 0, atomi: true, vrsteAtomov: [0, 1, 9] });
+      assert.equal((src.match(/\{/g) || []).length, (src.match(/\}/g) || []).length, `${ime}: oklepaji`);
+      assert.match(src, new RegExp(`^#define K_PA ${koda}$`, "m"));
+      const ostale = veje(src).join(" ");
+      assert.ok(new RegExp(`\\b${ime}\\b`).test(ostale), `${ime}: veja ostane`);
+      const imeB = kode.find((k) => k[1] === pB)[0];
+      assert.equal(new RegExp(`\\b${imeB}\\b`).test(ostale), mem || imeB === ime, `${ime}: veja strani B le z membrano`);
+      assert.ok(veje(src).length <= 2, `${ime}: največ dve veji`);
+    }
+  }
+  const zA = molekuleZa({ pA: 2, pB: 2, mem: false, memVrsta: 4, atomi: true, vrsteAtomov: [0, 1, 9, 1] });
+  assert.match(zA, /if \(a == A_VODA\)/);
+  assert.match(zA, /else if \(a == A_HEM\)/);
+  assert.doesNotMatch(zA, /a == A_APATIT|organska\(b, x \* 1\.4/, "vrste atomov, ki jih ni, ni v programu");
+  assert.match(molekuleZa({ pA: 2, pB: 2, mem: false, memVrsta: 4, atomi: true, vrsteAtomov: [11] }), /^  \{ organska\(b, x \* 1\.4/m, "le smola: ostane splošna veja");
+  assert.equal(kljucMolekul({ pA: 2, pB: 9, mem: false, memVrsta: 3, atomi: false, vrsteAtomov: [1] }), kljucMolekul({ pA: 2, pB: 5, mem: false, memVrsta: 0, atomi: false }));
+  assert.notEqual(kljucMolekul({ pA: 2, pB: 9, mem: true, memVrsta: 0, atomi: true, vrsteAtomov: [1] }), kljucMolekul({ pA: 2, pB: 9, mem: true, memVrsta: 0, atomi: true, vrsteAtomov: [1, 9] }));
   // imena in vloge v vseh jezikih, oznake na sliki in seznam pod njo
   const dir = path.join(ROOT, "public", "i18n", "ui");
   const jeziki = [["sl", sl], ...fs.readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => [f, json(`public/i18n/ui/${f}`)])];

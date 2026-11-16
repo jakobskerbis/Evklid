@@ -2,7 +2,7 @@
 // zamegljenost (optika), sloj molekul/atomov pri največjih povečavah, na koncu sestava na zaslon (vidno polje okularja
 // ali zaslon TEM, svetlost, kontrast, barva žarnice, šum elektronov). Riše samo ob spremembi (narisi()).
 import { fragmentPreparata } from "./glsl.js";
-import { MOLEKULE } from "./molekule.js";
+import { molekuleZa, kljucMolekul } from "./molekule.js";
 
 const VS = `#version 300 es
 in vec2 a; void main() { gl_Position = vec4(a, 0.0, 1.0); }`;
@@ -169,16 +169,34 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
 
   const blur = program(gl, BLUR);
   const sestavi = program(gl, SESTAVI);
-  // Program molekul je velik (~40 kB): na telefonu bi sinhrono prevajanje ob prvem prehodu nad ~1 000 000× zamrznilo
-  // stran (j, 13. 11. 2026: »nad 1200000x se okno mikroskopa zatrokira«). Zato se prevede v ozadju (pripraviMol); dokler
-  // ni pripravljen ali če se ne prevede, je slika brez sloja molekul.
-  let mol = null;
-  let molObljuba = null;
+  // Program molekul se prevede v ozadju (pripraviMol; j, 13. 11. 2026: »nad 1200000x se okno mikroskopa zatrokira«);
+  // dokler ni pripravljen ali če se ne prevede, je slika brez sloja molekul. Za vsak pogled je program specializiran
+  // (molekuleZa: le prizori strani A in B, membrana in atomi tega pogleda; j, 16. 11. 2026, hitrost): splošni program z
+  // vsemi 37 prizori je na grafiki brez pravega vejanja ~50× počasnejši in se prevaja ~20 s. Hranimo zadnjih nekaj.
+  const molProgrami = new Map(); // ključ → { p (program ali null), obljuba }
+  let molNapaka = false;
+  // ključ programa za pogled v; zaId: prehod ID atomov ne riše (vrne prej), zato je dober katerikoli program istega prizora
+  const molK = (v, px) => {
+    const U = v.mol.uniforme;
+    return {
+      pA: Math.floor(U.pA + 0.5), pB: Math.floor(U.pB + 0.5), mem: U.mem > 0.5, memVrsta: Math.floor(U.memVrsta + 0.5),
+      atomi: px < 0.0801, vrsteAtomov: Array.from(U.at, (a) => Math.floor(a + 0.5)),
+    };
+  };
+  // Program z atomi riše enako kot brez njih, kjer atomov ni (nad 0,08 nm na točko); prehod ID atomov ne riše.
+  const molProgram = (v, px, zaId = false) => {
+    const k = molK(v, px);
+    const x = molProgrami.get(kljucMolekul(k));
+    if (x?.p || (k.atomi && !zaId)) return x?.p || null;
+    const brez = kljucMolekul({ ...k, atomi: false });
+    for (const [kl, y] of molProgrami) if (y.p && kl.slice(0, kl.lastIndexOf(",")) === brez.slice(0, brez.lastIndexOf(","))) return y.p;
+    return null;
+  };
   let idT = null; // majhna tekstura za prehod z režami molekul (oznake)
   // zamegljenost se računa znova le, ko se je preparat ali sigma spremenil (sloj molekul se med risanjem sestavlja večkrat)
   let pVer = 0;
   let blurKljuc = "";
-  const nastaviMol = (U, res, pxNm, idPass) => {
+  const nastaviMol = (mol, U, res, pxNm, idPass) => {
     gl.useProgram(mol.p);
     gl.uniform2f(mol.u("uRes"), res, res);
     gl.uniform1f(mol.u("uPxNm"), pxNm);
@@ -315,8 +333,9 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
       const n = v.n;
       pripravi(n);
       // zamegljenost: vodoravno p → b, navpično b → a
+      // ko molekule z utežjo 1 pokrijejo vso sliko, se preparat ne vidi: zamegljenost ni potrebna
       const bk = `${pVer}|${T.id}|${v.sigma}`;
-      if (bk !== blurKljuc) {
+      if (bk !== blurKljuc && !(v.mol && molUtez >= 1 && molDo >= 1)) {
       blurKljuc = bk;
       gl.useProgram(blur.p);
       gl.uniform2f(blur.u("uVel"), n, n);
@@ -331,7 +350,7 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
       risi(T.a.f, n, n);
       }
       // molekule in atomi: sloj je že narisan (narisiMol), tu se le primeša
-      const utez = mol && v.mol && molUtez > 0 ? molUtez : 0;
+      const utez = v.mol && molUtez > 0 ? molUtez : 0;
       // sestava na zaslon
       gl.useProgram(sestavi.p);
       gl.activeTexture(gl.TEXTURE0);
@@ -372,28 +391,49 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
       }
       api.sestavi(v, ima ? v.mol.utez : 0);
     },
-    // Prevajanje programa molekul v ozadju. Vrne obljubo (true, ko je pripravljen; false ob napaki).
-    pripraviMol() {
-      if (!molObljuba)
-        molObljuba = programVzporedno(gl, MOLEKULE, vzporedno).then(
-          (p) => ((mol = p), true),
-          (e) => {
-            console.warn("Mikroskop: sloj molekul ni na voljo", e?.message?.slice(0, 200));
-            return false;
-          },
-        );
-      return molObljuba;
+    // Prevajanje programa molekul za pogled v (v.mol) v ozadju. Vrne obljubo (true, ko je pripravljen; false ob napaki).
+    pripraviMol(v) {
+      if (!v?.mol || molNapaka) return Promise.resolve(false);
+      const k = molK(v, v.umNaTocko * 1000);
+      const kl = kljucMolekul(k);
+      let x = molProgrami.get(kl);
+      if (x) return x.obljuba;
+      x = { p: null, obljuba: null };
+      molProgrami.set(kl, x);
+      x.obljuba = programVzporedno(gl, molekuleZa(k), vzporedno).then(
+        (p) => {
+          x.p = p;
+          // največ 8 programov: najstarejši (ki ni v prevajanju) se izbriše
+          for (const [kk, y] of molProgrami) {
+            if (molProgrami.size <= 8) break;
+            if (y.p && y !== x) {
+              gl.deleteProgram(y.p.p);
+              molProgrami.delete(kk);
+            }
+          }
+          return true;
+        },
+        (e) => {
+          molNapaka = true;
+          molProgrami.delete(kl);
+          console.warn("Mikroskop: sloj molekul ni na voljo", e?.message?.slice(0, 200));
+          return false;
+        },
+      );
+      return x.obljuba;
     },
-    molPripravljen() {
-      return !!mol;
+    // ali je program molekul za pogled v pripravljen (zaId: za prehod ID pri v.umNaTocko)
+    molPripravljen(v, zaId = false) {
+      return !!v?.mol && !!molProgram(v, v.umNaTocko * 1000, zaId);
     },
     // Sloj molekul v pasu vrstic y0..y1 (kot narisiPreparat): tudi pri atomih je izris po delih, zato grafični procesor
     // telefona nikoli ne dobi enega predolgega izrisa (ta lahko ponastavi grafiko in pusti črno sliko).
     narisiMol(v, y0 = 0, y1 = v.n) {
-      if (!mol || !v.mol) return false;
+      const mol = v.mol && molProgram(v, v.umNaTocko * 1000);
+      if (!mol) return false;
       const n = v.n;
       pripravi(n);
-      nastaviMol(v.mol.uniforme, n, v.umNaTocko * 1000, 0);
+      nastaviMol(mol, v.mol.uniforme, n, v.umNaTocko * 1000, 0);
       gl.enable(gl.SCISSOR_TEST);
       gl.scissor(0, y0, n, Math.max(0, Math.min(n, y1) - y0));
       risi(T.m.f, n, n);
@@ -408,9 +448,11 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
     // Reže molekul v mreži k × k čez isto vidno polje kot izris v (za oznake z imeni): vrednost = reža + 1, 0 = nič.
     // Kliči pred narisi: readPixels potem čaka le na majhen prehod k × k, ne na celoten izris molekul.
     idMolekul(v, k = 48) {
-      if (!v.mol || !mol) return null;
+      const pxNm = (v.umNaTocko * 1000 * v.n) / k;
+      const mol = v.mol && molProgram(v, pxNm, true);
+      if (!mol) return null;
       if (!idT || idT.n[0] !== k) idT = tekstura(gl, [k, k]); // oznake (48) in iskanje molekule (64) rabita različno mrežo
-      nastaviMol(v.mol.uniforme, k, (v.umNaTocko * 1000 * v.n) / k, 1);
+      nastaviMol(mol, v.mol.uniforme, k, pxNm, 1);
       risi(idT.f, k, k);
       const px = new Uint8Array(k * k * 4);
       gl.readPixels(0, 0, k, k, gl.RGBA, gl.UNSIGNED_BYTE, px);

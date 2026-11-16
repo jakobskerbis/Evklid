@@ -95,9 +95,14 @@ Nad ~800 000× (TEM) se slika prelije v ponazoritev molekul, ki jih v izbranem p
   spremembi povečave preparat premakne na najbližjo molekulo v krogu ~30 nm (mreža ID 64 × 64 po 1 nm, `kMolekuli`,
   `najblizjaMolekula`), npr. med filamenti miofibrile na miozin. Svet molekul je periodičen s 4 µm (`fino`, natančnost
   float32); šiv je pri x ≡ 2,22223 µm, ne pri okroglih številih, čezenj se sredina ne premakne.
-- Hitrost: program molekul (~40 kB) se prevede v ozadju (KHR_parallel_shader_compile) ob prvem obisku TEM; sloj se riše
-  po pasovih (prvi pas 4 vrstice, nato ~25 ms na pas) in se sproti primeša (`uMolDo`), da telefon ne zamrzne in grafika
-  ne preseže časovne meje. Po izgubi grafike (`webglcontextlost`) se mikroskop obnovi sam.
+- Hitrost: program molekul se za vsak pogled specializira (`molekuleZa` v molekule.js, j 16. 11. 2026): ostanejo le
+  prizori strani A in B, izbrana membrana in le vrste atomov iz rež tega pogleda (atomi le pod 0,08 nm na točko). Slika
+  je enaka do bita kot s splošnim programom (37 prizorov), ta pa se je na grafiki brez pravega vejanja (programski izris
+  v brskalniku brez GPE, tudi nekateri telefoni) prevajal ~18 s in risal ~65 µs na točko (zdaj 0,2–0,8 s in 0,1–2 µs).
+  upodobi.js hrani zadnjih 8 programov (`kljucMolekul`); prevedejo se v ozadju (KHR_parallel_shader_compile). Ko je
+  utež molekul 1 (od ~2 400 000×), preparata v polni ločljivosti ne rišemo (molekule ga povsem prekrijejo): predogled
+  takoj pokaže molekule v nižji ločljivosti, nato se sloj nariše po pasovih (prvi pas 4 vrstice, nato ~25 ms na pas),
+  da telefon ne zamrzne in grafika ne preseže časovne meje. Po izgubi grafike (`webglcontextlost`) se mikroskop obnovi sam.
 - Gladki ER (`S_GER`, 32): mreža cevk (premer ~45 nm) brez ribosomov, dve prepleteni izočrti šuma; največ v hepatocitih
   (skupaj z glikogenom), v maščobnih celicah in enterocitih; membrana s citokromom P450.
 
