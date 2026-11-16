@@ -16,11 +16,13 @@ for (const g of GENERATORS) {
   const topicId = g.topics.find((t) => getTopic(t));
   if (!topicId) continue;
   const st = { id: g.id, n: 0, hint: 0, data: 0, formula: 0, solution: 0, steps: 0, mistakes: 0, types: new Set(), texts: [new Set(), new Set(), new Set()], skels: [new Set(), new Set(), new Set()] };
+  // Generatorji z maxYear (tek-mladi-* do 4. razreda) se brez razreda ne izberejo: vzorčimo po razredih.
+  const years = g.maxYear != null ? Array.from({ length: g.maxYear - (g.minYear ?? 1) + 1 }, (_, i) => (g.minYear ?? 1) + i) : [null];
   for (let level = 1; level <= 3; level++) {
-    for (let seed = 1; seed <= SEEDS * 4 && st.texts[level - 1].size + 0 < 1e9; seed++) {
+    for (let seed = 1; seed <= SEEDS * 4 * years.length && st.texts[level - 1].size + 0 < 1e9; seed++) {
       let t;
       try {
-        t = generateTask(topicId, level, seed);
+        t = generateTask(topicId, level, seed, undefined, years[seed % years.length]);
       } catch {
         continue;
       }

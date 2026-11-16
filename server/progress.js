@@ -13,6 +13,7 @@ import { toChoice } from "./practice/choice.js";
 import { taskLanguage, localName } from "./exams.js";
 import { levelProgress, cleanXpGoal } from "../public/xp-levels.js";
 import { nowParts } from "./schedule.js";
+import { schoolYear } from "./games.js";
 
 // Tekmovalni trening in poskusno tekmovanje veljata tudi za priprave na izpite.
 const isPrepPath = (key) => isCompetitionPath(key) || isExamPath(key);
@@ -77,6 +78,11 @@ export class Progress {
   // jezike, ki v vmesniku padejo nazaj nanjo (bhodžpuri, maratščina …), sicer angleško.
   taskLang(studentId) {
     return taskLanguage(this.store.getStudent?.(studentId)?.settings?.language);
+  }
+  // Leto šolanja (OŠ 1–9, SŠ 10–13, faks 14) za izbiro nalog po razredu (practice/index.js fitsYear).
+  taskYear(studentId) {
+    const st = this.store.getStudent?.(studentId);
+    return st ? schoolYear(st.settings || {}) : null;
   }
   // Jezik vmesnika (za imena tem mednarodne poti v slovenskem vmesniku).
   uiLang(studentId) {
@@ -220,7 +226,7 @@ export class Progress {
     if (!hasGenerator(topicId)) return null;
     const s = this.state(studentId, topicId);
     if (!s.seen_example) {
-      const ex = generateTask(topicId, 1, undefined, this.taskLang(studentId));
+      const ex = generateTask(topicId, 1, undefined, this.taskLang(studentId), this.taskYear(studentId));
       s.seen_example = 1;
       if (s.status === "new") s.status = "learning";
       this.saveState(s);
@@ -237,7 +243,7 @@ export class Progress {
     if (pending) {
       return { task: { id: pending.id, mode: "practice", ...publicTask(JSON.parse(pending.payload)) }, state: { level: s.level, streak: s.streak }, resumed: true };
     }
-    const task = generateTask(topicId, s.level, undefined, this.taskLang(studentId));
+    const task = generateTask(topicId, s.level, undefined, this.taskLang(studentId), this.taskYear(studentId));
     const id = this.saveTask(studentId, task, "practice");
     return { task: { id, mode: "practice", ...publicTask(task) }, state: { level: s.level, streak: s.streak } };
   }
@@ -282,7 +288,7 @@ export class Progress {
         this.saveState(st);
       }
       const level = item.level ?? st.level;
-      let task = generateTask(item.topic, level, undefined, this.taskLang(sess.student_id));
+      let task = generateTask(item.topic, level, undefined, this.taskLang(sess.student_id), this.taskYear(sess.student_id));
       // Izpitni format: izbirna vprašanja (A–D) namesto vpisa števila.
       if (item.format === "choice") task = toChoice(task, task.seed, item.options || 4);
       const id = this.saveTask(sess.student_id, task, item.mode, sessionId);
@@ -756,15 +762,15 @@ export class Progress {
     if (packsToday >= RULES.offlinePacksPerDay) return { limited: true };
     this.db.prepare("INSERT INTO offline_packs (student_id) VALUES (?)").run(studentId);
     // Izdane naloge (seme, raven): sinhronizacija sprejme samo te, ne poljubnih semen (P2: neomejen XP).
-    const issue = this.db.prepare("INSERT OR IGNORE INTO offline_issued (student_id, topic_id, seed, level) VALUES (?, ?, ?, ?)");
+    const issue = this.db.prepare("INSERT OR IGNORE INTO offline_issued (student_id, topic_id, seed, level, year) VALUES (?, ?, ?, ?, ?)");
     this.db.prepare(`DELETE FROM offline_issued WHERE created_at < datetime('now','-${RULES.offlineIssuedDays} days')`).run();
     for (const t of topics) {
       const topic = getTopic(t.id);
       info[t.id] = { id: t.id, name: topic.name, goals: topic.goals, unit: topic.unit, path: pathKey, subject: topic.subject, pathLabel: path.label };
       tasks[t.id] = Array.from({ length: perTopic }, (_, i) => {
         const level = Math.max(1, Math.min(3, t.level + (i % 3 === 2 ? 1 : 0)));
-        const task = generateTask(t.id, level, undefined, this.taskLang(studentId));
-        issue.run(studentId, t.id, task.seed, level);
+        const task = generateTask(t.id, level, undefined, this.taskLang(studentId), this.taskYear(studentId));
+        issue.run(studentId, t.id, task.seed, level, this.taskYear(studentId));
         return { level, seed: task.seed, task: publicTask(task), answer: task.answer, solution: task.solution, hint: task.hint };
       });
     }
@@ -782,14 +788,15 @@ export class Progress {
     let noXp = 0;
     const seen = this.db.prepare("INSERT OR IGNORE INTO offline_results (student_id, topic_id, seed) VALUES (?, ?, ?)");
     const issued = this.db.prepare(
-      `SELECT 1 FROM offline_issued WHERE student_id = ? AND topic_id = ? AND seed = ? AND level = ? AND created_at >= datetime('now','-${RULES.offlineIssuedDays} days')`,
+      `SELECT year FROM offline_issued WHERE student_id = ? AND topic_id = ? AND seed = ? AND level = ? AND created_at >= datetime('now','-${RULES.offlineIssuedDays} days')`,
     );
     let left = RULES.offlineXpPerDay - this.db.prepare("SELECT COUNT(*) AS n FROM offline_results WHERE student_id = ? AND date(created_at) = date('now')").get(studentId).n;
     for (const r of results.slice(0, 300)) {
       const level = Number(r?.level);
       const seed = Number(r?.seed);
       if (!getTopic(r?.topic_id) || !hasGenerator(r.topic_id) || ![1, 2, 3].includes(level) || !Number.isInteger(seed) || seed < 0 || seed >= 2 ** 31) continue;
-      if (!issued.get(studentId, r.topic_id, seed, level)) {
+      const iss = issued.get(studentId, r.topic_id, seed, level);
+      if (!iss) {
         skipped += 1;
         continue;
       }
@@ -797,7 +804,9 @@ export class Progress {
       const xp = left > 0;
       left -= 1;
       if (!xp) noXp += 1;
-      const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId));
+      // Razred ob izdaji (učenec ga je vmes lahko spremenil): ista naloga kot v paketu. NULL (paket izdan pred
+      // shranjevanjem razreda, ali učenec brez razreda) = naloga brez razreda, kot ob izdaji teh paketov.
+      const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId), iss.year);
       const id = this.saveTask(studentId, task, "practice");
       const out = this.answer(studentId, id, String(r.answer ?? "").slice(0, 200), { xp });
       synced += 1;
