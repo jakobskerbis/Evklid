@@ -8,7 +8,7 @@ import { jeOs } from "../stopnja.js";
 import { solve, analyze, prep, tex as exprTex, parseTask, izvorOznak, oznakaGrafa } from "./solvecore.js";
 import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
-import { answerParts } from "./odgovor.js";
+import { answerParts, soughtParts, soughtNeedsAi } from "./odgovor.js";
 import { plottableFromText } from "../graph/math.js";
 
 let D = null; // { api, getStudent, toast, escapeHtml, askTutor, openGraph }
@@ -81,6 +81,11 @@ function math(tx, display = false) {
   } catch {
     return esc(tx);
   }
+}
+// iskano: besedilo kot navaden HTML (lomi se med besedami), ostanek kot formula
+function soughtHtml(src) {
+  const p = soughtParts(src);
+  return `<span class="scan-sought-item">${esc(p.text)}${p.text && p.math ? " " : ""}${p.math ? math(p.math) : ""}</span>`;
 }
 // besedilo z $…$ → HTML s formulami
 function rich(str) {
@@ -572,8 +577,8 @@ function renderConfirm(box) {
     <div class="card scan-confirm">
       ${S.problems.length ? `<p class="scan-label">${esc(t("scan.readAs"))}</p>` : ""}
       <div class="scan-preview" aria-live="polite"></div>
-      ${S.sought ? `<p class="scan-given scan-sought"><span class="scan-label">${esc(t("scan.sought"))}</span><span class="scan-given-item">${math(S.sought)}</span></p>` : ""}
       ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item">${math(g)}</span>`).join("")}</p>` : ""}
+      ${S.sought ? `<p class="scan-given scan-sought"><span class="scan-label">${esc(t("scan.sought"))}</span>${soughtHtml(S.sought)}</p>` : ""}
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <div class="scan-input-row">
         <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(S.text)}">
@@ -700,7 +705,9 @@ function bindPilotRate(box) {
 function solveNow() {
   const complex = !jeOs(D.getStudent()?.settings) || /SŠ|faks/i.test(D.getStudent()?.settings?.curriculum_level || "");
   // naloga s podatki (»določi a, b, c, če gre graf skozi T(7,2) …«): lastni reševalnik podatkov ne pozna, reši jo AI
-  const r = S.given.length ? { ok: false, goals: [] } : solve(S.text, { goal: S.goal, complex });
+  let r = S.given.length ? { ok: false, goals: [] } : solve(S.text, { goal: S.goal, complex });
+  // izraz z iskanim, ki ni poenostavitev (»teme«): lastni reševalnik bi ga le poenostavil, zato AI
+  if (soughtNeedsAi(r, { sought: S.sought, goal: S.goal })) r = { ok: false, goals: r.goals || [] };
   S.result = r.ok ? r : null;
   S.goals = r.goals || [];
   S.goal = r.goal || S.goal;

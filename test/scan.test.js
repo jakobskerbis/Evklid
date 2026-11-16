@@ -7,7 +7,7 @@ import { solve, analyze, prep, splitSystem, texToText } from "../public/scan/sol
 import { verifyAi } from "../public/scan/verify.js";
 import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, solveWithAi, READ_PROMPT, readLangLine } from "../server/scan.js";
 import { setClient } from "../server/claude.js";
-import { answerParts } from "../public/scan/odgovor.js";
+import { answerParts, soughtParts, soughtNeedsAi } from "../public/scan/odgovor.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 
@@ -371,7 +371,9 @@ test("photo reading writes the words of the data in the app language and keeps w
   assert.match(readLangLine("de"), /German/);
   assert.match(readLangLine("sl"), /"given" and "sought"/);
   assert.match(READ_PROMPT, /"sought": what the task asks you to find is never data/);
-  assert.match(READ_PROMPT, /leave "sought" empty/);
+  assert.match(READ_PROMPT, /leave "sought" out/);
+  assert.match(READ_PROMPT, /the vertex of the parabola\)/);
+  assert.doesNotMatch(READ_PROMPT, /a perimeter\)/);
   assert.match(READ_PROMPT, /with the meaning of the page/);
   assert.doesNotMatch(READ_PROMPT, /in the words of the page|Iskano:|last item of "given"/);
   assert.match(READ_PROMPT, /"given":\["\.\.\."\],"sought":"\.\.\."/);
@@ -441,4 +443,16 @@ test("API: scan read passes the app language to readFn and sought to solveFn", a
     assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1", sought: 5 })).status, 400);
     assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1", sought: "x".repeat(200) })).status, 400);
   });
+});
+
+test("sought is shown as plain text (breaks between words) and a plain expression with a sought goes to AI", () => {
+  assert.deepEqual(soughtParts("\\text{ploščina lika med grafom in koordinatnima osema}"), { text: "ploščina lika med grafom in koordinatnima osema", math: "" });
+  assert.deepEqual(soughtParts("\\text{teme parabole } T(p,q)"), { text: "teme parabole", math: "T(p,q)" });
+  assert.deepEqual(soughtParts("kot, pod katerim graf seka os x"), { text: "kot, pod katerim graf seka os x", math: "" });
+  assert.deepEqual(soughtParts("x_0"), { text: "", math: "x_0" });
+  const simp = solve("x^2-4", {});
+  assert.equal(soughtNeedsAi(simp, { sought: "\\text{teme}" }), true);
+  assert.equal(soughtNeedsAi(simp, { sought: "" }), false);
+  assert.equal(soughtNeedsAi(solve("x^2-4", { goal: "factor" }), { sought: "\\text{teme}", goal: "factor" }), false);
+  assert.equal(soughtNeedsAi(solve("x^2-4=0", {}), { sought: "\\text{kot}" }), false);
 });

@@ -32,3 +32,18 @@ export function answerParts(tex) {
   // le seznam dejstev z »=« (npr. več rešitev x_1=2, x_2=3 tudi); sicer formula ostane cela
   return facts.length > 1 && facts.filter((f) => /=|\\in\b/.test(f)).length >= 2 ? facts : [src];
 }
+
+// Iskano (»\\text{ploščina lika med grafom in osema}«): besedilo kot navaden HTML, da se lomi med besedami.
+// KaTeX \\text{} s č/š/ž se pri white-space: normal lomi sredi besede (»plošč / ina«, pregled #700).
+// Vrne { text, math }: text = navadno besedilo, math = ostanek v LaTeX (lahko prazen).
+export function soughtParts(src) {
+  const s = String(src ?? "").trim();
+  const m = /^\\text\{([^{}]*)\}(.*)$/s.exec(s);
+  if (m) return { text: m[1].trim(), math: m[2].trim() };
+  if (!/[\\^_{}]/.test(s)) return { text: s, math: "" };
+  return { text: "", math: s };
+}
+
+// Lastni reševalnik izraz brez cilja le poenostavi; če naloga sprašuje po čem drugem (iskano, npr. »teme«),
+// naj jo reši AI (pregled #700). Izrecni cilj (Razstavi …) ali enačba ostane lastnemu reševalniku.
+export const soughtNeedsAi = (r, { sought = "", goal = null } = {}) => !!sought && !goal && !!r?.ok && r.kind === "simplify";
