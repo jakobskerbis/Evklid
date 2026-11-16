@@ -17,7 +17,7 @@ export const GUIDE = [
   { id: "progress", title: "nav.progress", text: "tour.progressText", icon: "chart-column", view: "progress" },
   { id: "league", title: "nav.league", text: "tour.leagueText", icon: "trophy", view: "league" },
   { id: "settings", title: "nav.settings", text: "tour.settingsText", icon: "settings", view: "settings", app: "/me" },
-  { id: "feedback", title: "nav.feedbackShort", text: "tour.feedbackText", icon: "message-square-heart", view: "feedback" },
+  { id: "feedback", title: "nav.feedback", text: "tour.feedbackText", icon: "message-square-heart", view: "feedback" },
 ];
 
 // Deli, ki obstajajo v aplikaciji za telefon (true = samo besedilo, brez povezave).

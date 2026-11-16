@@ -42,13 +42,23 @@ export const GROUPS = {
     name: "Grške črke",
     keys: ["α", "β", "γ", "δ", "ε", "θ", "λ", "μ", "ν", "π", "ρ", "σ", "τ", "φ", "ω", "Δ", "Σ", "Φ", "Ω"].map((c) => k(c)),
   },
+  // Σ → Kemija pokaže iste strani kot zavihek »Kem« (tipkovnica.js kemBody, tipkovnica-data.js KEM_GROUPS);
+  // tu so opisi tipk (v slovenščini, za aria-label in namig).
   kemija: {
     name: "Kemija",
     keys: [
-      k("→", "→", "reakcija"), k("⇌", "⇌", "ravnotežje"), k("↑", "↑", "plin"), k("↓", "↓", "oborina"),
+      k("→", " → ", "reakcija"), k("⇌", " ⇌ ", "ravnotežje"), k("←", " ← ", "povratna reakcija"), k("+", " + ", "in (med snovmi)"),
+      k("↑", "↑", "plin"), k("↓", "↓", "oborina"), k("Δ", "Δ", "segrevanje"), k("hν", "hν", "svetloba"), k("kat.", "KAT", "katalizator"), k("e⁻", "e⁻", "elektron"),
       ..."₀₁₂₃₄₅₆₇₈₉".split("").map((c) => k(c, c, "indeks")),
-      k("⁺"), k("⁻"), k("²⁺"), k("³⁺"), k("²⁻"), k("·", "·", "kristalna voda"),
-      k("(s)"), k("(l)"), k("(g)"), k("(aq)"), k("ΔH"), k("°C"),
+      ..."⁰¹²³⁴⁵⁶⁷⁸⁹".split("").map((c) => k(c, c, "nadpisano")),
+      k("⁺", "⁺", "naboj"), k("⁻", "⁻", "naboj"), k("²⁺", "²⁺", "naboj"), k("³⁺", "³⁺", "naboj"), k("⁴⁺", "⁴⁺", "naboj"),
+      k("²⁻", "²⁻", "naboj"), k("³⁻", "³⁻", "naboj"), k("⁴⁻", "⁴⁻", "naboj"), k("·", "·", "kristalna voda"), k("[ ]", "[@]", "oglati oklepaj"),
+      k("OH", "OH", "hidroksid"), k("NO₃", "NO₃", "nitrat"), k("SO₄", "SO₄", "sulfat"), k("CO₃", "CO₃", "karbonat"),
+      k("PO₄", "PO₄", "fosfat"), k("NH₄", "NH₄", "amonij"), k("HCO₃", "HCO₃", "hidrogenkarbonat"), k("MnO₄", "MnO₄", "permanganat"),
+      k("(s)", "(s)", "trdno"), k("(l)", "(l)", "tekoče"), k("(g)", "(g)", "plinasto"), k("(aq)", "(aq)", "raztopljeno v vodi"),
+      k("ΔH", "ΔH", "reakcijska entalpija"), k("ΔS", "ΔS", "sprememba entropije"), k("ΔG", "ΔG", "sprememba Gibbsove proste energije"), k("°", "°", "standardno stanje"),
+      k("°C", "°C", "stopinja Celzija"), k("kPa", "kPa", "kilopaskal"), k("mol", "mol", "mol"), k("g/mol", "g/mol", "molska masa"),
+      k("mol/L", "mol/L", "množinska koncentracija"), k("kJ/mol", "kJ/mol", "kilojoul na mol"), k("pH", "pH", "pH"), k("%", "%", "odstotek"),
     ],
   },
 };
@@ -61,11 +71,20 @@ export function groupOrder(level, subject) {
   return chem ? ["kemija", "osnovno", "grske"] : ["osnovno", "grske", "kemija"];
 }
 
+/** Skupine v Σ po vrsti. Kjer je zavihek »Kem« (hasKem), čipa »Kemija« ni: kemija je že v zavihku, ne dvakrat. */
+export function symGroups(level, subject, hasKem = false) {
+  const order = groupOrder(level, subject);
+  return [...order, ...Object.keys(GROUPS).filter((g) => !order.includes(g))].filter((g) => !(hasKem && g === "kemija"));
+}
+
 // Kemijske formule: števke za simbolom elementa ali zaklepajem → indeksi (2H2O → 2H₂O, Ca(OH)2 → Ca(OH)₂).
 // Naboj na koncu (Fe3+, Na+, SO4 2-) → nadpisano (Fe³⁺, Na⁺, SO₄²⁻). Ostalo besedilo ostane.
-const ELEMENTS = new Set(
-  "H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr".split(" "),
+/** Simboli vseh 118 elementov po vrsti (vrstno število). */
+export const ELEMENT_SYMBOLS = (
+
+  "H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og".split(" ")
 );
+const ELEMENTS = new Set(ELEMENT_SYMBOLS);
 const SUB = "₀₁₂₃₄₅₆₇₈₉";
 const SUP = { 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹", "+": "⁺", "-": "⁻", "−": "⁻" };
 const sub = (n) => [...n].map((d) => SUB[d]).join("");
@@ -80,7 +99,7 @@ function formulaPart(f) {
 }
 
 function chemWord(word) {
-  const m = /^(.*?)([?!.,;:]*)$/.exec(word);
+  const m = /^(.*?)([?!.,;:↑↓]*)$/.exec(word); // končni ↑ (plin) in ↓ (oborina) ostaneta: CO2↑ → CO₂↑
   let [, core, tail] = m;
   // naboj: Fe3+, Na+, Cl-
   let charge = "";

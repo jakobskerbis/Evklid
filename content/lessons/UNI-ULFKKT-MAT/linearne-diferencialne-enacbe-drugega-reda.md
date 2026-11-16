@@ -43,7 +43,7 @@ $$W(x) = \begin{vmatrix} y_1 & y_2 \\ y_1' & y_2' \end{vmatrix} = y_1 y_2' - y_1
 
 $$y_h = C_1 y_1 + C_2 y_2.$$
 
-*Dokaz.* Abelova formula: $W' = y_1y_2'' - y_1''y_2 = y_1(-py_2' - qy_2) - (-py_1' - qy_1)y_2 = -p\,W$, to je enačba prvega reda z rešitvijo $W(x_0)e^{-\int p}$, eksponent pa ni nikoli $0$. Neodvisnost: iz $C_1y_1 + C_2y_2 = 0$ na $I$ z odvajanjem sledi še $C_1y_1' + C_2y_2' = 0$; v točki $x_0$ je to sistem z determinanto $W(x_0) \neq 0$, zato $C_1 = C_2 = 0$. Naj bo $y$ poljubna rešitev. Sistem $C_1y_1(x_0) + C_2y_2(x_0) = y(x_0)$, $C_1y_1'(x_0) + C_2y_2'(x_0) = y'(x_0)$ ima determinanto $W(x_0) \neq 0$, zato enolično rešitev $C_1$, $C_2$. Funkciji $y$ in $C_1y_1 + C_2y_2$ rešita isti začetni problem, zato sta po izreku o enoličnosti enaki. $\square$
+*Dokaz.* Abelova formula: $W' = y_1y_2'' - y_1''y_2 = y_1(-py_2' - qy_2) - (-py_1' - qy_1)y_2 = -p\,W$, to je enačba prvega reda z rešitvijo $W(x_0)e^{-\int p}$, eksponentna funkcija pa ni nikoli $0$. Neodvisnost: iz $C_1y_1 + C_2y_2 = 0$ na $I$ z odvajanjem sledi še $C_1y_1' + C_2y_2' = 0$; v točki $x_0$ je to sistem z determinanto $W(x_0) \neq 0$, zato $C_1 = C_2 = 0$. Naj bo $y$ poljubna rešitev. Sistem $C_1y_1(x_0) + C_2y_2(x_0) = y(x_0)$, $C_1y_1'(x_0) + C_2y_2'(x_0) = y'(x_0)$ ima determinanto $W(x_0) \neq 0$, zato enolično rešitev $C_1$, $C_2$. Funkciji $y$ in $C_1y_1 + C_2y_2$ rešita isti začetni problem, zato sta po izreku o enoličnosti enaki. $\square$
 
 Par $y_1$, $y_2$ z $W \neq 0$ imenujemo **fundamentalni sistem**; $y_h$ je **splošna rešitev** homogene enačbe.
 
@@ -152,7 +152,7 @@ $m\ddot x + b\dot x + kx = 0$; pri $\lambda = \alpha \pm i\beta$ je $x = e^{\alp
 2. Karakteristična enačba: $\lambda^2 + 4\lambda + 13 = 0$, $D = 16 - 52 = -36$, $\lambda = \frac{-4 \pm 6i}{2} = -2 \pm 3i$.
 3. Splošna rešitev: $x = e^{-2t}(C_1\cos 3t + C_2\sin 3t)$; dušenje je podkritično.
 4. Iz $x(0) = C_1 = 0{,}02$.
-5. Odvod: $\dot x = e^{-2t}\big((-2C_1 + 3C_2)\cos 3t + (-2C_2 - 3C_1)\sin 3t\big)$, torej $\dot x(0) = -2C_1 + 3C_2 = -0{,}01$, $3C_2 = -0{,}01 + 0{,}04 = 0{,}03$, $C_2 = 0{,}01$.
+5. Odvod: $\dot x = e^{-2t}\big((-2C_1 + 3C_2)\cos 3t + (-2C_2 - 3C_1)\sin 3t\big)$, torej $\dot x(0) = -2C_1 + 3C_2 = -0{,}01$; $3C_2 = -0{,}01 + 0{,}04 = 0{,}03$; $C_2 = 0{,}01$.
 6. Nihajni čas: $T = \frac{2\pi}{3\,\mathrm{s^{-1}}} = 2{,}09\,\mathrm{s}$.
 7. Ovojnica $e^{-2t}$ se v času $T$ zmanjša za faktor $e^{-2 \cdot 2{,}094} = e^{-4{,}19} = 0{,}015$.
 8. Odgovor: $x(t) = e^{-2t}\big(0{,}02\cos 3t + 0{,}01\sin 3t\big)\,\mathrm{m}$; nihajni čas je $2{,}09\,\mathrm{s}$, po enem nihaju ovojnica pade na $1{,}5\,\%$ prejšnje vrednosti (dušenje je močno).
@@ -288,9 +288,9 @@ Reši $y'' + 2y' + y = 3x + 1$ z $y(0) = 0$, $y'(0) = 0$.
 
 ## Drugače: Bolj natančno
 
-**Prostor rešitev.** Naj bodo $p$, $q$ zvezne na intervalu $I$. Po izreku o obstoju in enoličnosti za linearne sisteme (enačbo prevedemo na sistem prvega reda za $(y, y')$) ima začetni problem natanko eno rešitev na celem $I$. Preslikava, ki rešitvi homogene enačbe priredi par $(y(x_0), y'(x_0)) \in \mathbb R^2$, je linearna in bijektivna, zato je **prostor rešitev dvorazsežen** vektorski prostor. Vsaka baza tega prostora je fundamentalni sistem.
+**Prostor rešitev.** Naj bosta $p$, $q$ zvezni na intervalu $I$. Po izreku o obstoju in enoličnosti za linearne sisteme (enačbo prevedemo na sistem prvega reda za $(y, y')$) ima začetni problem natanko eno rešitev na celem $I$. Preslikava, ki rešitvi homogene enačbe priredi par $(y(x_0), y'(x_0)) \in \mathbb R^2$, je linearna in bijektivna, zato je **prostor rešitev dvorazsežen** vektorski prostor. Vsaka baza tega prostora je fundamentalni sistem.
 
-**Wronskijeva determinanta.** Za rešitvi $y_1$, $y_2$ homogene enačbe velja $W' = y_1y_2'' - y_1''y_2 = -p\,W$, zato je po **Abelovi formuli** $W(x) = W(x_0)\, e^{-\int_{x_0}^x p(t)\, dt}$. Wronskijeva determinanta je torej bodisi povsod enaka nič bodisi nikjer, in rešitvi sta neodvisni natanko tedaj, ko je $W(x_0) \neq 0$ v eni sami točki.
+**Wronskijeva determinanta.** Za rešitvi $y_1$, $y_2$ homogene enačbe velja $W' = y_1y_2'' - y_1''y_2 = -p\,W$, zato je po **Abelovi formuli** $W(x) = W(x_0)\, e^{-\int_{x_0}^x p(t)\, dt}$. Wronskijeva determinanta je torej bodisi povsod enaka nič bodisi nikjer, in rešitvi sta neodvisni natanko tedaj, ko je $W(x_0) \neq 0$ v vsaj eni točki $x_0$.
 
 **Dvojna ničla.** Naj bo $L[y] = y'' + ay' + by$ in $\chi(\lambda) = \lambda^2 + a\lambda + b$. Velja $L[e^{\lambda x}] = \chi(\lambda)e^{\lambda x}$. Odvajajmo po $\lambda$: $L[xe^{\lambda x}] = \big(\chi'(\lambda) + x\chi(\lambda)\big)e^{\lambda x}$. Pri dvojni ničli je $\chi(\lambda) = \chi'(\lambda) = 0$, zato je $xe^{\lambda x}$ rešitev. Isti argument utemelji faktor $x^k$ v nastavku pri resonanci.
 
@@ -365,10 +365,10 @@ k | koeficient vzmeti | | N/m | v nastavku večkratnost ničle karakteristične 
 F | zunanja sila | | N
 t | čas | | s
 T | nihajni čas dušenega nihanja | T = \frac{2\pi}{\beta} | s
-A | koeficient desne strani $f = A e^{\mu x}$ | |
+A | neznani koeficient v nastavku za y_p | | | na sliki amplituda ovojnice
 B | neznani koeficient v nastavku za y_p | |
 L | linearni operator leve strani | L[y] = y'' + p y' + q y | | v krogu RLC induktivnost
 P, R | polinoma v desni strani f | | | v nastavku za sinus/kosinus neznana koeficienta P, Q; v krogu RLC R upor
 Q, S | polinoma z neznanimi koeficienti v nastavku | |
-\mu | eksponent v desni strani $f = A e^{\mu x}$ | |
+\mu | eksponent v desni strani $f = e^{\mu x} P_n(x)$ | | | pri molekuli reducirana masa
 :::

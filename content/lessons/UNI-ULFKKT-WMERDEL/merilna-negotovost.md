@@ -15,15 +15,23 @@ Tam je ocena negotovosti odločilna. Raven hrupa $84\,\mathrm{dB}$ ali $86\,\mat
 
 ## Razlaga
 
-**1. Oblak meritev na številski premici.** Trener isti posnetek teka petkrat izmeri z ročno štoparico. Dobi $11{,}32$, $11{,}18$, $11{,}25$, $11{,}41$ in $11{,}24\,\mathrm{s}$. Vrišimo jih na premico (en znak je $0{,}01\,\mathrm{s}$):
+**1. Oblak meritev na številski premici.** Trener isti posnetek teka petkrat izmeri z ročno štoparico. Dobi $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$ in $11{,}24\,\mathrm{s}$. Vrišimo jih na premico (ena črtica je $0{,}01\,\mathrm{s}$):
 
-```
-11,1      11,2      11,3      11,4      11,5  t [s]
-|---------|---------|---------|---------|
-        •     ••      •        •
-                  ▲ povprečje 11,28
-         [-----------------]  povprečje ± s
-```
+:::risba premica
+opis: Številska premica časa t v sekundah od 11,1 do 11,5. Na njej je pet meritev: 11,18; 11,24; 11,25; 11,32 in 11,41. Povprečje 11,28 je označeno posebej. Pas povprečje ± s sega od 11,19 do 11,37; v njem so tri meritve, zunaj njega 11,18 in 11,41.
+od: 11,1
+do: 11,5
+korak: 0,01
+oznake: 0,1
+točka: 11,18
+točka: 11,24
+točka: 11,25
+točka: 11,32
+točka: 11,41
+točka: 11,28 | povprečje 11,28 | prazna
+interval: 11,19 .. 11,37
+podnapis: Debela črta je pas povprečje ± s od 11,19 do 11,37 s; črtice so na 0,01 s.
+:::
 
 Točke tvorijo oblak. Njegova sredina je **povprečje** $\bar{x}$, njegova širina pa je **raztros**. Raztros meri **standardni odmik** $s$: približno dve tretjini meritev leži znotraj pasu $\bar{x} \pm s$.
 
@@ -40,12 +48,12 @@ Ker $\sigma$ ne poznamo, jo ocenimo s $s$ (formula je v točki 6). Imenovalec $n
 :::premisli
 Trener želi negotovost povprečja razpoloviti. Koliko meritev mora opraviti namesto 5 in kaj se pri tem zgodi s širino oblaka $s$?
 ---
-Širina oblaka ostane približno enaka, saj je to lastnost štoparice in trenerjeve roke. Negotovost povprečja pa se deli z $\sqrt{n}$, zato je pri 20 meritvah približno pol manjša kot pri 5: štirikrat več meritev za pol manjšo negotovost.
+Širina oblaka ostane približno enaka, saj je to lastnost štoparice in trenerjeve roke. Negotovost povprečja pa se deli s $\sqrt{n}$, zato je pri 20 meritvah približno pol manjša kot pri 5: štirikrat več meritev za pol manjšo negotovost.
 :::
 
 **3. Kalibracija premakne cel oblak.** Ponavljanje ne pokaže, ali je oblak na pravem mestu. Štoparica, ki vedno zamudi $0{,}1\,\mathrm{s}$, da lep, ozek oblak, a zamaknjen. Tak stalen zamik je **sistematični pogrešek**: tisti del merilnega pogreška (razlike med izmerjeno in pravo vrednostjo), ki pri ponovljenih meritvah ostane enak ali se spreminja predvidljivo. Del, ki se od meritve do meritve nepredvidljivo spreminja, je **naključni pogrešek**.
 
-Sistematični pogrešek odkrije le **kalibracija**: primerjava merilnika z **etalonom**, to je virom z znano vrednostjo in znano negotovostjo. Merilnik hrupa na primer priključimo na zvočni kalibrator, ki daje natanko $94{,}0\,\mathrm{dB}$. Če merilnik pokaže $94{,}4\,\mathrm{dB}$, sedi njegov oblak $0{,}4\,\mathrm{dB}$ desno od prave vrednosti. **Popravek** je razlika med referenco in odčitkom, tu $-0{,}4\,\mathrm{dB}$. Prištejemo ga vsem nadaljnjim odčitkom.
+Sistematični pogrešek odkrije le **kalibracija**: primerjava merilnika z **etalonom**, to je virom z znano vrednostjo in znano negotovostjo. Merilnik hrupa na primer priključimo na zvočni kalibrator, ki daje raven $94{,}0\,\mathrm{dB}$. Če merilnik pokaže $94{,}4\,\mathrm{dB}$, sedi njegov oblak $0{,}4\,\mathrm{dB}$ desno od prave vrednosti. **Popravek** je razlika med referenco in odčitkom, tu $-0{,}4\,\mathrm{dB}$. Prištejemo ga vsem nadaljnjim odčitkom.
 
 :::premisli
 Štoparica vedno zamudi $0{,}1\,\mathrm{s}$. Trener opravi sto meritev namesto petih. Ali je povprečje zdaj bližje pravemu času?
@@ -103,9 +111,9 @@ $U$ zaokrožimo na eno ali dve veljavni mesti, rezultat pa na isto decimalno mes
 
 ### Primer 1: ponovljivost ročne štoparice
 
-Trener petkrat izmeri čas istega teka na posnetku: $11{,}32$, $11{,}18$, $11{,}25$, $11{,}41$ in $11{,}24\,\mathrm{s}$. Določi povprečje, standardni odmik in negotovost povprečja.
+Trener petkrat izmeri čas istega teka na posnetku: $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$ in $11{,}24\,\mathrm{s}$. Določi povprečje, standardni odmik in negotovost povprečja.
 
-**Podatki:** $n = 5$; $x_i$: $11{,}32$, $11{,}18$, $11{,}25$, $11{,}41$, $11{,}24\,\mathrm{s}$
+**Podatki:** $n = 5$, $x_i$: $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$; $11{,}24\,\mathrm{s}$
 **Iščemo:** $\bar{x}$, $s$ in $u_A$
 
 :::formula
@@ -115,10 +123,10 @@ $\bar{x} = \dfrac{\sum x_i}{n}$, $\quad s = \sqrt{\dfrac{\sum (x_i - \bar{x})^2}
 **Rešitev:**
 
 1. Vsota je $56{,}40\,\mathrm{s}$, zato $\bar{x} = 56{,}40 / 5 = 11{,}28\,\mathrm{s}$.
-2. Odmiki od povprečja so $0{,}04$, $-0{,}10$, $-0{,}03$, $0{,}13$ in $-0{,}04\,\mathrm{s}$. Njihovi kvadrati dajo vsoto $0{,}031\,\mathrm{s^2}$.
+2. Odmiki od povprečja so $0{,}04$; $-0{,}10$; $-0{,}03$; $0{,}13$ in $-0{,}04\,\mathrm{s}$. Njihovi kvadrati dajo vsoto $0{,}031\,\mathrm{s^2}$.
 3. Delimo z $n - 1 = 4$, ker smo povprečje izračunali iz istih podatkov: $s = \sqrt{0{,}031 / 4} \approx 0{,}088\,\mathrm{s}$.
 4. Negotovost povprečja: $u_A = 0{,}088 / \sqrt{5} \approx 0{,}039\,\mathrm{s}$.
-5. Odgovor: povprečni čas je $11{,}28\,\mathrm{s}$, posamezna meritev raztrosi za približno $0{,}09\,\mathrm{s}$, standardna negotovost povprečja pa je približno $0{,}04\,\mathrm{s}$.
+5. Odgovor: povprečni čas je $11{,}28\,\mathrm{s}$, raztros posamezne meritve je približno $0{,}09\,\mathrm{s}$, standardna negotovost povprečja pa je približno $0{,}04\,\mathrm{s}$.
 
 ### Primer 2: popravek iz kalibracije
 

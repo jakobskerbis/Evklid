@@ -9,7 +9,7 @@ Bunsen in Kirchhoff sta v 19. stoletju opazila, da vsak element v plamenu seva s
 
 Na koncu boš znal:
 
-- kaj so **orbitale** in kako izgledajo,
+- kaj so **orbitale** in kakšne oblike so,
 - kaj pomenijo **kvantna števila** $n$, $l$, $m_l$ in $m_s$ ter katere kombinacije so dovoljene,
 - zapisati **elektronsko konfiguracijo** atomov in ionov po izgradnem načelu, Paulijevem načelu in Hundovem pravilu,
 - razložiti izjeme (krom, baker) in konfiguracije ionov prehodnih kovin.
@@ -78,13 +78,31 @@ Orbitale $2p$ so usmerjene vzdolž različnih osi, zato sta elektrona v ločenih
 
 **8. Zapis konfiguracije.** Za kisik iz uvodnega primera ($Z = 8$): $1s^2\,2s^2\,2p^4$. Okrajšano zapišemo jedro kot konfiguracijo prejšnjega žlahtnega plina: železo je $[\mathrm{Ar}]\,3d^6\,4s^2$. Z orbitalnim diagramom (škatlice s puščicami) pokažemo tudi spine:
 
-```
-O:  1s [↑↓]  2s [↑↓]  2p [↑↓][↑ ][↑ ]    -> 2 nesparjena elektrona
-```
+:::risba skica
+opis: Orbitalni diagram atoma kisika. Orbitala 1s: par elektronov z nasprotnima spinoma (puščica gor in puščica dol). Orbitala 2s: par elektronov. Tri orbitale 2p: v prvi je par elektronov, v drugi en elektron s spinom gor, v tretji en elektron s spinom gor. Nesparjena sta 2 elektrona.
+območje: 0,5; 0,2 .. 8,5; 2,2
+napis: 1,5; 1,5 | 1s | nad
+pravokotnik: 1; 0,5 .. 2; 1,5
+puščica: 1,35; 0,65 -> 1,35; 1,35 | | | modra
+puščica: 1,65; 1,35 -> 1,65; 0,65 | | | oranžna
+napis: 3,5; 1,5 | 2s | nad
+pravokotnik: 3; 0,5 .. 4; 1,5
+puščica: 3,35; 0,65 -> 3,35; 1,35 | | | modra
+puščica: 3,65; 1,35 -> 3,65; 0,65 | | | oranžna
+napis: 6,5; 1,5 | 2p | nad
+pravokotnik: 5; 0,5 .. 6; 1,5
+puščica: 5,35; 0,65 -> 5,35; 1,35 | | | modra
+puščica: 5,65; 1,35 -> 5,65; 0,65 | | | oranžna
+pravokotnik: 6; 0,5 .. 7; 1,5
+puščica: 6,5; 0,65 -> 6,5; 1,35 | | | modra
+pravokotnik: 7; 0,5 .. 8; 1,5
+puščica: 7,5; 0,65 -> 7,5; 1,35 | | | modra
+podnapis: Kisik, 1s² 2s² 2p⁴: v orbitalah 2p sta 2 nesparjena elektrona
+:::
 
 **Valenčni elektroni** so elektroni v zunanji lupini (pri prehodnih kovinah še elektroni $(n-1)d$). Atom z nesparjenimi elektroni je **paramagneten** (privlači ga magnetno polje), atom z vsemi sparjenimi pa **diamagneten**.
 
-**9. Izjeme in ioni.** Polzasedena ($d^5$) in povsem zasedena ($d^{10}$) podlupina sta posebej stabilni, zato ima krom konfiguracijo $[\mathrm{Ar}]\,3d^5\,4s^1$ (ne $3d^4\,4s^2$) in baker $[\mathrm{Ar}]\,3d^{10}\,4s^1$. Pri tvorbi kationov prehodnih kovin atom **najprej odda elektrone $4s$**, šele nato $3d$, ker je pri teh elementih $3d$ že pod $4s$ (zakaj, pove razdelek »Bolj natančno«): $\mathrm{Fe^{2+}}$ je $[\mathrm{Ar}]\,3d^6$, ne $[\mathrm{Ar}]\,3d^4\,4s^2$. Pri anionih elektrone dodajamo v prvo nezasedeno orbitalo: $\mathrm{Cl^-}$ je $[\mathrm{Ne}]\,3s^2\,3p^6$, izoelektronski z argonom.
+**9. Izjeme in ioni.** Polzasedena ($d^5$) in povsem zasedena ($d^{10}$) podlupina sta posebej stabilni, zato ima krom konfiguracijo $[\mathrm{Ar}]\,3d^5\,4s^1$ (ne $3d^4\,4s^2$) in baker $[\mathrm{Ar}]\,3d^{10}\,4s^1$. Pri tvorbi kationov prehodnih kovin atom **najprej odda elektrone $4s$**, šele nato $3d$, ker je pri teh elementih $3d$ že pod $4s$ (zakaj, pove razdelek »Bolj natančno«): $\mathrm{Fe^{2+}}$ je $[\mathrm{Ar}]\,3d^6$, ne $[\mathrm{Ar}]\,3d^4\,4s^2$. Pri anionih elektrone dodajamo v najnižjo še ne polno podlupino: $\mathrm{Cl^-}$ je $[\mathrm{Ne}]\,3s^2\,3p^6$, izoelektronski z argonom.
 
 ## Rešeni primeri
 
@@ -233,17 +251,38 @@ Natančno navedi Paulijevo izključitveno načelo in iz njega ter dovoljenih vre
 
 Vrstni red zasedanja podlupin si zapomniš z diagonalnim diagramom: podlupine v vrsticah po $n$ beri po diagonalah od zgoraj desno navzdol levo.
 
-```
-1s
-2s 2p
-3s 3p 3d
-4s 4p 4d 4f
-5s 5p 5d 5f
-6s 6p 6d
-7s 7p
-
-diagonale:  1s | 2s | 2p 3s | 3p 4s | 3d 4p 5s | 4d 5p 6s | 4f 5d 6p 7s
-```
+:::risba skica
+opis: Diagonalni diagram zasedanja podlupin. V vrsticah od zgoraj navzdol so podlupine po glavnem kvantnem številu: 1s; 2s 2p; 3s 3p 3d; 4s 4p 4d 4f; 5s 5p 5d 5f; 6s 6p 6d; 7s 7p. Poševne puščice tečejo od zgoraj desno navzdol levo in povezujejo po vrsti: 1s; 2s; 2p 3s; 3p 4s; 3d 4p 5s; 4d 5p 6s; 4f 5d 6p 7s; 5f 6d 7p.
+območje: 0,5; 0 .. 9,5; 8
+puščica: 2,9; 7,45 -> 1,1; 6,55 | | | siva
+puščica: 2,9; 6,45 -> 1,1; 5,55 | | | siva
+puščica: 4,9; 6,45 -> 1,1; 4,55 | | | siva
+puščica: 4,9; 5,45 -> 1,1; 3,55 | | | siva
+puščica: 6,9; 5,45 -> 1,1; 2,55 | | | siva
+puščica: 6,9; 4,45 -> 1,1; 1,55 | | | siva
+puščica: 8,9; 4,45 -> 1,1; 0,55 | | | siva
+puščica: 8,9; 3,45 -> 3,1; 0,55 | | | siva
+napis: 2; 7 | 1s | sredina
+napis: 2; 6 | 2s | sredina
+napis: 4; 6 | 2p | sredina
+napis: 2; 5 | 3s | sredina
+napis: 4; 5 | 3p | sredina
+napis: 6; 5 | 3d | sredina
+napis: 2; 4 | 4s | sredina
+napis: 4; 4 | 4p | sredina
+napis: 6; 4 | 4d | sredina
+napis: 8; 4 | 4f | sredina
+napis: 2; 3 | 5s | sredina
+napis: 4; 3 | 5p | sredina
+napis: 6; 3 | 5d | sredina
+napis: 8; 3 | 5f | sredina
+napis: 2; 2 | 6s | sredina
+napis: 4; 2 | 6p | sredina
+napis: 6; 2 | 6d | sredina
+napis: 2; 1 | 7s | sredina
+napis: 4; 1 | 7p | sredina
+podnapis: Vrstni red: 1s, 2s, 2p 3s, 3p 4s, 3d 4p 5s, 4d 5p 6s, 4f 5d 6p 7s, 5f 6d 7p
+:::
 
 ## Drugače: Uporaba v stroki
 
@@ -298,7 +337,7 @@ kar za $Z = 1$ da $-2{,}179 \cdot 10^{-18}\,\mathrm{J}/n^2$. Pri vodiku je energ
 + $[\mathrm{Ar}]\,3d^5\,4s^1$
 - $[\mathrm{Ar}]\,3d^6$
 ~ Število elektronov se ujema, a $4s$ v atomu ni prazna; konfiguracija brez $4s$ velja za ione, ne za nevtralen atom.
-> Krom je izjema: polzasedena podlupina $3d^5$ s šestimi nesparjenimi elektroni ima nižjo energijo kot $3d^4\,4s^2$.
+> Krom je izjema: konfiguracija s polzasedeno podlupino $3d^5$ in šestimi nesparjenimi elektroni ima nižjo energijo kot $3d^4\,4s^2$.
 
 ? Koliko nesparjenih elektronov ima atom dušika ($1s^2\,2s^2\,2p^3$)?
 - $1$

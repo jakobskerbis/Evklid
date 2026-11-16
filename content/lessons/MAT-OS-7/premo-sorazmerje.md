@@ -21,7 +21,7 @@ Ko jo prepoznaš, iz enega znanega para izračunaš vse druge: razdaljo do vsake
 :::premisli
 Avtobus ima vozovnico za $1{,}50\,\text{€}$ na postajo, brez vstopnine. Napovej: ali za $10$ postaj plačaš dvakrat toliko kot za $5$? V čem se razlikuje od taksija?
 ---
-Da: $5$ postaj stane $7{,}50\,\text{€}$, $10$ postaj $15\,\text{€}$. Pri avtobusu ni začetnega zneska, zato $0$ postaj stane $0\,\text{€}$ in cena se res podvoji. Pri taksiju podvojitev prepreči vstopnina $3\,\text{€}$.
+Da: $5$ postaj stane $7{,}50\,\text{€}$; $10$ postaj $15\,\text{€}$. Pri avtobusu ni začetnega zneska, zato $0$ postaj stane $0\,\text{€}$ in cena se res podvoji. Pri taksiju podvojitev prepreči vstopnina $3\,\text{€}$.
 :::
 
 **Pravilo.** Dve količini sta **premo sorazmerni**, če velja: kolikokrat povečamo (ali zmanjšamo) eno, tolikokrat se poveča (ali zmanjša) druga. Rast sama ni dovolj. Rasti morata v istem razmerju.
@@ -70,7 +70,7 @@ Premo sorazmerje: $\dfrac{y}{x} = k$ je v vseh stolpcih enak, $y = k \cdot x$
 
 **Rešitev:**
 
-1. Količniki: $5 : 2 = 2{,}5$, $10 : 4 = 2{,}5$, $15 : 6 = 2{,}5$.
+1. Količniki: $5 : 2 = 2{,}5$; $10 : 4 = 2{,}5$; $15 : 6 = 2{,}5$.
 2. Vsi so enaki, zato je zveza premo sorazmerna in $k = 2{,}5$: $1\,\text{cm}$ pomeni $2{,}5\,\text{km}$.
 3. Za $10\,\text{cm}$: $2{,}5 \cdot 10 = 25$.
 
@@ -95,7 +95,7 @@ Sklepni račun: vrednost za $1\,\text{km}$ $=$ poraba $:$ pot, nato pomnožimo z
 
 Na vsej poti avto porabi $35$ litrov goriva.
 
-### Primer 3 (težji): od zemljevida do ure prihoda
+### Primer 3 (težji): od zemljevida do časa hoje
 
 Na zemljevidu Lana prebere, da $6\,\text{cm}$ pomeni $15\,\text{km}$. Pohodna pot do koče je na zemljevidu dolga $8{,}4\,\text{cm}$. Lana prehodi $4\,\text{km}$ v eni uri. Koliko časa bo hodila?
 
@@ -148,7 +148,7 @@ $0{,}06 \cdot 350 = 21$, torej $21$ litrov. Preizkus: $21 : 350 = 0{,}06$, koli�
 
 ## Povzetek
 
-- Količini sta premo sorazmerni, če se ob povečanju (zmanjšanju) ene za nekajkrat druga poveča (zmanjša) za enakokrat.
+- Količini sta premo sorazmerni, če velja: kolikokrat se poveča (zmanjša) ena, tolikokrat se poveča (zmanjša) druga.
 - Količnik $y : x$ je stalen; to je koeficient sorazmernosti $k$, zveza je $y = k \cdot x$. $k$ je vrednost za $1$ enoto.
 - Tabela: v vsakem stolpcu izračunaj $y : x$; vsi količniki morajo biti enaki.
 - Graf: točke ležijo na premici skozi izhodišče $(0, 0)$; večji $k$ pomeni strmejšo premico.

@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { DRSNE, IZVZETO } from "../public/drsniki.js";
+import { DRSNE, IZVZETO, BREZ_POKUKA } from "../public/drsniki.js";
 
 const pub = new URL("../public/", import.meta.url);
 
@@ -50,4 +50,16 @@ test("drsne vrstice nimajo navpičnega drsnika, razen namenoma navpičnih", asyn
   }
   assert.deepEqual(manjka, []);
   assert.match(readFileSync(new URL("drsniki.js", pub), "utf8"), /overflow-y: clip/);
+});
+
+// j, 5. 11.: ob odprtju pogovora je bil prvi čip »Preberi lekcijo« zamaknjen (rahel pomik, ki pokaže drsnost vrstice).
+test("vrstica oznak pogovora se ob odprtju ne premakne, a ostane drsna", () => {
+  assert.equal(BREZ_POKUKA, "#chat-state");
+  assert.ok(DRSNE.includes("#chat-state"), "ostane označena (bledenje roba)");
+  const src = readFileSync(new URL("drsniki.js", pub), "utf8");
+  assert.match(src, /el\.matches\(BREZ_POKUKA\)/, "pokukaj preskoči to vrstico");
+  assert.doesNotMatch(src, /Math\.abs\(premik\(el\) - cilj\) <= 2\) el\.scrollTo/, "vrnitev ne sme biti odvisna od natančnega položaja");
+  // pregled #460: nazaj samo naš pokuk (0 < premik ≤ cilj + 2), ne učenčevega pomika; poteg prsta tudi ustavi vrnitev
+  assert.match(src, /x > 0 && x <= cilj \+ 2\) el\.scrollTo/);
+  for (const d of ["touchmove", "pointermove", "pointerdown", "touchstart", "wheel"]) assert.ok(src.includes(`"${d}"`), d);
 });

@@ -1,33 +1,102 @@
 // Izris besedila z Markdownom in formulami (inštruktor, razlage, naloge, lekcije, kartice).
 // Knjižnice (marked, KaTeX, DOMPurify) so v brskalniku globalne; testi jih podajo sami.
 
+import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "./vodoravna-tabela.js";
+
 const lib = (name) => globalThis[name];
+
+// Točka A3: besedilo od modela in učencev (in vse drugo, kar gre skozi renderRich) ne sme nalagati ničesar z drugih
+// strani in ne sme vsebovati obrazcev ali vrinjenih slogov (style z url() bi naložil zunanjo sliko, gumb ali obrazec
+// bi se pretvarjal, da je del aplikacije). Povezave ostanejo. KaTeX se vstavi šele po čiščenju (style v formulah ostane).
+const PREPOVEDANE_OZNAKE = ["form", "input", "button", "textarea", "select", "option", "style", "link", "meta", "base"];
+const PREPOVEDANI_ATRIBUTI = ["style", "srcset", "poster", "background", "formaction", "action"];
+const NASLOVI_SLIK = ["src", "href", "xlink:href"];
+// Slika ali vir je dovoljen samo z iste strani, kot data:image/… ali blob: (fotografija s kamere).
+function lokalno(v) {
+  const s = String(v || "").trim();
+  if (/^data:image\//i.test(s)) return true;
+  try {
+    const u = new URL(s, globalThis.location?.href);
+    return (u.protocol === "blob:" || u.protocol === location.protocol) && u.origin === location.origin;
+  } catch {
+    return false;
+  }
+}
+const escHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const XHTML = "http://www.w3.org/1999/xhtml";
+const MEDIJI = new Set(["img", "source", "video", "audio", "track", "image", "use", "feimage", "iframe", "embed", "object", "mglyph"]);
+// url(…) v atributu (fill, stroke, mask, filter, clip-path, marker-*, cursor …) naloži tuj dokument SVG; dovoljen je le
+// sklic znotraj strani url(#…). Enako image-set(…), image(…), src(…), cross-fade(…), element(…). Ubežne znake CSS
+// (u\rl, u\72 l) najprej razrešimo.
+const odCss = (v) =>
+  String(v)
+    .replace(/\\([0-9a-f]{1,6})[ \t\r\n\f]?/gi, (_, h) => String.fromCodePoint(Math.min(parseInt(h, 16), 0x10ffff) || 0xfffd))
+    .replace(/\\([\s\S])/g, "$1");
+const tujUrl = (v) => {
+  const s = odCss(v);
+  return /url\s*\(\s*['"]?\s*(?!#)/i.test(s) || /(?:image-set|image|src|cross-fade|element)\s*\(/i.test(s);
+};
+export function ocistiStrogo(html, purify = lib("DOMPurify")) {
+  const frag = purify.sanitize(html, { FORBID_TAGS: PREPOVEDANE_OZNAKE, FORBID_ATTR: PREPOVEDANI_ATRIBUTI, RETURN_DOM_FRAGMENT: true });
+  for (const el of frag.querySelectorAll("*")) {
+    const ime = el.localName.toLowerCase();
+    const medij = MEDIJI.has(ime);
+    // SVG in MathML (razen povezave <a>): naslov samo #… ali, pri slikah in virih, z iste strani.
+    const tuji = el.namespaceURI !== XHTML && ime !== "a";
+    for (const { name, value } of [...el.attributes]) {
+      const naslov = NASLOVI_SLIK.includes(name.toLowerCase());
+      if (naslov && medij && !lokalno(value)) el.removeAttribute(name);
+      else if (naslov && tuji && !medij && !String(value).trim().startsWith("#")) el.removeAttribute(name);
+      else if (tujUrl(value)) el.removeAttribute(name);
+    }
+  }
+  const ovoj = frag.ownerDocument.createElement("div");
+  ovoj.append(frag);
+  return ovoj.innerHTML;
+}
 
 // annotate(tex): klikljive formule (formula-info.js) ovijejo znane simbole in enote v \htmlData{fx=…};
 // renderMath(tex, display, false) jih izpusti (npr. v gumbih z možnostmi odgovora).
 export function createRenderer({ marked = lib("marked"), katex = lib("katex"), sanitize, annotate = null } = {}) {
-  const clean = sanitize || ((html) => lib("DOMPurify").sanitize(html));
+  const clean = sanitize || ((html) => ocistiStrogo(html));
   const plain = { throwOnError: false, strict: "ignore" };
   const trusted = { ...plain, trust: (c) => c.command === "\\htmlData" };
+  // D5: predpomnilnik izrisov KaTeX (isti TeX in iste možnosti → isti HTML). Med pretakanjem odgovora se iste formule
+  // izrišejo znova ob vsakem koraku; tako samo prvič. Neuspešen izris (throwOnError) se ne shrani.
+  const izrisi = new Map();
+  const NAJVEC_IZRISOV = 500;
+  const izris = (tex, opts, display) => {
+    const kljuc = `${opts === trusted ? "t" : "p"}${display ? "D" : "i"}${tex}`;
+    let h = izrisi.get(kljuc);
+    if (h !== undefined) return h;
+    h = katex.renderToString(tex, { ...opts, ...(opts === trusted ? { throwOnError: true } : {}), displayMode: display });
+    if (izrisi.size >= NAJVEC_IZRISOV) izrisi.delete(izrisi.keys().next().value);
+    izrisi.set(kljuc, h);
+    return h;
+  };
 
   // Označena formula, ki je KaTeX ne zna izrisati, se izriše neoznačena (nikoli rdeč surov LaTeX).
-  // sentence: poved okoli formule, da dvoumna črka dobi pomen iz besedila (formula-data.js annotateTex).
-  function renderMath(tex, display, fx = true, sentence = "") {
+  // ctx: poved okoli formule (niz) ali { sentence, block }, da dvoumna črka dobi pomen iz besedila
+  // (formula-data.js annotateTex): block je celo besedilo (kartica, naloga, razdelek) z definicijami oznak.
+  function renderMath(tex, display, fx = true, ctx = "") {
     try {
       if (annotate && fx) {
-        const annotated = annotate(tex, sentence ? { sentence } : null);
+        const o = typeof ctx === "string" ? (ctx ? { sentence: ctx } : null) : ctx;
+        const annotated = annotate(tex, o);
         if (annotated !== tex) {
           try {
-            return katex.renderToString(annotated, { ...trusted, throwOnError: true, displayMode: display });
+            return izris(annotated, trusted, display);
           } catch { /* spodaj brez oznak */ }
         }
       }
-      return katex.renderToString(tex, { ...plain, displayMode: display });
+      return izris(tex, plain, display);
     } catch {
       try {
-        return katex.renderToString(tex, { ...plain, displayMode: display });
+        return izris(tex, plain, display);
       } catch {
-        return tex;
+        // Ne ParseError (npr. RangeError ob zelo globokem gnezdenju): formula je bila skrita pred čiščenjem, zato
+        // gre surov TeX na stran samo kot izpisano besedilo (sicer bi bil v njem lahko poljuben HTML).
+        return escHtml(tex);
       }
     }
   }
@@ -41,18 +110,39 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       .replace(/\\\[([\s\S]+?)\\\]/g, (_, t) => stash(t, true))
       .replace(/\\\((.+?)\\\)/g, (_, t) => stash(t, false))
       .replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, pre, t) => pre + stash(t, false));
-    if (annotate) for (const m of src.matchAll(/@@MATH(\d+)@@/g)) if (math[m[1]]) math[m[1]].sentence = sentenceAt(src, m[0], m.index);
+    const block = String(text ?? "");
+    if (annotate) {
+      // Formula nazaj v $…$ (odstavek za oznake iz besedila) ali kot TeX (formule v isti povedi).
+      const back = (s, asTex) => s.replace(/@@MATH(\d+)@@/g, (mk, i) => (!math[i] ? mk : asTex ? ` ${math[i].tex} ;` : math[i].display ? `$$${math[i].tex}$$` : `$${math[i].tex}$`));
+      for (const m of src.matchAll(/@@MATH(\d+)@@/g)) {
+        if (!math[m[1]]) continue;
+        const para = paragraphAt(src, m.index, m[0].length);
+        const raw = rawSentenceAt(src, m[0], m.index);
+        math[m[1]].ctx = { sentence: sentenceAt(src, m[0], m.index), sentenceTex: back(raw, true), sentenceMd: back(raw, false), para: back(para, false), block };
+      }
+    }
     let html = clean(marked.parse(splitFormulaCells(fixTables(src), math), { breaks: true, gfm: true }));
     // Tabela dobi svoj razred (oblika v style.css velja povsod, ne glede na okvir okoli nje);
     // ulomki in potence v njej so v polni velikosti (\displaystyle), sicer so premajhni za branje.
     html = html.replace(/<table>([\s\S]*?)<\/table>/g, (_, body) => {
       const inner = centerNumberColumns(body).replace(/@@MATH(\d+)@@/g, (m, i) =>
-        math[i] ? renderMath(math[i].display ? math[i].tex : `\\displaystyle ${math[i].tex}`, math[i].display, true, math[i].sentence) : m,
+        math[i] ? renderMath(math[i].display ? math[i].tex : `\\displaystyle ${math[i].tex}`, math[i].display, true, math[i].ctx) : m,
       );
-      return `<div class="md-table-wrap"><table class="md-table">${inner}</table></div>`;
+      const vod = vodoravnaTabela(inner);
+      if (vod) return vod;
+      const obrnjena = obrnjenaTabela(inner);
+      if (obrnjena) return `<div class="md-obrni"><div class="md-obrni-siroka"><div class="md-table-wrap"><table class="md-table">${inner}</table></div></div><div class="md-obrni-ozka"><div class="md-table-wrap"><table class="md-table">${obrnjena}</table></div></div></div>`;
+      const oznacena = oznaciStolpce(inner);
+      return `<div class="md-table-wrap"><table class="md-table${oznacena ? " md-stolpci" : ""}">${oznacena || inner}</table></div>`;
     });
     html = subHeadings(html);
-    return html.replace(/@@MATH(\d+)@@/g, (m, i) => (math[i] ? renderMath(math[i].tex, math[i].display, true, math[i].sentence) : m));
+    // Ločilo takoj za vrstično formulo (». , ; : ! ?«) ostane z njo v isti vrstici: pika se ne prelomi sama v novo vrstico
+    // (j, 5. 11.: kartica »Zapomni si«). Ne-prelomni ovoj samo za formulo in ločilo, ne za cel stavek.
+    return html.replace(/@@MATH(\d+)@@([.,;:!?]+)?/g, (m, i, punct) => {
+      if (!math[i]) return m;
+      const out = renderMath(math[i].tex, math[i].display, true, math[i].ctx);
+      return punct && !math[i].display ? `<span class="fx-nb">${out}${punct}</span>` : out + (punct || "");
+    });
   }
 
   return { renderMath, renderRich };
@@ -73,6 +163,19 @@ function splitSentences(text) {
   return out;
 }
 const cleanSentence = (s) => s.replace(/@@MATH\d+@@/g, " ").replace(/[*_#>`|]/g, " ").replace(/\s+/g, " ").trim();
+// Poved s formulo v izvirnem besedilu (z oznakami @@MATHn@@), za formule v isti povedi.
+function rawSentenceAt(src, mark, at) {
+  const before = splitSentences(src.slice(Math.max(0, at - 300), at));
+  const after = splitSentences(src.slice(at + mark.length, at + mark.length + 300));
+  return `${before[before.length - 1]} ${mark} ${after[0]}`;
+}
+// Odstavek s formulo (do prazne vrstice): oznaka iz besedila (»Za $y = 2x$ …«) velja le v njem, ne v celem razdelku.
+function paragraphAt(src, at, len) {
+  const a = src.lastIndexOf("\n\n", at);
+  const b = src.indexOf("\n\n", at + len);
+  return src.slice(a < 0 ? 0 : a + 2, b < 0 ? src.length : b);
+}
+
 export function sentenceAt(src, mark, at = src.indexOf(mark)) {
   if (at < 0) return "";
   const before = splitSentences(src.slice(Math.max(0, at - 300), at));

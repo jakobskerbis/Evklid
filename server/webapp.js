@@ -50,12 +50,15 @@ function strings(lang) {
 const HEX = /^#[0-9a-f]{6}$/i;
 const hexOr = (v, fallback) => (typeof v === "string" && HEX.test(v) ? v.toLowerCase() : fallback);
 
+// Oznaka različice ikon: enaka kot ?v= v index.html/gate.js; ob zamenjavi logotipa jo spremeni, da nameščena aplikacija (WebAPK) zazna novo ikono.
+const IKONE_V = "kristal";
+
 export function manifest(lang = "sl", { barva, ozadje } = {}) {
   const s = strings(lang);
   const shortcut = (key, view, file) => ({
     name: s[key],
     url: `/?pogled=${view}`,
-    icons: [{ src: `/icons/shortcut-${file}.png`, sizes: "192x192", type: "image/png" }],
+    icons: [{ src: `/icons/shortcut-${file}.png?v=${IKONE_V}`, sizes: "192x192", type: "image/png" }],
   });
   return {
     id: "/",
@@ -73,9 +76,9 @@ export function manifest(lang = "sl", { barva, ozadje } = {}) {
     // Klik na ikono, ko je Evklid že odprt, ga prikaže (brez drugega okna).
     launch_handler: { client_mode: ["navigate-existing", "auto"] },
     icons: [
-      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: `/icons/icon-192.png?v=${IKONE_V}`, sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: `/icons/icon-512.png?v=${IKONE_V}`, sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: `/icons/maskable-512.png?v=${IKONE_V}`, sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     shortcuts: [shortcut("nav.path", "path", "pot"), shortcut("nav.chat", "chat", "instruktor"), shortcut("nav.textbook", "textbook", "ucbenik"), shortcut("nav.graph", "graph", "kalkulator")],
     screenshots: [

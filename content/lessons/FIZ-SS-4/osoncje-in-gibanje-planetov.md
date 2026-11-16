@@ -52,8 +52,8 @@ Hiter je blizu Sonca, kjer je daljica Sonce–komet kratka in mora za enako plo�
 |---|---|---|---|
 | Merkur | 0,387 | 0,241 | 1,00 |
 | Zemlja | 1 | 1 | 1 |
-| Mars | 1,52 | 1,88 | 1,00 |
-| Jupiter | 5,20 | 11,9 | 1,00 |
+| Mars | 1,524 | 1,88 | 1,00 |
+| Jupiter | 5,20 | 11,86 | 1,00 |
 | Neptun | 30,1 | 165 | 1,00 |
 
 Dlje ko je planet, daljše je njegovo leto, a ne sorazmerno. Jupiter je $5{,}2$-krat dlje od Zemlje, njegovo leto pa je skoraj $12$-krat daljše. Stalen je šele količnik $T^2/a^3$. To je **tretji Keplerjev zakon**: za vsa telesa, ki krožijo okoli istega osrednjega telesa, je količnik $T^2/a^3$ enak.
@@ -97,7 +97,7 @@ Tretji Keplerjev zakon za dve telesi okoli Sonca: $\dfrac{T_\mathrm{M}^2}{a_\mat
 2. $a_\mathrm{M}^3 = 1{,}52^3 = 3{,}512$.
 3. Iščemo $T$, ne $T^2$, zato korenimo: $T_\mathrm{M} = \sqrt{3{,}512} = 1{,}874$ leta.
 4. V dnevih: $1{,}874 \cdot 365{,}25 \approx 684$ dni.
-5. Odgovor: leto na Marsu traja približno $1{,}87$ zemeljskega leta oziroma $684$ dni.
+5. Odgovor: leto na Marsu traja približno $1{,}87$ zemeljskega leta oziroma $684$ dni. Z natančnejšim podatkom $a_\mathrm{M} = 1{,}524\,\mathrm{a.e.}$ dobiš izmerjenih $687$ dni.
 
 ### Primer 2: kako hitro potujemo okoli Sonca
 

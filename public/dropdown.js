@@ -21,6 +21,15 @@ let uid = 0;
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
+// Besedilo oznake brez gnezdenih polj: <label>Jezik <select>…</select></label> ima v textContent tudi vse možnosti
+// (bralnik zaslona bi prebral ~100 imen jezikov kot ime gumba).
+function labelText(l) {
+  if (!l) return "";
+  const c = l.cloneNode(true);
+  for (const el of c.querySelectorAll("select, input, textarea, button, .dd")) el.remove();
+  return c.textContent.replace(/\s+/g, " ").trim();
+}
+
 export function enhanceSelect(sel) {
   if (done.has(sel) || sel.multiple || sel.size > 1 || sel.hasAttribute("data-native") || !sel.isConnected) return;
   done.add(sel);
@@ -32,7 +41,7 @@ export function enhanceSelect(sel) {
   btn.setAttribute("aria-haspopup", "listbox");
   btn.setAttribute("aria-expanded", "false");
   btn.innerHTML = `<span class="dd-label" dir="auto"></span>${CHEVRON}`;
-  const label = sel.getAttribute("aria-label") || sel.labels?.[0]?.textContent?.trim();
+  const label = sel.getAttribute("aria-label") || labelText(sel.labels?.[0]);
   if (label) btn.setAttribute("aria-label", label);
   sel.before(wrap);
   wrap.append(btn, sel); // gumb pred menijem: klik na <label> odpre gumb

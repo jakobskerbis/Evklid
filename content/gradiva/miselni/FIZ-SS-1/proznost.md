@@ -8,16 +8,17 @@ stanje: osnutek
 - Hookov zakon
   - $F = k\,x$
   - graf $F(x)$ je premica skozi izhodišče
+  - pred računom: $m\,g$ in metri
 - Prožnostni koeficient
   - enota $\mathrm{N/m}$
   - večji $k$, trša vzmet
-  - pred računom: $m\,g$ in metri
 - Meja prožnosti
   - čez njo vzmet ostane podaljšana
-  - Hookov zakon ne velja več
+  - sorazmerje preneha, ničla se premakne
 - Vzporedna vezava
   - enak raztezek, sili se seštejeta
   - $k_\mathrm{v} = k_1 + k_2$
+  - trša od vsake vzmeti
 - Zaporedna vezava
   - enaka sila, raztezka se seštejeta
   - $\dfrac{1}{k_\mathrm{z}} = \dfrac{1}{k_1} + \dfrac{1}{k_2}$

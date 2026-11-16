@@ -3,7 +3,7 @@
 // 2) ⇧ zamenja napise na mestu (iste tipke, brez ponovnega risanja plošče);
 // 3) vse plasti (ABC, 123, f(x), Σ, Kem) so enako visoke, zato stran ob menjavi ne poskoči; pri izklopljenih
 //    predlogih ni praznega pasu nad zavihki.
-import test from "node:test";
+import test, { before } from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
 import fs from "node:fs";
@@ -67,11 +67,13 @@ function serve() {
   return new Promise((ok) => server.listen(0, "127.0.0.1", () => ok(server)));
 }
 
+// Brskalnik se zažene v before(): vsi testi se registrirajo sinhrono (sicer jih --test-force-exit izpusti).
 let browser = null;
-try {
-  if (playwright) browser = await playwright.chromium.launch();
-} catch {}
-const skip = browser ? false : "Playwright/Chromium ni nameščen";
+before(async () => {
+  try {
+    if (playwright) browser = await playwright.chromium.launch();
+  } catch {}
+});
 test.after(() => browser?.close());
 
 for (const [name, opts] of [
@@ -79,7 +81,8 @@ for (const [name, opts] of [
   ["tablet", { viewport: { width: 820, height: 1180 }, isMobile: true, hasTouch: true }],
   ["desktop", { viewport: { width: 1280, height: 800 } }],
 ]) {
-  test(`keyboard stays light and the same height (${name})`, { skip }, async (t) => {
+  test(`keyboard stays light and the same height (${name})`, async (t) => {
+    if (!browser) return t.skip("Playwright/Chromium ni nameščen");
     const server = await serve();
     const ctx = await browser.newContext({ ...opts, locale: "sl-SI" });
     t.after(async () => {
@@ -226,7 +229,8 @@ for (const [name, opts] of [
   });
 }
 
-test("swiping the template row scrolls it and inserts nothing; a clean tap inserts (phone)", { skip }, async (t) => {
+test("swiping the template row scrolls it and inserts nothing; a clean tap inserts (phone)", async (t) => {
+  if (!browser) return t.skip("Playwright/Chromium ni nameščen");
   const server = await serve();
   const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, locale: "sl-SI" });
   t.after(async () => {
@@ -238,6 +242,9 @@ test("swiping the template row scrolls it and inserts nothing; a clean tap inser
   await page.waitForFunction(() => window.ready);
   await page.tap("#v");
   await page.waitForSelector("#tipkovnica .tk-ctx .tk-chip");
+  // Počasen strežnik (CI): počakaj, da se tipkovnica dokonča odpre, sicer poteg zgreši vrstico.
+  await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running"), null, { timeout: 5000 });
+  await page.waitForTimeout(100);
   const row = await page.locator("#tipkovnica .tk-ctx").boundingBox();
   const cdp = await ctx.newCDPSession(page);
   const y = row.y + row.height / 2;
@@ -248,8 +255,10 @@ test("swiping the template row scrolls it and inserts nothing; a clean tap inser
     await page.waitForTimeout(16);
   }
   await touch("touchEnd");
-  await page.waitForTimeout(300);
-  assert.ok(await page.locator("#tipkovnica .tk-ctx").evaluate((r) => r.scrollLeft > 20), "vrstica se je pomaknila");
+  const moved = await page
+    .waitForFunction(() => document.querySelector("#tipkovnica .tk-ctx").scrollLeft > 20, null, { timeout: 2000 })
+    .then(() => true, () => false);
+  assert.ok(moved, "vrstica se je pomaknila");
   assert.equal(await page.inputValue("#v"), "", "poteg ne vpiše predloge");
   await page.locator("#tipkovnica .tk-ctx .tk-chip").filter({ hasText: "π" }).tap();
   await page.waitForTimeout(60);

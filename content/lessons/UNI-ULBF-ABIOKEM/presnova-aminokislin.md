@@ -56,20 +56,29 @@ Koraki potekajo v jetrih, prva dva v mitohondriju, ostali v citosolu:
 4. **Argininosukcinat liaza:** argininosukcinat → arginin + fumarat.
 5. **Arginaza:** arginin + $\mathrm{H_2O}$ → **sečnina** + ornitin. Ornitin se vrne v mitohondrij.
 
-Skica v besedah:
+Skica cikla:
 
-```
-   NH4+ + HCO3- (2 ATP)
-          |
-   karbamoil fosfat
-          |
-ornitin --> citrulin
-   ^          |  + aspartat (ATP)
-   |          v
-arginin <- argininosukcinat
-   |                 |
- sečnina          fumarat
-```
+:::risba skica
+opis: Cikel sečnine kot krog štirih spojin. Zgoraj amonij in hidrogenkarbonat ob porabi 2 ATP dasta karbamoil fosfat. Ta vstopi med ornitinom levo zgoraj in citrulinom desno zgoraj. Citrulin z aspartatom ob porabi ATP da argininosukcinat desno spodaj. Iz njega nastane arginin levo spodaj, fumarat pa izstopi navzdol. Iz arginina izstopi navzdol sečnina, ornitin se obnovi in krog se sklene.
+območje: 0; 0 .. 10; 9
+napis: 4,5; 8,4 | NH₄⁺ + HCO₃⁻ (2 ATP) | sredina
+puščica: 4,5; 8,1 -> 4,5; 7,4
+napis: 4,5; 7,1 | karbamoil fosfat | sredina
+puščica: 4,5; 6,8 -> 4,5; 5,6
+napis: 2; 5,5 | ornitin | sredina
+puščica: 2,9; 5,5 -> 6,1; 5,5 | | | modra
+napis: 7,2; 5,5 | citrulin | sredina
+puščica: 7,2; 5,2 -> 7,2; 2,8 | | | modra
+napis: 7; 4 | + aspartat (ATP) | levo
+napis: 7,2; 2,5 | argininosukcinat | sredina
+puščica: 5,1; 2,5 -> 2,9; 2,5 | | | modra
+napis: 2; 2,5 | arginin | sredina
+puščica: 2; 2,8 -> 2; 5,2 | | | modra
+puščica: 2; 2,2 -> 2; 1 | | | oranžna
+napis: 2; 0,7 | sečnina | sredina
+puščica: 7,2; 2,2 -> 7,2; 1
+napis: 7,2; 0,7 | fumarat | sredina
+:::
 
 | Lastnost | citratni cikel | cikel sečnine |
 |---|---|---|
@@ -186,6 +195,64 @@ Z AST: označeni glutamat preda amino skupino oksaloacetatu, nastane aspartat s 
 - Sečnina ima dva N: iz $\mathrm{NH_4^+}$ in iz aspartata. Ornitin se obnovi kot oksaloacetat v citratnem ciklu.
 - Mnoge vodne živali (ribe kostnice, paglavci) izločajo amonijak, kopenski sesalci in odrasle dvoživke sečnino.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo transaminacije s splošno enačbo, vlogo PLP in zakaj je reakcija povratna ter brez porabe ATP;
+- reakcijo glutamat dehidrogenaze in razliko med transaminacijo in oksidativno deaminacijo (encim, usoda amino skupine, oksidacija, mesto);
+- vseh pet korakov cikla sečnine z encimi, substrati, produkti in mestom v celici (mitohondrij ali citosol);
+- izvor obeh dušikov sečnine ($\mathrm{NH_4^+}$ in aspartat) ter izvor ogljika ($\mathrm{HCO_3^-}$);
+- energijsko bilanco: 3 ATP, a 4 visokoenergijske vezi na molekulo sečnine, z utemeljitvijo;
+- povezavo s citratnim ciklom prek fumarata in aspartata ter delitev aminokislin na glukogene in ketogene.
+
+### Naloga 1
+
+Bolnik na dan zaužije $90\,\mathrm{g}$ beljakovin, ki vsebujejo $16\,\%$ dušika. V 24 urah z urinom izloči $24\,\mathrm{g}$ sečnine in še $2{,}0\,\mathrm{g}$ dušika v drugih spojinah (amonij, kreatinin, sečna kislina), z blatom in prek kože pa izgubi $2{,}0\,\mathrm{g}$ dušika. $M(\text{sečnina}) = 60\,\mathrm{g/mol}$, $M(\mathrm{N}) = 14\,\mathrm{g/mol}$. (a) Izračunaj dušikovo bilanco (vneseni dušik minus izločeni dušik) in povej, kaj pomeni njen predznak. (b) Koliko telesnih beljakovin na dan bolnik neto izgubi ali pridobi? (c) Kolikšen delež izločenega dušika je v sečnini? (d) Koliko molov ATP in koliko molov visokoenergijskih vezi porabijo jetra za izločeno sečnino?
+
+**Rešitev:**
+
+1. Vneseni dušik: $90\,\mathrm{g} \cdot 0{,}16 = 14{,}4\,\mathrm{g}$.
+2. Množina sečnine: $\dfrac{24\,\mathrm{g}}{60\,\mathrm{g/mol}} = 0{,}4\,\mathrm{mol}$.
+3. Sečnina nosi dva N, zato je dušika $2 \cdot 0{,}4\,\mathrm{mol} = 0{,}8\,\mathrm{mol}$, to je $0{,}8\,\mathrm{mol} \cdot 14\,\mathrm{g/mol} = 11{,}2\,\mathrm{g}$.
+4. Ves izločeni dušik: $11{,}2\,\mathrm{g} + 2{,}0\,\mathrm{g} + 2{,}0\,\mathrm{g} = 15{,}2\,\mathrm{g}$.
+5. Bilanca: $14{,}4\,\mathrm{g} - 15{,}2\,\mathrm{g} = -0{,}8\,\mathrm{g}$ dušika na dan. Bilanca je negativna: bolnik izloči več dušika, kot ga zaužije, torej razgrajuje lastne beljakovine.
+6. Neto izguba beljakovin: $\dfrac{0{,}8\,\mathrm{g}}{0{,}16} = 5\,\mathrm{g}$ na dan.
+7. Delež dušika v sečnini: $\dfrac{11{,}2\,\mathrm{g}}{15{,}2\,\mathrm{g}} \approx 0{,}74$, torej okoli $74\,\%$.
+8. ATP: $3 \cdot 0{,}4\,\mathrm{mol} = 1{,}2\,\mathrm{mol}$. Visokoenergijske vezi: $4 \cdot 0{,}4\,\mathrm{mol} = 1{,}6\,\mathrm{mol}$.
+9. Odgovor: (a) bilanca je $-0{,}8\,\mathrm{g}$ N na dan, negativna; (b) bolnik neto izgubi $5\,\mathrm{g}$ beljakovin na dan; (c) v sečnini je okoli $74\,\%$ izločenega dušika; (d) jetra porabijo $1{,}2\,\mathrm{mol}$ ATP oziroma $1{,}6\,\mathrm{mol}$ visokoenergijskih vezi.
+
+### Naloga 2
+
+Izpelji skupno enačbo cikla sečnine iz petih korakov. Iz nje utemelji, zakaj cikel porabi 3 molekule ATP, a 4 visokoenergijske vezi, in zakaj ornitina v skupni enačbi ni.
+
+**Rešitev:**
+
+1. Korak 1: $\mathrm{NH_4^+} + \mathrm{HCO_3^-} + 2\,\mathrm{ATP} \to$ karbamoil fosfat $+ 2\,\mathrm{ADP} + \mathrm{P_i}$.
+2. Korak 2: karbamoil fosfat + ornitin → citrulin $+ \mathrm{P_i}$. Fosfat, ki ga je nosil karbamoil fosfat, se tu sprosti.
+3. Korak 3: citrulin + aspartat + ATP → argininosukcinat + AMP $+ \mathrm{PP_i}$.
+4. Korak 4: argininosukcinat → arginin + fumarat.
+5. Korak 5: arginin $+ \mathrm{H_2O}$ → sečnina + ornitin.
+6. Enačbe seštej. Karbamoil fosfat, citrulin, argininosukcinat in arginin nastanejo v enem koraku in se porabijo v naslednjem, zato se krajšajo. Ornitin se porabi v koraku 2 in nastane v koraku 5, zato se krajša tudi on.
+7. Skupna enačba: $\mathrm{NH_4^+} + \mathrm{HCO_3^-} + \text{aspartat} + 3\,\mathrm{ATP} + \mathrm{H_2O} \to \text{sečnina} + \text{fumarat} + 2\,\mathrm{ADP} + \mathrm{AMP} + 2\,\mathrm{P_i} + \mathrm{PP_i}$.
+8. ATP: v koraku 1 se porabita 2 molekuli, v koraku 3 ena, skupaj 3.
+9. Vezi: dve molekuli ATP se razgradita do ADP (2 vezi). Tretja se razgradi do AMP in $\mathrm{PP_i}$ (1 vez), nato se $\mathrm{PP_i}$ razcepi v $2\,\mathrm{P_i}$ (še 1 vez). Skupaj $2 + 1 + 1 = 4$ vezi. Drugače povedano: da iz AMP spet nastane ATP, sta potrebni dve fosforilaciji.
+10. Odgovor: ornitin je nosilec, ki se v vsakem obratu obnovi, zato ga v skupni enačbi ni. Cikel porabi 3 ATP, vendar 4 visokoenergijske vezi, ker se ena molekula ATP razgradi do AMP.
+
+### Naloga 3
+
+Študent trdi: »Oba dušika sečnine se sprostita kot amonijak pri transaminaciji, sečnino pa nato naredijo ledvice.« Natančno navedi vse napake v trditvi in utemelji, od kod izvira vsak od obeh dušikov, če izhajamo iz alanina. Zapiši ustrezne reakcije.
+
+**Rešitev:**
+
+1. Prva napaka: pri transaminaciji se amonijak ne sprosti. Aminotransferaza s koencimom PLP amino skupino le prenese na α-ketokislino; število amino skupin se ne spremeni.
+2. Druga napaka: le en dušik vstopi v cikel kot prosti $\mathrm{NH_4^+}$, drugi vstopi vezan v aspartatu.
+3. Tretja napaka: sečnina nastaja v jetrih (mitohondrij in citosol jetrne celice), ledvice jo le izločijo.
+4. Zbiranje dušika: alanin + α-ketoglutarat $\rightleftharpoons$ piruvat + glutamat (ALT).
+5. Prvi dušik: glutamat $+ \mathrm{NAD^+} + \mathrm{H_2O} \to$ α-ketoglutarat $+ \mathrm{NH_4^+} + \mathrm{NADH} + \mathrm{H^+}$ (glutamat dehidrogenaza, mitohondrij). Nastali $\mathrm{NH_4^+}$ s $\mathrm{HCO_3^-}$ in 2 ATP da karbamoil fosfat.
+6. Drugi dušik: glutamat + oksaloacetat $\rightleftharpoons$ α-ketoglutarat + aspartat (AST). Aspartat v koraku 3 reagira s citrulinom v argininosukcinat.
+7. Ogljikov skelet aspartata zapusti cikel kot fumarat, njegov dušik pa ostane v argininu in nato v sečnini.
+8. Odgovor: oba dušika gresta skozi glutamat, a po različnih poteh: prvi z oksidativno deaminacijo kot $\mathrm{NH_4^+}$, drugi s transaminacijo v aspartat. Amonijak se sprosti samo pri deaminaciji, sečnina pa nastane v jetrih.
+
 ## Drugače: Na sliki
 
 Nariši dve kolesi, ki se dotikata, kot pri kolesu z dvema zobnikoma.
@@ -196,13 +263,15 @@ Nariši dve kolesi, ki se dotikata, kot pri kolesu z dvema zobnikoma.
 
 Slika pokaže, zakaj se cikla imenujeta tudi »Krebsovo dvokolo«: ogljik kroži med njima, dušik pa vstopa le v levo kolo in ga zapušča kot sečnina.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Štafeta.** Transaminacija je predaja štafetne palice. Palica (amino skupina) gre iz roke v roko, a nikoli ne pade na tla. Pade šele na cilju, pri glutamat dehidrogenazi, kjer jo pobere cikel sečnine.
+**Klinični laboratorij.** Aminotransferazi ALT in AST sta v jetrnih celicah. Ko so te poškodovane, encima uideta v kri. Zdrav odrasel ima ALT v serumu pod približno $0{,}7\,\mathrm{\mu kat/L}$ (okoli $40\,\mathrm{U/L}$); pri akutnem vnetju jeter vrednost zraste več kot desetkrat. Ker sečnino izločajo ledvice, njena povišana koncentracija v krvi kaže na slabše delovanje ledvic.
 
-**Hlev in plenice.** V hlevu ali pri polni plenici zadiši po amonijaku. Bakterije z encimom ureazo razgradijo sečnino nazaj v $\mathrm{NH_3}$ in $\mathrm{CO_2}$. To je obratno od tistega, kar so naredila jetra, a brez povrnitve porabljenega ATP.
+**Zootehnika.** Mikrobi v vampu krave beljakovine krme razgradijo do amonijaka. Presežek jetra pretvorijo v sečnino, ki preide tudi v mleko. Rejec zato iz sečnine v mleku presoja obrok: primerno je približno $15$ do $30\,\mathrm{mg}$ na $100\,\mathrm{mL}$. Višja vrednost pomeni preveč beljakovin glede na energijo; krava presežek dušika plača z ATP.
 
-**Gnojilo.** Sečnina je eno najpogostejših dušikovih gnojil. V tleh jo bakterije spet spremenijo v amonij, ki ga rastline vgradijo v svoje aminokisline. Dušik tako kroži med živalmi, tlemi in rastlinami.
+**Biotehnologija.** Živalske celice v bioreaktorju razgrajujejo glutamin in v gojišče izločajo amonij. Že nekaj $\mathrm{mmol/L}$ zavre rast in pokvari kakovost produkta, zato amonij sproti merijo. Spremenjene aminotransferaze s PLP industrija uporablja za sintezo kiralnih aminov, na primer za zdravilo sitagliptin.
+
+**Agronomija.** Sečnina je gnojilo s $46\,\%$ dušika. Ureaza talnih bakterij jo razgradi v amonijak, ki lahko uide v zrak, zato gnojilu dodajajo zaviralce ureaze.
 
 ## Preveri se
 

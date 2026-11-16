@@ -116,7 +116,7 @@ Sončni žarki so vzporedni, zato je razmerje $\dfrac{\text{senca}}{\text{višin
 
 **Rešitev:**
 
-1. Sonce je tako daleč, da so žarki, ki zadenejo palico in zvonik, praktično vzporedni. Oba predmeta zato metata senco pod istim kotom.
+1. Sonce je tako daleč, da so žarki, ki zadenejo palico in zvonik, praktično vzporedni. Oba predmeta zato mečeta senco pod istim kotom.
 2. Senca palice je $\dfrac{1{,}6}{1{,}0} = 1{,}6$-krat daljša od palice.
 3. Enako velja za zvonik, zato njegovo višino dobimo z deljenjem: $\dfrac{24}{1{,}6} = 15$, torej $15\,\text{m}$.
 4. Preizkus: $15\,\text{m} \cdot 1{,}6 = 24\,\text{m}$, kar je izmerjena senca.

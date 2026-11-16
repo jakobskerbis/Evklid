@@ -179,7 +179,7 @@ Razlika je $75{,}0\,\mathrm{W/m^2}$, toplotni tok pa $P = 75{,}0 \cdot 0{,}20 = 
 
 ## Drugače: Z analogijo
 
-Prevajanje je zelo podobno električnemu toku skozi upornik, ki ga poznaš iz Ohmovega zakona:
+Prevajanje je zelo podobno električnemu toku skozi upornik, ki ga poznaš iz osnovne šole (Ohmov zakon):
 
 | Elektrika | Toplota |
 |---|---|

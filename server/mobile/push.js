@@ -29,6 +29,12 @@ export function migratePush(db) {
       PRIMARY KEY (parent_id, kind, period)
     );
   `);
+  // Izbris računa: dnevnik obvestil (brez tuje povezave) gre z njim.
+  if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parents'").get()) {
+    db.exec(`CREATE TRIGGER IF NOT EXISTS push_log_parent_delete AFTER DELETE ON parents BEGIN
+      DELETE FROM push_log WHERE parent_id = OLD.id;
+    END;`);
+  }
 }
 
 export function goalPushText(child, n) {

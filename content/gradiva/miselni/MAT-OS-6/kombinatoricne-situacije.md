@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Drevesni prikaz
+  - Vsak korak doda nove veje
+  - Ena pot do konca je ena možnost
+- Preglednica
+  - Dva koraka: vrstice in stolpci
+  - Vsako polje je ena možnost
+- Pravilo produkta
+  - $N = a \cdot b \cdot c$
+  - Termini: $2 \cdot 3 = 6$
+  - Napaka: $3 + 2$ namesto $3 \cdot 2$
+- Brez ponavljanja
+  - Vsak korak ena izbira manj
+  - Tri vaje: $3 \cdot 2 \cdot 1 = 6$
+- Ničla spredaj
+  - $05$ ni dvomestno število
+- Vrstni red
+  - Rokovanje: AB je isto kot BA
+  - Pet oseb: $4 + 3 + 2 + 1 = 10$

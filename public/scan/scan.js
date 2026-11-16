@@ -25,6 +25,7 @@ const fresh = () => ({
   note: null, // obvestilo nad poljem (npr. brez povezave)
   given: [], // podatki naloge s fotografije (točka, asimptota …), gredo k AI rešitvi
   quality: null, // težava fotografije (blur | dark | glare), ki jo zaznamo na napravi pred branjem
+  shot: null, // zadnja prebrana fotografija (samo v pomnilniku; za pilot se shrani le ob soglasju)
 });
 const S = fresh();
 let owner = null; // profil, čigar naloga je v S (drug profil začne na praznem zaslonu)
@@ -37,6 +38,8 @@ let qTimer = null;
 let qLast = null; // težava zadnjega vzorca
 let qShown = null; // težava, ki je na zaslonu
 let tilt = null; // kot telefona glede na vodoravno (°), null brez senzorja
+// Naloga za člane pilota (public/pilot-naloge.js): po branju še »Prebrano prav / narobe«.
+let pilotTask = null; // { cond, title, photo: { allowed, days }, rate }
 
 export function initScan(deps) {
   D = deps;
@@ -96,6 +99,7 @@ export function showScan({ text = null, goal = null } = {}) {
     owner = sid();
     Object.assign(S, fresh());
     aiSeq++;
+    pilotTask = null; // naloga pilota prejšnjega profila (skupna naprava) ne velja za novega (B4)
     if (stream) stopCamera();
   }
   if (text) {
@@ -110,6 +114,15 @@ export function showScan({ text = null, goal = null } = {}) {
 }
 
 // Tipka Nazaj (telefon): rešitev, prepis ali izrez → nazaj na zajem; na zajemu zapusti zaslon.
+/** Začne skeniranje za nalogo pilota (zaslon se odpre na zajemu). */
+export function startPilotScan(task) {
+  pilotTask = task;
+  owner = sid();
+  Object.assign(S, fresh());
+  aiSeq++;
+  frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
+}
+
 export function scanBack() {
   if (S.mode === "capture") return false;
   S.mode = "capture";
@@ -123,6 +136,7 @@ export function scanBack() {
 
 export function leaveScan() {
   stopCamera();
+  pilotTask = null;
   if (graphView) {
     graphView.destroy?.();
     graphView = null;
@@ -141,6 +155,7 @@ function render() {
   else if (S.mode === "crop" || S.mode === "reading") renderCrop(box);
   else if (S.mode === "confirm") renderConfirm(box);
   else renderSolution(box);
+  if (pilotTask && S.mode !== "confirm") box.insertAdjacentHTML("afterbegin", `<p class="scan-note card pn-scan-banner">${icon("sparkles")}<span>${esc(pilotTask.title)}</span></p>`);
   hydrateIcons(box);
 }
 
@@ -491,6 +506,8 @@ async function readImage(dataUrl) {
     return render();
   }
   S.mode = "reading";
+  S.shot = dataUrl;
+  S.readOk = false; // ocena branja za pilot samo, ko je branje res teklo (ne ob izpadu ali v preizkusnem načinu)
   render();
   try {
     const out = await D.api(`/api/students/${sid()}/scan/read`, { method: "POST", body: { image: dataUrl } });
@@ -504,6 +521,15 @@ async function readImage(dataUrl) {
       return render();
     }
     S.problems = out.problems || [];
+    S.readOk = !out.error;
+    if (!S.problems.length && pilotTask && S.readOk) {
+      // Pilot: tudi neuspešno branje oceni (»Prebrano narobe«), zato ostanemo na prepisu.
+      S.given = [];
+      S.text = "";
+      S.note = t("scan.readFail");
+      S.mode = "confirm";
+      return render();
+    }
     if (!S.problems.length) {
       S.given = [];
       D.toast(t("scan.readFail"));
@@ -546,6 +572,7 @@ function renderConfirm(box) {
         <button type="button" class="primary" data-act="solve">${icon("check")}${esc(t("scan.solve"))}</button>
       </div>
     </div>`;
+  if (pilotTask && S.shot && S.readOk) bindPilotRate(box);
   const input = box.querySelector("#scan-input");
   const prev = box.querySelector(".scan-preview");
   const err = box.querySelector(".scan-err");
@@ -610,6 +637,47 @@ function renderConfirm(box) {
   };
   box.querySelector('[data-act="solve"]').addEventListener("click", go);
   if (!S.problems.length && !coarse()) input.focus();
+}
+
+// Pilot: ocena branja nad prepisom; fotografija gre na strežnik samo ob kljukici (in samo, kjer jo smemo ponuditi).
+function bindPilotRate(box) {
+  const task = pilotTask;
+  const photo = task.photo?.allowed;
+  // Gumba ocene sta enakovredna (nobeden ni poudarjen, sicer bi napihnil »prav«), vrstni red kot »Deluje / Ne deluje«.
+  box.insertAdjacentHTML(
+    "afterbegin",
+    `<div class="card pn-rate">
+      <p class="pn-rate-title">${icon("sparkles")}<b>${esc(task.title)}</b></p>
+      <p>${esc(t("pn.rateQ"))}</p>
+      <label class="scan-label" for="pn-rate-note">${esc(t("pn.note"))}</label>
+      <input id="pn-rate-note" type="text" maxlength="300" autocomplete="off" placeholder="${esc(t("pn.scanNotePh"))}">
+      ${photo ? `<label class="pn-consent"><input type="checkbox" id="pn-rate-photo"><span><b>${esc(t("pn.photoSave"))}</b><small class="muted">${esc(t("pn.photoRules", { n: task.photo.days }))} ${esc(t("pn.photoAi"))}</small></span></label>` : ""}
+      <div class="scan-actions pn-rate-btns">
+        <button type="button" class="secondary" data-pn-rate="ok">${icon("circle-check")}${esc(t("pn.ok"))}</button>
+        <button type="button" class="secondary" data-pn-rate="bad">${icon("circle-x")}${esc(t("pn.bad"))}</button>
+      </div>
+    </div>`,
+  );
+  box.querySelectorAll("[data-pn-rate]").forEach((b) =>
+    b.addEventListener("click", async () => {
+      if (task !== pilotTask) return;
+      box.querySelectorAll("[data-pn-rate]").forEach((x) => (x.disabled = true));
+      const consent = !!box.querySelector("#pn-rate-photo")?.checked;
+      try {
+        await task.rate({
+          ok: b.dataset.pnRate === "ok",
+          note: box.querySelector("#pn-rate-note").value.trim(),
+          consent,
+          image: consent ? S.shot : undefined,
+          problems: S.problems.map((p) => p.text).filter(Boolean),
+        });
+        Object.assign(S, fresh()); // ocenjena naloga ne ostane na zaslonu Skeniraj
+      } catch (err) {
+        D.toast(err?.message || t("scan.readFail"));
+        box.querySelectorAll("[data-pn-rate]").forEach((x) => (x.disabled = false));
+      }
+    }),
+  );
 }
 
 // ---------- 4. rešitev ----------

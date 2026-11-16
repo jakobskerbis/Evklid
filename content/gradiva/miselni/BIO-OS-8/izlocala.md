@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Izločanje
+  - snovi iz celic, ki so prišle v kri
+  - napaka: blato je iztrebljanje, ne izločanje
+- Tri izločala
+  - ledvice: seč s sečnino, vodo in solmi
+  - pljuča: ogljikov dioksid in vodna para
+  - koža: znoj
+- Sečila
+  - ledvici, sečevoda, sečni mehur, sečnica
+  - sečnina nastane v jetrih iz beljakovin
+- Precejanje
+  - v klobčiču kapilar nefrona
+  - prvotni seč okoli $180\,\mathrm{L}$ na dan
+  - krvničke in beljakovine ostanejo v krvi
+- Vsrkavanje nazaj
+  - v ledvičnem kanalčku: glukoza, voda, soli
+  - končni seč okoli $1{,}5\,\mathrm{L}$ na dan
+  - vrnjeno v kri: $V_\mathrm{v} = V_\mathrm{p} - V_\mathrm{k}$
+- Notranje okolje
+  - stalna količina vode in soli v krvi
+  - slana hrana: malo temnega seča
+- Dializa
+  - sečnina z difuzijo skozi opno
+  - nadomesti ledvice, ne pozdravi jih
+  - druga možnost: presaditev ledvice

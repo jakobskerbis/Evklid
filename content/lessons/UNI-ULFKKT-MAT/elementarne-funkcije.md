@@ -260,7 +260,7 @@ Enako velja za vsak par funkcija in njen inverz. Točka $(a, b)$ na grafu $f$ us
 | $1$ | $2{,}718$ |
 | $2$ | $7{,}389$ |
 
-Iz preglednice preberemo točke za $\ln x$: $(0{,}368;\ -1)$, $(1;\ 0)$, $(2{,}718;\ 1)$, $(7{,}389;\ 2)$.
+Iz preglednice preberemo točke za $\ln x$: $(0{,}368;\ -1)$; $(1;\ 0)$; $(2{,}718;\ 1)$; $(7{,}389;\ 2)$.
 
 Pri sinusu si predstavljaj valovito črto med $-1$ in $1$. Za $\arcsin$ izreži samo kos od $-\frac{\pi}{2}$ do $\frac{\pi}{2}$, kjer sinus strogo narašča, in ga prezrcali čez $y = x$. Dobiš kratko krivuljo od točke $(-1, -\frac{\pi}{2})$ do točke $(1, \frac{\pi}{2})$.
 
@@ -346,7 +346,7 @@ D_f | definicijsko območje funkcije f | |
 Z_f | zaloga vrednosti funkcije f | |
 D_{f^{-1}} | definicijsko območje inverzne funkcije | D_{f^{-1}} = Z_f |
 Z_{f^{-1}} | zaloga vrednosti inverzne funkcije | Z_{f^{-1}} = D_f |
-a | osnova logaritma | | | a > 0, a ≠ 1; pri premikih grafa premik v desno
+a | osnova eksponentne funkcije in logaritma | | | a > 0, a ≠ 1; pri premikih grafa premik v desno
 e | Eulerjevo število | | | e ≈ 2,718; osnova naravnega logaritma
 u | eksponent pri osnovi e | u = \ln v |
 v | pozitivna vrednost potence e^u | | | v > 0

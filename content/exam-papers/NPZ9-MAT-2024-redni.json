@@ -103,7 +103,7 @@
        "text": "Količnik pomnožimo z deliteljem in moramo dobiti deljenec: $(-8) \\cdot (-0{,}45) = 3{,}6$ ✓."
       }
      ],
-     "scoring": "1 t. za vrednost oklepaja $-0{,}45$, 1 t. za končni rezultat $-8$.",
+     "scoring": "1 t. za vrednost oklepaja $-0{,}45$; 1 t. za končni rezultat $-8$.",
      "mistake": "Oklepaj je treba izračunati najprej; račun $3{,}6 : 1{,}25 - 1{,}7$ ne upošteva oklepaja. Kdor odšteje v napačnem vrstnem redu ($1{,}7 - 1{,}25 = 0{,}45$), dobi napačen predznak, $+8$."
     }
    ]
@@ -524,7 +524,7 @@
        "text": "Ker je $5{,}5^2 = 30{,}25 < 32$, je $v > 5{,}5\\,\\mathrm{cm}$ in višina telesa večja od $13{,}5\\,\\mathrm{cm}$. Ker je $6^2 = 36 > 32$, je $v < 6\\,\\mathrm{cm}$ in višina telesa manjša od $14\\,\\mathrm{cm}$. Zaokrožitev na $14\\,\\mathrm{cm}$ je torej pravilna."
       }
      ],
-     "scoring": "1 t. za pravilen pravokotni trikotnik s polovico diagonale ($\\left(\\frac{d}{2}\\right)^2 = 32$ ali $\\frac{d}{2} = 4\\sqrt{2}\\,\\mathrm{cm}$) ali z višino stranske ploskve ($v_s^2 = 48$), 1 t. za $v^2 = 32$, 1 t. za $v \\approx 5{,}6\\,\\mathrm{cm}$, 1 t. za višino telesa $14\\,\\mathrm{cm}$.",
+     "scoring": "1 t. za pravilen pravokotni trikotnik s polovico diagonale ($\\left(\\frac{d}{2}\\right)^2 = 32$ ali $\\frac{d}{2} = 4\\sqrt{2}\\,\\mathrm{cm}$) ali z višino stranske ploskve ($v_s^2 = 48$); 1 t. za $v^2 = 32$; 1 t. za $v \\approx 5{,}6\\,\\mathrm{cm}$; 1 t. za višino telesa $14\\,\\mathrm{cm}$.",
      "mistake": "Pogosta napaka je, da namesto polovice diagonale vzamemo polovico roba: $8^2 - 4^2 = 48$ je kvadrat višine stranske ploskve, ne višine piramide (dobili bi napačnih $15\\,\\mathrm{cm}$). Ne pozabi prišteti roba kocke."
     }
    ]

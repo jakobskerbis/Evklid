@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pomen
+  - naboj, če pare dobi bolj elektronegativni atom
+  - zapis $+3$, naboj iona $3+$
+- Iz ionov
+  - $\mathrm{Fe_2O_3}$: $\mathrm{Fe^{3+}}$ in $\mathrm{O^{2-}}$
+  - vsota nabojev je $0$
+- Element in enoatomni ion
+  - $\mathrm{O_2}$, $\mathrm{N_2}$, Fe: $0$
+  - $\mathrm{Cl^-}$: $-1$
+- Stalna števila
+  - F $-1$, Na $+1$, Mg $+2$, Al $+3$
+  - H $+1$, O $-2$
+  - izjeme: $\mathrm{H_2O_2}$, $\mathrm{OF_2}$, $\mathrm{LiH}$
+- Vsota
+  - nevtralna spojina $0$, ion njegov naboj
+  - napaka: pozabljen indeks
+- Računanje neznanega
+  - $\mathrm{ClO_4^-}$: enačba $x - 8 = -1$, $x = +7$
+  - preizkus: vsota se mora ujemati
+- Razpon pri ogljiku
+  - $\mathrm{CH_4}$ $-4$, CO $+2$, $\mathrm{CO_2}$ $+4$

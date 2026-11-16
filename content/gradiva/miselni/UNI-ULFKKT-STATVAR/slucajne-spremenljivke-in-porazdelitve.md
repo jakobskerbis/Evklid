@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Slučajna spremenljivka
+  - funkcija $X\colon \Omega \to \mathbb{R}$
+  - $F(x) = P(X \le x)$
+  - $P(a < X \le b) = F(b) - F(a)$
+- Diskretna in zvezna
+  - diskretna: $P(X = k)$, verjetnosti seštevamo
+  - zvezna: ploščina pod gostoto, $P(X = a) = 0$
+  - pazi: gostota $f(x)$ ni verjetnost
+- Binomska porazdelitev
+  - $P(X = k) = \binom{n}{k}p^k(1-p)^{n-k}$
+  - $n$ neodvisnih poskusov, ista $p$
+  - napaka: pozabljen $\binom{n}{k}$
+- Poissonova porazdelitev
+  - $P(X = k) = \frac{\lambda^k}{k!}e^{-\lambda}$
+  - meja binomske: $n$ velik, $p$ majhen, $\lambda = np$
+- Enakomerna porazdelitev
+  - $f(x) = \frac{1}{b-a}$ na $[a, b]$
+  - verjetnost je delež dolžine
+- Eksponentna porazdelitev
+  - $P(T > t) = e^{-\lambda t}$, čas do dogodka
+  - brez spomina: $P(T > s+t \mid T > s) = P(T > t)$
+  - enoti $\lambda$ in $t$ izenači
+- Normalna porazdelitev
+  - $z = \frac{x - \mu}{\sigma}$, beri $\Phi(z)$
+  - $\Phi(-z) = 1 - \Phi(z)$
+  - $\mu \pm 2\sigma$ zajame približno $95\,\%$

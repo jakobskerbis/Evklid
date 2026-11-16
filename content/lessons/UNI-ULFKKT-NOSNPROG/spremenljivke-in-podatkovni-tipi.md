@@ -25,11 +25,19 @@ Beri od desne proti levi: »vrednost `19` shrani pod ime `starost`«. Znak `=` t
 
 Predstavljaj si nalepko z imenom, prilepljeno na škatlo z vrednostjo:
 
-```
-starost  ──►  [ 19 ]
-po starost = starost + 1:
-starost  ──►  [ 20 ]
-```
+:::risba skica
+opis: Dve vrstici. Zgoraj ime starost s puščico kaže na škatlo z vrednostjo 19. Spodaj, po ukazu starost = starost + 1, isto ime starost s puščico kaže na škatlo z vrednostjo 20.
+območje: 0; 0 .. 8; 4
+napis: 1,2; 3,2 | starost | sredina | debelo
+puščica: 2,4; 3,2 -> 4,4; 3,2
+pravokotnik: 4,5; 2,8 .. 6,1; 3,6 | modra
+napis: 5,3; 3,2 | 19 | sredina
+napis: 0,3; 2 | po starost = starost + 1: | desno
+napis: 1,2; 0,8 | starost | sredina | debelo
+puščica: 2,4; 0,8 -> 4,4; 0,8
+pravokotnik: 4,5; 0,4 .. 6,1; 1,2 | oranžna
+napis: 5,3; 0,8 | 20 | sredina
+:::
 
 Ime se začne s črko ali podčrtajem, vsebuje le črke, števke in `_` (brez presledkov) in ne sme biti rezervirana beseda jezika (`if`, `for`, `True`, `None` …). Velike in male črke se razlikujejo: `Starost` in `starost` sta dve različni imeni. Dobra imena povedo, kaj hranijo: `cena`, ne `x7`.
 
@@ -289,7 +297,7 @@ g = b == "1212" and len(a) > 2
 5. `int(-7.8)` odreže proti $0$ in da `-7`, zato je `f = -7 + 242 = 235`, tip `int`.
 6. `0.1 * 3` je `0.30000000000000004`, ker $0{,}1$ ni točno predstavljiv, zato je `h` enak `False`, tip `bool`.
 7. `a = "12" + "3"` je `"123"`; stara vrednost `"12"` je že bila uporabljena pri `b`, zato se `b` ne spremeni.
-8. `g`: `b == "1212"` je `True`, `len("123") > 2` je `True`, zato `g` je `True`.
+8. `g`: `b == "1212"` je `True`, `len("123") > 2` je `True`; `and` da `True` le, če sta resnična oba dela, zato `g` je `True`.
 9. Odgovor: `a = "123"`, `b = "1212"` (`str`); `c = 242`, `d = 2`, `e = -3`, `r = 3`, `f = 235` (`int`); `h = False`, `g = True` (`bool`).
 
 ### Naloga 2
@@ -301,7 +309,7 @@ Natančno navedi, kdaj ima okrajšan ulomek $m/n$ končen dvojiški zapis, in tr
 1. Trditev: naj bo $m/n$ okrajšan ulomek, $n > 0$. Ima končen dvojiški zapis natanko tedaj, ko je $n = 2^k$ za neko celo število $k \ge 0$.
 2. Če je $n = 2^k$: deljenje z $2^k$ premakne dvojiško vejico v zapisu celega števila $m$ za $k$ mest v levo, zapis ostane končen.
 3. Obratno: naj ima $q = m/n$ v dvojiškem zapisu $k$ mest za vejico. Potem je $N = q \cdot 2^k$ celo število in $m/n = N/2^k$, torej $m \cdot 2^k = N n$. Ker sta $m$ in $n$ tuji, $n$ deli $2^k$, zato je $n$ potenca števila $2$. $\square$
-4. $0{,}5 = 1/2$, $0{,}25 = 1/4$ in $0{,}75 = 3/4$ imajo imenovalce $2$, $4$ in $4$ ter največ dve dvojiški mesti za vejico, kar je veliko manj od $53$, zato so v `float` shranjeni točno.
+4. $0{,}5 = 1/2$; $0{,}25 = 1/4$ in $0{,}75 = 3/4$ imajo imenovalce $2$, $4$ in $4$ ter največ dve dvojiški mesti za vejico, kar je veliko manj od $53$, zato so v `float` shranjeni točno.
 5. Pri seštevanju IEEE 754 vrne točen rezultat, zaokrožen na najbližji `float`. Točna vsota $3/4$ je sama predstavljiva, zato zaokroževanja ni.
 6. Odgovor: `0.5 + 0.25 == 0.75` vrne `True`, medtem ko `0.1 + 0.2 == 0.3` vrne `False`, ker $1/10$, $1/5$ in $3/10$ nimajo imenovalca, ki bi bil potenca števila $2$.
 

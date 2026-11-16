@@ -203,5 +203,7 @@ test("periodni sistem vpiše celo formulo v kalkulator", () => {
   assert.ok(tools.includes("chemText(f)") && tools.includes("chemText(e.sym)"), "PSE: molska masa in element gresta v kalkulator kot M(…)");
   assert.ok(tools.includes("formulaToCalc(a.textContent, subject)"), "zbirka formul: gumb »V kalkulator«");
   const sci = readFileSync("public/graph/sci.js", "utf8");
-  assert.ok(sci.includes("withChem(text, analyze)") && sci.includes("withChem(text, evaluate)"), "kalkulator bere M(…) ob = in med tipkanjem");
+  // sproten predogled (analyzeLive) je v sci-vnos.js, da ga uporablja tudi lep zapis vnosa
+  const vnos = readFileSync("public/graph/sci-vnos.js", "utf8");
+  assert.ok(sci.includes("withChem(text, analyze)") && vnos.includes("withChem(text, evaluate, env)") && vnos.includes("withChem(text, analyze, env"), "kalkulator bere M(…) ob = in med tipkanjem");
 });

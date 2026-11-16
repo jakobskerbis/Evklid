@@ -1,6 +1,7 @@
 // Garancija »Boljša ocena ali vrnemo denar« in »Podari Evklid« (j 2026-11-04): prijava, 8 tednov vaje,
 // zahtevek, vračilo skrbnika, pilotne kode za šole, sklad (dodatek pri naročnini, »Podari mesec«) in vračila.
 import test from "node:test";
+import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { migrateAccounts } from "../server/accounts/schema.js";
@@ -40,15 +41,36 @@ function fakeStripe() {
     const sub = /^\/subscriptions\/(\w+)$/.exec(p);
     if (sub && init.method === "DELETE") return ok({ id: sub[1], status: "canceled", customer: "cus_x", items: { data: [] } });
     if (sub) return ok({});
+    if (p === "/subscriptions") return ok({ data: state.subList || [] }); // garancija prekliče vse naročnine kupca
     return { ok: false, status: 404, json: async () => ({ error: { message: "ni" } }) };
   };
   return { calls, state, fetchFn };
 }
 
-async function withServer(fn) {
+// Garancija se ponudi samo ob treh varovalih (garancija.js guaranteeAdvertised): stikalo, živ ključ, prava vračila.
+const GUARD_ENV = ["EVKLID_GARANCIJA_OGLAS", "EVKLID_GUARANTEE_LIVE"];
+const ON = { EVKLID_GARANCIJA_OGLAS: "1", EVKLID_GUARANTEE_LIVE: "1" };
+const LIVE = { key: "sk_live_x", env: ON };
+async function withServer(fn, { key = "sk_test_x", env = {} } = {}) {
+  const prev = Object.fromEntries(GUARD_ENV.map((k) => [k, process.env[k]]));
+  for (const k of GUARD_ENV) {
+    if (env[k] === undefined) delete process.env[k];
+    else process.env[k] = env[k];
+  }
+  try {
+    await withServerInner(fn, key);
+  } finally {
+    for (const [k, v] of Object.entries(prev)) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  }
+}
+
+async function withServerInner(fn, key) {
   const store = openDb(":memory:");
   const stripe = fakeStripe();
-  const app = createApp(store, { accounts: true, scheduler: false, stripeKey: "sk_test_x", resendKey: "re_x", webhookSecret: SECRET, fetchFn: stripe.fetchFn, log: { error() {} } });
+  const app = createApp(store, { accounts: true, scheduler: false, stripeKey: key, resendKey: "re_x", webhookSecret: SECRET, fetchFn: stripe.fetchFn, log: { error() {} } });
   const server = app.listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
   const client = () => {
@@ -160,7 +182,7 @@ test("garancija: prijava v 14 dneh, 8 tednov vaje, zahtevek in vračilo skrbnika
       assert.ok(stripe.calls.some((c) => c.method === "DELETE" && c.path === "/v1/subscriptions/sub_1"));
       // Drugič ne gre (ni več oddan zahtevek).
       assert.equal((await adm(`/api/admin/guarantees/${list[0].id}/refund`, { method: "POST", body: {} })).status, 409);
-    });
+    }, LIVE);
   } finally {
     delete process.env.EVKLID_ADMIN_EMAILS;
   }
@@ -189,10 +211,10 @@ test("garancija: zamujen teden vaje ali boljša ocena ne prineseta vračila", as
     // Rok: po 8 tednih + 60 dni zahtevka ni več.
     store.db.prepare("UPDATE guarantees SET status = 'active', started_at = ?").run(new Date(Date.now() - (56 + 61) * DAY).toISOString());
     assert.equal((await a("/api/guarantee")).body.guarantee.phase, "lapsed"); // brez vaje v teh tednih
-  });
+  }, LIVE);
 });
 
-test("Podari Evklid: pilotne kode z mejami, sklad iz dodatka in »Podari mesec«, vračilo zniža sklad", async () => {
+test("Podari Evklid: pilotne kode z mejami, sklad iz (starega) dodatka in »Podari mesec«, vračilo zniža sklad; novega dodatka ni", async () => {
   process.env.EVKLID_ADMIN_EMAILS = "skrbnik@pod.si";
   try {
     await withServer(async ({ client, stripe, store, hook }) => {
@@ -221,18 +243,17 @@ test("Podari Evklid: pilotne kode z mejami, sklad iz dodatka in »Podari mesec«
       assert.ok(!JSON.stringify(r.body.children).includes("podari"));
       assert.equal((await client()("/api/podari")).body.in_use_months, 3);
 
-      // Dodatek pri naročnini: enkratna vrstica in podari_id v metadata naročnine.
+      // Dodatka 2/5/10 € pri naročnini ni več (j 2026-11-04): checkout ga prezre, v Stripu je samo naročnina.
       store.db.prepare("UPDATE parents SET gift_until = NULL WHERE id = ?").run(parent.id);
       r = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, podari: 500 } });
       assert.equal(r.status, 200, JSON.stringify(r.body));
       const cs = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1).body;
-      assert.equal(cs["line_items[1][price_data][unit_amount]"], "500");
-      const podariId = cs["subscription_data[metadata][podari_id]"];
-      assert.ok(podariId);
-      // Neznan znesek dodatka se prezre.
-      await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, podari: 333 } });
-      assert.equal(stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1).body["line_items[1][price_data][unit_amount]"], undefined);
-      // invoice.paid potrdi dodatek (enkrat).
+      assert.equal(cs["line_items[1][price_data][unit_amount]"], undefined);
+      assert.equal(cs["subscription_data[metadata][podari_id]"], undefined);
+      assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM podari_fund WHERE kind = 'addon'").get().n, 0);
+      assert.equal((await client()("/api/podari")).body.addons, undefined);
+      // Star dodatek (sklenjen pred spremembo, prvi račun po preizkusu): invoice.paid ga še potrdi (enkrat).
+      const podariId = String(store.db.prepare("INSERT INTO podari_fund (parent_id, kind, amount) VALUES (?, 'addon', 500)").run(parent.id).lastInsertRowid);
       const inv = { id: "in_9", customer: "cus_x", amount_paid: 1499, payment_intent: "pi_add", subscription_details: { metadata: { podari_id: podariId, parent_id: String(parent.id) } } };
       await hook({ id: "evt_1", type: "invoice.paid", data: { object: inv } });
       await hook({ id: "evt_2", type: "invoice.paid", data: { object: { ...inv, id: "in_10", payment_intent: "pi_next" } } });
@@ -312,7 +333,7 @@ test("garancija: dodatek »Podari« ni plačilo naročnine (prijava, vračilo, p
       assert.equal(store.db.prepare("SELECT status FROM podari_fund WHERE payment_id = 'pi_2'").get().status, "paid");
       await hook({ id: "evt_r2", type: "charge.refunded", data: { object: { payment_intent: "pi_2", amount: 1499, amount_refunded: 1499 } } });
       assert.equal(store.db.prepare("SELECT status FROM podari_fund WHERE payment_id = 'pi_2'").get().status, "refunded");
-    });
+    }, LIVE);
   } finally {
     delete process.env.EVKLID_ADMIN_EMAILS;
   }
@@ -333,7 +354,7 @@ test("garancija: dan vaje (datum v Ljubljani) šteje samo v en teden", async () 
     for (const h of [10, 14]) ins.run(kid.id, sql(day0 + 7 * DAY + h * 3600000));
     const g = (await a("/api/guarantee")).body.guarantee;
     assert.deepEqual(g.weeks.slice(0, 2).map((w) => w.days), [0, 1]);
-  });
+  }, LIVE);
 });
 
 test("garancija: dnevi in tedni vaje po času v Ljubljani (vaja ob 0.30 v ponedeljek je ponedeljek)", async () => {
@@ -361,7 +382,7 @@ test("garancija: dnevi in tedni vaje po času v Ljubljani (vaja ob 0.30 v ponede
     ins.run(kid.id, sql(ljMidnight(day0, 9) - 30 * 60000));
     const g = (await a("/api/guarantee")).body.guarantee;
     assert.deepEqual(g.weeks.slice(0, 2).map((w) => w.days), [0, 2]);
-  });
+  }, LIVE);
 });
 
 test("Podari Evklid: vračilo po izdaji kod iz sklada sklada ne spusti pod 0", async () => {
@@ -428,4 +449,57 @@ test("garancija: zapis se izbriše 10 let po odločitvi, odprt zahtevek ostane",
   assert.equal(purgeOldGuarantees(db, now), 4);
   assert.deepEqual(db.prepare("SELECT email_hash FROM guarantees ORDER BY email_hash").all().map((r) => r.email_hash), ["b", "e", "g"]);
   assert.equal(purgeOldGuarantees(db, now), 0);
+});
+
+test("garancija: brez vseh treh varoval je Račun ne ponudi (ni vrstice, ni prijave), obstoječa prijava ostane", async () => {
+  const combos = [
+    { key: "sk_test_x", env: ON, why: "testni ključ" },
+    { key: "sk_live_x", env: {}, why: "brez stikal" },
+    { key: "sk_live_x", env: { EVKLID_GARANCIJA_OGLAS: "1" }, why: "brez pravih vračil" },
+    { key: "sk_live_x", env: { EVKLID_GUARANTEE_LIVE: "1" }, why: "brez stikala oglasa" },
+    { key: "sk_live_x", env: { ...ON, EVKLID_GARANCIJA_OGLAS: "true" }, why: "stikalo samo z 1" },
+    { key: "", env: ON, why: "brez Stripa" },
+  ];
+  const body = (kid) => ({ student_id: kid.id, subject: "MAT", grade: 2, terms: true });
+  for (const c of [...combos, { ...LIVE, why: "vse troje", on: true }]) {
+    await withServer(async ({ client, stripe, store }) => {
+      const a = client();
+      const parent = await registerVerified(a, stripe, "brez@gar.si");
+      const kid = (await a("/api/students", { method: "POST", body: { name: "Lan", birth_year: YEAR - 12, consent: true } })).body;
+      paid(store, parent.id);
+      stripe.state.invoices = [{ id: "in_1", amount_paid: 999, created: Math.floor((Date.now() - 2 * DAY) / 1000), payment_intent: "pi_1", subscription: "sub_1" }];
+      const acc = (await a("/api/account")).body;
+      if (c.on) {
+        assert.equal(acc.guarantee.offered, true, c.why);
+        assert.equal(acc.guarantee.can_enroll, true, c.why);
+        assert.equal((await a("/api/guarantee/enroll", { method: "POST", body: body(kid) })).status, 201, c.why);
+        return;
+      }
+      assert.equal(acc.guarantee, null, c.why);
+      assert.equal((await a("/api/guarantee")).body.guarantee, null, c.why);
+      const r = await a("/api/guarantee/enroll", { method: "POST", body: body(kid) });
+      assert.equal(r.status, 409, c.why);
+      assert.match(r.body.error, /ni na voljo/, c.why);
+      assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM guarantees").get().n, 0, c.why);
+      // Obstoječa prijava (npr. iz testne baze) ostane nedotaknjena: starš jo vidi, zahtevek odda, vrstice pri paketu ni.
+      const started = new Date(Date.now() - 57 * DAY).toISOString();
+      store.db
+        .prepare("INSERT INTO guarantees (parent_id, email_hash, student_id, subject, grade_before, started_at, first_paid_at) VALUES (?, 'h', ?, 'MAT', 2, ?, ?)")
+        .run(parent.id, kid.id, started, started);
+      const before = store.db.prepare("SELECT * FROM guarantees").get();
+      const g = (await a("/api/account")).body.guarantee;
+      assert.equal(g.id, before.id, c.why);
+      assert.equal(g.offered, false, c.why);
+      assert.equal(g.phase, "lapsed", c.why); // brez vaje
+      assert.deepEqual(store.db.prepare("SELECT * FROM guarantees").get(), before, c.why);
+      assert.equal((await a("/api/guarantee/enroll", { method: "POST", body: body(kid) })).status, 409, c.why);
+    }, c);
+  }
+});
+
+test("garancija: vrstica pri izbiri paketa samo ob ponudbi (account.js), pogoji niso v iskalnikih", () => {
+  const acc = readFileSync(new URL("../public/account.js", import.meta.url), "utf8");
+  assert.ok(acc.includes("${acc.guarantee?.offered ? guaranteeLine() : \"\"}"));
+  const html = readFileSync(new URL("../public/garancija.html", import.meta.url), "utf8");
+  assert.match(html, /<meta name="robots" content="noindex">/);
 });

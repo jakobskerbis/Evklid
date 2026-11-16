@@ -83,5 +83,8 @@ export function studentResults(store, studentId, topicId = null) {
   }
   if (chat.n) parts.push(`pogovori (30 dni): vsebinska napaka v ${chat.err} od ${chat.n} odgovorov`);
   if (!parts.length) parts.push("še ni podatkov");
-  return { text: `${parts.join("; ")}. Predlagana začetna zahtevnost: ${tier} (${why}).`, tier };
+  // personal: vrstica nosi rezultate tega učenca (štetja, stopnja, začetni test), ne le privzetih vrednosti nove teme;
+  // tak odgovor ne gre v skupni predpomnilnik (server/app.js hasPersonalPrompt, pregled #484 B P2-1).
+  const personal = all.n > 0 || chat.n > 0 || (!!topic && (topic.status !== "new" || topic.level !== 1 || topic.pretest != null || topic.n > 0));
+  return { text: `${parts.join("; ")}. Predlagana začetna zahtevnost: ${tier} (${why}).`, tier, personal };
 }

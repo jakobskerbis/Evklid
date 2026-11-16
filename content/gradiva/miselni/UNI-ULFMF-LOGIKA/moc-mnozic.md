@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enako močni množici
+  - $A \sim B$: obstaja bijekcija $A \to B$
+  - za $A \not\sim B$ izključi vse funkcije
+- Števne množice
+  - $A \sim \mathbb{N}$, moč $\aleph_0$
+  - $\mathbb{Z}$: vrsta $0, 1, -1, 2, -2, \dots$
+  - $S \sim \mathbb{N}$ prek $f(n) = 2n$
+- Diagonalno štetje parov
+  - $\pi(m, n) = \frac{(m+n-2)(m+n-1)}{2} + m$
+  - primer: $\pi(3, 4) = 18$
+  - zato je $\mathbb{Q}$ števna
+- Pravila števnosti
+  - podmnožica, unija, produkt števnih
+  - nadmnožica neštevne je neštevna
+- Diagonalni argument
+  - $(0, 1)$ neštevna, $x_k \neq$ $k$-ta decimalka $a_k$
+  - števki $4$ in $5$: brez dvojnih zapisov
+  - $|\mathbb{R}| = \mathfrak{c}$, iracionalnih neštevno
+- Primerjava moči
+  - $|A| \le |B|$: injekcija $A \to B$
+  - Cantor–Schröder–Bernstein: dve injekciji dasta bijekcijo
+  - Cantorjev izrek: $|A| < |\mathcal{P}(A)|$
+- Tipične napake
+  - »del je manjši od celote«
+  - gostota $\mathbb{Q}$ ne pomeni neštevnosti

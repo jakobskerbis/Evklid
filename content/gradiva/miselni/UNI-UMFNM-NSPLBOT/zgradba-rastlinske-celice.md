@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mikroskopska slika
+  - prava velikost $= \dfrac{d}{M}$
+  - $1\,\text{mm} = 1000\,\mu\text{m}$
+  - napaka: »množenje s povečavo«
+- Celična stena
+  - srednja lamela, primarna, sekundarna stena
+  - sekundarna leži pod primarno
+  - prepustna; izbira snovi plazmalema
+- Povezave med celicami
+  - piknje in plazmodezme
+  - simplast in apoplast
+- Plastidi
+  - dvojna membrana, lastna DNA, ribosomi 70S
+  - nastanejo le z delitvijo
+  - kloroplasti, kromoplasti, amiloplasti, etioplasti
+- Pretvorbe plastidov
+  - paradižnik: kloroplast v kromoplast
+  - krompir na svetlobi: amiloplast v kloroplast
+- Vakuola
+  - tonoplast in celični sok
+  - do okoli $90\,\%$ prostornine zrele celice
+  - skladišče, razgradnja, poceni rast
+- Turgor in plazmoliza
+  - $\Psi = \Psi_s + \Psi_p$, $\Psi_p$ okoli $0{,}5\,\text{MPa}$
+  - hipertonična raztopina: protoplast odstopi od stene

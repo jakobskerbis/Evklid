@@ -160,7 +160,7 @@ $\mathrm{pH} = \mathrm{p}K_a + \log\dfrac{n(\mathrm{A^-})}{n(\mathrm{HA})}$, ena
 **Rešitev:**
 
 1. $\mathrm{p}K_a = -\log(1{,}8 \cdot 10^{-5}) \approx 4{,}74$; v vmesnih računih obdržimo še eno decimalko, $4{,}745$.
-2. Pufer: $\mathrm{pH} = 4{,}74 + \log\dfrac{0{,}080}{0{,}100} = 4{,}745 - 0{,}097 \approx 4{,}65$ (baze je manj kot kisline, zato je pH pod $\mathrm{p}K_a$).
+2. Pufer: $\mathrm{pH} = 4{,}745 + \log\dfrac{0{,}080}{0{,}100} = 4{,}745 - 0{,}097 \approx 4{,}65$ (baze je manj kot kisline, zato je pH pod $\mathrm{p}K_a$).
 3. $\mathrm{NaOH}$ zreagira s kislino: $\mathrm{CH_3COOH + OH^- \to CH_3COO^- + H_2O}$. Nove množine: $n(\mathrm{CH_3COOH}) = 0{,}100 - 0{,}010 = 0{,}090\,\mathrm{mol}$, $n(\mathrm{CH_3COO^-}) = 0{,}080 + 0{,}010 = 0{,}090\,\mathrm{mol}$.
 4. $\mathrm{pH} = 4{,}74 + \log\dfrac{0{,}090}{0{,}090} = 4{,}74$. Sprememba je le okoli $+0{,}10$.
 5. V čisti vodi: $[\mathrm{OH^-}] = 0{,}010\,\mathrm{mol/L}$, $\mathrm{pOH} = 2{,}00$, $\mathrm{pH} = 12{,}00$. Sprememba od $7{,}00$ je $+5{,}00$.
@@ -223,7 +223,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-$25{,}0\,\mathrm{mL}$ raztopine ocetne kisline s koncentracijo $0{,}100\,\mathrm{mol/L}$ titriramo z raztopino $\mathrm{NaOH}$ s koncentracijo $0{,}100\,\mathrm{mol/L}$ pri $25\,^\circ\mathrm{C}$. Izračunaj pH po dodatku $10{,}0\,\mathrm{mL}$, $12{,}5\,\mathrm{mL}$ in $25{,}0\,\mathrm{mL}$ raztopine $\mathrm{NaOH}$ ($K_a = 1{,}8 \cdot 10^{-5}$, $K_w = 1{,}0 \cdot 10^{-14}$). Kateri indikator (barvilo, ki spremeni barvo v navedenem območju pH) je primeren za določitev ekvivalenčne točke (dodana množina $\mathrm{OH^-}$ je enaka začetni množini kisline): metiloranž (preskok pri $\mathrm{pH}$ $3{,}1$ do $4{,}4$) ali fenolftalein ($8{,}2$ do $10{,}0$)?
+$25{,}0\,\mathrm{mL}$ raztopine ocetne kisline s koncentracijo $0{,}100\,\mathrm{mol/L}$ titriramo z raztopino $\mathrm{NaOH}$ s koncentracijo $0{,}100\,\mathrm{mol/L}$ pri $25\,^\circ\mathrm{C}$. Izračunaj pH po dodatku $10{,}0\,\mathrm{mL}$; $12{,}5\,\mathrm{mL}$ in $25{,}0\,\mathrm{mL}$ raztopine $\mathrm{NaOH}$ ($K_a = 1{,}8 \cdot 10^{-5}$, $K_w = 1{,}0 \cdot 10^{-14}$). Kateri indikator (barvilo, ki spremeni barvo v navedenem območju pH) je primeren za določitev ekvivalenčne točke (dodana množina $\mathrm{OH^-}$ je enaka začetni množini kisline): metiloranž (preskok pri $\mathrm{pH}$ $3{,}1$ do $4{,}4$) ali fenolftalein ($8{,}2$ do $10{,}0$)?
 
 **Rešitev:**
 
@@ -235,7 +235,7 @@ $25{,}0\,\mathrm{mL}$ raztopine ocetne kisline s koncentracijo $0{,}100\,\mathrm
 6. $[\mathrm{OH^-}] \approx \sqrt{K_b c} = \sqrt{5{,}6 \cdot 10^{-10} \cdot 0{,}0500} = \sqrt{2{,}8 \cdot 10^{-11}} \approx 5{,}3 \cdot 10^{-6}\,\mathrm{mol/L}$; to je le $0{,}01\,\%$ od $c$ in mnogo več od $10^{-7}$, zato približek velja.
 7. $\mathrm{pOH} = -\log(5{,}3 \cdot 10^{-6}) \approx 5{,}28$ in $\mathrm{pH} = 14{,}00 - 5{,}28 = 8{,}72$.
 8. Ekvivalenčna točka je v bazičnem območju, ker je konjugirana baza šibke kisline bazična. Metiloranž bi spremenil barvo že v območju pufra (okoli $\mathrm{pH} \approx 4$), fenolftalein pa pri $8{,}2$ do $10{,}0$, kjer pH ob ekvivalenčni točki strmo naraste.
-9. Odgovor: pH je $4{,}57$, $4{,}74$ in $8{,}72$; primeren indikator je fenolftalein.
+9. Odgovor: pH je $4{,}57$; $4{,}74$ in $8{,}72$. Primeren indikator je fenolftalein.
 
 ### Naloga 2
 
@@ -255,11 +255,14 @@ Naj bo $\mathrm{HA}$ šibka enoprotonska kislina s konstanto $K_a$ in začetno k
 
 Lestvica pH z znanimi snovmi (vsak korak v levo pomeni desetkrat več $\mathrm{H_3O^+}$):
 
-```
- 0    1    2    3    4    5    6    7    8    9   10   11   12   13   14
- |----|----|----|----|----|----|----|----|----|----|----|----|----|----|
- <---------- kislo -------------->  7  <------------ bazično ----------->
-```
+:::risba premica
+opis: Lestvica pH od 0 do 14 s korakom 1. Od 0 do 7 je območje kislo, pri 7 je raztopina nevtralna (pri 25 °C), od 7 do 14 je območje bazično.
+od: 0
+do: 14
+interval: 0 .. 7 | kislo
+interval: 7 .. 14 | bazično
+točka: 7 | nevtralno
+:::
 
 | Snov | pH (okvirno) |
 |---|---|

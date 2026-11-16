@@ -242,7 +242,7 @@
        "text": "Ena osmina je $100\\,\\% : 8 = 12{,}5\\,\\%$, torej $12{,}5\\,\\% = \\frac{1}{8}$.\n\n$62{,}5\\,\\% = 5 \\cdot 12{,}5\\,\\% = \\frac{5}{8}$, decimalno pa $5 : 8 = 0{,}625$."
       }
      ],
-     "scoring": "1 t. za $0{,}625$, 1 t. za okrajšan ulomek $\\frac{5}{8}$ (neokrajšan ulomek, npr. $\\frac{625}{1000}$, točke ne prinese).",
+     "scoring": "1 t. za $0{,}625$; 1 t. za okrajšan ulomek $\\frac{5}{8}$ (neokrajšan ulomek, npr. $\\frac{625}{1000}$, točke ne prinese).",
      "mistake": "Napačno je $62{,}5\\,\\% = 6{,}25$: pri odstotku delimo s $100$, ne z $10$."
     },
     {
@@ -258,7 +258,7 @@
       },
       {
        "title": "Drugače: celi del posebej",
-       "text": "$1{,}24 = 1 + 0{,}24$ in $0{,}24 = \\frac{24}{100} = \\frac{6}{25}$, zato $1{,}24 = 1\\frac{6}{25}$.\n\nCela je $100\\,\\%$, $0{,}24$ pa je $24\\,\\%$, skupaj $100\\,\\% + 24\\,\\% = 124\\,\\%$. Delež je večji od celote, zato je več kot $100\\,\\%$."
+       "text": "$1{,}24 = 1 + 0{,}24$ in $0{,}24 = \\frac{24}{100} = \\frac{6}{25}$, zato $1{,}24 = 1\\frac{6}{25}$.\n\nCela je $100\\,\\%$; $0{,}24$ pa je $24\\,\\%$, skupaj $100\\,\\% + 24\\,\\% = 124\\,\\%$. Delež je večji od celote, zato je več kot $100\\,\\%$."
       }
      ],
      "scoring": "1 t. za okrajšan ulomek $\\frac{31}{25}$ ali mešano število $1\\frac{6}{25}$, 1 t. za $124\\,\\%$.",
@@ -284,7 +284,7 @@
        "text": "$40 \\cdot 0{,}075 = 3$ ✓, zato je $3 : 40 = 0{,}075$."
       }
      ],
-     "scoring": "1 t. za $0{,}075$, 1 t. za $7{,}5\\,\\%$.",
+     "scoring": "1 t. za $0{,}075$; 1 t. za $7{,}5\\,\\%$.",
      "mistake": "Napačno je $\\frac{3}{40} = 0{,}75$ (manjka ničla za vejico) ali $75\\,\\%$; preveri: $\\frac{3}{40}$ je manj kot $\\frac{4}{40} = \\frac{1}{10}$, torej manj kot $10\\,\\%$."
     }
    ]
@@ -427,7 +427,7 @@
       1,
       4
      ],
-     "answer": "$45\\,\\mathrm{cm}$, $4{,}5\\,\\mathrm{dm}$ in $450\\,\\mathrm{mm}$",
+     "answer": "$45\\,\\mathrm{cm}$; $4{,}5\\,\\mathrm{dm}$ in $450\\,\\mathrm{mm}$",
      "ways": [
       {
        "title": "S pretvorbami",
@@ -435,7 +435,7 @@
       },
       {
        "title": "S preglednico mest",
-       "text": "$0{,}45\\,\\mathrm{m}$ vpišemo v preglednico m | dm | cm | mm: $0 \\mid 4 \\mid 5 \\mid 0$. Preberemo $4{,}5\\,\\mathrm{dm}$, $45\\,\\mathrm{cm}$ in $450\\,\\mathrm{mm}$."
+       "text": "$0{,}45\\,\\mathrm{m}$ vpišemo v preglednico m | dm | cm | mm: $0 \\mid 4 \\mid 5 \\mid 0$. Preberemo $4{,}5\\,\\mathrm{dm}$; $45\\,\\mathrm{cm}$ in $450\\,\\mathrm{mm}$."
       }
      ],
      "mistake": "Med metrom in kilometrom je preskok $1000$, ne $100$; kdor deli s $100$, dobi napačno $0{,}0045\\,\\mathrm{km}$."
@@ -487,7 +487,7 @@
       2,
       4
      ],
-     "answer": "$1{,}2\\,\\mathrm{l}$, $1200\\,\\mathrm{ml}$ in $12\\,\\mathrm{dl}$",
+     "answer": "$1{,}2\\,\\mathrm{l}$; $1200\\,\\mathrm{ml}$ in $12\\,\\mathrm{dl}$",
      "ways": [
       {
        "title": "Prek litra",

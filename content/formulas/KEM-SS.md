@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Množina snovi | $n = \dfrac{m}{M} = \dfrac{N}{N_A} = \dfrac{V}{V_m}$ |
-| Molska prostornina | $V_m = 22{,}4\,\mathrm{L/mol}$ (normalni pogoji: $0\,^\circ\mathrm{C}$, $101{,}3\,\mathrm{kPa}$) |
+| Molska prostornina | $V_m = 22{,}4\,\mathrm{L/mol}$ (normalni pogoji: $0\,^\circ\mathrm{C}$; $101{,}3\,\mathrm{kPa}$) |
 | Plinska enačba | $p V = n R T$, $\; \dfrac{p_1 V_1}{T_1} = \dfrac{p_2 V_2}{T_2}$ |
 | Gostota plina | $\rho = \dfrac{p M}{R T}$ |
 | Delni tlak | $p_i = x_i\, p$, $\; p = \sum p_i$ |
@@ -160,7 +160,7 @@ n | število ogljikovih atomov v molekuli | | | poljubno naravno število ($n \g
 | Avogadrovo število | $N_A = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$ |
 | Splošna plinska konstanta | $R = 8{,}314\,\mathrm{J/(mol\,K)} = 8{,}314\,\mathrm{kPa\,L/(mol\,K)}$ |
 | Faradayeva konstanta | $F = 96\,485\,\mathrm{As/mol}$ |
-| Molska prostornina | $V_m = 22{,}4\,\mathrm{L/mol}$ (n. p.), $\; 24{,}5\,\mathrm{L/mol}$ ($25\,^\circ\mathrm{C}$, $101{,}3\,\mathrm{kPa}$) |
+| Molska prostornina | $V_m = 22{,}4\,\mathrm{L/mol}$ (n. p.), $\; 24{,}5\,\mathrm{L/mol}$ ($25\,^\circ\mathrm{C}$; $101{,}3\,\mathrm{kPa}$) |
 | Ionski produkt vode | $K_w = 1{,}0 \cdot 10^{-14}$ ($25\,^\circ\mathrm{C}$) |
 | Specifična toplota vode | $c = 4{,}18\,\mathrm{J/(g\,K)}$ |
 | Temperatura | $T\,[\mathrm{K}] = t\,[^\circ\mathrm{C}] + 273{,}15$ |

@@ -7,7 +7,7 @@ avtor: AI
 
 Na letališču kupiš plastenko vode: trda je, prozorna, na dnu ima trikotnik s številko 1. Med letom te zebe, zato iz nahrbtnika potegneš mehko flis jopico. Na etiketi piše »poliester«.
 
-Prvi predmet je tog in gladek, drugi mehak in kosmat. Vendar sta iz iste snovi, polietilen tereftalata (PET). Mnoge flis jopice so celo izdelane iz recikliranih plastenk.
+Prvi predmet je tog in gladek, drugi mehak in kosmat. Vendar sta iz iste snovi, polietilentereftalata (PET). Mnoge flis jopice so celo izdelane iz recikliranih plastenk.
 
 Kako je to mogoče? Skrivnost je v obliki molekul. PET je zgrajen iz zelo dolgih verig enakih členov. V plastenki so verige med pihanjem raztegnjene v dveh smereh in tvorijo tanko trdo steno. V vlaknu so potegnjene vzdolž vlakna, tanka vlakna pa se zlahka upogibajo. Ko razumeš, kako so verige zgrajene in kako nastanejo, znaš razložiti, zakaj se ena plastika na soncu zmehča, druga pa ne, in kako iz istega monomera nastanejo zelo različni materiali.
 
@@ -28,7 +28,7 @@ Da dobiš občutek za mero: ena enota PE je vzdolž verige dolga okoli $0{,}25\,
 | rahlo zamrežena | redki mostovi med progami | guma | ostane prožna |
 | gosto zamrežena | gosta mreža cest | epoksi, bakelit | ne stali, razpade |
 
-Linearne in razvejane verige drži skupaj le šibka medmolekulska vez. Ko jih segreješ, zdrsnejo druga mimo druge. Takim polimerom rečemo **termoplasti**: lahko jih večkrat stališ in preoblikuješ.
+Linearne in razvejane verige držijo skupaj le šibke medmolekulske vezi. Ko jih segreješ, zdrsnejo druga mimo druge. Takim polimerom rečemo **termoplasti**: lahko jih večkrat stališ in preoblikuješ.
 
 Pri zamreženih verigah so med progami kovalentni mostovi. Redki mostovi dajo **elastomer**: verige se raztegnejo, mostovi pa jih vlečejo nazaj. Gosta mreža da **duromer** (duroplast), ki ga po strjevanju ne moreš več staliti.
 
@@ -54,7 +54,7 @@ Pod temperaturo steklastega prehoda $T_g$ so amorfna področja trda in krhka, na
 
 Stranskih produktov ni, zato ima ponavljajoča enota enake atome kot monomer. Tako nastanejo PE, PP, PVC in PS.
 
-**Kondenzacijska (stopenjska) polimerizacija** gradi progo iz kosov, ki se spajajo med seboj. Monomera imata vsak po dve **funkcionalni skupini**, na primer $-\mathrm{OH}$ in $-\mathrm{COOH}$ ali $-\mathrm{NH_2}$ in $-\mathrm{COOH}$. Ob vsaki novi vezi se odcepi majhna molekula, navadno voda. Najprej nastanejo dimeri, nato krajše verige, ki se povezujejo v daljše. Dolge verige dobiš šele, ko zreagira skoraj ves monomer. Tako nastanejo PET, poliamidi (najlon) in polikarbonat.
+**Kondenzacijska (stopenjska) polimerizacija** gradi progo iz kosov, ki se spajajo med seboj. Monomera imata vsak po dve **funkcionalni skupini**, na primer $-\mathrm{OH}$ in $-\mathrm{COOH}$ ali $-\mathrm{NH_2}$ in $-\mathrm{COOH}$. Ob vsaki novi vezi se odcepi majhna molekula, navadno voda. Najprej nastanejo dimeri, nato krajše verige, ki se povezujejo v daljše. Dolge verige dobiš šele, ko zreagirajo skoraj vse funkcionalne skupine. Tako nastanejo PET, poliamidi (najlon) in polikarbonat.
 
 Pri najlonu 6,6 reagirata heksametilendiamin in adipinska kislina:
 
@@ -104,7 +104,7 @@ $n = \dfrac{M}{M_0}$
 
 ### Primer 2: dve povprečji
 
-Vzorec polimera za lupino kovčka ima tri razrede verig. Molski deleži so $0{,}2$ pri $10\,000\,\mathrm{g/mol}$, $0{,}5$ pri $30\,000\,\mathrm{g/mol}$ in $0{,}3$ pri $50\,000\,\mathrm{g/mol}$. Izračunaj $M_n$, $M_w$ in indeks polidisperznosti.
+Vzorec polimera za lupino kovčka ima tri razrede verig. Molski deleži so $0{,}2$ pri $10\,000\,\mathrm{g/mol}$; $0{,}5$ pri $30\,000\,\mathrm{g/mol}$ in $0{,}3$ pri $50\,000\,\mathrm{g/mol}$. Izračunaj $M_n$, $M_w$ in indeks polidisperznosti.
 
 **Podatki:** $x_1 = 0{,}2$, $M_1 = 10\,000\,\mathrm{g/mol}$; $x_2 = 0{,}5$, $M_2 = 30\,000\,\mathrm{g/mol}$; $x_3 = 0{,}3$, $M_3 = 50\,000\,\mathrm{g/mol}$
 **Iščemo:** $M_n$, $M_w$ in $M_w/M_n$
@@ -174,10 +174,71 @@ $n = 30\,000 / 192{,}17 \approx 156$. To je približno šestdesetkrat manj kot p
 
 - Polimer je makromolekula iz $n$ ponavljajočih enot; monomer je izhodna majhna molekula; $n = M/M_0$.
 - Zgradba verig: linearna, razvejana, rahlo zamrežena (elastomeri), gosto zamrežena (duromeri). Linearni in razvejani polimeri so termoplasti.
-- Verige so lahko amorfne ali delno kristalne; nad $T_g$ postanejo amorfna področja gumijasta.
+- Polimeri so lahko amorfni ali delno kristalni; nad $T_g$ postanejo amorfna področja gumijasta.
 - Adicijska (verižna) polimerizacija: iniciacija, rast, zaključek; odpre se dvojna vez, stranskega produkta ni (PE, PP, PVC, PS).
 - Kondenzacijska (stopenjska) polimerizacija: bifunkcionalni monomeri, ob vsaki vezi se odcepi majhna molekula (PET, najlon).
 - Povprečji: $M_n = \sum x_i M_i$, $M_w = \sum w_i M_i$, $M_w \geq M_n$.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije: polimer, monomer, ponavljajoča enota, stopnja polimerizacije $n = M/M_0$;
+- delitev po zgradbi verig (linearna, razvejana, rahlo in gosto zamrežena) ter iz nje razlago, zakaj se termoplast stali, elastomer in duromer pa ne;
+- razliko med amorfnim in delno kristalnim polimerom ter pomen temperature steklastega prehoda $T_g$;
+- tri stopnje adicijske polimerizacije in pogoj zanjo (dvojna vez $\mathrm{C{=}C}$, ni stranskega produkta);
+- pogoje za kondenzacijsko polimerizacijo (dve funkcionalni skupini na monomer, odcep majhne molekule) in zakaj dolge verige nastanejo šele na koncu;
+- definiciji $M_n$ in $M_w$, zvezo $w_i = \frac{x_i M_i}{M_n}$ in dokaz, da je $M_w \geq M_n$.
+
+### Naloga 1
+
+Analiza vzorca najlona 6,6 za izolacijske vezice da tri razrede verig z **masnimi** deleži: $0{,}20$ pri $10\,000\,\mathrm{g/mol}$; $0{,}50$ pri $20\,000\,\mathrm{g/mol}$ in $0{,}30$ pri $40\,000\,\mathrm{g/mol}$. Ponavljajoča enota ima $M_0 = 226{,}32\,\mathrm{g/mol}$. (a) Izračunaj $M_w$, $M_n$ in indeks polidisperznosti. (b) Kolikšna je številsko povprečna stopnja polimerizacije? (c) Koliko heksametilendiamina ($116{,}21\,\mathrm{g/mol}$) in adipinske kisline ($146{,}14\,\mathrm{g/mol}$) porabimo za $50\,\mathrm{kg}$ tega najlona in koliko vode ($18{,}015\,\mathrm{g/mol}$) nastane? Konce verig zanemari.
+
+**Rešitev:**
+
+1. (a) Masni deleži so dani, zato je $M_w$ neposredna vsota: $M_w = 0{,}20 \cdot 10\,000 + 0{,}50 \cdot 20\,000 + 0{,}30 \cdot 40\,000 = 24\,000$ (v g/mol).
+2. Za $M_n$ potrebujemo številske deleže. V $1\,\mathrm{g}$ vzorca je množina verig razreda $i$ enaka $\frac{w_i}{M_i}$, skupna množina verig pa $\sum \frac{w_i}{M_i}$. Številsko povprečje je masa, deljena z množino verig: $M_n = \dfrac{1}{\sum \frac{w_i}{M_i}}$.
+3. $\sum \frac{w_i}{M_i} = \frac{0{,}20}{10\,000} + \frac{0{,}50}{20\,000} + \frac{0{,}30}{40\,000} = 5{,}25 \cdot 10^{-5}$ (v mol/g).
+4. $M_n = \dfrac{1}{5{,}25 \cdot 10^{-5}} \approx 19\,048$ (v g/mol).
+5. Preizkus s številskimi deleži $x_i = \frac{w_i}{M_i} M_n$: $x_1 \approx 0{,}381$, $x_2 \approx 0{,}476$, $x_3 \approx 0{,}143$; vsota je $1$. Najkrajših verig je po masi petina, po številu pa skoraj dve petini.
+6. Indeks polidisperznosti: $\dfrac{24\,000}{19\,048} \approx 1{,}26$.
+7. (b) $n = \dfrac{M_n}{M_0} = \dfrac{19\,048}{226{,}32} \approx 84$.
+8. (c) Množina ponavljajočih enot: $\dfrac{50\,000}{226{,}32} \approx 220{,}93$ (v mol). Vsaka enota vsebuje po en ostanek diamina in kisline, zato porabimo po $220{,}93\,\mathrm{mol}$ vsakega monomera.
+9. Masa heksametilendiamina: $220{,}93 \cdot 116{,}21 \approx 25\,674$ (v g); masa adipinske kisline: $220{,}93 \cdot 146{,}14 \approx 32\,287$ (v g).
+10. Voda: na enoto nastaneta dve molekuli, torej $2 \cdot 220{,}93 = 441{,}86$ (v mol) in $441{,}86 \cdot 18{,}015 \approx 7960$ (v g).
+11. Preizkus z ohranitvijo mase: $25\,674 + 32\,287 = 57\,961$ (v g) monomerov, $50\,000 + 7960 = 57\,960$ (v g) produktov; razlika $1\,\mathrm{g}$ je zaokrožitev.
+12. Odgovor: $M_w = 24\,000\,\mathrm{g/mol}$, $M_n \approx 19\,000\,\mathrm{g/mol}$, indeks polidisperznosti $1{,}26$, $n \approx 84$. Za $50\,\mathrm{kg}$ najlona porabimo okoli $25{,}7\,\mathrm{kg}$ diamina in $32{,}3\,\mathrm{kg}$ kisline, nastane pa okoli $7{,}96\,\mathrm{kg}$ vode.
+
+### Naloga 2
+
+(a) Dokaži, da za vsak vzorec polimera velja $M_w \geq M_n$, in povej, kdaj velja enakost. (b) Zmešamo enaki masi dveh vzorcev, v katerih so vse verige enako dolge: prvi ima $10\,000\,\mathrm{g/mol}$, drugi $90\,000\,\mathrm{g/mol}$. Izračunaj $M_n$, $M_w$ in indeks polidisperznosti mešanice ter utemelji, zakaj $M_n$ ni $50\,000\,\mathrm{g/mol}$.
+
+**Rešitev:**
+
+1. (a) V $M_w = \sum w_i M_i$ vstavimo $w_i = \frac{x_i M_i}{M_n}$: $M_w = \dfrac{\sum x_i M_i^2}{M_n}$.
+2. Poglejmo razliko $M_w M_n - M_n^2 = \sum x_i M_i^2 - M_n^2$.
+3. Ker je $\sum x_i = 1$ in $\sum x_i M_i = M_n$, velja $\sum x_i (M_i - M_n)^2 = \sum x_i M_i^2 - 2M_n \sum x_i M_i + M_n^2 \sum x_i = \sum x_i M_i^2 - M_n^2$.
+4. Torej je $M_w M_n - M_n^2 = \sum x_i (M_i - M_n)^2 \geq 0$, ker je vsota nenegativnih členov. Delimo z $M_n > 0$ in dobimo $M_w \geq M_n$.
+5. Enakost velja natanko tedaj, ko je vsak člen enak $0$, torej ko imajo vse verige enako molsko maso $M_i = M_n$ (indeks polidisperznosti $1$).
+6. (b) Masna deleža sta $w_1 = w_2 = 0{,}5$, zato $M_w = 0{,}5 \cdot 10\,000 + 0{,}5 \cdot 90\,000 = 50\,000$ (v g/mol).
+7. Množina verig v $1\,\mathrm{g}$ mešanice: $\frac{0{,}5}{10\,000} + \frac{0{,}5}{90\,000} \approx 5{,}556 \cdot 10^{-5}$ (v mol/g), zato $M_n = \dfrac{1}{5{,}556 \cdot 10^{-5}} \approx 18\,000$ (v g/mol).
+8. Številska deleža: v enaki masi je kratkih verig devetkrat več kot dolgih, torej $x_1 = 0{,}9$ in $x_2 = 0{,}1$. Preizkus: $0{,}9 \cdot 10\,000 + 0{,}1 \cdot 90\,000 = 18\,000$ (v g/mol).
+9. Indeks polidisperznosti: $\dfrac{50\,000}{18\,000} \approx 2{,}78$.
+10. Odgovor: $M_n = 18\,000\,\mathrm{g/mol}$, $M_w = 50\,000\,\mathrm{g/mol}$, indeks $2{,}78$. Vrednost $50\,000\,\mathrm{g/mol}$ je masno povprečje; številsko povprečje je nižje, ker je kratkih verig $90\,\%$ po številu, čeprav jih je po masi le polovica.
+
+### Naloga 3
+
+PET nastane iz etilenglikola $\mathrm{HO{-}CH_2CH_2{-}OH}$ in tereftalne kisline $\mathrm{HOOC{-}C_6H_4{-}COOH}$, PE pa iz etena. (a) Natančno navedi, v čem se mehanizma nastanka razlikujeta (kaj reagira, kako raste veriga, stranski produkt), in utemelji, zakaj pri PET dolge verige nastanejo šele pri skoraj popolni pretvorbi, pri PE pa že na začetku. (b) Iz molskih mas monomerov ($62{,}068$ in $166{,}132\,\mathrm{g/mol}$) in vode ($18{,}015\,\mathrm{g/mol}$) izračunaj molsko maso ponavljajoče enote PET. (c) Utemelji, kaj se zgodi z verigami, če je enega od monomerov nekoliko preveč.
+
+**Rešitev:**
+
+1. (a) PE: adicijska (verižna) polimerizacija. Reagira dvojna vez $\mathrm{C{=}C}$; radikal iniciatorja jo odpre (iniciacija), aktivni konec pripenja monomer za monomerom (rast), dokler se dva aktivna konca ne združita (zaključek). Stranskega produkta ni, enota $\mathrm{C_2H_4}$ ima enake atome kot monomer.
+2. PET: kondenzacijska (stopenjska) polimerizacija. Reagirata funkcionalni skupini $-\mathrm{OH}$ in $-\mathrm{COOH}$ dveh različnih bifunkcionalnih monomerov; ob vsaki novi (estrski) vezi se odcepi molekula vode.
+3. Pri PE raste le malo verig hkrati, vsaka pa v delčku sekunde doseže polno dolžino. V zmesi so zato že na začetku dolge verige in še nezreagiran monomer; s časom narašča število verig, ne njihova dolžina.
+4. Pri PET lahko reagira vsak konec z vsakim: najprej nastanejo dimeri, nato kratke verige, ki se spajajo med seboj. Vsaka veriga ima dva prosta konca; povprečna veriga je dolga šele, ko je prostih koncev zelo malo, torej ko so zreagirale skoraj vse funkcionalne skupine.
+5. (b) Enota nastane iz ene molekule glikola in ene kisline, pri tem nastaneta dve estrski vezi in dve molekuli vode: $M_0 = 62{,}068 + 166{,}132 - 2 \cdot 18{,}015 = 192{,}17$ (v g/mol). To se ujema z enoto $\mathrm{C_{10}H_8O_4}$.
+6. (c) Ko se monomer, ki ga je manj, porabi, imajo vse verige na obeh koncih skupino presežnega monomera (na primer povsod $-\mathrm{OH}$). Enaki skupini med seboj ne reagirata, zato rast obstane in verige ostanejo krajše. Za dolge verige morata biti množini obeh vrst skupin enaki.
+7. Odgovor: PE raste verižno z aktivnega konca brez stranskega produkta, PET stopenjsko s spajanjem funkcionalnih skupin in odcepom vode; $M_0(\mathrm{PET}) = 192{,}17\,\mathrm{g/mol}$; presežek enega monomera omeji dolžino verig.
 
 ## Drugače: Z analogijo
 
@@ -185,26 +246,26 @@ Vzemi škatlo sponk za papir.
 
 **Adicijska polimerizacija** je, kot bi imel en sam odprt konec verižice: sponke pripenjaš le na ta konec, eno za drugo. Verižica zelo hitro postane dolga. Na mizi imaš ves čas nekaj zelo dolgih verižic in veliko posameznih sponk, ki še čakajo.
 
-**Kondenzacijska polimerizacija** je, kot bi si sponke med seboj podajali vsi v razredu. Vsakdo spne dve, kar ima v roki. Za vsako spenjanje moraš oddati žeton, to je molekula vode. Najprej so povsod pari, nato kratke verižice. Dolge verižice so šele na koncu, ko so skoraj vse sponke že porabljene.
+**Kondenzacijska polimerizacija** je, kot bi si sponke med seboj podajali vsi v razredu. Vsakdo spne dve, kar ima v roki. Za vsako spenjanje moraš oddati žeton, to je molekula vode. Najprej so povsod pari, nato kratke verižice. Dolge verižice so šele na koncu, ko so skoraj vsi prosti konci že speti.
 
 Če bi nekaj sponk imelo tri ušesa namesto dveh, bi namesto verižic nastala mreža, ki je ne moreš več razplesti. To je duromer.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Na skoraj vsaki plastiki, ki jo vzameš s seboj na pot, je trikotnik s številko. To je koda polimera:
+V elektrotehniki so polimeri predvsem izolatorji: z njimi so obdani vodniki, iz njih so podlage vezij, dielektriki kondenzatorjev in ohišja naprav. Kateri polimer inženir izbere, določa zgradba verig:
 
-| koda | polimer | sinteza | na potovanju |
+| polimer | zgradba in sinteza | uporaba | temperaturna meja |
 |---|---|---|---|
-| 1 | PET | kondenzacijska | plastenka, flis |
-| 2 | PE-HD | adicijska | kanister, pokrovček |
-| 3 | PVC | adicijska | napihljiva blazina |
-| 4 | PE-LD | adicijska | vrečka za tekočine |
-| 5 | PP | adicijska | lupina kovčka |
-| 6 | PS | adicijska | lonček za kavo |
+| PVC | termoplast, adicijska | izolacija inštalacijskih vodnikov | vodnik trajno do $70\,^\circ\mathrm{C}$ |
+| zamreženi PE (XLPE) | PE z mostovi med verigami | izolacija energetskih kablov | vodnik trajno do $90\,^\circ\mathrm{C}$ |
+| PP | termoplast, adicijska | folija močnostnih kondenzatorjev | okoli $105\,^\circ\mathrm{C}$ |
+| PET | termoplast, kondenzacijska | folija kondenzatorjev, izolacija v motorjih | okoli $125\,^\circ\mathrm{C}$ |
+| epoksi s steklenimi vlakni (FR-4) | duromer | plošče tiskanih vezij | $T_g$ okoli $130$ do $140\,^\circ\mathrm{C}$ |
+| poliimid | kondenzacijska | upogljiva vezja, izolacija navitij | trajno nad $200\,^\circ\mathrm{C}$ |
 
-Vsi s kodo 2 do 6 nastanejo iz monomera z dvojno vezjo $\mathrm{C{=}C}$. Koda 7 pomeni »drugo«, na primer polikarbonat, ki je kondenzacijski polimer.
+Opazi PVC in XLPE. Navadni PE je termoplast in bi se ob preobremenitvi kabla zmehčal in stekel. Zato verige, ko izolacijo nanesejo na vodnik, kemijsko zamrežijo: ob kratkem stiku sme vodnik v kablu XLPE za nekaj sekund doseči $250\,^\circ\mathrm{C}$, v kablu PVC le $160\,^\circ\mathrm{C}$. Enako žico v kablu XLPE lahko zato bolj obremeniš.
 
-Opazi še kode 2 in 4: oboje je polietilen iz istega etena. Kanister je tog, vrečka mehka, ker so verige PE-LD razvejane.
+Plošča tiskanega vezja gre med spajkanjem brez svinca skozi peč z okoli $240\,^\circ\mathrm{C}$. Termoplast bi se tam stalil, epoksi kot duromer pa ostane trden. Nad $T_g$ se vendarle zmehča in močneje razteza, zato za zahtevna vezja izberejo smolo z višjim $T_g$ (okoli $170\,^\circ\mathrm{C}$).
 
 ## Preveri se
 
@@ -229,7 +290,7 @@ Opazi še kode 2 in 4: oboje je polietilen iz istega etena. Kanister je tog, vre
 ~ Krajše verige povzroči monomer z eno skupino, ki zapre konec verige.
 - Nič, nastane enak linearni polimer.
 ~ Tretja skupina tudi reagira in ustvari odcep. Linearna veriga ne more ostati linearna.
-+ Nastanejo razvejanja in pri dovolj veliko takih mestih mreža.
++ Nastanejo razvejanja in pri dovolj velikem številu takih mest mreža.
 > Vsaka trifunkcionalna molekula je razcep v tri smeri. Veje se povežejo v mrežo in nastane duromer.
 
 ? Polistiren ($M_0 = 104{,}15\,\mathrm{g/mol}$) ima molsko maso $208\,300\,\mathrm{g/mol}$. Kolikšna je stopnja polimerizacije?

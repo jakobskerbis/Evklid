@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Nespolno razmnoževanje
+  - brstenje, delitev, partenogeneza
+  - potomci so kloni
+- Spolno razmnoževanje
+  - gameti $n$, zigota $2n$
+  - zunanja ali notranja oploditev
+- Mejoza
+  - $46 \to 23$ kromosomov pri človeku
+  - $K = 2^{n}$ različnih gamet
+  - napaka: gamete z mitozo
+- Nastanek gamet
+  - spermatogeneza: ena celica, štiri semenčice
+  - oogeneza: ena jajčna celica, polarna telesca
+- Spolni organi
+  - moda, nadmodek, semenovod, prostata
+  - jajčnika, jajcevod, maternica, nožnica
+- Hormoni
+  - hipofiza: FSH in LH
+  - negativna povratna zveza
+  - dodan testosteron utiša hipofizo in moda
+- Menstrualni ciklus
+  - folikel, ovulacija, rumeno telo, menstruacija
+  - $d_\mathrm{o} = L - 14$
+  - plodni od $d_\mathrm{o} - 5$ do $d_\mathrm{o} + 1$
+- Kontracepcija
+  - tabletka prepreči ovulacijo
+  - kondom ščiti tudi pred okužbami
+  - $P = \dfrac{N \cdot 1200}{M}$

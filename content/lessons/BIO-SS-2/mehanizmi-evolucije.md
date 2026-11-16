@@ -161,7 +161,7 @@ Kaj pove tabela? Odpornih je vsak dan le dvakrat več, delež pa skoči z $1\,\%
 
 ## Preveri se
 
-? Biologinja reče: »V genskem skladu te populacije komarjev se je povečal alel za odpornost na insekticid.« Kaj je genski sklad?
+? Biologinja reče: »V genskem skladu te populacije komarjev se je povečala pogostost alela za odpornost na insekticid.« Kaj je genski sklad?
 - Geni enega komarja, ki je preživel škropljenje.
 ~ En osebek ima le dva alela vsakega gena. Genski sklad se nanaša na celotno populacijo.
 + Vsi aleli vseh osebkov populacije.

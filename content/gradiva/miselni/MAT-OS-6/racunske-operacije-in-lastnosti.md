@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Takti in dobe
+  - Predtakt in takti: $2 + 3 \cdot 4 = 14$
+  - Oklepaj spremeni: $(2 + 3) \cdot 4 = 20$
+- Imena števil
+  - Seštevanca, vsota; faktorja, produkt
+  - Zmanjševanec, odštevanec; deljenec, delitelj
+- Vrstni red
+  - Oklepaji od znotraj navzven
+  - Nato množenje in deljenje
+  - Iste stopnje od leve: $24 : 6 \cdot 2 = 8$
+- Zamenjalni in združevalni zakon
+  - $a + b = b + a$, $a \cdot b = b \cdot a$
+  - Ne veljata za odštevanje in deljenje
+- Razčlenjevalni zakon
+  - $a \cdot (b + c) = a \cdot b + a \cdot c$
+  - Napaka: $3 \cdot 4 + 5$ namesto $3 \cdot 4 + 3 \cdot 5$
+- Izpostavljanje
+  - $37 \cdot 8 + 37 \cdot 2 = 37 \cdot 10$
+- Ničla in enica
+  - $a \cdot 0 = 0$, $a \cdot 1 = a$
+  - Z ničlo ne delimo
+- Računanje na pamet
+  - $4 \cdot 37 \cdot 25 = 37 \cdot 100$
+  - $6 \cdot 99 = 600 - 6$

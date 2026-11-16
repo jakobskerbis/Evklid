@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Titracijska krivulja
+  - analit v čaši, titrant iz birete
+  - pH v odvisnosti od $V_\mathrm{b}$, oblika S
+  - HCl: skok od $3{,}7$ do $10{,}3$
+- Močna kislina
+  - pred EP: $c(\mathrm{H_3O^+}) = \frac{c_\mathrm{k}V_\mathrm{k} - c_\mathrm{b}V_\mathrm{b}}{V_\mathrm{k} + V_\mathrm{b}}$
+  - po EP presežek $\mathrm{OH^-}$ v celotnem volumnu
+  - v EP $\mathrm{pH} = 7$ pri $25\,^\circ\mathrm{C}$
+- Ekvivalentna točka
+  - $\frac{n(\mathrm{T})}{\nu_\mathrm{T}} = \frac{n(\mathrm{A})}{\nu_\mathrm{A}}$
+  - razmerje $1:1$: $c_\mathrm{k}V_\mathrm{k} = c_\mathrm{b}V_\mathrm{b,EP}$
+  - končna točka je opažena, EP računska
+- Šibka kislina
+  - začetek: $c(\mathrm{H_3O^+}) \approx \sqrt{K_\mathrm{a}c}$, če $c/K_\mathrm{a} > 100$
+  - pufer: $\mathrm{pH} = \mathrm{p}K_\mathrm{a} + \log\frac{c(\mathrm{A^-})}{c(\mathrm{HA})}$
+  - polovica EP: $\mathrm{pH} = \mathrm{p}K_\mathrm{a}$
+- pH v EP
+  - $K_\mathrm{a}K_\mathrm{b} = K_\mathrm{w}$
+  - $\mathrm{pH} = 7 + \tfrac12\mathrm{p}K_\mathrm{a} + \tfrac12\log c(\mathrm{A^-})$
+  - ocetna kislina: $8{,}73$, ne $7$
+- Indikator
+  - preskok pri $\mathrm{p}K_\mathrm{a}(\mathrm{HIn}) \pm 1$
+  - območje mora ležati v skoku
+  - ocetna kislina: fenolftalein, ne metiloranž
+- Tipične napake
+  - »šibka kislina porabi manj baze«: volumen EP je enak
+  - preveč indikatorja porabi titrant

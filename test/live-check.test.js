@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote } from "../server/live-check.js";
+import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, lewisIssue, subscriptIssue, ionRatioIssue, celsiusIssue } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -13,9 +13,9 @@ function harness({ answers = [], fixes = [], reviews = [] } = {}) {
   const store = openDb(":memory:");
   const calls = [];
   const reviewCalls = [];
-  const streamFn = async ({ system, messages, mode, onText }) => {
+  const streamFn = async ({ system, messages, mode, onText, canRound }) => {
     const isFix = typeof system === "string" && system.startsWith("You fix one mistake");
-    calls.push({ system, messages, mode, isFix });
+    calls.push({ system, messages, mode, isFix, canRound });
     const text = isFix ? fixes.shift() ?? "OK" : (answers.shift() ?? "Odgovor.") + META;
     if (!isFix) onText(text);
     return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
@@ -164,21 +164,23 @@ test("live check: competition and university Haiku answers without calculations 
 });
 
 test("live check: review rules (free plan, saving mode, calculations already checked, non-Haiku)", () => {
-  const base = { checked: 0, model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: true, spentToday: 0, answerLength: 300 };
+  const base = { model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: true, answerLength: 300 };
   assert.equal(needsReview(base), true);
   assert.equal(needsReview({ ...base, premium: false }), false, "brezplačni paket");
   assert.equal(needsReview({ ...base, lite: true }), false);
   assert.equal(needsReview({ ...base, level: 0 }), false, "varčni način proračuna");
   assert.equal(needsReview({ ...base, level: () => -1 }), false);
-  assert.equal(needsReview({ ...base, checked: 2 }), false, "koda je že preverila račune");
+  assert.equal(needsReview({ ...base, checked: 2 }), true, "koda preveri števila, trditev ne: pri tveganju pregled ostane");
   assert.equal(needsReview({ ...base, model: "claude-sonnet-5-5" }), false);
   assert.equal(needsReview({ ...base, risky: false }), false);
   assert.equal(needsReview({ ...base, answerLength: 40 }), false);
-  assert.equal(needsReview({ ...base, spentToday: () => 1 }), false, "privzeta dnevna meja 1 $");
+  const spent = (v) => () => v;
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spent(1) }), "dan", "privzeta dnevna meja 0,30 $");
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spent(0) }), null);
 });
 
 test("live check: the daily cap stops reviews", async () => {
-  process.env.EVKLID_LIVE_CHECK_DAILY_USD = "0.005";
+  process.env.EVKLID_LIVE_CHECK_DAILY_USD = "0.03"; // rezerva v bazenu je 0,02 $
   const h = harness({ answers: [LONG, LONG] });
   try {
     const s = await h.student({ track: "COMPETITION" });
@@ -288,6 +290,8 @@ test("verdict check: a wrong confirmation is never shown; the tutor answers agai
     assert.match(h.reviewCalls[0].system, /judged the student's last message/);
     assert.match(h.reviewCalls[0].messages[0].content, /STUDENT'S MESSAGE:\nna luni ni teže[\s\S]*TUTOR'S REPLY:\nTočno tako/);
     assert.equal(h.calls.length, 3, "prvi odgovor, drugi odgovor po pregledu (brez ločenega popravka)");
+    // Ponovni odgovor sme poklicati orodje: vsak dodaten krog gre skozi rezervo (trda meja AI, pregled #462).
+    assert.equal(typeof h.calls[2].canRound, "function");
     const note = h.calls[2].messages.at(-1).content.at(-1).text;
     assert.match(note, /<preverjen_racun>[\s\S]*weight on the Moon[\s\S]*answer again/);
     assert.doesNotMatch(r.sse, /Točno tako/, "napačna sodba ni prišla do učenca");
@@ -375,3 +379,430 @@ test("verdict check: after a later task the solver cannot read, the code does no
     h.close();
   }
 });
+
+test("live check: SŠ trigger = labelled exercise, or a »Zapomni si« box inside a solved task", () => {
+  assert.equal(hasClaims("Rešitev je $x = 4$.\n\n**Vaja:** Reši $3x + 2 = 11$."), true);
+  assert.equal(hasClaims("**Vaja**: reši še $3x = 9$."), true);
+  assert.equal(hasClaims("Dodatna vaja: izračunaj maso."), true);
+  assert.equal(hasClaims("Za vajo: koliko je $2 \\cdot 7$?"), true);
+  assert.equal(hasClaims("Practice: solve $x^2 = 9$."), true);
+  assert.equal(hasClaims("**Podatki:** $m = 2$ kg\n…\n> 📌 **Zapomni si:** redoks reakcija …"), true, "okvir v rešeni nalogi");
+  assert.equal(hasClaims("> 📌 **Zapomni si:** ulomek je del celote."), false, "sam okvir v razlagi ni dovolj");
+  assert.equal(hasClaims("Poskusi sama: koliko je $2 \\cdot 7$?"), false);
+  assert.equal(hasClaims("Your turn: what is $2 + 2$?"), false);
+  assert.equal(hasClaims("Vaja dela mojstra, zato poskusi še enkrat."), false, "beseda brez oznake ni vaja");
+  assert.equal(hasClaims("Rešitev je $x = 4$. Kaj dobiš, če vstaviš?"), false);
+});
+
+test("live check: review at SŠ only for claims; OŠ only when switched on; school pool, per-pupil limit", () => {
+  const base = { model: "claude-haiku-5-5", lite: false, premium: true, level: 1, risky: false, answerLength: 300 };
+  assert.equal(claimReviewFor("SS"), true);
+  assert.equal(claimReviewFor("OS"), false);
+  assert.equal(claimReviewFor("FAKS"), false);
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: true }), true, "SŠ z vajo");
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: false }), false, "SŠ brez vaje in okvirja");
+  assert.equal(needsReview({ ...base, claimLevel: false, claims: true }), false, "OŠ privzeto brez pregleda");
+  assert.equal(needsReview({ ...base, claimLevel: true, claims: true, premium: false }), false, "brezplačni paket");
+  assert.equal(LIVE_REVIEW_SS_DAILY_USD(), 0.15, "šolski del je privzeto pol skupne meje");
+  assert.equal(LIVE_REVIEW_PER_PUPIL(), 6);
+  const spentBy = (m) => (kinds) => kinds.reduce((t, k) => t + (m[k] || 0), 0);
+  assert.equal(reviewBlock({ school: true, pupilToday: 0, spent: spentBy({ "preverjanje-sola": 0.15 }) }), "sola");
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spentBy({ "preverjanje-sola": 0.15 }) }), null, "šolski del ne ustavi fakultete");
+  assert.equal(reviewBlock({ school: false, pupilToday: 0, spent: spentBy({ "preverjanje-sola": 0.15, preverjanje: 0.15 }) }), "dan", "skupna meja šteje obe vrsti");
+  assert.equal(reviewBlock({ school: true, pupilToday: 6, spent: spentBy({}) }), "ucenec");
+  assert.equal(reviewKindFor(true), "preverjanje");
+  assert.equal(reviewKindFor(false), "preverjanje-sola");
+  process.env.EVKLID_LIVE_REVIEW_SS = "0";
+  process.env.EVKLID_LIVE_REVIEW_OS = "1";
+  process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD = "0.05";
+  process.env.EVKLID_LIVE_REVIEW_PER_PUPIL = "-1";
+  try {
+    assert.equal(claimReviewFor("SS"), false);
+    assert.equal(claimReviewFor("OS"), true);
+    assert.equal(LIVE_REVIEW_SS_DAILY_USD(), 0.05);
+    assert.equal(reviewBlock({ school: true, pupilToday: 99, spent: spentBy({}) }), null, "brez meje na učenca");
+  } finally {
+    for (const k of ["EVKLID_LIVE_REVIEW_SS", "EVKLID_LIVE_REVIEW_OS", "EVKLID_LIVE_REVIEW_SS_DAILY_USD", "EVKLID_LIVE_REVIEW_PER_PUPIL"]) delete process.env[k];
+  }
+  assert.match(LIVE_REVIEW_SYSTEM, /practice exercise/);
+  assert.match(LIVE_REVIEW_SYSTEM, /exactly one correct answer/);
+  assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.$/);
+});
+
+test("live check: SŠ answer with an exercise is reviewed and corrected; without one it is not", async () => {
+  const withEx = "Rešitev je pH = 12, ker je $c(OH^-) = 0{,}01$ mol/L.\n\n**Vaja:** V 0,50 L vode raztopimo 0,40 g MgO. Kolikšen je pH raztopine?";
+  const plainSs = "Rešitev je pH = 12, ker je koncentracija hidroksidnih ionov 0,01 mol/L. Preveri še, ali je enota prava in ali je rezultat smiseln za bazično raztopino.";
+  const h = harness({ answers: [withEx, plainSs], reviews: ["NAPAKA: MgO je v vodi zelo slabo topen; vaja ni izvedljiva."], fixes: ["Popravek: MgO se v vodi skoraj ne raztopi, zato vzemi raje 0,40 g CaO."] });
+  try {
+    const s = await h.student({ educational_track: "SREDNJA_SOLA", curriculum_level: "2" });
+    const r = await h.ask(s, "Koliko je pH raztopine CaO?");
+    assert.equal(h.reviewCalls.length, 1, "odgovor z vajo pregleda model");
+    assert.match(h.reviewCalls[0].system, /practice exercise/, "pregled z navodili za vaje");
+    assert.match(r.messages.at(-1).display_text, /Popravek:/);
+    await h.ask(s, "Koliko je pH raztopine CaO?");
+    assert.equal(h.reviewCalls.length, 1, "brez vaje in okvirja pri SŠ ni pregleda");
+  } finally {
+    h.close();
+  }
+});
+
+test("live check: at university the review runs even when the code checked a calculation", async () => {
+  const ans = "Velja $3 \\cdot 1000 = 3000$, zato je naslov 3000. Mimogrede: indeksiranje je od 1, zato bi bil naslov 2996, kar je pomembno pri vseh poljih v tem jeziku.";
+  const h = harness({ answers: [ans], reviews: ["OK"] });
+  try {
+    const s = await h.student({ educational_track: "UNIVERZA", curriculum_level: "1" });
+    await h.ask(s, "Kateri je naslov elementa?");
+    assert.equal(h.reviewCalls.length, 1);
+  } finally {
+    h.close();
+  }
+});
+
+test("live check: per-pupil daily limit and skip counter", async () => {
+  process.env.EVKLID_LIVE_REVIEW_PER_PUPIL = "1";
+  const h = harness({ answers: [LONG, LONG] });
+  try {
+    const s = await h.student({ track: "COMPETITION" });
+    await h.ask(s, "Kako začnem geometrijsko nalogo?");
+    await h.ask(s, "Kako začnem geometrijsko nalogo?");
+    assert.equal(h.reviewCalls.length, 1, "drugi pregled istega učenca isti dan ne gre");
+    const kv = JSON.parse(h.store.db.prepare("SELECT value FROM kv WHERE key = ?").get(SKIP_KV).value);
+    const day = Object.values(kv)[0];
+    assert.equal(Object.values(day).reduce((t, r) => t + (r.ucenec || 0), 0), 1, "preskok je zapisan z razlogom");
+    assert.equal(h.kinds().preverjanje, 1);
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_PER_PUPIL;
+    h.close();
+  }
+});
+
+test("live check: SŠ reviews use their own pool and kind", async () => {
+  process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD = "0.01";
+  const ex = "Rešitev je pH = 12, ker je koncentracija 0,01 mol/L hidroksidnih ionov v raztopini.\n\n**Vaja:** V 0,50 L vode raztopimo 0,40 g CaO. Kolikšen je pH?";
+  const h = harness({ answers: [ex, ex, LONG] });
+  try {
+    const ss = await h.student({ educational_track: "SREDNJA_SOLA", curriculum_level: "2" });
+    await h.ask(ss, "Koliko je pH?");
+    assert.equal(h.reviewCalls.length, 0, "rezerva pregleda (0,02 $) je večja od šolskega dela");
+    const tek = await h.student({ track: "COMPETITION" });
+    await h.ask(tek, "Kako začnem geometrijsko nalogo?");
+    assert.equal(h.reviewCalls.length, 1, "tekmovanja imajo svojo pot do skupne meje");
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD;
+    h.close();
+  }
+});
+
+test("live check: a review that times out is skipped, the answer stays", async () => {
+  const slow = () => new Promise(() => {});
+  await assert.rejects(reviewAnswer({ question: "q", answer: "a", createFn: slow, timeoutMs: 30 }), (e) => e.name === "TimeoutError");
+  const ctl = new AbortController();
+  const p = reviewAnswer({ question: "q", answer: "a", createFn: slow, signal: ctl.signal, timeoutMs: 5000 });
+  ctl.abort();
+  await assert.rejects(p, (e) => e.name === "AbortError");
+});
+
+test("live check: the fix call never solves a practice exercise", async () => {
+  let system = "";
+  await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
+  assert.match(system, /practice exercise, give corrected data or a replacement exercise; never give the exercise's solution/);
+});
+
+test("code check (2026-11-11 round 2): bonds v = 8 − z use outer electrons, not the atomic number", () => {
+  // Meritev 11. 11., KEM-OS-8/kovalentna-vez: »v = 8 − 7 = 1« za dušik.
+  assert.match(valenceIssue("1. Dušik ima vrstno število 7, zato $v = 8 - 7 = 1$.").issue, /N has 5 outer.*atomic number|atomic number.*5 outer/);
+  assert.match(valenceIssue("Za dušik: $v = 8 - z = 8 - 7 = 1$").issue, /v = 8 - 5 = 3/);
+  assert.match(valenceIssue("Ogljik tvori $v = 8 - 4 = 4$ vezi, vsak kisik $v = 8 - 8 = 0$.").issue, /kisik \(O\)/, "napaka pri drugem elementu v vrstici");
+  for (const a of [
+    "1. Vsak atom dušika tvori $v = 8 - 5 = 3$ vezi.",
+    "Ogljik tvori $v = 8 - 4 = 4$ vezi, vsak kisik $v = 8 - 6 = 2$ vezi, vsak vodik $v = 2 - 1 = 1$.",
+    "Za $\\mathrm{O}$: $v = 8 - 6 = 2$; za $\\mathrm{Cl}$: $v = 8 − 7 = 1$",
+    "Hitrost dušika $v = 8 - 2t$",
+    "Če bi za dušik vzel $v = 8 - 7$, bi dobil eno vez.",
+    "$v = 8 - 7 = 1$",
+  ])
+    assert.equal(valenceIssue(a).issue, null, a);
+  // Pregleda PR #574: drug element v vrstici, hitrost, množenje, klorofil/klorid, učenčev račun, »vzel«.
+  assert.equal(valenceIssue("Ogljik ima 4 zunanje elektrone in se veže s kisikom: $v = 8 - 4 = 4$.").issue, null, "4 je ogljikov");
+  assert.match(valenceIssue("Dušik in klor: za dušik $v = 8 - 7 = 1$").issue, /atomic number/, "7 = vrstno število dušika, tudi ob kloru");
+  for (const a of ["Ogljik: $v = 8 - 2\\cdot k$", "Ogljik: $v = 8 - 2 \\times t$", "Ogljik se giblje: v = 8 - 3 = 5 m/s", "Hitrost delca ogljika: $v = 8 - 3 = 5$", "Ogljik: $v = 8 - 3 = 5\\,\\text{m/s}$", "Klorofil: $v = 8 - 3$", "Kloridni ion: $v = 8 - 3$", "Za dušik je učenec vzel $v = 8 - 7 = 1$."])
+    assert.equal(valenceIssue(a).issue, null, a);
+  assert.equal(valenceIssue("Dušik: $v = 8 - 7 = 1$", "Ali je za dušik v = 8 − 7?").issue, null, "učenčev račun iz sporočila");
+  assert.match(valenceIssue("Dušik ima 15 nukleonov in še nekaj besedila, ki je dolgo, dolgo, dolgo, dolgo pred računom $v = 8 - 7 = 1$.").issue ?? "", /^$/, "ime več kot 60 znakov pred računom ne šteje");
+  // V codeFindings: popravek pride tudi pri OŠ, kjer pregleda z modelom ni.
+  assert.match(codeFindings("Dušik: $v = 8 - 7 = 1$").issue, /outer \(valence\) electrons/);
+});
+
+test("code check (round 4): main-group elements use groups 1–18, not the old main-group number", () => {
+  // Ciljna meritev po krogu 3, KEM-OS-8/kovalentna-vez: dušik »v 5. skupini« namesto v 15.
+  assert.match(groupIssue("Dušik je v 5. skupini, zato ima 5 zunanjih elektronov.").issue, /15\. skupina/);
+  assert.match(groupIssue("Atom $\\mathrm{O}$ spada v 6. skupino periodnega sistema.").issue, /O\) in the 6\. skupina.*16\. skupina/);
+  assert.match(codeFindings("Klor je v 7. skupini.").issue, /17\. skupina/, "popravek tudi pri OŠ brez pregleda");
+  for (const a of [
+    "Dušik je v 15. skupini, zato ima 5 zunanjih elektronov.",
+    "Kisik je v 16. skupini, ogljik v 14. skupini.",
+    "Dušik (15. skupina) ima 5 zunanjih elektronov; v stari oznaki je to 5. skupina glavnih skupin.",
+    "Kisik reagira s kovinami 1. in 2. skupine.",
+    "Natrij je v 1. skupini.",
+    "Ali je dušik v 5. skupini?",
+    "Ne drži, da je dušik v 5. skupini.",
+    "Dušik ima 15 nukleonov in še nekaj besedila, ki je dolgo, dolgo, dolgo, dolgo, dolgo pred 5. skupino.",
+  ])
+    assert.equal(groupIssue(a).issue, null, a);
+  assert.equal(groupIssue("Dušik je v 5. skupini.", "Učitelj pravi, da je dušik v 5. skupini.").issue, null, "oznaka iz učenčevega sporočila");
+  // Pregled A (PR #585): prehodne kovine, skupina česa drugega, nova poved.
+  for (const a of [
+    "Kisik tvori okside s kovinami, npr. s kromom iz 6. skupine.",
+    "Ogljik in titan: titan je v 4. skupini.",
+    "Dušik in vanadij (5. skupina) tvorita nitrid.",
+    "Fluor reagira z $\\mathrm{Mn}$ iz 7. skupine.",
+    "Ogljik: najprej rešimo 4. skupino nalog",
+    "Kisik ima 6 zunanjih elektronov. 6. skupina učencev naj nariše model.",
+  ])
+    assert.equal(groupIssue(a).issue, null, a);
+  for (const a of ["Halogeni (fluor, klor, brom, jod) so v 7. skupini.", "Dušik je v 2. periodi in 5. skupini.", "Kisik je nekovina. Kisik je v 6. skupini."])
+    assert.ok(groupIssue(a).issue, a);
+});
+
+test("code check (round 5): period of light elements and electron pairs around one period-2 atom", () => {
+  // Ciljna meritev po krogu 4, KEM-OS-8/kovalentna-vez: »dušik v 3. periodi« in »vsak atom 3 + 2 = 5 parov«.
+  assert.match(periodIssue("Dušik je v 3. periodi in 15. skupini.").issue, /N in the 3\. perioda.*2\. perioda/);
+  assert.ok(periodIssue("Atom $\\mathrm{O}$ leži v 3. periodi.").issue, "simbol v LaTeXu");
+  assert.ok(periodIssue("Natrij je v 2. periodi.").issue, "Na je v 3. periodi");
+  assert.match(codeFindings("Dušik v 3. periodi ima 5 zunanjih elektronov.").issue, /2\. perioda/, "popravek tudi pri OŠ brez pregleda");
+  for (const a of [
+    "Dušik je v 2. periodi in 15. skupini.",
+    "Natrij in klor sta v 3. periodi.",
+    "Vodik je v 1. periodi.",
+    "Ogljik je v 2. periodi, $\\mathrm{Na}$ v 3. periodi.",
+    "Pod dušikom je v 3. periodi fosfor.",
+    "Fosfor je pod dušikom v 3. periodi.",
+    "Dušik ima manj lupin kot elementi 3. periode.",
+    "Ali je dušik v 3. periodi?",
+    "Ne drži, da je dušik v 3. periodi.",
+    "Učenec postavi magnezij v 2. periodo, ker ima 2 zunanja elektrona.",
+    "$\\mathrm{M^{3+}}$: $[\\mathrm{Ar}]\\,3d^5$, argon ima $18$ elektronov; M je v 4. periodi",
+    "Kisik je v 2. periodi. 3. perioda nihanja traja dlje.",
+  ])
+    assert.equal(periodIssue(a).issue, null, a);
+  assert.equal(periodIssue("Dušik je v 3. periodi.", "Ali je dušik v 3. periodi?").issue, null, "perioda iz učenčevega sporočila");
+  // Pregled A (PR #589): element 4. periode ali višje je pravi osebek; imenovalnik na začetku stavka; »element« zadene.
+  for (const a of [
+    "Kisik reagira s kalijem, ki je v 4. periodi.",
+    "Klor in brom: brom je v 4. periodi.",
+    "$\\mathrm{Cl}$ in $\\mathrm{Br}$: $\\mathrm{Br}$ je v 4. periodi.",
+    "Natrij reagira s kalcijem iz 4. periode podobno.",
+    "Dušik in arzen sta v 15. skupini, arzen v 4. periodi.",
+    "Kisik; kalcij je v 4. periodi.",
+    "Vodik se veže z jodom, ki je v 5. periodi.",
+    "Magnezij in stroncij sta v 2. skupini; stroncij je v 5. periodi.",
+    "Kisik, žveplo, selen: selen je v 4. periodi.",
+    "Kloridni ion $\\mathrm{Cl^-}$ ima konfiguracijo argona, kalijev ion K⁺ tudi, kalij pa je v 4. periodi.",
+    "Ogljikov dioksid: ogljik in kisik sta nekovini; v 4. periodi pa so kovine kalij in kalcij.",
+    "Ogljik tvori verige, 4. perioda pa ima 18 elementov.",
+    "Kisik in fluor: 3. perioda vsebuje njune spodnje sosede.",
+    "Aluminij je tretji element 3. periode, galij pa je v 4. periodi.",
+  ])
+    assert.equal(periodIssue(a).issue, null, a);
+  for (const a of ["Klor je element 2. periode.", "Fluor je najbolj elektronegativen element 3. periode.", "Argon je žlahtni plin 4. periode."])
+    assert.ok(periodIssue(a).issue, a);
+  // Kemijske preverbe se združijo v en popravek.
+  const both = codeFindings("Dušik je v 5. skupini in v 3. periodi.").issue;
+  assert.match(both, /15\. skupina/);
+  assert.match(both, /2\. perioda/);
+
+  assert.match(pairsIssue("Vsak atom ima $3 + 2 = 5$ parov.").issue, /at most 4 pairs/);
+  assert.ok(pairsIssue("Ob vsakem atomu dušika je 5 elektronskih parov.").issue);
+  // Pregled A (PR #589): »so« ni formula SO; vsota veznih in neveznih parov.
+  for (const a of ["Ob atomu dušika so 5 parov.", "Okoli kisika so 6 parov.", "Ob dušiku so 3 vezni pari in 2 nevezna para, to je 5 parov.", "Ob dušiku so 3 vezni pari in 2 nevezna para.", "Ob vsakem atomu dušika so 3 vezni in 2 nevezna para."])
+    assert.ok(pairsIssue(a).issue, a);
+  for (const a of [
+    "Ob vsakem atomu dušika so 3 vezni in 1 nevezni par, skupaj 4 pari.",
+    "V molekuli $\\mathrm{N_2}$ je skupaj 5 parov.",
+    "Vsak atom ima 3 vezne pare, v vsej molekuli pa je 5 parov.",
+    "Okoli žvepla v SF₆ je 6 parov.",
+    "Okoli žveplovega atoma v SO₄²⁻ je 6 parov.",
+    "Vsak atom v $\\mathrm{C_2H_2}$: ogljik ima 4 vezne pare, etin pa 5 veznih parov.",
+    "Okoli vsakega atoma ogljika so 4 pari, zato v C₂H₆ nastane 7 veznih parov.",
+    "Ob atomu dušika so 3 vezni pari in en nevezni par, tj. 4 pari, a molekula NH₃ ima 3 vezne pare in 1 nevezni par.",
+    "Ob atomu dušika je 8 elektronov v parih.",
+    "Vsak atom dušika ima 5 zunanjih elektronov in en nevezni par.",
+    "Ali ima vsak atom 5 parov?",
+  ])
+    assert.equal(pairsIssue(a).issue, null, a);
+});
+
+test("code check (2026-11-11 round 2): temperatures given in °C are not written as kelvin in a difference", () => {
+  // Meritev 11. 11., FIZ-SS-2/notranja-energija-in-toplota: »$\Delta T_3 = 20\,\text{K} - 0\,\text{K}$«.
+  const q = "Led z maso 200 g pri 0 °C stalimo in vodo segrejemo do 20 °C.";
+  assert.match(celsiusIssue("$\\Delta T_3 = 20\\,\\text{K} - 0\\,\\text{K} = 20\\,\\text{K}$", q).issue, /20 °C and 0 °C/);
+  assert.ok(celsiusIssue("$\\Delta T = 20\\,\\mathrm{K} - 0\\,\\mathrm{K}$", "Voda pri $20\\,^{\\circ}\\mathrm{C}$ in led pri $0\\,^\\circ\\text{C}$").issue, "°C v zapisu LaTeX");
+  for (const a of ["$\\Delta T = (20 - 0)\\,\\text{K} = 20\\,\\text{K}$", "$\\Delta T = 293\\,\\text{K} - 273\\,\\text{K} = 20\\,\\text{K}$", "$\\Delta T = 20\\,°\\text{C} - 0\\,°\\text{C} = 20\\,\\text{K}$"])
+    assert.equal(celsiusIssue(a, q).issue, null, a);
+  assert.equal(celsiusIssue("$\\Delta T = 20\\,\\text{K} - 0\\,\\text{K}$", "Plin ohladimo z 20 K na 0 K.").issue, null, "naloga v kelvinih");
+  assert.equal(codeFindings("$\\Delta T = 20\\,\\text{K} - 0\\,\\text{K} = 20\\,\\text{K}$", null).issue, null, "brez naloge ni primerjave");
+  assert.match(celsiusIssue("$\\Delta T = 20\\,\\text{K} - (-10)\\,\\text{K}$", "Od -10 °C do 20 °C").issue || celsiusIssue("$\\Delta T = 20\\,\\text{K} - -10\\,\\text{K}$", "Od -10 °C do 20 °C").issue, /- \(-10\\,°\\text\{C\}\) = 30/, "negativna temperatura v oklepaju");
+});
+
+test("code check (2026-11-11 round 2): an OŠ chemistry answer with v = 8 − 7 for nitrogen gets one correction without a model review", async () => {
+  const h = harness({ answers: ["1. Dušik ima vrstno število 7, zato $v = 8 - 7 = 1$ vez."], fixes: ["Popravek: dušik ima 5 zunanjih elektronov, zato $v = 8 - 5 = 3$: vez v $\\mathrm{N_2}$ je trojna."] });
+  try {
+    const s = await h.student({ educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred", subject: "KEM" });
+    const r = await h.ask(s, "Kakšna vez povezuje atoma dušika v N2?");
+    assert.equal(h.calls.length, 2, "odgovor in en popravek");
+    assert.ok(h.calls[1].isFix);
+    assert.match(h.calls[1].messages[0].content[0].text, /5 outer \(valence\) electrons/);
+    assert.equal(h.reviewCalls.length, 0, "pri OŠ brez pregleda z modelom");
+    assert.match(r.messages.at(-1).display_text, /\*\*Popravek:\*\* dušik ima 5/);
+  } finally {
+    h.close();
+  }
+});
+
+test("»vzel/uporabil« izpusti samo preverjanje vezi, ne računov v popravkih (krog 2, pregled)", () => {
+  for (const t of ["Vzel si $g = 10$; pravilno je $F = 2 \\cdot 9{,}81 = 18{,}62\\,\\text{N}$.", "Uporabil bom: $3 \\cdot 4 = 13$."]) {
+    assert.ok(codeFindings(t).issue, t);
+  }
+  assert.equal(valenceIssue("Pri dušiku si vzel vrstno število: $v = 8 - 7 = 1$.").issue, null);
+});
+
+test("accuracy round 6: lone pairs drawn in a one-line Lewis formula must match v = 8 − z", () => {
+  const R = String.raw;
+  const bad = [
+    [R`Lewisova formula: $:\!\ddot{N}\!\equiv\!\ddot{N}\!:$`, /2 lone pair\(s\) on N.*has 1 lone pair/],
+    [R`Formula dušika je $:\!\ddot{\mathrm{N}}\!\equiv\!\ddot{\mathrm{N}}\!:$.`, /on N/],
+    [R`$::\mathrm{N}\equiv\mathrm{N}::$`, /2 lone pair/],
+    [R`$:\mathrm{N}\equiv\mathrm{N}$`, /0 lone pair\(s\) on N/],
+    [R`$\mathrm{H}-\ddot{\mathrm{O}}-\mathrm{H}$`, /1 lone pair\(s\) on O.*has 2/],
+    [R`Molekula: $\ddot{O}=C=\ddot{O}$`, /on O/],
+    [R`$\mathrm{H}{:}{-}\mathrm{Cl}$`, /on H/],
+    ["Narišemo ::N≡N:: in preverimo oktet.", /2 lone pair\(s\) on N/],
+  ];
+  for (const [a, re] of bad) {
+    const r = lewisIssue(a);
+    assert.match(r.issue || "", re, a);
+    assert.ok(r.issue.includes("{:}\\mathrm{N}{\\equiv}\\mathrm{N}{:}"), "popravek pokaže pravilen zapis");
+  }
+  const ok = [
+    R`Formula: $:\!\mathrm{N}\equiv\mathrm{N}\!:$`,
+    "Formula: $" + R`{:}\mathrm{N}{\equiv}\mathrm{N}{:}$`,
+    "Narišemo :N≡N: in preverimo.",
+    R`$\mathrm{H}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{O}}}{-}\mathrm{H}$`,
+    R`$:\ddot{\mathrm{O}}{=}\mathrm{C}{=}\ddot{\mathrm{O}}:$`,
+    "$" + R`{:}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{:}$`,
+    R`$\overset{..}{\underset{..}{O}}=C=\overset{..}{\underset{..}{O}}$`,
+    R`$\mathrm{H}-\mathrm{C}\equiv\mathrm{N}:$`,
+    R`Izjema: $:\mathrm{C}\equiv\mathrm{O}:$`, // CO: C ima 3 vezi, pravilo v = 8 − z ne velja
+    R`$[:\mathrm{C}\equiv\mathrm{N}:]^-$`, // ion
+    R`$\cdot\mathrm{N}=\mathrm{O}$`, // radikal
+    R`$\mathrm{H}-\ddot{\mathrm{N}}-\mathrm{H}$`, // NH₃ v eni vrstici (razvejana)
+    R`$\mathrm{H{-}C{\equiv}C{-}H}$`, // brez neveznih parov: ni risbe parov
+    R`$\mathrm{CH_3{-}\ddot{N}H_2}$`, // skrajšana formula z indeksi
+    R`$m\ddot x + kx = 0$`,
+    R`$\mathrm{H}:\mathrm{H}$`, // pikčasta formula veznega para
+    R`$a : b = 2 : 3$`,
+    "Vez v N≡N: trojna.",
+    "Formula je N≡N:",
+    "Odgovor: N≡N",
+    "razmerje 2:1 in N:O",
+    R`Ali je $:\ddot{N}\equiv\ddot{N}:$ prav?`, // vprašanje (SKIP_LINE)
+    R`Tvoja formula $:\ddot{N}\equiv\ddot{N}:$ ima preveč parov.`,
+    "  ··   ··\n :Cl – Cl:\n  ··   ··", // večvrstična risba
+    "     ··\n  H – N – H\n      |\n      H",
+  ];
+  for (const a of ok) assert.equal(lewisIssue(a).issue, null, a);
+  // formula iz učenčevega sporočila ni napaka odgovora
+  assert.equal(lewisIssue(R`Tu je $:\ddot{N}\equiv\ddot{N}:$ in`, R`Je $:\ddot{N}\equiv\ddot{N}:$ pravilno`).issue, null);
+  assert.equal(lewisIssue(R`Formula: $:\mathrm{N}\equiv\mathrm{N}:$`).checked, 1);
+  // priporočeni zapis z gnezdenima \overset in \underset se prebere (ne samo »ni zadetka«)
+  const water = R`$\mathrm{H}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{O}}}{-}\mathrm{H}$`;
+  assert.equal(lewisIssue(water).checked, 1);
+  assert.equal(lewisIssue("$" + R`{:}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{Cl}}}{:}$`).checked, 1);
+  assert.match(lewisIssue(R`$\mathrm{H}{-}\overset{\cdot\cdot}{\underset{\cdot\cdot}{\mathrm{O}}}{:}{-}\mathrm{H}$`).issue || "", /3 lone pair\(s\) on O/);
+});
+
+test("accuracy round 6: codeFindings joins the Lewis finding with the other chemistry checks", () => {
+  const a = String.raw`Dušik je v 5. skupini. Formula: $:\!\ddot{N}\!\equiv\!\ddot{N}\!:$`;
+  const r = codeFindings(a);
+  assert.match(r.issue, /15/);
+  assert.match(r.issue, /; the Lewis formula/);
+});
+
+test("accuracy round 7: an ionic formula with unreduced cross-rule subscripts is a mistake", () => {
+  const R = String.raw;
+  const bad = [
+    [R`Magnezijev oksid je $\mathrm{Mg_2O_2}$.`, /Mg2O2 → MgO/],
+    ["Kalcijev oksid: Ca2O2", /Ca2O2 → CaO/],
+    [R`Aluminijev nitrid je $\mathrm{Al_{3}N_{3}}$.`, /Al3N3 → AlN/],
+    ["Dobimo Mg₂O₂.", /MgO/],
+    [R`Kalcijev sulfat je $\mathrm{Ca_2(SO_4)_2}$.`, /Ca2\(SO4\)2 → CaSO4/],
+    ["Zn2S2 je cinkov sulfid.", /ZnS/],
+    [R`$\ce{Al3(PO4)3}$`, /AlPO4/],
+    ["Po križnem pravilu dobimo Mg₂O₂.", /MgO/], // križno pravilo brez krajšanja
+  ];
+  for (const [a, re] of bad) assert.match(subscriptIssue(a).issue || "", re, a);
+  const ok = [
+    R`$\mathrm{H_2O_2}$ je vodikov peroksid.`, // molekulska spojina
+    "N2O4", "C2H4", "Hg2Cl2", "Fe2S2", "BaO2",
+    "Na2O2 je natrijev peroksid.", // Na⁺: križno pravilo da Na₂O, zato Na₂O₂ ni neskrajšan rezultat
+    "Mg3N2", "Al2O3", "CaCl2", "K2SO4", "Mg2+ in O2-", R`$\mathrm{Mg^{2+}}$`,
+    "Po križnem pravilu dobimo Mg2O2, skrajšamo v MgO.",
+    R`$\mathrm{Mg^{2+}}$ + $\mathrm{O^{2-}}$ → $\mathrm{Mg_2O_2}$ → okrajšamo → $\mathrm{MgO}$`,
+    "Najprej $\\mathrm{Mg_2O_2}$.\nTo je $\\mathrm{MgO}$.", // skrajšana oblika je v odgovoru
+    "MgO namesto Mg2O2",
+    "Ali je Mg2O2 prav?", // SKIP_LINE
+    "Ti si napisal Mg2O2.",
+    "Križno pravilo da Mg₂O₂, kar še poenostavimo.",
+    "Fe₂O₃, Fe₃O₄, Pb₃O₄, C₂H₆, S₂O₃²⁻, CuSO₄·5H₂O, Al₂(SO₄)₃, Mg₃(PO₄)₂",
+  ];
+  for (const a of ok) assert.equal(subscriptIssue(a).issue, null, a);
+  // formula iz učenčevega sporočila ni napaka odgovora
+  assert.equal(subscriptIssue("Mg2O2", "Ali je Mg2O2 prav?").issue, null);
+  assert.equal(subscriptIssue("Formula je Mg2O2.").checked, 1);
+  // združeno z drugimi kemijskimi preverbami v en popravek
+  assert.match(codeFindings("Dušik je v 5. skupini. Formula je Mg2O2.").issue, /15.*; the formula Mg2O2/);
+});
+
+test("ionRatioIssue (round 8): an ion ratio that does not balance the charges", () => {
+  const R = String.raw;
+  const bad = [
+    ["Zato mora biti na 2 iona Mg²⁺ en ion O²⁻.", /\+4 and −2.*1 Mg per 1 O/], // ocenjevalec, ponovitev po #606
+    [R`Na dva iona $\mathrm{Mg^{2+}}$ pride en ion $\mathrm{O^{2-}}$, zato $\mathrm{MgO}$.`, /1 Mg per 1 O/],
+    [R`Dva iona $\mathrm{Al^{3+}}$ na dva iona $\mathrm{O^{2-}}$.`, /2 Al per 3 O/],
+    ["En ion Ca^{2+} na en ion Cl^-.", /1 Ca per 2 Cl/],
+    ["2 Na⁺ per 2 O²⁻", /2 Na per 1 O/],
+  ];
+  for (const [a, re] of bad) assert.match(ionRatioIssue(a).issue || "", re, a);
+  const ok = [
+    "Na en ion Mg²⁺ pride en ion O²⁻: MgO.",
+    R`En ion $\mathrm{Mg^{2+}}$ na en ion $\mathrm{O^{2-}}$.`,
+    "Na 2 iona Al^{3+} pridejo 3 ioni O^{2-}.",
+    "dva iona Na⁺ na en ion O²⁻",
+    "en ion Ca^{2+} na dva iona Cl^-",
+    "3 ioni Mg^{2+} na 2 iona N^{3-}",
+    "Dva Mg²⁺ na en O²⁻ bi dala 2, ne 0.", // pogojnik (SKIP_LINE)
+    "Dva iona Mg²⁺ na en ion O²⁻ je napačno.",
+    "Ali sta na 2 iona Mg²⁺ en ion O²⁻?",
+    "Ne dva iona Mg²⁺ na en ion O²⁻, temveč en na en.",
+    "Trije ioni Mg²⁺ dajo +6, dva iona N³⁻ dasta −6.", // brez »na«: ni trditve o razmerju
+    "Dva iona Mg²⁺ in en ion O²⁻.", // brez »na«
+    "Na 2 iona Mg²⁺ pride 1 ion Mg²⁺.", // isti predznak
+    "Mg²⁺ na O²⁻", // brez števcev
+    "Na 2 iona Mg^{2+} pride en ion O^{2-} in en ion S^{2-}.", // več kot dva iona
+    "Praviš, da na 2 iona Mg²⁺ pride en ion O²⁻.", // navedba zmote (pregled #610)
+    "Mnogi mislijo, da na 2 iona Mg²⁺ pride en ion O²⁻.",
+    "Učenci zmotno pišejo: na 2 iona Mg²⁺ en ion O²⁻.",
+    "Recimo, da na 2 iona Mg²⁺ pride en ion O²⁻.",
+  ];
+  for (const a of ok) assert.equal(ionRatioIssue(a).issue, null, a);
+  assert.equal(ionRatioIssue("En ion Mg²⁺ na en ion O²⁻.").checked, 1);
+  // razmerje iz učenčevega sporočila
+  assert.equal(ionRatioIssue("Torej: na 2 iona Mg²⁺ en ion O²⁻.", "Zakaj je na 2 iona Mg²⁺ en ion O²⁻").issue, null);
+  // združeno z drugimi kemijskimi preverbami v en popravek
+  // dolga beseda po števcu: brez katastrofalnega vračanja (pregled B #610; prej ~2× čas na črko)
+  const t0 = performance.now();
+  assert.equal(ionRatioIssue("na 2 " + "Ab".repeat(5000) + "x").issue, null);
+  assert.ok(performance.now() - t0 < 500, "ionRatioIssue na dolgi besedi");
+  assert.match(codeFindings("Dušik je v 5. skupini. Na 2 iona Mg²⁺ pride en ion O²⁻.").issue, /15.*; ".*does not add up|15.*do not add up/);
+});
+

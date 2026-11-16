@@ -57,7 +57,7 @@ $(-3)^2 = 9$, ker kvadriramo celo število $-3$. Pri $-3^2$ velja eksponent le z
 :::premisli
 Ali je kvadrat števila vedno večji od števila? Preden odgovoriš, preizkusi $3$, $1$ in $0{,}5$.
 ---
-Ne. $3^2 = 9$ je več kot $3$, $1^2 = 1$ je enako $1$, $(0{,}5)^2 = 0{,}25$ pa je manj kot $0{,}5$. Množenje z $0{,}5$ pomeni vzeti polovico, zato se število zmanjša. Kvadrat je večji od števila le, če je število večje od $1$ ali negativno.
+Ne. $3^2 = 9$ je več kot $3$; $1^2 = 1$ je enako $1$; $(0{,}5)^2 = 0{,}25$ pa je manj kot $0{,}5$. Množenje z $0{,}5$ pomeni vzeti polovico, zato se število zmanjša. Kvadrat je večji od števila le, če je število večje od $1$ ali negativno.
 :::
 
 **Korak 6: ocenjevanje.** Števila, ki ga ni v tabeli, ujameš med dva znana kvadrata. Za $27^2$: ker je $20 < 27 < 30$, je $400 < 27^2 < 900$. Ker je $27$ bliže $30$, bo kvadrat bliže $900$; natančno je $729$. Lahko pa osnovo zaokrožiš: $48^2 \approx 50^2 = 2500$. Pravi rezultat, $2304$, je malo manjši, ker je $48 < 50$. Enako gre z decimalnimi števili: $(6{,}8)^2$ je malo manj kot $7^2 = 49$, natančno $46{,}24$.
@@ -170,12 +170,12 @@ $2{,}9$ ima eno decimalko, kvadrat dve: $(2{,}9)^2 = 8{,}41$, torej $p = 8{,}41\
 - **Minus brez oklepaja.** Učenec napiše $(-5)^2 = -25$ ali pa $-5^2 = 25$. Pri $(-5)^2$ kvadriramo celo negativno število in dobimo $25$; pri $-5^2$ se kvadrira le $5$, rezultat je $-25$.
 - **Decimalna vejica.** Učenec zapiše $(0{,}4)^2 = 1{,}6$ ali $0{,}016$, ker ne prešteje decimalk. Kvadrat ima dvakrat toliko decimalk kot osnova: $0{,}16$. Pomaga ocena: kvadrat števila med $0$ in $1$ je manjši od tega števila.
 - **»Dvakrat daljša stranica, dvakrat večja ploščina.«** Tako je mislil Tim. Podvojita se dolžina in širina, zato je ploščina štirikrat večja: $30^2 = 900 = 4 \cdot 225$.
-- **Kvadrat vsote po delih.** $(3 + 4)^2 = 3^2 + 4^2 = 25$ je napačno. Najprej izračunaj oklepaj: $7^2 = 49$. Na sliki manjkata dva pravokotnika $3 \times 4$, in res je $25 + 24 = 49$.
+- **Kvadrat vsote po delih.** $(3 + 4)^2 = 3^2 + 4^2 = 25$ je napačno. Najprej izračunaj oklepaj: $7^2 = 49$. Do kvadrata $7 \times 7$ manjkata dva pravokotnika $3 \times 4$, in res je $25 + 24 = 49$.
 
 ## Povzetek
 
 - Kvadrat števila: $a^2 = a \cdot a$; kvadrat s stranico $a$ ima ploščino $a^2$.
-- Kvadrat ni nikoli negativen; $(-a)^2 = a^2$, toda $-a^2$ je negativno: $(-4)^2 = 16$, $-4^2 = -16$.
+- Kvadrat ni nikoli negativen; $(-a)^2 = a^2$, toda $-a^2$ je za $a \ne 0$ negativno: $(-4)^2 = 16$, $-4^2 = -16$.
 - Kvadrat ulomka: $\left(\dfrac{a}{b}\right)^2 = \dfrac{a^2}{b^2}$; kvadrat decimalnega števila ima dvakrat toliko decimalk.
 - Kvadrat števila med $0$ in $1$ je manjši od števila.
 - Dvakrat daljša stranica da štirikrat večjo ploščino.

@@ -74,7 +74,7 @@ $$d\sin\theta = m\lambda.$$
 
 **8. Uklonska mrežica.** Mrežica ima veliko enako razmaknjenih rež s **konstanto mrežice** $d$ (npr. $600$ rež na milimeter pomeni $d = 1{,}67\,\mu\mathrm{m}$). Ojačitve so pri istih kotih kot pri dveh režah, $d\sin\theta = m\lambda$, a so zelo ozke in svetle. Ker je kot ojačitve odvisen od $\lambda$, mrežica razkloni svetlobo v spekter, zato je srce mnogih spektrometrov. Največji red je $m \le d/\lambda$, ker je $\sin\theta \le 1$.
 
-**9. Interferenca na tankih plasteh.** Svetloba, odbita na zgornji in spodnji ploskvi tanke plasti z debelino $h$ in lomnim količnikom $n$, interferira. Pri pravokotnem vpadu je razlika poti $2nh$, pri odboju na optično gostejši snovi pa se faza dodatno spremeni za pol valovne dolžine. Pri plasti v zraku (milnica) ima ta skok le en odboj, zato je odbita svetloba ojačena pri $2nh = (m + \tfrac{1}{2})\lambda_0$. Pri protiodbojni plasti na steklu ($n_\mathrm{zrak} < n < n_\mathrm{steklo}$) ga imata oba odboja, zato je odbita svetloba oslabljena pri $2nh = (m + \tfrac{1}{2})\lambda_0$, najtanjša plast ima $h = \lambda_0/(4n)$. Od tod barve milnih mehurčkov in oljnih madežev ter protiodbojne plasti na lečah.
+**9. Interferenca na tankih plasteh.** Svetloba, odbita na zgornji in spodnji ploskvi tanke plasti z debelino $h$ in lomnim količnikom $n$, interferira. Pri pravokotnem vpadu je razlika poti $2nh$, pri odboju na optično gostejši snovi pa se faza dodatno spremeni za $\pi$, kar ustreza pol valovne dolžine. Pri plasti v zraku (milnica) ima ta skok le en odboj, zato je odbita svetloba ojačena pri $2nh = (m + \tfrac{1}{2})\lambda_0$. Pri protiodbojni plasti na steklu ($n_\mathrm{zrak} < n < n_\mathrm{steklo}$) ga imata oba odboja, zato je odbita svetloba oslabljena pri $2nh = (m + \tfrac{1}{2})\lambda_0$, najtanjša plast ima $h = \lambda_0/(4n)$. Od tod barve milnih mehurčkov in oljnih madežev ter protiodbojne plasti na lečah.
 
 ### Uklon: meja, ki je ne odpravi nobena leča
 
@@ -110,7 +110,7 @@ $n_1\sin\alpha = n_2\sin\beta$, $\sin\alpha_m = n_\mathrm{zrak}/n_\mathrm{voda}$
 
 ### Primer 2
 
-Na optični klopi v praktikumu postavimo predmet, visok $2{,}0\,\mathrm{cm}$, $15\,\mathrm{cm}$ pred zbiralno lečo z goriščno razdaljo $10\,\mathrm{cm}$. Kje nastane slika, kolikšna je povečava in kakšna je slika? Kaj se spremeni, če predmet premaknemo na razdaljo $6{,}0\,\mathrm{cm}$ pred lečo?
+Na optični klopi v praktikumu postavimo $15\,\mathrm{cm}$ pred zbiralno lečo predmet, visok $2{,}0\,\mathrm{cm}$. Leča ima goriščno razdaljo $10\,\mathrm{cm}$. Kje nastane slika, kolikšna je povečava in kakšna je slika? Kaj se spremeni, če predmet premaknemo na razdaljo $6{,}0\,\mathrm{cm}$ pred lečo?
 
 **Podatki:** $y = 2{,}0\,\mathrm{cm}$, $a_1 = 15\,\mathrm{cm}$, $a_2 = 6{,}0\,\mathrm{cm}$, $f = 10\,\mathrm{cm}$ (zbiralna leča)
 **Iščemo:** razdaljo slike $b$, povečavo $M$, velikost slike $y'$ in vrsto slike za obe legi predmeta
@@ -233,16 +233,21 @@ Natančno navedi enačbo tanke leče z vsemi pogoji in dogovorom o predznakih te
 
 Lom na meji zrak–voda (pravokotnica je navpična črta):
 
-```
-          |
-   \      |        zrak  n = 1,00
-     \ 40°|
-       \  |
-  ------\-+----------------  gladina
-          |\
-          | \ 28,9°    voda  n = 1,33
-          |  \
-```
+:::risba skica
+opis: Vodoravna gladina loči zrak z lomnim količnikom 1,00 zgoraj od vode z lomnim količnikom 1,33 spodaj. Žarek pade iz zraka z leve pod kotom 40° glede na navpično vpadno pravokotnico in se v vodi lomi k pravokotnici, pod kotom 28,9°.
+območje: -4; -3,4 .. 4; 3,2
+pravokotnik: -4; -3,4 .. 4; 0 | ozadje
+črta: -4; 0 -> 4; 0 | debelo
+črta: 0; -3,2 -> 0; 3 | črtkano siva
+puščica: -1,93; 2,3 -> 0; 0 | | | oranžna
+puščica: 0; 0 -> 1,45; -2,63 | | | oranžna
+napis: -0,55; 1,6 | 40° | nad
+napis: 0,7; -3 | 28,9°
+napis: 2,4; 1,8 | zrak, n = 1,00
+napis: 2,6; -1 | voda, n = 1,33
+napis: -2,9; 0,3 | gladina | nad
+napis: 0,2; 2,8 | pravokotnica | desno | siva
+:::
 
 Slika z lečo nastane v presečišču žarka, vzporednega z osjo, in žarka skozi središče; pri $a < f$ se sekata le podaljška nazaj.
 
@@ -346,4 +351,5 @@ D | vodoravna razdalja med točkama A in B | | m | pri uklonu širina reže ali 
 j | jakost svetlobe | | W/m^2
 j_1 | jakost svetlobe iz ene reže | | W/m^2
 s | razdalja med točkama, ki ju ločimo | s \approx L\theta | m
+h | debelina tanke plasti | | m
 :::

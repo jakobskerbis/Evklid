@@ -10,7 +10,7 @@ Večina količin v naravi je odvisna od več spremenljivk hkrati. Tlak idealnega
 Pri funkciji ene spremenljivke odvod pove, kako hitro se funkcija spreminja. Pri funkciji več spremenljivk pa se lahko vprašamo: kako hitro se spreminja, če spremenimo **samo eno** spremenljivko, druge pa držimo pri miru? Odgovor je **parcialni odvod**. Iz parcialnih odvodov sestavimo še:
 
 - **totalni diferencial**, s katerim ocenimo spremembo funkcije, ko se spremenijo vse spremenljivke hkrati, in izračunamo, kako se napake meritev prenesejo v rezultat,
-- **gradient**, vektor, ki kaže smer najhitrejšega naraščanja (npr. smer, v kateri se snov najhitreje segreva ali v katero difundira),
+- **gradient**, vektor, ki kaže smer najhitrejšega naraščanja (npr. smer, v kateri temperatura najhitreje narašča; toplota in snov pri difuziji tečeta v nasprotni smeri gradienta),
 - **verižno pravilo**, ko so spremenljivke same odvisne od drugih spremenljivk, na primer od časa.
 
 Parcialni odvodi so jezik termodinamike, fizikalne kemije, transportnih pojavov in optimizacije.
@@ -234,16 +234,22 @@ Natančno definiraj diferenciabilnost funkcije dveh spremenljivk v točki in dok
 
 Nivojnice funkcije $T(x, y) = 100 - x^2 - 2y^2$ iz Primera 2 so elipse okoli izhodišča (vrh »hriba« je v $(0, 0)$, kjer je $T = 100$):
 
-```
-                y
-                |
-         .-----------.        T = 91 (skozi točko (1, 2))
-       /    .-----.    \
-      |    (  100  )    |  --- x
-       \    '-----'    /
-         '-----------'
-                |
-```
+:::risba graf
+opis: Koordinatni sistem z dvema elipsama s središčem v izhodišču. Zunanja elipsa je nivojnica T = 91 skozi točko (1, 2); os x seka pri −3 in 3, os y pri približno −2,12 in 2,12. Notranja elipsa je nivojnica T = 96; os x seka pri −2 in 2, os y pri približno −1,41 in 1,41. V izhodišču je vrh, T = 100. Iz točke (1, 2) kaže puščica v smeri gradienta (−2, −8) pravokotno na zunanjo elipso navznoter, proti vrhu.
+x: -4 .. 4 | 1 | x
+y: -3 .. 3 | 1 | y
+enako: da
+f: sqrt((9 - x^2)/2) | modra | -3 .. 3
+f: -sqrt((9 - x^2)/2) | modra | -3 .. 3
+f: sqrt((4 - x^2)/2) | siva | -2 .. 2
+f: -sqrt((4 - x^2)/2) | siva | -2 .. 2
+napis: 2,2; 2,7 | T = 91 | desno | modra
+napis: -0,9; -0,7 | T = 96 | sredina | siva
+točka: 0; 0 | T = 100 | nad levo
+puščica: 1; 2 -> 0,75; 1 | ∇T | desno | oranžna debelo
+točka: 1; 2 | (1, 2) | nad desno
+podnapis: Nivojnici T = 91 in T = 96 funkcije T(x, y) = 100 − x² − 2y²; gradient v točki (1, 2) kaže proti vrhu
+:::
 
 V točki $(1, 2)$ gradient $(-2, -8)$ kaže pravokotno na elipso navznoter, proti vrhu. Dolžina gradienta je velika tam, kjer so nivojnice gosto skupaj (strm breg), in majhna, kjer so redke (položen teren).
 

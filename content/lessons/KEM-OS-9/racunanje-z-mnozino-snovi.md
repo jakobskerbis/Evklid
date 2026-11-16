@@ -109,7 +109,7 @@ $n = \dfrac{N}{N_A}$, nato $m = n \cdot M$
 **Rešitev:**
 
 1. Pot gre tokrat v obratni smeri, $N \to n \to m$. Tudi nazaj ne moremo preskočiti množine.
-2. **Množina.** Število atomov delimo z $N_A$. $3{,}01$ je polovica od $6{,}02$, $10^{20}$ pa je tisočina od $10^{23}$. Polovica tisočine je $0{,}0005$:
+2. **Množina.** Število atomov delimo z $N_A$. $3{,}01$ je polovica od $6{,}02$; $10^{20}$ pa je tisočina od $10^{23}$. Polovica tisočine je $0{,}0005$:
 $$n = \frac{3{,}01 \cdot 10^{20}}{6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}} = 0{,}0005\,\mathrm{mol}$$
 3. **Masa.**
 $$m = 0{,}0005\,\mathrm{mol} \cdot 197\,\mathrm{g/mol} = 0{,}0985\,\mathrm{g}$$

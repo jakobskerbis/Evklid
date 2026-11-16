@@ -63,11 +63,11 @@ Na kateri najnižji ravni se pojavi življenje? Zakaj molekula DNA sama še ni �
 Na ravni celice. DNA sama nima presnove, ne sprejema energije in se ne more podvojiti brez beljakovin v celici. Šele celica združi vse značilnosti živega.
 :::
 
-**4. Enotnost in raznolikost.** Bakterija, gliva, smreka in ti ste si v temelju enaki. Vsi ste iz celic z ovojnico (membrano), vsi hranite navodila v DNA in jih berete po istem **genetskem kodu** (pravilu, po katerem celica zapis v DNA prevede v beljakovino), vsi uporabljate isto molekulo za prenos energije (ATP). To je **enotnost** živega.
+**4. Enotnost in raznolikost.** Bakterija, gliva, smreka in ti ste si v temelju enaki. Vsi ste iz celic, ki jih obdaja celična membrana, vsi hranite navodila v DNA in jih berete po istem **genetskem kodu** (pravilu, po katerem celica zapis v DNA prevede v beljakovino), vsi uporabljate isto molekulo za prenos energije (ATP). To je **enotnost** živega.
 
 Hkrati je opisanih približno dva milijona vrst, pravo število pa je verjetno večkrat večje. To je **raznolikost**. Poleg njiju biologi poudarjajo še **soodvisnost** (organizmi so povezani med seboj, čebela potrebuje cvet, cvet čebelo) in **dinamičnost** (celice se obnavljajo, populacije nihajo).
 
-**5. Zgradba, delovanje in evolucija.** Zgradba se ujema z delovanjem. Planika na vetrovnem grebenu ima gosto dlakave liste, ki zmanjšajo izhlapevanje in ščitijo pred močnim soncem. Macesen pozimi odvrže iglice, da skoznje ne izgublja vode, ko je voda v tleh zamrznjena, in da se nanj ne nabira težek sneg.
+**5. Zgradba, delovanje in evolucija.** Zgradba se ujema z delovanjem. Planika na vetrovnem grebenu ima gosto dlakave liste, ki zmanjšajo izhlapevanje in ščitijo pred močnim soncem. Macesen jeseni odvrže iglice, da pozimi skoznje ne izgublja vode, ko je voda v tleh zamrznjena, in da se nanj ne nabira težek sneg.
 
 To ujemanje razloži **evolucija**: postopno spreminjanje populacij skozi rodove. Osebki, ki so slučajno bolje prilagojeni, pogosteje preživijo in imajo več potomcev, zato se njihove lastnosti v populaciji širijo. Vsi organizmi izvirajo iz skupnega prednika, zato so si v temelju enaki (enotnost). Prilagajanje različnim okoljem pa je ustvarilo raznolikost.
 
@@ -89,7 +89,7 @@ Strela zaneti borovec. Ogenj se v eni uri razširi na $2\,\text{ha}$, porablja k
 1. Celična zgradba: ogenj je vroč plin in žareči delci, celic nima.
 2. Dedna snov: novi ognji nastanejo iz vročine, ne iz prenesenih navodil, zato ni dedovanja.
 3. Homeostaza: ogenj ne vzdržuje stalnih razmer, ugasne, ko zmanjka goriva ali začne deževati.
-4. Rast in poraba kisika sta le dve od sedmih značilnosti, ki jih mora imeti živo bitje.
+4. Rast in poraba kisika le spominjata na dve od sedmih značilnosti (rast in presnovo), živo bitje pa mora imeti vse hkrati.
 5. Odgovor: ogenj ni živ, ker nima celic, dedne snovi in homeostaze.
 
 ### Primer 2: od molekule do biosfere

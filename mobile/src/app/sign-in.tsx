@@ -14,7 +14,7 @@ import { BirthDateField, Check, PrivacyLink, birthIso, type Birth } from "@/comp
 import { Logo } from "@/components/Logo";
 import brand from "../../../brand.json";
 
-type AppleStep = { token: string; nonce: string; given?: string | null; family?: string | null };
+type AppleStep = { token: string; nonce: string; given?: string | null; family?: string | null; existing?: boolean };
 
 export default function SignIn() {
   const th = useTheme();
@@ -54,7 +54,8 @@ export default function SignIn() {
       await api("/api/auth/apple", { body: { identity_token: step.token, nonce: step.nonce, given_name: step.given, family_name: step.family, ...extra } });
       await done();
     } catch (err) {
-      if (err instanceof ApiError && err.body?.need_signup) setApple(step);
+      // existing: račun s tem e-naslovom že obstaja, a naslov ni bil potrjen (strežnik ga zaščiti in poveže).
+      if (err instanceof ApiError && err.body?.need_signup) setApple({ ...step, existing: !!err.body?.existing });
       else throw err;
     }
   }
@@ -94,8 +95,8 @@ export default function SignIn() {
   if (apple) {
     return (
       <Screen>
-        <Title>{t("mob.appleNewTitle")}</Title>
-        <Body muted>{t("mob.appleNewText")}</Body>
+        <Title>{t(apple.existing ? "mob.appleExistingTitle" : "mob.appleNewTitle")}</Title>
+        <Body muted>{t(apple.existing ? "mob.appleExistingText" : "mob.appleNewText")}</Body>
         <BirthDateField value={birth} onChange={setBirth} />
         <Check checked={agree} onChange={setAgree}>
           {t("mob.agree")} <PrivacyLink />

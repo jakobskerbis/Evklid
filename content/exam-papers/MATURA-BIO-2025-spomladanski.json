@@ -2104,14 +2104,14 @@
      "ways": [
       {
        "title": "Po korakih",
-       "text": "1. **Osi:** neodvisno spremenljivko (koncentracija NaCl, ki so jo dijaki izbrali) postavimo na **vodoravno os**, odvisno (delež razpadlih celic) na **navpično os**. Obe osi poimenujemo in zapišemo enoto (%).\n2. **Merili:** največja koncentracija je $2{,}0\\,\\%$. Na mreži je 20 kvadratkov v širino, zato je 1 kvadratek $0{,}1\\,\\%$. Največji delež je $100\\,\\%$, v višino je 10 kvadratkov, zato je 1 kvadratek $10\\,\\%$. Merilo mora biti **enakomerno**, tudi če so koncentracije v preglednici neenakomerno razporejene ($0{,}6$, $0{,}9$, $2{,}0$).\n3. **Točke:** vnesemo osem točk, npr. $(0{,}4;\\ 60)$ je 4 kvadratke desno in 6 kvadratkov navzgor.\n4. **Črta:** pri linijskem grafikonu sosednje točke povežemo z daljicami."
+       "text": "1. **Osi:** neodvisno spremenljivko (koncentracija NaCl, ki so jo dijaki izbrali) postavimo na **vodoravno os**, odvisno (delež razpadlih celic) na **navpično os**. Obe osi poimenujemo in zapišemo enoto (%).\n2. **Merili:** največja koncentracija je $2{,}0\\,\\%$. Na mreži je 20 kvadratkov v širino, zato je 1 kvadratek $0{,}1\\,\\%$. Največji delež je $100\\,\\%$, v višino je 10 kvadratkov, zato je 1 kvadratek $10\\,\\%$. Merilo mora biti **enakomerno**, tudi če so koncentracije v preglednici neenakomerno razporejene ($0{,}6$; $0{,}9$; $2{,}0$).\n3. **Točke:** vnesemo osem točk, npr. $(0{,}4;\\ 60)$ je 4 kvadratke desno in 6 kvadratkov navzgor.\n4. **Črta:** pri linijskem grafikonu sosednje točke povežemo z daljicami."
       },
       {
        "title": "Preizkus: kaj mora pokazati graf",
        "text": "Pravilno narisan graf pokaže:\n- vodoraven del na $100\\,\\%$ pri najmanjših koncentracijah (vse celice razpadejo),\n- strm padec med $0{,}3\\,\\%$ in $0{,}6\\,\\%$ (tu so celice različno odporne),\n- vodoraven del na $0\\,\\%$ od $0{,}9\\,\\%$ naprej (izotonična in hipertonična raztopina).\n\nPolovica celic razpade pri približno $0{,}42\\,\\%$ – to lahko odčitamo na daljici med $(0{,}4;\\ 60)$ in $(0{,}5;\\ 15)$. Če grafikon ne kaže tega poteka, je verjetno merilo na vodoravni osi neenakomerno."
       }
      ],
-     "mistake": "Pogosta napaka je, da se koncentracije $0{,}6$, $0{,}9$ in $2{,}0$ postavi v enakih razmikih kot $0{,}2$, $0{,}3$, $0{,}4$ … Tako merilo ni enakomerno in graf napačno prikaže potek. Napačno je tudi stolpčni grafikon namesto linijskega."
+     "mistake": "Pogosta napaka je, da se koncentracije $0{,}6$; $0{,}9$ in $2{,}0$ postavi v enakih razmikih kot $0{,}2$; $0{,}3$; $0{,}4$ … Tako merilo ni enakomerno in graf napačno prikaže potek. Napačno je tudi stolpčni grafikon namesto linijskega."
     },
     {
      "id": "g",

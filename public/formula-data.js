@@ -12,6 +12,8 @@
 // ---------- slovar simbolov ----------
 // n: ime (sl), en: ime (en), r: zveza v TeX, u: enota (ključ v UNITS), note/noteEn: dodatna opomba,
 // ctx: regularni izraz, ki mora ustrezati celotni formuli (za dvoumne črke).
+// Množenje v formuli: »k x«, »k\,x«, »k \cdot x«, »k \times x« (pregled PR 463: F = k \cdot x ni bil klikljiv).
+const MUL = "\\s*(?:\\\\cdot|\\\\times|\\\\[,;: ])?\\s*";
 const FIZ = {
   F: { n: "sila", en: "force", r: "F = m\\,a", u: "N" },
   F_g: { n: "teža (sila teže)", en: "weight (gravitational force)", r: "F_g = m\\,g", u: "N" },
@@ -35,11 +37,12 @@ const FIZ = {
     { n: "gibalna količina", en: "momentum", r: "G = m\\,v", u: "kg m/s" },
   ],
   p: [
-    { ctx: "p\\s*=\\s*m\\s*\\\\?,?\\s*v", n: "gibalna količina", en: "momentum", r: "p = m\\,v", u: "kg m/s" },
+    { ctx: `p\\s*=\\s*m${MUL}v`, n: "gibalna količina", en: "momentum", r: "p = m\\,v", u: "kg m/s" },
     { n: "tlak", en: "pressure", r: "p = \\frac{F}{S}", u: "Pa" },
   ],
   S: { n: "ploščina (prečni presek)", en: "area (cross-section)", u: "m^2" },
-  A: { n: "delo", en: "work", r: "A = F\\,s", u: "J" },
+  // A je pri nihanju amplituda, v geometriji ploščina.
+  A: { n: "delo", en: "work", r: "A = F\\,s", u: "J", ne: "nihanj|nihal|valovan|amplitud" },
   W: { n: "energija", en: "energy", u: "J" },
   W_k: { n: "kinetična energija", en: "kinetic energy", r: "W_k = \\frac{m v^2}{2}", u: "J" },
   W_p: { n: "potencialna energija", en: "potential energy", r: "W_p = m\\,g\\,h", u: "J" },
@@ -51,13 +54,14 @@ const FIZ = {
   ρ: { n: "gostota", en: "density", r: "\\rho = \\frac{m}{V}", u: "kg/m^3" },
   V: { n: "prostornina", en: "volume", r: "V = \\frac{m}{\\rho}", u: "m^3" },
   h: [
-    { ctx: "h\\s*\\\\nu|h\\s*\\\\?,?\\s*f\\b|\\\\frac\\{h", n: "Planckova konstanta", en: "Planck constant", r: "h \\approx 6{,}63\\cdot 10^{-34}\\,\\mathrm{J\\,s}" },
+    { ctx: `h${MUL}\\\\nu|h${MUL}f\\b|\\\\frac\\{h`, n: "Planckova konstanta", en: "Planck constant", r: "h \\approx 6{,}63\\cdot 10^{-34}\\,\\mathrm{J\\,s}" },
     { n: "višina", en: "height", u: "m" },
   ],
   U: { n: "električna napetost", en: "voltage", r: "U = R\\,I", u: "V" },
   I: { n: "električni tok", en: "electric current", r: "I = \\frac{e}{t}", u: "A" },
   R: { n: "električni upor", en: "electrical resistance", r: "R = \\frac{U}{I}", u: "Ω" },
-  e: { n: "električni naboj", en: "electric charge", r: "e = I\\,t", u: "C" },
+  // e^{…} je Eulerjevo število (praznjenje kondenzatorja, razpad), ne naboj.
+  e: { brez: "e\\s*\\^", n: "električni naboj", en: "electric charge", r: "e = I\\,t", u: "C" },
   e_0: { n: "osnovni naboj", en: "elementary charge", r: "e_0 \\approx 1{,}6\\cdot 10^{-19}\\,\\mathrm{C}", u: "C" },
   q: { n: "električni naboj", en: "electric charge", u: "C" },
   Q: { n: "toplota", en: "heat", r: "Q = m\\,c\\,\\Delta T", u: "J", note: "Pri elektriki Q pomeni naboj (enota C).", noteEn: "In electricity Q means charge (unit C)." },
@@ -69,17 +73,20 @@ const FIZ = {
     { ctx: "\\\\Delta\\s*T|Q\\s*=", n: "specifična toplota", en: "specific heat capacity", r: "c = \\frac{Q}{m\\,\\Delta T}", u: "J/(kg K)" },
     { n: "hitrost svetlobe (valovanja)", en: "speed of light (of a wave)", r: "c \\approx 3\\cdot 10^{8}\\,\\mathrm{m/s}", u: "m/s" },
   ],
-  k: { n: "prožnostni koeficient (konstanta vzmeti)", en: "spring constant", r: "F = k\\,x", u: "N/m" },
+  // k je tudi Boltzmannova konstanta, valovno število, koeficient trenja; x tudi lega (koordinata).
+  k: { ctx: `F\\s*=\\s*-?\\s*k${MUL}(?:\\\\Delta\\s*)?x|\\\\frac\\{\\s*k${MUL}x`, teme: "vzmet|prožn|nihal|nihanj|raztez", n: "prožnostni koeficient (konstanta vzmeti)", en: "spring constant", r: "F = k\\,x", u: "N/m" },
   k_tr: { n: "koeficient trenja", en: "coefficient of friction", r: "k_{tr} = \\frac{F_{tr}}{F_n}" },
-  x: { n: "raztezek (odmik)", en: "extension (displacement)", u: "m" },
+  x: { ctx: `F\\s*=\\s*-?\\s*k${MUL}x|\\\\frac\\{\\s*k${MUL}x`, teme: "vzmet|prožn|raztez", n: "raztezek (odmik)", en: "extension (displacement)", u: "m" },
   η: { n: "izkoristek", en: "efficiency", r: "\\eta = \\frac{P_{izh}}{P_{vh}}" },
   ω: { n: "kotna hitrost", en: "angular velocity", r: "\\omega = \\frac{2\\pi}{t_0}", u: "1/s" },
   r: { n: "polmer (razdalja)", en: "radius (distance)", u: "m" },
-  M: { n: "navor", en: "torque", r: "M = r\\,F", u: "N m" },
+  // M je tudi masa Zemlje, Sonca (gravitacija) ali molska masa.
+  M: { ctx: `M\\s*=\\s*r${MUL}F|M\\s*=\\s*F${MUL}r`, teme: "navor|vzvod|ročic|ravnovesj|vrtenj|vrtiln", n: "navor", en: "torque", r: "M = r\\,F", u: "N m" },
   B: { n: "gostota magnetnega polja", en: "magnetic flux density", u: "T" },
   Φ: { n: "magnetni pretok", en: "magnetic flux", r: "\\Phi = B\\,S", u: "Wb" },
   C: { n: "kapaciteta", en: "capacitance", r: "C = \\frac{e}{U}", u: "F" },
-  n: { n: "lomni količnik", en: "refractive index", r: "n = \\frac{c_0}{c}" },
+  // n je tudi množina snovi (p V = n R T), število nihajev ali vrtljajev, red uklona.
+  n: { ctx: "n\\s*=\\s*\\\\frac\\{\\s*c|\\\\sin", teme: "\\blom|lomn|lomi|\\bleč|optik|snell|prizm", ne: "plin|množin|uklon|mrežic", n: "lomni količnik", en: "refractive index", r: "n = \\frac{c_0}{c}" },
   N: { n: "število (navojev, delcev, nihajev)", en: "number (of turns, particles, oscillations)" },
 };
 
@@ -114,36 +121,87 @@ const KEM = {
   t: { n: "čas", en: "time", u: "s" },
 };
 
+// Pomen črke je odvisen od konteksta (j, 6. 11.: x₁ v Lagrangevem izreku je točka, ne ničla). Polja vnosa:
+//   ctx  – formula (TeX) sama pove pomen (npr. a x² v kvadratni enačbi); zanesljivo.
+//   pov  – kot ctx, a za formule v isti povedi (»Premica $y = kx + n$ ima začetno vrednost $n$«).
+//   teme – tema (in sklop, druga stran kartice) ali poved okoli formule pove pomen; male črke, korenski zapis.
+//          Celo besedilo razdelka tu ne šteje: ena beseda v drugem zgledu ne sme dati pomena vsem črkam.
+//   ne   – v tej temi, povedi ali besedilu bloka ima črka drug pomen: teme tu ne velja (ctx pa še vedno).
+//   brez – formula, v kateri črka nima tega pomena (dx v integralu ni premer).
+//   oba  – potrebna sta ctx in teme hkrati.
+//   zan  – formula sama zanesljivo pove pomen (S = 1,5 m², V = 2,0 L), tudi brez teme in pri oba.
+//   samo – po temi (brez ctx) velja le, če se formula ujema s tem vzorcem (a = 1, b = −5; ne x = 2a).
+// Vnos s ctx ali teme velja samo, ko se kontekst ujema; sicer črka ni klikljiva (raje nič kot napačno).
+// Pravila in seznam dvoumnih črk: docs/pomen-crk.md.
 const QUAD = "a\\s*x\\^|ax\\^|b\\^2\\s*-\\s*4\\s*a\\s*c";
+// Formula rešitev ali Vietovi formuli: v njej so x₁, x₂, a, b, c in D zanesljivo iz kvadratne enačbe.
+// −b ± √… in ± √D sta formula rešitev; (√a ± √b)² ni (pregled 463, N4). Vietovi formuli (c/a, −b/a) le skupaj z
+// x₁ ali x₂: c/a = a/c_a v Evklidovem izreku ni kvadratna enačba (N3).
+const VIETA = "^(?=[\\s\\S]*x_\\{?[12])[\\s\\S]*(?:\\\\frac\\{\\s*-\\s*b\\s*\\}\\{\\s*a\\s*\\}|-\\s*\\\\frac\\{\\s*b\\s*\\}\\{\\s*a\\s*\\}|\\\\frac\\{\\s*c\\s*\\}\\{\\s*a\\s*\\})";
+const QUADF = `${QUAD}|-\\s*b\\s*\\\\pm\\s*\\\\sqrt|\\\\pm\\s*\\\\sqrt\\s*\\{?\\s*D|${VIETA}`;
+// »kvadratni koren«, »kvadratni centimeter« niso kvadratna enačba: samo enačba, funkcija, neenačba, polinom.
+const KVAD = "kvadratn\\w*\\s+(?:enačb|funkcij|neenačb|polinom|trinom)|diskriminant|viet";
+// a, b, c niso koeficienti kvadratne enačbe pri elipsi/hiperboli (polosi, y = c/x) ali v zaporedju.
+// a, b, c: »Vietovo pravilo« pri razstavljanju (x² + (a+b)x + ab) ni kvadratna enačba (pregled 463, N5).
+const KVAD_K = "kvadratn\\w*\\s+(?:enačb|funkcij|neenačb|polinom|trinom)|diskriminant";
+// p, q pri paraboli kot stožnici (y² = 2px) nista teme T(p, q) (pregled 463, N6).
+const STOZNICE = "gorišč|vodnic|stožnic|elips|hiperbol|parabol\\w*\\s+y\\^";
+const KVAD_NE = "elips|hiperbol|zaporedj|\\bvrst[aeio]?\\b";
+// Po temi sami so a, b, c koeficienti le v formuli brez drugih črk (»a = 1«, »a \\neq 0«), ne v »x = 2a«.
+const KOEF = "^(?:\\\\[a-zA-Z]+|[^a-zA-Z]|[abcD])*$";
 const CIRCLE = "\\\\pi";
+// Številka z enoto ploščine ali prostornine: S = 1,5 m², V = 2,00 L (pomen je jasen tudi zunaj geometrije).
+const NUM_UNIT = "\\s*=\\s*[\\d\\s{},.]+(?:\\\\[,;!: ])?\\s*(?:\\\\(?:mathrm|text|rm)\\s*\\{\\s*)?";
+// \b: »okrog« ni krog, »atmosfera« ni sfera (ASCII \b tu deluje, ker je pred korenom latinska črka ali nič).
+const KROG = "\\bkrog|krožnic|krožn|valj|stož|\\bsfer|\\bkrogl";
+const GEOM = `geometr|trikotnik|štirikotnik|pravokotnik|paralelogram|trapez|romb|deltoid|mnogokotnik|\\blik|ploščin|obseg|prostornin|površin|prizm|piramid|kock|kvader|\\bteles|\\btelo\\b|${KROG}`;
+// »linearna enačba« ni premica (k je tam poljuben množitelj): le premica, linearna funkcija, smerni koeficient.
+// Lekcija o linearnih enačbah ali sistemih (sklop »Linearna funkcija, enačbe in neenačbe«): k je tam množitelj.
+const LIN_ENACBE = "linearn\\w*\\s+enačb|sistem\\w*\\s+linearn";
+const PREMICA = "premic|linearn\\w*\\s+funkcij|smern|naklon";
+const ZAPOREDJE = "zaporedj|aritmetičn|geometrijsk|\\bvrst[aeio]?\\b";
+// α, β, γ niso koti pri »ravnina α«, stopnji tveganja, stopnji značilnosti ali parametru (»v ravnini« pa ni izjema).
+const ANGLE_NE = "ravnin\\w*\\s+\\$?\\s*\\\\?(?:alpha|beta|gamma|α|β|γ)|tveganj|značilnost|parameter";
+const KOTI = "\\\\angle|\\\\sin|\\\\cos|\\\\tan|\\\\cot|\\^\\s*\\{?\\s*\\\\circ|°";
 const MAT = {
   π: { n: "število pi", en: "pi", r: "\\pi \\approx 3{,}14159", note: "Razmerje med obsegom in premerom kroga.", noteEn: "Ratio of a circle's circumference to its diameter." },
   e: { ctx: "e\\^|\\\\ln|\\\\exp|\\\\lim", n: "Eulerjevo število", en: "Euler's number", r: "e \\approx 2{,}71828", note: "Osnova naravnega logaritma.", noteEn: "Base of the natural logarithm." },
-  i: { ctx: "i\\^2|[0-9a-z]\\s*i\\b|\\+\\s*i|-\\s*i", n: "imaginarna enota", en: "imaginary unit", r: "i^2 = -1" },
-  a: { ctx: QUAD, n: "vodilni koeficient (pri x²)", en: "leading coefficient (of x²)", r: "a x^2 + b x + c = 0", note: "a ≠ 0, sicer enačba ni kvadratna.", noteEn: "a ≠ 0, otherwise the equation is not quadratic." },
-  b: { ctx: QUAD, n: "linearni koeficient (pri x)", en: "linear coefficient (of x)", r: "x_1 + x_2 = -\\frac{b}{a}" },
-  c: { ctx: QUAD, n: "prosti člen", en: "constant term", r: "x_1 \\cdot x_2 = \\frac{c}{a}" },
-  D: { ctx: "b\\^2\\s*-\\s*4\\s*a\\s*c|b\\^\\{2\\}\\s*-\\s*4", n: "diskriminanta", en: "discriminant", r: "D = b^2 - 4ac", note: "D > 0: dve realni rešitvi · D = 0: ena · D < 0: nobene realne.", noteEn: "D > 0: two real solutions · D = 0: one · D < 0: none." },
-  x_1: { ctx: QUAD + "|x_\\{?1", n: "prva rešitev (ničla)", en: "first solution (zero)", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
-  x_2: { ctx: QUAD + "|x_\\{?2", n: "druga rešitev (ničla)", en: "second solution (zero)", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
-  "x_1,2": { n: "rešitvi kvadratne enačbe", en: "solutions of the quadratic equation", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
-  k: { ctx: "y\\s*=\\s*k\\s*x|k\\s*=\\s*\\\\frac\\{y", n: "smerni koeficient premice", en: "slope of the line", r: "k = \\frac{y_2 - y_1}{x_2 - x_1}" },
-  n: { ctx: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n", n: "začetna vrednost (presečišče z osjo y)", en: "y-intercept", r: "y = k x + n" },
-  p: { ctx: "\\(x\\s*-\\s*p\\)", n: "abscisa temena T(p, q)", en: "x-coordinate of the vertex T(p, q)", r: "p = -\\frac{b}{2a}" },
-  q: { ctx: "\\(x\\s*-\\s*p\\)", n: "ordinata temena T(p, q)", en: "y-coordinate of the vertex T(p, q)", r: "q = -\\frac{D}{4a}" },
-  r: { ctx: CIRCLE, n: "polmer", en: "radius", r: "d = 2r" },
-  d: { ctx: CIRCLE + "|d\\s*=\\s*2\\s*r", n: "premer", en: "diameter", r: "d = 2r" },
-  o: { ctx: "o\\s*=", n: "obseg", en: "perimeter (circumference)", r: "o = 2\\pi r" },
-  S: { ctx: "S\\s*=", n: "ploščina", en: "area" },
-  P: { ctx: "P\\s*=", n: "površina telesa", en: "surface area" },
-  V: { ctx: "V\\s*=", n: "prostornina", en: "volume" },
-  v: { ctx: "S\\s*=|V\\s*=|v_[a-c]", n: "višina", en: "height" },
-  a_n: { n: "splošni (n-ti) člen zaporedja", en: "general (n-th) term of the sequence" },
-  a_1: { ctx: "a_n|a_\\{n", n: "prvi člen zaporedja", en: "first term of the sequence" },
-  s_n: { n: "vsota prvih n členov", en: "sum of the first n terms" },
-  α: { n: "kot", en: "angle" },
-  β: { n: "kot", en: "angle" },
-  γ: { n: "kot", en: "angle" },
+  // Eulerjeva oblika (e^{iφ}, cos φ ± i sin φ) sama pove, da je i imaginarna enota; sicer formula in tema.
+  i: [
+    { ctx: "e\\^\\{\\s*-?\\s*i|(?:\\\\pm|[+-])\\s*i\\s*\\\\sin|\\\\pm\\s*i(?![\\w\\\\])|\\(\\s*x\\s*[-+]\\s*i\\s*\\)|i\\^\\{?2\\}?\\s*=\\s*-\\s*1", n: "imaginarna enota", en: "imaginary unit", r: "i^2 = -1" },
+    { ctx: "i\\^2|\\d\\s*i\\b|[+-]\\s*i\\b", teme: `kompleksn|imaginarn|${KVAD}`, oba: true, n: "imaginarna enota", en: "imaginary unit", r: "i^2 = -1" },
+  ],
+  a: { ctx: QUADF, teme: KVAD_K, ne: KVAD_NE, samo: KOEF, brez: "D\\s*=\\s*a\\^", n: "vodilni koeficient (pri x²)", en: "leading coefficient (of x²)", r: "a x^2 + b x + c = 0", note: "a ≠ 0, sicer enačba ni kvadratna.", noteEn: "a ≠ 0, otherwise the equation is not quadratic." },
+  // f(x) = a x² + b: b je tam prosti člen, ne linearni koeficient (brez).
+  b: { ctx: QUADF, teme: KVAD_K, ne: KVAD_NE, samo: KOEF, brez: "x\\^\\{?2\\}?\\s*[+-]\\s*b\\s*(?![a-zA-Z\\\\(])|b\\s*xy|D\\s*=\\s*a\\^", n: "linearni koeficient (pri x)", en: "linear coefficient (of x)", r: "x_1 + x_2 = -\\frac{b}{a}" },
+  c: { ctx: QUADF, teme: KVAD_K, ne: KVAD_NE, samo: KOEF, n: "prosti člen", en: "constant term", r: "x_1 \\cdot x_2 = \\frac{c}{a}" },
+  D: { brez: "D\\s*\\(", ctx: "b\\^2\\s*-\\s*4\\s*a\\s*c|b\\^\\{2\\}\\s*-\\s*4|\\\\sqrt\\s*\\{?\\s*D", teme: KVAD, n: "diskriminanta", en: "discriminant", r: "D = b^2 - 4ac", note: "D > 0: dve realni rešitvi · D = 0: ena · D < 0: nobene realne.", noteEn: "D > 0: two real solutions · D = 0: one · D < 0: none." },
+  // x₁, x₂ sta tudi točki na intervalu (Lagrange, Rolle), člena zaporedja ali abscisi dveh točk premice.
+  x_1: { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "prva rešitev (ničla)", en: "first solution (zero)", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
+  x_2: { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "druga rešitev (ničla)", en: "second solution (zero)", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
+  "x_1,2": { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "rešitvi kvadratne enačbe", en: "solutions of the quadratic equation", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
+  // k je tudi indeks (k-ti člen), celo število (x = π/2 + kπ), konstanta vzmeti; n tudi naravno število.
+  k: { ctx: "y\\s*=\\s*k\\s*x|k\\s*=\\s*\\\\frac\\{\\s*y", teme: PREMICA, brez: "\\^\\s*\\{[^}]*k|\\^\\s*-?\\s*k|\\\\ln\\s*k|k\\s*t\\b", ne: `reakcij|hitrostn|arrhenius|razpad|števec\\s+(?:je\\s+)?višj|zaporedj|kombinator|binom|vsot|indukcij|period|trigonometr|${LIN_ENACBE}`, n: "smerni koeficient premice", en: "slope of the line", r: "k = \\frac{y_2 - y_1}{x_2 - x_1}" },
+  // n je začetna vrednost le, če je y = k x + n v isti formuli ali povedi (pov), ne vsak n v temi o premici
+  // (»za vsak naravni n«, razmerje m : n pri Talesovem izreku).
+  n: { ctx: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n", pov: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n\\b", ne: "zaporedj|kombinator|binom|vsot|indukcij|mnogokotnik|potenc|koren", n: "začetna vrednost (presečišče z osjo y)", en: "y-intercept", r: "y = k x + n" },
+  p: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: STOZNICE, n: "abscisa temena T(p, q)", en: "x-coordinate of the vertex T(p, q)", r: "p = -\\frac{b}{2a}" },
+  q: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: STOZNICE, n: "ordinata temena T(p, q)", en: "y-coordinate of the vertex T(p, q)", r: "q = -\\frac{D}{4a}" },
+  r: { ctx: CIRCLE, teme: KROG, brez: "\\\\int|\\\\sum|\\\\lim|\\\\sin|\\\\cos|\\\\tan", n: "polmer", en: "radius", r: "d = 2r" },
+  d: { ctx: `${CIRCLE}|d\\s*=\\s*2\\s*r`, teme: KROG, ne: "razdalj|oddaljen|sekant|tangent|mimobežn|diagonal|štirikotnik|trapez|romb|deltoid|paralelogram", brez: "\\\\(?:o|i{0,2})int|\\\\frac\\{\\s*d|(?<![A-Za-z\\\\])d\\s*(?:[A-Za-z]|\\\\(?:varphi|vartheta|theta|phi|rho|tau|omega|lambda))(?![a-z])|\\\\mathrm\\s*\\{?\\s*d(?![a-zA-Z])", n: "premer", en: "diameter", r: "d = 2r" },
+  o: { ctx: "o\\s*=", teme: GEOM, oba: true, n: "obseg", en: "perimeter (circumference)", r: "o = 2\\pi r" },
+  S: { zan: `(?<![\\w\\\\])S${NUM_UNIT}(?:[kdcm]?m\\^\\{?2)`, ctx: "S\\s*=", teme: `${GEOM}|integral`, oba: true, ne: "zaporedj|vsot|statist|verjetn|množic", n: "ploščina", en: "area" },
+  // »Mečemo kocko«: P je verjetnost, ne površina (docs/pomen-crk.md).
+  P: { ctx: "P\\s*=", teme: "površin|prizm|piramid|kock|kvader|valj|stož|krogl|\\bteles|\\btelo\\b", oba: true, ne: "verjetn|dogod|meč", n: "površina telesa", en: "surface area" },
+  V: { zan: `(?<![\\w\\\\])V${NUM_UNIT}(?:[kdcm]?m\\^\\{?3|[mdc]?L\\b)`, ctx: "V\\s*=", teme: "prostornin|prizm|piramid|kock|kvader|valj|stož|krogl|\\bteles|\\btelo\\b|vrteni", oba: true, ne: "verjetn|dogod|meč", n: "prostornina", en: "volume" },
+  v: { ctx: "S\\s*=|V\\s*=|v_[a-c]", teme: GEOM, oba: true, ne: "hitrost|vektor", n: "višina", en: "height" },
+  a_n: { teme: ZAPOREDJE, ne: "polinom", n: "splošni (n-ti) člen zaporedja", en: "general (n-th) term of the sequence" },
+  a_1: { ctx: "a_n|a_\\{n", teme: ZAPOREDJE, oba: true, ne: "polinom", n: "prvi člen zaporedja", en: "first term of the sequence" },
+  s_n: { teme: ZAPOREDJE, n: "vsota prvih n členov", en: "sum of the first n terms" },
+  // α, β, γ so tudi ravnine, parametri, stopnje tveganja: kot samo ob kotih ali v geometriji.
+  α: { ctx: KOTI, teme: `^kot|${GEOM}|\\bkot[ai]\\b|kotn|kotov|konstrukc|simetral|podobn|skladn|trigonometr|vektor`, ne: ANGLE_NE, n: "kot", en: "angle" },
+  β: { ctx: KOTI, teme: `^kot|${GEOM}|\\bkot[ai]\\b|kotn|kotov|konstrukc|simetral|podobn|skladn|trigonometr|vektor`, ne: ANGLE_NE, n: "kot", en: "angle" },
+  γ: { ctx: KOTI, teme: `^kot|${GEOM}|\\bkot[ai]\\b|kotn|kotov|konstrukc|simetral|podobn|skladn|trigonometr|vektor`, ne: ANGLE_NE, n: "kot", en: "angle" },
 };
 
 const SYMBOLS = { FIZ, KEM, MAT };
@@ -232,18 +290,26 @@ const normSub = (s) => s.replace(/\\(mathrm|text|textrm)\s*/g, "").replace(/[{}\
 // ---------- iskanje ----------
 let subjectFn = () => "MAT";
 let override = null;
-export function setFormulaSubject(fn) {
+// Tema (ime teme, lekcije, sklopa, kartice): po njej se izbere pomen dvoumne črke (teme pri vnosu).
+let topicFn = () => "";
+let topicOverride = null;
+export function setFormulaSubject(fn, topic = null) {
   subjectFn = typeof fn === "function" ? fn : () => fn;
+  if (topic !== null) topicFn = typeof topic === "function" ? topic : () => topic;
 }
 // Začasno drug predmet (lekcija v učbeniku iz druge poti), med sinhronim izrisom.
 // glossary: oznake lekcije iz bloka :::simboli (parseSymbolsBlock); imajo prednost pred slovarjem.
-export function withFormulaSubject(subject, fn, glossary = null) {
+// topic: ime teme ali lekcije (»nedoločeni integral«); undefined = tema ostane, kot je.
+export function withFormulaSubject(subject, fn, glossary = null, topic = undefined) {
   const prev = override;
+  const prevTopic = topicOverride;
   override = glossary?.length ? registerGlossary(subject, glossary) : subject || null;
+  if (topic !== undefined) topicOverride = String(topic ?? "");
   try {
     return fn();
   } finally {
     override = prev;
+    topicOverride = prevTopic;
   }
 }
 
@@ -256,18 +322,51 @@ export function subjectWithGlossary(subject, glossary) {
 // imenuje natanko enega od pomenov (»Planckova konstanta h = 6,63·10⁻³⁴ J s«), sicer privzeti pomen.
 // Besede imena primerjamo po korenu (skloni: »gibalno količino«).
 let sentence = "";
+let scope = ""; // tema + besedilo bloka + poved (male črke): samo za izključitve (ne)
+let tscope = ""; // tema + poved (male črke): za pomen po temi (teme)
+let sentTex = ""; // TeX vseh formul v isti povedi (pov)
+let blockLocal = null; // "@id" z oznakami, ki jih določi besedilo bloka (definitionsIn)
 const escRe = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const stem = (w) => escRe(w.slice(0, Math.max(4, w.length - 1)));
 const nameWords = (n) => String(n || "").replace(/\s*\(.*?\)/g, "").replace(/\$[^$]*\$/g, " ").toLowerCase().split(/[\s,]+/).filter((w) => w.length > 2);
+const hasWord = (w, s) => new RegExp(`(^|[^\\p{L}])${stem(w)}`, "u").test(s);
 function namedIn(e, s) {
   return [e.n, e.en].some((n) => {
     const words = nameWords(n);
-    return words.length > 0 && words.every((w) => new RegExp(`(^|[^\\p{L}])${stem(w)}`, "u").test(s));
+    return words.length > 0 && words.every((w) => hasWord(w, s));
   });
 }
+// Ime iz besedila (»kjer je $k$ konstanta vzmeti«) in ime v slovarju poimenujeta isto: vse besede enega so v
+// drugem, v obe smeri (»konstanta vzmeti« je v »prožnostni koeficient (konstanta vzmeti)«).
+function sameName(e, name) {
+  const s = String(name || "").toLowerCase();
+  if (namedIn(e, s)) return true;
+  const own = nameWords(s);
+  return own.length > 0 && [e.n, e.en].some((n) => own.every((w) => hasWord(w, String(n || "").toLowerCase())));
+}
+// Ali vnos velja v tej formuli in kontekstu (scope: tema, besedilo bloka, poved). Glej opis polj pri MAT.
+const reCache = new Map();
+const re = (src, flags = "") => {
+  const k = `${flags}/${src}`;
+  if (!reCache.has(k)) reCache.set(k, new RegExp(src, flags));
+  return reCache.get(k);
+};
+// ctx v formuli ali pov v drugi formuli iste povedi.
+const byFormula = (e, tex) => (!!e.ctx && re(e.ctx).test(tex)) || (!!e.pov && !!sentTex && re(e.pov).test(sentTex));
+function validIn(e, tex) {
+  if (e.brez && re(e.brez).test(tex)) return false;
+  if (e.zan && re(e.zan).test(tex)) return true;
+  const byCtx = byFormula(e, tex);
+  // Tema (in poved) da pomen; besedilo celega bloka ga lahko le izključi (ne).
+  const byTopic = !!e.teme && !!tscope && re(e.teme, "iu").test(tscope) && !(e.ne && re(e.ne, "iu").test(scope)) && (!e.samo || byCtx || re(e.samo).test(tex));
+  if (e.oba) return (!e.ctx || byCtx) && (!e.teme || byTopic);
+  if (e.ctx || e.teme || e.pov) return byCtx || byTopic;
+  return !(e.ne && scope && re(e.ne, "iu").test(scope)); // privzeti pomen: le, če ga besedilo ne izključi
+}
+const strong = (e) => !!(e.ctx || e.teme || e.pov || e.zan);
 function pickIndex(list, tex) {
-  const k = list.findIndex((e) => !e.ctx || new RegExp(e.ctx).test(tex));
-  if (k >= 0 && list[k].ctx) return k;
+  const k = list.findIndex((e) => validIn(e, tex));
+  if (k >= 0 && strong(list[k])) return k;
   if (sentence && list.length > 1) {
     const s = sentence.toLowerCase();
     const named = list.map((e, i) => (namedIn(e, s) ? i : -1)).filter((i) => i >= 0);
@@ -325,14 +424,39 @@ export function lookupUnit(key) {
 // Simbol v formuli: [ključ, predmet ali @lekcija] ali null. Ključ "F_rez", "x_1,2", "ΔH" …
 // v_1, m_2, v_{povp} … brez lastnega vnosa = pomen osnovnega simbola.
 // Vrstni red: oznaka lekcije s celim indeksom, slovar s celim indeksom, oznaka lekcije brez indeksa, slovar.
+// Pomen iz slovarja je zanesljivejši od oznake iz besedila (pregled PR 463: »Naj bo $v = s/t$« je v izgubil
+// »hitrost« in enoto, »kjer je $r$ en sam faktor« polmer): ime je enako (v obe smeri), formula ga potrdi (ctx),
+// ali pa je to edini pomen črke v predmetu in besedilo da le zvezo (»Naj bo $v = s/t$«).
+function dictSure(d, own, tex) {
+  if (byFormula(d, tex)) return true;
+  if (own.n) return sameName(d, own.n);
+  return !strong(d) || (!!d.ctx && re(d.ctx).test(own.r || ""));
+}
 function symbolKey(base, sub, subject, tex) {
   const local = subject?.[0] === "@" ? subject : null;
   const dict = local ? LOCAL[local.slice(1)]?.subject : subject;
   const full = sub ? `${base}_${sub}` : null;
+  // 1) Oznake lekcije (:::simboli) imajo prednost pred vsem.
   if (full && local && lookupSymbol(full, local)) return [full, local];
+  // 2) Oznaka, določena v istem odstavku (»Za $H = G - F$ …«, »kjer je $v$ hitrost«): pred pomenom slovarja, ki
+  //    velja le po temi; zanesljiv pomen slovarja (dictSure) ostane, ker ima enoto in zvezo.
+  const k = blockLocal && (full && lookupSymbol(full, blockLocal) ? full : !sub && lookupSymbol(base, blockLocal) ? base : null);
+  if (k && !(local && lookupSymbol(k, local))) {
+    const d = lookupSymbol(k, dict, tex);
+    if (!(d && dictSure(d, lookupSymbol(k, blockLocal), tex))) return [k, blockLocal];
+  }
   if (full && lookupSymbol(full, dict, tex)) return [full, dict, variantOf(full, dict, tex)];
-  if (local && lookupSymbol(base, local)) return [base, local];
-  return lookupSymbol(base, dict, tex) ? [base, dict, variantOf(base, dict, tex)] : null;
+  // x₁, a_n, s_n imajo v slovarju svoj pomen (ničla, člen zaporedja): če tu ne velja, ne vemo, kaj so, zato ne
+  // podedujejo oznake lekcije za x ali a (a_n v polinomu ni »osnova logaritma«).
+  const ownFull = full && (SUBJECT_TABLES[dict] || ["MAT"]).some((tb) => SYMBOLS[tb][full]);
+  if (local && !ownFull && lookupSymbol(base, local)) return [base, local];
+  if (ownFull) return null;
+  const d = lookupSymbol(base, dict, tex);
+  if (!d) return null;
+  // a₂₀, D_f, k_tr: črka z indeksom podeduje pomen osnovne črke le, če ga potrdi formula (ali je pomen edini),
+  // ne samo tema (a₂₀ v zaporedju ni »vodilni koeficient«, D_f ni »diskriminanta«).
+  if (sub && strong(d) && !byFormula(d, tex)) return null;
+  return [base, dict, variantOf(base, dict, tex)];
 }
 
 // ---------- oznake lekcije (:::simboli) ----------
@@ -462,16 +586,145 @@ export function plainTex(tex) {
 }
 
 // Pred izrisom: ovije znane simbole in enote v \htmlData{fx=…}{…}.
-// o.sentence: besedilo povedi okoli formule (rich.js) za izbiro pomena dvoumne črke.
+// o.sentence: besedilo povedi okoli formule (rich.js) za izbiro pomena dvoumne črke; o.sentenceTex: TeX formul
+// v isti povedi (pov). o.para in o.sentenceMd: odstavek in poved s formulo (z $…$), iz njiju so oznake, ki jih
+// besedilo samo določi (»Za $X = …$« le v povedi).
+// o.block: celotno besedilo (kartica, naloga, razdelek lekcije, sporočilo): samo za izključitve (ne).
+// Pomen po temi (teme) velja le iz teme in povedi, ne iz celega bloka (pregled PR 463, točka 4).
 export function annotateTex(tex, subject = override || subjectFn(), o = null) {
   if (!tex || tex.length > 4000 || /\\htmlData/.test(tex)) return tex;
-  const prev = sentence;
+  const prev = [sentence, scope, tscope, sentTex, blockLocal];
   sentence = o?.sentence || "";
+  sentTex = o?.sentenceTex || "";
+  const topic = topicOverride ?? (topicFn() || "");
+  scope = [topic, o?.block || "", sentence].join("\n").toLowerCase().trim();
+  tscope = [topic, sentence].join("\n").toLowerCase().trim();
+  const defsFrom = o?.para ?? o?.block;
+  blockLocal = defsFrom && subject !== "@*" ? definedIn(defsFrom, subject, o?.para != null ? o?.sentenceMd || "" : null) : null;
   try {
     return annotateInner(tex, subject);
   } finally {
-    sentence = prev;
+    [sentence, scope, tscope, sentTex, blockLocal] = prev;
   }
+}
+
+// ---------- oznake, določene v besedilu ----------
+// »Za $H = G - F$ je …«, »Naj bo $x_0 = …$«, »kjer je $D = b^2 - 4ac$« → oznaka z zvezo iz besedila;
+// »kjer je $v$ hitrost, $t$ čas in $s$ pot« → oznake z imeni. Samo številska vrednost (»za $x = 2$«) ni definicija.
+const DEF_LEAD = /(?:^|[^\p{L}])(?:za|naj\s+bo(?:do|sta)?|označimo(?:\s+z)?|definiramo|vpeljemo|uvedemo|vzemimo|kjer\s+(?:je|sta|so)|pri\s+čemer\s+(?:je|sta|so))\s*$/iu;
+// Pred »za« je začetek besedila, vrstice ali alineje, ločilo ali oklepaj (za oznakami **, _ in presledki).
+function zaStartsClause(src, at) {
+  const from = Math.max(0, at - 60);
+  const head = (from === 0 ? "\n" : "") + src.slice(from, at);
+  return /(?:\n[ \t]*(?:[-*+][ \t]+|\d+[.)][ \t]*)?|[.:;,!?()…»«"])[\s*_]*za\s*$/iu.test(head);
+}
+const NAMED_LEAD =/(?:^|[^\p{L}])(?:kjer|pri\s+čemer)\s+(?:je|sta|so|pomeni|pomenita|pomenijo|označuje|označujeta)\s+(?=\$)/giu;
+// Na najvišji ravni (zunaj {…}) razdeli pri znaku.
+function splitAt(s, ch) {
+  const out = [];
+  let depth = 0;
+  let cur = "";
+  for (const c of s) {
+    if (c === "{") depth++;
+    else if (c === "}") depth--;
+    if (c === ch && depth === 0) { out.push(cur); cur = ""; } else cur += c;
+  }
+  out.push(cur);
+  return out;
+}
+// Desna stran »Za $X = …$« je izraz s spremenljivko, ne le vrednost: brez ukazov (\\dfrac, \\circ, \\,) in brez
+// enot v \\mathrm{…}/\\text{…} (tudi gnezdenih: \\mathrm{\\frac{m}{s^2}}) mora ostati črka ali grška črka (ne π).
+function stripRaw(s) {
+  let out = "";
+  for (let i = 0; i < s.length; ) {
+    const m = /^\\(?:mathrm|text|textrm|mbox|operatorname)\s*\{/.exec(s.slice(i));
+    if (!m) { out += s[i++]; continue; }
+    let depth = 0;
+    let j = i + m[0].length - 1;
+    for (; j < s.length; j++) {
+      if (s[j] === "\\") j++;
+      else if (s[j] === "{") depth++;
+      else if (s[j] === "}" && --depth === 0) break;
+    }
+    out += " ";
+    i = j + 1;
+  }
+  return out;
+}
+export function hasVariable(rhs) {
+  const bare = stripRaw(String(rhs || "")).replace(/\\([a-zA-Z]+)/g, (_, c) => (GREEK[c] && c !== "pi" ? "α" : " ")).replace(/\\./g, " ");
+  return /[A-Za-zα]/.test(bare);
+}
+// »kjer je $r$ en sam faktor«, »kjer je $f$ zvezna«: ime mora biti samostalniška besedna zveza, ne števnik,
+// zaimek, prislov ali sam pridevnik (pregled PR 463).
+const NOT_NOUN = /^(?:en|ena|eno|eden|sam|sama|samo|ta|to|te|ti|tisti|tista|tisto|nek|neka|neko|isti|ista|isto|enak|enaka|enako|enaki|vsak|vsaka|vsako|kateri|katera|katero|ki|kar|tudi|še|le|že|zgoraj|spodaj|levo|desno|tukaj|tu|tam|potem|nato|zdaj|prvi|prva|prvo|drugi|druga|drugo|tretji|tretja|tretje|večji|večja|večje|manjši|manjša|manjše|pozitiven|negativen|konstanten|različen|različna|različno|poljuben|poljubna|poljubno|zvezen|odvedljiv|definiran|dana|dano|znan|znana|znano|lahko|enkrat|dvakrat|pol|tak|taka|tako|več|manj|vedno|zato|torej|in|ali|da|od|do|na|v|z|s|pri|po|za|nad|pod|med|se|si|je|so|sta|bo|bi|ni|pa|naj|ga|jo|ju|jih|mu|jim)$/u;
+function nounPhrase(name) {
+  const w = name.toLowerCase().split(/\s+/);
+  if (NOT_NOUN.test(w[0])) return false;
+  // En sam pridevnik ali deležnik (zvezna, realni, kemijska, odvedljiva, definirana) ni ime.
+  if (w.length === 1 && /(?:[bcčdfghjklmprsštvzž]n|sk|šk|čk|ov|ev|ljiv)[aoi]$|.{3,}(?:an|en)[aoi]$/u.test(w[0])) return false;
+  return true;
+}
+// za: false izpusti »Za $X = …$« (velja le v svoji povedi: »Za $x = 2a$ je $f(x) = 4a^2$«), »Naj bo«, »Označimo«,
+// »kjer je« … veljajo v odstavku.
+export function definitionsIn(text, { za = true } = {}) {
+  const src = String(text || "");
+  const defs = [];
+  const seen = new Set();
+  const add = (texKey, entry) => {
+    const key = symbolKeyOf(texKey);
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    defs.push({ keys: [key], tex: [texKey.trim()], n: "", r: "", u: "", note: "", def: true, ...entry });
+  };
+  // 1) »Za $X = …$«: X je oznaka, zveza je iz besedila.
+  let last = 0;
+  for (const m of src.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+    const before = src.slice(Math.max(last, m.index - 40), m.index);
+    last = m.index + m[0].length;
+    const lead = DEF_LEAD.exec(before);
+    const isZa = !!lead && /za\s*$/iu.test(lead[0]);
+    if (!lead || (!za && isZa)) continue;
+    // »Za $X = …$« le na začetku povedi ali stavka: »v stolpcu za $y = 2x$«, »dvigne za $h = …$« ni definicija (N10).
+    if (isZa && !zaStartsClause(src, m.index)) continue;
+    const f = (m[1] ?? m[2]).trim();
+    const parts = splitAt(f, "=");
+    if (parts.length < 2) continue;
+    const lhs = parts[0].trim();
+    const rhs = parts[1].replace(/[,;.]\s*$/, "").trim();
+    // Desna stran mora biti izraz (črka ali ukaz), ne le število; leva ena oznaka (H, x_0, \varphi).
+    if (!rhs || !hasVariable(rhs)) continue;
+    add(lhs, { r: `${lhs} = ${rhs}` });
+  }
+  // 2) »kjer je $v$ hitrost, $t$ čas in $s$ pot«.
+  for (const m of src.matchAll(NAMED_LEAD)) {
+    let rest = src.slice(m.index + m[0].length);
+    for (let n = 0; n < 10; n++) {
+      const g = /^\$([^$\n]+)\$\s+(?:je\s+|pa\s+)?(\p{L}[\p{L}\s-]{0,60}?)(?=\s*(?:[,;.:)]|$|\n|\s+in\s+\$|\s+ter\s+\$|\s*\())/u.exec(rest);
+      if (!g) break;
+      const name = g[2].trim();
+      if (name.split(/\s+/).length <= 6 && !/=/.test(g[1]) && nounPhrase(name)) add(g[1], { n: name });
+      rest = rest.slice(g[0].length).replace(/^\s*(?:\([^)]*\))?\s*[,;]?\s*(?:in|ter)?\s*/u, "");
+      if (rest[0] !== "$") break;
+    }
+  }
+  return defs;
+}
+const defsCache = new Map();
+// Oznake iz besedila: iz povedi s formulo (tudi »Za $X = …$«) in iz odstavka (brez »Za«); poved ima prednost.
+function definedIn(block, subject, sent = null) {
+  const ck = `${subject}\u0000${block}\u0000${sent ?? "\u0001"}`;
+  if (defsCache.has(ck)) return defsCache.get(ck);
+  const defs = [];
+  const seen = new Set();
+  for (const d of sent === null ? definitionsIn(block) : [...definitionsIn(sent), ...definitionsIn(block, { za: false })]) {
+    if (!seen.has(d.keys[0])) { seen.add(d.keys[0]); defs.push(d); }
+  }
+  const base = subject?.[0] === "@" ? LOCAL[subject.slice(1)]?.subject || "MAT" : subject;
+  const id = defs.length ? registerGlossary(base, defs) : null;
+  if (defsCache.size > 300) defsCache.clear();
+  defsCache.set(ck, id);
+  return id;
 }
 function annotateInner(tex, subject) {
   let out = "";

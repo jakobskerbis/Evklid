@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Risanje iz tabele
+  - dve točki dovolj, tretja preizkus
+  - z ravnilom, podaljšaj čez točki
+- Stopnica
+  - iz $(0, n)$: $1$ desno, $k$ gor
+  - $k < 0$: navzdol
+  - $k = \dfrac{1}{2}$: $2$ desno, $1$ gor
+- Presečišče z osjo $y$
+  - $x = 0$, točka $(0, n)$
+- Ničla
+  - $x$, pri katerem je $y = 0$
+  - reši $kx + n = 0$: $x = -\dfrac{n}{k}$
+  - presečišče z osjo $x$: $\left(-\dfrac{n}{k}, 0\right)$
+- Posebni primeri
+  - $k = 0$, $n \ne 0$: ni ničle
+  - $k = 0$, $n = 0$: vsak $x$ ničla
+  - $n = 0$, $k \ne 0$: ničla $0$
+- Besedilne naloge
+  - le smiselni $x$: daljica ali poltrak
+  - ničla: kdaj bo nič (pristanek)

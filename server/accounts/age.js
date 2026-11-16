@@ -15,6 +15,11 @@ const MIN_AGE = {
 };
 export const DEFAULT_MIN_AGE = 16;
 export const ADULT_AGE = 18;
+// Najnižja starost imetnika računa: mlajši datum je zatipkan (npr. 2025 namesto 1985), ne pravi.
+export const MIN_HOLDER_AGE = 5;
+// Odgovor plačilnih poti, ko račun nima datuma rojstva (star račun, »Pozneje«): vsako plačilo ga zahteva (j 2026-11-06).
+// Aplikacija pokaže prevedeno besedilo birth.payMissing.
+export const BIRTH_MISSING_PAY = Object.freeze({ error: "Vpiši datum rojstva v zavihku Račun.", birth_missing: true });
 
 export const minAgeFor = (country) => MIN_AGE[String(country || "").toUpperCase()] ?? DEFAULT_MIN_AGE;
 
@@ -34,9 +39,14 @@ export function parseBirthDate(s) {
   return { y, m: mo, d };
 }
 
+// »Danes« po slovenskem času (Europe/Ljubljana), ne po časovnem pasu strežnika: na 15. ali 18. rojstni dan
+// je uporabnik starejši od polnoči po slovenskem času, tudi če strežnik teče v UTC.
+const SI_DAY = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Ljubljana", year: "numeric", month: "2-digit", day: "2-digit" });
+
 export function ageOn(birth, now = new Date()) {
   const b = typeof birth === "string" ? parseBirthDate(birth) : birth;
   if (!b) return null;
-  const y = now.getFullYear(), m = now.getMonth() + 1, d = now.getDate();
+  const parts = Object.fromEntries(SI_DAY.formatToParts(now).map((x) => [x.type, x.value]));
+  const y = Number(parts.year), m = Number(parts.month), d = Number(parts.day);
   return y - b.y - (m < b.m || (m === b.m && d < b.d) ? 1 : 0);
 }

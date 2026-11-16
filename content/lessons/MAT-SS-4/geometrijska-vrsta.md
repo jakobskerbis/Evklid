@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,9 +15,9 @@ Napako razkrije **geometrijska vrsta**: vsota neskončno mnogo členov je lahko 
 
 **Najprej en primer do konca.** Recimo, da Ahil teče s hitrostjo $10\,\mathrm{m/s}$, želva pa s hitrostjo $1\,\mathrm{m/s}$ (za želvo zelo velikodušno). Želva ima $100\,\mathrm{m}$ prednosti. Medtem ko Ahil preteče $100\,\mathrm{m}$, želva prehodi $10\,\mathrm{m}$. Ko Ahil preteče še teh $10\,\mathrm{m}$, je želva $1\,\mathrm{m}$ naprej.
 
-Vsak naslednji odsek je desetina prejšnjega. Ahilovi odseki so torej geometrijsko zaporedje s prvim členom $a_1 = 100\,\mathrm{m}$ in količnikom $q = \frac{1}{10}$. Seštevajmo jih enega za drugim:
+Vsak naslednji odsek je desetina prejšnjega. Ahilovi odseki so torej geometrijsko zaporedje s prvim členom $a_1 = 100\,\mathrm{m}$ in količnikom $q = \frac{1}{10}$. Seštevajmo jih enega za drugim ($a_n$ je $n$-ti odsek, $S_n$ skupna pot po $n$ odsekih):
 
-| odsekov $n$ | dodani odsek [m] | skupna pot $S_n$ [m] |
+| $n$ | $a_n$ [m] | $S_n$ [m] |
 |---|---|---|
 | 1 | 100 | 100 |
 | 2 | 10 | 110 |
@@ -30,10 +30,10 @@ Skupna pot raste, a vsakič za manj.
 :::premisli
 Ali skupna pot kdaj preseže $112\,\mathrm{m}$, če seštejemo dovolj veliko odsekov? Napovej, nato utemelji.
 ---
-Ne. Vsak nov odsek doda le enico na naslednjem decimalnem mestu: $111{,}1$, $111{,}11$, $111{,}111$ … Vse te vsote so manjše od $111{,}\overline{1}$, to pa je manj kot $112$.
+Ne. Vsak nov odsek doda le enico na naslednjem decimalnem mestu: $111{,}1$; $111{,}11$; $111{,}111$ … Vse te vsote so manjše od $111{,}\overline{1}$, to pa je manj kot $112$.
 :::
 
-Preverimo še z gibanjem. Po času $t$ (v sekundah) je Ahil pretekel $10t$ metrov, želva pa je od Ahilovega starta oddaljena $100 + t$ metrov. Ahil jo ujame, ko je $10t = 100 + t$, torej pri $t = \frac{100}{9}\,\mathrm{s} \approx 11{,}1\,\mathrm{s}$. Takrat je pretekel $\frac{1000}{9}\,\mathrm{m} = 111{,}\overline{1}\,\mathrm{m}$. Neskončno mnogo odsekov, a končna pot in končen čas. Zenon je zmotno mislil, da neskončno mnogo sumandov nujno da neskončno vsoto.
+Preverimo še z gibanjem. Po času $t$ (v sekundah) je Ahil pretekel $10t$ metrov, želva pa je od Ahilovega starta oddaljena $100 + t$ metrov. Ahil jo ujame, ko je $10t = 100 + t$, torej pri $t = \frac{100}{9}\,\mathrm{s} \approx 11{,}1\,\mathrm{s}$. Takrat je pretekel $\frac{1000}{9}\,\mathrm{m} = 111{,}\overline{1}\,\mathrm{m}$. Neskončno mnogo odsekov, a končna pot in končen čas. Zenon je zmotno mislil, da neskončno mnogo členov nujno da neskončno vsoto.
 
 **Imena.** Izraz z neskončno mnogo členi
 
@@ -105,7 +105,7 @@ vrsta konvergira natanko tedaj, ko je $|q| < 1$; takrat je $S = \dfrac{a_1}{1 - 
 
 1. Prva vrsta: $q = \dfrac{-6}{12} = -\dfrac{1}{2}$. Ker je $|q| = \frac{1}{2} < 1$, vrsta konvergira.
 2. $S = \dfrac{12}{1 - \left(-\frac{1}{2}\right)} = \dfrac{12}{\frac{3}{2}} = 8$. Pazi na predznak: $1 - \left(-\frac{1}{2}\right) = \frac{3}{2}$.
-3. Smiselnost: delne vsote so $12, 6, 9, 7{,}5, \dots$ Skačejo okoli $8$ in se mu bližajo.
+3. Smiselnost: delne vsote so $12; 6; 9; 7{,}5; \dots$ Skačejo okoli $8$ in se mu bližajo.
 4. Druga vrsta: $q = \dfrac{-18}{12} = -\dfrac{3}{2}$. Ker je $|q| = \frac{3}{2} > 1$, vrsta divergira. Formula bi dala $\frac{12}{5/2} = 4{,}8$, a te številke ne smemo zapisati kot vsote: delne vsote $12, -6, 21, \dots$ skačejo vse dlje.
 5. Odgovor: prva vrsta konvergira in ima vsoto $8$; druga divergira in vsote nima.
 
@@ -154,7 +154,7 @@ $S = \dfrac{0{,}36}{0{,}99} = \dfrac{36}{99} = \dfrac{4}{11}$. Preizkus: $4 : 11
 ## Pogoste napake
 
 - **Formula brez preverjanja količnika.** »$1 + 2 + 4 + \dots = \frac{1}{1-2} = -1$.« Vsota pozitivnih števil ne more biti negativna. Formula $S = \frac{a_1}{1-q}$ velja le pri $|q| < 1$. Zato najprej preveri $|q|$, šele nato računaj.
-- **»Neskončno sumandov, neskončna vsota.«** To je Zenonova napaka. Če je $|q| < 1$, se členi manjšajo tako hitro, da so delne vsote omejene. Vrsta $\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \dots$ ima vsoto $1$.
+- **»Neskončno členov, neskončna vsota.«** To je Zenonova napaka. Če je $|q| < 1$, se členi manjšajo tako hitro, da so delne vsote omejene. Vrsta $\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \dots$ ima vsoto $1$.
 - **Predznak pri negativnem količniku.** Pri $q = -\frac{1}{2}$ je $1 - q = \frac{3}{2}$, ne $\frac{1}{2}$. Kdor to zamenja, dobi v primeru 2 vsoto $24$ namesto $8$. Negativen $q$ vstavi v oklepaju.
 - **Obrnjen količnik.** $q = \frac{a_1}{a_2}$ namesto $\frac{a_2}{a_1}$. Pri vrsti $6 + 2 + \dots$ bi dobil $q = 3$ in zmotno sklepal, da vrsta divergira. Količnik je vedno »naslednji deljeno s prejšnjim«.
 - **Pozabljen dvojni odsek.** Pri žogi nekateri seštejejo $2 + 1{,}2 + 0{,}72 + \dots = \frac{2}{1 - 0{,}6} = 5\,\mathrm{m}$. Vsako višino po odboju žoga prepotuje dvakrat, zato je pravilno $8\,\mathrm{m}$. Najprej nariši pot, nato zapiši vrsto.
@@ -167,6 +167,86 @@ $S = \dfrac{0{,}36}{0{,}99} = \dfrac{36}{99} = \dfrac{4}{11}$. Preizkus: $4 : 11
 - Pri $|q| \ge 1$ (in $a_1 \ne 0$) vrsta divergira in vsote nima; formule ne smemo uporabiti.
 - Negativen $q$: delne vsote skačejo okoli vsote. Pri $1 - q$ pazi na predznak.
 - Uporaba: Zenonov paradoks, pot odbijajoče se žoge, periodična decimalna števila kot ulomki.
+
+## Ponovitev
+
+**Formule**
+- $q = \frac{a_2}{a_1}$ (na pamet)
+- $S_n = a_1 \cdot \frac{q^n - 1}{q - 1}$, $q \ne 1$ (priloga)
+- Konvergenca natanko pri $|q| < 1$ (na pamet)
+- $S = \frac{a_1}{1 - q}$ pri $|q| < 1$ (na pamet)
+
+**Postopek**
+1. Zapiši vrsto; pri žogi najprej nariši pot.
+2. Določi $a_1$ in $q = \frac{a_2}{a_1}$.
+3. Preveri $|q| < 1$; sicer vrsta divergira.
+4. Izračunaj $S = \frac{a_1}{1 - q}$ in ulomek okrajšaj.
+
+**Pazi na**
+- Formulo $S = \frac{a_1}{1 - q}$ uporabi le pri $|q| < 1$.
+- Negativen $q$ vstavi v oklepaju: pri $q = -\frac{1}{2}$ je $1 - q = \frac{3}{2}$.
+- Žoga vsako višino po odboju prepotuje dvakrat.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Periodično decimalno število $1{,}2\overline{7}$ zapišite z vsoto geometrijske vrste in ga nato zapišite z okrajšanim ulomkom.
+
+**Rešitev:**
+
+1. $1{,}2\overline{7} = 1{,}2 + 0{,}07 + 0{,}007 + 0{,}0007 + \ldots$ Od drugega člena naprej je to geometrijska vrsta s prvim členom $0{,}07$ in količnikom $q = 0{,}1$.
+2. Ker je $|q| < 1$, vrsta konvergira, njena vsota je $\dfrac{0{,}07}{1 - 0{,}1} = \dfrac{0{,}07}{0{,}9} = \dfrac{7}{90}$.
+3. Seštejemo: $1{,}2 + \dfrac{7}{90} = \dfrac{108}{90} + \dfrac{7}{90} = \dfrac{115}{90} = \dfrac{23}{18}$.
+4. Odgovor: $1{,}2\overline{7} = \dfrac{23}{18}$.
+
+**Točkovanje:** 1 točka za zapis z geometrijsko vrsto (prvi člen in količnik), 1 točka za vsoto vrste $\dfrac{7}{90}$, 1 točka za okrajšan ulomek $\dfrac{23}{18}$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 1 (brez računala)
+
+Dana je vrsta $3 + 3(x - 2) + 3(x - 2)^2 + 3(x - 2)^3 + \ldots$, kjer je $x$ realno število.
+
+a) Za katera realna števila $x$ vrsta konvergira? (2 točki)
+b) Izračunajte vsoto vrste pri $x = \dfrac{3}{2}$. (2 točki)
+c) Za kateri $x$ je vsota vrste enaka $4$? (2 točki)
+d) Ali obstaja tak $x$, da je vsota vrste enaka $1$? Utemeljite. (2 točki)
+
+**Rešitev:**
+
+1. a) Za $x \ne 2$ je to geometrijska vrsta s prvim členom $a_1 = 3$ in količnikom $q = x - 2$. Konvergira natanko tedaj, ko je $|x - 2| < 1$, torej $-1 < x - 2 < 1$.
+2. a) Pri $x = 2$ je vrsta $3 + 0 + 0 + \ldots$: vse delne vsote so enake $3$, zato vrsta konvergira in ima vsoto $3$.
+3. a) Vrsta konvergira za $1 < x < 3$, to je za $x \in (1, 3)$, vključno z $x = 2$.
+4. b) Pri $x = \dfrac{3}{2}$ je $q = -\dfrac{1}{2}$ in $|q| < 1$, zato je $S = \dfrac{3}{1 - \left(-\frac{1}{2}\right)} = \dfrac{3}{\frac{3}{2}} = 2$.
+5. c) Za $x \in (1, 3)$ je vsota $S = \dfrac{3}{1 - (x - 2)} = \dfrac{3}{3 - x}$ (tudi pri $x = 2$, kjer je $S = 3$). Iz enačbe $\dfrac{3}{3 - x} = 4$ sledi $3 - x = \dfrac{3}{4}$ in $x = \dfrac{9}{4}$.
+6. c) Preverimo pogoj konvergence: $\dfrac{9}{4}$ leži na intervalu $(1, 3)$, količnik je $q = \dfrac{1}{4}$, vsota pa $\dfrac{3}{3/4} = 4$.
+7. d) Enačba $\dfrac{3}{3 - x} = 1$ ima edino rešitev $x = 0$. Ta ne leži na intervalu $(1, 3)$: pri $x = 0$ je $q = -2$, vrsta divergira in vsote nima.
+8. Odgovor: a) vrsta konvergira za $1 < x < 3$; b) vsota je $2$; c) $x = \dfrac{9}{4}$; d) ne, takega $x$ ni.
+
+**Točkovanje:** a) 1 točka za količnik $q = x - 2$ in pogoj $|q| < 1$, 1 točka za interval $(1, 3)$ (interval brez $x = 2$ te točke ne dobi, ker vrsta pri $x = 2$ konvergira z vsoto $3$); b) 1 točka za količnik $q = -\dfrac{1}{2}$, 1 točka za vsoto $2$; c) 1 točka za enačbo $\dfrac{3}{3 - x} = 4$, 1 točka za $x = \dfrac{9}{4}$; d) 1 točka za rešitev enačbe $x = 0$, 1 točka za utemeljitev, da pri $x = 0$ vrsta divergira (enakovredno: za $1 < x < 3$ je $3 - x < 2$, zato je vsota $\dfrac{3}{3 - x}$ večja od $\dfrac{3}{2}$ in ne more biti $1$).
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako se vrsta razlikuje od zaporedja in kdaj pravimo, da vrsta konvergira?
+---
+Zaporedje je urejen seznam členov $a_1, a_2, a_3, \ldots$, vrsta pa je izraz $a_1 + a_2 + a_3 + \ldots$, v katerem te člene seštevamo v neskončnost. Vsoti prvih $n$ členov $S_n = a_1 + a_2 + \ldots + a_n$ rečemo $n$-ta delna vsota. Vrsta konvergira, če ima zaporedje delnih vsot $(S_n)$ limito $S$, ki ji rečemo vsota vrste. Če te limite ni, vrsta divergira in vsote nima.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji formulo za vsoto geometrijske vrste in navedi pogoj, pri katerem velja.
+---
+Za $q \ne 1$ je $n$-ta delna vsota geometrijske vrste $S_n = a_1 \cdot \dfrac{1 - q^n}{1 - q}$. Če je $|q| < 1$, gre $q^n$ proti $0$, ko gre $n$ proti neskončnosti. Zato delne vsote konvergirajo k vsoti $S = \dfrac{a_1}{1 - q}$. Formula velja le pri $|q| < 1$, pri $|q| \ge 1$ in $a_1 \ne 0$ pa vrsta divergira.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer divergentne geometrijske vrste z negativnim količnikom in pojasni, zakaj nima vsote.
+---
+Primer je vrsta $1 - 2 + 4 - 8 + \ldots$ s količnikom $q = -2$. Njene delne vsote so $1, -1, 3, -5, \ldots$ in skačejo vse dlje gor in dol. Zaporedje delnih vsot zato nima limite in vrsta divergira. Formula $\dfrac{a_1}{1 - q}$ bi dala $\dfrac{1}{3}$, vendar je ne smemo uporabiti, ker je $|q| > 1$.
+:::
 
 ## Drugače: Z analogijo
 
@@ -182,7 +262,7 @@ Kaj pa $q \ge 1$? To je, kot da bi ti vsak dan nekdo prinesel novo tablico, enak
 
 **Delna vsota.** Naj bo $S_n = a_1 + a_1 q + \dots + a_1 q^{n-1}$. Pomnožimo s $q$: $q S_n = a_1 q + \dots + a_1 q^n$. Razlika: $S_n - q S_n = a_1 - a_1 q^n$. Za $q \ne 1$ sledi $S_n = a_1 \cdot \frac{1 - q^n}{1 - q}$.
 
-**Zakaj $q^n \to 0$ pri $|q| < 1$.** Zaporedje $x_n = |q|^n$ je padajoče ($x_{n+1} = |q|\,x_n < x_n$) in navzdol omejeno z $0$. Monotono in omejeno zaporedje je konvergentno, recimo z limito $L$. Iz $x_{n+1} = |q|\,x_n$ v limiti dobimo $L = |q|\,L$. Ker je $|q| \ne 1$, je $L = 0$. Torej $S_n \to \frac{a_1}{1-q}$.
+**Zakaj $q^n \to 0$ pri $|q| < 1$.** Zaporedje $x_n = |q|^n$ je padajoče ($x_{n+1} = |q|\,x_n \le x_n$) in navzdol omejeno z $0$. Monotono in omejeno zaporedje je konvergentno, recimo z limito $L$. Iz $x_{n+1} = |q|\,x_n$ v limiti dobimo $L = |q|\,L$. Ker je $|q| \ne 1$, je $L = 0$. Torej $S_n \to \frac{a_1}{1-q}$.
 
 **Divergenca pri $|q| \ge 1$.** Če bi $S_n \to S$, bi tudi $S_{n-1} \to S$, zato bi šli členi $a_n = S_n - S_{n-1}$ proti $0$. Pri $|q| \ge 1$ in $a_1 \ne 0$ pa je $|a_n| = |a_1|\,|q|^{n-1} \ge |a_1| > 0$. Protislovje.
 
@@ -212,15 +292,11 @@ Kaj pa $q \ge 1$? To je, kot da bi ti vsak dan nekdo prinesel novo tablico, enak
 ~ Prvi člen vpliva le na velikost vsote. O konvergenci odloča količnik $q$.
 > V $S_n = a_1 \cdot \frac{1 - q^n}{1 - q}$ gre pri $|q| < 1$ potenca $q^n$ proti $0$, zato gre $S_n$ proti $\frac{a_1}{1 - q}$.
 
-? Koliko je vsota vrste $20 + 15 + 11{,}25 + \dots$?
-- $46{,}25$
-~ To je le vsota treh napisanih členov. Vrsta se nadaljuje v neskončnost.
-- približno $11{,}43$
-~ To je $\frac{20}{1 + 0{,}75}$. V imenovalcu je $1 - q$, ne $1 + q$.
-+ $80$
-- Vsote ni, ker so vsi členi pozitivni in jih je neskončno.
-~ To je Zenonova napaka. Pri $|q| < 1$ so delne vsote omejene in vrsta konvergira.
-> $q = \frac{15}{20} = 0{,}75$, $S = \frac{20}{1 - 0{,}75} = \frac{20}{0{,}25} = 80$.
+? (brez računala) Koliko je vsota vrste $20 + 15 + 11{,}25 + \dots$?
+= 80 | 0,01
+~ 46,25 | To je le vsota treh napisanih členov. Vrsta se nadaljuje v neskončnost.
+~ 11,4 | To je $\frac{20}{1 + 0{,}75}$. V imenovalcu je $1 - q$, ne $1 + q$.
+> $q = \frac{15}{20} = 0{,}75$, $S = \frac{20}{1 - 0{,}75} = \frac{20}{0{,}25} = 80$. Vsota obstaja, čeprav so vsi členi pozitivni in jih je neskončno: pri $|q| < 1$ so delne vsote omejene (misliti nasprotno je Zenonova napaka).
 
 ? Rok je izračunal vsoto vrste $3 + 6 + 12 + \dots$ takole: (1) $q = \frac{6}{3} = 2$; (2) $S = \frac{a_1}{1 - q}$; (3) $S = \frac{3}{1 - 2} = -3$. Kateri korak je napačen?
 - Korak (1).
@@ -232,15 +308,26 @@ Kaj pa $q \ge 1$? To je, kot da bi ti vsak dan nekdo prinesel novo tablico, enak
 ~ Vsota pozitivnih števil ne more biti negativna. Delne vsote $3, 9, 21, \dots$ rastejo brez meje.
 > Pri $q = 2$ je $|q| > 1$, zato vrsta divergira. Formula $S = \frac{a_1}{1-q}$ tu ne velja.
 
-? Teniško žogico spustimo z višine $1\,\mathrm{m}$. Po vsakem odboju se dvigne do polovice prejšnje višine. Kolikšno pot opravi, preden obmiruje?
-- $2\,\mathrm{m}$
-~ To je $\frac{1}{1 - 0{,}5}$. Pozabil si, da vsako višino po odboju žogica prepotuje dvakrat, gor in dol.
-+ $3\,\mathrm{m}$
-- $4\,\mathrm{m}$
-~ Tu je tudi prvi padec štet dvakrat. Prvih $1\,\mathrm{m}$ žogica opravi le navzdol.
-- Neskončno, ker se odbija neskončnokrat.
-~ Neskončno mnogo odbojev še ne pomeni neskončne poti. Višine tvorijo vrsto s $q = 0{,}5$, ki konvergira.
-> Prvi padec $1\,\mathrm{m}$, dvigi $0{,}5 + 0{,}25 + \dots = \frac{0{,}5}{1 - 0{,}5} = 1\,\mathrm{m}$, ki jih žogica prepotuje dvakrat: $s = 1\,\mathrm{m} + 2 \cdot 1\,\mathrm{m} = 3\,\mathrm{m}$.
+? Teniško žogico spustimo z višine $1\,\mathrm{m}$. Po vsakem odboju se dvigne do polovice prejšnje višine. Kolikšno pot (v metrih) opravi, preden obmiruje?
+= 3 m | 0,01
+~ 2 | To je $\frac{1}{1 - 0{,}5}$. Pozabil si, da vsako višino po odboju žogica prepotuje dvakrat, gor in dol.
+~ 4 | Tu je tudi prvi padec štet dvakrat. Prvih $1\,\mathrm{m}$ žogica opravi le navzdol.
+> Prvi padec $1\,\mathrm{m}$, dvigi $0{,}5 + 0{,}25 + \dots = \frac{0{,}5}{1 - 0{,}5} = 1\,\mathrm{m}$, ki jih žogica prepotuje dvakrat: $s = 1\,\mathrm{m} + 2 \cdot 1\,\mathrm{m} = 3\,\mathrm{m}$. Neskončno mnogo odbojev torej ne pomeni neskončne poti: višine tvorijo vrsto s $q = 0{,}5$, ki konvergira.
+
+<<RACUN
+vrednost: 0.07/(1-0.1) | 7/90
+vrednost: 6/5+7/90 | 23/18
+vrednost: 115/90 | 23/18
+neenacba: abs(x-2)<1 | x | (1, 3)
+vrednost: 3/(1-(-1/2)) | 2
+vrednost: 3/(3-2) | 3
+enako: 3/(1-(x-2)) | 3/(3-x)
+resi: 3/(3-x)=4 | x | 9/4
+vrednost: 3/(1-1/4) | 4
+resi: 3/(3-x)=1 | x | 0
+vrednost: 1-2+4-8 | -5
+vrednost: 1/(1-(-2)) | 1/3
+>>
 
 :::simboli
 a_1 | prvi člen vrste | |

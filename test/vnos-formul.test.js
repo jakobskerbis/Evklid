@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import katex from "katex";
-import { splitFormulas, toTex, hasFormula } from "../public/vnos-formul.js";
+import { splitFormulas, toTex, hasFormula, varnaMesta, brisiNazaj, brisiNaprej, delisKazalcem, OZNAKA } from "../public/vnos-formul.js";
 import { TUTOR_CHIPS, applyTemplate } from "../public/tipkovnica-data.js";
 
 // Ulomki, integrali, zaporedja in vsote v klepetu z inštruktorjem (j, 4. 11.): zapis s tipk se izriše kot formula.
@@ -39,14 +39,15 @@ test("every formula from the tutor keys renders in KaTeX", () => {
   }
 });
 
-test("tutor input: keys for fractions, powers, sequences, integrals and sums; preview above the field", () => {
+test("tutor input: keys for fractions, powers, sequences, integrals and sums; drawn inside the field", () => {
   const ins = TUTOR_CHIPS.map(([, v]) => v);
   for (const v of ["(@)/()", "^(@)", "_(@)", "∫ (@) dx", "∫_(@)^() () dx", "∑_(n=1)^(@) "]) assert.ok(ins.includes(v), v);
   const html = readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
-  assert.match(html, /id="formula-preview"[^>]*hidden/);
+  assert.match(html, /<textarea id="input"[^>]*data-izris-v-polju/, "ulomek se izriše v polju klepeta (public/predogled-vnosa.js)");
+  assert.doesNotMatch(html, /id="formula-preview"/, "ne še enkrat nad poljem");
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   assert.match(app, /splitFormulas\(p\)\.map/, "sporočilo učenca izriše zapis s tipk");
-  assert.match(app, /pv\.hidden = !show/);
+  assert.match(app, /dataset\.izrisVisina/, "polje klepeta zraste po izrisu");
 });
 
 test("»Razloži« in a lesson sends the original TeX, not the clickable-symbol wrappers", async () => {
@@ -78,4 +79,39 @@ test("tutor: a reply cut off mid-stream keeps what arrived and loses the typing 
   const c = app.slice(app.indexOf("  } catch (err) {\n    // Odgovor, prekinjen sredi izpisa"));
   assert.ok(c.length > 0 && c.indexOf('bubble.classList.remove("typing")') < c.indexOf("err.chatOff"));
   assert.match(c, /pacer\.finish\(\);\s*pacer\.skip\(\);/);
+});
+
+// Polje, ki zapis pokaže kot formulo (j, 14. 11.: »Ulomek naj se izpiše namesto surovega zapisa«): kazalec ne sme stati
+// med »)/(«, ⌫ na znaku zgradbe ulomka ne razbije.
+
+test("varnaMesta: kazalec v števcu, imenovalcu, pred in za ulomkom, ne med )/( ali med √ in (", () => {
+  assert.deepEqual(varnaMesta("π()/()"), [0, 1, 2, 5, 6]);
+  assert.deepEqual(varnaMesta("(3)/(4)"), [0, 1, 2, 5, 6, 7]);
+  assert.deepEqual(varnaMesta("√(2)"), [0, 2, 3, 4]);
+  assert.deepEqual(varnaMesta("12"), [0, 1, 2]);
+  // med dvema ulomkoma sme stati povsod (zapis ostane enak, tudi ko se formuli združita)
+  assert.ok([7, 8, 9, 10].every((p) => varnaMesta("(1)/(2) + (3)/(4)").includes(p)));
+});
+
+test("delisKazalcem: oznaka kazalca je v števcu ulomka", () => {
+  assert.deepEqual(delisKazalcem("π()/()", 2), [{ text: "π" }, { tex: `\\frac{${OZNAKA}}{}` }]);
+});
+
+test("brisiNazaj: prazen ulomek izgine cel, iz imenovalca skok v števec, navaden znak se zbriše normalno", () => {
+  assert.deepEqual(brisiNazaj("π()/()", 5), { value: "π", caret: 1 });
+  assert.deepEqual(brisiNazaj("π()/()", 2), { value: "π", caret: 1 });
+  assert.deepEqual(brisiNazaj("π(1)/(5)", 6), { value: "π(1)/(5)", caret: 3 });
+  assert.deepEqual(brisiNazaj("(3)/(4)", 1), { value: "(3)/(4)", caret: 0 });
+  assert.deepEqual(brisiNazaj("x^()", 3), { value: "x", caret: 1 });
+  assert.deepEqual(brisiNazaj("√(2)", 2), { value: "√(2)", caret: 0 });
+  assert.equal(brisiNazaj("(3)/(4)", 2), null, "števka 3 se zbriše kot vsak znak");
+  assert.equal(brisiNazaj("1/5", 3), null, "brez zapisa formule navaden ⌫");
+});
+
+test("brisiNazaj v telesu integrala in brisiNaprej (Del): zgradba ostane cela", () => {
+  assert.deepEqual(brisiNazaj("∫ () dx", 3), { value: "∫ ", caret: 2 });
+  assert.deepEqual(brisiNazaj("∫_(0)^(1) (x) dx", 11), { value: "∫_(0)^(1) (x) dx", caret: 10 });
+  assert.deepEqual(brisiNaprej("(1)/(2)", 2), { value: "(1)/(2)", caret: 5 });
+  assert.deepEqual(brisiNaprej("π()/()", 1), { value: "π", caret: 1 });
+  assert.equal(brisiNaprej("(1)/(2)", 1), null, "števka se zbriše kot vsak znak");
 });

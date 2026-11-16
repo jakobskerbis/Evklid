@@ -1494,7 +1494,7 @@
      "ways": [
       {
        "title": "Po korakih",
-       "text": "**Podatki:** $c(\\mathrm{Ba(OH)_2}) = 0{,}010\\,\\mathrm{mol/L}$, $25\\,^\\circ\\mathrm{C}$ (pH + pOH $= 14{,}00$).\n**Iščemo:** pH.\n\n$\\mathrm{Ba(OH)_2}$ je močna baza in iz vsake formulske enote sprosti dva iona $\\mathrm{OH^-}$:\n$\\mathrm{Ba(OH)_2 \\rightarrow Ba^{2+} + 2\\,OH^-}$, zato je $[\\mathrm{OH^-}] = 2 \\cdot 0{,}010\\,\\mathrm{mol/L} = 0{,}020\\,\\mathrm{mol/L}$ – največ od vseh treh raztopin ($\\mathrm{NaOH}$: $0{,}010\\,\\mathrm{mol/L}$, $\\mathrm{NH_3}$: veliko manj).\n\npOH $= -\\log 0{,}020 = 1{,}70$\n\npH $= 14{,}00 - 1{,}70 = 12{,}30$"
+       "text": "**Podatki:** $c(\\mathrm{Ba(OH)_2}) = 0{,}010\\,\\mathrm{mol/L}$; $25\\,^\\circ\\mathrm{C}$ (pH + pOH $= 14{,}00$).\n**Iščemo:** pH.\n\n$\\mathrm{Ba(OH)_2}$ je močna baza in iz vsake formulske enote sprosti dva iona $\\mathrm{OH^-}$:\n$\\mathrm{Ba(OH)_2 \\rightarrow Ba^{2+} + 2\\,OH^-}$, zato je $[\\mathrm{OH^-}] = 2 \\cdot 0{,}010\\,\\mathrm{mol/L} = 0{,}020\\,\\mathrm{mol/L}$ – največ od vseh treh raztopin ($\\mathrm{NaOH}$: $0{,}010\\,\\mathrm{mol/L}$, $\\mathrm{NH_3}$: veliko manj).\n\npOH $= -\\log 0{,}020 = 1{,}70$\n\npH $= 14{,}00 - 1{,}70 = 12{,}30$"
       },
       {
        "title": "Drugače: prek $[\\mathrm{H_3O^+}]$",

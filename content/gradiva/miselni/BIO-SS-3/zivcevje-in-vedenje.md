@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Živci proti hormonom
+  - živčevje: hitro, natančno, kratko
+  - hormoni: po krvi, počasi, dolgo
+  - povezuje ju hipotalamus
+- Osrednje in obkrajno
+  - osrednje: možgani in hrbtenjača
+  - obkrajno: živci in gangliji
+  - somatsko hoteno, avtonomno nehoteno
+- Hrbtenjača
+  - siva snov v sredini (metulj), bela okoli
+  - hrbtna korenina senzorična, trebušna motorična
+- Refleksni lok
+  - receptor, senzorični nevron, internevron, motorični nevron, efektor
+  - $t = \dfrac{s}{v}$, npr. $0{,}8\,\mathrm{m}$ pri $20\,\mathrm{m/s}$ je $40\,\mathrm{ms}$
+  - napaka: ukaz ne pride iz možganov
+- Deli možganov
+  - veliki: skorja, zaznave, hoteni gibi, učenje
+  - mali: usklajevanje gibov, ravnotežje
+  - deblo: dihanje, srčni utrip
+- Živčevje živali
+  - mrežasto (ožigalkarji), dve vrvici z ganglijema (ploski črvi)
+  - trebušnjača z gangliji (členonožci), hrbtenjača (vretenčarji)
+- Vedenje
+  - prirojeno: refleksi, nagoni (pajkova mreža)
+  - naučeno: privajanje, vtisnjenje, pogojevanje, vpogled

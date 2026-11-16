@@ -128,7 +128,7 @@ export function labPh(el) {
   function calibrate() {
     if (!need()) return;
     B.umeri();
-    log.push("Elektrodo si potopil v pufre pH 4,01, 7,00 in 10,01 in jo vmes spiral. pH-meter je umerjen.", "ok");
+    log.push("Elektrodo si potopil v pufre pH 4,01; 7,00 in 10,01 in jo vmes spiral. pH-meter je umerjen.", "ok");
     draw();
   }
   function dip() {

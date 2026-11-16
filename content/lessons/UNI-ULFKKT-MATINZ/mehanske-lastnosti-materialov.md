@@ -7,7 +7,7 @@ avtor: AI
 
 Med drugo svetovno vojno so v ZDA zgradili več tisoč tovornih ladij razreda Liberty. Da bi jih izdelali hitro in poceni, so trup namesto kovičenja varili. Nekaj ladij je v mrzlem morju nenadoma počilo, nekatere celo na dvoje, čeprav niso bile preobremenjene. Preiskave so pokazale, da je bilo jeklo dovolj trdno, a pri nizki temperaturi **krhko**. Ni prenašalo udarca in razpoke.
 
-Od takrat jekla ne kupujemo le po ceni na kilogram. Na atestu (certifikatu) so napisane številke, ki povedo, kaj plačaš: meja tečenja, natezna trdnost, raztezek in udarna žilavost pri določeni temperaturi. Oznaka konstrukcijskega jekla S355J2 na primer pove, da ima meja tečenja vsaj $355\,\mathrm{MPa}$ in da epruveta pri $-20\,^\circ\mathrm{C}$ ob udarcu porabi vsaj $27\,\mathrm{J}$. Kako te številke izmerimo in kaj pomenijo, je vsebina te teme.
+Od takrat jekla ne kupujemo le po ceni na kilogram. Na atestu (certifikatu) so napisane številke, ki povedo, kaj plačaš: meja tečenja, natezna trdnost, raztezek in udarna žilavost pri določeni temperaturi. Oznaka konstrukcijskega jekla S355J2 na primer pove, da je meja tečenja vsaj $355\,\mathrm{MPa}$ in da epruveta pri $-20\,^\circ\mathrm{C}$ ob udarcu porabi vsaj $27\,\mathrm{J}$. Kako te številke izmerimo in kaj pomenijo, je vsebina te teme.
 
 ## Razlaga
 
@@ -93,7 +93,7 @@ $F = R_e \cdot S$, $S = \dfrac{\pi d^2}{4}$; cena na kN $= \dfrac{\text{cena}}{F
 
 Za zunanji žerjav, ki bo delal pozimi do $-20\,^\circ\mathrm{C}$, potrebujemo $2400\,\mathrm{kg}$ pločevine. Ponudnik A prodaja S355JR po $1{,}10$ €/kg, ponudnik B S355J2 po $1{,}18$ €/kg. Charpyjevo nihalo z maso $20{,}0\,\mathrm{kg}$ (višine merimo za težišče) spustimo z višine $1{,}50\,\mathrm{m}$. Brez epruvete se zaradi trenja in upora zraka dvigne do $1{,}49\,\mathrm{m}$. Epruveta iz ponudbe A, ohlajena na $-20\,^\circ\mathrm{C}$, ga po lomu pusti dvigniti do $1{,}38\,\mathrm{m}$. Zahteva je vsaj $27\,\mathrm{J}$. (a) Kolikšna je udarna žilavost jekla A, popravljena za izgube? (b) Do katere višine bi se nihalo smelo največ dvigniti, da bi epruveta ustrezala? (c) Katero ponudbo izberemo in koliko več plačamo?
 
-**Podatki:** $m_{\text{pl}} = 2400\,\mathrm{kg}$, $1{,}10$ €/kg in $1{,}18$ €/kg, $m = 20{,}0\,\mathrm{kg}$, $h_1 = 1{,}50\,\mathrm{m}$, $h_0 = 1{,}49\,\mathrm{m}$ (prosti nihaj), $h_2 = 1{,}38\,\mathrm{m}$, $g = 9{,}81\,\mathrm{m/s^2}$, zahteva $\mathrm{KV} \ge 27\,\mathrm{J}$ pri $-20\,^\circ\mathrm{C}$
+**Podatki:** $m_{\text{pl}} = 2400\,\mathrm{kg}$; $1{,}10$ €/kg in $1{,}18$ €/kg; $m = 20{,}0\,\mathrm{kg}$; $h_1 = 1{,}50\,\mathrm{m}$; $h_0 = 1{,}49\,\mathrm{m}$ (prosti nihaj); $h_2 = 1{,}38\,\mathrm{m}$; $g = 9{,}81\,\mathrm{m/s^2}$; zahteva $\mathrm{KV} \ge 27\,\mathrm{J}$ pri $-20\,^\circ\mathrm{C}$
 **Iščemo:** $\mathrm{KV}$ jekla A pri $-20\,^\circ\mathrm{C}$, največjo dopustno $h_2$, izbiro in razliko v ceni
 
 :::formula

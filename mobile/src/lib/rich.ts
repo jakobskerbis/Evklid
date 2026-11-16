@@ -22,7 +22,7 @@ const make = createRenderer as (o: object) => { renderRich: (s: string) => strin
 const trusted = make({ marked: trustedMarked, katex, sanitize: (h: string) => h });
 const untrusted = make({ marked: safeMarked, katex, sanitize: (h: string) => h });
 // Klikljive črke (kot na spletu): oznake v formuli dobijo data-fx s pomenom iz predmeta in lekcije.
-const annotate = (tex: string, o?: { sentence?: string } | null) => (annotateTex as (t: string, s?: string, o?: unknown) => string)(tex, undefined, o);
+const annotate = (tex: string, o?: { sentence?: string; block?: string } | null) => (annotateTex as (t: string, s?: string, o?: unknown) => string)(tex, undefined, o);
 const trustedFx = make({ marked: trustedMarked, katex, sanitize: (h: string) => h, annotate });
 const untrustedFx = make({ marked: safeMarked, katex, sanitize: (h: string) => h, annotate });
 
@@ -33,7 +33,7 @@ export function toHtml(md: string, { ai = false, streaming = false, fx = null as
   const src = streaming ? streamSafe(md) : md;
   if (!fx) return (ai ? untrusted : trusted).renderRich(src) as string;
   const r = ai ? untrustedFx : trustedFx;
-  const html = withFormulaSubject(fx.subject || "MAT", () => r.renderRich(src), fx.symbols as never) as string;
+  const html = withFormulaSubject(fx.subject || "MAT", () => r.renderRich(src), fx.symbols as never, (fx.topic || "") as never) as string;
   if (!owner) return html;
   return markHtml(html, ownPage ? createMarkPage() : pageOf(fx), owner);
 }

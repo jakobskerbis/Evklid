@@ -209,7 +209,7 @@ Opomba: v 8. razredu logaritma formalno ne računamo; pomembna je ideja, da en k
 + $\mathrm{pH} = 8$
 - $\mathrm{pH} = 4{,}5$
 ~ Necela vrednost je čisto običajna. $4{,}5 < 7$, torej je kisla.
-> Vrednosti $2$, $4{,}5$ in $6$ so pod $7$, torej kisle. Le $8$ je nad $7$, zato je bazična.
+> Vrednosti $2$; $4{,}5$ in $6$ so pod $7$, torej kisle. Le $8$ je nad $7$, zato je bazična.
 
 ? Raztopina A ima $\mathrm{pH} = 2$, raztopina B pa $\mathrm{pH} = 5$. Kolikokrat več oksonijevih ionov je v A kot v enaki prostornini B?
 - $3$-krat

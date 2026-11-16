@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Oznaka namesto gumba
+  - ukaz: `\ukaz{argument}`, npr. `\textbf{nujno}`
+  - `.tex` prevedeš s `pdflatex` v PDF
+- Preambula in telo
+  - `\documentclass`, `\usepackage`, `\newtheorem`
+  - vsebina med `\begin{document}` in `\end{document}`
+  - `\section` se oštevilči sam: 1, 2, 2.1
+- Matematični način
+  - v vrstici med dolarjema, izpostavljeno v svoji vrstici
+  - `x^{10}`, `a_{12}`: brez oklepajev le en znak
+  - `\sin`, `\text{…}`, decimalna vejica `3{,}5`
+- Okolja
+  - `itemize`, `enumerate`, `equation`, `align`
+  - `izrek` z `\newtheorem`, `proof` iz `amsthm`
+  - zapiraj v obratnem vrstnem redu
+- Sklici
+  - `\label{eq:ime}`, nato `\ref` ali `\eqref`
+  - prevedi dvakrat: številke hrani `.aux`
+  - »??« po dveh prevajanjih: ime se ne ujema z oznako
+- Literatura
+  - `thebibliography`, `\bibitem{ključ}`, `\cite{ključ}`
+  - daljša dela: datoteka `.bib` in BibTeX

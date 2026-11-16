@@ -138,7 +138,7 @@ Ločitev spremenljivk: $\int \frac{dc}{c} = -\int k\, dt$, rešitev $c(t) = c_0 
 3. Eksponent: $kt = 0{,}0250\,\mathrm{min^{-1}} \cdot 40\,\mathrm{min} = 1{,}00$ (brez enote, kot mora biti).
 4. $c(40\,\mathrm{min}) = 0{,}80\,\mathrm{mol/L} \cdot e^{-1} = 0{,}80 \cdot 0{,}3679\,\mathrm{mol/L} = 0{,}294\,\mathrm{mol/L}$.
 5. Razpolovni čas: $t_{1/2} = \frac{\ln 2}{0{,}0250\,\mathrm{min^{-1}}} = \frac{0{,}6931}{0{,}0250}\,\mathrm{min} = 27{,}7\,\mathrm{min}$.
-6. Preizkus: $40\,\mathrm{min}$ je malo več od enega razpolovnega časa, zato mora biti koncentracija malo manj od polovice $0{,}40\,\mathrm{mol/L}$; $0{,}294\,\mathrm{mol/L}$ se s tem ujema.
+6. Preizkus: $40\,\mathrm{min}$ je med enim in dvema razpolovnima časoma, zato mora biti koncentracija med $0{,}40\,\mathrm{mol/L}$ in $0{,}20\,\mathrm{mol/L}$; $0{,}294\,\mathrm{mol/L}$ se s tem ujema.
 7. Odgovor: po $40\,\mathrm{min}$ je koncentracija $0{,}294\,\mathrm{mol/L}$, razpolovni čas pa je $27{,}7\,\mathrm{min}$.
 
 ### Primer 2
@@ -185,7 +185,7 @@ Bilanca: $\frac{dm}{dt} = (\text{dotok soli}) - (\text{odtok soli})$. Linearna e
 7. Rešitev: $m(t) = 0{,}4\,(50 + t) - \frac{750}{50 + t}$.
 8. Pri $t = 25$: $m = 0{,}4 \cdot 75 - \frac{750}{75} = 30 - 10 = 20\,\mathrm{kg}$. Prostornina je $V = 150\,\mathrm{L}$, koncentracija $\gamma = \frac{20\,\mathrm{kg}}{150\,\mathrm{L}} = 0{,}133\,\mathrm{kg/L}$.
 9. Koncentracija kot funkcija časa (delimo z $V = 2(50 + t)$): $\gamma(t) = \frac{m(t)}{V(t)} = 0{,}2 - \frac{375}{(50 + t)^2}$ v $\mathrm{kg/L}$. Preizkus: $\gamma(0) = 0{,}2 - 0{,}15 = 0{,}05$ in $\gamma(25) = 0{,}2 - 0{,}0667 = 0{,}133$.
-10. Pogoj $\gamma = 0{,}1$: $\frac{375}{(50 + t)^2} = 0{,}1$, $(50 + t)^2 = 3750$, $50 + t = 61{,}24$ (negativni koren odpade, ker je $50 + t > 0$), torej $t^* = 11{,}2\,\mathrm{min}$.
+10. Pogoj $\gamma = 0{,}1$: $\frac{375}{(50 + t)^2} = 0{,}1$; $(50 + t)^2 = 3750$; $50 + t = 61{,}24$ (negativni koren odpade, ker je $50 + t > 0$), torej $t^* = 11{,}2\,\mathrm{min}$.
 11. Posoda je polna, ko je $100 + 2t = 200$, torej pri $t = 50\,\mathrm{min}$. Model velja do tedaj, zato sta $t = 25\,\mathrm{min}$ in $t^* = 11{,}2\,\mathrm{min}$ v njegovem območju.
 12. Preizkus smisla: $\gamma$ narašča od $0{,}05\,\mathrm{kg/L}$ proti $0{,}2\,\mathrm{kg/L}$ (koncentraciji dotoka), a je ne doseže.
 13. Odgovor: po $25\,\mathrm{min}$ je v posodi $20\,\mathrm{kg}$ soli, masna koncentracija je $0{,}133\,\mathrm{kg/L}$; koncentracija $0{,}1\,\mathrm{kg/L}$ je dosežena po $11{,}2\,\mathrm{min}$, dolgo preden posoda pri $50\,\mathrm{min}$ začne prelivati.
@@ -370,6 +370,7 @@ N | velikost populacije | | | eksponentna rast: $N(t) = N_0 e^{kt}$
 N_0 | začetna velikost populacije | |
 t | čas | |
 k | konstanta rasti oziroma hitrosti | | | k > 0 rast, k < 0 upadanje; v kinetiki s⁻¹
+\lambda | razpadna konstanta | \lambda = -k | | pri razpadu ($k < 0$); $t_{1/2} = \ln 2/\lambda$
 r | stopnja rasti v logističnem modelu | |
 K | nosilnost okolja | | | drugje tudi poljubna konstanta v rešitvi
 c | množinska koncentracija reaktanta | c(t) = c_0 e^{-kt} | mol/L | kinetika prvega reda

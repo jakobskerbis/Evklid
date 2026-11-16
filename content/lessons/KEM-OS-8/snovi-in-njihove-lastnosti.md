@@ -131,7 +131,7 @@ $m_\text{soli} = m_\text{zmesi} - m_\text{peska}$, delež $= \dfrac{m_\text{soli
 
 Vrnimo se k plastenki z začetka. Mineralna voda ima suhi ostanek $300\,\mathrm{mg/L}$, plastenka ima $1{,}5\,\mathrm{L}$. Koliko suhega ostanka je v eni plastenki in koliko v paketu s $6$ plastenkami (v gramih)?
 
-**Podatki:** suhi ostanek $300\,\mathrm{mg}$ na $1\,\mathrm{L}$, $V = 1{,}5\,\mathrm{L}$, $6$ plastenk, $1\,\mathrm{g} = 1000\,\mathrm{mg}$
+**Podatki:** suhi ostanek $300\,\mathrm{mg}$ na $1\,\mathrm{L}$; $V = 1{,}5\,\mathrm{L}$; $6$ plastenk; $1\,\mathrm{g} = 1000\,\mathrm{mg}$
 **Iščemo:** maso ostanka v eni plastenki in v paketu
 
 :::formula

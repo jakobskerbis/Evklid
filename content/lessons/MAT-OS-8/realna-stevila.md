@@ -39,7 +39,7 @@ $$\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}$$
 |---|---|---|
 | naravna | $\mathbb{N}$ | $1$, $7$, $\sqrt{9}$ |
 | cela | $\mathbb{Z}$ | $-3$, $0$, $7$ |
-| racionalna | $\mathbb{Q}$ | $\dfrac{2}{3}$, $-1{,}5$, $0{,}333\ldots$ |
+| racionalna | $\mathbb{Q}$ | $\dfrac{2}{3}$; $-1{,}5$; $0{,}333\ldots$ |
 | realna | $\mathbb{R}$ | vsa zgoraj ter $\sqrt{2}$, $\pi$, $-\sqrt{5}$ |
 
 Iracionalna števila so v $\mathbb{R}$, niso pa v $\mathbb{Q}$.
@@ -48,17 +48,20 @@ Iracionalna števila so v $\mathbb{R}$, niso pa v $\mathbb{Q}$.
 
 **5. Številska premica.** Vsakemu realnemu številu ustreza natanko ena točka na številski premici in vsaki točki natanko eno realno število. Iracionalna števila zapolnijo vse »luknje« med ulomki. Lego najprej ocenimo s celima številoma: ker je $1^2 = 1 < 2 < 4 = 2^2$, je $1 < \sqrt{2} < 2$.
 
-```
-−3   −2   −1    0    1    2    3    4
- +----+----+----+----+----+----+----+
-     ▲             ▲   ▲        ▲
-     −√5           0,5 √2       π
-```
-
 :::premisli
 Napovej: leži $-\sqrt{5}$ levo ali desno od $-2$?
 ---
 Levo. Ker je $4 < 5 < 9$, je $\sqrt{5}$ med $2$ in $3$, približno $2{,}24$. Nasprotno število $-\sqrt{5} \approx -2{,}24$ leži zrcalno čez $0$, torej levo od $-2$.
+:::
+
+:::risba premica
+opis: Številska premica od −3 do 4 s točkami −√5 (približno −2,24, malo levo od −2), 0,5, √2 (približno 1,41) in π (približno 3,14).
+od: -3
+do: 4
+točka: -2,2361 | −√5
+točka: 0,5 | 0,5
+točka: 1,4142 | √2
+točka: 3,1416 | π
 :::
 
 V simulaciji spodaj, »Realna števila: kam spada število?«, najprej klikni $\sqrt{9}$, nato $\sqrt{2}$. Opazuj, v kateri množici se pojavi točka in kje na premici leži. Opazi, da je $\sqrt{9}$ v najmanjši množici, $\sqrt{2}$ pa samo v $\mathbb{R}$.
@@ -80,9 +83,9 @@ Torej $1{,}41 < \sqrt{2} < 1{,}42$. Postopek lahko nadaljuješ, a se nikoli ne k
 
 ### Primer 1: razvrščanje števil
 
-Katera od števil $7$, $-3$, $0{,}5$, $\sqrt{9}$, $\sqrt{7}$, $\pi$, $\sqrt{\dfrac{16}{25}}$ so racionalna in katera iracionalna?
+Katera od števil $7$; $-3$; $0{,}5$; $\sqrt{9}$; $\sqrt{7}$; $\pi$; $\sqrt{\dfrac{16}{25}}$ so racionalna in katera iracionalna?
 
-**Podatki:** števila $7$, $-3$, $0{,}5$, $\sqrt{9}$, $\sqrt{7}$, $\pi$, $\sqrt{\dfrac{16}{25}}$
+**Podatki:** števila $7$; $-3$; $0{,}5$; $\sqrt{9}$; $\sqrt{7}$; $\pi$; $\sqrt{\dfrac{16}{25}}$
 **Iščemo:** katera so racionalna in katera iracionalna
 
 :::formula
@@ -164,7 +167,7 @@ $1414^2 = 1\,999\,396$ in $1415^2 = 2\,002\,225$, zato $1414 < \sqrt{2\,000\,000
 ## Pogoste napake
 
 - **»Vsak koren je iracionalen.«** Učenec vidi znak za koren in sklepa na iracionalnost. Toda $\sqrt{16} = 4$ in $\sqrt{0{,}49} = 0{,}7$ sta racionalni. Najprej preveri, ali je pod korenom popolni kvadrat.
-- **»Dolg ali neskončen zapis pomeni iracionalno.«** Število $0{,}333\ldots$ je neskončno, a periodično, zato je $\dfrac{1}{3}$. Iracionalno je le število, ki je neskončno **in** neperiodično.
+- **»Dolg ali neskončen zapis pomeni iracionalno.«** Zapis $0{,}333\ldots$ je neskončen, a periodičen, zato je to $\dfrac{1}{3}$. Iracionalno je le število, katerega zapis je neskončen **in** neperiodičen.
 - **Približek namesto vrednosti.** Zapisa $\pi = 3{,}14$ in $\sqrt{2} = 1{,}41$ sta napačna, ker sta to zaokrožena približka. Tudi $\dfrac{22}{7}$ ni $\pi$. Piši $\pi \approx 3{,}14$.
 - **Napačna lega negativnih korenov.** $-\sqrt{5}$ ni med $2$ in $3$, ampak zrcalno čez $0$: med $-3$ in $-2$, približno pri $-2{,}24$.
 - **Koren zamenjan s polovico.** »$\sqrt{70}$ je okrog $35$«, ker je učenec delil z $2$. Koren je število, ki krat samo sebe da $70$: $8^2 = 64$ in $9^2 = 81$, torej je $\sqrt{70}$ med $8$ in $9$.
@@ -209,7 +212,7 @@ Predpostavka je bila napačna, zato $\sqrt{2}$ ni racionalno število. Podoben r
 ~ $\sqrt{16} = 4$ je naravno število. Koren ni vedno iracionalen.
 + racionalna: $\sqrt{16}$, $0{,}333\ldots$ | iracionalna: $\sqrt{15}$, $\pi$
 - racionalna: $\sqrt{16}$ | iracionalna: $0{,}333\ldots$, $\pi$
-~ $0{,}333\ldots$ je neskončno, a periodično, zato je enako $\dfrac{1}{3}$.
+~ $0{,}333\ldots$ ima neskončen, a periodičen zapis, zato je enako $\dfrac{1}{3}$.
 > $\sqrt{16} = 4$ in $0{,}333\ldots = \dfrac{1}{3}$ sta racionalni. $15$ ni popolni kvadrat, zato je $\sqrt{15}$ iracionalno, enako kot $\pi$.
 
 ? Oceni: med katerima zaporednima celima številoma leži $\sqrt{70}$?

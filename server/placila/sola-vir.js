@@ -32,6 +32,15 @@ export function createSchoolSource(
   if (!CACHES.has(db)) CACHES.set(db, new Map());
   const cache = CACHES.get(db);
 
+  const hasLedger = () => {
+    try {
+      return !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'ai_school_use'").get();
+    } catch {
+      return false;
+    }
+  };
+  const ledgerStart = () => (hasLedger() ? db.prepare("SELECT value FROM kv WHERE key = 'ai_school_ledger_start'").get()?.value || null : null);
+  const ledgerSum = (schoolId) => db.prepare("SELECT COALESCE(SUM(usd),0) AS s FROM ai_school_use WHERE school_id = ? AND created_at >= date('now','start of month')").get(schoolId).s;
   function spentUsd(schoolId) {
     const c = cache.get(schoolId);
     if (c && Date.now() - c.at < SPENT_MS) return c.usd;
@@ -43,13 +52,17 @@ export function createSchoolSource(
     // Učenec z mestom v dveh šolah šteje samo v šolo, ki mu da pravice (access() izbere eno).
     const both = new Set(src.seats && src.elsewhere ? src.elsewhere(db, schoolId, seated) : []);
     const ids = seated.filter((id) => !personalOf(id) && (!both.has(id) || src.access(db, id, Date.now())?.schoolId === schoolId));
-    const usd = ids.length
-      ? db
-          .prepare(
-            `SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month') AND student_id IN (${ids.map(() => "?").join(",")})`,
-          )
-          .get(...ids).s
-      : 0;
+    // Poraba sedanjih učencev z mestom (kot prej) in knjiga ob zapisu (recordUse; pregled #462 H7: poraba učenca, ki je
+    // razred zapustil ali kupil osebni paket, ostane v šoli) s starejšo porabo pred začetkom knjige. Velja večje.
+    const start = ledgerStart();
+    const sumOf = (extra, args) =>
+      ids.length
+        ? db
+            .prepare(`SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month')${extra} AND student_id IN (${ids.map(() => "?").join(",")})`)
+            .get(...args, ...ids).s
+        : 0;
+    const members = sumOf("", []);
+    const usd = start ? Math.max(members, sumOf(" AND created_at < ?", [start]) + ledgerSum(schoolId)) : members;
     cache.set(schoolId, { at: Date.now(), usd });
     return usd;
   }
@@ -81,5 +94,11 @@ export function createSchoolSource(
     // Članstvo za pravila ponudb (server/placila/ponudbe.js): { inSchool, inClass, offersOff } ali null.
     membership: (studentId) => src?.membership?.(db, studentId) || null,
     clearCache: () => cache.clear(),
+    // Poraba, ki je šla pod mejo šole (accounts/index.js onLog), v knjigo šole.
+    recordUse(schoolId, studentId, usd) {
+      if (!hasLedger() || !(usd > 0) || schoolId == null) return;
+      db.prepare("INSERT INTO ai_school_use (school_id, student_id, usd) VALUES (?, ?, ?)").run(schoolId, studentId, usd);
+      cache.delete(schoolId);
+    },
   };
 }

@@ -158,7 +158,7 @@ $L(N) = \dfrac{1}{\binom{N}{k}}$ za $N \ge m$, sicer $0$; $\quad \hat N = m \cdo
 
 ### Primer 4 – zdaj ti
 
-Sprinter je v štirih tekih na $100\,\mathrm{m}$ dosegel $11{,}2$, $11{,}5$, $11{,}0$ in $11{,}3\,\mathrm{s}$. Čase modeliramo z normalno porazdelitvijo. Izračunaj $\hat{\sigma}^2$ (MLE) in nepristransko $s^2$.
+Sprinter je v štirih tekih na $100\,\mathrm{m}$ dosegel $11{,}2$; $11{,}5$; $11{,}0$ in $11{,}3\,\mathrm{s}$. Čase modeliramo z normalno porazdelitvijo. Izračunaj $\hat{\sigma}^2$ (MLE) in nepristransko $s^2$.
 
 **Podatki:** $n = 4$, časi $11{,}2$; $11{,}5$; $11{,}0$; $11{,}3\,\mathrm{s}$
 **Iščemo:** $\hat{\sigma}^2$ in $s^2$

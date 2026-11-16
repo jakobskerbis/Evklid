@@ -6,11 +6,11 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, digitFor,
-  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS,
+  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS, KEM_GROUPS, KEM_LETTERS, KEM_CHARGE,
   NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest, glideDecode,
 } from "../public/tipkovnica-data.js";
 import { WORDS } from "../public/tipkovnica-besede.js";
-import { GROUPS } from "../public/symbols.js";
+import { GROUPS, symGroups, ELEMENT_SYMBOLS } from "../public/symbols.js";
 import { DEVICE_SETTINGS, deviceValue } from "../public/settings-registry.js";
 import { BUILTINS } from "../public/graph/math.js";
 import { evaluate } from "../public/graph/scicore.js";
@@ -168,7 +168,73 @@ test("f(x) keys only insert what the calculator understands; ℂ is among the se
   const alg = FX_GROUPS.find(([g]) => g === "alg")[2].map(([l]) => l);
   assert.ok(alg.includes("det") && alg.includes("inverse"));
   assert.equal(CAS_SL.inverse, "inverz");
-  assert.ok(KEM_ROWS.flat().includes("(aq)") && KEM_ROWS.flat().includes("₂") && KEM_ROWS.flat().includes("⇌"));
+  const trimmed = KEM_ROWS.flat().map((k) => k.trim());
+  assert.ok(trimmed.includes("(aq)") && trimmed.includes("₂") && trimmed.includes("⇌") && trimmed.includes("→"));
+});
+
+test("kemija je samo enkrat: zavihek Kem ima vse iz čipa Σ, čipa Σ ni, kjer je zavihek (j, 5. 11.)", () => {
+  const kem = KEM_ROWS.flat().map((k) => k.trim());
+  assert.equal(new Set(kem).size, kem.length, "tipka v Kem je dvakrat");
+  for (const k of GROUPS.kemija.keys) assert.ok(kem.includes(k.ins.trim()), `»${k.label}« je bila samo v čipu Σ, v Kem je ni`);
+  for (const [lvl, subj] of [["OS", "MAT"], ["SS", "KEM"], ["FAKS", "KEM"], ["FAKS", "MAT"], ["OS", "FIZ"]]) {
+    assert.ok(!symGroups(lvl, subj, true).includes("kemija"), `${lvl} ${subj}: čip Kemija ob zavihku Kem`);
+    assert.ok(symGroups(lvl, subj, false).includes("kemija"), `${lvl} ${subj}: brez zavihka Kem čip ostane`);
+  }
+  // pregled #460: pravi » + « med snovmi v Reakcijah, naboji (tudi ³⁻) posebej (od 13. 11. na strani Ioni) in nadpisani
+  const re = KEM_GROUPS.find(([id]) => id === "re")[2].flat();
+  const ion = KEM_GROUPS.find(([id]) => id === "ion")[2].flat();
+  assert.ok(re.includes(" + "), "» + « med snovmi");
+  for (const c of ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "³⁻"]) assert.ok(ion.includes(c) && KEM_CHARGE.test(c), c);
+  assert.ok(!KEM_CHARGE.test(" + ") && !KEM_CHARGE.test("e⁻") && !KEM_CHARGE.test("₂"));
+  const tk = read("public/tipkovnica.js");
+  assert.match(tk, /tk-chg-b[^`]*◌<\/span><sup>/, "naboj je nadpisan ob ◌");
+  // podzavihka imata svoja napisa (i18n), ne enakih kot tipki; tipka »H₂O« ostane oblikovanje formule
+  assert.deepEqual(KEM_GROUPS.map(([, l]) => l), ["tk.kem.el", "tk.kem.ion", "tk.kem.re", "tk.kem.pse"]);
+  assert.match(tk, /subtabs\(KEM_GROUPS\.map\(\(\[id, label\]\) => \[id, t\(label\)\]\)/);
+  assert.match(tk, /key\("H₂O", \{ a: "chem" \}/);
+  assert.match(tk, /role="tab"[^`]*aria-label="\$\{esc\(label\)\}"/, "podzavihki imajo aria-label");
+  for (const f of fs.readdirSync(path.join(ROOT, "public/i18n/ui"))) {
+    const j = JSON.parse(read(`public/i18n/ui/${f}`));
+    assert.ok(j["tk.kem.el"] && j["tk.kem.re"] && j["tk.kem.el"] !== j["tk.kem.re"], `${f}: podzavihka Kem`);
+    for (const k of ["tk.kem.ion", "tk.kem.pse", "tk.kem.cat", "tk.kem.sub", "tk.kem.sup"]) assert.ok(j[k], `${f}: ${k}`);
+    assert.ok(j["tk.kem.sub"].includes("{n}") && j["tk.kem.sup"].includes("{n}"), `${f}: {n} v opisu indeksa`);
+  }
+  // opisi kemijskih tipk iz GROUPS.kemija (oborina, plin, kristalna voda)
+  const opis = Object.fromEntries(GROUPS.kemija.keys.map((k) => [k.ins, k.title]));
+  assert.equal(opis["↓"], "oborina");
+  assert.equal(opis["↑"], "plin");
+  assert.equal(opis["·"], "kristalna voda");
+  assert.match(tk, /GROUPS\.kemija\.keys\.filter\(\(k\) => k\.title\)/);
+  // strani po največ tri vrste po 10 tipk: zavihek je enako visok kot drugi (tipkovnica.css data-kem)
+  for (const [, , rows] of KEM_GROUPS) assert.ok(rows.length <= 3 && rows.every((r) => r.length <= 10));
+});
+
+test("kemijska tipkovnica (j, 13. 11.): Σ → Kemija = zavihek Kem, indeksi in naboji ločeni, vsak element dosegljiv", () => {
+  const page = (id) => KEM_GROUPS.find(([g]) => g === id)[2];
+  // Snovi: pogosti elementi in vsi indeksi; Ioni: naboji, skupine in vse nadpisane števke
+  assert.deepEqual([...page("el")[2]].sort(), [..."₀₁₂₃₄₅₆₇₈₉"].sort());
+  assert.deepEqual([...page("ion")[2]].sort(), [..."⁰¹²³⁴⁵⁶⁷⁸⁹"].sort());
+  for (const x of page("el").slice(0, 2).flat()) assert.ok(ELEMENT_SYMBOLS.includes(x), x);
+  for (const c of ["(s)", "(l)", "(g)", "(aq)", "Δ", "hν", "KAT", "e⁻", " ← ", "°", "ΔH"]) assert.ok(page("re").flat().includes(c), c);
+  assert.ok(page("ion").flat().includes("[@]") && page("ion").flat().includes("·"));
+  // Vsi elementi: vseh 118 simbolov, vsaka začetnica ima tipko, v vrsti elementov jih je največ 12
+  assert.equal(ELEMENT_SYMBOLS.length, 118);
+  assert.equal(new Set(ELEMENT_SYMBOLS).size, 118);
+  const letters = KEM_LETTERS.flat();
+  for (const s of ELEMENT_SYMBOLS) assert.ok(letters.includes(s[0]), `${s}: ni začetnice`);
+  for (const l of letters) {
+    const n = ELEMENT_SYMBOLS.filter((s) => s[0] === l).length;
+    assert.ok(n >= 1 && n <= 12, `${l}: ${n} elementov`);
+  }
+  const tk = read("public/tipkovnica.js");
+  assert.match(tk, /if \(S\.symg === "kemija"\) return tabs \+ kemBody\(true\)/, "Σ → Kemija riše isto kot zavihek Kem");
+  assert.match(tk, /const kemHtml = \(\) => kemBody\(false\)/);
+  // indeks spodaj, naboj zgoraj, oba ob okvirčku
+  assert.match(tk, /cls: "chg dn"[^\n]*<sub>/);
+  assert.match(tk, /cls: `chg up[^\n]*<sup>/);
+  const css = read("public/tipkovnica.css");
+  assert.match(css, /\.tk-k\.chg sub \{ top: /);
+  assert.match(css, /data-kem="sym"\] \.tk-k \{ height: 42px/);
 });
 
 test("settings: registry keys for the tutor, defaults, stored per device", () => {
@@ -210,7 +276,7 @@ test("i18n: every keyboard string is in Slovenian and all 32 UI languages, trans
     const d = JSON.parse(read(`public/i18n/ui/${code}.json`));
     for (const k of [...used, ...tk]) assert.ok(d[k], `${code}: ${k}`);
     // prevedeno, ne slovenska kopija (razen kratic in imen, ki so v več jezikih enaka)
-    const same = tk.filter((k) => d[k] === SL[k] && !["tk.l.kem", "tk.g.osnovno", "tk.g.funkcije", "tk.g.kemija", "tk.set.title"].includes(k));
+    const same = tk.filter((k) => d[k] === SL[k] && !["tk.l.kem", "tk.g.osnovno", "tk.g.funkcije", "tk.g.kemija", "tk.set.title", "tk.kem.cat"].includes(k));
     assert.ok(same.length <= 3, `${code}: neprevedeno ${same.join(", ")}`);
   }
 });
@@ -381,4 +447,22 @@ test("sentenceBack: troklik na ⌫ izbriše poved do konca prejšnje (presledek 
   assert.equal(sentenceBack("", 0), 0);
   const w = "Prva poved. Druga ";
   assert.equal(w.slice(0, sentenceBack(w, w.length)), "Prva poved. ");
+});
+
+test("pregled #460: puščici in » + « se vstavita s presledkoma, brez dvojnega presledka; ↑ ↓ brez; indeksi z ◌", async () => {
+  const rows = KEM_ROWS.flat();
+  for (const k of [" + ", " → ", " ⇌ "]) assert.ok(rows.includes(k), JSON.stringify(k));
+  assert.ok(rows.includes("↑") && rows.includes("↓"), "↑ ↓ brez presledkov");
+  assert.equal(applyTemplate("2H2", 3, 3, " → ").value, "2H2 → ");
+  assert.equal(applyTemplate("2H2 ", 4, 4, " → ").value, "2H2 → ");
+  assert.equal(applyTemplate("", 0, 0, " + ").value, "+ ");
+  assert.equal(applyTemplate("A ", 2, 2, " ⇌ ").value, "A ⇌ ");
+  assert.equal(applyTemplate("CO2", 3, 3, "↑").value, "CO2↑");
+  const tk = read("public/tipkovnica.js");
+  assert.match(tk, /opis\.get\(c\.trim\(\)\)/, "opis tipke po obrezani vrednosti");
+  assert.match(tk, /tk-chg-b[^`]*◌<\/span><sub>/, "indeks je podpisan ob ◌");
+  const { chemFormat } = await import("../public/symbols.js");
+  assert.equal(chemFormat("2H2 + O2 → 2H2O"), "2H₂ + O₂ → 2H₂O");
+  assert.equal(chemFormat("CO2↑"), "CO₂↑");
+  assert.equal(chemFormat("AgCl↓ in H2↑"), "AgCl↓ in H₂↑");
 });

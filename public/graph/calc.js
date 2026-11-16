@@ -309,8 +309,14 @@ export function createCalculator(root, opts) {
     const extra = row.querySelector(".gc-extra");
     // drsnik med animacijo posodobimo na mestu: če bi ga vsako sličico zgradili znova,
     // gumb za ustavitev in drsnik ne bi nikoli dobila klika
-    if (o.kind === "slider" && updateSliderInPlace(o, extra)) return;
-    extra.innerHTML = extraHtml(o);
+    if (o.kind === "slider" && updateSliderInPlace(o, extra)) return void (extra._html = null);
+    // Ostale vrstice med predvajanjem drsnika zgradimo znova le, ko se spremenijo: nova polja in gumbi (meji t, θ,
+    // »Dodaj drsnike«) v vsaki sličici bi na iPadu in iPhonu pokvarili vse dotike (Safari klik pošlje le, če se ob
+    // dotiku ne pojavi nov klikljiv element; docs/oblikovanje.md, scripts/gumbi-na-dotik.cjs).
+    const html = extraHtml(o);
+    if (extra._html === html) return;
+    extra._html = html;
+    extra.innerHTML = html;
     if (o.kind === "slider") bindSlider(o, extra);
     if (o.kind === "param" || o.kind === "polar") bindDomain(o, extra);
   }
@@ -440,6 +446,8 @@ export function createCalculator(root, opts) {
         } catch {
           v = NaN;
         }
+        // vrstica se zgradi znova (napačen vnos izgine, 2*pi se izpiše kot 2π), čeprav se njen HTML ni spremenil
+        extra._html = null;
         if (!Number.isFinite(v)) return refresh();
         const d = [...(it.domain || DEFAULT_DOMAIN[o.kind])];
         d[Number(inp.dataset.dom)] = v;
@@ -502,13 +510,18 @@ export function createCalculator(root, opts) {
         inp.value = Number.isFinite(v) ? fmt(v, 6) : "";
       });
       extra.innerHTML = "";
+      extra._html = null;
       return;
     }
     const opts2 = [["", t("gc.regNone")], ...MODELS.map((m) => [m, t(`gc.reg.${m}`)])];
-    extra.innerHTML = `<div class="gc-reg">
+    // Izbira regresije in kljukica se zgradita znova le, ko se spremenita (glej updateRow: dotik na iPadu med drsnikom).
+    const html = `<div class="gc-reg">
       <label class="gc-reg-pick"><span>${esc(t("gc.reg"))}</span><select data-act="reg">${opts2.map(([v, l]) => `<option value="${v}" ${(it.reg || "") === v ? "selected" : ""}>${esc(l)}</option>`).join("")}</select></label>
       <label class="gc-check"><input type="checkbox" data-act="lines" ${it.lines ? "checked" : ""}> ${esc(t("gc.lines"))}</label>
     </div>${o.fit ? `<div class="gc-val gc-fit">${tex(o.fit.tex)}<span class="gc-r2">${tex(`R^2 = ${fmt(o.fit.r2, 4).replace(",", "{,}")}`)}</span></div>` : ""}`;
+    if (extra._html === html) return;
+    extra._html = html;
+    extra.innerHTML = html;
   }
 
   // ---------- dogodki seznama ----------
@@ -734,7 +747,7 @@ export function createCalculator(root, opts) {
     let last = performance.now();
     const step = (now) => {
       const playing = state.items.filter((x) => x.slider?.play);
-      if (!playing.length || !root.isConnected) {
+      if (!playing.length || !root.isConnected || root.closest("[hidden]")) {
         animating = false;
         return;
       }
@@ -1250,6 +1263,14 @@ export function createCalculator(root, opts) {
     resize() {
       view.resize();
       view.draw();
+      if (state.items.some((x) => x.slider?.play)) animate(); // drsnik, ki je tekel pred preklopom, teče naprej
+    },
+    /** Tipka Nazaj (app.js calcBack): zapre meni vrstice ali povečan graf. Vrne true, če je kaj zaprla. */
+    back() {
+      if (!pop.hidden) closePop();
+      else if (root.classList.contains("gc-full")) root.querySelector('[data-act="expand"]')?.click();
+      else return false;
+      return true;
     },
     /** Ob menjavi učenca: njegov zadnji graf (shranjen na napravi). */
     reload() {

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Relacijski model
+  - relacija, zapis, atribut, domena
+  - vsak podatek zapisan enkrat
+- Ključi
+  - primarni: enolično določi zapis
+  - tuji: kaže na primarni ključ druge tabele
+  - $1 : N$, tuji ključ na strani »mnogo«
+- Poizvedba SELECT
+  - `SELECT … FROM … WHERE … ORDER BY …`
+  - $\pi_{\text{ime},\,\text{goli}}\big(\sigma_{\text{goli} > 6}(\text{Igralci})\big)$
+  - rezultat je spet tabela
+- Skupine
+  - `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`
+  - `WHERE` za vrstice, `HAVING` za skupine
+  - napaka: »`WHERE SUM(goli) > 15`«
+- Logični vrstni red
+  - `FROM`, `WHERE`, `GROUP BY`, `HAVING`, `SELECT`, `ORDER BY`
+  - ime iz `SELECT` v `WHERE` še ne obstaja
+- Stik JOIN
+  - `ON i.id_kluba = k.id_kluba`, simbol $\bowtie$
+  - brez pogoja vsi pari: $6 \cdot 3 = 18$
+- Spreminjanje podatkov
+  - `INSERT`, `UPDATE`, `DELETE`
+  - brez `WHERE` ukaz zadene vse vrstice

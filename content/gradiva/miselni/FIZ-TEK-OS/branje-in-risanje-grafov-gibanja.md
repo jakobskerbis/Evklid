@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Najprej osi
+  - navpična os: pot $s$ ali hitrost $v$
+  - graf ni slika poti
+- Graf poti
+  - naklon $v = \dfrac{\Delta s}{\Delta t}$
+  - vodoravno pomeni mirovanje
+  - napaka: $\dfrac{s}{t}$ namesto razlik
+- Graf hitrosti
+  - vodoravno pomeni enakomerno gibanje
+  - mirovanje samo na osi $t$
+  - naklon $a = \dfrac{\Delta v}{\Delta t}$
+- Ploščina pod grafom
+  - ploščina pod $v(t)$ je pot
+  - trikotnik: deli z $2$
+  - trapez pri obratnih nalogah
+- Pospešeno gibanje
+  - $v(t)$ poševna premica
+  - $s(t)$ vse bolj strma krivulja
+- Tekmovalna strategija
+  - graf razreži na preproste odseke
+  - presečišče $v(t)$ ni srečanje

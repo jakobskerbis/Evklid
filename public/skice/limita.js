@@ -32,7 +32,7 @@ export default function narisi(host) {
     S.cipi([
       { barva: "druga", oznaka: "a", vrednost: st(a, 1) },
       { barva: "izbor", oznaka: "b = \\lim\\limits_{x \\to a} f(x)", vrednost: vr(q.b, 3) },
-      { barva: "izbor", oznaka: "\\varepsilon", vrednost: st(eps, 1) },
+      { barva: "izbor", oznaka: "\\varepsilon", vrednost: st(eps, 2) },
       { barva: "druga", oznaka: "\\delta", vrednost: vr(q.delta, 3) },
     ]);
   }

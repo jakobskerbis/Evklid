@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Izjava
+  - resnična ($1$) ali neresnična ($0$)
+  - $x > 3$ je izjavna forma, ne izjava
+- Vezniki
+  - $\neg$, $\wedge$, $\vee$, $\Rightarrow$, $\Leftrightarrow$
+  - $p \vee q$ je vključujoči ali
+  - prednost: $\neg$, $\wedge$, $\vee$, $\Rightarrow$, $\Leftrightarrow$
+- Implikacija
+  - neresnična le pri $p = 1$, $q = 0$
+  - $p \Rightarrow q \sim \neg p \vee q \sim \neg q \Rightarrow \neg p$
+  - pazi: obrat $q \Rightarrow p$ ni enakovreden
+- Resničnostna tabela
+  - $n$ spremenljivk, $2^n$ vrstic
+  - stolpci od notranjih podformul navzven
+- Tavtologija in enakovrednost
+  - tavtologija $p \vee \neg p$, protislovje $p \wedge \neg p$
+  - $A \sim B$: $A \Leftrightarrow B$ je tavtologija
+- Zakoni
+  - De Morgan: $\neg(p \wedge q) \sim \neg p \vee \neg q$
+  - $\neg(p \Rightarrow q) \sim p \wedge \neg q$
+  - distributivnost, absorpcija, dvojna negacija
+- Pravilen sklep
+  - $A_1, \dots, A_n \models B$
+  - $(A_1 \wedge \dots \wedge A_n) \Rightarrow B$ je tavtologija
+  - modus ponens, modus tollens, silogizma
+- Napačna sklepa
+  - zatrjevanje posledice, zanikanje predpostavke
+  - protiprimer $p = 0$, $q = 1$

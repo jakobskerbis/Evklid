@@ -1,6 +1,7 @@
 // Register generatorjev in ustvarjanje nalog.
 import crypto from "node:crypto";
 import { makeRng } from "./rng.js";
+import { popraviNastevanja } from "../nastevanje.js";
 import { MAT_GENERATORS } from "./generators/mat.js";
 import { FIZ_GENERATORS } from "./generators/fiz.js";
 import { KEM_GENERATORS } from "./generators/kem.js";
@@ -8,6 +9,11 @@ import { UNI_GENERATORS } from "./generators/uni.js";
 import { DODATNE_MAT_OS } from "./generators/dodatne-mat-os.js";
 import { DODATNE_MAT_SS12 } from "./generators/dodatne-mat-ss12.js";
 import { DODATNE_MAT_SS34 } from "./generators/dodatne-mat-ss34.js";
+import { MATURA_MAT_SS4 } from "./generators/matura-mat-ss4.js";
+import { MATURA_MAT_SS3 } from "./generators/matura-mat-ss3.js";
+import { MATURA_MAT_SS2 } from "./generators/matura-mat-ss2.js";
+import { MATURA_MAT_SS1_GEO } from "./generators/matura-mat-ss1-geo.js";
+import { MATURA_MAT_SS1 } from "./generators/matura-mat-ss1.js";
 import { DODATNE_OS_FIZ_KEM } from "./generators/dodatne-os-fiz-kem.js";
 import { DODATNE_FIZ_SS } from "./generators/dodatne-fiz-ss.js";
 import { DODATNE_KEM_SS } from "./generators/dodatne-kem-ss.js";
@@ -41,6 +47,11 @@ export const GENERATORS = [
   ...DODATNE_MAT_OS,
   ...DODATNE_MAT_SS12,
   ...DODATNE_MAT_SS34,
+  ...MATURA_MAT_SS1,
+  ...MATURA_MAT_SS1_GEO,
+  ...MATURA_MAT_SS2,
+  ...MATURA_MAT_SS3,
+  ...MATURA_MAT_SS4,
   ...DODATNE_OS_FIZ_KEM,
   ...DODATNE_FIZ_SS,
   ...DODATNE_KEM_SS,
@@ -93,8 +104,11 @@ export function topicsWithGenerators() {
 // TeX-ova vejica {,} zunaj formul ($…$, $$…$$) bi se izpisala dobesedno (»1{,}86 a.e.«):
 // tam jo zamenjamo z navadno vejico (tx() se uporablja tudi v navadnem besedilu).
 const MATH_SPLIT = /(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/;
-const plain = (s) => (typeof s === "string" && s.includes("{,}") ? s.split(MATH_SPLIT).map((p, i) => (i % 2 ? p : p.replaceAll("{,}", ","))).join("") : s);
-function plainCommas(t) {
+// Pred tem naštevanja z decimalno vejico dobijo podpičje (»$1{,}5$; $2$«, »$(3; 7{,}5)$«; server/nastevanje.js),
+// razen pri dvojezičnih (indijskih) generatorjih z decimalno piko.
+const plainOnly = (s) => (typeof s === "string" && s.includes("{,}") ? s.split(MATH_SPLIT).map((p, i) => (i % 2 ? p : p.replaceAll("{,}", ","))).join("") : s);
+export function plainCommas(t, slovensko = true) {
+  const plain = slovensko ? (s) => plainOnly(popraviNastevanja(s)) : plainOnly;
   const a = t.answer;
   return {
     ...t,
@@ -120,7 +134,7 @@ export function generateTask(topicId, level = 1, seed = crypto.randomInt(2 ** 31
   // Nekaj poskusov, če bi generator vrnil neveljavno nalogo.
   for (let i = 0; i < 5; i++) {
     const t = g.gen(level, r, genTopic, lang);
-    if (t && t.text && t.answer) return plainCommas({ ...t, generator: g.id, topicId, level, seed, ...(lang === "hi" && g.langs?.includes("hi") ? { textLang: "hi" } : {}) });
+    if (t && t.text && t.answer) return plainCommas({ ...t, generator: g.id, topicId, level, seed, ...(lang === "hi" && g.langs?.includes("hi") ? { textLang: "hi" } : {}) }, !g.langs);
   }
   throw new Error(`Generator ${g.id} ni ustvaril naloge.`);
 }

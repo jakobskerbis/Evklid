@@ -55,7 +55,7 @@ Liter, minuta in ura niso enote SI, a jih smemo uporabljati skupaj z njimi. Temp
 | centi | c | $0{,}01$ (stotinka) |
 | mili | m | $0{,}001$ (tisočinka) |
 
-Tako je $1\,\mathrm{cm} = 0{,}01\,\mathrm{m}$, $1\,\mathrm{mm} = 0{,}001\,\mathrm{m}$ in $1\,\mathrm{kg} = 1000\,\mathrm{g}$. Pozor: znak $\mathrm{m}$ *pred* enoto je predpona mili, sam pa je meter.
+Tako je $1\,\mathrm{cm} = 0{,}01\,\mathrm{m}$; $1\,\mathrm{mm} = 0{,}001\,\mathrm{m}$ in $1\,\mathrm{kg} = 1000\,\mathrm{g}$. Pozor: znak $\mathrm{m}$ *pred* enoto je predpona mili, sam pa je meter.
 
 **8. Pravilo pretvarjanja.** Pri maratonu smo šli iz večje enote (km) v manjšo (m) in število je zraslo. To velja vedno:
 - **v manjšo enoto** število postane večje, zato **množimo**,

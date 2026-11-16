@@ -174,22 +174,81 @@ $P^* = 38$ €/m² in $Q^* = 1450 - 20 \cdot 38 = 690$ m². Oba premika dvigujet
 - Povpraševanje desno: $P$ in $Q$ zrasteta. Ponudba desno: $P$ pade, $Q$ zraste. Pri premiku obeh je ena spremenljivka nedoločena.
 - Pri linearnih krivuljah ravnovesje dobiš z izenačenjem; dvig ponudbe za $t$ pomeni zamenjavo $P \to P - t$ v $Q_S$.
 
+## Za izpit
+
+Znati moraš povedati:
+- definiciji funkcije povpraševanja $Q_D(P)$ in funkcije ponudbe $Q_S(P)$ s pogojem »ob nespremenjenih drugih dejavnikih« ter zakon povpraševanja;
+- definicijo tržnega ravnovesja $Q_D(P^*) = Q_S(P^*)$ ter kaj sta presežek ponudbe in presežno povpraševanje in v katero smer potisneta ceno;
+- razliko med premikom po krivulji in premikom krivulje ter dejavnike, ki premaknejo povpraševanje oziroma ponudbo;
+- smer spremembe $P^*$ in $Q^*$ pri premiku ene krivulje in kaj je nedoločeno pri premiku obeh;
+- izpeljavo $P^* = \dfrac{a - c}{b + d}$ in $Q^* = \dfrac{ad + bc}{b + d}$ za linearni krivulji ter delitev stroška $t$ med kupce in prodajalce.
+
+### Naloga 1
+
+Na trgu lesnih peletov je povpraševanje $Q_D = 2400 - 8P$ in ponudba $Q_S = -600 + 12P$, kjer je $P$ cena v €/t in $Q$ količina v tonah na teden. (a) Poišči ravnovesje. (b) Država proizvajalcem naloži okoljsko dajatev $25$ €/t. Poišči novo ravnovesje, ceno, ki jo po plačilu dajatve obdržijo proizvajalci, delitev dajatve med kupce in proizvajalce ter tedenski prihodek države. (c) Ob dajatvi nastopi še huda zima: pri vsaki ceni kupci želijo $\Delta a$ ton več. Kolikšen mora biti $\Delta a$, da se prodana količina vrne na vrednost iz (a), in kolikšna je takrat cena? (d) V položaju iz (c) država omeji ceno na ravnovesno ceno iz (a). Koliko peletov se proda in kolikšen je primanjkljaj?
+
+**Rešitev:**
+
+1. Izenačimo: $2400 - 8P = -600 + 12P$, torej $3000 = 20P$ in $P^* = 150$ €/t.
+2. Količina: $Q^* = 2400 - 8 \cdot 150 = 1200$ t.
+3. Dajatev dvigne ponudbo za $25$: $Q_S = -600 + 12(P - 25) = -900 + 12P$.
+4. Za novo ravnovesje izenačimo: $2400 - 8P = -900 + 12P$, torej $3300 = 20P$ in $P^* = 165$ €/t.
+5. Količina: $Q^* = 2400 - 8 \cdot 165 = 1080$ t.
+6. Proizvajalci obdržijo $165 - 25 = 140$ €/t. Kupci plačajo $165 - 150 = 15$ €/t več, proizvajalci dobijo $150 - 140 = 10$ €/t manj. Kupci nosijo $\frac{15}{25} = 0{,}6$ dajatve, kar je ravno $\frac{d}{b + d} = \frac{12}{20}$.
+7. Prihodek države: $25 \cdot 1080 = 27000$ € na teden.
+8. Za (c) mora ponudba dati $1200$ t: $-900 + 12P = 1200$, torej $12P = 2100$ in $P = 175$ €/t.
+9. Pri tej ceni mora biti tudi povpraševana količina $1200$: $2400 + \Delta a - 8 \cdot 175 = 1200$, torej $\Delta a = 1200 - 2400 + 1400 = 200$ t.
+10. Za (d) je povpraševanje $Q_D = 2600 - 8P$. Pri $P = 150$: $Q_D = 2600 - 8 \cdot 150 = 1400$ t, $Q_S = -900 + 12 \cdot 150 = 900$ t.
+11. Proda se manjša izmed obeh količin, torej $900$ t. Primanjkljaj je $1400 - 900 = 500$ t.
+12. Odgovor: (a) $150$ €/t in $1200$ t; (b) $165$ €/t in $1080$ t, proizvajalci obdržijo $140$ €/t, kupci nosijo $15$ € in proizvajalci $10$ € dajatve, država dobi $27000$ € na teden; (c) $\Delta a = 200$ t, cena je $175$ €/t; (d) proda se $900$ t, primanjkljaj je $500$ t.
+
+### Naloga 2
+
+Za linearni krivulji $Q_D = a - bP$ in $Q_S = c + dP$ ($b, d > 0$) izpelji ravnovesno ceno in količino ter navedi pogoja, da sta obe pozitivni. Nato izpelji, za koliko se pri dvigu ponudbe za $t$ spremenijo cena, ki jo plačajo kupci, cena, ki jo obdržijo prodajalci, in količina. Utemelji, v katerih mejnih primerih ves strošek nosijo kupci in v katerem prodajalci.
+
+**Rešitev:**
+
+1. Ravnovesni pogoj: $a - bP^* = c + dP^*$. Člene s $P^*$ zberemo: $a - c = (b + d)P^*$, torej $P^* = \dfrac{a - c}{b + d}$.
+2. Vstavimo v povpraševanje: $Q^* = a - b\,\dfrac{a - c}{b + d} = \dfrac{a(b + d) - b(a - c)}{b + d} = \dfrac{ad + bc}{b + d}$.
+3. Ker je $b + d > 0$, je $P^* > 0$ natanko tedaj, ko je $a > c$, in $Q^* > 0$ natanko tedaj, ko je $ad + bc > 0$. Drugi pogoj je pomemben, kadar je $c < 0$.
+4. Dvig ponudbe za $t$: prodajalec se pri ceni $P$ odloča kot prej pri $P - t$, zato $Q_S = c + d(P - t)$, kar pomeni $c \to c - dt$.
+5. Nova cena: $P_1 = \dfrac{a - c + dt}{b + d}$. Kupci plačajo za $\Delta P = P_1 - P^* = \dfrac{d}{b + d}\,t$ več.
+6. Prodajalci obdržijo $P_1 - t$. Sprememba je $\Delta P - t = \dfrac{d - (b + d)}{b + d}\,t = -\dfrac{b}{b + d}\,t$.
+7. Količina se giblje po krivulji povpraševanja: $\Delta Q = -b\,\Delta P = -\dfrac{bd}{b + d}\,t$.
+8. Deleža $\dfrac{d}{b + d}$ in $\dfrac{b}{b + d}$ sta med $0$ in $1$ in se seštejeta v $1$. Kupci nosijo ves strošek, ko gre $b \to 0$ (povpraševana količina se na ceno ne odziva) ali ko gre $d \to \infty$ (prodajalci pri isti ceni ponudijo poljubno količino). Prodajalci nosijo ves strošek, ko gre $b \to \infty$ ali $d \to 0$.
+9. Preizkus s primerom 3 ($b = 20$, $d = 30$, $t = 5$): $\Delta P = \frac{30}{50} \cdot 5 = 3$ in $\Delta Q = -\frac{20 \cdot 30}{50} \cdot 5 = -60$, kar se ujema s $33$ €/m² in $540$ m².
+
+### Naloga 3
+
+Analitik zbere podatke o trgu kave: v petih zaporednih letih sta ravnovesna cena in prodana količina vsako leto zrasli. Sklene: »Krivulja povpraševanja po kavi je naraščajoča, zakon povpraševanja tu ne velja.« Utemelji, ali sklep drži. Nato natančno navedi, katere kombinacije premikov krivulj dajo (a) višjo ceno in večjo količino, (b) višjo ceno in manjšo količino, (c) nespremenjeno ceno in večjo količino.
+
+**Rešitev:**
+
+1. Sklep ne drži. Krivulja povpraševanja povezuje ceno in količino ob nespremenjenih drugih dejavnikih. Opazovane točke so ravnovesja iz različnih let, v katerih so se drugi dejavniki (dohodek, okus, število kupcev) spreminjali.
+2. Vsaka opazovana točka je presečišče tistega leta. Če se povpraševanje premika desno, ponudba pa miruje, točke ležijo na naraščajoči krivulji *ponudbe*. Analitik je torej izrisal ponudbo, ne povpraševanja.
+3. Zakon povpraševanja bi preveril le s spremembo cene pri mirujočem povpraševanju, torej s premiki ponudbe (letina, cena vložkov).
+4. (a) Višja cena in večja količina: povpraševanje desno pri mirujoči ponudbi; ali oba premika hkrati, če premik povpraševanja desno prevlada nad premikom ponudbe (desno ali levo).
+5. (b) Višja cena in manjša količina: ponudba levo pri mirujočem povpraševanju; ali ponudba levo in dovolj majhen premik povpraševanja v katerokoli smer.
+6. (c) Nespremenjena cena in večja količina: obe krivulji desno, in to za enako količino pri stari ceni. Pri linearnih krivuljah to pomeni $\Delta a = \Delta c$, saj je $P^* = \dfrac{a - c}{b + d}$ odvisna le od razlike $a - c$.
+7. Sklep: iz samih ravnovesnih točk ne moreš prebrati nobene krivulje, dokler ne veš, katera se je premikala.
+
 ## Drugače: Na sliki
 
 Nariši graf: navpična os je cena, vodoravna količina.
 
-```
- P
- │ \         /  S
- │  \       /
- │   \     /
- │    \   /
- │      X      ← ravnovesje (600, 30)
- │    /   \
- │   /     \
- │  /       \  D
- └──────────────── Q
-```
+:::risba graf
+opis: Graf ponudbe in povpraševanja na trgu desk. Na vodoravni osi je količina Q od 0 do 1200 kvadratnih metrov, na navpični cena P od 0 do 60 evrov. Premica povpraševanja D se spušča od točke (0, 60) do (1200, 0). Premica ponudbe S se dviga od točke (0, 10) do (1200, 50). Sekata se v točki X, v ravnovesju pri količini 600 in ceni 30.
+x: 0 .. 1200 | 200 | Q
+y: 0 .. 60 | 10 | P
+f: 60 - x/20 | modra
+f: 10 + x/30 | oranžna
+črta: 600; 0 -> 600; 30 -> 0; 30 | črtkano siva
+točka: 600; 30
+napis: 600; 32 | X | nad
+napis: 1050; 10 | D | nad | modra
+napis: 1050; 47 | S | nad | oranžna
+podnapis: Povpraševanje D pada, ponudba S raste; presečišče X je ravnovesje (600, 30).
+:::
 
 - Črta **D** se spušča (kupci), črta **S** se dviga (prodajalci). Presečišče **X** je ravnovesje.
 - Pri subvenciji iz primera 2 premakneš D vzporedno v desno. Novo presečišče leži više in bolj desno: $(750, 35)$.
@@ -197,15 +256,17 @@ Nariši graf: navpična os je cena, vodoravna količina.
 
 Pravilo za branje: premakni *eno* črto, ostane druga. Novo ravnovesje drsi po tisti, ki je ostala.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Pomisli na božični sejem rokodelcev, kjer lončar prodaja skodelice.
+Pomisli na borzo električne energije, kjer analitik trgovalca vsak dan napoveduje ceno za naslednji dan.
 
-- Prvi dan postavi ceno $25$ €. Ob stojnici se nihče ne ustavi in do večera ima polno mizo skodelic. To je presežek ponudbe. Drugi dan ceno spusti.
-- Pri $12$ € so skodelice razprodane do poldneva, ljudje pa še sprašujejo. To je presežno povpraševanje. Tretji dan ceno dvigne.
-- Ko najde ceno, pri kateri zvečer proda zadnjo skodelico in nihče več ne vpraša, je našel ravnovesje.
+- Za vsako uro elektrarne oddajo ponudbe: koliko megavatov in po kateri najnižji ceni. Borza jih razvrsti od najcenejše navzgor. To je krivulja ponudbe.
+- Vzemi uro, v kateri odjemalci potrebujejo $1500$ MW. Hidroelektrarne in jedrska ponudijo $900$ MW po $10$ €/MWh, premog $400$ MW po $70$ €/MWh, plin $500$ MW po $110$ €/MWh. Prvi dve skupini dasta le $1300$ MW, zato je potreben še plin. Ravnovesna cena je $110$ €/MWh in velja za vse.
+- Pri ceni $70$ €/MWh bi manjkalo $200$ MW. To je presežno povpraševanje, zato algoritem ceno dvigne.
 
-Zdaj sneg zapre cesto in pol lončarjev ne pride na sejem. Ponudba se premakne levo. Isti lončar lahko dvigne ceno in še vedno proda vse. Ni spremenil skodelic, spremenil se je trg okoli njega.
+Zdaj zapiha in vetrnice ponudijo še $300$ MW skoraj zastonj. Ponudba se premakne desno. Brez plina je na voljo $1600$ MW, kar zadošča. Cena pade na $70$ €/MWh. Premogovna elektrarna ni spremenila ničesar, spremenil se je trg okoli nje.
+
+Enak izračun presečišča naredi borza vrednostnih papirjev v otvoritveni avkciji in zakladnica pri prodaji državnih menic.
 
 ## Drugače: Bolj natančno
 
@@ -262,7 +323,7 @@ Q_D | povpraševana količina (funkcija povpraševanja) | Q_D = a - bP | m^2/ted
 Q_S | ponujena količina (funkcija ponudbe) | Q_S = c + dP | m^2/teden | naraščajoča funkcija cene
 Q | količina | | m^2/teden | Q* ravnovesna količina
 P | cena | | €/m^2 | P* ravnovesna cena
-a | količina povpraševanja pri ceni 0 | | m^2/teden
+a | povpraševana količina pri ceni 0 | | m^2/teden
 b | naklon povpraševanja (padec količine na 1 € cene) | | | b > 0
 c | ponujena količina pri ceni 0 | | m^2/teden | lahko je negativna
 d | naklon ponudbe (porast količine na 1 € cene) | | | d > 0

@@ -222,14 +222,14 @@ Natančno navedi prvi zakon termodinamike in dokaži, da za reverzibilno adiabat
 1. Če zaprt sistem preide iz stanja 1 v stanje 2 in prejme toploto $Q$ in delo $A$, je $\Delta W_n = Q + A$; za majhno spremembo $\mathrm{d}W_n = \delta Q + \delta A$.
 2. Za idealni plin je $\mathrm{d}W_n = nC_V\,\mathrm{d}T$; pri reverzibilni spremembi je $\delta A = -p\,\mathrm{d}V$, pri adiabatni $\delta Q = 0$.
 3. Torej $nC_V\,\mathrm{d}T = -p\,\mathrm{d}V$. Iz $pV = nRT$ diferenciramo $p\,\mathrm{d}V + V\,\mathrm{d}p = nR\,\mathrm{d}T$ in izločimo $\mathrm{d}T$: $C_V(p\,\mathrm{d}V + V\,\mathrm{d}p) = -Rp\,\mathrm{d}V$.
-4. Z $C_V + R = C_p$ dobimo $C_pp\,\mathrm{d}V + C_VV\,\mathrm{d}p = 0$, torej $\kappa\frac{\mathrm{d}V}{V} + \frac{\mathrm{d}p}{p} = 0$.
+4. S $C_V + R = C_p$ dobimo $C_pp\,\mathrm{d}V + C_VV\,\mathrm{d}p = 0$, torej $\kappa\frac{\mathrm{d}V}{V} + \frac{\mathrm{d}p}{p} = 0$.
 5. Integracija: $\kappa\ln V + \ln p = \text{konst.}$, torej $pV^\kappa = \text{konst.}$
 6. Naklon: iz 4. koraka je za adiabato $\frac{\mathrm{d}p}{\mathrm{d}V} = -\kappa\frac{p}{V}$, iz $pV = \text{konst.}$ za izotermo $-\frac{p}{V}$. Ker je $\kappa = C_p/C_V > 1$, je adiabata v isti točki $\kappa$-krat bolj strma.
 7. Fizikalno: pri adiabatnem razširjanju plin opravlja delo na račun notranje energije, se ohlaja, zato tlak pade hitreje kot pri stalni temperaturi.
 
 ### Naloga 3
 
-Idealni plin preide iz stanja $(p_1, V_1) = (2{,}0\,\mathrm{bar}, 1{,}0\,\mathrm{L})$ v stanje $(p_2, V_2) = (1{,}0\,\mathrm{bar}, 2{,}0\,\mathrm{L})$ po dveh poteh: (a) najprej izobarno pri $2{,}0\,\mathrm{bar}$ do $2{,}0\,\mathrm{L}$, nato izohorno do $1{,}0\,\mathrm{bar}$; (b) najprej izohorno do $1{,}0\,\mathrm{bar}$, nato izobarno do $2{,}0\,\mathrm{L}$. Izračunaj toploto, ki jo plin prejme po vsaki poti, in utemelji, ali je toplota funkcija stanja.
+Idealni plin preide iz stanja $(p_1; V_1) = (2{,}0\,\mathrm{bar}; 1{,}0\,\mathrm{L})$ v stanje $(p_2; V_2) = (1{,}0\,\mathrm{bar}; 2{,}0\,\mathrm{L})$ po dveh poteh: (a) najprej izobarno pri $2{,}0\,\mathrm{bar}$ do $2{,}0\,\mathrm{L}$, nato izohorno do $1{,}0\,\mathrm{bar}$; (b) najprej izohorno do $1{,}0\,\mathrm{bar}$, nato izobarno do $2{,}0\,\mathrm{L}$. Izračunaj toploto, ki jo plin prejme po vsaki poti, in utemelji, ali je toplota funkcija stanja.
 
 **Rešitev:**
 
@@ -242,17 +242,18 @@ Idealni plin preide iz stanja $(p_1, V_1) = (2{,}0\,\mathrm{bar}, 1{,}0\,\mathrm
 
 V diagramu $p(V)$ nariši izotermo in adiabato skozi isto začetno točko:
 
-```
- p
- |  \
- |   \ adiabata (bolj strma)
- |    \.
- |     \ '.
- |      \   '. izoterma
- |       \     ' - .
- |        \           ' - - .
- +---------------------------------> V
-```
+:::risba graf
+opis: Diagram p(V) v relativnih enotah: na vodoravni osi je V/V₁, na navpični p/p₁. Iz skupne začetne točke (1; 1) izhajata dve padajoči krivulji razširjanja. Izoterma p = p₁V₁/V pada počasneje in pri V = 3V₁ doseže 0,33 p₁. Adiabata za κ = 1,4 je bolj strma in pri V = 3V₁ doseže le 0,21 p₁, zato leži pod izotermo.
+x: 0 .. 4 | 1 | V/V_1
+y: 0 .. 1,2 | 0,2 | p/p_1
+f: 1/x | modra | 1 .. 4
+f: 1/x^1.4 | oranžna debelo | 1 .. 4
+točka: 1; 1 | začetno stanje | desno
+napis: 2,6; 0,5 | izoterma | desno | modra
+napis: 1,2; 0,25 | adiabata (bolj strma) | pod | oranžna
+črta: 3; 0 -> 3; 0,333 | črtkano siva
+podnapis: Izoterma in adiabata (κ = 1,4) skozi isto začetno stanje
+:::
 
 Pri razširjanju adiabata pade hitreje kot izoterma, ker se plin hkrati ohlaja. Ploščina pod krivuljo je delo, ki ga opravi plin: pri adiabatnem razširjanju je manjša kot pri izotermnem, ker plin ne dobiva toplote.
 

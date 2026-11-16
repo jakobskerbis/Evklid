@@ -84,7 +84,7 @@ Za met z vodoravnih tal in pristanek na isti višini veljajo:
 
 $$t_{\text{let}} = \frac{2v_0\sin\alpha}{g}, \qquad h_{\max} = \frac{v_0^2\sin^2\alpha}{2g}, \qquad D = \frac{v_0^2\sin 2\alpha}{g}.$$
 
-*Izpeljava.* Pristanek: $y = 0$ da $t(v_0\sin\alpha - \tfrac{1}{2}gt) = 0$, rešitev $t \ne 0$ je $t_{\text{let}}$. Vrh: $v_y = 0$ pri $t = t_{\text{let}}/2$, vstavimo v $y(t)$ in dobimo $h_{\max}$. Domet: $D = v_0\cos\alpha \cdot t_{\text{let}} = 2v_0^2\sin\alpha\cos\alpha/g$. Ker je $\sin 2\alpha \le 1$ z enakostjo pri $2\alpha = 90^\circ$, je domet največji pri $\alpha = 45^\circ$, koti $\alpha$ in $90^\circ - \alpha$ pa dasta enak domet. V najvišji točki je $v_y = 0$, hitrost pa ni nič: ostane $v_x$.
+*Izpeljava.* Pristanek: $y = 0$ da $t(v_0\sin\alpha - \tfrac{1}{2}gt) = 0$, rešitev $t \ne 0$ je $t_{\text{let}}$. Vrh: $v_y = 0$ pri $t = t_{\text{let}}/2$, vstavimo v $y(t)$ in dobimo $h_{\max}$. Domet: $D = v_0\cos\alpha \cdot t_{\text{let}} = 2v_0^2\sin\alpha\cos\alpha/g$. Ker je $\sin 2\alpha \le 1$ z enakostjo pri $2\alpha = 90^\circ$, je domet največji pri $\alpha = 45^\circ$, kota $\alpha$ in $90^\circ - \alpha$ pa dasta enak domet. V najvišji točki je $v_y = 0$, hitrost pa ni nič: ostane $v_x$.
 
 ### Kroženje in relativno gibanje
 
@@ -237,7 +237,7 @@ Z roba ravne strehe na višini $12\,\mathrm{m}$ vržemo žogo s hitrostjo $15\,\
 5. Kot pod vodoravnico: $\tan\beta = 17{,}08/12{,}99 \approx 1{,}315$, $\beta \approx 52{,}7^\circ$.
 6. V najvišji točki je $\vec{v}$ vodoraven, $\vec{g}$ pa pravokoten nanj: $a_t = 0$, $a_r = g = 9{,}81\,\mathrm{m/s^2}$.
 7. Iz $a_r = v^2/R$ sledi $R = v_x^2/g = 12{,}99^2/9{,}81\,\mathrm{m} \approx 17{,}2\,\mathrm{m}$.
-8. Odgovor: žoga pade po približno $2{,}51\,\mathrm{s}$, $32{,}5\,\mathrm{m}$ od stavbe, s hitrostjo $21{,}5\,\mathrm{m/s}$ pod kotom približno $53^\circ$ pod vodoravnico; v najvišji točki je ves pospešek radialen, krivinski polmer tira pa okoli $17\,\mathrm{m}$.
+8. Odgovor: žoga po približno $2{,}51\,\mathrm{s}$ pade $32{,}5\,\mathrm{m}$ od stavbe, in sicer s hitrostjo $21{,}5\,\mathrm{m/s}$ pod kotom približno $53^\circ$ pod vodoravnico; v najvišji točki je ves pospešek radialen, krivinski polmer tira pa okoli $17\,\mathrm{m}$.
 
 ### Naloga 2
 
@@ -257,17 +257,24 @@ Natančno definiraj trenutno hitrost in pospešek točkastega telesa. Dokaži, d
 
 Tir poševnega meta je parabola. Na vsaki točki nariši vektor hitrosti kot puščico, tangentno na tir:
 
-```
-              v_x (v najvišji točki ostane samo vodoravna komponenta)
-             ---->
-          .         .
-       .               .
-     .  ^ v             .
-   .   /                  .
-  .   /  alfa              .
- ------------------------------
- |<----------- D ------------>|
-```
+:::risba graf
+opis: Tir poševnega meta je parabola od izmeta v izhodišču do pristanka na isti višini, razdalja med njima je domet D. V izhodišču je narisana puščica začetne hitrosti v₀ pod kotom alfa glede na vodoravnico, tangentno na tir. V najvišji točki, na sredini dometa, je puščica hitrosti vodoravna: ostane samo vodoravna komponenta.
+x: -0,5 .. 9
+y: -1,2 .. 3
+enako: da
+oznake: ne
+f: x - x^2/8 | modra | 0 .. 8
+puščica: 0; 0 -> 1,5; 1,5 | | | oranžna
+napis: 1,6; 1,6 | v_0 | nad | oranžna
+napis: 1,1; 0,35 | α
+puščica: 4; 2 -> 5,5; 2 | v_x | nad | oranžna
+točka: 4; 2
+črta: 4; 0 -> 4; 2 | črtkano siva
+puščica: 4; -0,8 -> 8; -0,8
+puščica: 4; -0,8 -> 0; -0,8
+napis: 4; -0,4 | D | sredina
+podnapis: V najvišji točki ostane samo vodoravna komponenta hitrosti; D je domet.
+:::
 
 Vodoravna komponenta puščice je povsod enako dolga, navpična se enakomerno krajša, v vrhu izgine in nato raste navzdol. Pospešek $\vec{g}$ je v vsaki točki enak: kratka puščica navpično navzdol.
 

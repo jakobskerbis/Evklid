@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prerez njive
+  - setvenica $3$–$8\,\mathrm{cm}$, ornica do $25$–$30\,\mathrm{cm}$
+  - plužni taban: zbita plast pod ornico
+- Osnovna obdelava
+  - oranje $20$–$30\,\mathrm{cm}$: obrne, zrahlja, zaorje ostanke
+  - podrahljavanje $40$–$60\,\mathrm{cm}$ razbije plužni taban
+- Dopolnilna obdelava
+  - do $10\,\mathrm{cm}$: brana, kultivator, valjar
+  - drobi, ravna, zapira vlago
+  - pazi: prefina setvenica naredi skorjo
+- Konzervirajoča obdelava
+  - po setvi vsaj $30\,\%$ pokritosti z ostanki
+  - reducirana, v pasovih, neposredna setev
+  - manj erozije, a več plevela, hladnejša tla
+- Godnost tal
+  - kepa se ob padcu razleti v mrvice
+  - premokra tla se mažejo in zbijejo
+- Poroznost in pokritost
+  - $P = 1 - \dfrac{\rho_v}{\rho_t}$, $\rho_t \approx 2{,}65\,\mathrm{g/cm^3}$
+  - $D = \dfrac{\text{zadetki}}{\text{vse oznake}}$, več meritev
+- Učinek stroja
+  - $U = b \cdot v \cdot \eta$, $t = \dfrac{A}{U}$
+  - primer: $0{,}784\,\mathrm{ha/h}$; $12\,\mathrm{ha}$ v $15{,}3\,\mathrm{h}$

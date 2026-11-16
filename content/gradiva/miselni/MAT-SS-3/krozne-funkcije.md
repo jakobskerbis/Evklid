@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Obratna funkcija
+  - $\sin^{-1}$ na kalkulatorju pomeni $\arcsin$
+  - pozor: $\sin^{-1} x$ ni $\frac{1}{\sin x}$
+- Zožitev
+  - sinus na $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, kosinus na $[0, \pi]$
+  - vsako vrednost doseže natanko enkrat
+- Arkus sinus
+  - $D = [-1, 1]$, $Z = \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$
+  - narašča, liha; $\arcsin\frac12 = \frac{\pi}{6}$
+- Arkus kosinus
+  - $D = [-1, 1]$, $Z = [0, \pi]$, pada
+  - $\arccos\left(-\frac12\right) = \frac{2\pi}{3}$, ne $-\frac{\pi}{3}$
+- Arkus tangens
+  - $D = \mathbb{R}$, narašča, liha
+  - vodoravni asimptoti $y = \pm\frac{\pi}{2}$
+- Graf
+  - zrcaljenje zoženega dela čez $y = x$
+  - primer: $2\arcsin(x - 1)$ ima $D = [0, 2]$
+- Sestavljanje
+  - $\sin(\arcsin x) = x$ za vse $x \in [-1, 1]$
+  - $\arcsin\left(\sin\frac{5\pi}{6}\right) = \frac{\pi}{6}$
+- Enačbe
+  - arkus da le eno rešitev $x_1$
+  - druga družina: $\pi - x_1 + 2k\pi$

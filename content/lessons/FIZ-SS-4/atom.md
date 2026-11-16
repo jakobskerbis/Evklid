@@ -48,7 +48,7 @@ Zakaj so energije negativne? Ničlo izberemo tam, kjer je elektron prost, daleč
 
 Pozor pri primerjanju: $-0{,}85\,\mathrm{eV}$ je *več* kot $-3{,}40\,\mathrm{eV}$. Večji $n$ pomeni višji nivo.
 
-Velja tudi obratno. Bela svetloba vsebuje fotone vseh energij. Ko gre skozi hladnejši plin, atomi **absorbirajo** samo fotone, katerih energija je točno enaka razliki dveh nivojev; elektron pri tem skoči navzgor. V spektru ostanejo temne črte na mavričnem ozadju. Pri vodiku je treba paziti: hladen vodik je skoraj ves v osnovnem stanju $n = 1$, zato vpija le ultravijolične fotone. Temne *vidne* črte vodika nastanejo tam, kjer je veliko atomov na nivoju $n = 2$, na primer v ozračju vroče zvezde. To je **absorpcijski spekter**. Svetle črte žarečega plina so **emisijski spekter**. Žareča nitka ali Sonce pa dasta **zvezni spekter**, mavrico brez vrzeli.
+Velja tudi obratno. Bela svetloba vsebuje fotone vseh energij. Ko gre skozi hladnejši plin, atomi **absorbirajo** samo fotone, katerih energija je točno enaka razliki dveh nivojev; elektron pri tem skoči navzgor. V spektru ostanejo temne črte na mavričnem ozadju. Pri vodiku je treba paziti: hladen vodik je skoraj ves v osnovnem stanju $n = 1$, zato vpija le ultravijolične fotone. Temne *vidne* črte vodika nastanejo tam, kjer je veliko atomov na nivoju $n = 2$, na primer v ozračju vroče zvezde. To je **absorpcijski spekter**. Svetle črte žarečega plina so **emisijski spekter**. Žareča nitka žarnice pa da **zvezni spekter**, mavrico brez vrzeli.
 
 :::premisli
 Zakaj so temne črte v absorpcijskem spektru vodika točno na istih mestih kot svetle črte v emisijskem?
@@ -140,7 +140,7 @@ Koliko različnih črt lahko izseva vodik, ko je elektron na $n = 4$?
 
 1. Izpiši nivoje: $E_4 = -0{,}85\,\mathrm{eV}$, $E_3 = -1{,}51\,\mathrm{eV}$, $E_2 = -3{,}40\,\mathrm{eV}$, $E_1 = -13{,}6\,\mathrm{eV}$.
 2. Naštej vse skoke navzdol. Elektron lahko skoči naravnost ali po stopnicah: $4 \to 3$, $4 \to 2$, $4 \to 1$, $3 \to 2$, $3 \to 1$, $2 \to 1$. To je šest črt.
-3. Izračunaj razlike: $0{,}66$, $2{,}55$, $12{,}75$, $1{,}89$, $12{,}09$ in $10{,}2\,\mathrm{eV}$.
+3. Izračunaj razlike: $0{,}66$; $2{,}55$; $12{,}75$; $1{,}89$; $12{,}09$ in $10{,}2\,\mathrm{eV}$.
 4. Vsako deli v $1240\,\mathrm{eV\,nm}$: približno $1880$, $486$, $97$, $656$, $103$ in $122\,\mathrm{nm}$.
 5. Razvrsti: vidni sta le $486\,\mathrm{nm}$ in $656\,\mathrm{nm}$. Črta pri $1880\,\mathrm{nm}$ je infrardeča, preostale tri so ultravijolične.
 

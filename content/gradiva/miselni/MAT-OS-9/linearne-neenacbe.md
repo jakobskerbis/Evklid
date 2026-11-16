@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Neenačba
+  - znaki $<$, $>$, $\le$, $\ge$
+  - neskončno mnogo rešitev
+- Kot pri enačbi
+  - prištevanje in odštevanje: znak ostane
+  - deljenje s pozitivnim številom: znak ostane
+- Obrat znaka
+  - krat ali deljeno z negativnim številom
+  - $-2x<6$ postane $x>-3$
+  - napaka: obrat zaradi minusa na desni
+- Številska premica
+  - $<$, $>$: prazen krogec
+  - $\le$, $\ge$: poln krogec
+  - $x>a$ desno, $x<a$ levo
+- Preizkus
+  - eno število iz rešitve, eno zunaj
+  - pri meji preveri krogec
+- Besedilne naloge
+  - »največ« je $\le$, »vsaj« je $\ge$
+  - razdalja ne more biti negativna

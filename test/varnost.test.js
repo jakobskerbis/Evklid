@@ -103,8 +103,9 @@ test("varnostne glave: CSP, HSTS samo prek https, no-store za API", async () => 
     const call = client();
     const home = await call("/");
     const csp = home.headers.get("content-security-policy");
-    for (const d of ["default-src 'self'", "script-src 'self'", "object-src 'none'", "frame-ancestors 'none'", "img-src 'self' data: blob: https:", "connect-src 'self'"]) assert.ok(csp.includes(d), d);
+    for (const d of ["default-src 'self'", "script-src 'self'", "object-src 'none'", "frame-ancestors 'none'", "img-src 'self' data: blob:", "connect-src 'self'"]) assert.ok(csp.includes(d), d);
     assert.ok(!/script-src[^;]*unsafe-inline/.test(csp));
+    assert.ok(!/img-src[^;]*https:/.test(csp), "A3: slike samo lastne, data: in blob:");
     assert.equal(home.headers.get("x-content-type-options"), "nosniff");
     assert.equal(home.headers.get("referrer-policy"), "strict-origin-when-cross-origin");
     assert.equal(home.headers.get("cross-origin-opener-policy"), "same-origin");
@@ -116,10 +117,11 @@ test("varnostne glave: CSP, HSTS samo prek https, no-store za API", async () => 
     assert.equal(https.headers.get("strict-transport-security"), "max-age=31536000; includeSubDomains");
     assert.equal((await call("/api/students")).headers.get("cache-control"), "no-store");
     assert.equal((await call("/api/paths")).headers.get("cache-control"), "no-cache");
-    // Strani brez vrinjenih skript (CSP script-src 'self').
-    for (const f of ["index.html", "starsi.html", "placaj.html", "ucitelj.html", "zasebnost.html", "garancija.html"]) {
+    // Strani brez vrinjenih skript (CSP script-src 'self'). Podatkovni blok schema.org (application/ld+json)
+    // ni skripta: brskalnik ga ne izvede in CSP ga ne zadeva (server/vidnost.js).
+    for (const f of ["index.html", "starsi.html", "placaj.html", "ucitelj.html", "zasebnost.html", "garancija.html", "o-evklidu.html", "zakaj-evklid.html"]) {
       const html = fs.readFileSync(path.join("public", f), "utf8");
-      assert.ok(!/<script(?![^>]*\bsrc=)[^>]*>/i.test(html), `${f}: vrinjena skripta`);
+      assert.ok(!/<script(?![^>]*\bsrc=)(?![^>]*\btype="application\/ld\+json")[^>]*>/i.test(html), `${f}: vrinjena skripta`);
       assert.ok(!/\son[a-z]+\s*=/i.test(html), `${f}: on…= v HTML`);
     }
     const print = await call("/ucbenik/MAT-OS-6");

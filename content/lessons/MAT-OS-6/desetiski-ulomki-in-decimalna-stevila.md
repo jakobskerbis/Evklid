@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Odpri kuhinjski predal in poišči merilni vrč. Ob črticah so napisi, na primer $0{,}1\,\text{l}$, $0{,}2\,\text{l}$, $0{,}3\,\text{l}$ in tako naprej do $1\,\text{l}$. Nalij vode do tretje črtice.
+Odpri kuhinjski predal in poišči merilni vrč. Ob črticah so napisi, na primer $0{,}1\,\text{l}$; $0{,}2\,\text{l}$; $0{,}3\,\text{l}$ in tako naprej do $1\,\text{l}$. Nalij vode do tretje črtice.
 
 Koliko vode je v vrču? Preštej razdelke: od dna do oznake $1\,\text{l}$ jih je deset, vsi so enako visoki. Voda sega do treh, torej imaš $\dfrac{3}{10}$ litra. Ob črtici pa piše $0{,}3\,\text{l}$. Isto vodo lahko torej zapišeš na dva načina.
 
@@ -106,9 +106,9 @@ Na kosu sira piše $0{,}35\,\text{kg}$, v loncu pa je $2{,}08\,\text{l}$ juhe. Z
 
 ### Primer 3: dovolj masla?
 
-Za pecivo potrebuješ vsaj $0{,}24\,\text{kg}$ masla. V hladilniku so štirje kosi z masami $0{,}3\,\text{kg}$, $0{,}125\,\text{kg}$, $0{,}2\,\text{kg}$ in $0{,}25\,\text{kg}$. Uredi kose od najlažjega do najtežjega. Kateri kosi zadoščajo vsak zase?
+Za pecivo potrebuješ vsaj $0{,}24\,\text{kg}$ masla. V hladilniku so štirje kosi z masami $0{,}3\,\text{kg}$; $0{,}125\,\text{kg}$; $0{,}2\,\text{kg}$ in $0{,}25\,\text{kg}$. Uredi kose od najlažjega do najtežjega. Kateri kosi zadoščajo vsak zase?
 
-**Podatki:** potrebno vsaj $0{,}24\,\text{kg}$; kosi $0{,}3\,\text{kg}$, $0{,}125\,\text{kg}$, $0{,}2\,\text{kg}$, $0{,}25\,\text{kg}$
+**Podatki:** potrebno vsaj $0{,}24\,\text{kg}$, kosi ($0{,}3\,\text{kg}$; $0{,}125\,\text{kg}$; $0{,}2\,\text{kg}$; $0{,}25\,\text{kg}$)
 **Iščemo:** vrstni red kosov in kose z vsaj $0{,}24\,\text{kg}$
 
 :::formula
@@ -118,11 +118,11 @@ Dopiši ničle do enakega števila decimalnih mest, nato primerjaj po mestih: ce
 **Rešitev:**
 
 1. Največ decimalnih mest (tri) ima $0{,}125$, zato vsem dopišemo ničle do treh mest: $0{,}300$; $0{,}125$; $0{,}200$; $0{,}250$. Potrebna masa je $0{,}240$.
-2. Cela dela so povsod $0$, zato odločajo desetinke: $1$ pri $0{,}125$, $2$ pri $0{,}200$ in $0{,}250$, $3$ pri $0{,}300$.
+2. Cela dela so povsod $0$, zato odločajo desetinke: $1$ pri $0{,}125$; $2$ pri $0{,}200$ in $0{,}250$; $3$ pri $0{,}300$.
 3. Med $0{,}200$ in $0{,}250$ odločijo stotinke. Ker je $0 < 5$, je lažji $0{,}2\,\text{kg}$.
 4. Vrstni red: $0{,}125 < 0{,}2 < 0{,}25 < 0{,}3$.
-5. Primerjamo s $0{,}240$. Kos $0{,}300$ ima več desetink, zadošča. Kos $0{,}250$ ima enako desetink, a več stotink ($5 > 4$), zadošča. Kos $0{,}200$ ima manj stotink ($0 < 4$), kos $0{,}125$ pa manj desetink, zato ne zadoščata.
-6. Odgovor: od najlažjega do najtežjega so kosi $0{,}125\,\text{kg}$, $0{,}2\,\text{kg}$, $0{,}25\,\text{kg}$ in $0{,}3\,\text{kg}$. Vsak zase zadoščata kosa z $0{,}25\,\text{kg}$ in $0{,}3\,\text{kg}$.
+5. Primerjamo z $0{,}240$. Kos $0{,}300$ ima več desetink, zadošča. Kos $0{,}250$ ima enako desetink, a več stotink ($5 > 4$), zadošča. Kos $0{,}200$ ima manj stotink ($0 < 4$), kos $0{,}125$ pa manj desetink, zato ne zadoščata.
+6. Odgovor: od najlažjega do najtežjega so kosi $0{,}125\,\text{kg}$; $0{,}2\,\text{kg}$; $0{,}25\,\text{kg}$ in $0{,}3\,\text{kg}$. Vsak zase zadoščata kosa z $0{,}25\,\text{kg}$ in $0{,}3\,\text{kg}$.
 
 ### Primer 4: zdaj ti
 
@@ -152,7 +152,7 @@ Večje je $0{,}10$: odločijo desetinke, $1 > 0$. Velja $0{,}06 < 0{,}1$, zato k
 - **»Več števk pomeni večje število.«** Učenec misli, da je $0{,}125 > 0{,}3$, ker je $125 > 3$. Števke za vejico pa niso celo število, vsaka ima svoje mesto. $0{,}3$ ima $3$ desetinke, $0{,}125$ le $1$. Popravek: dopiši ničle ($0{,}300$ in $0{,}125$) in primerjaj od leve proti desni.
 - **Mesta šteje po števcu, ne po imenovalcu.** $\dfrac{45}{1000}$ zapiše kot $0{,}45$, ker ima $45$ dve števki. A $0{,}45$ je $\dfrac{45}{100}$. Število decimalnih mest določi imenovalec: tri ničle, tri mesta, $0{,}045$.
 - **Izpuščena ničla za vejico.** $\dfrac{5}{100}$ zapiše kot $0{,}5$. To je pet desetink, desetkrat preveč. Petica mora stati na mestu stotink: $0{,}05$.
-- **Napačen imenovalec pri vračanju v ulomek.** $2{,}35$ zapiše kot $\dfrac{235}{1000}$, ker ima $235$ tri števke. Imenovalec določijo le mesta za vejico; dve mesti dajo $\dfrac{235}{100}$.
+- **Napačen imenovalec pri vračanju v ulomek.** $2{,}35$ zapiše kot $\dfrac{235}{1000}$, ker ima $235$ tri števke. Imenovalec določijo le mesta za vejico; dve mesti dasta $\dfrac{235}{100}$.
 - **»Ničla na koncu poveča število.«** $0{,}50$ se zdi večje od $0{,}5$. Toda pet desetink je toliko kot petdeset stotink; ničla na koncu vrednosti ne spremeni.
 
 ## Povzetek
@@ -161,7 +161,7 @@ Večje je $0{,}10$: odločijo desetinke, $1 > 0$. Velja $0{,}06 < 0{,}1$, zato k
 - Vejica loči celi del od decimalnega dela. Mesta za vejico so desetinke, stotinke, tisočinke.
 - Število ničel v imenovalcu je enako številu decimalnih mest: $\dfrac{45}{1000} = 0{,}045$.
 - Nazaj: števec je število brez vejice, imenovalec ima toliko ničel, kolikor je decimalnih mest: $2{,}08 = \dfrac{208}{100} = 2\dfrac{8}{100}$.
-- Ničle na koncu decimalnega dela vrednosti ne spremenijo, ničle takoj za vejico jo.
+- Ničle na koncu decimalnega dela vrednosti ne spremenijo, ničle takoj za vejico pa jo spremenijo.
 - Primerjamo po mestih od leve: cele, desetinke, stotinke …; prej dopišemo ničle. Več števk ne pomeni večjega števila.
 
 ## Drugače: Korak za korakom s številkami

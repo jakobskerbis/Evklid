@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Linearna neenačba
+  - znaki $<$, $>$, $\le$, $\ge$ namesto $=$
+  - rešitev je množica števil, ne eno število
+- Ohranjen znak
+  - prištevanje ali odštevanje istega števila
+  - množenje ali deljenje s pozitivnim številom
+- Obrnjen znak
+  - deljenje z negativnim: $-2x < 8$ da $x > -4$
+  - napaka: pozabljena obrnitev
+- Zapis z intervalom
+  - $x \ge 3$ je $[3, \infty)$
+  - $x < 4$ je $(-\infty, 4)$
+  - pri $\infty$ vedno okrogel oklepaj
+- Številska premica
+  - poln krožec pri $\le$, $\ge$
+  - prazen krožec pri $<$, $>$
+- Posebni primeri
+  - $1 < -3$: ni rešitve
+  - resnična neenačba brez $x$: vsa realna števila
+- Besedilne naloge
+  - letve: $6 + 4{,}5x \le 33$ da $x \le 6$
+  - cela števila: zaokroži navzdol

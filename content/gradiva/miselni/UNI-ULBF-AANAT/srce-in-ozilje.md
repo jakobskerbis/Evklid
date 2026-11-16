@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lega in votline
+  - sredoprsje, dve tretjini levo od mediane ravnine
+  - dva preddvora, dva prekata, neprepusten pretin
+- Zaklopke
+  - trikuspidalna desno, mitralna levo
+  - pulmonalna in aortna na izhodu prekatov
+  - tetivne nitke in papilarne mišice
+- Stena in prehrana
+  - endokard, miokard, epikard
+  - venčni arteriji iz začetka aorte
+- Arterija in vena
+  - arterija od srca, vena k srcu
+  - pazi: arterija ne pomeni kisika
+- Mali in veliki obtok
+  - desni prekat → pljuča → levi preddvor
+  - levi prekat → telo → desni preddvor
+  - levi prekat: debelejša stena zaradi tlaka
+- Aorta in odcepi
+  - lok: ramenoglavično deblo, leva karotidna, leva podključnična
+  - razcep v višini $\mathrm{L4}$ v skupni iliakalni arteriji
+- Glavne vene
+  - votli veni v desni preddvor
+  - portalna vena vodi v jetra
+  - velika safena, srednja komolčna vena
+- Minutni volumen
+  - $V_m = V_u \cdot f$
+  - mirovanje okoli $5\,\text{L/min}$

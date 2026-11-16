@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sukcesija
+  - postopno spreminjanje združbe na istem mestu
+  - travnik → grmi → breze, bori → bukov gozd
+- Primarna in sekundarna
+  - primarna: gola skala, prvi lišaji in mahovi
+  - sekundarna: ohranjena prst, zato hitrejša
+- Klimaksna združba
+  - stabilna, ustreza podnebju in tlom
+  - napaka: ni nujno najbogatejša z vrstami
+- Vrstna pestrost
+  - število vrst in izenačenost
+  - $p_i = \dfrac{n_i}{N}$
+  - $D = 1 - \left(p_1^2 + \ldots + p_S^2\right)$, med 0 in 1
+- Tri ravni pestrosti
+  - genska: razlike znotraj vrste
+  - vrstna: vrste na območju
+  - ekosistemska: mozaik ekosistemov v pokrajini
+- Ključne vrste
+  - nesorazmerno velik vpliv na ekosistem
+  - črna žolna (dupla), bober (mokrišča)
+  - napaka: ključna ni najštevilčnejša vrsta

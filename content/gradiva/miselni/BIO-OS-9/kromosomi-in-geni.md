@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Cel zapis povsod
+  - vsaka celica z jedrom ima vse gene
+  - uporablja le nekatere
+- Dvojna vijačnica DNA
+  - baze A, T, G, C
+  - pari A–T in G–C
+- Gen
+  - odsek DNA za eno beljakovino
+  - človek okoli $20\,000$ genov
+- Kromosom
+  - DNA, navita okoli beljakovin
+  - človek $46$ kromosomov, $23$ parov
+- Podvojevanje DNA
+  - vsaka kopija: ena stara, ena nova veriga
+  - nato dve kromatidi, oblika X
+- Mitoza in mejoza
+  - mitoza: $2$ enaki celici s $46$
+  - mejoza: $4$ različne celice s $23$
+  - oploditev $23 + 23 = 46$
+- Odkritje 1953
+  - Watson, Crick, slika Rosalind Franklin
+  - Chargaff: $A = T$, $G = C$

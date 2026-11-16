@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Neskončno dolg lik
+  - $\int_a^\infty f = \lim_{b\to\infty}\int_a^b f$
+  - končna limita: konvergira, sicer divergira
+  - $\int_1^\infty \frac{dx}{x^2} = 1$, $\int_1^\infty \frac{dx}{x}$ divergira
+- Pravilo za potence
+  - $\int_1^\infty \frac{dx}{x^p}$ konvergira natanko za $p > 1$
+  - $\int_0^1 \frac{dx}{x^p}$ konvergira natanko za $p < 1$
+  - napaka: zamenjana smer pravila
+- Singularnost
+  - $\int_a^b f = \lim_{\varepsilon\to0^+}\int_{a+\varepsilon}^b f$
+  - $\int_0^4 \frac{dx}{\sqrt x} = 4$
+  - v notranjosti: razdeli, oba dela posebej
+- Obe meji neskončni
+  - razdeli v $c$, meji neodvisno
+  - $\int_{-\infty}^{\infty} \frac{dx}{1+x^2} = \pi$
+  - napaka: »simetrična limita, $\int_{-\infty}^\infty x\,dx$«
+- Primerjalni kriterij
+  - $0 \le f \le g$, $\int g$ konvergira: $\int f$ konvergira
+  - $e^{-x^2} \le e^{-x}$ za $x \ge 1$
+- Pogoj ni zadosten
+  - $f(x) \to 0$ ne zagotovi konvergence
+  - odloča hitrost padanja
+- Absolutna konvergenca
+  - $\int |f|$ konvergira: $\int f$ konvergira
+  - $\int_1^\infty \frac{\sin x}{x}\,dx$ konvergira le pogojno

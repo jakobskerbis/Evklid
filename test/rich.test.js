@@ -32,7 +32,8 @@ const count = (s, re) => (s.match(re) || []).length;
 
 test("tabela iz odgovora inštruktorja je prava tabela z razredom md-table", () => {
   const html = renderRich(REPLY);
-  assert.match(html, /<div class="md-table-wrap"><table class="md-table">/);
+  // Tabela s 3+ stolpci ima imena stolpcev v celicah (zložljiva na telefonu, public/vodoravna-tabela.js).
+  assert.match(html, /<div class="md-table-wrap"><table class="md-table md-stolpci">/);
   assert.equal(count(html, /<th[ >]/g), 4);
   assert.equal(count(html, /<td[ >]/g), 16);
   assert.ok(!html.includes("|"), "v izrisu ni ostala nobena navpična črta");
@@ -47,7 +48,7 @@ test("stolpci s števili in formulami so na sredini, besedilni levo", () => {
   const head = html.match(/<thead>[\s\S]*?<\/thead>/)[0];
   assert.match(head, /<th>ime<\/th>/);
   assert.equal(count(head, /align="center"/g), 2);
-  assert.match(html, /<td>Ana<\/td>/);
+  assert.match(html, /<td data-label="ime">Ana<\/td>/);
   // Poravnava, ki jo zapiše avtor, ostane.
   const own = renderRich("| a | b |\n|:--|--:|\n| 1 | 2 |");
   assert.match(own, /<td align="left">1<\/td>/);
@@ -130,7 +131,7 @@ test("videz tabel je skupen v vsej aplikaciji (style.css), tudi v temnem načinu
 test("stolpec z dolgim besedilom se sme prelomiti, formule ne", () => {
   const html = renderRich("| Korak | Kaj naredimo | Rezultat |\n|---|---|---|\n| 1 | Odpravimo ulomke: vse pomnožimo s $4$ (skupni imenovalec) | $2x + 12 = x + 20$ |");
   assert.match(html, /<th class="wrap">Kaj naredimo<\/th>/);
-  assert.match(html, /<td align="center">1<\/td>/);
+  assert.match(html, /<td align="center" data-label="Korak">1<\/td>/);
   assert.equal(count(html, /class="wrap"/g), 2);
 });
 
@@ -191,4 +192,13 @@ test("oštevilčen podnaslov postane naslov, stavek z odebeljenim začetkom osta
   assert.equal(subHeadings("<p><strong>2. Postopek:</strong></p>"), '<h3 class="sub-head">2. Postopek</h3>');
   const sentence = "<p><strong>3. Seštevanje</strong> dveh števil je preprosto.</p>";
   assert.equal(subHeadings(sentence), sentence);
+});
+
+test("ločilo takoj za vrstično formulo ostane z njo (kartica »Zapomni si«: pika se ne prelomi sama v novo vrstico)", () => {
+  const html = renderRich("> 📌 **Zapomni si:** rešitev je $x = \\frac{1}{2}$.\n\nOdgovor je $a$, potem $b$ in še $c$!");
+  assert.ok(html.includes("</span>.</span>"), "pika je v ovoju z zadnjo formulo");
+  assert.equal((html.match(/class="fx-nb"/g) || []).length, 3, "tudi vejica in klicaj");
+  // formula sredi stavka, brez ločila, ostane brez ovoja; formula v display načinu tudi
+  assert.ok(!renderRich("Vrednost $x$ je pozitivna").includes("fx-nb"));
+  assert.ok(!renderRich("$$x^2$$.").includes("fx-nb"));
 });

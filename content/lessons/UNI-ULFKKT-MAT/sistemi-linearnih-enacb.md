@@ -78,7 +78,7 @@ Bilanca mase: $x + y = 600$; bilanca soli: $0{,}10\,x + 0{,}40\,y = 0{,}20 \cdot
 
 **Rešitev:**
 
-1. Masa soli v zmesi: $0{,}20 \cdot 600\,\mathrm{g} = 120\,\mathrm{g}$. Sistem: $x + y = 600$, $0{,}1x + 0{,}4y = 120$.
+1. Masa soli v zmesi: $0{,}20 \cdot 600\,\mathrm{g} = 120\,\mathrm{g}$. Sistem: $x + y = 600$; $0{,}1x + 0{,}4y = 120$.
 2. Razširjena matrika: $\left[\begin{array}{cc|c} 1 & 1 & 600 \\ 0{,}1 & 0{,}4 & 120 \end{array}\right]$.
 3. Drugo vrstico pomnožimo z $10$: $\left[\begin{array}{cc|c} 1 & 1 & 600 \\ 1 & 4 & 1200 \end{array}\right]$.
 4. Od druge vrstice odštejemo prvo: $\left[\begin{array}{cc|c} 1 & 1 & 600 \\ 0 & 3 & 600 \end{array}\right]$, torej $3y = 600$ in $y = 200$.
@@ -199,13 +199,23 @@ Natančno navedi Kronecker-Capellijev izrek in dokaži, da je sistem $A\vec{x} =
 
 Pri dveh neznankah je vsaka enačba premica v ravnini. Možnosti so tri:
 
-```
- ena rešitev          ni rešitve           neskončno rešitev
-     \   /             ______              ______
-      \ /              ______              ======  (premici
-       X  (presečišče)  (vzporedni)                 sovpadata)
-      / \
-```
+:::risba skica
+opis: Tri sličice z dvema premicama. Levo se premici sekata v eni točki, presečišču: ena rešitev. V sredini sta premici vzporedni in različni: ni rešitve. Desno premici sovpadata, narisana je ena debela premica: neskončno rešitev.
+območje: 0; 0 .. 22; 6
+črta: 1; 1,4 -> 5; 4,6 | modra
+črta: 1; 4,6 -> 5; 1,4 | oranžna
+točka: 3; 3
+napis: 3; 5,4 | ena rešitev
+napis: 3; 0,6 | presečišče
+črta: 8,5; 1,6 -> 12,5; 3,2 | modra
+črta: 8,5; 2,8 -> 12,5; 4,4 | oranžna
+napis: 10,5; 5,4 | ni rešitve
+napis: 10,5; 0,6 | vzporedni
+črta: 16; 1,6 -> 20; 4 | modra debelo
+črta: 16; 1,6 -> 20; 4 | oranžna črtkano
+napis: 18; 5,4 | neskončno rešitev
+napis: 18; 0,6 | premici sovpadata
+:::
 
 - Premici se sekata: $\operatorname{rang} A = \operatorname{rang}[A \mid \vec{b}] = 2$.
 - Premici sta vzporedni in različni: $\operatorname{rang} A = 1$, $\operatorname{rang}[A \mid \vec{b}] = 2$.
@@ -277,8 +287,8 @@ Enak postopek z matriko $[A \mid I]$ namesto $[A \mid \vec{b}]$ da inverzno matr
 a_{11}, a_{12}, a_{1n}, a_{m1}, a_{mn} | koeficienti sistema (elementi matrike A) | | | aᵢⱼ: i-ta enačba, j-ta neznanka
 x_1, x_2, x_n | neznanke sistema | | |
 b_1, b_m | desne strani enačb | | |
-x | masa raztopine z deležem 10 % | | g |
-y | masa raztopine z deležem 40 % | | g |
+x | masa raztopine z deležem 10 % (Primer 1) | | g | drugod neznanka sistema brez enote
+y | masa raztopine z deležem 40 % (Primer 1) | | g | drugod neznanka sistema brez enote
 A | matrika sistema | | | razsežnost m × n
 \vec{b} | stolpec desnih strani | | |
 n | število neznank | | |

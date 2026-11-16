@@ -4,7 +4,7 @@ import { BRAND, LEGACY } from "./brand.js";
 import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { DEFAULT_SETTINGS, normalizeSettings, normalizeWeaknessList } from "./settings.js";
+import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessList } from "./settings.js";
 import { Flashcards } from "./flashcards.js";
 import { seal, unseal, sealJson, unsealJson, UNREADABLE } from "./crypto-polje.js";
 
@@ -32,6 +32,11 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   migrateLegacyDb(file);
   const db = new DatabaseSync(file);
   db.exec(`
+    -- D6: pisanje drugega procesa (npr. skripta v lupini Renderja) zaklene bazo za kratek čas. Brez čakanja (privzeto 0)
+    -- strežnik takoj vrže »database is locked« (500, izgubljen odgovor); tako počaka največ 2 s (ves strežnik, ker je
+    -- DatabaseSync sinhron).
+    -- Prvo, da velja tudi za WAL in migracije ob zagonu.
+    PRAGMA busy_timeout = 2000;
     PRAGMA journal_mode = WAL;
     PRAGMA foreign_keys = ON;
     CREATE TABLE IF NOT EXISTS students (
@@ -159,6 +164,21 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       PRIMARY KEY (student_id, topic_id, seed)
     );
+    -- Naloge, ki jih je strežnik izdal v paketu brez povezave (offline-pack): sinhronizacija sprejme samo te
+    CREATE TABLE IF NOT EXISTS offline_issued (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      topic_id TEXT NOT NULL,
+      seed INTEGER NOT NULL,
+      level INTEGER NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      PRIMARY KEY (student_id, topic_id, seed)
+    );
+    -- Izdani paketi brez povezave (zadnji dan): omejitev izdaje na profil
+    CREATE TABLE IF NOT EXISTS offline_packs (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_offline_packs ON offline_packs(student_id, created_at);
     -- Kartice za ponavljanje (od inštruktorja ali lastne), ponavljanje z razmiki
     CREATE TABLE IF NOT EXISTS flashcards (
       id INTEGER PRIMARY KEY,
@@ -170,7 +190,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       front TEXT NOT NULL,                       -- vprašanje
       back TEXT NOT NULL,                        -- odgovor
       norm TEXT NOT NULL,                        -- vprašanje za iskanje podvojenih
-      source TEXT NOT NULL DEFAULT 'tutor',      -- tutor | own
+      source TEXT NOT NULL DEFAULT 'tutor',      -- tutor | own | zapiski
       box INTEGER NOT NULL DEFAULT 0,            -- 0 = novo ali pozabljeno, 1..6 = škatle (1, 3, 7, 16, 35, 90 dni)
       due TEXT NOT NULL DEFAULT (datetime('now')),
       reviews INTEGER NOT NULL DEFAULT 0,
@@ -180,6 +200,34 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       UNIQUE (student_id, norm)
     );
     CREATE INDEX IF NOT EXISTS idx_cards_due ON flashcards(student_id, due);
+    -- Učenčevi zapiski (server/zapiski.js): naslov in prepis rokopisa šifrirana kot pogovori; prepisa tiskanih strani
+    -- ne shranimo (prepis NULL), slik nikoli. Kartice iz zapiskov so v flashcards (zapisek_id, izbris skupaj).
+    CREATE TABLE IF NOT EXISTS zapiski (
+      id INTEGER PRIMARY KEY,
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      naslov TEXT NOT NULL,
+      teme TEXT NOT NULL DEFAULT '[]',           -- id-ji tem učne poti (JSON)
+      prepis TEXT,                               -- rokopis in vpisano besedilo; NULL pri tiskanih straneh
+      vrsta TEXT NOT NULL,                       -- rokopis | tiskano | besedilo
+      strani INTEGER NOT NULL DEFAULT 0,         -- prebrane fotografije
+      vsebina_hash TEXT,                         -- ista vsebina dvakrat: shranjeni rezultat brez novega klica
+      ai_off INTEGER NOT NULL DEFAULT 0,         -- 1 = shranjen brez kartic (meja AI); ob ponovni oddaji poskusi znova
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_zapiski_student ON zapiski(student_id, id);
+    -- Ista vsebina pri istem učencu samo enkrat (tudi ob hkratnih zahtevkih).
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_zapiski_hash ON zapiski(student_id, vsebina_hash);
+    -- Porabljene strani zapiskov v mesecu (meja strani po paketih: fotografija ali prilepljeno besedilo). Izbris zapiska
+    -- strani ne vrne. Izbris profila tudi ne: vrstica ostane z računom (student_id NULL, parent_id) in šteje v mejo
+    -- drugih profilov računa ta mesec, kot poraba AI (server/usage.js orphanSpent); ob izbrisu računa se izbriše.
+    CREATE TABLE IF NOT EXISTS zapiski_strani (
+      student_id INTEGER REFERENCES students(id) ON DELETE SET NULL,
+      parent_id INTEGER,
+      mesec TEXT NOT NULL,
+      strani INTEGER NOT NULL DEFAULT 0,
+      branja INTEGER NOT NULL DEFAULT 0,         -- prebrane fotografije, ki še niso v zapisku (stran je že porabljena)
+      UNIQUE (student_id, mesec)
+    );
     -- Šibke točke iz iger, učbenika, pol, kartic in kviza (server/weaknesses.js): samo dnevne vsote po temi,
     -- brez odgovorov in časov posameznih nalog. Klepet in Vadnica sta v events.
     CREATE TABLE IF NOT EXISTS skill_results (
@@ -214,6 +262,49 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
   `);
+  // Vprašanja inštruktorju na dan (dnevne meje): ostanejo šteta tudi po izbrisu pogovora ali prekinjenem odgovoru.
+  // Rezervacije klicev AI v teku (server/usage.js hold, pregled #462 S4): ob ponovnem zagonu med klicem bi se strošek
+  // sicer ne zapisal; ob zagonu se ostanek zapiše kot poraba (zgornja meja, recoverHolds).
+  db.exec(`CREATE TABLE IF NOT EXISTS ai_holds (
+      id INTEGER PRIMARY KEY,
+      student_id INTEGER,
+      usd REAL NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );`);
+  // Knjiga porabe AI šole ob zapisu (pregled #462 H7): poraba, ki je šla pod mejo šole, ostane v šoli tudi, ko učenec
+  // razred zapusti ali kupi osebni paket. Začetek knjige (kv) loči starejšo porabo, ki se šteje po članstvu.
+  const hadSchoolUse = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'ai_school_use'").get();
+  db.exec(`CREATE TABLE IF NOT EXISTS ai_school_use (
+      id INTEGER PRIMARY KEY,
+      school_id INTEGER NOT NULL,
+      student_id INTEGER,
+      usd REAL NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_school_use ON ai_school_use(school_id, created_at);
+    CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);`);
+  if (!hadSchoolUse) db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES ('ai_school_ledger_start', datetime('now'))").run();
+  // Migracija: nova tabela dobi današnja vprašanja iz obstoječih pogovorov, da se števec ob posodobitvi ne ponastavi.
+  const hadQuestionLog = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'question_log'").get();
+  db.exec(`CREATE TABLE IF NOT EXISTS question_log (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      day TEXT NOT NULL,
+      n INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (student_id, day)
+    );`);
+  if (!hadQuestionLog) {
+    db.exec(`INSERT OR IGNORE INTO question_log (student_id, day, n)
+      SELECT c.student_id, date('now'), COUNT(*) FROM messages m JOIN conversations c ON c.id = m.conversation_id
+      WHERE m.role = 'user' AND date(m.created_at) = date('now') GROUP BY c.student_id`);
+  }
+  // Lastnik računa ob zapisu porabe (j 2026-11-06, trda meja AI): poraba izbrisanega profila (student_id NULL) ostane
+  // šteta za račun, da izbris in nov profil ne obideta meje paketa. Ob izbrisu računa se odklopi (accounts/schema.js).
+  const usageCols = db.prepare("PRAGMA table_info(usage)").all().map((c) => c.name);
+  if (!usageCols.includes("parent_id")) {
+    db.exec("ALTER TABLE usage ADD COLUMN parent_id INTEGER");
+    if (studentParentCol(db)) db.exec("UPDATE usage SET parent_id = (SELECT parent_id FROM students WHERE students.id = usage.student_id) WHERE student_id IS NOT NULL");
+  }
+  db.exec("CREATE INDEX IF NOT EXISTS idx_usage_parent ON usage(parent_id, created_at)");
   // Migracije za starejše baze
   const studentCols = db.prepare("PRAGMA table_info(students)").all().map((c) => c.name);
   // Kdaj je učenec nazadnje spremenil šolo ali letnik (za predlog prehoda na začetku šolskega leta).
@@ -226,12 +317,22 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   const convCols = db.prepare("PRAGMA table_info(conversations)").all().map((c) => c.name);
   if (!convCols.includes("path_topic")) db.exec("ALTER TABLE conversations ADD COLUMN path_topic TEXT");
   if (!convCols.includes("deep")) db.exec("ALTER TABLE conversations ADD COLUMN deep INTEGER NOT NULL DEFAULT 0");
+  // Način (A/B), s katerim je inštruktor nazadnje odgovoril v tem pogovoru: ob zamenjavi v glavi dobi opombo (server/nacin.js).
+  if (!convCols.includes("solving_mode")) db.exec("ALTER TABLE conversations ADD COLUMN solving_mode TEXT");
   // Trojno preverjanje (server/verify.js): shranjen odgovor in kartica sta vidna šele, ko sta preverjena.
   // Stari shranjeni odgovori niso bili preverjeni, zato ostanejo skriti (privzeto 0); stare kartice ostanejo.
   const cacheCols = db.prepare("PRAGMA table_info(answer_cache)").all().map((c) => c.name);
   if (!cacheCols.includes("verified")) db.exec("ALTER TABLE answer_cache ADD COLUMN verified INTEGER NOT NULL DEFAULT 0");
+  // Enkrat: shranjeni odgovori izpred #484 lahko nosijo zanimanja, cilj, urnik, rezultate ali ime (brez strešic,
+  // v drugi pisavi) drugega otroka. Izbrišemo jih; odgovori nastanejo znova.
+  if (db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES ('answer_cache_personal_purge', datetime('now'))").run().changes) {
+    db.exec("DELETE FROM answer_cache");
+  }
   const cardCols = db.prepare("PRAGMA table_info(flashcards)").all().map((c) => c.name);
   if (!cardCols.includes("verified")) db.exec("ALTER TABLE flashcards ADD COLUMN verified INTEGER NOT NULL DEFAULT 1");
+  // Kartice iz zapiskov (server/zapiski.js): zapisek (izbris zapiska izbriše tudi kartice) in oznaka preverjeno (1) / nepreverjeno (0).
+  if (!cardCols.includes("zapisek_id")) db.exec("ALTER TABLE flashcards ADD COLUMN zapisek_id INTEGER REFERENCES zapiski(id) ON DELETE CASCADE");
+  if (!cardCols.includes("checked")) db.exec("ALTER TABLE flashcards ADD COLUMN checked INTEGER");
   // Priprava na test, ki jo je nastavil test iz urnika (server/schedule.js).
   const planCols = db.prepare("PRAGMA table_info(test_plans)").all().map((c) => c.name);
   if (!planCols.includes("event_id")) db.exec("ALTER TABLE test_plans ADD COLUMN event_id TEXT");
@@ -266,6 +367,50 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Rok hrambe dnevnih vsot za šibke točke.
   db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
+  // D1 (hitrost, j 13. 11.): indeksi za poizvedbe po profilu, ki so brez njih brale celo tabelo ali ves mesec porabe
+  // (meritev 13. 11.: docs/meritve). Po vseh migracijah, ker obnova tabele events zgoraj ohrani samo idx_events_student.
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_conv_student ON conversations(student_id, updated_at);
+    CREATE INDEX IF NOT EXISTS idx_usage_student ON usage(student_id, created_at);
+    CREATE INDEX IF NOT EXISTS idx_tasks_session ON tasks(session_id);
+    CREATE INDEX IF NOT EXISTS idx_events_conv ON events(conversation_id, id);
+  `);
+  // D7 (hitrost, j 14. 11.): poraba AI vseh učencev po dnevih (UTC), da skupna vsota za danes in za ta mesec ni
+  // seštevanje celega meseca vrstic usage ob vsakem sporočilu (pri 1 M vrsticah ~0,3 s na vsoto, ~11 vsot na
+  // sporočilo). Vsoto vzdržujejo sprožilci ob vsakem vpisu, spremembi in brisanju iz usage (tudi iz drugega procesa),
+  // zato je enaka SUM(cost_usd) nad istimi vrsticami. Pozor: INSERT OR REPLACE / REPLACE INTO v usage bi vsoto
+  // podvojil (zamenjana vrstica ne sproži brisanja); tega v kodi ni. Če tabela ali kateri od sprožilcev manjka (prvi
+  // zagon, ročni poseg), se vse ustvari znova in napolni iz obstoječe porabe, v eni transakciji.
+  const dnevnoCelo = () =>
+    db.prepare("SELECT COUNT(*) AS n FROM sqlite_master WHERE name IN ('usage_dnevno', 'usage_dnevno_ins', 'usage_dnevno_del', 'usage_dnevno_upd')").get().n === 4;
+  if (!dnevnoCelo()) {
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      if (!dnevnoCelo()) {
+        db.exec(`
+          CREATE TABLE IF NOT EXISTS usage_dnevno (dan TEXT PRIMARY KEY, usd REAL NOT NULL DEFAULT 0);
+          CREATE TRIGGER IF NOT EXISTS usage_dnevno_ins AFTER INSERT ON usage BEGIN
+            INSERT INTO usage_dnevno (dan, usd) VALUES (substr(NEW.created_at, 1, 10), NEW.cost_usd)
+              ON CONFLICT(dan) DO UPDATE SET usd = usd + excluded.usd;
+          END;
+          CREATE TRIGGER IF NOT EXISTS usage_dnevno_del AFTER DELETE ON usage BEGIN
+            UPDATE usage_dnevno SET usd = usd - OLD.cost_usd WHERE dan = substr(OLD.created_at, 1, 10);
+          END;
+          CREATE TRIGGER IF NOT EXISTS usage_dnevno_upd AFTER UPDATE OF cost_usd, created_at ON usage BEGIN
+            UPDATE usage_dnevno SET usd = usd - OLD.cost_usd WHERE dan = substr(OLD.created_at, 1, 10);
+            INSERT INTO usage_dnevno (dan, usd) VALUES (substr(NEW.created_at, 1, 10), NEW.cost_usd)
+              ON CONFLICT(dan) DO UPDATE SET usd = usd + excluded.usd;
+          END;
+          DELETE FROM usage_dnevno;
+          INSERT INTO usage_dnevno (dan, usd) SELECT substr(created_at, 1, 10), SUM(cost_usd) FROM usage GROUP BY 1;
+        `);
+      }
+      db.exec("COMMIT");
+    } catch (err) {
+      db.exec("ROLLBACK");
+      throw err;
+    }
+  }
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
@@ -318,7 +463,7 @@ export class Store {
   updateStudent(id, { name, settings, manual_weaknesses }) {
     const cur = this.getStudent(id);
     if (!cur) return null;
-    const next = normalizeSettings({ ...cur.settings, ...(settings || {}) });
+    const next = mergeSettings(cur.settings, settings || {});
     const levelChanged = ["educational_track", "curriculum_level", "study_program", "school_system"].some((k) => next[k] !== cur.settings[k]);
     this.db
       .prepare(
@@ -358,6 +503,12 @@ export class Store {
   touchConversation(id) {
     this.db.prepare("UPDATE conversations SET updated_at = datetime('now') WHERE id = ?").run(id);
   }
+  // Vprašanje inštruktorju za dnevno mejo (delta -1: odgovora ni bilo zaradi napake strežnika ali API).
+  logQuestion(studentId, delta = 1) {
+    this.db
+      .prepare("INSERT INTO question_log (student_id, day, n) VALUES (?, date('now'), MAX(0, ?)) ON CONFLICT(student_id, day) DO UPDATE SET n = MAX(0, n + ?)")
+      .run(studentId, delta, delta);
+  }
   deleteConversation(id) {
     return this.db.prepare("DELETE FROM conversations WHERE id = ?").run(id).changes > 0;
   }
@@ -371,6 +522,10 @@ export class Store {
       .run(conversationId, role, sealJson(apiContent), seal(displayText), hasImage ? 1 : 0);
     this.touchConversation(conversationId);
     return Number(r.lastInsertRowid);
+  }
+  // Ali ima pogovor kakšno sporočilo (D3: brez nalaganja in odšifriranja vseh sporočil, tudi fotografij).
+  hasMessages(conversationId) {
+    return !!this.db.prepare("SELECT EXISTS(SELECT 1 FROM messages WHERE conversation_id = ?) AS e").get(conversationId).e;
   }
   listMessages(conversationId) {
     return this.db
@@ -455,4 +610,9 @@ export class Store {
       )
       .all(studentId, `-${days} days`);
   }
+}
+
+// Ali ima tabela students stolpec parent_id (računi; brez njih lokalno ni lastnika).
+function studentParentCol(db) {
+  return db.prepare("PRAGMA table_info(students)").all().some((c) => c.name === "parent_id");
 }

@@ -221,6 +221,82 @@ test("App Store purchase gives the plan, other account is refused, refund notifi
   });
 });
 
+// Točka 1.2: po vračilu star podpisan nakup (isti JWS) naročnine ne oživi; nov nakup, obnova in nadgradnja jo.
+// Transakcija, kupljena pred najnovejšo znano (iOS jih ob zagonu dostavi po vrsti; star letni paket po nadgradnji),
+// stanja ne spremeni. REFUND_REVERSED nakup spet vklopi.
+test("Apple: refunded purchase stays refunded; renewals, upgrades and new purchases go through; older ones are no-ops", async () => {
+  await withServer(async ({ appClient, adult, store, base }) => {
+    const c = appClient();
+    const p = await adult(c);
+    const token = (await c("/api/billing/store")).body.account_token;
+    const post = (t) => c("/api/billing/apple", { body: { signed_transaction: appleJws(t) } });
+    const parent = () => store.db.prepare("SELECT sub_status, sub_plan FROM parents WHERE id = ?").get(p.id);
+    const status = () => parent().sub_status;
+    const notify = (type, t) =>
+      fetch(`${base}/webhooks/app-store`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ signedPayload: appleJws({ notificationType: type, data: { bundleId: BUNDLE_ID, signedTransactionInfo: appleJws(t) } }) }) });
+    const DAY = 86400000;
+    const now = Date.now();
+    const product = (interval, family) => STORE_PRODUCTS.find((x) => !x.legacy && x.interval === interval && !!x.family === family);
+    const t = (id, o) => tx({ appAccountToken: token, transactionId: id, signedDate: now, ...o });
+    const oct = t("2000000010", { purchaseDate: now - 32 * DAY, expiresDate: now - 2 * DAY });
+    const nov = t("2000000011", { purchaseDate: now - 2 * DAY, expiresDate: now + 28 * DAY });
+
+    // 1. Novejše obdobje, nato iOS znova dostavi starejšo transakcijo: brez učinka, ostane dejavno.
+    assert.equal((await post(nov)).status, 200);
+    const older = await post(oct);
+    assert.equal(older.status, 200);
+    assert.equal(older.body.older, true);
+    assert.equal(status(), "active");
+    assert.equal((await post(nov)).status, 200, "isti nakup znova (»Obnovi nakupe«)");
+
+    // 2. Vračilo starejšega obdobja: obvestilo naročnino konča, trenutni (plačani) nakup jo znova vklopi.
+    assert.equal((await notify("REFUND", { ...oct, revocationDate: now })).status, 200);
+    assert.equal(status(), "canceled");
+    assert.equal((await post(nov)).status, 200);
+    assert.equal(status(), "active");
+
+    // 3. Vračilo trenutnega obdobja: isti nakup ostane zavrnjen (tudi brez datuma podpisa), zakasnelo obvestilo ga ne vklopi.
+    assert.equal((await notify("REFUND", { ...nov, revocationDate: now })).status, 200);
+    assert.equal(status(), "canceled");
+    const again = await post(nov);
+    assert.equal(again.status, 409);
+    assert.equal(again.body.revoked, true);
+    assert.equal((await post({ ...nov, signedDate: undefined })).status, 409);
+    assert.equal((await notify("DID_RENEW", nov)).status, 200);
+    assert.equal(status(), "canceled");
+
+    // 4. Vračilo preklicano (spor končan): nakup spet velja.
+    assert.equal((await notify("REFUND_REVERSED", nov)).status, 200);
+    assert.equal(status(), "active");
+    assert.equal((await post(nov)).status, 200);
+
+    // 5. Nadgradnja iz letnega v družinski mesečni paket v aplikaciji: novi paket velja.
+    const y1 = t("2000000020", { productId: product("year", false).id, purchaseDate: now - DAY, expiresDate: now + 364 * DAY });
+    const m1 = t("2000000021", { productId: product("month", true).id, purchaseDate: now, expiresDate: now + 30 * DAY });
+    assert.equal((await post(y1)).status, 200);
+    assert.equal(parent().sub_plan, product("year", false).plan);
+    const up = await post(m1);
+    assert.equal(up.status, 200, JSON.stringify(up.body));
+    assert.equal(up.body.older, undefined);
+    assert.deepEqual({ ...parent() }, { sub_status: "active", sub_plan: product("month", true).plan });
+
+    // 6. Vračilo nadgradnje: star letni nakup iz predpomnilnika naročnine ne vklopi.
+    assert.equal((await notify("REFUND", { ...m1, revocationDate: now })).status, 200);
+    assert.equal(status(), "canceled");
+    const stale = await post(y1);
+    assert.equal(stale.status, 200);
+    assert.equal(stale.body.older, true);
+    assert.equal(status(), "canceled");
+
+    // 7. Nov nakup po vračilu (krajše obdobje od vrnjenega letnega): velja.
+    const m2 = t("2000000022", { productId: product("month", false).id, purchaseDate: now + 1000, expiresDate: now + 30 * DAY });
+    const fresh = await post(m2);
+    assert.equal(fresh.status, 200, JSON.stringify(fresh.body));
+    assert.equal(fresh.body.older, undefined);
+    assert.equal(status(), "active");
+  });
+});
+
 // Testni nakupi so brezplačni (TestFlight, peskovnik): veljajo samo za testne račune.
 test("test purchases count only for store testers and admins", async () => {
   await withServer(
@@ -352,7 +428,11 @@ test("Sign in with Apple: new account needs age and consent, then logs in by App
     // Izbris brez gesla: potrditev z novo prijavo z Apple (tuj sub ne zadošča).
     const wrong = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.999" }, NONCE), apple_nonce: NONCE } });
     assert.equal(wrong.status, 401);
-    const del = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.001" }, NONCE), apple_nonce: NONCE } });
+    // Žeton prijave (isti enkratni niz) izbrisa ne odpre; potreben je svež žeton z novim nizom.
+    const replay = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.001" }, NONCE), apple_nonce: NONCE } });
+    assert.equal(replay.status, 401);
+    const DEL_NONCE = "svez-niz-za-izbris-1234";
+    const del = await c2("/api/account", { method: "DELETE", body: { apple_identity_token: identityToken({ sub: "apple.001" }, DEL_NONCE), apple_nonce: DEL_NONCE } });
     assert.equal(del.status, 200);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM parents").get().n, 0);
   });
@@ -400,7 +480,7 @@ test("calculator page for the app works without login and loads only the calcula
     assert.equal(res.status, 200);
     assert.match(res.headers.get("content-type"), /text\/html/);
     const page = await res.text();
-    assert.match(page, /<script type="module" src="kalkulator\.js"><\/script>/);
+    assert.match(page, /<script type="module" src="zagon\.js" data-moduli="kalkulator\.js"><\/script>/);
     assert.doesNotMatch(page, /src="app\.js"|<script>/); // brez celotne aplikacije in brez vrinjenih skript (CSP)
     assert.match(res.headers.get("content-security-policy"), /script-src 'self'/);
     for (const f of ["kalkulator.js", "kalkulator-nastavi.js", "graph/sci.js", "graph/calc.js", "graph/tools.js"]) assert.equal((await fetch(`${base}/${f}`)).status, 200, f);
@@ -649,4 +729,43 @@ test("mobilno preverjanje brez povezave: server/practice/check.js deluje brez st
   const { checkAnswer } = await import("../server/practice/check.js");
   assert.equal(checkAnswer({ type: "number", value: 2 }, "2").kind, "correct");
   assert.notEqual(checkAnswer({ type: "number", value: 2 }, "3").kind, "correct");
+});
+
+// Prevzem pred registracijo: napadalec ustvari račun z žrtvinim e-naslovom (ga ne potrdi) in svojim geslom.
+// Ko se žrtev prijavi z Apple (Apple e-naslov potrdi), se račun poveže; napadalčevo geslo in seja ne smeta veljati.
+test("Sign in with Apple on an unverified account: the old password and sessions stop working", async () => {
+  await withServer(async ({ appClient, store }) => {
+    const attacker = appClient();
+    const reg = await attacker("/api/auth/register", { body: { email: "zrtev@primer.si", password: "napadalec1", accept_privacy: true, birth_date: ADULT } });
+    assert.equal(reg.status, 201, JSON.stringify(reg.body));
+    assert.equal((await attacker("/api/account")).status, 200);
+    const r = await appClient()("/api/auth/apple", { body: { identity_token: identityToken({ sub: "apple.888", email: "zrtev@primer.si", email_verified: true }, NONCE), nonce: NONCE, accept_privacy: true, birth_date: ADULT } });
+    assert.equal(r.status, 200);
+    assert.equal(r.body.parent.id, reg.body.parent.id);
+    assert.notEqual((await attacker("/api/account")).status, 200, "napadalčeva seja še velja");
+    const login = await appClient()("/api/auth/login", { body: { email: "zrtev@primer.si", password: "napadalec1" } });
+    assert.equal(login.status, 401, "napadalčevo geslo še odpre račun");
+    assert.ok(store.db.prepare("SELECT email_verified_at FROM parents WHERE id = ?").get(reg.body.parent.id).email_verified_at);
+  });
+});
+
+test("Sign in with Apple on a verified account keeps its password", async () => {
+  await withServer(async ({ appClient, adult }) => {
+    await adult(appClient(), "potrjen@primer.si");
+    const r = await appClient()("/api/auth/apple", { body: { identity_token: identityToken({ sub: "apple.999", email: "potrjen@primer.si", email_verified: true }, NONCE), nonce: NONCE } });
+    assert.equal(r.status, 200);
+    assert.equal((await appClient()("/api/auth/login", { body: { email: "potrjen@primer.si", password: "geslo12345" } })).status, 200);
+  });
+});
+
+// Pregled #506 A/B: Apple ključev ni mogoče prenesti → pot prijave odgovori 502 »Apple se ne odziva«, ne 401.
+test("Sign in with Apple: JWKS download failure answers 502, not 401", async () => {
+  const { resetAppleKeyCache } = await import("../server/mobile/apple-crypto.js");
+  resetAppleKeyCache();
+  const fetchFn = async () => ({ ok: false, status: 503, json: async () => ({}) });
+  await withServer(async ({ appClient }) => {
+    const r = await appClient()("/api/auth/apple", { body: { identity_token: identityToken({ sub: "apple.502" }, NONCE), nonce: NONCE } });
+    assert.equal(r.status, 502, JSON.stringify(r.body));
+  }, { appleKeys: null, fetchFn });
+  resetAppleKeyCache();
 });

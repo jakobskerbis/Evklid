@@ -99,12 +99,39 @@ export const FX_GROUPS = [
 // Imena ukazov CAS v slovenščini (enako kot commandName v public/graph/cas.js; kalkulator razume oboje).
 export const CAS_SL = { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor", det: "det", inverse: "inverz" };
 
-// Kemija: elementi, indeksi, naboji, puščice, agregatna stanja.
-export const KEM_ROWS = [
-  ["H", "C", "N", "O", "S", "Cl", "Na", "K", "Ca", "Fe"],
-  ["₂", "₃", "₄", "₅", "₆", "⁺", "⁻", "²⁺", "³⁺", "²⁻"],
-  ["→", "⇌", "↑", "↓", "(aq)", "(s)", "(l)", "(g)", "Δ", "e⁻"],
+// Kemija (j, 13. 11.: »Izboljšaj tipkovnico za kemijo«): štiri strani, vsaka tri vrste, enake v zavihku »Kem« in v Σ → Kemija
+// (tipkovnica.js kemBody). »Snovi«: pogosti elementi in indeksi (₂, spodaj); »Ioni«: naboji (²⁺, zgoraj), skupine (SO₄),
+// nadpisane števke (¹⁴C, 1s²); »Reakcije«: » + « in puščice s presledkoma, ↑ ↓, pogoji (Δ, hν, kat.), agregatna stanja,
+// termodinamika in enote; »Vsi elementi«: začetnica, nato vsi elementi s to začetnico (KEM_LETTERS, symbols.js ELEMENT_SYMBOLS).
+// Napisi strani so ključi i18n (tk.kem.*); »KAT« je katalizator v jeziku učenca (tk.kem.cat). Indeksi in naboji so na tipkah
+// izrisani ob ◌ (spodaj ali zgoraj), da se ločijo od navadnih števk in od » + « med snovmi. Tipka »H₂O« v spodnji vrstici
+// je oblikovanje formule v polju (tk.chemFormat).
+export const KEM_GROUPS = [
+  ["el", "tk.kem.el", [
+    ["H", "C", "N", "O", "S", "P", "Cl", "Na", "K", "Ca"],
+    ["Mg", "Al", "Fe", "Cu", "Zn", "Ag", "F", "Br", "I", "Si"],
+    ["₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", "₀"],
+  ]],
+  ["ion", "tk.kem.ion", [
+    ["⁺", "⁻", "²⁺", "²⁻", "³⁺", "³⁻", "⁴⁺", "⁴⁻", "·", "[@]"],
+    ["OH", "NO₃", "SO₄", "CO₃", "PO₄", "NH₄", "HCO₃", "MnO₄"],
+    ["¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "⁰"],
+  ]],
+  ["re", "tk.kem.re", [
+    [" + ", " → ", " ⇌ ", " ← ", "↑", "↓", "Δ", "hν", "KAT", "e⁻"],
+    ["(s)", "(l)", "(g)", "(aq)", "ΔH", "ΔS", "ΔG", "°", "%"],
+    ["°C", "kPa", "mol", "g/mol", "mol/L", "kJ/mol", "pH"],
+  ]],
+  ["pse", "tk.kem.pse", []],
 ];
+/** Strani »Vsi elementi«: začetnice simbolov (brez J in Q, s katerima se ne začne noben element), dve vrsti. */
+export const KEM_LETTERS = [
+  ["A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M"],
+  ["N", "O", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
+];
+/** Naboj (⁺, ²⁻, …): na tipki nadpisan ob ◌, da ni videti kot » + « ali »−«. */
+export const KEM_CHARGE = /^[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]$/;
+export const KEM_ROWS = KEM_GROUPS.flatMap(([, , rows]) => rows);
 
 // Vrstica 123 nad številkami: v matematiki zapisi, drugje pogosti znaki.
 export const NUM_TOP_MATH = [["x²", "²"], ["√", "√(@)"], ["xⁿ", "^(@)"], ["π", "π"], ["( )", "(@)"], ["a/b", "(@)/()"]];
@@ -191,6 +218,8 @@ export function applyTemplate(value, start, end, ins, maxLength = -1, literal = 
   const sel = v.slice(s, e);
   const at = literal ? -1 : ins.indexOf("@"); // literal: »@« je znak (e-pošta, prilepljena povezava), ne mesto kazalca
   let text = at < 0 ? ins : ins.slice(0, at) + sel + ins.slice(at + 1);
+  // » + «, » → «, » ⇌ « s presledkoma: pred kazalcem je že presledek (ali začetek polja) → brez dvojnega presledka
+  if (!literal && /^ \S/.test(text) && (s === 0 || /\s/.test(v[s - 1]))) text = text.slice(1);
   if (maxLength >= 0) {
     const room = maxLength - (v.length - (e - s));
     if (room <= 0) return { value: v, caret: e, text: "" };

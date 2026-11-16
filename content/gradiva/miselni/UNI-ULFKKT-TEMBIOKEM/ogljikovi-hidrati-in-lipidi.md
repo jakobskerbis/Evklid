@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Monosaharidi
+  - aldoze in ketoze, $3$ do $7$ ogljikov
+  - D: $-\text{OH}$ na zadnjem stereocentru desno
+  - največ $2^n$ stereoizomerov, aldoheksoz je $16$
+- Obroč in anomera
+  - piranoza: hemiacetal na C1
+  - $\alpha$ pod ravnino, $\beta$ nad njo
+  - mutarotacija: glukoza v ravnotežju okoli $64\,\%$ $\beta$
+- Glikozidna vez
+  - kondenzacija, $M = nM_1 - (n-1)M(\text{H}_2\text{O})$
+  - reducirajoči sladkor: prost hemiacetal
+  - saharoza $\alpha 1 \leftrightarrow \beta 2$ ni reducirajoča
+- Polisaharidi
+  - škrob, glikogen: $\alpha(1 \to 4)$, veje $\alpha(1 \to 6)$
+  - celuloza: $\beta(1 \to 4)$, ravna vlakna
+  - pazi: različna je vez, ne monomer
+- Maščobne kisline
+  - zapis $m{:}k$, npr. oleinska $18{:}1$
+  - vez *cis* upogne verigo, nižje tališče
+- Triacilgliceroli
+  - glicerol in tri kisline, tri estrske vezi
+  - $\text{US} = 3 \cdot 1000\,M(\text{KOH})/M(\text{TAG})$, v mg/g
+  - jodno število: g $\text{I}_2$ na $100\,\text{g}$
+- Membrana
+  - fosfolipid: polarna glava, dva repa
+  - dvosloj debel okoli $5\,\text{nm}$
+  - holesterol uravnava tekočnost
+- Zaloga energije
+  - maščoba $37\,\text{kJ/g}$, ogljikovi hidrati $17\,\text{kJ/g}$
+  - glikogen hitra, maščoba dolgoročna zaloga

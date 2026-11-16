@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Elementarne transformacije
+  - zamenjava, množenje s $c \neq 0$, prištevanje večkratnika
+  - vsaka je množenje z elementarno matriko $E$
+- Stopničasta oblika
+  - pivoti se pomikajo desno, ničelne vrstice na dnu
+  - Gauss-Jordan: pivoti $1$, nad njimi ničle
+- Rang
+  - število neničelnih vrstic v stopničasti obliki
+  - $\operatorname{rang} A \le \min(m, n)$
+  - napaka: »ni enakih vrstic, torej poln rang«
+- Obrnljivost
+  - $\operatorname{rang} A = n \iff \det A \neq 0$
+  - ničelna vrstica na levi: inverza ni
+- Gaussova metoda za inverz
+  - $[A \mid I] \sim [I \mid A^{-1}]$
+  - transformacija vedno na celi vrstici
+- Parameter
+  - pivot s parametrom: primer posebej
+  - $a = 1$ in $a = -2$ dasta rang $1$ in $2$
+- Uporaba
+  - $\vec{U} = G^{-1}\vec{J}$ v omrežju
+  - brez mase: rang $n - 1$

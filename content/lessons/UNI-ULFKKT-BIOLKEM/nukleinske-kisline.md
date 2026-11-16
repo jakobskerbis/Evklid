@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-V vrečki zmečkaj nekaj jagod z žličko detergenta za posodo in ščepcem soli, precedi in po robu kozarca nalij mrzel alkohol. Na meji tekočin se v nekaj minutah pokažejo bele, sluzaste niti: DNA, vidna s prostim očesom. Bakterija *E. coli* ima v svoji DNA približno $4{,}6$ milijona baznih parov. Prepisati jih mora pred vsako delitvijo, vsakih $20$ do $40$ minut, in to skoraj brez napake.
+V vrečki zmečkaj nekaj jagod z žličko detergenta za posodo in ščepcem soli, precedi in po robu kozarca nalij mrzel alkohol. Na meji tekočin se v nekaj minutah pokažejo bele, sluzaste niti: DNA, vidna s prostim očesom. Bakterija *E. coli* ima v svoji DNA približno $4{,}6$ milijona baznih parov. Podvojiti jih mora pred vsako delitvijo, vsakih $20$ do $40$ minut, in to skoraj brez napake.
 
 Natančno kopijo omogoča zgradba: verigi se ujemata kot ključ in ključavnica, zato vsaka nosi navodilo za drugo.
 
@@ -35,7 +35,7 @@ Veriga ima dva različna konca: na enem je prost 5'-fosfat, na drugem prosta 3'-
 
 ### Blok 3: dvojna vijačnica DNA
 
-V celici DNA tvori dve verigi, ovite druga okoli druge v desnosučno vijačnico (oblika B). Pomembna so tri pravila:
+V celici DNA tvori dve verigi, oviti druga okoli druge v desnosučno vijačnico (oblika B). Pomembna so tri pravila:
 
 - Verigi sta **antiparalelni**: ena teče $5' \to 3'$, druga ob njej $3' \to 5'$.
 - Baze se parijo **komplementarno**: A s T z dvema vodikovima vezema, G s C s tremi.
@@ -110,14 +110,29 @@ Gradniki so deoksinukleozid-trifosfati (dATP, dGTP, dCTP, dTTP). Sproščeni pir
 
 Ker sta matrici antiparalelni, se ena nova veriga lahko podaljšuje ves čas v smeri gibanja vilice. To je **vodilna veriga**. Druga mora rasti stran od vilice, zato nastaja v koščkih, **Okazakijevih fragmentih** (pri bakterijah $1000$ do $2000$ nukleotidov). To je **zaostajajoča veriga**.
 
-Na sliki v besedah:
+Na sliki:
 
-```
-          5' ──────────────────── 3'   stara veriga
-vilica →     ═══► vodilna (neprekinjena)
-             ◄══ ◄══ ◄══ zaostajajoča (koščki)
-          3' ──────────────────── 5'   stara veriga
-```
+:::risba skica
+opis: Replikacijske vilice v obliki ležeče črke Y. Desno je še nerazpleteni del dvojne vijačnice, vilica se premika v desno. Zgornja stara veriga ima levo konec 3' in desno konec 5'; ob njej raste vodilna veriga kot ena neprekinjena puščica v desno, proti vilici. Spodnja stara veriga ima levo konec 5' in desno konec 3'; ob njej nastaja zaostajajoča veriga iz treh kratkih puščic v levo, stran od vilice. Vse nove verige rastejo v smeri od 5' proti 3'.
+območje: 0; 0 .. 14; 8
+črta: 1; 7 -> 8; 4,3 -> 12,5; 4,3 | siva debelo
+črta: 1; 1 -> 8; 3,7 -> 12,5; 3,7 | siva debelo
+napis: 0,5; 7 | 3'
+napis: 13; 4,3 | 5' | nad
+napis: 0,5; 1 | 5'
+napis: 13; 3,7 | 3' | pod
+napis: 8; 7,2 | stara veriga
+napis: 8; 0,7 | stara veriga
+puščica: 1; 6,4 -> 6,5; 4,28 | | | modra debelo
+puščica: 2,6; 2,22 -> 1; 1,6 | | | oranžna
+puščica: 4,6; 2,99 -> 3; 2,37 | | | oranžna
+puščica: 6,5; 3,72 -> 5; 3,14 | | | oranžna
+napis: 2,2; 4,5 | vodilna
+napis: 2,2; 3,5 | zaostajajoča
+puščica: 9; 5,6 -> 11,5; 5,6 | vilica | nad
+napis: 10; 2,6 | nerazpleteni del
+podnapis: Vodilna veriga raste neprekinjeno proti vilici, zaostajajoča v koščkih stran od nje
+:::
 
 :::premisli
 Kaj bi se zgodilo z zaostajajočo verigo, če bi DNA-polimeraza znala graditi tudi v smeri $3' \to 5'$?
@@ -179,12 +194,12 @@ Kromosom *E. coli* je krožen in ima $4{,}6 \cdot 10^6$ baznih parov. Podvajanje
 **Iščemo:** čas podvajanja $t$, število fragmentov $n_\mathrm{F}$ in primerjev, potrebno hitrost $v'$
 
 :::formula
-Vsaka vilica prepiše polovico kromosoma: $t = \dfrac{N/2}{v}$, $\quad n_\mathrm{F} = \dfrac{2 \cdot N/2}{l}$, $\quad v' = \dfrac{N/2}{t'}$
+Vsaka vilica podvoji polovico kromosoma: $t = \dfrac{N/2}{v}$, $\quad n_\mathrm{F} = \dfrac{2 \cdot N/2}{l}$, $\quad v' = \dfrac{N/2}{t'}$
 :::
 
 **Rešitev:**
 
-1. Vilici se odpravita v nasprotnih smereh in se srečata na drugi strani kroga, zato vsaka prepiše polovico: $\dfrac{4{,}6 \cdot 10^6\,\text{bp}}{2} = 2{,}3 \cdot 10^6\,\text{bp}$.
+1. Vilici se odpravita v nasprotnih smereh in se srečata na drugi strani kroga, zato vsaka podvoji polovico: $\dfrac{4{,}6 \cdot 10^6\,\text{bp}}{2} = 2{,}3 \cdot 10^6\,\text{bp}$.
 2. Čas: $t = \dfrac{2{,}3 \cdot 10^6\,\text{bp}}{1000\,\text{bp/s}} = 2300\,\text{s}$.
 3. V minutah: $2300 / 60 \approx 38{,}3$, torej približno $38\,\text{min}$.
 4. V vsaki vilici je ena nova veriga zaostajajoča, ker sta matrici antiparalelni; dolga je toliko kot pot vilice, $2{,}3 \cdot 10^6\,\text{nt}$.
@@ -201,13 +216,13 @@ Kromosom 1 človeka ima približno $2{,}5 \cdot 10^8$ baznih parov. Vilica pri e
 **Iščemo:** najmanjše število izvorov $n$
 
 :::formula
-Vsak izvor v času $t$ prepiše $2 \cdot v \cdot t$ baznih parov: $n = \dfrac{N}{2 \cdot v \cdot t}$
+Vsak izvor v času $t$ podvoji $2 \cdot v \cdot t$ baznih parov: $n = \dfrac{N}{2 \cdot v \cdot t}$
 :::
 
 **Rešitev:**
 
 1. Čas v sekundah: $8 \cdot 3600 = 28800$, torej $t = 28\,800\,\text{s}$.
-2. En izvor z dvema vilicama prepiše $2 \cdot 50 \cdot 28800 = 2880000$, torej $2{,}88 \cdot 10^6\,\text{bp}$.
+2. En izvor z dvema vilicama podvoji $2 \cdot 50 \cdot 28800 = 2880000$, torej $2{,}88 \cdot 10^6\,\text{bp}$.
 3. Izračunaj $n$ sam in razmisli, kako zaokrožiti.
 
 :::premisli

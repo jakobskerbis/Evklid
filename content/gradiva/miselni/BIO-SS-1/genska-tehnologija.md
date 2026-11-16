@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vsa hrana ima gene
+  - vsaka celica ima DNA
+  - GSO ima dodan ali spremenjen gen
+- Umetni izbor
+  - divje zelje: brokoli, cvetača, koleraba
+  - le obstoječi aleli, le sorodniki, več rodov
+- Orodja genskega inženiringa
+  - restrikcijski encim reže le na svojem zaporedju (EcoRI: GAATTC)
+  - ligaza lepi, plazmid je vektor
+  - napaka: gen in plazmid z različnima encimoma
+- Restrikcijski zemljevid
+  - linearna DNA: $f = k + 1$
+  - krožni plazmid: $f = k$
+  - dolžina odseka $l = x_2 - x_1$
+- Bakterije z inzulinom
+  - izbor na gojišču z antibiotikom
+  - $N_t = N_0 \cdot 2^n$, $n = \frac{t}{\tau}$
+- Prenos genov
+  - rastline: *Agrobacterium*, genska puška
+  - živali: vbrizg v oplojeno jajčno celico
+- Koristi in tveganja
+  - zdravila, pridelek, manj škropiv, zlati riž
+  - prenos genov v divje sorodnike, odporni škodljivci
+  - EU: oznaka nad $0{,}9\,\%$

@@ -57,10 +57,10 @@
       },
       {
        "title": "Drugače: po delih in z oceno",
-       "text": "Število $3{,}6$ razdeli na $3$ in $0{,}6$:\n\n$3 \\cdot 2{,}47 = 7{,}41$, $\\quad 0{,}6 \\cdot 2{,}47 = 1{,}482$, $\\quad 7{,}41 + 1{,}482 = 8{,}892$.\n\n**Ocena:** $3{,}6$ je približno $3{,}5$, $2{,}47$ pa približno $2{,}5$. Ker je $3{,}5 \\cdot 2{,}5 = 8{,}75$, je rezultat okoli $9$. Torej je vejica na pravem mestu ($8{,}892$, ne $88{,}92$).\n\nŠtevilo $8{,}892$ leži med $8{,}8$ in $8{,}9$; do $8{,}9$ manjka le $0{,}008$, zato zaokroženo $8{,}9$."
+       "text": "Število $3{,}6$ razdeli na $3$ in $0{,}6$:\n\n$3 \\cdot 2{,}47 = 7{,}41$; $\\quad 0{,}6 \\cdot 2{,}47 = 1{,}482$; $\\quad 7{,}41 + 1{,}482 = 8{,}892$.\n\n**Ocena:** $3{,}6$ je približno $3{,}5$; $2{,}47$ pa približno $2{,}5$. Ker je $3{,}5 \\cdot 2{,}5 = 8{,}75$, je rezultat okoli $9$. Torej je vejica na pravem mestu ($8{,}892$, ne $88{,}92$).\n\nŠtevilo $8{,}892$ leži med $8{,}8$ in $8{,}9$; do $8{,}9$ manjka le $0{,}008$, zato zaokroženo $8{,}9$."
       }
      ],
-     "scoring": "1 t. za pravilen zmnožek $8{,}892$, 1 t. za pravilno zaokroženo vrednost $8{,}9$ (točko za zaokrožitev dobiš tudi, če pravilno zaokrožiš napačen zmnožek).",
+     "scoring": "1 t. za pravilen zmnožek $8{,}892$; 1 t. za pravilno zaokroženo vrednost $8{,}9$ (točko za zaokrožitev dobiš tudi, če pravilno zaokrožiš napačen zmnožek).",
      "mistake": "Napačno je vejico postaviti tako kot pri seštevanju (»ena decimalka, ker ima $3{,}6$ eno«) in zapisati $889{,}2$. Pri množenju se decimalke obeh faktorjev seštejejo: $1 + 2 = 3$ decimalke."
     },
     {
@@ -128,7 +128,7 @@
      "ways": [
       {
        "title": "Po korakih",
-       "text": "**Podatki:** $8$ škatlic, ena škatlica stane $5{,}70$ €.\n\n**Iščemo:** ceno vseh škatlic.\n\nIzračunaj izraz $8 \\cdot 5{,}70$ po delih:\n\n$8 \\cdot 5 = 40$, $\\quad 8 \\cdot 0{,}70 = 5{,}60$, $\\quad 40 + 5{,}60 = 45{,}60$.\n\n**Odgovor:** Trener je za vse škatlice plačal $45{,}60$ €."
+       "text": "**Podatki:** $8$ škatlic, ena škatlica stane $5{,}70$ €.\n\n**Iščemo:** ceno vseh škatlic.\n\nIzračunaj izraz $8 \\cdot 5{,}70$ po delih:\n\n$8 \\cdot 5 = 40$; $\\quad 8 \\cdot 0{,}70 = 5{,}60$; $\\quad 40 + 5{,}60 = 45{,}60$.\n\n**Odgovor:** Trener je za vse škatlice plačal $45{,}60$ €."
       },
       {
        "title": "Drugače: prek cene ene žogice",
@@ -276,7 +276,7 @@
       },
       {
        "title": "Drugače: zapiši vse oznake s stotinami",
-       "text": "Zapiši $0{,}4 = 0{,}40$ in $0{,}5 = 0{,}50$. Od $40$ do $50$ stotin v petih enakih korakih: $40, 42, 44, 46, 48, 50$. Oznake so torej $0{,}40$, $0{,}42$, $0{,}44$, $0{,}46$, $0{,}48$, $0{,}50$. Okvirček je pri tretji oznaki za $0{,}40$: $0{,}46$.\n\n**Preizkus:** do $0{,}5$ sta še dva razdelka, $0{,}46 + 2 \\cdot 0{,}02 = 0{,}50$. ✓\n\nZ ulomkom: $0{,}46 = \\frac{46}{100}$."
+       "text": "Zapiši $0{,}4 = 0{,}40$ in $0{,}5 = 0{,}50$. Od $40$ do $50$ stotin v petih enakih korakih: $40, 42, 44, 46, 48, 50$. Oznake so torej $0{,}40$; $0{,}42$; $0{,}44$; $0{,}46$; $0{,}48$; $0{,}50$. Okvirček je pri tretji oznaki za $0{,}40$: $0{,}46$.\n\n**Preizkus:** do $0{,}5$ sta še dva razdelka, $0{,}46 + 2 \\cdot 0{,}02 = 0{,}50$. ✓\n\nZ ulomkom: $0{,}46 = \\frac{46}{100}$."
       }
      ],
      "scoring": "1 t. za število $0{,}46$ v okvirčku, 1 t. za pravilen zapis z ulomkom ($\\frac{46}{100}$ ali $\\frac{23}{50}$).",

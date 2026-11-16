@@ -30,6 +30,12 @@ test("ostra stran nima težav, zamegljena je »blur«", () => {
   assert.equal(problemOf(soft), "blur");
 });
 
+test("prag ostrine 0,034: 0,032 je »blur«, 0,037 ne (umerjeno na 2. krogu fotografij)", () => {
+  const m = (sharpness) => ({ brightness: 120, contrast: 190, glare: 0, sharpness });
+  assert.equal(problemOf(m(0.032)), "blur");
+  assert.equal(problemOf(m(0.037)), null);
+});
+
 test("temna slika je »dark«, prazen list brez kontrasta ni ostra", () => {
   assert.equal(problemOf(measure(...page({ paper: 40, ink: 10 }))), "dark");
   const blank = measure(...page({ ink: 225 }));

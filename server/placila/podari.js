@@ -3,14 +3,16 @@
 // ni nobene oznake (koda je navadna darilna koda DAR-…, server/placila/darila.js).
 // Dva vira kod:
 //  - pilot: Evklid kode plača iz svojega proračuna za AI (2–3 na šolo, skupaj največ 10 na mesec ≈ 20 $ AI);
-//  - sklad: kupci prostovoljno dodajo 2/5/10 € pri plačilu naročnine ali kupijo »Podari mesec« (cena OŠ meseca).
+//  - sklad: kupci kupijo »Podari mesec« (cena OŠ meseca). Dodatka 2/5/10 € pri plačilu naročnine ni več
+//    (j 2026-11-04, brez mikrotransakcij); stari vnosi kind = 'addon' v podari_fund ostanejo v skladu in se
+//    berejo kot doslej (invoicePaid, addonOf, end), novih ni.
 //    To ni donacija dobrodelni organizaciji: je nakup darila za neznanega prejemnika (brez davčne olajšave).
 //    Do s.p. deluje samo v testnem načinu Stripa, kot vsa plačila.
 import { levelPlanFor } from "../accounts/plans.js";
 import { newCode } from "./darila.js";
 import { audit } from "../dnevnik-dostopov.js";
+import { BIRTH_MISSING_PAY } from "../accounts/age.js";
 
-export const PODARI_ADDONS = [200, 500, 1000];
 export const PODARI_DAYS = 90; // 3 mesece
 export const PODARI_MONTHS = 3;
 export const PODARI_TEXT =
@@ -47,7 +49,7 @@ export function migratePodari(db) {
 
 // ctx: { db, stripe, json, log, ensureCustomer, baseUrl, isMinor }
 export function mountPodari(app, ctx) {
-  const { db, stripe, json, log, ensureCustomer, baseUrl, isMinor } = ctx;
+  const { db, stripe, json, log, ensureCustomer, baseUrl, isMinor, birthMissing = () => false, pilotOf = () => false } = ctx; // pilotOf: član pilota brez »Podari Evklid« (j 2026-11-10)
   migratePodari(db);
 
   const paidSum = () => db.prepare("SELECT COALESCE(SUM(amount), 0) AS c FROM podari_fund WHERE status = 'paid'").get().c;
@@ -65,27 +67,13 @@ export function mountPodari(app, ctx) {
       donated_months: Math.max(0, Math.floor(paidSum() / monthCents("OS"))),
       evklid_months: (by.pilot?.n || 0) * PODARI_MONTHS,
       in_use_months: used * PODARI_MONTHS,
-      addons: PODARI_ADDONS,
       month_price: monthCents("OS"),
       text: PODARI_TEXT,
     };
   }
 
-  // Dodatek pri naročnini: vrstica za Checkout in id vnosa (metadata naročnine), ali null.
-  function addonFor(parentId, cents) {
-    const amount = Number(cents);
-    if (!PODARI_ADDONS.includes(amount)) return null;
-    const id = Number(db.prepare("INSERT INTO podari_fund (parent_id, kind, amount) VALUES (?, 'addon', ?)").run(parentId, amount).lastInsertRowid);
-    return {
-      id,
-      line_item: {
-        price_data: { currency: "eur", unit_amount: amount, tax_behavior: "inclusive", product_data: { name: "Podari Evklid (darilo za otroka, ki ga izbere šola)" } },
-        quantity: 1,
-      },
-    };
-  }
-
-  // invoice.paid: prvi plačan račun naročnine z dodatkom (podari_id v metadata naročnine) ga potrdi.
+  // invoice.paid: prvi plačan račun naročnine z (starim) dodatkom (podari_id v metadata naročnine) ga potrdi.
+  // Novih dodatkov ni; to ostane za naročnine, sklenjene pred 5. 11. 2026, ki prvi račun plačajo po koncu preizkusa.
   function invoicePaid(inv) {
     const id = Number(inv?.subscription_details?.metadata?.podari_id);
     if (!id || !(inv.amount_paid > 0)) return false;
@@ -109,9 +97,11 @@ export function mountPodari(app, ctx) {
   }
 
   // Samostojen nakup »Podari mesec« je plačan (Checkout Session v načinu payment).
-  function complete(session) {
+  // unmatched(razlog): kupec je račun izbrisal pred plačilom (parent_id SET NULL) – zapis za ročno vračilo (webhook).
+  function complete(session, unmatched = null) {
     if (session?.metadata?.kind !== "podari" || session.payment_status !== "paid") return false;
     const row = db.prepare("SELECT * FROM podari_fund WHERE id = ?").get(Number(session.metadata.fund_id));
+    if (row && row.parent_id == null && row.status === "pending") unmatched?.("kupec_izbrisan");
     if (!row || row.kind !== "month" || String(row.parent_id) !== String(session.metadata.parent_id)) return false;
     const pi = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id || null;
     return db.prepare("UPDATE podari_fund SET status = 'paid', payment_id = ?, paid_at = datetime('now') WHERE id = ? AND status = 'pending'").run(pi, row.id).changes > 0;
@@ -134,8 +124,10 @@ export function mountPodari(app, ctx) {
 
   app.post("/api/billing/podari", json, async (req, res) => {
     const p = req.parent;
+    if (pilotOf(p)) return res.status(409).json({ error: "Med pilotom nakup ni mogoč. Po koncu pilota bo spet na voljo.", pilot: true });
     if (!stripe.enabled) return res.status(503).json({ error: "Plačila še niso nastavljena (manjka STRIPE_SECRET_KEY)." });
     if (p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
+    if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Podari lahko samo polnoletna oseba." });
     if (req.body?.adult !== true || req.body?.understand !== true) return res.status(400).json({ error: "Pred plačilom sta potrebni obe potrditvi.", consent: true });
     const open = db.prepare("SELECT COUNT(*) AS n FROM podari_fund WHERE parent_id = ? AND status = 'pending' AND kind = 'month' AND created_at > datetime('now', '-1 day')").get(p.id).n;
@@ -147,7 +139,7 @@ export function mountPodari(app, ctx) {
       const lang = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(req.body?.lang || "")) ? req.body.lang : "sl";
       // Shrani se samo to, kar je kupec potrdil (polnoletnost in »ni donacija«), ne besedilo o odstopu pri naročnini.
       db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'podari', ?)").run(p.id, p.email, `${PODARI_ADULT}\n${PODARI_TEXT}\n[jezik: ${lang}]`);
-      const meta = { kind: "podari", fund_id: id, parent_id: p.id };
+      const meta = { kind: "podari", fund_id: id, parent_id: p.id, parent_uid: p.uid || undefined };
       const base = baseUrl(req);
       const session = await stripe.request("POST", "/checkout/sessions", {
         mode: "payment",
@@ -263,5 +255,5 @@ export function mountPodari(app, ctx) {
     res.json(adminView());
   });
 
-  return { stats, addonFor, addonOf, invoicePaid, complete, end };
+  return { stats, addonOf, invoicePaid, complete, end };
 }

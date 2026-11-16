@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ločeni polreakciji
+  - elektroni gredo po žici, nastane tok
+  - solni most: ioni sklenejo krog
+- Anoda in katoda
+  - anoda oksidacija, katoda redukcija
+  - galvanski člen: anoda (−), katoda (+)
+- Standardni potencial
+  - $E^\circ$ proti vodikovi elektrodi, $0\,\mathrm{V}$
+  - $1\,\mathrm{mol/L}$, $25\,\mathrm{°C}$, $100\,\mathrm{kPa}$
+  - višji $E^\circ$: rad sprejema elektrone
+- Napetost člena
+  - $E^\circ_\text{člen} = E^\circ_\text{katoda} - E^\circ_\text{anoda}$
+  - Zn in Cu: $1{,}10\,\mathrm{V}$
+  - napaka: $E^\circ$ množiti s koeficientom
+- Elektroliza
+  - vir poganja nespontano reakcijo
+  - anoda (+), katoda (−)
+  - $\mathrm{CuCl_2}$: najmanj $1{,}02\,\mathrm{V}$
+- Zaščita pred rjo
+  - kovina z nižjim $E^\circ$ je anoda
+  - magnezijeva palica v bojlerju, pocinkana ograja

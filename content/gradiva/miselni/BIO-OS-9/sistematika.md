@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dvodelno ime
+  - rod + vrstni pridevek: *Ursus arctos*
+  - rod z veliko, pridevek z malo
+  - napaka: *arctos* sam ni ime vrste
+- Linné
+  - švedski naravoslovec, 1707–1778
+  - latinska imena, enaka po vsem svetu
+- Vrsta
+  - parjenje in plodni potomci
+  - konj in osel: mula je neplodna
+- Kategorije
+  - vrsta, rod, družina, red, razred, deblo, kraljestvo
+  - red je znotraj razreda
+- Sorodnost
+  - več skupnih kategorij, bližji sorodnik
+  - $s = 7 - r$
+  - rjavi medved in volk: $s = 4$
+- Zgradba, ne okolje
+  - netopir: dlaka, mleko, zato sesalec
+  - kit ni riba
+- Evolucijsko drevo
+  - razvejitev je skupni prednik
+  - združitev bliže konicam: bližji sorodnik

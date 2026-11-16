@@ -124,7 +124,7 @@ export function zVzorcem(rgb, id) {
 }
 
 // ---------------------------------------------------------------- pH-meter
-// Ločljivost 0,01 pH. Po umerjanju s tremi pufri (pH 4,01, 7,00, 10,01 pri 25 °C, ±0,02; DIN 19266) natančnost ±0,05 pH
+// Ločljivost 0,01 pH. Po umerjanju s tremi pufri (pH 4,01; 7,00 in 10,01 pri 25 °C, ±0,02, DIN 19266) natančnost ±0,05 pH
 // (ocena za šolski pH-meter): stalni zamik ≤ 0,012, napaka naklona ≤ 0,3 % (≤ 0,021 pri pH 0 ali 14), nihanje ≤ 0,01.
 // Neumerjen (star) meter: zamik 0,3–0,8 pH in naklon 90–97 % (ocena za postarano elektrodo).
 // Neoprana elektroda: kapljica prejšnjega vzorca in spomin stekla premakneta odčitek za 15 % razlike do prejšnjega

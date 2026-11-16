@@ -19,6 +19,9 @@
   font-family: var(--k3-font);
   -webkit-tap-highlight-color: transparent;
 }
+/* pridržana povezava: brez oblačka s povezavo (public/dotik.js, style.css) */
+html { -webkit-tap-highlight-color: transparent; }
+@media (pointer: coarse) { .k3 a[href] { -webkit-touch-callout: none; -webkit-user-drag: none; } }
 .k3 *,
 .k3 *::before,
 .k3 *::after { box-sizing: border-box; }
@@ -42,31 +45,27 @@
 .k3-oder::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 75% 70% at 50% 45%, transparent 55%, rgba(4, 6, 10, 0.55) 100%); }
 .k3-plast { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
 .k3-tocke { position: absolute; inset: 0; }
-.k3-tocka {
-  position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; padding: 0; border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.92); background: var(--barva); pointer-events: auto; cursor: pointer;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--barva) 35%, transparent), 0 2px 8px rgba(0, 0, 0, 0.5);
-  transition: opacity 0.18s, box-shadow 0.18s;
+/* Okno izbranega dela (pregledovalnik.js) je v plošči ob odru, nikoli čez model (j, 5. 11.): na računalniku desno ob
+   modelu, na telefonu pod odrom, v lekcijah pod odrom. Prvo v plošči (order), z barvo dela ob robu. */
+.k3-info {
+  order: -1; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; padding-block: 12px 14px; padding-inline: 16px 12px; border-radius: 18px;
+  background: var(--k3-povrsina); border: 1px solid var(--k3-rob); border-inline-start: 4px solid var(--barva, var(--k3-accent));
+  animation: k3-pojav 0.18s both;
 }
-.k3-tocka::before { content: ""; position: absolute; inset: -11px; border-radius: 50%; } /* večja tarča za prst */
-.k3-tocka.on { box-shadow: 0 0 0 6px color-mix(in srgb, var(--barva) 55%, transparent), 0 0 18px var(--barva); }
-.k3-tocka.zakrita { opacity: 0.18; pointer-events: none; }
-.k3-tocka.skrita { opacity: 0; pointer-events: none; }
-.k3-oznaka {
-  position: absolute; left: 0; top: 0; max-width: min(280px, 60%); padding: 9px 13px; border-radius: 14px;
-  background: var(--k3-steklo); border: 1px solid var(--k3-rob); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  translate: 0 -50%; transition: opacity 0.18s; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-}
-.k3-oznaka.levo { translate: -100% -50%; }
-.k3-oznaka b { display: block; font-size: 1rem; font-weight: 600; }
-.k3-oznaka span { display: block; color: var(--k3-muted); font-size: 0.88rem; line-height: 1.35; margin-top: 2px; }
-.k3-oznaka.skrita { opacity: 0; }
-.k3-oznaka .k3-la { display: block; color: var(--k3-muted); font-size: 0.8rem; margin-top: 1px; }
-/* »Poglej pod povečavo« na kartici dela (plast ne lovi dotikov, gumb jih). */
-.k3 .k3-oznaka .k3-povecava-gumb { pointer-events: auto; margin-top: 8px; min-height: 40px; padding: 0 14px; font-size: 0.9rem; }
-.k3-oznaka .k3-povecava-gumb svg { width: 18px; height: 18px; flex: none; }
-.k3-oznaka .k3-povecava-gumb span { display: inline; margin: 0; color: inherit; font-size: inherit; }
-.k3-oznaka.skrita .k3-povecava-gumb { pointer-events: none; }
+.k3-info[hidden] { display: none; }
+.k3-info-glava { display: flex; align-items: flex-start; gap: 10px; }
+.k3-info-glava > .k3-pika { margin-top: 0.42em; }
+.k3-info-naslov { flex: 1; min-width: 0; }
+.k3-info .k3-info-ime { margin: 0; font-size: 1.06rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+.k3-info .k3-la { display: block; color: var(--k3-muted); font-size: 0.86rem; margin-top: 1px; }
+.k3 .k3-info-zapri { flex: none; width: 40px; height: 40px; min-height: 40px; margin-block: -4px 0; margin-inline: 0 -2px; }
+/* samo za bralnike zaslona (status z imenom izbranega dela) */
+.k3-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.k3-info-zapri svg.i { width: 18px; height: 18px; }
+.k3-info-opis { margin: 0; color: var(--k3-besedilo); line-height: 1.5; font-size: 0.95rem; unicode-bidi: plaintext; }
+.k3 .k3-info .k3-povecava-gumb { align-self: flex-start; min-height: 40px; padding: 0 14px; font-size: 0.9rem; }
+.k3-info .k3-povecava-gumb svg { width: 18px; height: 18px; flex: none; }
+@media (prefers-reduced-motion: reduce) { .k3-info { animation: none; } }
 /* model.povzetek() (npr. V in P pri telesih): levo zgoraj na odru, ostane viden tudi med vlečenjem drsnika */
 .k3-povzetek { position: absolute; top: 12px; left: 12px; z-index: 2; max-width: calc(100% - 210px); padding: 6px 12px; border-radius: 14px;
   background: var(--k3-steklo); border: 1px solid var(--k3-rob); color: var(--k3-besedilo); font-weight: 600; font-size: 0.92rem;
@@ -94,7 +93,7 @@
 }
 .k3 .k3-krog:hover,
 .k3 .a3-krog:hover { background: var(--k3-povrsina-2); }
-.k3 .a3-mali-krog { width: 36px; height: 36px; min-height: 36px; }
+.k3 .a3-mali-krog { width: 40px; height: 40px; min-height: 40px; }
 .k3 .a3-mali-krog svg.i { width: 18px; height: 18px; }
 .k3 .seg { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--k3-bg); border: 1px solid var(--k3-rob); overflow-x: auto; scrollbar-width: none; }
 .k3 .seg > button {
@@ -149,10 +148,15 @@
 .k3-izbor-moznost[aria-selected="true"] { background: var(--k3-accent-soft); color: var(--k3-accent); }
 .k3-izbor-moznost[aria-selected="true"]::after { content: ""; margin-inline-start: auto; width: 16px; height: 16px; flex: none;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e9bff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") no-repeat center / contain; }
-.k3-izbira-oznaka, .k3-izpis span:first-child { font-size: 0.92rem; color: var(--k3-muted); }
+.k3-izbira-oznaka, .k3-izpis > span:first-child { font-size: 0.92rem; color: var(--k3-muted); }
 .k3-stikalo { display: flex; align-items: center; gap: 12px; min-height: 44px; }
 .k3-izpis { flex: 1 1 100%; display: flex; justify-content: space-between; gap: 12px; padding: 8px 12px; border-radius: 12px; background: var(--k3-povrsina); font-variant-numeric: tabular-nums; }
 .k3-izpis output { font-weight: 600; }
+/* Izpis s formulami (tex: true): formule gredo pod oznako, ko ob njej niso cele (vsaka v svoji vrstici, prelom le pri =). */
+.k3-izpis-tex { flex-wrap: wrap; row-gap: 4px; }
+.k3-izpis-tex output { flex: 1 0 auto; max-width: 100%; text-align: right; font-weight: 400; }
+/* Aplikacija (ui.css) formulam prepove prelom, ker jih zlaga sirina.js; izpisa 3D ta ne obdela (prelomi KaTeX, kot na /3d). */
+.k3-izpis.k3-izpis-tex output .katex { white-space: normal; }
 .k3-deli { display: flex; flex-wrap: wrap; gap: 8px; }
 .k3-del {
   display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px;
@@ -190,7 +194,7 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .k3-zvezda-ic svg.i { width: 30px; height: 30px; }
 .k3-zvezda-oznake { display: flex; flex-wrap: wrap; gap: 6px; }
 .k3-zvezda-oznake span { font-size: 0.82rem; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); color: var(--k3-muted); }
-/* Iskanje in področja: lepljiva vrstica (ostane vidna med pomikanjem po zbirki). */
+/* Iskanje, mikroskop in pot po drevesu: lepljiva vrstica (ostane vidna med pomikanjem po zbirki). */
 .k3-hub-orodja {
   position: sticky; top: 0; z-index: 3; display: flex; flex-direction: column; gap: 10px;
   margin: -8px calc(-1 * max(16px, env(safe-area-inset-right))) 0 calc(-1 * max(16px, env(safe-area-inset-left)));
@@ -202,18 +206,41 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   background: var(--k3-povrsina); border: 1px solid var(--k3-rob); color: var(--k3-muted); cursor: text;
 }
 .k3-iskalnik:focus-within { border-color: var(--k3-accent); }
-.k3-iskalnik input { flex: 1; min-width: 0; height: 46px; border: 0; outline: none; background: transparent; color: var(--k3-besedilo); font: inherit; font-size: 1rem; }
+.k3-iskalnik input { flex: 1; min-width: 0; text-overflow: ellipsis; height: 46px; border: 0; outline: none; background: transparent; color: var(--k3-besedilo); font: inherit; font-size: 1rem; }
 .k3-iskalnik input::placeholder { color: var(--k3-muted); }
 .k3-iskalnik input::-webkit-search-cancel-button { filter: invert(0.7); cursor: pointer; }
-.k3-cipi { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; mask-image: linear-gradient(90deg, transparent, #000 12px, #000 calc(100% - 12px), transparent); }
-.k3-cipi::-webkit-scrollbar { display: none; }
-.k3 .k3-cip {
-  flex: none; display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 15px; border-radius: 999px;
-  border: 1px solid var(--k3-rob); background: transparent; color: var(--k3-muted); font-weight: 600; font-size: 0.92rem; cursor: pointer; white-space: nowrap;
+.k3-hub-iskanje { display: flex; align-items: center; gap: 10px; }
+.k3-hub-iskanje .k3-iskalnik { flex: 1; min-width: 0; }
+.k3 .k3-hub-mikroskop { flex: none; width: 48px; height: 48px; min-height: 48px; color: var(--k3-besedilo); text-decoration: none; }
+/* Pot po drevesu (»3D svet › Biologija › Človeško telo«): prejšnji koraki so povezave, zadnji v barvi skupine. */
+.k3-drevo-pot { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; min-height: 40px; padding: 0 4px; font-size: 0.95rem; color: var(--k3-muted); }
+.k3-drevo-pot > span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; } /* »›« ostane ob svojem koraku */
+.k3-drevo-pot a { display: inline-flex; align-items: center; min-height: 40px; padding-inline: 4px; color: var(--k3-accent); text-decoration: none; font-weight: 600; }
+.k3-drevo-pot a:hover { text-decoration: underline; }
+.k3-drevo-pot b { display: inline-flex; align-items: center; min-height: 40px; padding-inline: 4px; font-weight: 700; color: var(--k3-besedilo); }
+.k3-drevo-pot b:focus { outline: none; }
+.k3-drevo-loc { color: var(--k3-muted); }
+[dir="rtl"] .k3-drevo-loc { transform: scaleX(-1); }
+/* Drevo 3D sveta (public/3d/drevo.js): veje kot ikone (izrisi Cycles v slogu aplikacije), ime vedno pod ikono. */
+.k3-drevo { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px 16px; } /* liha zadnja veja na sredini */
+.k3-veja { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 0 1 calc(50% - 8px); max-width: 300px; min-width: 0; color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+@media (min-width: 600px) { .k3-veja { flex-basis: clamp(140px, calc((100% - 48px) / 4), 300px); } } /* štiri v vrsto čez širino */
+.k3-veja-ikona {
+  position: relative; display: block; width: 100%; aspect-ratio: 1; border-radius: 28%;
+  background: radial-gradient(70% 70% at 50% 42%, color-mix(in srgb, var(--veja) 20%, transparent), color-mix(in srgb, var(--veja) 7%, transparent) 72%);
+  border: 1.5px solid color-mix(in srgb, var(--veja) 34%, transparent); transition: transform 0.15s ease, border-color 0.15s ease;
 }
-.k3 .k3-cip:hover { color: var(--k3-besedilo); background: var(--k3-povrsina); }
-.k3 .k3-cip[aria-pressed="true"] { background: var(--k3-accent); border-color: var(--k3-accent); color: #0b0f16; }
-.k3-cip small { font-size: 0.78rem; font-weight: 600; opacity: 0.75; font-variant-numeric: tabular-nums; }
+.k3-veja-ikona img { position: absolute; inset: 4%; width: 92%; height: 92%; object-fit: contain; }
+.k3-veja:hover .k3-veja-ikona, .k3-veja:focus-visible .k3-veja-ikona { transform: translateY(-3px); border-color: var(--veja); }
+.k3-veja:active .k3-veja-ikona { transform: scale(0.96); }
+.k3-veja:focus-visible { outline: none; }
+.k3-veja:focus-visible .k3-veja-ikona { outline: 2px solid var(--k3-accent); outline-offset: 3px; }
+.k3-veja-stevec {
+  position: absolute; top: 8px; inset-inline-end: 8px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; display: grid; place-items: center;
+  background: var(--veja); color: #0b0f16; font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.k3-veja-ime { font-weight: 600; font-size: 1rem; line-height: 1.25; text-align: center; overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) { .k3-veja-ikona { transition: none; } .k3-veja:hover .k3-veja-ikona, .k3-veja:active .k3-veja-ikona { transform: none; } }
 .k3-hub-vsebina { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
 .k3-zadetki { margin: 0; color: var(--k3-muted); }
 .k3-podrocje { min-width: 0; }
@@ -221,10 +248,7 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .k3-stevec { font-size: 0.82rem; font-weight: 600; color: var(--k3-muted); font-variant-numeric: tabular-nums; }
 .k3-podrocje-glava { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .k3-podrocje-glava h2 { margin: 0; }
-.k3 .k3-vec { display: inline-flex; align-items: center; gap: 4px; min-height: 40px; padding: 0 6px 0 12px; border: 0; border-radius: 999px; background: transparent; color: var(--k3-accent); font-weight: 600; font-size: 0.92rem; cursor: pointer; }
-.k3 .k3-vec:hover { background: var(--k3-accent-soft); }
-.k3-vec svg.i { width: 18px; height: 18px; }
-[dir="rtl"] .k3-vec svg.i, [dir="rtl"] .k3-sosed svg.i, .k3-zrcali svg.i { transform: scaleX(-1); }
+[dir="rtl"] .k3-sosed svg.i, .k3-zrcali svg.i { transform: scaleX(-1); }
 [dir="rtl"] .k3-zrcali svg.i { transform: none; }
 /* Polica: vodoravna vrsta kartic do robov zaslona (brez praznih robov), pripenjanje na kartico. */
 .k3-polica-ovoj { position: relative; margin: 0 calc(-1 * max(16px, env(safe-area-inset-right))) 0 calc(-1 * max(16px, env(safe-area-inset-left))); }
@@ -240,6 +264,8 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .k3-polica-gumb.desno { right: 8px; }
 @media (hover: none) { .k3 .k3-polica-gumb { display: none; } }
 .k3-mreza { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(208px, calc(50% - 6px)), 1fr)); gap: 12px; }
+/* Modeli zadnje veje drevesa (2–4): na sredini in čez širino, kot veje nad njimi. */
+@media (min-width: 600px) { .k3-mreza.k3-veja-modeli { grid-template-columns: repeat(auto-fit, minmax(240px, 340px)); justify-content: center; } }
 .k3-kartica {
   display: flex; flex-direction: column; min-width: 0; border-radius: 18px; overflow: hidden; border: 1px solid var(--k3-rob);
   background: var(--k3-povrsina); color: inherit; text-decoration: none; transition: border-color 0.15s, transform 0.15s;
@@ -275,9 +301,16 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .k3-model-telo .k3-pregled { border-radius: 18px; }
 .k3-model-telo .k3-oder-ovoj { height: clamp(320px, 62vh, 760px); }
 @media (max-width: 480px) {
-  .k3-model-vrh { gap: 8px; }
-  /* Ime modela ob štirih gumbih: dve vrstici namesto »Geometrijska …«. */
-  .k3-model-vrh h1 { font-size: 1.05rem; line-height: 1.2; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
+  /* Ob štirih gumbih ostane imenu v isti vrstici le ~90 px (»Bakteriofa/g«, »Kostna celica (osteo…«): gumbi in
+     področje v prvi vrstici, ime modela čez vso širino pod njimi, prelom le med besedami. */
+  .k3-model-vrh:not(.mk-vrh) { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "nazaj nad desno" "ime ime ime"; column-gap: 8px; row-gap: 6px; }
+  .k3-model-vrh:not(.mk-vrh) > .a3-krog { grid-area: nazaj; }
+  .k3-model-vrh:not(.mk-vrh) .k3-model-naslov { display: contents; }
+  .k3-model-vrh:not(.mk-vrh) .k3-nadnaslov { grid-area: nad; min-width: 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .k3-model-vrh:not(.mk-vrh) .k3-model-desno { grid-area: desno; }
+  .k3-model-vrh:not(.mk-vrh) h1 { grid-area: ime; font-size: 1.15rem; line-height: 1.25; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: break-word; }
+  .mk-vrh { gap: 8px; }
+  .mk-vrh h1 { font-size: 1.05rem; line-height: 1.2; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: break-word; }
   .k3-model-desno .a3-krog { width: 40px; height: 40px; min-height: 40px; }
   .k3-model-stevec { display: none; }
 }
@@ -338,6 +371,13 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .a3-nast { flex: none; }
 .a3-kartica, .a3-kviz { padding: 14px 16px 16px; border-radius: 22px; border: 1px solid var(--k3-rob); background: var(--k3-steklo); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4); max-height: 46vh; overflow: auto; animation: a3-gor 0.22s ease-out; }
 @keyframes a3-gor { from { transform: translateY(10px); opacity: 0; } }
+/* Kartica dela nikoli čez telo (atlas.js uskladiKartico, j 5. 11.). Telefon: kartica in spodnja vrstica sta list pod
+   odrom, oder se skrajša do vrha lista. */
+.a3.a3-info-odprta .a3-oder { bottom: var(--a3-dno-h, 0px); }
+.a3.a3-info-odprta .a3-dno { padding-top: 12px; gap: 8px; background: var(--k3-bg); border-top: 1px solid var(--k3-rob); }
+.a3.a3-info-odprta .a3-kartica { background: var(--k3-povrsina); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; max-height: 38vh; }
+.a3.a3-info-odprta .a3-namig { display: none; }
+.a3.a3-info-odprta .a3-namig-vrsta { justify-content: flex-end; padding: 0; border: 0; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
 .a3-pot { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--k3-muted); line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-inline-end: 44px; }
 .a3-pot::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--barva); }
 .a3-kartica { position: relative; }
@@ -453,6 +493,39 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   .k3-zvezda { grid-template-columns: auto 1fr; align-items: center; padding: 28px; }
   .k3-zvezda > :not(.k3-zvezda-ic):not(.k3-zvezda-slika) { grid-column: 2; }
 }
+/* Računalnik in telefon ležeče: kartica levo ob odru pod glavo, oder se zoži. Stolpec je visok kot vsebina (kartica in
+   gumb za nastavitve), pod njim je ozadje odra, ne prazen stolpec (pregled PR #459). Mere so fizične (levo), kot oder,
+   zato enako tudi v RTL. */
+@media (min-width: 900px), (orientation: landscape) and (max-height: 560px) {
+  .a3.a3-info-odprta { background: var(--k3-oder); }
+  .a3.a3-info-odprta .a3-oder { bottom: 0; left: var(--a3-dno-w, 0px); }
+  .a3.a3-info-odprta .a3-dno {
+    top: var(--a3-vrh-h, 0px); bottom: auto; right: auto; width: min(460px, 42vw); max-height: calc(100% - var(--a3-vrh-h, 0px));
+    padding-top: 14px; border-top: 0; background: none; overflow-y: auto;
+  }
+  .a3.a3-info-odprta .a3-kartica { max-height: none; overflow: visible; }
+}
+/* Telefon ležeče in nizek okvir 3D sveta: glava v dveh nizkih vrsticah (naslov, iskanje in gumba; nato števec in
+   povečava), da ostane čim več odra za telo. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .a3-vrh { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding-top: max(8px, var(--varno-zg, env(safe-area-inset-top, 0px))); }
+  .a3-vrh::before { height: calc(var(--varno-zg, env(safe-area-inset-top, 0px)) + 104px); }
+  .a3-glava { display: contents; }
+  .a3-znak, .a3-nadnaslov { display: none; }
+  .a3-naslovi { flex: 0 1 auto; max-width: 30%; }
+  .a3-naslov { font-size: 1rem; -webkit-line-clamp: 1; }
+  .a3-vrh > .a3-vrsta:not(.a3-vrsta3) { order: 1; flex: 1 1 240px; gap: 8px; }
+  .a3-glava > .a3-krog { order: 2; width: 40px; height: 40px; min-height: 40px; }
+  .a3-vrh > .a3-vrsta3 { order: 3; flex: 1 1 100%; }
+  .a3-iskanje { min-height: 40px; }
+  .a3-iskanje input { height: 38px; }
+  .k3 .a3-brskaj { width: 44px; min-height: 40px; padding: 0; }
+  .a3-brskaj span { display: none; }
+  .a3-vrsta .a3-krog { width: 40px; height: 40px; min-height: 40px; }
+  .a3-stevec { min-height: 32px; font-size: 0.88rem; }
+  .a3-dno { padding-bottom: max(8px, var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+  .a3-rezultati { max-height: min(60vh, 240px); }
+}
 @media (prefers-reduced-motion: reduce) {
   .a3-kartica, .a3-kviz, .a3-list { animation: none; }
   .k3 * { transition: none !important; }
@@ -467,8 +540,12 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   background-image: radial-gradient(ellipse 62% 54% at 50% 47%, rgba(118, 84, 80, 0.30) 0%, rgba(62, 44, 46, 0.18) 42%, transparent 74%);
 }
 .k3-organ .k3-oder::after { background: radial-gradient(ellipse 80% 75% at 50% 46%, transparent 52%, rgba(5, 5, 7, 0.6) 100%); }
-.k3-organ .k3-tocka { left: -8px; top: -8px; width: 16px; height: 16px; border-width: 2px; box-shadow: 0 0 0 3px color-mix(in srgb, var(--barva) 30%, transparent), 0 1px 6px rgba(0, 0, 0, 0.55); }
-.k3-organ .k3-tocka::before { inset: -12px; } /* tarča za prst ostane 40 px */
+/* Celice (model.oder = "celica"): globok vijoličen oder z mehkim sijem za celico, kot ciljni videz celic. */
+.k3-celica .k3-oder {
+  background-color: #110c22 !important;
+  background-image: radial-gradient(ellipse 60% 56% at 50% 46%, rgba(104, 76, 178, 0.46) 0%, rgba(56, 40, 110, 0.26) 46%, transparent 78%);
+}
+.k3-celica .k3-oder::after { background: radial-gradient(ellipse 80% 75% at 50% 46%, transparent 52%, rgba(6, 3, 14, 0.62) 100%); }
 .k3-organ .k3-nadzor {
   position: absolute; z-index: 2; top: 12px; left: 12px; gap: 8px; padding: 4px 6px 4px 14px; border-radius: 999px;
   background: var(--k3-steklo); border: 1px solid var(--k3-rob); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -510,6 +587,8 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   padding: 14px max(16px, env(safe-area-inset-right)) max(16px, var(--varno-sp, env(safe-area-inset-bottom, 0px))) max(16px, env(safe-area-inset-left));
   border-top: 1px solid var(--k3-rob); background: var(--k3-bg);
 }
+/* Plošča se drsi, njeni deli se ne krčijo (sicer se na telefonu ob odprtem oknu seznam delov organa stisne na 0). */
+.k3-stran-pregled > .k3-plosca > * { flex-shrink: 0; }
 .k3-o-modelu { order: 9; display: flex; flex-direction: column; gap: 8px; }
 .k3-o-modelu p { margin: 0; line-height: 1.5; color: var(--k3-muted); font-size: 0.94rem; }
 .k3-o-opis { unicode-bidi: plaintext; } /* opis je slovenski tudi v RTL: pika na koncu, ne na začetku vrstice */
@@ -540,8 +619,7 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   }
   .k3-o-modelu { order: 0; }
   /* Stolpec brez prelamljanja: .k3-izpis ima flex-basis 100 %, ki bi v stolpcu pomenil višino plošče in razlil nadzor v
-     stolpce desno od plošče (telefon ležeče, Sončni sistem). Plošča se drsi, njeni deli se ne krčijo. */
-  .k3-stran-pregled > .k3-plosca > * { flex-shrink: 0; }
+     stolpce desno od plošče (telefon ležeče, Sončni sistem). */
   .k3-stran-pregled .k3-nadzor { flex-direction: column; flex-wrap: nowrap; align-items: stretch; }
   .k3-stran-pregled .k3-drsnik, .k3-stran-pregled .k3-izbira, .k3-stran-pregled .k3-izpis { flex: none; }
   .k3-stran-pregled .k3-nadzor > .k3-pill { align-self: flex-start; }
@@ -567,9 +645,6 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 /* Iskalnik: fokus pokaže obroba celega polja (ne pravokotnik v njem); puščica Nazaj v RTL kaže desno. */
 .k3 .k3-iskalnik input:focus-visible { outline: none; }
 [dir="rtl"] .k3-hub-vrh > a.a3-krog svg.i, [dir="rtl"] .k3-model-vrh > button.a3-krog svg.i { transform: scaleX(-1); }
-/* Točke po mirovanju zbledijo (pregledovalnik.js), izbrana ostane; počasnejši prehod kot ob pojavu. */
-.k3-tocke-mirne .k3-tocka:not(.on) { opacity: 0; pointer-events: none; transition: opacity 0.9s; }
-@media (prefers-reduced-motion: reduce) { .k3-tocke-mirne .k3-tocka:not(.on) { transition: none; } }
 
 /* Obvestilo ob preklopu načina vrtenja (poveziGumbVrtenja v scena.js) */
 .k3-vrtenje-sporocilo {
