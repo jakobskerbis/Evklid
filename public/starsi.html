@@ -25,6 +25,10 @@
     .cta { display: inline-block; margin: 8px 0; padding: 12px 22px; border-radius: 12px; background: var(--accent); color: var(--accent-text); font-weight: 700; text-decoration: none; }
     a { color: var(--accent); }
     .doc a.cta { color: var(--accent-text); }
+    .faq { display: grid; gap: 10px; }
+    .faq details { border: 1px solid var(--border); border-radius: 14px; padding: 0 16px; background: var(--surface); }
+    .faq summary { cursor: pointer; font-weight: 700; padding: 14px 0; min-height: 24px; }
+    .faq details p { margin: 0 0 14px; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -105,6 +109,34 @@
     <li>Naročnino lahko kadar koli prekličete v zavihku Račun. Paket velja do konca že plačanega meseca ali leta, nato otrok nadaljuje v brezplačnem paketu.</li>
   </ul>
 
+  <h2>Pogosta vprašanja</h2>
+  <div class="faq">
+    <details>
+      <summary>Kaj Evklid ponuja za otroke od 1. do 5. razreda?</summary>
+      <p>Inštruktorja in učne igre, v katerih igranje pomeni računanje. Z mlajšimi učenci inštruktor govori v zelo kratkih stavkih, dela en korak naenkrat in računa s konkretnimi predmeti, na primer z jabolki, kockami in denarjem. Učna pot po razredih in priprava na NPZ sta na voljo od 6. razreda naprej.</p>
+      <p>Vprašanje lahko otrok inštruktorju tudi pove, če brskalnik podpira glasovni vnos. Odgovorov inštruktorja Evklid ne bere na glas, zato je pri otroku, ki še ne bere tekoče, dobro, da ste zraven.</p>
+    </details>
+    <details>
+      <summary>Ali paket Družina pokriva osnovnošolca in srednješolca?</summary>
+      <p>Da. Družina ima do 4 profile in odpre snov osnovne in srednje šole. Če je med otroki študent, izberete Družino s študentom, ki odpre tudi fakulteto. Vsak profil ima svoj napredek in svoja vprašanja na dan, mesečni obseg podrobnih razlag pa je skupen za vse profile.</p>
+      <p>Ko otrok preide v višji razred ali iz osnovne v srednjo šolo, ostaneta njegov profil in napredek. Pri Družini se ob tem paket ne spremeni.</p>
+    </details>
+    <details>
+      <summary>Kaj se zgodi, če otrok vztraja, naj mu inštruktor pove rešitev?</summary>
+      <p>Inštruktor končnega rezultata nikoli ne pove kot prvi odgovor na novo nalogo. Ko se otrok zatakne, pomaga po stopnjah: najprej z vprašanjem, ki ga usmeri, nato s splošnim in natančnejšim namigom, na koncu en korak naredita skupaj. Pri domači nalogi prvo nalogo rešita skupaj po korakih, naslednje iste vrste poskusi sam.</p>
+      <p>Če otrok še vedno izrecno želi celotno rešitev, mu jo inštruktor pokaže, a vedno s postopkom in razlogom za vsak korak, nikoli samo rezultata.</p>
+    </details>
+    <details>
+      <summary>Koliko naj otrok vadi?</summary>
+      <p>Bolje malo vsak dan kot veliko naenkrat. Na učni poti (od 6. razreda) Evklid vsak dan pripravi trening, ki traja okoli 15 minut: nova snov in ponavljanje. Kar otrok začne pozabljati, mu aplikacija čez nekaj dni sama vrne v ponavljanje.</p>
+    </details>
+    <details>
+      <summary>Kaj lahko kot starš spremljam?</summary>
+      <p>V pregledu <i>Napredek</i> vidite, kaj otrok dela, kaj mu gre in kje potrebuje pomoč. Tam so označeni tudi pogovori, v katerih je inštruktor zaznal stisko ali nevarno prošnjo. Vsako nedeljo lahko dobite kratko poročilo po e-pošti.</p>
+      <p>Otrokov profil je na vašem računu, zato lahko odprete tudi njegove pogovore z inštruktorjem. Nastavitve za omejitev časa uporabe Evklid nima.</p>
+    </details>
+  </div>
+
   <h2>Kako date soglasje</h2>
   <ol>
     <li>Kliknite <b>Ustvari račun in dodaj otroka</b> in vpišite svoj e-naslov, geslo in datum rojstva.</li>
@@ -114,6 +146,15 @@
   </ol>
   <p class="muted">Zakaj ne zahtevamo osebnega dokumenta? Skenirani dokumenti otrok in staršev so zelo občutljivi podatki, ki jih za učno aplikacijo ne potrebujemo. Zakon zahteva razumen trud pri preverjanju, zato soglasje da odrasla oseba s potrjenim e-naslovom, mi pa hranimo le zapis o tem.</p>
   <p><a class="cta" id="cta2" href="/?starsi=1">Ustvari račun in dodaj otroka</a></p>
+  <footer class="mkt-foot">
+    <a href="/">Evklid</a>
+    <a href="/o-evklidu">O Evklidu</a>
+    <a href="/zakaj-evklid">Zakaj Evklid</a>
+    <a href="/starsi.html">Za starše</a>
+    <a href="/sole">Za učitelje in šole</a>
+    <a href="/prenesi?lang=sl">Prenesi aplikacijo</a>
+    <a href="/zasebnost.html">Zasebnost</a>
+  </footer>
 </div>
 <script src="/starsi.js"></script>
 <script type="module" src="/zagon.js" data-moduli="/tipkovnica-strani.js /vir.js"></script>

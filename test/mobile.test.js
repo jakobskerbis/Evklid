@@ -466,11 +466,31 @@ test("download page offers the APK when it exists and works without login", asyn
       const page = await (await fetch(`${base}/prenesi?lang=en`)).text();
       assert.match(page, /\/prenesi\/evklid\.apk/);
       assert.match(page, /TestFlight/);
+      // Z aplikacijo za iPhone (TestFlight) uvod omeni obe napravi; APK brez Google Play pove, zakaj je datoteka.
+      assert.match(page, /available as an app for Android and iPhone/);
+      assert.match(page, /not in Google Play yet/);
+      // Noga z javnimi stranmi (ne v aplikaciji, ?app=1).
+      assert.match(page, /<footer><a href="\/">Evklid<\/a><a href="\/o-evklidu">/);
+      assert.ok(!(await (await fetch(`${base}/prenesi?lang=sl&app=1`)).text()).includes("<footer>"));
       const apk = await fetch(`${base}/prenesi/evklid.apk`);
       assert.equal(apk.status, 200);
       assert.equal(apk.headers.get("content-type"), "application/vnd.android.package-archive");
     },
     { apkFile: fileURLToPath(new URL("./fixtures/apple-chain.json", import.meta.url)), env: { EVKLID_TESTFLIGHT_URL: "https://testflight.apple.com/join/TEST" } },
+  );
+});
+
+// Pregled kupca 16. 11. 2026: brez aplikacije za iPhone stran ne obljublja »aplikacije za iPhone« (iPhone = Safari).
+test("download page without an iPhone app says iPhone uses Safari", async () => {
+  await withServer(
+    async ({ base }) => {
+      const sl = await (await fetch(`${base}/prenesi?lang=sl`)).text();
+      assert.match(sl, /Evklid je na voljo kot aplikacija za Android, na iPhonu in iPadu pa ga odpreš v Safariju\./);
+      assert.ok(!sl.includes("aplikacija za Android in iPhone"));
+      assert.match(sl, /Aplikacije še ni v trgovini Google Play, zato jo preneseš kar s te strani\./);
+      assert.ok(sl.includes('<a href="/starsi.html">Za starše</a>'));
+    },
+    { apkFile: fileURLToPath(new URL("./fixtures/apple-chain.json", import.meta.url)) },
   );
 });
 

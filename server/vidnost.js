@@ -13,6 +13,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { BRAND } from "./brand.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS, freeDailyQuestions } from "./accounts/plans.js";
+import { personalDailyQuestions } from "./placila/pravice.js";
 import { icon } from "../public/icons.js";
 import { latestMeasurement, measurementError, pctText, slDate } from "../scripts/meritev-natancnosti.js";
 
@@ -110,6 +111,9 @@ export function facts(measurement) {
     domain: BRAND.domain,
     trialDays: TRIAL_DAYS,
     freeDaily: freeDailyQuestions(),
+    // Vprašanja na dan v naročnini (server/placila/pravice.js): najmanj toliko, s proračunom AI lahko več.
+    paidDaily: personalDailyQuestions("SS"),
+    paidDailyFaks: personalDailyQuestions("FAKS"),
     languages: uiLanguages().length,
     osM: eur(LEVEL_PRICES.OS.month),
     osY: eur(LEVEL_PRICES.OS.year),

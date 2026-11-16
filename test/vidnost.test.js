@@ -133,7 +133,7 @@ test("stran /o-evklidu: brez JavaScripta, cene iz cenika, pogosta vprašanja", (
   const text = html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ");
   assert.ok(!/\b(tvoj\w*|tebe|moraš|lahko\s+(fotografiraš|izbereš)|vprašaš)\b/i.test(text), "brez tikanja");
   // Notranje povezave kažejo na javne strani.
-  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href) || DRAFT_PAGES.includes(href), href);
+  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href.split("?")[0]) || DRAFT_PAGES.includes(href.split("?")[0]), href);
 });
 
 test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenika, brez imen in cen tekmecev", () => {
@@ -203,7 +203,7 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.equal(css(html), css(aboutPage()), "temni način = /o-evklidu");
   assert.ok(html.includes('<meta name="color-scheme" content="light dark">'));
   assert.ok(!/\b(tvoj\w*|tebe|moraš|vprašaš)\b/i.test(text), "brez tikanja");
-  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href) || DRAFT_PAGES.includes(href), href);
+  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href.split("?")[0]) || DRAFT_PAGES.includes(href.split("?")[0]), href);
   for (const [, id] of html.matchAll(/href="#([\w-]+)"/g)) assert.ok(html.includes(`id="${id}"`), `sidro ${id}`);
   // Povezave na stran: /o-evklidu, vstopna stran brez JavaScripta, llms.txt (z isto meritvijo).
   assert.ok(aboutPage().includes('<a href="/zakaj-evklid">Zakaj Evklid</a>'));
@@ -382,4 +382,34 @@ test("javne strani (Za starše, Za šole, Zasebnost) imajo videz po napravi, bre
   const app = read("v-aplikaciji.js").match(/\(function \(\) \{[\s\S]*\}\)\(\);/)[0];
   assert.ok(read("theme.js").includes(app), "v-aplikaciji.js = blok iz theme.js");
   for (const f of ["starsi.html", "sole.html", "zasebnost.html"]) assert.ok(read(f).includes('<script src="/v-aplikaciji.js"></script>'), f);
+});
+
+// Pregled kupca 16. 11. 2026 (Gemini): cenik pove, kaj doda naročnina, razdelek za maturante, pogosta vprašanja
+// staršev in noga na podstraneh. Trditve so preverjene v kodi; številke pridejo iz kode (server/placila/pravice.js).
+test("javne strani: kaj doda naročnina, matura, vprašanja staršev, noga podstrani", async () => {
+  const { personalDailyQuestions } = await import("../server/placila/pravice.js");
+  const { freeDailyQuestions } = await import("../server/accounts/plans.js");
+  const read = (f) => readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8");
+  const text = (html) => html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ").replace(/\s+/g, " ");
+  const about = text(aboutPage());
+  assert.ok(about.includes(`Brezplačni paket ima ${freeDailyQuestions()} vprašanj inštruktorju na dan, naročnina pa ${personalDailyQuestions("SS")} in podrobnejše razlage.`));
+  assert.ok(about.includes(`${personalDailyQuestions("OS")} vprašanj inštruktorju na dan namesto ${freeDailyQuestions()} (na fakulteti ${personalDailyQuestions("FAKS")}).`));
+  assert.ok(about.includes("Kaj doda naročnina"));
+  for (const s of ["od 1. do 9. razreda", "vsi letniki in matura, tudi snov osnovne šole", "2–4 profili, osnovna in srednja šola", "2–4 profili, tudi fakulteta", "Priprava na maturo iz matematike, fizike, kemije in biologije", "Celotno rešitev pokaže le, če jo otrok izrecno zahteva"])
+    assert.ok(about.includes(s), s);
+  // Brez obljub, ki jih koda ne drži: naročnina ni neomejena.
+  assert.ok(!/neomejen\w* vprašanj|brez dnevne (meje|zapore)/i.test(about));
+  // Za starše: pet vprašanj, vikanje, brez obljube branja na glas ali omejitve časa.
+  const starsi = read("starsi.html");
+  assert.equal((starsi.match(/<details>/g) || []).length, 5);
+  const st = text(starsi);
+  for (const s of ["Odgovorov inštruktorja Evklid ne bere na glas", "Nastavitve za omejitev časa uporabe Evklid nima", "nikoli samo rezultata", "okoli 15 minut"]) assert.ok(st.includes(s), s);
+  assert.ok(!/\b(tvoj\w*|tebe|moraš|vprašaš)\b/i.test(st), "vikanje");
+  // Noga na podstraneh in na /o-evklidu, /zakaj-evklid: povezave na vse javne strani.
+  for (const html of [read("starsi.html"), read("sole.html"), read("zasebnost.html"), read("garancija.html"), aboutPage(), whyPage()]) {
+    const foot = html.match(/<footer class="(?:mkt|land)-foot">([\s\S]*?)<\/footer>/)[1];
+    for (const href of ["/", "/o-evklidu", "/zakaj-evklid", "/starsi.html", "/sole", "/prenesi?lang=sl", "/zasebnost.html"].filter((h) => !html.includes(`<link rel="canonical" href="${ORIGIN}${h}">`)))
+      assert.ok(foot.includes(`href="${href}"`), href);
+  }
+  assert.ok(read("zasebnost.html").includes('href="/predstavitev.css"'));
 });

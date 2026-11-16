@@ -2357,10 +2357,13 @@ export default {
   // stran za prenos aplikacije (/prenesi, server/mobile/download.js)
   "dl.title": "Aplikacija za telefon in tablico",
   "dl.intro": "Evklid je na voljo kot aplikacija za Android in iPhone. Prijaviš se z istim računom kot na spletu, napredek ostane isti.",
+  // brez aplikacije v App Store in TestFlight: iPhone je spletna aplikacija v Safariju (server/mobile/download.js)
+  "dl.introWeb": "Evklid je na voljo kot aplikacija za Android, na iPhonu in iPadu pa ga odpreš v Safariju. Prijaviš se z istim računom kot na spletu, napredek ostane isti.",
   "dl.android": "Android",
   "dl.play": "Na voljo v trgovini Google Play",
   "dl.apk": "Prenesi za Android (APK)",
   "dl.apkSteps": "Odpri preneseno datoteko in potrdi namestitev. Če telefon vpraša, dovoli nameščanje iz tega brskalnika.",
+  "dl.apkWhy": "Aplikacije še ni v trgovini Google Play, zato jo preneseš kar s te strani.",
   "dl.ios": "iPhone in iPad",
   "dl.appStore": "Prenesi v trgovini App Store",
   "dl.testflight": "Namesti prek TestFlight",
