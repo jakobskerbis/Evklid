@@ -18,6 +18,12 @@
     }
   }
   var POSNETEK = "evklid.zadnji-posnetek";
+  var PRENOS = "evklid.posnetek-prenos";
+  var prenos = false;
+  try {
+    prenos = sessionStorage.getItem(PRENOS) === "1";
+    sessionStorage.removeItem(PRENOS);
+  } catch (e) {}
   var html = document.documentElement;
   function konec() {
     html.removeAttribute("data-zacetek");
@@ -27,9 +33,16 @@
   }
   var pozabljen = false;
   var zaprto = false;
+  var prej = [];
   function pozabi() {
     pozabljen = true;
     zaprto = true;
+    for (var i = prej.length - 1; i >= 0; i--) {
+      if (prej[i][0].textContent !== prej[i][4]) continue;
+      prej[i][0].textContent = prej[i][1];
+      if (prej[i][2]) prej[i][2].hidden = prej[i][3];
+    }
+    prej = [];
     try {
       localStorage.removeItem(POSNETEK);
     } catch (e) {}
@@ -177,8 +190,8 @@
       if (!html.hasAttribute("data-zacetek")) return;
       if (!m) {
         var r = razlicica();
-        if (pos && (pos.r || "") !== r) pos = null;
-        if (kasneje && (kasneje.r || "") !== r) kasneje = null;
+        if (pos && !prenos && (pos.r || "") !== r) pos = null;
+        if (kasneje && !prenos && (kasneje.r || "") !== r) kasneje = null;
         m = document.createElement("main");
         m.setAttribute("data-posnetek", "");
         m.setAttribute("aria-hidden", "true");
@@ -191,15 +204,36 @@
         for (var i = 0; i < zs.length; i++) zs[i].scrollTop = Number(zs[i].getAttribute("data-zs")) || 0;
       }
     }
+    var glavaZa = null;
     function oznaci(bar, p) {
       var tb = p && typeof p.tb === "string" && IME.test(p.tb) ? p.tb : "";
-      var tabs = bar.querySelectorAll(".tab");
+      var tabs = bar ? bar.querySelectorAll(".tab") : [];
       for (var j = 0; tb && j < tabs.length; j++) tabs[j].classList.toggle("active", tabs[j].getAttribute("data-view") === tb);
+      if (!p || glavaZa === p) return;
+      glavaZa = p;
       var b = p && Array.isArray(p.b) ? p.b : [];
       for (var k = 0; k < b.length; k++) {
         var el = b[k] === "mock-banner" || b[k] === "test-notice" ? document.getElementById(b[k]) : null;
         if (el) el.hidden = false;
       }
+      var hd = p && p.hd && typeof p.hd === "object" ? p.hd : null;
+      if (hd) {
+        glava("#usage-meter", "#usage-meter b", hd.u, true);
+        glava(null, "#xp-total", hd.x);
+        glava(null, "#xp-streak", hd.k);
+        glava("#goal-chip", "#goal-chip b", hd.c, true);
+        glava(null, "#profile-btn .pm-avatar", hd.i);
+        glava(null, "#profile-btn .pm-name", hd.n);
+      }
+    }
+    function glava(skrit, sel, val, prikazi) {
+      if (typeof val !== "string" || !val || val.length > 60) return;
+      var el = document.querySelector(sel);
+      if (!el) return;
+      var s = prikazi ? document.querySelector(skrit) : null;
+      prej.push([el, el.textContent, s, s && s.hidden, val]);
+      el.textContent = val;
+      if (s) s.hidden = false;
     }
     if (kasneje)
       nadgradi = function () {
@@ -217,6 +251,7 @@
       function () {
         var prvi = !m && document.querySelector("body > main");
         if (prvi) vstavi(prvi);
+        if (prvi) oznaci(null, pos);
       }
     );
   }
@@ -243,7 +278,7 @@
     delete pred[url];
     return p && Date.now() - predOd < 15000 ? p : null;
   }
-  window.evklidZacetek = { KEY: KEY, POSNETEK: POSNETEK, OWNER: OWNER, MAX: MAX, JEZIK: JEZIK, izberi: izberi, beri: beri, vnaprej: vnaprej, konec: konec, pozabi: pozabi, lahkoShrani: lahkoShrani, znova: znova, ociscen: ociscen };
+  window.evklidZacetek = { KEY: KEY, POSNETEK: POSNETEK, PRENOS: PRENOS, OWNER: OWNER, MAX: MAX, JEZIK: JEZIK, izberi: izberi, beri: beri, vnaprej: vnaprej, konec: konec, pozabi: pozabi, lahkoShrani: lahkoShrani, znova: znova, ociscen: ociscen };
   try {
     var z = beri();
     var sid = localStorage.getItem("studentId");
@@ -279,7 +314,14 @@
       });
   } catch (e) {}
   try {
+    html.setAttribute("data-zacetek-lupina", "");
+    var pokaziLupino = function () {
+      html.removeAttribute("data-zacetek-lupina");
+    };
+    document.addEventListener("DOMContentLoaded", pokaziLupino);
+    setTimeout(pokaziLupino, 3000);
     koLupina(function () {
+      pokaziLupino();
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
           window.evklidZacetek.izris = Date.now();
