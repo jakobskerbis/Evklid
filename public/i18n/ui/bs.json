@@ -3911,7 +3911,7 @@
   "land.fact1": "Račune provjerava program",
   "land.fact2": "Prema slovenskom nastavnom planu",
   "land.fact3": "Bez oglasa",
-  "land.trust": "Server i baza u EU (Frankfurt) · Bez oglasa i alata za praćenje · Anthropic ne koristi podatke za treniranje modela",
+  "land.trust": "Baza podataka u EU (Frankfurt) · Bez oglasa i alata za praćenje · Podaci se ne koriste za učenje umjetne inteligencije",
   "land.howTitle": "Kako početi",
   "land.s1.t": "Napravi račun",
   "land.s1.d": "S e-mail adresom i lozinkom.",
