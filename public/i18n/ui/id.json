@@ -4165,5 +4165,11 @@
   "ginv.joinTitle": "Kamu diundang ke Evklid",
   "ginv.joinIntro": "Kamu bisa memakai Evklid tanpa alamat email, dengan paket gratis. Kemajuanmu hanya tersimpan di perangkat ini; kamu bisa membuat akun kapan saja.",
   "ginv.start": "Mulai tanpa email",
-  "ginv.invalid": "Undangan ini sudah tidak berlaku (kedaluwarsa atau sudah habis). Buat akun atau minta tautan baru."
+  "ginv.invalid": "Undangan ini sudah tidak berlaku (kedaluwarsa atau sudah habis). Buat akun atau minta tautan baru.",
+  "povabi.title": "Tunjukkan Evklid ke teman",
+  "povabi.text": "Kalau Evklid membantumu, kirim tautannya ke teman yang juga sedang belajar.",
+  "povabi.reward": "Saat keluarga yang kamu undang berlangganan dan membayar pertama kali, kedua keluarga mendapat gratis satu bulan.",
+  "povabi.later": "Nanti saja",
+  "povabi.link": "Tautan untuk teman",
+  "povabi.shareText": "Aku belajar dengan Evklid. Coba juga, yuk:"
 }

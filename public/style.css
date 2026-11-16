@@ -1256,6 +1256,19 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .reward-offer button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
 .reward-offer.calm { border-style: solid; border-width: 1px; background: var(--surface); }
 .reward-offer.calm .reward-ic { background: var(--accent-soft); color: var(--accent); }
+/* Povabi prijatelja po uspehu (public/povabi.js): mirna kartica pod rezultatom, brez pritiska */
+.povabi-slot:empty { display: none; }
+.povabi { max-width: 520px; margin: 16px 0 0; padding: 14px; text-align: start; }
+.povabi-glava { display: flex; align-items: center; gap: 12px; }
+.povabi-ic { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); flex-shrink: 0; }
+.povabi-t { min-width: 0; }
+.povabi-t b, .povabi-t small { display: block; }
+.povabi-t small { color: var(--muted); margin-top: 2px; }
+.povabi-nagrada { margin: 10px 0 0; font-size: .92em; }
+.povabi-vrsta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.povabi-vrsta input { flex: 1 1 200px; min-width: 0; min-height: 44px; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+.povabi-vrsta button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+.povabi-ne { display: block; margin: 8px 0 0; margin-inline-start: auto; min-height: 44px; }
 
 /* Orodja aplikacije pod odgovorom inštruktorja (public/odpri.js): gumbi, formula, graf, skica, okno poskusa. */
 .open-tools { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; min-width: 0; }

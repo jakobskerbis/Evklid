@@ -4193,5 +4193,11 @@
   "ginv.joinTitle": "Je ftuar në Evklid",
   "ginv.joinIntro": "Mund ta përdorësh Evklid pa adresë emaili, me paketën falas. Përparimi mbetet vetëm në këtë pajisje; llogari mund të krijosh në çdo kohë.",
   "ginv.start": "Fillo pa email",
-  "ginv.invalid": "Kjo ftesë nuk është më e vlefshme (ka skaduar ose është përdorur). Krijo një llogari ose kërko një lidhje të re."
+  "ginv.invalid": "Kjo ftesë nuk është më e vlefshme (ka skaduar ose është përdorur). Krijo një llogari ose kërko një lidhje të re.",
+  "povabi.title": "Tregoji një shoku Evklid-in",
+  "povabi.text": "Nëse Evklid të ndihmon, dërgoja lidhjen një shoku që gjithashtu mëson.",
+  "povabi.reward": "Kur familja që fton pajtohet dhe paguan për herë të parë, të dyja familjet marrin një muaj falas.",
+  "povabi.later": "Jo tani",
+  "povabi.link": "Lidhje për një shok",
+  "povabi.shareText": "Po mësoj me Evklid. Provoje edhe ti:"
 }

@@ -4259,5 +4259,11 @@
   "ginv.joinTitle": "Si pozvaný/á do Evklidu",
   "ginv.joinIntro": "Evklid môžeš používať bez e-mailovej adresy, s bezplatným balíkom. Pokrok zostáva len na tomto zariadení; účet si môžeš vytvoriť kedykoľvek.",
   "ginv.start": "Začať bez e-mailu",
-  "ginv.invalid": "Táto pozvánka už neplatí (vypršala alebo je vyčerpaná). Vytvor si účet alebo požiadaj o nový odkaz."
+  "ginv.invalid": "Táto pozvánka už neplatí (vypršala alebo je vyčerpaná). Vytvor si účet alebo požiadaj o nový odkaz.",
+  "povabi.title": "Ukáž Evklid kamarátovi",
+  "povabi.text": "Ak ti Evklid pomáha, pošli odkaz kamarátovi, ktorý sa tiež učí.",
+  "povabi.reward": "Keď si rodina, ktorú pozveš, objedná predplatné a prvýkrát zaplatí, obe rodiny dostanú jeden mesiac zadarmo.",
+  "povabi.later": "Teraz nie",
+  "povabi.link": "Odkaz pre kamaráta",
+  "povabi.shareText": "Učím sa s Evklidom. Skús to aj ty:"
 }

@@ -4190,4 +4190,11 @@ export default {
   "ginv.joinIntro": "Evklid lahko uporabljaš brez e-naslova, z brezplačnim paketom. Napredek ostane samo na tej napravi; račun lahko ustvariš kadar koli.",
   "ginv.start": "Začni brez e-naslova",
   "ginv.invalid": "Povabilo ne velja več (poteklo je ali je porabljeno). Ustvari račun ali prosi za novo povezavo.",
+  // povabilo po uspehu (public/povabi.js)
+  "povabi.title": "Pokaži Evklida prijatelju",
+  "povabi.text": "Če ti Evklid pomaga, pošlji povezavo prijatelju, ki se tudi uči.",
+  "povabi.reward": "Ko se družina, ki jo povabiš, naroči in prvič plača, obe družini dobita en mesec brezplačno.",
+  "povabi.later": "Ne zdaj",
+  "povabi.link": "Povezava za prijatelja",
+  "povabi.shareText": "Učim se z Evklidom. Poskusi še ti:",
 };
