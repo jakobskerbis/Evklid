@@ -811,7 +811,7 @@ function stepHtml(s, i, from) {
     <div class="scan-step-head"><span class="scan-step-n" aria-hidden="true">${i + 1}</span><p class="scan-step-title"><span class="sr-only">${esc(t("scan.stepN", { n: i + 1 }))}: </span>${tr(s.title)}</p></div>
     ${
       s.note && from
-        ? `<div class="scan-step-math scan-step-izvor"><div class="scan-step-from">${math(from)}<span class="scan-step-note">${math(s.note)}</span></div>${math(s.tex, true)}</div>`
+        ? `<div class="scan-step-math scan-step-izvor"><div class="scan-step-from">${math(`\\displaystyle ${from}`)}<span class="scan-step-note">${math(s.note)}</span></div>${math(s.tex, true)}</div>`
         : `<div class="scan-step-math">${math(s.tex, true)}${s.note ? `<span class="scan-step-note">${math(s.note)}</span>` : ""}</div>`
     }
     <div class="scan-step-actions">
