@@ -132,6 +132,9 @@ export function pdfTemplateHash() {
 // sestavi iz že izdelanih PDF-jev razredov (zdruzi: ključi razredov; scripts/ucbenik-pdf.cjs, pypdf: zaznamki in
 // povezave kazal ostanejo), brez novega izrisa.
 export const PDF_BOOK_MAX_LESSONS = 45;
+// Različica sestave (MERGE_PY, checkMerged v scripts/ucbenik-pdf.cjs): povečaj ob spremembi, da se sestavljeni
+// PDF-ji izdelajo znova (sicer bi ostali stari, ker se razredi niso spremenili).
+export const PDF_MERGE_VERSION = 1;
 
 const unitFile = (key, unit) => `${key}--${slugify(unit).slice(0, 40) || "sklop"}-${sha(unit).slice(0, 6)}`;
 
@@ -191,7 +194,7 @@ export function pdfHash(key, unit = null) {
     // Sestavljen PDF: velja, dokler veljajo vsi PDF-ji razredov, iz katerih je sestavljen.
     const parts = x.zdruzi.map((k) => pdfHash(k));
     if (parts.some((h) => !h)) return null;
-    const hash = sha(JSON.stringify([pdfTemplateHash(), id, "zdruzi", x.label, x.zdruzi, parts])).slice(0, 20);
+    const hash = sha(JSON.stringify([pdfTemplateHash(), id, "zdruzi", PDF_MERGE_VERSION, x.label, x.zdruzi, parts])).slice(0, 20);
     hashes.set(id, { sig, hash });
     return hash;
   }
@@ -267,6 +270,8 @@ export function createPdfStore({
     const id = unit != null ? `${key}?${unit}` : key;
     const e = manifest?.files?.[id];
     if (!validEntry(e)) return null;
+    // Do 40 MB samo sestavljen predmet; razred, poglavje in manjši predmet ostanejo pri 15 MB.
+    if (e.bytes > PDF_MAX_BYTES && !targetTopics(key, unit)?.zdruzi) return null;
     const hash = pdfHash(key, unit);
     return hash && e.hash === hash ? e : null;
   };

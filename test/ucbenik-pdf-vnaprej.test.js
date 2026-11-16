@@ -64,6 +64,9 @@ test("seznam PDF-jev: predmeti, razredi in poglavja šolskih učbenikov; zgošč
   assert.ok(big.zdruzi.length >= 2 && big.zdruzi.every((k) => targets.find((t) => t.id === k)?.kind === "razred"));
   assert.ok(targets.filter((t) => t.kind === "predmet" && t.lessons <= PDF_BOOK_MAX_LESSONS).every((t) => !t.zdruzi), "manjši predmet se izriše v celoti");
   assert.match(pdfHash("MAT-OS"), /^[0-9a-f]{20}$/);
+  assert.notEqual(pdfHash("MAT-OS"), pdfHash("MAT-OS-6"));
+  // Zgoščena vrednost sestavljenega predmeta je iz vrednosti razredov (in različice sestave).
+  assert.ok(big.zdruzi.every((k) => pdfHash(k)), "vsi razredi imajo zgoščeno vrednost");
   assert.equal(pdfDownloadName("MAT-OS"), "Evklid - Matematika - osnovna šola.pdf");
   assert.ok(!targets.some((t) => t.key.startsWith("UNI-") || t.key.startsWith("P-")), "fakultetni učbeniki ostanejo pri tisku v brskalniku");
   const razred = targets.find((t) => t.id === KEY);
@@ -193,6 +196,21 @@ test("shramba: meja velikosti in prostor na disku", async () => {
     const full = createPdfStore({ dir, url: "x", fetchFn: fakeRelease({ [fileA]: a }, manifest).fetchFn, minFree: Number.MAX_SAFE_INTEGER, verify, log: quiet });
     assert.equal(await full.sync(), 0);
     assert.match(full.status().napaka, /premalo prostora/);
+    // Razred nad 15 MB ne velja (do 40 MB samo sestavljen predmet).
+    const dir3 = tmp();
+    const over = { value: { v: 1, files: { [KEY]: { ...entry(fileA, a, pdfHash(KEY)), bytes: PDF_MAX_BYTES + 1 } } } };
+    const s3 = createPdfStore({ dir: dir3, url: "x", fetchFn: fakeRelease({ [fileA]: a }, over).fetchFn, verify, log: quiet });
+    assert.equal(await s3.sync(), 0, "razred nad 15 MB se ne prenese");
+    fs.rmSync(dir3, { recursive: true, force: true });
+    // Sestavljen predmet (MAT-OS) sme imeti več kot 15 MB.
+    const dir4 = tmp();
+    const m = Buffer.concat([Buffer.from("%PDF-1.4\n"), Buffer.alloc(PDF_MAX_BYTES + 10, 32)]);
+    const fileM = `MAT-OS.${pdfHash("MAT-OS")}.pdf`;
+    const merged = { value: { v: 1, files: { "MAT-OS": entry(fileM, m, pdfHash("MAT-OS")) } } };
+    const s4 = createPdfStore({ dir: dir4, url: "x", fetchFn: fakeRelease({ [fileM]: m }, merged).fetchFn, verify, log: quiet });
+    assert.equal(await s4.sync(), 1, "sestavljen predmet nad 15 MB se prenese");
+    assert.equal(s4.find("MAT-OS")?.bytes, m.length);
+    fs.rmSync(dir4, { recursive: true, force: true });
     const big = { value: { v: 1, files: { [KEY]: { ...entry(fileA, a, pdfHash(KEY)), bytes: PDF_BOOK_MAX_BYTES + 1 } } } };
     const dir2 = tmp();
     const store = createPdfStore({ dir: dir2, url: "x", fetchFn: fakeRelease({ [fileA]: a }, big).fetchFn, verify, log: quiet });

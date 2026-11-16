@@ -184,6 +184,7 @@ function optimizePdf(buf) {
 
 // Cel predmet z več kot PDF_BOOK_MAX_LESSONS lekcijami: sestavi ga pypdf iz PDF-jev razredov (Chromium ga v enem
 // kosu ne izriše). Zaznamki (vsak razred ena veja) in povezave kazal razredov ostanejo. Vrne Buffer ali vrže napako.
+// Ob spremembi sestave ali pregleda povečaj PDF_MERGE_VERSION (server/ucbenik-pdf.js).
 const MERGE_PY = `
 import sys
 from pypdf import PdfWriter
@@ -207,7 +208,7 @@ function mergePdfs(bufs, title) {
       return f;
     });
     const out = path.join(dir, "out.pdf");
-    const r = spawnSync("python3", ["-I", "-c", MERGE_PY, out, title, ...ins], { encoding: "utf8" });
+    const r = spawnSync("python3", ["-I", "-c", MERGE_PY, out, title, ...ins], { encoding: "utf8", timeout: 600_000, maxBuffer: 16e6 });
     if (r.error || r.status !== 0 || !fs.existsSync(out)) throw new Error(`pypdf ni uspel: ${(r.error?.message || r.stderr || "").trim().split("\n").pop()}`);
     return fs.readFileSync(out);
   } finally {
@@ -219,10 +220,15 @@ function mergePdfs(bufs, title) {
 async function partPdf(e, out, url) {
   const local = path.join(out, e.file);
   let buf = fs.existsSync(local) ? fs.readFileSync(local) : null;
-  if (!buf) {
-    const r = await fetch(`${url}/${e.file}`, { redirect: "follow", signal: AbortSignal.timeout(120_000) });
-    if (!r.ok) throw new Error(`${e.file}: HTTP ${r.status}`);
-    buf = Buffer.from(await r.arrayBuffer());
+  for (let poskus = 1; !buf; poskus++) {
+    try {
+      const r = await fetch(`${url}/${e.file}`, { redirect: "follow", signal: AbortSignal.timeout(120_000) });
+      if (!r.ok) throw new Error(`${e.file}: HTTP ${r.status}`);
+      buf = Buffer.from(await r.arrayBuffer());
+    } catch (err) {
+      if (poskus >= 3) throw err;
+      await new Promise((ok) => setTimeout(ok, poskus * 5000));
+    }
   }
   if (crypto.createHash("sha256").update(buf).digest("hex") !== e.sha256) throw new Error(`${e.file}: SHA-256 se ne ujema`);
   return buf;

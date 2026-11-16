@@ -6,13 +6,14 @@ document.querySelector(".bar button")?.addEventListener("click", () => print());
 if (location.hash === "#natisni" && !window.__tiskNe) addEventListener("load", () => setTimeout(() => print(), 300));
 
 // Samo zaslon (j 16. 11., telefon): modra vrstica ostane nad formulami (KaTeX ima position: relative), široka skica
-// (<pre>) ali predolga formula v vrstici se pomika sama in ne zamakne cele strani vstran (gumb je ostal napol
+// (<pre>), tabela ali predolga formula v vrstici se pomika sama in ne zamakne cele strani vstran (gumb je ostal napol
 // zunaj zaslona). Pravila so tu in ne v lupini strani, da se zgoščena vrednost predloge PDF ne spremeni
 // (server/ucbenik-pdf.js pdfTemplateHash: sprememba bi razveljavila vse vnaprej izdelane PDF-je); tisk jih ne vidi.
 const css = document.createElement("style");
 css.textContent = `@media screen {
   .bar { z-index: 5; }
   main pre { overflow-x: auto; }
+  main table { display: block; max-width: 100%; overflow-x: auto; }
   main .tisk-siroka { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; }
 }`;
 document.head.append(css);
@@ -20,6 +21,15 @@ function siroke() {
   const main = document.querySelector("main");
   if (!main || matchMedia("print").matches) return;
   const right = main.getBoundingClientRect().right - parseFloat(getComputedStyle(main).paddingRight);
-  for (const k of main.querySelectorAll(".katex:not(.katex-display .katex)")) if (k.getBoundingClientRect().right > right + 1) k.classList.add("tisk-siroka");
+  for (const k of main.querySelectorAll(".tisk-siroka")) k.classList.remove("tisk-siroka");
+  // Formule v tabelah ne: tabela se pomika sama (zgoraj).
+  for (const k of main.querySelectorAll(".katex:not(.katex-display .katex, td .katex, th .katex)")) if (k.getBoundingClientRect().right > right + 1) k.classList.add("tisk-siroka");
 }
 addEventListener("load", siroke);
+let cakaj = 0;
+const znova = () => {
+  clearTimeout(cakaj);
+  cakaj = setTimeout(siroke, 200);
+};
+addEventListener("resize", znova); // obrat telefona
+document.addEventListener("toggle", znova, true); // odprte rešitve (<details>): formule šele zdaj dobijo širino
