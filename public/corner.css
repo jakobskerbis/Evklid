@@ -82,7 +82,7 @@ body.corner-board-open { overflow: hidden; }
 
 /* ---------- vprašalnik ---------- */
 .iq-wrap { position: fixed; inset: 0; z-index: 450; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(15, 23, 42, 0.5); overflow-y: auto; }
-.iq.card { width: min(640px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; margin: 0; }
+.iq.card { --iq-pad: 20px; width: min(640px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; margin: 0; padding: var(--iq-pad) var(--iq-pad) 0; }
 .iq h2 { margin: 0 0 6px; }
 .iq-step { margin: 0 0 6px; font-size: 13px; font-weight: 700; }
 .iq-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin: 14px 0 6px; }
@@ -97,10 +97,12 @@ body.corner-board-open { overflow: hidden; }
 .iq-custom { display: block; margin: 14px 0 6px; }
 .iq-custom input { width: 100%; }
 .iq .check { margin-top: 12px; }
-.iq-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 18px; }
+/* Gumba vprašalnika sta vedno vidna (j, 15. 11. 2026): noga se prilepi na dno okna, vsebina se pomika nad njo. */
+.iq-actions { position: sticky; bottom: 0; z-index: 1; display: flex; justify-content: space-between; gap: 8px; margin: 18px calc(-1 * var(--iq-pad)) 0; padding: 12px var(--iq-pad) var(--iq-pad); background: var(--surface); border-top: 1px solid var(--border); }
 @media (max-width: 760px) {
   .iq-wrap { align-items: flex-end; padding: 0; }
-  .iq.card { border-radius: 20px 20px 0 0; max-height: 92dvh; padding-bottom: max(16px, var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+  .iq.card { --iq-pad: 16px; border-radius: 20px 20px 0 0; max-height: 92dvh; }
+  .iq-actions { padding-bottom: max(16px, var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
   .iq-grid { grid-template-columns: 1fr 1fr; }
   .iq-actions > button { flex: 1; }
 }

@@ -42,12 +42,21 @@ export function initFeedback(opts, config = {}) {
   renderFeedbackCard();
 }
 
-// Kartica na Učni poti: dokler tester ne pošlje mnenja ali je ne skrije.
+// Profil je star vsaj en koledarski dan (lokalni datum): nov učenec na prvi dan vidi najprej trening (j, 15. 11. 2026).
+const localDay = (d) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+function secondDay(s) {
+  if (!s) return false;
+  if (!s.created_at) return true; // brez datuma nastanka (npr. profil samo na napravi) kartica ostane kot prej
+  const born = new Date(`${String(s.created_at).replace(" ", "T")}Z`); // created_at je UTC (SQLite datetime)
+  return !Number.isNaN(born.getTime()) && born < new Date() && localDay(born) !== localDay(new Date());
+}
+
+// Kartica na Učni poti: od drugega dne profila, dokler tester ne pošlje mnenja ali je ne skrije.
 export function renderFeedbackCard() {
   const box = $("#feedback-card");
-  if (!box) return;
+  if (!box || !ctx) return;
   const state = store();
-  box.hidden = !cfg.prompt || state === "hidden" || state === "sent";
+  box.hidden = !cfg.prompt || state === "hidden" || state === "sent" || !secondDay(ctx.getStudent());
   if (box.hidden) return;
   box.className = "card fb-card";
   box.innerHTML = `
