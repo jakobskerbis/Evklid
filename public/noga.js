@@ -17,6 +17,10 @@ const TIPKE = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "En
 const ROB_MISKE = 80; // miška v spodnjih 80 px vrne vrstico (ozko okno na računalniku)
 const NE_DRSENJE = "input[type=range], canvas, .pad, .graph-slot";
 const UPORABA = ["pointerdown", "pointermove", "touchstart", "input", "scroll"];
+// Dotik ob robu gre skozi (vrstica ostane skrita), če je odprto okno ali je pod prstom gumb/povezava (j 2026-11-15):
+// prej je prvi dotik »Naprej« v anketi ali »Začni trening« ob dnu pogoltnilo, vrstica pa je zdrsnila čez gumb.
+const INTERAKTIVNO = "button, a[href], input, select, textarea, label, [role=button], [tabindex]:not([tabindex='-1'])";
+const OKNO = ".iq-wrap, [aria-modal=true], [role=dialog]";
 
 export function nastaviNogo({
   bar,
@@ -28,6 +32,7 @@ export function nastaviNogo({
   // Zaslon za branje: vrstica je pritrjena (position: fixed) že brez naših razredov.
   branje = () => win.getComputedStyle(bar).position === "fixed",
   vodic = () => !!doc.querySelector("#tour:not([hidden])"),
+  okno = () => [...doc.querySelectorAll(OKNO)].some((el) => !el.hidden && el.getClientRects().length > 0),
   skrijPokukano = () => body.classList.remove("tb-peek"),
   sync = () => {},
   zdaj = () => Date.now(),
@@ -86,7 +91,11 @@ export function nastaviNogo({
   function uporaba(e) {
     if (e.type === "touchstart") zacY = e.touches?.[0]?.clientY ?? null;
     if (cls.contains("tb-mir")) {
-      const tap = e.type === "pointerdown" && obRobu(e, bar.offsetHeight || 64);
+      let tap = e.type === "pointerdown" && obRobu(e, bar.offsetHeight || 64);
+      if (tap) {
+        const cilj = e.target?.closest?.(INTERAKTIVNO);
+        if ((cilj && !bar.contains(cilj)) || okno()) return straza(); // dotik velja vsebini, vrstica ostane skrita
+      }
       const drsi =
         e.type === "wheel" ||
         tap ||
