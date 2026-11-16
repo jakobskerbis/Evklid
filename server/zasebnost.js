@@ -27,6 +27,10 @@ export const RETENTION = {
   odpiranjeDni: 120,
   // Predpomnjeni odgovori inštruktorja se uporabijo 30 dni (app.js), nato izbrišejo (docs/izbris-izvoz.md, najdba 4).
   answerCacheDays: 30,
+  // Naročila šol (school_orders: ime, e-naslov in telefon kontaktne osebe) od zadnje spremembe (updated_at).
+  // j 2026-11-16: brez pogodbe 2 leti po zadnjem stiku, sklenjeno 10 let (računovodska listina).
+  schoolOrderOpenDays: 730,
+  schoolOrderWonDays: 3653,
   // Potekle seje in odklepi profilov se izbrišejo takoj (niso več veljavni).
 };
 
@@ -179,6 +183,12 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
     if (file) out.backups = pocistiStare(file, new Date(now));
   } catch (e) {
     log.error?.(`[evklid] čiščenje starih varnostnih kopij: ${e.message}`);
+  }
+  if (hasTable(db, "school_orders")) {
+    // Sklenjeno: status »won« ali šola z licenco iz naročila (school_id); ostalo je povpraševanje brez pogodbe.
+    const won = "(status = 'won' OR school_id IS NOT NULL)";
+    const del = (cond, d) => (d ? Number(db.prepare(`DELETE FROM school_orders WHERE ${cond} AND updated_at < ?`).run(ago(d)).changes) : 0);
+    out.schoolOrders = del(`NOT ${won}`, RETENTION.schoolOrderOpenDays) + del(won, RETENTION.schoolOrderWonDays);
   }
   ensureAuditTable(db);
   out.audit = Number(db.prepare("DELETE FROM audit_log WHERE at < ?").run(ago(RETENTION.auditDays)).changes);
