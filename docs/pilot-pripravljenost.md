@@ -79,7 +79,8 @@ Za pilot nobena ni ovira; vse so zapisane, da se odloči j.
 - Strošek meritve po objavi ni v opozorilu o strošku AI; ima svojo mejo (`server/meritev-po-objavi.js`).
 
 **Spremljanje** (`docs/spremljanje.md`, »Česar ni«)
-- GitHub lahko zagon Straže zamakne za nekaj minut.
+- GitHub zagon Straže po urniku zamakne za ure: izpad javi UptimeRobot, strošek AI in kopijo strežnik po e-pošti,
+  napako e-pošte pa nihče (enkrat na teden poglej `posta` v `/healthz/stanje`).
 - Po 60 dneh brez sprememb v repozitoriju GitHub Stražo izklopi; takrat jo znova vklopi.
 
 **Repozitorij**

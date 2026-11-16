@@ -19,8 +19,8 @@ async function dobi(pot) {
 
 // Stanje strežnika (/healthz/stanje) → { napake, opozorila }. Napaka podre Stražo (GitHub pošlje e-pošto), opozorilo se
 // samo izpiše. Stanja, ki trajajo ves dan (strošek AI nad mejo, neuspel nočni preizkus kopije, neuspela e-pošta),
-// so napaka samo eno uro po dogodku (do 4 zagoni Straže, torej do 4 e-pošte GitHuba), nato samo opozorilo
-// (docs/spremljanje.md). Strežnik sam pošlje skrbniku e-pošto za strošek AI in preizkus kopije.
+// so napaka samo eno uro po dogodku, nato samo opozorilo (docs/spremljanje.md). GitHub urnik zažene le na ~5–10 ur,
+// zato to uro običajno ujame samo zagon po objavi. Strežnik sam pošlje skrbniku e-pošto za strošek AI in preizkus kopije.
 export const SVEZE_MS = 60 * 60 * 1000;
 export function presojaStanja(j, now = Date.now()) {
   const napake = [];

@@ -9,13 +9,15 @@ Tri poti, neodvisne ena od druge:
 2. **Strežnik sam** pošlje e-pošto naslovom iz `EVKLID_ADMIN_EMAILS` (prek Resenda) ob dogodkih, ki jih vidi samo on:
    dnevni strošek AI nad mejo in neuspel nočni preizkus varnostne kopije.
 3. **UptimeRobot** (brezplačen račun j, 16. 11. 2026): vsakih 5 min odpre `https://evklid.app/healthz` in ob izpadu
-   pošlje e-pošto »Down«, ob vrnitvi »Up«. Par v nekaj minutah ob objavi nove različice je samo ponovni zagon.
+   pošlje e-pošto »Down«, ob vrnitvi »Up«. Če ob objavi nove različice prideta »Down« in v nekaj minutah »Up«, je bil
+   to le ponovni zagon.
 
 ## Kaj sproži opozorilo
 
 | Dogodek | Straža (e-pošta GitHub) | Strežnik (e-pošta skrbniku) |
 |---|---|---|
-| Strežnik ne odgovori ali vrne napako (`/healthz`, domača stran, `app.js`, atlas, `/api/config`) | da, ob vsakem zagonu, dokler traja (UptimeRobot: `/healthz` v ~5 min) | – |
+| Strežnik ne odgovori (`/healthz`) | **UptimeRobot** (ne Straža): e-pošta v ~5 min | – |
+| Strežnik ne odgovori ali vrne napako (`/healthz`, domača stran, `app.js`, atlas, `/api/config`) | da, ob vsakem zagonu, dokler traja | – |
 | Strošek AI danes (UTC) nad `EVKLID_OPOZORILO_AI_USD` (privzeto 3 $) | da, prvo uro po preseganju (in prvo uro po drugem e-mailu) | da, z zneskom; drugič istega dne pri 3-kratniku meje |
 | Nočni preizkus obnove iz kopije ni uspel (4.30–8.00) | da, prvo uro po preizkusu (ne ob prehodni napaki, ki jo strežnik čez 10 min ponovi) | da, enkrat na dan, z razlogom (`server/kopije-preveri.js`) |
 | Dnevna kopija baze ni narejena (`kopije.napaka`) | da, dokler traja | – |
@@ -24,7 +26,9 @@ Tri poti, neodvisne ena od druge:
 | PDF učbenika se ne prenese; kopija v R2 ni nastavljena | samo vrstica »Opozorilo« v dnevniku Straže | – |
 
 Stanja, ki trajajo ves dan (strošek AI nad mejo, neuspel preizkus kopije, e-pošta), Stražo podrejo samo eno uro po
-dogodku: to so do 4 e-pošte GitHuba, ne cel dan na 15 minut. Po tem je v dnevniku Straže samo »Opozorilo«. En
+dogodku, da ne pada ves dan. Ker GitHub Stražo po urniku zažene le na ~5–10 ur, tisto uro običajno ujame samo
+zagon po objavi, zato teh stanj od Straže **večinoma ne dobiš** (glej »Česar ni«). Po tej uri je v dnevniku Straže
+samo »Opozorilo«. En
 napačen e-naslov uporabnika (Resend 422) ni napaka e-pošte. Opozorila (PDF, R2) so vidna samo v dnevniku zagona:
 Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
 
@@ -68,9 +72,10 @@ Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
 
 ## Česar ni
 
-- GitHub načrtovani zagon Straže zamakne za ure, zato Straža stanja iz `/healthz/stanje` (strošek AI, kopija,
-  e-pošta) javi pozno. Strošek AI in neuspel preizkus kopije ti strežnik pošlje tudi sam po e-pošti; težavo z e-pošto
-  vidiš samo v Straži. Izpad strežnika javi UptimeRobot.
+- GitHub načrtovani zagon Straže zamakne za ure, zato stanj iz `/healthz/stanje` (strošek AI, kopija, e-pošta)
+  Straža večinoma ne javi. Strošek AI in neuspel preizkus kopije ti strežnik pošlje sam po e-pošti. **Napake e-pošte
+  (Resend) ti nihče ne javi**: enkrat na teden odpri https://evklid.app/healthz/stanje in preveri, da je pri `posta`
+  `"napak":0` ali da je `zadnjiUspeh` novejši od `zadnjaNapaka`. Izpad strežnika javi UptimeRobot.
 - GitHub v javnem repozitoriju izklopi načrtovane delovne tokove po 60 dneh brez sprememb v repozitoriju (pošlje
   opozorilo). Takrat Stražo v Actions znova vklopi (in alarmi gredo tebi).
 - Dodatna varovalka zunaj aplikacije (šteje tudi meritve po objavi): mesečna meja porabe v Anthropic Console
