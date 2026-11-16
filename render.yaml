@@ -49,9 +49,8 @@ services:
         value: "200"
       - key: EVKLID_LIVE_CHECK_DAILY_USD   # pregled z zmogljivejšim modelom, vsi učenci skupaj na dan (j 11. 11.: 1 $ med pilotom; SŠ polovica)
         value: "1"
-      # Ciljna meritev natančnosti po vsaki objavi (server/meritev-po-objavi.js): največ 1 $ na zagon in 15 $ na teden.
-      - key: EVKLID_MERITEV_PO_OBJAVI
-        value: "1"
+      # Ciljna meritev natančnosti po objavi teče v GitHubu (.github/workflows/meritev-po-objavi.yml), ne na strežniku:
+      # strežnik in meritev skupaj presežeta 512 MB (16. 11. 2026). Strežnik spremenljivke EVKLID_MERITEV_PO_OBJAVI ne bere več.
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
