@@ -266,14 +266,15 @@ test("brez povezave: menjava razreda pred sinhronizacijo, stari paketi brez razr
     const pack = await call("GET", `/api/students/${s.id}/offline-pack?path=MAT-TEK-OS`);
     const items = Object.entries(pack.tasks).flatMap(([topic_id, list]) => list.map((t) => ({ topic_id, ...t })));
     assert.ok(items.length >= 6, `nalog v paketu: ${items.length}`);
-    // Smiselnost: vsaj nekaj nalog je za 7. razred drugačnih (sicer test ne bi nič preveril).
-    assert.ok(items.some((t) => input(generateTask(t.topic_id, t.level, t.seed, "en", 7).answer) !== input(t.answer)));
+    // Smiselnost: vsaj nekaj nalog je za 2. razred in brez razreda drugačnih (sicer test ne bi nič preveril).
+    assert.ok(items.some((t) => input(generateTask(t.topic_id, t.level, t.seed, "en", 2).answer) !== input(t.answer)));
+    assert.ok(items.some((t, i) => i % 2 === 1 && input(generateTask(t.topic_id, t.level, t.seed, "en", null).answer) !== input(generateTask(t.topic_id, t.level, t.seed, "en", 2).answer)));
     const rows = store.db.prepare("SELECT year FROM offline_issued WHERE student_id = ?").all(s.id);
     assert.ok(rows.length && rows.every((x) => x.year === 3), JSON.stringify(rows.slice(0, 3)));
     // Polovica izdanih kot pred posodobitvijo (brez razreda): odgovor iz naloge brez razreda.
     const old = items.filter((_, i) => i % 2 === 1);
     for (const t of old) store.db.prepare("UPDATE offline_issued SET year = NULL WHERE student_id = ? AND topic_id = ? AND seed = ?").run(s.id, t.topic_id, t.seed);
-    await call("PUT", `/api/students/${s.id}`, { settings: { ...settings, curriculum_level: "7. razred" } });
+    await call("PUT", `/api/students/${s.id}`, { settings: { ...settings, curriculum_level: "2. razred" } }); // razred 1–4: vrstice brez razreda se ne smejo oceniti po trenutnem razredu
     const results = items.map((t, i) => ({
       topic_id: t.topic_id,
       level: t.level,

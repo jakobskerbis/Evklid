@@ -30,14 +30,14 @@ const squaresBySize = (w, h) => {
   }
   return out;
 };
-// Napačni dnevi z razlago: za dan preveč (štel si danes), premalo, v napačno smer, nato drugi dnevi.
+// Napačni dnevi z razlago: za dan premalo (štel si danes kot prvi dan), preveč, v napačno smer, nato drugi dnevi.
 const dayMistakes = (r, s, d, past) => {
   const at = (k) => DAYS[(((s + k) % 7) + 7) % 7];
   const dir = past ? -1 : 1;
   const out = new Map();
   const add = (day, why) => out.has(day) || out.set(day, why);
-  add(at(dir * (d + 1)), "Za en dan preveč: današnjega dne ne štej.");
-  add(at(dir * (d - 1)), "Za en dan premalo: preštej ostanek še enkrat, dan za dnem.");
+  add(at(dir * (d + 1)), "Za en dan preveč: preštej še enkrat, dan za dnem.");
+  add(at(dir * (d - 1)), "Za en dan premalo: današnji dan ni prvi dan štetja.");
   add(at(-dir * d), past ? "Pred toliko dnevi gremo nazaj, ne naprej." : "Čez toliko dni gremo naprej, ne nazaj.");
   for (const x of r.shuffle(DAYS)) add(x, "Cele tedne preskoči, potem pojdi dan za dnem.");
   return [...out].filter(([x]) => x !== at(dir * d)).slice(0, 3);
@@ -121,7 +121,7 @@ export const TEK_MAT_OS_MLADI = [
           text: `${o.at} ${verbOf(n, "je", "sta", "so")} ${cnt(n)}. ${rule} Kdo zmaga, če ${oba(a, b)} igrata najbolje?`,
           answer: choiceWhy(r, right, [
             [right === a ? b : a, v ? `${a} lahko pusti slab kup, zato ${b} ne more zmagati.` : `${a} začne pri slabem kupu: kar koli vzame, ${b} dopolni do ${m}.`],
-            ["Nihče ne more zagotovo zmagati.", "Igra se vedno konča in nekdo vzame zadnjega, zato eden od njiju lahko zagotovo zmaga."],
+            ["Nihče ne more zagotovo zmagati.", `Igra se vedno konča in nekdo vzame zadnjega, zato ${oba(a, b) === "obe" ? "ena" : "eden"} od njiju lahko zagotovo zmaga.`],
           ]),
           hint: `Začni pri koncu. Kdo zmaga, če ${verbOf(m, "ostane", "ostaneta", "ostanejo")} ${cnt(m)} in je na potezi ${a}?`,
           data: false,
@@ -378,7 +378,7 @@ export const TEK_MAT_OS_MLADI = [
           const right = dur === 30 ? "pol ure" : "eno uro";
           return {
             text,
-            answer: choiceWhy(r, right, ["pol ure", "eno uro", "uro in pol", "dve uri"].map((o) => [o, `Od ${fmt(start)} do ${fmt(end)} je ${ura(dur)}, ne ${o}.`])),
+            answer: choiceWhy(r, right, ["pol ure", "eno uro", "uro in pol", "dve uri"].map((o) => [o, `Od ${fmt(start)} do ${fmt(end)} traja ${right}, ne ${o}.`])),
             hint: "Od polne ure do pol je pol ure. Od pol do naslednje polne ure je še pol ure.",
             data: false,
             formula: "\\text{ena ura} = \\text{pol ure} + \\text{pol ure}",
