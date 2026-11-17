@@ -181,3 +181,44 @@ test("rep po dnevih: razporeditev velja za naročnino, ne za preizkus ali aktiva
     assert.equal(u.allowance(kid.id).spread, true);
   });
 });
+
+test("rep po dnevih: poraba prejšnjih računov člana pilota ni današnja (ni ustavitve »jutri spet« vsak dan)", () => {
+  const { u, ids, spend } = setup();
+  const [s] = ids;
+  // Prejšnji račun člana pilota je porabil mejo in del repa (priorSpentOf šteje ne glede na dan); danes še nič.
+  u.configure({ priorSpentOf: () => 1.75 });
+  const t = u.tailToday(s);
+  assert.equal(t.spent, 0, "danes ni porabe");
+  assert.equal(t.over, false);
+  assert.ok(Math.abs(t.share - (0.2 - Math.min(0.05, callMaxUsd(MODEL, 60_000, MAX_TOKENS.chat)) - 0.05) / t.days) < 1e-9, String(t.share));
+  assert.equal(u.blockInfo(s), null);
+  spend(s, t.share);
+  assert.equal(u.blockInfo(s).code, "block.tailDay", "šele današnja poraba porabi današnji del");
+});
+
+test("rep po dnevih: ves rep porabljen → števec ne obljublja »vsak dan« (ai.out)", () => {
+  const { u, ids, spend } = setup();
+  const [s] = ids;
+  spend(s, 1.9, Date.now() - 2 * DAY);
+  assert.equal(u.overFreeTail(s), true);
+  assert.equal(u.allowance(s).tail, false);
+});
+
+test("rep po dnevih: obnovitev 31. v mesecu: obdobje traja do 31. 3., ne do 28. 3.", async () => {
+  const { withAccounts } = await import("./racuni-pomoc.js");
+  await withAccounts({}, async ({ store, kid, app }) => {
+    const real = Date.now;
+    const now = Date.parse("2027-03-10T12:00:00Z");
+    try {
+      Date.now = () => now;
+      store.db.prepare("UPDATE parents SET sub_status = 'active', sub_seats = 1, sub_period_end = '2027-03-31T08:00:00.000Z'").run();
+      const u = app.locals.usage;
+      assert.equal(u.periodOf(kid.id), "2027-02-28T08:00:00.000Z", "okno se začne 28. 2.");
+      assert.equal(u.periodEndOf(kid.id), "2027-03-31T08:00:00.000Z");
+      const days = Math.ceil((Date.parse(u.periodEndOf(kid.id)) - Date.UTC(2027, 2, 10)) / DAY);
+      assert.equal(days, 22, "10. 3. do 31. 3. (z današnjim)");
+    } finally {
+      Date.now = real;
+    }
+  });
+});

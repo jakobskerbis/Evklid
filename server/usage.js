@@ -337,11 +337,14 @@ export class Usage {
     if (!sb.guaranteed || sb.credit > 0 || sb.spent < sb.ceiling - 1e-9 || !this.spreadOf(studentId)) return null;
     const n = sb.group?.length || 1;
     const tail = Math.max(0, Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, this.totalOf(studentId) ?? Infinity) - sb.ceiling);
+    // Dan se zamenja ob polnoči UTC (01:00 oz. 02:00 po slovenskem času), kot pri drugih dnevnih mejah (date('now')).
     const dayStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
     const start = this.periodStart(studentId);
     const today = new Date(dayStart).toISOString().slice(0, 19).replace("T", " ");
     const since = today > start ? today : start;
-    const spentToday = this.groupSpentSince(studentId, since, sb.owner, sb.group);
+    // Poraba prejšnjih računov člana pilota (priorSpentOf) ni današnja: šteje v rep pred današnjim dnem, sicer bi bil
+    // pilot vsak dan ustavljen z »jutri spet« (pregled #821).
+    const spentToday = this.groupSpentSince(studentId, since, sb.owner, sb.group) - (this.priorSpentOf(studentId, since) || 0);
     const before = sb.spent - spentToday;
     const usedBefore = Math.max(0, before - sb.ceiling);
     const endIso = this.periodEndOf(studentId);
@@ -371,7 +374,8 @@ export class Usage {
       explanations_month: explanationsFor(sb.allowance),
       pool: !!sb.pool, // skupen delež družine: obvestila in preostanek veljajo za vse profile skupaj
       // Porabljen tudi hitri način (brez kredita): do konca obdobja vsak dan kot brezplačni paket (tailToday).
-      tail: sb.credit <= 0 && spent >= sb.ceiling - 1e-9 && !!this.spreadOf(studentId),
+      // Ves rep porabljen (overFreeTail, redka ustavitev do novega obdobja): ne »vsak dan«, ampak ai.out.
+      tail: sb.credit <= 0 && spent >= sb.ceiling - 1e-9 && !!this.spreadOf(studentId) && !this.overFreeTail(studentId, state),
       // Plačan paket: po hitrem načinu vsak dan kot brezplačni paket (obvestilo ai.then); preizkus, koda, bonus ne.
       spread: !!this.spreadOf(studentId),
     };

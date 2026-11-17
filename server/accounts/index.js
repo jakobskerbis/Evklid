@@ -631,7 +631,17 @@ export function mountAccounts(app, store, opts = {}) {
     const tier = r.personalTier === "paid" ? unpaidTier(p) || "paid" : r.personalTier;
     const until = tier === "trial" && Date.parse(p?.trial_ends_at || "") > Date.now() ? p.trial_ends_at : tier === "bonus" ? p?.bonus_until : null;
     const end = Date.parse(until || "");
-    return new Date(Number.isFinite(end) && end > start ? end : addMonthsUtc(start, 1)).toISOString();
+    if (Number.isFinite(end) && end > start) return new Date(end).toISOString();
+    // Mesečna okna, sidrana na obnovitev (konec obdobja, darila, kode): konec okna je prvi datum sidra, štet nazaj, ki je
+    // za začetkom (obnovitev 31.: okno 28. 2. – 31. 3., ne do 28. 3.; pregled #821). Okno zunaj mreže: mesec od začetka.
+    const anchor = Date.parse((tier === "paid" ? p?.sub_period_end : tier === "gift" ? p?.gift_until : tier === "promo" ? p?.promo_until : null) || "");
+    if (Number.isFinite(anchor)) {
+      for (let k = 240; k >= 0; k--) {
+        const t = addMonthsUtc(anchor, -k);
+        if (t > start) return t <= addMonthsUtc(start, 1) + 3 * DAY ? new Date(t).toISOString() : new Date(addMonthsUtc(start, 1)).toISOString();
+      }
+    }
+    return new Date(addMonthsUtc(start, 1)).toISOString();
   }
   // Vrednost paketa (meja + brezplačni rep) v $: trda meja (server/usage.js capsFor), največ to.
   const guaranteeTotalFor = (studentId) => subGuarantee(studentId)?.total ?? null;
