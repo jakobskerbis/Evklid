@@ -2,6 +2,15 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-17: krajši prvi odgovor v načinu B, rezultat v prvem stavku (PR #797)
+
+- Zakaj: j je 17. 11. primerjal Evklid z ChatGPT in Matura AI (Astra) na 10 maturitetnih nalogah. Vsi so bili pravilni in Evklidove razlage najboljše, odgovori pa daleč najdaljši (Podatki, Iščemo, Načrt, koraki, Preverba, Zapomni si, »Kaj je naloga preverjala«, Vaja, gumbi). Všeč mu je bil odgovor z rezultatom v prvem stavku. Neskladje: »≈ 52,6 m« v koraku, »Rezultat: s_z ≈ 53 m« na koncu.
+- Prompt (stalni del, razdelek »Način B – celotna rešitev«): nalogo najprej reši in preveri v razmisleku; prvi stavek pove preverjeni rezultat krepko z enoto (pri podvprašanjih a), b), c) vse po vrsti); Podatki in Iščemo v eni do dveh vrsticah, Načrt en stavek; koraki kratki (najprej simbolično, nato števila; skica ostane, kjer jo zahteva predmet); Preverba ena vrstica; »Zapomni si« le, kadar koristi; brez ločenega stavka »katero znanje je naloga preverjala«; Vaja v enem stavku z gumbi `IZBIRE`; ena zaokrožitev v prvem stavku, zadnjem koraku in Preverbi, ob drugačnem rezultatu med koraki odkrit »Popravek: pravilno je …«. OŠ 1.–5. razred obdrži dosedanji vrstni red (j 17. 11.). »Vzorec za računske naloge« točka 3 kaže na razdelek Način B.
+- Stalni del +1 514 znakov (55 277 → 56 791; ~400 predpomnjenih žetonov, zanemarljiv strošek). Meja 1 550 znakov je v testu načina B; test skic ima zdaj le spodnjo mejo.
+- Koda: `server/app.js` `cacheKey` doda »b2« v načinu B in ob prošnji za celo rešitev v načinu A, da se stari dolgi shranjeni odgovori ne vračajo; ključi običajnih vprašanj v načinu A ostanejo.
+- Test: `test/prompt.test.js` (besedilo razdelka, vrstica za OŠ 1.–5., meja rasti), `test/zasebnost-predpomnilnik.test.js` (ključi).
+- Meritev: plačane meritve ni bilo (j 17. 11.: po objavi preizkusi sam). Skript za kasnejšo primerjavo: `node scripts/meri-nacin-b.mjs --max-usd 3`.
+
 ## 2026-11-16: skice samo z blokom SKICA/GRAF (PR #782, j potrdil na kartici 16. 11.)
 
 - Zakaj: j je na telefonu (OŠ 9. razred, »Razloži mi Pitagorov izrek.«) dobil trikotnik, narisan iz `|`, `\` in `_` v kodnem bloku, ki je bil zamaknjen. Splošno pravilo »dodaj preprosto skico v besedilu« je model bral kot risbo iz znakov; blok `SKICA` je opisan šele v razdelku Orodja aplikacije.
