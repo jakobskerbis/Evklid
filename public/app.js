@@ -1133,7 +1133,7 @@ const ideasHtml = (ideas) => ideas.map((x) => `<button type="button" class="idea
 // Predlogi v praznem klepetu po profilu (j, 17. 11. 2026): tema z učne poti učenčevega razreda/letnika in predmeta,
 // pri maturantu naloga v slogu mature (pri MAT z ravnijo), v 6. in 9. razredu pri MAT v slogu NPZ.
 // Brez učne poti (še ni naložena, napaka) ostanejo splošni predlogi.
-const ideasKey = (s) => [s?.subject, s?.educational_track, s?.curriculum_level, s?.study_program, s?.school_system].join("|");
+const ideasKey = (s) => [s?.subject, s?.educational_track, s?.curriculum_level, s?.study_program, s?.study_course, s?.school_system].join("|");
 const ideasPath = (st) => (state.ideasPath && state.ideasPath.student === st?.id && state.ideasPath.key === ideasKey(st?.settings) ? state.ideasPath : null);
 function chatIdeas(s = {}, path = null) {
   const topics = (path?.topics || []).filter((x) => x?.name);
@@ -2166,6 +2166,7 @@ async function subjectChoices() {
 }
 async function pickSubject(item) {
   const uni = isUni(state.student.settings);
+  const ideasFor = state.student, ideasFrom = ideasKey(ideasFor.settings); // predlogi: pot za tega učenca in te nastavitve
   const settings = uni ? { study_course: item.id, subject: item.subject || state.student.settings.subject } : { subject: item.id, study_course: "" };
   // Optimistično (j 6. 11. 2026: odziven Evklid): izbira, glava in obvestilo takoj, shranjevanje na strežnik
   // v ozadju (meni se zapre brez čakanja). Podatke zaslona naložimo po shranjevanju (strežnik jih bere po
@@ -3048,7 +3049,7 @@ async function loadPath(key = state.pathKey) {
   const changed = state.pathKey !== p.key;
   state.pathKey = p.key;
   state.pathSubject = paths.find((x) => x.key === p.key)?.subject || state.student.settings.subject;
-  if (!uni || !key || key === p.defaultKey) (rememberIdeasPath(state.student, p), showIdeas());
+  if ((!uni || !key || key === p.defaultKey) && state.student?.id === ideasFor.id && ideasKey(state.student.settings) === ideasFrom) (rememberIdeasPath(state.student, p), showIdeas());
   if (changed) refreshModes(); // fakulteta: drug predmet iz seznama poti
   showLevelCard();
   renderStageHome();
