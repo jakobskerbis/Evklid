@@ -3389,6 +3389,8 @@
   "mk.beam": "Fascio di elettroni",
   "mk.colors": "Molecole a colori",
   "mk.temLimit": "Qui la sezione non mostra altri dettagli: attiva Molecole a colori.",
+  "mk.molLoading": "Disegno le molecole…",
+  "mk.molError": "Questo dispositivo non riesce a disegnare le molecole. Con un ingrandimento minore vedi la sezione.",
   "mk.fieldOfView": "Campo visivo",
   "mk.resolution": "Risoluzione",
   "mk.rayleigh": "{d} (Rayleigh)",

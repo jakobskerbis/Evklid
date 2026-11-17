@@ -2,7 +2,7 @@
 // zamegljenost (optika), sloj molekul/atomov pri največjih povečavah, na koncu sestava na zaslon (vidno polje okularja
 // ali zaslon TEM, svetlost, kontrast, barva žarnice, šum elektronov). Riše samo ob spremembi (narisi()).
 import { fragmentPreparata } from "./glsl.js";
-import { molekuleZa, kljucMolekul } from "./molekule.js";
+import { MOLEKULE, molekuleZa, kljucMolekul } from "./molekule.js";
 
 const VS = `#version 300 es
 in vec2 a; void main() { gl_Position = vec4(a, 0.0, 1.0); }`;
@@ -116,14 +116,23 @@ function preveri(gl, g) {
 function program(gl, fs) {
   return preveri(gl, zgradi(gl, fs));
 }
+// Brez razširitve vsako branje stanja (ali prvo risanje) čaka, da je program preveden, in toliko časa stran stoji. Zato se
+// taki programi prevajajo eden za drugim, vsak šele v mirnem trenutku (requestIdleCallback, najkasneje po 300 ms): stran
+// naenkrat stoji največ toliko, kolikor traja prevajanje enega programa.
+let vrstaBrez = Promise.resolve();
+const mirno = () => new Promise((ok) => (typeof requestIdleCallback === "function" ? requestIdleCallback(() => ok(), { timeout: 300 }) : setTimeout(ok, 50)));
 function programVzporedno(gl, fs, ext) {
+  if (!ext) {
+    const o = vrstaBrez.then(mirno).then(() => preveri(gl, zgradi(gl, fs)));
+    vrstaBrez = o.catch(() => {});
+    return o;
+  }
   const g = zgradi(gl, fs);
-  // brez razširitve prevajanje čaka ob prvem branju stanja: vsaj po naslednji sličici, da je predogled že na zaslonu
-  if (!ext) return new Promise((ok) => setTimeout(ok, 50)).then(() => preveri(gl, g));
+  // z razširitvijo: stanje (LINK_STATUS, COMPILE_STATUS) se prebere šele, ko COMPLETION_STATUS_KHR pove, da je konec
   return new Promise((ok, napaka) => {
     const cakaj = () => {
       try {
-        if (gl.isContextLost()) napaka(new Error("WebGL: kontekst izgubljen"));
+        if (gl.isContextLost()) napaka(Object.assign(new Error("WebGL: kontekst izgubljen"), { izguba: true }));
         else if (gl.getProgramParameter(g.p, ext.COMPLETION_STATUS_KHR)) ok(preveri(gl, g));
         else setTimeout(cakaj, 16);
       } catch (e) {
@@ -173,8 +182,17 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
   // dokler ni pripravljen ali če se ne prevede, je slika brez sloja molekul. Za vsak pogled je program specializiran
   // (molekuleZa: le prizori strani A in B, membrana in atomi tega pogleda; j, 16. 11. 2026, hitrost): splošni program z
   // vsemi 37 prizori je na grafiki brez pravega vejanja ~50× počasnejši in se prevaja ~20 s. Hranimo zadnjih nekaj.
-  const molProgrami = new Map(); // ključ → { p (program ali null), obljuba }
-  let molNapaka = false;
+  // Hranimo zadnjih 8 uporabljenih (LRU). Če se program za pogled ne prevede (stara grafika, omejitve telefona), velja
+  // za ta ključ splošni program (enaka slika); če se ne prevede niti ta, mikroskop to pove (molStanje »napaka«).
+  const molProgrami = new Map(); // ključ → { p (program ali null), obljuba }; vrstni red = zadnja uporaba
+  const neuspeli = new Set(); // ključi, katerih program se ni prevedel
+  let splosni = null; // { p, obljuba, napaka } splošni program z vsemi prizori (le kot nadomestek)
+  const MOL_NAJVEC = 8;
+  const uporabi = (kl, x) => {
+    molProgrami.delete(kl);
+    molProgrami.set(kl, x);
+    return x.p;
+  };
   // ključ programa za pogled v; zaId: prehod ID atomov ne riše (vrne prej), zato je dober katerikoli program istega prizora
   const molK = (v, px) => {
     const U = v.mol.uniforme;
@@ -184,13 +202,33 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
     };
   };
   // Program z atomi riše enako kot brez njih, kjer atomov ni (nad 0,08 nm na točko); prehod ID atomov ne riše.
+  // Splošni program (če je že preveden) riše vse poglede enako kot specializirani.
   const molProgram = (v, px, zaId = false) => {
     const k = molK(v, px);
-    const x = molProgrami.get(kljucMolekul(k));
-    if (x?.p || (k.atomi && !zaId)) return x?.p || null;
-    const brez = kljucMolekul({ ...k, atomi: false });
-    for (const [kl, y] of molProgrami) if (y.p && kl.slice(0, kl.lastIndexOf(",")) === brez.slice(0, brez.lastIndexOf(","))) return y.p;
-    return null;
+    const kl = kljucMolekul(k);
+    const x = molProgrami.get(kl);
+    if (x?.p) return uporabi(kl, x);
+    if (!k.atomi || zaId) {
+      const brez = kljucMolekul({ ...k, atomi: false });
+      const pre = brez.slice(0, brez.lastIndexOf(","));
+      for (const [kk, y] of molProgrami) if (y.p && kk.slice(0, kk.lastIndexOf(",")) === pre) return uporabi(kk, y);
+    }
+    return splosni?.p || null;
+  };
+  const pripraviSplosni = () => {
+    if (!splosni) {
+      const x = (splosni = { p: null, napaka: false, obljuba: null });
+      x.obljuba = programVzporedno(gl, MOLEKULE, vzporedno).then(
+        (p) => ((x.p = p), true),
+        (e) => {
+          if (e?.izguba) splosni = null;
+          else x.napaka = true;
+          console.warn("Mikroskop: sloj molekul ni na voljo", e?.message?.slice(0, 200));
+          return false;
+        },
+      );
+    }
+    return splosni.obljuba;
   };
   let idT = null; // majhna tekstura za prehod z režami molekul (oznake)
   // zamegljenost se računa znova le, ko se je preparat ali sigma spremenil (sloj molekul se med risanjem sestavlja večkrat)
@@ -393,19 +431,19 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
     },
     // Prevajanje programa molekul za pogled v (v.mol) v ozadju. Vrne obljubo (true, ko je pripravljen; false ob napaki).
     pripraviMol(v) {
-      if (!v?.mol || molNapaka) return Promise.resolve(false);
-      const k = molK(v, v.umNaTocko * 1000);
-      const kl = kljucMolekul(k);
+      if (!v?.mol) return Promise.resolve(false);
+      const kl = kljucMolekul(molK(v, v.umNaTocko * 1000));
+      if (neuspeli.has(kl)) return pripraviSplosni();
       let x = molProgrami.get(kl);
       if (x) return x.obljuba;
       x = { p: null, obljuba: null };
       molProgrami.set(kl, x);
-      x.obljuba = programVzporedno(gl, molekuleZa(k), vzporedno).then(
+      x.obljuba = programVzporedno(gl, molekuleZa(molK(v, v.umNaTocko * 1000)), vzporedno).then(
         (p) => {
           x.p = p;
-          // največ 8 programov: najstarejši (ki ni v prevajanju) se izbriše
+          // največ 8 programov: izbriše se najdlje neuporabljen (ki ni v prevajanju)
           for (const [kk, y] of molProgrami) {
-            if (molProgrami.size <= 8) break;
+            if (molProgrami.size <= MOL_NAJVEC) break;
             if (y.p && y !== x) {
               gl.deleteProgram(y.p.p);
               molProgrami.delete(kk);
@@ -414,10 +452,11 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
           return true;
         },
         (e) => {
-          molNapaka = true;
           molProgrami.delete(kl);
-          console.warn("Mikroskop: sloj molekul ni na voljo", e?.message?.slice(0, 200));
-          return false;
+          if (e?.izguba) return false; // izguba grafike: mikroskop ustvari upodobitev znova
+          neuspeli.add(kl);
+          console.warn("Mikroskop: program molekul za ta pogled se ni prevedel, velja splošni", e?.message?.slice(0, 200));
+          return pripraviSplosni();
         },
       );
       return x.obljuba;
@@ -425,6 +464,13 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
     // ali je program molekul za pogled v pripravljen (zaId: za prehod ID pri v.umNaTocko)
     molPripravljen(v, zaId = false) {
       return !!v?.mol && !!molProgram(v, v.umNaTocko * 1000, zaId);
+    },
+    // »« brez sloja molekul, »ok« pripravljen, »caka« se prevaja, »napaka« ga na tej napravi ni mogoče narisati
+    molStanje(v) {
+      if (!v?.mol) return "";
+      if (molProgram(v, v.umNaTocko * 1000)) return "ok";
+      const kl = kljucMolekul(molK(v, v.umNaTocko * 1000));
+      return neuspeli.has(kl) && splosni?.napaka ? "napaka" : "caka";
     },
     // Sloj molekul v pasu vrstic y0..y1 (kot narisiPreparat): tudi pri atomih je izris po delih, zato grafični procesor
     // telefona nikoli ne dobi enega predolgega izrisa (ta lahko ponastavi grafiko in pusti črno sliko).

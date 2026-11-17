@@ -3393,6 +3393,8 @@
   "mk.beam": "Feixe de eletrões",
   "mk.colors": "Moléculas a cores",
   "mk.temLimit": "Aqui o corte já não mostra mais pormenores – ativa Moléculas a cores.",
+  "mk.molLoading": "A desenhar as moléculas…",
+  "mk.molError": "Este dispositivo não consegue desenhar as moléculas. Com menor ampliação vês o corte.",
   "mk.fieldOfView": "Campo de visão",
   "mk.resolution": "Resolução",
   "mk.rayleigh": "{d} (Rayleigh)",

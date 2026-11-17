@@ -3389,6 +3389,8 @@
   "mk.beam": "Faisceau d’électrons",
   "mk.colors": "Molécules en couleur",
   "mk.temLimit": "Ici, la coupe ne montre plus de détails : active Molécules en couleur.",
+  "mk.molLoading": "Dessin des molécules…",
+  "mk.molError": "Cet appareil ne peut pas dessiner les molécules. Avec un grossissement plus faible, tu vois la coupe.",
   "mk.fieldOfView": "Champ de vision",
   "mk.resolution": "Résolution",
   "mk.rayleigh": "{d} (Rayleigh)",

@@ -3452,6 +3452,8 @@
   "mk.beam": "Elektrónový zväzok",
   "mk.colors": "Molekuly vo farbách",
   "mk.temLimit": "Rez tu už neukáže ďalšie podrobnosti – zapni Molekuly vo farbách.",
+  "mk.molLoading": "Kreslím molekuly…",
+  "mk.molError": "Toto zariadenie molekuly nakresliť nezvládne. Pri menšom zväčšení uvidíš rez.",
   "mk.fieldOfView": "Zorné pole",
   "mk.resolution": "Rozlíšenie",
   "mk.rayleigh": "{d} (Rayleigh)",

@@ -3388,6 +3388,8 @@
   "mk.beam": "Tufa e elektroneve",
   "mk.colors": "Molekula me ngjyra",
   "mk.temLimit": "Prerja këtu nuk tregon më detaje – ndiz Molekula me ngjyra.",
+  "mk.molLoading": "Po vizatoj molekulat…",
+  "mk.molError": "Kjo pajisje nuk mund t'i vizatojë molekulat. Me zmadhim më të vogël sheh prerjen.",
   "mk.fieldOfView": "Fusha e pamjes",
   "mk.resolution": "Rezolucioni",
   "mk.rayleigh": "{d} (Rayleigh)",

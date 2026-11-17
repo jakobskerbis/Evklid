@@ -3421,6 +3421,8 @@
   "mk.beam": "Fascicul de electroni",
   "mk.colors": "Molecule colorate",
   "mk.temLimit": "Aici secțiunea nu mai arată alte detalii – activează Molecule colorate.",
+  "mk.molLoading": "Desenez moleculele…",
+  "mk.molError": "Acest dispozitiv nu poate desena moleculele. La o mărire mai mică vezi secțiunea.",
   "mk.fieldOfView": "Câmp vizual",
   "mk.resolution": "Rezoluție",
   "mk.rayleigh": "{d} (Rayleigh)",

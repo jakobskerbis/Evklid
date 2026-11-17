@@ -382,17 +382,146 @@ test("mikroskop: pri atomih se sredina premakne na najbližjo molekulo, ne ostan
 // j, 16. 11. 2026: »na racunalniku molekule se vedno niso izrisane«. Splošni program molekul (vseh 37 prizorov v eni
 // verigi) se je na namizju prevajal ~20 s in risal ~65 µs na točko: pri 1920 × 1080 je bila po 90 s narisana šele
 // četrtina sloja, ob vsakem premiku pa se je začel znova. Sloj molekul mora risati program, specializiran za pogled.
-test("mikroskop: sloj molekul riše program za en pogled, ne splošnega s 37 prizori", async () => {
-  const upo = fs.readFileSync(path.join(ROOT, "public", "mikroskop", "upodobi.js"), "utf8");
-  assert.doesNotMatch(upo, /import \{[^}]*\bMOLEKULE\b[^}]*\} from "\.\/molekule\.js"/, "upodobi.js ne prevaja splošnega programa");
-  assert.match(upo, /programVzporedno\(gl, molekuleZa\(/);
+// j, 17. 11. 2026 (posnetek s telefona: pri 50 000 000× enakomerno siva slika; »zasteka okoli 1 000 000×«): dokler se
+// program prevaja ali če se ne prevede, mikroskop to pove, ob napaki velja splošni program, stanje programa se ne bere
+// pred koncem vzporednega prevajanja. Preizkus z namišljenim WebGL2 (brez brskalnika).
+function lazniGL({ khr = true, napaka = () => false } = {}) {
+  const st = { programi: [], prezgodaj: 0, gotovo: false };
+  const ext = { COMPLETION_STATUS_KHR: "COMPLETION" };
+  const impl = {
+    getExtension: (n) => (n === "KHR_parallel_shader_compile" ? (khr ? ext : null) : n === "EXT_color_buffer_float" ? {} : null),
+    createShader: (tip) => ({ tip, src: "" }),
+    shaderSource: (sh, src) => (sh.src = src),
+    createProgram: () => ({ sh: [], izbrisan: false }),
+    attachShader: (p, sh) => p.sh.push(sh),
+    linkProgram: (p) => {
+      p.src = p.sh.map((x) => x.src).join("\n");
+      p.mol = /uniform \w+ uPA\b/.test(p.src);
+      st.programi.push(p);
+    },
+    getProgramParameter: (p, k) => {
+      if (k === "COMPLETION") return st.gotovo;
+      if (p.mol && khr && !st.gotovo) st.prezgodaj++;
+      return !napaka(p.src);
+    },
+    getShaderParameter: (sh) => !napaka(sh.src),
+    getShaderInfoLog: () => "ERROR: 0:1: preveč",
+    getProgramInfoLog: () => "link",
+    deleteProgram: (p) => (p.izbrisan = true),
+    isContextLost: () => false,
+    getUniformLocation: () => ({}),
+  };
+  const gl = new Proxy(impl, { get: (o, k) => (k in o ? o[k] : /^[A-Z0-9_]+$/.test(k) ? k : () => ({})) });
+  return { st, platno: { width: 64, height: 64, getContext: () => gl } };
+}
+const cakaj = (ms = 60) => new Promise((r) => setTimeout(r, ms));
+const pogledMol = (pA, { mem = 0, pB = 0 } = {}) => ({ n: 64, umNaTocko: 0.0002, mol: { utez: 1, uniforme: { pA, pB, mem, memVrsta: 0, at: new Array(16).fill(1), fine: [0, 0], n: [0, 1], smer: [1, 0] } } });
+
+test("mikroskop: sloj molekul riše program za en pogled, ob napaki splošni, stanje za obvestilo", async () => {
+  const { ustvariUpodobitev } = await import("../public/mikroskop/upodobi.js");
+  const { MOLEKULE } = await import("../public/mikroskop/molekule.js");
+  const { obvestiloMol } = await import("../public/mikroskop/pogled.js");
+  const molSrc = (st) => st.programi.filter((p) => p.mol).map((p) => (/^#define K_PA (\d+)$/m.exec(p.src) || [, "splošni"])[1]);
+
+  // 1) program za pogled: le njegov prizor; dokler se prevaja, je stanje »caka« (obvestilo »nalaganje«), nato »ok«
+  {
+    const g = lazniGL();
+    const upo = ustvariUpodobitev(g.platno);
+    const v = pogledMol(2);
+    assert.equal(upo.molStanje(v), "caka");
+    const o = upo.pripraviMol(v);
+    assert.equal(upo.pripraviMol(v), o, "isti pogled: ista obljuba, ne drugo prevajanje");
+    assert.deepEqual(molSrc(g.st), ["2"]);
+    const vejP = (src) => [...src.matchAll(/^  (?:\} else )?if \(P == (.*)\) \{$/gm)].length;
+    assert.ok(vejP(g.st.programi.find((p) => p.mol).src) <= 1 && vejP(MOLEKULE) > 20, "le veja tega prizora, ne vseh 37");
+    await cakaj();
+    assert.equal(upo.molStanje(v), "caka");
+    assert.equal(upo.molPripravljen(v), false);
+    assert.equal(upo.narisiMol(v), false, "brez programa se sloj ne riše");
+    assert.equal(obvestiloMol(upo.molStanje(v), v.mol.utez), "nalaganje");
+    assert.equal(obvestiloMol(upo.molStanje(v), 0.3), "", "pri manjši uteži se preparat še vidi");
+    g.st.gotovo = true;
+    assert.equal(await o, true);
+    assert.equal(g.st.prezgodaj, 0, "LINK_STATUS/COMPILE_STATUS šele po COMPLETION_STATUS_KHR");
+    assert.equal(upo.molStanje(v), "ok");
+    assert.equal(obvestiloMol("ok", 1), "");
+    assert.equal(upo.narisiMol(v), true);
+    // drug prizor: nov program
+    await upo.pripraviMol(pogledMol(5));
+    assert.deepEqual(molSrc(g.st), ["2", "5"]);
+  }
+
+  // 2) program za pogled se ne prevede: splošni program (vsi prizori) za ta pogled, drugi pogledi ostanejo specializirani
+  {
+    const g = lazniGL({ napaka: (src) => /^#define K_PA 7$/m.test(src) });
+    g.st.gotovo = true;
+    const upo = ustvariUpodobitev(g.platno);
+    const v = pogledMol(7);
+    const warn = console.warn;
+    console.warn = () => {};
+    try {
+      assert.equal(await upo.pripraviMol(v), true);
+    } finally {
+      console.warn = warn;
+    }
+    assert.deepEqual(molSrc(g.st), ["7", "splošni"]);
+    assert.equal(upo.molStanje(v), "ok");
+    assert.equal(upo.narisiMol(v), true);
+    assert.equal(await upo.pripraviMol(v), true, "ponovna zahteva ne prevaja znova");
+    assert.deepEqual(molSrc(g.st), ["7", "splošni"]);
+  }
+
+  // 3) ne prevede se niti splošni: stanje »napaka«, mikroskop pokaže sporočilo (ne sive slike)
+  {
+    const g = lazniGL({ napaka: (src) => /uniform \w+ uPA\b/.test(src) });
+    g.st.gotovo = true;
+    const upo = ustvariUpodobitev(g.platno);
+    const v = pogledMol(3);
+    const warn = console.warn;
+    console.warn = () => {};
+    try {
+      assert.equal(await upo.pripraviMol(v), false);
+    } finally {
+      console.warn = warn;
+    }
+    assert.equal(upo.molStanje(v), "napaka");
+    assert.equal(obvestiloMol(upo.molStanje(v), 1), "napaka");
+  }
+
+  // 4) hranimo 8 programov; izbriše se najdlje neuporabljen (LRU), ne najstarejši
+  {
+    const g = lazniGL();
+    g.st.gotovo = true;
+    const upo = ustvariUpodobitev(g.platno);
+    for (let i = 0; i < 8; i++) await upo.pripraviMol(pogledMol(i));
+    assert.ok(upo.molPripravljen(pogledMol(0)), "uporaba prvega ga premakne na konec");
+    await upo.pripraviMol(pogledMol(8));
+    const izbrisani = g.st.programi.filter((p) => p.mol && p.izbrisan).map((p) => /^#define K_PA (\d+)$/m.exec(p.src)[1]);
+    assert.deepEqual(izbrisani, ["1"]);
+    assert.ok(upo.molPripravljen(pogledMol(0)));
+    assert.equal(upo.molPripravljen(pogledMol(1)), false);
+  }
+
+  // 5) brez KHR_parallel_shader_compile: programi se prevajajo eden za drugim (stran naenkrat stoji le za enega)
+  {
+    const g = lazniGL({ khr: false });
+    const upo = ustvariUpodobitev(g.platno);
+    const a = upo.pripraviMol(pogledMol(2));
+    const b = upo.pripraviMol(pogledMol(4));
+    assert.deepEqual(molSrc(g.st), [], "nič se ne prevaja sinhrono ob zahtevi");
+    assert.equal(await a, true);
+    assert.deepEqual(molSrc(g.st), ["2"]);
+    assert.equal(await b, true);
+    assert.deepEqual(molSrc(g.st), ["2", "4"]);
+  }
+
   const mod = await import("../public/mikroskop/molekule.js");
-  assert.equal(typeof mod.molekuleZa, "function");
   const veje = (src) => [...src.matchAll(/^  (?:\} else )?if \(P == (.*)\) \{$/gm)].length;
   assert.ok(veje(mod.MOLEKULE) > 20);
   const kode = [...mod.MOLEKULE.matchAll(/^#define P_[A-Z0-9_]+ (\d+)$/gm)].map((m) => +m[1]);
   for (const pA of kode) assert.ok(veje(mod.molekuleZa({ pA, pB: kode[0], mem: true, memVrsta: 0, atomi: false })) <= 2, `prizor ${pA}`);
-  // ko molekule povsem prekrijejo preparat (utež 1), se preparat v polni ločljivosti ne riše
-  const ui = fs.readFileSync(path.join(ROOT, "public", "mikroskop", "mikroskop.js"), "utf8");
-  assert.match(ui, /const rabiP = kljuc !== pKljuc && !skrit;/);
+  // nova besedila na odru v vseh jezikih
+  const dir = path.join(ROOT, "public", "i18n", "ui");
+  for (const [f, d] of [["sl", sl], ...fs.readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => [f, json(`public/i18n/ui/${f}`)])])
+    for (const k of ["mk.molLoading", "mk.molError"]) assert.ok(d[k] && (f === "sl" || d[k] !== sl[k]), `${f}: ${k}`);
 });

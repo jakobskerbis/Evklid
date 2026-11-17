@@ -3388,6 +3388,8 @@
   "mk.beam": "Elektronenstrahl",
   "mk.colors": "Moleküle in Farbe",
   "mk.temLimit": "Der Schnitt zeigt hier keine weiteren Details – schalte Moleküle in Farbe ein.",
+  "mk.molLoading": "Moleküle werden gezeichnet …",
+  "mk.molError": "Dieses Gerät kann die Moleküle nicht zeichnen. Bei kleinerer Vergrößerung siehst du den Schnitt.",
   "mk.fieldOfView": "Sehfeld",
   "mk.resolution": "Auflösung",
   "mk.rayleigh": "{d} (Rayleigh)",

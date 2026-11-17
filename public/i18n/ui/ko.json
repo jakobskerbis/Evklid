@@ -3361,6 +3361,8 @@
   "mk.beam": "전자빔",
   "mk.colors": "분자를 컬러로",
   "mk.temLimit": "여기서는 절편이 더 이상 세부를 보여 주지 않아요. ‘분자를 컬러로’를 켜 보세요.",
+  "mk.molLoading": "분자를 그리는 중…",
+  "mk.molError": "이 기기에서는 분자를 그릴 수 없어요. 배율을 낮추면 절편이 보여요.",
   "mk.fieldOfView": "시야",
   "mk.resolution": "분해능",
   "mk.rayleigh": "{d} (Rayleigh)",

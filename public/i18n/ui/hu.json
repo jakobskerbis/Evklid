@@ -3386,6 +3386,8 @@
   "mk.beam": "Elektronnyaláb",
   "mk.colors": "Színes molekulák",
   "mk.temLimit": "A metszet itt már nem mutat több részletet – kapcsold be a Színes molekulákat.",
+  "mk.molLoading": "Rajzolom a molekulákat…",
+  "mk.molError": "Ez az eszköz nem tudja megrajzolni a molekulákat. Kisebb nagyításnál látod a metszetet.",
   "mk.fieldOfView": "Látómező",
   "mk.resolution": "Felbontás",
   "mk.rayleigh": "{d} (Rayleigh)",

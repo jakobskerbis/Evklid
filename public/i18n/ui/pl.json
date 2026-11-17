@@ -3454,6 +3454,8 @@
   "mk.beam": "Wiązka elektronów",
   "mk.colors": "Cząsteczki w kolorze",
   "mk.temLimit": "Skrawek nie pokazuje tu już więcej szczegółów – włącz Cząsteczki w kolorze.",
+  "mk.molLoading": "Rysuję cząsteczki…",
+  "mk.molError": "To urządzenie nie potrafi narysować cząsteczek. Przy mniejszym powiększeniu zobaczysz skrawek.",
   "mk.fieldOfView": "Pole widzenia",
   "mk.resolution": "Zdolność rozdzielcza",
   "mk.rayleigh": "{d} (Rayleigh)",

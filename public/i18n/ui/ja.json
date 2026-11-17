@@ -3361,6 +3361,8 @@
   "mk.beam": "電子線",
   "mk.colors": "分子をカラーで",
   "mk.temLimit": "ここでは切片からこれ以上の細部は見えません。「分子をカラーで」をオンにしましょう。",
+  "mk.molLoading": "分子を描いています…",
+  "mk.molError": "この端末では分子を描けません。倍率を下げると切片が見えます。",
   "mk.fieldOfView": "視野",
   "mk.resolution": "分解能",
   "mk.rayleigh": "{d} (Rayleigh)",

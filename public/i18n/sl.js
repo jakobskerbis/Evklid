@@ -3615,6 +3615,8 @@ export default {
   "mk.beam": "Snop elektronov",
   "mk.colors": "Molekule v barvah",
   "mk.temLimit": "Rezina tu ne pokaže več podrobnosti – vklopi Molekule v barvah.",
+  "mk.molLoading": "Rišem molekule …",
+  "mk.molError": "Ta naprava ne zmore narisati molekul. Pri manjši povečavi vidiš rezino.",
   "mk.fieldOfView": "Vidno polje",
   "mk.resolution": "Ločljivost",
   "mk.rayleigh": "{d} (Rayleigh)",

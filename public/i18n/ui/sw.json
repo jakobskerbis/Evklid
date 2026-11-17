@@ -3386,6 +3386,8 @@
   "mk.beam": "Mwali wa elektroni",
   "mk.colors": "Molekuli kwa rangi",
   "mk.temLimit": "Kipande hakionyeshi maelezo zaidi hapa – washa Molekuli kwa rangi.",
+  "mk.molLoading": "Ninachora molekuli…",
+  "mk.molError": "Kifaa hiki hakiwezi kuchora molekuli. Kwa ukuzaji mdogo zaidi unaona kipande.",
   "mk.fieldOfView": "Uga wa kuona",
   "mk.resolution": "Uwezo wa kutenganisha",
   "mk.rayleigh": "{d} (Rayleigh)",

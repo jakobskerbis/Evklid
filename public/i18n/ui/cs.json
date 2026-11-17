@@ -3448,6 +3448,8 @@
   "mk.beam": "Elektronový svazek",
   "mk.colors": "Molekuly v barvách",
   "mk.temLimit": "Řez tu už neukáže další podrobnosti – zapni Molekuly v barvách.",
+  "mk.molLoading": "Kreslím molekuly…",
+  "mk.molError": "Toto zařízení molekuly nakreslit nezvládne. Při menším zvětšení uvidíš řez.",
   "mk.fieldOfView": "Zorné pole",
   "mk.resolution": "Rozlišení",
   "mk.rayleigh": "{d} (Rayleigh)",

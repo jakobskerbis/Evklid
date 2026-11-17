@@ -3386,6 +3386,8 @@
   "mk.beam": "Elektron demeti",
   "mk.colors": "Renkli moleküller",
   "mk.temLimit": "Kesit burada daha fazla ayrıntı göstermez – Renkli moleküller'i aç.",
+  "mk.molLoading": "Moleküller çiziliyor…",
+  "mk.molError": "Bu cihaz molekülleri çizemiyor. Daha küçük büyütmede kesiti görürsün.",
   "mk.fieldOfView": "Görüş alanı",
   "mk.resolution": "Çözünürlük",
   "mk.rayleigh": "{d} (Rayleigh)",

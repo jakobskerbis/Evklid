@@ -3361,6 +3361,8 @@
   "mk.beam": "Berkas elektron",
   "mk.colors": "Molekul berwarna",
   "mk.temLimit": "Irisan tidak lagi menunjukkan detail di sini – nyalakan Molekul berwarna.",
+  "mk.molLoading": "Menggambar molekul…",
+  "mk.molError": "Perangkat ini tidak bisa menggambar molekul. Dengan perbesaran lebih kecil kamu melihat irisannya.",
   "mk.fieldOfView": "Bidang pandang",
   "mk.resolution": "Resolusi",
   "mk.rayleigh": "{d} (Rayleigh)",

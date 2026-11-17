@@ -4,7 +4,7 @@
 // pri tkivih 3D sveta) in laboratorij (pogon simulacij »lab-mikroskop«). Besedila vsebine so slovenska kot pri 3D modelih.
 import { MOL, ELEMENTI, ZNACILNO, ZNACILNA_TOCKA, elementiMolekule } from "./molekule-vrste.js";
 import { ustvariUpodobitev } from "./upodobi.js";
-import { izracunajPogled, ZACETNO, povecava, najblizjaMolekula, fino } from "./pogled.js";
+import { izracunajPogled, ZACETNO, povecava, najblizjaMolekula, fino, obvestiloMol } from "./pogled.js";
 import { svetlost, OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, TEM_MAX, SEM_MAX, vidnoPolje, locljivost, globinskaOstrina, globinskaOstrinaSem, merilce, oznakaDolzine, oznakaPovecave, utezModela, raven } from "./optika.js";
 import { BARVANJA } from "./barvila.js";
 import { PREPARATI, SKUPINE, ZACETNI, naloziPreparat } from "./preparati/index.js";
@@ -121,13 +121,17 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   merilo.append(meriloCrta, meriloNapis);
   const znacka = mk("div", "mk-znacka");
   const nalaganje = mk("div", "mk-nalaganje", t("mk.loading"));
+  // sloj molekul se še prevaja ali ga ta naprava ne zmore: slika brez molekul bi bila enakomerno siva
+  const molNal = mk("div", "mk-nalaganje mk-nalaganje-mol");
+  molNal.setAttribute("role", "status");
+  molNal.hidden = true;
   // 100× brez olja: gumb kar na odru, da ga na telefonu ni treba iskati pod sliko
   const bKapni = mk("button", "a3-pill mk-kapni");
   bKapni.type = "button";
   bKapni.hidden = true;
   const oznakeMol = mk("div", "mk-mol-oznake"); // imena molekul na sliki (raven molekul in atomov)
   oznakeMol.setAttribute("aria-hidden", "true");
-  oder.append(platno, oznakeMol, igla, oznaka, merilo, znacka, bKapni, nalaganje);
+  oder.append(platno, oznakeMol, igla, oznaka, merilo, znacka, bKapni, molNal, nalaganje);
   const kazalec = mk("p", "mk-kazalec");
   kazalec.setAttribute("aria-live", "polite");
 
@@ -168,6 +172,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     pKljuc = mKljuc = "";
     msNaVzorec = msNaMol = 0;
     molCaka = null;
+    molStanjeZadnje = "";
     idKljuc = "";
     const id = zadnjiId || prep?.id; // izguba med nalaganjem preparata: tisti, ki se je nalagal
     if (id) izberiPreparat(id, { zacetek: id !== prep?.id }).catch(() => {});
@@ -176,6 +181,8 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   let prep = null;
   let s = { ...ZACETNO };
   let zivo = true;
+  let molStanjeZadnje = ""; // upo.molStanje zadnjega izrisa (»napaka« → sporočilo tudi pod nadzorom TEM)
+  let molNalCas = 0;
   let interakcija = 0;
   let cakaIzris = false;
   let zadnji = null; // zadnji pogled (vp, n, velikost)
@@ -596,25 +603,71 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   const visinaPasuMol = (n) => (msNaMol ? Math.max(4, Math.min(n, Math.round(PAS_MS / Math.max(1e-7, msNaMol * n)))) : 4);
   const visinaPasu = (n, ss) => Math.max(4, Math.min(n, Math.round(PAS_MS / Math.max(1e-7, msNaVzorec * n * ss))));
   // hiter izris v nižji ločljivosti (med premikanjem in kot predogled); skala se prilagodi, da traja ~30 ms
-  // mol: sloj molekul (pogled z utežjo 1), ki se v predogledu nariše v isti nižji ločljivosti
+  // mol: sloj molekul (pogled z utežjo 1), ki se v predogledu nariše v isti nižji ločljivosti. Tudi med premikanjem pri
+  // TEM nad ~800 000× se sloj molekul nariše v predogledu (sicer je slika pod prstom siva); če program še ni pripravljen
+  // ali je naprava zanj prepočasna, ostane zadnja slika.
   function predogled(css, N, n, mol = null) {
+    const uz = s.nacin === "tem" ? utezModela(povecava(s)) : 0;
+    // sloj molekul v predogledu le, če ga naprava zmore v ~80 ms tudi pri najmanjši skali (96 × 96)
+    const zMol = !!mol || (uz > 0 && (!msNaMol || msNaMol * 96 * 96 < 80));
+    const cena = msNaVzorec + (zMol ? msNaMol : 0);
     // ko je hitrost naprave že izmerjena, skala takoj ustreza ~30 ms (zahtevnejši preparati so lahko večkrat počasnejši)
-    if (msNaVzorec) skala = Math.round(20 * Math.max(0.15, Math.min(0.75, Math.sqrt(30 / (msNaVzorec * n * n))))) / 20;
+    if (msNaVzorec) skala = Math.round(20 * Math.max(0.15, Math.min(0.75, Math.sqrt(30 / (cena * n * n))))) / 20;
     const nn = Math.min(n, Math.max(96, 32 * Math.round((n * skala) / 32)));
+    const r = izracunajPogled(upo, prep, s, nn, { hitro: !zMol || !!mol });
+    const m = mol || r.mol;
+    const vm = m && { ...r.v, mol: m };
+    const molOk = !!vm && upo.molPripravljen(vm);
+    if (vm && !molOk) pripraviMol(vm);
+    // molekule bodo prekrile večino slike, a še niso pripravljene: ostane zadnja slika (in obvestilo), ne siva
+    if (zadnji && (uz >= 0.5 || (m && m.utez >= 0.5)) && !molOk) return void pokaziStanjeMol(vm || null, uz);
     if (nn === n) pKljuc = ""; // predogled v polni velikosti prepiše polno sliko
-    const r = izracunajPogled(upo, prep, s, nn, { hitro: true });
     r.v.ss = r.v.ss || 1;
     r.v.zaslonN = N;
     r.v.cas = performance.now() / 1000;
-    const ms = izmeri(() => upo.narisiPreparat(r.v), nn * nn * (r.v.ss || 1));
-    const vm = mol && { ...r.v, mol };
-    if (vm && upo.narisiMol(vm)) upo.sestavi(vm, mol.utez);
-    else upo.sestavi(r.v);
+    if (vm) vm.zaslonN = N, vm.cas = r.v.cas;
+    let ms = izmeri(() => upo.narisiPreparat(r.v), nn * nn * (r.v.ss || 1));
+    if (molOk) {
+      const t0 = performance.now();
+      upo.narisiMol(vm);
+      upo.pocakajMol();
+      const t = performance.now() - t0;
+      msNaMol = msNaMol ? 0.6 * msNaMol + 0.4 * (t / (nn * nn)) : t / (nn * nn);
+      ms += t;
+      upo.sestavi(vm, m.utez);
+    } else upo.sestavi(r.v);
+    pokaziStanjeMol(vm || null, uz);
     const f = Math.max(0.8, Math.min(1.25, Math.sqrt(30 / Math.max(1, ms))));
     skala = Math.round(20 * Math.max(0.15, Math.min(0.75, skala * f))) / 20;
-    zadnji = { vp: r.vp, css, m: r.m, mol: r.mol || mol };
+    zadnji = { vp: r.vp, css, m: r.m, mol: m || null };
     oznakeMol.replaceChildren();
     posodobiMerilo();
+  }
+  // Obvestilo na odru, ko bi bila slika brez molekul siva (utež ≥ 0,5): »Rišem molekule …« med prevajanjem (pokaže se šele po
+  // 200 ms, da ne utripa) in kratko sporočilo, če jih naprava ne zmore. Ob napaki je isto besedilo še pod nadzorom TEM.
+  function pokaziStanjeMol(v, uz = v?.mol?.utez || 0) {
+    const st = v?.mol ? upo.molStanje(v) : "";
+    const prej = molStanjeZadnje;
+    molStanjeZadnje = st;
+    const o = obvestiloMol(st, uz);
+    if (o !== "nalaganje") {
+      clearTimeout(molNalCas);
+      molNalCas = 0;
+    }
+    if (o === "napaka") {
+      molNal.textContent = t("mk.molError");
+      molNal.hidden = false;
+    } else if (o === "nalaganje") {
+      if (!molNal.hidden) molNal.textContent = t("mk.molLoading");
+      else if (!molNalCas)
+        molNalCas = setTimeout(() => {
+          molNalCas = 0;
+          if (molStanjeZadnje !== "caka") return;
+          molNal.textContent = t("mk.molLoading");
+          molNal.hidden = false;
+        }, 200);
+    } else molNal.hidden = true;
+    if ((prej === "napaka") !== (st === "napaka")) posodobiNadzor({ brezDrsnika: true });
   }
   // Pri največjih povečavah (vidno polje pod 20 nm) je sredina pogosto v vodi med molekulami (npr. med filamenti
   // miofibrile): ob spremembi povečave se preparat premakne na najbližjo molekulo v krogu ~30 nm, da se vidi, iz česa
@@ -626,7 +679,32 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     const o = upo.pripraviMol(v);
     if (o === molCaka) return;
     molCaka = o;
-    o.then((ok) => ok && zivo && narisi());
+    // tudi ob napaki: izris pokaže sporočilo namesto sive slike
+    const u = upo;
+    o.then(() => {
+      if (molCaka === o) molCaka = null;
+      if (zivo && u === upo) narisi();
+    });
+  }
+  // Ogrevanje (TEM od 100 000× do ~800 000×): ko slika miruje, se v ozadju pripravita programa molekul, ki ju bo ta pogled rabil pri
+  // ~900 000× in pri 5 000 000× (stran rezine na sredini, membrana, atomi), da se ob povečevanju slika ne ustavi.
+  let ogretoZa = "";
+  function ogrej(n) {
+    if (s.nacin !== "tem" || !prep || interakcija > 0 || delo) return;
+    const m = povecava(s);
+    if (m < 0.99e5 || utezModela(m) > 0) return; // od 100 000× (vidno polje 1,6 µm): sredina se do ~900 000× malo premakne
+    const kl = JSON.stringify([prep.id, s.sredisce, n]);
+    if (kl === ogretoZa) return;
+    ogretoZa = kl;
+    const u = upo;
+    const cilji = [9e5, Math.min(temMax(), TEM_MAX)];
+    (async () => {
+      for (const mm of cilji) {
+        if (!zivo || u !== upo || interakcija > 0 || ogretoZa !== kl) return;
+        const r = izracunajPogled(upo, prep, { ...s, m: mm }, n, { hitro: false });
+        if (r.mol && !upo.molPripravljen(r.v)) await upo.pripraviMol(r.v);
+      }
+    })();
   }
   function kMolekuli(n) {
     if (s.nacin !== "tem" || s.m === molM) return;
@@ -677,8 +755,9 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     }
     r.v.zaslonN = N;
     r.v.cas = performance.now() / 1000;
-    // sloj molekul: program se prevaja v ozadju šele ob prvem obisku TEM (ko je pripravljen, se slika osveži)
+    // sloj molekul: program se prevaja v ozadju (ko je pripravljen, se slika osveži); medtem obvestilo namesto sive slike
     if (r.mol) pripraviMol(r.v);
+    pokaziStanjeMol(r.mol ? r.v : null);
     const kljuc = kljucPreparata(r.v);
     const mK = r.mol && upo.molPripravljen(r.v) ? kljucMol(r) : "";
     if (!upo.ima(n)) pKljuc = mKljuc = "";
@@ -749,6 +828,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     koncaj(d.r, d.css);
   }
   function koncaj(r, css) {
+    if (!r.mol) setTimeout(() => ogrej(r.v.n), 400);
     const id = idMolekul(r);
     const molGotov = r.mol && mKljuc && mKljuc === kljucMol(r);
     upo.sestavi(r.v, molGotov ? r.mol.utez : 0);
@@ -941,8 +1021,9 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     opozorilo.textContent = brezOlja ? t("mk.noOil") : oljeBrezPotrebe ? t("mk.oilNotNeeded") : "";
     const utez = tem ? utezModela(m) : 0;
     bBarve.hidden = utez <= 0;
-    namig.hidden = !(tem && !s.barve && m >= TEM_MAX * 0.7);
-    namig.textContent = namig.hidden ? "" : t("mk.temLimit");
+    const molNe = tem && utezModela(m) > 0 && molStanjeZadnje === "napaka";
+    namig.hidden = !molNe && !(tem && !s.barve && m >= TEM_MAX * 0.7);
+    namig.textContent = namig.hidden ? "" : t(molNe ? "mk.molError" : "mk.temLimit");
     znacka.textContent = `${oznakaPovecave(m)} · ${tem ? "TEM" : sem ? "SEM" : t("mk.badgeObjective", { m: obj.m })}`;
     const vp = vidnoPolje(m, s.nacin);
     const vrstice = [

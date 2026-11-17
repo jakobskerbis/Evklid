@@ -3361,6 +3361,8 @@
   "mk.beam": "Chùm electron",
   "mk.colors": "Phân tử có màu",
   "mk.temLimit": "Ở đây lát cắt không cho thấy thêm chi tiết – hãy bật Phân tử có màu.",
+  "mk.molLoading": "Đang vẽ phân tử…",
+  "mk.molError": "Thiết bị này không vẽ được phân tử. Ở độ phóng đại nhỏ hơn, bạn thấy lát cắt.",
   "mk.fieldOfView": "Trường nhìn",
   "mk.resolution": "Độ phân giải",
   "mk.rayleigh": "{d} (Rayleigh)",

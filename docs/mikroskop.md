@@ -101,12 +101,25 @@ Nad ~800 000× (TEM) se slika prelije v ponazoritev molekul, ki jih v izbranem p
   prizori strani A in B, izbrana membrana in le vrste atomov iz rež tega pogleda (atomi le pod 0,08 nm na točko). Slika
   je enaka do bita kot s splošnim programom (37 prizorov), ta pa se je na grafiki brez pravega vejanja (programski izris
   v brskalniku brez GPE, tudi nekateri telefoni) prevajal ~18 s in risal ~65 µs na točko (zdaj 0,2–0,8 s in 0,1–2 µs).
-  upodobi.js hrani zadnjih 8 programov (`kljucMolekul`); prevedejo se v ozadju (KHR_parallel_shader_compile). Ko je
+  upodobi.js hrani zadnjih 8 uporabljenih programov (LRU, `kljucMolekul`); prevedejo se v ozadju (KHR_parallel_shader_compile;
+  stanje programa se prebere šele, ko `COMPLETION_STATUS_KHR` pove, da je preveden). Brez te razširitve (programska grafika,
+  nekateri brskalniki) se programi prevajajo eden za drugim v mirnem trenutku (`requestIdleCallback`), zato stran naenkrat
+  stoji največ za prevajanje enega majhnega programa. Ko TEM med 100 000× in ~800 000× miruje, mikroskop v ozadju pripravi programa za
+  ~900 000× in 5 000 000× na sredini slike (ogrevanje), da se ob povečevanju čez ~1 000 000× slika ne ustavi (j, 17. 11. 2026:
+  »Mikroskop zasteka tudi ko prideš do okoli 1 000 000× povečave«). Če se program za pogled ne prevede, velja za ta pogled
+  splošni program (enaka slika); če se ne prevede niti ta, je na odru in pod nadzorom TEM `mk.molError`. Dokler se program
+  prevaja, je na odru `mk.molLoading` (po 200 ms), ne siva slika (j, 17. 11. 2026: posnetek pri 50 000 000× enakomerno siv).
+  Med premikanjem in povečevanjem se sloj molekul nariše tudi v predogledu (v nižji ločljivosti); če program še ni
+  pripravljen ali bi bil predogled prepočasen, ostane zadnja slika. Ko je
   utež molekul 1 (od ~2 400 000×), preparata v polni ločljivosti ne rišemo (molekule ga povsem prekrijejo): predogled
   takoj pokaže molekule v nižji ločljivosti, nato se sloj nariše po pasovih (prvi pas 4 vrstice, nato ~25 ms na pas),
   da telefon ne zamrzne in grafika ne preseže časovne meje. Na namizju (j, 16. 11. 2026: »na racunalniku molekule se
   vedno niso izrisane«) je splošni program pri 1920 × 1080 po 90 s narisal šele četrtino sloja; s specializiranim so
-  molekule vidne v ~1 s (`test/mikroskop.test.js`). Merilnik časa: Playwright, 360 px s 4× upočasnjenim procesorjem in
+  molekule pri polni uteži vidne v 0,4–0,9 s (meritev pregleda #781 s Playwrightom; `test/mikroskop.test.js` preveri
+  vedenje z namišljenim WebGL2: program za pogled, stanje »caka«, nadomestni splošni program, LRU, brez razširitve eden za
+  drugim, ne časa). Pri delni uteži (~850 000×–2 400 000×) je treba narisati še preparat v polni ločljivosti (TEM `ultra()`,
+  na programski grafiki ~10 µs na točko, enako kot brez molekul pod 800 000×); predogled v nižji ločljivosti z molekulami je
+  na zaslonu takoj, polna slika sledi po pasovih. Merilnik časa: Playwright, 360 px s 4× upočasnjenim procesorjem in
   1280 px, programska grafika (SwiftShader); prava grafična kartica je hitrejša. Po izgubi grafike (`webglcontextlost`) se mikroskop obnovi sam.
 - Gladki ER (`S_GER`, 32): mreža cevk (premer ~45 nm) brez ribosomov, dve prepleteni izočrti šuma; največ v hepatocitih
   (skupaj z glikogenom), v maščobnih celicah in enterocitih; membrana s citokromom P450.

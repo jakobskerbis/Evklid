@@ -3361,6 +3361,8 @@
   "mk.beam": "电子束",
   "mk.colors": "彩色分子",
   "mk.temLimit": "切片在这里已显示不出更多细节，请打开“彩色分子”。",
+  "mk.molLoading": "正在绘制分子…",
+  "mk.molError": "这台设备无法绘制分子。降低放大倍数就能看到切片。",
   "mk.fieldOfView": "视野",
   "mk.resolution": "分辨率",
   "mk.rayleigh": "{d} (Rayleigh)",
