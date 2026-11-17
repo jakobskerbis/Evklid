@@ -173,7 +173,9 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
           const tn = s.firstChild;
           const lh = parseFloat(getComputedStyle(s).lineHeight);
           if (s.getBoundingClientRect().height > lh * 2 + 2) out.push(`${lang} ${key}: več kot 2 vrstici`);
-          if (lang === "th") continue; // tajščina nima presledkov: prelom med besedami je pravilen
+          // Tajščina nima presledkov (prelom med besedami je pravilen); cirilice Instrument Sans nima, širina je od
+          // sistemske pisave (v CI širša kot na telefonih), zato je ne merimo tu.
+          if (["th", "ru", "uk", "mk", "sr"].includes(lang)) continue;
           for (const m of tn ? tn.data.matchAll(/\S+/g) : []) {
             const r = document.createRange();
             r.setStart(tn, m.index);
