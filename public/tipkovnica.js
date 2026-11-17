@@ -141,6 +141,9 @@ export function openKeyboard(field, { layer } = {}) {
   if (document.activeElement !== field) field.focus({ preventScroll: true });
   const was = S.open;
   S.open = true;
+  // Polje v modalnem oknu (<dialog>, npr. ustno spraševanje): tipkovnica gre v okno, sicer je pod njim in nedosegljiva.
+  const host = field.closest("dialog[open]") || document.body;
+  if (board.parentElement !== host) host.appendChild(board);
   board.hidden = false;
   document.body.classList.add("tk-open");
   render();
