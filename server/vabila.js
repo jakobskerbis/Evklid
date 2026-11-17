@@ -10,7 +10,7 @@
 import crypto from "node:crypto";
 import express from "express";
 import { pilotLastDay } from "./accounts/pilot-meja.js";
-import { MAX_CODE, MIN_CODE, norm, inviteCodes, inviteHash } from "./vabila-kode.js";
+import { MAX_CODE, MIN_CODE, norm, inviteCodes, shortInviteCodes, inviteHash } from "./vabila-kode.js";
 
 // Seznam kod in zgoščena koda so v server/vabila-kode.js (brez Expressa, uvozi ga tudi meja pilota).
 export { MAX_CODE, MIN_CODE, inviteCodes, shortInviteCodes, inviteHash, inviteHashValid } from "./vabila-kode.js";
