@@ -302,6 +302,8 @@ function showView(name) {
   // Skener iz kamere v Inštruktorju ostane pod zavihkom Inštruktor.
   if (name === "scan" && state.scanFromChat) $('#tabbar [data-view="chat"]')?.classList.add("active");
   else if (meView(name)) $('#tabbar [data-view="me"]').classList.add("active");
+  // Računalnik: kar ni med glavnimi zavihki zgoraj, je pod »Jaz« (j, 17. 11. 2026).
+  if (podJazZgoraj(name)) $("#me-tab-top").classList.add("active");
   pinSnapshot(); // posnetek zadnjega zaslona (zagon) ostane na svojem mestu, pravi pogled se pripravi pod njim
   document.querySelectorAll(".view").forEach((v) => {
     if (!v.classList.contains("in-okno") && !v.hasAttribute("data-posnetek")) v.hidden = v.id !== `view-${name}`;
@@ -705,10 +707,10 @@ function backStep(wasOverlay) {
   if (currentView === "scan" && state.scanFromChat) return showView("chat"), true; // skener iz kamere v Inštruktorju
   if (closeByEsc()) return true;
   if (currentView === "path") return false;
-  const subMe = meView(currentView) && currentView !== "me";
+  const subMe = currentView !== "me" && (meView(currentView) || podJazZgoraj(currentView));
   // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
   // Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
-  const up = subMe && tabbarShown() ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
+  const up = subMe && (tabbarShown() || podJazZgoraj(currentView)) ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
   if (up !== "path") {
     showView(up); // zapis v zgodovini doda showView (syncHistory)
     return true;
@@ -754,6 +756,9 @@ window.addEventListener("popstate", () => {
   exitTimer = setTimeout(ensureGuard, EXIT_MS);
 });
 
+// Glavni zavihki zgornje vrstice na računalniku; vse ostalo s strani »Jaz« je pod zavihkom »Jaz« (index.html data-pod-jaz).
+const TOP_MAIN = ["path", "uci", "chat", "scan", "graph", "competition"];
+const podJazZgoraj = (name) => name !== "me" && !TOP_MAIN.includes(name) && (meView(name) || name === "exams");
 const ME_VIEWS = ["me", "progress", "league", "settings", "account", "feedback", "graph", "games", "corner", "schedule", "zbirke", "scan", "pilot"];
 // Četrto mesto spodnje vrstice: Laboratorij ali »NPZ in matura« (ko je cilj NPZ/matura); kar ni tam, je pod »Jaz«.
 const meView = (name) => ME_VIEWS.includes(name) || (!!name && offTabbarViews().includes(name));
@@ -784,6 +789,7 @@ function renderMe() {
   paintMeLevel();
   $("#me-streak").textContent = $("#xp-streak").textContent;
   $("#me-account").hidden = $("#account-tab").hidden;
+  $("#me-feedback").hidden = $("#feedback-tab").hidden;
   loadMeOverview();
 }
 // Pregled na strani Jaz (j, 4. 11. 2026: prazen spodnji del strani naj bo izkoriščen): koledar aktivnosti,
@@ -3343,7 +3349,10 @@ function syncCompetitionTab() {
   ms.textContent = t(mKey);
   m.querySelector("i, svg").outerHTML = icon(exams || regionalExams() ? "clipboard-check" : "medal");
   m.classList.toggle("active", currentView === m.dataset.view);
-  $("#me-exams").hidden = !siExams() || exams;
+  // Ko je NPZ/matura na četrtem mestu spodnje vrstice, vrstice pod Jaz na telefonu ni (touch.css .v-vrstici);
+  // na računalniku je »NPZ in matura« samo pod Jaz (zgornja vrstica, j 17. 11. 2026), zato tam ostane.
+  $("#me-exams").hidden = !siExams();
+  $("#me-exams").classList.toggle("v-vrstici", !!exams);
   $("#me-competition").hidden = noComp || !exams; // Tekmovanja so pod Jaz le, ko je na četrtem mestu NPZ ali matura
   // Regijski sistemi: isti vnos pod Jaz je »Izpiti« (pogled competition naloži loadExams).
   const mc = $("#me-competition");
@@ -4684,7 +4693,7 @@ const TOUR = [
   { sel: '.tab[data-view="league"]', title: "nav.league", text: "tour.leagueText" },
   { sel: '.tab[data-view="settings"]', title: "nav.settings", text: "tour.settingsText" },
   { sel: '.tab[data-view="feedback"]', title: "nav.feedback", text: "tour.feedbackText" },
-  { sel: '#tabbar [data-view="me"]', title: "nav.me", text: "tour.meText2" },
+  { sel: '.tab[data-view="me"]', title: "nav.me", text: "tour.meText2" },
   { sel: "#profile-btn", title: "tour.profile", text: "tour.profileText" },
   { title: "tour.end", text: "tour.endText" },
 ];
@@ -4695,7 +4704,7 @@ const TOUR_SHORT = [
   { sel: "#xp-card", title: "daily.title", text: "tour.dailyText" },
   { sel: '.tab[data-view="chat"]', title: "nav.chat", text: "tour.chatText" },
   [
-    { sel: '#tabbar [data-view="me"]', title: "nav.me", text: "tour.meText2" },
+    { sel: '.tab[data-view="me"]', title: "nav.me", text: "tour.meText2" },
     { sel: "#profile-btn", title: "tour.profile", text: "tour.profileText" },
   ],
 ];
