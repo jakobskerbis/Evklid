@@ -29,11 +29,13 @@ test("datumi: v slovenščini mesec v rodilniku (»23. novembra 2026«), drugje 
   assert.equal(dateText(d, "sl", { weekday: "long", day: "numeric", month: "long" }), "ponedeljek, 23. novembra");
   assert.equal(dateText(d, "en"), "November 23, 2026");
   assert.equal(dateText("ni datum", "sl"), "");
+  // mesec iz istih nastavitev (UTC), ne iz krajevnega časa: 30. 11. 23.30 UTC ostane november
+  assert.equal(dateText(new Date("2026-11-30T23:30:00Z"), "sl", { day: "numeric", month: "long", timeZone: "UTC" }), "30. novembra");
   assert.equal(SL_MONTH.length, 12);
-  for (const f of ["account.js", "garancija-ui.js", "flashcards.js", "corner.js", "zapiski/zapiski.js", "pilot-naloge.js"]) {
-    const src = read(`public/${f}`);
+  for (const f of ["public/account.js", "public/garancija-ui.js", "public/flashcards.js", "public/corner.js", "public/zapiski/zapiski.js", "public/pilot-naloge.js", "public/games/daily-view.js", "server/gradiva.js", "server/textbook-print.js", "server/gradiva-vsebina.js"]) {
+    const src = read(f);
     assert.ok(!/toLocaleDateString\([^)]*month: "long"/.test(src), `${f}: datum z mesecem prek dateText`);
-    assert.match(src, /from "\.\.?\/datum\.js"/, f);
+    assert.match(src, /from "(\.\.?\/|\.\.\/public\/)datum\.js"/, f);
   }
 });
 
@@ -163,7 +165,8 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
     await p.evaluate(() => document.querySelector("#zap-test").remove());
     // 11a: spodnja vrstica pri 360 px: v nobenem od 33 jezikov se beseda ne prelomi sredi besede (»Competition|s«).
     const dicts = { sl, ...ui };
-    const broken = await p.evaluate((dicts) => {
+    const broken = await p.evaluate(async (dicts) => {
+      await document.fonts.ready;
       const spans = [...document.querySelectorAll("#tabbar .tab:not([hidden]) span")];
       const out = [];
       for (const [lang, d] of Object.entries(dicts)) {
@@ -173,9 +176,8 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
           const tn = s.firstChild;
           const lh = parseFloat(getComputedStyle(s).lineHeight);
           if (s.getBoundingClientRect().height > lh * 2 + 2) out.push(`${lang} ${key}: več kot 2 vrstici`);
-          // Tajščina nima presledkov (prelom med besedami je pravilen); cirilice Instrument Sans nima, širina je od
-          // sistemske pisave (v CI širša kot na telefonih), zato je ne merimo tu.
-          if (["th", "ru", "uk", "mk", "sr"].includes(lang)) continue;
+          // Tajščina nima presledkov: prelom med besedami je pravilen.
+          if (lang === "th") continue;
           for (const m of tn ? tn.data.matchAll(/\S+/g) : []) {
             const r = document.createRange();
             r.setStart(tn, m.index);

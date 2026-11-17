@@ -9,6 +9,7 @@ import { lessonVersion } from "./tisk-predpomnilnik.js";
 import { splitFormulaCells } from "../public/rich.js";
 import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "../public/vodoravna-tabela.js";
 import { BRAND } from "./brand.js";
+import { dateText } from "../public/datum.js";
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -117,7 +118,7 @@ export function lessonHtml(t, lesson, n) {
   </article>`;
 }
 
-const today = () => new Date().toLocaleDateString("sl-SI", { day: "numeric", month: "long", year: "numeric" });
+const today = () => dateText(new Date(), "sl-SI"); // »17. novembra 2026« (public/datum.js)
 const NOTE = `<p class="muted small">Interaktivni poskusi, simulacije, sprotno preverjanje in vaje so na voljo v aplikaciji Evklid.
         Lekcije, ki jih učitelj še ni pregledal, se lahko še spremenijo.</p>`;
 

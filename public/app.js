@@ -2948,14 +2948,15 @@ function toast(msg, ic = null) {
   t.innerHTML = `${ic ? icon(ic) : ""}<span></span>`;
   t.querySelector("span").textContent = msg;
   t.hidden = false;
-  toast.at = Date.now();
+  t.dataset.at = Date.now();
   clearTimeout(toast.timer);
   toast.timer = setTimeout(() => (t.hidden = true), 3500);
 }
 // Obvestilo s prejšnjega zaslona ne ostane po menjavi pogleda; tisto, ki ga je pokazalo isto dejanje tik pred
 // menjavo (npr. »Zdaj si v …« in nato Učna pot), ostane.
 function hideOldToast() {
-  if (Date.now() - (toast.at || 0) > 500) $("#toast").hidden = true;
+  const el = $("#toast"); // čas zapišejo vsi toast() (app.js, account.js, leagues.js)
+  if (Date.now() - Number(el.dataset.at || 0) > 500) el.hidden = true;
 }
 
 // ---------- pomožno ----------

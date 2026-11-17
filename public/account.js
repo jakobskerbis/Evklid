@@ -281,6 +281,7 @@ function toast(msg) {
   if (!t) return alert(msg);
   t.textContent = msg;
   t.hidden = false;
+  t.dataset.at = Date.now(); // app.js hideOldToast: obvestilo tik pred menjavo pogleda ostane
   clearTimeout(toast.timer);
   toast.timer = setTimeout(() => (t.hidden = true), 4000);
 }
@@ -367,31 +368,35 @@ export async function initAccount({ onReady }) {
     renderVerifyLink(verifyToken);
     return false;
   }
+  // Obvestila o plačilu pokažemo šele po preklopu na zavihek Račun (menjava pogleda skrije starejša obvestila).
+  const notes = [];
+  const billNote = (m) => notes.push(m);
   if (billing && status.logged_in) {
     if (billing === "pass" && sessionId) {
       // Paket pred testom: potrditev plačila ob vrnitvi (deluje tudi brez webhooka).
       const r = await api("/api/billing/pass/confirm", { method: "POST", body: { session_id: sessionId } }).catch(() => null);
-      toast(r?.paid ? t("pass.paid") : t("pass.pending"));
+      billNote(r?.paid ? t("pass.paid") : t("pass.pending"));
     } else if (billing === "credit" && sessionId) {
       // Dokup porabe AI: potrditev ob vrnitvi s plačilne strani (deluje tudi brez webhooka).
       const r = await api("/api/billing/credit/confirm", { method: "POST", body: { session_id: sessionId } }).catch(() => null);
-      toast(r?.paid ? t("credit.paid") : t("credit.pending"));
+      billNote(r?.paid ? t("credit.paid") : t("credit.pending"));
     } else if (billing === "gift" && sessionId) {
       // Darilna koda: potrditev ob vrnitvi; koda je potem v zavihku Račun.
       const r = await api("/api/billing/gift/confirm", { method: "POST", body: { session_id: sessionId } }).catch(() => null);
-      toast(r?.paid ? t("gift.paid") : t("pass.pending"));
+      billNote(r?.paid ? t("gift.paid") : t("pass.pending"));
     } else if (billing === "podari" && sessionId) {
       // »Podari Evklid«: potrditev ob vrnitvi s plačilne strani.
       const r = await api("/api/billing/podari/confirm", { method: "POST", body: { session_id: sessionId } }).catch(() => null);
-      toast(r?.paid ? t("pod.paid") : t("pass.pending"));
+      billNote(r?.paid ? t("pod.paid") : t("pass.pending"));
     } else if (billing !== "cancel") await api("/api/billing/sync", { method: "POST" }).catch(() => {});
-    if (billing === "success") toast(t("acct.subThanks"));
+    if (billing === "success") billNote(t("acct.subThanks"));
     status = await api("/api/account/status");
   }
   if (parentInvite) route.firstMode = "register";
   const ready = await route();
   route.firstMode = null;
-  if (ready && billing) setTimeout(() => $("#account-tab").click(), 0);
+  if (ready && billing) setTimeout(() => ($("#account-tab").click(), notes.forEach((m) => toast(m))), 0);
+  else notes.forEach((m) => toast(m));
   return ready;
 }
 
@@ -1602,7 +1607,7 @@ function bindGuestForms(after) {
 // Zavihek Račun za gosta: ustvari račun (isti profil in napredek) ali se prijavi v obstoječega.
 function renderGuestAccount(view, acc) {
   view.innerHTML = `
-    <button type="button" class="ghost back me-back">${icon("arrow-left")}Jaz</button>
+    <button type="button" class="ghost back me-back">${icon("arrow-left")}${esc(t("nav.me"))}</button>
     <h1>${esc(t("guest.title"))}</h1>
     <div class="card">
       <p>${esc(t("guest.intro"))}</p>
