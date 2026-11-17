@@ -116,7 +116,7 @@ test("old routes land on the right tab: showView, ?pogled=, the tutor's open_win
   // Lekcija (openLesson) in Laboratorij (»Odpri temo v učbeniku«) še vedno kličeta showView("textbook").
   assert.match(read("public/textbook.js"), /ctx\.showView\("textbook"\)/);
   // Uvodni ogled in vodič kažeta »Uči se«.
-  assert.match(app, /sel: '\.tab\[data-view="uci"\]', title: "nav.learn", text: "tour.learnText"/);
+  assert.match(read("public/uvodni-ogled.js"), /sel: '\.tab\[data-view="uci"\]', title: "nav.learn", text: "tour.learnText"/);
   assert.match(read("public/vodic.js"), /view: "uci"/);
 });
 

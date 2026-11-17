@@ -208,6 +208,8 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
     // 11d: mehurček inštruktorja ne prekrije polj in gumbov v Nastavitvah (po drsenju se umakne).
     await p.reload();
     await p.waitForSelector("#view-path #xp-card .hero");
+    // Posnetek zadnjega zaslona (zacetek.js) pokaže kartico, preden app.js nastavi window.evklid (nestabilno v CI 17. 11.).
+    await p.waitForFunction(() => window.evklid && window.evklid.showView);
     await p.evaluate(() => window.evklid.showView("chat"));
     await p.waitForSelector("#input", { state: "visible" });
     await p.fill("#input", "Koliko je 12 + 30?");
