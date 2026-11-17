@@ -1,30 +1,47 @@
 // Kode vabila v pilot (j 2026-11-15, 4. korak načrta pilota): stran /vabilo?koda=… (public/vabilo.html).
 // Kode so samo v okolju EVKLID_VABILA (ločila vejica, podpičje ali presledek, brez ozira na velike črke), j jih izbere
-// sam, ena koda za eno osebo. Koda velja, dokler je na seznamu: brez tabele, brez računa in brez naslova IP v bazi.
-// Članstva v pilotu koda (še) ne da: to je e-naslov v EVKLID_PILOT_EMAILS, ki ga po registraciji vpiše j. Samodejno
-// članstvo iz kode in »porabljeno« je prošnja drugemu profilu (server/accounts/), GitHub issue #751; tam naj se
-// uporabi isInviteCode().
-// Odgovor je samo { ok: true, do } ali { ok: false } (do = zadnji dan pilota za besedilo strani). Koda gre v telesu
-// POST, ne v poti, da je ni v dnevnikih strežnika in gostovanja; seznama kod ne vrne nobena pot.
+// sam, ena koda za eno osebo. Koda velja, dokler je na seznamu. Preverjanje ne zapiše ničesar (ne kode ne naslova IP).
+// Samodejno članstvo (#751, j 2026-11-17): registracija s kodo (polje invite) shrani na račun samo zgoščeno kodo
+// (inviteHash); ob potrditvi e-naslova server/accounts/index.js (claimPilotInvite) kodo porabi v tabeli pilot_vabila
+// (ena vrstica na kodo, PRIMARY KEY: ena koda = en račun) in račun je član pilota (pilot-meja.js isPilotParent), dokler
+// je koda na seznamu EVKLID_VABILA in pilot traja. Porabljena koda ostane porabljena tudi po izbrisu računa.
+// Odgovor je samo { ok: true, do }, { ok: false, used: true } (porabljena) ali { ok: false } (do = zadnji dan pilota
+// za besedilo strani). Koda gre v telesu POST, ne v poti, da je ni v dnevnikih strežnika in gostovanja; seznama kod ne vrne nobena pot.
 import crypto from "node:crypto";
 import express from "express";
 import { pilotLastDay } from "./accounts/pilot-meja.js";
+import { MAX_CODE, MIN_CODE, norm, inviteCodes, inviteHash } from "./vabila-kode.js";
 
-export const MAX_CODE = 64;
-// Krajše kode v EVKLID_VABILA ne veljajo (prelahko jih uganeš); ob zagonu strežnik enkrat opozori, koliko jih je.
-export const MIN_CODE = 8;
+// Seznam kod in zgoščena koda so v server/vabila-kode.js (brez Expressa, uvozi ga tudi meja pilota).
+export { MAX_CODE, MIN_CODE, inviteCodes, shortInviteCodes, inviteHash, inviteHashValid } from "./vabila-kode.js";
+
 // Omejitev ugibanja (v pomnilniku, po zagonu prazno): na IP največ PER_IP NAPAČNIH kod v WINDOW_MS (uspešna preverjanja
 // se ne štejejo: stran kodo preveri ob vsakem odprtju, razred na istem šolskem omrežju bi sicer zaklenil druge), za vse
 // skupaj največ GLOBAL_FAILS napačnih kod na uro (razpršeno ugibanje z več naslovov).
 export const LIMITS = { perIp: 10, windowMs: 15 * 60 * 1000, globalFails: 200, globalMs: 60 * 60 * 1000 };
 
-const norm = (v) => (typeof v === "string" ? v.trim().toLowerCase() : "");
-const allCodes = (env) => String(env.EVKLID_VABILA || "").split(/[,;\s]+/).map(norm).filter(Boolean);
-export const inviteCodes = (env = process.env) => allCodes(env).filter((c) => c.length >= MIN_CODE && c.length <= MAX_CODE);
-// Koliko kod v okolju je prekratkih (opozorilo ob zagonu; kod samih ne izpišemo).
-export const shortInviteCodes = (env = process.env) => allCodes(env).filter((c) => c.length < MIN_CODE).length;
-
 const digest = (s) => crypto.createHash("sha256").update(s).digest();
+
+// Porabljene kode (#751). Tabelo ustvari server/accounts/index.js (z računi); brez nje ni porabljena nobena koda.
+export function ensureInviteUses(db) {
+  db.exec(`CREATE TABLE IF NOT EXISTS pilot_vabila (
+    code_hash TEXT PRIMARY KEY,
+    parent_id INTEGER REFERENCES parents(id) ON DELETE SET NULL,
+    used_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )`);
+}
+export function inviteUsed(db, code) {
+  if (!db) return false;
+  try {
+    return !!db.prepare("SELECT 1 FROM pilot_vabila WHERE code_hash = ?").get(inviteHash(code));
+  } catch {
+    return false; // brez računov tabele ni
+  }
+}
+// Porabi kodo za račun (atomarno: ob dveh hkratnih potrditvah z isto kodo uspe samo prva). true = uspelo.
+export function claimInvite(db, hash, parentId) {
+  return db.prepare("INSERT OR IGNORE INTO pilot_vabila (code_hash, parent_id) VALUES (?, ?)").run(hash, parentId).changes === 1;
+}
 
 // Ali je koda veljavna (na seznamu EVKLID_VABILA). Primerja z vsemi kodami v enakem času (brez zgodnjega izhoda).
 export function isInviteCode(code, env = process.env) {
@@ -69,7 +86,8 @@ export function createInviteLimiter(limits = LIMITS, now = () => Date.now(), log
 }
 
 // Pot API je javna (brez prijave), zato jo server/app.js namesti PRED preverjanjem prijave (server/accounts/index.js).
-export function mountInviteApi(app, { env = process.env, log = console, limiter = createInviteLimiter(LIMITS, undefined, log) } = {}) {
+// db: za porabljene kode (#751): veljavna, a porabljena koda vrne { ok: false, used: true } in ne šteje kot napačna.
+export function mountInviteApi(app, { env = process.env, log = console, limiter = createInviteLimiter(LIMITS, undefined, log), db = null } = {}) {
   const short = shortInviteCodes(env);
   if (short) log.warn?.(`[vabilo] EVKLID_VABILA: ${short} kod krajših od ${MIN_CODE} znakov ne velja`);
   // Kot server/sole.js: z računi (Render) req.ip (trust proxy, ki ga nastavi server/accounts/index.js; namestitev
@@ -93,6 +111,7 @@ export function mountInviteApi(app, { env = process.env, log = console, limiter 
         limiter.fail(ip);
         return res.json({ ok: false });
       }
+      if (inviteUsed(db, koda)) return res.json({ ok: false, used: true });
       res.json({ ok: true, do: pilotLastDay(env) });
     });
   });
