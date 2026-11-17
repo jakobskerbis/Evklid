@@ -30,6 +30,7 @@ test("datumi: v slovenščini mesec v rodilniku (»23. novembra 2026«), drugje 
   assert.equal(dateText(d, "en"), "November 23, 2026");
   assert.equal(dateText("ni datum", "sl"), "");
   // mesec iz istih nastavitev (UTC), ne iz krajevnega časa: 30. 11. 23.30 UTC ostane november
+  assert.equal(dateText(d, "sl", { month: "long", year: "numeric" }), "november 2026", "brez dneva: imenovalnik");
   assert.equal(dateText(new Date("2026-11-30T23:30:00Z"), "sl", { day: "numeric", month: "long", timeZone: "UTC" }), "30. novembra");
   assert.equal(SL_MONTH.length, 12);
   for (const f of ["public/account.js", "public/garancija-ui.js", "public/flashcards.js", "public/corner.js", "public/zapiski/zapiski.js", "public/pilot-naloge.js", "public/games/daily-view.js", "server/gradiva.js", "server/textbook-print.js", "server/gradiva-vsebina.js"]) {
@@ -132,6 +133,12 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
       assert.equal(await p.locator("#view-me").isVisible(), true);
       await p.evaluate(() => window.evklid.showView("path"));
     }
+    // Tipka Nazaj (Android, brskalnik) gre tja kot »←«: Urnik z Učne poti → Učna pot.
+    await p.evaluate(() => window.evklid.showView("schedule"));
+    await p.locator("#view-schedule .me-back").waitFor();
+    await p.goBack();
+    await p.waitForFunction(() => !document.querySelector("#view-path").hidden);
+    assert.equal(await p.locator("#view-me").isVisible(), false, "Nazaj z Urnika: Učna pot, ne Jaz");
     // 10b: NPZ 9 matematika nima izbirnih nalog → brez »(od tega 0 izbirnih)«.
     await p.evaluate(() => window.evklid.showView("exams"));
     await p.waitForSelector("#view-exams .contest-head");

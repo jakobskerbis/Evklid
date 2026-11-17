@@ -578,7 +578,10 @@ function placeBubble() {
     }
     return null;
   };
-  let spot = (controls.length && find(rects.concat(controls))) || find(rects);
+  // Trenutno mesto je prosto (tudi polj): mehurček ostane, ne skače ob vsakem drsenju.
+  const cur = { side: bubble.dataset.side, y: parseFloat(bubble.style.top) };
+  const keep = controls.length && cur.side === pref && cur.y >= lo && cur.y <= hi && !rects.concat(controls).some((r) => hit(r, xOf(pref), cur.y));
+  let spot = keep ? cur : (controls.length && find(rects.concat(controls))) || find(rects);
   // Kalkulator na ležečem telefonu (nizek zaslon) ali brez prostega mesta ob njegovih tipkah: mehurček se skrije, dokler
   // se to ne spremeni (obrat, drug način ali pogled; j 14. 11. 2026). Inštruktor ostane v spodnji vrstici.
   const lowLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;

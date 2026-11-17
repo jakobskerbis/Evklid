@@ -7,7 +7,8 @@ export function dateText(value, loc, opts = { day: "numeric", month: "long", yea
   const d = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(d.getTime())) return "";
   const f = new Intl.DateTimeFormat(loc, opts);
-  if (!/^sl\b/i.test(loc) || opts.month !== "long") return f.format(d);
+  // Rodilnik samo z dnevom (»23. novembra«); sam mesec ostane v imenovalniku (»november 2026«).
+  if (!/^sl\b/i.test(loc) || opts.month !== "long" || !opts.day) return f.format(d);
   // Mesec iz istih nastavitev (npr. timeZone: "UTC"), ne iz d.getMonth() v krajevnem času.
   const m = Number(new Intl.DateTimeFormat("en", { ...opts, month: "numeric" }).formatToParts(d).find((p) => p.type === "month").value);
   return f
