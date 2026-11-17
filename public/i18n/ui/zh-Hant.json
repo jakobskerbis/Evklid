@@ -182,7 +182,7 @@
     "other": "{n} 分"
   },
   "task.phCoef": "例如 2, 1, 2",
-  "task.phUnit": "數值和單位，例如 12.5 {unit}",
+  "task.phUnit": "數值和單位",
   "task.phResult": "輸入答案",
   "task.write": "手寫",
   "task.writeTitle": "用手指或滑鼠輸入：數字鍵盤或手寫",
@@ -659,7 +659,7 @@
   "chk.empty": "請先輸入答案。",
   "chk.number": "請輸入一個數（小數點或逗號都可以）。",
   "chk.addUnit": "數已經寫了，再加上單位。結果的單位是什麼？",
-  "chk.unit": "檢查單位：用{unit}寫出結果。",
+  "chk.unit": "這個單位不對。檢查一下結果應該用什麼單位。",
   "chk.rounding": "計算正確，只是四捨五入錯了。正確的近似值是{right}。",
   "chk.fraction": "分數寫成 a/b（如 3/4），比寫成 a : b（如 3 : 4），或寫成帶分數（如 1 1/2）。",
   "chk.simplify": "數值正確，但要把分數約成最簡。",

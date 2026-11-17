@@ -430,15 +430,16 @@ async function mockReply({ messages, onText, signal, model, onToolUse = null }) 
 
 export const OCR_MODEL = env("EVKLID_OCR_MODEL", MODEL);
 
-export async function readHandwriting({ imageBase64, mediaType = "image/png", answerType = "number", unit = null }) {
+// Prave enote modelu ne pošljemo (j, 17. 11. 2026): bralec bi jo lahko dopisal in izdal odgovor; enota je neobvezna.
+export async function readHandwriting({ imageBase64, mediaType = "image/png", answerType = "number", withUnit = false }) {
   if (isMockMode()) return { text: null, mock: true, usage: null, model: OCR_MODEL };
   const kind =
     answerType === "fraction"
       ? "ulomek (zapiši kot a/b)"
       : answerType === "coefficients"
         ? "zaporedje koeficientov, ločenih z vejico (npr. 2, 1, 2)"
-        : unit
-          ? `število z enoto (npr. 12,5 ${unit})`
+        : withUnit
+          ? "število, morda z enoto (enoto prepiši le, če je napisana; ne dodajaj je)"
           : "število ali kratek izraz";
   const final = await getClient().messages.create({
     model: OCR_MODEL,

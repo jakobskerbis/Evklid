@@ -5,6 +5,7 @@
 // se ob ponovni povezavi pošljejo strežniku, ki vsako nalogo iz semena ustvari znova,
 // odgovor preveri še enkrat in podeli XP.
 import { checkAnswer } from "/practice/check.js";
+import { isStalePack, offlineTask } from "./enote-izbira.js";
 
 // Enako kot hintSteps v server/practice/index.js: podatki → formula → namig.
 function hintSteps(t) {
@@ -64,7 +65,8 @@ export class OfflineError extends Error {
 export async function refreshPack(api, sid, pathKey, { force = false } = {}) {
   if (!navigator.onLine) return getPack(sid);
   const old = getPack(sid);
-  if (!force && old && old.path === pathKey && Date.now() - Date.parse(old.created) < DAY) return old;
+  // Paket iz različice pred PR 786 (enota brez hasUnit) je zastarel tudi, če je mlajši od dneva.
+  if (!force && old && old.path === pathKey && Date.now() - Date.parse(old.created) < DAY && !isStalePack(old)) return old;
   try {
     const pack = await api(`/api/students/${sid}/offline-pack?path=${encodeURIComponent(pathKey)}`);
     // Če ni prostora (zasebno okno, poln pomnilnik), paket preprosto ni na voljo.
@@ -110,7 +112,7 @@ export function offlineApi(sid, url, opts = {}) {
     const done = new Set(read(QUEUE(sid), []).map((r) => `${r.topic_id}:${r.seed}`));
     const item = list.find((x) => !done.has(`${body.topic_id}:${x.seed}`)) || list[Math.floor(Math.random() * list.length)];
     lastTask = { ...item, topic_id: body.topic_id, attempts: 0, id: `off-${item.seed}` };
-    return { task: { id: lastTask.id, mode: "practice", ...item.task }, state: { level: item.level, streak: 0 }, offline: true };
+    return { task: { id: lastTask.id, mode: "practice", ...offlineTask(item.task, item.answer, checkAnswer) }, state: { level: item.level, streak: 0 }, offline: true };
   }
   const m = /^\/api\/students\/\d+\/tasks\/(off-[^/]+)\/(answer|help|skip|read|hint)$/.exec(p);
   if (m && lastTask?.id === decodeURIComponent(m[1])) {
@@ -119,7 +121,7 @@ export function offlineApi(sid, url, opts = {}) {
       return { steps: steps.slice(0, Math.max(1, Number(body.step) || 1)), total: steps.length, offline: true };
     }
     if (m[2] !== "answer") throw new OfflineError();
-    const res = checkAnswer(lastTask.answer, body.answer);
+    const res = checkAnswer(lastTask.answer, body.answer, { convert: true, text: lastTask.task?.text });
     const out = { kind: res.kind, message: res.message || null, ...(res.code ? { code: res.code, params: res.params || {} } : {}), offline: true };
     if (["format", "unit", "simplify"].includes(res.kind)) return { ...out, retry: true };
     lastTask.attempts += 1;
