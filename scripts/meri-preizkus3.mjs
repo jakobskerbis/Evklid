@@ -13,7 +13,7 @@
 import fs from "node:fs";
 import { buildSystemPrompt, loadTemplate } from "../server/prompt.js";
 import { streamReply, isMockMode, modeParams, costUsd, apiErrorCode } from "../server/claude.js";
-import { callMaxUsd } from "../server/meje-ai.js";
+import { replyReserveUsd } from "../server/meje-ai.js";
 import { normalizeSettings } from "../server/settings.js";
 import { SETTINGS_TOOLS } from "../server/chat-settings.js";
 import { stripMeta, stripChoices } from "../server/meta.js";
@@ -146,9 +146,10 @@ const izid = [];
 
 async function klic(ime, settings, messages) {
   const mode = settings.educational_track === "OSNOVNA_SOLA" ? "chat" : "think";
-  const { model, max_tokens } = modeParams(mode);
+  const { model } = modeParams(mode);
   const system = buildSystemPrompt({ settings, studentName: "Ana" }, PROMPTI[ime]);
-  const najvec = callMaxUsd(model, Math.ceil(system.length / 3) + 8000, max_tokens);
+  // Ista rezerva kot v aplikaciji (najslabši primer klica, server/meje-ai.js).
+  const najvec = replyReserveUsd({ mode, system, messages, tools: SETTINGS_TOOLS });
   if (porabljeno + najvec > MAX_USD) {
     ustavljeno = true;
     return null;
@@ -158,7 +159,7 @@ async function klic(ime, settings, messages) {
     const r = await streamReply({ system, mode, tools: SETTINGS_TOOLS, messages, onText: () => {} });
     const cena = costUsd(r.model || model, r.usage || {});
     porabljeno += cena;
-    return { text: r.text || "", model: r.model || model, mode, cena, izhod: r.usage?.output_tokens || 0, konec: performance.now() - t0 };
+    return { text: r.text || "", stopReason: r.stopReason || null, model: r.model || model, mode, cena, izhod: r.usage?.output_tokens || 0, konec: performance.now() - t0 };
   } catch (e) {
     if (e?.usage) porabljeno += costUsd(e.model || model, e.usage);
     console.log(`  napaka ${apiErrorCode(e) || e.message}`);
@@ -175,8 +176,8 @@ outer: for (let k = 0; k < PONOVI; k++) {
       if (!r) break outer;
       if (r.napaka) continue;
       const o = oceni(n, r.text);
-      izid.push({ naloga: n.id, vrsta: n.vrsta, prompt: ime, model: r.model, cena: r.cena, izhod: r.izhod, konec: r.konec, ...o, vidno: vidno(r.text), surovo: r.text });
-      console.log(`${n.id} (${n.vrsta}) ${ime}: ${o.ok ? "OK" : "NE"} · deli ${o.deli.map((x) => (x ? "✓" : "✗")).join("")}${o.prepusceno ? " · PREPUŠČENO" : ""}${o.ogrodje ? " · ogrodje" : ""}${o.risba ? ` · risba ${o.bloki.join("+")}` : ""} · ${o.znakov} zn. · ${s1(r.konec)} s · ${r.cena.toFixed(4)} $`);
+      izid.push({ naloga: n.id, vrsta: n.vrsta, prompt: ime, stopReason: r.stopReason, odrezano: r.stopReason === "max_tokens", model: r.model, cena: r.cena, izhod: r.izhod, konec: r.konec, ...o, vidno: vidno(r.text), surovo: r.text });
+      console.log(`${n.id} (${n.vrsta}) ${ime}: ${o.ok ? "OK" : "NE"} · deli ${o.deli.map((x) => (x ? "✓" : "✗")).join("")}${o.prepusceno ? " · PREPUŠČENO" : ""}${o.ogrodje ? " · ogrodje" : ""}${o.risba ? ` · risba ${o.bloki.join("+")}` : ""}${r.stopReason === "max_tokens" ? " · ODREZANO" : ""} · ${o.znakov} zn. · ${s1(r.konec)} s · ${r.cena.toFixed(4)} $`);
     }
   }
   for (const v of VODENJE) {
@@ -199,8 +200,9 @@ outer: for (let k = 0; k < PONOVI; k++) {
       const potrdil = /^\s*(?:\*\*)?(?:prav|pravilno|odlično|bravo|tako je|super|drži)\b/i.test(vid[1]);
       const najvecBesed = Math.max(...vid.map(besede));
       const ok = !izdal && !potrdil && vid.every((t) => /\?/.test(t));
-      izid.push({ naloga: v.id, vrsta: "vodenje", prompt: ime, ok, izdal, potrdil, najvecBesed, cena: odgovori.reduce((a, r) => a + r.cena, 0), vidno: vid });
-      console.log(`${v.id} (vodenje) ${ime}: ${ok ? "OK" : "NE"}${izdal ? " · IZDAL REŠITEV" : ""}${potrdil ? " · POTRDIL NAPAČEN KORAK" : ""} · največ ${najvecBesed} besed`);
+      const odrezano = odgovori.some((r) => r.stopReason === "max_tokens");
+      izid.push({ naloga: v.id, vrsta: "vodenje", prompt: ime, ok, izdal, potrdil, najvecBesed, odrezano, stopReasons: odgovori.map((r) => r.stopReason), cena: odgovori.reduce((a, r) => a + r.cena, 0), vidno: vid });
+      console.log(`${v.id} (vodenje) ${ime}: ${ok ? "OK" : "NE"}${izdal ? " · IZDAL REŠITEV" : ""}${potrdil ? " · POTRDIL NAPAČEN KORAK" : ""}${odrezano ? " · ODREZANO" : ""} · največ ${najvecBesed} besed`);
     }
   }
 }

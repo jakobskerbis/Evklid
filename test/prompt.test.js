@@ -314,10 +314,10 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     assert.deepEqual(kinds(b.exprs), ["y", "y", "y", "x", "x", "x"]);
     assert.equal(b?.kind, "graph");
     assert.equal(b.exprs.length, 6);
-    assert.deepEqual(b.view, { ymin: -3, ymax: 3 });
+    assert.deepEqual(b.view, { xmin: 0, xmax: 10, ymin: -3, ymax: 3 }); // celo okno (pregled 3: zgled ne sme učiti okna samo za y)
     for (const ex of ["y = 12 {4 <= x <= 10}", "x = 1 {1 <= y <= 3}", "0 <= y <= {0 <= x < 2: 3, 2 <= x < 4: 5}"]) assert.ok(graf.includes("`" + ex + "`"), ex);
     assert.doesNotMatch(dyn, /škatlo z brki|OŠ 1\.–4\. razred/);
-    // Doda ~1 780 znakov predpomnjenega dela (58 164 → 59 946; ~480 žetonov) s popravki pregleda #811, meja 1 800.
+    // Doda ~1 800 znakov predpomnjenega dela (58 164 → 59 960; ~480 žetonov) s popravki pregleda #811, meja 1 800.
     assert.ok(stat.length < 58164 + 1800, `stalni del ${stat.length} znakov`);
   });
 });
