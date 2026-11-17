@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { marked } from "marked";
 import katex from "katex";
-import { createRenderer, brezPraznihVrstic, streamSafe, fixTables, isTableSeparator, centerNumberColumns, subHeadings } from "../public/rich.js";
+import { createRenderer, brezPraznihVrstic, potencaZOklepaji, streamSafe, fixTables, isTableSeparator, centerNumberColumns, subHeadings } from "../public/rich.js";
 import { nextChunk } from "../public/pace.js";
 import { annotateTex, withFormulaSubject } from "../public/formula-data.js";
 
@@ -223,4 +223,24 @@ test("empty rows in aligned or gathered math are dropped, spacing rows and matri
   assert.ok(performance.now() - t0 < 500);
   const h = renderRich("$$\\begin{aligned} a &= b \\\\ \\\\ &= c \\end{aligned}$$");
   assert.equal(h, renderRich("$$\\begin{aligned} a &= b \\\\ &= c \\end{aligned}$$"));
+});
+
+// Potenca z okroglimi oklepaji (j 17. 11. 2026: »e^(-x^2)« je bil nadpisan le »(«, ostalo v vrstici).
+test("a superscript written with round brackets becomes a real power, other exponents stay", () => {
+  const f = potencaZOklepaji;
+  assert.equal(f("f(x) = e^(-x^2)"), "f(x) = e^{-x^2}");
+  assert.equal(f("2^(n+1)"), "2^{n+1}");
+  assert.equal(f("x^((a+b)/2)"), "x^{(a+b)/2}");
+  assert.equal(f("(1+x)^(n)"), "(1+x)^{n}");
+  assert.equal(f("e^(x)(y)"), "e^{x}(y)"); // le prvi oklepaj
+  assert.equal(f("e^(-\\frac{x^2}{2\\sigma^2})"), "e^{-\\frac{x^2}{2\\sigma^2}}");
+  assert.equal(f("e^(a^(2)+1)"), "e^{a^{2}+1}");
+  assert.equal(f("x^(a)^(b)"), "x^(a)^{b}"); // »x^{a}^{b}« bi bil dvojni eksponent (napaka KaTeX)
+  // ostane: neuravnotežen oklepaj, \text{…}, relacija ali vejica v oklepaju, eksponenti z {…}, številko ali ukazom
+  for (const t of ["a^(b", "x^(a, b)", "x^(a = b)", "\\text{a^(b)}", "x^{(a)}", "x^2", "x^\\frac{1}{2}", "\\^(x)", `x^(${"a".repeat(100)})`]) assert.equal(f(t), t);
+  assert.equal(f("\\text{e^(x)} + c^(d)"), "\\text{e^(x)} + c^{d}");
+  assert.equal(renderRich("$f(x) = e^(-x^2)$"), renderRich("$f(x) = e^{-x^2}$"));
+  const t0 = performance.now();
+  f("x^(".repeat(30000));
+  assert.ok(performance.now() - t0 < 500);
 });

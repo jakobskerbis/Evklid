@@ -77,6 +77,67 @@ export function brezPraznihVrstic(tex) {
   });
 }
 
+// Potenca z okroglimi oklepaji (»e^(-x^2)«, j 17. 11. 2026): KaTeX bi nadpisal le »(«, ostalo bi bilo v vrstici.
+// »^(X)« postane »^{X}«, ko je oklepaj ves eksponent: uravnotežen, brez vrhnje relacije ali vejice, ne predolg.
+// Ne v \text{…} in ne za \^ (naglas); »^{…}«, »^2«, »^\frac…« ostanejo.
+const BESEDILO = /^\\(?:text|textrm|textbf|textit|mbox|hbox)\s*\{/;
+const REL_V_POTENCI = /^(?:=|<|>|,|;|\\(?:le|leq|ge|geq|neq|ne|approx|equiv|to|rightarrow|Rightarrow|iff|quad|qquad)(?![a-zA-Z]))/;
+export function potencaZOklepaji(tex) {
+  if (!tex.includes("^(") && !/\^\s+\(/.test(tex)) return tex;
+  let out = "";
+  for (let i = 0; i < tex.length; ) {
+    const c = tex[i];
+    if (c === "\\") {
+      const b = BESEDILO.exec(tex.slice(i, i + 12));
+      if (b) {
+        // preskoči vso skupino {…}
+        let d = 0, j = i + b[0].length - 1;
+        for (; j < tex.length; j++) {
+          if (tex[j] === "\\") { j++; continue; }
+          if (tex[j] === "{") d++;
+          else if (tex[j] === "}" && --d === 0) break;
+        }
+        out += tex.slice(i, j + 1);
+        i = j + 1;
+        continue;
+      }
+      out += tex.slice(i, i + 2);
+      i += 2;
+      continue;
+    }
+    if (c === "^") {
+      const m = /^\^\s*\(/.exec(tex.slice(i));
+      if (m) {
+        const z = i + m[0].length; // za »(«
+        let p = 1, br = 0, j = z, ok = true;
+        for (; j < tex.length && j - z <= 80; j++) {
+          const t = tex[j];
+          if (t === "\\") {
+            if (p === 1 && br === 0 && REL_V_POTENCI.test(tex.slice(j))) ok = false;
+            j++;
+            continue;
+          }
+          if (t === "{") br++;
+          else if (t === "}") { if (--br < 0) break; }
+          else if (br === 0 && t === "(") p++;
+          else if (br === 0 && t === ")" && --p === 0) break;
+          else if (p === 1 && br === 0 && REL_V_POTENCI.test(tex.slice(j))) ok = false;
+        }
+        const notri = tex.slice(z, j);
+        // »x^(a)^(b)«: prvi ostane (dvojni eksponent bi bil napaka KaTeX), drugi se popravi.
+        if (ok && p === 0 && br === 0 && notri.trim() && !/^\s*\^/.test(tex.slice(j + 1))) {
+          out += `^{${potencaZOklepaji(notri)}}`;
+          i = j + 1;
+          continue;
+        }
+      }
+    }
+    out += c;
+    i++;
+  }
+  return out;
+}
+
 // annotate(tex): klikljive formule (formula-info.js) ovijejo znane simbole in enote v \htmlData{fx=…};
 // renderMath(tex, display, false) jih izpusti (npr. v gumbih z možnostmi odgovora).
 export function createRenderer({ marked = lib("marked"), katex = lib("katex"), sanitize, annotate = null } = {}) {
@@ -101,7 +162,7 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
   // ctx: poved okoli formule (niz) ali { sentence, block }, da dvoumna črka dobi pomen iz besedila
   // (formula-data.js annotateTex): block je celo besedilo (kartica, naloga, razdelek) z definicijami oznak.
   function renderMath(tex, display, fx = true, ctx = "") {
-    tex = brezPraznihVrstic(tex);
+    tex = brezPraznihVrstic(potencaZOklepaji(tex));
     try {
       if (annotate && fx) {
         const o = typeof ctx === "string" ? (ctx ? { sentence: ctx } : null) : ctx;
