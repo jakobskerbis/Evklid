@@ -218,3 +218,27 @@ test("pregled 785-2, 2: x^x + q brez asimptote; člen, pomnožen z x, ni premik"
     assert.equal(label("MAT", "", f, "p"), null, f);
   }
 });
+
+// Pregled 785, krog 3: izjema I = P/… le za jakost (P/S, P/(4πr²)); I = P/U ostane tok. Mehanska napetost ni R.
+test("pregled 785-3, 1: I = P/U je tok, I = P/(4πr²) in P/S nista", () => {
+  for (const x of ["Tok dobiš iz moči: $I = \\frac{P}{U}$", "$P = \\dfrac{W}{t}$, $I = \\dfrac{P}{U}$", "Tok je $I = \\dfrac{P}{U\\cos\\varphi}$.", "Tok je $I = P/(U\\cos\\varphi)$."]) {
+    assert.match(label("FIZ", "Električna energija in moč", x, "I") || "", /tok/, x);
+  }
+  for (const x of ["Svetloba: $I = \\frac{P}{4\\pi r^2}$", "Na zaslon pade $I = \\frac{P}{S}$.", "Žarek: $I = P/S$", "Laser: $I = \\dfrac{P}{\\pi d^2/4}$"]) {
+    assert.equal(label("FIZ", "Valovanje", x, "I"), null, x);
+  }
+});
+
+test("pregled 785-3, 2: napetost vrvi, meja tečenja, trdnost in R_e, R_m, R_p0,2 niso električni upor", () => {
+  const none = [
+    "Napetost vrvi je $F = 200\\,\\mathrm{N}$, kolo ima polmer $R$.",
+    "Napetost v vrvi je enaka teži, škripec ima $R = 0{,}1\\,\\mathrm{m}$.",
+    "Meja tečenja jekla je $R = 235\\,\\mathrm{MPa}$.",
+    "Natezna trdnost je $R = 400\\,\\mathrm{MPa}$.",
+    "Velja $\\sigma \\le R_e$.",
+    "Velja $\\sigma \\le R_{m}$.",
+    "Velja $\\sigma \\le R_{p0,2}$.",
+  ];
+  for (const x of none) assert.equal(label("FIZ", "Trdnost materialov", x, "R"), null, x);
+  assert.match(label("FIZ", "Električni tok in vezja", "Upornik ima upor $R = 50\\,\\Omega$.", "R") || "", /upor/);
+});
