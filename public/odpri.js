@@ -35,8 +35,10 @@ export function addOpen(bubble, list) {
   }
   if (row.children.length) box.prepend(row);
   if (!box.children.length) return;
-  const foot = bubble.querySelector(".msg-foot");
-  if (foot) foot.before(box);
+  // Takoj za besedilom odgovora, pred gumbi z izbirami, »Razloži podrobneje«, »Nariši graf« in nogo sporočila
+  // (ti so lahko dodani prej ali pozneje; app.js addChoices jih postavi za ta okvir).
+  const before = bubble.querySelector(":scope > .choice-row, :scope > .deep-btn, :scope > .graph-btn, :scope > .msg-foot");
+  if (before) before.before(box);
   else bubble.append(box);
 }
 
@@ -171,20 +173,33 @@ function graphCard(x) {
     D.openGraph(current);
   });
   // Graf se nariše, ko je sporočilo vidno (modul kalkulatorja se naloži šele takrat).
-  requestAnimationFrame(() => drawGraph(host, sliders, x.exprs, (list) => (current = list)).catch(() => host.replaceChildren(el("p", "muted", D.t("open.failed")))));
+  requestAnimationFrame(() => drawGraph(host, sliders, x.exprs, (list) => (current = list), x.view).catch(() => host.replaceChildren(el("p", "muted", D.t("open.failed")))));
   return c;
 }
 
-async function drawGraph(host, slidersEl, exprs, onChange) {
-  const [{ GraphView }, { buildModel, emptyState, newId, sliderRange }] = await Promise.all([import("./graph/plot.js"), import("./graph/model.js")]);
+async function drawGraph(host, slidersEl, exprs, onChange, fixed) {
+  const [{ GraphView }, { buildModel, emptyState, newId, sliderRange }, { fitModelView }] = await Promise.all([
+    import("./graph/plot.js"),
+    import("./graph/model.js"),
+    import("./graph/okno.js"),
+  ]);
   const state = emptyState();
   state.items = exprs.map((text, i) => ({ id: newId(), type: "expr", text, color: i % 8 }));
   let model = buildModel(state);
+  // Okno pokaže ničle, pole, ekstreme in prevoje (graph/okno.js), ne stalnega −10 … 10; okno iz bloka GRAF
+  // (inštruktor ga je določil sam) ostane, kot je. Drsniki okna ne spreminjajo.
+  const box = host.getBoundingClientRect();
+  const fit = fitModelView(model, { W: box.width || 320, H: box.height || 220, fixed: fixed || {} });
+  if (fit) {
+    state.view = fit;
+    state.settings.square = false;
+  }
   const fmt = (v, d = 4) => String(Math.round(v * 10 ** d) / 10 ** d).replace(".", ",").replace("-", "−");
   const view = new GraphView(host, {
     getState: () => state,
     getModel: () => model,
     label: (k) => D.t(`gc.poi.${k}`),
+    asimptote: true,
     fmt,
     axisFmt: (v, dec) => v.toFixed(dec).replace(".", ",").replace("-", "−"),
   });
