@@ -49,7 +49,7 @@ Pri Lari je $a = -0{,}1$, $b - k = 1{,}5$ in $c - n = 0$, zato je $D = 1{,}5^2 -
 :::premisli
 Laro zanima premica $y = 0{,}5x + n$, ki jo dvigujemo (večamo $n$). Kaj se dogaja s presečiščema in z diskriminanto? Napovej.
 ---
-Presečišči se bližata druga drugi. Diskriminanta se manjša: pri Lari je $a = -0{,}1$ in $c = 0$, zato je $D = 2{,}25 - 0{,}4n$. Pri $D = 0$ se presečišči zlijeta v dotikališče (tangenta). Ko premico dvignemo še više, je $D < 0$ in skupnih točk ni več (mimobežnica).
+Presečišči se bližata drugo drugemu. Diskriminanta se manjša: pri Lari je $a = -0{,}1$ in $c = 0$, zato je $D = 2{,}25 - 0{,}4n$. Pri $D = 0$ se presečišči zlijeta v dotikališče (tangenta). Ko premico dvignemo še više, je $D < 0$ in skupnih točk ni več (mimobežnica).
 :::
 
 **4. Dve paraboli.** Postopek se ne spremeni. Za paraboli $f(x) = x^2 - 2x - 3$ in $g(x) = -x^2 + 4x + 5$ izenačimo $f(x) = g(x)$ in vse prenesemo na levo: enačba $2x^2 - 6x - 8 = 0$, deljeno z $2$ enačba $x^2 - 3x - 4 = 0$. Razcep $(x - 4)(x + 1) = 0$ da $x = 4$ ali $x = -1$. Ordinati: $f(4) = 5$ in $f(-1) = 0$. Paraboli se sekata v točkah $(-1, 0)$ in $(4, 5)$.

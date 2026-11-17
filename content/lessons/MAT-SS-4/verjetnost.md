@@ -54,7 +54,7 @@ $$P(A + B) = P(A) + P(B).$$
 :::premisli
 V kuhinji je verjetnost, da je v hladilniku mleko, $0{,}7$, da so jajca, pa $0{,}6$. Ali je verjetnost, da je vsaj eno od obojega, $1{,}3$? Zakaj ne?
 ---
-Ne, verjetnost ne more biti večja od $1$. Dneve, ko sta v hladilniku oboje, smo šteli dvakrat. Odšteti moramo $P(A \cdot B)$; ta je vsaj $0{,}3$, saj mora biti vsota največ $1$.
+Ne, verjetnost ne more biti večja od $1$. Dneve, ko je v hladilniku oboje, smo šteli dvakrat. Odšteti moramo $P(A \cdot B)$; ta je vsaj $0{,}3$, saj mora biti vsota največ $1$.
 :::
 
 **5. Pogojna verjetnost (višja raven).** Verjetnost dogodka $A$ ob pogoju, da se je $B$ že zgodil (s $P(B) > 0$), je

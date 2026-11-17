@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -38,7 +38,7 @@ Tu je $p$ tlak, $V$ prostornina, $T$ temperatura v kelvinih in $R = 8{,}314\,\ma
 :::premisli
 Balona sta enaka po številu molekul. V katerem je več **atomov** in kolikokrat več?
 ---
-V balonu s $\mathrm{SF_6}$, sedemkrat več. Helij je enoatomen, vsaka molekula $\mathrm{SF_6}$ pa ima en atom žvepla in šest atomov fluora.
+V balonu z $\mathrm{SF_6}$, sedemkrat več. Helij je enoatomen, vsaka molekula $\mathrm{SF_6}$ pa ima en atom žvepla in šest atomov fluora.
 :::
 
 **3. Most čez množino.** Vsaka količina v nalogi se pretvori v množino in vsak rezultat se iz nje izračuna:

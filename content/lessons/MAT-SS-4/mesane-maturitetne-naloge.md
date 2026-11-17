@@ -148,7 +148,7 @@ $a_n = a_1 q^{n-1}$, $S_n = a_1 \dfrac{q^n - 1}{q - 1}$
 :::premisli
 Koliko je $S_6 = 2000 \cdot \dfrac{1{,}05^6 - 1}{0{,}05}$?
 ---
-$S_6 \approx 13\,604$ vstopnic v šestih sezonah.
+$S_6 \approx 13\,604$ vstopnice v šestih sezonah.
 :::
 
 ## Pogoste napake

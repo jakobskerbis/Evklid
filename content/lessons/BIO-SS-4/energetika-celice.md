@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -26,7 +26,7 @@ Energija je torej vmes shranjena kot razlika v koncentraciji $\mathrm{H^+}$, pod
 Kako vemo, da je gradient res vmesni korak? Leta 1966 sta André Jagendorf in Ernest Uribe namočila tilakoide (notranje membrane kloroplasta) v kislo raztopino s pH 4, da so se napolnile s protoni. Nato sta jih v temi prenesla v raztopino s pH 8, v kateri sta bila ADP in fosfat. Tilakoide so naredile ATP brez svetlobe in brez prenosa elektronov. Zadoščal je gradient.
 
 :::premisli
-Bi tilakoidi v tem poskusu naredili ATP, če bi jih iz raztopine s pH 4 prenesli v drugo raztopino s pH 4? Napovej in utemelji.
+Bi tilakoide v tem poskusu naredile ATP, če bi jih iz raztopine s pH 4 prenesli v drugo raztopino s pH 4? Napovej in utemelji.
 ---
 Ne. Brez razlike v koncentraciji $\mathrm{H^+}$ med notranjostjo in okolico protoni nimajo kam teči, zato se ATP-sintaza ne vrti. Odloča razlika, ne kislost sama. Takšen del poskusa je dobra kontrolna skupina.
 :::

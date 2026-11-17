@@ -313,7 +313,7 @@ Odštejemo $70$: $45x \le 530$. Delimo s $45$: $x \le 11{,}78\ldots$ Ker škatel
 
 Iz tega se vidi, da matematična rešitev ($x \le 11{,}78\ldots$) in rešitev v resničnem svetu ($x \in \{0, 1, \dots, 11\}$) nista vedno enaki. Pri besedilnih nalogah vedno premisli, ali je rešitev smiselna.
 
-Analogija za obrnitev znaka: če si po višini razvrščen od najnižjega do najvišjega in se obrneš na glavo (množenje z $-1$), je vrstni red obrnjen.
+Analogija za obrnitev znaka: na termometru je $5\,^\circ\mathrm{C}$ topleje od $2\,^\circ\mathrm{C}$, $-5\,^\circ\mathrm{C}$ pa hladneje od $-2\,^\circ\mathrm{C}$. Množenje z $-1$ prezrcali števila čez $0$, zato se vrstni red obrne.
 
 ## Drugače: Korak za korakom s številkami
 

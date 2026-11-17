@@ -83,7 +83,7 @@ V prvem letu se obe obrestujeta od iste glavnice $G_0$, zato sta obresti enaki. 
 V simulaciji spodaj »Navadno in obrestno obrestovanje« nastavi isto glavnico in obrestno mero za obe vrsti, nato povečuj število let. Opazuj, v katerem letu je razlika prvič večja od $10\,\%$ začetne glavnice.
 
 :::premisli
-Vrni se k uganki. Kje ima Ana več po $5$ letih in kje po $10$ letih? Napovej, nato izračunaj s $G_n = 2000\,(1 + 0{,}06\,n)$ za A in $G_n = 2000 \cdot 1{,}05^n$ za B.
+Vrni se k uganki. Kje ima Ana več po $5$ letih in kje po $10$ letih? Napovej, nato izračunaj z $G_n = 2000\,(1 + 0{,}06\,n)$ za A in $G_n = 2000 \cdot 1{,}05^n$ za B.
 ---
 Po $5$ letih: A $2600\,\text{€}$, B približno $2552{,}56\,\text{€}$, boljša je A. Po $10$ letih: A $3200\,\text{€}$, B približno $3257{,}79\,\text{€}$, boljša je B. Banka B prehiti A med 8. letom (A $2960\,\text{€}$, B $2954{,}91\,\text{€}$) in 9. letom (A $3080\,\text{€}$, B $3102{,}66\,\text{€}$). Pri kratkem varčevanju odloča višja mera, pri dolgem obresti od obresti.
 :::

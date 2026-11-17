@@ -178,7 +178,7 @@ $g(1{,}875) \approx -0{,}033 < 0$, zato je ničla na $(1{,}875; 1{,}88)$ in se z
 ## Pogoste napake
 
 - **»Različna predznaka, torej ničla« brez zveznosti.** Kdor tako sklepa pri $f(x) = \frac{1}{x}$ na $[-1, 1]$, išče ničlo, ki je ni: funkcija v $0$ ni definirana in skoči. Najprej preveri, da je funkcija na $[a, b]$ zvezna.
-- **»Natanko ena ničla«.** Izrek zagotovi **vsaj** eno ničlo. Funkcija iz primera 1 ima na $[0, 2]$ dve. Število ničel ugotoviš šele z več vrednostmi ali grafom.
+- **»Natanko ena ničla«.** Izrek zagotovi **vsaj** eno ničlo. Funkcija iz primera 1 ima $f(-2) = -1$ in $f(2) = 3$, na $[-2, 2]$ pa tri ničle. Število ničel ugotoviš šele z več vrednostmi ali grafom.
 - **»Enaka predznaka, torej ni ničle«.** $x^2 - 1$ ima na $[-2, 2]$ na obeh krajiščih vrednost $3$ in vseeno dve ničli. Iz enakih predznakov ne sklepaš ničesar.
 - **Napačna polovica pri bisekciji.** Nekateri obdržijo polovico, kjer je $f(c) > 0$, ne glede na drugo krajišče. Obdrži polovico, kjer imata **krajišči** različna predznaka; sicer se oddaljiš od ničle.
 - **Prezgodnji konec.** Interval dolžine $0{,}0625$ še ne pomeni ene pravilne decimalke (primer 2 po četrtem koraku). Ustaviš se, ko se obe krajišči zaokrožita enako.

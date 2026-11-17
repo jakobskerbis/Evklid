@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -25,8 +25,8 @@ Cinkova ploščica v raztopini bakrove soli se prevleče z bakrom, raztopina se 
 opis: Galvanski člen. Levo čaša z raztopino in cinkovo elektrodo, označeno kot anoda in negativni pol. Desno čaša z bakrovo elektrodo, označeno kot katoda in pozitivni pol. Elektrodi povezuje žica z voltmetrom, puščica nad žico kaže tok elektronov od cinka proti bakru. Čaši povezuje solni most.
 območje: 0; -1 .. 10; 7,5
 enota: 28
-pravokotnik: 0,5; 0,5 .. 3,5; 3,5 | modra ozadje
-pravokotnik: 6,5; 0,5 .. 9,5; 3,5 | oranžna ozadje
+pravokotnik: 0,5; 0,5 .. 3,5; 3,5 | oranžna ozadje
+pravokotnik: 6,5; 0,5 .. 9,5; 3,5 | modra ozadje
 črta: 0,5; 4,5 -> 0,5; 0,5 -> 3,5; 0,5 -> 3,5; 4,5
 črta: 6,5; 4,5 -> 6,5; 0,5 -> 9,5; 0,5 -> 9,5; 4,5
 pravokotnik: 1,7; 1 .. 2,3; 5,2 | siva polno

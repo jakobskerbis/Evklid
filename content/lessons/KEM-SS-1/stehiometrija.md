@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -24,7 +24,7 @@ $$2\,\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\,\mathrm{H_2O}$$
 velja: $2\,\text{mol}$ vodika reagirata z $1\,\text{mol}$ kisika in nastaneta $2\,\text{mol}$ vode. Razmerje množin je $n(\mathrm{H_2}) : n(\mathrm{O_2}) : n(\mathrm{H_2O}) = 2 : 1 : 2$.
 
 :::premisli
-Ali $2\,\text{g}$ vodika reagira z natanko $1\,\text{g}$ kisika?
+Ali $2\,\text{g}$ vodika reagirata z natanko $1\,\text{g}$ kisika?
 ---
 Ne. Razmerje $2 : 1$ velja za mole. $2\,\text{g}$ vodika je $1\,\text{mol}$ $\mathrm{H_2}$, ki potrebuje $0{,}5\,\text{mol}$ $\mathrm{O_2}$, to pa je $0{,}5\,\text{mol} \cdot 32\,\text{g/mol} = 16\,\text{g}$ kisika.
 :::

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -186,7 +186,7 @@ Vsak račun o križancih in poliploidih rešiš v istih štirih korakih.
 1. Za vsakega starša zapiši $2n$.
 2. Razpolovi: gameta ima $n = \dfrac{2n}{2}$.
 3. Seštej gameti obeh staršev: to je $2n$ križanca.
-4. Preveri pare. Če kromosomi nimajo svojega para, ker prihajajo iz različnih vrst ali ker je kompletov liho število, mejoza ne deluje in križanec je neploden.
+4. Preveri pare. Če kromosomi nimajo svojega para, ker prihajajo iz različnih vrst ali ker je število kompletov liho, mejoza ne deluje in križanec je neploden.
 
 | Križanec | Gameti | $2n$ | Plodnost |
 |---|---|---|---|
