@@ -182,7 +182,8 @@ function unitIssue(ans, unit) {
   if (!ans.unit) return null;
   if (!normUnit(unit)) return { kind: "unit", code: "chk.addUnit", message: `Število je zapisano, dodaj še enoto. V kateri enoti je rezultat?` };
   if (![ans.unit, ...(ans.unitAlternatives || [])].some((u) => sameUnit(u, unit))) {
-    return { kind: "unit", code: "chk.unit", params: { unit: ans.unit }, message: `Preveri enoto: rezultat zapiši v ${ans.unit}.` };
+    // Sporočilo ne imenuje prave enote (j, 17. 11. 2026): enota je del odgovora.
+    return { kind: "unit", code: "chk.unit", params: {}, message: "Ta enota ni prava. Preveri, katera količina se išče." };
   }
   return null;
 }

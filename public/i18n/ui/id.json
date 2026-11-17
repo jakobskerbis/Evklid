@@ -649,7 +649,7 @@
   "chk.empty": "Tulis jawabanmu dulu.",
   "chk.number": "Tulis sebuah angka (koma atau titik sama-sama bisa).",
   "chk.addUnit": "Angkanya sudah ada, sekarang tambahkan satuannya. Hasilnya dalam satuan apa?",
-  "chk.unit": "Periksa satuannya: tulis hasilnya dalam {unit}.",
+  "chk.unit": "Satuan ini tidak tepat. Periksa besaran apa yang dicari.",
   "chk.rounding": "Perhitunganmu benar, hanya pembulatannya yang salah. Dibulatkan dengan benar hasilnya {right}.",
   "chk.fraction": "Tulis pecahan sebagai a/b (mis. 3/4), perbandingan sebagai a : b (mis. 3 : 4) atau bilangan campuran (mis. 1 1/2).",
   "chk.simplify": "Nilainya benar, tetapi sederhanakan pecahannya sampai habis.",

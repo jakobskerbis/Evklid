@@ -36,7 +36,7 @@
 .tk-ctx { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; min-height: 32px; padding: 0 2px; }
 .tk-ctx::-webkit-scrollbar { display: none; }
 .tk-chip { flex: none; min-height: 32px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: 700 0.86rem var(--font); padding: 4px 12px; border-radius: 99px; cursor: pointer; box-shadow: none; }
-.tk-chip.unit { border-color: var(--accent); color: var(--accent); }
+.tk-chip.unit { border-color: var(--accent); color: var(--accent); min-height: 40px; }
 .tk-ctx.words .tk-chip { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tk-tabs { display: flex; align-items: center; gap: 4px; min-height: 36px; }
 .tk-tablist { display: flex; gap: 3px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }

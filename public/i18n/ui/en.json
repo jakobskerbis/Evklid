@@ -655,7 +655,7 @@
   "chk.empty": "Enter your answer first.",
   "chk.number": "Enter a number (a decimal point or comma both work).",
   "chk.addUnit": "The number is there, now add the unit. What unit is the result in?",
-  "chk.unit": "Check the unit: write the result in {unit}.",
+  "chk.unit": "This unit is not right. Check which quantity you are looking for.",
   "chk.rounding": "Your calculation is right, only the rounding is off. Correctly rounded, it is {right}.",
   "chk.fraction": "Write a fraction as a/b (e.g. 3/4), a ratio as a : b (e.g. 3 : 4) or a mixed number (e.g. 1 1/2).",
   "chk.simplify": "The value is right, but simplify the fraction fully.",

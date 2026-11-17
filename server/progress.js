@@ -836,8 +836,11 @@ export class Progress {
     // code/params: prevod sporočila v jeziku vmesnika (message ostane slovenski).
     const out = { kind: res.kind, message: res.message || null, ...(res.code ? { code: res.code, params: res.params || {} } : {}) };
 
-    // Napake v zapisu (manjka enota, neokrajšan ulomek ...) ne štejemo kot poskus.
-    if (["format", "unit", "simplify"].includes(res.kind)) {
+    // Napake v zapisu (manjka enota, neokrajšan ulomek ...) ne štejemo kot poskus. Napačna enota (chk.unit) na
+    // tekmovanju in poskusnem izpitu (mode »contest«) šteje kot napačen odgovor (j, 17. 11. 2026: »Nevtralno + šteje
+    // na tekmovanjih«); manjkajoča enota (chk.addUnit) je povsod nov poskus.
+    const wrongUnitCounts = res.kind === "unit" && res.code === "chk.unit" && row.mode === "contest";
+    if (["format", "unit", "simplify"].includes(res.kind) && !wrongUnitCounts) {
       return { ...out, retry: true };
     }
 

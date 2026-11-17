@@ -661,7 +661,7 @@
   "chk.empty": "Najprije upiši odgovor.",
   "chk.number": "Upiši broj (možeš koristiti zarez ili tačku).",
   "chk.addUnit": "Broj je upisan, dodaj još jedinicu. U kojoj je jedinici rezultat?",
-  "chk.unit": "Provjeri jedinicu: rezultat zapiši u {unit}.",
+  "chk.unit": "Ova jedinica nije tačna. Provjeri koja se veličina traži.",
   "chk.rounding": "Račun je tačan, samo zaokruživanje nije. Ispravno zaokruženo je {right}.",
   "chk.fraction": "Zapiši razlomak kao a/b (npr. 3/4), omjer kao a : b (npr. 3 : 4) ili mješoviti broj (npr. 1 1/2).",
   "chk.simplify": "Vrijednost je tačna, ali razlomak skrati do kraja.",

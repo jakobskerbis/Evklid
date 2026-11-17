@@ -17,7 +17,7 @@ import { useTopicFx } from "@/lib/useTopicFx";
 import Storage from "expo-sqlite/kv-store";
 import { key } from "@/lib/keys";
 import { expectedMs, progressAt, addDuration } from "../../../public/check-progress.js";
-import { unitChoices } from "../../../public/enote-izbira.js";
+import { unitChoices, withUnit } from "../../../public/enote-izbira.js";
 import { Banner, Body, Button, Card, ErrorView, Icon, Loading, ProgressBar, Screen, Title } from "@/components/ui";
 
 type Task = {
@@ -29,6 +29,7 @@ type Task = {
   inputHint?: string | null;
   answerType: "number" | "fraction" | "choice" | "coefficients";
   unit?: string | null;
+  units?: string[] | null; // enote za izbiro (strežnik, public/enote-izbira.js)
   options?: string[] | null;
   optionsTex?: boolean; // možnosti so formule brez $ (kot renderMath na spletu)
   topicId?: string | null; // tema naloge (za pomen črk v formulah)
@@ -355,14 +356,13 @@ function AnswerInput({ task, value, onChange, onSubmit, inputRef }: { task: Task
   }
   const placeholder = task.answerType === "coefficients" ? t("task.phCoef") : task.unit ? t("task.phUnit") : t("task.phResult");
   // Enota je del odgovora: ne samo prava, ampak več enot predmeta po abecedi (public/enote-izbira.js).
-  const units: string[] = unitChoices(task.unit || "", { subject: task.topicId || "", seed: task.text });
+  const units: string[] = task.units || unitChoices(task.unit || "", { subject: task.topicId || "", seed: task.text });
   const keys = ["−", ",", "/", ...units];
   const insert = (k: string) => {
     tap();
     if (units.includes(k)) {
-      // Nova enota zamenja prejšnjo (»1,2 V« → »1,2 mV«).
-      const old = units.filter((u) => value.trimEnd().endsWith(" " + u)).sort((a, b) => b.length - a.length)[0];
-      onChange(`${old ? value.trimEnd().slice(0, -old.length).trimEnd() : value.trimEnd()} ${k}`);
+      // Nova enota zamenja prejšnjo (»1,2 V« → »1,2 mV«, tudi »N s«).
+      onChange(withUnit(value, k, units));
       inputRef.current?.focus();
       return;
     }

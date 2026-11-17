@@ -4,7 +4,7 @@
 import { icon } from "./icons.js";
 import { t as tr, currentLang } from "./i18n.js";
 import { configureKeyboard, openKeyboard, hideKeyboard, keyboardOpenFor, keyboardPrefs, initKeyboard } from "./tipkovnica.js";
-import { unitChoices } from "./enote-izbira.js";
+import { unitChoices, unitAtEnd, withUnit } from "./enote-izbira.js";
 
 const LS_KEY = "evklid.pad";
 const prefs = (() => {
@@ -114,8 +114,8 @@ function showTask() {
   requestAnimationFrame(() => card?.scrollIntoView({ block: "start" }));
 }
 
-// Enota na koncu odgovora, če je ena od ponujenih (»1,25 V« → »V«), sicer "".
-const chosenUnit = (v) => (cur?.units || []).filter((u) => String(v).trimEnd().endsWith(" " + u)).sort((a, b) => b.length - a.length)[0] || "";
+// Enota na koncu odgovora, če je ena od ponujenih (»1,25 V«, »12V«, sama »V« → »V«), sicer "".
+const chosenUnit = (v) => unitAtEnd(v, cur?.units || []);
 
 function syncValue() {
   if (!cur) return;
@@ -130,10 +130,10 @@ function syncValue() {
 // Izbira enote: zamenja prejšnjo enoto (tudi »N s«, »kg m/s«); prazna izbira jo odstrani.
 function setUnit(unit) {
   if (!cur) return;
-  const v = cur.input.value.trimEnd();
-  const old = chosenUnit(v);
-  const num = old ? v.slice(0, -old.length).trimEnd() : v.replace(/\s+[^\d\s,./−-][^\s]*$/, "").trimEnd();
-  cur.input.value = unit ? `${num} ${unit}`.trimStart() : num;
+  const empty = !withUnit(cur.input.value, "", cur.units);
+  cur.input.value = withUnit(cur.input.value, unit, cur.units);
+  // Brez števila: kazalka pred enoto, da se število vpiše pred njo (»12V« preverjanje sprejme).
+  if (empty) cur.input.setSelectionRange?.(0, 0);
   cur.input.dispatchEvent(new Event("input", { bubbles: true }));
   syncValue();
 }
@@ -176,15 +176,18 @@ async function readInk() {
     ink.changed = ink.version !== version;
     box.innerHTML = `<div class="fb info"><span>${tr("pad.readAs", { text: '<b class="read-text"></b>' })}</span></div>
       <div class="actions"><button type="button" class="primary" data-ok>${tr("pad.okCheck")}</button><button type="button" data-fix>${tr("pad.fix")}</button></div>`;
-    box.querySelector(".read-text").textContent = r.text;
+    // Izbrana enota ostane, če je v prebranem zapisu ni (»22« + izbrana »V« → »22 V«).
+    const unit = chosenUnit(cur.input.value);
+    const read = unit && !/[^\d\s,.\-−+/·^{}()]/.test(r.text) ? `${r.text.trim()} ${unit}` : r.text;
+    box.querySelector(".read-text").textContent = read;
     box.querySelector("[data-ok]").addEventListener("click", () => {
-      cur.input.value = r.text;
+      cur.input.value = read;
       syncValue();
       box.innerHTML = "";
       submit();
     });
     box.querySelector("[data-fix]").addEventListener("click", () => {
-      cur.input.value = r.text;
+      cur.input.value = read;
       syncValue();
       box.innerHTML = "";
       setTab("keys");
@@ -219,10 +222,12 @@ export function attachPad(opts) {
   ink.clear(true);
   pad.querySelector(".read-result").innerHTML = "";
   // Enota je del odgovora: privzeto ni izbrana, ponudba je več enot predmeta po abecedi (enote-izbira.js).
-  const units = unitChoices(opts.task.unit, { subject: opts.task.topicId || opts.subject, seed: opts.task.text });
+  // Ponudbo sestavi strežnik (task.units, s pravim preverjanjem); sicer jo izračunamo tu.
+  const units = opts.task.units || unitChoices(opts.task.unit, { subject: opts.task.topicId || opts.subject, seed: opts.task.text });
   cur.units = units;
+  // Ime iz <label> (ne aria-label), da bralnik zaslona prebere tudi izbrano enoto.
   pad.querySelector(".pad-units").innerHTML = units.length
-    ? `<select class="pad-unit" aria-label="${escapeHtml(tr("fx.unit"))}"><option value="">${escapeHtml(tr("fx.unit"))}</option>${units.map((u) => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join("")}</select>`
+    ? `<label class="sr-only" for="pad-unit">${escapeHtml(tr("fx.unit"))}</label><select id="pad-unit" class="pad-unit"><option value="">${escapeHtml(tr("fx.unit"))}</option>${units.map((u) => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join("")}</select>`
     : "";
   const kem = opts.subject === "KEM";
   configureKeyboard(opts.input, {

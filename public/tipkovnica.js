@@ -898,8 +898,13 @@ function act(a) {
       fire(f, "insertReplacementText");
     }
   } else if (a.a === "unit") {
-    f.value = withUnit(f.value, a.v);
-    f.setSelectionRange?.(f.value.length, f.value.length);
+    // Vse ponujene enote (vrstica nad tipkami): nova zamenja prejšnjo, tudi »N s« (public/enote-izbira.js).
+    const units = (val(S.cfg.ctx, S.field) || []).filter((c) => !Array.isArray(c) && c.unit).map((c) => c.ins ?? c.label);
+    const empty = !withUnit(f.value, "", units);
+    f.value = withUnit(f.value, a.v, units);
+    // Brez števila kazalka pred enoto, da se število vpiše pred njo.
+    const at = empty ? 0 : f.value.length;
+    f.setSelectionRange?.(at, at);
     fire(f, "insertReplacementText");
   } else if (a.a === "word") {
     const w = currentWord();

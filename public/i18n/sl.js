@@ -334,7 +334,7 @@ export default {
   "chk.empty": "Najprej vpiši odgovor.",
   "chk.number": "Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko).",
   "chk.addUnit": "Število je zapisano, dodaj še enoto. V kateri enoti je rezultat?",
-  "chk.unit": "Preveri enoto: rezultat zapiši v {unit}.",
+  "chk.unit": "Ta enota ni prava. Preveri, katera količina se išče.",
   "chk.rounding": "Izračun je pravilen, popraviti je treba le zaokroževanje. Pravilno zaokroženo je {right}.",
   "chk.fraction": "Zapiši ulomek v obliki a/b (npr. 3/4), razmerje v obliki a : b (npr. 3 : 4) ali mešano število (npr. 1 1/2).",
   "chk.simplify": "Vrednost je pravilna, a ulomek še okrajšaj do konca.",

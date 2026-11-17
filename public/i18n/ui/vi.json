@@ -649,7 +649,7 @@
   "chk.empty": "Hãy nhập câu trả lời trước.",
   "chk.number": "Nhập một số (dùng dấu phẩy hay dấu chấm đều được).",
   "chk.addUnit": "Đã có số, giờ hãy thêm đơn vị. Kết quả tính bằng đơn vị nào?",
-  "chk.unit": "Kiểm tra đơn vị: viết kết quả theo {unit}.",
+  "chk.unit": "Đơn vị này chưa đúng. Hãy kiểm tra xem đại lượng cần tìm là gì.",
   "chk.rounding": "Phép tính đúng, chỉ có làm tròn là sai. Làm tròn đúng là {right}.",
   "chk.fraction": "Viết phân số dạng a/b (ví dụ 3/4), tỉ số dạng a : b (ví dụ 3 : 4) hoặc hỗn số (ví dụ 1 1/2).",
   "chk.simplify": "Giá trị đúng, nhưng hãy rút gọn phân số đến tối giản.",

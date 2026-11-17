@@ -655,7 +655,7 @@
   "chk.empty": "Fillimisht shkruaj përgjigjen.",
   "chk.number": "Shkruaj një numër (mund të përdorësh presje ose pikë).",
   "chk.addUnit": "Numri është shkruar, shto edhe njësinë. Në cilën njësi është rezultati?",
-  "chk.unit": "Kontrollo njësinë: shkruaje rezultatin në {unit}.",
+  "chk.unit": "Kjo njësi nuk është e saktë. Kontrollo cila madhësi kërkohet.",
   "chk.rounding": "Llogaritja është e saktë, vetëm rrumbullakimi jo. I rrumbullakuar saktë është {right}.",
   "chk.fraction": "Shkruaj thyesën si a/b (p.sh. 3/4), raportin si a : b (p.sh. 3 : 4) ose numër të përzier (p.sh. 1 1/2).",
   "chk.simplify": "Vlera është e saktë, por thjeshtoje thyesën deri në fund.",

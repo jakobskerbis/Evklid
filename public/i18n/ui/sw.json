@@ -655,7 +655,7 @@
   "chk.empty": "Kwanza andika jibu lako.",
   "chk.number": "Andika namba (koma au nukta, zote zinakubalika).",
   "chk.addUnit": "Namba ipo, sasa ongeza kipimo. Jibu liko katika kipimo gani?",
-  "chk.unit": "Angalia kipimo: andika jibu katika {unit}.",
+  "chk.unit": "Kipimo hiki si sahihi. Angalia ni kiasi gani kinachotafutwa.",
   "chk.rounding": "Hesabu ni sahihi, ila kukadiria si sahihi. Ukikadiria vizuri ni {right}.",
   "chk.fraction": "Andika sehemu kama a/b (mf. 3/4), uwiano kama a : b (mf. 3 : 4) au namba mchanganyiko (mf. 1 1/2).",
   "chk.simplify": "Thamani ni sahihi, lakini rahisisha sehemu hadi mwisho.",

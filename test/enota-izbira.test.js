@@ -8,8 +8,12 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { unitChoices } from "../public/enote-izbira.js";
-import { checkAnswer } from "../server/practice/check.js";
+import { unitChoices, unitAtEnd, withUnit as putUnit } from "../public/enote-izbira.js";
+import { withUnit } from "../public/tipkovnica-data.js";
+import { openDb } from "../server/db.js";
+import { Progress } from "../server/progress.js";
+import { generateTask, publicTask, topicsWithGenerators } from "../server/practice/index.js";
+import { checkAnswer, fmt } from "../server/practice/check.js";
 import SL from "../public/i18n/sl.js";
 
 const require = createRequire(import.meta.url);
@@ -107,7 +111,10 @@ test("plošča Piši: izbira enote je privzeto prazna, prava enota ni sama", { s
     const sel = page.locator("#pad .pad-unit");
     assert.equal(await sel.count(), 1, "izbira enote");
     assert.equal(await sel.inputValue(), "", "privzeto ni izbrane enote");
-    assert.equal(await sel.getAttribute("aria-label"), SL["fx.unit"]);
+    // J: ime iz <label> (bralnik zaslona prebere ime in izbrano enoto), ne aria-label.
+    assert.equal(await sel.getAttribute("aria-label"), null);
+    assert.equal(await page.locator('label[for="pad-unit"]').textContent(), SL["fx.unit"]);
+    assert.equal(await page.getByLabel(SL["fx.unit"]).count(), 1);
     const opts = await sel.locator("option").allTextContents();
     assert.equal(opts[0], SL["fx.unit"]);
     assert.ok(opts.length >= 6 && opts.includes("V"), opts.join(","));
@@ -122,6 +129,11 @@ test("plošča Piši: izbira enote je privzeto prazna, prava enota ni sama", { s
     assert.equal(await page.inputValue("#answer"), `1,23 ${other}`);
     await sel.selectOption("");
     assert.equal(await page.inputValue("#answer"), "1,23");
+    // I: prazno število + izbira »V« → »V«, izbira ostane »V«, število se vpiše pred enoto.
+    await page.fill("#answer", "");
+    await sel.selectOption("V");
+    assert.equal(await page.inputValue("#answer"), "V");
+    assert.equal(await sel.inputValue(), "V");
     // Vpisana enota se pokaže v izbiri.
     await page.fill("#answer", "4,5 V");
     await page.dispatchEvent("#answer", "input");
@@ -131,4 +143,149 @@ test("plošča Piši: izbira enote je privzeto prazna, prava enota ni sama", { s
     await browser.close();
     srv.close();
   }
+});
+
+// ---------- pregled PR 786 (17. 11. 2026) ----------
+const CHK_UNIT = "Ta enota ni prava. Preveri, katera količina se išče.";
+
+test("pregled 786, A: napačna enota – nevtralno sporočilo brez prave enote (vseh 33 jezikov)", () => {
+  const r = checkAnswer({ type: "number", value: 1.23, decimals: 2, unit: "V" }, "1,23 J");
+  assert.equal(r.code, "chk.unit");
+  assert.equal(r.message, CHK_UNIT);
+  assert.deepEqual(r.params, {});
+  assert.equal(SL["chk.unit"], CHK_UNIT);
+  for (const f of fs.readdirSync("public/i18n/ui")) {
+    const v = JSON.parse(fs.readFileSync(path.join("public/i18n/ui", f), "utf8"))["chk.unit"];
+    assert.ok(v && !/\{unit\}/.test(v), f);
+  }
+});
+
+function unitTask(p, s, mode) {
+  const store = p.store || null;
+  let n;
+  if (mode === "contest") n = p.startContest(s.id, "FIZ-TEK-OS");
+  else {
+    p.nextPractice(s.id, "MAT-OS-8/pitagorov-izrek");
+    n = p.nextPractice(s.id, "MAT-OS-8/pitagorov-izrek");
+  }
+  const row = p.getTask(n.task.id);
+  const payload = { ...row.payload, answer: { type: "number", value: 2.5, decimals: 1, unit: "V" } };
+  p.db.prepare("UPDATE tasks SET payload = ? WHERE id = ?").run(JSON.stringify(payload), n.task.id);
+  void store;
+  return n.task.id;
+}
+test("pregled 786, A: napačna enota šteje kot poskus le na tekmovanju in poskusnem izpitu", () => {
+  for (const mode of ["practice", "contest"]) {
+    const store = openDb(":memory:");
+    const p = new Progress(store);
+    const s = store.createStudent("Ana");
+    const id = unitTask(p, s, mode);
+    // Manjkajoča enota: povsod nov poskus.
+    const miss = p.answer(s.id, id, "2,5");
+    assert.equal(miss.code, "chk.addUnit", mode);
+    assert.equal(miss.retry, true, mode);
+    assert.equal(p.getTask(id).attempts, 0, mode);
+    const wrong = p.answer(s.id, id, "2,5 J");
+    assert.equal(wrong.code, "chk.unit", mode);
+    assert.doesNotMatch(wrong.message, /\bV\b/);
+    if (mode === "contest") {
+      assert.equal(wrong.retry, undefined);
+      assert.equal(wrong.saved, true);
+      assert.equal(p.getTask(id).attempts, 1);
+      assert.equal(p.getTask(id).solved, 0);
+    } else {
+      assert.equal(wrong.retry, true);
+      assert.equal(p.getTask(id).attempts, 0);
+      assert.equal(p.answer(s.id, id, "2,5 V").kind, "correct");
+    }
+  }
+});
+
+test("pregled 786, B: pilotne naloge (enota ni obvezna) – namig je samo rezultat", () => {
+  const src = fs.readFileSync("public/pilot-naloge.js", "utf8");
+  assert.doesNotMatch(src, /task\.phUnit/);
+  assert.match(src, /tk\.inputHint \|\| t\("task\.phResult"\)/);
+});
+
+test("pregled 786, C: branje rokopisa ne dobi prave enote, navodilo pravi, da je enota neobvezna", () => {
+  const app = fs.readFileSync("server/app.js", "utf8");
+  assert.doesNotMatch(app, /readFn\(\{[^}]*unit: a\.unit/);
+  const claude = fs.readFileSync("server/claude.js", "utf8");
+  const fn = claude.slice(claude.indexOf("export async function readHandwriting"), claude.indexOf("export async function readHandwriting") + 1500);
+  assert.doesNotMatch(fn, /\$\{unit\}/);
+  assert.match(fn, /morda z enoto/);
+  // Plošča: izbrana enota ostane, če je prebrani zapis nima.
+  assert.match(fs.readFileSync("public/pad.js", "utf8"), /const unit = chosenUnit\(cur\.input\.value\)/);
+});
+
+// Vsaka ponujena enota razen prave je pri pravi vrednosti zavrnjena (chk.unit), in ni enakovredna pravi.
+const EQ = [["mL", "ml", "cm³"], ["L", "l", "dm³"], ["N s", "kg m/s"], ["N/C", "V/m"], ["J", "N m"], ["Pa", "N/m²"]];
+test("pregled 786, D in E: med drugimi enotami ni enakovrednih ne sprejetih (vse naloge generatorjev)", () => {
+  let n = 0;
+  for (const id of topicsWithGenerators()) {
+    for (const seed of [11, 12]) {
+      let t;
+      try {
+        t = generateTask(id, 2, seed, "sl");
+      } catch {
+        continue;
+      }
+      if (!t?.answer?.unit || t.answer.type !== "number") continue;
+      n++;
+      const pub = publicTask({ ...t, topicId: t.topicId || id });
+      const right = pub.units.filter((u) => checkAnswer(t.answer, `${fmt(t.answer.value, t.answer.decimals ?? null)} ${u}`).kind !== "unit");
+      assert.equal(right.length, 1, `${id}: ${pub.units.join(", ")} (prava ${t.answer.unit})`);
+      const eq = EQ.find((g) => g.some((x) => x.replace(/\s/g, "").toLowerCase() === right[0].replace(/\s/g, "").toLowerCase()));
+      if (eq) for (const u of pub.units) if (u !== right[0]) assert.ok(!eq.some((x) => x.replace(/\s/g, "").toLowerCase() === u.replace(/\s/g, "").toLowerCase()), `${id}: ${u} je enakovredna ${right[0]}`);
+    }
+  }
+  assert.ok(n > 500, `nalog z enoto: ${n}`);
+  // Odjemalec brez strežnika: mL ↔ cm³, N/C ↔ V/m, m ↔ M nista med drugimi.
+  for (let i = 0; i < 100; i++) {
+    assert.ok(!unitChoices("mL", { subject: "KEM", seed: String(i) }).some((u) => ["cm³", "ml"].includes(u)));
+    assert.ok(!unitChoices("N/C", { subject: "FIZ", seed: String(i) }).includes("V/m"));
+    assert.ok(!unitChoices("N s", { subject: "FIZ", seed: String(i) }).includes("kg m/s"));
+  }
+});
+
+test("pregled 786, F: prava enota je v seznamu predmeta (ne izstopa), ² in ³ lepo zapisana", () => {
+  for (const [u, s] of [["€", "UNI"], ["dni", "MAT"], ["let", "MAT"], ["cm^2", "MAT"], ["m^2", "MAT"], ["µF", "FIZ"], ["N m", "FIZ"], ["min⁻¹", "FIZ"], ["MW/m²", "FIZ"], ["dm", "MAT"], ["dag", "MAT"], ["dm³", "FIZ"], ["As", "FIZ"]]) {
+    const c = unitChoices(u, { subject: s, seed: "x" });
+    assert.equal(c.length >= 5, true, u);
+    assert.ok(!c.some((x) => /\^/.test(x)), `${u}: ${c}`);
+  }
+  assert.ok(unitChoices("cm^2", { subject: "MAT", seed: "x" }).includes("cm²"));
+  // Denar: druge enote so iz finančnega sveta, ne fizike.
+  assert.ok(unitChoices("€", { subject: "UNI", seed: "x" }).every((u) => ["€", "%", "let", "dni", "mesecev", "tednov", "ur"].includes(u)));
+});
+
+test("pregled 786, G: 2–3 enote iste količine z drugo predpono (V → mV, kV), šest, po abecedi, ponovljivo", () => {
+  let withSib = 0;
+  for (let i = 0; i < 100; i++) {
+    const c = unitChoices("V", { subject: "FIZ", seed: `n${i}` });
+    assert.equal(c.length, 6);
+    const sib = c.filter((u) => ["mV", "kV", "MV", "µV"].includes(u)).length;
+    assert.ok(sib >= 2 && sib <= 3, c.join(","));
+    withSib++;
+  }
+  assert.equal(withSib, 100);
+  assert.ok(unitChoices("cm³", { subject: "MAT", seed: "a" }).some((u) => ["dm³", "m³", "mm³"].includes(u)));
+});
+
+test("pregled 786, H: vpis enote zamenja vso prejšnjo enoto", () => {
+  const offered = ["kg m/s", "N s", "V", "cm", "mV"];
+  assert.equal(withUnit("12 N s", "kg m/s", offered), "12 kg m/s");
+  assert.equal(withUnit("30°", "cm", offered), "30 cm");
+  assert.equal(withUnit("12,5V", "V", offered), "12,5 V");
+  assert.equal(withUnit("", "V", offered), "V");
+  assert.equal(withUnit("12 m/s", "km/h"), "12 km/h");
+  assert.equal(putUnit("1,2 V", "mV", offered), "1,2 mV");
+  assert.equal(putUnit("1,2 mV", "", offered), "1,2");
+  assert.equal(unitAtEnd("V", offered), "V");
+  assert.equal(unitAtEnd("12V", offered), "V");
+  assert.equal(unitAtEnd("12 kg m/s", offered), "kg m/s");
+});
+
+test("pregled 786, K: tipke enot na tipkovnici so visoke vsaj 40 px", () => {
+  assert.match(fs.readFileSync("public/tipkovnica.css", "utf8"), /\.tk-chip\.unit \{[^}]*min-height: 4\dpx/);
 });

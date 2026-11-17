@@ -307,7 +307,8 @@ function quizCard(s) {
   let body;
   if (quiz?.data?.task) {
     const tk = quiz.data.task;
-    const ph = tk.inputHint || (tk.unit ? t("task.phUnit") : t("task.phResult"));
+    // Pri pilotnih nalogah enota ni obvezna (strežnik jo doda, server/pilot-ucinek.js): namig je samo rezultat.
+    const ph = tk.inputHint || t("task.phResult");
     const input =
       tk.answerType === "choice"
         ? `<div class="choices${tk.options.some((o) => String(o).length > 20) ? " one-col" : ""}">${tk.options.map((o, i) => `<button type="button" class="choice" data-pn="quiz-choice" data-i="${i}">${D.choiceHtml?.(tk, o) ?? esc(o)}</button>`).join("")}</div>`
