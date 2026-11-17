@@ -314,4 +314,7 @@ test("worked example »zadnji korak je tvoj«: steps stay open, only the last st
   assert.match(p4, /<details class="tb-solution"><summary>Pokaži rešitev<\/summary>/);
   assert.match(p5, /<details class="tb-solution" open><summary>Skrij rešitev<\/summary>[\s\S]*Prvi/);
   assert.match(p5, /<\/details>\n\n<div class="tb-think">/, "Premisli ostane pod postopkom");
+  // fraza v zadnjem koraku (KEM-TEK-SS, kemijska vez, Primer 3)
+  const kem = hideSolutions("### Primer 3: voda\nIzračunaj.\n\n**Rešitev:**\n\n1. Prvi.\n2. Zadnji korak je tvoj: vstavi.\n\n<div class=\"tb-think\">x</div>\n");
+  assert.match(kem, /<details class="tb-solution" open><summary>Skrij rešitev<\/summary>/);
 });
