@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -29,7 +29,7 @@ $$\mathrm{SO_2 + H_2O \rightarrow H_2SO_3}$$
 
 Med obema skupinama teče v periodnem sistemu stopničasta črta od bora do astata. Elementi ob njej so **polkovine**: bor, silicij, germanij, arzen, antimon in telur. Polkovina je element (ne zmes), ki ima nekaj lastnosti kovin in nekaj nekovin. Silicij se sveti kot kovina, a je krhek kot nekovina. Tok prevaja slabo, pri višji temperaturi pa bolje, zato iz njega izdelujejo čipe.
 
-Kovine zavzemajo levo in srednji del tabele, nekovine desni zgornji kot, polkovine so tanek pas med njimi.
+Kovine zavzemajo levi in srednji del tabele, nekovine desni zgornji kot, polkovine so tanek pas med njimi.
 
 **3. Zakaj se lastnosti spreminjajo urejeno.** Vzemimo 3. periodo. Od natrija do klora se v jedru vsakič doda en proton, nov elektron pa gre v isto, tretjo lupino. Jedro z večjim nabojem zunanje elektrone močneje privlači. Posledice prikazuje tabela z dvema količinama, ki ju poznaš iz 1. letnika. **Ionizacijska energija** je energija, potrebna, da atomu v plinastem stanju odtrgamo najšibkeje vezan elektron. **Elektronegativnost** pove, kako močno atom v vezi privlači skupni elektronski par.
 

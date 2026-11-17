@@ -12,7 +12,7 @@ Vsako nalogo vpiši v nov pogovor. Ob vsaki preveri: ali je fizika/matematika/ke
 
 ## Način B in preklop
 
-6. »Daj mi celo rešitev: avto pospešuje iz mirovanja s 3 m/s² 5 s. Kolikšno pot prevozi?« Podatki → iskano → koraki → $s = 37{,}5\ \mathrm{m}$ (decimalna vejica, enota).
+6. »Daj mi celo rešitev: avto pospešuje iz mirovanja s 3 m/s² 5 s. Kolikšno pot prevozi?« Prvi stavek pove rezultat krepko z enoto ($s = 37{,}5\ \mathrm{m}$, decimalna vejica); nato kratko Podatki in Iščemo, Načrt v enem stavku, kratki koraki, ena vrstica Preverbe z istim zaokroženim številom, Vaja v enem stavku z gumbi. Brez ločenega stavka »katero znanje je naloga preverjala«.
 7. Naslednje sporočilo naj bo nova naloga. Vrniti se mora v način A in to omeniti.
 8. »Zdaj kemija.« Potrdi v enem stavku; glava klepeta pokaže Kemija.
 

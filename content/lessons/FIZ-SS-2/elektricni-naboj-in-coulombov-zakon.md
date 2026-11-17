@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Pleskar pred barvanjem okenskega okvirja nalepi zaščitni lepilni trak. Poskusi nekaj podobnega sam, najbolje s prozornim lepilnim trakom, ker se papirni pleskarski slabo naelektri. Na mizo nalepi dva kosa traka, ju hitro odtrgaj in ju drži za konca drugega ob drugem. Traka se odmakneta. Zdaj en trak nalepi na mizo, drugega na njegov hrbet, oba skupaj odlepi z mize in ju hitro razloči. Ta dva se privlačita.
+Pleskar pred barvanjem okenskega okvirja nalepi zaščitni lepilni trak. Poskusi nekaj podobnega sam, najbolje s prozornim lepilnim trakom, ker se papirni pleskarski slabo naelektri. Na mizo nalepi dva kosa traka, ju hitro odtrgaj in ju drži za konca drugega ob drugem. Traka se odmakneta. Zdaj en trak nalepi na mizo, drugega na njegov hrbet, oba skupaj odlepi z mize in ju hitro loči. Ta dva se privlačita.
 
 **Uganka:** zakaj se isti trak enkrat odbija, drugič privlači? Preden bereš naprej, zapiši svojo razlago. Namig: pomisli, kaj se dogaja na stiku, ko trak odtrgaš od podlage.
 
@@ -30,13 +30,13 @@ Naboj označimo z $e$, enota je **amperska sekunda** ($\mathrm{As}$), ki se imen
 
 **3. Merjenje sile.** Namesto Coulombovih kroglic vzemimo dve žogici za namizni tenis, prevlečeni z grafitno barvo, ki prevaja elektriko. Obe naelektrimo z enakim nabojem $5{,}0 \cdot 10^{-8}\,\mathrm{As}$ in merimo silo pri različnih razdaljah med središčema. Izmerili bi približno tole:
 
-| $r$ [cm] | izmerjena $F$ [mN] | $F$ v primerjavi s $10\,\mathrm{cm}$ |
+| $r$ [cm] | izmerjena $F$ [mN] | $F$ v primerjavi z $10\,\mathrm{cm}$ |
 |---|---|---|
 | $10$ | $2{,}24$ | $1$ |
 | $20$ | $0{,}57$ | $\approx \frac{1}{4}$ |
 | $30$ | $0{,}24$ | $\approx \frac{1}{9}$ |
 
-Meritve imajo majhen raztros, vzorec pa je jasen. Pri dvakratni razdalji je sila štirikrat manjša, pri trikratni devetkrat. Sila je **obratno sorazmerna s kvadratom razdalje**, tako kot pri gravitacijskem zakonu. Kako pa spremenimo naboj, če ga ne znamo izmeriti? Coulombov trik: nabito žogico se dotakni z enako, nenabito žogico. Naboj se razdeli na obe enako, ker sta enaki, zato ima vsaka pol prvotnega. Ko pri $10\,\mathrm{cm}$ eni žogici tako naboj razpolovimo, izmerimo približno pol manjšo silo, $1{,}1\,\mathrm{mN}$; dvakratni naboj bi dal dvakratno silo, $4{,}5\,\mathrm{mN}$. Sila je **sorazmerna z vsakim od nabojev**. Tako je sklepal tudi Coulomb: iz meritev z raztrosom je prepoznal preprosto pravilo.
+Meritve imajo majhen raztros, vzorec pa je jasen. Pri dvakratni razdalji je sila štirikrat manjša, pri trikratni devetkrat. Sila je **obratno sorazmerna s kvadratom razdalje**, tako kot pri gravitacijskem zakonu. Kako pa spremenimo naboj, če ga ne znamo izmeriti? Coulombov trik: nabite žogice se dotakni z enako, nenabito žogico. Naboj se razdeli na obe enako, ker sta enaki, zato ima vsaka pol prvotnega. Ko pri $10\,\mathrm{cm}$ eni žogici tako naboj razpolovimo, izmerimo približno pol manjšo silo, $1{,}1\,\mathrm{mN}$; dvakratni naboj bi dal dvakratno silo, $4{,}5\,\mathrm{mN}$. Sila je **sorazmerna z vsakim od nabojev**. Tako je sklepal tudi Coulomb: iz meritev z raztrosom je prepoznal preprosto pravilo.
 
 Krivulja na grafu kaže to pravilo, tri meritve iz tabele (oranžne točke, prva z napisom »meritev«) ležijo skoraj na njej. Točka z napisom F na krivulji je pri $10\,\mathrm{cm}$ in $2{,}25\,\mathrm{mN}$. V aplikaciji premakni drsnik za razdaljo na $20\,\mathrm{cm}$: točka pade na $0{,}56\,\mathrm{mN}$, na četrtino. Pri $30\,\mathrm{cm}$ pade na $0{,}25\,\mathrm{mN}$, na devetino. Opazi, da krivulja pri majhnih $r$ strmo pada, daleč pa se le počasi približuje osi. Nato z drugim drsnikom podvoji naboj: pri $10\,\mathrm{cm}$ dobiš $4{,}50\,\mathrm{mN}$.
 

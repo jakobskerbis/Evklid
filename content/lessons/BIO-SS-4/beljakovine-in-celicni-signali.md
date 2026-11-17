@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -44,7 +44,7 @@ Fosfatna skupina je močno negativno nabita. Odbija negativne in privlači pozit
 
 ### Receptorji: kdo sprejme sporočilo
 
-**Receptor** je beljakovina, na katero se veže signalna molekula (ligand) in pri tem spremeni obliko. Ligand se receptorju prilega kot ključ ključavnici.
+**Receptor** je beljakovina, na katero se veže signalna molekula (ligand) in ki pri tem spremeni obliko. Ligand se receptorju prilega kot ključ ključavnici.
 
 - Hidrofilni signali (adrenalin, glukagon, insulin) ne prehajajo skozi lipidni dvosloj. Njihovi receptorji so v celični membrani.
 - Lipofilni signali (kortizol, estrogen, testosteron) prehajajo skozi membrano. Njihovi receptorji so v citoplazmi ali jedru.

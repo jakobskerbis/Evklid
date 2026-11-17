@@ -373,6 +373,7 @@ vrednost: (7.82-6.92)*60 | 54
 x | prva spremenljivka (na vodoravni osi) | | | v primeru 2 najvišja temperatura
 y | druga spremenljivka (na navpični osi) | |
 y_1, y_2 | vrednosti $y$ pri sosednjih podatkih | |
+\bar y_1, \bar y_2 | aritmetični sredini $y$ v prvi in drugi skupini | |
 \bar x | aritmetična sredina | \bar x = \frac{x_1 + x_2 + \dots + x_N}{N} |
 x_1, x_2, x_N | posamezni podatki | |
 N | število podatkov v skupini | |

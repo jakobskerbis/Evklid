@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -65,7 +65,7 @@ podnapis: Polna črta: HCl, črtkana: ocetna kislina, obe 20 mL s koncentracijo 
 Krivulji se razlikujeta na tri načine:
 
 - Ocetna kislina začne pri višjem pH, ker odda proton le majhen del molekul.
-- Na sredini je njena krivulja skoraj ravna. V erlenmajerici sta ocetna kislina in acetat, torej pufer. Pri $10\,\mathrm{mL}$ je polovica kisline nevtralizirane, koncentraciji sta enaki in $\mathrm{pH} = \mathrm{p}K_\mathrm{a} = 4{,}74$.
+- Na sredini je njena krivulja skoraj ravna. V erlenmajerici sta ocetna kislina in acetat, torej pufer. Pri $10\,\mathrm{mL}$ je polovica kisline nevtralizirana, koncentraciji sta enaki in $\mathrm{pH} = \mathrm{p}K_\mathrm{a} = 4{,}74$.
 - Skok je krajši (od okoli $7$ do $10{,}4$), točka ekvivalence pa je pri pH $8{,}72$.
 
 Zakaj potem porabi enako baze? Hidroksidni ion reagira tudi z molekulami, ki protona še niso oddale: $\mathrm{CH_3COOH} + \mathrm{OH^-} \rightarrow \mathrm{CH_3COO^-} + \mathrm{H_2O}$. Ko baza odvzema protone, se ravnotežje šibke kisline pomika v desno, dokler ne odda protona vsaka molekula. **Poraba je odvisna od množine kisline, ne od njene jakosti.**

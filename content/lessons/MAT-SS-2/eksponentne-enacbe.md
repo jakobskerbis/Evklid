@@ -217,7 +217,7 @@ podnapis: a) krivulja je pod padajočo premico za x < 2; b) pod premico y = x + 
 - Eksponentna enačba ima neznanko v eksponentu.
 - Za $a > 0$, $a \ne 1$ velja $a^{u} = a^{v} \iff u = v$ (enačenje osnov).
 - Ker je $a^x > 0$, enačbe $a^x = c$ s $c \le 0$ nimajo rešitve.
-- Pomagaj si s $\dfrac{1}{a^n} = a^{-n}$, $\sqrt[n]{a^m} = a^{\frac{m}{n}}$, $(a^m)^n = a^{mn}$, $a^{x+n} = a^n \cdot a^x$.
+- Pomagaj si z $\dfrac{1}{a^n} = a^{-n}$, $\sqrt[n]{a^m} = a^{\frac{m}{n}}$, $(a^m)^n = a^{mn}$, $a^{x+n} = a^n \cdot a^x$.
 - Pri vsoti potenc z isto osnovo izpostavi skupni faktor $a^x$.
 - Če nastopata $a^{2x}$ in $a^x$, vpelji $t = a^x$ s pogojem $t > 0$ in reši kvadratno enačbo.
 - Iz $a^u = b^u$ za različni pozitivni osnovi sledi $u = 0$.
@@ -373,7 +373,7 @@ Opazi, da je kvadratna enačba za $t$ le vmesni korak. Dokler ne izračunaš $x$
 
 **Obstoj rešitve.** Zaloga vrednosti funkcije $a^x$ ($a > 0$, $a \ne 1$) je interval $(0, \infty)$. Zato ima enačba $a^x = c$ za vsak $c > 0$ natanko eno rešitev, za $c \le 0$ pa nobene. Z enačenjem osnov jo najdemo le, če je $c$ »lepa« potenca števila $a$; za ostale pozitivne $c$ rešitev obstaja, a jo zapišemo z novim pojmom, ki ga spoznaš v naslednji lekciji.
 
-**Enačbe z $a^x$ in $a^{-x}$.** Enačbo $2^x + 2^{-x} = \dfrac{5}{2}$ rešimo z $t = 2^x$: $t + \dfrac{1}{t} = \dfrac{5}{2}$. Pomnožimo z $2t$ (smemo, ker je $t > 0$): $2t^2 - 5t + 2 = 0$, torej $t = 2$ ali $t = \dfrac{1}{2}$ in $x = 1$ ali $x = -1$.
+**Enačbe z $a^x$ in $a^{-x}$.** Enačbo $2^x + 2^{-x} = \dfrac{5}{2}$ rešimo s $t = 2^x$: $t + \dfrac{1}{t} = \dfrac{5}{2}$. Pomnožimo z $2t$ (smemo, ker je $t > 0$): $2t^2 - 5t + 2 = 0$, torej $t = 2$ ali $t = \dfrac{1}{2}$ in $x = 1$ ali $x = -1$.
 
 ## Preveri se
 

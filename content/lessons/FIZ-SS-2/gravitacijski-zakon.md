@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -9,7 +9,7 @@ Leta 1619 je Johannes Kepler izdal knjigo *Harmonices Mundi* (Harmonija sveta). 
 
 V isti knjigi je objavil še eno pravilo, ki ga danes imenujemo 3. Keplerjev zakon: planet, ki je dlje od Sonca, potrebuje za en obhod veliko več časa. Natančneje: kvadrat obhodnega časa je sorazmeren s kubom razdalje od Sonca, $t_0^2 \propto r^3$. Kepler je znal opisati, **kako** se planeti gibljejo, ni pa znal pravilno pojasniti, **zakaj**. Slutil je, da planete poganja neka sila s Sonca, a jo je opisal napačno. Kaj jih sploh drži na tirih?
 
-Odgovor je pozneje dal Isaac Newton z gravitacijskim zakonom. Z njim danes izračunamo, kako hitro mora leteti vesoljska postaja, in na kateri višini mora krožiti satelit, s katerega gledamo televizijo ali poslušamo radio.
+Odgovor je pozneje dal Isaac Newton z gravitacijskim zakonom. Z njim danes izračunamo, kako hitro mora leteti vesoljska postaja in na kateri višini mora krožiti satelit, s katerega gledamo televizijo ali poslušamo radio.
 
 ## Razlaga
 
@@ -33,7 +33,7 @@ podnapis: Telesi se privlačita z enako veliko silo; r merimo od središča do s
 
 Iz risbe preberemo tri stvari. Sili sta enako dolgi in nasprotno usmerjeni, kot zahteva 3. Newtonov zakon. Sila deluje vzdolž zveznice središč. Razdaljo $r$ merimo med **središčema**, ne med površjema.
 
-**Kako je sila odvisna od razdalje?** Newton je primerjal dve telesi, ki ju Zemlja pospešuje: jabolko na površju in Luno. Luna je od središča Zemlje približno $60$ Zemljinih polmerov ($384\,000\,\mathrm{km}$) in jo obkroži v $27{,}3$ dneh. Njen centripetalni pospešek izračunamo iz enakomernega kroženja.
+**Kako je sila odvisna od razdalje?** Newton je primerjal dve telesi, ki ju Zemlja pospešuje: jabolko na površju in Luno. Luna je od središča Zemlje oddaljena približno $60$ Zemljinih polmerov ($384\,000\,\mathrm{km}$) in jo obkroži v $27{,}3$ dneh. Njen centripetalni pospešek izračunamo iz enakomernega kroženja.
 
 | Telo | razdalja $r$ | pospešek |
 |---|---|---|
@@ -42,7 +42,7 @@ Iz risbe preberemo tri stvari. Sili sta enako dolgi in nasprotno usmerjeni, kot 
 
 Razdalja je $60$-krat večja, pospešek pa $9{,}81 : 0{,}00272 \approx 3600$-krat manjši. In $60^2 = 3600$. Privlak Zemlje je torej **obratno sorazmeren s kvadratom razdalje**: pri dvakratni razdalji je štirikrat manjši, pri trikratni devetkrat.
 
-**Kako je sila odvisna od mas?** Telo z dvakrat večjo maso Zemlja vleče z dvakrat večjo silo (teža $mg$). Ker telesi delujeta druga na drugo enako, mora sila na enak način rasti tudi z maso drugega telesa. Če bi bila sorazmerna le z $m_1$, bi bila sila jabolka na Zemljo drugačna od sile Zemlje na jabolko, kar krši 3. Newtonov zakon. Zato vsebuje produkt $m_1 m_2$. Vse skupaj zapišemo v **gravitacijski zakon**:
+**Kako je sila odvisna od mas?** Telo z dvakrat večjo maso Zemlja vleče z dvakrat večjo silo (teža $mg$). Ker telesi delujeta drugo na drugo enako, mora sila na enak način rasti tudi z maso drugega telesa. Če bi bila sorazmerna le z $m_1$, bi bila sila jabolka na Zemljo drugačna od sile Zemlje na jabolko, kar krši 3. Newtonov zakon. Zato vsebuje produkt $m_1 m_2$. Vse skupaj zapišemo v **gravitacijski zakon**:
 
 $$F_g = G\,\frac{m_1 m_2}{r^2}$$
 
@@ -70,7 +70,7 @@ drsnik: d | 1 .. 6 | 0,5 | 2 | razdalja od središča v Zemljinih polmerih
 f: 9.81/x^2 | modra | 1 .. 8
 črta: d; 0 -> d; 9.81/d^2 | siva črtkano
 točka: d; 9.81/d^2 | {9.81/(d*d):.2} | nad desno | oranžna
-podnapis: Pri r = {d}-kratniku Zemljinega polmera je g = {9.81/(d*d):.2} m/s²: vrednost s površja, deljena z {d*d}.
+podnapis: Pri r = {d}-kratniku Zemljinega polmera je g = {9.81/(d*d):.2} m/s²: vrednost s površja, deljena s številom {d*d}.
 :::
 
 Napoved preveri na grafu. V aplikaciji premikaj drsnik od $1$ do $6$. Opazi: pri $r = 2\,R_Z$ je $g = 2{,}45\,\mathrm{m/s^2}$, četrtina vrednosti na tleh, pri $3\,R_Z$ pa le še devetina, $1{,}09\,\mathrm{m/s^2}$. Krivulja se hitro položi, a nikoli ne pade na nič.
