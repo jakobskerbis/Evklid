@@ -198,6 +198,8 @@ details .card { margin-top: 8px; }
 .land-foot a { min-height: 40px; display: inline-flex; align-items: center; }
 /* Ponudnik in kontakt pod povezavami (pregled »kupca« 16. 11. 2026) */
 .land-provider { flex-basis: 100%; margin: 0; text-align: center; color: var(--muted); }
+.land-provider a { min-height: 0; }
+.land-contact { white-space: nowrap; }
 /* Pristajalna stran brez JavaScripta (<noscript> v index.html, scripts/pristajalna-noscript.js): opomba namesto gumbov */
 .land-nojs { margin: 0; font-weight: 600; }
 /* Brez ikon: kartice na telefonu brez praznega stolpca za ikono */

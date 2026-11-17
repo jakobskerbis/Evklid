@@ -4088,7 +4088,7 @@
   "land.terms": "Условия использования",
   "land.what": "Что такое Evklid?",
   "land.why": "Почему Evklid?",
-  "land.provider": "{app} в настоящее время управляет {name}",
+  "land.provider": "Сейчас приложением {app} управляет {name}",
   "land.contact": "Контакт",
   "land.noJs": "Чтобы зарегистрироваться и войти в браузере, включи JavaScript.",
   "pay.perStudyYear": "академический год",

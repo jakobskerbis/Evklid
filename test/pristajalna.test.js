@@ -164,7 +164,7 @@ test("/api/account/prices: garancija samo ob vklopu in samo pri cenah v evrih", 
 
 test("ponudnik in kontakt v nogi sta ista kot upravljavec v obvestilu o zasebnosti", () => {
   const html = landingHtml({ name: "Evklid" });
-  assert.match(html, /class="land-provider">Evklid trenutno upravlja Jakob Skerbiš · Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
+  assert.match(html, /class="land-provider">Evklid trenutno upravlja Jakob Skerbiš · <span class="land-contact">Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
   // Ista beseda kot v pogojih uporabe, točka 1 (#806): »Evklid trenutno upravlja Jakob Skerbiš kot fizična oseba«.
   const terms = readFileSync(new URL("../public/pogoji.html", import.meta.url), "utf8");
   assert.ok(terms.includes(SL["land.provider"].replace("{app}", "Evklid").replace("{name}", PROVIDER.name)), "public/pogoji.html točka 1 se ujema z land.provider");
@@ -194,7 +194,7 @@ test("index.html brez JavaScripta: najprej pristajalna stran, lupina skrita, bre
   for (const k of ["land.lead", "land.proofTitle", "land.p1.t", "land.p3.d", "land.demo.q1"]) assert.ok(block.includes(SL[k]), k);
   assert.match(block, /7 dni brezplačno, brez kartice\./);
   assert.match(block, /Za mlajše od 15 let račun ustvari starš\./);
-  assert.match(block, /Jakob Skerbiš · Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
+  assert.match(block, /Jakob Skerbiš · <span class="land-contact">Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
   assert.match(block, /href="\/zasebnost\.html"/);
   assert.match(block, /class="land-nojs"/);
   assert.doesNotMatch(block, /data-land=|<svg|land\.|undefined|garancija\.html|land-login/);
