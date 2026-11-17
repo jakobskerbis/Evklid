@@ -1,7 +1,7 @@
 // Graf v odgovoru inštruktorja (public/odpri.js): okno, ki pokaže zanimive dele funkcije (ničle, pole, presečišče z
 // osjo y, ekstreme, prevoje), in asimptote (navpične, vodoravne, poševne), ki jih plot.js nariše črtkano z oznako.
 // Brez DOM (testi v test/graf-okno.test.js). Funkcije f(x) tu vračajo število (NaN zunaj definicijskega območja).
-import { toNum, specialPoints, intersections } from "./model.js";
+import { toNum, specialPoints, intersections, emptyState } from "./model.js";
 
 const fin = Number.isFinite;
 
@@ -404,13 +404,54 @@ export function fitModelView(model, { W, H, fixed } = {}) {
   const points = [];
   for (const o of model?.items || []) {
     if (o.src?.hidden) continue;
-    // krivulje brez y = f(x) (krožnica, parametrična, polarna, območje): ostane običajno okno, da jih ne odrežemo
-    if (["implicit", "param", "polar", "region"].includes(o.kind)) return fixed && fin(fixed.xmin + fixed.xmax + fixed.ymin + fixed.ymax) ? fitView([], { fixed }) : null;
+    // krivulje brez y = f(x) (krožnica, parametrična, polarna, območje): ostane običajno okno, da jih ne odrežemo;
+    // podana os iz bloka GRAF (histogram le z oknom y) pa velja, druga ostane običajna
+    if (["implicit", "param", "polar", "region"].includes(o.kind)) return mergeFixed(fixed);
     if (o.kind === "points") for (const p of o.evalPoints?.() || []) points.push(p);
+    // omejena navpična daljica x = c {a <= y <= b}: krajišči sta v oknu
+    if (o.kind === "x" && o.fn) points.push(...segmentEnds(o));
   }
   const fns = modelFns(model);
   if (!fns.length && !points.length && !(fixed && Object.keys(fixed).length)) return null;
   return fitView(fns, { W, H, points, fixed });
+}
+
+// Običajno okno kalkulatorja z osmi, ki jih je podal blok GRAF (vsaka os le cela, xmin < xmax); null brez njih.
+function mergeFixed(fixed) {
+  const v = { ...emptyState().view };
+  let any = false;
+  for (const [lo, hi] of [["xmin", "xmax"], ["ymin", "ymax"]])
+    if (fin(fixed?.[lo]) && fin(fixed?.[hi]) && fixed[hi] > fixed[lo]) (v[lo] = fixed[lo]), (v[hi] = fixed[hi]), (any = true);
+  return any ? v : null;
+}
+
+// Krajišči omejitve x = g(y) {a <= y <= b}: meje iz primerjav s številom v izrazu; ob strogi meji tik znotraj.
+function segmentEnds(o) {
+  const ts = [];
+  const num = (n) => (n?.k === "num" ? n.v : n?.k === "neg" && n.a?.k === "num" ? -n.a.v : NaN);
+  const walk = (n) => {
+    if (!n || typeof n !== "object") return;
+    if (Array.isArray(n)) return n.forEach(walk);
+    if (n.k === "cmp" && n.terms?.some((t) => t?.k === "var" && t.name === o.varName)) for (const t of n.terms) if (fin(num(t))) ts.push(num(t));
+    for (const v of Object.values(n)) if (v && typeof v === "object") walk(v);
+  };
+  walk(o.ast2);
+  const out = [];
+  for (const t of ts) {
+    const e = 1e-9 * Math.max(1, Math.abs(t));
+    for (const y of [t, t + e, t - e]) {
+      let x = NaN;
+      try {
+        const r = o.fn(y);
+        x = Array.isArray(r) ? NaN : toNum(r);
+      } catch {}
+      if (fin(x)) {
+        out.push([x, y]);
+        break;
+      }
+    }
+  }
+  return out;
 }
 
 /** Oznake asimptot funkcij modela v oknu view (za opis slike bralnikom zaslona): »x = 1«, »y = x + 1«. */

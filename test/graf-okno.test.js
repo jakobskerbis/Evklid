@@ -213,3 +213,30 @@ test("pregled 3 #802: ravne funkcije brez tisočev kandidatov za pol, opis asimp
   const model = buildModel(st);
   assert.deepEqual(modelAsymptoteLabels(model, fitModelView(model, { W: 320, H: 220 })), ["x = 1", "y = x + 1"]);
 });
+
+test("pregled #811: histogram z delnim oknom, krajišči navpične daljice v oknu", async () => {
+  const { buildModel, emptyState, newId } = await import("../public/graph/model.js");
+  const model = (...texts) => {
+    const st = emptyState();
+    st.items = texts.map((text) => ({ id: newId(), type: "expr", text }));
+    return buildModel(st);
+  };
+  const W = 320, H = 220;
+  const hist = model("0 <= y <= {0 <= x < 2: 30, 2 <= x < 4: 50}");
+  // samo os y (visoki stolpci): ostane, os x je običajna
+  assert.deepEqual(fitModelView(hist, { W, H, fixed: { ymin: 0, ymax: 60 } }), { xmin: -10, xmax: 10, ymin: 0, ymax: 60 });
+  // samo os x: ostane, os y je običajna
+  assert.deepEqual(fitModelView(hist, { W, H, fixed: { xmin: 0, xmax: 4 } }), { xmin: 0, xmax: 4, ymin: -7, ymax: 7 });
+  assert.deepEqual(fitModelView(hist, { W, H, fixed: { xmin: 0, xmax: 4, ymin: 0, ymax: 60 } }), { xmin: 0, xmax: 4, ymin: 0, ymax: 60 });
+  assert.equal(fitModelView(hist, { W, H, fixed: {} }), null);
+  assert.equal(fitModelView(hist, { W, H, fixed: { xmin: 4, xmax: 0 } }), null);
+  // navpična daljica daleč od izhodišča (tudi s strogo mejo) in skupaj s funkcijo
+  for (const [texts, pts] of [
+    [["x = 30 {20 <= y <= 40}"], [[30, 20], [30, 40]]],
+    [["x = -5 {-12 < y < -9}"], [[-5, -11.99], [-5, -9.01]]],
+    [["y = 1", "x = 4 {-1 <= y <= 25}"], [[4, -1], [4, 25]]],
+  ]) {
+    const v = fitModelView(model(...texts), { W, H, fixed: {} });
+    for (const [x, y] of pts) assert.ok(inView(v, x, y), `${texts}: ${JSON.stringify(v)}`);
+  }
+});
