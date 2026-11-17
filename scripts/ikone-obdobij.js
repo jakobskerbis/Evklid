@@ -21,7 +21,7 @@ export const ZNAKI = [
   "zoom-in", "zoom-out", "maximize", "maximize-2", "minimize-2", "copy", "corner-down-left", "circle", "square", "square-plus",
   "circle-check", "circle-x", "circle-arrow-up", "info", "circle-help", "lock", "unlock", "pin", "pin-off", "link", "log-out",
   "download", "cloud-upload", "save", "image-down", "folder-open", "share", "wifi-off", "volume-2", "volume-x", "sliders-horizontal",
-  "camera", "keyboard", "mic", "eraser", "text", "image", "smartphone", "monitor-play", "sun", "moon", "sun-moon", "user-plus", "users",
+  "camera", "keyboard", "mic", "message-circle-question", "eraser", "text", "image", "smartphone", "monitor-play", "sun", "moon", "sun-moon", "user-plus", "users",
   "badge-check", "zap", "heart", "bell", "wallet", "coins", "gem", "spade", "bomb", "venetian-mask", "ruler-dimension-line", "train-front", "key-round", "arrow-up-narrow-wide",
   // grafični kalkulator (orodja in vrste funkcij)
   "house", "table", "wrench", "activity", "chart-area", "chart-spline", "flower", "infinity", "spline", "square-function",
