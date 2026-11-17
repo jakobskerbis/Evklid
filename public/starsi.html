@@ -25,6 +25,10 @@
     .cta { display: inline-block; margin: 8px 0; padding: 12px 22px; border-radius: 12px; background: var(--accent); color: var(--accent-text); font-weight: 700; text-decoration: none; }
     a { color: var(--accent); }
     .doc a.cta { color: var(--accent-text); }
+    .faq { display: grid; gap: 10px; }
+    .faq details { border: 1px solid var(--border); border-radius: 14px; padding: 0 16px; background: var(--surface); }
+    .faq summary { cursor: pointer; font-weight: 700; padding: 14px 0; min-height: 24px; }
+    .faq details p { margin: 0 0 14px; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -47,7 +51,15 @@
   </ul>
   <h1>Evklid za starše</h1>
   <p class="ask" id="ask" hidden>Vaš otrok bi rad uporabljal Evklid. Ker je mlajši od starosti, pri kateri lahko sam privoli v obdelavo osebnih podatkov (v Sloveniji 15 let), potrebuje vaše soglasje. Na tej strani je vse, kar potrebujete za odločitev.</p>
+  <p>Spodaj je opisano, kako Evklid deluje, kako varuje otroka, koliko stane in kako date soglasje.</p>
   <p><a class="cta" id="cta" href="/?starsi=1">Ustvari račun in dodaj otroka</a></p>
+
+  <h2>Na kratko</h2>
+  <ul>
+    <li><b>Program preveri račune.</b> Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah v plačljivih paketih odgovor pregleda še zmogljivejši model.</li>
+    <li><b>Matura z inštruktorjem.</b> Pretekle pole mature in Evklidove pole v slogu mature. Pri vsaki nalogi inštruktor z namigi vodi do rešitve.</li>
+    <li><b>Varno za otroke.</b> Brez oglasov in sledilnikov. Ni klepeta z drugimi uporabniki, na tedenski lestvici so vidni samo vzdevki.</li>
+  </ul>
 
   <h2>Kaj je Evklid</h2>
   <ul>
@@ -69,7 +81,7 @@
   </figure>
   <p>Račune v enačbah, odvodih in daljših izračunih preveri program. V tem primeru je program izračunal x = 5, zato inštruktor otrokovega rezultata x = 6 ni potrdil. Več: <a href="/zakaj-evklid">Zakaj Evklid</a>.</p>
 
-  <h2>Varnost in nadzor</h2>
+  <h2 id="nadzor">Varnost in nadzor</h2>
   <ul>
     <li>Profil otroka ustvarite vi in je vezan na vaš račun. Do celotnega profila imate dostop samo vi in otrok. Če je otrok v razredu, učitelj vidi samo njegov vzdevek in avatar, oznako, ki jo vpiše učitelj, točke na lestvici razreda ter rezultate pri temah in kvizih, ki jih da razredu. Prijave napak, ki jih pošlje otrok, vidi skrbnik aplikacije, da napako popravi.</li>
     <li>Ko na svojem računu odprete otrokov profil, v zavihku <i>Napredek</i> vidite teme, ki jih je otrok vadil, število odgovorov in napak po temah, šibke točke in dneve, ko se je učil. Koliko časa otrok preživi v aplikaciji, ne merimo.</li>
@@ -79,7 +91,7 @@
     <li>Vsako nedeljo zvečer lahko dobite kratko poročilo po e-pošti: koliko dni se je otrok učil, koliko nalog je rešil in koliko jih je bilo pravilnih v prvem poskusu, koliko vprašanj je zastavil inštruktorju, katere teme je vadil in kaj predlagamo za naslednji teden. Odjava je z enim klikom.</li>
     <li>Igre lahko skrijete: v <i>Nastavitvah</i> otrokovega profila vklopite <i>Skrij igre</i>. Napredek ostane. Nastavitev lahko spremeni tudi otrok.</li>
     <li>Omejitve časa uporabe Evklid nima. Z otrokom lahko nastavite dnevni cilj in cilj z datumom (na primer test); za tak cilj aplikacija vsak dan ob 12.00 pokaže opomnik.</li>
-    <li>Na tedenski lestvici so vidni samo vzdevki. Ni oglasov in ni klepeta z drugimi uporabniki.</li>
+    <li>Na tedenski lestvici so vidni samo vzdevki.</li>
   </ul>
 
   <h2>Katere podatke hranimo</h2>
@@ -105,6 +117,33 @@
     <li>Naročnino lahko kadar koli prekličete v zavihku Račun. Paket velja do konca že plačanega meseca ali leta, nato otrok nadaljuje v brezplačnem paketu.</li>
   </ul>
 
+  <h2>Pogosta vprašanja</h2>
+  <div class="faq">
+    <details>
+      <summary>Kaj Evklid ponuja za otroke od 1. do 5. razreda?</summary>
+      <p>Inštruktorja in učne igre, v katerih igranje pomeni računanje. Z mlajšimi učenci inštruktor govori v zelo kratkih stavkih, dela en korak naenkrat in računa s konkretnimi predmeti, na primer z jabolki, kockami in denarjem. Učna pot po razredih in priprava na NPZ sta na voljo od 6. razreda naprej.</p>
+      <p>Vprašanje lahko otrok inštruktorju tudi pove, če to dovolite v zavihku <i>Račun</i> (privzeto je izklopljeno) in brskalnik podpira glasovni vnos. Odgovorov inštruktorja Evklid ne bere na glas, zato je pri otroku, ki še ne bere tekoče, dobro, da ste zraven.</p>
+    </details>
+    <details>
+      <summary>Ali paket Družina pokriva osnovnošolca in srednješolca?</summary>
+      <p>Da. Družina ima do 4 profile in odpre snov osnovne in srednje šole. Če je med otroki študent, izberete Družino s študentom, ki odpre tudi fakulteto. Vsak profil ima svoj napredek in svoja vprašanja na dan, mesečni obseg podrobnih razlag pa je skupen za vse profile.</p>
+      <p>Ko otrok preide v višji razred ali iz osnovne v srednjo šolo, ostaneta njegov profil in napredek. Pri Družini se ob tem paket ne spremeni.</p>
+    </details>
+    <details>
+      <summary>Kaj se zgodi, če otrok vztraja, naj mu inštruktor pove rešitev?</summary>
+      <p>V privzetem načinu inštruktor pri novi nalogi ne začne z rezultatom. Ko se otrok zatakne, pomaga po stopnjah: najprej z vprašanjem, ki ga usmeri, nato s splošnim in natančnejšim namigom, na koncu en korak naredita skupaj. Pri domači nalogi prvo nalogo rešita skupaj po korakih, naslednje iste vrste poskusi sam.</p>
+      <p>Če otrok izrecno želi celotno rešitev ali izbere način Celotna rešitev, mu jo inštruktor pokaže s postopkom in razlogom za vsak korak. Če pri posamezni nalogi, ki jo prinese sam, izrecno prosi samo za rezultat, ga dobi v eni vrstici z računom, a največ pri dveh nalogah v pogovoru. Naloga z deli a), b), c) šteje kot ena. Pri več ločenih nalogah hkrati (tudi pri seznamu vaj istega tipa, na primer »Izračunaj: a) …, b) …, c) …«), pri »moram oddati« ter pri tekmovalnih nalogah in nalogah, ki jih da Evklid (vaje, učna pot, pole), samega rezultata ne dobi.</p>
+    </details>
+    <details>
+      <summary>Koliko naj otrok vadi?</summary>
+      <p>Bolje malo vsak dan kot veliko naenkrat. Na učni poti (od 6. razreda) Evklid vsak dan pripravi trening, ki traja okoli 15 minut: nova snov in ponavljanje. Kar otrok začne pozabljati, mu aplikacija čez nekaj dni sama vrne v ponavljanje.</p>
+    </details>
+    <details>
+      <summary>Kaj lahko kot starš spremljam?</summary>
+      <p>V zavihku <i>Napredek</i> otrokovega profila vidite teme, ki jih je otrok vadil, napake po temah, šibke točke in opozorila. Odprete lahko tudi njegove pogovore z inštruktorjem, vsako nedeljo pa lahko dobite kratko poročilo po e-pošti. Podrobno je opisano v razdelku <a href="#nadzor">Varnost in nadzor</a>.</p>
+    </details>
+  </div>
+
   <h2>Kako date soglasje</h2>
   <ol>
     <li>Kliknite <b>Ustvari račun in dodaj otroka</b> in vpišite svoj e-naslov, geslo in datum rojstva.</li>
@@ -114,6 +153,16 @@
   </ol>
   <p class="muted">Zakaj ne zahtevamo osebnega dokumenta? Skenirani dokumenti otrok in staršev so zelo občutljivi podatki, ki jih za učno aplikacijo ne potrebujemo. Zakon zahteva razumen trud pri preverjanju, zato soglasje da odrasla oseba s potrjenim e-naslovom, mi pa hranimo le zapis o tem.</p>
   <p><a class="cta" id="cta2" href="/?starsi=1">Ustvari račun in dodaj otroka</a></p>
+  <footer class="mkt-foot">
+    <a href="/">Evklid</a>
+    <a href="/o-evklidu">O Evklidu</a>
+    <a href="/zakaj-evklid">Zakaj Evklid</a>
+    <a href="/starsi.html">Za starše</a>
+    <a href="/sole">Za učitelje in šole</a>
+    <a href="/prenesi?lang=sl">Prenesi aplikacijo</a>
+    <a href="/zasebnost.html">Zasebnost</a>
+    <a href="/pogoji.html">Pogoji uporabe</a>
+  </footer>
 </div>
 <script src="/starsi.js"></script>
 <script type="module" src="/zagon.js" data-moduli="/tipkovnica-strani.js /vir.js"></script>

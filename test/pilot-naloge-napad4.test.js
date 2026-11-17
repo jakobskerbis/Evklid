@@ -183,20 +183,21 @@ test("B4: XP iz pilota ne začne niza dni, ne prinese bonusa za niz in ne šteje
   assert.match(r, /FROM xp_events WHERE created_at >= \? AND COALESCE\(reason, ''\) NOT LIKE 'pilot:%'/);
 });
 
-test("j 6. 11. 20:01: potrjeno besedilo e-pošte o politiki in §8 z e-pošto (dobesedno)", async () => {
-  const { privacyChangeEmail } = await import("../server/accounts/email.js");
-  const m = privacyChangeEmail("https://evklid.si/zasebnost.html");
+test("besedilo e-pošte o politiki (različica 2026-11-18, #817; pred --poslji potrdi j) in §8 z e-pošto (dobesedno)", async () => {
+  const { privacyChangeEmail, privacyDateText } = await import("../server/accounts/email.js");
+  assert.equal(privacyDateText("2026-11-18"), "18. novembra 2026");
+  const m = privacyChangeEmail("https://evklid.si/zasebnost.html", privacyDateText("2026-11-18"));
   assert.equal(m.subject, "Evklid: posodobili smo pravila zasebnosti");
   assert.equal(
     m.text,
     `Pozdravljeni,
 
-6. novembra 2026 smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:
+18. novembra 2026 smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:
 
-- Natančneje piše, katere podatke lahko izvozite in izbrišete ter koliko časa jih hranimo.
-- Za člane pilota smo dodali neobvezne naloge: oceno branja fotografij nalog, oceno delov aplikacije, kratko anketo, kratek preizkus znanja na začetku in čez 14 dni ter vprašanje staršem, ali bi za Evklid plačali. Fotografijo naloge in prebrano besedilo shranimo samo, če ju otrok, star vsaj 15 let, posebej označi, in ju hranimo največ 30 dni.
-- Skrbnik Evklida vidi skupna števila brez imen, šele ko so odgovori vsaj trije (pri vprašanju o plačilu pet). Vidi tudi kratke opombe brez imena, e-naslove računov v pilotu in fotografije, ki jih je otrok sam označil za shranjevanje.
-- Član pilota lahko prijavi napako z zastavico; prijavi se priložita opis in zadnjih 10 sporočil pogovora.
+- Fotografije nalog v pogovorih z inštruktorjem hranimo 7 dni, nato ostane samo besedilo pogovora.
+- Natančneje piše, kdo vidi otrokove podatke: celoten profil vidite samo vi in otrok. Če je otrok v razredu, učitelj vidi samo vzdevek in avatar, oznako, ki jo vpiše učitelj, točke na lestvici razreda ter rezultate pri temah in kvizih, ki jih da razredu.
+- Pri šolski licenci je za podatke razreda upravljavec šola, za otrokov profil pa ostanemo upravljavec mi.
+- Enkrat na dan naredimo šifrirano varnostno kopijo baze, ki je shranjena v EU in jo izbrišemo po 30 dneh.
 
 Nič vam ni treba narediti. Celotna pravila: https://evklid.si/zasebnost.html
 

@@ -2503,6 +2503,7 @@
   "dl.play": "Shkarko nga Google Play",
   "dl.apk": "Shkarko për Android (APK)",
   "dl.apkSteps": "Hap skedarin e shkarkuar dhe konfirmo instalimin. Nëse telefoni pyet, lejo instalimin nga ky shfletues.",
+  "dl.apkWhy": "Aplikacioni nuk është ende në Google Play, ndaj e shkarkon drejtpërdrejt nga kjo faqe.",
   "dl.ios": "iPhone dhe iPad",
   "dl.appStore": "Shkarko nga App Store",
   "dl.testflight": "Instalo përmes TestFlight",
