@@ -4570,7 +4570,11 @@ async function loadUsage() {
   if (!res?.ok) return;
   const u = await res.json();
   const m = await import("./poraba-skrbnik.js").catch(() => null);
-  m?.renderUsage($("#usage"), u, escapeHtml);
+  if (!m) {
+    if (card) card.hidden = true;
+    return;
+  }
+  m.renderUsage($("#usage"), u, escapeHtml);
 }
 
 // ---------- uvodni ogled ----------
@@ -4579,7 +4583,8 @@ const TOUR_VERSION = 2;
 let tourP = null;
 function startTour(opts = {}) {
   tourP ||= import("./uvodni-ogled.js").catch((e) => ((tourP = null), Promise.reject(e)));
-  return tourP.then((m) => m.startTour(opts, { state, api, TOUR_VERSION, setEnd: (fn) => (startTour.end = fn) })).catch(() => null);
+  // Med nalaganjem modula je učenec morda odprl drug pogled: samodejni ogled tedaj počaka (ročni »Ponovi« ne).
+  return tourP.then((m) => (opts.full || currentView === "path" ? m.startTour(opts, { state, api, TOUR_VERSION, setEnd: (fn) => (startTour.end = fn) }) : (maybeTour.done = false))).catch(() => null);
 }
 // Vsak profil vidi vodič enkrat, ob prvi uporabi (tudi star profil, ki je videl le kratek ogled).
 function maybeTour() {
@@ -4797,7 +4802,7 @@ function prefetchNext() {
     () =>
       navigator.serviceWorker?.controller?.postMessage({
         type: "precache",
-        urls: ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"],
+        urls: ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js", "/uvodni-ogled.js", ...(usageAdmin ? ["/poraba-skrbnik.js"] : [])],
       }),
   ];
   const next = () => {
