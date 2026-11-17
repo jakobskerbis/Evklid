@@ -73,6 +73,10 @@ export const BLOCK_TEXT = {
   "block.trialOut": "Vprašanja za inštruktorja v preizkusu so porabljena. Za nadaljevanje naj starš izbere naročnino v zavihku Račun. Vadnica in razlage tem delujejo naprej.",
   "block.passOut": "Paket pred testom je porabljen. Nadaljuješ v brezplačnem paketu. Vadnica in razlage tem delujejo naprej.",
   "block.longChat": "Ta pogovor je predolg za inštruktorja. Začni nov pogovor, pa lahko nadaljuješ.",
+  // Brezplačni rep naročnika, razporejen po dnevih (j 2026-11-17): današnji del je porabljen, jutri spet (tailToday).
+  "block.tailDay": "Današnja vprašanja za inštruktorja so porabljena. Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
+  "block.tailDayTopup": "Današnja vprašanja za inštruktorja so porabljena. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer jutri. Vadnica in razlage tem delujejo naprej.",
+  "block.tailDayBirth": "Današnja vprašanja za inštruktorja so porabljena. Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
   "block.freeTailBirth": "V tem obdobju paketa si porabil vsa vprašanja za inštruktorja. Spet jih dobiš z novim obdobjem paketa. Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
   "block.capOutBirth": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
   "block.shareOutBirth": "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
@@ -96,6 +100,12 @@ const CREDIT_PAUSE_MS = 10 * 60_000;
 const SHARE_TTL_MS = 60_000;
 // Nad tem deležem svojega dela proračuna učenec ne dobi več nadgradnje ali Opusa.
 const SHARE_SOFT = 0.8;
+const DAY_MS = 86_400_000;
+// Brezplačni rep naročnika po dnevih (j 2026-11-17): del repa ostane neporabljen kot rezerva za rezervacijo enega klica
+// (server/meje-ai.js: klic sme začeti le, če njegov najvišji strošek še gre pod trdo mejo). Brez nje bi zadnja dva
+// dneva obdobja rezervacija klica (~0,014 $) presegla ostanek repa in inštruktor bi se ustavil do novega obdobja.
+// Hitri model, ~60k vhodnih žetonov (sistemski prompt in zgodovina), izhod navadnega odgovora; največ četrt repa.
+const tailKeepUsd = (tail) => Math.min(tail / 4, callMaxUsd(MODEL, 60_000, MAX_TOKENS.chat));
 
 export class Usage {
   constructor(db) {
@@ -125,6 +135,8 @@ export class Usage {
     this.blockFor = (studentId, code) => ({ error: BLOCK_TEXT[code], code });
     // Začetek obdobja meje zajamčenega paketa (ISO) ali null = koledarski mesec (j 2026-11-06, pregled #462).
     this.periodOf = () => null;
+    // Konec tega obdobja meje (ISO) ali null = konec koledarskega meseca (brezplačni rep po dnevih, tailToday).
+    this.periodEndOf = () => null;
     // Lastnik (server/accounts/pilot-meja.js): brez meje inštruktorja (brez trde meje, dnevnih meja in zaustavitve
     // proračuna); poraba se še vedno zapiše (log).
     this.unlimitedOf = () => false;
@@ -142,7 +154,7 @@ export class Usage {
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
   // totalOf: vrednost paketa (meja + brezplačni rep) v $ ali null; trda meja ni nikoli višja (capsFor).
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf, unlimitedOf, priorSpentOf, pilotOf, onUse } = {}) {
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, periodEndOf, minCall, blockFor, creditOverOf, unlimitedOf, priorSpentOf, pilotOf, onUse } = {}) {
     if (onUse) this.onUse = onUse;
     if (unlimitedOf) this.unlimitedOf = unlimitedOf;
     if (priorSpentOf) this.priorSpentOf = priorSpentOf;
@@ -153,6 +165,7 @@ export class Usage {
     if (capsOf) this.capsOf = capsOf;
     if (totalOf) this.totalOf = totalOf;
     if (periodOf) this.periodOf = periodOf;
+    if (periodEndOf) this.periodEndOf = periodEndOf;
     if (onLog) this.onLog = onLog;
     if (weightOf) this.weightOf = weightOf;
     if (poolOf) this.poolOf = poolOf;
@@ -274,8 +287,7 @@ export class Usage {
       const group = this.poolOf(studentId);
       // Poraba šteje po obdobju paketa (naročnina: od začetka plačanega obdobja, ne koledarski mesec), brez porabe
       // iz kredita; poraba izbrisanih profilov računa šteje (izbris in nov profil meje ne ponastavita).
-      const since = this.periodStart(studentId);
-      const spent = (group || [studentId]).reduce((t, id) => t + this.spentSince(id, since), 0) + this.orphanSpent(owner, since) + (this.priorSpentOf(studentId, since) || 0);
+      const spent = this.groupSpentSince(studentId, this.periodStart(studentId), owner, group);
       return { ...base, spent, group, pool: !!group, allowance: detailedShare(g), ceiling: g, guaranteed: true };
     }
     const pool = state.cap ? Math.max(0, state.cap - this.reservedUsd(studentId)) : 0;
@@ -301,11 +313,45 @@ export class Usage {
     const sb = this.studentBudget(studentId, state);
     return !!sb.guaranteed && sb.spent >= sb.ceiling - 1e-9 && sb.credit <= 0;
   }
-  // Naročnik je nad mejo paketa porabil še brezplačni rep (kot brezplačni profil: freeStudentMonthlyUsd na profil,
-  // pri Družini za vse profile skupaj), brez kredita: inštruktor do novega obdobja paketa ali do dokupa ne odgovarja.
+  // Naročnik je nad mejo paketa porabil še ves brezplačni rep (freeStudentMonthlyUsd na profil, pri Družini za vse
+  // profile skupaj), brez kredita: inštruktor do novega obdobja paketa ali do dokupa ne odgovarja. Rep je razporejen po
+  // dnevih (tailToday), zato se to zgodi le izjemoma (dnevni del se preverja po dejanski porabi, en klic ga lahko preseže).
   overFreeTail(studentId, state = this.budgetState()) {
     const sb = this.studentBudget(studentId, state);
     return !!sb.guaranteed && sb.credit <= 0 && sb.spent >= sb.ceiling + freeStudentMonthlyUsd() * (sb.group?.length || 1) - 1e-9;
+  }
+  // Brezplačni rep po dnevih (j 2026-11-17): nad mejo paketa (overCeiling) naročnik vsak dan do konca obdobja dela kot
+  // brezplačni profil: dnevna meja vprašanj (accounts/index.js dailyLimitFor) in današnji del repa = (rep − rezerva −
+  // rep, porabljen pred današnjim dnem) / preostali dnevi obdobja (z današnjim). Pri Družini rep velja za vse profile
+  // skupaj, dnevni del pa za vsak profil posebej (delež / število profilov). Dnevni del se preverja po dejanski porabi
+  // (ne po rezervaciji klica); trda meja (capsFor: meja + ves rep) ostane in vrednost paketa ne zraste (pravilo 25 %).
+  // Vrne null pod mejo paketa, s kreditom ali brez zajamčenega paketa, sicer { share, spent, days, over, code }:
+  // over = današnji del profila je porabljen; code = block.tailDay* (jutri spet) ali, ko za preostale dni ni več repa,
+  // koda konca obdobja (tailCode).
+  tailToday(studentId, state = this.budgetState(), now = new Date()) {
+    const sb = this.studentBudget(studentId, state);
+    if (!sb.guaranteed || sb.credit > 0 || sb.spent < sb.ceiling - 1e-9) return null;
+    const n = sb.group?.length || 1;
+    const tail = Math.max(0, Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, this.totalOf(studentId) ?? Infinity) - sb.ceiling);
+    const dayStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const start = this.periodStart(studentId);
+    const today = new Date(dayStart).toISOString().slice(0, 19).replace("T", " ");
+    const since = today > start ? today : start;
+    const spentToday = this.groupSpentSince(studentId, since, sb.owner, sb.group);
+    const before = sb.spent - spentToday;
+    const usedBefore = Math.max(0, before - sb.ceiling);
+    const endIso = this.periodEndOf(studentId);
+    const endMs = Date.parse(endIso || "");
+    const end = Number.isFinite(endMs) ? endMs : periodOf(now).end;
+    const days = Math.max(1, Math.ceil((end - dayStart) / DAY_MS));
+    const groupShare = Math.max(0, tail - tailKeepUsd(tail) - usedBefore) / days;
+    // Del današnje porabe nad mejo paketa (dan, ko je meja prestopljena, šteje le del nad njo).
+    const groupToday = Math.max(0, sb.spent - Math.max(sb.ceiling, before));
+    // Družina: del profila sorazmerno z njegovo današnjo porabo (dan prestopa meje: del pred mejo ni rep).
+    const mine = sb.group ? (spentToday > 0 ? (groupToday * this.spentSince(studentId, since)) / spentToday : 0) : groupToday;
+    const share = groupShare / n;
+    const code = groupShare > 0 ? `block.tailDay${tpSuffix(this.topupPrompt(studentId))}` : this.tailCode(studentId);
+    return { share, spent: mine, days, over: groupShare <= 0 || mine >= share - 1e-12, code };
   }
   // Prikaz porabe za učenca in starše (j 2026-11-01): preostale podrobne razlage, nikoli € ali $.
   // stage: ok | low (80 %) | out (100 %, hitri način); null brez zajamčenega deleža.
@@ -320,6 +366,8 @@ export class Usage {
       explanations_left: explanationsFor(Math.max(0, sb.allowance - spent)) + explanationsFor(sb.credit),
       explanations_month: explanationsFor(sb.allowance),
       pool: !!sb.pool, // skupen delež družine: obvestila in preostanek veljajo za vse profile skupaj
+      // Porabljen tudi hitri način (brez kredita): do konca obdobja vsak dan kot brezplačni paket (tailToday).
+      tail: sb.credit <= 0 && spent >= sb.ceiling - 1e-9,
     };
   }
   // Prilagodi izbrani način proračunu: pod načrtom močnejši model, nad njim hitri.
@@ -540,6 +588,8 @@ export class Usage {
     // topupPrompt: true (poziv k dokupu), "birth" (dokup šele po vpisu datuma rojstva) ali false.
     const tail = tpSuffix;
     if (this.overFreeTail(studentId, state)) return out(this.tailCode(studentId));
+    const day = this.tailToday(studentId, state);
+    if (day?.over) return out(day.code);
     if (state.cap) {
       if (!this.overShare(studentId, state)) {
         const hard = this.hardBlock(studentId);
@@ -574,6 +624,11 @@ export class Usage {
     const iso = this.periodOf(studentId);
     const t = iso ? Date.parse(iso) : NaN;
     return Number.isFinite(t) ? new Date(t).toISOString().slice(0, 19).replace("T", " ") : this.monthStart();
+  }
+  // Poraba zajamčenega paketa od since: profil ali vsi profili skupnega deleža, izbrisani profili računa in prejšnji
+  // računi člana pilota; brez porabe iz dokupljenega kredita (studentBudget, tailToday).
+  groupSpentSince(studentId, since, owner = this.ownerOf(studentId), group = this.poolOf(studentId)) {
+    return (group || [studentId]).reduce((t, id) => t + this.spentSince(id, since), 0) + this.orphanSpent(owner, since) + (this.priorSpentOf(studentId, since) || 0);
   }
   // Poraba profila od since brez porabe iz dokupljenega kredita.
   spentSince(studentId, since) {
