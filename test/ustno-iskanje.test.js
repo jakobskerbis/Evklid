@@ -112,6 +112,9 @@ test("brskalnik: brez »ni vprašanj« ob besedilu iz klepeta, po iskanju da; pr
       const mod = await import("/ustno/ustno.js");
       await mod.odpri({ tema: "FIZ-OS-9/upor-in-ohmov-zakon" }, { api, student: st, renderRich: (x) => x });
     }, s.id);
+    // Tipkanje (Chromium ima prepoznavo govora: privzeti »glas« bi najprej pokazal obvestilo), brez branja na glas.
+    await p.check('.us-form[data-us="nastavi"] input[name="nacin"][value="tipkanje"]');
+    await p.uncheck('.us-form[data-us="nastavi"] input[name="beri"]');
     await p.click('.us-form[data-us="nastavi"] button[type="submit"]');
     const sym = p.locator('.us-in-row [data-us="sym"]');
     await sym.waitFor();
@@ -129,7 +132,7 @@ test("brskalnik: brez »ni vprašanj« ob besedilu iz klepeta, po iskanju da; pr
 
 test("odjemalec: rezultat računa ima gumb Σ in Evklidovo tipkovnico (kot skeniranje)", () => {
   const src = readFileSync(new URL("../public/ustno/ustno.js", import.meta.url), "utf8");
-  assert.match(src, /name="rezultat"[^`]*data-us="sym"/);
+  assert.match(src, /name="rezultat"[\s\S]{0,400}data-us="sym"/);
   assert.match(src, /configureKeyboard\(result, \{ math: true, layers: \["num", "fx", "sym", "abc"\]/);
   assert.match(src, /toggleKeyboard\(result, \{ layer: "sym" \}\)/);
 });
