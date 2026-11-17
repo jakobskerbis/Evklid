@@ -1837,6 +1837,7 @@ async function accounts(browser, app) {
     await p.fill('#auth-form input[name="password"]', "geslo1234");
     await p.fill('#auth-form input[name="birth_date"]', "1985-04-02");
     await p.check('#auth-form input[name="accept_privacy"]');
+    await p.check('#auth-form input[name="accept_terms"]');
     await screen(p, "registracija");
     await click(p, '#auth-form button[type="submit"]', { wait: 400 });
     await expectVisible(p, "#verify-done", "potrditev e-naslova");

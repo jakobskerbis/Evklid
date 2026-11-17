@@ -11,6 +11,7 @@ export const GIFT_WITHDRAWAL_TEXT =
   "Vem, da lahko v 14 dneh od nakupa odstopim in dobim vrnjeno celotno plačilo, če koda še ni vpisana. Ko je koda vpisana, se uporaba začne in pravica do odstopa preneha.";
 import { giftFor, isoIn } from "../accounts/plans.js";
 import { BIRTH_MISSING_PAY } from "../accounts/age.js";
+import { insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText } from "../accounts/potrdilo.js";
 import { STOPNJE, visja } from "../../public/stopnja.js";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // brez I, O, 0, 1
@@ -47,7 +48,7 @@ export function migrateGifts(db) {
 
 const later = (iso, now = Date.now()) => !!iso && Date.parse(iso) > now;
 
-// ctx: { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, recordConsent, paidActive }
+// ctx: { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, paidActive }
 export function mountGifts(app, ctx) {
   const {
     db,
@@ -59,7 +60,6 @@ export function mountGifts(app, ctx) {
     baseUrl,
     isMinor,
     birthMissing = () => false,
-    recordConsent,
     paidActive,
     pilotOf = () => false, // član pilota: brez nakupa darilne kode (j 2026-11-10)
   } = ctx;
@@ -192,6 +192,7 @@ export function mountGifts(app, ctx) {
       return res
         .status(400)
         .json({ error: "Pred plačilom sta potrebni obe potrditvi.", consent: true });
+    if (!termsAccepted(req.body)) return res.status(400).json(TERMS_ERROR);
     const open = db
       .prepare(
         "SELECT COUNT(*) AS n FROM gifts WHERE buyer_id = ? AND status = 'pending' AND created_at > datetime('now', '-1 day')",
@@ -215,8 +216,6 @@ export function mountGifts(app, ctx) {
           )
           .run(p.id, GIFT.amount, GIFT.currency, GIFT.days, GIFT.level).lastInsertRowid,
       );
-      const lang = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(req.body?.lang || "")) ? req.body.lang : "sl";
-      db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'gift', ?)").run(p.id, p.email, `${GIFT_ADULT_TEXT}\n${GIFT_WITHDRAWAL_TEXT}\n[jezik: ${lang}]`);
       const meta = { kind: "gift", gift_id: id, parent_id: p.id, parent_uid: p.uid || undefined };
       const base = baseUrl(req);
       const session = await stripe.request("POST", "/checkout/sessions", {
@@ -244,7 +243,8 @@ export function mountGifts(app, ctx) {
         session.id,
         id,
       );
-      recordConsent(p.id, p.email, "gift", req.body?.lang);
+      // Potrditve za darilo (ne besedilo naročnine), pogoji in seja za potrdilo po e-pošti (server/accounts/potrdilo.js).
+      insertBillingConsent(db, { parentId: p.id, email: p.email, kind: "gift", lines: [GIFT_ADULT_TEXT, GIFT_WITHDRAWAL_TEXT], lang: req.body?.lang, checkoutId: session.id, item: `${GIFT.label}, ${moneyText(GIFT.amount, GIFT.currency)}` });
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe darilo:", err.message);

@@ -211,13 +211,13 @@ test("paket pred testom: ponudba samo brez naročnine, potrditve, plačilo, poln
       const noConsent = await a("/api/billing/pass", { method: "POST", body });
       assert.equal(noConsent.status, 400);
       assert.equal(noConsent.body.consent, true);
-      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, test_date: day(40), adult: true, withdrawal: true } })).status, 400);
+      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, test_date: day(40), adult: true, withdrawal: true, terms: true } })).status, 400);
       // 30-dnevnega paketa ni več; test čez 20 dni paket še ne pokrije (najdaljši je 14 dni).
-      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, days: 30, test_date: day(20), adult: true, withdrawal: true } })).status, 400);
-      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, test_date: day(20), adult: true, withdrawal: true } })).status, 400);
-      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, days: 10, adult: true, withdrawal: true } })).status, 400);
+      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, days: 30, test_date: day(20), adult: true, withdrawal: true, terms: true } })).status, 400);
+      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, test_date: day(20), adult: true, withdrawal: true, terms: true } })).status, 400);
+      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, days: 10, adult: true, withdrawal: true, terms: true } })).status, 400);
 
-      const co = await a("/api/billing/pass", { method: "POST", body: { ...body, adult: true, withdrawal: true } });
+      const co = await a("/api/billing/pass", { method: "POST", body: { ...body, adult: true, withdrawal: true, terms: true } });
       assert.equal(co.status, 200, JSON.stringify(co.body));
       const session = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1);
       assert.equal(session.body.mode, "payment");
@@ -249,7 +249,7 @@ test("paket pred testom: ponudba samo brez naročnine, potrditve, plačilo, poln
       assert.equal(acc.children[0].pass.days, 14);
       // Aktiven paket: ni nove ponudbe in ni drugega nakupa.
       assert.equal((await a(`/api/students/${kid.id}/pass-offer`)).body.active.days, 14);
-      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, adult: true, withdrawal: true } })).status, 409);
+      assert.equal((await a("/api/billing/pass", { method: "POST", body: { ...body, adult: true, withdrawal: true, terms: true } })).status, 409);
       // Tuj starš ne more potrditi tujega plačila.
       const b = client();
       await registerVerified(b, stripe, "tuj@paket.si");
@@ -269,7 +269,7 @@ test("paket pred testom: ponudba samo brez naročnine, potrditve, plačilo, poln
       // Z naročnino se paket ne ponudi in ga ni mogoče kupiti (j 2026-10-30).
       store.db.prepare("UPDATE parents SET sub_status = 'active', sub_seats = 1 WHERE id = ?").run(parent.id);
       assert.equal((await a(`/api/students/${kid.id}/pass-offer`)).body.offer, null);
-      const sub = await a("/api/billing/pass", { method: "POST", body: { ...body, adult: true, withdrawal: true } });
+      const sub = await a("/api/billing/pass", { method: "POST", body: { ...body, adult: true, withdrawal: true, terms: true } });
       assert.equal(sub.status, 409);
       assert.equal(sub.body.subscription, true);
     });
@@ -289,7 +289,7 @@ test("paket pred testom: preizkus, ki pokrije test, ponudbe ne prikaže; webhook
     await addTest(a, kid.id, day(12));
     assert.equal((await a(`/api/students/${kid.id}/pass-offer`)).body.offer.suggested, 14);
 
-    await a("/api/billing/pass", { method: "POST", body: { student_id: kid.id, days: 14, test_date: day(12), adult: true, withdrawal: true } });
+    await a("/api/billing/pass", { method: "POST", body: { student_id: kid.id, days: 14, test_date: day(12), adult: true, withdrawal: true, terms: true } });
     const passId = store.db.prepare("SELECT id FROM passes").get().id;
     const evt = {
       id: "evt_p1",
@@ -317,12 +317,12 @@ test("povezava za starše: najstnik ne plača sam, starš pregleda in plača bre
     store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z'").run();
 
     // Mladoletni imetnik: naročnine in paketa ne more plačati sam.
-    const own = await teen("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } });
+    const own = await teen("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true } });
     assert.equal(own.status, 403);
     assert.equal(own.body.pay_link, true);
     await addTest(teen, kid.id, day(5));
     assert.equal((await teen(`/api/students/${kid.id}/pass-offer`)).body.offer.pay_link, true);
-    assert.equal((await teen("/api/billing/pass", { method: "POST", body: { student_id: kid.id, days: 7, test_date: day(5), adult: true, withdrawal: true } })).status, 403);
+    assert.equal((await teen("/api/billing/pass", { method: "POST", body: { student_id: kid.id, days: 7, test_date: day(5), adult: true, withdrawal: true, terms: true } })).status, 403);
 
     // Povezava za naročnino.
     const link = await teen("/api/billing/pay-link", { method: "POST", body: { kind: "sub", seats: 1, interval: "month" } });
@@ -338,9 +338,9 @@ test("povezava za starše: najstnik ne plača sam, starš pregleda in plača bre
     assert.equal((await mom("/api/pay/napacen-zeton-ki-ne-obstaja-123")).status, 404);
 
     // Brez e-naslova ali potrditev ne gre.
-    assert.equal((await mom(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "x", adult: true, withdrawal: true } })).status, 400);
+    assert.equal((await mom(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "x", adult: true, withdrawal: true, terms: true } })).status, 400);
     assert.equal((await mom(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "mama@primer.si", adult: true } })).status, 400);
-    const co = await mom(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "mama@primer.si", adult: true, withdrawal: true } });
+    const co = await mom(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "mama@primer.si", adult: true, withdrawal: true, terms: true } });
     assert.equal(co.status, 200, JSON.stringify(co.body));
     const session = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1);
     assert.equal(session.body.mode, "subscription");
@@ -358,7 +358,7 @@ test("povezava za starše: najstnik ne plača sam, starš pregleda in plača bre
     const row = store.db.prepare("SELECT stripe_customer_id, sub_status FROM parents WHERE id = ?").get(parent.id);
     assert.deepEqual([row.stripe_customer_id, row.sub_status], ["cus_mama", "active"]);
     assert.equal((await teen("/api/account")).body.access.tier, "paid");
-    assert.equal((await mom(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "mama@primer.si", adult: true, withdrawal: true } })).status, 409);
+    assert.equal((await mom(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "mama@primer.si", adult: true, withdrawal: true, terms: true } })).status, 409);
     // Z naročnino povezave za paket ni več.
     assert.equal((await teen("/api/billing/pay-link", { method: "POST", body: { kind: "pass", student_id: kid.id, days: 7, test_date: day(5) } })).status, 409);
 
@@ -382,10 +382,10 @@ test("povezava za starše: paket pred testom", async () => {
     const dad = client();
     const view = (await dad(`/api/pay/${token}`)).body;
     assert.deepEqual([view.kind, view.name, view.plan.amount, view.test.name], ["pass", "Ema", 549, "Kontrolna iz kemije"]);
-    await dad(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", adult: true, withdrawal: true } });
+    await dad(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", adult: true, withdrawal: true, terms: true } });
     const first = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1);
     // Drugi klik (npr. v drugem zavihku) uporabi isti neplačan paket: dve plačili ne dasta dveh paketov.
-    await dad(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", adult: true, withdrawal: true, lang: "en" } });
+    await dad(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", adult: true, withdrawal: true, terms: true, lang: "en" } });
     const session = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1);
     assert.equal(session.body["metadata[pass_id]"], first.body["metadata[pass_id]"]);
     assert.match(store.db.prepare("SELECT text FROM billing_consents ORDER BY rowid DESC").get().text, /\[jezik: en\]$/);
@@ -467,7 +467,7 @@ test("brez mikrotransakcij (j 2026-11-04): dokup samo paketi in samo polnoleten;
   await withServer(async ({ client, stripe, store }) => {
     const a = client();
     const parent = await registerVerified(a, stripe, "brez@mikro.si");
-    const consent = { adult: true, withdrawal: true };
+    const consent = { adult: true, withdrawal: true, terms: true };
     // Poljubnega zneska ni več.
     let r = await a("/api/billing/credit", { method: "POST", body: { pack: "custom", amount_eur: 37.5, ...consent } });
     assert.equal(r.status, 400);
@@ -528,7 +528,7 @@ test("Stripe: plačilo izbrisanega računa ne gre novemu računu z istim id (rea
       const a = client();
       const A = await registerVerified(a, stripe, "a@ponoven.si");
       store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(A.id);
-      const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } });
+      const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true } });
       assert.equal(co.status, 200, JSON.stringify(co.body));
       const sent = lastSession(stripe);
       const uidA = store.db.prepare("SELECT uid FROM parents WHERE id = ?").get(A.id).uid;
@@ -603,10 +603,10 @@ test("Stripe: plačilo paketa in dokupa izbrisanega računa ne vklopi nakupa nov
       store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(p.id);
       const kid = (await c("/api/students", { method: "POST", body: { name: "Lan", birth_year: YEAR - 16, consent: true } })).body;
       await addTest(c, kid.id, day(5));
-      const pr = await c("/api/billing/pass", { method: "POST", body: { student_id: kid.id, days: 7, test_date: day(5), test_name: "Test iz ulomkov", adult: true, withdrawal: true } });
+      const pr = await c("/api/billing/pass", { method: "POST", body: { student_id: kid.id, days: 7, test_date: day(5), test_name: "Test iz ulomkov", adult: true, withdrawal: true, terms: true } });
       assert.equal(pr.status, 200, JSON.stringify(pr.body));
       const pass = lastSession(stripe);
-      const cr = await c("/api/billing/credit", { method: "POST", body: { pack: "k5", adult: true, withdrawal: true } });
+      const cr = await c("/api/billing/credit", { method: "POST", body: { pack: "k5", adult: true, withdrawal: true, terms: true } });
       assert.equal(cr.status, 200, JSON.stringify(cr.body));
       const credit = lastSession(stripe);
       return { c, p, pass, credit };

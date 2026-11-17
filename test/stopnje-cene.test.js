@@ -364,11 +364,11 @@ test("Račun: cena stopnje profila, Družina pri ≥ 2 profilih; nakup po stopnj
     assert.equal(acc.plan_level, "FAKS");
     assert.equal(acc.family_ok, false, "Družina samo pri vsaj 2 profilih");
     assert.deepEqual(acc.gift_prices, { OS: 9900, SS: 13900, FAKS: 19900 });
-    const co = await call("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "year", adult: true, withdrawal: true } });
+    const co = await call("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "year", adult: true, withdrawal: true, terms: true } });
     assert.equal(co.status, 200, JSON.stringify(co.body));
     assert.equal(stripe.calls.find((c) => c.path === "/v1/checkout/sessions").body["line_items[0][price]"], "price_evklid_faks_year");
     // Darilna koda za SŠ: letna cena SŠ.
-    const g = await call("/api/billing/gift", { method: "POST", body: { level: "SS", adult: true, withdrawal: true } });
+    const g = await call("/api/billing/gift", { method: "POST", body: { level: "SS", adult: true, withdrawal: true, terms: true } });
     assert.equal(g.status, 200, JSON.stringify(g.body));
     assert.equal(stripe.calls.filter((c) => c.path === "/v1/checkout/sessions").at(-1).body["line_items[0][price_data][unit_amount]"], "13900");
   });
@@ -633,17 +633,17 @@ test("paket pred testom, kupljen pred cenami po stopnjah, odpre vse stopnje (št
 test("nakup: brez števila profilov 400; neznana stopnja darila 400; darilo nižje stopnje ne da brezplačnega preizkusa višjega paketa", async () => {
   await withAccounts(async ({ call, stripe, kid, db, pid }) => {
     kid("Maks", "FAKS", YEAR - 20);
-    assert.equal((await call("/api/billing/checkout", { method: "POST", body: { interval: "month", adult: true, withdrawal: true } })).status, 400);
-    assert.equal((await call("/api/billing/gift", { method: "POST", body: { level: "faks", adult: true, withdrawal: true } })).status, 400);
+    assert.equal((await call("/api/billing/checkout", { method: "POST", body: { interval: "month", adult: true, withdrawal: true, terms: true } })).status, 400);
+    assert.equal((await call("/api/billing/gift", { method: "POST", body: { level: "faks", adult: true, withdrawal: true, terms: true } })).status, 400);
     const sessions = () => stripe.calls.filter((c) => c.path === "/v1/checkout/sessions");
     // Darilo OŠ še 200 dni: naročnina faks se plača takoj (brez preizkusa do konca darila).
     db.prepare("UPDATE parents SET gift_until = ?, gift_level = 'OS', trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(iso(200), pid);
-    assert.equal((await call("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } })).status, 200);
+    assert.equal((await call("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true } })).status, 200);
     assert.equal(sessions().at(-1).body["line_items[0][price]"], "price_evklid_faks_month");
     assert.equal(sessions().at(-1).body["subscription_data[trial_end]"], undefined);
     // Darilo faks (ali staro darilo brez stopnje): preostanek se prenese kot doslej.
     db.prepare("UPDATE parents SET gift_level = 'FAKS' WHERE id = ?").run(pid);
-    await call("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } });
+    await call("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true } });
     assert.ok(sessions().at(-1).body["subscription_data[trial_end]"]);
   });
 });
@@ -717,7 +717,7 @@ test("povezava za plačilo s starim paketom »2 otroka«: stran in plačilo po d
     db.prepare("INSERT INTO pay_links (token_hash, parent_id, kind, plan_key, expires_at) VALUES (?, ?, 'sub', 'evklid_2_month', ?)").run(sha256("t".repeat(30)), pid, iso(5));
     const view = (await call(`/api/pay/${"t".repeat(30)}`)).body;
     assert.equal(view.plan.amount, 1899);
-    const co = await call(`/api/pay/${"t".repeat(30)}/checkout`, { method: "POST", body: { email: "oce@p.si", adult: true, withdrawal: true } });
+    const co = await call(`/api/pay/${"t".repeat(30)}/checkout`, { method: "POST", body: { email: "oce@p.si", adult: true, withdrawal: true, terms: true } });
     assert.equal(co.status, 200, JSON.stringify(co.body));
     assert.equal(stripe.calls.filter((c) => c.path === "/v1/checkout/sessions").at(-1).body["line_items[0][price]"], "price_evklid_druzina_month");
   });

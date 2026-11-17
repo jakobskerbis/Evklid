@@ -245,7 +245,7 @@ test("Podari Evklid: pilotne kode z mejami, sklad iz (starega) dodatka in »Poda
 
       // Dodatka 2/5/10 € pri naročnini ni več (j 2026-11-04): checkout ga prezre, v Stripu je samo naročnina.
       store.db.prepare("UPDATE parents SET gift_until = NULL WHERE id = ?").run(parent.id);
-      r = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, podari: 500 } });
+      r = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true, podari: 500 } });
       assert.equal(r.status, 200, JSON.stringify(r.body));
       const cs = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1).body;
       assert.equal(cs["line_items[1][price_data][unit_amount]"], undefined);
@@ -261,7 +261,7 @@ test("Podari Evklid: pilotne kode z mejami, sklad iz (starega) dodatka in »Poda
 
       // »Podari mesec« (9,99 €): potrebni sta obe potrditvi, plačilo potrdi vrnitev.
       assert.equal((await a("/api/billing/podari", { method: "POST", body: { adult: true } })).status, 400);
-      r = await a("/api/billing/podari", { method: "POST", body: { adult: true, understand: true } });
+      r = await a("/api/billing/podari", { method: "POST", body: { adult: true, understand: true, terms: true } });
       assert.equal(r.status, 200);
       const fundId = store.db.prepare("SELECT id FROM podari_fund WHERE kind = 'month'").get().id;
       stripe.state.sessions.cs_pod = { id: "cs_pod", payment_status: "paid", payment_intent: "pi_pod", metadata: { kind: "podari", fund_id: String(fundId), parent_id: String(parent.id) } };
@@ -420,7 +420,7 @@ test("Podari Evklid: meja na šolo velja tudi za razstavljene črke in nevidne z
       }
       const a = client();
       const parent = await registerVerified(a, stripe, "kupec@pod2.si");
-      assert.equal((await a("/api/billing/podari", { method: "POST", body: { adult: true, understand: true } })).status, 200);
+      assert.equal((await a("/api/billing/podari", { method: "POST", body: { adult: true, understand: true, terms: true } })).status, 200);
       const rows = store.db.prepare("SELECT text FROM billing_consents WHERE parent_id = ?").all(parent.id);
       assert.equal(rows.length, 1);
       assert.ok(!/odstop/i.test(rows[0].text), rows[0].text);
