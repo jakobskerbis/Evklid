@@ -2,7 +2,7 @@
 // vidi in lahko popravi. Strošek gre skozi iste meje AI kot inštruktor (server/usage.js hold, server/meje-ai.js),
 // spraševanje šteje kot USTNO_QUESTIONS vprašanj na dan (accounts: brezplačni paket 3 od 10). Ne gre v lige, učitelj
 // ga ne vidi; prepis se hrani kot pogovor (šifrirano, kot drugi pogovori). Ugovor »Ne strinjam se« gre v prijave napak.
-import { getTopic } from "./curriculum.js";
+import { getTopic, pathKeyFor } from "./curriculum.js";
 import { loadLesson } from "./textbook.js";
 import { hasGenerator } from "./practice/index.js";
 import { lessonForQuestion } from "./lekcija-za-vprasanje.js";
@@ -88,6 +88,15 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     return null;
   }
 
+  // Primer v polju za iskanje (»npr. …«): tema z učenčeve učne poti (njegov predmet in raven), za katero so vprašanja;
+  // najprej zadnja začeta, nato tista, ki je na vrsti, nato prva na poti.
+  function exampleTopic(student) {
+    const view = progress?.pathView?.(student.id, pathKeyFor(student.settings));
+    const all = (view?.units || []).filter((u) => !u.ahead).flatMap((u) => u.topics);
+    const order = [...all.filter((t) => t.status !== "new").reverse(), ...(view?.next ? [view.next] : []), ...all];
+    return order.find((t) => topicOf(t.id))?.name || null;
+  }
+
   const loadSession = (req, res, s) => {
     const row = db.prepare("SELECT * FROM ustno_seje WHERE id = ? AND student_id = ?").get(intParam(req.params.sid), s.id);
     if (!row) {
@@ -125,7 +134,7 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const s = loadStudent(req, res);
     if (!s) return;
     const snov = topicsFor(s, { tema: req.query.tema, test: req.query.test === "1", besedilo: req.query.besedilo });
-    res.json({ snov: snov ? { naslov: snov.naslov, teme: snov.teme.map((t) => ({ id: t.id, name: t.name })) } : null, glas: voice(s.id), stevila: COUNTS });
+    res.json({ snov: snov ? { naslov: snov.naslov, teme: snov.teme.map((t) => ({ id: t.id, name: t.name })) } : null, ...(snov ? {} : { primer: exampleTopic(s) }), glas: voice(s.id), stevila: COUNTS });
   });
 
   // Začetek: izbor vprašanj, pogovor; spraševanje šteje kot USTNO_QUESTIONS vprašanj (ne pri samooceni).
