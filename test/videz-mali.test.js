@@ -164,13 +164,19 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
     assert.ok(res.includes(zapSl["zap.notKeptNoCards"]) && !res.includes(zapSl["zap.notKept"]), "brez »samo snov in kartice«");
     await p.evaluate(() => document.querySelector("#zap-test").remove());
     // 11a: spodnja vrstica pri 360 px: v nobenem od 33 jezikov se beseda ne prelomi sredi besede (»Competition|s«).
+    // Cirilice Instrument Sans nima: telefon vzame sistemsko pisavo (Roboto, SF), CI pa precej širšo DejaVu. Cirilico zato
+    // merimo z Inter (podobne širine kot Roboto in SF, devDependency @fontsource/inter).
     const dicts = { sl, ...ui };
-    const broken = await p.evaluate(async (dicts) => {
+    const cyr = readFileSync(new URL("../node_modules/@fontsource/inter/files/inter-cyrillic-800-normal.woff2", import.meta.url)).toString("base64");
+    const broken = await p.evaluate(async ([dicts, cyr]) => {
       await document.fonts.ready;
+      const face = new FontFace("EvklidPreizkusCyr", `url(data:font/woff2;base64,${cyr})`, { weight: "800" });
+      document.fonts.add(await face.load());
       const spans = [...document.querySelectorAll("#tabbar .tab:not([hidden]) span")];
       const out = [];
       for (const [lang, d] of Object.entries(dicts)) {
         document.documentElement.lang = lang;
+        for (const s of spans) s.style.fontFamily = ["ru", "uk", "mk", "sr"].includes(lang) ? "EvklidPreizkusCyr" : "";
         for (const [key, s] of [["nav.path", spans[0]], ["nav.learn", spans[1]], ["nav.chat", spans[2]], ["nav.competitionShort", spans[3]], ["goal.npz", spans[3]], ["goal.matura", spans[3]], ["nav.exams", spans[3]], ["nav.me", spans[4]]]) {
           s.textContent = d[key] || "";
           const tn = s.firstChild;
@@ -186,8 +192,9 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
           }
         }
       }
+      for (const s of spans) s.style.fontFamily = "";
       return out;
-    }, dicts);
+    }, [dicts, cyr]);
     assert.deepEqual(broken, []);
     const tab4 = await p.evaluate(() => document.querySelector("#competition-tab-m span").dataset.i18n);
     assert.equal(tab4, "nav.competitionShort");
