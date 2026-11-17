@@ -608,8 +608,9 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   // ali je naprava zanj prepočasna, ostane zadnja slika.
   function predogled(css, N, n, mol = null) {
     const uz = s.nacin === "tem" ? utezModela(povecava(s)) : 0;
-    // sloj molekul v predogledu le, če ga naprava zmore v ~80 ms tudi pri najmanjši skali (96 × 96)
-    const zMol = !!mol || (uz > 0 && (!msNaMol || msNaMol * 96 * 96 < 80));
+    // med premikanjem sloj molekul v predogledu le, če ga naprava zmore v ~80 ms tudi pri najmanjši skali (96 × 96);
+    // po spustu (nov pogled) vedno, ker je to prva slika z molekulami (prvo risanje z novim programom je lahko počasno)
+    const zMol = !!mol || (uz > 0 && (interakcija === 0 || !msNaMol || msNaMol * 96 * 96 < 80));
     const cena = msNaVzorec + (zMol ? msNaMol : 0);
     // ko je hitrost naprave že izmerjena, skala takoj ustreza ~30 ms (zahtevnejši preparati so lahko večkrat počasnejši)
     if (msNaVzorec) skala = Math.round(20 * Math.max(0.15, Math.min(0.75, Math.sqrt(30 / (cena * n * n))))) / 20;
