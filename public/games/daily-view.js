@@ -2,6 +2,7 @@
 // z rešitvijo korak za korakom in današnjo lestvico). Uganka in preverjanje: daily.js, strežnik:
 // server/daily-puzzle.js. Odgovor učenec vtipka s številčnico iger (keyBtn iz produce.js) ali s tipkovnico.
 import { icon } from "../icons.js";
+import { dateText } from "../datum.js";
 import { avatarSvg, DEFAULT_AVATAR } from "../avatar.js";
 import { keyBtn, esc } from "./produce.js";
 import { LEVELS, MAX_HINTS, HINT_MS, WRONG_MS, puzzleFor, checkAnswer, timeText, suggestedLevel } from "./daily.js";
@@ -31,7 +32,7 @@ export const pickLevel = (stage, year) => savedLevel() || suggestedLevel(stage, 
 // Datum uganke (UTC) v jeziku vmesnika.
 function dayText(day, lang) {
   try {
-    return new Intl.DateTimeFormat(lang, { day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${day}T00:00:00Z`));
+    return dateText(new Date(`${day}T12:00:00Z`), lang, { day: "numeric", month: "long", timeZone: "UTC" }) || day;
   } catch {
     return day;
   }

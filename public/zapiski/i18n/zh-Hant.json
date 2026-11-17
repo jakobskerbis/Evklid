@@ -25,6 +25,7 @@
   "zap.noCards": "現在無法用這些筆記做記憶卡。",
   "zap.practice": "複習記憶卡",
   "zap.printed": "印刷頁面的文字我們不保存——只保存知識點和記憶卡。",
+  "zap.printedNoCards": "印刷頁面的文字我們不保存。",
   "zap.list": "已保存的筆記",
   "zap.empty": "你還沒有保存的筆記。",
   "zap.open": "打開",
@@ -44,6 +45,7 @@
   "zap.keep": "這是我的筆記 – 儲存",
   "zap.keepHint": "不勾選就不儲存文字。測驗和卡片會保留。",
   "zap.notKept": "我們沒有儲存貼上的文字 – 只有主題和卡片。",
+  "zap.notKeptNoCards": "我們沒有儲存貼上的文字。",
   "zap.correctMark": "正確答案",
   "zap.yourMark": "你的答案"
 }

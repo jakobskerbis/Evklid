@@ -148,3 +148,12 @@
 /* iskano ni podatek: svoja vrstica brez čipa (j 16. 11. 2026) */
 .scan-sought-item { padding: 4px 0; max-width: 100%; }
 .scan-answer-tex .scan-fact { margin: 4px 0; text-align: center; font-size: 1.15rem; font-weight: 400; }
+
+/* Kamera v Inštruktorju (scan.js, renderTutorConfirm): prepis celotne naloge, ki ga učenec popravi, in fotografija zraven */
+.scan-tutor textarea { width: 100%; min-height: 7.5em; resize: vertical; font: inherit; line-height: 1.45; }
+.scan-tutor .scan-photo-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; min-height: 44px; cursor: pointer; }
+.scan-tutor .scan-photo-row img { width: 56px; height: 42px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); flex: none; }
+.scan-tutor .scan-photo-row span { display: grid; gap: 2px; }
+/* »Pošlji inštruktorju« ostane viden brez drsenja (telefon 360 × 740): vrstica gumbov se prilepi na spodnji rob. */
+.scan-tutor .scan-tutor-actions { position: sticky; bottom: 0; z-index: 2; margin: 12px -16px -16px; padding: 10px 16px calc(10px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); background: var(--surface); border-top: 1px solid var(--border); border-radius: 0 0 var(--radius, 14px) var(--radius, 14px); }
+@media (max-height: 760px) { .scan-tutor textarea { min-height: 5.5em; } }

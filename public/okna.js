@@ -64,6 +64,7 @@ export const floatingViews = () => [...wins.keys()];
 
 const tabOf = (name) => document.querySelector(`.topbar .tabs .tab[data-view="${name}"]`);
 function canFloat(name) {
+  if (name === "me") return false; // »Jaz« je seznam za odpiranje drugih pogledov, ne okno
   const tab = tabOf(name);
   return !!tab && !tab.hidden && !!document.getElementById(`view-${name}`);
 }
@@ -150,6 +151,8 @@ const sideAt = (x) => (x <= EDGE ? "left" : x >= window.innerWidth - EDGE ? "rig
 
 function syncTabs() {
   document.querySelectorAll(".tabs .tab, #tabbar .tab").forEach((b) => b.classList.toggle("floating", wins.has(b.dataset.view)));
+  // Okno pogleda, ki je na računalniku pod »Jaz« (skrit zavihek data-pod-jaz): pika na zavihku Jaz.
+  document.getElementById("me-tab-top")?.classList.toggle("floating", [...document.querySelectorAll(".topbar .tabs .tab[data-pod-jaz]")].some((b) => wins.has(b.dataset.view)));
   document.body.classList.toggle("has-okna", wins.size > 0);
   syncDock();
   layout.open = [...wins.values()].sort((a, b) => (a.el.style.zIndex | 0) - (b.el.style.zIndex | 0)).map((w) => w.name);
@@ -454,7 +457,7 @@ function bubbleEl() {
     if (e.target instanceof Element && e.target.closest("#view-chat, #messages, .okno")) return;
     bubble.classList.add("scrolling");
     clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(() => bubble.classList.remove("scrolling"), 700);
+    scrollTimer = setTimeout(() => (bubble.classList.remove("scrolling"), placeBubble()), 700); // po drsenju z vnosnih polj
   }, { passive: true, capture: true });
   const main = bubble.querySelector(".cb-main");
   bubble.querySelector(".cb-x").addEventListener("click", dismissBubble);
@@ -544,6 +547,9 @@ function flyToDrop() {
 // Deli glavnega pogleda, ki se z drsenjem ne premaknejo izpod mehurčka: tipke in vnos znanstvenega kalkulatorja,
 // seznam in gumbi za povečavo grafičnega, izbira načina. Mehurček jih ne prekrije (pilot 14. 11. 2026).
 const KEEP_CLEAR = "body > main.view:not([hidden]):not(.in-okno) :is(.calc-modes, .sc-keys, .sc-entry, .gc-panel, .gc-zoom)";
+// Polja in gumbi glavnega pogleda (Nastavitve, Napredek, NPZ, Učbenik): mehurček jih ne prekrije, če ob robu najde
+// prosto mesto (ob koncu drsenja se premakne); sicer ostane kot prej (ne prekrije le oken in KEEP_CLEAR).
+const CONTROLS = "body > main.view:not([hidden]):not(.in-okno) :is(input:not([type=hidden]), select, textarea, button, a[href], [role=button], [role=switch])";
 // Mehurček ne prekrije okna (npr. tipk kalkulatorja spodaj desno) ne KEEP_CLEAR: najbližje prosto mesto ob robu,
 // najprej na izbrani strani, nato na drugi.
 function placeBubble() {
@@ -559,16 +565,23 @@ function placeBubble() {
   const xOf = (side) => (side === "left" ? 12 : window.innerWidth - size - 12);
   const clear = [...document.querySelectorAll(KEEP_CLEAR)].filter((el) => el.offsetParent);
   const rects = [...wins.values()].map((w) => w.el).concat(clear).map((el) => el.getBoundingClientRect());
-  const free = (x, y) => !rects.some((r) => x < r.right + 4 && x + size > r.left - 4 && y < r.bottom + 4 && y + size > r.top - 4);
-  let spot = null;
-  for (const side of [pref, pref === "left" ? "right" : "left"]) {
-    const x = xOf(side);
-    for (let d = 0; d <= hi - lo && !spot; d += 16) {
-      if (y0 - d >= lo && free(x, y0 - d)) spot = { side, y: y0 - d };
-      else if (y0 + d <= hi && free(x, y0 + d)) spot = { side, y: y0 + d };
+  const hit = (r, x, y) => x < r.right + 4 && x + size > r.left - 4 && y < r.bottom + 4 && y + size > r.top - 4;
+  const near = (r) => r.width > 0 && r.bottom > lo && r.top < hi + size && ["left", "right"].some((sd) => xOf(sd) < r.right + 4 && xOf(sd) + size > r.left - 4);
+  const controls = [...document.querySelectorAll(CONTROLS)].map((el) => el.getBoundingClientRect()).filter(near);
+  const find = (avoid) => {
+    for (const side of [pref, pref === "left" ? "right" : "left"]) {
+      const x = xOf(side);
+      for (let d = 0; d <= hi - lo; d += 16) {
+        if (y0 - d >= lo && !avoid.some((r) => hit(r, x, y0 - d))) return { side, y: y0 - d };
+        if (y0 + d <= hi && !avoid.some((r) => hit(r, x, y0 + d))) return { side, y: y0 + d };
+      }
     }
-    if (spot) break;
-  }
+    return null;
+  };
+  // Trenutno mesto je prosto (tudi polj): mehurček ostane, ne skače ob vsakem drsenju.
+  const cur = { side: bubble.dataset.side, y: parseFloat(bubble.style.top) };
+  const keep = controls.length && cur.side === pref && cur.y >= lo && cur.y <= hi && !rects.concat(controls).some((r) => hit(r, xOf(pref), cur.y));
+  let spot = keep ? cur : (controls.length && find(rects.concat(controls))) || find(rects);
   // Kalkulator na ležečem telefonu (nizek zaslon) ali brez prostega mesta ob njegovih tipkah: mehurček se skrije, dokler
   // se to ne spremeni (obrat, drug način ali pogled; j 14. 11. 2026). Inštruktor ostane v spodnji vrstici.
   const lowLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;
@@ -616,7 +629,12 @@ export function refreshBubble() {
     unread = 0;
     hidePreview();
     b.classList.remove("show-x");
-  } else placeBubble();
+  } else {
+    placeBubble();
+    // Vsebina novega pogleda (npr. Nastavitve) se izriše šele za tem: mesto preverimo še enkrat.
+    clearTimeout(refreshBubble.t);
+    refreshBubble.t = setTimeout(() => !b.hidden && placeBubble(), 400);
+  }
   const badge = b.querySelector(".cb-badge");
   badge.hidden = !unread;
   badge.textContent = unread > 9 ? "9+" : String(unread);

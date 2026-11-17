@@ -62,6 +62,7 @@ body.tk-open .mk:not(.mk-lekcija) { bottom: var(--tk-h, 0px); }
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(11, 15, 22, 0.75);
   font-weight: 600; color: var(--k3-muted);
 }
+.mk-nalaganje-mol { padding: 24px; text-align: center; line-height: 1.45; unicode-bidi: plaintext; z-index: 1; }
 
 /* izbirnik preparatov */
 .mk-izbirnik { position: fixed; inset: 0; z-index: 30; background: rgba(5, 8, 12, 0.6); display: flex; align-items: center; justify-content: center; padding: 16px; }

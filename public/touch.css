@@ -8,6 +8,7 @@
 .me-back { display: none !important; }
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
   .me-back { display: inline-flex !important; }
+  #me-exams.v-vrstici { display: none !important; } /* NPZ/matura je na četrtem mestu spodnje vrstice (app.js) */
 }
 
 /* ---------- tablica na dotik: spodnja vrstica z napisi namesto samih ikon zgoraj ---------- */

@@ -96,8 +96,49 @@ export function attachMic(button, field, { onMessage = () => {}, onChange = () =
     button.title = on ? "Poslušam … dotakni se za konec" : "Povej vprašanje";
   };
 
+  // Gumb ne sme ostati rdeč (j, 17. 11. 2026: »mikrofon označen še od 15 min prej«): nekateri brskalniki in
+  // WebView v aplikaciji ne pošljejo onend (napaka, aplikacija v ozadju). Zato konec poslušanja zapremo tudi sami.
+  let guard = null;
+  // Varovalo za tišino: WebView po tišini včasih konča brez onend in brez onerror, gumb bi ostal rdeč.
+  // Brez novega rezultata TIHO_MS poslušanje ustavimo sami (vsak rezultat ali začetek uro ponastavi).
+  const TIHO_MS = 45_000;
+  let tiho = null;
+  const budno = () => {
+    clearTimeout(tiho);
+    tiho = setTimeout(stop, TIHO_MS);
+  };
+  function finish(r = rec) {
+    clearTimeout(guard);
+    guard = null;
+    if (r === rec) clearTimeout(tiho);
+    if (r !== rec) return; // že novo poslušanje
+    rec = null;
+    setListening(false);
+  }
   function stop() {
-    rec?.stop();
+    const r = rec;
+    if (!r) return;
+    try {
+      r.stop();
+    } catch {}
+    clearTimeout(guard);
+    guard = setTimeout(() => {
+      try {
+        r.abort?.();
+      } catch {}
+      finish(r);
+    }, 2000);
+  }
+  // Pošiljanje: kar je bilo slišano, je že v poslanem sporočilu. Zadnji rezultat in onend, ki ju brskalnik pošlje
+  // po stop(), ne smeta besedila vrniti v prazno polje, zato prepoznavanje zavržemo (abort brez rezultatov).
+  function cancel() {
+    const r = rec;
+    if (!r) return;
+    r.onresult = r.onend = r.onerror = null;
+    try {
+      r.abort?.();
+    } catch {}
+    finish(r);
   }
 
   function start() {
@@ -109,8 +150,11 @@ export function attachMic(button, field, { onMessage = () => {}, onChange = () =
     base = field.value;
     finalText = "";
     let heard = false;
+    const mine = rec;
 
     rec.onresult = (e) => {
+      if (mine !== rec) return;
+      budno();
       let interim = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const r = e.results[i];
@@ -122,6 +166,7 @@ export function attachMic(button, field, { onMessage = () => {}, onChange = () =
       onChange();
     };
     rec.onerror = (e) => {
+      if (mine !== rec) return; // pozna napaka starega poslušanja (npr. »aborted« po varovalu)
       const msg = {
         "not-allowed": "Dovoli uporabo mikrofona v brskalniku (ikona ob naslovu strani).",
         "service-not-allowed": "Brskalnik ne dovoli prepoznavanja govora. Poskusi v Chromu ali Safariju.",
@@ -130,25 +175,31 @@ export function attachMic(button, field, { onMessage = () => {}, onChange = () =
         network: "Za glasovni vnos potrebuješ internetno povezavo.",
       }[e.error];
       if (msg) onMessage(msg);
+      stop(); // onend naj pride; če ga ni, ga čez 2 s nadomesti finish
     };
     rec.onend = () => {
-      setListening(false);
+      if (mine !== rec) return;
       if (heard) {
         field.value = join(base, spokenMath(finalText));
         onChange();
       }
-      rec = null;
+      finish(mine);
       field.focus();
     };
     try {
       rec.start();
       setListening(true);
+      budno();
     } catch {
       rec = null;
       onMessage("Glasovnega vnosa ni bilo mogoče začeti. Poskusi znova.");
     }
   }
 
+  // Pošiljanje sporočila ali odhod iz aplikacije (zaklep, drug zavihek) poslušanje ustavi.
+  field.form?.addEventListener("submit", cancel);
+  document.addEventListener("visibilitychange", () => document.hidden && stop());
+  window.addEventListener("pagehide", stop);
   button.addEventListener("click", async () => {
     if (rec) return stop();
     if (allowed && !(await allowed())) return onBlocked();

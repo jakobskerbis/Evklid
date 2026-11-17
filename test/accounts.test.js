@@ -473,14 +473,14 @@ test("weekly report: what was learned, weak spots, next steps, Slovenian plurals
   ]);
   assert.equal(headline({ active_days: 0 }), "Ta teden ni bilo vaje.");
   assert.equal(isQuiet({ active_days: 0, prev_active_days: 1 }), false);
-  // Graf po dnevih: vsota stolpcev = rešene naloge + vprašanja, višine v celicah (Outlook), največji dan = 64 px.
+  // Graf po dnevih: vsota stolpcev = naloge na ploščici, višine v celicah (Outlook), največji dan = 64 px.
   assert.equal(w.strip.length, 7);
-  assert.equal(w.strip.reduce((n, d) => n + d.tasks, 0), w.solved);
+  assert.equal(w.strip.reduce((n, d) => n + d.tasks, 0), w.tasks);
   const { barsHtml } = await import("../server/accounts/weekly.js");
-  const bars = barsHtml([{ label: "po", active: true, tasks: 6, asked: 2 }, { label: "to", active: true, tasks: 0, asked: 0 }, { label: "sr", active: false, tasks: 0, asked: 0 }]);
-  assert.match(bars, /height="16" bgcolor="#b4c0f8"/);
-  assert.match(bars, /height="48" bgcolor="#4f6bed"/);
-  assert.match(bars, />8</);
+  const bars = barsHtml([{ label: "po", active: true, tasks: 6 }, { label: "to", active: true, tasks: 3 }, { label: "sr", active: true, tasks: 0 }, { label: "če", active: false, tasks: 0 }]);
+  assert.match(bars, /height="64" bgcolor="#4f6bed"/);
+  assert.match(bars, /height="32" bgcolor="#4f6bed"/);
+  assert.match(bars, />6</);
   assert.match(bars, /✓/); // dejaven dan brez nalog
   assert.doesNotMatch(bars, /<div style="height/);
 });

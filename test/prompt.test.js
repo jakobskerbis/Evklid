@@ -220,7 +220,50 @@ test("sketches (j 2026-11-16): figures only with the SKICA/GRAF block, never dra
   assert.match(line("- **MAT:**"), /nariši s `SKICA`/);
   assert.match(line("- `SKICA`:"), /ne z risbo iz znakov/);
   assert.match(line("- **FIZ:**"), /skica s `SKICA` \(vektorji\)/);
-  // Skice dodajo ~270 znakov predpomnjenega dela (55 013 → 55 277; ~75 žetonov), meja 300.
-  assert.ok(stat.length < 55013 + 300, `stalni del ${stat.length} znakov`);
+  // Skice dodajo ~270 znakov predpomnjenega dela (55 013 → 55 277; ~75 žetonov). Zgornja meja rasti je odslej v testu
+  // krajšega načina B (17. 11.); tu ostane le spodnja.
+  assert.ok(stat.length > 55013, `stalni del ${stat.length} znakov`);
   assert.doesNotMatch(dyn, /Risb iz znakov/);
+});
+
+test("mode B (j 2026-11-17): short solution with the result in the first sentence, one rounding, kids keep the old order", () => {
+  const [stat, dyn] = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8").split(SPLIT_MARKER);
+  const sec = stat.slice(stat.indexOf("## Način B – celotna rešitev"), stat.indexOf("## Vzorec za računske naloge"));
+  for (const s of ["Prvi stavek pove ta preverjeni končni rezultat, krepko in z enoto", "**Podatki:** in **Iščemo:** skupaj v eni do dveh vrsticah", "**Načrt:** en stavek", "**Preverba:** ena vrstica", "»Zapomni si« le, kadar", "**Vaja:** podobna naloga v enem stavku, nato gumbi z izbirami", "Rezultat zaokroži enkrat", "isto število zapiši v prvem stavku, v zadnjem koraku in v Preverbi", "tudi v načinu B je vsak korak razložen", "Nalogo najprej v celoti reši in preveri zase (v razmisleku, ne v odgovoru)", "vse rezultate po vrsti, npr. »a) **…**, b) **…**«", "»Popravek: pravilno je …«", "korakov ne prilagajaj napačnemu rezultatu", "najprej simbolično, nato števila", "skica (`SKICA`/`GRAF`) ostane", "gumbi z izbirami (`IZBIRE`"]) assert.ok(sec.includes(s), `način B: »${s}«`);
+  // Najmlajši (OŠ 1.–5.) ohranijo dosedanji vrstni red; pri ostalih ni več ločenega stavka »katero znanje je naloga preverjala«.
+  const kids = sec.slice(sec.indexOf("OŠ 1.–5. razred ("));
+  assert.match(kids, /en stavek, katero znanje je naloga preverjala → ponudba podobne naloge/);
+  assert.match(kids, /namesto točk 1–6 velja/);
+  assert.match(kids, /tudi tu rezultat zaokroži enkrat/);
+  // Vzorec za računske naloge kaže na razdelek Način B (vrstni red in dolžina).
+  assert.match(stat.slice(stat.indexOf("## Vzorec za računske naloge")), /vrstni red in dolžino v načinu B določa razdelek Način B/);
+  assert.equal(sec.split("katero znanje je naloga preverjala").length, 2, "samo v vrstici za OŠ 1.–5.");
+  // Oznake, po katerih live-check prepozna rešeno nalogo (server/live-check.js, SOLVED_RE), ostanejo.
+  assert.match(sec, /\*\*Podatki:\*\*/);
+  assert.doesNotMatch(dyn, /Prvi stavek pove ta preverjeni/);
+  // Krajši način B s popravki po pregledih doda ~1 510 znakov predpomnjenega dela (55 277 → 56 791; ~400 žetonov). Zgornja meja
+  // rasti je odslej v testu »Samo rezultat pri eni nalogi« (17. 11.); tu ostane le spodnja.
+  assert.ok(stat.length > 55277, `stalni del ${stat.length} znakov`);
+});
+
+test("result only (j 2026-11-17): one task, asked only for the result → result with the formula in one line; homework rule stays", () => {
+  const [stat, dyn] = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8").split(SPLIT_MARKER);
+  const row = stat.split("\n").find((l) => l.startsWith("- **Samo rezultat pri eni nalogi**")) || "";
+  for (const s of ["pri eni nalogi izrecno prosi le za rezultat", "v obeh načinih takoj odgovori v eni vrstici z rezultatom (krepko, z enoto) in formulo z vstavljenimi števili", "**$W_k = 9{,}0\\ \\mathrm{J}$**", "skupaj največ dve vrstici", "Brez Podatkov, Iščemo, Preverbe in razlage", "načina ne preklopiš; brez uvoda in napovedi (»Rezultat ti dam …«)", "`IZBIRE`", "Pri več nalogah hkrati ali »moram oddati« velja Domača naloga za oddajo", "\\frac{2{,}0\\ \\mathrm{kg} \\cdot (3{,}0\\ \\mathrm{m/s})^2}{2} = 9{,}0\\ \\mathrm{J}$).«", "ki se konča z rezultatom", "Pri OŠ 1.–5. namesto formule račun s števili, npr. »**12 jabolk** (3 · 4 = 12)«", "(račun vseeno preveri zase in dodaj blok RACUN)", "Pri nalogi s podvprašanji (a, b, c …) velja to za eno podvprašanje; za več podvprašanj velja Domača naloga za oddajo", "Ne velja za naloge, ki jih je dal Evklid (Vaja, učna pot, Vadnica, Priprava na test, pole), za tekmovalne naloge in za nalogo, ki jo že rešujeta po korakih"]) assert.ok(row.includes(s), `samo rezultat: »${s}«`);
+  assert.ok(row.endsWith("Če je v tem pogovoru že dobil samo rezultat pri dveh nalogah, pri naslednjih velja Domača naloga za oddajo."), "zadnji stavek točke");
+  const i = (x) => stat.indexOf(x);
+  assert.ok(i("## Pedagoške situacije") < i("- **Samo rezultat pri eni nalogi**") && i("- **Samo rezultat pri eni nalogi**") < i("- **Domača naloga za oddajo, prepisovanje**"));
+  // Pravilo proti prepisovanju za več nalog ostane nespremenjeno.
+  const hw = stat.split("\n").find((l) => l.startsWith("- **Domača naloga za oddajo, prepisovanje**")) || "";
+  assert.match(hw, /Seznama golih rezultatov ne daš; ob vsaki rešitvi, ki jo pokažeš, je postopek\./);
+  assert.ok(hw.includes("»samo rezultat« pri več nalogah"), "sprožilec pravila za več nalog");
+  assert.match(hw, /»reši vse« ali »moram oddati« ob več nalogah ni prošnja za način B/);
+  // Izjema je navedena pri obeh pravilih, ki bi ji sicer nasprotovali; preverjanje učenčevega golega rezultata ostane.
+  assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjema: Samo rezultat pri eni nalogi\)/);
+  assert.match(stat, /Končnega odgovora nikoli ne izdaš kot prvi odziv na novo nalogo \(izjema: Samo rezultat pri eni nalogi v Pedagoških situacijah\)\./);
+  assert.match(stat, /Pravilen rezultat brez postopka ali z napačnim postopkom ni rešen/);
+  assert.ok(row.length < 1300, `točka naj ostane kratka (${row.length} znakov)`);
+  assert.doesNotMatch(dyn, /Samo rezultat pri eni nalogi/);
+  // Doda 1 373 znakov predpomnjenega dela (56 791 → 58 164; ~370 žetonov) po pregledih #799, meja 1 400.
+  assert.ok(stat.length < 56791 + 1400, `stalni del ${stat.length} znakov`);
 });

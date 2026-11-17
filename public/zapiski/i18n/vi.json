@@ -25,6 +25,7 @@
   "zap.noCards": "Hiện mình chưa thể làm thẻ từ ghi chép này.",
   "zap.practice": "Ôn thẻ",
   "zap.printed": "Chúng tôi không lưu văn bản của trang in – chỉ lưu chủ đề và thẻ.",
+  "zap.printedNoCards": "Chúng tôi không lưu văn bản của trang in.",
   "zap.list": "Ghi chép đã lưu",
   "zap.empty": "Bạn chưa có ghi chép nào được lưu.",
   "zap.open": "Mở",
@@ -44,6 +45,7 @@
   "zap.keep": "Đây là ghi chép của tôi – lưu",
   "zap.keepHint": "Nếu không đánh dấu, chúng tôi không lưu văn bản. Bài kiểm tra và thẻ vẫn còn.",
   "zap.notKept": "Chúng tôi không lưu văn bản đã dán – chỉ chủ đề và thẻ.",
+  "zap.notKeptNoCards": "Chúng tôi không lưu văn bản đã dán.",
   "zap.correctMark": "Đáp án đúng",
   "zap.yourMark": "Câu trả lời của bạn"
 }

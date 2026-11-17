@@ -219,12 +219,12 @@ export function levelChoices(s = {}) {
   }
   const make = (curriculum_level, label = levelLabel(curriculum_level)) => ({ settings: { educational_track: s.educational_track, study_program: s.study_program || "", curriculum_level }, label, current: curriculum_level === level });
   if (!imaStopnjo(s)) return [];
-  if (jeOs(s)) return OS_GRADES.map(make);
+  if (jeOs(s)) return OS_GRADES.map((y) => make(y));
   if (jeSs(s)) {
     const rest = level.replace(/^\d+\. letnik/, ""); // » OR« / » VR«
     // Raven matematike ima v glavi svoj izbirni seznam (ravenChoices), zato je letnik napisan brez nje.
     return SS_YEARS.map((y) => make(y + rest, / (OR|VR)$/.test(rest) ? levelLabel(y) : levelLabel(y + rest)));
   }
-  if (jeFaks(s)) return UNI_YEARS.map(make);
+  if (jeFaks(s)) return UNI_YEARS.map((y) => make(y));
   return [];
 }

@@ -103,6 +103,29 @@ Meritev z `EVKLID_MOCK` (5 simuliranih spraševanj po 5 vprašanj in 2 dodatni v
 razmislek Haikuja ocenjen na 1200 žetonov): **0,0050 $ na spraševanje** (7 klicev, ~5 500 vhodnih in ~9 000 izhodnih žetonov);
 en pregled s Sonnetom ~0,009 $. Pravi strošek izmerimo na pravih spraševanjih pred javno objavo.
 
+## Skener v Inštruktorju (j, 2026-11-17; osnutek, odloči j)
+
+Kamera v vrstici za pisanje ne pošlje več slike naravnost inštruktorju: odpre skener (zajem, izrez na napravi brez AI),
+`POST /api/students/:id/scan/read-task` prepiše celotno nalogo (vsi predmeti, formule v `$…$`), učenec prepis popravi in ga
+pošlje v odprti pogovor. Fotografija gre zraven le, če ostane označena (samodejno: skica ali graf, `figure`, ali branje ni
+uspelo). Model branja `EVKLID_SCAN_TUTOR_MODEL`, privzeto hitri model inštruktorja (Haiku 5.5), `max_tokens` 1200, navodila
+~300 žetonov, trda meja AI kot pri skenerju (`imageCallReserveUsd`), vrsta `skeniranje`.
+
+Ocena na fotografirano nalogo (Haiku 0,10 / 0,50 $ na milijon žetonov; izrez do 1600 px ≈ 2 300 žetonov slike, prej
+slika v klepetu do 1200 px ≈ 1 450 žetonov; slika ostane v zgodovini samo v svoji potezi, `EVKLID_HISTORY_IMAGE_TURNS=1`):
+
+| | prej (slika → inštruktor) | zdaj (skener → besedilo) |
+|---|---|---|
+| branje | – | ~0,0004 $ (2 600 vhod + ~300 izhod) |
+| slika v odgovoru inštruktorja (Haiku) | ~0,00015 $ | 0 (besedilo ~100 žetonov), s sliko ob skici ~0,00015 $ |
+| skupaj na nalogo | **~0,00015 $** | **~0,0004 $** (s skico ~0,00055 $) |
+
+Razlika je ~+0,0003 $ na fotografirano nalogo (~0,03 $ na 100 fotografij), en klic več. Če odgovori močnejši model
+(proračun, »Razloži podrobneje«), je prihranek pri sliki večji od stroška branja (Sonnet: slika ~0,003 $). Z branjem s
+Sonnetom (`EVKLID_SCAN_TUTOR_MODEL=claude-sonnet-5-5`, kot zaslon Skeniraj) bi bilo ~0,008 $ na nalogo. Prednost: inštruktor
+dobi besedilo, zato koda preveri račun (`presolve` ne deluje pri sliki), odgovor je lahko iz predpomnilnika, slike se ne
+shranjujejo, kadar ne gredo zraven.
+
 ## Števec porabe za skrbnika (2026-10-29)
 
 - V zgornji vrstici je števec porabe AI (€ danes) za vse profile. Vidi ga samo skrbnik: na računalniku, kjer teče Evklid, ali račun z e-naslovom v `EVKLID_ADMIN_EMAILS`. Na računalniku lahko v števcu z gumbom »Pokaži števec tudi na mojem telefonu« svoj račun označiš kot skrbniški.

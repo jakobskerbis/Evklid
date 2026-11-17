@@ -9,6 +9,7 @@ import { icon, hydrateIcons } from "../icons.js";
 import { spokenMath } from "../speech.js";
 import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba } from "../nujno.js";
 import { zavrzi } from "../odgovor.js";
+import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer, hideKeyboard } from "../tipkovnica.js";
 import SL from "./besedila/sl.js";
 
 const KEY_NOTICE = "evklid.ustno.obvestilo"; // + ».<id profila>«: obvestilo vidi vsak profil na napravi (pregled B7)
@@ -151,12 +152,14 @@ function sheet() {
   dlg.addEventListener("close", () => {
     stopRec();
     stopSpeak();
+    hideKeyboard(); // tipkovnica je v oknu (tipkovnica.js): ob zaprtju se zapre, sicer ostane spodnji odmik
   });
   document.body.append(dlg);
   return dlg;
 }
 function paint(body, { title = tt("u.naslov"), focus = null } = {}) {
   const d = sheet();
+  hideKeyboard(); // nov zaslon zamenja vsebino okna, tudi tipkovnico v njem
   d.innerHTML = `<div class="us-box" role="document">
     <div class="us-head"><span class="us-ic">${icon("mic")}</span><h2 id="us-title">${esc(title)}</h2>
       <button type="button" class="ghost icon-only" data-us="x" aria-label="${esc(tt("u.zapri"))}" title="${esc(tt("u.zapri"))}">${icon("x")}</button></div>
@@ -189,7 +192,7 @@ function prefs() {
  * Odpre spraševanje. src: { tema } (lekcija), { test: true } (urnik), { besedilo } (klepet: »Vprašaj me … iz …«).
  * c: { api, student, renderRich, openLesson }.
  */
-export async function odpri(src = {}, c = {}) {
+export async function odpri(src = {}, c = {}, typed = false) {
   ctx = c;
   // Gumb data-ustno: "test" (urnik), "pogovor" (klepet: tema pogovora ali zadnje vprašanje), sicer id lekcije.
   if (typeof src === "string") {
@@ -211,10 +214,11 @@ export async function odpri(src = {}, c = {}) {
   }
   // število iz klepeta (»Vprašaj me 3 vprašanja …«)
   const asked = Number(/\b([358])\b/.exec(src.besedilo || "")?.[1]);
-  setup(src, pre, asked);
+  setup(src, pre, asked, typed);
 }
 
-function setup(src, pre, asked) {
+// typed: učenec je snov sam vpisal v iskanje (»Za to snov še ni vprašanj« samo takrat, ne ob besedilu iz klepeta).
+function setup(src, pre, asked, typed = false) {
   const p = prefs();
   if (asked) p.n = asked;
   const canVoice = speechOk() && pre.glas?.dovoljen;
@@ -222,13 +226,13 @@ function setup(src, pre, asked) {
   const nacin = canVoice ? p.nacin : "tipkanje";
   if (!pre.snov) {
     const d = paint(`<form class="us-form" data-us="isci">
-        <p>${esc(src.besedilo ? tt("u.niVprasanj") : "")}</p>
-        <label class="us-field"><span>${esc(tt("u.iskanje"))}</span><input name="q" maxlength="120" placeholder="${esc(tt("u.isciPh"))}" autocomplete="off" required></label>
+        ${typed ? `<p>${esc(tt("u.niVprasanj"))}</p>` : ""}
+        <label class="us-field"><span>${esc(tt("u.iskanje"))}</span><input name="q" maxlength="120" placeholder="${esc(pre.primer ? tt("u.isciPhTema", { tema: pre.primer }) : tt("u.isciPh"))}" value="${esc(typed ? src.besedilo : "")}" autocomplete="off" required></label>
         <button type="submit" class="primary">${esc(tt("u.isci"))}</button></form>`);
     d.querySelector("form").addEventListener("submit", (e) => {
       e.preventDefault();
       const v = e.target.q.value.trim();
-      if (v) odpri({ besedilo: v }, ctx);
+      if (v) odpri({ besedilo: v }, ctx, true);
     });
     return;
   }
@@ -297,7 +301,7 @@ function question(follow = null) {
     ${voice ? `<div class="us-mic-row"><button type="button" class="us-mic" data-us="mic" aria-pressed="false" aria-label="${esc(tt("u.mikrofon"))}">${icon("mic")}</button><p class="us-mic-hint muted">${esc(tt("u.dotakni"))}</p></div>` : ""}
     ${q.vrsta === "izracunaj" && !follow ? `<p class="muted small">${esc(tt("u.racun"))}</p>` : ""}
     <label class="us-field"><span>${esc(tt("u.prepis"))}</span><textarea name="odgovor" rows="4" maxlength="3000" dir="auto"></textarea></label>
-    ${q.vrsta === "izracunaj" && !follow ? `<label class="us-field"><span>${esc(tt("u.rezultat"))}</span><input name="rezultat" inputmode="decimal" maxlength="60" autocomplete="off" placeholder="${esc(q.enota ? `… ${q.enota}` : "")}"></label>` : ""}
+    ${q.vrsta === "izracunaj" && !follow ? `<label class="us-field"><span>${esc(tt("u.rezultat"))}</span><span class="us-in-row"><input name="rezultat" inputmode="decimal" maxlength="60" autocomplete="off" placeholder="${esc(q.enota ? `… ${q.enota}` : "")}"><button type="button" class="ghost icon-only" data-us="sym" aria-label="${esc(tGlobal("scan.symbols"))}" title="${esc(tGlobal("scan.symbols"))}" aria-expanded="false">${icon("sigma")}</button></span></label>` : ""}
     <div class="us-actions">
       ${voice ? `<button type="button" class="secondary" data-us="fix">${icon("pencil")} ${esc(tt("u.popravi"))}</button><button type="button" class="secondary" data-us="again">${icon("rotate-ccw")} ${esc(tt("u.povejZnova"))}</button>` : ""}
       <button type="button" class="primary" data-us="send">${icon("send")} ${esc(tt("u.oddaj"))}</button>
@@ -372,6 +376,14 @@ function question(follow = null) {
     await grade({ answer, res, skip, follow: !!follow });
   };
   d.querySelector('[data-us="send"]').addEventListener("click", () => submit(false));
+  // Σ: Evklidova tipkovnica za rezultat (številke, ulomki, potence, enote), kot pri skeniranju (public/scan/scan.js).
+  if (result) {
+    configureKeyboard(result, { math: true, layers: ["num", "fx", "sym", "abc"], start: "num", enter: "go", enterText: tt("u.oddaj"), onEnter: () => submit(false) });
+    const sym = d.querySelector('[data-us="sym"]');
+    sym.addEventListener("click", () => toggleKeyboard(result, { layer: "sym" }));
+    const sync = () => (sym.isConnected ? sym.setAttribute("aria-expanded", String(keyboardOpenFor(result) && keyboardLayer() === "sym")) : window.removeEventListener("evklid:tipkovnica", sync));
+    window.addEventListener("evklid:tipkovnica", sync);
+  }
   d.querySelector('[data-us="dunno"]').addEventListener("click", () => submit(true));
   d.querySelector('[data-us="skip"]')?.addEventListener("click", () => submit(true));
 }

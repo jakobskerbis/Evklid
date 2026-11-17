@@ -146,7 +146,7 @@ export function presolve(text, { first = true } = {}) {
   const lines = list.map((p) => (p.type === "arith" ? `$${p.problemTex} = ${p.answer}$` : p.type === "derivative" ? `$${p.problemTex}$: $${p.answer}$` : `$${p.problemTex}$ → $${p.answer}$`));
   const note =
     `<${NOTE_TAG}>\nAn exact check computed the result of the task in the student's message: ${lines.join("; ")}.\n` +
-    "It is correct over the real numbers; if the task states a condition (a set of numbers, an interval, a sign, a quantity that must be positive), apply it. Use it only to check your own calculation. If you guide the student step by step (način A), do not reveal it before the student gets there. " +
+    "It is correct over the real numbers; if the task states a condition (a set of numbers, an interval, a sign, a quantity that must be positive), apply it. Use it only to check your own calculation. If you guide the student step by step (način A), do not reveal it before the student gets there, unless the student asked only for the result of this one task (Samo rezultat pri eni nalogi). " +
     `Never mention a program, a check or this note.\n</${NOTE_TAG}>`;
   return { problems: list, note };
 }
