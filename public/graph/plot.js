@@ -3,6 +3,7 @@
 // implicitne krivulje (marching squares), senčenje neenačb, posebne točke in sledenje krivulji.
 import { toNum, specialPoints, intersections } from "./model.js";
 import { integrate, niceNumber } from "./math.js";
+import { verticalAsymptotes, endAsymptotes, asymptoteLabel } from "./okno.js";
 
 // barve krivulj (kot CSS spremenljivke v graph.css, da delujejo v temnem načinu)
 export const PALETTE = ["--g-red", "--g-blue", "--g-green", "--g-purple", "--g-orange", "--g-black", "--g-teal", "--g-pink"];
@@ -382,7 +383,8 @@ export class GraphView {
   }
 
   // prilagodljivo vzorčenje z zaznavo asimptot; vrne seznam poti v zaslonskih koordinatah
-  sampleExplicit(f, swap = false) {
+  // poles: znani poli (navpične asimptote); črta se ob njih vedno prekine, tudi ko vzorec pola ne zadene
+  sampleExplicit(f, swap = false, poles = null) {
     const v = this.view;
     const [a, b] = swap ? [v.ymin, v.ymax] : [v.xmin, v.xmax];
     const span = swap ? this.W : this.H;
@@ -457,7 +459,15 @@ export class GraphView {
     for (let i = 1; i <= n; i++) {
       const t1 = a + ((b - a) * i) / n;
       const y1 = f(t1);
-      refine(t0, y0, t1, y1, 8);
+      const p = poles?.find((q) => q > t0 && q < t1);
+      if (p !== undefined) {
+        const d = (b - a) * 1e-7;
+        refine(t0, y0, p - d, f(p - d), 8);
+        end();
+        const yr = f(p + d);
+        if (Number.isFinite(yr)) push(p + d, yr);
+        refine(p + d, yr, t1, y1, 8);
+      } else refine(t0, y0, t1, y1, 8);
       t0 = t1;
       y0 = y1;
     }
@@ -557,8 +567,12 @@ export class GraphView {
     if (o.kind === "y" || o.kind === "x" || (o.kind === "func" && o.plot === "y")) {
       const swap = o.kind === "x";
       const all = [];
-      for (const f of this.branches(o.fn, swap ? (v.ymin + v.ymax) / 2 : (v.xmin + v.xmax) / 2)) {
-        const paths = this.sampleExplicit(f, swap);
+      const fs = this.branches(o.fn, swap ? (v.ymin + v.ymax) / 2 : (v.xmin + v.xmax) / 2);
+      // asimptote (graf v odgovoru inštruktorja, hooks.asimptote): črtkano pod krivuljo, črta se ob polu prekine
+      const asym = this.hooks.asimptote && !swap && fs.length === 1 ? this.asymptotes(o, fs[0]) : null;
+      if (asym) this.drawAsymptotes(ctx, asym, C);
+      for (const f of fs) {
+        const paths = this.sampleExplicit(f, swap, asym?.poles);
         all.push(...paths);
       }
       this.stroke(ctx, o, color, { width: w });
@@ -676,6 +690,93 @@ export class GraphView {
       }
     }
     ctx.setLineDash([]);
+  }
+
+  // Asimptote funkcije: konec (x → ±∞) enkrat na funkcijo, poli za vsako okno posebej.
+  asymptotes(o, f) {
+    const g = (x) => {
+      try {
+        return f(x);
+      } catch {
+        return NaN;
+      }
+    };
+    this.asymCache ||= new WeakMap();
+    let c = this.asymCache.get(o.fn);
+    if (!c) this.asymCache.set(o.fn, (c = { ends: endAsymptotes(g) }));
+    const v = this.view;
+    const key = `${v.xmin}|${v.xmax}|${this.W}`;
+    if (c.key !== key) {
+      c.key = key;
+      c.poles = verticalAsymptotes(g, v.xmin, v.xmax, Math.max(200, Math.round(this.W)), { fine: false });
+    }
+    return c;
+  }
+
+  drawAsymptotes(ctx, { poles, ends }, C) {
+    const v = this.view;
+    const W = this.W;
+    const H = this.H;
+    const labels = [];
+    ctx.save();
+    ctx.strokeStyle = C.poi;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 5]);
+    ctx.beginPath();
+    for (const x of poles) {
+      const px = this.X(x);
+      ctx.moveTo(px, 0);
+      ctx.lineTo(px, H);
+    }
+    for (const e of ends) {
+      ctx.moveTo(0, this.Y(e.k * v.xmin + e.n));
+      ctx.lineTo(W, this.Y(e.k * v.xmax + e.n));
+      // oznaka na vidnem delu premice, proti strani, kjer se ji krivulja približa
+      let [lo, hi] = [v.xmin, v.xmax];
+      if (e.k) {
+        const [a, b] = [(v.ymin - e.n) / e.k, (v.ymax - e.n) / e.k].sort((p, q) => p - q);
+        lo = Math.max(lo, a);
+        hi = Math.min(hi, b);
+      } else if (e.n < v.ymin || e.n > v.ymax) continue;
+      if (!(hi > lo)) continue;
+      // y = 0 leži na osi x, ki ima desno oznako »x«: tam oznako raje levo
+      const right = e.sides.includes(1) && !(e.k === 0 && e.n === 0 && e.sides.includes(-1));
+      const lx = right ? lo + 0.97 * (hi - lo) : lo + 0.03 * (hi - lo);
+      labels.push({ text: asymptoteLabel(e), px: this.X(lx), py: this.Y(e.k * lx + e.n) - 7, align: right ? "right" : "left", base: "bottom" });
+    }
+    ctx.stroke();
+    ctx.restore();
+    // oznake navpičnih asimptot: največ tri, najbližje sredini okna
+    const mid = (v.xmin + v.xmax) / 2;
+    for (const x of [...poles].sort((p, q) => Math.abs(p - mid) - Math.abs(q - mid)).slice(0, 3)) {
+      const px = this.X(x);
+      const left = px > W - 70;
+      // pod oznako osi y (»y« na vrhu osi)
+      // ob osi y nižje, da ne prekrije oznake »y«
+      const py = v.xmin < 0 && v.xmax > 0 && Math.abs(px - this.X(0)) < 24 ? 36 : 22;
+      labels.push({ text: asymptoteLabel({ x }), px: px + (left ? -5 : 5), py, align: left ? "right" : "left", base: "top" });
+    }
+    ctx.save();
+    ctx.font = "600 12px 'Nunito Variable', Nunito, system-ui, sans-serif";
+    ctx.lineJoin = "round";
+    const placed = []; // oznake, ki bi se prekrivale (tan x), izpustimo; oznaka osi »y« je že tam
+    if (v.xmin < 0 && v.xmax > 0) placed.push([this.X(0) - 2, 0, 16, 20]);
+    for (const l of labels) {
+      ctx.textAlign = l.align;
+      ctx.textBaseline = l.base;
+      const py = Math.max(l.base === "top" ? 2 : 16, Math.min(H - 4, l.py));
+      const w = ctx.measureText(l.text).width;
+      const x0 = l.align === "right" ? l.px - w : l.px;
+      const y0 = l.base === "top" ? py : py - 14;
+      if (placed.some((b) => x0 < b[0] + b[2] + 4 && b[0] < x0 + w + 4 && y0 < b[1] + b[3] && b[1] < y0 + 14)) continue;
+      placed.push([x0, y0, w, 14]);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = C.bg;
+      ctx.strokeText(l.text, l.px, py);
+      ctx.fillStyle = C.poi;
+      ctx.fillText(l.text, l.px, py);
+    }
+    ctx.restore();
   }
 
   pointLabel(ctx, C, px, py, text, color) {

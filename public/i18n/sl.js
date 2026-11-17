@@ -4232,6 +4232,7 @@ export default {
   "open.formulas": "Zbirka formul",
   "open.graph": "Graf",
   "open.inCalc": "Odpri v kalkulatorju",
+  "open.asymptotes": "asimptote",
   "open.sketch": "Skica",
   // datum rojstva imetnika računa (stari računi ga vpišejo enkrat; registracija ga zahteva)
   "birth.title": "Še en podatek: datum rojstva imetnika računa",
