@@ -460,12 +460,31 @@ test("push tokens: only Expo tokens, tied to the account", async () => {
   });
 });
 
+test("download page: without an iPhone app it does not promise one, in every language (dl.intro)", async () => {
+  await withServer(async ({ base }) => {
+    const en = await (await fetch(`${base}/prenesi?lang=en`)).text();
+    assert.doesNotMatch(en, /Android and iPhone/);
+    assert.match(en, /app for Android\. On iPhone and iPad, add it to your Home Screen/);
+    const sl = await (await fetch(`${base}/prenesi?lang=sl`)).text();
+    assert.match(sl, /aplikacija za Android\. Na iPhonu in iPadu ga v Safariju dodaš na začetni zaslon/);
+  });
+  // Vsi jeziki: uvod brez aplikacije za iPhone omeni Safari (Dodaj na začetni zaslon), ime ostane Evklid.
+  const dir = new URL("../public/i18n/ui/", import.meta.url);
+  for (const f of fs.readdirSync(dir)) {
+    const d = JSON.parse(fs.readFileSync(new URL(f, dir), "utf8"));
+    assert.match(d["dl.intro"], /Safari/, f);
+    assert.match(d["dl.intro"], /Evklid/, f);
+    assert.notEqual(d["dl.intro"], d["dl.introApps"], f);
+  }
+});
+
 test("download page offers the APK when it exists and works without login", async () => {
   await withServer(
     async ({ base }) => {
       const page = await (await fetch(`${base}/prenesi?lang=en`)).text();
       assert.match(page, /\/prenesi\/evklid\.apk/);
       assert.match(page, /TestFlight/);
+      assert.match(page, /available as an app for Android and iPhone/); // TestFlight: aplikacija za iPhone obstaja
       const apk = await fetch(`${base}/prenesi/evklid.apk`);
       assert.equal(apk.status, 200);
       assert.equal(apk.headers.get("content-type"), "application/vnd.android.package-archive");

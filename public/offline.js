@@ -20,6 +20,7 @@ function hintSteps(t) {
 
 const PACK = (sid) => `evklid.offline.pack.${sid}`;
 const QUEUE = (sid) => `evklid.offline.queue.${sid}`;
+const LIMIT = (sid) => `evklid.offline.limit.${sid}`; // strežnik je danes že izdal največ paketov (429): do jutri ne sprašujemo
 const DAY = 86400000;
 
 const read = (key, fallback) => {
@@ -67,12 +68,15 @@ export async function refreshPack(api, sid, pathKey, { force = false } = {}) {
   const old = getPack(sid);
   // Paket iz različice pred PR 786 (enota brez hasUnit) je zastarel tudi, če je mlajši od dneva.
   if (!force && old && old.path === pathKey && Date.now() - Date.parse(old.created) < DAY && !isStalePack(old)) return old;
+  const today = new Date().toDateString();
+  if (read(LIMIT(sid), null) === today) return old;
   try {
     const pack = await api(`/api/students/${sid}/offline-pack?path=${encodeURIComponent(pathKey)}`);
     // Če ni prostora (zasebno okno, poln pomnilnik), paket preprosto ni na voljo.
     if (!write(PACK(sid), pack)) return old;
     return pack;
-  } catch {
+  } catch (err) {
+    if (err?.status === 429) write(LIMIT(sid), today);
     return old;
   }
 }
@@ -227,7 +231,7 @@ export async function clearPrivate() {
 // Izbris enega profila: pobrišejo se njegovi podatki na napravi (paket, vrsta, skener, kalkulator, cilji …).
 export function clearProfile(sid) {
   const id = String(sid);
-  const own = new RegExp(`^evklid\\.(offline\\.pack|offline\\.queue|scan|graph|sci|goalSeen)\\.${id}$|^evklid\\.(ours|levelup)\\.${id}\\.`);
+  const own = new RegExp(`^evklid\\.(offline\\.pack|offline\\.queue|offline\\.limit|scan|graph|sci|goalSeen)\\.${id}$|^evklid\\.(ours|levelup)\\.${id}\\.`);
   try {
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));

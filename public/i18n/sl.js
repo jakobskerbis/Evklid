@@ -2483,7 +2483,8 @@ export default {
   "tbk.askTopic": "Vprašaj inštruktorja o tej temi",
   // stran za prenos aplikacije (/prenesi, server/mobile/download.js)
   "dl.title": "Aplikacija za telefon in tablico",
-  "dl.intro": "Evklid je na voljo kot aplikacija za Android in iPhone. Prijaviš se z istim računom kot na spletu, napredek ostane isti.",
+  "dl.intro": "Evklid je na voljo kot aplikacija za Android. Na iPhonu in iPadu ga v Safariju dodaš na začetni zaslon. Prijaviš se z istim računom kot na spletu, napredek ostane isti.",
+  "dl.introApps": "Evklid je na voljo kot aplikacija za Android in iPhone. Prijaviš se z istim računom kot na spletu, napredek ostane isti.",
   "dl.android": "Android",
   "dl.play": "Na voljo v trgovini Google Play",
   "dl.apk": "Prenesi za Android (APK)",
