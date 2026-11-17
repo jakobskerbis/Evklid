@@ -117,6 +117,10 @@ export function mountAccounts(app, store, opts = {}) {
   const inviteToThrottle = new Throttle(2, 24 * 3600000);
   // Skupaj največ 30 na dan za ves strežnik, da prošnje ne porabijo kvote Resend za potrditve in gesla.
   const inviteAllThrottle = new Throttle(30, 24 * 3600000);
+  // Ponovno pošiljanje povezave za potrditev (#747 točka 4): vsak klic pošlje e-pošto, zato na račun 3 v 15 min in
+  // z enega omrežja 10 v 15 min (spletni 60-sekundni zaklep v public/account.js je samo prijaznost, ne zaščita).
+  const resendThrottle = new Throttle(3, 15 * 60000);
+  const resendNetThrottle = new Throttle(10, 15 * 60000);
   // Povezave za potrditev in novo geslo v odgovoru (brez e-pošte) samo na računalniku, kjer teče strežnik, in nikoli
   // v produkciji: s skupnim geslom (EVKLID_GATE) bi jih sicer dobil vsak tester za tuj e-naslov in prevzel račun
   // (ponastavitev gesla) ali postal skrbnik (EVKLID_ADMIN_EMAILS), če Resend ne deluje (pregled #492 B, P2-4).
@@ -392,6 +396,9 @@ export function mountAccounts(app, store, opts = {}) {
     // mesec (pilotLevel, pregled #477 B2/C1), kot pri plačanem paketu. Prava plačana naročnina ostane naročnina (Stripe v preizkusni dobi še
     // ni plačilo, zato tam velja pilot).
     if (isOwnerParent(parent)) return { tier: "owner", until: null, level: null };
+    // Nepotrjen e-naslov (#747: profil in prva naloga že pred potrditvijo): samo brezplačni paket. Preizkus, aktivacijska
+    // koda in pilot začnejo veljati s potrditvijo; plačila so do potrditve zaprta (spodaj, UNVERIFIED_BLOCKED).
+    if (!parent.is_guest && !parent.email_verified_at) return null;
     if (isPilotParent(parent) && (access.tier !== "paid" || unpaidTier(parent))) {
       return { tier: "pilot", until: new Date(pilotEndMs()).toISOString(), level: pilotLevel(parentId) };
     }
@@ -827,7 +834,7 @@ export function mountAccounts(app, store, opts = {}) {
   // Mlajši od 18: naj starš izbere naročnino; polnoleten (npr. študent) jo izbere sam. Brez znane starosti ponudbe
   // s ceno ni (ponudbe.js), zato tudi namiga ne.
   const moreHintCode = (studentId) =>
-    guests.netOf(studentId) ? "block.hintGuest" : upsell(studentId) ? ((ageOfStudent(studentId) ?? 0) >= 18 ? "block.hintAdult" : "block.hintParent") : null;
+    guests.netOf(studentId) ? (getParent(ownerOf(studentId))?.is_guest ? "block.hintGuest" : "block.hintVerify") : upsell(studentId) ? ((ageOfStudent(studentId) ?? 0) >= 18 ? "block.hintAdult" : "block.hintParent") : null;
   // Odgovor 429 za brezplačni paket: { error, code, params?, hint? }; error je slovenska rezerva (razlog + namig).
   function freeBlock(studentId, code, params) {
     const hint = moreHintCode(studentId);
@@ -937,6 +944,7 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Izvoz in stanje prijav (server/reports.js): brez seje s ključem ali na računalniku s strežnikom; s sejo gredo skozi
   // preverjanje spodaj (zaklep računa, OWNER_ONLY), da otrok na skrbnikovi napravi ne vidi prijav mimo zaklepa.
+  const UNVERIFIED_BLOCKED = [/^\/billing\//i, /^\/account\/(export|profile-password|promo|weekly-report\/send)\/?$/i];
   const SESSIONLESS = [/^\/kozmetika\/prijave\/izvoz$/, /^\/kozmetika\/prijave\/(message|lesson|app)\/\d+\/stanje$/];
   const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
   // Nekanonična pot /api (server/app.js, točka A1): 404, le zaklenjen račun ostane 403 (enako kot kanonična pot).
@@ -951,6 +959,10 @@ export function mountAccounts(app, store, opts = {}) {
     }
     if (req.nekanonicnaApi) return ni(res);
     if (p.is_guest && /^\/billing\//i.test(req.path)) return res.status(403).json({ error: "Najprej ustvari račun v zavihku Račun.", guest: true });
+    // Pred potrditvijo e-naslova se lahko učiš (#747), varnostno pomembna dejanja pa čakajo na potrditev: plačila,
+    // izvoz podatkov, gesla profilov, aktivacijska koda, poročilo na e-pošto (drugi profil ali profil otroka: /api/students).
+    if (!p.is_guest && !p.email_verified_at && req.method !== "GET" && UNVERIFIED_BLOCKED.some((re) => re.test(req.path)))
+      return res.status(403).json({ error: "Najprej potrdi e-naslov (povezava je v e-pošti).", verify: true });
     if (p.is_guest && !guestAllowed(p)) return res.status(401).json({ error: "Uporaba brez računa ni več mogoča. Ustvari račun, da obdržiš napredek.", login: true, guest_off: true });
     // Porabo AI vidi samo skrbnik ali kdor aplikacijo odpre na računalniku, kjer teče strežnik.
     if (/^\/usage(\/|$)/i.test(req.path) && !p.is_admin && !isLocalRequest(req)) return res.status(403).json({ error: "Samo za skrbnika." });
@@ -1096,9 +1108,12 @@ export function mountAccounts(app, store, opts = {}) {
     const refCode = String(req.body?.referral_code || "").trim().toUpperCase();
     const referrer = refCode ? db.prepare("SELECT id FROM parents WHERE referral_code = ? AND is_guest = 0").get(refCode) : null;
     const { id, verifyToken: token } = createParent(req, { email, passwordHash: await hashPassword(password), name: req.body?.name, birthIso: v.birthIso, referrerId: referrer?.id ?? null });
+    // Do potrditve e-naslova se račun uči z brezplačnim paketom (personalOf) in šteje v kvoto omrežja kot nekdanji gost
+    // (guest_net, server/accounts/guest.js): novi računi z izmišljenimi naslovi ne dobijo vsak svoje kvote (#747).
+    update(id, { guest_net: guestNet(req) });
 
     const url = `${baseUrl(req)}/api/auth/verify?token=${token}`;
-    await sendMail(email, verifyEmail(url));
+    await sendMail(email, verifyEmail(url, { minor: isMinor(getParent(id)) }));
     // Aktivacijska koda ob registraciji; napačna koda registracije ne ustavi.
     const promoRaw = String(req.body?.promo_code || "").trim();
     const promoResult = promoRaw ? promo.redeem(getParent(id), promoRaw) : null;
@@ -1160,7 +1175,7 @@ export function mountAccounts(app, store, opts = {}) {
     ).run(v.email, hash, cleanText(req.body?.name, 60), 0, sha256(token), PRIVACY_VERSION, v.birthIso, isoIn(VERIFY_DAYS), p.id);
     db.prepare("UPDATE consents SET parent_email = ? WHERE parent_id = ?").run(v.email, p.id);
     const url = `${baseUrl(req)}/api/auth/verify?token=${token}`;
-    await sendMail(v.email, verifyEmail(url));
+    await sendMail(v.email, verifyEmail(url, { minor: isMinor(getParent(p.id)) }));
     sessions.destroyAll(p.id);
     accountLocks.unlock(p.id, req.deviceId);
     setSessionCookie(req, res, sessions.create(p.id));
@@ -1282,10 +1297,20 @@ export function mountAccounts(app, store, opts = {}) {
     if (!p) return res.status(401).json({ error: "Prijavi se.", login: true });
     if (p.is_guest) return res.status(400).json({ error: "Najprej ustvari račun." });
     if (p.email_verified_at) return res.json({ ok: true, verified: true });
+    const acct = `resend${p.id}`;
+    const net = netKey(req.ip);
+    const hit = resendThrottle.blocked(acct) ? resendThrottle.hits.get(acct) : resendNetThrottle.blocked(net) ? resendNetThrottle.hits.get(net) : null;
+    if (hit && !isLocalRequest(req)) {
+      const retry = Math.max(1, Math.ceil((hit.start + resendThrottle.windowMs - Date.now()) / 1000));
+      res.set("Retry-After", String(retry));
+      return res.status(429).json({ error: `Povezavo smo poslali že večkrat. Poišči jo v e-pošti (tudi v mapah Promocije in Vsiljena pošta) ali poskusi znova čez ${Math.ceil(retry / 60)} min.`, retry_after: retry });
+    }
+    resendThrottle.fail(acct);
+    resendNetThrottle.fail(net);
     const token = randomToken();
     update(p.id, { verify_token_hash: sha256(token), verify_expires_at: isoIn(VERIFY_DAYS) });
     const url = `${baseUrl(req)}/api/auth/verify?token=${token}`;
-    await sendMail(p.email, verifyEmail(url));
+    await sendMail(p.email, verifyEmail(url, { minor: isMinor(p) }));
     res.json({ ok: true, ...(devLinks(req, p.email) ? { dev_verify_url: url } : {}) });
   });
 
@@ -2062,7 +2087,10 @@ export function mountAccounts(app, store, opts = {}) {
 
   app.post("/api/students", json, async (req, res) => {
     const p = req.parent;
-    if (!p.email_verified_at && !p.is_guest) return res.status(403).json({ error: "Najprej potrdi e-naslov (povezava je v e-pošti).", verify: true });
+    // Pred potrditvijo e-naslova (#747) samo prvi, lasten profil (dijak ali študent soglaša sam), da se lahko takoj uči;
+    // profil za otroka (soglasje starša) in vsak nadaljnji profil šele po potrditvi.
+    if (!p.email_verified_at && !p.is_guest && (childIds(p.id).length || !(isMinor(p) || req.body?.self === true)))
+      return res.status(403).json({ error: "Najprej potrdi e-naslov (povezava je v e-pošti).", verify: true });
     // Število profilov = paket (preizkus: 2, brezplačno: 1). Menjava profila največ enkrat na 30 dni.
     const seats = profileSeats(p);
     if (childIds(p.id).length >= seats) {

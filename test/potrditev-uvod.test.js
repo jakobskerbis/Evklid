@@ -61,7 +61,8 @@ test("Potrdi e-naslov na telefonu: sporočilo »še ni potrjeno«, Pošlji znova
     page.on("pageerror", (e) => errors.push(e.message));
     return { ctx, page };
   };
-  // Registracija v brskalniku (piškotek seje ostane v kontekstu), nato zaslon »Potrdi e-naslov«.
+  // Registracija v brskalniku (piškotek seje ostane v kontekstu), nato zaslon »Potrdi e-naslov«. Od #747 potrditev ni
+  // več zid pred profilom: lasten profil nastane brez potrditve, zaslon odpre kartica v zavihku Račun (#verify-open).
   const register = async (page, email, years) => {
     await page.goto(base + "/");
     const r = await page.evaluate(
@@ -77,6 +78,16 @@ test("Potrdi e-naslov na telefonu: sporočilo »še ni potrjeno«, Pošlji znova
     );
     assert.equal(r.status, 201, JSON.stringify(r.body));
     await page.goto(base + "/");
+    await page.locator("#child-form").waitFor();
+    const kid = await page.evaluate(async (y) => {
+      const res = await fetch("/api/students", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: "Jaz", self: true, birth_year: y, consent: true }) });
+      return res.status;
+    }, new Date().getFullYear() - years);
+    assert.equal(kid, 201, "lasten profil pred potrditvijo (#747)");
+    await page.goto(base + "/");
+    await page.waitForFunction(() => !document.body.classList.contains("auth-mode") && !!document.querySelector("#account-tab"));
+    await page.evaluate(() => document.querySelector("#account-tab").click());
+    await page.locator("#verify-open").tap();
     await page.locator("#verify-done").waitFor();
     return r.body.dev_verify_url;
   };
@@ -116,7 +127,8 @@ test("Potrdi e-naslov na telefonu: sporočilo »še ni potrjeno«, Pošlji znova
       const res = await page.request.get(fresh, { maxRedirects: 0 });
       assert.match(res.headers().location || "", /verified=1/);
       await page.locator("#verify-done").tap();
-      await page.locator("#child-form").waitFor();
+      // Profil že obstaja (#747): po potrditvi naravnost v aplikacijo.
+      await page.waitForFunction(() => !document.body.classList.contains("auth-mode"));
       assert.equal(await page.locator("#verify-state").count(), 0);
       await ctx.close();
     }
@@ -146,7 +158,7 @@ test("Potrdi e-naslov na telefonu: sporočilo »še ni potrjeno«, Pošlji znova
       // Geslo potrdi kot prej.
       await other.page.fill("#auth-form input[name=password]", "geslo-12345");
       await other.page.locator("#auth-form button[type=submit]").tap();
-      await other.page.locator("#child-form").waitFor();
+      await other.page.waitForFunction(() => !document.body.classList.contains("auth-mode")); // profil že obstaja (#747)
       const sw = await other.page.evaluate(() => document.documentElement.scrollWidth);
       assert.ok(sw <= 360, `brez vodoravnega drsenja (${sw})`);
       await other.ctx.close();

@@ -1839,7 +1839,18 @@ async function accounts(browser, app) {
     await p.check('#auth-form input[name="accept_privacy"]');
     await screen(p, "registracija");
     await click(p, '#auth-form button[type="submit"]', { wait: 400 });
+    // Potrditev e-naslova ni zid pred profilom (#747): najprej obrazec za profil; profil za otroka (soglasje starša)
+    // pa šele po potrditvi, zato odda obrazec za otroka zaslon »Potrdi e-naslov«.
+    await expectVisible(p, "#child-form", "obrazec za profil pred potrditvijo", 8000);
+    await p.check('#child-form input[name="whose"][value="child"]');
+    await p.fill('#child-form input[name="name"]', "Miha");
+    for (const val of ["OSNOVNA_SOLA", "7. razred"]) await click(p, `#child-form .lp-opt[data-val="${val}"]`);
+    await p.selectOption('#child-form select[name="birth_year"]', String(new Date().getFullYear() - 12));
+    await p.check('#child-form input[name="consent"]');
+    p.allow = [/^403 \/api\/students$/];
+    await click(p, '#child-form button[type="submit"]', { wait: 600 });
     await expectVisible(p, "#verify-done", "potrditev e-naslova");
+    p.allow = [];
     await screen(p, "potrditev");
     const href = await p.locator('#view-auth a[href*="/api/auth/verify"]').getAttribute("href");
     await p.goto(href);

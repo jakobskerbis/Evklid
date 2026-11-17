@@ -71,7 +71,18 @@ ${inner}
 export const button = (href, label) =>
   `<p style="margin:24px 0"><a href="${esc(href)}" style="background:#4f6bed;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">${esc(label)}</a></p>`;
 
-export function verifyEmail(url) {
+// minor: mladoletni imetnik (15–17 let, račun zase; #747 točka 2) dobi besedilo s »ti« brez izjave zakonitega
+// zastopnika (za otroka mlajšega od 15 let profil ustvari starš s svojim računom). Polnoletni: besedilo kot prej.
+export function verifyEmail(url, { minor = false } = {}) {
+  if (minor)
+    return {
+      subject: "Potrdi e-naslov za Evklid",
+      html: layout(
+        "Potrdi svoj e-naslov",
+        `<p>Živjo! S klikom na gumb potrdiš svoj e-naslov za Evklid. Učiš se lahko že zdaj, s potrditvijo pa račun zavaruješ in odkleneš vse možnosti.</p>${button(url, "Potrdi e-naslov")}<p style="font-size:13px;color:#5f6779">Povezava velja 7 dni. Če se nisi registriral(a), sporočilo prezri.</p>`,
+      ),
+      text: `Potrdi e-naslov za Evklid: ${url}\nPovezava velja 7 dni.`,
+    };
   return {
     subject: "Potrdite e-naslov za Evklid",
     html: layout(

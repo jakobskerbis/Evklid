@@ -53,6 +53,8 @@ let status = null;
 let onReadyCb = null;
 
 export const accountsOn = () => enabled;
+// Zadnje znano stanje računa (/api/account/status), npr. za opomnik za potrditev po prvi nalogi.
+export const accountStatus = () => status;
 
 // Profil je lahko hkrati odprt samo na eni napravi. Če ga ima druga naprava,
 // strežnik vrne 409 { taken }; ponudimo prevzem.
@@ -482,7 +484,8 @@ async function route() {
   if (hashMode()) history.replaceState(null, "", location.pathname + location.search);
   // Uporaba brez računa je izklopljena: gost lahko samo ustvari račun in obdrži napredek.
   if (status.parent.guest && !status.guest_mode) return renderGuestOff(), false;
-  if (!status.parent.verified && !status.parent.guest) return renderVerify(), false;
+  // Nepotrjen e-naslov ni več zid pred prvo nalogo (#747): lasten profil in učenje takoj, potrditev po prvi rešeni
+  // nalogi (public/potrditev-po-nalogi.js) ali ko jo zahteva varnostno pomembno dejanje (odgovor 403 { verify }).
   // Star račun brez datuma rojstva: ob prijavi ga enkrat vprašamo (z razlago in »Pozneje«), nikoli ne zaklenemo.
   // Samo na odklenjeni napravi: na zaklenjeni (otrok na starševi napravi) zaslon preskočimo, vprašanje ostane za pozneje.
   if (status.parent.need_birth && status.account_unlocked) return renderBirth(), false;
@@ -881,6 +884,7 @@ function renderVerify() {
       <div class="form-actions">
         <button class="primary" id="verify-done" type="button">Sem potrdil(a)</button>
         <button id="verify-resend" type="button" aria-describedby="verify-resend-hint">Pošlji znova</button>
+        <button id="verify-back" type="button">${esc(t("verify.back"))}</button>
         <button id="verify-logout" type="button">Odjava</button>
       </div>
       <p class="muted" id="verify-resend-hint">${esc(t("verify.resendHint"))}</p>
@@ -934,6 +938,8 @@ function renderVerify() {
     }
   });
   $("#verify-logout").addEventListener("click", logout);
+  // Nazaj na učenje brez potrditve (#747): profil ali obrazec za lasten profil.
+  $("#verify-back").addEventListener("click", continueFlow);
 }
 
 // ---------- otroci ----------
@@ -1041,6 +1047,8 @@ function bindChildForm(after) {
       store.set("evklid_invite_name", null);
       await after(s);
     } catch (err) {
+      // Profil za otroka ali drugi profil pred potrditvijo e-naslova (#747): zaslon za potrditev.
+      if (err.data?.verify && status?.logged_in && !status.parent?.verified) return renderVerify();
       showError(f, err);
     }
   });
@@ -1051,6 +1059,7 @@ async function renderAddChild() {
   shell(`
     <h1>Ustvari profil</h1>
     <p class="muted">Vsak učenec, dijak ali študent ima svoj profil z učno potjo in napredkom. Za otroke, mlajše od 15 let, je potrebno soglasje starša.</p>
+    ${status?.parent && !status.parent.verified && !status.parent.guest ? `<p class="muted">${esc(t("verify.laterNote"))}</p>` : ""}
     ${childForm(acc.consent_text, programs, acc.children?.length > 0)}
     <p class="auth-links"><a href="#" id="add-child-logout">Odjava</a></p>`);
   $("#add-child-logout").addEventListener("click", (e) => (e.preventDefault(), logout()));
@@ -1829,6 +1838,11 @@ export async function renderAccount() {
     <button type="button" class="ghost back me-back">${icon("arrow-left")}${esc(t("nav.me"))}</button>
     <h1>${esc(t("nav.account"))}</h1>
     ${privacyBanner(acc)}
+    ${acc.parent.verified ? "" : `<div class="card" id="verify-card">
+      <h2>${esc(t("verify.nudgeTitle"))}</h2>
+      <p>${esc(t("verify.nudgeText", { email: acc.parent.email }))}</p>
+      <button class="primary" id="verify-open" type="button">${esc(t("verify.open"))}</button>
+    </div>`}
     <div class="kolone">
     <div class="card">
       <h2>${esc(t("mob.subscription"))}</h2>
@@ -2016,6 +2030,12 @@ export async function renderAccount() {
       }
     }),
   );
+  // Nepotrjen e-naslov (#747): zaslon »Potrdi e-naslov« (Pošlji znova, Sem potrdil(a), Nazaj na učenje).
+  $("#verify-open")?.addEventListener("click", async () => {
+    status = await api("/api/account/status");
+    if (status.parent?.verified) return renderAccount();
+    renderVerify();
+  });
   $("#portal-btn")?.addEventListener("click", async () => {
     try {
       location.href = (await api("/api/billing/portal", { method: "POST" })).url;
