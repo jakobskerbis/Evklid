@@ -239,6 +239,8 @@ export function mountAccounts(app, store, opts = {}) {
     const age = p?.birth_date ? ageOn(p.birth_date) : null;
     return age !== null && age < ADULT_AGE;
   };
+  // Potrditvena e-pošta (#747 točka 2): mladoletni imetnik (15–17) dobi besedilo s »ti« brez izjave zakonitega zastopnika.
+  const pismoPotrditve = (p, url) => verifyEmail(url, { minor: isMinor(p) });
   // Račun brez datuma rojstva (star račun, »Pozneje«): ne plača ničesar, dokler datuma ne vpiše (j 2026-11-06).
   const birthMissing = (p) => !!p && !p.is_guest && !p.birth_date;
 
@@ -1113,7 +1115,7 @@ export function mountAccounts(app, store, opts = {}) {
     update(id, { guest_net: guestNet(req) });
 
     const url = `${baseUrl(req)}/api/auth/verify?token=${token}`;
-    await sendMail(email, verifyEmail(url, { minor: isMinor(getParent(id)) }));
+    await sendMail(email, pismoPotrditve(getParent(id), url));
     // Aktivacijska koda ob registraciji; napačna koda registracije ne ustavi.
     const promoRaw = String(req.body?.promo_code || "").trim();
     const promoResult = promoRaw ? promo.redeem(getParent(id), promoRaw) : null;
@@ -1175,7 +1177,7 @@ export function mountAccounts(app, store, opts = {}) {
     ).run(v.email, hash, cleanText(req.body?.name, 60), 0, sha256(token), PRIVACY_VERSION, v.birthIso, isoIn(VERIFY_DAYS), p.id);
     db.prepare("UPDATE consents SET parent_email = ? WHERE parent_id = ?").run(v.email, p.id);
     const url = `${baseUrl(req)}/api/auth/verify?token=${token}`;
-    await sendMail(v.email, verifyEmail(url, { minor: isMinor(getParent(p.id)) }));
+    await sendMail(v.email, pismoPotrditve(getParent(p.id), url));
     sessions.destroyAll(p.id);
     accountLocks.unlock(p.id, req.deviceId);
     setSessionCookie(req, res, sessions.create(p.id));
@@ -1310,7 +1312,7 @@ export function mountAccounts(app, store, opts = {}) {
     const token = randomToken();
     update(p.id, { verify_token_hash: sha256(token), verify_expires_at: isoIn(VERIFY_DAYS) });
     const url = `${baseUrl(req)}/api/auth/verify?token=${token}`;
-    await sendMail(p.email, verifyEmail(url, { minor: isMinor(p) }));
+    await sendMail(p.email, pismoPotrditve(p, url));
     res.json({ ok: true, ...(devLinks(req, p.email) ? { dev_verify_url: url } : {}) });
   });
 
