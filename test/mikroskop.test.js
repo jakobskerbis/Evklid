@@ -568,7 +568,7 @@ test("mikroskop: brez programa molekul (niti splošnega) se slika in merilo spre
   const app = createApp(openDb(":memory:"), { accounts: true, scheduler: false, log: { error() {}, info() {}, warn() {} } });
   const server = app.listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
-  const ctx = await browser.newContext({ viewport: { width: 480, height: 720 }, reducedMotion: "reduce" });
+  const ctx = await browser.newContext({ viewport: { width: 480, height: 720 }, reducedMotion: "reduce", locale: "sl-SI" }); // besedila v slovenščini (sl.js)
   try {
     // vsak senčilnik molekul (uniform uPA) dobi neveljavno kodo: napaka prevajanja takoj, kot na napravi, ki ga ne zmore
     await ctx.addInitScript(() => {
