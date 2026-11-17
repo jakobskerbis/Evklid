@@ -121,6 +121,7 @@ export function stripMeta(text) {
     .replace(CHOICES_RE, "")
     .replace(CHOICES_LOOSE_RE, "")
     .replace(OPEN_RE, "")
+    .replace(/<orodje>[\s\S]*?(?:<\/orodje>|$)/g, "") // skrit zapis orodja (chat-settings.js actionNote), če ga model ponovi
     .replace(/(?:<<\s*(?:META|KARTICA|RA[CČ]UN|ODPRI|GRAF|SKICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, "") // nedokončan blok (npr. odrezan odgovor)
     .replace(/\n{3,}/g, "\n\n")
     .replace(/\s+$/, "");
@@ -177,6 +178,13 @@ export function createStreamFilter() {
       const out = buffer.slice(emitted, safeEnd);
       emitted = safeEnd;
       return lead(out);
+    },
+    // Začne znova (besedilo pred klicem orodja ni odgovor, server/claude.js onRetract).
+    reset() {
+      buffer = "";
+      emitted = 0;
+      metaStarted = false;
+      leadDone = false;
     },
     // Na koncu vrne preostanek (brez strojnih blokov) in celotno surovo besedilo.
     end() {

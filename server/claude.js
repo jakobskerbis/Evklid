@@ -156,7 +156,14 @@ export const supportsFallback = (model) => !/haiku/.test(model);
  * @returns {Promise<{content, text, stopReason, usage, model}>}
  */
 // canRound(round): pred vsakim dodatnim krogom orodij; false = brez novega klica (trda meja AI, server/meje-ai.js).
-export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
+// Besedilo pred klicem orodja (j, 17. 11. 2026: »Želi zeleno barvo. Najbolj smiselno je …« v odgovoru): kratek uvod
+// oziroma razmislek se ne prikaže. Daljše besedilo (razlaga z odstavki, formulami ali bloki) ostane, ker je del odgovora.
+export const isPreamble = (s) => {
+  const t = String(s || "").trim();
+  return t.length <= 300 && !/\n\s*\n|\$|<</.test(t);
+};
+
+export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, onRetract = null, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
   const { model, effort, max_tokens } = modeParams(mode);
   if (isMockMode()) return mockReply({ messages, onText, signal, model, onToolUse: tools?.length ? onToolUse : null });
 
@@ -196,7 +203,12 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   let finalModel = model;
   let toolCalls = 0;
   let msgs = messages;
+  // Besedilo kroga, ki se konča s klicem orodja (»Želi zeleno barvo. Najbolj smiselno je …«), je razmislek pred
+  // dejanjem, ne odgovor (j, 17. 11. 2026): ne gre v odgovor; odjemalec ga ob onRetract pobriše. Če po orodju
+  // modela ne napiše ničesar več, ostane zadnje tako besedilo (da odgovor ni prazen).
+  let dropped = "";
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+    const roundStart = text.length;
     if (round > 0 && canRound && !canRound(round)) break;
     // Prekinjeno pred zahtevo (učenec je zaprl aplikacijo med pripravo, npr. povzetkom): klic ne odide in se ne
     // šteje (pregled #462 S2: prej fantomski strošek vhoda in odgovor Opusa v dnevni meji).
@@ -290,6 +302,11 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     content.push(...final.content);
     const calls = final.content.filter((b) => b.type === "tool_use");
     if (stopReason !== "tool_use" || !calls.length || !onToolUse) break;
+    if (text.length > roundStart && isPreamble(text.slice(roundStart))) {
+      dropped = text.slice(roundStart).trim();
+      text = text.slice(0, roundStart);
+      onRetract?.(text);
+    }
     const results = [];
     for (const c of calls) {
       toolCalls++;
@@ -298,6 +315,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     }
     msgs = [...msgs, { role: "assistant", content: final.content }, { role: "user", content: results }];
   }
+  if (!text.trim() && dropped) text = dropped;
   return { content, text, stopReason, usage, model: finalModel, toolCalls };
 }
 

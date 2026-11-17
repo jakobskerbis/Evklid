@@ -1564,6 +1564,11 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         if (!shownText && !bubble.classList.contains("checking")) waitNote = ""; // odgovor se začne: napis zamenja besedilo
         pacer.push(d.text);
       },
+      // Uvod pred klicem orodja se umakne (server/claude.js onRetract): spet napis med čakanjem, dokler ni novega besedila.
+      retract: () => {
+        if (!bubble.classList.contains("checking")) waitNote = t(deep ? "chat.waitDeep" : "chat.wait");
+        pacer.reset();
+      },
       // Strežnik preverja odgovor (server/app.js): napis »Preverjam odgovor …«; pod izpisanim besedilom šele čez 0,6 s,
       // da hitro preverjanje ne utripne.
       phase: (d) => {
@@ -2764,7 +2769,9 @@ function openReport(el, foot, btn, id, done) {
     const c = box.querySelector(".rep-code");
     c.hidden = false;
     c.firstElementChild.textContent = `${t("rep.code")}:`;
-    c.lastElementChild.textContent = foot.dataset.code;
+    // Črka O z malo (j, 17. 11. 2026): v pisavi telefona sta »O« in »0« enaka (#000O je bil videti kot #0000).
+    // Iskanje kode (server/reports.js parseMessageCode) ne loči velikih in malih črk.
+    c.lastElementChild.textContent = foot.dataset.code.replace(/O/g, "o");
   }
   box.setAttribute("aria-label", t("rep.ask"));
   const area = box.querySelector("textarea");

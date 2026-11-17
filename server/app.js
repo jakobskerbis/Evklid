@@ -38,7 +38,7 @@ import { printPage, printPageParts, printSignature, printSizeHint, streamParts }
 import { createPdfStore, pdfDownloadName, printFallbackExists } from "./ucbenik-pdf.js";
 import { createPageCache } from "./tisk-predpomnilnik.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
-import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
+import { SETTINGS_TOOLS, createSettingsTools, actionNote, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
 import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSkill, firstTime, mountSkillChecks } from "./weaknesses.js";
 import { cleanText, plainTitle, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
@@ -1152,6 +1152,15 @@ export function createApp(store, opts = {}) {
           const out = filter.push(chunk);
           if (out) claim ? held.push(out) : send("delta", { text: out });
         },
+        // Besedilo pred klicem orodja ni odgovor (j, 17. 11.): odjemalec ga pobriše, tok začne znova od kept.
+        onRetract: (kept) => {
+          filter.reset();
+          held.length = 0;
+          if (!claim) send("retract", {});
+          if (!claim && note) send("delta", { text: note }); // obvestilo pred odgovorom ostane
+          const out = kept ? filter.push(kept) : "";
+          if (out) claim ? held.push(out) : send("delta", { text: out });
+        },
       });
       // Odgovor je že plačan; zapiše se spodaj (»chat«) ali ob prekinitvi v catch (»prekinjeno«).
       if (!cached) unlogged = { model: first.model || answerModelOf(mode, deep), usage: first.usage };
@@ -1189,6 +1198,12 @@ export function createApp(store, opts = {}) {
               signal: controller.signal,
               onText: (chunk) => {
                 const out = again2.push(chunk);
+                if (out) held.push(out);
+              },
+              onRetract: (kept) => {
+                again2.reset();
+                held.length = 0;
+                const out = kept ? again2.push(kept) : "";
                 if (out) held.push(out);
               },
             });
@@ -1344,6 +1359,8 @@ export function createApp(store, opts = {}) {
         meta = { subject: meta?.subject ?? student.settings.subject, topic: null, error: 0, mode: meta?.mode ?? null, flag: "unsafe" };
       }
       if (!display) display = "…";
+      const opomba = actionNote(settingsTools.state.done);
+      if (opomba) content = [...content, { type: "text", text: opomba }];
 
       const assistantId = store.addMessage(conv.id, "assistant", content, display);
       // Način, v katerem je ta odgovor nastal (po morebitni spremembi z orodjem v tem odgovoru).
