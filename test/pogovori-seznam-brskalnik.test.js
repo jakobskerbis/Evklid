@@ -41,7 +41,8 @@ test("Inštruktor: klik ali dotik kjerkoli v vrstici starega pogovora odpre ta p
 
   for (const vp of [{ width: 360, height: 740 }, { width: 1280, height: 800 }]) {
     const phone = vp.width < 500;
-    const ctx = await chromium.newContext({ viewport: vp, hasTouch: true, isMobile: phone });
+    // Brez service workerja: ob novi različici bi stran med testom osvežil (app-version).
+    const ctx = await chromium.newContext({ viewport: vp, hasTouch: true, isMobile: phone, serviceWorkers: "block" });
     await ctx.addInitScript((sid) => {
       localStorage.setItem("evklid.tour", "1");
       localStorage.setItem("studentId", String(sid));
@@ -49,7 +50,7 @@ test("Inštruktor: klik ali dotik kjerkoli v vrstici starega pogovora odpre ta p
     const p = await ctx.newPage();
     const errors = [];
     p.on("pageerror", (e) => errors.push(e.message));
-    await p.goto(base + "/");
+    await p.goto(base + "/", { waitUntil: "networkidle" });
     await p.waitForFunction(() => window.evklid?.showView);
     await p.evaluate(() => window.evklid.showView("chat"));
     await p.waitForSelector("#conversation-list li", { state: "attached" });
