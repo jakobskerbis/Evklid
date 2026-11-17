@@ -413,7 +413,16 @@ function lazniGL({ khr = true, napaka = () => false } = {}) {
     getUniformLocation: () => ({}),
   };
   const gl = new Proxy(impl, { get: (o, k) => (k in o ? o[k] : /^[A-Z0-9_]+$/.test(k) ? k : () => ({})) });
-  return { st, platno: { width: 64, height: 64, getContext: () => gl } };
+  // platno: poslušalci dogodkov (webglcontextlost) za izgubo grafike
+  const posl = {};
+  const platno = {
+    width: 64,
+    height: 64,
+    getContext: () => gl,
+    addEventListener: (ime, fn) => (posl[ime] ||= []).push(fn),
+    sprozi: (ime) => (posl[ime] || []).splice(0).forEach((fn) => fn({ type: ime, preventDefault() {} })),
+  };
+  return { st, platno };
 }
 const cakaj = (ms = 60) => new Promise((r) => setTimeout(r, ms));
 const pogledMol = (pA, { mem = 0, pB = 0 } = {}) => ({ n: 64, umNaTocko: 0.0002, mol: { utez: 1, uniforme: { pA, pB, mem, memVrsta: 0, at: new Array(16).fill(1), fine: [0, 0], n: [0, 1], smer: [1, 0] } } });
@@ -515,23 +524,27 @@ test("mikroskop: sloj molekul riše program za en pogled, ob napaki splošni, st
     assert.equal(await b, true);
     assert.deepEqual(molSrc(g.st), ["2", "4"]);
     // izguba grafike (F4): programi starega konteksta, ki še čakajo v skupni vrsti, se ne prevajajo, ne štejejo za
-    // neuspele (stanje ostane »caka«, ne »napaka«) in ne izpišejo opozorila
+    // neuspele (stanje ostane »caka«, ne »napaka«) in ne izpišejo opozorila – tudi ko je kontekst že obnovljen (isti gl
+    // tedaj spet pravi isContextLost() false) in nova upodobitev na istem platnu prevaja svoje programe
     const c = upo.pripraviMol(pogledMol(6));
     g.st.izgubljen = true;
+    g.platno.sprozi("webglcontextlost");
+    g.st.izgubljen = false; // webglcontextrestored
+    const nova = ustvariUpodobitev(g.platno);
     const warn = console.warn;
     const opozorila = [];
     console.warn = (...a) => opozorila.push(a.join(" "));
     try {
+      const d = nova.pripraviMol(pogledMol(7));
       assert.equal(await c, false);
+      assert.equal(await d, true, "nova upodobitev ne čaka na stare programe v vrsti");
     } finally {
       console.warn = warn;
     }
-    assert.deepEqual(molSrc(g.st), ["2", "4"], "po izgubi se nič ne prevaja");
+    assert.deepEqual(molSrc(g.st), ["2", "4", "7"], "program »6« mrtve upodobitve se ne prevaja");
     assert.equal(upo.molStanje(pogledMol(6)), "caka");
+    assert.equal(nova.molStanje(pogledMol(7)), "ok");
     assert.deepEqual(opozorila, []);
-    // nova upodobitev (nov kontekst) ne čaka na stare programe v vrsti
-    const g2 = lazniGL({ khr: false });
-    assert.equal(await ustvariUpodobitev(g2.platno).pripraviMol(pogledMol(6)), true);
   }
 
   const mod = await import("../public/mikroskop/molekule.js");
@@ -576,6 +589,13 @@ test("mikroskop: brez programa molekul (niti splošnega) se slika in merilo spre
       const ss = P.shaderSource;
       P.shaderSource = function (sh, src) {
         return ss.call(this, sh, /uniform \w+ uPA\b/.test(src) ? "#version 300 es\nvoid main() { ni_funkcije(); }" : src);
+      };
+      // števec sličic, ki jih zahteva mikroskop (ko slika miruje, se ne riše znova); druge zanke strani ne štejejo
+      window.__raf = 0;
+      const raf = window.requestAnimationFrame.bind(window);
+      window.requestAnimationFrame = (fn) => {
+        if (/\/mikroskop\//.test(new Error().stack || "")) window.__raf++;
+        return raf(fn);
       };
     });
     const p = await ctx.newPage();
@@ -639,9 +659,18 @@ test("mikroskop: brez programa molekul (niti splošnega) se slika in merilo spre
     await pocakaj(() => /Å$/.test(document.querySelector(".k3-merilo-crta").parentElement.textContent.trim()), null, "merilo je obstalo", 60000);
     const um = await merilo();
     assert.ok(um < 0.002, `merilo je obstalo pri ${um * 1000} nm (pri 100 000 000× je vidno polje manjše od 2 nm)`);
-    const resnica = await p.evaluate(() => [...document.querySelectorAll(".mk-resnica")].filter((e) => !e.hidden).map((e) => e.textContent));
+    // namig pod nadzorom: posnetek TEM, ne »ponazoritev … barve so dogovorjene« nad sliko brez molekul
+    const vidniNamigi = () => [...document.querySelectorAll(".mk-resnica")].filter((e) => !e.hidden).map((e) => e.textContent);
+    await pocakaj((tem) => { const r = [...document.querySelectorAll(".mk-resnica")].filter((e) => !e.hidden).map((e) => e.textContent); return r.length === 1 && r[0] === tem; }, sl["mk.truth.tem"], "namig ni mk.truth.tem", 30000);
+    const resnica = await p.evaluate(vidniNamigi);
     assert.ok(!resnica.includes(sl["mk.truth.model"]) && !resnica.includes(sl["mk.truth.crystal"]), "namig o ponazoritvi z dogovorjenimi barvami nad sliko brez molekul");
     assert.deepEqual(resnica, [sl["mk.truth.tem"]]);
+    // stanje »napaka« ne riše ob vsaki sličici znova (prej ~60 izrisov na sekundo brez konca)
+    await p.waitForTimeout(3000); // polna slika po pasovih se konča
+    const raf0 = await p.evaluate(() => window.__raf);
+    await p.waitForTimeout(1000);
+    const sliciceNaSekundo = (await p.evaluate(() => window.__raf)) - raf0;
+    assert.ok(sliciceNaSekundo < 10, `slika miruje, a se riše znova: ${sliciceNaSekundo} sličic v 1 s`);
     assert.deepEqual(napake, []);
   } finally {
     await ctx.close();

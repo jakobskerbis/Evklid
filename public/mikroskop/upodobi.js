@@ -120,18 +120,20 @@ function program(gl, fs) {
 // taki programi prevajajo eden za drugim, vsak šele v mirnem trenutku (requestIdleCallback, najkasneje po 300 ms): stran
 // naenkrat stoji največ toliko, kolikor traja prevajanje enega programa.
 // Vrsta je skupna vsem kontekstom: po izgubi grafike se programi starega konteksta, ki še čakajo v vrsti, ne prevajajo in
-// ne štejejo za neuspele (napaka z izguba: true, brez opozorila), sicer bi nova upodobitev čakala nanje.
+// ne štejejo za neuspele (napaka z izguba: true, brez opozorila), sicer bi nova upodobitev čakala nanje. Po obnovitvi
+// (webglcontextrestored) isti gl spet pravi isContextLost() false, zato velja še preklic(): upodobitev je mrtva od izgube.
 let vrstaBrez = Promise.resolve();
 const mirno = () => new Promise((ok) => (typeof requestIdleCallback === "function" ? requestIdleCallback(() => ok(), { timeout: 300 }) : setTimeout(ok, 50)));
 const napakaIzgube = () => Object.assign(new Error("WebGL: kontekst izgubljen"), { izguba: true });
-function programVzporedno(gl, fs, ext) {
+function programVzporedno(gl, fs, ext, preklic = () => false) {
+  const mrtev = () => gl.isContextLost() || preklic();
   if (!ext) {
     const o = vrstaBrez.then(mirno).then(() => {
-      if (gl.isContextLost()) throw napakaIzgube();
+      if (mrtev()) throw napakaIzgube();
       try {
         return preveri(gl, zgradi(gl, fs));
       } catch (e) {
-        throw gl.isContextLost() ? napakaIzgube() : e;
+        throw mrtev() ? napakaIzgube() : e;
       }
     });
     vrstaBrez = o.catch(() => {});
@@ -142,7 +144,7 @@ function programVzporedno(gl, fs, ext) {
   return new Promise((ok, napaka) => {
     const cakaj = () => {
       try {
-        if (gl.isContextLost()) napaka(napakaIzgube());
+        if (mrtev()) napaka(napakaIzgube()); // tudi po obnovitvi: stari program ni več veljaven (sicer čakanje brez konca)
         else if (gl.getProgramParameter(g.p, ext.COMPLETION_STATUS_KHR)) ok(preveri(gl, g));
         else setTimeout(cakaj, 16);
       } catch (e) {
@@ -178,6 +180,10 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
     throw e;
   }
   const plavajoce = !!gl.getExtension("EXT_color_buffer_float");
+  // od izgube grafike je ta upodobitev mrtva (mikroskop ustvari novo): njeni programi se ne prevajajo več
+  let mrtva = false;
+  platno.addEventListener("webglcontextlost", () => (mrtva = true), { once: true });
+  const preklic = () => mrtva;
   const buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
@@ -228,7 +234,7 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
   const pripraviSplosni = () => {
     if (!splosni) {
       const x = (splosni = { p: null, napaka: false, obljuba: null });
-      x.obljuba = programVzporedno(gl, MOLEKULE, vzporedno).then(
+      x.obljuba = programVzporedno(gl, MOLEKULE, vzporedno, preklic).then(
         (p) => ((x.p = p), true),
         (e) => {
           if (e?.izguba) {
@@ -314,7 +320,7 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
     async nastaviPreparat(p, velja = () => true) {
       const moja = ++zadnjaZahteva;
       if (prepId === p.id) return;
-      const nov = await programVzporedno(gl, fragmentPreparata(p.glsl), vzporedno);
+      const nov = await programVzporedno(gl, fragmentPreparata(p.glsl), vzporedno, preklic);
       // med prevajanjem je bil izbran drug preparat: velja zadnja izbira
       if (moja !== zadnjaZahteva || !velja()) return void gl.deleteProgram(nov.p);
       if (prep) gl.deleteProgram(prep.p);
@@ -451,7 +457,7 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
       if (x) return x.obljuba;
       x = { p: null, obljuba: null };
       molProgrami.set(kl, x);
-      x.obljuba = programVzporedno(gl, molekuleZa(molK(v, v.umNaTocko * 1000)), vzporedno).then(
+      x.obljuba = programVzporedno(gl, molekuleZa(molK(v, v.umNaTocko * 1000)), vzporedno, preklic).then(
         (p) => {
           x.p = p;
           // največ 8 programov: izbriše se najdlje neuporabljen (ki ni v prevajanju)

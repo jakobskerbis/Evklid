@@ -679,7 +679,8 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   let molM = 0;
   // sloj molekul: program za ta pogled (prizor, membrana, atomi) se prevede v ozadju, nato se slika osveži
   function pripraviMol(v) {
-    if (upo.molPripravljen(v)) return;
+    // »napaka«: obljuba je že izpolnjena, nov .then bi ob vsaki sličici sprožil nov izris (60 sličic na sekundo brez konca)
+    if (upo.molPripravljen(v) || upo.molStanje(v) === "napaka") return;
     const o = upo.pripraviMol(v);
     if (o === molCaka) return;
     molCaka = o;
