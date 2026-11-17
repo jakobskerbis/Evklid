@@ -392,23 +392,23 @@ test("javne strani: kaj doda naročnina, matura, vprašanja staršev, noga podst
   const read = (f) => readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8");
   const text = (html) => html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ").replace(/\s+/g, " ");
   const about = text(aboutPage());
-  assert.ok(about.includes(`Brezplačni paket ima ${freeDailyQuestions()} vprašanj inštruktorju na dan, naročnina pa ${personalDailyQuestions("SS")} in podrobnejše razlage.`));
+  assert.ok(about.includes(`Brezplačni paket ima ${freeDailyQuestions()} vprašanj inštruktorju na dan, naročnina pa ${personalDailyQuestions("SS")} (na fakulteti ${personalDailyQuestions("FAKS")}) in podrobne razlage.`));
   assert.ok(about.includes(`${personalDailyQuestions("OS")} vprašanj inštruktorju na dan namesto ${freeDailyQuestions()} (na fakulteti ${personalDailyQuestions("FAKS")}).`));
   assert.ok(about.includes("Kaj doda naročnina"));
-  for (const s of ["od 1. do 9. razreda", "vsi letniki in matura, tudi snov osnovne šole", "2–4 profili, osnovna in srednja šola", "2–4 profili, tudi fakulteta", "Priprava na maturo iz matematike, fizike, kemije in biologije", "Celotno rešitev pokaže le, če jo otrok izrecno zahteva", "novo stopnjo odprto takoj in brez doplačila do konca plačanega obdobja. O novi ceni vas obvestimo 30 dni pred podaljšanjem."])
+  for (const s of ["od 1. do 9. razreda", "vsi letniki in matura, tudi snov osnovne šole", "2–4 profili, osnovna in srednja šola", "2–4 profili, tudi fakulteta", "Priprava na maturo iz matematike, fizike, kemije in biologije", "Celotno rešitev pokaže, če jo otrok izrecno zahteva ali izbere način Celotna rešitev", "Samo rezultat brez razlage da le pri posamezni nalogi", "novo stopnjo odprto takoj in brez doplačila, najmanj do konca plačanega obdobja", "najmanj 30 dni pred podaljšanjem, s katerim začne veljati", "lahko dokupite pogovore", "matematični in naravoslovni predmeti vašega študijskega programa"])
     assert.ok(about.includes(s), s);
   // Tri prednosti na vrhu /o-evklidu in strani za starše (Gemini, točka 3); brez poudarka na jezikih in »vajah, ki ne zmanjkajo« (točka 10).
   const strengths = ["Program preveri račune", "Matura z inštruktorjem", "Varno za otroke", "Ni klepeta z drugimi uporabniki"];
   for (const s of strengths) assert.ok(about.includes(s) && text(read("starsi.html")).includes(s), s);
   assert.ok(about.indexOf("Program preveri račune") < about.indexOf("Kaj zna Evklid"));
-  assert.ok(!/ne zmanjkajo|neskončn/i.test(about) && about.includes("Na iPhonu ga odprete v Safariju"));
+  assert.ok(!/ne zmanjkajo|neskončn/i.test(about) && about.includes("Na iPhonu Evklid odprete v Safariju"));
   // Brez obljub, ki jih koda ne drži: naročnina ni neomejena.
   assert.ok(!/neomejen\w* vprašanj|brez dnevne (meje|zapore)/i.test(about));
   // Za starše: pet vprašanj, vikanje, brez obljube branja na glas ali omejitve časa.
   const starsi = read("starsi.html");
   assert.equal((starsi.match(/<details>/g) || []).length, 5);
   const st = text(starsi);
-  for (const s of ["Odgovorov inštruktorja Evklid ne bere na glas", "Omejitve časa uporabe Evklid nima", "nikoli samo rezultata", "okoli 15 minut"]) assert.ok(st.includes(s), s);
+  for (const s of ["Odgovorov inštruktorja Evklid ne bere na glas", "Omejitve časa uporabe Evklid nima", "pri novi nalogi ne začne z rezultatom", "največ pri dveh nalogah v pogovoru", "samega rezultata ne dobi", "(privzeto je izklopljeno)", "okoli 15 minut"]) assert.ok(st.includes(s), s);
   assert.ok(!/\b(tvoj\w*|tebe|moraš|vprašaš)\b/i.test(st), "vikanje");
   // Noga na podstraneh in na /o-evklidu, /zakaj-evklid: povezave na vse javne strani.
   for (const html of [read("starsi.html"), read("sole.html"), read("zasebnost.html"), read("garancija.html"), aboutPage(), whyPage()]) {
