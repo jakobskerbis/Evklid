@@ -25,6 +25,7 @@
   "zap.noCards": "Iz ovih bilješki sada ne mogu napraviti kartice.",
   "zap.practice": "Ponavljaj kartice",
   "zap.printed": "Tekst štampanih stranica ne čuvamo – samo gradivo i kartice.",
+  "zap.printedNoCards": "Tekst štampanih stranica ne čuvamo.",
   "zap.list": "Sačuvane bilješke",
   "zap.empty": "Još nemaš sačuvanih bilješki.",
   "zap.open": "Otvori",
@@ -44,6 +45,7 @@
   "zap.keep": "Ovo su moje bilješke – sačuvaj",
   "zap.keepHint": "Bez kvačice tekst ne čuvamo. Kviz i kartice ostaju.",
   "zap.notKept": "Zalijepljeni tekst nismo sačuvali – samo gradivo i kartice.",
+  "zap.notKeptNoCards": "Zalijepljeni tekst nismo sačuvali.",
   "zap.correctMark": "Tačan odgovor",
   "zap.yourMark": "Tvoj odgovor"
 }

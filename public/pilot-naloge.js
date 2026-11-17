@@ -4,6 +4,7 @@
 // 2. preizkusi 5 delov aplikacije, 3. kje je zastavica za prijavo napake, 4. kratka anketa, 5. preizkus znanja na začetku
 // in čez 14 dni (server/pilot-ucinek.js). Vse je prostovoljno. V Računu: vprašanje o plačilu za polnoletnega imetnika.
 import { t, locale, currentLang } from "./i18n.js";
+import { SL_MONTH } from "./datum.js";
 import { icon, hydrateIcons } from "./icons.js";
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -223,7 +224,6 @@ function render() {
 
 // Datum odprtja: v slovenščini »v petek, 13. novembra« (tožilnik dneva, rodilnik meseca; B4 P2-7), drugod Intl.
 const SL_DAY = ["nedeljo", "ponedeljek", "torek", "sredo", "četrtek", "petek", "soboto"];
-const SL_MONTH = ["januarja", "februarja", "marca", "aprila", "maja", "junija", "julija", "avgusta", "septembra", "oktobra", "novembra", "decembra"];
 export function whenText(iso, lang = currentLang()) {
   const d = new Date(iso);
   if (lang === "sl") return `v ${SL_DAY[d.getDay()]}, ${d.getDate()}. ${SL_MONTH[d.getMonth()]}`;

@@ -25,6 +25,7 @@
   "zap.noCards": "Z těchto poznámek teď kartičky udělat nemůžu.",
   "zap.practice": "Opakovat kartičky",
   "zap.printed": "Text tištěných stran neukládáme – jen látku a kartičky.",
+  "zap.printedNoCards": "Text tištěných stran neukládáme.",
   "zap.list": "Uložené poznámky",
   "zap.empty": "Zatím nemáš uložené poznámky.",
   "zap.open": "Otevřít",
@@ -44,6 +45,7 @@
   "zap.keep": "Tohle jsou moje poznámky – uložit",
   "zap.keepHint": "Bez zaškrtnutí text neukládáme. Kvíz a kartičky zůstanou.",
   "zap.notKept": "Vložený text jsme neuložili – jen učivo a kartičky.",
+  "zap.notKeptNoCards": "Vložený text jsme neuložili.",
   "zap.correctMark": "Správná odpověď",
   "zap.yourMark": "Tvoje odpověď"
 }

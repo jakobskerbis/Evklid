@@ -292,7 +292,11 @@ function showView(name) {
   }
   syncHistory(name);
   if (currentView === "chat" && name !== "chat" && !isFloating("chat")) leaveChat(); // odhod iz inštruktorja: od tu teče 10 min
-  if (name !== currentView) prevView = currentView;
+  if (name !== currentView) {
+    if (BACK_ORIGIN.includes(name)) meBackFrom[name] = startHold ? "me" : currentView; // zagon na zadnjem zaslonu: Jaz
+    prevView = currentView;
+    hideOldToast();
+  }
   currentView = name;
   syncCompetitionTab();
   if (name === "path" || name === "competition" || name === "exams") setBack(name);
@@ -309,6 +313,7 @@ function showView(name) {
     if (!v.classList.contains("in-okno") && !v.hasAttribute("data-posnetek")) v.hidden = v.id !== `view-${name}`;
   });
   initView(name);
+  syncMeBack(name);
   if (away("scan")) leaveScan(), scanFromChat(false);
   if (away("games")) leaveGames();
   if (away("corner")) closeBoard();
@@ -579,6 +584,8 @@ document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () 
 // APK (mobile/src/app/web.tsx) gre nazaj po isti zgodovini (goBack), zato tam ni treba ničesar spreminjati.
 let currentView = "path";
 let prevView = "path"; // za gumb Nazaj v glavi klepeta (telefon)
+const BACK_ORIGIN = ["schedule", "exams", "competition"]; // »←« na teh podstraneh: meBackTarget
+const meBackFrom = {};
 let fromBack = false;
 let skipPop = 0;
 let overlayEntry = false; // zapis v zgodovini samo za okno, odprto na Učni poti
@@ -710,7 +717,8 @@ function backStep(wasOverlay) {
   const subMe = currentView !== "me" && (meView(currentView) || podJazZgoraj(currentView));
   // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
   // Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
-  const up = subMe && (tabbarShown() || podJazZgoraj(currentView)) ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
+  // Urnik, NPZ/matura, Tekmovanja: tja, od koder je učenec prišel (kot gumb »←«, meBackTarget).
+  const up = subMe && (tabbarShown() || podJazZgoraj(currentView)) ? (BACK_ORIGIN.includes(currentView) ? meBackTarget(currentView) : "me") : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
   if (up !== "path") {
     showView(up); // zapis v zgodovini doda showView (syncHistory)
     return true;
@@ -850,7 +858,9 @@ function paintMeLevel() {
 }
 // Nazaj na »Jaz« s podstrani (viden samo, ko je spodnja vrstica: telefon in tablica).
 document.addEventListener("click", (e) => {
-  if (e.target.closest(".me-back")) showView(e.target.closest("#view-scan") && state.scanFromChat ? "chat" : "me");
+  if (!e.target.closest(".me-back")) return;
+  if (e.target.closest("#view-scan") && state.scanFromChat) return showView("chat");
+  showView(meBackTarget(e.target.closest(".view")?.id.replace(/^view-/, "")));
 });
 document.querySelectorAll("#view-me [data-go], #settings-account [data-go]").forEach((b) =>
   b.addEventListener("click", () => (b.dataset.go === "account" ? $("#account-tab").click() : showView(b.dataset.go))),
@@ -2939,8 +2949,15 @@ function toast(msg, ic = null) {
   t.innerHTML = `${ic ? icon(ic) : ""}<span></span>`;
   t.querySelector("span").textContent = msg;
   t.hidden = false;
+  t.dataset.at = Date.now();
   clearTimeout(toast.timer);
   toast.timer = setTimeout(() => (t.hidden = true), 3500);
+}
+// Obvestilo s prejšnjega zaslona ne ostane po menjavi pogleda; tisto, ki ga je pokazalo isto dejanje tik pred
+// menjavo (npr. »Zdaj si v …« in nato Učna pot), ostane.
+function hideOldToast() {
+  const el = $("#toast"); // čas zapišejo vsi toast() (app.js, account.js, leagues.js)
+  if (Date.now() - Number(el.dataset.at || 0) > 500) el.hidden = true;
 }
 
 // ---------- pomožno ----------
@@ -3315,7 +3332,18 @@ function offTabbarViews() {
   const v = tabbarFourth();
   return v === "exams" ? ["competition"] : siExams() ? ["exams"] : [];
 }
-const meBackHtml = () => `<button type="button" class="ghost back me-back">${icon("arrow-left")}<span>${t("nav.me")}</span></button>`;
+// Urnik, NPZ/matura in Tekmovanja se odprejo tudi z Učne poti (kartica urnika, cilj): »←« vodi nazaj na zavihek spodnje
+// vrstice, s katerega je učenec prišel, in nosi njegovo ime; z drugih zaslonov na Jaz.
+function meBackTarget(view) {
+  const o = BACK_ORIGIN.includes(view) ? meBackFrom[view] : null;
+  return o && o !== view && $(`#tabbar .tab[data-view="${o}"]:not([hidden])`) ? o : "me";
+}
+const meBackKey = (view) => $(`#tabbar .tab[data-view="${meBackTarget(view)}"] span`)?.dataset.i18n || "nav.me";
+function syncMeBack(view) {
+  if (!BACK_ORIGIN.includes(view)) return;
+  document.querySelectorAll(`#view-${view} .me-back span`).forEach((s) => ((s.dataset.i18n = meBackKey(view)), (s.textContent = t(s.dataset.i18n))));
+}
+const meBackHtml = (view) => `<button type="button" class="ghost back me-back">${icon("arrow-left")}<span data-i18n="${meBackKey(view)}">${t(meBackKey(view))}</span></button>`;
 // »Skrij igre« (nastavitev profila games: off): brez zavihka, vrstice pod Jaz in koraka v uvodnem ogledu.
 function syncGamesTab() {
   const off = !!state.student && !gamesOn(state.student.settings);
@@ -3344,7 +3372,7 @@ function syncCompetitionTab() {
   const ms = m.querySelector("span");
   // Na ozki spodnji vrstici kratko: »NPZ« v OŠ, »Matura« v SŠ (zgoraj »NPZ in matura«).
   const short = jeOs(state.student?.settings) ? "goal.npz" : "goal.matura";
-  const mKey = exams ? short : regionalExams() ? "nav.exams" : "nav.competition";
+  const mKey = exams ? short : regionalExams() ? "nav.exams" : "nav.competitionShort"; // »Contests«: cela beseda v 360 px
   ms.dataset.i18n = mKey;
   ms.textContent = t(mKey);
   m.querySelector("i, svg").outerHTML = icon(exams || regionalExams() ? "clipboard-check" : "medal");
@@ -4096,7 +4124,7 @@ async function loadCompetition(key = state.compKey) {
     : `<p class="muted small-note">${t("comp.historyEmpty")}</p>`;
   const learning = c.units.flatMap((u) => u.topics).filter((t) => t.status !== "new").length;
   box.innerHTML = `
-    ${offTabbarViews().includes("competition") ? meBackHtml() : ""}
+    ${offTabbarViews().includes("competition") ? meBackHtml("competition") : ""}
     <h1>${t("comp.title")}</h1>
     <div class="comp-pickers">
       ${seg(["MAT", "FIZ", "KEM"].map((k) => [k, SUBJECT_NAMES[k] || k]), c.subject, "data-comp-subject")}
@@ -4240,7 +4268,7 @@ async function loadExams(key = state.examKey, exam = null) {
     : [...c.exams.own, ...(ownIds.includes(c.exam) ? [] : [{ id: c.exam, name: c.name }])].map((x) => [x.id, x.name]);
   const m = c.mock;
   box.innerHTML = `
-    ${offTabbarViews().includes(si ? "exams" : "competition") ? meBackHtml() : ""}
+    ${offTabbarViews().includes(si ? "exams" : "competition") ? meBackHtml(si ? "exams" : "competition") : ""}
     <h1>${si ? t("nav.examsSi") : t("exam.title")}</h1>
     <div class="comp-pickers">
       ${seg(examSeg, c.exam, "data-exam")}
@@ -4260,7 +4288,7 @@ async function loadExams(key = state.examKey, exam = null) {
       <div class="contest-head">
         <span class="session-icon">${icon("timer")}</span>
         <div><h2>${t("exam.mock")}</h2>
-          <p class="muted">${t("exam.mockText", { tasks: m.tasks, choice: m.choice, minutes: m.minutes, max: m.maxPoints })}</p>
+          <p class="muted">${t(m.choice ? "exam.mockText" : "exam.mockTextNoChoice", { tasks: m.tasks, choice: m.choice, minutes: m.minutes, max: m.maxPoints })}</p>
           ${m.negative ? `<p class="muted small-note">${t("exam.negative", { p: String(m.penalty).replace("-", "−") })}</p>` : ""}
           ${m.scale ? `<p class="muted small-note">${t("exam.scaleNote", { min: m.scale[0], max: m.scale[1] })}</p>` : ""}
           ${m.graded ? `<p class="muted small-note">${t("exam.gradeNote")}</p>` : ""}</div>

@@ -4,6 +4,7 @@
 // kartica znova na vrsto (1, 3, 7, 16, 35, 90 dni). Napačna kartica se v isti vaji vrne še enkrat.
 import { icon } from "./icons.js";
 import { t, locale } from "./i18n.js";
+import { dateText } from "./datum.js";
 import { cardSets, sessionCards, OWN, OTHER } from "./kartice-sklopi.js";
 
 let D = null; // { api, renderRich, cardRich, escapeHtml, toast, showView, getStudent, getPath, subjectName, onDue }
@@ -53,7 +54,7 @@ function renderOverview() {
   const list = [...cards.values()];
   const sets = cardSets(list, new Intl.Collator(locale()));
   const due = list.filter((c) => c.is_due).length;
-  const next = data?.next_due ? sqlDate(data.next_due).toLocaleDateString(locale(), { weekday: "long", day: "numeric", month: "long" }) : null;
+  const next = data?.next_due ? dateText(sqlDate(data.next_due), locale(), { weekday: "long", day: "numeric", month: "long" }) : null;
   const start = due
     ? `<p class="fc-start-n"><b>${t("cards.dueN", { n: due })}</b></p>
        <div class="actions"><button type="button" class="primary" data-start>${icon("play")} ${t("cards.start")}</button></div>`
