@@ -1075,7 +1075,8 @@ function renderConversationList() {
     const li = document.createElement("li");
     li.className = c.id === state.conversationId ? "active" : "";
     li.innerHTML = `<span>${escapeHtml(c.title)}</span><button title="${t("chat.delete")}" aria-label="${t("chat.delete")}">${icon("trash-2")}</button>`;
-    li.querySelector("span").addEventListener("click", () => openConversation(c.id));
+    // Klik kjerkoli v vrstici (ne le na besedilu): dotik ob robu vrstice je prej samo zaprl seznam (j, 17. 11. 2026).
+    li.addEventListener("click", () => openConversation(c.id));
     // Brisanje z enim klikom, brez potrditve (j, 4. 11.): pogovor takoj izgine iz seznama (tudi ob hitrem
     // brisanju več pogovorov), ob napaki se seznam znova naloži.
     li.querySelector("button").addEventListener("click", async (e) => {
