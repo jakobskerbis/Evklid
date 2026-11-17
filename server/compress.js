@@ -156,7 +156,7 @@ export function compressedStatic(mounts, { maxBytes = defaultStaticMax() } = {})
     }
     return n;
   };
-  middleware.stats = () => ({ entries: cache.size, bytes, maxBytes }); // testi in /healthz/stanje
+  middleware.stats = () => ({ entries: cache.size, bytes, maxBytes }); // testi
   return middleware;
 }
 

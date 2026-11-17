@@ -60,7 +60,7 @@ const summaryOf = (lesson) => lesson?.sections?.find((s) => /^povzetek/i.test(s.
 // Kazalo tem za predmet in raven: krni naslova, ciljev in (kjer je lekcija s »Povzetkom«) besedila.
 // Teme brez lekcije so v kazalu tudi, da vprašanje o njih ne dobi sosednje lekcije z eno skupno besedo.
 // Kazalo ima ~1 MB kopice (množice besed vseh lekcij do ravni); hranimo največ INDEX_MAX nazadnje uporabljenih
-// (prej do 200 = do ~200 MB ob 512 MB na Renderju). Izpuščeno se ob naslednjem vprašanju zgradi znova (~10–50 ms).
+// (prej meja 200, v praksi do ~65 MB: 5 predmetov × 13 ravni, ob 512 MB na Renderju). Izpuščeno se ob naslednjem vprašanju zgradi znova (~10–50 ms).
 export const INDEX_MAX = 16;
 const indexes = new Map();
 export const indexCount = () => indexes.size; // testi
