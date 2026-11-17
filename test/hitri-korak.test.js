@@ -25,7 +25,7 @@ const withFlag = async (val, fn) => {
 test("hitri korak: privzeto izklopljen; z zastavico samo Haiku, OŠ/SŠ, način A, brez slike, z rešitvijo reševalnika", async () => {
   const pre = presolve("Reši enačbo 3x + 7 = 22.", { first: true });
   assert.ok(pre);
-  const ok = { mode: "chat", settings: OS, pre };
+  const ok = { mode: "chat", settings: OS, pre, isFirst: true };
   await withFlag(undefined, () => assert.equal(hitriKorak(ok), false, "privzeto izklopljen"));
   await withFlag("0", () => assert.equal(hitriKorak(ok), false));
   await withFlag("1", () => {
@@ -34,6 +34,7 @@ test("hitri korak: privzeto izklopljen; z zastavico samo Haiku, OŠ/SŠ, način 
     assert.equal(hitriKorak({ ...ok, settings: { educational_track: "SREDNJA_SOLA", curriculum_level: "2. letnik" } }), true);
     for (const mode of ["deep", "mid", "think"]) assert.equal(hitriKorak({ ...ok, mode }), false, mode);
     assert.equal(hitriKorak({ ...ok, pre: null }), false, "reševalnik naloge ni rešil");
+    assert.equal(hitriKorak({ ...ok, isFirst: false }), false, "samo prvo sporočilo pogovora");
     assert.equal(hitriKorak({ ...ok, image: true }), false);
     assert.equal(hitriKorak({ ...ok, settings: { ...OS, solving_mode: "B" } }), false);
     assert.equal(hitriKorak({ ...ok, settings: { ...OS, track: "COMPETITION" } }), false);
@@ -88,6 +89,8 @@ test("dogodek »Razmišljam«: enkrat, pred prvim besedilom; časi odgovora se z
         assert.equal(v[0].razmislek_ms, 900);
         assert.equal(v[0].besedilo_ms, 2400);
         assert.equal(v[0].konec_ms, 3100);
+        assert.match(v[0].created_at, /^\d{4}-\d{2}-\d{2}$/, "samo dan, brez ure (ni povezave z vrstico usage)");
+        assert.ok(v[0].id > 1000, "naključen ključ, ne zaporedni");
         assert.ok(v[0].pred_ms >= 0);
         const stolpci = Object.keys(v[0]);
         for (const x of ["student_id", "conversation_id", "text", "parent_id"]) assert.ok(!stolpci.includes(x), x);
@@ -118,12 +121,15 @@ test("z zastavico: lahek prvi korak gre brez razmišljanja in se v časih loči 
   await withFlag("1", () => pogovor(async () => assert.equal(k2[0].noThinking, false), { text: "Zakaj je nebo modro?", streamFn: stream(k2) }));
 });
 
-test("povzetek časov: mediana in p90 po modelu, načinu in razmišljanju", () => {
+test("povzetek časov: mediana in p90 po modelu, načinu in razmišljanju; staro se pobriše", () => {
   const db = openDb(":memory:").db;
+  logCasi(db, { model: "claude-haiku-5-5", nacin: "chat", timing: { thinking: true, firstTextMs: 1 } });
+  db.prepare("UPDATE casi_odgovora SET created_at = date('now', '-91 days')").run();
   for (const [i, ms] of [1000, 2000, 3000, 4000, 10000].entries()) logCasi(db, { model: "claude-haiku-5-5", nacin: "chat", raven: "OS", predMs: 5, timing: { thinking: true, firstThinkMs: 100, firstTextMs: ms, totalMs: ms + 1000 + i } });
   logCasi(db, { model: "claude-haiku-5-5", nacin: "chat", raven: "OS", poskus: "hitri-korak", timing: { thinking: false, firstThinkMs: null, firstTextMs: 800, totalMs: 2000 } });
   const g = casiPovzetek(db);
   assert.equal(g.length, 2);
+  assert.equal(db.prepare("SELECT COUNT(*) n FROM casi_odgovora WHERE created_at < date('now', '-90 days')").get().n, 0, "starejše od 90 dni pobrisano");
   assert.deepEqual(g[0].besedilo, { n: 5, mediana: 3000, p90: 10000 });
   assert.equal(g[1].razmislek, false);
 });

@@ -117,11 +117,21 @@ function togglePop() {
 
 // Sekunde v jeziku aplikacije (1,2 s).
 const sec = (ms) => (ms == null ? "–" : `${(ms / 1000).toLocaleString(locale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })} s`);
+// Vrne true, ko so podatki prikazani; ob napaki (403, brez povezave) sporočilo in gumb za ponovni poskus.
 async function loadSpeed(box) {
+  box.innerHTML = `<p class="muted">${t("common.loading")}</p>`;
   const res = await fetch("/api/usage/casi").catch(() => null);
   const d = res?.ok ? await res.json().catch(() => null) : (res && zavrzi(res), null);
-  const list = d?.skupine || [];
-  if (!list.length) return (box.innerHTML = `<p class="muted">${t("meter.speedNone")}</p>`);
+  if (!d) {
+    box.innerHTML = `<p class="muted">${res ? t("common.error", { status: res.status }) : t("off.noConnection")}</p><button type="button" class="text-btn" data-act="speed-retry">${t("task.retry")}</button>`;
+    box.querySelector('[data-act="speed-retry"]').addEventListener("click", () => loadSpeed(box));
+    return false;
+  }
+  const list = d.skupine || [];
+  if (!list.length) {
+    box.innerHTML = `<p class="muted">${t("meter.speedNone")}</p>`;
+    return true;
+  }
   const esc = D.escapeHtml;
   box.innerHTML = `<p class="muted">${t("meter.speedCols")}</p><ul class="um-speed-list">${list
     .map(
@@ -129,6 +139,7 @@ async function loadSpeed(box) {
         `<li><b>${esc(g.model.replace(/^claude-/, ""))} · ${esc(g.nacin)}${g.razmislek ? "" : ` · ${t("meter.speedNoThink")}`}</b> <span class="muted">(${g.n})</span><br>${sec(g.besedilo.mediana)} / ${sec(g.besedilo.p90)} · ${sec(g.konec.mediana)}</li>`,
     )
     .join("")}</ul>`;
+  return true;
 }
 
 function renderPop() {
@@ -164,7 +175,10 @@ function renderPop() {
   pop.querySelector(".um-close").addEventListener("click", () => (pop.hidden = true));
   // Časi odgovorov inštruktorja (server/casi-odgovora.js): naložijo se šele ob odprtju razdelka.
   const speed = pop.querySelector(".um-speed");
-  speed.addEventListener("toggle", () => speed.open && loadSpeed(speed.querySelector(".um-speed-body")), { once: true });
+  let speedOk = false;
+  speed.addEventListener("toggle", async () => {
+    if (speed.open && !speedOk) speedOk = await loadSpeed(speed.querySelector(".um-speed-body"));
+  });
   pop.querySelector('[data-act="more"]').addEventListener("click", () => {
     pop.hidden = true;
     D.showView("settings");

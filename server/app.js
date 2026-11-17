@@ -1129,7 +1129,7 @@ export function createApp(store, opts = {}) {
       const notes = [pre?.note, codeVerdict].filter(Boolean).join("\n");
       const held = []; // zadržani deli odgovora, dokler sodba ni preverjena
       // Poskus brez razmišljanja za lahek prvi korak (privzeto izklopljen, server/hitri-korak.js).
-      const brezRazmisleka = !cached && hitriKorak({ mode, settings: student.settings, pre, image: !!image, competition: !!tekTopic });
+      const brezRazmisleka = !cached && hitriKorak({ mode, settings: student.settings, pre, image: !!image, competition: !!tekTopic, isFirst });
       let besediloPoslano = false;
       let razmisljamPoslano = false;
       const klicZacetek = Date.now();
@@ -1183,7 +1183,7 @@ export function createApp(store, opts = {}) {
           model: first.model || answerModelOf(mode, deep),
           nacin: mode,
           raven: jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS",
-          poskus: brezRazmisleka ? "hitri-korak" : "",
+          poskus: brezRazmisleka && first.timing.thinking === false ? "hitri-korak" : "", // le če je bil res brez razmišljanja
           predMs: klicZacetek - prispelo,
           timing: first.timing,
         });

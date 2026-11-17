@@ -6,7 +6,8 @@
 // Ne piše v bazo in ne šteje v porabo aplikacije (vidno samo v konzoli Anthropic).
 // Zagon v lupini Renderja (tam je ključ API):
 //   node scripts/meri-hitri-korak.mjs [--meja-usd 3] [--lahke 40] [--tezje 20] [--json pot.json]
-// Ustavi se, preden bi strošek presegel --meja-usd (privzeto 3 $). Ocena: ~0,001 $ na klic (Haiku), 120 klicev ~0,15 $.
+// Ustavi se, preden bi strošek presegel --meja-usd (privzeto 3 $). Ocena: ~0,001 $ na klic (Haiku), 120 klicev ~0,15 $;
+// meja računa z najslabšim primerom klica (NA_KLIC_NAJVEC, ~0,06 $).
 import fs from "node:fs";
 import { buildSystemPrompt } from "../server/prompt.js";
 import { streamReply, isMockMode, costUsd } from "../server/claude.js";
@@ -21,7 +22,10 @@ const arg = (name, d) => {
   return i >= 0 ? process.argv[i + 1] : d;
 };
 const MEJA = Number(arg("--meja-usd", 3));
-const NA_KLIC_NAJVEC = 0.02; // zgornja ocena enega klica (Haiku, ~20 tisoč žetonov poziva, hladen predpomnilnik)
+// Najslabši primer enega klica (prvi krog in 3 krogi orodij, vsak s hladnim zapisom poziva in največ izhoda): s tem
+// računa meja, preden klic odide, in ga prišteje, kadar klic pade (porabe ne poznamo).
+// Izračun da ~0,02 $; meja vzame 0,06 $ (rezerva za daljši poziv ali drugačne cene).
+const NA_KLIC_NAJVEC = Math.max(0.06, 4 * costUsd("claude-haiku-5-5", { input_tokens: 2000, cache_creation_input_tokens: 25000, output_tokens: 5000 }));
 
 // Lahke naloge (OŠ, en ali dva koraka) in težje (SŠ: kvadratne, sistemi, ulomki v enačbi). Vse reši naš reševalnik.
 export const LAHKE = [
@@ -96,6 +100,10 @@ async function klic({ system, text, pre, brez }) {
 }
 
 async function main() {
+  if (!(MEJA > 0)) {
+    console.error("--meja-usd mora biti pozitivno število.");
+    process.exit(1);
+  }
   if (isMockMode()) {
     console.error("Ni ključa API (preizkusni način): zaženi v lupini Renderja (ANTHROPIC_API_KEY).");
     process.exit(1);
@@ -127,6 +135,7 @@ async function main() {
         rez.push({ vrsta, text, brez, ...r });
         process.stderr.write(`${rez.length} ${vrsta} ${brez ? "brez" : "z    "} ${r.besediloMs} ms / ${r.konecMs} ms ${r.usd.toFixed(4)} $ (skupaj ${porabljeno.toFixed(3)} $)\n`);
       } catch (e) {
+        porabljeno += NA_KLIC_NAJVEC; // previdno: klic je morda že plačan
         console.warn(`napaka: ${text}: ${e?.message || e}`);
       }
     }

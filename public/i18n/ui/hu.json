@@ -1459,7 +1459,7 @@
   "meter.claimed": "A számláló a telefonon is látható lesz.",
   "meter.claimFail": "Ezt nem sikerült beállítani.",
   "meter.more": "Részletek a Beállításokban",
-  "meter.speed": "Válaszsebesség (az utolsó 7 nap)",
+  "meter.speed": "Válaszsebesség (az elmúlt 7 nap)",
   "meter.speedCols": "Első szöveg: medián / p90 · vége: medián",
   "meter.speedNone": "Még nincs mérés.",
   "meter.speedNoThink": "gondolkodás nélkül",
