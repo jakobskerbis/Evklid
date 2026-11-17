@@ -141,7 +141,8 @@ function open(sel, btn) {
     }
   } else setActive(state, Math.max(0, items.findIndex((el) => Number(el.dataset.i) === current)), true);
   if (state.search) {
-    const fold = (x) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    // Brez naglasov in presledkov: »4.letni« najde »4. letnik VR« (j 16. 11., pregled posnetkov).
+    const fold = (x) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "").toLowerCase();
     state.search.addEventListener("input", () => {
       const q = fold(state.search.value.trim());
       let first = -1;

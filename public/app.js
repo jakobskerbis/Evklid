@@ -30,6 +30,7 @@ import { createIzrisBlokov, enIzrisNaSlicico } from "./izpis-toka.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
 import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
+import { starterKeys } from "./zacetna-vprasanja.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
@@ -845,8 +846,10 @@ document.addEventListener("click", (e) => {
 document.querySelectorAll("#view-me [data-go], #settings-account [data-go]").forEach((b) =>
   b.addEventListener("click", () => (b.dataset.go === "account" ? $("#account-tab").click() : showView(b.dataset.go))),
 );
-// Klik na kartico s profilom: Nastavitve, na mestu šole in letnika (pod njimi je povezava na Račun).
-$("#me-head")?.addEventListener("click", () => {
+// Klik na kartico s profilom (in »Druga šola ali stopnja …« v glavi Inštruktorja): Nastavitve, na mestu šole in
+// letnika (pod njimi je povezava na Račun). Tam veljajo vsa pravila izbire (stopnja, program, šolski sistem).
+$("#me-head")?.addEventListener("click", () => openSchoolSettings());
+function openSchoolSettings() {
   showView("settings");
   const el = $("#settings-form .level-field") || $("#settings-form");
   requestAnimationFrame(() => {
@@ -856,7 +859,7 @@ $("#me-head")?.addEventListener("click", () => {
     void card?.offsetWidth;
     card?.classList.add("flash-target");
   });
-});
+}
 
 // ---------- učenci ----------
 
@@ -1105,26 +1108,35 @@ function renderConversationList() {
 function renderEmptyChat() {
   state.chatFx = null; // nov pogovor (tudi po brisanju odprtega ali menjavi profila): predmet iz nastavitev
   $("#chat-title").textContent = t("chat.new");
-  const ideas = [t("chat.idea1"), t("chat.idea2"), t("chat.idea3")];
   // .empty-hall: okvir pozdrava (ui.css → »Klepet obdobja«: s chat.frame »stebri« pročelje templa iz
   // ERAS[…].arch.temple, templeParts doda dele in jih ob menjavi sloga zamenja; »pilon« iz ERAS[…].building enako).
   $("#messages").innerHTML = `<div class="empty"><div class="empty-hall">
     <div class="tutor-avatar big" aria-hidden="true">${icon("sparkles")}</div>
     <p class="big">${t("chat.hello", { name: escapeHtml(state.student.name) })}</p>
     <p>${t("chat.intro")}</p>
-    <div class="ideas">${ideas.map((t) => `<button type="button" class="idea" data-idea="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join("")}</div></div>
+    <div class="ideas"></div></div>
     ${greekFactHtml("gr-chat")}</div>`;
   templeParts();
   wireGreekFacts($("#messages"));
+  renderIdeas();
+  renderState(null);
+}
+
+// Začetna vprašanja praznega pogovora (public/zacetna-vprasanja.js): po predmetu v glavi, razredu ali letniku
+// in ravni; ob menjavi predmeta ali letnika v glavi se zamenjajo (studentUpdated).
+function renderIdeas() {
+  const box = $("#messages .empty .ideas");
+  if (!box || !state.student) return;
+  const ideas = starterKeys(state.student.settings, state.student.settings.subject).map((k) => t(k));
+  box.innerHTML = ideas.map((x) => `<button type="button" class="idea" data-idea="${escapeHtml(x)}">${escapeHtml(x)}</button>`).join("");
   // Predlog se pošlje takoj in inštruktor nanj odgovori (j, 3. 11.): ni ga treba še enkrat poslati.
   // Če je učenec že kaj napisal ali dodal fotografijo, predlog gre v polje (da se nič ne izgubi).
-  $("#messages").querySelectorAll("[data-idea]").forEach((b) =>
+  box.querySelectorAll("[data-idea]").forEach((b) =>
     b.addEventListener("click", () => {
       if (!$("#input").value.trim() && !state.image) return send(b.dataset.idea);
       fillInput(b.dataset.idea);
     }),
   );
-  renderState(null);
 }
 
 function templeParts() {
@@ -1155,10 +1167,9 @@ function renderState(convState) {
     SUBJECT_NAMES[subject] && pick("subject", t("set.subject"), opt(subject, SUBJECT_NAMES[subject], true)),
     MODE_NAMES[mode] && pick("mode", t("set.mode"), Object.entries(MODE_NAMES).map(([k, v]) => opt(k, v, k === mode)).join("")),
     program && `<span class="chip">${escapeHtml(program)}</span>`,
-    levelLabel(s.curriculum_level) &&
-      (levels.length > 1
-        ? pick("level", t("set.school"), levels.map((x, i) => opt(i, x.label, x.current)).join(""))
-        : `<span class="chip">${escapeHtml(levelLabel(s.curriculum_level))}</span>`),
+    // Letnik (in raven matematike) iste šole; zadnja izbira »Druga šola ali stopnja …« odpre Jaz → Šola in letnik
+    // (j 16. 11.: iz glave se mora dati priti tudi do druge stopnje, npr. iz OŠ v SŠ ali na fakulteto).
+    levelLabel(s.curriculum_level) && pick("level", t("set.school"), levelOptions(levels, opt) + opt("other", t("chat.levelOther"), false)),
   ]
     .filter(Boolean)
     .join("");
@@ -1175,6 +1186,17 @@ function renderState(convState) {
   }
 }
 
+// Možnosti letnika v glavi: skupine po ravni matematike (SŠ), sicer seznam; brez izbire iste šole samo sedanji napis.
+function levelOptions(levels, opt) {
+  const s = state.student.settings;
+  if (!levels.length) return opt("", levelLabel(s.curriculum_level), true);
+  const groups = [...new Set(levels.map((x) => x.group || ""))];
+  if (groups.length < 2) return levels.map((x, i) => opt(i, x.label, x.current)).join("");
+  return groups
+    .map((g) => `<optgroup label="${escapeHtml(g)}">${levels.map((x, i) => (x.group === g ? opt(i, x.label, x.current) : "")).join("")}</optgroup>`)
+    .join("");
+}
+
 async function wireStatePicks(head, subject, levels) {
   const save = async (settings, what, label) => {
     const updated = await api(`/api/students/${state.student.id}`, { method: "PUT", body: { settings } });
@@ -1185,6 +1207,8 @@ async function wireStatePicks(head, subject, levels) {
     save({ solving_mode: e.target.value }, t("set.mode"), MODE_NAMES[e.target.value]).catch(() => renderState(null)),
   );
   head.querySelector('[data-pick="level"]')?.addEventListener("change", (e) => {
+    if (e.target.value === "other") return renderState(null), openSchoolSettings(); // izbira v glavi ostane sedanja
+    if (!levels[Number(e.target.value)]) return;
     const next = { ...levels[Number(e.target.value)].settings };
     // Predmet, ki ga novi razred nima (npr. fizika v 7. razredu), zamenja prvi predmet razreda.
     if (!jeFaks(next)) {
@@ -1754,6 +1778,20 @@ async function readSse(res, handlers) {
 }
 
 const input = $("#input");
+// Napis v polju (j 16. 11., pregled posnetkov: »Napiši nalogo ali ...« odrezan pri 360 px): cel napis, kadar gre v
+// polje, sicer kratek (chat.placeholderShort). Oznaka za bralnik zaslona ostane cela.
+const phCanvas = document.createElement("canvas").getContext("2d");
+function fitPlaceholder() {
+  const cs = getComputedStyle(input);
+  const room = input.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  if (room <= 0) return;
+  phCanvas.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const full = t("chat.placeholder");
+  const ph = phCanvas.measureText(full).width <= room ? full : t("chat.placeholderShort");
+  if (input.placeholder !== ph) input.placeholder = ph;
+}
+new ResizeObserver(fitPlaceholder).observe(input);
+document.fonts?.ready.then(fitPlaceholder);
 // Polje raste z besedilom do 40 % vidne višine (tudi z odprto tipkovnico), nato drsi; nobena vrstica ni odrezana.
 // Če besedilo ne gre več v polje, se samodejno pokaže v večjem oknu (public/razpri.js). Zadnja sporočila
 // ostanejo vidna nad poljem.
@@ -2312,6 +2350,7 @@ function studentUpdated(updated) {
   leaveHiddenGames();
   refreshProfileButton();
   renderState(null);
+  if (before.subject !== updated.settings.subject || levelChanged(before, updated.settings)) renderIdeas();
   if (before.goal !== updated.settings.goal || before.games !== updated.settings.games) renderGoal(); // bližnjici po cilju na Učni poti
   if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
     state.pathKey = null;
@@ -2583,10 +2622,9 @@ function addMsgFoot(el, { id, code, reported }) {
   if (el.classList.contains("error") || el.querySelector(".msg-foot")) return;
   const foot = document.createElement("div");
   foot.className = "msg-foot";
-  const tag = document.createElement("span");
-  tag.className = "msg-code";
-  tag.textContent = code || "";
-  tag.title = t("rep.code");
+  // Koda sporočila (#00YA, server/reports.js: z njo skrbnik najde sporočilo s posnetka zaslona) je samo v obrazcu
+  // prijave, z napisom »Koda sporočila«; pod vsakim odgovorom je bila videti kot notranja številka (j 16. 11.).
+  if (code) foot.dataset.code = code;
   const done = () => {
     foot.querySelector(".msg-report")?.remove();
     const s = document.createElement("span");
@@ -2595,7 +2633,6 @@ function addMsgFoot(el, { id, code, reported }) {
     s.lastChild.textContent = t("rep.done");
     foot.append(s);
   };
-  foot.append(tag);
   if (reported) done();
   else {
     const b = document.createElement("button");
@@ -2618,8 +2655,10 @@ function openReport(el, foot, btn, id, done) {
   box.setAttribute("role", "group");
   box.innerHTML = `<p></p><div class="rep-reasons"></div><textarea maxlength="500" rows="2"></textarea>
     <p class="rep-err" role="alert" hidden></p>
-    <div class="rep-actions"><button type="button" class="primary small rep-send"></button><button type="button" class="ghost rep-cancel"></button></div>`;
+    <div class="rep-actions"><button type="button" class="primary small rep-send"></button><button type="button" class="ghost rep-cancel"></button></div>
+    <p class="msg-code muted" hidden></p>`;
   box.querySelector("p").textContent = t("rep.ask");
+  if (foot.dataset.code) Object.assign(box.querySelector(".msg-code"), { hidden: false, textContent: `${t("rep.code")}: ${foot.dataset.code}` });
   box.setAttribute("aria-label", t("rep.ask"));
   const area = box.querySelector("textarea");
   area.placeholder = t("rep.notePh");
@@ -4911,7 +4950,10 @@ async function plotFromText(text) {
 async function addGraphButton(bubble, text) {
   if (!mayPlot(text) || bubble.querySelector(".graph-btn")) return;
   const exprs = await plotFromText(text);
-  if (!exprs.length) return;
+  const { worthGraph } = await import("./graph/math.js");
+  // Samo, kjer ima graf smisel (j 16. 11., pregled posnetkov): zveza z y ali funkcija f(x) = …, ne rešitev
+  // »x = 4« ali neenačba z eno spremenljivko pod računom, kot je x + 1 = 5.
+  if (!exprs.some(worthGraph) || !bubble.isConnected || bubble.querySelector(".graph-btn")) return;
   const b = document.createElement("button");
   b.type = "button";
   b.className = "secondary small graph-btn";
@@ -4920,8 +4962,13 @@ async function addGraphButton(bubble, text) {
     e.stopPropagation();
     openGraphOverlay(exprs, t("nav.chat"));
   });
+  // Gumb pride po izpisu (uvoz modula): če je bil učenec na dnu, ga pokažemo nad poljem za pisanje (360 px).
+  const box = bubble.closest("#messages");
+  const atBottom = box && box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   bubble.append(b);
+  if (atBottom && !bubble.nextElementSibling) box.scrollTop = box.scrollHeight;
 }
+
 
 // Za samodejne preizkuse v brskalniku.
 window.evklid = { openTopic, showView, openLesson, openGraphOverlay, openCalcOverlay, openZbirke, openWindow, closeWindow, openFromTutor };

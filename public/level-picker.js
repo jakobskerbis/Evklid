@@ -197,8 +197,9 @@ export function levelLabel(level) {
 }
 
 /**
- * Razredi ali letniki iste šole za hitro menjavo (glava Inštruktorja): [{ settings, label, current }].
- * Ostane ista vrsta šole, program in raven matematike (SŠ); regijski sistem: razredi iste stopnje.
+ * Razredi ali letniki iste šole za hitro menjavo (glava Inštruktorja): [{ settings, label, current, group? }].
+ * Ostane ista vrsta šole in program; SŠ z ravnjo matematike: letniki obeh ravni (group = ime ravni);
+ * regijski sistem: razredi iste stopnje. Drugo šolo ali stopnjo izbere »Druga šola ali stopnja …« (app.js).
  */
 export function levelChoices(s = {}) {
   const level = String(s.curriculum_level || "");
@@ -212,6 +213,10 @@ export function levelChoices(s = {}) {
   if (jeOs(s)) return OS_GRADES.map(make);
   if (jeSs(s)) {
     const rest = level.replace(/^\d+\. letnik/, ""); // » OR« / » VR«
+    // Raven matematike (j 16. 11., pregled posnetkov): v glavi tudi druga raven, ne le letniki sedanje.
+    // Skupina (group) je ime ravni; brez ravni (npr. »2. letnik gimnazija«) ostanejo letniki kot prej.
+    const raven = / (OR|VR)$/.exec(rest)?.[1];
+    if (raven) return SS_LEVELS.flatMap(([id, name]) => SS_YEARS.map((y) => ({ ...make(`${y} ${id}`), group: name })));
     return SS_YEARS.map((y) => make(y + rest));
   }
   if (jeFaks(s)) return UNI_YEARS.map(make);
