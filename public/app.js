@@ -4788,20 +4788,31 @@ async function setCalcMode(mode) {
   return tool;
 }
 function prefetchNext() {
-  if (!backgroundLoadOk(navigator.connection) || document.documentElement.classList.contains("lite") || !state.student) return;
+  if (navigator.connection?.saveData || document.documentElement.classList.contains("lite") || !state.student) return;
+  // Lahki koraki (pregledovalnik prenesene pole, uvodni ogled) na vsaki povezavi, da delujejo tudi brez povezave;
+  // težki (kalkulator, grafi, 3D, three.js) le na hitri povezavi brez omejitve podatkov (backgroundLoadOk, j 17. 11. 2026).
+  const heavy = backgroundLoadOk(navigator.connection);
   const steps = [
-    () => calcTool(calcMode === "formulas" ? "sci" : calcMode),
-    () => import("./graph/sci.js"),
-    () => import("./graph/tools.js"),
-    () => import("./graph/calc.js"),
-    () => import("./3d/modeli.js"),
+    ...(heavy
+      ? [
+          () => calcTool(calcMode === "formulas" ? "sci" : calcMode),
+          () => import("./graph/sci.js"),
+          () => import("./graph/tools.js"),
+          () => import("./graph/calc.js"),
+          () => import("./3d/modeli.js"),
+        ]
+      : []),
     () => loadPaperViewer(), // pregledovalnik prenesene pole (in paper-tasks.js): odpre se tudi brez povezave
     // 3D pregledovalnik (stran /3d v okvirju) in three.js: samo v predpomnilnik service workerja, brez izvajanja,
     // da se prvi model odpre brez čakanja na omrežje.
     () =>
       navigator.serviceWorker?.controller?.postMessage({
         type: "precache",
-        urls: ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js", "/uvodni-ogled.js", ...(usageAdmin ? ["/poraba-skrbnik.js"] : [])],
+        urls: [
+          ...(heavy ? ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"] : []),
+          "/uvodni-ogled.js",
+          ...(usageAdmin ? ["/poraba-skrbnik.js"] : []),
+        ],
       }),
   ];
   const next = () => {

@@ -104,15 +104,20 @@ export function initGames(c) {
 }
 // Lahek zagon (j 17. 11. 2026): generatorji nalog se naložijo le za učenčev predmet in predmet, ki ga portal
 // pokaže (shranjena izbira, sicer matematika); ob nalaganju iger v ozadju (public/app.js) in ob menjavi predmeta
-// v profilu. Tako so igre tega predmeta v predpomnilniku service workerja in delujejo tudi brez povezave.
+// v profilu. Tako so igre tega predmeta v predpomnilniku service workerja in delujejo tudi brez povezave. Na mobilnih
+// podatkih ali počasni povezavi se igre v ozadju ne prenesejo (games/stage.js backgroundLoadOk): tam delujejo brez
+// povezave šele, ko je učenec po zadnji objavi vsaj enkrat odprl Igre s povezavo.
 // Igra drugega predmeta naloži svoj paket šele ob izbiri predmeta ali odprtju igre (openGame).
 export const currentSubjects = () => [ctx?.getStudent()?.settings?.subject, filter.subject].filter((x) => SUBJECTS.includes(x));
 export const prepareSubjects = () => loadSubjects(currentSubjects()).catch(() => {});
 export const allGamesCount = () => ENGINES.reduce((n, e) => n + (e.fits ? CONCEPTS.filter((c) => e.fits(c)).length : CONCEPTS.length), 0);
 
+// Predmeti, za katere je portal v tem odprtju Iger že začel prenos paketov (največ enkrat na predmet).
+const portalTried = new Set();
 export async function showGames() {
   root = document.querySelector("#games-content");
   if (!root || !ctx) return;
+  portalTried.clear();
   setNumberStyle(ctx.currentLang());
   await loadConceptNames(ctx.currentLang());
   applyStageLook();
@@ -283,7 +288,11 @@ function renderPortal() {
   const hidden = !subjects.includes(filter.subject);
   const subj = hidden ? (subjects.includes("MAT") ? "MAT" : subjects[0]) : filter.subject;
   const fArea = hidden && !["you", "all"].includes(filter.area) ? "you" : filter.area;
-  if (!subjectsReady([subj])) loadSubjects([subj]).catch(() => {}); // igre prikazanega predmeta pripravimo že zdaj
+  // Igre prikazanega predmeta pripravimo že zdaj; brez povezave ne (in največ enkrat na predmet v tem odprtju Iger).
+  if (!subjectsReady([subj]) && navigator.onLine !== false && !portalTried.has(subj)) {
+    portalTried.add(subj);
+    loadSubjects([subj]).catch(() => {});
+  }
   // Iskanje gre čez vse predmete, sicer le izbrani predmet.
   // »Zate« brez iger za ta predmet (npr. fakultetni predmet v OŠ) → vsa področja predmeta.
   const anyForYou = CONCEPTS.some((c) => c.subject === subj && forYou(c));
@@ -960,6 +969,7 @@ function closeGame() {
 
 // Ob odhodu iz pogleda igro ustavimo.
 export function leaveGames() {
+  root?.querySelector(".gm-wait")?.remove(); // čakanje na paket ne odpre igre v skritem pogledu (waitForPack)
   if (game) {
     game.destroy();
     game = null;

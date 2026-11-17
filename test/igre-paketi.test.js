@@ -69,12 +69,22 @@ test("app.js: igre in orodja v ozadju preverijo povezavo, igre pripravijo učen�
   const src = fs.readFileSync(path.join(PUB, "app.js"), "utf8");
   const games = src.slice(src.indexOf("// Igre v ozadju"), src.indexOf("// Takojšnje odpiranje (j 6. 11. 2026)"));
   assert.match(games, /!backgroundLoadOk\(navigator\.connection\)\) return;\s*loadGames\(\)/);
-  const next = src.slice(src.indexOf("function prefetchNext()"), src.indexOf("const steps", src.indexOf("function prefetchNext()")));
-  assert.match(next, /!backgroundLoadOk\(navigator\.connection\)/);
+  // prefetchNext: težki koraki le ob backgroundLoadOk; pregledovalnik pole in uvodni ogled na vsaki povezavi (razen
+  // varčevanja s podatki in lahkega načina), ker delujeta tudi brez povezave (pregled 2 #816, točka 1)
+  const start = src.indexOf("function prefetchNext()");
+  const next = src.slice(start, src.indexOf("\n}\n", start));
+  assert.match(next, /if \(navigator\.connection\?\.saveData \|\| document\.documentElement\.classList\.contains\("lite"\) \|\| !state\.student\) return;/);
+  assert.match(next, /const heavy = backgroundLoadOk\(navigator\.connection\);/);
+  const light = next.slice(next.indexOf(": []),"));
+  assert.match(next.slice(0, next.indexOf(": []),")), /heavy\s*\?\s*\[\s*\(\) => calcTool[\s\S]*3d\/modeli\.js/);
+  assert.match(light, /loadPaperViewer\(\)/);
+  assert.match(light, /heavy \? \["\/3d\/stran\.js"[^\]]*three\.module\.js[^\]]*\] : \[\]\),\s*"\/uvodni-ogled\.js"/);
   assert.match(src, /m\.prepareSubjects\?\.\(\)/, "po nalaganju iger: paket učenčevega predmeta");
   assert.match(src, /function leaveHiddenGames\(\) \{[^}]*gamesMod\?\.prepareSubjects\?\.\(\)/, "menjava predmeta ali profila");
   const idx = fs.readFileSync(path.join(PUB, "games/index.js"), "utf8");
   assert.match(idx, /if \(!conceptReady\(cid\)\) return waitForPack\(id, concept\);/, "igra drugega predmeta počaka na svoj paket");
+  assert.match(idx, /export function leaveGames\(\) \{\s*root\?\.querySelector\("\.gm-wait"\)\?\.remove\(\);/, "odhod iz Iger prekliče čakanje na paket");
+  assert.match(idx, /!subjectsReady\(\[subj\]\) && navigator\.onLine !== false && !portalTried\.has\(subj\)/, "portal brez povezave ne prenaša paketov");
 });
 
 // ---------- v brskalniku ----------
