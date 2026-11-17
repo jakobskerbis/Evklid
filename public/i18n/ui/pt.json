@@ -2492,6 +2492,7 @@
   "dl.title": "App para telemóvel e tablet",
   "dl.intro": "O Evklid está disponível como app para Android. No iPhone e no iPad, adicionas o Evklid ao ecrã principal a partir do Safari. Inicias sessão com a mesma conta que na web e o teu progresso mantém-se.",
   "dl.introApps": "O Evklid está disponível como app para Android e iPhone. Inicias sessão com a mesma conta que na web e o teu progresso mantém-se.",
+  "dl.introWeb": "A app para telemóvel estará disponível em breve. Até lá, abre o Evklid no navegador e adiciona-o ao ecrã principal (no iPhone, no Safari). O teu progresso é o mesmo em todos os dispositivos.",
   "dl.android": "Android",
   "dl.play": "Disponível no Google Play",
   "dl.apk": "Transferir para Android (APK)",

@@ -2485,6 +2485,7 @@ export default {
   "dl.title": "Aplikacija za telefon in tablico",
   "dl.intro": "Evklid je na voljo kot aplikacija za Android. Na iPhonu in iPadu ga v Safariju dodaš na začetni zaslon. Prijaviš se z istim računom kot na spletu, napredek ostane isti.",
   "dl.introApps": "Evklid je na voljo kot aplikacija za Android in iPhone. Prijaviš se z istim računom kot na spletu, napredek ostane isti.",
+  "dl.introWeb": "Aplikacija za telefon bo kmalu na voljo. Do takrat Evklid odpreš v brskalniku in ga dodaš na začetni zaslon (na iPhonu v Safariju). Napredek je isti na vseh napravah.",
   "dl.android": "Android",
   "dl.play": "Na voljo v trgovini Google Play",
   "dl.apk": "Prenesi za Android (APK)",

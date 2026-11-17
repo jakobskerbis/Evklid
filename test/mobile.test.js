@@ -460,20 +460,34 @@ test("push tokens: only Expo tokens, tied to the account", async () => {
   });
 });
 
-test("download page: without an iPhone app it does not promise one, in every language (dl.intro)", async () => {
+test("download page: promises only apps that exist, in every language (dl.intro, dl.introWeb)", async () => {
+  // Brez APK in Google Play: ne obljublja nobene aplikacije (dl.introWeb).
   await withServer(async ({ base }) => {
     const en = await (await fetch(`${base}/prenesi?lang=en`)).text();
-    assert.doesNotMatch(en, /Android and iPhone/);
-    assert.match(en, /app for Android\. On iPhone and iPad, add it to your Home Screen/);
+    assert.doesNotMatch(en, /available as an app for Android/);
+    assert.match(en, /The phone app is coming soon\./);
     const sl = await (await fetch(`${base}/prenesi?lang=sl`)).text();
-    assert.match(sl, /aplikacija za Android\. Na iPhonu in iPadu ga v Safariju dodaš na začetni zaslon/);
+    assert.match(sl, /Aplikacija za telefon bo kmalu na voljo\./);
   });
-  // Vsi jeziki: uvod brez aplikacije za iPhone omeni Safari (Dodaj na začetni zaslon), ime ostane Evklid.
+  // APK za Android, za iPhone ni aplikacije: Android + »Dodaj na začetni zaslon« (dl.intro).
+  await withServer(
+    async ({ base }) => {
+      const en = await (await fetch(`${base}/prenesi?lang=en`)).text();
+      assert.doesNotMatch(en, /Android and iPhone/);
+      assert.match(en, /app for Android\. On iPhone and iPad, add it to your Home Screen/);
+      const sl = await (await fetch(`${base}/prenesi?lang=sl`)).text();
+      assert.match(sl, /aplikacija za Android\. Na iPhonu in iPadu ga v Safariju dodaš na začetni zaslon/);
+    },
+    { apkFile: fileURLToPath(new URL("./fixtures/apple-chain.json", import.meta.url)) },
+  );
+  // Vsi jeziki: uvoda brez aplikacije za iPhone omenita Safari, ime ostane Evklid.
   const dir = new URL("../public/i18n/ui/", import.meta.url);
   for (const f of fs.readdirSync(dir)) {
     const d = JSON.parse(fs.readFileSync(new URL(f, dir), "utf8"));
-    assert.match(d["dl.intro"], /Safari/, f);
-    assert.match(d["dl.intro"], /Evklid/, f);
+    for (const k of ["dl.intro", "dl.introWeb"]) {
+      assert.match(d[k], /Safari/, `${f} ${k}`);
+      assert.match(d[k], /Evklid/, `${f} ${k}`);
+    }
     assert.notEqual(d["dl.intro"], d["dl.introApps"], f);
   }
 });

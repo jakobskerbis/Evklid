@@ -206,9 +206,9 @@ test("PR 786: star paket z enoto brez hasUnit se osveži; brez povezave naloga p
   else delete globalThis.navigator;
 });
 
-// Pregled celotne aplikacije (17. 11. 2026): strežnik je danes že izdal največ paketov (429) → do jutri brez
+// Pregled celotne aplikacije (17. 11. 2026): strežnik je že izdal največ paketov (429) → 6 ur brez
 // novih zahtev ob vsakem zagonu (prej je vsak zagon dobil 429 v konzoli); oznaka je osebni podatek profila.
-test("paket vaj: po 429 do jutri ne vpraša znova; clearProfile pobriše oznako", async () => {
+test("paket vaj: po 429 6 ur ne vpraša znova; clearProfile pobriše oznako", async () => {
   ls.clear();
   const nav = Object.getOwnPropertyDescriptor(globalThis, "navigator");
   Object.defineProperty(globalThis, "navigator", { configurable: true, get: () => ({ onLine: true }) });
@@ -219,7 +219,11 @@ test("paket vaj: po 429 do jutri ne vpraša znova; clearProfile pobriše oznako"
   };
   assert.equal(await off.refreshPack(limited, 4, "MAT-OS-8"), null);
   assert.equal(await off.refreshPack(limited, 4, "MAT-OS-8"), null);
-  assert.equal(calls, 1, "drugi zagon istega dne ne vpraša znova");
+  assert.equal(calls, 1, "drugi zagon v 6 urah ne vpraša znova");
+  // Po 6 urah (strežnik šteje drseče okno 24 ur) spet poskusi.
+  ls.setItem("evklid.offline.limit.4", JSON.stringify(Date.now() - 6 * 3600e3 - 1000));
+  await off.refreshPack(limited, 4, "MAT-OS-8");
+  assert.equal(calls, 2, "po 6 urah spet vpraša");
   // Druga napaka (npr. brez povezave) ne ustavi naslednjega poskusa.
   ls.clear();
   const down = async () => {
@@ -228,8 +232,8 @@ test("paket vaj: po 429 do jutri ne vpraša znova; clearProfile pobriše oznako"
   };
   await off.refreshPack(down, 4, "MAT-OS-8");
   await off.refreshPack(down, 4, "MAT-OS-8");
-  assert.equal(calls, 3);
-  ls.setItem("evklid.offline.limit.4", JSON.stringify(new Date().toDateString()));
+  assert.equal(calls, 4);
+  ls.setItem("evklid.offline.limit.4", JSON.stringify(Date.now()));
   off.clearProfile(4);
   assert.equal(ls.getItem("evklid.offline.limit.4"), null);
   if (nav) Object.defineProperty(globalThis, "navigator", nav);

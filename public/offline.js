@@ -20,7 +20,9 @@ function hintSteps(t) {
 
 const PACK = (sid) => `evklid.offline.pack.${sid}`;
 const QUEUE = (sid) => `evklid.offline.queue.${sid}`;
-const LIMIT = (sid) => `evklid.offline.limit.${sid}`; // strežnik je danes že izdal največ paketov (429): do jutri ne sprašujemo
+// Strežnik je v zadnjih 24 urah že izdal največ paketov (429, drseče okno): 6 ur ne sprašujemo znova.
+const LIMIT = (sid) => `evklid.offline.limit.${sid}`;
+const LIMIT_MS = 6 * 3600e3;
 const DAY = 86400000;
 
 const read = (key, fallback) => {
@@ -68,15 +70,15 @@ export async function refreshPack(api, sid, pathKey, { force = false } = {}) {
   const old = getPack(sid);
   // Paket iz različice pred PR 786 (enota brez hasUnit) je zastarel tudi, če je mlajši od dneva.
   if (!force && old && old.path === pathKey && Date.now() - Date.parse(old.created) < DAY && !isStalePack(old)) return old;
-  const today = new Date().toDateString();
-  if (read(LIMIT(sid), null) === today) return old;
+  const limitAt = Number(read(LIMIT(sid), 0)) || 0;
+  if (limitAt && Date.now() - limitAt < LIMIT_MS && Date.now() >= limitAt) return old;
   try {
     const pack = await api(`/api/students/${sid}/offline-pack?path=${encodeURIComponent(pathKey)}`);
     // Če ni prostora (zasebno okno, poln pomnilnik), paket preprosto ni na voljo.
     if (!write(PACK(sid), pack)) return old;
     return pack;
   } catch (err) {
-    if (err?.status === 429) write(LIMIT(sid), today);
+    if (err?.status === 429) write(LIMIT(sid), Date.now());
     return old;
   }
 }

@@ -2491,6 +2491,7 @@
   "dl.title": "Alkalmazás telefonra és táblagépre",
   "dl.intro": "Az Evklid alkalmazásként érhető el Androidra. iPhone-on és iPaden a Safariban adhatod hozzá a főképernyőhöz. Ugyanazzal a fiókkal jelentkezel be, mint a weben, és a haladásod is ugyanaz marad.",
   "dl.introApps": "Az Evklid alkalmazásként is elérhető Androidra és iPhone-ra. Ugyanazzal a fiókkal jelentkezel be, mint a weben, és a haladásod is ugyanaz marad.",
+  "dl.introWeb": "A telefonos alkalmazás hamarosan elérhető. Addig böngészőben nyisd meg az Evklidet, és add hozzá a főképernyőhöz (iPhone-on a Safariban). A haladásod minden eszközön ugyanaz.",
   "dl.android": "Android",
   "dl.play": "Letöltés a Google Playről",
   "dl.apk": "Letöltés Androidra (APK)",

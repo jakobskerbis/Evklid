@@ -164,11 +164,14 @@ const serverError = (err, status) => {
 let apiSeq = 0;
 const apiOpen = new Set();
 // Isti GET, ki je že v teku (ob zagonu ga zahteva več delov strani hkrati: Učna pot, predlogi v klepetu, urnik …),
-// gre na strežnik enkrat; drugi klic dobi kopijo odgovora (vsak lahko svojega spreminja).
+// gre na strežnik enkrat; vsak klic (tudi prvi) dobi svojo kopijo odgovora, da ga lahko spreminja.
+// Zahteva, ki kaj spremeni (ne GET), pozabi GET v teku: naslednji GET prebere novo stanje.
 const apiInFlight = new Map();
+const kopija = (v) => (v && typeof v === "object" ? structuredClone(v) : v);
 const api = (url, opts = {}) => {
   const get = !opts.method && !opts.body && !opts.headers && !opts.signal;
-  if (get && apiInFlight.has(url)) return apiInFlight.get(url).then((v) => structuredClone(v));
+  if (!get) apiInFlight.clear();
+  if (get && apiInFlight.has(url)) return apiInFlight.get(url).then(kopija);
   const p = (async () => {
     const id = ++apiSeq;
     apiOpen.add(id);
@@ -178,14 +181,11 @@ const api = (url, opts = {}) => {
       apiOpen.delete(id);
     }
   })();
-  if (get) {
-    apiInFlight.set(url, p);
-    p.then(
-      () => apiInFlight.delete(url),
-      () => apiInFlight.delete(url),
-    );
-  }
-  return p;
+  if (!get) return p;
+  apiInFlight.set(url, p);
+  const pobrisi = () => apiInFlight.get(url) === p && apiInFlight.delete(url);
+  p.then(pobrisi, pobrisi);
+  return p.then(kopija);
 };
 const apiCall = async (url, opts = {}) => {
   // Klic, ki ga je zagon že začel v <head> (public/zacetek.js): enkrat, samo uspešen odgovor; sicer običajna pot.
@@ -5012,12 +5012,12 @@ function prefetchNext() {
     () => import("./graph/tools.js"),
     () => import("./graph/calc.js"),
     () => import("./3d/modeli.js"),
-    // 3D pregledovalnik (stran /3d v okvirju) in three.js: samo v predpomnilnik service workerja, brez izvajanja,
-    // da se prvi model odpre brez čakanja na omrežje.
+    // Pregledovalnik prenesene pole, 3D pregledovalnik (stran /3d v okvirju) in three.js: samo v predpomnilnik
+    // service workerja, brez izvajanja, da se pola ali prvi model odpre brez čakanja na omrežje.
     () =>
       navigator.serviceWorker?.controller?.postMessage({
         type: "precache",
-        urls: ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"],
+        urls: ["/paper-viewer.js", "/paper-tasks.js", "/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"],
       }),
   ];
   const next = () => {

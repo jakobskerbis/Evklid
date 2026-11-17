@@ -2492,6 +2492,7 @@
   "dl.title": "Appli pour téléphone et tablette",
   "dl.intro": "Evklid existe en appli pour Android. Sur iPhone et iPad, tu l’ajoutes à l’écran d’accueil depuis Safari. Tu te connectes avec le même compte que sur le web, et ta progression reste la même.",
   "dl.introApps": "Evklid existe en appli pour Android et iPhone. Tu te connectes avec le même compte que sur le web, et ta progression reste la même.",
+  "dl.introWeb": "L’appli pour téléphone arrive bientôt. En attendant, ouvre Evklid dans ton navigateur et ajoute-le à l’écran d’accueil (sur iPhone, dans Safari). Ta progression est la même sur tous tes appareils.",
   "dl.android": "Android",
   "dl.play": "Télécharger sur Google Play",
   "dl.apk": "Télécharger pour Android (APK)",

@@ -84,6 +84,19 @@ test("naša pola: Esc zapre polo, ko je fokus na body, in ohrani označene točk
   await page.evaluate(() => window.odpri());
   assert.equal(await page.isChecked("[data-op-got]"), true);
 
+  // Polje za pisanje zunaj pole (npr. klepet pod njo) ima fokus: Esc je njegov, pola ostane.
+  await page.evaluate(() => {
+    const i = document.createElement("input");
+    i.id = "zunaj";
+    document.body.prepend(i);
+    i.focus();
+  });
+  await page.keyboard.press("Escape");
+  assert.equal(await page.evaluate(() => window.odprta()), true, "Esc v polju zunaj pole");
+  // Med sestavljanjem znaka (IME) Esc ni za polo.
+  await page.evaluate(() => document.activeElement.blur());
+  await page.evaluate(() => document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", isComposing: true, bubbles: true, cancelable: true })));
+  assert.equal(await page.evaluate(() => window.odprta()), true, "Esc med sestavljanjem znaka");
   // Drugo okno nad polo: Esc ne zapre pole pod njim.
   await page.evaluate(() => window.drugo());
   await page.evaluate(() => document.activeElement.blur());

@@ -66,7 +66,9 @@ test("odjemalec zahteva porabo samo kot skrbnik in združi enake zahteve v teku"
   const load = app.slice(app.indexOf("async function loadUsage"));
   assert.ok(load.indexOf("if (!usageAdmin)") < load.indexOf('fetch("/api/usage")'), "nastavitve: dovoljenje pred zahtevo");
   assert.match(app, /initUsageMeter\(\{ escapeHtml, showView, toast, allowed: \(\) => usageAdmin \}\)/);
-  assert.match(app, /if \(get && apiInFlight\.has\(url\)\) return apiInFlight\.get\(url\)\.then\(\(v\) => structuredClone\(v\)\)/);
+  assert.match(app, /if \(get && apiInFlight\.has\(url\)\) return apiInFlight\.get\(url\)\.then\(kopija\)/);
+  assert.match(app, /p\.then\(pobrisi, pobrisi\);\n\s*return p\.then\(kopija\);/, "tudi prvi klic dobi kopijo");
+  assert.match(app, /if \(!get\) apiInFlight\.clear\(\);/, "sprememba pozabi GET v teku");
   assert.match(app, /await start\(\{ cfgFresh: true \}\)/, "prvi zagon prijavljenega: /api/config enkrat");
 });
 
