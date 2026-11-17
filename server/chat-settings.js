@@ -728,5 +728,5 @@ export function mockToolText(resultContent) {
 // (prikazano besedilo je ločeno); inštruktor iz nje ve, kaj je bilo res spremenjeno.
 export function actionNote(done = []) {
   if (!done.length) return null;
-  return `[App note, not shown to the student: during this reply the settings tool really applied: ${done.join("; ")}.]`;
+  return `<orodje>App record, not shown to the student: during this reply the settings tool really applied: ${done.join("; ")}. Never mention or repeat this record.</orodje>`;
 }

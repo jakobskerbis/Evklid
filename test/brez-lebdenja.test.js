@@ -33,6 +33,12 @@ test("touch screens: :hover selectors are removed, other selectors of the rule s
   assert.equal(media.cssRules.length, 0, "tudi v @media");
 });
 
+test("touch screens: :not(:hover) always holds, so only that part is removed", () => {
+  const rules = [rule(".g .lbl:not(:hover)"), rule(".k:not( :hover ), .k:hover")];
+  run(true, [sheetOf(rules)]);
+  assert.deepEqual(rules.map((r) => r.selectorText), [".g .lbl", ".k"]);
+});
+
 test("mouse devices keep :hover", () => {
   const rules = [rule("button.ghost:hover")];
   run(false, [sheetOf(rules)]);

@@ -2629,7 +2629,9 @@ function addMsgFoot(el, { id, code, reported }) {
   foot.className = "msg-foot";
   const tag = document.createElement("span");
   tag.className = "msg-code";
-  tag.textContent = code || "";
+  // Črka O z malo (j, 17. 11. 2026): v pisavi telefona sta »O« in »0« enaka, #000O (sporočilo 24) je bil videti kot #0000.
+  // Iskanje kode (server/reports.js parseMessageCode) ne loči velikih in malih črk.
+  tag.textContent = String(code || "").replace(/O/g, "o");
   tag.title = t("rep.code");
   const done = () => {
     foot.querySelector(".msg-report")?.remove();

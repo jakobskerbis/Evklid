@@ -156,6 +156,13 @@ export const supportsFallback = (model) => !/haiku/.test(model);
  * @returns {Promise<{content, text, stopReason, usage, model}>}
  */
 // canRound(round): pred vsakim dodatnim krogom orodij; false = brez novega klica (trda meja AI, server/meje-ai.js).
+// Besedilo pred klicem orodja (j, 17. 11. 2026: »Želi zeleno barvo. Najbolj smiselno je …« v odgovoru): kratek uvod
+// oziroma razmislek se ne prikaže. Daljše besedilo (razlaga z odstavki, formulami ali bloki) ostane, ker je del odgovora.
+export const isPreamble = (s) => {
+  const t = String(s || "").trim();
+  return t.length <= 300 && !/\n\s*\n|\$|<</.test(t);
+};
+
 export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, onRetract = null, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
   const { model, effort, max_tokens } = modeParams(mode);
   if (isMockMode()) return mockReply({ messages, onText, signal, model, onToolUse: tools?.length ? onToolUse : null });
@@ -295,7 +302,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     content.push(...final.content);
     const calls = final.content.filter((b) => b.type === "tool_use");
     if (stopReason !== "tool_use" || !calls.length || !onToolUse) break;
-    if (text.length > roundStart) {
+    if (text.length > roundStart && isPreamble(text.slice(roundStart))) {
       dropped = text.slice(roundStart).trim();
       text = text.slice(0, roundStart);
       onRetract?.(text);

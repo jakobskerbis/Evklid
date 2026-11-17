@@ -25,7 +25,10 @@
     for (var i = list.length - 1; i >= 0; i--) {
       var r = list[i];
       if (r.selectorText !== undefined && r.selectorText.indexOf(":hover") !== -1) {
-        var keep = split(r.selectorText).filter(function (s) { return s.indexOf(":hover") === -1; });
+        // »:not(:hover)« na dotik vedno velja: ta del izbirnika odstranimo, izbirnik pa ostane.
+        var keep = split(r.selectorText)
+          .map(function (s) { return s.replace(/:not\(\s*:hover\s*\)/g, "").trim() || "*"; })
+          .filter(function (s) { return s.indexOf(":hover") === -1; });
         try {
           if (keep.length) r.selectorText = keep.join(", ");
           else r.parentRule ? r.parentRule.deleteRule(i) : r.parentStyleSheet.deleteRule(i);

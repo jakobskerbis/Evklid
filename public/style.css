@@ -491,9 +491,7 @@ html[data-tutor-ic] .msg.assistant::after {
 .choice-row .choice-btn { min-height: 40px !important; max-width: 100%; white-space: normal; text-align: start; overflow-wrap: anywhere; background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); color: var(--text); } /* odgovori se ločijo od »Razloži podrobneje« */
 /* Pod odgovorom: koda sporočila (za preverjanje posnetkov zaslona) in »Prijavi napako« (server/reports.js) */
 .msg-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-top: 8px; font-size: 0.78rem; color: var(--muted); }
-/* Male črke (j, 17. 11. 2026): v pisavi telefona sta »O« in »0« enaka, zato je #000O (sporočilo 24) izgledal kot #0000.
-   Koda ostane ista (server/reports.js parseMessageCode ne loči velikih in malih črk). */
-.msg-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.03em; user-select: all; text-transform: lowercase; }
+.msg-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.03em; user-select: all; }
 button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px; gap: 4px; }
 @media (hover: hover) { button.ghost.msg-report:hover { color: var(--danger); } } /* na dotik bi ostal rdeč po tapu */
 .msg-report svg.i, .rep-done svg.i { width: 14px; height: 14px; }

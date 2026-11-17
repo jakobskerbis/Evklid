@@ -38,15 +38,26 @@ test("mic button turns off even when the browser never fires onend", async (t) =
   t.mock.timers.tick(2000);
   assert.ok(!classes.has("rec"));
 
-  // Pošiljanje sporočila med poslušanjem ustavi poslušanje; pozni onend starega poslušanja ne zmoti novega.
+  // Pošiljanje sporočila med poslušanjem: takoj ugasne, pozen rezultat in onend ne vrneta besedila v prazno polje,
+  // pozni dogodki starega poslušanja ne zmotijo novega.
   await listeners.click[0]();
   const old = made.at(-1);
-  form.addEventListener === undefined || listeners.submit[0]();
-  t.mock.timers.tick(2000);
-  assert.ok(!classes.has("rec"));
+  const lateResult = old.onresult, lateEnd = old.onend, lateError = old.onerror;
+  field.value = ""; // send() je polje izpraznil
+  listeners.submit[0]();
+  assert.ok(!classes.has("rec") && !mic.listening, "pošiljanje takoj ugasne");
+  lateResult({ resultIndex: 0, results: [Object.assign([{ transcript: "pozno" }], { isFinal: true })] });
+  lateEnd();
+  assert.equal(field.value, "", "poslano besedilo se ne vrne v polje");
   await listeners.click[0]();
-  old.onend();
+  lateEnd();
+  lateError({ error: "aborted" });
   assert.ok(classes.has("rec"), "novo poslušanje teče naprej");
+
+  // Dolga tišina brez onend in onerror (WebView): ugasne samo.
+  t.mock.timers.tick(45000);
+  t.mock.timers.tick(2000);
+  assert.ok(!classes.has("rec") && !mic.listening, "po tišini ugasne");
   delete globalThis.window;
   delete globalThis.document;
 });

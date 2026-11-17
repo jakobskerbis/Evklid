@@ -1145,6 +1145,7 @@ export function createApp(store, opts = {}) {
           filter.reset();
           held.length = 0;
           if (!claim) send("retract", {});
+          if (!claim && note) send("delta", { text: note }); // obvestilo pred odgovorom ostane
           const out = kept ? filter.push(kept) : "";
           if (out) claim ? held.push(out) : send("delta", { text: out });
         },
@@ -1184,6 +1185,12 @@ export function createApp(store, opts = {}) {
               signal: controller.signal,
               onText: (chunk) => {
                 const out = again2.push(chunk);
+                if (out) held.push(out);
+              },
+              onRetract: (kept) => {
+                again2.reset();
+                held.length = 0;
+                const out = kept ? again2.push(kept) : "";
                 if (out) held.push(out);
               },
             });
