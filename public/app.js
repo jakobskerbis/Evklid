@@ -91,8 +91,17 @@ import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName,
 import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 // Pregledovalnik prenesene pole (paper-viewer.js, paper-tasks.js) šele ob odprtju pole: ni del zagona.
+// Ob neuspehu (brez povezave, nova različica) se obljuba pozabi in naslednji poskus gre z drugim naslovom (?r=), kot loadGames.
 let paperViewer = null;
-const loadPaperViewer = () => import("./paper-viewer.js").then((m) => (paperViewer = m));
+let paperViewerP = null;
+let paperViewerTries = 0;
+const loadPaperViewer = () =>
+  (paperViewerP ||= (paperViewerTries++ ? import(`./paper-viewer.js?r=${paperViewerTries}`) : import("./paper-viewer.js"))
+    .then((m) => (paperViewer = m))
+    .catch((err) => {
+      paperViewerP = null;
+      throw err;
+    }));
 const closePaperViewer = () => paperViewer?.closePaperViewer() || false;
 import { openOurPaper, closeOurPaper } from "./our-paper.js";
 import { partKey, partLabel } from "./our-paper-key.js";
@@ -164,8 +173,9 @@ const serverError = (err, status) => {
 let apiSeq = 0;
 const apiOpen = new Set();
 // Isti GET, ki je že v teku (ob zagonu ga zahteva več delov strani hkrati: Učna pot, predlogi v klepetu, urnik …),
-// gre na strežnik enkrat; vsak klic (tudi prvi) dobi svojo kopijo odgovora, da ga lahko spreminja.
-// Zahteva, ki kaj spremeni (ne GET), pozabi GET v teku: naslednji GET prebere novo stanje.
+// gre na strežnik enkrat. Vsak klic, tudi prvi, dobi svojo kopijo odgovora (structuredClone), zato nobeden ne
+// spremeni odgovora drugemu. Zahteva, ki ni GET, pozabi vse GET v teku: GET po njej gre znova na strežnik in
+// prebere novo stanje (GET, ki je že v teku, se ne prekine; ostane le zunaj seznama za združevanje).
 const apiInFlight = new Map();
 const kopija = (v) => (v && typeof v === "object" ? structuredClone(v) : v);
 const api = (url, opts = {}) => {
@@ -4425,7 +4435,7 @@ function openLocalPaper(entry, file, subjectName, page = 0) {
       keptPaper = { sid, key, file, page: task.page };
       paperTask(entry, subjectName, task);
     },
-  }), (err) => toast(err.message));
+  }), () => toast(t(navigator.onLine === false ? "off.noConnection" : "off.serverBusy"))); // modul se ni naložil (naslednjič ?r=)
 }
 async function newTutorChat() {
   const conv = await api(`/api/students/${state.student.id}/conversations`, { method: "POST", body: {} });
@@ -5012,12 +5022,13 @@ function prefetchNext() {
     () => import("./graph/tools.js"),
     () => import("./graph/calc.js"),
     () => import("./3d/modeli.js"),
-    // Pregledovalnik prenesene pole, 3D pregledovalnik (stran /3d v okvirju) in three.js: samo v predpomnilnik
-    // service workerja, brez izvajanja, da se pola ali prvi model odpre brez čakanja na omrežje.
+    () => loadPaperViewer(), // pregledovalnik prenesene pole (in paper-tasks.js): odpre se tudi brez povezave
+    // 3D pregledovalnik (stran /3d v okvirju) in three.js: samo v predpomnilnik service workerja, brez izvajanja,
+    // da se prvi model odpre brez čakanja na omrežje.
     () =>
       navigator.serviceWorker?.controller?.postMessage({
         type: "precache",
-        urls: ["/paper-viewer.js", "/paper-tasks.js", "/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"],
+        urls: ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"],
       }),
   ];
   const next = () => {

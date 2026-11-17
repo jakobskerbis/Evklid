@@ -70,6 +70,11 @@ test("odjemalec zahteva porabo samo kot skrbnik in združi enake zahteve v teku"
   assert.match(app, /p\.then\(pobrisi, pobrisi\);\n\s*return p\.then\(kopija\);/, "tudi prvi klic dobi kopijo");
   assert.match(app, /if \(!get\) apiInFlight\.clear\(\);/, "sprememba pozabi GET v teku");
   assert.match(app, /await start\(\{ cfgFresh: true \}\)/, "prvi zagon prijavljenega: /api/config enkrat");
+  // Pregledovalnik pole: ni del zagona, a se predpomni v mirovanju; neuspel uvoz se pozabi in poskusi z ?r= (kot igre).
+  assert.doesNotMatch(app, /^import [^\n]*"\.\/paper-viewer\.js"/m);
+  assert.match(app, /\(\) => loadPaperViewer\(\), \/\/ pregledovalnik prenesene pole/);
+  assert.match(app, /paperViewerTries\+\+ \? import\(`\.\/paper-viewer\.js\?r=\$\{paperViewerTries\}`\) : import\("\.\/paper-viewer\.js"\)/);
+  assert.match(app, /\.catch\(\(err\) => \{\n\s*paperViewerP = null;/);
 });
 
 const require = createRequire(import.meta.url);
