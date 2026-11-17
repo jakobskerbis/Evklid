@@ -122,4 +122,9 @@ test("krajši način B (17. 11.): shranjeni odgovori načina B dobijo nov ključ
   assert.equal(cacheKey(Q, a, "think"), star(a, "think"), "način A (think): ključ kot doslej");
   assert.notEqual(cacheKey(Q, b, "chat"), star(b), "način B: star dolg odgovor se ne vrne");
   assert.notEqual(cacheKey(Q, b, "think"), star(b, "think"));
+  // Prošnja za celo rešitev v načinu A: odgovor je v obliki načina B, zato nov ključ.
+  for (const q of ["Daj mi celo rešitev: avto pospešuje iz mirovanja s 3 m/s² 5 s. Kolikšno pot prevozi?", "Prosim celotno rešitev naloge 2x + 3 = 11", "V načinu B reši 2x + 3 = 11"]) {
+    const old = crypto.createHash("sha256").update([q.toLowerCase().replace(/\s+/g, " ").replace(/[\s.!?]+$/, "").trim(), a.subject, a.track, a.educational_track, a.study_program, a.study_course, a.curriculum_level, "A", a.personality_setting, 0].join("|")).digest("hex");
+    assert.notEqual(cacheKey(q, a, "chat"), old, q);
+  }
 });

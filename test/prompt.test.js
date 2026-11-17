@@ -229,14 +229,18 @@ test("sketches (j 2026-11-16): figures only with the SKICA/GRAF block, never dra
 test("mode B (j 2026-11-17): short solution with the result in the first sentence, one rounding, kids keep the old order", () => {
   const [stat, dyn] = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8").split(SPLIT_MARKER);
   const sec = stat.slice(stat.indexOf("## Način B – celotna rešitev"), stat.indexOf("## Vzorec za računske naloge"));
-  for (const s of ["Prvi stavek pove končni rezultat, krepko in z enoto", "**Podatki:** in **Iščemo:** skupaj v eni do dveh vrsticah", "**Načrt:** en stavek", "**Preverba:** ena vrstica", "»Zapomni si« le, kadar", "**Vaja:** podobna naloga v enem stavku, nato gumbi z izbirami", "Rezultat zaokroži enkrat", "isto število zapiši v prvem stavku, v zadnjem koraku in v Preverbi", "tudi v načinu B je vsak korak razložen"]) assert.ok(sec.includes(s), `način B: »${s}«`);
+  for (const s of ["Prvi stavek pove ta preverjeni končni rezultat, krepko in z enoto", "**Podatki:** in **Iščemo:** skupaj v eni do dveh vrsticah", "**Načrt:** en stavek", "**Preverba:** ena vrstica", "»Zapomni si« le, kadar", "**Vaja:** podobna naloga v enem stavku, nato gumbi z izbirami", "Rezultat zaokroži enkrat", "isto število zapiši v prvem stavku, v zadnjem koraku in v Preverbi", "tudi v načinu B je vsak korak razložen", "Nalogo najprej v celoti reši in preveri zase (v razmisleku, ne v odgovoru)", "vse rezultate po vrsti, npr. »a) **…**, b) **…**«", "»Popravek: pravilno je …«", "korakov ne prilagajaj napačnemu rezultatu", "najprej simbolično, nato števila", "skica (`SKICA`/`GRAF`) ostane", "gumbi z izbirami (`IZBIRE`"]) assert.ok(sec.includes(s), `način B: »${s}«`);
   // Najmlajši (OŠ 1.–5.) ohranijo dosedanji vrstni red; pri ostalih ni več ločenega stavka »katero znanje je naloga preverjala«.
-  const kids = sec.slice(sec.indexOf("OŠ 1.–5. razred:"));
+  const kids = sec.slice(sec.indexOf("OŠ 1.–5. razred ("));
   assert.match(kids, /en stavek, katero znanje je naloga preverjala → ponudba podobne naloge/);
+  assert.match(kids, /namesto točk 1–6 velja/);
+  assert.match(kids, /tudi tu rezultat zaokroži enkrat/);
+  // Vzorec za računske naloge kaže na razdelek Način B (vrstni red in dolžina).
+  assert.match(stat.slice(stat.indexOf("## Vzorec za računske naloge")), /vrstni red in dolžino v načinu B določa razdelek Način B/);
   assert.equal(sec.split("katero znanje je naloga preverjala").length, 2, "samo v vrstici za OŠ 1.–5.");
   // Oznake, po katerih live-check prepozna rešeno nalogo (server/live-check.js, SOLVED_RE), ostanejo.
   assert.match(sec, /\*\*Podatki:\*\*/);
-  assert.doesNotMatch(dyn, /Prvi stavek pove končni rezultat/);
-  // Krajši način B doda ~780 znakov predpomnjenega dela (55 277 → 56 056; ~200 žetonov), meja 850.
-  assert.ok(stat.length < 55277 + 850, `stalni del ${stat.length} znakov`);
+  assert.doesNotMatch(dyn, /Prvi stavek pove ta preverjeni/);
+  // Krajši način B s popravki po pregledih doda ~1 510 znakov predpomnjenega dela (55 277 → 56 791; ~400 žetonov), meja 1 550.
+  assert.ok(stat.length < 55277 + 1550, `stalni del ${stat.length} znakov`);
 });

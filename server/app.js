@@ -121,8 +121,9 @@ export function cacheKey(text, settings, mode, lite = false, pathTopic = null, w
   if (settings.school_system && settings.school_system !== "SI") parts.push(settings.school_system);
   if (settings.dialect) parts.push(`d:${settings.dialect}`);
   if (lite) parts.push("lite");
-  // Način B v krajši obliki (rezultat v prvem stavku, 17. 11.): shranjeni dolgi odgovori se ne vrnejo več; način A ostane.
-  if (settings.solving_mode === "B") parts.push("b2");
+  // Način B v krajši obliki (rezultat v prvem stavku, 17. 11.): shranjeni dolgi odgovori se ne vrnejo več, tudi ne ob
+  // prošnji za celo rešitev v načinu A; ključi običajnih vprašanj v načinu A ostanejo.
+  if (settings.solving_mode === "B" || /celo\w* rešit|načinu? b\b/i.test(norm)) parts.push("b2");
   // Zahtevnost po rezultatih učenca (osnovna je privzeta, da shranjeni odgovori ostanejo veljavni).
   if (tier && tier !== "osnovna") parts.push(`zahtevnost:${tier}`);
   return crypto.createHash("sha256").update(parts.join("|")).digest("hex");
