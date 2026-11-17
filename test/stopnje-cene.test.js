@@ -1206,6 +1206,15 @@ test("odstop v 14 dneh: vračilo = delež preostalega časa, poraba AI ga ne zni
     db.prepare("INSERT INTO ai_credit_buys (parent_id, pack, amount, currency, credit_usd, status, paid_at) VALUES (?, 'p5', 500, 'EUR', 1, 'active', datetime('now', '-3 days'))").run(pid);
     const all = (await call(`/api/admin/withdrawal/${pid}`)).body;
     assert.deepEqual([all.passes[0].currency, all.passes[0].refund_cents, all.passes[0].within_14_days], ["EUR", 425, true]);
+    // Paket v čakalni vrsti (kupljen zdaj, začne se čez 7 dni): rok od nakupa, takoj v roku, vrne se vse.
+    db.prepare("UPDATE passes SET created_at = datetime('now', '-7 days') WHERE parent_id = ?").run(pid);
+    db.prepare("INSERT INTO passes (parent_id, student_id, days, amount, currency, ai_usd, status, starts_at, ends_at) VALUES (?, ?, 14, 849, 'EUR', 1.5, 'active', ?, ?)").run(pid, ana, new Date(Date.now() + 7 * day).toISOString(), new Date(Date.now() + 21 * day).toISOString());
+    const q = (await call(`/api/admin/withdrawal/${pid}`)).body.passes;
+    const queued = q.find((x) => x.time_left === 1);
+    assert.deepEqual([queued.contract_from_source, queued.within_14_days, queued.refund_cents], ["nakup", true, 849], JSON.stringify(queued));
+    assert.ok(Math.abs(Date.parse(queued.contract_from) - Date.now()) < 60000, queued.contract_from);
+    const running = q.find((x) => x !== queued);
+    assert.ok(running.within_14_days && Math.abs(Date.parse(running.contract_from) - (Date.now() - 7 * day)) < 60000, JSON.stringify(running));
     assert.equal(all.credits[0].currency, "EUR");
     assert.equal(all.credits[0].within_14_days, true);
     assert.ok(all.credits[0].created_at && all.credits[0].paid_at, JSON.stringify(all.credits[0]));

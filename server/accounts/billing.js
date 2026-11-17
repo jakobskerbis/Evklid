@@ -789,7 +789,12 @@ export function mountBilling(app, ctx) {
     for (const ps of db.prepare("SELECT * FROM passes WHERE parent_id = ? AND status = 'active'").all(p.id)) {
       const start = Date.parse(ps.starts_at);
       const r = withdrawalRefundCents({ paidCents: ps.amount, startMs: start, endMs: Date.parse(ps.ends_at), nowMs: now, aiCapUsd: passCapUsd(ps), aiSpentUsd: passes.spentUsd(ps) });
-      out.passes.push({ id: ps.id, paid_cents: ps.amount, currency: ps.currency || "EUR", refund_cents: r.cents, time_left: r.timeLeft, ai_left: r.aiLeft, contract_from: Number.isFinite(start) ? new Date(start).toISOString() : null, contract_from_source: "zacetek_paketa", within_14_days: within(start) });
+      // Rok od sklenitve: nakup (created_at, UTC) ali začetek paketa, kar je prej. Paket v čakalni vrsti (začne se
+      // po koncu prejšnjega) je kupljen prej, zato rok teče že od nakupa (#815).
+      const bought = fromSql(ps.created_at);
+      const from = Number.isFinite(bought) && !(bought >= start) ? bought : start;
+      const fromSrc = from === bought && from !== start ? "nakup" : "zacetek_paketa";
+      out.passes.push({ id: ps.id, paid_cents: ps.amount, currency: ps.currency || "EUR", refund_cents: r.cents, time_left: r.timeLeft, ai_left: r.aiLeft, created_at: ps.created_at, contract_from: Number.isFinite(from) ? new Date(from).toISOString() : null, contract_from_source: fromSrc, within_14_days: within(from) });
     }
     // Dokup: vrne se največ neporabljeni del (pregled #462 S1: credits.refund odvzame ves paket, porabljen AI ostane
     // plačan). Delež neporabljenega je za ves račun (preostanek / vsi aktivni paketi), previdno za vsak paket.
