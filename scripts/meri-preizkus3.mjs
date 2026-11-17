@@ -43,17 +43,17 @@ function stariPrompt(nov) {
     if (a < 0 || b < 0 || s.indexOf(zacetek, a + 1) >= 0) throw new Error(`kos ni v promptu natanko enkrat: ${zacetek.slice(0, 60)}`);
     s = s.slice(0, a) + s.slice(b + konec.length);
   };
-  zamenjaj("ostane, kjer jo zahteva predmet; kar naloga naroči narisati, vedno nariši z blokom (Orodja aplikacije).", "ostane, kjer jo zahteva predmet.");
+  zamenjaj("ostane, kjer jo zahteva predmet; kar naloga naroči narisati, vedno nariši z blokom, kadar se da (Orodja aplikacije).", "ostane, kjer jo zahteva predmet.");
   izreži("Naloga s podvprašanji (a, b, c …) je ena naloga:", "Vaja in gumbi so šele za zadnjim delom.\n");
   izreži("OŠ 1.–4. razred (1.–4. leto šolanja):", "le z gumbi `IZBIRE`.\n");
   zamenjaj("OŠ 5. razred (5. leto šolanja): namesto točk 1–6", "OŠ 1.–5. razred (1.–5. leto šolanja): namesto točk 1–6");
   zamenjaj(
-    "v istem odgovoru odgovoriš na vsa, vsako v svoji vrstici (»a) **…** (…)«, »b) **…** (…)«), in nobenega ne prepustiš učencu; taka naloga šteje kot ena.",
+    "v istem odgovoru odgovoriš na vsa, vsako v svoji vrstici (»a) **…**«, »b) **…**«), in nobenega ne prepustiš učencu; taka naloga šteje kot ena. Seznam vaj istega tipa pod eno številko (npr. »Izračunaj: a) …, b) …, c) …«) je več nalog: velja Domača naloga za oddajo.",
     "velja to za eno podvprašanje; za več podvprašanj velja Domača naloga za oddajo."
   );
-  zamenjaj("»moram oddati«; podvprašanja a), b), c) ene naloge niso več nalog):", "»moram oddati«):");
-  zamenjaj(" Podvprašanja a), b), c) ene naloge v načinu B in pri Samo rezultat rešiš vsa v enem odgovoru.", "");
-  izreži(" Kadar naloga naroči graf, diagram", "da je viden ves graf.");
+  zamenjaj("»moram oddati«; podvprašanja a), b), c) ene naloge niso več nalog, seznam vaj istega tipa pod eno številko pa je):", "»moram oddati«):");
+  zamenjaj("(v načinu B okoli 120 besed; pri nalogi s podvprašanji vsi deli v istem odgovoru, vsak zelo kratko)", "(v načinu B okoli 120 besed)");
+  izreži(" Kar naloga naroči narisati (graf, diagram", "`{\"x\": [a, b], \"y\": [c, d]}`.");
   return s;
 }
 

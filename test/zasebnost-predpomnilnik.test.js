@@ -159,6 +159,9 @@ test("Preizkus 3 (17. 11.): odgovori načina B in »samo rezultat« pred popravk
   const dva = "Samo končna rezultata, brez postopka: a) pH HCl s koncentracijo 0,0010 mol/L b) koncentracija 4,0 g NaOH v 250 mL";
   assert.notEqual(cacheKey(dva, a, "chat"), prej(dva, a, "r1"), "samo rezultat, način A");
   assert.notEqual(cacheKey(dva, b, "chat"), prej(dva, b, "b2", "r1"), "samo rezultat, način B");
+  // »moram oddati« (pregled #811): nov ključ tudi v načinu A.
+  const oddaja = "Moram oddati do jutri: izračunaj a) 3 + 4 · 2, b) 12 : 3 − 1, c) 5 · (2 + 3)";
+  assert.notEqual(cacheKey(oddaja, a, "chat"), prej(oddaja, a), "moram oddati");
   // Običajno vprašanje v načinu A obdrži ključ.
   assert.equal(cacheKey(razstavi, a, "chat"), prej(razstavi, a));
 });

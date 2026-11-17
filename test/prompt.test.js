@@ -263,7 +263,7 @@ test("result only (j 2026-11-17): one task, asked only for the result → result
   assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjema: Samo rezultat pri eni nalogi\)/);
   assert.match(stat, /Končnega odgovora nikoli ne izdaš kot prvi odziv na novo nalogo \(izjema: Samo rezultat pri eni nalogi v Pedagoških situacijah\)\./);
   assert.match(stat, /Pravilen rezultat brez postopka ali z napačnim postopkom ni rešen/);
-  assert.ok(row.length < 1350, `točka naj ostane kratka (${row.length} znakov)`);
+  assert.ok(row.length < 1450, `točka naj ostane kratka (${row.length} znakov)`);
   assert.doesNotMatch(dyn, /Samo rezultat pri eni nalogi/);
   // Doda 1 373 znakov predpomnjenega dela (56 791 → 58 164; ~370 žetonov) po pregledih #799. Zgornja meja rasti je odslej
   // v testu »Preizkus 3« (17. 11.); tu ostane le spodnja.
@@ -275,26 +275,32 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
   const line = (start) => stat.split("\n").find((l) => l.startsWith(start)) || "";
   const sec = stat.slice(stat.indexOf("## Način B – celotna rešitev"), stat.indexOf("## Vzorec za računske naloge"));
   // 1. Vsi deli: način B, Samo rezultat, in pravili za več nalog ne veljata za podvprašanja ene naloge.
-  assert.match(sec, /Naloga s podvprašanji \(a, b, c …\) je ena naloga: v istem odgovoru rešiš vse dele po vrsti, vsakega s svojimi koraki; nobenega dela ne prepustiš učencu in ne vprašaš, ali naj nadaljuješ/);
+  assert.match(sec, /Naloga s podvprašanji \(a, b, c …\) je ena naloga: v istem odgovoru rešiš vse dele, vsakega s svojimi koraki; nobenega dela ne prepustiš učencu in ne vprašaš, ali naj nadaljuješ/);
   assert.match(sec, /Vaja in gumbi so šele za zadnjim delom\./);
   const row = line("- **Samo rezultat pri eni nalogi**");
-  assert.ok(row.includes("v istem odgovoru odgovoriš na vsa, vsako v svoji vrstici (»a) **…** (…)«, »b) **…** (…)«), in nobenega ne prepustiš učencu; taka naloga šteje kot ena."), "samo rezultat: vsi deli");
+  assert.ok(row.includes("v istem odgovoru odgovoriš na vsa, vsako v svoji vrstici (»a) **…**«, »b) **…**«), in nobenega ne prepustiš učencu; taka naloga šteje kot ena."), "samo rezultat: vsi deli");
+  // Seznam vaj istega tipa ni pot do prepisovanja (pregled #811).
+  assert.ok(row.includes("Seznam vaj istega tipa pod eno številko (npr. »Izračunaj: a) …, b) …, c) …«) je več nalog: velja Domača naloga za oddajo."), "samo rezultat: seznam vaj");
+  assert.match(sec, /veljata za več ločenih nalog, tudi za seznam vaj istega tipa pod eno številko\)/);
+  // Lahki način: vsi deli, vsak zelo kratko.
+  assert.match(line("- Če je »Dolžina odgovorov« kratka"), /v načinu B okoli 120 besed; pri nalogi s podvprašanji vsi deli v istem odgovoru, vsak zelo kratko\), en korak naenkrat/);
   assert.doesNotMatch(row, /za več podvprašanj velja Domača naloga/);
-  assert.match(line("- **Več vprašanj hkrati:**"), /Podvprašanja a\), b\), c\) ene naloge v načinu B in pri Samo rezultat rešiš vsa v enem odgovoru\./);
-  assert.match(line("- **Domača naloga za oddajo, prepisovanje**"), /podvprašanja a\), b\), c\) ene naloge niso več nalog\)/);
+  // »Več vprašanj hkrati« ostane (Način B pove, da velja za ločene naloge).
+  assert.doesNotMatch(line("- **Več vprašanj hkrati:**"), /podvprašanj/);
+  assert.match(line("- **Domača naloga za oddajo, prepisovanje**"), /podvprašanja a\), b\), c\) ene naloge niso več nalog, seznam vaj istega tipa pod eno številko pa je\)/);
   // Vodenje (način A) ostane nespremenjeno.
   const a = stat.slice(stat.indexOf("## Način A – vodenje"), stat.indexOf("## Način B – celotna rešitev"));
   assert.doesNotMatch(a, /podvprašanj/);
   assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjema: Samo rezultat pri eni nalogi\)/);
   // 2. OŠ 1.–4.: brez ogrodja, kratko; 5. razred ohrani vrstni red.
   const kids = line("OŠ 1.–4. razred (1.–4. leto šolanja):");
-  for (const s of ["brez Podatkov, Iščemo, Načrta, Preverbe, okvirja »Zapomni si«, stavka, kaj je naloga preverjala, in Vaje", "en do dva kratka stavka s preprostimi besedami", "rezultat krepko", "Skupaj največ okoli 450 znakov, razen če otrok prosi za več", "le z gumbi `IZBIRE`"]) assert.ok(kids.includes(s), `OŠ 1.–4.: »${s}«`);
+  for (const s of ["namesto točk 1–6 brez Podatkov, Iščemo, Načrta, Preverbe, okvirja »Zapomni si«, stavka, kaj je naloga preverjala, in Vaje", "en do dva kratka stavka s preprostimi besedami", "rezultat krepko", "Skupaj do okoli 450 znakov, razen če otrok prosi za več", "le z gumbi `IZBIRE`"]) assert.ok(kids.includes(s), `OŠ 1.–4.: »${s}«`);
   assert.match(line("OŠ 5. razred (5. leto šolanja):"), /namesto točk 1–6 velja Podatki → Iščemo/);
   // 3. Graf, ki ga naloga zahteva, je vedno blok; zgledi se razčlenijo v app (server/odpri.js).
   const graf = line("- `GRAF`:");
-  assert.match(graf, /Kadar naloga naroči graf, diagram \(npr\. \$p\(V\)\$\), škatlo z brki, histogram ali skico, jo v načinu B in ob rešitvi vedno nariši z `GRAF` ali `SKICA`, ne le opiši\./);
-  assert.match(sec, /kar naloga naroči narisati, vedno nariši z blokom \(Orodja aplikacije\)/);
-  const box = graf.match(/`(\["y = 0 \{1 <= x <= 3\}"[^`]*\])`/)?.[1];
+  assert.ok(graf.includes("Kar naloga naroči narisati (graf, diagram, npr. $p(V)$, škatlo z brki, histogram, skico), v načinu B vedno nariši z `GRAF` ali `SKICA`, kadar se da s tema blokoma, ne le opiši; v načinu A šele, ko je učenec nalogo rešil (za primerjavo)."), "graf: pravilo");
+  assert.match(sec, /kar naloga naroči narisati, vedno nariši z blokom, kadar se da \(Orodja aplikacije\)/);
+  const box = graf.match(/`(\["y = \{1 <= x <= 3: 0, 6 <= x <= 9: 0\}"[^`]*\])`/)?.[1];
   assert.ok(box, "zgled škatle z brki");
   return Promise.all([import("../server/odpri.js"), import("../public/graph/model.js")]).then(([{ parseOpenBlocks }, { buildModel, emptyState }]) => {
     const [b] = parseOpenBlocks(`<<GRAF ${box}>>`);
@@ -304,14 +310,14 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
       st.items = list.map((text, i) => ({ id: `i${i}`, type: "expr", text, color: i }));
       return buildModel(st).items.map((o) => (o.error ? "napaka" : o.kind));
     };
-    assert.deepEqual(kinds(["y = 12 {4 <= x <= 10}", "x = 1 {1 <= y <= 3}", "y = {0 <= x <= 4: 3x, 4 < x <= 10: 12}", "0 <= y <= {0 <= x < 2: 3, 2 <= x < 4: 5}"]), ["y", "x", "y", "region"]);
-    assert.deepEqual(kinds(b.exprs), ["y", "y", "y", "y", "x", "x", "x"]);
+    assert.deepEqual(kinds(["y = 12 {4 <= x <= 10}", "x = 1 {1 <= y <= 3}", "0 <= y <= {0 <= x < 2: 3, 2 <= x < 4: 5}"]), ["y", "x", "region"]);
+    assert.deepEqual(kinds(b.exprs), ["y", "y", "y", "x", "x", "x"]);
     assert.equal(b?.kind, "graph");
-    assert.equal(b.exprs.length, 7);
+    assert.equal(b.exprs.length, 6);
     assert.deepEqual(b.view, { ymin: -3, ymax: 3 });
-    for (const ex of ["y = 12 {4 <= x <= 10}", "x = 1 {1 <= y <= 3}", "y = {0 <= x <= 4: 3x, 4 < x <= 10: 12}", "0 <= y <= {0 <= x < 2: 3, 2 <= x < 4: 5}"]) assert.ok(graf.includes("`" + ex + "`"), ex);
+    for (const ex of ["y = 12 {4 <= x <= 10}", "x = 1 {1 <= y <= 3}", "0 <= y <= {0 <= x < 2: 3, 2 <= x < 4: 5}"]) assert.ok(graf.includes("`" + ex + "`"), ex);
     assert.doesNotMatch(dyn, /škatlo z brki|OŠ 1\.–4\. razred/);
-    // Doda ~1 690 znakov predpomnjenega dela (58 164 → 59 852; ~450 žetonov), meja 1 800.
+    // Doda ~1 780 znakov predpomnjenega dela (58 164 → 59 946; ~480 žetonov) s popravki pregleda #811, meja 1 800.
     assert.ok(stat.length < 58164 + 1800, `stalni del ${stat.length} znakov`);
   });
 });
