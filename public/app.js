@@ -2166,7 +2166,6 @@ async function subjectChoices() {
 }
 async function pickSubject(item) {
   const uni = isUni(state.student.settings);
-  const ideasFor = state.student, ideasFrom = ideasKey(ideasFor.settings); // predlogi: pot za tega učenca in te nastavitve
   const settings = uni ? { study_course: item.id, subject: item.subject || state.student.settings.subject } : { subject: item.id, study_course: "" };
   // Optimistično (j 6. 11. 2026: odziven Evklid): izbira, glava in obvestilo takoj, shranjevanje na strežnik
   // v ozadju (meni se zapre brez čakanja). Podatke zaslona naložimo po shranjevanju (strežnik jih bere po
@@ -3012,6 +3011,7 @@ async function loadPath(key = state.pathKey) {
   // Šola (OŠ/SŠ): učna pot je vedno za razred/letnik iz profila; nižje razrede ima Učbenik (j, 1. 11.).
   // Fakulteta: izbira med predmeti študijskega programa ostane.
   const uni = isUni(state.student.settings);
+  const ideasFor = state.student, ideasFrom = ideasKey(ideasFor.settings); // predlogi: pot za tega učenca in te nastavitve
   const q = uni && key ? `?key=${encodeURIComponent(key)}` : "";
   const sys = state.student.settings.school_system || "SI";
   // Učna pot, seznam poti in programi hkrati (prej drug za drugim: trije čakanji na strežnik ob vsakem odprtju
