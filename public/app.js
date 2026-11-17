@@ -90,7 +90,19 @@ import { heatmapHtml, weeksHtml } from "./aktivnost.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
 import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
-import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
+// Pregledovalnik prenesene pole (paper-viewer.js, paper-tasks.js) šele ob odprtju pole: ni del zagona.
+// Ob neuspehu (brez povezave, nova različica) se obljuba pozabi in naslednji poskus gre z drugim naslovom (?r=), kot loadGames.
+let paperViewer = null;
+let paperViewerP = null;
+let paperViewerTries = 0;
+const loadPaperViewer = () =>
+  (paperViewerP ||= (paperViewerTries++ ? import(`./paper-viewer.js?r=${paperViewerTries}`) : import("./paper-viewer.js"))
+    .then((m) => (paperViewer = m))
+    .catch((err) => {
+      paperViewerP = null;
+      throw err;
+    }));
+const closePaperViewer = () => paperViewer?.closePaperViewer() || false;
 import { openOurPaper, closeOurPaper } from "./our-paper.js";
 import { partKey, partLabel } from "./our-paper-key.js";
 import { initDrsniki } from "./drsniki.js";
@@ -160,14 +172,30 @@ const serverError = (err, status) => {
 // zadnjega zaslona (finishStart).
 let apiSeq = 0;
 const apiOpen = new Set();
-const api = async (url, opts = {}) => {
-  const id = ++apiSeq;
-  apiOpen.add(id);
-  try {
-    return await apiCall(url, opts);
-  } finally {
-    apiOpen.delete(id);
-  }
+// Isti GET, ki je že v teku (ob zagonu ga zahteva več delov strani hkrati: Učna pot, predlogi v klepetu, urnik …),
+// gre na strežnik enkrat. Vsak klic, tudi prvi, dobi svojo kopijo odgovora (structuredClone), zato nobeden ne
+// spremeni odgovora drugemu. Zahteva, ki ni GET, pozabi vse GET v teku: GET po njej gre znova na strežnik in
+// prebere novo stanje (GET, ki je že v teku, se ne prekine; ostane le zunaj seznama za združevanje).
+const apiInFlight = new Map();
+const kopija = (v) => (v && typeof v === "object" ? structuredClone(v) : v);
+const api = (url, opts = {}) => {
+  const get = !opts.method && !opts.body && !opts.headers && !opts.signal;
+  if (!get) apiInFlight.clear();
+  if (get && apiInFlight.has(url)) return apiInFlight.get(url).then(kopija);
+  const p = (async () => {
+    const id = ++apiSeq;
+    apiOpen.add(id);
+    try {
+      return await apiCall(url, opts);
+    } finally {
+      apiOpen.delete(id);
+    }
+  })();
+  if (!get) return p;
+  apiInFlight.set(url, p);
+  const pobrisi = () => apiInFlight.get(url) === p && apiInFlight.delete(url);
+  p.then(pobrisi, pobrisi);
+  return p.then(kopija);
 };
 const apiCall = async (url, opts = {}) => {
   // Klic, ki ga je zagon že začel v <head> (public/zacetek.js): enkrat, samo uspešen odgovor; sicer običajna pot.
@@ -1386,6 +1414,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 let bugAdmin = false;
+let usageAdmin = false; // /api/usage sme samo skrbnik ali računalnik s strežnikom (/api/config admin)
 function syncBugButton() {
   $("#chat-bug").hidden = !(bugAdmin || isPilotMember());
 }
@@ -4426,7 +4455,7 @@ let keptPaper = null;
 function openLocalPaper(entry, file, subjectName, page = 0) {
   const key = paperLabel(entry, subjectName);
   const sid = state.student.id;
-  openPaperViewer(file, {
+  loadPaperViewer().then(({ openPaperViewer }) => openPaperViewer(file, {
     title: key,
     page,
     onClose: () => (keptPaper = null),
@@ -4434,7 +4463,7 @@ function openLocalPaper(entry, file, subjectName, page = 0) {
       keptPaper = { sid, key, file, page: task.page };
       paperTask(entry, subjectName, task);
     },
-  });
+  }), () => toast(t(navigator.onLine === false ? "off.noConnection" : "off.serverBusy"))); // modul se ni naložil (naslednjič ?r=)
 }
 async function newTutorChat() {
   const conv = await api(`/api/students/${state.student.id}/conversations`, { method: "POST", body: {} });
@@ -4673,8 +4702,12 @@ function countUp(el, ms = 900) {
 // ---------- poraba in lestvica ----------
 
 async function loadUsage() {
-  // Poraba je samo za skrbnika: strežnik drugim vrne 403, kartica ostane skrita.
+  // Poraba je samo za skrbnika (/api/config admin): drugim je ne zahtevamo (strežnik bi vrnil 403), kartica je skrita.
   const card = $("#usage")?.closest(".card");
+  if (!usageAdmin) {
+    if (card) card.hidden = true;
+    return;
+  }
   const res = await fetch("/api/usage").catch(() => null);
   if (card) card.hidden = !res?.ok;
   if (!res?.ok) return;
@@ -5017,6 +5050,7 @@ function prefetchNext() {
     () => import("./graph/tools.js"),
     () => import("./graph/calc.js"),
     () => import("./3d/modeli.js"),
+    () => loadPaperViewer(), // pregledovalnik prenesene pole (in paper-tasks.js): odpre se tudi brez povezave
     // 3D pregledovalnik (stran /3d v okvirju) in three.js: samo v predpomnilnik service workerja, brez izvajanja,
     // da se prvi model odpre brez čakanja na omrežje.
     () =>
@@ -5410,6 +5444,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   // Skrbnik: »Prijavi napako« v glavi klepeta (napaka v aplikaciji ali pri inštruktorju, public/prijave.js).
   // Člani pilota jo vidijo tudi (public/pilot-naloge.js).
   bugAdmin = !!cfg.admin;
+  usageAdmin = !!cfg.admin;
   syncBugButton();
   initFeedback({ api, getStudent: () => state.student, showView, toast, currentLang }, cfg);
   initGames({ api, getStudent: () => state.student, setStudent: studentUpdated, toast: (m, ic = "check") => toast(m, ic), refreshXp, currentLang });
@@ -5440,16 +5475,19 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   // Starševski računi (account.js): prijava, potrditev, prvi otrok.
   let first = true;
   const start = async (o) => {
-    // Prijava brez ponovnega nalaganja strani: /api/config pred prijavo še ni vedel, da je to skrbnik.
-    if (!cfg.admin)
-      api("/api/config")
-        .then((c) => {
-          bugAdmin = !!c.admin;
-          syncBugButton();
-        })
-        .catch(() => {});
+    // Prijava brez ponovnega nalaganja strani: /api/config pred prijavo še ni vedel, da je to skrbnik. Ob prvem
+    // zagonu že prijavljenega (cfgFresh) je config iz te seje: drugič ga ne zahtevamo.
+    const admin = (cfg.admin || o?.cfgFresh)
+      ? null
+      : api("/api/config")
+          .then((c) => {
+            bugAdmin = usageAdmin = !!c.admin;
+            syncBugButton();
+          })
+          .catch(() => {});
     await loadStudents();
-    if (first) initUsageMeter({ escapeHtml, showView, toast });
+    await admin; // števec porabe šele, ko vemo, ali je skrbnik (sicer 403)
+    if (first) initUsageMeter({ escapeHtml, showView, toast, allowed: () => usageAdmin });
     else refreshUsageMeter();
     // Prvo odprtje: bližnjica (?pogled=) ali zadnji zaslon (≤ 12 ur); Učna pot se pripravi pod njim.
     const z = first && !o?.keepView && !START_VIEW ? startScreen() : null;
@@ -5484,7 +5522,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     first = false;
   };
   captureSource(); // oznaka vira iz povezave (public/vir.js), pred prijavo, ki lahko preusmeri
-  if (await initAccount({ onReady: start })) await start();
+  if (await initAccount({ onReady: start })) await start({ cfgFresh: true });
   else {
     // Prijava ali pristajalna stran: po prijavi se odpre Učna pot, ne zadnji zaslon pred odjavo.
     startRec = null;

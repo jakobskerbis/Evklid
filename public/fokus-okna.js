@@ -56,3 +56,21 @@ export function zadrziFokus(okno, { zacetni = null, prej = document.activeElemen
     if (vrni && fokusabilen(vnos.prej) && (!a || a === document.body || okno.contains(a) || !a.isConnected)) vnos.prej.focus?.({ preventScroll: true });
   };
 }
+
+/**
+ * Esc za okno čez zaslon, ko fokus ni v njem (na body, ko izgine element s fokusom, ali na strani pod oknom):
+ * true, če naj se okno zapre; Esc je potem porabljen (preventDefault, stopPropagation), da ga ne dobijo še
+ * poslušalci strani pod oknom. Poslušalec: document.addEventListener("keydown", fn, true). Ne, če je Esc že
+ * obdelan, je fokus v oknu (tam ga obdela okno samo), okna ni na strani ali je nad njim drugo okno.
+ */
+export function escZaOkno(e, okno) {
+  if (e.key !== "Escape" || e.isComposing || e.defaultPrevented || !okno?.isConnected || okno.hidden || okno.contains(e.target)) return false;
+  const top = odprta.at(-1);
+  if (top && top.okno !== okno && top.okno.isConnected && !top.okno.hidden && !okno.contains(top.okno)) return false;
+  const a = document.activeElement;
+  // Fokus v drugem oknu ali v polju za pisanje zunaj okna (tam Esc briše vnos ali zapre predlog): ni za nas.
+  if (a && a !== document.body && a !== document.documentElement && !okno.contains(a) && (a.closest(DRUGO_OKNO) || a.matches?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])'))) return false;
+  e.preventDefault();
+  e.stopPropagation();
+  return true;
+}

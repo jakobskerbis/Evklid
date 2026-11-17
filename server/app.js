@@ -29,6 +29,7 @@ import { sourceVisitCounter, mountRast, setSource } from "./rast.js";
 import { mountOdpiranje } from "./odpiranje-delov.js";
 import { mountAnketa } from "./anketa-teden.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
+import { mountShortLinks, notFound } from "./ni-strani.js";
 import { mountInviteApi, mountInvitePage } from "./vabila.js";
 import { mountVidnost } from "./vidnost.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
@@ -361,6 +362,7 @@ export function createApp(store, opts = {}) {
     if (!req.path.startsWith("/api/")) res.setHeader("X-Evklid-App", filesVersion());
     next();
   });
+  mountShortLinks(app); // /pogoji, /zasebnost, /starsi, /garancija → .html (pred števcem obiskov, server/ni-strani.js)
   // Merjenje v pilotu: števec ogledov strani za starše (pred statičnimi datotekami, glej pilot.js).
   app.use(visitCounter(store.db));
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
@@ -1968,5 +1970,6 @@ export function createApp(store, opts = {}) {
   backupChecks = startBackupChecks(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, isBusy: () => activity.active > 0 });
   // Vsakih 10 min: današnji strošek AI nad EVKLID_OPOZORILO_AI_USD → e-mail skrbnikom, največ enkrat na dan.
   aiCostAlert = startAiCostAlert(store.db, usage, { scheduler: opts.scheduler !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
+  app.use(notFound); // neznana pot: stran v slogu aplikacije namesto »Cannot GET« (server/ni-strani.js)
   return app;
 }
