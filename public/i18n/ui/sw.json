@@ -2503,6 +2503,7 @@
   "dl.play": "Pakua kwenye Google Play",
   "dl.apk": "Pakua kwa Android (APK)",
   "dl.apkSteps": "Fungua faili uliyopakua na uthibitishe usakinishaji. Simu ikiuliza, ruhusu kusakinisha kutoka kwenye kivinjari hiki.",
+  "dl.apkWhy": "Programu bado haipo kwenye Google Play, kwa hiyo unaipakua moja kwa moja kutoka ukurasa huu.",
   "dl.ios": "iPhone na iPad",
   "dl.appStore": "Pakua kwenye App Store",
   "dl.testflight": "Sakinisha kupitia TestFlight",

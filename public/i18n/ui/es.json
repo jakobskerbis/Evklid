@@ -2504,6 +2504,7 @@
   "dl.play": "Descargar en Google Play",
   "dl.apk": "Descargar para Android (APK)",
   "dl.apkSteps": "Abre el archivo descargado y confirma la instalación. Si el móvil te lo pide, permite instalar desde este navegador.",
+  "dl.apkWhy": "La app aún no está en Google Play, así que la descargas directamente desde esta página.",
   "dl.ios": "iPhone y iPad",
   "dl.appStore": "Descargar en el App Store",
   "dl.testflight": "Instalar con TestFlight",

@@ -2583,6 +2583,7 @@
   "dl.play": "نزّله من Google Play",
   "dl.apk": "تنزيل لأندرويد (APK)",
   "dl.apkSteps": "افتح الملف الذي نزّلته وأكّد التثبيت. إذا سألك الهاتف، فاسمح بالتثبيت من هذا المتصفح.",
+  "dl.apkWhy": "التطبيق ليس على Google Play بعد، لذلك تنزّله مباشرة من هذه الصفحة.",
   "dl.ios": "iPhone وiPad",
   "dl.appStore": "نزّله من App Store",
   "dl.testflight": "التثبيت عبر TestFlight",
