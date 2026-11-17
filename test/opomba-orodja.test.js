@@ -31,5 +31,5 @@ test("koda sporočila: mala črka o na zaslonu, iskanje deluje z obojimi", () =>
   assert.equal(messageCode(24), "#000O");
   assert.equal(parseMessageCode("#000o"), 24);
   assert.equal(parseMessageCode(messageCode(1234).toLowerCase()), 1234);
-  assert.match(readFileSync(new URL("../public/app.js", import.meta.url), "utf8"), /tag\.textContent = String\(code \|\| ""\)\.replace\(\/O\/g, "o"\)/);
+  assert.match(readFileSync(new URL("../public/app.js", import.meta.url), "utf8"), /c\.lastElementChild\.textContent = foot\.dataset\.code\.replace\(\/O\/g, "o"\)/);
 });
