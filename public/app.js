@@ -2666,7 +2666,8 @@ function renderGoalModes() {
     .filter((k) => !shown.includes(k))
     .filter((k) => k !== "scan") // »Skeniraj nalogo« je že vrstica v #xp-card tik pod današnjim treningom (j, 18. 11. 2026)
     .filter((k, i, a) => a.indexOf(k) === i);
-  for (const alt of ["chat", "textbook"]) if (list.length < 2 && !list.includes(alt)) list.push(alt);
+  // Nadomestki ne smejo podvojiti kartice stopnje (shown) niti ponuditi izklopljenih iger.
+  for (const alt of ["chat", "textbook", "games"]) if (list.length < 2 && !list.includes(alt) && !shown.includes(alt) && (alt !== "games" || gamesOn(s))) list.push(alt);
   box.innerHTML = list
     .map((k) => {
       const [ic, name, sub] = GOAL_MODES[k];
