@@ -306,3 +306,12 @@ test("university lessons: check-lesson asks for the exam-oriented structure", ()
   // Enovrstična rešitev zadnje naloge na koncu razdelka je tudi skrita za gumbom.
   assert.match(hideSolutions("### Naloga 2\nUtemelji.\n\n**Rešitev:** Ker velja $2+2=4$."), /<details class="tb-solution">[\s\S]*Ker velja/);
 });
+
+test("worked example »zadnji korak je tvoj«: steps stay open, only the last step waits in Premisli (Gemini review 2026-11-17)", () => {
+  const md = "### Primer 4: produkt\nOdvajaj.\n\n**Rešitev:**\n1. Korak.\n\n### Primer 5: zadnji korak je tvoj\nIzračunaj.\n\n**Rešitev:**\n1. Prvi.\n2. Napovej:\n\n<div class=\"tb-think\">x</div>\n";
+  const html = hideSolutions(md);
+  const [p4, p5] = html.split("### Primer 5");
+  assert.match(p4, /<details class="tb-solution"><summary>Pokaži rešitev<\/summary>/);
+  assert.match(p5, /<details class="tb-solution" open><summary>Skrij rešitev<\/summary>[\s\S]*Prvi/);
+  assert.match(p5, /<\/details>\n\n<div class="tb-think">/, "Premisli ostane pod postopkom");
+});

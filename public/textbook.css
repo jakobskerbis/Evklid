@@ -17,7 +17,9 @@
 .tb-book p { margin: 0; }
 .tb-book .eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; }
 .tb-book-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.tb-jump { padding: 8px 0; background: var(--bg, var(--surface)); }
+.tb-jump { padding: 8px 0; background: var(--bg, var(--surface)); flex-wrap: wrap; } /* vsi letniki in »Vse« vidni, brez skritega drsenja */
+/* Telefon: tudi kratek korak lahko pride na vrh zaslona pod glavo (textbook.js wireSteps), sicer bi stran ostala pri »Testu predznanja«. */
+@media (max-width: 759px) { #view-textbook .tb-step { min-height: calc(100dvh - 150px); } }
 .tb-mine { margin-inline-start: 4px; padding: 1px 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 0.72rem; font-weight: 800; }
 .tb-jump .active .tb-mine { background: var(--surface); }
 .tb-part { scroll-margin-top: 130px; }
