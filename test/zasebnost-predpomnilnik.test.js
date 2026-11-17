@@ -109,3 +109,17 @@ test("stari shranjeni odgovori (pred popravkom ključa) se ob zagonu enkrat izbr
   store.db.close();
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+test("krajši način B (17. 11.): shranjeni odgovori načina B dobijo nov ključ, ključi načina A ostanejo enaki", async () => {
+  const { cacheKey } = await import("../server/app.js");
+  const crypto = await import("node:crypto");
+  const s = { subject: "MAT", track: "REGULAR", educational_track: "SREDNJA_SOLA", study_program: "", study_course: "", curriculum_level: "4. letnik VR", personality_setting: "nevtralna", language: "sl" };
+  // Ključ kot pred spremembo (server/app.js cacheKey brez oznake »b2«).
+  const star = (st, ...extra) => crypto.createHash("sha256").update([Q.toLowerCase().replace(/[\s.!?]+$/, ""), st.subject, st.track, st.educational_track, st.study_program, st.study_course, st.curriculum_level, st.solving_mode, st.personality_setting, 0, ...extra].join("|")).digest("hex");
+  const a = { ...s, solving_mode: "A" };
+  const b = { ...s, solving_mode: "B" };
+  assert.equal(cacheKey(Q, a, "chat"), star(a), "način A: ključ kot doslej");
+  assert.equal(cacheKey(Q, a, "think"), star(a, "think"), "način A (think): ključ kot doslej");
+  assert.notEqual(cacheKey(Q, b, "chat"), star(b), "način B: star dolg odgovor se ne vrne");
+  assert.notEqual(cacheKey(Q, b, "think"), star(b, "think"));
+});
