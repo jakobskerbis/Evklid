@@ -704,7 +704,7 @@ function backStep(wasOverlay) {
   if (currentView === "scan" && scanBack()) return true;
   if (closeByEsc()) return true;
   if (currentView === "path") return false;
-  const subMe = meView(currentView) && currentView !== "me";
+  const subMe = currentView !== "me" && (meView(currentView) || podJazZgoraj(currentView));
   // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
   // Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
   const up = subMe && (tabbarShown() || podJazZgoraj(currentView)) ? "me" : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
@@ -786,6 +786,7 @@ function renderMe() {
   paintMeLevel();
   $("#me-streak").textContent = $("#xp-streak").textContent;
   $("#me-account").hidden = $("#account-tab").hidden;
+  $("#me-feedback").hidden = $("#feedback-tab").hidden;
   loadMeOverview();
 }
 // Pregled na strani Jaz (j, 4. 11. 2026: prazen spodnji del strani naj bo izkoriščen): koledar aktivnosti,
@@ -3218,7 +3219,10 @@ function syncCompetitionTab() {
   ms.textContent = t(mKey);
   m.querySelector("i, svg").outerHTML = icon(exams || regionalExams() ? "clipboard-check" : "medal");
   m.classList.toggle("active", currentView === m.dataset.view);
-  $("#me-exams").hidden = !siExams() || exams;
+  // Ko je NPZ/matura na četrtem mestu spodnje vrstice, vrstice pod Jaz na telefonu ni (touch.css .v-vrstici);
+  // na računalniku je »NPZ in matura« samo pod Jaz (zgornja vrstica, j 17. 11. 2026), zato tam ostane.
+  $("#me-exams").hidden = !siExams();
+  $("#me-exams").classList.toggle("v-vrstici", !!exams);
   $("#me-competition").hidden = noComp || !exams; // Tekmovanja so pod Jaz le, ko je na četrtem mestu NPZ ali matura
   // Regijski sistemi: isti vnos pod Jaz je »Izpiti« (pogled competition naloži loadExams).
   const mc = $("#me-competition");
