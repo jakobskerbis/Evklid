@@ -164,7 +164,10 @@ test("/api/account/prices: garancija samo ob vklopu in samo pri cenah v evrih", 
 
 test("ponudnik in kontakt v nogi sta ista kot upravljavec v obvestilu o zasebnosti", () => {
   const html = landingHtml({ name: "Evklid" });
-  assert.match(html, /class="land-provider">Evklid razvija in upravlja Jakob Skerbiš · Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
+  assert.match(html, /class="land-provider">Evklid trenutno upravlja Jakob Skerbiš · Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
+  // Ista beseda kot v pogojih uporabe, točka 1 (#806): »Evklid trenutno upravlja Jakob Skerbiš kot fizična oseba«.
+  const terms = readFileSync(new URL("../public/pogoji.html", import.meta.url), "utf8");
+  assert.ok(terms.includes(SL["land.provider"].replace("{app}", "Evklid").replace("{name}", PROVIDER.name)), "public/pogoji.html točka 1 se ujema z land.provider");
   const priv = readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
   const sec = priv.slice(priv.indexOf("1. Upravljavec"), priv.indexOf("<h2>", priv.indexOf("1. Upravljavec")));
   assert.ok(sec.includes(PROVIDER.name) && sec.includes(`mailto:${PROVIDER.email}`), "public/zasebnost.html točka 1 se ujema s PROVIDER");
