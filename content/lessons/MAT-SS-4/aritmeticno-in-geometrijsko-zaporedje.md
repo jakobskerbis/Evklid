@@ -11,7 +11,7 @@ Ugibati ni treba. Odgovor dobiš z enim računom, ko spoznaš dve vrsti zaporedi
 
 ## Razlaga
 
-**1. Dve zaporedji v tabeli.** Obe zaporedji se začneta z $2$. Prvo vsakič poveča za $3$, drugo vsakič pomnoži s $3$:
+**1. Dve zaporedji v tabeli.** Obe zaporedji se začneta z $2$. Prvo se vsakič poveča za $3$, drugo se vsakič pomnoži s $3$:
 
 | $n$ | prištevamo $3$ | množimo s $3$ |
 |---|---|---|

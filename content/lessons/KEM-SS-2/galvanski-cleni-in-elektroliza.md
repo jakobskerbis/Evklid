@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -25,8 +25,8 @@ Cinkova ploščica v raztopini bakrove soli se prevleče z bakrom, raztopina se 
 opis: Galvanski člen. Levo čaša z raztopino in cinkovo elektrodo, označeno kot anoda in negativni pol. Desno čaša z bakrovo elektrodo, označeno kot katoda in pozitivni pol. Elektrodi povezuje žica z voltmetrom, puščica nad žico kaže tok elektronov od cinka proti bakru. Čaši povezuje solni most.
 območje: 0; -1 .. 10; 7,5
 enota: 28
-pravokotnik: 0,5; 0,5 .. 3,5; 3,5 | modra ozadje
-pravokotnik: 6,5; 0,5 .. 9,5; 3,5 | oranžna ozadje
+pravokotnik: 0,5; 0,5 .. 3,5; 3,5 | oranžna ozadje
+pravokotnik: 6,5; 0,5 .. 9,5; 3,5 | modra ozadje
 črta: 0,5; 4,5 -> 0,5; 0,5 -> 3,5; 0,5 -> 3,5; 4,5
 črta: 6,5; 4,5 -> 6,5; 0,5 -> 9,5; 0,5 -> 9,5; 4,5
 pravokotnik: 1,7; 1 .. 2,3; 5,2 | siva polno
@@ -236,7 +236,7 @@ Elektroni v členu sami od sebe tečejo od leve točke (anoda) proti desni (kato
 ~ Elektroni tečejo samo po žici. Po mostu se premikajo ioni.
 + Ker se brez gibanja ionov raztopini naelektrita in krog ni sklenjen.
 - Ker se brez mostu raztopini ne moreta pomešati.
-~ Mešanje raztopin si ne želimo: bakrovi ioni bi prišli do cinka in elektroni bi preskočili neposredno, brez toka po žici.
+~ Mešanja raztopin si ne želimo: bakrovi ioni bi prišli do cinka in elektroni bi preskočili neposredno, brez toka po žici.
 > Ob anodi nastajajo pozitivni ioni, ob katodi jih zmanjkuje. Ioni iz mostu naboj izenačijo in sklenejo krog.
 
 ? Člen iz srebra (katoda, $+0{,}80\,\mathrm{V}$) in neznane kovine da $1{,}24\,\mathrm{V}$. Katera kovina je to?

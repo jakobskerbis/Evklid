@@ -159,6 +159,8 @@ export function mountDownload(app, opts = {}) {
     const { apk, play, appStore, testflight } = links();
     const ua = String(req.get("user-agent") || "");
     const first = /iPhone|iPad|Macintosh.*Mobile/.test(ua) ? "ios" : "android";
+    // Uvod pove samo, kar res obstaja: brez App Store in TestFlight na iPhonu ni aplikacije, le »Dodaj na začetni zaslon«;
+    // brez APK in Google Play tudi za Android ne (dl.introWeb).
     const btn = (href, label, primary = true) => `<a class="btn${primary ? "" : " sec"}" href="${esc(href)}">${label}</a>`;
     const android = `<section><h2>${t("dl.android")}</h2>
       ${play ? btn(play, t("dl.play")) : ""}
@@ -179,7 +181,6 @@ export function mountDownload(app, opts = {}) {
       ${!appStore && testflight ? `${btn(testflight, t("dl.testflight"))}<p class="muted">${t("dl.testflightSteps")}</p>` : ""}
       ${!appStore ? `<p class="muted">${t("dl.iosWeb")}</p>${btn("/", t("dl.openWeb"), false)}` : ""}
     </section>`;
-    // Uvod (Android, iPhone v Safariju) samo, ko je aplikacija za Android res na voljo (APK ali Google Play).
     // Noga z javnimi stranmi, kot na pristajalni strani (strani so v slovenščini); ne v aplikaciji (?app=1).
     const footer = `<footer>${[["/", BRAND.name], ["/o-evklidu", t("land.what")], ["/zakaj-evklid", t("land.why")], ["/starsi.html", t("land.par.t")], ["/sole", t("land.sch.t")], ["/zasebnost.html", t("land.privacy")]]
       .map(([href, label]) => `<a href="${href}">${href === "/" ? esc(label) : label}</a>`)
@@ -204,7 +205,7 @@ footer a{color:var(--accent);min-height:40px;display:inline-flex;align-items:cen
 </style></head><body><main>
 <header><img src="/icons/icon-192.png" alt=""><div><h1>${esc(BRAND.name)}</h1><div class="muted">${t("dl.title")}</div></div></header>
 ${req.query.app ? appLink : ""}
-${apk || play ? `<p>${t(appStore || testflight ? "dl.intro" : "dl.introWeb")}</p>` : ""}
+<p>${t(appStore || testflight ? "dl.introApps" : apk || play ? "dl.intro" : "dl.introWeb")}</p>
 ${first === "ios" ? ios + android : android + ios}
 ${req.query.app ? "" : appLink}
 ${req.query.app ? "" : footer}

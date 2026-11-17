@@ -185,7 +185,7 @@ $k = 12 \log_2 \dfrac{\nu}{\nu_0}$; $\;\log_a A = c \iff A = a^c$
 3. a) Pomnožimo z $12$: $12 \cdot (-2) = -24$. Ton je $24$ poltonov oziroma dve oktavi pod A.
 4. b) Enačbo $12 \log_2 \dfrac{\nu}{440} = 7$ delimo z $12$: $\log_2 \dfrac{\nu}{440} = \dfrac{7}{12}$.
 5. b) Po definiciji logaritma je $\dfrac{\nu}{440} = 2^{\frac{7}{12}} \approx 1{,}4983$; osnova $2$ se potencira, desna stran je eksponent.
-6. b) Pomnožimo z $440$: $\nu \approx 440 \cdot 1{,}4983 \approx 659{,}3\,\mathrm{Hz}$, kar je pozitivno in ustreza pogoju.
+6. b) Pomnožimo s $440$: $\nu \approx 440 \cdot 1{,}4983 \approx 659{,}3\,\mathrm{Hz}$, kar je pozitivno in ustreza pogoju.
 7. Odgovor: pri struni A aplikacija pokaže $k = -24$, vrednost $k = 7$ pa pri frekvenci približno $659{,}3\,\mathrm{Hz}$ (ton E).
 
 ### Primer 4 – zdaj ti

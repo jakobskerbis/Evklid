@@ -25,6 +25,7 @@
   "zap.noCards": "Je ne peux pas faire de fiches avec ces notes pour l'instant.",
   "zap.practice": "Réviser les fiches",
   "zap.printed": "Nous ne gardons pas le texte des pages imprimées – seulement les thèmes et les fiches.",
+  "zap.printedNoCards": "Nous ne gardons pas le texte des pages imprimées.",
   "zap.list": "Notes enregistrées",
   "zap.empty": "Tu n'as pas encore de notes enregistrées.",
   "zap.open": "Ouvrir",
@@ -44,6 +45,7 @@
   "zap.keep": "Ce sont mes notes – enregistrer",
   "zap.keepHint": "Sans la coche, nous n'enregistrons pas le texte. Le quiz et les cartes restent.",
   "zap.notKept": "Nous n'avons pas enregistré le texte collé – seulement les thèmes et les cartes.",
+  "zap.notKeptNoCards": "Nous n'avons pas enregistré le texte collé.",
   "zap.correctMark": "Bonne réponse",
   "zap.yourMark": "Ta réponse"
 }

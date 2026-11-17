@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer"><!-- koda vabila iz naslova ne gre naprej (server/vabila.js) -->
+  <title>Evklid</title>
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
+  <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
+  <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/vendor/instrument-sans/index.css">
+  <link rel="stylesheet" href="/vendor/nunito/index.css">
+  <link rel="stylesheet" href="/vendor/ibm-plex-sans/index.css">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/ui.css">
+  <link rel="stylesheet" href="/vabilo.css">
+</head>
+<body>
+<main class="doc vab" id="vab-root">
+  <p><a href="/" id="vab-home">← Evklid</a></p>
+  <h1 data-i18n="vab.title">Vabilo v pilot Evklida</h1>
+  <p data-i18n="vab.intro">Evklid je slovenski učni pomočnik za matematiko, fiziko, kemijo in biologijo: učna pot, naloge in inštruktor z umetno inteligenco.</p>
+  <form id="vab-form" class="card" novalidate>
+    <label for="vab-koda" data-i18n="vab.codeLabel">Koda vabila</label>
+    <input id="vab-koda" name="koda" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" required>
+    <button class="primary" type="submit" data-i18n="vab.check">Preveri kodo</button>
+  </form>
+  <div id="vab-out" aria-live="polite"></div>
+</main>
+<script type="module" src="/zagon.js" data-moduli="/vabilo.js /tipkovnica-strani.js"></script>
+</body>
+</html>

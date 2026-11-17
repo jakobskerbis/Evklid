@@ -234,7 +234,8 @@ test("check results carry a message code for translated feedback", () => {
   const r = checkAnswer({ type: "number", value: 2.513, decimals: 2, dot: true }, "2.5");
   assert.equal(r.code, "chk.rounding");
   assert.equal(r.params.right, "2.51");
-  assert.deepEqual(checkAnswer({ type: "number", value: 5, unit: "m" }, "5 kg").params, { unit: "m" });
+  // Napačna enota: sporočilo ne imenuje prave enote (j, 17. 11. 2026).
+  assert.deepEqual(checkAnswer({ type: "number", value: 5, unit: "m" }, "5 kg").params, {});
   assert.equal(checkAnswer({ type: "fraction", num: 1, den: 2 }, "2/4").code, "chk.simplify");
   // Napačen odgovor pri vadbi: koda za »poskusi znova«.
   const store = openDb(":memory:");

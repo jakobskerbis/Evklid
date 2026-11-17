@@ -69,7 +69,7 @@ Za $f(x) = x^4$ je $f''(x) = 12x^2$ in $f''(0) = 0$. Ali ima graf v $(0, 0)$ pre
 Nima. $12x^2 > 0$ na obeh straneh ničle, zato je $x^4$ konveksna povsod in v $(0, 0)$ ima minimum. Pogoj $f''(x_0) = 0$ je **potreben, ni pa zadosten**: odločilna je menjava predznaka.
 :::
 
-**5. Prevoj ni stacionarna točka.** V prevoju $f''$ zamenja predznak, zato $f'$ na eni strani narašča, na drugi pada. Naklon tangente je tam največji ali najmanjši v okolici: $f'$ ima ekstrem. Tangenta je vodoravna le izjemoma (pri $x^3$ v $0$). Pri raketi je prevoj grafa višine trenutek največje hitrosti, ne vrh leta.
+**5. Prevoj praviloma ni stacionarna točka.** V prevoju $f''$ zamenja predznak, zato $f'$ na eni strani narašča, na drugi pada. Naklon tangente je tam največji ali najmanjši v okolici: $f'$ ima ekstrem. Tangenta je vodoravna le izjemoma (pri $x^3$ v $0$). Pri raketi je prevoj grafa višine trenutek največje hitrosti, ne vrh leta.
 
 **6. Drugi odvod in ekstremi.** Iz lekcije Uporaba odvoda veš, da je v stacionarni točki $a$ ekstrem, če $f'$ zamenja predznak. Drugi odvod to pogosto pove hitreje:
 

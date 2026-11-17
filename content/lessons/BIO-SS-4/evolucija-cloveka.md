@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -165,7 +165,7 @@ $t = \dfrac{1{,}2}{0{,}2} = 6$, torej pred okoli $6$ milijoni let, kar se ujema 
 
 ## Pogoste napake
 
-- **»Človek izhaja iz šimpanza.«** Šimpanz je današnja vrsta. Popravek: imava skupnega prednika izpred $6$ do $7$ milijonov let.
+- **»Človek izhaja iz šimpanza.«** Šimpanz je današnja vrsta. Popravek: imata skupnega prednika izpred $6$ do $7$ milijonov let.
 - **»Evolucija človeka je ravna vrsta od opice do človeka.«** Slika s pohodom vedno pokončnejših postav zavaja. Popravek: grmovje vrst, ki so živele tudi hkrati; neandertalec je naš sorodnik, ne prednik.
 - **»Najprej so zrasli možgani, potem so se postavili na noge.«** Tabela kaže nasprotno: Lucy je hodila pokončno z možgani šimpanza. Popravek: mozaična evolucija, hoja pred možgani.
 - **»Kar se starši naučijo ali pridobijo, podedujejo otroci.«** Pridobljeno se ne zapiše v DNA spolnih celic. Popravek: znanje prenaša kultura, gene spreminjata mutacija in izbor.
@@ -214,7 +214,7 @@ Danes sediš v razredu s telefonom v roki, z možgani, kakršne je imela skupina
 + Živel je pred okoli $6$ do $7$ milijoni let in ni bil ne človek ne šimpanz.
 - Skupnega prednika nimata, ker imata različno število kromosomov.
 ~ Razlika v številu je posledica zlitja dveh kromosomov v človeški kromosom 2 po ločitvi.
-> Molekulska ura in fosili postavijo razcep pred $6$ do $7$ milijonov let.
+> Molekulska ura in fosili postavijo razcep pred $6$ do $7$ milijoni let.
 
 ? Baterija telefona shrani $12\,\mathrm{Wh}$ energije. Koliko časa bi z njo delovali možgani, ki porabljajo $20\,\mathrm{W}$?
 - $240$ ur

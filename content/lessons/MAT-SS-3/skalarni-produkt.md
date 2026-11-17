@@ -392,7 +392,7 @@ Fiziki temu rečejo **delo** sile: $\vec F \cdot \vec s = |\vec F|\,|\vec s|\cos
 
 ? Kocka ima oglišča $A(0, 0, 0)$, $B(4, 0, 0)$, $D(0, 4, 0)$ in $G(4, 4, 4)$. Telesna diagonala $AG$ in ploskovna diagonala $BD$ nimata skupne točke. Koliko je $\overrightarrow{AG} \cdot \overrightarrow{BD}$?
 = 0 | 0
-~ 32 | Za $\overrightarrow{BD}$ si sešel koordinati točk. Vektor od $B$ do $D$ je $D - B = (-4, 4, 0)$.
+~ 32 | Za $\overrightarrow{BD}$ si seštel koordinate točk. Vektor od $B$ do $D$ je $D - B = (-4, 4, 0)$.
 > $\overrightarrow{AG} = (4, 4, 4)$ in $\overrightarrow{BD} = (-4, 4, 0)$, produkt je $-16 + 16 + 0 = 0$. Diagonali sta pravokotni mimobežnici.
 
 <<RACUN

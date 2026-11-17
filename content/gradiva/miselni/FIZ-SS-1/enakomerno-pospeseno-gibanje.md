@@ -19,7 +19,7 @@ stanje: osnutek
   - iz mirovanja: dvojni čas, štirikratna pot
 - Enačba brez časa
   - $v^2 = v_0^2 + 2\,a\,s$
-  - zavorna pot raste s $v_0^2$
+  - zavorna pot raste z $v_0^2$
 - Graf s(t)
   - parabola, vse strmejša
   - naklon tangente je hitrost

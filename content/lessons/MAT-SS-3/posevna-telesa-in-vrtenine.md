@@ -9,7 +9,7 @@ avtor: AI
 
 V nedeljo spečeš $16$ palačink s premerom $20\,\mathrm{cm}$, vsaka je debela $0{,}5\,\mathrm{cm}$. Kup je visok $8\,\mathrm{cm}$. Mlajši brat ga s komolcem porine, da se nagne, in reče: »Zdaj je pa poševen, torej ga je manj.« Ima prav? Pojedel ni nobene palačinke.
 
-Še eno vprašanje iz kuhinje: lončar skledo oblikuje na vretenu, ki se vrti, zato je okrogla. Tudi sladoledni kornet ima obliko, ki nastane z vrtenjem lika. Kakšno telo nastane, ko zavrtiš nek lik, in koliko sladoleda gre vanj? Obe vprašanji rešimo s formulami, ki jih že poznaš.
+Še eno vprašanje iz kuhinje: lončar skledo oblikuje na vretenu, ki se vrti, zato je okrogla. Tudi sladoledni kornet ima obliko, ki nastane z vrtenjem lika. Kakšno telo nastane, ko zavrtiš neki lik, in koliko sladoleda gre vanj? Obe vprašanji rešimo s formulami, ki jih že poznaš.
 
 ## Razlaga
 

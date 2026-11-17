@@ -10,7 +10,8 @@ Evklidova tipkovnica, laboratorij, NPZ, vse nove stvari s spleta. Seja je ena: W
 (`server/mobile/web-session.js`). Odjava na spletu odjavi tudi aplikacijo. Splet aplikacijo prepozna po
 `EvklidApp/<različica>` v User-Agent (`public/install.js` → `isStandalone()`: brez ponudbe »Namesti aplikacijo«).
 Vrstici telefona (ura, gumbi) dobita barvo roba strani. Gumb nazaj na Androidu gre nazaj po strani, povezave na
-druge strani odpre brskalnik.
+druge strani odpre brskalnik. Povezava iz e-pošte `https://evklid.app/vabilo?koda=…` (vabilo v pilot, `server/vabila.js`) se vedno odpre v
+brskalniku (aplikacija nima univerzalnih povezav); registracija tam je ista kot v aplikaciji, zato posebnega zaslona v aplikaciji ni.
 
 Naravno ostane: prijava in registracija (tipkovnica telefona), posodobitve (OTA in nov APK), obvestila, vaje
 brez povezave. Med objavo nove različice (gostitelj vrne 502/503/504) aplikacija ob vrtavki pokaže »Evklid se posodablja …« in poskuša znova do ~70 s (`BUSY_WAIT`, kot splet), ob prekinjeni povezavi dvakrat tiho poskusi znova. Ko strežnik še vedno ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
@@ -95,6 +96,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Nastavitve | slogi (Igriv, Temen, zgodovinski), lastne barve, jezik, tempo, tipkovnica, glas; aplikacija ima raven, opomnike, vibracijo | M | naravno; slogi kot dodatne palete v `theme.ts` | delno |
 | Račun staršev | otroci, plačila, darila, šole (`account.js`) | M | odpri spletno stran prijavljeno (`app-link.js` v obratni smeri) | delno (naročnina, izbris) |
 | Nadgradnja stopnje, dokup razlag, darilo po stopnji | gumb »Odpri: …« (doplačilo razlike), gumb »Dokupi razlage« ob obvestilu o porabi, izbira stopnje darilne kode (`account.js`, `app.js` addAllowanceNote) | S | splet; aplikacija iz trgovine teh nakupov ne sme ponuditi mimo trgovine | delno (cena stopnje, Družina, obvestilo o porabi brez gumba; mobilna aplikacija nima zaslona za dokup pogovorov, zato videza izbire dokupa iz `credit-card.js` — ploščice in gumb »Nadaljuj za skupaj …«, j 2026-11-15 — ni treba usklajevati) |
+| Kartica ob porabljenih brezplačnih vprašanjih | razlog, »Z naročnino dobiš« (cena stopnje, več vprašanj, podrobnejše razlage, interaktivni deli lekcij), »Pošlji povezavo staršu« (mladoletni) ali »Izberi naročnino« (polnoleten), »Vadi naprej v Vadnici« (`public/meja-placilo.js`, j 2026-11-15) | S | aplikacija iz trgovine ponudbe in povezave za plačilo mimo trgovine ne sme pokazati: tudi splet v aplikaciji (`EvklidApp/` v User-Agent) kaže samo razlog in Vadnico; naravni klepet (`mobile/src/app/chat/[id].tsx` blockText) ostaja vrstica z razlogom in namigom | ✗ (namerno, do nakupa v trgovini) |
 | Skrbnik | upravljanje (APK, uporabniki) | S | samo splet | ✗ (namerno) |
 | Povabi prijatelja po uspehu | kartica »Pokaži Evklida prijatelju« pod osvojeno temo in opravljenim preizkusom znanja (`public/povabi.js`, 15+, enkrat na 7 dni, nagrada samo z delujočimi plačili) | S | ne: nagrada za povabilo je vezana na plačilo na spletu (pravila trgovin); tudi WebView z `EvklidApp/` je ne pokaže | ✗ (namerno) |
 | Skeniraj: po korakih | reševalnik po korakih (`public/scan/`); aplikacija pošlje fotografijo inštruktorju | M | WebView strani skeniranja ali naravni zaslon korakov | delno |

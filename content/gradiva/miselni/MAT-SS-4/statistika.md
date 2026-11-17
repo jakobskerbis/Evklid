@@ -12,7 +12,7 @@ stanje: osnutek
 - Razpršenost
   - variacijski razmik $x_{\max} - x_{\min}$
   - $\sigma = \sqrt{\sigma^2}$, $\sigma^2$ je varianca
-  - napaka: vsota odklonov je vedno $0$
+  - pazi: vsota odklonov je vedno $0$
 - Škatla z brki
   - min, $Q_1$, $\mathrm{Me}$, $Q_3$, max
   - medkvartilni razmik $Q_3 - Q_1$
