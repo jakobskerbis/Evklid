@@ -1,10 +1,10 @@
 // Virtualni mikroskop (docs/mikroskop.md): svetlobni mikroskop s štirimi objektivi (4×, 10×, 40×, 100× z oljem), grobim
 // in finim vijakom, lučko in zaslonko, nad 1000× presevni elektronski mikroskop (TEM) do uporabnih 5 000 000×, z »Molekulami
-// v barvah« do 50 000 000× (j, 12. in 16. 11. 2026), pri največjih povečavah model molekul in atomov. Odpre ga stran /3d (#mikroskop?p=<id>, gumb »Poglej z mikroskopom«
+// v barvah« do 100 000 000× (j, 12. in 16. 11. 2026), pri največjih povečavah model molekul in atomov. Odpre ga stran /3d (#mikroskop?p=<id>, gumb »Poglej z mikroskopom«
 // pri tkivih 3D sveta) in laboratorij (pogon simulacij »lab-mikroskop«). Besedila vsebine so slovenska kot pri 3D modelih.
 import { MOL, ELEMENTI, ZNACILNO, ZNACILNA_TOCKA, elementiMolekule } from "./molekule-vrste.js";
 import { ustvariUpodobitev } from "./upodobi.js";
-import { izracunajPogled, ZACETNO, povecava, najblizjaMolekula, fino } from "./pogled.js";
+import { izracunajPogled, ZACETNO, povecava, najblizjaMolekula, fino, obvestiloMol } from "./pogled.js";
 import { svetlost, OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, TEM_MAX, SEM_MAX, vidnoPolje, locljivost, globinskaOstrina, globinskaOstrinaSem, merilce, oznakaDolzine, oznakaPovecave, utezModela, raven } from "./optika.js";
 import { BARVANJA } from "./barvila.js";
 import { PREPARATI, SKUPINE, ZACETNI, naloziPreparat } from "./preparati/index.js";
@@ -121,13 +121,17 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   merilo.append(meriloCrta, meriloNapis);
   const znacka = mk("div", "mk-znacka");
   const nalaganje = mk("div", "mk-nalaganje", t("mk.loading"));
+  // sloj molekul se še prevaja ali ga ta naprava ne zmore: slika brez molekul bi bila enakomerno siva
+  const molNal = mk("div", "mk-nalaganje mk-nalaganje-mol");
+  molNal.setAttribute("role", "status");
+  molNal.hidden = true;
   // 100× brez olja: gumb kar na odru, da ga na telefonu ni treba iskati pod sliko
   const bKapni = mk("button", "a3-pill mk-kapni");
   bKapni.type = "button";
   bKapni.hidden = true;
   const oznakeMol = mk("div", "mk-mol-oznake"); // imena molekul na sliki (raven molekul in atomov)
   oznakeMol.setAttribute("aria-hidden", "true");
-  oder.append(platno, oznakeMol, igla, oznaka, merilo, znacka, bKapni, nalaganje);
+  oder.append(platno, oznakeMol, igla, oznaka, merilo, znacka, bKapni, molNal, nalaganje);
   const kazalec = mk("p", "mk-kazalec");
   kazalec.setAttribute("aria-live", "polite");
 
@@ -167,7 +171,8 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     izgubljen = false;
     pKljuc = mKljuc = "";
     msNaVzorec = msNaMol = 0;
-    molZacet = false;
+    molCaka = null;
+    molStanjeZadnje = "";
     idKljuc = "";
     const id = zadnjiId || prep?.id; // izguba med nalaganjem preparata: tisti, ki se je nalagal
     if (id) izberiPreparat(id, { zacetek: id !== prep?.id }).catch(() => {});
@@ -176,6 +181,8 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   let prep = null;
   let s = { ...ZACETNO };
   let zivo = true;
+  let molStanjeZadnje = ""; // upo.molStanje zadnjega izrisa (»napaka« → sporočilo tudi pod nadzorom TEM)
+  let molNalCas = 0;
   let interakcija = 0;
   let cakaIzris = false;
   let zadnji = null; // zadnji pogled (vp, n, velikost)
@@ -575,7 +582,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   let brezSS = false; // naprava je prepočasna za 4 vzorce na točko (do menjave preparata)
   let mKljuc = ""; // pogled, za katerega je sloj molekul v celoti narisan
   let msNaMol = 0; // izmerjen čas sloja molekul na točko (ms)
-  let molZacet = false;
+  let molCaka = null; // obljuba programa molekul, ki se prevaja (upo.pripraviMol)
   let delo = null; // izris po pasovih, ki še teče: { kljuc, mK, r, css, faza (0 preparat, 1 molekule), y, h }
   const PAS_MS = 25;
   const kljucPreparata = (v) => JSON.stringify([prep?.id, v.n, v.sredisce, v.umNaTocko, v.nacin, v.barvila, v.debelina, v.ss]);
@@ -596,34 +603,123 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
   const visinaPasuMol = (n) => (msNaMol ? Math.max(4, Math.min(n, Math.round(PAS_MS / Math.max(1e-7, msNaMol * n)))) : 4);
   const visinaPasu = (n, ss) => Math.max(4, Math.min(n, Math.round(PAS_MS / Math.max(1e-7, msNaVzorec * n * ss))));
   // hiter izris v nižji ločljivosti (med premikanjem in kot predogled); skala se prilagodi, da traja ~30 ms
-  function predogled(css, N, n) {
+  // mol: sloj molekul (pogled z utežjo 1), ki se v predogledu nariše v isti nižji ločljivosti. Tudi med premikanjem pri
+  // TEM nad ~800 000× se sloj molekul nariše v predogledu (sicer je slika pod prstom siva); če program še ni pripravljen
+  // ali je naprava zanj prepočasna, ostane zadnja slika.
+  function predogled(css, N, n, mol = null) {
+    const uz = s.nacin === "tem" ? utezModela(povecava(s)) : 0;
+    // med premikanjem sloj molekul v predogledu le, če ga naprava zmore v ~80 ms tudi pri najmanjši skali (96 × 96);
+    // po spustu (nov pogled) vedno, ker je to prva slika z molekulami (prvo risanje z novim programom je lahko počasno)
+    const zMol = !!mol || (uz > 0 && (interakcija === 0 || !msNaMol || msNaMol * 96 * 96 < 80));
+    const cena = msNaVzorec + (zMol ? msNaMol : 0);
     // ko je hitrost naprave že izmerjena, skala takoj ustreza ~30 ms (zahtevnejši preparati so lahko večkrat počasnejši)
-    if (msNaVzorec) skala = Math.round(20 * Math.max(0.15, Math.min(0.75, Math.sqrt(30 / (msNaVzorec * n * n))))) / 20;
+    if (msNaVzorec) skala = Math.round(20 * Math.max(0.15, Math.min(0.75, Math.sqrt(30 / (cena * n * n))))) / 20;
     const nn = Math.min(n, Math.max(96, 32 * Math.round((n * skala) / 32)));
+    const r = izracunajPogled(upo, prep, s, nn, { hitro: !zMol || !!mol });
+    const m = mol || r.mol;
+    const vm = m && { ...r.v, mol: m };
+    const molOk = !!vm && upo.molPripravljen(vm);
+    if (vm && !molOk) pripraviMol(vm);
+    // molekule bodo prekrile večino slike, a še niso pripravljene: ostane zadnja slika (in obvestilo), ne siva. Če jih ta
+    // naprava ne zmore (»napaka«, ne prevede se niti splošni program), se riše rez brez molekul, da se merilo in slika
+    // ob povečevanju še spreminjata (sicer bi slika obstala pri ~1 750 000×, merilo pa pri »20 nm«).
+    const molNapaka = vm ? upo.molStanje(vm) === "napaka" : molStanjeZadnje === "napaka";
+    if (zadnji && (uz >= 0.5 || (m && m.utez >= 0.5)) && !molOk && !molNapaka) return void pokaziStanjeMol(vm || null, uz);
     if (nn === n) pKljuc = ""; // predogled v polni velikosti prepiše polno sliko
-    const r = izracunajPogled(upo, prep, s, nn, { hitro: true });
     r.v.ss = r.v.ss || 1;
     r.v.zaslonN = N;
     r.v.cas = performance.now() / 1000;
-    const ms = izmeri(() => upo.narisiPreparat(r.v), nn * nn * (r.v.ss || 1));
-    upo.sestavi(r.v);
+    if (vm) vm.zaslonN = N, vm.cas = r.v.cas;
+    let ms = izmeri(() => upo.narisiPreparat(r.v), nn * nn * (r.v.ss || 1));
+    if (molOk) {
+      const t0 = performance.now();
+      upo.narisiMol(vm);
+      upo.pocakajMol();
+      const t = performance.now() - t0;
+      msNaMol = msNaMol ? 0.6 * msNaMol + 0.4 * (t / (nn * nn)) : t / (nn * nn);
+      ms += t;
+      upo.sestavi(vm, m.utez);
+    } else upo.sestavi(r.v);
+    pokaziStanjeMol(vm || null, uz);
     const f = Math.max(0.8, Math.min(1.25, Math.sqrt(30 / Math.max(1, ms))));
     skala = Math.round(20 * Math.max(0.15, Math.min(0.75, skala * f))) / 20;
-    zadnji = { vp: r.vp, css, m: r.m, mol: r.mol };
+    zadnji = { vp: r.vp, css, m: r.m, mol: m || null };
     oznakeMol.replaceChildren();
     posodobiMerilo();
+  }
+  // Obvestilo na odru, ko bi bila slika brez molekul siva (utež ≥ 0,5): »Rišem molekule …« med prevajanjem (pokaže se šele po
+  // 200 ms, da ne utripa) in kratko sporočilo, če jih naprava ne zmore. Ob napaki je isto besedilo še pod nadzorom TEM.
+  function pokaziStanjeMol(v, uz = v?.mol?.utez || 0) {
+    const st = v?.mol ? upo.molStanje(v) : "";
+    const prej = molStanjeZadnje;
+    molStanjeZadnje = st;
+    const o = obvestiloMol(st, uz);
+    if (o !== "nalaganje") {
+      clearTimeout(molNalCas);
+      molNalCas = 0;
+    }
+    if (o === "napaka") {
+      molNal.textContent = t("mk.molError");
+      molNal.hidden = false;
+    } else if (o === "nalaganje") {
+      if (!molNal.hidden) molNal.textContent = t("mk.molLoading");
+      else if (!molNalCas)
+        molNalCas = setTimeout(() => {
+          molNalCas = 0;
+          if (molStanjeZadnje !== "caka") return;
+          molNal.textContent = t("mk.molLoading");
+          molNal.hidden = false;
+        }, 200);
+    } else molNal.hidden = true;
+    if ((prej === "napaka") !== (st === "napaka")) posodobiNadzor({ brezDrsnika: true });
   }
   // Pri največjih povečavah (vidno polje pod 20 nm) je sredina pogosto v vodi med molekulami (npr. med filamenti
   // miofibrile): ob spremembi povečave se preparat premakne na najbližjo molekulo v krogu ~30 nm, da se vidi, iz česa
   // je snov na sredini (j, 13. 11. 2026: srčna mišica pri 50 000 000×). Premikanje preparata potem deluje kot prej.
   let molM = 0;
+  // sloj molekul: program za ta pogled (prizor, membrana, atomi) se prevede v ozadju, nato se slika osveži
+  function pripraviMol(v) {
+    // »napaka«: obljuba je že izpolnjena, nov .then bi ob vsaki sličici sprožil nov izris (60 sličic na sekundo brez konca)
+    if (upo.molPripravljen(v) || upo.molStanje(v) === "napaka") return;
+    const o = upo.pripraviMol(v);
+    if (o === molCaka) return;
+    molCaka = o;
+    // tudi ob napaki: izris pokaže sporočilo namesto sive slike
+    const u = upo;
+    o.then(() => {
+      if (molCaka === o) molCaka = null;
+      if (zivo && u === upo) narisi();
+    });
+  }
+  // Ogrevanje (TEM od 100 000× do ~800 000×): ko slika miruje, se v ozadju pripravita programa molekul, ki ju bo ta pogled rabil pri
+  // ~900 000× in pri 5 000 000× (stran rezine na sredini, membrana, atomi), da se ob povečevanju slika ne ustavi.
+  let ogretoZa = "";
+  function ogrej(n) {
+    if (s.nacin !== "tem" || !prep || interakcija > 0 || delo) return;
+    const m = povecava(s);
+    if (m < 0.99e5 || utezModela(m) > 0) return; // od 100 000× (vidno polje 1,6 µm): sredina se do ~900 000× malo premakne
+    const kl = JSON.stringify([prep.id, s.sredisce, n]);
+    if (kl === ogretoZa) return;
+    ogretoZa = kl;
+    const u = upo;
+    const cilji = [9e5, Math.min(temMax(), TEM_MAX)];
+    (async () => {
+      for (const mm of cilji) {
+        if (!zivo || u !== upo || interakcija > 0 || ogretoZa !== kl) return;
+        const r = izracunajPogled(upo, prep, { ...s, m: mm }, n, { hitro: false });
+        if (r.mol && !upo.molPripravljen(r.v)) await upo.pripraviMol(r.v);
+      }
+    })();
+  }
   function kMolekuli(n) {
-    if (s.nacin !== "tem" || s.m === molM || !upo.molPripravljen()) return;
-    molM = s.m;
-    if (vidnoPolje(s.m, "tem") >= 0.02) return;
+    if (s.nacin !== "tem" || s.m === molM) return;
+    if (vidnoPolje(s.m, "tem") >= 0.02) return void (molM = s.m);
     const r = izracunajPogled(upo, prep, s, n, { hitro: false });
     const k = 64; // mreža 64 × 64 po 1 nm
-    const id = r.mol && upo.idMolekul({ ...r.v, n: k, umNaTocko: 0.001 }, k);
+    const vId = r.mol && { ...r.v, n: k, umNaTocko: 0.001 };
+    if (vId && !upo.molPripravljen(vId, true)) return void pripraviMol(r.v); // ko je program pripravljen, znova
+    molM = s.m;
+    const id = vId && upo.idMolekul(vId, k);
     if (!id) return;
     const d = najblizjaMolekula(id, k, r.mol.reze);
     if (!d) return;
@@ -664,20 +760,24 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     }
     r.v.zaslonN = N;
     r.v.cas = performance.now() / 1000;
-    // sloj molekul: program se prevaja v ozadju šele ob prvem obisku TEM (ko je pripravljen, se slika osveži)
-    if (r.mol && !molZacet) {
-      molZacet = true;
-      upo.pripraviMol().then((ok) => ok && zivo && narisi());
-    }
+    // sloj molekul: program se prevaja v ozadju (ko je pripravljen, se slika osveži); medtem obvestilo namesto sive slike
+    if (r.mol) pripraviMol(r.v);
+    pokaziStanjeMol(r.mol ? r.v : null);
     const kljuc = kljucPreparata(r.v);
-    const mK = r.mol && upo.molPripravljen() ? kljucMol(r) : "";
+    const mK = r.mol && upo.molPripravljen(r.v) ? kljucMol(r) : "";
     if (!upo.ima(n)) pKljuc = mKljuc = "";
-    const rabiP = kljuc !== pKljuc;
+    // sloj molekul z utežjo 1 povsem prekrije preparat: preparata v polni ločljivosti ni treba risati (j, 16. 11. 2026)
+    const skrit = !!mK && r.mol.utez >= 1;
+    const rabiP = kljuc !== pKljuc && !skrit;
     const rabiM = !!mK && mK !== mKljuc;
     if (!rabiP && !rabiM) return koncaj(r, css);
-    if (delo && delo.kljuc === kljuc && (delo.mK === mK || delo.faza === 0)) {
+    // (preparat, ki ga bodo molekule povsem prekrile, se ne riše do konca: nov izris začne s sloja molekul)
+    if (delo && delo.kljuc === kljuc && (delo.mK === mK || delo.faza === 0) && !(skrit && delo.faza === 0)) {
       // med pasovi preparata se je spremenil le sloj molekul (barve, program pripravljen): preparat se ne začne znova
       if (delo.mK !== mK) {
+        // program molekul je pravkar pripravljen, preparat v polni ločljivosti pa se še riše (delna utež, ~850 000×–
+        // 2 400 000×): takoj predogled z molekulami v nižji ločljivosti, ne šele po vseh pasovih preparata
+        if (rabiM && delo.faza === 0) predogled(css, N, n);
         if (rabiM) mKljuc = "";
         delo.mK = rabiM ? mK : "";
       }
@@ -690,9 +790,9 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     if (rabiP) {
       if (!msNaVzorec || msNaVzorec * n * n * r.v.ss > 2 * PAS_MS) predogled(css, N, n);
       pKljuc = "";
-    }
+    } else if (skrit && rabiM) predogled(css, N, n, r.mol); // takoj molekule v nižji ločljivosti, nato polna slika
     if (rabiM) mKljuc = ""; // sloj molekul se nariše znova le, če se je spremenil (je ~100× dražji od preparata)
-    const d = (delo = { kljuc, mK: rabiM ? mK : "", r, css, faza: rabiP ? 0 : 1, y: 0, h: rabiP ? visinaPasu(n, r.v.ss) : visinaPasuMol(n) });
+    const d = (delo = { kljuc, mK: rabiM ? mK : "", r, css, skrit, faza: rabiP ? 0 : 1, y: 0, h: rabiP ? visinaPasu(n, r.v.ss) : visinaPasuMol(n) });
     requestAnimationFrame(() => nadaljuj(d));
   }
   // vsak izris ima svojo zanko pasov; ko ga zamenja nov pogled, se stara zanka ustavi (sicer bi se zanke kopičile)
@@ -723,7 +823,8 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
       d.h = visinaPasuMol(v.n);
       if (d.y < v.n) {
         // sproti pokaži že narisani del (na počasnem telefonu traja celoten sloj nekaj sekund), največ ~8-krat na sekundo
-        if (d.r.mol && performance.now() - (d.sestavljeno || 0) > 120) {
+        // (če preparat ni narisan, ker ga molekule prekrijejo, ostane do konca predogled)
+        if (d.r.mol && !d.skrit && performance.now() - (d.sestavljeno || 0) > 120) {
           upo.sestavi(v, d.r.mol.utez, d.y / v.n);
           d.sestavljeno = performance.now();
         }
@@ -735,6 +836,7 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     koncaj(d.r, d.css);
   }
   function koncaj(r, css) {
+    if (!r.mol) setTimeout(() => ogrej(r.v.n), 400);
     const id = idMolekul(r);
     const molGotov = r.mol && mKljuc && mKljuc === kljucMol(r);
     upo.sestavi(r.v, molGotov ? r.mol.utez : 0);
@@ -927,8 +1029,9 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     opozorilo.textContent = brezOlja ? t("mk.noOil") : oljeBrezPotrebe ? t("mk.oilNotNeeded") : "";
     const utez = tem ? utezModela(m) : 0;
     bBarve.hidden = utez <= 0;
-    namig.hidden = !(tem && !s.barve && m >= TEM_MAX * 0.7);
-    namig.textContent = namig.hidden ? "" : t("mk.temLimit");
+    const molNe = tem && utezModela(m) > 0 && molStanjeZadnje === "napaka";
+    namig.hidden = !molNe && !(tem && !s.barve && m >= TEM_MAX * 0.7);
+    namig.textContent = namig.hidden ? "" : t(molNe ? "mk.molError" : "mk.temLimit");
     znacka.textContent = `${oznakaPovecave(m)} · ${tem ? "TEM" : sem ? "SEM" : t("mk.badgeObjective", { m: obj.m })}`;
     const vp = vidnoPolje(m, s.nacin);
     const vrstice = [
@@ -940,13 +1043,14 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     if (sem) vrstice.push([t("mk.depthOfField"), oznakaDolzine(globinskaOstrinaSem(m))]);
     vrstice.push([t("mk.whatYouSee"), imeRavni(raven(m, s.nacin))]);
     tabela.replaceChildren(...vrstice.flatMap(([a, b]) => [mk("dt", "", a), mk("dd", "", b)]));
+    // brez sloja molekul (molNe: naprava ga ne zmore) je slika navaden posnetek TEM, ne ponazoritev z dogovorjenimi barvami
     resnica.textContent = sem
       ? t("mk.truth.sem")
       : !tem
       ? m >= 1000
         ? t("mk.truth.light")
         : ""
-      : utez > 0
+      : utez > 0 && !molNe
         ? (prep?.snovi?.[18] || prep?.snovi?.[4]) && /kost|zob/.test(prep.id)
           ? t("mk.truth.crystal")
           : t("mk.truth.model")

@@ -27,6 +27,14 @@ uniform float uGostMol[16]; // gostota za TEM; < 0: reža je prazna
 uniform float uAtMol[16];   // vrsta atomov (A_*)
 uniform int uIdPass;      // 1: namesto barve zapiši režo molekule (za oznake)
 out vec4 o;
+// Splošni program bere prizor in membrano iz uniform; molekuleZa() jih vstavi kot stalnice (specializiran program)
+#ifndef K_PA
+#define K_PA int(uPA + 0.5)
+#define K_PB int(uPB + 0.5)
+#define K_MEM (uMem > 0.5)
+#define K_MV int(uMemVrsta + 0.5)
+#define K_AT true
+#endif
 
 // ---------- atomi ----------
 // el: 1 H, 2 C, 3 N, 4 O, 5 P, 6 S, 7 Ca, 8 Fe, 9 Na, 10 K, 11 Cl, 12 Zn (barve CPK, kot ELEMENTI v molekule-vrste.js)
@@ -671,7 +679,7 @@ M prizor(int P, float b, vec2 x, float y, float px) {
 // Membrana (reže 12–15) čez prizor: 0 lipidni dvosloj, 1 glava faga T4, 2 virusna ovojnica z bodicami, 3 stena iz p24,
 // 4 brez (le rob). y > 0 na strani A; uZun = +1, če je zunanjost (pri virusih) na strani A.
 void membranaMol(inout M m, vec2 x, float y, float px) {
-  int v = int(uMemVrsta + 0.5);
+  int v = K_MV;
   vec2 t = vec2(-uN.y, uN.x);
   float u = dot(x, t);
   vec2 z = vec2(u, y);
@@ -768,15 +776,15 @@ void main() {
   vec2 x = uFine + off;                     // natančno (do 4000 nm)
   float y = uY0 + dot(off, uN);             // oddaljenost od membrane (> 0 na strani A)
   float px = uPxNm;
-  bool stranB = uMem > 0.5 && y < 0.0;
+  bool stranB = K_MEM && y < 0.0;
   M m;
-  if (stranB) m = prizor(int(uPB + 0.5), 6.0, x, -y, px);
-  else m = prizor(int(uPA + 0.5), 0.0, x, y, px);
-  if (uMem > 0.5 && abs(y) < 30.0) membranaMol(m, x, y, px);
+  if (stranB) m = prizor(K_PB, 6.0, x, -y, px);
+  else m = prizor(K_PA, 0.0, x, y, px);
+  if (K_MEM && abs(y) < 30.0) membranaMol(m, x, y, px);
   if (uIdPass == 1) { o = vec4((m.id + 1.0) / 255.0, 0.0, 0.0, 1.0); return; }
   vec3 c = uBarve > 0.5 ? m.c : vec3(exp(-2.0 * m.g));
   // raven atomov: postopen prehod od 0,08 do 0,03 nm na točko; voda je bleda, da izstopajo molekule
-  float at = smoothstep(0.08, 0.03, px);
+  float at = K_AT ? smoothstep(0.08, 0.03, px) : 0.0;
   if (at > 0.0) {
     vec4 b = atomiMol(m, x, y);
     bool vodna = int(uAtMol[int(m.id)] + 0.5) == A_VODA;
@@ -797,3 +805,73 @@ void main() {
   }
   o = vec4(c, 1.0);
 }`;
+
+// Specializiran program molekul za en pogled (j, 16. 11. 2026: »Molekule v barvah« so se risale do ~60 s). Splošni
+// program ima vseh 37 prizorov, membrane in atome; na grafiki, ki pri vejitvah izvede obe strani (programska grafika,
+// tudi nekateri telefoni), vsaka točka plača vse prizore, prevajanje pa traja ~20 s. Tu ostanejo le prizori strani A
+// in B, izbrana membrana in (le pod 0,08 nm na točko) atomi: slika je enaka do bita, program pa je ~50× hitrejši in
+// se prevede v delu sekunde. k = { pA, pB, mem, memVrsta, atomi, vrsteAtomov } (iz uniformeMolekul in nm na točko;
+// vrsteAtomov = vrste A_* v vseh 16 režah, brez njih ostanejo vse veje atomov).
+const P_KODE = Object.fromEntries([...MOLEKULE.matchAll(/^#define (P_[A-Z0-9_]+) (\d+)$/gm)].map((m) => [m[1], +m[2]]));
+const A_KODE = Object.fromEntries([...MOLEKULE.matchAll(/^#define (A_[A-Z]+) (\d+)$/gm)].map((m) => [m[1], +m[2]]));
+const VEJA = /^  (?:\} else )?if \(P == (.*)\) \{$/;
+export const kljucMolekul = (k) =>
+  [k.pA, k.mem ? k.pB : -1, k.mem ? 1 : 0, k.mem ? k.memVrsta : -1, k.atomi ? [...new Set(k.vrsteAtomov || [-1])].sort((a, b) => a - b).join("+") : "-"].join(",");
+export function molekuleZa(k) {
+  const prizori = new Set(k.mem ? [k.pA, k.pB] : [k.pA]);
+  const vrstice = MOLEKULE.split("\n");
+  const out = [];
+  let v = 0;
+  // glava: stalnice pred #ifndef K_PA (splošne vrednosti se ne uporabijo)
+  for (; v < vrstice.length; v++) {
+    out.push(vrstice[v]);
+    if (v === 0)
+      out.push(`#define K_PA ${k.pA}`, `#define K_PB ${k.mem ? k.pB : 0}`, `#define K_MEM ${k.mem ? "true" : "false"}`, `#define K_MV ${k.mem ? k.memVrsta : 4}`, `#define K_AT ${k.atomi ? "true" : "false"}`);
+    if (vrstice[v].startsWith("M prizor(")) break;
+  }
+  // veriga »if (P == …) { … } else if …« v prizor(): ostanejo le veje z izbranimi prizori
+  let veja = null;
+  let prva = true;
+  const zapri = () => {
+    if (veja?.ostane) {
+      out.push(`  ${prva ? "" : "} else "}if (${veja.pogoj}) {`, ...veja.telo);
+      prva = false;
+    }
+  };
+  for (v++; v < vrstice.length; v++) {
+    const l = vrstice[v];
+    const m = VEJA.exec(l);
+    if (m) {
+      zapri();
+      const pogoj = `P == ${m[1]}`;
+      const kode = pogoj.split("||").map((c) => P_KODE[c.replace("P ==", "").trim()]);
+      if (kode.some((x) => x === undefined)) throw new Error(`molekuleZa: neznan pogoj ${pogoj}`);
+      veja = { pogoj, ostane: kode.some((x) => prizori.has(x)), telo: [] };
+    } else if (veja && l === "  }") {
+      zapri();
+      if (!prva) out.push("  }");
+      veja = null;
+      break;
+    } else if (veja) veja.telo.push(l);
+    else out.push(l);
+  }
+  if (veja) throw new Error("molekuleZa: veriga prizorov ni zaključena");
+  // atomi: veje atomiMol() le za vrste atomov, ki so v režah tega pogleda (uAtMol)
+  const rep = vrstice.slice(v + 1);
+  if (!k.atomi || !k.vrsteAtomov) return out.concat(rep).join("\n");
+  const vrste = new Set(k.vrsteAtomov);
+  const ATOM = /^  (?:else )?if \(a == (A_[A-Z]+)\) (.*)$/;
+  const i0 = rep.findIndex((l) => ATOM.test(l));
+  const i1 = rep.findIndex((l, i) => i > i0 && l.startsWith("  else {"));
+  if (i0 < 0 || i1 < 0) throw new Error("molekuleZa: veriga atomov ni najdena");
+  const veje = [];
+  const znane = new Set();
+  for (const l of rep.slice(i0, i1)) {
+    const [, ime, stavek] = ATOM.exec(l) || [];
+    if (!ime || !(ime in A_KODE)) throw new Error(`molekuleZa: neznana vrstica atomov ${l}`);
+    znane.add(A_KODE[ime]);
+    if (vrste.has(A_KODE[ime])) veje.push(`  ${veje.length ? "else " : ""}if (a == ${ime}) ${stavek}`);
+  }
+  if ([...vrste].some((x) => !znane.has(x))) veje.push(veje.length ? rep[i1] : rep[i1].replace("  else ", "  "));
+  return out.concat(rep.slice(0, i0), veje, rep.slice(i1 + 1)).join("\n");
+}
