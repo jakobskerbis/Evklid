@@ -15,7 +15,7 @@ test("meri.yml: le ročni zagon z main, samo branje, en zagon naenkrat, časovna
   assert.match(y, /^permissions:\n  contents: read\n/m);
   assert.match(y, /^    if: github\.ref == 'refs\/heads\/main'$/m);
   assert.match(y, /^concurrency:\n  group: \S+\n  cancel-in-progress: false$/m);
-  assert.match(y, /^    timeout-minutes: 30$/m);
+  assert.match(y, /^    timeout-minutes: 90$/m);
   assert.match(y, /persist-credentials: false/);
   for (const a of y.match(/uses: \S+/g)) assert.match(a, /@[0-9a-f]{40}$/, `${a} ni pripet na SHA`);
 });
@@ -27,9 +27,21 @@ test("meri.yml: skrivnost le v koraku Meritev, nikjer ${{ }} v skriptah run", ()
   assert.match(korak, /ANTHROPIC_API_KEY: \$\{\{ secrets\.ANTHROPIC_API_KEY \}\}/);
   assert.match(korak, /--max-usd "\$MAX"/);
   assert.match(korak, /EVKLID_DB: \$\{\{ runner\.temp \}\}/);
+  // Korak se konča sam pred časovno mejo posla, ključ ne gre v izhod, povzetek ob vsakem izidu.
+  assert.match(korak, /timeout 80m node /);
+  assert.match(korak, /grep -qF "\$ANTHROPIC_API_KEY" meri\.log data\/meri-\*\.json/);
+  assert.ok(korak.indexOf("grep -qF") < korak.indexOf("GITHUB_STEP_SUMMARY"), "pregled ključa pred povzetkom");
+  assert.match(korak, /tail -n 40 meri\.log/);
+  assert.match(korak, /^ +exit \$STATUS$/m);
   // Vsebina vsakega bloka run (zamaknjene vrstice za »run: |«) ne sme imeti izrazov ${{ }}.
   for (const m of y.matchAll(/^(\s+)run: \|\n((?:\1  .*\n|\s*\n)+)/gm)) assert.doesNotMatch(m[2], /\$\{\{/);
   for (const m of y.matchAll(/^\s+run: (?!\|)(.+)$/gm)) assert.doesNotMatch(m[1], /\$\{\{/);
+});
+
+test("meri.yml: SymPy preverjen pred meritvijo", () => {
+  const i = y.indexOf("- name: SymPy nameščen");
+  assert.ok(i > y.indexOf("npm ci") && i < y.indexOf("- name: Meritev\n"));
+  assert.match(y, /PYTHONPATH=\.pylib python3 -c "import sympy/);
 });
 
 test("meri.yml: artefakt z dnevnikom in JSON ostane 30 dni, tudi ob napaki", () => {
@@ -45,11 +57,13 @@ const skripta = (() => {
   return m[1].replace(/^ {10}/gm, "");
 })();
 const MAIN = "a".repeat(40);
-function preveri(vnosi) {
+function preveri(vnosi, ghStanje = null) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "meri-yml-"));
+  // Nadomestni gh: vrne stanje primerjave (REST compare) ali pade, kot pri neobstoječem commitu.
+  fs.writeFileSync(path.join(dir, "gh"), ghStanje ? `#!/bin/sh\necho ${ghStanje}\n` : "#!/bin/sh\nexit 1\n", { mode: 0o755 });
   const out = path.join(dir, "out");
   fs.writeFileSync(out, "");
-  const env = { PATH: process.env.PATH, GITHUB_OUTPUT: out, MAIN_SHA: MAIN, REPO: "x/y", SKRIPTA: "scripts/meri-preizkus3.mjs", SHA: "", MAX_USD: "2", ARGUMENTI: "", ...vnosi };
+  const env = { PATH: `${dir}:${process.env.PATH}`, GITHUB_OUTPUT: out, MAIN_SHA: MAIN, REPO: "x/y", SKRIPTA: "scripts/meri-preizkus3.mjs", SHA: "", MAX_USD: "2", ARGUMENTI: "", ...vnosi };
   const r = spawnSync("bash", ["-c", skripta], { env, encoding: "utf8" });
   const izhod = Object.fromEntries(fs.readFileSync(out, "utf8").trim().split("\n").filter(Boolean).map((v) => v.split("=")));
   fs.rmSync(dir, { recursive: true, force: true });
@@ -62,6 +76,16 @@ test("meri.yml: preverjanje vnosov sprejme veljavne in zniža mejo na 2 $", () =
   assert.equal(preveri({ MAX_USD: "100" }).izhod.max, "2");
   assert.equal(preveri({ MAX_USD: "2.5" }).izhod.max, "2");
   assert.equal(preveri({ SKRIPTA: "scripts/meri-hitri-korak.mjs", SHA: MAIN }).status, 0);
+  assert.equal(preveri({ ARGUMENTI: "--suho" }).status, 0, "brezplačen preizkus");
+});
+
+test("meri.yml: sha mora biti v zgodovini main (REST compare)", () => {
+  const B = "b".repeat(40);
+  assert.deepEqual(preveri({ SHA: B }, "ahead"), { status: 0, izhod: { ref: B, max: "2" } });
+  assert.equal(preveri({ SHA: B }, "identical").status, 0);
+  assert.equal(preveri({ SHA: B }, "diverged").status, 1);
+  assert.equal(preveri({ SHA: B }, "behind").status, 1);
+  assert.equal(preveri({ SHA: B }).status, 1, "gh pade (commit ne obstaja)");
 });
 
 test("meri.yml: preverjanje vnosov zavrne neveljavne", () => {
@@ -82,6 +106,10 @@ test("meri.yml: preverjanje vnosov zavrne neveljavne", () => {
     { ARGUMENTI: "--max-usd 50" },
     { ARGUMENTI: "--meja-usd 50" },
   ]) assert.equal(preveri(v).status, 1, JSON.stringify(v));
+});
+
+test("meri-preizkus3 --suho nikoli ne kliče API (0 $), tudi s ključem", () => {
+  assert.match(fs.readFileSync(new URL("../scripts/meri-preizkus3.mjs", import.meta.url), "utf8"), /if \(SUHO\) process\.env\.EVKLID_MOCK = "1";/);
 });
 
 test("plačane meri-*.mjs upoštevajo --max-usd (sicer jih delovni tok zavrne)", () => {

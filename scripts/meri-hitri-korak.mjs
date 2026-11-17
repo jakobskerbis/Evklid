@@ -102,11 +102,11 @@ async function klic({ system, text, pre, brez }) {
 
 async function main() {
   if (!(MEJA > 0)) {
-    console.error("--meja-usd mora biti pozitivno število.");
+    console.error("--max-usd (ali staro --meja-usd) mora biti pozitivno število.");
     process.exit(1);
   }
   if (isMockMode()) {
-    console.error("Ni ključa API (preizkusni način): zaženi v lupini Renderja (ANTHROPIC_API_KEY).");
+    console.error("Ni ključa API (preizkusni način; GitHub Actions: manjka skrivnost ANTHROPIC_API_KEY; Render: zaženi v lupini Renderja).");
     process.exit(1);
   }
   const nL = Math.min(LAHKE.length, Number(arg("--lahke", 40)));
@@ -119,6 +119,13 @@ async function main() {
   const rez = [];
   let porabljeno = 0;
   let ustavljeno = false;
+  const out = arg("--json", "data/meri-hitri-korak.json");
+  // Vmesni zapis po vsakem klicu: ob prekinitvi (npr. časovna meja v Actions) ostanejo plačani izidi.
+  const zapisi = (koncano) => {
+    fs.mkdirSync(out.replace(/[^/]*$/, "") || ".", { recursive: true });
+    fs.writeFileSync(out, JSON.stringify({ porabljeno, ustavljeno, koncano, rez }, null, 2));
+  };
+  const zapisiVmesno = () => zapisi(false);
   for (const [i, [vrsta, text]] of naloge.entries()) {
     const pre = presolve(text, { first: true });
     if (!pre) {
@@ -134,6 +141,7 @@ async function main() {
         const r = await klic({ system: sistem[vrsta], text, pre, brez });
         porabljeno += r.usd;
         rez.push({ vrsta, text, brez, ...r });
+        zapisiVmesno();
         process.stderr.write(`${rez.length} ${vrsta} ${brez ? "brez" : "z    "} ${r.besediloMs} ms / ${r.konecMs} ms ${r.usd.toFixed(4)} $ (skupaj ${porabljeno.toFixed(3)} $)\n`);
       } catch (e) {
         porabljeno += NA_KLIC_NAJVEC; // previdno: klic je morda že plačan
@@ -155,10 +163,8 @@ async function main() {
     ...["lahka", "tezja"].flatMap((v) => [vrstica(v, false), vrstica(v, true)]).filter(Boolean),
   ].join("\n");
   console.log(tabela);
-  console.log(`\nSkupaj ${porabljeno.toFixed(3).replace(".", ",")} $${ustavljeno ? ` (ustavljeno pri meji ${MEJA} $)` : ""}.`);
-  const out = arg("--json", "data/meri-hitri-korak.json");
-  if (out) fs.mkdirSync(out.replace(/[^/]*$/, "") || ".", { recursive: true });
-  if (out) fs.writeFileSync(out, JSON.stringify({ porabljeno, ustavljeno, rez }, null, 2));
+  console.log(`\nSkupaj ${porabljeno.toFixed(3).replace(".", ",")} $${ustavljeno ? ` (ustavljeno pred mejo --max-usd ${MEJA} $)` : ""}.`);
+  zapisi(true);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) await main();

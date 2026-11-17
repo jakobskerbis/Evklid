@@ -23,8 +23,12 @@ const MAX_USD = Number(arg("max-usd", 3));
 const PONOVI = Math.min(Math.max(Number(arg("ponovi", 1)) || 1, 1), 5);
 const OUT = arg("out", "data/meri-nacin-b.json");
 
+if (!(MAX_USD > 0)) {
+  console.error("--max-usd mora biti pozitivno število.");
+  process.exit(1);
+}
 if (isMockMode()) {
-  console.error("Ni ključa API (preizkusni način): zaženi v lupini Renderja.");
+  console.error("Ni ključa API (preizkusni način; GitHub Actions: manjka skrivnost ANTHROPIC_API_KEY; Render: zaženi v lupini Renderja).");
   process.exit(1);
 }
 
@@ -96,6 +100,11 @@ const s = (ms) => (ms / 1000).toFixed(1).replace(".", ",");
 let porabljeno = 0;
 const izid = [];
 let ustavljeno = false;
+// Vmesni zapis po vsakem izidu: ob prekinitvi (npr. časovna meja v Actions) ostanejo plačani odgovori.
+const zapisiVmesno = () => {
+  fs.mkdirSync("data", { recursive: true });
+  fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), porabljeno, ustavljeno, koncano: false, izid }, null, 1));
+};
 outer: for (let k = 0; k < PONOVI; k++) {
   for (const n of NALOGE) {
     const settings = normalizeSettings({ ...n.s, solving_mode: "B" });
@@ -125,10 +134,12 @@ outer: for (let k = 0; k < PONOVI; k++) {
         const cena = costUsd(r.model || model, r.usage || {});
         porabljeno += cena;
         izid.push({ naloga: n.id, prompt: ime, mode, model: r.model || model, prvo, konec, izhod: r.usage?.output_tokens || 0, cena, ...oceni(r.text || "", n.ok) });
+        zapisiVmesno();
         const z = izid.at(-1);
         console.log(`${n.id} ${ime}: ${z.pravilno ? "pravilno" : "NI REZULTATA"}, 1. stavek ${z.vPrvemStavku ? "da" : "ne"}, ${z.izhod} žet., ${z.znakov} zn., ${s(prvo ?? 0)}/${s(konec)} s, ${cena.toFixed(4)} $`);
       } catch (e) {
-        if (e?.usage) porabljeno += costUsd(e.model || model, e.usage);
+        // Brez podatka o porabi previdno šteje najslabši primer (klic je morda že plačan).
+        porabljeno += e?.usage ? costUsd(e.model || model, e.usage) : najvec;
         console.log(`${n.id} ${ime}: napaka ${apiErrorCode(e) || e.message}`);
       }
     }
@@ -148,5 +159,5 @@ console.log("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|");
 for (const r of t) console.log(`| ${r.ime} | ${r.pravilno} | ${r.prvi} | ${r.krepko} | ${f(r.besedPred)} | ${f(r.izhod)} | ${f(r.znakov)} | ${f(r.besed)} | ${r.preverba} | ${r.zapomni} | ${r.preverjala} | ${r.vaja.toFixed(1).replace(".", ",")} | ${s(r.prvo)} | ${s(r.konec)} |`);
 console.log(`\nStrošek ${porabljeno.toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}.`);
 fs.mkdirSync("data", { recursive: true });
-fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), porabljeno, ustavljeno, povzetek: t, izid }, null, 1));
+fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), porabljeno, ustavljeno, koncano: true, povzetek: t, izid }, null, 1));
 console.log(`Odgovori: ${OUT}`);

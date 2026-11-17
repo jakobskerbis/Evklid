@@ -38,7 +38,7 @@ jobs:
   meritev:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 90
     steps:
       - name: Preveri vnose
         id: vnosi
@@ -104,6 +104,9 @@ jobs:
       # Namesti tudi SymPy (postinstall), ki ga uporablja preverjanje s kodo (server/live-check.js).
       - run: npm ci --omit=dev --no-audit --no-fund
         timeout-minutes: 10
+      # Brez SymPy bi preverjanje s kodo teklo drugače in vseeno stalo: raje ustavi, preden kaj plačamo.
+      - name: SymPy nameščen
+        run: PYTHONPATH=.pylib python3 -c "import sympy; print('SymPy', sympy.__version__)"
       - name: Meritev
         env:
           SKRIPTA: ${{ inputs.skripta }}
@@ -115,7 +118,18 @@ jobs:
           set -o pipefail
           mkdir -p data
           # $ARGS namenoma brez narekovajev (več argumentov); znaki so preverjeni zgoraj (brez * ? [ $ ` / ;).
-          node --disable-warning=ExperimentalWarning "$SKRIPTA" --max-usd "$MAX" $ARGS 2>&1 | tee meri.log
+          # timeout 80 min < 90 min posla: korak se konča sam, zato spodnji pregled in povzetek tečeta vedno;
+          # skripte sproti zapisujejo data/meri-*.json, zato prekinjen zagon pusti plačane izide.
+          timeout 80m node --disable-warning=ExperimentalWarning "$SKRIPTA" --max-usd "$MAX" $ARGS 2>&1 | tee meri.log
+          STATUS=$?
+          # Ključ nikoli v artefakt ali povzetek.
+          if [[ -n "$ANTHROPIC_API_KEY" ]] && grep -qF "$ANTHROPIC_API_KEY" meri.log data/meri-*.json 2>/dev/null; then
+            rm -f meri.log data/meri-*.json
+            echo "::error::ključ v izhodu"
+            exit 1
+          fi
+          { echo "### Meritev: $SKRIPTA (meja $MAX \$)"; echo '```'; tail -n 40 meri.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit $STATUS
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

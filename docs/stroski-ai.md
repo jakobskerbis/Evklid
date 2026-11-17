@@ -92,16 +92,27 @@ Strošek zagona: 4,60 $ (aplikacija 0,98 $, ocenjevalec 3,61 $), 77 min.
 
 ## Ročna meritev v GitHub Actions (j, 2026-11-17)
 
-Plačane meritve inštruktorja `scripts/meri-*.mjs` (npr. `meri-preizkus3.mjs`, `meri-nacin-b.mjs`, `meri-hitri-korak.mjs`) se zaženejo brez lupine Renderja, z delovnim tokom `.github/workflows/meri.yml`:
+Plačane meritve inštruktorja `scripts/meri-*.mjs` (npr. `meri-preizkus3.mjs`, `meri-nacin-b.mjs`, `meri-hitri-korak.mjs`) se zaženejo brez lupine Renderja, z delovnim tokom `.github/workflows/meri.yml`.
 
-1. GitHub → **Actions** → **Meritev** → **Run workflow** (veja `main`).
-2. Polja: `skripta` (privzeto `scripts/meri-preizkus3.mjs`), `sha` (prazno = zadnji main; sicer 40 znakov hex, commit mora biti v zgodovini main), `max_usd` (privzeto 2), `argumenti` (neobvezno, npr. `--samo-novi --naloge 19,45`; samo male črke, števke, presledek in `, = . -`).
-3. Izid: dnevnik zagona (tabela in »Strošek …« na koncu) ter artefakt **meritev** z `meri.log` in `data/meri-*.json` (30 dni).
+**Zagon s telefona:**
 
-- **Meja stroška:** skripta dobi `--max-usd` največ **2 $** na zagon (višja vrednost se zniža na 2; meje ni mogoče podati v `argumenti`). Skripte se ustavijo, preden bi strošek presegel mejo. Delovni tok zažene le skripte, ki `--max-usd` res preberejo (`meri-model.mjs` npr. ne); `meri-hitri-korak.mjs` sprejme `--max-usd` (staro ime `--meja-usd`).
-- Teče največ en zagon naenkrat (naslednji počaka), največ 30 minut. Le ročni zagon z main; PR in push ga ne sprožita.
-- Ključ `ANTHROPIC_API_KEY` (skrivnost Actions, ista kot pri »Meritev po objavi«) dobi samo korak meritve; brez ključa skripte končajo brez klica.
+1. V brskalniku na telefonu odpri **github.com/jakobskerbis/Evklid** (prijavljen v GitHub).
+2. Tapni **Actions** (če ga ne vidiš, tapni »…« ob zavihkih), nato na levi **Meritev**.
+3. Tapni **Run workflow**. Veja ostane `main`.
+4. V polje **skripta** vpiši skripto (privzeto `scripts/meri-preizkus3.mjs`). Ostala polja lahko pustiš.
+5. Tapni zeleni gumb **Run workflow**. Po nekaj sekundah se pojavi nov zagon; tapni ga.
+6. Izid: stran **Summary** zagona pokaže zadnjih 40 vrstic (tabela in »Strošek …«). Celoten dnevnik in odgovori so v artefaktu **meritev** na isti strani (zip, odpri ga na računalniku; ostane 30 dni).
+
+**Brezplačen preizkus (0 $):** skripta `scripts/meri-preizkus3.mjs`, v polje **argumenti** vpiši `--suho`. Pokliče preizkusne odgovore namesto modela (tudi kadar je ključ nastavljen) in samo preveri, da zagon deluje.
+
+**Polja:** `skripta` (`scripts/meri-<ime>.mjs`), `sha` (prazno = zadnji main; sicer 40 znakov hex, commit mora biti v zgodovini main), `max_usd` (privzeto 2), `argumenti` (neobvezno, npr. `--samo-novi --naloge 19,45` ali `--suho`; samo male črke, števke, presledek in `, = . -`).
+
+- **Meja stroška:** skripta dobi `--max-usd` največ **2 $** na zagon (višja vrednost se zniža na 2; meje ni mogoče podati v `argumenti`). Skripte se ustavijo, preden bi strošek presegel mejo; klic, ki pade brez podatka o porabi, štejejo kot najslabši primer. Delovni tok zažene le skripte, ki `--max-usd` res preberejo (`meri-model.mjs` npr. ne); `meri-hitri-korak.mjs` sprejme `--max-usd` (staro ime `--meja-usd`).
+- **En zagon naenkrat:** drugi zagon počaka, dokler prvi ne konča. Tretji, sprožen med tem, prekliče čakajočega (čaka največ en, najnovejši). Zagon traja največ 80 minut (posel 90); skripte odgovore sproti zapisujejo v `data/meri-*.json` (`koncano: false`, dokler ne končajo), zato tudi prekinjen zagon pusti plačane izide v artefaktu.
+- Le ročni zagon z main; PR in push ga ne sprožita. Pred meritvijo se preveri, da je SymPy nameščen (sicer zagon pade, preden kaj stane).
+- **Rdeč zagon z »Ni ključa API«:** v repozitoriju manjka skrivnost `ANTHROPIC_API_KEY` (Settings → Secrets and variables → Actions; ista kot pri »Meritev po objavi«). Ključ dobi samo korak meritve; če bi se ključ kdaj pojavil v izhodu, korak izbriše dnevnik in JSON in pade (»ključ v izhodu«).
 - Meritve ne pišejo v bazo in ne štejejo v porabo aplikacije (vidno le v konzoli Anthropic); `EVKLID_DB` vseeno kaže na začasno datoteko, prave baze na Renderju se ne dotaknejo.
+- **Priporočilo (še ni nastavljeno):** v GitHub (Settings → Environments) ustvari okolje »meritev«, omejeno na vejo main, in vanj premakni ključ; nato ga delovni tok uporabi z `environment: meritev`. V konzoli Anthropic nastavi mesečno mejo porabe ključa.
 - Test: `test/meri-delovni-tok.test.js` (varovalke v datoteki in preverjanje vnosov).
 
 ## Ustno spraševanje »Vprašaj me« (j, 2026-11-10)
