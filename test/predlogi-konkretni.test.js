@@ -97,7 +97,7 @@ test("glava, graf, koda, namig in nastavitve (koda)", () => {
   // Koda samo v obrazcu prijave; napis navaden, monospace samo koda.
   const foot = app.slice(app.indexOf("function addMsgFoot("), app.indexOf("function openReport("));
   assert.doesNotMatch(foot, /msg-code/);
-  assert.match(app, /<p class="rep-code muted" hidden><span><\/span> <span class="msg-code"><\/span><\/p>/);
+  assert.match(read("public/prijave.js"), /<p class="rep-code muted" hidden><span><\/span> <span class="msg-code"><\/span><\/p>/);
   // Kratek namig v obstoječem prilagajanju (ne drugo prilagajanje).
   assert.equal((app.match(/getContext\("2d"\)/g) || []).length >= 1, true);
   assert.match(app, /const short = t\("chat\.placeholderShort"\);/);

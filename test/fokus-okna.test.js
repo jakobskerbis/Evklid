@@ -18,7 +18,7 @@ const src = (f) => fs.readFileSync(path.join(PUB, f), "utf8");
 test("okna čez zaslon uporabljajo zadrziFokus (kalkulator, vodič, poskus, pola, naša pola, oglasna deska)", () => {
   const app = src("app.js");
   assert.match(app, /calcFokus = zadrziFokus\(\$\("#graph-overlay"\)/);
-  assert.match(app, /sprosti = zadrziFokus\(box, \{ zacetni: box\.querySelector\('\[data-tour="next"\]'\)/);
+  assert.match(src("uvodni-ogled.js"), /sprosti = zadrziFokus\(box, \{ zacetni: box\.querySelector\('\[data-tour="next"\]'\)/);
   for (const f of ["odpri.js", "paper-viewer.js", "our-paper.js", "corner.js"]) assert.match(src(f), /zadrziFokus\(/, f);
 });
 
