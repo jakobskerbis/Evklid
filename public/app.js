@@ -613,7 +613,7 @@ document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () 
 // APK (mobile/src/app/web.tsx) gre nazaj po isti zgodovini (goBack), zato tam ni treba ničesar spreminjati.
 let currentView = "path";
 let prevView = "path"; // za gumb Nazaj v glavi klepeta (telefon)
-const BACK_ORIGIN = ["schedule", "exams", "competition"]; // »←« na teh podstraneh: meBackTarget
+const BACK_ORIGIN = ["schedule", "exams", "competition", "scan"]; // »←« na teh podstraneh: meBackTarget (skener se odpre tudi z Učne poti)
 const meBackFrom = {};
 let fromBack = false;
 let skipPop = 0;
@@ -2664,8 +2664,9 @@ function renderGoalModes() {
     .map((k) => (k === "games" && !gamesOn(s) ? "chat" : k))
     .filter((k) => !(k === "exams" && !siExams()) && !(k === "izpiti" && !regionalExams()))
     .filter((k) => !shown.includes(k))
+    .filter((k) => k !== "scan") // »Skeniraj nalogo« je že vrstica v #xp-card tik pod današnjim treningom (j, 18. 11. 2026)
     .filter((k, i, a) => a.indexOf(k) === i);
-  for (const alt of ["scan", "chat"]) if (list.length < 2 && !list.includes(alt)) list.push(alt);
+  for (const alt of ["chat", "textbook"]) if (list.length < 2 && !list.includes(alt)) list.push(alt);
   box.innerHTML = list
     .map((k) => {
       const [ic, name, sub] = GOAL_MODES[k];
