@@ -128,3 +128,19 @@ test("krajši način B (17. 11.): shranjeni odgovori načina B dobijo nov ključ
     assert.notEqual(cacheKey(q, a, "chat"), old, q);
   }
 });
+
+test("samo rezultat pri eni nalogi (17. 11., #799): prošnja samo za rezultat dobi nov ključ, ključi načina A ostanejo enaki", async () => {
+  const { cacheKey } = await import("../server/app.js");
+  const crypto = await import("node:crypto");
+  const a = { subject: "FIZ", track: "REGULAR", educational_track: "OSNOVNA_SOLA", study_program: "", study_course: "", curriculum_level: "8. razred", solving_mode: "A", personality_setting: "nevtralna", language: "sl" };
+  // Ključ kot pred spremembo (server/app.js cacheKey brez oznake »r1«).
+  const old = (q, ...extra) => crypto.createHash("sha256").update([q.toLowerCase().replace(/\s+/g, " ").replace(/[\s.!?]+$/, "").trim(), a.subject, a.track, a.educational_track, a.study_program, a.study_course, a.curriculum_level, "A", a.personality_setting, 0, ...extra].join("|")).digest("hex");
+  for (const q of ["Kolikšna je kinetična energija telesa z maso 2,0 kg pri 3,0 m/s? Samo končni rezultat, brez postopka.", "Samo rezultat prosim: 3x + 4 = 19", "Brez postopka: koliko je 15 % od 240?"]) {
+    assert.notEqual(cacheKey(q, a, "chat"), old(q), q);
+  }
+  // Običajna vprašanja v načinu A ohranijo ključ.
+  for (const q of [Q, "Kolikšna je kinetična energija telesa z maso 2,0 kg pri 3,0 m/s?", "Kako izračunam rezultat te enačbe?"]) {
+    assert.equal(cacheKey(q, a, "chat"), old(q), q);
+    assert.equal(cacheKey(q, a, "think"), old(q, "think"), q);
+  }
+});
