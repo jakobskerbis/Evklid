@@ -30,6 +30,8 @@ import { mountOdpiranje } from "./odpiranje-delov.js";
 import { mountAnketa } from "./anketa-teden.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { mountShortLinks, notFound } from "./ni-strani.js";
+import { logCasi, casiPovzetek } from "./casi-odgovora.js";
+import { hitriKorak } from "./hitri-korak.js";
 import { mountInviteApi, mountInvitePage } from "./vabila.js";
 import { mountVidnost } from "./vidnost.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
@@ -799,6 +801,7 @@ export function createApp(store, opts = {}) {
   app.post("/api/conversations/:id/messages", async (req, res) => {
     const conv = loadConversation(req, res);
     if (!conv) return;
+    const prispelo = Date.now(); // časi odgovora (server/casi-odgovora.js): čas pred klicem modela
     const student = store.getStudent(conv.student_id);
     // Dnevna meja vprašanj (točka A1) se preverja tu, v obdelavi sporočila, ne po obliki poti v vmesniku. Od tod do
     // rezervacije za klic AI in store.logQuestion spodaj ni nobenega await (razen na poteh, ki vrnejo odgovor), zato
@@ -1127,6 +1130,11 @@ export function createApp(store, opts = {}) {
       const codeVerdict = claim ? claimNote(text, firstPre) : null;
       const notes = [pre?.note, codeVerdict].filter(Boolean).join("\n");
       const held = []; // zadržani deli odgovora, dokler sodba ni preverjena
+      // Poskus brez razmišljanja za lahek prvi korak (privzeto izklopljen, server/hitri-korak.js).
+      const brezRazmisleka = !cached && hitriKorak({ mode, settings: student.settings, pre, image: !!image, competition: !!tekTopic, isFirst });
+      let besediloPoslano = !!note; // obvestilo (meja, nižji model) je že poslano: »Razmišljam« ga ne zamenja
+      let razmisljamPoslano = false;
+      const klicZacetek = Date.now();
       const run = cached
         ? async ({ onText }) => {
             // Ime učenca je v predpomnilniku shranjeno kot {{IME}}.
@@ -1150,8 +1158,16 @@ export function createApp(store, opts = {}) {
         canRound: () => hold.take(roundReserve()),
         fallback: !noFallback,
         signal: controller.signal,
+        noThinking: brezRazmisleka,
+        // Model razmišlja, besedila še ni: odjemalec pokaže »Razmišljam …« (ne med preverjanjem sodbe, tam ostane »Preverjam«).
+        onPhase: (p) => {
+          if (p !== "think" || besediloPoslano || claim || razmisljamPoslano) return;
+          razmisljamPoslano = true;
+          send("phase", { phase: "think" });
+        },
         onText: (chunk) => {
           const out = filter.push(chunk);
+          if (out && !claim) besediloPoslano = true;
           if (out) claim ? held.push(out) : send("delta", { text: out });
         },
         // Besedilo pred klicem orodja ni odgovor (j, 17. 11.): odjemalec ga pobriše, tok začne znova od kept.
@@ -1164,6 +1180,16 @@ export function createApp(store, opts = {}) {
           if (out) claim ? held.push(out) : send("delta", { text: out });
         },
       });
+      if (!cached && first.timing) {
+        logCasi(store.db, {
+          model: first.model || answerModelOf(mode, deep),
+          nacin: mode,
+          raven: jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS",
+          poskus: brezRazmisleka && first.timing.thinking === false ? "hitri-korak" : "", // le če je bil res brez razmišljanja
+          predMs: klicZacetek - prispelo,
+          timing: first.timing,
+        });
+      }
       // Odgovor je že plačan; zapiše se spodaj (»chat«) ali ob prekinitvi v catch (»prekinjeno«).
       if (!cached) unlogged = { model: first.model || answerModelOf(mode, deep), usage: first.usage };
       // Rezervo odgovora zamenja njegov dejanski strošek (zapiše se spodaj); ostanek je prost za preverjanja.
@@ -1945,6 +1971,11 @@ export function createApp(store, opts = {}) {
     if (base !== undefined && !usage.setBudgetBase(base)) return res.status(400).json({ error: "Napačen znesek." });
     if (add !== undefined && !usage.addBudget(add)) return res.status(400).json({ error: "Napačen znesek." });
     res.json({ ok: true, budget: usage.budgetState() });
+  });
+  // Časi odgovorov inštruktorja (mediana, p90; server/casi-odgovora.js): samo skrbnik, kot /api/usage.
+  app.get("/api/usage/casi", (req, res) => {
+    if (!accounts && !isLocalRequest(req)) return res.status(403).json({ error: "Samo za skrbnika." });
+    res.json({ dni: 7, skupine: casiPovzetek(store.db, { dni: 7 }) });
   });
   app.get("/api/students/:id/usage", (req, res) => {
     const s = loadStudent(req, res);
