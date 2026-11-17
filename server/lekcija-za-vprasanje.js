@@ -59,10 +59,19 @@ const summaryOf = (lesson) => lesson?.sections?.find((s) => /^povzetek/i.test(s.
 
 // Kazalo tem za predmet in raven: krni naslova, ciljev in (kjer je lekcija s »Povzetkom«) besedila.
 // Teme brez lekcije so v kazalu tudi, da vprašanje o njih ne dobi sosednje lekcije z eno skupno besedo.
+// Kazalo ima ~1 MB kopice (množice besed vseh lekcij do ravni); hranimo največ INDEX_MAX nazadnje uporabljenih
+// (prej do 200 = do ~200 MB ob 512 MB na Renderju). Izpuščeno se ob naslednjem vprašanju zgradi znova (~10–50 ms).
+export const INDEX_MAX = 16;
 const indexes = new Map();
+export const indexCount = () => indexes.size; // testi
 function indexFor(subject, school, grade) {
   const key = `${subject}|${school}|${grade}`;
-  if (indexes.has(key)) return indexes.get(key);
+  const hit = indexes.get(key);
+  if (hit) {
+    indexes.delete(key); // LRU: na konec
+    indexes.set(key, hit);
+    return hit;
+  }
   const docs = [];
   for (const p of listPaths(subject)) {
     if (!(p.school in SCHOOL_RANK)) continue; // brez tekmovalnih poti
@@ -87,8 +96,8 @@ function indexFor(subject, school, grade) {
   for (const d of docs) for (const w of new Set([...d.title, ...d.meta, ...d.body])) df.set(w, (df.get(w) || 0) + 1);
   const idf = (w) => Math.log(1 + docs.length / (df.get(w) || 0.5));
   const idx = { docs, idf };
-  if (indexes.size > 200) indexes.clear();
   indexes.set(key, idx);
+  while (indexes.size > INDEX_MAX) indexes.delete(indexes.keys().next().value);
   return idx;
 }
 

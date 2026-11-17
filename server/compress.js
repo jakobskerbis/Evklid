@@ -44,9 +44,30 @@ const encode = (buf, enc) =>
 
 // Stisnjene statične datoteke iz mape `root` (in podmap, npr. vendor), predpomnjene po času spremembe.
 // mounts: [[url predpona, mapa], ...]. Vrne vmesnik (middleware) z metodo warm(urls) za pripravo vnaprej.
-export function compressedStatic(mounts) {
-  const cache = new Map(); // "enc:datoteka" -> { mtime, body, etag }
+// Meja predpomnilnika: EVKLID_STATIC_MB (privzeto 16 MB). Brez meje je zrasel na vse stisnjene datoteke iz public in
+// vendor (~37 MB surovo, br in gzip posebej), strežnik ima na Renderju 512 MB. Najdlje neuporabljene gredo prve;
+// izpuščena datoteka se ob naslednjem zahtevku spet stisne (zlib v ozadju), nikoli ne odpove.
+const defaultStaticMax = () => (Number(process.env.EVKLID_STATIC_MB) > 0 ? Number(process.env.EVKLID_STATIC_MB) : 16) * 1024 * 1024;
+
+export function compressedStatic(mounts, { maxBytes = defaultStaticMax() } = {}) {
+  const cache = new Map(); // "enc:datoteka" -> { mtime, body, etag } (vrstni red = nazadnje uporabljen na koncu)
   const pending = new Map(); // "enc:datoteka" -> Promise (ista datoteka se stiska samo enkrat naenkrat)
+  let bytes = 0;
+  const remember = (key, entry) => {
+    const old = cache.get(key);
+    if (old) {
+      cache.delete(key);
+      bytes -= old.body.length;
+    }
+    if (entry.body.length > maxBytes) return; // prevelika za predpomnilnik: pošljemo jo, ne hranimo
+    cache.set(key, entry);
+    bytes += entry.body.length;
+    for (const [k, e] of cache) {
+      if (bytes <= maxBytes) break;
+      cache.delete(k);
+      bytes -= e.body.length;
+    }
+  };
 
   // URL → { file, st, prefix } ali null (ni naša datoteka); "skip" = prepusti express.static.
   const locate = (url) => {
@@ -71,7 +92,11 @@ export function compressedStatic(mounts) {
   const compressed = (file, st, enc) => {
     const key = `${enc}:${file}`;
     const hit = cache.get(key);
-    if (hit && hit.mtime === st.mtimeMs) return hit;
+    if (hit && hit.mtime === st.mtimeMs) {
+      cache.delete(key); // LRU: na konec
+      cache.set(key, hit);
+      return hit;
+    }
     const running = pending.get(key);
     if (running && running.mtime === st.mtimeMs) return running.promise;
     const raw = fs.readFileSync(file);
@@ -79,7 +104,7 @@ export function compressedStatic(mounts) {
     const promise = encode(raw, enc)
       .then((body) => {
         const entry = { mtime: st.mtimeMs, body, etag };
-        cache.set(key, entry);
+        remember(key, entry);
         return entry;
       })
       .finally(() => {
@@ -131,6 +156,7 @@ export function compressedStatic(mounts) {
     }
     return n;
   };
+  middleware.stats = () => ({ entries: cache.size, bytes, maxBytes }); // testi in /healthz/stanje
   return middleware;
 }
 

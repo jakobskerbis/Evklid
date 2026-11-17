@@ -17,6 +17,16 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"                # node:sqlite brez zastavice šele od 22.13
+      # Pomnilnik (17. 11. 2026, PR »Pomnilnik«): glibc sicer obdrži sproščen pomnilnik zlib/brotli, izrisa učbenika in
+      # scrypt (RSS je rasel v stopnicah do ~400 MB in se ni vrnil). S temi tremi vrne velike kose sistemu: lokalno
+      # (preizkusni način, enak promet) RSS strežnika po prometu 653 → 381 MB, v mirovanju po predgretju 384 → 240 MB.
+      # Prebere jih glibc ob zagonu procesa, zato morajo biti tu (ne v kodi).
+      - key: MALLOC_ARENA_MAX
+        value: "2"
+      - key: MALLOC_TRIM_THRESHOLD_
+        value: "131072"
+      - key: MALLOC_MMAP_THRESHOLD_
+        value: "131072"
       - key: EVKLID_DB
         value: /var/data/evklid.db
       - key: ANTHROPIC_API_KEY
