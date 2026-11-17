@@ -89,8 +89,16 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
   }
 
   // Primer v polju za iskanje (»npr. …«): tema z učenčeve učne poti (njegov predmet in raven), za katero so vprašanja;
-  // najprej zadnja začeta, nato tista, ki je na vrsti, nato prva na poti.
+  // najprej zadnja začeta (po vrsti na poti), nato tista, ki je na vrsti, nato prva na poti. Ime je v jeziku poti
+  // (za ne-slovenske učence lahko slovensko, kot vsebina poti). Ob napaki brez primera.
   function exampleTopic(student) {
+    try {
+      return exampleTopicOf(student);
+    } catch {
+      return null;
+    }
+  }
+  function exampleTopicOf(student) {
     const view = progress?.pathView?.(student.id, pathKeyFor(student.settings));
     const all = (view?.units || []).filter((u) => !u.ahead).flatMap((u) => u.topics);
     const order = [...all.filter((t) => t.status !== "new").reverse(), ...(view?.next ? [view.next] : []), ...all];

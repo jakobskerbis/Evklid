@@ -9,7 +9,7 @@ import { icon, hydrateIcons } from "../icons.js";
 import { spokenMath } from "../speech.js";
 import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba } from "../nujno.js";
 import { zavrzi } from "../odgovor.js";
-import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
+import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer, hideKeyboard } from "../tipkovnica.js";
 import SL from "./besedila/sl.js";
 
 const KEY_NOTICE = "evklid.ustno.obvestilo"; // + ».<id profila>«: obvestilo vidi vsak profil na napravi (pregled B7)
@@ -152,12 +152,14 @@ function sheet() {
   dlg.addEventListener("close", () => {
     stopRec();
     stopSpeak();
+    hideKeyboard(); // tipkovnica je v oknu (tipkovnica.js): ob zaprtju se zapre, sicer ostane spodnji odmik
   });
   document.body.append(dlg);
   return dlg;
 }
 function paint(body, { title = tt("u.naslov"), focus = null } = {}) {
   const d = sheet();
+  hideKeyboard(); // nov zaslon zamenja vsebino okna, tudi tipkovnico v njem
   d.innerHTML = `<div class="us-box" role="document">
     <div class="us-head"><span class="us-ic">${icon("mic")}</span><h2 id="us-title">${esc(title)}</h2>
       <button type="button" class="ghost icon-only" data-us="x" aria-label="${esc(tt("u.zapri"))}" title="${esc(tt("u.zapri"))}">${icon("x")}</button></div>

@@ -106,7 +106,9 @@ test("brskalnik: brez »ni vprašanj« ob besedilu iz klepeta, po iskanju da; pr
     await p.evaluate(async (sid) => {
       const api = async (url, o = {}) => {
         const r = await fetch(url, { method: o.method || "GET", headers: { "content-type": "application/json" }, body: o.body ? JSON.stringify(o.body) : undefined });
-        return r.json();
+        const j = await r.json();
+        if (!r.ok) throw Object.assign(new Error(j.error), { body: j });
+        return j;
       };
       const st = await (await fetch(`/api/students/${sid}`)).json();
       const mod = await import("/ustno/ustno.js");
@@ -125,6 +127,14 @@ test("brskalnik: brez »ni vprašanj« ob besedilu iz klepeta, po iskanju da; pr
     const seven = p.locator("#tipkovnica .tk-k", { hasText: /^7$/ }).first();
     await seven.click();
     assert.match(await p.inputValue('input[name="rezultat"]'), /7/);
+    // Oddaj s tipkovnice → naslednji zaslon okna: tipkovnica se zapre (ne ostane tk-open in spodnji odmik); Esc tudi.
+    await p.route("**/ustno/1/odgovor", (r) => r.fulfill({ status: 500, json: { error: "Preizkus" } }));
+    await p.locator("#tipkovnica .tk-k.go").click();
+    await p.waitForSelector('.us-box [data-us="retry"]');
+    assert.equal(await p.evaluate(() => document.body.classList.contains("tk-open")), false, "po oddaji");
+    await p.keyboard.press("Escape");
+    await p.waitForFunction(() => !document.querySelector("dialog.us-okno")?.open);
+    assert.equal(await p.evaluate(() => document.body.classList.contains("tk-open")), false, "po Esc");
     assert.deepEqual(errors, []);
     await ctx.close();
   });
