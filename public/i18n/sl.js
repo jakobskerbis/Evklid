@@ -509,7 +509,7 @@ export default {
   "chat.deeperMsg": "Tega ne razumem dobro. Razloži podrobneje, korak za korakom.",
   "chat.wait": "Pripravljam razlago …",
   "chat.waitDeep": "Pripravljam podrobnejšo razlago …",
-  "chat.waitCheck": "Preverjam račun …",
+  "chat.waitCheck": "Preverjam odgovor …",
   "chat.full": "Pokaži celoten postopek",
   "chat.fullMsg": "Pokaži mi celoten postopek te naloge.",
   "chat.choices": "Hitri odgovori",

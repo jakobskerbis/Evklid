@@ -319,7 +319,7 @@
   "chat.deeperMsg": "No lo entiendo bien. Explícamelo con más detalle, paso a paso.",
   "chat.wait": "Preparando la explicación …",
   "chat.waitDeep": "Preparando una explicación más detallada …",
-  "chat.waitCheck": "Comprobando el cálculo …",
+  "chat.waitCheck": "Comprobando la respuesta …",
   "chatMode.A": "Guiado",
   "chatMode.B": "Solución completa",
   "subj.MAT": "Matemáticas",

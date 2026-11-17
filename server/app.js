@@ -986,6 +986,13 @@ export function createApp(store, opts = {}) {
       "X-Accel-Buffering": "no",
     });
     const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    // Faza za napis med čakanjem (public/app.js): »check«, ko koda ali pregled res preverja odgovor, »answer«, ko konča.
+    let checking = false;
+    const phase = (on) => {
+      if (on === checking) return;
+      checking = on;
+      send("phase", { phase: on ? "check" : "answer" });
+    };
     // Pod mejo: lokalni zaznavalnik (strošek 0); varnostni odgovor se pokaže nad odgovorom inštruktorja (j 6. 11.).
     // Posredna stiska (lokalno »pogovor«, blažje okno): ne gre takoj, da pregled B ali inštruktor (META) lahko odpreta
     // močnejše okno; če ga ne, se blažje okno pošlje pred koncem odgovora (j 10. 11.).
@@ -1157,7 +1164,7 @@ export function createApp(store, opts = {}) {
       const verdictReserve = checkReserveUsd(MODEL_MID, `${prevTutorText}${text}${result.text || ""}`);
       if (claim && !codeVerdict && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used && liveReviewOn() && needsVerdictReview({ answer: stripMeta(result.text), lite, spentToday: () => usage.kindToday("sodba") }) && hold.take(verdictReserve)) {
         verdictChecked = true;
-        send("phase", { phase: "check" }); // učenec vidi »Preverjam račun …« (public/app.js), dokler sodba ni preverjena
+        phase(true); // učenec vidi »Preverjam odgovor …« (public/app.js), dokler sodba ni preverjena
         try {
           const rv = await reviewVerdict({ context: prevTutorText, student: text, answer: stripMeta(result.text), createFn: opts.reviewCreateFn, usage, studentId: student.id });
           extraCost += rv.cost;
@@ -1195,6 +1202,7 @@ export function createApp(store, opts = {}) {
           console.warn(`[evklid] pregled sodbe ni uspel: ${e?.message || e}`);
         }
       }
+      phase(false); // preverjanje sodbe je končano: napis »Preverjam odgovor …« izgine
       for (const t of held) send("delta", { text: t });
       if (rest) send("delta", { text: rest });
 
@@ -1211,7 +1219,7 @@ export function createApp(store, opts = {}) {
         const hadBlock = hasClaimBlock(result.text);
         let claimRes = null;
         if (!issue && hadBlock && !controller.signal.aborted) {
-          send("phase", { phase: "check" });
+          phase(true);
           claimRes = await checkAnswerClaims(result.text);
           if (claimRes.issue) issue = claimRes.issue;
           claimFailed = claimRes.failed.length > 0;
@@ -1239,7 +1247,7 @@ export function createApp(store, opts = {}) {
           noteReviewSkip(store.db, stopnja, "meja_ucenca");
         }
         if (pool?.held > 0) {
-          send("phase", { phase: "check" });
+          phase(true);
           try {
             const rv = await reviewAnswer({ question: text, answer: plain, createFn: opts.reviewCreateFn, usage, studentId: student.id, kind: reviewKindFor(risky), signal: controller.signal });
             extraCost += rv.cost;
@@ -1259,7 +1267,7 @@ export function createApp(store, opts = {}) {
         const fixMode = fixModeFor(mode);
         const fixReserve = callMaxUsd(modeParams(fixMode).model, Buffer.byteLength(plain + (issue || ""), "utf8") + 3000, modeParams(fixMode).max_tokens);
         if (issue && liveFixOn() && hold.take(fixReserve)) {
-          send("phase", { phase: "check" });
+          phase(true);
           try {
             const c = await correction({ streamFn, mode, answer: plain, issue, language: student.settings.language || "sl", signal: controller.signal });
             extraCost += usage.log(student.id, c.model || modeParams(c.mode).model, c.usage || {}, "popravek");
@@ -1275,6 +1283,7 @@ export function createApp(store, opts = {}) {
         }
       }
 
+      phase(false);
       let meta = parseMeta(result.text);
       // Fotografija, ki ni učno gradivo (obraz, oseba, osebni dokument …): inštruktor jo zavrne z flag=photo,
       // slika pa se takoj odstrani iz shranjenega sporočila (j, 2026-10-30).

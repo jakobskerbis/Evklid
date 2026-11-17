@@ -313,7 +313,7 @@
   "chat.deeperMsg": "よくわかりません。もっと詳しく、一歩ずつ説明してください。",
   "chat.wait": "説明を準備しています …",
   "chat.waitDeep": "もっと詳しい説明を準備しています …",
-  "chat.waitCheck": "計算を確認しています …",
+  "chat.waitCheck": "答えを確認しています …",
   "chatMode.A": "ガイド付き",
   "chatMode.B": "完全な解答",
   "subj.MAT": "数学",

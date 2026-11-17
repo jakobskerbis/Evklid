@@ -1464,6 +1464,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     if (n?.vrsta) nujnoEl = addNujno({ ...n, izs: izsiljevanje(text) }, opts);
   };
   state.sending = true;
+  state.sendSeq = (state.sendSeq || 0) + 1; // »Razloži podrobneje« v čakanju ve, ali je vmes šlo novo sporočilo
   $("#send").disabled = true;
   state.pacer?.skip();
 
@@ -1556,9 +1557,18 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         if (!shownText && !bubble.classList.contains("checking")) waitNote = ""; // odgovor se začne: napis zamenja besedilo
         pacer.push(d.text);
       },
-      // Strežnik preverja račun (server/app.js): napis »Preverjam račun …«; pod izpisanim besedilom šele čez 0,6 s,
+      // Strežnik preverja odgovor (server/app.js): napis »Preverjam odgovor …«; pod izpisanim besedilom šele čez 0,6 s,
       // da hitro preverjanje ne utripne.
       phase: (d) => {
+        // Preverjanje je končano (»answer«): napis izgine pod besedilom; brez besedila spet »Pripravljam …«.
+        if (d?.phase === "answer") {
+          clearTimeout(checkTimer);
+          checkTimer = null;
+          if (!bubble.classList.contains("checking")) return;
+          bubble.classList.remove("checking");
+          waitNote = shownText ? "" : t(deep ? "chat.waitDeep" : "chat.wait");
+          return paint(shownText);
+        }
         if (d?.phase !== "check" || bubble.classList.contains("checking") || checkTimer) return;
         const show = () => {
           checkTimer = null;
@@ -2775,10 +2785,18 @@ function addDeepButton(el, wasDeep) {
     b.disabled = true;
     b.classList.add("pressed");
     b.setAttribute("aria-busy", "true");
+    const seq = state.sendSeq;
+    const release = () => {
+      b.disabled = false;
+      b.classList.remove("pressed");
+      b.removeAttribute("aria-busy");
+    };
     const go = (tries = 0) => {
       if (!b.isConnected) return;
+      // Vmes je učenec poslal novo sporočilo: podrobnejša razlaga prejšnjega odgovora ne gre več.
+      if (state.sendSeq !== seq) return b.remove();
       if (state.sending && tries < 150) return setTimeout(() => go(tries + 1), 100);
-      if (state.sending) return (b.disabled = false), b.classList.remove("pressed"), b.removeAttribute("aria-busy");
+      if (state.sending) return release(); // po 15 s tiho spet omogočen
       b.remove();
       send(t("chat.deeperMsg"), { deep: true });
     };

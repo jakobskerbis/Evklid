@@ -319,7 +319,7 @@
   "chat.deeperMsg": "Das verstehe ich nicht gut. Erklär es genauer, Schritt für Schritt.",
   "chat.wait": "Erklärung wird vorbereitet …",
   "chat.waitDeep": "Ausführlichere Erklärung wird vorbereitet …",
-  "chat.waitCheck": "Rechnung wird geprüft …",
+  "chat.waitCheck": "Antwort wird geprüft …",
   "chatMode.A": "Anleitung",
   "chatMode.B": "Komplette Lösung",
   "subj.MAT": "Mathematik",

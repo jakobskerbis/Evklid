@@ -313,7 +313,7 @@
   "chat.deeperMsg": "잘 이해가 안 돼요. 더 자세히, 한 단계씩 설명해 주세요.",
   "chat.wait": "설명을 준비하고 있어요 …",
   "chat.waitDeep": "더 자세한 설명을 준비하고 있어요 …",
-  "chat.waitCheck": "계산을 확인하고 있어요 …",
+  "chat.waitCheck": "답을 확인하고 있어요 …",
   "chatMode.A": "안내형",
   "chatMode.B": "전체 풀이",
   "subj.MAT": "수학",

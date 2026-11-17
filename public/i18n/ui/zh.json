@@ -313,7 +313,7 @@
   "chat.deeperMsg": "我不太明白。请讲得更详细些，一步一步来。",
   "chat.wait": "正在准备讲解 …",
   "chat.waitDeep": "正在准备更详细的讲解 …",
-  "chat.waitCheck": "正在检查计算 …",
+  "chat.waitCheck": "正在检查答案 …",
   "chatMode.A": "引导式",
   "chatMode.B": "完整解答",
   "subj.MAT": "数学",

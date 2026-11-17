@@ -1,6 +1,6 @@
 // Napis med čakanjem na odgovor inštruktorja (j, 16. 11. 2026, zunanji pregledi posnetkov s telefona: »po
 // pošiljanju samo utripajoča pika 6–10 s, po »Razloži podrobneje« ~4 s nič«). Takoj ob piki »Pripravljam
-// razlago …« (podrobneje: »Pripravljam podrobnejšo razlago …«); pravo fazo »Preverjam račun …« pove strežnik
+// razlago …« (podrobneje: »Pripravljam podrobnejšo razlago …«); pravo fazo »Preverjam odgovor …« pove strežnik
 // z dogodkom phase, ko koda ali pregled res preverja račun. Napis ni del odgovora in izgine, ko se odgovor začne.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -40,7 +40,7 @@ async function withApp(streamFn, fn) {
 test("besedila: tri nova besedila v vseh 33 jezikih, kratka in brez »strežnik/model«", () => {
   assert.equal(sl["chat.wait"], "Pripravljam razlago …");
   assert.equal(sl["chat.waitDeep"], "Pripravljam podrobnejšo razlago …");
-  assert.equal(sl["chat.waitCheck"], "Preverjam račun …");
+  assert.equal(sl["chat.waitCheck"], "Preverjam odgovor …");
   const dir = new URL("../public/i18n/ui/", import.meta.url);
   const langs = readdirSync(dir).filter((f) => f.endsWith(".json"));
   assert.equal(langs.length, 32);
@@ -73,11 +73,21 @@ test("strežnik: dogodek phase »check«, ko koda preverja račun iz bloka RACUN
     const names = ev.map((e) => e.event);
     const at = names.indexOf("phase");
     assert.ok(at > -1, names.join(","));
-    assert.deepEqual(ev[at].data, { phase: "check" });
-    assert.ok(at < names.indexOf("done"));
+    // »check«, ko koda preverja, in »answer«, ko konča (napis ne ostane do konca), oboje pred done.
+    assert.deepEqual(ev.filter((e) => e.event === "phase").map((e) => e.data.phase), ["check", "answer"]);
+    assert.ok(names.lastIndexOf("phase") < names.indexOf("done"));
     // Brez bloka in brez preverjanja: nobene faze (napis ostane »Pripravljam razlago …«, nič izmišljenega).
     assert.ok(!(await ask("Kaj je gostota?")).some((e) => e.event === "phase"));
   });
+});
+
+test("odjemalec: »answer« odstrani napis pod odgovorom; novo sporočilo prekliče čakajočo podrobnejšo razlago", () => {
+  const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  const send = app.slice(app.indexOf("async function send(text"), app.indexOf("// --- varnostni odgovor"));
+  assert.match(send, /if \(d\?\.phase === "answer"\) \{[\s\S]{0,200}bubble\.classList\.remove\("checking"\);[\s\S]{0,120}return paint\(shownText\);/);
+  assert.match(send, /state\.sendSeq = \(state\.sendSeq \|\| 0\) \+ 1;/);
+  const deep = app.slice(app.indexOf("function addDeepButton("), app.indexOf("function addFullButton("));
+  assert.match(deep, /if \(state\.sendSeq !== seq\) return b\.remove\(\);/);
 });
 
 test("telefon 360 px: napis takoj ob pošiljanju, izgine ob odgovoru; »Razloži podrobneje« se takoj odzove", opts, async () => {
