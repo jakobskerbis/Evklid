@@ -341,6 +341,15 @@ export function fitView(fns, { W = 320, H = 220, points = [], fixed = {} } = {})
     y0 = c0 - below * scale;
     y1 = c1 + above * scale;
   }
+  // krivulja mora biti vidna: če je v oknu manj kot 30 % vzorcev (100/x: |y| ≥ 27 na [−3,6; 3,6]),
+  // razširimo os y na 20. do 80. percentil (razmerje osi nato razširi še os x)
+  if (samples.length) {
+    const inside = samples.filter((y) => y >= y0 && y <= y1).length;
+    if (inside < 0.3 * samples.length) {
+      y0 = Math.min(y0, quantile(samples, 0.2));
+      y1 = Math.max(y1, quantile(samples, 0.8));
+    }
+  }
   if (y1 - y0 < 1e-9) (y0 -= 1), (y1 += 1);
   // os x naj bo vidna, če je blizu
   if (y0 > 0 && y0 < (y1 - y0) * 0.5) y0 = 0;

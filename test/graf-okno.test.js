@@ -132,7 +132,10 @@ test("pregled #802: k/x, e^(−x²), log, floor, |x|, √(x² − 4), e^(1/x) in
   for (const k of [100, 1000]) {
     const f = (x) => k / x;
     const v = fitView([f], { W, H });
-    assert.ok(v.ymin < 0 && v.ymax > 0 && v.ymax - v.ymin < 40, `${k}/x ${JSON.stringify(v)}`);
+    assert.ok(v.ymin < 0 && v.ymax > 0, `${k}/x ${JSON.stringify(v)}`);
+    // krivulja je v oknu vidna (vsaj tretjina vzorcev na vidni osi x)
+    const ys = Array.from({ length: 401 }, (_, i) => f(v.xmin + ((v.xmax - v.xmin) * i) / 400));
+    assert.ok(ys.filter((y) => y > v.ymin && y < v.ymax).length > 130, `${k}/x krivulja ni vidna ${JSON.stringify(v)}`);
     assert.deepEqual(endAsymptotes(f), [{ k: 0, n: 0, sides: [-1, 1] }]);
   }
   const x2k = fitView([(x) => x * x + 1000], { W, H });
