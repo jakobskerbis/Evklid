@@ -494,7 +494,7 @@ export default {
   "chat.ideaNpz": "Daj mi nalogo v slogu NPZ.",
   "chat.ideaExample": "Pokaži mi rešen primer iz teme »{topic}«.",
   "chat.ideaQuiz": "Postavi mi tri kratka vprašanja iz teme »{topic}«.",
-  "chat.ideaMistakes": "Katere napake se pogosto delajo pri temi »{topic}«?",
+  "chat.ideaMistakes": "Kje pri temi »{topic}« najpogosteje naredimo napako?",
   "chat.ideaRepeat": "Ponoviva temo »{topic}«.",
   "chat.readLesson": "Preberi lekcijo",
   "chat.photoNote": "fotografija naloge",

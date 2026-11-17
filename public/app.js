@@ -1138,7 +1138,7 @@ const ideasKey = (s) => [s?.subject, s?.educational_track, s?.curriculum_level, 
 const ideasPath = (st) => (state.ideasPath && state.ideasPath.student === st?.id && state.ideasPath.key === ideasKey(st?.settings) ? state.ideasPath : null);
 function chatIdeas(st) {
   const path = ideasPath(st);
-  const key = `${st?.id}|${ideasKey(st?.settings)}|${path ? 1 : 0}`;
+  const key = `${st?.id}|${ideasKey(st?.settings)}|${path?.topics?.length || path?.next ? 1 : 0}`; // pot brez tem = splošni predlogi, brez ponovnega žrebanja
   if (state.ideasNow?.key !== key) state.ideasNow = { key, list: pickIdeas(st?.settings || {}, path, t) };
   return state.ideasNow.list;
 }
