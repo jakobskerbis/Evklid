@@ -203,13 +203,19 @@ export function allowanceEmail({ childName, stage, left, untilText, pool = false
 }
 
 // Enkratno obvestilo o spremenjeni politiki zasebnosti (scripts/obvestilo-zasebnost.js). Besedilo potrdi j, preden
-// se pošlje; skripta brez --poslji ničesar ne pošlje.
-export function privacyChangeEmail(policyUrl, dateText = "6. novembra 2026") {
+// se pošlje; skripta brez --poslji ničesar ne pošlje. Točke opisujejo trenutno različico (PRIVACY_VERSION 2026-11-18,
+// #817); prejšnja (6. 11. 2026) je v zgodovini git. dateText poda klicatelj (privacyDateText).
+const MESECI = ["januarja", "februarja", "marca", "aprila", "maja", "junija", "julija", "avgusta", "septembra", "oktobra", "novembra", "decembra"];
+export const privacyDateText = (iso) => {
+  const [y, m, d] = String(iso).split("-").map(Number);
+  return `${d}. ${MESECI[m - 1]} ${y}`;
+};
+export function privacyChangeEmail(policyUrl, dateText) {
   const points = [
-    "Natančneje piše, katere podatke lahko izvozite in izbrišete ter koliko časa jih hranimo.",
-    "Za člane pilota smo dodali neobvezne naloge: oceno branja fotografij nalog, oceno delov aplikacije, kratko anketo, kratek preizkus znanja na začetku in čez 14 dni ter vprašanje staršem, ali bi za Evklid plačali. Fotografijo naloge in prebrano besedilo shranimo samo, če ju otrok, star vsaj 15 let, posebej označi, in ju hranimo največ 30 dni.",
-    "Skrbnik Evklida vidi skupna števila brez imen, šele ko so odgovori vsaj trije (pri vprašanju o plačilu pet). Vidi tudi kratke opombe brez imena, e-naslove računov v pilotu in fotografije, ki jih je otrok sam označil za shranjevanje.",
-    "Član pilota lahko prijavi napako z zastavico; prijavi se priložita opis in zadnjih 10 sporočil pogovora.",
+    "Fotografije nalog v pogovorih z inštruktorjem hranimo 7 dni, nato ostane samo besedilo pogovora.",
+    "Natančneje piše, kdo vidi otrokove podatke: celoten profil vidite samo vi in otrok. Če je otrok v razredu, učitelj vidi samo vzdevek in avatar, oznako, ki jo vpiše učitelj, točke na lestvici razreda ter rezultate pri temah in kvizih, ki jih da razredu.",
+    "Pri šolski licenci je za podatke razreda upravljavec šola, za otrokov profil pa ostanemo upravljavec mi.",
+    "Enkrat na dan naredimo šifrirano varnostno kopijo baze, ki je shranjena v EU in jo izbrišemo po 30 dneh.",
   ];
 
   const text = `Pozdravljeni,\n\n${dateText} smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:\n\n${points.map((p) => `- ${p}`).join("\n")}\n\nNič vam ni treba narediti. Celotna pravila: ${policyUrl}\n\nEkipa Evklid`;

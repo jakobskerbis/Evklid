@@ -6,9 +6,11 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 
 // Dve obvezni potrditvi (besedilo hrani tudi strežnik ob vsakem plačilu).
 // kind "gift": izjavi za nakup darilne kode (uporaba se začne šele ob vpisu kode).
+// kind "credit": dokup pogovorov (ob odstopu se vrne delež neporabljenih pogovorov, ne delež časa).
+const WITHDRAWAL_KEY = { gift: "pay.giftWithdrawal", credit: "pay.creditWithdrawal" };
 export const consentFields = (kind = "") => `
   <label class="check pay-consent"><input type="checkbox" name="adult" required><span>${esc(t(kind === "gift" ? "pay.giftAdult" : "pay.adult"))}</span></label>
-  <label class="check pay-consent"><input type="checkbox" name="withdrawal" required><span>${esc(t(kind === "gift" ? "pay.giftWithdrawal" : "pay.withdrawal"))}</span></label>
+  <label class="check pay-consent"><input type="checkbox" name="withdrawal" required><span>${esc(t(WITHDRAWAL_KEY[kind] || "pay.withdrawal"))}</span></label>
   ${termsField()}`;
 
 // Potrditev splošnih pogojev (#765 točka 2): pred vsakim plačilom in ob registraciji. Strežnik shrani različico.

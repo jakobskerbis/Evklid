@@ -358,7 +358,7 @@ async function withAccounts(fn, opts = {}) {
 }
 
 test("Račun: cena stopnje profila, Družina pri ≥ 2 profilih; nakup po stopnji", async () => {
-  await withAccounts(async ({ call, stripe, kid }) => {
+  await withAccounts(async ({ call, stripe, kid, db }) => {
     kid("Maks", "FAKS", YEAR - 20);
     let acc = (await call("/api/account")).body;
     assert.equal(acc.plan_level, "FAKS");
@@ -370,6 +370,11 @@ test("Račun: cena stopnje profila, Družina pri ≥ 2 profilih; nakup po stopnj
     // Darilna koda za SŠ: letna cena SŠ.
     const g = await call("/api/billing/gift", { method: "POST", body: { level: "SS", adult: true, withdrawal: true, terms: true } });
     assert.equal(g.status, 200, JSON.stringify(g.body));
+    // Nakup darila zapiše eno soglasje z besediloma za darilo, ne še drugega z besedilom naročnine (#815 M1).
+    const { GIFT_WITHDRAWAL_TEXT } = await import("../server/placila/darila.js");
+    const gifts = db.prepare("SELECT text FROM billing_consents WHERE kind = 'gift'").all();
+    assert.equal(gifts.length, 1, JSON.stringify(gifts));
+    assert.ok(gifts[0].text.includes(GIFT_WITHDRAWAL_TEXT) && !/čas do odstopa/.test(gifts[0].text), gifts[0].text);
     assert.equal(stripe.calls.filter((c) => c.path === "/v1/checkout/sessions").at(-1).body["line_items[0][price_data][unit_amount]"], "13900");
   });
 });
@@ -1113,17 +1118,52 @@ test("preizkus, koda in bonus: skupni bazen vseh računov brez plačila", async 
   }
 });
 
-test("odstop v 14 dneh: vračilo sorazmerno porabi (manjše od deleža časa in neporabljene meje AI)", async () => {
-  const { withdrawalRefundCents, WITHDRAWAL_TEXT } = await import("../server/accounts/billing.js");
+test("odstop v 14 dneh: vračilo = delež preostalega časa, poraba AI ga ne zniža (j 2026-11-16, #765)", async () => {
+  const { withdrawalRefundCents, WITHDRAWAL_TEXT, CREDIT_WITHDRAWAL_TEXT, WITHDRAWAL_VERSION, consentRecordText } = await import("../server/accounts/billing.js");
   const day = 86400000;
-  // 2 dni od 30, AI porabljen ves: nič.
-  assert.equal(withdrawalRefundCents({ paidCents: 999, startMs: 0, endMs: 30 * day, nowMs: 2 * day, aiCapUsd: 1.9, aiSpentUsd: 1.9 }).cents, 0);
-  // 2 dni od 30, AI 10 %: min(28/30 = 0,933; 0,9) = 0,9.
-  assert.equal(withdrawalRefundCents({ paidCents: 1000, startMs: 0, endMs: 30 * day, nowMs: 2 * day, aiCapUsd: 2, aiSpentUsd: 0.2 }).cents, 900);
-  // Nič porabe AI: delež časa.
-  assert.equal(withdrawalRefundCents({ paidCents: 3000, startMs: 0, endMs: 30 * day, nowMs: 10 * day, aiCapUsd: 2, aiSpentUsd: 0 }).cents, 2000);
-  assert.match(WITHDRAWAL_TEXT, /14 dneh/);
-  assert.doesNotMatch(WITHDRAWAL_TEXT, /sorazmerni del plačila/);
+  const refund = (paidCents, len, d, aiCapUsd, aiSpentUsd) => withdrawalRefundCents({ paidCents, startMs: 0, endMs: len * day, nowMs: d * day, aiCapUsd, aiSpentUsd }).cents;
+  // Primeri iz PR: [plačilo, dolžina obdobja v dneh, dan odstopa, meja AI, poraba AI] → vračilo v centih.
+  const cases = [
+    // Mesečna OŠ 9,99 € (30 dni, meja 1,9 $): 999 × (30 − d) / 30, navzgor na cent (v korist kupca).
+    [999, 30, 1, 1.9, 0.19, 966], [999, 30, 1, 1.9, 1.9, 966],
+    [999, 30, 7, 1.9, 0.19, 766], [999, 30, 7, 1.9, 1.9, 766],
+    [999, 30, 13, 1.9, 0.19, 567], [999, 30, 13, 1.9, 1.9, 567],
+    // Letna OŠ 99 € (365 dni, meja 12 × 1,7 $).
+    [9900, 365, 1, 20.4, 1.7, 9873], [9900, 365, 7, 20.4, 1.7, 9711], [9900, 365, 13, 20.4, 1.7, 9548],
+    // Paket pred testom 14 dni 8,49 € (meja 1,5 $).
+    [849, 14, 1, 1.5, 1.5, 789], [849, 14, 7, 1.5, 1.5, 425], [849, 14, 13, 1.5, 1.5, 61],
+    // Celo število ostane celo (napaka plavajoče vejice ne doda centa): 900 × 20/30 = 600.
+    [900, 30, 10, 0, 0, 600],
+  ];
+  for (const [paid, len, d, cap, spent, want] of cases) assert.equal(refund(paid, len, d, cap, spent), want, `${paid} / ${len} d / dan ${d} / AI ${spent} $`);
+  // Ves AI porabljen ali poraba nad mejo: vračilo ostane delež časa (prej 0).
+  assert.equal(refund(999, 30, 2, 1.9, 5), 933);
+  // Robovi: po koncu obdobja 0, pred začetkom vse, prazno obdobje 0.
+  assert.equal(refund(999, 30, 31, 1.9, 0), 0);
+  assert.equal(refund(999, 30, -1, 1.9, 0), 999);
+  assert.equal(withdrawalRefundCents({ paidCents: 999, startMs: 5, endMs: 5, nowMs: 5 }).cents, 0);
+  // aiLeft ostane za prikaz skrbniku.
+  const r = withdrawalRefundCents({ paidCents: 1000, startMs: 0, endMs: 30 * day, nowMs: 2 * day, aiCapUsd: 2, aiSpentUsd: 0.2 });
+  assert.equal(r.cents, 934);
+  assert.ok(Math.abs(r.aiLeft - 0.9) < 1e-9 && Math.abs(r.timeLeft - 28 / 30) < 1e-9);
+  // Besedilo potrditve: enako kot /pogoji.html 12. točka (tam v 2. osebi) in prevod pay.withdrawal; staro pravilo min(čas, AI) ni več omenjeno.
+  const pogoji = (await import("node:fs")).readFileSync(new URL("../public/pogoji.html", import.meta.url), "utf8");
+  assert.ok(pogoji.includes("plačate le sorazmerni del cene za čas do odstopa, ostalo vam vrnemo"), "pogoji.html");
+  assert.ok(WITHDRAWAL_TEXT.endsWith("Takrat plačam le sorazmerni del cene za čas do odstopa, ostalo mi vrnete."));
+  assert.equal(WITHDRAWAL_TEXT, "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat plačam le sorazmerni del cene za čas do odstopa, ostalo mi vrnete.");
+  assert.doesNotMatch(WITHDRAWAL_TEXT + CREDIT_WITHDRAWAL_TEXT, /manjši od|vprašanj za inštruktorja/);
+  assert.match(CREDIT_WITHDRAWAL_TEXT, /14 dneh.*neporabljene pogovore/);
+  const { default: sl } = await import("../public/i18n/sl.js");
+  assert.equal(sl["pay.withdrawal"], WITHDRAWAL_TEXT);
+  assert.equal(sl["pay.creditWithdrawal"], CREDIT_WITHDRAWAL_TEXT);
+  // Zapisano soglasje o polnoletnosti = besedilo, ki ga plačnik vidi v sl (pay.adult).
+  const { ADULT_TEXT } = await import("../server/accounts/billing.js");
+  assert.equal(sl["pay.adult"], ADULT_TEXT);
+  // Zapis soglasja: besedilo, pogoji (#818), različica pogojev, različica pravila o odstopu in jezik (jezik ostane zadnji).
+  const { TERMS_TEXT, TERMS_VERSION } = await import("../server/accounts/potrdilo.js");
+  assert.equal(consentRecordText("sub", "en").split("\n").slice(1).join("|"), `${WITHDRAWAL_TEXT}|${TERMS_TEXT}|[pogoji: ${TERMS_VERSION}]|[odstop: ${WITHDRAWAL_VERSION}]|[jezik: en]`);
+  assert.ok(consentRecordText("credit", "sl").includes(CREDIT_WITHDRAWAL_TEXT));
+  assert.ok(consentRecordText("pay_link_pass", "sl").includes(WITHDRAWAL_TEXT));
   await withAccounts(async ({ db, api, kid, subscribe, pid, call }) => {
     const ana = kid("Ana", "OS", YEAR - 12);
     subscribe("evklid_1_month", new Date(Date.now() + 28 * day).toISOString());
@@ -1133,8 +1173,52 @@ test("odstop v 14 dneh: vračilo sorazmerno porabi (manjše od deleža časa in 
     db.prepare("UPDATE parents SET is_admin = 1 WHERE id = ?").run(pid);
     const r = (await call(`/api/admin/withdrawal/${pid}`)).body.subscription;
     assert.ok(Math.abs(r.ai_left - 0.5) < 0.01, JSON.stringify(r));
-    assert.equal(r.refund_cents, Math.floor(999 * Math.min(r.time_left, r.ai_left)));
-    assert.ok(r.refund_cents <= 500 && r.within_14_days);
+    // Polovica AI porabljena, vračilo vseeno po deležu časa (~28 od ~30 dni), ne ~500; navzgor na cent.
+    assert.equal(r.refund_cents, Math.ceil(999 * r.time_left - 1e-9));
+    assert.ok(r.refund_cents > 800, JSON.stringify(r));
+    // Brez plačanega računa: cenik in ocenjen začetek obdobja; brez soglasja rok od začetka obdobja (#815 L2/L3/L6).
+    assert.equal(r.source, "cenik");
+    assert.equal(r.period_start_source, "ocena");
+    assert.equal(r.contract_from_source, "zacetek_obdobja");
+    assert.ok(r.within_14_days);
+    assert.ok(Date.parse((await call(`/api/admin/withdrawal/${pid}`)).body.at) <= Date.now());
+    // Datum izjave (?at): prej = večji delež časa; prihodnost se omeji na zdaj; neveljaven datum 400 (#815 M2).
+    const start = Date.parse(r.period_start);
+    const atStart = (await call(`/api/admin/withdrawal/${pid}?at=${new Date(start + day).toISOString()}`)).body;
+    assert.equal(atStart.at, new Date(start + day).toISOString());
+    assert.ok(atStart.subscription.refund_cents > r.refund_cents, JSON.stringify(atStart.subscription));
+    const future = (await call(`/api/admin/withdrawal/${pid}?at=2999-01-01T00:00:00Z`)).body;
+    assert.ok(Date.parse(future.at) <= Date.now() && future.subscription.refund_cents > 0);
+    assert.equal((await call(`/api/admin/withdrawal/${pid}?at=jutri`)).status, 400);
+    // Pravi začetek obdobja iz plačanega računa (letna 13. 1. → 13. 1.), plačilo s kodo, rok od soglasja ob nakupu.
+    const end = Date.parse(db.prepare("SELECT sub_period_end FROM parents WHERE id = ?").get(pid).sub_period_end);
+    const realStart = end - 31 * day;
+    api.paidPeriods.record(pid, { id: "in_w", subscription: "sub_a", currency: "eur", lines: { data: [{ amount: 899, period: { start: Math.floor(realStart / 1000), end: Math.floor(end / 1000) } }] } }, { country: "SI" });
+    db.prepare("INSERT INTO billing_consents (parent_id, kind, text, created_at) VALUES (?, 'sub', 'x', ?)").run(pid, new Date(Date.now() - 20 * day).toISOString().slice(0, 19).replace("T", " "));
+    const paid = (await call(`/api/admin/withdrawal/${pid}`)).body.subscription;
+    assert.equal(paid.source, "placilo");
+    assert.equal(paid.paid_cents, 899);
+    assert.equal(paid.period_start_source, "placilo");
+    assert.equal(Date.parse(paid.period_start), Math.floor(realStart / 1000) * 1000);
+    assert.equal(paid.contract_from_source, "soglasje");
+    assert.equal(paid.within_14_days, false, "soglasje pred 20 dnevi: rok je potekel");
+    // Paket pred testom in dokup: valuta in rok (#815 L4).
+    db.prepare("INSERT INTO passes (parent_id, student_id, days, amount, currency, ai_usd, status, starts_at, ends_at) VALUES (?, ?, 14, 849, 'EUR', 1.5, 'active', ?, ?)").run(pid, ana, new Date(Date.now() - 7 * day).toISOString(), new Date(Date.now() + 7 * day).toISOString());
+    db.prepare("INSERT INTO ai_credit_buys (parent_id, pack, amount, currency, credit_usd, status, paid_at) VALUES (?, 'p5', 500, 'EUR', 1, 'active', datetime('now', '-3 days'))").run(pid);
+    const all = (await call(`/api/admin/withdrawal/${pid}`)).body;
+    assert.deepEqual([all.passes[0].currency, all.passes[0].refund_cents, all.passes[0].within_14_days], ["EUR", 425, true]);
+    // Paket v čakalni vrsti (kupljen zdaj, začne se čez 7 dni): rok od nakupa, takoj v roku, vrne se vse.
+    db.prepare("UPDATE passes SET created_at = datetime('now', '-7 days') WHERE parent_id = ?").run(pid);
+    db.prepare("INSERT INTO passes (parent_id, student_id, days, amount, currency, ai_usd, status, starts_at, ends_at) VALUES (?, ?, 14, 849, 'EUR', 1.5, 'active', ?, ?)").run(pid, ana, new Date(Date.now() + 7 * day).toISOString(), new Date(Date.now() + 21 * day).toISOString());
+    const q = (await call(`/api/admin/withdrawal/${pid}`)).body.passes;
+    const queued = q.find((x) => x.time_left === 1);
+    assert.deepEqual([queued.contract_from_source, queued.within_14_days, queued.refund_cents], ["nakup", true, 849], JSON.stringify(queued));
+    assert.ok(Math.abs(Date.parse(queued.contract_from) - Date.now()) < 60000, queued.contract_from);
+    const running = q.find((x) => x !== queued);
+    assert.ok(running.within_14_days && Math.abs(Date.parse(running.contract_from) - (Date.now() - 7 * day)) < 60000, JSON.stringify(running));
+    assert.equal(all.credits[0].currency, "EUR");
+    assert.equal(all.credits[0].within_14_days, true);
+    assert.ok(all.credits[0].created_at && all.credits[0].paid_at, JSON.stringify(all.credits[0]));
   });
 });
 

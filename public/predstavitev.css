@@ -28,3 +28,8 @@
 .mkt-chat .land-msg.me { align-self: flex-end; background: var(--accent); color: var(--accent-text); border-end-end-radius: 4px; }
 .mkt-chat .eq { white-space: nowrap; }
 .mkt-chat .land-msg.tutor { align-self: flex-start; background: var(--surface-2); color: var(--text); border-end-start-radius: 4px; }
+/* Noga podstrani: iste povezave kot na pristajalni strani in na /o-evklidu (zunanji pregled 16. 11. 2026). */
+.mkt-foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; margin: 32px 0 0; padding-top: 16px; border-top: 1px solid var(--border); font-size: 0.92rem; }
+.mkt-foot a { min-height: 40px; display: inline-flex; align-items: center; color: var(--accent); }
+/* V aplikaciji za Android/iOS (razred iz theme.js oz. v-aplikaciji.js) brez noge s povezavami na javne strani. */
+.v-aplikaciji .mkt-foot { display: none; }

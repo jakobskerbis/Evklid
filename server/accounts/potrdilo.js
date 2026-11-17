@@ -55,9 +55,13 @@ export function migrateTerms(db) {
 
 // Potrditve pred plačilom (lines: slovenska besedila, ki jih je plačnik označil), pogoji z različico in jezik.
 // Vrne id zapisa; checkoutId se lahko doda pozneje (linkConsent), ko plačilna seja obstaja.
-export function insertBillingConsent(db, { parentId, email, kind, lines, lang, checkoutId = null, item = "", firstCharge = "" }) {
+// Besedilo zapisa: potrditve, pogoji, [pogoji: V], [odstop: V] (samo pri besedilu odstopa iz billing.js), [jezik: l].
+export function consentText({ lines, lang, odstop = null }) {
   const l = LANG_RE.test(String(lang || "")) ? lang : "sl";
-  const text = [...lines, TERMS_TEXT, `[pogoji: ${TERMS_VERSION}]`, `[jezik: ${l}]`].join("\n");
+  return [...lines, TERMS_TEXT, `[pogoji: ${TERMS_VERSION}]`, ...(odstop ? [`[odstop: ${odstop}]`] : []), `[jezik: ${l}]`].join("\n");
+}
+export function insertBillingConsent(db, { parentId, email, kind, lines, lang, checkoutId = null, item = "", firstCharge = "", odstop = null }) {
+  const text = consentText({ lines, lang, odstop });
   const r = db
     .prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text, terms_version, checkout_id, item, first_charge) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
     .run(parentId ?? null, email || "", kind, text, TERMS_VERSION, checkoutId, String(item || "").slice(0, 300), firstCharge || null);
@@ -88,7 +92,7 @@ export async function sendPurchaseConfirmation({ db, session, sendMail, appUrl, 
   if (!claim.changes) return false;
   if (c.parent_id == null && db.prepare("SELECT COUNT(*) AS n FROM email_log WHERE kind = 'purchase' AND period = ?").get(String(session.id)).n > 1) return false;
   const lines = String(c.text || "").split("\n");
-  const statements = lines.filter((s) => s && !/^\[[a-z]+: /.test(s));
+  const statements = lines.filter((s) => s && !/^\[(jezik|pogoji|odstop):/.test(s));
   // Shranjeno je slovensko besedilo; plačnik ga je v aplikaciji morda bral v prevodu (e-pošta je zaenkrat samo slovenska).
   const lang = (lines.find((s) => s.startsWith("[jezik: ")) || "").slice(8, -1) || "sl";
   const base = String(appUrl || "/").replace(/\/+$/, "");

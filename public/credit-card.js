@@ -54,7 +54,7 @@ export async function renderCreditCard(el, { api }) {
             : `<fieldset class="credit-packs"><legend class="sr-only">${esc(t("credit.title"))}</legend>${packs}</fieldset>
       <p class="muted">${esc(t("credit.note"))}</p>`
       }
-      ${canPay ? `${consentFields()}<button type="submit" class="primary credit-go">${esc(t("pay.continue"))}</button>` : ""}
+      ${canPay ? `${consentFields("credit")}<button type="submit" class="primary credit-go">${esc(t("pay.continue"))}</button>` : ""}
       <p class="form-error" role="alert" hidden></p>
     </form>`;
   hydrateIcons?.(el);

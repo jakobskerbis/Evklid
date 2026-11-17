@@ -6,7 +6,7 @@ import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { signWebhook } from "../server/accounts/stripe.js";
 import { TERMS_VERSION, termsVersionText, TERMS_TEXT, withdrawalNote } from "../server/accounts/potrdilo.js";
-import { WITHDRAWAL_TEXT, ADULT_TEXT } from "../server/accounts/billing.js";
+import { WITHDRAWAL_TEXT, ADULT_TEXT, CREDIT_WITHDRAWAL_TEXT, WITHDRAWAL_VERSION } from "../server/accounts/billing.js";
 import { GIFT_ADULT_TEXT, GIFT_WITHDRAWAL_TEXT } from "../server/placila/darila.js";
 import { PODARI_ADULT, PODARI_TEXT } from "../server/placila/podari.js";
 import { purchaseEmail } from "../server/accounts/email.js";
@@ -160,6 +160,8 @@ test("nakup: potrditve z različico pogojev in opisom; po plačilu eno potrdilo 
     assert.ok(c.text.includes(TERMS_TEXT) && c.text.includes(WITHDRAWAL_TEXT), c.text);
     assert.match(c.item, /^Naročnina: .+ na mesec, samodejno podaljšanje do preklica$/);
     assert.match(c.checkout_id, /^cs_/);
+    // Vrstni red oznak: pogoji, odstop, jezik (zadnji).
+    assert.ok(c.text.endsWith(`${TERMS_TEXT}\n[pogoji: ${TERMS_VERSION}]\n[odstop: ${WITHDRAWAL_VERSION}]\n[jezik: sl]`), c.text);
     const before = mails(stripe).length;
     const session = { id: c.checkout_id, object: "checkout.session", status: "complete", payment_status: "paid", amount_total: 999, currency: "eur", customer_details: { email: "kupec@pogoji.si" }, metadata: { parent_id: String(parent.id) } };
     // Nedokončano (async) plačilo: še brez potrdila.
@@ -175,6 +177,7 @@ test("nakup: potrditve z različico pogojev in opisom; po plačilu eno potrdilo 
     assert.ok(m.text.includes(c.item), "kaj je kupljeno");
     assert.match(m.text, /Plačano ob nakupu: 9,99\s€/);
     assert.ok(m.text.includes(WITHDRAWAL_TEXT), "izjava o odstopu, ki jo je kupec potrdil");
+    assert.doesNotMatch(m.text, /\[(jezik|pogoji|odstop):/, "oznake niso v e-pošti");
     assert.ok(m.text.includes(`različica ${termsVersionText(TERMS_VERSION)}`) && m.text.includes("/pogoji.html"));
     assert.ok(m.text.includes("zasebnost@evklid.app") && m.text.includes("/pogoji.html#obrazec"), "kako odstopi");
     assert.ok(m.html.includes("zasebnost@evklid.app"));
@@ -194,6 +197,7 @@ test("shranjena besedila potrditev so enaka slovenskim besedilom, ki jih plačni
   const pairs = [
     [ADULT_TEXT, "pay.adult"],
     [WITHDRAWAL_TEXT, "pay.withdrawal"],
+    [CREDIT_WITHDRAWAL_TEXT, "pay.creditWithdrawal"],
     [GIFT_ADULT_TEXT, "pay.giftAdult"],
     [GIFT_WITHDRAWAL_TEXT, "pay.giftWithdrawal"],
     [PODARI_ADULT, "pod.adult"],
@@ -230,4 +234,13 @@ test("naročnina s preizkusom: potrdilo pove datum in znesek prvega plačila", (
     const m = mails(stripe).slice(before).find((x) => /potrdilo o nakupu/.test(x.subject));
     assert.ok(m, "potrdilo poslano");
     assert.ok(m.text.includes(`Prvo plačilo: ${c.first_charge}`), m.text);
+  }));
+
+test("dokup: shrani besedilo odstopa za dokup (ne naročnine)", () =>
+  withServer(async (ctx) => {
+    const { a, parent } = await account(ctx, "dokup@pogoji.si");
+    const r = await a("/api/billing/credit", { method: "POST", body: { pack: "k5", adult: true, withdrawal: true, terms: true } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    const c = ctx.store.db.prepare("SELECT text FROM billing_consents WHERE parent_id = ? AND kind = 'credit'").get(parent.id);
+    assert.ok(c.text.includes(CREDIT_WITHDRAWAL_TEXT) && !c.text.includes(WITHDRAWAL_TEXT), c.text);
   }));
