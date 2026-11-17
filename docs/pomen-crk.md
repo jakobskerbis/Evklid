@@ -33,6 +33,8 @@ Koda: `public/formula-data.js` (slovar, `validIn`, `definitionsIn`), `public/ric
      so lahko sredi druge besede, imajo `\b` (»leč« ni v »vleče«/»daleč«, »krog« ni v »okrog«, »sfer« ni v »atmosfera«);
    - `ne`: v tej temi, povedi ali kjerkoli v besedilu bloka ima črka drug pomen, zato `teme` ne velja (formula `ctx` še vedno);
    - `brez`: formula, kjer črka nima tega pomena (`dx` v integralu ni premer, `e^{…}` ni naboj);
+   - `kljub`/`kljubF`: privzeti pomen velja kljub `ne`, če poved (tema) ali formula vsebuje ta vzorec;
+   - `povNe`: `pov` ne velja, če je v isti povedi tudi ta vzorec;
    - `oba`: potrebna sta formula in tema (ploščina S, površina P, prostornina V, višina v, imaginarna enota i).
    - `zan`: formula sama zanesljivo pove pomen, tudi brez teme in pri `oba` (številka z enoto: S = 1,5 m², V = 2,00 L);
    - `samo`: po temi (brez `ctx`) velja le, če se formula ujema z vzorcem (a, b, c so koeficienti v »a = 1«, »a ≠ 0«,
@@ -69,7 +71,7 @@ klikljivih črk manj (varna smer).
 | D (MAT) | diskriminanta | b² − 4ac, √D; tema kvadratna | oglišče D, definicijsko območje |
 | k (MAT) | smerni koeficient | y = k x + n; tema premica, linearna funkcija | indeks, celo število (kπ), binomski simbol, zaporedje, lekcija o linearnih enačbah ali sistemih (množitelj ±k) |
 | n (MAT) | začetna vrednost | y = k x + n v isti formuli ali povedi (j, pregled 463: ne vsak n v temi) | naravno število, n-ti koren, mnogokotnik, razmerje m : n |
-| p, q (MAT) | koordinati temena / središča / premika grafa | (x − p)² + (y − q)² → središče S(p, q); (x − p)² (temenska oblika y = a(x − p)² + q), tema teme/temenska oblika → teme; (x − p) v log, ln, √, sin/cos, eksponentu, ulomku, \|x − p\|, f(x − p) → vodoravni premik (asimptota x = p pri log in ulomku); + q na koncu formule s tako funkcijo → navpični premik (j, 16. 11. 2026: v log_a(x − p) + q je bil q »ordinata temena«) | verjetnost (p + q = 1), praštevilo, količnik q zaporedja, stožnice (y² = 2px), 1/(x − p)² ni teme; teme po temi ne velja v temah o logaritmih, eksponentni, korenski, racionalni, kotnih funkcijah, premikih |
+| p, q (MAT) | koordinati temena / središča / premika grafa | (x − p)² + (y − q)² → središče S(p, q); (x − p)² (temenska oblika y = a(x − p)² + q), tema teme/temenska oblika → teme; (x − p) v log, ln, √, sin/cos, eksponentu, ulomku, \|x − p\|, f(x − p) → vodoravni premik (asimptota x = p pri log in ulomku); (x − p)ⁿ z n ≠ 2 (potenčna) → vodoravni premik; »= [koeficient] člen + q« (+ q edini člen za funkcijo, števec ulomka brez x) → navpični premik (j, 16. 11. 2026: v log_a(x − p) + q je bil q »ordinata temena«; pregled PR 785: − q, (2x + 1)/(x − p) + q, 2^x + 3 + q, diferenčni kvocient, P(x)/(x − p), f(x − p) = f(x), x = √p + q → ni okna; asimptota le iz iste formule) | verjetnost (p + q = 1), praštevilo, količnik q zaporedja, stožnice (y² = 2px), 1/(x − p)² ni teme; teme po temi ne velja v temah o logaritmih, eksponentni, korenski, racionalni, kotnih funkcijah, premikih |
 | r, d (MAT) | polmer, premer | π v formuli ali tema krog/valj/stožec/krogla | `dx`, integral, vsota, limita, kotne funkcije, »okrog«; d kot razdalja (sekanta, tangenta) |
 | o, S, P, V, v (MAT) | obseg, ploščina, površina, prostornina, višina | `X =` in geometrijska tema | vsota S, S v stopinjah (vsota kotov), verjetnost P (met kocke), hitrost v |
 | e (MAT) | Eulerjevo število | e^…, ln, exp, lim | linearna ekscentričnost (e² = a² − b², ε = e/a) |
@@ -86,7 +88,7 @@ klikljivih črk manj (varna smer).
 | c (FIZ) | hitrost svetlobe (valovanja) | c = λν, mc², hc; tema svetloba, valovanje, zvok, optika | rob kvadra; c_p ne podeduje; specifična toplota ima svojo različico (Q =, ΔT) |
 | t (FIZ, KEM, BIO) | čas / temperatura v °C | °C: T = t + 273, število s °C za = ali ≈; sicer čas (BIO le z enoto časa) | Δt = 300 °C / hitrost je čas |
 | E, T (FIZ) | energija, temperatura | privzeto | modul elastičnosti in navor v mehaniki trdnin (torzija, upogib, nosilci); E pri električnem polju (E = F/e, E = U/d, F = eE, tema električno polje, kondenzator) |
-| U, R, I, C, Q, λ (FIZ) | napetost, upor, tok, kapaciteta, toplota, valovna dolžina | privzeto | ΔU, notranja energija, termodinamika; R v p V = n R T, plin, polmer Zemlje/planeta; I jakost zvoka/svetlobe, vztrajnost; C toplotna kapaciteta (ΔT); Q = C U, Q = I t, kondenzator, elektrostatika; λ razpadna konstanta (e^{−λt}, razpad, radioaktivnost) — tam črka ni klikljiva (16. 11. 2026) |
+| U, R, I, C, Q, λ (FIZ) | napetost, upor, tok, kapaciteta, toplota, valovna dolžina | privzeto | ΔU, notranja energija, termodinamika; R v p V = n R T, plin, polmer Zemlje/planeta; I jakost zvoka/svetlobe, vztrajnost; C toplotna kapaciteta (ΔT); Q = C U, Q = I t, kondenzator, elektrostatika; λ razpadna konstanta (e^{−λt}, razpad, radioaktivnost) — tam črka ni klikljiva (16. 11. 2026); U in R ostaneta napetost in upor, ko poved omenja napetost, upor, volt, Ω ali električni tok/krog ali je v formuli tok I (`kljub`, `kljubF`) |
 | h (FIZ) | Planckova konstanta / višina | h ν, h f, h c, h/… → Planck; sicer višina | višina ne velja v temah foton, fotoefekt, kvant, sevanje, spekter |
 | B, G (FIZ) | gostota magnetnega polja, gibalna količina | formula (Φ = B S, G = m v), enota T, tema magnetizem / trki | podpora nosilca, teža G, gravitacijska konstanta, Gibbsova energija ΔG |
 | S (FIZ) | ploščina | privzeto | ΔS (entropija) |

@@ -65,6 +65,7 @@ test("premiki drugih funkcij: eksponentna, korenska, racionalna, kotna, absolutn
     assert.match(label("MAT", "", f, "q") || "", /navpični premik/, `q v ${f}`);
   // Eksponentna in racionalna: vodoravna asimptota y = q.
   assert.match(card("MAT", "", "$y = 2^{x - p} + q$", "q").html, /asimptota/);
+  assert.match(label("MAT", "", "$y = \\log_{a}{(x - p)} + q$", "p") || "", /vodoravni premik/);
 });
 
 test("temenska oblika parabole: p in q ostaneta koordinati temena", () => {
@@ -128,4 +129,65 @@ test("fizika in kemija: brez privzetega pomena, ki bi bil tu napačen", () => {
   assert.match(label("FIZ", "Kondenzator", "Kapaciteta $C = \\frac{e}{U}$.", "C") || "", /kapaciteta/);
   assert.match(label("KEM", "Raztopine", "Velja $c = \\frac{n}{V}$.", "c") || "", /koncentracija/);
   assert.match(label("FIZ", "Gibanje", "Telo pade z višine $h = 5\\,\\mathrm{m}$.", "h") || "", /višina/);
+});
+
+// Pregled PR 785 (17. 11. 2026): napake ločeno pregledovalcev.
+test("pregled 785, 1: − q ni navzgor (brez okna)", () => {
+  // 1. − q ni »premakne za q navzgor«: brez okna.
+  for (const f of ["$y = \\log_a x - q$", "$y = 2^x - q$", "$y = \\frac{1}{x} - q$", "$y = \\log_a(x - p) - q$"]) assert.equal(label("MAT", "", f, "q"), null, f);
+});
+
+test("pregled 785, 2: asimptota y = q le pri členu brez x v števcu in samo + q", () => {
+  // 2. (2x + 1)/(x − p) + q in 2^x + 3 − q, 2^x + 3 + q: ni vodoravne asimptote y = q (raje nič).
+  for (const f of ["$y = \\frac{2x + 1}{x - p} + q$", "$y = 2^x + 3 - q$", "$y = 2^x + 3 + q$"]) assert.equal(label("MAT", "", f, "q"), null, f);
+  assert.equal(label("MAT", "", "$y = \\frac{2x + 1}{x - p} + q$", "p"), null);
+  assert.match(card("MAT", "", "$y = \\dfrac{3}{x - p} + q$", "q").html, /Vodoravna asimptota/);
+  assert.match(card("MAT", "", "$y = \\dfrac{3}{x - p} + q$", "p").html, /Navpična asimptota/);
+});
+
+test("pregled 785, 3: krožnica: p, q v vektorju nista premik", () => {
+  // 3. Krožnica (MAT-SS-3/kroznica.md): p v vektorju ni premik grafa.
+  const kr = "Za točko $T(x, y)$ na krožnici je vektor $\\overrightarrow{ST} = (x - p, y - q)$, torej $\\sqrt{(x - p)^2 + (y - q)^2} = r$.";
+  assert.doesNotMatch(label("MAT", "Krožnica", kr, "p") || "", /premik/);
+  assert.doesNotMatch(label("MAT", "Krožnica", kr, "q") || "", /premik/);
+});
+
+test("pregled 785, 4: asimptota iz druge formule iste povedi ne velja", () => {
+  // 4. Druga formula iste povedi ne prinese asimptote log ali ulomka.
+  const pr = "Primerjaj $y = \\sqrt{x - p} + q$ in $y = \\log_a(x - p) + q$.";
+  const html = withFormulaSubject("MAT", () => fx.renderRich(pr), null, "");
+  const sqrtP = codes(html).filter((c) => c.split(":")[2] === "p").map(cardFor);
+  assert.equal(sqrtP.length, 2);
+  assert.doesNotMatch(sqrtP[0].html, /asimptota/, "p v √: brez asimptote");
+  assert.match(sqrtP[1].html, /Navpična asimptota/, "p v log: asimptota");
+});
+
+test("pregled 785, 5: diferenčni kvocient, izrek o ostanku, perioda, x = √p + q: brez okna", () => {
+  // 5. Lažni zadetki: diferenčni kvocient, izrek o ostanku, perioda, x = √p + q.
+  for (const [f, k] of [["$\\frac{f(x) - f(p)}{x - p}$", "p"], ["$\\frac{P(x)}{x - p} + q$", "p"], ["$\\frac{P(x)}{x - p} + q$", "q"], ["$f(x - p) = f(x)$", "p"], ["$x = \\sqrt{p} + q$", "q"], ["$\\lim_{x \\to p} \\frac{f(x) - f(p)}{x - p}$", "p"]])
+    assert.equal(label("MAT", "", f, k), null, `${k} v ${f}`);
+});
+
+test("pregled 785, 6: potenčna funkcija (x − p)ⁿ + q: premik", () => {
+  // 6. Potenčna funkcija (x − p)ⁿ + q: premik, ne teme, brez asimptote.
+  for (const f of ["$y = (x - p)^n + q$", "$y = a(x - p)^3 + q$", "$y = a \\cdot (x - p)^{3} + q$"]) {
+    const p = card("MAT", "Potenčna in korenska funkcija", f, "p");
+    const q = card("MAT", "Potenčna in korenska funkcija", f, "q");
+    assert.match(p?.label || "", /vodoravni premik/, f);
+    assert.match(q?.label || "", /navpični premik/, f);
+    assert.doesNotMatch(p.html + q.html, /asimptota|teme/, f);
+  }
+});
+
+test("pregled 785, 7: fizikalne izključitve niso preširoke", () => {
+  // Plinska razelektritev, ozemljitev, sončna celica, plin v cevi: R in U ostaneta.
+  assert.match(label("FIZ", "Električni tok in vezja", "Cev, napolnjena s plinom, ima upor $R = 50\\,\\Omega$.", "R") || "", /upor/);
+  assert.match(label("FIZ", "Električni tok in vezja", "Pri plinski razelektritvi je $U = R I$.", "R") || "", /upor/);
+  assert.match(label("FIZ", "Električni tok", "Ohišje je ozemljeno; upor ozemljitve je $R = 2\\,\\Omega$.", "R") || "", /upor/);
+  assert.match(label("FIZ", "Sončna celica", "Sončna celica ima notranji upor $R$.", "R") || "", /upor/);
+  assert.match(label("FIZ", "Električno delo", "Grelnik pretvarja električno delo v notranjo energijo: $A = U I t$.", "U") || "", /napetost/);
+  // Plin, Zemlja, termodinamika brez električnega konteksta: še vedno nič.
+  assert.equal(label("FIZ", "Idealni plin", "Velja enačba stanja idealnega plina.", "R"), null);
+  assert.equal(label("FIZ", "Gravitacija", "Polmer Zemlje je $R = 6370\\,\\mathrm{km}$.", "R"), null);
+  assert.equal(label("FIZ", "Termodinamika", "Notranja energija je $U = \\frac{3}{2} n R T$.", "U"), null);
 });

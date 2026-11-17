@@ -22,6 +22,9 @@ const CELZIJ = "t\\s*\\+\\s*273|t\\s*/\\s*\\{?\\}?\\s*\\^?\\s*\\\\circ|(?:=|\\\\
 const T_CELZIJ = { ctx: CELZIJ, n: "temperatura (v °C)", en: "temperature (in °C)", r: "T = t + 273{,}15" };
 // p⁺ (proton) in n⁰ (nevtron) nista tlak in množina snovi.
 const DELEC = "p\\s*\\^\\s*\\{?\\s*\\+|n\\s*\\^\\s*\\{?\\s*0";
+// Električni kontekst v povedi ali formuli: U in R ostaneta napetost in upor kljub »ne« (pregled PR 785).
+const ELEKTRIKA = "napetost|(?<!\\p{L})volt|(?<!\\p{L})upor|(?<!\\p{L})ohm|Ω|električn\\w*\\s+(?:tok|krog|vezj)";
+const ELEKTRIKA_F = "(?<![\\w\\\\])I(?![\\w])|\\\\Omega|\\\\mathrm\\s*\\{\\s*[mkM]?(?:V|A|\\\\Omega)\\s*\\}";
 const FIZ = {
   // F je pri lečah in zrcalih gorišče.
   F: { ne: "\\bleč|gorišč|zrcal", n: "sila", en: "force", r: "F = m\\,a", u: "N" },
@@ -75,9 +78,9 @@ const FIZ = {
   ],
   // ΔU v termodinamiki je notranja energija; I je tudi jakost zvoka ali svetlobe; R tudi plinska konstanta
   // (p V = n R T) in polmer Zemlje; C tudi toplotna kapaciteta; λ tudi razpadna konstanta. Tam raje nič.
-  U: { brez: "\\\\Delta\\s*U", ne: "notranj\\w*\\s+energij|termodinam", n: "električna napetost", en: "voltage", r: "U = R\\,I", u: "V" },
+  U: { brez: "\\\\Delta\\s*U", ne: "notranj\\w*\\s+energij|termodinam", kljub: ELEKTRIKA, kljubF: ELEKTRIKA_F, n: "električna napetost", en: "voltage", r: "U = R\\,I", u: "V" },
   I: { ne: "jakost\\w*\\s+(?:zvok|svetlob|valovan|sevanj)|intenzitet|glasnost|decibel|vztrajnost", n: "električni tok", en: "electric current", r: "I = \\frac{e}{t}", u: "A" },
-  R: { brez: `R${MUL}T|n${MUL}R\\b`, ne: "plin|termodinam|gravitac|zemlj|planet|sonc|satelit", n: "električni upor", en: "electrical resistance", r: "R = \\frac{U}{I}", u: "Ω" },
+  R: { brez: `R${MUL}T|n${MUL}R\\b`, ne: "idealn\\w*\\s+plin|plinsk\\w*\\s+(?:enačb|konstant|zakon)|stanj\\w*\\s+plin|termodinam|gravitac|(?<!\\p{L})zemlj(?:a|e|i|o|in\\w*)(?!\\p{L})|planet|(?<!\\p{L})sonc(?:e|a|u|em)(?!\\p{L})|satelit", kljub: ELEKTRIKA, kljubF: ELEKTRIKA_F, n: "električni upor", en: "electrical resistance", r: "R = \\frac{U}{I}", u: "Ω" },
   // e^{…} je Eulerjevo število (praznjenje kondenzatorja, razpad), ne naboj.
   e: { brez: "e\\s*\\^", n: "električni naboj", en: "electric charge", r: "e = I\\,t", u: "C" },
   e_0: { n: "osnovni naboj", en: "elementary charge", r: "e_0 \\approx 1{,}6\\cdot 10^{-19}\\,\\mathrm{C}", u: "C" },
@@ -190,23 +193,46 @@ const KVAD_K = "kvadratn\\w*\\s+(?:enačb|funkcij|neenačb|polinom|trinom)|diskr
 // p, q pri paraboli kot stožnici (y² = 2px) nista teme T(p, q) (pregled 463, N6).
 // Krožnica (x − p)² + (y − q)² = r²: p, q sta koordinati središča S(p, q); f(x − p) + q je premik grafa (§5.1).
 const KROZNICA = "\\(\\s*x\\s*-\\s*p\\s*\\)\\^\\{?2\\}?\\s*\\+\\s*\\(\\s*y\\s*-\\s*q";
-// Premik grafa (j, 16. 11. 2026: v »Premiki grafa« je bil p v f(x) = log_a(x − p) + q »abscisa temena«):
-// (x − p) kot argument funkcije, ki ni kvadrat (log, ln, koren, kotne, eksponent, ulomek, |x − p|, f(x − p)), pomeni
-// vodoravni premik, + q na koncu formule navpični premik. Teme T(p, q) je le pri (x − p)² (temenska oblika).
-const FN_ARG = "\\\\(?:log|ln|lg|sin|cos|tan|cot|tg|ctg|sqrt|exp)(?![a-zA-Z])[^=+]{0,16}?[({]\\s*|\\^\\s*\\{[^}]*?|\\\\frac\\s*\\{[^}]*\\}\\s*\\{\\s*(?:\\\\left\\s*)?\\(?\\s*|(?:\\\\left\\s*)?\\|\\s*|\\\\[lv]vert\\s*|[fg]\\s*\\(\\s*";
-const SHIFT_P = `(?:${FN_ARG})x\\s*-\\s*p(?![\\w])`;
-const LOG_P = "\\\\(?:log|ln|lg)(?![a-zA-Z])[^=+]{0,16}?[({]\\s*x\\s*-\\s*p(?![\\w])";
-const FRAC_P = "\\\\frac\\s*\\{[^}]*\\}\\s*\\{\\s*(?:\\\\left\\s*)?\\(?\\s*x\\s*-\\s*p(?![\\w])";
-// Funkcija spremenljivke x brez premika v levo/desno (log_a x + q, a^x + q, √x + q, 1/x + q).
-const FN_X = "\\\\(?:log|ln|lg|sin|cos|tan|cot|tg|ctg|sqrt|exp)(?![a-zA-Z])|\\^\\s*(?:\\{[^}]*x|x)|\\\\frac\\s*\\{[^}]*\\}\\s*\\{[^}]*x|\\|\\s*x|[fg]\\s*\\(\\s*x\\s*-\\s*p";
-// + q kot zadnji člen formule (ne q v log(p + q)).
-const Q_END = "[+-]\\s*q\\s*(?=$|[,;]|\\\\[,;:! ]|\\\\q?quad|\\\\text|\\\\\\\\)";
-const SHIFT_Q = (fn) => `^(?=[\\s\\S]*(?:${fn}))[\\s\\S]*${Q_END}`;
+// Premik grafa (j, 16. 11. 2026: v »Premiki grafa« je bil p v f(x) = log_a(x − p) + q »abscisa temena«).
+// Teme T(p, q) je le pri (x − p)² (temenska oblika). p je vodoravni premik, ko je x − p cel argument funkcije
+// (log, ln, √, kotne, eksponent, ulomek brez x v števcu, |x − p|, f(x − p), (x − p)ⁿ z n ≠ 2); q je navpični
+// premik, ko je formula »… = [koeficient] člen + q« in je + q edini člen za funkcijo (pregled PR 785:
+// »− q«, »2^x + 3 − q«, (2x + 1)/(x − p) + q, diferenčni kvocient, f(x − p) = f(x), x = √p + q niso premik).
+// Sicer črka ni klikljiva. Vzorci so String.raw (en sam \ pred ukazom TeX).
+const L = String.raw`(?:\\left\s*)?`;
+const R = String.raw`(?:\\right\s*)?`;
+// Argument: x − p (za p) ali x oziroma x − p (za q).
+const XP = String.raw`x\s*-\s*p(?![\w])`;
+const XQ = String.raw`x(?:\s*-\s*p(?![\w]))?`;
+const FN_TERMS = (a) => ({
+  log: String.raw`\\(?:log|ln|lg)(?![a-zA-Z])(?:_\s*(?:\{[^{}]*\}|[\w]))?\s*(?:${L}\(\s*${a}\s*${R}\)|\{\s*(?:${L}\(\s*)?${a}\s*(?:${R}\)\s*)?\}${a === XQ ? String.raw`|x(?![\w])` : ""})`,
+  exp: String.raw`(?:(?:[a-zA-Z]|\d+(?:[.,{}]+\d+)?|${L}\([^()]*${R}\))\s*\^\s*(?:\{\s*\(?\s*${a}\s*\)?\s*\}${a === XQ ? String.raw`|x(?![\w])` : ""})|\\exp\s*${L}\(\s*${a}\s*${R}\))`,
+  sqrt: String.raw`\\sqrt(?:\[[^\]]*\])?\s*\{\s*${a}\s*\}`,
+  frac: String.raw`\\[dt]?frac\s*\{[^{}x]*\}\s*\{\s*${L}\(?\s*${a}\s*${R}\)?\s*\}`,
+  abs: String.raw`${L}\|\s*${a}\s*${R}\||\\[lv]vert\s*${a}\s*\\[rv]vert`,
+  trig: String.raw`\\(?:sin|cos|tan|cot|tg|ctg)(?![a-zA-Z])\s*(?:${L}\(\s*(?:[\w.,]+\s*(?:\\cdot\s*)?${L}\(\s*${a}\s*${R}\)|${a})\s*${R}\)${a === XQ ? String.raw`|x(?![\w])` : ""})`,
+  fn: String.raw`(?<![\\a-zA-Z])[fg]\s*\(\s*${a}\s*\)`,
+  pow: String.raw`${L}\(\s*${XP}\s*${R}\)\s*\^\s*(?:\{\s*(?:[3-9]|n)\s*\}|[3-9]|n)(?![\w])`,
+});
+const TP = FN_TERMS(XP);
+const TQ = FN_TERMS(XQ);
+const any = (o, keys = Object.keys(o)) => keys.map((k) => o[k]).join("|");
+const SHIFT_P = any(TP);
+const LOG_P = TP.log;
+const FRAC_P = TP.frac;
+// »= [−][število][črka][·] člen + q« do konca formule (ali vejice, \quad, \text).
+const Q_END = String.raw`\s*(?=$|[,;.]|\\[,;:! ]|\\q?quad|\\text|\\\\)`;
+const COEF = String.raw`(?:-\s*)?(?:\d+(?:[.,{}]+\d+)?\s*)?(?:[a-zA-Z](?![a-zA-Z])\s*)?(?:\\cdot\s*)?`;
+const SHIFT_Q = (terms) => String.raw`=\s*${COEF}(?:${terms})\s*\+\s*q${Q_END}`;
 // (x − p)² v temenski obliki (tudi \left( … \right)^2).
-const KVADRAT_P = "\\(\\s*x\\s*-\\s*p\\s*(?:\\\\right\\s*)?\\)\\s*\\^\\s*\\{?\\s*2(?!\\d)";
-const TEME_BREZ = `${KROZNICA}|${SHIFT_P}`;
+const KVADRAT_P = String.raw`\(\s*x\s*-\s*p\s*(?:\\right\s*)?\)\s*\^\s*\{?\s*2(?!\d)`;
+// f(x − p) = f(x) (perioda) ni premik.
+const PERIODA = String.raw`[fg]\s*\(\s*x\s*[-+]\s*p\s*\)\s*=`;
+// (x − p)² v imenovalcu ali pod korenom, logaritmom, kotno funkcijo ni temenska oblika (1/(x − p)² + q).
+const KVADRAT_V_FN = String.raw`\\[dt]?frac\s*\{[^{}]*\}\s*\{[^{}]*\(\s*x\s*-\s*p|\\(?:sqrt|log|ln|lg|sin|cos|tan|cot|tg|ctg)(?![a-zA-Z])[^=]*?\(\s*x\s*-\s*p\s*(?:\\right\s*)?\)\s*\^`;
+const TEME_BREZ = `${KROZNICA}|${SHIFT_P}|${KVADRAT_V_FN}`;
 const TEME_NE = "krožnic|središč|premik|transformacij|logarit|eksponent|korensk|racionaln|kotn\\w*\\s+funkcij|trigonometr|asimptot";
-const PREMIK_BREZ = `${KROZNICA}|${KVADRAT_P}`;
+const PREMIK_BREZ = `${KROZNICA}|${KVADRAT_P}|${PERIODA}`;
 const PREMIK_P = { n: "vodoravni premik grafa", en: "horizontal shift of the graph", r: "y = f(x - p) + q", note: "Graf se premakne za $p$ v desno (pri $p < 0$ v levo).", noteEn: "The graph moves $p$ to the right (to the left if $p < 0$)." };
 const PREMIK_Q = { n: "navpični premik grafa", en: "vertical shift of the graph", r: "y = f(x - p) + q", note: "Graf se premakne za $q$ navzgor (pri $q < 0$ navzdol).", noteEn: "The graph moves $q$ up (down if $q < 0$)." };
 const STOZNICE = "gorišč|vodnic|stožnic|elips|hiperbol|parabol\\w*\\s+y\\^";
@@ -253,17 +279,19 @@ const MAT = {
   p: [
     { ctx: KROZNICA, n: "abscisa središča S(p, q)", en: "x-coordinate of the centre S(p, q)", r: "(x - p)^2 + (y - q)^2 = r^2" },
     { ctx: KVADRAT_P, brez: TEME_BREZ, teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: `${STOZNICE}|${TEME_NE}`, n: "abscisa temena T(p, q)", en: "x-coordinate of the vertex T(p, q)", r: "p = -\\frac{b}{2a}" },
-    { ...PREMIK_P, ctx: LOG_P, pov: LOG_P, brez: PREMIK_BREZ, r: "y = \\log_a(x - p) + q", note: `${PREMIK_P.note} Navpična asimptota je $x = p$.`, noteEn: `${PREMIK_P.noteEn} The vertical asymptote is $x = p$.` },
-    { ...PREMIK_P, ctx: FRAC_P, pov: FRAC_P, brez: PREMIK_BREZ, r: "y = \\frac{1}{x - p} + q", note: `${PREMIK_P.note} Navpična asimptota je $x = p$.`, noteEn: `${PREMIK_P.noteEn} The vertical asymptote is $x = p$.` },
-    { ...PREMIK_P, ctx: SHIFT_P, pov: SHIFT_P, brez: PREMIK_BREZ },
+    // Asimptota x = p le v sami formuli z log ali ulomkom (ne po drugi formuli iste povedi).
+    { ...PREMIK_P, ctx: LOG_P, brez: PREMIK_BREZ, r: "y = \\log_a(x - p) + q", note: `${PREMIK_P.note} Navpična asimptota je $x = p$.`, noteEn: `${PREMIK_P.noteEn} The vertical asymptote is $x = p$.` },
+    { ...PREMIK_P, ctx: FRAC_P, brez: PREMIK_BREZ, r: "y = \\frac{1}{x - p} + q", note: `${PREMIK_P.note} Navpična asimptota je $x = p$.`, noteEn: `${PREMIK_P.noteEn} The vertical asymptote is $x = p$.` },
+    // pov: p v drugi formuli iste povedi (»asimptota $x = p$«), a ne, če je v povedi tudi (x − p)² ali krožnica.
+    { ...PREMIK_P, ctx: SHIFT_P, pov: SHIFT_P, povNe: PREMIK_BREZ, brez: PREMIK_BREZ },
   ],
   q: [
     { ctx: KROZNICA, n: "ordinata središča S(p, q)", en: "y-coordinate of the centre S(p, q)", r: "(x - p)^2 + (y - q)^2 = r^2" },
     { ctx: KVADRAT_P, brez: TEME_BREZ, teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: `${STOZNICE}|${TEME_NE}`, n: "ordinata temena T(p, q)", en: "y-coordinate of the vertex T(p, q)", r: "q = -\\frac{D}{4a}" },
-    { ...PREMIK_Q, ctx: SHIFT_Q("\\\\(?:log|ln|lg)(?![a-zA-Z])"), brez: PREMIK_BREZ, r: "y = \\log_a(x - p) + q" },
-    // a^{x − p} + q in 1/(x − p) + q: vodoravna asimptota je y = q.
-    { ...PREMIK_Q, ctx: SHIFT_Q(`\\^\\s*(?:\\{[^}]*x|x)|\\\\exp(?![a-zA-Z])|${FRAC_P}|\\\\frac\\s*\\{[^}]*\\}\\s*\\{\\s*x\\s*\\}`), brez: PREMIK_BREZ, r: "y = a^{x - p} + q", note: `${PREMIK_Q.note} Vodoravna asimptota je $y = q$.`, noteEn: `${PREMIK_Q.noteEn} The horizontal asymptote is $y = q$.` },
-    { ...PREMIK_Q, ctx: SHIFT_Q(`${FN_X}|${SHIFT_P}`), brez: PREMIK_BREZ },
+    { ...PREMIK_Q, ctx: SHIFT_Q(TQ.log), brez: PREMIK_BREZ, r: "y = \\log_a(x - p) + q" },
+    // a^{x − p} + q in c/(x − p) + q (števec brez x): vodoravna asimptota je y = q.
+    { ...PREMIK_Q, ctx: SHIFT_Q(any(TQ, ["exp", "frac"])), brez: PREMIK_BREZ, r: "y = a^{x - p} + q", note: `${PREMIK_Q.note} Vodoravna asimptota je $y = q$.`, noteEn: `${PREMIK_Q.noteEn} The horizontal asymptote is $y = q$.` },
+    { ...PREMIK_Q, ctx: SHIFT_Q(any(TQ, ["sqrt", "abs", "trig", "fn", "pow"])), brez: PREMIK_BREZ },
   ],
   r: { ctx: CIRCLE, teme: KROG, brez: "\\\\int|\\\\sum|\\\\lim|\\\\sin|\\\\cos|\\\\tan", n: "polmer", en: "radius", r: "d = 2r" },
   d: { ctx: `${CIRCLE}|d\\s*=\\s*2\\s*r`, teme: KROG, ne: "razdalj|oddaljen|sekant|tangent|mimobežn|diagonal|štirikotnik|trapez|romb|deltoid|paralelogram", brez: "\\\\(?:o|i{0,2})int|\\\\frac\\{\\s*d|(?<![A-Za-z\\\\])d\\s*(?:[A-Za-z]|\\\\(?:varphi|vartheta|theta|phi|rho|tau|omega|lambda))(?![a-z])|\\\\mathrm\\s*\\{?\\s*d(?![a-zA-Z])", n: "premer", en: "diameter", r: "d = 2r" },
@@ -431,7 +459,11 @@ const re = (src, flags = "") => {
   return reCache.get(k);
 };
 // ctx v formuli ali pov v drugi formuli iste povedi.
-const byFormula = (e, tex) => (!!e.ctx && re(e.ctx).test(tex)) || (!!e.pov && !!sentTex && re(e.pov).test(sentTex));
+// povNe: druga formula iste povedi ne velja, če je v povedi tudi ta vzorec (krožnica ob premiku).
+const byFormula = (e, tex) => (!!e.ctx && re(e.ctx).test(tex)) || (!!e.pov && !!sentTex && re(e.pov).test(sentTex) && !(e.povNe && re(e.povNe).test(sentTex)));
+// kljub (tema, poved) ali kljubF (formula ali formule iste povedi): privzeti pomen velja kljub »ne«
+// (R v »plinska razelektritev« je upor, ko poved omenja upor ali formula vsebuje tok I).
+const despite = (e, tex) => (!!e.kljub && !!tscope && re(e.kljub, "iu").test(tscope)) || (!!e.kljubF && (re(e.kljubF).test(tex) || (!!sentTex && re(e.kljubF).test(sentTex))));
 function validIn(e, tex) {
   if (e.brez && re(e.brez).test(tex)) return false;
   if (e.zan && re(e.zan).test(tex)) return true;
@@ -440,7 +472,7 @@ function validIn(e, tex) {
   const byTopic = !!e.teme && !!tscope && re(e.teme, "iu").test(tscope) && !(e.ne && re(e.ne, "iu").test(scope)) && (!e.samo || byCtx || re(e.samo).test(tex));
   if (e.oba) return (!e.ctx || byCtx) && (!e.teme || byTopic);
   if (e.ctx || e.teme || e.pov) return byCtx || byTopic;
-  return !(e.ne && scope && re(e.ne, "iu").test(scope)); // privzeti pomen: le, če ga besedilo ne izključi
+  return !(e.ne && scope && re(e.ne, "iu").test(scope)) || despite(e, tex); // privzeti pomen: le, če ga besedilo ne izključi
 }
 const strong = (e) => !!(e.ctx || e.teme || e.pov || e.zan);
 function pickIndex(list, tex) {
