@@ -1,0 +1,15 @@
+// Datumi v besedilu: v slovenščini mesec v rodilniku (»do 23. novembra 2026«, »ponedeljek, 23. novembra«), kot ga
+// zahteva pravopis; Intl ga piše v imenovalniku (»23. november 2026«). Drugi jeziki ostanejo pri Intl.
+export const SL_MONTH = ["januarja", "februarja", "marca", "aprila", "maja", "junija", "julija", "avgusta", "septembra", "oktobra", "novembra", "decembra"];
+
+/** Datum z Intl.DateTimeFormat(loc, opts); v slovenščini z mesecem v rodilniku. */
+export function dateText(value, loc, opts = { day: "numeric", month: "long", year: "numeric" }) {
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  const f = new Intl.DateTimeFormat(loc, opts);
+  if (!/^sl\b/i.test(loc) || opts.month !== "long") return f.format(d);
+  return f
+    .formatToParts(d)
+    .map((p) => (p.type === "month" ? SL_MONTH[d.getMonth()] : p.value))
+    .join("");
+}
