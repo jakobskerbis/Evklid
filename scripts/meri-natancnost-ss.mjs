@@ -2,7 +2,7 @@
 // so prvi uporabniki gimnazijci). Ovoj okoli scripts/primerjava-modelov.js --s-preverjanjem --groups ss: isti rešeni
 // primeri iz lekcij kot v polni meritvi (docs/meritve/natancnost-*.json, isto seme), a samo stopnja »srednja šola«
 // (~30 primerov od 100), privzeto samo cel odgovor s preverjanjem (kot ga vidi učenec), ocenjevalec Opus.
-// Polna meritev (~5 $) ne gre skozi delovni tok Meritev (največ 2 $ na zagon); ta del je ocenjen na ~1,5 $.
+// Polna meritev (~5 $) ne gre skozi delovni tok Meritev (največ 2 $ na zagon); ta del je ocenjen na ~1,7 $ (suhi tek).
 // Zagon: GitHub Actions > Meritev > Run workflow, skripta scripts/meri-natancnost-ss.mjs (docs/stroski-ai.md).
 //   node scripts/meri-natancnost-ss.mjs [--max-usd 2] [--stopnje ss] [--del 1-2] [--oba] [--suho]
 //   --stopnje ss,tek   stopnje kot --groups v primerjava-modelov.js (os, ss, tek, uni); privzeto ss
@@ -14,7 +14,7 @@
 // Izid: povzetek v dnevniku, vrstice po primerih v data/meri-natancnost-ss.json (artefakt »meritev«).
 import fs from "node:fs";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -58,7 +58,33 @@ const ukaz = [...osnova, "--samo", ids.join(","), "--ponovi", "1", "--max-usd", 
 if (!process.argv.includes("--oba")) ukaz.push("--pogoj", "s");
 if (SUHO) ukaz.push("--dry");
 console.log(`Meritev pravilnosti: stopnje ${STOPNJE}, del ${del[1]}/${del[2]}, primerov ${ids.length}, meja ${MEJA} $${SUHO ? ", suho (brez klicev)" : ""}.`);
-const r = spawnSync(process.execPath, ukaz, { cwd: root, stdio: "inherit", env: process.env });
-// Vrstice po primerih (odgovori in ocene) za artefakt; ob prekinitvi ostane, kar je že plačano.
-if (!SUHO && fs.existsSync(PONOVITVE)) fs.copyFileSync(PONOVITVE, IZID);
-process.exit(r.status ?? 1);
+if (!SUHO) fs.rmSync(PONOVITVE, { force: true }); // star lokalni izid ne sme veljati za novega (npr. zagon brez ključa)
+if (!SUHO && (!process.env.ANTHROPIC_API_KEY || process.env.EVKLID_MOCK === "1")) console.log("OPOZORILO: ni ključa ANTHROPIC_API_KEY (ali je EVKLID_MOCK=1). NIČ NE BO IZMERJENO.");
+
+// Otrok teče asinhrono, da ob prekinitvi (SIGTERM ob časovni meji ali preklicu zagona) že plačane vrstice še pridejo v artefakt.
+const otrok = spawn(process.execPath, ukaz, { cwd: root, stdio: "inherit", env: process.env });
+let koncano = false;
+function zakljuci(status) {
+  if (koncano) return;
+  koncano = true;
+  if (!SUHO) povzetek();
+  process.exit(status);
+}
+// Vrstice po primerih (odgovori in ocene) za artefakt in ena zadnja vrstica s seštevkom (povzetek zagona kaže le konec dnevnika).
+function povzetek() {
+  if (!fs.existsSync(PONOVITVE)) return console.log("IZID: nič ni bilo izmerjeno (ni vrstic).");
+  fs.copyFileSync(PONOVITVE, IZID);
+  let vrstice = [];
+  try {
+    const j = JSON.parse(fs.readFileSync(IZID, "utf8"));
+    vrstice = Array.isArray(j) ? j : Array.isArray(j?.rows) ? j.rows : [];
+  } catch {
+    return console.log("IZID: datoteke z vrsticami ni mogoče prebrati.");
+  }
+  const st = (o) => vrstice.filter((v) => v?.ocena === o).length;
+  const ocenjeni = st("pravilno") + st("manjsa_napaka") + st("napaka");
+  console.log(`IZID (${STOPNJE}, del ${del[1]}/${del[2]}): od ${ids.length} primerov ocenjenih ${ocenjeni}: pravilno ${st("pravilno")}, manjša napaka ${st("manjsa_napaka")}, napaka ${st("napaka")}; neocenjenih ${vrstice.length - ocenjeni}. Ocenjevalec je model AI, en odgovor na primer.`);
+}
+for (const sig of ["SIGTERM", "SIGINT"]) process.on(sig, () => (otrok.kill(sig), setTimeout(() => zakljuci(1), 5000)));
+otrok.on("error", (e) => (console.error(`Meritev se ni zagnala: ${e.message}`), zakljuci(1)));
+otrok.on("exit", (status) => zakljuci(status ?? 1));
