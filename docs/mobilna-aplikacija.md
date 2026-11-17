@@ -10,7 +10,8 @@ Evklidova tipkovnica, laboratorij, NPZ, vse nove stvari s spleta. Seja je ena: W
 (`server/mobile/web-session.js`). Odjava na spletu odjavi tudi aplikacijo. Splet aplikacijo prepozna po
 `EvklidApp/<različica>` v User-Agent (`public/install.js` → `isStandalone()`: brez ponudbe »Namesti aplikacijo«).
 Vrstici telefona (ura, gumbi) dobita barvo roba strani. Gumb nazaj na Androidu gre nazaj po strani, povezave na
-druge strani odpre brskalnik.
+druge strani odpre brskalnik. Povezava iz e-pošte `https://evklid.app/vabilo?koda=…` (vabilo v pilot, `server/vabila.js`) se vedno odpre v
+brskalniku (aplikacija nima univerzalnih povezav); registracija tam je ista kot v aplikaciji, zato posebnega zaslona v aplikaciji ni.
 
 Naravno ostane: prijava in registracija (tipkovnica telefona), posodobitve (OTA in nov APK), obvestila, vaje
 brez povezave. Med objavo nove različice (gostitelj vrne 502/503/504) aplikacija ob vrtavki pokaže »Evklid se posodablja …« in poskuša znova do ~70 s (`BUSY_WAIT`, kot splet), ob prekinjeni povezavi dvakrat tiho poskusi znova. Ko strežnik še vedno ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
@@ -72,6 +73,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Razloži ob izboru | označeno besedilo lekcije → inštruktor | S | naravno (meni izbora WebView) | ✓ narejeno |
 | Kalkulator | znanstveni, grafični, orodja, PSE (`public/graph/`) | M | WebView `/kalkulator` | ✓ narejeno med vajo; manjka še gumb v lekciji in klepetu |
 | 3D atlas in modeli | telo v 3D, kviz, modeli iz kode (`public/3d/`) | L | WebView `/3d` (`Web3D.tsx`), vstop v Uči se → 3D svet in v zavihku Jaz | ✓ narejeno; vstop iz lekcije (»Poglej v 3D«, simulacija `3d-<id>` v katalogu) je na spletu, v naravni lekciji še ne |
+| Potrditev e-naslova | »Sem potrdil(a)« pove »Še ni potrjeno …«, »Pošlji znova« pove, da velja samo nova povezava (`public/account.js` renderVerify) | S | naravno (`profiles.tsx` VerifyEmail) | ✓ narejeno (15. 11. 2026); zaslon za povezavo v drugem brskalniku (»Težave?«) je samo na spletu, ker se povezava iz e-pošte vedno odpre v brskalniku; mladoletni/polnoletni stavek o staršu aplikacija ne kaže |
 | Formule | zbirka formul (način Formule kalkulatorja) | S | dodati način `formulas` na `/kalkulator` (potrebuje `rich.js`, marked) | ✗ |
 | Klikljive črke v formulah | kartica s pomenom črke iz predmeta, razdelka in lekcije (`public/formula-info.js`; lekcije, razlaga teme z »Bistvom«, naloge, odgovori inštruktorja, list s formulami z oznakami razdelkov) | M | naravno: `RichText` označi črke (`annotateTex`), dotik pošlje kodo iz WebView, kartica (`public/formula-card.js`) se odpre kot spodnji list; predmet in oznake iz `FormulaCtx` (`useTopicFx`, `/api/topic`) | ✓ narejeno v lekciji, nalogah in klepetu; list s formulami čaka na način Formule (vrstica »Formule«) |
 | Moji grafi | shranjeni grafi na strežniku | S | `/kalkulator` s sejo aplikacije (žeton v glavi ali enkratna povezava kot `app-link.js`) | ✗ |
@@ -94,11 +96,13 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Nastavitve | slogi (Igriv, Temen, zgodovinski), lastne barve, jezik, tempo, tipkovnica, glas; aplikacija ima raven, opomnike, vibracijo | M | naravno; slogi kot dodatne palete v `theme.ts` | delno |
 | Račun staršev | otroci, plačila, darila, šole (`account.js`) | M | odpri spletno stran prijavljeno (`app-link.js` v obratni smeri) | delno (naročnina, izbris) |
 | Nadgradnja stopnje, dokup razlag, darilo po stopnji | gumb »Odpri: …« (doplačilo razlike), gumb »Dokupi razlage« ob obvestilu o porabi, izbira stopnje darilne kode (`account.js`, `app.js` addAllowanceNote) | S | splet; aplikacija iz trgovine teh nakupov ne sme ponuditi mimo trgovine | delno (cena stopnje, Družina, obvestilo o porabi brez gumba; mobilna aplikacija nima zaslona za dokup pogovorov, zato videza izbire dokupa iz `credit-card.js` — ploščice in gumb »Nadaljuj za skupaj …«, j 2026-11-15 — ni treba usklajevati) |
+| Kartica ob porabljenih brezplačnih vprašanjih | razlog, »Z naročnino dobiš« (cena stopnje, več vprašanj, podrobnejše razlage, interaktivni deli lekcij), »Pošlji povezavo staršu« (mladoletni) ali »Izberi naročnino« (polnoleten), »Vadi naprej v Vadnici« (`public/meja-placilo.js`, j 2026-11-15) | S | aplikacija iz trgovine ponudbe in povezave za plačilo mimo trgovine ne sme pokazati: tudi splet v aplikaciji (`EvklidApp/` v User-Agent) kaže samo razlog in Vadnico; naravni klepet (`mobile/src/app/chat/[id].tsx` blockText) ostaja vrstica z razlogom in namigom | ✗ (namerno, do nakupa v trgovini) |
 | Skrbnik | upravljanje (APK, uporabniki) | S | samo splet | ✗ (namerno) |
 | Povabi prijatelja po uspehu | kartica »Pokaži Evklida prijatelju« pod osvojeno temo in opravljenim preizkusom znanja (`public/povabi.js`, 15+, enkrat na 7 dni, nagrada samo z delujočimi plačili) | S | ne: nagrada za povabilo je vezana na plačilo na spletu (pravila trgovin); tudi WebView z `EvklidApp/` je ne pokaže | ✗ (namerno) |
 | Skeniraj: po korakih | reševalnik po korakih (`public/scan/`); aplikacija pošlje fotografijo inštruktorju | M | WebView strani skeniranja ali naravni zaslon korakov | delno |
 | Govor | mikrofon v klepetu (`speech.js`) | M | naravna odvisnost (prepoznava govora) → nova gradnja APK | ✗ |
 | Učbenik za tisk | PDF učbenika (`/ucbenik`) | S | odpri v brskalniku (`WebBrowser`) | ✗ |
+| Pristajalna stran pred prijavo | eno sporočilo za gimnazijce, en gumb »Začni brezplačno«, prijava kot povezava, zgled pogovora in trije dokazi (`public/pristajalna.js`, j 15. 11. 2026) | S | naravno: naslov in en gumb nad prijavo v `sign-in.tsx` | ✗ aplikacija se odpre na naravni prijavi (`sign-in.tsx`: logotip, `mob.tagline`, »Prijava« in »Ustvari račun« kot dva gumba); pristajalne strani nima, ker jo namesti nekdo, ki je Evklid že izbral |
 
 - **Deljiva kartica zbirke** (»Deli zbirko«, public/deli-kartico.js): WebView ne podpira Web Share z datotekami
   ne prenosa slike, zato aplikacija deli prek mostu (`public/deli-most.js`, `mobile/src/app/web.tsx`):

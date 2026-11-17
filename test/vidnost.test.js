@@ -10,7 +10,7 @@ import { createApp } from "../server/app.js";
 import { BRAND } from "../server/brand.js";
 import { startupFiles } from "../server/startup-files.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS } from "../server/accounts/plans.js";
-import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, PUBLIC_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
+import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, PUBLIC_PAGES, DRAFT_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
 import { presolve, claimNote } from "../server/live-check.js";
 import { latestMeasurement, measurementError, pctText, slDate, summarize, tableMd, updateDoc, finalNumbers, codeResult, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
 
@@ -100,6 +100,7 @@ test("robots.txt, sitemap.xml in llms.txt: vsebina", () => {
   assert.match(llms, /je slovenska aplikacija/);
   assert.match(llms, /Ni povezana s projekti z imenom »Euclid«/);
   assert.match(llms, /is not related to projects named "Euclid"/);
+  assert.ok(llms.includes(`družina s študentom (2–4 profili) ${eur(FAMILY_PRICES.druzina_student.month)} (${eur(FAMILY_PRICES.druzina_student.year)})`), "Družina s študentom v llms.txt");
   assert.ok(llms.includes(eur(LEVEL_PRICES.OS.month)) && llms.includes("9.99 EUR") && llms.includes(`${TRIAL_DAYS} dni brezplačno`));
   // Ime ponudnika modela (j, 10. 11. 2026): slovensko in angleško.
   assert.ok(llms.includes("pripravijo modeli Claude podjetja Anthropic") && llms.includes("Anthropic's Claude models"));
@@ -136,7 +137,7 @@ test("stran /o-evklidu: brez JavaScripta, cene iz cenika, pogosta vprašanja", (
   const text = html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ");
   assert.ok(!/\b(tvoj\w*|tebe|moraš|lahko\s+(fotografiraš|izbereš)|vprašaš)\b/i.test(text), "brez tikanja");
   // Notranje povezave kažejo na javne strani.
-  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href), href);
+  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href) || DRAFT_PAGES.includes(href), href);
 });
 
 test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenika, brez imen in cen tekmecev", () => {
@@ -183,15 +184,15 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.ok(text.includes("Pri nekaterih nalogah (na primer tekmovanja, fakulteta) odgovor v plačljivih paketih, do dnevne meje, pregleda še zmogljivejši model."));
 
   // Kaj dobite: cene, preizkus, brezplačni paket in jeziki iz kode.
-  for (const c of [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina]) {
+  for (const c of [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina, FAMILY_PRICES.druzina_student]) {
     assert.ok(html.includes(`<td>${eur(c.month)} na mesec ali ${eur(c.year)} na leto</td>`), `cena ${c.month}`);
   }
   assert.ok(html.includes(`<td>${TRIAL_DAYS} dni, brez kartice</td>`) && html.includes("<td>10 vprašanj inštruktorju na dan</td>") && html.includes("vmesnik v 33 jezikih"));
-  const known = [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina].flatMap((c) => [eur(c.month), eur(c.year)]);
+  const known = [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina, FAMILY_PRICES.druzina_student].flatMap((c) => [eur(c.month), eur(c.year)]);
   for (const [x] of text.matchAll(/\d+(?:,\d+)? €/g)) assert.ok(known.includes(x), x);
 
   // Pošteno: česa Evklid še ne zna.
-  for (const s of ["Česa Evklid (še) ne zna", "Aplikacije še ni v trgovinah Google Play in App Store", "Umetna inteligenca se lahko zmoti pri razlagi", "drugih predmetov ne pokriva"]) assert.ok(text.includes(s), s);
+  for (const s of ["Česa Evklid (še) ne zna", "Aplikacije še ni v trgovinah Google Play in App Store", "Pri besedni razlagi se umetna inteligenca lahko zmoti", "drugih predmetov ne pokriva"]) assert.ok(text.includes(s), s);
   // Primerjalno oglaševanje (j 10. 11.: brez imen tekmecev): brez imen, cen in slabosti tekmecev. Edino tuje ime je
   // Tudi splošni klepetalniki niso imenovani; imen modelov na strani ni.
   assert.ok(!/Photomath|Khan|Gemini|Copilot|Astra|Duolingo|Brainly|Mathway|Wolfram|Socratic|Claude|Haiku|Sonnet|Opus|ChatGPT|OpenAI|GPT|Grok|Perplexity|DeepSeek|Mistral/i.test(text + html.split("<body>")[0]), "brez imen tekmecev in modelov");
@@ -206,7 +207,7 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.equal(css(html), css(aboutPage()), "temni način = /o-evklidu");
   assert.ok(html.includes('<meta name="color-scheme" content="light dark">'));
   assert.ok(!/\b(tvoj\w*|tebe|moraš|vprašaš)\b/i.test(text), "brez tikanja");
-  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href), href);
+  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href) || DRAFT_PAGES.includes(href), href);
   for (const [, id] of html.matchAll(/href="#([\w-]+)"/g)) assert.ok(html.includes(`id="${id}"`), `sidro ${id}`);
   // Povezave na stran: /o-evklidu, vstopna stran brez JavaScripta, llms.txt (z isto meritvijo).
   assert.ok(aboutPage().includes('<a href="/zakaj-evklid">Zakaj Evklid</a>'));

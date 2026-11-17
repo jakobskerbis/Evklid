@@ -1,7 +1,7 @@
 // Pristajalna stran brez JavaScripta (pregled »kupca« 16. 11. 2026): kdor prebere surovi HTML strani https://evklid.app/
 // (iskalniki, predogledi povezav, orodja AI, brskalnik brez JavaScripta), je prej videl lupino aplikacije (15 zavihkov,
 // »0 €«, »Nalagam …«, skrita obvestila) namesto predstavitve. Zdaj je na začetku <body> v <noscript> ista pristajalna stran
-// kot v aplikaciji (public/pristajalna.js, slovensko, cene iz cenika), lupina pa je brez JavaScripta skrita (slog v <head>).
+// kot v aplikaciji (public/pristajalna.js, slovensko), lupina pa je brez JavaScripta skrita (slog v <head>).
 // Brskalnik z JavaScriptom vsebine <noscript> ne izriše, zato uporabniki aplikacije ne vidijo ničesar novega.
 //
 // node scripts/pristajalna-noscript.js          zapiše blok med oznakama v public/index.html
@@ -23,10 +23,6 @@ const { plansFor, TRIAL_DAYS } = await import("../server/accounts/plans.js");
 const { minAgeOf } = await import("../server/accounts/age.js");
 const { BRAND } = await import("../server/brand.js");
 
-// Kot account.js (money + whole) v slovenščini: »13,99 €«, »99 €«.
-const money = (minor, currency) =>
-  (minor / 100).toLocaleString("sl", { style: "currency", currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/[,.]00(?=\D*$)/, "");
-
 // Brez ikon (SVG): blok gre z vsako stranjo tudi uporabnikom z JavaScriptom, zato naj bo majhen.
 const noIcons = (html) =>
   html
@@ -35,9 +31,9 @@ const noIcons = (html) =>
     .replace(/\n\s*\n/g, "\n");
 
 export function noscriptBlock() {
-  // Cenik za Slovenijo (EUR); garancije tu ni, ker jo strežnik oglašuje samo, ko je vklopljena (prices.guarantee).
+  // Kot /api/account/prices za Slovenijo; garancije tu ni, ker jo strežnik oglašuje samo, ko je vklopljena (prices.guarantee).
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: TRIAL_DAYS, min_age: minAgeOf("SI") };
-  const land = noIcons(landingHtml({ name: BRAND.name, prices, money, noscript: true }));
+  const land = noIcons(landingHtml({ name: BRAND.name, prices, noscript: true }));
   return `${START}
   <noscript>
     <main class="view narrow land-static">

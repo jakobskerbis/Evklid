@@ -149,8 +149,8 @@ const CONFIG = "evklid.config";
 // zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon) in njegov posnetek (zadnji-posnetek, public/zacetek.js).
 const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|zadnji-zaslon$|zadnji-posnetek$)/;
 // Posamezni ključi: učiteljev ključ razreda (dostop do razreda!), ime otroka iz povabila, darilna in
-// priporočilna koda iz povezave, izbrani profil.
-const LINK_KEYS = new Set(["evklid_invite_name", "evklid_koda", "evklid_ref"]);
+// priporočilna koda iz povezave, koda vabila v pilot (public/vabilo.js), izbrani profil.
+const LINK_KEYS = new Set(["evklid_invite_name", "evklid_koda", "evklid_ref", "evklid.vabilo"]);
 const PRIVATE_EXACT = new Set(["teacherClasses", "studentId", ...LINK_KEYS]);
 export const isPrivateKey = (k) => typeof k === "string" && (PRIVATE_KEYS.test(k) || PRIVATE_EXACT.has(k));
 

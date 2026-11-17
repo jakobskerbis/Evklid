@@ -133,6 +133,8 @@ export function normalizeSettings(input = {}) {
   // Različica vodiča ob prvi uporabi, ki jo je profil že videl (public/app.js TOUR_VERSION); ni nastavitev za inštruktorja.
   const tv = Number(input.tour_version);
   if (Number.isInteger(tv) && tv >= 0 && tv <= 99) out.tour_version = tv;
+  // Profil je rešil prvo nalogo (public/app.js): šele potem vprašalnik zanimanj in vodič; ni nastavitev za inštruktorja.
+  if (input.first_task === true || input.first_task === 1) out.first_task = 1;
   return out;
 }
 

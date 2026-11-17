@@ -18,7 +18,7 @@ export const consentBody = () => ({ adult: true, withdrawal: true, lang: current
 export const linkBox = (url) => `
   <div class="pay-link" role="group" aria-label="${esc(t("pay.askParent"))}">
     <p class="muted">${esc(t("pay.askParentText"))}</p>
-    <div class="inline"><input readonly value="${esc(url)}" aria-label="${esc(t("pay.linkLabel"))}">
+    <div class="inline"><input readonly dir="ltr" value="${esc(url)}" aria-label="${esc(t("pay.linkLabel"))}">
       <button type="button" data-pay-copy>${esc(t("pay.copy"))}</button>
       ${navigator.share ? `<button type="button" data-pay-share>${esc(t("pay.share"))}</button>` : ""}
     </div>
