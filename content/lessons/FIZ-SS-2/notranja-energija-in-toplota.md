@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -81,7 +81,7 @@ $$Q_{\text{oddana}} = Q_{\text{prejeta}}$$
 
 $$m_{\text{voda}}\,c_{\text{voda}}\,(t_{\text{voda}} - t_k) = m_{\text{Fe}}\,c_{\text{Fe}}\,(t_k - t_{\text{Fe}})$$
 
-Na obeh straneh je pozitivna toplota: od večje temperature odštejemo manjšo. Z $c_{\text{voda}} = 4200\,\text{J/(kg\,K)}$ in $c_{\text{Fe}} = 450\,\text{J/(kg\,K)}$ za $1\,\text{kg}$ vsake snovi dobimo $4200\,(80 - t_k) = 450\,(t_k - 20)$. Člene s $t_k$ zberemo na eni strani:
+Na obeh straneh je pozitivna toplota: od večje temperature odštejemo manjšo. S $c_{\text{voda}} = 4200\,\text{J/(kg\,K)}$ in $c_{\text{Fe}} = 450\,\text{J/(kg\,K)}$ za $1\,\text{kg}$ vsake snovi dobimo $4200\,(80 - t_k) = 450\,(t_k - 20)$. Člene s $t_k$ zberemo na eni strani:
 
 $$t_k = \frac{4200 \cdot 80 + 450 \cdot 20}{4200 + 450}\,^\circ\text{C} = 74{,}2\,^\circ\text{C}$$
 
@@ -323,7 +323,7 @@ Analogija ima mejo: na pravi poti višina lahko pada, tudi ko hodiš naprej. Na 
 ~ Močnejši ogenj spremeni le hitrost izparevanja. Vrelišče spremeni tlak, ne moč gorilnika.
 > Pri višjem tlaku voda zavre pri višji temperaturi. V loncu na pritisk voda vre nad $100\,^\circ\text{C}$, zato hrana prej prejme dovolj toplote.
 
-? Na postanku v termovko s $0{,}30\,\text{kg}$ čaja z $90\,^\circ\text{C}$ doliješ $0{,}20\,\text{kg}$ vode s $15\,^\circ\text{C}$. Kolikšna je končna temperatura v $^\circ\text{C}$? Čaj ima enako $c$ kot voda, izgube toplote zanemari.
+? Na postanku v termovko z $0{,}30\,\text{kg}$ čaja z $90\,^\circ\text{C}$ doliješ $0{,}20\,\text{kg}$ vode s $15\,^\circ\text{C}$. Kolikšna je končna temperatura v $^\circ\text{C}$? Čaj ima enako $c$ kot voda, izgube toplote zanemari.
 = 60 °C | 0,5
 ~ 52,5 | To je navadno povprečje obeh temperatur. Čaja je več kot vode, zato je končna temperatura bliže $90\,^\circ\text{C}$.
 ~ 45 | Mase si zamenjal. Več je vročega čaja ($0{,}30\,\text{kg}$), zato je končna temperatura bliže temperaturi čaja.

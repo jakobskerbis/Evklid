@@ -216,7 +216,7 @@ $\bar{x} = \dfrac{\sum f_i x_i}{n}$, $\;\sigma^2 = \dfrac{\sum f_i (x_i - \bar{x
 
 1. Preveri število podatkov: $4 + 8 + 5 + 2 + 1 = 20$.
 2. Vsota vrednosti: $\sum f_i x_i = 0 + 8 + 10 + 6 + 4 = 28$, zato je $\bar{x} = \dfrac{28}{20} = 1{,}4$.
-3. Frekvence seštevamo po vrsti: do vrednosti $0$ je $4$ podatkov, do vrednosti $1$ pa $12$. Pri $n = 20$ sta srednja podatka deseti in enajsti. Oba ležita med petim in dvanajstim podatkom, ki so vsi enaki $1$, torej je $M = 1$. Modus je $1$ (največja frekvenca $8$).
+3. Frekvence seštevamo po vrsti: do vrednosti $0$ so $4$ podatki, do vrednosti $1$ pa jih je $12$. Pri $n = 20$ sta srednja podatka deseti in enajsti. Oba ležita med petim in dvanajstim podatkom, ki so vsi enaki $1$, torej je $M = 1$. Modus je $1$ (največja frekvenca $8$).
 4. Kvadrati odklonov od $\bar{x} = 1{,}4$, pomnoženi s frekvenco (npr. $(0 - 1{,}4)^2 = 1{,}96$): $4 \cdot 1{,}96 = 7{,}84$; $8 \cdot 0{,}16 = 1{,}28$; $5 \cdot 0{,}36 = 1{,}8$; $2 \cdot 2{,}56 = 5{,}12$; $1 \cdot 6{,}76 = 6{,}76$. Vsota je $22{,}8$.
 5. Varianca: $\sigma^2 = \dfrac{22{,}8}{20} = 1{,}14$. Standardni odklon: $\sigma = \sqrt{1{,}14} \approx 1{,}07$.
 6. Odgovor: $\bar{x} = 1{,}4$, $M = 1$, modus $1$, $\sigma^2 = 1{,}14$ in $\sigma \approx 1{,}07$. Učenec ima v povprečju $1{,}4$ brata ali sestre, običajni odklon od tega pa je okoli $1$.
@@ -268,7 +268,7 @@ opisni podatki: modus; vrstni: mediana; številski: aritmetična sredina ali med
 
 - **Mediana neurejenih podatkov.** Če vzameš srednji podatek v prvotnem vrstnem redu, dobiš napačno število. Najprej uredi, nato poišči sredino.
 - **Napačen imenovalec pri frekvenčni tabeli.** Pri frekvenčni tabeli učenci pogosto delijo s številom različnih vrednosti (v Primeru 3 s $5$), ne s številom podatkov ($20$). Pravilno: $\bar{x} = \dfrac{\sum f_i x_i}{\sum f_i}$.
-- **Standardni odklon brez korena.** Varianca ima enoto na kvadrat (npr. $\text{min}^2$), zato je ni smiselno primerjati s podatki. Vedno dokončaj z $\sigma = \sqrt{\sigma^2}$.
+- **Standardni odklon brez korena.** Varianca ima enoto na kvadrat (npr. $\text{min}^2$), zato je ni smiselno primerjati s podatki. Vedno dokončaj s $\sigma = \sqrt{\sigma^2}$.
 - **Vsota odklonov namesto vsote kvadratov.** $\sum (x_i - \bar{x}) = 0$ za vsak nabor podatkov. Odklone moraš najprej kvadrirati in šele nato sešteti.
 - **Povprečje kot edina številka.** Povprečje brez razpršenosti je lahko zavajajoče. Ob njem vedno pogledaj mediano in standardni odklon ali medkvartilni razmik.
 

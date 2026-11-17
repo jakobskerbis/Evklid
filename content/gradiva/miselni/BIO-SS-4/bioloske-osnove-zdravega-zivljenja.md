@@ -5,7 +5,7 @@ stanje: osnutek
 - Esencialne snovi
   - telo jih ne zna narediti
   - $9$ aminokislin, omega-3 in omega-6
-  - napaka: esencialno ne pomeni najpomembnejše
+  - pazi: esencialno ne pomeni najpomembnejše
 - Energija hrane
   - ogljikovi hidrati in beljakovine $17\,\mathrm{kJ/g}$
   - maščobe $37\,\mathrm{kJ/g}$

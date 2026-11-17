@@ -15,7 +15,7 @@ stanje: osnutek
 - Dušik
   - amino skupina $\mathrm{-NH_2}$ v beljakovinah
   - dušikove baze v DNA
-  - napaka: $\mathrm{N_2}$ iz zraka ne porabimo
+  - pazi: $\mathrm{N_2}$ iz zraka ne porabimo
 - Fosfor in žveplo
   - fosfat v DNA, ATP, fosfolipidih, kosteh
   - žveplo v cisteinu in metioninu

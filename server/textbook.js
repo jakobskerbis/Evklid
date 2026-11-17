@@ -247,9 +247,15 @@ export function expandFormulaBlocks(md, mode = "html") {
 // aplikaciji skrita za gumbom »Pokaži rešitev«, da učenec najprej poskusi sam (j, 1. 11. 2026). Samo v
 // načinu html; tudi enovrstična rešitev na koncu razdelka (»Za izpit«). »Premisli« na koncu razdelka (v 270 lekcijah) ostane viden pod gumbom, ne v rešitvi.
 const SOLUTION_RE = /^\*\*Rešitev:\*\*[ \t]*([^\n]*)\n?([\s\S]*?)(?=^#{2,3}[ \t]|^[ \t]*<div class="tb-think">|(?![\s\S]))/gm;
+// Primer »… zadnji korak je tvoj« (v naslovu primera ali v zadnjem koraku rešitve): postopek je odprt, skrit ostane le zadnji korak v »Premisli« pod njim (sicer
+// sta drug pod drugim dva podobna gumba za razkritje; Geminijev pregled 17. 11. 2026).
+const OPEN_SOLUTION_RE = /zadnji korak je tvoj/i;
 export function hideSolutions(md) {
-  return String(md ?? "").replace(SOLUTION_RE, (_, first, body) => {
+  const src = String(md ?? "");
+  return src.replace(SOLUTION_RE, (_, first, body, offset) => {
     const inner = `${first.trim()}\n\n${body.trim()}`.trim();
+    const heading = src.slice(0, offset).match(/^#{2,3}[ \t]+(.*)$/gm)?.pop() || "";
+    if (OPEN_SOLUTION_RE.test(heading) || OPEN_SOLUTION_RE.test(body)) return `<details class="tb-solution" open><summary>Skrij rešitev</summary>\n\n${inner}\n\n</details>\n\n`;
     return `<details class="tb-solution"><summary>Pokaži rešitev</summary>\n\n${inner}\n\n</details>\n\n`;
   });
 }

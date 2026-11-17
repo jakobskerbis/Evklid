@@ -443,7 +443,7 @@ vrednost: sin(3*135°)-sin(135°) | 0
 \beta | drugi kot (zasuk) | |
 r | polmer krožnika (razdalja skodelice od središča) | | cm
 \varphi | kot točke na krožnici | |
-x | koordinata $x$ skodelice po zasuku | x = r\cos(\alpha + \beta) | cm
+x | koordinata $x$ skodelice po zasuku | x = r\cos(\alpha + \beta) | cm | v izrazih, kot je $\sin 2x$, je $x$ kot
 y | koordinata $y$ skodelice po zasuku | y = r\sin(\alpha + \beta) | cm
 u | pomožni kot (polovica vsote) | u = \frac{\alpha + \beta}{2} |
 v | pomožni kot (polovica razlike) | v = \frac{\alpha - \beta}{2} |

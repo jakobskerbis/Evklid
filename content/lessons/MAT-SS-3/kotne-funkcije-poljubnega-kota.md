@@ -180,7 +180,7 @@ V II. kvadrantu je kosinus negativen, zato $\cos\alpha = -\frac45$. Potem je $\t
 ## Pogoste napake
 
 - **Pozabljen predznak.** »$\cos 120^\circ = \cos 60^\circ = \frac12$.« Pripadajoči ostri kot da le absolutno vrednost. Točka za $120^\circ$ leži levo od osi $y$, zato je $\cos 120^\circ = -\frac12$. Najprej vedno določi kvadrant.
-- **Radian je majhen kot stopinja.** »Kot $2$ je skoraj nič, torej je v I. kvadrantu.« En radian je približno $57{,}3^\circ$, ne $1^\circ$. Kot $2$ je približno $114{,}6^\circ$, torej v II. kvadrantu. Primerjaj z $\frac{\pi}{2} \approx 1{,}57$ in $\pi \approx 3{,}14$.
+- **Radian je majhen kot stopinja.** »Kot $2$ je skoraj nič, torej je v I. kvadrantu.« En radian je približno $57{,}3^\circ$, ne $1^\circ$. Kot $2$ je približno $114{,}6^\circ$, torej v II. kvadrantu. Primerjaj s $\frac{\pi}{2} \approx 1{,}57$ in $\pi \approx 3{,}14$.
 - **Kalkulator v napačnem načinu.** »$\sin 30 = -0{,}988$, torej je sinus $30^\circ$ negativen.« Kalkulator je bil nastavljen na radiane (RAD) in je izračunal sinus $30$ radianov. Za stopinje preklopi na DEG; sicer kot pretvori.
 - **Tangens pravega kota.** »$\tan 90^\circ = 0$« ali »$\tan 90^\circ = 1$«. Pri $90^\circ$ je $x = \cos 90^\circ = 0$, z ničlo pa ne delimo. Zato $\tan 90^\circ$ ni definiran.
 - **Zamenjana koordinata.** »Sinus je vodoravna koordinata.« Kosinus je $x$ (vodoravno), sinus je $y$ (navpično). Pomaga abeceda: $x$ je pred $y$ in $\cos$ pred $\sin$, kot v paru $(\cos\alpha, \sin\alpha)$.
@@ -192,7 +192,7 @@ V II. kvadrantu je kosinus negativen, zato $\cos\alpha = -\frac45$. Potem je $\t
 - Predznak dobiš iz kvadranta, absolutno vrednost iz pripadajočega ostrega kota.
 - $\sin^2\alpha + \cos^2\alpha = 1$; zato $-1 \le \sin\alpha \le 1$ in $-1 \le \cos\alpha \le 1$.
 - Kota $\alpha$ in $\alpha + 360^\circ$ imata enake vrednosti kotnih funkcij.
-- $\pi\,\text{rad} = 180^\circ$, $1\,\text{rad} \approx 57{,}3^\circ$; pretvorba z $\dfrac{\pi}{180^\circ}$ oziroma $\dfrac{180^\circ}{\pi}$.
+- $\pi\,\text{rad} = 180^\circ$, $1\,\text{rad} \approx 57{,}3^\circ$; pretvorba s $\dfrac{\pi}{180^\circ}$ oziroma $\dfrac{180^\circ}{\pi}$.
 
 ## Ponovitev
 
@@ -366,7 +366,7 @@ Radian je naravna enota: na krožnici s polmerom $r$ je dolžina loka pri sredi�
 > V načinu RAD kalkulator število $30$ razume kot $30\,\text{rad}$, in $\sin 30 \approx -0{,}988$. Preklopi na DEG ali kot pretvori v radiane: $30^\circ = \frac{\pi}{6}$.
 
 ? (brez računala) Koliko je $\tan 225^\circ$?
-= 1 | 0,01
+= 1 | 0
 ~ -1 | Kot $225^\circ$ je v III. kvadrantu. Tam sta sinus in kosinus negativna, njun količnik pa je pozitiven.
 > Pripadajoči ostri kot je $225^\circ - 180^\circ = 45^\circ$ in $\tan 45^\circ = 1$. V III. kvadrantu je tangens pozitiven, zato $\tan 225^\circ = 1$.
 

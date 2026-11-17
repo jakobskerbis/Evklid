@@ -345,7 +345,7 @@ točka: 12,4 | izmerjeno
 > Pas ob stranici $a$ ima ploščino $b \cdot \Delta a$, kar je delež $\delta a$ ploščine. Enako za drugo stranico, zato $\delta S \approx \delta a + \delta b$.
 
 ? (brez računala) Dva dežemera sta izmerila $(17 \pm 1)\,\mathrm{mm}$ in $(8 \pm 1)\,\mathrm{mm}$ dežja. Oceni relativno napako vsote v odstotkih.
-= 8 % | 0,5
+= 8 % | 0
 ~ 18 | Seštel si relativni napaki $\dfrac{1}{17} + \dfrac{1}{8}$. Pri vsoti se seštejeta absolutni napaki: $\dfrac{2}{25}$.
 ~ 4 | Vzel si le napako enega dežemera. Absolutni napaki se seštejeta v $2\,\mathrm{mm}$.
 > Vsota je $(25 \pm 2)\,\mathrm{mm}$, relativna napaka $\dfrac{2}{25} = \dfrac{8}{100} = 8\,\%$.

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -216,7 +216,7 @@ $0{,}15 \cdot v_1 = 1{,}8$, torej $v_1 = \dfrac{1{,}8}{0{,}15} = 12\,\mathrm{m/s
 
 ## Pogoste napake
 
-- **Seštevanje brez predznakov.** Kosa ledu s $8\,\mathrm{kg\,m/s}$ v desno in $2\,\mathrm{kg\,m/s}$ v levo nimata skupaj $10\,\mathrm{kg\,m/s}$. Gibalna količina je vektor. Najprej izberi pozitivno smer, potem seštej: $8 - 2 = 6\,\mathrm{kg\,m/s}$.
+- **Seštevanje brez predznakov.** Kosa ledu z $8\,\mathrm{kg\,m/s}$ v desno in $2\,\mathrm{kg\,m/s}$ v levo nimata skupaj $10\,\mathrm{kg\,m/s}$. Gibalna količina je vektor. Najprej izberi pozitivno smer, potem seštej: $8 - 2 = 6\,\mathrm{kg\,m/s}$.
 - **»Odboj je mehkejši kot zaustavitev.«** Zdi se, da se pri odboju del gibalne količine »vrne«. V resnici je sprememba večja: pri toči $0{,}6$ namesto $0{,}5\,\mathrm{N\,s}$. Pri $\Delta p = m\,(v' - v)$ obe hitrosti vstavi s predznakom.
 - **»Težje telo dobi pri trku večji sunek.«** Sunka sta vedno nasprotno enaka, ker sta sili enaki po 3. Newtonovem zakonu. Lažje telo samo bolj spremeni hitrost, ker ima manjšo maso.
 - **»Snežna odeja zmanjša spremembo gibalne količine.«** Sprememba je enaka, saj se telo v vsakem primeru ustavi. Mehka podlaga podaljša čas $\Delta t$, zato je sila manjša.
@@ -245,7 +245,7 @@ Na zamrznjenem jezeru drsi drsalec z maso $60\,\mathrm{kg}$ s hitrostjo $2\,\mat
 
 ## Drugače: Kot zgodba
 
-Januarja je ribnik za vasjo zamrznil. Tina je sedla na sani in čakala, da jo kdo porine. Njen pes Fido z maso $20\,\mathrm{kg}$ je pritekel po ledu s hitrostjo $6\,\mathrm{m/s}$ in skočil k njej. Tina in sani imata skupaj $40\,\mathrm{kg}$.
+Januarja je ribnik za vasjo zamrznil. Tina je sedla na sani in čakala, da jo kdo porine. Njen pes Fido z maso $20\,\mathrm{kg}$ je pritekel po ledu s hitrostjo $6\,\mathrm{m/s}$ in skočil k njej. Tina in sani imajo skupaj $40\,\mathrm{kg}$.
 
 Fido je prinesel gibalno količino $120\,\mathrm{kg\,m/s}$. Ko je pristal na saneh, si jo je razdelil z njimi. Zdaj se je gibalo $60\,\mathrm{kg}$, zato je bila hitrost le $2\,\mathrm{m/s}$. Skupna gibalna količina je ostala enaka, ker led skoraj ne zavira.
 

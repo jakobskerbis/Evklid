@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,7 +15,7 @@ Estri so tudi v odstranjevalcu laka za nohte (etil etanoat) in v maščobah. Tab
 
 **1. Mamljiva, a napačna ideja.** Nevtralizacijo že poznaš: kislina + baza → sol + voda. Alkohol ima skupino $\mathrm{{-}OH}$, natrijev hidroksid tudi. Ponuja se sklep: kislina + alkohol je nevtralizacija, ester pa je neke vrste sol. Ta sklep je napačen. Ko ugotoviš, zakaj, razumeš večino te teme.
 
-**2. Karboksilna skupina.** Karboksilna kislina ima skupino $\mathrm{{-}COOH}$: na istem atomu ogljika sta dvojno vezan kisik in skupina $\mathrm{{-}OH}$. Ime dobi po alkanu z enakim številom atomov C in končnici **-ojska kislina**: metanojska (mravljična), etanojska (ocetna), propanojska, butanojska. Ogljik skupine je vedno prvi ogljik verige. Že veš, da kislina nastane z oksidacijo aldehida.
+**2. Karboksilna skupina.** Karboksilna kislina ima skupino $\mathrm{{-}COOH}$: na istem atomu ogljika sta dvojno vezan kisik in skupina $\mathrm{{-}OH}$. Ime dobi po alkanu z enakim številom atomov C in končnici **-ojska kislina**: metanojska (mravljinčna), etanojska (ocetna), propanojska, butanojska. Ogljik skupine je vedno prvi ogljik verige. Že veš, da kislina nastane z oksidacijo aldehida.
 
 V vodi kislina odda vodikov ion iz skupine $\mathrm{{-}OH}$:
 

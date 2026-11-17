@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -318,7 +318,7 @@ napis: 2,9; -2,6 | v | desno
 ~ 25 | To je $v^2$. Na koncu manjka še koren.
 > $v_x = 3\,\text{m/s}$, $v_y = 4\,\text{m/s}$, zato $v = \sqrt{9 + 16}\,\text{m/s} = 5\,\text{m/s}$.
 
-? Na zemljevidu sta dva tira Tininega kajaka čez reko, široko $60\,\text{m}$. Obakrat vesla s $1{,}5\,\text{m/s}$ pravokotno čez reko. Tir A je pri toku $0{,}8\,\text{m/s}$ (prečkanje traja $40\,\text{s}$), tir B pri dvakrat hitrejšem toku. Koliko časa traja prečkanje po tiru B?
+? Na zemljevidu sta dva tira Tininega kajaka čez reko, široko $60\,\text{m}$. Obakrat vesla z $1{,}5\,\text{m/s}$ pravokotno čez reko. Tir A je pri toku $0{,}8\,\text{m/s}$ (prečkanje traja $40\,\text{s}$), tir B pri dvakrat hitrejšem toku. Koliko časa traja prečkanje po tiru B?
 :::risba graf
 opis: Zemljevid reke, široke 60 m. Oba tira začneta v izhodišču. Tir A je poševna puščica do točke 32 m dolvodno na drugem bregu, tir B je bolj nagnjena puščica do točke 64 m dolvodno.
 x: -10 .. 100 | 20 | vzdolž reke (m)

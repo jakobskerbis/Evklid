@@ -23,7 +23,7 @@ stanje: osnutek
   - $N_t = N_0 \cdot (1 + r)^{t}$, kot obresti
 - Logistična rast
   - krivulja S do nosilne zmogljivosti $K$
-  - napaka: pri $K$ se razmnoževanje ne ustavi
+  - pazi: pri $K$ se razmnoževanje ne ustavi
 - Nihanje
   - vreme deluje ne glede na gostoto
   - ris in zajec: cikli okoli $10$ let
