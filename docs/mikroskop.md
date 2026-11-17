@@ -117,9 +117,9 @@ Nad ~800 000× (TEM) se slika prelije v ponazoritev molekul, ki jih v izbranem p
   vedno niso izrisane«) je splošni program pri 1920 × 1080 po 90 s narisal šele četrtino sloja; s specializiranim so
   molekule pri polni uteži vidne v 0,4–0,9 s (meritev pregleda #781 s Playwrightom; `test/mikroskop.test.js` preveri
   vedenje z namišljenim WebGL2: program za pogled, stanje »caka«, nadomestni splošni program, LRU, brez razširitve eden za
-  drugim, ne časa). Pri delni uteži (~850 000×–2 400 000×) je treba narisati še preparat v polni ločljivosti (TEM `ultra()`,
-  na programski grafiki ~10 µs na točko, enako kot brez molekul pod 800 000×); predogled v nižji ločljivosti z molekulami je
-  na zaslonu takoj, polna slika sledi po pasovih. Merilnik časa: Playwright, 360 px s 4× upočasnjenim procesorjem in
+  drugim, ne časa). Pri delni uteži (~850 000×–2 400 000×) je treba narisati še preparat v polni ločljivosti (TEM `ultra()`;
+  telefon 360 px, 4× počasnejši procesor, programska grafika: ~7 s pri 700 000× brez molekul, ~14 s do polne slike pri
+  900 000×–1 000 000×); predogled v nižji ločljivosti z molekulami je na zaslonu po 0,3–0,5 s, polna slika sledi po pasovih. Merilnik časa: Playwright, 360 px s 4× upočasnjenim procesorjem in
   1280 px, programska grafika (SwiftShader); prava grafična kartica je hitrejša. Po izgubi grafike (`webglcontextlost`) se mikroskop obnovi sam.
 - Gladki ER (`S_GER`, 32): mreža cevk (premer ~45 nm) brez ribosomov, dve prepleteni izočrti šuma; največ v hepatocitih
   (skupaj z glikogenom), v maščobnih celicah in enterocitih; membrana s citokromom P450.
