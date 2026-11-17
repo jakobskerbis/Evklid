@@ -20,5 +20,5 @@ test("pogoji.html nima opomb za pravnika", () => {
 });
 
 test("pogoji.html nima označenih polj class=\"todo\"", () => {
-  assert.doesNotMatch(besedilo, /class="todo"/);
+  assert.doesNotMatch(besedilo, /class=["'][^"']*\btodo\b/);
 });
