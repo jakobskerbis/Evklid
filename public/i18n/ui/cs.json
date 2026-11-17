@@ -2543,6 +2543,7 @@
   "dl.play": "Stáhnout na Google Play",
   "dl.apk": "Stáhnout pro Android (APK)",
   "dl.apkSteps": "Otevři stažený soubor a potvrď instalaci. Pokud se telefon zeptá, povol instalaci z tohoto prohlížeče.",
+  "dl.apkWhy": "Aplikace zatím není na Google Play, proto si ji stáhneš přímo z této stránky.",
   "dl.ios": "iPhone a iPad",
   "dl.appStore": "Stáhnout v App Store",
   "dl.testflight": "Nainstalovat přes TestFlight",

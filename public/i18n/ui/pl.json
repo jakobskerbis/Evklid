@@ -2543,6 +2543,7 @@
   "dl.play": "Pobierz z Google Play",
   "dl.apk": "Pobierz na Androida (APK)",
   "dl.apkSteps": "Otwórz pobrany plik i potwierdź instalację. Jeśli telefon zapyta, zezwól na instalowanie z tej przeglądarki.",
+  "dl.apkWhy": "Aplikacji nie ma jeszcze w Google Play, więc pobierasz ją bezpośrednio z tej strony.",
   "dl.ios": "iPhone i iPad",
   "dl.appStore": "Pobierz z App Store",
   "dl.testflight": "Zainstaluj przez TestFlight",

@@ -2489,6 +2489,7 @@
   "dl.play": "Google Play で入手",
   "dl.apk": "Android 用をダウンロード（APK）",
   "dl.apkSteps": "ダウンロードしたファイルを開いて、インストールを確定してください。スマホに確認されたら、このブラウザからのインストールを許可してください。",
+  "dl.apkWhy": "アプリはまだ Google Play にないため、このページから直接ダウンロードします。",
   "dl.ios": "iPhone・iPad",
   "dl.appStore": "App Store からダウンロード",
   "dl.testflight": "TestFlight でインストール",
