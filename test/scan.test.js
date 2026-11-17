@@ -57,6 +57,18 @@ test("rational equations: domain, common denominator, rejected roots; x collecte
   assert.match(ans("-3/x = 6").methods[0].steps.at(-1).tex, /: \\left\(-\\frac/);
 });
 
+test("quadratic razcep with a ≠ 1: ac split and grouping come before the roots", () => {
+  const f = ans("6x^2-x-2=0").methods.find((m) => m.id === "factor");
+  assert.deepEqual(f.steps.slice(0, 3).map((s) => s.title.k), ["scan.s.vieta", "scan.s.factored", "scan.s.zeroProduct"]);
+  assert.equal(flat(f.steps[0].tex), "-4\\cdot3=-12,\\quad-4+3=-1");
+  const t = flat(f.steps[1].tex);
+  assert.ok(t.includes("6x^{2}-4x+3x-2=0") && t.includes("2x\\left(3x-2\\right)+\\left(3x-2\\right)=0") && t.includes("\\left(2x+1\\right)\\left(3x-2\\right)=0"), t);
+  assert.ok(!f.steps[0].tex.includes("x_{1}"), "roots are not given before the factorisation");
+  assert.equal(f.steps[0].why.k, "scan.w.acSplit");
+  const d = ans("4x^2-4x+1=0").methods.find((m) => m.id === "factor");
+  assert.match(flat(d.steps[1].tex), /2x\\left\(2x-1\\right\)-\\left\(2x-1\\right\)=0.*\\left\(2x-1\\right\)\^\{2\}=0/);
+});
+
 test("quadratic equations: every method gives the same verified roots", () => {
   let r = ans("x^2-5x+6=0");
   assert.deepEqual(r.methods.map((m) => m.id), ["factor", "formula", "square"]);

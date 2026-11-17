@@ -293,7 +293,7 @@ Kaj pa $q \ge 1$? To je, kot da bi ti vsak dan nekdo prinesel novo tablico, enak
 > V $S_n = a_1 \cdot \frac{1 - q^n}{1 - q}$ gre pri $|q| < 1$ potenca $q^n$ proti $0$, zato gre $S_n$ proti $\frac{a_1}{1 - q}$.
 
 ? (brez računala) Koliko je vsota vrste $20 + 15 + 11{,}25 + \dots$?
-= 80 | 0,01
+= 80 | 0
 ~ 46,25 | To je le vsota treh napisanih členov. Vrsta se nadaljuje v neskončnost.
 ~ 11,4 | To je $\frac{20}{1 + 0{,}75}$. V imenovalcu je $1 - q$, ne $1 + q$.
 > $q = \frac{15}{20} = 0{,}75$, $S = \frac{20}{1 - 0{,}75} = \frac{20}{0{,}25} = 80$. Vsota obstaja, čeprav so vsi členi pozitivni in jih je neskončno: pri $|q| < 1$ so delne vsote omejene (misliti nasprotno je Zenonova napaka).

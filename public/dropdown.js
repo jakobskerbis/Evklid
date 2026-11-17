@@ -41,8 +41,18 @@ export function enhanceSelect(sel) {
   btn.setAttribute("aria-haspopup", "listbox");
   btn.setAttribute("aria-expanded", "false");
   btn.innerHTML = `<span class="dd-label" dir="auto"></span>${CHEVRON}`;
+  // Ime gumba: oznaka in izbrana vrednost (aria-labelledby), da bralnik zaslona prebere tudi izbiro
+  // (pregled PR 786: aria-label je skril izbrano enoto). Pri prazni izbiri (»Enota«) samo oznaka.
   const label = sel.getAttribute("aria-label") || labelText(sel.labels?.[0]);
-  if (label) btn.setAttribute("aria-label", label);
+  const ids = `dd-${++uid}`;
+  if (label) {
+    const name = document.createElement("span");
+    name.id = `${ids}-n`;
+    name.className = "sr-only";
+    name.textContent = label;
+    btn.prepend(name);
+    btn.querySelector(".dd-label").id = `${ids}-v`;
+  }
   sel.before(wrap);
   wrap.append(btn, sel); // gumb pred menijem: klik na <label> odpre gumb
   sel.tabIndex = -1;
@@ -56,6 +66,7 @@ export function enhanceSelect(sel) {
     const opt = sel.options[indexProp.get.call(sel)];
     btn.querySelector(".dd-label").textContent = opt ? opt.textContent : "";
     btn.classList.toggle("placeholder", !opt || opt.value === "");
+    if (label) btn.setAttribute("aria-labelledby", !opt || opt.value === "" ? `${ids}-n` : `${ids}-n ${ids}-v`);
     btn.disabled = sel.disabled;
     wrap.hidden = sel.hidden;
   };
@@ -77,20 +88,27 @@ export function enhanceSelect(sel) {
   });
 }
 
+let gseq = 0;
 function open(sel, btn) {
   closeMenu();
   const list = document.createElement("div");
   list.className = "dd-list";
   list.id = `dd-list-${++uid}`;
   list.setAttribute("role", "listbox");
+  // Ime seznama za bralnik zaslona (#792): isto kot gumb (aria-label izbirnega seznama ali njegova oznaka).
+  const name = sel.getAttribute("aria-label") || labelText(sel.labels?.[0]);
+  if (name) list.setAttribute("aria-label", name);
   list.tabIndex = -1;
   const items = [];
   const current = indexProp.get.call(sel);
   let html = "";
   for (const child of sel.children) {
     if (child.tagName === "OPTGROUP") {
-      html += `<div class="dd-group" role="presentation">${esc(child.label)}</div>`;
+      // Skupina (npr. raven) z imenom za bralnik zaslona; ovoj ima display: contents (ui.css), videz ostane.
+      const gid = `dd-g-${uid}-${++gseq}`;
+      html += `<div class="dd-grp" role="group" aria-labelledby="${gid}"><div class="dd-group" id="${gid}" role="presentation">${esc(child.label)}</div>`;
       for (const o of child.children) html += optHtml(o);
+      html += "</div>";
     } else if (child.tagName === "OPTION") html += optHtml(child);
   }
   function optHtml(o) {
@@ -134,10 +152,9 @@ function open(sel, btn) {
       const el = items[at];
       const grp = el.previousElementSibling?.classList.contains("dd-group") && !el.previousElementSibling.hidden ? el.previousElementSibling : el;
       const want = Math.max(0, grp.offsetTop - head.offsetHeight);
-      // Blizu konca seznama se ne da pomakniti dovolj: seznam raje skrajšamo, da ni odrezane vrstice.
-      const short = want - (list.scrollHeight - list.clientHeight);
-      if (short > 0) list.style.maxHeight = `${list.offsetHeight - short}px`;
-      list.scrollTop = want;
+      // Blizu konca seznama (npr. 8. razred od 9) se ne da pomakniti dovolj: seznam ostane cel in se pomakne do dna,
+      // da so vidni tudi razredi pred izbranim (prej se je skrajšal na eno ali dve vrstici, #792).
+      list.scrollTop = Math.min(want, list.scrollHeight - list.clientHeight);
     }
   } else setActive(state, Math.max(0, items.findIndex((el) => Number(el.dataset.i) === current)), true);
   if (state.search) {

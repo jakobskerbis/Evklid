@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -145,7 +145,7 @@ Oddani elektroni = sprejeti elektroni; na koncu preveri atome in naboj
 **Rešitev:**
 
 1. Oksidacija: $\mathrm{2\,I^- \rightarrow I_2 + 2\,e^-}$.
-2. Redukcija: kisik gre iz $-1$ v $-2$. Dva atoma O dasta desno dve vodi. Te imata štiri atome H, $\mathrm{H_2O_2}$ le dva, zato levo dodamo $\mathrm{2\,H^+}$. Naboj levo je potem $2$, desno $0$, zato levo dodamo še dva elektrona: $\mathrm{H_2O_2 + 2\,H^+ + 2\,e^- \rightarrow 2\,H_2O}$.
+2. Redukcija: kisik gre iz $-1$ v $-2$. Dva atoma O dasta desno dve vodi. Ti imata štiri atome H, $\mathrm{H_2O_2}$ le dva, zato levo dodamo $\mathrm{2\,H^+}$. Naboj levo je potem $2$, desno $0$, zato levo dodamo še dva elektrona: $\mathrm{H_2O_2 + 2\,H^+ + 2\,e^- \rightarrow 2\,H_2O}$.
 3. Primerjaj število elektronov, seštej in preveri sam.
 
 :::premisli

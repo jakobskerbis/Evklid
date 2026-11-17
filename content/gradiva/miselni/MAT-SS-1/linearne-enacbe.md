@@ -7,7 +7,7 @@ stanje: osnutek
   - $3x + 250 = 430$ da $x = 60$
 - Ekvivalentne preoblike
   - prištej, odštej isto
-  - množi z $k \ne 0$
+  - množi s $k \ne 0$
 - Oklepaji
   - minus spremeni oba predznaka
   - $-(2x - 1) = -2x + 1$

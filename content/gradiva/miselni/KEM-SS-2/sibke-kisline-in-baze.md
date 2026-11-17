@@ -23,7 +23,7 @@ stanje: osnutek
 - Pufer
   - šibka kislina in njena konjugirana baza
   - acetat prestreže kislino, ocetna kislina bazo
-  - napaka: $\mathrm{HCl}$ in $\mathrm{NaCl}$ nista pufer
+  - pazi: $\mathrm{HCl}$ in $\mathrm{NaCl}$ nista pufer
 - pH pufra
   - $[\mathrm{H_3O^+}] = K_\mathrm{a} \cdot \dfrac{[\mathrm{HA}]}{[\mathrm{A^-}]}$
   - enaki koncentraciji: $\mathrm{pH} = \mathrm{p}K_\mathrm{a}$

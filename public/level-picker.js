@@ -197,9 +197,18 @@ export function levelLabel(level) {
 }
 
 /**
- * Razredi ali letniki iste šole za hitro menjavo (glava Inštruktorja): [{ settings, label, current, group? }].
- * Ostane ista vrsta šole in program; SŠ z ravnjo matematike: letniki obeh ravni (group = ime ravni);
- * regijski sistem: razredi iste stopnje. Drugo šolo ali stopnjo izbere »Druga šola ali stopnja …« (app.js).
+ * Raven matematike v srednji šoli (osnovna / višja) za hitro menjavo v glavi Inštruktorja (j, 17. 11. 2026):
+ * [{ settings, label, current }]; prazno, če letnik ravni nima (npr. »2. letnik gimnazija«) ali ni srednja šola.
+ */
+export function ravenChoices(s = {}) {
+  const m = /^(\d+\. letnik) (OR|VR)$/.exec(String(s.curriculum_level || ""));
+  if (!m || isRegional(s.school_system) || !jeSs(s)) return [];
+  return SS_LEVELS.map(([r, label]) => ({ settings: { educational_track: s.educational_track, study_program: s.study_program || "", curriculum_level: `${m[1]} ${r}` }, label, current: r === m[2] }));
+}
+
+/**
+ * Razredi ali letniki iste šole za hitro menjavo (glava Inštruktorja): [{ settings, label, current }].
+ * Ostane ista vrsta šole, program in raven matematike (SŠ); regijski sistem: razredi iste stopnje.
  */
 export function levelChoices(s = {}) {
   const level = String(s.curriculum_level || "");
@@ -208,17 +217,14 @@ export function levelChoices(s = {}) {
     const stage = SCHOOL_SYSTEMS[s.school_system].stages.find(([name]) => name === g?.stage);
     return (stage?.[1] || []).map(([label]) => ({ settings: regionToSettings({ sys: s.school_system, grade: label }), label, current: label === g?.label })).filter((x) => x.settings);
   }
-  const make = (curriculum_level) => ({ settings: { educational_track: s.educational_track, study_program: s.study_program || "", curriculum_level }, label: levelLabel(curriculum_level), current: curriculum_level === level });
+  const make = (curriculum_level, label = levelLabel(curriculum_level)) => ({ settings: { educational_track: s.educational_track, study_program: s.study_program || "", curriculum_level }, label, current: curriculum_level === level });
   if (!imaStopnjo(s)) return [];
-  if (jeOs(s)) return OS_GRADES.map(make);
+  if (jeOs(s)) return OS_GRADES.map((y) => make(y));
   if (jeSs(s)) {
     const rest = level.replace(/^\d+\. letnik/, ""); // » OR« / » VR«
-    // Raven matematike (j 16. 11., pregled posnetkov): v glavi tudi druga raven, ne le letniki sedanje.
-    // Skupina (group) je ime ravni; brez ravni (npr. »2. letnik gimnazija«) ostanejo letniki kot prej.
-    const raven = / (OR|VR)$/.exec(rest)?.[1];
-    if (raven) return SS_LEVELS.flatMap(([id, name]) => SS_YEARS.map((y) => ({ ...make(`${y} ${id}`), group: name })));
-    return SS_YEARS.map((y) => make(y + rest));
+    // Raven matematike ima v glavi svoj izbirni seznam (ravenChoices), zato je letnik napisan brez nje.
+    return SS_YEARS.map((y) => make(y + rest, / (OR|VR)$/.test(rest) ? levelLabel(y) : levelLabel(y + rest)));
   }
-  if (jeFaks(s)) return UNI_YEARS.map(make);
+  if (jeFaks(s)) return UNI_YEARS.map((y) => make(y));
   return [];
 }

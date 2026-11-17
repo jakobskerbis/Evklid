@@ -33,7 +33,7 @@ Ker je v vsakem poteku natanko dvakrat faktor $0{,}8$ in enkrat $0{,}2$. Pri mno
 
 **2. Kaj iz primera velja splošno.** Recimo, da poskus ponovimo $n$-krat in uspe vsakič z verjetnostjo $p$. Opazimo dve stvari:
 
-- vsak potek z $k$ uspehi ima verjetnost $p^k q^{n-k}$, kjer je $q = 1 - p$;
+- vsak potek s $k$ uspehi ima verjetnost $p^k q^{n-k}$, kjer je $q = 1 - p$;
 - takih potekov je toliko, kolikor je načinov, da izmed $n$ poskusov izberemo $k$ uspešnih, torej $\binom{n}{k}$. V primeru je $\binom{3}{2} = 3$.
 
 **3. Zaporedje neodvisnih poskusov.** Tako lahko računamo, kadar velja vse troje:

@@ -311,7 +311,7 @@ Vsak rezultat lahko preveriš tudi s števili, brez simbolnega odvajanja.
 5. Rezultat preveri z odvajanjem.
 > Deljenje je prvo, ker nastavek deluje le pri manjši stopnji števca. Razcep imenovalca določi nastavek, iz koeficientov dobiš logaritme, preizkus pa ujame napake v predznaku.
 
-? Trije od teh integralov se rešijo s per partes, en ne (zanj zadošča nova spremenljivka). Kateri je izjema?
+? Trije od teh integralov se rešijo s per partes, eden ne (zanj zadošča nova spremenljivka). Kateri je izjema?
 - $\int x\,e^x\,dx$
 ~ To je tipičen per partes: $u = x$ se z odvajanjem poenostavi v $1$.
 - $\int \ln x\,dx$
@@ -319,7 +319,7 @@ Vsak rezultat lahko preveriš tudi s števili, brez simbolnega odvajanja.
 + $\int 2x\,e^{x^2}\,dx$
 - $\int x^2 \cos x\,dx$
 ~ Potrebuje dva koraka per partes ($x^2 \to 2x \to 2$), a je še vedno per partes.
-> Pri $\int 2x\,e^{x^2}\,dx$ je $2x$ odvod notranje funkcije $x^2$. Z $t = x^2$, $dt = 2x\,dx$ dobiš $\int e^t\,dt = e^{x^2} + C$.
+> Pri $\int 2x\,e^{x^2}\,dx$ je $2x$ odvod notranje funkcije $x^2$. S $t = x^2$, $dt = 2x\,dx$ dobiš $\int e^t\,dt = e^{x^2} + C$.
 
 ? (brez računala) Velja $\frac{3x + 1}{(x - 1)(x + 1)} = \frac{A}{x - 1} + \frac{B}{x + 1}$. Koliko je $A$?
 = 2 | 0

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -182,7 +182,7 @@ Pomlad 1820, Kopenhagen. Profesor Hans Christian Ørsted predava o elektriki. Na
 
 Ugotovil je tri stvari. Igla se odziva le, ko teče tok. Obrne se, ko se obrne tok. In ne kaže proti žici, ampak vstran, kot da jo nekaj vrti okoli žice.
 
-Novica je v nekaj tednih prišla do Pariza. André-Marie Ampère je pokazal, da se dve žici s tokom privlačita ali odbijata, in da je zvita žica, tuljava, kot magnet. Elektrika in magnetizem, dotlej dve ločeni poglavji, sta postala eno.
+Novica je v nekaj tednih prišla do Pariza. André-Marie Ampère je pokazal, da se dve žici s tokom privlačita ali odbijata in da je zvita žica, tuljava, kot magnet. Elektrika in magnetizem, dotlej dve ločeni poglavji, sta postala eno.
 
 Danes isto zgodbo ponovi vsaka blagajna: tuljava, gumb, sunek toka. Nalepka »izve« za polje, čeprav se je nihče ne dotakne.
 

@@ -56,7 +56,7 @@ Isti štirje koraki delujejo pri vsaki mešani nalogi. Najtežji je drugi: iz be
 - »se dotika« → diskriminanta, pogoj $D = 0$
 - »stranica nasproti kota« → kosinusni izrek
 
-Večkoračna naloga je **veriga** takih orodij. Primer: »Žoga leti po tiru $h(t)$. Kdaj je najvišje in kdaj pade na tla?« Prvi del je odvod, drugi kvadratna enačba iz 1. letnika. Vsak člen verige reši posebej in rezultat prvega zapiši, preden začneš drugega.
+Večkoračna naloga je **veriga** takih orodij. Primer: »Žoga leti po tiru $h(t)$. Kdaj je najvišje in kdaj pade na tla?« Prvi del je odvod, drugi kvadratna enačba iz 2. letnika. Vsak člen verige reši posebej in rezultat prvega zapiši, preden začneš drugega.
 
 :::premisli
 Naloga sprašuje: »Kolikšna je največja hitrost kolesarja in kolikšno pot prevozi do ustavitve?« Dana je hitrost $v(t)$. Kateri dve orodji potrebuješ in zakaj ne istega dvakrat?
@@ -148,7 +148,7 @@ $a_n = a_1 q^{n-1}$, $S_n = a_1 \dfrac{q^n - 1}{q - 1}$
 :::premisli
 Koliko je $S_6 = 2000 \cdot \dfrac{1{,}05^6 - 1}{0{,}05}$?
 ---
-$S_6 \approx 13\,604$ vstopnic v šestih sezonah.
+$S_6 \approx 13\,604$ vstopnice v šestih sezonah.
 :::
 
 ## Pogoste napake
@@ -285,7 +285,7 @@ Vsoto zapišemo kot $S_n = a_1 + a_1 q + \dots + a_1 q^{n-1}$. Enakost pomnožim
 
 Trener ne izumi nove taktike za vsako akcijo nasprotnika. Pozna nekaj vzorcev (protinapad, prekršek pred kazenskim prostorom, kot) in za vsakega ima pripravljeno potezo. Ko prepozna vzorec, ve, kaj narediti.
 
-Maturitetna naloga je ista igra. »Najvišja točka« je protinapad: odgovor je vedno $f'(x) = 0$. »Vsaj en zadetek« je kot: odgovor je vedno nasprotni dogodek. Naloga se zdi nova, ker je oblečena v drugo zgodbo (žoga, kolesar, vstopnice), vzorec pod njo pa je star. Preglednica v razlagi je tvoja knjiga potez.
+Maturitetna naloga je ista igra. »Najvišja točka« je protinapad: odgovor je vedno $f'(x) = 0$. »Vsaj en zadetek« je kot: odgovor je vedno nasprotni dogodek. Naloga se zdi nova, ker je oblečena v drugo zgodbo (žoga, kolesar, vstopnice), vzorec pod njo pa je star. Seznam v razlagi je tvoja knjiga potez.
 
 ## Drugače: Bolj natančno
 
@@ -362,7 +362,7 @@ a_1 | prvi člen zaporedja | | | vstopnice v 1. sezoni
 a_n, a_6 | $n$-ti člen zaporedja | a_n = a_1 q^{n-1} | |
 q | količnik geometrijskega zaporedja | | – | $q = 1{,}05$ pri rasti $5\,\%$
 S_n, S_6 | vsota prvih $n$ členov | S_n = a_1 \frac{q^n - 1}{q - 1} | |
-p | odstotek rasti | | \% |
+p | odstotek rasti | | \% | v 2. nalogi za maturo je $p$ oznaka premice $y = x$
 D | diskriminanta | D = b^2 - 4ac | |
 :::
 

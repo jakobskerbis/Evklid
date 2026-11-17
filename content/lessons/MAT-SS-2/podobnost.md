@@ -234,7 +234,7 @@ $x' = x_S + k\,(x - x_S)$, $\;y' = y_S + k\,(y - y_S)$; ploščina slike je $k^2
 - **Napačno povezane stranice.** Razmerje mora povezovati *ustrezni* stranici, torej tisti, ki ležita nasproti enakih kotov. Preden zapišeš sorazmerje, označi enake kote.
 - **Obrnjeno razmerje na eni strani.** Kar na levi deliš v nekem vrstnem redu (na primer premer z razdaljo), moraš v istem vrstnem redu deliti tudi na desni. Pri Luni je zapis $\dfrac{x}{384\,000} = \dfrac{275}{2{,}5}$ napačen: na levi je premer deljen z razdaljo, na desni razdalja s premerom.
 - **Ploščina raste s $k$ namesto s $k^2$.** Kdor misli »dvakrat daljše, dvakrat večje«, pozabi, da se lik raztegne v dveh smereh. Če so dolžine dvakrat večje, je ploščina štirikrat večja. Iz razmerja ploščin dobiš $k$ s korenjenjem.
-- **Zamenjana odseka pri Evklidovem izreku.** Kvadrat katete $a$ je enak $c \cdot c_a$, kjer je $c_a$ odsek *ob* kateti $a$ (med $B$ in vznožjem višine). Ne uporabi odseka ob drugi kateti.
+- **Zamenjana odseka pri Evklidovem izreku.** Kvadrat katete $a$ je enak $c \cdot c_a$, kjer je $c_a$ odsek *ob* kateti $a$ (med $B$ in nožiščem višine). Ne uporabi odseka ob drugi kateti.
 - **Pozabljen koren.** Velja $v_c^2 = c_a \cdot c_b$ in $a^2 = c \cdot c_a$. Kdor zapiše zmnožek kot končni rezultat, dobi pri odsekih $4$ in $25$ višino $100$, kar je daljše od hipotenuze. Na koncu še koreni.
 
 ## Povzetek
@@ -365,7 +365,7 @@ Preverimo višino še s ploščino. Ploščina je $\dfrac{a \cdot b}{2} = \dfrac
 
 ## Drugače: Bolj natančno (dokaz)
 
-**Podobnost trikotnikov.** V pravokotnem trikotniku $ABC$ (pravi kot pri $C$) naj bo $D$ vznožje višine iz $C$. Označimo kota $\alpha$ pri $A$ in $\beta$ pri $B$, pri čemer $\alpha + \beta = 90^\circ$.
+**Podobnost trikotnikov.** V pravokotnem trikotniku $ABC$ (pravi kot pri $C$) naj bo $D$ nožišče višine iz $C$. Označimo kota $\alpha$ pri $A$ in $\beta$ pri $B$, pri čemer $\alpha + \beta = 90^\circ$.
 
 - $\triangle ABC$ in $\triangle CBD$: oba imata pravi kot (pri $C$ oziroma pri $D$) in skupni kot $\beta$ pri $B$. Po izreku KK sta podobna.
 - $\triangle ABC$ in $\triangle ACD$: oba imata pravi kot in skupni kot $\alpha$ pri $A$. Po izreku KK sta podobna.
