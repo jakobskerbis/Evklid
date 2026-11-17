@@ -24,12 +24,12 @@ test("besedilo pred orodjem: kratek uvod se umakne, razlaga ostane", () => {
   assert.ok(!isPreamble("x".repeat(301)), "dolgo");
 });
 
-// Koda sporočila: črka O je na zaslonu mala (public/app.js addMsgFoot), da se #000O (24) ne zamenja z #0000.
+// Koda sporočila: črka O je na zaslonu mala (public/prijave.js openMsgReport), da se #000O (24) ne zamenja z #0000.
 import { readFileSync } from "node:fs";
 import { messageCode, parseMessageCode } from "../server/reports.js";
 test("koda sporočila: mala črka o na zaslonu, iskanje deluje z obojimi", () => {
   assert.equal(messageCode(24), "#000O");
   assert.equal(parseMessageCode("#000o"), 24);
   assert.equal(parseMessageCode(messageCode(1234).toLowerCase()), 1234);
-  assert.match(readFileSync(new URL("../public/app.js", import.meta.url), "utf8"), /c\.lastElementChild\.textContent = foot\.dataset\.code\.replace\(\/O\/g, "o"\)/);
+  assert.match(readFileSync(new URL("../public/prijave.js", import.meta.url), "utf8"), /c\.lastElementChild\.textContent = foot\.dataset\.code\.replace\(\/O\/g, "o"\)/);
 });
