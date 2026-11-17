@@ -178,6 +178,13 @@ export function createStreamFilter() {
       emitted = safeEnd;
       return lead(out);
     },
+    // Začne znova (besedilo pred klicem orodja ni odgovor, server/claude.js onRetract).
+    reset() {
+      buffer = "";
+      emitted = 0;
+      metaStarted = false;
+      leadDone = false;
+    },
     // Na koncu vrne preostanek (brez strojnih blokov) in celotno surovo besedilo.
     end() {
       const rest = lead(stripMeta(buffer.slice(emitted)));

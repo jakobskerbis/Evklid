@@ -96,8 +96,29 @@ export function attachMic(button, field, { onMessage = () => {}, onChange = () =
     button.title = on ? "Poslušam … dotakni se za konec" : "Povej vprašanje";
   };
 
+  // Gumb ne sme ostati rdeč (j, 17. 11. 2026: »mikrofon označen še od 15 min prej«): nekateri brskalniki in
+  // WebView v aplikaciji ne pošljejo onend (napaka, aplikacija v ozadju). Zato konec poslušanja zapremo tudi sami.
+  let guard = null;
+  function finish(r = rec) {
+    clearTimeout(guard);
+    guard = null;
+    if (r !== rec) return; // že novo poslušanje
+    rec = null;
+    setListening(false);
+  }
   function stop() {
-    rec?.stop();
+    const r = rec;
+    if (!r) return;
+    try {
+      r.stop();
+    } catch {}
+    clearTimeout(guard);
+    guard = setTimeout(() => {
+      try {
+        r.abort?.();
+      } catch {}
+      finish(r);
+    }, 2000);
   }
 
   function start() {
@@ -130,14 +151,16 @@ export function attachMic(button, field, { onMessage = () => {}, onChange = () =
         network: "Za glasovni vnos potrebuješ internetno povezavo.",
       }[e.error];
       if (msg) onMessage(msg);
+      stop(); // onend naj pride; če ga ni, ga čez 2 s nadomesti finish
     };
+    const mine = rec;
     rec.onend = () => {
-      setListening(false);
+      if (mine !== rec) return;
       if (heard) {
         field.value = join(base, spokenMath(finalText));
         onChange();
       }
-      rec = null;
+      finish(mine);
       field.focus();
     };
     try {
@@ -149,6 +172,10 @@ export function attachMic(button, field, { onMessage = () => {}, onChange = () =
     }
   }
 
+  // Pošiljanje sporočila ali odhod iz aplikacije (zaklep, drug zavihek) poslušanje ustavi.
+  field.form?.addEventListener("submit", stop);
+  document.addEventListener("visibilitychange", () => document.hidden && stop());
+  window.addEventListener("pagehide", stop);
   button.addEventListener("click", async () => {
     if (rec) return stop();
     if (allowed && !(await allowed())) return onBlocked();

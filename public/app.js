@@ -1543,6 +1543,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         if (d.stage === "out") state.aiOut = true;
       },
       delta: (d) => pacer.push(d.text),
+      retract: () => pacer.reset(),
       // Pod mejo: varnostni odgovor nad odgovorom inštruktorja (ga ne ustavi).
       nujno: (d) => showNujno(d, { before: bubble }),
       cards: (d) => (cardsData = d),
