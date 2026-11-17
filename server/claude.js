@@ -163,9 +163,12 @@ export const isPreamble = (s) => {
   return t.length <= 300 && !/\n\s*\n|\$|<</.test(t);
 };
 
-export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, onRetract = null, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
+// onPhase("think"): model je začel razmišljati (prvi blok razmišljanja, preden je kaj besedila); odjemalec pokaže
+// »Razmišljam …«. noThinking: klic brez razmišljanja (samo Haiku, poskus EVKLID_HITRI_KORAK, server/hitri-korak.js).
+// Rezultat ima timing: { thinking, firstThinkMs, firstTextMs, totalMs } od začetka klica (server/casi-odgovora.js).
+export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, onRetract = null, onPhase = null, noThinking = false, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
   const { model, effort, max_tokens } = modeParams(mode);
-  if (isMockMode()) return mockReply({ messages, onText, signal, model, onToolUse: tools?.length ? onToolUse : null });
+  if (isMockMode()) return mockReply({ messages, onText, onPhase, signal, model, onToolUse: tools?.length ? onToolUse : null });
 
   const params = {
     model,
@@ -190,6 +193,11 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   // Orodja (npr. nastavitve iz klepeta) so pred sistemskim promptom in enaka za vse učence,
   // zato ostanejo v istem predpomnjenem začetku.
   if (tools?.length) params.tools = tools;
+  // Brez razmišljanja dovoli samo Haiku (Opus 5.5 ga ne dovoli izklopiti, glej quickParams).
+  const thinkingOff = (!!noThinking && /haiku/.test(model)) || params.thinking?.type === "disabled";
+  if (noThinking && /haiku/.test(model)) params.thinking = { type: "disabled" };
+  const t0 = Date.now();
+  const timing = { thinking: !thinkingOff, firstThinkMs: null, firstTextMs: null, totalMs: null };
   if (supportsFallback(model) && fallback !== false) {
     params.betas = ["server-side-fallback-2026-07-01"];
     params.fallbacks = "default";
@@ -248,6 +256,10 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
         } else if (event.type === "content_block_start" && /thinking/.test(event.content_block?.type || "")) {
           thinkAt = Date.now();
           firstBlockAt ||= thinkAt;
+          if (timing.firstThinkMs === null) {
+            timing.firstThinkMs = thinkAt - t0;
+            if (!text) onPhase?.("think");
+          }
         } else if (event.type === "content_block_stop" && thinkAt) {
           thinkMs += Date.now() - thinkAt;
           thinkAt = 0;
@@ -257,6 +269,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
           const d = event.delta || {};
           deltaBytes += Buffer.byteLength(String(d.text ?? d.thinking ?? d.partial_json ?? d.signature ?? ""), "utf8");
           if (d.type === "text_delta") {
+            if (timing.firstTextMs === null) timing.firstTextMs = Date.now() - t0;
             const chunk = gap + d.text;
             gap = "";
             text += chunk;
@@ -316,7 +329,8 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     msgs = [...msgs, { role: "assistant", content: final.content }, { role: "user", content: results }];
   }
   if (!text.trim() && dropped) text = dropped;
-  return { content, text, stopReason, usage, model: finalModel, toolCalls };
+  timing.totalMs = Date.now() - t0;
+  return { content, text, stopReason, usage, model: finalModel, toolCalls, timing };
 }
 
 const MAX_TOOL_ROUNDS = 3;
@@ -404,7 +418,9 @@ function mockAnswer(userText) {
   );
 }
 
-async function mockReply({ messages, onText, signal, model, onToolUse = null }) {
+async function mockReply({ messages, onText, onPhase = null, signal, model, onToolUse = null }) {
+  const t0 = Date.now();
+  onPhase?.("think"); // kot pravi model: najprej razmišlja (odjemalec pokaže »Razmišljam …«)
   let text = null;
   let toolCalls = 0;
   // Nastavitve iz klepeta tudi brez ključa (najpogostejše prošnje, glej server/chat-settings.js).
@@ -416,12 +432,13 @@ async function mockReply({ messages, onText, signal, model, onToolUse = null }) 
   }
   if (text === null) text = mockAnswer(lastUserText(messages));
   const delay = Number(process.env.EVKLID_MOCK_DELAY_MS ?? 15);
+  const firstTextMs = Date.now() - t0;
   for (let i = 0; i < text.length; i += 6) {
     if (signal?.aborted) break;
     onText(text.slice(i, i + 6));
     if (delay) await new Promise((r) => setTimeout(r, delay));
   }
-  return { content: [{ type: "text", text }], text, stopReason: "end_turn", usage: { input_tokens: 0, output_tokens: 0 }, model, toolCalls };
+  return { content: [{ type: "text", text }], text, stopReason: "end_turn", usage: { input_tokens: 0, output_tokens: 0 }, model, toolCalls, timing: { thinking: true, firstThinkMs: 0, firstTextMs, totalMs: Date.now() - t0 } };
 }
 
 // ---------------------------------------------------------------------------

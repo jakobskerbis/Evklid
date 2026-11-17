@@ -115,6 +115,22 @@ function togglePop() {
   refreshUsageMeter();
 }
 
+// Sekunde v jeziku aplikacije (1,2 s).
+const sec = (ms) => (ms == null ? "–" : `${(ms / 1000).toLocaleString(locale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })} s`);
+async function loadSpeed(box) {
+  const res = await fetch("/api/usage/casi").catch(() => null);
+  const d = res?.ok ? await res.json().catch(() => null) : (res && zavrzi(res), null);
+  const list = d?.skupine || [];
+  if (!list.length) return (box.innerHTML = `<p class="muted">${t("meter.speedNone")}</p>`);
+  const esc = D.escapeHtml;
+  box.innerHTML = `<p class="muted">${t("meter.speedCols")}</p><ul class="um-speed-list">${list
+    .map(
+      (g) =>
+        `<li><b>${esc(g.model.replace(/^claude-/, ""))} · ${esc(g.nacin)}${g.razmislek ? "" : ` · ${t("meter.speedNoThink")}`}</b> <span class="muted">(${g.n})</span><br>${sec(g.besedilo.mediana)} / ${sec(g.besedilo.p90)} · ${sec(g.konec.mediana)}</li>`,
+    )
+    .join("")}</ul>`;
+}
+
 function renderPop() {
   const u = last;
   const pop = $("#usage-pop");
@@ -143,8 +159,12 @@ function renderPop() {
     ${budgetHtml(u.budget)}
     ${u.can_claim ? `<div class="um-claim"><button type="button" class="secondary" data-act="claim">${icon("smartphone")} ${t("meter.claim")}</button><small class="muted">${t("meter.claimHint")}</small></div>` : ""}
     ${adviceHtml(u.advice)}
+    <details class="um-speed"><summary>${t("meter.speed")}</summary><div class="um-speed-body" aria-live="polite"></div></details>
     <button type="button" class="text-btn" data-act="more">${t("meter.more")} ${icon("chevron-right")}</button>`;
   pop.querySelector(".um-close").addEventListener("click", () => (pop.hidden = true));
+  // Časi odgovorov inštruktorja (server/casi-odgovora.js): naložijo se šele ob odprtju razdelka.
+  const speed = pop.querySelector(".um-speed");
+  speed.addEventListener("toggle", () => speed.open && loadSpeed(speed.querySelector(".um-speed-body")), { once: true });
   pop.querySelector('[data-act="more"]').addEventListener("click", () => {
     pop.hidden = true;
     D.showView("settings");

@@ -1588,6 +1588,12 @@ async function send(text, { deep = false, image: attached = null } = {}) {
           waitNote = shownText ? "" : t(deep ? "chat.waitDeep" : "chat.wait");
           return paint(shownText);
         }
+        // Model razmišlja, besedila še ni (server/claude.js onPhase): »Razmišljam …«, dokler ne pride prvo besedilo.
+        if (d?.phase === "think") {
+          if (shownText || bubble.classList.contains("checking")) return;
+          waitNote = t("chat.waitThink");
+          return paint("");
+        }
         if (d?.phase !== "check" || bubble.classList.contains("checking") || checkTimer) return;
         const show = () => {
           checkTimer = null;

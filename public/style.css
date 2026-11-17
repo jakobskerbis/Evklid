@@ -1235,6 +1235,9 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .um-tip.ok { border-inline-start-color: var(--ok); }
 .um-tip.act { border-inline-start-color: #eab308; }
 .um-tip p { margin: 4px 0 0; }
+.um-speed { margin: 10px 0 4px; }
+.um-speed summary { cursor: pointer; }
+.um-speed-list { margin: 6px 0 0; padding-inline-start: 18px; font-size: 0.9rem; }
 .um-claim { display: flex; flex-direction: column; gap: 4px; margin: 10px 0; }
 .um-budget-form { display: flex; gap: 8px; align-items: flex-end; margin: 6px 0; flex-wrap: wrap; }
 .um-budget-form label { display: flex; flex-direction: column; gap: 2px; font-size: 0.85rem; flex: 1 1 160px; }
