@@ -244,7 +244,7 @@ c) Kolikšen delež ploščine kroga pokriva trapez? Rezultat zapišite v odstot
 1. a) Simetrala tetive gre skozi središče krožnice, zato je $SE \perp AB$. Trikotnik $AES$ je pravokoten s hipotenuzo $|SA| = r = 13\,\text{cm}$ in kateto $|AE| = 12\,\text{cm}$: $|SE| = \sqrt{13^2 - 12^2}\,\text{cm} = \sqrt{25}\,\text{cm} = 5\,\text{cm}$.
 2. a) Enako v trikotniku $DFS$: $|SF| = \sqrt{13^2 - 5^2}\,\text{cm} = \sqrt{144}\,\text{cm} = 12\,\text{cm}$.
 3. a) Točke $E$, $S$ in $F$ ležijo na skupni simetrali obeh osnovnic, $S$ pa je med osnovnicama, zato je višina $v = |SE| + |SF| = 5\,\text{cm} + 12\,\text{cm} = 17\,\text{cm}$.
-4. b) Višina iz $D$ na $AB$ ima nožišče, ki je od $A$ oddaljeno $\dfrac{a - c}{2} = \dfrac{24 - 10}{2}\,\text{cm} = 7\,\text{cm}$. Krak je hipotenuza pravokotnega trikotnika s katetama $7\,\text{cm}$ in $17\,\text{cm}$: $b = \sqrt{7^2 + 17^2}\,\text{cm} = \sqrt{338}\,\text{cm} \approx 18{,}385\,\text{cm} \approx 18{,}38\,\text{cm}$.
+4. b) Višina iz $D$ na $AB$ ima nožišče, ki je od $A$ oddaljeno $\dfrac{a - c}{2} = \dfrac{24 - 10}{2}\,\text{cm} = 7\,\text{cm}$. Krak je hipotenuza pravokotnega trikotnika s katetama $7\,\text{cm}$ in $17\,\text{cm}$: $b = \sqrt{7^2 + 17^2}\,\text{cm} = \sqrt{338}\,\text{cm} \approx 18{,}3848\,\text{cm} \approx 18{,}38\,\text{cm}$.
 5. b) Obseg: $o = a + c + 2b = (24 + 10 + 2\sqrt{338})\,\text{cm} \approx 70{,}770\,\text{cm} \approx 70{,}77\,\text{cm}$.
 6. c) Ploščina trapeza: $\dfrac{(a + c)\, v}{2} = \dfrac{(24 + 10) \cdot 17}{2}\,\text{cm}^2 = 289\,\text{cm}^2$.
 7. c) Ploščina kroga: $\pi r^2 = 169\pi\,\text{cm}^2 \approx 530{,}93\,\text{cm}^2$.
@@ -299,7 +299,7 @@ Vzemimo pravokotnik s stranicama $a = 9\,\text{cm}$ in $b = 12\,\text{cm}$ ter m
 
 Ana z dedkom gradi vrtno uto. Najprej zakoličita temelj. Dedek napne vrvico in odmeri $3\,\text{m}$ ob eni stranici, $4\,\text{m}$ ob drugi, nato premakne drugo stranico, da je razdalja med oznakama natanko $5\,\text{m}$. »Zdaj je vogal pravi,« reče. Ana pomisli in prikima: $3^2 + 4^2 = 25 = 5^2$, trikotnik iz vrvice je torej pravokoten (obrat Pitagorovega izreka).
 
-Stranska stena ima obliko trapeza: spodaj meri $180\,\text{cm}$, pod streho $120\,\text{cm}$, visoka je $80\,\text{cm}$ nad zidcem. Ana izračuna, koliko desk potrebujeta: $S = \dfrac{(180 + 120) \cdot 80}{2} = 12000\,\text{cm}^2$, torej $1{,}2\,\text{m}^2$. »Kraka ne smeš vzeti za višino,« jo opomni dedek, »ker sta poševna.«
+Stranska stena ima obliko trapeza: spodaj meri $180\,\text{cm}$, pod streho $120\,\text{cm}$, visoka je $80\,\text{cm}$ nad zidcem. Ana izračuna, koliko desk potrebujeta: $S = \dfrac{(180 + 120) \cdot 80}{2} = 12000\,\text{cm}^2$, torej $1{,}2\,\text{m}^2$. »Kraka ne smeš vzeti za višino,« jo opomni dedek, »ker je poševen.«
 
 V vrata želita okroglo okence s polmerom $30\,\text{cm}$. Za tesnilo okoli stekla potrebujeta obseg, $2\pi \cdot 30 \approx 188{,}5\,\text{cm}$, za steklo ploščino, $\pi \cdot 30^2 \approx 2827\,\text{cm}^2$. Ana opazi, da sta enoti različni: centimetri za tesnilo, kvadratni centimetri za steklo.
 
@@ -330,7 +330,7 @@ Na koncu dedek iz okrogle deske izreže mizico in išče njeno središče. Kotni
 > Oba stojita nad istim lokom, ki mu pripada en sam središčni kot $\alpha$, zato sta oba enaka $\dfrac{\alpha}{2}$.
 
 ? (brez računala) Trapez ima ploščino $60\,\text{cm}^2$ ter osnovnici $11\,\text{cm}$ in $9\,\text{cm}$. Kolikšna je njegova višina?
-= 6 cm | 0,01
+= 6 cm | 0
 ~ 3 | Pozabil si, da je v formuli deljenje z $2$: $v = \dfrac{2S}{a + c}$, ne $\dfrac{S}{a + c}$.
 ~ 5,45 | Računal si kot pri paralelogramu z eno osnovnico, $\dfrac{60}{11} \approx 5{,}45$. Trapez ima dve različni osnovnici.
 > Iz $S = \dfrac{(a + c)\, v}{2}$ sledi $v = \dfrac{2S}{a + c} = \dfrac{120}{20} = 6\,\text{cm}$.

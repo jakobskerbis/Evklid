@@ -34,7 +34,7 @@ class MemoryStorage {
 // public/offline.js uvozi »/practice/check.js« (pot v brskalniku); za test kopija z uvozom iz strežnika.
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-offline-"));
 const check = pathToFileURL(path.resolve("server/practice/check.js")).href;
-fs.writeFileSync(path.join(dir, "offline.mjs"), fs.readFileSync("public/offline.js", "utf8").replace('"/practice/check.js"', JSON.stringify(check)));
+fs.writeFileSync(path.join(dir, "offline.mjs"), fs.readFileSync("public/offline.js", "utf8").replace('"/practice/check.js"', JSON.stringify(check)).replace('"./enote-izbira.js"', JSON.stringify(pathToFileURL(path.resolve("public/enote-izbira.js")).href)));
 globalThis.localStorage = new MemoryStorage();
 globalThis.location = { origin: "https://evklid.test" };
 const deleted = [];
@@ -175,4 +175,33 @@ test("hiter zagon (pregled #560 A5, A2): poln pomnilnik najprej pobriše posnete
     delete globalThis.evklidZacetek;
   }
   assert.equal(n, 1);
+});
+
+// Pregled PR 786, krog 3: paket iz starejše različice (enota brez hasUnit) se osveži tudi, če je mlajši od dneva;
+// brez povezave naloga iz njega še vedno pokaže izbiro enot.
+test("PR 786: star paket z enoto brez hasUnit se osveži; brez povezave naloga pokaže enote", async () => {
+  ls.clear();
+  let online = true;
+  const nav = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  Object.defineProperty(globalThis, "navigator", { configurable: true, get: () => ({ onLine: online }) });
+  const answer = { type: "number", value: 2.5, decimals: 1, unit: "kg" };
+  const stale = { path: "MAT-OS-8", created: new Date().toISOString(), view: {}, topics: {}, tasks: { t: [{ seed: 5, level: 1, answer, hint: "", task: { text: "Kolikšna je masa?", answerType: "number", unit: "kg" } }] } };
+  ls.setItem("evklid.offline.pack.3", JSON.stringify(stale));
+  const fresh = { ...stale, tasks: { t: [{ ...stale.tasks.t[0], task: { text: "Kolikšna je masa?", answerType: "number", hasUnit: true, units: ["dag", "g", "kg"] } }] } };
+  let calls = 0;
+  const api = async () => (calls++, fresh);
+  assert.deepEqual(await off.refreshPack(api, 3, "MAT-OS-8"), fresh);
+  assert.equal(calls, 1);
+  await off.refreshPack(api, 3, "MAT-OS-8");
+  assert.equal(calls, 1, "nov paket ostane do naslednjega dne");
+  // Brez povezave ostane stari paket; naloga ima hasUnit in enote, ne prave enote.
+  ls.setItem("evklid.offline.pack.3", JSON.stringify(stale));
+  online = false;
+  const r = off.offlineApi(3, "/api/students/3/practice/next", { body: { topic_id: "t" } });
+  assert.equal(r.task.hasUnit, true);
+  assert.equal(r.task.unit, undefined);
+  assert.ok(r.task.units.includes("kg"));
+  assert.equal(off.offlineApi(3, `/api/students/3/tasks/${r.task.id}/answer`, { body: { answer: "250 dag" } }).kind, "correct");
+  if (nav) Object.defineProperty(globalThis, "navigator", nav);
+  else delete globalThis.navigator;
 });

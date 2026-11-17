@@ -31,7 +31,7 @@ Temu ulomku rečemo **diferenčni količnik**. Izračunajmo ga za vedno krajše 
 
 Povprečne hitrosti se bližajo $12$. Algebra to potrdi: $T(4 + h) - T(4) = 12h - h^2$, zato je diferenčni količnik $12 - h$, ta pa ima pri $h \to 0$ limito $12$.
 
-Maticov »$\frac{0}{0}$« je torej nedoločeni izraz iz prejšnje lekcije, ne nesmisel. Limita obstaja: v trenutku $t = 4$ se olje segreva s hitrostjo $12\,^\circ\mathrm{C/min}$, kar je več od povprečja $10$.
+Maticov »$\frac{0}{0}$« je torej nedoločeni izraz iz lekcije o limiti, ne nesmisel. Limita obstaja: v trenutku $t = 4$ se olje segreva s hitrostjo $12\,^\circ\mathrm{C/min}$, kar je več od povprečja $10$.
 
 **2. Odvod.** Kar smo naredili z oljem, naredimo s poljubno funkcijo $f$ v točki $a$:
 
@@ -93,7 +93,7 @@ Pri **sestavljeni funkciji** $f(g(x))$ ločimo zunanjo funkcijo $f$ in notranjo 
 
 $$\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$$
 
-**7. Odvodi elementarnih funkcij.** Izpeljemo jih z definicijo in limitami; pri $\sin x$ potrebujemo $\lim\limits_{h \to 0} \frac{\sin h}{h} = 1$ iz prejšnje lekcije.
+**7. Odvodi elementarnih funkcij.** Izpeljemo jih z definicijo in limitami; pri $\sin x$ potrebujemo $\lim\limits_{h \to 0} \frac{\sin h}{h} = 1$ iz lekcije o limiti.
 
 | funkcija | odvod |
 |---|---|
@@ -309,7 +309,7 @@ d) Poiščite vse točke na grafu funkcije $g(x) = \tan x$, $-\frac{\pi}{2} < x 
 
 **Rešitev:**
 
-1. a) Diferenčni količnik je $\dfrac{\sqrt{x + h} - \sqrt{x}}{h}$. Razširimo ga z $\sqrt{x + h} + \sqrt{x}$: $\dfrac{(x + h) - x}{h\,(\sqrt{x + h} + \sqrt{x})} = \dfrac{1}{\sqrt{x + h} + \sqrt{x}}$.
+1. a) Diferenčni količnik je $\dfrac{\sqrt{x + h} - \sqrt{x}}{h}$. Razširimo ga s $\sqrt{x + h} + \sqrt{x}$: $\dfrac{(x + h) - x}{h\,(\sqrt{x + h} + \sqrt{x})} = \dfrac{1}{\sqrt{x + h} + \sqrt{x}}$.
 2. a) Ko gre $h \to 0$, gre $\sqrt{x + h} \to \sqrt{x}$, zato je limita enaka $\dfrac{1}{2\sqrt{x}}$. Torej $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$.
 3. b) Pravilo za kvocient $\left(\dfrac{u}{v}\right)' = \dfrac{u'v - uv'}{v^2}$ uporabimo z $u = \sin x$ in $v = 1 + \cos x$, kjer je $u' = \cos x$ in $v' = -\sin x$. Imenovalec je $(1 + \cos x)^2$, števec pa $(1 + \cos x)\cos x + \sin^2 x = \cos x + \cos^2 x + \sin^2 x$.
 4. b) Ker je $\sin^2 x + \cos^2 x = 1$, je števec enak $1 + \cos x$. Okrajšamo: $\dfrac{1 + \cos x}{(1 + \cos x)^2} = \dfrac{1}{1 + \cos x}$ (za $\cos x \ne -1$).
@@ -381,7 +381,7 @@ Vajenec čez nekaj minut pokaže termometer: »Zdaj se skoraj ne segreva več.«
 > Odvod je limita smernih koeficientov sekant, ko gre $h \to 0$, torej smerni koeficient tangente.
 
 ? (brez računala) Koliko je $f'(1)$ za $f(x) = 4x^3 - 2x + 7$?
-= 10 | 0,01
+= 10 | 0
 ~ 9 | To je $f(1) = 4 - 2 + 7$. Vrednost funkcije ni odvod.
 ~ 17 | Konstanta $7$ je ostala. Njen odvod je $0$.
 ~ 0 | Tako dobiš, če najprej vstaviš $x = 1$ in nato odvajaš število. Najprej odvajaj, nato vstavi.

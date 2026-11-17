@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Ana doma kurijo s pečjo na drva. V spletni trgovini najde napravo za $79$ €: majhen toplotni motorček, ki ga postaviš na vročo ploščo peči in poganja generator za polnjenje telefonov. Oglas obljublja: »Iz $500\,\mathrm{W}$ toplote naredi $200\,\mathrm{W}$ električne moči!«
+Pri Ani doma kurijo s pečjo na drva. Ana v spletni trgovini najde napravo za $79$ €: majhen toplotni motorček, ki ga postaviš na vročo ploščo peči in poganja generator za polnjenje telefonov. Oglas obljublja: »Iz $500\,\mathrm{W}$ toplote naredi $200\,\mathrm{W}$ električne moči!«
 
 Plošča peči ima okoli $127\,^\circ\mathrm{C}$, v sobi je $27\,^\circ\mathrm{C}$. Ana se sprašuje, ali je obljuba sploh mogoča ali pa bo denar vrgla stran.
 

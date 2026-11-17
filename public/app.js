@@ -29,7 +29,7 @@ import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
 import { createIzrisBlokov, enIzrisNaSlicico } from "./izpis-toka.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
-import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
+import { mountLevelPicker, levelLabel, levelChoices, ravenChoices, schoolSystemOptions } from "./level-picker.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
@@ -96,6 +96,7 @@ import { partKey, partLabel } from "./our-paper-key.js";
 import { initDrsniki } from "./drsniki.js";
 import { initSirina, prilagodiZdaj } from "./sirina.js";
 import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
+import { chatIdeas as pickIdeas } from "./predlogi.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 import { GUIDE } from "./vodic.js";
 import { initOpen, addOpen, simOverlayOpen, closeSimOverlay } from "./odpri.js";
@@ -1108,26 +1109,60 @@ function renderConversationList() {
 function renderEmptyChat() {
   state.chatFx = null; // nov pogovor (tudi po brisanju odprtega ali menjavi profila): predmet iz nastavitev
   $("#chat-title").textContent = t("chat.new");
-  const ideas = [t("chat.idea1"), t("chat.idea2"), t("chat.idea3")];
+  state.ideasNow = null; // nov prazen klepet: novi predlogi
+  const ideas = chatIdeas(state.student);
   // .empty-hall: okvir pozdrava (ui.css → »Klepet obdobja«: s chat.frame »stebri« pročelje templa iz
   // ERAS[…].arch.temple, templeParts doda dele in jih ob menjavi sloga zamenja; »pilon« iz ERAS[…].building enako).
   $("#messages").innerHTML = `<div class="empty"><div class="empty-hall">
     <div class="tutor-avatar big" aria-hidden="true">${icon("sparkles")}</div>
     <p class="big">${t("chat.hello", { name: escapeHtml(state.student.name) })}</p>
     <p>${t("chat.intro")}</p>
-    <div class="ideas">${ideas.map((t) => `<button type="button" class="idea" data-idea="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join("")}</div></div>
+    <div class="ideas">${ideasHtml(ideas)}</div></div>
     ${greekFactHtml("gr-chat")}</div>`;
   templeParts();
   wireGreekFacts($("#messages"));
   // Predlog se pošlje takoj in inštruktor nanj odgovori (j, 3. 11.): ni ga treba še enkrat poslati.
   // Če je učenec že kaj napisal ali dodal fotografijo, predlog gre v polje (da se nič ne izgubi).
-  $("#messages").querySelectorAll("[data-idea]").forEach((b) =>
-    b.addEventListener("click", () => {
-      if (!$("#input").value.trim() && !state.image) return send(b.dataset.idea);
-      fillInput(b.dataset.idea);
-    }),
-  );
   renderState(null);
+  if (!ideasPath(state.student)) refreshIdeas();
+}
+$("#messages").addEventListener("click", ideaClick); // enkrat: predlogi se ob osvežitvi zamenjajo
+function ideaClick(e) {
+  const b = e.target.closest?.("[data-idea]");
+  if (!b) return;
+  if (!$("#input").value.trim() && !state.image) return send(b.dataset.idea);
+  fillInput(b.dataset.idea);
+}
+const ideasHtml = (ideas) => ideas.map((x) => `<button type="button" class="idea" data-idea="${escapeHtml(x)}">${escapeHtml(x)}</button>`).join("");
+
+// Predlogi v praznem klepetu po profilu in vsakič drugačni (public/predlogi.js). Izbrani predlogi ostanejo isti,
+// dokler je odprt isti prazen klepet (sicer bi se ob vsakem osveženju zamenjali pred očmi); nov klepet = novi predlogi.
+const ideasKey = (s) => [s?.subject, s?.educational_track, s?.curriculum_level, s?.study_program, s?.study_course, s?.school_system].join("|");
+const ideasPath = (st) => (state.ideasPath && state.ideasPath.student === st?.id && state.ideasPath.key === ideasKey(st?.settings) ? state.ideasPath : null);
+function chatIdeas(st) {
+  const path = ideasPath(st);
+  const key = `${st?.id}|${ideasKey(st?.settings)}|${path?.topics?.length || path?.next ? 1 : 0}`; // pot brez tem = splošni predlogi, brez ponovnega žrebanja
+  if (state.ideasNow?.key !== key) state.ideasNow = { key, list: pickIdeas(st?.settings || {}, path, t) };
+  return state.ideasNow.list;
+}
+// Učna pot za predloge: shrani jo loadPath; sicer (klepet odprt pred Učno potjo, menjava v glavi) jo naložimo tu.
+async function refreshIdeas() {
+  const st = state.student;
+  if (!st || ideasPath(st)) return showIdeas();
+  try {
+    const p = await api(`/api/students/${st.id}/path`);
+    rememberIdeasPath(st, p);
+  } catch { return; }
+  showIdeas();
+}
+function rememberIdeasPath(st, p) {
+  if (!st || !p) return;
+  state.ideasPath = { student: st.id, key: ideasKey(st.settings), next: p.next || null, topics: (p.units || []).flatMap((u) => u.topics || []) };
+}
+function showIdeas() {
+  const box = $("#messages .empty-hall .ideas");
+  if (!box || state.conversationId || !state.student) return;
+  box.innerHTML = ideasHtml(chatIdeas(state.student));
 }
 
 function templeParts() {
@@ -1153,6 +1188,7 @@ function renderState(convState) {
     `<span class="chip chip-pick"><select data-pick="${key}" aria-label="${escapeHtml(label)}">${options}</select></span>`;
   const opt = (value, label, current) => `<option value="${escapeHtml(value)}"${current ? " selected" : ""}>${escapeHtml(label)}</option>`;
   const levels = levelChoices(s);
+  const ravni = ravenChoices(s);
   const head = $("#chat-state");
   head.innerHTML = [
     SUBJECT_NAMES[subject] && pick("subject", t("set.subject"), opt(subject, SUBJECT_NAMES[subject], true)),
@@ -1162,10 +1198,11 @@ function renderState(convState) {
       (levels.length > 1
         ? pick("level", t("set.school"), levels.map((x, i) => opt(i, x.label, x.current)).join(""))
         : `<span class="chip">${escapeHtml(levelLabel(s.curriculum_level))}</span>`),
+    ravni.length > 1 && pick("raven", t("tbk.level"), ravni.map((x, i) => opt(i, x.label, x.current)).join("")),
   ]
     .filter(Boolean)
     .join("");
-  wireStatePicks(head, subject, levels);
+  wireStatePicks(head, subject, levels, ravni);
   // Pogovor o temi učne poti: povezava na lekcijo v učbeniku.
   const topicId = state.conversationId && state.convTopic;
   if (topicId) {
@@ -1178,7 +1215,7 @@ function renderState(convState) {
   }
 }
 
-async function wireStatePicks(head, subject, levels) {
+async function wireStatePicks(head, subject, levels, ravni = []) {
   const save = async (settings, what, label) => {
     const updated = await api(`/api/students/${state.student.id}`, { method: "PUT", body: { settings } });
     studentUpdated(updated);
@@ -1195,6 +1232,11 @@ async function wireStatePicks(head, subject, levels) {
       if (list.length && !list.includes(state.student.settings.subject)) next.subject = list.includes("NAR") && ["FIZ", "KEM", "BIO"].includes(state.student.settings.subject) ? "NAR" : list[0];
     } else next.study_course = "";
     save(next, t("set.school"), levels[Number(e.target.value)].label).catch(() => renderState(null));
+  });
+  // Raven matematike (SŠ): ostaneta letnik in predmet, spremeni se le OR/VR.
+  head.querySelector('[data-pick="raven"]')?.addEventListener("change", (e) => {
+    const r = ravni[Number(e.target.value)];
+    if (r) save({ ...r.settings }, t("tbk.level"), r.label).catch(() => renderState(null));
   });
   const sel = head.querySelector('[data-pick="subject"]');
   if (!sel) return;
@@ -2333,6 +2375,7 @@ function studentUpdated(updated) {
   refreshProfileButton();
   renderState(null);
   if (before.goal !== updated.settings.goal || before.games !== updated.settings.games) renderGoal(); // bližnjici po cilju na Učni poti
+  if (ideasKey(before) !== ideasKey(updated.settings)) refreshIdeas(); // predlogi v praznem klepetu po novem razredu, ravni, predmetu
   if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
     state.pathKey = null;
     refreshModes(); // številki na gumbih Ponavljanje in Kartice za novi predmet
@@ -2982,6 +3025,7 @@ async function loadPath(key = state.pathKey) {
   // Šola (OŠ/SŠ): učna pot je vedno za razred/letnik iz profila; nižje razrede ima Učbenik (j, 1. 11.).
   // Fakulteta: izbira med predmeti študijskega programa ostane.
   const uni = isUni(state.student.settings);
+  const ideasFor = state.student, ideasFrom = ideasKey(ideasFor.settings); // predlogi: pot za tega učenca in te nastavitve
   const q = uni && key ? `?key=${encodeURIComponent(key)}` : "";
   const sys = state.student.settings.school_system || "SI";
   // Učna pot, seznam poti in programi hkrati (prej drug za drugim: trije čakanji na strežnik ob vsakem odprtju
@@ -3019,6 +3063,7 @@ async function loadPath(key = state.pathKey) {
   const changed = state.pathKey !== p.key;
   state.pathKey = p.key;
   state.pathSubject = paths.find((x) => x.key === p.key)?.subject || state.student.settings.subject;
+  if ((!uni || !key || key === p.defaultKey) && state.student?.id === ideasFor.id && ideasKey(state.student.settings) === ideasFrom) (rememberIdeasPath(state.student, p), showIdeas());
   if (changed) refreshModes(); // fakulteta: drug predmet iz seznama poti
   showLevelCard();
   renderStageHome();
@@ -3508,8 +3553,8 @@ function renderTask(task, ctx) {
   } else {
     const ph =
       task.inputHint ||
-      (task.answerType === "coefficients" ? t("task.phCoef") : task.unit ? t("task.phUnit", { unit: task.unit }) : t("task.phResult"));
-    input = `<form class="answer-row"><input id="answer" aria-label="${escapeHtml(t("games.yourAnswer"))}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
+      (task.answerType === "coefficients" ? t("task.phCoef") : task.hasUnit ? t("task.phUnit") : t("task.phResult"));
+    input = `<form class="answer-row"><input id="answer" aria-label="${escapeHtml(t("games.yourAnswer"))}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.hasUnit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
   }
   const calcBtn = ["contest", "placement", "pretest"].includes(ctx.mode) ? "" : `<button type="button" class="ghost task-calc icon-only" title="${escapeHtml(t("nav.graph"))}" aria-label="${escapeHtml(t("nav.graph"))}">${icon("calculator")}</button>`;
   const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span>${ctx.total ? `<span class="contest-count">${ctx.index} / ${ctx.total}</span>` : ""}</div>` : "";

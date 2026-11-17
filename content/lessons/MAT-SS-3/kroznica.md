@@ -390,7 +390,7 @@ Naloga: lega premice $y = x + 1$ in krožnice $x^2 + y^2 = 13$.
 > Vstavimo $y = \frac{12}{x}$ in pomnožimo z $x^2$: $x^4 - 25x^2 + 144 = 0$, torej $x^2 = 9$ ali $x^2 = 16$. Točke so $(3, 4)$, $(4, 3)$, $(-3, -4)$ in $(-4, -3)$.
 
 ? (brez računala) Krožnica s središčem $S(2, -1)$ gre skozi točko $T(-4, 7)$. Koliko meri njen polmer?
-= 10 | 0,01
+= 10 | 0
 ~ 100 | To je $r^2 = 6^2 + 8^2$. Polmer je koren te vsote.
 ~ 14 | Razdalja ni vsota razlik koordinat $6 + 8$. Razliki kvadriraš, sešteješ in koreniš.
 ~ 6,32 | Koordinati središča si prištel namesto odštel: $(-4 + 2)^2 + (7 - 1)^2 = 40$. Pravilno je $(-4 - 2)^2 + (7 - (-1))^2$.
@@ -432,7 +432,7 @@ resi: z^2 - 25*z + 144 = 0 | z | 9, 16
 x, y | koordinati točke na krožnici | | | v primerih v km
 p, q | koordinati središča $S$ | | | $S(p, q)$
 r | polmer krožnice | r = \sqrt{(x - p)^2 + (y - q)^2} | | razdalja točke krožnice od središča
-D, E, F | koeficienti splošne oblike | | | $x^2 + y^2 + Dx + Ey + F = 0$
+D, E, F | koeficienti splošne oblike | | | $x^2 + y^2 + Dx + Ey + F = 0$; pri legi premice je $D$ diskriminanta
 P_1, P_2 | presečišči premice in krožnice | | |
 x_1, x_2 | abscisi presečišč | | |
 y_1, y_2 | ordinati presečišč | | |

@@ -365,7 +365,7 @@ točka: 2,1; 5,7 | H | nad
 > Najprej projekcija, šele nato računanje: brez koraka 1 in 2 ne veš, katero daljico vzeti za priležno kateto.
 
 ? (brez računala) Omarica ob bolniški postelji ima obliko kvadra z osnovno ploskvijo $6\,\mathrm{dm} \times 8\,\mathrm{dm}$ in višino $10\,\mathrm{dm}$. Kolikšen kot (v stopinjah) oklepa njena telesna diagonala z osnovno ploskvijo?
-= 45 | 0,5
+= 45 | 0
 ~ 51,3 | Za projekcijo si vzel rob $8\,\mathrm{dm}$. Projekcija diagonale je diagonala osnovne ploskve, $\sqrt{36 + 64} = 10\,\mathrm{dm}$.
 ~ 59,0 | Za projekcijo si vzel rob $6\,\mathrm{dm}$. Projekcija diagonale je diagonala osnovne ploskve, $10\,\mathrm{dm}$.
 > Diagonala osnovne ploskve je $\sqrt{6^2 + 8^2} = 10\,\mathrm{dm}$, enako kot višina. Zato je $\tan\varphi = \frac{10}{10} = 1$ in $\varphi = 45^\circ$.
@@ -373,7 +373,7 @@ točka: 2,1; 5,7 | H | nad
 ? (višja raven) Koliko oglišč kocke $ABCDEFGH$ leži na simetralni ravnini daljice $AC$?
 = 4 | 0
 ~ 2 | Našel si le $B$ in $D$, kot da gre za simetralo v ravnini $ABCD$. Simetralna ravnina je pravokotna na $AC$ in sega tudi navzgor, zato vsebuje še $F$ in $H$.
-~ 0 | Oglišča $B$ in $D$ sta od $A$ in $C$ enako oddaljena (rob $a$), zato ležita na simetralni ravnini.
+~ 0 | Oglišči $B$ in $D$ sta od $A$ in $C$ enako oddaljeni (rob $a$), zato ležita na simetralni ravnini.
 > Simetralna ravnina daljice $AC$ gre skozi razpolovišče in je pravokotna na $AC$. To je ravnina $BDHF$: oglišča $B$, $D$, $F$, $H$ so enako oddaljena od $A$ in $C$.
 
 <<RACUN

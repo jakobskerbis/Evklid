@@ -62,7 +62,7 @@ točka: 0; n | (0, {n}) | levo | oranžna
 podnapis: y = kx + n pri k = {k} in n = {n}
 :::
 
-V simulaciji spodaj (»Graf funkcije y = kx + n«) pusti $n = 5$ in pomikaj $k$ od $2$ do $-2$. Opazi, da se premica vrti okoli točke $(0, 5)$ in da je pri $k = 0$ vodoravna.
+V simulaciji spodaj (»Graf funkcije y = kx + n«) nastavi $n = 5$ in pomikaj $k$ od $2$ do $-2$. Opazi, da se premica vrti okoli točke $(0, 5)$ in da je pri $k = 0$ vodoravna.
 
 :::premisli
 Drug operater ponuja paket $y = 3x + 2$. Kateri graf je strmejši in zakaj se premici nekje sekata?
@@ -308,19 +308,19 @@ $$\frac{y_2 - y_1}{x_2 - x_1} = \frac{(kx_2 + n) - (kx_1 + n)}{x_2 - x_1} = \fra
 
 Razmerje je za **vsak** par točk enako $k$. To je prav lastnost premice: konstanten naklon. Zato lahko $k$ izračunamo iz katerih koli dveh točk.
 
-**Ničla.** Iz $kx + n = 0$ dobimo $kx = -n$. Če je $k \neq 0$, lahko delimo s $k$ in dobimo $x_0 = -\dfrac{n}{k}$. Če je $k = 0$, enačba postane $n = 0$, ki je ali vedno resnična (če je $n = 0$) ali nikoli (če je $n \ne 0$). Zato konstantna funkcija nima ene same ničle.
+**Ničla.** Iz $kx + n = 0$ dobimo $kx = -n$. Če je $k \neq 0$, lahko delimo s $k$ in dobimo $x_0 = -\dfrac{n}{k}$. Če je $k = 0$, enačba postane $n = 0$, ki je ali vedno resnična (če je $n = 0$) ali nikoli (če je $n \ne 0$). Zato konstantna funkcija nima natanko ene ničle.
 
 ## Preveri se
 
 ? (brez računala) Izračunaj ničlo funkcije $f(x) = 3x - 12$. Vpiši vrednost $x$.
-= 4 | 0,01
+= 4 | 0
 ~ -4 | Napačen predznak: $-12$ na desni postane $+12$, zato $3x = 12$ in $x = 4$.
 ~ -12 | To je $n$, presečišče z osjo $y$, ne ničla. Ničla je pri $f(x) = 0$.
 ~ 12 | Pozabil si deliti s $3$: iz $3x = 12$ sledi $x = 4$.
 > Rešimo $3x - 12 = 0$, torej $3x = 12$ in $x = 4$. Vrednost $-12$ je presečišče z osjo $y$ ($f(0) = -12$), ne ničla.
 
 ? (brez računala) Premica poteka skozi točki $(2, 1)$ in $(5, 7)$. Kolikšen je smerni koeficient $k$?
-= 2 | 0,01
+= 2 | 0
 ~ 0,5 | Obrnjen ulomek: razlika $x$ ne sodi v števec. $k = \dfrac{y_2 - y_1}{x_2 - x_1}$.
 ~ 3 | To je samo razlika $x$ ($5 - 2$). Spremembo $y$ moraš deliti z njo.
 ~ 6 | To je samo razlika $y$ ($7 - 1$). Deliti jo moraš še z razliko $x$.

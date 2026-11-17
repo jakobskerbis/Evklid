@@ -377,7 +377,7 @@ F | primitivna funkcija; nedoločeni integral je družina F + C | F'(x) = f(x) |
 C | integracijska konstanta | | | poljubno realno število
 x | spremenljivka, po kateri integriramo | |
 n | eksponent potence | | | $n \ne -1$
-g | notranja funkcija | |
+g | notranja funkcija | | | v pravilu za vsoto druga funkcija pod integralom
 u | nova spremenljivka | u = g(x) |
 k | koeficient notranje funkcije $kx$ | |
 a | konstantni faktor pred prvim členom | |

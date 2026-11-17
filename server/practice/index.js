@@ -1,6 +1,8 @@
 // Register generatorjev in ustvarjanje nalog.
 import crypto from "node:crypto";
 import { makeRng } from "./rng.js";
+import { checkAnswer, fmt } from "./check.js";
+import { unitChoices } from "../../public/enote-izbira.js";
 import { popraviNastevanja } from "../nastevanje.js";
 import { MAT_GENERATORS } from "./generators/mat.js";
 import { FIZ_GENERATORS } from "./generators/fiz.js";
@@ -173,6 +175,18 @@ export function optionsAreTex(task) {
   return opts.length > 0 && !opts.some((o) => o.includes("$")) && opts.some((o) => /\\[a-zA-Z]+/.test(o));
 }
 
+// Ali preverjanje sprejme enoto u kot pravo (ne vrne napake enote) pri pravi številski vrednosti.
+function unitAccepts(answer) {
+  const value = Number.isFinite(answer.value) ? fmt(answer.value, answer.decimals ?? null) : "1";
+  return (u) => {
+    try {
+      return checkAnswer(answer, `${value} ${u}`).kind !== "unit";
+    } catch {
+      return true; // v dvomu enote ne ponudimo
+    }
+  };
+}
+
 // Kar gre k odjemalcu: brez pravilnega odgovora in rešitve.
 export function publicTask(task) {
   const { answer } = task;
@@ -182,7 +196,11 @@ export function publicTask(task) {
     inputHint: task.inputHint || null,
     level: task.level,
     answerType: answer.type,
-    unit: answer.unit || null,
+    // Prave enote odjemalec pred odgovorom ne dobi (pregled PR 786, C): le, ali jo naloga ima, in enote za izbiro.
+    hasUnit: !!answer.unit,
+    // Enote za izbiro (prava in pet drugih po abecedi, public/enote-izbira.js): brez enot, ki jih preverjanje
+    // sprejme kot pravo (velikost črke, unitAlternatives), da izbira ne ponudi »napačne«, ki je v resnici prava.
+    units: answer.unit ? unitChoices(answer.unit, { subject: task.topicId || task.subject || "", seed: task.text, accepts: unitAccepts(answer) }) : null,
     options: answer.type === "choice" ? answer.options : null,
     optionsTex: optionsAreTex(task),
     coefficientCount: answer.type === "coefficients" ? answer.values.length : null,
