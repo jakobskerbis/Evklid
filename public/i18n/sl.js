@@ -4231,7 +4231,7 @@ export default {
   "land.terms": "Pogoji uporabe",
   "land.what": "Kaj je Evklid?",
   "land.why": "Zakaj Evklid?",
-  "land.provider": "{app} razvija in upravlja {name}",
+  "land.provider": "{app} trenutno upravlja {name}",
   "land.contact": "Kontakt",
   "land.noJs": "Za registracijo in prijavo vklopi JavaScript v brskalniku.",
   "open.group": "Odpri v aplikaciji",

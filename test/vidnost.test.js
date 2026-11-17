@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { BRAND } from "../server/brand.js";
+import SL from "../public/i18n/sl.js";
 import { startupFiles } from "../server/startup-files.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS } from "../server/accounts/plans.js";
 import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, PUBLIC_PAGES, DRAFT_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
@@ -19,6 +20,15 @@ const index = readFileSync(new URL("../public/index.html", import.meta.url), "ut
 const landingNoscript = () => index.slice(index.indexOf("<!-- pristajalna-noscript: začetek"), index.indexOf("<!-- pristajalna-noscript: konec"));
 const meta = (html, attr, name) => html.match(new RegExp(`<meta ${attr}="${name}" content="([^"]*)"`))?.[1];
 const textOf = (html) => html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ").replace(/\s+/g, " ");
+// Širina in višina slike JPEG iz glave SOF (brez knjižnic).
+const jpegSize = (b) => {
+  for (let i = 2; i < b.length; ) {
+    const m = b[i + 1], len = b.readUInt16BE(i + 2);
+    if (m >= 0xc0 && m <= 0xcf && m !== 0xc4 && m !== 0xc8 && m !== 0xcc) return [b.readUInt16BE(i + 7), b.readUInt16BE(i + 5)];
+    i += 2 + len;
+  }
+  return null;
+};
 const ldBlocks = (html) => [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
 
 async function withApp(fn) {
@@ -45,7 +55,29 @@ test("vstopna stran: naslov, opis, canonical, Open Graph in Twitter", () => {
   assert.equal(meta(index, "property", "og:site_name"), BRAND.name);
   assert.equal(meta(index, "property", "og:locale"), "sl_SI");
   assert.ok(meta(index, "property", "og:title") && meta(index, "property", "og:description") && meta(index, "property", "og:image"));
-  assert.equal(meta(index, "name", "twitter:card"), "summary");
+  assert.equal(meta(index, "name", "twitter:card"), "summary_large_image");
+  // Opis za iskalnike in predogled povezave: naslov in uvod pristajalne strani (#750, land.title in land.lead v sl.js).
+  assert.ok(desc.startsWith(SL["land.title"]) && desc.includes("Za gimnazijo, vse šolsko leto."), desc);
+  for (const k of ["og:description", "twitter:description"]) {
+    const d = meta(index, k.startsWith("og") ? "property" : "name", k);
+    assert.equal(d, `${SL["land.title"]} ${SL["land.lead"]}`, k);
+    assert.ok(d.length <= 220, `${k} ima ${d.length} znakov`);
+  }
+  assert.equal(meta(index, "name", "twitter:title"), meta(index, "property", "og:title"));
+  // Slika za predogled 1200 × 630 (scripts/og-slika.cjs) obstaja in je res te velikosti; ni del prvega odprtja (test/hitrost-proracun.test.js).
+  const og = meta(index, "property", "og:image");
+  const ogFile = new URL(`../public${og.slice(ORIGIN.length)}`, import.meta.url);
+  assert.ok(og.startsWith(`${ORIGIN}/`) && existsSync(ogFile), og);
+  assert.deepEqual(jpegSize(readFileSync(ogFile)), [1200, 630], og);
+  assert.equal(meta(index, "name", "twitter:image"), og);
+  assert.equal(meta(index, "property", "og:image:width"), "1200");
+  assert.equal(meta(index, "property", "og:image:height"), "630");
+  assert.ok(meta(index, "property", "og:image:alt").startsWith(`${BRAND.name} · ${BRAND.domain}`));
+  // Brez imen drugih aplikacij v opisih in predogledu (j 2026-11-17).
+  for (const k of ["description", "og:description", "twitter:description", "og:image:alt", "og:title", "twitter:title"]) {
+    const v = meta(index, k.startsWith("og") ? "property" : "name", k);
+    assert.ok(!/Euclid|Photomath|Khan|ChatGPT|Gemini|Brainly|Socratic/i.test(v), `${k}: ${v}`);
+  }
   assert.ok(!/hreflang/.test(index), "aplikacija nima jezikovnih naslovov URL, zato brez hreflang");
   // Brez JavaScripta (pomočniki AI strani ne izrišejo) je pristajalna stran s povezavo na /o-evklidu (scripts/pristajalna-noscript.js).
   const noscript = landingNoscript();

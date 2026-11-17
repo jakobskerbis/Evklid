@@ -356,7 +356,9 @@ export async function initAccount({ onReady }) {
   const verified = q.get("verified");
   const billing = q.get("billing");
   const sessionId = q.get("session_id");
-  if (q.toString()) history.replaceState(null, "", location.pathname);
+  // Poizvedbo umaknemo iz naslova, sidro pa ostane (#753): /?vir=pilot#registracija odpre registracijo, ne pristajalne strani.
+  // Oznako vira je public/vir.js shranil že ob uvozu, preden pridemo sem.
+  if (q.toString()) history.replaceState(null, "", location.pathname + location.hash);
   if (verified === "1") toast("E-naslov je potrjen ✓");
   if (verified === "0") toast("Povezava za potrditev ni veljavna, je potekla ali je že uporabljena. Novo pošlješ v zavihku Račun.");
 

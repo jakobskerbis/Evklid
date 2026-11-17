@@ -6,7 +6,8 @@ import { icon } from "./icons.js";
 import { t } from "./i18n.js";
 
 // Kdo stoji za aplikacijo (pregled »kupca« 16. 11. 2026: starši na vstopni strani niso našli ponudnika in kontakta).
-// Isto kot v public/zasebnost.html, točka 1 »Upravljavec« (test/pristajalna.test.js preveri, da se ne razideta).
+// Isto kot v public/zasebnost.html, točka 1 »Upravljavec«, in v public/pogoji.html, točka 1 (»Evklid trenutno upravlja …«);
+// test/pristajalna.test.js preveri, da se ne razidejo.
 export const PROVIDER = Object.freeze({ name: "Jakob Skerbiš", email: "zasebnost@evklid.app" });
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
