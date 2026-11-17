@@ -6,7 +6,7 @@
 import { t, locale } from "./i18n.js";
 import { prilagodiSirino } from "./sirina.js";
 import { icon } from "./icons.js";
-import { zadrziFokus } from "./fokus-okna.js";
+import { zadrziFokus, escZaOkno } from "./fokus-okna.js";
 import { partKey } from "./our-paper-key.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -154,10 +154,15 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
       close();
     }
   });
+  // Esc zapre polo tudi, ko fokus ni v njej (npr. na body, ko izgine element s fokusom). Kot gumb ×: označene
+  // točke ostanejo (score.set ob vsaki spremembi), šibke točke gredo na strežnik (onChecked).
+  const naEsc = (e) => escZaOkno(e, el) && close();
+  document.addEventListener("keydown", naEsc, true);
   let sprosti = () => {}; // zadrziFokus spodaj; close() je varen tudi, če izris prej vrže napako
   const close = () => {
     if (!current) return;
     current = null;
+    document.removeEventListener("keydown", naEsc, true);
     if (touched.size && onChecked) onChecked([...touched].map((key) => ({ key, ok: !!got[key] })));
     sprosti({ vrni: false });
     el.remove();

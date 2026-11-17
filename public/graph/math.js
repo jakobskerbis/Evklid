@@ -1526,6 +1526,10 @@ export function plottableFromText(text) {
   return curve ? out.filter((s) => !/^\s*x\s*(<=|>=|<|>|≤|≥)[^xy=]*$/.test(s)) : out;
 }
 
+/** Ali ima graf izraza iz plottableFromText smisel pod odgovorom inštruktorja: zveza z y (y = 2x + 1, x² + y² = 25,
+ *  y > x) ali funkcija f(x) = …; rešitev »x = 4« ali »x > 3« z eno spremenljivko ne (j 16. 11.). */
+export const worthGraph = (src) => /\by\b/.test(String(src)) || /^\s*[a-hk-wz]\s*\(\s*x\s*\)\s*=/.test(String(src));
+
 // ---------- oblikovanje števil ----------
 
 /** Lepo zapisano število (do 10 mest, brez repov 0,30000000004). */

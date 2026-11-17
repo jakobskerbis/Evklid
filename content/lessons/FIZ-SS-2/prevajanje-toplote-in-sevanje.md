@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Leta 1879 je Jožef Stefan na Dunaju preučeval meritve irskega fizika Johna Tyndalla. Tyndall je segreval platinasto žico in meril, koliko toplote izseva. Pri približno $1200\,^\circ\mathrm{C}$ je žica sevala skoraj dvanajstkrat več kot pri približno $525\,^\circ\mathrm{C}$. Temperatura v stopinjah Celzija se ni povečala niti za trikrat. Od kod torej dvanajstkratnik?
+Leta 1879 je Jožef Stefan na Dunaju preučeval meritve irskega fizika Johna Tyndalla. Tyndall je segreval platinasto žico in meril, koliko toplote izseva. Pri približno $1200\,^\circ\mathrm{C}$ je žica sevala skoraj dvanajstkrat več kot pri približno $525\,^\circ\mathrm{C}$. Temperatura v stopinjah Celzija se ni povečala niti trikrat. Od kod torej dvanajstkratnik?
 
 Stefan je temperaturi zapisal v kelvinih: $798\,\mathrm{K}$ in $1473\,\mathrm{K}$. Razmerje je približno $1{,}85$, njegova četrta potenca pa okoli $11{,}6$. Tako je nastal **Stefanov zakon**: izsevani tok je sorazmeren s četrto potenco absolutne temperature.
 

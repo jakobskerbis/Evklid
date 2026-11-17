@@ -156,9 +156,19 @@ export const supportsFallback = (model) => !/haiku/.test(model);
  * @returns {Promise<{content, text, stopReason, usage, model}>}
  */
 // canRound(round): pred vsakim dodatnim krogom orodij; false = brez novega klica (trda meja AI, server/meje-ai.js).
-export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
+// Besedilo pred klicem orodja (j, 17. 11. 2026: »Želi zeleno barvo. Najbolj smiselno je …« v odgovoru): kratek uvod
+// oziroma razmislek se ne prikaže. Daljše besedilo (razlaga z odstavki, formulami ali bloki) ostane, ker je del odgovora.
+export const isPreamble = (s) => {
+  const t = String(s || "").trim();
+  return t.length <= 300 && !/\n\s*\n|\$|<</.test(t);
+};
+
+// onPhase("think"): model je začel razmišljati (prvi blok razmišljanja, preden je kaj besedila); odjemalec pokaže
+// »Razmišljam …«. noThinking: klic brez razmišljanja (samo Haiku, poskus EVKLID_HITRI_KORAK, server/hitri-korak.js).
+// Rezultat ima timing: { thinking, firstThinkMs, firstTextMs, totalMs } od začetka klica (server/casi-odgovora.js).
+export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, onRetract = null, onPhase = null, noThinking = false, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
   const { model, effort, max_tokens } = modeParams(mode);
-  if (isMockMode()) return mockReply({ messages, onText, signal, model, onToolUse: tools?.length ? onToolUse : null });
+  if (isMockMode()) return mockReply({ messages, onText, onPhase, signal, model, onToolUse: tools?.length ? onToolUse : null });
 
   const params = {
     model,
@@ -183,6 +193,12 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   // Orodja (npr. nastavitve iz klepeta) so pred sistemskim promptom in enaka za vse učence,
   // zato ostanejo v istem predpomnjenem začetku.
   if (tools?.length) params.tools = tools;
+  // Brez razmišljanja dovoli samo Haiku (Opus 5.5 ga ne dovoli izklopiti, glej quickParams).
+  const thinkingOff = (!!noThinking && /haiku/.test(model)) || params.thinking?.type === "disabled";
+  // quickParams: thinking disabled in effort low (brez razmišljanja višji effort vrne 400, npr. EVKLID_EFFORT=medium).
+  if (noThinking && /haiku/.test(model)) Object.assign(params, quickParams(model));
+  const t0 = Date.now();
+  const timing = { thinking: !thinkingOff, firstThinkMs: null, firstTextMs: null, totalMs: null };
   if (supportsFallback(model) && fallback !== false) {
     params.betas = ["server-side-fallback-2026-07-01"];
     params.fallbacks = "default";
@@ -196,7 +212,12 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   let finalModel = model;
   let toolCalls = 0;
   let msgs = messages;
+  // Besedilo kroga, ki se konča s klicem orodja (»Želi zeleno barvo. Najbolj smiselno je …«), je razmislek pred
+  // dejanjem, ne odgovor (j, 17. 11. 2026): ne gre v odgovor; odjemalec ga ob onRetract pobriše. Če po orodju
+  // modela ne napiše ničesar več, ostane zadnje tako besedilo (da odgovor ni prazen).
+  let dropped = "";
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+    const roundStart = text.length;
     if (round > 0 && canRound && !canRound(round)) break;
     // Prekinjeno pred zahtevo (učenec je zaprl aplikacijo med pripravo, npr. povzetkom): klic ne odide in se ne
     // šteje (pregled #462 S2: prej fantomski strošek vhoda in odgovor Opusa v dnevni meji).
@@ -236,6 +257,10 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
         } else if (event.type === "content_block_start" && /thinking/.test(event.content_block?.type || "")) {
           thinkAt = Date.now();
           firstBlockAt ||= thinkAt;
+          if (timing.firstThinkMs === null) {
+            timing.firstThinkMs = thinkAt - t0;
+            if (!text) onPhase?.("think");
+          }
         } else if (event.type === "content_block_stop" && thinkAt) {
           thinkMs += Date.now() - thinkAt;
           thinkAt = 0;
@@ -245,6 +270,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
           const d = event.delta || {};
           deltaBytes += Buffer.byteLength(String(d.text ?? d.thinking ?? d.partial_json ?? d.signature ?? ""), "utf8");
           if (d.type === "text_delta") {
+            if (timing.firstTextMs === null) timing.firstTextMs = Date.now() - t0;
             const chunk = gap + d.text;
             gap = "";
             text += chunk;
@@ -290,6 +316,11 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     content.push(...final.content);
     const calls = final.content.filter((b) => b.type === "tool_use");
     if (stopReason !== "tool_use" || !calls.length || !onToolUse) break;
+    if (text.length > roundStart && isPreamble(text.slice(roundStart))) {
+      dropped = text.slice(roundStart).trim();
+      text = text.slice(0, roundStart);
+      onRetract?.(text);
+    }
     const results = [];
     for (const c of calls) {
       toolCalls++;
@@ -298,7 +329,9 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     }
     msgs = [...msgs, { role: "assistant", content: final.content }, { role: "user", content: results }];
   }
-  return { content, text, stopReason, usage, model: finalModel, toolCalls };
+  if (!text.trim() && dropped) text = dropped;
+  timing.totalMs = Date.now() - t0;
+  return { content, text, stopReason, usage, model: finalModel, toolCalls, timing };
 }
 
 const MAX_TOOL_ROUNDS = 3;
@@ -386,7 +419,9 @@ function mockAnswer(userText) {
   );
 }
 
-async function mockReply({ messages, onText, signal, model, onToolUse = null }) {
+async function mockReply({ messages, onText, onPhase = null, signal, model, onToolUse = null }) {
+  const t0 = Date.now();
+  onPhase?.("think"); // kot pravi model: najprej razmišlja (odjemalec pokaže »Razmišljam …«)
   let text = null;
   let toolCalls = 0;
   // Nastavitve iz klepeta tudi brez ključa (najpogostejše prošnje, glej server/chat-settings.js).
@@ -398,12 +433,13 @@ async function mockReply({ messages, onText, signal, model, onToolUse = null }) 
   }
   if (text === null) text = mockAnswer(lastUserText(messages));
   const delay = Number(process.env.EVKLID_MOCK_DELAY_MS ?? 15);
+  const firstTextMs = Date.now() - t0;
   for (let i = 0; i < text.length; i += 6) {
     if (signal?.aborted) break;
     onText(text.slice(i, i + 6));
     if (delay) await new Promise((r) => setTimeout(r, delay));
   }
-  return { content: [{ type: "text", text }], text, stopReason: "end_turn", usage: { input_tokens: 0, output_tokens: 0 }, model, toolCalls };
+  return { content: [{ type: "text", text }], text, stopReason: "end_turn", usage: { input_tokens: 0, output_tokens: 0 }, model, toolCalls, timing: { thinking: true, firstThinkMs: 0, firstTextMs, totalMs: Date.now() - t0 } };
 }
 
 // ---------------------------------------------------------------------------
@@ -412,15 +448,16 @@ async function mockReply({ messages, onText, signal, model, onToolUse = null }) 
 
 export const OCR_MODEL = env("EVKLID_OCR_MODEL", MODEL);
 
-export async function readHandwriting({ imageBase64, mediaType = "image/png", answerType = "number", unit = null }) {
+// Prave enote modelu ne pošljemo (j, 17. 11. 2026): bralec bi jo lahko dopisal in izdal odgovor; enota je neobvezna.
+export async function readHandwriting({ imageBase64, mediaType = "image/png", answerType = "number", withUnit = false }) {
   if (isMockMode()) return { text: null, mock: true, usage: null, model: OCR_MODEL };
   const kind =
     answerType === "fraction"
       ? "ulomek (zapiši kot a/b)"
       : answerType === "coefficients"
         ? "zaporedje koeficientov, ločenih z vejico (npr. 2, 1, 2)"
-        : unit
-          ? `število z enoto (npr. 12,5 ${unit})`
+        : withUnit
+          ? "število, morda z enoto (enoto prepiši le, če je napisana; ne dodajaj je)"
           : "število ali kratek izraz";
   const final = await getClient().messages.create({
     model: OCR_MODEL,

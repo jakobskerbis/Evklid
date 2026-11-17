@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -463,7 +463,7 @@ R_k | upor k-te veje | | Ω
 P_k | moč k-te naprave | P_k = U I_k | W
 R_{23} | nadomestni upor vzporedno vezanih R₂ in R₃ | R_{23} = \dfrac{R_2 R_3}{R_2 + R_3} | Ω
 U_{23} | napetost na vzporednem delu | | V
-P_1 | moč na uporniku R₁ | | W
+P_1, P_2 | moč posamezne naprave ali upornika | | W
 A | opravljeno delo (porabljena energija) | A = P \cdot t | J | $1\,\text{J} = 1\,\text{W}\cdot\text{s}$
 t | čas | | s
 :::

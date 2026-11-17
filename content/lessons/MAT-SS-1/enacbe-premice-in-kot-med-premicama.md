@@ -86,7 +86,7 @@ $$k = \tan\alpha$$
 
 Kot iz $k$ dobiš na računalu s tipko $\tan^{-1}$ (pogosto SHIFT in tan). Računalo mora biti nastavljeno na stopinje (DEG). Tu: $\alpha = \tan^{-1} 0{,}75 \approx 36{,}87^\circ$. Pri $k < 0$ računalo vrne negativen kot; naklonski kot je takrat $180^\circ$ minus kot, ki ga dobiš za $|k|$ (npr. pri $k = -1$ je $\alpha = 180^\circ - 45^\circ = 135^\circ$).
 
-Nekaj vrednosti velja zapomniti (dobimo jih iz enakokrakega pravokotnega trikotnika in iz polovice enakostraničnega trikotnika). Pri $k = 1$ sta dvig in pomik enaka, trikotnik je enakokrak in zato $\alpha = 45^\circ$:
+Nekaj vrednosti si velja zapomniti (dobimo jih iz enakokrakega pravokotnega trikotnika in iz polovice enakostraničnega trikotnika). Pri $k = 1$ sta dvig in pomik enaka, trikotnik je enakokrak in zato $\alpha = 45^\circ$:
 
 | $k$ | $\alpha$ |
 |---|---|

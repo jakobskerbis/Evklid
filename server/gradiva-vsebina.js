@@ -11,6 +11,7 @@ import { renderMd, shell } from "./textbook-print.js";
 import { speakMarkdown } from "./govor.js";
 import { checkIdentities } from "./lesson-identity.js";
 import { ENGINES } from "../public/sim/index.js";
+import { dateText } from "../public/datum.js";
 
 export const GRADIVA_DIR = process.env.EVKLID_GRADIVA || path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "content", "gradiva");
 
@@ -156,7 +157,7 @@ export function checkGradivo(vrsta, src, topicId = null) {
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const today = () => new Date().toLocaleDateString("sl-SI", { day: "numeric", month: "long", year: "numeric" });
+const today = () => dateText(new Date(), "sl-SI"); // »17. novembra 2026« (public/datum.js)
 
 const PAGE_CSS = `
   .gr { font: 10.5pt/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }

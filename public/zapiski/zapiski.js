@@ -6,6 +6,7 @@ import { t as tg, currentLang, srToLatin } from "../i18n.js";
 import { uiChain } from "../i18n/languages.js";
 import { zavrzi } from "../odgovor.js";
 import { icon } from "../icons.js";
+import { dateText } from "../datum.js";
 import { zaznajNujno, izsiljevanje, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, opomba } from "../nujno.js";
 import SL from "./sl.js";
 
@@ -58,7 +59,7 @@ const tag = (ok) =>
     : `<span class="zap-tag zap-unchecked">${icon("info")} ${esc(t("cards.notesUnchecked"))}</span>`;
 const errText = (err) => {
   const c = err?.body?.code;
-  if (c === "zapiski_strani") return t("zap.errPages", { date: new Date(err.body.pages?.renews || Date.now()).toLocaleDateString(currentLang(), { day: "numeric", month: "long" }) });
+  if (c === "zapiski_strani") return t("zap.errPages", { date: dateText(err.body.pages?.renews || Date.now(), currentLang(), { day: "numeric", month: "long" }) });
   if (c === "zapiski_neucno") return t("zap.errUnrelated");
   if (c === "zapiski_snov") return t("zap.errSubject");
   if (c === "zapiski_prazno" || c === "zapiski_ai") return t("zap.errEmpty");
@@ -110,7 +111,7 @@ async function renderHome(msg = "", nujno = null) {
   el.querySelector('[data-act="shot"]').addEventListener("click", () => el.querySelector("[data-shot]").click());
   el.querySelector('[data-act="gallery"]').addEventListener("click", () => el.querySelector("[data-file]").click());
   el.querySelector('[data-act="paste"]').addEventListener("click", () => {
-    S = { mode: "check", pages: [{ text: "", kind: "besedilo" }], photos: 0 };
+    S = { mode: "check", pages: [{ text: "", kind: "besedilo" }], photos: 0, quota: p }; // kvota strani tudi na zaslonu za lepljenje
     renderCheck();
   });
   for (const inp of el.querySelectorAll("input[type=file]")) inp.addEventListener("change", () => readPhotos([...inp.files].slice(0, MAX)));
@@ -220,7 +221,8 @@ function renderCheck() {
         )
         .join("")}
       ${paste ? `<label class="zap-keep"><input type="checkbox" name="keep"${S.keep ? " checked" : ""}> <span>${esc(t("zap.keep"))}</span></label>
-      <p class="muted zap-note">${esc(t("zap.keepHint"))}</p>` : ""}
+      <p class="muted zap-note">${esc(t("zap.keepHint"))}</p>
+      ${S.quota ? `<p class="muted zap-note">${esc(t("zap.pagesLeft", { left: S.quota.left, limit: S.quota.limit }))}</p>` : ""}` : ""}
       <div class="nujno-slot">${S.nujno ? nujnoHtml(S.nujno) : ""}</div>
       <p class="zap-msg" role="alert"></p>
       <div class="actions zap-actions">
@@ -279,13 +281,15 @@ function renderResult() {
   const el = v();
   const rich = (s) => D.renderRich(s);
   const opt = (o, tex) => (tex ? rich(`$${o}$`) : rich(o));
+  // Brez kartic (meja porabe, ni jih bilo mogoče narediti) obvestilo ne obljublja »snov in kartice«.
+  const noCards = aiOff || (cards ? !cards.length : !note.cards);
   el.innerHTML = `
     <button type="button" class="ghost back zap-back">${icon("arrow-left")}<span>${esc(t("cards.notes"))}</span></button>
     ${S.nujno ? nujnoHtml(S.nujno) : ""}
     <h1 class="with-icon" dir="auto">${icon("notebook-pen")} ${esc(note.title)}</h1>
     ${note.topics.length ? `<p>${esc(t("zap.topics"))}</p><ul class="zap-topics">${note.topics.map((x) => `<li dir="auto">${icon("book-open")} ${esc(x.name)}</li>`).join("")}</ul>` : `<p class="muted">${esc(t("zap.noTopics"))}</p>`}
-    ${printed ? `<p class="muted zap-note">${esc(t("zap.printed"))}</p>` : ""}
-    ${notKept ? `<p class="muted zap-note">${esc(t("zap.notKept"))}</p>` : ""}
+    ${printed ? `<p class="muted zap-note">${esc(t(noCards ? "zap.printedNoCards" : "zap.printed"))}</p>` : ""}
+    ${notKept ? `<p class="muted zap-note">${esc(t(noCards ? "zap.notKeptNoCards" : "zap.notKept"))}</p>` : ""}
     ${quiz.length ? `<section class="zap-quiz"><h2>${icon("list-checks")} ${esc(t("zap.quiz"))} <small class="muted">${quiz.length}</small></h2><p class="muted">${esc(t("zap.quizHint"))}</p>
       <ol>${quiz
         .map(

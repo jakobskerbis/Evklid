@@ -103,7 +103,9 @@ test("pregled 463-2 §5: p, q, a, S, e, α, β po kontekstu", () => {
   has("MAT", "Krožnica", kr, "p", /središča/);
   has("MAT", "Krožnica", kr, "q", /središča/);
   has("MAT", "Kvadratna funkcija", "Temenska oblika $f(x) = a(x - p)^2 + q$.", "p", /temena/);
-  none("MAT", "Transformacije grafov", "Premik grafa: $g(x) = f(x - p) + q$.", "q");
+  // f(x − p) + q: premik grafa (j, 16. 11. 2026), ne teme (prej raje nič).
+  has("MAT", "Transformacije grafov", "Premik grafa: $g(x) = f(x - p) + q$.", "q", /navpični premik/);
+  has("MAT", "Transformacije grafov", "Premik grafa: $g(x) = f(x - p) + q$.", "p", /vodoravni premik/);
   none("MAT", "Odvod", "Za funkcijo $f(x) = ax^3 + 3x^2$ velja $f'(2) = -36$.", "a");
   none("MAT", "Logaritemska funkcija in enačbe", "Velja $\\log_a x^2 = 2\\log_a x$.", "a");
   has("MAT", "Kvadratna enačba", "Reši $2ax^2 + bx + c = 0$.", "a", /vodilni/);

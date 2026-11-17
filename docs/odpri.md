@@ -13,5 +13,11 @@ sredi pogovora pokaže Evklidova orodja.
 - `public/odpri.js` nariše gumbe pod sporočilom: poskus se odpre v oknu nad pogovorom (× , Esc, Nazaj) z nastavljenimi
   drsniki (`nastavi`, po oznaki drsnika), 3D model z osvetljenim delom (`#organ-srce?del=…`, pregledovalnik.js) ali
   struktura v atlasu (`#atlas?izberi=…`), lekcija, igra (`openReward`), formula v sporočilu z gumbom »Zbirka formul«,
-  premičen graf v sporočilu (vrstice `a = 1` so drsniki, »Odpri v kalkulatorju«) in skica v SVG.
+  premičen graf v sporočilu (vrstice `a = 1` so drsniki, »Odpri v kalkulatorju«) in skica v SVG. Okvir z grafom,
+  skico ali formulo je takoj za besedilom, pred gumbi z izbirami in »Razloži podrobneje«.
+- Okno grafa (`public/graph/okno.js`): pokaže ničle, pole, presečišče z osjo y, ekstreme in prevoje (vrednosti ob polu
+  le do 5./95. percentila, razmerje osi med 1 : 5 in 8 : 1); navpične, vodoravne in poševne asimptote so črtkane z
+  oznako (`x = 1`, `y = x + 1`). Neobvezno okno v bloku, `<<GRAF ["y = 1/x", {"x": [-3, 3], "y": [-4, 4]}]>>` (ena
+  ali obe osi), ostane nespremenjeno; inštruktorjev prompt ga (še) ne omenja. Ob krožnici, parametrični ali polarni
+  krivulji ali območju ostane običajno okno.
 - Preizkus brez API ključa: v klepet napiši »pokaži poskus« (vnaprej pripravljen odgovor v `server/claude.js`).

@@ -356,7 +356,7 @@ točka: 0; 3 | (0; 3) | desno
 > Enačba $x(30 - 2x)^2 = 1000$ ne ve, da gre za pekač. Pri $x = 18{,}66$ je $(30 - 2x)^2$ sicer pozitiven, a stranica dna $30 - 2x \approx -7{,}3$ ni dolžina. Geometrijska omejitev to rešitev izloči.
 
 ? (višja raven) Premica $y = x + n$ se dotika krožnice $x^2 + y^2 = 2$. Izračunaj pozitivni $n$ (brez računala).
-= 2 | 0,01
+= 2 | 0
 ~ 1,41 | To je polmer $\sqrt{2}$. Število $n$ je presečišče premice z osjo $y$, ne razdalja premice od središča.
 ~ 4 | To je $n^2$. Iz $n^2 = 4$ vzemi še koren.
 > Vstavimo: $2x^2 + 2nx + n^2 - 2 = 0$. Diskriminanta $4n^2 - 8(n^2 - 2) = 16 - 4n^2 = 0$, zato $n^2 = 4$ in $n = 2$.

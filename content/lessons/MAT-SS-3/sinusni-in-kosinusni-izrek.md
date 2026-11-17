@@ -303,7 +303,7 @@ Neznani kot izračunamo s sinusnim izrekom, ta pa da le njegov sinus. Med $0^\ci
 + Korak 3
 - Vsi koraki so pravilni.
 ~ Kalkulator da le ostri kot. Preveriti je treba še $180^\circ - 64{,}2^\circ$.
-> Tudi $\alpha \approx 115{,}8^\circ$ ima sinus $0{,}9$, s $\beta = 30^\circ$ pa je vsota še pod $180^\circ$ ($\gamma \approx 34{,}2^\circ$). Trikotnika sta dva.
+> Tudi $\alpha \approx 115{,}8^\circ$ ima sinus $0{,}9$, z $\beta = 30^\circ$ pa je vsota še pod $180^\circ$ ($\gamma \approx 34{,}2^\circ$). Trikotnika sta dva.
 
 ? Smučarski tekač preteče $3\,\mathrm{km}$ proti vzhodu, nato zavije za $50^\circ$ v levo in preteče še $2\,\mathrm{km}$. Kako daleč je od starta?
 - $2{,}30\,\mathrm{km}$
@@ -316,7 +316,7 @@ Neznani kot izračunamo s sinusnim izrekom, ta pa da le njegov sinus. Med $0^\ci
 > Notranji kot je $180^\circ - 50^\circ = 130^\circ$. Torej $c^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $c \approx 4{,}55\,\mathrm{km}$.
 
 ? (brez računala) V trikotniku je $a = 7\,\mathrm{cm}$, $b = 8\,\mathrm{cm}$ in $\gamma = 120^\circ$. Koliko centimetrov meri $c$?
-= 13 cm | 0,01
+= 13 cm | 0
 ~ 7,55 | Vzel si $\cos 120^\circ = 0{,}5$. Kot je top, zato je $\cos 120^\circ = -0{,}5$ in se popravek $2ab \cdot 0{,}5$ prišteje.
 ~ 10,63 | To je $\sqrt{49 + 64}$, Pitagorov izrek. Trikotnik ni pravokoten, zato manjka popravek $-2ab\cos\gamma$.
 ~ 169 | To je $c^2$. Na koncu moraš še koreniti.
@@ -331,6 +331,15 @@ vrednost: 62*sin(74°)/sqrt(85^2+62^2-2*85*62*cos(74°)) | 0.6596
 vrednost: asin(62*sin(74°)/sqrt(85^2+62^2-2*85*62*cos(74°)))*180/pi | 41.27
 vrednost: sqrt(85^2+62^2-2*85*62*cos(74°))/(2*sin(74°)) | 47.00
 vrednost: asin(62*sin(74°)/90.4)*180/pi | 41.24
+vrednost: sqrt(120^2+150^2-2*120*150*cos(20°)) | 55.4
+vrednost: 400/sin(57°)*sin(71°) | 451.0
+vrednost: 400/sin(57°)*sin(52°) | 375.8
+vrednost: acos((20^2+18^2-7.32^2)/(2*20*18))*180/pi | 21.4
+vrednost: asin(18*sin(acos((20^2+18^2-7.32^2)/(2*20*18)))/7.32)*180/pi | 63.7
+vrednost: acos((2.4^2+3.1^2-3.5^2)/(2*2.4*3.1))*180/pi | 77.9
+vrednost: sqrt(5^2+7^2-2*5*7*cos(60°)) | 6.24
+vrednost: sqrt(3^2+2^2-2*3*2*cos(130°)) | 4.55
+vrednost: sqrt(7^2+8^2-2*7*8*cos(120°)) | 13
 >>
 
 :::simboli

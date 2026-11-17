@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -27,7 +27,7 @@ Ko je ulov večji od prirastka, populacija upada, z manj ribami pa se manjša tu
 - Voda: gnojila (nitrati, fosfati) s polj povzročijo **evtrofikacijo**. Alge se razrastejo, odmrejo, razkrojevalci jih razgrajujejo in pri tem porabijo kisik, zato ribe poginejo.
 - Tla in morje: pesticidi, težke kovine, plastika.
 
-Nekatere snovi (DDT, živo srebro) se v telesu ne razgradijo in se v njem kopičijo, DDT na primer v maščobi. Ker na višjo raven preide le okoli $10\,\%$ energije, mora plenilec pojesti mnogo več biomase, kot je sam tehta, strup pa ostane v njem. Koncentracija zato od ravni do ravni narašča. Temu pravimo **biomagnifikacija**. DDT je ujedam, npr. ribjemu orlu, tanjšal jajčne lupine, dokler ga niso prepovedali.
+Nekatere snovi (DDT, živo srebro) se v telesu ne razgradijo in se v njem kopičijo, DDT na primer v maščobi. Ker na višjo raven preide le okoli $10\,\%$ energije, mora plenilec pojesti mnogo več biomase, kot sam tehta, strup pa ostane v njem. Koncentracija zato od ravni do ravni narašča. Temu pravimo **biomagnifikacija**. DDT je ujedam, npr. ribjemu orlu, tanjšal jajčne lupine, dokler ga niso prepovedali.
 
 :::premisli
 Ribji orel v življenju poje veliko kilogramov rib, sam pa tehta le nekaj kilogramov. Kam gre energija iz teh rib in kam DDT iz njih?
@@ -152,7 +152,7 @@ $t = \dfrac{18\,\mathrm{km}}{1{,}5\,\mathrm{km/leto}} = 12$ let. Naravovarstveni
 
 ## Drugače: Kot zgodba
 
-Sredi 20. stoletja je v severni Evropi račja kuga, bolezen, ki jo povzroča plesni podoben organizem, pomorila domače rake. Ribiči so se domislili: pripeljimo ameriškega raka, ki za kugo ne zboli. Tako je signalni rak pripotoval čez ocean.
+Do srede 20. stoletja je v severni Evropi račja kuga, bolezen, ki jo povzroča plesni podoben organizem, pomorila domače rake. Ribiči so se domislili: pripeljimo ameriškega raka, ki za kugo ne zboli. Tako je signalni rak pripotoval čez ocean.
 
 Niso vedeli, da kugo nosi s seboj. Kamor je prišel, so domači raki poginili. Ljudje so ga prenašali iz reke v reko, spore kuge so potovale na mokrih škornjih in mrežah. Tako je prišel tudi v nekatere slovenske reke.
 

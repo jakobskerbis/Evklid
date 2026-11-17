@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -153,7 +153,7 @@ $N_\mathrm{endo} = 600 \cdot 9 = 5400$. Celica mora odščipniti približno $540
 - Pot beljakovine za izločanje: ribosomi na zrnatem ER → Golgijev aparat (cis → trans) → sekrecijski vezikel → eksocitoza.
 - Gladki ER: lipidi, steroidni hormoni, razstrupljanje, zaloga $\mathrm{Ca^{2+}}$. Lizosomi: encimi pri $\mathrm{pH} \approx 5$ razgradijo zajeto snov.
 - Stalno izločanje teče ves čas, uravnavano (inzulin, živčni prenašalci) šele po signalu.
-- Površina vezikla je sorazmerna s $d^2$: zrnce s trikrat večjim premerom ima devetkrat več membrane.
+- Površina vezikla je sorazmerna z $d^2$: zrnce s trikrat večjim premerom ima devetkrat več membrane.
 
 ## Drugače: Korak za korakom s številkami
 

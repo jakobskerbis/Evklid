@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-**Tristo in tristo je tristo?** Dva atleta na treningu vlečeta težke sani, vsak s svojo vrvjo. Vsak vleče s silo $300\,\mathrm{N}$. Vrvi med seboj oklepata kot $120^\circ$. S kolikšno skupno silo vlečeta sani? Odgovor je $300\,\mathrm{N}$, toliko kot bi vlekel en sam atlet.
+**Tristo in tristo je tristo?** Dva atleta na treningu vlečeta težke sani, vsak s svojo vrvjo. Vsak vleče s silo $300\,\mathrm{N}$. Vrvi med seboj oklepata kot $120^\circ$. S kolikšno skupno silo vlečeta sani? Odgovor je $300\,\mathrm{N}$, toliko, kot bi vlekel en sam atlet.
 
 Zveni napačno, a ni. Sila nima le velikosti, ampak tudi smer. Ko vlečeta vsak malo vstran, se del njunega truda izniči. Količinam z velikostjo in smerjo pravimo **vektorji**: sila, hitrost, premik žoge po igrišču.
 

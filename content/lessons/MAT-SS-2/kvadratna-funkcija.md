@@ -397,7 +397,7 @@ c) Zapišite zalogo vrednosti funkcije $f$ in interval, na katerem funkcija nara
 
 ### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
 
-Kmet želi ob ravnem zidu hleva z $120\,\text{m}$ ograje ograditi pravokoten pašnik. Ob zidu ograje ne postavi. Pašnik s pregrado, ki je pravokotna na zid, razdeli na dva dela; tudi pregrada je iz iste ograje. Z $x$ označimo dolžino stranice pašnika, ki je pravokotna na zid, v metrih.
+Kmet želi ob ravnem zidu hleva s $120\,\text{m}$ ograje ograditi pravokoten pašnik. Ob zidu ograje ne postavi. Pašnik s pregrado, ki je pravokotna na zid, razdeli na dva dela; tudi pregrada je iz iste ograje. Z $x$ označimo dolžino stranice pašnika, ki je pravokotna na zid, v metrih.
 
 a) Pokažite, da je ploščina pašnika $P(x) = -3x^2 + 120x$ (v $\text{m}^2$), in zapišite, za katere $x$ je model smiseln. (3 točke)
 b) Določite mere pašnika z največjo ploščino in to ploščino. (3 točke)

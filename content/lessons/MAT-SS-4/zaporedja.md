@@ -308,7 +308,7 @@ Limita je ena sama: če bi imelo zaporedje limiti $L_1 \ne L_2$, bi izbrali $\va
 ? (brez računala) Kolikšna je $\lim\limits_{n \to \infty} \dfrac{5n^2 - 2}{2n^2 + n}$? Vpiši kot decimalno število.
 = 2,5 | 0,01
 ~ 1 | Toliko je člen $a_1$, »neskončno deljeno z neskončno« pa ni $1$. Deli z $n^2$.
-> Delimo z $n^2$: $\dfrac{5 - \frac{2}{n^2}}{2 + \frac{1}{n}} \to \dfrac{5}{2} = 2{,}5$. Števec raste čez vse meje, a enako hitro tudi imenovalec, zato limita obstaja.
+> Delimo z $n^2$: $\dfrac{5 - \frac{2}{n^2}}{2 + \frac{1}{n}} \to \dfrac{5}{2} = 2{,}5$. Števec raste čez vse meje, a z enako potenco $n$ tudi imenovalec, zato limita obstaja.
 
 ? Prvo uro poti zaradi gneče prevoziš le $60\,\text{km}$, nato vsako uro $90\,\text{km}$. Povprečna hitrost po $n$ urah je $v_n = 90 - \dfrac{30}{n}$ (v km/h) in ima limito $90\,\text{km/h}$. Od katere ure naprej je za manj kot $2\,\text{km/h}$ pod limito? Vpiši $n$.
 = 16 | 0

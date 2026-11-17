@@ -17,7 +17,9 @@
 .tb-book p { margin: 0; }
 .tb-book .eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; }
 .tb-book-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.tb-jump { padding: 8px 0; background: var(--bg, var(--surface)); }
+.tb-jump { padding: 8px 0; background: var(--bg, var(--surface)); flex-wrap: wrap; } /* vsi letniki in »Vse« vidni, brez skritega drsenja */
+/* Telefon: tudi kratek korak lahko pride na vrh zaslona pod glavo (textbook.js wireSteps), sicer bi stran ostala pri »Testu predznanja«. */
+@media (max-width: 759px) { #view-textbook .tb-step { min-height: calc(100dvh - 150px); } }
 .tb-mine { margin-inline-start: 4px; padding: 1px 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 0.72rem; font-weight: 800; }
 .tb-jump .active .tb-mine { background: var(--surface); }
 .tb-part { scroll-margin-top: 130px; }
@@ -137,8 +139,8 @@
 .tb-step-btn.next { border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
 .tb-step-btn svg { width: 24px; height: 24px; margin: 0; }
 .tb-step-btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 3px; }
-.tb-step-btn:disabled { cursor: default; box-shadow: var(--shadow); border-color: var(--border); background: var(--surface); color: var(--muted); }
-.tb-step-btn:disabled svg { opacity: 0.4; }
+/* Na prvem koraku ni Nazaj, na zadnjem ni Naprej (j, 17. 11. 2026): krog izgine, mesto ostane (števec ostane na sredini). */
+.tb-step-btn:disabled { visibility: hidden; }
 @media (hover: hover) { .tb-step-btn:not(:disabled):hover { border-color: var(--accent); } .tb-step-btn.next:not(:disabled):hover { filter: brightness(1.08); } }
 [dir="rtl"] .tb-step-btn svg { transform: scaleX(-1); }
 .tb-step-count {
