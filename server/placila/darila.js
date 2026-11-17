@@ -47,7 +47,7 @@ export function migrateGifts(db) {
 
 const later = (iso, now = Date.now()) => !!iso && Date.parse(iso) > now;
 
-// ctx: { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, recordConsent, paidActive }
+// ctx: { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, paidActive }
 export function mountGifts(app, ctx) {
   const {
     db,
@@ -59,7 +59,6 @@ export function mountGifts(app, ctx) {
     baseUrl,
     isMinor,
     birthMissing = () => false,
-    recordConsent,
     paidActive,
     pilotOf = () => false, // član pilota: brez nakupa darilne kode (j 2026-11-10)
   } = ctx;
@@ -244,7 +243,7 @@ export function mountGifts(app, ctx) {
         session.id,
         id,
       );
-      recordConsent(p.id, p.email, "gift", req.body?.lang);
+      // Soglasje je že zapisano zgoraj (besedili za darilo); recordConsent bi dodal napačno besedilo naročnine (#815 M1).
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe darilo:", err.message);
