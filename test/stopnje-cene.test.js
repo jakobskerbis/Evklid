@@ -1113,17 +1113,43 @@ test("preizkus, koda in bonus: skupni bazen vseh računov brez plačila", async 
   }
 });
 
-test("odstop v 14 dneh: vračilo sorazmerno porabi (manjše od deleža časa in neporabljene meje AI)", async () => {
-  const { withdrawalRefundCents, WITHDRAWAL_TEXT } = await import("../server/accounts/billing.js");
+test("odstop v 14 dneh: vračilo = delež preostalega časa, poraba AI ga ne zniža (j 2026-11-16, #765)", async () => {
+  const { withdrawalRefundCents, WITHDRAWAL_TEXT, CREDIT_WITHDRAWAL_TEXT, WITHDRAWAL_VERSION, consentRecordText } = await import("../server/accounts/billing.js");
   const day = 86400000;
-  // 2 dni od 30, AI porabljen ves: nič.
-  assert.equal(withdrawalRefundCents({ paidCents: 999, startMs: 0, endMs: 30 * day, nowMs: 2 * day, aiCapUsd: 1.9, aiSpentUsd: 1.9 }).cents, 0);
-  // 2 dni od 30, AI 10 %: min(28/30 = 0,933; 0,9) = 0,9.
-  assert.equal(withdrawalRefundCents({ paidCents: 1000, startMs: 0, endMs: 30 * day, nowMs: 2 * day, aiCapUsd: 2, aiSpentUsd: 0.2 }).cents, 900);
-  // Nič porabe AI: delež časa.
-  assert.equal(withdrawalRefundCents({ paidCents: 3000, startMs: 0, endMs: 30 * day, nowMs: 10 * day, aiCapUsd: 2, aiSpentUsd: 0 }).cents, 2000);
-  assert.match(WITHDRAWAL_TEXT, /14 dneh/);
-  assert.doesNotMatch(WITHDRAWAL_TEXT, /sorazmerni del plačila/);
+  const refund = (paidCents, len, d, aiCapUsd, aiSpentUsd) => withdrawalRefundCents({ paidCents, startMs: 0, endMs: len * day, nowMs: d * day, aiCapUsd, aiSpentUsd }).cents;
+  // Primeri iz PR: [plačilo, dolžina obdobja v dneh, dan odstopa, meja AI, poraba AI] → vračilo v centih.
+  const cases = [
+    // Mesečna OŠ 9,99 € (30 dni, meja 1,9 $): 999 × (30 − d) / 30, navzdol.
+    [999, 30, 1, 1.9, 0.19, 965], [999, 30, 1, 1.9, 1.9, 965],
+    [999, 30, 7, 1.9, 0.19, 765], [999, 30, 7, 1.9, 1.9, 765],
+    [999, 30, 13, 1.9, 0.19, 566], [999, 30, 13, 1.9, 1.9, 566],
+    // Letna OŠ 99 € (365 dni, meja 12 × 1,7 $).
+    [9900, 365, 1, 20.4, 1.7, 9872], [9900, 365, 7, 20.4, 1.7, 9710], [9900, 365, 13, 20.4, 1.7, 9547],
+    // Paket pred testom 14 dni 8,49 € (meja 1,5 $).
+    [849, 14, 1, 1.5, 1.5, 788], [849, 14, 7, 1.5, 1.5, 424], [849, 14, 13, 1.5, 1.5, 60],
+  ];
+  for (const [paid, len, d, cap, spent, want] of cases) assert.equal(refund(paid, len, d, cap, spent), want, `${paid} / ${len} d / dan ${d} / AI ${spent} $`);
+  // Ves AI porabljen ali poraba nad mejo: vračilo ostane delež časa (prej 0).
+  assert.equal(refund(999, 30, 2, 1.9, 5), Math.floor((999 * 28) / 30));
+  // Robovi: po koncu obdobja 0, pred začetkom vse, prazno obdobje 0.
+  assert.equal(refund(999, 30, 31, 1.9, 0), 0);
+  assert.equal(refund(999, 30, -1, 1.9, 0), 999);
+  assert.equal(withdrawalRefundCents({ paidCents: 999, startMs: 5, endMs: 5, nowMs: 5 }).cents, 0);
+  // aiLeft ostane za prikaz skrbniku.
+  const r = withdrawalRefundCents({ paidCents: 1000, startMs: 0, endMs: 30 * day, nowMs: 2 * day, aiCapUsd: 2, aiSpentUsd: 0.2 });
+  assert.equal(r.cents, 933);
+  assert.ok(Math.abs(r.aiLeft - 0.9) < 1e-9 && Math.abs(r.timeLeft - 28 / 30) < 1e-9);
+  // Besedilo potrditve: enako kot /pogoji.html in prevod pay.withdrawal; staro pravilo min(čas, AI) ni več omenjeno.
+  assert.equal(WITHDRAWAL_TEXT, "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat plačam le del cene za čas do odstopa, ostalo mi vrnete.");
+  assert.doesNotMatch(WITHDRAWAL_TEXT + CREDIT_WITHDRAWAL_TEXT, /manjši od|vprašanj za inštruktorja/);
+  assert.match(CREDIT_WITHDRAWAL_TEXT, /14 dneh.*neporabljene pogovore/);
+  const { default: sl } = await import("../public/i18n/sl.js");
+  assert.equal(sl["pay.withdrawal"], WITHDRAWAL_TEXT);
+  assert.equal(sl["pay.creditWithdrawal"], CREDIT_WITHDRAWAL_TEXT);
+  // Zapis soglasja: besedilo, različica pravila in jezik (jezik ostane zadnji).
+  assert.equal(consentRecordText("sub", "en").split("\n").slice(1).join("|"), `${WITHDRAWAL_TEXT}|[odstop: ${WITHDRAWAL_VERSION}]|[jezik: en]`);
+  assert.ok(consentRecordText("credit", "sl").includes(CREDIT_WITHDRAWAL_TEXT));
+  assert.ok(consentRecordText("pay_link_pass", "sl").includes(WITHDRAWAL_TEXT));
   await withAccounts(async ({ db, api, kid, subscribe, pid, call }) => {
     const ana = kid("Ana", "OS", YEAR - 12);
     subscribe("evklid_1_month", new Date(Date.now() + 28 * day).toISOString());
@@ -1133,8 +1159,9 @@ test("odstop v 14 dneh: vračilo sorazmerno porabi (manjše od deleža časa in 
     db.prepare("UPDATE parents SET is_admin = 1 WHERE id = ?").run(pid);
     const r = (await call(`/api/admin/withdrawal/${pid}`)).body.subscription;
     assert.ok(Math.abs(r.ai_left - 0.5) < 0.01, JSON.stringify(r));
-    assert.equal(r.refund_cents, Math.floor(999 * Math.min(r.time_left, r.ai_left)));
-    assert.ok(r.refund_cents <= 500 && r.within_14_days);
+    // Polovica AI porabljena, vračilo vseeno po deležu časa (~28 od ~30 dni), ne ~500.
+    assert.equal(r.refund_cents, Math.floor(999 * r.time_left));
+    assert.ok(r.refund_cents > 800 && r.within_14_days, JSON.stringify(r));
   });
 });
 

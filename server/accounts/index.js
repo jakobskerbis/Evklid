@@ -20,7 +20,7 @@ import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail, skrbnikKodaEmail } from "./email.js";
-import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
+import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT, CREDIT_WITHDRAWAL_TEXT, consentRecordText } from "./billing.js";
 import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
 import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
 import { Devices, deviceLabel, deviceWarnLimit } from "./devices.js";
@@ -1671,7 +1671,7 @@ export function mountAccounts(app, store, opts = {}) {
         : {}),
       // Točka A9: skrbnik mora to sejo še potrditi s kodo na e-pošto (public/account.js skrbnikBox).
       ...(req.skrbnikCaka ? { skrbnik_potrditev: true } : {}),
-      consents: { adult: ADULT_TEXT, withdrawal: WITHDRAWAL_TEXT },
+      consents: { adult: ADULT_TEXT, withdrawal: WITHDRAWAL_TEXT, credit_withdrawal: CREDIT_WITHDRAWAL_TEXT },
       grace_days: GRACE_DAYS,
       referral: { code: p.referral_code, url: `${baseUrl(req)}/?ref=${p.referral_code}`, rewards, days: REFERRAL_DAYS },
       consent_text: CONSENT_TEXT,
@@ -2200,7 +2200,7 @@ export function mountAccounts(app, store, opts = {}) {
         metadata: { parent_id: p.id, parent_uid: p.uid || undefined },
       });
       const lang = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(req.body?.lang || "")) ? req.body.lang : "sl";
-      db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'sub', ?)").run(p.id, p.email, `${ADULT_TEXT}\n${WITHDRAWAL_TEXT}\n[jezik: ${lang}]`);
+      db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'sub', ?)").run(p.id, p.email, consentRecordText("sub", lang));
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe checkout:", err.message);

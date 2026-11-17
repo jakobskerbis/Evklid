@@ -20,18 +20,30 @@ import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
 
 export const ADULT_TEXT = "Sem polnoleten/-na in plačujem za svoj profil ali kot starš oziroma skrbnik.";
-// Odstop v 14 dneh (j 2026-11-06): vrne se del plačila za neporabljeno storitev, sorazmerno PORABI: manjši od deleža
-// preostalega časa in deleža neporabljene meje AI (withdrawalRefundCents). Besedilo pred zagonom plačil preveri pravnik.
+// Odstop v 14 dneh (j 2026-11-16, #765, enako kot /pogoji.html 12. točka): naročnina in paket pred testom vrneta
+// plačilo × delež preostalega časa (withdrawalRefundCents); dokup pogovorov vrne delež neporabljenih pogovorov
+// (CREDIT_WITHDRAWAL_TEXT, izračun v /api/admin/withdrawal). Prej (j 2026-11-06) je veljal manjši od deleža časa in
+// deleža neporabljene meje AI. Besedilo pred zagonom plačil preveri pravnik.
 export const WITHDRAWAL_TEXT =
-  "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat dobim vrnjen del plačila za storitev, ki je še nisem porabil: manjši od deleža preostalega časa in deleža še neporabljenih vprašanj za inštruktorja.";
+  "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat plačam le del cene za čas do odstopa, ostalo mi vrnete.";
+export const CREDIT_WITHDRAWAL_TEXT =
+  "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat mi vrnete delež plačila za še neporabljene pogovore.";
+// Različica pravila o odstopu, zapisana v vsako novo soglasje (billing_consents.text). Starejši zapisi so brez nje
+// in hranijo besedilo, ki ga je plačnik takrat potrdil (pravilo min(čas, AI)); ostanejo veljavni, kot so.
+export const WITHDRAWAL_VERSION = "2026-11-16";
 export const WITHDRAWAL_DAYS = 14;
-// Vračilo ob odstopu v centih: plačilo × min(delež preostalega časa, delež neporabljene meje AI), navzdol na cent.
-// Brez meje AI (aiCapUsd 0) velja le delež časa.
+// Zapis soglasja: obe potrjeni besedili (slovenski izvirnik), različica pravila in jezik, v katerem ju je plačnik bral.
+export function consentRecordText(kind, lang) {
+  const w = String(kind || "").endsWith("credit") ? CREDIT_WITHDRAWAL_TEXT : WITHDRAWAL_TEXT;
+  return `${ADULT_TEXT}\n${w}\n[odstop: ${WITHDRAWAL_VERSION}]\n[jezik: ${lang}]`;
+}
+// Vračilo ob odstopu v centih: plačilo × delež preostalega časa, navzdol na cent. Poraba AI ne zniža vračila
+// (j 2026-11-16); aiLeft se vrne samo za prikaz skrbniku.
 export function withdrawalRefundCents({ paidCents, startMs, endMs, nowMs = Date.now(), aiCapUsd = 0, aiSpentUsd = 0 }) {
   const clamp = (x) => Math.min(1, Math.max(0, Number.isFinite(x) ? x : 0));
   const timeLeft = endMs > startMs ? clamp((endMs - nowMs) / (endMs - startMs)) : 0;
   const aiLeft = aiCapUsd > 0 ? clamp(1 - aiSpentUsd / aiCapUsd) : 1;
-  return { cents: Math.max(0, Math.floor((Number(paidCents) || 0) * Math.min(timeLeft, aiLeft))), timeLeft, aiLeft };
+  return { cents: Math.max(0, Math.floor((Number(paidCents) || 0) * timeLeft)), timeLeft, aiLeft };
 }
 const PAY_LINK_DAYS = 7;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -246,7 +258,7 @@ export function mountBilling(app, ctx) {
   // Shrani se slovensko besedilo in jezik, v katerem ju je plačnik prebral (prevod je v public/i18n).
   function recordConsent(parentId, payerEmail, kind, lang) {
     const l = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(lang || "")) ? lang : "sl";
-    db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, ?, ?)").run(parentId, payerEmail || "", kind, `${ADULT_TEXT}\n${WITHDRAWAL_TEXT}\n[jezik: ${l}]`);
+    db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, ?, ?)").run(parentId, payerEmail || "", kind, consentRecordText(kind, l));
   }
 
   // Ali ima profil poln dostop iz paketa pred testom (dokler ni porabljena meja AI paketa).
@@ -711,6 +723,7 @@ export function mountBilling(app, ctx) {
     return false;
   };
   // Izračun vračila ob odstopu v 14 dneh (samo prikaz za skrbnika; vračilo izvede skrbnik v Stripu).
+  // refund_cents = plačilo × delež preostalega časa (j 2026-11-16); ai_left je samo podatek, vračila ne zniža.
   // Naročnina: tekoče plačano obdobje, meja AI = vrednost paketa × mesecev obdobja, poraba vseh profilov računa.
   // Paketi pred testom: ves paket, meja paketa, poraba profila.
   app.get("/api/admin/withdrawal/:parentId", (req, res) => {

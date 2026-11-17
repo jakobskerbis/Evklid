@@ -388,7 +388,7 @@ test("povezava za starše: paket pred testom", async () => {
     await dad(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", adult: true, withdrawal: true, lang: "en" } });
     const session = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1);
     assert.equal(session.body["metadata[pass_id]"], first.body["metadata[pass_id]"]);
-    assert.match(store.db.prepare("SELECT text FROM billing_consents ORDER BY rowid DESC").get().text, /\[jezik: en\]$/);
+    assert.match(store.db.prepare("SELECT text FROM billing_consents ORDER BY rowid DESC").get().text, /\[odstop: 2026-11-16\]\n\[jezik: en\]$/);
     assert.equal(session.body.mode, "payment");
     assert.equal(session.body.customer_email, "oce@primer.si");
     const passId = session.body["metadata[pass_id]"];
