@@ -3185,6 +3185,7 @@ async function loadPath(key = state.pathKey) {
       <div class="hero-text"><h2>${t("daily.title")}</h2><p>${done ? t("daily.doneText") : t("daily.text")}</p></div>
       <button class="primary big" data-daily>${done ? t("daily.again") : t("daily.start")}</button>
     </div>
+    ${document.getElementById("view-scan") ? `<button type="button" class="next-row scan-path-row" data-scan-home><span class="eyebrow">${t("scan.title")}</span><span class="next-name">${t("scan.meSub")}</span>${icon("camera")}</button>` : ""}
     ${
       p.next
         ? `<button class="next-row" data-open="${p.next.id}"><span class="eyebrow">${t("path.next")}</span><span class="next-name">${escapeHtml(p.next.name)}</span>${icon("chevron-right")}</button>`
@@ -3261,6 +3262,8 @@ document.addEventListener("click", (e) => {
   const un = e.target.closest("[data-unit]");
   if (un) startSession("unit-practice", { path: state.pathKey, unit: Number(un.dataset.unit) });
   if (e.target.closest("[data-daily]")) startSession("daily", { path: state.pathKey });
+  // Prvi zaslon: »Skeniraj nalogo« tik pod današnjim treningom (j, 18. 11. 2026: pristajalna stran obljublja pomoč pri domači nalogi).
+  if (e.target.closest("[data-scan-home]")) showView("scan");
   if (e.target.closest("[data-dnevna]")) {
     showView("games");
     loadGames().then((m) => m.openDailyPuzzle()).catch(() => {});
