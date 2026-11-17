@@ -148,8 +148,10 @@ export function endAsymptotes(f) {
     const r = [3.1e3, 5.7e4, 4.3e5].map((X) => Math.abs(f(s * X * m) - (k * s * X * m + n1)));
     if (!r.every(fin) || r[2] > 2e-2 * (1 + Math.abs(n1)) || r[2] > r[1] || r[1] > r[0] * 1.01) continue;
     // na tej strani je funkcija kar ta premica (|x| za x > 0, ali del, zapisan s premico)
-    if ([5, 17.3, 123].every((t) => Math.abs(f(s * t) - (k * s * t + n1)) <= 1e-9 * (1 + Math.abs(f(s * t))))) continue;
-    const line = { k, n: snapCoef(n1) };
+    // (merilo je premica sama, ne f: e^(−x²) je pri x = 5 ≈ 1e-11, a ni enaka 0)
+    if ([5, 17.3, 123].every((t) => Math.abs(f(s * t) - (k * s * t + n1)) <= 1e-12 * (Math.abs(k * s * t) + Math.abs(n1)))) continue;
+    // ostanek računa (tan(x)/x da n ≈ 0,0000034) ni prava vrednost
+    const line = { k, n: Math.abs(n1) < 1e-5 * (1 + Math.abs(k)) ? 0 : snapCoef(n1) };
     const same = found.find((q) => Math.abs(q.k - line.k) < 1e-6 * (1 + Math.abs(line.k)) && Math.abs(q.n - line.n) < 1e-6 * (1 + Math.abs(line.n)));
     if (same) same.sides.push(s);
     else found.push({ ...line, sides: [s] });
@@ -366,7 +368,8 @@ export function fitView(fns, { W = 320, H = 220, points = [], fixed = {} } = {})
   };
   let xa = x0, xb = x1;
   if (rho < 1 / 5) [y0, y1] = grow(y0, y1, (xspan / W) * H / 5);
-  else if (rho > 8 && !hasX) [xa, xb] = grow(x0, x1, (y1 - y0) / H * W / 8);
+  // strma funkcija (10⁶·x, e^x − 1000): os x največ 3× razpona zanimivih točk, sicer bi graf postal stopnica
+  else if (rho > 8 && !hasX) [xa, xb] = grow(x0, x1, Math.min(((y1 - y0) / H) * W / 8, 3 * xspan));
   else if (rho > 0.6 && rho < 1.6) {
     if (rho < 1) [y0, y1] = grow(y0, y1, (xspan / W) * H);
     else if (!hasX) [xa, xb] = grow(x0, x1, ((y1 - y0) / H) * W);

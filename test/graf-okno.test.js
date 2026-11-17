@@ -181,3 +181,20 @@ test("pregled #802: k/x, e^(−x²), log, floor, |x|, √(x² − 4), e^(1/x) in
   assert.ok(fitModelView(buildModel(st), { W, H }));
   assert.equal(parseGraphView('["y = x", {"x": [1, 1.0000000001]}]'), null);
 });
+
+test("ponovni pregled #802: e^(−x²) ima y = 0, strme funkcije brez prevelike osi x, tan(x)/x brez ostanka", () => {
+  const W = 320, H = 220;
+  assert.deepEqual(endAsymptotes((x) => Math.exp(-x * x)), [{ k: 0, n: 0, sides: [-1, 1] }]);
+  assert.deepEqual(endAsymptotes(Math.abs), []);
+  for (const [name, f, max] of [
+    ["10⁶·x", (x) => 1e6 * x, 25],
+    ["e^x − 1000", (x) => Math.exp(x) - 1000, 40],
+    ["1000/x", (x) => 1000 / x, 25],
+  ]) {
+    const v = fitView([f], { W, H });
+    assert.ok(v.xmax - v.xmin <= max, `${name} ${JSON.stringify(v)}`);
+  }
+  const e = fitView([(x) => Math.exp(x) - 1000], { W, H });
+  assert.ok(inView(e, Math.log(1000), 0), JSON.stringify(e)); // ničla ln 1000 ≈ 6,9
+  for (const a of endAsymptotes((x) => Math.tan(x) / x)) assert.ok(a.n === 0 || Math.abs(a.n) > 1e-3, JSON.stringify(a));
+});
