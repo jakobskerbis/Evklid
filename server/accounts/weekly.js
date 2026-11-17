@@ -267,7 +267,7 @@ const firstTry = (w) => (w.accuracy === null ? "–" : (w.judged ?? 5) < 5 ? `${
 function tiles(w) {
   const tile = (value, label, extra = "") =>
     `<td style="width:33%;padding:4px;vertical-align:top"><div style="background:#f4f6fb;border-radius:10px;padding:12px 8px;text-align:center">
-<div style="font-size:24px;font-weight:bold;color:#1d2433">${value}</div><div style="font-size:12px;color:${MUTED};margin-top:2px">${label}</div>${extra}</div></td>`;
+<div style="font-size:${/ od /.test(value) ? 20 : 24}px;font-weight:bold;color:#1d2433;white-space:nowrap">${value}</div><div style="font-size:12px;color:${MUTED};margin-top:2px">${label}</div>${extra}</div></td>`;
   return `<table role="presentation" style="width:100%;border-collapse:collapse;margin:12px 0 0"><tr>
 ${tile(`<b>${w.tasks}</b>`, `${plural(w.tasks, NALOG).replace(/^\d+ /, "")}, ${plural(w.solved, RESENA)}`, trend(w.tasks, w.prev_tasks))}
 ${tile(firstTry(w), "prav v prvem poskusu")}
