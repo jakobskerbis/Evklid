@@ -96,6 +96,7 @@ import { partKey, partLabel } from "./our-paper-key.js";
 import { initDrsniki } from "./drsniki.js";
 import { initSirina, prilagodiZdaj } from "./sirina.js";
 import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
+import { chatIdeas as pickIdeas } from "./predlogi.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 import { GUIDE } from "./vodic.js";
 import { initOpen, addOpen, simOverlayOpen, closeSimOverlay } from "./odpri.js";
@@ -1105,7 +1106,8 @@ function renderConversationList() {
 function renderEmptyChat() {
   state.chatFx = null; // nov pogovor (tudi po brisanju odprtega ali menjavi profila): predmet iz nastavitev
   $("#chat-title").textContent = t("chat.new");
-  const ideas = chatIdeas(state.student.settings, ideasPath(state.student));
+  state.ideasNow = null; // nov prazen klepet: novi predlogi
+  const ideas = chatIdeas(state.student);
   // .empty-hall: okvir pozdrava (ui.css → »Klepet obdobja«: s chat.frame »stebri« pročelje templa iz
   // ERAS[…].arch.temple, templeParts doda dele in jih ob menjavi sloga zamenja; »pilon« iz ERAS[…].building enako).
   $("#messages").innerHTML = `<div class="empty"><div class="empty-hall">
@@ -1130,23 +1132,15 @@ function ideaClick(e) {
 }
 const ideasHtml = (ideas) => ideas.map((x) => `<button type="button" class="idea" data-idea="${escapeHtml(x)}">${escapeHtml(x)}</button>`).join("");
 
-// Predlogi v praznem klepetu po profilu (j, 17. 11. 2026): tema z učne poti učenčevega razreda/letnika in predmeta,
-// pri maturantu naloga v slogu mature (pri MAT z ravnijo), v 6. in 9. razredu pri MAT v slogu NPZ.
-// Brez učne poti (še ni naložena, napaka) ostanejo splošni predlogi.
+// Predlogi v praznem klepetu po profilu in vsakič drugačni (public/predlogi.js). Izbrani predlogi ostanejo isti,
+// dokler je odprt isti prazen klepet (sicer bi se ob vsakem osveženju zamenjali pred očmi); nov klepet = novi predlogi.
 const ideasKey = (s) => [s?.subject, s?.educational_track, s?.curriculum_level, s?.study_program, s?.study_course, s?.school_system].join("|");
 const ideasPath = (st) => (state.ideasPath && state.ideasPath.student === st?.id && state.ideasPath.key === ideasKey(st?.settings) ? state.ideasPath : null);
-function chatIdeas(s = {}, path = null) {
-  const topics = (path?.topics || []).filter((x) => x?.name);
-  const first = path?.next?.name ? path.next : topics.find((x) => x.status !== "mastered") || topics[0];
-  if (!first) return [t("chat.idea1"), t("chat.idea2"), t("chat.idea3")];
-  const second = topics.find((x) => x.id !== first.id && x.status !== "mastered") || first;
-  const level = String(s.curriculum_level || "");
-  const raven = / (VR|OR)$/.exec(level)?.[1];
-  let exam = null;
-  if (jeSs(s) && /^4\. letnik/.test(level) && ["MAT", "FIZ", "KEM", "BIO"].includes(s.subject))
-    exam = s.subject === "MAT" && raven ? t(raven === "VR" ? "chat.ideaMaturaVR" : "chat.ideaMaturaOR") : t("chat.ideaMatura");
-  else if (jeOs(s) && /^(6|9)\. razred/.test(level) && s.subject === "MAT") exam = t("chat.ideaNpz");
-  return [t("chat.ideaExplain", { topic: first.name }), t("chat.ideaTask", { topic: second.name }), exam || t("chat.ideaExplain", { topic: (topics.find((x) => x.id !== first.id && x.id !== second.id && x.status !== "mastered") || second).name })];
+function chatIdeas(st) {
+  const path = ideasPath(st);
+  const key = `${st?.id}|${ideasKey(st?.settings)}|${path ? 1 : 0}`;
+  if (state.ideasNow?.key !== key) state.ideasNow = { key, list: pickIdeas(st?.settings || {}, path, t) };
+  return state.ideasNow.list;
 }
 // Učna pot za predloge: shrani jo loadPath; sicer (klepet odprt pred Učno potjo, menjava v glavi) jo naložimo tu.
 async function refreshIdeas() {
@@ -1165,7 +1159,7 @@ function rememberIdeasPath(st, p) {
 function showIdeas() {
   const box = $("#messages .empty-hall .ideas");
   if (!box || state.conversationId || !state.student) return;
-  box.innerHTML = ideasHtml(chatIdeas(state.student.settings, ideasPath(state.student)));
+  box.innerHTML = ideasHtml(chatIdeas(state.student));
 }
 
 function templeParts() {
