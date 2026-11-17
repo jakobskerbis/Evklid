@@ -34,9 +34,10 @@ import { zaTisk as tiskPot } from "../../../public/tisk-v-chromu.js";
 const ORIGIN = API_URL.replace(/\/+$/, "");
 // Prvi naslov: /api/mobile/web prenese sejo in preusmeri na pot »to« (privzeto /). Druga pot pride kot parameter
 // zaslona, npr. /?pogled=racun za nakup naročnine v APK (src/lib/billing.ts openWebAccount). Samo pot na tem
-// strežniku; strežnik jo preveri še sam (server/mobile/web-session.js safeTarget).
-const webStart = (to?: string) =>
-  `${ORIGIN}/api/mobile/web?to=${encodeURIComponent(typeof to === "string" && /^\/(?![/\\])[^\s]*$/.test(to) && to.length <= 500 ? to : "/")}`;
+// strežniku in samo s seznama TO: povezava evklid:// lahko odpre zaslon /web s poljubnim »to«, zato aplikacija
+// prijavljenega WebViewa ne pošlje na nobeno drugo pot (strežnik jo preveri še sam, server/mobile/web-session.js safeTarget).
+const TO = new Set(["/", "/?pogled=racun"]);
+const webStart = (to?: string) => `${ORIGIN}/api/mobile/web?to=${encodeURIComponent(typeof to === "string" && TO.has(to) ? to : "/")}`;
 // Stran za tisk Evklida: odpre jo privzeti brskalnik (Chrome), kjer »Shrani kot PDF« dela (public/tisk-v-chromu.js).
 const zaTisk = (url: string) => tiskPot(url, ORIGIN);
 

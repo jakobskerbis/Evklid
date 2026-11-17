@@ -29,6 +29,14 @@ test("APK: nakup odpre spletni zavihek Račun, trgovine ostanejo pri nakupu v tr
   const web = read("mobile/src/app/web.tsx");
   assert.match(web, /useLocalSearchParams<\{ to\?: string; n\?: string \}>\(\)/);
   assert.match(web, /useState\(\(\) => \(\{ uri: webStart\(to\), headers: appHeaders\(\) \}\)\)/);
+  // Samo poti s seznama: povezava evklid:// ne sme prijavljenega WebViewa poslati drugam po evklid.app.
+  assert.match(web, /const TO = new Set\(\["\/", "\/\?pogled=racun"\]\);\nconst webStart = \(to\?: string\) => `\$\{ORIGIN\}\/api\/mobile\/web\?to=\$\{encodeURIComponent\(typeof to === "string" && TO\.has\(to\) \? to : "\/"\)\}`;/);
+  const src = web.match(/const TO = [^\n]*\nconst webStart = [^\n]*/)[0].replace("(to?: string)", "(to)");
+  const webStart = new Function("ORIGIN", `${src}; return webStart;`)("https://evklid.app");
+  assert.equal(webStart("/?pogled=racun"), "https://evklid.app/api/mobile/web?to=%2F%3Fpogled%3Dracun");
+  assert.equal(webStart(), "https://evklid.app/api/mobile/web?to=%2F");
+  assert.equal(webStart("/?reset=x"), "https://evklid.app/api/mobile/web?to=%2F");
+  assert.equal(webStart("//drug.si/"), "https://evklid.app/api/mobile/web?to=%2F");
   // Pot gre skozi /api/mobile/web (seja aplikacije), strežnik jo sprejme; tuje poti ne.
   assert.equal(safeTarget("/?pogled=racun"), "/?pogled=racun");
   assert.equal(safeTarget("//drug.si/?pogled=racun"), "/");
@@ -89,8 +97,11 @@ test("splet: /?pogled=racun odpre zavihek Račun z obrazcem za naročnino (telef
     await page.locator("#plan-form").waitFor({ timeout: 20_000 });
     assert.equal(await page.locator("#view-account").isVisible(), true);
     assert.equal(await page.locator("#account-tab").evaluate((el) => el.classList.contains("active")), true, "zavihek Račun je označen");
-    // Obrazec ima potrditvi pred plačilom (polnoletnost, odstop), ki ju aplikacija sama ni pošiljala.
+    // Obrazec ima potrditvi pred plačilom (polnoletnost, odstop), ki ju aplikacija sama ni pošiljala; pokažeta se po izbiri paketa.
     assert.ok((await page.locator('#plan-form input[type="checkbox"]').count()) >= 2);
+    await page.locator('#plan-form input[name=who][value="1"]').check();
+    assert.equal(await page.locator("#plan-rest").isVisible(), true);
+    for (const name of ["adult", "withdrawal"]) assert.equal(await page.locator(`#plan-form input[type="checkbox"][name="${name}"]`).isVisible(), true, `potrditev ${name} je vidna`);
     assert.equal(new URL(page.url()).search, "", "parameter izgine iz naslova");
     assert.equal(calls.some((c) => c.body?.mode === "subscription"), false, "brez plačilne seje Stripa samo ob odprtju");
 
