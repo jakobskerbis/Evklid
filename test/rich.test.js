@@ -215,6 +215,12 @@ test("empty rows in aligned or gathered math are dropped, spacing rows and matri
   assert.equal(brezPraznihVrstic("\\begin{aligned} v &= \\sqrt{549} \\\\ \\\\ &\\approx 23{,}5 \\\\ \\end{aligned}"), "\\begin{aligned} v &= \\sqrt{549} \\\\ &\\approx 23{,}5\\end{aligned}");
   assert.equal(brezPraznihVrstic("\\begin{gathered} a \\\\ \\\\ \\\\ b \\end{gathered}"), "\\begin{gathered} a \\\\ b \\end{gathered}");
   for (const t of ["\\begin{aligned}a&=b\\\\[4pt] &=c\\end{aligned}", "\\begin{pmatrix}1\\\\ \\\\2\\end{pmatrix}", "a = b"]) assert.equal(brezPraznihVrstic(t), t);
+  // prazna vrstica v matriki znotraj aligned ostane (to je vrstica matrike), vrstica aligned odpade
+  assert.equal(brezPraznihVrstic("\\begin{aligned} M &= \\begin{pmatrix}1\\\\ \\\\2\\end{pmatrix} \\\\ \\\\ &= x \\\\ \\end{aligned}"), "\\begin{aligned} M &= \\begin{pmatrix}1\\\\ \\\\2\\end{pmatrix} \\\\ &= x\\end{aligned}");
+  // linearno tudi na zelo dolgem nizu presledkov (ne kvadratno)
+  const t0 = performance.now();
+  brezPraznihVrstic(`\\begin{aligned}a \\\\${" ".repeat(200000)}x \\\\${" ".repeat(200000)}\\end{aligned}`);
+  assert.ok(performance.now() - t0 < 500);
   const h = renderRich("$$\\begin{aligned} a &= b \\\\ \\\\ &= c \\end{aligned}$$");
   assert.equal(h, renderRich("$$\\begin{aligned} a &= b \\\\ &= c \\end{aligned}$$"));
 });

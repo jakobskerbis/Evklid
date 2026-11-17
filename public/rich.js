@@ -61,8 +61,19 @@ const VRSTICE_ENV = /\\begin\{(aligned|alignedat|gathered|align\*?|gather\*?|spl
 export function brezPraznihVrstic(tex) {
   if (!tex.includes("\\begin")) return tex;
   return tex.replace(VRSTICE_ENV, (_, env, body) => {
-    const b = body.replace(/\\\\(?:\s*\\\\(?!\s*\[))+/g, "\\\\").replace(/\s*\\\\\s*$/, "");
-    return `\\begin{${env}}${b}\\end{${env}}`;
+    // Le vrstice tega okolja: v vgnezdenem okolju (pmatrix, cases …) ostane vse, kot je.
+    let d = 0;
+    const kosi = body.split(/(\\(?:begin|end)\{[a-zA-Z*]*\})/).map((t, i) => {
+      if (i % 2) return (d += t.startsWith("\\begin") ? 1 : -1), t;
+      return d ? t : t.replace(/\\\\(?:\s*\\\\(?!\s*\[))+/g, "\\\\");
+    });
+    if (!d) {
+      // brez \s* pred \\ (sicer kvadratno na dolgem nizu presledkov)
+      const v = kosi[kosi.length - 1];
+      const k = v.replace(/\\\\\s*$/, "");
+      if (k !== v) kosi[kosi.length - 1] = k.trimEnd();
+    }
+    return `\\begin{${env}}${kosi.join("")}\\end{${env}}`;
   });
 }
 

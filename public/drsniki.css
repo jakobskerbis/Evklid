@@ -13,10 +13,11 @@
 .drs.drs-rtl.drs-k:not(.drs-z) { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to left, #000 calc(100% - var(--drs-rob)), transparent); }
 .drs.drs-rtl.drs-z:not(.drs-k) { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to right, #000 calc(100% - var(--drs-rob)), transparent); }
 
-/* Tabela s prilepljenim prvim stolpcem (style.css): začetek ne bledi, sicer bi zbledele oznake vrstic; bledi le konec. */
-.md-table-wrap.drs.drs-z:not(.drs-k) { -webkit-mask-image: none; mask-image: none; }
-.md-table-wrap.drs.drs-z.drs-k { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to right, #000 calc(100% - var(--drs-rob)), transparent); }
-.md-table-wrap.drs.drs-rtl.drs-z.drs-k { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to left, #000 calc(100% - var(--drs-rob)), transparent); }
+/* Tabela v klepetu s prilepljenim prvim stolpcem (style.css): začetek ne bledi, sicer bi zbledele oznake vrstic; bledi
+   le konec. */
+.msg .md-table-wrap.drs.drs-z:not(.drs-k) { -webkit-mask-image: none; mask-image: none; }
+.msg .md-table-wrap.drs.drs-z.drs-k { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to right, #000 calc(100% - var(--drs-rob)), transparent); }
+.msg .md-table-wrap.drs.drs-rtl.drs-z.drs-k { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - var(--drs-rob)), transparent); mask-image: linear-gradient(to left, #000 calc(100% - var(--drs-rob)), transparent); }
 
 @media print { .drs { -webkit-mask-image: none !important; mask-image: none !important; } }
 

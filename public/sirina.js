@@ -93,7 +93,8 @@ function razrezi(t, dolg, znaki = PLUS) {
         if (m && i + 1 + m[0].length < t.length) vrh.push(i + 1 + m[0].length);
       }
     }
-    if (g > 0) odprti.push(tok);
+    // Indeks korena (\sqrt[n+1]{…}) ni oklepaj, v katerem bi lomili (kot {…}).
+    if (g > 0) odprti.push(tok === "[" && /\\sqrt\s*$/.test(t.slice(0, i)) ? "{" : tok);
     else if (g < 0) odprti.pop();
     const pred = () => !PRED.test(t.slice(0, i).trimEnd()) && !/^\s*10\s*\^/.test(t.slice(i + tok.length));
     if (g) depth = Math.max(0, depth + g);
@@ -226,6 +227,13 @@ export function zlozTex(tex, stopnja = 2, meja = 0, strnjeno = false) {
   }
   // Razmik na koncu vrstice (»2k\\pi \\ « pred »ali«) ni več potreben.
   for (const d of izjave.flat()) d.t = d.t.replace(/(?:\s|\\[ ,;:!]|\\q?quad(?![a-zA-Z]))+$/, "");
+  // Relacija na koncu (»… = « brez desne strani) ostane na koncu prejšnjega dela, ne odpade.
+  for (const iz of izjave)
+    for (let j = iz.length - 1; j > 0; j--)
+      if (iz[j].rel && !iz[j].t.trim()) {
+        iz[j - 1].t = `${iz[j - 1].t.trimEnd()} ${iz[j].rel}`;
+        iz.splice(j, 1);
+      }
   const del = (d) => `${d.rel ? `${d.rel} ` : ""}${ovoj(d.t.trim())}`;
   // Od stopnje 3 naprej: kosi, dolgi največ 1/(stopnja − 1) najdaljšega dela (ali do meje, zamik odštet).
   const najdaljsi = Math.max(...izjave.flat().map((d) => dolzina(d.t)));
@@ -340,9 +348,9 @@ function izrisi(al) {
 
 // stopnja "t": ista formula v velikosti besedila (ostane v vrstici); 0: cela formula v svoji vrstici;
 // 1 in 2: zložena (zlozTex).
-function zlozi(k, stopnja, meja = 0) {
+function zlozi(k, stopnja, meja = 0, strnjeno = !!k.closest(STRNJENO)) {
   const tex = (izvirnik.has(k) ? izvirniTex.get(k) : null) ?? k.querySelector("annotation")?.textContent;
-  let al = tex && globalThis.katex && (stopnja === "t" ? besedilniTex(tex) : stopnja === 0 ? tex : zlozTex(tex, stopnja, meja, !!k.closest(STRNJENO)));
+  let al = tex && globalThis.katex && (stopnja === "t" ? besedilniTex(tex) : stopnja === 0 ? tex : zlozTex(tex, stopnja, meja, strnjeno));
   if (!al) return null;
   if (stopnja === "t") {
     let html;
@@ -404,16 +412,19 @@ function prilagodiFormulo(k, w, meri, visoka = Infinity) {
   const meja = tex ? Math.floor((w * dolzina(tex)) / need) : 0;
   let prej = null;
   let st0 = 0;
-  for (const st of [1, 2, 3, 4, 5]) {
+  // Klepet: če strnjena oblika še vedno ne gre v vrstico (dolga leva stran), še oblika iz učbenika.
+  const s0 = !!k.closest(STRNJENO);
+  let sn0 = s0;
+  for (const [st, sn] of [[1, s0], [2, s0], [3, s0], [4, s0], [5, s0], ...(s0 ? [[2, false], [3, false], [4, false], [5, false]] : [])]) {
     if (meri(k) <= w + 1 || w / meri(k) >= 0.9) break;
-    const al = tex && zlozTex(tex, st, meja, !!k.closest(STRNJENO));
+    const al = tex && zlozTex(tex, st, meja, sn);
     if (!al || al === prej) continue; // ta stopnja ne spremeni ničesar
     prej = al;
-    const z = zlozi(k, st, meja);
-    if (z) (k = z), (st0 = st);
+    const z = zlozi(k, st, meja, sn);
+    if (z) (k = z), (st0 = st), (sn0 = sn);
   }
   pomanjsaj(k, w, () => meri(k));
-  if (kljuc) zapomni(kljuc, { st: st0, meja, fs: k.style.fontSize });
+  if (kljuc) zapomni(kljuc, { st: st0, sn: sn0, meja, fs: k.style.fontSize });
   return k;
 }
 
@@ -500,7 +511,7 @@ function hitro(mesta) {
       continue;
     }
     f.ks.forEach((k, i) => {
-      const z = (r[i].st && zlozi(k, r[i].st, r[i].meja)) || k;
+      const z = (r[i].st && zlozi(k, r[i].st, r[i].meja, r[i].sn)) || k;
       z.style.fontSize = r[i].fs;
     });
     sirine.set(el, w);

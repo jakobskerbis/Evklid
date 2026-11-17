@@ -85,6 +85,32 @@ test("in the tutor chat a folded equation keeps its left side on the first line 
   assert.equal(zlozTex(f, 2, 0), "\\begin{aligned}&F \\\\ &\\quad {}= k m g \\\\ &\\quad {}= 0{,}80 \\cdot 1200 \\cdot 9{,}81 \\\\ &\\quad {}\\approx 9418\\end{aligned}");
 });
 
+// Klepet, 3. pregled PR #798: predolga leva stran (»E_{k,1}+E_{p,1}+W_{zun}+Q_{dovedena} = …«) v strnjeni obliki ostane
+// v prvi vrstici, ki se pomika; prilagodiFormulo zato za strnjeno obliko poskusi še obliko iz učbenika, ki levo stran razreže.
+test("in the chat a long left side that does not fit in the packed layout falls back to the textbook fold", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  const e = "E_{k,1}+E_{p,1}+W_{zun}+Q_{dovedena} = E_{k,2}+E_{p,2} = 1250\\ \\text{J}";
+  // strnjeno: leva stran in prvi korak ostaneta skupaj v prvi vrstici na vseh stopnjah (predolga za mejo 12)
+  for (const st of [2, 3, 4, 5]) assert.match(zlozTex(e, st, 12, true).split(" \\\\ ")[0], /Q_\{dovedena\} = E_\{k,2\}/);
+  // učbenik: od stopnje 3 se leva stran nadaljuje pred + v novi vrstici
+  const u = zlozTex(e, 3, 12).split(" \\\\ ");
+  assert.equal(u[0], "\\begin{aligned}&E_{k,1}+E_{p,1}");
+  assert.ok(u.every((v) => !v.includes("Q_{dovedena} =")), u.join(" | "));
+  // prilagodiFormulo: po strnjenih stopnjah 1–5 še stopnje 2–5 iz učbenika; oblika (sn) gre v zlozi in v predpomnilnik
+  const js = pub("sirina.js");
+  assert.match(js, /\[\[1, s0\], \[2, s0\], \[3, s0\], \[4, s0\], \[5, s0\], \.\.\.\(s0 \? \[\[2, false\], \[3, false\], \[4, false\], \[5, false\]\] : \[\]\)\]/);
+  assert.match(js, /const z = zlozi\(k, st, meja, sn\);/);
+  assert.match(js, /zapomni\(kljuc, \{ st: st0, sn: sn0, meja,/);
+  assert.match(js, /zlozi\(k, r\[i\]\.st, r\[i\]\.meja, r\[i\]\.sn\)/);
+});
+
+test("folding never splits inside a root index and keeps a relation that ends the formula", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  for (const sn of [true, false]) for (const st of [3, 4, 5]) assert.match(zlozTex("a = \\sqrt[n+1]{x_1 + x_2 + x_3 + x_4 + x_5 + x_6} = 5", st, 10, sn), /\\sqrt\[n\+1\]\{x_1/);
+  assert.equal(zlozTex("F = m a + b c + d e =", 2, 6), "\\begin{aligned}&F \\\\ &\\quad {}= m a + b c + d e =\\end{aligned}");
+  assert.match(zlozTex("F = m a + b c = 5 \\quad G = 4 \\approx", 2, 4, true), /G = 4 \\approx\\end\{aligned\}$/);
+});
+
 test("an arrow with a label (»Zapomni si« chain) folds before the arrow and keeps its label", async () => {
   const { zlozTex } = await import("../public/sirina.js");
   const v = "V \\xrightarrow{pV=nRT} n(\\text{plin}) \\xrightarrow{\\text{koeficienta}} n(\\text{snov}) \\xrightarrow{m=nM} m";
