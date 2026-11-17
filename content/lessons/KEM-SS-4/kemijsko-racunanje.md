@@ -7,7 +7,7 @@ avtor: AI
 
 Napihni dva enaka balona, vsakega s $5\,\mathrm{L}$ plina pri sobni temperaturi. V prvega daš helij, v drugega žveplov heksafluorid, $\mathrm{SF_6}$. Plin v drugem je približno $36$-krat težji, zato ta balon pade na tla kot kamen. Pa vendar je v obeh **natanko enako število molekul**.
 
-Zveni napačno? Ta dva plina poznajo tudi glasbeniki in tonski tehniki. Kdor vdihne malo helija, govori kot risani junak, s $\mathrm{SF_6}$ pa dobi globok, zamolkel glas. Glasilki nihata enako, spremeni pa se barva glasu: v heliju se zvok širi skoraj trikrat hitreje kot v zraku, zato se resonance v ustih in grlu premaknejo navzgor. (Ne poskušaj sam: plin namesto zraka v pljučih je nevaren.)
+Zveni napačno? Ta dva plina poznajo tudi glasbeniki in tonski tehniki. Kdor vdihne malo helija, govori kot risani junak, z $\mathrm{SF_6}$ pa dobi globok, zamolkel glas. Glasilki nihata enako, spremeni pa se barva glasu: v heliju se zvok širi skoraj trikrat hitreje kot v zraku, zato se resonance v ustih in grlu premaknejo navzgor. (Ne poskušaj sam: plin namesto zraka v pljučih je nevaren.)
 
 Paradoks z baloni razreši ena sama ideja, na kateri stoji vse kemijsko računanje: **kemija šteje delce, ne gramov in ne litrov.** Na maturi so računske naloge mešane. Masa, prostornina plina, koncentracija raztopine in enačba reakcije se znajdejo v isti nalogi. Kdor zna vsako količino pretvoriti v množino in nazaj, reši vse.
 
@@ -80,7 +80,7 @@ $n = c \cdot V$, nato $m = n \cdot M$
 
 ### Primer 2: dva balona za koncert
 
-Za nastop pripravijo balon s $5{,}00\,\mathrm{L}$ helija in enak balon s $\mathrm{SF_6}$, oba pri $20\,\mathrm{°C}$ in $101{,}3\,\mathrm{kPa}$. Kolikšna je masa plina v vsakem balonu?
+Za nastop pripravijo balon s $5{,}00\,\mathrm{L}$ helija in enak balon z $\mathrm{SF_6}$, oba pri $20\,\mathrm{°C}$ in $101{,}3\,\mathrm{kPa}$. Kolikšna je masa plina v vsakem balonu?
 
 **Podatki:** $V = 5{,}00\,\mathrm{L}$, $t = 20\,\mathrm{°C}$, $p = 101{,}3\,\mathrm{kPa}$, $M(\mathrm{He}) = 4{,}003\,\mathrm{g/mol}$, $M(\mathrm{SF_6}) = 146{,}1\,\mathrm{g/mol}$, $R = 8{,}314\,\mathrm{kPa\,L/(mol\,K)}$
 **Iščemo:** maso helija in maso $\mathrm{SF_6}$

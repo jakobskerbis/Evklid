@@ -103,7 +103,7 @@ Vsak starš da gameto s polovico kromosomov: $n = \dfrac{2n}{2}$. Mula dobi $2n_
 
 ### Primer 2: kruh iz nove vrste
 
-Pšenica za kruh je nastala na poljih. Kmetje so gojili dvozrnico s $28$ kromosomi, ob poljih je rasla divja trava s $14$ kromosomi. Križanec je bil neploden, dokler se mu ni po napaki pri delitvi podvojilo število kromosomov. Koliko kromosomov je imel križanec in koliko jih ima pšenica za kruh? Je to nova vrsta?
+Pšenica za kruh je nastala na poljih. Kmetje so gojili dvozrnico z $28$ kromosomi, ob poljih je rasla divja trava s $14$ kromosomi. Križanec je bil neploden, dokler se mu ni po napaki pri delitvi podvojilo število kromosomov. Koliko kromosomov je imel križanec in koliko jih ima pšenica za kruh? Je to nova vrsta?
 
 **Podatki:** $2n_{\mathrm{dvozrnica}} = 28$, $2n_{\mathrm{trava}} = 14$, število kromosomov križanca se podvoji
 **Iščemo:** kromosome križanca, kromosome pšenice za kruh, ali je nova vrsta
@@ -186,7 +186,7 @@ Vsak račun o križancih in poliploidih rešiš v istih štirih korakih.
 1. Za vsakega starša zapiši $2n$.
 2. Razpolovi: gameta ima $n = \dfrac{2n}{2}$.
 3. Seštej gameti obeh staršev: to je $2n$ križanca.
-4. Preveri pare. Če kromosomi nimajo svojega para, ker prihajajo iz različnih vrst ali ker je kompletov liho, mejoza ne deluje in križanec je neploden.
+4. Preveri pare. Če kromosomi nimajo svojega para, ker prihajajo iz različnih vrst ali ker je kompletov liho število, mejoza ne deluje in križanec je neploden.
 
 | Križanec | Gameti | $2n$ | Plodnost |
 |---|---|---|---|

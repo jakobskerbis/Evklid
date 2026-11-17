@@ -213,7 +213,7 @@ $v = \dfrac{5{,}89 \cdot 10^7\,\mathrm{m}}{27\,540\,\mathrm{s}} \approx 2140\,\m
 - **»Pospešek kaže navzven.«** V avtu v ovinku te res »vrže« proti zunanji strani. To pa ni sila navzven, ampak tvoje telo, ki bi rado nadaljevalo naravnost. Pospešek in rezultanta sil kažeta proti središču.
 - **»Ko se vrvica pretrga, kamen odleti radialno navzven.«** Odleti po tangenti, v smeri hitrosti v tistem trenutku, ker nanj ne deluje več nobena vodoravna sila.
 - **Podvojena hitrost, podvojen pospešek.** V $a_r = \dfrac{v^2}{r}$ je hitrost na kvadrat: dvakrat večja hitrost pomeni štirikrat večji pospešek.
-- **Mešanje enot.** Polmer v kilometrih in čas v minutah ali dnevih dajo nesmiselne rezultate. Pred računanjem vse pretvori v metre in sekunde.
+- **Mešanje enot.** Polmer v kilometrih in čas v minutah ali dnevih dasta nesmiselne rezultate. Pred računanjem vse pretvori v metre in sekunde.
 
 ## Povzetek
 

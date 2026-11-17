@@ -115,7 +115,7 @@ Izenačimo desni strani; za enačbo $ax^2 + (b - k)x + (c - n) = 0$ je $D = (b -
 
 **Rešitev:**
 
-1. Izenačimo desni strani, ker imata presečišči enak $y$: enačba $x^2 - 4x + 5 = x + 1$.
+1. Izenačimo desni strani, ker imata grafa v presečišču enak $y$: enačba $x^2 - 4x + 5 = x + 1$.
 2. Prenesemo na levo: enačba $x^2 - 5x + 4 = 0$.
 3. Diskriminanta: $D = 25 - 16 = 9 > 0$, zato sta presečišči dve.
 4. Razcep $(x - 1)(x - 4) = 0$ da $x = 1$ in $x = 4$.
@@ -200,7 +200,7 @@ $x \in (-2, 0]$. Del $[4, \infty)$ ne seka intervala $(-2, 3)$. Število $0$ je 
 - $D > 0$: sekanta (dve presečišči); $D = 0$: tangenta (dotikališče); $D < 0$: mimobežnica (ni presečišč).
 - Dve paraboli presekaš enako; pri enakem vodilnem koeficientu dobiš linearno enačbo in največ eno presečišče.
 - Ničle parabole so le presečišča z osjo $x$.
-- (višja raven) Sistem kvadratnih neenačb: reši vsako neenačbo posebej (skica parabole), rešitve nariši na isto številsko premico in vzemi presek. Krajišča vključi samo, če ju vključita obe neenačbi.
+- (višja raven) Sistem kvadratnih neenačb: reši vsako neenačbo posebej (skica parabole), rešitve nariši na isto številsko premico in vzemi presek. Krajišče vključi samo, če ga vključita obe neenačbi.
 
 ## Ponovitev
 
@@ -227,7 +227,7 @@ $x \in (-2, 0]$. Del $[4, \infty)$ ne seka intervala $(-2, 3)$. Število $0$ je 
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Izračunajte koordinati presečišč parabole $y = 2x^2 + x - 3$ in premice $y = 3x + 1$.
+Izračunajte koordinate presečišč parabole $y = 2x^2 + x - 3$ in premice $y = 3x + 1$.
 
 **Rešitev:**
 

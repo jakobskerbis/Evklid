@@ -130,7 +130,7 @@ $m = \dfrac{E}{e}$
 V meteoritu Murchison, ki je leta 1969 padel v Avstraliji, so našli aminokisline, med njimi glicin ($M = 75\,\mathrm{g/mol}$) in alanin ($M = 89\,\mathrm{g/mol}$). V laboratoriju iz njiju pripravijo dipeptid in ga nato hidrolizirajo. Koliko gramov vode se porabi pri hidrolizi $2{,}92\,\mathrm{g}$ dipeptida? $M(\mathrm{H_2O}) = 18\,\mathrm{g/mol}$.
 
 **Podatki:** $M(\mathrm{Gly}) = 75\,\mathrm{g/mol}$, $M(\mathrm{Ala}) = 89\,\mathrm{g/mol}$, $M(\mathrm{H_2O}) = 18\,\mathrm{g/mol}$, $m_\mathrm{d} = 2{,}92\,\mathrm{g}$ (dipeptid)
-**Iščemo:** masa porabljene vode $m(\mathrm{H_2O})$
+**Iščemo:** maso porabljene vode $m(\mathrm{H_2O})$
 
 :::formula
 $M(\text{dipeptid}) = M(\mathrm{Gly}) + M(\mathrm{Ala}) - M(\mathrm{H_2O})$

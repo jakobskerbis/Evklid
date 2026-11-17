@@ -66,7 +66,7 @@ Zaradi univerzalnosti lahko gen za človeški inzulin vstavimo v bakterijo in ta
 
 - **zamenjava enega nukleotida**:
   - *tiha mutacija*: novi kodon pomeni isto aminokislino (zaradi izrojenosti koda), beljakovina ostane enaka;
-  - *mutacija s spremenjenim pomenom*: nastane druga aminokislina. Pri srpastocelični anemiji kodon GAG v genu za β-globin postane GUG (valin namesto glutaminske kisline), hemoglobin se zlepi v vlakna in eritrocit postane srpast;
+  - *mutacija s spremenjenim pomenom*: nastane druga aminokislina. Pri srpastocelični anemiji kodon GAG v mRNA za β-globin postane GUG (valin namesto glutaminske kisline), hemoglobin se zlepi v vlakna in eritrocit postane srpast;
   - *nesmiselna mutacija*: nastane stop kodon, beljakovina je prekratka in navadno ne deluje;
 - **vrinjenje ali izpad nukleotidov** (če njihovo število ni večkratnik treh) povzroči **premik bralnega okvirja**: vsi kodoni za mestom mutacije se preberejo drugače.
 
@@ -119,7 +119,7 @@ Odgovor: mRNA je AUG CCU UUA GGC UAA, beljakovina Met–Pro–Leu–Gly ima $4$ 
 
 ### Primer 2: tri mutacije istega gena
 
-V genu iz primera 1 se zgodi ena od treh mutacij matrice: (a) tretji kodon AAT postane AAC; (b) tretji kodon AAT postane ACT; (c) izpade prvi G v drugem kodonu. Kako se spremeni beljakovina?
+V genu iz primera 1 se zgodi ena od treh mutacij matrice: (a) tretja trojica AAT postane AAC; (b) tretja trojica AAT postane ACT; (c) izpade prvi G v drugi trojici. Kako se spremeni beljakovina?
 
 **Podatki:** prvotna matrica 3′-TAC GGA AAT CCG ATT-5′; mutacije (a), (b), (c) kot v besedilu; del tabele kodov: UUG – Leu, CUU – Leu, UGA – stop, UAG – stop in kodoni iz primera 1
 **Iščemo:** beljakovino pri vsaki mutaciji in vrsto mutacije
@@ -163,7 +163,7 @@ $t = \dfrac{8 \cdot 10^6}{2000} = 4000\,\mathrm{s}$, to je $\dfrac{4000}{60} \ap
 ## Pogoste napake
 
 - **»DNA-polimeraza lahko gradi v obe smeri.«** Gradi samo v smeri $5' \to 3'$, ker dodaja nukleotide le na 3′-konec. Zato zaostajajoča veriga nastaja v Okazakijevih fragmentih, čeprav tudi ta raste $5' \to 3'$.
-- **»Vsaka mutacija spremeni beljakovino.«** Zaradi izrojenosti koda je zamenjava, zlasti v tretjem mestu kodona, lahko tiha. Če pa nastane stop kodon, se beljakovina skrajša.
+- **»Vsaka mutacija spremeni beljakovino.«** Zaradi izrojenosti koda je zamenjava, zlasti na tretjem mestu kodona, lahko tiha. Če pa nastane stop kodon, se beljakovina skrajša.
 - **»Vrinjenje nukleotida spremeni le eno aminokislino.«** Vrinjenje ali izpad enega nukleotida premakne bralni okvir, zato se spremenijo vsi kodoni za mestom mutacije.
 - **»Laktoza se veže na operator in vklopi gene.«** Na operator se veže represor. Alolaktoza se veže na represor, ta odpade in RNA-polimeraza prepisuje.
 

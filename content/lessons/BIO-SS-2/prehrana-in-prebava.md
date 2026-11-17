@@ -31,7 +31,7 @@ Kolesar med dirko popije raztopino glukoze, njegov tekmec pa poje kos kruha. Nap
 Kolesar z raztopino. Glukoza je že gradnik, zato je ni treba prebaviti in se v tankem črevesu takoj absorbira. V kruhu je glukoza vezana v škrob, ki ga morajo encimi šele razgraditi.
 :::
 
-**Potrebne snovi.** Telo potrebuje snovi za energijo in za gradnjo. Energijo dajejo **ogljikovi hidrati**, **maščobe** in **beljakovine**. Beljakovine so predvsem gradbeni material. Energije ne dajejo, a so nujni **vitamini** (npr. C, D, A), **minerali** (železo, kalcij, jod), **voda** in **vlaknine**. Vlaknine so večinoma celuloza iz rastlinskih celičnih sten. Človek je ne prebavi, a pospešuje gibanje vsebine po črevesu.
+**Potrebne snovi.** Telo potrebuje snovi za energijo in za gradnjo. Energijo dajejo **ogljikovi hidrati**, **maščobe** in **beljakovine**. Beljakovine so predvsem gradbeni material. Energije ne dajejo, a so nujni **vitamini** (npr. C, D, A), **minerali** (železo, kalcij, jod), **voda** in **vlaknine**. Vlaknine so večinoma celuloza iz rastlinskih celičnih sten. Človek je ne prebavi, a celuloza pospešuje gibanje vsebine po črevesu.
 
 **Prebavna cev in prebavne žleze.** Hrana potuje po **prebavni cevi**: usta, žrelo, požiralnik, želodec, tanko črevo, debelo črevo, danka. Prvi kratek del tankega črevesa je **dvanajstnik**. Ob cevi so **prebavne žleze**, ki vanjo izločajo sokove. Sokovi vsebujejo **encime**, beljakovine, ki pospešijo razgradnjo. Vsak encim razgrajuje le eno vrsto molekul.
 

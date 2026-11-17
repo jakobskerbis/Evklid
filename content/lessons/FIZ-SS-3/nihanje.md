@@ -184,7 +184,7 @@ Ko je kondenzator poln, tok ne teče, tako kot utež v skrajni legi miruje. Ko j
 
 ## Drugače: Bolj natančno
 
-**Kotna frekvenca.** Odmik pri harmoničnem nihanju je $x = x_0 \cos(\omega t)$, kjer je $\omega = \dfrac{2\pi}{t_0}$ kotna frekvenca. Za nihalo na vzmeti je $\omega = \sqrt{\dfrac{k}{m}}$. Največja hitrost je $v_0 = \omega x_0$, največji pospešek $a_0 = \omega^2 x_0$.
+**Krožna frekvenca.** Odmik pri harmoničnem nihanju je $x = x_0 \cos(\omega t)$, kjer je $\omega = \dfrac{2\pi}{t_0}$ krožna frekvenca. Za nihalo na vzmeti je $\omega = \sqrt{\dfrac{k}{m}}$. Največja hitrost je $v_0 = \omega x_0$, največji pospešek $a_0 = \omega^2 x_0$.
 
 Za utež iz razlage je $\omega = 10\,\mathrm{s^{-1}}$. Največja hitrost je $10 \cdot 0{,}05 = 0{,}5\,\mathrm{m/s}$, enako kot iz energije. Največji pospešek je $10^2 \cdot 0{,}05 = 5\,\mathrm{m/s^2}$, enako kot iz sile $2\,\mathrm{N}$ na $0{,}4\,\mathrm{kg}$.
 
@@ -258,5 +258,5 @@ x_0 | amplituda (največji odmik) | | m
 F | sila, ki vleče nazaj | F = k x | N | rezultanta sile vzmeti in teže, kaže proti ravnovesni legi
 W | energija nihanja | W = \frac{1}{2} k x_0^2 | J | stalna, če ni trenja
 v_0 | največja hitrost | v_0 = \sqrt{\frac{2W}{m}} | m/s | v ravnovesni legi
-\omega | kotna frekvenca | \omega = \frac{2\pi}{t_0} | s^{-1}
+\omega | krožna frekvenca | \omega = \frac{2\pi}{t_0} | s^{-1}
 :::

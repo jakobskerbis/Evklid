@@ -237,7 +237,7 @@ V drugem intervalu je polje največje, napetosti pa ni. Tudi tu šteje le spreme
 + $4\,\mathrm{V}$
 > $U_i = N \dfrac{\Delta \Phi}{\Delta t} = 1000 \cdot \dfrac{2\cdot10^{-4}\,\mathrm{V\,s}}{0{,}05\,\mathrm{s}} = 4\,\mathrm{V}$.
 
-? Polnilnik električne zobne ščetke ima transformator s $2300$ ovoji na primarni in $60$ ovoji na sekundarni strani. Priključen je na $230\,\mathrm{V}$. Kolikšna je napetost na sekundarni strani?
+? Polnilnik električne zobne ščetke ima transformator z $2300$ ovoji na primarni in $60$ ovoji na sekundarni strani. Priključen je na $230\,\mathrm{V}$. Kolikšna je napetost na sekundarni strani?
 - $8817\,\mathrm{V}$
 ~ Razmerje si obrnil. Na strani z manj ovoji je napetost nižja: $U_2 = U_1 \dfrac{N_2}{N_1}$.
 - $60\,\mathrm{V}$

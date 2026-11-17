@@ -209,7 +209,7 @@ Za hitro računanje v eV si zapomni $hc \approx 1240\,\mathrm{eV\,nm}$. Tako je 
 
 ? Ana je računala, kaj se zgodi, ko na natrij ($A_i = 2{,}28\,\mathrm{eV}$) posveti z dvakrat močnejšo UV-svetlobo $254\,\mathrm{nm}$. Korak 1: $W_f = 4{,}89\,\mathrm{eV}$. Korak 2: svetloba je dvakrat močnejša, zato $W_f = 9{,}78\,\mathrm{eV}$. Korak 3: $W_k = 9{,}78\,\mathrm{eV} - 2{,}28\,\mathrm{eV} = 7{,}50\,\mathrm{eV}$. Kje je napaka?
 - V koraku 1.
-~ Korak 1 je pravilen: to je energija fotona s $254\,\mathrm{nm}$ iz primera 1.
+~ Korak 1 je pravilen: to je energija fotona z $254\,\mathrm{nm}$ iz primera 1.
 + V koraku 2.
 - V koraku 3.
 ~ Odštevanje je pravilno zapisano, a uporablja napačno vrednost iz koraka 2.

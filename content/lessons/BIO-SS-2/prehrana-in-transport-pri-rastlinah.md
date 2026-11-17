@@ -208,7 +208,7 @@ Sledi puščicam kot krogu. Voda in ioni iz tal gredo po ksilemu navzgor. V list
 
 ## Drugače: Bolj natančno
 
-**Pot vode v korenini.** Voda gre od laska do ksilema po celičnih stenah in medceličnih prostorih ali skozi celice po plazmodezmijah. Pred osrednjim valjem jo ustavi **Casparyjev trak** v endodermu. Od tam mora skozi membrano žive celice, ki izbira, katere ione spusti naprej.
+**Pot vode v korenini.** Voda gre od laska do ksilema po celičnih stenah in medceličnih prostorih ali skozi celice po plazmodezmah. Pred osrednjim valjem jo ustavi **Casparyjev trak** v endodermu. Od tam mora skozi membrano žive celice, ki izbira, katere ione spusti naprej.
 
 **Odpiranje rež.** Na svetlobi zapiralki aktivno sprejmeta ione $\mathrm{K^+}$. Koncentracija v njiju naraste, voda vstopi z osmozo, turgor se poveča. Notranja stena zapiralk je debelejša od zunanje, zato se celici ukrivita in med njima nastane odprtina. Ob suši rastlina naredi hormon abscizinsko kislino, ki sproži odtok $\mathrm{K^+}$ in zapiranje rež.
 

@@ -174,8 +174,8 @@ Delimo z $-2$, zato se znak obrne: $x \le -5$. Interval je $(-\infty, -5]$, kraj
 
 **Formule**
 - Prištevanje, odštevanje: znak ostane (na pamet)
-- Množenje ali deljenje z $c > 0$: znak ostane (na pamet)
-- Z $c < 0$ se znak obrne: $-2x < 6 \Rightarrow x > -3$ (na pamet)
+- Množenje ali deljenje s $c > 0$: znak ostane (na pamet)
+- S $c < 0$ se znak obrne: $-2x < 6 \Rightarrow x > -3$ (na pamet)
 - $x > 4$: $(4, \infty)$; $x \le 4$: $(-\infty, 4]$ (na pamet)
 
 **Postopek**

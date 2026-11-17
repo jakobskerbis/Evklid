@@ -63,7 +63,7 @@ puščica: 8,75; 1,5 -> 8,75; 4,4 | ΔH > 0 | levo | zelena
 
 $$\mathrm{2\,H_2(g) + O_2(g) \rightarrow 2\,H_2O(g)}$$
 
-pri čemer je $\Delta H = -484\,\mathrm{kJ}$. Ta vrednost velja za **množine, ki jih kažejo koeficienti**: ko zgorita $2\,\mathrm{mol}$ vodika in $1\,\mathrm{mol}$ kisika, se sprosti $484\,\mathrm{kJ}$. Če zgori dvakrat toliko, se sprosti dvakrat toliko toplote. Toploto $Q$ za poljubno množino $n$ snovi, ki ima v enačbi koeficient $\nu$ (grška črka »ni«), dobiš tako:
+pri čemer je $\Delta H = -484\,\mathrm{kJ}$. Ta vrednost velja za **množine, ki jih kažejo koeficienti**: ko $2\,\mathrm{mol}$ vodika zgorita z $1\,\mathrm{mol}$ kisika, se sprosti $484\,\mathrm{kJ}$. Če zgori dvakrat toliko, se sprosti dvakrat toliko toplote. Toploto $Q$ za poljubno množino $n$ snovi, ki ima v enačbi koeficient $\nu$ (grška črka »ni«), dobiš tako:
 
 $$Q = \frac{n}{\nu} \cdot |\Delta H|$$
 

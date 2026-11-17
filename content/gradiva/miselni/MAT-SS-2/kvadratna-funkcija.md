@@ -10,7 +10,7 @@ stanje: osnutek
   - $|a| > 1$: ožja parabola
 - Temenska oblika
   - $f(x) = a(x - p)^2 + q$, teme $T(p, q)$
-  - napaka: pri $(x + 3)^2$ je $p = -3$
+  - pazi: pri $(x + 3)^2$ je $p = -3$
 - Teme iz splošne
   - $p = -\dfrac{b}{2a}$, $q = f(p)$
   - simetrijska os $x = p$

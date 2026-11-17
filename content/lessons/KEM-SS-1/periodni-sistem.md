@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Pri zgradbi atoma si spoznal, da so atomi sestavljeni iz protonov, nevtronov in elektronov, in da je elektronov v nevtralnem atomu natanko toliko kot protonov. Veš tudi, da so elektroni razporejeni po lupinah in da se atomi povezujejo v molekule in ionske spojine.
+Pri zgradbi atoma si spoznal, da so atomi sestavljeni iz protonov, nevtronov in elektronov in da je elektronov v nevtralnem atomu natanko toliko kot protonov. Veš tudi, da so elektroni razporejeni po lupinah in da se atomi povezujejo v molekule in ionske spojine.
 
 Periodni sistem je več kot seznam elementov. Njegova razporeditev je **zemljevid lastnosti**: iz mesta elementa lahko ugotoviš, koliko valenčnih elektronov ima, kako velik je njegov atom, ali rad oddaja elektrone in kako močno privlači elektrone v vezi. Zato lahko za element, ki ga še nisi srečal, napoveš, kako se bo vedel. Pri tej uri se naučimo, kako se lastnosti spreminjajo po periodnem sistemu (**periodične lastnosti**) in kaj je **elektronegativnost**. Z njo napovemo, ali je kemijska vez ionska, polarna ali nepolarna.
 
@@ -104,8 +104,8 @@ V isti periodi elektronegativnost narašča od leve proti desni.
 
 Oceni vrsto vezi v $\mathrm{Cl_2}$, $\mathrm{HCl}$ in $\mathrm{NaCl}$. Elektronegativnosti: $\mathrm{Cl}$ $3{,}2$, $\mathrm{H}$ $2{,}2$, $\mathrm{Na}$ $0{,}9$.
 
-**Podatki:** $\mathrm{EN}(\mathrm{Cl}) = 3{,}2$, $\mathrm{EN}(\mathrm{H}) = 2{,}2$, $\mathrm{EN}(\mathrm{Na}) = 0{,}9$; spojine $\mathrm{Cl_2}$, $\mathrm{HCl}$, $\mathrm{NaCl}$
-**Iščemo:** vrsto vezi v vsaki spojini
+**Podatki:** $\mathrm{EN}(\mathrm{Cl}) = 3{,}2$, $\mathrm{EN}(\mathrm{H}) = 2{,}2$, $\mathrm{EN}(\mathrm{Na}) = 0{,}9$; snovi $\mathrm{Cl_2}$, $\mathrm{HCl}$, $\mathrm{NaCl}$
+**Iščemo:** vrsto vezi v vsaki snovi
 
 :::formula
 $\Delta\mathrm{EN} = |\mathrm{EN}_1 - \mathrm{EN}_2|$
@@ -188,8 +188,8 @@ Bolj polarna je vez $\mathrm{O{-}H}$ ($1{,}2 > 0{,}8$). Obe vezi sta polarni kov
 
 Predstavljaj si periodni sistem kot zemljevid z dvema puščicama.
 
-- Puščica **proti desni** ponazarja naraščanje naboja jedra v isti lupini. Jedro je kot vedno močnejši magnet, ki bolj in bolj vleče zunanje elektrone. Atom se skrči, elektroni se težje odtrgajo (višja ionizacijska energija) in v vezi so bolj »požrešni« (višja elektronegativnost).
-- Puščica **navzdol** ponazarja dodajanje lupin. Zunanji elektroni so vedno dlje od jedra, zato je privlak slabši. Atom je večji, elektroni se lažje odtrgajo in so v vezi manj »požrešni«.
+- Puščica **proti desni** ponazarja naraščanje naboja jedra v isti lupini. Jedro je kot vedno močnejši magnet, ki bolj in bolj vleče zunanje elektrone. Atom se skrči, elektroni se težje odtrgajo (višja ionizacijska energija) in atom je v vezi bolj »požrešen« (višja elektronegativnost).
+- Puščica **navzdol** ponazarja dodajanje lupin. Zunanji elektroni so vedno dlje od jedra, zato je privlak slabši. Atom je večji, elektroni se lažje odtrgajo in atom je v vezi manj »požrešen«.
 
 Zaradi obeh puščic je »vrh« elektronegativnosti zgoraj desno (fluor), »dno« pa spodaj levo (cezij, francij). Žlahtne pline v zadnjem stolpcu pri elektronegativnosti pustimo ob strani.
 
@@ -198,8 +198,8 @@ Zaradi obeh puščic je »vrh« elektronegativnosti zgoraj desno (fluor), »dno�
 Elektronegativnost si lahko predstavljaš kot **vleko vrvi** med dvema ljudema. Skupni elektronski par je vrv.
 
 - Če sta oba enako močna ($\mathrm{Cl_2}$, $\Delta\mathrm{EN} = 0$), je vrv na sredini. To je nepolarna vez.
-- Če je en malo močnejši ($\mathrm{HCl}$), vrv potegne k sebi, a je ne dobi povsem. To je polarna vez.
-- Če je en neprimerno močnejši ($\mathrm{NaCl}$), vrv povsem prevzame. To je ionska vez.
+- Če je eden malo močnejši ($\mathrm{HCl}$), vrv potegne k sebi, a je ne dobi povsem. To je polarna vez.
+- Če je eden neprimerno močnejši ($\mathrm{NaCl}$), vrv povsem prevzame. To je ionska vez.
 
 Zato se v vsakdanjem življenju sol ($\mathrm{NaCl}$, ionska snov) obnaša drugače kot klorovodik ($\mathrm{HCl}$, molekulska snov, ki je pri sobni temperaturi plin). Razlika izhaja iz različne elektronegativnosti vezanih atomov.
 
@@ -224,7 +224,7 @@ Primer s številkami za 2. periodo:
 | O | 16 | 6 | 3,4 |
 | F | 17 | 7 | 4,0 |
 
-Vidiš, da elektronegativnost od litija do fluora stalno raste, in da se z vsakim korakom doda en valenčni elektron.
+Vidiš, da elektronegativnost od litija do fluora stalno raste in da se z vsakim korakom doda en valenčni elektron.
 
 Še primer za 17. skupino (halogeni):
 

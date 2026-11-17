@@ -148,7 +148,7 @@ $a^r : a^s = a^{r-s}$, $\;(a^r)^s = a^{r \cdot s}$, $\;(a \cdot b)^r = a^r \cdot
 
 1. Najprej uredimo ulomek v oklepaju; pri deljenju eksponente odštejemo. Pri $x$: $\dfrac{3}{4} - \left(-\dfrac{1}{4}\right) = \dfrac{4}{4} = 1$. Pri $y$: $-\dfrac{1}{2} - \dfrac{1}{6} = -\dfrac{3}{6} - \dfrac{1}{6} = -\dfrac{2}{3}$.
 2. V oklepaju je torej $x^1 \cdot y^{-\frac{2}{3}}$.
-3. Potenciramo z $\dfrac{3}{2}$: $x^{1 \cdot \frac{3}{2}} \cdot y^{-\frac{2}{3} \cdot \frac{3}{2}} = x^{\frac{3}{2}} \cdot y^{-1} = \dfrac{x^{\frac{3}{2}}}{y}$.
+3. Potenciramo s $\dfrac{3}{2}$: $x^{1 \cdot \frac{3}{2}} \cdot y^{-\frac{2}{3} \cdot \frac{3}{2}} = x^{\frac{3}{2}} \cdot y^{-1} = \dfrac{x^{\frac{3}{2}}}{y}$.
 4. S korenom: $x^{\frac{3}{2}} = x^{1 + \frac{1}{2}} = x\sqrt{x}$, zato je izraz enak $\dfrac{x\sqrt{x}}{y}$.
 5. Zdaj ti: vstavi $x = 4$ in $y = 8$ v poenostavljeni izraz.
 
@@ -315,7 +315,7 @@ Vsi trije grafi gredo skozi točki $(0, 0)$ in $(1, 1)$, ker je $1^r = 1$ za vsa
 > V $a^{\frac{4}{3}}$ sta števec in imenovalec zamenjana: to je $\sqrt[3]{a^4}$. Imenovalec eksponenta je stopnja korena.
 
 ? (brez računala) Koliko je $64^{\frac{2}{3}}$?
-= 16 | 0,01
+= 16 | 0
 ~ 42,7 | To je $64 \cdot \frac{2}{3}$. Eksponent $\frac{2}{3}$ ni množenje z $\frac{2}{3}$; pomeni kubični koren in kvadrat.
 ~ 8 | $8 = \sqrt{64}$: vzel si kvadratni koren in pozabil na števec $2$ ter stopnjo $3$.
 ~ 512 | $512 = 64^{\frac{3}{2}}$: števec in imenovalec sta zamenjana.

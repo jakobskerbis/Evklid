@@ -43,7 +43,7 @@ Propen $\mathrm{C_3H_6}$, propin $\mathrm{C_3H_4}$. Vsaka dodatna vez med ogljik
 
 Kratke verige so pri sobni temperaturi plini (metan do butan), srednje so tekočine (bencin), zelo dolge pa trdne snovi, kot je parafin v sveči.
 
-**5. Areni: obroč s posebnimi elektroni.** Benzen $\mathrm{C_6H_6}$ je obroč iz šestih atomov C, vsak nosi en atom H. Če bi bil navaden alken, bi ga narisali s tremi izmenjajočimi se dvojnimi vezmi. Meritve pa pokažejo, da so vse vezi C–C v obroču enako dolge, nekje med enojno in dvojno. Šest elektronov, ki bi sicer tvorili te tri dodatne vezi, ni vezanih med dva atoma. Razporejeni so po celem obroču. Pravimo, da so **delokalizirani**. Zato benzen pogosto rišemo kot šesterokotnik s krogom v sredini:
+**5. Areni: obroč s posebnimi elektroni.** Benzen $\mathrm{C_6H_6}$ je obroč iz šestih atomov C, vsak nosi en atom H. Če bi bil navaden alken, bi ga narisali s tremi izmenjujočimi se dvojnimi vezmi. Meritve pa pokažejo, da so vse vezi C–C v obroču enako dolge, nekje med enojno in dvojno. Šest elektronov, ki bi sicer tvorili te tri dodatne vezi, ni vezanih med dva atoma. Razporejeni so po celem obroču. Pravimo, da so **delokalizirani**. Zato benzen pogosto rišemo kot šesterokotnik s krogom v sredini:
 
 ```
         H
@@ -146,8 +146,8 @@ koren pent- = 5 atomov C; -in = trojna vez; alkin $\mathrm{C}_n\mathrm{H}_{2n-2}
 4. Vsakemu ogljiku dodamo toliko H, da ima 4 vezi:
 
 ```
-               CH3
-               |
+            CH3
+            |
 CH3 - C≡C - CH - CH3
 ```
 

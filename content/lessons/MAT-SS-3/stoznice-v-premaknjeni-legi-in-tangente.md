@@ -76,7 +76,7 @@ puščica: -4; 3 -> -4; 1,8
 | $(-4, 3)$ | $(-4; 1{,}8)$ |
 | $(5, 0)$ | $(5, 0)$ |
 
-Zdaj še simboli. Točka $(x, y)$ na elipsi je nastala iz točke $\left(x, \frac53 y\right)$ na krožnici, saj nazaj množimo z obratnim faktorjem $\frac53$. Ta zadošča enačbi krožnice: $x^2 + \left(\frac53 y\right)^2 = 25$. Delimo s $25$ in dobimo $\frac{x^2}{25} + \frac{y^2}{9} = 1$. Splošno: krožnica $x^2 + y^2 = a^2$, raztegnjena vzdolž osi $y$ s faktorjem $\frac{b}{a}$, je elipsa s polosema $a$ in $b$. Faktor manjši od $1$ krožnico stisne, večji jo raztegne. Pri krožnici s središčem $S(x_0, y_0)$ raztegujemo glede na premico $y = y_0$ in dobimo premaknjeno elipso.
+Zdaj še simboli. Točka $(x, y)$ na elipsi je nastala iz točke $\left(x, \frac53 y\right)$ na krožnici, saj nazaj množimo z obratnim faktorjem $\frac53$. Ta zadošča enačbi krožnice: $x^2 + \left(\frac53 y\right)^2 = 25$. Delimo s $25$ in dobimo $\frac{x^2}{25} + \frac{y^2}{9} = 1$. Splošno: krožnica $x^2 + y^2 = a^2$, raztegnjena vzdolž osi $y$ s faktorjem $\frac{b}{a}$, je elipsa s polosema $a$ in $b$. Faktor, manjši od $1$, krožnico stisne, večji jo raztegne. Pri krožnici s središčem $S(x_0, y_0)$ raztegujemo glede na premico $y = y_0$ in dobimo premaknjeno elipso.
 
 **3. Hiperbola v premaknjeni legi (višja raven).** Premik deluje enako:
 
@@ -417,7 +417,7 @@ f: -3*sqrt(1 - x^2/25) | modra debelo | -5 .. 5
 točka: 5; 0
 točka: 0; 3
 :::
-= 1 | 0,01
+= 1 | 0
 ~ 4 | To je abscisa gorišča pred premikom, $e = \sqrt{25 - 9} = 4$. Premik v levo jo zmanjša za $3$.
 ~ 7 | Premaknil si v desno. Premik v levo pomeni $x_0 = -3$.
 ~ 2,83 | To je $\sqrt{34} - 3$. Pri elipsi je $e = \sqrt{a^2 - b^2}$, ne $\sqrt{a^2 + b^2}$.

@@ -384,7 +384,7 @@ f: x*x | modra | 0 .. 4
 ~ 4 | To je pot do $2\,\mathrm{s}$. Odčitaj še pot pri $3\,\mathrm{s}$ in izračunaj razliko.
 > Pri $2\,\mathrm{s}$ odčitamo $4\,\mathrm{m}$, pri $3\,\mathrm{s}$ pa $9\,\mathrm{m}$. V tretji sekundi telo naredi $9 - 4 = 5\,\mathrm{m}$, več kot v drugi ($3\,\mathrm{m}$), ker je hitrejše.
 
-? Avto vozi s $20\,\mathrm{m/s}$ in začne enakomerno zavirati. Po $3\,\mathrm{s}$ ima še $8\,\mathrm{m/s}$. Kolikšen je njegov pospešek, če je pozitivna smer smer vožnje?
+? Avto vozi z $20\,\mathrm{m/s}$ in začne enakomerno zavirati. Po $3\,\mathrm{s}$ ima še $8\,\mathrm{m/s}$. Kolikšen je njegov pospešek, če je pozitivna smer smer vožnje?
 = -4 m/s² | 0,05
 ~ 4 | Velikost je prava, predznak ne. Hitrost se manjša, zato je pospešek negativen.
 ~ -12 | To je sprememba hitrosti $8 - 20$ v $\mathrm{m/s}$. Deli jo še s časom.

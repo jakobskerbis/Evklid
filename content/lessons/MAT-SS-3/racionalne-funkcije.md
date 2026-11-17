@@ -175,7 +175,7 @@ Pogoji: imenovalci $\ne 0$; obe strani pomnožimo z najmanjšim skupnim imenoval
 
 1. Razcep: $x^2 - 1 = (x - 1)(x + 1)$. Najmanjši skupni imenovalec je $(x - 1)(x + 1)$.
 2. Pogoji: $x \ne 1$ in $x \ne -1$.
-3. Pomnožimo s $(x - 1)(x + 1)$: $x(x + 1) - 2(x - 1) = 4$.
+3. Pomnožimo z $(x - 1)(x + 1)$: $x(x + 1) - 2(x - 1) = 4$.
 4. Odpravimo oklepaje: $x^2 + x - 2x + 2 = 4$, torej $x^2 - x - 2 = 0$.
 5. Razcep: $(x - 2)(x + 1) = 0$, kandidata sta $x = 2$ in $x = -1$.
 6. Preizkus s pogoji: $x = -1$ je ničla imenovalca, zato je navidezna rešitev. Za $x = 2$: leva stran je $\frac{2}{1} - \frac{2}{3} = \frac{4}{3}$, desna $\frac{4}{3}$.

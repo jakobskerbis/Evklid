@@ -47,7 +47,7 @@ $$y = f(a) - \frac{1}{f'(a)}\,(x - a)$$
 
 Pri $f'(a) = 0$ je normala navpična premica $x = a$.
 
-**Presečni kot krivulj.** Kot med grafoma $f$ in $g$ v presečišču z absciso $x_0$ je kot med tangentama v tej točki. Z $k_1 = f'(x_0)$ in $k_2 = g'(x_0)$ je
+**Presečni kot krivulj.** Kot med grafoma $f$ in $g$ v presečišču z absciso $x_0$ je kot med tangentama v tej točki. S $k_1 = f'(x_0)$ in $k_2 = g'(x_0)$ je
 
 $$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$
 
@@ -367,13 +367,13 @@ Enako je pri ceni rogljičkov: prihodek je največji tam, kjer podražitev neha 
 > Desno od maksimuma je $R' < 0$, prihodek pada: $R(1{,}40) = 1{,}40 \cdot 220 = 308\,€$.
 
 ? Tangenta na graf $f(x) = x^2 - 2x$ v točki z absciso $3$ ima enačbo $y = kx + n$. Koliko je $n$?
-= -9 | 0,01
+= -9 | 0
 ~ -6 | Za smerni koeficient je vzeta vrednost $f(3) = 3$ namesto $f'(3) = 4$, tako dobiš $y = 3x - 6$.
 ~ 3 | Za začetno vrednost $n$ je vzet $f(3)$, premik $(x - 3)$ pa izpuščen.
 > $f(3) = 3$, $f'(x) = 2x - 2$, $f'(3) = 4$; $y = 3 + 4(x - 3) = 4x - 9$.
 
 ? (brez računala) Dnevni dobiček delavnice je $D(x) = -2x^2 + 120x - 1000$ evrov, kjer je $x$ število izdelkov. Kolikšen je največji dobiček?
-= 800 € | 0,01
+= 800 € | 0
 ~ 30 | $30$ je število izdelkov, pri katerem je dobiček največji, ne dobiček.
 ~ 0 | To je $D'(30)$. Vrednost dobička dobiš, ko $30$ vstaviš v $D$, ne v $D'$.
 > $D'(x) = -4x + 120 = 0$ da $x = 30$; $D(30) = -1800 + 3600 - 1000 = 800$, predznak $D'$ gre iz $+$ v $-$.

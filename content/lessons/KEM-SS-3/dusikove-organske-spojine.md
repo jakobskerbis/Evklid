@@ -85,7 +85,7 @@ Vrsto amina določa število ogljikovih atomov, vezanih neposredno na dušik: $1
 
 1. $\mathrm{(CH_3)_3N}$: na N so tri metilne skupine, torej trije ogljiki. Terciarni amin.
 2. $\mathrm{(CH_3)_2NH}$: na N sta dve metilni skupini in en vodik. Sekundarni amin.
-3. $\mathrm{CH_3CH_2NH_2}$: na N je samo en ogljik, drugi ogljik etilne skupine dušika ne dotika. Primarni amin.
+3. $\mathrm{CH_3CH_2NH_2}$: na N je samo en ogljik, drugi ogljik etilne skupine se dušika ne dotika. Primarni amin.
 4. Odgovor: trimetilamin je terciarni, N-metilmetanamin sekundarni, etanamin primarni amin.
 
 ### Primer 2: glicin v kislini, vodi in bazi
@@ -190,7 +190,7 @@ V simulaciji spodaj »Dušikove organske spojine« uvrsti spojine v skupine. Pri
 ~ To je opis amida. Amin izhaja iz amoniaka, ne iz karboksilne kisline.
 + Amini so derivati amoniaka, v katerih je vsaj en vodik nadomeščen z ogljikovodikovim ostankom.
 - V aminih je dušik vezan na kisik.
-~ V aminih je dušik vezan na ogljik in vodik. Vez N–O ni značilna za amine.
+~ V aminih je dušik vezan na ogljik, lahko tudi na vodik. Vez N–O ni značilna za amine.
 - Amini v vodi oddajo proton, zato so šibke kisline.
 ~ Amini proton sprejmejo, ne oddajo. Z vodo dajo ione $\mathrm{OH^-}$, zato so baze.
 > Amin nastane, ko vodik v $\mathrm{NH_3}$ nadomesti alkilna ali arilna skupina; nevezni par na dušiku ostane.

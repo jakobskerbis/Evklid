@@ -67,7 +67,7 @@ $$\left(\sqrt{a} + \sqrt{b}\right)\left(\sqrt{a} - \sqrt{b}\right) = a - b.$$
 
 Tako je $\dfrac{1}{\sqrt{a} - \sqrt{b}} = \dfrac{\sqrt{a} + \sqrt{b}}{a - b}$ za $a \ne b$.
 
-Razširitev je dovoljena, ker ulomek množimo z $1$, na primer z $\dfrac{\sqrt{b}}{\sqrt{b}}$. Konjugirani izraz deluje tudi, kadar je le eden od členov koren: $\dfrac{3}{2 + \sqrt{3}} = \dfrac{3\left(2 - \sqrt{3}\right)}{4 - 3} = 6 - 3\sqrt{3}$. Preverjanje: leva stran je $\dfrac{3}{3{,}732} \approx 0{,}804$, desna $6 - 5{,}196 = 0{,}804$.
+Razširitev je dovoljena, ker ulomek množimo z $1$, na primer s $\dfrac{\sqrt{b}}{\sqrt{b}}$. Konjugirani izraz deluje tudi, kadar je le eden od členov koren: $\dfrac{3}{2 + \sqrt{3}} = \dfrac{3\left(2 - \sqrt{3}\right)}{4 - 3} = 6 - 3\sqrt{3}$. Preverjanje: leva stran je $\dfrac{3}{3{,}732} \approx 0{,}804$, desna $6 - 5{,}196 = 0{,}804$.
 
 :::premisli
 S čim razširiš ulomek $\dfrac{1}{\sqrt[3]{2}}$, da v imenovalcu ne bo več korena? Namig: pod kubičnim korenom mora nastati popolni kub.
@@ -241,7 +241,7 @@ $b = \sqrt[n]{a}$ pomeni $b^n = a$; na računalu tipka $\sqrt[\square]{\square}$
 - **Koren vsote kot vsota korenov.** Zapis $\sqrt{a + b} = \sqrt{a} + \sqrt{b}$ je napačen, saj pravilo velja le za produkt in količnik. Če je v korenu vsota, je ne smeš razdeliti. Preizkus: $\sqrt{9 + 16} = 5 \ne 7$.
 - **$\sqrt{x^2} = x$.** To velja le za $x \ge 0$. Za $x = -3$ je $\sqrt{(-3)^2} = 3$. Pravilno: $\sqrt{x^2} = |x|$.
 - **Seštevanje različnih korenov.** $2\sqrt{3} + 3\sqrt{5} = 5\sqrt{8}$ ni res. Seštejemo samo člene z enakim številom pod korenom. Najprej delno korenimo, nato šele ugotovimo, ali so istovrstni.
-- **Napačen faktor pri racionalizaciji.** Pri $\dfrac{1}{\sqrt{5} - \sqrt{2}}$ ulomka ne smeš razširiti z $\sqrt{5} - \sqrt{2}$, ker dobiš $\left(\sqrt{5} - \sqrt{2}\right)^2 = 7 - 2\sqrt{10}$, ki še vedno vsebuje koren. Razširiti moraš z izrazom nasprotnega znaka $\sqrt{5} + \sqrt{2}$, da dobiš $5 - 2 = 3$.
+- **Napačen faktor pri racionalizaciji.** Pri $\dfrac{1}{\sqrt{5} - \sqrt{2}}$ ulomka ne smeš razširiti s $\sqrt{5} - \sqrt{2}$, ker dobiš $\left(\sqrt{5} - \sqrt{2}\right)^2 = 7 - 2\sqrt{10}$, ki še vedno vsebuje koren. Razširiti moraš z izrazom nasprotnega znaka $\sqrt{5} + \sqrt{2}$, da dobiš $5 - 2 = 3$.
 - **Delno korenjenje do polovice.** $\sqrt{72} = 2\sqrt{18}$ drži, a ni končna oblika, ker je v $18$ še popolni kvadrat $9$. Izvleči moraš *največji* popolni kvadrat: $72 = 36 \cdot 2$, zato je $\sqrt{72} = 6\sqrt{2}$.
 
 ## Povzetek
@@ -275,7 +275,7 @@ $b = \sqrt[n]{a}$ pomeni $b^n = a$; na računalu tipka $\sqrt[\square]{\square}$
 **Pazi na**
 - $\sqrt{a + b} \ne \sqrt{a} + \sqrt{b}$: pravilo velja le za produkt in količnik.
 - Seštevaš le korene z enakim številom pod korenom; najprej delno koreni.
-- Pri $\sqrt{a} - \sqrt{b}$ v imenovalcu razširi z $\sqrt{a} + \sqrt{b}$.
+- Pri $\sqrt{a} - \sqrt{b}$ v imenovalcu razširi s $\sqrt{a} + \sqrt{b}$.
 
 ## Za maturo
 
@@ -415,7 +415,7 @@ Za drugo gredico imata le letev, dolgo $1{,}2\,\text{m}$, ki naj bo ravno diagon
 ~ Napačno je misliti, da je $\sqrt{5} + \sqrt{2}$ enako $\sqrt{7}$: vsota korenov ni koren vsote ($3{,}65$ proti $2{,}65$).
 + Ker zmnožek s $\sqrt{5} + \sqrt{2}$ da $5 - 2 = 3$ brez korena, kvadrat $\left(\sqrt{5} - \sqrt{2}\right)^2 = 7 - 2\sqrt{10}$ pa koren še ima.
 - Ker se s tem vrednost ulomka poveča in je lažje računati.
-~ Razširjanje vrednosti ne spremeni: ulomek množimo z $\dfrac{\sqrt{5} + \sqrt{2}}{\sqrt{5} + \sqrt{2}} = 1$.
+~ Razširjanje vrednosti ne spremeni: ulomek množimo s $\dfrac{\sqrt{5} + \sqrt{2}}{\sqrt{5} + \sqrt{2}} = 1$.
 > Konjugirani izraz da razliko kvadratov, v kateri korena izgineta: $\dfrac{1}{\sqrt{5} - \sqrt{2}} = \dfrac{\sqrt{5} + \sqrt{2}}{3}$.
 
 ? Kateri koren je enak $3\sqrt{5}$?

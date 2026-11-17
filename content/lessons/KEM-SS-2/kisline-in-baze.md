@@ -76,7 +76,7 @@ Konjugirana baza je $\mathrm{OH^-}$ (voda izgubi proton), konjugirana kislina pa
 
 **6. Močna kislina, šibka konjugirana baza.** V vodi odda proton skoraj vsaka molekula klorovodika, zato v enačbi pišemo le puščico v desno. Ion $\mathrm{Cl^-}$ protona skoraj ne sprejme nazaj: je zelo šibka baza. Velja splošno: močnejša kot je kislina, šibkejša je njena konjugirana baza. Kako to izmerimo s številom, spoznaš pri šibkih kislinah.
 
-V simulaciji spodaj »Kisline, baze in pH« izberi *amoniak (čistilo)*. Primerjaj koncentraciji $\mathrm{OH^-}$ in $\mathrm{H_3O^+}$. Opazi, da je ionov $\mathrm{OH^-}$ mnogo več, čeprav $\mathrm{NH_3}$ nima skupine $\mathrm{OH}$: dala jih je voda.
+V simulaciji spodaj »Kisline, baze in pH« izberi *amonijak (čistilo)*. Primerjaj koncentraciji $\mathrm{OH^-}$ in $\mathrm{H_3O^+}$. Opazi, da je ionov $\mathrm{OH^-}$ mnogo več, čeprav $\mathrm{NH_3}$ nima skupine $\mathrm{OH}$: dala jih je voda.
 
 ## Rešeni primeri
 
