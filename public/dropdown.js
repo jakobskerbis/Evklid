@@ -88,20 +88,27 @@ export function enhanceSelect(sel) {
   });
 }
 
+let gseq = 0;
 function open(sel, btn) {
   closeMenu();
   const list = document.createElement("div");
   list.className = "dd-list";
   list.id = `dd-list-${++uid}`;
   list.setAttribute("role", "listbox");
+  // Ime seznama za bralnik zaslona (#792): isto kot gumb (aria-label izbirnega seznama ali njegova oznaka).
+  const name = sel.getAttribute("aria-label") || labelText(sel.labels?.[0]);
+  if (name) list.setAttribute("aria-label", name);
   list.tabIndex = -1;
   const items = [];
   const current = indexProp.get.call(sel);
   let html = "";
   for (const child of sel.children) {
     if (child.tagName === "OPTGROUP") {
-      html += `<div class="dd-group" role="presentation">${esc(child.label)}</div>`;
+      // Skupina (npr. raven) z imenom za bralnik zaslona; ovoj ima display: contents (ui.css), videz ostane.
+      const gid = `dd-g-${uid}-${++gseq}`;
+      html += `<div class="dd-grp" role="group" aria-labelledby="${gid}"><div class="dd-group" id="${gid}" role="presentation">${esc(child.label)}</div>`;
       for (const o of child.children) html += optHtml(o);
+      html += "</div>";
     } else if (child.tagName === "OPTION") html += optHtml(child);
   }
   function optHtml(o) {
@@ -145,14 +152,14 @@ function open(sel, btn) {
       const el = items[at];
       const grp = el.previousElementSibling?.classList.contains("dd-group") && !el.previousElementSibling.hidden ? el.previousElementSibling : el;
       const want = Math.max(0, grp.offsetTop - head.offsetHeight);
-      // Blizu konca seznama se ne da pomakniti dovolj: seznam raje skrajšamo, da ni odrezane vrstice.
-      const short = want - (list.scrollHeight - list.clientHeight);
-      if (short > 0) list.style.maxHeight = `${list.offsetHeight - short}px`;
-      list.scrollTop = want;
+      // Blizu konca seznama (npr. 8. razred od 9) se ne da pomakniti dovolj: seznam ostane cel in se pomakne do dna,
+      // da so vidni tudi razredi pred izbranim (prej se je skrajšal na eno ali dve vrstici, #792).
+      list.scrollTop = Math.min(want, list.scrollHeight - list.clientHeight);
     }
   } else setActive(state, Math.max(0, items.findIndex((el) => Number(el.dataset.i) === current)), true);
   if (state.search) {
-    const fold = (x) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    // Brez naglasov in presledkov: »4.letni« najde »4. letnik VR« (j 16. 11., pregled posnetkov).
+    const fold = (x) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "").toLowerCase();
     state.search.addEventListener("input", () => {
       const q = fold(state.search.value.trim());
       let first = -1;

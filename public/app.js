@@ -76,7 +76,7 @@ import { initFullscreen } from "./fullscreen.js";
 import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
 import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./schedule.js";
 import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
-import { initScan, showScan, leaveScan, scanBack, startPilotScan } from "./scan/scan.js";
+import { initScan, showScan, leaveScan, scanBack, startPilotScan, startTutorScan } from "./scan/scan.js";
 import { initPilot, loadPilot, showPilot, scanTask, isPilotMember } from "./pilot-naloge.js";
 import { initAnketa, preveriAnketo } from "./anketa-teden.js";
 import { initLab, showLab, labBack, openLabExperiment } from "./laboratorij.js";
@@ -299,13 +299,15 @@ function showView(name) {
   if (name !== "topic") stopContestTimer();
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === name));
   // Na telefonu so Napredek, Lige, Nastavitve in Račun pod zavihkom »Jaz«.
-  if (meView(name)) $('#tabbar [data-view="me"]').classList.add("active");
+  // Skener iz kamere v Inštruktorju ostane pod zavihkom Inštruktor.
+  if (name === "scan" && state.scanFromChat) $('#tabbar [data-view="chat"]')?.classList.add("active");
+  else if (meView(name)) $('#tabbar [data-view="me"]').classList.add("active");
   pinSnapshot(); // posnetek zadnjega zaslona (zagon) ostane na svojem mestu, pravi pogled se pripravi pod njim
   document.querySelectorAll(".view").forEach((v) => {
     if (!v.classList.contains("in-okno") && !v.hasAttribute("data-posnetek")) v.hidden = v.id !== `view-${name}`;
   });
   initView(name);
-  if (away("scan")) leaveScan();
+  if (away("scan")) leaveScan(), scanFromChat(false);
   if (away("games")) leaveGames();
   if (away("corner")) closeBoard();
   hideKeyboard(); // odhod z zaslona: Evklidova tipkovnica se zapre (public/tipkovnica.js)
@@ -700,6 +702,7 @@ function backStep(wasOverlay) {
   if (currentView === "uci" && uciBack({ textbookBack, labBack })) return true;
   if (currentView === "games" && gamesBack()) return true;
   if (currentView === "scan" && scanBack()) return true;
+  if (currentView === "scan" && state.scanFromChat) return showView("chat"), true; // skener iz kamere v Inštruktorju
   if (closeByEsc()) return true;
   if (currentView === "path") return false;
   const subMe = meView(currentView) && currentView !== "me";
@@ -841,13 +844,15 @@ function paintMeLevel() {
 }
 // Nazaj na »Jaz« s podstrani (viden samo, ko je spodnja vrstica: telefon in tablica).
 document.addEventListener("click", (e) => {
-  if (e.target.closest(".me-back")) showView("me");
+  if (e.target.closest(".me-back")) showView(e.target.closest("#view-scan") && state.scanFromChat ? "chat" : "me");
 });
 document.querySelectorAll("#view-me [data-go], #settings-account [data-go]").forEach((b) =>
   b.addEventListener("click", () => (b.dataset.go === "account" ? $("#account-tab").click() : showView(b.dataset.go))),
 );
-// Klik na kartico s profilom: Nastavitve, na mestu šole in letnika (pod njimi je povezava na Račun).
-$("#me-head")?.addEventListener("click", () => {
+// Klik na kartico s profilom (in »Druga šola ali stopnja …« v glavi Inštruktorja): Nastavitve, na mestu šole in
+// letnika (pod njimi je povezava na Račun). Tam veljajo vsa pravila izbire (stopnja, program, šolski sistem).
+$("#me-head")?.addEventListener("click", () => openSchoolSettings());
+function openSchoolSettings() {
   showView("settings");
   const el = $("#settings-form .level-field") || $("#settings-form");
   requestAnimationFrame(() => {
@@ -857,7 +862,8 @@ $("#me-head")?.addEventListener("click", () => {
     void card?.offsetWidth;
     card?.classList.add("flash-target");
   });
-});
+}
+
 
 // ---------- učenci ----------
 
@@ -1191,10 +1197,9 @@ function renderState(convState) {
     SUBJECT_NAMES[subject] && pick("subject", t("set.subject"), opt(subject, SUBJECT_NAMES[subject], true)),
     MODE_NAMES[mode] && pick("mode", t("set.mode"), Object.entries(MODE_NAMES).map(([k, v]) => opt(k, v, k === mode)).join("")),
     program && `<span class="chip">${escapeHtml(program)}</span>`,
+    // Zadnja izbira »Druga šola ali stopnja …« odpre Jaz → Šola in letnik (prehod OŠ ↔ SŠ ↔ fakulteta, drug sistem; #792).
     levelLabel(s.curriculum_level) &&
-      (levels.length > 1
-        ? pick("level", t("set.school"), levels.map((x, i) => opt(i, x.label, x.current)).join(""))
-        : `<span class="chip">${escapeHtml(levelLabel(s.curriculum_level))}</span>`),
+      pick("level", t("set.school"), (levels.length ? levels.map((x, i) => opt(i, x.label, x.current)).join("") : opt("", levelLabel(s.curriculum_level), true)) + opt("other", t("chat.levelOther"), false)),
     ravni.length > 1 && pick("raven", t("tbk.level"), ravni.map((x, i) => opt(i, x.label, x.current)).join("")),
   ]
     .filter(Boolean)
@@ -1222,6 +1227,8 @@ async function wireStatePicks(head, subject, levels, ravni = []) {
     save({ solving_mode: e.target.value }, t("set.mode"), MODE_NAMES[e.target.value]).catch(() => renderState(null)),
   );
   head.querySelector('[data-pick="level"]')?.addEventListener("change", (e) => {
+    if (e.target.value === "other") return renderState(null), openSchoolSettings(); // izbira v glavi ostane sedanja
+    if (!levels[Number(e.target.value)]) return;
     const next = { ...levels[Number(e.target.value)].settings };
     // Predmet, ki ga novi razred nima (npr. fizika v 7. razredu), zamenja prvi predmet razreda.
     if (!jeFaks(next)) {
@@ -1886,7 +1893,10 @@ input.addEventListener("vnos-izris-visina", () => autoGrow());
     if (!full || !ctx || room <= 0) return;
     ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
     let text = full;
-    if (ctx.measureText(full).width > room) {
+    // Ne gre cel: kratek namig (»Napiši nalogo«, #792), šele nato rez za zadnjo celo besedo.
+    const short = t("chat.placeholderShort");
+    if (ctx.measureText(full).width > room && short && ctx.measureText(short).width <= room) text = short;
+    else if (ctx.measureText(full).width > room) {
       const words = full.replace(/\s*…$/, "").split(/\s+/);
       while (words.length > 1 && ctx.measureText(`${words.join(" ")} …`).width > room) words.pop();
       text = `${words.join(" ")} …`;
@@ -1968,11 +1978,16 @@ window.addEventListener("evklid:tipkovnica", () => {
 
 // ---------- fotografije ----------
 
-async function loadImage(file) {
-  if (!file || !file.type.startsWith("image/")) return;
-  // Pomanjšaj na največ 1600 px, da je pošiljanje hitro in poceni.
-  const bitmap = await createImageBitmap(file);
-  // Lahki način: še manjša in bolj stisnjena slika (manj prenosa in manj žetonov).
+// Slika za inštruktorja: največ 1200 px (lahki način 900 px, kakovost 0,6), da je pošiljanje hitro in poceni.
+// Vir je datoteka (prilepljena slika) ali slika iz skenerja (data URL).
+async function scaledImage(src) {
+  // data URL brez fetch (pravila CSP za connect-src ga ne dovolijo): prek elementa <img>.
+  let bitmap = src;
+  if (typeof src === "string") {
+    bitmap = new Image();
+    bitmap.src = src;
+    await bitmap.decode();
+  } else bitmap = await createImageBitmap(src);
   const lite = liteActive();
   const scale = Math.min(1, (lite ? 900 : 1200) / Math.max(bitmap.width, bitmap.height)); // manjša slika = manj žetonov
   const canvas = document.createElement("canvas");
@@ -1980,16 +1995,50 @@ async function loadImage(file) {
   canvas.height = Math.round(bitmap.height * scale);
   canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   const url = canvas.toDataURL("image/jpeg", lite ? 0.6 : 0.8);
-  state.image = { media_type: "image/jpeg", data: url.split(",")[1], url };
-  $("#image-preview img").src = url;
+  return { media_type: "image/jpeg", data: url.split(",")[1], url };
+}
+function showImage(img) {
+  state.image = img;
+  $("#image-preview img").src = img.url;
   $("#image-preview").hidden = false;
+}
+async function loadImage(file) {
+  if (!file || !file.type.startsWith("image/")) return;
+  showImage(await scaledImage(file));
 }
 function clearImage() {
   state.image = null;
   $("#image-preview").hidden = true;
-  $("#image-input").value = "";
 }
-$("#image-input").addEventListener("change", (e) => loadImage(e.target.files[0]));
+// Kamera v Inštruktorju (j 17. 11.: en vhod za fotografijo, skener namesto neposredne slike): zajem, izrez, branje,
+// učenec prepis pregleda in popravi, nato gre naloga v odprti pogovor (predmet, način in letnik ostanejo).
+// Fotografija gre zraven le, če jo učenec pusti označeno (skica, graf ali branje ni uspelo).
+function scanFromChat(on) {
+  state.scanFromChat = on;
+  const back = $("#view-scan .me-back span");
+  if (back) back.textContent = t(on ? "nav.chat" : "nav.me");
+}
+async function scanToChat({ text, image }) {
+  // Pomanjšana kot slika iz polja; če pomanjšanje ne uspe, gre izvirni izrez (nikoli se ne izgubi).
+  const img = image ? await scaledImage(image).catch(() => ({ media_type: "image/jpeg", data: image.split(",")[1], url: image })) : null;
+  showView("chat");
+  // Odgovor se še izpisuje ali je klepet izklopljen: naloga in fotografija gresta v polje (nič se ne izgubi),
+  // učenec ju pošlje sam.
+  if (state.sending || !$("#chat-off").hidden) {
+    if (text) fillInput(text);
+    if (img && !state.image) showImage(img);
+    return $("#input").focus();
+  }
+  $("#input").focus(); // fokus nazaj v polje za pisanje (dostopnost), pošiljanje ga ne potrebuje
+  send(text, { image: img });
+}
+$("#photo-btn").addEventListener("click", () => {
+  if (!state.student) return;
+  startTutorScan((x) => scanToChat(x));
+  scanFromChat(true);
+  showView("scan");
+  requestAnimationFrame(() => $("#view-scan h1")?.focus({ preventScroll: true })); // fokus na naslov skenerja
+});
 $("#remove-image").addEventListener("click", clearImage);
 input.addEventListener("paste", (e) => {
   const file = [...(e.clipboardData?.files || [])].find((f) => f.type.startsWith("image/"));
@@ -2373,6 +2422,7 @@ $("#settings-form").addEventListener("submit", async (e) => {
   fillDeleteCard();
   refreshProfileButton();
   renderState(null);
+  if (ideasKey(before) !== ideasKey(updated.settings)) refreshIdeas(); // prazen klepet: predlogi po novem razredu, ravni, predmetu
   if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
     state.pathKey = null; // Ponavljanje in Kartice (state.pathKey) za novi predmet, ne za prejšnjega
     refreshModes();
@@ -2674,10 +2724,9 @@ function addMsgFoot(el, { id, code, reported }) {
   if (el.classList.contains("error") || el.querySelector(".msg-foot")) return;
   const foot = document.createElement("div");
   foot.className = "msg-foot";
-  const tag = document.createElement("span");
-  tag.className = "msg-code";
-  tag.textContent = code || "";
-  tag.title = t("rep.code");
+  // Koda sporočila (#00YA, server/reports.js: z njo skrbnik najde sporočilo s posnetka zaslona) je samo v obrazcu
+  // prijave, z napisom »Koda sporočila«; pod vsakim odgovorom je bila videti kot notranja številka (#792).
+  if (code) foot.dataset.code = code;
   const done = () => {
     foot.querySelector(".msg-report")?.remove();
     const s = document.createElement("span");
@@ -2686,7 +2735,6 @@ function addMsgFoot(el, { id, code, reported }) {
     s.lastChild.textContent = t("rep.done");
     foot.append(s);
   };
-  foot.append(tag);
   if (reported) done();
   else {
     const b = document.createElement("button");
@@ -2709,8 +2757,15 @@ function openReport(el, foot, btn, id, done) {
   box.setAttribute("role", "group");
   box.innerHTML = `<p></p><div class="rep-reasons"></div><textarea maxlength="500" rows="2"></textarea>
     <p class="rep-err" role="alert" hidden></p>
-    <div class="rep-actions"><button type="button" class="primary small rep-send"></button><button type="button" class="ghost rep-cancel"></button></div>`;
+    <div class="rep-actions"><button type="button" class="primary small rep-send"></button><button type="button" class="ghost rep-cancel"></button></div>
+    <p class="rep-code muted" hidden><span></span> <span class="msg-code"></span></p>`;
   box.querySelector("p").textContent = t("rep.ask");
+  if (foot.dataset.code) {
+    const c = box.querySelector(".rep-code");
+    c.hidden = false;
+    c.firstElementChild.textContent = `${t("rep.code")}:`;
+    c.lastElementChild.textContent = foot.dataset.code;
+  }
   box.setAttribute("aria-label", t("rep.ask"));
   const area = box.querySelector("textarea");
   area.placeholder = t("rep.notePh");
@@ -5023,7 +5078,9 @@ async function plotFromText(text) {
 async function addGraphButton(bubble, text) {
   if (!mayPlot(text) || bubble.querySelector(".graph-btn")) return;
   const exprs = await plotFromText(text);
-  if (!exprs.length) return;
+  const { worthGraph } = await import("./graph/math.js");
+  // Samo, kjer ima graf smisel (#792): zveza z y ali funkcija f(x) = …, ne rešitev »x = 4« pod računom x + 1 = 5.
+  if (!exprs.some(worthGraph) || !bubble.isConnected || bubble.querySelector(".graph-btn")) return;
   const b = document.createElement("button");
   b.type = "button";
   b.className = "secondary small graph-btn";
@@ -5032,7 +5089,11 @@ async function addGraphButton(bubble, text) {
     e.stopPropagation();
     openGraphOverlay(exprs, t("nav.chat"));
   });
+  // Gumb pride po izpisu (uvoz modula): če je bil učenec na dnu, ga pokažemo nad poljem za pisanje (360 px).
+  const box = bubble.closest("#messages");
+  const atBottom = box && box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   bubble.append(b);
+  if (atBottom && !bubble.nextElementSibling) box.scrollTop = box.scrollHeight;
 }
 
 // Za samodejne preizkuse v brskalniku.
@@ -5245,7 +5306,6 @@ initUci({
   },
   onOverlay: (open) => (open ? overlayOpened() : overlayClosed()),
 });
-document.querySelectorAll("[data-open-scan]").forEach((b) => b.addEventListener("click", () => showView("scan")));
 
 initTextbook({
   api,
