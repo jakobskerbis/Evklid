@@ -482,7 +482,9 @@ function formuleOkvira(el, w, rob) {
 }
 
 function okvir(el) {
-  const w = el.clientWidth;
+  // Formula v svoji vrstici v mehurčku, ki se skrči na vsebino (klepet): šteje prostor mehurčka, ne trenutna širina.
+  // Sicer zložena formula zoži mehurček, ta formulo, ta jo zloži še ožje … (ResizeObserver v krogu, 320 px).
+  const w = el.matches(".katex-display") && el.parentElement?.closest(".msg, .bubble, .fx-pop") ? Math.floor(prostor(el)) : el.clientWidth;
   if (!w || sirine.get(el) === w) return;
   sirine.set(el, w);
   if (el.matches(".md-table-wrap")) {
