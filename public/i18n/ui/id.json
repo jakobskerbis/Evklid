@@ -2359,7 +2359,7 @@
   "terms.accept": "Saya menyetujui {link}.",
   "terms.link": "ketentuan umum penggunaan",
   "terms.missing": "Sebelum membayar, konfirmasikan bahwa Anda menyetujui ketentuan umum penggunaan.",
-  "pay.consentMissing": "Centang kedua konfirmasi sebelum membayar.",
+  "pay.consentMissing": "Centang semua konfirmasi sebelum membayar.",
   "pay.continue": "Lanjut ke pembayaran",
   "pay.payNow": "Bayar sekarang",
   "pay.askParent": "Minta orang tua membayar",
@@ -2478,7 +2478,7 @@
   "payp.passWhat": {
     "other": "Membuka seluruh Evklid (tutor, latihan, kuis) selama {n} hari sejak pembayaran."
   },
-  "payp.consentMissing": "Silakan centang kedua konfirmasi sebelum membayar.",
+  "payp.consentMissing": "Silakan centang semua konfirmasi sebelum membayar.",
   "pass.until": "sampai {date}",
   "pass.parentInfo": "Ujian “{name}” ({date}) sudah dekat. Orang tuamu bisa memilih paket persiapan ujian.",
   "pass.parentInfoLink": "Informasi untuk orang tua",

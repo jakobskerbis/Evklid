@@ -2395,7 +2395,7 @@
   "terms.accept": "Súhlasím so {link}.",
   "terms.link": "všeobecnými podmienkami používania",
   "terms.missing": "Pred platbou potvrďte, že súhlasíte so všeobecnými podmienkami používania.",
-  "pay.consentMissing": "Pred platbou zaškrtni obe potvrdenia.",
+  "pay.consentMissing": "Pred platbou zaškrtni všetky potvrdenia.",
   "pay.continue": "Pokračovať na platbu",
   "pay.payNow": "Zaplatiť teraz",
   "pay.askParent": "Popros rodičov o zaplatenie",
@@ -2532,7 +2532,7 @@
     "many": "Odomkne celý Evklid (tútor, cvičenia, skúšobné testy) na {n} dňa od zaplatenia.",
     "other": "Odomkne celý Evklid (tútor, cvičenia, skúšobné testy) na {n} dní od zaplatenia."
   },
-  "payp.consentMissing": "Pred platbou zaškrtnite obe potvrdenia.",
+  "payp.consentMissing": "Pred platbou zaškrtnite všetky potvrdenia.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Test „{name}“ ({date}) sa blíži. Rodičia ti môžu vybrať balík prípravy na test.",
   "pass.parentInfoLink": "Informácie pre rodičov",

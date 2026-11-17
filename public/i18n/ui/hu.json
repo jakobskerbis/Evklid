@@ -2369,7 +2369,7 @@
   "terms.accept": "Elfogadom az {link}.",
   "terms.link": "általános felhasználási feltételeket",
   "terms.missing": "Fizetés előtt erősítse meg, hogy elfogadja az általános felhasználási feltételeket.",
-  "pay.consentMissing": "Fizetés előtt jelöld be mindkét megerősítést.",
+  "pay.consentMissing": "Fizetés előtt jelöld be az összes megerősítést.",
   "pay.continue": "Tovább a fizetéshez",
   "pay.payNow": "Fizetés most",
   "pay.askParent": "Kérd meg a szüleidet, hogy fizessenek",
@@ -2492,7 +2492,7 @@
     "one": "A fizetéstől számítva {n} napra megnyitja a teljes Evklidet (oktató, gyakorlás, próbatesztek).",
     "other": "A fizetéstől számítva {n} napra megnyitja a teljes Evklidet (oktató, gyakorlás, próbatesztek)."
   },
-  "payp.consentMissing": "Fizetés előtt jelölje be mindkét megerősítést.",
+  "payp.consentMissing": "Fizetés előtt jelölje be az összes megerősítést.",
   "pass.until": "eddig: {date}",
   "pass.parentInfo": "Közeleg a dolgozatod: „{name}” ({date}). A szüleid választhatnak neked felkészülési csomagot.",
   "pass.parentInfoLink": "Információ szülőknek",

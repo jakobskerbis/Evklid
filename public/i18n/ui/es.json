@@ -2370,7 +2370,7 @@
   "terms.accept": "Acepto las {link}.",
   "terms.link": "condiciones generales de uso",
   "terms.missing": "Antes de pagar, confirme que acepta las condiciones generales de uso.",
-  "pay.consentMissing": "Marca las dos casillas antes de pagar.",
+  "pay.consentMissing": "Marca todas las casillas antes de pagar.",
   "pay.continue": "Continuar al pago",
   "pay.payNow": "Pagar ahora",
   "pay.askParent": "Pide a tus padres que paguen",
@@ -2493,7 +2493,7 @@
     "one": "Desbloquea todo Evklid (tutor, ejercicios, pruebas) durante {n} día desde el pago.",
     "other": "Desbloquea todo Evklid (tutor, ejercicios, pruebas) durante {n} días desde el pago."
   },
-  "payp.consentMissing": "Marque las dos casillas antes de pagar.",
+  "payp.consentMissing": "Marque todas las casillas antes de pagar.",
   "pass.until": "hasta el {date}",
   "pass.parentInfo": "El examen «{name}» ({date}) está cerca. Tus padres pueden elegir un paquete de preparación para el examen.",
   "pass.parentInfoLink": "Información para padres",

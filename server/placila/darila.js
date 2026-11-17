@@ -191,7 +191,7 @@ export function mountGifts(app, ctx) {
     if (req.body?.adult !== true || req.body?.withdrawal !== true)
       return res
         .status(400)
-        .json({ error: "Pred plačilom sta potrebni obe potrditvi.", consent: true });
+        .json({ error: "Pred plačilom so potrebne vse potrditve.", consent: true });
     if (!termsAccepted(req.body)) return res.status(400).json(TERMS_ERROR);
     const open = db
       .prepare(

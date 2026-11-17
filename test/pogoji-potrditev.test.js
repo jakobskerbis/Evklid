@@ -5,8 +5,11 @@ import { readFileSync } from "node:fs";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { signWebhook } from "../server/accounts/stripe.js";
-import { TERMS_VERSION, termsVersionText, TERMS_TEXT } from "../server/accounts/potrdilo.js";
-import { WITHDRAWAL_TEXT } from "../server/accounts/billing.js";
+import { TERMS_VERSION, termsVersionText, TERMS_TEXT, withdrawalNote } from "../server/accounts/potrdilo.js";
+import { WITHDRAWAL_TEXT, ADULT_TEXT } from "../server/accounts/billing.js";
+import { GIFT_ADULT_TEXT, GIFT_WITHDRAWAL_TEXT } from "../server/placila/darila.js";
+import { PODARI_ADULT, PODARI_TEXT } from "../server/placila/podari.js";
+import { purchaseEmail } from "../server/accounts/email.js";
 
 const SECRET = "whsec_test";
 const ADULT = "1985-04-12";
@@ -184,4 +187,47 @@ test("seja brez zapisa potrditev (tuja ali stara) ne dobi potrdila", () =>
     const before = mails(stripe).length;
     await hook("checkout.session.completed", { id: "cs_tuja", object: "checkout.session", status: "complete", payment_status: "paid", amount_total: 500, currency: "eur", customer_details: { email: "x@y.si" }, metadata: {} });
     assert.equal(mails(stripe).length, before);
+  }));
+
+test("shranjena besedila potrditev so enaka slovenskim besedilom, ki jih plačnik vidi (public/i18n/sl.js)", async () => {
+  const { default: sl } = await import("../public/i18n/sl.js");
+  const pairs = [
+    [ADULT_TEXT, "pay.adult"],
+    [WITHDRAWAL_TEXT, "pay.withdrawal"],
+    [GIFT_ADULT_TEXT, "pay.giftAdult"],
+    [GIFT_WITHDRAWAL_TEXT, "pay.giftWithdrawal"],
+    [PODARI_ADULT, "pod.adult"],
+    [PODARI_TEXT, "pod.notDonation"],
+  ];
+  for (const [server, key] of pairs) assert.equal(server, sl[key], key);
+  assert.equal(TERMS_TEXT, sl["terms.accept"].replace("{link}", sl["terms.link"]));
+});
+
+test("potrdilo: odstop po vrsti nakupa, prvo plačilo pri preizkusu, opomba o prevodu", () => {
+  assert.match(withdrawalNote("gift"), /Dokler koda ni vpisana/);
+  assert.match(withdrawalNote("credit"), /neporabljene pogovore/);
+  assert.match(withdrawalNote("pay_link_sub"), /12\. točki/);
+  assert.equal(withdrawalNote("podari"), "");
+  const m = purchaseEmail({ item: "Naročnina", paidText: "0,00 €", firstCharge: "1. 12. 2026, 9,99 €", dateText: "17. 11. 2026", statements: ["a"], lang: "en", termsUrl: "https://x/pogoji.html", termsVersion: "17. 11. 2026", withdrawUrl: "https://x/pogoji.html#obrazec", contact: "zasebnost@evklid.app", withdrawal: withdrawalNote("gift"), appUrl: "https://x/" });
+  assert.match(m.text, /Prvo plačilo: 1\. 12\. 2026, 9,99 €/);
+  assert.match(m.text, /jezik: en/);
+  assert.match(m.text, /Dokler koda ni vpisana/);
+  const sl = purchaseEmail({ item: "x", paidText: "1 €", dateText: "d", statements: [], termsUrl: "u", termsVersion: "v", withdrawUrl: "w", contact: "c", appUrl: "a" });
+  assert.doesNotMatch(sl.text, /Prvo plačilo|jezik:/);
+});
+
+test("naročnina s preizkusom: potrdilo pove datum in znesek prvega plačila", () =>
+  withServer(async (ctx) => {
+    const { stripe, store, hook } = ctx;
+    const { a, parent } = await account(ctx, "preizkus@pogoji.si");
+    // Nov račun ima še 7 dni preizkusa: Stripe naročnina dobi trial_end.
+    const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true } });
+    assert.equal(co.status, 200, JSON.stringify(co.body));
+    const c = store.db.prepare("SELECT * FROM billing_consents WHERE parent_id = ?").get(parent.id);
+    assert.match(c.first_charge || "", /^\d{1,2}\. \d{1,2}\. \d{4}, \d+,\d{2}\s€$/);
+    const before = mails(stripe).length;
+    await hook("checkout.session.completed", { id: c.checkout_id, object: "checkout.session", created: now(), status: "complete", payment_status: "no_payment_required", amount_total: 0, currency: "eur", customer_details: { email: "preizkus@pogoji.si" }, metadata: { parent_id: String(parent.id) } });
+    const m = mails(stripe).slice(before).find((x) => /potrdilo o nakupu/.test(x.subject));
+    assert.ok(m, "potrdilo poslano");
+    assert.ok(m.text.includes(`Prvo plačilo: ${c.first_charge}`), m.text);
   }));

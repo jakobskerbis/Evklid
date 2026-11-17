@@ -2359,7 +2359,7 @@
   "terms.accept": "Tôi đồng ý với {link}.",
   "terms.link": "điều khoản sử dụng chung",
   "terms.missing": "Trước khi thanh toán, vui lòng xác nhận rằng bạn đồng ý với điều khoản sử dụng chung.",
-  "pay.consentMissing": "Hãy đánh dấu cả hai ô xác nhận trước khi thanh toán.",
+  "pay.consentMissing": "Hãy đánh dấu tất cả các ô xác nhận trước khi thanh toán.",
   "pay.continue": "Tiếp tục thanh toán",
   "pay.payNow": "Thanh toán ngay",
   "pay.askParent": "Nhờ bố mẹ thanh toán",
@@ -2478,7 +2478,7 @@
   "payp.passWhat": {
     "other": "Mở khóa toàn bộ Evklid (gia sư, bài luyện tập, bài kiểm tra thử) trong {n} ngày kể từ khi thanh toán."
   },
-  "payp.consentMissing": "Vui lòng đánh dấu cả hai ô xác nhận trước khi thanh toán.",
+  "payp.consentMissing": "Vui lòng đánh dấu tất cả các ô xác nhận trước khi thanh toán.",
   "pass.until": "đến {date}",
   "pass.parentInfo": "Bài kiểm tra “{name}” ({date}) sắp đến. Bố mẹ em có thể chọn gói ôn thi cho em.",
   "pass.parentInfoLink": "Thông tin cho phụ huynh",

@@ -2369,7 +2369,7 @@
   "terms.accept": "{link} kabul ediyorum.",
   "terms.link": "Genel kullanım koşullarını",
   "terms.missing": "Ödemeden önce genel kullanım koşullarını kabul ettiğinizi onaylayın.",
-  "pay.consentMissing": "Ödemeden önce iki onay kutusunu da işaretle.",
+  "pay.consentMissing": "Ödemeden önce tüm onay kutularını işaretle.",
   "pay.continue": "Ödemeye devam et",
   "pay.payNow": "Şimdi öde",
   "pay.askParent": "Ailenden ödeme yapmasını iste",
@@ -2492,7 +2492,7 @@
     "one": "Ödemeden itibaren {n} gün boyunca Evklid'in tamamını açar (özel öğretmen, alıştırmalar, deneme testleri).",
     "other": "Ödemeden itibaren {n} gün boyunca Evklid'in tamamını açar (özel öğretmen, alıştırmalar, deneme testleri)."
   },
-  "payp.consentMissing": "Ödemeden önce iki onay kutusunu da işaretleyin.",
+  "payp.consentMissing": "Ödemeden önce tüm onay kutularını işaretleyin.",
   "pass.until": "{date} tarihine kadar",
   "pass.parentInfo": "“{name}” sınavı ({date}) yaklaşıyor. Ailen sınav öncesi hazırlık paketini seçebilir.",
   "pass.parentInfoLink": "Veliler için bilgi",

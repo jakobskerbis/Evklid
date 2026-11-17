@@ -2395,7 +2395,7 @@
   "terms.accept": "Akceptuję {link}.",
   "terms.link": "ogólne warunki korzystania",
   "terms.missing": "Przed zapłatą potwierdź, że akceptujesz ogólne warunki korzystania.",
-  "pay.consentMissing": "Przed płatnością zaznacz oba potwierdzenia.",
+  "pay.consentMissing": "Przed płatnością zaznacz wszystkie potwierdzenia.",
   "pay.continue": "Przejdź do płatności",
   "pay.payNow": "Zapłać teraz",
   "pay.askParent": "Poproś rodziców o płatność",
@@ -2532,7 +2532,7 @@
     "many": "Odblokowuje cały Evklid (korepetytor, ćwiczenia, testy próbne) na {n} dni od płatności.",
     "other": "Odblokowuje cały Evklid (korepetytor, ćwiczenia, testy próbne) na {n} dnia od płatności."
   },
-  "payp.consentMissing": "Przed płatnością prosimy zaznaczyć oba potwierdzenia.",
+  "payp.consentMissing": "Przed płatnością prosimy zaznaczyć wszystkie potwierdzenia.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Sprawdzian „{name}” ({date}) już niedługo. Rodzice mogą wybrać pakiet przygotowania do sprawdzianu.",
   "pass.parentInfoLink": "Informacje dla rodziców",

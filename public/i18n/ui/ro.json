@@ -2382,7 +2382,7 @@
   "terms.accept": "Sunt de acord cu {link}.",
   "terms.link": "condițiile generale de utilizare",
   "terms.missing": "Înainte de plată, confirmați că sunteți de acord cu condițiile generale de utilizare.",
-  "pay.consentMissing": "Bifează ambele confirmări înainte de plată.",
+  "pay.consentMissing": "Bifează toate confirmările înainte de plată.",
   "pay.continue": "Continuă spre plată",
   "pay.payNow": "Plătește acum",
   "pay.askParent": "Roagă-ți părinții să plătească",
@@ -2512,7 +2512,7 @@
     "few": "Deblochează tot Evklid (tutore, exerciții, teste de probă) timp de {n} zile de la plată.",
     "other": "Deblochează tot Evklid (tutore, exerciții, teste de probă) timp de {n} de zile de la plată."
   },
-  "payp.consentMissing": "Bifați ambele confirmări înainte de plată.",
+  "payp.consentMissing": "Bifați toate confirmările înainte de plată.",
   "pass.until": "până pe {date}",
   "pass.parentInfo": "Testul „{name}” ({date}) se apropie. Părinții tăi pot alege un pachet de pregătire pentru test.",
   "pass.parentInfoLink": "Informații pentru părinți",

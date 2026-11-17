@@ -21,7 +21,7 @@ import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, month
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail, skrbnikKodaEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
-import { insertBillingConsent, recordSignupTerms, sendPurchaseConfirmation, subItem, termsAccepted, TERMS_ERROR } from "./potrdilo.js";
+import { insertBillingConsent, recordSignupTerms, sendPurchaseConfirmation, subItem, firstChargeText, termsAccepted, TERMS_ERROR } from "./potrdilo.js";
 import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
 import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
 import { Devices, deviceLabel, deviceWarnLimit } from "./devices.js";
@@ -2177,7 +2177,7 @@ export function mountAccounts(app, store, opts = {}) {
     // Naročnino sklene polnoletna oseba; mladoletni imetnik pošlje staršu povezavo za plačilo. Brez datuma rojstva: najprej ga vpiše.
     if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Naročnino plača starš. Pošlji mu povezavo za plačilo.", pay_link: true });
-    if (req.body?.adult !== true || req.body?.withdrawal !== true) return res.status(400).json({ error: "Pred plačilom sta potrebni obe potrditvi.", consent: true });
+    if (req.body?.adult !== true || req.body?.withdrawal !== true) return res.status(400).json({ error: "Pred plačilom so potrebne vse potrditve.", consent: true });
     if (!termsAccepted(req.body)) return res.status(400).json(TERMS_ERROR);
     try {
       const customer = await ensureCustomer(p);
@@ -2205,7 +2205,7 @@ export function mountAccounts(app, store, opts = {}) {
         subscription_data,
         metadata: { parent_id: p.id, parent_uid: p.uid || undefined },
       });
-      insertBillingConsent(db, { parentId: p.id, email: p.email, kind: "sub", lines: [ADULT_TEXT, WITHDRAWAL_TEXT], lang: req.body?.lang, checkoutId: session.id, item: subItem(plan) });
+      insertBillingConsent(db, { parentId: p.id, email: p.email, kind: "sub", lines: [ADULT_TEXT, WITHDRAWAL_TEXT], lang: req.body?.lang, checkoutId: session.id, item: subItem(plan), firstCharge: subscription_data.trial_end ? firstChargeText(subscription_data.trial_end, plan) : "" });
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe checkout:", err.message);

@@ -2359,7 +2359,7 @@
   "terms.accept": "我同意{link}。",
   "terms.link": "一般使用條款",
   "terms.missing": "付款前，請確認您同意一般使用條款。",
-  "pay.consentMissing": "付款前請勾選兩項確認。",
+  "pay.consentMissing": "付款前請勾選所有確認。",
   "pay.continue": "繼續付款",
   "pay.payNow": "立即付款",
   "pay.askParent": "請家長付款",
@@ -2478,7 +2478,7 @@
   "payp.passWhat": {
     "other": "自付款起 {n} 天內解鎖 Evklid 的全部功能（輔導老師、練習、小測驗）。"
   },
-  "payp.consentMissing": "請您在付款前勾選兩項確認。",
+  "payp.consentMissing": "請您在付款前勾選所有確認。",
   "pass.until": "至{date}",
   "pass.parentInfo": "「{name}」考試（{date}）快到了。你的家長可以為你選擇考前方案。",
   "pass.parentInfoLink": "給家長的資訊",

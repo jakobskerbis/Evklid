@@ -259,7 +259,7 @@ test("Podari Evklid: pilotne kode z mejami, sklad iz (starega) dodatka in »Poda
       await hook({ id: "evt_2", type: "invoice.paid", data: { object: { ...inv, id: "in_10", payment_intent: "pi_next" } } });
       assert.equal(store.db.prepare("SELECT status, payment_id FROM podari_fund WHERE id = ?").get(Number(podariId)).payment_id, "pi_add");
 
-      // »Podari mesec« (9,99 €): potrebni sta obe potrditvi, plačilo potrdi vrnitev.
+      // »Podari mesec« (9,99 €): potrebne so vse potrditve, plačilo potrdi vrnitev.
       assert.equal((await a("/api/billing/podari", { method: "POST", body: { adult: true } })).status, 400);
       r = await a("/api/billing/podari", { method: "POST", body: { adult: true, understand: true, terms: true } });
       assert.equal(r.status, 200);

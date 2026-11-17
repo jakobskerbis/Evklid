@@ -2369,7 +2369,7 @@
   "terms.accept": "Ninakubali {link}.",
   "terms.link": "masharti ya jumla ya matumizi",
   "terms.missing": "Kabla ya kulipa, thibitisha kwamba unakubali masharti ya jumla ya matumizi.",
-  "pay.consentMissing": "Weka alama kwenye uthibitisho wote mawili kabla ya kulipa.",
+  "pay.consentMissing": "Weka alama kwenye uthibitisho wote kabla ya kulipa.",
   "pay.continue": "Endelea kwenye malipo",
   "pay.payNow": "Lipa sasa",
   "pay.askParent": "Waombe wazazi walipe",
@@ -2492,7 +2492,7 @@
     "one": "Inafungua Evklid yote (mwalimu, mazoezi, majaribio) kwa siku {n} tangu malipo.",
     "other": "Inafungua Evklid yote (mwalimu, mazoezi, majaribio) kwa siku {n} tangu malipo."
   },
-  "payp.consentMissing": "Tafadhali weka alama kwenye uthibitisho wote mawili kabla ya kulipa.",
+  "payp.consentMissing": "Tafadhali weka alama kwenye uthibitisho wote kabla ya kulipa.",
   "pass.until": "hadi {date}",
   "pass.parentInfo": "Mtihani “{name}” ({date}) unakaribia. Wazazi wako wanaweza kuchagua kifurushi cha kabla ya mtihani.",
   "pass.parentInfoLink": "Taarifa kwa wazazi",

@@ -28,23 +28,39 @@ export const moneyText = (minor, currency = "EUR") => {
 export const subItem = (plan) =>
   `Naročnina: ${plan.label}, ${moneyText(plan.amount, plan.currency || "EUR")} ${plan.interval === "month" ? "na mesec" : "na leto"}, samodejno podaljšanje do preklica`;
 
+// Prvo plačilo naročnine s preizkusom (trial_end v sekundah): »17. 12. 2026, 9,99 €«.
+export const firstChargeText = (trialEndSec, plan) =>
+  `${dayText(trialEndSec * 1000)}, ${moneyText(plan.amount, plan.currency || "EUR")}`;
+const dayText = (ms) => new Intl.DateTimeFormat("sl-SI", { timeZone: "Europe/Ljubljana", day: "numeric", month: "numeric", year: "numeric" }).format(new Date(ms));
+
+// Kaj vrnemo ob odstopu, po vrsti nakupa (enako kot /pogoji.html 12. točka).
+// TODO(j, pravnik): »Podari Evklid« (kind podari) v pogojih nima pravila o odstopu, zato potrdilo pove samo, kako odstop sporočiti.
+export function withdrawalNote(kind) {
+  const k = String(kind || "");
+  if (k === "gift") return "Dokler koda ni vpisana, vam vrnemo celotno plačilo. Ko je koda vpisana, pravica do odstopa preneha.";
+  if (k.endsWith("credit")) return "Vrnemo vam delež plačila za še neporabljene pogovore.";
+  if (k === "podari") return "";
+  return "Kaj vrnemo, piše v 12. točki splošnih pogojev.";
+}
+
 export function migrateTerms(db) {
   const cols = db.prepare("PRAGMA table_info(billing_consents)").all().map((c) => c.name);
   if (!cols.length) return;
   if (!cols.includes("terms_version")) db.exec("ALTER TABLE billing_consents ADD COLUMN terms_version TEXT");
   if (!cols.includes("checkout_id")) db.exec("ALTER TABLE billing_consents ADD COLUMN checkout_id TEXT");
   if (!cols.includes("item")) db.exec("ALTER TABLE billing_consents ADD COLUMN item TEXT");
+  if (!cols.includes("first_charge")) db.exec("ALTER TABLE billing_consents ADD COLUMN first_charge TEXT");
   db.exec("CREATE INDEX IF NOT EXISTS billing_consents_checkout ON billing_consents (checkout_id)");
 }
 
 // Potrditve pred plačilom (lines: slovenska besedila, ki jih je plačnik označil), pogoji z različico in jezik.
 // Vrne id zapisa; checkoutId se lahko doda pozneje (linkConsent), ko plačilna seja obstaja.
-export function insertBillingConsent(db, { parentId, email, kind, lines, lang, checkoutId = null, item = "" }) {
+export function insertBillingConsent(db, { parentId, email, kind, lines, lang, checkoutId = null, item = "", firstCharge = "" }) {
   const l = LANG_RE.test(String(lang || "")) ? lang : "sl";
   const text = [...lines, TERMS_TEXT, `[pogoji: ${TERMS_VERSION}]`, `[jezik: ${l}]`].join("\n");
   const r = db
-    .prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text, terms_version, checkout_id, item) VALUES (?, ?, ?, ?, ?, ?, ?)")
-    .run(parentId ?? null, email || "", kind, text, TERMS_VERSION, checkoutId, String(item || "").slice(0, 300));
+    .prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text, terms_version, checkout_id, item, first_charge) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+    .run(parentId ?? null, email || "", kind, text, TERMS_VERSION, checkoutId, String(item || "").slice(0, 300), firstCharge || null);
   return Number(r.lastInsertRowid);
 }
 export const linkConsent = (db, id, checkoutId) => db.prepare("UPDATE billing_consents SET checkout_id = ? WHERE id = ?").run(checkoutId, id);
@@ -71,15 +87,19 @@ export async function sendPurchaseConfirmation({ db, session, sendMail, appUrl, 
   const claim = db.prepare("INSERT OR IGNORE INTO email_log (parent_id, kind, period) VALUES (?, 'purchase', ?)").run(c.parent_id ?? null, String(session.id));
   if (!claim.changes) return false;
   if (c.parent_id == null && db.prepare("SELECT COUNT(*) AS n FROM email_log WHERE kind = 'purchase' AND period = ?").get(String(session.id)).n > 1) return false;
-  const statements = String(c.text || "")
-    .split("\n")
-    .filter((s) => s && !/^\[(jezik|pogoji):/.test(s));
+  const lines = String(c.text || "").split("\n");
+  const statements = lines.filter((s) => s && !/^\[[a-z]+: /.test(s));
+  // Shranjeno je slovensko besedilo; plačnik ga je v aplikaciji morda bral v prevodu (e-pošta je zaenkrat samo slovenska).
+  const lang = (lines.find((s) => s.startsWith("[jezik: ")) || "").slice(8, -1) || "sl";
   const base = String(appUrl || "/").replace(/\/+$/, "");
   const msg = purchaseEmail({
     item: c.item || "Nakup v aplikaciji " + BRAND.name,
     paidText: moneyText(session.amount_total ?? 0, session.currency || "EUR"),
-    dateText: new Intl.DateTimeFormat("sl-SI", { timeZone: "Europe/Ljubljana", day: "numeric", month: "numeric", year: "numeric" }).format(new Date()),
+    dateText: dayText(Number(session.created) > 0 ? Number(session.created) * 1000 : Date.now()),
+    firstCharge: !(session.amount_total > 0) && c.first_charge ? c.first_charge : "",
     statements,
+    lang,
+    withdrawal: withdrawalNote(c.kind),
     termsUrl: `${base}/pogoji.html`,
     termsVersion: termsVersionText(c.terms_version || TERMS_VERSION),
     withdrawUrl: `${base}/pogoji.html#obrazec`,

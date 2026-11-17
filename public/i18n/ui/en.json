@@ -2369,7 +2369,7 @@
   "terms.accept": "I agree to the {link}.",
   "terms.link": "general terms of use",
   "terms.missing": "Before paying, please confirm that you agree to the general terms of use.",
-  "pay.consentMissing": "Tick both boxes before you pay.",
+  "pay.consentMissing": "Tick all the boxes before you pay.",
   "pay.continue": "Continue to payment",
   "pay.payNow": "Pay now",
   "pay.askParent": "Ask your parents to pay",
@@ -2492,7 +2492,7 @@
     "one": "Unlocks all of Evklid (tutor, practice, quizzes) for {n} day from payment.",
     "other": "Unlocks all of Evklid (tutor, practice, quizzes) for {n} days from payment."
   },
-  "payp.consentMissing": "Please tick both boxes before paying.",
+  "payp.consentMissing": "Please tick all the boxes before paying.",
   "pass.until": "until {date}",
   "pass.parentInfo": "Your test “{name}” ({date}) is coming up. Your parents can choose a pre-test pack to help you prepare.",
   "pass.parentInfoLink": "Information for parents",

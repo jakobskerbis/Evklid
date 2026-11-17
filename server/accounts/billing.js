@@ -18,9 +18,10 @@ import { audit } from "../dnevnik-dostopov.js";
 import { parentFromMeta, purchaseMismatch, logSafe } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
-import { migrateTerms, insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText, subItem } from "./potrdilo.js";
+import { migrateTerms, insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText, subItem, firstChargeText } from "./potrdilo.js";
 
-export const ADULT_TEXT = "Sem polnoleten/-na in plačujem za svoj profil ali kot starš oziroma skrbnik.";
+// Enako kot pay.adult v public/i18n/sl.js (kar plačnik vidi); test/pogoji-potrditev.test.js primerja vsa besedila.
+export const ADULT_TEXT = "Sem polnoletna oseba in plačujem za svoj profil ali kot starš oziroma skrbnik.";
 // Odstop v 14 dneh (j 2026-11-06): vrne se del plačila za neporabljeno storitev, sorazmerno PORABI: manjši od deleža
 // preostalega časa in deleža neporabljene meje AI (withdrawalRefundCents). Besedilo pred zagonom plačil preveri pravnik.
 export const WITHDRAWAL_TEXT =
@@ -245,13 +246,13 @@ export function mountBilling(app, ctx) {
     return true;
   };
   const consented = (body) => body?.adult === true && body?.withdrawal === true;
-  const consentError = { error: "Pred plačilom sta potrebni obe potrditvi.", consent: true };
+  const consentError = { error: "Pred plačilom so potrebne vse potrditve.", consent: true };
   // Tri potrditve: polnoletnost, takojšen začetek z odstopom in splošni pogoji (#765 točka 2).
   const consentFail = (body) => (!consented(body) ? consentError : !termsAccepted(body) ? TERMS_ERROR : null);
   // Shrani se slovensko besedilo in jezik, v katerem ju je plačnik prebral (prevod je v public/i18n).
   // checkoutId in item: plačilna seja in opis nakupa za potrdilo po e-pošti (potrdilo.js).
-  function recordConsent(parentId, payerEmail, kind, lang, checkoutId = null, item = "") {
-    insertBillingConsent(db, { parentId, email: payerEmail, kind, lines: [ADULT_TEXT, WITHDRAWAL_TEXT], lang, checkoutId, item });
+  function recordConsent(parentId, payerEmail, kind, lang, checkoutId = null, item = "", firstCharge = "") {
+    insertBillingConsent(db, { parentId, email: payerEmail, kind, lines: [ADULT_TEXT, WITHDRAWAL_TEXT], lang, checkoutId, item, firstCharge });
   }
   const passItem = (plan) => `Paket pred testom: ${plan.label}, ${plan.days} dni, ${moneyText(plan.amount, plan.currency)}`;
 
@@ -482,7 +483,7 @@ export function mountBilling(app, ctx) {
         payment_intent_data: { metadata: meta },
       });
       credits.setCheckout(creditId, session.id);
-      recordConsent(p.id, p.email, "credit", req.body?.lang, session.id, `Dokup pogovorov z inštruktorjem: ${moneyText(pack.amount, pack.currency)}`);
+      recordConsent(p.id, p.email, "credit", req.body?.lang, session.id, `Dokup pogovorov z inštruktorjem (število pogovorov: ${conversationsFor(creditUsdFor(pack.amount))}), ${moneyText(pack.amount, pack.currency)}`);
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe dokup porabe:", err.message);
@@ -640,6 +641,7 @@ export function mountBilling(app, ctx) {
     try {
       let session;
       let item = "";
+      let firstCharge = "";
       if (l.kind === "sub") {
         if (paidActive(parent)) return res.status(409).json({ error: "To je že plačano. Hvala!", paid: true });
         const plan = linkSubPlan(l, parent);
@@ -663,6 +665,7 @@ export function mountBilling(app, ctx) {
           metadata: { parent_id: parent.id, parent_uid: parent.uid || undefined, pay_link: l.token_hash },
         });
         item = subItem(plan);
+        firstCharge = subscription_data.trial_end ? firstChargeText(subscription_data.trial_end, plan) : "";
       } else {
         const plan = passByKey(l.plan_key) || passByDays(l.days);
         if (!plan) return res.status(410).json({ error: "Povezava za plačilo ne velja več. Prosite za novo.", expired: true });
@@ -687,7 +690,7 @@ export function mountBilling(app, ctx) {
         passes.setCheckout(passId, session.id);
         item = passItem(plan);
       }
-      recordConsent(parent.id, email, `pay_link_${l.kind}`, req.body?.lang, session.id, item);
+      recordConsent(parent.id, email, `pay_link_${l.kind}`, req.body?.lang, session.id, item, firstCharge);
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe povezava za starše:", err.message);

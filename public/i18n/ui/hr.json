@@ -2382,7 +2382,7 @@
   "terms.accept": "Slažem se s {link}.",
   "terms.link": "općim uvjetima korištenja",
   "terms.missing": "Prije plaćanja potvrdite da se slažete s općim uvjetima korištenja.",
-  "pay.consentMissing": "Prije plaćanja označi obje potvrde.",
+  "pay.consentMissing": "Prije plaćanja označi sve potvrde.",
   "pay.continue": "Nastavi na plaćanje",
   "pay.payNow": "Plati sada",
   "pay.askParent": "Zamoli roditelje da plate",
@@ -2512,7 +2512,7 @@
     "few": "Otključava cijeli Evklid (instruktor, vježbe, probni testovi) na {n} dana od plaćanja.",
     "other": "Otključava cijeli Evklid (instruktor, vježbe, probni testovi) na {n} dana od plaćanja."
   },
-  "payp.consentMissing": "Prije plaćanja označite obje potvrde.",
+  "payp.consentMissing": "Prije plaćanja označite sve potvrde.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Ispit „{name}” ({date}) je blizu. Roditelji mogu odabrati paket prije ispita.",
   "pass.parentInfoLink": "Informacije za roditelje",

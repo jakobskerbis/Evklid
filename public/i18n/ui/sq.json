@@ -2369,7 +2369,7 @@
   "terms.accept": "Pajtohem me {link}.",
   "terms.link": "kushtet e përgjithshme të përdorimit",
   "terms.missing": "Para pagesës, konfirmoni që pajtoheni me kushtet e përgjithshme të përdorimit.",
-  "pay.consentMissing": "Para pagesës shëno të dyja konfirmimet.",
+  "pay.consentMissing": "Para pagesës shëno të gjitha konfirmimet.",
   "pay.continue": "Vazhdo te pagesa",
   "pay.payNow": "Paguaj tani",
   "pay.askParent": "Kërkoju prindërve të paguajnë",
@@ -2492,7 +2492,7 @@
     "one": "Hap të gjithë Evklid (tutori, ushtrime, teste provë) për {n} ditë nga pagesa.",
     "other": "Hap të gjithë Evklid (tutori, ushtrime, teste provë) për {n} ditë nga pagesa."
   },
-  "payp.consentMissing": "Para pagesës shënoni të dyja konfirmimet.",
+  "payp.consentMissing": "Para pagesës shënoni të gjitha konfirmimet.",
   "pass.until": "deri më {date}",
   "pass.parentInfo": "Testi «{name}» ({date}) është afër. Prindërit e tu mund të zgjedhin një paketë para testit.",
   "pass.parentInfoLink": "Informacion për prindërit",
