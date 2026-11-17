@@ -52,6 +52,10 @@ Kršitev je tudi nenamerno razkritje ali dostop (npr. API vrne podatke drugega r
    - verjetno tveganje → prijava Informacijskemu pooblaščencu (čl. 33(1)); kar še ni znano, se dopolni pozneje;
    - visoko tveganje → še obvestilo prizadetim (staršem) v preprostem jeziku (čl. 34);
    - ni verjetnega tveganja → brez prijave.
-4. **Vedno zapiši evidenco** (čl. 33(5)) v `docs/krsitve/LLLL-MM-DD-<kratko>.md`: kaj, od kdaj, kdo je lahko videl,
-   ocena in odločitev z razlogom, ukrepi. Primer: `docs/krsitve/2026-11-06-lestvica.md`.
+   - Če gre za podatke razreda (upravljavec je šola), šolo obvesti brez nepotrebnega odlašanja; o prijavi odloča šola (čl. 33(2)).
+4. **Vedno zapiši evidenco** (čl. 33(5)): kaj, od kdaj, kdo je lahko videl, ocena in odločitev z razlogom, ukrepi.
+   Evidenco vodi j v **zasebnem** dokumentu projekta `pravo/evidenca-krsitev.md` (j, 2026-11-17), polja so v
+   `docs/krsitve/PREDLOGA.md`. **Nikoli v repozitorij** (je javen, zgodovine git ni mogoče izbrisati): v repozitorij
+   gresta samo tehnični popravek in test. Opis PR, sporočilo commita in ime veje opišejo napako v kodi, ne pa,
+   čigavi podatki so bili razkriti, koliko oseb, katera šola ali razred.
 5. **Prepreči ponovitev:** test, ki pade na stari kodi (npr. `test/zasebnost-vse-poti.test.js`).

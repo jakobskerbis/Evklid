@@ -2489,6 +2489,7 @@
   "dl.play": "Tải trên Google Play",
   "dl.apk": "Tải cho Android (APK)",
   "dl.apkSteps": "Mở tệp vừa tải và xác nhận cài đặt. Nếu điện thoại hỏi, hãy cho phép cài đặt từ trình duyệt này.",
+  "dl.apkWhy": "Ứng dụng chưa có trên Google Play, nên bạn tải trực tiếp từ trang này.",
   "dl.ios": "iPhone và iPad",
   "dl.appStore": "Tải trên App Store",
   "dl.testflight": "Cài qua TestFlight",

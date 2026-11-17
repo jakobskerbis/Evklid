@@ -2543,6 +2543,7 @@
   "dl.play": "Скачать в Google Play",
   "dl.apk": "Скачать для Android (APK)",
   "dl.apkSteps": "Открой скачанный файл и подтверди установку. Если телефон спросит, разреши установку из этого браузера.",
+  "dl.apkWhy": "Приложения пока нет в Google Play, поэтому ты скачиваешь его прямо с этой страницы.",
   "dl.ios": "iPhone и iPad",
   "dl.appStore": "Скачать в App Store",
   "dl.testflight": "Установить через TestFlight",

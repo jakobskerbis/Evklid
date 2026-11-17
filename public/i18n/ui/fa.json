@@ -2503,6 +2503,7 @@
   "dl.play": "دریافت از Google Play",
   "dl.apk": "دانلود برای اندروید (APK)",
   "dl.apkSteps": "فایل دانلودشده را باز کن و نصب را تأیید کن. اگر گوشی پرسید، اجازهٔ نصب از این مرورگر را بده.",
+  "dl.apkWhy": "برنامه هنوز در Google Play نیست، برای همین آن را مستقیم از همین صفحه دانلود می‌کنی.",
   "dl.ios": "iPhone و iPad",
   "dl.appStore": "دریافت از App Store",
   "dl.testflight": "نصب از طریق TestFlight",
