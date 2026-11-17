@@ -56,7 +56,7 @@ Ker je $1 + (-1) = 0$, je izraz enak $0$. Po razčlenitvi je enak $(-1) \cdot 1 
 
 **3. Deljivost.** Celo število $a \neq 0$ **deli** celo število $b$, zapisano $a \mid b$, če obstaja tako celo število $k$, da je $b = k \cdot a$. Pravimo tudi, da je $a$ *delitelj* števila $b$ in da je $b$ *večkratnik* števila $a$. Na primer $4 \mid 28$, ker je $28 = 7 \cdot 4$, in $-3 \mid 12$, ker je $12 = (-4) \cdot (-3)$, medtem ko $7 \nmid 30$. Veljajo naslednje lastnosti:
 
-- $1 \mid b$ za vsak $b$, ter $a \mid a$ in $a \mid 0$ za vsak $a \neq 0$,
+- $1 \mid b$ za vsak $b$ ter $a \mid a$ in $a \mid 0$ za vsak $a \neq 0$,
 - če $a \mid b$ in $a \mid c$, potem $a \mid (b + c)$ in $a \mid (b - c)$ (iz $b = ka$ in $c = la$ sledi $b \pm c = (k \pm l)a$),
 - če $a \mid b$ in $b \mid c$, potem $a \mid c$.
 

@@ -27,4 +27,4 @@ stanje: osnutek
 - Sestavljena in inverzna
   - $(g \circ f)(x) = g(f(x))$, najprej $f$
   - $f^{-1}$ le za injektivno $f$
-  - napaka: $f^{-1}(x) \ne \frac{1}{f(x)}$
+  - pazi: $f^{-1}(x) \ne \frac{1}{f(x)}$

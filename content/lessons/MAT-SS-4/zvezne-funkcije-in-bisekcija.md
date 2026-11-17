@@ -178,7 +178,7 @@ $g(1{,}875) \approx -0{,}033 < 0$, zato je ničla na $(1{,}875; 1{,}88)$ in se z
 ## Pogoste napake
 
 - **»Različna predznaka, torej ničla« brez zveznosti.** Kdor tako sklepa pri $f(x) = \frac{1}{x}$ na $[-1, 1]$, išče ničlo, ki je ni: funkcija v $0$ ni definirana in skoči. Najprej preveri, da je funkcija na $[a, b]$ zvezna.
-- **»Natanko ena ničla«.** Izrek zagotovi **vsaj** eno ničlo. Funkcija iz primera 1 ima na $[0, 2]$ dve. Število ničel ugotoviš šele z več vrednostmi ali grafom.
+- **»Natanko ena ničla«.** Izrek zagotovi **vsaj** eno ničlo. Funkcija iz primera 1 ima $f(-2) = -1$ in $f(2) = 3$, na $[-2, 2]$ pa tri ničle. Število ničel ugotoviš šele z več vrednostmi ali grafom.
 - **»Enaka predznaka, torej ni ničle«.** $x^2 - 1$ ima na $[-2, 2]$ na obeh krajiščih vrednost $3$ in vseeno dve ničli. Iz enakih predznakov ne sklepaš ničesar.
 - **Napačna polovica pri bisekciji.** Nekateri obdržijo polovico, kjer je $f(c) > 0$, ne glede na drugo krajišče. Obdrži polovico, kjer imata **krajišči** različna predznaka; sicer se oddaljiš od ničle.
 - **Prezgodnji konec.** Interval dolžine $0{,}0625$ še ne pomeni ene pravilne decimalke (primer 2 po četrtem koraku). Ustaviš se, ko se obe krajišči zaokrožita enako.
@@ -371,6 +371,15 @@ vrednost: 1.21875^3+1.21875-3 | 0.029
 vrednost: 100*1.1^3-37*1.1^2-37*1.1-37 | 10.63
 vrednost: 100*1.05^3-37*1.05^2-37*1.05-37 | -0.88
 vrednost: 100*1.075^3-37*1.075^2-37*1.075-37 | 4.70
+vrednost: 100*1.0625^3-37*1.0625^2-37*1.0625-37 | 1.86
+vrednost: 100*1.05625^3-37*1.05625^2-37*1.05625-37 | 0.48
+vrednost: 100*1.054^3-37*1.054^2-37*1.054-37 | -0.011
+vrednost: 100*1.055^3-37*1.055^2-37*1.055-37 | 0.21
+vrednost: 1.8^3-3*1.8-1 | -0.568
+vrednost: 1.9^3-3*1.9-1 | 0.159
+vrednost: 1.87^3-3*1.87-1 | -0.071
+vrednost: 2.5^3-2*2.5-5 | 5.625
+vrednost: 2.125^3-2*2.125-5 | 0.35
 vrednost: 100*1.0535^3-37*1.0535^2-37*1.0535-37 | -0.12
 vrednost: 100*1.0545^3-37*1.0545^2-37*1.0545-37 | 0.098
 vrednost: ((1000*1.054-370)*1.054-370) | 350.94

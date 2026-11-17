@@ -352,7 +352,7 @@ Zdaj si predstavljaj, da hipotenuzo vrtiš okoli levega oglišča kot kazalec. K
 > Lestev je hipotenuza, višina je nasprotna kateta kota ob tleh: $h = 5\,\text{m} \cdot \sin 70^\circ \approx 4{,}70\,\text{m}$.
 
 ? (brez računala) Kateta nasproti kota $\alpha = 30^\circ$ v pravokotnem trikotniku meri $7\,\text{cm}$. Kolikšna je hipotenuza?
-= 14 cm | 0,01
+= 14 cm | 0
 ~ 3,5 | To je $7\,\text{cm} \cdot \sin 30^\circ$. Iz $\sin 30^\circ = \dfrac{a}{c}$ sledi $c = \dfrac{a}{\sin 30^\circ}$, deliti moraš. Hipotenuza je najdaljša stranica, ne more biti krajša od katete.
 > $\sin 30^\circ = \dfrac{a}{c} = \dfrac{1}{2}$, zato je $c = 2a = 2 \cdot 7\,\text{cm} = 14\,\text{cm}$.
 

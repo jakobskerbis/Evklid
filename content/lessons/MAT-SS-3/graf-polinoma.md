@@ -372,7 +372,7 @@ Vsak ulomek v oklepaju ima v imenovalcu potenco $x$, zato gre proti $0$, ko $|x|
 > Pri ničli sode stopnje se graf osi dotakne in obrne nazaj, predznak se ne zamenja.
 
 ? (brez računala) Koliko je $p(0)$ za $p(x) = -2(x - 1)^3(x + 4)^2$?
-= 32 | 0,01
+= 32 | 0
 ~ -32 | $(0 - 1)^3 = -1$, ne $1$: liha potenca negativnega števila je negativna.
 ~ 8 | Izpustil si kvadrat: $(0 + 4)^2 = 16$, ne $4$.
 ~ -8 | Tu sta dve napaki hkrati: $(-1)^3$ si vzel kot $1$, $4^2$ pa kot $4$.

@@ -367,7 +367,7 @@ Lastnosti kotov ob prečnici izhajajo iz **aksioma o vzporednici**, ki ga je v n
 > Če je $\alpha + \beta = 180^\circ$ in $\gamma + \beta = 180^\circ$, je $\alpha = 180^\circ - \beta = \gamma$.
 
 ? (brez računala) Kot in njegov komplementarni kot se razlikujeta za $20^\circ$. Koliko stopinj meri večji od njiju?
-= 55 ° | 0,01
+= 55 ° | 0
 ~ 100 | To bi veljalo za suplementarna kota z vsoto $180^\circ$. Komplementarna kota imata vsoto $90^\circ$.
 ~ 35 | To je manjši kot. Vprašanje sprašuje po večjem.
 ~ 70 | To je $90^\circ - 20^\circ$: razliko odšteješ od vsote, namesto da bi rešil sistem. Kota $70^\circ$ in $20^\circ$ se razlikujeta za $50^\circ$.

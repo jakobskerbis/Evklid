@@ -898,7 +898,16 @@ function wireSteps(box, lessonId, n) {
     try {
       sessionStorage.setItem(key, String(cur));
     } catch {}
-    if (scroll && bar.getBoundingClientRect().top < 0) bar.scrollIntoView({ block: "start" });
+    // Nov korak se začne pri razlagi (Geminijev pregled 17. 11.): če korak ne bi bil ves viden pod glavo lekcije ali
+    // na telefonu glava zavzame več kot tretjino zaslona, skočimo na trak napredka nad korakom; na velikem zaslonu,
+    // kjer je korak že ves viden, stran ostane.
+    if (scroll) {
+      const top = bar.getBoundingClientRect().top;
+      const stepper = box.querySelector(".tb-stepper");
+      const visibleBottom = stepper ? stepper.getBoundingClientRect().top : innerHeight;
+      const narrow = innerWidth < 760 && top > innerHeight * 0.3;
+      if (top < 0 || narrow || all[cur].getBoundingClientRect().bottom > visibleBottom) bar.scrollIntoView({ block: "start" });
+    }
   };
   prev.addEventListener("click", () => go(cur - 1, true));
   next.addEventListener("click", () => go(cur + 1, true));

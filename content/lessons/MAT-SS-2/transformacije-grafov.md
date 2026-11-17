@@ -468,7 +468,7 @@ Ko na koncu pogledaš predpis $2(x - p)^2 + q$, iz njega razbereš vso zgodbo: k
 > Širino določa samo faktor: $(2x)^2 = 4x^2$ je najožja, sledi $3x^2$. Prištevanje $5$ parabolo le dvigne, zato je $x^2 + 5$ široka kot $x^2$. Faktor $\frac{1}{2}$ jo razširi.
 
 ? (brez računala) Točka $(4, 2)$ leži na grafu $f(x) = \sqrt{x}$. Graf preslikamo v $g(x) = -2\sqrt{x - 1} + 3$. Vpiši koordinato $y$ točke, v katero preide $(4, 2)$.
-= -1 | 0,01
+= -1 | 0
 ~ 7 | Izpustil si minus pred $2$. Negativen faktor vrednost še zrcali čez os $x$.
 ~ -10 | Najprej si prištel $3$ in šele nato množil z $-2$. Razteg pride pred premikom $q$.
 ~ -0,46 | To je $g(4)$. Točka se premakne tudi vodoravno, v $x = 5$.
@@ -494,7 +494,7 @@ f: -2*abs(x - 1) + 3 | modra
 točka: 1; 3 | | | modra
 podnapis: Graf g; mreža ima korak 1
 :::
-= -2 | 0,01
+= -2 | 0
 ~ 2 | Strmino si odčital prav, a graf je obrnjen navzdol. Zrcaljenje čez os $x$ pomeni negativen $a$.
 ~ -0,5 | Zamenjal si smeri: za $1$ v desno od vrha se graf spusti za $2$, ne za $0{,}5$.
 ~ 3 | To je $q$, višina vrha. Faktor $a$ pove, kako strma sta kraka.

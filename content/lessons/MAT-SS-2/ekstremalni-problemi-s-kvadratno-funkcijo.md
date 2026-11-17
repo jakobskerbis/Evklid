@@ -387,7 +387,7 @@ točka: 8; 64 | T(8, 64) | nad
 ~ 18 | To je vsota dolžine in širine, $9 + 9$, torej polovica obsega. Obseg šteje vsako stranico dvakrat.
 ~ 20,25 | Ploščino si delil s $4$. Največjo ploščino ima kvadrat, njegova stranica je $\sqrt{81} = 9$.
 ~ 9 | To je stranica kvadrata, ne obseg.
-> Največjo ploščino ima kvadrat: $a^2 = 81$, $a = 9\,\text{cm}$, obseg je $4 \cdot 9 = 36\,\text{cm}$.
+> Največjo ploščino ima kvadrat: $x^2 = 81$, $x = 9\,\text{cm}$, obseg je $4 \cdot 9 = 36\,\text{cm}$.
 
 ? Iz ploščice v obliki pravokotnega trikotnika s katetama $1{,}5\,\text{m}$ in $0{,}9\,\text{m}$ izrežejo pravokotnik, ki ima dve stranici na katetah in oglišče na hipotenuzi. Izračunaj največjo ploščino pravokotnika v $\text{m}^2$ in jo zaokroži na stotinko.
 = 0,34 m² | 0,01

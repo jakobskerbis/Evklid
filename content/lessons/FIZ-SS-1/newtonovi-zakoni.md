@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -38,7 +38,7 @@ Lastnosti telesa, da se upira spremembi gibanja, pravimo **vztrajnost**. Večja 
 
 Timov voziček torej ne obstane zato, ker »zmanjka sile«, ampak ker nanj delujeta trenje in upor koles. Če ju ni, se hitrost ne spremeni.
 
-Poln voziček z maso $20\,\mathrm{kg}$ ima na začetku hitrost $1\,\mathrm{m/s}$, upori nanj skupaj delujejo s silo $10\,\mathrm{N}$ nazaj. Ti ga potiskaš naprej s silo $F$. Na sliki je $F = 10\,\mathrm{N}$: potisk in upori sta enako velika, rezultanta je nič in hitrost ostane ves čas $1\,\mathrm{m/s}$. V aplikaciji premikaj drsnik. Pri $F$ nad $10\,\mathrm{N}$ kaže rezultanta naprej in hitrost raste. Pri $F$ pod $10\,\mathrm{N}$ kaže nazaj in hitrost pada; pri $F = 0$ voziček obstane, nato miruje. Opazi: premica je vodoravna natanko takrat, ko je rezultanta nič, ne takrat, ko ni nobene sile.
+Poln voziček z maso $20\,\mathrm{kg}$ ima na začetku hitrost $1\,\mathrm{m/s}$, upori nanj skupaj delujejo s silo $10\,\mathrm{N}$ nazaj. Ti ga potiskaš naprej s silo $F$. Na sliki je $F = 10\,\mathrm{N}$: potisk in upori so enako veliki, rezultanta je nič in hitrost ostane ves čas $1\,\mathrm{m/s}$. V aplikaciji premikaj drsnik. Pri $F$ nad $10\,\mathrm{N}$ kaže rezultanta naprej in hitrost raste. Pri $F$ pod $10\,\mathrm{N}$ kaže nazaj in hitrost pada; pri $F = 0$ voziček obstane, nato miruje. Opazi: premica je vodoravna natanko takrat, ko je rezultanta nič, ne takrat, ko ni nobene sile.
 
 :::risba graf
 opis: Graf hitrosti nakupovalnega vozička v odvisnosti od časa od 0 do 5 sekund. Masa je 20 kg, začetna hitrost 1 m/s, upori 10 N. V aplikaciji se potisna sila F spreminja z drsnikom; izbrano je F = {F} N in hitrost po 4 s je {max(0, 1+(F-10)/20*4)} m/s.
@@ -65,7 +65,7 @@ Hitrost ostaja skoraj enaka, ker je rezultanta sil skoraj nič. Za gibanje sila 
 | $20\,\mathrm{N}$ | $20\,\mathrm{kg}$ | $0{,}99\,\mathrm{m/s^2}$ |
 | $40\,\mathrm{N}$ | $20\,\mathrm{kg}$ | $1{,}97\,\mathrm{m/s^2}$ |
 
-Primerjaj prvi dve vrstici: dvojna sila da približno dvojni pospešek. Drugi in tretji: dvojna masa da približno pol manjši pospešek. V vsaki vrstici je sila v okviru merske napake enaka masi krat pospešek. To je drugi Newtonov zakon: rezultanta sil na telo je enaka produktu mase in pospeška:
+Primerjaj prvi dve vrstici: dvojna sila da približno dvojni pospešek. Drugo in tretjo: dvojna masa da približno pol manjši pospešek. V vsaki vrstici je sila v okviru merske napake enaka masi krat pospešek. To je drugi Newtonov zakon: rezultanta sil na telo je enaka produktu mase in pospeška:
 
 $$F_\mathrm{r} = m\,a$$
 

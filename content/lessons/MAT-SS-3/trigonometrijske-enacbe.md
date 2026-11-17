@@ -294,7 +294,7 @@ c) Zvezo iz a) uporabite za kot $\dfrac{x}{2}$ in z zapisom s polovičnim kotom 
 6. c) Zvezo iz a) zapišemo za kot $\frac{x}{2}$ (takrat je $2 \cdot \frac{x}{2} = x$ in $3 \cdot \frac{x}{2} = \frac{3x}{2}$): leva stran je $\cos\frac{3x}{2} + \cos\frac{x}{2} = 2\cos x\cos\frac{x}{2}$.
 7. c) Desno stran zapišemo s polovičnim kotom: $\cos x = \cos^2\frac{x}{2} - \sin^2\frac{x}{2} = 2\cos^2\frac{x}{2} - 1$, zato $1 + \cos x = 2\cos^2\frac{x}{2}$. Enačba je $2\cos x\cos\frac{x}{2} = 2\cos^2\frac{x}{2}$; prenesemo na levo in izpostavimo: $2\cos\frac{x}{2}\left(\cos x - \cos\frac{x}{2}\right) = 0$.
 8. c) $\cos\frac{x}{2} = 0$: $\frac{x}{2} = 90^\circ + k \cdot 180^\circ$, torej $x = 180^\circ + k \cdot 360^\circ$. Na intervalu: $180^\circ$ in $540^\circ$.
-9. c) Enačba $\cos x = \cos\frac{x}{2}$: z $\cos x = 2\cos^2\frac{x}{2} - 1$ in $z = \cos\frac{x}{2}$ dobimo $2z^2 - z - 1 = (2z + 1)(z - 1) = 0$, torej $z = 1$ ali $z = -\frac{1}{2}$.
+9. c) Enačba $\cos x = \cos\frac{x}{2}$: s $\cos x = 2\cos^2\frac{x}{2} - 1$ in $z = \cos\frac{x}{2}$ dobimo $2z^2 - z - 1 = (2z + 1)(z - 1) = 0$, torej $z = 1$ ali $z = -\frac{1}{2}$.
 10. c) $\cos\frac{x}{2} = 1$: $\frac{x}{2} = k \cdot 360^\circ$, torej $x = k \cdot 720^\circ$; na intervalu je to $0^\circ$. $\cos\frac{x}{2} = -\frac{1}{2}$: $\frac{x}{2} = \pm 120^\circ + k \cdot 360^\circ$, torej $x = \pm 240^\circ + k \cdot 720^\circ$; na intervalu sta to $240^\circ$ in $-240^\circ + 720^\circ = 480^\circ$.
 11. Odgovor: b) $x \in \{45^\circ, 60^\circ, 135^\circ, 225^\circ, 300^\circ, 315^\circ\}$; c) $x \in \{0^\circ, 180^\circ, 240^\circ, 480^\circ, 540^\circ\}$.
 

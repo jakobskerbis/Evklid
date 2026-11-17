@@ -112,7 +112,7 @@ Izraz $|x - 1|$ spremeni obliko pri $x = 1$, kjer je $x - 1 = 0$. Izraz $|x + 2|
 Graf ni »V«, ampak korito z ravnim dnom:
 
 :::risba graf
-opis: Graf funkcije f, vsote absolutnih vrednosti od x − 1 in od x + 2, za x od −4 do 3. Levo pada (y = −2x − 1), med −2 in 1 je vodoraven na višini 3, desno narašča (y = 2x + 1). Točki (−2, 3) in (1, 3) sta označeni. Črtkano sta narisana oba sestavna grafa v obliki črke V z temenoma v (1, 0) in (−2, 0).
+opis: Graf funkcije f, vsote absolutnih vrednosti od x − 1 in od x + 2, za x od −4 do 3. Levo pada (y = −2x − 1), med −2 in 1 je vodoraven na višini 3, desno narašča (y = 2x + 1). Točki (−2, 3) in (1, 3) sta označeni. Črtkano sta narisana oba sestavna grafa v obliki črke V s temenoma v (1, 0) in (−2, 0).
 x: -4 .. 3 | 1
 y: 0 .. 8 | 1
 f: abs(x-1) | siva črtkano
