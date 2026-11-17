@@ -90,6 +90,20 @@ Strošek zagona: 4,60 $ (aplikacija 0,98 $, ocenjevalec 3,61 $), 77 min.
 - **Brez ključa** (ali z `EVKLID_MOCK=1`) skripta konča brez klica in brez zapisa; `--dry` izpiše izbor in oceno stroška.
 - **Zagon na Renderju:** Render → evklid → **Shell**, vpiši `node scripts/primerjava-modelov.js --s-preverjanjem --max-usd 5` in počakaj do konca (med zagonom ne združuj ničesar v main, nova objava prekine Shell; po prekinitvi isti ukaz nadaljuje, če je `data/` na trajnem disku). Skripta teče ob aplikaciji kot drug proces (približno 200 do 250 MB pomnilnika: v preizkusnem načinu izmerjeno 203 MB za zagon skozi klepet in 158 MB za izbor primerov; s pravim API ni izmerjeno). Na strežniku ne piše v `docs/`: na koncu izpiše blok »POVZETEK ZA REPOZITORIJ«. Kopiraj ga in pošlji Claudu; ta ga shrani v datoteko in požene `node scripts/primerjava-modelov.js --iz-json <datoteka>`, ki preveri obliko in zapiše `docs/meritve/natancnost-<datum>.json` ter zgornjo tabelo (brez klicev).
 
+## Ročna meritev v GitHub Actions (j, 2026-11-17)
+
+Plačane meritve inštruktorja `scripts/meri-*.mjs` (npr. `meri-preizkus3.mjs`, `meri-nacin-b.mjs`, `meri-hitri-korak.mjs`) se zaženejo brez lupine Renderja, z delovnim tokom `.github/workflows/meri.yml`:
+
+1. GitHub → **Actions** → **Meritev** → **Run workflow** (veja `main`).
+2. Polja: `skripta` (privzeto `scripts/meri-preizkus3.mjs`), `sha` (prazno = zadnji main; sicer 40 znakov hex, commit mora biti v zgodovini main), `max_usd` (privzeto 2), `argumenti` (neobvezno, npr. `--samo-novi --naloge 19,45`; samo male črke, števke, presledek in `, = . -`).
+3. Izid: dnevnik zagona (tabela in »Strošek …« na koncu) ter artefakt **meritev** z `meri.log` in `data/meri-*.json` (30 dni).
+
+- **Meja stroška:** skripta dobi `--max-usd` največ **2 $** na zagon (višja vrednost se zniža na 2; meje ni mogoče podati v `argumenti`). Skripte se ustavijo, preden bi strošek presegel mejo. Delovni tok zažene le skripte, ki `--max-usd` res preberejo (`meri-model.mjs` npr. ne); `meri-hitri-korak.mjs` sprejme `--max-usd` (staro ime `--meja-usd`).
+- Teče največ en zagon naenkrat (naslednji počaka), največ 30 minut. Le ročni zagon z main; PR in push ga ne sprožita.
+- Ključ `ANTHROPIC_API_KEY` (skrivnost Actions, ista kot pri »Meritev po objavi«) dobi samo korak meritve; brez ključa skripte končajo brez klica.
+- Meritve ne pišejo v bazo in ne štejejo v porabo aplikacije (vidno le v konzoli Anthropic); `EVKLID_DB` vseeno kaže na začasno datoteko, prave baze na Renderju se ne dotaknejo.
+- Test: `test/meri-delovni-tok.test.js` (varovalke v datoteki in preverjanje vnosov).
+
 ## Ustno spraševanje »Vprašaj me« (j, 2026-11-10)
 
 `server/ustno.js`, `server/ustno-api.js`. Ocena enega odgovora je ločen klic Haikuja (effort `medium`, `EVKLID_USTNO_EFFORT`,

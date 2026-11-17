@@ -9,7 +9,7 @@ Trenutni prompt je v `prompts/system_prompt.md`.
 - Stalni del +1 796 znakov (58 164 → 59 960; ~480 predpomnjenih žetonov, zanemarljiv strošek).
 - Koda: `server/app.js` `cacheKey` »b2« → »b3« (način B in prošnja za celo rešitev) in »r1« → »r2« (samo rezultat) in nova oznaka »o1« ob »moram oddati« (tudi v načinu A), da se shranjeni odgovori z enim delom, dolgim ogrodjem ali brez grafa ne vračajo; ključi običajnih vprašanj v načinu A ostanejo.
 - Test: `test/prompt.test.js` (»Preizkus 3«: besedila pravil, način A brez sprememb, zgledi GRAF se razčlenijo in narišejo v kalkulatorju, meja rasti 1 800), posodobljena testa načina B in samo rezultata; `test/zasebnost-predpomnilnik.test.js` (novi ključi).
-- Meritev: `node scripts/meri-preizkus3.mjs --max-usd 2` v lupini Renderja (stari in novi prompt na nalogah 19, 83, 4, 100, 121, 45, 17, 21, 1, 55, 61, 62, 63, 145, 29, 89, 109, 10, 13, 18, 23, 27, 33, 47 in Vodenju 6, 25, 40, 50, 93, 112; Haiku, ~0,3 $). Plačane meritve tu ni bilo (ni ključa).
+- Meritev: `node scripts/meri-preizkus3.mjs --max-usd 2` (Actions > Meritev > Run workflow, docs/stroski-ai.md; prej v lupini Renderja) (stari in novi prompt na nalogah 19, 83, 4, 100, 121, 45, 17, 21, 1, 55, 61, 62, 63, 145, 29, 89, 109, 10, 13, 18, 23, 27, 33, 47 in Vodenju 6, 25, 40, 50, 93, 112; Haiku, ~0,3 $). Plačane meritve tu ni bilo (ni ključa).
 
 ## 2026-11-17: na prošnjo samo rezultat dobi rezultat s formulo v eni vrstici (PR #799)
 
