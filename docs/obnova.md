@@ -10,11 +10,11 @@ Splošno o kopijah: [objava.md → Varnostna kopija](objava.md#varnostna-kopija)
 |---|---|---|
 | Dnevna kopija baze (7 dni) + ročne (zadnje 3, največ 22 dni) | Render disk, `/var/data/kopije` | deluje (`kopije.kopij` 7, nočni preizkus `preverjanjeKopij.ok` true) |
 | Posnetek celega diska (7 dni) | Render → Disks | samodejno, Render |
-| Šifrirana kopija zunaj Renderja | Cloudflare R2 | **ni nastavljena** (`kopijeZunaj` null) |
+| Šifrirana kopija zunaj Renderja (1 na dan, 30 dni) | Cloudflare R2, vedro v EU s pravilom »izbriši po 30 dneh« (j potrdil 17. 11. 2026) | deluje od 17. 11. 2026 (`kopijeZunaj.zadnja` 2026-11-17, `napaka: false`) |
 
-Brez R2 ob odpovedi diska pomaga samo Renderjev posnetek diska (dokler stara storitev obstaja); ob izgubi storitve
-ali celega Render računa ni nobene kopije. Nastavitev R2: objava.md →
-»Kopija zunaj Renderja (Cloudflare R2)«.
+Ob izgubi storitve ali celega Render računa ostane šifrirana kopija v R2 (obnova spodaj). Če `kopijeZunaj.napaka` v
+`/healthz/stanje` postane `true` ali `zadnja` ni včerajšnja ali današnja, nalaganje ne teče: preveri ključe v Render →
+Environment. Nastavitev R2: objava.md → »Kopija zunaj Renderja (Cloudflare R2)«.
 
 ## Izmerjeni časi
 

@@ -29,7 +29,7 @@ vsakem PR in vsaki spremembi `main`. Zadnji zagon na `main` pred tem dokumentom:
 | `posta` | `nastavljena: true`, 0 napak | e-pošta (Resend) je nastavljena |
 | `aiStrosek` | `nadMejo: false` | opozorilo o strošku AI teče, danes pod mejo |
 | `pomnilnik` | 276 MB od 512 MB (največ 62 % v 30 min) | dovolj prostora |
-| `kopijeZunaj` | `null` | **kopija zunaj Renderja (R2) ni nastavljena** (ročno, spodaj) |
+| `kopijeZunaj` | 17. 11.: `zadnja: 2026-11-17`, `napaka: false` | šifrirana kopija zunaj Renderja (R2) teče; vedro v EU s pravilom 30 dni (j potrdil 17. 11. 2026) |
 
 Straža (Actions → Straža) je v zadnjih zagonih uspešna, tudi po objavi #767.
 
@@ -40,7 +40,7 @@ Kako preveriš sam: odpri https://evklid.app/healthz/stanje v brskalniku ali pog
 
 | # | Kaj | Kje | Zakaj | Podrobno |
 |---|---|---|---|---|
-| 1 | Nastavi kopijo baze zunaj Renderja (R2) | Cloudflare R2 + Render → Environment | Okvaro diska pokrije Renderjev posnetek; ob izgubi cele storitve ali računa na Renderju brez R2 ni nobene kopije | `docs/obnova.md` |
+| 1 | ~~Nastavi kopijo baze zunaj Renderja (R2)~~ narejeno 17. 11. 2026 (vedro v EU, pravilo 30 dni) | Cloudflare R2 + Render → Environment | Ob izgubi cele storitve ali računa na Renderju ostane kopija v R2 | `docs/obnova.md` |
 | 1a | Vaja obnove na Renderju (enkrat pred pilotom, nato enkrat na mesec), ko nihče ne uporablja Evklida | Render → Shell | Preveri, da obnova deluje na pravem strežniku | `docs/obnova.md` → Vaja |
 | 2 | Različica API webhooka Stripe `2024-06-20` | Stripe → Developers → Webhooks → endpoint | Z novejšo vračilo naročnine ne zniža meje AI | `docs/placila-poti.md` |
 | 3 | En ročni testni nakup (kartice 4242…, 4000…0341, preklic, vračilo) | Stripe testni način + aplikacija | Preveri prave ključe in webhook; vsak dogodek mora dobiti 200 | `docs/placila-poti.md` |
@@ -65,7 +65,7 @@ Za pilot nobena ni ovira; vse so zapisane, da se odloči j.
 - Obnova iz kopije vrne račune, izbrisane po datumu kopije. Po obnovi ročno ponovi zahteve za izbris iz tega obdobja
   (`docs/izbris-izvoz.md` 8) in v Stripe → Developers → Events znova pošlji dogodke od časa kopije (`docs/obnova.md`).
 - Stranka v Stripu (e-naslov, ime) ostane po izbrisu računa (`docs/izbris-izvoz.md` 9).
-- R2: rok 30 dni nima rezerve; predlog 28 dni, ko bo R2 nastavljen (`docs/izbris-izvoz.md` 10).
+- R2 (nastavljen 17. 11. 2026): rok 30 dni v kodi nima rezerve, varovalka je pravilo vedra »izbriši po 30 dneh«; predlog 28 dni v kodi (`docs/izbris-izvoz.md` 10).
 - Resend hrani poslana sporočila po svojih pravilih (`docs/izbris-izvoz.md` 11).
 
 **Plačila** (`docs/placila-poti.md`)
