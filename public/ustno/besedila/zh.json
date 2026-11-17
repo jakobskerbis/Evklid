@@ -4,6 +4,7 @@
 "u.snov": "内容",
 "u.iskanje": "要从哪部分内容提问你？",
 "u.isciPh": "例如：欧姆定律",
+"u.isciPhTema": "例如：{tema}",
 "u.isci": "搜索",
 "u.koliko": "问题数量",
 "u.kako": "回答方式",
