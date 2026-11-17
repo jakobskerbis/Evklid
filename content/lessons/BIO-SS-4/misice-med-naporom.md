@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -202,7 +202,7 @@ $V_{E2} = 40 \cdot 2{,}5\,\mathrm{L} = 100\,\mathrm{L/min}$. Razmerje $\dfrac{10
 Sarkomera je kot vlečenje vrvi, pri katerem tekmovalci stojijo pri miru, vrv pa drsi skozi njihove roke. Miozinske glave so roke: primejo vrv (aktin), potegnejo, spustijo in primejo malo naprej. Vrv se ne skrajša, le premakne se.
 
 - **Kalcij** je sodnikov žvižg: dokler ne zažvižga, je vrv prekrita s ponjavo (tropomiozin) in je nihče ne more prijeti.
-- **ATP** je moč, da roka vrv spusti in seže naprej po nov prijem. Kdor nima moči, ne more več spustiti vrvi in obvisi nanjo; tako je z mišico brez ATP.
+- **ATP** je moč, da roka vrv spusti in seže naprej po nov prijem. Kdor nima moči, ne more več spustiti vrvi in obvisi na njej; tako je z mišico brez ATP.
 - **Anaerobna pot** je kot tekmovalec, ki se namesto zajtrka bodri s sladkorčki: hitro dobi energijo, a mu zaloga skopni in se ga loti utrujenost.
 - **Srce in pljuča** so oskrbovalna ekipa, ki ob težji tekmi nosi več vode in hrane na igrišče.
 

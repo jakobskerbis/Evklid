@@ -325,7 +325,7 @@ d) Iz modela izrazite $l$ kot funkcijo $T$ in izračunajte dolžino nihala z nih
 **Rešitev:**
 
 1. a) Pri premem sorazmerju bi bil količnik $\dfrac{T}{l}$ stalen. Iz tabele je $\dfrac{1{,}0}{0{,}25} = 4$; $\dfrac{2{,}0}{1{,}00} = 2$; $\dfrac{3{,}0}{2{,}25} \approx 1{,}33$ in $\dfrac{4{,}0}{4{,}00} = 1$.
-2. a) Količnik ni stalen: ko se dolžina poveča s $1\,\mathrm{m}$ na $4\,\mathrm{m}$ (štirikrat), se nihajni čas le podvoji. Zato $T$ ni premo sorazmeren z $l$.
+2. a) Količnik ni stalen: ko se dolžina poveča z $1\,\mathrm{m}$ na $4\,\mathrm{m}$ (štirikrat), se nihajni čas le podvoji. Zato $T$ ni premo sorazmeren z $l$.
 3. b) Korenimo dolžine: $\sqrt{0{,}25} = 0{,}5$; $\sqrt{1} = 1$; $\sqrt{2{,}25} = 1{,}5$; $\sqrt{4} = 2$. Količniki $\dfrac{T}{\sqrt{l}}$ so $\dfrac{1{,}0}{0{,}5} = \dfrac{2{,}0}{1} = \dfrac{3{,}0}{1{,}5} = \dfrac{4{,}0}{2} = 2$, torej stalni.
 4. b) Podatki ustrezajo modelu $T = 2\sqrt{l}$, konstanta je $c = 2$ (za $l$ v metrih in $T$ v sekundah).
 5. c) $T = 2\sqrt{1{,}5} \approx 2{,}4495$, torej približno $2{,}45\,\mathrm{s}$.

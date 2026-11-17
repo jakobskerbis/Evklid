@@ -236,7 +236,7 @@ d) Za koliko odstotkov je mejna hitrost na mokri cesti manjša od mejne hitrosti
 5. b) Parabola je odprta navzgor, pod osjo je med ničlama: $v_1 < v < v_2$.
 6. b) Hitrost ni negativna, zato se avtomobil ustavi pred oviro pri $0 \le v < 69{,}9\,\text{km/h}$ (natančneje $v < 69{,}859$).
 7. c) Zavorna pot je $1{,}5 \cdot 0{,}008v^2 = 0{,}012v^2$, zato $d_m(v) = 0{,}3v + 0{,}012v^2$.
-8. c) Neenačba $0{,}012v^2 + 0{,}3v < 60$ po množenju s $\dfrac{250}{3}$ da $v^2 + 25v - 5000 < 0$; $D = 625 + 20000 = 20625$.
+8. c) Neenačba $0{,}012v^2 + 0{,}3v < 60$ po množenju z $\dfrac{250}{3}$ da $v^2 + 25v - 5000 < 0$; $D = 625 + 20000 = 20625$.
 9. c) Pozitivna ničla je $v = \dfrac{-25 + \sqrt{20625}}{2} \approx 59{,}307$, zato se avtomobil ustavi pri $0 \le v < 59{,}3\,\text{km/h}$.
 10. d) Razlika mejnih hitrosti je $69{,}859 - 59{,}307 = 10{,}552\,\text{km/h}$.
 11. d) $\dfrac{10{,}552}{69{,}859} \approx 0{,}151$, torej je mejna hitrost manjša za približno $15{,}1\,\%$.
@@ -369,7 +369,7 @@ Izraz v oglatem oklepaju je vsota nenegativnega kvadrata in pozitivnega števila
 > Ničli sta $-2$ in $4$ (razcep $(x + 2)(x - 4)$). Parabola je odprta navzgor, pod osjo je med ničlama: $x \in (-2, 4)$. Cela števila v njem so $-1$, $0$, $1$, $2$ in $3$, torej $5$.
 
 ? (brez računala) Cesta čez drug prelaz ima višinski profil $h(x) = 1500 - 20x^2$ metrov, $x$ je vodoravna oddaljenost od vrha v km (vzhodno pozitivna, zahodno negativna). Snežna meja je na $1320\,\text{m}$. Koliko kilometrov ceste je nad snežno mejo?
-= 6 km | 0,01
+= 6 km | 0
 ~ 3 | To je le pol odseka, vzhodno od vrha. Iz $x^2 < 9$ sledi $-3 < x < 3$, odsek sega $3\,\text{km}$ na vsako stran.
 ~ 9 | To je meja za $x^2$. Dolžino odseka dobiš iz ničel $\pm 3$, ne iz $9$.
 > $1500 - 20x^2 > 1320$ da $180 - 20x^2 > 0$, torej $x^2 < 9$ in $x \in (-3, 3)$. Odsek je dolg $3 - (-3) = 6\,\text{km}$.
@@ -388,7 +388,7 @@ p | poraba goriva pri hitrosti $v$ | p(v) = 0{,}001v^2 - 0{,}16v + 11 | | v litr
 h | nadmorska višina ceste | h(x) = 1600 - 25x^2 | m | $x$ je oddaljenost od vrha prelaza v km
 d | zaustavitvena pot na suhi cesti | d(v) = 0{,}3v + 0{,}008v^2 | m | v nalogi za maturo; $v$ v km/h
 d_m | zaustavitvena pot na mokri cesti | d_m(v) = 0{,}3v + 0{,}012v^2 | m | v nalogi za maturo
-v_1, v_2 | ničli kvadratnega izraza s hitrostjo $v$ | | km/h | v nalogi za maturo
+v_1, v_2 | ničli kvadratnega izraza s hitrostjo $v$ | | km/h | v Primeru 3 in v nalogi za maturo
 :::
 
 <<RACUN

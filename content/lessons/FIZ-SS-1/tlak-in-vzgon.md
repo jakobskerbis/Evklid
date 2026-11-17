@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -173,7 +173,7 @@ $p_h = \rho\,g\,h$, skupni tlak $p = p_0 + p_h$
 **Rešitev:**
 
 1. Iščemo tlak zaradi vode, zato uporabimo $p_h = \rho\,g\,h$.
-2. Vstavimo: $p_h = 1025 \cdot 9{,}8 \cdot 4{,}0 = 40\,180\,\text{Pa} \approx 4{,}0 \cdot 10^4\,\text{Pa}$. Zaokrožimo na 2 mestni števki, ker ima globina $4{,}0\,\text{m}$ le dve.
+2. Vstavimo: $p_h = 1025 \cdot 9{,}8 \cdot 4{,}0 = 40\,180\,\text{Pa} \approx 4{,}0 \cdot 10^4\,\text{Pa}$. Zaokrožimo na 2 veljavni mesti, ker ima globina $4{,}0\,\text{m}$ le dve.
 3. To je približno $40\,\text{kPa}$ ali $0{,}4\,\text{bar}$.
 4. Skupni tlak dobimo, ko prištejemo še zračni tlak, ki pritiska na gladino: $p \approx 100\,000 + 40\,000 = 140\,000\,\text{Pa}$.
 
@@ -216,7 +216,7 @@ Telo plava: $F_v = F_g$, torej $\rho_t\,g\,V_i = \rho\,g\,V$ in $\dfrac{V_i}{V} 
 1. **Pogoj plavanja.** Ledena gora miruje, zato je vzgon enak teži: $\rho_t\,g\,V_i = \rho\,g\,V$. Ko krajšamo $g$, dobimo $\dfrac{V_i}{V} = \dfrac{\rho}{\rho_t}$.
 2. **Delež pod gladino:** $\dfrac{920}{1025} \approx 0{,}898$, torej približno $90\,\%$.
 3. **Delež nad gladino:** $1 - 0{,}898 = 0{,}102$. To je tista desetina z začetka: odloča samo razmerje gostot, ne velikost gore.
-4. **Celotna prostornina.** Natančneje je nad gladino $\dfrac{1025 - 920}{1025} = \dfrac{105}{1025}$ prostornine, zato je $V = 2000 \cdot \dfrac{1025}{105} \approx 19\,524\,\text{m}^3 \approx 2{,}0 \cdot 10^4\,\text{m}^3$. Na 2 mestni števki zaokrožimo, ker sta gostoti dani le približno.
+4. **Celotna prostornina.** Natančneje je nad gladino $\dfrac{1025 - 920}{1025} = \dfrac{105}{1025}$ prostornine, zato je $V = 2000 \cdot \dfrac{1025}{105} \approx 19\,524\,\text{m}^3 \approx 2{,}0 \cdot 10^4\,\text{m}^3$. Na 2 veljavni mesti zaokrožimo, ker sta gostoti dani le približno.
 5. **Masa:** $m = \rho\,V = 920 \cdot 19\,524 \approx 1{,}8 \cdot 10^7\,\text{kg}$.
 
 Odgovor: ledena gora ima prostornino približno $20\,000\,\text{m}^3$ in maso okoli $18\,000$ ton, čeprav nad vodo vidimo le $2000\,\text{m}^3$.
@@ -308,7 +308,7 @@ Rezultanta sil tlaka je
 
 $$F_v = F_2 - F_1 = \rho_t\,g\,(h_2 - h_1)\,S = \rho_t\,g\,H\,S = \rho_t\,g\,V$$
 
-Zunanji tlak $p_0$ se pri odštevanju izniči. Ker je $H S = V$ prostornina kvadra, dobimo Arhimedov zakon. Za telesa poljubne oblike izrek velja splošno, saj ga lahko razumemo kot vsoto veliko majhnih kvadrov.
+Zunanji tlak $p_0$ se pri odštevanju izniči. Ker je $H S = V$ prostornina kvadra, dobimo Arhimedov zakon. Za telesa poljubne oblike zakon velja splošno, saj ga lahko razumemo kot vsoto veliko majhnih kvadrov.
 
 **Zakaj tlak ni odvisen od posode?** V izpeljavi $p_h = \rho g h$ se ploščina $S$ pokrajša, zato rezultat ni odvisen od preseka stolpca.
 

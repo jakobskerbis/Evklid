@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -238,7 +238,7 @@ $v = 300\,\text{W} / 1200\,\text{N} = 0{,}25\,\text{m/s}$ in $t = 6{,}0\,\text{m
 
 Delo je kot količina vode, ki jo natočiš v sod. Moč je kot pretok pipe: koliko litrov na sekundo. Isti sod lahko napolniš z močnim curkom v pol minute ali s tankim v petih minutah. Vode je na koncu enako, pretok pa je bil različen. Tako sta Miha in Ana »natočila« enako dela, $300\,\text{J}$, Miha pa z dvakrat večjim »pretokom«, $150\,\text{J}$ vsako sekundo.
 
-Kosinus si predstavljaj kot senco. Silo posveti od zgoraj, pravokotno na tla. Senca puščice na tleh je del sile, ki vleče v smer gibanja. Navpična sila nima sence na tleh, zato ne opravi dela.
+Kosinus si predstavljaj kot senco. Silo osvetli od zgoraj, pravokotno na tla. Senca puščice na tleh je del sile, ki vleče v smer gibanja. Navpična sila nima sence na tleh, zato ne opravi dela.
 
 ## Drugače: Bolj natančno
 
