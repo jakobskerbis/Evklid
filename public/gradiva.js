@@ -38,9 +38,11 @@ function say(root, msg) {
 // Stran za tisk odpremo v novem oknu: okno odpremo takoj (sicer ga brskalnik blokira), vsebino
 // naložimo s prijavo trenutne seje in jo zapišemo vanj (base: poti do slogov in KaTeX).
 export async function openPrintable(url, onError, headers = {}) {
-  // V aplikaciji (spletna stran v WebView, mobile/src/app/web.tsx) novih oken ni: window.open bi izpraznil
-  // stran. Preverimo dostop (napake kot na spletu) in stran odpremo kar tu; nazaj z gumbom nazaj ali potegom.
-  const inApp = / EvklidApp\//.test(navigator.userAgent) && !Object.keys(headers).length;
+  // V aplikaciji (spletna stran v WebView, mobile/src/app/web.tsx) novih oken in tiska ni. Strežnik po enakih
+  // pravilih dostopa izdela stran in vrne povezavo za 10 minut (server/gradiva.js, ?povezava=1); aplikacija jo
+  // odpre v brskalniku telefona (Chrome), kjer »Shrani kot PDF« dela (j, 17. 11. 2026). Starejša aplikacija
+  // (brez zastavice EvklidNative.tisk) jo odpre kar tu.
+  const inApp = / EvklidApp\//.test(navigator.userAgent);
   const w = inApp ? null : window.open("", "_blank");
   if (!w && !inApp) return onError(t("gr.popup"));
   try {
@@ -49,7 +51,7 @@ export async function openPrintable(url, onError, headers = {}) {
   } catch {}
   let r;
   try {
-    r = await fetch(url, { headers });
+    r = await fetch(inApp ? `${url}${url.includes("?") ? "&" : "?"}povezava=1` : url, { headers });
   } catch {
     w?.close();
     return onError(t("off.noConnection"));
@@ -60,7 +62,13 @@ export async function openPrintable(url, onError, headers = {}) {
     w?.close();
     return onError(e.code && t(e.code) !== e.code ? t(e.code) : e.error || t("common.error", { status: r.status }));
   }
-  if (!w) return location.assign(url); // v aplikaciji: dostop je preverjen, stran odpremo tu
+  if (!w) {
+    const d = await r.json().catch(() => ({}));
+    if (typeof d.url !== "string" || !d.url.startsWith("/gradiva/tisk/")) return onError(t("common.error", { status: r.status }));
+    const to = `${location.origin}${d.url}#natisni`; // v brskalniku takoj ponudi tisk (public/ucbenik-tisk.js)
+    if (window.EvklidNative?.tisk && window.ReactNativeWebView?.postMessage) return window.ReactNativeWebView.postMessage(JSON.stringify({ t: "tisk", url: to }));
+    return location.assign(to);
+  }
   const html = (await r.text()).replace("<head>", `<head><base href="${location.origin}/">`);
   w.document.open();
   w.document.write(html);
