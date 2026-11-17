@@ -187,7 +187,7 @@
     "other": "{n} Punkte"
   },
   "task.phCoef": "z. B. 2, 1, 2",
-  "task.phUnit": "Zahl und Einheit, z. B. 12,5 {unit}",
+  "task.phUnit": "Zahl und Einheit",
   "task.phResult": "Ergebnis eingeben",
   "task.write": "Schreiben",
   "task.writeTitle": "Eingabe mit Finger oder Maus: Tasten oder Handschrift",
@@ -665,7 +665,7 @@
   "chk.empty": "Gib zuerst deine Antwort ein.",
   "chk.number": "Gib eine Zahl ein (Komma oder Punkt gehen beide).",
   "chk.addUnit": "Die Zahl steht da, jetzt fehlt noch die Einheit. In welcher Einheit ist das Ergebnis?",
-  "chk.unit": "Prüfe die Einheit: Schreib das Ergebnis in {unit}.",
+  "chk.unit": "Diese Einheit stimmt nicht. Prüfe, in welcher Einheit das Ergebnis ist.",
   "chk.rounding": "Die Rechnung stimmt, nur die Rundung nicht. Richtig gerundet ist es {right}.",
   "chk.fraction": "Schreib einen Bruch als a/b (z. B. 3/4), ein Verhältnis als a : b (z. B. 3 : 4) oder eine gemischte Zahl (z. B. 1 1/2).",
   "chk.simplify": "Der Wert stimmt, aber kürze den Bruch vollständig.",

@@ -1549,6 +1549,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         if (d.stage === "out") state.aiOut = true;
       },
       delta: (d) => pacer.push(d.text),
+      retract: () => pacer.reset(),
       // Pod mejo: varnostni odgovor nad odgovorom inštruktorja (ga ne ustavi).
       nujno: (d) => showNujno(d, { before: bubble }),
       cards: (d) => (cardsData = d),
@@ -2634,7 +2635,9 @@ function addMsgFoot(el, { id, code, reported }) {
   foot.className = "msg-foot";
   const tag = document.createElement("span");
   tag.className = "msg-code";
-  tag.textContent = code || "";
+  // Črka O z malo (j, 17. 11. 2026): v pisavi telefona sta »O« in »0« enaka, #000O (sporočilo 24) je bil videti kot #0000.
+  // Iskanje kode (server/reports.js parseMessageCode) ne loči velikih in malih črk.
+  tag.textContent = String(code || "").replace(/O/g, "o");
   tag.title = t("rep.code");
   const done = () => {
     foot.querySelector(".msg-report")?.remove();
@@ -3542,8 +3545,8 @@ function renderTask(task, ctx) {
   } else {
     const ph =
       task.inputHint ||
-      (task.answerType === "coefficients" ? t("task.phCoef") : task.unit ? t("task.phUnit", { unit: task.unit }) : t("task.phResult"));
-    input = `<form class="answer-row"><input id="answer" aria-label="${escapeHtml(t("games.yourAnswer"))}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
+      (task.answerType === "coefficients" ? t("task.phCoef") : task.hasUnit ? t("task.phUnit") : t("task.phResult"));
+    input = `<form class="answer-row"><input id="answer" aria-label="${escapeHtml(t("games.yourAnswer"))}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.hasUnit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
   }
   const calcBtn = ["contest", "placement", "pretest"].includes(ctx.mode) ? "" : `<button type="button" class="ghost task-calc icon-only" title="${escapeHtml(t("nav.graph"))}" aria-label="${escapeHtml(t("nav.graph"))}">${icon("calculator")}</button>`;
   const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span>${ctx.total ? `<span class="contest-count">${ctx.index} / ${ctx.total}</span>` : ""}</div>` : "";

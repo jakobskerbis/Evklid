@@ -192,7 +192,7 @@
     "other": "{n} de puncte"
   },
   "task.phCoef": "de ex. 2, 1, 2",
-  "task.phUnit": "număr și unitate, de ex. 12,5 {unit}",
+  "task.phUnit": "număr și unitate",
   "task.phResult": "scrie rezultatul",
   "task.write": "Scrie",
   "task.writeTitle": "Introducere cu degetul sau mouse-ul: tastatură sau scris de mână",
@@ -671,7 +671,7 @@
   "chk.empty": "Mai întâi scrie răspunsul.",
   "chk.number": "Scrie un număr (merge și virgula, și punctul).",
   "chk.addUnit": "Numărul e scris, adaugă și unitatea. În ce unitate este rezultatul?",
-  "chk.unit": "Verifică unitatea: scrie rezultatul în {unit}.",
+  "chk.unit": "Această unitate nu este corectă. Verifică în ce unitate este rezultatul.",
   "chk.rounding": "Calculul e corect, doar rotunjirea nu. Rotunjit corect este {right}.",
   "chk.fraction": "Scrie fracția ca a/b (de ex. 3/4), raportul ca a : b (de ex. 3 : 4) sau ca număr mixt (de ex. 1 1/2).",
   "chk.simplify": "Valoarea e corectă, dar simplifică fracția complet.",

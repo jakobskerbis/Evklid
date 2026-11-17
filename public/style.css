@@ -676,6 +676,9 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .answer-row { display: flex; gap: 8px; margin-top: 16px; }
 .answer-row input { flex: 1; min-width: 0; padding: 12px 14px; border-radius: var(--radius-sm); border: 2px solid var(--border); background: var(--bg); font-size: 1.1rem; font-weight: 700; min-height: 52px; }
 .answer-row input:focus { border-color: var(--accent); outline: none; }
+/* Ozko polje na telefonu: namig »število in enota« v celoti (pregled PR 786, G). */
+.answer-row input { text-overflow: ellipsis; }
+@media (max-width: 420px) { .answer-row input::placeholder { font-size: 0.82em; } }
 .answer-row button { min-height: 52px !important; }
 .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 16px; }
 .choices.one-col { grid-template-columns: 1fr; }
@@ -914,7 +917,7 @@ label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
 .pad[data-tab="draw"] .pad-draw { display: block; }
 .pad-units { display: flex; gap: 6px; }
 .pad-units:empty { display: none; }
-.pad-units button { min-height: 44px; padding: 6px 14px; border-radius: 12px; }
+.pad-units select { min-height: 44px; padding: 6px 10px; border-radius: 12px; max-width: 9em; }
 .draw-tools { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
 .draw-tools button { padding: 6px 12px; border-radius: 10px; }
 .draw-tools button.on { outline: 2px solid var(--accent); }

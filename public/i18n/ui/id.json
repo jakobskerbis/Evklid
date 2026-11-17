@@ -182,7 +182,7 @@
     "other": "{n} poin"
   },
   "task.phCoef": "mis. 2, 1, 2",
-  "task.phUnit": "angka dan satuan, mis. 12,5 {unit}",
+  "task.phUnit": "angka dan satuan",
   "task.phResult": "tulis jawabanmu",
   "task.write": "Tulis",
   "task.writeTitle": "Input dengan jari atau mouse: papan angka atau tulisan tangan",
@@ -659,7 +659,7 @@
   "chk.empty": "Tulis jawabanmu dulu.",
   "chk.number": "Tulis sebuah angka (koma atau titik sama-sama bisa).",
   "chk.addUnit": "Angkanya sudah ada, sekarang tambahkan satuannya. Hasilnya dalam satuan apa?",
-  "chk.unit": "Periksa satuannya: tulis hasilnya dalam {unit}.",
+  "chk.unit": "Satuan ini tidak tepat. Periksa satuan apa yang dipakai hasilnya.",
   "chk.rounding": "Perhitunganmu benar, hanya pembulatannya yang salah. Dibulatkan dengan benar hasilnya {right}.",
   "chk.fraction": "Tulis pecahan sebagai a/b (mis. 3/4), perbandingan sebagai a : b (mis. 3 : 4) atau bilangan campuran (mis. 1 1/2).",
   "chk.simplify": "Nilainya benar, tetapi sederhanakan pecahannya sampai habis.",

@@ -187,7 +187,7 @@
     "other": "{n} pont"
   },
   "task.phCoef": "pl. 2, 1, 2",
-  "task.phUnit": "szám és mértékegység, pl. 12,5 {unit}",
+  "task.phUnit": "szám és mértékegység",
   "task.phResult": "írd be az eredményt",
   "task.write": "Írás",
   "task.writeTitle": "Bevitel ujjal vagy egérrel: billentyűk vagy kézírás",
@@ -665,7 +665,7 @@
   "chk.empty": "Először írd be a válaszod.",
   "chk.number": "Írj be egy számot (vessző és pont is jó).",
   "chk.addUnit": "A szám megvan, add hozzá a mértékegységet is. Milyen mértékegységben van az eredmény?",
-  "chk.unit": "Ellenőrizd a mértékegységet: az eredményt {unit} egységben írd.",
+  "chk.unit": "Ez a mértékegység nem jó. Nézd meg, milyen mértékegységben van az eredmény.",
   "chk.rounding": "A számolás jó, csak a kerekítés nem. Helyesen kerekítve {right}.",
   "chk.fraction": "Írd a törtet a/b alakban (pl. 3/4), az arányt a : b alakban (pl. 3 : 4) vagy vegyes számként (pl. 1 1/2).",
   "chk.simplify": "Az érték jó, de egyszerűsítsd a törtet a végéig.",
