@@ -371,6 +371,15 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 .md-table .katex { white-space: nowrap; }
 .md-table td .katex { font-size: 1.1em; }
 .md-table :is(th, td) .katex-display { margin: 0; }
+/* Tabela v klepetu, ki se pomika (drsniki.js doda »drs«): prvi stolpec z oznakami vrstic ostane na mestu, da se vidi,
+   katera vrstica je katera (j 17. 11. 2026, telefon: »četek«, »rememba«). Ozadje je neprosojno, da vsebina drsi pod
+   njim. Prazna prva celica (skupina pod imenom, zgoraj) ostane prosojna in se pomika. Črta ob stolpcu le med
+   pomikanjem (drs-z), sicer jo nariše že rob druge celice. Učbenik ostane, kot je bil. */
+.msg .md-table-wrap.drs > .md-table > :is(thead, tbody) > tr > :is(th, td):first-child:not(:empty) { position: sticky; inset-inline-start: 0; z-index: 1; background-color: var(--surface); }
+.msg .md-table-wrap.drs > .md-table > thead > tr > th:first-child:not(:empty) { background-color: var(--surface-2); }
+.msg .md-table-wrap.drs > .md-table > tbody > tr:nth-child(even) > td:first-child:not(:empty) { background-image: linear-gradient(color-mix(in srgb, var(--surface-2) 45%, transparent), color-mix(in srgb, var(--surface-2) 45%, transparent)); }
+.msg .md-table-wrap.drs.drs-z > .md-table > :is(thead, tbody) > tr > :is(th, td):first-child:not(:empty) { box-shadow: inset -1px 0 var(--border); }
+.msg .md-table-wrap.drs.drs-z.drs-rtl > .md-table > :is(thead, tbody) > tr > :is(th, td):first-child:not(:empty) { box-shadow: inset 1px 0 var(--border); }
 
 .table { width: 100%; font-size: 0.93rem; }
 .table td.bad { color: var(--danger); font-weight: 800; }
