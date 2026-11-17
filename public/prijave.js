@@ -241,3 +241,80 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
     }),
   );
 }
+
+// Obrazec »Prijavi napako« pod odgovorom inštruktorja (iz public/app.js addMsgFoot; server/reports.js).
+export function openMsgReport(el, foot, btn, id, done, { convId, api, toast }) {
+  if (el.querySelector(".report-box")) return;
+  btn.setAttribute("aria-expanded", "true");
+  const box = document.createElement("div");
+  box.className = "report-box";
+  box.setAttribute("role", "group");
+  box.innerHTML = `<p></p><div class="rep-reasons"></div><textarea maxlength="500" rows="2"></textarea>
+    <p class="rep-err" role="alert" hidden></p>
+    <div class="rep-actions"><button type="button" class="primary small rep-send"></button><button type="button" class="ghost rep-cancel"></button></div>
+    <p class="rep-code muted" hidden><span></span> <span class="msg-code"></span></p>`;
+  box.querySelector("p").textContent = t("rep.ask");
+  if (foot.dataset.code) {
+    const c = box.querySelector(".rep-code");
+    c.hidden = false;
+    c.firstElementChild.textContent = `${t("rep.code")}:`;
+    // Črka O z malo (j, 17. 11. 2026): v pisavi telefona sta »O« in »0« enaka (#000O je bil videti kot #0000).
+    // Iskanje kode (server/reports.js parseMessageCode) ne loči velikih in malih črk.
+    c.lastElementChild.textContent = foot.dataset.code.replace(/O/g, "o");
+  }
+  box.setAttribute("aria-label", t("rep.ask"));
+  const area = box.querySelector("textarea");
+  area.placeholder = t("rep.notePh");
+  area.setAttribute("aria-label", t("rep.notePh"));
+  let reason = null;
+  for (const r of ["wrong", "unsafe", "other"]) {
+    const rb = document.createElement("button");
+    rb.type = "button";
+    rb.className = "secondary small";
+    rb.setAttribute("aria-pressed", "false");
+    rb.textContent = t(`rep.${r}`);
+    rb.addEventListener("click", () => {
+      reason = r;
+      box.querySelectorAll(".rep-reasons button").forEach((x) => x.setAttribute("aria-pressed", String(x === rb)));
+      err.hidden = true;
+    });
+    box.querySelector(".rep-reasons").append(rb);
+  }
+  const err = box.querySelector(".rep-err");
+  const sendBtn = box.querySelector(".rep-send");
+  const close = () => {
+    box.remove();
+    btn.setAttribute("aria-expanded", "false");
+    btn.focus();
+  };
+  sendBtn.textContent = t("rep.send");
+  box.querySelector(".rep-cancel").textContent = t("rep.cancel");
+  box.querySelector(".rep-cancel").addEventListener("click", close);
+  box.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      e.stopPropagation();
+      close();
+    }
+  });
+  sendBtn.addEventListener("click", async () => {
+    if (!reason) {
+      err.textContent = t("rep.pick");
+      err.hidden = false;
+      return;
+    }
+    sendBtn.disabled = true;
+    try {
+      // Zraven gre, kar je učenec videl: izrisan HTML sporočila in naprava (napaka v izpisu formule).
+      await api(`/api/conversations/${convId}/messages/${id}/report`, { method: "POST", body: { reason, note: area.value, shown: shownHtml(el), ...deviceInfo() } });
+      box.remove();
+      done();
+      toast(t("rep.thanks"), "check");
+    } catch (e) {
+      err.textContent = e.message;
+      err.hidden = false;
+      sendBtn.disabled = false;
+    }
+  });
+  foot.after(box);
+  box.querySelector(".rep-reasons button").focus();
+}
