@@ -42,6 +42,10 @@ let qShown = null; // težava, ki je na zaslonu
 let tilt = null; // kot telefona glede na vodoravno (°), null brez senzorja
 // Naloga za člane pilota (public/pilot-naloge.js): po branju še »Prebrano prav / narobe«.
 let pilotTask = null; // { cond, title, photo: { allowed, days }, rate }
+// Kamera v Inštruktorju (j 17. 11.: »default skener nalog, ki nalogo po pregledu preda inštruktorju«): zajem in izrez
+// kot sicer, branje celotne naloge (/scan/read-task), učenec prepis popravi, nato gre inštruktorju (onSend).
+let tutorMode = null; // { onSend({ text, image }) }
+const TUTOR_FRAME = { x: 0.05, y: 0.12, w: 0.9, h: 0.62 }; // besedilna naloga je višja od ene enačbe
 
 export function initScan(deps) {
   D = deps;
@@ -134,6 +138,15 @@ export function startPilotScan(task) {
   frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
 }
 
+/** Začne skeniranje za Inštruktorja: po pregledu prepisa gre naloga v klepet (onSend). */
+export function startTutorScan(onSend) {
+  tutorMode = { onSend };
+  owner = sid();
+  Object.assign(S, fresh());
+  aiSeq++;
+  frame = { ...TUTOR_FRAME };
+}
+
 export function scanBack() {
   if (S.mode === "capture") return false;
   S.mode = "capture";
@@ -148,6 +161,7 @@ export function scanBack() {
 export function leaveScan() {
   stopCamera();
   pilotTask = null;
+  tutorMode = null;
   if (graphView) {
     graphView.destroy?.();
     graphView = null;
@@ -164,6 +178,7 @@ function render() {
   }
   if (S.mode === "capture") renderCapture(box);
   else if (S.mode === "crop" || S.mode === "reading") renderCrop(box);
+  else if (S.mode === "confirm" && tutorMode) renderTutorConfirm(box);
   else if (S.mode === "confirm") renderConfirm(box);
   else renderSolution(box);
   if (pilotTask && S.mode !== "confirm") box.insertAdjacentHTML("afterbegin", `<p class="scan-note card pn-scan-banner">${icon("sparkles")}<span>${esc(pilotTask.title)}</span></p>`);
@@ -173,7 +188,7 @@ function render() {
 // ---------- 1. zajem ----------
 
 function renderCapture(box) {
-  const hist = history();
+  const hist = tutorMode ? [] : history(); // rešene naloge skenerja niso za klepet
   box.innerHTML = `
     <div class="scan-cam card">
       <div class="scan-stage" data-stage>
@@ -448,7 +463,7 @@ function renderCrop(box) {
   box.querySelector('[data-act="back"]').addEventListener("click", () => {
     S.mode = "capture";
     S.quality = null;
-    frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
+    frame = tutorMode ? { ...TUTOR_FRAME } : { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
     render();
   });
   box.querySelector('[data-act="read"]').addEventListener("click", () => {
@@ -513,6 +528,7 @@ function bindFrame(stage) {
 }
 
 async function readImage(dataUrl) {
+  if (tutorMode) return readTask(dataUrl);
   if (!navigator.onLine) {
     S.note = t("scan.offline");
     S.mode = "confirm";
@@ -565,6 +581,87 @@ async function readImage(dataUrl) {
     S.mode = S.image ? "crop" : "capture";
     render();
   }
+}
+
+// Inštruktor: prepis celotne naloge (vsi predmeti). Ob napaki, brez povezave ali brez branja (preizkusni način)
+// gre učenec na pregled s fotografijo: pošlje jo inštruktorju ali nalogo vpiše (nikoli slepa ulica).
+async function readTask(dataUrl) {
+  S.mode = "reading";
+  S.shot = dataUrl;
+  S.figure = false;
+  S.more = false;
+  render();
+  const seq = ++aiSeq;
+  try {
+    if (!navigator.onLine) throw new Error(t("scan.tutorFail"));
+    const out = await D.api(`/api/students/${sid()}/scan/read-task`, { method: "POST", body: { image: dataUrl } });
+    if (seq !== aiSeq || S.mode !== "reading") return;
+    S.text = out.text || "";
+    S.figure = !!out.figure;
+    S.more = !!out.more;
+    S.note = out.mock ? t("scan.mock") : S.text ? null : t("scan.tutorFail");
+  } catch (err) {
+    if (seq !== aiSeq || S.mode !== "reading") return;
+    S.text = "";
+    S.note = err?.limit || err?.status === 429 ? err.message : t("scan.tutorFail");
+  }
+  S.mode = "confirm";
+  render();
+}
+
+function renderTutorConfirm(box) {
+  const photo = !!S.shot;
+  const withPhoto = photo && (S.figure || !S.text.trim());
+  box.innerHTML = `
+    ${S.note ? `<p class="scan-note card" role="status">${icon("info")}<span>${esc(S.note)}</span></p>` : ""}
+    <div class="card scan-confirm scan-tutor">
+      <label class="scan-label" for="scan-task">${esc(S.text ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
+      <textarea id="scan-task" rows="5" maxlength="3000" autocomplete="off" spellcheck="true">${esc(S.text)}</textarea>
+      <div class="scan-preview scan-task-preview" aria-hidden="true"></div>
+      ${S.more ? `<p class="scan-hint muted">${esc(t("scan.tutorMore"))}</p>` : ""}
+      ${
+        photo
+          ? `<label class="check-row scan-photo-row"><input type="checkbox" data-photo ${withPhoto ? "checked" : ""}><img src="${esc(S.shot)}" alt="${esc(t("scan.photoAlt"))}"><span><b>${esc(t("scan.tutorPhoto"))}</b>${S.figure ? `<small class="muted">${esc(t("scan.tutorFigure"))}</small>` : ""}</span></label>`
+          : ""
+      }
+      <p class="scan-err" role="alert" hidden></p>
+      <div class="scan-actions">
+        <button type="button" class="secondary" data-act="retake">${icon("camera")}${esc(t("scan.retake"))}</button>
+        <button type="button" class="primary" data-act="send">${icon("send")}${esc(t("scan.tutorSend"))}</button>
+      </div>
+    </div>`;
+  const area = box.querySelector("#scan-task");
+  const err = box.querySelector(".scan-err");
+  // Predogled: formule ($…$) izrisane, kot jih bo videl inštruktor in učenec v pogovoru.
+  const prev = box.querySelector(".scan-task-preview");
+  const preview = () => (prev.innerHTML = /\$[^$]+\$/.test(area.value) ? rich(area.value) : "");
+  preview();
+  area.addEventListener("input", () => {
+    S.text = area.value;
+    err.hidden = true;
+    preview();
+  });
+  box.querySelector('[data-act="retake"]').addEventListener("click", () => {
+    S.mode = "capture";
+    S.note = null;
+    S.text = "";
+    frame = { ...TUTOR_FRAME };
+    render();
+  });
+  box.querySelector('[data-act="send"]').addEventListener("click", () => {
+    const text = area.value.trim();
+    const image = photo && box.querySelector("[data-photo]")?.checked ? S.shot : null;
+    if (!text && !image) {
+      err.textContent = t("scan.tutorEmpty");
+      err.hidden = false;
+      return area.focus();
+    }
+    const cb = tutorMode;
+    Object.assign(S, fresh());
+    tutorMode = null;
+    cb.onSend({ text, image });
+  });
+  if (!S.text && !coarse()) area.focus();
 }
 
 // ---------- 3. prepis (uredljiv) ----------
@@ -641,7 +738,7 @@ function renderConfirm(box) {
   box.querySelector('[data-act="retake"]').addEventListener("click", () => {
     S.mode = "capture";
     S.note = null;
-    frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
+    frame = tutorMode ? { ...TUTOR_FRAME } : { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
     render();
   });
   const go = () => {
@@ -909,7 +1006,7 @@ function bindSolution(box) {
     S.sought = "";
     S.text = "";
     S.goal = null;
-    frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
+    frame = tutorMode ? { ...TUTOR_FRAME } : { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
     render();
     $v()?.scrollIntoView({ block: "start" });
   });

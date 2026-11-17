@@ -40,7 +40,7 @@ import { createPageCache } from "./tisk-predpomnilnik.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
 import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSkill, firstTime, mountSkillChecks } from "./weaknesses.js";
-import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
+import { cleanText, plainTitle, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
 import { isHiddenNote } from "./skrite-opombe.js";
 import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
@@ -973,7 +973,7 @@ export function createApp(store, opts = {}) {
     // ne shrani za druge (tudi brez dvojnega preverjanja, ki ga plača aplikacija) in ne vzame shranjenega.
     const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !hasPersonalPrompt(student, conv.path_topic, weak, results) && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
     if (conv.title === "Nov pogovor") {
-      store.renameConversation(conv.id, cleanText(text, 50) || "Naloga s fotografije");
+      store.renameConversation(conv.id, cleanText(plainTitle(text), 50) || "Naloga s fotografije");
     }
 
     res.writeHead(200, {
@@ -1885,7 +1885,7 @@ export function createApp(store, opts = {}) {
   mountClassShowcase(app, store.db, { loadStudent, leagues, knowledge }); // vitrina v razredu (opt-in, server/vitrina.js)
   mountCorner(app, store, { loadStudent, fetchFn: opts.newsFetch, offline: opts.newsOffline });
   mountSchedule(app, store, { loadStudent, progress, usage, schedules, photoFn: opts.schedulePhotoFn, fetchFn: opts.fetchFn, lookup: opts.lookup, modelCapFor: (id) => accounts?.modelCapFor?.(id) ?? null });
-  mountScan(app, { loadStudent, usage, readFn: opts.scanReadFn, solveFn: opts.scanSolveFn });
+  mountScan(app, { loadStudent, usage, readFn: opts.scanReadFn, solveFn: opts.scanSolveFn, readTaskFn: opts.scanReadTaskFn });
   ustno = mountUstno(app, store, { loadStudent, usage, progress, accounts, createFn: opts.ustnoFn }); // ustno spraševanje »Vprašaj me« (server/ustno.js)
   // Uči se iz svojih zapiskov (korak 1): meja strani po paketu, vsak klic skozi trdo mejo AI.
   mountZapiski(app, store, { loadStudent, usage, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, readFn: opts.zapiskiReadFn, cardsFn: opts.zapiskiCardsFn });

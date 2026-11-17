@@ -62,6 +62,28 @@ export const DEFAULT_SETTINGS = {
 
 // Proste besedilne nastavitve gredo v sistemski prompt, zato jih skrajšamo
 // in odstranimo prelome vrstic, da ne morejo posnemati novih razdelkov.
+// Naslov pogovora iz prvega sporočila (j 17. 11., pregled: naslov skeniranega pogovora je bil surov zapis): formule v
+// $…$ in zapis kalkulatorja (2*(x-3), sqrt(x), x^2) kot berljivo besedilo, brez klica AI.
+const SUP = { 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹", "-": "⁻", n: "ⁿ", x: "ˣ" };
+const TEX = { cdot: "·", times: "×", div: ":", le: "≤", leq: "≤", ge: "≥", geq: "≥", ne: "≠", neq: "≠", pi: "π", alpha: "α", beta: "β", gamma: "γ", Delta: "Δ", delta: "δ", lambda: "λ", mu: "μ", omega: "ω", varphi: "φ", phi: "φ", theta: "θ", rho: "ρ", sigma: "σ", infty: "∞", to: "→", rightarrow: "→", approx: "≈", pm: "±", circ: "°", degree: "°", int: "∫", sum: "Σ", sqrt: "√" };
+const par = (x) => (/^[\w.,]+$/.test(x.trim()) ? x.trim() : `(${x.trim()})`);
+export function plainTitle(value) {
+  if (typeof value !== "string") return "";
+  let s = value
+    .replace(/\\(?:d|t)?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, (m, a, b) => `${par(a)}/${par(b)}`)
+    .replace(/\\sqrt\s*\{([^{}]*)\}/g, "√$1")
+    .replace(/\\(?:text|mathrm|mathbf|operatorname)\s*\{([^{}]*)\}/g, "$1")
+    .replace(/\\(left|right)\b/g, "")
+    .replace(/\\([a-zA-Z]+)/g, (m, c) => TEX[c] ?? "")
+    .replace(/\\[,;:! ]/g, " ")
+    .replace(/\^\{([0-9n\-x]+)\}|\^([0-9nx])/g, (m, a, b) => [...(a || b)].map((c) => SUP[c] ?? c).join(""))
+    .replace(/_\{([^{}]*)\}/g, "$1")
+    .replace(/[{}$]/g, "")
+    .replace(/\bsqrt\(/g, "√(")
+    .replace(/(\S)\s*\*\s*(\S)/g, "$1·$2");
+  return s;
+}
+
 export function cleanText(value, maxLen) {
   if (typeof value !== "string") return "";
   return value.replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim().slice(0, maxLen);
