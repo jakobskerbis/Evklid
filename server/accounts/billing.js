@@ -19,7 +19,7 @@ import { parentFromMeta, purchaseMismatch, logSafe } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
 
-export const ADULT_TEXT = "Sem polnoleten/-na in plačujem za svoj profil ali kot starš oziroma skrbnik.";
+export const ADULT_TEXT = "Sem polnoletna oseba in plačujem za svoj profil ali kot starš oziroma skrbnik.";
 // Odstop v 14 dneh (j 2026-11-16, #765, enako kot /pogoji.html 12. točka): naročnina in paket pred testom vrneta
 // plačilo × delež preostalega časa (withdrawalRefundCents); dokup pogovorov vrne delež neporabljenih pogovorov
 // (CREDIT_WITHDRAWAL_TEXT, izračun v /api/admin/withdrawal). Prej (j 2026-11-06) je veljal manjši od deleža časa in

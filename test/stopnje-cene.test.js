@@ -1156,6 +1156,9 @@ test("odstop v 14 dneh: vračilo = delež preostalega časa, poraba AI ga ne zni
   const { default: sl } = await import("../public/i18n/sl.js");
   assert.equal(sl["pay.withdrawal"], WITHDRAWAL_TEXT);
   assert.equal(sl["pay.creditWithdrawal"], CREDIT_WITHDRAWAL_TEXT);
+  // Zapisano soglasje o polnoletnosti = besedilo, ki ga plačnik vidi v sl (pay.adult).
+  const { ADULT_TEXT } = await import("../server/accounts/billing.js");
+  assert.equal(sl["pay.adult"], ADULT_TEXT);
   // Zapis soglasja: besedilo, različica pravila in jezik (jezik ostane zadnji).
   assert.equal(consentRecordText("sub", "en").split("\n").slice(1).join("|"), `${WITHDRAWAL_TEXT}|[odstop: ${WITHDRAWAL_VERSION}]|[jezik: en]`);
   assert.ok(consentRecordText("credit", "sl").includes(CREDIT_WITHDRAWAL_TEXT));
