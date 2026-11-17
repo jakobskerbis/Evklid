@@ -3993,7 +3993,9 @@ function readinessHtml(c) {
   const date = s.goal === siGoal() && validDate(s.goal_date) ? s.goal_date : "";
   const d = new Date();
   const min = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  const name = siExamName(c.exam);
+  // Raven mature iz matematike (izbrana ob profilu, »4. letnik VR«) se vidi ob imenu izpita (Geminijev pregled 17. 11.).
+  const raven = c.exam === "MATURA" && c.subject === "MAT" ? / (VR|OR)$/.exec(String(s.curriculum_level || ""))?.[1] : null;
+  const name = siExamName(c.exam) + (raven ? ` · ${t(raven === "VR" ? "lp.vr" : "lp.or")}` : "");
   const dateForm = `<div class="er-form" ${date ? "hidden" : ""}>
       <label class="goal-date"><span>${t("ready.date")}</span><input type="date" id="er-date" value="${date}" min="${min}"></label>
       <button type="button" class="primary" data-er-save>${t("common.save")}</button>
