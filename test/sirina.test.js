@@ -102,6 +102,8 @@ test("in the chat a long left side that does not fit in the packed layout falls 
   assert.match(js, /const z = zlozi\(k, st, meja, sn\);/);
   assert.match(js, /zapomni\(kljuc, \{ st: st0, sn: sn0, meja,/);
   assert.match(js, /zlozi\(k, r\[i\]\.st, r\[i\]\.meja, r\[i\]\.sn\)/);
+  // strnjena oblika s predolgo prvo vrstico se ne izriše in ne meri (hitrost pri 320 px)
+  assert.match(js, /if \(sn && st >= 2 && meja > 0 && sirokaPrva\(al, meja\)\) continue;/);
   // formula v svoji vrstici v mehurčku meri proti prostoru mehurčka (ne trenutni širini), sicer bi se zlaganje vrtelo v krogu
   assert.match(js, /el\.matches\("\.katex-display"\) && el\.parentElement\?\.closest\("\.msg, \.bubble, \.fx-pop"\) \? Math\.floor\(prostor\(el\)\) : el\.clientWidth/);
 });

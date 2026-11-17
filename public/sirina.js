@@ -393,6 +393,8 @@ function zlozi(k, stopnja, meja = 0, strnjeno = !!k.closest(STRNJENO)) {
 // pomanjšaj do MIN. Vrne (morda novo) formulo.
 // Formula sredi besedila, višja od `visoka` (ulomek, pisan z \dfrac), bi razmaknila vrstico besedila: najprej
 // jo izrišemo v velikosti besedila (\frac), le če je še vedno previsoka, dobi svojo vrstico (j 2026-11-01).
+// Ali je prva vrstica zložene formule (al) po dolzina daljša od meje.
+const sirokaPrva = (al, meja) => dolzina(al.replace(/^\\begin\{aligned\}/, "").split(" \\\\ ")[0].replace(/&/g, "")) > meja;
 function prilagodiFormulo(k, w, meri, visoka = Infinity) {
   k = obnovi(k);
   k.style.fontSize = "";
@@ -419,6 +421,9 @@ function prilagodiFormulo(k, w, meri, visoka = Infinity) {
     if (meri(k) <= w + 1 || w / meri(k) >= 0.9) break;
     const al = tex && zlozTex(tex, st, meja, sn);
     if (!al || al === prej) continue; // ta stopnja ne spremeni ničesar
+    // Strnjena oblika, katere prva vrstica (leva stran s prvim korakom) po oceni ne gre v vrstico: brez izrisa in
+    // merjenja naprej (vsako merjenje postavi stran znova; 50 takih formul pri 320 px je bilo dvakrat počasnejših).
+    if (sn && st >= 2 && meja > 0 && sirokaPrva(al, meja)) continue;
     prej = al;
     const z = zlozi(k, st, meja, sn);
     if (z) (k = z), (st0 = st), (sn0 = sn);
