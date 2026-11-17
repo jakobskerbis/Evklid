@@ -29,9 +29,12 @@ import { font, useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui";
 import { setWebPending } from "@/lib/web-state";
 import { checkShareImage, shareResultJs, NATIVE_FLAG_JS } from "../../../public/deli-most.js";
+import { zaTisk as tiskPot } from "../../../public/tisk-v-chromu.js";
 
 const ORIGIN = API_URL.replace(/\/+$/, "");
 const START = `${ORIGIN}/api/mobile/web?to=${encodeURIComponent("/")}`;
+// Stran za tisk Evklida: odpre jo Chrome, kjer »Shrani kot PDF« dela (public/tisk-v-chromu.js).
+const zaTisk = (url: string) => tiskPot(url, ORIGIN);
 
 // Barva zgornjega in spodnjega roba strani (zgornja vrstica, spodnji zavihki ali polje za pisanje): vrstici
 // telefona (ura, gumbi) dobita isto barvo, tudi ko učenec zamenja slog ali zaslon. Pošlje le ob spremembi.
@@ -182,7 +185,8 @@ export default function Web() {
             // Povezave target=_blank (PDF učbenika) na Androidu pridejo sem, ne v onShouldStartLoadWithRequest.
             onOpenWindow={(e: { nativeEvent: { targetUrl: string } }) => {
               const u = e.nativeEvent.targetUrl;
-              if (/^https?:/.test(u)) WebBrowser.openBrowserAsync(u).catch(() => {});
+              if (zaTisk(u)) Linking.openURL(u).catch(() => {});
+              else if (/^https?:/.test(u)) WebBrowser.openBrowserAsync(u).catch(() => {});
             }}
             injectedJavaScriptBeforeContentLoaded={NATIVE_FLAG_JS + studentJs(student?.id ?? null)}
             injectedJavaScript={BAR_JS}
@@ -204,9 +208,9 @@ export default function Web() {
             }}
             onShouldStartLoadWithRequest={(req: { url: string; isTopFrame?: boolean }) => {
               if (req.isTopFrame === false) return true;
-              if ((req.url.startsWith(ORIGIN + "/") && !(req.url.startsWith(ORIGIN + "/ucbenik/") || req.url.startsWith(ORIGIN + "/ucbenik-pdf/"))) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
-              // Učbenik za tisk/PDF (/ucbenik/… in vnaprej izdelan /ucbenik-pdf/…): WebView ne zna shraniti PDF-ja, zato ga odpre sistemski brskalnik.
-              if ((req.url.startsWith(ORIGIN + "/ucbenik/") || req.url.startsWith(ORIGIN + "/ucbenik-pdf/"))) WebBrowser.openBrowserAsync(req.url).catch(() => {});
+              if ((req.url.startsWith(ORIGIN + "/") && !zaTisk(req.url) && !req.url.startsWith(ORIGIN + "/ucbenik-pdf/")) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
+              // Strani za tisk odpre Chrome (zaTisk), vnaprej izdelan PDF (/ucbenik-pdf/…) pa vgrajeni zavihek, ki ga prenese.
+              if (zaTisk(req.url)) Linking.openURL(req.url).catch(() => {});
               else if (/^https?:/.test(req.url)) WebBrowser.openBrowserAsync(req.url).catch(() => {});
               // mailto: (zasebnost, povabilo staršem), tel: … odpre sistem (originWhitelist "*" jih ne odpre sam).
               else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});
