@@ -162,7 +162,9 @@ test("a folded formula keeps the original MathML; the chat scrolls to the bottom
   assert.match(js, /export function prilagodiZdaj\(\) \{\n\s*if \(mo\) noveFormule\(mo\.takeRecords\(\)\);/);
   const app = pub("app.js");
   // D5 (#684): izris med tokom gre prek predpomnilnika blokov (izrisBlokov), končni prek chatRich; vrstni red ostane.
-  assert.match(app, /bubble\.innerHTML = \(koncno \? chatRich\(shown\) : izrisBlokov\(streamSafe\(shown\)\)\)[^\n]*\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
+  // Napis med čakanjem (#790): HTML odgovora najprej v html, nato v mehurček (z napisom ali brez); vrstni red ostane.
+  assert.match(app, /const html = koncno \? chatRich\(shown\) : izrisBlokov\(streamSafe\(shown\)\);/);
+  assert.match(app, /bubble\.innerHTML = \(html \? [^\n]*\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
   assert.match(app, /box\.appendChild\(el\);\n\s*prilagodiZdaj\(\);\n\s*box\.scrollTop = box\.scrollHeight;/);
   // kemijska enačba: znak na začetku nadaljevanja ostane zunaj \mathrm (sicer predznak brez razmika)
   const { zlozTex } = await import("../public/sirina.js");
