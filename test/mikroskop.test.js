@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { createRequire } from "node:module";
 import {
   OBJEKTIVI, MIN_M, MAX_M, TEM_MAX, TEM_LOCLJIVOST, svetlostSnopa, svetlost, SVETLOBNI_MAX, vidnoPolje, locljivost, globinskaOstrina, zamegljenost, raven, utezModela, merilce,
   oznakaDolzine, oznakaPovecave, SEM_MAX, SEM_LOCLJIVOST, globinskaOstrinaSem,
@@ -408,7 +409,7 @@ function lazniGL({ khr = true, napaka = () => false } = {}) {
     getShaderInfoLog: () => "ERROR: 0:1: preveč",
     getProgramInfoLog: () => "link",
     deleteProgram: (p) => (p.izbrisan = true),
-    isContextLost: () => false,
+    isContextLost: () => !!st.izgubljen,
     getUniformLocation: () => ({}),
   };
   const gl = new Proxy(impl, { get: (o, k) => (k in o ? o[k] : /^[A-Z0-9_]+$/.test(k) ? k : () => ({})) });
@@ -513,6 +514,24 @@ test("mikroskop: sloj molekul riše program za en pogled, ob napaki splošni, st
     assert.deepEqual(molSrc(g.st), ["2"]);
     assert.equal(await b, true);
     assert.deepEqual(molSrc(g.st), ["2", "4"]);
+    // izguba grafike (F4): programi starega konteksta, ki še čakajo v skupni vrsti, se ne prevajajo, ne štejejo za
+    // neuspele (stanje ostane »caka«, ne »napaka«) in ne izpišejo opozorila
+    const c = upo.pripraviMol(pogledMol(6));
+    g.st.izgubljen = true;
+    const warn = console.warn;
+    const opozorila = [];
+    console.warn = (...a) => opozorila.push(a.join(" "));
+    try {
+      assert.equal(await c, false);
+    } finally {
+      console.warn = warn;
+    }
+    assert.deepEqual(molSrc(g.st), ["2", "4"], "po izgubi se nič ne prevaja");
+    assert.equal(upo.molStanje(pogledMol(6)), "caka");
+    assert.deepEqual(opozorila, []);
+    // nova upodobitev (nov kontekst) ne čaka na stare programe v vrsti
+    const g2 = lazniGL({ khr: false });
+    assert.equal(await ustvariUpodobitev(g2.platno).pripraviMol(pogledMol(6)), true);
   }
 
   const mod = await import("../public/mikroskop/molekule.js");
@@ -524,4 +543,86 @@ test("mikroskop: sloj molekul riše program za en pogled, ob napaki splošni, st
   const dir = path.join(ROOT, "public", "i18n", "ui");
   for (const [f, d] of [["sl", sl], ...fs.readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => [f, json(`public/i18n/ui/${f}`)])])
     for (const k of ["mk.molLoading", "mk.molError"]) assert.ok(d[k] && (f === "sl" || d[k] !== sl[k]), `${f}: ${k}`);
+});
+
+// Ne prevede se noben program molekul, niti splošni (pregled PR #781, F1): slika pri ~1 750 000× ni smela obstati, merilo
+// ne pri »20 nm«, pod nadzorom pa ni namiga »ponazoritev … barve so dogovorjene« nad sivo sliko brez molekul.
+// V pravem brskalniku (Playwright, če je nameščen); senčilnik molekul se namenoma ne prevede.
+const require = createRequire(import.meta.url);
+let playwright = null;
+for (const p of ["playwright", process.env.PLAYWRIGHT, "/opt/npm-tools/node_modules/playwright"].filter(Boolean)) {
+  try {
+    playwright = require(p);
+    break;
+  } catch {}
+}
+test("mikroskop: brez programa molekul (niti splošnega) se slika in merilo spreminjata do 100 000 000×, namig je TEM", { skip: playwright ? false : "Playwright ni nameščen", timeout: 240000 }, async (t) => {
+  let browser;
+  try {
+    browser = await playwright.chromium.launch();
+  } catch {
+    return t.skip("Chromium ni nameščen");
+  }
+  const { createApp } = await import("../server/app.js");
+  const { openDb } = await import("../server/db.js");
+  const app = createApp(openDb(":memory:"), { accounts: true, scheduler: false, log: { error() {}, info() {}, warn() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const ctx = await browser.newContext({ viewport: { width: 480, height: 720 }, reducedMotion: "reduce" });
+  try {
+    // vsak senčilnik molekul (uniform uPA) dobi neveljavno kodo: napaka prevajanja takoj, kot na napravi, ki ga ne zmore
+    await ctx.addInitScript(() => {
+      const P = WebGL2RenderingContext.prototype;
+      const ss = P.shaderSource;
+      P.shaderSource = function (sh, src) {
+        return ss.call(this, sh, /uniform \w+ uPA\b/.test(src) ? "#version 300 es\nvoid main() { ni_funkcije(); }" : src);
+      };
+    });
+    const p = await ctx.newPage();
+    const napake = [];
+    p.on("pageerror", (e) => napake.push(String(e)));
+    await p.goto(`${base}/3d#mikroskop?p=mali-mozgani`, { waitUntil: "load" });
+    await p.waitForSelector(".mk-tem", { timeout: 120000 });
+    await p.click(".mk-tem");
+    const nastaviM = (M) =>
+      p.evaluate((M) => {
+        const el = document.querySelector(".mk-drsnik input");
+        el.value = String((Math.log(M) - Math.log(40)) / (Math.log(1e8) - Math.log(40)));
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+      }, M);
+    // v µm iz »20 nm«, »2 Å« …
+    const merilo = () =>
+      p.evaluate(() => {
+        const [x, e] = document.querySelector(".k3-merilo-crta").parentElement.textContent.trim().split(/\s+/);
+        return parseFloat(x.replace(",", ".")) * { mm: 1000, "µm": 1, nm: 1e-3, "Å": 1e-4 }[e];
+      });
+    // barve (gumb se pokaže, ko je sloj molekul v igri), nato največja povečava
+    await nastaviM(2e6);
+    await p.waitForFunction(() => !document.querySelectorAll(".mk-stikalo")[1].hidden, null, { timeout: 60000 });
+    await p.evaluate(() => {
+      const b = document.querySelectorAll(".mk-stikalo")[1];
+      if (b.getAttribute("aria-pressed") !== "true") b.click();
+    });
+    await nastaviM(1e8);
+    await p.waitForFunction(
+      (napaka) => {
+        const o = document.querySelector(".mk-nalaganje-mol");
+        return /100 000 000×/.test(document.querySelector(".mk-znacka").textContent) && o && !o.hidden && o.textContent === napaka;
+      },
+      sl["mk.molError"],
+      { timeout: 120000 },
+    );
+    // izris (predogled in polna slika) teče po sličicah: počakamo, da se merilo ustali pod 20 nm
+    await p.waitForFunction(() => !/^20 nm$/.test(document.querySelector(".k3-merilo-crta").parentElement.textContent.trim()), null, { timeout: 120000 }).catch(() => {});
+    const um = await merilo();
+    assert.ok(um < 0.002, `merilo je obstalo pri ${um * 1000} nm (pri 100 000 000× je vidno polje manjše od 2 nm)`);
+    const resnica = await p.evaluate(() => [...document.querySelectorAll(".mk-resnica")].filter((e) => !e.hidden).map((e) => e.textContent));
+    assert.ok(!resnica.includes(sl["mk.truth.model"]) && !resnica.includes(sl["mk.truth.crystal"]), "namig o ponazoritvi z dogovorjenimi barvami nad sliko brez molekul");
+    assert.deepEqual(resnica, [sl["mk.truth.tem"]]);
+    assert.deepEqual(napake, []);
+  } finally {
+    await ctx.close();
+    await browser.close();
+    server.close();
+  }
 });

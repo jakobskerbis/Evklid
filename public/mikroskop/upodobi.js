@@ -119,11 +119,21 @@ function program(gl, fs) {
 // Brez razširitve vsako branje stanja (ali prvo risanje) čaka, da je program preveden, in toliko časa stran stoji. Zato se
 // taki programi prevajajo eden za drugim, vsak šele v mirnem trenutku (requestIdleCallback, najkasneje po 300 ms): stran
 // naenkrat stoji največ toliko, kolikor traja prevajanje enega programa.
+// Vrsta je skupna vsem kontekstom: po izgubi grafike se programi starega konteksta, ki še čakajo v vrsti, ne prevajajo in
+// ne štejejo za neuspele (napaka z izguba: true, brez opozorila), sicer bi nova upodobitev čakala nanje.
 let vrstaBrez = Promise.resolve();
 const mirno = () => new Promise((ok) => (typeof requestIdleCallback === "function" ? requestIdleCallback(() => ok(), { timeout: 300 }) : setTimeout(ok, 50)));
+const napakaIzgube = () => Object.assign(new Error("WebGL: kontekst izgubljen"), { izguba: true });
 function programVzporedno(gl, fs, ext) {
   if (!ext) {
-    const o = vrstaBrez.then(mirno).then(() => preveri(gl, zgradi(gl, fs)));
+    const o = vrstaBrez.then(mirno).then(() => {
+      if (gl.isContextLost()) throw napakaIzgube();
+      try {
+        return preveri(gl, zgradi(gl, fs));
+      } catch (e) {
+        throw gl.isContextLost() ? napakaIzgube() : e;
+      }
+    });
     vrstaBrez = o.catch(() => {});
     return o;
   }
@@ -132,7 +142,7 @@ function programVzporedno(gl, fs, ext) {
   return new Promise((ok, napaka) => {
     const cakaj = () => {
       try {
-        if (gl.isContextLost()) napaka(Object.assign(new Error("WebGL: kontekst izgubljen"), { izguba: true }));
+        if (gl.isContextLost()) napaka(napakaIzgube());
         else if (gl.getProgramParameter(g.p, ext.COMPLETION_STATUS_KHR)) ok(preveri(gl, g));
         else setTimeout(cakaj, 16);
       } catch (e) {
@@ -181,7 +191,7 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
   // Program molekul se prevede v ozadju (pripraviMol; j, 13. 11. 2026: »nad 1200000x se okno mikroskopa zatrokira«);
   // dokler ni pripravljen ali če se ne prevede, je slika brez sloja molekul. Za vsak pogled je program specializiran
   // (molekuleZa: le prizori strani A in B, membrana in atomi tega pogleda; j, 16. 11. 2026, hitrost): splošni program z
-  // vsemi 37 prizori je na grafiki brez pravega vejanja ~50× počasnejši in se prevaja ~20 s. Hranimo zadnjih nekaj.
+  // vsemi 37 prizori je na grafiki brez pravega vejanja ~50× počasnejši in se prevaja ~20 s.
   // Hranimo zadnjih 8 uporabljenih (LRU). Če se program za pogled ne prevede (stara grafika, omejitve telefona), velja
   // za ta ključ splošni program (enaka slika); če se ne prevede niti ta, mikroskop to pove (molStanje »napaka«).
   const molProgrami = new Map(); // ključ → { p (program ali null), obljuba }; vrstni red = zadnja uporaba
@@ -221,8 +231,11 @@ export function ustvariUpodobitev(platno, { temSonda = () => false } = {}) {
       x.obljuba = programVzporedno(gl, MOLEKULE, vzporedno).then(
         (p) => ((x.p = p), true),
         (e) => {
-          if (e?.izguba) splosni = null;
-          else x.napaka = true;
+          if (e?.izguba) {
+            splosni = null; // izguba grafike: brez opozorila, mikroskop ustvari upodobitev znova
+            return false;
+          }
+          x.napaka = true;
           console.warn("Mikroskop: sloj molekul ni na voljo", e?.message?.slice(0, 200));
           return false;
         },

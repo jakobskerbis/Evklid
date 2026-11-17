@@ -620,8 +620,11 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     const vm = m && { ...r.v, mol: m };
     const molOk = !!vm && upo.molPripravljen(vm);
     if (vm && !molOk) pripraviMol(vm);
-    // molekule bodo prekrile večino slike, a še niso pripravljene: ostane zadnja slika (in obvestilo), ne siva
-    if (zadnji && (uz >= 0.5 || (m && m.utez >= 0.5)) && !molOk) return void pokaziStanjeMol(vm || null, uz);
+    // molekule bodo prekrile večino slike, a še niso pripravljene: ostane zadnja slika (in obvestilo), ne siva. Če jih ta
+    // naprava ne zmore (»napaka«, ne prevede se niti splošni program), se riše rez brez molekul, da se merilo in slika
+    // ob povečevanju še spreminjata (sicer bi slika obstala pri ~1 750 000×, merilo pa pri »20 nm«).
+    const molNapaka = vm ? upo.molStanje(vm) === "napaka" : molStanjeZadnje === "napaka";
+    if (zadnji && (uz >= 0.5 || (m && m.utez >= 0.5)) && !molOk && !molNapaka) return void pokaziStanjeMol(vm || null, uz);
     if (nn === n) pKljuc = ""; // predogled v polni velikosti prepiše polno sliko
     r.v.ss = r.v.ss || 1;
     r.v.zaslonN = N;
@@ -1039,13 +1042,14 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     if (sem) vrstice.push([t("mk.depthOfField"), oznakaDolzine(globinskaOstrinaSem(m))]);
     vrstice.push([t("mk.whatYouSee"), imeRavni(raven(m, s.nacin))]);
     tabela.replaceChildren(...vrstice.flatMap(([a, b]) => [mk("dt", "", a), mk("dd", "", b)]));
+    // brez sloja molekul (molNe: naprava ga ne zmore) je slika navaden posnetek TEM, ne ponazoritev z dogovorjenimi barvami
     resnica.textContent = sem
       ? t("mk.truth.sem")
       : !tem
       ? m >= 1000
         ? t("mk.truth.light")
         : ""
-      : utez > 0
+      : utez > 0 && !molNe
         ? (prep?.snovi?.[18] || prep?.snovi?.[4]) && /kost|zob/.test(prep.id)
           ? t("mk.truth.crystal")
           : t("mk.truth.model")
