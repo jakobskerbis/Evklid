@@ -1,0 +1,141 @@
+# Ročna plačana meritev inštruktorja (scripts/meri-*.mjs) brez lupine Renderja (j 17. 11., gumb).
+# Zagon: Actions > Meritev > Run workflow (veja main). Izid: povzetek v dnevniku, meri.log in data/meri-*.json v artefaktu
+# »meritev« (30 dni). Navodila in meje: docs/stroski-ai.md »Ročna meritev v GitHub Actions«.
+# Meja stroška: --max-usd največ 2 $ na zagon (višja vrednost se zniža na 2). Dovoljene so le skripte, ki --max-usd
+# res upoštevajo (ustavijo se, preden bi strošek presegel mejo). Teče le en zagon naenkrat.
+# Skrivnost ANTHROPIC_API_KEY dobi samo korak meritve; brez nje skripte končajo brez klica. Le ročni zagon z main
+# (nikoli PR ali push); commit (sha) mora biti v zgodovini main.
+# Meritve ne pišejo v bazo; EVKLID_DB vseeno kaže na začasno datoteko izven repozitorija.
+name: Meritev
+on:
+  workflow_dispatch:
+    inputs:
+      skripta:
+        description: "Skripta (scripts/meri-<ime>.mjs), ki upošteva --max-usd"
+        required: true
+        default: scripts/meri-preizkus3.mjs
+      sha:
+        description: "Commit iz main (40 znakov hex); prazno = zadnji main"
+        required: false
+        default: ""
+      max_usd:
+        description: "Največji strošek v $ (največ 2)"
+        required: true
+        default: "2"
+      argumenti:
+        description: "Dodatni argumenti (samo a-z 0-9 presledek , = . -), npr. --samo-novi --naloge 19,45"
+        required: false
+        default: ""
+permissions:
+  contents: read
+concurrency:
+  group: meritev-rocna
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  meritev:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Preveri vnose
+        id: vnosi
+        env:
+          SKRIPTA: ${{ inputs.skripta }}
+          SHA: ${{ inputs.sha }}
+          MAX_USD: ${{ inputs.max_usd }}
+          ARGUMENTI: ${{ inputs.argumenti }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          MAIN_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$SKRIPTA" =~ ^scripts/meri-[a-z0-9-]+\.mjs$ ]]; then
+            echo "::error::Neveljavna skripta (dovoljeno scripts/meri-<ime>.mjs)."; exit 1
+          fi
+          if [[ -n "$SHA" && ! "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::sha mora imeti 40 znakov hex (male črke) ali ostati prazen."; exit 1
+          fi
+          if [[ ! "$MAX_USD" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "::error::max_usd mora biti število (npr. 2 ali 0.5)."; exit 1
+          fi
+          MAX=$(awk -v m="$MAX_USD" 'BEGIN { if (m + 0 > 2) m = 2; printf "%s", m + 0 }')
+          if [[ "$MAX" == "0" ]]; then
+            echo "::error::max_usd mora biti večji od 0."; exit 1
+          fi
+          if [[ ! "$ARGUMENTI" =~ ^[a-z0-9\ ,=.-]*$ ]]; then
+            echo "::error::argumenti: dovoljeni so le a-z, 0-9, presledek in , = . -"; exit 1
+          fi
+          if [[ "$ARGUMENTI" == *usd* ]]; then
+            echo "::error::Meje stroška ne podaj v argumentih; uporabi polje max_usd."; exit 1
+          fi
+          REF="${SHA:-$MAIN_SHA}"
+          if [[ "$REF" != "$MAIN_SHA" ]]; then
+            # sha mora biti prednik main (ne commit iz forka ali druge veje).
+            STANJE=$(gh api "repos/$REPO/compare/$REF...$MAIN_SHA" --jq .status 2>/dev/null || echo napaka)
+            if [[ "$STANJE" != "ahead" && "$STANJE" != "identical" ]]; then
+              echo "::error::Commit $REF ni v zgodovini main ($STANJE)."; exit 1
+            fi
+          fi
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+          echo "max=$MAX" >> "$GITHUB_OUTPUT"
+          echo "Skripta $SKRIPTA, commit $REF, meja $MAX \$, argumenti: ${ARGUMENTI:-(brez)}"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.vnosi.outputs.ref }}
+          persist-credentials: false
+      - name: Skripta upošteva --max-usd
+        env:
+          SKRIPTA: ${{ inputs.skripta }}
+        run: |
+          set -euo pipefail
+          if [[ ! -f "$SKRIPTA" ]]; then
+            echo "::error::$SKRIPTA na tem commitu ne obstaja."; exit 1
+          fi
+          if ! grep -Eq 'arg\("(--)?max-usd"' "$SKRIPTA"; then
+            echo "::error::$SKRIPTA ne upošteva --max-usd, zato je tu ni mogoče zagnati (meja stroška)."; exit 1
+          fi
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      # Namesti tudi SymPy (postinstall), ki ga uporablja preverjanje s kodo (server/live-check.js).
+      - run: npm ci --omit=dev --no-audit --no-fund
+        timeout-minutes: 10
+      # Brez SymPy bi preverjanje s kodo teklo drugače in vseeno stalo: raje ustavi, preden kaj plačamo.
+      - name: SymPy nameščen
+        run: PYTHONPATH=.pylib python3 -c "import sympy; print('SymPy', sympy.__version__)"
+      - name: Meritev
+        env:
+          SKRIPTA: ${{ inputs.skripta }}
+          MAX: ${{ steps.vnosi.outputs.max }}
+          ARGS: ${{ inputs.argumenti }}
+          EVKLID_DB: ${{ runner.temp }}/meritev.db
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set -o pipefail
+          mkdir -p data
+          # $ARGS namenoma brez narekovajev (več argumentov); znaki so preverjeni zgoraj (brez * ? [ $ ` / ;).
+          # timeout 80 min < 90 min posla: korak se konča sam, zato spodnji pregled in povzetek tečeta vedno;
+          # skripte sproti zapisujejo data/meri-*.json, zato prekinjen zagon pusti plačane izide.
+          timeout 80m node --disable-warning=ExperimentalWarning "$SKRIPTA" --max-usd "$MAX" $ARGS 2>&1 | tee meri.log
+          STATUS=$?
+          # Ključ nikoli v artefakt ali povzetek.
+          if [[ -n "$ANTHROPIC_API_KEY" ]] && grep -qF "$ANTHROPIC_API_KEY" meri.log data/meri-*.json 2>/dev/null; then
+            rm -f meri.log data/meri-*.json
+            echo "::error::ključ v izhodu"
+            exit 1
+          fi
+          { echo "### Meritev: $SKRIPTA (meja $MAX \$)"; echo '```'; tail -n 40 meri.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit $STATUS
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: meritev
+          path: |
+            meri.log
+            data/meri-*.json
+          if-no-files-found: ignore
+          retention-days: 30

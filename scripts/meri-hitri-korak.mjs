@@ -4,9 +4,9 @@
 // Meri: čas do prvega besedila, do konca, strošek; kakovost s kodo kot v klepetu: blok RACUN (je, pade pri SymPy),
 // »Popravek« iz kode (codeFindings) in ali odgovor v načinu A že izda končni rezultat (ne bi smel).
 // Ne piše v bazo in ne šteje v porabo aplikacije (vidno samo v konzoli Anthropic).
-// Zagon v lupini Renderja (tam je ključ API):
-//   node scripts/meri-hitri-korak.mjs [--meja-usd 3] [--lahke 40] [--tezje 20] [--json pot.json]
-// Ustavi se, preden bi strošek presegel --meja-usd (privzeto 3 $). Ocena: ~0,001 $ na klic (Haiku), 120 klicev ~0,15 $;
+// Zagon: GitHub Actions > Meritev > Run workflow (docs/stroski-ai.md) ali v lupini Renderja:
+//   node scripts/meri-hitri-korak.mjs [--max-usd 3] [--lahke 40] [--tezje 20] [--json data/meri-hitri-korak.json]
+// Ustavi se, preden bi strošek presegel --max-usd (staro ime --meja-usd; privzeto 3 $). Ocena: ~0,001 $ na klic (Haiku), 120 klicev ~0,15 $;
 // meja računa z najslabšim primerom klica (NA_KLIC_NAJVEC, ~0,06 $).
 import fs from "node:fs";
 import { buildSystemPrompt } from "../server/prompt.js";
@@ -21,7 +21,8 @@ const arg = (name, d) => {
   const i = process.argv.indexOf(name);
   return i >= 0 ? process.argv[i + 1] : d;
 };
-const MEJA = Number(arg("--meja-usd", 3));
+// --max-usd (kot druge meri-*.mjs in delovni tok Meritev) ima prednost pred starim --meja-usd.
+const MEJA = Number(arg("--max-usd", arg("--meja-usd", 3)));
 // Najslabši primer enega klica (prvi krog in 3 krogi orodij, vsak s hladnim zapisom poziva in največ izhoda): s tem
 // računa meja, preden klic odide, in ga prišteje, kadar klic pade (porabe ne poznamo).
 // Izračun da ~0,02 $; meja vzame 0,06 $ (rezerva za daljši poziv ali drugačne cene).
@@ -101,11 +102,11 @@ async function klic({ system, text, pre, brez }) {
 
 async function main() {
   if (!(MEJA > 0)) {
-    console.error("--meja-usd mora biti pozitivno število.");
+    console.error("--max-usd (ali staro --meja-usd) mora biti pozitivno število.");
     process.exit(1);
   }
   if (isMockMode()) {
-    console.error("Ni ključa API (preizkusni način): zaženi v lupini Renderja (ANTHROPIC_API_KEY).");
+    console.error("Ni ključa API (preizkusni način; GitHub Actions: manjka skrivnost ANTHROPIC_API_KEY; Render: zaženi v lupini Renderja).");
     process.exit(1);
   }
   const nL = Math.min(LAHKE.length, Number(arg("--lahke", 40)));
@@ -118,6 +119,13 @@ async function main() {
   const rez = [];
   let porabljeno = 0;
   let ustavljeno = false;
+  const out = arg("--json", "data/meri-hitri-korak.json");
+  // Vmesni zapis po vsakem klicu: ob prekinitvi (npr. časovna meja v Actions) ostanejo plačani izidi.
+  const zapisi = (koncano) => {
+    fs.mkdirSync(out.replace(/[^/]*$/, "") || ".", { recursive: true });
+    fs.writeFileSync(out, JSON.stringify({ porabljeno, ustavljeno, koncano, rez }, null, 2));
+  };
+  const zapisiVmesno = () => zapisi(false);
   for (const [i, [vrsta, text]] of naloge.entries()) {
     const pre = presolve(text, { first: true });
     if (!pre) {
@@ -133,6 +141,7 @@ async function main() {
         const r = await klic({ system: sistem[vrsta], text, pre, brez });
         porabljeno += r.usd;
         rez.push({ vrsta, text, brez, ...r });
+        zapisiVmesno();
         process.stderr.write(`${rez.length} ${vrsta} ${brez ? "brez" : "z    "} ${r.besediloMs} ms / ${r.konecMs} ms ${r.usd.toFixed(4)} $ (skupaj ${porabljeno.toFixed(3)} $)\n`);
       } catch (e) {
         porabljeno += NA_KLIC_NAJVEC; // previdno: klic je morda že plačan
@@ -154,9 +163,8 @@ async function main() {
     ...["lahka", "tezja"].flatMap((v) => [vrstica(v, false), vrstica(v, true)]).filter(Boolean),
   ].join("\n");
   console.log(tabela);
-  console.log(`\nSkupaj ${porabljeno.toFixed(3).replace(".", ",")} $${ustavljeno ? ` (ustavljeno pri meji ${MEJA} $)` : ""}.`);
-  const out = arg("--json", null);
-  if (out) fs.writeFileSync(out, JSON.stringify({ porabljeno, ustavljeno, rez }, null, 2));
+  console.log(`\nSkupaj ${porabljeno.toFixed(3).replace(".", ",")} $${ustavljeno ? ` (ustavljeno pred mejo --max-usd ${MEJA} $)` : ""}.`);
+  zapisi(true);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) await main();

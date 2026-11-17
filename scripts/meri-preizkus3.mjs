@@ -28,6 +28,8 @@ const PONOVI = Math.min(Math.max(Number(arg("ponovi", 1)) || 1, 1), 5);
 const OUT = arg("out", "data/meri-preizkus3.json");
 const SAMO_NOVI = process.argv.includes("--samo-novi");
 const SUHO = process.argv.includes("--suho"); // preizkusni način brez ključa: samo preveri, da skripta teče
+// --suho nikoli ne kliče API, tudi kadar je ključ nastavljen (GitHub Actions): 0 $.
+if (SUHO) process.env.EVKLID_MOCK = "1";
 const IZBRANE = arg("naloge", "") ? new Set(arg("naloge", "").split(",").map((x) => x.trim())) : null;
 
 // Stari prompt nastane iz trenutnega (brez git-a): vsaka sprememba popravka nazaj. Vsak kos mora biti v promptu natanko enkrat.
@@ -102,8 +104,12 @@ const VODENJE = [
   { id: "112", s: SS(3, "FIZ"), q: "Sem v 3. letniku gimnazije.\nNe povej mi rešitve, samo vodi me korak za korakom. Tuljava ima 200 ovojev s ploščino preseka 25 cm². Je v homogenem magnetnem polju, ki ima smer osi tuljave. Gostota polja se v 0,050 s enakomerno zmanjša od 0,40 T na nič. Kolikšna napetost se inducira v tuljavi?", odg: "Ploščina je 25 cm² = 0,25 m².", resitev: /U_?\{?i?\}?\s*=\s*4[,.]0|4[,.]0\s*(?:\\?\s*)?(?:\\mathrm\{)?V(?![a-z])/ },
 ];
 
+if (!(MAX_USD > 0)) {
+  console.error("--max-usd mora biti pozitivno število.");
+  process.exit(1);
+}
 if (isMockMode() && !SUHO) {
-  console.error("Ni ključa API (preizkusni način): zaženi v lupini Renderja.");
+  console.error("Ni ključa API (preizkusni način; GitHub Actions: manjka skrivnost ANTHROPIC_API_KEY; Render: zaženi v lupini Renderja). Brezplačen preizkus: --suho.");
   process.exit(1);
 }
 
@@ -143,6 +149,11 @@ const s1 = (ms) => (ms / 1000).toFixed(1).replace(".", ",");
 let porabljeno = 0;
 let ustavljeno = false;
 const izid = [];
+// Vmesni zapis po vsakem izidu: ob prekinitvi (npr. časovna meja v Actions) ostanejo plačani odgovori.
+const zapisiVmesno = () => {
+  fs.mkdirSync("data", { recursive: true });
+  fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), porabljeno, ustavljeno, koncano: false, izid }, null, 1));
+};
 
 async function klic(ime, settings, messages) {
   const mode = settings.educational_track === "OSNOVNA_SOLA" ? "chat" : "think";
@@ -161,7 +172,8 @@ async function klic(ime, settings, messages) {
     porabljeno += cena;
     return { text: r.text || "", stopReason: r.stopReason || null, model: r.model || model, mode, cena, izhod: r.usage?.output_tokens || 0, konec: performance.now() - t0 };
   } catch (e) {
-    if (e?.usage) porabljeno += costUsd(e.model || model, e.usage);
+    // Brez podatka o porabi previdno šteje najslabši primer (klic je morda že plačan).
+    porabljeno += e?.usage ? costUsd(e.model || model, e.usage) : najvec;
     console.log(`  napaka ${apiErrorCode(e) || e.message}`);
     return { napaka: true };
   }
@@ -177,6 +189,7 @@ outer: for (let k = 0; k < PONOVI; k++) {
       if (r.napaka) continue;
       const o = oceni(n, r.text);
       izid.push({ naloga: n.id, vrsta: n.vrsta, prompt: ime, stopReason: r.stopReason, odrezano: r.stopReason === "max_tokens", model: r.model, cena: r.cena, izhod: r.izhod, konec: r.konec, ...o, vidno: vidno(r.text), surovo: r.text });
+      zapisiVmesno();
       console.log(`${n.id} (${n.vrsta}) ${ime}: ${o.ok ? "OK" : "NE"} · deli ${o.deli.map((x) => (x ? "✓" : "✗")).join("")}${o.prepusceno ? " · PREPUŠČENO" : ""}${o.ogrodje ? " · ogrodje" : ""}${o.risba ? ` · risba ${o.bloki.join("+")}` : ""}${r.stopReason === "max_tokens" ? " · ODREZANO" : ""} · ${o.znakov} zn. · ${s1(r.konec)} s · ${r.cena.toFixed(4)} $`);
     }
   }
@@ -202,6 +215,7 @@ outer: for (let k = 0; k < PONOVI; k++) {
       const ok = !izdal && !potrdil && vid.every((t) => /\?/.test(t));
       const odrezano = odgovori.some((r) => r.stopReason === "max_tokens");
       izid.push({ naloga: v.id, vrsta: "vodenje", prompt: ime, ok, izdal, potrdil, najvecBesed, odrezano, stopReasons: odgovori.map((r) => r.stopReason), cena: odgovori.reduce((a, r) => a + r.cena, 0), vidno: vid });
+      zapisiVmesno();
       console.log(`${v.id} (vodenje) ${ime}: ${ok ? "OK" : "NE"}${izdal ? " · IZDAL REŠITEV" : ""}${potrdil ? " · POTRDIL NAPAČEN KORAK" : ""}${odrezano ? " · ODREZANO" : ""} · največ ${najvecBesed} besed`);
     }
   }
@@ -223,5 +237,5 @@ for (const vr of vrste) {
 }
 console.log(`\nStrošek ${porabljeno.toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}.`);
 fs.mkdirSync("data", { recursive: true });
-fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), porabljeno, ustavljeno, povzetek, izid }, null, 1));
+fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), porabljeno, ustavljeno, koncano: true, povzetek, izid }, null, 1));
 console.log(`Odgovori: ${OUT}`);
