@@ -770,6 +770,9 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     if (delo && delo.kljuc === kljuc && (delo.mK === mK || delo.faza === 0) && !(skrit && delo.faza === 0)) {
       // med pasovi preparata se je spremenil le sloj molekul (barve, program pripravljen): preparat se ne začne znova
       if (delo.mK !== mK) {
+        // program molekul je pravkar pripravljen, preparat v polni ločljivosti pa se še riše (delna utež, ~850 000×–
+        // 2 400 000×): takoj predogled z molekulami v nižji ločljivosti, ne šele po vseh pasovih preparata
+        if (rabiM && delo.faza === 0) predogled(css, N, n);
         if (rabiM) mKljuc = "";
         delo.mK = rabiM ? mK : "";
       }
