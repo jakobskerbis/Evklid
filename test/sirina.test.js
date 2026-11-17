@@ -104,8 +104,12 @@ test("in the chat a long left side that does not fit in the packed layout falls 
   assert.match(js, /zlozi\(k, r\[i\]\.st, r\[i\]\.meja, r\[i\]\.sn\)/);
   // strnjena oblika s predolgo prvo vrstico se ne izriše in ne meri (hitrost pri 320 px)
   assert.match(js, /if \(sn && st >= 2 && meja > 0 && sirokaPrva\(al, meja\)\) continue;/);
+  // tabela v mehurčku tudi; ob spremembi okna (obrat) se mehurčki prilagodijo znova; ostane najožja poskušena oblika
+  assert.match(js, /const vMehurcku = \(el\) => el\.matches\("\.katex-display, \.md-table-wrap"\)/);
+  assert.match(js, /addEventListener\?\.\("resize", [\s\S]{0,200}vMehurcku\(el\) && prilagodi\(el\)/);
+  assert.match(js, /naj\.st \? zlozi\(k, naj\.st, meja, naj\.sn\) : obnovi\(k\)/);
   // formula v svoji vrstici v mehurčku meri proti prostoru mehurčka (ne trenutni širini), sicer bi se zlaganje vrtelo v krogu
-  assert.match(js, /el\.matches\("\.katex-display"\) && el\.parentElement\?\.closest\("\.msg, \.bubble, \.fx-pop"\) \? Math\.floor\(prostor\(el\)\) : el\.clientWidth/);
+  assert.match(js, /const w = vMehurcku\(el\) \? Math\.floor\(prostor\(el\)\) : el\.clientWidth;/);
 });
 
 test("folding never splits inside a root index and keeps a relation that ends the formula", async () => {

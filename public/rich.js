@@ -79,8 +79,9 @@ export function brezPraznihVrstic(tex) {
 
 // Potenca z okroglimi oklepaji (»e^(-x^2)«, j 17. 11. 2026): KaTeX bi nadpisal le »(«, ostalo bi bilo v vrstici.
 // »^(X)« postane »^{X}«, ko je oklepaj ves eksponent: uravnotežen, brez vrhnje relacije ali vejice, ne predolg.
-// Ne v \text{…} in ne za \^ (naglas); »^{…}«, »^2«, »^\frac…« ostanejo.
-const BESEDILO = /^\\(?:text|textrm|textbf|textit|mbox|hbox)\s*\{/;
+// Ne v \text{…} in ne za \^ (naglas); »^{…}«, »^2«, »^\frac…« ostanejo. Red odvoda (»f^(n)(x)«, »y^(4)«: ena črka ali
+// števka pri f, g ali y) ostane v oklepaju: »f^{(n)}«.
+const BESEDILO = /^\\(?:text|textrm|textbf|textit|textsf|texttt|textnormal|textup|emph|mbox|hbox)\s*\{/;
 const REL_V_POTENCI = /^(?:=|<|>|,|;|\\(?:le|leq|ge|geq|neq|ne|approx|equiv|to|rightarrow|Rightarrow|iff|quad|qquad)(?![a-zA-Z]))/;
 export function potencaZOklepaji(tex) {
   if (!tex.includes("^(") && !/\^\s+\(/.test(tex)) return tex;
@@ -88,7 +89,7 @@ export function potencaZOklepaji(tex) {
   for (let i = 0; i < tex.length; ) {
     const c = tex[i];
     if (c === "\\") {
-      const b = BESEDILO.exec(tex.slice(i, i + 12));
+      const b = BESEDILO.exec(tex.slice(i, i + 16));
       if (b) {
         // preskoči vso skupino {…}
         let d = 0, j = i + b[0].length - 1;
@@ -124,9 +125,10 @@ export function potencaZOklepaji(tex) {
           else if (p === 1 && br === 0 && REL_V_POTENCI.test(tex.slice(j))) ok = false;
         }
         const notri = tex.slice(z, j);
-        // »x^(a)^(b)«: prvi ostane (dvojni eksponent bi bil napaka KaTeX), drugi se popravi.
-        if (ok && p === 0 && br === 0 && notri.trim() && !/^\s*\^/.test(tex.slice(j + 1))) {
-          out += `^{${potencaZOklepaji(notri)}}`;
+        // »x^(a)^(b)«, »y^(n)'«: prvi ostane (dvojni eksponent bi bil napaka KaTeX), drugi se popravi.
+        if (ok && p === 0 && br === 0 && notri.trim() && !/^\s*['^]/.test(tex.slice(j + 1))) {
+          const odvod = /^[fgy]$/.test(tex[i - 1] || "") && !/[a-zA-Z\\]/.test(tex[i - 2] || "") && /^\s*[a-zA-Z0-9]\s*$/.test(notri);
+          out += odvod ? `^{(${notri.trim()})}` : `^{${potencaZOklepaji(notri)}}`;
           i = j + 1;
           continue;
         }

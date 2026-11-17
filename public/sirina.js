@@ -417,8 +417,17 @@ function prilagodiFormulo(k, w, meri, visoka = Infinity) {
   // Klepet: če strnjena oblika še vedno ne gre v vrstico (dolga leva stran), še oblika iz učbenika.
   const s0 = !!k.closest(STRNJENO);
   let sn0 = s0;
+  // Najožja poskušena oblika (pri enaki širini prejšnja): če nobena ne gre v vrstico, ostane ta, ne zadnja poskušena
+  // (pri 320 px je bila oblika iz učbenika z »v« samim v prvi vrstici enako široka kot strnjena).
+  let naj = null;
+  const oceni = () => {
+    const m = meri(k);
+    if (!naj || m < naj.m - 1) naj = { st: st0, sn: sn0, m };
+    return m;
+  };
   for (const [st, sn] of [[1, s0], [2, s0], [3, s0], [4, s0], [5, s0], ...(s0 ? [[2, false], [3, false], [4, false], [5, false]] : [])]) {
-    if (meri(k) <= w + 1 || w / meri(k) >= 0.9) break;
+    const m = oceni();
+    if (m <= w + 1 || w / m >= 0.9) break;
     const al = tex && zlozTex(tex, st, meja, sn);
     if (!al || al === prej) continue; // ta stopnja ne spremeni ničesar
     // Strnjena oblika, katere prva vrstica (leva stran s prvim korakom) po oceni ne gre v vrstico: brez izrisa in
@@ -427,6 +436,11 @@ function prilagodiFormulo(k, w, meri, visoka = Infinity) {
     prej = al;
     const z = zlozi(k, st, meja, sn);
     if (z) (k = z), (st0 = st), (sn0 = sn);
+  }
+  const m = oceni();
+  if (m > w + 1 && w / m < 0.9 && naj && (naj.st !== st0 || naj.sn !== sn0)) {
+    const z = naj.st ? zlozi(k, naj.st, meja, naj.sn) : obnovi(k);
+    if (z) (k = z), (st0 = naj.st), (sn0 = naj.sn);
   }
   pomanjsaj(k, w, () => meri(k));
   if (kljuc) zapomni(kljuc, { st: st0, sn: sn0, meja, fs: k.style.fontSize });
@@ -486,10 +500,12 @@ function formuleOkvira(el, w, rob) {
   return ks.length ? { w: sir, rob, ks, meri } : null;
 }
 
+const MEHURCEK = ".msg, .bubble, .fx-pop";
+const vMehurcku = (el) => el.matches(".katex-display, .md-table-wrap") && !!el.parentElement?.closest(MEHURCEK);
 function okvir(el) {
-  // Formula v svoji vrstici v mehurčku, ki se skrči na vsebino (klepet): šteje prostor mehurčka, ne trenutna širina.
-  // Sicer zložena formula zoži mehurček, ta formulo, ta jo zloži še ožje … (ResizeObserver v krogu, 320 px).
-  const w = el.matches(".katex-display") && el.parentElement?.closest(".msg, .bubble, .fx-pop") ? Math.floor(prostor(el)) : el.clientWidth;
+  // Formula v svoji vrstici ali tabela v mehurčku, ki se skrči na vsebino (klepet): šteje prostor mehurčka, ne trenutna
+  // širina. Sicer zložena formula zoži mehurček, ta formulo, ta jo zloži še ožje … (ResizeObserver v krogu, 320 px).
+  const w = vMehurcku(el) ? Math.floor(prostor(el)) : el.clientWidth;
   if (!w || sirine.get(el) === w) return;
   sirine.set(el, w);
   if (el.matches(".md-table-wrap")) {
@@ -708,6 +724,13 @@ function zazeni() {
   if (ro) return;
   // V naslednji sliki, da sprememba pisave ne sproži opozorila »ResizeObserver loop«.
   ro = new ResizeObserver((vnosi) => requestAnimationFrame(() => vnosi.forEach((v) => prilagodi(v.target))));
+  // Obrat telefona: mehurček, ki se skrči na vsebino, z enako zloženo formulo ostane enako širok, zato ResizeObserver
+  // ne sporoči ničesar, čeprav je prostora zdaj več (ali manj). Ob spremembi okna (z zamikom) jih prilagodi znova.
+  let cakaj = 0;
+  globalThis.addEventListener?.("resize", () => {
+    clearTimeout(cakaj);
+    cakaj = setTimeout(() => opazovani.forEach((el) => el.isConnected && vMehurcku(el) && prilagodi(el)), 150);
+  });
   // Ko se naložijo pisave KaTeX, so formule drugače široke: prilagodi znova.
   const znova = () => {
     sirine = new WeakMap();

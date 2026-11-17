@@ -235,7 +235,13 @@ test("a superscript written with round brackets becomes a real power, other expo
   assert.equal(f("e^(x)(y)"), "e^{x}(y)"); // le prvi oklepaj
   assert.equal(f("e^(-\\frac{x^2}{2\\sigma^2})"), "e^{-\\frac{x^2}{2\\sigma^2}}");
   assert.equal(f("e^(a^(2)+1)"), "e^{a^{2}+1}");
-  assert.equal(f("x^(a)^(b)"), "x^(a)^{b}"); // »x^{a}^{b}« bi bil dvojni eksponent (napaka KaTeX)
+  assert.equal(f("x^(a)^(b)"), "x^(a)^{b}");
+  assert.equal(f("y^(n)'"), "y^(n)'"); // »y^{n}'« bi bil dvojni eksponent
+  // red odvoda ostane v oklepaju
+  assert.equal(f("f^(n)(x)"), "f^{(n)}(x)");
+  assert.equal(f("y^(4)"), "y^{(4)}");
+  assert.equal(f("\\log^(2) x"), "\\log^{2} x");
+  assert.equal(f("\\textsf{a^(b)} + \\emph{c^(d)}"), "\\textsf{a^(b)} + \\emph{c^(d)}"); // »x^{a}^{b}« bi bil dvojni eksponent (napaka KaTeX)
   // ostane: neuravnotežen oklepaj, \text{…}, relacija ali vejica v oklepaju, eksponenti z {…}, številko ali ukazom
   for (const t of ["a^(b", "x^(a, b)", "x^(a = b)", "\\text{a^(b)}", "x^{(a)}", "x^2", "x^\\frac{1}{2}", "\\^(x)", `x^(${"a".repeat(100)})`]) assert.equal(f(t), t);
   assert.equal(f("\\text{e^(x)} + c^(d)"), "\\text{e^(x)} + c^{d}");
