@@ -2378,7 +2378,7 @@
   "rep.done": "Raportat",
   "rep.pick": "Alege ce nu este în regulă.",
   "pay.adult": "Sunt o persoană majoră și plătesc pentru propriul profil sau ca părinte ori tutore.",
-  "pay.withdrawal": "Vreau ca utilizarea să înceapă imediat. Știu că mă pot retrage din contract în 14 zile. Atunci plătesc doar partea din preț pentru perioada până la retragere, iar restul mi se returnează.",
+  "pay.withdrawal": "Vreau ca utilizarea să înceapă imediat. Știu că mă pot retrage din contract în 14 zile. Atunci plătesc doar partea proporțională din preț pentru perioada până la retragere, iar restul mi se returnează.",
   "pay.creditWithdrawal": "Vreau ca utilizarea să înceapă imediat. Știu că mă pot retrage din contract în 14 zile. Atunci mi se returnează partea din plată pentru conversațiile încă nefolosite.",
   "pay.consentMissing": "Bifează ambele confirmări înainte de plată.",
   "pay.continue": "Continuă spre plată",

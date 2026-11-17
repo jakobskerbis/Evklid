@@ -2366,7 +2366,7 @@
   "rep.done": "Reportado",
   "rep.pick": "Escolhe o que está errado.",
   "pay.adult": "Sou maior de idade e pago pelo meu próprio perfil ou como pai, mãe ou tutor legal.",
-  "pay.withdrawal": "Quero que a utilização comece de imediato. Sei que posso desistir do contrato no prazo de 14 dias. Nesse caso pago apenas a parte do preço pelo tempo até à desistência e o resto é-me devolvido.",
+  "pay.withdrawal": "Quero que a utilização comece de imediato. Sei que posso desistir do contrato no prazo de 14 dias. Nesse caso pago apenas a parte proporcional do preço pelo tempo até à desistência e o resto é-me devolvido.",
   "pay.creditWithdrawal": "Quero que a utilização comece de imediato. Sei que posso desistir do contrato no prazo de 14 dias. Nesse caso é-me devolvida a parte do pagamento pelas conversas ainda não usadas.",
   "pay.consentMissing": "Marca as duas caixas antes de pagar.",
   "pay.continue": "Continuar para o pagamento",

@@ -2365,7 +2365,7 @@
   "rep.done": "Reported",
   "rep.pick": "Choose what is wrong.",
   "pay.adult": "I'm an adult and I'm paying for my own profile or as a parent or guardian.",
-  "pay.withdrawal": "I want my access to start right away. I know that I can withdraw from the contract within 14 days. In that case I pay only the part of the price for the time until I withdraw, and you refund the rest.",
+  "pay.withdrawal": "I want my access to start right away. I know that I can withdraw from the contract within 14 days. In that case I pay only the proportional part of the price for the time until I withdraw, and you refund the rest.",
   "pay.creditWithdrawal": "I want my access to start right away. I know that I can withdraw from the contract within 14 days. In that case you refund the part of the payment for the conversations I haven't used yet.",
   "pay.consentMissing": "Tick both boxes before you pay.",
   "pay.continue": "Continue to payment",

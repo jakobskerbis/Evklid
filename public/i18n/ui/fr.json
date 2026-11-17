@@ -2366,7 +2366,7 @@
   "rep.done": "Signalé",
   "rep.pick": "Choisis ce qui ne va pas.",
   "pay.adult": "Je suis une personne majeure et je paie pour mon propre profil ou en tant que parent ou tuteur légal.",
-  "pay.withdrawal": "Je veux que l’utilisation commence tout de suite. Je sais que je peux me rétracter du contrat dans les 14 jours. Je ne paie alors que la part du prix correspondant à la période jusqu’à la rétractation, le reste m’est remboursé.",
+  "pay.withdrawal": "Je veux que l’utilisation commence tout de suite. Je sais que je peux me rétracter du contrat dans les 14 jours. Je ne paie alors que la part proportionnelle du prix correspondant à la période jusqu’à la rétractation, le reste m’est remboursé.",
   "pay.creditWithdrawal": "Je veux que l’utilisation commence tout de suite. Je sais que je peux me rétracter du contrat dans les 14 jours. La part du paiement correspondant aux conversations pas encore utilisées m’est alors remboursée.",
   "pay.consentMissing": "Coche les deux cases avant de payer.",
   "pay.continue": "Continuer vers le paiement",

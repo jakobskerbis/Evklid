@@ -2365,7 +2365,7 @@
   "rep.done": "Bildirildi",
   "rep.pick": "Sorunun ne olduğunu seç.",
   "pay.adult": "Reşit olduğumu ve kendi profilim için ya da ebeveyn veya vasi olarak ödeme yaptığımı onaylıyorum.",
-  "pay.withdrawal": "Kullanımın hemen başlamasını istiyorum. Sözleşmeden 14 gün içinde cayabileceğimi biliyorum. Bu durumda yalnızca cayma tarihine kadar olan süre için fiyatın bir kısmını öderim, kalanı bana iade edilir.",
+  "pay.withdrawal": "Kullanımın hemen başlamasını istiyorum. Sözleşmeden 14 gün içinde cayabileceğimi biliyorum. Bu durumda yalnızca cayma tarihine kadar olan süre için fiyatın orantılı kısmını öderim, kalanı bana iade edilir.",
   "pay.creditWithdrawal": "Kullanımın hemen başlamasını istiyorum. Sözleşmeden 14 gün içinde cayabileceğimi biliyorum. Bu durumda henüz kullanmadığım sohbetlerin ödeme payı bana iade edilir.",
   "pay.consentMissing": "Ödemeden önce iki onay kutusunu da işaretle.",
   "pay.continue": "Ödemeye devam et",

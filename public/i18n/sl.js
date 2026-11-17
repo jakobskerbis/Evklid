@@ -2965,7 +2965,7 @@ export default {
   "scan.s.dCombine": "Seštejemo odvode členov.",
   "scan.w.dCombine": "Odvode posameznih členov združimo in zapišemo čim preprosteje.",
   "pay.adult": "Sem polnoletna oseba in plačujem za svoj profil ali kot starš oziroma skrbnik.",
-  "pay.withdrawal": "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat plačam le del cene za čas do odstopa, ostalo mi vrnete.",
+  "pay.withdrawal": "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat plačam le sorazmerni del cene za čas do odstopa, ostalo mi vrnete.",
   "pay.creditWithdrawal": "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat mi vrnete delež plačila za še neporabljene pogovore.",
   "pay.giftAdult": "Sem polnoletna oseba in kupujem darilno kodo za Evklid.",
   "pay.giftWithdrawal": "Vem, da lahko v 14 dneh od nakupa odstopim in dobim vrnjeno celotno plačilo, če koda še ni vpisana. Ko je koda vpisana, se uporaba začne in pravica do odstopa preneha.",

@@ -149,6 +149,16 @@ export function createPaidPeriods(kv) {
       }
       return { eur: Math.max(0, eur), rows };
     },
+    // Dejanski začetek plačanega obdobja naročnine sub, ki se konča ob end (ms): najzgodnejši začetek plačanih vrstic
+    // s tem koncem (±1 dan; negativne vrstice proracije ne štejejo, pozitivne se začnejo pozneje). 0 = ni zapisa.
+    periodStart(parentId, sub, end) {
+      let start = 0;
+      for (const r of load(parentId)) {
+        if (r.sub !== sub || r.cents < 0 || Math.abs(r.end - end) > 86400000 || !(r.start < r.end)) continue;
+        if (!start || r.start < start) start = r.start;
+      }
+      return start;
+    },
     // Plačano z DDV (najmanjše enote valute) za obdobje [start, end), za izračun vračila ob odstopu.
     centsIn(parentId, sub, start, end) {
       let cents = 0;

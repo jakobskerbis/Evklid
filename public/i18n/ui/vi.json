@@ -2355,7 +2355,7 @@
   "rep.done": "Đã báo cáo",
   "rep.pick": "Chọn điều gì sai.",
   "pay.adult": "Tôi đã đủ tuổi thành niên và thanh toán cho hồ sơ của chính mình hoặc với tư cách cha mẹ hay người giám hộ.",
-  "pay.withdrawal": "Tôi muốn việc sử dụng bắt đầu ngay. Tôi biết mình có thể rút khỏi hợp đồng trong vòng 14 ngày. Khi đó tôi chỉ trả phần giá cho thời gian đến khi rút, phần còn lại được hoàn lại cho tôi.",
+  "pay.withdrawal": "Tôi muốn việc sử dụng bắt đầu ngay. Tôi biết mình có thể rút khỏi hợp đồng trong vòng 14 ngày. Khi đó tôi chỉ trả phần giá tương ứng cho thời gian đến khi rút, phần còn lại được hoàn lại cho tôi.",
   "pay.creditWithdrawal": "Tôi muốn việc sử dụng bắt đầu ngay. Tôi biết mình có thể rút khỏi hợp đồng trong vòng 14 ngày. Khi đó tôi được hoàn lại phần thanh toán cho các cuộc trò chuyện chưa dùng.",
   "pay.consentMissing": "Hãy đánh dấu cả hai ô xác nhận trước khi thanh toán.",
   "pay.continue": "Tiếp tục thanh toán",
