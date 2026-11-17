@@ -316,7 +316,7 @@ export function createApp(store, opts = {}) {
   const VELIKA_TELESA = [
     [/^\/api\/conversations\/[^/]+\/messages$/i, "10mb"], // sporočilo s sliko (MAX_IMAGE_B64)
     // skener, zapiski, urnik s fotografije, zapis s prstom, fotografija naloge v pilotu
-    [/^\/api\/students\/[^/]+\/(scan\/read|zapiski\/preberi|schedule\/photo|tasks\/[^/]+\/read|pilot\/scan)$/i, "10mb"],
+    [/^\/api\/students\/[^/]+\/(scan\/read(?:-task)?|zapiski\/preberi|schedule\/photo|tasks\/[^/]+\/read|pilot\/scan)$/i, "10mb"],
     [/^\/api\/students\/[^/]+\/schedule\/ics$/i, "4mb"], // vsebina datoteke .ics (do 3 MB)
     [/^\/api\/students\/[^/]+\/graphs(\/[^/]+)?$/i, "1mb"], // graf s sličico (MAX_DATA + MAX_THUMB)
     [/^\/api\/conversations\/[^/]+\/messages\/[^/]+\/report$/i, "1mb"], // prijava odgovora z izrisanim HTML (SHOWN_MAX)
@@ -1888,7 +1888,7 @@ export function createApp(store, opts = {}) {
   mountClassShowcase(app, store.db, { loadStudent, leagues, knowledge }); // vitrina v razredu (opt-in, server/vitrina.js)
   mountCorner(app, store, { loadStudent, fetchFn: opts.newsFetch, offline: opts.newsOffline });
   mountSchedule(app, store, { loadStudent, progress, usage, schedules, photoFn: opts.schedulePhotoFn, fetchFn: opts.fetchFn, lookup: opts.lookup, modelCapFor: (id) => accounts?.modelCapFor?.(id) ?? null });
-  mountScan(app, { loadStudent, usage, readFn: opts.scanReadFn, solveFn: opts.scanSolveFn, readTaskFn: opts.scanReadTaskFn });
+  mountScan(app, { loadStudent, usage, readFn: opts.scanReadFn, solveFn: opts.scanSolveFn, readTaskFn: opts.scanReadTaskFn, dailyBlock: (id) => accounts?.dailyBlock?.(id), chatOff });
   ustno = mountUstno(app, store, { loadStudent, usage, progress, accounts, createFn: opts.ustnoFn }); // ustno spraševanje »Vprašaj me« (server/ustno.js)
   // Uči se iz svojih zapiskov (korak 1): meja strani po paketu, vsak klic skozi trdo mejo AI.
   mountZapiski(app, store, { loadStudent, usage, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, readFn: opts.zapiskiReadFn, cardsFn: opts.zapiskiCardsFn });

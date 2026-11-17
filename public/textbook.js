@@ -732,7 +732,7 @@ async function renderLesson(topicId, name = "") {
     <h2>Kaj zdaj?</h2>
     ${L.practice || !pending ? `<div class="actions">
       ${L.practice ? `<button type="button" class="primary" id="tb-practice">${ic("pencil")}Vadi naloge</button>` : ""}
-      ${lesson ? `<button type="button" class="secondary" data-ustno="${esc(L.id)}">${ic("message-circle-question")}${esc(t("ustno.vprasajMe"))}</button>` : ""}
+      ${lesson ? `<button type="button" class="secondary" data-ustno="${esc(L.id)}">${ic("speech")}${esc(t("ustno.vprasajMe"))}</button>` : ""}
       ${pending ? "" : `<button type="button" class="secondary" id="tb-ask">${ic("message-circle")}Še ni jasno? Vprašaj inštruktorja</button>`}
     </div>` : ""}
     <div class="tb-nav">

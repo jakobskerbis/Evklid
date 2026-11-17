@@ -1923,11 +1923,16 @@ window.addEventListener("evklid:tipkovnica", () => {
 
 // ---------- fotografije ----------
 
-async function loadImage(file) {
-  if (!file || !file.type.startsWith("image/")) return;
-  // Pomanjšaj na največ 1600 px, da je pošiljanje hitro in poceni.
-  const bitmap = await createImageBitmap(file);
-  // Lahki način: še manjša in bolj stisnjena slika (manj prenosa in manj žetonov).
+// Slika za inštruktorja: največ 1200 px (lahki način 900 px, kakovost 0,6), da je pošiljanje hitro in poceni.
+// Vir je datoteka (prilepljena slika) ali slika iz skenerja (data URL).
+async function scaledImage(src) {
+  // data URL brez fetch (pravila CSP za connect-src ga ne dovolijo): prek elementa <img>.
+  let bitmap = src;
+  if (typeof src === "string") {
+    bitmap = new Image();
+    bitmap.src = src;
+    await bitmap.decode();
+  } else bitmap = await createImageBitmap(src);
   const lite = liteActive();
   const scale = Math.min(1, (lite ? 900 : 1200) / Math.max(bitmap.width, bitmap.height)); // manjša slika = manj žetonov
   const canvas = document.createElement("canvas");
@@ -1935,16 +1940,21 @@ async function loadImage(file) {
   canvas.height = Math.round(bitmap.height * scale);
   canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   const url = canvas.toDataURL("image/jpeg", lite ? 0.6 : 0.8);
-  state.image = { media_type: "image/jpeg", data: url.split(",")[1], url };
-  $("#image-preview img").src = url;
+  return { media_type: "image/jpeg", data: url.split(",")[1], url };
+}
+function showImage(img) {
+  state.image = img;
+  $("#image-preview img").src = img.url;
   $("#image-preview").hidden = false;
+}
+async function loadImage(file) {
+  if (!file || !file.type.startsWith("image/")) return;
+  showImage(await scaledImage(file));
 }
 function clearImage() {
   state.image = null;
   $("#image-preview").hidden = true;
-  $("#image-input").value = "";
 }
-$("#image-input").addEventListener("change", (e) => loadImage(e.target.files[0]));
 // Kamera v Inštruktorju (j 17. 11.: en vhod za fotografijo, skener namesto neposredne slike): zajem, izrez, branje,
 // učenec prepis pregleda in popravi, nato gre naloga v odprti pogovor (predmet, način in letnik ostanejo).
 // Fotografija gre zraven le, če jo učenec pusti označeno (skica, graf ali branje ni uspelo).
@@ -1953,14 +1963,26 @@ function scanFromChat(on) {
   const back = $("#view-scan .me-back span");
   if (back) back.textContent = t(on ? "nav.chat" : "nav.me");
 }
+async function scanToChat({ text, image }) {
+  // Pomanjšana kot slika iz polja; če pomanjšanje ne uspe, gre izvirni izrez (nikoli se ne izgubi).
+  const img = image ? await scaledImage(image).catch(() => ({ media_type: "image/jpeg", data: image.split(",")[1], url: image })) : null;
+  showView("chat");
+  // Odgovor se še izpisuje ali je klepet izklopljen: naloga in fotografija gresta v polje (nič se ne izgubi),
+  // učenec ju pošlje sam.
+  if (state.sending || !$("#chat-off").hidden) {
+    if (text) fillInput(text);
+    if (img && !state.image) showImage(img);
+    return $("#input").focus();
+  }
+  $("#input").focus(); // fokus nazaj v polje za pisanje (dostopnost), pošiljanje ga ne potrebuje
+  send(text, { image: img });
+}
 $("#photo-btn").addEventListener("click", () => {
   if (!state.student) return;
-  startTutorScan(({ text, image }) => {
-    showView("chat");
-    send(text, { image: image ? { media_type: "image/jpeg", data: image.split(",")[1], url: image } : null });
-  });
+  startTutorScan((x) => scanToChat(x));
   scanFromChat(true);
   showView("scan");
+  requestAnimationFrame(() => $("#view-scan h1")?.focus({ preventScroll: true })); // fokus na naslov skenerja
 });
 $("#remove-image").addEventListener("click", clearImage);
 input.addEventListener("paste", (e) => {

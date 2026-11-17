@@ -599,6 +599,7 @@ async function readTask(dataUrl) {
     S.text = out.text || "";
     S.figure = !!out.figure;
     S.more = !!out.more;
+    S.tasks = Number(out.tasks) || (S.more ? 2 : 1);
     S.note = out.mock ? t("scan.mock") : S.text ? null : t("scan.tutorFail");
   } catch (err) {
     if (seq !== aiSeq || S.mode !== "reading") return;
@@ -618,14 +619,14 @@ function renderTutorConfirm(box) {
       <label class="scan-label" for="scan-task">${esc(S.text ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <textarea id="scan-task" rows="5" maxlength="3000" autocomplete="off" spellcheck="true">${esc(S.text)}</textarea>
       <div class="scan-preview scan-task-preview" aria-hidden="true"></div>
-      ${S.more ? `<p class="scan-hint muted">${esc(t("scan.tutorMore"))}</p>` : ""}
+      ${S.more ? `<p class="scan-hint muted">${esc(t(S.tasks > 2 ? "scan.tutorMoreMany" : "scan.tutorMore"))}</p>` : ""}
       ${
         photo
           ? `<label class="check-row scan-photo-row"><input type="checkbox" data-photo ${withPhoto ? "checked" : ""}><img src="${esc(S.shot)}" alt="${esc(t("scan.photoAlt"))}"><span><b>${esc(t("scan.tutorPhoto"))}</b>${S.figure ? `<small class="muted">${esc(t("scan.tutorFigure"))}</small>` : ""}</span></label>`
           : ""
       }
       <p class="scan-err" role="alert" hidden></p>
-      <div class="scan-actions">
+      <div class="scan-actions scan-tutor-actions">
         <button type="button" class="secondary" data-act="retake">${icon("camera")}${esc(t("scan.retake"))}</button>
         <button type="button" class="primary" data-act="send">${icon("send")}${esc(t("scan.tutorSend"))}</button>
       </div>
@@ -661,7 +662,8 @@ function renderTutorConfirm(box) {
     tutorMode = null;
     cb.onSend({ text, image });
   });
-  if (!S.text && !coarse()) area.focus();
+  // Fokus (dostopnost): prazno polje → polje za nalogo, prebrana naloga → »Pošlji inštruktorju« (vidno brez drsenja).
+  requestAnimationFrame(() => (S.text ? box.querySelector('[data-act="send"]') : area)?.focus({ preventScroll: false }));
 }
 
 // ---------- 3. prepis (uredljiv) ----------

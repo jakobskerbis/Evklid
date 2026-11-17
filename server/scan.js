@@ -238,9 +238,9 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [], 
 export const TASK_READ_PROMPT =
   "The image shows a school task (maths, physics, chemistry or biology; printed or handwritten) that a student photographed to ask a tutor for help. " +
   "Transcribe the task exactly as written, in its own language: the full wording with all numbers, units and sub-tasks a), b) …; maths and formulas in LaTeX between $ … $ (chemical formulas such as H₂O may stay plain). " +
-  "Do not solve, do not fix mistakes, do not add anything. If several separate tasks are visible, transcribe the most prominent one (the one in the middle or marked) and set \"more\": true. Leave out the student's own working and crossed-out parts.\n" +
+  "Do not solve, do not fix mistakes, do not add anything. If several separate tasks are visible, transcribe the most prominent one (the one in the middle or marked), set \"more\": true and \"tasks\" to how many separate tasks you see. Leave out the student's own working and crossed-out parts.\n" +
   "Set \"figure\": true if the task depends on a drawing, graph, diagram, table image, circuit, geometric figure or structure formula that the text cannot fully replace; otherwise false.\n" +
-  'Return only JSON: {"text":"...","figure":false,"more":false}. If no task is readable: {"text":""}.\n' +
+  'Return only JSON: {"text":"...","figure":false,"more":false,"tasks":1}. If no task is readable: {"text":""}.\n' +
   'Accept schoolwork even if people appear in the frame. Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, return only {"text":"","unrelated":true}.';
 const TASK_READ_PROMPT_TOKENS = Buffer.byteLength(TASK_READ_PROMPT, "utf8") + 300;
 const TASK_READ_MAX = 1200; // izhodni žetoni: dolga besedilna naloga s podnalogami
@@ -264,12 +264,13 @@ export async function readTaskPhoto({ imageBase64, mediaType = "image/jpeg" }) {
   const data = jsonFrom(textOf(final)) || {};
   const unrelated = data.unrelated === true;
   const text = unrelated || typeof data.text !== "string" ? "" : data.text.trim().slice(0, MAX_TASK_TEXT);
-  return { text, figure: data.figure === true, more: data.more === true, unrelated, usage: final.usage, model: final.model || model };
+  const tasks = Number.isInteger(data.tasks) && data.tasks > 0 ? Math.min(data.tasks, 20) : data.more === true ? 2 : 1;
+  return { text, figure: data.figure === true, more: data.more === true || tasks > 1, tasks, unrelated, usage: final.usage, model: final.model || model };
 }
 
 // Navodila branja v žetonih za rezervo (žeton ≤ bajt, pregled #462 S7) + sporočilo in ovoj.
 const READ_PROMPT_TOKENS = Buffer.byteLength(READ_PROMPT, "utf8") + 500;
-export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, solveFn = solveWithAi, readTaskFn = readTaskPhoto }) {
+export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, solveFn = solveWithAi, readTaskFn = readTaskPhoto, dailyBlock = () => null, chatOff = () => false }) {
   // Kamera v Inštruktorju: prepis naloge, ki ga učenec pregleda in pošlje inštruktorju (public/scan/scan.js, način tutor).
   // Slike strežnik ne shrani; ob napaki učenec pošlje fotografijo ali nalogo vpiše (nikoli slepa ulica).
   app.post("/api/students/:id/scan/read-task", async (req, res) => {
@@ -277,6 +278,10 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     if (!s) return;
     const m = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(String(req.body?.image || ""));
     if (!m || m[2].length > MAX_IMAGE) return res.status(400).json({ error: "Slika manjka ali je prevelika." });
+    // Branje plačamo le, če bo naloga lahko šla k inštruktorju: klepet vklopljen in dnevna meja vprašanj ni dosežena.
+    if (chatOff()) return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true });
+    const dnevna = dailyBlock(s.id);
+    if (dnevna) return res.status(429).json(dnevna);
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
     const hold = usage?.guard ? usage.guard(s.id, imageCallReserveUsd(TASK_READ_MODEL(), TASK_READ_MAX, 1, TASK_READ_PROMPT_TOKENS)) : null;
@@ -285,7 +290,8 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
       const out = await readTaskFn({ imageBase64: m[2], mediaType: m[1] });
       if (out.mock) return res.json({ text: "", mock: true });
       if (out.usage) usage?.log(s.id, out.model, out.usage, "skeniranje");
-      res.json({ text: out.text || "", figure: !!out.figure, more: !!out.more, ...(out.unrelated ? { unrelated: true } : {}) });
+      const more = !!out.more || out.tasks > 1;
+      res.json({ text: out.text || "", figure: !!out.figure, more, ...(more ? { tasks: Math.max(2, Number(out.tasks) || 2) } : {}), ...(out.unrelated ? { unrelated: true } : {}) });
     } catch (err) {
       console.error("[evklid] branje naloge:", err?.message || err);
       res.status(502).json({ error: errorText(err, "Branje fotografije trenutno ne deluje. Nalogo vpiši s tipkami.") });
