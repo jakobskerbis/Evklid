@@ -43,7 +43,7 @@ const LJ_DAY = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Ljubljana", 
 // created_at v bazi je UTC brez pasu (»2026-11-10 23:30:00«, datetime('now')); starejši zapisi so lahko ISO z »Z«.
 const utcMs = (text) => Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(text) ? text : `${String(text).replace(" ", "T")}Z`);
 export const ljDay = (t) => {
-  const ms = typeof t === "number" ? t : utcMs(String(t ?? ""));
+  const ms = t instanceof Date ? t.getTime() : typeof t === "number" ? t : utcMs(String(t ?? ""));
   return Number.isFinite(ms) ? LJ_DAY.format(new Date(ms)) : ""; // neveljaven zapis ne podre poročila, le ne šteje
 };
 // Koledarski dan i dni pred dnem »YYYY-MM-DD« (brez ur, zato poletni/zimski čas ne zmoti).
@@ -60,19 +60,19 @@ export function childWeek(db, student, { now = Date.now() } = {}) {
   const inWeek = new Set(week);
   const inPrev = new Set([13, 12, 11, 10, 9, 8, 7].map((i) => dayBefore(today, i)));
   // SQL vzame en dan več na vsako stran (UTC ↔ Ljubljana), natančno izbiro naredi ljDay.
+  // Primerjava created_at >= 'YYYY-MM-DD' (brez date()) uporabi indekse (student_id, created_at).
   const from = dayBefore(today, 14);
   const rows = (sql) => db.prepare(sql).all(id, from).map((r) => ({ ...r, day: ljDay(r.created_at) }));
 
-  const taskRows = rows(`SELECT topic_id, solved, first_try_correct, created_at FROM tasks WHERE student_id = ? AND attempts > 0 AND date(created_at) >= ?`);
+  const taskRows = rows(`SELECT topic_id, solved, first_try_correct, created_at FROM tasks WHERE student_id = ? AND attempts > 0 AND created_at >= ?`);
   const asked = rows(
     `SELECT m.created_at FROM messages m JOIN conversations c ON c.id = m.conversation_id
-     WHERE c.student_id = ? AND m.role = 'user' AND date(m.created_at) >= ?`,
+     WHERE c.student_id = ? AND m.role = 'user' AND m.created_at >= ?`,
   );
-  const otherDays = rows(
-    `SELECT created_at FROM events WHERE student_id = ?1 AND date(created_at) >= ?2
-     UNION ALL SELECT created_at FROM xp_events WHERE student_id = ?1 AND date(created_at) >= ?2`,
-  );
-  const activeIn = (set) => new Set([...taskRows, ...otherDays].map((r) => r.day).filter((d) => set.has(d)));
+  const xpRows = rows(`SELECT amount, created_at FROM xp_events WHERE student_id = ? AND created_at >= ?`);
+  const eventRows = rows(`SELECT subject, topic, conversation_id, created_at FROM events WHERE student_id = ? AND created_at >= ?`);
+  // Dejaven dan: naloga, dogodek, XP ali vprašanje inštruktorju (dan samo z vprašanji je »dan z drugo vajo«).
+  const activeIn = (set) => new Set([...taskRows, ...eventRows, ...xpRows, ...asked].map((r) => r.day).filter((d) => set.has(d)));
   const dates = activeIn(inWeek);
   const weekTasks = taskRows.filter((r) => inWeek.has(r.day));
 
@@ -87,7 +87,7 @@ export function childWeek(db, student, { now = Date.now() } = {}) {
   const sum = (list, f) => list.reduce((n, r) => n + (f(r) ? 1 : 0), 0);
   const firstOk = sum(weekTasks, (r) => r.first_try_correct === 1);
   const judged = sum(weekTasks, (r) => r.first_try_correct !== null && r.first_try_correct !== undefined);
-  const xp = rows(`SELECT amount, created_at FROM xp_events WHERE student_id = ? AND date(created_at) >= ?`)
+  const xp = xpRows
     .filter((r) => inWeek.has(r.day))
     .reduce((n, r) => n + (r.amount || 0), 0);
   const questions = asked.filter((r) => inWeek.has(r.day)).length;
@@ -108,8 +108,8 @@ export function childWeek(db, student, { now = Date.now() } = {}) {
 
   // Teme iz klepeta z inštruktorjem.
   const chatCount = new Map();
-  for (const e of rows(`SELECT subject, topic, created_at FROM events WHERE student_id = ? AND topic IS NOT NULL AND conversation_id IS NOT NULL AND date(created_at) >= ?`)) {
-    if (!inWeek.has(e.day)) continue;
+  for (const e of eventRows) {
+    if (e.topic == null || e.conversation_id == null || !inWeek.has(e.day)) continue;
     const key = JSON.stringify([e.subject, e.topic]);
     const c = chatCount.get(key) || { subject: e.subject, topic: e.topic, n: 0 };
     c.n += 1;
@@ -130,7 +130,7 @@ export function childWeek(db, student, { now = Date.now() } = {}) {
   }
 
   const mastered = db
-    .prepare(`SELECT topic_id, mastered_at FROM topic_state WHERE student_id = ? AND status = 'mastered' AND mastered_at IS NOT NULL AND date(mastered_at) >= ?`)
+    .prepare(`SELECT topic_id, mastered_at FROM topic_state WHERE student_id = ? AND status = 'mastered' AND mastered_at IS NOT NULL AND mastered_at >= ?`)
     .all(id, from)
     .filter((r) => inWeek.has(ljDay(r.mastered_at)))
     .map((r) => topicName(r.topic_id));
@@ -177,6 +177,8 @@ export function childWeek(db, student, { now = Date.now() } = {}) {
     prev_tasks: taskRows.filter((r) => inPrev.has(r.day)).length,
     solved: sum(weekTasks, (r) => r.solved),
     accuracy: judged ? Math.round((firstOk / judged) * 100) : null,
+    first_ok: firstOk, // pri manj kot 5 ocenjenih nalogah poročilo kaže »x od y« namesto odstotka
+    judged,
     xp,
     questions,
     subjects: [...subjects.values()],
@@ -199,7 +201,7 @@ export function headline(w) {
   const parts = [`${plural(w.active_days, DNI)} vaje`];
   if (w.tasks) parts.push(plural(w.tasks, NALOG));
   if (w.mastered.length) parts.push(plural(w.mastered.length, ["nova osvojena tema", "novi osvojeni temi", "nove osvojene teme", "novih osvojenih tem"]));
-  const mood = w.active_days >= 4 || w.mastered.length ? "Odličen teden" : w.active_days >= 2 ? "Dober teden" : w.prev_active_days > 1 ? "Mirnejši teden" : "Dober začetek";
+  const mood = w.active_days >= 4 || w.mastered.length ? "Odličen teden" : w.tasks >= 3 && w.accuracy === 0 ? "Zahteven teden" : w.active_days >= 2 ? "Dober teden" : w.prev_active_days > 1 ? "Mirnejši teden" : "Dober začetek";
   return `${mood}: ${parts.join(", ")}.`;
 }
 
@@ -259,13 +261,16 @@ function trend(now, prev) {
   return `<div style="font-size:12px;color:${MUTED}">enako kot teden prej</div>`;
 }
 
+// »Prav v prvem poskusu«: odstotek šele od 5 ocenjenih nalog naprej, prej »x od y« (»0 %« pri dveh nalogah bi prestrašil).
+const firstTry = (w) => (w.accuracy === null ? "–" : (w.judged ?? 5) < 5 ? `${w.first_ok} od ${w.judged}` : `${w.accuracy} %`);
+
 function tiles(w) {
   const tile = (value, label, extra = "") =>
     `<td style="width:33%;padding:4px;vertical-align:top"><div style="background:#f4f6fb;border-radius:10px;padding:12px 8px;text-align:center">
 <div style="font-size:24px;font-weight:bold;color:#1d2433">${value}</div><div style="font-size:12px;color:${MUTED};margin-top:2px">${label}</div>${extra}</div></td>`;
   return `<table role="presentation" style="width:100%;border-collapse:collapse;margin:12px 0 0"><tr>
 ${tile(`<b>${w.tasks}</b>`, `${plural(w.tasks, NALOG).replace(/^\d+ /, "")}, ${plural(w.solved, RESENA)}`, trend(w.tasks, w.prev_tasks))}
-${tile(w.accuracy === null ? "–" : `${w.accuracy} %`, "prav v prvem poskusu")}
+${tile(firstTry(w), "prav v prvem poskusu")}
 ${tile(`${w.questions}`, plural(w.questions, ["vprašanje", "vprašanji", "vprašanja", "vprašanj"]).replace(/^\d+ /, "") + " inštruktorju")}
 </tr></table>`;
 }
@@ -351,7 +356,7 @@ function childText({ child, week: w, self, ai }) {
   const lines = [`${child.name}: ${headline(w)}`];
   if (w.active_days)
     lines.push(
-      `Naloge: ${w.tasks}, od tega ${plural(w.solved, RESENA)} (prejšnji teden ${w.prev_tasks}); prav v prvem poskusu: ${w.accuracy === null ? "–" : `${w.accuracy} %`}; vprašanja inštruktorju: ${w.questions}.`,
+      `Naloge: ${w.tasks} (prejšnji teden ${w.prev_tasks}), od tega ${plural(w.solved, RESENA)}; prav v prvem poskusu: ${firstTry(w)}; vprašanja inštruktorju: ${w.questions}.`,
     );
   for (const s of w.subjects) lines.push(`${s.name}: ${[...s.practice.map((t) => t.name), ...s.chat].join(", ")}`);
   if (w.mastered.length) lines.push(`Osvojeno: ${w.mastered.join(", ")}`);

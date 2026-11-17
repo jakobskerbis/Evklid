@@ -66,7 +66,7 @@ test("en teden, ena osnova: stolpci = ploščica, tema »4 naloge, 1 rešena« o
   assert.match(t, /naloge na dan/);
   assert.doesNotMatch(t, /rešene naloge/);
   assert.match(r.subject, /^Zala ta teden: 2 dneva vaje, 12 nalog$/);
-  assert.match(r.text, /Naloge: 12, od tega 9 rešenih \(prejšnji teden 0\); prav v prvem poskusu: 58 %; vprašanja inštruktorju: 1\./);
+  assert.match(r.text, /Naloge: 12 \(prejšnji teden 0\), od tega 9 rešenih; prav v prvem poskusu: 58 %; vprašanja inštruktorju: 1\./);
 });
 
 test("dnevi po slovenskem času: 0.30 je že naslednji dan, tudi poleti", () => {
@@ -77,15 +77,23 @@ test("dnevi po slovenskem času: 0.30 je že naslednji dan, tudi poleti", () => 
   task.run(X, 1, 1, 1, "2026-11-08 22:30:00"); // nedelja 8. 11. ob 23.30: prejšnji teden
   ask("2026-11-14 23:15:00"); // nedelja 15. 11. ob 0.15
   store.db.prepare("INSERT INTO topic_state (student_id, topic_id, status, mastered_at) VALUES (?, ?, 'mastered', ?)").run(s.id, Y, "2026-11-08 23:10:00");
-  const w = report(now).children[0];
+  const r = report(now);
+  const w = r.children[0];
   assert.deepEqual(w.strip.map((d) => d.label), ["po", "to", "sr", "če", "pe", "so", "ne"]);
   assert.deepEqual(w.strip.map((d) => d.tasks), [1, 0, 1, 0, 0, 0, 0]);
   assert.equal(w.tasks, 2);
   assert.equal(w.prev_tasks, 1);
   assert.equal(w.questions, 1);
-  assert.equal(w.strip[6].active, false); // vprašanje ni naloga in ne dejavnost iz tabel nalog/XP
+  // Dan samo z vprašanjem inštruktorju je dejaven dan (✓ »dan z drugo vajo«), stolpec nalog pa ostane 0.
+  assert.equal(w.strip[6].active, true);
+  assert.match(text(r.html), /dan z drugo vajo/);
   assert.deepEqual(w.mastered, ["Deljivost"]);
-  assert.equal(w.active_days, 2);
+  assert.equal(w.active_days, 3);
+  // Manj kot 5 ocenjenih nalog: »2 od 2« namesto »100 %«.
+  assert.equal(w.first_ok, 2);
+  assert.equal(w.judged, 2);
+  assert.match(text(r.html), /2 od 2 prav v prvem poskusu/);
+  assert.match(r.text, /prav v prvem poskusu: 2 od 2;/);
   assert.equal(w.prev_active_days, 1);
 
   // Poleti (CEST): sreda 8. 7. ob 0.30 po slovensko.
@@ -101,4 +109,22 @@ test("dnevi po slovenskem času: 0.30 je že naslednji dan, tudi poleti", () => 
   assert.equal(ljDay("2026-07-07 21:59:00"), "2026-07-07");
   assert.equal(ljDay("2026-11-10T23:30:00.000Z"), "2026-11-11");
   assert.equal(ljDay("ni datum"), "");
+  assert.equal(ljDay(new Date("2026-11-10T23:30:00Z")), "2026-11-11");
+});
+
+test("teden samo z vprašanji inštruktorju ni tih; teden brez pravilnih nalog je »Zahteven teden«", () => {
+  const now = Date.parse("2026-11-15T18:00:00Z");
+  const a = fixture();
+  a.ask("2026-11-12 16:00:00");
+  const ra = a.report(now);
+  assert.equal(ra.children[0].active_days, 1);
+  assert.equal(ra.children[0].tasks, 0);
+  assert.equal(ra.quiet, false);
+
+  const b = fixture();
+  for (let i = 0; i < 3; i++) b.task.run(Y, 2, 0, 0, "2026-11-12 15:00:00");
+  b.task.run(Y, 2, 0, 0, "2026-11-13 15:00:00");
+  const wb = b.report(now).children[0];
+  assert.equal(wb.accuracy, 0);
+  assert.match(weekly.headline(wb), /^Zahteven teden: 2 dneva vaje, 4 naloge\.$/);
 });
