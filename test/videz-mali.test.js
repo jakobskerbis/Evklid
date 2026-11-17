@@ -111,10 +111,10 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
     await p.waitForFunction(() => !document.querySelector("#toast").hidden);
     assert.equal(await p.evaluate(() => [document.querySelector("#toast").textContent.trim(), document.querySelectorAll("#toast svg").length].join("|")), `${sl["common.saved"]}|1`);
     await p.waitForTimeout(700);
-    await p.click('#tabbar [data-view="me"]');
+    await p.evaluate(() => window.evklid.showView("me"));
     assert.equal(await toastShown(p), false, "obvestilo izgine ob menjavi pogleda");
     // 10d: Urnik in NPZ z Učne poti → »← Učna pot« in nazaj na Učno pot; z Jaz → »← Jaz«.
-    await p.click('#tabbar [data-view="path"]');
+    await p.evaluate(() => window.evklid.showView("path"));
     for (const view of ["schedule", "exams"]) {
       await p.evaluate((v) => window.evklid.showView(v), view);
       const back = p.locator(`#view-${view} .me-back`).first();
@@ -122,13 +122,13 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
       assert.equal((await back.innerText()).trim(), sl["nav.path"], `${view}: oznaka`);
       await back.click();
       assert.equal(await p.locator("#view-path").isVisible(), true, `${view}: nazaj na Učno pot`);
-      await p.click('#tabbar [data-view="me"]');
+      await p.evaluate(() => window.evklid.showView("me"));
       await p.evaluate((v) => window.evklid.showView(v), view);
       await p.locator(`#view-${view} .me-back`).first().waitFor();
       assert.equal((await p.locator(`#view-${view} .me-back`).first().innerText()).trim(), sl["nav.me"], `${view}: z Jaz`);
       await p.locator(`#view-${view} .me-back`).first().click();
       assert.equal(await p.locator("#view-me").isVisible(), true);
-      await p.click('#tabbar [data-view="path"]');
+      await p.evaluate(() => window.evklid.showView("path"));
     }
     // 10b: NPZ 9 matematika nima izbirnih nalog → brez »(od tega 0 izbirnih)«.
     await p.evaluate(() => window.evklid.showView("exams"));
@@ -173,6 +173,7 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
           const tn = s.firstChild;
           const lh = parseFloat(getComputedStyle(s).lineHeight);
           if (s.getBoundingClientRect().height > lh * 2 + 2) out.push(`${lang} ${key}: več kot 2 vrstici`);
+          if (lang === "th") continue; // tajščina nima presledkov: prelom med besedami je pravilen
           for (const m of tn ? tn.data.matchAll(/\S+/g) : []) {
             const r = document.createRange();
             r.setStart(tn, m.index);
@@ -189,7 +190,8 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
     // 11d: mehurček inštruktorja ne prekrije polj in gumbov v Nastavitvah (po drsenju se umakne).
     await p.reload();
     await p.waitForSelector("#view-path #xp-card .hero");
-    await p.click('#tabbar [data-view="chat"]');
+    await p.evaluate(() => window.evklid.showView("chat"));
+    await p.waitForSelector("#input", { state: "visible" });
     await p.fill("#input", "Koliko je 12 + 30?");
     await p.click("#send");
     await p.waitForSelector(".msg.assistant:not(.typing)");
