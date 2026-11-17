@@ -201,3 +201,22 @@ test("vabilo → pilot: potrditev s ponastavitvijo gesla tudi porabi kodo", { sk
     assert.equal(isPilotParent(parent("reset@primer.si")), true);
   });
 });
+
+test("vabilo → pilot: »Računa nisem ustvaril jaz« kode ne porabi (vnesel jo je tujec)", { skip: inPilot ? false : "pilot 2026 je končan" }, async () => {
+  await withServer(ENV, async ({ store, client, register, parent, actions }) => {
+    const tujec = client();
+    await register(tujec, "lastnik@primer.si", CODE);
+    const token = "v".repeat(40);
+    const { sha256 } = await import("../server/accounts/auth.js");
+    store.db.prepare("UPDATE parents SET verify_token_hash = ? WHERE email = ?").run(sha256(token), "lastnik@primer.si");
+    const r = await client()("/api/auth/verify", { method: "POST", body: { token, not_mine: true } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    const p = parent("lastnik@primer.si");
+    assert.ok(p.email_verified_at);
+    assert.equal(p.pilot_invite_hash, null);
+    assert.equal(p.pilot_invite_at, null);
+    assert.equal(isPilotParent(p), false);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM pilot_vabila").get().n, 0, "koda ostane neporabljena");
+    assert.deepEqual(actions("lastnik@primer.si"), ["pilot_invite_pending:1", "pilot_invite_rejected:0"]);
+  });
+});

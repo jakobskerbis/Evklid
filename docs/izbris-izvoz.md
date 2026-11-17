@@ -23,6 +23,7 @@ Ostane brez povezave na račun (stolpci računa so `NULL`):
 | `audit_log` | dnevnik dostopov, 1 leto |
 | `answer_cache` | splošen odgovor inštruktorja brez imena učenca, deljen med učenci (uporabi se in hrani 30 dni) |
 | `pilot_mnenja_prenehalo` | naključna oznaka mnenja, da skrbnik umakne objavo |
+| `pilot_vabila` | porabljena koda vabila v pilot (samo zgoščena koda in čas, `parent_id` = `NULL`): izbris in nova registracija ne dasta novega članstva |
 | `schools`, `class_assignments` | šola in naloga v razredu drugega učitelja ostaneta, avtor postane `NULL` |
 | `ai_school_use` | poraba AI, ki je šla pod mejo šole, ostane šoli (`student_id` = `NULL`) |
 | `school_licences`, `school_orders` | licenca in naročilo šole ostaneta s šolo (podatki šole, ne računa) |

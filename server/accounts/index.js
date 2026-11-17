@@ -1187,7 +1187,7 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   // Potrditev e-naslova: gost zapusti kvoto omrežja, skrbnik prevzame učence iz časa pred računi.
-  function confirmEmail(parentId) {
+  function confirmEmail(parentId, req = null) {
     // Nekdanji gost: s potrditvijo zapusti kvoto omrežja in dobi 7-dnevni preizkus. Poraba gosta ostane šteta za
     // omrežje (guest_spent), zapisana, dokler je račun še na omrežju (pred potrditvijo; pregled #462).
     const before = getParent(parentId);
@@ -1258,7 +1258,7 @@ export function mountAccounts(app, store, opts = {}) {
     // Samo seja tega računa potrdi takoj; brez nje (tudi račun brez gesla) GET ne potrdi ničesar, ker povezavo odprejo
     // tudi pregledovalniki pošte (pregled #492/#500 A P3-1).
     if (req.parent?.id === p.id) {
-      confirmEmail(p.id);
+      confirmEmail(p.id, req);
       return res.redirect("/?verified=1");
     }
     res.redirect(`/?verify=${encodeURIComponent(token)}`);
@@ -1279,11 +1279,16 @@ export function mountAccounts(app, store, opts = {}) {
     }
     // Seja istega računa (povezava odprta v brskalniku, kjer je lastnik prijavljen): potrdi brez gesla.
     if (req.parent?.id === p.id && req.body?.not_mine !== true) {
-      confirmEmail(p.id);
+      confirmEmail(p.id, req);
       return res.json({ ok: true });
     }
     if (req.body?.not_mine === true) {
-      confirmEmail(p.id);
+      // Kodo vabila je vnesel tisti, ki je račun ustvaril, ne lastnik naslova: ne porabi se (#751).
+      if (p.pilot_invite_hash) {
+        update(p.id, { pilot_invite_hash: null });
+        audit(db, { req, parentId: p.id, action: "pilot_invite_rejected", ok: false });
+      }
+      confirmEmail(p.id, req);
       const reset = randomToken();
       // Tujčev Apple ID (če ga je povezal) odpade z njegovim geslom (pregled #492 A P3-7).
       update(p.id, { password_hash: unusablePasswordHash(), reset_token_hash: sha256(reset), reset_expires_at: isoIn(1 / 24) });
@@ -1307,7 +1312,7 @@ export function mountAccounts(app, store, opts = {}) {
       audit(db, { req, parentId: p.id, action: "verify_password_fail", ok: false });
       return res.status(401).json({ error: "Napačno geslo." });
     }
-    confirmEmail(p.id);
+    confirmEmail(p.id, req);
     audit(db, { req, parentId: p.id, action: "verify_password" });
     // Geslo in dostop do e-pošte: kot prijava (Safari po registraciji v aplikaciji je potem tudi prijavljen).
     if (!req.parent) {
