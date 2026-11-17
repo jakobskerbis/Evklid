@@ -1448,6 +1448,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
   let userEl = null;
   let bubble = null;
   let pacer = null;
+  let shownText = ""; // že izpisano besedilo odgovora (napis med čakanjem ni del odgovora)
   // Varnostni odgovor (public/nujno.js) največ enkrat na sporočilo: lokalni zaznavalnik takoj ob pošiljanju,
   // nato strežnik (AI pregled čez mejo). meja: učenec ni dobil odgovora → opomba »ne šteje se med vprašanja«.
   let nujnoEl = null;
@@ -1463,6 +1464,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     if (n?.vrsta) nujnoEl = addNujno({ ...n, izs: izsiljevanje(text) }, opts);
   };
   state.sending = true;
+  state.sendSeq = (state.sendSeq || 0) + 1; // »Razloži podrobneje« v čakanju ve, ali je vmes šlo novo sporočilo
   $("#send").disabled = true;
   state.pacer?.skip();
 
@@ -1486,6 +1488,11 @@ async function send(text, { deep = false, image: attached = null } = {}) {
 
     bubble = addMessage("assistant", "");
     bubble.classList.add("typing");
+    // Napis med čakanjem (j 16. 11.): takoj, ob piki »piše«; #messages je aria-live, zato ga bralnik prebere.
+    // Pravo fazo pove strežnik (dogodek phase: »check«, ko koda ali pregled preverja račun); nikoli izmišljene.
+    let waitNote = t(deep ? "chat.waitDeep" : "chat.wait");
+    let checkTimer = null;
+    const noteHtml = () => (waitNote ? `<p class="wait-note">${escapeHtml(waitNote)}</p>` : "");
     // Takoj, brez čakanja na strežnik (objava nove različice, počasen AI pregled): pregled A V4.
     // Blažje okno »pogovor« (posredna stiska) počaka na strežnik, ki lahko pošlje močnejšo vrsto.
     const takoj = lokalnoNujno(text);
@@ -1495,7 +1502,11 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     const izrisBlokov = createIzrisBlokov(chatRich);
     const paint = enIzrisNaSlicico((shown, koncno) => {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-      bubble.innerHTML = (koncno ? chatRich(shown) : izrisBlokov(streamSafe(shown))) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
+      shownText = shown || "";
+      const html = koncno ? chatRich(shown) : izrisBlokov(streamSafe(shown));
+      // Napis med čakanjem: dokler odgovora ni, in med preverjanjem računa pod že izpisanim besedilom.
+      // Zadnji odstavek nosi piko »piše« (style.css).
+      bubble.innerHTML = (html ? html + (bubble.classList.contains("checking") ? noteHtml() : "") : noteHtml()) || "<p></p>";
       prilagodiZdaj(); // dolgo enačbo zloži že zdaj, da pomik na dno šteje njeno pravo višino
       if (atBottom) box.scrollTop = box.scrollHeight;
       // Varnostno okno ostane v celoti vidno: izpis odgovora ga ne potisne nad zgornji rob (pregled B2).
@@ -1542,7 +1553,33 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         allowanceData = d;
         if (d.stage === "out") state.aiOut = true;
       },
-      delta: (d) => pacer.push(d.text),
+      delta: (d) => {
+        if (!shownText && !bubble.classList.contains("checking")) waitNote = ""; // odgovor se začne: napis zamenja besedilo
+        pacer.push(d.text);
+      },
+      // Strežnik preverja odgovor (server/app.js): napis »Preverjam odgovor …«; pod izpisanim besedilom šele čez 0,6 s,
+      // da hitro preverjanje ne utripne.
+      phase: (d) => {
+        // Preverjanje je končano (»answer«): napis izgine pod besedilom; brez besedila spet »Pripravljam …«.
+        if (d?.phase === "answer") {
+          clearTimeout(checkTimer);
+          checkTimer = null;
+          if (!bubble.classList.contains("checking")) return;
+          bubble.classList.remove("checking");
+          waitNote = shownText ? "" : t(deep ? "chat.waitDeep" : "chat.wait");
+          return paint(shownText);
+        }
+        if (d?.phase !== "check" || bubble.classList.contains("checking") || checkTimer) return;
+        const show = () => {
+          checkTimer = null;
+          if (!bubble.classList.contains("typing")) return;
+          waitNote = t("chat.waitCheck");
+          bubble.classList.add("checking");
+          paint(shownText);
+        };
+        if (shownText) checkTimer = setTimeout(show, 600);
+        else show();
+      },
       // Pod mejo: varnostni odgovor nad odgovorom inštruktorja (ga ne ustavi).
       nujno: (d) => showNujno(d, { before: bubble }),
       cards: (d) => (cardsData = d),
@@ -1560,6 +1597,10 @@ async function send(text, { deep = false, image: attached = null } = {}) {
       mastered: (d) => toast(d.unlocked?.length ? `${t("chat.mastered", { topic: d.topic })} ${unlockedText(d.unlocked)}` : t("chat.mastered", { topic: d.topic }), "trophy"),
       done: (d) => {
         doneData = d;
+        clearTimeout(checkTimer);
+        checkTimer = null;
+        bubble.classList.remove("checking");
+        waitNote = "";
         // Strežnik ni poslal okna, lokalni zaznavalnik pa je našel nujnost: lokalno okno.
         if (!nujnoEl && takoj) showNujno(takoj, { before: bubble });
         // Ves delež podrobnih razlag porabljen (strežnik, ai_out): gumba »Razloži podrobneje« ne kažemo več.
@@ -1574,6 +1615,9 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         if (d.title) $("#chat-title").textContent = d.title;
       },
       error: (d) => {
+        clearTimeout(checkTimer);
+        bubble.classList.remove("checking");
+        waitNote = "";
         showNujno(d.nujno || lokalnoNujno(text), { before: bubble, meja: true });
         bubble.classList.add("error");
         pacer.finish(d.error);
@@ -1581,6 +1625,8 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         if (state.conversationId === sentTo && !deep) restoreDraft(text, image); // vrni besedilo za ponovni poskus
       },
     });
+    clearTimeout(checkTimer);
+    waitNote = ""; // tok se je končal: napis med čakanjem ne ostane v mehurčku
     pacer.finish();
     pacer.done.then(() => {
       bubble.classList.remove("typing");
@@ -1620,8 +1666,10 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     }
     if (bubble) {
       bubble.classList.remove("typing");
+      bubble.classList.remove("checking");
       bubble.removeAttribute("title");
-      if (!bubble.textContent.trim()) bubble.remove();
+      bubble.querySelector(".wait-note")?.remove(); // napis med čakanjem ni del odgovora
+      if (!shownText.trim() || !bubble.textContent.trim()) bubble.remove();
     }
     // Brez povezave ali prekinjen odgovor: lokalni zaznavalnik (strošek 0).
     if (text) showNujno(lokalnoNujno(text), { meja: true });
@@ -2730,10 +2778,29 @@ function addDeepButton(el, wasDeep) {
   b.className = "deep-btn";
   b.type = "button";
   b.innerHTML = `${icon("search")} ${t("chat.deeper")}`;
+  // Takojšen odziv (j 16. 11.): gumb je pritisnjen in onemogočen; če prejšnji odgovor še ni povsem zaključen
+  // (state.sending), počaka nanj, namesto da bi se dotik izgubil. Nato napis »Pripravljam podrobnejšo razlago …«.
   b.addEventListener("click", () => {
-    if (state.sending || !$("#chat-off").hidden) return;
-    b.remove();
-    send(t("chat.deeperMsg"), { deep: true });
+    if (b.disabled || !$("#chat-off").hidden) return;
+    b.disabled = true;
+    b.classList.add("pressed");
+    b.setAttribute("aria-busy", "true");
+    const seq = state.sendSeq;
+    const release = () => {
+      b.disabled = false;
+      b.classList.remove("pressed");
+      b.removeAttribute("aria-busy");
+    };
+    const go = (tries = 0) => {
+      if (!b.isConnected) return;
+      // Vmes je učenec poslal novo sporočilo: podrobnejša razlaga prejšnjega odgovora ne gre več.
+      if (state.sendSeq !== seq) return b.remove();
+      if (state.sending && tries < 150) return setTimeout(() => go(tries + 1), 100);
+      if (state.sending) return release(); // po 15 s tiho spet omogočen
+      b.remove();
+      send(t("chat.deeperMsg"), { deep: true });
+    };
+    go();
   });
   el.appendChild(b);
 }
