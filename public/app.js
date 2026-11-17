@@ -846,8 +846,10 @@ document.addEventListener("click", (e) => {
 document.querySelectorAll("#view-me [data-go], #settings-account [data-go]").forEach((b) =>
   b.addEventListener("click", () => (b.dataset.go === "account" ? $("#account-tab").click() : showView(b.dataset.go))),
 );
-// Klik na kartico s profilom: Nastavitve, na mestu šole in letnika (pod njimi je povezava na Račun).
-$("#me-head")?.addEventListener("click", () => {
+// Klik na kartico s profilom (in »Druga šola ali stopnja …« v glavi Inštruktorja): Nastavitve, na mestu šole in
+// letnika (pod njimi je povezava na Račun). Tam veljajo vsa pravila izbire (stopnja, program, šolski sistem).
+$("#me-head")?.addEventListener("click", () => openSchoolSettings());
+function openSchoolSettings() {
   showView("settings");
   const el = $("#settings-form .level-field") || $("#settings-form");
   requestAnimationFrame(() => {
@@ -857,7 +859,8 @@ $("#me-head")?.addEventListener("click", () => {
     void card?.offsetWidth;
     card?.classList.add("flash-target");
   });
-});
+}
+
 
 // ---------- učenci ----------
 
@@ -1191,10 +1194,9 @@ function renderState(convState) {
     SUBJECT_NAMES[subject] && pick("subject", t("set.subject"), opt(subject, SUBJECT_NAMES[subject], true)),
     MODE_NAMES[mode] && pick("mode", t("set.mode"), Object.entries(MODE_NAMES).map(([k, v]) => opt(k, v, k === mode)).join("")),
     program && `<span class="chip">${escapeHtml(program)}</span>`,
+    // Zadnja izbira »Druga šola ali stopnja …« odpre Jaz → Šola in letnik (prehod OŠ ↔ SŠ ↔ fakulteta, drug sistem; #792).
     levelLabel(s.curriculum_level) &&
-      (levels.length > 1
-        ? pick("level", t("set.school"), levels.map((x, i) => opt(i, x.label, x.current)).join(""))
-        : `<span class="chip">${escapeHtml(levelLabel(s.curriculum_level))}</span>`),
+      pick("level", t("set.school"), (levels.length ? levels.map((x, i) => opt(i, x.label, x.current)).join("") : opt("", levelLabel(s.curriculum_level), true)) + opt("other", t("chat.levelOther"), false)),
     ravni.length > 1 && pick("raven", t("tbk.level"), ravni.map((x, i) => opt(i, x.label, x.current)).join("")),
   ]
     .filter(Boolean)
@@ -1222,6 +1224,8 @@ async function wireStatePicks(head, subject, levels, ravni = []) {
     save({ solving_mode: e.target.value }, t("set.mode"), MODE_NAMES[e.target.value]).catch(() => renderState(null)),
   );
   head.querySelector('[data-pick="level"]')?.addEventListener("change", (e) => {
+    if (e.target.value === "other") return renderState(null), openSchoolSettings(); // izbira v glavi ostane sedanja
+    if (!levels[Number(e.target.value)]) return;
     const next = { ...levels[Number(e.target.value)].settings };
     // Predmet, ki ga novi razred nima (npr. fizika v 7. razredu), zamenja prvi predmet razreda.
     if (!jeFaks(next)) {
@@ -1886,7 +1890,10 @@ input.addEventListener("vnos-izris-visina", () => autoGrow());
     if (!full || !ctx || room <= 0) return;
     ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
     let text = full;
-    if (ctx.measureText(full).width > room) {
+    // Ne gre cel: kratek namig (»Napiši nalogo«, #792), šele nato rez za zadnjo celo besedo.
+    const short = t("chat.placeholderShort");
+    if (ctx.measureText(full).width > room && short && ctx.measureText(short).width <= room) text = short;
+    else if (ctx.measureText(full).width > room) {
       const words = full.replace(/\s*…$/, "").split(/\s+/);
       while (words.length > 1 && ctx.measureText(`${words.join(" ")} …`).width > room) words.pop();
       text = `${words.join(" ")} …`;
@@ -2373,6 +2380,7 @@ $("#settings-form").addEventListener("submit", async (e) => {
   fillDeleteCard();
   refreshProfileButton();
   renderState(null);
+  if (ideasKey(before) !== ideasKey(updated.settings)) refreshIdeas(); // prazen klepet: predlogi po novem razredu, ravni, predmetu
   if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
     state.pathKey = null; // Ponavljanje in Kartice (state.pathKey) za novi predmet, ne za prejšnjega
     refreshModes();
@@ -2674,10 +2682,9 @@ function addMsgFoot(el, { id, code, reported }) {
   if (el.classList.contains("error") || el.querySelector(".msg-foot")) return;
   const foot = document.createElement("div");
   foot.className = "msg-foot";
-  const tag = document.createElement("span");
-  tag.className = "msg-code";
-  tag.textContent = code || "";
-  tag.title = t("rep.code");
+  // Koda sporočila (#00YA, server/reports.js: z njo skrbnik najde sporočilo s posnetka zaslona) je samo v obrazcu
+  // prijave, z napisom »Koda sporočila«; pod vsakim odgovorom je bila videti kot notranja številka (#792).
+  if (code) foot.dataset.code = code;
   const done = () => {
     foot.querySelector(".msg-report")?.remove();
     const s = document.createElement("span");
@@ -2686,7 +2693,6 @@ function addMsgFoot(el, { id, code, reported }) {
     s.lastChild.textContent = t("rep.done");
     foot.append(s);
   };
-  foot.append(tag);
   if (reported) done();
   else {
     const b = document.createElement("button");
@@ -2709,8 +2715,15 @@ function openReport(el, foot, btn, id, done) {
   box.setAttribute("role", "group");
   box.innerHTML = `<p></p><div class="rep-reasons"></div><textarea maxlength="500" rows="2"></textarea>
     <p class="rep-err" role="alert" hidden></p>
-    <div class="rep-actions"><button type="button" class="primary small rep-send"></button><button type="button" class="ghost rep-cancel"></button></div>`;
+    <div class="rep-actions"><button type="button" class="primary small rep-send"></button><button type="button" class="ghost rep-cancel"></button></div>
+    <p class="rep-code muted" hidden><span></span> <span class="msg-code"></span></p>`;
   box.querySelector("p").textContent = t("rep.ask");
+  if (foot.dataset.code) {
+    const c = box.querySelector(".rep-code");
+    c.hidden = false;
+    c.firstElementChild.textContent = `${t("rep.code")}:`;
+    c.lastElementChild.textContent = foot.dataset.code;
+  }
   box.setAttribute("aria-label", t("rep.ask"));
   const area = box.querySelector("textarea");
   area.placeholder = t("rep.notePh");
@@ -5023,7 +5036,9 @@ async function plotFromText(text) {
 async function addGraphButton(bubble, text) {
   if (!mayPlot(text) || bubble.querySelector(".graph-btn")) return;
   const exprs = await plotFromText(text);
-  if (!exprs.length) return;
+  const { worthGraph } = await import("./graph/math.js");
+  // Samo, kjer ima graf smisel (#792): zveza z y ali funkcija f(x) = …, ne rešitev »x = 4« pod računom x + 1 = 5.
+  if (!exprs.some(worthGraph) || !bubble.isConnected || bubble.querySelector(".graph-btn")) return;
   const b = document.createElement("button");
   b.type = "button";
   b.className = "secondary small graph-btn";
@@ -5032,7 +5047,11 @@ async function addGraphButton(bubble, text) {
     e.stopPropagation();
     openGraphOverlay(exprs, t("nav.chat"));
   });
+  // Gumb pride po izpisu (uvoz modula): če je bil učenec na dnu, ga pokažemo nad poljem za pisanje (360 px).
+  const box = bubble.closest("#messages");
+  const atBottom = box && box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   bubble.append(b);
+  if (atBottom && !bubble.nextElementSibling) box.scrollTop = box.scrollHeight;
 }
 
 // Za samodejne preizkuse v brskalniku.
