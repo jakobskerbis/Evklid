@@ -123,6 +123,14 @@ test("brskalnik: brez »ni vprašanj« ob besedilu iz klepeta, po iskanju da; pr
     await sym.click();
     await p.waitForSelector("#tipkovnica:not([hidden])");
     assert.equal(await sym.getAttribute("aria-expanded"), "true");
+    // Okno se dvigne nad tipkovnico: polje za rezultat ni pod tipkami.
+    await p.waitForTimeout(400);
+    const over = await p.evaluate(() => {
+      const f = document.querySelector('input[name="rezultat"]').getBoundingClientRect();
+      const k = document.querySelector("#tipkovnica").getBoundingClientRect();
+      return { fieldBottom: Math.round(f.bottom), kbTop: Math.round(k.top) };
+    });
+    assert.ok(over.fieldBottom <= over.kbTop, `polje pod tipkovnico: ${JSON.stringify(over)}`);
     await p.locator("#tipkovnica .tk-tab").first().click(); // plast številk (prva)
     const seven = p.locator("#tipkovnica .tk-k", { hasText: /^7$/ }).first();
     await seven.click();
