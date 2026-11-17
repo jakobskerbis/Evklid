@@ -941,6 +941,10 @@ body.boot-down-on > :not(#boot-down) { visibility: hidden; }
 #view-settings > :is(h1, .set-cols) { width: min(100%, calc(3 * 460px + 2 * 20px)); margin-inline: auto; }
 :is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
 #exams-content > :is(h1, .comp-pickers), #competition-content > :is(h1, .comp-pickers), #path-content > .legend { column-span: all; }
+/* Učna pot: sklopi po vrsticah (1, 2, 3 v prvi vrsti, nato 4, 5, 6), ne po stolpcih (j, 17. 11. 2026); stolpci kot zgoraj
+   (vsaj 400 px, kolikor jih gre), višina vrstice po najvišjem sklopu v njej. */
+#path-content { columns: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr)); gap: 0 20px; align-items: start; }
+#path-content > :is(.legend, h1, h2, h3, p) { grid-column: 1 / -1; }
 /* Jaz: profil, raven, števci in zbirke v vrsti; seznam povezav pod njimi v stolpcih. */
 /* Vrstice vedno po vsebini: pogled ima stalno višino (drsi), zato bi jih mreža sicer stisnila do min-height
    (gumb s profilom na 44 px, velika ikona J bi segla čez kartico Raven; telefon, j 4. 11. 2026). */

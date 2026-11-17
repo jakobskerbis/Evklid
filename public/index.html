@@ -75,15 +75,17 @@
       <button class="tab" data-view="scan"><i data-icon="scan-line"></i><span data-i18n="scan.nav">Skeniraj</span></button>
       <button class="tab" data-view="graph"><i data-icon="calculator"></i><span data-i18n="nav.graph">Kalkulator</span></button>
       <button class="tab" data-view="competition" id="competition-tab"><i data-icon="medal"></i><span data-i18n="nav.competition">Tekmovanja</span></button>
-      <button class="tab" data-view="exams" id="exams-tab" hidden><i data-icon="clipboard-check"></i><span data-i18n="nav.examsSi">NPZ in matura</span></button>
-      <button class="tab" data-view="games"><i data-icon="gamepad-2"></i><span data-i18n="nav.games">Igre</span></button>
-      <button class="tab" data-view="schedule"><i data-icon="calendar-days"></i><span data-i18n="sch.title">Urnik</span></button>
-      <button class="tab" data-view="corner"><i data-icon="newspaper"></i><span data-i18n="nav.corner">Kotiček</span></button>
-      <button class="tab" data-view="progress"><i data-icon="chart-column"></i><span data-i18n="nav.progress">Napredek</span></button>
-      <button class="tab" data-view="settings"><i data-icon="settings"></i><span data-i18n="nav.settings">Nastavitve</span></button>
-      <button class="tab" data-view="account" id="account-tab" hidden><i data-icon="user"></i><span data-i18n="nav.account">Račun</span></button>
-      <button class="tab" data-view="league"><i data-icon="trophy"></i><span data-i18n="nav.league">Lige</span></button>
-      <button class="tab" data-view="feedback" id="feedback-tab" hidden><i data-icon="message-square-heart"></i><span data-i18n="nav.feedback">Povratne informacije</span></button>
+      <!-- Računalnik (j, 17. 11. 2026): šest glavnih zavihkov z napisi in »Jaz«; ostali (data-pod-jaz) so pod »Jaz« (style.css). -->
+      <button class="tab" data-view="me" id="me-tab-top"><i data-icon="user"></i><span data-i18n="nav.me">Jaz</span></button>
+      <button class="tab" data-pod-jaz data-view="exams" id="exams-tab" hidden><i data-icon="clipboard-check"></i><span data-i18n="nav.examsSi">NPZ in matura</span></button>
+      <button class="tab" data-pod-jaz data-view="games"><i data-icon="gamepad-2"></i><span data-i18n="nav.games">Igre</span></button>
+      <button class="tab" data-pod-jaz data-view="schedule"><i data-icon="calendar-days"></i><span data-i18n="sch.title">Urnik</span></button>
+      <button class="tab" data-pod-jaz data-view="corner"><i data-icon="newspaper"></i><span data-i18n="nav.corner">Kotiček</span></button>
+      <button class="tab" data-pod-jaz data-view="progress"><i data-icon="chart-column"></i><span data-i18n="nav.progress">Napredek</span></button>
+      <button class="tab" data-pod-jaz data-view="settings"><i data-icon="settings"></i><span data-i18n="nav.settings">Nastavitve</span></button>
+      <button class="tab" data-pod-jaz data-view="account" id="account-tab" hidden><i data-icon="user"></i><span data-i18n="nav.account">Račun</span></button>
+      <button class="tab" data-pod-jaz data-view="league"><i data-icon="trophy"></i><span data-i18n="nav.league">Lige</span></button>
+      <button class="tab" data-pod-jaz data-view="feedback" id="feedback-tab" hidden><i data-icon="message-square-heart"></i><span data-i18n="nav.feedback">Povratne informacije</span></button>
     </nav>
     <div id="xp-badge" class="xp-badge">
       <button type="button" id="goal-chip" class="stat goal-chip" hidden><i data-icon="target"></i><b></b></button>
