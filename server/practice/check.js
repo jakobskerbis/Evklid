@@ -217,7 +217,8 @@ function unitIssue(ans, unit) {
 // Pravilno pretvorjen rezultat v isti osnovni enoti z drugo predpono SI je pravilen (5,42 N = 5420 mN = 0,00542 kN),
 // razen če besedilo naloge zahteva enoto (unitRequired). Le predpone SI na isti osnovi; ² in ³ s pravo potenco
 // (cm² = 10⁻⁴ m²); L = dm³, mL = cm³. Ne med različnimi količinami, ne °C ↔ K, ne min/h/s, ne sestavljene enote (m/s).
-const SI_PREFIX = { G: 1e9, M: 1e6, k: 1e3, h: 1e2, d: 1e-1, c: 1e-2, m: 1e-3, µ: 1e-6, μ: 1e-6, u: 1e-6, n: 1e-9, p: 1e-12 };
+// »da« (deka): dag = 10 g (250 dag = 2,5 kg).
+const SI_PREFIX = { G: 1e9, M: 1e6, k: 1e3, h: 1e2, da: 1e1, d: 1e-1, c: 1e-2, m: 1e-3, µ: 1e-6, μ: 1e-6, u: 1e-6, n: 1e-9, p: 1e-12 };
 const SI_BASES = ["mol", "Pa", "Hz", "eV", "Wh", "Bq", "Wb", "bar", "m", "g", "s", "V", "A", "W", "J", "N", "Ω", "C", "F", "T", "L", "l"];
 const POW = { "²": 2, "³": 3, 2: 2, 3: 3 };
 // Enota → { base, pow, scale } (vrednost v osnovni enoti = vrednost · scale) ali null.
@@ -230,6 +231,7 @@ export function siUnit(u) {
     let pre = null;
     if (body === b) pre = "";
     else if (body.length === b.length + 1 && body.endsWith(b) && SI_PREFIX[body[0]]) pre = body[0];
+    else if (body === `da${b}`) pre = "da";
     if (pre === null) continue;
     // Predpone na ² in ³ le pri metru (mm², cm³, dm³, km²); s ni s predpono v potenci.
     if (pow > 1 && b !== "m") return null;

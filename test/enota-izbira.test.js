@@ -430,3 +430,37 @@ test("pregled 786-2, E: spustni meni (dropdown.js) pove ime in izbrano enoto", {
     srv.close();
   }
 });
+
+// ---------- pregled PR 786, krog 3 (17. 11. 2026) ----------
+import { isStalePack, offlineTask } from "../public/enote-izbira.js";
+
+test("pregled 786-3, 1: dag (dekagram) se pretvori v kg in g", () => {
+  assert.equal(unitFactor("kg", "dag"), 100);
+  assert.equal(unitFactor("dag", "g"), 10);
+  const kg = { type: "number", value: 2.5, unit: "kg" };
+  assert.equal(conv(kg, "250 dag", "Kolikšna je masa?"), "correct");
+  assert.equal(conv(kg, "25 dag", "Kolikšna je masa?"), "wrong");
+  assert.equal(conv({ type: "number", value: 250, unit: "dag" }, "2,5 kg", "Kolikšna je masa?"), "correct");
+  assert.equal(conv({ type: "number", value: 40, unit: "dag" }, "400 g", "Kolikšna je masa?"), "correct");
+  // d ostane deci (dm, dL), »da« je le cela predpona.
+  assert.equal(unitFactor("m", "dm"), 10);
+  assert.equal(unitFactor("m", "dam"), 0.1);
+});
+
+test("pregled 786-3, 2: star paket brez povezave (unit brez hasUnit) je zastarel in še vedno pokaže enote", () => {
+  const answer = { type: "number", value: 1.23, decimals: 2, unit: "V" };
+  const old = { path: "FIZ-OS-9", created: new Date().toISOString(), tasks: { t: [{ seed: 1, level: 1, answer, task: { text: "Kolikšna je napetost?", answerType: "number", unit: "V", topicId: "FIZ-OS-9/x" } }] } };
+  const fresh = { ...old, tasks: { t: [{ ...old.tasks.t[0], task: publicTask({ text: "Kolikšna je napetost?", topicId: "FIZ-OS-9/x", level: 1, answer }) }] } };
+  assert.equal(isStalePack(old), true);
+  assert.equal(isStalePack(fresh), false);
+  assert.equal(isStalePack({ tasks: { t: [{ task: { answerType: "choice" }, answer: { type: "choice" } }] } }), false);
+  assert.equal(isStalePack(null), false);
+  // Stari paket brez povezave: hasUnit ?? !!unit, ponudba enot s pravo enoto, prava enota ne gre naprej.
+  const t = offlineTask(old.tasks.t[0].task, answer, checkAnswer);
+  assert.equal(t.hasUnit, true);
+  assert.equal(t.unit, undefined);
+  assert.ok(t.units.includes("V") && t.units.length > 1, t.units.join(" "));
+  // Nov paket ostane, kot ga je dal strežnik.
+  assert.deepEqual(offlineTask(fresh.tasks.t[0].task, answer, checkAnswer).units, fresh.tasks.t[0].task.units);
+  assert.equal(offlineTask({ answerType: "number" }, { type: "number", value: 4 }).hasUnit, false);
+});
