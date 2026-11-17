@@ -403,7 +403,9 @@ export function createApp(store, opts = {}) {
     ]);
     app.use(statics);
     // server/index.js po zagonu vnaprej stisne datoteke prvega odprtja strani (prvi obiski po posodobitvi hitri).
-    app.locals.warmStatic = () => statics.warm(startupFiles(publicDir, "index.html", ["games/index.js"]));
+    // Paketi nalog iger (games/subjects/*.js) se v brskalniku naložijo z import() po predmetih, zato jih naštejemo posebej.
+    const gamePacks = () => fs.readdirSync(path.join(publicDir, "games", "subjects")).filter((f) => f.endsWith(".js")).map((f) => `games/subjects/${f}`);
+    app.locals.warmStatic = () => statics.warm(startupFiles(publicDir, "index.html", ["games/index.js", ...gamePacks()]));
     app.use("/api", compressedJson());
   }
   app.use(express.static(publicDir));

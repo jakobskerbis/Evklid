@@ -40,7 +40,7 @@ import { initFeedback, showFeedback, renderFeedbackCard } from "./feedback.js";
 import { openAdminBug, openMsgReport } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
-// Igre (games/, ~2 MB kode s predmeti) se naložijo šele, ko jih učenec odpre, ali v mirnem trenutku po
+// Igre (games/, ~0,7 MB kode; naloge predmetov še ~0,1–0,4 MB na predmet, games/subjects/) se naložijo šele, ko jih učenec odpre, ali v mirnem trenutku po
 // zagonu: prvo odprtje Evklida mora prenesti in zagnati pol manj kode (j, 2026-11-04: »stran deluje počasi«).
 let gamesMod = null;
 let gamesCtx = null;
@@ -51,6 +51,7 @@ const loadGames = () =>
   (gamesP ||= (gamesTries++ ? import(`./games/index.js?r=${gamesTries}`) : import("./games/index.js")).then((m) => {
     gamesMod = m;
     if (gamesCtx) m.initGames(gamesCtx);
+    m.prepareSubjects?.(); // naloge le za učenčev predmet (ostali predmeti ob izbiri v Igrah)
     return m;
   }).catch((err) => {
     gamesP = null; // brez povezave ali napaka: naslednji poskus znova
@@ -59,6 +60,7 @@ const loadGames = () =>
 const initGames = (c) => {
   gamesCtx = c;
   gamesMod?.initGames(c);
+  gamesMod?.prepareSubjects?.();
 };
 const gamesNote = (key) =>
   document.querySelector("#games-content")?.replaceChildren(Object.assign(document.createElement("p"), { className: "muted", textContent: t(key) }));
@@ -68,7 +70,7 @@ const showGames = () => {
 };
 const gamesBack = () => gamesMod?.gamesBack() ?? false;
 const leaveGames = () => gamesMod?.leaveGames();
-import { gamesOn, stageOf, STAGES } from "./games/stage.js";
+import { gamesOn, stageOf, STAGES, backgroundLoadOk } from "./games/stage.js";
 import { rewardOffer } from "./games/reward.js";
 import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskInterests, interestsSummary } from "./corner.js";
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
@@ -3311,7 +3313,8 @@ function syncGamesTab() {
 }
 // Igre so se pravkar skrile (Nastavitve, inštruktor, menjava profila): odprto okno se zapre, glavni pogled gre na Jaz.
 function leaveHiddenGames() {
-  if (!state.student || gamesOn(state.student.settings)) return;
+  // Igre so vklopljene: naložene igre pripravijo naloge novega predmeta ali profila (tudi za delo brez povezave).
+  if (!state.student || gamesOn(state.student.settings)) return void gamesMod?.prepareSubjects?.();
   if (isFloating("games")) closeWindow("games");
   if (currentView === "games") showView("me");
 }
@@ -4785,7 +4788,7 @@ async function setCalcMode(mode) {
   return tool;
 }
 function prefetchNext() {
-  if (navigator.connection?.saveData || document.documentElement.classList.contains("lite") || !state.student) return;
+  if (!backgroundLoadOk(navigator.connection) || document.documentElement.classList.contains("lite") || !state.student) return;
   const steps = [
     () => calcTool(calcMode === "formulas" ? "sci" : calcMode),
     () => import("./graph/sci.js"),
@@ -5190,10 +5193,11 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   syncBugButton();
   initFeedback({ api, getStudent: () => state.student, showView, toast, currentLang }, cfg);
   initGames({ api, getStudent: () => state.student, setStudent: studentUpdated, toast: (m, ic = "check") => toast(m, ic), refreshXp, currentLang });
-  // Igre v ozadju, ko se je stran že odprla (zavihek Igre se nato odpre takoj); ne ob »Skrij igre« in ne ob varčevanju s podatki.
+  // Igre v ozadju, ko se je stran že odprla (zavihek Igre se nato odpre takoj); ne ob »Skrij igre« in ne ob varčevanju
+  // s podatki, počasni ali mobilni povezavi (backgroundLoadOk): takrat se igre naložijo ob dotiku zavihka Igre.
   const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1500));
   setTimeout(() => idle(() => {
-    if ((state.student && !gamesOn(state.student.settings)) || navigator.connection?.saveData) return;
+    if ((state.student && !gamesOn(state.student.settings)) || !backgroundLoadOk(navigator.connection)) return;
     loadGames().catch(() => {});
   }), 3000);
   // Takojšnje odpiranje (j 6. 11. 2026): ob nedejavnosti po odprtju se pripravijo verjetni naslednji zasloni.

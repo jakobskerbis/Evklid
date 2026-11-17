@@ -1,8 +1,10 @@
 // Naloge za igre: vsak pojem ima generator gen(stopnja 1–3) → { q, a, w: [napačni …] }.
 // Besedilo je kratko in čim bolj v simbolih, da se izriše na predmetu v igri (meteor, balon …).
 // Modul je čist (brez DOM), zato ga uporabljajo tudi testi na strežniku.
-// Drugi predmeti so v subjects/ (gen(stopnja, { lang, num })).
-import { PACKS } from "./subjects/index.js";
+// Drugi predmeti so v subjects/ (gen(stopnja, { lang, num })): seznam pojmov (subjects/meta.js) je takoj na voljo,
+// generatorji nalog predmeta pa se naložijo šele z loadSubjects (lahek zagon, j 17. 11. 2026).
+import { PACK_FILES, importPack } from "./subjects/index.js";
+import { META } from "./subjects/meta.js";
 
 let DEC = ",";
 let LANG = "sl";
@@ -1267,14 +1269,51 @@ def("cx_pow", "la", 12, "Potence števila i", "Powers of i", (t) => {
   return mk(`i${sup(n)}`, r, ["1", "i", `${M}1`, `${M}i`].filter((x) => x !== r), () => null);
 });
 
-// Pojmi drugih predmetov: generator dobi še jezik in oblikovalnik števil.
+// Pojmi drugih predmetov: generator dobi še jezik in oblikovalnik števil. Pojem je na seznamu takoj (meta.js), njegov
+// generator pa šele, ko je paket predmeta naložen (loadSubjects); prej gen vrže napako (makeQuestion: rezervna naloga).
 const CTX = { get lang() { return LANG; }, num: (x) => fmt(x) };
 const SUBJ_AREAS = [];
-for (const [key, pack] of Object.entries(PACKS)) {
-  const subject = pack.SUBJECT || key; // npr. mat15.js dopolni matematiko (SUBJECT = "MAT")
-  for (const a of pack.AREAS || []) SUBJ_AREAS.push([a[0], a[1], a[2], subject]);
-  for (const c of pack.CONCEPTS || []) C.push({ id: c.id, area: c.area, year: c.year, name: c.name, glyph: c.glyph, subject, gen: (tier) => c.gen(tier, CTX) });
+const BASE = new Set(C.map((c) => c.id)); // matematični pojmi iz te datoteke: vedno pripravljeni
+const GENS = new Map(); // id pojma → pojem iz naloženega paketa (z generatorjem)
+const KEYS_OF = {}; // predmet → paketi (npr. MAT → MAT15, MAT2)
+for (const key of Object.keys(PACK_FILES)) {
+  const { subject, areas, concepts } = META[key];
+  (KEYS_OF[subject] ||= []).push(key);
+  for (const a of areas) SUBJ_AREAS.push([a[0], a[1], a[2], subject]);
+  for (const [id, area, year, name, glyph] of concepts)
+    C.push({
+      id, area, year, name, glyph, subject,
+      gen: (tier) => {
+        const c = GENS.get(id);
+        if (!c) throw new Error(`games: pack for ${id} not loaded`);
+        return c.gen(tier, CTX);
+      },
+    });
 }
+const packs = new Map(); // paket → obljuba nalaganja (neuspela se pobriše, naslednji poskus z drugim naslovom)
+const ready = new Set(); // naloženi paketi
+const retries = {}; // neuspeli poskusi po paketih (nov poskus z drugim naslovom, subjects/index.js)
+function loadPack(key) {
+  if (!packs.has(key))
+    packs.set(key, importPack(key, retries[key] || 0).then(
+      (m) => {
+        for (const c of m.CONCEPTS || []) GENS.set(c.id, c);
+        ready.add(key);
+      },
+      (err) => {
+        packs.delete(key);
+        retries[key] = (retries[key] || 0) + 1;
+        throw err;
+      },
+    ));
+  return packs.get(key);
+}
+const keysFor = (subjects) => [...new Set(subjects)].flatMap((s) => KEYS_OF[s] || []);
+// Naloži generatorje nalog za te predmete (npr. ["MAT", "FIZ"]); neznani predmeti ne naložijo ničesar.
+export const loadSubjects = (subjects) => Promise.all(keysFor(subjects).map(loadPack)).then(() => undefined);
+export const subjectsReady = (subjects) => keysFor(subjects).every((k) => ready.has(k));
+export const conceptReady = (id) => BASE.has(id) || GENS.has(id);
+export const loadedPacks = () => [...ready];
 for (const c of C) c.subject ||= "MAT";
 export const CONCEPTS = C;
 export const AREAS = [
@@ -1293,6 +1332,8 @@ export const AREAS = [
   ["la", { sl: "Vektorji, matrike, kompleksna števila", en: "Vectors, matrices, complex numbers" }, "#d946ef"],
 ].map((a) => [...a, "MAT"]).concat(SUBJ_AREAS);
 export const SUBJECTS = [...new Set(AREAS.map((a) => a[3]))];
+// Vsi paketi (testi, skripte, strežnik): kot prej, ko so bili vsi uvoženi statično.
+export const loadAllSubjects = () => loadSubjects(SUBJECTS);
 // Imena v jeziku vmesnika, ki ni slovenščina ali angleščina (names-<jezik>.js); naloge ostanejo v angleščini.
 const NAME_PACKS = { ar: () => import("./names-ar.js") };
 let NAMES = null;

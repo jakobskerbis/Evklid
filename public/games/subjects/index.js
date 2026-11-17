@@ -1,19 +1,26 @@
 // Pojmi za igre iz drugih predmetov (fizika, kemija …). Vsak predmet ima svojo datoteko;
 // dodatni paketi (mat15, mat2, fiz2 …) z izvozom SUBJECT dopolnijo obstoječi predmet.
-import * as MAT15 from "./mat15.js";
-import * as MAT2 from "./mat2.js";
-import * as FIZ2 from "./fiz2.js";
-import * as KEM2 from "./kem2.js";
-import * as BIO2 from "./bio2.js";
-import * as NAR2 from "./nar2.js";
-import * as SPO from "./spo.js";
-import * as NIT from "./nit.js";
-import * as NAR from "./nar.js";
-import * as FIZ from "./fiz.js";
-import * as KEM from "./kem.js";
-import * as BIO from "./bio.js";
-import * as GEO from "./geo.js";
-import * as RAC from "./rac.js";
-import * as EKO from "./eko.js";
+// Paketi skupaj merijo ~1,5 MB, zato jih ../topics.js ne uvozi statično (lahek zagon, j 17. 11. 2026): seznam
+// pojmov brez generatorjev nalog je v meta.js (scripts/igre-pojmi.js), generatorji predmeta pa se naložijo z
+// import() šele, ko jih učenec potrebuje (loadSubjects v ../topics.js). Vrstni red je vrstni red pojmov v igrah.
+export const PACK_FILES = {
+  MAT15: "mat15",
+  MAT2: "mat2",
+  FIZ2: "fiz2",
+  KEM2: "kem2",
+  BIO2: "bio2",
+  NAR2: "nar2",
+  SPO: "spo",
+  NIT: "nit",
+  NAR: "nar",
+  FIZ: "fiz",
+  KEM: "kem",
+  BIO: "bio",
+  GEO: "geo",
+  RAC: "rac",
+  EKO: "eko",
+};
 
-export const PACKS = { MAT15, MAT2, FIZ2, KEM2, BIO2, NAR2, SPO, NIT, NAR, FIZ, KEM, BIO, GEO, RAC, EKO };
+// Brskalnik si neuspel modul zapomni do ponovnega nalaganja strani: nov poskus (npr. po izpadu povezave)
+// zato z drugim naslovom (?r=), kot igre v public/app.js.
+export const importPack = (key, retry = 0) => import(`./${PACK_FILES[key]}.js${retry ? `?r=${retry}` : ""}`);
