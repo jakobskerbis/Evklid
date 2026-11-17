@@ -85,8 +85,18 @@ test("Potrdi e-naslov na telefonu: sporočilo »še ni potrjeno«, Pošlji znova
     }, new Date().getFullYear() - years);
     assert.equal(kid, 201, "lasten profil pred potrditvijo (#747)");
     await page.goto(base + "/");
-    await page.waitForFunction(() => !document.body.classList.contains("auth-mode") && !!document.querySelector("#account-tab"));
-    await page.evaluate(() => document.querySelector("#account-tab").click());
+    // Zavihek Račun je pripravljen, ko ga account.js pokaže (hidden = false); do takrat klik ne naredi nič, zato
+    // klikamo, dokler se kartica ne izriše.
+    await page.waitForFunction(
+      () => {
+        if (document.querySelector("#verify-open")?.checkVisibility()) return true;
+        const tab = document.querySelector("#account-tab");
+        if (tab && !tab.hidden && !document.body.classList.contains("auth-mode")) tab.click();
+        return false;
+      },
+      null,
+      { polling: 700, timeout: 30000 },
+    );
     await page.locator("#verify-open").tap();
     await page.locator("#verify-done").waitFor();
     return r.body.dev_verify_url;
@@ -129,7 +139,9 @@ test("Potrdi e-naslov na telefonu: sporočilo »še ni potrjeno«, Pošlji znova
       await page.locator("#verify-done").tap();
       // Profil že obstaja (#747): po potrditvi naravnost v aplikacijo.
       await page.waitForFunction(() => !document.body.classList.contains("auth-mode"));
-      assert.equal(await page.locator("#verify-state").count(), 0);
+      // Zaslon za potrditev ni več viden (#view-auth je skrit; vsebino ob naslednjem zaslonu prepiše shell()).
+      assert.equal(await page.locator("#view-auth").isVisible(), false);
+      assert.equal(await page.locator("#verify-state").isVisible(), false);
       await ctx.close();
     }
     // 2) Polnoleten imetnik: stavek o staršu ali zakonitem zastopniku ostane.

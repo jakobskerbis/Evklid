@@ -4,6 +4,7 @@
 // (ali račun ni pravi račun z e-naslovom), se ne pokaže nič.
 import { t } from "./i18n.js";
 import { accountStatus } from "./account.js";
+import { jsonAliNic } from "./odgovor.js";
 
 export const LATER_KEY = "evklid.potrdi_pozneje";
 const LATER_MS = 24 * 3600000;
@@ -23,7 +24,7 @@ export async function potrdiPoNalogi(slot) {
   let st;
   try {
     const res = await fetch("/api/account/status", { headers: { "Content-Type": "application/json" } });
-    st = res.ok ? await res.json() : null;
+    st = await jsonAliNic(res, null);
   } catch {
     return;
   }

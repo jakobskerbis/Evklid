@@ -349,6 +349,7 @@ test("referral: both parents get a free month after the first payment", async ()
     const b = client();
     const reg = await b("/api/auth/register", { method: "POST", body: { email: "fran@primer.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT, referral_code: ref.referral_code.toLowerCase() } });
     assert.equal(reg.body.referred, true);
+    assert.equal((await b(verifyLink(calls))).status, 302); // plačila šele po potrditvi e-naslova (#747)
     await b("/api/billing/checkout", { method: "POST", body: { seats: 2, interval: "month", adult: true, withdrawal: true } });
     const customer = store.db.prepare("SELECT stripe_customer_id FROM parents WHERE email = 'fran@primer.si'").get().stripe_customer_id;
 
@@ -821,6 +822,7 @@ test("aktivacijska koda: poln dostop za prve N računov, enkrat na račun", asyn
     const a = client();
     const reg = await a("/api/auth/register", { method: "POST", body: { email: "a@kod.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT, promo_code: " evklid100 " } });
     assert.equal(reg.status, 201);
+    assert.equal((await a(verifyLink(calls))).status, 302); // koda velja s potrditvijo e-naslova (#747)
     const days = (Date.parse(reg.body.promo_until) - Date.now()) / 86400000;
     assert.ok(days > 364.9 && days <= 365, String(days));
     let acc = (await a("/api/account")).body;
@@ -839,6 +841,9 @@ test("aktivacijska koda: poln dostop za prve N računov, enkrat na račun", asyn
     const regB = await b("/api/auth/register", { method: "POST", body: { email: "b@kod.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT, promo_code: "NAPAKA" } });
     assert.equal(regB.status, 201);
     assert.match(regB.body.promo_error, /ni veljavna/);
+    // Pred potrditvijo samo brezplačni paket, aktivacijske kode ni mogoče vnesti (#747).
+    assert.equal((await b("/api/account/promo", { method: "POST", body: { code: "EVKLID100" } })).status, 403);
+    assert.equal((await b(verifyLink(calls))).status, 302);
     assert.equal((await b("/api/account")).body.access.tier, "trial");
     // Pozneje v zavihku Račun.
     const ok = await b("/api/account/promo", { method: "POST", body: { code: "EVKLID100" } });

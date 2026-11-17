@@ -179,10 +179,11 @@ test("RB-7 attacker exhausting the account-wide limit cannot stop not_mine", asy
   await withServer(async ({ webClient, register }) => {
     const attacker = webClient();
     const reg = await register(attacker);
-    for (let i = 0; i < 31; i++) await attacker("/api/account/export", { body: { password: "x" }, headers: { "x-forwarded-for": `10.0.${i}.1` } });
+    // Izvoz je do potrditve e-naslova zaprt (#747): ne šteje v mejo računa, zato je napadalec z njim ne izčrpa.
+    for (let i = 0; i < 31; i++) assert.equal((await attacker("/api/account/export", { body: { password: "x" }, headers: { "x-forwarded-for": `10.0.${i}.1` } })).status, 403);
     const token = new URL(reg.body.dev_verify_url).searchParams.get("token");
     const victim = webClient();
-    assert.equal((await victim("/api/auth/verify", { body: { token, password: "ugibam" } })).status, 429);
+    assert.equal((await victim("/api/auth/verify", { body: { token, password: "ugibam" } })).status, 401);
     const nm = await victim("/api/auth/verify", { body: { token, not_mine: true } });
     assert.equal(nm.status, 200);
     assert.equal((await attacker("/api/account")).status, 401);

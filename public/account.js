@@ -1098,6 +1098,8 @@ function planText(acc) {
   // Pilot in lastnik (server accountView, pregled #477 B3): poln paket brezplačno, brez ponudb za nakup.
   if (acc.pilot?.kind === "owner") return `<p>${esc(t("acct.owner"))}</p>`;
   if (acc.pilot?.kind === "pilot") return `<p>${esc(t("acct.pilot", { date: date(`${acc.pilot.last_day}T12:00:00Z`), n: acc.pilot.profiles }))}</p>`;
+  // Nepotrjen e-naslov (#747): do potrditve velja brezplačni paket (server personalOf), preizkus in kode šele potem.
+  if (!parent.verified && !parent.guest) return `<p>${esc(t("acct.free", { n: acc.free_daily_questions }))}</p>`;
   if (access.tier === "paid") {
     const pend = acc.pending_change;
     // Ime paketa iz jezika vmesnika (stopnja ali Družina); regijski paketi in stari paketi brez stopnje z imenom s strežnika.

@@ -90,8 +90,9 @@ test("#747: dijak (16) brez potrditve ustvari svoj profil in se uči; drugi prof
     const kid = await a("/api/students", { method: "POST", body: { name: "Tia", birth_year: YEAR - 16, consent: true } });
     assert.equal(kid.status, 201, JSON.stringify(kid.body));
     // Naloga in inštruktor delujeta pred potrditvijo (brezplačni paket: 2 vprašanji, nato namig za potrditev).
-    const next = await a(`/api/students/${kid.body.id}/practice/next`, { method: "POST", body: {} });
-    assert.ok(next.status < 400, `vadnica ${next.status}`);
+    const next = await a(`/api/students/${kid.body.id}/practice/next`, { method: "POST", body: { topic_id: "MAT-OS-8/pitagorov-izrek" } });
+    assert.equal(next.status, 200, `vadnica ${next.status} ${JSON.stringify(next.body)}`);
+    assert.ok(next.body.task || next.body.example, `naloga pred potrditvijo: ${Object.keys(next.body)}`);
     const r = await ask(a, kid.body.id, 3);
     assert.deepEqual(r.map((x) => x.status), [200, 200, 429]);
     assert.equal(r[2].body.code, "block.freeDaily");
@@ -135,13 +136,14 @@ test("#747: polnoleten imetnik pred potrditvijo: lasten profil da, profil za otr
       ["/api/account/profile-password", { student_id: own.body.id, auth: "geslo1234", password: "novogeslo" }],
       ["/api/account/promo", { code: "X" }],
       ["/api/account/weekly-report/send", {}],
-      ["/API/Account/Export/", { password: "geslo1234" }],
     ];
     for (const [p, body] of blocked) {
       const r = await a(p, { method: "POST", body });
       assert.equal(r.status, 403, `${p}: ${r.status} ${JSON.stringify(r.body)}`);
       assert.equal(r.body.verify, true, p);
     }
+    // Nekanonična pot (velike črke, poševnica na koncu) se ustavi že prej (404, server/app.js), do izvoza ne pride.
+    for (const p of ["/API/Account/Export", "/api/account/export/"]) assert.equal((await a(p, { method: "POST", body: { password: "geslo1234" } })).status, 404, p);
     // Branje stanja in izbris lastnega profila ostaneta (GDPR, napačen e-naslov).
     assert.equal((await a("/api/account")).status, 200);
 
