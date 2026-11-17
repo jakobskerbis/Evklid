@@ -137,6 +137,9 @@ export class Usage {
     this.periodOf = () => null;
     // Konec tega obdobja meje (ISO) ali null = konec koledarskega meseca (brezplačni rep po dnevih, tailToday).
     this.periodEndOf = () => null;
+    // Ali se brezplačni rep zajamčenega paketa razporedi po dnevih (tailToday): plačani paketi (naročnina, darilo,
+    // pilot); preizkus, aktivacijska koda in bonus (brez plačila) ostanejo pri ustavitvi s pozivom k naročnini.
+    this.spreadOf = () => true;
     // Lastnik (server/accounts/pilot-meja.js): brez meje inštruktorja (brez trde meje, dnevnih meja in zaustavitve
     // proračuna); poraba se še vedno zapiše (log).
     this.unlimitedOf = () => false;
@@ -154,7 +157,7 @@ export class Usage {
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
   // totalOf: vrednost paketa (meja + brezplačni rep) v $ ali null; trda meja ni nikoli višja (capsFor).
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, periodEndOf, minCall, blockFor, creditOverOf, unlimitedOf, priorSpentOf, pilotOf, onUse } = {}) {
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, periodEndOf, spreadOf, minCall, blockFor, creditOverOf, unlimitedOf, priorSpentOf, pilotOf, onUse } = {}) {
     if (onUse) this.onUse = onUse;
     if (unlimitedOf) this.unlimitedOf = unlimitedOf;
     if (priorSpentOf) this.priorSpentOf = priorSpentOf;
@@ -166,6 +169,7 @@ export class Usage {
     if (totalOf) this.totalOf = totalOf;
     if (periodOf) this.periodOf = periodOf;
     if (periodEndOf) this.periodEndOf = periodEndOf;
+    if (spreadOf) this.spreadOf = spreadOf;
     if (onLog) this.onLog = onLog;
     if (weightOf) this.weightOf = weightOf;
     if (poolOf) this.poolOf = poolOf;
@@ -330,7 +334,7 @@ export class Usage {
   // koda konca obdobja (tailCode).
   tailToday(studentId, state = this.budgetState(), now = new Date()) {
     const sb = this.studentBudget(studentId, state);
-    if (!sb.guaranteed || sb.credit > 0 || sb.spent < sb.ceiling - 1e-9) return null;
+    if (!sb.guaranteed || sb.credit > 0 || sb.spent < sb.ceiling - 1e-9 || !this.spreadOf(studentId)) return null;
     const n = sb.group?.length || 1;
     const tail = Math.max(0, Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, this.totalOf(studentId) ?? Infinity) - sb.ceiling);
     const dayStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
@@ -367,7 +371,9 @@ export class Usage {
       explanations_month: explanationsFor(sb.allowance),
       pool: !!sb.pool, // skupen delež družine: obvestila in preostanek veljajo za vse profile skupaj
       // Porabljen tudi hitri način (brez kredita): do konca obdobja vsak dan kot brezplačni paket (tailToday).
-      tail: sb.credit <= 0 && spent >= sb.ceiling - 1e-9,
+      tail: sb.credit <= 0 && spent >= sb.ceiling - 1e-9 && !!this.spreadOf(studentId),
+      // Plačan paket: po hitrem načinu vsak dan kot brezplačni paket (obvestilo ai.then); preizkus, koda, bonus ne.
+      spread: !!this.spreadOf(studentId),
     };
   }
   // Prilagodi izbrani način proračunu: pod načrtom močnejši model, nad njim hitri.

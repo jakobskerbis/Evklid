@@ -154,3 +154,30 @@ test("rep po dnevih: besedila v slovenščini in vseh jezikih vmesnika", async (
     }
   }
 });
+
+test("rep po dnevih: preizkus, koda in bonus (brez plačila) ostanejo kot doslej, brez »jutri spet«", () => {
+  const { u, ids, spend } = setup({ ceil: 0.3 });
+  const [s] = ids;
+  u.configure({ spreadOf: () => false });
+  spend(s, 0.3, Date.now() - 2 * DAY);
+  spend(s, 0.05);
+  assert.equal(u.tailToday(s), null);
+  assert.equal(u.blockInfo(s), null, "rep se porablja kot doslej, brez dnevnega dela");
+  assert.deepEqual([u.allowance(s).tail, u.allowance(s).spread], [false, false], "brez obvestila »vsak dan kot brezplačni paket«");
+  spend(s, 0.15);
+  assert.equal(u.blockInfo(s).code, "block.freeTail", "ves rep porabljen: ustavitev kot doslej (accounts: poziv k naročnini)");
+});
+
+test("rep po dnevih: razporeditev velja za naročnino, ne za preizkus ali aktivacijsko kodo", async () => {
+  const { withAccounts } = await import("./racuni-pomoc.js");
+  await withAccounts({}, async ({ store, kid, app }) => {
+    const u = app.locals.usage;
+    store.db.prepare("UPDATE parents SET trial_ends_at = ?").run(new Date(Date.now() + 5 * DAY).toISOString());
+    assert.equal(u.spreadOf(kid.id), false, "preizkus");
+    store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z', promo_until = ?").run(new Date(Date.now() + 60 * DAY).toISOString());
+    assert.equal(u.spreadOf(kid.id), false, "aktivacijska koda");
+    store.db.prepare("UPDATE parents SET promo_until = NULL, sub_status = 'active', sub_seats = 1").run();
+    assert.equal(u.spreadOf(kid.id), true, "naročnina");
+    assert.equal(u.allowance(kid.id).spread, true);
+  });
+});

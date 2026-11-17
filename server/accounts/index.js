@@ -709,7 +709,7 @@ export function mountAccounts(app, store, opts = {}) {
   // Besedilo zavrnitve: preizkus in bonus → poziv k naročnini (ne »spet jih dobiš«); brezplačni paket z namigom.
   function aiBlockFor(studentId, code) {
     const g = subGuarantee(studentId);
-    // Preizkus in bonus: »jutri spet« (block.tailDay*) ostane, ob koncu repa poziv k naročnini.
+    // Preizkus in bonus (nopay): rep ni razporejen po dnevih (spreadOf), ob koncu repa poziv k naročnini.
     if (/^block\.freeTail(Topup|Birth)?$/.test(code) && (g?.nopay === "trial" || g?.nopay === "bonus")) code = "block.trialOut";
     if (code === "block.freeMonth" || code === "block.freePool") return freeBlock(studentId, code);
     return { error: BLOCK_TEXT[code], code };
@@ -749,7 +749,7 @@ export function mountAccounts(app, store, opts = {}) {
       schools.clearCache();
     }
   }
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, periodEndOf: aiPeriodEnd, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, priorSpentOf: pilotPriorSpent, pilotOf: (id) => rightsFor(id).personalTier === "pilot", onLog: schoolOnLog, onUse: pilotOnUse });
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, periodEndOf: aiPeriodEnd, spreadOf: (id) => !subGuarantee(id)?.nopay, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, priorSpentOf: pilotPriorSpent, pilotOf: (id) => rightsFor(id).personalTier === "pilot", onLog: schoolOnLog, onUse: pilotOnUse });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.

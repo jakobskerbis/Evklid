@@ -1878,7 +1878,7 @@ function addAllowanceNote(bubble, d) {
   el.className = "cards-note allowance-note";
   // Pri 80 % dve vrstici: obvestilo, pod njim preostanek (»Podrobne razlage ta mesec: še 6«).
   // Pri 100 % še, kaj sledi hitremu načinu (do konca meseca vsak dan kot brezplačni paket, server/usage.js tailToday).
-  const base = d.stage === "out" ? `${escapeHtml(t("ai.out"))}<br><small>${escapeHtml(t("ai.then"))}</small>` : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
+  const base = d.stage === "out" ? (d.spread ? `${escapeHtml(t("ai.out"))}<br><small>${escapeHtml(t("ai.then"))}</small>` : escapeHtml(t("ai.out"))) : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
   // Družina: obvestilo velja za skupen delež vseh profilov.
   const text = d.pool ? `${base}<br><small>${escapeHtml(t("ai.pool"))}</small>` : base;
   el.innerHTML = `<div class="cn-head">${icon("info")} <span>${text}</span></div>${d.buy ? `<button type="button" class="text-btn">${escapeHtml(t("ai.buy"))} ${icon("chevron-right")}</button>` : ""}`;

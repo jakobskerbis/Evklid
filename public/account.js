@@ -1070,7 +1070,7 @@ function aiPill(a) {
   if (!a || a.percent == null) return "";
   // Družina: skupen delež za vse profile (enak preostanek pri vsakem otroku, ai.pool v opisu).
   // Porabljen tudi hitri način (a.tail): do konca meseca vsak dan kot brezplačni paket (server/usage.js tailToday).
-  const outText = a.tail ? t("ai.tail") : `${t("ai.out")} ${t("ai.then")}`;
+  const outText = a.tail ? t("ai.tail") : a.spread ? `${t("ai.out")} ${t("ai.then")}` : t("ai.out");
   if (a.guaranteed) return `<span class="pill${a.stage === "out" ? " warn" : ""}" title="${esc((a.stage === "out" ? outText : t("ai.left", { n: a.explanations_left })) + (a.pool ? " " + t("ai.pool") : ""))}">${esc(t("ai.left", { n: a.explanations_left }))}</span>`;
   if (a.hard_reached) return `<span class="pill warn" title="${esc(t("acct.aiOutTitle"))}">${esc(t("acct.aiOut"))}</span>`;
   const extra = a.soft_reached ? ` · ${esc(t("acct.aiSoft"))}` : "";

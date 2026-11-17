@@ -121,6 +121,9 @@ for (const paket of PAKETI) {
         const opis = JSON.stringify(app.locals.usage.capsFor(kid.id).map((c) => [c.key, c.code]));
         assert.match(opis, paket.paket, `${paket.ime}: meje ${opis}`);
         if (paket.ne) assert.doesNotMatch(opis, paket.ne, `${paket.ime}: meje ${opis}`);
+        // Brezplačni rep naročnika je razporejen po dnevih (server/usage.js tailToday, j 2026-11-17): zadnji dan obdobja
+        // je ves preostali rep današnji del, zato tu ustavi le trda meja v $, ki jo ta test preverja.
+        app.locals.usage.periodEndOf = () => new Date(Math.ceil((Date.now() + 1) / DAY) * DAY).toISOString();
         // Malo prostora (0,10 $): napad mora mejo res doseči, ne glede na velikost paketa.
         spendTo(app, store, kid.id, 0.1);
         const { statusi, poti, denar } = await napad(call, kid.id, 24);
