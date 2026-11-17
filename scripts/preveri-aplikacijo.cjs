@@ -359,6 +359,11 @@ async function tab(p, view) {
   // Računalnik: zgornja vrstica; telefon: spodnja vrstica ali »Jaz« → seznam.
   const top = p.locator(`.topbar .tab[data-view="${view}"]`);
   if (await top.isVisible()) return click(p, `.topbar .tab[data-view="${view}"]`);
+  // Računalnik: pogledi pod »Jaz« (data-pod-jaz) so na seznamu v »Jaz«.
+  if (view !== "me" && (await p.locator('.topbar .tab[data-view="me"]').isVisible())) {
+    await click(p, '.topbar .tab[data-view="me"]');
+    return click(p, `#view-me [data-go="${view}"]`);
+  }
   await revealBar(p);
   const bottom = p.locator(`#tabbar .tab[data-view="${view}"]`);
   if (await bottom.isVisible()) return click(p, `#tabbar .tab[data-view="${view}"]`);
@@ -791,7 +796,10 @@ async function oknaVsi(p) {
   // Okna iz prejšnjih korakov zapremo in jih na koncu vrnemo (sicer bi zavihek odprl okno namesto glavnega pogleda).
   const before = await p.$$eval(".okno[data-view]", (ws) => ws.map((w) => w.dataset.view));
   for (const v of before) await p.evaluate((v) => window.evklid.closeWindow(v), v);
-  const views = await p.$$eval(".topbar .tabs .tab[data-view]", (ts) => ts.filter((t) => !t.hidden).map((t) => t.dataset.view));
+  // Vidni zavihki brez »Jaz« (seznam, ne okno) in brez tistih pod »Jaz« (data-pod-jaz, odprejo se s seznama).
+  const views = await p.$$eval(".topbar .tabs .tab[data-view]", (ts) =>
+    ts.filter((t) => !t.hidden && t.getClientRects().length && t.dataset.view !== "me").map((t) => t.dataset.view),
+  );
   for (const v of views) {
     if (v === "path") continue; // Učna pot je glavni pogled tega koraka
     const ok = await p.evaluate((v) => window.evklid.openWindow(v), v);
@@ -1336,8 +1344,10 @@ async function flashcards(p) {
 }
 
 async function feedback(p, label) {
-  const t = p.locator('.topbar .tab[data-view="feedback"]');
-  if (!(await t.isVisible()) && !(await p.locator("#tabbar").evaluate((b) => getComputedStyle(b).display !== "none"))) return;
+  // Zavihek je na računalniku pod »Jaz«: šteje atribut hidden, ne vidnost.
+  const on = await p.locator("#feedback-tab").evaluate((t) => !t.hidden);
+  const meTop = await p.locator('.topbar .tab[data-view="me"]').isVisible();
+  if (!(on && meTop) && !(await p.locator("#tabbar").evaluate((b) => getComputedStyle(b).display !== "none"))) return;
   await tab(p, "feedback");
   await settle(p, 300);
   if ((await currentView(p)) !== "view-feedback") throw new Error("Mnenje se ni odprlo");
@@ -1440,11 +1450,11 @@ async function desktop(browser, app) {
     if (lbl === "SS") await step(p, `npz-matura-${lbl}`, () => examsView(p, lbl));
     if (lbl === "UNI")
       await step(p, "faks-brez-npz", async () => {
-        if (await p.locator("#exams-tab").isVisible()) throw new Error("fakulteta ima zavihek NPZ in matura");
+        if (await p.locator("#exams-tab").evaluate((t) => !t.hidden)) throw new Error("fakulteta ima zavihek NPZ in matura");
       });
     if (lbl === "UNI")
       await step(p, "faks-brez-tekmovanj", async () => {
-        if (await p.locator("#competition-tab").isVisible()) throw new Error("fakulteta ima zavihek Tekmovanja");
+        if (await p.locator("#competition-tab").evaluate((t) => !t.hidden)) throw new Error("fakulteta ima zavihek Tekmovanja");
       });
     await views(p, lbl);
   }
@@ -1462,7 +1472,7 @@ async function desktop(browser, app) {
     await expectVisible(p, "#view-path #xp-card .hero", `učna pot po osvežitvi (${p.url()})`, 8000);
     await tab(p, "competition");
     await expectVisible(p, "#competition-content [data-comp-train]", "izpiti");
-    if (await p.locator("#exams-tab").isVisible()) throw new Error("regijski sistem ima zavihek NPZ in matura");
+    if (await p.locator("#exams-tab").evaluate((t) => !t.hidden)) throw new Error("regijski sistem ima zavihek NPZ in matura");
     await screen(p, "izpiti");
     await click(p, "#competition-content [data-comp-train]", { wait: 400 });
     await expectVisible(p, "#practice .task", "naloga izpitnega treninga");
@@ -1854,7 +1864,8 @@ async function accounts(browser, app) {
     await screen(p, "pot-otroka");
   });
   await step(p, "racun", async () => {
-    await click(p, "#account-tab", { wait: 500 });
+    await tab(p, "account");
+    await settle(p, 500);
     await expectVisible(p, "#view-account #logout-btn", "Račun");
     await screen(p, "racun");
   });
@@ -1865,7 +1876,8 @@ async function accounts(browser, app) {
   });
   await step(p, "klepet-racun", () => chat(p, "racun"));
   await step(p, "odjava-prijava", async () => {
-    await click(p, "#account-tab", { wait: 400 });
+    await tab(p, "account");
+    await settle(p, 400);
     await click(p, "#logout-btn", { wait: 500 });
     await expectVisible(p, "#auth-form", "prijava po odjavi", 8000);
     await p.fill('#auth-form input[name="email"]', email);

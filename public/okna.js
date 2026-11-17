@@ -64,6 +64,7 @@ export const floatingViews = () => [...wins.keys()];
 
 const tabOf = (name) => document.querySelector(`.topbar .tabs .tab[data-view="${name}"]`);
 function canFloat(name) {
+  if (name === "me") return false; // »Jaz« je seznam za odpiranje drugih pogledov, ne okno
   const tab = tabOf(name);
   return !!tab && !tab.hidden && !!document.getElementById(`view-${name}`);
 }
@@ -150,6 +151,8 @@ const sideAt = (x) => (x <= EDGE ? "left" : x >= window.innerWidth - EDGE ? "rig
 
 function syncTabs() {
   document.querySelectorAll(".tabs .tab, #tabbar .tab").forEach((b) => b.classList.toggle("floating", wins.has(b.dataset.view)));
+  // Okno pogleda, ki je na računalniku pod »Jaz« (skrit zavihek data-pod-jaz): pika na zavihku Jaz.
+  document.getElementById("me-tab-top")?.classList.toggle("floating", [...document.querySelectorAll(".topbar .tabs .tab[data-pod-jaz]")].some((b) => wins.has(b.dataset.view)));
   document.body.classList.toggle("has-okna", wins.size > 0);
   syncDock();
   layout.open = [...wins.values()].sort((a, b) => (a.el.style.zIndex | 0) - (b.el.style.zIndex | 0)).map((w) => w.name);
