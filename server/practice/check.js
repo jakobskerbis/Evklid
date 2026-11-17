@@ -122,7 +122,7 @@ function parseQuotient(input, { dot = false } = {}) {
   return { value: a.value / b.value, unit: b.unit };
 }
 
-function checkNumber(ans, input) {
+function checkNumber(ans, input, opts = {}) {
   const s = westernDigits(String(input).trim());
   const q = clockLike(ans, s) ? null : parseQuotient(input, { dot: !!ans.dot });
   if (q) {
@@ -149,7 +149,13 @@ function checkNumber(ans, input) {
   if (!p) return { kind: "format", code: "chk.number", message: "Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
   // »2:3:4« pri nalogi brez enote: znak za deljenje ni enota (prej je veljalo kot 2).
   if (!ans.unit && /^[:÷∶/]/.test(p.unit)) return { kind: "format", code: "chk.oneNumber", message: "Vpiši eno samo število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
-  const res = checkParsed(ans, p);
+  // »2π cm«, »4\pi«: število krat π, enota ostane (pregled PR 786, G).
+  const pi = /^(?:π|\\pi)(?![a-zA-Z])\s*/.exec(p.unit);
+  if (pi) {
+    const value = p.value * Math.PI;
+    Object.assign(p, { value, decimals: effDecimals(value), unit: p.unit.slice(pi[0].length).trim(), pi: true });
+  }
+  const res = checkParsed(ans, p, opts);
   // »2.500« je lahko 2500 (pika za tisočice) ali 2,5 s piko kot decimalnim ločilom (tipkovnica v
   // angleščini, arabščini, urdujščini). Decimalno branje upoštevamo samo, kadar rezultat res ima tri
   // decimalke (zahtevano zaokroževanje ali točna vrednost, kot 12,345): sicer je »2.500« za 2,5 najverjetneje
@@ -160,14 +166,33 @@ function checkNumber(ans, input) {
   const dotLike = res.kind !== "correct" && !ans.dot && /^[+-]?[1-9]\d{0,2}\.\d{3}(?!\d)/.test(westernDigits(String(input).trim()).replace(/−/g, "-"));
   if (dotLike && threeDecimals(ans)) {
     const q = parseNumberWithUnit(input, { dot: true });
-    const alt = q && checkParsed(ans, q);
+    const alt = q && checkParsed(ans, q, opts);
     if (alt?.kind === "correct" || alt?.kind === "rounding") return alt;
   } else if (dotLike && ans.decimals === 2 && res.kind === "wrong") {
     const q = parseNumberWithUnit(input, { dot: true });
-    const alt = q && checkParsed(ans, q);
+    const alt = q && checkParsed(ans, q, opts);
     if (alt?.kind === "rounding") return { kind: "wrong" };
   }
   return res;
+}
+
+// Število decimalk pretvorjene vrednosti (brez ničel na koncu in brez napake plavajoče vejice).
+function effDecimals(x) {
+  const s = String(Number(x.toPrecision(12)));
+  if (/e-/.test(s)) return Number(s.split("e-")[1]) + ((s.split("e")[0].split(".")[1] || "").length);
+  return (s.split(".")[1] || "").length;
+}
+// Pretvorjen rezultat ali rezultat s π (»2π cm«): pravilen, če se zaokroži na isto kot pravi rezultat
+// (pravilo zaokroževanja naloge velja za vrednost v enoti naloge), sicer običajno preverjanje (zaokroževanje, napake).
+function checkConverted(ans, q) {
+  const exacts = [ans.value, ...(ans.alsoAccept || [])];
+  const d = ans.decimals;
+  const ok =
+    d === undefined || d === null
+      ? exacts.some((e) => Math.abs(q.value - e) <= Math.max(ans.tolerance ?? 1e-9, 1e-9) * Math.max(1, Math.abs(e)))
+      : exacts.some((e) => Math.abs(roundHalfUp(q.value, d) - roundHalfUp(e, d)) < 1e-9);
+  if (ok) return { kind: "correct" };
+  return checkParsed({ ...ans, unitAlternatives: [] }, q);
 }
 
 // Ima pravilni odgovor lahko tri decimalke? Da, kadar je zahtevano zaokroževanje na vsaj 3 decimalke ali kadar
@@ -182,16 +207,70 @@ function unitIssue(ans, unit) {
   if (!ans.unit) return null;
   if (!normUnit(unit)) return { kind: "unit", code: "chk.addUnit", message: `Število je zapisano, dodaj še enoto. V kateri enoti je rezultat?` };
   if (![ans.unit, ...(ans.unitAlternatives || [])].some((u) => sameUnit(u, unit))) {
-    return { kind: "unit", code: "chk.unit", params: { unit: ans.unit }, message: `Preveri enoto: rezultat zapiši v ${ans.unit}.` };
+    // Sporočilo ne imenuje prave enote (j, 17. 11. 2026): enota je del odgovora.
+    return { kind: "unit", code: "chk.unit", params: {}, message: "Ta enota ni prava. Preveri, v kateri enoti je rezultat." };
   }
   return null;
 }
 
-function checkParsed(ans, p) {
+// ---------- pretvorba enot s predpono (j, 17. 11. 2026: »Sprejmi pravilno pretvorbo«) ----------
+// Pravilno pretvorjen rezultat v isti osnovni enoti z drugo predpono SI je pravilen (5,42 N = 5420 mN = 0,00542 kN),
+// razen če besedilo naloge zahteva enoto (unitRequired). Le predpone SI na isti osnovi; ² in ³ s pravo potenco
+// (cm² = 10⁻⁴ m²); L = dm³, mL = cm³. Ne med različnimi količinami, ne °C ↔ K, ne min/h/s, ne sestavljene enote (m/s).
+// »da« (deka): dag = 10 g (250 dag = 2,5 kg).
+const SI_PREFIX = { G: 1e9, M: 1e6, k: 1e3, h: 1e2, da: 1e1, d: 1e-1, c: 1e-2, m: 1e-3, µ: 1e-6, μ: 1e-6, u: 1e-6, n: 1e-9, p: 1e-12 };
+const SI_BASES = ["mol", "Pa", "Hz", "eV", "Wh", "Bq", "Wb", "bar", "m", "g", "s", "V", "A", "W", "J", "N", "Ω", "C", "F", "T", "L", "l"];
+const POW = { "²": 2, "³": 3, 2: 2, 3: 3 };
+// Enota → { base, pow, scale } (vrednost v osnovni enoti = vrednost · scale) ali null.
+export function siUnit(u) {
+  const m = String(u || "").replace(/\s+/g, "").replace(/\^\{?([23])\}?$/, "$1").match(/^(.+?)([²³23])?$/);
+  if (!m) return null;
+  const body = m[1];
+  const pow = m[2] ? POW[m[2]] : 1;
+  for (const b of SI_BASES) {
+    let pre = null;
+    if (body === b) pre = "";
+    else if (body.length === b.length + 1 && body.endsWith(b) && SI_PREFIX[body[0]]) pre = body[0];
+    else if (body === `da${b}`) pre = "da";
+    if (pre === null) continue;
+    // Predpone na ² in ³ le pri metru (mm², cm³, dm³, km²); s ni s predpono v potenci.
+    if (pow > 1 && b !== "m") return null;
+    const f = pre ? SI_PREFIX[pre] : 1;
+    if (b === "L" || b === "l") return pow === 1 ? { base: "m", pow: 3, scale: f * 1e-3 } : null;
+    return { base: b, pow, scale: f ** pow };
+  }
+  return null;
+}
+// Faktor, s katerim se vrednost v enoti »from« pretvori v enoto »to«, ali null (ni ista količina ali ni pretvorbe).
+export function unitFactor(from, to) {
+  const a = siUnit(from);
+  const b = siUnit(to);
+  if (!a || !b || a.base !== b.base || a.pow !== b.pow) return null;
+  return a.scale / b.scale;
+}
+// Zahteva besedilo naloge točno to enoto? Previdno: da, če je enota v besedilu za »v«, »na«, »kot«, »in« (angl.),
+// »enotah«, »= ?«, »?«, ali v zahtevi »izrazi/zapiši/podaj/pretvori … v«. Številka z enoto (»5 kN«) ni zahteva.
+const escRe = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+export function unitRequired(text, unit) {
+  if (!text || !unit) return false;
+  const t = String(text).replace(/\\(?:mathrm|text|rm|mbox)\s*\{\s*([^{}]*?)\s*\}/g, "$1").replace(/\\[,;:! ]|~|\$/g, " ").replace(/\^\{?2\}?/g, "²").replace(/\^\{?3\}?/g, "³");
+  const forms = new Set([unit, String(unit).replace(/\^\{?2\}?/g, "²").replace(/\^\{?3\}?/g, "³")]);
+  return [...forms].some((u) => {
+    const U = escRe(u.replace(/\s+/g, " ")).replace(/ /g, "\\s*");
+    return new RegExp(`(?:^|[\\s(])(?:v|na|kot|in|enotah?|enoti)\\s+(?:enot[aio]?\\s+)?${U}(?![\\p{L}\\d])|[=?]\\s*\\??\\s*(?:\\\\square|_+|\\.\\.\\.|…)?\\s*${U}(?![\\p{L}\\d])`, "u").test(t);
+  });
+}
 
-  // Enota
-  const unit = unitIssue(ans, p.unit);
+function checkParsed(ans, p, opts = {}) {
+
+  // Enota: pravilno pretvorjen rezultat (druga predpona iste osnove) se pretvori v enoto naloge in preveri naprej.
+  let unit = unitIssue(ans, p.unit);
+  if (unit && unit.code === "chk.unit" && opts.convert && !unitRequired(opts.text, ans.unit)) {
+    const f = unitFactor(p.unit, ans.unit);
+    if (f !== null) return checkConverted(ans, { value: p.value * f, decimals: effDecimals(p.value * f), unit: ans.unit, converted: true });
+  }
   if (unit) return unit;
+  if (p.pi) return checkConverted(ans, { ...p, pi: false });
 
   const exacts = [ans.value, ...(ans.alsoAccept || [])];
   const d = ans.decimals;
@@ -368,13 +447,13 @@ function checkCoefficients(ans, input) {
   return { kind: "wrong" };
 }
 
-export function checkAnswer(answer, input) {
+export function checkAnswer(answer, input, opts = {}) {
   if (input === undefined || input === null || String(input).trim() === "") {
     return { kind: "format", code: "chk.empty", message: "Najprej vpiši odgovor." };
   }
   switch (answer.type) {
     case "number":
-      return checkNumber(answer, input);
+      return checkNumber(answer, input, opts);
     case "fraction":
       return checkFraction(answer, input);
     case "choice":

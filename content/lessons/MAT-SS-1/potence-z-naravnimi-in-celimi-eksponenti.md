@@ -348,7 +348,7 @@ Najpogostejša past je četrti korak: odštevanje negativnega eksponenta je pri�
 > $\left(\dfrac{2}{5}\right)^{-2} = \left(\dfrac{5}{2}\right)^2 = \dfrac{25}{4} = 6{,}25$.
 
 ? (brez računala) Koliko je $\dfrac{2^3 \cdot 2^{-5}}{2^{-4}}$?
-= 4 | 0,01
+= 4 | 0
 ~ 0,016 | To je $2^{-6} = \dfrac{1}{64} \approx 0{,}016$. Pri deljenju odšteješ $-4$, kar je prištevanje: $-2 - (-4) = 2$, ne $-6$.
 ~ -4 | Negativni eksponenti ne dajo negativnega rezultata: potenca pozitivne osnove je vedno pozitivna.
 > Števec: $2^{3 + (-5)} = 2^{-2}$. Deljenje: $2^{-2 - (-4)} = 2^2 = 4$.

@@ -69,6 +69,13 @@ function sondaModela(upo, c, m) {
 // pod krovnim steklom močno, posušen razmaz srednje, rezina v balzamu ali smoli malo.
 const VLAGA = { naravno: 1, jod: 1, metilensko: 0.9, orcein: 0.8, giemsa: 0.5, gram: 0.5, obrus: 0.4 };
 
+// Obvestilo na odru za sloj molekul (upodobi.js molStanje: »«, »ok«, »caka«, »napaka«) pri uteži molekul utez: ko bi
+// molekule prekrile vsaj pol slike, a jih ni, je slika brez obvestila enakomerno siva. Vrne »«, »nalaganje« ali »napaka«.
+export function obvestiloMol(stanje, utez) {
+  if (!(utez >= 0.5)) return "";
+  return stanje === "caka" ? "nalaganje" : stanje === "napaka" ? "napaka" : "";
+}
+
 // Vrne { v (za narisi), mol (uniforme modela ali null), vp, sredisce }.
 export function izracunajPogled(upo, preparat, s, n, { hitro = false } = {}) {
   const tem = s.nacin === "tem";

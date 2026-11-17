@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -140,7 +140,7 @@ $n_\mathrm{v} = 2 \cdot 0{,}125\,\mathrm{mol} = 0{,}25\,\mathrm{mol}$ in $m_\mat
 - **Dvojna vez ostane v verigi.** Zapis $\mathrm{{-}[CH_2{=}CH_2]_n{-}}$ je napačen: ogljik bi imel pet vezi. Dvojna vez se pri polimerizaciji odpre, ravno iz nje nastaneta novi vezi do sosedov.
 - **Pri adicijski polimerizaciji se odcepi voda.** Ne: monomeri se le seštejejo. Iz $84\,\mathrm{kg}$ propena dobiš $84\,\mathrm{kg}$ polipropena. Vodo odštevaš samo pri polikondenzaciji.
 - **Za polikondenzacijo zadošča ena funkcionalna skupina.** Monomer z eno skupino (etanol, etanojska kislina) verigo zaključi. Vsak monomer potrebuje dve skupini.
-- **Stopnja polimerizacije pri polikondenzaciji iz vsote monomerov.** Pri najlonu deliš z maso enote $226\,\mathrm{g/mol}$ ($116 + 146 - 2 \cdot 18$), ne s $262\,\mathrm{g/mol}$, ker v verigi ni odcepljene vode.
+- **Stopnja polimerizacije pri polikondenzaciji iz vsote monomerov.** Pri najlonu deliš z maso enote $226\,\mathrm{g/mol}$ ($116 + 146 - 2 \cdot 18$), ne z $262\,\mathrm{g/mol}$, ker v verigi ni odcepljene vode.
 
 ## Povzetek
 

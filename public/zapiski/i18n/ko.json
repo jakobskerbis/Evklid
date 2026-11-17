@@ -25,6 +25,7 @@
   "zap.noCards": "지금은 이 필기로 카드를 만들 수 없어.",
   "zap.practice": "카드 복습하기",
   "zap.printed": "인쇄된 쪽의 글은 저장하지 않아 – 단원과 카드만.",
+  "zap.printedNoCards": "인쇄된 쪽의 글은 저장하지 않아.",
   "zap.list": "저장한 필기",
   "zap.empty": "아직 저장한 필기가 없어.",
   "zap.open": "열기",
@@ -44,6 +45,7 @@
   "zap.keep": "내 노트야 – 저장",
   "zap.keepHint": "체크하지 않으면 글은 저장하지 않아. 퀴즈와 카드는 남아.",
   "zap.notKept": "붙여 넣은 글은 저장하지 않았어 – 단원과 카드만.",
+  "zap.notKeptNoCards": "붙여 넣은 글은 저장하지 않았어.",
   "zap.correctMark": "정답",
   "zap.yourMark": "네 답"
 }

@@ -9,7 +9,7 @@ Travnik ima obliko kvadrata s stranico $52\,\mathrm{m}$. Sredi njega je kvadrate
 
 Prva pot zahteva dva velika kvadrata: $52^2 = 2704$ in $48^2 = 2304$, razlika je $400\,\mathrm{m}^2$. Druga gre na pamet: $52^2 - 48^2 = (52 - 48)(52 + 48) = 4 \cdot 100 = 400$. Kupiš $8$ vreč.
 
-Druga pot je hitrejša, ker smo razliko zapisali kot **produkt**. Temu rečemo **razstavljanje**. Produkt je enak $0$ samo takrat, ko je vsaj en faktor enak $0$, zato iz razcepa takoj vidiš, kdaj je izraz nič. Razstavljanje boš potreboval tudi za krajšanje ulomljenih izrazov v naslednji temi.
+Druga pot je hitrejša, ker smo razliko zapisali kot **produkt**. Temu rečemo **razstavljanje**. Produkt je enak $0$ samo takrat, ko je vsaj en faktor enak $0$, zato iz razcepa takoj vidiš, kdaj je izraz nič. Razstavljanje boš potreboval tudi za krajšanje ulomljenih izrazov v eni od naslednjih tem.
 
 ## Razlaga
 
@@ -298,7 +298,7 @@ Vsota ploščin je $x^2 + 4x + 3x + 12 = x^2 + 7x + 12$. Srednji člen je nastal
 
 **Računanje na pamet.** Razliko kvadratov uporabiš za hitre račune: $98 \cdot 102 = (100-2)(100+2) = 100^2 - 2^2 = 10\,000 - 4 = 9\,996$. Prav tako $47 \cdot 53 = (50-3)(50+3) = 50^2 - 3^2 = 2\,491$.
 
-**Dimenzije.** Pravokotna terasa ima ploščino $x^2 + 7x + 12$ kvadratnih metrov. Pri risanju načrta mora delavec vedeti, koliko merita stranici. Razcep $(x+3)(x+4)$ pove, da sta stranici dolgi $x+3$ in $x+4$ metra. Za $x = 2$ je to pravokotnik $5\,\text{m} \times 6\,\text{m}$ s ploščino $30\,\text{m}^2$, kar se ujema z $4 + 14 + 12 = 30$.
+**Dimenzije.** Pravokotna terasa ima ploščino $x^2 + 7x + 12$ kvadratnih metrov. Pri risanju načrta mora delavec vedeti, koliko merita stranici. Razcep $(x+3)(x+4)$ pove, da sta stranici dolgi $x+3$ in $x+4$ metra. Za $x = 2$ je to pravokotnik $5\,\text{m} \times 6\,\text{m}$ s ploščino $30\,\text{m}^2$, kar se ujema s $4 + 14 + 12 = 30$.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -325,7 +325,7 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 
 ## Drugače: Bolj natančno
 
-**Zakaj Vietovo pravilo deluje.** Iz $(x+a)(x+b) = x^2 + bx + ax + ab = x^2 + (a+b)x + ab$ vidiš, da je koeficient pri $x$ vsota števil $a$ in $b$, prosti člen pa njun produkt. Primerjava s $x^2 + px + q$ da natanko pogoja $a + b = p$ in $a \cdot b = q$.
+**Zakaj Vietovo pravilo deluje.** Iz $(x+a)(x+b) = x^2 + bx + ax + ab = x^2 + (a+b)x + ab$ vidiš, da je koeficient pri $x$ vsota števil $a$ in $b$, prosti člen pa njun produkt. Primerjava z $x^2 + px + q$ da natanko pogoja $a + b = p$ in $a \cdot b = q$.
 
 **Zakaj vsote kvadratov ni mogoče razstaviti.** Denimo, da bi veljalo $x^2 + 1 = (x+a)(x+b)$ za vse $x$. Pri $x = -a$ bi bila desna stran enaka $0$, leva pa $a^2 + 1 \ge 1$. To je protislovje. Enako velja za $x^2 + c$ pri vsakem $c > 0$.
 
@@ -358,7 +358,7 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 + Ker bi potrebovali $a + b = 0$ in $a \cdot b = 9$, takih realnih števil pa ni.
 - Lahko ga: $x^2 + 9 = (x + 3)^2$.
 ~ $(x + 3)^2 = x^2 + 6x + 9$ ima srednji člen $6x$, ki ga v $x^2 + 9$ ni.
-> Člena s $x$ ni, zato je $p = 0$. Iz $a + b = 0$ sledi $b = -a$ in $a \cdot b = -a^2 \le 0$, kar ne more biti $9$.
+> Člena z $x$ ni, zato je $p = 0$. Iz $a + b = 0$ sledi $b = -a$ in $a \cdot b = -a^2 \le 0$, kar ne more biti $9$.
 
 ? Razcep je $(x - 3)(x + 5)$. Kateri tričlenik smo razstavili?
 - $x^2 - 2x - 15$
@@ -376,7 +376,7 @@ Vsoto $2$ ima zadnji par, zato je $x^2 + 2x - 24 = (x-4)(x+6)$. Preizkus pri $x 
 - $(x - 2)\,\mathrm{m}$
 ~ Iskal si le vsoto, in to s $p = 1$ namesto $-1$: $3 + (-2) = 1$. Produkt pa je $3 \cdot (-2) = -6$, ne $-12$: $(x + 3)(x - 2) = x^2 + x - 6$.
 + $(x - 4)\,\mathrm{m}$
-> Iščemo $b$ z $3 + b = -1$ in $3 \cdot b = -12$, torej $b = -4$. Preizkus: $(x + 3)(x - 4) = x^2 - x - 12$.
+> Iščemo $b$ s $3 + b = -1$ in $3 \cdot b = -12$, torej $b = -4$. Preizkus: $(x + 3)(x - 4) = x^2 - x - 12$.
 
 ? (brez računala) Vpiši največjo rešitev enačbe $x^2 - 3x = 28$.
 = 7 | 0

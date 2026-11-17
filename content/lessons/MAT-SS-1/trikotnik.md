@@ -371,7 +371,7 @@ V simulaciji »Značilne točke trikotnika« spreminjaj obliko trikotnika in pri
 + Ker lahko z istimi podatki narišemo dva različna trikotnika.
 - Ker bi bila vsota kotov večja od $180^\circ$.
 ~ Vsota kotov je v vsakem narisanem trikotniku $180^\circ$; težava je v tem, da trikotnik ni določen enolično.
-> Krog s polmerom krajše stranice lahko seka krak kota v dveh točkah, zato dobimo dva neskladna trikotnika. Pri kotu nasproti daljše stranice je presečišče eno samo (SsK).
+> Krožnica s polmerom krajše stranice lahko seka krak kota v dveh točkah, zato dobimo dva neskladna trikotnika. Pri kotu nasproti daljše stranice je presečišče eno samo (SsK).
 
 ? Višinska točka trikotnika leži zunaj trikotnika. Kakšen je trikotnik?
 - ostrokoten

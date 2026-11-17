@@ -352,7 +352,7 @@ Z besedami: ne glede na to, kako ozek pas $\varepsilon$ okoli $L$ zahtevaš, naj
 
 Primer: $\lim\limits_{x \to 3} (2x + 1) = 7$. Velja $|2x + 1 - 7| = 2\,|x - 3|$. Če izberemo $\delta = \dfrac{\varepsilon}{2}$, iz $|x - 3| < \delta$ sledi $|2x + 1 - 7| < 2 \cdot \dfrac{\varepsilon}{2} = \varepsilon$.
 
-Zakaj je $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$ res, ne le v tabeli? Na enotski krožnici za $0 < x < \frac{\pi}{2}$ primerjamo ploščine dveh trikotnikov in izseka: $\sin x < x < \tan x$. Delimo s $\sin x$ in vzamemo obratne vrednosti: $\cos x < \dfrac{\sin x}{x} < 1$. Ker gre $\cos x \to 1$, je ulomek »stisnjen« med dve funkciji z limito $1$, zato ima tudi sam limito $1$ (izrek o sendviču).
+Zakaj je $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$ res, ne le v tabeli? Na enotski krožnici za $0 < x < \frac{\pi}{2}$ primerjamo ploščine dveh trikotnikov in izseka: $\sin x < x < \tan x$. Delimo s $\sin x$ in vzamemo obratne vrednosti: $\cos x < \dfrac{\sin x}{x} < 1$. Ulomek je soda funkcija, zato isto velja za $-\frac{\pi}{2} < x < 0$. Ker gre $\cos x \to 1$, je ulomek »stisnjen« med dve funkciji z limito $1$, zato ima tudi sam limito $1$ (izrek o sendviču).
 
 ## Preveri se
 
@@ -385,12 +385,12 @@ Zakaj je $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$ res, ne le v tabeli? Na e
 > Imenovalec je pozitiven in gre proti $0$, zato $f(x)$ raste čez vse meje: $\lim\limits_{x \to 1} f(x) = \infty$, navpična asimptota $x = 1$.
 
 ? (brez računala) Koliko je $\lim\limits_{x \to -2} \dfrac{x^2 + 5x + 6}{x + 2}$?
-= 1 | 0,01
+= 1 | 0
 ~ 0 | Vstavljanje da $\frac{0}{0}$, kar ni $0$, ampak nedoločeni izraz. Izraz najprej razstavi.
 > $x^2 + 5x + 6 = (x + 2)(x + 3)$; po krajšanju ostane $x + 3$, pri $x = -2$ je to $1$. Limita obstaja, čeprav je imenovalec pri $x = -2$ enak $0$: limita ne gleda točke $-2$ same, ampak njeno bližino.
 
 ? Po vklopu ojačevalnika se relativna glasnost v dvorani spreminja po formuli $v(t) = \dfrac{12t^2 + 5}{4t^2 + 5}$. Kateri vrednosti se glasnost približuje, ko $t \to \infty$?
-= 3 | 0,01
+= 3 | 0
 ~ 1 | To je $\frac{\infty}{\infty} = 1$, kar ne velja. (Vrednost $1$ ima glasnost ob vklopu, pri $t = 0$.)
 ~ 12 | Upoštevati moraš tudi vodilni koeficient imenovalca, $4$.
 > Delimo s $t^2$: $\dfrac{12 + \frac{5}{t^2}}{4 + \frac{5}{t^2}} \to \dfrac{12}{4} = 3$. Števec res raste čez vse meje, a tudi imenovalec; oba rasteta s $t^2$, zato je ulomek omejen.

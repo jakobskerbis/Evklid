@@ -14,7 +14,7 @@ const uciTabs = [...html.matchAll(/data-uci-tab="([\w-]+)"/g)].map((m) => m[1]);
 
 // Brez ukaza inštruktorju: klepet je inštruktor sam; Račun ima osebne in finančne podatke (inštruktor jih ne sme
 // odpirati, public/settings-registry.js); Mnenje je obrazec za odziv, ne orodje pri učenju.
-const NO_COMMAND = { chat: "inštruktor sam", account: "osebni in finančni podatki", feedback: "obrazec za mnenje" };
+const NO_COMMAND = { chat: "inštruktor sam", account: "osebni in finančni podatki", feedback: "obrazec za mnenje", me: "seznam za odpiranje drugih pogledov (public/okna.js canFloat), ne okno" };
 
 test("every top tab has its own view (so it can open as a window)", () => {
   assert.ok(tabs.length >= 10);

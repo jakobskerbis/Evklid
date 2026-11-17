@@ -25,6 +25,7 @@
   "zap.noCards": "Aus diesen Notizen kann ich gerade keine Karteikarten machen.",
   "zap.practice": "Karteikarten wiederholen",
   "zap.printed": "Den Text gedruckter Seiten speichern wir nicht – nur Themen und Karteikarten.",
+  "zap.printedNoCards": "Den Text gedruckter Seiten speichern wir nicht.",
   "zap.list": "Gespeicherte Notizen",
   "zap.empty": "Du hast noch keine gespeicherten Notizen.",
   "zap.open": "Öffnen",
@@ -44,6 +45,7 @@
   "zap.keep": "Das sind meine Notizen – speichern",
   "zap.keepHint": "Ohne Häkchen speichern wir den Text nicht. Quiz und Karten bleiben.",
   "zap.notKept": "Den eingefügten Text haben wir nicht gespeichert – nur Themen und Karten.",
+  "zap.notKeptNoCards": "Den eingefügten Text haben wir nicht gespeichert.",
   "zap.correctMark": "Richtige Antwort",
   "zap.yourMark": "Deine Antwort"
 }

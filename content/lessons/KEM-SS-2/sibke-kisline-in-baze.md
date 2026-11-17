@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -242,7 +242,7 @@ Beseda pufer prihaja iz nemške besede za **blažilnik**, kakršnega imajo žele
 ~ To velja za močno kislino. Ocetna kislina je šibka.
 + Pozabila je koreniti: $[\mathrm{H_3O^+}] = \sqrt{K_\mathrm{a} \cdot c}$, pH je $3{,}37$.
 - Napake ni; pH šibke kisline je blizu $7$.
-~ Raztopina kisline s $0{,}010\,\mathrm{mol/L}$ ni skoraj nevtralna. Rezultat $6{,}74$ je znak, da je v računu napaka.
+~ Raztopina kisline z $0{,}010\,\mathrm{mol/L}$ ni skoraj nevtralna. Rezultat $6{,}74$ je znak, da je v računu napaka.
 > Iz $K_\mathrm{a} = [\mathrm{H_3O^+}]^2/c$ sledi $[\mathrm{H_3O^+}] = \sqrt{1{,}8 \cdot 10^{-7}} = 4{,}2 \cdot 10^{-4}\,\mathrm{mol/L}$ in $\mathrm{pH} = 3{,}37$.
 
 ? Pri teku v kri prihaja mlečna kislina, pH krvi pa ostane skoraj $7{,}4$. Kaj ga drži pri miru?

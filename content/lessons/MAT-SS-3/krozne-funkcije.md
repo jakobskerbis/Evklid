@@ -19,7 +19,7 @@ Kalkulator ima za to tipko $\sin^{-1}$. Ta tipka je ena od **krožnih funkcij**.
 
 Oznaka $^{-1}$ tu pomeni **obratno (inverzno) funkcijo**. Sinus kotu priredi število, obratna funkcija pa številu priredi kot. Da ne pride do zmede, pišemo $\arcsin x$ (beri »arkus sinus«).
 
-**2. Druga napaka: en sinus, en kot.** Premica $y = \frac12$ seka graf sinusa v neskončno točkah: pri $\frac{\pi}{6}$, $\frac{5\pi}{6}$, $\frac{13\pi}{6}$ in tako naprej. Funkcija pa mora vsakemu številu prirediti en sam rezultat. Zato sinus **zožimo** na interval, kjer vsako vrednost od $-1$ do $1$ doseže natanko enkrat. To je $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, kjer sinus narašča.
+**2. Druga napaka: en sinus, en kot.** Premica $y = \frac12$ seka graf sinusa v neskončno mnogo točkah: pri $\frac{\pi}{6}$, $\frac{5\pi}{6}$, $\frac{13\pi}{6}$ in tako naprej. Funkcija pa mora vsakemu številu prirediti en sam rezultat. Zato sinus **zožimo** na interval, kjer vsako vrednost od $-1$ do $1$ doseže natanko enkrat. To je $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, kjer sinus narašča.
 
 V simulaciji spodaj »Kot iz vrednosti sinusa« nastavi $a = 0{,}5$. Na $[0, 2\pi)$ dobiš dve rešitvi, $\frac{\pi}{6}$ in $\frac{5\pi}{6}$; v zoženem intervalu leži le prva. Nato nastavi $a = -0{,}5$. Opazi, da nobena prikazana rešitev ni med $-\frac{\pi}{2}$ in $\frac{\pi}{2}$: arkus sinus vrne $-\frac{\pi}{6}$, kar je kot $\frac{11\pi}{6}$, zmanjšan za $2\pi$.
 
@@ -223,7 +223,7 @@ $\frac{2\pi}{3}$. Velja $\cos\frac{2\pi}{3} = -\frac12$ in $\frac{2\pi}{3}$ lež
 - **»$\arcsin(\sin x)$ je vedno $x$.«** Arkus sinus vrača le kote z $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, zato je na primer $\arcsin\left(\sin\frac{5\pi}{4}\right) = -\frac{\pi}{4}$. Najprej izračunaj notranjo funkcijo, nato poišči kot v zalogi vrednosti.
 - **»Arkus kosinus je lih.«** Kdor misli tako, dobi $\arccos\left(-\frac12\right) = -\frac{\pi}{3}$. Negativni koti niso v $[0, \pi]$. Prav je $\pi - \frac{\pi}{3} = \frac{2\pi}{3}$.
 - **»Arkus sinus da vse rešitve enačbe.«** $\arcsin a$ je samo ena rešitev enačbe $\sin x = a$. Drugo družino dobiš iz $\pi - x_1$, nato prišteješ $2k\pi$.
-- **Kalkulator v stopinjah.** Če $\arcsin$ izračunaš v stopinjah in rezultat vstaviš v izraz z $2\pi$, je čas napačen za faktor približno $57$. Pri enačbah z $\pi$ preklopi na radiane.
+- **Kalkulator v stopinjah.** Če $\arcsin$ izračunaš v stopinjah in rezultat vstaviš v izraz z $2\pi$, je čas napačen za faktor približno $57$. Pri enačbah s $\pi$ preklopi na radiane.
 
 ## Povzetek
 

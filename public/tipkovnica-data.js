@@ -248,9 +248,8 @@ export function stepCaret(value, pos, dir) {
 }
 
 /** Enota pri nalogi: zamenja prejšnjo enoto na koncu odgovora (»12 m« + km/h → »12 km/h«). */
-export function withUnit(value, unit) {
-  return String(value ?? "").replace(/\s+[^\d\s,./−-][^\s]*$/, "").trimEnd() + " " + unit;
-}
+// Vpis enote (skupaj s ploščo Piši in aplikacijo): public/enote-izbira.js.
+export { withUnit } from "./enote-izbira.js";
 
 // ---------- nastavitve naprave ----------
 export const PREF_KEY = "evklid.tipkovnica";

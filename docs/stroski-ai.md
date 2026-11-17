@@ -90,6 +90,31 @@ Strošek zagona: 4,60 $ (aplikacija 0,98 $, ocenjevalec 3,61 $), 77 min.
 - **Brez ključa** (ali z `EVKLID_MOCK=1`) skripta konča brez klica in brez zapisa; `--dry` izpiše izbor in oceno stroška.
 - **Zagon na Renderju:** Render → evklid → **Shell**, vpiši `node scripts/primerjava-modelov.js --s-preverjanjem --max-usd 5` in počakaj do konca (med zagonom ne združuj ničesar v main, nova objava prekine Shell; po prekinitvi isti ukaz nadaljuje, če je `data/` na trajnem disku). Skripta teče ob aplikaciji kot drug proces (približno 200 do 250 MB pomnilnika: v preizkusnem načinu izmerjeno 203 MB za zagon skozi klepet in 158 MB za izbor primerov; s pravim API ni izmerjeno). Na strežniku ne piše v `docs/`: na koncu izpiše blok »POVZETEK ZA REPOZITORIJ«. Kopiraj ga in pošlji Claudu; ta ga shrani v datoteko in požene `node scripts/primerjava-modelov.js --iz-json <datoteka>`, ki preveri obliko in zapiše `docs/meritve/natancnost-<datum>.json` ter zgornjo tabelo (brez klicev).
 
+## Ročna meritev v GitHub Actions (j, 2026-11-17)
+
+Plačane meritve inštruktorja `scripts/meri-*.mjs` (npr. `meri-preizkus3.mjs`, `meri-nacin-b.mjs`, `meri-hitri-korak.mjs`) se zaženejo brez lupine Renderja, z delovnim tokom `.github/workflows/meri.yml`.
+
+**Zagon s telefona:**
+
+1. V brskalniku na telefonu odpri **github.com/jakobskerbis/Evklid** (prijavljen v GitHub).
+2. Tapni **Actions** (če ga ne vidiš, tapni »…« ob zavihkih), nato na levi **Meritev**.
+3. Tapni **Run workflow**. Veja ostane `main`.
+4. V polje **skripta** vpiši skripto (privzeto `scripts/meri-preizkus3.mjs`). Ostala polja lahko pustiš.
+5. Tapni zeleni gumb **Run workflow**. Po nekaj sekundah se pojavi nov zagon; tapni ga.
+6. Izid: stran **Summary** zagona pokaže zadnjih 40 vrstic (tabela in »Strošek …«). Celoten dnevnik in odgovori so v artefaktu **meritev** na isti strani (zip, odpri ga na računalniku; ostane 30 dni).
+
+**Brezplačen preizkus (0 $):** skripta `scripts/meri-preizkus3.mjs`, v polje **argumenti** vpiši `--suho`. Pokliče preizkusne odgovore namesto modela (tudi kadar je ključ nastavljen) in samo preveri, da zagon deluje.
+
+**Polja:** `skripta` (`scripts/meri-<ime>.mjs`), `sha` (prazno = zadnji main; sicer 40 znakov hex, commit mora biti v zgodovini main), `max_usd` (privzeto 2), `argumenti` (neobvezno, npr. `--samo-novi --naloge 19,45` ali `--suho`; samo male črke, števke, presledek in `, = . -`).
+
+- **Meja stroška:** skripta dobi `--max-usd` največ **2 $** na zagon (višja vrednost se zniža na 2; meje ni mogoče podati v `argumenti`). Skripte se ustavijo, preden bi strošek presegel mejo; klic, ki pade brez podatka o porabi, štejejo kot najslabši primer. Delovni tok zažene le skripte, ki `--max-usd` res preberejo (`meri-model.mjs` npr. ne); `meri-hitri-korak.mjs` sprejme `--max-usd` (staro ime `--meja-usd`).
+- **En zagon naenkrat:** drugi zagon počaka, dokler prvi ne konča. Tretji, sprožen med tem, prekliče čakajočega (čaka največ en, najnovejši). Zagon traja največ 80 minut (posel 90); skripte odgovore sproti zapisujejo v `data/meri-*.json` (`koncano: false`, dokler ne končajo), zato tudi prekinjen zagon pusti plačane izide v artefaktu.
+- Le ročni zagon z main; PR in push ga ne sprožita. Pred meritvijo se preveri, da je SymPy nameščen (sicer zagon pade, preden kaj stane).
+- **Rdeč zagon z »Ni ključa API«:** v repozitoriju manjka skrivnost `ANTHROPIC_API_KEY` (Settings → Secrets and variables → Actions; ista kot pri »Meritev po objavi«). Ključ dobi samo korak meritve; če bi se ključ kdaj pojavil v izhodu, korak izbriše dnevnik in JSON in pade (»ključ v izhodu«).
+- Meritve ne pišejo v bazo in ne štejejo v porabo aplikacije (vidno le v konzoli Anthropic); `EVKLID_DB` vseeno kaže na začasno datoteko, prave baze na Renderju se ne dotaknejo.
+- **Priporočilo (še ni nastavljeno):** v GitHub (Settings → Environments) ustvari okolje »meritev«, omejeno na vejo main, in vanj premakni ključ; nato ga delovni tok uporabi z `environment: meritev`. V konzoli Anthropic nastavi mesečno mejo porabe ključa.
+- Test: `test/meri-delovni-tok.test.js` (varovalke v datoteki in preverjanje vnosov).
+
 ## Ustno spraševanje »Vprašaj me« (j, 2026-11-10)
 
 `server/ustno.js`, `server/ustno-api.js`. Ocena enega odgovora je ločen klic Haikuja (effort `medium`, `EVKLID_USTNO_EFFORT`,
@@ -102,6 +127,29 @@ po `callMaxUsd`) in se zapiše pod učenca (vrsti `ustno`, `ustno-pregled`). Spr
 Meritev z `EVKLID_MOCK` (5 simuliranih spraševanj po 5 vprašanj in 2 dodatni vprašanji, poraba ocenjena iz velikosti pozivov,
 razmislek Haikuja ocenjen na 1200 žetonov): **0,0050 $ na spraševanje** (7 klicev, ~5 500 vhodnih in ~9 000 izhodnih žetonov);
 en pregled s Sonnetom ~0,009 $. Pravi strošek izmerimo na pravih spraševanjih pred javno objavo.
+
+## Skener v Inštruktorju (j, 2026-11-17; osnutek, odloči j)
+
+Kamera v vrstici za pisanje ne pošlje več slike naravnost inštruktorju: odpre skener (zajem, izrez na napravi brez AI),
+`POST /api/students/:id/scan/read-task` prepiše celotno nalogo (vsi predmeti, formule v `$…$`), učenec prepis popravi in ga
+pošlje v odprti pogovor. Fotografija gre zraven le, če ostane označena (samodejno: skica ali graf, `figure`, ali branje ni
+uspelo). Model branja `EVKLID_SCAN_TUTOR_MODEL`, privzeto hitri model inštruktorja (Haiku 5.5), `max_tokens` 1200, navodila
+~300 žetonov, trda meja AI kot pri skenerju (`imageCallReserveUsd`), vrsta `skeniranje`.
+
+Ocena na fotografirano nalogo (Haiku 0,10 / 0,50 $ na milijon žetonov; izrez do 1600 px ≈ 2 300 žetonov slike, prej
+slika v klepetu do 1200 px ≈ 1 450 žetonov; slika ostane v zgodovini samo v svoji potezi, `EVKLID_HISTORY_IMAGE_TURNS=1`):
+
+| | prej (slika → inštruktor) | zdaj (skener → besedilo) |
+|---|---|---|
+| branje | – | ~0,0004 $ (2 600 vhod + ~300 izhod) |
+| slika v odgovoru inštruktorja (Haiku) | ~0,00015 $ | 0 (besedilo ~100 žetonov), s sliko ob skici ~0,00015 $ |
+| skupaj na nalogo | **~0,00015 $** | **~0,0004 $** (s skico ~0,00055 $) |
+
+Razlika je ~+0,0003 $ na fotografirano nalogo (~0,03 $ na 100 fotografij), en klic več. Če odgovori močnejši model
+(proračun, »Razloži podrobneje«), je prihranek pri sliki večji od stroška branja (Sonnet: slika ~0,003 $). Z branjem s
+Sonnetom (`EVKLID_SCAN_TUTOR_MODEL=claude-sonnet-5-5`, kot zaslon Skeniraj) bi bilo ~0,008 $ na nalogo. Prednost: inštruktor
+dobi besedilo, zato koda preveri račun (`presolve` ne deluje pri sliki), odgovor je lahko iz predpomnilnika, slike se ne
+shranjujejo, kadar ne gredo zraven.
 
 ## Števec porabe za skrbnika (2026-10-29)
 

@@ -6,6 +6,7 @@ export default {
   "u.snov": "Snov",
   "u.iskanje": "Iz katere snovi naj te vprašam?",
   "u.isciPh": "npr. Ohmov zakon",
+  "u.isciPhTema": "npr. {tema}",
   "u.isci": "Poišči",
   "u.koliko": "Koliko vprašanj",
   "u.kako": "Kako odgovarjaš",

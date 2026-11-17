@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -191,7 +191,7 @@ Košarico za sadje s težo $24\,\mathrm{N}$ obesiš na dve zaporedno vezani vzme
 **Iščemo:** raztezka $x_1$, $x_2$, skupni raztezek $x$ in novo spodnjo vzmet $k_2'$
 
 :::formula
-Vsaka vzmet nosi celo težo: $x_1 = \dfrac{F}{k_1}$, $x_2 = \dfrac{F}{k_2}$, $x = x_1 + x_2$; preizkus z $k_\mathrm{z} = \dfrac{k_1 k_2}{k_1 + k_2}$; za obrat $\dfrac{1}{k_2'} = \dfrac{1}{k_\mathrm{z}'} - \dfrac{1}{k_1}$
+Vsaka vzmet nosi celo težo: $x_1 = \dfrac{F}{k_1}$, $x_2 = \dfrac{F}{k_2}$, $x = x_1 + x_2$; preizkus s $k_\mathrm{z} = \dfrac{k_1 k_2}{k_1 + k_2}$; za obrat $\dfrac{1}{k_2'} = \dfrac{1}{k_\mathrm{z}'} - \dfrac{1}{k_1}$
 :::
 
 **Rešitev:**

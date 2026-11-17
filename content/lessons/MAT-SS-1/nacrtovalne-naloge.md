@@ -42,7 +42,7 @@ Na primer $75^\circ = 60^\circ + 15^\circ$: načrtaj $60^\circ$, ob njegovem kra
 **5. Diskusija.** Vrnimo se k Niki: $c = 6\,\mathrm{cm}$, $\alpha = 30^\circ$, $a$ spreminjamo. Naj bo $D$ nožišče pravokotnice iz $B$ na krak. Trikotnik $ABD$ (kota $30^\circ$ in $90^\circ$) je polovica enakostraničnega trikotnika s stranico $c$, zato je razdalja $d = |BD| = \frac{c}{2} = 3\,\mathrm{cm}$.
 
 :::risba graf
-opis: Daljica AB dolžine 6 cm leži na osi x, A je v izhodišču, B v točki (6, 0). Iz A gre krak kota 30 stopinj. Črtkana krožnica ima središče B in polmer a = {a} cm. Njena presečišča s krakom sta možni legi oglišča C, označeni s C₁ in C₂. V aplikaciji a spreminjaš z drsnikom od 1 do 7.
+opis: Daljica AB dolžine 6 cm leži na osi x, A je v izhodišču, B v točki (6, 0). Iz A gre krak kota 30 stopinj. Črtkana krožnica ima središče B in polmer a = {a} cm. Njeni presečišči s krakom sta možni legi oglišča C, označeni s C₁ in C₂. V aplikaciji a spreminjaš z drsnikom od 1 do 7.
 x: -2 .. 14
 y: -7 .. 8
 enako: da
@@ -383,7 +383,7 @@ napis: 7,4; 1,2 | 4 | desno
 - Oba se pokvarita, ker vlečenje vedno spremeni lik.
 ~ Vlečenje premakne lik, a dobro načrtan lik ohrani lastnosti. To je smisel testa vlečenja.
 - Anin ostane kvadrat, Borov ne, ker se njegove pomožne črte zamaknejo.
-~ Pomožne črte se premaknejo skupaj s $B$ in iz njih spet nastaneta pravilni točki $C$ in $D$.
+~ Pomožne črte se premaknejo skupaj z $B$ in iz njih spet nastaneta pravilni točki $C$ in $D$.
 > Program si zapomni, kako je točka nastala. Načrtane točke sledijo prosti točki, točke na oko pa ne.
 
 ? Tim rešuje nalogo s podatki $c = 8\,\mathrm{cm}$, $\alpha = 30^\circ$, $a = 3\,\mathrm{cm}$. Na risbi je njegov načrt, spodaj pa njegova diskusija.

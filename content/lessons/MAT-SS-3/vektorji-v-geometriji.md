@@ -69,7 +69,7 @@ V ravnini so vsi vektorji koplanarni, zato ima vprašanje smisel šele v prostor
 
 $$\alpha\,\vec a + \beta\,\vec b = \vec 0 \;\Rightarrow\; \alpha = \beta = 0$$
 
-Ničelni vektor dobiš samo tako, da oba vzameš nič krat. Sicer sta **linearno odvisna**. Primer: $2 \cdot (2, 1) + 1 \cdot (-4, -2) = (0, 0)$, zato sta $(2, 1)$ in $(-4, -2)$ odvisna.
+Ničelni vektor dobiš samo tako, da oba vzameš ničkrat. Sicer sta **linearno odvisna**. Primer: $2 \cdot (2, 1) + 1 \cdot (-4, -2) = (0, 0)$, zato sta $(2, 1)$ in $(-4, -2)$ odvisna.
 
 Dva vektorja sta odvisna natanko tedaj, ko sta kolinearna. Trije so odvisni natanko tedaj, ko so koplanarni:
 
@@ -93,7 +93,7 @@ Pazi na vrstni red: če je $D$ bližje $A$, ima $\vec r_A$ večjo utež, torej v
 
 $$\vec r_S = \frac{\vec r_A + \vec r_B}{2}$$
 
-**6. Težišče trikotnika (višja raven).** Težiščnica povezuje oglišče z razpoloviščem nasprotne stranice. Vse tri se sekajo v težišču $T$. Ta deli vsako težiščnico v razmerju $2 : 1$, daljši del je ob oglišču. Na težiščnici $CS$, kjer je $S$ razpolovišče $AB$, je $CT : TS = 2 : 1$. Delilno razmerje da $\vec r_T = \frac{\vec r_C + 2\vec r_S}{3}$; vstavimo $2\vec r_S = \vec r_A + \vec r_B$:
+**6. Težišče trikotnika (višja raven).** Težiščnica povezuje oglišče z razpoloviščem nasprotne stranice. Vse tri se sekajo v težišču $T$. Težišče deli vsako težiščnico v razmerju $2 : 1$, daljši del je ob oglišču. Na težiščnici $CS$, kjer je $S$ razpolovišče $AB$, je $CT : TS = 2 : 1$. Delilno razmerje da $\vec r_T = \frac{\vec r_C + 2\vec r_S}{3}$; vstavimo $2\vec r_S = \vec r_A + \vec r_B$:
 
 $$\vec r_T = \frac{\vec r_A + \vec r_B + \vec r_C}{3}$$
 

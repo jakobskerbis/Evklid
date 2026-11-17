@@ -587,7 +587,7 @@ točka: 1; 4
 točka: 3; -2
 točka: 5; 4
 :::
-= 4 | 0,1
+= 4 | 0
 ~ 1,6 | To je $b = \frac{2\pi}{T} = \frac{\pi}{2} \approx 1{,}57$. Vprašanje je po periodi $T$.
 ~ 2 | To je vodoravna razdalja od vrha do naslednjega dna, torej le pol periode.
 ~ 6 | To je višinska razlika med vrhom in dnom, $2|A|$. Periodo meriš vodoravno.
@@ -605,7 +605,7 @@ točka: 5; 4
 > $2x - \frac{\pi}{3} = 2\left(x - \frac{\pi}{6}\right)$, zato je $c = \frac{\pi}{6}$: premik za $\frac{\pi}{6}$ v desno. Korak (1) je pravilen.
 
 ? (brez računala) Lučka za obvestila na telefonu »diha«: njena svetlost je $s(t) = 40\cos(\pi t) + 50$ (v odstotkih, $t$ v sekundah). Kolikšna je najmanjša svetlost lučke?
-= 10 % | 0,5
+= 10 % | 0
 ~ -40 | Prezrl si premik $d = 50$: ves val je dvignjen za $50$. Negativne svetlosti ni.
 ~ 50 | To je srednja črta. Val niha za $40$ nad njo in za $40$ pod njo.
 ~ 90 | To je največja svetlost, $50 + 40$. Najmanjša je $50 - 40$.
