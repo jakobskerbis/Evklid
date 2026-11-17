@@ -29,7 +29,7 @@ import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
 import { createIzrisBlokov, enIzrisNaSlicico } from "./izpis-toka.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
-import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
+import { mountLevelPicker, levelLabel, levelChoices, ravenChoices, schoolSystemOptions } from "./level-picker.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
@@ -1105,26 +1105,67 @@ function renderConversationList() {
 function renderEmptyChat() {
   state.chatFx = null; // nov pogovor (tudi po brisanju odprtega ali menjavi profila): predmet iz nastavitev
   $("#chat-title").textContent = t("chat.new");
-  const ideas = [t("chat.idea1"), t("chat.idea2"), t("chat.idea3")];
+  const ideas = chatIdeas(state.student.settings, ideasPath(state.student));
   // .empty-hall: okvir pozdrava (ui.css → »Klepet obdobja«: s chat.frame »stebri« pročelje templa iz
   // ERAS[…].arch.temple, templeParts doda dele in jih ob menjavi sloga zamenja; »pilon« iz ERAS[…].building enako).
   $("#messages").innerHTML = `<div class="empty"><div class="empty-hall">
     <div class="tutor-avatar big" aria-hidden="true">${icon("sparkles")}</div>
     <p class="big">${t("chat.hello", { name: escapeHtml(state.student.name) })}</p>
     <p>${t("chat.intro")}</p>
-    <div class="ideas">${ideas.map((t) => `<button type="button" class="idea" data-idea="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join("")}</div></div>
+    <div class="ideas">${ideasHtml(ideas)}</div></div>
     ${greekFactHtml("gr-chat")}</div>`;
   templeParts();
   wireGreekFacts($("#messages"));
   // Predlog se pošlje takoj in inštruktor nanj odgovori (j, 3. 11.): ni ga treba še enkrat poslati.
   // Če je učenec že kaj napisal ali dodal fotografijo, predlog gre v polje (da se nič ne izgubi).
-  $("#messages").querySelectorAll("[data-idea]").forEach((b) =>
-    b.addEventListener("click", () => {
-      if (!$("#input").value.trim() && !state.image) return send(b.dataset.idea);
-      fillInput(b.dataset.idea);
-    }),
-  );
   renderState(null);
+  if (!ideasPath(state.student)) refreshIdeas();
+}
+$("#messages").addEventListener("click", ideaClick); // enkrat: predlogi se ob osvežitvi zamenjajo
+function ideaClick(e) {
+  const b = e.target.closest?.("[data-idea]");
+  if (!b) return;
+  if (!$("#input").value.trim() && !state.image) return send(b.dataset.idea);
+  fillInput(b.dataset.idea);
+}
+const ideasHtml = (ideas) => ideas.map((x) => `<button type="button" class="idea" data-idea="${escapeHtml(x)}">${escapeHtml(x)}</button>`).join("");
+
+// Predlogi v praznem klepetu po profilu (j, 17. 11. 2026): tema z učne poti učenčevega razreda/letnika in predmeta,
+// pri maturantu naloga v slogu mature (pri MAT z ravnijo), v 6. in 9. razredu pri MAT v slogu NPZ.
+// Brez učne poti (še ni naložena, napaka) ostanejo splošni predlogi.
+const ideasKey = (s) => [s?.subject, s?.educational_track, s?.curriculum_level, s?.study_program, s?.school_system].join("|");
+const ideasPath = (st) => (state.ideasPath && state.ideasPath.student === st?.id && state.ideasPath.key === ideasKey(st?.settings) ? state.ideasPath : null);
+function chatIdeas(s = {}, path = null) {
+  const topics = (path?.topics || []).filter((x) => x?.name);
+  const first = path?.next?.name ? path.next : topics.find((x) => x.status !== "mastered") || topics[0];
+  if (!first) return [t("chat.idea1"), t("chat.idea2"), t("chat.idea3")];
+  const second = topics.find((x) => x.id !== first.id && x.status !== "mastered") || first;
+  const level = String(s.curriculum_level || "");
+  const raven = / (VR|OR)$/.exec(level)?.[1];
+  let exam = null;
+  if (jeSs(s) && /^4\. letnik/.test(level) && ["MAT", "FIZ", "KEM", "BIO"].includes(s.subject))
+    exam = s.subject === "MAT" && raven ? t(raven === "VR" ? "chat.ideaMaturaVR" : "chat.ideaMaturaOR") : t("chat.ideaMatura");
+  else if (jeOs(s) && /^(6|9)\. razred/.test(level) && s.subject === "MAT") exam = t("chat.ideaNpz");
+  return [t("chat.ideaExplain", { topic: first.name }), t("chat.ideaTask", { topic: second.name }), exam || t("chat.ideaExplain", { topic: (topics.find((x) => x.id !== first.id && x.id !== second.id && x.status !== "mastered") || second).name })];
+}
+// Učna pot za predloge: shrani jo loadPath; sicer (klepet odprt pred Učno potjo, menjava v glavi) jo naložimo tu.
+async function refreshIdeas() {
+  const st = state.student;
+  if (!st || ideasPath(st)) return showIdeas();
+  try {
+    const p = await api(`/api/students/${st.id}/path`);
+    rememberIdeasPath(st, p);
+  } catch { return; }
+  showIdeas();
+}
+function rememberIdeasPath(st, p) {
+  if (!st || !p) return;
+  state.ideasPath = { student: st.id, key: ideasKey(st.settings), next: p.next || null, topics: (p.units || []).flatMap((u) => u.topics || []) };
+}
+function showIdeas() {
+  const box = $("#messages .empty-hall .ideas");
+  if (!box || state.conversationId || !state.student) return;
+  box.innerHTML = ideasHtml(chatIdeas(state.student.settings, ideasPath(state.student)));
 }
 
 function templeParts() {
@@ -1150,6 +1191,7 @@ function renderState(convState) {
     `<span class="chip chip-pick"><select data-pick="${key}" aria-label="${escapeHtml(label)}">${options}</select></span>`;
   const opt = (value, label, current) => `<option value="${escapeHtml(value)}"${current ? " selected" : ""}>${escapeHtml(label)}</option>`;
   const levels = levelChoices(s);
+  const ravni = ravenChoices(s);
   const head = $("#chat-state");
   head.innerHTML = [
     SUBJECT_NAMES[subject] && pick("subject", t("set.subject"), opt(subject, SUBJECT_NAMES[subject], true)),
@@ -1159,10 +1201,11 @@ function renderState(convState) {
       (levels.length > 1
         ? pick("level", t("set.school"), levels.map((x, i) => opt(i, x.label, x.current)).join(""))
         : `<span class="chip">${escapeHtml(levelLabel(s.curriculum_level))}</span>`),
+    ravni.length > 1 && pick("raven", t("tbk.level"), ravni.map((x, i) => opt(i, x.label, x.current)).join("")),
   ]
     .filter(Boolean)
     .join("");
-  wireStatePicks(head, subject, levels);
+  wireStatePicks(head, subject, levels, ravni);
   // Pogovor o temi učne poti: povezava na lekcijo v učbeniku.
   const topicId = state.conversationId && state.convTopic;
   if (topicId) {
@@ -1175,7 +1218,7 @@ function renderState(convState) {
   }
 }
 
-async function wireStatePicks(head, subject, levels) {
+async function wireStatePicks(head, subject, levels, ravni = []) {
   const save = async (settings, what, label) => {
     const updated = await api(`/api/students/${state.student.id}`, { method: "PUT", body: { settings } });
     studentUpdated(updated);
@@ -1192,6 +1235,11 @@ async function wireStatePicks(head, subject, levels) {
       if (list.length && !list.includes(state.student.settings.subject)) next.subject = list.includes("NAR") && ["FIZ", "KEM", "BIO"].includes(state.student.settings.subject) ? "NAR" : list[0];
     } else next.study_course = "";
     save(next, t("set.school"), levels[Number(e.target.value)].label).catch(() => renderState(null));
+  });
+  // Raven matematike (SŠ): ostaneta letnik in predmet, spremeni se le OR/VR.
+  head.querySelector('[data-pick="raven"]')?.addEventListener("change", (e) => {
+    const r = ravni[Number(e.target.value)];
+    if (r) save({ ...r.settings }, t("tbk.level"), r.label).catch(() => renderState(null));
   });
   const sel = head.querySelector('[data-pick="subject"]');
   if (!sel) return;
@@ -2313,6 +2361,7 @@ function studentUpdated(updated) {
   refreshProfileButton();
   renderState(null);
   if (before.goal !== updated.settings.goal || before.games !== updated.settings.games) renderGoal(); // bližnjici po cilju na Učni poti
+  if (ideasKey(before) !== ideasKey(updated.settings)) refreshIdeas(); // predlogi v praznem klepetu po novem razredu, ravni, predmetu
   if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
     state.pathKey = null;
     refreshModes(); // številki na gumbih Ponavljanje in Kartice za novi predmet
@@ -2999,6 +3048,7 @@ async function loadPath(key = state.pathKey) {
   const changed = state.pathKey !== p.key;
   state.pathKey = p.key;
   state.pathSubject = paths.find((x) => x.key === p.key)?.subject || state.student.settings.subject;
+  if (!uni || !key || key === p.defaultKey) (rememberIdeasPath(state.student, p), showIdeas());
   if (changed) refreshModes(); // fakulteta: drug predmet iz seznama poti
   showLevelCard();
   renderStageHome();
