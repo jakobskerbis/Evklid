@@ -115,7 +115,14 @@ test("meri-preizkus3 --suho nikoli ne kliče API (0 $), tudi s ključem", () => 
 test("plačane meri-*.mjs upoštevajo --max-usd (sicer jih delovni tok zavrne)", () => {
   const vzorec = /arg\("(--)?max-usd"/; // isti vzorec kot korak »Skripta upošteva --max-usd«
   assert.ok(y.includes(`grep -Eq '${vzorec.source}'`));
-  for (const s of ["meri-preizkus3.mjs", "meri-nacin-b.mjs", "meri-hitri-korak.mjs"]) {
+  for (const s of ["meri-preizkus3.mjs", "meri-nacin-b.mjs", "meri-hitri-korak.mjs", "meri-natancnost-ss.mjs"]) {
     assert.match(fs.readFileSync(new URL(`../scripts/${s}`, import.meta.url), "utf8"), vzorec, s);
   }
+});
+
+test("meri-natancnost-ss: meja in izbor se preverita pred klicem; privzeto samo odgovor s preverjanjem", () => {
+  const src = fs.readFileSync(new URL("../scripts/meri-natancnost-ss.mjs", import.meta.url), "utf8");
+  assert.match(src, /"--samo", ids\.join\(","\), "--ponovi", "1", "--max-usd", String\(MEJA\)/); // mejo uveljavi primerjava-modelov.js
+  assert.match(src, /if \(!process\.argv\.includes\("--oba"\)\) ukaz\.push\("--pogoj", "s"\);/);
+  assert.match(src, /if \(SUHO\) ukaz\.push\("--dry"\);/); // --suho nikoli ne kliče modela
 });

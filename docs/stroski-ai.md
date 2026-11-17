@@ -103,6 +103,8 @@ Plačane meritve inštruktorja `scripts/meri-*.mjs` (npr. `meri-preizkus3.mjs`, 
 5. Tapni zeleni gumb **Run workflow**. Po nekaj sekundah se pojavi nov zagon; tapni ga.
 6. Izid: stran **Summary** zagona pokaže zadnjih 40 vrstic (tabela in »Strošek …«). Celoten dnevnik in odgovori so v artefaktu **meritev** na isti strani (zip, odpri ga na računalniku; ostane 30 dni).
 
+**Pravilnost na srednješolski snovi (j, 2026-11-18):** skripta `scripts/meri-natancnost-ss.mjs` pošlje ~30 rešenih primerov iz srednješolskih lekcij (isti izbor kot polna meritev) skozi pravo pot klepeta in oceni odgovor, kot ga vidi učenec (s preverjanjem). Ocena ~1,7 $; če se zagon ustavi ob meji 2 $, v **argumenti** vpiši `--del 1-2`, nato v drugem zagonu `--del 2-2`. `--oba` doda še pogoj brez preverjanja (dvojni strošek), `--stopnje os,ss,tek,uni` izbere druge stopnje. Izid ni meritev za objavo (stran »Zakaj Evklid« se ne spremeni).
+
 **Brezplačen preizkus (0 $):** skripta `scripts/meri-preizkus3.mjs`, v polje **argumenti** vpiši `--suho`. Pokliče preizkusne odgovore namesto modela (tudi kadar je ključ nastavljen) in samo preveri, da zagon deluje.
 
 **Polja:** `skripta` (`scripts/meri-<ime>.mjs`), `sha` (prazno = zadnji main; sicer 40 znakov hex, commit mora biti v zgodovini main), `max_usd` (privzeto 2), `argumenti` (neobvezno, npr. `--samo-novi --naloge 19,45` ali `--suho`; samo male črke, števke, presledek in `, = . -`).
