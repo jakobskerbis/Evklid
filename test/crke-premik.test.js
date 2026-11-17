@@ -191,3 +191,30 @@ test("pregled 785, 7: fizikalne izključitve niso preširoke", () => {
   assert.equal(label("FIZ", "Gravitacija", "Polmer Zemlje je $R = 6370\\,\\mathrm{km}$.", "R"), null);
   assert.equal(label("FIZ", "Termodinamika", "Notranja energija je $U = \\frac{3}{2} n R T$.", "U"), null);
 });
+
+// Pregled 785, krog 2 (17. 11. 2026): izjema za električni kontekst je bila preširoka.
+test("pregled 785-2, 1: »Uporabi«, upor zraka, površinska napetost, jakost I ne vrnejo napačnega pomena", () => {
+  const none = [
+    ["FIZ", "Gravitacijski zakon", "Uporabi $G M_Z = 3{,}98 \\cdot 10^{14}\\,\\mathrm{m^3/s^2}$ in $R = 6370\\,\\mathrm{km}$.", "R"],
+    ["FIZ", "Idealni plin in kinetična teorija", "Z $R = 8{,}314\\,\\mathrm{J/(mol\\,K)}$ uporabljaj $\\mathrm{Pa}$ in $\\mathrm{m^3}$ pri enačbi stanja idealnega plina.", "R"],
+    ["FIZ", "Prevod toplote", "Uporabi toplotni upor $R = \\frac{d}{\\lambda S}$ za steno.", "R"],
+    ["FIZ", "Termodinamika", "Uporabi $\\Delta U = Q + A$ in $U = \\frac{3}{2} n R T$.", "U"],
+    ["FIZ", "Gibanje", "Upor zraka zanemarimo, polmer Zemlje je $R = 6370\\,\\mathrm{km}$.", "R"],
+    ["FIZ", "Površinska napetost", "Kapljica s polmerom $R$ zaradi površinske napetosti ohrani obliko.", "R"],
+    ["FIZ", "Mehanske lastnosti materialov", "Mehanska napetost je $\\sigma = F/S$; palica ima polmer $R$.", "R"],
+    ["FIZ", "Sevanje", "Na razdalji $R$ od Sonca je $I = \\frac{P}{4\\pi R^2}$.", "R"],
+    ["FIZ", "Sevanje", "Na razdalji $R$ od Sonca je $I = \\frac{P}{4\\pi R^2}$.", "I"],
+  ];
+  for (const [s, t, x, k] of none) assert.equal(label(s, t, x, k), null, `${k} v »${x}«`);
+  // Pravi električni kontekst ostane.
+  assert.match(label("FIZ", "Električni tok in vezja", "Upornik ima upor $R = 50\\,\\Omega$.", "R") || "", /upor/);
+  assert.match(label("FIZ", "Električno delo", "Grelnik pretvarja električno delo v notranjo energijo: $A = U I t$.", "U") || "", /napetost/);
+  assert.match(label("FIZ", "Termodinamika", "Napetost vira je $U = 12\\,\\mathrm{V}$.", "U") || "", /napetost/);
+});
+
+test("pregled 785-2, 2: x^x + q brez asimptote; člen, pomnožen z x, ni premik", () => {
+  assert.doesNotMatch(card("MAT", "", "$y = x^{x} + q$", "q")?.html || "", /asimptota/);
+  for (const f of ["$y = \\sqrt{x - p} \\cdot x + q$", "$y = \\frac{1}{x - p} \\cdot x + q$", "$y = x \\log_a(x - p)$"]) {
+    assert.equal(label("MAT", "", f, "p"), null, f);
+  }
+});

@@ -23,8 +23,10 @@ const T_CELZIJ = { ctx: CELZIJ, n: "temperatura (v °C)", en: "temperature (in �
 // p⁺ (proton) in n⁰ (nevtron) nista tlak in množina snovi.
 const DELEC = "p\\s*\\^\\s*\\{?\\s*\\+|n\\s*\\^\\s*\\{?\\s*0";
 // Električni kontekst v povedi ali formuli: U in R ostaneta napetost in upor kljub »ne« (pregled PR 785).
-const ELEKTRIKA = "napetost|(?<!\\p{L})volt|(?<!\\p{L})upor|(?<!\\p{L})ohm|Ω|električn\\w*\\s+(?:tok|krog|vezj)";
-const ELEKTRIKA_F = "(?<![\\w\\\\])I(?![\\w])|\\\\Omega|\\\\mathrm\\s*\\{\\s*[mkM]?(?:V|A|\\\\Omega)\\s*\\}";
+// Upor le kot samostalnik (upor, upora, uporom, upornik …, ne »uporabi«), ne zračni ali toplotni upor; napetost ne
+// površinska ali mehanska; formula le z enoto V, A ali Ω (ne vsak I: tudi jakost, vztrajnostni moment). Pregled 785-2.
+const ELEKTRIKA = String.raw`(?<!(?:površinsk|mehansk|natezn|strižn|tlačn)\w*\s+)napetost|(?<!\p{L})volt|(?<!(?:zračn|toplotn|kotaln)\w*\s+)(?<!\p{L})upor(?:a|u|om|i|ov|ih|e|nik\w*|n\w*)?(?!\p{L})(?!\s+zrak)|(?<!\p{L})ohm|Ω|električn\w*\s+(?:tok|krog|vezj|del|energij|moč|grel|naboj)`;
+const ELEKTRIKA_F = String.raw`\\Omega|\\mathrm\s*\{\s*[mkM]?(?:V|A|\\Omega)\s*\}`;
 const FIZ = {
   // F je pri lečah in zrcalih gorišče.
   F: { ne: "\\bleč|gorišč|zrcal", n: "sila", en: "force", r: "F = m\\,a", u: "N" },
@@ -79,8 +81,8 @@ const FIZ = {
   // ΔU v termodinamiki je notranja energija; I je tudi jakost zvoka ali svetlobe; R tudi plinska konstanta
   // (p V = n R T) in polmer Zemlje; C tudi toplotna kapaciteta; λ tudi razpadna konstanta. Tam raje nič.
   U: { brez: "\\\\Delta\\s*U", ne: "notranj\\w*\\s+energij|termodinam", kljub: ELEKTRIKA, kljubF: ELEKTRIKA_F, n: "električna napetost", en: "voltage", r: "U = R\\,I", u: "V" },
-  I: { ne: "jakost\\w*\\s+(?:zvok|svetlob|valovan|sevanj)|intenzitet|glasnost|decibel|vztrajnost", n: "električni tok", en: "electric current", r: "I = \\frac{e}{t}", u: "A" },
-  R: { brez: `R${MUL}T|n${MUL}R\\b`, ne: "idealn\\w*\\s+plin|plinsk\\w*\\s+(?:enačb|konstant|zakon)|stanj\\w*\\s+plin|termodinam|gravitac|(?<!\\p{L})zemlj(?:a|e|i|o|in\\w*)(?!\\p{L})|planet|(?<!\\p{L})sonc(?:e|a|u|em)(?!\\p{L})|satelit", kljub: ELEKTRIKA, kljubF: ELEKTRIKA_F, n: "električni upor", en: "electrical resistance", r: "R = \\frac{U}{I}", u: "Ω" },
+  I: { brez: String.raw`I\s*=\s*(?:\\[dt]?frac\s*\{\s*P|P\s*/)`, ne: "jakost\\w*\\s+(?:zvok|svetlob|valovan|sevanj)|intenzitet|glasnost|decibel|vztrajnost", n: "električni tok", en: "electric current", r: "I = \\frac{e}{t}", u: "A" },
+  R: { brez: `R${MUL}T|n${MUL}R\\b`, ne: "polmer|toplotn|prevod\\w*\\s+toplot|idealn\\w*\\s+plin|plinsk\\w*\\s+(?:enačb|konstant|zakon)|stanj\\w*\\s+plin|termodinam|gravitac|(?<!\\p{L})zemlj(?:a|e|i|o|in\\w*)(?!\\p{L})|planet|(?<!\\p{L})sonc(?:e|a|u|em)(?!\\p{L})|satelit", kljub: ELEKTRIKA, kljubF: ELEKTRIKA_F, n: "električni upor", en: "electrical resistance", r: "R = \\frac{U}{I}", u: "Ω" },
   // e^{…} je Eulerjevo število (praznjenje kondenzatorja, razpad), ne naboj.
   e: { brez: "e\\s*\\^", n: "električni naboj", en: "electric charge", r: "e = I\\,t", u: "C" },
   e_0: { n: "osnovni naboj", en: "elementary charge", r: "e_0 \\approx 1{,}6\\cdot 10^{-19}\\,\\mathrm{C}", u: "C" },
@@ -206,7 +208,7 @@ const XP = String.raw`x\s*-\s*p(?![\w])`;
 const XQ = String.raw`x(?:\s*-\s*p(?![\w]))?`;
 const FN_TERMS = (a) => ({
   log: String.raw`\\(?:log|ln|lg)(?![a-zA-Z])(?:_\s*(?:\{[^{}]*\}|[\w]))?\s*(?:${L}\(\s*${a}\s*${R}\)|\{\s*(?:${L}\(\s*)?${a}\s*(?:${R}\)\s*)?\}${a === XQ ? String.raw`|x(?![\w])` : ""})`,
-  exp: String.raw`(?:(?:[a-zA-Z]|\d+(?:[.,{}]+\d+)?|${L}\([^()]*${R}\))\s*\^\s*(?:\{\s*\(?\s*${a}\s*\)?\s*\}${a === XQ ? String.raw`|x(?![\w])` : ""})|\\exp\s*${L}\(\s*${a}\s*${R}\))`,
+  exp: String.raw`(?:(?:[a-wyzA-Z]|\d+(?:[.,{}]+\d+)?|${L}\([^()]*${R}\))\s*\^\s*(?:\{\s*\(?\s*${a}\s*\)?\s*\}${a === XQ ? String.raw`|x(?![\w])` : ""})|\\exp\s*${L}\(\s*${a}\s*${R}\))`,
   sqrt: String.raw`\\sqrt(?:\[[^\]]*\])?\s*\{\s*${a}\s*\}`,
   frac: String.raw`\\[dt]?frac\s*\{[^{}x]*\}\s*\{\s*${L}\(?\s*${a}\s*${R}\)?\s*\}`,
   abs: String.raw`${L}\|\s*${a}\s*${R}\||\\[lv]vert\s*${a}\s*\\[rv]vert`,
@@ -232,7 +234,9 @@ const PERIODA = String.raw`[fg]\s*\(\s*x\s*[-+]\s*p\s*\)\s*=`;
 const KVADRAT_V_FN = String.raw`\\[dt]?frac\s*\{[^{}]*\}\s*\{[^{}]*\(\s*x\s*-\s*p|\\(?:sqrt|log|ln|lg|sin|cos|tan|cot|tg|ctg)(?![a-zA-Z])[^=]*?\(\s*x\s*-\s*p\s*(?:\\right\s*)?\)\s*\^`;
 const TEME_BREZ = `${KROZNICA}|${SHIFT_P}|${KVADRAT_V_FN}`;
 const TEME_NE = "krožnic|središč|premik|transformacij|logarit|eksponent|korensk|racionaln|kotn\\w*\\s+funkcij|trigonometr|asimptot";
-const PREMIK_BREZ = `${KROZNICA}|${KVADRAT_P}|${PERIODA}`;
+// Člen, pomnožen z drugim x-členom (√(x − p)·x + q, x·log(x − p)): ni čist premik grafa.
+const KRAT_X = String.raw`(?:${SHIFT_P})\s*(?:\\cdot|\\times|\\[,;: ])?\s*(?:x|\\?\(|\\left)|x\s*(?:\\cdot|\\times|\\[,;: ])?\s*(?:${SHIFT_P})`;
+const PREMIK_BREZ = `${KROZNICA}|${KVADRAT_P}|${PERIODA}|${KRAT_X}`;
 const PREMIK_P = { n: "vodoravni premik grafa", en: "horizontal shift of the graph", r: "y = f(x - p) + q", note: "Graf se premakne za $p$ v desno (pri $p < 0$ v levo).", noteEn: "The graph moves $p$ to the right (to the left if $p < 0$)." };
 const PREMIK_Q = { n: "navpični premik grafa", en: "vertical shift of the graph", r: "y = f(x - p) + q", note: "Graf se premakne za $q$ navzgor (pri $q < 0$ navzdol).", noteEn: "The graph moves $q$ up (down if $q < 0$)." };
 const STOZNICE = "gorišč|vodnic|stožnic|elips|hiperbol|parabol\\w*\\s+y\\^";
