@@ -312,7 +312,7 @@ function quizCard(s) {
     const input =
       tk.answerType === "choice"
         ? `<div class="choices${tk.options.some((o) => String(o).length > 20) ? " one-col" : ""}">${tk.options.map((o, i) => `<button type="button" class="choice" data-pn="quiz-choice" data-i="${i}">${D.choiceHtml?.(tk, o) ?? esc(o)}</button>`).join("")}</div>`
-        : `<form class="answer-row pn-quiz-form"><label class="sr-only" for="pn-quiz-in">${esc(ph)}</label><input id="pn-quiz-in" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${tk.answerType === "number" && !tk.unit ? "decimal" : "text"}" placeholder="${esc(ph)}"><button type="button" class="primary" data-pn="quiz-send">${esc(t("pn.quizSend"))}</button></form>`;
+        : `<form class="answer-row pn-quiz-form"><label class="sr-only" for="pn-quiz-in">${esc(ph)}</label><input id="pn-quiz-in" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${tk.answerType === "number" && !tk.hasUnit ? "decimal" : "text"}" placeholder="${esc(ph)}"><button type="button" class="primary" data-pn="quiz-send">${esc(t("pn.quizSend"))}</button></form>`;
     // Prvič vse pravilno: strežnik doda tri težje naloge (brez tega bi bil drugi preizkus na stropu).
     const harder = quiz.phase === "pre" && quiz.data.harder ? `<p class="pn-status ok" role="status">${icon("sparkles")}${esc(t("pn.quizHarder"))}</p>` : "";
     body = `${harder}<p class="muted small" aria-live="polite">${esc(t("pn.quizCount", { i: quiz.data.index + 1, n: quiz.data.total }))}</p>

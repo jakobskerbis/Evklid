@@ -73,7 +73,7 @@ export function offlineHint(step: number) {
 
 export function offlineAnswer(sid: number, taskId: string, answer: string) {
   if (!current || current.id !== taskId) return null;
-  const res: any = checkAnswer(current.answer, answer);
+  const res: any = checkAnswer(current.answer, answer, { convert: true, text: current.task?.text });
   const out = { kind: res.kind, message: res.message || null, code: res.code, params: res.params || {}, offline: true };
   if (["format", "unit", "simplify"].includes(res.kind)) return { ...out, retry: true };
   current.attempts += 1;

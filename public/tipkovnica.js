@@ -532,6 +532,23 @@ function render() {
     if (cv === fading) cv.classList.add("out");
   }
   if (S.layer === "abc" && prefs.glide) loadGlide();
+  markMore();
+}
+// Vrstica nad tipkami, ki drsi vstran (šest enot): zbledel rob na strani, kjer je še kaj (pregled PR 786, G).
+function markMore() {
+  const box = board?.querySelector(".tk-ctx");
+  if (!box) return;
+  const upd = () => {
+    const max = box.scrollWidth - box.clientWidth;
+    const x = Math.abs(box.scrollLeft);
+    box.classList.toggle("more-end", max > 1 && x < max - 1);
+    box.classList.toggle("more-start", max > 1 && x > 1);
+  };
+  if (!box.dataset.more) {
+    box.dataset.more = "1";
+    box.addEventListener("scroll", upd, { passive: true });
+  }
+  requestAnimationFrame(upd);
 }
 // Na dotik je pri vklopljenih predlogih besed vrstica nad zavihki vedno na mestu (tudi prazna, kot pas
 // predlogov pri Gboard), da tipkovnica med pisanjem ne raste. Izklopljeni predlogi: brez praznega pasu (j, 4. 11.).
@@ -556,6 +573,7 @@ function renderCtx() {
   }
   if (!box || !(prefs.words && S.layer === "abc")) return;
   box.innerHTML = c.html;
+  markMore();
 }
 
 /** Sprememba ⇧ na črkah: napise zamenjamo na mestu (kot Gboard brez utripa), ne rišemo vse plošče znova. */

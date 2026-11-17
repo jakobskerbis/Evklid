@@ -196,7 +196,8 @@ export function publicTask(task) {
     inputHint: task.inputHint || null,
     level: task.level,
     answerType: answer.type,
-    unit: answer.unit || null,
+    // Prave enote odjemalec pred odgovorom ne dobi (pregled PR 786, C): le, ali jo naloga ima, in enote za izbiro.
+    hasUnit: !!answer.unit,
     // Enote za izbiro (prava in pet drugih po abecedi, public/enote-izbira.js): brez enot, ki jih preverjanje
     // sprejme kot pravo (velikost črke, unitAlternatives), da izbira ne ponudi »napačne«, ki je v resnici prava.
     units: answer.unit ? unitChoices(answer.unit, { subject: task.topicId || task.subject || "", seed: task.text, accepts: unitAccepts(answer) }) : null,

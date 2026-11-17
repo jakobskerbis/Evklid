@@ -832,7 +832,8 @@ export class Progress {
     }
 
     const task = row.payload;
-    const res = checkAnswer(task.answer, input);
+    // Pravilno pretvorjen rezultat (druga predpona) velja povsod, kjer besedilo ne zahteva enote (j, 17. 11. 2026).
+    const res = checkAnswer(task.answer, input, { convert: true, text: task.text });
     // code/params: prevod sporočila v jeziku vmesnika (message ostane slovenski).
     const out = { kind: res.kind, message: res.message || null, ...(res.code ? { code: res.code, params: res.params || {} } : {}) };
 

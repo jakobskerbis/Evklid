@@ -17,7 +17,7 @@ import { useTopicFx } from "@/lib/useTopicFx";
 import Storage from "expo-sqlite/kv-store";
 import { key } from "@/lib/keys";
 import { expectedMs, progressAt, addDuration } from "../../../public/check-progress.js";
-import { unitChoices, withUnit } from "../../../public/enote-izbira.js";
+import { withUnit } from "../../../public/enote-izbira.js";
 import { Banner, Body, Button, Card, ErrorView, Icon, Loading, ProgressBar, Screen, Title } from "@/components/ui";
 
 type Task = {
@@ -28,7 +28,7 @@ type Task = {
   figure?: Figure | null;
   inputHint?: string | null;
   answerType: "number" | "fraction" | "choice" | "coefficients";
-  unit?: string | null;
+  hasUnit?: boolean; // ali ima odgovor enoto (prave enote odjemalec ne dobi)
   units?: string[] | null; // enote za izbiro (strežnik, public/enote-izbira.js)
   options?: string[] | null;
   optionsTex?: boolean; // možnosti so formule brez $ (kot renderMath na spletu)
@@ -354,9 +354,9 @@ function AnswerInput({ task, value, onChange, onSubmit, inputRef }: { task: Task
       </View>
     );
   }
-  const placeholder = task.answerType === "coefficients" ? t("task.phCoef") : task.unit ? t("task.phUnit") : t("task.phResult");
+  const placeholder = task.answerType === "coefficients" ? t("task.phCoef") : task.hasUnit ? t("task.phUnit") : t("task.phResult");
   // Enota je del odgovora: ne samo prava, ampak več enot predmeta po abecedi (public/enote-izbira.js).
-  const units: string[] = task.units || unitChoices(task.unit || "", { subject: task.topicId || "", seed: task.text });
+  const units: string[] = task.units || [];
   const keys = ["−", ",", "/", ...units];
   const insert = (k: string) => {
     tap();

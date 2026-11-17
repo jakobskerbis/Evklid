@@ -4,7 +4,7 @@
 import { icon } from "./icons.js";
 import { t as tr, currentLang } from "./i18n.js";
 import { configureKeyboard, openKeyboard, hideKeyboard, keyboardOpenFor, keyboardPrefs, initKeyboard } from "./tipkovnica.js";
-import { unitChoices, unitAtEnd, withUnit } from "./enote-izbira.js";
+import { unitAtEnd, withUnit } from "./enote-izbira.js";
 
 const LS_KEY = "evklid.pad";
 const prefs = (() => {
@@ -207,7 +207,7 @@ function escapeHtml(s) {
 function startLayer(task, subject) {
   const numeric = ["number", "fraction", "coefficients"].includes(task.answerType);
   if (subject === "KEM" && !numeric) return "kem";
-  return numeric || task.unit ? "num" : "abc";
+  return numeric || task.hasUnit ? "num" : "abc";
 }
 
 /**
@@ -222,8 +222,8 @@ export function attachPad(opts) {
   ink.clear(true);
   pad.querySelector(".read-result").innerHTML = "";
   // Enota je del odgovora: privzeto ni izbrana, ponudba je več enot predmeta po abecedi (enote-izbira.js).
-  // Ponudbo sestavi strežnik (task.units, s pravim preverjanjem); sicer jo izračunamo tu.
-  const units = opts.task.units || unitChoices(opts.task.unit, { subject: opts.task.topicId || opts.subject, seed: opts.task.text });
+  // Ponudbo sestavi strežnik (task.units, s pravim preverjanjem); prave enote odjemalec ne dobi.
+  const units = opts.task.units || [];
   cur.units = units;
   // Ime iz <label> (ne aria-label), da bralnik zaslona prebere tudi izbrano enoto.
   pad.querySelector(".pad-units").innerHTML = units.length

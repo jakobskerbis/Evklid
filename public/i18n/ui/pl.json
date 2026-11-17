@@ -667,7 +667,7 @@
   "chk.empty": "Najpierw wpisz odpowiedź.",
   "chk.number": "Wpisz liczbę (działa przecinek i kropka).",
   "chk.addUnit": "Liczba jest, dodaj jeszcze jednostkę. W jakiej jednostce jest wynik?",
-  "chk.unit": "Ta jednostka jest nieprawidłowa. Sprawdź, jakiej wielkości szukasz.",
+  "chk.unit": "Ta jednostka jest nieprawidłowa. Sprawdź, w jakiej jednostce jest wynik.",
   "chk.rounding": "Obliczenie jest dobre, tylko zaokrąglenie nie. Poprawnie zaokrąglone to {right}.",
   "chk.fraction": "Zapisz ułamek jako a/b (np. 3/4), stosunek jako a : b (np. 3 : 4) lub liczbę mieszaną (np. 1 1/2).",
   "chk.simplify": "Wartość jest dobra, ale skróć ułamek do końca.",

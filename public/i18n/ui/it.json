@@ -655,7 +655,7 @@
   "chk.empty": "Prima scrivi la tua risposta.",
   "chk.number": "Scrivi un numero (vanno bene sia la virgola sia il punto).",
   "chk.addUnit": "Il numero c'è, ora aggiungi l'unità. In che unità è il risultato?",
-  "chk.unit": "Questa unità non è corretta. Controlla quale grandezza si cerca.",
+  "chk.unit": "Questa unità non è corretta. Controlla in quale unità è il risultato.",
   "chk.rounding": "Il calcolo è giusto, sbagli solo l'arrotondamento. Arrotondato correttamente è {right}.",
   "chk.fraction": "Scrivi una frazione come a/b (es. 3/4), un rapporto come a : b (es. 3 : 4) o un numero misto (es. 1 1/2).",
   "chk.simplify": "Il valore è giusto, ma semplifica del tutto la frazione.",
