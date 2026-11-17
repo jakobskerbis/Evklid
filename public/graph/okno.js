@@ -51,9 +51,12 @@ export function blowsUp(f, c) {
   return false;
 }
 
-/** Navpične asimptote na [a, b] (poli in rob definicijskega območja z neomejeno vrednostjo), naraščajoče. */
-export function verticalAsymptotes(f, a, b, n = 800) {
-  return scan(f, a, b, n).poles;
+/**
+ * Navpične asimptote na [a, b] (poli in rob definicijskega območja z neomejeno vrednostjo), naraščajoče.
+ * fine: okolico vsakega pola pregleda še na drobno (bližnja pola); pri risanju vsake sličice izklopljeno.
+ */
+export function verticalAsymptotes(f, a, b, n = 800, { fine = true } = {}) {
+  return scan(f, a, b, n, fine).poles;
 }
 
 /** Robovi definicijskega območja brez neomejene vrednosti (√(x² − 4) pri ±2): {x, y} na končni strani. */
@@ -86,7 +89,8 @@ function scan(f, a, b, n, fine = true) {
   // pol brez spremembe predznaka (1/x²): krajevni maksimum |f| med vzorci
   for (let i = 1; i < n; i++) {
     const [y0, y1, y2] = [ys[i - 1], ys[i], ys[i + 1]].map(Math.abs);
-    if (fin(y0) && fin(y1) && fin(y2) && y1 >= y0 && y1 >= y2 && y1 > 0) cand.push(maxAbs(f, xs[i - 1], xs[i + 1]));
+    // strog vrh (ne ravnina: y = 3, floor, sign bi sicer dali tisoče kandidatov)
+    if (fin(y0) && fin(y1) && fin(y2) && y1 >= y0 && y1 >= y2 && (y1 > y0 || y1 > y2) && y1 > 0) cand.push(maxAbs(f, xs[i - 1], xs[i + 1]));
   }
   cand.sort((p, q) => p - q);
   const out = [];
@@ -260,7 +264,7 @@ export function fitView(fns, { W = 320, H = 220, points = [], fixed = {} } = {})
   const range = hasX ? [[fixed.xmin, fixed.xmax]] : [[-40, 40], [-200, 200]];
   for (const [a, b] of range) {
     feats = [];
-    for (const f of fns) feats.push(...features(f, a, b, hasX ? 1500 : 4000));
+    for (const f of fns) feats.push(...features(f, a, b, hasX ? 1500 : 2000));
     for (let i = 0; i < fns.length; i++) for (let j = i + 1; j < fns.length; j++) feats.push(...intersections(fns[i], fns[j], a, b, 2000));
     if (feats.some((p) => p.type !== "yint") || points.length) break;
   }
@@ -377,27 +381,44 @@ export function fitView(fns, { W = 320, H = 220, points = [], fixed = {} } = {})
   return { xmin: xa, xmax: xb, ymin: y0, ymax: y1 };
 }
 
+// Funkcije y = f(x) iz modela kalkulatorja kot f(x) → število (NaN ob napaki ali več vrednostih).
+function modelFns(model) {
+  const fns = [];
+  for (const o of model?.items || []) {
+    if (o.src?.hidden || !((o.kind === "y" || (o.kind === "func" && o.plot === "y")) && o.fn)) continue;
+    const fn = o.fn;
+    fns.push((x) => {
+      try {
+        const v = fn(x);
+        return Array.isArray(v) ? NaN : toNum(v);
+      } catch {
+        return NaN;
+      }
+    });
+  }
+  return fns;
+}
+
 /** Okno za model grafičnega kalkulatorja (funkcije y = …, točke, tabele); null, če ni česa prilagoditi. */
 export function fitModelView(model, { W, H, fixed } = {}) {
-  const fns = [];
   const points = [];
   for (const o of model?.items || []) {
     if (o.src?.hidden) continue;
     // krivulje brez y = f(x) (krožnica, parametrična, polarna, območje): ostane običajno okno, da jih ne odrežemo
     if (["implicit", "param", "polar", "region"].includes(o.kind)) return fixed && fin(fixed.xmin + fixed.xmax + fixed.ymin + fixed.ymax) ? fitView([], { fixed }) : null;
-    if ((o.kind === "y" || (o.kind === "func" && o.plot === "y")) && o.fn) {
-      const fn = o.fn;
-      fns.push((x) => {
-        try {
-          const v = fn(x);
-          return Array.isArray(v) ? NaN : toNum(v);
-        } catch {
-          return NaN;
-        }
-      });
-    }
     if (o.kind === "points") for (const p of o.evalPoints?.() || []) points.push(p);
   }
+  const fns = modelFns(model);
   if (!fns.length && !points.length && !(fixed && Object.keys(fixed).length)) return null;
   return fitView(fns, { W, H, points, fixed });
+}
+
+/** Oznake asimptot funkcij modela v oknu view (za opis slike bralnikom zaslona): »x = 1«, »y = x + 1«. */
+export function modelAsymptoteLabels(model, view) {
+  const out = [];
+  for (const f of modelFns(model)) {
+    for (const x of verticalAsymptotes(f, view.xmin, view.xmax, 400, { fine: false })) out.push(asymptoteLabel({ x }));
+    for (const e of endAsymptotes(f)) out.push(asymptoteLabel(e));
+  }
+  return [...new Set(out)];
 }

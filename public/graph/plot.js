@@ -708,7 +708,7 @@ export class GraphView {
     const key = `${v.xmin}|${v.xmax}|${this.W}`;
     if (c.key !== key) {
       c.key = key;
-      c.poles = verticalAsymptotes(g, v.xmin, v.xmax, Math.max(200, Math.round(this.W)));
+      c.poles = verticalAsymptotes(g, v.xmin, v.xmax, Math.max(200, Math.round(this.W)), { fine: false });
     }
     return c;
   }
@@ -752,12 +752,15 @@ export class GraphView {
       const px = this.X(x);
       const left = px > W - 70;
       // pod oznako osi y (»y« na vrhu osi)
-      labels.push({ text: asymptoteLabel({ x }), px: px + (left ? -5 : 5), py: 22, align: left ? "right" : "left", base: "top" });
+      // ob osi y nižje, da ne prekrije oznake »y«
+      const py = v.xmin < 0 && v.xmax > 0 && Math.abs(px - this.X(0)) < 24 ? 36 : 22;
+      labels.push({ text: asymptoteLabel({ x }), px: px + (left ? -5 : 5), py, align: left ? "right" : "left", base: "top" });
     }
     ctx.save();
     ctx.font = "600 12px 'Nunito Variable', Nunito, system-ui, sans-serif";
     ctx.lineJoin = "round";
-    const placed = []; // oznake, ki bi se prekrivale (tan x), izpustimo
+    const placed = []; // oznake, ki bi se prekrivale (tan x), izpustimo; oznaka osi »y« je že tam
+    if (v.xmin < 0 && v.xmax > 0) placed.push([this.X(0) - 2, 0, 16, 20]);
     for (const l of labels) {
       ctx.textAlign = l.align;
       ctx.textBaseline = l.base;
@@ -765,8 +768,8 @@ export class GraphView {
       const w = ctx.measureText(l.text).width;
       const x0 = l.align === "right" ? l.px - w : l.px;
       const y0 = l.base === "top" ? py : py - 14;
-      if (placed.some((b) => x0 < b[0] + b[2] + 4 && b[0] < x0 + w + 4 && y0 < b[1] + 14 && b[1] < y0 + 14)) continue;
-      placed.push([x0, y0, w]);
+      if (placed.some((b) => x0 < b[0] + b[2] + 4 && b[0] < x0 + w + 4 && y0 < b[1] + b[3] && b[1] < y0 + 14)) continue;
+      placed.push([x0, y0, w, 14]);
       ctx.lineWidth = 4;
       ctx.strokeStyle = C.bg;
       ctx.strokeText(l.text, l.px, py);

@@ -1,7 +1,7 @@
 // Graf v odgovoru inštruktorja: okno po zanimivih točkah in asimptote (public/graph/okno.js, server/odpri.js).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fitView, fitModelView, verticalAsymptotes, endAsymptotes, asymptoteLabel, niceNumber, features, domainEdges } from "../public/graph/okno.js";
+import { fitView, fitModelView, modelAsymptoteLabels, verticalAsymptotes, endAsymptotes, asymptoteLabel, niceNumber, features, domainEdges } from "../public/graph/okno.js";
 import { parseOpenBlocks, parseGraphView } from "../server/odpri.js";
 
 const F = {
@@ -197,4 +197,19 @@ test("ponovni pregled #802: e^(−x²) ima y = 0, strme funkcije brez prevelike 
   const e = fitView([(x) => Math.exp(x) - 1000], { W, H });
   assert.ok(inView(e, Math.log(1000), 0), JSON.stringify(e)); // ničla ln 1000 ≈ 6,9
   for (const a of endAsymptotes((x) => Math.tan(x) / x)) assert.ok(a.n === 0 || Math.abs(a.n) > 1e-3, JSON.stringify(a));
+});
+
+test("pregled 3 #802: ravne funkcije brez tisočev kandidatov za pol, opis asimptot za bralnike zaslona", async () => {
+  for (const [name, f] of [["y = 3", () => 3], ["floor", Math.floor], ["sign", Math.sign]]) {
+    let n = 0;
+    fitView([(x) => (n++, f(x))], { W: 320, H: 220 });
+    assert.ok(n < 60000, `${name}: ${n} izračunov`);
+  }
+  // pri risanju brez drobnega pregleda: pol je še vedno najden
+  assert.deepEqual(verticalAsymptotes((x) => 1 / (x - 1), -5, 5, 320, { fine: false }), [1]);
+  const { buildModel, emptyState, newId } = await import("../public/graph/model.js");
+  const st = emptyState();
+  st.items = ["y = (x^2 - 4)/(x - 1)"].map((text) => ({ id: newId(), type: "expr", text }));
+  const model = buildModel(st);
+  assert.deepEqual(modelAsymptoteLabels(model, fitModelView(model, { W: 320, H: 220 })), ["x = 1", "y = x + 1"]);
 });

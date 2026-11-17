@@ -178,7 +178,7 @@ function graphCard(x) {
 }
 
 async function drawGraph(host, slidersEl, exprs, onChange, fixed) {
-  const [{ GraphView }, { buildModel, emptyState, newId, sliderRange }, { fitModelView }] = await Promise.all([
+  const [{ GraphView }, { buildModel, emptyState, newId, sliderRange }, { fitModelView, modelAsymptoteLabels }] = await Promise.all([
     import("./graph/plot.js"),
     import("./graph/model.js"),
     import("./graph/okno.js"),
@@ -188,6 +188,9 @@ async function drawGraph(host, slidersEl, exprs, onChange, fixed) {
   let model = buildModel(state);
   // Okno pokaže ničle, pole, ekstreme in prevoje (graph/okno.js), ne stalnega −10 … 10; okno iz bloka GRAF
   // (inštruktor ga je določil sam) ostane, kot je. Drsniki okna ne spreminjajo.
+  // Iskanje okna traja na telefonu nekaj deset ms: najprej naj se izriše besedilo odgovora.
+  await (globalThis.scheduler?.yield ? globalThis.scheduler.yield() : new Promise((r) => setTimeout(r, 0)));
+  if (!host.isConnected) return;
   const box = host.getBoundingClientRect();
   const fit = fitModelView(model, { W: box.width || 320, H: box.height || 220, fixed: fixed || {} });
   if (fit) {
@@ -203,7 +206,10 @@ async function drawGraph(host, slidersEl, exprs, onChange, fixed) {
     fmt,
     axisFmt: (v, dec) => v.toFixed(dec).replace(".", ",").replace("-", "−"),
   });
-  view.canvas.setAttribute("aria-label", exprs.filter((e) => !/^\s*[a-zA-Z]\w*\s*=\s*-?[\d.,]+\s*$/.test(e)).join("; "));
+  // Opis za bralnike zaslona: izrazi in asimptote (»y = (x^2 - 4)/(x - 1); asimptote: x = 1, y = x + 1«).
+  const asym = modelAsymptoteLabels(model, state.view);
+  const desc = exprs.filter((e) => !/^\s*[a-zA-Z]\w*\s*=\s*-?[\d.,]+\s*$/.test(e)).join("; ");
+  view.canvas.setAttribute("aria-label", asym.length ? `${desc}; ${D.t("open.asymptotes")}: ${asym.join(", ")}` : desc);
   const redraw = () => {
     model = buildModel(state);
     view.draw();
