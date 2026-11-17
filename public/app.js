@@ -5169,7 +5169,9 @@ initOpen({
 // Bližnjica z ikone aplikacije (dolg pritisk na ikono): /?pogled=chat odpre Inštruktorja. Iz 3D atlasa (/3d)
 // »Vprašaj inštruktorja«: /?pogled=chat&vprasaj=… odpre klepet z vpisanim vprašanjem (pošlje ga učenec sam).
 // Pogled »Uči se« z zadnjim zavihkom: ?pogled=uci; določen zavihek: ?pogled=textbook, lab ali 3d.
+// Zavihek Račun: ?pogled=racun (APK s strani /prenesi pošlje nakup naročnine sem, mobile/src/lib/billing.ts).
 const START_VIEW = ["chat", "graph", "uci", ...UCI_TABS].find((v) => v === new URLSearchParams(location.search).get("pogled"));
+const START_ACCOUNT = new URLSearchParams(location.search).get("pogled") === "racun";
 const START_ASK = START_VIEW === "chat" ? (new URLSearchParams(location.search).get("vprasaj") || "").slice(0, 2000) : "";
 if (new URLSearchParams(location.search).has("pogled")) history.replaceState(null, "", location.pathname);
 initInstall({ toast, onSheet: (open) => (open ? overlayOpened() : overlayClosed()) });
@@ -5232,11 +5234,13 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     if (first) initUsageMeter({ escapeHtml, showView, toast, allowed: () => usageAdmin });
     else refreshUsageMeter();
     // Prvo odprtje: bližnjica (?pogled=) ali zadnji zaslon (≤ 12 ur); Učna pot se pripravi pod njim.
-    const z = first && !o?.keepView && !START_VIEW ? startScreen() : null;
+    const z = first && !o?.keepView && !START_VIEW && !START_ACCOUNT ? startScreen() : null;
     if (!o?.keepView) showView("path");
     const mark = apiSeq; // klici do sem so od profila in Učne poti
-    const other = z || (first && START_VIEW && !o?.keepView);
+    const other = z || (first && (START_VIEW || START_ACCOUNT) && !o?.keepView);
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
+    // Kot dotik zavihka Račun (account.js renderAccount); brez računov je zavihek skrit in ostane Učna pot.
+    if (first && START_ACCOUNT && !o?.keepView && !$("#account-tab").hidden) $("#account-tab").click();
     if (z) {
       brezStetja = true;
       try {

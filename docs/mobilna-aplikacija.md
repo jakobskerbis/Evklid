@@ -55,7 +55,8 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
   `evklid://prijava?t=…`, 15 minut, `server/mobile/app-link.js`). Zaslon za prijavo v aplikaciji ima gumb,
   ki to stran odpre.
 - **Naročnina**: v trgovinah nakup v aplikaciji (Apple In-App Purchase, Google Play Billing), v APK za
-  neposredni prenos plačilo na spletu (Stripe).
+  neposredni prenos plačilo na spletu (Stripe): naravni zaslon Naročnina odpre spletni zavihek Račun v aplikaciji
+  (`/api/mobile/web?to=/?pogled=racun`), kjer so potrditve pred plačilom; aplikacija sama nakupa ne pošilja.
 - Svetla in temna tema, 33 jezikov vmesnika (isti prevodi kot splet), iPad, dostopnost (VoiceOver,
   TalkBack).
 
