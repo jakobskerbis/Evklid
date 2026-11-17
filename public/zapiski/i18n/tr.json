@@ -25,6 +25,7 @@
   "zap.noCards": "Bu notlardan şu anda kart yapamıyorum.",
   "zap.practice": "Kartları tekrarla",
   "zap.printed": "Basılı sayfaların metnini saklamıyoruz – yalnızca konuları ve kartları.",
+  "zap.printedNoCards": "Basılı sayfaların metnini saklamıyoruz.",
   "zap.list": "Kaydedilen notlar",
   "zap.empty": "Henüz kaydedilmiş notun yok.",
   "zap.open": "Aç",
@@ -44,6 +45,7 @@
   "zap.keep": "Bunlar benim notlarım – kaydet",
   "zap.keepHint": "İşaret koymazsan metni kaydetmeyiz. Test ve kartlar kalır.",
   "zap.notKept": "Yapıştırılan metni kaydetmedik – sadece konular ve kartlar.",
+  "zap.notKeptNoCards": "Yapıştırılan metni kaydetmedik.",
   "zap.correctMark": "Doğru cevap",
   "zap.yourMark": "Senin cevabın"
 }

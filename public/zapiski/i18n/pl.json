@@ -25,6 +25,7 @@
   "zap.noCards": "Z tych notatek nie mogę teraz zrobić fiszek.",
   "zap.practice": "Powtarzaj fiszki",
   "zap.printed": "Nie zapisujemy tekstu stron drukowanych – tylko tematy i fiszki.",
+  "zap.printedNoCards": "Nie zapisujemy tekstu stron drukowanych.",
   "zap.list": "Zapisane notatki",
   "zap.empty": "Nie masz jeszcze zapisanych notatek.",
   "zap.open": "Otwórz",
@@ -44,6 +45,7 @@
   "zap.keep": "To moje notatki – zapisz",
   "zap.keepHint": "Bez zaznaczenia nie zapisujemy tekstu. Quiz i fiszki zostają.",
   "zap.notKept": "Nie zapisaliśmy wklejonego tekstu – tylko tematy i fiszki.",
+  "zap.notKeptNoCards": "Nie zapisaliśmy wklejonego tekstu.",
   "zap.correctMark": "Poprawna odpowiedź",
   "zap.yourMark": "Twoja odpowiedź"
 }

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { marked } from "marked";
 import katex from "katex";
-import { createRenderer, streamSafe, fixTables, isTableSeparator, centerNumberColumns, subHeadings } from "../public/rich.js";
+import { createRenderer, brezPraznihVrstic, potencaZOklepaji, streamSafe, fixTables, isTableSeparator, centerNumberColumns, subHeadings } from "../public/rich.js";
 import { nextChunk } from "../public/pace.js";
 import { annotateTex, withFormulaSubject } from "../public/formula-data.js";
 
@@ -208,4 +208,45 @@ test("ločilo takoj za vrstično formulo ostane z njo (kartica »Zapomni si«: p
   // formula sredi stavka, brez ločila, ostane brez ovoja; formula v display načinu tudi
   assert.ok(!renderRich("Vrednost $x$ je pozitivna").includes("fx-nb"));
   assert.ok(!renderRich("$$x^2$$.").includes("fx-nb"));
+});
+
+// Prazen pas sredi računa na telefonu (j 17. 11. 2026): »\\ \\« v aligned je prazna vrstica, KaTeX jo nariše kot vrzel.
+test("empty rows in aligned or gathered math are dropped, spacing rows and matrices stay", () => {
+  assert.equal(brezPraznihVrstic("\\begin{aligned} v &= \\sqrt{549} \\\\ \\\\ &\\approx 23{,}5 \\\\ \\end{aligned}"), "\\begin{aligned} v &= \\sqrt{549} \\\\ &\\approx 23{,}5\\end{aligned}");
+  assert.equal(brezPraznihVrstic("\\begin{gathered} a \\\\ \\\\ \\\\ b \\end{gathered}"), "\\begin{gathered} a \\\\ b \\end{gathered}");
+  for (const t of ["\\begin{aligned}a&=b\\\\[4pt] &=c\\end{aligned}", "\\begin{pmatrix}1\\\\ \\\\2\\end{pmatrix}", "a = b"]) assert.equal(brezPraznihVrstic(t), t);
+  // prazna vrstica v matriki znotraj aligned ostane (to je vrstica matrike), vrstica aligned odpade
+  assert.equal(brezPraznihVrstic("\\begin{aligned} M &= \\begin{pmatrix}1\\\\ \\\\2\\end{pmatrix} \\\\ \\\\ &= x \\\\ \\end{aligned}"), "\\begin{aligned} M &= \\begin{pmatrix}1\\\\ \\\\2\\end{pmatrix} \\\\ &= x\\end{aligned}");
+  // linearno tudi na zelo dolgem nizu presledkov (ne kvadratno)
+  const t0 = performance.now();
+  brezPraznihVrstic(`\\begin{aligned}a \\\\${" ".repeat(200000)}x \\\\${" ".repeat(200000)}\\end{aligned}`);
+  assert.ok(performance.now() - t0 < 500);
+  const h = renderRich("$$\\begin{aligned} a &= b \\\\ \\\\ &= c \\end{aligned}$$");
+  assert.equal(h, renderRich("$$\\begin{aligned} a &= b \\\\ &= c \\end{aligned}$$"));
+});
+
+// Potenca z okroglimi oklepaji (j 17. 11. 2026: »e^(-x^2)« je bil nadpisan le »(«, ostalo v vrstici).
+test("a superscript written with round brackets becomes a real power, other exponents stay", () => {
+  const f = potencaZOklepaji;
+  assert.equal(f("f(x) = e^(-x^2)"), "f(x) = e^{-x^2}");
+  assert.equal(f("2^(n+1)"), "2^{n+1}");
+  assert.equal(f("x^((a+b)/2)"), "x^{(a+b)/2}");
+  assert.equal(f("(1+x)^(n)"), "(1+x)^{n}");
+  assert.equal(f("e^(x)(y)"), "e^{x}(y)"); // le prvi oklepaj
+  assert.equal(f("e^(-\\frac{x^2}{2\\sigma^2})"), "e^{-\\frac{x^2}{2\\sigma^2}}");
+  assert.equal(f("e^(a^(2)+1)"), "e^{a^{2}+1}");
+  assert.equal(f("x^(a)^(b)"), "x^(a)^{b}");
+  assert.equal(f("y^(n)'"), "y^(n)'"); // »y^{n}'« bi bil dvojni eksponent
+  // red odvoda ostane v oklepaju
+  assert.equal(f("f^(n)(x)"), "f^{(n)}(x)");
+  assert.equal(f("y^(4)"), "y^{(4)}");
+  assert.equal(f("\\log^(2) x"), "\\log^{2} x");
+  assert.equal(f("\\textsf{a^(b)} + \\emph{c^(d)}"), "\\textsf{a^(b)} + \\emph{c^(d)}"); // »x^{a}^{b}« bi bil dvojni eksponent (napaka KaTeX)
+  // ostane: neuravnotežen oklepaj, \text{…}, relacija ali vejica v oklepaju, eksponenti z {…}, številko ali ukazom
+  for (const t of ["a^(b", "x^(a, b)", "x^(a = b)", "\\text{a^(b)}", "x^{(a)}", "x^2", "x^\\frac{1}{2}", "\\^(x)", `x^(${"a".repeat(100)})`]) assert.equal(f(t), t);
+  assert.equal(f("\\text{e^(x)} + c^(d)"), "\\text{e^(x)} + c^{d}");
+  assert.equal(renderRich("$f(x) = e^(-x^2)$"), renderRich("$f(x) = e^{-x^2}$"));
+  const t0 = performance.now();
+  f("x^(".repeat(30000));
+  assert.ok(performance.now() - t0 < 500);
 });

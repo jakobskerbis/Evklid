@@ -13,6 +13,7 @@ import { createPageCache, lessonVersion } from "./tisk-predpomnilnik.js";
 import { generateTask, hasGenerator, optionsAreTex } from "./practice/index.js";
 import { GRADIVA_DIR, hasGradivo, gradivoPage, videoFor } from "./gradiva-vsebina.js";
 import { weakTopicsFor } from "./weaknesses.js";
+import { dateText } from "../public/datum.js";
 
 // free: brezplačno kot besedilo učbenika (narejeno iz lekcije, brez stroškov).
 // Ostalo velja za šolsko licenco (šolski predmeti) in Evklid Osebno (vsi predmeti).
@@ -27,7 +28,7 @@ export const VRSTE = {
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const today = () => new Date().toLocaleDateString("sl-SI", { day: "numeric", month: "long", year: "numeric" });
+const today = () => dateText(new Date(), "sl-SI"); // »17. novembra 2026« (public/datum.js)
 const inline = (md) => renderMd(md).replace(/^<p>([\s\S]*)<\/p>\s*$/, "$1");
 
 // --- povzetek na eni strani ---

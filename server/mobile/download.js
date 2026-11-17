@@ -159,6 +159,8 @@ export function mountDownload(app, opts = {}) {
     const { apk, play, appStore, testflight } = links();
     const ua = String(req.get("user-agent") || "");
     const first = /iPhone|iPad|Macintosh.*Mobile/.test(ua) ? "ios" : "android";
+    // Uvod pove samo, kar res obstaja: brez App Store in TestFlight na iPhonu ni aplikacije, le »Dodaj na začetni zaslon«;
+    // brez APK in Google Play tudi za Android ne (dl.introWeb).
     const btn = (href, label, primary = true) => `<a class="btn${primary ? "" : " sec"}" href="${esc(href)}">${label}</a>`;
     const android = `<section><h2>${t("dl.android")}</h2>
       ${play ? btn(play, t("dl.play")) : ""}
@@ -197,7 +199,7 @@ section{background:var(--surface);border:1px solid var(--border);border-radius:1
 </style></head><body><main>
 <header><img src="/icons/icon-192.png" alt=""><div><h1>${esc(BRAND.name)}</h1><div class="muted">${t("dl.title")}</div></div></header>
 ${req.query.app ? appLink : ""}
-<p>${t("dl.intro")}</p>
+<p>${t(appStore || testflight ? "dl.introApps" : apk || play ? "dl.intro" : "dl.introWeb")}</p>
 ${first === "ios" ? ios + android : android + ios}
 ${req.query.app ? "" : appLink}
 </main></body></html>`);

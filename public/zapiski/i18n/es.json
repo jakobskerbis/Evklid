@@ -25,6 +25,7 @@
   "zap.noCards": "Ahora no puedo hacer tarjetas con estos apuntes.",
   "zap.practice": "Repasar tarjetas",
   "zap.printed": "No guardamos el texto de páginas impresas – solo los temas y las tarjetas.",
+  "zap.printedNoCards": "No guardamos el texto de páginas impresas.",
   "zap.list": "Apuntes guardados",
   "zap.empty": "Aún no tienes apuntes guardados.",
   "zap.open": "Abrir",
@@ -44,6 +45,7 @@
   "zap.keep": "Son mis apuntes – guardar",
   "zap.keepHint": "Sin la marca no guardamos el texto. El quiz y las tarjetas se quedan.",
   "zap.notKept": "No guardamos el texto pegado – solo los temas y las tarjetas.",
+  "zap.notKeptNoCards": "No guardamos el texto pegado.",
   "zap.correctMark": "Respuesta correcta",
   "zap.yourMark": "Tu respuesta"
 }

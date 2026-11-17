@@ -25,6 +25,7 @@
   "zap.noCards": "Sekarang aku belum bisa membuat kartu dari catatan ini.",
   "zap.practice": "Ulangi kartu",
   "zap.printed": "Teks halaman cetak tidak kami simpan – hanya materi dan kartu.",
+  "zap.printedNoCards": "Teks halaman cetak tidak kami simpan.",
   "zap.list": "Catatan tersimpan",
   "zap.empty": "Kamu belum punya catatan tersimpan.",
   "zap.open": "Buka",
@@ -44,6 +45,7 @@
   "zap.keep": "Ini catatanku – simpan",
   "zap.keepHint": "Tanpa centang, teksnya tidak kami simpan. Kuis dan kartu tetap ada.",
   "zap.notKept": "Teks yang ditempel tidak kami simpan – hanya topik dan kartu.",
+  "zap.notKeptNoCards": "Teks yang ditempel tidak kami simpan.",
   "zap.correctMark": "Jawaban benar",
   "zap.yourMark": "Jawabanmu"
 }

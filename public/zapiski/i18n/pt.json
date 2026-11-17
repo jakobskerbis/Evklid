@@ -25,6 +25,7 @@
   "zap.noCards": "Agora não consigo fazer cartões com estes apontamentos.",
   "zap.practice": "Rever cartões",
   "zap.printed": "Não guardamos o texto de páginas impressas – só os temas e os cartões.",
+  "zap.printedNoCards": "Não guardamos o texto de páginas impressas.",
   "zap.list": "Apontamentos guardados",
   "zap.empty": "Ainda não tens apontamentos guardados.",
   "zap.open": "Abrir",
@@ -44,6 +45,7 @@
   "zap.keep": "São os meus apontamentos – guardar",
   "zap.keepHint": "Sem o visto não guardamos o texto. O quiz e os cartões ficam.",
   "zap.notKept": "Não guardámos o texto colado – só os temas e os cartões.",
+  "zap.notKeptNoCards": "Não guardámos o texto colado.",
   "zap.correctMark": "Resposta certa",
   "zap.yourMark": "A tua resposta"
 }

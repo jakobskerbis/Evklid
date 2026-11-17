@@ -144,3 +144,24 @@ test("samo rezultat pri eni nalogi (17. 11., #799): prošnja samo za rezultat do
     assert.equal(cacheKey(q, a, "think"), old(q, "think"), q);
   }
 });
+
+test("Preizkus 3 (17. 11.): odgovori načina B in »samo rezultat« pred popravkom (»b2«, »r1«) se ne vrnejo, način A ostane", async () => {
+  const { cacheKey } = await import("../server/app.js");
+  const crypto = await import("node:crypto");
+  const s = { subject: "MAT", track: "REGULAR", educational_track: "OSNOVNA_SOLA", study_program: "", study_course: "", curriculum_level: "8. razred", personality_setting: "nevtralna", language: "sl" };
+  const norm = (q) => q.toLowerCase().replace(/\s+/g, " ").replace(/[\s.!?]+$/, "").trim();
+  // Ključ, kot ga je računal #799 (z oznakama »b2« in »r1«).
+  const prej = (q, st, ...extra) => crypto.createHash("sha256").update([norm(q), st.subject, st.track, st.educational_track, st.study_program, st.study_course, st.curriculum_level, st.solving_mode, st.personality_setting, 0, ...extra].join("|")).digest("hex");
+  const b = { ...s, solving_mode: "B" };
+  const a = { ...s, solving_mode: "A" };
+  const razstavi = "Razstavi izraze: a) 4x² − 25 b) x² − 7x + 12 c) 3a²b − 12ab²";
+  assert.notEqual(cacheKey(razstavi, b, "chat"), prej(razstavi, b, "b2"), "način B");
+  const dva = "Samo končna rezultata, brez postopka: a) pH HCl s koncentracijo 0,0010 mol/L b) koncentracija 4,0 g NaOH v 250 mL";
+  assert.notEqual(cacheKey(dva, a, "chat"), prej(dva, a, "r1"), "samo rezultat, način A");
+  assert.notEqual(cacheKey(dva, b, "chat"), prej(dva, b, "b2", "r1"), "samo rezultat, način B");
+  // »moram oddati« (pregled #811): nov ključ tudi v načinu A.
+  const oddaja = "Moram oddati do jutri: izračunaj a) 3 + 4 · 2, b) 12 : 3 − 1, c) 5 · (2 + 3)";
+  assert.notEqual(cacheKey(oddaja, a, "chat"), prej(oddaja, a), "moram oddati");
+  // Običajno vprašanje v načinu A obdrži ključ.
+  assert.equal(cacheKey(razstavi, a, "chat"), prej(razstavi, a));
+});
