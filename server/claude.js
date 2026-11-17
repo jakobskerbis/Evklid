@@ -195,7 +195,8 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   if (tools?.length) params.tools = tools;
   // Brez razmišljanja dovoli samo Haiku (Opus 5.5 ga ne dovoli izklopiti, glej quickParams).
   const thinkingOff = (!!noThinking && /haiku/.test(model)) || params.thinking?.type === "disabled";
-  if (noThinking && /haiku/.test(model)) params.thinking = { type: "disabled" };
+  // quickParams: thinking disabled in effort low (brez razmišljanja višji effort vrne 400, npr. EVKLID_EFFORT=medium).
+  if (noThinking && /haiku/.test(model)) Object.assign(params, quickParams(model));
   const t0 = Date.now();
   const timing = { thinking: !thinkingOff, firstThinkMs: null, firstTextMs: null, totalMs: null };
   if (supportsFallback(model) && fallback !== false) {

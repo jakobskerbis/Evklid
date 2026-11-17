@@ -6,7 +6,7 @@ import fs from "node:fs";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { hitriKorak } from "../server/hitri-korak.js";
-import { logCasi, casiPovzetek } from "../server/casi-odgovora.js";
+import { logCasi, casiPovzetek, pocistiCasi, pozabiPovzetek } from "../server/casi-odgovora.js";
 import { presolve } from "../server/live-check.js";
 
 const OS = { educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred", subject: "MAT" };
@@ -121,22 +121,37 @@ test("z zastavico: lahek prvi korak gre brez razmišljanja in se v časih loči 
   await withFlag("1", () => pogovor(async () => assert.equal(k2[0].noThinking, false), { text: "Zakaj je nebo modro?", streamFn: stream(k2) }));
 });
 
-test("povzetek časov: mediana in p90 po modelu, načinu in razmišljanju; staro se pobriše", () => {
+test("povzetek časov: mediana in p90 po modelu, načinu in razmišljanju; točno 7 dni; staro se pobriše", () => {
   const db = openDb(":memory:").db;
   logCasi(db, { model: "claude-haiku-5-5", nacin: "chat", timing: { thinking: true, firstTextMs: 1 } });
-  db.prepare("UPDATE casi_odgovora SET created_at = date('now', '-91 days')").run();
+  db.prepare("UPDATE casi_odgovora SET created_at = date('now', '-31 days')").run();
+  pocistiCasi(db);
+  // 7. dan nazaj ni več v povzetku (danes + 6 dni), 6. dan je.
+  logCasi(db, { model: "claude-haiku-5-5", nacin: "lite", timing: { thinking: true, firstTextMs: 5 } });
+  db.prepare("UPDATE casi_odgovora SET created_at = date('now', '-7 days') WHERE nacin = 'lite'").run();
+  logCasi(db, { model: "claude-haiku-5-5", nacin: "think", timing: { thinking: true, firstTextMs: 5 } });
+  db.prepare("UPDATE casi_odgovora SET created_at = date('now', '-6 days') WHERE nacin = 'think'").run();
   for (const [i, ms] of [1000, 2000, 3000, 4000, 10000].entries()) logCasi(db, { model: "claude-haiku-5-5", nacin: "chat", raven: "OS", predMs: 5, timing: { thinking: true, firstThinkMs: 100, firstTextMs: ms, totalMs: ms + 1000 + i } });
   logCasi(db, { model: "claude-haiku-5-5", nacin: "chat", raven: "OS", poskus: "hitri-korak", timing: { thinking: false, firstThinkMs: null, firstTextMs: 800, totalMs: 2000 } });
-  const g = casiPovzetek(db);
+  pozabiPovzetek();
+  const vse = casiPovzetek(db);
+  assert.ok(!vse.some((x) => x.nacin === "lite"), "7. dan nazaj ni v povzetku");
+  assert.ok(vse.some((x) => x.nacin === "think"), "6. dan nazaj je");
+  const g = vse.filter((x) => x.nacin === "chat");
   assert.equal(g.length, 2);
-  assert.equal(db.prepare("SELECT COUNT(*) n FROM casi_odgovora WHERE created_at < date('now', '-90 days')").get().n, 0, "starejše od 90 dni pobrisano");
+  assert.equal(db.prepare("SELECT COUNT(*) n FROM casi_odgovora WHERE created_at < date('now', '-30 days')").get().n, 0, "starejše od 30 dni pobrisano");
+  // Predpomnjen 60 s: nova vrstica se pokaže šele po izteku (ali pozabiPovzetek).
+  logCasi(db, { model: "claude-sonnet-5-5", nacin: "mid", timing: { thinking: true, firstTextMs: 9 } });
+  assert.ok(!casiPovzetek(db).some((x) => x.nacin === "mid"));
+  pozabiPovzetek();
+  assert.ok(casiPovzetek(db).some((x) => x.nacin === "mid"));
   assert.deepEqual(g[0].besedilo, { n: 5, mediana: 3000, p90: 10000 });
   assert.equal(g[1].razmislek, false);
 });
 
 test("odjemalec: »Razmišljam …« samo dokler ni besedila; ključi v vseh jezikih (test/i18n.test.js)", async () => {
   const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(app, /if \(d\?\.phase === "think"\) \{\n\s*if \(shownText \|\| bubble\.classList\.contains\("checking"\)\) return;\n\s*waitNote = t\("chat\.waitThink"\);/);
+  assert.match(app, /if \(d\?\.phase === "think"\) return shownText \|\| bubble\.classList\.contains\("checking"\) \|\| \(\(waitNote = t\("chat\.waitThink"\)\), paint\(""\)\);/);
   const { default: sl } = await import("../public/i18n/sl.js");
   assert.equal(sl["chat.waitThink"], "Razmišljam …");
 });

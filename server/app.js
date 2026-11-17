@@ -1132,7 +1132,7 @@ export function createApp(store, opts = {}) {
       const held = []; // zadržani deli odgovora, dokler sodba ni preverjena
       // Poskus brez razmišljanja za lahek prvi korak (privzeto izklopljen, server/hitri-korak.js).
       const brezRazmisleka = !cached && hitriKorak({ mode, settings: student.settings, pre, image: !!image, competition: !!tekTopic, isFirst });
-      let besediloPoslano = false;
+      let besediloPoslano = !!note; // obvestilo (meja, nižji model) je že poslano: »Razmišljam« ga ne zamenja
       let razmisljamPoslano = false;
       const klicZacetek = Date.now();
       const run = cached

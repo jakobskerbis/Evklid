@@ -124,20 +124,22 @@ function togglePop() {
 
 // Sekunde v jeziku aplikacije (1,2 s).
 const sec = (ms) => (ms == null ? "–" : `${(ms / 1000).toLocaleString(locale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })} s`);
-// Vrne true, ko so podatki prikazani; ob napaki (403, brez povezave) sporočilo in gumb za ponovni poskus.
+// Ob uspehu si zapomni izris (speedHtml); ob napaki (403, brez povezave) sporočilo in gumb za ponovni poskus.
+let speedOpen = false;
+let speedHtml = "";
 async function loadSpeed(box) {
-  box.innerHTML = `<p class="muted">${t("common.loading")}</p>`;
+  if (!speedHtml) box.innerHTML = `<p class="muted">${t("common.loading")}</p>`; // prejšnji izris ostane med nalaganjem
   const res = await fetch("/api/usage/casi").catch(() => null);
   const d = res?.ok ? await res.json().catch(() => null) : (res && zavrzi(res), null);
   if (!d) {
     box.innerHTML = `<p class="muted">${res ? t("common.error", { status: res.status }) : t("off.noConnection")}</p><button type="button" class="text-btn" data-act="speed-retry">${t("task.retry")}</button>`;
     box.querySelector('[data-act="speed-retry"]').addEventListener("click", () => loadSpeed(box));
-    return false;
+    return;
   }
   const list = d.skupine || [];
   if (!list.length) {
-    box.innerHTML = `<p class="muted">${t("meter.speedNone")}</p>`;
-    return true;
+    speedHtml = box.innerHTML = `<p class="muted">${t("meter.speedNone")}</p>`;
+    return;
   }
   const esc = D.escapeHtml;
   box.innerHTML = `<p class="muted">${t("meter.speedCols")}</p><ul class="um-speed-list">${list
@@ -146,7 +148,7 @@ async function loadSpeed(box) {
         `<li><b>${esc(g.model.replace(/^claude-/, ""))} · ${esc(g.nacin)}${g.razmislek ? "" : ` · ${t("meter.speedNoThink")}`}</b> <span class="muted">(${g.n})</span><br>${sec(g.besedilo.mediana)} / ${sec(g.besedilo.p90)} · ${sec(g.konec.mediana)}</li>`,
     )
     .join("")}</ul>`;
-  return true;
+  speedHtml = box.innerHTML;
 }
 
 function renderPop() {
@@ -177,14 +179,15 @@ function renderPop() {
     ${budgetHtml(u.budget)}
     ${u.can_claim ? `<div class="um-claim"><button type="button" class="secondary" data-act="claim">${icon("smartphone")} ${t("meter.claim")}</button><small class="muted">${t("meter.claimHint")}</small></div>` : ""}
     ${adviceHtml(u.advice)}
-    <details class="um-speed"><summary>${t("meter.speed")}</summary><div class="um-speed-body" aria-live="polite"></div></details>
+    <details class="um-speed"${speedOpen ? " open" : ""}><summary>${t("meter.speed")}</summary><div class="um-speed-body" aria-live="polite">${speedHtml}</div></details>
     <button type="button" class="text-btn" data-act="more">${t("meter.more")} ${icon("chevron-right")}</button>`;
   pop.querySelector(".um-close").addEventListener("click", () => (pop.hidden = true));
   // Časi odgovorov inštruktorja (server/casi-odgovora.js): naložijo se šele ob odprtju razdelka.
   const speed = pop.querySelector(".um-speed");
-  let speedOk = false;
-  speed.addEventListener("toggle", async () => {
-    if (speed.open && !speedOk) speedOk = await loadSpeed(speed.querySelector(".um-speed-body"));
+  // Odprt razdelek in njegova vsebina ostaneta ob osvežitvi števca (vsako minuto).
+  speed.addEventListener("toggle", () => {
+    speedOpen = speed.open;
+    if (speed.open) loadSpeed(speed.querySelector(".um-speed-body")); // strežnik povzetek predpomni 60 s
   });
   pop.querySelector('[data-act="more"]').addEventListener("click", () => {
     pop.hidden = true;
