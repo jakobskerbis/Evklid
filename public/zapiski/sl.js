@@ -27,6 +27,7 @@ export default {
   "zap.noCards": "Iz teh zapiskov zdaj ne morem narediti kartic.",
   "zap.practice": "Ponavljaj kartice",
   "zap.printed": "Prepisa tiskanih strani ne shranimo – samo snov in kartice.",
+  "zap.printedNoCards": "Prepisa tiskanih strani ne shranimo.",
   "zap.list": "Shranjeni zapiski",
   "zap.empty": "Še nimaš shranjenih zapiskov.",
   "zap.open": "Odpri",
@@ -46,6 +47,7 @@ export default {
   "zap.keep": "To so moji zapiski – shrani",
   "zap.keepHint": "Brez kljukice besedila ne shranimo. Kviz in kartice ostanejo.",
   "zap.notKept": "Prilepljenega besedila nismo shranili – samo snov in kartice.",
+  "zap.notKeptNoCards": "Prilepljenega besedila nismo shranili.",
   "zap.correctMark": "Pravilni odgovor",
   "zap.yourMark": "Tvoj odgovor",
 };

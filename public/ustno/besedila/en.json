@@ -4,6 +4,7 @@
 "u.snov": "Topic",
 "u.iskanje": "Which topic should I quiz you on?",
 "u.isciPh": "e.g. Ohm's law",
+"u.isciPhTema": "e.g. {tema}",
 "u.isci": "Search",
 "u.koliko": "How many questions",
 "u.kako": "How you answer",

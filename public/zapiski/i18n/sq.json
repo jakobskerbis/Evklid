@@ -25,6 +25,7 @@
   "zap.noCards": "Tani nuk mund të bëj karta nga këto shënime.",
   "zap.practice": "Përsërit kartat",
   "zap.printed": "Tekstin e faqeve të shtypura nuk e ruajmë – vetëm temat dhe kartat.",
+  "zap.printedNoCards": "Tekstin e faqeve të shtypura nuk e ruajmë.",
   "zap.list": "Shënime të ruajtura",
   "zap.empty": "Ende nuk ke shënime të ruajtura.",
   "zap.open": "Hap",
@@ -44,6 +45,7 @@
   "zap.keep": "Këto janë shënimet e mia – ruaji",
   "zap.keepHint": "Pa shenjë nuk e ruajmë tekstin. Kuizi dhe kartat mbeten.",
   "zap.notKept": "Tekstin e ngjitur nuk e ruajtëm – vetëm temat dhe kartat.",
+  "zap.notKeptNoCards": "Tekstin e ngjitur nuk e ruajtëm.",
   "zap.correctMark": "Përgjigjja e saktë",
   "zap.yourMark": "Përgjigjja jote"
 }

@@ -6,7 +6,7 @@ import { t, locale } from "./i18n.js";
 import { zavrzi } from "./odgovor.js";
 
 const $ = (sel) => document.querySelector(sel);
-let D = null; // { escapeHtml, showView, toast }
+let D = null; // { escapeHtml, showView, toast, allowed() }
 let last = null;
 let timer = null;
 
@@ -40,6 +40,13 @@ export async function refreshUsageMeter() {
   const btn = $("#usage-meter");
   if (!btn || !D) return;
   clearTimeout(timer);
+  if (D.allowed && !D.allowed()) {
+    // Ni skrbnik: porabe ne zahtevamo (strežnik bi vrnil 403), števec je skrit.
+    last = null;
+    btn.hidden = true;
+    $("#usage-pop").hidden = true;
+    return;
+  }
   let res = null;
   try {
     res = await fetch("/api/usage");

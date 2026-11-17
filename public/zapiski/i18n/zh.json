@@ -25,6 +25,7 @@
   "zap.noCards": "现在无法用这些笔记做记忆卡。",
   "zap.practice": "复习记忆卡",
   "zap.printed": "印刷页面的文字我们不保存——只保存知识点和记忆卡。",
+  "zap.printedNoCards": "印刷页面的文字我们不保存。",
   "zap.list": "已保存的笔记",
   "zap.empty": "你还没有保存的笔记。",
   "zap.open": "打开",
@@ -44,6 +45,7 @@
   "zap.keep": "这是我的笔记 – 保存",
   "zap.keepHint": "不勾选就不保存文字。测验和卡片会保留。",
   "zap.notKept": "我们没有保存粘贴的文字 – 只有主题和卡片。",
+  "zap.notKeptNoCards": "我们没有保存粘贴的文字。",
   "zap.correctMark": "正确答案",
   "zap.yourMark": "你的答案"
 }
