@@ -416,5 +416,9 @@ test("javne strani: kaj doda naročnina, matura, vprašanja staršev, noga podst
     for (const href of ["/", "/o-evklidu", "/zakaj-evklid", "/starsi.html", "/sole", "/prenesi?lang=sl", "/zasebnost.html"].filter((h) => !html.includes(`<link rel="canonical" href="${ORIGIN}${h}">`)))
       assert.ok(foot.includes(`href="${href}"`), href);
   }
+  // Podstrani: tudi Pogoji uporabe; v aplikaciji (razred v-aplikaciji) noge ni.
+  for (const f of ["starsi.html", "sole.html", "zasebnost.html", "garancija.html"])
+    assert.ok(read(f).match(/<footer class="mkt-foot">([\s\S]*?)<\/footer>/)[1].includes('<a href="/pogoji.html">Pogoji uporabe</a>'), f);
+  assert.match(read("predstavitev.css"), /\.v-aplikaciji \.mkt-foot \{ display: none; \}/);
   assert.ok(read("zasebnost.html").includes('href="/predstavitev.css"'));
 });
