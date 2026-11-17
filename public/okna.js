@@ -626,7 +626,12 @@ export function refreshBubble() {
     unread = 0;
     hidePreview();
     b.classList.remove("show-x");
-  } else placeBubble();
+  } else {
+    placeBubble();
+    // Vsebina novega pogleda (npr. Nastavitve) se izriše šele za tem: mesto preverimo še enkrat.
+    clearTimeout(refreshBubble.t);
+    refreshBubble.t = setTimeout(() => !b.hidden && placeBubble(), 400);
+  }
   const badge = b.querySelector(".cb-badge");
   badge.hidden = !unread;
   badge.textContent = unread > 9 ? "9+" : String(unread);

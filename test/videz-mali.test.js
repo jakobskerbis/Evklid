@@ -201,7 +201,9 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
     for (const sel of ['#view-settings input[type="date"]', "#view-settings button.primary[type=submit]"]) {
       await p.evaluate(([sel, y]) => {
         const el = document.querySelector(sel);
-        window.scrollBy(0, el.getBoundingClientRect().top - y);
+        let sc = el.parentElement;
+        while (sc && !(sc.scrollHeight > sc.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(sc).overflowY))) sc = sc.parentElement;
+        (sc || document.scrollingElement).scrollBy(0, el.getBoundingClientRect().top - y);
       }, [sel, bubbleY]);
       await p.waitForTimeout(1100);
       const cover = await p.evaluate(() => {
