@@ -4,6 +4,7 @@
 "u.snov": "단원",
 "u.iskanje": "어느 단원에서 질문할까?",
 "u.isciPh": "예: 옴의 법칙",
+"u.isciPhTema": "예: {tema}",
 "u.isci": "찾기",
 "u.koliko": "질문 수",
 "u.kako": "답하는 방법",

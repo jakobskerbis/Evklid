@@ -25,6 +25,7 @@
   "zap.noCards": "Acum nu pot face cartonașe din aceste notițe.",
   "zap.practice": "Repetă cartonașele",
   "zap.printed": "Nu păstrăm textul paginilor tipărite – doar temele și cartonașele.",
+  "zap.printedNoCards": "Nu păstrăm textul paginilor tipărite.",
   "zap.list": "Notițe salvate",
   "zap.empty": "Încă nu ai notițe salvate.",
   "zap.open": "Deschide",
@@ -44,6 +45,7 @@
   "zap.keep": "Acestea sunt notițele mele – salvează",
   "zap.keepHint": "Fără bifă nu salvăm textul. Testul și cartonașele rămân.",
   "zap.notKept": "Nu am salvat textul lipit – doar temele și cartonașele.",
+  "zap.notKeptNoCards": "Nu am salvat textul lipit.",
   "zap.correctMark": "Răspunsul corect",
   "zap.yourMark": "Răspunsul tău"
 }

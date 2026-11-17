@@ -387,6 +387,7 @@ function toast(msg) {
   if (!el) return alert(msg);
   el.textContent = msg;
   el.hidden = false;
+  el.dataset.at = Date.now(); // app.js hideOldToast
   clearTimeout(toast.timer);
   toast.timer = setTimeout(() => (el.hidden = true), 4000);
 }

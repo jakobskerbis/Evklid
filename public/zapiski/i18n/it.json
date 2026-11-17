@@ -25,6 +25,7 @@
   "zap.noCards": "Ora non riesco a fare flashcard da questi appunti.",
   "zap.practice": "Ripassa le flashcard",
   "zap.printed": "Il testo delle pagine stampate non lo conserviamo – solo argomenti e flashcard.",
+  "zap.printedNoCards": "Il testo delle pagine stampate non lo conserviamo.",
   "zap.list": "Appunti salvati",
   "zap.empty": "Non hai ancora appunti salvati.",
   "zap.open": "Apri",
@@ -44,6 +45,7 @@
   "zap.keep": "Sono i miei appunti – salva",
   "zap.keepHint": "Senza la spunta non salviamo il testo. Quiz e schede restano.",
   "zap.notKept": "Non abbiamo salvato il testo incollato – solo gli argomenti e le schede.",
+  "zap.notKeptNoCards": "Non abbiamo salvato il testo incollato.",
   "zap.correctMark": "Risposta corretta",
   "zap.yourMark": "La tua risposta"
 }

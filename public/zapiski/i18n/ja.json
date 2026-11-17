@@ -25,6 +25,7 @@
   "zap.noCards": "このノートからは今カードを作れません。",
   "zap.practice": "カードを復習",
   "zap.printed": "印刷ページの文字は保存しません――単元とカードだけです。",
+  "zap.printedNoCards": "印刷ページの文字は保存しません。",
   "zap.list": "保存したノート",
   "zap.empty": "保存したノートはまだありません。",
   "zap.open": "開く",
@@ -44,6 +45,7 @@
   "zap.keep": "これは自分のノートです – 保存する",
   "zap.keepHint": "チェックしないとテキストは保存しません。クイズとカードは残ります。",
   "zap.notKept": "貼り付けたテキストは保存していません – 単元とカードだけです。",
+  "zap.notKeptNoCards": "貼り付けたテキストは保存していません。",
   "zap.correctMark": "正しい答え",
   "zap.yourMark": "あなたの答え"
 }

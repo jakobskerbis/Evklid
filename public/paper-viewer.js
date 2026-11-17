@@ -3,7 +3,7 @@
 // Naloge najde besedilna plast (public/paper-tasks.js); »Pomoč pri tej nalogi« izreže le to nalogo (JPEG, največ
 // 1600 px) in jo z besedilom pošlje inštruktorju. Strani brez zaznanih nalog: učenec povleče okvir (prst ali miška).
 import { t } from "./i18n.js";
-import { zadrziFokus } from "./fokus-okna.js";
+import { zadrziFokus, escZaOkno } from "./fokus-okna.js";
 import { icon } from "./icons.js";
 import { splitTasks, textInBox } from "./paper-tasks.js";
 
@@ -99,6 +99,7 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   const close = (forHelp) => {
     if (state.closed) return;
     state.closed = true;
+    document.removeEventListener("keydown", naEscDok, true);
     if (!forHelp) onClose?.();
     current = null;
     observer?.disconnect();
@@ -115,13 +116,19 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   const sprosti = zadrziFokus(el, { zacetni: $("[data-pv-close]"), prej: back });
   $("[data-pv-close]").onclick = () => close(); // že med nalaganjem in ob napaki
 
-  el.addEventListener("keydown", (e) => {
+  const naEsc = (e) => {
     if (e.key !== "Escape") return;
     e.preventDefault();
     e.stopPropagation();
     if (sel || el.classList.contains("pv-boxing")) return setMarking(false);
     close();
-  });
+  };
+  el.addEventListener("keydown", naEsc);
+  // Esc tudi, ko fokus ni v oknu (npr. na body): enako kot v oknu.
+  function naEscDok(e) {
+    if (escZaOkno(e, el)) naEsc(e);
+  }
+  document.addEventListener("keydown", naEscDok, true);
 
   try {
     const data = new Uint8Array(await file.arrayBuffer());

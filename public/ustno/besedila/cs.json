@@ -4,6 +4,7 @@
 "u.snov": "Učivo",
 "u.iskanje": "Z jakého učiva tě mám vyzkoušet?",
 "u.isciPh": "např. Ohmův zákon",
+"u.isciPhTema": "např. {tema}",
 "u.isci": "Hledat",
 "u.koliko": "Kolik otázek",
 "u.kako": "Jak odpovídáš",

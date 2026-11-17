@@ -4,6 +4,7 @@
 "u.snov": "Stoff",
 "u.iskanje": "Zu welchem Stoff soll ich dich abfragen?",
 "u.isciPh": "z. B. Ohmsches Gesetz",
+"u.isciPhTema": "z. B. {tema}",
 "u.isci": "Suchen",
 "u.koliko": "Wie viele Fragen",
 "u.kako": "Wie du antwortest",

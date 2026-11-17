@@ -2,11 +2,12 @@
 // server/placila/podari.js). Skrbniški kartici (zahtevki za vračilo, kode za šole) vidi samo skrbnik, zato sta v slovenščini.
 import { icon } from "./icons.js";
 import { t, locale, currentLang } from "./i18n.js";
+import { dateText } from "./datum.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const $ = (sel, root = document) => root.querySelector(sel);
 const fmtEur = (c) => (c / 100).toLocaleString(locale(), { style: "currency", currency: "EUR" });
-const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" }) : "");
+const fmtDate = (iso) => (iso ? dateText(iso, locale()) : "");
 const SUBJ = (s) => t(`subj.${s}`);
 
 // Vrstica pri izbiri paketa: obljuba in povezava do pogojev.
