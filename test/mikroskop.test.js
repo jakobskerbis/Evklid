@@ -583,13 +583,34 @@ test("mikroskop: brez programa molekul (niti splošnega) se slika in merilo spre
     p.on("pageerror", (e) => napake.push(String(e)));
     await p.goto(`${base}/3d#mikroskop?p=mali-mozgani`, { waitUntil: "load" });
     await p.waitForSelector(".mk-tem", { timeout: 120000 });
+    // stanje odra za sporočila ob napaki
+    const stanje = () =>
+      p.evaluate(() => {
+        const o = document.querySelector(".mk-nalaganje-mol");
+        return {
+          znacka: document.querySelector(".mk-znacka")?.textContent,
+          merilo: document.querySelector(".k3-merilo-crta")?.parentElement.textContent.trim(),
+          obvestilo: o && !o.hidden ? o.textContent : "",
+          barve: document.querySelectorAll(".mk-stikalo")[1]?.getAttribute("aria-pressed"),
+          tem: document.querySelector(".mk-tem")?.getAttribute("aria-pressed"),
+        };
+      });
+    const pocakaj = async (fn, arg, opis, ms = 120000) => {
+      try {
+        await p.waitForFunction(fn, arg, { timeout: ms, polling: 250 });
+      } catch (e) {
+        assert.fail(`${opis}: ${JSON.stringify(await stanje())} ${napake.join(" | ")} (${e.message.split("\n")[0]})`);
+      }
+    };
     await p.click(".mk-tem");
-    const nastaviM = (M) =>
-      p.evaluate((M) => {
+    await pocakaj(() => /TEM/.test(document.querySelector(".mk-znacka")?.textContent || ""), null, "TEM se ni vklopil");
+    // drsnik povečave je logaritemski od MIN_M do največje povečave (TEM brez barv TEM_MAX, z barvami MAX_M)
+    const nastaviM = (M, najvec) =>
+      p.evaluate(([u]) => {
         const el = document.querySelector(".mk-drsnik input");
-        el.value = String((Math.log(M) - Math.log(40)) / (Math.log(1e8) - Math.log(40)));
+        el.value = String(u);
         el.dispatchEvent(new Event("input", { bubbles: true }));
-      }, M);
+      }, [(Math.log(M) - Math.log(MIN_M)) / (Math.log(najvec) - Math.log(MIN_M))]);
     // v µm iz »20 nm«, »2 Å« …
     const merilo = () =>
       p.evaluate(() => {
@@ -597,23 +618,25 @@ test("mikroskop: brez programa molekul (niti splošnega) se slika in merilo spre
         return parseFloat(x.replace(",", ".")) * { mm: 1000, "µm": 1, nm: 1e-3, "Å": 1e-4 }[e];
       });
     // barve (gumb se pokaže, ko je sloj molekul v igri), nato največja povečava
-    await nastaviM(2e6);
-    await p.waitForFunction(() => !document.querySelectorAll(".mk-stikalo")[1].hidden, null, { timeout: 60000 });
+    await nastaviM(2e6, TEM_MAX);
+    await pocakaj(() => !document.querySelectorAll(".mk-stikalo")[1].hidden, null, "gumb Barve se ni pokazal pri 2 000 000×", 60000);
     await p.evaluate(() => {
       const b = document.querySelectorAll(".mk-stikalo")[1];
       if (b.getAttribute("aria-pressed") !== "true") b.click();
     });
-    await nastaviM(1e8);
-    await p.waitForFunction(
+    await pocakaj(() => document.querySelectorAll(".mk-stikalo")[1].getAttribute("aria-pressed") === "true", null, "barve se niso vklopile", 30000);
+    await nastaviM(MAX_M, MAX_M);
+    await pocakaj(() => /100 000 000×/.test(document.querySelector(".mk-znacka").textContent), null, "povečava ni 100 000 000×", 30000);
+    // ko se program molekul ne prevede: sporočilo na odru, slika in merilo se še spreminjata (merilo pod 2 nm, prej »20 nm«)
+    await pocakaj(
       (napaka) => {
         const o = document.querySelector(".mk-nalaganje-mol");
-        return /100 000 000×/.test(document.querySelector(".mk-znacka").textContent) && o && !o.hidden && o.textContent === napaka;
+        return o && !o.hidden && o.textContent === napaka;
       },
       sl["mk.molError"],
-      { timeout: 120000 },
+      "ni sporočila, da naprava ne zmore molekul",
     );
-    // izris (predogled in polna slika) teče po sličicah: počakamo, da se merilo ustali pod 20 nm
-    await p.waitForFunction(() => !/^20 nm$/.test(document.querySelector(".k3-merilo-crta").parentElement.textContent.trim()), null, { timeout: 120000 }).catch(() => {});
+    await pocakaj(() => /Å$/.test(document.querySelector(".k3-merilo-crta").parentElement.textContent.trim()), null, "merilo je obstalo", 60000);
     const um = await merilo();
     assert.ok(um < 0.002, `merilo je obstalo pri ${um * 1000} nm (pri 100 000 000× je vidno polje manjše od 2 nm)`);
     const resnica = await p.evaluate(() => [...document.querySelectorAll(".mk-resnica")].filter((e) => !e.hidden).map((e) => e.textContent));
