@@ -216,7 +216,7 @@ Opazi: rob je položnejši od ploskve ($50{,}8^\circ < 60^\circ$), ker je njegov
 - Stožec: $P = \pi r(r+s)$, $V = \dfrac{\pi r^2 v}{3}$, $s = \sqrt{r^2+v^2}$.
 - Krogla: $P = 4\pi r^2$, $V = \dfrac{4\pi r^3}{3}$.
 - Pri sestavljenih telesih računaj posebej vsak del in pazi, katere ploskve so res zunaj.
-- Kote v telesih računaš v pravokotnih trikotnikih z višino: naklon stranske ploskve s $\frac{a}{2}$ in $v_s$, naklon stranskega roba s polovico diagonale, naklon stranice stožca z $r$ in $s$.
+- Kote v telesih računaš v pravokotnih trikotnikih z višino: naklon stranske ploskve z $\frac{a}{2}$ in $v_s$, naklon stranskega roba s polovico diagonale, naklon stranice stožca z $r$ in $s$.
 
 ## Ponovitev
 
@@ -348,7 +348,7 @@ Prostornino si predstavljaj kot plasti: prizma in valj sta zloženi iz enakih pl
 
 **Cavalierijevo načelo (višja raven):** če imata dve telesi enako višino in so vsi vzporedni preseki na isti višini enako veliki, imata enaki prostornini.
 
-**Izpeljava prostornine krogle (višja raven).** Primerjaj polkroglo s polmerom $r$ in valj s polmerom $r$ in višino $r$, iz katerega izrezemo stožec (vrh v središču spodnje osnovne ploskve, osnovna ploskev je zgornji krog valja). Na višini $h$ nad osnovno ploskvijo:
+**Izpeljava prostornine krogle (višja raven).** Primerjaj polkroglo s polmerom $r$ in valj s polmerom $r$ in višino $r$, iz katerega izrežemo stožec (vrh v središču spodnje osnovne ploskve, osnovna ploskev je zgornji krog valja). Na višini $h$ nad osnovno ploskvijo:
 
 - presek polkrogle je krog s polmerom $\sqrt{r^2 - h^2}$, ploščina $\pi(r^2 - h^2)$,
 - presek »valja brez stožca« je kolobar: velik krog $\pi r^2$ minus krog stožca s polmerom $h$ (stožec ima enako višino in polmer, zato je na višini $h$ polmer $h$): $\pi r^2 - \pi h^2$.
@@ -382,7 +382,7 @@ Krogla je dvakrat tolikšna: $V = \dfrac{4\pi r^3}{3}$.
 > Valj je zložen iz enakih plasti $\pi r^2$ do višine $v$. Pri stožcu se plasti proti vrhu manjšajo, skupaj dajo natanko tretjino.
 
 ? (brez računala) Krogla ima prostornino $288\pi\,\text{cm}^3$. Kolikšen je njen polmer v centimetrih?
-= 6 cm | 0,01
+= 6 cm | 0
 ~ 6,6 | To je $\sqrt[3]{288}$. Pozabljen je faktor $\frac{4}{3}$: iz $\frac{4\pi r^3}{3} = 288\pi$ najprej dobiš $r^3 = 216$.
 ~ 14,7 | To je $\sqrt{216}$. Prostornina krogle vsebuje $r^3$, ne $r^2$, zato koreniš s tretjim korenom.
 ~ 216 | To je $r^3$. Iz njega moraš še izračunati tretji koren.
@@ -409,7 +409,7 @@ Krogla je dvakrat tolikšna: $V = \dfrac{4\pi r^3}{3}$.
 > Stranica je $s = \sqrt{25 + 144} = 13\,\text{cm}$. Potem $P = \pi r^2 + \pi r s = 25\pi + 65\pi = 90\pi$. Odgovor $85\pi$ uporabi $v$ namesto $s$, $65\pi$ je samo plašč, $100\pi$ pa je prostornina.
 
 ? (brez računala) Stožec ima polmer osnovne ploskve $5\,\text{cm}$ in stranico $10\,\text{cm}$. Kolikšen kot (v stopinjah) oklepa stranica z ravnino osnovne ploskve?
-= 60 | 0,5
+= 60 | 0
 ~ 30 | To je kot med stranico in višino ob vrhu. Polmer $5$ je priležna kateta kota ob osnovni ploskvi, zato velja $\cos\alpha = \frac{5}{10}$.
 ~ 63,4 | Uporabil si $\tan\alpha = \frac{10}{5}$, a stranica $10$ je hipotenuza, ne kateta. S stranico in polmerom računaš kosinus.
 > V osnem preseku je polmer priležna kateta, stranica hipotenuza: $\cos\alpha = \frac{5}{10} = \frac{1}{2}$, zato $\alpha = 60^\circ$.

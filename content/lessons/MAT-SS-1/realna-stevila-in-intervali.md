@@ -70,7 +70,7 @@ $$|x - 3| = \begin{cases} x - 3, & x \ge 3 \\ 3 - x, & x < 3 \end{cases}$$
 | $(-\infty, b]$ | $x \le b$ |
 | $(-\infty, \infty)$ | vsak $x$ |
 
-Po vrsti so to **odprti**, **zaprti**, dva **polodprta** in štirje **neomejeni** intervali. Na številski premici izključeno krajišče narišemo s praznim krožcem, vključeno s polnim. Interval do $\infty$ ima puščico v desno, interval od $-\infty$ v levo, $(-\infty, \infty)$ pa je cela premica $\mathbb{R}$.
+Po vrsti so to **odprti**, **zaprti**, dva **polodprta** in pet **neomejenih** intervalov. Na številski premici izključeno krajišče narišemo s praznim krožcem, vključeno s polnim. Interval do $\infty$ ima puščico v desno, interval od $-\infty$ v levo, $(-\infty, \infty)$ pa je cela premica $\mathbb{R}$.
 
 Pravila za zapis:
 

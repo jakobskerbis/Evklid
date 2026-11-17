@@ -13,7 +13,7 @@ Aplikacija izpiše povprečje $80$ minut. Sošolec Miha takoj sklene: »Torej po
 
 Preštej sam: več kot $80$ minut igrata le **dva** od desetih. Miha je zamenjal dve različni »sredini« podatkov. Ena sama vrednost ($400$ minut, nekdo je pozabil izklopiti igro) je povprečje potegnila navzgor, večine pa ni premaknila.
 
-Statistika ti pove, katero število opiše podatke pošteno, kako so podatki razpršeni in kdaj lahko iz povprečja in razpršenosti napoveš delež, ne da bi preštel vse. Proizvajalci telefonov tako napovejo, koliko baterij bo zdržalo manj kot obljubljajo, in temu prilagodijo garancijo.
+Statistika ti pove, katero število opiše podatke pošteno, kako so podatki razpršeni in kdaj lahko iz povprečja in razpršenosti napoveš delež, ne da bi preštel vse. Proizvajalci telefonov tako napovejo, koliko baterij bo zdržalo manj, kot obljubljajo, in temu prilagodijo garancijo.
 
 ## Razlaga
 

@@ -176,7 +176,7 @@ $\dfrac{340}{340 - v} \ge \dfrac{17}{16}$
 
 5. Rešitev neenačbe je $[20, 340)$; vsa ta števila so pozitivna, zato pogoj $v \ge 0$ ne spremeni ničesar.
 6. Pretvorba: $20\,\mathrm{m/s} = 20 \cdot 3{,}6\,\mathrm{km/h} = 72\,\mathrm{km/h}$.
-7. Odgovor: vozilo mora peljati s hitrostjo vsaj $20\,\mathrm{m/s}$ ($72\,\mathrm{km/h}$) in manj kot hitrost zvoka. Množenje z $340 - v$ bi dalo $v \ge 20$ in sprejelo tudi $v > 340$, kjer je razmerje negativno in nima smisla.
+7. Odgovor: vozilo mora peljati s hitrostjo vsaj $20\,\mathrm{m/s}$ ($72\,\mathrm{km/h}$) in manj kot hitrost zvoka. Množenje s $340 - v$ bi dalo $v \ge 20$ in sprejelo tudi $v > 340$, kjer je razmerje negativno in nima smisla.
 
 ### Primer 4 – zdaj ti
 

@@ -597,13 +597,25 @@ function quadraticMethods(a, b, c, v, opt = {}) {
       const f2 = `\\left(${termsTex([{ m: { [v]: 1 }, c: Q.ONE }, { m: {}, c: new Q(q) }].filter((x) => !x.c.zero))}\\right)`;
       st.push(step(T("scan.s.factored"), p === q ? `${f1}^{2} = 0` : `${f1}${f2} = 0`, { why: T("scan.w.factored") }));
     } else {
-      // a(x − r1)(x − r2) → (d1 x − n1)(d2 x − n2)
+      // Metoda ac: srednji člen razdelimo (m · n = a · c, m + n = b), v parih izpostavimo, šele nato rešitve.
+      // a x² + bx + c = L(d1 x − n1)(d2 x − n2) z L = a / (d1 d2) (celo, ker sta faktorja primitivna);
+      // m = −L d1 n2, n = −L d2 n1; a x² + mx = L d1 x (d2 x − n2), nx + c = −L n1 (d2 x − n2).
       const fs = sols.length > 1 ? sols : [sols[0], sols[0]];
+      const [n1, d1, n2, d2] = [fs[0].q.n, fs[0].q.d, fs[1].q.n, fs[1].q.d];
       const lin = fs.map((s) => new P([{ m: { [v]: 1 }, c: new Q(s.q.d) }, { m: {}, c: new Q(-s.q.n) }]));
-      const lead = a.div(new Q(fs[0].q.d * fs[1].q.d));
+      const lead = a.div(new Q(d1 * d2));
       const pre = lead.one ? "" : lead.tex();
-      st.push(step(T("scan.s.acMethod", { ac: String(A * C), b: String(B) }), lines([`${v}_{1} + ${v}_{2} = -\\frac{b}{a} = ${b.neg().div(a).tex()},\\quad ${v}_{1} \\cdot ${v}_{2} = \\frac{c}{a} = ${c.div(a).tex()}`, `\\Rightarrow\\; ${solsTex}`]), { why: T("scan.w.vietaA") }));
-      st.push(step(T("scan.s.factored"), sols.length > 1 ? `${pre}\\left(${lin[0].tex()}\\right)\\left(${lin[1].tex()}\\right) = 0` : `${pre}\\left(${lin[0].tex()}\\right)^{2} = 0`, { why: T("scan.w.factored") }));
+      const L = lead.n;
+      const m = -L * d1 * n2;
+      const n = -L * d2 * n1;
+      const w = (x) => (x < 0n ? `(${x})` : `${x}`);
+      st.push(step(T("scan.s.vieta", { p: String(A * C), s: String(B), m: String(m), n: String(n) }), `${m} \\cdot ${w(n)} = ${A * C},\\quad ${m} + ${w(n)} = ${B}`, { why: T("scan.w.acSplit") }));
+      const split = `${termsTex([{ m: { [v]: 2 }, c: a }, { m: { [v]: 1 }, c: new Q(m) }, { m: { [v]: 1 }, c: new Q(n) }, { m: {}, c }])} = 0`;
+      const g2 = -L * n1;
+      const abs2 = g2 < 0n ? -g2 : g2;
+      const group = `${termsTex([{ m: { [v]: 1 }, c: new Q(L * d1) }])}\\left(${lin[1].tex()}\\right) ${g2 < 0n ? "-" : "+"} ${abs2 === 1n ? "" : abs2}\\left(${lin[1].tex()}\\right) = 0`;
+      const fact = sols.length > 1 ? `${pre}\\left(${lin[0].tex()}\\right)\\left(${lin[1].tex()}\\right) = 0` : `${pre}\\left(${lin[0].tex()}\\right)^{2} = 0`;
+      st.push(step(T("scan.s.factored"), lines([split, group, fact]), { why: T("scan.w.factored") }));
     }
     st.push(step(T("scan.s.zeroProduct"), solsTex, { why: T("scan.w.zeroProduct") }));
     methods.push({ id: "factor", steps: st });

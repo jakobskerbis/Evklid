@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -144,7 +144,7 @@ $a = 16\,\mathrm{a.e.}$, ker je $16^3 = 4096$. Komet ima polos šestnajstkrat ve
 ## Pogoste napake
 
 - **Linearno sklepanje.** »Dvakrat daljša nit, dvakrat daljši nihaj« zveni naravno, a velja le pri potenci $n = 1$. Najprej poišči potenco v zakonu, šele nato sklepaj.
-- **Obrnjeno razmerje.** Pri $T \propto g^{-1/2}$ učenec pomnoži z $\sqrt{1{,}62/9{,}81}$ in dobi, da nihalo na Luni niha hitreje ($0{,}82\,\mathrm{s}$). Negativna potenca pomeni: večji $g$, krajši čas. Preveri smer s premislekom, preden računaš.
+- **Obrnjeno razmerje.** Pri $T \propto g^{-1/2}$ učenec pomnoži s $\sqrt{1{,}62/9{,}81}$ in dobi, da nihalo na Luni niha hitreje ($0{,}82\,\mathrm{s}$). Negativna potenca pomeni: večji $g$, krajši čas. Preveri smer s premislekom, preden računaš.
 - **Celzijeve stopinje v razmerju.** Pri Stefanovem zakonu $\dfrac{60\,\mathrm{^\circ C}}{30\,\mathrm{^\circ C}} = 2$ ne pomeni $16$-krat več sevanja. Ničla Celzijeve lestvice ni prava ničla, zato razmerje nima pomena. V kelvinih je $\left(\tfrac{333}{303}\right)^4 \approx 1{,}46$.
 - **Višina namesto razdalje od središča.** Na višini $h = R_Z$ je $r = 2R_Z$, zato je sila teže četrtina, ne nič in ne polovica. Gravitacijski zakon vedno meri od središča.
 - **Napačen obrat potence.** Iz $T^2 = a^3$ sledi $a = T^{2/3}$, ne $T^{3/2}$ in ne $T^{1/3}$. Preveri tako, da rezultat vstaviš nazaj v prvotno enačbo.
@@ -161,7 +161,7 @@ $a = 16\,\mathrm{a.e.}$, ker je $16^3 = 4096$. Komet ima polos šestnajstkrat ve
 
 Ali metoda razmerij res da isto kot polni račun? Preverimo za Mars, ki je od Sonca oddaljen $1{,}52\,\mathrm{a.e.}$ Vzemimo $G = 6{,}67\cdot10^{-11}\,\mathrm{N\,m^2/kg^2}$, $M_S = 1{,}99\cdot10^{30}\,\mathrm{kg}$ in $1\,\mathrm{a.e.} = 1{,}50\cdot10^{11}\,\mathrm{m}$.
 
-**Polni račun** z $T = 2\pi\sqrt{\dfrac{a^3}{G M_S}}$:
+**Polni račun** s $T = 2\pi\sqrt{\dfrac{a^3}{G M_S}}$:
 
 1. $a = 1{,}52 \cdot 1{,}50\cdot10^{11}\,\mathrm{m} = 2{,}28\cdot10^{11}\,\mathrm{m}$.
 2. $a^3 \approx 1{,}185\cdot10^{34}\,\mathrm{m^3}$ in $G M_S \approx 1{,}327\cdot10^{20}\,\mathrm{m^3/s^2}$.
@@ -209,7 +209,7 @@ Ker je $T \propto g^{-1/2}$, je $g$ manjši za kvadrat tega faktorja: $1{,}62^2 
 ~ Čas padanja je odvisen od $g$: $t = \sqrt{2h/g}$.
 + približno $5\,\mathrm{s}$
 - približno $12\,\mathrm{s}$
-~ $g$ je res šestkrat manjši, a čas je sorazmeren s $g^{-1/2}$, zato je daljši le za $\sqrt{6}$.
+~ $g$ je res šestkrat manjši, a čas je sorazmeren z $g^{-1/2}$, zato je daljši le za $\sqrt{6}$.
 > $t \propto g^{-1/2}$: $\sqrt{9{,}81/1{,}6} \approx 2{,}5$, zato $2\,\mathrm{s} \cdot 2{,}5 \approx 5\,\mathrm{s}$.
 
 ? Planet obkroži Sonce v $27$ letih. Kolikšna je velika polos njegove tirnice?
@@ -241,7 +241,7 @@ x_1, x_2 | vrednosti $x$ v prvem in drugem primeru | | |
 L, L_1, L_2 | izsev zvezde | L = 4\pi R^2 \sigma T^4 | W |
 L_\mathrm{z} | izsev druge zvezde | | W |
 L_S | izsev Sonca | | W | $3{,}85\cdot10^{26}\,\mathrm{W}$
-R, R_1, R_2 | polmer zvezde | | m |
+R, R_1, R_2 | polmer zvezde | | m | pri grelcu pa upor v $\Omega$
 R_Z | polmer Zemlje | | m |
 T | nihajni ali obhodni čas | T = 2\pi\sqrt{l/g} | s | pri zvezdah pa temperatura v K
 T_1, T_2 | površinska temperatura zvezde | | K | vedno v kelvinih

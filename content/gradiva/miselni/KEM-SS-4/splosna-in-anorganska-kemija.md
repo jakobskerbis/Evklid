@@ -20,7 +20,7 @@ stanje: osnutek
 - Redoks reakcije
   - oksidacija: oddaja elektronov, število naraste
   - oksidant se reducira, reducent oksidira
-  - napaka: vezava kisika ni redukcija
+  - pazi: vezava kisika ni redukcija
 - Kisli dež
   - čista deževnica ima pH $5{,}6$ zaradi $\mathrm{CO_2}$
   - $\mathrm{SO_2}$ in dušikovi oksidi ga zakisajo

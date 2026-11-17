@@ -293,7 +293,7 @@ e) Utemeljite, da $x - 2$ in $x + 2$ nista faktorja izraza $x^4 + 16$. (2 točki
 :::premisli
 Izpelji obrazec za razstavljanje razlike kubov $a^3 - b^3$ in iz njega še obrazec za vsoto kubov.
 ---
-Velja $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$, kar potrdimo z množenjem: $a^3 + a^2b + ab^2 - a^2b - ab^2 - b^3 = a^3 - b^3$. Ker je $(-b)^3 = -b^3$, lahko vsoto zapišemo kot razliko $a^3 + b^3 = a^3 - (-b)^3$. V obrazec za razliko kubov vstavimo $-b$ namesto $b$ in dobimo $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$. Drugi faktor $a^2 \pm ab + b^2$ z realnimi števili ne razstavimo naprej.
+Velja $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$, kar potrdimo z množenjem: $a^3 + a^2b + ab^2 - a^2b - ab^2 - b^3 = a^3 - b^3$. Ker je $(-b)^3 = -b^3$, lahko vsoto zapišemo kot razliko $a^3 + b^3 = a^3 - (-b)^3$. V obrazec za razliko kubov vstavimo $-b$ namesto $b$ in dobimo $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$. Drugega faktorja $a^2 \pm ab + b^2$ z realnimi števili ne razstavimo naprej.
 :::
 
 ### Ustno vprašanje 2

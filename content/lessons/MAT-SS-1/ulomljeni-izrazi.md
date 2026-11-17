@@ -69,7 +69,7 @@ Okrajšali smo $x-1$ in $2x$, saj je $4x^2 = 2x \cdot 2x$. Pogoja sta $x \neq 1$
 
 Primer deljenja: $\dfrac{x^2-1}{x} : \dfrac{x+1}{x^2} = \dfrac{(x-1)(x+1)}{x} \cdot \dfrac{x^2}{x+1} = x(x-1)$. Pogoja sta $x \neq 0$ in $x \neq -1$; drugi je potreben, ker z ulomkom, ki je enak $0$, ne delimo.
 
-**5. Seštevanje in odštevanje.** Ulomka z enakim imenovalcem seštejemo (odštejemo) števca:
+**5. Seštevanje in odštevanje.** Ulomkoma z enakim imenovalcem seštejemo (odštejemo) števca:
 
 $$\frac{A}{C} \pm \frac{B}{C} = \frac{A \pm B}{C}.$$
 
@@ -330,7 +330,7 @@ Vrednosti se ujemajo povsod, razen pri $x = 3$, kjer prvotni izraz ni definiran.
 > $\dfrac{(x-3)(x+3)}{x(x+3)} = \dfrac{x-3}{x}$ za $x \neq 0$ in $x \neq -3$. Pogoje zapišemo pred krajšanjem, sicer bi pogoj $x \neq -3$ izgubili.
 
 ? (brez računala) Izraz $\dfrac{x-5}{5-x}$ ima za vsak $x \neq 5$ isto vrednost. Koliko je?
-= -1 | 0,01
+= -1 | 0
 ~ 1 | Okrajšal si, kot da sta $x - 5$ in $5 - x$ enaka faktorja. Sta nasprotna: pri $x = 7$ je $x - 5 = 2$, a $5 - x = -2$.
 ~ 0 | Pri krajšanju delimo, ne odštevamo: $\dfrac{C}{C} = 1$, ne $0$. Poleg tega sta faktorja nasprotna.
 > Ker je $5 - x = -(x-5)$, je $\dfrac{x-5}{5-x} = \dfrac{x-5}{-(x-5)} = -1$ za $x \neq 5$.
@@ -367,6 +367,14 @@ a, b, c | števila ali izrazi v obrazcih | | |
 :::
 
 <<RACUN
+enako: (3*x+6)/(x^2-4) | 3/(x-2)
+enako: x/(x^2-9)-2/(x+3) | (6-x)/((x-3)*(x+3))
+enako: (x/(x-2)-4/(x^2-2*x))*(x^2-4*x+4)/(x^2+4*x+4) | (x-2)^2/(x*(x+2))
+enako: 2400/t+2400/(t+20) | 4800*(t+10)/(t*(t+20))
+vrednost: 4800*(100+10)/(100*(100+20)) | 44
+enako: 3/(x-1)-2/(x+1) | (x+5)/(x^2-1)
+enako: (x+1)/(x-2)*(x^2-4)/(x^2+x) | (x+2)/x
+vrednost: (100-3)/100 | 0.97
 enako: x^2-5*x+6 | (x-2)*(x-3)
 enako: 18-2*x^2 | 2*(3-x)*(3+x)
 enako: (x^2-5*x+6)/(18-2*x^2) | (2-x)/(2*(x+3))

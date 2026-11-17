@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -291,7 +291,7 @@ Znižanje hriba je razlika aktivacijskih energij. Katalizator ne premakne reakta
 :::premisli
 Koliko je $75\,\mathrm{kJ/mol} - 49\,\mathrm{kJ/mol}$? Kaj se s katalizatorjem ne spremeni? Kolikšno je razmerje obeh repov?
 ---
-$75 - 49 = 26$: platina zniža hrib za $26\,\mathrm{kJ/mol}$. Sprosti se enako, $98\,\mathrm{kJ/mol}$, ker sta reaktanti in produkti na isti višini. Platine je še vedno $0{,}5\,\mathrm{g}$, ker se katalizator ne porabi. Hitrejša je, ker ima ob nižjem vrhu pri isti temperaturi dovolj energije veliko večji delež delcev. Slika to pokaže na nizkem hribu: rep zraste s $4{,}19\,\%$ na $17{,}75\,\%$, to je $\dfrac{17{,}75}{4{,}19} \approx 4{,}2$-krat, čeprav se hrib zniža le za $4\,\mathrm{kJ/mol}$.
+$75 - 49 = 26$: platina zniža hrib za $26\,\mathrm{kJ/mol}$. Sprosti se enako, $98\,\mathrm{kJ/mol}$, ker reaktanti in produkti ostanejo na istih višinah. Platine je še vedno $0{,}5\,\mathrm{g}$, ker se katalizator ne porabi. Hitrejša je, ker ima ob nižjem vrhu pri isti temperaturi dovolj energije veliko večji delež delcev. Slika to pokaže na nizkem hribu: rep zraste s $4{,}19\,\%$ na $17{,}75\,\%$, to je $\dfrac{17{,}75}{4{,}19} \approx 4{,}2$-krat, čeprav se hrib zniža le za $4\,\mathrm{kJ/mol}$.
 :::
 
 ## Pogoste napake
