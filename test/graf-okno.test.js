@@ -1,7 +1,7 @@
 // Graf v odgovoru inštruktorja: okno po zanimivih točkah in asimptote (public/graph/okno.js, server/odpri.js).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fitView, verticalAsymptotes, endAsymptotes, asymptoteLabel, niceNumber, features } from "../public/graph/okno.js";
+import { fitView, fitModelView, verticalAsymptotes, endAsymptotes, asymptoteLabel, niceNumber, features, domainEdges } from "../public/graph/okno.js";
 import { parseOpenBlocks, parseGraphView } from "../server/odpri.js";
 
 const F = {
@@ -124,4 +124,57 @@ test("GRAF: neobvezno okno v seznamu", () => {
   const [b] = parseOpenBlocks('Graf.\n<<GRAF ["y = 1/x", {"x": [-3, 3], "y": [-4, 4]}]>>');
   assert.deepEqual(b, { kind: "graph", exprs: ["y = 1/x"], view: { xmin: -3, xmax: 3, ymin: -4, ymax: 4 } });
   assert.deepEqual(parseOpenBlocks('<<GRAF ["y = x"]>>')[0], { kind: "graph", exprs: ["y = x"] });
+});
+
+test("pregled #802: k/x, e^(−x²), log, floor, |x|, √(x² − 4), e^(1/x) in drugi robni primeri", async () => {
+  const W = 320, H = 220;
+  // k/x: okno pri osi x, y = 0 tudi za velik k
+  for (const k of [100, 1000]) {
+    const f = (x) => k / x;
+    const v = fitView([f], { W, H });
+    assert.ok(v.ymin < 0 && v.ymax > 0 && v.ymax - v.ymin < 40, `${k}/x ${JSON.stringify(v)}`);
+    assert.deepEqual(endAsymptotes(f), [{ k: 0, n: 0, sides: [-1, 1] }]);
+  }
+  const x2k = fitView([(x) => x * x + 1000], { W, H });
+  assert.ok(x2k.ymin > 995 && x2k.ymin < 1000 && x2k.ymax > 1005 && x2k.ymax < 1020, JSON.stringify(x2k));
+  // e^(−x²): ničle zaradi podkoračitve niso zanimive točke
+  const g = fitView([(x) => Math.exp(-x * x)], { W, H });
+  assert.ok(g.xmax < 6 && g.xmin > -6 && inView(g, 0, 1), JSON.stringify(g));
+  // log x in 0,5·ln x: navpična asimptota x = 0
+  assert.deepEqual(verticalAsymptotes(Math.log10, -1, 5), [0]);
+  assert.deepEqual(verticalAsymptotes((x) => 0.5 * Math.log(x), -1, 5), [0]);
+  // floor, round, x^x: ni lažnih asimptot
+  for (const f of [Math.floor, Math.round, (x) => x ** x]) assert.deepEqual(endAsymptotes(f), [], String(f));
+  // |x| in odsekoma podana funkcija: stran, kjer je funkcija sama premica, nima asimptote
+  assert.deepEqual(endAsymptotes(Math.abs), []);
+  assert.deepEqual(endAsymptotes((x) => (x < 0 ? 1 / x : x)), [{ k: 0, n: 0, sides: [-1] }]);
+  // √(x² − 4): oba kraka (robova ±2) in poševni asimptoti y = ±x; √(1 − x²) na sredini
+  const sq = (x) => Math.sqrt(x * x - 4);
+  const e = domainEdges(sq, -5, 5);
+  assert.equal(e.length, 2);
+  assert.ok(near(e[0].x, -2) && near(e[1].x, 2));
+  const v4 = fitView([sq], { W, H });
+  assert.ok(inView(v4, -2, 0) && inView(v4, 2, 0) && near(v4.xmin, -v4.xmax, 1e-6), JSON.stringify(v4));
+  assert.deepEqual(endAsymptotes(sq), [{ k: -1, n: 0, sides: [-1] }, { k: 1, n: 0, sides: [1] }]);
+  const v1 = fitView([(x) => Math.sqrt(1 - x * x)], { W, H });
+  assert.ok(near(v1.xmin, -v1.xmax, 1e-6) && v1.xmax > 1 && v1.xmax < 2, JSON.stringify(v1));
+  // e^(1/x): pol pri 0 (ni prekoračitev), y = 1
+  assert.deepEqual(verticalAsymptotes((x) => Math.exp(1 / x), -3, 3), [0]);
+  assert.deepEqual(verticalAsymptotes(Math.exp, 600, 800), []);
+  // bližnja pola, majhne oznake, ena asimptota y = 0 za 1/(x − 1000)
+  const two = verticalAsymptotes((x) => 1 / (x * x - 0.000001), -3.6, 3.6);
+  assert.equal(two.length, 2);
+  assert.equal(asymptoteLabel({ x: two[1] }), "x = 0,001");
+  assert.deepEqual(endAsymptotes((x) => 1 / (x - 1000)), [{ k: 0, n: 0, sides: [-1, 1] }]);
+  // samo točka (3, 4): vidni osi
+  const p = fitView([], { W, H, points: [[3, 4]] });
+  assert.ok(inView(p, 0, 0) && inView(p, 3, 4), JSON.stringify(p));
+  // krožnica in premica: okna ne prilagajamo (krožnica bi bila odrezana)
+  const { buildModel, emptyState, newId } = await import("../public/graph/model.js");
+  const st = emptyState();
+  st.items = ["x^2 + y^2 = 25", "y = x"].map((text) => ({ id: newId(), type: "expr", text }));
+  assert.equal(fitModelView(buildModel(st), { W, H }), null);
+  st.items = ["y = x^2 - 4"].map((text) => ({ id: newId(), type: "expr", text }));
+  assert.ok(fitModelView(buildModel(st), { W, H }));
+  assert.equal(parseGraphView('["y = x", {"x": [1, 1.0000000001]}]'), null);
 });

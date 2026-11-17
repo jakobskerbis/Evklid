@@ -99,7 +99,7 @@ export function parseGraphView(json) {
     const r = o[ax];
     if (!Array.isArray(r) || r.length !== 2) continue;
     const [a, b] = r;
-    if (typeof a !== "number" || typeof b !== "number" || !Number.isFinite(a) || !Number.isFinite(b) || !(b > a) || Math.max(Math.abs(a), Math.abs(b)) > 1e6) continue;
+    if (typeof a !== "number" || typeof b !== "number" || !Number.isFinite(a) || !Number.isFinite(b) || !(b - a >= 1e-6 * Math.max(1, Math.abs(a), Math.abs(b))) || Math.max(Math.abs(a), Math.abs(b)) > 1e6) continue;
     view[`${ax}min`] = a;
     view[`${ax}max`] = b;
   }

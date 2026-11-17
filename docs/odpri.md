@@ -18,5 +18,6 @@ sredi pogovora pokaže Evklidova orodja.
 - Okno grafa (`public/graph/okno.js`): pokaže ničle, pole, presečišče z osjo y, ekstreme in prevoje (vrednosti ob polu
   le do 5./95. percentila, razmerje osi med 1 : 5 in 8 : 1); navpične, vodoravne in poševne asimptote so črtkane z
   oznako (`x = 1`, `y = x + 1`). Neobvezno okno v bloku, `<<GRAF ["y = 1/x", {"x": [-3, 3], "y": [-4, 4]}]>>` (ena
-  ali obe osi), ostane nespremenjeno; inštruktorjev prompt ga (še) ne omenja.
+  ali obe osi), ostane nespremenjeno; inštruktorjev prompt ga (še) ne omenja. Ob krožnici, parametrični ali polarni
+  krivulji ali območju ostane običajno okno.
 - Preizkus brez API ključa: v klepet napiši »pokaži poskus« (vnaprej pripravljen odgovor v `server/claude.js`).
