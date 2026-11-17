@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { marked } from "marked";
 import katex from "katex";
-import { createRenderer, streamSafe, fixTables, isTableSeparator, centerNumberColumns, subHeadings } from "../public/rich.js";
+import { createRenderer, brezPraznihVrstic, streamSafe, fixTables, isTableSeparator, centerNumberColumns, subHeadings } from "../public/rich.js";
 import { nextChunk } from "../public/pace.js";
 import { annotateTex, withFormulaSubject } from "../public/formula-data.js";
 
@@ -208,4 +208,13 @@ test("ločilo takoj za vrstično formulo ostane z njo (kartica »Zapomni si«: p
   // formula sredi stavka, brez ločila, ostane brez ovoja; formula v display načinu tudi
   assert.ok(!renderRich("Vrednost $x$ je pozitivna").includes("fx-nb"));
   assert.ok(!renderRich("$$x^2$$.").includes("fx-nb"));
+});
+
+// Prazen pas sredi računa na telefonu (j 17. 11. 2026): »\\ \\« v aligned je prazna vrstica, KaTeX jo nariše kot vrzel.
+test("empty rows in aligned or gathered math are dropped, spacing rows and matrices stay", () => {
+  assert.equal(brezPraznihVrstic("\\begin{aligned} v &= \\sqrt{549} \\\\ \\\\ &\\approx 23{,}5 \\\\ \\end{aligned}"), "\\begin{aligned} v &= \\sqrt{549} \\\\ &\\approx 23{,}5\\end{aligned}");
+  assert.equal(brezPraznihVrstic("\\begin{gathered} a \\\\ \\\\ \\\\ b \\end{gathered}"), "\\begin{gathered} a \\\\ b \\end{gathered}");
+  for (const t of ["\\begin{aligned}a&=b\\\\[4pt] &=c\\end{aligned}", "\\begin{pmatrix}1\\\\ \\\\2\\end{pmatrix}", "a = b"]) assert.equal(brezPraznihVrstic(t), t);
+  const h = renderRich("$$\\begin{aligned} a &= b \\\\ \\\\ &= c \\end{aligned}$$");
+  assert.equal(h, renderRich("$$\\begin{aligned} a &= b \\\\ &= c \\end{aligned}$$"));
 });

@@ -31,7 +31,13 @@ let ro = null;
 
 // Relacije, pri katerih zložimo predolgo formulo (le na vrhnji ravni, ne v ulomku ali oklepaju {…}).
 const REL = new Set(["\\approx", "\\le", "\\leq", "\\ge", "\\geq", "\\neq", "\\ne", "\\equiv", "\\doteq", "\\sim", "\\simeq", "\\to", "\\rightarrow", "\\Rightarrow", "\\Leftrightarrow", "\\iff", "\\implies", "\\longrightarrow", "\\leftrightarrow", "\\rightleftharpoons", "\\propto", "\\lt", "\\gt"]);
+// Puščica z napisom (»V \xrightarrow{pV=nRT} n«, kartica »Zapomni si«): relacija skupaj s svojim napisom [..]{..}.
+const XREL = /^\\x(?:rightarrow|leftarrow|Rightarrow|Leftarrow|leftrightarrow|Leftrightarrow|rightleftharpoons|longrightarrow|mapsto|hookrightarrow)$/;
 const LOCI = new Set(["\\quad", "\\qquad"]);
+// Klepet (j 17. 11. 2026, telefon): zložena enačba ostane strnjena. Leva stran ostane v prvi vrstici s prvim
+// »= …«, naslednji koraki gredo v isto vrstico, dokler gredo vanjo, enačaji drug pod drugim. Učbenik in drugo
+// ohranijo levo stran v svoji vrstici (j 2026-11-01).
+export const STRNJENO = ".msg";
 // Sklep (⇒, ⇔) začne novo izjavo, ki se v novi vrstici začne s puščico: »2h = 15« / »⇒ h = 7,5«.
 const SKLEP = new Set(["\\Rightarrow", "\\implies", "\\iff", "\\Leftrightarrow", "\\Longrightarrow", "\\Longleftrightarrow"]);
 // Člen vsote, pri katerem lahko predolg del enačbe nadaljujemo v novi vrstici (pred znakom, kot v zvezku).
@@ -145,6 +151,20 @@ function imaVrstice(t) {
   return false;
 }
 
+// Dolžina skupine [..] ali {..} (s presledki pred njo) na mestu i v t, ali 0.
+function skupina(t, i) {
+  const m = /^\s*([[{])/.exec(t.slice(i));
+  if (!m) return 0;
+  const [o, z] = m[1] === "[" ? ["[", "]"] : ["{", "}"];
+  let d = 0;
+  for (let j = i + m[0].length - 1; j < t.length; j++) {
+    if (t[j] === "\\") { j++; continue; }
+    if (t[j] === o) d++;
+    else if (t[j] === z && --d === 0) return j + 1 - i;
+  }
+  return 0;
+}
+
 // TeX formule → TeX z vrsticami v »aligned«, ali null, če formule ni kje zložiti.
 // stopnja 1: le izjave, ločene s \quad, gredo vsaka v svojo vrstico.
 // stopnja 2: še leva stran v svoji vrstici in pod njo vsak »= …« (zamaknjen, enačaji drug pod drugim).
@@ -152,7 +172,8 @@ function imaVrstice(t) {
 // približno 1/2, 1/3 … najdaljšega dela.
 // meja (neobvezno): koliko znakov (dolzina) približno gre v vrstico. Z njo stopnja 2 zloži le izjave, ki so
 // daljše od meje (krajše ostanejo v eni vrstici), od stopnje 3 pa so kosi dolgi do meje (3), 3/4 (4), 1/2 (5).
-export function zlozTex(tex, stopnja = 2, meja = 0) {
+// strnjeno (klepet, STRNJENO): leva stran ostane v prvi vrstici s prvim »= …«; koraki se nizajo v vrstico do meje.
+export function zlozTex(tex, stopnja = 2, meja = 0, strnjeno = false) {
   if (imaVrstice(tex) || /^\s*\\begin\{[a-z]*(?:aligned|align|gather|cases|split|array)\*?\}/.test(tex)) return null; // že ima vrstice ali poravnavo
   // Kemijska enačba v enem \mathrm{…}: zložimo vsebino, vsak del spet v \mathrm.
   let ovoj = (x) => x;
@@ -186,6 +207,15 @@ export function zlozTex(tex, stopnja = 2, meja = 0) {
       i += tok.length;
       continue;
     }
+    if (lahko && XREL.test(tok)) {
+      // Napis puščice ([spodaj]{zgoraj}) ostane z njo.
+      let n = tok.length;
+      if (/^\s*\[/.test(tex.slice(i + n))) n += skupina(tex, i + n);
+      if (/^\s*\{/.test(tex.slice(i + n))) n += skupina(tex, i + n);
+      iz.push({ rel: tex.slice(i, i + n).trim(), t: "" });
+      i += n;
+      continue;
+    }
     if (lahko && (tok === "=" || tok === "<" || tok === ">" || REL.has(tok))) iz.push({ rel: tok, t: "" });
     else if (depth === 0 && LOCI.has(tok) && iz.some((d) => d.t.trim())) {
       izjave.push([{ rel: "", t: "" }]);
@@ -201,17 +231,44 @@ export function zlozTex(tex, stopnja = 2, meja = 0) {
   const najdaljsi = Math.max(...izjave.flat().map((d) => dolzina(d.t)));
   const dolg = stopnja < 3 ? Infinity : Math.max(6, meja > 0 ? Math.floor(meja * [1, 0.75, 0.5][Math.min(stopnja, 5) - 3]) - 2 : Math.ceil(najdaljsi / (stopnja - 1)));
   // Izjava, ki gre po meji v vrstico, ostane cela.
-  const kratka = (iz) => meja > 0 && iz.reduce((n, d) => n + dolzina(d.t) + (d.rel ? 1 : 0), 0) <= meja;
+  const kratka = (iz) => meja > 0 && iz.reduce((n, d) => n + dolzina(d.t) + dolzina(d.rel), 0) <= meja;
   // Del v eno ali več vrstic: prva z relacijo (zamik `zamik`), nadaljevanja pred + ali − še malo bolj zamaknjena.
   const vrsticeDela = (d, zamik) => {
     const kosi = dolg < Infinity ? razrezi(d.t.trim(), dolg) : [d.t.trim()];
-    // V kemijski enačbi (\\mathrm) ostane znak na začetku nadaljevanja zunaj ovoja, sicer bi bil predznak (»+NaCl«).
-    const nad = (t) => {
-      const z = mr && /^(?:[-+]|\\(?:pm|mp|cdot|times)(?![a-zA-Z]))\s*/.exec(t);
-      return z ? `${z[0].trim()} ${ovoj(t.slice(z[0].length))}` : ovoj(t);
-    };
     return kosi.map((t, j) => (j ? `&${zamik}\\quad {}${nad(t)}` : `&${zamik}${d.rel ? "{}" : ""}${del({ rel: d.rel, t })}`));
   };
+  // Strnjeno: prva vrstica »leva stran = prvi korak«, nato koraki, dokler gredo v vrstico (meja, od stopnje 4 ožja).
+  // Ena sama izjava s kratko levo stranjo ima enačaje poravnane pod prvim (»F &= … \\ &≈ …«), sicer so nadaljnje
+  // vrstice zamaknjene za \quad. Nadaljevanje predolgega dela (pred + ali ·) je vedno v novi vrstici.
+  const strnjene = (deli, sama) => {
+    const L = dolzina(deli[0].t);
+    const lim = meja > 0 ? meja * [1, 1, 1, 1, 0.85, 0.7][Math.min(stopnja, 5)] : 0;
+    const poravnaj = sama && L <= Math.max(6, lim * 0.4);
+    const zamik = poravnaj ? L : 2;
+    const vrste = [{ rel: true, s: [] }];
+    let n = L;
+    deli.slice(1).forEach((d, i) => {
+      const kosi = dolg < Infinity ? razrezi(d.t.trim(), dolg) : [d.t.trim()];
+      kosi.forEach((t, j) => {
+        const m = dolzina(t) + (j ? 0 : dolzina(d.rel));
+        if (j) vrste.push({ rel: false, s: [`\\quad {}${nad(t)}`] }), (n = zamik + 2 + m);
+        else if (!i || n + m <= lim) vrste[vrste.length - 1].s.push(del({ rel: d.rel, t })), (n += m);
+        else vrste.push({ rel: true, s: [del({ rel: d.rel, t })] }), (n = zamik + m);
+      });
+    });
+    const lev = ovoj(deli[0].t.trim());
+    return vrste.map((v, j) => {
+      const s = `${v.rel ? "{}" : ""}${v.s.join(" ")}`;
+      if (poravnaj) return j ? `&${s}` : `${lev} &${s}`;
+      return j ? `&\\quad ${s}` : `&${lev} ${v.s.join(" ")}`;
+    });
+  };
+  // V kemijski enačbi (\\mathrm) ostane znak na začetku nadaljevanja zunaj ovoja, sicer bi bil predznak (»+NaCl«).
+  const nad = (t) => {
+    const z = mr && /^(?:[-+]|\\(?:pm|mp|cdot|times)(?![a-zA-Z]))\s*/.exec(t);
+    return z ? `${z[0].trim()} ${ovoj(t.slice(z[0].length))}` : ovoj(t);
+  };
+  const vec = izjave.filter((iz) => iz.some((d) => d.t.trim())).length > 1;
   const vrstice = [];
   for (const iz of izjave) {
     const deli = iz.filter((d) => d.t.trim());
@@ -221,6 +278,7 @@ export function zlozTex(tex, stopnja = 2, meja = 0) {
     }
     // Leva stran v svoji vrstici, nato vsak »= …« v svoji (j 2026-11-01), enačaji drug pod drugim.
     if (stopnja < 2 || kratka(deli)) vrstice.push(`&${deli.map(del).join(" ")}`);
+    else if (strnjeno) vrstice.push(...strnjene(deli, !vec));
     else vrstice.push(...vrsticeDela(deli[0], ""), ...deli.slice(1).flatMap((d) => vrsticeDela(d, "\\quad ")));
   }
   if (vrstice.length < 2) return null;
@@ -284,7 +342,7 @@ function izrisi(al) {
 // 1 in 2: zložena (zlozTex).
 function zlozi(k, stopnja, meja = 0) {
   const tex = (izvirnik.has(k) ? izvirniTex.get(k) : null) ?? k.querySelector("annotation")?.textContent;
-  let al = tex && globalThis.katex && (stopnja === "t" ? besedilniTex(tex) : stopnja === 0 ? tex : zlozTex(tex, stopnja, meja));
+  let al = tex && globalThis.katex && (stopnja === "t" ? besedilniTex(tex) : stopnja === 0 ? tex : zlozTex(tex, stopnja, meja, !!k.closest(STRNJENO)));
   if (!al) return null;
   if (stopnja === "t") {
     let html;
@@ -348,7 +406,7 @@ function prilagodiFormulo(k, w, meri, visoka = Infinity) {
   let st0 = 0;
   for (const st of [1, 2, 3, 4, 5]) {
     if (meri(k) <= w + 1 || w / meri(k) >= 0.9) break;
-    const al = tex && zlozTex(tex, st, meja);
+    const al = tex && zlozTex(tex, st, meja, !!k.closest(STRNJENO));
     if (!al || al === prej) continue; // ta stopnja ne spremeni ničesar
     prej = al;
     const z = zlozi(k, st, meja);

@@ -62,6 +62,39 @@ test("a setting with only a few values is buttons, not a slider (axis sliders st
   assert.match(pub("textbook.css"), /\.demo-slider\.as-choice \.demo-choice/);
 });
 
+// Klepet na telefonu (j 17. 11. 2026): leva stran ni več sama v vrstici, koraki gredo v isto vrstico, dokler gredo vanjo.
+test("in the tutor chat a folded equation keeps its left side on the first line and packs steps up to the line length", async () => {
+  const { zlozTex, STRNJENO } = await import("../public/sirina.js");
+  assert.equal(STRNJENO, ".msg");
+  const f = "F = k m g = 0{,}80 \\cdot 1200 \\cdot 9{,}81 \\approx 9418";
+  // dovolj prostora za dva koraka: »F = k m g = 0,80 · …« in pod enačajem »≈ 9418«
+  assert.equal(zlozTex(f, 2, 22, true), "\\begin{aligned}F &{}= k m g = 0{,}80 \\cdot 1200 \\cdot 9{,}81 \\\\ &{}\\approx 9418\\end{aligned}");
+  // brez ocene dolžine vrstice: vsak naslednji korak v svoji vrstici, leva stran še vedno s prvim
+  assert.equal(zlozTex(f, 2, 0, true), "\\begin{aligned}F &{}= k m g \\\\ &{}= 0{,}80 \\cdot 1200 \\cdot 9{,}81 \\\\ &{}\\approx 9418\\end{aligned}");
+  assert.equal(zlozTex("n(\\mathrm{O_2}) = \\frac{pV}{RT} = 0{,}204\\ \\text{mol}", 2, 10, true), "\\begin{aligned}n(\\mathrm{O_2}) &{}= \\frac{pV}{RT} \\\\ &{}= 0{,}204\\ \\text{mol}\\end{aligned}");
+  // nobene prazne vrstice in nobene vrstice s samo levo stranjo
+  for (const m of [0, 6, 10, 22]) for (const vr of (zlozTex(f, 2, m, true) || "").split(" \\\\ ")) assert.doesNotMatch(vr.replace(/\\\\(?:begin|end)\{aligned\}/g, ""), /^&?\s*(?:F\s*)?$/);
+  // kar gre v vrstico, ostane cela; enačba z enim samim enačajem se pri enačaju ne lomi (leva stran ne ostane sama)
+  assert.equal(zlozTex("Q = a - b = 1050", 2, 30, true), null);
+  assert.equal(zlozTex("s = v t", 2, 2, true), null);
+  // več izjav: brez poravnave pod prvim enačajem (stolpec leve strani bi zamaknil drugo izjavo), nadaljevanje za \\quad
+  assert.equal(zlozTex("x = 1 + 2 = 3 \\quad y = 4 + 5 = 9", 2, 4, true), "\\begin{aligned}&x = 1 + 2 \\\\ &\\quad {}= 3 \\\\ &y = 4 + 5 \\\\ &\\quad {}= 9\\end{aligned}");
+  // predolg del se nadaljuje pred + v novi vrstici
+  assert.equal(zlozTex("S = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 = 36", 3, 14, true), "\\begin{aligned}S &{}= 1 + 2 + 3 + 4 \\\\ &\\quad {}+ 5 + 6 + 7 + 8 = 36\\end{aligned}");
+  // učbenik (brez strnjeno) ostane, kot je bil
+  assert.equal(zlozTex(f, 2, 0), "\\begin{aligned}&F \\\\ &\\quad {}= k m g \\\\ &\\quad {}= 0{,}80 \\cdot 1200 \\cdot 9{,}81 \\\\ &\\quad {}\\approx 9418\\end{aligned}");
+});
+
+test("an arrow with a label (»Zapomni si« chain) folds before the arrow and keeps its label", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  const v = "V \\xrightarrow{pV=nRT} n(\\text{plin}) \\xrightarrow{\\text{koeficienta}} n(\\text{snov}) \\xrightarrow{m=nM} m";
+  assert.equal(zlozTex(v, 2, 25, true), "\\begin{aligned}V &{}\\xrightarrow{pV=nRT} n(\\text{plin}) \\\\ &{}\\xrightarrow{\\text{koeficienta}} n(\\text{snov}) \\\\ &{}\\xrightarrow{m=nM} m\\end{aligned}");
+  assert.equal(zlozTex(v, 2, 60, true), null); // napis šteje v dolžino: gre v vrstico
+  assert.equal(zlozTex("V \\xrightarrow[a]{pV=nRT} n \\xrightarrow{m=nM} m", 2, 8, true), "\\begin{aligned}V &{}\\xrightarrow[a]{pV=nRT} n \\\\ &{}\\xrightarrow{m=nM} m\\end{aligned}");
+  // v kemijski enačbi ostane napis pri puščici, zunaj \\mathrm
+  assert.equal(zlozTex("\\mathrm{CaCO_3 \\xrightarrow{T} CaO + CO_2}", 2, 0), "\\begin{aligned}&\\mathrm{CaCO_3} \\\\ &\\quad {}\\xrightarrow{T} \\mathrm{CaO + CO_2}\\end{aligned}");
+});
+
 test("a formula that does not fit is folded at its equals signs: left side on top, each »= …« below", async () => {
   const { zlozTex } = await import("../public/sirina.js");
   assert.equal(zlozTex("a = b + c = d"), "\\begin{aligned}&a \\\\ &\\quad {}= b + c \\\\ &\\quad {}= d\\end{aligned}");

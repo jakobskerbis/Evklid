@@ -55,6 +55,17 @@ export function ocistiStrogo(html, purify = lib("DOMPurify")) {
   return ovoj.innerHTML;
 }
 
+// Prazna vrstica v poravnanih enačbah (»… \\ \\ …« v aligned, gathered …) bi bila prazen pas sredi računa
+// (j 17. 11. 2026, telefon): dvojni prelom postane enojni, prelom tik pred \end odpade.
+const VRSTICE_ENV = /\\begin\{(aligned|alignedat|gathered|align\*?|gather\*?|split)\}([\s\S]*?)\\end\{\1\}/g;
+export function brezPraznihVrstic(tex) {
+  if (!tex.includes("\\begin")) return tex;
+  return tex.replace(VRSTICE_ENV, (_, env, body) => {
+    const b = body.replace(/\\\\(?:\s*\\\\(?!\s*\[))+/g, "\\\\").replace(/\s*\\\\\s*$/, "");
+    return `\\begin{${env}}${b}\\end{${env}}`;
+  });
+}
+
 // annotate(tex): klikljive formule (formula-info.js) ovijejo znane simbole in enote v \htmlData{fx=…};
 // renderMath(tex, display, false) jih izpusti (npr. v gumbih z možnostmi odgovora).
 export function createRenderer({ marked = lib("marked"), katex = lib("katex"), sanitize, annotate = null } = {}) {
@@ -79,6 +90,7 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
   // ctx: poved okoli formule (niz) ali { sentence, block }, da dvoumna črka dobi pomen iz besedila
   // (formula-data.js annotateTex): block je celo besedilo (kartica, naloga, razdelek) z definicijami oznak.
   function renderMath(tex, display, fx = true, ctx = "") {
+    tex = brezPraznihVrstic(tex);
     try {
       if (annotate && fx) {
         const o = typeof ctx === "string" ? (ctx ? { sentence: ctx } : null) : ctx;
