@@ -236,7 +236,7 @@ Elektroni v členu sami od sebe tečejo od leve točke (anoda) proti desni (kato
 ~ Elektroni tečejo samo po žici. Po mostu se premikajo ioni.
 + Ker se brez gibanja ionov raztopini naelektrita in krog ni sklenjen.
 - Ker se brez mostu raztopini ne moreta pomešati.
-~ Mešanje raztopin si ne želimo: bakrovi ioni bi prišli do cinka in elektroni bi preskočili neposredno, brez toka po žici.
+~ Mešanja raztopin si ne želimo: bakrovi ioni bi prišli do cinka in elektroni bi preskočili neposredno, brez toka po žici.
 > Ob anodi nastajajo pozitivni ioni, ob katodi jih zmanjkuje. Ioni iz mostu naboj izenačijo in sklenejo krog.
 
 ? Člen iz srebra (katoda, $+0{,}80\,\mathrm{V}$) in neznane kovine da $1{,}24\,\mathrm{V}$. Katera kovina je to?

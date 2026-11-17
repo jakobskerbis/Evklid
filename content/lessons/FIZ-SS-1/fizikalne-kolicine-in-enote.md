@@ -248,7 +248,7 @@ $320\,000 \cdot 10^{-2}\,\text{m} = 3200\,\text{m}$ in $3200 \cdot 10^{-3}\,\tex
 - **Gram namesto kilograma.** »Kilo je predpona, torej je osnovna enota gram.« Pri masi je izjema: osnovna enota SI je že kilogram. Pravilno: v formule vstavljaj maso v $\text{kg}$, npr. $730\,\text{g} = 0{,}73\,\text{kg}$.
 - **Napačna smer pretvorbe.** »Kilo je $1000$, torej $500\,\text{m}$ krat $1000$ da kilometre.« Tako dobiš $500\,000\,\text{km}$, kar je absurdno. Večja enota pomeni manj enot, zato mora biti število manjše: $500\,\text{m} = 0{,}5\,\text{km}$. Enako pri hitrosti: iz $\text{km/h}$ v $\text{m/s}$ delimo s $3{,}6$, ne množimo.
 - **Ploščine in prostornine kot dolžine.** »Centi je $10^{-2}$, torej $1\,\text{cm}^2 = 10^{-2}\,\text{m}^2$.« Kvadrat ima dve stranici in pretvoriti moraš obe, kot kaže mreža zgoraj. Pravilno: $(10^{-2})^2 = 10^{-4}$, torej $1\,\text{cm}^2 = 10^{-4}\,\text{m}^2$.
-- **Čas pretvarjaš z $100$.** »$1{,}5\,\text{h}$ je $150\,\text{min}$.« Ura nima $100$ minut, ampak $60$; minute in ure niso desetiške. Pravilno: $1{,}5 \cdot 60 = 90\,\text{min}$.
+- **Čas pretvarjaš s $100$.** »$1{,}5\,\text{h}$ je $150\,\text{min}$.« Ura nima $100$ minut, ampak $60$; minute in ure niso desetiške. Pravilno: $1{,}5 \cdot 60 = 90\,\text{min}$.
 - **Zamenjava $\text{m}$ in $\text{M}$.** »$5\,\text{Mm}$ je pet milimetrov.« Velika črka $\text{M}$ pomeni mega ($10^6$), mala $\text{m}$ mili ($10^{-3}$). Zato pri predponah vedno pazi na veliko in malo črko.
 
 ## Povzetek
@@ -295,7 +295,7 @@ Enota $\text{km}$ se pokrajša, ostane $\text{m}$.
 
 **Dimenzijska analiza.** Obe strani enačbe morata imeti isto enoto. Če je $s = v \cdot t$, je desna stran $\dfrac{\text{m}}{\text{s}} \cdot \text{s} = \text{m}$, kar ustreza levi. Če pri izpeljavi dobiš na obeh straneh različni enoti, si naredil napako. Tako lahko preveriš formulo, še preden vstaviš števila.
 
-**Zakaj je ploščina kvadratna?** Če vsako stranico kvadrata pomnožimo z $k$, se ploščina pomnoži s $k^2$. Zato iz $1\,\text{cm} = 10^{-2}\,\text{m}$ sledi $1\,\text{cm}^2 = (10^{-2})^2\,\text{m}^2 = 10^{-4}\,\text{m}^2$.
+**Zakaj je ploščina kvadratna?** Če vsako stranico kvadrata pomnožimo s $k$, se ploščina pomnoži s $k^2$. Zato iz $1\,\text{cm} = 10^{-2}\,\text{m}$ sledi $1\,\text{cm}^2 = (10^{-2})^2\,\text{m}^2 = 10^{-4}\,\text{m}^2$.
 
 ## Preveri se
 

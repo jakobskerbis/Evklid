@@ -197,7 +197,7 @@ $\dfrac{p_1}{T_1} = \dfrac{p_2}{T_2}$
 
 ### Primer 3: vremenski balon
 
-Meteorologi spustijo balon z merilnimi napravami. Pri tleh ga napolnijo s $2\,\mathrm{m^3}$ helija pri tlaku $100\,\mathrm{kPa}$ in temperaturi $15\,^\circ\mathrm{C}$. Koliko helija je v balonu (v molih in kilogramih)? Kolikšna je prostornina balona na višini $10\,\mathrm{km}$, kjer je tlak $26\,\mathrm{kPa}$ in temperatura $-50\,^\circ\mathrm{C}$? Tlak v balonu naj bo enak zunanjemu.
+Meteorologi spustijo balon z merilnimi napravami. Pri tleh ga napolnijo z $2\,\mathrm{m^3}$ helija pri tlaku $100\,\mathrm{kPa}$ in temperaturi $15\,^\circ\mathrm{C}$. Koliko helija je v balonu (v molih in kilogramih)? Kolikšna je prostornina balona na višini $10\,\mathrm{km}$, kjer je tlak $26\,\mathrm{kPa}$ in temperatura $-50\,^\circ\mathrm{C}$? Tlak v balonu naj bo enak zunanjemu.
 
 **Podatki:** $V_1 = 2\,\mathrm{m^3}$, $p_1 = 100\,\mathrm{kPa}$, $t_1 = 15\,^\circ\mathrm{C}$, $p_2 = 26\,\mathrm{kPa}$, $t_2 = -50\,^\circ\mathrm{C}$, $M = 4\,\mathrm{g/mol}$, $R = 8{,}31\,\mathrm{J/(mol\,K)}$
 **Iščemo:** količino $n$, maso $m$ in prostornino $V_2$

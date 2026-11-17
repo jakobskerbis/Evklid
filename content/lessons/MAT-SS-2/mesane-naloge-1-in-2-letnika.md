@@ -325,7 +325,7 @@ f: 80*0,5^(x/6) | modra | 0 .. 24
 točka: 6; 40 | (6; 40) | desno
 točka: 12; 20 | (12; 20) | nad
 :::
-= 6 h | 0,01
+= 6 h | 0
 ~ 18 | Toliko časa zdravilo učinkuje pri prvotnem odmerku, a podvojen odmerek časa ne podvoji. Iz $160$ pride do $80$ po enem razpolovnem času, od tam naprej je vse enako kot prej.
 ~ 24 | To je ves čas učinkovanja pri dvojnem odmerku. Vprašanje je, za koliko se čas podaljša: $24 - 18$.
 ~ 36 | Podvojen odmerek ne podvoji časa. Iz $160$ pride do $80$ po enem razpolovnem času, od tam naprej je vse enako kot prej.

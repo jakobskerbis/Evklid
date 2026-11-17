@@ -87,7 +87,7 @@ Za vsak element: število atomov levo $=$ število atomov desno. Spreminjamo sam
 
 1. Preštejemo: levo $2\,\mathrm{H}$ in $2\,\mathrm{O}$, desno $2\,\mathrm{H}$ in $1\,\mathrm{O}$. Kisika je desno premalo.
 2. Pred vodo napišemo $2$, ker indeksa ne smemo spremeniti. Desno je zdaj $4\,\mathrm{H}$ in $2\,\mathrm{O}$.
-3. Vodika je zdaj levo premalo, zato pred $\mathrm{H_2}$ napišemo $2$: levo je $2 \cdot 2 = 4$ atomov $\mathrm{H}$.
+3. Vodika je zdaj levo premalo, zato pred $\mathrm{H_2}$ napišemo $2$: levo so $2 \cdot 2 = 4$ atomi $\mathrm{H}$.
 4. Preverimo: levo $4\,\mathrm{H}$ in $2\,\mathrm{O}$, desno $4\,\mathrm{H}$ in $2\,\mathrm{O}$.
 5. Iz dveh snovi nastane ena, zato je to spajanje. Ker vodik pri tem gori, je hkrati zgorevanje.
 
@@ -129,7 +129,7 @@ $\dfrac{n(\mathrm{O_2})}{n(\mathrm{Al})} = \dfrac{\nu(\mathrm{O_2})}{\nu(\mathrm
 **Rešitev:**
 
 1. Kisik: levo $2$, desno $3$ atomi. Najmanjši skupni večkratnik je $6$, zato napišemo $3\,\mathrm{O_2}$ in $2\,\mathrm{Al_2O_3}$, saj je $3 \cdot 2 = 6$ in $2 \cdot 3 = 6$.
-2. Desno je zdaj $2 \cdot 2 = 4$ atomov $\mathrm{Al}$, zato levo $4\,\mathrm{Al}$: $\mathrm{4\,Al + 3\,O_2 \rightarrow 2\,Al_2O_3}$.
+2. Desno so zdaj $2 \cdot 2 = 4$ atomi $\mathrm{Al}$, zato levo $4\,\mathrm{Al}$: $\mathrm{4\,Al + 3\,O_2 \rightarrow 2\,Al_2O_3}$.
 3. Množina aluminija: $n(\mathrm{Al}) = \dfrac{5{,}4\,\mathrm{g}}{27\,\mathrm{g/mol}} = 0{,}2\,\mathrm{mol}$.
 4. Zdaj ti: iz razmerja koeficientov $4 : 3$ izračunaj $n(\mathrm{O_2})$ in nato maso kisika.
 
@@ -177,7 +177,7 @@ Uredimo rjavenje jeklenih strun, $\mathrm{Fe + O_2 \rightarrow Fe_2O_3}$, in po 
 
 Kisik ima levo $2$ in desno $3$ atome. Najmanjši skupni večkratnik je $6$. Levo ga dobimo s $3\,\mathrm{O_2}$ ($3 \cdot 2 = 6$), desno z $2\,\mathrm{Fe_2O_3}$ ($2 \cdot 3 = 6$).
 
-Pri tem desno nastane $2 \cdot 2 = 4$ atomov železa, zato pred $\mathrm{Fe}$ napišemo $4$.
+Pri tem desno nastanejo $2 \cdot 2 = 4$ atomi železa, zato pred $\mathrm{Fe}$ napišemo $4$.
 
 Rezultat: $\mathrm{4\,Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$. Vrsta: spajanje.
 
@@ -211,13 +211,13 @@ Rezultat: $\mathrm{4\,Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$. Vrsta: spajanje.
 
 ? Kolikšen koeficient stoji pred $\mathrm{O_2}$ v urejeni enačbi $\mathrm{CH_4 + O_2 \rightarrow CO_2 + H_2O}$?
 - $1$
-~ Z eno molekulo $\mathrm{O_2}$ sta levo le $2$ atoma kisika, desno pa jih je po urejanju vodika $4$.
+~ Z eno molekulo $\mathrm{O_2}$ sta levo le $2$ atoma kisika, desno pa so po urejanju vodika $4$.
 + $2$
 - $4$
 ~ $4$ je število atomov kisika na desni. Ena molekula $\mathrm{O_2}$ ima dva atoma, zato je molekul pol manj.
 - $\tfrac{3}{2}$
 ~ Tako dobiš, če vode ne urediš in šteješ desno le $3$ atome kisika. Najprej uredi vodik ($2\,\mathrm{H_2O}$), koeficienti pa morajo biti cela števila.
-> $\mathrm{CH_4 + 2\,O_2 \rightarrow CO_2 + 2\,H_2O}$: desno je $2 + 2 = 4$ atomov kisika, to je $4 : 2 = 2$ molekuli $\mathrm{O_2}$.
+> $\mathrm{CH_4 + 2\,O_2 \rightarrow CO_2 + 2\,H_2O}$: desno so $2 + 2 = 4$ atomi kisika, to sta $4 : 2 = 2$ molekuli $\mathrm{O_2}$.
 
 ? Grelnik ob odru kuri butan: $\mathrm{2\,C_4H_{10} + 13\,O_2 \rightarrow 8\,CO_2 + 10\,H_2O}$. Koliko atomov kisika je na desni strani?
 - $13$

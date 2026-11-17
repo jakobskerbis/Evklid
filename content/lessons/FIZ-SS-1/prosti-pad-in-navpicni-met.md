@@ -279,7 +279,7 @@ $g = \dfrac{2 \cdot 1{,}00}{0{,}45^2} = \dfrac{2{,}00}{0{,}2025} \approx 9{,}88\
 
 ## Pogoste napake
 
-- **Pospešek v vrhu je nič ali tam zamenja smer.** Žoga za trenutek obstane, zato se zdi, da nanjo nič ne deluje; ali pa, da pospešek kaže tja, kamor se žoga giblje. Ni res. Smer zamenja hitrost, pospešek je ves čas $g$ navzdol. Če bi bil v vrhu nič, bi telo obvisilo v zraku.
+- **Pospešek v vrhu je nič ali tam zamenja smer.** Žoga za trenutek obstane, zato se zdi, da nanjo nič ne deluje; ali pa, da pospešek kaže tja, kamor se žoga giblje. Ni res. Smer zamenja hitrost, pospešek je ves čas $g$ navzdol. Če bi bil v vrhu nič, bi telo obviselo v zraku.
 - **Mešanje predznakov.** Dijak piše $v = v_0 + g t$ tudi pri metu navzgor in dobi hitrost, ki ves čas raste. Če os usmeriš navzgor, mora imeti $g$ v enačbah nasprotno smer od $v_0$.
 - **Pozabljen faktor $\tfrac{1}{2}$ ali kvadrat časa.** Kdor si zapomni le »hitrost krat čas«, računa $h = g t$ ali $h = g t^2$. Hitrost pa med padanjem raste od $0$, zato je povprečna le polovica končne. Pravilno je $h = \dfrac{g t^2}{2}$ in $h_\text{max} = \dfrac{v_0^2}{2g}$.
 - **»Težja telesa padajo hitreje.«** Izkušnja s peresom in kamnom to navidez potrjuje. Brez zračnega upora vsa telesa padajo z istim pospeškom; razliko povzroča le zrak.
@@ -378,6 +378,36 @@ f: 19.62 - 9.81*x | modra | 0 .. 4
 ~ 14,1 | Velikost je prava, predznak ne. Os kaže navzgor, kamen pa je že pod robom, zato je lega negativna.
 ~ 74,1 | Člen z $g$ si prištel. Pri osi navzgor je $a = -g$: $y = v_0 t - \dfrac{g t^2}{2}$.
 > $y = 10 \cdot 3 - 4{,}905 \cdot 3^2 = 30 - 44{,}1 = -14{,}1\,\text{m}$. Kamen je že $14{,}1\,\text{m}$ pod robom.
+
+<<RACUN
+vrednost: 0.98/0.1 | 9.8
+vrednost: 9.81*3 | 29.43
+vrednost: sqrt(2*0.20/9.81) | 0.20
+vrednost: 5+9.81*2 | 24.62
+vrednost: 5*2+4.905*2^2 | 29.62
+vrednost: sqrt(2*10/9.81) | 1.43
+vrednost: sqrt(2*9.81*10) | 14.0
+vrednost: 14/9.81 | 1.43
+vrednost: 14^2/(2*9.81) | 9.99
+vrednost: 2*14/9.81 | 2.85
+vrednost: 10/9.81 | 1.02
+vrednost: 10^2/(2*9.81) | 5.10
+vrednost: sqrt(2*30.1/9.81) | 2.48
+vrednost: 1.02+2.48 | 3.50
+vrednost: sqrt(10^2+2*9.81*25) | 24.3
+vrednost: (10+sqrt(10^2+2*9.81*25))/9.81 | 3.50
+vrednost: 108/240 | 0.45
+vrednost: 2*1.00/0.45^2 | 9.88
+vrednost: sqrt(2*10/3.71) | 2.32
+vrednost: sqrt(2*10/1.62) | 3.51
+vrednost: 2*20/2 | 20
+vrednost: sqrt(2*0.11/9.81) | 0.15
+vrednost: sqrt(2*0.8/9.81) | 0.40
+vrednost: sqrt(2*1.6/9.81) | 0.57
+vrednost: sqrt(2*0.8/3.71) | 0.66
+vrednost: sqrt(2*0.8/1.62) | 0.99
+vrednost: 10*3-4.905*3^2 | -14.1
+>>
 
 :::simboli
 g | težni pospešek | | m/s^2 | približno 9,81 m/s²

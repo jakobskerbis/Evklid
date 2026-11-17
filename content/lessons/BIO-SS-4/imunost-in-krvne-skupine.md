@@ -9,11 +9,11 @@ Okoli leta 1900 je bila transfuzija krvi loterija: nekateri bolniki so po njej o
 
 Dunajski zdravnik Karl Landsteiner je takrat v epruvetah mešal kri sodelavcev. Opazil je, da se rdeče krvničke ene osebe v plazmi druge včasih zlepijo v kepice, včasih pa ne. Tako je odkril krvne skupine A, B in O; skupino AB sta kmalu zatem opisala njegova sodelavca. Leta 1940 je s sodelavcem opisal še sistem Rh.
 
-Danes transfuzijski center deluje kot skladišče trgovine. Vsaka vrečka krvi ima nalepko s skupino, rok uporabe in črtno kodo. Skladiščnik mora vedeti, katera vrečka sme k kateremu bolniku. Odgovor skriva imunski sistem. Zakaj napade kri, ki je popolnoma zdrava?
+Danes transfuzijski center deluje kot skladišče trgovine. Vsaka vrečka krvi ima nalepko s skupino, rok uporabe in črtno kodo. Skladiščnik mora vedeti, katera vrečka sme h kateremu bolniku. Odgovor skriva imunski sistem. Zakaj napade kri, ki je popolnoma zdrava?
 
 ## Razlaga
 
-**1. Mamljiva, a napačna predstava.** Veliko ljudi misli, da imunski sistem napade vse, kar je *škodljivo*. Potem ne bi zavrnil zdrave ledvice darovalca ali zdravih krvničk napačne skupine. A ju zavrne. Merilo torej ni škodljivost, ampak razlika med **lastnim in tujim**.
+**1. Mamljiva, a napačna predstava.** Veliko ljudi misli, da imunski sistem napade vse, kar je *škodljivo*. Potem ne bi zavrnil zdrave ledvice darovalca ali zdravih krvničk napačne skupine. A jih zavrne. Merilo torej ni škodljivost, ampak razlika med **lastnim in tujim**.
 
 **2. Antigeni kot črtne kode.** Tujek imunski sistem prepozna po **antigenih**. Antigen je molekula, navadno beljakovina ali sladkorna veriga na površini celice ali virusa, na katero se imunski sistem odzove. Spomni se blagajne: čitalnik prebere črtno kodo, ne preverja kakovosti izdelka. Prav tako imunska celica »bere« antigen, ne nevarnosti.
 
@@ -127,7 +127,7 @@ $n_1 = N \cdot p_1$, $\quad n_2 = n_1 \cdot p_2$, $\quad C = n_2 \cdot c$
 **Rešitev:**
 
 1. Mater Rh−: $n_1 = 1200 \cdot 0{,}15 = 180$.
-2. Anti-D izdela le mati Rh−, ki rodi otroka Rh+, zato pomnožimo še z $p_2$: $n_2 = 180 \cdot 0{,}6 = 108$.
+2. Anti-D izdela le mati Rh−, ki rodi otroka Rh+, zato pomnožimo še s $p_2$: $n_2 = 180 \cdot 0{,}6 = 108$.
 3. Strošek: $C = 108 \cdot 50 = 5400$ €.
 4. Odgovor: naročijo $108$ doz, ki stanejo $5400$ €.
 

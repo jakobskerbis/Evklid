@@ -36,7 +36,7 @@ Tiri planetov so skoraj krožnice. Zemlja je Soncu najbližje $147{,}1$ milijona
 
 **4. Drugi zakon: enake ploščine.** Daljica od Sonca do planeta v enakih časih opiše enake ploščine. Blizu Sonca je ta daljica kratka. Da opiše enako ploščino, mora planet v istem času prepotovati daljši lok, torej se giblje hitreje.
 
-Zemlja je Soncu najbližje, v **prisončju**, v začetku januarja; tedaj potuje s $30{,}3\,\mathrm{km/s}$. V začetku julija je v **odsončju** in potuje s $29{,}3\,\mathrm{km/s}$.
+Zemlja je Soncu najbližje, v **prisončju**, v začetku januarja; tedaj potuje s $30{,}3\,\mathrm{km/s}$. V začetku julija je v **odsončju** in potuje z $29{,}3\,\mathrm{km/s}$.
 
 V simulaciji spodaj (»Keplerjevi zakoni«) zmanjšaj začetno hitrost, da tir postane podolgovata elipsa, in vklopi »pokaži ploskve v enakih časih«. Opazi: ploskve blizu Sonca so kratke in široke, daleč od Sonca dolge in ozke, a vse enako velike.
 
@@ -210,7 +210,7 @@ Višji tir je daljši, satelit pa se na njem giblje počasneje. Zato obhodni ča
 ~ Planet se Sonca ne dotakne. Najhitrejši je v prisončju, ki je od Sonca še vedno daleč.
 > Prvi Keplerjev zakon: Sonce je v enem gorišču, drugo gorišče je prazno.
 
-? Zemlja se januarja giblje s $30{,}3\,\mathrm{km/s}$, julija s $29{,}3\,\mathrm{km/s}$. Zakaj?
+? Zemlja se januarja giblje s $30{,}3\,\mathrm{km/s}$, julija z $29{,}3\,\mathrm{km/s}$. Zakaj?
 - Ker je januarja pri nas zima in je Zemlja zato dlje od Sonca.
 ~ Letnih časov ne povzroča razdalja, ampak nagnjena os. Januarja je Zemlja Soncu najbližje.
 + Ker je januarja Soncu najbližje in mora v istem času opisati enako ploščino kot julija.

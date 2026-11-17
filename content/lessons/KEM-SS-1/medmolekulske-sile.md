@@ -41,8 +41,8 @@ Delujejo med vsemi molekulami. Večja kot je molekula in več elektronov ima, mo
    H                 H
     \                 \
      O — H ······· O — H
-      kovalentna   vodikova
-         vez         vez
+kovalentna vodikova
+   vez       vez
 ```
 
 Ta privlak je **vodikova vez**. Ime zavaja: ni prava kemijska vez, ampak medmolekulska sila. Je približno dvajsetkrat šibkejša od kovalentne vezi $\mathrm{O{-}H}$, a nekajkrat močnejša od običajnih sil dipol-dipol.

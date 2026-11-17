@@ -238,17 +238,17 @@ $F_\mathrm{r} \approx 1{,}407\,\mathrm{N} - 0{,}804\,\mathrm{N} \approx 0{,}60\,
 
 ## Drugače: Korak za korakom s številkami
 
-Vprašanje »ali telo zdrsne in kako hitro pospešuje« vedno rešiš po istem vrstnem redu. Primer: sklednica z maso $2{,}0\,\mathrm{kg}$ na deski z naklonom $30^\circ$, $k_\mathrm{l} = 0{,}50$, $k_\mathrm{tr} = 0{,}40$.
+Vprašanje »ali telo zdrsne in kako hitro pospešuje« vedno rešiš po istem vrstnem redu. Primer: skleda z maso $2{,}0\,\mathrm{kg}$ na deski z naklonom $30^\circ$, $k_\mathrm{l} = 0{,}50$, $k_\mathrm{tr} = 0{,}40$.
 
 1. Teža: $F_\mathrm{g} = 2{,}0\,\mathrm{kg} \cdot 9{,}81\,\mathrm{m/s^2} \approx 19{,}6\,\mathrm{N}$.
 2. Razstavi jo. Vzdolž deske: $F_\parallel = 19{,}62\,\mathrm{N} \cdot \sin 30^\circ \approx 9{,}8\,\mathrm{N}$. Pravokotno: $F_\mathrm{p} = 19{,}62\,\mathrm{N} \cdot \cos 30^\circ \approx 17{,}0\,\mathrm{N}$.
 3. Meja lepenja: $F_\mathrm{l,max} = 0{,}50 \cdot 16{,}99\,\mathrm{N} \approx 8{,}5\,\mathrm{N}$.
-4. Primerjaj: $9{,}8\,\mathrm{N} > 8{,}5\,\mathrm{N}$, zato sklednica zdrsne. (Hitra kontrola: $\tan 30^\circ \approx 0{,}58 > 0{,}50$.)
+4. Primerjaj: $9{,}8\,\mathrm{N} > 8{,}5\,\mathrm{N}$, zato skleda zdrsne. (Hitra kontrola: $\tan 30^\circ \approx 0{,}58 > 0{,}50$.)
 5. Ko drsi, velja drsno trenje: $F_\mathrm{tr} = 0{,}40 \cdot 16{,}99\,\mathrm{N} \approx 6{,}8\,\mathrm{N}$.
 6. Rezultanta: $F_\mathrm{r} \approx 9{,}8\,\mathrm{N} - 6{,}8\,\mathrm{N} = 3{,}0\,\mathrm{N}$.
 7. Pospešek: $a \approx \dfrac{3{,}0\,\mathrm{N}}{2{,}0\,\mathrm{kg}} = 1{,}5\,\mathrm{m/s^2}$.
 
-Kaj pa pri naklonu $20^\circ$? Tedaj je $F_\parallel = 19{,}62\,\mathrm{N} \cdot \sin 20^\circ \approx 6{,}7\,\mathrm{N}$, meja lepenja pa $0{,}50 \cdot 19{,}62\,\mathrm{N} \cdot \cos 20^\circ \approx 9{,}2\,\mathrm{N}$. Ker je $6{,}7\,\mathrm{N} < 9{,}2\,\mathrm{N}$, sklednica miruje. Sila lepenja je takrat $6{,}7\,\mathrm{N}$, ne $9{,}2\,\mathrm{N}$, pospeška ni, koraki 5 do 7 pa odpadejo.
+Kaj pa pri naklonu $20^\circ$? Tedaj je $F_\parallel = 19{,}62\,\mathrm{N} \cdot \sin 20^\circ \approx 6{,}7\,\mathrm{N}$, meja lepenja pa $0{,}50 \cdot 19{,}62\,\mathrm{N} \cdot \cos 20^\circ \approx 9{,}2\,\mathrm{N}$. Ker je $6{,}7\,\mathrm{N} < 9{,}2\,\mathrm{N}$, skleda miruje. Sila lepenja je takrat $6{,}7\,\mathrm{N}$, ne $9{,}2\,\mathrm{N}$, pospeška ni, koraki 5 do 7 pa odpadejo.
 
 ## Drugače: Kot zgodba
 

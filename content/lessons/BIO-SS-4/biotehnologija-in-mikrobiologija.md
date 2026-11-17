@@ -51,7 +51,7 @@ Ne in ne. *Plasmodium* je pražival, evkariontska celica brez peptidoglikana, ar
 Opaziš, da stolpca nista povezana. Trije organizmi gradijo svoje telo iz $\mathrm{CO_2}$, a energijo dobijo vsak drugače. Zato vsakega opišemo z dvema vprašanjema.
 
 - Od kod ogljik? Iz $\mathrm{CO_2}$: **avtotrof**. Iz organskih snovi: **heterotrof**.
-- Od kod energija? S svetlobe: **fototrof**. Iz kemijskih reakcij: **kemotrof**.
+- Od kod energija? Iz svetlobe: **fototrof**. Iz kemijskih reakcij: **kemotrof**.
 
 Cianobakterija je torej fotoavtotrof, kot rastline. Nitrifikacijska bakterija in metanogena arheja sta kemoavtotrofa: gradita iz $\mathrm{CO_2}$ v popolni temi. Kvasovka in mlečnokislinska bakterija sta kemoheterotrofa, tako kot praživali in mi.
 
@@ -126,7 +126,7 @@ $n = \dfrac{t}{g}$, nato $N = N_0 \cdot 2^{n}$
 
 1. Čas izrazimo v istih enotah kot $g$: $t = 2\,\mathrm{h} = 120\,\mathrm{min}$.
 2. Število generacij: $n = \dfrac{120\,\mathrm{min}}{20\,\mathrm{min}} = 6$.
-3. V vsaki generaciji se število podvoji, zato množimo s $2^{6}$: $N = 100 \cdot 2^{6} = 6400$.
+3. V vsaki generaciji se število podvoji, zato množimo z $2^{6}$: $N = 100 \cdot 2^{6} = 6400$.
 4. Odgovor: po dveh urah je v juhi $6400$ celic.
 
 ### Primer 2: koliko plina napihne balon
@@ -272,7 +272,7 @@ Tam ga je našla denitrifikacijska bakterija. Nitrat je uporabila namesto kisika
 - Kvasovke.
 ~ Kvasovke so heterotrofi: porabljajo sladkor in $\mathrm{CO_2}$ oddajajo, ne porabljajo.
 - Nitrifikacijske bakterije.
-~ So avtotrofi, a energijo dobijo iz amonijaka, ne s svetlobe, in kisik porabljajo.
+~ So avtotrofi, a energijo dobijo iz amonijaka, ne iz svetlobe, in kisik porabljajo.
 + Cianobakterije.
 - Metanogene arheje.
 ~ Uporabijo $\mathrm{CO_2}$, a živijo brez kisika in iz $\mathrm{CO_2}$ naredijo metan, ne kisika.

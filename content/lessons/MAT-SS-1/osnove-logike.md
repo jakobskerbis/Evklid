@@ -22,7 +22,7 @@ Večina ljudi tu zgreši, ker so besede »če«, »ali« in »ni« v vsakdanjem 
 
 ## Razlaga
 
-**1. Izjava.** Izjava je poved, za katero lahko rečemo, da je **pravilna** (P) ali **nepravilna** (N), nikoli oboje hkrati. »Opeka je iz žgane gline« je pravilna izjava. »$2 + 3 = 6$« je nepravilna izjava. »Prinesi metro!« in »Je malta že suha?« nista izjavi: ukaz in vprašanje nista ne pravilna ne nepravilna. Izjave označujemo z velikimi črkami $A$, $B$, $C$.
+**1. Izjava.** Izjava je poved, za katero lahko rečemo, da je **pravilna** (P) ali **nepravilna** (N), nikoli oboje hkrati. »Opeka je iz žgane gline« je pravilna izjava. »$2 + 3 = 6$« je nepravilna izjava. »Prinesi meter!« in »Je malta že suha?« nista izjavi: ukaz in vprašanje nista ne pravilna ne nepravilna. Izjave označujemo z velikimi črkami $A$, $B$, $C$.
 
 *Preveri:* ali je »Vsak trikotnik ima štiri kote.« izjava? (Da, nepravilna izjava.)
 

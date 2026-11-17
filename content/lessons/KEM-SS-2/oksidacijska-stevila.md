@@ -44,7 +44,7 @@ V repih kometov je tudi ogljikov oksid $\mathrm{CO}$. Napovej oksidacijsko štev
 $+2$. Kisik ima $-2$, vsota v nevtralni molekuli mora biti $0$, zato ogljik $+2$. To je med $-4$ v metanu in $+4$ v ogljikovem dioksidu.
 :::
 
-Ogljik lahko zavzame vsa števila od $-4$ do $+4$. Molekule z Titana, kometov in iz medzvezdnih oblakov se lepo razvrstijo po premici:
+Ogljik lahko zavzame vsa števila od $-4$ do $+4$. Molekule s Titana, kometov in iz medzvezdnih oblakov se lepo razvrstijo po premici:
 
 :::risba premica
 opis: Številska premica od −4 do 4 z oksidacijskimi števili ogljika: CH₄ pri −4, CH₃OH (metanol) pri −2, HCHO (formaldehid) pri 0, CO pri +2 in CO₂ pri +4. Bolj desno je ogljik vezan z več kisika.

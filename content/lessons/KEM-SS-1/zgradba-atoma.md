@@ -200,7 +200,7 @@ Lupine natrija kot obroči okoli jedra: notranji obroč $2$ elektrona, srednji $
 
 $$A_r = \sum_i x_i\, m_i$$
 
-**Spektralne črte.** Elektron, ki preskoči z višjega energijskega nivoja (lupine ali podlupine) na nižjega, odda svetlobo z energijo, enako razliki energij nivojev. Rumena črta natrija nastane pri preskoku iz $3p$ v $3s$. Ker so te razlike za vsak element drugačne, je spekter elementa enoličen. Po njem astronomi določijo sestavo zvezd in meglic.
+**Spektralne črte.** Elektron, ki preskoči z višjega energijskega nivoja (lupine ali podlupine) na nižjega, odda svetlobo z energijo, enako razliki energij nivojev. Rumena črta natrija nastane pri preskoku iz $3p$ v $3s$. Ker so te razlike za vsak element drugačne, je spekter elementa edinstven. Po njem astronomi določijo sestavo zvezd in meglic.
 
 ## Preveri se
 

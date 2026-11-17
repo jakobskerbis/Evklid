@@ -23,7 +23,7 @@ Zdi se logično: glukoza ima energijo, celica jo pretoči v ATP. Pri glikolizi i
 
 Energija je torej vmes shranjena kot razlika v koncentraciji $\mathrm{H^+}$, podobno kot voda za jezom.
 
-Kako vemo, da je gradient res vmesni korak? Leta 1966 sta André Jagendorf in Ernest Uribe namočila tilakoide (notranje membrane kloroplasta) v kislo raztopino s pH 4, da so se napolnili s protoni. Nato sta jih v temi prenesla v raztopino s pH 8, v kateri sta bila ADP in fosfat. Tilakoidi so naredili ATP brez svetlobe in brez prenosa elektronov. Zadoščal je gradient.
+Kako vemo, da je gradient res vmesni korak? Leta 1966 sta André Jagendorf in Ernest Uribe namočila tilakoide (notranje membrane kloroplasta) v kislo raztopino s pH 4, da so se napolnile s protoni. Nato sta jih v temi prenesla v raztopino s pH 8, v kateri sta bila ADP in fosfat. Tilakoide so naredile ATP brez svetlobe in brez prenosa elektronov. Zadoščal je gradient.
 
 :::premisli
 Bi tilakoidi v tem poskusu naredili ATP, če bi jih iz raztopine s pH 4 prenesli v drugo raztopino s pH 4? Napovej in utemelji.
@@ -146,7 +146,7 @@ $p = \dfrac{v_2 - v_1}{v_1} \cdot 100\,\%$, kjer je $v_1$ hitrost pred nakupom i
 
 1. Samo več $\mathrm{CO_2}$: hitrost ostane $10$. Pri šibki svetlobi je omejujoči dejavnik svetloba, ker Calvinov cikel nima dovolj ATP in NADPH.
 2. Samo lučke: $p = \dfrac{16 - 10}{10} \cdot 100 = 60$, torej $60\,\%$ hitreje. Letos naj kupi lučke.
-3. Z lučkami je svetlobe dovolj. Zdaj omejuje $\mathrm{CO_2}$, saj ga dodatek pospeši s $16$ na $22$.
+3. Z lučkami je svetlobe dovolj. Zdaj omejuje $\mathrm{CO_2}$, saj njegov dodatek hitrost poveča s $16$ na $22$.
 4. Relativno povečanje drugo leto izračunaj sam:
 
 :::premisli

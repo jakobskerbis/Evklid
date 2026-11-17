@@ -44,7 +44,7 @@ Nič. Nosilka sile poteka skozi os, zato je ročica $0$ in $M = 100\,\mathrm{N} 
 
 Na sliki je veja vodoravna daljica od osi O do prijemališča $2\,\mathrm{m}$ desno. Sila $100\,\mathrm{N}$ oklepa z vejo kot $60^\circ$. Črtkana črta je nosilka, oranžna daljica od O pravokotno na nosilko je ročica. Veja, ročica in nosilka tvorijo pravokotni trikotnik s kotoma $60^\circ$ in $30^\circ$ ter hipotenuzo $2\,\mathrm{m}$. Tak trikotnik je polovica enakostraničnega, zato je kateta na nosilki pol hipotenuze, $1\,\mathrm{m}$. Po Pitagorovem izreku je ročica $r = \sqrt{(2\,\mathrm{m})^2 - (1\,\mathrm{m})^2} = 1{,}73\,\mathrm{m}$, zato $M = 173\,\mathrm{N\,m}$, ne $200\,\mathrm{N\,m}$.
 
-Enako dobiš z razstavljanjem sile, ki ga poznaš iz poglavja o silah. Komponenta pravokotno na vejo je $100\,\mathrm{N} \cdot \sin 60^\circ = 86{,}6\,\mathrm{N}$; njena ročica je cela dolžina veje: $86{,}6\,\mathrm{N} \cdot 2\,\mathrm{m} = 173\,\mathrm{N\,m}$. Komponenta vzdolž veje, $50\,\mathrm{N}$, vejo le stiska. Ročica je torej samo krajši zapis za »vrti le pravokotni del sile«.
+Enako dobiš z razstavljanjem sile, ki ga poznaš iz poglavja o silah. Komponenta pravokotno na vejo je $100\,\mathrm{N} \cdot \sin 60^\circ = 86{,}6\,\mathrm{N}$; njena ročica je cela dolžina veje: $86{,}6\,\mathrm{N} \cdot 2\,\mathrm{m} = 173\,\mathrm{N\,m}$. Komponenta vzdolž veje, $50\,\mathrm{N}$, vejo le razteza. Ročica je torej samo krajši zapis za »vrti le pravokotni del sile«.
 
 :::risba graf
 opis: Veja dolžine 2 m je vrtljiva okoli osi O na levem koncu. Na desnem koncu deluje sila 100 N pod kotom {a}° glede na vejo. Črtkana črta je nosilka sile, ročica r je pravokotna razdalja od O do nosilke: r = {2*sin(a*pi/180):.2} m, navor M = {200*sin(a*pi/180):.0} N m. V aplikaciji se kot spreminja z drsnikom.
@@ -102,7 +102,7 @@ puščica: d; 2.3 - 0.25*d/2.2*sign(75*d - 37.5) -> d; 0.8 - 0.25*d/2.2*sign(75*
 podnapis: Oče {d} m od osi: navor Neže 368 N m, navor očeta {735.75*d:.0} N m
 :::
 
-V aplikaciji pomikaj očeta proti osi. Pri $0{,}5\,\mathrm{m}$ sta navora enaka in gugalnica je vodoravna: trikrat večja sila na trikrat krajši ročici. Še bliže osi prevesi Neža. Tim je imel narobe: šteje navor, ne samo teža.
+V aplikaciji pomikaj očeta proti osi. Pri $0{,}5\,\mathrm{m}$ sta navora enaka in gugalnica je vodoravna: trikrat večja sila na trikrat krajši ročici. Še bliže osi prevesi Neža. Tim se je motil: šteje navor, ne samo teža.
 
 :::premisli
 S palico želiš premakniti skalo. Ali je bolje, da kamen, na katerega palico nasloniš kot oporo, postaviš bliže skali ali bliže svojim rokam? Zakaj?

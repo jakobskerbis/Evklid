@@ -238,7 +238,7 @@ $r = \sqrt{1{,}0816} = 1{,}04$, zato $\frac{p}{100} = 0{,}04$ in $p = 4\,\%$. Pr
 - **Seštevanje zaporednih odstotkov.** »Podražitev za $20\,\%$ in pocenitev za $20\,\%$ se izničita.« Druga sprememba se računa od nove osnove: $1{,}2 \cdot 0{,}8 = 0{,}96$, cena je za $4\,\%$ nižja. Zaporedne spremembe množi s faktorji.
 - **Relativna mera namesto konformne.** Če mora pripis večkrat na leto dati enako kot letni pripis, mera ni $\frac{p}{m}$, ampak $p_k$ iz $r_m = \sqrt[m]{r}$. Na računalu ne pozabi oklepaja: $1{,}06$ ^ $(1 : 12)$.
 - **Odstotek v faktorju kot celo število.** Pri $p = 4$ nekateri zapišejo $r = 1 + 4 = 5$ ali $r = 1{,}4$. Pravilno je $r = 1 + \frac{4}{100} = 1{,}04$. Preveri: faktor pri majhni obrestni meri je le malo večji od $1$.
-- **Množenje z $n$ namesto potenciranja.** »$3000 \cdot 1{,}02 \cdot 3 = 9180\,\text{€}$.« Tako bi denar v treh letih skoraj potrojil. Vsako leto znova množimo z $r$, zato je prav $3000 \cdot 1{,}02^3$.
+- **Množenje z $n$ namesto potenciranja.** »$3000 \cdot 1{,}02 \cdot 3 = 9180\,\text{€}$.« Tako bi denar v treh letih več kot potrojil. Vsako leto znova množimo z $r$, zato je prav $3000 \cdot 1{,}02^3$.
 - **Zamenjani vrsti obrestovanja.** Pri obrestnem obrestovanju nekateri računajo $G_0\,(1 + \frac{n \cdot p}{100})$, kot da obresti ne bi bile pripisane. To je formula za navadno obrestovanje in da premalo. Najprej se vprašaj: se obresti računajo od začetne glavnice ali od trenutnega stanja?
 - **Računanje nazaj z odštevanjem.** »Čez $5$ let pri $3\,\%$ je $15\,\%$, $6000 - 900 = 5100\,\text{€}$.« Obresti se računajo od vloge, ne od končnega zneska. Preizkus pokaže napako: $5100 \cdot 1{,}03^5 \approx 5912\,\text{€}$. Končni znesek deli z $r^n$.
 - **»Obrestno je vedno boljše.«** Pri isti obrestni meri da obrestno obrestovanje po prvem letu enako, pozneje več. Pri različnih merah pa je lahko navadno z višjo mero dolgo ugodnejše, kot kaže uganka. Primerjaj s številkami za tvoje število let.
@@ -373,7 +373,7 @@ V prvem letu sta obe stopnici enaki. Prostor med črto in krivuljo so obresti od
 - $3180{,}00\,\text{€}$
 ~ To je navadno obrestovanje: $3000 \cdot (1 + 0{,}06)$. Pri obrestnem se obrestujejo tudi pripisane obresti.
 - $9180{,}00\,\text{€}$
-~ To je $3000 \cdot 1{,}02 \cdot 3$. Faktor $r$ ne množimo s številom let, ampak ga potenciramo: $r^3$.
+~ To je $3000 \cdot 1{,}02 \cdot 3$. Faktorja $r$ ne množimo s številom let, ampak ga potenciramo: $r^3$.
 - $5184{,}00\,\text{€}$
 ~ To je $3000 \cdot 1{,}2^3$. Pri $2\,\%$ je $r = 1{,}02$, ne $1{,}2$.
 + $3183{,}62\,\text{€}$

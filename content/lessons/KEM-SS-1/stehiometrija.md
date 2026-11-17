@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že znaš urediti kemijsko enačbo in izračunati množino snovi iz mase: $n = \dfrac{m}{M}$. Znaš tudi, da koeficienti v enačbi povedo, v kakšnem razmerju delci reagirajo.
+Že znaš urediti kemijsko enačbo in izračunati množino snovi iz mase: $n = \dfrac{m}{M}$. Veš tudi, da koeficienti v enačbi povedo, v kakšnem razmerju delci reagirajo.
 
 Stehiometrija združi vse troje in odgovori na praktična vprašanja:
 
@@ -21,7 +21,7 @@ Brez teh izračunov ne gre v laboratoriju, v farmaciji ali v industriji gnojil. 
 
 $$2\,\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\,\mathrm{H_2O}$$
 
-velja: $2\,\text{mol}$ vodika reagira z $1\,\text{mol}$ kisika in nastaneta $2\,\text{mol}$ vode. Razmerje množin je $n(\mathrm{H_2}) : n(\mathrm{O_2}) : n(\mathrm{H_2O}) = 2 : 1 : 2$.
+velja: $2\,\text{mol}$ vodika reagirata z $1\,\text{mol}$ kisika in nastaneta $2\,\text{mol}$ vode. Razmerje množin je $n(\mathrm{H_2}) : n(\mathrm{O_2}) : n(\mathrm{H_2O}) = 2 : 1 : 2$.
 
 :::premisli
 Ali $2\,\text{g}$ vodika reagira z natanko $1\,\text{g}$ kisika?
@@ -40,7 +40,7 @@ $$\frac{n(\mathrm{B})}{n(\mathrm{A})} = \frac{\nu(\mathrm{B})}{\nu(\mathrm{A})}$
 3. Z razmerjem koeficientov izračunaj množino iskane snovi.
 4. Množino pretvori v maso: $m = n \cdot M$.
 
-Maso ene snovi torej nikoli ne pretvarjaš neposredno v maso druge. Vmes je vedno množina.
+Mase ene snovi torej nikoli ne pretvarjaš neposredno v maso druge. Vmes je vedno množina.
 
 **4. Prebitni reaktant in omejitveni reaktant.** Pogosto reaktantov ne vzamemo v točno stehiometrijskem razmerju. Tisti, ki se porabi do konca, je **omejitveni reaktant** (omeji, koliko produkta nastane). Tisti, ki ga ostane, je **prebitni reaktant**.
 
@@ -170,7 +170,7 @@ $M(\mathrm{NaCl}) = 23 + 35{,}5 = 58{,}5\,\text{g/mol}$, zato $m(\mathrm{NaCl}) 
 
 - **Računanje z masami namesto z množinami.** »Iz $200\,\text{g}$ $\mathrm{CaCO_3}$ nastane $200\,\text{g}$ $\mathrm{CaO}$, ker je razmerje $1 : 1$.« Razmerje velja za mole, en mol $\mathrm{CaO}$ pa je lažji od mola $\mathrm{CaCO_3}$. Popravek: maso vedno najprej pretvori v množino.
 - **Napačno uporabljeni koeficienti.** »$3\,\text{mol}$ $\mathrm{H_2}$, koeficient vode je $2$, torej nastane $6\,\text{mol}$ vode.« Šteje *razmerje* koeficientov iskane in znane snovi, ne en sam koeficient. Popravek: pomnoži z $\dfrac{\nu(\mathrm{B})}{\nu(\mathrm{A})} = \dfrac{2}{2}$, nastanejo $3\,\text{mol}$.
-- **Omejitveni reaktant po manjši masi ali množini.** »Klora ($3\,\text{mol}$) je manj kot natrija ($4\,\text{mol}$), zato je klor omejitveni.« Ker natrij potrebujemo dvakrat več, se porabi prej. Popravek: primerjaj količnika $\dfrac{n}{\nu}$, ne samih mas ali množin.
+- **Omejitveni reaktant po manjši masi ali množini.** »Klora ($3\,\text{mol}$) je manj kot natrija ($4\,\text{mol}$), zato je klor omejitveni.« Ker natrija potrebujemo dvakrat več, se porabi prej. Popravek: primerjaj količnika $\dfrac{n}{\nu}$, ne samih mas ali množin.
 - **Produkt iz prebitnega reaktanta.** Če v primeru 3 računaš $\mathrm{MgO}$ iz kisika, dobiš $0{,}625\,\text{mol}$ $\mathrm{MgO}$ ($25\,\text{g}$), čeprav magnezija za to ni dovolj. Popravek: količino produkta določa omejitveni reaktant.
 - **Napačna molska masa.** Pri $\mathrm{O_2}$ je $32\,\text{g/mol}$, ne $16\,\text{g/mol}$, ker ima molekula dva atoma. Pri $\mathrm{H_2}$ je $2\,\text{g/mol}$.
 
@@ -251,13 +251,13 @@ Ker se atomi pri reakciji ne ustvarjajo in ne uničujejo, je vsota mas vseh snov
 
 ? Kaj povedo koeficienti v urejeni kemijski enačbi?
 - Razmerje mas snovi, ki reagirajo in nastanejo.
-~ Koeficienti veljajo za delce oziroma mole. $2\,\text{g}$ vodika ne reagira z $1\,\text{g}$ kisika, ker imajo moli različnih snovi različne mase.
+~ Koeficienti veljajo za delce oziroma mole. $2\,\text{g}$ vodika ne reagirata z $1\,\text{g}$ kisika, ker imajo moli različnih snovi različne mase.
 + Razmerje množin (molov) snovi, ki reagirajo in nastanejo.
 - Koliko gramov snovi moramo natehtati.
 ~ Koeficienti so le razmerje, ne konkretna količina. Za grame potrebuješ še molsko maso: $m = n \cdot M$.
 > Koeficienti povedo razmerje števila delcev, zato tudi razmerje množin: pri $2\,\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\,\mathrm{H_2O}$ je to $2 : 1 : 2$.
 
-? Pri reakciji $2\,\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\,\mathrm{H_2O}$ popolnoma reagira $3\,\text{mol}$ vodika (kisika je dovolj). Koliko molov vode nastane?
+? Pri reakciji $2\,\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\,\mathrm{H_2O}$ popolnoma reagirajo $3\,\text{mol}$ vodika (kisika je dovolj). Koliko molov vode nastane?
 - $1{,}5\,\text{mol}$
 ~ To je množina porabljenega kisika (razmerje $2 : 1$). Za vodo velja razmerje $\mathrm{H_2} : \mathrm{H_2O} = 2 : 2$.
 + $3\,\text{mol}$
@@ -272,8 +272,8 @@ Ker se atomi pri reakciji ne ustvarjajo in ne uničujejo, je vsota mas vseh snov
 ~ Izbral si reaktant z manjšo množino. Natrija pa reakcija potrebuje dvakrat več, zato primerjaj $\dfrac{n}{\nu}$: $\dfrac{4}{2} = 2$ in $\dfrac{3}{1} = 3$.
 + Na; ostane $1\,\text{mol}$ $\mathrm{Cl_2}$
 - Na; ostane $2\,\text{mol}$ $\mathrm{Cl_2}$
-~ Upošteval si, da $4\,\text{mol}$ Na porabi $1\,\text{mol}$ $\mathrm{Cl_2}$. Po razmerju $2 : 1$ porabi $2\,\text{mol}$ $\mathrm{Cl_2}$, zato ostane $1\,\text{mol}$.
-> $n/\nu$: za Na $4/2 = 2$, za $\mathrm{Cl_2}$ $3/1 = 3$. Manjši količnik ima Na, ki je omejitveni. Porabi se $2\,\text{mol}$ $\mathrm{Cl_2}$, ostane $3 - 2 = 1\,\text{mol}$.
+~ Upošteval si, da $4\,\text{mol}$ Na porabijo $1\,\text{mol}$ $\mathrm{Cl_2}$. Po razmerju $2 : 1$ porabijo $2\,\text{mol}$ $\mathrm{Cl_2}$, zato ostane $1\,\text{mol}$.
+> $n/\nu$: za Na $4/2 = 2$, za $\mathrm{Cl_2}$ $3/1 = 3$. Manjši količnik ima Na, ki je omejitveni. Porabita se $2\,\text{mol}$ $\mathrm{Cl_2}$, ostane $3 - 2 = 1\,\text{mol}$.
 
 ? Za reakcijo $2\,\mathrm{Mg} + \mathrm{O_2} \rightarrow 2\,\mathrm{MgO}$ zmešamo $10\,\text{g}$ magnezija in $10\,\text{g}$ kisika. Kaj velja?
 - Ne ostane nič, ker sta masi reaktantov enaki.

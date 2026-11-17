@@ -163,7 +163,7 @@ $\nu' = \nu\,\dfrac{c}{c - v}$, od tod $v = c\left(1 - \dfrac{\nu}{\nu'}\right)$
 
 **Rešitev:**
 
-1. Slišana frekvenca je višja, torej se vozilo približuje; velja enačba z $c - v$.
+1. Slišana frekvenca je višja, torej se vozilo približuje; velja enačba s $c - v$.
 2. Izrazimo: $c - v = c\,\dfrac{\nu}{\nu'}$, zato $v = c\left(1 - \dfrac{\nu}{\nu'}\right)$.
 3. Vstavi podatke in izračunaj sam, nato pretvori v $\mathrm{km/h}$.
 
@@ -203,7 +203,7 @@ $v = 340\,\mathrm{m/s} \cdot \left(1 - \dfrac{700}{750}\right) \approx 22{,}7\,\
 **Doppler po korakih.**
 
 1. Ugotovi, ali se izvir približuje (višji ton, $c - v$) ali oddaljuje (nižji ton, $c + v$).
-2. Izračunaj razmerje $\dfrac{c}{c \mp v}$; pri hitrosti, majhni v primerjavi z $c$, je blizu $1$.
+2. Izračunaj razmerje $\dfrac{c}{c \mp v}$; pri hitrosti, majhni v primerjavi s $c$, je blizu $1$.
 3. Pomnoži s frekvenco izvira.
 4. Preveri: pri približevanju mora biti rezultat večji od $\nu$, pri oddaljevanju manjši.
 

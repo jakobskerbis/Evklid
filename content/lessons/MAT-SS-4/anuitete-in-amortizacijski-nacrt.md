@@ -101,7 +101,7 @@ Isto načelo velja pri varčevanju: kdor ob koncu vsakega leta vplača $a$, ima 
 
 Družina vzame posojilo $2700$ € za potovanje na ogled popolnega Sončevega mrka. Vrne ga v treh enakih letnih anuitetah; prvo plača leto po najemu. Letna obrestna mera je $4\,\%$, obrestovanje je letno. Kolikšna je anuiteta?
 
-**Podatki:** $G_0 = 2700$ €, $p = 4\,\%$, $n = 3$ let, anuitete ob koncu leta
+**Podatki:** $G_0 = 2700$ €, $p = 4\,\%$, $n = 3$ leta, anuitete ob koncu leta
 **Iščemo:** anuiteto $a$
 
 :::formula
@@ -348,7 +348,7 @@ stolpec: 5 | 0
 > Po 2. letu ostane približno $3800$ € (natančno $3807{,}38$ €), obresti 3. leta so $3800 \cdot 0{,}06 = 228$ € (natančno $228{,}44$ €).
 
 ? (brez računala) Posojilo vrnemo z dvema letnima anuitetama po $1210$ €; prvo plačamo leto po najemu. Letna obrestna mera je $10\,\%$. Kolikšno je bilo posojilo v evrih?
-= 2100 € | 1
+= 2100 € | 0
 ~ 2420 | Obroka si samo seštel. Plačana sta pozneje, zato ju preračunaj nazaj na dan najema.
 ~ 2200 | Oba obroka si delil z $1{,}1$. Drugi je plačan dve leti po najemu, zato ga deli z $1{,}1^2 = 1{,}21$.
 ~ 2000 | Oba obroka si delil z $1{,}21$. Prvi je plačan po enem letu, zato ga deli le z $1{,}1$.

@@ -65,7 +65,7 @@ $$\mathrm{CH_3CH_2Br + OH^- \rightarrow CH_3CH_2OH + Br^-}$$
 
 $$\mathrm{CH_3CHBrCH_3 + KOH \rightarrow CH_2{=}CHCH_3 + KBr + H_2O}$$
 
-V obeh primerih reagira hidroksid, a pogoji in produkt sta drugačna. Zato moraš pri halogenoalkanih vedno pogledati, ali reakcija poteka v vodi ali v etanolu.
+V obeh primerih reagira hidroksid, a pogoji in produkt so drugačni. Zato moraš pri halogenoalkanih vedno pogledati, ali reakcija poteka v vodi ali v etanolu.
 
 **6. Reakcije alkoholov.** Alkoholi gorijo do ogljikovega dioksida in vode, metanol in etanol z modrikastim, skoraj nevidnim plamenom. Z natrijem sproščajo vodik, podobno kot voda, le počasneje. Nastane natrijev alkoksid, iz etanola natrijev etoksid $\mathrm{C_2H_5ONa}$.
 
@@ -107,7 +107,7 @@ Substitucija v vodni raztopini: $\mathrm{R{-}X + OH^- \rightarrow R{-}OH + X^-}$
 2. Reakcija poteka v vodi, zato pričakujemo substitucijo. Eliminacija tu sploh ni mogoča, saj klorometan nima drugega ogljika, s katerega bi se odcepil vodik.
 3. Zapišemo: $\mathrm{CH_3Cl + OH^- \rightarrow CH_3OH + Cl^-}$.
 4. Organski produkt ima skupino $\mathrm{{-}OH}$ na edinem ogljiku, torej je metanol.
-5. Odgovor: nastaneta metanol in kloridni ioni (v raztopini z natrijevimi ioni). Reakcija je substitucija.
+5. Odgovor: nastanejo metanol in kloridni ioni (v raztopini z natrijevimi ioni). Reakcija je substitucija.
 
 ### Primer 2: koliko kisika nese raketa
 
@@ -207,7 +207,7 @@ Da tekočina zavre, mora vsaka molekula pretrgati te povezave. Več in močnejš
 ## Drugače: Iz vsakdanjega življenja
 
 - **Razkužilo za roke** vsebuje etanol ali propan-2-ol. Na koži hitro izhlapi in jo ohladi. Z vodo se pomeša, z mastjo na koži pa tudi, ker ima nepolarni del.
-- **Stari alkotest** je bil cevka z oranžnim dikromatom. Etanol iz izdiha ga je oksidiral in cevka je pozelenela. To je ista oksidacija primarnega alkohola kot v tabeli zgoraj.
+- **Stari alkotest** je bil cevka z oranžnim dikromatom. Etanol iz izdiha se je z njim oksidiral in cevka je pozelenela. To je ista oksidacija primarnega alkohola kot v tabeli zgoraj.
 - **Antifriz** v avtomobilu je etan-1,2-diol, alkohol z dvema skupinama OH. Z vodo se meša, ker z njo tvori vodikove vezi. Njegove molekule motijo urejanje molekul vode v led, zato zmes zmrzne šele pri nizki temperaturi.
 - **Freoni** so halogenoalkani s klorom in fluorom, nekoč v hladilnikih in razpršilih. Ker so nereaktivni in netopni v vodi, jih dež ne spere iz zraka. Prepotujejo do stratosfere, kjer UV svetloba pretrga vez C–Cl. Sproščeni atomi klora razgrajujejo ozon. Ozonsko luknjo nad Antarktiko so izmerili tudi s sateliti.
 
