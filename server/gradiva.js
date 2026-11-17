@@ -314,15 +314,16 @@ const seedOf = (v) => (/^\d{1,6}$/.test(String(v ?? "")) ? Math.max(1, Number(v)
 // stran izdela, jo hrani 10 minut in vrne naključno povezavo /gradiva/tisk/<žeton> (velja samo za to stran).
 export const TISK_MS = 10 * 60 * 1000;
 const TISK_NAJVEC = 60; // strani hkrati; najstarejša gre ven
+const TISK_NA_LASTNIKA = 5; // en učenec ali razred ne izrine povezav drugih
 const TISK_BAJTOV = 12 * 1024 * 1024;
 
 export function createTiskPovezave({ now = Date.now } = {}) {
-  const pages = new Map(); // žeton -> { html, exp }
+  const pages = new Map(); // žeton -> { html, exp, owner, size }
   let bytes = 0;
   const drop = (k) => {
     const e = pages.get(k);
     if (!e) return;
-    bytes -= e.html.length;
+    bytes -= e.size;
     pages.delete(k);
   };
   const prune = () => {
@@ -330,12 +331,15 @@ export function createTiskPovezave({ now = Date.now } = {}) {
     for (const [k, e] of pages) if (e.exp <= t) drop(k);
   };
   return {
-    add(html) {
+    add(html, owner = "") {
       prune();
-      while (pages.size && (pages.size >= TISK_NAJVEC || bytes + html.length > TISK_BAJTOV)) drop(pages.keys().next().value);
+      const size = Buffer.byteLength(html);
+      const own = [...pages].filter(([, e]) => e.owner === owner).map(([k]) => k);
+      while (own.length >= TISK_NA_LASTNIKA) drop(own.shift());
+      while (pages.size && (pages.size >= TISK_NAJVEC || bytes + size > TISK_BAJTOV)) drop(pages.keys().next().value);
       const token = randomBytes(24).toString("base64url");
-      pages.set(token, { html, exp: now() + TISK_MS });
-      bytes += html.length;
+      pages.set(token, { html, exp: now() + TISK_MS, owner, size });
+      bytes += size;
       return token;
     },
     get(token) {
@@ -356,9 +360,10 @@ const NO_STORE = { "Cache-Control": "no-store", "Referrer-Policy": "no-referrer"
 export function mountGradiva(app, store, { loadStudent, accounts, leagues = null, tisk = createTiskPovezave() }) {
   app.locals.tiskPovezave = tisk; // testi
   // Stran za tisk: sama stran ali (?povezava=1) povezava za Chrome v aplikaciji.
-  const sendPrintable = (req, res, html) => {
+  // owner: učenec ali razred (največ TISK_NA_LASTNIKA povezav hkrati).
+  const sendPrintable = (req, res, html, owner) => {
     if (req.query.povezava !== "1") return res.set("Cache-Control", "no-store").type("html").send(html);
-    res.set(NO_STORE).json({ url: `/gradiva/tisk/${tisk.add(html)}`, velja_s: TISK_MS / 1000 });
+    res.set(NO_STORE).json({ url: `/gradiva/tisk/${tisk.add(html, owner)}`, velja_s: TISK_MS / 1000 });
   };
   app.get("/gradiva/tisk/:token", (req, res) => {
     const html = /^[\w-]{32}$/.test(req.params.token) ? tisk.get(req.params.token) : null;
@@ -422,7 +427,7 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
     if (!canUse(s, vrsta, t.id)) return res.status(403).json({ error: "To gradivo je v paketu.", code: "gr.lockedAny" });
     const html = gradivoPage(vrsta, t.id);
     if (!html) return res.status(404).json({ error: "Za to temo tega gradiva še ni." });
-    sendPrintable(req, res, html);
+    sendPrintable(req, res, html, `s:${s.id}`);
   });
 
   // Kratek video: scenarij, po katerem predvajalnik upravlja simulacijo in bere podnapise.
@@ -457,7 +462,7 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
     const perTopic = Math.min(10, Math.max(2, Math.trunc(Number(req.query.n)) || (weak ? 4 : 6)));
     const html = worksheetPage({ topicIds: ids, perTopic, seed: seedOf(req.query.seme), title: weak ? "Vaja iz šibkih tem" : null });
     if (!html) return res.status(404).json({ error: "Za to temo nalog za tisk še ni." });
-    sendPrintable(req, res, html);
+    sendPrintable(req, res, html, `s:${s.id}`);
   });
 
   // Delovni list za razred: učitelju vedno zastonj (koda razreda in učiteljev ključ ali lastnik razreda).
@@ -470,6 +475,6 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
     const perTopic = Math.min(12, Math.max(2, Math.trunc(Number(req.query.n)) || 8));
     const html = worksheetPage({ topicIds: [t.id], perTopic, seed: seedOf(req.query.seme), solutions: req.query.resitve !== "0" });
     if (!html) return res.status(404).json({ error: "Za to temo nalog za tisk še ni." });
-    sendPrintable(req, res, html);
+    sendPrintable(req, res, html, `r:${req.params.code}`);
   });
 }

@@ -40,7 +40,8 @@ function say(root, msg) {
 export async function openPrintable(url, onError, headers = {}) {
   // V aplikaciji (spletna stran v WebView, mobile/src/app/web.tsx) novih oken in tiska ni. Strežnik po enakih
   // pravilih dostopa izdela stran in vrne povezavo za 10 minut (server/gradiva.js, ?povezava=1); aplikacija jo
-  // odpre v Chromu, kjer »Shrani kot PDF« dela (j, 17. 11. 2026). Starejša aplikacija jo odpre kar tu.
+  // odpre v brskalniku telefona (Chrome), kjer »Shrani kot PDF« dela (j, 17. 11. 2026). Starejša aplikacija
+  // (brez zastavice EvklidNative.tisk) jo odpre kar tu.
   const inApp = / EvklidApp\//.test(navigator.userAgent);
   const w = inApp ? null : window.open("", "_blank");
   if (!w && !inApp) return onError(t("gr.popup"));
@@ -64,7 +65,9 @@ export async function openPrintable(url, onError, headers = {}) {
   if (!w) {
     const d = await r.json().catch(() => ({}));
     if (typeof d.url !== "string" || !d.url.startsWith("/gradiva/tisk/")) return onError(t("common.error", { status: r.status }));
-    return location.assign(`${d.url}#natisni`); // v Chromu takoj ponudi tisk (public/ucbenik-tisk.js)
+    const to = `${location.origin}${d.url}#natisni`; // v brskalniku takoj ponudi tisk (public/ucbenik-tisk.js)
+    if (window.EvklidNative?.tisk && window.ReactNativeWebView?.postMessage) return window.ReactNativeWebView.postMessage(JSON.stringify({ t: "tisk", url: to }));
+    return location.assign(to);
   }
   const html = (await r.text()).replace("<head>", `<head><base href="${location.origin}/">`);
   w.document.open();

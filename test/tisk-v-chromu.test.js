@@ -15,7 +15,8 @@ test("aplikacija: katere strani odpre Chrome", () => {
   assert.equal(zaTisk(`${O}/ucbenik/MAT-SS-1/potence?l=sl#natisni`, O), true);
   assert.equal(zaTisk(`${O}/gradiva/povzetek/FIZ-OS-9/upor-in-ohmov-zakon`, O), true);
   assert.equal(zaTisk(`${O}/gradiva/tisk/abc#natisni`, O), true);
-  assert.equal(zaTisk(`${O}/ucbenik-pdf/MAT-SS-1?l=sl`, O), false, "PDF prenese vgrajeni zavihek");
+  assert.equal(zaTisk(`${O}/ucbenik-pdf/MAT-SS-1?l=sl`, O), true, "zastarel PDF preusmeri na tisk v brskalniku");
+  assert.equal(zaTisk(`${O}/ucbenik`, O), false, "stran aplikacije");
   assert.equal(zaTisk(`${O}/`, O), false);
   assert.equal(zaTisk(`${O}/api/students/1/gradiva/delovni-list?topic=x`, O), false);
   assert.equal(zaTisk(`${O}/gradiva/tisk/`, O), false);
@@ -25,6 +26,7 @@ test("aplikacija: katere strani odpre Chrome", () => {
   const web = readFileSync(new URL("../mobile/src/app/web.tsx", import.meta.url), "utf8");
   assert.match(web, /if \(zaTisk\(u\)\) Linking\.openURL\(u\)/, "target=_blank (lekcija, povzetek)");
   assert.match(web, /if \(zaTisk\(req\.url\)\) Linking\.openURL\(req\.url\)/, "navigacija (povezava za tisk)");
+  assert.match(web, /m\?\.t === "tisk" && typeof m\.url === "string" && zaTisk\(m\.url\)/, "sporočilo strani (delovni list)");
 });
 
 test("povezave za tisk: 10 minut, naključne, omejeno število", () => {
@@ -41,8 +43,17 @@ test("povezave za tisk: 10 minut, naključne, omejeno število", () => {
   assert.equal(p.get(b), "<p>b</p>");
   t += 1;
   assert.equal(p.get(b), null, "po 10 minutah ne");
-  for (let i = 0; i < 100; i++) p.add(`<p>${i}</p>`);
+  for (let i = 0; i < 100; i++) p.add(`<p>${i}</p>`, `s:${i}`);
   assert.ok(p.size <= 60, "najstarejše gredo ven");
+  // En lastnik ima največ 5 povezav: ne izrine povezav drugih.
+  const q = createTiskPovezave({ now: () => t });
+  const tuja = q.add("<p>tuja</p>", "s:2");
+  const moje = [];
+  for (let i = 0; i < 20; i++) moje.push(q.add(`<p>${i}</p>`, "s:1"));
+  assert.equal(q.get(tuja), "<p>tuja</p>");
+  assert.equal(q.size, 6);
+  assert.equal(q.get(moje[19]), "<p>19</p>");
+  assert.equal(q.get(moje[0]), null);
 });
 
 test("HTTP: delovni list s ?povezava=1 vrne povezavo, ki brez prijave pokaže isti list", async () => {
@@ -86,5 +97,7 @@ test("odjemalec: v aplikaciji povezava za tisk, sicer novo okno", () => {
   const src = readFileSync(new URL("../public/gradiva.js", import.meta.url), "utf8");
   assert.match(src, /povezava=1/);
   assert.match(src, /d\.url\.startsWith\("\/gradiva\/tisk\/"\)/);
-  assert.match(src, /location\.assign\(`\$\{d\.url\}#natisni`\)/);
+  assert.match(src, /const to = `\$\{location\.origin\}\$\{d\.url\}#natisni`/);
+  assert.match(src, /window\.EvklidNative\?\.tisk && window\.ReactNativeWebView\?\.postMessage/, "nova aplikacija: sporočilo");
+  assert.match(src, /return location\.assign\(to\)/, "starejša aplikacija: stran kar v WebView");
 });

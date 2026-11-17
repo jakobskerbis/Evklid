@@ -33,7 +33,7 @@ import { zaTisk as tiskPot } from "../../../public/tisk-v-chromu.js";
 
 const ORIGIN = API_URL.replace(/\/+$/, "");
 const START = `${ORIGIN}/api/mobile/web?to=${encodeURIComponent("/")}`;
-// Stran za tisk Evklida: odpre jo Chrome, kjer »Shrani kot PDF« dela (public/tisk-v-chromu.js).
+// Stran za tisk Evklida: odpre jo privzeti brskalnik (Chrome), kjer »Shrani kot PDF« dela (public/tisk-v-chromu.js).
 const zaTisk = (url: string) => tiskPot(url, ORIGIN);
 
 // Barva zgornjega in spodnjega roba strani (zgornja vrstica, spodnji zavihki ali polje za pisanje): vrstici
@@ -182,7 +182,8 @@ export default function Web() {
             style={{ flex: 1, backgroundColor: th.bg }}
             applicationNameForUserAgent={`EvklidApp/${Constants.expoConfig?.version ?? "1"}`}
             originWhitelist={["*"]}
-            // Povezave target=_blank (PDF učbenika) na Androidu pridejo sem, ne v onShouldStartLoadWithRequest.
+            // Povezave target=_blank: z setSupportMultipleWindows={false} jih Android pošlje v onShouldStartLoadWithRequest;
+            // tu za vsak primer (iOS, starejši WebView) enako.
             onOpenWindow={(e: { nativeEvent: { targetUrl: string } }) => {
               const u = e.nativeEvent.targetUrl;
               if (zaTisk(u)) Linking.openURL(u).catch(() => {});
@@ -196,6 +197,9 @@ export default function Web() {
                 if (m?.t === "bar") setBar({ top: String(m.top || ""), bottom: String(m.bottom || "") });
                 // Prvi izris strani Evklida: zagonski zaslon se umakne (med čakanjem na strežnik ne).
                 else if (m?.t === "izris" && !waitTimer.current && (e.nativeEvent.url === ORIGIN || e.nativeEvent.url?.startsWith(ORIGIN + "/"))) setLoading(false);
+                // Stran za tisk (public/gradiva.js openPrintable): delovni list, poskus, projekt v brskalniku telefona.
+                else if (m?.t === "tisk" && typeof m.url === "string" && zaTisk(m.url) && (e.nativeEvent.url === ORIGIN || e.nativeEvent.url?.startsWith(ORIGIN + "/")))
+                  Linking.openURL(m.url).catch(() => {});
                 // Deljenje slike samo s strani Evklida (druge strani WebView odpre v brskalniku, a za vsak primer).
                 else if (m?.type === "evklid:share-image" && (e.nativeEvent.url === ORIGIN || e.nativeEvent.url?.startsWith(ORIGIN + "/")))
                   shareImage(m).then((r) => ref.current?.injectJavaScript(shareResultJs(r)));
@@ -208,8 +212,8 @@ export default function Web() {
             }}
             onShouldStartLoadWithRequest={(req: { url: string; isTopFrame?: boolean }) => {
               if (req.isTopFrame === false) return true;
-              if ((req.url.startsWith(ORIGIN + "/") && !zaTisk(req.url) && !req.url.startsWith(ORIGIN + "/ucbenik-pdf/")) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
-              // Strani za tisk odpre Chrome (zaTisk), vnaprej izdelan PDF (/ucbenik-pdf/…) pa vgrajeni zavihek, ki ga prenese.
+              if ((req.url.startsWith(ORIGIN + "/") && !zaTisk(req.url)) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
+              // Strani za tisk in PDF učbenika odpre privzeti brskalnik (zaTisk), druge strani vgrajeni zavihek.
               if (zaTisk(req.url)) Linking.openURL(req.url).catch(() => {});
               else if (/^https?:/.test(req.url)) WebBrowser.openBrowserAsync(req.url).catch(() => {});
               // mailto: (zasebnost, povabilo staršem), tel: … odpre sistem (originWhitelist "*" jih ne odpre sam).
