@@ -1170,7 +1170,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
   .tabbar .tab { padding-inline: 0; }
   .tabbar .tab span { letter-spacing: -0.015em; }
   /* Cirilica (Instrument Sans je nima): sistemska pisava je širša, »Инструктор« ostane cel. */
-  :lang(ru, uk, mk, sr, bg) .tabbar .tab span { font-size: 0.66rem; letter-spacing: -0.02em; }
+  :lang(ru, uk, mk, sr, bg) .tabbar .tab span { font-size: 0.62rem; letter-spacing: -0.03em; }
 }
 body.pad-open .tabbar { display: none; }
 .pad-tabs button { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }

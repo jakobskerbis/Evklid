@@ -182,7 +182,7 @@ test("brskalnik (360 px): vprašalnik, obvestila, »←« na Urniku in NPZ, posk
             const r = document.createRange();
             r.setStart(tn, m.index);
             r.setEnd(tn, m.index + m[0].length);
-            if (new Set([...r.getClientRects()].map((x) => Math.round(x.top))).size > 1) out.push(`${lang} ${key}: »${m[0]}«`);
+            if (new Set([...r.getClientRects()].map((x) => Math.round(x.top))).size > 1) out.push(`${lang} ${key}: »${m[0]}« (${Math.round(r.getBoundingClientRect().width)}/${Math.round(s.getBoundingClientRect().width)} px)`);
           }
         }
       }
