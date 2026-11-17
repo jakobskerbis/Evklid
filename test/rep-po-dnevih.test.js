@@ -222,3 +222,22 @@ test("rep po dnevih: obnovitev 31. v mesecu: obdobje traja do 31. 3., ne do 28. 
     }
   });
 });
+
+test("rep po dnevih: okno zunaj mreže (preklop mesečno ↔ letno) traja do meseca od začetka, ne do novega sidra", async () => {
+  const { withAccounts } = await import("./racuni-pomoc.js");
+  await withAccounts({}, async ({ store, kid, app }) => {
+    const real = Date.now;
+    try {
+      Date.now = () => Date.parse("2027-11-05T12:00:00Z");
+      const pid = store.db.prepare("SELECT parent_id FROM students WHERE id = ?").get(kid.id).parent_id;
+      // Okno 1. 11. – 1. 12. ostane (paidWindow), preklop je sidro premaknil na 10. v mesecu.
+      store.db.prepare("UPDATE parents SET sub_status = 'active', sub_seats = 1, sub_id = 'sub_x', sub_period_end = '2028-11-10T08:00:00.000Z'").run();
+      store.db.prepare("INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)").run(`ai_window_${pid}`, JSON.stringify({ sub: "sub_x", start: Date.parse("2027-11-01T08:00:00.000Z") }));
+      const u = app.locals.usage;
+      assert.equal(u.periodOf(kid.id), "2027-11-01T08:00:00.000Z", "staro okno ostane");
+      assert.equal(u.periodEndOf(kid.id), "2027-12-01T08:00:00.000Z", "ne 10. 11. (ves rep v enem dnevu)");
+    } finally {
+      Date.now = real;
+    }
+  });
+});

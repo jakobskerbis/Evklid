@@ -633,15 +633,20 @@ export function mountAccounts(app, store, opts = {}) {
     const end = Date.parse(until || "");
     if (Number.isFinite(end) && end > start) return new Date(end).toISOString();
     // Mesečna okna, sidrana na obnovitev (konec obdobja, darila, kode): konec okna je prvi datum sidra, štet nazaj, ki je
-    // za začetkom (obnovitev 31.: okno 28. 2. – 31. 3., ne do 28. 3.; pregled #821). Okno zunaj mreže: mesec od začetka.
+    // za začetkom (obnovitev 31.: okno 28. 2. – 31. 3., ne do 28. 3.; pregled #821). Datum sidra velja le blizu meseca od
+    // začetka (± 3 dni) in v prihodnosti; okno zunaj mreže (preklop mesečno ↔ letno premakne sidro, paidWindow obdrži
+    // staro okno, npr. 1. 11. – 1. 12. s sidrom 10.): mesec od začetka, ne 10. 11. (sicer ves rep v enem dnevu).
+    const month = addMonthsUtc(start, 1);
     const anchor = Date.parse((tier === "paid" ? p?.sub_period_end : tier === "gift" ? p?.gift_until : tier === "promo" ? p?.promo_until : null) || "");
     if (Number.isFinite(anchor)) {
       for (let k = 240; k >= 0; k--) {
         const t = addMonthsUtc(anchor, -k);
-        if (t > start) return t <= addMonthsUtc(start, 1) + 3 * DAY ? new Date(t).toISOString() : new Date(addMonthsUtc(start, 1)).toISOString();
+        if (t <= start) continue;
+        if (t >= month - 3 * DAY && t <= month + 3 * DAY && t > Date.now()) return new Date(t).toISOString();
+        break;
       }
     }
-    return new Date(addMonthsUtc(start, 1)).toISOString();
+    return new Date(month).toISOString();
   }
   // Vrednost paketa (meja + brezplačni rep) v $: trda meja (server/usage.js capsFor), največ to.
   const guaranteeTotalFor = (studentId) => subGuarantee(studentId)?.total ?? null;
