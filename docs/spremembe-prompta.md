@@ -2,6 +2,14 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-17: na prošnjo samo rezultat dobi rezultat s formulo v eni vrstici (PR »Inštruktor: na prošnjo samo rezultat dobi rezultat s formulo v eni vrstici«)
+
+- Zakaj: učenec je pri eni preprosti nalogi prosil »samo končni rezultat, brez postopka« (kinetična energija, $m = 2{,}0\ \mathrm{kg}$, $v = 3{,}0\ \mathrm{m/s}$). Evklid je kljub temu pisal Podatki, Iščemo, formulo in Preverbo ter »Rezultat ti dam s kratkim postopkom …«; konkurent je odgovoril »9,0 J«. Vzrok: »samo rezultat« je bil le med znaki prepisovanja v točki »Domača naloga za oddajo«, »Vedno« in Način A pa prepovedujeta rezultat kot prvi odziv. j je 17. 11. izbral »Rezultat + 1 vrstica«.
+- Prompt (stalni del, Pedagoške situacije, nova točka pred »Domača naloga za oddajo«): **Samo rezultat pri eni nalogi** – v obeh načinih takoj ena vrstica z rezultatom (krepko, z enoto) in formulo z vstavljenimi števili (zgled $W_k = 9{,}0\ \mathrm{J}$); pri nalogi z več koraki ključna veriga formul, skupaj največ dve vrstici; brez Podatkov, Iščemo, Preverbe in razlage; načina ne preklopi in tega ne napoveduje; nato lahko en stavek z gumbi `IZBIRE` (postopek, podobna naloga). Pri več nalogah hkrati ali »moram oddati« velja Domača naloga za oddajo, ki ostane nespremenjena (seznama golih rezultatov ne da). Izjema je dopisana v vrstico »Vedno« in v Način A »Končnega odgovora nikoli ne izdaš kot prvi odziv …«. »Pravilen rezultat brez postopka … ni rešen« (preverjanje učenčevega rezultata) ostane. Način B (#797) se ne spremeni: velja za celotne rešitve, ta točka za prošnjo samo za rezultat.
+- Stalni del +776 znakov (56 791 → 57 567; ~210 predpomnjenih žetonov, zanemarljiv strošek). Meja 800 znakov je v novem testu; test načina B ima zdaj le spodnjo mejo.
+- Test: `test/prompt.test.js` (besedilo točke, mesto pred Domačo nalogo, nespremenjeno pravilo za več nalog, izjemi v »Vedno« in Načinu A, meja rasti).
+- Meritev: plačane meritve ni bilo; po objavi j ponovi »Kolikšna je kinetična energija telesa z maso 2,0 kg pri 3,0 m/s? Samo končni rezultat, brez postopka.«
+
 ## 2026-11-17: krajši prvi odgovor v načinu B, rezultat v prvem stavku (PR #797)
 
 - Zakaj: j je 17. 11. primerjal Evklid z ChatGPT in Matura AI (Astra) na 10 maturitetnih nalogah. Vsi so bili pravilni in Evklidove razlage najboljše, odgovori pa daleč najdaljši (Podatki, Iščemo, Načrt, koraki, Preverba, Zapomni si, »Kaj je naloga preverjala«, Vaja, gumbi). Všeč mu je bil odgovor z rezultatom v prvem stavku. Neskladje: »≈ 52,6 m« v koraku, »Rezultat: s_z ≈ 53 m« na koncu.
