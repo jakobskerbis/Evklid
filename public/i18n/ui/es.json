@@ -187,7 +187,7 @@
     "other": "{n} puntos"
   },
   "task.phCoef": "p. ej. 2, 1, 2",
-  "task.phUnit": "número y unidad, p. ej. 12,5 {unit}",
+  "task.phUnit": "número y unidad",
   "task.phResult": "escribe el resultado",
   "task.write": "Escribir",
   "task.writeTitle": "Entrada con el dedo o el ratón: teclas o escritura a mano",
@@ -665,7 +665,7 @@
   "chk.empty": "Primero escribe tu respuesta.",
   "chk.number": "Escribe un número (sirven la coma y el punto).",
   "chk.addUnit": "El número está, ahora añade la unidad. ¿En qué unidad está el resultado?",
-  "chk.unit": "Revisa la unidad: escribe el resultado en {unit}.",
+  "chk.unit": "Esta unidad no es correcta. Comprueba en qué unidad está el resultado.",
   "chk.rounding": "El cálculo es correcto, solo falla el redondeo. Bien redondeado es {right}.",
   "chk.fraction": "Escribe una fracción como a/b (p. ej. 3/4), una razón como a : b (p. ej. 3 : 4) o un número mixto (p. ej. 1 1/2).",
   "chk.simplify": "El valor es correcto, pero simplifica la fracción del todo.",

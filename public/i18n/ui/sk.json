@@ -197,7 +197,7 @@
     "other": "{n} bodov"
   },
   "task.phCoef": "napr. 2, 1, 2",
-  "task.phUnit": "číslo a jednotka, napr. 12,5 {unit}",
+  "task.phUnit": "číslo a jednotka",
   "task.phResult": "zadaj výsledok",
   "task.write": "Písať",
   "task.writeTitle": "Zadávanie prstom alebo myšou: klávesnica alebo rukopis",
@@ -677,7 +677,7 @@
   "chk.empty": "Najprv napíš odpoveď.",
   "chk.number": "Napíš číslo (funguje čiarka aj bodka).",
   "chk.addUnit": "Číslo tam je, ešte pridaj jednotku. V akej jednotke je výsledok?",
-  "chk.unit": "Skontroluj jednotku: výsledok zapíš v {unit}.",
+  "chk.unit": "Táto jednotka nie je správna. Skontroluj, v akej jednotke je výsledok.",
   "chk.rounding": "Výpočet je správny, len zaokrúhlenie nie. Správne zaokrúhlené je to {right}.",
   "chk.fraction": "Zapíš zlomok ako a/b (napr. 3/4), pomer ako a : b (napr. 3 : 4) alebo zmiešané číslo (napr. 1 1/2).",
   "chk.simplify": "Hodnota je správna, ale zlomok úplne skráť.",

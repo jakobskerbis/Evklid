@@ -41,8 +41,18 @@ export function enhanceSelect(sel) {
   btn.setAttribute("aria-haspopup", "listbox");
   btn.setAttribute("aria-expanded", "false");
   btn.innerHTML = `<span class="dd-label" dir="auto"></span>${CHEVRON}`;
+  // Ime gumba: oznaka in izbrana vrednost (aria-labelledby), da bralnik zaslona prebere tudi izbiro
+  // (pregled PR 786: aria-label je skril izbrano enoto). Pri prazni izbiri (»Enota«) samo oznaka.
   const label = sel.getAttribute("aria-label") || labelText(sel.labels?.[0]);
-  if (label) btn.setAttribute("aria-label", label);
+  const ids = `dd-${++uid}`;
+  if (label) {
+    const name = document.createElement("span");
+    name.id = `${ids}-n`;
+    name.className = "sr-only";
+    name.textContent = label;
+    btn.prepend(name);
+    btn.querySelector(".dd-label").id = `${ids}-v`;
+  }
   sel.before(wrap);
   wrap.append(btn, sel); // gumb pred menijem: klik na <label> odpre gumb
   sel.tabIndex = -1;
@@ -56,6 +66,7 @@ export function enhanceSelect(sel) {
     const opt = sel.options[indexProp.get.call(sel)];
     btn.querySelector(".dd-label").textContent = opt ? opt.textContent : "";
     btn.classList.toggle("placeholder", !opt || opt.value === "");
+    if (label) btn.setAttribute("aria-labelledby", !opt || opt.value === "" ? `${ids}-n` : `${ids}-n ${ids}-v`);
     btn.disabled = sel.disabled;
     wrap.hidden = sel.hidden;
   };

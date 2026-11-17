@@ -187,7 +187,7 @@
     "other": "{n} puan"
   },
   "task.phCoef": "ör. 2, 1, 2",
-  "task.phUnit": "sayı ve birim, ör. 12,5 {unit}",
+  "task.phUnit": "sayı ve birim",
   "task.phResult": "cevabını yaz",
   "task.write": "Yaz",
   "task.writeTitle": "Parmak veya fareyle giriş: tuş takımı veya el yazısı",
@@ -665,7 +665,7 @@
   "chk.empty": "Önce cevabını yaz.",
   "chk.number": "Bir sayı yaz (virgül de nokta da olur).",
   "chk.addUnit": "Sayı tamam, şimdi birimi ekle. Sonuç hangi birimde?",
-  "chk.unit": "Birimi kontrol et: sonucu {unit} cinsinden yaz.",
+  "chk.unit": "Bu birim doğru değil. Sonucun hangi birimde olduğunu kontrol et.",
   "chk.rounding": "Hesabın doğru, sadece yuvarlama yanlış. Doğru yuvarlanmış hali {right}.",
   "chk.fraction": "Kesri a/b biçiminde (ör. 3/4), oranı a : b biçiminde (ör. 3 : 4) ya da tam sayılı kesir olarak (ör. 1 1/2) yaz.",
   "chk.simplify": "Değer doğru ama kesri sonuna kadar sadeleştir.",

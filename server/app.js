@@ -1798,7 +1798,7 @@ export function createApp(store, opts = {}) {
     if (!hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
       const a = t.payload.answer || {};
-      const out = await readFn({ imageBase64: m[2], mediaType: m[1], answerType: a.type, unit: a.unit || null });
+      const out = await readFn({ imageBase64: m[2], mediaType: m[1], answerType: a.type, withUnit: !!a.unit });
       if (out.mock) return res.json({ text: null, message: "Branje rokopisa trenutno ne deluje. Odgovor vpiši s tipkami." });
       if (out.usage) usage.log(s.id, out.model, out.usage, "ocr");
       res.json({ text: out.text, message: out.text ? null : "Zapisa nisem uspel prebrati. Poskusi pisati večje ali uporabi tipke." });

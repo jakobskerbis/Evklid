@@ -4,6 +4,7 @@
 // Enako kot public/offline.js v spletni aplikaciji, le da je shramba SQLite namesto localStorage.
 import Storage from "expo-sqlite/kv-store";
 import { checkAnswer } from "../../../server/practice/check.js";
+import { isStalePack, offlineTask } from "../../../public/enote-izbira.js";
 import { api } from "./api";
 import { key } from "./keys";
 
@@ -32,7 +33,8 @@ export const packTaskCount = (sid: number) => Object.values(getPack(sid)?.tasks 
 // Prenese nov paket, če je stari starejši od dneva ali za drugo pot.
 export async function refreshPack(sid: number, pathKey?: string | null, force = false) {
   const old = getPack(sid);
-  if (!force && old && (!pathKey || old.path === pathKey) && Date.now() - Date.parse(old.created) < DAY) return old;
+  // Paket iz različice pred PR 786 (enota brez hasUnit) je zastarel tudi, če je mlajši od dneva.
+  if (!force && old && (!pathKey || old.path === pathKey) && Date.now() - Date.parse(old.created) < DAY && !isStalePack(old)) return old;
   const pack = await api<Pack>(`/api/students/${sid}/offline-pack${pathKey ? `?path=${encodeURIComponent(pathKey)}` : ""}`);
   write(PACK(sid), pack);
   return pack;
@@ -56,7 +58,7 @@ export function offlineNext(sid: number, topicId: string) {
   const done = new Set(read<Queued[]>(QUEUE(sid), []).map((r) => `${r.topic_id}:${r.seed}`));
   const item = list.find((x) => !done.has(`${topicId}:${x.seed}`)) || list[Math.floor(Math.random() * list.length)];
   current = { ...item, topic_id: topicId, attempts: 0, id: `off-${item.seed}` };
-  return { task: { id: current.id, mode: "practice", ...item.task }, state: { level: item.level, streak: 0 }, offline: true };
+  return { task: { id: current.id, mode: "practice", ...offlineTask(item.task, item.answer, checkAnswer) }, state: { level: item.level, streak: 0 }, offline: true };
 }
 
 export function offlineHint(step: number) {
@@ -73,7 +75,7 @@ export function offlineHint(step: number) {
 
 export function offlineAnswer(sid: number, taskId: string, answer: string) {
   if (!current || current.id !== taskId) return null;
-  const res: any = checkAnswer(current.answer, answer);
+  const res: any = checkAnswer(current.answer, answer, { convert: true, text: current.task?.text });
   const out = { kind: res.kind, message: res.message || null, code: res.code, params: res.params || {}, offline: true };
   if (["format", "unit", "simplify"].includes(res.kind)) return { ...out, retry: true };
   current.attempts += 1;

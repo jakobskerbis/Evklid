@@ -187,7 +187,7 @@
     "other": "{n} pikë"
   },
   "task.phCoef": "p.sh. 2, 1, 2",
-  "task.phUnit": "numri dhe njësia, p.sh. 12,5 {unit}",
+  "task.phUnit": "numri dhe njësia",
   "task.phResult": "shkruaj rezultatin",
   "task.write": "Shkruaj",
   "task.writeTitle": "Hyrje me gisht ose maus: tastierë ose shkrim dore",
@@ -665,7 +665,7 @@
   "chk.empty": "Fillimisht shkruaj përgjigjen.",
   "chk.number": "Shkruaj një numër (mund të përdorësh presje ose pikë).",
   "chk.addUnit": "Numri është shkruar, shto edhe njësinë. Në cilën njësi është rezultati?",
-  "chk.unit": "Kontrollo njësinë: shkruaje rezultatin në {unit}.",
+  "chk.unit": "Kjo njësi nuk është e saktë. Kontrollo në cilën njësi është rezultati.",
   "chk.rounding": "Llogaritja është e saktë, vetëm rrumbullakimi jo. I rrumbullakuar saktë është {right}.",
   "chk.fraction": "Shkruaj thyesën si a/b (p.sh. 3/4), raportin si a : b (p.sh. 3 : 4) ose numër të përzier (p.sh. 1 1/2).",
   "chk.simplify": "Vlera është e saktë, por thjeshtoje thyesën deri në fund.",
