@@ -145,6 +145,11 @@ export function openKeyboard(field, { layer } = {}) {
   // Tudi če je bila tipkovnica odstranjena z vsebino okna (!board.isConnected), jo spet vstavimo.
   const host = field.closest("dialog[open]") || document.body;
   if (board.parentElement !== host || !board.isConnected) host.appendChild(board);
+  // Okno se zapre (npr. kviz, ustno): tipkovnica gre z njim, zato jo zapremo (sicer ostaneta tk-open in odmik).
+  if (host !== document.body && !host.tkZapri) {
+    host.tkZapri = true;
+    host.addEventListener("close", () => S.open && board.parentElement === host && hideKeyboard());
+  }
   board.hidden = false;
   document.body.classList.add("tk-open");
   render();
