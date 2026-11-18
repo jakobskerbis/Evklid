@@ -191,6 +191,36 @@ test("Potrdi e-naslov na telefonu: sporočilo »še ni potrjeno«, Pošlji znova
       await other.ctx.close();
       await ctx.close();
     }
+    // 5) Polnoleten imetnik pred potrditvijo odda otrokov profil (pregled #834): zaslon za potrditev ima stavek za starše
+    // in »Profil za otroka dodate …« (renderVerify(forChild)).
+    {
+      const { ctx, page } = await phone();
+      await page.goto(base + "/");
+      const r = await page.evaluate(async (birth) => {
+        const res = await fetch("/api/auth/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: "stars-otrok@example.com", password: "geslo-12345", birth_date: birth, accept_privacy: true, country: "SI" }) });
+        return res.status;
+      }, ymdYearsAgo(40));
+      assert.equal(r, 201);
+      await page.goto(base + "/");
+      await page.locator("#child-form").waitFor();
+      await page.locator('#child-form input[name="whose"][value="child"]').check();
+      await page.fill('#child-form input[name="name"]', "Lan");
+      await page.evaluate((y) => {
+        const sel = document.querySelector('#child-form select[name="birth_year"]');
+        sel.value = String(y);
+        sel.dispatchEvent(new Event("change", { bubbles: true }));
+      }, new Date().getFullYear() - 10);
+      for (let i = 0; i < 4 && (await page.locator("#child-form .lp-opt").count()); i++) {
+        await page.locator("#child-form .lp-opt").first().click(); // osnovna šola, nato prva možnost
+        await page.waitForTimeout(150);
+      }
+      await page.check('#child-form input[name="consent"]');
+      await page.click('#child-form button[type="submit"]');
+      await page.locator("#verify-done").waitFor();
+      assert.equal(await page.locator(".verify-note").innerText(), SL["verify.parentNote"], "profil za otroka: stavek za starše");
+      assert.equal(await page.locator(".verify-later").innerText(), `${SL["verify.laterNote"]} ${SL["verify.laterNoteChild"]}`);
+      await ctx.close();
+    }
     assert.deepEqual(errors, []);
   } finally {
     await browser.close();

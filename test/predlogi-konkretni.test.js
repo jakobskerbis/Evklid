@@ -84,7 +84,7 @@ test("glava: razredi v izbiri imajo ime (»8. razred«), ne številke (#793 je d
 test("glava, graf, koda, namig in nastavitve (koda)", () => {
   const app = read("public/app.js");
   const fn = app.slice(app.indexOf("function renderState("), app.indexOf("async function wireStatePicks("));
-  assert.match(fn, /opt\("other", t\("chat\.levelOther"\), false\)/);
+  assert.match(fn, /opt\("other", t\("chat\.levelOther"\), false[,)]/);
   assert.match(app, /e\.target\.value === "other"\) return renderState\(null\), openSchoolSettings\(\)/);
   assert.match(app, /\$\("#me-head"\)\?\.addEventListener\("click", \(\) => openSchoolSettings\(\)\)/);
   assert.match(read("public/dropdown.js"), /replace\(\/\\s\+\/g, ""\)\.toLowerCase\(\)/);

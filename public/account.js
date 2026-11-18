@@ -587,7 +587,7 @@ function renderLogin(mode = "login") {
       <label>Geslo <input name="password" type="password" required minlength="8" autocomplete="${mode === "login" ? "current-password" : "new-password"}"></label>
       ${mode === "register" ? `
         <label>Tvoj datum rojstva <input name="birth_date" type="date" required min="1900-01-01" max="${localToday()}" autocomplete="bday"></label>
-        <details class="code-row"${code ? " open" : ""}><summary>${esc(t("code.have"))}</summary>
+        <details class="reg-code"${code ? " open" : ""}><summary>${esc(t("code.have"))}</summary>
           <label>${esc(t("code.label"))} <input name="code" maxlength="64" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-describedby="code-hint" value="${esc(code)}"></label>
           <p class="muted small" id="code-hint">${esc(t("code.hint"))}</p>
         </details>
@@ -611,16 +611,20 @@ function renderLogin(mode = "login") {
       if (mode === "login") {
         await api("/api/auth/login", { method: "POST", body: { email: f.email.value, password: f.password.value } });
       } else {
-        // Vrsto kode določi strežnik (signupCodeKind). Koda vabila s strani /vabilo (že preverjena) gre v polje invite
-        // kot v #819; priporočilo iz povezave (?ref=) velja tudi, če je v vrstici druga koda.
+        // Vrsto kode določi strežnik (signupCodeKind). Koda vabila s strani /vabilo (že preverjena) gre vedno v polje
+        // invite kot v #819, tudi če je v vrstici aktivacijska koda iz ?koda= ali jo je uporabnik spremenil (pregled #834);
+        // vpisana koda vabila (code_kind "invite") ima prednost. Priporočilo iz povezave (?ref=) velja tudi ob drugi kodi.
         const typed = f.code.value.trim();
-        const isInvite = !!typed && typed.toLowerCase() === invite.trim().toLowerCase();
+        const storedInvite = invite.trim();
+        const isInvite = !!typed && typed.toLowerCase() === storedInvite.toLowerCase();
+        const fromRef = !!typed && !!ref && typed.toUpperCase() === ref.toUpperCase();
         const r = await api("/api/auth/register", {
           method: "POST",
           body: {
             name: f.name.value, email: f.email.value, password: f.password.value,
             referral_code: ref && ref.toUpperCase() !== typed.toUpperCase() ? ref : "",
-            ...(typed ? (isInvite ? { invite: typed } : { code: typed }) : {}),
+            ...(storedInvite ? { invite: storedInvite } : {}),
+            ...(typed && !isInvite ? { code: typed } : {}),
             accept_privacy: f.accept_privacy.checked, accept_terms: f.accept_terms.checked, birth_date: f.birth_date.value, country: deviceRegion(),
           },
         });
@@ -628,7 +632,8 @@ function renderLogin(mode = "login") {
         // Darilna koda velja šele v Računu po potrditvi e-naslova: ostane shranjena, polje tam je že izpolnjeno.
         store.set("evklid_koda", r.code_kind === "gift" ? typed.toUpperCase() : null);
         if (r.code_kind === "gift") toast(t("code.giftLater"));
-        if (r.code_kind === "unknown") toast(t("code.unknown"));
+        // Priporočilo iz povezave, ki ga ni več, ostane tiho kot prej (pregled #834); »te kode ne poznamo« le za vpisano kodo.
+        if (r.code_kind === "unknown" && !fromRef) toast(t("code.unknown"));
         if (r.code_kind === "referral") toast(t("code.refOk"));
         store.set(INVITE_KEY, null);
         // Koda vabila v pilot (#819): vpisana v vrstico ali s strani /vabilo; po potrditvi e-naslova račun samodejno v pilotu (#751).

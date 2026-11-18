@@ -1237,7 +1237,7 @@ function renderState(convState) {
   // Predmet, način in letnik se zamenjajo kar v glavi (izbirni seznam), program je le napis.
   const pick = (key, label, options) =>
     `<span class="chip chip-pick"><select data-pick="${key}" aria-label="${escapeHtml(label)}">${options}</select></span>`;
-  const opt = (value, label, current) => `<option value="${escapeHtml(value)}"${current ? " selected" : ""}>${escapeHtml(label)}</option>`;
+  const opt = (value, label, current, attrs = "") => `<option value="${escapeHtml(value)}"${current ? " selected" : ""}${attrs}>${escapeHtml(label)}</option>`;
   const levels = levelChoices(s);
   const ravni = ravenChoices(s);
   const head = $("#chat-state");
@@ -1248,10 +1248,12 @@ function renderState(convState) {
     // Zadnja izbira »Druga šola ali stopnja …« odpre Jaz → Šola in letnik (prehod OŠ ↔ SŠ ↔ fakulteta, drug sistem; #792).
     // SŠ: letnik in raven matematike v enem seznamu (»3. letnik OR«), da glava na telefonu (360 px) ne gre čez rob.
     levelLabel(s.curriculum_level) &&
-      pick("level", t("set.school"), (() => {
+      // Ime seznama pove tudi raven; trenutna raven ima kljukico (data-checked), pred »Druga šola …« je črta (data-sep; dropdown.js).
+      pick("level", ravni.length ? `${t("set.school")}, ${t("tbk.level")}` : t("set.school"), (() => {
         const years = levels.length ? levels.map((x, i) => opt(i, x.label, x.current)).join("") : opt("", levelLabel(s.curriculum_level), true);
         const grp = (label, html) => `<optgroup label="${escapeHtml(label)}">${html}</optgroup>`;
-        return (ravni.length ? grp(t("tbk.year"), years) + grp(t("tbk.level"), ravni.map((x, i) => opt(`r${i}`, x.label, false)).join("")) : years) + opt("other", t("chat.levelOther"), false);
+        const raven = (x, i) => opt(`r${i}`, x.label, false, x.current ? " data-checked" : "");
+        return (ravni.length ? grp(t("tbk.year"), years) + grp(t("tbk.level"), ravni.map(raven).join("")) : years) + opt("other", t("chat.levelOther"), false, " data-sep");
       })()),
   ]
     .filter(Boolean)

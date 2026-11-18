@@ -114,7 +114,10 @@ function open(sel, btn) {
   function optHtml(o) {
     if (o.hidden) return "";
     const i = o.index;
-    return `<div class="dd-opt" role="option" data-i="${i}" aria-selected="${i === current}"${o.disabled ? ' aria-disabled="true"' : ""}><span dir="auto">${esc(o.textContent)}</span>${CHECK}</div>`;
+    // data-sep: črta pred možnostjo; data-checked: kljukica pri drugi trenutni izbiri istega seznama (raven mature v glavi, #834).
+    const sep = o.hasAttribute("data-sep") ? '<div class="dd-sep" role="separator"></div>' : "";
+    const checked = o.hasAttribute("data-checked") ? ' aria-checked="true"' : "";
+    return `${sep}<div class="dd-opt" role="option" data-i="${i}" aria-selected="${i === current}"${checked}${o.disabled ? ' aria-disabled="true"' : ""}><span dir="auto">${esc(o.textContent)}</span>${CHECK}</div>`;
   }
   // Dolg seznam (npr. jeziki ali vsak z vsaj SEARCH_FROM možnostmi) ima na vrhu iskalnik,
   // v katerem piše izbrana možnost: <select data-search data-search-ph="Išči …">.

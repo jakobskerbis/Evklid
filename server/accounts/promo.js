@@ -146,10 +146,13 @@ export function createPromo(db, cfg) {
     return r.changes ? { ok: true } : { error: "Koda ne obstaja." };
   }
 
-  // Ali koda obstaja (tudi neaktivna ali porabljena): registracija z eno kodo (»Imam kodo«) tako ve, da je aktivacijska.
+  // Ali je koda veljavna aktivacijska koda (vklopljena, ne pretečena): registracija z eno kodo (»Imam kodo«) tako ve,
+  // da je aktivacijska. Izklopljena ali pretečena koda ne zasenči vabila ali priporočila z istim zapisom (pregled #834).
   const exists = (raw) => {
     const code = String(raw || "").trim().toUpperCase();
-    return CODE_RE.test(code) && !!get(code);
+    if (!CODE_RE.test(code)) return false;
+    const row = get(code);
+    return !!row && !!row.active && !(row.valid_until && row.valid_until < today());
   };
 
   return { redeem, check, stats, used, codeOf, termsOf, list, create, setActive, anyActive, exists };
