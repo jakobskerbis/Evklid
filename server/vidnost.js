@@ -2,7 +2,7 @@
 // »Euclid« in trdil, da nima slovenščine, kamere in drugih predmetov. Tu so na enem mestu javna dejstva:
 // - /robots.txt, /sitemap.xml, /llms.txt (pravi Content-Type; pred statičnimi datotekami),
 // - /o-evklidu: statična stran brez JavaScripta (public/o-evklidu.html, spremenljivke {{…}} in ikone {{i:ime}}),
-// - /zakaj-evklid: enaka tehnika (public/zakaj-evklid.html): kako Evklid preverja rezultate, izmerjena natančnost
+// - /zakaj-evklid: enaka tehnika (public/zakaj-evklid.html): kako Evklid preverja rezultate, natančnost
 //   (meritev iz docs/meritve/ samo, če je OBJAVI_MERITEV; zdaj ne) in primerjava pristopa s splošnimi klepetalniki, brez imen in cen tekmecev,
 // - structuredData(): schema.org za vstopno stran; public/index.html ga nosi zapisanega, test/vidnost.test.js
 //   preveri, da se ujema s cenikom (server/accounts/plans.js) in jeziki vmesnika.
@@ -282,7 +282,7 @@ function staticPage(file, measurement, store = false) {
   return html.replace("</head>", `  ${ldScript(faqData(html))}\n</head>`);
 }
 export const aboutPage = (store = false) => staticPage(PAGE, undefined, store);
-// measurement: samo za teste (stran z drugo meritvijo); strežnik vedno pokaže zadnjo iz docs/meritve/.
+// measurement: samo za teste (stran z meritvijo); strežnik meritev pokaže le, če je OBJAVI_MERITEV (zdaj ne).
 export const whyPage = (measurement, store = false) => staticPage(WHY_PAGE, measurement, store);
 
 // Pred statičnimi datotekami (server/app.js), da predloga /o-evklidu.html ne gre ven s spremenljivkami {{…}}.

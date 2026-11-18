@@ -279,6 +279,7 @@ test("javne strani ne objavljajo odstotka napak, dokler meritev ni neodvisna (j,
     for (const p of pcts) assert.ok(!t.includes(p) && !t.includes(p.replace(" ", "&nbsp;")), `${page}: ${p}`);
   }
   for (const p of pcts) assert.ok(!aboutPage().includes(p) && !Object.values(SL).some((v) => typeof v === "string" && v.includes(p)), p);
+  assert.ok(!/kaj smo izmerili|izmerjen\w* natančnost/i.test(textOf(aboutPage())), "/o-evklidu ne obljublja meritve");
 });
 
 test("meritev 4. 11. 2026 (sam model): samo zapisani odstotki, z opozorili; meritve s preverjanjem stran ne izmišlja", () => {
