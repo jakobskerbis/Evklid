@@ -105,6 +105,8 @@ Plačane meritve inštruktorja `scripts/meri-*.mjs` (npr. `meri-preizkus3.mjs`, 
 
 **Pravilnost na srednješolski snovi (j, 2026-11-18):** skripta `scripts/meri-natancnost-ss.mjs` pošlje ~30 rešenih primerov iz srednješolskih lekcij (isti izbor kot polna meritev) skozi pravo pot klepeta in oceni odgovor, kot ga vidi učenec (s preverjanjem). Predviden strošek za vseh 30 je ~1,7 $, meja 2 $ pa zaradi rezerve zadošča le za ~27 primerov. Zato meritev zaženi **v dveh delih**: v **argumenti** vpiši `--del 1-2`, v drugem zagonu `--del 2-2` (vsak ~15 primerov, ~0,9 $). Zadnja vrstica povzetka (»IZID …«) pove, koliko odgovorov je pravilnih, z manjšo napako in z napako. `--oba` doda še pogoj brez preverjanja (dvojni strošek, zato vedno z `--del`), `--stopnje os,ss,tek,uni` izbere druge stopnje. Izid ni meritev za objavo (stran »Zakaj Evklid« se ne spremeni).
 
+**Ponovitev posameznih primerov** (ali se napaka ponavlja): `--primeri 10,13 --ponovi 3` izmeri le primera s tema zaporednima številkama, vsakega trikrat (številke izpiše zagon z `--suho`; veljajo za privzete stopnje `ss`). Dva primera po trikrat stane ~0,4 $.
+
 Pri branju izida upoštevaj: ocenjevalec je model AI (primerja z rešitvijo iz lekcije), ne človek; vsak primer dobi en sam odgovor, zato en primer pomeni ~3 odstotne točke in se izid med zagoni spreminja; primeri so rešeni primeri iz lekcij, večinoma težji; približno enako matematike, fizike, kemije in biologije; samo gimnazijske lekcije, brez drugih srednješolskih programov.
 
 **Brezplačen preizkus (0 $):** skripta `scripts/meri-preizkus3.mjs`, v polje **argumenti** vpiši `--suho`. Pokliče preizkusne odgovore namesto modela (tudi kadar je ključ nastavljen) in samo preveri, da zagon deluje.

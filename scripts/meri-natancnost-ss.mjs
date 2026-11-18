@@ -4,9 +4,11 @@
 // (~30 primerov od 100), privzeto samo cel odgovor s preverjanjem (kot ga vidi učenec), ocenjevalec Opus.
 // Polna meritev (~5 $) ne gre skozi delovni tok Meritev (največ 2 $ na zagon); ta del je ocenjen na ~1,7 $ (suhi tek).
 // Zagon: GitHub Actions > Meritev > Run workflow, skripta scripts/meri-natancnost-ss.mjs (docs/stroski-ai.md).
-//   node scripts/meri-natancnost-ss.mjs [--max-usd 2] [--stopnje ss] [--del 1-2] [--oba] [--suho]
+//   node scripts/meri-natancnost-ss.mjs [--max-usd 2] [--stopnje ss] [--del 1-2] [--primeri 10,13 --ponovi 3] [--oba] [--suho]
 //   --stopnje ss,tek   stopnje kot --groups v primerjava-modelov.js (os, ss, tek, uni); privzeto ss
 //   --del 1-2          le del izbora (vsak drugi primer), če vsi ne gredo pod mejo enega zagona; nato --del 2-2
+//   --primeri 10,13    le primeri s temi zaporednimi številkami izbora (izpiše jih --suho); ne skupaj z --del
+//   --ponovi 3         vsak primer N-krat (1–5), za preverbo, ali se napaka ponavlja
 //   --oba              tudi pogoj »sam model, brez preverjanja« (privzeto samo cel odgovor s preverjanjem, kot ga vidi učenec)
 //   --suho             samo izbor primerov in ocena stroška, brez klica modela (0 $)
 // Ustavi se, preden bi strošek presegel --max-usd (mejo uveljavi primerjava-modelov.js). Ne piše v bazo aplikacije
@@ -48,16 +50,34 @@ if (!del || Number(del[1]) > Number(del[2])) {
   console.error(`Neveljaven --del »${arg("--del", "")}« (npr. 1-2 ali 2-2). Nič ni bilo poklicano.`);
   process.exit(1);
 }
-ids = ids.filter((_, i) => i % Number(del[2]) === Number(del[1]) - 1);
+// --primeri 10,13: le izbrani primeri po zaporedni številki v izboru (kot jih oštevilči --suho); za ciljno ponovitev
+// primerov z napako. Številke namesto id-jev, ker delovni tok Meritev v argumentih ne dovoli velikih črk in znaka /.
+const PRIMERI_RAW = process.argv.includes("--primeri") ? String(arg("--primeri", "")) : null;
+if (PRIMERI_RAW !== null) {
+  const st = PRIMERI_RAW.split(",").map(Number);
+  if (!/^[0-9]+(,[0-9]+)*$/.test(PRIMERI_RAW) || st.some((n) => n < 1 || n > ids.length) || new Set(st).size !== st.length || process.argv.includes("--del")) {
+    console.error(`Neveljavni --primeri »${PRIMERI_RAW}« (številke 1–${ids.length} brez ponovitev, ločene z vejico; ne skupaj z --del). Nič ni bilo poklicano.`);
+    process.exit(1);
+  }
+  ids = st.map((n) => ids[n - 1]);
+} else ids = ids.filter((_, i) => i % Number(del[2]) === Number(del[1]) - 1);
+// --ponovi N (1–5): vsak primer N-krat, ker isti model na isto nalogo ne odgovori vedno enako.
+const PONOVI = Number(arg("--ponovi", 1));
+if (!Number.isInteger(PONOVI) || PONOVI < 1 || PONOVI > 5) {
+  console.error(`Neveljaven --ponovi »${arg("--ponovi", "")}« (celo število 1–5). Nič ni bilo poklicano.`);
+  process.exit(1);
+}
 
 // 2) Meritev: ciljna ponovitev izbranih primerov (--samo). Privzeto samo pogoj »s« (cel Evklidov odgovor s preverjanjem,
 // kot ga vidi učenec); --oba doda še »sam model, brez preverjanja« (dvojni strošek).
 const PONOVITVE = path.join(root, "data", "natancnost-ponovitve.json");
 const IZID = path.join(root, "data", "meri-natancnost-ss.json");
-const ukaz = [...osnova, "--samo", ids.join(","), "--ponovi", "1", "--max-usd", String(MEJA)];
+const ukaz = [...osnova, "--samo", ids.join(","), "--ponovi", String(PONOVI), "--max-usd", String(MEJA)];
 if (!process.argv.includes("--oba")) ukaz.push("--pogoj", "s");
 if (SUHO) ukaz.push("--dry");
-console.log(`Meritev pravilnosti: stopnje ${STOPNJE}, del ${del[1]}/${del[2]}, primerov ${ids.length}, meja ${MEJA} $${SUHO ? ", suho (brez klicev)" : ""}.`);
+const OBSEG = PRIMERI_RAW !== null ? `primeri ${PRIMERI_RAW}` : `del ${del[1]}/${del[2]}`;
+console.log(`Meritev pravilnosti: stopnje ${STOPNJE}, ${OBSEG}, primerov ${ids.length}${PONOVI > 1 ? ` × ${PONOVI} ponovitve` : ""}, meja ${MEJA} $${SUHO ? ", suho (brez klicev)" : ""}.`);
+if (SUHO) ids.forEach((id, i) => console.log(`  ${PRIMERI_RAW !== null ? PRIMERI_RAW.split(",")[i] : PRIMERI_RAW === null && del[2] === "1" ? i + 1 : "·"}  ${id}`));
 if (!SUHO) fs.rmSync(PONOVITVE, { force: true }); // star lokalni izid ne sme veljati za novega (npr. zagon brez ključa)
 if (!SUHO && (!process.env.ANTHROPIC_API_KEY || process.env.EVKLID_MOCK === "1")) console.log("OPOZORILO: ni ključa ANTHROPIC_API_KEY (ali je EVKLID_MOCK=1). NIČ NE BO IZMERJENO.");
 
@@ -83,7 +103,7 @@ function povzetek() {
   }
   const st = (o) => vrstice.filter((v) => v?.ocena === o).length;
   const ocenjeni = st("pravilno") + st("manjsa_napaka") + st("napaka");
-  console.log(`IZID (${STOPNJE}, del ${del[1]}/${del[2]}): od ${ids.length} primerov ocenjenih ${ocenjeni}: pravilno ${st("pravilno")}, manjša napaka ${st("manjsa_napaka")}, napaka ${st("napaka")}; neocenjenih ${vrstice.length - ocenjeni}. Ocenjevalec je model AI, en odgovor na primer.`);
+  console.log(`IZID (${STOPNJE}, ${OBSEG}): od ${ids.length * PONOVI} odgovorov ocenjenih ${ocenjeni}: pravilno ${st("pravilno")}, manjša napaka ${st("manjsa_napaka")}, napaka ${st("napaka")}; neocenjenih ${vrstice.length - ocenjeni}. Ocenjevalec je model AI${PONOVI > 1 ? "" : ", en odgovor na primer"}.`);
 }
 for (const sig of ["SIGTERM", "SIGINT"]) process.on(sig, () => (otrok.kill(sig), setTimeout(() => zakljuci(1), 5000)));
 otrok.on("error", (e) => (console.error(`Meritev se ni zagnala: ${e.message}`), zakljuci(1)));
