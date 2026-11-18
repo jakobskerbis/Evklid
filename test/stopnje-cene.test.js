@@ -870,6 +870,13 @@ test("E-pošta o porabi razlag: enkrat na obdobje paketa (10. → 10.), datum ko
     const kind = (sid, stage) => `ai_${stage}:${u.studentMonth(sid).pool ? "pool" : sid}`;
     const periods = (sid, stage, len) => db.prepare("SELECT period FROM email_log WHERE kind = ? AND length(period) = ? ORDER BY id").all(kind(sid, stage), len).map((r) => r.period);
     const [periodOf, periodEndOf] = [u.periodOf, u.periodEndOf];
+    // created_at je sicer pravi čas vpisa (datetime('now')): postavi ga na navidezni »now«, da pogoji s created_at
+    // veljajo kot v resnici. Pri skupnem deležu (pool) si vsi profili računa delijo ključ, zato si datumi sledijo.
+    const send = async (sid, stage, t) => {
+      const n = await api.billing.allowanceMail(sid, stage, new Date(t));
+      if (n) db.prepare("UPDATE email_log SET created_at = ? WHERE id = (SELECT max(id) FROM email_log)").run(t.slice(0, 19).replace("T", " "));
+      return n;
+    };
     const at = (startIso, endIso) => {
       u.periodOf = () => startIso;
       u.periodEndOf = () => endIso;
@@ -877,32 +884,50 @@ test("E-pošta o porabi razlag: enkrat na obdobje paketa (10. → 10.), datum ko
     try {
       // Obdobje 10. 10. – 10. 11.: e-pošta 20. 10. z datumom 10. 11. (ne 1. 11.), 5. 11. nič več (isto obdobje).
       at("2026-10-10T08:00:00.000Z", "2026-11-10T08:00:00.000Z");
-      assert.equal(await api.billing.allowanceMail(ana, "out", new Date("2026-10-20T12:00:00Z")), 1);
+      assert.equal(await send(ana, "out", "2026-10-20T12:00:00Z"), 1);
       assert.ok(mails().at(-1).body.text.includes(sl("2026-11-10T08:00:00.000Z")), mails().at(-1).body.text);
-      assert.equal(await api.billing.allowanceMail(ana, "out", new Date("2026-11-05T12:00:00Z")), 0, "isto obdobje");
+      assert.equal(await send(ana, "out", "2026-11-05T12:00:00Z"), 0, "isto obdobje");
       // Novo obdobje 10. 11. – 10. 12.: spet ena (prej bi ključ »2026-11« iz 5. 11. to zamolčal).
       at("2026-11-10T08:00:00.000Z", "2026-12-10T08:00:00.000Z");
-      assert.equal(await api.billing.allowanceMail(ana, "out", new Date("2026-11-12T12:00:00Z")), 1);
-      assert.equal(await api.billing.allowanceMail(ana, "out", new Date("2026-11-30T12:00:00Z")), 0);
+      assert.equal(await send(ana, "out", "2026-11-12T12:00:00Z"), 1);
+      assert.equal(await send(ana, "out", "2026-11-30T12:00:00Z"), 0);
       assert.equal(mails().length, 2);
       assert.deepEqual(periods(ana, "out", 10), ["2026-10-10", "2026-11-10"]);
 
       // Prehod: e-pošta s starim ključem (koledarski mesec), poslana v tem obdobju, velja; poslana pred začetkom ne.
       db.prepare("INSERT INTO email_log (parent_id, kind, period, created_at) VALUES (?, ?, '2026-12', '2026-12-15 09:00:00')").run(api.ownerOf(ana), kind(ana, "low"));
       at("2026-12-10T08:00:00.000Z", "2027-01-10T08:00:00.000Z");
-      assert.equal(await api.billing.allowanceMail(ana, "low", new Date("2027-01-03T12:00:00Z")), 0, "stari ključ v tem obdobju");
+      assert.equal(await send(ana, "low", "2027-01-03T12:00:00Z"), 0, "stari ključ v tem obdobju");
       at("2027-01-10T08:00:00.000Z", "2027-02-10T08:00:00.000Z");
       db.prepare("INSERT INTO email_log (parent_id, kind, period, created_at) VALUES (?, ?, '2027-01', '2027-01-05 09:00:00')").run(api.ownerOf(ana), kind(ana, "low"));
-      assert.equal(await api.billing.allowanceMail(ana, "low", new Date("2027-01-20T12:00:00Z")), 1, "stari ključ iz prejšnjega obdobja ne šteje");
+      assert.equal(await send(ana, "low", "2027-01-20T12:00:00Z"), 1, "stari ključ iz prejšnjega obdobja ne šteje");
 
-      // Brez obdobja paketa (pilot, brez paketa): koledarski mesec in 1. naslednjega meseca kot prej.
+      // Brez obdobja paketa (pilot, brez paketa): koledarski mesec in 1. naslednjega meseca kot prej (meseci brez
+      // e-pošte iz obdobja paketa, ker je ključ pri skupnem deležu skupen).
       const bor = kid("Bor", "OS", YEAR - 12);
       at(null, null);
-      assert.equal(await api.billing.allowanceMail(bor, "out", new Date("2026-10-20T12:00:00Z")), 1);
-      assert.ok(mails().at(-1).body.text.includes(sl("2026-11-01T00:00:00Z")));
-      assert.equal(await api.billing.allowanceMail(bor, "out", new Date("2026-10-31T12:00:00Z")), 0);
-      assert.equal(await api.billing.allowanceMail(bor, "out", new Date("2026-11-01T12:00:00Z")), 1);
-      assert.deepEqual(periods(bor, "out", 7), ["2026-10", "2026-11"]);
+      assert.equal(await send(bor, "out", "2027-01-20T12:00:00Z"), 1);
+      assert.ok(mails().at(-1).body.text.includes(sl("2027-02-01T00:00:00Z")));
+      assert.equal(await send(bor, "out", "2027-01-31T12:00:00Z"), 0);
+      assert.equal(await send(bor, "out", "2027-02-01T12:00:00Z"), 1);
+      assert.deepEqual(periods(bor, "out", 7), ["2027-01", "2027-02"]);
+
+      // Plačano → brezplačno v istem koledarskem mesecu: e-pošta iz obdobja paketa v tem mesecu velja, druge ni.
+      const cvet = kid("Cvet", "OS", YEAR - 12);
+      at("2027-03-05T08:00:00.000Z", "2027-04-05T08:00:00.000Z");
+      assert.equal(await send(cvet, "out", "2027-03-10T12:00:00Z"), 1);
+      at(null, null);
+      assert.equal(await send(cvet, "out", "2027-03-20T12:00:00Z"), 0, "isti mesec po koncu paketa");
+      assert.equal(await send(cvet, "out", "2027-04-02T12:00:00Z"), 1, "naslednji mesec spet");
+      assert.deepEqual(periods(cvet, "out", 7).at(-1), "2027-04");
+
+      // Konec obdobja paketa že mimo (npr. zamuda obnovitve): datum je 1. naslednjega meseca, ključ ostane dan začetka.
+      const dan = kid("Dan", "OS", YEAR - 12);
+      at("2027-05-10T08:00:00.000Z", "2027-06-10T08:00:00.000Z");
+      assert.equal(await send(dan, "out", "2027-06-15T12:00:00Z"), 1);
+      assert.ok(mails().at(-1).body.text.includes(sl("2027-07-01T00:00:00Z")), mails().at(-1).body.text);
+      assert.ok(!mails().at(-1).body.text.includes(sl("2027-06-10T08:00:00.000Z")));
+      assert.deepEqual(periods(dan, "out", 10).at(-1), "2027-05-10");
     } finally {
       [u.periodOf, u.periodEndOf] = [periodOf, periodEndOf];
     }

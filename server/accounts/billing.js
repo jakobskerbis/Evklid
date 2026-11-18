@@ -966,8 +966,8 @@ export function mountBilling(app, ctx) {
 
   // Poraba podrobnih razlag (j 2026-11-01): pri profilu, mlajšem od 15 let, dobi starš e-pošto pri 80 % in 100 %
   // (enkrat na obdobje za vsako mejo, email_log). Starejši in polnoletni vidijo obvestilo v aplikaciji.
-  // Obdobje je obdobje meje AI: pri paketu od dneva plačila do istega dne naslednji mesec (accounts/index.js
-  // aiPeriodStart/aiPeriodEnd), sicer (pilot, brez paketa) koledarski mesec kot prej.
+  // Obdobje je obdobje paketa (accounts/index.js aiPeriodStart/aiPeriodEnd; mesečno ali preizkus/bonus),
+  // sicer (pilot, brez paketa) koledarski mesec kot prej.
   async function allowanceMail(studentId, stage, now = new Date()) {
     if (stage !== "low" && stage !== "out") return 0;
     const age = ageOf(studentId, now);
@@ -984,8 +984,12 @@ export function mountBilling(app, ctx) {
     const sent = (sql, ...args) => !!db.prepare(`SELECT 1 FROM email_log WHERE parent_id = ? AND kind = ? AND ${sql}`).get(p.id, kind, ...args);
     if (sent("period = ?", period)) return 0; // že poslano v tem obdobju
     // Prehod: pred tem popravkom je bil ključ vedno koledarski mesec. E-pošta s starim ključem, poslana v tem obdobju
-    // paketa, velja (sicer bi starš v prvem obdobju po objavi dobil še eno).
+    // paketa, velja (sicer bi starš v prvem obdobju po objavi dobil še eno). Ta pogoj se lahko odstrani približno
+    // eno obdobje (mesec) po objavi, ko v obdobjih paketa ni več e-pošt s starim ključem.
     if (period !== month && sent("length(period) = 7 AND created_at >= ?", new Date(start).toISOString().slice(0, 19).replace("T", " "))) return 0;
+    // Plačano → brezplačno v istem koledarskem mesecu: e-pošta s ključem obdobja paketa, poslana v tem mesecu, velja
+    // (sicer bi starš v istem mesecu dobil drugo).
+    if (period === month && sent("length(period) = 10 AND created_at >= ?", `${month}-01 00:00:00`)) return 0;
     const st = store.getStudent(studentId);
     // Nove razlage: ob koncu obdobja paketa (periodEndOf), sicer 1. naslednjega meseca (koledarski mesec).
     const endMs = Date.parse(aiUsage?.periodEndOf?.(studentId) || "");
