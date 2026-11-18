@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -28,7 +28,7 @@ Zanikanje izjave »Oba sva oprodi« **ni** »Oba sva viteza«. Med njima je še 
 :::premisli
 Ali lahko kdo na otoku reče »Jaz sem oproda«? Zakaj?
 ---
-Ne more. Vitez bi s tem lagal, kar vitez ne počne. Oproda bi s tem povedal resnico. Kdor to reče, ni z otoka.
+Ne more. Vitez bi s tem lagal, česar vitez ne počne. Oproda bi s tem povedal resnico. Kdor to reče, ni z otoka.
 :::
 
 Obratno pa izjavo »Jaz sem vitez« lahko reče vsak: vitez po resnici, oproda z lažjo. Taka izjava sama zase ne pove ničesar.
@@ -159,7 +159,7 @@ Pri izjavi »X in jaz sva iste vrste« preveri obe možnosti za govorca.
 :::premisli
 Kakšen je C in kakšen je končni odgovor?
 ---
-B je že gotovo vitez. Če bi bil C oproda, bi bil vitez natanko eden in A bi govoril resnico, kar ni mogoče. Torej je C vitez. Odgovor: A je oproda, B in C sta viteza. Preverba: vitezov sta $2$, zato A res laže; B pove resnico o A; C pove resnico, ker sta B in C oba viteza.
+B je že gotovo vitez. Če bi bil C oproda, bi bil vitez natanko eden in A bi govoril resnico, kar ni mogoče. Torej je C vitez. Odgovor: A je oproda, B in C sta viteza. Preverba: viteza sta $2$, zato A res laže; B pove resnico o A; C pove resnico, ker sta B in C oba viteza.
 :::
 
 ## Pogoste napake

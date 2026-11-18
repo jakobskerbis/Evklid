@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: diagram
 avtor: AI
 ---
@@ -136,7 +136,7 @@ Nima. Med sinicami in vrabci ni nobene »vmesne« vrste in vrstni red vrst je iz
 4. Od vrha stolpca ali pike pojdi vodoravno do navpične osi in odčitaj vrednost.
 5. Odgovori s stavkom in enoto. »Za koliko več« pomeni odštevanje, »skupaj« seštevanje.
 
-V simulaciji spodaj (**Prikazi podatkov**) povečaj eno od števil za $1$. Opazuj, da zraste samo stolpec te kategorije, za natanko eno oznako na osi, ostali stolpci pa ostanejo enaki.
+V simulaciji spodaj (**Prikazi podatkov**) povečaj eno od števil, ki ni največje, za $1$. Opazuj, da zraste samo stolpec te kategorije, za natanko eno oznako na osi, ostali stolpci pa ostanejo enaki.
 
 ## Rešeni primeri
 

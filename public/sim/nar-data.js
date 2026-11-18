@@ -115,7 +115,7 @@ export const SETS = {
       ["plesen na kruhu", "glive", "Plesni so glive, ki razkrajajo organske snovi."],
       ["mlečnokislinske bakterije v jogurtu", "bakt", "Bakterije so enocelične in nimajo celičnega jedra."],
       ["deževnik", "ziv", "Živali se hranijo z drugimi organizmi in se večinoma premikajo."],
-      ["koral", "ziv", "Korale so živali, čeprav so pritrjene in spominjajo na rastline."],
+      ["korala", "ziv", "Korale so živali, čeprav so pritrjene in spominjajo na rastline."],
       ["mah", "rast", "Rastline imajo klorofil in si hrano naredijo same."],
       ["lišaj", "glive", "Lišaj je sožitje glive in alge (ali cianobakterije); glavni del je gliva."],
     ],

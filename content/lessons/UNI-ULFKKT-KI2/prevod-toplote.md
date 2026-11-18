@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -245,7 +245,7 @@ Inkubator za celične kulture ima notranjo površino sten pri $37\,^\circ\mathrm
 6. Delež vrat: $7{,}64/22{,}26 \approx 0{,}34$. Vrata so $13\,\%$ ploščine, a dajo $34\,\%$ izgub.
 7. Za $18\,\mathrm{W}$ morajo stene prepuščati $18 - 7{,}64 = 10{,}36\,\mathrm{W}$, torej $R_s = 15/10{,}36\,\mathrm{K/W} \approx 1{,}448\,\mathrm{K/W}$ in $R_A = 1{,}448 \cdot 1{,}30\,\mathrm{m^2\,K/W} \approx 1{,}882\,\mathrm{m^2\,K/W}$.
 8. Pena: $d = (1{,}882 - 0{,}000125) \cdot 0{,}030\,\mathrm{m} \approx 0{,}0565\,\mathrm{m}$.
-9. Odgovor: grelnik mora dajati okoli $22\,\mathrm{W}$, nadomestni upor je $0{,}67\,\mathrm{K/W}$, vrata nosijo tretjino izgub; za $18\,\mathrm{W}$ bi potrebovali okoli $57\,\mathrm{mm}$ pene. Učinkoviteje bi bilo izboljšati vrata, ki so najšibkejša pot.
+9. Odgovor: grelnik mora dajati okoli $22\,\mathrm{W}$, nadomestni upor je $0{,}67\,\mathrm{K/W}$, vrata nosijo tretjino izgub; za $18\,\mathrm{W}$ bi potrebovali okoli $56\,\mathrm{mm}$ pene. Učinkoviteje bi bilo izboljšati vrata, ki so najšibkejša pot.
 
 ### Naloga 2
 
@@ -256,7 +256,7 @@ Natančno navedi Fourierov zakon in pogoje, pod katerimi je temperaturni profil 
 1. Zakon: $\vec{q} = -\lambda\nabla T$, v eni razsežnosti $q_x = -\lambda\,\mathrm{d}T/\mathrm{d}x$; $\lambda > 0$ je toplotna prevodnost, minus pomeni tok proti nižji temperaturi.
 2. Pogoji za linearni profil: stacionarno stanje, tok le v smeri $x$, v steni ni virov toplote, $\lambda$ je stalna. Tedaj iz bilance sledi $\mathrm{d}q/\mathrm{d}x = 0$, iz zakona pa $\mathrm{d}T/\mathrm{d}x = -q/\lambda = $ konst.
 3. Zaporedne plasti: v stacionarnem stanju brez virov skozi vsako plast teče isti $\Phi$, sicer bi se toplota na stiku kopičila in temperatura bi se spreminjala. Padec na plasti $i$ je $\Delta T_i = \Phi R_i$, vsota padcev je celotna razlika, zato $R_\mathrm{sk} = \Delta T/\Phi = \sum R_i$.
-4. Trditev drži: gostota toka $q$ je v obeh plasteh enaka (enaka ploščina, isti tok), zato je $|\mathrm{d}T/\mathrm{d}x| = q/\lambda$ obratno sorazmeren s $\lambda$. Plast z manjšo $\lambda$ ima strmejši profil.
+4. Trditev drži: gostota toka $q$ je v obeh plasteh enaka (enaka ploščina, isti tok), zato je $|\mathrm{d}T/\mathrm{d}x| = q/\lambda$ obratno sorazmeren z $\lambda$. Plast z manjšo $\lambda$ ima strmejši profil.
 5. Pozor: to govori o gradientu, ne o padcu. Padec $q\,d_i/\lambda_i$ je odvisen tudi od debeline; tanka slabo prevodna plast ima lahko manjši padec od debele dobro prevodne.
 
 ### Naloga 3

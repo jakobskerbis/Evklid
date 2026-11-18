@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -29,7 +29,7 @@ Ne bo. Amilaza je beljakovina in vročina jo uniči, tako kot strdi beljak. Prek
 
 Vitamini, minerali in voda so dovolj majhni in jih ni treba razgraditi. **Vlaknin** (v zelenjavi, polnozrnatem kruhu) telo ne razgradi; pomagajo, da hrana dobro potuje skozi črevo.
 
-**4. Pot skozi prebavno cev.** Prebavna cev je dolga cev od ust do zadnjične odprtine. Vsak del ima svojo nalogo in svoj **prebavni sok**: tekočino z encimi.
+**4. Pot skozi prebavno cev.** Prebavna cev je dolga cev od ust do zadnjične odprtine. Vsak del ima svojo nalogo, nekateri tudi svoj **prebavni sok**: tekočino z encimi.
 
 | Del | Kaj se zgodi |
 |---|---|

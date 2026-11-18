@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,7 +15,7 @@ V obeh primerih ne poznamo neposredne formule, poznamo pa **pravilo, kako iz pre
 
 Pri tlakovanju naj bo $t_n$ število načinov za pot dolžine $n$. Zadnja plošča je dolžine $1$ (pred njo je pot dolžine $n - 1$) ali dolžine $2$ (pred njo pot dolžine $n - 2$), zato je $t_n = t_{n-1} + t_{n-2}$, $t_1 = 1$, $t_2 = 2$. Zaporedje je $1, 2, 3, 5, 8, 13, \ldots$
 
-Ker zaporedje raste približno geometrijsko, je mamljivo poskusiti z $t_n = r^n$ in poiskati »pravi« $r$. Vstavimo: $r^n = r^{n-1} + r^{n-2}$, po deljenju z $r^{n-2}$ dobimo $r^2 = r + 1$ in $r = \frac{1 \pm \sqrt5}{2}$. Toda nobeno od zaporedij $r^n$ ne da $t_1 = 1$ in $t_2 = 2$ hkrati, z dodatnim faktorjem $c\,r^n$ pa lahko izpolnimo le en začetni pogoj.
+Ker zaporedje raste približno geometrijsko, je mamljivo poskusiti s $t_n = r^n$ in poiskati »pravi« $r$. Vstavimo: $r^n = r^{n-1} + r^{n-2}$, po deljenju z $r^{n-2}$ dobimo $r^2 = r + 1$ in $r = \frac{1 \pm \sqrt5}{2}$. Toda nobeno od zaporedij $r^n$ ne da $t_1 = 1$ in $t_2 = 2$ hkrati, z dodatnim faktorjem $c\,r^n$ pa lahko izpolnimo le en začetni pogoj.
 
 Napaka je v predpostavki, da je rešitev **eno samo** geometrijsko zaporedje. Rešitve linearne rekurzije se dajo **seštevati**: vsota rešitev je spet rešitev. Pravilna rešitev je kombinacija obeh, $t_n = C_1 r_1^n + C_2 r_2^n$, in dve konstanti ravno zadoščata za dva začetna pogoja. To zdaj natančno utemeljimo.
 
@@ -232,7 +232,7 @@ Natančno navedi izrek o splošni rešitvi homogene linearne rekurzije reda $k$,
 1. Izrek: če ima $p(r) = r^k - c_1r^{k-1} - \cdots - c_k$ različne korene $r_1, \ldots, r_k$, je vsaka rešitev $a_n = c_1a_{n-1} + \cdots + c_ka_{n-k}$ oblike $\sum C_ir_i^n$ z enolično določenimi konstantami.
 2. Vsak $r_i^n$ je rešitev (vstavimo, delimo z $r_i^{n-k}$, dobimo $p(r_i) = 0$); po linearnosti je rešitev tudi vsaka kombinacija.
 3. Za dane $a_0, \ldots, a_{k-1}$ rešimo sistem $\sum_i C_ir_i^j = a_j$, $j = 0, \ldots, k-1$. Njegova matrika je Vandermondova z determinanto $\prod_{i<l}(r_l - r_i) \ne 0$, zato ima natanko eno rešitev. Po izreku o enoličnosti je dobljena kombinacija prav iskano zaporedje; drugih rešitev ni.
-4. Dvojni koren: z $q(x) = x^{n-k}p(x)$ velja $q(r) = q'(r) = 0$. Iz $rq'(r) = 0$ sledi $nr^n = \sum_{j=1}^{k} c_j(n - j)r^{n-j}$, kar je rekurzija za $a_n = nr^n$.
+4. Dvojni koren: s $q(x) = x^{n-k}p(x)$ velja $q(r) = q'(r) = 0$. Iz $rq'(r) = 0$ sledi $nr^n = \sum_{j=1}^{k} c_j(n - j)r^{n-j}$, kar je rekurzija za $a_n = nr^n$.
 5. Neodvisnost: iz $\lambda r^n + \mu nr^n = 0$ za vse $n$ sledi pri $n = 0$ $\lambda = 0$ in pri $n = 1$ $\mu r = 0$; ker je $r \ne 0$ ($c_k \ne 0$), je $\mu = 0$. Rešitvi sta neodvisni.
 
 ### Naloga 3
@@ -348,7 +348,7 @@ Reši $a_n = 4a_{n-1} - 4a_{n-2}$, $a_0 = 1$, $a_1 = 6$.
 ~ Prost člen linearnosti ne pokvari; nelinearna bi bila, če bi nastopal na primer $k_{n-1}^2$ ali $k_{n-1}k_{n-2}$.
 > Koeficienta pri $k_{n-1}$ in $k_{n-2}$ sta stalna, člen $f(n) = 1$ pa je od nič različen: nehomogena linearna rekurzija reda $2$.
 
-? Razvrsti rešitve od najpočasneje do najhitreje rastoče za velike $n$: (A) $2^n$; (B) $n2^n$; (C) $\varphi^n$ z $\varphi \approx 1{,}618$; (D) $3^n$.
+? Razvrsti rešitve od najpočasneje do najhitreje rastoče za velike $n$: (A) $2^n$; (B) $n2^n$; (C) $\varphi^n$ s $\varphi \approx 1{,}618$; (D) $3^n$.
 - A, C, B, D
 ~ $\varphi^n$ raste počasneje od $2^n$, ker je $\varphi < 2$.
 + C, A, B, D

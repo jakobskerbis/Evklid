@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Ana trenira odbojko. V športni trgovini drži v roki kilogramsko dozo beljakovinskega praška za $30\,\text{€}$. Prodajalec jo prepričuje: »Kar telo ne porabi, se shrani v mišice, nič ne gre v nič.«
+Ana trenira odbojko. V športni trgovini drži v roki kilogramsko dozo beljakovinskega praška za $30\,\text{€}$. Prodajalec jo prepričuje: »Česar telo ne porabi, se shrani v mišice, nič ne gre v nič.«
 
 Ana pri kosilu že poje meso, jajca in skuto. Preden plača, se vpraša: če beljakovin že ima dovolj, kam gre tisto, kar bi dodala s praškom? Se res shrani?
 

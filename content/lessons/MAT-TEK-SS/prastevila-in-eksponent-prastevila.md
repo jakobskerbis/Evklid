@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -161,7 +161,7 @@ $v_2(a^n - b^n) = v_2(a - b) + v_2(a + b) + v_2(n) - 1$ za liha $a$, $b$ in sod 
 :::premisli
 Koliko je $v_2(3^{64} - 1)$? Ali $1024 \mid 3^{64} - 1$? In kaj bi dobil, če bi po pomoti vzel osnovno obliko LTE?
 ---
-$v_2(3^{64} - 1) = 1 + 2 + 6 - 1 = 8$. Število je deljivo z $2^8 = 256$, z $1024$ pa ne. Kdor pozabi člen $v_2(a + b) - 1$, dobi napačno $7$.
+$v_2(3^{64} - 1) = 1 + 2 + 6 - 1 = 8$. Število je deljivo z $2^8 = 256$, s $1024$ pa ne. Kdor pozabi člen $v_2(a + b) - 1$, dobi napačno $7$.
 :::
 
 ## Pogoste napake

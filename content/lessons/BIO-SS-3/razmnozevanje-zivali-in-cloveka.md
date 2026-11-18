@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -76,7 +76,7 @@ interval: 9 .. 15 | plodni dnevi
 točka: 14 | ovulacija
 :::
 
-**Oploditev** poteka v jajcevodu. Semenčica ima glavico z jedrom ($n$) in **akrosomom**, ki z encimi raztopi ovoj jajčne celice, ter biček, ki ga poganjajo mitohondriji. Vstopi samo ena: takoj nato se ovoj spremeni, da drugih ne spusti. Jedri se združita v zigoto z $46$ kromosomi. Jajčna celica živi okoli en dan, semenčice v ženskih spolovilih do pet dni, zato je **plodnih** okoli sedem dni ciklusa: od pet dni pred ovulacijo do dneva po njej, kot kaže premica zgoraj.
+**Oploditev** poteka v jajcevodu. Semenčica ima glavico z jedrom ($n$) in **akrosomom**, ki z encimi raztopi ovoj jajčne celice, ter biček, ki ga poganjajo mitohondriji. Vstopi samo ena: takoj nato se ovoj spremeni, da drugih ne spusti. Jedri se združita v zigoto s $46$ kromosomi. Jajčna celica živi okoli en dan, semenčice v ženskih spolovilih do pet dni, zato je **plodnih** okoli sedem dni ciklusa: od pet dni pred ovulacijo do dneva po njej, kot kaže premica zgoraj.
 
 :::premisli
 Kontracepcijska tabletka vsebuje estrogen in progestagen, podoben progesteronu. Napovej, kaj naredi s FSH, LH in ovulacijo.
@@ -205,7 +205,7 @@ Sledi še dnevom $28$-dnevnega ciklusa:
 1. Dnevi 1–5: menstruacija, FSH začne rast folikla.
 2. Do 14. dne: folikel raste, estrogena je vse več.
 3. 14. dan: vrh LH, ovulacija ($28 - 14 = 14$).
-4. Dnevi 15–28: rumeno telo, progesteron; brez oploditve na 29. dan začne nov ciklus.
+4. Dnevi 15–28: rumeno telo, progesteron; brez oploditve se na 29. dan začne nov ciklus.
 
 ## Preveri se
 

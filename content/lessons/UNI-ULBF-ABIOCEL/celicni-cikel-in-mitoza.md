@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,7 +15,7 @@ Odgovor da celični cikel. Ko poznaš njegove faze in kontrolne točke, iz enega
 
 **Definicija.** *Celični cikel* je zaporedje dogodkov od nastanka celice z delitvijo do njene lastne delitve. Razdelimo ga na **interfazo** (G1, S, G2) in **fazo M** (mitoza in citokineza). Čas enega obrata je *generacijski čas* $T$.
 
-Predstavljaj si cikel kot številčnico ure. Za tipično človeško celico v kulturi z $T = 24\,\mathrm{h}$ so faze razporejene približno takole:
+Predstavljaj si cikel kot številčnico ure. Za tipično človeško celico v kulturi s $T = 24\,\mathrm{h}$ so faze razporejene približno takole:
 
 | faza | kaj se zgodi | trajanje |
 |---|---|---|
@@ -243,7 +243,7 @@ Celični cikel je kot tiskanje in vezava knjige v dveh izvodih.
 - G1: tiskarna kupi papir in preveri, ali je naročilo sploh potrjeno (točka R).
 - S: vsako stran natisne dvakrat in obe kopiji spne s sponko (kohezin).
 - G2: kontrolor preveri, ali so natisnjene vse strani in brez napak.
-- Mitoza: vsak par strani pripne na dve tekoči traki, ki gresta v nasprotni smeri. Šele ko je na traka pripet prav vsak par, delavec naenkrat prereže vse sponke (separaza).
+- Mitoza: vsak par strani pripne na dva tekoča trakova, ki gresta v nasprotni smeri. Šele ko je na traka pripet prav vsak par, delavec naenkrat prereže vse sponke (separaza).
 - Citokineza: dva kupa ločijo v dve škatli.
 
 Če bi delavec prerezal sponke, ko bi bil en par še nepripet, bi obe kopiji te strani lahko končali v isti škatli. Ena knjiga bi imela stran dvakrat, druga je ne bi imela. To je aneuploidija.

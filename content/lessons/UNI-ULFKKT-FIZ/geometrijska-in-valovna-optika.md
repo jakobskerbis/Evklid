@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -278,8 +278,8 @@ Pri mrežici z $N$ režami so glavne ojačitve $N^2$-krat svetlejše in široke 
 ## Preveri se
 
 ? Kolikšen je mejni kot za totalni odboj pri prehodu svetlobe iz stekla z lomnim količnikom $1{,}50$ v zrak?
-- $48{,}6^\circ$
-~ To je $\arcsin 0{,}75$, mejni kot za vodo z $n \approx 1{,}33$; vzel si lomni količnik vode namesto stekla.
+- $48{,}8^\circ$
+~ To je $\arcsin 0{,}752$, mejni kot za vodo z $n = 1{,}33$; vzel si lomni količnik vode namesto stekla.
 + $41{,}8^\circ$
 - $56{,}3^\circ$
 ~ To je $\arctan 1{,}50$; pri mejnem kotu velja $\sin\alpha_m = n_2/n_1$, ne tangens.

@@ -287,7 +287,7 @@ export function sile(el) {
     stage: [svg],
     controls: [toggle("pokaži komponente", comp, (v) => ((comp = v), draw())), toggle("sila, ki uravnovesi (−R)", eqv, (v) => ((eqv = v), draw()))],
     out,
-    tryText: "Nastavi sili tako, da bo rezultanta 0. Nato nastavi dve sili po 5 N, ki dasta rezultanto 5 N.",
+    tryText: "Nastavi sili tako, da bo rezultanta 0. Nato nastavi dve sili po 5 N, ki dasta rezultanto, manjšo od 5 N.",
   });
   draw();
 }

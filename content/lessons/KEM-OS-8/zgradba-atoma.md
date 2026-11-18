@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -13,7 +13,7 @@ Odgovor je skrit v atomih. Vsak atom ima v sebi pozitivne in negativne delce. Na
 
 ## Razlaga
 
-**1. Trije delci.** Atom je osnovni gradnik snovi. Je zelo majhen: njegov premer je približno $10^{-10}\,\mathrm{m}$. Sestavljen je iz treh vrst še manjših delcev. Kaj sta jedro in ovojnica, pojasni točka 2.
+**1. Trije delci.** Atom je osnovni gradnik snovi. Je zelo majhen: njegov premer je približno desetmilijoninka milimetra. Sestavljen je iz treh vrst še manjših delcev. Kaj sta jedro in ovojnica, pojasni točka 2.
 
 | Delec (oznaka) | Naboj | Relativna masa (proton $= 1$) | Kje je |
 |---|---|---|---|

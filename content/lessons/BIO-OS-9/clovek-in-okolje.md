@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -66,7 +66,7 @@ Težava je *okrepljeni* učinek. S kurjenjem premoga, nafte in plina ter s sekan
 
 Z izumrlo vrsto lahko izgubimo tudi zdravilo. Iz madagaskarskega zimzelena pridobivajo zdravila proti levkemiji, iz tise zdravilo proti raku.
 
-**8. Varstvo narave in okolja.** **Varstvo narave** ohranja vrste in njihove habitate: zavarovane vrste (človeška ribica), Triglavski narodni park, območja Natura 2000. Ris je bil v Sloveniji na začetku 20. stoletja iztrebljen. Leta 1973 so ga ponovno naselili, po letu 2019 pa so pripeljali še nove rise, ker so se maloštevilni risi parili v sorodstvu (premajhna **genska pestrost**). **Varstvo okolja** zmanjšuje onesnaževanje: čistilne naprave, filtri, ločeno zbiranje odpadkov.
+**8. Varstvo narave in okolja.** **Varstvo narave** ohranja vrste in njihove habitate: zavarovane vrste (človeška ribica), Triglavski narodni park, območja Natura 2000. Ris je bil v Sloveniji na začetku 20. stoletja iztrebljen. Leta 1973 so ga ponovno naselili, od leta 2019 pa so pripeljali še nove rise, ker so se maloštevilni risi parili v sorodstvu (premajhna **genska pestrost**). **Varstvo okolja** zmanjšuje onesnaževanje: čistilne naprave, filtri, ločeno zbiranje odpadkov.
 
 **9. Trajnostni razvoj.** **Trajnostni razvoj** zadovolji potrebe današnjih ljudi, ne da bi vzel možnosti prihodnjim rodovom. Upošteva okolje, gospodarstvo in družbo hkrati. Vsak lahko prispeva: manj odpadkov, popravilo namesto nakupa, kolo namesto avtomobila.
 

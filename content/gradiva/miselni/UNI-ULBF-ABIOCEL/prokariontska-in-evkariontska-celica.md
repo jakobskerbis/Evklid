@@ -25,5 +25,5 @@ stanje: osnutek
   - kloroplast iz cianobakterije
 - Dokazi
   - dvojna membrana, krožna DNA, ribosomi $70\mathrm{S}$
-  - delitev na dvoje, velikost okoli $1\,\mu\mathrm{m}$
+  - delitev na dvoje, velikost $1$ do nekaj $\mu\mathrm{m}$
   - geni podobni bakterijskim, večina danes v jedru

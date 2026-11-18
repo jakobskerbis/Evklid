@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -64,7 +64,7 @@ Kateri kos sira je težji, $0{,}8\,\text{kg}$ ali $0{,}75\,\text{kg}$? Zakaj tu 
 Težji je $0{,}8\,\text{kg}$. Dopišemo ničlo: $0{,}80$ in $0{,}75$. Odločijo že desetinke, $8 > 7$. Število števk ne pove ničesar. Šteje, na katerem mestu števka stoji.
 :::
 
-V simulaciji spodaj premakni drsnik na $0{,}3$, nato na $0{,}35$. Opazuj, da je en cel stolpec mreže ena desetinka ($10$ kvadratkov), en kvadratek pa ena stotinka. Na premici pod mrežo poglej, da se točka premakne le za pol razdelka naprej.
+V simulaciji spodaj premakni drsnik na $0{,}3$, nato na $0{,}35$. Opazuj, da je en cel stolpec mreže ena desetinka ($10$ kvadratkov), en kvadratek pa ena stotinka. Na premici pod mrežo poglej, da se točka premakne le za pol desetinke naprej.
 
 ## Rešeni primeri
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -179,7 +179,7 @@ $\beta = 180^\circ - 47^\circ = 133^\circ$. Rezultat je res topi kot, kar se uje
 
 **Sokota kot polovica pice.** Pico prerežeš čez sredino. Pol pice je iztegnjeni kot, $180^\circ$. Če to polovico prerežeš še enkrat iz središča, dobiš dva kosa. Večji ko je en kos, manjši je drugi, skupaj pa sta vedno pol pice.
 
-**Sovršna kota kot škarje.** Ko škarje odpreš, se rezili razpreta za nek kot. Ročaja se na drugi strani vijaka razpreta za natanko enak kot. Rezili in ročaja sta podaljška drug drugega, prav kot kraka sovršnih kotov.
+**Sovršna kota kot škarje.** Ko škarje odpreš, se rezili razpreta za neki kot. Ročaja se na drugi strani vijaka razpreta za natanko enak kot. Rezili in ročaja so podaljški drug drugega, prav kot kraki sovršnih kotov.
 
 **Vzporedni kraki kot geotrikotnik na ravnilu.** Geotrikotnik drsi ob ravnilu. Njegov kot se premika po listu, a se ne zasuka, zato ostane enak. To sta kota z vzporednimi kraki iste vrste. Če pa en krak obrneš v nasprotno smer, drugega pa pustiš, dobiš sokot prvotnega kota.
 

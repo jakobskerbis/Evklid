@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -156,7 +156,7 @@ $5 - 0{,}25 = 0{,}55\,x - 0{,}44\,x$, torej $4{,}75 = 0{,}11\,x$ in $x \approx 4
 - **»Več organske snovi, več dušika za rastline.«** Snov z visokim C/N (žagovina, slama, sekanci) dušik najprej veže. Gnoji šele kompost ali snov s C/N pod okrog $25$; svež les najprej kompostiraj ali dodaj dušik.
 - **Humus je vsa organska snov.** Sveži opad, listje in žagovina niso humus. Humus je predelana, temna, obstojna snov s C/N okrog $10$. Tudi »humus« na vreči iz trgovine je navadno mešanica zemlje in komposta.
 - **Mineralizacija in humifikacija sta isto.** Mineralizacija razgradi snov do $\mathrm{CO_2}$ in ionov ter sprosti hranila. Humifikacija gradi obstojne snovi in hranila zadrži. Prva hrani rastline danes, druga gradi zalogo.
-- **Organski ogljik je organska snov.** $2{,}3\,\%$ $C_\mathrm{org}$ ni $2{,}3\,\%$ OST. Pomnoži s $1{,}72$.
+- **Organski ogljik je organska snov.** $2{,}3\,\%$ $C_\mathrm{org}$ ni $2{,}3\,\%$ OST. Pomnoži z $1{,}72$.
 
 ## Povzetek
 
@@ -281,7 +281,7 @@ Leva veja je mineralizacija, desna humifikacija. Srednja veja je ozko grlo za du
 
 ? Ornica je globoka $0{,}3\,\mathrm{m}$, gostota tal je $1{,}3\,\mathrm{t/m^3}$, organske snovi je $3\,\%$. Koliko organske snovi je približno na hektarju?
 - okrog $1{,}2\,\mathrm{t}$
-~ Verjetno si pozabil, da ima hektar $10\,000\,\mathrm{m^2}$, ali si dvakrat delil s $100$.
+~ Verjetno si za hektar vzel $100\,\mathrm{m^2}$ namesto $10\,000\,\mathrm{m^2}$ ali si dvakrat delil s $100$.
 - okrog $12\,\mathrm{t}$
 ~ Za faktor $10$ premalo; preveri globino ($0{,}3\,\mathrm{m}$, ne $0{,}03\,\mathrm{m}$).
 + okrog $120\,\mathrm{t}$

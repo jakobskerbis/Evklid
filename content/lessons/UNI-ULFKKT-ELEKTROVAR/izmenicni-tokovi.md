@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Na gradbišču je betonski mešalnik priključen na vtičnico $230\,\mathrm{V}$. Tokovne klešče na dovodnem kablu kažejo $3{,}83\,\mathrm{A}$. Sošolec hitro izračuna: »Moč je $U I$, torej $230\,\mathrm{V} \cdot 3{,}83\,\mathrm{A} \approx 881\,\mathrm{W}$. Toliko energije v sekundi gre v boben.«
+Na gradbišču je betonski mešalnik priključen na vtičnico $230\,\mathrm{V}$. Tokovne klešče na eni žili dovodnega kabla kažejo $3{,}83\,\mathrm{A}$. Sošolec hitro izračuna: »Moč je $U I$, torej $230\,\mathrm{V} \cdot 3{,}83\,\mathrm{A} \approx 881\,\mathrm{W}$. Toliko energije v sekundi gre v boben.«
 
 Števec električne energije na gradbiščni omarici se s tem ne strinja. V eni uri našteje le okoli $0{,}53\,\mathrm{kWh}$, ne $0{,}88\,\mathrm{kWh}$. Kdo ima prav in kam gre razlika? Odgovor skriva izmenični tok: napetost in tok v motorju nista »v koraku«. Do konca lekcije boš sošolčevo trditev popravil s tremi orodji: s kazalci, z impedanco ter z delovno in jalovo močjo. Ista orodja rabi električar, ko izbira presek kabla za delavnico ali kondenzatorje za kompenzacijo.
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -79,7 +79,7 @@ Rastline niso razporejene enakomerno. Ob poti so tla poteptana in suha, zato tam
 - Kras ima več kot $13\,000$ jam in Slovenija je med najbogatejšimi deželami po jamskih živalih. Najbolj znana je **človeška ribica** (*Proteus anguinus*), dvoživka podzemnih voda Dinarskega krasa.
 - Več kot polovico države pokriva gozd.
 
-Vrsta, ki živi samo na majhnem območju in nikjer drugje, je **endemit**. Primer je Zoisova zvončica (*Campanula zoysii*), ki raste le v skalnih razpokah jugovzhodnih Alp. Za varovanje narave je Slovenija okoli $37\,\%$ ozemlja vključila v **Naturo 2000**, evropsko omrežje zavarovanih območij. To je eden največjih deležev v Evropski uniji.
+Vrsta, ki živi samo na majhnem območju in nikjer drugje, je **endemit**. Primer je Zoisova zvončica (*Campanula zoysii*), ki raste le v skalnih razpokah jugovzhodnih Alp. Za varovanje narave je Slovenija okoli $37\,\%$ ozemlja vključila v **Naturo 2000**, evropsko omrežje varovanih območij. To je eden največjih deležev v Evropski uniji.
 
 *Hitro preveri:* Zakaj ima majhna Slovenija toliko vrst? *(Ker se na njej stika veliko različnih ekosistemov: Alpe, kras, Panonska nižina in morje.)*
 

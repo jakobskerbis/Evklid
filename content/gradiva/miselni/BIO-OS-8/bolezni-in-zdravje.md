@@ -18,7 +18,7 @@ stanje: osnutek
   - uniči le bakterije
   - pri gripi in prehladu ne pomaga
 - Protitelesa in spomin
-  - prepoznajo en sam povzročitelj
+  - prepoznajo enega samega povzročitelja
   - spominske celice: imunost, npr. norice
   - cepivo da imunost brez bolezni
 - Nenalezljive bolezni

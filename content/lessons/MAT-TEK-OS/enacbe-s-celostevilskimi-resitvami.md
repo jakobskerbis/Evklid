@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -10,11 +10,11 @@ Dve zgodbi z izleta:
 - Ana na počitnicah kupuje vozovnice: za mestni avtobus po $3$ €, za vlak po $5$ €. Skupaj porabi natanko $31$ €. Koliko vozovnic vsake vrste je kupila?
 - Miha na zemljevidu pohodniških poti sestavlja krožno pot. Odseki med kočami merijo $3\,\mathrm{km}$ ali $5\,\mathrm{km}$, on pa želi prehoditi natanko $31\,\mathrm{km}$. Koliko odsekov katere dolžine naj izbere?
 
-Zgodbi sta različni, račun je isti: iščemo števili $x$ in $y$, za kateri velja $3x + 5y = 31$. Ena enačba z dvema neznankama ima običajno neskončno mnogo rešitev. Tukaj pa ne moremo kupiti $2{,}5$ vozovnice ali prehoditi $-1$ odseka. Prav ta omejitev, da so rešitve **cela števila**, iz nedoločene naloge naredi rešljivo uganko. Takih nalog je na tekmovanjih veliko, in vse se lotiš z istima orodjema: **omejevanjem** in **preizkušanjem**.
+Zgodbi sta različni, račun je isti: iščemo števili $x$ in $y$, za kateri velja $3x + 5y = 31$. Ena enačba z dvema neznankama ima običajno neskončno mnogo rešitev. Tukaj pa ne moremo kupiti $2{,}5$ vozovnice ali prehoditi $-1$ odseka. Prav ta omejitev, da so rešitve **cela števila**, iz nedoločene naloge naredi rešljivo uganko. Takih nalog je na tekmovanjih veliko, in vseh se lotiš z istima orodjema: **omejevanjem** in **preizkušanjem**.
 
 ## Razlaga
 
-**Najprej do konca rešimo Anino nalogo.** Naj bo $x$ število avtobusnih in $y$ število vlakovnih vozovnic. Obe števili sta cela in nenegativna.
+**Najprej do konca rešimo Anino nalogo.** Naj bo $x$ število avtobusnih in $y$ število vlakovnih vozovnic. Obe števili sta celi in nenegativni.
 
 Vlakovnih vozovnic Ana ne more kupiti veliko: že same stanejo $5y$ €, to pa ne sme preseči $31$, torej je $y$ največ $6$. Za vsak $y$ od $0$ do $6$ izračunamo, koliko denarja ostane za avtobus, in preverimo, ali je to večkratnik $3$:
 
@@ -32,7 +32,7 @@ Rešitvi sta dve: $7$ avtobusnih in $2$ vlakovni vozovnici ali $2$ avtobusni in 
 
 **Zdaj posplošimo, kaj smo naredili.** Enačbi, pri kateri iščemo le celoštevilske rešitve, rečemo **diofantska enačba** (po grškem matematiku Diofantu). Postopek ima tri korake.
 
-*Omejevanje.* Neznanke so nenegativne, zato vsak člen leve strani ne sme preseči desne. Iz $5y \le 31$ sledi $y \le 6$. Tako iz neskončno mnogo možnosti nastane končen seznam.
+*Omejevanje.* Neznanke so nenegativne, zato noben člen leve strani ne sme preseči desne. Iz $5y \le 31$ sledi $y \le 6$. Tako iz neskončno mnogo možnosti nastane končen seznam.
 
 *Preizkušanje.* Seznam pregledaš po vrsti. Izberi neznanko z **večjim koeficientom**, ker ima manj možnosti: za $y$ jih je $7$, za $x$ bi jih bilo $11$ (od $0$ do $10$).
 
@@ -64,7 +64,7 @@ Turistična skupina s $23$ ljudmi se pelje na otok s čolni. Na voljo so čolni 
 **Iščemo:** vse možne pare (število štirisedov $x$, število trisedov $y$)
 
 :::formula
-$4x + 3y = 23$, $x, y$ cela in nenegativna
+$4x + 3y = 23$, $x, y$ celi in nenegativni
 :::
 
 **Rešitev:**

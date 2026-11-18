@@ -10,7 +10,7 @@ stanje: osnutek
   - $F = 0$ pomeni stalno temperaturo
 - Vezna premica
   - krajišči dasta sestavi faz
-  - napaka: talina nima sestave $c_0$
+  - pazi: talina nima sestave $c_0$
 - Vzvodno pravilo
   - $W_\mathrm{L} = \frac{c_\alpha - c_0}{c_\alpha - c_\mathrm{L}}$
   - nasprotni krak, iz ohranitve mase

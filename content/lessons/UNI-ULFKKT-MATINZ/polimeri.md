@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -79,7 +79,7 @@ Plastenka. Pri hitrem ohlajanju verige nimajo časa, da bi se zložile, zato ost
 
 **Definicija.** **Temperatura steklastega prehoda** $T_g$ je temperatura, pod katero so segmenti verig v amorfnih področjih zamrznjeni (polimer je trd in krhek kot steklo), nad njo pa se lahko segmenti vrtijo okoli vezi (polimer je usnjat ali gumijast). Pri $T_g$ se skokovito spremenita toplotna kapaciteta in temperaturni razteznostni koeficient, modul pa pade za okoli tri velikostne rede. **Tališče** $T_m$ je temperatura, pri kateri se stalijo kristalna področja; amorfni polimer ga nima.
 
-Pri mnogih polimerih je $T_g$ (v kelvinih) med polovico in dvema tretjinama $T_m$. Primeri: PE $T_g \approx -120\,^\circ\mathrm{C}$, $T_m \approx 135\,^\circ\mathrm{C}$; PP $-10$ in $165\,^\circ\mathrm{C}$; PET $75$ in $255\,^\circ\mathrm{C}$; PS (ataktni) $T_g \approx 100\,^\circ\mathrm{C}$ brez tališča; PVC $T_g \approx 80\,^\circ\mathrm{C}$. PE je pri sobni temperaturi nad $T_g$, zato je žilav in upogljiv; PS je pod $T_g$, zato je trd in krhek kot lonček za jogurt.
+Pri mnogih polimerih je $T_g$ (v kelvinih) med polovico in dvema tretjinama $T_m$. Primeri: PE $T_g \approx -120\,^\circ\mathrm{C}$, $T_m \approx 135\,^\circ\mathrm{C}$ (izjema, razmerje je le okoli $0{,}4$); PP $-10$ in $165\,^\circ\mathrm{C}$; PET $75$ in $255\,^\circ\mathrm{C}$; PS (ataktni) $T_g \approx 100\,^\circ\mathrm{C}$ brez tališča; PVC $T_g \approx 80\,^\circ\mathrm{C}$. PE je pri sobni temperaturi nad $T_g$, zato je žilav in upogljiv; PS je pod $T_g$, zato je trd in krhek kot lonček za jogurt.
 
 Modul amorfnega polimera pri segrevanju gre skozi štiri stopnje: steklasto (okoli $3\,\mathrm{GPa}$), prehodno usnjato pri $T_g$, gumijasti plato (okoli $1\,\mathrm{MPa}$) in viskozni tok. Zamreženje odstrani tok: guma ostane na gumijastem platoju, dokler se ne razkroji.
 
@@ -96,7 +96,7 @@ Modul amorfnega polimera pri segrevanju gre skozi štiri stopnje: steklasto (oko
 Natezni preizkus poznaš pri kovinah. Pri polimerih isti preizkus pokaže tri tipe krivulj:
 
 - **krhki** (PS, duromeri pod $T_g$): skoraj linearno do loma pri nekaj odstotkih raztezka;
-- **duktilni termoplasti** (PE, PP, PA): meja tečenja, nato **vrat**, ki se razširi po vsej preizkušanki (**hladno vlečenje**); verige se v vratu uredijo vzdolž smeri vleka in material se utrdi, raztezek je lahko več sto odstotkov;
+- **duktilni termoplasti** (PE, PP, PA): meja tečenja, nato **vrat**, ki se razširi po vsem preizkušancu (**hladno vlečenje**); verige se v vratu uredijo vzdolž smeri vleka in material se utrdi, raztezek je lahko več sto odstotkov;
 - **elastomeri**: nizek modul, velik povraten raztezek, brez izrazite meje tečenja.
 
 Odločilna razlika od kovin: lastnosti polimerov so močno odvisne od **temperature** in **hitrosti** obremenitve. Polimer je **viskoelastičen**: pri stalni obremenitvi se počasi deformira naprej (**lezenje**), pri stalni deformaciji napetost počasi pada (**relaksacija**). Pri jeklu je lezenje pomembno šele nad nekaj sto stopinjami, pri plastični cevi pa že pri sobni temperaturi. Zato plastične tlačne cevi dimenzioniramo na trdnost po $50$ letih, ne na kratkotrajno natezno trdnost.
@@ -413,7 +413,7 @@ s | standardni odklon molske mase | | g/mol
 m_i | masa frakcije | | g
 n_i | množina verig v frakciji | n_i = \frac{m_i}{M_i} | mol
 \chi | stopnja kristaliničnosti (masni delež) | \chi = \frac{\rho_c(\rho - \rho_a)}{\rho(\rho_c - \rho_a)} | –
-\rho | gostota vzorca | | g/cm^3
+\rho | gostota vzorca | | g/cm^3 | v $G = \rho RT/M_c$ v kg/m³
 \rho_c | gostota povsem kristalnega polimera | | g/cm^3
 \rho_a | gostota povsem amorfnega polimera | | g/cm^3
 m | masa | m = \rho V | kg

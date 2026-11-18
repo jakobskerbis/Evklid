@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Po poletni nevihti sošolec Tine razlaga: »Na vrtu imam veliko vedro, ti pa le kozarec za vlaganje. V moje vedro je nateklo skoraj tri litre vode, v tvoj kozarec pa komaj deciliter. Pri nas je torej padlo veliko več dežja.«
+Po poletni nevihti sošolec Tine razlaga: »Na vrtu imam veliko vedro, ti pa le kozarec za vlaganje. V moje vedro so natekli skoraj trije litri vode, v tvoj kozarec pa komaj deciliter. Pri nas je torej padlo veliko več dežja.«
 
 Sliši se prepričljivo, a v trditvi je napaka. Na koncu razlage jo boš pokazal z meritvami.
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -11,7 +11,7 @@ Napetosti zaporedno vezanih členov se seštejejo. Trije dajo $3{,}30\,\mathrm{V
 
 ## Razlaga
 
-**1. Proton ali elektron.** Pri kislinah in bazah se prenaša proton: kislina ga odda, baza sprejme, moč kisline meri $K_\mathrm{a}$. Pri **redoks reakcijah** se prenašajo elektroni. **Reducent** elektrone odda in se pri tem **oksidira**: njegovo oksidacijsko število naraste. **Oksidant** elektrone sprejme in se **reducira**: oksidacijsko število pade. Kot ima kislina svojo konjugirano bazo, ima kovina cink svoj ion: par $\mathrm{Zn^{2+}/Zn}$ imenujemo **redoks par**. Moč takega para ne meri $K_\mathrm{a}$, ampak standardni potencial $E^\circ$.
+**1. Proton ali elektron.** Pri kislinah in bazah se prenaša proton: kislina ga odda, baza sprejme, moč kisline meri $K_\mathrm{a}$. Pri **redoks reakcijah** se prenašajo elektroni. **Reducent** elektrone odda in se pri tem **oksidira**: njegovo oksidacijsko število naraste. **Oksidant** elektrone sprejme in se **reducira**: oksidacijsko število pade. Kot ima kislina svojo konjugirano bazo, ima kovina cink svoj ion: par $\mathrm{Zn^{2+}/Zn}$ imenujemo **redoks par**. Moči takega para ne meri $K_\mathrm{a}$, ampak standardni potencial $E^\circ$.
 
 **2. Urejanje: atomi in naboj.** Navadno enačbo urediš, ko se ujemajo atomi. Redoks enačba v ionski obliki mora izpolniti še dva pogoja: naboj je na obeh straneh enak in število oddanih elektronov je enako številu sprejetih. Enačba $\mathrm{Cu + Ag^+ \rightarrow Cu^{2+} + Ag}$ ima atome urejene, a levo je naboj $+1$, desno $+2$. Zato je napačna.
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -49,14 +49,14 @@ Ne, na njeni levi. Desno pomeni desno stran Lukovega telesa. Ko si dve osebi gle
 
 **Telesne votline.** Zdaj prereži sliko z mediano ravnino in poglej prerez od strani. Vidiš dve skupini prostorov.
 
-- **Dorzalno** sta **lobanjska votlina** z možgani in **hrbtenični kanal** s hrbtenjačo. Obe obdaja kost.
+- **Dorzalno** sta **lobanjska votlina** z možgani in **hrbtenični kanal** s hrbtenjačo. Oba obdaja kost.
 - **Ventralno** je velik prostor, ki ga po sredini prečno razdeli mišična pregrada, **trebušna prepona**. Nad njo je **prsna votlina**, pod njo **trebušno-medenična votlina**.
 
 Prsna votlina ima tri predele. Levo in desno sta **plevralni votlini**, vsaka s svojim pljučnim krilom. Med njima je **sredoprsje** (mediastinum). V njem leži srce v **osrčniku**, poleg njega pa sapnik, požiralnik in velike žile.
 
 Trebušno-medenična votlina je ena sama. Zgornji del je **trebušna votlina** z želodcem, jetri, vranico in večino črevesja. Spodnji del, obdan z medenico, je **medenična votlina** s sečnim mehurjem, danko in notranjimi spolovili. Mejo med njima postavimo z namišljeno ravnino skozi vhod v malo medenico. Prave stene tam ni.
 
-Notranje stene votlin in organe v njih prekriva tanka, gladka **serozna mrena**. Zunanji, **parietalni list** obdaja steno votline. Notranji, **visceralni list** se tesno prilega organu. Med listoma je le tanka plast tekočine, zato organi drsijo brez trenja. Serozne mrene so tri: **popljučnica** (plevra) ob pljučih, **osrčnik** (perikard) ob srcu in **potrebušnica** (peritonej) v trebušni votlini.
+Notranje stene votlin in organe v njih prekriva tanka, gladka **serozna mrena**. Zunanji, **parietalni list** oblaga steno votline. Notranji, **visceralni list** se tesno prilega organu. Med listoma je le tanka plast tekočine, zato organi drsijo brez trenja. Serozne mrene so tri: **plevra** (poprsnica; njen visceralni list je popljučnica, parietalni porebrnica) ob pljučih, **osrčnik** (perikard) ob srcu in **potrebušnica** (peritonej) v trebušni votlini.
 
 :::premisli
 Pacientu se v trebušni votlini nabere tekočina. Kje se bo zbrala, ko pacient stoji? Bi lahko na enak način tekočina iz prsne votline stekla v trebuh?
@@ -125,7 +125,7 @@ Kvadranti: mediana ravnina in transverzalna ravnina skozi popek. Prepona loči p
 :::premisli
 Kateri del prsne votline leži nad levo polovico prepone, lateralno od sredoprsja, in katera mrena ga obdaja?
 ---
-Leva plevralna votlina z levim pljučnim krilom. Obdaja jo popljučnica (plevra). Srce v osrčniku je medialno od tod, v sredoprsju.
+Leva plevralna votlina z levim pljučnim krilom. Obdaja jo plevra (poprsnica). Srce v osrčniku je medialno od tod, v sredoprsju.
 :::
 
 ## Pogoste napake
@@ -134,7 +134,7 @@ Leva plevralna votlina z levim pljučnim krilom. Obdaja jo popljučnica (plevra)
 - **Opis v trenutni drži.** »Roka je dvignjena, zato je komolec kranialno od rame.« Izrazi veljajo za anatomski položaj, ne za trenutno držo. Komolec je vedno distalno od rame, ne glede na to, ali igralec blokira ali stoji.
 - **Zamenjava sagitalne in frontalne ravnine.** »Frontalna ravnina gre od spredaj nazaj, ker gleda naprej.« Ime pove, čemu je ravnina vzporedna: frontalna je vzporedna s čelom (lat. *frons*). Od spredaj nazaj gre sagitalna.
 - **Stena med trebuhom in medenico.** »Prepona loči trebušno votlino od medenične.« Prepona loči prsno votlino od trebušne. Trebušna in medenična votlina sta en prostor z namišljeno mejo.
-- **Ena serozna votlina za vse.** »Srce in pljuča ležita v isti votlini, zato ju obdaja ista mrena.« Vsako pljučno krilo ima svojo plevralno votlino, srce pa svojo osrčnikovo votlino v sredoprsju.
+- **Ena serozna votlina za vse.** »Srce in pljuča ležijo v isti votlini, zato jih obdaja ista mrena.« Vsako pljučno krilo ima svojo plevralno votlino, srce pa svojo osrčnikovo votlino v sredoprsju.
 
 ## Povzetek
 
@@ -142,7 +142,7 @@ Leva plevralna votlina z levim pljučnim krilom. Obdaja jo popljučnica (plevra)
 - Ravnine: sagitalna (mediana skozi sredino) loči levo in desno, frontalna spredaj in zadaj, transverzalna zgoraj in spodaj. Gib poteka v ravnini okoli osi, ki je nanjo pravokotna.
 - Pari smeri: kranialno/kavdalno, ventralno/dorzalno, medialno/lateralno, proksimalno/distalno (na udih), površinsko/globoko. Desno in levo s pacientove strani.
 - Dorzalno: lobanjska votlina in hrbtenični kanal. Ventralno: prsna votlina (dve plevralni votlini in sredoprsje s srcem) in pod prepono trebušno-medenična votlina.
-- Serozne mrene (popljučnica, osrčnik, potrebušnica) imajo parietalni in visceralni list, med njima je tanka plast tekočine.
+- Serozne mrene (plevra, osrčnik, potrebušnica) imajo parietalni in visceralni list, med njima je tanka plast tekočine.
 
 ## Za izpit
 
@@ -187,12 +187,12 @@ Rezilo zadene pacienta v desno stransko steno prsnega koša tik nad prepono. Usm
 
 **Rešitev:**
 
-1. Za steno prsnega koša je parietalni list popljučnice. Rezilo ga predre in vstopi v desno plevralno votlino.
-2. Ker pljučnega krila ne zadene, visceralni list popljučnice ostane cel.
-3. Prepono na prsni strani prekriva parietalni list popljučnice. Rezilo predre ta list in nato prepono. S tem iz prsne votline preide v trebušno.
+1. Za steno prsnega koša je parietalni list plevre. Rezilo ga predre in vstopi v desno plevralno votlino.
+2. Ker pljučnega krila ne zadene, visceralni list plevre ostane cel.
+3. Prepono na prsni strani prekriva parietalni list plevre. Rezilo predre ta list in nato prepono. S tem iz prsne votline preide v trebušno.
 4. Spodnjo stran prepone prekriva parietalni list potrebušnice. Za njim je potrebušnična votlina s tanko plastjo tekočine.
 5. Jetra prekriva visceralni list potrebušnice. Rezilo ga predre in vstopi v organ.
-6. Vrstni red: parietalna popljučnica, plevralna votlina, parietalna popljučnica na preponi, prepona, parietalna potrebušnica, potrebušnična votlina, visceralna potrebušnica, jetra. Predrti so torej trije parietalni listi in en visceralni.
+6. Vrstni red: parietalna plevra, plevralna votlina, parietalna plevra na preponi, prepona, parietalna potrebušnica, potrebušnična votlina, visceralna potrebušnica, jetra. Predrti so torej trije parietalni listi in en visceralni.
 7. Kri: iz jeter teče v potrebušnično votlino. Ker med trebušno in medenično votlino ni stene, se pri stoječem pacientu zbira v medenični votlini. Skozi odprtino v preponi lahko pride tudi v desno plevralno votlino, ki je sicer od trebušne ločena.
 8. Osrčnik: srce z osrčnikom leži v sredoprsju, medialno od plevralne votline. Rezilo predre prepono že lateralno od sredoprsja in se ustavi v jetrih, zato osrčnika ne doseže.
 
@@ -231,10 +231,10 @@ Na urgenci zdravnik zapiše kvadrant, kjer boli, in s tem zoži nabor možnih or
 > Dve navpični ravnini dasta $3$ navpične pasove, dve vodoravni $3$ vodoravne. Skupaj $3 \cdot 3 = 9$ regij.
 
 ? Zakaj pljuča ob dihanju drsijo ob notranji strani prsne stene skoraj brez trenja?
-- Ker so pljuča prirasla na prsno steno in se premikata skupaj.
+- Ker so pljuča prirasla na prsno steno in se premikajo skupaj z njo.
 ~ Če bi bila prirasla, ne bi drsela. Med pljuči in steno je serozna votlina.
-+ Ker je med parietalnim in visceralnim listom popljučnice tanka plast tekočine.
-- Ker pljuča in srce ležita v isti votlini in si delita mreno.
++ Ker je med parietalnim in visceralnim listom plevre tanka plast tekočine.
+- Ker pljuča in srce ležijo v isti votlini in si delijo mreno.
 ~ Vsako pljučno krilo ima svojo plevralno votlino, srce pa svojo v sredoprsju.
 - Ker prepona pljuča odmakne od stene.
 ~ Prepona loči prsno votlino od trebušne in pomaga pri vdihu, a trenja ne zmanjšuje.

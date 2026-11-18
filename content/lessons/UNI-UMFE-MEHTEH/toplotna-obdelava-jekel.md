@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -19,7 +19,7 @@ Vse se začne v faznem diagramu železo–ogljik, zato ga najprej na kratko obno
 
 **Faze jekla.** Jeklo je zlitina železa z do $2{,}11\,\%$ ogljika. Nad črto $A_3$, ki je odvisna od deleža ogljika, je podevtektoidno jeklo ves **avstenit** (γ, mreža KPloC), ki raztopi veliko ogljika. Pod $A_1 = 727\,^\circ\mathrm{C}$ sta v ravnotežju **ferit** (α, KPC, raztopi največ $0{,}022\,\%$ C) in trdi **cementit** $\mathrm{Fe_3C}$. Pri $0{,}77\,\%$ C (evtektoidno jeklo) nastane iz avstenita sam **perlit**: tanke izmenične plasti ferita in cementita. Jeklo z manj ogljika je **podevtektoidno**, z več **nadevtektoidno**.
 
-*Hitri test:* katere faze vidiš v jeklu z $0{,}45\,\%$ C po počasnem ohlajanju? (Ferit in perlit.)
+*Hitri test:* kaj vidiš pod mikroskopom v jeklu z $0{,}45\,\%$ C po počasnem ohlajanju? (Ferit in perlit.)
 
 **Ohlajanje je tekma s časom.** Ko avstenit pod $A_1$ preide v ferit, mora ogljik oditi iz njega v cementit. To gre z **difuzijo**: atomi ogljika skačejo iz ene intersticijske praznine v sosednjo, za kar potrebujejo čas. Pri počasnem ohlajanju nastane grob perlit, ki je mehak. Pri hitrejšem ohlajanju so plasti perlita tanjše in jeklo trše.
 
@@ -280,7 +280,7 @@ Pri $550\,^\circ\mathrm{C}$ ($823\,\mathrm{K}$) dobimo isti učinek, ko je $\log
 > Podevtektoidno jeklo segrejemo na $A_3 + 30$–$50\,^\circ\mathrm{C}$, da je ves kos avstenit.
 
 ? Isti kos istega jekla enkrat kalimo v vodi, drugič v olju. Kaj velja?
-+ V vodi je ohlajanje hitrejše, kos je trši, a je nevarnost zvijanja in razpok večja.
++ V vodi je ohlajanje hitrejše, kos je enako trd ali trši, a je nevarnost zvijanja in razpok večja.
 - V olju je kos trši, ker se olje segreje počasneje.
 ~ Olje odvaja toploto počasneje od vode, zato je ohlajanje počasnejše in trdota nižja ali enaka.
 - Razlike ni, ker je trdota odvisna le od vsebnosti ogljika.

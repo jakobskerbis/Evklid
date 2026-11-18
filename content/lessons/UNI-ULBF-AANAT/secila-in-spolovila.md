@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Odrasel človek ima okoli $3\,\mathrm L$ krvne plazme. Ledvici v enem dnevu precedita okoli $180\,\mathrm L$ tekočine iz krvi, z urinom pa izločimo le okoli $1{,}5\,\mathrm L$. Poskusi, preden bereš naprej: kolikokrat na dan gre vsa plazma skozi ledvični filter? In zakaj bi organ najprej izločil skoraj vse, nato pa več kot $99\,\%$ vrnil nazaj?
+Odrasel človek ima okoli $3\,\mathrm{L}$ krvne plazme. Ledvici v enem dnevu precedita okoli $180\,\mathrm{L}$ tekočine iz krvi, z urinom pa izločimo le okoli $1{,}5\,\mathrm{L}$. Poskusi, preden bereš naprej: kolikokrat na dan gre vsa plazma skozi ledvični filter? In zakaj bi organ najprej izločil skoraj vse, nato pa več kot $99\,\%$ vrnil nazaj?
 
 Odgovor je v zgradbi. Ledvica ni sito, ki pobere le odpadke, temveč filter z veliko pretočnostjo, za katerim sledi dolga cev za vračanje. Enak načrt poznajo čistilne naprave in obrati za predelavo vode: najprej vse odstrani, nato vrni, kar je dragoceno. Za biologa je to temelj fiziologije izločanja in osnova za razumevanje dialize, sečnih kamnov in okužb. Spolovila obravnavamo v isti lekciji, ker se razvijejo iz istega zasnovka in si pri moškem delijo pot navzven.
 
@@ -13,7 +13,7 @@ Odgovor je v zgradbi. Ledvica ni sito, ki pobere le odpadke, temveč filter z ve
 
 ### Blok 1: lega in zunanja zgradba ledvic
 
-Ledvici ležita **retroperitonealno**: za potrebušnico, ob hrbtenici, približno od 12. prsnega do 3. ledvenega vretenca. Desna je nekoliko nižje, ker so nad njo jetra. Vsaka je velika okoli $11 \times 6 \times 3\,\mathrm{cm}$ in tehta okoli $150\,\mathrm g$. Obdaja jo vezivna ovojnica, zunaj nje maščobna blazina in ledvična fascija.
+Ledvici ležita **retroperitonealno**: za potrebušnico, ob hrbtenici, približno od 12. prsnega do 3. ledvenega vretenca. Desna je nekoliko nižje, ker so nad njo jetra. Vsaka je velika okoli $11 \times 6 \times 3\,\mathrm{cm}$ in tehta okoli $150\,\mathrm{g}$. Obdaja jo vezivna ovojnica, zunaj nje maščobna blazina in ledvična fascija.
 
 Na medialnem robu je **hilus**: vanj vstopa ledvična arterija, izstopata ledvična vena in **ledvični meh** (pelvis), ki se nadaljuje v sečevod. Na čelnem prerezu vidimo:
 
@@ -110,7 +110,7 @@ Pretok plazme $Q_\mathrm{p}$ dobimo iz pretoka krvi in hematokrita: $Q_\mathrm{p
 
 ### Blok 6: moška spolovila
 
-- **Modi** (testes) v **mošnji**: temperatura je okoli $2$ do $3\,\mathrm K$ nižja od telesne, kar potrebuje nastajanje semenčic. V **semenskih kanalčkih** nastajajo semenčice ob **Sertolijevih celicah**; med kanalčki **Leydigove celice** tvorijo testosteron.
+- **Modi** (testes) v **mošnji**: temperatura je okoli $2$ do $3\,\mathrm{K}$ nižja od telesne, kar potrebuje nastajanje semenčic. V **semenskih kanalčkih** nastajajo semenčice ob **Sertolijevih celicah**; med kanalčki **Leydigove celice** tvorijo testosteron.
 - **Nadmodek** (epididymis): zelo zvita cev, kjer semenčice dozorevajo.
 - **Semenovod** (ductus deferens): skozi dimeljski kanal v trebušno votlino, za mehurjem se združi z izvodilom **semenskega mešička** v **izbrizgalni vod**, ki se odpre v sečnico v prostati.
 - Žleze: semenska mešička (večina prostornine semena, fruktoza), **prostata** (obdaja začetek sečnice) in bulbouretralni žlezi.
@@ -137,9 +137,9 @@ Jajcevod se z lijakom odpira v trebušno votlino, zato je pri ženski pot od no�
 
 ### Primer 1 (lažji): uganka iz uvoda
 
-Hitrost glomerulne filtracije je $125\,\mathrm{mL/min}$, dnevna količina urina $1{,}5\,\mathrm L$, prostornina plazme $3\,\mathrm L$. Koliko filtrata nastane na dan, kolikšen delež se vrne in kolikokrat na dan se prefiltrira vsa plazma?
+Hitrost glomerulne filtracije je $125\,\mathrm{mL/min}$, dnevna količina urina $1{,}5\,\mathrm{L}$, prostornina plazme $3\,\mathrm{L}$. Koliko filtrata nastane na dan, kolikšen delež se vrne in kolikokrat na dan se prefiltrira vsa plazma?
 
-**Podatki:** $G = 125\,\mathrm{mL/min}$, $V_\mathrm{u} = 1{,}5\,\mathrm L$ na dan, $V_\mathrm{p} = 3\,\mathrm L$, $1$ dan $= 1440\,\mathrm{min}$
+**Podatki:** $G = 125\,\mathrm{mL/min}$, $V_\mathrm{u} = 1{,}5\,\mathrm{L}$ na dan, $V_\mathrm{p} = 3\,\mathrm{L}$, $1$ dan $= 1440\,\mathrm{min}$
 **Iščemo:** dnevni filtrat $V_\mathrm{f}$, delež vrnjenega, število prehodov
 
 :::formula
@@ -148,10 +148,10 @@ $V_\mathrm{f} = G \cdot t$, delež vrnjenega $= \dfrac{V_\mathrm{f} - V_\mathrm{
 
 **Rešitev:**
 
-1. Filtrat: $V_\mathrm{f} = 125 \cdot 1440 = 180\,000\,\mathrm{mL} = 180\,\mathrm L$.
+1. Filtrat: $V_\mathrm{f} = 125 \cdot 1440 = 180\,000\,\mathrm{mL} = 180\,\mathrm{L}$.
 2. Vrnjeno: $\dfrac{180 - 1{,}5}{180} \approx 0{,}992$, torej okoli $99{,}2\,\%$.
 3. Prehodi: $\dfrac{180}{3} = 60$.
-4. Odgovor: na dan nastane $180\,\mathrm L$ filtrata, vrne se več kot $99\,\%$, vsa plazma pa gre skozi filter $60$-krat. Velik pretok pomeni, da se tudi snov z majhno koncentracijo hitro odstrani.
+4. Odgovor: na dan nastane $180\,\mathrm{L}$ filtrata, vrne se več kot $99\,\%$, vsa plazma pa gre skozi filter $60$-krat. Velik pretok pomeni, da se tudi snov z majhno koncentracijo hitro odstrani.
 
 ### Primer 2: očistek inulina in glukoze
 
@@ -173,9 +173,9 @@ $G = C_\mathrm{in} = \dfrac{U_\mathrm{in} Q_\mathrm{u}}{P_\mathrm{in}}$, $F = G 
 
 ### Primer 3 (težji): bolnik s sladkorno boleznijo
 
-Pri bolniku izmerijo: pretok krvi skozi ledvici $1{,}1\,\mathrm{L/min}$, hematokrit $0{,}45$, kreatinin v plazmi $0{,}010\,\mathrm{mg/mL}$ in v urinu $1{,}25\,\mathrm{mg/mL}$, dnevni urin $1{,}44\,\mathrm L$, glukozo v plazmi $4{,}0\,\mathrm{mg/mL}$. Največja hitrost vračanja glukoze je $375\,\mathrm{mg/min}$. Predpostavi, da je očistek kreatinina enak $G$. Izračunaj (a) $G$, (b) filtracijsko frakcijo, (c) koliko glukoze se izloči na minuto in kolikšna je njena koncentracija v urinu, (d) prag plazemske glukoze, nad katerim se glukoza pojavi v urinu.
+Pri bolniku izmerijo: pretok krvi skozi ledvici $1{,}1\,\mathrm{L/min}$, hematokrit $0{,}45$, kreatinin v plazmi $0{,}010\,\mathrm{mg/mL}$ in v urinu $1{,}25\,\mathrm{mg/mL}$, dnevni urin $1{,}44\,\mathrm{L}$, glukozo v plazmi $4{,}0\,\mathrm{mg/mL}$. Največja hitrost vračanja glukoze je $375\,\mathrm{mg/min}$. Predpostavi, da je očistek kreatinina enak $G$. Izračunaj (a) $G$, (b) filtracijsko frakcijo, (c) koliko glukoze se izloči na minuto in kolikšna je njena koncentracija v urinu, (d) prag plazemske glukoze, nad katerim se glukoza pojavi v urinu.
 
-**Podatki:** $Q_\mathrm{k} = 1100\,\mathrm{mL/min}$, $H = 0{,}45$, $P_\mathrm{kr} = 0{,}010\,\mathrm{mg/mL}$, $U_\mathrm{kr} = 1{,}25\,\mathrm{mg/mL}$, $V_\mathrm{u} = 1{,}44\,\mathrm L$ na dan, $P_\mathrm{g} = 4{,}0\,\mathrm{mg/mL}$, $T_\mathrm{m} = 375\,\mathrm{mg/min}$
+**Podatki:** $Q_\mathrm{k} = 1100\,\mathrm{mL/min}$, $H = 0{,}45$, $P_\mathrm{kr} = 0{,}010\,\mathrm{mg/mL}$, $U_\mathrm{kr} = 1{,}25\,\mathrm{mg/mL}$, $V_\mathrm{u} = 1{,}44\,\mathrm{L}$ na dan, $P_\mathrm{g} = 4{,}0\,\mathrm{mg/mL}$, $T_\mathrm{m} = 375\,\mathrm{mg/min}$
 **Iščemo:** $G$, $f$, izločeno glukozo, $U_\mathrm{g}$, prag
 
 :::formula
@@ -218,7 +218,7 @@ Sečevod → ledvični meh → velika in mala čaša → papila → zbiralca (vn
 
 ## Pogoste napake
 
-- **»Ledvica izloči le odpadke.«** Glomerul filtrira vse majhne molekule, tudi glukozo in soli; tubuli jih nato vrnejo. Zato je filtrata $180\,\mathrm L$, urina $1{,}5\,\mathrm L$.
+- **»Ledvica izloči le odpadke.«** Glomerul filtrira vse majhne molekule, tudi glukozo in soli; tubuli jih nato vrnejo. Zato je filtrata $180\,\mathrm{L}$, urina $1{,}5\,\mathrm{L}$.
 - **»Za glomerulom je vena.«** Za glomerulom je eferentna *arteriola*; šele za peritubularnimi kapilarami so vene. To ohranja visok tlak v glomerulu.
 - **Zamenjava sečevoda in sečnice.** Sečevod (ureter) vodi iz ledvice v mehur, sečnica (urethra) iz mehurja navzven.
 - **»Oploditev poteka v maternici.«** Navadno poteka v ampuli jajcevoda; v maternico pride že zarodek.
@@ -256,8 +256,8 @@ Pri preiskavi ledvic izmerijo: paraaminohipurna kislina (PAH) v plazmi $0{,}010\
 4. $G$ iz inulina: $\dfrac{30 \cdot 1{,}0}{0{,}25} = 120\,\mathrm{mL/min}$.
 5. Filtracijska frakcija: $f = \dfrac{120}{650} \approx 0{,}185$.
 6. Filtrirana glukoza: $120 \cdot 3{,}5 = 420\,\mathrm{mg/min}$; izloči se $420 - 375 = 45\,\mathrm{mg/min}$.
-7. Na dan: $45 \cdot 1440 = 64\,800\,\mathrm{mg} \approx 64{,}8\,\mathrm g$.
-8. Odgovor: pretok plazme $650\,\mathrm{mL/min}$, krvi okoli $1{,}18\,\mathrm{L/min}$, $f \approx 0{,}18$; izloči se okoli $65\,\mathrm g$ glukoze na dan, kar s seboj potegne tudi vodo (žeja in pogosto uriniranje pri sladkorni bolezni).
+7. Na dan: $45 \cdot 1440 = 64\,800\,\mathrm{mg} \approx 64{,}8\,\mathrm{g}$.
+8. Odgovor: pretok plazme $650\,\mathrm{mL/min}$, krvi okoli $1{,}18\,\mathrm{L/min}$, $f \approx 0{,}18$; izloči se okoli $65\,\mathrm{g}$ glukoze na dan, kar s seboj potegne tudi vodo (žeja in pogosto uriniranje pri sladkorni bolezni).
 
 ### Naloga 2
 
@@ -287,7 +287,7 @@ Spolovila v mediani ravnini: pri ženski od spredaj nazaj mehur, maternica, dank
 
 **Protitočni mehanizem.** Henlejeva zanka ima dva kraka z različno prepustnostjo. Spust je prepusten za vodo, vzpon ni, a aktivno črpa $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ v intersticij. Ker tekočina v krakih teče v nasprotnih smereh, se majhna razlika na vsaki višini sešteje v velik gradient: od okoli $300\,\mathrm{mOsm/L}$ v skorji do okoli $1200\,\mathrm{mOsm/L}$ na vrhu papile. Zbiralce prehaja ta gradient; ob antidiuretičnem hormonu so v njegovi steni vodne pore (akvaporini) in urin se koncentrira.
 
-**Skupni izvor.** Sečila in spolovila se razvijejo iz vmesnega mezoderma. Mezonefrični vod pri moškem postane nadmodek, semenovod in semenski mešiček, pri ženski skoraj izgine. Paramezonefrični vod pri ženski postane jajcevoda, maternica in zgornji del nožnice. Zato so organi homologni: moda in jajčnika, mošnja in velike sramne ustne.
+**Skupni izvor.** Sečila in spolovila se razvijejo iz vmesnega mezoderma. Mezonefrični vod pri moškem postane nadmodek, semenovod in semenski mešiček, pri ženski skoraj izgine. Paramezonefrični vod pri ženski postane jajcevoda, maternica in zgornji del nožnice. Zato so organi homologni: modi in jajčnika, mošnja in velike sramne ustne.
 
 ## Preveri se
 

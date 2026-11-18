@@ -23,7 +23,7 @@ stanje: osnutek
   - mRNA, tRNA, rRNA
   - 2'-OH: hidroliza v bazičnem
 - Semikonzervativno podvajanje
-  - Meselson in Stahl, $^{15}\mathrm{N}$
+  - Meselson in Stahl, $\mathrm{^{15}N}$
   - hibridnih molekul $2$ od $2^n$
 - Replikacijske vilice
   - helikaza, SSB, topoizomeraza, primaza, ligaza

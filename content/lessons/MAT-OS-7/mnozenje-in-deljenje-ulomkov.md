@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -29,7 +29,7 @@ Tako je $\frac{2}{3}\cdot\frac{4}{5}=\frac{8}{15}$.
 :::premisli
 Ali bo $\frac{3}{4}\cdot\frac{1}{2}$ večje ali manjše od $\frac{3}{4}$? Napovej, preden računaš.
 ---
-Manjše. Množiti s $\frac{1}{2}$ pomeni vzeti polovico, rezultat je $\frac{3}{8}$. Pri množenju z ulomkom, manjšim od $1$, dobiš manj, kot si imel.
+Manjše. Množiti z $\frac{1}{2}$ pomeni vzeti polovico, rezultat je $\frac{3}{8}$. Pri množenju z ulomkom, manjšim od $1$, dobiš manj, kot si imel.
 :::
 
 **3. Krajšanje pred množenjem.** Produkt je en sam ulomek $\frac{a\cdot c}{b\cdot d}$. Zato smemo pred množenjem krajšati **katerikoli** števec s **katerimkoli** imenovalcem, če ju deli isto število. Pri seštevanju tega ne smemo: v $\frac{1}{2}+\frac{2}{3}$ dvojk ne smeš »pokrajšati navzkriž«.

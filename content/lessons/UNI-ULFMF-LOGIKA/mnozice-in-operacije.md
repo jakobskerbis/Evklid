@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -38,7 +38,7 @@ Prvo ne velja, drugo velja. Elementa množice $\{1, 2\}$ sta števili $1$ in $2$
 | razlika | $A \setminus B$ | $x \in A \wedge x \notin B$ | in ne |
 | komplement | $A^c$ | $x \in U \wedge x \notin A$ | ne |
 
-Komplement je smiseln le glede na izbrano **univerzalno množico** $U$, v kateri živijo vsi elementi, o katerih govorimo. Množici z $A \cap B = \emptyset$ rečemo **disjunktni**.
+Komplement je smiseln le glede na izbrano **univerzalno množico** $U$, v kateri živijo vsi elementi, o katerih govorimo. Množicama z $A \cap B = \emptyset$ rečemo **disjunktni**.
 
 **Vennov diagram** v besedah: nariši pravokotnik $U$, v njem dva kroga $A$ in $B$, ki se delno prekrivata. Lečasti del, kjer se kroga prekrivata, je $A \cap B$. Oba kroga skupaj sta $A \cup B$. Del kroga $A$ zunaj kroga $B$ je $A \setminus B$. Vse v pravokotniku zunaj kroga $A$ je $A^c$.
 
@@ -101,7 +101,7 @@ $|\mathcal{P}(A)| = 2^{|A|}$
 2. Naštejemo po velikosti, da nobene ne izpustimo. Velikost $0$: $\emptyset$. Velikost $1$: $\{a\}, \{b\}, \{c\}$. Velikost $2$: $\{a, b\}, \{a, c\}, \{b, c\}$. Velikost $3$: $\{a, b, c\}$.
 3. Skupaj $1 + 3 + 3 + 1 = 8$, kar se ujema s korakom 1.
 4. Podmnožice z $a$: odločitev za $a$ je že sprejeta, ostaneta dve prosti odločitvi (za $b$ in $c$), torej $2^2 = 4$. Res: $\{a\}, \{a, b\}, \{a, c\}, \{a, b, c\}$.
-5. Odgovor: $\mathcal{P}(A) = \{\emptyset, \{a\}, \{b\}, \{c\}, \{a, b\}, \{a, c\}, \{b, c\}, \{a, b, c\}\}$; element $a$ vsebuje $4$ podmnožice, polovica vseh.
+5. Odgovor: $\mathcal{P}(A) = \{\emptyset, \{a\}, \{b\}, \{c\}, \{a, b\}, \{a, c\}, \{b, c\}, \{a, b, c\}\}$; element $a$ vsebujejo $4$ podmnožice, polovica vseh.
 
 ### Primer 3 (težji): dokaz zakona
 

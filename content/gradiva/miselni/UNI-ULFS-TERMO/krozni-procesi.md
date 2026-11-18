@@ -11,7 +11,7 @@ stanje: osnutek
 - Ottov proces
   - dve adiabati, dve izohori
   - $\eta = 1 - \varepsilon^{1-\kappa}$, brez $T_3$
-  - napaka: več toplote ne da večjega $\eta$
+  - napaka: »več toplote da večji $\eta$«
 - Dieslov proces
   - izobarno dovajanje, $\varphi = \dfrac{V_3}{V_2}$
   - pri enakem $\varepsilon$ slabši od Otta

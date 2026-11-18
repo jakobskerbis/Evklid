@@ -424,7 +424,7 @@ export function simetrija(el) {
       label(lay, Q[i][0] + 10, Q[i][1] - 10, "ABC"[i] + "'", "pt-lbl");
     });
     const d = (p) => (mode === "os" ? Math.abs(p[0] - O[0]) : mode === "posevna" ? Math.abs(p[0] - O[0] - (p[1] - O[1])) / Math.SQRT2 : dist(p, O));
-    out.innerHTML = `<p>${mode === "sredisce" ? "Pri <b>središčni simetriji</b> je O razpolovišče daljic AA', BB' in CC'. Lik se zasuka za 180°." : "Pri <b>zrcaljenju čez os</b> je os simetrale daljic AA', BB' in CC': zveznice so pravokotne na os, točka in slika sta enako oddaljeni od osi."}</p>
+    out.innerHTML = `<p>${mode === "sredisce" ? "Pri <b>središčni simetriji</b> je O razpolovišče daljic AA', BB' in CC'. Lik se zasuka za 180°." : "Pri <b>zrcaljenju čez os</b> je os simetrala daljic AA', BB' in CC': zveznice so pravokotne na os, točka in slika sta enako oddaljeni od osi."}</p>
       <p>Razdalji od ${mode === "sredisce" ? "O" : "osi"}: A ${fmt(d(pts.A) / CM, 1)} cm, A' ${fmt(d(Q[0]) / CM, 1)} cm.</p>
       <p class="muted">Slika je skladna z likom (enake stranice in koti). ${mode === "sredisce" ? "Orientacija ostane enaka." : "Orientacija se obrne: A → B → C gre v nasprotno smer kot A' → B' → C'."}</p>`;
     place();

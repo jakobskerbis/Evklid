@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -50,7 +50,7 @@ Potrebnih je $7$ podvojitev, saj je $2^6 = 64$ še premalo, $2^7 = 128$ pa dovol
 
 | Vrsta | Primeri bolezni | Pomaga |
 |---|---|---|
-| bakterija | angina, tetanus | antibiotik |
+| bakterija | angina, škrlatinka | antibiotik |
 | virus | gripa, norice | cepljenje vnaprej |
 | zajedavec | uši, gliste | zdravila |
 
@@ -60,9 +60,9 @@ Potrebnih je $7$ podvojitev, saj je $2^6 = 64$ še premalo, $2^7 = 128$ pa dovol
 
 Povzročitelji se prenašajo s kapljicami pri kašljanju in kihanju, z dotikom, s skupnim bidonom ali brisačo, z umazano hrano in vodo ter s piki (klop).
 
-**5. Protitelesa in spomin.** Nekatere bele krvničke izdelujejo **protitelesa**: beljakovine, ki se prilepijo na točno določen povzročitelj in ga označijo za uničenje. Ob prvi okužbi traja nekaj dni, da jih je dovolj; zato si bolan. Po okužbi v krvi ostanejo **spominske celice**. Če pride isti povzročitelj znova, protitelesa nastanejo veliko hitreje in jih je več, zato navadno ne zboliš. Takrat si **imun**.
+**5. Protitelesa in spomin.** Nekatere bele krvničke izdelujejo **protitelesa**: beljakovine, ki se prilepijo na točno določenega povzročitelja in ga označijo za uničenje. Ob prvi okužbi traja nekaj dni, da jih je dovolj; zato si bolan. Po okužbi v krvi ostanejo **spominske celice**. Če pride isti povzročitelj znova, protitelesa nastanejo veliko hitreje in jih je več, zato navadno ne zboliš. Takrat si **imun**.
 
-**Cepivo** vsebuje oslabljen ali mrtev povzročitelj ali le njegov del. Telo naredi protitelesa in spominske celice, ne da bi zbolelo.
+**Cepivo** vsebuje oslabljenega ali mrtvega povzročitelja ali le njegov del. Telo naredi protitelesa in spominske celice, ne da bi zbolelo.
 
 :::premisli
 Zakaj po prebolelih noricah navadno ne zboliš še enkrat, prehlad pa lahko dobiš večkrat na leto?
@@ -188,7 +188,7 @@ Primerjava ima mejo: virus ne gleda tekme, ampak vdre v »garderobo«, tvojo cel
 
 Velikosti povzročiteljev se zelo razlikujejo. Virus gripe meri okoli $0{,}1\,\mu\mathrm{m}$, bakterija nekaj mikrometrov, bela krvnička okoli $12\,\mu\mathrm{m}$, uš okoli $3\,\mathrm{mm}$. Bakterijo vidiš s šolskim svetlobnim mikroskopom, virusa pa ne; zanj potrebujemo elektronski mikroskop.
 
-Bele krvničke so dveh glavnih vrst. **Fagociti** (požiralke) požrejo vsak tujek, ki ga srečajo. **Limfociti** izdelujejo protitelesa in postanejo spominske celice; vsak limfocit prepozna en sam povzročitelj.
+Bele krvničke so dveh glavnih vrst. **Fagociti** (požiralke) požrejo vsak tujek, ki ga srečajo. **Limfociti** izdelujejo protitelesa in postanejo spominske celice; vsak limfocit prepozna enega samega povzročitelja.
 
 Antibiotiki uničijo občutljive bakterije. Če jih jemlješ po nepotrebnem ali premalo časa, preživijo najbolj odporne. Te se razmnožijo in antibiotik nanje ne deluje več. Zato antibiotik jemlješ le, ko ga predpiše zdravnik, in ves predpisani čas.
 

@@ -8,7 +8,7 @@ stanje: osnutek
 - Elektrenje z drgnjenjem
   - premikajo se le elektroni
   - prejme elektrone: $-$, odda: $+$
-  - napaka: protoni se ne premikajo
+  - napaka: »premaknejo se protoni«
 - Ohranitev naboja
   - naboj se le prerazporedi
   - telesi enako močno, nasprotno nabiti

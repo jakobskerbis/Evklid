@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: delci
 avtor: AI
 ---
@@ -214,7 +214,7 @@ Na Mednarodni vesoljski postaji živi skodelica čaja. Njeni delci so vroči in 
 
 Kjer se čaj dotika stene skodelice in zraka, hitri delci čaja trkajo v počasnejše in jim pri tem predajo del svoje energije. Ta energija, ki potuje od hitrejših k počasnejšim, je toplota. Delci čaja se umirjajo, zrak okoli skodelice se malo segreje.
 
-Nihče ne pošilja »mraza« v čaj. Zgodba gre vedno v eno smer: od vročega k hladnemu. Ko imajo delci čaja in delci zraka v povprečju enako energijo gibanja, se predajanje ustavi. Čaj in zrak imata zdaj enako temperaturo, in astronavt mora natočiti novega.
+Nihče ne pošilja »mraza« v čaj. Zgodba gre vedno v eno smer: od vročega k hladnemu. Ko imajo delci čaja in delci zraka v povprečju enako energijo gibanja, se predajanje ustavi. Čaj in zrak imata zdaj enako temperaturo in astronavt mora natočiti novega.
 
 ## Preveri se
 
@@ -264,7 +264,7 @@ napis: 30; 27 | B | levo | oranžna
 = 22 °C | 0,5
 ~ 5 | Sok ne obdrži mraza. Iz toplejšega zraka prejema toploto, dokler nima njegove temperature.
 ~ 13,5 | Sredino dobiš le pri mešanju enakih količin. Zraka v kuhinji je ogromno, zato sok doseže temperaturo zraka.
-~ 17 | To je za koliko se je sok segrel ($22 - 5$), ne njegova končna temperatura.
+~ 17 | To je, za koliko se je sok segrel ($22 - 5$), ne njegova končna temperatura.
 > Sok se segreva, dokler ni v toplotnem ravnovesju z zrakom: $22\,^\circ\mathrm{C}$.
 
 <<RACUN

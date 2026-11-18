@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -287,7 +287,7 @@ Pri eni neznanki potrebuješ toliko pogojev, da lahko zapišeš eno enačbo. Če
 x | neznanka | | | število, ki ga iščemo
 y | očetova starost (neznanka) | | | sin je star y/3
 o | obseg pravokotnika | o = 2a + 2b |
-a | dolžina pravokotnika | | | za 7 cm daljša od širine
+a | dolžina pravokotnika | | | v primeru 2 za 7 cm daljša od širine; v povzetku je $a$ poljubno število
 b | širina pravokotnika | |
 t | število let (»čez t let«) | | | vsak je čez t let starejši za t
 :::

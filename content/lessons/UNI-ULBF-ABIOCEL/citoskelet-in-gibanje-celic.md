@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -37,7 +37,7 @@ napis: 0,3; 3,06 | mikrotubul | desno
 napis: 24,8; 3,06 | ~25 nm | desno
 :::
 
-**Aktinski filamenti** (mikrofilamenti) so zgrajeni iz kroglastega **G-aktina**, ki z vezanim ATP polimerizira v vijačni **F-aktin**. Filament je **polaren**: na koncu plus (»bodičastem«) se monomeri pripenjajo hitreje kot na koncu minus. Po vezavi se ATP hidrolizira v ADP. Aktin je zgoščen pod plazmalemo (celična skorja), gradi mikrovile in filopodije, s **miozinom** pa tvori krčljiv aparat (mišice, delitveni obroč pri citokinezi).
+**Aktinski filamenti** (mikrofilamenti) so zgrajeni iz kroglastega **G-aktina**, ki z vezanim ATP polimerizira v vijačni **F-aktin**. Filament je **polaren**: na koncu plus (»bodičastem«) se monomeri pripenjajo hitreje kot na koncu minus. Po vezavi se ATP hidrolizira v ADP. Aktin je zgoščen pod plazmalemo (celična skorja), gradi mikrovile in filopodije, z **miozinom** pa tvori krčljiv aparat (mišice, delitveni obroč pri citokinezi).
 
 **Mikrotubuli** so votle cevke iz heterodimerov **$\alpha$- in $\beta$-tubulina**. Dimer je dolg približno $8\,\mathrm{nm}$. Dimeri se nizajo v protofilamente, $13$ protofilamentov pa tvori steno cevke z zunanjim premerom okoli $25\,\mathrm{nm}$. Tudi mikrotubul je polaren: na koncu plus je izpostavljen $\beta$-tubulin, ki veže GTP. Konec minus je navadno zasidran v **centru za organizacijo mikrotubulov** (MTOC), pri živalskih celicah v **centrosomu** s parom centriolov.
 
@@ -86,9 +86,9 @@ Fibroblast ali bela krvnička se po podlagi premika v štirih korakih:
 
 ### Primer 1 (lažji)
 
-Mikrotubul v aksonu je dolg $1\,\mu\mathrm m$. Koliko dimerov tubulina ga sestavlja? Koliko monomerov aktina je v enako dolgem aktinskem filamentu, če vsak monomer filament podaljša za $2{,}75\,\mathrm{nm}$?
+Mikrotubul v aksonu je dolg $1\,\mu\mathrm{m}$. Koliko dimerov tubulina ga sestavlja? Koliko monomerov aktina je v enako dolgem aktinskem filamentu, če vsak monomer filament podaljša za $2{,}75\,\mathrm{nm}$?
 
-**Podatki:** $L = 1\,\mu\mathrm m = 1000\,\mathrm{nm}$, $13$ protofilamentov, dolžina dimera $8\,\mathrm{nm}$, podaljšek na monomer aktina $2{,}75\,\mathrm{nm}$
+**Podatki:** $L = 1\,\mu\mathrm{m} = 1000\,\mathrm{nm}$, $13$ protofilamentov, dolžina dimera $8\,\mathrm{nm}$, podaljšek na monomer aktina $2{,}75\,\mathrm{nm}$
 **Iščemo:** število dimerov $N_\mathrm{t}$ in monomerov $N_\mathrm{a}$
 
 :::formula
@@ -100,13 +100,13 @@ $N_\mathrm{t} = 13 \cdot \dfrac{L}{8\,\mathrm{nm}}$, $N_\mathrm{a} = \dfrac{L}{2
 1. En protofilament dolžine $1000\,\mathrm{nm}$ ima $1000 / 8 = 125$ dimerov.
 2. Protofilamentov je $13$, zato $N_\mathrm{t} = 13 \cdot 125 = 1625$.
 3. Aktinski filament ima dve vijačno zviti verigi; podatek $2{,}75\,\mathrm{nm}$ že upošteva obe, zato $N_\mathrm{a} = 1000 / 2{,}75 \approx 364$.
-4. Odgovor: mikrotubul dolžine $1\,\mu\mathrm m$ ima $1625$ dimerov tubulina, aktinski filament pa okoli $364$ monomerov.
+4. Odgovor: mikrotubul dolžine $1\,\mu\mathrm{m}$ ima $1625$ dimerov tubulina, aktinski filament pa okoli $364$ monomerov.
 
 ### Primer 2: motor ali difuzija?
 
-Motorni nevron, ki oživčuje mišico stopala, ima akson dolg okoli $1\,\mathrm m$. Kinezin v poskusu in vitro naredi $100$ korakov po $8\,\mathrm{nm}$ na sekundo. Koliko časa bi vezikel potoval do sinapse? Primerjaj z difuzijo, pri kateri je čas $t \approx L^2/(2D)$; za vezikel v citoplazmi vzemimo $D = 0{,}1\,\mu\mathrm m^2/\mathrm s$.
+Motorni nevron, ki oživčuje mišico stopala, ima akson dolg okoli $1\,\mathrm{m}$. Kinezin v poskusu in vitro naredi $100$ korakov po $8\,\mathrm{nm}$ na sekundo. Koliko časa bi vezikel potoval do sinapse? Primerjaj z difuzijo, pri kateri je čas $t \approx L^2/(2D)$; za vezikel v citoplazmi vzemimo $D = 0{,}1\,\mu\mathrm{m}^2/\mathrm{s}$.
 
-**Podatki:** $L = 1\,\mathrm m = 10^6\,\mu\mathrm m$, $100$ korakov na sekundo, korak $8\,\mathrm{nm}$, $D = 0{,}1\,\mu\mathrm m^2/\mathrm s$
+**Podatki:** $L = 1\,\mathrm{m} = 10^6\,\mu\mathrm{m}$, $100$ korakov na sekundo, korak $8\,\mathrm{nm}$, $D = 0{,}1\,\mu\mathrm{m}^2/\mathrm{s}$
 **Iščemo:** čas potovanja z motorjem $t_\mathrm{m}$ in z difuzijo $t_\mathrm{d}$
 
 :::formula
@@ -115,17 +115,17 @@ $v = (\text{koraki na sekundo}) \cdot (\text{dolžina koraka})$, $t_\mathrm{m} =
 
 **Rešitev:**
 
-1. Hitrost: $v = 100 \cdot 8\,\mathrm{nm/s} = 800\,\mathrm{nm/s} = 0{,}8\,\mu\mathrm m/\mathrm s$.
-2. Čas z motorjem: $t_\mathrm{m} = 10^6 / 0{,}8 = 1{,}25 \cdot 10^6\,\mathrm s$, kar je $1{,}25 \cdot 10^6 / 86\,400 \approx 14{,}5$ dneva.
-3. Čas z difuzijo: $t_\mathrm{d} = (10^6)^2 / (2 \cdot 0{,}1) = 5 \cdot 10^{12}\,\mathrm s$, to je okoli $158\,000$ let.
+1. Hitrost: $v = 100 \cdot 8\,\mathrm{nm/s} = 800\,\mathrm{nm/s} = 0{,}8\,\mu\mathrm{m}/\mathrm{s}$.
+2. Čas z motorjem: $t_\mathrm{m} = 10^6 / 0{,}8 = 1{,}25 \cdot 10^6\,\mathrm{s}$, kar je $1{,}25 \cdot 10^6 / 86\,400 \approx 14{,}5$ dneva.
+3. Čas z difuzijo: $t_\mathrm{d} = (10^6)^2 / (2 \cdot 0{,}1) = 5 \cdot 10^{12}\,\mathrm{s}$, to je okoli $158\,000$ let.
 4. Zakaj tolikšna razlika: pri difuziji čas raste s *kvadratom* razdalje, pri usmerjenem gibanju le linearno.
 5. Odgovor: kinezin bi vezikel pripeljal v okoli dveh tednih, difuzija nikoli v življenju organizma. V živem nevronu je hitri aksonski transport še hitrejši, okoli $200$ do $400\,\mathrm{mm}$ na dan (več motorjev, ugodnejše razmere), torej nekaj dni.
 
 ### Primer 3 (težji): kinezin v optični pinceti
 
-V poskusu z optično pinceto je kroglica pritrjena na en kinezin. Past deluje kot vzmet s togostjo $0{,}05\,\mathrm{pN/nm}$. Kinezin vleče kroglico iz sredine pasti, dokler se pri odmiku $120\,\mathrm{nm}$ ne ustavi. (a) Kolikšna je sila zaustavitve? (b) Koliko dela opravi kinezin v enem koraku $8\,\mathrm{nm}$ tik pred zaustavitvijo? (c) Kolikšen je izkoristek, če hidroliza enega ATP v celici sprosti $50\,\mathrm{kJ/mol}$ proste entalpije? (d) Koliko je to v enotah $k_\mathrm{B} T$ pri $37\,^\circ\mathrm C$?
+V poskusu z optično pinceto je kroglica pritrjena na en kinezin. Past deluje kot vzmet s togostjo $0{,}05\,\mathrm{pN/nm}$. Kinezin vleče kroglico iz sredine pasti, dokler se pri odmiku $120\,\mathrm{nm}$ ne ustavi. (a) Kolikšna je sila zaustavitve? (b) Koliko dela opravi kinezin v enem koraku $8\,\mathrm{nm}$ tik pred zaustavitvijo? (c) Kolikšen je izkoristek, če hidroliza enega ATP v celici sprosti $50\,\mathrm{kJ/mol}$ proste entalpije? (d) Koliko je to v enotah $k_\mathrm{B} T$ pri $37\,^\circ\mathrm{C}$?
 
-**Podatki:** $k = 0{,}05\,\mathrm{pN/nm}$, $x = 120\,\mathrm{nm}$, $d = 8\,\mathrm{nm}$, $\Delta G = 50\,\mathrm{kJ/mol}$, $N_\mathrm{A} = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$, $k_\mathrm{B} = 1{,}381 \cdot 10^{-23}\,\mathrm{J/K}$, $T = 310{,}15\,\mathrm K$
+**Podatki:** $k = 0{,}05\,\mathrm{pN/nm}$, $x = 120\,\mathrm{nm}$, $d = 8\,\mathrm{nm}$, $\Delta G = 50\,\mathrm{kJ/mol}$, $N_\mathrm{A} = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$, $k_\mathrm{B} = 1{,}381 \cdot 10^{-23}\,\mathrm{J/K}$, $T = 310{,}15\,\mathrm{K}$
 **Iščemo:** silo $F$, delo $W$, izkoristek $\eta$, $\Delta G$ na molekulo v $k_\mathrm{B} T$
 
 :::formula
@@ -135,18 +135,18 @@ $F = k x$, $W = F d$, $\Delta G_1 = \dfrac{\Delta G}{N_\mathrm{A}}$, $\eta = \df
 **Rešitev:**
 
 1. Sila zaustavitve (Hookov zakon za past): $F = 0{,}05 \cdot 120 = 6\,\mathrm{pN}$.
-2. Delo v enem koraku proti tej sili: $W = 6\,\mathrm{pN} \cdot 8\,\mathrm{nm} = 48\,\mathrm{pN\,nm}$. Ker je $1\,\mathrm{pN\,nm} = 10^{-21}\,\mathrm J$, je $W = 4{,}8 \cdot 10^{-20}\,\mathrm J$.
-3. Prosta entalpija na *eno* molekulo ATP: $\Delta G_1 = 50\,000 / (6{,}022 \cdot 10^{23}) \approx 8{,}30 \cdot 10^{-20}\,\mathrm J$.
+2. Delo v enem koraku proti tej sili: $W = 6\,\mathrm{pN} \cdot 8\,\mathrm{nm} = 48\,\mathrm{pN\,nm}$. Ker je $1\,\mathrm{pN\,nm} = 10^{-21}\,\mathrm{J}$, je $W = 4{,}8 \cdot 10^{-20}\,\mathrm{J}$.
+3. Prosta entalpija na *eno* molekulo ATP: $\Delta G_1 = 50\,000 / (6{,}022 \cdot 10^{23}) \approx 8{,}30 \cdot 10^{-20}\,\mathrm{J}$.
 4. Izkoristek: $\eta = 4{,}8 / 8{,}30 \approx 0{,}578$, torej okoli $58\,\%$.
-5. Toplotna energija: $k_\mathrm{B} T = 1{,}381 \cdot 10^{-23} \cdot 310{,}15 \approx 4{,}28 \cdot 10^{-21}\,\mathrm J$, zato je $\Delta G_1 \approx 19\,k_\mathrm{B} T$.
+5. Toplotna energija: $k_\mathrm{B} T = 1{,}381 \cdot 10^{-23} \cdot 310{,}15 \approx 4{,}28 \cdot 10^{-21}\,\mathrm{J}$, zato je $\Delta G_1 \approx 19\,k_\mathrm{B} T$.
 6. Pomen: en korak porabi energijo, ki je le okoli dvajsetkrat večja od naključnih toplotnih sunkov; motor zato deluje v okolju močnega šuma in vsak korak »zaklene« hidroliza.
-7. Odgovor: (a) $6\,\mathrm{pN}$; (b) $4{,}8 \cdot 10^{-20}\,\mathrm J$; (c) okoli $58\,\%$; (d) okoli $19\,k_\mathrm{B} T$.
+7. Odgovor: (a) $6\,\mathrm{pN}$; (b) $4{,}8 \cdot 10^{-20}\,\mathrm{J}$; (c) okoli $58\,\%$; (d) okoli $19\,k_\mathrm{B} T$.
 
 ### Primer 4 – zdaj ti
 
-Sprednji rob lamelipodija se premika s hitrostjo $0{,}2\,\mu\mathrm m/\mathrm s$, ker na koncih plus aktinskih filamentov, obrnjenih proti membrani, dodajajo monomere. Vsak monomer filament podaljša za $2{,}75\,\mathrm{nm}$. Hitrostni konstanti na koncu plus sta $k_\mathrm{on} = 11{,}6\,\mu\mathrm M^{-1}\mathrm s^{-1}$ in $k_\mathrm{off} = 1{,}4\,\mathrm s^{-1}$. Kolikšna mora biti vsaj koncentracija prostega G-aktina?
+Sprednji rob lamelipodija se premika s hitrostjo $0{,}2\,\mu\mathrm{m}/\mathrm{s}$, ker na koncih plus aktinskih filamentov, obrnjenih proti membrani, dodajajo monomere. Vsak monomer filament podaljša za $2{,}75\,\mathrm{nm}$. Hitrostni konstanti na koncu plus sta $k_\mathrm{on} = 11{,}6\,\mu\mathrm{M}^{-1}\mathrm{s}^{-1}$ in $k_\mathrm{off} = 1{,}4\,\mathrm{s}^{-1}$. Kolikšna mora biti vsaj koncentracija prostega G-aktina?
 
-**Podatki:** $v = 0{,}2\,\mu\mathrm m/\mathrm s = 200\,\mathrm{nm/s}$, $\Delta l = 2{,}75\,\mathrm{nm}$, $k_\mathrm{on} = 11{,}6\,\mu\mathrm M^{-1}\mathrm s^{-1}$, $k_\mathrm{off} = 1{,}4\,\mathrm s^{-1}$
+**Podatki:** $v = 0{,}2\,\mu\mathrm{m}/\mathrm{s} = 200\,\mathrm{nm/s}$, $\Delta l = 2{,}75\,\mathrm{nm}$, $k_\mathrm{on} = 11{,}6\,\mu\mathrm{M}^{-1}\mathrm{s}^{-1}$, $k_\mathrm{off} = 1{,}4\,\mathrm{s}^{-1}$
 **Iščemo:** koncentracijo $c$
 
 :::formula
@@ -156,12 +156,12 @@ neto hitrost pritrjevanja $= k_\mathrm{on} c - k_\mathrm{off}$, $v = (k_\mathrm{
 **Rešitev:**
 
 1. Potrebna neto hitrost pritrjevanja: $200 / 2{,}75 \approx 72{,}7$ monomera na sekundo.
-2. Zapiši enačbo $k_\mathrm{on} c - k_\mathrm{off} = 72{,}7\,\mathrm s^{-1}$ in jo reši sam.
+2. Zapiši enačbo $k_\mathrm{on} c - k_\mathrm{off} = 72{,}7\,\mathrm{s}^{-1}$ in jo reši sam.
 
 :::premisli
 Kolikšen je $c$ in kaj pove primerjava s kritično koncentracijo $k_\mathrm{off}/k_\mathrm{on}$?
 ---
-$c = (72{,}7 + 1{,}4) / 11{,}6 \approx 6{,}4\,\mu\mathrm M$. Kritična koncentracija je le $1{,}4 / 11{,}6 \approx 0{,}12\,\mu\mathrm M$; za hitro gibanje mora celica imeti okoli petdesetkrat več prostega aktina, kot je potrebno za samo rast.
+$c = (72{,}7 + 1{,}4) / 11{,}6 \approx 6{,}4\,\mu\mathrm{M}$. Kritična koncentracija je le $1{,}4 / 11{,}6 \approx 0{,}12\,\mu\mathrm{M}$; za hitro gibanje mora celica imeti okoli petdesetkrat več prostega aktina, kot je potrebno za samo rast.
 :::
 
 ## Pogoste napake
@@ -193,16 +193,16 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Mikrotubul v poskusu raste s hitrostjo $1{,}2\,\mu\mathrm m/\mathrm{min}$ štiri minute, nato doživi katastrofo in razpada s hitrostjo $15\,\mu\mathrm m/\mathrm{min}$, dokler ne izgine. (a) Kolikšna je največja dolžina in koliko časa traja razpad? (b) Koliko dimerov se v povprečju pritrdi v sekundi med rastjo? (c) Koliko molekul GTP se med rastjo in razpadom tega mikrotubula hidrolizira, če vsak pritrjen dimer hidrolizira en GTP? (d) S kolikšno hitrostjo se dimeri sproščajo med razpadom?
+Mikrotubul v poskusu raste s hitrostjo $1{,}2\,\mu\mathrm{m}/\mathrm{min}$ štiri minute, nato doživi katastrofo in razpada s hitrostjo $15\,\mu\mathrm{m}/\mathrm{min}$, dokler ne izgine. (a) Kolikšna je največja dolžina in koliko časa traja razpad? (b) Koliko dimerov se v povprečju pritrdi v sekundi med rastjo? (c) Koliko molekul GTP se med rastjo in razpadom tega mikrotubula hidrolizira, če vsak pritrjen dimer hidrolizira en GTP? (d) S kolikšno hitrostjo se dimeri sproščajo med razpadom?
 
 **Rešitev:**
 
-1. (a) Dolžina: $L = 1{,}2 \cdot 4 = 4{,}8\,\mu\mathrm m$. Razpad: $4{,}8 / 15 = 0{,}32\,\mathrm{min} = 19{,}2\,\mathrm s$.
-2. (b) Hitrost rasti v nanometrih: $1{,}2\,\mu\mathrm m/\mathrm{min} = 1200 / 60 = 20\,\mathrm{nm/s}$. Na en protofilament je to $20 / 8 = 2{,}5$ dimera na sekundo, na $13$ protofilamentov $2{,}5 \cdot 13 = 32{,}5$ dimera na sekundo.
+1. (a) Dolžina: $L = 1{,}2 \cdot 4 = 4{,}8\,\mu\mathrm{m}$. Razpad: $4{,}8 / 15 = 0{,}32\,\mathrm{min} = 19{,}2\,\mathrm{s}$.
+2. (b) Hitrost rasti v nanometrih: $1{,}2\,\mu\mathrm{m}/\mathrm{min} = 1200 / 60 = 20\,\mathrm{nm/s}$. Na en protofilament je to $20 / 8 = 2{,}5$ dimera na sekundo, na $13$ protofilamentov $2{,}5 \cdot 13 = 32{,}5$ dimera na sekundo.
 3. (c) Mikrotubul ima $1625$ dimerov na mikrometer (Primer 1), torej $4{,}8 \cdot 1625 = 7800$ dimerov. Hidrolizira se $7800$ molekul GTP.
 4. (d) Sproščanje: $7800 / 19{,}2 \approx 406$ dimerov na sekundo, $12{,}5$-krat hitreje od pritrjevanja.
 5. Pomen: hitri razpad omogoči, da se vreteno v sekundah preuredi; energijo zanj je mikrotubul »shranil« v napetosti tubulina z GDP.
-6. Odgovor: (a) $4{,}8\,\mu\mathrm m$, $19{,}2\,\mathrm s$; (b) $32{,}5$ dimera na sekundo; (c) $7800$; (d) okoli $406$ na sekundo.
+6. Odgovor: (a) $4{,}8\,\mu\mathrm{m}$, $19{,}2\,\mathrm{s}$; (b) $32{,}5$ dimera na sekundo; (c) $7800$; (d) okoli $406$ na sekundo.
 
 ### Naloga 2
 
@@ -226,13 +226,13 @@ Utemelji, zakaj so aktinski filamenti in mikrotubuli polarni, intermediarni fila
 
 ## Drugače: Korak za korakom s številkami
 
-Tekoči trak izračunajmo s podatki za aktin z ATP: konec plus $k_\mathrm{on} = 11{,}6\,\mu\mathrm M^{-1}\mathrm s^{-1}$, $k_\mathrm{off} = 1{,}4\,\mathrm s^{-1}$; konec minus $k_\mathrm{on} = 1{,}3\,\mu\mathrm M^{-1}\mathrm s^{-1}$, $k_\mathrm{off} = 0{,}8\,\mathrm s^{-1}$.
+Tekoči trak izračunajmo s podatki za aktin z ATP: konec plus $k_\mathrm{on} = 11{,}6\,\mu\mathrm{M}^{-1}\mathrm{s}^{-1}$, $k_\mathrm{off} = 1{,}4\,\mathrm{s}^{-1}$; konec minus $k_\mathrm{on} = 1{,}3\,\mu\mathrm{M}^{-1}\mathrm{s}^{-1}$, $k_\mathrm{off} = 0{,}8\,\mathrm{s}^{-1}$.
 
-1. Kritični koncentraciji: konec plus $1{,}4 / 11{,}6 \approx 0{,}12\,\mu\mathrm M$, konec minus $0{,}8 / 1{,}3 \approx 0{,}62\,\mu\mathrm M$.
-2. Pri $c = 0{,}3\,\mu\mathrm M$ na koncu plus: $11{,}6 \cdot 0{,}3 - 1{,}4 = 2{,}08$ monomera na sekundo pritrjenih.
+1. Kritični koncentraciji: konec plus $1{,}4 / 11{,}6 \approx 0{,}12\,\mu\mathrm{M}$, konec minus $0{,}8 / 1{,}3 \approx 0{,}62\,\mu\mathrm{M}$.
+2. Pri $c = 0{,}3\,\mu\mathrm{M}$ na koncu plus: $11{,}6 \cdot 0{,}3 - 1{,}4 = 2{,}08$ monomera na sekundo pritrjenih.
 3. Na koncu minus: $1{,}3 \cdot 0{,}3 - 0{,}8 = -0{,}41$, torej odpade $0{,}41$ monomera na sekundo.
 4. Filament se neto daljša za $2{,}08 - 0{,}41 = 1{,}67$ monomera na sekundo, hkrati pa »teče« naprej.
-5. Stacionarno stanje (dolžina stalna) da enačbo $11{,}6c - 1{,}4 = 0{,}8 - 1{,}3c$, torej $12{,}9c = 2{,}2$ in $c \approx 0{,}171\,\mu\mathrm M$.
+5. Stacionarno stanje (dolžina stalna) da enačbo $11{,}6c - 1{,}4 = 0{,}8 - 1{,}3c$, torej $12{,}9c = 2{,}2$ in $c \approx 0{,}171\,\mu\mathrm{M}$.
 6. Tedaj se na koncu plus pritrdi in na koncu minus odpade po $0{,}578$ monomera na sekundo; filament se pomika s hitrostjo $0{,}578 \cdot 2{,}75 \approx 1{,}6\,\mathrm{nm/s}$, ne da bi se spremenila njegova dolžina.
 
 V celici je tekoči trak veliko hitrejši, ker beljakovine (profilin, kofilin) pospešijo pritrjevanje in razgradnjo.
@@ -256,14 +256,14 @@ Bazalno telesce na dnu migetalke je enaka ura, le da je na vsaki številki troj�
 > Miozin II hodi po aktinskih filamentih (mišično krčenje, citokineza), ne po mikrotubulih.
 
 ? Mikrotubul ima $13$ protofilamentov, dimer je dolg $8\,\mathrm{nm}$. Za koliko se podaljša, ko se nanj pritrdi $650$ dimerov?
-- $5{,}2\,\mu\mathrm m$
+- $5{,}2\,\mu\mathrm{m}$
 ~ To je $650 \cdot 8\,\mathrm{nm}$: dimeri so razporejeni po $13$ protofilamentih, ne v enem.
-+ $0{,}4\,\mu\mathrm m$
-- $67{,}6\,\mu\mathrm m$
++ $0{,}4\,\mu\mathrm{m}$
+- $67{,}6\,\mu\mathrm{m}$
 ~ To je $650 \cdot 13 \cdot 8\,\mathrm{nm}$: s $13$ je množeno namesto deljeno. Protofilamenti rastejo vzporedno, zato si $650$ dimerov razdeli $13$ protofilamentov.
-- $4\,\mu\mathrm m$
-~ Pretvorba enot je napačna: $400\,\mathrm{nm}$ je deljeno s $100$. Ker je $1\,\mu\mathrm m = 1000\,\mathrm{nm}$, je $400\,\mathrm{nm} = 0{,}4\,\mu\mathrm m$.
-> $650 / 13 = 50$ dimerov na protofilament, $50 \cdot 8\,\mathrm{nm} = 400\,\mathrm{nm} = 0{,}4\,\mu\mathrm m$.
+- $4\,\mu\mathrm{m}$
+~ Pretvorba enot je napačna: $400\,\mathrm{nm}$ je deljeno s $100$. Ker je $1\,\mu\mathrm{m} = 1000\,\mathrm{nm}$, je $400\,\mathrm{nm} = 0{,}4\,\mu\mathrm{m}$.
+> $650 / 13 = 50$ dimerov na protofilament, $50 \cdot 8\,\mathrm{nm} = 400\,\mathrm{nm} = 0{,}4\,\mu\mathrm{m}$.
 
 ? Paklitaksel stabilizira mikrotubule, da ne razpadajo. Kaj je posledica v rakavih celicah?
 - Celice se delijo hitreje, ker imajo več mikrotubulov.
@@ -275,15 +275,15 @@ Bazalno telesce na dnu migetalke je enaka ura, le da je na vsaki številki troj�
 ~ Miozin hodi po aktinu; paklitaksel cilja na tubulin.
 > Brez dinamične nestabilnosti vreteno ne ujame in ne potegne kromosomov; celica obstane v metafazi.
 
-? Študent računa izkoristek kinezina: »1. $F = 0{,}05 \cdot 120 = 6\,\mathrm{pN}$. 2. $W = 6\,\mathrm{pN} \cdot 8\,\mathrm{nm} = 4{,}8 \cdot 10^{-20}\,\mathrm J$. 3. ATP da $50\,\mathrm{kJ} = 5 \cdot 10^4\,\mathrm J$. 4. $\eta \approx 10^{-24}$, kinezin je skoraj neuporaben.« Kateri korak je napačen?
+? Študent računa izkoristek kinezina: »1. $F = 0{,}05 \cdot 120 = 6\,\mathrm{pN}$. 2. $W = 6\,\mathrm{pN} \cdot 8\,\mathrm{nm} = 4{,}8 \cdot 10^{-20}\,\mathrm{J}$. 3. ATP da $50\,\mathrm{kJ} = 5 \cdot 10^4\,\mathrm{J}$. 4. $\eta \approx 10^{-24}$, kinezin je skoraj neuporaben.« Kateri korak je napačen?
 - korak 1
 ~ Sila pasti je res $kx = 6\,\mathrm{pN}$.
 - korak 2
-~ Delo $48\,\mathrm{pN\,nm} = 4{,}8 \cdot 10^{-20}\,\mathrm J$ je izračunano pravilno.
+~ Delo $48\,\mathrm{pN\,nm} = 4{,}8 \cdot 10^{-20}\,\mathrm{J}$ je izračunano pravilno.
 + korak 3
 - korak 4
 ~ Korak 4 je le posledica napake prej; pri pravem $\Delta G$ da okoli $58\,\%$.
-> $50\,\mathrm{kJ}$ velja za mol ATP; ena molekula da $8{,}3 \cdot 10^{-20}\,\mathrm J$, izkoristek je okoli $58\,\%$.
+> $50\,\mathrm{kJ}$ velja za mol ATP; ena molekula da $8{,}3 \cdot 10^{-20}\,\mathrm{J}$, izkoristek je okoli $58\,\%$.
 
 ? Bolnik ima od otroštva kronični sinusitis in bronhitis, srce na desni strani, njegovi spermiji pa se ne gibljejo. Kje je najverjetneje napaka?
 + v dineinskih ročicah aksoneme migetalk in bičkov

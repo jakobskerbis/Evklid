@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -178,7 +178,7 @@ $t_0 = \frac{2\pi \cdot 1{,}673 \cdot 10^{-27}}{1{,}602 \cdot 10^{-19} \cdot 0{,
 - **»Sila kaže vzdolž silnic.«** Tako je pri električnem polju, ne pri magnetnem. Magnetna sila je pravokotna na $\vec B$ in na $\vec v$. Kdor riše silo vzdolž silnic, dobi napačno smer odklona.
 - **»Magnetno polje delec pospeši.«** Ker je sila pravokotna na hitrost, ne opravi dela. Spremeni se smer hitrosti, velikost ne. Hitrost v nalogi vedno dobiš iz napetosti ali je dana.
 - **Pozabljen predznak naboja.** Desna roka da smer sile na pozitiven naboj. Elektron zavije na drugo stran. Iz smeri ukrivljenja zato sklepaš na predznak naboja.
-- **»Hitrejši delec hitreje obkroži.«** Večja hitrost pomeni večji krog, obhodni čas $t_0 = \frac{2\pi m}{qB}$ pa ostane enak.
+- **»Hitrejši delec hitreje opravi obhod.«** Večja hitrost pomeni večji krog, obhodni čas $t_0 = \frac{2\pi m}{qB}$ pa ostane enak.
 - **Cela hitrost namesto komponente.** Pri poševnem vstopu v polmer vstaviš $v_\perp = v\sin\alpha$, kjer je $\alpha$ kot do silnic. Kosinus da komponento vzdolž polja, ki kroženju ne prispeva ničesar.
 
 ## Povzetek

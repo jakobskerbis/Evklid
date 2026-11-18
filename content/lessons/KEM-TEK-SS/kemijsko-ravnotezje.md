@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -157,7 +157,7 @@ $$K = \frac{[\mathrm{HbCO}]\,p(\mathrm{O_2})}{[\mathrm{HbO_2}]\,p(\mathrm{CO})} 
 
 Človek dalj časa diha zrak, v katerem je v pljučnih mešičkih $p(\mathrm{O_2}) = 14\,\mathrm{kPa}$ in $p(\mathrm{CO}) = 0{,}010\,\mathrm{kPa}$. Kolikšen delež hemoglobina, ki nosi plin, je vezan s CO?
 
-**Podatki:** $K = 230$, $p(\mathrm{O_2}) = 14\,\mathrm{kPa}$, $p(\mathrm{CO}) = 0{,}010\,\mathrm{kPa}$; hemoglobin je vezan ali s $\mathrm{O_2}$ ali s CO
+**Podatki:** $K = 230$, $p(\mathrm{O_2}) = 14\,\mathrm{kPa}$, $p(\mathrm{CO}) = 0{,}010\,\mathrm{kPa}$; hemoglobin je vezan ali z $\mathrm{O_2}$ ali s CO
 **Iščemo:** delež $\dfrac{[\mathrm{HbCO}]}{[\mathrm{HbCO}] + [\mathrm{HbO_2}]}$
 
 :::formula

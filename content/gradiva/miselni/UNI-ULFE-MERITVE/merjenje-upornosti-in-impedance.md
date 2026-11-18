@@ -7,10 +7,10 @@ stanje: osnutek
   - napaka zaradi $R_A$ in $R_V$
 - Vezava A
   - voltmeter neposredno na merjencu
-  - $R_x = \dfrac{U}{I - U/R_V}$, rezultat premajhen
+  - $R_x = \dfrac{U}{I - U/R_V}$, $R_m$ premajhna
 - Vezava B
   - ampermeter neposredno v veji merjenca
-  - $R_x = \dfrac{U}{I} - R_A$, rezultat prevelik
+  - $R_x = \dfrac{U}{I} - R_A$, $R_m$ prevelika
 - Izbira vezave
   - mejna upornost $R_g = \sqrt{R_A R_V}$
   - pod $R_g$ vezava A, nad njo B

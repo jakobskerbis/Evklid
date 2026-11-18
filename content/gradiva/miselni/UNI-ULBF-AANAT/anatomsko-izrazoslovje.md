@@ -23,7 +23,7 @@ stanje: osnutek
   - prepona; trebušna in medenična brez stene
 - Serozne mrene
   - parietalni list na steni, visceralni na organu
-  - popljučnica, osrčnik, potrebušnica
+  - plevra, osrčnik, potrebušnica
 - Kvadranti trebuha
   - mediana in transverzalna ravnina skozi popek
   - vranica: levi zgornji kvadrant

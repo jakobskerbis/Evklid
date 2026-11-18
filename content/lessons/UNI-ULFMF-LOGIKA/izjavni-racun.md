@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -363,7 +363,7 @@ Preveri distributivni zakon $p \wedge (q \vee r) \sim (p \wedge q) \vee (p \wedg
 A_1, A_2, A_n | predpostavke (premise) sklepa
 A | izjavna formula
 B | izjavna formula | | | v sklepu zaključek
-n | število izjavnih spremenljivk | | | tabela ima 2ⁿ vrstic
+n | število izjavnih spremenljivk | | | tabela ima 2ⁿ vrstic; v Primeru 3 je $n$ izjava »raztopina je nevtralna«
 X, Y | izjavi v implikaciji X ⇒ Y | | | 1 resnično, 0 neresnično
 F | izjavna formula, ki jo preverjamo
 p, q | izjavni spremenljivki

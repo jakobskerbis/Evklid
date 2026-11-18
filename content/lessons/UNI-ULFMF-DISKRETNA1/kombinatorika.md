@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -36,7 +36,7 @@ Ali je več trizvokov ali štirizvokov iz sedmih tonov? Napovej, nato preveri.
 Enako, $35$. Izbrati $4$ tone, ki zazvenijo, je isto kot izbrati $3$ tone, ki ostanejo tiho: $\binom{7}{4} = \binom{7}{3}$. Splošno $\binom{n}{k} = \binom{n}{n-k}$.
 :::
 
-**4. Pascalov trikotnik in ritmi.** Takt ima $4$ dobe, na vsaki je udarec ali premor. Ritmov z natanko $k$ udarci je $\binom{4}{k}$: izberemo, na katerih dobah so udarci. Zapiši te številke za takte z $0, 1, 2, 3, 4$ dobami v trikotnik:
+**4. Pascalov trikotnik in ritmi.** Takt ima $4$ dobe, na vsaki je udarec ali premor. Ritmov z natanko $k$ udarci je $\binom{4}{k}$: izberemo, na katerih dobah so udarci. Zapiši ta števila za takte z $0, 1, 2, 3, 4$ dobami v trikotnik:
 
 :::risba skica
 opis: Pascalov trikotnik s petimi vrsticami. Vrstice od zgoraj navzdol: 1; 1, 1; 1, 2, 1; 1, 3, 3, 1; 1, 4, 6, 4, 1. Vsako število stoji pod sredino med dvema številoma nad njim in je njuna vsota.

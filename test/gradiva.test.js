@@ -56,7 +56,7 @@ test("z/s before numbers and letters follows Slovenian spelling", () => {
 test("povzetek na eni strani bere stanje lekcije iz glave (stanje: …)", () => {
   // Prej je bral neobstoječe polje in opombo »še pregleduje učitelj« kazal tudi pri pregledanih lekcijah.
   assert.equal(summaryParts("MAT-SS-4/statistika").status, "preverjeno");
-  assert.equal(summaryParts(OHM).status, "osnutek");
+  assert.equal(summaryParts(OHM).status, "preverjeno"); // od 18. 11. 2026 ni nobena lekcija več osnutek
 });
 
 test("one-page summary: mind map from the lesson summary, mistakes and formulas", () => {

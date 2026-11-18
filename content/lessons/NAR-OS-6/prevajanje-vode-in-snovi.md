@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -68,7 +68,7 @@ Deluje kot pitje po slamici: vlečeš na vrhu, voda se dvigne od spodaj. Pri ras
 
 **6. Hlajenje.** Za izhlapevanje je potrebna toplota, ki jo voda vzame listu. Kot znoj ohladi igralca, transpiracija ohladi list. Zato je pod krošnjo drevesa hladneje kot pod platnenim sončnikom.
 
-V simulaciji spodaj »Pot vode skozi rastlino« postavi postaje v pravi vrstni red. Opazuj, kje voda vstopi v rastlino, kateri del jo prevaja in kje jo zapusti.
+V simulaciji spodaj »Pot vode skozi rastlino« pri vsaki trditvi izberi, ali voda vstopa, potuje ali izhaja. Opazuj, kje voda vstopi v rastlino, kateri del jo prevaja in kje jo zapusti.
 
 :::premisli
 V vročem, suhem popoldnevu rastlina zapre listne reže. Zakaj ji to pomaga in kaj jo to stane?
@@ -193,11 +193,11 @@ Tako izmeriš transpiracijo doma:
 6. zrak (vodna para)
 > Koreninski laski vodo vsrkajo, les jo prevaja navzgor do listnih žil, skozi listne reže pa izhlapi v zrak.
 
-? Kaj se zgodi, če vsem listom sončnice z vazelinom namažemo spodnjo stran?
+? Kaj se zgodi, če vsem listom fižola z vazelinom namažemo spodnjo stran?
 - Nič, korenina še naprej enako hitro potiska vodo navzgor.
 ~ Korenina ni glavna črpalka. Vodo vleče izhlapevanje v listih; če voda ne more izhlapeti, se tok upočasni.
 + Rastlina vsrka precej manj vode, ker večina listnih rež ne more oddajati vodne pare.
-- Voda bo enako hitro izhlapevala skozi zgornjo stran listov.
+- Rastlina bo oddala enako veliko vode, le da skozi zgornjo stran listov.
 ~ Na zgornji strani je rež malo. V primeru 2 je skozi njo izhlapelo osemkrat manj vode.
 - Rastlina vsrka več vode, da nadomesti zamašene reže.
 ~ Rastlina ne more vsrkati več, če voda zgoraj nima kam oditi. Vleka od zgoraj je manj, zato je vsrkavanja manj.

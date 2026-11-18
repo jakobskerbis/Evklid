@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -194,7 +194,7 @@ Glukoza se pri puščicah navzdol vrne v kri vsa. Zato je zdrav seč brez glukoz
 
 ## Drugače: Iz vsakdanjega življenja
 
-Pomisli na pospravljanje kuhinjskega predala, v katerem se je nabralo vsega. Najhitreje gre tako, da ves predal strešeš na mizo. To je precejanje: na mizo pride vse, dobro in slabo.
+Pomisli na pospravljanje kuhinjskega predala, v katerem se je nabralo vsega. Najhitreje gre tako, da ves predal streseš na mizo. To je precejanje: na mizo pride vse, dobro in slabo.
 
 Nato po vrsti vračaš v predal, kar še rabiš: žlice, odpirač, škarje. To je vsrkavanje nazaj. Na mizi ostanejo stari računi in polomljena vžigalica, ki gredo v smeti. To je končni seč.
 

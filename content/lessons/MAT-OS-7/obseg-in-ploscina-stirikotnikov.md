@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -147,7 +147,7 @@ $v = 96 : 10 = 9{,}6\,\text{m}$. Odgovor: led pokriva $96\,\text{m}^2$, višina 
 - **Stranica namesto višine.** Kot Tilen: pri paralelogramu ali rombu množiš sosednji stranici. Tako dobiš ploščino pravokotnika, ki je večja. Vstavi višino, ki je pravokotna na osnovnico.
 - **Enak obseg, »torej« enaka ploščina.** Paralelogram iz istih palčk ima pri različnih kotih različno ploščino. Obseg in ploščina sta različni količini in ju računaš posebej.
 - **Brez deljenja z $2$ ali z deljenjem tam, kjer ga ni.** Pri trapezu, rombu (z diagonalama) in deltoidu je v formuli deljenje z $2$. Pri paralelogramu ga ni, $S = a \cdot v_a$. Deljenje z $2$ pri paralelogramu je zamenjava s formulo za trikotnik.
-- **Osnovnici zmnožiš namesto seštevaš.** Pri trapezu je v števcu $(a + c) \cdot v$, ne $a \cdot c \cdot v$.
+- **Osnovnici zmnožiš, namesto da bi ju seštel.** Pri trapezu je v števcu $(a + c) \cdot v$, ne $a \cdot c \cdot v$.
 - **Diagonale ali višine v obsegu.** Obseg je samo rob lika. Diagonala in višina sta znotraj lika.
 
 ## Povzetek

@@ -24,4 +24,4 @@ stanje: osnutek
 - Spust z ostanki
   - kvadrat pri deljenju s $3$: ostanek $0$ ali $1$
   - $x^2 + y^2 = 3z^2$ nima pozitivnih rešitev
-  - napaka: rešitev $0, 0, 0$ ne pada
+  - pazi: rešitev $0, 0, 0$ ne pada
