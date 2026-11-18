@@ -630,7 +630,8 @@ def rounded_operands_ok(e, expr, claimed):
         return False
     base = decimals_tol(claimed)
     if base is None:
-        if not float(cv.real).is_integer():
+        # kot same_value: zaokrožitev na celo le pri |vrednost| ≥ 10 (pregled #835: »2*3.1416 | 6« ni zaokrožitev)
+        if not float(cv.real).is_integer() or abs(ev) < 10:
             return False
         base = 0.5
     slack = operand_rounding(expr)

@@ -181,6 +181,12 @@ test("lesson-math: bajt in bit (meritev SŠ 18. 11.: lažen popravek »2 MB ni 1
     "2\\ \\mathrm{KiB} = 2 \\cdot 1024 \\cdot 8 = 16\\,384\\ \\mathrm{bit}",
     "5\\ \\mathrm{MB} = 5 \\cdot 8 = 40\\ \\mathrm{Mbit}",
     "4\\ \\mathrm{GB} = 4 \\cdot 1024 = 4096\\ \\mathrm{MB}",
+    // ponovni pregled #835: natančen količnik, tudi med predponami
+    "1\\ \\mathrm{Gbit/s} = 1000/8 = 125\\ \\mathrm{MB/s}",
+    "24\\ \\mathrm{kbit} = 24\\,000/8 = 3000\\ \\mathrm{B}",
+    "8\\ \\mathrm{Mbit/s} = 8 \\cdot 10^6/8 = 10^6\\ \\mathrm{B/s}",
+    "1\\ \\mathrm{GiB} = 1024 \\cdot 1024 \\cdot 1024 = 1\\,073\\,741\\,824\\ \\mathrm{B}",
+    "3\\ \\mathrm{kg} = 3 \\cdot 1000 = 3000\\ \\mathrm{g}",
   ];
   for (const t of good) assert.equal(one(t).mismatches.length, 0, t);
   // Količnik 8 in 1,024 samo na koraku od enote podatkov k pretvorbi in v pravi smeri; koraki do rezultata strogo.
@@ -195,6 +201,15 @@ test("lesson-math: bajt in bit (meritev SŠ 18. 11.: lažen popravek »2 MB ni 1
     "10\\ \\mathrm{GB} = 10 \\cdot 1000 = 10240\\ \\mathrm{MB}",
     "16\\ \\mathrm{bit} = 16 \\cdot 8 = 128\\ \\mathrm{B}",
     "5\\ \\mathrm{kg} = 5 \\cdot 8 = 40\\ \\mathrm{N}",
+    // ponovni pregled #835: napačna potenca 10 v pretvorbi ali v rezultatu, napačna smer
+    "2\\ \\mathrm{MB} = 2 \\cdot 10^5 \\cdot 8 = 1{,}6 \\cdot 10^6\\ \\mathrm{bit}",
+    "2\\ \\mathrm{MB} = 2 \\cdot 10^6 \\cdot 80 = 1{,}6 \\cdot 10^8\\ \\mathrm{bit}",
+    "100\\ \\mathrm{Mbit/s} = 100/80 = 1{,}25\\ \\mathrm{MB/s}",
+    "2\\ \\mathrm{MB} = 2 \\cdot 10^6 \\cdot 8 = 1{,}6 \\cdot 10^6\\ \\mathrm{bit}",
+    "100\\ \\mathrm{Mbit/s} = 100/8 = 1{,}25",
+    "100\\ \\mathrm{Mbit/s} = 100/8 = 125\\ \\mathrm{MB/s}",
+    "100\\ \\mathrm{Mbit/s} = 100 \\cdot 8 = 800\\ \\mathrm{MB/s}",
+    "40\\ \\mathrm{Mbit} = 40 \\cdot 8 = 320\\ \\mathrm{MB}",
   ];
   for (const t of bad) assert.equal(one(t).mismatches.length, 1, t);
 });

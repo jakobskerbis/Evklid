@@ -1057,7 +1057,7 @@ Also check, as strictly as the calculations:
 - the plan and every intermediate equation: relations in the right direction (»a divides b« is not »b divides a«) and every written equality true (a rounded value written with = is fine);
 - every explanation of why something happens: it must give the textbook cause, not only a feature that merely goes with it;
 - every experiment plan: the group counts add up (every combination of conditions has the same number of repeats);
-- every statement about what the task says must match the task (do not judge claims about a textbook you cannot see), and every warning must be unambiguous (a sentence that, read literally, rejects the correct formula is an error).
+- every statement about what the task says must match the task (a claim about what the student's textbook says that is not quoted in the question is an error), and every warning must be unambiguous (a sentence that, read literally, rejects the correct formula is an error).
 A textbook rule of the student's level that is applied where it holds is not an error just because it omits rare exceptions; a rule applied where it does not hold is an error, and so is an empirical rule (biology, chemistry, physics) stated for all cases that is false for common cases at the student's level or that generalises the single case of the task. A correct general textbook rule (»metals conduct electricity«), a definition or a mathematical theorem needs no added conditions. In the reason, quote only the wrong words (at most about ten) and then give the correct fact in a few words.
 Reply with exactly one line: OK, or NAPAKA: <short reason>.`;
 

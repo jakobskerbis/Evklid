@@ -538,7 +538,7 @@ test("live check (meritev SŠ 18. 11. po #833): review catches generalisations, 
   assert.match(LIVE_REVIEW_SYSTEM, /describes a flawed experiment or a wrong claim on purpose and asks the student to find the flaw is fine/);
   assert.match(LIVE_REVIEW_SYSTEM, /every experiment plan: the group counts add up/);
   // KEM-SS-2/sibke-kisline-in-baze, FIZ-SS-3/elektromagnetno-valovanje
-  assert.match(LIVE_REVIEW_SYSTEM, /what the task says must match the task \(do not judge claims about a textbook you cannot see\), and every warning must be unambiguous/);
+  assert.match(LIVE_REVIEW_SYSTEM, /what the task says must match the task \(a claim about what the student's textbook says that is not quoted in the question is an error\), and every warning must be unambiguous/);
   assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.$/);
   // BIO-SS-4/molekularna-genetika, KEM-SS-3: popravek ob pravilni pretvorbi ali zaokroženem vmesnem rezultatu.
   let system = "";
