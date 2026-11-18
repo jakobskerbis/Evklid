@@ -124,7 +124,7 @@ async function deletedThenPays({ client, store, stripe, hook }, order) {
   const a = client();
   const A = await registerVerified(a, stripe, "a@b511.si");
   store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(A.id);
-  assert.equal((await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } })).status, 200);
+  assert.equal((await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true } })).status, 200);
   const cusA = store.db.prepare("SELECT stripe_customer_id AS c FROM parents WHERE id = ?").get(A.id).c;
   assert.equal((await a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
   const b = client();
@@ -242,7 +242,7 @@ test("B511-5: vračilo in spor pri plačilu izbrisanega A ne vplivata na B; pri 
 
 test("B511-6a: dokup pogovorov z istim id računa IN istim id nakupa: A plača, B dobi kredit", async () => {
   await withServer(async ({ client, store, stripe, hook }) => {
-    const consent = { adult: true, withdrawal: true };
+    const consent = { adult: true, withdrawal: true, terms: true };
     const a = client();
     const A = await registerVerified(a, stripe, "ka@b511.si");
     assert.equal((await a("/api/billing/credit", { method: "POST", body: { pack: "k20", ...consent } })).status, 200);

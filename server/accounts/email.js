@@ -248,3 +248,39 @@ export function ownerCodeEmail(code) {
     html: layout("Koda za potrditev", `<p>Vaša koda za potrditev v Evklidu:</p><p style="font-size:28px;font-weight:bold;letter-spacing:4px">${esc(code)}</p><p style="font-size:13px;color:#5f6779">Velja 10 minut. Če je niste zahtevali, sporočilo prezrite.</p>`),
   };
 }
+
+// Potrdilo o nakupu (trajni nosilec, ZVPot-1; #765 točka 3, j 2026-11-17): kaj je kupljeno, cena (pri preizkusu še
+// prvo plačilo), potrditve, ki jih je plačnik označil (tudi izjava o odstopu), različica pogojev in kako odstopi
+// (withdrawal: kaj vrnemo po vrsti nakupa, server/accounts/potrdilo.js withdrawalNote). Vikanje (plačnik je odrasel).
+export function purchaseEmail({ item, paidText, firstCharge = "", dateText, statements = [], lang = "sl", termsUrl, termsVersion, withdrawUrl, contact, withdrawal = "", appUrl }) {
+  const n = BRAND.name;
+  const list = statements.map((s) => `<li>${esc(s)}</li>`).join("");
+  const translated = lang && lang !== "sl" ? `V aplikaciji ste potrditve brali v prevodu (jezik: ${lang}); tu je slovensko besedilo, ki smo ga shranili.` : "";
+  const how = `V 14 dneh od nakupa lahko od pogodbe odstopite brez navedbe razloga. Pošljite jasno izjavo na ${contact}; uporabite lahko obrazec za odstop: ${withdrawUrl}.`;
+  return {
+    subject: `${n}: potrdilo o nakupu`,
+    html: layout(
+      "Potrdilo o nakupu",
+      `<p>Hvala za nakup. To sporočilo shranite: je vaše potrdilo o sklenjeni pogodbi.</p>
+<p><b>Kupljeno:</b> ${esc(item)}<br><b>Plačano ob nakupu:</b> ${esc(paidText)}${firstCharge ? `<br><b>Prvo plačilo:</b> ${esc(firstCharge)}` : ""}<br><b>Datum:</b> ${esc(dateText)}</p>
+<p><b>Pred plačilom ste potrdili:</b></p><ul>${list}</ul>${translated ? `<p>${esc(translated)}</p>` : ""}
+<p><b>Splošni pogoji uporabe</b>, različica ${esc(termsVersion)}: <a href="${esc(termsUrl)}">${esc(termsUrl)}</a></p>
+<p><b>Odstop od pogodbe.</b> V 14 dneh od nakupa lahko od pogodbe odstopite brez navedbe razloga. Pošljite jasno izjavo na <a href="mailto:${esc(contact)}">${esc(contact)}</a>; uporabite lahko <a href="${esc(withdrawUrl)}">obrazec za odstop</a>.${withdrawal ? ` ${esc(withdrawal)}` : ""}</p>
+<p>Račune najdete v zavihku Račun (»Upravljaj naročnino in račune«).</p>${button(appUrl, `Odprite ${n}`)}`,
+    ),
+    text: [
+      "Potrdilo o nakupu",
+      "Hvala za nakup. To sporočilo shranite: je vaše potrdilo o sklenjeni pogodbi.",
+      `Kupljeno: ${item}`,
+      `Plačano ob nakupu: ${paidText}`,
+      ...(firstCharge ? [`Prvo plačilo: ${firstCharge}`] : []),
+      `Datum: ${dateText}`,
+      "Pred plačilom ste potrdili:",
+      ...statements.map((s) => `- ${s}`),
+      ...(translated ? [translated] : []),
+      `Splošni pogoji uporabe, različica ${termsVersion}: ${termsUrl}`,
+      `Odstop od pogodbe: ${how}${withdrawal ? ` ${withdrawal}` : ""}`,
+      `Račune najdete v zavihku Račun (»Upravljaj naročnino in račune«): ${appUrl}`,
+    ].join("\n"),
+  };
+}

@@ -174,7 +174,7 @@ test("free tier limits tutor questions; subscription via webhook lifts it", asyn
       assert.equal(blocked.body.hint, undefined);
 
       // Plačilo: checkout s pravilno ceno.
-      const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "year", adult: true, withdrawal: true } });
+      const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "year", adult: true, withdrawal: true, terms: true } });
       assert.equal(co.body.url, "https://checkout.stripe.test/cs_1");
       const session = calls.find((c) => c.path === "/v1/checkout/sessions");
       assert.equal(session.body["line_items[0][price]"], "price_evklid_1_year");
@@ -207,7 +207,7 @@ test("free tier limits tutor questions; subscription via webhook lifts it", asyn
       assert.equal(acc.parent.subscription.plan, "evklid_1_year");
       assert.equal(acc.parent.subscription.period_end, "2030-01-01T00:00:00.000Z");
       assert.equal((await ask("tretje")).status, 200);
-      assert.equal((await a("/api/billing/checkout", { method: "POST", body: { seats: 2, interval: "month", adult: true, withdrawal: true } })).status, 409);
+      assert.equal((await a("/api/billing/checkout", { method: "POST", body: { seats: 2, interval: "month", adult: true, withdrawal: true, terms: true } })).status, 409);
 
       const portal = await a("/api/billing/portal", { method: "POST" });
       assert.equal(portal.body.url, "https://billing.stripe.test/p");
@@ -334,7 +334,7 @@ test("checkout carries remaining app trial into Stripe", async () => {
   await withServer(async ({ client, calls }) => {
     const a = client();
     await registerVerified(a, calls, "dani@primer.si");
-    await a("/api/billing/checkout", { method: "POST", body: { seats: 2, interval: "month", adult: true, withdrawal: true } });
+    await a("/api/billing/checkout", { method: "POST", body: { seats: 2, interval: "month", adult: true, withdrawal: true, terms: true } });
     const session = calls.find((c) => c.path === "/v1/checkout/sessions");
     assert.equal(session.body["line_items[0][price]"], "price_evklid_druzina_month", "Družina namesto »2 otroka«");
     const days = (Number(session.body["subscription_data[trial_end]"]) * 1000 - Date.now()) / 86400000;
@@ -349,7 +349,7 @@ test("referral: both parents get a free month after the first payment", async ()
     const b = client();
     const reg = await b("/api/auth/register", { method: "POST", body: { email: "fran@primer.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT, referral_code: ref.referral_code.toLowerCase() } });
     assert.equal(reg.body.referred, true);
-    await b("/api/billing/checkout", { method: "POST", body: { seats: 2, interval: "month", adult: true, withdrawal: true } });
+    await b("/api/billing/checkout", { method: "POST", body: { seats: 2, interval: "month", adult: true, withdrawal: true, terms: true } });
     const customer = store.db.prepare("SELECT stripe_customer_id FROM parents WHERE email = 'fran@primer.si'").get().stripe_customer_id;
 
     const send = (status) => {
@@ -855,7 +855,7 @@ test("aktivacijska koda: poln dostop za prve N računov, enkrat na račun", asyn
 
     // Preostanek kode se prenese v Stripe, da starš ne plača, dokler koda velja.
     store.db.prepare("UPDATE parents SET email_verified_at = datetime('now') WHERE email = ?").run("a@kod.si");
-    await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } });
+    await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true } });
     const session = calls.find((x) => x.path === "/v1/checkout/sessions");
     const left = (Number(session.body["subscription_data[trial_end]"]) * 1000 - Date.now()) / 86400000;
     assert.ok(left > 364, String(left));
@@ -1199,7 +1199,7 @@ test("guest: logging into an existing account moves the guest profile when there
     assert.equal(full.body.guest_conflict, true);
     assert.equal((await b("/api/students")).body.length, 1);
     // Gost ne more do plačil ali aktivacijske kode.
-    assert.equal((await b("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } })).status, 403);
+    assert.equal((await b("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true } })).status, 403);
     assert.equal((await b("/api/account/promo", { method: "POST", body: { code: "EVKLID100" } })).status, 403);
   });
 });

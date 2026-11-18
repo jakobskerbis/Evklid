@@ -2357,7 +2357,10 @@
   "pay.adult": "我已成年，為自己的個人檔案付費，或以家長或監護人身分付費。",
   "pay.withdrawal": "我希望立即開始使用。我知道可以在 14 天內撤銷合約。屆時我只需支付至撤銷前期間的按比例價格，其餘款項將退還給我。",
   "pay.creditWithdrawal": "我希望立即開始使用。我知道可以在 14 天內撤銷合約。屆時將退還尚未使用的對話所對應的部分款項。",
-  "pay.consentMissing": "付款前請勾選兩項確認。",
+  "terms.accept": "我同意{link}。",
+  "terms.link": "一般使用條款",
+  "terms.missing": "付款前，請確認您同意一般使用條款。",
+  "pay.consentMissing": "付款前請勾選所有確認。",
   "pay.continue": "繼續付款",
   "pay.payNow": "立即付款",
   "pay.askParent": "請家長付款",
@@ -2476,7 +2479,7 @@
   "payp.passWhat": {
     "other": "自付款起 {n} 天內解鎖 Evklid 的全部功能（輔導老師、練習、小測驗）。"
   },
-  "payp.consentMissing": "請您在付款前勾選兩項確認。",
+  "payp.consentMissing": "請您在付款前勾選所有確認。",
   "pass.until": "至{date}",
   "pass.parentInfo": "「{name}」考試（{date}）快到了。你的家長可以為你選擇考前方案。",
   "pass.parentInfoLink": "給家長的資訊",
