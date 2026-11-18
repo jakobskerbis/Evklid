@@ -1,17 +1,24 @@
 // Različica aplikacije iz trgovine (Google Play, App Store) ne sme ponuditi nakupa s kartico (Apple 3.1.1, Google Play
 // Payments): tam velja nakup v trgovini (server/mobile/store-billing.js). Splet v aplikaciji teh obrazcev ne pokaže
-// (public/po-placilu.js); to je varovalo na strežniku, če bi jih kdo vseeno poslal.
+// (public/pay-ui.js); to je varovalo na strežniku, če bi jih kdo vseeno poslal.
 // Kako strežnik prepozna različico iz trgovine:
 // - zahteve aplikacije same (mobile/src/lib/api.ts): glavi X-App-Client in X-App-Channel: store;
 // - zahteve spletne strani v aplikaciji (WebView, brez teh glav): User-Agent »… EvklidApp/<različica> store«
 //   (mobile/src/app/web.tsx applicationNameForUserAgent).
 // Starejše aplikacije brez kanala in APK z evklid.app (kanal »direct«) delujejo kot prej.
-const BUY = /^\/api\/billing\/(checkout|upgrade|gift|credit|pass|podari|pay-link)$/;
+// portal: v Stripovem portalu se paket zamenja (mesečno ↔ letno) z doplačilom s kartico.
+// /api/pay/<žeton>/checkout: plačilo staršu poslane povezave (public/placaj.js, server/accounts/billing.js).
+const BUY = /^\/api\/(billing\/(checkout|upgrade|gift|credit|pass|podari|pay-link|portal)|pay\/[^/]+\/checkout)$/;
 const STORE_UA = / EvklidApp\/\S+ store\b/;
 
 export const storeAppRequest = (req) =>
   (!!req.get("x-app-client") && String(req.get("x-app-channel") || "").trim().toLowerCase() === "store") ||
   STORE_UA.test(String(req.get("user-agent") || ""));
+
+// Nakup se je začel v aplikaciji (katerikoli kanal): stran za uspeh dobi »&app=1« in brez prijave pove, naj se
+// vrne v aplikacijo (public/account.js renderPaidElsewhere).
+export const fromApp = (req) => !!req.get("x-app-client") || / EvklidApp\//.test(String(req.get("user-agent") || ""));
+export const appMark = (req) => (fromApp(req) ? "&app=1" : "");
 
 // Pot kot jo ujame usmerjevalnik (velike črke, podvojene ali končne poševnice).
 const normal = (p) => String(p || "").toLowerCase().replace(/\/{2,}/g, "/").replace(/(.)\/$/, "$1");

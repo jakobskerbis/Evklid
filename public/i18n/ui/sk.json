@@ -2441,6 +2441,7 @@
   "acct.secondChild": "Pre druhé dieťa vyber balík pre 2 deti.",
   "acct.subThanks": "Ďakujeme! Predplatné je aktívne.",
   "acct.paidBackToApp": "Platba prebehla. Vráť sa do aplikácie Evklid.",
+  "acct.paidLogin": "Platba prebehla. Prihlás sa.",
   "acct.aiOut": "doučovateľ tento mesiac vyčerpaný",
   "acct.aiOutTitle": "Doučovateľ bude opäť dostupný 1. dňa v mesiaci. Precvičovanie funguje ďalej.",
   "acct.aiSoft": "do konca mesiaca sú vysvetlenia menej podrobné",
@@ -2532,6 +2533,7 @@
     "other": "Odomkne celý Evklid (tútor, cvičenia, skúšobné testy) na {n} dní od zaplatenia."
   },
   "payp.consentMissing": "Pred platbou zaškrtnite obe potvrdenia.",
+  "payp.inApp": "V aplikácii nie je možné platiť. Otvorte tento odkaz vo webovom prehliadači.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Test „{name}“ ({date}) sa blíži. Rodičia ti môžu vybrať balík prípravy na test.",
   "pass.parentInfoLink": "Informácie pre rodičov",

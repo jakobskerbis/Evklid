@@ -12,6 +12,7 @@ import { levelPlanFor } from "../accounts/plans.js";
 import { newCode } from "./darila.js";
 import { audit } from "../dnevnik-dostopov.js";
 import { BIRTH_MISSING_PAY } from "../accounts/age.js";
+import { appMark } from "../mobile/trgovina.js";
 
 export const PODARI_DAYS = 90; // 3 mesece
 export const PODARI_MONTHS = 3;
@@ -146,7 +147,7 @@ export function mountPodari(app, ctx) {
         customer,
         client_reference_id: String(p.id),
         line_items: [{ price_data: { currency: "eur", unit_amount: amount, tax_behavior: "inclusive", product_data: { name: "Podari Evklid – 1 mesec za otroka, ki ga izbere šola" } }, quantity: 1 }],
-        success_url: `${base}/?billing=podari&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${base}/?billing=podari${appMark(req)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: "sl",
         metadata: meta,

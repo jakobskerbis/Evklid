@@ -2413,6 +2413,7 @@
   "acct.secondChild": "Második gyereknek válassz 2 gyerekes csomagot.",
   "acct.subThanks": "Köszönjük! Az előfizetés aktív.",
   "acct.paidBackToApp": "Sikeres fizetés. Térj vissza az Evklid alkalmazásba.",
+  "acct.paidLogin": "Sikeres fizetés. Jelentkezz be.",
   "acct.aiOut": "a tanár ebben a hónapban elfogyott",
   "acct.aiOutTitle": "A tanár a hónap 1-jén lesz újra elérhető. A gyakorlás továbbra is működik.",
   "acct.aiSoft": "a magyarázatok a hónap végéig kevésbé részletesek",
@@ -2492,6 +2493,7 @@
     "other": "A fizetéstől számítva {n} napra megnyitja a teljes Evklidet (oktató, gyakorlás, próbatesztek)."
   },
   "payp.consentMissing": "Fizetés előtt jelölje be mindkét megerősítést.",
+  "payp.inApp": "Az alkalmazásban nem lehet fizetni. Nyissa meg ezt a linket egy webböngészőben.",
   "pass.until": "eddig: {date}",
   "pass.parentInfo": "Közeleg a dolgozatod: „{name}” ({date}). A szüleid választhatnak neked felkészülési csomagot.",
   "pass.parentInfoLink": "Információ szülőknek",

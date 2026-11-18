@@ -1,5 +1,5 @@
 // A) Različica iz trgovine (Google Play, App Store) brez nakupa s kartico: User-Agent »EvklidApp/<različica> store«
-//    (mobile/src/app/web.tsx), splet skrije obrazce (public/po-placilu.js, account.js), strežnik zavrne nakup
+//    (mobile/src/app/web.tsx), splet skrije obrazce (public/pay-ui.js, account.js), strežnik zavrne nakup
 //    (server/mobile/trgovina.js). APK (kanal »direct«) in starejše aplikacije brez kanala ostanejo, kot so.
 // B) Vrnitev v APK po plačilu v zavihku brskalnika: stran osveži stanje računa (evklid:spet, visibilitychange).
 import test from "node:test";
@@ -9,7 +9,10 @@ import { createRequire } from "node:module";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { storeAppRequest } from "../server/mobile/trgovina.js";
-import { isStoreApp, markCheckout, checkoutPending, watchReturnFromPay, CHECKOUT_MAX_AGE } from "../public/po-placilu.js";
+
+// public/i18n.js po nalaganju nastavi jezik na document (kot test/meja-placilo.test.js).
+globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
+const { isStoreApp, markCheckout, checkoutPending, watchReturnFromPay, CHECKOUT_MAX_AGE } = await import("../public/pay-ui.js");
 
 const read = (p) => fs.readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
 const require = createRequire(import.meta.url);
@@ -99,13 +102,18 @@ test("vrnitev po plačilu: sync enkrat na 5 s, zahvala ob novi naročnini, zapis
     await run();
     assert.equal(calls.length, 2, "po plačilu ni več klicev");
 
-    // Dokup pogovorov pri že plačani naročnini: osvežitev, brez zahvale za naročnino.
+    // Dokup pogovorov: ena osvežitev, brez zahvale za naročnino, zapis pobrisan (tudi brez plačane naročnine).
+    tier = "free";
     Date.now = now;
     markCheckout("credit");
     Date.now = realNow;
     t += 10_000;
     await run();
     assert.deepEqual(seen, [false, true, false]);
+    assert.equal(data.size, 0, "enkratno plačilo: zapis po prvi osvežitvi pobrisan");
+    t += 10_000;
+    await run();
+    assert.equal(calls.length, 3, "brez nadaljnjih klicev");
 
     // Star zapis (več kot 2 uri) ne velja.
     Date.now = now;
@@ -126,7 +134,7 @@ function setup() {
   const fetchFn = async (url, init = {}) => {
     const u = new URL(url);
     const body = init.body && init.headers?.["Content-Type"]?.includes("json") ? JSON.parse(init.body) : null;
-    calls.push({ host: u.host, path: u.pathname, body });
+    calls.push({ host: u.host, path: u.pathname, method: init.method || "GET", body, raw: typeof init.body === "string" ? init.body : "" });
     const ok = (data) => ({ ok: true, status: 200, json: async () => data });
     if (u.pathname.endsWith("/prices") && init.method === "GET") return ok({ data: [] });
     if (u.pathname.endsWith("/checkout/sessions")) return ok({ id: "cs_1", url: "https://checkout.stripe.com/c/pay/cs_1" });
@@ -169,7 +177,7 @@ test("strežnik: aplikacija iz trgovine ne more začeti nakupa s kartico, APK in
     await s.account();
     const body = { seats: 1, interval: "month", adult: true, withdrawal: true };
     const stripeCalls = () => s.calls.filter((c) => c.path.endsWith("/checkout/sessions")).length;
-    for (const path of ["/api/billing/checkout", "/API/billing/Checkout", "/api/billing/gift", "/api/billing/credit", "/api/billing/pass", "/api/billing/upgrade", "/api/billing/podari", "/api/billing/pay-link"]) {
+    for (const path of ["/api/billing/checkout", "/API/billing/Checkout", "/api/billing/gift", "/api/billing/credit", "/api/billing/pass", "/api/billing/upgrade", "/api/billing/podari", "/api/billing/pay-link", "/api/billing/portal", "/api/pay/abc123/checkout"]) {
       const r = await s.call(path, { method: "POST", body, headers: { "user-agent": `${CHROME} EvklidApp/1.4.0 store` } });
       assert.equal(r.status, 403, path);
       assert.equal(r.body.store_app, true, path);
@@ -184,6 +192,21 @@ test("strežnik: aplikacija iz trgovine ne more začeti nakupa s kartico, APK in
     const apk = await s.call("/api/billing/checkout", { method: "POST", body, headers: { "user-agent": `${CHROME} EvklidApp/1.4.0 direct` } });
     assert.equal(apk.status, 200, JSON.stringify(apk.body));
     assert.equal(stripeCalls(), 2);
+    // Stran za uspeh: »&app=1« samo za nakup iz aplikacije.
+    const urls = s.calls.filter((c) => c.path.endsWith("/checkout/sessions")).map((c) => decodeURIComponent(c.raw));
+    assert.match(urls[1], /billing=success&app=1&session_id=/);
+    assert.equal((await s.call("/api/billing/checkout", { method: "POST", body, headers: { "user-agent": CHROME } })).status, 200);
+    assert.match(decodeURIComponent(s.calls.filter((c) => c.path.endsWith("/checkout/sessions")).at(-1).raw), /billing=success&session_id=/);
+
+    // /api/billing/sync: največ en klic Stripa na 5 s za istega starša.
+    s.store.db.prepare("UPDATE parents SET stripe_customer_id = 'cus_x'").run();
+    const subsCalls = () => s.calls.filter((c) => c.path.endsWith("/subscriptions") && c.method === "GET").length;
+    const before = subsCalls();
+    assert.equal((await s.call("/api/billing/sync", { method: "POST" })).status, 200);
+    const again = await s.call("/api/billing/sync", { method: "POST" });
+    assert.equal(again.status, 200);
+    assert.ok(again.body.access, "vmes stanje iz baze");
+    assert.equal(subsCalls() - before, 1);
   } finally {
     s.server.close();
   }
@@ -213,20 +236,57 @@ test("splet v aplikaciji: trgovina brez nakupov, APK osveži Račun ob vrnitvi s
       return { ctx, page, errors };
     };
 
-    // Trgovina: ni obrazca za naročnino, darila, Podari, dokupa ali gumba za Stripe.
-    const st = await open(`${CHROME} EvklidApp/1.4.0 store`);
-    for (const sel of ["#plan-form", "#gift-form", "#podari-form", "#portal-btn", ".credit-go", "#plan-link", "[data-upgrade]"]) {
-      assert.equal(await st.page.locator(sel).count(), 0, sel);
+    // Kartica paketa pred testom z izmišljeno ponudbo (strežnik jo ponudi le ob testu v urniku).
+    const passCard = (page) =>
+      page.evaluate(async () => {
+        const m = await import("/pass-offer.js");
+        const el = document.createElement("div");
+        const api = async () => ({ offer: { test: { name: "Ulomki", date: "2030-01-10" }, suggested: 7 }, passes: [{ days: 7, amount: 900, currency: "EUR" }] });
+        await m.renderPassOffer(el, { api, studentId: 1, toast() {} });
+        return el.querySelectorAll("form, [data-pass-now], [data-pass-link]").length;
+      });
+    const UNPAID = ["#plan-form", "#gift-form", "#podari-form", ".credit-go", "#promo-form"];
+    const PAID = ["[data-upgrade]", "#portal-btn"];
+    const STORE = `${CHROME} EvklidApp/1.4.0 store`;
+    const APK = `${CHROME} EvklidApp/1.4.0 direct`;
+    const counts = async (ua, sels) => {
+      const x = await open(ua);
+      const out = {};
+      for (const sel of sels) out[sel] = await x.page.locator(sel).count();
+      out.pass = await passCard(x.page);
+      out.errors = x.errors;
+      await x.ctx.close();
+      return out;
+    };
+    // Isto stanje računa: v APK so obrazci, v različici iz trgovine nobenega (sicer 0 ne bi nič dokazal).
+    const apkFree = await counts(APK, [...UNPAID, ".podari-card"]);
+    const storeFree = await counts(STORE, [...UNPAID, "#plan-link", ".podari-card"]);
+    for (const sel of UNPAID) {
+      assert.ok(apkFree[sel] > 0, `APK: ${sel}`);
+      assert.equal(storeFree[sel], 0, `trgovina: ${sel}`);
     }
-    assert.deepEqual(st.errors, []);
-    await st.ctx.close();
+    assert.ok(apkFree.pass > 0, "APK: paket pred testom");
+    assert.equal(storeFree.pass, 0, "trgovina: brez paketa pred testom");
+    assert.equal(storeFree["#plan-link"], 0);
+    assert.equal(storeFree[".podari-card"], 0, "trgovina: brez kartice Podari");
+    assert.ok(apkFree[".podari-card"] > 0);
+    assert.deepEqual([...apkFree.errors, ...storeFree.errors], []);
+
+    const end = new Date(Date.now() + 30 * 86400000).toISOString();
+    s.store.db.prepare("UPDATE parents SET sub_status = 'active', sub_plan = 'evklid_1_month', sub_id = 'sub_x', sub_provider = 'stripe', stripe_customer_id = 'cus_x', sub_period_end = ?").run(end);
+    const apkPaid = await counts(APK, PAID);
+    const storePaid = await counts(STORE, PAID);
+    for (const sel of PAID) {
+      assert.ok(apkPaid[sel] > 0, `APK: ${sel}`);
+      assert.equal(storePaid[sel], 0, `trgovina: ${sel}`);
+    }
+    s.store.db.prepare("UPDATE parents SET sub_status = NULL, sub_plan = NULL, sub_id = NULL, stripe_customer_id = NULL, sub_period_end = NULL").run();
 
     // APK: obrazec je; po odhodu na Stripe (zapis nakupa) in plačilu se ob vrnitvi Račun izriše znova.
     const apk = await open(`${CHROME} EvklidApp/1.4.0 direct`);
     await apk.page.locator("#plan-form").waitFor();
     await apk.page.evaluate(() => sessionStorage.setItem("evklid.checkout", String(Date.now())) || sessionStorage.setItem("evklid.checkout.vrsta", "sub"));
-    const end = new Date(Date.now() + 30 * 86400000).toISOString();
-    s.store.db.prepare("UPDATE parents SET sub_status = 'active', sub_plan = 'os-month', sub_period_end = ?").run(end);
+    s.store.db.prepare("UPDATE parents SET sub_status = 'active', sub_plan = 'evklid_1_month', sub_period_end = ?").run(end);
     await apk.page.evaluate(() => window.dispatchEvent(new Event("evklid:spet")));
     await apk.page.locator("#plan-form").waitFor({ state: "detached", timeout: 10_000 });
     await apk.page.locator("#toast", { hasText: "Hvala! Naročnina je aktivna." }).waitFor({ timeout: 5000 });
@@ -239,8 +299,15 @@ test("splet v aplikaciji: trgovina brez nakupov, APK osveži Račun ob vrnitvi s
     const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, locale: "sl-SI", serviceWorkers: "block" });
     await ctx.addInitScript(() => localStorage.setItem("evklid.lang", "sl"));
     const page = await ctx.newPage();
-    await page.goto(s.base + "/?billing=success&session_id=cs_1", { waitUntil: "load" });
+    await page.goto(s.base + "/?billing=success&app=1&session_id=cs_1", { waitUntil: "load" });
     await page.locator("#view-auth h1", { hasText: "Plačilo je uspelo. Vrni se v aplikacijo Evklid." }).waitFor({ timeout: 20_000 });
+    // Brez »app=1« (plačilo na spletu): samo prijava; »cancel« ostane običajna stran.
+    await page.goto(s.base + "/?billing=credit&session_id=cs_1", { waitUntil: "load" });
+    await page.locator("#view-auth h1", { hasText: "Plačilo je uspelo. Prijavi se." }).waitFor({ timeout: 20_000 });
+    await page.goto(s.base + "/?billing=cancel", { waitUntil: "load" });
+    await page.locator("#view-auth h1").first().waitFor({ timeout: 20_000 });
+    assert.equal(await page.locator("#paid-login").count(), 0);
+    await page.goto(s.base + "/?billing=success&session_id=cs_1", { waitUntil: "load" });
     await page.locator("#paid-login").click();
     await page.locator('#view-auth input[type="password"]').waitFor({ timeout: 5000 });
     await ctx.close();

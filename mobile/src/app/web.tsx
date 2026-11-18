@@ -67,7 +67,7 @@ const BAR_JS = `(function(){
   addEventListener('scroll',send,{passive:true,capture:true});addEventListener('resize',send);setInterval(send,1000);send();
 })();true;`;
 
-// Vrnitev v aplikacijo (npr. po plačilu v zavihku brskalnika): stran osveži stanje računa (public/po-placilu.js).
+// Vrnitev v aplikacijo (npr. po plačilu v zavihku brskalnika): stran osveži stanje računa (public/pay-ui.js).
 const SPET_JS = "window.dispatchEvent(new Event('evklid:spet'));true;";
 
 // Izbrani profil iz aplikacije, če ga splet na tej napravi še nima (public/app.js bere »studentId«).
@@ -133,7 +133,7 @@ export default function Web() {
   }, [failed]);
 
   // Plačilo s Stripom se odpre v zavihku brskalnika (Android: Custom Tab, openBrowserAsync se konča takoj), stran za
-  // uspeh se naloži tam. Ob vrnitvi iz ozadja stran izve, da naj vpraša strežnik za novo stanje (public/po-placilu.js),
+  // uspeh se naloži tam. Ob vrnitvi iz ozadja stran izve, da naj vpraša strežnik za novo stanje (public/pay-ui.js),
   // sicer zavihek Račun kaže staro stanje in starš lahko plača dvakrat.
   const spet = useCallback(() => ref.current?.injectJavaScript(SPET_JS), []);
   useEffect(() => {
@@ -218,7 +218,7 @@ export default function Web() {
             source={source}
             style={{ flex: 1, backgroundColor: th.bg }}
             // Kanal na koncu (»store« ali »direct«): splet v različici iz trgovine ne pokaže nakupa s kartico
-            // (public/po-placilu.js isStoreApp, server/mobile/trgovina.js).
+            // (public/pay-ui.js isStoreApp, server/mobile/trgovina.js).
             applicationNameForUserAgent={`EvklidApp/${Constants.expoConfig?.version ?? "1"} ${CHANNEL}`}
             originWhitelist={["*"]}
             // Povezave target=_blank: z setSupportMultipleWindows={false} jih Android pošlje v onShouldStartLoadWithRequest;
@@ -226,6 +226,9 @@ export default function Web() {
             onOpenWindow={(e: { nativeEvent: { targetUrl: string } }) => {
               const u = e.nativeEvent.targetUrl;
               if (zaTisk(u)) Linking.openURL(u).catch(() => {});
+              // Različica iz trgovine: strani Evklida ostanejo v aplikaciji (v brskalniku bi bil nakup s kartico mimo trgovine).
+              else if (CHANNEL === "store" && (u === ORIGIN || u.startsWith(ORIGIN + "/")))
+                ref.current?.injectJavaScript(`location.href=${JSON.stringify(u)};true;`);
               else if (/^https?:/.test(u)) openTab(u);
             }}
             injectedJavaScriptBeforeContentLoaded={NATIVE_FLAG_JS + studentJs(student?.id ?? null)}

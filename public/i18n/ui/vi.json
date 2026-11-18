@@ -2402,6 +2402,7 @@
   "acct.secondChild": "Với con thứ hai, hãy chọn gói cho 2 con.",
   "acct.subThanks": "Cảm ơn! Gói đăng ký đã hoạt động.",
   "acct.paidBackToApp": "Thanh toán thành công. Hãy quay lại ứng dụng Evklid.",
+  "acct.paidLogin": "Thanh toán thành công. Hãy đăng nhập.",
   "acct.aiOut": "gia sư đã dùng hết tháng này",
   "acct.aiOutTitle": "Gia sư sẽ dùng lại được vào ngày 1 của tháng. Phần luyện tập vẫn hoạt động.",
   "acct.aiSoft": "lời giải thích kém chi tiết hơn đến cuối tháng",
@@ -2478,6 +2479,7 @@
     "other": "Mở khóa toàn bộ Evklid (gia sư, bài luyện tập, bài kiểm tra thử) trong {n} ngày kể từ khi thanh toán."
   },
   "payp.consentMissing": "Vui lòng đánh dấu cả hai ô xác nhận trước khi thanh toán.",
+  "payp.inApp": "Không thể thanh toán trong ứng dụng. Hãy mở liên kết này trong trình duyệt web.",
   "pass.until": "đến {date}",
   "pass.parentInfo": "Bài kiểm tra “{name}” ({date}) sắp đến. Bố mẹ em có thể chọn gói ôn thi cho em.",
   "pass.parentInfoLink": "Thông tin cho phụ huynh",

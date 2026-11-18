@@ -2402,6 +2402,7 @@
   "acct.secondChild": "Untuk anak kedua, pilih paket untuk 2 anak.",
   "acct.subThanks": "Terima kasih! Langganan aktif.",
   "acct.paidBackToApp": "Pembayaran berhasil. Kembali ke aplikasi Evklid.",
+  "acct.paidLogin": "Pembayaran berhasil. Silakan masuk.",
   "acct.aiOut": "tutor habis bulan ini",
   "acct.aiOutTitle": "Tutor tersedia lagi pada tanggal 1. Latihan tetap berjalan.",
   "acct.aiSoft": "penjelasan kurang rinci sampai akhir bulan",
@@ -2478,6 +2479,7 @@
     "other": "Membuka seluruh Evklid (tutor, latihan, kuis) selama {n} hari sejak pembayaran."
   },
   "payp.consentMissing": "Silakan centang kedua konfirmasi sebelum membayar.",
+  "payp.inApp": "Pembayaran tidak bisa dilakukan di aplikasi. Buka tautan ini di peramban web.",
   "pass.until": "sampai {date}",
   "pass.parentInfo": "Ujian “{name}” ({date}) sudah dekat. Orang tuamu bisa memilih paket persiapan ujian.",
   "pass.parentInfoLink": "Informasi untuk orang tua",

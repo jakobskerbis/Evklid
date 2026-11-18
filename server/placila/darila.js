@@ -12,6 +12,7 @@ export const GIFT_WITHDRAWAL_TEXT =
 import { giftFor, isoIn } from "../accounts/plans.js";
 import { BIRTH_MISSING_PAY } from "../accounts/age.js";
 import { STOPNJE, visja } from "../../public/stopnja.js";
+import { appMark } from "../mobile/trgovina.js";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // brez I, O, 0, 1
 export const newCode = () =>
@@ -233,7 +234,7 @@ export function mountGifts(app, ctx) {
             quantity: 1,
           },
         ],
-        success_url: `${base}/?billing=gift&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${base}/?billing=gift${appMark(req)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: "sl",
         metadata: meta,

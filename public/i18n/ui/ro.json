@@ -2427,6 +2427,7 @@
   "acct.secondChild": "Pentru al doilea copil, alege un plan pentru 2 copii.",
   "acct.subThanks": "Mulțumim! Abonamentul este activ.",
   "acct.paidBackToApp": "Plata a reușit. Întoarce-te în aplicația Evklid.",
+  "acct.paidLogin": "Plata a reușit. Conectează-te.",
   "acct.aiOut": "tutorele s-a epuizat luna aceasta",
   "acct.aiOutTitle": "Tutorele va fi din nou disponibil pe 1 ale lunii. Exercițiile funcționează în continuare.",
   "acct.aiSoft": "explicațiile sunt mai puțin detaliate până la sfârșitul lunii",
@@ -2512,6 +2513,7 @@
     "other": "Deblochează tot Evklid (tutore, exerciții, teste de probă) timp de {n} de zile de la plată."
   },
   "payp.consentMissing": "Bifați ambele confirmări înainte de plată.",
+  "payp.inApp": "Plata nu este posibilă în aplicație. Deschideți acest link într-un browser web.",
   "pass.until": "până pe {date}",
   "pass.parentInfo": "Testul „{name}” ({date}) se apropie. Părinții tăi pot alege un pachet de pregătire pentru test.",
   "pass.parentInfoLink": "Informații pentru părinți",

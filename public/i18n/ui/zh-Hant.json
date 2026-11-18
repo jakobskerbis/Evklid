@@ -2402,6 +2402,7 @@
   "acct.secondChild": "第二個孩子請選擇 2 個孩子的方案。",
   "acct.subThanks": "謝謝！訂閱已生效。",
   "acct.paidBackToApp": "付款成功。請返回 Evklid 應用程式。",
+  "acct.paidLogin": "付款成功。請登入。",
   "acct.aiOut": "本月家教已用完",
   "acct.aiOutTitle": "家教將於每月 1 日恢復可用。練習照常進行。",
   "acct.aiSoft": "本月剩餘時間講解會簡略一些",
@@ -2478,6 +2479,7 @@
     "other": "自付款起 {n} 天內解鎖 Evklid 的全部功能（輔導老師、練習、小測驗）。"
   },
   "payp.consentMissing": "請您在付款前勾選兩項確認。",
+  "payp.inApp": "無法在應用程式內付款。請在網頁瀏覽器中開啟此連結。",
   "pass.until": "至{date}",
   "pass.parentInfo": "「{name}」考試（{date}）快到了。你的家長可以為你選擇考前方案。",
   "pass.parentInfoLink": "給家長的資訊",

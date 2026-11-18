@@ -2427,6 +2427,7 @@
   "acct.secondChild": "Za drugo dijete odaberi paket za 2 djece.",
   "acct.subThanks": "Hvala! Pretplata je aktivna.",
   "acct.paidBackToApp": "Plaćanje je uspjelo. Vrati se u aplikaciju Evklid.",
+  "acct.paidLogin": "Plaćanje je uspjelo. Prijavi se.",
   "acct.aiOut": "instruktor ovaj mjesec potrošen",
   "acct.aiOutTitle": "Instruktor će opet biti dostupan 1. u mjesecu. Vježbanje radi dalje.",
   "acct.aiSoft": "objašnjenja su do kraja mjeseca manje detaljna",
@@ -2512,6 +2513,7 @@
     "other": "Otključava cijeli Evklid (instruktor, vježbe, probni testovi) na {n} dana od plaćanja."
   },
   "payp.consentMissing": "Prije plaćanja označite obje potvrde.",
+  "payp.inApp": "U aplikaciji plaćanje nije moguće. Otvorite poveznicu u web-pregledniku.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Ispit „{name}” ({date}) je blizu. Roditelji mogu odabrati paket prije ispita.",
   "pass.parentInfoLink": "Informacije za roditelje",

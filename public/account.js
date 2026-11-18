@@ -5,9 +5,8 @@ import { systemForCountry } from "./regions.js";
 import { currentLang, currentRegion, deviceRegion, locale, t } from "./i18n.js";
 import { dateText } from "./datum.js";
 import { openProfileMenu } from "./profile-menu.js";
-import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
+import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout, clearCheckout, watchReturnFromPay } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
-import { isStoreApp, markCheckout, clearCheckout, watchReturnFromPay } from "./po-placilu.js";
 import { renderAdminReports } from "./prijave.js";
 import { renderPilotAdmin, paintAccountPilot, paintAccountWtp, proofHtml, proofBody, wireProof } from "./pilot-naloge.js";
 import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
@@ -357,8 +356,9 @@ export async function initAccount({ onReady }) {
   const verified = q.get("verified");
   const billing = q.get("billing");
   const sessionId = q.get("session_id");
+  const payFromApp = q.get("app") === "1"; // nakup se je začel v aplikaciji (server/mobile/trgovina.js appMark)
   if (q.toString()) history.replaceState(null, "", location.pathname);
-  // Vrnitev s Stripa v istem oknu (splet): stanje se osveži spodaj, zapis nakupa ni več potreben (public/po-placilu.js).
+  // Vrnitev s Stripa v istem oknu (splet): stanje se osveži spodaj, zapis nakupa ni več potreben (public/pay-ui.js).
   if (billing) clearCheckout();
   watchReturnFromPay({ api, onSynced: refreshAfterPay });
   if (verified === "1") toast("E-naslov je potrjen ✓");
@@ -397,8 +397,8 @@ export async function initAccount({ onReady }) {
     status = await api("/api/account/status");
   }
   // Plačilo je uspelo v zavihku brskalnika, kjer obiskovalec ni prijavljen (APK: Stripe se odpre v Custom Tab).
-  if (billing && billing !== "cancel" && billing !== "portal" && !status.logged_in && !reset && !verifyToken) {
-    renderPaidElsewhere();
+  if (PAID_RETURN.has(billing) && !status.logged_in && !reset && !verifyToken) {
+    renderPaidElsewhere(payFromApp);
     return false;
   }
   if (parentInvite) route.firstMode = "register";
@@ -409,11 +409,17 @@ export async function initAccount({ onReady }) {
   return ready;
 }
 
-// Po vrnitvi v aplikacijo s plačila (public/po-placilu.js): novo stanje, zavihek Račun znova, zahvala ob novi naročnini.
-async function refreshAfterPay({ becamePaid }) {
+// Po vrnitvi v aplikacijo s plačila (public/pay-ui.js): novo stanje; zavihek Račun znova samo, ko se je kupljeno
+// spremenilo (paket, preostali pogovori, darilne kode, paket pred testom), zahvala ob novi naročnini.
+let shownSig = null;
+const paySig = (acc, balance) => JSON.stringify([acc?.access?.tier, (acc?.gifts || []).length, (acc?.children || []).map((c) => c.pass?.ends_at || ""), balance || 0]);
+async function refreshAfterPay({ acc, becamePaid }) {
   status = await api("/api/account/status").catch(() => status);
   const view = $("#view-account");
-  if (view && !view.hidden && view.getClientRects().length && status?.logged_in) await renderAccount();
+  if (view && !view.hidden && view.getClientRects().length && status?.logged_in) {
+    const credit = await api("/api/billing/credit").catch(() => null);
+    if (paySig(acc, credit?.balance_conversations) !== shownSig) await renderAccount();
+  }
   if (becamePaid) {
     toast(t("acct.subThanks"));
     await onReadyCb?.({ keepView: true });
@@ -422,8 +428,9 @@ async function refreshAfterPay({ becamePaid }) {
 
 // Plačilo je uspelo, a ta brskalnik ni prijavljen (navadno zavihek brskalnika iz aplikacije): kratko obvestilo,
 // ne pristajalna stran. Na računalniku se obiskovalec lahko prijavi.
-function renderPaidElsewhere() {
-  shell(`<h1>${esc(t("acct.paidBackToApp"))}</h1>
+const PAID_RETURN = new Set(["success", "pass", "credit", "gift", "podari"]);
+function renderPaidElsewhere(fromApp) {
+  shell(`<h1>${esc(t(fromApp ? "acct.paidBackToApp" : "acct.paidLogin"))}</h1>
     <div class="form-actions"><button type="button" class="secondary" id="paid-login">${esc(t("mob.signIn"))}</button></div>`);
   $("#paid-login")?.addEventListener("click", () => goAuth("login"));
 }
@@ -1853,7 +1860,7 @@ export async function renderAccount() {
   }
   if (acc.parent.guest) return renderGuestAccount(view, acc);
   const paid = acc.access.tier === "paid";
-  // Aplikacija iz trgovine: brez nakupa s kartico (naročnina, nadgradnja, darilo, Podari, dokup; public/po-placilu.js).
+  // Aplikacija iz trgovine: brez nakupa s kartico (naročnina, nadgradnja, darilo, Podari, dokup; public/pay-ui.js).
   // Kupljeno ostane vidno (stanje naročnine, darilne kode, preostali pogovori).
   const storeApp = isStoreApp();
   const shown = storeApp ? { ...acc, upgrade: null, gift_buy: false } : acc;
@@ -1869,7 +1876,7 @@ export async function renderAccount() {
       ${storeApp
         ? paid && acc.parent.has_customer ? `<p class="muted">${esc(t("mob.subElsewhere"))}</p>` : ""
         : acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">${esc(t("acct.portal"))}</button>` : ""}
-      ${promoBox(acc, paid)}
+      ${promoBox(acc, paid || storeApp)}
     </div>
     <div class="card" id="pn-wtp" hidden></div>
     ${acc.skrbnik_potrditev ? skrbnikBox() : ""}
@@ -1877,7 +1884,7 @@ export async function renderAccount() {
     ${acc.guest_invite ? guestInviteCard() : ""}
     ${guaranteeBox(acc)}
     ${giftBox(shown)}
-    ${podariBox(storeApp ? { ...acc, billing: false } : acc)}
+    ${storeApp ? "" : podariBox(acc)}
     ${adminCards(acc)}
     ${acc.promo?.codes ? `<div class="card" id="pilot-card"><h2>${esc(t("pilot.title"))}</h2><div id="pilot-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="pilot-tasks-card"><h2>${esc(t("pilot.n.title"))}</h2><div id="pilot-tasks-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
@@ -1964,7 +1971,7 @@ export async function renderAccount() {
     try {
       if (!consentsOk(e.target)) throw new Error(t("payp.consentMissing"));
       const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody() } });
-      markCheckout("sub"); // vrnitev v aplikacijo osveži stanje (public/po-placilu.js)
+      markCheckout("sub"); // vrnitev v aplikacijo osveži stanje (public/pay-ui.js)
       location.href = r.url;
     } catch (err) {
       btn.disabled = false;
@@ -1992,7 +1999,9 @@ export async function renderAccount() {
   paintAccountWtp($("#pn-wtp"), acc.pilot_wtp, { api, toast, hasPassword }); // pilot: »Ali bi za Evklid plačali?« (enkrat)
   wirePrivacyBanner(hasPassword); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
-  renderCreditCard($("#credit-card"), { api, buy: !storeApp });
+  // Kaj je izrisano (refreshAfterPay izriše znova le ob spremembi, da ne pobriše napol izpolnjenih obrazcev).
+  shownSig = null;
+  renderCreditCard($("#credit-card"), { api, buy: !storeApp }).then((balance) => (shownSig = paySig(acc, balance)));
   import("./ustno/starsi.js").then((m) => m.karticaStarsev($("#ustno-starsi"), api)).catch(() => {}); // glas pri ustnem (ob odprtju)
   $("#gift-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();

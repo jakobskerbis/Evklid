@@ -4,6 +4,7 @@
 //    in (brez naročnine) povezava do paketov v zavihku Račun.
 import { icon } from "./icons.js";
 import { stopnja, rang } from "./stopnja.js";
+import { isStoreApp } from "./pay-ui.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -64,7 +65,8 @@ export function renderWelcome(box, o) {
   const w = WELCOME[o.stage];
   if (!w) return;
   // Pravila ponudb (server/placila/ponudbe.js): ne med poukom, ne pod 15 let, ne, če jih je učitelj izklopil.
-  const upsell = !o.premium && o.accounts && (!o.offers || (o.offers.show && o.offers.prices));
+  // Aplikacija iz trgovine: brez ponudbe naročnine mimo trgovine (public/pay-ui.js isStoreApp).
+  const upsell = !isStoreApp() && !o.premium && o.accounts && (!o.offers || (o.offers.show && o.offers.prices));
   box.innerHTML = `
     <div class="card level-card welcome">
       <div class="lc-head"><span class="lc-ic">${icon("party-popper")}</span><h2>${w.title}</h2>

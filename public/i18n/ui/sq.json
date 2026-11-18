@@ -2413,6 +2413,7 @@
   "acct.secondChild": "Për një fëmijë të dytë, zgjidh paketën për 2 fëmijë.",
   "acct.subThanks": "Faleminderit! Abonimi është aktiv.",
   "acct.paidBackToApp": "Pagesa u krye. Kthehu te aplikacioni Evklid.",
+  "acct.paidLogin": "Pagesa u krye. Hyr në llogari.",
   "acct.aiOut": "mësuesi u harxhua këtë muaj",
   "acct.aiOutTitle": "Mësuesi do të jetë sërish në dispozicion më 1 të muajit. Ushtrimet vazhdojnë të funksionojnë.",
   "acct.aiSoft": "shpjegimet janë më pak të hollësishme deri në fund të muajit",
@@ -2492,6 +2493,7 @@
     "other": "Hap të gjithë Evklid (tutori, ushtrime, teste provë) për {n} ditë nga pagesa."
   },
   "payp.consentMissing": "Para pagesës shënoni të dyja konfirmimet.",
+  "payp.inApp": "Pagesa nuk është e mundur në aplikacion. Hapeni këtë lidhje në një shfletues uebi.",
   "pass.until": "deri më {date}",
   "pass.parentInfo": "Testi «{name}» ({date}) është afër. Prindërit e tu mund të zgjedhin një paketë para testit.",
   "pass.parentInfoLink": "Informacion për prindërit",

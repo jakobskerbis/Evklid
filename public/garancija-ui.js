@@ -3,7 +3,7 @@
 import { icon } from "./icons.js";
 import { t, locale, currentLang } from "./i18n.js";
 import { dateText } from "./datum.js";
-import { markCheckout } from "./po-placilu.js";
+import { markCheckout } from "./pay-ui.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -165,7 +165,7 @@ export function bindGuarantee(acc, { api, toast, showError, refresh }) {
     try {
       if (!e.target.adult.checked || !e.target.understand.checked) throw new Error(t("payp.consentMissing"));
       const r = await api("/api/billing/podari", { method: "POST", body: { adult: true, understand: true, lang: currentLang() } });
-      markCheckout("podari"); // vrnitev v aplikacijo osveži stanje (public/po-placilu.js)
+      markCheckout("podari"); // vrnitev v aplikacijo osveži stanje (public/pay-ui.js)
       location.href = r.url;
     } catch (err) {
       btn.disabled = false;

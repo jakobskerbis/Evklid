@@ -2441,6 +2441,7 @@
   "acct.secondChild": "Dla drugiego dziecka wybierz plan dla 2 dzieci.",
   "acct.subThanks": "Dziękujemy! Subskrypcja jest aktywna.",
   "acct.paidBackToApp": "Płatność udana. Wróć do aplikacji Evklid.",
+  "acct.paidLogin": "Płatność udana. Zaloguj się.",
   "acct.aiOut": "korepetytor w tym miesiącu wyczerpany",
   "acct.aiOutTitle": "Korepetytor będzie znowu dostępny 1. dnia miesiąca. Ćwiczenia działają dalej.",
   "acct.aiSoft": "do końca miesiąca wyjaśnienia są mniej szczegółowe",
@@ -2532,6 +2533,7 @@
     "other": "Odblokowuje cały Evklid (korepetytor, ćwiczenia, testy próbne) na {n} dnia od płatności."
   },
   "payp.consentMissing": "Przed płatnością prosimy zaznaczyć oba potwierdzenia.",
+  "payp.inApp": "W aplikacji nie można zapłacić. Otwórz ten link w przeglądarce internetowej.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Sprawdzian „{name}” ({date}) już niedługo. Rodzice mogą wybrać pakiet przygotowania do sprawdzianu.",
   "pass.parentInfoLink": "Informacje dla rodziców",

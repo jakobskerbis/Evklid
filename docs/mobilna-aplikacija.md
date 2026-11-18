@@ -57,11 +57,19 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
 - **Naročnina**: v trgovinah nakup v aplikaciji (Apple In-App Purchase, Google Play Billing), v APK za
   neposredni prenos plačilo na spletu (Stripe): naravni zaslon Naročnina odpre spletni zavihek Račun v aplikaciji
   (`/api/mobile/web?to=/?pogled=racun`), kjer so potrditve pred plačilom; aplikacija sama nakupa ne pošilja.
-  Kanal na koncu User-Agent (`store` ali `direct`) in glava `X-App-Channel`: v različici iz trgovine splet ne pokaže
-  naročnine, nadgradnje, darila, Podari, dokupa, paketa pred testom ali povezave za plačilo staršu
-  (`public/po-placilu.js`), strežnik take zahteve zavrne s 403 (`server/mobile/trgovina.js`). Plačilo v APK se odpre
-  v zavihku brskalnika; ob vrnitvi v aplikacijo (`evklid:spet` iz `web.tsx`) splet pokliče `/api/billing/sync` in
-  zavihek Račun izriše znova (zapis nakupa v sessionStorage, največ 2 uri), da starš ne plača dvakrat.
+  Kanal na koncu User-Agent (`store` ali `direct`) in glava `X-App-Channel`. V različici iz trgovine
+  (`public/pay-ui.js` isStoreApp) splet ne pokaže: naročnine, nadgradnje, gumba »Upravljaj naročnino« (portal),
+  darila, vpisa aktivacijske ali darilne kode, kartice Podari, dokupa (le preostali pogovori), paketa pred testom,
+  povezave za plačilo staršu, obrazca na `placaj.html` (besedilo `payp.inApp`), ponudbe naročnine ob novi stopnji
+  (`public/level-up.js`), gumba za dokup ob obvestilu o porabi (`server/app.js` `allowance.buy`) ter povezav na cene
+  in `/prenesi` na javnih straneh (`theme.js`, `v-aplikaciji.js`); povezave `target=_blank` na strani Evklida ostanejo
+  v aplikaciji (`web.tsx` onOpenWindow). Strežnik nakup zavrne s 403 (`server/mobile/trgovina.js`: `/api/billing/`
+  checkout, upgrade, gift, credit, pass, podari, pay-link, portal in `/api/pay/<žeton>/checkout`).
+  Plačilo v APK se odpre v zavihku brskalnika; stran za uspeh ima `&app=1` (nakup iz aplikacije) in brez prijave
+  pove »Vrni se v aplikacijo Evklid«. Ob vrnitvi v aplikacijo (`evklid:spet` iz `web.tsx`) splet pokliče
+  `/api/billing/sync` (strežnik največ en klic Stripa na 5 s na starša) in zavihek Račun izriše znova, ko se je
+  kupljeno spremenilo (zapis nakupa v sessionStorage: naročnina do plačila ali 2 uri, drugo ena osvežitev), da
+  starš ne plača dvakrat.
 - Svetla in temna tema, 33 jezikov vmesnika (isti prevodi kot splet), iPad, dostopnost (VoiceOver,
   TalkBack).
 

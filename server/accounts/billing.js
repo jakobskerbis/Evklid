@@ -18,6 +18,7 @@ import { audit } from "../dnevnik-dostopov.js";
 import { parentFromMeta, purchaseMismatch, logSafe } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
+import { appMark } from "../mobile/trgovina.js";
 
 export const ADULT_TEXT = "Sem polnoletna oseba in plačujem za svoj profil ali kot starš oziroma skrbnik.";
 // Odstop v 14 dneh (j 2026-11-16, #765, enako kot /pogoji.html 12. točka): naročnina in paket pred testom vrneta
@@ -396,7 +397,7 @@ export function mountBilling(app, ctx) {
         customer,
         client_reference_id: String(p.id),
         line_items: [passLineItem(c.plan)],
-        success_url: `${base}/?billing=pass&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${base}/?billing=pass${appMark(req)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: "sl",
         metadata: meta,
@@ -483,7 +484,7 @@ export function mountBilling(app, ctx) {
             quantity: 1,
           },
         ],
-        success_url: `${base}/?billing=credit&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${base}/?billing=credit${appMark(req)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: "sl",
         metadata: meta,
