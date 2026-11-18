@@ -137,6 +137,8 @@ test("API: veščine nalog, strani iz meje zapiskov, vaja od lažjih k težjim, 
     assert.equal((await req("POST", `${base}/zacni`, { sheet: r.body.sheet, length: 6, tasks: [{ i: 1, skill: "MAT-OS-9/podobni-trikotniki" }] })).status, 400);
     assert.equal((await req("POST", `${base}/zacni`, { sheet: r.body.sheet, length: 7, tasks: [] })).status, 400);
     assert.equal((await req("POST", `${base}/zacni`, { sheet: "x", length: 6, tasks: [] })).status, 410);
+    assert.equal((await req("POST", `${base}/zacni`, [1, 2, 3, 4, 5, 6])).status, 400, "seznam namesto predmeta");
+    assert.equal((await req("POST", `${base}/zacni`, { sheet: r.body.sheet, length: 6, tasks: [{ i: 1, skill: [t2.skill.id] }] })).status, 400, "veščina mora biti niz");
     const skills = [t2, t3].map((t) => ({ i: t.i, skill: t.skill.id }));
     const st = await req("POST", `${base}/zacni`, { sheet: r.body.sheet, length: 6, tasks: skills });
     assert.equal(st.status, 200, JSON.stringify(st.body));

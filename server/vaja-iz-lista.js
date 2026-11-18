@@ -260,20 +260,22 @@ export function mountVajaIzLista(app, store, { loadStudent, usage, progress, rig
   app.post("/api/students/:id/zapiski/vaja/zacni", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const length = Number(req.body?.length);
+    // Telo mora biti predmet (pri seznamu bi bil »length« dolžina seznama, CodeQL).
+    const body = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : {};
+    const length = typeof body.length === "number" ? body.length : NaN;
     if (!LIST.lengths.includes(length)) return res.status(400).json({ error: "Napačna dolžina vaje." });
     let skills;
-    if (req.body?.again != null) {
+    if (body.again != null) {
       // »Še ena vaja«: iste veščine kot prejšnja seja, brez branja in brez strani.
-      const prev = progress.getSession(String(req.body.again));
+      const prev = progress.getSession(String(body.again));
       if (!prev || prev.student_id !== s.id || prev.kind !== "list") return res.status(404).json({ error: "Vaja ne obstaja." });
       skills = prev.params.skills || [];
     } else {
-      const sh = sheets.get(req.body?.sheet, s.id);
+      const sh = sheets.get(typeof body.sheet === "string" ? body.sheet : "", s.id);
       if (!sh) return res.status(410).json({ error: "Seznam nalog je potekel. Preberi list znova.", code: "vaja_potekla" });
-      const chosen = Array.isArray(req.body?.tasks) ? req.body.tasks.slice(0, MAX_TASKS) : [];
+      const chosen = Array.isArray(body.tasks) ? body.tasks.slice(0, MAX_TASKS) : [];
       // Veščina mora biti s seznama kandidatov te naloge (strežnik ne zaupa odjemalcu).
-      skills = chosen.filter((c) => c && Number.isInteger(c.i) && sh.tasks[c.i]?.options.includes(c.skill)).map((c) => c.skill);
+      skills = chosen.filter((c) => c && Number.isInteger(c.i) && typeof c.skill === "string" && sh.tasks[c.i]?.options.includes(c.skill)).map((c) => c.skill);
     }
     const out = progress.startList(s.id, skills, length);
     if (!out) return res.status(400).json({ error: "Izberi vsaj eno nalogo z vajo.", code: "vaja_brez" });
