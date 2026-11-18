@@ -21,7 +21,8 @@ import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, month
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail, skrbnikKodaEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT, CREDIT_WITHDRAWAL_TEXT, WITHDRAWAL_VERSION } from "./billing.js";
-import { insertBillingConsent, recordSignupTerms, sendPurchaseConfirmation, subItem, firstChargeText, termsAccepted, TERMS_ERROR } from "./potrdilo.js";
+import { insertBillingConsent, recordSignupTerms, sendPurchaseConfirmation, subItem, firstChargeText, termsAccepted, TERMS_ERROR, TERMS_VERSION, termsNotice, livePayBlocked, LIVE_BLOCKED } from "./potrdilo.js";
+import { mountWithdrawal, contractsFor } from "../placila/odstop.js";
 import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
 import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
 import { Devices, deviceLabel, deviceWarnLimit } from "./devices.js";
@@ -285,6 +286,8 @@ export function mountAccounts(app, store, opts = {}) {
     need_birth: !p.is_guest && !p.birth_date && !p.birth_asked_at,
     // Politika zasebnosti se je spremenila po registraciji: aplikacija enkrat pokaže kratko obvestilo s povezavo.
     privacy_notice: !p.is_guest && (p.privacy_seen || p.privacy_version || "") < PRIVACY_VERSION ? PRIVACY_VERSION : null,
+    // Nova različica splošnih pogojev (samo objavljeni pogoji, EVKLID_POGOJI_OBJAVLJENI): imetnik jo potrdi v zavihku Račun.
+    terms_notice: termsNotice(db, p),
     verified: !!p.email_verified_at,
     // Račun brez gesla (prijava z Apple): potrditev imetnika s kodo na e-pošto namesto gesla; splet za izvoz
     // in izbris namesto gesla ponudi nastavitev gesla. (Prej je bil ključ zapisan dvakrat; veljal je ta, z gostom.)
@@ -1079,7 +1082,7 @@ export function mountAccounts(app, store, opts = {}) {
     /^\/schools\/join\/?$/i,
   ];
   const SESSIONLESS = [/^\/kozmetika\/prijave\/izvoz$/, /^\/kozmetika\/prijave\/(message|lesson|app)\/\d+\/stanje$/];
-  const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
+  const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/, /^\/withdrawal$/];
   // Nekanonična pot /api (server/app.js, točka A1): 404, le zaklenjen račun ostane 403 (enako kot kanonična pot).
   const ni = (res) => res.status(404).json({ error: "Pot ne obstaja." });
   app.use("/api", (req, res, next) => {
@@ -1805,6 +1808,16 @@ export function mountAccounts(app, store, opts = {}) {
     res.json({ parent: publicParent(getParent(p.id)) });
   });
 
+  // Ponovna potrditev splošnih pogojev ob novi različici (terms_notice): zapis različice in časa v consents (brez
+  // dodatnih osebnih podatkov; e-naslov računa kot pri registraciji). Samo imetnik (OWNER_ONLY v account-lock.js).
+  app.post("/api/account/terms", json, (req, res) => {
+    const p = req.parent;
+    if (p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
+    if (req.body?.version !== TERMS_VERSION || req.body?.accept !== true) return res.status(409).json({ error: "Pogoji so se medtem spremenili. Osveži stran.", version: TERMS_VERSION });
+    recordSignupTerms(db, p.id, p.email);
+    res.json({ parent: publicParent(getParent(p.id)) });
+  });
+
   // Odklep računa na tej napravi z geslom računa (zavihek Račun, nov ali izbrisan profil).
   app.post("/api/account/unlock", json, async (req, res) => {
     const p = req.parent;
@@ -1863,6 +1876,15 @@ export function mountAccounts(app, store, opts = {}) {
     return options.length ? { from: plan.key, options: options.map((o) => ({ key: o.key, level: o.level, family: !!o.family, label: o.label, amount: o.amount, interval: o.interval, currency: "EUR" })) } : null;
   }
 
+  function withdrawalOpen(p) {
+    try {
+      const c = contractsFor(db, p, billing.withdrawalQuote);
+      return c.options.length > 0;
+    } catch (err) {
+      log.error?.("[evklid] odstop (seznam pogodb):", err.message);
+      return false;
+    }
+  }
   function accountView(req, p) {
     const access = accessOf(p);
     // Skrbniški podatki po seji (req.parent), ne po vrstici v bazi: p je pogosto sveže prebran (is_admin = 1 v bazi).
@@ -1934,6 +1956,9 @@ export function mountAccounts(app, store, opts = {}) {
       // Točka A9: skrbnik mora to sejo še potrditi s kodo na e-pošto (public/account.js skrbnikBox).
       ...(req.skrbnikCaka ? { skrbnik_potrditev: true } : {}),
       consents: { adult: ADULT_TEXT, withdrawal: WITHDRAWAL_TEXT, credit_withdrawal: CREDIT_WITHDRAWAL_TEXT },
+      // Funkcija za odstop (ZVPot-1A): povezava v zavihku Račun, dokler je kaka pogodba v roku 14 dni (ali nakup v trgovini).
+      withdrawal_open: !!billing && withdrawalOpen(p),
+      terms_version: TERMS_VERSION,
       grace_days: GRACE_DAYS,
       referral: { code: p.referral_code, url: `${baseUrl(req)}/?ref=${p.referral_code}`, rewards, days: REFERRAL_DAYS },
       consent_text: CONSENT_TEXT,
@@ -2427,6 +2452,7 @@ export function mountAccounts(app, store, opts = {}) {
     if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Naročnino plača starš. Pošlji mu povezavo za plačilo.", pay_link: true });
     if (req.body?.adult !== true || req.body?.withdrawal !== true) return res.status(400).json({ error: "Pred plačilom so potrebne vse potrditve.", consent: true });
+    if (livePayBlocked(stripe)) return res.status(409).json(LIVE_BLOCKED);
     if (!termsAccepted(req.body)) return res.status(400).json(TERMS_ERROR);
     try {
       const customer = await ensureCustomer(p);
@@ -2694,6 +2720,22 @@ export function mountAccounts(app, store, opts = {}) {
     await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } }, { noFallback: true });
   }
   guarantee = mountGuarantee(app, { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, birthMissing, cancelSubscription, addonOf: podari.addonOf });
+  // Funkcija za odstop od pogodbe (ZVPot-1A 138.a člen): /odstop.html, potrdilo o prejemu, vračilo in preklic (server/placila/odstop.js).
+  mountWithdrawal(app, {
+    db,
+    stripe,
+    json,
+    log,
+    getParent,
+    quote: (p, now) => billing.withdrawalQuote(p, now),
+    cancelSubscription,
+    passes: billing.passes,
+    credits,
+    sendMail,
+    baseUrl,
+    isMinor,
+    ownerOk: (req) => !lockable(req.parent) || accountLocks.isUnlocked(req.parent.id, req.deviceId),
+  });
 
   // Naročnina iz dogodka: sveže stanje iz Stripa (dogodki lahko pridejo v napačnem vrstnem redu).
   async function freshSubscription(obj) {

@@ -29,7 +29,8 @@ export const WHY_PATH = "/zakaj-evklid";
 // Javne strani za iskalnike (brez prijave, brez osebnih podatkov). Garancija je še osnutek, zato je ni tu.
 export const PUBLIC_PAGES = ["/", ABOUT_PATH, WHY_PATH, "/starsi.html", "/sole", "/prenesi", "/zasebnost.html"];
 // Osnutki do pregleda pravnika (j 2026-11-16): stran deluje in je povezana v nogi, v zemljevidu strani in llms.txt je ni (meta robots noindex).
-export const DRAFT_PAGES = ["/pogoji.html"];
+// Tudi stran za odstop od pogodbe (ZVPot-1A): povezana v nogi, za iskalnike ni (obrazec, ne vsebina).
+export const DRAFT_PAGES = ["/pogoji.html", "/odstop.html"];
 // Zasebne poti: API, plačilna stran s kodo, prijava testne različice, stanje strežnika, datoteke aplikacije za prenos.
 export const PRIVATE_PATHS = ["/api/", "/placaj.html", "/prijava", "/healthz", "/gradiva/", "/prenesi/"];
 

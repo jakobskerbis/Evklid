@@ -1,7 +1,7 @@
 // Skupni deli plačilnih zaslonov: tri potrditve pred plačilom (polnoletnost, odstop, pogoji) in povezava »Prosi starše za plačilo«.
 // Uporabljajo jih zavihek Račun (account.js), kartica paketa pred testom (pass-offer.js) in stran za starše (placaj.js).
 // Spodaj še aplikacija iz trgovine (isStoreApp) in vrnitev v aplikacijo po plačilu (watchReturnFromPay).
-import { t, currentLang } from "./i18n.js";
+import { t, currentLang, locale } from "./i18n.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -14,10 +14,26 @@ export const consentFields = (kind = "") => `
   <label class="check pay-consent"><input type="checkbox" name="withdrawal" required><span>${esc(t(WITHDRAWAL_KEY[kind] || "pay.withdrawal"))}</span></label>
   ${termsField()}`;
 
-// Potrditev splošnih pogojev (#765 točka 2): pred vsakim plačilom in ob registraciji. Strežnik shrani različico.
+// Potrditev splošnih pogojev (#765 točka 2): pred vsakim plačilom in ob registraciji. Strežnik shrani različico;
+// ob povezavi je različica pogojev (iz /api/config, ko pride; prej je prazna in skrita).
+let termsVersion = "";
+const versionLabel = (v) => {
+  const [y, m, d] = String(v).split("-").map(Number);
+  return y ? t("terms.version", { date: new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString(locale(), { day: "numeric", month: "numeric", year: "numeric", timeZone: "UTC" }) }) : "";
+};
+const fillVersions = () => document.querySelectorAll(".terms-version").forEach((el) => ((el.textContent = ` ${versionLabel(termsVersion)}`), (el.hidden = !termsVersion)));
+if (typeof document !== "undefined" && typeof fetch === "function")
+  fetch("/api/config")
+    .then((r) => (r.ok ? r.json() : null))
+    .then((c) => {
+      termsVersion = String(c?.terms?.version || "");
+      fillVersions();
+    })
+    .catch(() => {});
 export const termsField = (name = "terms") => {
   const [before, after = ""] = t("terms.accept").split("{link}");
-  return `<label class="check pay-consent"><input type="checkbox" name="${name}" required><span>${esc(before)}<a href="/pogoji.html" target="_blank" rel="noopener">${esc(t("terms.link"))}</a>${esc(after)}</span></label>`;
+  const v = termsVersion ? ` ${esc(versionLabel(termsVersion))}` : "";
+  return `<label class="check pay-consent"><input type="checkbox" name="${name}" required><span>${esc(before)}<a href="/pogoji.html" target="_blank" rel="noopener">${esc(t("terms.link"))}</a>${esc(after)}<span class="terms-version muted"${v ? "" : " hidden"}>${v}</span></span></label>`;
 };
 
 export const consentsOk = (form) => !!form.adult?.checked && !!form.withdrawal?.checked && !!form.terms?.checked;

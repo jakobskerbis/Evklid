@@ -267,7 +267,7 @@ export function purchaseEmail({ item, paidText, firstCharge = "", dateText, stat
   const n = BRAND.name;
   const list = statements.map((s) => `<li>${esc(s)}</li>`).join("");
   const translated = lang && lang !== "sl" ? `V aplikaciji ste potrditve brali v prevodu (jezik: ${lang}); tu je slovensko besedilo, ki smo ga shranili.` : "";
-  const how = `V 14 dneh od nakupa lahko od pogodbe odstopite brez navedbe razloga. Pošljite jasno izjavo na ${contact}; uporabite lahko obrazec za odstop: ${withdrawUrl}.`;
+  const how = `V 14 dneh od nakupa lahko od pogodbe odstopite brez navedbe razloga: na strani ${withdrawUrl} (»Kliknite tukaj za odstop od pogodbe«) ali z jasno izjavo na ${contact}.`;
   return {
     subject: `${n}: potrdilo o nakupu`,
     html: layout(
@@ -276,7 +276,7 @@ export function purchaseEmail({ item, paidText, firstCharge = "", dateText, stat
 <p><b>Kupljeno:</b> ${esc(item)}<br><b>Plačano ob nakupu:</b> ${esc(paidText)}${firstCharge ? `<br><b>Prvo plačilo:</b> ${esc(firstCharge)}` : ""}<br><b>Datum:</b> ${esc(dateText)}</p>
 <p><b>Pred plačilom ste potrdili:</b></p><ul>${list}</ul>${translated ? `<p>${esc(translated)}</p>` : ""}
 <p><b>Splošni pogoji uporabe</b>, različica ${esc(termsVersion)}: <a href="${esc(termsUrl)}">${esc(termsUrl)}</a></p>
-<p><b>Odstop od pogodbe.</b> V 14 dneh od nakupa lahko od pogodbe odstopite brez navedbe razloga. Pošljite jasno izjavo na <a href="mailto:${esc(contact)}">${esc(contact)}</a>; uporabite lahko <a href="${esc(withdrawUrl)}">obrazec za odstop</a>.${withdrawal ? ` ${esc(withdrawal)}` : ""}</p>
+<p><b>Odstop od pogodbe.</b> V 14 dneh od nakupa lahko od pogodbe odstopite brez navedbe razloga: <a href="${esc(withdrawUrl)}">kliknite tukaj za odstop od pogodbe</a> ali pošljite jasno izjavo na <a href="mailto:${esc(contact)}">${esc(contact)}</a>.${withdrawal ? ` ${esc(withdrawal)}` : ""}</p>
 <p>Račune najdete v zavihku Račun (»Upravljaj naročnino in račune«).</p>${button(appUrl, `Odprite ${n}`)}`,
     ),
     text: [
@@ -292,6 +292,45 @@ export function purchaseEmail({ item, paidText, firstCharge = "", dateText, stat
       `Splošni pogoji uporabe, različica ${termsVersion}: ${termsUrl}`,
       `Odstop od pogodbe: ${how}${withdrawal ? ` ${withdrawal}` : ""}`,
       `Račune najdete v zavihku Račun (»Upravljaj naročnino in račune«): ${appUrl}`,
+    ].join("\n"),
+  };
+}
+
+// Potrdilo o prejemu spletnega obvestila o odstopu od pogodbe (ZVPot-1A, 138.a člen, 4. odstavek): na trajnem nosilcu
+// (e-pošta), brez nepotrebnega odlašanja, z vsebino obvestila ter datumom in uro oddaje. Vikanje (plačnik je odrasel).
+// auto: odstop bo izveden takoj (prijavljen imetnik, pogodba v roku); sicer ga pregledamo in vam odgovorimo.
+export function withdrawalAckEmail({ name, email, contract, details = "", submitted, refundText = "", auto = false, contact, appUrl }) {
+  const n = BRAND.name;
+  const next = auto
+    ? `Odstop izvedemo takoj: naročnino ali nakup prekličemo${refundText ? `, vračilo ${refundText} pa pošljemo na isto plačilno sredstvo (banka ga običajno pripiše v 5–10 dneh)` : ""}. Če kaj ne uspe, vam pišemo.`
+    : "Obvestilo bomo pregledali in vam v nekaj dneh odgovorili. Vračilo izvedemo na isto plačilno sredstvo najpozneje v 14 dneh od prejema obvestila.";
+  const rows = [
+    ["Ime in priimek", name],
+    ["E-naslov za potrdilo", email],
+    ["Pogodba", contract],
+    ...(details ? [["Dodatno", details]] : []),
+    ["Oddano", submitted],
+  ];
+  return {
+    subject: `${n}: potrdilo o prejemu odstopa od pogodbe`,
+    html: layout(
+      "Potrdilo o prejemu odstopa od pogodbe",
+      `<p>Prejeli smo vaše obvestilo o odstopu od pogodbe. To sporočilo shranite: je potrdilo, da ste odstopili pravočasno.</p>
+<p><b>Vsebina obvestila</b></p>
+<p>Obveščam vas, da odstopam od pogodbe.<br>${rows.map(([k, v]) => `<b>${esc(k)}:</b> ${esc(v)}`).join("<br>")}</p>
+<p>${esc(next)}</p>
+<p>Vprašanja: <a href="mailto:${esc(contact)}">${esc(contact)}</a></p>${button(appUrl, `Odprite ${n}`)}`,
+    ),
+    text: [
+      "Potrdilo o prejemu odstopa od pogodbe",
+      "Prejeli smo vaše obvestilo o odstopu od pogodbe. To sporočilo shranite: je potrdilo, da ste odstopili pravočasno.",
+      "",
+      "Vsebina obvestila:",
+      "Obveščam vas, da odstopam od pogodbe.",
+      ...rows.map(([k, v]) => `${k}: ${v}`),
+      "",
+      next,
+      `Vprašanja: ${contact}`,
     ].join("\n"),
   };
 }

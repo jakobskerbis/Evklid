@@ -18,7 +18,7 @@ import { audit } from "../dnevnik-dostopov.js";
 import { parentFromMeta, purchaseMismatch, logSafe } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
-import { migrateTerms, insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText, subItem, firstChargeText, consentText } from "./potrdilo.js";
+import { migrateTerms, insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText, subItem, firstChargeText, consentText, livePayBlocked, LIVE_BLOCKED } from "./potrdilo.js";
 import { appMark } from "../mobile/trgovina.js";
 
 // Enako kot pay.adult v public/i18n/sl.js (kar plačnik vidi); test/pogoji-potrditev.test.js primerja vsa besedila.
@@ -395,6 +395,7 @@ export function mountBilling(app, ctx) {
     if (isMinor(p)) return res.status(403).json({ error: "Paket plača starš. Pošlji mu povezavo za plačilo.", pay_link: true });
     const c = checkPass(req, p, req.body);
     if (c.status) return res.status(c.status).json(c.body);
+    if (livePayBlocked(stripe)) return res.status(409).json(LIVE_BLOCKED);
     if (consentFail(req.body)) return res.status(400).json(consentFail(req.body));
     try {
       const customer = await ensureCustomer(p);
@@ -472,6 +473,7 @@ export function mountBilling(app, ctx) {
     const pack = packById(req.body?.pack);
     if (!pack) return res.status(400).json({ error: "Neznan paket." });
     if (currencyOf(req, p) !== "EUR") return res.status(400).json({ error: "Dokup pogovorov je zaenkrat na voljo samo v evrih." });
+    if (livePayBlocked(stripe)) return res.status(409).json(LIVE_BLOCKED);
     if (consentFail(req.body)) return res.status(400).json(consentFail(req.body));
     try {
       const customer = await ensureCustomer(p);
@@ -645,6 +647,7 @@ export function mountBilling(app, ctx) {
     if (!l) return;
     const email = String(req.body?.email || "").trim().toLowerCase();
     if (!EMAIL_RE.test(email) || email.length > 200) return res.status(400).json({ error: "Vpišite veljaven e-naslov za račun." });
+    if (livePayBlocked(stripe)) return res.status(409).json(LIVE_BLOCKED);
     if (consentFail(req.body)) return res.status(400).json(consentFail(req.body));
     const parent = getParent(l.parent_id);
     if (!parent) return res.status(404).json({ error: "Povezava za plačilo ne obstaja ali je potekla. Prosite za novo.", expired: true });
@@ -757,6 +760,12 @@ export function mountBilling(app, ctx) {
       if (!Number.isFinite(at)) return res.status(400).json({ error: "Neveljaven datum izjave (at)." });
       now = Math.min(at, realNow);
     }
+    const out = withdrawalQuote(p, now);
+    audit(db, { req, parentId: req.parent?.id, actor: "admin", action: "withdrawal_view", target: `parent:${p.id}` });
+    res.json(out);
+  });
+  // Izračun za odstop ob času izjave now (ms): skrbniški prikaz zgoraj in funkcija za odstop (server/placila/odstop.js).
+  function withdrawalQuote(p, now = Date.now()) {
     const sqlTime = (ms) => new Date(ms).toISOString().slice(0, 19).replace("T", " ");
     const fromSql = (t) => (t ? Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(t) ? t : `${String(t).replace(" ", "T")}Z`) : NaN);
     const within = (fromMs) => Number.isFinite(fromMs) && now >= fromMs && now - fromMs <= WITHDRAWAL_DAYS * 86400000;
@@ -824,9 +833,8 @@ export function mountBilling(app, ctx) {
         out.credits.push({ id: c.id, paid_cents: c.amount, currency: c.currency || "EUR", credit_usd: c.credit_usd, refund_cents: refundUp(c.amount * left), ai_left: left, created_at: c.created_at, paid_at: c.paid_at || null, contract_from: Number.isFinite(from) ? new Date(from).toISOString() : null, contract_from_source: "placilo", within_14_days: within(from) });
       }
     }
-    audit(db, { req, parentId: req.parent?.id, actor: "admin", action: "withdrawal_view", target: `parent:${p.id}` });
-    res.json(out);
-  });
+    return out;
+  }
   app.get("/api/admin/promo-codes", (req, res) => {
     if (admin(req, res)) res.json({ codes: promo.list() });
   });
@@ -1033,5 +1041,5 @@ export function mountBilling(app, ctx) {
     }
   }
 
-  return { passes, passPremium, passOfferFor, completePassSession, completeCreditSession, completeSubSession, billingDaily, recordConsent, pendingChange, allowanceMail, levelChanges };
+  return { passes, passPremium, passOfferFor, completePassSession, completeCreditSession, completeSubSession, billingDaily, recordConsent, pendingChange, allowanceMail, levelChanges, withdrawalQuote };
 }

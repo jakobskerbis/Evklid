@@ -46,3 +46,38 @@ odvzem kredita ob vračilu, novi testi v SP padejo.
 - Delno vračilo dokupa odvzame cel paket kredita; že porabljeni del tega paketa se odšteje od drugih aktivnih paketov.
 - Koda ob vračilu naročnine bere `charge.invoice` iz dogodka; pri novejši različici API bi morala plačilo prebrati
   s `GET /charges/:id` (zgoraj: dokler je različica webhooka `2024-06-20`, to ni potrebno).
+
+## Odstop od pogodbe: funkcija za odstop (ZVPot-1A, 18. 11. 2026)
+
+Zakon: 138.a člen ZVPot-1A (Uradni list RS, objava 29. 10. 2026; velja 15. dan po objavi, uporablja se 30 dni po
+uveljavitvi) in člen 11a Direktive 2011/83/EU (Direktiva (EU) 2023/2673). Stran `/odstop.html` (kratka pot `/odstop`),
+povezava »Odstop od pogodbe« v nogi vseh javnih strani, na pristajalni strani in v zavihku Račun (dokler je kaka
+pogodba v roku). Strežnik: `server/placila/odstop.js`, test `test/odstop.test.js` (**O**).
+
+| Korak | Kaj | Test |
+|---|---|---|
+| Funkcija | gumb »Kliknite tukaj za odstop od pogodbe« → obrazec (ime, e-naslov za potrdilo, pogodba) → »Potrdi odstop od pogodbe« | O »oznake …« |
+| Brez prijave | zapis + potrdilo o prejemu (vsebina, datum in ura s sekundami, CET/CEST); obdela skrbnik | O »brez prijave …« |
+| Prijavljen imetnik | izbere pogodbo v roku 14 dni (naročnina, paket, dokup); vračilo v Stripu, nato takojšen preklic | O »prijavljen imetnik …« |
+| Znesek | sorazmerno (pogoji 12. točka), če je plačnik pred plačilom izrecno potrdil takojšen začetek, sicer celotno | O »… celotno vračilo« |
+| Skrbnik | Račun → »Odstopi od pogodbe«: izvedi, poveži obvestilo brez prijave z računom, zaključi ročno (razlog) | O »skrbnik …« |
+| Pravi ključ | samodejno vračilo samo v testnem načinu, dokler ni `EVKLID_ODSTOP_LIVE=1` | O »pravi ključ …« |
+
+Nastavitve (Render → Environment):
+- `EVKLID_ODSTOP_VRACILO=celotno`: vedno celotno plačilo (če pravnik reče, da sorazmerni del ni dovoljen).
+- `EVKLID_ODSTOP_SAMODEJNO=0`: nič samodejno, vse obdela skrbnik.
+- `EVKLID_ODSTOP_LIVE=1`: samodejno vračilo tudi s pravim ključem (po s.p. in potrditvi pravnika).
+
+Nakupi v App Store in Google Play: trgovina je prodajalec in vodi vračila; stran prijavljenemu imetniku pove, naj odstop
+uredi pri trgovini, obvestilo brez prijave pa skrbnik zaključi z razlogom.
+
+## Splošni pogoji: osnutek in objava
+
+`EVKLID_POGOJI_OBJAVLJENI` (privzeto izklopljeno): `/pogoji.html` pokaže pasico »Splošni pogoji so v pripravi« in
+noindex, plačila s pravim ključem Stripa (`sk_live_`) vrnejo 409 (`terms_draft`), testni način deluje naprej. Z `=1`
+strežnik odstrani dele med `<!-- osnutek -->` in `<!-- /osnutek -->` (`server/pogoji-stran.js`), plačila se odprejo
+in imetnik, ki zadnje različice (`TERMS_VERSION`) še ni potrdil, v zavihku Račun dobi pasico »Novi splošni pogoji«
+(`POST /api/account/terms`, zapis različice in časa v `consents`). Ob vsaki potrditvi pred plačilom se različica
+zapiše v `billing_consents.terms_version`; ob potrditvi je prikazana različica (iz `/api/config`).
+Objava novega besedila: zamenjaj besedilo v `public/pogoji.html`, popravi datum »Različica« in `TERMS_VERSION`
+(`server/accounts/potrdilo.js`; test preveri, da se ujemata), nato nastavi zastavico.

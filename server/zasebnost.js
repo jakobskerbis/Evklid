@@ -198,6 +198,11 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
     // Samo soglasja izbrisanih računov (parent_id NULL); pri obstoječem računu ostanejo, dokler je račun.
     out.billingConsents = Number(db.prepare("DELETE FROM billing_consents WHERE parent_id IS NULL AND created_at < ?").run(ago(RETENTION.billingConsentDays)).changes);
   }
+  if (RETENTION.billingConsentDays && hasTable(db, "withdrawals")) {
+    // Obvestila o odstopu (ime, e-naslov, pogodba; server/placila/odstop.js): dokaz o pravočasnem odstopu, enako dolgo kot
+    // soglasje ob nakupu. Pri obstoječem računu ostanejo, dokler je račun; po izbrisu računa 5 let od oddaje (preveri pravnik).
+    out.withdrawals = Number(db.prepare("DELETE FROM withdrawals WHERE parent_id IS NULL AND submitted_at < ?").run(new Date(now - RETENTION.billingConsentDays * 86400000).toISOString()).changes);
+  }
   ensureAuditTable(db);
   out.audit = Number(db.prepare("DELETE FROM audit_log WHERE at < ?").run(ago(RETENTION.auditDays)).changes);
   out.unverified = deleteStaleUnverified(db, { nowIso, before: ago(RETENTION.unverifiedDays) });

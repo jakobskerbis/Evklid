@@ -10,6 +10,7 @@ import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
 import { renderPilotAdmin, paintAccountPilot, paintAccountWtp, proofHtml, proofBody, wireProof } from "./pilot-naloge.js";
 import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
+import { withdrawalLink, termsBanner, withdrawalAdminCard, bindWithdrawal } from "./odstop-ui.js";
 import { clearPrivate, checkOwner, deviceData, endedSession, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
 import { currentSource } from "./vir.js";
@@ -1926,6 +1927,7 @@ export async function renderAccount() {
     <button type="button" class="ghost back me-back">${icon("arrow-left")}${esc(t("nav.me"))}</button>
     <h1>${esc(t("nav.account"))}</h1>
     ${privacyBanner(acc)}
+    ${termsBanner(acc)}
     ${acc.parent.verified ? "" : `<div class="card" id="verify-card">
       <h2>${esc(t("verify.nudgeTitle"))}</h2>
       <p>${esc(t("verify.nudgeText", { email: acc.parent.email }))}</p>
@@ -1939,6 +1941,7 @@ export async function renderAccount() {
       ${storeApp
         ? paid && acc.parent.has_customer ? `<p class="muted">${esc(t("mob.subElsewhere"))}</p>` : ""
         : acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">${esc(t("acct.portal"))}</button>` : ""}
+      ${withdrawalLink(acc)}
       ${promoBox(acc, paid || storeApp)}
     </div>
     <div class="card" id="pn-wtp" hidden></div>
@@ -1949,6 +1952,7 @@ export async function renderAccount() {
     ${giftBox(shown)}
     ${storeApp || acc.self_only ? "" : podariBox(acc)}
     ${adminCards(acc)}
+    ${withdrawalAdminCard(acc)}
     ${acc.promo?.codes ? `<div class="card" id="pilot-card"><h2>${esc(t("pilot.title"))}</h2><div id="pilot-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="pilot-tasks-card"><h2>${esc(t("pilot.n.title"))}</h2><div id="pilot-tasks-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="pilot-mnenja-card"><h2>${esc(t("pilot.mn.title"))}</h2><div id="pilot-mnenja-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
@@ -2063,6 +2067,7 @@ export async function renderAccount() {
   paintAccountWtp($("#pn-wtp"), acc.pilot_wtp, { api, toast, hasPassword }); // pilot: »Ali bi za Evklid plačali?« (enkrat)
   wirePrivacyBanner(hasPassword); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
+  bindWithdrawal(acc, { api, toast, refresh: renderAccount });
   // Kaj je izrisano (refreshAfterPay izriše znova le ob spremembi, da ne pobriše napol izpolnjenih obrazcev).
   shownSig = null;
   renderCreditCard($("#credit-card"), { api, buy: !storeApp }).then((balance) => (shownSig = paySig(acc, balance)));
