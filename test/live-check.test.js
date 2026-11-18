@@ -1049,3 +1049,33 @@ test("live check (pregled #848): two review calls reserve twice in the school po
     server2.close();
   }
 });
+
+test("live check: Render turns on review in OŠ with a 3 $ daily pool (j 18. 11.), and every paid plan keeps AI ≤ 25 % and profit ≥ 75 %", async () => {
+  const fs = await import("node:fs");
+  const yaml = fs.readFileSync(new URL("../render.yaml", import.meta.url), "utf8");
+  const env = (k) => yaml.match(new RegExp(`- key: ${k}\\n\\s+value: "([^"]*)"`))?.[1];
+  assert.equal(env("EVKLID_LIVE_CHECK_DAILY_USD"), "3");
+  assert.equal(env("EVKLID_LIVE_REVIEW_OS"), "1");
+  const { LIVE_CHECK_DAILY_USD } = await import("../server/live-check.js");
+  const keep = { d: process.env.EVKLID_LIVE_CHECK_DAILY_USD, o: process.env.EVKLID_LIVE_REVIEW_OS };
+  process.env.EVKLID_LIVE_CHECK_DAILY_USD = env("EVKLID_LIVE_CHECK_DAILY_USD");
+  process.env.EVKLID_LIVE_REVIEW_OS = env("EVKLID_LIVE_REVIEW_OS");
+  try {
+    assert.equal(LIVE_CHECK_DAILY_USD(), 3);
+    assert.equal(LIVE_REVIEW_SS_DAILY_USD(), 1.5, "šolski del (OŠ + SŠ) je polovica");
+    assert.equal(claimReviewFor("OS"), true);
+    assert.equal(claimReviewFor("SS"), true);
+    assert.equal(claimReviewFor("FAKS"), false, "faks gre v pregled kot tvegan odgovor, ne po stopnji");
+    assert.equal(LIVE_REVIEW_PER_PUPIL(), 6);
+  } finally {
+    for (const [k, v] of [["EVKLID_LIVE_CHECK_DAILY_USD", keep.d], ["EVKLID_LIVE_REVIEW_OS", keep.o]]) if (v === undefined) delete process.env[k]; else process.env[k] = v;
+  }
+  // Pregled gre v mejo učenca (server/app.js hold.take), zato je najslabši strošek AI na profil zajamčeni AI paketa.
+  const { PLANS, LEGACY_PLANS, SCHOOL_PLANS, planGuarantee, planEurMonth, aiCapFromEur, worstProfit, VAT_MAX, COST } = await import("../server/accounts/plans.js");
+  for (const p of [...PLANS, ...LEGACY_PLANS, ...SCHOOL_PLANS]) {
+    const g = planGuarantee(p);
+    const eur = planEurMonth(p);
+    assert.ok(g.total <= aiCapFromEur(eur, VAT_MAX) + 1e-9, `${p.key}: AI ≤ 25 % cene brez DDV`);
+    assert.ok(worstProfit(eur, g.total, { months: p.interval === "year" ? 12 : 1, profiles: p.seats || 1 }) >= COST.minProfit, `${p.key}: dobiček ≥ 75 %`);
+  }
+});
