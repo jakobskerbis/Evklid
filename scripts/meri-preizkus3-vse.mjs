@@ -7,7 +7,9 @@
 // profilom »Učenec« (brez šibkih točk in rezultatov iz prejšnjih nalog). Samo trenutni prompt.
 // Naloge niso javne (j 18. 11.): scripts/preizkus3-naloge.enc (AES-256-GCM, scripts/preizkus3-sifra.mjs), ključ v
 // okolju PREIZKUS3_KLJUC (skrivnost v GitHubu). Lokalno lahko --naloge-datoteka <pot> s čistim besedilom (nikoli v
-// repozitorij). Izid vsebuje odgovore in številke nalog, ne besedila nalog.
+// repozitorij). Izid vsebuje odgovore in številke nalog, ne besedil nalog, in je šifriran z istim ključem (odgovori
+// pogosto navajajo nalogo): datoteka ostane .json (vzorec artefakta), odšifriranje lokalno s
+// scripts/preizkus3-sifra.mjs --odsifriraj. Brez ključa (le lokalno, --naloge-datoteka) je izid nešifriran.
 // Privzeto kot plačljivi paket brez nadgradenj po mesečnem proračunu (OŠ »chat«, SŠ in faks »think«, kot
 // meri-preizkus3.mjs in meritev-po-objavi), brez pregleda z zmogljivejšim modelom (v krogih 1–3 je j-jev profil dnevno
 // mejo pregledov učenca, 6, porabil že v 1. krogu) in brez preverjanja kartic s Sonnetom/Opusom. --kot-produkcija
@@ -26,7 +28,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { odsifriraj, kljucIz } from "./preizkus3-sifra.mjs";
+import { odsifriraj, sifriraj, kljucIz } from "./preizkus3-sifra.mjs";
 
 const ZNANI = { "--max-usd": 1, "--naloge": 1, "--del": 1, "--hkrati": 1, "--out": 1, "--naloge-datoteka": 1, "--kot-produkcija": 0, "--s-pregledom": 0, "--suho": 0 };
 for (let i = 2; i < process.argv.length; i++) {
@@ -64,13 +66,17 @@ if (PRODUKCIJA && process.env.GITHUB_ACTIONS) napaka("--kot-produkcija ni dovolj
 // okolja, da ga noben del strežnika ne vidi in ne zapiše.
 const KLJUC = process.env.PREIZKUS3_KLJUC;
 delete process.env.PREIZKUS3_KLJUC;
+// V GitHub Actions vedno s ključem: izid v artefaktu mora biti šifriran.
+if (process.env.GITHUB_ACTIONS && !KLJUC) napaka("Ni ključa PREIZKUS3_KLJUC (skrivnost v GitHubu): v GitHub Actions mora biti izid šifriran.");
+let IZID_KLJUC = null;
 let NALOGE;
 try {
+  if (KLJUC) IZID_KLJUC = kljucIz(KLJUC);
   const datoteka = arg("naloge-datoteka", "");
   if (datoteka) NALOGE = JSON.parse(fs.readFileSync(datoteka, "utf8")).naloge;
   else {
     if (!KLJUC) napaka("Ni ključa PREIZKUS3_KLJUC (GitHub Actions: skrivnost PREIZKUS3_KLJUC; lokalno: --naloge-datoteka <pot>).");
-    NALOGE = JSON.parse(odsifriraj(fs.readFileSync(new URL("./preizkus3-naloge.enc", import.meta.url), "utf8"), kljucIz(KLJUC))).naloge;
+    NALOGE = JSON.parse(odsifriraj(fs.readFileSync(new URL("./preizkus3-naloge.enc", import.meta.url), "utf8"), IZID_KLJUC)).naloge;
   }
 } catch (e) {
   napaka(`Naloge ni bilo mogoče prebrati: ${e.message}`);
@@ -120,12 +126,15 @@ const vidno = (t) => stripChoices(stripMeta(String(t))).replace(/<<[A-ZČŠŽ_]+
 // Rezerva sporočila (najslabši primer, preden gre klic ven). Privzeto Haiku: prvo sporočilo 0,08 $ (odgovor z razmislekom,
 // popravek in zapis poziva v predpomnilnik), nadaljnja pri Vodenju 0,12 $ (daljša zgodovina); s pregledom + 2× pregled
 // Sonneta. Z nadgradnjami (lokalno): 2× najslabši odgovor Opusa (server/meje-ai.js) + 2× pregled Sonneta.
+// Varnostni pregled sporočila pred zavrnitvijo (server/nujno.js, na strošek aplikacije, zunaj rezerve odgovora) lahko
+// mejo preseže za nekaj desetink centa: zato stalen dodatek 0,01 $ na sporočilo.
+const NUJNO = 0.01;
 function rezerva(n, text, korak) {
   const pregled = PREGLED || PRODUKCIJA ? 2 * checkReserveUsd(MODEL_MID, text + "x".repeat(8000)) : 0;
-  if (!PRODUKCIJA) return (korak ? 0.12 : 0.08) + pregled;
+  if (!PRODUKCIJA) return (korak ? 0.12 : 0.08) + pregled + NUJNO;
   const system = buildSystemPrompt({ settings: n.nastavitve, studentName: IME });
   const zgodovina = [n.q, ...(n.odgovori || [])].slice(0, korak + 1).map((t) => ({ role: "user", content: t + "x".repeat(korak ? 12000 : 0) }));
-  return 2 * replyReserveUsd({ mode: "deep", system, messages: zgodovina, tools: SETTINGS_TOOLS, extraTokens: 2000 }) + pregled;
+  return 2 * replyReserveUsd({ mode: "deep", system, messages: zgodovina, tools: SETTINGS_TOOLS, extraTokens: 2000 }) + pregled + NUJNO;
 }
 
 const store = openDb(":memory:");
@@ -143,7 +152,8 @@ const stroskek = () => Math.max(porabljeno, vBazi());
 const zapisi = (koncano) => {
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   const naloge = Object.fromEntries(Object.entries(izid).sort((a, b) => a[0] - b[0]));
-  fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), commit: process.env.GITHUB_SHA || null, del: DEL || null, suho: SUHO, kotProdukcija: PRODUKCIJA, sPregledom: PREGLED, porabljeno: stroskek(), ustavljeno, koncano, naloge }, null, 1));
+  const json = JSON.stringify({ datum: new Date().toISOString(), commit: process.env.GITHUB_SHA || null, del: DEL || null, suho: SUHO, kotProdukcija: PRODUKCIJA, sPregledom: PREGLED, porabljeno: stroskek(), ustavljeno, koncano, sifrirano: !!IZID_KLJUC, naloge }, null, 1);
+  fs.writeFileSync(OUT, IZID_KLJUC ? sifriraj(json, IZID_KLJUC) : json);
 };
 
 async function sporocilo(studentId, convId, text, res) {
@@ -242,4 +252,4 @@ const nap = Object.entries(izid).filter(([, v]) => v.napaka);
 if (nap.length) console.log(`Napake: ${nap.map(([k, v]) => `${k} (${v.napaka})`).join("; ")}`);
 const manjka = izbor.filter((n) => !izid[n.id] || izid[n.id].napaka).map((n) => n.id);
 console.log(`Strošek ${stroskek().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}.${manjka.length ? ` Manjkajo: ${manjka.join(",")}.` : ""}`);
-console.log(`Odgovori: ${OUT}`);
+console.log(`Odgovori: ${OUT}${IZID_KLJUC ? " (šifrirano, scripts/preizkus3-sifra.mjs --odsifriraj)" : ""}`);

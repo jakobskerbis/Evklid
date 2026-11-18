@@ -8,7 +8,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { sifriraj, odsifriraj, kljucIz, OBLIKA } from "../scripts/preizkus3-sifra.mjs";
+import { sifriraj, odsifriraj, kljucIz, jeSifrirano, OBLIKA } from "../scripts/preizkus3-sifra.mjs";
 import { normalizeSettings } from "../server/settings.js";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -52,6 +52,37 @@ test("šifra: AES-256-GCM z naključnim IV, glava z različico; napačen ključ,
   assert.throws(() => odsifriraj(JSON.stringify({ ...o, v: 2 }), k), /Neznana oblika/);
   assert.throws(() => kljucIz("abc"), /32 bajtov/);
   assert.equal(kljucIz(k.toString("base64")).length, 32);
+  assert.equal(kljucIz(` ${k.toString("base64")}\n`).length, 32, "presledki okoli se odrežejo");
+  // Buffer.from bi neveljavne znake tiho preskočil: ključ mora biti natanko 43 znakov base64 in »=«.
+  for (const slab of ["!".repeat(43) + "=", k.toString("base64").replace("=", "A"), k.toString("base64url").slice(0, 43) + "=", crypto.randomBytes(31).toString("base64"), crypto.randomBytes(33).toString("base64"), `${k.toString("base64").slice(0, 20)} ${k.toString("base64").slice(21)}`]) {
+    if (/^[A-Za-z0-9+/]{43}=$/.test(slab)) continue; // base64url brez - in _ je lahko veljaven base64
+    assert.throws(() => kljucIz(slab), /32 bajtov/, slab);
+  }
+  // Oznaka mora imeti 16 bajtov (GCM bi sprejel krajšo in oslabil overjanje), IV 12.
+  const kratka = { ...o, tag: Buffer.from(o.tag, "base64").subarray(0, 12).toString("base64") };
+  assert.throws(() => odsifriraj(JSON.stringify(kratka), k), /dolžina oznake/);
+  assert.throws(() => odsifriraj(JSON.stringify({ ...o, iv: crypto.randomBytes(16).toString("base64") }), k), /dolžina oznake ali IV/);
+  assert.equal(jeSifrirano(a), true);
+  assert.equal(jeSifrirano('{"naloge":{}}'), false);
+  assert.equal(jeSifrirano("ni json"), false);
+});
+
+test("preizkus3-sifra.mjs --sifriraj in --odsifriraj: krog prek ukazne vrstice; napačen ali manjkajoč ključ konča z 1", () => {
+  const dir = tmp();
+  const k = crypto.randomBytes(32).toString("base64");
+  const cli = (a, kljuc = k) => spawnSync(process.execPath, [path.join(root, "scripts/preizkus3-sifra.mjs"), ...a], { encoding: "utf8", env: { ...process.env, PREIZKUS3_KLJUC: kljuc } });
+  fs.writeFileSync(path.join(dir, "a.json"), '{"naloge":{"1":{"out":[{"txt":"čšž"}]}}}');
+  assert.equal(cli(["--sifriraj", path.join(dir, "a.json"), path.join(dir, "a.enc")]).status, 0);
+  assert.ok(jeSifrirano(fs.readFileSync(path.join(dir, "a.enc"), "utf8")));
+  const r = cli(["--odsifriraj", path.join(dir, "a.enc"), path.join(dir, "b.json")]);
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(fs.readFileSync(path.join(dir, "b.json"), "utf8"), '{"naloge":{"1":{"out":[{"txt":"čšž"}]}}}');
+  const n = cli(["--odsifriraj", path.join(dir, "a.enc"), path.join(dir, "c.json")], crypto.randomBytes(32).toString("base64"));
+  assert.equal(n.status, 1);
+  assert.match(n.stderr, /Odšifriranje ni uspelo/);
+  assert.ok(!fs.existsSync(path.join(dir, "c.json")));
+  assert.equal(cli(["--odsifriraj", path.join(dir, "a.enc"), path.join(dir, "c.json")], "").status, 1);
+  assert.doesNotMatch(n.stderr + n.stdout, new RegExp(k.replace(/[+/=]/g, "\\$&")), "ključ ni izpisan");
 });
 
 test("preizkus3-naloge.enc: šifrirana, brez čistega besedila nalog; čisto besedilo v .gitignore", () => {
@@ -112,6 +143,25 @@ test("--suho z lokalno datoteko: brez klica (tudi s ključem API), Vodenje tri s
     }
 });
 
+test("s ključem je izid šifriran (ime .json ostane); v GitHub Actions brez ključa ne teče", () => {
+  const k = crypto.randomBytes(32).toString("base64");
+  const r = zagon(["--suho", "--naloge-datoteka", datoteka], { PREIZKUS3_KLJUC: k });
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /\(šifrirano, scripts\/preizkus3-sifra\.mjs --odsifriraj\)/);
+  const surovo = fs.readFileSync(path.join(r.cwd, "data/meri-preizkus3-vse.json"), "utf8");
+  assert.ok(jeSifrirano(surovo), "izid šifriran");
+  assert.doesNotMatch(surovo, /Preizkusni način|"naloge"/);
+  const d = JSON.parse(odsifriraj(surovo, kljucIz(k)));
+  assert.equal(d.sifrirano, true);
+  assert.deepEqual(Object.keys(d.naloge), ["1", "2", "3"]);
+  assert.equal(d.naloge["2"].out.length, 3);
+  assert.ok(!(r.stdout + r.stderr).includes(k), "ključ ni izpisan");
+  const gh = zagon(["--suho", "--naloge-datoteka", datoteka], { GITHUB_ACTIONS: "true" });
+  assert.equal(gh.status, 1);
+  assert.match(gh.stderr, /v GitHub Actions mora biti izid šifriran/);
+  assert.equal(zagon(["--suho", "--naloge-datoteka", datoteka], { PREIZKUS3_KLJUC: "kratek" }).status, 1, "neveljaven ključ");
+});
+
 test("--del: le izbrane naloge; ime profila »Učenec«", () => {
   const r = zagon(["--suho", "--naloge-datoteka", datoteka, "--del", "1-2"]);
   assert.equal(r.status, 0, r.stderr);
@@ -142,6 +192,8 @@ test("okolje kot plačljivi paket: brez predpomnilnika, kartic, pregleda OŠ in 
   assert.match(src, /delete process\.env\.EVKLID_VERIFY_MODELS;/);
   assert.match(src, /delete process\.env\.EVKLID_COMPETITION_DEEP;/);
   assert.match(src, /process\.env\.EVKLID_LIVE_REVIEW_OS = "0";/);
+  assert.match(src, /const NUJNO = 0\.01;/); // dodatek za varnostni pregled pred zavrnitvijo (zunaj rezerve odgovora)
+  assert.match(src, /\+ pregled \+ NUJNO;/);
   assert.match(src, /const KLJUC = process\.env\.PREIZKUS3_KLJUC;\ndelete process\.env\.PREIZKUS3_KLJUC;/);
   // Okolje se nastavi pred uvozom strežnika.
   assert.ok(src.indexOf('EVKLID_VERIFY_DAILY_USD = "0"') < src.indexOf('await import("../server/app.js")'));
