@@ -66,4 +66,6 @@
 .vaja-sum { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
 .vaja-sum li { display: flex; gap: 8px; align-items: center; overflow-wrap: anywhere; }
 .vaja-sum li svg { width: 18px; height: 18px; flex: none; }
+.vaja-sum li small { white-space: nowrap; }
+.vaja-none[hidden] { display: none; }
 .vaja-ok li svg { color: var(--ok); }

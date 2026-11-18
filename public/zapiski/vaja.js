@@ -225,7 +225,7 @@ function taskRow(x) {
         ? `<p class="vaja-none">${icon("info")} <span>${esc(t("vaja.none"))}</span></p>`
         : `<label class="vaja-skill" for="${id}"><span>${esc(t("vaja.skill"))}</span>
       <select id="${id}" data-skill dir="auto">${x.pick ? "" : `<option value="">${esc(t("vaja.pick"))}</option>`}${found.map(opt).join("")}${path.length ? `<optgroup label="${esc(t("vaja.fromPath"))}">${path.map(opt).join("")}</optgroup>` : ""}</select></label>
-      ${!x.skill && !x.pick ? `<p class="vaja-none">${icon("info")} <span>${esc(t("vaja.unknown"))}</span></p>` : x.skill && !x.sure && x.pick === x.skill.id ? `<p class="vaja-unsure">${icon("circle-help")} <span>${esc(t("vaja.unsure"))}</span></p>` : ""}`
+      ${!x.skill ? `<p class="vaja-none" data-unknown${x.pick ? " hidden" : ""}>${icon("info")} <span>${esc(t("vaja.unknown"))}</span></p>` : x.skill && !x.sure && x.pick === x.skill.id ? `<p class="vaja-unsure">${icon("circle-help")} <span>${esc(t("vaja.unsure"))}</span></p>` : ""}`
     }
   </li>`;
 }
@@ -259,6 +259,9 @@ function renderList() {
       x.on = !!x.pick;
       const cb = li.querySelector("[data-on]");
       if (cb) (cb.disabled = !x.pick), (cb.checked = x.on);
+      const note = li.querySelector("[data-unknown]");
+      if (note) note.hidden = !!x.pick; // izbral je sam: obvestilo »Nisem prepoznal« ni več potrebno
+      li.querySelector(".vaja-unsure")?.remove();
     }
     if (e.target.matches("[data-on]")) x.on = e.target.checked;
     li.classList.toggle("off", !!x.pick && !x.on);
@@ -280,7 +283,7 @@ function doneHtml(n) {
   const by = (st) => list.filter((k) => k.status === st);
   const group = (items, cls, ic, title) =>
     items.length
-      ? `<h3 class="with-icon vaja-sum-h">${icon(ic)} ${esc(title)}</h3><ul class="vaja-sum ${cls}">${items.map((k) => `<li dir="auto">${icon(ic)} <span>${esc(k.name)}</span> <small class="muted">${k.correct}/${k.total}</small></li>`).join("")}</ul>`
+      ? `<h3 class="with-icon vaja-sum-h">${icon(ic)} ${esc(title)}</h3><ul class="vaja-sum ${cls}">${items.map((k) => `<li dir="auto">${icon(ic)} <span>${esc(k.name)}</span> <small class="muted"><bdi>${k.correct}/${k.total}</bdi></small></li>`).join("")}</ul>`
       : "";
   const more = by("more");
   // Ponavljanje obljubimo samo za teme, ki jih strežnik res postavi v ponavljanje (obvladane že pred to vajo).
