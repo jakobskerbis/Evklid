@@ -12,7 +12,7 @@ import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
 hydrateIcons();
-import { initAccount, prefetchAccountStatus, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { initAccount, prefetchAccountStatus, accountsOn, accountStatus, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
 import { povabiPoUspehu } from "./povabi.js";
 import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
@@ -3913,6 +3913,7 @@ async function checkTask(task, ctx, value) {
       ${r.selfExplain ? `<div class="fb info">${icon("circle-help")}<span>${escapeHtml(r.selfExplain)}</span></div>` : ""}
       ${r.offline ? "" : tutorRow(task.id)}`;
     html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next();
+    if (!r.offline) html += `<div class="potrdi-slot"></div>`; // potrditev e-naslova šele po rešeni nalogi (#747)
     // Osvojena tema: povabilo po končani nalogi; med serijo (trening, priprava na test) šele, ko je serija končana.
     if (r.mastered && !r.offline && (ctx.mode === "practice" || r.next?.finished)) html += `<div class="povabi-slot"></div>`;
   } else {
@@ -3933,6 +3934,9 @@ async function checkTask(task, ctx, value) {
   fb.innerHTML = html;
   const sid = state.student?.id;
   if (accountsOn()) povabiPoUspehu(fb.querySelector(".povabi-slot"), { api, profileId: sid, toast, alive: () => state.student?.id === sid });
+  // Modul se naloži šele ob rešeni nalogi (ni ga na zagonu); potrjen račun ne vidi ničesar.
+  const potrdiSlot = accountsOn() && accountStatus()?.parent?.verified === false && fb.querySelector(".potrdi-slot");
+  if (potrdiSlot) import("./potrditev-po-nalogi.js").then((m) => m.potrdiPoNalogi(potrdiSlot)).catch(() => {});
   // Nov XP (pravilno, opravljen preizkus znanja, konec treninga): zgornji znesek se animira, ob novi ravni čestitka.
   if (!r.offline && (r.correct || r.xp || r.placement?.xp || r.next?.xp)) refreshXp();
   // Ko je naloga zaključena, plošča izgine, da sta razlaga in gumb »Naprej« vidna.

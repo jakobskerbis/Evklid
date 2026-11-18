@@ -173,18 +173,90 @@ test("RB-6 verify POST without a valid token is no password oracle", async () =>
   });
 });
 
-// DoS lastnika: napadalec s sejo nepotrjenega računa izčrpa mejo računa (acct<id>) z izvozom; lastnik z ukradenim naslovom
-// mora še vedno imeti izhod »nisem ustvaril«.
+// DoS lastnika: napadalec izčrpa mejo računa (acct<id>) z napačnimi gesli na /api/auth/verify z različnih omrežij;
+// lastnik naslova mora še vedno imeti izhod »nisem ustvaril«. (Izvoz je do potrditve zaprt, #747, zato tu ne šteje.)
 test("RB-7 attacker exhausting the account-wide limit cannot stop not_mine", async () => {
   await withServer(async ({ webClient, register }) => {
     const attacker = webClient();
     const reg = await register(attacker);
-    for (let i = 0; i < 31; i++) await attacker("/api/account/export", { body: { password: "x" }, headers: { "x-forwarded-for": `10.0.${i}.1` } });
     const token = new URL(reg.body.dev_verify_url).searchParams.get("token");
+    assert.equal((await attacker("/api/account/export", { body: { password: "x" } })).status, 403);
+    for (let i = 0; i < 30; i++) {
+      const r = await webClient()("/api/auth/verify", { body: { token, password: `napacno${i}` }, headers: { "x-forwarded-for": `10.0.${i}.1` } });
+      assert.equal(r.status, 401, `poskus ${i + 1}`);
+    }
     const victim = webClient();
-    assert.equal((await victim("/api/auth/verify", { body: { token, password: "ugibam" } })).status, 429);
-    const nm = await victim("/api/auth/verify", { body: { token, not_mine: true } });
+    assert.equal((await victim("/api/auth/verify", { body: { token, password: "ugibam" }, headers: { "x-forwarded-for": "10.9.9.9" } })).status, 429);
+    const nm = await victim("/api/auth/verify", { body: { token, not_mine: true }, headers: { "x-forwarded-for": "10.9.9.9" } });
     assert.equal(nm.status, 200);
     assert.equal((await attacker("/api/account")).status, 401);
+  });
+});
+
+// ---- #747 pregled 2, P1: profil iz časa pred potrditvijo ne ostane tistemu, ki prevzame naslov ----
+// Tujec (napačno vpisan e-naslov) ustvari račun in profil mladoletnega, nato lastnik naslova račun prevzame. Profil in
+// shranjena aktivacijska koda odpadeta (izbris kot DELETE /api/account), poraba ostane šteta za omrežje (guest_spent),
+// v dnevniku je zapis unverified_takeover_cleared.
+const MINOR = `${new Date().getFullYear() - 16}-03-04`;
+async function strangerWithProfile({ webClient, register, db }) {
+  const stranger = webClient();
+  const reg = await register(stranger, VICTIM, "napadalec1", { birth_date: MINOR });
+  assert.equal(reg.status, 201, JSON.stringify(reg.body));
+  const kid = await stranger("/api/students", { body: { name: "Tujčev", birth_year: new Date().getFullYear() - 16, consent: true } });
+  assert.equal(kid.status, 201, JSON.stringify(kid.body));
+  db.prepare("INSERT INTO question_log (student_id, day, n) VALUES (?, date('now'), 3)").run(kid.body.id);
+  db.prepare("UPDATE parents SET promo_pending = 'KODA123' WHERE id = ?").run(reg.body.parent.id);
+  return { stranger, reg, kidId: kid.body.id, parentId: reg.body.parent.id };
+}
+function assertCleared(db, { kidId, parentId }, how) {
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM students WHERE id = ?").get(kidId).n, 0, "profil izbrisan");
+  const p = db.prepare("SELECT email_verified_at, promo_pending FROM parents WHERE id = ?").get(parentId);
+  assert.ok(p.email_verified_at, "naslov potrjen");
+  assert.equal(p.promo_pending, null, "koda tujca ne velja");
+  assert.equal(db.prepare("SELECT COALESCE(SUM(questions),0) AS n FROM guest_spent WHERE day = date('now')").get().n, 3, "poraba ostane šteta za omrežje");
+  const a = db.prepare("SELECT target FROM audit_log WHERE parent_id = ? AND action = 'unverified_takeover_cleared'").all(parentId);
+  assert.deepEqual(a.map((r) => r.target), [`${how}:1`]);
+}
+
+test("#747 P1: »Računa nisem ustvaril jaz« izbriše profil tujca", async () => {
+  await withServer(async (ctx) => {
+    const s = await strangerWithProfile(ctx);
+    const token = new URL(s.reg.body.dev_verify_url).searchParams.get("token");
+    const r = await ctx.webClient()("/api/auth/verify", { body: { token, not_mine: true } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    assertCleared(ctx.db, s, "not_mine");
+    assert.equal((await s.stranger("/api/account")).status, 401);
+  });
+});
+
+test("#747 P1: novo geslo prek povezave iz e-pošte na nepotrjenem računu izbriše profil tujca; potrjen račun ostane cel", async () => {
+  await withServer(async (ctx) => {
+    const { sha256 } = await import("../server/accounts/auth.js");
+    const s = await strangerWithProfile(ctx);
+    const forgot = await ctx.webClient()("/api/auth/forgot", { body: { email: VICTIM } });
+    assert.equal(forgot.status, 200);
+    const token = "r".repeat(40);
+    ctx.db.prepare("UPDATE parents SET reset_token_hash = ?, reset_expires_at = ? WHERE id = ?").run(sha256(token), new Date(Date.now() + 3600000).toISOString(), s.parentId);
+    const r = await ctx.webClient()("/api/auth/reset", { body: { token, password: "lastnik-geslo1" } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    assertCleared(ctx.db, s, "reset");
+    // Potrjen račun: ponastavitev gesla profilov ne briše.
+    const owner = ctx.webClient();
+    const reg2 = await ctx.register(owner, "potrjen@primer.si", "geslo-lastnika1", { birth_date: MINOR });
+    ctx.db.prepare("UPDATE parents SET email_verified_at = datetime('now') WHERE id = ?").run(reg2.body.parent.id);
+    const kid = await owner("/api/students", { body: { name: "Moj", birth_year: new Date().getFullYear() - 16, consent: true } });
+    assert.equal(kid.status, 201);
+    ctx.db.prepare("UPDATE parents SET reset_token_hash = ?, reset_expires_at = ? WHERE id = ?").run(sha256("q".repeat(40)), new Date(Date.now() + 3600000).toISOString(), reg2.body.parent.id);
+    assert.equal((await ctx.webClient()("/api/auth/reset", { body: { token: "q".repeat(40), password: "novo-geslo-12" } })).status, 200);
+    assert.equal(ctx.db.prepare("SELECT COUNT(*) AS n FROM students WHERE id = ?").get(kid.body.id).n, 1);
+  });
+});
+
+test("#747 P1: prijava z Apple na nepotrjen račun z istim naslovom izbriše profil tujca", async () => {
+  await withServer(async (ctx) => {
+    const s = await strangerWithProfile(ctx);
+    const r = await ctx.appClient()("/api/auth/apple", apple({ sub: "apple.lastnik", email: VICTIM, email_verified: true }, { birth_date: MINOR }));
+    assert.ok(r.status < 300, `${r.status} ${JSON.stringify(r.body)}`);
+    assertCleared(ctx.db, s, "apple");
   });
 });
