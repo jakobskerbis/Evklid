@@ -24,4 +24,4 @@ stanje: osnutek
 - Alkoholno vrenje
   - piruvat → etanol in $\mathrm{CO_2}$
   - kvasovke v testu in vinu
-  - napaka: drugi korak vrenja ne da ATP
+  - pazi: drugi korak vrenja ne da ATP

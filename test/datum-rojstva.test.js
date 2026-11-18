@@ -295,6 +295,8 @@ test("brez datuma rojstva (»Pozneje«) ni mogoče plačati ničesar; sporočilo
     async ({ client, store }) => {
       const a = client();
       await oldAccount(a, store, "placa@primer.si");
+      // Plačila so zaprta tudi do potrditve e-naslova (#747); tu je potrjen, preverja se samo datum rojstva.
+      store.db.prepare("UPDATE parents SET email_verified_at = datetime('now') WHERE email = ?").run("placa@primer.si");
       await a("/api/account/birth-date", { method: "POST", body: { later: true } });
       for (const [path, body] of [
         ["/api/billing/checkout", { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true }],
@@ -329,6 +331,7 @@ test("povezava za plačilo: imetnik brez datuma rojstva je ne more ustvariti, ž
     async ({ client, store }) => {
       const a = client();
       assert.equal((await register(a, "povezava@primer.si", { birth_date: ymd(40) })).status, 201);
+      store.db.prepare("UPDATE parents SET email_verified_at = datetime('now') WHERE email = ?").run("povezava@primer.si"); // plačila po potrditvi (#747)
       const made = await a("/api/billing/pay-link", { method: "POST", body: { kind: "sub", seats: 1, interval: "month" } });
       assert.equal(made.status, 201, JSON.stringify(made.body));
       const token = String(made.body.url).split("t=").pop();

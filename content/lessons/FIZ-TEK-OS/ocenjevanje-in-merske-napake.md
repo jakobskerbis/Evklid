@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -170,7 +170,7 @@ V simulaciji spodaj »Meritve in merska napaka« izmeri svinčnik desetkrat z ra
 
 ## Drugače: Bolj natančno
 
-**Naključne in sistematične napake.** Vse, kar je bilo doslej, so **naključne** napake: meritve se raztresejo na obe strani prave vrednosti, povprečje pa jih deloma izravna. **Sistematična** napaka vse meritve premakne v isto smer, na primer obrabljen začetek metra, ki manjka $2\,\mathrm{mm}$. Takšne napake povprečje ne odpravi; najdeš jo le, če merilo primerjaš z drugim ali z znano dolžino.
+**Naključne in sistematične napake.** Vse, kar je bilo doslej, so **naključne** napake: meritve se raztresejo na obe strani prave vrednosti, povprečje pa jih deloma izravna. **Sistematična** napaka vse meritve premakne v isto smer, na primer obrabljen začetek metra, ki mu manjkata $2\,\mathrm{mm}$. Takšne napake povprečje ne odpravi; najdeš jo le, če merilo primerjaš z drugim ali z znano dolžino.
 
 **Napaka vsote in razlike.** Pri vsoti ali razliki dveh izmerjenih dolžin se **absolutni** napaki seštejeta. Če od letve $(100{,}0 \pm 0{,}1)\,\mathrm{cm}$ odrežeš kos $(30{,}0 \pm 0{,}1)\,\mathrm{cm}$, ostane $(70{,}0 \pm 0{,}2)\,\mathrm{cm}$. Napaka se pri odštevanju ne odšteje.
 

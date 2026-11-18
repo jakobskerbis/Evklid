@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -225,7 +225,7 @@ Taylorjevi polinomi za $e^x$ okoli $0$: tangenta $1 + x$ se ujema z grafom le v 
 
 **Farmakokinetika.** Pri peroralnem jemanju je koncentracija zdravila v krvi pogosto opisana s $c(t) = A t e^{-kt}$. Odvod $c'(t) = A e^{-kt}(1 - kt)$ je enak $0$ pri $t = \frac{1}{k}$; pred tem koncentracija raste, potem pada. Za $k = 0{,}25\,\mathrm{h^{-1}}$ je vrh po $4\,\mathrm{h}$.
 
-**Širjenje merske napake.** Diferencial (Taylorjev polinom prve stopnje) da $\Delta f \approx f'(x)\,\Delta x$. Za $\mathrm{pH} = -\log_{10} c$ je $\Delta\mathrm{pH} \approx \frac{1}{\ln 10}\frac{\Delta c}{c} \approx 0{,}434\,\frac{\Delta c}{c}$: relativna napaka koncentracije $2\,\%$ da negotovost pH približno $0{,}009$.
+**Širjenje merske napake.** Diferencial (Taylorjev polinom prve stopnje) da $\Delta f \approx f'(x)\,\Delta x$. Za $\mathrm{pH} = -\log_{10} c$ je $|\Delta\mathrm{pH}| \approx \frac{1}{\ln 10}\frac{|\Delta c|}{c} \approx 0{,}434\,\frac{|\Delta c|}{c}$: relativna napaka koncentracije $2\,\%$ da negotovost pH približno $0{,}009$.
 
 **Embalaža.** Valjasta pločevinka s prostornino $V$ ima najmanjšo površino $S(r) = 2\pi r^2 + \frac{2V}{r}$ pri $r = \sqrt[3]{\frac{V}{2\pi}}$ in $h = 2r$. Izračun s števili je v razdelku »Korak za korakom«.
 

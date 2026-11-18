@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -55,7 +55,7 @@ $$\vec{b} = x_1\vec{a}_1 + x_2\vec{a}_2 + \cdots + x_n\vec{a}_n.$$
 
 Reševanje sistema torej pomeni: s katerimi utežmi sestavimo $\vec{b}$ iz stolpcev $A$? Pogoj $\det A \neq 0$ pomeni, da so stolpci linearno neodvisni (rang $A$ je $n$). Takrat je zapis $\vec{b}$ z njimi en sam. Ko $\vec{b}$ vstavimo na mesto $\vec{a}_i$, determinanta »izmeri« ravno utež $x_i$. Natančen dokaz je v razdelku »Bolj natančno«.
 
-**5. Ko je $\det A = 0$.** Formula bi zahtevala deljenje z nič, zato pravilo ne velja. Sistem ima tedaj bodisi nobene bodisi neskončno rešitev. Katero od obojega, ugotoviš z Gaussovo eliminacijo ali s primerjavo rangov $A$ in razširjene matrike $[A \mid \vec{b}]$.
+**5. Ko je $\det A = 0$.** Formula bi zahtevala deljenje z nič, zato pravilo ne velja. Sistem tedaj bodisi nima rešitve bodisi jih ima neskončno. Katero od obojega, ugotoviš z Gaussovo eliminacijo ali s primerjavo rangov $A$ in razširjene matrike $[A \mid \vec{b}]$.
 
 **6. Cena.** Za sistem $n \times n$ potrebuješ $n + 1$ determinant reda $n$. Za $n = 2$ ali $n = 3$ je to hitro. Za velike sisteme je eliminacija veliko cenejša, zato računalniki Cramerja ne uporabljajo.
 

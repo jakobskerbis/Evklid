@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -19,7 +19,7 @@ Vsak zakon postavimo ob nekaj, kar že poznaš, in pogledamo, v čem se razlikuj
 
 Novo je to, da enako velja za telo, ki se že giblje. **Prvi Newtonov zakon (zakon o ravnovesju ali vztrajnostni zakon):** če je rezultanta sil na telo nič, telo miruje ali se giblje enakomerno po premici.
 
-Za sile sta torej mirovanje in enakomerno premo gibanje *enaka* stanja. Za gibanje s stalno hitrostjo rezultanta ni potrebna. Potrebna je šele za **spremembo** velikosti ali smeri hitrosti.
+Za sile sta torej mirovanje in enakomerno premo gibanje *enaki* stanji. Za gibanje s stalno hitrostjo rezultanta ni potrebna. Potrebna je šele za **spremembo** velikosti ali smeri hitrosti.
 
 Lastnost telesa, da ohranja svoje gibanje, imenujemo **vztrajnost**. Večja ko je masa, večja je vztrajnost.
 

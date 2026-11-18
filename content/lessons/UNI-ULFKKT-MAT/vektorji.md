@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -125,7 +125,7 @@ $|\vec{a}| = \sqrt{a_1^2 + a_2^2 + a_3^2}$, $\vec{a} \cdot \vec{b} = a_1b_1 + a_
 1. $|\vec{a}| = \sqrt{1 + 4 + 4} = \sqrt{9} = 3$, $|\vec{b}| = \sqrt{9 + 0 + 16} = 5$.
 2. $\vec{a} \cdot \vec{b} = 1 \cdot 3 + 2 \cdot 0 + 2 \cdot 4 = 11$.
 3. $\cos\varphi = \dfrac{11}{3 \cdot 5} = \dfrac{11}{15} \approx 0{,}733$.
-4. $\varphi = \arccos 0{,}733 \approx 42{,}8^\circ$ (v radianih $\approx 0{,}748$).
+4. $\varphi = \arccos\frac{11}{15} \approx 42{,}8^\circ$ (v radianih $\approx 0{,}748$).
 5. Odgovor: $|\vec{a}| = 3$, $|\vec{b}| = 5$, $\vec{a} \cdot \vec{b} = 11$, vektorja oklepata kot približno $42{,}8^\circ$.
 
 ### Primer 2

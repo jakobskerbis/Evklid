@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -19,11 +19,11 @@ Kako pride ukaz »zapoj ton« ali »udari tipko« od zamisli do mišice? Odgovor
 2. Iz debla gredo prek **talamusa** v **slušno skorjo** v **senčnem režnju**.
 3. Odločitev »zaigraj« nastane v **čelnem režnju**. **Gibalna (motorična) skorja** tik pred osrednjo brazdo pošlje ukaz navzdol. Osrednja brazda je globoka zareza na meji s temenskim režnjem.
 4. Gibalna proga se v **podaljšani hrbtenjači** prekriža na drugo stran in teče po **hrbtenjači** do vratnih segmentov.
-5. Ukaz izstopi po **hrbtenjačnih živcih**, njihova vlakna se v **pazdušnem prepletu** zberejo v **komolčni živec**. Ta pripelje ukaz do mišic mezinca.
+5. Ukaz izstopi po **hrbtenjačnih živcih**, njihova vlakna se v **nadlahtnem pletežu** zberejo v **komolčni živec**. Ta pripelje ukaz do mišic mezinca.
 
 Imen si še ni treba zapomniti; vsako postajo razložimo spodaj. Iz tega primera zgradimo celotno shemo.
 
-**Osrednje in obkrajno živčevje.** Koraki 2–4 potekajo v možganih in hrbtenjači. To je **osrednje živčevje** (OŽ): zaščiteno je s kostmi (lobanja, hrbtenični kanal), z ovojnicami in z možgansko-hrbtenjačno tekočino (likvorjem). Koraki 1 in 5 potekajo po živcih zunaj možganov in hrbtenjače. To je **obkrajno (periferno) živčevje** (PŽ). Sestavljajo ga $12$ parov možganskih živcev, $31$ parov hrbtenjačnih živcev, živčni prepleti in gangliji (skupki teles živčnih celic zunaj OŽ).
+**Osrednje in obkrajno živčevje.** Koraki 2–4 potekajo v možganih in hrbtenjači. To je **osrednje živčevje** (OŽ): zaščiteno je s kostmi (lobanja, hrbtenični kanal), z ovojnicami in z možgansko-hrbtenjačno tekočino (likvorjem). Koraki 1 in 5 potekajo po živcih zunaj možganov in hrbtenjače. To je **obkrajno (periferno) živčevje** (PŽ). Sestavljajo ga $12$ parov možganskih živcev, $31$ parov hrbtenjačnih živcev, živčni pleteži in gangliji (skupki teles živčnih celic zunaj OŽ).
 
 Po smeri ločimo **aferentna** (čutilna) vlakna, ki nesejo signal proti OŽ, in **eferentna** (gibalna) vlakna, ki ga nesejo od OŽ. V primeru je slušni živec aferenten, komolčni živec pri gibu eferenten.
 
@@ -46,7 +46,7 @@ Vsako poloblo velikih možganov delimo na **čelni**, **temenski**, **senčni** 
 
 **Ovojnice.** Možgane in hrbtenjačo od zunaj navznoter obdajajo **trda opna**, **pajčevnica** in **mehka opna**. Med pajčevnico in mehko opno teče likvor, ki deluje kot blažilnik udarcev.
 
-**Hrbtenjača.** Je približno $45\,\mathrm{cm}$ dolg snop v hrbteničnem kanalu. Začne se pri velikem zatilnem odprtju in pri odraslem konča v višini 1. do 2. ledvenega vretenca. Spodaj ji sledi šop korenin, imenovan **konjski rep**. Na prerezu je razporeditev obrnjena glede na skorjo: **siva snov je znotraj** v obliki metulja, **bela snov zunaj**.
+**Hrbtenjača.** Je približno $45\,\mathrm{cm}$ dolg snop v hrbteničnem kanalu. Začne se pri veliki zatilnični odprtini in pri odraslem konča v višini 1. do 2. ledvenega vretenca. Spodaj ji sledi šop korenin, imenovan **konjski rep**. Na prerezu je razporeditev obrnjena glede na skorjo: **siva snov je znotraj** v obliki metulja, **bela snov zunaj**.
 
 - **Zadnji (dorzalni) rog** sive snovi sprejema čutilne signale. Telesa čutilnih nevronov so v **spinalnem gangliju** na zadnji korenini.
 - **Sprednji (ventralni) rog** vsebuje gibalne nevrone; njihovi aksoni izstopijo po **sprednji korenini**.
@@ -60,7 +60,7 @@ Zakaj zdravnik pri odraslem vbode iglo za odvzem likvorja med 3. in 4. ledvenim 
 Ker se hrbtenjača konča pri 1. do 2. ledvenem vretencu. Niže je v kanalu le likvor s koreninami konjskega repa, ki se igli umaknejo. V prsnem delu bi igla lahko zadela hrbtenjačo.
 :::
 
-**Prepleti.** Sprednje veje vratnih, ledvenih in križnih živcev se spletajo v **vratni**, **pazdušni** (za roko), **ledveni** in **križni** preplet (za nogo; iz njega izhaja **ishiadični živec**). Prsni živci prepleta ne tvorijo; potekajo kot medrebrni živci.
+**Pleteži.** Sprednje veje vratnih, ledvenih in križnih živcev se spletajo v **vratni**, **nadlahtni** oziroma brahialni (za roko), **ledveni** in **križni** pletež (za nogo; iz njega izhaja **ishiadični živec**). Prsni živci pleteža ne tvorijo; potekajo kot medrebrni živci.
 
 **Somatsko in avtonomno.** Somatski del PŽ vodi hotne gibe skeletnih mišic, na primer pianistov mezinec. **Avtonomni** del vodi srce, gladke mišice in žleze. Ima **simpatikus** (»boj ali beg«, izhaja iz prsnih in zgornjih ledvenih segmentov) in **parasimpatikus** (»počitek in prebava«, izhaja iz možganskega debla in križnih segmentov).
 
@@ -68,13 +68,13 @@ Ker se hrbtenjača konča pri 1. do 2. ledvenem vretencu. Niže je v kanalu le l
 
 ### Primer 1 (lažji): kaj spada v osrednje živčevje
 
-Bobnar udari po činelah. Pri tem sodelujejo: slušni živec, talamus, gibalna skorja, mali možgani, vratni segmenti hrbtenjače, pazdušni preplet in mediani živec. Razvrsti jih v OŽ in PŽ.
+Bobnar udari po činelah. Pri tem sodelujejo: slušni živec, talamus, gibalna skorja, mali možgani, vratni segmenti hrbtenjače, nadlahtni pletež in mediani živec. Razvrsti jih v OŽ in PŽ.
 
-**Podatki:** sedem struktur: slušni živec, talamus, gibalna skorja, mali možgani, vratna hrbtenjača, pazdušni preplet, mediani živec
+**Podatki:** sedem struktur: slušni živec, talamus, gibalna skorja, mali možgani, vratna hrbtenjača, nadlahtni pletež, mediani živec
 **Iščemo:** katere so del osrednjega in katere obkrajnega živčevja
 
 :::formula
-OŽ = možgani + hrbtenjača (znotraj lobanje in hrbteničnega kanala); PŽ = vse, kar leži zunaj njiju: živci, prepleti, gangliji.
+OŽ = možgani + hrbtenjača (znotraj lobanje in hrbteničnega kanala); PŽ = vse, kar leži zunaj njiju: živci, pleteži, gangliji.
 :::
 
 **Rešitev:**
@@ -82,8 +82,8 @@ OŽ = možgani + hrbtenjača (znotraj lobanje in hrbteničnega kanala); PŽ = vs
 1. Talamus je del medmožganov, gibalna skorja del velikih možganov, mali možgani so samostojen del možganov. Vsi trije so v lobanji, torej OŽ.
 2. Vratna hrbtenjača je v hrbteničnem kanalu, torej OŽ.
 3. Slušni živec je možganski živec. Možganski živci spadajo v PŽ, čeprav izhajajo iz možganov.
-4. Pazdušni preplet in mediani živec ležita zunaj hrbtenice, torej PŽ.
-5. Odgovor: v OŽ so talamus, gibalna skorja, mali možgani in vratna hrbtenjača; v PŽ so slušni živec, pazdušni preplet in mediani živec.
+4. Nadlahtni pletež in mediani živec ležita zunaj hrbtenice, torej PŽ.
+5. Odgovor: v OŽ so talamus, gibalna skorja, mali možgani in vratna hrbtenjača; v PŽ so slušni živec, nadlahtni pletež in mediani živec.
 
 ### Primer 2: koliko je hrbtenjačnih živcev
 
@@ -156,12 +156,12 @@ V obkrajno živčevje: možganski živci so del PŽ, poškodba pa je na vratu, z
 
 ## Povzetek
 
-- Osrednje živčevje (OŽ) so možgani in hrbtenjača; obkrajno (PŽ) so $12$ parov možganskih in $31$ parov hrbtenjačnih živcev, prepleti in gangliji.
+- Osrednje živčevje (OŽ) so možgani in hrbtenjača; obkrajno (PŽ) so $12$ parov možganskih in $31$ parov hrbtenjačnih živcev, pleteži in gangliji.
 - Možgani: veliki možgani (4 režnji, skorja sive snovi), medmožgani (talamus, hipotalamus), možgansko deblo (srednji možgani, most, podaljšana hrbtenjača), mali možgani (usklajevanje gibov).
 - Ovojnice: trda opna, pajčevnica, mehka opna; med pajčevnico in mehko opno je likvor.
-- Hrbtenjača: od velikega zatilnega odprtja do L1–L2, nato konjski rep; siva snov znotraj (zadnji rog čutilni, sprednji gibalni), bela zunaj; hrbtenjačni živci so mešani.
+- Hrbtenjača: od velike zatilnične odprtine do L1–L2, nato konjski rep; siva snov znotraj (zadnji rog čutilni, sprednji gibalni), bela zunaj; hrbtenjačni živci so mešani.
 - Gibalna proga se prekriža v podaljšani hrbtenjači: vsaka polobla vodi nasprotno stran telesa.
-- Prepleti: vratni, pazdušni (roka), ledveni in križni (noga); avtonomno živčevje ima simpatikus in parasimpatikus.
+- Pleteži: vratni, nadlahtni (roka), ledveni in križni (noga); avtonomno živčevje ima simpatikus in parasimpatikus.
 
 ## Za izpit
 
@@ -171,7 +171,7 @@ Znati moraš povedati:
 - tri ovojnice po vrsti in prostor, v katerem je likvor;
 - zgradbo hrbtenjače: obseg, konjski rep, rogova sive snovi, korenini, spinalni ganglij, mešani hrbtenjačni živec;
 - križanje gibalne proge v podaljšani hrbtenjači in posledico za stran okvare;
-- preplete in področja, ki jih oživčujejo, ter delitev na somatsko in avtonomno živčevje (simpatikus, parasimpatikus).
+- pleteže in področja, ki jih oživčujejo, ter delitev na somatsko in avtonomno živčevje (simpatikus, parasimpatikus).
 
 ### Naloga 1
 
@@ -209,13 +209,13 @@ Za vsakega od treh bolnikov utemelji, kje je okvara in ali je v osrednjem ali ob
 
 **Rešitev:**
 
-1. Bolnik A: roka in noga iste strani imata različne živce in različna prepleta (pazdušni, ledveni in križni), zato ena okvara v PŽ obeh ne razloži. Skupna jima je gibalna proga v OŽ.
+1. Bolnik A: roka in noga iste strani imata različne živce in različne pleteže (nadlahtni, ledveni in križni), zato ena okvara v PŽ obeh ne razloži. Skupna jima je gibalna proga v OŽ.
 2. Gibalna proga se prekriža v podaljšani hrbtenjači. Okvara nad križanjem prizadene nasprotno stran, zato je pri nenadni desni ohromelosti brez poškodbe okvara najverjetneje v levi polobli velikih možganov (kap): v gibalni skorji čelnega režnja ali v progi pod njo.
-3. Bolnik B: v pazduhi poteka pazdušni preplet iz sprednjih vej vratnih živcev, ki oživčuje roko. Rana je zunaj hrbteničnega kanala, torej v PŽ.
-4. Hrbtenjačni živci so mešani, zato izpadeta gib in občutek. Izpad je na strani rane, ker je okvara pod križanjem. Nogi oživčujeta ledveni in križni preplet, ki nista prizadeta.
+3. Bolnik B: v pazduhi poteka nadlahtni pletež iz sprednjih vej vratnih živcev, ki oživčuje roko. Rana je zunaj hrbteničnega kanala, torej v PŽ.
+4. Hrbtenjačni živci so mešani, zato izpadeta gib in občutek. Izpad je na strani rane, ker je okvara pod križanjem. Nogi oživčujeta ledveni in križni pletež, ki nista prizadeta.
 5. Bolnica C: hrbtenjača se pri odraslem konča v višini 1. do 2. ledvenega vretenca. Med 4. in 5. ledvenim vretencem so v kanalu le likvor in korenine konjskega repa.
 6. Hrbtenjača torej ni stisnjena. Stisnjene so korenine hrbtenjačnih živcev, ki so že del PŽ; izpad je v področju teh korenin na nogi, na strani pritiska.
-7. Odgovor: A ima okvaro v OŽ, najverjetneje v levi polobli; B v PŽ, v levem pazdušnem prepletu; C v PŽ, na koreninah konjskega repa.
+7. Odgovor: A ima okvaro v OŽ, najverjetneje v levi polobli; B v PŽ, v levem nadlahtnem pletežu; C v PŽ, na koreninah konjskega repa.
 
 ## Drugače: Z analogijo
 
@@ -224,13 +224,13 @@ Predstavljaj si ozvočenje na koncertu. Mikrofoni na odru so **čutila**, kabli 
 - Večžilni kabel je **hrbtenjača**: debel snop, v katerem je zbranih veliko povezav, zaščitenih v skupnem plašču (hrbtenični kanal).
 - Mešalna miza je **osrednji del možganov**: talamus je kot preklopna plošča, ki pošlje vsak kanal na pravo mesto; skorja je tonski mojster, ki se odloči.
 - Kabli od mize do zvočnikov so **eferentni živci**, zvočniki so mišice.
-- Razdelilnik ob odru, kjer se kabli prerazporedijo, je **preplet**.
+- Razdelilnik ob odru, kjer se kabli prerazporedijo, je **pletež**.
 
 Meje analogije: signal v živcu potuje le $1$ do $120\,\mathrm{m/s}$, hrbtenjača pa ni le kabel, saj njeni nevroni sami sklenejo reflekse.
 
 ## Drugače: Bolj natančno
 
-- **Razvoj.** Iz nevralne cevi nastanejo tri možganske vezikle (prozencefalon, mezencefalon, rombencefalon), nato pet: telencefalon (veliki možgani), diencefalon (medmožgani), mezencefalon (srednji možgani), metencefalon (most in mali možgani) in mielencefalon (podaljšana hrbtenjača). Votlina cevi postane prekati in osrednji kanal hrbtenjače.
+- **Razvoj.** Iz nevralne cevi nastanejo trije možganski vezikli (prozencefalon, mezencefalon, rombencefalon), nato pet: telencefalon (veliki možgani), diencefalon (medmožgani), mezencefalon (srednji možgani), metencefalon (most in mali možgani) in mielencefalon (podaljšana hrbtenjača). Votlina cevi postane prekati in osrednji kanal hrbtenjače.
 - **Vidni živec** je v razvoju izrastek medmožganov in ga obdajajo vse tri ovojnice, zato je po zgradbi proga OŽ, čeprav ga štejemo med možganske živce.
 - **Dermatomi.** Vsak hrbtenjačni živec oživčuje pas kože, dermatom. Mezinec in notranji rob dlani pripadata segmentu C8, palec C6. Po izpadu občutka v dermatomu nevrolog oceni višino okvare.
 - **Bela snov hrbtenjače** ima zadnje, stranske in sprednje snopiče. V stranskih se spušča lateralna kortikospinalna proga; tvori jo okoli $90\,\%$ vlaken piramidne proge, ki se prekrižajo v piramidah podaljšane hrbtenjače.
@@ -245,7 +245,7 @@ Meje analogije: signal v živcu potuje le $1$ do $120\,\mathrm{m/s}$, hrbtenjač
 + ishiadični živec
 - mali možgani
 ~ Mali možgani so del možganov, čeprav ležijo zadaj pod velikimi.
-> Ishiadični živec izhaja iz križnega prepleta in poteka po nogi, torej je obkrajno živčevje.
+> Ishiadični živec izhaja iz križnega pleteža in poteka po nogi, torej je obkrajno živčevje.
 
 ? Kitaristu pride ukaz iz skorje do mišice po poti dolžine $1{,}2\,\mathrm{m}$ s hitrostjo $60\,\mathrm{m/s}$. Koliko časa potuje?
 - $72\,\mathrm{ms}$

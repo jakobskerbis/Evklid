@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -166,7 +166,7 @@ Predstavljaj si nakupovalni center.
 - Stavba, elektrika, ogrevanje in svetloba so kot **biotop**. Vsi ljudje v centru skupaj, prodajalci in kupci, so kot **združba**. Center z ljudmi in vsem, kar se v njem dogaja, je kot **ekosistem**.
 - Vsi prodajalci iste trgovske verige so kot **populacija**: ista »vrsta«, isti prostor.
 - **Habitat** je naslov: pekarna je v pritličju ob vhodu. **Niša** je poklic: peče kruh, odprta je od šestih zjutraj, kupci so tisti, ki zajtrkujejo.
-- Če ob vhod odpre še druga pekarna z istim kruhom in istim časom, se trgovini borita za iste kupce. Ena navadno zapre. Prav tako se godi dvema vrstama z enako nišo. Cvetličarna poleg pekarne pa preživi brez težav, ker ima drug »poklic«.
+- Če ob vhodu odpre še druga pekarna z istim kruhom in istim časom, se trgovini borita za iste kupce. Ena navadno zapre. Prav tako se godi dvema vrstama z enako nišo. Cvetličarna poleg pekarne pa preživi brez težav, ker ima drug »poklic«.
 
 Analogija ima meje: trgovine si poklic izberejo same, vrste pa so se svojim nišam prilagajale skozi dolgo evolucijo.
 
@@ -203,7 +203,7 @@ Analogija ima meje: trgovine si poklic izberejo same, vrste pa so se svojim niš
 ? Iz akvarija odstranimo vse polže, ki so strgali alge s stekla. Kaj se najverjetneje zgodi?
 - Neonke prevzamejo vlogo polžev in začnejo jesti alge.
 ~ Vrsta ne zamenja niše kar čez noč. Neonke so prilagojene na drobno hrano v vodi, ne na strganje alg.
-+ Alge se razrastejo, ker nihče več ne zaseda niše, ki jih je.
++ Alge se razrastejo, ker je niša polžev ostala prazna in jih nihče več ne je.
 - Nič, ker polži niso del ekosistema, ampak okras.
 ~ Polži so živa populacija v združbi in imajo svojo vlogo. Brez njih se odnosi v ekosistemu spremenijo.
 - Voda postane hladnejša.

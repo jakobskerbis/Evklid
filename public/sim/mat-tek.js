@@ -117,7 +117,7 @@ export function predalcki(el) {
       buttons(button("Razporedi naključno", () => upd(true), "primary small"), button("Čim bolj enakomerno", () => upd(false))),
     ],
     out,
-    tryText: "Koliko ljudi mora biti v sobi, da imata gotovo dva rojstni dan v istem mesecu? Nastavi 12 predalov.",
+    tryText: "Koliko ljudi mora biti v sobi, da sta gotovo dva rojena na isti dan v tednu? Nastavi 7 predalov.",
   });
 }
 

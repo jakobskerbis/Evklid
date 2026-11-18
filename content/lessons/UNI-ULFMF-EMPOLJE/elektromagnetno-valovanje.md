@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -305,7 +305,7 @@ Iz robnih pogojev izpelji odbojnost pri pravokotnem vpadu na mejo dveh nemagnetn
 3. Iz obeh: $r = E_r/E_0 = (n_1 - n_2)/(n_1 + n_2)$; odbojnost $R = r^2$ (intenziteti sta v isti snovi, zato le kvadrat).
 4. Zrak–steklo: $R = (0{,}50/2{,}50)^2 = 0{,}040$; zrak–voda: $R = (0{,}33/2{,}33)^2 \approx 0{,}020$.
 5. Plošča: na vsaki površini gre skozi $96\,\%$, skupaj $0{,}96^2 \approx 0{,}922$, torej okoli $92\,\%$.
-6. Prevleka: odboja na obeh mejah prevleke se izničita, če sta enako močna in v protifazi. Enaka moč zahteva $n_p = \sqrt{n_1n_2} = \sqrt{1{,}50} \approx 1{,}22$; protifaza zahteva (oba odboja dobita enak fazni skok $\pi$, ker $n$ na obeh mejah naraste) dodatno pot $2d = \lambda/(2n_p)$, torej $d = \lambda/(4n_p) \approx 550/(4 \cdot 1{,}22)\,\mathrm{nm} \approx 112\,\mathrm{nm}$.
+6. Prevleka: odboja na obeh mejah prevleke se izničita, če sta enako močna in v protifazi. Enaka moč zahteva $n_p = \sqrt{n_1n_2} = \sqrt{1{,}50} \approx 1{,}225$; protifaza zahteva (oba odboja dobita enak fazni skok $\pi$, ker $n$ na obeh mejah naraste) dodatno pot $2d = \lambda/(2n_p)$, torej $d = \lambda/(4n_p) \approx 550/(4 \cdot 1{,}225)\,\mathrm{nm} \approx 112\,\mathrm{nm}$.
 7. Odgovor: $R = 4{,}0\,\%$ za steklo, $2{,}0\,\%$ za vodo; plošča prepusti okoli $92\,\%$; prevleka z $n \approx 1{,}22$ in debelino okoli $112\,\mathrm{nm}$ (v praksi $\mathrm{MgF_2}$ z $n = 1{,}38$, ki odboj zmanjša na okoli $1{,}4\,\%$).
 
 ## Drugače: Z analogijo
@@ -332,7 +332,7 @@ $$r_s = \frac{n_1\cos\alpha - n_2\cos\beta}{n_1\cos\alpha + n_2\cos\beta}, \qqua
 
 Odbojnost je $R = r^2$. Pri $\alpha = 0$ obe dasta formulo iz Razlage. Koeficient $r_p$ je nič, ko je $n_2\cos\alpha = n_1\cos\beta$; skupaj z lomnim zakonom to da $\alpha + \beta = 90^\circ$ in $\tan\alpha_B = n_2/n_1$ – Brewstrov kot. Pri vpadu skoraj vzporedno s površino gre $R$ za obe polarizaciji proti $1$, zato se tudi mat površine pod zelo položnim kotom svetijo.
 
-**Evanescentno valovanje.** Pri totalnem odboju polje za mejo ne izgine povsem: v redkejši snovi ostane val, ki eksponentno pojema z razdaljo od meje na globini nekaj desetin valovne dolžine in v povprečju ne prenaša energije. Če na to razdaljo približamo drugo gostejšo snov, se del svetlobe prebije (oslabljeni totalni odboj). To izkoriščajo mikroskopija TIRF, ki osvetli le tanko plast celice ob steklu, in spektroskopija ATR.
+**Evanescentno valovanje.** Pri totalnem odboju polje za mejo ne izgine povsem: v redkejši snovi ostane val, ki eksponentno pojema z razdaljo od meje na globini nekaj desetin valovne dolžine in v povprečju ne prenaša energije. Če na to razdaljo približamo drugo gostejšo snov, se del svetlobe prebije (moteni oziroma frustrirani totalni odboj). To izkoriščajo mikroskopija TIRF, ki osvetli le tanko plast celice ob steklu, in spektroskopija ATR.
 
 **Valovanje v prevodniku.** V snovi s specifično prevodnostjo $\sigma_e$ val pojema z globino; pri dobrih prevodnikih je značilna globina (kožni pojav) $\delta = \sqrt{2/(\mu_0\sigma_e\omega)}$. Za baker pri $50\,\mathrm{Hz}$ je okoli $9\,\mathrm{mm}$, pri $1\,\mathrm{GHz}$ le okoli $2\,\mathrm{\mu m}$ – zato kovinski oklop zaduši mikrovalove in zato kovine dobro odbijajo svetlobo.
 

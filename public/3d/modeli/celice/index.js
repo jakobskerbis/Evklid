@@ -27,6 +27,6 @@ export default [
   { id: "celica-koreninski-lasek", pot: "./koreninski-lasek.js", naslov: "Celica koreninskega laska", predmet: "BIO", opis: "Celica korenine z dolgim izrastkom, ki vpija vodo iz prsti." },
   { id: "celica-ksilem-floem", pot: "./ksilem-floem.js", naslov: "Ksilem in floem", predmet: "BIO", opis: "Žilni snop: ksilem nosi vodo navzgor, floem sladkorje iz listov." },
   { id: "celica-ameba", pot: "./ameba.js", naslov: "Ameba", predmet: "BIO", opis: "Enoceličar, ki se premika in hrani s panožicami." },
-  { id: "celica-paramecij", pot: "./paramecij.js", naslov: "Paramecij (copatkar)", predmet: "BIO", opis: "Enoceličar, ki plava z migetalkami." },
+  { id: "celica-paramecij", pot: "./paramecij.js", naslov: "Paramecij", predmet: "BIO", opis: "Enoceličar, ki plava z migetalkami." },
   { id: "celica-evglena", pot: "./evglena.js", naslov: "Evglena", predmet: "BIO", opis: "Enoceličar z bičem, očesno pego in kloroplasti." },
 ];

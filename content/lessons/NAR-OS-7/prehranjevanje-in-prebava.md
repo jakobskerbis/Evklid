@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -220,7 +220,7 @@ Kar ni šlo v kri, je zdrsnilo v debelo črevo, ki mi je vzelo vodo. Čez dan al
 + Majhni delci prebavljene hrane preidejo v kri večinoma v tankem črevesu.
 - Debelo črevo je daljše od tankega, zato se v njem vsrka največ hrane.
 ~ Ime pove širino, ne dolžine. Debelo črevo je dolgo okoli $1{,}5\,\mathrm{m}$, tanko okoli $6\,\mathrm{m}$. Debelo črevo vsrka predvsem vodo.
-- Hrana na poti skozi telo potuje tudi skozi jetra.
+- Hrana na poti skozi prebavno cev potuje tudi skozi jetra.
 ~ Jetra so prebavna žleza zunaj prebavne cevi. V tanko črevo pošljejo žolč, hrana pa skoznje ne gre.
 > Tanko črevo ima z gubami in resicami ogromno površino za prehod hrane v kri.
 

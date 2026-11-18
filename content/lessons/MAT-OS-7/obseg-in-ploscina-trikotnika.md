@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -50,7 +50,7 @@ Vsak kos ima osnovnico $5\,\text{cm}$ in isto višino $12\,\text{cm}$, zato plo�
 
 **Topokotni trikotnik.** Višina na krajšo stranico pade zunaj trikotnika, na podaljšek stranice. Obrazec velja enako, le višino moraš izmeriti do podaljška.
 
-V simulaciji spodaj (»Ploščina trikotnika«) nastavi $a = 6$ in $v = 4$. Nato premikaj drsnik »zamik vrha«. Opazuj: stranice se daljšajo, obseg raste, ploščina pa ostane $12$.
+V simulaciji spodaj (»Ploščina trikotnika«) nastavi $a = 6$ in $v = 4$. Nato premikaj drsnik »zamik vrha«. Opazuj: poševni stranici se daljšata ali krajšata, obseg se spreminja, ploščina pa ostane $12$.
 
 :::premisli
 Zakaj se ploščina ne spremeni, ko vrh drsi vzporedno z osnovnico?
@@ -190,7 +190,7 @@ Kaj se zgodi, ko vrh drsi vzporedno z osnovnico $a = 6\,\text{cm}$ na višini $v
 | nad ogliščem | $6 \cdot 4 = 24$ | $12\,\text{cm}^2$ | večji |
 | daleč ob strani | $6 \cdot 4 = 24$ | $12\,\text{cm}^2$ | še večji |
 
-Ploščina je v vseh vrsticah ista, obseg pa raste, ker se poševni stranici daljšata.
+Ploščina je v vseh vrsticah ista, obseg pa raste, ker se vsota poševnih stranic veča.
 
 ## Preveri se
 

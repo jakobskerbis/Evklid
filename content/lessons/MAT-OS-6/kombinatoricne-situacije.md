@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: kombinatorika
 avtor: AI
 ---
@@ -170,7 +170,7 @@ Rokovanje je par dveh različnih oseb. Vrstni red ni pomemben: par AB je isti ko
 
 ### Primer 4 – zdaj ti
 
-Fizioterapevt Niki predpiše tri vaje: raztezanje (R), počep (P) in most (M). Vsako naredi enkrat, vrstni red izbere sama. Na koliko različnih vrstnih redov lahko vadi?
+Fizioterapevt Niki predpiše tri vaje: raztezanje (R), počep (P) in most (M). Vsako naredi enkrat, vrstni red izbere sama. V koliko različnih vrstnih redih lahko vadi?
 
 **Podatki:** 3 vaje R, P, M; vsaka se naredi natanko enkrat (izbira se ne ponovi); vrstni red je pomemben
 **Iščemo:** število vseh vrstnih redov

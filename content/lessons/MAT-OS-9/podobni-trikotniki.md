@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -217,7 +217,7 @@ Primer: pravokotni trikotnik s katetama $3\,\text{cm}$ in $4\,\text{cm}$ ima plo
 - Nič, ker ne poznamo nobene stranice.
 ~ Po izreku KK zadoščata dva para skladnih kotov; stranic za podobnost ni treba meriti.
 - Nosilca sta skladna.
-~ Skladna bi bila le, če bi bili enako veliki ($k = 1$). Enaki koti zagotovijo samo enako obliko.
+~ Skladna bi bila le, če bi bila enako velika ($k = 1$). Enaki koti zagotovijo samo enako obliko.
 + Nosilca sta podobna po izreku KK.
 > Tretji kot je pri obeh $180^\circ - 90^\circ - 35^\circ = 55^\circ$. Vsi koti se ujemajo, zato sta trikotnika podobna. Velikost se lahko razlikuje.
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: telesa
 avtor: AI
 ---
@@ -73,7 +73,7 @@ Zato velja:
 
 $$P = 2 \cdot (a \cdot b + a \cdot c + b \cdot c)$$
 
-**4. Prostornina.** **Prostornina telesa** pove, koliko prostora telo zavzema. Merimo jo z **enotnimi kockami**: kocka z robom $1\,\text{cm}$ ima prostornino $1\,\text{cm}^3$ (en kubični centimeter). Zlagajmo takšne kocke v kvader, kot zlagaš kocke lego. Dno naj bo dolgo $3$ kocke in široko $2$ kocki, plasti pa dodajamo.
+**4. Prostornina.** **Prostornina telesa** pove, koliko prostora telo zavzema. Merimo jo z **enotskimi kockami**: kocka z robom $1\,\text{cm}$ ima prostornino $1\,\text{cm}^3$ (en kubični centimeter). Zlagajmo takšne kocke v kvader, kot zlagaš kocke lego. Dno naj bo dolgo $3$ kocke in široko $2$ kocki, plasti pa dodajamo.
 
 | Kock v dnu | Plasti | Vseh kock |
 |---|---|---|
@@ -84,7 +84,7 @@ $$P = 2 \cdot (a \cdot b + a \cdot c + b \cdot c)$$
 Opaziš vzorec? Primerjaj zadnji stolpec s prvima dvema: kako iz kock v dnu in števila plasti dobiš vse kocke?
 
 :::premisli
-Koliko enotnih kock gre v kvader z dolžino $5$, širino $4$ in višino $3$? Napovej po vzorcu iz preglednice.
+Koliko enotskih kock gre v kvader z dolžino $5$, širino $4$ in višino $3$? Napovej po vzorcu iz preglednice.
 ---
 $60$ kock. V eno plast gre $5 \cdot 4 = 20$ kock, plasti so $3$, zato je kock $20 \cdot 3 = 60$.
 :::
@@ -97,7 +97,7 @@ Pri kocki so vsi trije robovi enaki, zato velja:
 
 $$V = a \cdot a \cdot a = a^3$$
 
-**5. Enote za prostornino.** Enote so kubične: $\text{mm}^3$, $\text{cm}^3$, $\text{dm}^3$, $\text{m}^3$. Pretvorba je tokrat po $1000$, ne po $10$ ali $100$, ker pretvorimo vse tri mere: kocka z robom $1\,\text{dm} = 10\,\text{cm}$ vsebuje $10 \cdot 10 \cdot 10 = 1000$ enotnih kock po $1\,\text{cm}^3$.
+**5. Enote za prostornino.** Enote so kubične: $\text{mm}^3$, $\text{cm}^3$, $\text{dm}^3$, $\text{m}^3$. Pretvorba je tokrat po $1000$, ne po $10$ ali $100$, ker pretvorimo vse tri mere: kocka z robom $1\,\text{dm} = 10\,\text{cm}$ vsebuje $10 \cdot 10 \cdot 10 = 1000$ enotskih kock po $1\,\text{cm}^3$.
 
 $$1\,\text{dm}^3 = 1000\,\text{cm}^3 \qquad 1\,\text{m}^3 = 1000\,\text{dm}^3$$
 
@@ -120,7 +120,7 @@ Površina se je povečala $4$-krat ($96 : 24 = 4$), prostornina $8$-krat ($64 : 
 
 Enako velja za vsak kvader, tudi za škatlo telefona: dvakrat daljši robovi pomenijo $4$-krat več kartona in $8$-krat več prostora. Tilen torej nima prav.
 
-V simulaciji spodaj (**Kocka in kvader: mreža, površina, prostornina**) izberi kocko in vklopi »enotske kocke«. Rob $a$ nastavi najprej na $2$, nato na $4$. Opazuj, kolikokrat več enotnih kock je v večji kocki.
+V simulaciji spodaj (**Kocka in kvader: mreža, površina, prostornina**) izberi kocko in vklopi »enotske kocke«. Rob $a$ nastavi najprej na $2$, nato na $4$. Opazuj, kolikokrat več enotskih kock je v večji kocki.
 
 **7. Postopek reševanja.**
 
@@ -203,7 +203,7 @@ $V = a \cdot b \cdot c$, zato $c = V : (a \cdot b)$; $P = 2 \cdot (a \cdot b + a
 
 **Rešitev:**
 
-1. Ploščina dna: $a \cdot b = 16 \cdot 9 = 144\,\text{cm}^2$. Toliko enotnih kock gre v eno plast.
+1. Ploščina dna: $a \cdot b = 16 \cdot 9 = 144\,\text{cm}^2$. Toliko enotskih kock gre v eno plast.
 2. Višina pove, koliko je plasti: $c = 720 : 144$. Izračunaj jo sam.
 3. Z višino izračunaj še površino škatle, nato preveri:
 

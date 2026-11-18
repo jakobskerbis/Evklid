@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -33,11 +33,11 @@ Kaj bi se zgodilo, če bi spolne celice nastajale z navadno delitvijo in bi imel
 Otrok bi imel $92$, vnuki $184$, število bi se v vsakem rodu podvojilo. Mejoza število razpolovi, oploditev ga spet dopolni, zato ostaja $46$ iz roda v rod.
 :::
 
-**3. Moški spolni organi.** Semenčice nastajajo v **modih**. Moda so v **mošnji** zunaj trebušne votline, kjer je temperatura za $2$ do $3\,^\circ\mathrm{C}$ nižja kot v telesu. Pri $37\,^\circ\mathrm{C}$ semenčice ne bi dozorele. Od pubertete do starosti nastaja več deset milijonov semenčic na dan. Dozorijo v **nadmodku**, po **semenovodu** potujejo naprej. Žleze (**semenska mešička** in **prostata** ali obsečnica) dodajo tekočino, s katero nastane **semenska tekočina**. Ta izteče skozi sečnico v **spolnem udu**. Moda izdelujejo tudi hormon **testosteron**.
+**3. Moški spolni organi.** Semenčice nastajajo v **modih**. Moda so v **mošnji** zunaj trebušne votline, kjer je temperatura za $2$ do $3\,^\circ\mathrm{C}$ nižja kot v telesu. Pri $37\,^\circ\mathrm{C}$ semenčice ne bi dozorele. Od pubertete do starosti nastaja okoli sto milijonov semenčic na dan. Dozorijo v **nadmodku**, po **semenovodu** potujejo naprej. Žleze (**semenska mešička** in **prostata** ali obsečnica) dodajo tekočino, s katero nastane **semenska tekočina**. Ta izteče skozi sečnico v **spolnem udu**. Moda izdelujejo tudi hormon **testosteron**.
 
 *Preveri:* Zakaj moda niso v trebušni votlini? *(Tam je pretoplo za nastanek semenčic.)*
 
-**4. Ženski spolni organi.** Ženska ima dva **jajčnika**. V njih so že ob rojstvu vsi zametki jajčnih celic; v življenju dozori in se sprosti le okoli $400$ do $500$ jajčnih celic. Jajčnika izdelujeta hormona **estrogen** in **progesteron**. Sproščeno jajčno celico ujame **jajcevod** in jo vodi proti **maternici**. Maternica je votel mišičast organ, v katerem se razvija plod. Od znotraj jo obdaja **sluznica**, mehka plast z veliko žilami. Spodnji del maternice je **maternični vrat**, ki se odpira v **nožnico**.
+**4. Ženski spolni organi.** Ženska ima dva **jajčnika**. V njih so že ob rojstvu vsi zametki jajčnih celic; v življenju dozori in se sprosti le okoli $400$ do $500$ jajčnih celic. Jajčnika izdelujeta hormona **estrogen** in **progesteron**. Sproščeno jajčno celico ujame **jajcevod** in jo vodi proti **maternici**. Maternica je votel mišičast organ, v katerem se razvija plod. Od znotraj jo prekriva **sluznica**, mehka plast z veliko žilami. Spodnji del maternice je **maternični vrat**, ki se odpira v **nožnico**.
 
 V simulaciji spodaj (»Spolni organi in njihove naloge«) razvrsti dogodke k organom. Opazi, da se oploditev zgodi v jajcevodu, ne v maternici.
 
@@ -208,7 +208,7 @@ napis: 8,55; 3,6 | ugnezdenje | sredina
 puščica: 2; 4,7 -> 6,7; 4,7 | smer poti | nad
 :::
 
-Pot je dolga le nekaj centimetrov, a traja skoraj teden dni. Oploditev je blizu začetka poti, ugnezdenje na koncu.
+Pot je dolga le okoli deset centimetrov, a traja skoraj teden dni. Oploditev je blizu začetka poti, ugnezdenje na koncu.
 
 ## Drugače: Bolj natančno
 

@@ -25,5 +25,5 @@ stanje: osnutek
   - felogen iz pericikla, periderm, skorja odpade
   - obroči pese niso letnice
 - Metamorfoze
-  - založne, oporne, zračne, dihalne, haustoriji, krčilne
+  - založne, oporne, zračne, dihalne, havstoriji, krčilne
   - krompir je stebelni gomolj, batata koreninski

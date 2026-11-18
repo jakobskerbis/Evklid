@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -264,7 +264,7 @@ Celotna deformacija je vsota mehanske in toplotne: $\varepsilon = \dfrac{\sigma}
 + $F$: 100, 200, 300 N; $\Delta L$: 0,05; 0,10; 0,15 mm
 - $F$: 100, 200, 300 N; $\Delta L$: 0,05; 0,05; 0,05 mm
 ~ Podaljšek ni odvisen samo od snovi in dolžine: večja sila da večjo napetost in večji podaljšek.
-> V elastičnem območju je $\Delta L$ premo sorazmeren s $F$: dvakratna sila, dvakratni podaljšek.
+> V elastičnem območju je $\Delta L$ premo sorazmeren z $F$: dvakratna sila, dvakratni podaljšek.
 
 ? Enako dolgi palici, jeklena in aluminijasta, imata enak presek in nosita enako silo. Približno kolikokrat več se podaljša aluminijasta?
 - Enako, ker imata enako napetost.

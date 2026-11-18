@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -52,7 +52,7 @@ Pri deljivosti je $\sup\{a, b\} = \operatorname{v}(a, b)$ (najmanjši skupni ve�
 
 **5. Mreže.**
 
-**Definicija.** Delno urejena množica je **mreža**, če ima **vsak par** elementov supremum in infimum. Pišemo $a \vee b = \sup\{a, b\}$ (»spoj«) in $a \wedge b = \inf\{a, b\}$ (»srečanje«).
+**Definicija.** Delno urejena množica je **mreža**, če ima **vsak par** elementov supremum in infimum. Pišemo $a \vee b = \sup\{a, b\}$ (»spoj«) in $a \wedge b = \inf\{a, b\}$ (»stik«).
 
 **Izrek.** V mreži za vse $a$, $b$, $c$ velja: idempotentnost $a \vee a = a$; komutativnost $a \vee b = b \vee a$; asociativnost $(a \vee b) \vee c = a \vee (b \vee c)$; **absorpcija** $a \vee (a \wedge b) = a$; in dualno za $\wedge$. Poleg tega $a \preceq b \iff a \wedge b = a \iff a \vee b = b$.
 
@@ -119,7 +119,7 @@ Najkrajši čas = število elementov najdaljše verige; hkrati lahko tečejo le 
 
 Dokaži: mreža deliteljev $D_n$ (z $\vee = \operatorname{v}$, $\wedge = \operatorname{D}$) je Boolova algebra natanko tedaj, ko $n$ ni deljiv s kvadratom nobenega praštevila. Za $n = 30$ zapiši komplement vsakega elementa.
 
-**Podatki:** $D_n$ z deljivostjo, $0 = 1$, $1 = n$; distributivnost $\operatorname{D}(a, \operatorname{v}(b, c)) = \operatorname{v}(\operatorname{D}(a, b), \operatorname{D}(a, c))$ velja za vse $n$; $n = 30$
+**Podatki:** $D_n$ z deljivostjo, najmanjši element je $1$, največji $n$; distributivnost $\operatorname{D}(a, \operatorname{v}(b, c)) = \operatorname{v}(\operatorname{D}(a, b), \operatorname{D}(a, c))$ velja za vse $n$; $n = 30$
 **Iščemo:** dokaz obeh smeri in komplemente v $D_{30}$
 
 :::formula
@@ -140,7 +140,7 @@ $a'$ je komplement: $\operatorname{D}(a, a') = 1$ in $\operatorname{v}(a, a') = 
 V $\mathcal P(\{a, b, c\})$ z $\subseteq$ določi $\{a\} \vee \{b\}$, $\{a, b\} \wedge \{b, c\}$ in komplement $\{a, c\}$.
 
 **Podatki:** $\mathcal P(\{a, b, c\})$, $\vee = \cup$, $\wedge = \cap$, $1 = \{a, b, c\}$
-**Iščemo:** spoj, srečanje in komplement
+**Iščemo:** spoj, stik in komplement
 
 :::formula
 $X \vee Y = X \cup Y$, $X \wedge Y = X \cap Y$, $X' = \{a, b, c\} \setminus X$
@@ -149,7 +149,7 @@ $X \vee Y = X \cup Y$, $X \wedge Y = X \cap Y$, $X' = \{a, b, c\} \setminus X$
 **Rešitev:**
 
 1. $\{a\} \vee \{b\} = \{a, b\}$: najmanjša množica, ki vsebuje obe.
-2. Izračunaj srečanje in komplement sam.
+2. Izračunaj stik in komplement sam.
 
 :::premisli
 Kaj dobiš?
@@ -325,7 +325,7 @@ Vsaka enoelementna množica je povezana z dvema dvoelementnima, ki jo vsebujeta 
 P | delno urejena množica | |
 S | podmnožica delno urejene množice | |
 a, b, c | elementi delno urejene množice | |
-x, y | komplementa elementa $a$ | |
+x, y | elementa delno urejene množice | | | v dokazu enoličnosti: komplementa elementa $a$
 a' | komplement elementa $a$ | | | $a \wedge a' = 0$, $a \vee a' = 1$
 D_n | množica deliteljev števila $n$ | |
 d | delitelj števila $n$ | |

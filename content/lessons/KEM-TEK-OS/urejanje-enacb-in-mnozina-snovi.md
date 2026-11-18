@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -124,7 +124,7 @@ Aluminijasta posoda za kampiranje se na zraku prevleče s tanko plastjo aluminij
 
 1. Kisik: levo $2$ atoma, desno $3$. Najmanjši skupni večkratnik je $6$, ker se mora $6$ deliti z $2$ in s $3$.
 2. Zato $3\,\mathrm{O_2}$ (6 atomov O) in $2\,\mathrm{Al_2O_3}$ (6 atomov O).
-3. Desno je zdaj $2 \cdot 2 = 4$ atomov Al, zato levo $4\,\mathrm{Al}$.
+3. Desno so zdaj $2 \cdot 2 = 4$ atomi Al, zato levo $4\,\mathrm{Al}$.
 4. Preverba: Al $4 = 4$, O $6 = 6$.
 5. Odgovor: $\mathrm{4\,Al + 3\,O_2 \rightarrow 2\,Al_2O_3}$.
 

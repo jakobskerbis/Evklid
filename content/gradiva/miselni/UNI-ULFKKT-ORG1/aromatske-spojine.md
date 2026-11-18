@@ -18,7 +18,7 @@ stanje: osnutek
   - piridin: par N ne šteje
   - $\text{C}^+$ prispeva $0$, $\text{C}^-$ $2$
 - Elektrofilna aromatska substitucija
-  - počasi areniumski ion, nato $-\text{H}^+$
+  - počasi arenijev ion, nato $-\text{H}^+$
   - substitucija obnovi aromatičnost
   - napaka: »benzen adira kot alken«
 - Pet reakcij

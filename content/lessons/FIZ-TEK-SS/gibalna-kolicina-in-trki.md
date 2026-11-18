@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -43,7 +43,7 @@ $$m_1 v_1 + m_2 v_2 = m_1 v_1' + m_2 v_2'$$
 :::premisli
 Kovčka imata namesto zaponk prožne odbijače, zato se odbijeta. Ali bo drugi kovček odpeljal hitreje ali počasneje kot $0{,}6\,\mathrm{m/s}$? Napovej, preden bereš naprej.
 ---
-Hitreje. Prvemu kovčku se hitrost pri odboju spremeni bolj kot pri sprijemu (celo obrne se), zato drugemu preda več gibalne količine. Iz formul spodaj dobiš $v_2' = \dfrac{2 \cdot 40}{100} \cdot 1{,}5 = 1{,}2\,\mathrm{m/s}$, prvi pa se zapelje nazaj s $0{,}3\,\mathrm{m/s}$.
+Hitreje. Prvemu kovčku se hitrost pri odboju spremeni bolj kot pri sprijemu (celo obrne se), zato drugemu preda več gibalne količine. Iz formul spodaj dobiš $v_2' = \dfrac{2 \cdot 40}{100} \cdot 1{,}5 = 1{,}2\,\mathrm{m/s}$, prvi pa se zapelje nazaj z $0{,}3\,\mathrm{m/s}$.
 :::
 
 **Sunek in boben.** Bobnar udari po opni s palico z maso $50\,\mathrm{g}$, ki prileti s hitrostjo $5\,\mathrm{m/s}$. Palica se dotika opne približno $2\,\mathrm{ms}$.

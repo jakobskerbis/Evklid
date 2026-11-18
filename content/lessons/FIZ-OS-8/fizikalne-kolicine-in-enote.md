@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -65,7 +65,7 @@ Pri času je drugače: $1\,\mathrm{min} = 60\,\mathrm{s}$ in $1\,\mathrm{h} = 60
 
 V simulaciji spodaj, »Predpone in pretvarjanje enot«, izberi isto dolžino najprej v metrih, nato v centimetrih. Opazuj, kolikokrat se poveča število, ko se enota zmanjša.
 
-**9. Prostornina.** Enota SI za prostornino je $\mathrm{m^3}$; tako veliko je kocka z robom $1\,\mathrm{m}$. Manjši sta $\mathrm{dm^3}$ in $\mathrm{cm^3}$. Velja $1\,\mathrm{l} = 1\,\mathrm{dm^3}$ in $1\,\mathrm{ml} = 1\,\mathrm{cm^3}$.
+**9. Prostornina.** Enota SI za prostornino je $\mathrm{m^3}$; tako velika je kocka z robom $1\,\mathrm{m}$. Manjši sta $\mathrm{dm^3}$ in $\mathrm{cm^3}$. Velja $1\,\mathrm{l} = 1\,\mathrm{dm^3}$ in $1\,\mathrm{ml} = 1\,\mathrm{cm^3}$.
 
 :::premisli
 Kocka ima rob $1\,\mathrm{dm} = 10\,\mathrm{cm}$. Koliko kockic z robom $1\,\mathrm{cm}$ gre vanjo? Napovej, preden pogledaš.

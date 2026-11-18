@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -175,7 +175,7 @@ $V = 7{,}5 \cdot 1440 = 10\,800\,\mathrm{L} \approx 1{,}1 \cdot 10^4\,\mathrm{L}
 - **Red velikosti iz eksponenta.** Kdor $7 \cdot 10^3$ zaokroži na $10^3$, pogleda le eksponent. Pravilo: pri $a \ge 3{,}16$ se red poveča za ena, torej $10^4$. Pazi tudi: »dva reda velikosti« pomeni stokrat, ne dvakrat.
 - **Linearno namesto potence.** »Žila je za $20\,\%$ ožja, torej je pretok za $20\,\%$ manjši.« Narobe: $Q \propto r^4$, zato pade na $41\,\%$. Ko eksponent dobiš, ga vedno uporabi na razmerju.
 - **Napačen predznak eksponenta.** Pri izenačevanju eksponentov hitro zapišeš $a - b$ namesto $a + b$. Rezultat potem pokaže napačno smer (padec z večje višine bi trajal manj časa). Preizkus smeri odkrije napako.
-- **Lažna natančnost.** Oceni z $7056\,\mathrm{L}$ ne verjameš na štiri mesta, saj so podatki znani le na eno ali dve. Zapiši $7 \cdot 10^3\,\mathrm{L}$.
+- **Lažna natančnost.** Oceni s $7056\,\mathrm{L}$ ne verjameš na štiri mesta, saj so podatki znani le na eno ali dve. Zapiši $7 \cdot 10^3\,\mathrm{L}$.
 
 ## Povzetek
 

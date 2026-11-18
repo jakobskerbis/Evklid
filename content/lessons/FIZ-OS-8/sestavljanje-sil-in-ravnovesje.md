@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -44,7 +44,7 @@ Ves čas se manjša: od $7\,\mathrm{N}$ pri isti smeri, prek $5\,\mathrm{N}$ pri
 
 Rezultanta dveh sil je zato vedno nekje med razliko in vsoto njunih velikosti. Pri silah $3\,\mathrm{N}$ in $4\,\mathrm{N}$ je to med $1\,\mathrm{N}$ in $7\,\mathrm{N}$.
 
-V simulaciji spodaj »Sestavljanje sil in ravnovesje« vleci konici puščic $F_1$ in $F_2$. Poskusi najti dve sili po $5\,\mathrm{N}$, ki dasta rezultanto prav tako $5\,\mathrm{N}$. Opazuj, kako se diagonala paralelograma krajša, ko se kot med silama veča.
+V simulaciji spodaj »Sestavljanje sil in ravnovesje« vleci konici puščic $F_1$ in $F_2$. Poskusi najti dve sili po $5\,\mathrm{N}$, ki dasta rezultanto, manjšo od $5\,\mathrm{N}$. Opazuj, kako se diagonala paralelograma krajša, ko se kot med silama veča.
 
 **4. Ravnovesje dveh sil.** V tretji vrstici je rezultanta nič. Sile na voziček delujejo, a se njihovi učinki izničijo. Takrat rečemo, da sta sili v **ravnovesju**. Telo, ki je mirovalo, miruje še naprej.
 

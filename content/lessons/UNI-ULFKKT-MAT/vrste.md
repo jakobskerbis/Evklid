@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -339,7 +339,7 @@ n | indeks (zaporedna številka) člena | | |
 a_n | splošni člen vrste | | | potreben pogoj konvergence: aₙ → 0
 a_1, a_2, a_3 | prvi, drugi in tretji člen vrste | | |
 a | prvi člen geometrijske vrste | | | a ≠ 0
-q | količnik geometrijske vrste | | | vrsta konvergira za |q| < 1
+q | količnik geometrijske vrste | | | vrsta konvergira za |q| < 1; v Uporabi v stroki particijska funkcija
 p | eksponent v vrsti Σ 1/nᵖ | | | konvergira natanko za p > 1
 c_n | koeficienti potenčne vrste | | |
 x | spremenljivka potenčne vrste | | |

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -35,7 +35,7 @@ Ne. Beljakovine, ki pri evkariontih sedijo v membrani mitohondrija, ima bakterij
 | DNA | krožna, plazmidi | linearna, v kromosomih |
 | Organeli z membrano | jih ni | so |
 | Ribosomi | manjši | večji |
-| Velikost | okoli $1$–$5\,\mu\text{m}$ | okoli $10$–$100\,\mu\text{m}$ |
+| Velikost | okoli $1$–$5\,\mu\text{m}$ | večinoma $10$–$100\,\mu\text{m}$ |
 | Primeri | bakterije | glive, rastline, živali |
 
 **6. Organeli evkariontske celice.** Evkariontska celica je razdeljena na prostore, **organele**, vsak s svojo nalogo. Membrana okoli organela loči različne reakcije, da se ne motijo.
@@ -158,7 +158,7 @@ $L = 1{,}5 \cdot 10^{10} \cdot 2\,\mu\text{m} = 3 \cdot 10^{10}\,\mu\text{m}$. D
 - Rastlinska celica ima steno iz celuloze, kloroplaste in veliko vakuolo; živalska nima stene; glivna ima steno iz hitina in nima kloroplastov. Mitohondrije imajo vse.
 - Endosimbiontska teorija: mitohondriji in kloroplasti izvirajo iz požrtih bakterij (dve membrani, lastna krožna DNA in ribosomi).
 - Virus ni celica: dednina v kapsidi, razmnožuje se le v gostiteljski celici; antibiotiki nanj ne delujejo.
-- Velikosti: virus okoli $100\,\text{nm}$, bakterija okoli $2\,\mu\text{m}$, evkariontska celica $10$–$100\,\mu\text{m}$.
+- Velikosti: virus okoli $100\,\text{nm}$, bakterija okoli $2\,\mu\text{m}$, evkariontska celica večinoma $10$–$100\,\mu\text{m}$.
 
 ## Drugače: Kot zgodba
 

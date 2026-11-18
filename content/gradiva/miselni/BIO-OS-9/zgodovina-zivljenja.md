@@ -19,7 +19,7 @@ stanje: osnutek
   - Millerjev poskus: iskre dajo aminokisline
 - Cianobakterije in kisik
   - fotosinteza sprošča kisik
-  - kisik v zraku od $2{,}4$ milijarde let
+  - kisik v zraku pred $2{,}4$ milijarde let
   - ozonski plašč omogoči kopno
 - Množična izumrtja
   - pet velikih izumrtij

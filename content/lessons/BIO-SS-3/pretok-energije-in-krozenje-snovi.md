@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -76,7 +76,7 @@ Napovej brez slike: kolikšen del energije proizvajalcev dobi 4. raven in kolik�
 4. raven: $0{,}1 \cdot 0{,}1 \cdot 0{,}1 = 0{,}001$, to je $0{,}1\,\%$. Peta raven bi dobila le $0{,}01\,\%$, kar je premalo za stalno populacijo. Zato so verige redko daljše od štirih ali petih členov in zato so veliki plenilci redki.
 :::
 
-V simulaciji spodaj (Energijska piramida) premakni drsnik »prenos na višjo raven« s $10\,\%$ na $5\,\%$. Opazuj, kolikokrat se zmanjša energija končnih plenilcev: ne dvakrat, ampak osemkrat, ker se manjši delež pomnoži trikrat.
+V simulaciji spodaj (Energijska piramida) premakni drsnik »prenos na višjo raven« z $10\,\%$ na $5\,\%$. Opazuj, kolikokrat se zmanjša energija končnih plenilcev: ne dvakrat, ampak osemkrat, ker se manjši delež pomnoži trikrat.
 
 **4. Primarna proizvodnja.** Vsa energija piramide izvira iz fotosinteze. Energijo, ki jo proizvajalci v določenem času vežejo na določeni površini, imenujemo **bruto primarna proizvodnja**. Rastline del te energije same porabijo za dihanje. Kar ostane v novih listih, steblih in plodovih, je **neto primarna proizvodnja**: le ta je na voljo rastlinojedcem. Rastline vežejo navadno manj kot $1\,\%$ sončne svetlobe, ki pade nanje.
 

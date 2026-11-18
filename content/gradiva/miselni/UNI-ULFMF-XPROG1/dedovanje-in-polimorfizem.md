@@ -18,7 +18,7 @@ stanje: osnutek
   - podpis po statičnem, različica po dinamičnem
 - Pretvorbe
   - navzgor samodejno
-  - navzdol z `(Tip)`, sicer `ClassCastException`
+  - navzdol s `(Tip)`, napačna vrže `ClassCastException`
   - preveri z `instanceof`
 - Abstraktni razred
   - `abstract` metoda brez telesa

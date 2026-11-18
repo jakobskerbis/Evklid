@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -51,7 +51,7 @@ Pri zvišanju. Pri $28\,^\circ\mathrm{C}$ se celica še deli približno dvakrat 
 
 **Abiotski in biotski dejavniki.** Temperatura je le eden od **ekoloških dejavnikov**, to je vplivov okolja na organizem. **Abiotski** dejavniki so neživi: temperatura, svetloba, voda in vlaga, kisik, pH, slanost, hranila v prsti. **Biotski** dejavniki so vplivi drugih organizmov: hrana, plenilci, zajedavci, tekmeci, povzročitelji bolezni. Za bakterijo v mehurju sta pH in temperatura urina abiotska dejavnika, čeprav ju ustvarja človeško telo; bele krvničke, ki jo napadajo, pa so biotski dejavnik.
 
-Za vsak dejavnik ima vrsta svojo krivuljo strpnosti. Kje lahko živi, odloči tisti dejavnik, ki je najbližje robu svojega območja. To je **omejitveni dejavnik** (Liebigov zakon minimuma). Bakterija tetanusa ne prenese kisika, zato se razmnoži le v globoki, ozki rani, kamor zrak ne pride. Kisik je zanjo omejitveni dejavnik, tudi če sta temperatura in hrana idealni. Omejuje torej lahko tudi presežek, ne le pomanjkanje: preveč soli ustavi rast večine bakterij, zato meso solimo.
+Za vsak dejavnik ima vrsta svojo krivuljo strpnosti. Kje lahko živi, odloči tisti dejavnik, ki je najbližje robu svojega območja. To je **omejitveni dejavnik** (Shelfordov zakon strpnosti; za pomanjkanje hranil to pove že Liebigov zakon minimuma). Bakterija tetanusa ne prenese kisika, zato se razmnoži le v globoki, ozki rani, kamor zrak ne pride. Kisik je zanjo omejitveni dejavnik, tudi če sta temperatura in hrana idealni. Omejuje torej lahko tudi presežek, ne le pomanjkanje: preveč soli ustavi rast večine bakterij, zato meso solimo.
 
 V simulaciji spodaj, »Abiotski in biotski dejavniki«, uvrsti vseh sedem dejavnikov. Opazi, da so vsi biotski dejavniki *drugi organizmi ali odnosi z njimi*, vsi abiotski pa fizikalne ali kemijske lastnosti okolja.
 

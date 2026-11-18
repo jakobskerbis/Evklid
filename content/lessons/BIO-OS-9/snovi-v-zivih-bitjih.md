@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -33,7 +33,7 @@ Kos kruha, ki ga pozabiš v opekaču, počrni. Kuhinjska sol ali pesek v vroči 
 Kruh je iz organskih snovi (škrob, beljakovine). Vročina razbije njihove molekule, voda in drugi plini uidejo, ostane črn ogljik iz ogrodja. Sol in pesek sta anorganski snovi brez ogljikovih verig, zato ni česa zogleneti.
 :::
 
-**Voda in soli.** Obe najdeš tudi v neživi naravi: v rekah, morju in kamninah. Živa bitja ju sprejmejo iz okolja. Voda je največji del telesa: pri človeku približno $60\,\%$ mase, v listu ali gobi tudi $90\,\%$. V njej se raztapljajo druge snovi, z njo kri in rastlinski sok prenašata snovi po telesu, s potenjem pa se ohlajamo.
+**Voda in soli.** Oboje najdeš tudi v neživi naravi: v rekah, morju in kamninah. Živa bitja oboje sprejmejo iz okolja. Voda je največji del telesa: pri človeku približno $60\,\%$ mase, v listu ali gobi tudi $90\,\%$. V njej se raztapljajo druge snovi, z njo kri in rastlinski sok prenašata snovi po telesu, s potenjem pa se ohlajamo.
 
 Soli so v telesu v majhnih količinah, a brez njih ne gre: kalcij gradi kosti in zobe, železo je v krvnem barvilu, magnezij v listnem zelenilu (klorofilu).
 
@@ -163,7 +163,7 @@ $m_\mathrm{suho} = 50\,\mathrm{g}$. Iz pol kilograma svežih gob dobiš le za pe
 ## Povzetek
 
 - Živa bitja so iz istih elementov kot neživa narava, a več kot $95\,\%$ njihove mase je iz C, H, O, N, P in S.
-- Ogljik tvori verige in obroče, zato je ogrodje organskih snovi. Voda in soli sta anorganski snovi.
+- Ogljik tvori verige in obroče, zato je ogrodje organskih snovi. Voda in soli so anorganske snovi.
 - Voda je največji del telesa (človek okoli $60\,\%$, gobe in listi do $90\,\%$); soli gradijo kosti, so v krvi in klorofilu.
 - Ogljikovi hidrati (C, H, O) dajo hitro energijo ($17\,\mathrm{kJ/g}$), maščobe (C, H, O, malo O) so zaloga ($37\,\mathrm{kJ/g}$), beljakovine (dodatno N, S) gradijo telo in so encimi, DNA (dodatno P) nosi dedni zapis.
 - Presnova: fotosinteza gradi glukozo iz $\mathrm{CO_2}$ in vode, celično dihanje jo razgradi nazaj in sprosti energijo.

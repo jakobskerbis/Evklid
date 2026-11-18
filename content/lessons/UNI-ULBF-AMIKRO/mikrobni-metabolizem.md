@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -84,7 +84,7 @@ $\text{št. glukoz} = \dfrac{\text{potrebni ATP}}{\text{ATP na glukozo}}$
 1. Fermentacija: $\dfrac{380}{2} = 190$ molekul glukoze.
 2. Aerobno dihanje: $\dfrac{380}{38} = 10$ molekul glukoze.
 3. Razmerje: $\dfrac{38}{2} = 19$. Fermentacija izkoristi le glikolizo, dihanje pa še verigo za prenos elektronov.
-4. Odgovor: fermentor porabi $190$, dihajoči sev $10$ molekul glukoze, torej $19$-krat manj.
+4. Odgovor: fermentirajoči sev porabi $190$, dihajoči sev $10$ molekul glukoze, torej $19$-krat manj.
 
 ### Primer 2: kisik ali nitrat
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -153,7 +153,7 @@ Steiner za $I_y$, $I_z$, $I_{yz}$, nato $I_{1,2} = I_s \pm R$ in $\tan 2\varphi_
 2. Odmiki težišč krakov od skupnega težišča: krak 1 $(-1;\ 1)\,\mathrm{cm}$, krak 2 $(1{,}5;\ -1{,}5)\,\mathrm{cm}$. Lastni momenti krakov po $\dfrac{b h^3}{12}$: za $I_y$ sta $18$ in $0{,}33\,\mathrm{cm^4}$, za $I_z$ pa $0{,}5$ in $5{,}33\,\mathrm{cm^4}$.
 3. $I_y = 18 + 1^2 \cdot 6 + 0{,}33 + 1{,}5^2 \cdot 4 = 33{,}33\,\mathrm{cm^4}$.
 4. $I_z = 0{,}5 + 1^2 \cdot 6 + 5{,}33 + 1{,}5^2 \cdot 4 = 20{,}83\,\mathrm{cm^4}$.
-5. $I_{yz} = (-1) \cdot 1 \cdot 6 + 1{,}5 \cdot (-1{,}5) \cdot 4 = -15\,\mathrm{cm^4}$. Krakova ležita v »drugem« in »četrtem« kvadrantu okrog težišča, zato je predznak negativen.
+5. $I_{yz} = (-1) \cdot 1 \cdot 6 + 1{,}5 \cdot (-1{,}5) \cdot 4 = -15\,\mathrm{cm^4}$. Kraka ležita v »drugem« in »četrtem« kvadrantu okrog težišča, zato je predznak negativen.
 6. $I_s = \dfrac{33{,}33 + 20{,}83}{2} = 27{,}08\,\mathrm{cm^4}$ in $R = \sqrt{6{,}25^2 + 15^2} = 16{,}25\,\mathrm{cm^4}$.
 7. $I_1 = 27{,}08 + 16{,}25 = 43{,}33\,\mathrm{cm^4}$, $I_2 = 27{,}08 - 16{,}25 = 10{,}83\,\mathrm{cm^4}$.
 8. $\tan 2\varphi_0 = \dfrac{2 \cdot (-15)}{20{,}83 - 33{,}33} = 2{,}4$, torej $2\varphi_0 = 67{,}4^\circ$ in $\varphi_0 = 33{,}7^\circ$.

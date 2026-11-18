@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Najprej uganka, brez računanja. Na kuhinjski mizi, visoki $0{,}80\,\mathrm{m}$, ležita dve zrni graha. Prvo s prstom sunkovito odriveš čez rob, da odleti vodoravno. V istem trenutku drugo zrno le spustiš z roba. Katero prej udari ob tla?
+Najprej uganka, brez računanja. Na kuhinjski mizi, visoki $0{,}80\,\mathrm{m}$, ležita dve zrni graha. Prvo s prstom sunkovito odrineš čez rob, da odleti vodoravno. V istem trenutku drugo zrno le spustiš z roba. Katero prej udari ob tla?
 
 A) Spuščeno, ker ima krajšo pot.
 B) Odrinjeno, ker je hitrejše.
@@ -147,7 +147,7 @@ $D = \dfrac{v_0^2 \sin 2\alpha}{g}$, od koder $\sin 2\alpha = \dfrac{D g}{v_0^2}
 **Rešitev:**
 
 1. Tokrat je neznanka kot, zato formulo za domet obrnemo: $\sin 2\alpha = \dfrac{2{,}0 \cdot 9{,}81}{5{,}0^2} = 0{,}785$.
-2. Ker je $0{,}785 < 1$, je met mogoč. Kalkulator (nastavljen na stopinje) da $2\alpha_1 = 51{,}7^\circ$, torej $\alpha_1 = 25{,}9^\circ$.
+2. Ker je $0{,}785 < 1$, je met mogoč. Računalo (nastavljeno na stopinje) da $2\alpha_1 = 51{,}7^\circ$, torej $\alpha_1 = 25{,}9^\circ$.
 3. Čas leta pri tem kotu: $\sin 25{,}9^\circ = 0{,}437$, zato $t_1 = \dfrac{2 \cdot 5{,}0 \cdot 0{,}437}{9{,}81} = 0{,}445$, torej $0{,}445\,\mathrm{s}$.
 4. Sinus pa ima vrednost $0{,}785$ še pri enem kotu med $90^\circ$ in $180^\circ$. Drugi kot meta in njegov čas leta poišči sam.
 

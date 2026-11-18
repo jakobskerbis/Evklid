@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -227,8 +227,8 @@ Povezan seznam celih števil je v pomnilniku zapisan takole: glava hrani naslov 
 6. (c) Do zadnjega vozlišča pridemo s $3$ sledenji: $1200$, $1040$, $1100$. V novo vozlišče $1300$ zapišemo podatek $4$ in kazalec ∅, nato kazalec v $1100$ nastavimo na $1300$. Novo vozlišče pripravimo prej, da seznam v nobenem trenutku ne kaže na nedokončano vozlišče.
 7. Končno stanje: glava $= 1200$; $1200$: ($5$, $1040$); $1040$: ($7$, $1100$); $1100$: ($9$, $1300$); $1300$: ($4$, ∅). Vrstni red podatkov je $5, 7, 9, 4$.
 8. (d) Pred prvim dodajanjem ima seznam $1000$ vozlišč, pred zadnjim $1199$. Vsakič sledimo kazalcu tolikokrat, kolikor je vozlišč, skupaj $1000 + 1001 + \dots + 1199$. To je vsota $200$ členov aritmetičnega zaporedja: $200 \cdot \frac{1000 + 1199}{2} = 219900$.
-9. S kazalcem na konec sledenj ni: novo vozlišče pripnemo na zadnje in kazalec na konec premaknemo nanj, pri vsakem dodajanju sta to $2$ spremembi, skupaj $200 \cdot 2 = 400$ sprememb.
-10. Odgovor: vstavljanje na začetek zahteva $0$ sledenj in $2$ spremembi, brisanje $2$ sledenji in $1$ spremembo, vstavljanje na konec $3$ sledenja in $2$ zapisa kazalca; končni seznam je $5, 7, 9, 4$. Brez kazalca na konec je za $200$ dodajanj potrebnih $219900$ sledenj, z njim nobeno.
+9. S kazalcem na konec zadošča pri vsakem dodajanju eno sledenje (po kazalcu na konec do zadnjega vozlišča), skupaj $200$: novo vozlišče pripnemo na zadnje in kazalec na konec premaknemo nanj, pri vsakem dodajanju sta to $2$ spremembi, skupaj $200 \cdot 2 = 400$ sprememb.
+10. Odgovor: vstavljanje na začetek zahteva $0$ sledenj in $2$ spremembi, brisanje $2$ sledenji in $1$ spremembo, vstavljanje na konec $3$ sledenja in $2$ zapisa kazalca; končni seznam je $5, 7, 9, 4$. Brez kazalca na konec je za $200$ dodajanj potrebnih $219900$ sledenj, z njim le $200$.
 
 ### Naloga 3
 
