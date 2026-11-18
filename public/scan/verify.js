@@ -119,7 +119,7 @@ function check(problemText, ai) {
     if (kind === "system") {
       const parts = splitSystem(problemText) || String(problemText).split(/;|\n/).filter((s) => s.includes("="));
       for (const sol of ai.solutions || []) {
-        const env = {};
+        const env = Object.create(null); // ključ je ena črka; brez prototipa (CodeQL js/remote-property-injection)
         for (const m of String(sol).matchAll(/([a-zA-Z])\s*=\s*([^;,]+(?:,\d+)?)/g)) {
           const val = values(m[2])[0];
           if (val === undefined) return { verified: false, reason: "parse" };
