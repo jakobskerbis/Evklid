@@ -578,7 +578,8 @@ export class Store {
         `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, e.topic, e.error, e.mode, sealFlag(e.flag ?? "none"), e.topic_id ?? null);
+      // Ob stiski brez teme (j 18. 11. 2026): tema bi v nešifriranem stolpcu ostala tudi po roku hrambe oznake.
+      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, e.flag === "distress" ? null : e.topic, e.error, e.mode, sealFlag(e.flag ?? "none"), e.flag === "distress" ? null : (e.topic_id ?? null));
   }
   // Oznaka je šifrirana (razen »none«); neberljiva šteje kot opozorilo (»unknown«), ne kot navaden odgovor.
   lastEvent(conversationId) {

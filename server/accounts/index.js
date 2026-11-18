@@ -2961,8 +2961,18 @@ export function mountAccounts(app, store, opts = {}) {
     appUrl: baseUrl(null) + "/",
     audit: (o) => audit(db, o),
     log,
-    // Ista pot kot DELETE /api/account (plačane račune neaktivni.js izpusti, zato brez preklica naročnine).
-    erase: (p) => eraseAccount(db, p.id, { guests, transaction: true, before: () => (recordPilotDeletion(p), clearPilotLevels(p.id)) }),
+    // Ista pot kot DELETE /api/account (plačane račune neaktivni.js izpusti, zato brez preklica naročnine). check() v
+    // transakciji: ponovno preverjanje mirovanja in zapis v dnevnik dostopov pred izbrisom.
+    erase: (p, check) =>
+      eraseAccount(db, p.id, {
+        guests,
+        transaction: true,
+        before: () => {
+          check();
+          recordPilotDeletion(p);
+          clearPilotLevels(p.id);
+        },
+      }),
   });
   async function inactiveDaily(now = new Date(), { force = false } = {}) {
     if (!neaktivniVklopljeni()) return null;

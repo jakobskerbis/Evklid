@@ -44,21 +44,26 @@ V vseh primerih poraba ostane šteta za omrežje (`guest_spent`).
 Vklop: `EVKLID_NEAKTIVNI=1` v Render → Environment (v `render.yaml` zakomentirano; j vklopi po posvetu s pravnikom).
 Koda: `server/accounts/neaktivni.js`, test `test/neaktivni.test.js`. Teče enkrat na dan po 10.00 (Ljubljana).
 
-- **Dejavnost:** prijava (nova seja), vsak klic API s sejo (`parents.last_active_at`, enkrat na dan), vprašanja,
-  dogodki učenja, točke in odprtje profila na napravi (tudi otrokova uporaba na računu starša).
-- **12 mesecev brez dejavnosti:** eno kratko e-sporočilo v slovenščini na e-naslov imetnika računa (povezava za
-  prijavo in za izbris v zavihku Račun, datum izbrisa). Za isto obdobje mirovanja nikoli dvakrat (`email_log`
+- **Dejavnost:** prijava (nova seja), vsak klic API s sejo (`parents.last_active_at`, enkrat na dan; tudi v izvozu),
+  vprašanja, dogodki učenja, točke, rezultati vaj in iger (`skill_results`) in odprtje profila na napravi (tudi
+  otrokova uporaba na računu starša).
+- **12 mesecev brez dejavnosti:** eno kratko servisno e-sporočilo v slovenščini na e-naslov imetnika računa (»Evklid:
+  ali še uporabljate svoj račun?«, povezava za prijavo in za izbris v zavihku Račun, datum izbrisa, noga z
+  upravljavcem in opombo, da sporočilo ni oglasno). Za isto obdobje mirovanja nikoli dvakrat (`email_log`
   `neaktivni`, period = dan zadnje dejavnosti; zapis ostane 760 dni). Če pošiljanje ne uspe, nov poskus naslednji dan.
+- **Mladoletni imetnik** (račun zase, mlajši od 18 let) in račun samo »Zame« brez datuma rojstva dobita isto
+  obvestilo s »ti« in enak rok. Tihega izbrisa ni (vprašanje za pravnika (a)). Profili otrok nimajo e-naslova;
+  sporočilo gre vedno samo imetniku računa.
 - **24 mesecev brez dejavnosti** in vsaj 30 dni po poslanem obvestilu: izbris po isti poti kot `DELETE /api/account`
-  (`eraseAccount`, zapis pilota), dnevnik dostopov `inactive_deleted` (samo število). Prijava vmes izbris ustavi.
-- **Brez e-pošte mladoletnim:** imetnik, mlajši od 18 let (račun zase), ali račun samo »Zame« brez datuma rojstva ne
-  dobi sporočila; izbriše se po 24 mesecih brez obvestila (odprto vprašanje za pravnika). Profili otrok nimajo
-  e-naslova; sporočilo gre vedno samo imetniku računa.
+  (`eraseAccount`, zapis pilota). V transakciji izbrisa se mirovanje preveri znova (prijava med tekom izbris ustavi)
+  in se zapiše v dnevnik dostopov (`inactive_deleted`, en zapis na račun, nato brez povezave na račun). Brez poslanega
+  obvestila ni izbrisa.
 - **Izvzeti:** gostje in nepotrjeni računi (svoji roki zgoraj), skrbniki, plačana ali podarjena doba (naročnina,
-  koda, darilo, bonus), učitelji šole z veljavno licenco.
+  koda, darilo, bonus), preostanek kredita AI, veljaven paket (`passes`) in **šolski računi v celoti** (učitelji,
+  ustanovitelji šol, lastniki razredov; tudi po poteku licence): zanje velja pogodba o obdelavi s šolo (vprašanje (f)).
 - **Brez Resenda** (`RESEND_API_KEY`) ne gre nobeno obvestilo in ni nobenega izbrisa.
-- **Poročilo brez dejanj** (skrbnik): `GET /api/admin/neaktivni` → `{ vklopljeno, eposta, obvestilo, izbris, cakaRok,
-  mladoletniBrezObvestila }` (samo števila, brez e-naslovov).
+- **Poročilo brez dejanj** (skrbnik): `GET /api/admin/neaktivni` → `{ vklopljeno, eposta, obvestilo,
+  obvestiloMladoletnim, izbris, cakaRok }` (samo števila, brez e-naslovov).
 - **Kopije:** izbrisan račun ostane v varnostnih kopijah do njihovega poteka (spodaj, največ 30 dni).
 
 ## Izbris profila (`DELETE /api/students/:id`)

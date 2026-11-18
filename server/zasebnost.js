@@ -37,9 +37,9 @@ export const RETENTION = {
   // Soglasje plačnika ob nakupu (billing_consents, z e-naslovom plačnika) po izbrisu računa: dokaz soglasja.
   // j 2026-11-16: 5 let po nakupu (splošni zastaralni rok, OZ 346).
   billingConsentDays: 1826,
-  // Oznaka stiske (events.flag »distress«: stiska, samopoškodovanje, nasilje, nujno zdravje; j 18. 11. 2026): 90 dni
-  // od dogodka. Dogodek učenja (predmet, tema, napaka) ostane, oznaka postane »none« (clearOldDistress).
-  distressDays: 90,
+  // Oznake dogodkov (events.flag razen »none«; stiska, nevarna vsebina, vrivanje, tema zunaj predmetov, fotografija;
+  // j 18. 11. 2026, pregled #846): 90 dni od dogodka. Dogodek učenja ostane, oznaka postane »none« (clearOldFlags).
+  flagDays: 90,
   // Potekle seje in odklepi profilov se izbrišejo takoj (niso več veljavni).
 };
 
@@ -111,7 +111,11 @@ function* sealSteps(db, batch) {
           for (const c of cols) bytes += r[c]?.length || 0;
           const plain = cols.map((c) => (r[c] === null ? null : unseal(r[c], null)));
           if (plain.some((v, i) => v === null && r[cols[i]] !== null)) continue; // neberljivo: pusti
-          const vals = plain.map((v) => (v === null ? null : seal(v)));
+          const vals = plain.map((v) => (v === null ? null : seal(t.pad ? String(v).padEnd(t.pad) : v)));
+          if (t.clearIf && plain.some((v) => typeof v === "string" && v.trim() === t.clearIf.value)) {
+            const have = t.clearIf.cols.filter((c) => hasCol(db, t.table, c));
+            if (have.length) db.prepare(`UPDATE ${t.table} SET ${have.map((c) => `${c} = NULL`).join(", ")} WHERE rowid = ?`).run(r.rid);
+          }
           if (!t.norm) {
             upd.run(...vals, r.rid);
           } else {
@@ -141,23 +145,26 @@ export function migrateEncryption(db, batch = 200) {
 }
 
 
-// Oznaka stiske starejša od RETENTION.distressDays → »none«. Oznake razen »none« so šifrirane (crypto-polje.js sealFlag),
-// zato SQL izbere vse stare oznake in vsako odšifrira. Neberljiva oznaka (manjka ključ) se tudi izbriše: lahko je
-// stiska, prebrati je ne more nihče. Idempotentno; secure_delete, da staro besedilo ne ostane v prostih straneh.
-export function clearOldDistress(db, before) {
-  if (!hasTable(db, "events")) return 0;
-  const rows = db.prepare("SELECT id, flag FROM events WHERE flag <> 'none' AND created_at < ?").all(before);
-  const gone = rows.filter((r) => {
-    const f = openFlag(r.flag);
-    return f === "distress" || f === null;
-  });
-  if (!gone.length) return 0;
+// Oznake dogodkov (events.flag razen »none«: stiska, nevarna vsebina, vrivanje, tema zunaj predmetov, fotografija),
+// starejše od RETENTION.flagDays → »none«; dogodek učenja ostane. Brez ključa nič (napačna nastavitev ne sme brisati na
+// slepo). Neberljive oznake (manjka stari ključ) ostanejo: niso nikoli obravnavane kot stiska, le preštete v dnevniku.
+// Idempotentno; secure_delete, da staro besedilo ne ostane v prostih straneh.
+export function clearOldFlags(db, before, { log = console } = {}) {
+  if (!hasTable(db, "events") || !currentKeyId()) return 0;
+  const ids = [];
+  let unreadable = 0;
+  for (const r of db.prepare("SELECT id, flag FROM events WHERE flag <> 'none' AND created_at < ?").iterate(before)) {
+    if (openFlag(r.flag) === null) unreadable++;
+    else ids.push(r.id);
+  }
+  if (unreadable) log.warn?.(`[evklid] neberljive oznake dogodkov, starejše od roka: ${unreadable} (manjka ključ v EVKLID_DATA_KEYS_OLD)`);
+  if (!ids.length) return 0;
   const upd = db.prepare("UPDATE events SET flag = 'none' WHERE id = ?");
   const restore = secureDelete(db);
   try {
     db.exec("BEGIN IMMEDIATE");
     try {
-      for (const r of gone) upd.run(r.id);
+      for (const id of ids) upd.run(id);
       db.exec("COMMIT");
     } catch (e) {
       db.exec("ROLLBACK");
@@ -166,7 +173,7 @@ export function clearOldDistress(db, before) {
   } finally {
     restore();
   }
-  return gone.length;
+  return ids.length;
 }
 
 // --- dnevno čiščenje ---
@@ -240,7 +247,7 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
     out.pushLog = Number(db.prepare("DELETE FROM push_log WHERE period GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*' AND substr(period, 1, 10) < ?").run(ago(RETENTION.pushLogDays).slice(0, 10)).changes);
   }
   if (hasTable(db, "odpiranje_delov")) out.odpiranje = Number(db.prepare("DELETE FROM odpiranje_delov WHERE zadnji < ?").run(ago(RETENTION.odpiranjeDni).slice(0, 10)).changes);
-  out.distress = clearOldDistress(db, ago(RETENTION.distressDays));
+  out.oznake = clearOldFlags(db, ago(RETENTION.flagDays), { log });
   if (hasTable(db, "answer_cache")) out.answerCache = Number(db.prepare("DELETE FROM answer_cache WHERE created_at < ?").run(ago(RETENTION.answerCacheDays)).changes);
   // Rok hrambe varnostnih kopij na disku tudi z EVKLID_BACKUPS=0 (ko ne teče dnevna kopija): docs/izbris-izvoz.md.
   try {

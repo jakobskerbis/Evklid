@@ -89,9 +89,16 @@ export function canOpen(value) {
 
 // Oznaka dogodka (events.flag, j 18. 11. 2026): »none« ostane berljiv (SQL loči opozorila od navadnih odgovorov),
 // vse ostale (distress, unsafe, injection, offtopic, photo) se zašifrirajo, da se iz baze ne vidi, katera je stiska.
-export const sealFlag = (flag) => (flag === null || flag === undefined || flag === "none" ? flag : seal(flag));
+// Pred šifriranjem dopolnjena na FLAG_PAD znakov: vsi zapisi so enako dolgi, dolžina ne izda vrste oznake.
+export const FLAG_PAD = 12;
+// Brez ključa ostane nedopolnjena (kot vsa polja brez ključa: nešifrirano).
+export const sealFlag = (flag) => (flag === null || flag === undefined || flag === "none" || !keys() ? flag : seal(String(flag).padEnd(FLAG_PAD)));
 // Odšifrirana oznaka; neberljiva (manjka ključ) vrne `fallback` (privzeto null).
-export const openFlag = (flag, fallback = null) => (isEncrypted(flag) ? unseal(flag, fallback) : flag);
+export function openFlag(flag, fallback = null) {
+  if (!isEncrypted(flag)) return typeof flag === "string" ? flag.trim() : flag;
+  const v = unseal(flag, null);
+  return v === null ? fallback : v.trim();
+}
 
 // JSON polje: zašifriran niz JSON; ob neberljivem zapisu vrne `fallback`.
 export const sealJson = (obj) => seal(JSON.stringify(obj));
@@ -161,8 +168,9 @@ export const SEALED = [
   // Učenčevi zapiski (server/zapiski.js): naslov in prepis rokopisa.
   { table: "zapiski", cols: ["naslov", "prepis"] },
   // Oznaka dogodka učenja (stiska, nevarna vsebina …; j 18. 11. 2026). »none« ostane berljiv (where), rok hrambe
-  // stiske 90 dni: server/zasebnost.js RETENTION.distressDays.
-  { table: "events", cols: ["flag"], where: "flag <> 'none'" },
+  // oznak 90 dni: server/zasebnost.js RETENTION.flagDays.
+  // pad: dopolnitev pred šifriranjem (sealFlag); clearIf: ob stiski se ob selitvi pobriše tudi tema (kot v addEvent).
+  { table: "events", cols: ["flag"], where: "flag <> 'none'", pad: FLAG_PAD, clearIf: { value: "distress", cols: ["topic", "topic_id"] } },
 ];
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);

@@ -9,7 +9,7 @@ import { DatabaseSync } from "node:sqlite";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { newKey, isEncrypted } from "../server/crypto-polje.js";
-import { migrateEncryption, encryptionStats, runRetention, clearOldDistress, RETENTION } from "../server/zasebnost.js";
+import { migrateEncryption, encryptionStats, runRetention, clearOldFlags, RETENTION } from "../server/zasebnost.js";
 
 const ADULT = "1985-04-12";
 const DISTRESS_REPLY = 'Slišim te. Pokliči TOM 116 111. Je zdaj kdo pri tebi?\n<<META subject=MAT topic="-" error=0 mode=A flag=distress done=0>>';
@@ -109,6 +109,8 @@ test("stiska: oznaka je v bazi šifrirana, Napredek in izvoz jo pokažeta, drug 
       const exp = await call("/api/account/export", { method: "POST", body: { password: "geslo1234" } });
       assert.equal(exp.status, 200);
       assert.deepEqual(exp.body.children[0].events.map((e) => e.flag), ["distress"]);
+      // Varnostni odgovor ni v nešifriranem predpomnilniku odgovorov.
+      assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM answer_cache").get().n, 0);
       assert.ok(encryptionStats(store.db).find((s) => s.table === "events" && s.col === "flag").encrypted >= 1);
       store.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
       assert.equal(rawFile(file).indexOf("distress"), -1, "v datoteki baze ni besedila »distress«");
@@ -121,44 +123,51 @@ test("stiska: oznaka je v bazi šifrirana, Napredek in izvoz jo pokažeta, drug 
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
-test("stiska: selitev obstoječih vrstic (idempotentna), rok hrambe 90 dni, neberljiva stara oznaka se izbriše", async () => {
+test("stiska: selitev obstoječih vrstic (idempotentna, dopolnjene, brez teme ob stiski), rok hrambe 90 dni za vse oznake", async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "stiska-"));
   const file = path.join(dir, "t.db");
   const store = openDb(file);
   const s = store.createStudent("Ana");
   const c = store.createConversation(s.id, { title: "Ulomki" });
-  const add = (flag, daysAgo) => {
-    store.addEvent({ student_id: s.id, conversation_id: c.id, subject: "MAT", topic: "ulomki", error: 0, mode: "A", flag });
-    store.db.prepare("UPDATE events SET created_at = datetime('now', ?) WHERE id = (SELECT MAX(id) FROM events)").run(`-${daysAgo} days`);
-  };
-  // Brez ključa (stara baza): oznake nešifrirane.
+  // Stara baza (pred tem popravkom): oznake nešifrirane, tema tudi ob stiski.
+  const add = (flag, daysAgo) =>
+    store.db
+      .prepare("INSERT INTO events (student_id, conversation_id, subject, topic, topic_id, error, mode, flag, created_at) VALUES (?, ?, 'MAT', 'ulomki', 'mat-ulomki', 0, 'A', ?, datetime('now', ?))")
+      .run(s.id, c.id, flag, `-${daysAgo} days`);
   add("distress", 120);
   add("distress", 10);
   add("unsafe", 120);
+  add("offtopic", 10);
   add("none", 120);
-  assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM events WHERE flag = 'distress'").get().n, 2);
+  const log = { warn() {}, info() {}, error() {} };
   await withKey(newKey(), () => {
     const out = migrateEncryption(store.db);
-    assert.equal(out.events, 3, "distress, distress, unsafe; »none« ostane");
+    assert.equal(out.events, 4, "vse razen »none«");
     assert.deepEqual(migrateEncryption(store.db), {}, "idempotentno");
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM events WHERE flag = 'none'").get().n, 1);
-    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM events WHERE flag LIKE 'enc1:%'").get().n, 3);
-    // Napredek: obe stiski in unsafe, najnovejša prva.
-    assert.deepEqual(store.flagEvents(s.id).map((f) => f.flag), ["unsafe", "distress", "distress"]);
-    // Rok hrambe: stara stiska → none, nova ostane, unsafe ostane (rok velja samo za stisko).
-    assert.equal(RETENTION.distressDays, 90);
-    const r1 = runRetention(store.db, { log: {} });
-    assert.equal(r1.distress, 1);
-    assert.deepEqual(store.flagEvents(s.id).map((f) => f.flag), ["unsafe", "distress"]);
-    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM events").get().n, 4, "dogodek učenja ostane");
-    assert.equal(runRetention(store.db, { log: {} }).distress, 0, "idempotentno");
-    // Neberljiva oznaka (neznan ključ), starejša od roka: izbriše se.
-    store.db.prepare("UPDATE events SET flag = ? WHERE id = (SELECT MIN(id) FROM events)").run(`enc1:deadbeef:${Buffer.alloc(40).toString("base64")}`);
-    const before = new Date(Date.now() - 90 * 86400000).toISOString().replace("T", " ").slice(0, 19);
-    assert.equal(clearOldDistress(store.db, before), 1);
-    // Zapis z ključem v enem koraku (nov dogodek) je takoj šifriran.
-    add("distress", 0);
-    assert.ok(isEncrypted(store.db.prepare("SELECT flag FROM events WHERE id = (SELECT MAX(id) FROM events)").get().flag));
+    const sealed = store.db.prepare("SELECT flag, topic, topic_id FROM events WHERE flag <> 'none' ORDER BY id").all();
+    assert.ok(sealed.every((r) => isEncrypted(r.flag)));
+    // Dopolnjene na enako dolžino: »distress«, »unsafe« in »offtopic« so v bazi enako dolgi.
+    assert.equal(new Set(sealed.map((r) => r.flag.length)).size, 1);
+    // Ob stiski je tema pobrisana, pri ostalih ostane.
+    assert.deepEqual(sealed.map((r) => r.topic), [null, null, "ulomki", "ulomki"]);
+    assert.deepEqual(sealed.map((r) => r.topic_id), [null, null, "mat-ulomki", "mat-ulomki"]);
+    assert.deepEqual(store.flagEvents(s.id).map((f) => f.flag), ["offtopic", "unsafe", "distress", "distress"]);
+    // Rok hrambe 90 dni za vse oznake: stara stiska in stari unsafe → none; nove ostanejo; dogodki učenja ostanejo.
+    assert.equal(RETENTION.flagDays, 90);
+    const r1 = runRetention(store.db, { log });
+    assert.equal(r1.oznake, 2);
+    assert.equal("distress" in r1, false, "dnevnik nima posebnega števila stisk");
+    assert.deepEqual(store.flagEvents(s.id).map((f) => f.flag), ["offtopic", "distress"]);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM events").get().n, 5);
+    assert.equal(runRetention(store.db, { log }).oznake, 0, "idempotentno");
+    // Nov dogodek s stisko: šifriran, dopolnjen, brez teme.
+    store.addEvent({ student_id: s.id, conversation_id: c.id, subject: "MAT", topic: "ulomki", topic_id: "mat-ulomki", error: 0, mode: "A", flag: "distress" });
+    const last = store.db.prepare("SELECT flag, topic, topic_id FROM events WHERE id = (SELECT MAX(id) FROM events)").get();
+    assert.ok(isEncrypted(last.flag));
+    assert.equal(last.flag.length, sealed[0].flag.length);
+    assert.equal(last.topic, null);
+    assert.equal(last.topic_id, null);
   });
   store.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
   store.db.close();
@@ -170,12 +179,36 @@ test("stiska: selitev obstoječih vrstic (idempotentna), rok hrambe 90 dni, nebe
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
-test("stiska: brez ključa (razvoj) rok hrambe velja tudi za nešifrirano oznako", () => {
+test("stiska: brez ključa se nič ne pobriše; neberljiva stara oznaka ostane in se prešteje", async () => {
   const store = openDb(":memory:");
   const s = store.createStudent("Ana");
   const c = store.createConversation(s.id);
-  store.addEvent({ student_id: s.id, conversation_id: c.id, subject: "MAT", topic: "x", error: 0, mode: "A", flag: "distress" });
+  const k = newKey();
+  await withKey(k, () => {
+    store.addEvent({ student_id: s.id, conversation_id: c.id, subject: "MAT", topic: "x", error: 0, mode: "A", flag: "distress" });
+    store.addEvent({ student_id: s.id, conversation_id: c.id, subject: "MAT", topic: "x", error: 0, mode: "A", flag: "unsafe" });
+  });
   store.db.exec("UPDATE events SET created_at = datetime('now', '-91 days')");
-  assert.equal(runRetention(store.db, { log: {} }).distress, 1);
-  assert.deepEqual(store.flagEvents(s.id), []);
+  // Ključ odstranjen (napačna nastavitev): nič se ne pobriše.
+  const prev = process.env.EVKLID_DATA_KEY;
+  delete process.env.EVKLID_DATA_KEY;
+  try {
+    assert.equal(runRetention(store.db, { log: { warn() {}, info() {}, error() {} } }).oznake, 0);
+  } finally {
+    if (prev !== undefined) process.env.EVKLID_DATA_KEY = prev;
+  }
+  assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM events WHERE flag LIKE 'enc1:%'").get().n, 2);
+  // Drug ključ (stari manjka): oznake so neberljive, ostanejo, v dnevniku samo število.
+  const warns = [];
+  await withKey(newKey(), () => {
+    const before = new Date(Date.now() - 90 * 86400000).toISOString().replace("T", " ").slice(0, 19);
+    assert.equal(clearOldFlags(store.db, before, { log: { warn: (m) => warns.push(m) } }), 0);
+    assert.deepEqual(store.flagEvents(s.id), []);
+  });
+  assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM events WHERE flag LIKE 'enc1:%'").get().n, 2);
+  assert.equal(warns.length, 1);
+  assert.match(warns[0], /: 2 /);
+  assert.doesNotMatch(warns[0], /distress|stisk/i);
+  // S pravim ključem: obe pobrisani.
+  await withKey(k, () => assert.equal(runRetention(store.db, { log: { warn() {}, info() {}, error() {} } }).oznake, 2));
 });
