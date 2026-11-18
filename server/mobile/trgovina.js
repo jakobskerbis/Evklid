@@ -40,20 +40,16 @@ export const storeHtml = (html, store) => String(html).replace(STORE_PART, (_m, 
 
 // Statične strani s takimi deli: v aplikaciji iz trgovine jih pošlje ta vmesnik (pred statičnimi datotekami),
 // drugim zahtevam pusti express.static. Vary: odgovor je odvisen od User-Agent in X-App-Channel.
+// Strani preberemo ob zagonu (brez dostopa do diska ob vsaki zahtevi); sprememba strani velja po ponovnem zagonu.
 export const STORE_PAGES = ["/starsi.html", "/garancija.html"];
 export function storeAppPages(publicDir) {
-  const cache = new Map();
+  const pages = new Map(STORE_PAGES.map((p) => [p, storeHtml(fs.readFileSync(path.join(publicDir, p.slice(1)), "utf8"), true)]));
   return (req, res, next) => {
-    if ((req.method !== "GET" && req.method !== "HEAD") || !STORE_PAGES.includes(req.path)) return next();
+    if ((req.method !== "GET" && req.method !== "HEAD") || !pages.has(req.path)) return next();
     res.vary("User-Agent");
     res.vary("X-App-Channel");
     if (!storeAppRequest(req)) return next();
-    let html = cache.get(req.path);
-    if (!html) {
-      html = storeHtml(fs.readFileSync(path.join(publicDir, req.path.slice(1)), "utf8"), true);
-      if (process.env.NODE_ENV === "production") cache.set(req.path, html); // v razvoju datoteko urejamo
-    }
     res.set("Cache-Control", "no-cache");
-    res.type("html").send(html);
+    res.type("html").send(pages.get(req.path));
   };
 }
