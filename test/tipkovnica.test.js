@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import {
-  prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, digitFor,
+  prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, digitFor,
   fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS, KEM_GROUPS, KEM_LETTERS, KEM_CHARGE,
   NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest, glideDecode,
 } from "../public/tipkovnica-data.js";
@@ -93,6 +93,18 @@ test("templates: @ marks the caret and takes the selected text", () => {
   // vse predloge imajo največ en @
   const all = [...FX_GROUPS.flatMap(([, , k]) => k), ...NUM_TOP_MATH, ...TUTOR_CHIPS, ...Object.values(GROUPS).flatMap((g) => g.keys.map((x) => [x.label, x.ins]))];
   for (const [label, ins] of all) assert.ok((ins.match(/@/g) || []).length <= 1, label);
+});
+
+test("tipka = je pri roki (j, 18. 11.): druga predloga v Inštruktorju, v 123 pri matematiki zgoraj; ≠ in x ostaneta", () => {
+  assert.deepEqual(TUTOR_CHIPS[0], ["a/b", "(@)/()"]);
+  assert.deepEqual(TUTOR_CHIPS[1], ["=", "="]);
+  assert.ok(TUTOR_CHIPS.some(([l]) => l === "≠"), "≠ ostane");
+  assert.deepEqual(NUM_TOP_MATH[1], ["=", "="]);
+  assert.deepEqual(NUM_TOP_MATH.map(([l]) => l), ["x²", "=", "√", "xⁿ", "π", "( )", "a/b"]);
+  const js = read("public/tipkovnica.js");
+  assert.match(js, /math \? "x" : "="/, "v mreži 123 pri matematiki ostane x");
+  assert.match(js, /--cols:\$\{topKeys\.length\}/, "zgornja vrsta je ena vrstica ne glede na število tipk");
+  assert.match(js, /l === "=" && enterMode\(\) === "calc"/, "v načinu calc je = samo izračunaj");
 });
 
 test("letter layouts per app language", () => {
@@ -437,18 +449,19 @@ test("glide: slovar je veljaven, WORDS.sl na začetku, brez dvojnikov, pod 150 K
   assert.ok(GLIDE_SL.includes("enačba") && GLIDE_SL.includes("kemija"));
 });
 
-test("sentenceBack: troklik na ⌫ izbriše poved do konca prejšnje (presledek za piko ostane)", () => {
-  const v = "Prva poved. Druga po";
-  assert.equal(v.slice(0, sentenceBack(v, v.length)), "Prva poved. ");
-  assert.equal(sentenceBack("Prva poved.", 11), 0);
-  assert.equal(sentenceBack("Ali je? Da!  ", 13), 8);
-  assert.equal(sentenceBack("vrstica\nnova vrst", 17), 8);
-  assert.equal(sentenceBack("x = 3.5 cm", 10), 0, "decimalna pika brez presledka ni konec povedi");
-  assert.equal(sentenceBack("", 0), 0);
-  const w = "Prva poved. Druga ";
-  assert.equal(w.slice(0, sentenceBack(w, w.length)), "Prva poved. ");
+test("⌫ kot Gboard (j, 18. 11.): brez dvoklika/troklika; držanje po 1,5 s po besedah, v polju s formulo po znakih; ⌫ po drsenju zbriše besedo", () => {
+  const js = read("public/tipkovnica.js");
+  assert.doesNotMatch(js, /BS_MULTI_MS|deleteChunk|sentenceBack|bsAt/, "ni več dvoklika in troklika na ⌫");
+  assert.match(js, /const BS_WORD_MS = 1500;/);
+  assert.match(js, /if \(a\.word\) deleteWord\(f\);\s*else if \(!undoCorrection\(f, corr\)\) backspace\(f\);/, "dotik = en znak, prvi ⌫ po samopopravku ga razveljavi");
+  assert.match(js, /return !!r && r\[0\] === r\[1\] && !f\.classList\.contains\("vnos-izrisan"\)/, "po besedah samo navadno besedilo s kazalcem");
+  assert.match(js, /if \(!wordWise\(f\)\) return backspace\(f\)/, "v polju s formulo po znakih");
+  assert.match(js, /down !== d \|\| !wordWise\(target\(\)\)\) return;/, "kjer ni po besedah, ostane 75 ms po znakih");
+  assert.match(js, /nl === r\[0\] - 1 \? nl : Math\.max\(wordsBack\(f\.value, r\[0\], 1\), nl \+ 1\)/, "nova vrstica je svoj korak");
+  assert.match(js, /if \(S\.field !== field\) clearTimers\(\);[^\n]*\n\s*S\.field = field;/, "držan ⌫ ne briše v novem polju");
+  assert.match(js, /a\.a === "bs" && lg\)/, "⌫ takoj po drsenju zbriše drsano besedo");
+  assert.equal(wordsBack("Prva poved. Druga beseda", 24), 18);
 });
-
 test("pregled #460: puščici in » + « se vstavita s presledkoma, brez dvojnega presledka; ↑ ↓ brez; indeksi z ◌", async () => {
   const rows = KEM_ROWS.flat();
   for (const k of [" + ", " → ", " ⇌ "]) assert.ok(rows.includes(k), JSON.stringify(k));
