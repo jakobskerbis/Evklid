@@ -64,7 +64,7 @@ details .card { margin-top: 8px; }
 .lock-card input[type="password"] { width: 100%; box-sizing: border-box; }
 .lock-card button { min-height: 44px; }
 /* summary ostane list-item (puščica kot pri »Imate aktivacijsko kodo?«), višina 44 px s paddingom */
-.lock-forgot summary, .profile-pw summary, .code-new summary, .gift-card summary, .promo-code summary { margin: 0; padding: 10px 0; line-height: 24px; }
+.lock-forgot summary, .profile-pw summary, .code-new summary, .gift-card summary, .promo-code summary, .reg-code summary { margin: 0; padding: 10px 0; line-height: 24px; }
 .lock-forgot .form { margin-top: 6px; }
 .lock-others-title { margin: 6px 0 0; }
 .lock-others { display: flex; flex-wrap: wrap; gap: 8px; }

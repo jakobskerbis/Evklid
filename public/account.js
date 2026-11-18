@@ -574,6 +574,9 @@ function renderLogin(mode = "login") {
   const invited = mode === "register" && store.get("evklid_invite_name");
   const ref = store.get("evklid_ref") || "";
   const koda = store.get("evklid_koda") || "";
+  const invite = store.get(INVITE_KEY) || "";
+  // Ena vrstica »Imam kodo« namesto treh polj (ovire na telefonu 2026-11-18): koda iz povezave je že vpisana.
+  const code = koda || invite || ref;
   shell(`
     <h1>${mode === "login" ? "Prijava" : "Nov račun"}</h1>
     <p class="muted">${mode === "login" ? "Za starše (otrokov profil) in za dijake ter študente (lasten profil)." : `Evklid je 7 dni brezplačen, brez kartice. Nato naročnina od ${eur(999)} na mesec ali brezplačni paket z omejenim številom vprašanj.`}</p>
@@ -584,8 +587,10 @@ function renderLogin(mode = "login") {
       <label>Geslo <input name="password" type="password" required minlength="8" autocomplete="${mode === "login" ? "current-password" : "new-password"}"></label>
       ${mode === "register" ? `
         <label>Tvoj datum rojstva <input name="birth_date" type="date" required min="1900-01-01" max="${localToday()}" autocomplete="bday"></label>
-        <label>Aktivacijska koda (neobvezno) <input name="promo_code" maxlength="40" autocapitalize="characters" value="${esc(koda)}"></label>
-        <label>Koda priporočila (neobvezno) <input name="referral_code" maxlength="12" value="${esc(ref)}"></label>
+        <details class="reg-code"${code ? " open" : ""}><summary>${esc(t("code.have"))}</summary>
+          <label>${esc(t("code.label"))} <input name="code" maxlength="64" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-describedby="code-hint" value="${esc(code)}"></label>
+          <p class="muted small" id="code-hint">${esc(t("code.hint"))}</p>
+        </details>
         <label class="check"><input type="checkbox" name="accept_privacy" required>
           <span>Prebral(a) sem <a href="/zasebnost.html" target="_blank">obvestilo o varstvu osebnih podatkov</a>. Račun ustvarjam zase (dijak ali študent) ali kot starš ali zakoniti zastopnik.</span></label>
         ${termsField("accept_terms")}` : ""}
@@ -606,14 +611,32 @@ function renderLogin(mode = "login") {
       if (mode === "login") {
         await api("/api/auth/login", { method: "POST", body: { email: f.email.value, password: f.password.value } });
       } else {
+        // Vrsto kode določi strežnik (signupCodeKind). Koda vabila s strani /vabilo (že preverjena) gre vedno v polje
+        // invite kot v #819, tudi če je v vrstici aktivacijska koda iz ?koda= ali jo je uporabnik spremenil (pregled #834);
+        // vpisana koda vabila (code_kind "invite") ima prednost. Priporočilo iz povezave (?ref=) velja tudi ob drugi kodi.
+        const typed = f.code.value.trim();
+        const storedInvite = invite.trim();
+        const isInvite = !!typed && typed.toLowerCase() === storedInvite.toLowerCase();
+        const fromRef = !!typed && !!ref && typed.toUpperCase() === ref.toUpperCase();
         const r = await api("/api/auth/register", {
           method: "POST",
-          // invite: koda vabila v pilot s strani /vabilo (public/vabilo.js); po potrditvi e-naslova račun samodejno v pilotu (#751).
-          body: { name: f.name.value, email: f.email.value, password: f.password.value, referral_code: f.referral_code.value, promo_code: f.promo_code.value, accept_privacy: f.accept_privacy.checked, accept_terms: f.accept_terms.checked, birth_date: f.birth_date.value, country: deviceRegion(), invite: store.get(INVITE_KEY) || undefined },
+          body: {
+            name: f.name.value, email: f.email.value, password: f.password.value,
+            referral_code: ref && ref.toUpperCase() !== typed.toUpperCase() ? ref : "",
+            ...(storedInvite ? { invite: storedInvite } : {}),
+            ...(typed && !isInvite ? { code: typed } : {}),
+            accept_privacy: f.accept_privacy.checked, accept_terms: f.accept_terms.checked, birth_date: f.birth_date.value, country: deviceRegion(),
+          },
         });
         store.set("evklid_ref", null);
-        store.set("evklid_koda", null);
+        // Darilna koda velja šele v Računu po potrditvi e-naslova: ostane shranjena, polje tam je že izpolnjeno.
+        store.set("evklid_koda", r.code_kind === "gift" ? typed.toUpperCase() : null);
+        if (r.code_kind === "gift") toast(t("code.giftLater"));
+        // Priporočilo iz povezave, ki ga ni več, ostane tiho kot prej (pregled #834); »te kode ne poznamo« le za vpisano kodo.
+        if (r.code_kind === "unknown" && !fromRef) toast(t("code.unknown"));
+        if (r.code_kind === "referral") toast(t("code.refOk"));
         store.set(INVITE_KEY, null);
+        // Koda vabila v pilot (#819): vpisana v vrstico ali s strani /vabilo; po potrditvi e-naslova račun samodejno v pilotu (#751).
         if (r.invite) toast(t({ pending: "vab.regPending", ended: "vab.regEnded" }[r.invite] || "vab.regBad"));
         if (r.promo_until) toast(`Aktivacijska koda velja ✓ Poln dostop do ${date(r.promo_until)}.`);
         if (r.promo_pending) toast(t("acct.promoAfterVerify"));
@@ -915,17 +938,22 @@ function renderBirth() {
 const RESEND_WAIT = 60000;
 let resendAt = 0;
 
-function renderVerify() {
+function renderVerify(forChild = false) {
   const dev = store.get("evklid_dev_verify");
   // Mladoletni imetnik (15–17 let, račun zase) ne izjavlja, da je starš (pregled uvoda, ovira 4). Račun brez
   // datuma rojstva (star račun) dobi pogojni stavek: izjava velja le, če ustvari profil za otroka (j 2026-11-15,
-  // polnoletni dijak zase ni starš; končno besedilo pregleda pravnik).
-  const note = esc(t(status.parent.minor ? "verify.selfNote" : "verify.parentNote"));
+  // polnoletni dijak zase ni starš; končno besedilo pregleda pravnik). Polnoleten dijak s profilom »Zame«
+  // (status.self_only) dobi besedilo za učenca, razen ko je zaslon odprl poskus profila za otroka (forChild).
+  const parentLike = !status.parent.minor && (forChild || !status.self_only);
+  const note = esc(t(parentLike ? "verify.parentNote" : "verify.selfNote"));
+  // Kot na zaslonu »Ustvari profil« (#820): stavek o otrokovem profilu samo za starše.
+  const later = `${esc(t("verify.laterNote"))}${parentLike ? ` ${esc(t("verify.laterNoteChild"))}` : ""}`;
   shell(`
     <h1>Potrdi e-naslov</h1>
     <div class="card">
       <p>Na <b>${esc(status.parent.email)}</b> smo poslali povezavo. Klikni jo, nato se vrni sem.</p>
       <p class="muted verify-note">${note}</p>
+      <p class="muted verify-later">${later}</p>
       ${dev && !status.email ? `<p class="muted">Razvojni način (e-pošta ni nastavljena): <a href="${esc(dev)}">potrdi e-naslov</a></p>` : ""}
       ${!dev && !status.email ? `<p class="warn">Pošiljanje e-pošte še ni nastavljeno, zato povezava ni prišla. Na računalniku, kjer teče Evklid, se prijavi v ta račun in klikni »Pošlji znova«.</p>` : ""}
       <div role="status" aria-live="polite"><p id="verify-state" class="warn" hidden></p></div>
@@ -1097,7 +1125,7 @@ function bindChildForm(after) {
       await after(s);
     } catch (err) {
       // Profil za otroka ali drugi profil pred potrditvijo e-naslova (#747): zaslon za potrditev.
-      if (err.data?.verify && status?.logged_in && !status.parent?.verified) return renderVerify();
+      if (err.data?.verify && status?.logged_in && !status.parent?.verified) return renderVerify(!isSelf());
       showError(f, err);
     }
   });
@@ -1161,11 +1189,12 @@ function planText(acc) {
       ${pend ? `<p class="muted">${esc(t("up.pending", { date: date(pend.effective_at), price: money(pend.amount, pend.currency), name: shortName(planName(acc.plans.find((p) => p.key === pend.plan) || { level: "OS" })) }))}</p>` : ""}
       ${upgradeBox(acc)}`;
   }
-  if (access.tier === "trial") return `<p>${esc(t("acct.trial", { date: date(access.until) }))}</p>`;
+  // Dijak ali študent s profilom »Zame« (acc.self_only): brez »za do 2 otroka« (ovire na telefonu 2026-11-18).
+  if (access.tier === "trial") return `<p>${esc(t(acc.self_only ? "acct.trialSelf" : "acct.trial", { date: date(access.until) }))}</p>`;
   if (access.tier === "promo") {
     const trial = Date.parse(parent.trial_ends_at || 0) > Date.now();
     return `<p>${esc(t("acct.promo", { date: date(access.until) }))}</p>${
-      trial ? `<p class="muted">${esc(t("acct.promoTrial", { date: date(parent.trial_ends_at), n: Math.max(1, acc.promo?.seats || 1) }))}</p>` : ""}`;
+      trial && !acc.self_only ? `<p class="muted">${esc(t("acct.promoTrial", { date: date(parent.trial_ends_at), n: Math.max(1, acc.promo?.seats || 1) }))}</p>` : ""}`;
   }
   if (access.tier === "bonus") return `<p>${esc(t("acct.bonus", { date: date(access.until) }))}</p>`;
   if (access.tier === "gift") return `<p>${esc(t("gift.tier", { date: date(access.until) }))}</p>`;
@@ -1918,7 +1947,7 @@ export async function renderAccount() {
     ${acc.guest_invite ? guestInviteCard() : ""}
     ${guaranteeBox(acc)}
     ${giftBox(shown)}
-    ${storeApp ? "" : podariBox(acc)}
+    ${storeApp || acc.self_only ? "" : podariBox(acc)}
     ${adminCards(acc)}
     ${acc.promo?.codes ? `<div class="card" id="pilot-card"><h2>${esc(t("pilot.title"))}</h2><div id="pilot-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="pilot-tasks-card"><h2>${esc(t("pilot.n.title"))}</h2><div id="pilot-tasks-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
@@ -1927,7 +1956,7 @@ export async function renderAccount() {
     ${acc.promo?.codes ? `<div class="card" id="orders-card"><h2>${esc(t("orders.title"))}</h2><div id="orders-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
 
     <div class="card">
-      <h2>Otroci</h2>
+      <h2>${acc.self_only ? esc(t("mob.profiles")) : "Otroci"}</h2>
       <ul class="child-list">${acc.children
         .map((c) => `<li><b>${esc(c.name)}</b> <span class="muted">(${c.birth_year || "–"})</span> ${
           c.premium ? `<span class="pill ok">${esc(t("acct.fullAccess"))}</span>` : `<span class="pill">${esc(t("acct.freeToday", { used: c.questions_today, max: acc.free_daily_questions }))}</span>`
@@ -1949,7 +1978,7 @@ export async function renderAccount() {
         ? `<p class="muted">Profil lahko zamenjaš enkrat na 30 dni. Nov profil lahko dodaš ${date(acc.swap_blocked_until)}.</p>`
         : acc.children.length < acc.max_children
           ? `<details><summary>Dodaj profil</summary>${childForm(acc.consent_text, await loadPrograms(api), acc.children.length > 0, acc.children.filter((c) => !c.has_password))}</details>`
-          : `<p class="muted">${esc(t("acct.profiles", { n: acc.max_children }))}${acc.max_children === 1 ? ` ${esc(t("acct.secondChild"))}` : ""}</p>`}
+          : `<p class="muted">${esc(t("acct.profiles", { n: acc.max_children }))}${acc.max_children === 1 && !acc.self_only ? ` ${esc(t("acct.secondChild"))}` : ""}</p>`}
       <p class="muted">Vsak profil je lahko hkrati odprt samo na eni napravi. Profil zamenjaš (izbrišeš v zavihku Nastavitve in dodaš novega) največ enkrat na 30 dni.</p>
     </div>
     ${acc.parent.birth_missing ? `<div class="card" id="birth-card">
@@ -1966,6 +1995,7 @@ export async function renderAccount() {
       <div class="inline"><input id="ref-url" readonly value="${esc(acc.referral.url)}"><button id="ref-copy" type="button">Kopiraj</button></div>
       <p class="muted">Tvoja koda: <b>${esc(acc.referral.code)}</b>${acc.referral.rewards ? ` · prisluženi meseci: ${acc.referral.rewards}` : ""}</p>
     </div>
+    ${storeApp || !acc.self_only ? "" : podariBox(acc)}
 
     <div class="card">
       <h2>Tedensko poročilo</h2>

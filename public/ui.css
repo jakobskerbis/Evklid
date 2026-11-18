@@ -37,7 +37,8 @@
 .dd-opt[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); }
 .dd-opt[aria-disabled="true"] { color: var(--muted); opacity: 0.6; cursor: default; }
 .dd-check { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; visibility: hidden; }
-.dd-opt[aria-selected="true"] .dd-check { visibility: visible; }
+.dd-opt[aria-selected="true"] .dd-check, .dd-opt[aria-checked="true"] .dd-check { visibility: visible; }
+.dd-sep { border-top: 1px solid var(--border); margin: 4px 0; }
 .dd-group {
   padding: 10px 12px 4px; font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
 }
