@@ -3,7 +3,7 @@
 # »meritev« (30 dni). Navodila in meje: docs/stroski-ai.md »Ročna meritev v GitHub Actions«.
 # Meja stroška: --max-usd največ 2 $ na zagon (višja vrednost se zniža na 2). Dovoljene so le skripte, ki --max-usd
 # res upoštevajo (ustavijo se, preden bi strošek presegel mejo). Teče le en zagon naenkrat.
-# Skrivnost ANTHROPIC_API_KEY dobi samo korak meritve; brez nje skripte končajo brez klica. Le ročni zagon z main
+# Skrivnosti ANTHROPIC_API_KEY in PREIZKUS3_KLJUC (šifrirane naloge Preizkusa 3) dobi samo korak meritve; brez ključa API skripte končajo brez klica. Le ročni zagon z main
 # (nikoli PR ali push); commit (sha) mora biti v zgodovini main.
 # Meritve ne pišejo v bazo; EVKLID_DB vseeno kaže na začasno datoteko izven repozitorija.
 name: Meritev
@@ -114,6 +114,8 @@ jobs:
           ARGS: ${{ inputs.argumenti }}
           EVKLID_DB: ${{ runner.temp }}/meritev.db
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Ključ šifriranih nalog Preizkusa 3 (scripts/preizkus3-naloge.enc), samo v tem koraku; kot ključ API nikoli v izhod.
+          PREIZKUS3_KLJUC: ${{ secrets.PREIZKUS3_KLJUC }}
         run: |
           set -o pipefail
           mkdir -p data
@@ -126,6 +128,11 @@ jobs:
           if [[ -n "$ANTHROPIC_API_KEY" ]] && grep -qF "$ANTHROPIC_API_KEY" meri.log data/meri-*.json 2>/dev/null; then
             rm -f meri.log data/meri-*.json
             echo "::error::ključ v izhodu"
+            exit 1
+          fi
+          if [[ -n "$PREIZKUS3_KLJUC" ]] && grep -qF "$PREIZKUS3_KLJUC" meri.log data/meri-*.json 2>/dev/null; then
+            rm -f meri.log data/meri-*.json
+            echo "::error::ključ nalog v izhodu"
             exit 1
           fi
           { echo "### Meritev: $SKRIPTA (meja $MAX \$)"; echo '```'; tail -n 40 meri.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
