@@ -171,9 +171,30 @@ Besedilo.
   assert.equal(r.calcChecked, 2);
 });
 
-test("lesson-math: bajt in bit (meritev SŠ 18. 11.: lažen popravek »2 MB ni 1,6 · 10⁷ bit«)", () => {
-  assert.equal(one("2\\ \\mathrm{MB} = 2 \\cdot 10^6\\ \\mathrm{B} \\cdot 8\\ \\frac{\\mathrm{bit}}{\\mathrm{B}} = 1{,}6 \\cdot 10^7\\ \\mathrm{bit}").mismatches.length, 0);
-  // napačen račun z biti ostane najden; količnik 8 brez enot podatkov ni pretvorba
-  assert.equal(one("2\\ \\mathrm{MB} = 2 \\cdot 10^6 \\cdot 8 = 1{,}7 \\cdot 10^7\\ \\mathrm{bit}").mismatches.length, 1);
-  assert.equal(one("5\\ \\mathrm{kg} = 5 \\cdot 8 = 40\\ \\mathrm{N}").mismatches.length, 1);
+test("lesson-math: bajt in bit (meritev SŠ 18. 11.: lažen popravek »2 MB ni 1,6 · 10⁷ bit«; pregled #835)", () => {
+  const good = [
+    "2\\ \\mathrm{MB} = 2 \\cdot 10^6\\ \\mathrm{B} \\cdot 8\\ \\frac{\\mathrm{bit}}{\\mathrm{B}} = 1{,}6 \\cdot 10^7\\ \\mathrm{bit}",
+    "100\\ \\mathrm{Mbit/s} = 100/8 = 12{,}5\\ \\mathrm{MB/s}",
+    "100\\ \\frac{\\mathrm{Mbit}}{\\mathrm{s}} = \\frac{100}{8} = 12{,}5\\ \\frac{\\mathrm{MB}}{\\mathrm{s}}",
+    "3\\ \\mathrm{KB} = 3 \\cdot 1000 \\cdot 8 = 24\\,000\\ \\mathrm{bit}",
+    "2\\ \\mathrm{KiB} = 2 \\cdot 1024 = 2048\\ \\mathrm{B}",
+    "2\\ \\mathrm{KiB} = 2 \\cdot 1024 \\cdot 8 = 16\\,384\\ \\mathrm{bit}",
+    "5\\ \\mathrm{MB} = 5 \\cdot 8 = 40\\ \\mathrm{Mbit}",
+    "4\\ \\mathrm{GB} = 4 \\cdot 1024 = 4096\\ \\mathrm{MB}",
+  ];
+  for (const t of good) assert.equal(one(t).mismatches.length, 0, t);
+  // Količnik 8 in 1,024 samo na koraku od enote podatkov k pretvorbi in v pravi smeri; koraki do rezultata strogo.
+  const bad = [
+    "2\\ \\mathrm{MB} = 2 \\cdot 10^6 \\cdot 8 = 1{,}65 \\cdot 10^7\\ \\mathrm{bit}",
+    "2\\ \\mathrm{MB} = 2 \\cdot 10^6 \\cdot 8 = 1{,}64 \\cdot 10^7\\ \\mathrm{bit}",
+    "2\\ \\mathrm{MB} = 2 \\cdot 10^6 \\cdot 8 = 1{,}7 \\cdot 10^7\\ \\mathrm{bit}",
+    "5\\ \\mathrm{kB} = 5 \\cdot 1000 \\cdot 8 = 41\\,000\\ \\mathrm{bit}",
+    "3\\ \\mathrm{MB} = 3 \\cdot 10^6 \\cdot 8 = 3 \\cdot 10^7\\ \\mathrm{bit}",
+    "5\\ \\mathrm{MB} = 5 \\cdot 8 = 50\\ \\mathrm{Mbit}",
+    "4\\ \\mathrm{kB} = 4 \\cdot 1000 \\cdot 8 = 40000\\ \\mathrm{bit}",
+    "10\\ \\mathrm{GB} = 10 \\cdot 1000 = 10240\\ \\mathrm{MB}",
+    "16\\ \\mathrm{bit} = 16 \\cdot 8 = 128\\ \\mathrm{B}",
+    "5\\ \\mathrm{kg} = 5 \\cdot 8 = 40\\ \\mathrm{N}",
+  ];
+  for (const t of bad) assert.equal(one(t).mismatches.length, 1, t);
 });

@@ -102,6 +102,11 @@ cas("SymPy: zaokroženi rezultati in enote", async () => {
   assert.equal((await casCheck("value", ["17.46*60.05", "1048.6"])).ok, true, "zaokrožen vmesni rezultat s 4 mesti");
   assert.equal((await casCheck("value", ["17.46*60.05", "1049.5"])).ok, false, "prava napaka ostane napaka");
   assert.equal((await casCheck("value", ["1.0487*4.80", "5.05"])).ok, false);
+  assert.equal((await casCheck("value", ["17.46*60.05", "1049"])).ok, true, "celo število: zaokrožitev 0,5");
+  // Pregled #835: odstopanje zaradi zaokroženih vmesnih rezultatov je omejeno (≤ 0,1 % vrednosti, presežek ≤ 0,05 %).
+  for (const [expr, claim] of [["1234.5-1234.4", "0.2"], ["1234.5-1234.4", "0.15"], ["17.46*60.05", "1048.9"], ["1.0001^10000", "2.0"], ["1/(1.2345-1.2344)", "5000.0"], ["1/(1.2345-1.2344)", "12000.0"]]) {
+    assert.equal((await casCheck("value", [expr, claim])).ok, false, `${expr} | ${claim}`);
+  }
   assert.equal((await casCheck("units", ["3.2*kg*9.81*m/s^2", "31.4*N"])).ok, true);
   assert.equal((await casCheck("units", ["3.2*kg*9.81*m/s^2", "31.4*J"])).ok, false, "napačna enota");
   assert.equal((await casCheck("units", ["72*km/h", "20*m/s"])).ok, true);

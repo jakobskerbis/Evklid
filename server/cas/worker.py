@@ -592,11 +592,12 @@ DEC_LIT = re.compile(r"(?<![\w.])(\d+)\.(\d+)(?![\w.])")
 
 
 def operand_rounding(expr_text):
-    """Odstopanje vrednosti zaradi zaokroženih vmesnih rezultatov v izrazu (meritev SŠ 18. 11.: »17.46*60.05 | 1048.6«
-    je pravilno iz nezaokroženih 17,4626 mol, koda pa je dala lažen »Popravek«). Šteje le števila z vsaj 4 veljavnimi
-    mesti (izpisani vmesni rezultati; podatki naloge imajo navadno 2–3): pol zadnjega mesta, razširjeno skozi izraz."""
+    """Največje odstopanje vrednosti zaradi enega zaokroženega vmesnega rezultata v izrazu (meritev SŠ 18. 11.:
+    »17.46*60.05 | 1048.6« je pravilno iz nezaokroženih 17,4626 mol, koda pa je dala lažen »Popravek«). Šteje le števila
+    z vsaj 4 veljavnimi mesti (izpisani vmesni rezultati; podatki naloge imajo navadno 2–3): pol zadnjega mesta,
+    razširjeno skozi izraz; največji prispevek enega števila, ne vsota (pregled PR #835)."""
     s = clean(expr_text)
-    total = 0.0
+    worst = 0.0
     for m in DEC_LIT.finditer(s):
         digits = (m.group(1) + m.group(2)).lstrip("0")
         if len(digits) < 4:
@@ -607,8 +608,36 @@ def operand_rounding(expr_text):
             lo = complex(sp.N(parse(s[: m.start()] + repr(float(m.group(0)) - h) + s[m.end():]), 30))
         except Exception:
             return 0.0
-        total += abs(hi - lo) / 2
-    return total
+        worst = max(worst, abs(hi - lo) / 2)
+    return worst
+
+
+# Meje za odstopanje zaradi zaokroženih vmesnih rezultatov (pregled PR #835): odstopanje sme biti največ 0,1 % vrednosti
+# (sicer je izraz občutljiv, npr. odštevanje skoraj enakih števil ali visoka potenca, in velja stroga primerjava), presežek
+# nad zaokrožitvijo trditve pa največ 0,05 % vrednosti. Celoštevilska trditev (»1049«) ima zaokrožitev 0,5.
+SLACK_MAX_REL = 1e-3
+EXCESS_MAX_REL = 5e-4
+
+
+def rounded_operands_ok(e, expr, claimed):
+    """True, če se trditev od točne vrednosti razlikuje le zaradi zaokroženih vmesnih rezultatov v izrazu, sicer False."""
+    try:
+        ev = complex(sp.N(e, 30))
+        cv = complex(sp.N(parse(claimed), 30))
+    except Exception:
+        return False
+    if abs(ev.imag) > 1e-12 or abs(cv.imag) > 1e-12 or ev == 0:
+        return False
+    base = decimals_tol(claimed)
+    if base is None:
+        if not float(cv.real).is_integer():
+            return False
+        base = 0.5
+    slack = operand_rounding(expr)
+    if not (0 < slack <= SLACK_MAX_REL * abs(ev)):
+        return False
+    diff = abs(ev - cv)
+    return diff <= base + slack and diff - base <= EXCESS_MAX_REL * abs(ev)
 
 
 def op_value(expr, claimed):
@@ -622,13 +651,9 @@ def op_value(expr, claimed):
     if e.free_symbols:
         raise Unsure("izraz ima neznanke")
     ok = same_value(e, claimed)
-    if ok is False and decimals_tol(claimed) is not None:
-        slack = operand_rounding(expr)
-        if slack > 0:
-            try:
-                ok = abs(complex(sp.N(e, 30)) - complex(sp.N(parse(claimed), 30))) <= decimals_tol(claimed) + slack
-            except Exception:
-                pass
+    # Zaokroženi vmesni rezultati samo v mejah SLACK_MAX_REL in EXCESS_MAX_REL; zunaj njih ostane stroga sodba.
+    if ok is not True and rounded_operands_ok(e, expr, claimed):
+        ok = True
     if ok is None:
         raise Unsure("vrednosti ne znam primerjati")
     return ok, "" if ok else f"pravilno je {sp.sstr(sp.nsimplify(e) if e.is_Float else e)} ≈ {complex(sp.N(e)).real:.6g}"

@@ -528,7 +528,9 @@ test("live check (SŠ meritev 18. 11.): the fix adds no new facts and may only w
 
 test("live check (meritev SŠ 18. 11. po #833): review catches generalisations, side causes, inconsistent exercises and plans", async () => {
   // BIO-SS-2/nastanek-vrst: neplodnost mule le z lihim številom kromosomov, posplošeno v pravilo.
-  assert.match(LIVE_REVIEW_SYSTEM, /so is a rule stated for all cases that is false for common cases at the student's level or that generalises the single case of the task/);
+  assert.match(LIVE_REVIEW_SYSTEM, /so is an empirical rule \(biology, chemistry, physics\) stated for all cases that is false for common cases at the student's level or that generalises the single case of the task/);
+  // Pregled #835: pravilna splošna učbeniška pravila, definicije in izreki ostanejo brez pogojev.
+  assert.match(LIVE_REVIEW_SYSTEM, /A correct general textbook rule \(»metals conduct electricity«\), a definition or a mathematical theorem needs no added conditions\./);
   assert.match(LIVE_REVIEW_SYSTEM, /explanation of why something happens: it must give the textbook cause, not only a feature that merely goes with it/);
   // BIO-SS-1/encimi-in-atp: vaja pripiše isti amilazi pri isti temperaturi drugo hitrost.
   assert.match(LIVE_REVIEW_SYSTEM, /must not give the object of the task, under the same conditions, a value different from the task's/);
@@ -536,7 +538,7 @@ test("live check (meritev SŠ 18. 11. po #833): review catches generalisations, 
   assert.match(LIVE_REVIEW_SYSTEM, /describes a flawed experiment or a wrong claim on purpose and asks the student to find the flaw is fine/);
   assert.match(LIVE_REVIEW_SYSTEM, /every experiment plan: the group counts add up/);
   // KEM-SS-2/sibke-kisline-in-baze, FIZ-SS-3/elektromagnetno-valovanje
-  assert.match(LIVE_REVIEW_SYSTEM, /what the task or the textbook says must match the task, and every warning must be unambiguous/);
+  assert.match(LIVE_REVIEW_SYSTEM, /what the task says must match the task \(do not judge claims about a textbook you cannot see\), and every warning must be unambiguous/);
   assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.$/);
   // BIO-SS-4/molekularna-genetika, KEM-SS-3: popravek ob pravilni pretvorbi ali zaokroženem vmesnem rezultatu.
   let system = "";
