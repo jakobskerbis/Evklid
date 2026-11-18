@@ -2992,9 +2992,9 @@ export default {
   "ai.left": "Podrobne razlage v tem obdobju: še {n}",
   "ai.low": "V tem obdobju je porabljenih 80 % podrobnih razlag.",
   "ai.out": "Podrobne razlage za to obdobje so porabljene. Inštruktor odgovarja naprej v hitrem načinu.",
-  // nad mejo paketa: do konca obdobja naročnine (od dneva plačila, ne koledarski mesec) vsak dan kot brezplačni paket (server/usage.js tailToday)
-  "ai.then": "Ko porabiš še hitri način, imaš do konca obdobja naročnine vsak dan vprašanja kot v brezplačnem paketu.",
-  "ai.tail": "Podrobne razlage in hitri način za to obdobje so porabljeni. Do konca obdobja naročnine imaš vsak dan vprašanja za inštruktorja kot v brezplačnem paketu.",
+  // nad mejo paketa: do konca obdobja (naročnina: od dneva plačila; pilot: koledarski mesec) vsak dan kot brezplačni paket (server/usage.js tailToday)
+  "ai.then": "Ko porabiš še hitri način, imaš do konca obdobja vsak dan vprašanja kot v brezplačnem paketu.",
+  "ai.tail": "Podrobne razlage in hitri način za to obdobje so porabljeni. Do konca obdobja imaš vsak dan vprašanja za inštruktorja kot v brezplačnem paketu.",
   "ai.buy": "Dokupi razlage",
   "ai.pool": "Razlage si delijo vsi profili v družini.",
   "pay.consentMissing": "Pred plačilom obkljukaj vse potrditve.",
