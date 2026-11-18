@@ -439,7 +439,7 @@ test("live check: SŠ answer with an exercise is reviewed and corrected; without
     // Odgovor z vajo: splošni pregled in vzporedni ciljni pregled vaje in načrta (meritev po #844).
     assert.equal(h.reviewCalls.length, 2, "odgovor z vajo pregleda model (splošni in ciljni pregled)");
     assert.ok(h.reviewCalls.some((c) => /practice exercise/.test(c.system) && /as strictly as the calculations/.test(c.system)), "splošni pregled z navodili za vaje");
-    assert.ok(h.reviewCalls.some((c) => /^You check only two parts/.test(c.system)), "ciljni pregled vaje");
+    assert.ok(h.reviewCalls.some((c) => /^You check only three things/.test(c.system)), "ciljni pregled vaje");
     assert.match(r.messages.at(-1).display_text, /Popravek:/);
     assert.equal(h.kinds()["preverjanje-sola"], 1, "oba klica sta en vpis porabe");
     await h.ask(s, "Koliko je pH raztopine CaO?");
@@ -508,7 +508,7 @@ test("live check: a review that times out is skipped, the answer stays", async (
 test("live check: the fix call never solves a practice exercise", async () => {
   let system = "";
   await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
-  assert.match(system, /practice exercise, give corrected data or a replacement exercise; never give the exercise's solution/);
+  assert.match(system, /practice exercise, write the whole corrected or replacement exercise again, with every given it needs; never give the exercise's solution/);
 });
 
 test("live check (SŠ meritev 18. 11.): the fix adds no new facts and may only withdraw an unsure side claim", async () => {
@@ -1048,4 +1048,22 @@ test("live check (pregled #848): two review calls reserve twice in the school po
   } finally {
     server2.close();
   }
+});
+
+test("live check (meritev SŠ po #848): the focused check also checks explanations, notation and percentage points; exercises state every given", async () => {
+  const { EXTRA_SYSTEM, correction } = await import("../server/live-check.js");
+  assert.match(EXTRA_SYSTEM, /^You check only three things in an AI tutor's answer to a school student: the practice exercise \(»Vaja«, »Practice«\), any plan of an experiment that the tutor proposes, and every explanation of how or why something happens\./);
+  // molekularna-genetika#3 (vilici »na nasprotnih straneh«), nastanek-vrst#5 (haploidnost iz oploditve)
+  assert.match(EXTRA_SYSTEM, /3\. Explanations and notation: for every sentence that says how or why something happens \(mechanism, cause, order of events, where a process starts and where it ends, what halves or doubles a number\)/);
+  assert.match(EXTRA_SYSTEM, /a reason that reverses cause and effect or names the wrong process or place is an error/);
+  // nastanek-vrst#3 (»63 ni oblike 2n«), raziskovanje#2 (»razlika 40 %«)
+  assert.match(EXTRA_SYSTEM, /2n is the number of chromosomes in body cells, also when it is odd/);
+  assert.match(EXTRA_SYSTEM, /A difference between two percentages is in percentage points, not per cent\./);
+  assert.match(LIVE_REVIEW_SYSTEM, /a difference between two percentages is in percentage points\);/);
+  // molekularna-genetika#4: vaji je manjkal podatek o dveh vilicah
+  assert.match(EXTRA_SYSTEM, /states every given its solution needs \(also givens taken over from the task/);
+  assert.match(EXTRA_SYSTEM, /End with one final line: OK, or NAPAKA: /);
+  let system = "";
+  await correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
+  assert.match(system, /write the whole corrected or replacement exercise again, with every given it needs/);
 });
