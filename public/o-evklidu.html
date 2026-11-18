@@ -55,10 +55,13 @@
     .about-faq details p { margin: 0 0 14px; line-height: 1.6; color: var(--muted); }
     .about-list { margin: 0; padding-inline-start: 20px; line-height: 1.6; max-width: 80ch; }
     .about-list li { margin-bottom: 6px; }
+    .about-sub { margin: 18px 0 8px; font-size: 1.05rem; }
     @media (min-width: 900px) {
       .about-faq { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
       .about-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 4vw, 64px); align-items: start; }
     }
+    @media (min-width: 860px) { .about-adv { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 560px) and (max-width: 859px) { .about-adv > :last-child { grid-column: 1 / -1; } }
     @media (min-width: 860px) { .about-who { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     @media (min-width: 560px) and (max-width: 859px) { .about-who { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 559px) {
@@ -144,6 +147,21 @@
       </div>
     </section>
 
+    <section class="land-sec" aria-labelledby="h-top">
+      <h2 id="h-top">Na kratko</h2>
+      <ul class="land-grid land-feats about-adv">
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:badge-check}}</span><h3>Program preveri račune</h3><p>Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah v plačljivih paketih odgovor pregleda še zmogljivejši model. <a href="/zakaj-evklid">Kako to deluje in kaj smo izmerili</a></p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:clipboard-check}}</span><h3>Matura z inštruktorjem</h3><p>Pretekle pole mature in Evklidove pole v slogu mature. Pri vsaki nalogi inštruktor z namigi vodi do rešitve.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:lock}}</span><h3>Varno za otroke</h3><p>Brez oglasov in sledilnikov. Ni klepeta z drugimi uporabniki, na tedenski lestvici so vidni samo vzdevki.</p></li>
+      </ul>
+    </section>
+
+    <section class="land-sec about-matura" aria-labelledby="h-matura">
+      <h2 id="h-matura">Priprava na maturo iz matematike, fizike, kemije in biologije</h2>
+      <p class="about-text">Pretekle pole mature je mogoče prenesti z ric.si in jih odpreti v Evklidu. Pri vsaki nalogi je mogoče vprašati inštruktorja, ki z namigi vodi do rešitve. Evklidove pole v slogu mature imajo enako zgradbo in točkovanje kot izvirne, naloge pa so nove in imajo razložene rešitve.</p>
+      <p class="about-text">Nalogo iz zvezka je mogoče fotografirati. Prvih {{trialDays}} dni je brezplačnih, brez kartice.</p>
+    </section>
+
     <section class="land-sec" aria-labelledby="h-kaj">
       <h2 id="h-kaj">Kaj je Evklid</h2>
       <p class="about-text">Evklid je učna aplikacija, narejena v Sloveniji za slovenske učence, dijake in študente. Združuje inštruktorja, učbenik, vaje, simulacije in pripravo na preizkuse znanja. Deluje v spletnem brskalniku na naslovu <a href="/">evklid.app</a> in kot aplikacija za Android.</p>
@@ -165,34 +183,42 @@
       <ul class="land-grid land-feats">
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:message-circle}}</span><h3>Inštruktor korak za korakom</h3><p>Rešitve ne izda. Najprej ugotovi, kaj učenec že zna, nato ga z namigi vodi do konca. Vprašati ga je mogoče tudi z glasom.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:camera}}</span><h3>Skener nalog s kamero</h3><p>Učenec nalogo iz zvezka fotografira ali jo napiše z roko. Evklid jo prebere in pomaga po korakih.</p></li>
-        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:badge-check}}</span><h3>Rezultate preveri program</h3><p>Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah odgovor pregleda še zmogljivejši model. <a href="/zakaj-evklid">Kako to deluje in kaj smo izmerili</a></p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:book-open}}</span><h3>Učbenik in učna pot</h3><p>Kratke lekcije in formule z razlago vsakega simbola. Snov je razvrščena po razredih in sklopih slovenskega učnega načrta.</p></li>
-        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:infinity}}</span><h3>Vaje, ki ne zmanjkajo</h3><p>Vsakič nove številke in težavnost po meri učenca. Evklid pokaže, v katerem koraku je napaka.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:target}}</span><h3>Vaje po meri učenca</h3><p>Težavnost vaj se prilagaja učencu. Evklid pokaže, v katerem koraku je napaka.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:flask-conical}}</span><h3>Laboratorij in simulacije</h3><p>Poskuse učenec sestavi in izvede sam: pribor, meritve, tabela, graf in zaključek.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:box}}</span><h3>3D atlas</h3><p>3D modeli človeškega telesa, organov in celic ter modeli iz kemije, fizike in matematike.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:gamepad-2}}</span><h3>Igre, točke in lige</h3><p>Več kot 30 iger, v katerih igranje pomeni računanje. Učenci zbirajo točke in tekmujejo s prijatelji ali razredom.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:clipboard-check}}</span><h3>NPZ in matura</h3><p>Pretekle izpitne pole, razdeljene na posamezne naloge. Vsako je mogoče reševati skupaj z inštruktorjem.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:medal}}</span><h3>Tekmovanja</h3><p>Težje naloge v slogu tekmovanj. Naloge sestavi aplikacija, zato niso kopije preteklih tekmovanj.</p></li>
-        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:globe}}</span><h3>{{languages}} jezikov</h3><p>Aplikacija je napisana v slovenščini. Vmesnik je preveden v {{languages}} jezikov.</p></li>
-        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:smartphone}}</span><h3>Telefon in računalnik</h3><p>Evklid deluje v brskalniku in kot aplikacija za Android. Napredek je povsod enak. <a href="/prenesi">Prenesite aplikacijo</a></p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:smartphone}}</span><h3>Telefon in računalnik</h3><p>Evklid deluje v brskalniku in kot aplikacija za Android. Napredek je povsod enak. <a href="/prenesi?lang=sl">Prenesite aplikacijo za Android</a>. Na iPhonu Evklid odprete v Safariju in ga dodate na začetni zaslon.</p></li>
       </ul>
     </section>
 
     <div class="about-two">
       <section class="land-sec" aria-labelledby="cene">
         <h2 id="cene">Cene</h2>
-        <p class="about-text">Prvih {{trialDays}} dni je brezplačnih, brez kartice. Potem izberete naročnino ali ostanete na brezplačnem paketu.</p>
+        <p class="about-text">Prvih {{trialDays}} dni je brezplačnih, brez kartice. Potem ostanete na brezplačnem paketu ali izberete naročnino za svojo stopnjo.<!--ce:paidDaily--> Brezplačni paket ima {{freeDaily}} vprašanj inštruktorju na dan, naročnina pa {{paidDaily}} (na fakulteti {{paidDailyFaks}}) in podrobne razlage.<!--/ce:paidDaily--></p>
         <table class="about-prices">
           <thead><tr><th scope="col">Paket</th><th scope="col">Na mesec</th><th scope="col">Na leto</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Brezplačni paket<small>{{freeDaily}} vprašanj inštruktorju na dan</small></th><td>0 €</td><td>0 €</td></tr>
-            <tr><th scope="row">Osnovna šola</th><td>{{osM}}</td><td>{{osY}}</td></tr>
-            <tr><th scope="row">Srednja šola</th><td>{{ssM}}</td><td>{{ssY}}</td></tr>
-            <tr><th scope="row">Fakulteta</th><td>{{faksM}}</td><td>{{faksY}}</td></tr>
-            <tr><th scope="row">Družina<small>2–4 profili</small></th><td>{{famM}}</td><td>{{famY}}</td></tr>
-            <tr><th scope="row">Družina s študentom<small>2–4 profili</small></th><td>{{famsM}}</td><td>{{famsY}}</td></tr>
+            <tr><th scope="row">Brezplačni paket<small>{{freeDaily}} vprašanj inštruktorju na dan, vadnica brez omejitev in besedilo vseh lekcij</small></th><td>0 €</td><td>0 €</td></tr>
+            <tr><th scope="row">Osnovna šola<small>od 1. do 9. razreda</small></th><td>{{osM}}</td><td>{{osY}}</td></tr>
+            <tr><th scope="row">Srednja šola<small>vsi letniki in matura, tudi snov osnovne šole</small></th><td>{{ssM}}</td><td>{{ssY}}</td></tr>
+            <tr><th scope="row">Fakulteta<small>matematični in naravoslovni predmeti vašega študijskega programa, tudi snov osnovne in srednje šole</small></th><td>{{faksM}}</td><td>{{faksY}}</td></tr>
+            <tr><th scope="row">Družina<small>2–4 profili, osnovna in srednja šola</small></th><td>{{famM}}</td><td>{{famY}}</td></tr>
+            <tr><th scope="row">Družina s študentom<small>2–4 profili, tudi fakulteta</small></th><td>{{famsM}}</td><td>{{famsY}}</td></tr>
           </tbody>
         </table>
+        <h3 class="about-sub">Kaj doda naročnina</h3>
+        <ul class="about-list">
+<!--ce:paidDaily-->
+          <li>{{paidDaily}} vprašanj inštruktorju na dan namesto {{freeDaily}} (na fakulteti {{paidDailyFaks}}).</li>
+<!--/ce:paidDaily-->
+          <li>Podrobne razlage. Pri nekaterih nalogah odgovor pregleda še zmogljivejši model.</li>
+          <li>Poskusi, simulacije in sprotno preverjanje v lekcijah ter laboratorij.</li>
+          <li>Podrobne razlage imajo mesečni obseg. Ko je porabljen, inštruktor pomaga naprej v hitrejšem načinu, nato z dnevno mejo brezplačnega paketa. Ko je porabljen tudi ta del, lahko dokupite pogovore ali počakate na nov mesec naročnine. Preostanek vidite v zavihku Račun.</li>
+        </ul>
+        <p class="land-note">Ko profil preide na višjo stopnjo, na primer iz srednje šole na fakulteto, ima pri naročnini za en profil novo stopnjo odprto takoj in brez doplačila, najmanj do konca plačanega obdobja. Če se zato cena naročnine zviša, vas po e-pošti obvestimo najmanj 30 dni pred podaljšanjem, s katerim začne veljati.</p>
         <p class="land-note">Naročnino lahko kadar koli prekličete. Učiteljski račun je brezplačen; ponudba za šole je na strani <a href="/sole">Za učitelje in šole</a>.</p>
       </section>
 
@@ -235,7 +261,7 @@
         </details>
         <details>
           <summary>Ali Evklid reši nalogo namesto otroka?</summary>
-          <p>Ne. Inštruktor rešitve ne izda, ampak otroka z namigi in vprašanji vodi do nje. Tako otrok snov res razume.</p>
+          <p>Ne. Inštruktor rešitve ne izda sam od sebe, ampak otroka z namigi in vprašanji vodi do nje. Tako otrok snov res razume. Celotno rešitev pokaže, če jo otrok izrecno zahteva ali izbere način Celotna rešitev, in tudi takrat razloži vsak korak. Samo rezultat brez razlage da le pri posamezni nalogi, ki jo otrok prinese sam, in le, če ga izrecno zahteva.</p>
         </details>
         <details>
           <summary>Kateri model AI uporablja Evklid?</summary>
@@ -269,7 +295,7 @@
       <a href="/zakaj-evklid">Zakaj Evklid</a>
       <a href="/starsi.html">Za starše</a>
       <a href="/sole">Za učitelje in šole</a>
-      <a href="/prenesi">Prenesi aplikacijo</a>
+      <a href="/prenesi?lang=sl">Prenesi aplikacijo</a>
       <a href="/zasebnost.html">Zasebnost</a>
       <a href="/pogoji.html">Pogoji uporabe</a>
     </footer>

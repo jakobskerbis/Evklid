@@ -403,7 +403,9 @@ export function createApp(store, opts = {}) {
     ]);
     app.use(statics);
     // server/index.js po zagonu vnaprej stisne datoteke prvega odprtja strani (prvi obiski po posodobitvi hitri).
-    app.locals.warmStatic = () => statics.warm(startupFiles(publicDir, "index.html", ["games/index.js"]));
+    // Paketi nalog iger (games/subjects/*.js) se v brskalniku naložijo z import() po predmetih, zato jih naštejemo posebej.
+    const gamePacks = () => fs.readdirSync(path.join(publicDir, "games", "subjects")).filter((f) => f.endsWith(".js")).map((f) => `games/subjects/${f}`);
+    app.locals.warmStatic = () => statics.warm(startupFiles(publicDir, "index.html", ["games/index.js", ...gamePacks()]));
     app.use("/api", compressedJson());
   }
   app.use(express.static(publicDir));
@@ -1355,7 +1357,7 @@ export function createApp(store, opts = {}) {
         // Z dokupljenim kreditom so podrobne razlage še na voljo (usage.fastOnly), gumb ostane.
         aiOut = usage.fastOnly(student.id);
         if (after.stage !== allowBefore.stage && (after.stage === "low" || after.stage === "out")) {
-          send("allowance", { stage: after.stage, percent: after.percent, left: after.explanations_left, pool: after.pool || undefined, buy: !!accounts.topupButton?.(student.id) });
+          send("allowance", { stage: after.stage, percent: after.percent, left: after.explanations_left, pool: after.pool || undefined, spread: after.spread || undefined, buy: !!accounts.topupButton?.(student.id) });
         }
         // E-pošta staršu ob vsakem odgovoru nad mejo (enkrat na mesec za mejo, email_log): mejo lahko prestopi tudi
         // strošek zunaj tega odgovora (preverjanje, skeniranje), zato ne samo ob prehodu v tem odgovoru.

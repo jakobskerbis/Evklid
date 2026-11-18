@@ -40,7 +40,7 @@ test("prvo odprtje: velikost stisnjenih datotek v proračunu", () => {
 });
 
 test("težka orodja niso del prvega odprtja (naložijo se ob uporabi ali ob nedejavnosti)", () => {
-  for (const u of ["/graph/calc.js", "/graph/sci.js", "/graph/tools.js", "/3d/modeli.js", "/games/index.js"]) {
+  for (const u of ["/graph/calc.js", "/graph/sci.js", "/graph/tools.js", "/3d/modeli.js", "/games/index.js", "/icons/deljenje.jpg"]) {
     assert.ok(!own.includes(u), `${u} se naloži ob prvem odprtju`);
   }
   assert.ok(!startupFiles(pub, "index.html").some((u) => u.startsWith("/vendor/three")), "three.js ob prvem odprtju");

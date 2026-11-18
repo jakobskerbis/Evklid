@@ -163,7 +163,7 @@ async function withServer(fn) {
   }
 }
 
-const OK = { adult: true, withdrawal: true };
+const OK = { adult: true, withdrawal: true, terms: true };
 
 test("Osebno ob šolski licenci: le z otrokom s šolsko licenco, cena ni v portalu, mesto dobi šolski otrok", async () => {
   await withServer(async ({ store, stripe, licensed, register }) => {

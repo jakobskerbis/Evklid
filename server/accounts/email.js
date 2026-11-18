@@ -203,13 +203,19 @@ export function allowanceEmail({ childName, stage, left, untilText, pool = false
 }
 
 // Enkratno obvestilo o spremenjeni politiki zasebnosti (scripts/obvestilo-zasebnost.js). Besedilo potrdi j, preden
-// se pošlje; skripta brez --poslji ničesar ne pošlje.
-export function privacyChangeEmail(policyUrl, dateText = "6. novembra 2026") {
+// se pošlje; skripta brez --poslji ničesar ne pošlje. Točke opisujejo trenutno različico (PRIVACY_VERSION 2026-11-18,
+// #817); prejšnja (6. 11. 2026) je v zgodovini git. dateText poda klicatelj (privacyDateText).
+const MESECI = ["januarja", "februarja", "marca", "aprila", "maja", "junija", "julija", "avgusta", "septembra", "oktobra", "novembra", "decembra"];
+export const privacyDateText = (iso) => {
+  const [y, m, d] = String(iso).split("-").map(Number);
+  return `${d}. ${MESECI[m - 1]} ${y}`;
+};
+export function privacyChangeEmail(policyUrl, dateText) {
   const points = [
-    "Natančneje piše, katere podatke lahko izvozite in izbrišete ter koliko časa jih hranimo.",
-    "Za člane pilota smo dodali neobvezne naloge: oceno branja fotografij nalog, oceno delov aplikacije, kratko anketo, kratek preizkus znanja na začetku in čez 14 dni ter vprašanje staršem, ali bi za Evklid plačali. Fotografijo naloge in prebrano besedilo shranimo samo, če ju otrok, star vsaj 15 let, posebej označi, in ju hranimo največ 30 dni.",
-    "Skrbnik Evklida vidi skupna števila brez imen, šele ko so odgovori vsaj trije (pri vprašanju o plačilu pet). Vidi tudi kratke opombe brez imena, e-naslove računov v pilotu in fotografije, ki jih je otrok sam označil za shranjevanje.",
-    "Član pilota lahko prijavi napako z zastavico; prijavi se priložita opis in zadnjih 10 sporočil pogovora.",
+    "Fotografije nalog v pogovorih z inštruktorjem hranimo 7 dni, nato ostane samo besedilo pogovora.",
+    "Natančneje piše, kdo vidi otrokove podatke: celoten profil vidite samo vi in otrok. Če je otrok v razredu, učitelj vidi samo vzdevek in avatar, oznako, ki jo vpiše učitelj, točke na lestvici razreda ter rezultate pri temah in kvizih, ki jih da razredu.",
+    "Pri šolski licenci je za podatke razreda upravljavec šola, za otrokov profil pa ostanemo upravljavec mi.",
+    "Enkrat na dan naredimo šifrirano varnostno kopijo baze, ki je shranjena v EU in jo izbrišemo po 30 dneh.",
   ];
 
   const text = `Pozdravljeni,\n\n${dateText} smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:\n\n${points.map((p) => `- ${p}`).join("\n")}\n\nNič vam ni treba narediti. Celotna pravila: ${policyUrl}\n\nEkipa Evklid`;
@@ -240,5 +246,41 @@ export function ownerCodeEmail(code) {
     subject: "Evklid: koda za potrditev",
     text: `Vaša koda za potrditev v Evklidu: ${code}\n\nVelja 10 minut. Če je niste zahtevali, sporočilo prezrite.`,
     html: layout("Koda za potrditev", `<p>Vaša koda za potrditev v Evklidu:</p><p style="font-size:28px;font-weight:bold;letter-spacing:4px">${esc(code)}</p><p style="font-size:13px;color:#5f6779">Velja 10 minut. Če je niste zahtevali, sporočilo prezrite.</p>`),
+  };
+}
+
+// Potrdilo o nakupu (trajni nosilec, ZVPot-1; #765 točka 3, j 2026-11-17): kaj je kupljeno, cena (pri preizkusu še
+// prvo plačilo), potrditve, ki jih je plačnik označil (tudi izjava o odstopu), različica pogojev in kako odstopi
+// (withdrawal: kaj vrnemo po vrsti nakupa, server/accounts/potrdilo.js withdrawalNote). Vikanje (plačnik je odrasel).
+export function purchaseEmail({ item, paidText, firstCharge = "", dateText, statements = [], lang = "sl", termsUrl, termsVersion, withdrawUrl, contact, withdrawal = "", appUrl }) {
+  const n = BRAND.name;
+  const list = statements.map((s) => `<li>${esc(s)}</li>`).join("");
+  const translated = lang && lang !== "sl" ? `V aplikaciji ste potrditve brali v prevodu (jezik: ${lang}); tu je slovensko besedilo, ki smo ga shranili.` : "";
+  const how = `V 14 dneh od nakupa lahko od pogodbe odstopite brez navedbe razloga. Pošljite jasno izjavo na ${contact}; uporabite lahko obrazec za odstop: ${withdrawUrl}.`;
+  return {
+    subject: `${n}: potrdilo o nakupu`,
+    html: layout(
+      "Potrdilo o nakupu",
+      `<p>Hvala za nakup. To sporočilo shranite: je vaše potrdilo o sklenjeni pogodbi.</p>
+<p><b>Kupljeno:</b> ${esc(item)}<br><b>Plačano ob nakupu:</b> ${esc(paidText)}${firstCharge ? `<br><b>Prvo plačilo:</b> ${esc(firstCharge)}` : ""}<br><b>Datum:</b> ${esc(dateText)}</p>
+<p><b>Pred plačilom ste potrdili:</b></p><ul>${list}</ul>${translated ? `<p>${esc(translated)}</p>` : ""}
+<p><b>Splošni pogoji uporabe</b>, različica ${esc(termsVersion)}: <a href="${esc(termsUrl)}">${esc(termsUrl)}</a></p>
+<p><b>Odstop od pogodbe.</b> V 14 dneh od nakupa lahko od pogodbe odstopite brez navedbe razloga. Pošljite jasno izjavo na <a href="mailto:${esc(contact)}">${esc(contact)}</a>; uporabite lahko <a href="${esc(withdrawUrl)}">obrazec za odstop</a>.${withdrawal ? ` ${esc(withdrawal)}` : ""}</p>
+<p>Račune najdete v zavihku Račun (»Upravljaj naročnino in račune«).</p>${button(appUrl, `Odprite ${n}`)}`,
+    ),
+    text: [
+      "Potrdilo o nakupu",
+      "Hvala za nakup. To sporočilo shranite: je vaše potrdilo o sklenjeni pogodbi.",
+      `Kupljeno: ${item}`,
+      `Plačano ob nakupu: ${paidText}`,
+      ...(firstCharge ? [`Prvo plačilo: ${firstCharge}`] : []),
+      `Datum: ${dateText}`,
+      "Pred plačilom ste potrdili:",
+      ...statements.map((s) => `- ${s}`),
+      ...(translated ? [translated] : []),
+      `Splošni pogoji uporabe, različica ${termsVersion}: ${termsUrl}`,
+      `Odstop od pogodbe: ${how}${withdrawal ? ` ${withdrawal}` : ""}`,
+      `Račune najdete v zavihku Račun (»Upravljaj naročnino in račune«): ${appUrl}`,
+    ].join("\n"),
   };
 }

@@ -54,7 +54,7 @@ Izbrisani podatki ostanejo v kopijah, dokler kopije ne potečejo:
 
 - dnevna kopija na disku: 7 dni;
 - posnetek diska pri Renderju: 7 dni;
-- šifrirana kopija v R2 (ko bo nastavljena): 30 dni (`EVKLID_KOPIJE_OBLAK_DNI`);
+- šifrirana kopija v R2 (nastavljena 17. 11. 2026, vedro v EU s pravilom »izbriši po 30 dneh«): 30 dni (`EVKLID_KOPIJE_OBLAK_DNI`);
 - **ročne kopije** (`obnovi-kopijo.js --zdaj`, tudi prenesene iz R2): zadnje 3, nobena pa ne starejša od 22 dni
   (22 + 7 dni posnetka diska + 1 dan do čiščenja = 30). Pobriše jih dnevna kopija, ročna kopija, zagon strežnika ali
   dnevno čiščenje po rokih hrambe (tudi z `EVKLID_BACKUPS=0`);
@@ -95,6 +95,7 @@ Zunaj baze (pregled 3; test jih ne vidi):
 10. **R2:** kopije, starejše od 30 dni, se brišejo samo ob uspešnem nalaganju; če nalaganje odpove, ostanejo. Kopija,
     prenesena iz R2 (`--oblak-prenesi`), je ročna kopija in spada pod točko 1 (ker ima datum izvirne kopije, se lahko
     pobriše že naslednji dan; pred obnovo jo po potrebi prenesi znova). Rok 30 dni nima rezerve: kopija se pobriše ob
-    prvem nalaganju po 30 dneh. Predlog: privzeto 28 dni (`EVKLID_KOPIJE_OBLAK_DNI`), ko bo R2 nastavljen.
+    prvem nalaganju po 30 dneh; če nalaganje odpove, kopijo po 30 dneh izbriše pravilo vedra (j potrdil 17. 11. 2026). Predlog:
+    privzeto 28 dni (`EVKLID_KOPIJE_OBLAK_DNI`).
 11. **Resend** hrani poslana sporočila (tudi ime otroka v opomniku cilja in tedenskem poročilu) po svojih pravilih;
     brez nastavljenega Resenda gre zadeva sporočila v dnevnik Renderja.
