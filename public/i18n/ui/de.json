@@ -4358,6 +4358,7 @@
   "vab.login": "Anmelden",
   "vab.regPending": "Dein Einladungscode ist gespeichert. Sobald du deine E-Mail-Adresse bestätigst, bist du im Pilot.",
   "vab.regBad": "Dein Konto ist erstellt, aber der Einladungscode gilt nicht (falsch oder schon verwendet).",
+  "vab.regEnded": "Dein Konto ist erstellt, aber der Pilot ist schon vorbei, deshalb gilt der Einladungscode nicht mehr.",
   "vab.errTitle": "Wir können den Code gerade nicht prüfen",
   "vab.tooMany": "Zu viele Versuche. Versuch es in 15 Minuten erneut.",
   "vab.busy": "Wir können den Code gerade nicht prüfen. Versuch es später erneut.",

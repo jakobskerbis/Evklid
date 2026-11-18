@@ -4359,6 +4359,7 @@
   "vab.login": "Accedi",
   "vab.regPending": "Il codice di invito è salvato. Dopo aver confermato l'email, sei nel pilota.",
   "vab.regBad": "L'account è stato creato, ma il codice di invito non è valido (sbagliato o già usato).",
+  "vab.regEnded": "L'account è stato creato, ma il pilota è già terminato, quindi il codice di invito non è più valido.",
   "vab.errTitle": "Ora non possiamo verificare il codice",
   "vab.tooMany": "Troppi tentativi. Riprova tra 15 minuti.",
   "vab.busy": "Ora non possiamo verificare il codice. Riprova più tardi.",

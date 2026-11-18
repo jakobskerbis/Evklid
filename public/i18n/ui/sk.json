@@ -4424,6 +4424,7 @@
   "vab.login": "Prihlásiť sa",
   "vab.regPending": "Kód pozvánky je uložený. Keď potvrdíš e-mail, si v pilote.",
   "vab.regBad": "Účet je vytvorený, ale kód pozvánky neplatí (nesprávny alebo už použitý).",
+  "vab.regEnded": "Účet je vytvorený, ale pilot už skončil, takže kód pozvánky už neplatí.",
   "vab.errTitle": "Kód teraz nemôžeme overiť",
   "vab.tooMany": "Príliš veľa pokusov. Skús to znova o 15 minút.",
   "vab.busy": "Kód teraz nemôžeme overiť. Skús to znova neskôr.",

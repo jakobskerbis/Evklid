@@ -4420,6 +4420,7 @@
   "vab.login": "Přihlásit se",
   "vab.regPending": "Kód pozvánky je uložen. Jakmile potvrdíš e-mail, jsi v pilotu.",
   "vab.regBad": "Účet je vytvořen, ale kód pozvánky neplatí (chybný nebo už použitý).",
+  "vab.regEnded": "Účet je vytvořen, ale pilot už skončil, takže kód pozvánky už neplatí.",
   "vab.errTitle": "Kód teď nemůžeme ověřit",
   "vab.tooMany": "Příliš mnoho pokusů. Zkus to znovu za 15 minut.",
   "vab.busy": "Kód teď nemůžeme ověřit. Zkus to znovu později.",

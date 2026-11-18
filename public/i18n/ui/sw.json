@@ -4356,6 +4356,7 @@
   "vab.login": "Ingia",
   "vab.regPending": "Msimbo wa mwaliko umehifadhiwa. Ukithibitisha barua pepe yako, uko kwenye majaribio.",
   "vab.regBad": "Akaunti imefunguliwa, lakini msimbo wa mwaliko si halali (si sahihi au umeshatumika).",
+  "vab.regEnded": "Akaunti imefunguliwa, lakini majaribio yameshaisha, kwa hiyo msimbo wa mwaliko hautumiki tena.",
   "vab.errTitle": "Hatuwezi kukagua msimbo sasa",
   "vab.tooMany": "Majaribio mengi mno. Jaribu tena baada ya dakika 15.",
   "vab.busy": "Hatuwezi kukagua msimbo sasa. Jaribu tena baadaye.",

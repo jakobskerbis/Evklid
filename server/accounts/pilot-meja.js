@@ -81,7 +81,10 @@ export function privilegedEmail(email, env = process.env) {
 export function isPilotParent(p, now = Date.now(), env = process.env) {
   const email = verifiedEmail(p);
   if (!email || now >= pilotEndMs(env, now)) return false;
-  return list(env.EVKLID_PILOT_EMAILS).includes(email) || (!!p.pilot_invite_at && inviteHashValid(p.pilot_invite_hash, env));
+  // Član iz kode: koda porabljena, še na seznamu in oznaka pilota (pilot_at) še stoji. Ko jo skrbnik odstrani
+  // (»Odstrani«, server/pilot-naloge.js) ali ko je koda umaknjena (endRevokedInvites v server/accounts/index.js), se
+  // konča tudi meja (#819).
+  return list(env.EVKLID_PILOT_EMAILS).includes(email) || (!!p.pilot_invite_at && !!p.pilot_at && inviteHashValid(p.pilot_invite_hash, env));
 }
 
 // Ali je račun lastnik (skrbnik po EVKLID_ADMIN_EMAILS s potrjenim e-naslovom). Zastavica is_admin v bazi sama

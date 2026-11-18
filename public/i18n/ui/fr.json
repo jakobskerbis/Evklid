@@ -4359,6 +4359,7 @@
   "vab.login": "Se connecter",
   "vab.regPending": "Ton code d'invitation est enregistré. Une fois ton e-mail confirmé, tu fais partie du pilote.",
   "vab.regBad": "Ton compte est créé, mais le code d'invitation n'est pas valable (erroné ou déjà utilisé).",
+  "vab.regEnded": "Ton compte est créé, mais le pilote est déjà terminé, donc le code d'invitation n'est plus valable.",
   "vab.errTitle": "Nous ne pouvons pas vérifier le code pour l'instant",
   "vab.tooMany": "Trop de tentatives. Réessaie dans 15 minutes.",
   "vab.busy": "Nous ne pouvons pas vérifier le code pour l'instant. Réessaie plus tard.",

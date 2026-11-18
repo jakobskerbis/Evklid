@@ -568,7 +568,7 @@ function renderLogin(mode = "login") {
         store.set("evklid_ref", null);
         store.set("evklid_koda", null);
         store.set(INVITE_KEY, null);
-        if (r.invite) toast(t(r.invite === "pending" ? "vab.regPending" : "vab.regBad"));
+        if (r.invite) toast(t({ pending: "vab.regPending", ended: "vab.regEnded" }[r.invite] || "vab.regBad"));
         if (r.promo_until) toast(`Aktivacijska koda velja ✓ Poln dostop do ${date(r.promo_until)}.`);
         if (r.promo_error) toast(`Račun je ustvarjen, koda pa ni bila sprejeta: ${r.promo_error}`);
         if (r.dev_verify_url) store.set("evklid_dev_verify", r.dev_verify_url);

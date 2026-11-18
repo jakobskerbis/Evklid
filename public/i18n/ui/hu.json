@@ -4356,6 +4356,7 @@
   "vab.login": "Bejelentkezés",
   "vab.regPending": "A meghívókódot elmentettük. Ha megerősíted az e-mail-címedet, a pilotban vagy.",
   "vab.regBad": "A fiók elkészült, de a meghívókód nem érvényes (hibás vagy már felhasznált).",
+  "vab.regEnded": "A fiók elkészült, de a pilot már véget ért, ezért a meghívókód már nem érvényes.",
   "vab.errTitle": "Most nem tudjuk ellenőrizni a kódot",
   "vab.tooMany": "Túl sok próbálkozás. Próbáld újra 15 perc múlva.",
   "vab.busy": "Most nem tudjuk ellenőrizni a kódot. Próbáld újra később.",

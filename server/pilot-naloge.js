@@ -160,6 +160,15 @@ export function photoAllowed(db, studentId, now = new Date()) {
   }
 }
 
+// Izstop računa iz pilota (skrbnik »Odstrani« ali umaknjena koda vabila, server/accounts/index.js): oznaka pilota_at
+// odpade (naloge, »Povej mnenje«, seznam skrbnika, pri članu iz kode tudi meja plačanega paketa), fotografije profilov
+// tega računa izbrišemo takoj (soglasje velja za sodelovanje v pilotu; public/zasebnost.html). Vrne število fotografij.
+export function endAccountPilot(db, parentId) {
+  db.prepare("UPDATE parents SET pilot_at = NULL WHERE id = ?").run(parentId);
+  if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_photos'").get()) return 0;
+  return Number(db.prepare("DELETE FROM pilot_photos WHERE student_id IN (SELECT id FROM students WHERE parent_id = ?)").run(parentId).changes);
+}
+
 // Bivši člani (šoli je potekla pilotna licenca, učenec je zapustil razred): fotografije izbrišemo pri dnevnem čiščenju
 // (zasebnost.js runRetention), torej najpozneje v enem dnevu. Ob odstranitvi računa iz pilota takoj (clani, spodaj).
 export function dropFormerPhotos(db) {
@@ -566,9 +575,8 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     const p = db.prepare("SELECT id FROM parents WHERE email = ?").get(email);
     if (!p) return res.status(404).json({ error: "Račun s tem e-naslovom ne obstaja." });
     const on = req.body?.on !== false;
-    db.prepare(`UPDATE parents SET pilot_at = ${on ? "COALESCE(pilot_at, datetime('now'))" : "NULL"} WHERE id = ?`).run(p.id);
-    // Izstop iz pilota: fotografije profilov tega računa izbrišemo takoj (soglasje velja za sodelovanje v pilotu).
-    if (!on) db.prepare("DELETE FROM pilot_photos WHERE student_id IN (SELECT id FROM students WHERE parent_id = ?)").run(p.id);
+    if (on) db.prepare("UPDATE parents SET pilot_at = COALESCE(pilot_at, datetime('now')) WHERE id = ?").run(p.id);
+    else endAccountPilot(db, p.id); // tudi član iz kode vabila izgubi mejo pilota (pilot-meja.js isPilotParent, #819)
     audit(db, { req, parentId: req.parent?.id ?? null, actor: "admin", action: on ? "pilot_add" : "pilot_remove", target: `parent:${p.id}` });
     res.json({ ok: true });
   });

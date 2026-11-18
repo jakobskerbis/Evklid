@@ -4330,6 +4330,7 @@
   "vab.login": "Masuk",
   "vab.regPending": "Kode undangan sudah disimpan. Setelah kamu mengonfirmasi email, kamu ikut pilot.",
   "vab.regBad": "Akun sudah dibuat, tetapi kode undangan tidak berlaku (salah atau sudah dipakai).",
+  "vab.regEnded": "Akun sudah dibuat, tetapi pilot sudah berakhir, jadi kode undangan tidak berlaku lagi.",
   "vab.errTitle": "Kami tidak bisa memeriksa kode sekarang",
   "vab.tooMany": "Terlalu banyak percobaan. Coba lagi dalam 15 menit.",
   "vab.busy": "Kami tidak bisa memeriksa kode sekarang. Coba lagi nanti.",

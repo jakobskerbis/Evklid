@@ -4426,6 +4426,7 @@
   "vab.login": "Zaloguj się",
   "vab.regPending": "Kod zaproszenia jest zapisany. Gdy potwierdzisz adres e-mail, jesteś w pilotażu.",
   "vab.regBad": "Konto zostało założone, ale kod zaproszenia jest nieważny (błędny lub już wykorzystany).",
+  "vab.regEnded": "Konto zostało założone, ale pilotaż już się zakończył, więc kod zaproszenia jest już nieważny.",
   "vab.errTitle": "Nie możemy teraz sprawdzić kodu",
   "vab.tooMany": "Za dużo prób. Spróbuj ponownie za 15 minut.",
   "vab.busy": "Nie możemy teraz sprawdzić kodu. Spróbuj ponownie później.",

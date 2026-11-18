@@ -4363,6 +4363,7 @@
   "vab.login": "Iniciar sessão",
   "vab.regPending": "O teu código de convite está guardado. Depois de confirmares o e-mail, ficas no piloto.",
   "vab.regBad": "A conta foi criada, mas o código de convite não é válido (errado ou já usado).",
+  "vab.regEnded": "A conta foi criada, mas o piloto já terminou, por isso o código de convite já não é válido.",
   "vab.errTitle": "Agora não conseguimos verificar o código",
   "vab.tooMany": "Demasiadas tentativas. Tenta de novo daqui a 15 minutos.",
   "vab.busy": "Agora não conseguimos verificar o código. Tenta novamente mais tarde.",

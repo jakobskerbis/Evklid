@@ -4390,6 +4390,7 @@
   "vab.login": "Prijavi se",
   "vab.regPending": "Kod pozivnice je sačuvan. Kad potvrdiš e-adresu, u pilotu si.",
   "vab.regBad": "Račun je napravljen, ali kod pozivnice ne važi (pogrešan ili već iskorišten).",
+  "vab.regEnded": "Račun je napravljen, ali pilot je već završen, pa kod pozivnice više ne važi.",
   "vab.errTitle": "Kod sada ne možemo provjeriti",
   "vab.tooMany": "Previše pokušaja. Pokušaj ponovo za 15 minuta.",
   "vab.busy": "Kod sada ne možemo provjeriti. Pokušaj ponovo kasnije.",

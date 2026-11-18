@@ -4358,6 +4358,7 @@
   "vab.login": "Hyr",
   "vab.regPending": "Kodi i ftesës u ruajt. Pasi të konfirmosh email-in, je në pilot.",
   "vab.regBad": "Llogaria u krijua, por kodi i ftesës nuk vlen (i gabuar ose i përdorur tashmë).",
+  "vab.regEnded": "Llogaria u krijua, por piloti ka përfunduar tashmë, prandaj kodi i ftesës nuk vlen më.",
   "vab.errTitle": "Tani nuk mund ta kontrollojmë kodin",
   "vab.tooMany": "Shumë përpjekje. Provo sërish pas 15 minutash.",
   "vab.busy": "Tani nuk mund ta kontrollojmë kodin. Provo përsëri më vonë.",

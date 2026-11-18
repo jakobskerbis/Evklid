@@ -4358,6 +4358,7 @@
   "vab.login": "Log in",
   "vab.regPending": "Your invitation code is saved. Once you confirm your email, you are in the pilot.",
   "vab.regBad": "Your account is created, but the invitation code is not valid (wrong or already used).",
+  "vab.regEnded": "Your account is created, but the pilot has already ended, so the invitation code no longer applies.",
   "vab.errTitle": "We can't check the code right now",
   "vab.tooMany": "Too many attempts. Try again in 15 minutes.",
   "vab.busy": "We can't check the code right now. Try again later.",

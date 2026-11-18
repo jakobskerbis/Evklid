@@ -4356,6 +4356,7 @@
   "vab.login": "Giriş yap",
   "vab.regPending": "Davet kodun kaydedildi. E-postanı onayladığında pilottasın.",
   "vab.regBad": "Hesabın oluşturuldu, ancak davet kodu geçerli değil (yanlış ya da zaten kullanılmış).",
+  "vab.regEnded": "Hesabın oluşturuldu, ancak pilot zaten sona erdi, bu yüzden davet kodu artık geçerli değil.",
   "vab.errTitle": "Kodu şu anda kontrol edemiyoruz",
   "vab.tooMany": "Çok fazla deneme. 15 dakika sonra tekrar dene.",
   "vab.busy": "Kodu şu anda kontrol edemiyoruz. Daha sonra tekrar dene.",

@@ -4356,6 +4356,7 @@ export default {
   "vab.login": "Prijavi se v račun",
   "vab.regPending": "Koda vabila je shranjena. Ko potrdiš e-naslov, si v pilotu.",
   "vab.regBad": "Račun je ustvarjen, koda vabila pa ne velja (napačna ali že porabljena).",
+  "vab.regEnded": "Račun je ustvarjen, pilot pa je že končan, zato koda vabila ne velja več.",
   "vab.errTitle": "Kode zdaj ne moremo preveriti",
   "vab.tooMany": "Preveč poskusov. Poskusi znova čez 15 minut.",
   "vab.busy": "Kode zdaj ne moremo preveriti. Poskusi znova pozneje.",

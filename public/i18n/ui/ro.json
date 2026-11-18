@@ -4392,6 +4392,7 @@
   "vab.login": "Autentificare",
   "vab.regPending": "Codul de invitație a fost salvat. După ce îți confirmi adresa de e-mail, ești în pilot.",
   "vab.regBad": "Contul a fost creat, dar codul de invitație nu este valabil (greșit sau deja folosit).",
+  "vab.regEnded": "Contul a fost creat, dar pilotul s-a încheiat deja, așa că codul de invitație nu mai este valabil.",
   "vab.errTitle": "Nu putem verifica acum codul",
   "vab.tooMany": "Prea multe încercări. Încearcă din nou peste 15 minute.",
   "vab.busy": "Nu putem verifica acum codul. Încearcă din nou mai târziu.",

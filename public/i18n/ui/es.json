@@ -4359,6 +4359,7 @@
   "vab.login": "Iniciar sesión",
   "vab.regPending": "Tu código de invitación está guardado. Cuando confirmes tu correo, estarás en el piloto.",
   "vab.regBad": "Tu cuenta está creada, pero el código de invitación no es válido (incorrecto o ya usado).",
+  "vab.regEnded": "Tu cuenta está creada, pero el piloto ya ha terminado, así que el código de invitación ya no es válido.",
   "vab.errTitle": "Ahora no podemos comprobar el código",
   "vab.tooMany": "Demasiados intentos. Vuelve a intentarlo en 15 minutos.",
   "vab.busy": "Ahora no podemos comprobar el código. Vuelve a intentarlo más tarde.",
