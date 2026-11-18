@@ -124,13 +124,13 @@ test("plačane meri-*.mjs upoštevajo --max-usd (sicer jih delovni tok zavrne)",
 test("meri-natancnost-ss: meja in izbor se preverita pred klicem; privzeto samo odgovor s preverjanjem", () => {
   const src = fs.readFileSync(new URL("../scripts/meri-natancnost-ss.mjs", import.meta.url), "utf8");
   assert.match(src, /"--samo", ids\.join\(","\), "--ponovi", String\(PONOVI\), "--max-usd", String\(MEJA\)/); // mejo uveljavi primerjava-modelov.js
-  assert.match(src, /if \(!process\.argv\.includes\("--oba"\)\) ukaz\.push\("--pogoj", "s"\);/);
+  assert.match(src, /if \(!OBA\) ukaz\.push\("--pogoj", "s"\);/);
   assert.match(src, /if \(SUHO\) ukaz\.push\("--dry"\);/); // --suho nikoli ne kliče modela
 });
 
 test("meri-natancnost-ss --suho: izbor brez klica; neveljavni argumenti končajo z 1", () => {
   const skripta = fileURLToPath(new URL("../scripts/meri-natancnost-ss.mjs", import.meta.url));
-  const zagon = (...a) => spawnSync(process.execPath, ["--disable-warning=ExperimentalWarning", skripta, ...a], { encoding: "utf8", env: { ...process.env, EVKLID_MOCK: "1", ANTHROPIC_API_KEY: "" } });
+  const zagon = (...a) => spawnSync(process.execPath, ["--disable-warning=ExperimentalWarning", skripta, ...a], { encoding: "utf8", timeout: 60000, env: { ...process.env, EVKLID_MOCK: "1", ANTHROPIC_API_KEY: "" } });
   const suho = zagon("--suho", "--del", "1-2");
   assert.equal(suho.status, 0, suho.stderr);
   const n = Number(/primerov (\d+)/.exec(suho.stdout)?.[1]);
@@ -144,7 +144,7 @@ test("meri-natancnost-ss --suho: izbor brez klica; neveljavni argumenti končajo
 
 test("meri-natancnost-ss --primeri in --ponovi: izbrani primeri po številki, večkrat; neveljavno konča z 1", () => {
   const skripta = fileURLToPath(new URL("../scripts/meri-natancnost-ss.mjs", import.meta.url));
-  const zagon = (...a) => spawnSync(process.execPath, ["--disable-warning=ExperimentalWarning", skripta, ...a], { encoding: "utf8", env: { ...process.env, EVKLID_MOCK: "1", ANTHROPIC_API_KEY: "" } });
+  const zagon = (...a) => spawnSync(process.execPath, ["--disable-warning=ExperimentalWarning", skripta, ...a], { encoding: "utf8", timeout: 60000, env: { ...process.env, EVKLID_MOCK: "1", ANTHROPIC_API_KEY: "" } });
   const vsi = zagon("--suho");
   const peti = /^ {2}5 {2}(\S+)$/m.exec(vsi.stdout)?.[1];
   const drugi = /^ {2}2 {2}(\S+)$/m.exec(vsi.stdout)?.[1];
@@ -154,5 +154,9 @@ test("meri-natancnost-ss --primeri in --ponovi: izbrani primeri po številki, ve
   assert.match(r.stdout, /primeri 5,2, primerov 2 × 3 ponovitve/);
   assert.match(r.stdout, /2 primerov × 3 ponovitve × 1 pogoj/); // otrok (primerjava-modelov.js) dobi iste primere in ponovitve
   assert.ok(r.stdout.includes(`  5  ${peti}`) && r.stdout.includes(`  2  ${drugi}`));
-  for (const slabo of [["--primeri", "0"], ["--primeri", "5,5"], ["--primeri", "999"], ["--primeri", "5", "--del", "1-2"], ["--ponovi", "6"], ["--ponovi", "1.5"]]) assert.equal(zagon("--suho", ...slabo).status, 1, slabo.join(" "));
+  assert.ok(r.stdout.indexOf(`  5  ${peti}`) < r.stdout.indexOf(`  2  ${drugi}`)); // vrstni red kot v --primeri
+  assert.match(zagon("--suho", "--primeri", "5,2", "--ponovi", "2", "--oba").stdout, /× 2 pogoja/);
+  // Tipkarska napaka ali oblika z = ne sme tiho pognati vseh primerov; --ponovi brez --primeri bi presegel mejo.
+  for (const slabo of [["--primeri", "0"], ["--primeri", "5,5"], ["--primeri", "999"], ["--primeri", "05"], ["--primeri"], ["--primeri", "5", "--del", "1-2"], ["--primeri", "5", "--ponovi", "6"], ["--primeri", "5", "--ponovi", "0"], ["--ponovi", "3"], ["--primeri=5,2"], ["--primer", "5"]])
+    assert.equal(zagon("--suho", ...slabo).status, 1, slabo.join(" "));
 });

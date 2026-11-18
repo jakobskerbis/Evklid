@@ -7,8 +7,9 @@
 //   node scripts/meri-natancnost-ss.mjs [--max-usd 2] [--stopnje ss] [--del 1-2] [--primeri 10,13 --ponovi 3] [--oba] [--suho]
 //   --stopnje ss,tek   stopnje kot --groups v primerjava-modelov.js (os, ss, tek, uni); privzeto ss
 //   --del 1-2          le del izbora (vsak drugi primer), če vsi ne gredo pod mejo enega zagona; nato --del 2-2
-//   --primeri 10,13    le primeri s temi zaporednimi številkami izbora (izpiše jih --suho); ne skupaj z --del
-//   --ponovi 3         vsak primer N-krat (1–5), za preverbo, ali se napaka ponavlja
+//   --primeri 10,13    le primeri s temi zaporednimi številkami izbora (izpiše jih --suho; veljajo za iste --stopnje
+//                      in isti commit); ne skupaj z --del
+//   --ponovi 3         vsak izbrani primer N-krat (1–5), za preverbo, ali se napaka ponavlja; samo skupaj z --primeri
 //   --oba              tudi pogoj »sam model, brez preverjanja« (privzeto samo cel odgovor s preverjanjem, kot ga vidi učenec)
 //   --suho             samo izbor primerov in ocena stroška, brez klica modela (0 $)
 // Ustavi se, preden bi strošek presegel --max-usd (mejo uveljavi primerjava-modelov.js). Ne piše v bazo aplikacije
@@ -24,9 +25,20 @@ const arg = (name, d) => {
   const i = process.argv.indexOf(name);
   return i >= 0 ? process.argv[i + 1] : d;
 };
-const MEJA = Number(arg("--max-usd", 2));
+// Neznan argument ali oblika --ime=vrednost (delovni tok dovoli znak =) bi se tiho prezrla in pognala vseh 30 primerov.
+const ZNANI = { "--max-usd": 1, "--meja-usd": 1, "--stopnje": 1, "--del": 1, "--primeri": 1, "--ponovi": 1, "--oba": 0, "--suho": 0 };
+for (let i = 2; i < process.argv.length; i++) {
+  const a = process.argv[i];
+  if (!(a in ZNANI)) {
+    console.error(`Neznan argument »${a}« (dovoljeni: ${Object.keys(ZNANI).join(", ")}; vrednost za presledkom, ne z =). Nič ni bilo poklicano.`);
+    process.exit(1);
+  }
+  i += ZNANI[a];
+}
+const MEJA = Number(arg("--max-usd", arg("--meja-usd", 2)));
 const STOPNJE = String(arg("--stopnje", "ss"));
 const SUHO = process.argv.includes("--suho");
+const OBA = process.argv.includes("--oba");
 if (!(MEJA > 0) || MEJA > 5) {
   console.error(`Neveljavna meja --max-usd »${arg("--max-usd", "")}« (večja od 0, največ 5). Nič ni bilo poklicano.`);
   process.exit(1);
@@ -44,27 +56,35 @@ if (izbor.status !== 0 || !ids.length) {
   console.error(`Izbor primerov ni uspel (izhod ${izbor.status}). Nič ni bilo poklicano.\n${(izbor.stderr || "").slice(-500)}`);
   process.exit(1);
 }
-// --del 1-2 (delovni tok Meritev v argumentih ne dovoli znaka /): prva polovica izbora (vsak k-ti primer, da ostane mešanica predmetov); za zagon v več delih pod mejo 2 $.
+// --del 1-2 (delovni tok Meritev v argumentih ne dovoli znaka /): prva polovica izbora (vsak k-ti primer, da ostane
+// mešanica predmetov); za zagon v več delih pod mejo 2 $.
 const del = /^([1-9])[-/]([1-9])$/.exec(String(arg("--del", "1-1")));
 if (!del || Number(del[1]) > Number(del[2])) {
-  console.error(`Neveljaven --del »${arg("--del", "")}« (npr. 1-2 ali 2-2). Nič ni bilo poklicano.`);
+  console.error(`Neveljaven --del »${arg("--del", "") ?? ""}« (npr. 1-2 ali 2-2). Nič ni bilo poklicano.`);
   process.exit(1);
 }
-// --primeri 10,13: le izbrani primeri po zaporedni številki v izboru (kot jih oštevilči --suho); za ciljno ponovitev
-// primerov z napako. Številke namesto id-jev, ker delovni tok Meritev v argumentih ne dovoli velikih črk in znaka /.
-const PRIMERI_RAW = process.argv.includes("--primeri") ? String(arg("--primeri", "")) : null;
+// Vsak primer nosi svojo zaporedno številko v izboru (1 = prvi); z njo ga izbere --primeri.
+let izbrani = ids.map((id, i) => ({ n: i + 1, id }));
+// --primeri 10,13: le izbrani primeri po zaporedni številki; za ciljno ponovitev primerov z napako. Številke namesto
+// id-jev, ker delovni tok Meritev v argumentih ne dovoli velikih črk in znaka /. Številke veljajo za iste --stopnje in
+// isti commit (nove lekcije v main jih lahko premaknejo): pred plačanim zagonom jih preveri z --suho; zagon izbrane
+// primere vedno izpiše na začetku.
+const PRIMERI_RAW = process.argv.includes("--primeri") ? String(arg("--primeri", "") ?? "") : null;
 if (PRIMERI_RAW !== null) {
   const st = PRIMERI_RAW.split(",").map(Number);
-  if (!/^[0-9]+(,[0-9]+)*$/.test(PRIMERI_RAW) || st.some((n) => n < 1 || n > ids.length) || new Set(st).size !== st.length || process.argv.includes("--del")) {
+  if (!/^[1-9][0-9]*(,[1-9][0-9]*)*$/.test(PRIMERI_RAW) || st.some((n) => n > ids.length) || new Set(st).size !== st.length || process.argv.includes("--del")) {
     console.error(`Neveljavni --primeri »${PRIMERI_RAW}« (številke 1–${ids.length} brez ponovitev, ločene z vejico; ne skupaj z --del). Nič ni bilo poklicano.`);
     process.exit(1);
   }
-  ids = st.map((n) => ids[n - 1]);
-} else ids = ids.filter((_, i) => i % Number(del[2]) === Number(del[1]) - 1);
-// --ponovi N (1–5): vsak primer N-krat, ker isti model na isto nalogo ne odgovori vedno enako.
-const PONOVI = Number(arg("--ponovi", 1));
-if (!Number.isInteger(PONOVI) || PONOVI < 1 || PONOVI > 5) {
-  console.error(`Neveljaven --ponovi »${arg("--ponovi", "")}« (celo število 1–5). Nič ni bilo poklicano.`);
+  izbrani = st.map((n) => izbrani[n - 1]);
+} else izbrani = izbrani.filter((_, i) => i % Number(del[2]) === Number(del[1]) - 1);
+ids = izbrani.map((v) => v.id);
+// --ponovi N (1–5): vsak primer N-krat, ker isti model na isto nalogo ne odgovori vedno enako. Samo z --primeri
+// (ponovitev vseh primerov bi presegla mejo enega zagona).
+const PONOVI_RAW = process.argv.includes("--ponovi") ? String(arg("--ponovi", "") ?? "") : "1";
+const PONOVI = Number(PONOVI_RAW);
+if (!/^[1-5]$/.test(PONOVI_RAW) || (PONOVI > 1 && PRIMERI_RAW === null)) {
+  console.error(`Neveljaven --ponovi »${PONOVI_RAW}« (celo število 1–5; več kot 1 samo skupaj z --primeri). Nič ni bilo poklicano.`);
   process.exit(1);
 }
 
@@ -73,11 +93,26 @@ if (!Number.isInteger(PONOVI) || PONOVI < 1 || PONOVI > 5) {
 const PONOVITVE = path.join(root, "data", "natancnost-ponovitve.json");
 const IZID = path.join(root, "data", "meri-natancnost-ss.json");
 const ukaz = [...osnova, "--samo", ids.join(","), "--ponovi", String(PONOVI), "--max-usd", String(MEJA)];
-if (!process.argv.includes("--oba")) ukaz.push("--pogoj", "s");
+if (!OBA) ukaz.push("--pogoj", "s");
 if (SUHO) ukaz.push("--dry");
+const POGOJEV = OBA ? 2 : 1;
 const OBSEG = PRIMERI_RAW !== null ? `primeri ${PRIMERI_RAW}` : `del ${del[1]}/${del[2]}`;
-console.log(`Meritev pravilnosti: stopnje ${STOPNJE}, ${OBSEG}, primerov ${ids.length}${PONOVI > 1 ? ` × ${PONOVI} ponovitve` : ""}, meja ${MEJA} $${SUHO ? ", suho (brez klicev)" : ""}.`);
-if (SUHO) ids.forEach((id, i) => console.log(`  ${PRIMERI_RAW !== null ? PRIMERI_RAW.split(",")[i] : PRIMERI_RAW === null && del[2] === "1" ? i + 1 : "·"}  ${id}`));
+const naslov = `Meritev pravilnosti: stopnje ${STOPNJE}, ${OBSEG}, primerov ${ids.length}${PONOVI > 1 ? ` × ${PONOVI} ponovitve` : ""}${OBA ? ", oba pogoja" : ""}, meja ${MEJA} $${SUHO ? ", suho (brez klicev)" : ""}.`;
+const seznam = () => izbrani.forEach((v) => console.log(`  ${v.n}  ${v.id}`));
+if (SUHO) {
+  // Suhi tek: ocena stroška iz otroka (brez njegovega neoštevilčenega seznama), oštevilčen izbor na koncu, da je viden
+  // v povzetku zagona (zadnjih 40 vrstic).
+  const r = spawnSync(process.execPath, ukaz, { cwd: root, encoding: "utf8", env: process.env });
+  console.log(naslov);
+  for (const v of (r.stdout || "").split("\n")) if (v && !v.startsWith("- ")) console.log(v);
+  if (r.stderr) process.stderr.write(r.stderr);
+  console.log("Izbrani primeri (številka za --primeri, id lekcije):");
+  seznam();
+  process.exit(r.status ?? 1);
+}
+console.log(naslov);
+console.log("Izbrani primeri (številka, id lekcije):");
+seznam();
 if (!SUHO) fs.rmSync(PONOVITVE, { force: true }); // star lokalni izid ne sme veljati za novega (npr. zagon brez ključa)
 if (!SUHO && (!process.env.ANTHROPIC_API_KEY || process.env.EVKLID_MOCK === "1")) console.log("OPOZORILO: ni ključa ANTHROPIC_API_KEY (ali je EVKLID_MOCK=1). NIČ NE BO IZMERJENO.");
 
@@ -103,7 +138,7 @@ function povzetek() {
   }
   const st = (o) => vrstice.filter((v) => v?.ocena === o).length;
   const ocenjeni = st("pravilno") + st("manjsa_napaka") + st("napaka");
-  console.log(`IZID (${STOPNJE}, ${OBSEG}): od ${ids.length * PONOVI} odgovorov ocenjenih ${ocenjeni}: pravilno ${st("pravilno")}, manjša napaka ${st("manjsa_napaka")}, napaka ${st("napaka")}; neocenjenih ${vrstice.length - ocenjeni}. Ocenjevalec je model AI${PONOVI > 1 ? "" : ", en odgovor na primer"}.`);
+  console.log(`IZID (${STOPNJE}, ${OBSEG}): od ${ids.length * PONOVI * POGOJEV} odgovorov${OBA ? " (oba pogoja skupaj)" : ""} ocenjenih ${ocenjeni}: pravilno ${st("pravilno")}, manjša napaka ${st("manjsa_napaka")}, napaka ${st("napaka")}; neocenjenih ${vrstice.length - ocenjeni}. Ocenjevalec je model AI${PONOVI > 1 ? "" : ", en odgovor na primer"}.`);
 }
 for (const sig of ["SIGTERM", "SIGINT"]) process.on(sig, () => (otrok.kill(sig), setTimeout(() => zakljuci(1), 5000)));
 otrok.on("error", (e) => (console.error(`Meritev se ni zagnala: ${e.message}`), zakljuci(1)));
