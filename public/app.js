@@ -1180,6 +1180,11 @@ function renderEmptyChat() {
   // Če je učenec že kaj napisal ali dodal fotografijo, predlog gre v polje (da se nič ne izgubi).
   renderState(null);
   if (!ideasPath(state.student)) refreshIdeas();
+  aiOznaka();
+}
+// AI Act čl. 50 (public/ai-oznaka/)
+function aiOznaka() {
+  import("./ai-oznaka/ai-oznaka.js").then((m) => m.oznaciKlepet(state.student)).catch(() => {});
 }
 $("#messages").addEventListener("click", ideaClick); // enkrat: predlogi se ob osvežitvi zamenjajo
 function ideaClick(e) {
@@ -1409,6 +1414,7 @@ async function openConversation(id, { mark = true } = {}) {
   for (const m of conv.messages) addMessage(m.role, m.text, m.has_image, m);
   renderState(conv.state);
   renderConversationList();
+  aiOznaka();
   prilagodiZdaj(); // zložene formule (sirina.js) so višje: na dno šele zdaj
   box.scrollTop = box.scrollHeight;
   refreshBubble();
@@ -1480,6 +1486,7 @@ function addMessage(role, text, hasImage = false, info = null) {
     }
   } else {
     el.innerHTML = chatRich(text);
+    if (!info?.error) el.dataset.aiGenerated = "true";
     if (text) addDeepButton(el, false);
     if (text && info?.full_offer) addFullButton(el);
     if (text && info?.choices) addChoices(el, info.choices);

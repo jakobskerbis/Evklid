@@ -178,7 +178,7 @@ export function summaryPage(topicId) {
     }</div>${formulas}</div>
     ${p.status !== "pregledano" ? `<p class="muted small">Narejeno iz lekcije, ki jo še pregleduje učitelj.</p>` : ""}
   </section>`;
-  return shell(`${t.name} · povzetek`, content, SUMMARY_CSS);
+  return shell(`${t.name} · povzetek`, content, SUMMARY_CSS, 0, { ai: true });
 }
 
 // --- delovni list ---
@@ -288,7 +288,7 @@ export function worksheetPage({ topicIds, perTopic = 4, seed = 1, title = null, 
     <ol class="tasks">${list}</ol>
     ${key}
   </section>`;
-  return shell(`${name} · delovni list`, content, WORKSHEET_CSS);
+  return shell(`${name} · delovni list`, content, WORKSHEET_CSS, 0, { ai: true });
 }
 
 // Šibke teme učenca: z učencem (student) najprej šibke teme iz vseh virov (server/weaknesses.js), nato
