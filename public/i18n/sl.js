@@ -2989,12 +2989,12 @@ export default {
   "up.pending": "Od {date} velja nova cena: {price} ({name}).",
   "up.locked": "stopnja zaklenjena",
   // zajamčena poraba naročnika: preostale podrobne razlage (nikoli € ali $), obvestilo pri 80 % in 100 %
-  "ai.left": "Podrobne razlage ta mesec: še {n}",
-  "ai.low": "Ta mesec je porabljenih 80 % podrobnih razlag.",
-  "ai.out": "Podrobne razlage za ta mesec so porabljene. Inštruktor odgovarja naprej v hitrem načinu.",
-  // nad mejo paketa: do konca meseca vsak dan kot brezplačni paket (server/usage.js tailToday)
-  "ai.then": "Ko porabiš še hitri način, imaš do konca meseca vsak dan vprašanja kot v brezplačnem paketu.",
-  "ai.tail": "Podrobne razlage in hitri način za ta mesec so porabljeni. Do konca meseca imaš vsak dan vprašanja za inštruktorja kot v brezplačnem paketu.",
+  "ai.left": "Podrobne razlage v tem obdobju: še {n}",
+  "ai.low": "V tem obdobju je porabljenih 80 % podrobnih razlag.",
+  "ai.out": "Podrobne razlage za to obdobje so porabljene. Inštruktor odgovarja naprej v hitrem načinu.",
+  // nad mejo paketa: do konca obdobja (naročnina: od dneva plačila; pilot: koledarski mesec) vsak dan kot brezplačni paket (server/usage.js tailToday)
+  "ai.then": "Ko porabiš še hitri način, imaš do konca obdobja vsak dan vprašanja kot v brezplačnem paketu.",
+  "ai.tail": "Podrobne razlage in hitri način za to obdobje so porabljeni. Do konca obdobja imaš vsak dan vprašanja za inštruktorja kot v brezplačnem paketu.",
   "ai.buy": "Dokupi razlage",
   "ai.pool": "Razlage si delijo vsi profili v družini.",
   "pay.consentMissing": "Pred plačilom obkljukaj vse potrditve.",

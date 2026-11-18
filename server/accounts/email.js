@@ -203,12 +203,12 @@ export function allowanceEmail({ childName, stage, left, untilText, pool = false
   if (pool) childName = "Skupni delež družine";
   const body =
     stage === "out"
-      ? `${childName}: podrobne razlage za ta mesec so porabljene. Inštruktor odgovarja naprej v hitrem načinu, nove razlage so na voljo ${untilText}.`
-      : `${childName}: porabljenih je 80 % podrobnih razlag za ta mesec, ostalo jih je še približno ${left}. Ko jih zmanjka, inštruktor odgovarja naprej v hitrem načinu.`;
+      ? `${childName}: podrobne razlage za to obdobje so porabljene. Inštruktor odgovarja naprej v hitrem načinu, nove razlage so na voljo ${untilText}.`
+      : `${childName}: porabljenih je 80 % podrobnih razlag za to obdobje, ostalo jih je še približno ${left}. Ko jih zmanjka, inštruktor odgovarja naprej v hitrem načinu.`;
   return {
-    subject: stage === "out" ? `${n}: podrobne razlage za ta mesec so porabljene` : `${n}: porabljenih 80 % podrobnih razlag`,
+    subject: stage === "out" ? `${n}: podrobne razlage za to obdobje so porabljene` : `${n}: porabljenih 80 % podrobnih razlag`,
     // topup false: pilot in lastnik (brez ponudbe dokupa, pregled #477 B3).
-    html: layout("Podrobne razlage ta mesec", `<p>${esc(body)}</p>${topup ? "<p>Več razlag lahko dokupite v zavihku Račun.</p>" : ""}${button(appUrl, `Odprite ${n}`)}`),
+    html: layout("Podrobne razlage v tem obdobju", `<p>${esc(body)}</p>${topup ? "<p>Več razlag lahko dokupite v zavihku Račun.</p>" : ""}${button(appUrl, `Odprite ${n}`)}`),
     text: topup ? `${body} Več razlag dokupite v zavihku Račun: ${appUrl}` : `${body} ${appUrl}`,
   };
 }
