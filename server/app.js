@@ -1304,7 +1304,7 @@ export function createApp(store, opts = {}) {
         if (pool?.held > 0) {
           phase(true);
           try {
-            const rv = await reviewAnswer({ question: text, answer: plain, createFn: opts.reviewCreateFn, usage, studentId: student.id, kind: reviewKindFor(risky), signal: controller.signal });
+            const rv = await reviewAnswer({ question: text, answer: plain, stopnja, createFn: opts.reviewCreateFn, usage, studentId: student.id, kind: reviewKindFor(risky), signal: controller.signal });
             extraCost += rv.cost;
             if (rv.reason) issue = `a reviewer reported: ${rv.reason}`;
           } catch (e) {
@@ -1324,7 +1324,7 @@ export function createApp(store, opts = {}) {
         if (issue && liveFixOn() && hold.take(fixReserve)) {
           phase(true);
           try {
-            const c = await correction({ streamFn, mode, answer: plain, issue, language: student.settings.language || "sl", signal: controller.signal });
+            const c = await correction({ streamFn, mode, answer: plain, issue, language: student.settings.language || "sl", stopnja, signal: controller.signal });
             extraCost += usage.log(student.id, c.model || modeParams(c.mode).model, c.usage || {}, "popravek");
             hold.settle(fixReserve);
             if (c.block) {

@@ -246,6 +246,30 @@ export function neutralize(answer) {
   if (!/^> \*\*[^*\n]{2,45}:\*\* /.test(block) || !block.split("\n").every((l) => l.startsWith(">"))) return s;
   return `${s.slice(0, i)}\n\n${block.replace(/^> \*\*[^*\n]{2,45}:\*\* /, "").split("\n").map((l) => l.replace(/^> ?/, "")).join("\n")}`;
 }
+// Odgovor ocenjevalca (JSON) → predmet. Meritev SŠ 18. 11.: 3 od 30 odgovorov so ostali neocenjeni, ker je ocenjevalec
+// v »razlog« pisal LaTeX ($\mathrm{…}$, \,): »\m« ni veljaven ubeg v JSON in JSON.parse je padel, čeprav je bila
+// ocena jasna. Zato: najprej strogo, nato s podvojenimi poševnicami, ki niso veljaven ubeg, nazadnje samo polje »ocena«.
+// Pregled PR #833: dva predmeta z različno »ocena« (ocenjevalec se je premislil) sta neocenjena, ne prva ocena; ukazi LaTeX,
+// ki se začnejo z veljavnim ubegom JSON (\frac → \f, \theta → \t, \nu → \n), ostanejo v »razlog« cele.
+const LATEX_CMD = new Set("frac tfrac dfrac binom beta bar bmod boldsymbol bullet forall nabla neq ne neg not nu rho right rightarrow rangle rm theta tau times text textrm textit tan tanh to top triangle".split(" "));
+const keepLatex = (s) => s.replace(/\\(\\|[a-zA-Z]+)/g, (m, w) => (LATEX_CMD.has(w) ? "\\\\" + w : m));
+export function parseGrade(text) {
+  const t = String(text || "");
+  const ocene = new Set([...t.matchAll(/"ocena"\s*:\s*"([^"]+)"/g)].map((m) => m[1]));
+  if (ocene.size > 1) return { ocena: "neocenjeno", rezultat_podan: false, razlog: `nasprotujoči oceni: ${[...ocene].join(", ")}`.slice(0, 200) };
+  const raw = keepLatex(t.slice(t.indexOf("{"), t.lastIndexOf("}") + 1));
+  for (const s of [raw, raw.replace(/\\(u[0-9a-fA-F]{4}|["\\/bfnrt])?/g, (m, ok) => (ok ? m : "\\\\"))]) {
+    try {
+      const j = JSON.parse(s);
+      if (j && typeof j === "object") return j;
+    } catch {
+      // naslednji poskus
+    }
+  }
+  const ocena = /"ocena"\s*:\s*"([^"]+)"/.exec(raw)?.[1];
+  if (ocena) return { ocena, rezultat_podan: /"rezultat_podan"\s*:\s*true/.test(raw), vrsta: /"vrsta"\s*:\s*"([^"]+)"/.exec(raw)?.[1], razlog: (/"razlog"\s*:\s*"([\s\S]*?)"\s*[,}]/.exec(raw)?.[1] || raw).slice(0, 300) };
+  return { ocena: "neocenjeno", rezultat_podan: false, razlog: t.slice(0, 200) };
+}
 export const GRADER_FINAL_RULE = "Če odgovor svojo trditev ali rezultat pozneje sam popravi, šteje končno stanje odgovora po popravku.";
 
 // ---------- zagon skozi pravo pot klepeta ----------
