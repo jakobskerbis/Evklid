@@ -436,11 +436,14 @@ test("live check: SŠ answer with an exercise is reviewed and corrected; without
   try {
     const s = await h.student({ educational_track: "SREDNJA_SOLA", curriculum_level: "2" });
     const r = await h.ask(s, "Koliko je pH raztopine CaO?");
-    assert.equal(h.reviewCalls.length, 1, "odgovor z vajo pregleda model");
-    assert.match(h.reviewCalls[0].system, /practice exercise/, "pregled z navodili za vaje");
+    // Odgovor z vajo: splošni pregled in vzporedni ciljni pregled vaje in načrta (meritev po #844).
+    assert.equal(h.reviewCalls.length, 2, "odgovor z vajo pregleda model (splošni in ciljni pregled)");
+    assert.ok(h.reviewCalls.some((c) => /practice exercise/.test(c.system) && /as strictly as the calculations/.test(c.system)), "splošni pregled z navodili za vaje");
+    assert.ok(h.reviewCalls.some((c) => /^You check only two parts/.test(c.system)), "ciljni pregled vaje");
     assert.match(r.messages.at(-1).display_text, /Popravek:/);
+    assert.equal(h.kinds()["preverjanje-sola"], 1, "oba klica sta en vpis porabe");
     await h.ask(s, "Koliko je pH raztopine CaO?");
-    assert.equal(h.reviewCalls.length, 1, "brez vaje in okvirja pri SŠ ni pregleda");
+    assert.equal(h.reviewCalls.length, 2, "brez vaje in okvirja pri SŠ ni pregleda");
   } finally {
     h.close();
   }
@@ -907,4 +910,45 @@ test("live check (pregled #840): all NAPAKA lines are collected; a 4-sentence fi
   assert.match(block, /^\n\n> \*\*Popravek:\*\* tudi mulo zapišemo kot \$2n\$/);
   assert.ok(block.includes("se v mejozi ne morejo pravilno spariti"));
   assert.equal(fixBlock("Popravek: " + "x".repeat(1600)), null, "predolg popravek ni prikazan");
+});
+
+test("live check (meritev SŠ po #844): SŠ answers with an exercise or experiment plan get a second, focused check in parallel", async () => {
+  const { reviewAnswer, needsExtraCheck, reviewCalls, hasPlan, EXTRA_SYSTEM, sumUsage } = await import("../server/live-check.js");
+  const vaja = "Rešitev je **5 min**.\n\n**Vaja:** Fotografija velikosti 1 MB je zapisana s 4 biti na nukleotid. Koliko nukleotidov potrebujemo?";
+  const plan = "**Boljši načrt:**\n- Vzamemo 6 enakih desk.\n- Tri premazane in tri nepremazane na sonce, tri premazane in tri nepremazane v senco.";
+  assert.equal(needsExtraCheck(vaja, "SS"), true);
+  assert.equal(needsExtraCheck(plan, "SS"), true);
+  assert.equal(hasPlan("Načrt: delimo maso s hitrostjo."), false, "Načrt iz vzorca računske naloge ni načrt poskusa");
+  assert.equal(needsExtraCheck("Rešitev je **5 min**.", "SS"), false);
+  assert.equal(needsExtraCheck(vaja, "FAKS"), false);
+  assert.equal(needsExtraCheck(vaja, "OS"), false, "OŠ le z EVKLID_LIVE_REVIEW_OS=1");
+  assert.equal(reviewCalls(vaja, "SS"), 2);
+  assert.equal(reviewCalls("Rešitev je **5 min**.", "SS"), 1);
+  for (const s of ["list every value and fact it assumes", "agrees with the fixed facts of the task and of nature", "given to the right object (parent or offspring", "count the items it assigns to every group and condition", "must add up to the stated total", "find, judge or improve it is fine", "clearly states as hypothetical"]) assert.ok(EXTRA_SYSTEM.includes(s), s);
+  assert.match(EXTRA_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: /);
+  assert.deepEqual(sumUsage({ input_tokens: 10, output_tokens: 5 }, { input_tokens: 3, output_tokens: 2, cache_read_input_tokens: 1 }), { input_tokens: 13, output_tokens: 7, cache_read_input_tokens: 1 });
+
+  // Splošni pregled spusti, ciljni najde: razlog ciljnega, ena vrstica porabe za oba klica.
+  const systems = [];
+  const reply = (text) => ({ content: [{ type: "text", text }], stop_reason: "end_turn", usage: { input_tokens: 100, output_tokens: 10 }, model: "claude-sonnet-5-5" });
+  const createFn = async (p) => (systems.push(p.system), reply(p.system === EXTRA_SYSTEM ? "NAPAKA: »4 biti na nukleotid« – največ 2 bita" : "OK"));
+  const logged = [];
+  const usage = { log: (id, model, u, kind) => (logged.push({ u, kind }), 0.01) };
+  const r = await reviewAnswer({ question: "q", answer: vaja, stopnja: "SS", createFn, usage, kind: "preverjanje-sola" });
+  assert.equal(r.reason, "»4 biti na nukleotid« – največ 2 bita");
+  assert.equal(r.extra, true);
+  assert.equal(systems.length, 2);
+  assert.equal(logged.length, 1, "en vpis porabe (meja pregledov na učenca šteje en pregled)");
+  assert.deepEqual(logged[0].u, { input_tokens: 200, output_tokens: 20 });
+  // Obe najdbi skupaj
+  const both = async (p) => reply(p.system === EXTRA_SYSTEM ? "NAPAKA: 6 desk, razporejenih 12" : "NAPAKA: »2n« ne velja");
+  assert.equal((await reviewAnswer({ question: "q", answer: plan, stopnja: "SS", createFn: both })).reason, "»2n« ne velja; 6 desk, razporejenih 12");
+  // Brez vaje in načrta en klic; neuspel ciljni pregled ne ustavi splošnega.
+  systems.length = 0;
+  assert.equal((await reviewAnswer({ question: "q", answer: "Rešitev je **5 min**.", stopnja: "SS", createFn })).reason, null);
+  assert.equal(systems.length, 1);
+  const flaky = async (p) => { if (p.system === EXTRA_SYSTEM) throw new Error("rok"); return reply("OK"); };
+  const f = await reviewAnswer({ question: "q", answer: vaja, stopnja: "SS", createFn: flaky });
+  assert.equal(f.reason, null);
+  assert.equal(f.extra, false);
 });
