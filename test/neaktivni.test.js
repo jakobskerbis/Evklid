@@ -22,7 +22,7 @@ function setup() {
   const api = mountAccounts(express(), store, { accounts: true, scheduler: false, resendKey: "re_x", fetchFn, log: { error() {}, info() {}, warn() {} } });
   const db = store.db;
   let n = 0;
-  const parent = (email, { birth = "1985-04-12", ...cols } = {}) => {
+  const parent = (email, { birth = "1985-04-12", noKid = false, ...cols } = {}) => {
     n++;
     const id = Number(
       db
@@ -30,6 +30,7 @@ function setup() {
         .run(email, `u${n}`, `R${n}`, birth).lastInsertRowid,
     );
     for (const [k, v] of Object.entries(cols)) db.prepare(`UPDATE parents SET ${k} = ? WHERE id = ?`).run(v, id);
+    if (noKid) return { id, kid: null };
     const kid = store.createStudent(`Otrok${n}`);
     db.prepare("UPDATE students SET parent_id = ? WHERE id = ?").run(id, kid.id);
     return { id, kid: kid.id };
@@ -191,6 +192,18 @@ test("neaktivni: mladoletni dobi obvestilo s »ti« (nikoli tihega izbrisa); izv
     for (const p of [paid, admin, guest, unverified, active, credit, pass, teacher, owner]) assert.ok(exists(p.id), `izvzet ${p.id}`);
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'inactive_deleted'").get().n, 3);
     assert.equal(mails.length, 3);
+  });
+});
+
+test("neaktivni: brez datuma rojstva in brez profilov »ti«, brez datuma s profilom otroka »vi«", async () => {
+  const { api, mails, parent } = setup();
+  await withFlag("1", async () => {
+    parent("brez@x.si", { birth: null, noKid: true });
+    parent("stars@x.si", { birth: null });
+    await api.inactiveDaily(at(400), { force: true });
+    const by = Object.fromEntries(mails.map((m) => [m.to[0], m.subject]));
+    assert.equal(by["brez@x.si"], "Evklid: ali še uporabljaš svoj račun?");
+    assert.equal(by["stars@x.si"], "Evklid: ali še uporabljate svoj račun?");
   });
 });
 

@@ -9,7 +9,7 @@ import { DatabaseSync } from "node:sqlite";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { newKey, isEncrypted } from "../server/crypto-polje.js";
-import { migrateEncryption, encryptionStats, runRetention, clearOldFlags, RETENTION } from "../server/zasebnost.js";
+import { migrateEncryption, encryptionStats, runRetention, clearOldFlags, purgeCachedDistress, RETENTION } from "../server/zasebnost.js";
 
 const ADULT = "1985-04-12";
 const DISTRESS_REPLY = 'Slišim te. Pokliči TOM 116 111. Je zdaj kdo pri tebi?\n<<META subject=MAT topic="-" error=0 mode=A flag=distress done=0>>';
@@ -25,7 +25,7 @@ const withKey = async (key, fn) => {
   }
 };
 
-async function withServer(fn, store) {
+async function withServer(fn, store, { reply = DISTRESS_REPLY, varnost = "NE" } = {}) {
   const calls = [];
   const app = createApp(store, {
     accounts: true,
@@ -36,10 +36,10 @@ async function withServer(fn, store) {
       return { ok: true, status: 200, json: async () => ({ id: "m" }) };
     },
     log: { error() {}, info() {}, warn() {} },
-    varnostFn: async () => ({ content: [{ type: "text", text: "NE" }] }),
+    varnostFn: async () => ({ content: [{ type: "text", text: varnost }] }),
     streamFn: async ({ onText }) => {
-      onText(DISTRESS_REPLY);
-      return { text: DISTRESS_REPLY, stopReason: "end_turn" };
+      onText(reply);
+      return { text: reply, stopReason: "end_turn" };
     },
   });
   const server = app.listen(0);
@@ -211,4 +211,40 @@ test("stiska: brez ključa se nič ne pobriše; neberljiva stara oznaka ostane i
   assert.doesNotMatch(warns[0], /distress|stisk/i);
   // S pravim ključem: obe pobrisani.
   await withKey(k, () => assert.equal(runRetention(store.db, { log: { warn() {}, info() {}, error() {} } }).oznake, 2));
+});
+
+test("stiska: odgovor s flag=none se ne shrani v predpomnilnik, če je stisko našel pregled B (kontrola: brez zadetka se shrani)", async () => {
+  const reply = 'Razumem. Najprej poglejva, kaj že veš.\n<<META subject=MAT topic="-" error=0 mode=A flag=none done=0>>';
+  for (const [varnost, n] of [["STISKA", 0], ["NE", 1]]) {
+    const store = openDb(":memory:");
+    await withServer(
+      async ({ client, calls }) => {
+        const call = client();
+        const student = await parentWithChild(call, calls, "ana@primer.si");
+        const c = await call(`/api/students/${student.id}/conversations`, { method: "POST" });
+        const r = await call(`/api/conversations/${c.body.id}/messages`, { method: "POST", body: { text: "Koliko je ena tretjina od devet?" } });
+        assert.match(r.body, /event: done/);
+        if (varnost === "STISKA") assert.match(r.body, /event: nujno/);
+        assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM answer_cache").get().n, n, `pregled B: ${varnost}`);
+      },
+      store,
+      { reply, varnost },
+    );
+    store.db.close();
+  }
+});
+
+test("stiska: že shranjeni varnostni odgovori v predpomnilniku se izbrišejo ob čiščenju (enkrat, idempotentno)", () => {
+  const store = openDb(":memory:");
+  const ins = store.db.prepare("INSERT INTO answer_cache (key, text, verified) VALUES (?, ?, 1)");
+  ins.run("a", 'Slišim te. Pokliči TOM 116 111.\n<<META subject=MAT topic="-" error=0 mode=A flag=distress done=0>>');
+  ins.run("b", 'Ulomek skrajšaš tako, da ...\n<<META subject=MAT topic="ulomki" error=0 mode=A flag=none done=0>>');
+  ins.run("c", "Besedilo o stiski brez vrstice META (flag=distress v razlagi) ostane.");
+  assert.equal(purgeCachedDistress(store.db), 1);
+  assert.deepEqual(store.db.prepare("SELECT key FROM answer_cache ORDER BY key").all().map((r) => r.key), ["b", "c"]);
+  assert.equal(purgeCachedDistress(store.db), 0, "idempotentno");
+  ins.run("d", 'x\n<<META subject=FIZ topic="-" error=0 mode=A flag=distress done=0>>');
+  const out = runRetention(store.db, { log: { warn() {}, info() {}, error() {} } });
+  assert.equal(out.answerCache, 1, "v dnevnem čiščenju, šteto med predpomnjene odgovore");
+  assert.equal("distress" in out, false);
 });

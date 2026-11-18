@@ -176,6 +176,19 @@ export function clearOldFlags(db, before, { log = console } = {}) {
   return ids.length;
 }
 
+// Predpomnjeni odgovori z oznako stiske v vrstici META (<<META … flag=distress …>>). secure_delete: besedilo ne ostane
+// v prostih straneh. Odgovorov z flag=none, ob katerih je stisko našel le lokalni zaznavalnik ali pregled B, iz
+// besedila ni mogoče prepoznati; ti se izbrišejo z rokom predpomnilnika (30 dni).
+export function purgeCachedDistress(db) {
+  if (!hasTable(db, "answer_cache")) return 0;
+  const restore = secureDelete(db);
+  try {
+    return Number(db.prepare("DELETE FROM answer_cache WHERE text LIKE '%<<META%flag=distress%'").run().changes);
+  } finally {
+    restore();
+  }
+}
+
 // --- dnevno čiščenje ---
 // Hramba zapisa neujemajočega se plačila Stripa (dni).
 export const UNMATCHED_DAYS = 365;
@@ -248,7 +261,10 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
   }
   if (hasTable(db, "odpiranje_delov")) out.odpiranje = Number(db.prepare("DELETE FROM odpiranje_delov WHERE zadnji < ?").run(ago(RETENTION.odpiranjeDni).slice(0, 10)).changes);
   out.oznake = clearOldFlags(db, ago(RETENTION.flagDays), { log });
-  if (hasTable(db, "answer_cache")) out.answerCache = Number(db.prepare("DELETE FROM answer_cache WHERE created_at < ?").run(ago(RETENTION.answerCacheDays)).changes);
+  // Varnostni odgovori ob stiski, shranjeni v predpomnilnik pred popravkom #846 (genericAnswer shrani celo besedilo z
+  // vrstico META): izbris takoj, ne šele po 30 dneh. Idempotentno; šteje v answerCache (brez posebnega števila stisk).
+  const cachedSafety = hasTable(db, "answer_cache") ? purgeCachedDistress(db) : 0;
+  if (hasTable(db, "answer_cache")) out.answerCache = cachedSafety + Number(db.prepare("DELETE FROM answer_cache WHERE created_at < ?").run(ago(RETENTION.answerCacheDays)).changes);
   // Rok hrambe varnostnih kopij na disku tudi z EVKLID_BACKUPS=0 (ko ne teče dnevna kopija): docs/izbris-izvoz.md.
   try {
     const file = db.prepare("PRAGMA database_list").all().find((r) => r.name === "main")?.file;

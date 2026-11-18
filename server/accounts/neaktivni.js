@@ -3,7 +3,8 @@
 // - Potrjen račun brez prijave in dejavnosti 12 mesecev: eno kratko e-sporočilo imetniku računa (prijava ali izbris).
 // - 24 mesecev brez dejavnosti: izbris računa po isti poti kot DELETE /api/account (eraseAccount, zapis pilota),
 //   a najprej 30 dni po poslanem obvestilu. Brez poslanega obvestila nikoli izbrisa (tudi ne pri mladoletnih).
-// - Mladoletni imetnik (račun zase, 15–17 let) in račun samo »Zame« brez datuma rojstva: obvestilo s »ti«, sicer enako.
+// - Mladoletni imetnik (račun zase, 15–17 let) in račun brez datuma rojstva, ki je samo »Zame« ali nima profilov:
+//   obvestilo s »ti«, sicer enako.
 //   Profili otrok nimajo e-naslova; sporočilo gre vedno samo na e-naslov imetnika računa.
 // - Ne velja za goste in nepotrjene račune (njih čisti server/zasebnost.js), skrbnike, račune s plačano ali podarjeno
 //   dobo, preostankom kredita AI ali veljavnim paketom, in za šolske račune (učitelji, ustanovitelji šol, lastniki
@@ -79,7 +80,7 @@ class StillActive extends Error {}
 
 /**
  * Ena obdelava (enkrat na dan). dryRun: samo štetje, brez e-pošte in izbrisa (skrbniško poročilo).
- * ctx: { db, sendMail(to, msg) → bool, isMinor(p), selfOnly(id), isAdminEmail(p), erase(p, check),
+ * ctx: { db, sendMail(to, msg) → bool, isMinor(p), selfOnly(id), childIds(id), isAdminEmail(p), erase(p, check),
  *        email({ appUrl, accountUrl, dateText, minor }) → { subject, text, html }, appUrl, audit(obj), log }
  * erase(p, check) mora poklicati check() v transakciji izbrisa, pred izbrisom: ta znova preveri mirovanje (in vrže
  * napako, če je račun medtem postal dejaven) ter zapiše izbris v dnevnik dostopov.
@@ -97,8 +98,9 @@ export async function runInactive(ctx, { now = Date.now(), dryRun = false } = {}
   for (const r of rows) {
     const p = db.prepare("SELECT * FROM parents WHERE id = ?").get(r.id);
     if (!p || ctx.isAdminEmail?.(p)) continue;
-    // Mladoletni imetnik ali račun samo »Zame« brez datuma rojstva (starost neznana): obvestilo s »ti«.
-    const minor = !!ctx.isMinor(p) || (!p.birth_date && !!ctx.selfOnly(p.id));
+    // Mladoletni imetnik ali starost neznana (brez datuma rojstva in račun samo »Zame« ali brez profilov, pregled #846
+    // P3-1): obvestilo s »ti«. Brez datuma rojstva s profili drugih (otrok) je imetnik starš: »vi«.
+    const minor = !!ctx.isMinor(p) || (!p.birth_date && (!!ctx.selfOnly(p.id) || !(ctx.childIds?.(p.id)?.length > 0)));
     const period = r.last.slice(0, 10);
     const notice = noticeOf(p.id, period);
     if (notice?.ok) {

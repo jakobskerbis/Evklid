@@ -2956,6 +2956,7 @@ export function mountAccounts(app, store, opts = {}) {
     sendMail,
     isMinor,
     selfOnly,
+    childIds,
     isAdminEmail,
     email: inactiveEmail,
     appUrl: baseUrl(null) + "/",

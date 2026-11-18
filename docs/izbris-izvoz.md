@@ -51,7 +51,8 @@ Koda: `server/accounts/neaktivni.js`, test `test/neaktivni.test.js`. Teče enkra
   ali še uporabljate svoj račun?«, povezava za prijavo in za izbris v zavihku Račun, datum izbrisa, noga z
   upravljavcem in opombo, da sporočilo ni oglasno). Za isto obdobje mirovanja nikoli dvakrat (`email_log`
   `neaktivni`, period = dan zadnje dejavnosti; zapis ostane 760 dni). Če pošiljanje ne uspe, nov poskus naslednji dan.
-- **Mladoletni imetnik** (račun zase, mlajši od 18 let) in račun samo »Zame« brez datuma rojstva dobita isto
+- **Mladoletni imetnik** (račun zase, mlajši od 18 let) in račun brez datuma rojstva, ki je samo »Zame« ali nima
+  profilov (starost neznana), dobita isto
   obvestilo s »ti« in enak rok. Tihega izbrisa ni (vprašanje za pravnika (a)). Profili otrok nimajo e-naslova;
   sporočilo gre vedno samo imetniku računa.
 - **24 mesecev brez dejavnosti** in vsaj 30 dni po poslanem obvestilu: izbris po isti poti kot `DELETE /api/account`
