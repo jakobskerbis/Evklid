@@ -55,7 +55,7 @@ function form() {
   ${view.logged_in ? "" : `<p class="muted small">${esc(t("odstop.loginHint"))} <a href="/#prijava" id="wd-login">${esc(t("odstop.login"))}</a></p>`}
   <form class="card form" id="wd-form" novalidate>
     <label>${esc(t("odstop.name"))} <input name="name" autocomplete="name" maxlength="120" required value="${esc(view.name || "")}"></label>
-    <label>${esc(t("odstop.email"))} <input name="email" type="email" autocomplete="email" maxlength="200" required value="${esc(view.email || "")}"></label>
+    <label>${esc(t("odstop.email"))} <input name="email" type="email" autocomplete="email" maxlength="200" required value="${esc(view.email || "")}"${view.logged_in ? " readonly" : ""}></label>
     ${select}
     <label><span id="wd-details-label">${esc(t(opts.length ? "odstop.detailsMore" : "odstop.details"))}</span> <textarea name="details" maxlength="1000"${opts.length ? "" : " required"}></textarea></label>
     <p class="form-error" role="alert" hidden></p>

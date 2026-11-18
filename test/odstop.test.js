@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { signWebhook } from "../server/accounts/stripe.js";
-import { submittedText, WITHDRAW_LABEL, CONFIRM_LABEL } from "../server/placila/odstop.js";
+import { submittedText, WITHDRAW_LABEL, CONFIRM_LABEL, stripLinks } from "../server/placila/odstop.js";
 import { publishedHtml } from "../server/pogoji-stran.js";
 import { TERMS_VERSION } from "../server/accounts/potrdilo.js";
 import SL from "../public/i18n/sl.js";
@@ -23,7 +23,7 @@ const now = () => Math.floor(Date.now() / 1000);
 
 function fakeStripe() {
   const calls = [];
-  const state = { sessions: {}, subs: {}, invoices: [], refunds: [], intents: {}, failNextRefund: false, mailFail: false, cancelGone: false };
+  const state = { sessions: {}, subs: {}, invoices: [], refunds: [], intents: {}, failNextRefund: false, mailFail: false, cancelGone: false, cancelError: false, refundStatus: "succeeded" };
   let n = 0;
   const fetchFn = async (url, init = {}) => {
     const body = init.body ? Object.fromEntries(new URLSearchParams(init.body)) : null;
@@ -39,6 +39,7 @@ function fakeStripe() {
     if (p === "/prices") return ok({ id: "price_" + body.lookup_key });
     if (p === "/checkout/sessions" && init.method === "POST") return ok({ id: "cs_" + ++n, url: "https://checkout.stripe.test/" + n });
     const sub = /^\/subscriptions\/(\w+)$/.exec(p);
+    if (sub && init.method === "DELETE" && state.cancelError) return { ok: false, status: 400, json: async () => ({ error: { code: "x", message: "boom" } }) };
     if (sub && init.method === "DELETE" && state.cancelGone) return { ok: false, status: 404, json: async () => ({ error: { code: "resource_missing", message: "No such subscription" } }) };
     if (sub && init.method === "DELETE") return ok({ ...(state.subs[sub[1]] || { id: sub[1], items: { data: [] } }), status: "canceled", ended_at: now() });
     if (sub) return ok(state.subs[sub[1]] || {});
@@ -49,7 +50,7 @@ function fakeStripe() {
       const key = init.headers?.["Idempotency-Key"];
       const again = key && state.refunds.find((r) => r.key === key);
       if (again) return ok(again);
-      const r = { id: "re_" + ++n, amount: Number(body.amount), payment_intent: body.payment_intent, status: "succeeded", metadata: { kind: body["metadata[kind]"], withdrawal_id: body["metadata[withdrawal_id]"] }, key };
+      const r = { id: "re_" + ++n, amount: Number(body.amount), payment_intent: body.payment_intent, status: state.refundStatus, metadata: { kind: body["metadata[kind]"], withdrawal_id: body["metadata[withdrawal_id]"] }, key };
       state.refunds.push(r);
       // Stripe vračilo naredi, odgovor pa se izgubi (prekinjena povezava).
       if (state.failNextRefund) {
@@ -159,7 +160,7 @@ test("oznake funkcije in potrdila sta iz zakona (138.a člen ZVPot-1A) in enaki 
   assert.match(submittedText("2026-07-01T08:00:09Z"), /^1\. 7\. 2026 ob 10\.00\.09 \(CEST\)$/);
   // Povezava na funkcijo v nogi vseh javnih strani in na pristajalni strani.
   for (const f of ["index.html", "zasebnost.html", "starsi.html", "sole.html", "garancija.html", "o-evklidu.html", "zakaj-evklid.html"])
-    assert.ok(fs.readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8").includes('<a href="/odstop.html">Odstop od pogodbe</a>'), f);
+    assert.ok(fs.readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8").includes('<a href="/odstop.html" data-i18n="land.withdraw">Odstop od pogodbe</a>'), f);
   assert.ok(fs.readFileSync(new URL("../public/pristajalna.js", import.meta.url), "utf8").includes('href="/odstop.html"'));
 });
 
@@ -509,4 +510,74 @@ test("predpogodbena informacija o funkciji za odstop ob potrditvah pred plačilo
   assert.ok(SL["pay.withdrawInfo"].includes("»Kliknite tukaj za odstop od pogodbe«") && SL["pay.withdrawInfo"].includes("{link}"));
   assert.ok(SL["payp.withdrawInfo"].startsWith("Odstopite"));
   for (const f of ["placaj.html", "vabilo.html", "ucitelj.html"]) assert.ok(fs.readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8").includes('href="/odstop.html"'), f);
+});
+
+test("prijavljen imetnik: potrdilo samo na e-naslov računa (vpisan naslov je samo podatek)", () =>
+  withServer(async (ctx) => {
+    const { stripe, store } = ctx;
+    const acct = await account(ctx, "lastnik@primer.si");
+    const r = await acct.a("/api/withdrawal", { method: "POST", body: { name: "Ana", email: "tuj@primer.si", details: "nakup" } });
+    assert.equal(r.status, 201);
+    assert.equal(r.body.withdrawal.email, "lastnik@primer.si");
+    const w = store.db.prepare("SELECT email, ack_to FROM withdrawals").get();
+    assert.deepEqual(w, { email: "tuj@primer.si", ack_to: "lastnik@primer.si" });
+    assert.ok(!mails(stripe).some((m) => m.to[0] === "tuj@primer.si"));
+    assert.ok(mails(stripe).some((m) => m.to[0] === "lastnik@primer.si" && /odstopa/.test(m.subject)));
+  }));
+
+test("zadržana potrdila: skrbnik dobi največ eno povzetno opozorilo na dan; neuspelo pošiljanje šteje v mejo naslova", () =>
+  withServer(
+    async (ctx) => {
+      const { client, stripe } = ctx;
+      const anon = client();
+      stripe.state.mailFail = true; // prvo potrdilo ne gre (ack_ok 0), šteje v mejo
+      await anon("/api/withdrawal", { method: "POST", body: { name: "A", email: "z@primer.si", details: "x x x" } });
+      stripe.state.mailFail = false;
+      for (let i = 0; i < 3; i++) await anon("/api/withdrawal", { method: "POST", body: { name: "A", email: "z@primer.si", details: "x x x" } });
+      assert.equal(mails(stripe).filter((m) => m.to[0] === "z@primer.si").length, 1, "drugo poslano, tretje in četrto zadržano");
+      const summary = mails(stripe).filter((m) => m.to[0] === "skrbnik@primer.si" && /povzetek/.test(m.text));
+      assert.equal(summary.length, 1, "en povzetek za dve zadržani");
+    },
+    { env: ADMIN },
+  ));
+
+test("delno vrnjeno: zaključi samo z »vrnjeno ročno«, pogodba ostane zasedena; ni prevezave; Stripe zavrne vračilo → skrbnik, brez ponovitve", () =>
+  withServer(
+    async (ctx) => {
+      const { stripe, store } = ctx;
+      const acct = await account(ctx, "zavrnjeno@primer.si");
+      await subscribe(ctx, acct);
+      stripe.state.refundStatus = "failed";
+      await acct.a("/api/withdrawal", { method: "POST", body: { name: "Ana", email: "zavrnjeno@primer.si", contract: "sub" } });
+      const w = store.db.prepare("SELECT * FROM withdrawals").get();
+      assert.equal(w.status, "failed");
+      assert.equal(JSON.parse(w.refunds).pi_sub1.state, "failed");
+      const adm = await account(ctx, "skrbnik@primer.si");
+      assert.equal((await adm.a(`/api/admin/withdrawals/${w.id}/process`, { method: "POST", body: { parent_id: adm.parent.id } })).status, 409, "ni prevezave, ko so vračila");
+      assert.equal((await adm.a(`/api/admin/withdrawals/${w.id}/process`, { method: "POST", body: {} })).status, 409);
+      assert.equal(refundPosts(stripe).length, 1, "zavrnjenega ključa ne ponovimo");
+      // Delno vrnjeno (npr. ročno 500 centov): zapiranje brez potrditve ne gre.
+      store.db.prepare("UPDATE withdrawals SET refund_cents = 500 WHERE id = ?").run(w.id);
+      assert.equal((await adm.a(`/api/admin/withdrawals/${w.id}/close`, { method: "POST", body: { note: "x" } })).status, 409);
+      assert.equal((await adm.a(`/api/admin/withdrawals/${w.id}/close`, { method: "POST", body: { note: "ostalo v Stripu", refunded_manually: true } })).status, 200);
+      assert.match(store.db.prepare("SELECT note FROM withdrawals WHERE id = ?").get(w.id).note, /^vrnjeno ročno/);
+    },
+    { env: ADMIN },
+  ));
+
+test("preklic: druga napaka Stripa (naročnina ni preklicana) ni »že preklicana«", () =>
+  withServer(async (ctx) => {
+    const { stripe, store } = ctx;
+    const acct = await account(ctx, "napaka@primer.si");
+    await subscribe(ctx, acct, { status: "trialing", paid: false });
+    store.db.prepare("UPDATE parents SET sub_status = 'trialing' WHERE id = ?").run(acct.parent.id);
+    stripe.state.cancelError = true;
+    const r = await acct.a("/api/withdrawal", { method: "POST", body: { name: "Ana", email: "napaka@primer.si", contract: "sub" } });
+    assert.equal(r.body.processed, false);
+    assert.equal(store.db.prepare("SELECT status FROM withdrawals").get().status, "failed");
+  }));
+
+test("brez povezav v e-pošti, a »dr.Novak« ostane; do 1000 znakov", () => {
+  assert.equal(stripLinks("dr.Novak, glej zlo.com/x"), "dr.Novak, glej [povezava]");
+  assert.equal(stripLinks("a".repeat(1500)).length, 1000);
 });

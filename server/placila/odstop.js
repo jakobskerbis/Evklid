@@ -57,7 +57,8 @@ export function migrateWithdrawals(db) {
       id INTEGER PRIMARY KEY,
       parent_id INTEGER REFERENCES parents(id) ON DELETE SET NULL,
       name TEXT NOT NULL,
-      email TEXT NOT NULL,
+      email TEXT NOT NULL,               -- e-naslov, ki ga je vpisal (pri prijavljenem imetniku samo podatek)
+      ack_to TEXT,                       -- kam gre potrdilo: prijavljen imetnik vedno na e-naslov računa
       contract TEXT NOT NULL,            -- sub | pass:<id> | credit:<id> | gift:<id> | other
       contract_text TEXT NOT NULL,       -- podatki o pogodbi, kot jih je potrošnik videl ali vpisal
       details TEXT NOT NULL DEFAULT '',
@@ -85,6 +86,7 @@ export function migrateWithdrawals(db) {
 const sqlTime = (ms) => new Date(ms).toISOString().slice(0, 19).replace("T", " ");
 const fromSql = (t) => (t ? Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(t) ? t : `${String(t).replace(" ", "T")}Z`) : NaN);
 const LIVE_SUB = new Set(["active", "trialing", "past_due"]);
+const BAD_REFUND = new Set(["failed", "canceled"]); // vračilo, ki ga Stripe ni izvedel: uredi skrbnik
 const refundsOf = (w) => {
   try {
     const v = JSON.parse(w?.refunds || "{}");
@@ -130,9 +132,9 @@ export function contractsFor(db, p, quote, now = Date.now(), exceptId = 0) {
   // Pogodba, za katero že obstaja obvestilo po sklenitvi, ki je v obdelavi, izvedeno, neuspelo (uredi skrbnik) ali je
   // že kaj vrnilo, ni več na seznamu: drugo obvestilo ne sme sprožiti drugega vračila.
   const taken = db
-    .prepare("SELECT contract, submitted_at, status, refund_cents, refunds FROM withdrawals WHERE parent_id = ? AND id != ? AND status != 'closed'")
+    .prepare("SELECT contract, submitted_at, status, refund_cents, refunds FROM withdrawals WHERE parent_id = ? AND id != ? AND (status != 'closed' OR refund_cents > 0)")
     .all(p.id, exceptId)
-    .filter((w) => w.status !== "received" || w.refund_cents > 0 || Object.keys(refundsOf(w)).length > 0);
+    .filter((w) => !["received", "closed"].includes(w.status) || w.refund_cents > 0 || Object.keys(refundsOf(w)).length > 0);
   const open = options.filter((o) => !taken.some((w) => w.contract === o.id && Date.parse(w.submitted_at) >= Date.parse(o.from)));
   return { options: open, store };
 }
@@ -157,10 +159,10 @@ function consentRow(db, p, o) {
   }
   return db
     .prepare(
-      `SELECT text FROM billing_consents WHERE parent_id = ? AND kind IN (${kinds.map(() => "?").join(",")}) AND created_at <= ?
+      `SELECT text FROM billing_consents WHERE parent_id = ? AND kind IN (${kinds.map(() => "?").join(",")}) AND created_at <= ? AND created_at >= ?
        ORDER BY (checkout_id IS NOT NULL AND checkout_id IN (SELECT period FROM email_log WHERE kind = 'purchase')) DESC, created_at DESC, id DESC LIMIT 1`,
     )
-    .get(p.id, ...kinds, sqlTime(Date.parse(o.from) + CONSENT_SLACK_MS));
+    .get(p.id, ...kinds, sqlTime(Date.parse(o.from) + CONSENT_SLACK_MS), sqlTime(Date.parse(o.from) - DAY));
 }
 function expressConsent(db, p, o) {
   if (o.kind === "gift") return false;
@@ -178,8 +180,9 @@ export const stripLinks = (s) =>
   String(s || "")
     .replace(/\b(?:https?:\/\/|www\.)\S+/gi, "[povezava]")
     .replace(/\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+\b/g, "[e-naslov]")
-    .replace(/\b[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}(?:\/\S*)?/gi, "[povezava]")
-    .slice(0, 300);
+    // Domena: vsaj ena pika in končnica z malimi črkami (»dr.Novak« ostane, »zlo.com« ne).
+    .replace(/\b[\w-]+(?:\.[\w-]+)*\.[a-z]{2,24}\b(?:\/\S*)?/g, "[povezava]")
+    .slice(0, 1000);
 
 export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, quote, cancelSub, passes, credits, sendMail, baseUrl, ownerOk, isMinor, env = process.env }) {
   migrateWithdrawals(db);
@@ -210,7 +213,7 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
     const refundText = w.refund_target > 0 ? `${moneyText(w.refund_target, w.currency || "EUR")}${w.refund_mode === "sorazmerno" ? " (sorazmerni del za čas po odstopu)" : " (celotno plačilo)"}` : "";
     const msg = withdrawalAckEmail({
       name: pub ? stripLinks(w.name) : w.name,
-      email: w.email,
+      email: w.ack_to || w.email,
       contract: w.contract_text,
       details: pub ? stripLinks(w.details) : w.details,
       submitted: submittedText(w.submitted_at),
@@ -225,7 +228,7 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
   async function sendAck(w, appBase = "") {
     let ok = false;
     try {
-      ok = !!(await sendMail(w.email, ackMessage({ ...w, app_url: appBase })));
+      ok = !!(await sendMail(w.ack_to || w.email, ackMessage({ ...w, app_url: appBase })));
     } catch (err) {
       log.error?.("[evklid] potrdilo o odstopu:", err.message);
     }
@@ -235,9 +238,21 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
   }
 
   // Skrbniku e-pošta za vsako obvestilo, ki ni bilo izvedeno samodejno (EVKLID_ADMIN_EMAILS), enkrat.
-  async function alertAdmin(id) {
+  async function alertAdmin(id, { flood = false } = {}) {
     const w = db.prepare("SELECT * FROM withdrawals WHERE id = ?").get(id);
     if (!w || w.status === "done" || w.admin_alerted) return;
+    // Zadržano potrdilo ali nad dnevno mejo obvestil brez prijave: največ eno povzetno opozorilo na dan.
+    if (flood) {
+      const since = new Date(Date.now() - DAY).toISOString();
+      if (db.prepare("SELECT 1 FROM withdrawals WHERE admin_alerted = 2 AND submitted_at >= ?").get(since)) return;
+      const n = db.prepare("SELECT COUNT(*) AS n FROM withdrawals WHERE source = 'public' AND submitted_at >= ?").get(since).n;
+      const to = emailList(env.EVKLID_ADMIN_EMAILS);
+      const msg = withdrawalAdminEmail({ id, status: w.status, source: w.source, submitted: submittedText(w.submitted_at), contract: w.contract_text, note: `povzetek: ${n} obvestil brez prijave v 24 urah, potrdila nad mejo zadržana; do jutri brez novih opozoril`, ackOk: w.ack_ok });
+      let sent = 0;
+      for (const a of to) sent += (await sendMail(a, msg).catch(() => false)) ? 1 : 0;
+      if (sent) db.prepare("UPDATE withdrawals SET admin_alerted = 2 WHERE id = ?").run(id);
+      return;
+    }
     const to = emailList(env.EVKLID_ADMIN_EMAILS);
     if (!to.length) return log.error?.("[evklid] odstop čaka skrbnika, EVKLID_ADMIN_EMAILS ni nastavljen", id);
     const msg = withdrawalAdminEmail({ id, status: w.status, source: w.source, submitted: submittedText(w.submitted_at), contract: w.contract_text, note: w.note, ackOk: w.ack_ok });
@@ -267,17 +282,19 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
     const cText = option ? contractText(option) : "Drugo (opis spodaj)";
     const refund = option ? refundFor(db, p, option) : null;
     const willAuto = !!(p && option?.auto && canAuto(p));
+    // Prijavljen imetnik: potrdilo vedno na e-naslov računa (vpisan naslov je samo podatek, nihče ne pošilja na tuje naslove).
+    const ackTo = p ? p.email : email;
     const id = Number(
       db
-        .prepare("INSERT INTO withdrawals (parent_id, name, email, contract, contract_text, details, source, submitted_at, refund_mode, refund_target, currency, ack_auto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-        .run(p?.id ?? null, name, email, option ? option.id : "other", cText, details, p ? "app" : "public", submittedAt, refund?.mode ?? null, refund?.cents ?? null, option?.currency ?? null, willAuto ? 1 : 0).lastInsertRowid,
+        .prepare("INSERT INTO withdrawals (parent_id, name, email, ack_to, contract, contract_text, details, source, submitted_at, refund_mode, refund_target, currency, ack_auto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        .run(p?.id ?? null, name, email, ackTo, option ? option.id : "other", cText, details, p ? "app" : "public", submittedAt, refund?.mode ?? null, refund?.cents ?? null, option?.currency ?? null, willAuto ? 1 : 0).lastInsertRowid,
     );
     audit(db, { req, parentId: p?.id ?? null, actor: p ? "parent" : "public", action: "withdrawal_submit", target: `withdrawal:${id}` });
     // Brez prijave: največ PER_EMAIL_DAY potrdil na isti naslov in PUBLIC_DAY na dan skupaj; nad tem zapis brez e-pošte.
     let held = false;
     if (!p) {
       const since = new Date(Date.now() - DAY).toISOString();
-      const perEmail = db.prepare("SELECT COUNT(*) AS n FROM withdrawals WHERE lower(email) = lower(?) AND source = 'public' AND submitted_at >= ? AND ack_ok = 1").get(email, since).n;
+      const perEmail = db.prepare("SELECT COUNT(*) AS n FROM withdrawals WHERE lower(ack_to) = lower(?) AND source = 'public' AND submitted_at >= ? AND ack_ok IN (0, 1)").get(ackTo, since).n;
       const all = db.prepare("SELECT COUNT(*) AS n FROM withdrawals WHERE source = 'public' AND submitted_at >= ?").get(since).n;
       if (all > PUBLIC_DAY) log.error?.(`[evklid] OPOZORILO: ${all} obvestil o odstopu brez prijave v 24 urah (meja ${PUBLIC_DAY}); potrdila zadržana`);
       held = perEmail >= PER_EMAIL_DAY || all > PUBLIC_DAY;
@@ -287,7 +304,8 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
     else ok = await sendAck(db.prepare("SELECT * FROM withdrawals WHERE id = ?").get(id), appUrl(req));
     let result = null;
     if (willAuto) result = await processRow(id, { req, actor: "parent" });
-    if (!result?.ok) await alertAdmin(id).catch((e) => log.error?.("[evklid] opozorilo o odstopu:", e.message));
+    // Brez opozorila, ko isti odstop že teče (ni čakajoč).
+    if (!result?.ok && !result?.running) await alertAdmin(id, { flood: held }).catch((e) => log.error?.("[evklid] opozorilo o odstopu:", e.message));
     const row = db.prepare("SELECT * FROM withdrawals WHERE id = ?").get(id);
     res.status(201).json({ withdrawal: publicRow(row), ack_sent: ok, processed: result?.ok === true });
   });
@@ -297,7 +315,8 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
   const publicRow = (w) => ({
     id: w.id,
     name: w.name,
-    email: w.email,
+    email: w.ack_to || w.email, // kam je šlo potrdilo
+    typed_email: w.email,
     contract_text: w.contract_text,
     details: w.details,
     submitted_at: w.submitted_at,
@@ -331,14 +350,15 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
     for (const [pi, r] of Object.entries(map)) {
       if (r.state !== "pending") continue;
       const list = await stripe.request("GET", "/refunds", { payment_intent: pi, limit: 100 });
-      const hit = (list?.data || []).find((x) => String(x?.metadata?.withdrawal_id) === String(id) && x.status !== "failed" && x.status !== "canceled");
-      if (hit) map[pi] = { state: "done", amount: Number(hit.amount) || 0, id: hit.id };
+      const hit = (list?.data || []).find((x) => String(x?.metadata?.withdrawal_id) === String(id));
+      if (hit && BAD_REFUND.has(hit.status)) map[pi] = { state: "failed", amount: 0, id: hit.id }; // skrbnik, ključa ne ponovimo
+      else if (hit) map[pi] = { state: "done", amount: Number(hit.amount) || 0, id: hit.id };
       else delete map[pi]; // ni ga: spodaj znova z istim ključem (Stripe ne naredi dvojnika)
     }
     let cents = save(map);
     for (const pay of payments) {
       if (cents >= target) break;
-      if (!pay.pi || map[pay.pi]?.state === "done") continue;
+      if (!pay.pi || ["done", "failed"].includes(map[pay.pi]?.state)) continue;
       const left = pay.left != null ? pay.left : await piLeft(pay.pi);
       const amount = Math.min(target - cents, left);
       if (amount <= 0) continue;
@@ -350,7 +370,7 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
         { payment_intent: pay.pi, amount, reason: "requested_by_customer", metadata: { kind: "withdrawal", withdrawal_id: String(id) } },
         { idempotencyKey: `withdrawal-${id}-${pay.pi}` },
       );
-      map[pay.pi] = { state: "done", amount: Number(r?.amount || amount), id: r?.id || null };
+      map[pay.pi] = BAD_REFUND.has(r?.status) ? { state: "failed", amount: 0, id: r?.id || null } : { state: "done", amount: Number(r?.amount || amount), id: r?.id || null };
       cents = save(map);
     }
     return cents;
@@ -371,7 +391,7 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
 
   // Izvedba odstopa za zapis id (prijavljen imetnik takoj ali skrbnik pozneje). Vrne { ok, error? }.
   async function processRow(id, { req, actor }) {
-    if (running.has(id)) return { ok: false, error: "Odstop se že izvaja." };
+    if (running.has(id)) return { ok: false, running: true, error: "Odstop se že izvaja." };
     const w0 = db.prepare("SELECT * FROM withdrawals WHERE id = ?").get(id);
     if (!w0) return { ok: false, error: "Zapisa ni." };
     // »processing« brez teka v tem procesu = prekinjeno (ponovni zagon); ponovitev ne vrne že vrnjenih plačil.
@@ -474,6 +494,7 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
     const contract = req.body?.contract != null ? String(req.body.contract) : null;
     if (pid != null || contract != null) {
       if (!["received", "failed", "processing"].includes(w.status)) return res.status(409).json({ error: "Odstop je že obdelan." });
+      if (running.has(id) || w.refund_cents > 0 || Object.keys(refundsOf(w)).length) return res.status(409).json({ error: "Obvestilo s tekočim ali že narejenim vračilom ni mogoče povezati z drugim računom ali pogodbo." });
       if (pid != null && !getParent(pid)) return res.status(404).json({ error: "Račun ne obstaja." });
       if (contract != null && !/^(sub|pass:\d+|credit:\d+)$/.test(contract)) return res.status(400).json({ error: "Neznana pogodba (sub, pass:<id>, credit:<id>)." });
       db.prepare("UPDATE withdrawals SET parent_id = COALESCE(?, parent_id), contract = COALESCE(?, contract) WHERE id = ?").run(pid, contract, id);
@@ -486,7 +507,10 @@ export function mountWithdrawal(app, { db, stripe, json, log = {}, getParent, qu
     if (!admin(req, res)) return;
     const note = String(req.body?.note || "").trim().slice(0, 300);
     if (!note) return res.status(400).json({ error: "Napiši razlog." });
-    const r = db.prepare("UPDATE withdrawals SET status = 'closed', note = ?, processed_at = ? WHERE id = ? AND status IN ('received', 'failed')").run(note, new Date().toISOString(), Number(req.params.id));
+    const w = db.prepare("SELECT refund_cents FROM withdrawals WHERE id = ?").get(Number(req.params.id));
+    // Delno vrnjeno: zaključi samo z izrecno potrditvijo »vrnjeno ročno« (preostanek vrnjen zunaj aplikacije).
+    if (w?.refund_cents > 0 && req.body?.refunded_manually !== true) return res.status(409).json({ error: "Del je že vrnjen. Zaključi samo, če si preostanek vrnil ročno (vrnjeno ročno).", refunded: true });
+    const r = db.prepare("UPDATE withdrawals SET status = 'closed', note = ?, processed_at = ? WHERE id = ? AND status IN ('received', 'failed')").run(w?.refund_cents > 0 ? `vrnjeno ročno: ${note}` : note, new Date().toISOString(), Number(req.params.id));
     if (!r.changes) return res.status(409).json({ error: "Zaključiti je mogoče samo neobdelano obvestilo." });
     audit(db, { req, parentId: req.parent?.id, actor: "admin", action: "withdrawal_close", target: `withdrawal:${req.params.id}` });
     res.json({ withdrawals: adminList() });

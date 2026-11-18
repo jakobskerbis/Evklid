@@ -462,6 +462,19 @@ function guardLogoOnAuth() {
   );
 }
 
+// Prijava s strani »Odstop od pogodbe«: po prijavi ali registraciji (tudi Apple v mobilni aplikaciji prek iste
+// seje) nazaj na /odstop.html (continueFlow: vse poti prijave). Samo ta pot (ni odprte preusmeritve).
+function backToWithdrawal() {
+  try {
+    if (sessionStorage.getItem("evklid.poPrijavi") !== "/odstop.html") return false;
+    sessionStorage.removeItem("evklid.poPrijavi");
+  } catch {
+    return false;
+  }
+  location.href = "/odstop.html";
+  return true;
+}
+
 // Naprava, na kateri je bil kdo že prijavljen: neprijavljen obiskovalec dobi takoj prijavo, ne pristajalne strani.
 const SEEN = "evklid.racun";
 const AUTH_HASH = { "#prijava": "login", "#registracija": "register", "#pozabljeno-geslo": "forgot" };
@@ -540,6 +553,7 @@ async function route() {
 }
 
 async function continueFlow() {
+  if (backToWithdrawal()) return; // prijava ali registracija s strani za odstop od pogodbe
   status = await api("/api/account/status");
   if (await route()) await onReadyCb?.();
 }
@@ -611,12 +625,6 @@ function renderLogin(mode = "login") {
     try {
       if (mode === "login") {
         await api("/api/auth/login", { method: "POST", body: { email: f.email.value, password: f.password.value } });
-        // Prijava s strani za odstop od pogodbe (public/odstop.js): nazaj na to stran.
-        if (sessionStorage.getItem("evklid.poPrijavi") === "/odstop.html") {
-          sessionStorage.removeItem("evklid.poPrijavi");
-          location.href = "/odstop.html";
-          return;
-        }
       } else {
         // Vrsto kode določi strežnik (signupCodeKind). Koda vabila s strani /vabilo (že preverjena) gre vedno v polje
         // invite kot v #819, tudi če je v vrstici aktivacijska koda iz ?koda= ali jo je uporabnik spremenil (pregled #834);

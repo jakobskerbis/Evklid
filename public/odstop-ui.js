@@ -106,7 +106,11 @@ export function bindWithdrawal(acc, { api, toast, refresh }) {
     });
     act("[data-wd-close]", (b) => {
       const note = prompt("Razlog (npr. urejeno pri trgovini, vrnjeno ročno v Stripu, prepozno):");
-      if (note) run(b, `/api/admin/withdrawals/${b.dataset.wdClose}/close`, { note });
+      if (!note) return;
+      const w = v.withdrawals.find((x) => String(x.id) === b.dataset.wdClose);
+      // Delno že vrnjeno: zaključi samo, če je preostanek vrnjen ročno.
+      if (w?.refund_cents > 0 && !confirm("Del je že vrnjen. Si preostanek vrnil ročno v Stripu (vrnjeno ročno)?")) return;
+      run(b, `/api/admin/withdrawals/${b.dataset.wdClose}/close`, { note, ...(w?.refund_cents > 0 ? { refunded_manually: true } : {}) });
     });
   };
   const load = () => api("/api/admin/withdrawals").then(show, (err) => (out.innerHTML = `<p class="form-error">${esc(err.message)}</p>`));

@@ -2727,7 +2727,9 @@ export function mountAccounts(app, store, opts = {}) {
     try {
       sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
     } catch (err) {
-      const gone = err?.stripe?.code === "resource_missing" || /cancel/i.test(String(err?.message || ""));
+      // Že preklicana: samo resource_missing ali naročnina, ki jo Stripe vrne kot canceled.
+      let gone = err?.stripe?.code === "resource_missing";
+      if (!gone) gone = (await stripe.request("GET", `/subscriptions/${p.sub_id}`).catch(() => null))?.status === "canceled";
       if (!gone) throw err;
     }
     await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } }, { noFallback: true });
