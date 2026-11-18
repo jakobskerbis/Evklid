@@ -46,6 +46,7 @@ import { mountPodari } from "../placila/podari.js";
 import { Schedules, nowParts } from "../schedule.js";
 import { setSource } from "../rast.js";
 import { parentFromMeta, unmatchedRecorder } from "./ponoven-id.js";
+import { appMark } from "../mobile/trgovina.js";
 
 export const CONSENT_TEXT =
   "Izjavljam, da sem starš ali zakoniti zastopnik tega otroka in soglašam, da Evklid obdeluje otrokove osebne podatke " +
@@ -2227,7 +2228,7 @@ export function mountAccounts(app, store, opts = {}) {
         customer,
         client_reference_id: String(p.id),
         line_items: [{ price: prices[plan.key], quantity: 1 }],
-        success_url: `${base}/?billing=success&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${base}/?billing=success${appMark(req)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: currency === "EUR" ? "sl" : "auto",
         // Šolska cena je že znižana: brez dodatnih kod za popust.
@@ -2374,8 +2375,16 @@ export function mountAccounts(app, store, opts = {}) {
     if (best) await applySubscription(p.id, best, { adopt: true });
   }
 
+  // Največ en klic Stripa na 5 s za istega starša (vrnitev v aplikacijo po plačilu, public/pay-ui.js
+  // watchReturnFromPay, in več zavihkov hkrati); vmes stanje iz baze.
+  const syncedAt = new Map();
   app.post("/api/billing/sync", async (req, res) => {
     if (needStripe(res)) return;
+    const now = Date.now();
+    const id = req.parent.id;
+    if (now - (syncedAt.get(id) || 0) < 5000) return res.json(accountView(req, getParent(id)));
+    syncedAt.set(id, now);
+    if (syncedAt.size > 5000) for (const [k, at] of syncedAt) if (now - at >= 5000) syncedAt.delete(k);
     try {
       await syncCustomer(req.parent);
     } catch (err) {

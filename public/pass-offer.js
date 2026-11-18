@@ -5,7 +5,7 @@
 // Gumba »Prosi starše za plačilo« kartica ne ponuja sama: učenec ga odpre v »Kako lahko plača starš?«.
 import { t, locale } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
-import { consentFields, consentsOk, consentMessage, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
+import { consentFields, consentsOk, consentMessage, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout } from "./pay-ui.js";
 import { accountsOn } from "./account.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -31,7 +31,8 @@ export async function renderPassOffer(el, { api, studentId, toast }) {
     return;
   }
   const o = d.offer;
-  if (!o) {
+  // Aplikacija iz trgovine: brez nakupa s kartico in brez povezave za plačilo (public/pay-ui.js).
+  if (!o || isStoreApp()) {
     el.innerHTML = "";
     return;
   }
@@ -112,6 +113,7 @@ export async function renderPassOffer(el, { api, studentId, toast }) {
     btn.disabled = true;
     try {
       const r = await api("/api/billing/pass", { method: "POST", body: { ...body(), ...consentBody() } });
+      markCheckout("pass");
       location.href = r.url;
     } catch (x) {
       btn.disabled = false;

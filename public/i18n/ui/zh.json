@@ -2404,6 +2404,8 @@
   "acct.freeToday": "免费套餐 · 今天 {used}/{max}",
   "acct.secondChild": "第二个孩子请选择 2 个孩子的套餐。",
   "acct.subThanks": "谢谢！订阅已生效。",
+  "acct.paidBackToApp": "付款成功。请返回 Evklid 应用。",
+  "acct.paidLogin": "付款成功。请登录。",
   "acct.aiOut": "本月辅导老师已用完",
   "acct.aiOutTitle": "辅导老师将于每月 1 日恢复可用。练习照常进行。",
   "acct.aiSoft": "本月剩余时间讲解会简略一些",
@@ -2480,6 +2482,7 @@
     "other": "自付款起 {n} 天内解锁 Evklid 的全部功能（辅导老师、练习、小测验）。"
   },
   "payp.consentMissing": "请您在付款前勾选所有确认。",
+  "payp.inApp": "无法在应用内付款。请在网页浏览器中打开此链接。",
   "pass.until": "至{date}",
   "pass.parentInfo": "“{name}”考试（{date}）快到了。你的家长可以为你选择考前套餐。",
   "pass.parentInfoLink": "给家长的信息",

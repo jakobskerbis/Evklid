@@ -2416,6 +2416,8 @@
   "acct.freeToday": "offre gratuite · aujourd’hui {used}/{max}",
   "acct.secondChild": "Pour un deuxième enfant, choisis une offre pour 2 enfants.",
   "acct.subThanks": "Merci ! L’abonnement est actif.",
+  "acct.paidBackToApp": "Paiement réussi. Reviens dans l’application Evklid.",
+  "acct.paidLogin": "Paiement réussi. Connecte-toi.",
   "acct.aiOut": "tuteur épuisé ce mois-ci",
   "acct.aiOutTitle": "Le tuteur sera de nouveau disponible le 1er du mois. L’entraînement continue de fonctionner.",
   "acct.aiSoft": "les explications sont moins détaillées jusqu’à la fin du mois",
@@ -2495,6 +2497,7 @@
     "other": "Débloque tout Evklid (tuteur, exercices, tests d’entraînement) pendant {n} jours à partir du paiement."
   },
   "payp.consentMissing": "Cochez toutes les cases avant de payer.",
+  "payp.inApp": "Le paiement n’est pas possible dans l’application. Ouvrez ce lien dans un navigateur web.",
   "pass.until": "jusqu’au {date}",
   "pass.parentInfo": "Le contrôle « {name} » ({date}) approche. Tes parents peuvent choisir un pack de préparation au contrôle.",
   "pass.parentInfoLink": "Informations pour les parents",

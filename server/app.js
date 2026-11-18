@@ -83,6 +83,7 @@ import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
+import { blockStoreAppPurchases, storeAppRequest } from "./mobile/trgovina.js";
 import { mount3d } from "./tri-d.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
 import { startFxJobs } from "./tecaji.js";
@@ -296,6 +297,7 @@ export function createApp(store, opts = {}) {
     next();
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
+  app.use(blockStoreAppPurchases); // aplikacija iz trgovine: brez nakupa s kartico (server/mobile/trgovina.js)
   mountInviteApi(app); // koda vabila v pilot (javno, pred prijavo; server/vabila.js)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
   app.use((req, res, next) => (req.nekanonicnaApi ? res.status(404).json({ error: "Pot ne obstaja." }) : next())); // točka A1
@@ -1357,7 +1359,7 @@ export function createApp(store, opts = {}) {
         // Z dokupljenim kreditom so podrobne razlage še na voljo (usage.fastOnly), gumb ostane.
         aiOut = usage.fastOnly(student.id);
         if (after.stage !== allowBefore.stage && (after.stage === "low" || after.stage === "out")) {
-          send("allowance", { stage: after.stage, percent: after.percent, left: after.explanations_left, pool: after.pool || undefined, spread: after.spread || undefined, buy: !!accounts.topupButton?.(student.id) });
+          send("allowance", { stage: after.stage, percent: after.percent, left: after.explanations_left, pool: after.pool || undefined, spread: after.spread || undefined, buy: !storeAppRequest(req) && !!accounts.topupButton?.(student.id) });
         }
         // E-pošta staršu ob vsakem odgovoru nad mejo (enkrat na mesec za mejo, email_log): mejo lahko prestopi tudi
         // strošek zunaj tega odgovora (preverjanje, skeniranje), zato ne samo ob prehodu v tem odgovoru.

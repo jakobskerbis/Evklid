@@ -7,5 +7,13 @@
     r.classList.add("v-aplikaciji");
     r.style.setProperty("--varno-zg", "0px");
     r.style.setProperty("--varno-sp", "0px");
+    // Aplikacija iz trgovine (»EvklidApp/<različica> store«, public/pay-ui.js isStoreApp): brez povezav na cene in
+    // na prenos APK mimo trgovine (pravila trgovin).
+    if (/ EvklidApp\/\S+ store\b/.test(navigator.userAgent)) {
+      r.classList.add("v-trgovini");
+      const st = document.createElement("style");
+      st.textContent = '.v-trgovini a[href*="#cene"],.v-trgovini a[href^="/prenesi"]{display:none!important}';
+      document.head.appendChild(st);
+    }
   } catch {}
 })();

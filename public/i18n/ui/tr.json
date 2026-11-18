@@ -2415,6 +2415,8 @@
   "acct.freeToday": "ücretsiz plan · bugün {used}/{max}",
   "acct.secondChild": "İkinci çocuk için 2 çocuklu bir plan seç.",
   "acct.subThanks": "Teşekkürler! Abonelik etkin.",
+  "acct.paidBackToApp": "Ödeme başarılı. Evklid uygulamasına geri dön.",
+  "acct.paidLogin": "Ödeme başarılı. Giriş yap.",
   "acct.aiOut": "öğretmen bu ay tükendi",
   "acct.aiOutTitle": "Öğretmen ayın 1'inde yeniden kullanılabilir. Alıştırmalar çalışmaya devam eder.",
   "acct.aiSoft": "açıklamalar ay sonuna kadar daha az ayrıntılı",
@@ -2494,6 +2496,7 @@
     "other": "Ödemeden itibaren {n} gün boyunca Evklid'in tamamını açar (özel öğretmen, alıştırmalar, deneme testleri)."
   },
   "payp.consentMissing": "Ödemeden önce tüm onay kutularını işaretleyin.",
+  "payp.inApp": "Uygulamada ödeme yapılamaz. Bu bağlantıyı bir web tarayıcısında açın.",
   "pass.until": "{date} tarihine kadar",
   "pass.parentInfo": "“{name}” sınavı ({date}) yaklaşıyor. Ailen sınav öncesi hazırlık paketini seçebilir.",
   "pass.parentInfoLink": "Veliler için bilgi",
