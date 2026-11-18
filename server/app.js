@@ -87,6 +87,8 @@ import { mobileClient, mountMobile } from "./mobile/index.js";
 import { blockStoreAppPurchases, storeAppRequest, storeAppPages } from "./mobile/trgovina.js";
 import { mount3d } from "./tri-d.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
+import { TERMS_VERSION, termsPublished } from "./accounts/potrdilo.js";
+import { pogojiStran } from "./pogoji-stran.js";
 import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs, jeOs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
@@ -382,6 +384,7 @@ export function createApp(store, opts = {}) {
     next();
   });
   mountShortLinks(app); // /pogoji, /zasebnost, /starsi, /garancija → .html (pred števcem obiskov, server/ni-strani.js)
+  app.get("/pogoji.html", pogojiStran(publicDir)); // osnutek ali objavljeni pogoji (EVKLID_POGOJI_OBJAVLJENI)
   // Merjenje v pilotu: števec ogledov strani za starše (pred statičnimi datotekami, glej pilot.js).
   app.use(visitCounter(store.db));
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
@@ -669,6 +672,8 @@ export function createApp(store, opts = {}) {
       admin: !!req.parent?.is_admin || isLocalRequest(req),
       chat_off: chatOff(),
       test_notice: testNotice(),
+      // Splošni pogoji: različica in ali so objavljeni (EVKLID_POGOJI_OBJAVLJENI; server/accounts/potrdilo.js).
+      terms: { version: TERMS_VERSION, published: termsPublished() },
     });
   });
 

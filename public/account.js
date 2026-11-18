@@ -5,11 +5,12 @@ import { systemForCountry } from "./regions.js";
 import { currentLang, currentRegion, deviceRegion, locale, t } from "./i18n.js";
 import { dateText } from "./datum.js";
 import { openProfileMenu } from "./profile-menu.js";
-import { consentFields, termsField, consentsOk, consentMessage, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout, clearCheckout, watchReturnFromPay } from "./pay-ui.js";
+import { setTermsVersion, consentFields, termsField, consentsOk, consentMessage, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout, clearCheckout, watchReturnFromPay } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
 import { renderPilotAdmin, paintAccountPilot, paintAccountWtp, proofHtml, proofBody, wireProof } from "./pilot-naloge.js";
 import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
+import { withdrawalLink, termsBanner, withdrawalAdminCard, bindWithdrawal } from "./odstop-ui.js";
 import { clearPrivate, checkOwner, deviceData, endedSession, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
 import { currentSource } from "./vir.js";
@@ -461,6 +462,19 @@ function guardLogoOnAuth() {
   );
 }
 
+// Prijava s strani »Odstop od pogodbe«: po prijavi ali registraciji (tudi Apple v mobilni aplikaciji prek iste
+// seje) nazaj na /odstop.html (continueFlow: vse poti prijave). Samo ta pot (ni odprte preusmeritve).
+function backToWithdrawal() {
+  try {
+    if (sessionStorage.getItem("evklid.poPrijavi") !== "/odstop.html") return false;
+    sessionStorage.removeItem("evklid.poPrijavi");
+  } catch {
+    return false;
+  }
+  location.href = "/odstop.html";
+  return true;
+}
+
 // Naprava, na kateri je bil kdo že prijavljen: neprijavljen obiskovalec dobi takoj prijavo, ne pristajalne strani.
 const SEEN = "evklid.racun";
 const AUTH_HASH = { "#prijava": "login", "#registracija": "register", "#pozabljeno-geslo": "forgot" };
@@ -539,6 +553,7 @@ async function route() {
 }
 
 async function continueFlow() {
+  if (backToWithdrawal()) return; // prijava ali registracija s strani za odstop od pogodbe
   status = await api("/api/account/status");
   if (await route()) await onReadyCb?.();
 }
@@ -1917,6 +1932,7 @@ export async function renderAccount() {
     return;
   }
   if (acc.parent.guest) return renderGuestAccount(view, acc);
+  setTermsVersion(acc.terms_version); // različica ob potrditvi pogojev pred plačilom (public/pay-ui.js)
   const paid = acc.access.tier === "paid";
   // Aplikacija iz trgovine: brez nakupa s kartico (naročnina, nadgradnja, darilo, Podari, dokup; public/pay-ui.js).
   // Kupljeno ostane vidno (stanje naročnine, darilne kode, preostali pogovori).
@@ -1926,6 +1942,8 @@ export async function renderAccount() {
     <button type="button" class="ghost back me-back">${icon("arrow-left")}${esc(t("nav.me"))}</button>
     <h1>${esc(t("nav.account"))}</h1>
     ${privacyBanner(acc)}
+    ${termsBanner(acc)}
+    ${withdrawalLink(acc)}
     ${acc.parent.verified ? "" : `<div class="card" id="verify-card">
       <h2>${esc(t("verify.nudgeTitle"))}</h2>
       <p>${esc(t("verify.nudgeText", { email: acc.parent.email }))}</p>
@@ -1949,6 +1967,7 @@ export async function renderAccount() {
     ${giftBox(shown)}
     ${storeApp || acc.self_only ? "" : podariBox(acc)}
     ${adminCards(acc)}
+    ${withdrawalAdminCard(acc)}
     ${acc.promo?.codes ? `<div class="card" id="pilot-card"><h2>${esc(t("pilot.title"))}</h2><div id="pilot-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="pilot-tasks-card"><h2>${esc(t("pilot.n.title"))}</h2><div id="pilot-tasks-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="pilot-mnenja-card"><h2>${esc(t("pilot.mn.title"))}</h2><div id="pilot-mnenja-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
@@ -2063,6 +2082,7 @@ export async function renderAccount() {
   paintAccountWtp($("#pn-wtp"), acc.pilot_wtp, { api, toast, hasPassword }); // pilot: »Ali bi za Evklid plačali?« (enkrat)
   wirePrivacyBanner(hasPassword); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
+  bindWithdrawal(acc, { api, toast, refresh: renderAccount });
   // Kaj je izrisano (refreshAfterPay izriše znova le ob spremembi, da ne pobriše napol izpolnjenih obrazcev).
   shownSig = null;
   renderCreditCard($("#credit-card"), { api, buy: !storeApp }).then((balance) => (shownSig = paySig(acc, balance)));

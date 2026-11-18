@@ -2,7 +2,7 @@
 // starš vidi, kaj plačuje, potrdi obe izjavi in plača prek Stripa. Brez prijave v Evklid.
 // Strežnik: /api/pay/:token (server/accounts/billing.js).
 import { t, locale, applyI18n } from "./i18n.js";
-import { consentFields, consentsOk, consentMessage, consentBody, isStoreApp } from "./pay-ui.js";
+import { consentFields, consentsOk, consentMessage, consentBody, isStoreApp, setTermsVersion } from "./pay-ui.js";
 
 const root = document.getElementById("pay-root");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -52,6 +52,7 @@ function summary(v) {
 
 function render(v) {
   if (v.paid) return showPaid(v);
+  setTermsVersion(v.terms_version);
   // Aplikacija iz trgovine: brez plačila s kartico in brez cene (pravila trgovin; strežnik plačilo zavrne,
   // server/mobile/trgovina.js).
   if (isStoreApp()) return shell(`<div class="card"><p id="pay-in-app">${esc(t("payp.inApp"))}</p></div>`);
@@ -62,7 +63,7 @@ function render(v) {
       <form id="pay-form" novalidate>
         <label for="pay-email">${esc(t("payp.email"))}</label>
         <input id="pay-email" name="email" type="email" required autocomplete="email" maxlength="200">
-        ${consentFields()}
+        ${consentFields("", { vi: true })}
         <p class="form-error" role="alert" hidden></p>
         <button class="primary" type="submit">${esc(t("payp.pay"))}</button>
         <p class="muted">${esc(t("payp.secure"))}</p>

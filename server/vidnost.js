@@ -30,6 +30,8 @@ export const WHY_PATH = "/zakaj-evklid";
 export const PUBLIC_PAGES = ["/", ABOUT_PATH, WHY_PATH, "/starsi.html", "/sole", "/prenesi", "/zasebnost.html"];
 // Osnutki do pregleda pravnika (j 2026-11-16): stran deluje in je povezana v nogi, v zemljevidu strani in llms.txt je ni (meta robots noindex).
 export const DRAFT_PAGES = ["/pogoji.html"];
+// Strani z obrazcem, povezane v nogi, a ne za iskalnike (meta robots noindex): funkcija za odstop od pogodbe (ZVPot-1A).
+export const NOINDEX_PAGES = ["/odstop.html"];
 // Zasebne poti: API, plačilna stran s kodo, prijava testne različice, stanje strežnika, datoteke aplikacije za prenos.
 export const PRIVATE_PATHS = ["/api/", "/placaj.html", "/prijava", "/healthz", "/gradiva/", "/prenesi/"];
 

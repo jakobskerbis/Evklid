@@ -12,7 +12,7 @@ import { levelPlanFor } from "../accounts/plans.js";
 import { newCode } from "./darila.js";
 import { audit } from "../dnevnik-dostopov.js";
 import { BIRTH_MISSING_PAY } from "../accounts/age.js";
-import { insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText } from "../accounts/potrdilo.js";
+import { insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText, livePayBlocked, LIVE_BLOCKED } from "../accounts/potrdilo.js";
 import { appMark } from "../mobile/trgovina.js";
 
 export const PODARI_DAYS = 90; // 3 mesece
@@ -132,6 +132,7 @@ export function mountPodari(app, ctx) {
     if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Podari lahko samo polnoletna oseba." });
     if (req.body?.adult !== true || req.body?.understand !== true) return res.status(400).json({ error: "Pred plačilom so potrebne vse potrditve.", consent: true });
+    if (livePayBlocked(stripe)) return res.status(409).json(LIVE_BLOCKED);
     if (!termsAccepted(req.body)) return res.status(400).json(TERMS_ERROR);
     const open = db.prepare("SELECT COUNT(*) AS n FROM podari_fund WHERE parent_id = ? AND status = 'pending' AND kind = 'month' AND created_at > datetime('now', '-1 day')").get(p.id).n;
     if (open >= 5) return res.status(429).json({ error: "Preveč odprtih nakupov. Poskusi jutri." });
