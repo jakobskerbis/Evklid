@@ -1,0 +1,1838 @@
+{
+  "vir": "preizkus-3-naloge.md (Preizkus 3, 150 nalog; besedilo iz bloka, nastavitve iz vrstice »Evklid«)",
+  "naloge": [
+    {
+      "id": 1,
+      "naslov": "Matematika · OŠ 3. razred · standardna",
+      "evklid": "Osnovna šola, 3. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "3. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. razredu osnovne šole.\nMaja ima 3 vrečke frnikol. V vsaki vrečki je 8 frnikol. Prijateljici podari 7 frnikol.\na) Koliko frnikol ima Maja zdaj?\nb) Njena sestra ima dvakrat toliko frnikol, kot jih ima Maja zdaj. Koliko frnikol ima sestra?"
+    },
+    {
+      "id": 2,
+      "naslov": "Matematika · OŠ 5. razred · standardna",
+      "evklid": "Osnovna šola, 5. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "5. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 5. razredu osnovne šole.\nVrt ima obliko pravokotnika, dolg je 12 m in širok 7,5 m.\na) Koliko metrov ograje potrebujemo, da ogradimo cel vrt?\nb) Kolikšna je ploščina vrta?"
+    },
+    {
+      "id": 3,
+      "naslov": "Matematika · OŠ 6. razred · standardna",
+      "evklid": "Osnovna šola, 6. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "6. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 6. razredu osnovne šole.\nIzračunaj in rezultat zapiši kot okrajšan ulomek (če je večji od 1, tudi kot mešano število):\na) 3/4 + 2/5\nb) 5/6 · 3/10"
+    },
+    {
+      "id": 4,
+      "naslov": "Matematika · OŠ 7. razred · standardna (a/b/c)",
+      "evklid": "Osnovna šola, 7. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "7. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 7. razredu osnovne šole.\nJakna stane 48 €. Najprej jo pocenijo za 15 %, čez en mesec pa novo ceno podražijo za 15 %.\na) Koliko stane jakna po pocenitvi?\nb) Koliko stane po podražitvi?\nc) Za koliko odstotkov je končna cena nižja od prvotne?"
+    },
+    {
+      "id": 5,
+      "naslov": "Matematika · OŠ 8. razred · standardna",
+      "evklid": "Osnovna šola, 8. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\nLestev, dolga 5,0 m, je naslonjena na navpično steno. Spodnji konec lestve je 1,4 m od stene. Kako visoko na steni sega lestev?"
+    },
+    {
+      "id": 6,
+      "naslov": "Matematika · OŠ 9. razred · Vodenje",
+      "evklid": "Osnovna šola, 9. razred, Matematika, način **Vodenje**",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "MAT",
+        "solving_mode": "A"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nNe povej mi rešitve, samo vodi me korak za korakom. Reši enačbo (x + 1)/2 − (x − 3)/3 = 2.",
+      "odgovori": ["Pomnožim s 6 in dobim 3x + 3 − 2x − 6 = 12.", "Ne vem."]
+    },
+    {
+      "id": 7,
+      "naslov": "Matematika · SŠ 1. letnik OR · standardna (a/b)",
+      "evklid": "Srednja šola, 1. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije, maturo bom pisal na osnovni ravni.\na) Reši neenačbo 3(x − 2) − 5 < 2x + 1.\nb) Koliko naravnih števil reši to neenačbo?"
+    },
+    {
+      "id": 8,
+      "naslov": "Matematika · SŠ 2. letnik OR · standardna (a/b/c)",
+      "evklid": "Srednja šola, 2. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije, maturo bom pisal na osnovni ravni.\nDana je kvadratna funkcija f(x) = x² − 4x − 5.\na) Izračunaj ničli in koordinati temena.\nb) Zapiši začetno vrednost funkcije.\nc) Za katere x je f(x) < 0?"
+    },
+    {
+      "id": 9,
+      "naslov": "Matematika · SŠ 3. letnik OR · graf",
+      "evklid": "Srednja šola, 3. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije, maturo bom pisal na osnovni ravni.\nNariši graf racionalne funkcije f(x) = (x − 2)/(x + 1). Prej določi ničlo, pol, vodoravno asimptoto in presečišče z osjo y."
+    },
+    {
+      "id": 10,
+      "naslov": "Matematika · SŠ 3. letnik VR · standardna",
+      "evklid": "Srednja šola, 3. letnik VR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik VR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije, maturo bom pisal na višji ravni.\nReši enačbo 4^x − 3 · 2^(x + 1) + 8 = 0."
+    },
+    {
+      "id": 11,
+      "naslov": "Matematika · SŠ 4. letnik VR · standardna",
+      "evklid": "Srednja šola, 4. letnik VR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik VR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije, maturo bom pisal na višji ravni.\nDana je funkcija f(x) = x³ − 3x² − 9x + 5.\na) Določi stacionarni točki in ugotovi, katera je lokalni maksimum in katera lokalni minimum.\nb) Določi intervale naraščanja in padanja.\nc) Določi prevoj."
+    },
+    {
+      "id": 12,
+      "naslov": "Matematika · SŠ 4. letnik OR · standardna",
+      "evklid": "Srednja šola, 4. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije, maturo bom pisal na osnovni ravni.\nIzračunaj ploščino lika, ki ga omejujeta parabola y = x² in premica y = 2x + 3."
+    },
+    {
+      "id": 13,
+      "naslov": "Matematika · SŠ 2. letnik OR · past (nemogoč podatek)",
+      "evklid": "Srednja šola, 2. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije, maturo bom pisal na osnovni ravni.\nTrikotnik ima stranice a = 3 cm, b = 4 cm in c = 8 cm. Izračunaj njegovo ploščino s Heronovo formulo."
+    },
+    {
+      "id": 14,
+      "naslov": "Matematika · SŠ 2. letnik OR · standardna (a/b/c)",
+      "evklid": "Srednja šola, 2. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije, maturo bom pisal na osnovni ravni.\nV trikotniku ABC je b = 7,0 cm, c = 5,0 cm in α = 60°.\na) Izračunaj stranico a.\nb) Izračunaj ploščino trikotnika.\nc) Izračunaj kota β in γ."
+    },
+    {
+      "id": 15,
+      "naslov": "Matematika · SŠ 3. letnik VR · dokaz",
+      "evklid": "Srednja šola, 3. letnik VR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik VR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije, maturo bom pisal na višji ravni.\nZ matematično indukcijo dokaži, da za vsako naravno število n velja\n1 · 2 + 2 · 3 + 3 · 4 + … + n(n + 1) = n(n + 1)(n + 2)/3."
+    },
+    {
+      "id": 16,
+      "naslov": "Matematika · SŠ 1. letnik VR · dokaz",
+      "evklid": "Srednja šola, 1. letnik VR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik VR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije, maturo bom pisal na višji ravni.\nTočki A in B sta krajišči premera krožnice, točka C pa je katerakoli druga točka na tej krožnici. Dokaži, da je kot ACB pravi kot."
+    },
+    {
+      "id": 17,
+      "naslov": "Matematika · SŠ 3. letnik OR · samo končni rezultat (večkoračna)",
+      "evklid": "Srednja šola, 3. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije, maturo bom pisal na osnovni ravni.\nSamo končni rezultat, brez postopka: v aritmetičnem zaporedju je a₃ = 15 in a₇ = 31. Kolikšna je vsota prvih 20 členov?"
+    },
+    {
+      "id": 18,
+      "naslov": "Matematika · SŠ 4. letnik OR · napačen dijakov odgovor",
+      "evklid": "Srednja šola, 4. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije, maturo bom pisal na osnovni ravni.\nVržemo dve pošteni igralni kocki. Kolikšna je verjetnost, da je vsota pik 7?\nJaz sem rešil tako: možne vsote so 2, 3, 4, …, 12, to je 11 možnosti, ena od njih je 7, zato je verjetnost 1/11. Ali je prav?"
+    },
+    {
+      "id": 19,
+      "naslov": "Matematika · fakulteta 1. letnik · standardna (a/b/c)",
+      "evklid": "Univerza, program z matematiko v 1. letniku (npr. Matematika ali Računalništvo in informatika), 1. letnik, Matematika",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FRI-RI",
+        "study_course": "UNI-ULFRI-OMA",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika, predmet Matematika.\na) Izračunaj limito lim_{x→0} (e^(2x) − 1)/x.\nb) Izračunaj določeni integral ∫₀¹ x · eˣ dx.\nc) Izračunaj determinanto in inverz matrike A = [[2, 1, 0], [1, 3, 1], [0, 1, 2]]."
+    },
+    {
+      "id": 20,
+      "naslov": "Matematika · fakulteta 1. letnik · dokaz",
+      "evklid": "Univerza, isti program kot pri nalogi 19, 1. letnik, Matematika",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FRI-RI",
+        "study_course": "UNI-ULFRI-OMA",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika, predmet Matematika.\nDano je zaporedje aₙ = n/(n + 1).\na) Dokaži, da je zaporedje naraščajoče in omejeno.\nb) Po definiciji limite dokaži, da je lim aₙ = 1.\nc) Od katerega n naprej je |aₙ − 1| < 0,01?"
+    },
+    {
+      "id": 21,
+      "naslov": "Fizika · OŠ 8. razred · samo končni rezultat (preprosta)",
+      "evklid": "Osnovna šola, 8. razred, Fizika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\nSamo končni rezultat, brez postopka: kovinska kocka z robom 2,0 cm ima maso 21,6 g. Kolikšna je njena gostota?"
+    },
+    {
+      "id": 22,
+      "naslov": "Fizika · OŠ 9. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 9. razred, Fizika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nGradbeno dvigalo v 15 s enakomerno dvigne tovor z maso 80 kg za 12 m.\na) Koliko dela opravi dvigalo?\nb) S kolikšno močjo dela?"
+    },
+    {
+      "id": 23,
+      "naslov": "Fizika · SŠ 1. letnik · napačen dijakov odgovor",
+      "evklid": "Srednja šola, 1. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nZ višine 20 m hkrati spustimo kroglo z maso 2 kg in kroglo z maso 4 kg. Zračni upor zanemarimo. Kateri krogli prej padeta na tla in koliko časa padata?\nMoja rešitev: krogla s 4 kg je dvakrat težja, zato pade dvakrat hitreje, in čas padanja je pri njej pol krajši kot pri krogli z 2 kg. Ali je prav?"
+    },
+    {
+      "id": 24,
+      "naslov": "Fizika · SŠ 1. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 1. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nŽogo vržemo vodoravno s hitrostjo 12 m/s z višine 1,8 m. Zračni upor zanemarimo.\na) Koliko časa leti žoga?\nb) Kako daleč od mesta meta (vodoravno) pade na tla?\nc) S kolikšno hitrostjo in pod kolikšnim kotom glede na vodoravnico pade na tla?"
+    },
+    {
+      "id": 25,
+      "naslov": "Fizika · SŠ 1. letnik · Vodenje",
+      "evklid": "Srednja šola, 1. letnik, Fizika, način **Vodenje**",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "FIZ",
+        "solving_mode": "A"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nNe povej mi rešitve, samo vodi me korak za korakom. Klada z maso 5,0 kg drsi po klancu z naklonom 30°. Koeficient trenja med klado in klancem je 0,20. S kolikšnim pospeškom drsi klada navzdol?",
+      "odgovori": [
+        "Sila trenja je 0,20 · 5,0 kg · 9,81 m/s² = 9,81 N.",
+        "Ne vem."
+      ]
+    },
+    {
+      "id": 26,
+      "naslov": "Fizika · SŠ 2. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 2. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nV valju s premičnim batom je 2,0 L idealnega plina pri temperaturi 20 °C in tlaku 100 kPa. Plin pri stalnem tlaku segrejemo na 80 °C.\na) Kolikšna je nova prostornina plina?\nb) Koliko molov plina je v valju?"
+    },
+    {
+      "id": 27,
+      "naslov": "Fizika · SŠ 1. letnik · past (protislovni podatki)",
+      "evklid": "Srednja šola, 1. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nAvto z maso 1200 kg v 5,0 s enakomerno pospeši iz mirovanja do hitrosti 20 m/s. Njegov pospešek je 3,0 m/s². S kolikšno rezultanto sil pospešuje avto?"
+    },
+    {
+      "id": 28,
+      "naslov": "Fizika · SŠ 3. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nUpornik R₁ = 6,0 Ω je zaporedno vezan z vzporedno vezavo upornikov R₂ = 12 Ω in R₃ = 4,0 Ω. Vezje priključimo na napetost 12 V.\na) Kolikšen je nadomestni upor vezja?\nb) Kolikšen tok teče skozi vsak upornik?\nc) Kolikšna je skupna moč vezja?"
+    },
+    {
+      "id": 29,
+      "naslov": "Fizika · SŠ 1. letnik · graf",
+      "evklid": "Srednja šola, 1. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nAvto 4,0 s enakomerno pospešuje iz mirovanja do hitrosti 12 m/s, nato 6,0 s vozi s stalno hitrostjo, nato pa v 3,0 s enakomerno zavre do ustavitve.\nNariši graf hitrosti v odvisnosti od časa v(t) in graf pospeška a(t). Iz grafa v(t) izračunaj celotno prevoženo pot."
+    },
+    {
+      "id": 30,
+      "naslov": "Fizika · SŠ 3. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nMatematično nihalo ima dolžino 0,80 m.\na) Kolikšen je nihajni čas na Zemlji?\nb) Kolikšna je frekvenca nihanja?\nc) Kolikšen bi bil nihajni čas na Luni, kjer je težni pospešek 1,62 m/s²?"
+    },
+    {
+      "id": 31,
+      "naslov": "Fizika · SŠ 4. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 4. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije.\nNa kovino z izstopnim delom 2,3 eV posvetimo s svetlobo z valovno dolžino 450 nm.\na) Kolikšna je energija enega fotona v J in v eV?\nb) Kolikšna je največja kinetična energija izbitih elektronov v eV?\nc) Kolikšna je najdaljša valovna dolžina svetlobe, ki še izbija elektrone iz te kovine?"
+    },
+    {
+      "id": 32,
+      "naslov": "Fizika · SŠ 1. letnik · izpeljava",
+      "evklid": "Srednja šola, 1. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nTelo vržemo s tal z začetno hitrostjo v₀ pod kotom α glede na vodoravnico. Zračni upor zanemarimo.\nIzpelji enačbo za domet D in pokaži, pri katerem kotu je domet največji."
+    },
+    {
+      "id": 33,
+      "naslov": "Fizika · SŠ 2. letnik · razloži, zakaj",
+      "evklid": "Srednja šola, 2. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nV kozarcu, ki je do roba napolnjen z vodo, plava kocka ledu. Ali se voda prelije čez rob, ko se led stali? Razloži, zakaj."
+    },
+    {
+      "id": 34,
+      "naslov": "Fizika · fakulteta 1. letnik · standardna (a/b)",
+      "evklid": "Univerza, program s fiziko v 1. letniku (npr. Fizika ali Strojništvo), 1. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FMF-FIZ",
+        "study_course": "UNI-ULFMF-KLASFIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika, predmet Fizika.\nPoln homogen valj z maso 2,0 kg in polmerom 0,10 m se iz mirovanja kotali brez drsenja po klancu navzdol. Višinska razlika je 1,5 m.\na) Kolikšna je hitrost težišča valja na dnu klanca?\nb) Kolikšen del kinetične energije na dnu je translacijski in kolikšen rotacijski (v J)?"
+    },
+    {
+      "id": 35,
+      "naslov": "Kemija · OŠ 8. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 8. razred, Kemija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\nMetan (CH₄) gori v kisiku. Pri tem nastaneta ogljikov dioksid in voda.\na) Zapiši in uredi enačbo reakcije.\nb) 16 g metana popolnoma zgori s 64 g kisika. Kolikšna je skupna masa produktov? Zakaj?"
+    },
+    {
+      "id": 36,
+      "naslov": "Kemija · OŠ 9. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 9. razred, Kemija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nV 175 g vode raztopimo 25 g sladkorja.\na) Kolikšen je masni delež sladkorja v raztopini?\nb) Koliko gramov vode moramo dodati, da bo masni delež sladkorja 5 %?"
+    },
+    {
+      "id": 37,
+      "naslov": "Kemija · SŠ 1. letnik · past (manjka podatek)",
+      "evklid": "Srednja šola, 1. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nV vodi raztopimo 5,85 g natrijevega klorida. Kolikšna je množinska koncentracija nastale raztopine?"
+    },
+    {
+      "id": 38,
+      "naslov": "Kemija · SŠ 1. letnik · napačen dijakov odgovor",
+      "evklid": "Srednja šola, 1. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nIzračunaj masni delež natrija v natrijevem kloridu.\nJaz sem napisal: NaCl ima dva elementa, en atom Na in en atom Cl, zato je masni delež natrija 50 %. Ali je prav?"
+    },
+    {
+      "id": 39,
+      "naslov": "Kemija · SŠ 1. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 1. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nImamo 10,0 g vode.\na) Kolikšna je množina vode?\nb) Koliko molekul vode je to?\nc) Koliko atomov vodika je v tej vodi?"
+    },
+    {
+      "id": 40,
+      "naslov": "Kemija · SŠ 2. letnik · Vodenje",
+      "evklid": "Srednja šola, 2. letnik, Kemija, način **Vodenje**",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "KEM",
+        "solving_mode": "A"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nNe povej mi rešitve, samo vodi me korak za korakom. Izračunaj pH raztopine barijevega hidroksida Ba(OH)₂ s koncentracijo 0,0050 mol/L. Barijev hidroksid je močna baza.",
+      "odgovori": ["Koncentracija OH⁻ je 0,0050 mol/L.", "Ne vem."]
+    },
+    {
+      "id": 41,
+      "naslov": "Kemija · SŠ 2. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 2. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\n10,0 g kalcijevega karbonata zreagira s prebitkom klorovodikove kisline.\na) Zapiši urejeno enačbo reakcije.\nb) Kolikšna prostornina ogljikovega dioksida nastane pri normalnih pogojih (0 °C, 101,3 kPa)?\nc) Kolikšna masa kalcijevega klorida nastane?"
+    },
+    {
+      "id": 42,
+      "naslov": "Kemija · SŠ 2. letnik · standardna",
+      "evklid": "Srednja šola, 2. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nZa reakcijo H₂(g) + I₂(g) ⇌ 2 HI(g) je pri dani temperaturi Kc = 50,0. V posodo s prostornino 1,00 L damo 1,00 mol H₂ in 1,00 mol I₂. Izračunaj ravnotežne koncentracije vseh treh snovi."
+    },
+    {
+      "id": 43,
+      "naslov": "Kemija · SŠ 3. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\na) Napiši racionalne (skeletne ali strukturne) formule in imena vseh alkoholov z molekulsko formulo C₄H₁₀O.\nb) Kateri od njih je terciarni alkohol?\nc) Koliko izomerov s formulo C₄H₁₀O je etrov?"
+    },
+    {
+      "id": 44,
+      "naslov": "Kemija · SŠ 4. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 4. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije.\nStandardna elektrodna potenciala sta E°(Zn²⁺/Zn) = −0,76 V in E°(Cu²⁺/Cu) = +0,34 V.\na) Kolikšna je standardna napetost galvanskega člena Zn/Cu?\nb) Katera elektroda je anoda in katera katoda? Zapiši polreakciji.\nc) Pri elektrolizi raztopine CuSO₄ teče tok 2,00 A 30,0 minut. Kolikšna masa bakra se izloči?"
+    },
+    {
+      "id": 45,
+      "naslov": "Kemija · SŠ 4. letnik · samo končni rezultat (dve podvprašanji)",
+      "evklid": "Srednja šola, 4. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije.\nSamo končna rezultata, brez postopka:\na) Kolikšen je pH raztopine HCl s koncentracijo 0,0010 mol/L?\nb) Kolikšna je množinska koncentracija raztopine, ki v 250 mL vsebuje 4,0 g NaOH?"
+    },
+    {
+      "id": 46,
+      "naslov": "Kemija · fakulteta 1. letnik · standardna (a/b)",
+      "evklid": "Univerza, Kemija (UL FKKT), 1. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FKKT-KEM",
+        "study_course": "UNI-ULFKKT-SPLKEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika, predmet Splošna kemija.\n1,00 L pufrske raztopine vsebuje 0,10 mol ocetne kisline in 0,15 mol natrijevega acetata. pKa ocetne kisline je 4,76.\na) Izračunaj pH pufra.\nb) Izračunaj pH po dodatku 0,010 mol HCl (prostornina se ne spremeni)."
+    },
+    {
+      "id": 47,
+      "naslov": "Biologija · OŠ 8. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 8. razred, Biologija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\na) Naštej tri zgradbe, ki jih ima rastlinska celica, živalska pa ne.\nb) V katerih celičnih organelih poteka fotosinteza in kaj pri njej nastane?"
+    },
+    {
+      "id": 48,
+      "naslov": "Biologija · OŠ 9. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 9. razred, Biologija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nRastline v ekosistemu na travniku v enem letu vežejo 50 000 kJ energije. V prehranjevalni verigi trava → kobilica → žaba se na naslednjo stopnjo prenese približno 10 % energije.\na) Koliko energije pride do kobilic in koliko do žab?\nb) Zakaj imajo prehranjevalne verige navadno le malo členov?"
+    },
+    {
+      "id": 49,
+      "naslov": "Biologija · SŠ 1. letnik · napačen dijakov odgovor",
+      "evklid": "Srednja šola, 1. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nKaj nastane pri mitozi človeške telesne celice?\nJaz sem napisal: iz ene celice s 46 kromosomi nastanejo štiri celice s po 23 kromosomi. Ali je prav?"
+    },
+    {
+      "id": 50,
+      "naslov": "Biologija · SŠ 3. letnik · Vodenje",
+      "evklid": "Srednja šola, 3. letnik, Biologija, način **Vodenje**",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "BIO",
+        "solving_mode": "A"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nNe povej mi rešitve, samo vodi me korak za korakom. Pri grahu je rumena barva semen (A) dominantna nad zeleno (a), okrogla oblika (B) pa nad nagubano (b). Križamo dve rastlini z genotipom AaBb. Kolikšen delež potomcev ima rumena in nagubana semena?",
+      "odgovori": ["Gameti staršev sta Aa in Bb.", "Ne vem."]
+    },
+    {
+      "id": 51,
+      "naslov": "Biologija · SŠ 3. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 3. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nBarvna slepota (rdeče-zelena) se deduje recesivno, vezano na kromosom X. Mati ima normalen vid, njen oče pa je bil barvno slep. Oče otrok ima normalen vid.\na) Kolikšna je verjetnost, da bo njun sin barvno slep?\nb) Kolikšna je verjetnost, da bo hči barvno slepa in kolikšna, da bo prenašalka?"
+    },
+    {
+      "id": 52,
+      "naslov": "Biologija · SŠ 2. letnik · razloži, zakaj",
+      "evklid": "Srednja šola, 2. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nRazloži, zakaj antibiotiki ne pomagajo pri gripi, in zakaj nepravilna raba antibiotikov vodi do odpornih bakterij."
+    },
+    {
+      "id": 53,
+      "naslov": "Biologija · SŠ 4. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 4. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije.\nV populaciji, ki je v Hardy-Weinbergovem ravnovesju, ima 16 % osebkov recesivni fenotip.\na) Kolikšni sta pogostosti alelov p in q?\nb) Kolikšen delež osebkov je heterozigotov?\nc) Koliko heterozigotov pričakujemo v populaciji s 500 osebki?"
+    },
+    {
+      "id": 54,
+      "naslov": "Biologija · SŠ 1. letnik · past (napačna predpostavka)",
+      "evklid": "Srednja šola, 1. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nZakaj imajo zrele rdeče krvničke pri človeku več mitohondrijev kot mišične celice?"
+    },
+    {
+      "id": 55,
+      "naslov": "Naravoslovje · OŠ 4. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 4. razred, Naravoslovje",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "4. razred",
+        "subject": "NAR",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. razredu osnovne šole.\na) Kaj se zgodi z vodo, ko jo damo v zamrzovalnik, in kaj, ko jo v loncu dolgo segrevamo? Kako se imenujeta ti spremembi?\nb) Pri kateri temperaturi se to zgodi?"
+    },
+    {
+      "id": 56,
+      "naslov": "Naravoslovje · OŠ 6. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 6. razred, Naravoslovje",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "6. razred",
+        "subject": "NAR",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 6. razredu osnovne šole.\nV vroč čaj pomočimo kovinsko in leseno žličko.\na) Katera se na ročaju prej segreje in zakaj?\nb) Navedi en primer iz kuhinje, kjer to lastnost snovi s pridom uporabimo."
+    },
+    {
+      "id": 57,
+      "naslov": "Naravoslovje · OŠ 7. razred · standardna",
+      "evklid": "Osnovna šola, 7. razred, Naravoslovje",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "7. razred",
+        "subject": "NAR",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 7. razredu osnovne šole.\nImamo zmes peska, kuhinjske soli in železnih opilkov. Opiši postopek, s katerim ločiš vse tri snovi, in poimenuj vsak postopek ločevanja."
+    },
+    {
+      "id": 58,
+      "naslov": "Računalništvo · fakulteta 1. letnik · standardna (a/b/c)",
+      "evklid": "Univerza, Računalništvo in informatika (UL FRI), 1. letnik, Računalništvo",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FRI-RI",
+        "study_course": "UNI-ULFRI-P1",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika računalništva.\na) Pretvori desetiško število 2024 v dvojiški in šestnajstiški zapis.\nb) Zapiši število −45 v 8-bitnem dvojiškem komplementu.\nc) Katero desetiško število predstavlja 8-bitni zapis 10110110, če ga beremo kot nepredznačeno število, in katero, če je zapisan v dvojiškem komplementu?"
+    },
+    {
+      "id": 59,
+      "naslov": "Računalništvo · fakulteta 1. letnik · napačen dijakov odgovor",
+      "evklid": "Univerza, Računalništvo in informatika (UL FRI), 1. letnik, Računalništvo",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FRI-RI",
+        "study_course": "UNI-ULFRI-P1",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika računalništva.\nKakšna je časovna zahtevnost te kode v Pythonu?\n\nfor i in range(n):\n    for j in range(i, n):\n        x += 1\n\nJaz sem odgovoril O(n), ker notranja zanka ne gre vsakič od začetka, ampak samo od i naprej. Ali je prav?"
+    },
+    {
+      "id": 60,
+      "naslov": "Računalništvo · fakulteta 1. letnik · standardna (a/b/c)",
+      "evklid": "Univerza, Računalništvo in informatika (UL FRI), 1. letnik, Računalništvo",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FRI-RI",
+        "study_course": "UNI-ULFRI-P1",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika računalništva.\na) V Pythonu napiši funkcijo gcd(a, b), ki z Evklidovim algoritmom vrne največji skupni delitelj dveh naravnih števil (brez uporabe math.gcd).\nb) Pokaži sled izvajanja za gcd(252, 105): vrednosti a, b in ostanka v vsakem koraku.\nc) Kolikšen je najmanjši skupni večkratnik števil 252 in 105?"
+    },
+    {
+      "id": 61,
+      "naslov": "Matematika · OŠ 1. razred · zelo lahka (a/b)",
+      "evklid": "Osnovna šola, 1. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "1. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. razredu osnovne šole.\nNa veji sedi 6 ptičkov. 2 ptička odletita, nato priletijo še 4 ptički.\na) Koliko ptičkov je zdaj na veji?\nb) Ali je zdaj na veji več ali manj ptičkov kot na začetku? Za koliko?"
+    },
+    {
+      "id": 62,
+      "naslov": "Matematika · OŠ 2. razred · zelo lahka (a/b)",
+      "evklid": "Osnovna šola, 2. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "2. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. razredu osnovne šole.\nTine ima 45 centov. Kupi liziko, ki stane 28 centov.\na) Koliko centov mu ostane?\nb) Babica mu nato da še 3 kovance po 10 centov. Koliko centov ima zdaj?"
+    },
+    {
+      "id": 63,
+      "naslov": "Naravoslovje · OŠ 2. razred · zelo lahka, razloži, zakaj (a/b)",
+      "evklid": "Osnovna šola, 2. razred, Naravoslovje",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "2. razred",
+        "subject": "NAR",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. razredu osnovne šole.\na) Po dežju je na igrišču luža. Ko posije sonce, luža izgine. Kam je šla voda? Zakaj se luža na soncu posuši prej kot v senci?\nb) Naštej tri stvari, ki jih rastlina potrebuje, da raste."
+    },
+    {
+      "id": 64,
+      "naslov": "Matematika · SŠ 1. letnik OR · osnovna vaja",
+      "evklid": "Srednja šola, 1. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije, maturo bom pisal na osnovni ravni.\nReši enačbo 4(x − 3) = 2x + 6."
+    },
+    {
+      "id": 65,
+      "naslov": "Fizika · SŠ 1. letnik · osnovna vaja",
+      "evklid": "Srednja šola, 1. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nAvto vozi s stalno hitrostjo 72 km/h. Kolikšno pot prevozi v 15 minutah?"
+    },
+    {
+      "id": 66,
+      "naslov": "Kemija · SŠ 1. letnik · osnovna vaja",
+      "evklid": "Srednja šola, 1. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nKoliko molov žveplove(VI) kisline (H₂SO₄) je v 49 g te snovi?"
+    },
+    {
+      "id": 67,
+      "naslov": "Matematika · SŠ 4. letnik VR · zahtevna maturitetna (a/b/c)",
+      "evklid": "Srednja šola, 4. letnik VR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik VR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije, maturo bom pisal na višji ravni.\nDana je funkcija f(x) = x · e^(1 − x).\na) Določi stacionarno točko in njeno vrsto, prevoj in vodoravno asimptoto grafa.\nb) Zapiši enačbo tangente na graf v prevoju. V kateri točki ta tangenta seka abscisno os?\nc) Natančno izračunaj ploščino lika, ki ga omejujejo graf funkcije f, abscisna os in premica x = 1."
+    },
+    {
+      "id": 68,
+      "naslov": "Fizika · SŠ 4. letnik · zahtevna maturitetna (a/b/c)",
+      "evklid": "Srednja šola, 4. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije.\nNa vodoravnih tleh leži gladka polkrogla s polmerom 0,80 m (ravna ploskev je na tleh). Majhno kroglico položimo na vrh polkrogle in jo rahlo sunemo, da začne drseti (začetna hitrost je zanemarljiva). Trenje in upor zraka zanemarimo, g = 9,81 m/s².\na) Na kateri višini nad tlemi se kroglica odlepi od polkrogle?\nb) Kolikšna je takrat njena hitrost?\nc) Kako daleč od središča polkrogle (vodoravno) kroglica pade na tla in s kolikšno hitrostjo?"
+    },
+    {
+      "id": 69,
+      "naslov": "Kemija · SŠ 4. letnik · zahtevna maturitetna (a/b/c)",
+      "evklid": "Srednja šola, 4. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije.\n25,0 mL raztopine ocetne kisline s koncentracijo 0,100 mol/L titriramo z raztopino NaOH s koncentracijo 0,100 mol/L. Ka(CH₃COOH) = 1,8 · 10⁻⁵.\nIzračunaj pH:\na) pred začetkom titracije,\nb) po dodatku 12,5 mL raztopine NaOH,\nc) v ekvivalentni točki."
+    },
+    {
+      "id": 70,
+      "naslov": "Matematika · OŠ 7. razred · tekmovalna (Vegovo) (a/b)",
+      "evklid": "Osnovna šola, 7. razred, Matematika, Cilj: **Tekmovanje**",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "7. razred",
+        "subject": "MAT",
+        "solving_mode": "B",
+        "goal": "tekmovanje"
+      },
+      "q": "Sem v 7. razredu osnovne šole in se pripravljam na tekmovanje iz matematike.\nTrimestno število pri deljenju s 4 da ostanek 3, pri deljenju s 5 ostanek 4 in pri deljenju s 6 ostanek 5.\na) Koliko je takih trimestnih števil?\nb) Katero je največje med njimi?"
+    },
+    {
+      "id": 71,
+      "naslov": "Fizika · OŠ 8. razred · tekmovalna (Stefanovo) (a/b/c)",
+      "evklid": "Osnovna šola, 8. razred, Fizika, Cilj: **Tekmovanje**",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "FIZ",
+        "solving_mode": "B",
+        "goal": "tekmovanje"
+      },
+      "q": "Sem v 8. razredu osnovne šole in se pripravljam na tekmovanje iz fizike.\nLesena kocka z robom 10 cm ima gostoto 600 kg/m³. Gostota vode je 1000 kg/m³, gostota olja 800 kg/m³.\na) Kocko položimo v vodo. Kako globoko se potopi?\nb) Kolikšno maso mora imeti utež, ki jo postavimo na kocko, da bo zgornja ploskev kocke ravno v gladini vode?\nc) Na vodo v posodi nalijemo 5,0 cm debelo plast olja, ki se z vodo ne meša, in vanjo položimo kocko (brez uteži). Kocka plava pokonci. Koliko centimetrov kocke je v vodi in koliko jih gleda iz olja?"
+    },
+    {
+      "id": 72,
+      "naslov": "Matematika · SŠ 2. letnik VR · tekmovalna (Vegovo) (a/b, dokaz)",
+      "evklid": "Srednja šola, 2. letnik VR, Matematika, Cilj: **Tekmovanje**",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik VR",
+        "subject": "MAT",
+        "solving_mode": "B",
+        "goal": "tekmovanje"
+      },
+      "q": "Sem v 2. letniku gimnazije in se pripravljam na tekmovanje iz matematike.\na) Koliko je urejenih parov celih števil (x, y), za katere velja x² − y² = 2025?\nb) Dokaži, da enačba x² − y² = 2026 nima nobene rešitve v celih številih."
+    },
+    {
+      "id": 73,
+      "naslov": "Fizika · SŠ 1. letnik · tekmovalna (Stefanovo) (a/b)",
+      "evklid": "Srednja šola, 1. letnik, Fizika, Cilj: **Tekmovanje**",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B",
+        "goal": "tekmovanje"
+      },
+      "q": "Sem v 1. letniku gimnazije in se pripravljam na tekmovanje iz fizike.\nŽogo vržemo s tal z začetno hitrostjo 20 m/s. Vodoravno 20 m stran stoji navpična stena, visoka 10 m. Upor zraka zanemarimo, g = 9,81 m/s².\na) Pod katerim kotom glede na vodoravnico moramo vreči žogo, da zadene točko na vrhu stene? Poišči vse rešitve.\nb) Kolikšna je najmanjša začetna hitrost, s katero žoga sploh lahko zadene vrh stene, in pod katerim kotom jo moramo takrat vreči?"
+    },
+    {
+      "id": 74,
+      "naslov": "Kemija · SŠ 2. letnik · tekmovalna (Preglovo) (a/b/c)",
+      "evklid": "Srednja šola, 2. letnik, Kemija, Cilj: **Tekmovanje**",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "KEM",
+        "solving_mode": "B",
+        "goal": "tekmovanje"
+      },
+      "q": "Sem v 2. letniku gimnazije in se pripravljam na tekmovanje iz kemije.\nZmes natrijevega hidrogenkarbonata in natrijevega karbonata ima maso 10,00 g. Zmes segrevamo do stalne mase. Pri tem razpade samo NaHCO₃, masa trdnega ostanka pa se zmanjša za 1,55 g.\na) Napiši urejeno enačbo razpada.\nb) Izračunaj masni delež NaHCO₃ v prvotni zmesi.\nc) Kolikšna prostornina CO₂ pri normalnih pogojih bi se sprostila, če bi enako prvotno zmes (10,00 g) namesto segrevanja raztopili v prebitku klorovodikove kisline?"
+    },
+    {
+      "id": 75,
+      "naslov": "Biologija · SŠ 3. letnik · tekmovalna (Proteus) (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik, Biologija, Cilj: **Tekmovanje**",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "BIO",
+        "solving_mode": "B",
+        "goal": "tekmovanje"
+      },
+      "q": "Sem v 3. letniku gimnazije in se pripravljam na tekmovanje iz biologije (Proteus).\nPri vinski mušici gena A in B ležita na istem kromosomu, med njima je 20 % rekombinacije (20 cM). Alela A in B sta dominantna. Samico, ki je od matere dobila kromosom z aleloma A in b, od očeta pa kromosom z aleloma a in B, križamo s samcem aabb.\na) Katere gamete in v kakšnem razmerju tvori samica?\nb) Kolikšen delež potomcev ima fenotip, ki ga določata dominantna alela A in B?\nc) Koliko potomcev med 800 pričakujemo z genotipom aabb? Koliko bi jih pričakovali, če bi gena ležala na različnih kromosomih?"
+    },
+    {
+      "id": 76,
+      "naslov": "Matematika · fakulteta 1. letnik · zahtevna (račun in dokaz)",
+      "evklid": "Univerza, Matematika (UL FMF), 1. letnik, predmet Analiza 1",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FMF-MAT",
+        "study_course": "UNI-ULFMF-ANALIZA1",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika matematike, predmet Analiza 1.\na) Izračunaj lim_{x→0} (sin x − x cos x)/x³.\nb) Za katere α > 0 vrsta Σ_{n=2}^∞ 1/(n (ln n)^α) konvergira? Utemelji.\nc) Zaporedje je dano z a₁ = 1 in aₙ₊₁ = aₙ + 1/aₙ. Dokaži, da je zaporedje neomejeno in da velja lim_{n→∞} aₙ/√(2n) = 1."
+    },
+    {
+      "id": 77,
+      "naslov": "Fizika · fakulteta 1. letnik · zahtevna (a/b/c/d)",
+      "evklid": "Univerza, Fizika (UL FMF), 1. letnik, predmet Klasična fizika",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FMF-FIZ",
+        "study_course": "UNI-ULFMF-KLASFIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika fizike, predmet Klasična fizika.\nPolno homogeno kroglo zalučamo po vodoravnih tleh tako, da na začetku drsi s hitrostjo 7,0 m/s in se ne vrti. Koeficient trenja med kroglo in tlemi je 0,20, g = 9,81 m/s².\na) Po kolikšnem času se krogla začne kotaliti brez spodrsavanja?\nb) Kolikšna je takrat hitrost njenega težišča?\nc) Kolikšno pot opravi težišče do tega trenutka?\nd) Kolikšen delež začetne kinetične energije se pri tem pretvori v toploto?"
+    },
+    {
+      "id": 78,
+      "naslov": "Računalništvo · fakulteta 1. letnik · zahtevna (a/b/c)",
+      "evklid": "Univerza, Računalništvo in informatika (UL FRI), 1. letnik, Računalništvo (Programiranje 1)",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FRI-RI",
+        "study_course": "UNI-ULFRI-P1",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika računalništva.\na) V Pythonu napiši funkcijo, ki za seznam celih števil (lahko negativnih) v času O(n) vrne največjo vsoto strnjenega nepraznega podseznama. Utemelji, zakaj je algoritem pravilen.\nb) Kaj vrne tvoja funkcija za seznam [3, −4, 5, −1, 3, −7, 4, 1, −2, 2] in kateri podseznam da to vsoto?\nc) Seznam je zdaj krožen: podseznam se lahko nadaljuje s konca na začetek (vsak element največ enkrat). Kako prilagodiš algoritem, da ostane O(n)? Kolikšna je največja vsota za isti seznam?"
+    },
+    {
+      "id": 79,
+      "naslov": "Matematika · OŠ 6. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 6. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "6. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 6. razredu osnovne šole.\nNina ima 3 majice (rdečo, modro, belo), 2 hlače (kavbojke, trenirko) in 2 para obuval (superge, sandale).\na) Na koliko različnih načinov se lahko obleče, če izbere eno majico, ene hlače in en par obuval? Nariši drevesni prikaz.\nb) Rdeče majice nikoli ne obleče skupaj s trenirko. Koliko načinov ji ostane?"
+    },
+    {
+      "id": 80,
+      "naslov": "Matematika · OŠ 7. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 7. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "7. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 7. razredu osnovne šole.\nLuka je na petih testih dosegel 72, 85, 90, 64 in 79 točk.\na) Kolikšna je aritmetična sredina njegovih točk?\nb) Pisal bo še šesti test. Koliko točk mora doseči, da bo aritmetična sredina vseh šestih testov 80 točk?"
+    },
+    {
+      "id": 81,
+      "naslov": "Matematika · OŠ 7. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 7. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "7. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 7. razredu osnovne šole.\n6 delavcev bi prenovilo šolo v 15 dneh. Vsi delajo enako hitro.\na) V koliko dneh bi šolo prenovilo 10 delavcev?\nb) Delo začne 6 delavcev. Po 5 dneh se jim pridružijo še 4 delavci. Koliko dni skupaj traja prenova?"
+    },
+    {
+      "id": 82,
+      "naslov": "Matematika · OŠ 8. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 8. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\nOkrogla pica ima polmer 18 cm. Odrežemo kos v obliki krožnega izseka s središčnim kotom 40°.\na) Kolikšna je ploščina tega kosa?\nb) Kolikšna je dolžina skorje (krožnega loka) na tem kosu?\nRezultata zapiši natančno (s π) in na dve decimalki."
+    },
+    {
+      "id": 83,
+      "naslov": "Matematika · OŠ 8. razred · standardna (a/b/c)",
+      "evklid": "Osnovna šola, 8. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\nRazstavi izraze:\na) 4x² − 25\nb) x² − 7x + 12\nc) 3a²b − 12ab²"
+    },
+    {
+      "id": 84,
+      "naslov": "Matematika · OŠ 9. razred · standardna (a/b/c)",
+      "evklid": "Osnovna šola, 9. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nPokončni stožec ima polmer osnovne ploskve 6 cm in višino 8 cm.\na) Kolikšna je dolžina stranice (izvodnice) stožca?\nb) Kolikšna je površina stožca?\nc) Kolikšna je prostornina stožca?"
+    },
+    {
+      "id": 85,
+      "naslov": "Matematika · OŠ 9. razred · napačen dijakov odgovor",
+      "evklid": "Osnovna šola, 9. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nV vrečki so 3 rdeče in 5 modrih kroglic. Na slepo izvlečemo eno kroglico, je ne vrnemo, in nato izvlečemo še eno. Kolikšna je verjetnost, da sta obe kroglici rdeči?\nJaz sem izračunal: 3/8 · 3/8 = 9/64. Ali je prav?"
+    },
+    {
+      "id": 86,
+      "naslov": "Matematika · OŠ 9. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 9. razred, Matematika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nNavpična palica, visoka 1,5 m, meče na ravnih tleh 2,0 m dolgo senco. Ob istem času meče drevo 14 m dolgo senco.\na) Kako visoko je drevo?\nb) Kolikokrat je drevo višje od palice?"
+    },
+    {
+      "id": 87,
+      "naslov": "Matematika · SŠ 1. letnik OR · standardna (a/b)",
+      "evklid": "Srednja šola, 1. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije, maturo bom pisal na osnovni ravni.\nZa koncert so prodali 85 vstopnic in zbrali 845 €. Vstopnica za odrasle stane 12 €, za otroke pa 7 €.\na) Zapiši sistem dveh linearnih enačb za število vstopnic za odrasle (x) in za otroke (y).\nb) Reši sistem. Koliko vstopnic za odrasle in koliko za otroke so prodali?"
+    },
+    {
+      "id": 88,
+      "naslov": "Matematika · SŠ 1. letnik VR · standardna (a/b/c)",
+      "evklid": "Srednja šola, 1. letnik VR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik VR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije, maturo bom pisal na višji ravni.\nTrikotnik ima stranice a = 13 cm, b = 14 cm in c = 15 cm.\na) Izračunaj ploščino trikotnika.\nb) Izračunaj polmer trikotniku očrtanega kroga.\nc) Izračunaj polmer trikotniku včrtanega kroga."
+    },
+    {
+      "id": 89,
+      "naslov": "Matematika · SŠ 1. letnik OR · graf",
+      "evklid": "Srednja šola, 1. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije, maturo bom pisal na osnovni ravni.\nDvanajst dijakov je zapisalo, koliko ur na teden berejo knjige: 7, 12, 5, 10, 2, 8, 15, 5, 9, 4, 10, 6.\nDoloči najmanjšo vrednost, prvi kvartil, mediano, tretji kvartil in največjo vrednost ter nariši škatlo z brki (okvir z ročaji). Izračunaj še aritmetično sredino in povej, ali je večja ali manjša od mediane."
+    },
+    {
+      "id": 90,
+      "naslov": "Matematika · SŠ 2. letnik OR · standardna (a/b/c)",
+      "evklid": "Srednja šola, 2. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije, maturo bom pisal na osnovni ravni.\nDani sta kompleksni števili z₁ = 3 − 2i in z₂ = 1 + 4i.\na) Izračunaj z₁ · z₂.\nb) Izračunaj z₁ / z₂ in rezultat zapiši v obliki a + bi.\nc) Izračunaj |z₁| in z₁ · z̄₁ (z̄₁ je konjugirano število)."
+    },
+    {
+      "id": 91,
+      "naslov": "Matematika · SŠ 2. letnik OR · standardna",
+      "evklid": "Srednja šola, 2. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije, maturo bom pisal na osnovni ravni.\nReši enačbo log₂(x + 3) + log₂(x − 1) = 5."
+    },
+    {
+      "id": 92,
+      "naslov": "Matematika · SŠ 2. letnik VR · standardna (a/b/c)",
+      "evklid": "Srednja šola, 2. letnik VR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik VR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije, maturo bom pisal na višji ravni.\nDana je funkcija f(x) = (2x − 1)/(x + 3).\na) Določi definicijsko območje in zalogo vrednosti funkcije f.\nb) Izračunaj inverzno funkcijo f⁻¹ in zapiši njeno definicijsko območje.\nc) Naj bo g(x) = x² + 1. Izračunaj (g ∘ f)(1) in zapiši predpis (f ∘ g)(x)."
+    },
+    {
+      "id": 93,
+      "naslov": "Matematika · SŠ 3. letnik OR · Vodenje",
+      "evklid": "Srednja šola, 3. letnik OR, Matematika, način **Vodenje**",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "A"
+      },
+      "q": "Sem v 3. letniku gimnazije, maturo bom pisal na osnovni ravni.\nNe povej mi rešitve, samo vodi me korak za korakom. Reši enačbo 2 sin²x − sin x − 1 = 0 na intervalu [0, 2π).",
+      "odgovori": [
+        "Uvedem t = sin x in dobim 2t² − t − 1 = 0. Rešitvi sta t = −1 in t = 1/2.",
+        "Ne vem."
+      ]
+    },
+    {
+      "id": 94,
+      "naslov": "Matematika · SŠ 3. letnik OR · standardna (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije, maturo bom pisal na osnovni ravni.\nDana sta vektorja a = (2, −1, 2) in b = (1, 2, −2).\na) Izračunaj skalarni produkt a · b in dolžini obeh vektorjev.\nb) Izračunaj kot med vektorjema a in b.\nc) Določi število m tako, da bo vektor c = (m, 4, 1) pravokoten na vektor a."
+    },
+    {
+      "id": 95,
+      "naslov": "Matematika · SŠ 3. letnik VR · standardna (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik VR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik VR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije, maturo bom pisal na višji ravni.\nDana je krožnica x² + y² − 6x + 4y − 12 = 0.\na) Določi središče in polmer krožnice.\nb) Pokaži, da točka T(6, 2) leži na krožnici.\nc) Zapiši enačbo tangente na krožnico v točki T."
+    },
+    {
+      "id": 96,
+      "naslov": "Matematika · SŠ 3. letnik OR · standardna (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije, maturo bom pisal na osnovni ravni.\nPravilna štiristrana piramida ima osnovni rob 6 cm in stranski rob 5 cm.\na) Izračunaj višino stranske ploskve.\nb) Izračunaj površino piramide.\nc) Izračunaj višino in prostornino piramide."
+    },
+    {
+      "id": 97,
+      "naslov": "Matematika · SŠ 4. letnik OR · past (nemogoče vprašanje)",
+      "evklid": "Srednja šola, 4. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije, maturo bom pisal na osnovni ravni.\nIzračunaj vsoto neskončne geometrijske vrste 2 + 3 + 4,5 + 6,75 + …"
+    },
+    {
+      "id": 98,
+      "naslov": "Matematika · SŠ 4. letnik VR · standardna (a/b)",
+      "evklid": "Srednja šola, 4. letnik VR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik VR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije, maturo bom pisal na višji ravni.\nDan je izraz (2x − 1/x)⁸.\na) Izračunaj koeficient pri x⁴ v razvoju tega izraza.\nb) Izračunaj člen, ki ne vsebuje x."
+    },
+    {
+      "id": 99,
+      "naslov": "Matematika · SŠ 4. letnik OR · standardna (a/b/c)",
+      "evklid": "Srednja šola, 4. letnik OR, Matematika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik OR",
+        "subject": "MAT",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije, maturo bom pisal na osnovni ravni.\nV razredu je 12 fantov in 10 deklet. Za organizacijo plesa izberejo štiričlansko skupino.\na) Na koliko načinov lahko izberejo skupino?\nb) Na koliko načinov lahko izberejo skupino, v kateri sta natanko dve dekleti?\nc) Na koliko načinov lahko izberejo skupino, v kateri je vsaj eno dekle?"
+    },
+    {
+      "id": 100,
+      "naslov": "Matematika · fakulteta 1. letnik · standardna (a/b/c)",
+      "evklid": "Univerza, Matematika (UL FMF), 1. letnik, predmet Algebra 1",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FMF-MAT",
+        "study_course": "UNI-ULFMF-ALGEBRA1",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika matematike, predmet Algebra 1.\nDana je matrika A = [[4, 1], [2, 3]].\na) Izračunaj lastne vrednosti matrike A.\nb) Za vsako lastno vrednost določi lasten vektor.\nc) Zapiši A = P D P⁻¹ z diagonalno matriko D in s tem izračunaj A⁵."
+    },
+    {
+      "id": 101,
+      "naslov": "Fizika · OŠ 8. razred · standardna (a/b/c)",
+      "evklid": "Osnovna šola, 8. razred, Fizika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\nPlaninec z maso 72 kg stoji na snegu. Ploščina podplatov obeh čevljev skupaj je 300 cm². Ko si nadene krplje, je ploščina, na katero pritiska, 0,40 m².\na) Kolikšen tlak povzroča planinec na sneg v čevljih?\nb) Kolikšen tlak povzroča s krpljami? Zakaj se s krpljami manj udira?\nc) Kolikšen je tlak vode (brez zračnega tlaka) v globini 3,0 m pod gladino jezera?"
+    },
+    {
+      "id": 102,
+      "naslov": "Fizika · OŠ 8. razred · razloži, zakaj",
+      "evklid": "Osnovna šola, 8. razred, Fizika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\nSvinčnik postavimo poševno v kozarec z vodo. Ko ga gledamo od strani, se zdi, kot da je na gladini vode prelomljen. Razloži, zakaj."
+    },
+    {
+      "id": 103,
+      "naslov": "Fizika · OŠ 9. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 9. razred, Fizika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nSpecifična toplota vode je 4200 J/(kg K).\na) Zmešamo 0,30 kg vode s temperaturo 80 °C in 0,20 kg vode s temperaturo 20 °C. Kolikšna je končna temperatura, če toplotne izgube zanemarimo?\nb) Grelnik vode z močjo 2000 W segreje 1,5 kg vode od 20 °C do 100 °C. Koliko časa traja segrevanje, če izgube zanemarimo?"
+    },
+    {
+      "id": 104,
+      "naslov": "Fizika · OŠ 9. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 9. razred, Fizika",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nElektrični radiator z močjo 2,0 kW deluje vsak dan 45 minut, 30 dni. 1 kWh električne energije stane 0,20 €.\na) Koliko električnega dela opravi radiator v teh 30 dneh in koliko to stane?\nb) Kolikšen tok teče skozi radiator, ko je priključen na napetost 230 V?"
+    },
+    {
+      "id": 105,
+      "naslov": "Fizika · SŠ 1. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 1. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nVoziček z maso 2,0 kg se giblje s hitrostjo 3,0 m/s in se zaleti v mirujoč voziček z maso 1,0 kg. Vozička se sprimeta in nadaljujeta pot skupaj. Trenje zanemarimo.\na) Kolikšna je hitrost vozičkov po trku?\nb) Koliko kinetične energije se pri trku pretvori v druge oblike energije?"
+    },
+    {
+      "id": 106,
+      "naslov": "Fizika · SŠ 1. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 1. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nGugalnica je lahka deska, dolga 4,0 m, podprta na sredini (maso deske zanemarimo). Na levi strani sedi otrok z maso 30 kg, 1,6 m od podpore.\na) Kako daleč od podpore mora na desni sesti otrok z maso 40 kg, da bo gugalnica v ravnovesju?\nb) S kolikšno silo podpora takrat deluje na desko?"
+    },
+    {
+      "id": 107,
+      "naslov": "Fizika · SŠ 2. letnik · napačen dijakov odgovor",
+      "evklid": "Srednja šola, 2. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nAvto vozi po vodoravnem krožnem ovinku s polmerom 50 m. Koeficient lepenja med gumami in cesto je 0,60. Kolikšna je največja hitrost, s katero lahko avto pelje skozi ovinek, ne da bi zdrsnil?\nJaz mislim, da je to odvisno od mase: težji tovornjak mora ovinek peljati počasneje kot lahek avto, ker je centrifugalna sila na tovornjak večja. Ali je prav?"
+    },
+    {
+      "id": 108,
+      "naslov": "Fizika · SŠ 2. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 2. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nGeostacionarni satelit kroži nad ekvatorjem z obhodnim časom 24 h. Masa Zemlje je 5,97 · 10²⁴ kg, polmer Zemlje 6370 km, G = 6,67 · 10⁻¹¹ N m²/kg².\na) Kolikšen je polmer tira satelita?\nb) Na kolikšni višini nad površjem Zemlje kroži?\nc) Kolikšna je njegova obodna hitrost?"
+    },
+    {
+      "id": 109,
+      "naslov": "Fizika · SŠ 2. letnik · graf",
+      "evklid": "Srednja šola, 2. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nIdealni plin opravi krožno spremembo: iz stanja A (100 kPa; 1,0 L) ga pri stalni prostornini segrejemo do stanja B (300 kPa; 1,0 L), nato se pri stalnem tlaku razpne do stanja C (300 kPa; 3,0 L), nato ga pri stalni prostornini ohladimo do stanja D (100 kPa; 3,0 L) in ga pri stalnem tlaku stisnemo nazaj v stanje A.\nNariši diagram p(V) te krožne spremembe in iz njega izračunaj delo, ki ga plin opravi v enem obhodu. Kolikokrat je temperatura v stanju C večja od temperature v stanju A?"
+    },
+    {
+      "id": 110,
+      "naslov": "Fizika · SŠ 2. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 2. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nTočkasta naboja q₁ = +2,0 µC in q₂ = −8,0 µC sta na razdalji 30 cm.\na) S kolikšno silo delujeta drug na drugega? Ali se privlačita ali odbijata?\nb) V kateri točki na premici skozi oba naboja je električna poljska jakost enaka nič?"
+    },
+    {
+      "id": 111,
+      "naslov": "Fizika · SŠ 3. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 3. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nProton (m = 1,67 · 10⁻²⁷ kg) prileti s hitrostjo 2,0 · 10⁶ m/s pravokotno na silnice homogenega magnetnega polja z gostoto 0,50 T.\na) Kolikšen je polmer krožnice, po kateri se giblje proton?\nb) Kolikšen je obhodni čas protona? Ali je odvisen od hitrosti?"
+    },
+    {
+      "id": 112,
+      "naslov": "Fizika · SŠ 3. letnik · Vodenje",
+      "evklid": "Srednja šola, 3. letnik, Fizika, način **Vodenje**",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "FIZ",
+        "solving_mode": "A"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nNe povej mi rešitve, samo vodi me korak za korakom. Tuljava ima 200 ovojev s ploščino preseka 25 cm². Je v homogenem magnetnem polju, ki ima smer osi tuljave. Gostota polja se v 0,050 s enakomerno zmanjša od 0,40 T na nič. Kolikšna napetost se inducira v tuljavi?",
+      "odgovori": ["Ploščina je 25 cm² = 0,25 m².", "Ne vem."]
+    },
+    {
+      "id": 113,
+      "naslov": "Fizika · SŠ 3. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nStruna kitare med pritrdiščema je dolga 0,65 m in niha z osnovno frekvenco 196 Hz.\na) Kolikšna je hitrost valovanja na struni?\nb) Kolikšna je frekvenca prvega višjega harmonika (drugega lastnega nihanja)?\nc) Kolikšna je valovna dolžina zvoka z osnovno frekvenco v zraku, kjer je hitrost zvoka 340 m/s?"
+    },
+    {
+      "id": 114,
+      "naslov": "Fizika · SŠ 3. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 3. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nZbiralna leča ima goriščno razdaljo 10 cm.\na) Predmet postavimo 15 cm pred lečo. Kje nastane slika, kolikšna je povečava in kakšna je slika (realna/navidezna, pokončna/obrnjena)?\nb) Kaj se spremeni, če predmet postavimo 5,0 cm pred lečo? Izračunaj lego slike in povečavo."
+    },
+    {
+      "id": 115,
+      "naslov": "Fizika · SŠ 3. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 3. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nNa uklonsko mrežico s 600 režami na milimeter pravokotno posvetimo z rdečim laserjem z valovno dolžino 650 nm.\na) Pod kolikšnim kotom glede na vpadno smer vidimo ojačitev prvega reda?\nb) Koliko je najvišji red ojačitve, ki ga še lahko opazimo?"
+    },
+    {
+      "id": 116,
+      "naslov": "Fizika · SŠ 4. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 4. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije.\nKobalt-60 (⁶⁰Co) razpada z razpadom β⁻, razpolovni čas je 5,27 leta.\na) Zapiši enačbo razpada (nastane nikelj).\nb) Po kolikšnem času pade aktivnost vzorca na 10 % začetne vrednosti?"
+    },
+    {
+      "id": 117,
+      "naslov": "Fizika · SŠ 4. letnik · past (napačna predpostavka)",
+      "evklid": "Srednja šola, 4. letnik, Fizika",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik",
+        "subject": "FIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije.\nRazpolovni čas joda-131 je 8,0 dni. V bolnišnici imajo vzorec joda-131. Čez koliko dni bo ves jod v vzorcu razpadel?"
+    },
+    {
+      "id": 118,
+      "naslov": "Fizika · fakulteta 1. letnik · standardna (a/b/c)",
+      "evklid": "Univerza, Fizika (UL FMF), 1. letnik, predmet Klasična fizika",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FMF-FIZ",
+        "study_course": "UNI-ULFMF-KLASFIZ",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika fizike, predmet Klasična fizika.\nUtež z maso 0,50 kg visi na vzmeti s koeficientom 200 N/m. Sila upora je sorazmerna s hitrostjo, F = −b v, kjer je b = 2,0 kg/s.\na) Kolikšni sta lastna krožna frekvenca nedušenega nihala in krožna frekvenca dušenega nihanja?\nb) Po kolikšnem času se amplituda nihanja zmanjša na polovico?\nc) Kolikšen je faktor kakovosti Q tega nihala (približno)?"
+    },
+    {
+      "id": 119,
+      "naslov": "Kemija · OŠ 8. razred · standardna (a/b/c)",
+      "evklid": "Osnovna šola, 8. razred, Kemija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\nAtom magnezija ima vrstno število 12 in masno število 24.\na) Koliko protonov, nevtronov in elektronov ima ta atom?\nb) Zapiši razporeditev elektronov po lupinah. V kateri skupini in periodi periodnega sistema je magnezij?\nc) Kakšen ion tvori magnezij in zakaj?"
+    },
+    {
+      "id": 120,
+      "naslov": "Kemija · OŠ 8. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 8. razred, Kemija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\na) Zapiši formule spojin: aluminijev oksid, kalcijev klorid, natrijev sulfat, ogljikov dioksid.\nb) Za vsako od teh spojin povej, ali je ionska ali kovalentna (molekulska) spojina."
+    },
+    {
+      "id": 121,
+      "naslov": "Kemija · OŠ 9. razred · standardna (a/b/c)",
+      "evklid": "Osnovna šola, 9. razred, Kemija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\na) Zapiši racionalni formuli propana in propena. Kateri je nasičen in kateri nenasičen ogljikovodik?\nb) Kateri od njiju razbarva bromovico? Zapiši enačbo te reakcije in povej, kako se imenuje ta vrsta reakcije.\nc) Zapiši in uredi enačbo popolnega gorenja propana."
+    },
+    {
+      "id": 122,
+      "naslov": "Kemija · OŠ 9. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 9. razred, Kemija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nPri alkoholnem vrenju kvasovke razgradijo glukozo: C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂.\na) Koliko gramov etanola nastane iz 90 g glukoze?\nb) Koliko gramov ogljikovega dioksida nastane pri tem?"
+    },
+    {
+      "id": 123,
+      "naslov": "Kemija · SŠ 1. letnik · razloži, zakaj",
+      "evklid": "Srednja šola, 1. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nVoda (H₂O, M = 18 g/mol) vre pri 100 °C, vodikov sulfid (H₂S, M = 34 g/mol) pa pri približno −60 °C. Razloži, zakaj ima voda kljub manjši molski masi toliko višje vrelišče."
+    },
+    {
+      "id": 124,
+      "naslov": "Kemija · SŠ 1. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 1. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nV zaprti jekleni posodi s prostornino 2,0 L je 5,0 g ogljikovega dioksida pri 25 °C.\na) Kolikšna je množina CO₂ v posodi?\nb) Kolikšen je tlak plina v posodi? Plin obravnavaj kot idealen plin."
+    },
+    {
+      "id": 125,
+      "naslov": "Kemija · SŠ 1. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 1. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nStandardne tvorbene entalpije so: ΔH°tv(CH₄, g) = −74,8 kJ/mol, ΔH°tv(CO₂, g) = −393,5 kJ/mol, ΔH°tv(H₂O, l) = −285,8 kJ/mol.\na) Izračunaj standardno reakcijsko entalpijo gorenja metana: CH₄(g) + 2 O₂(g) → CO₂(g) + 2 H₂O(l). Ali je reakcija eksotermna ali endotermna?\nb) Koliko toplote se sprosti pri gorenju 1,0 kg metana?"
+    },
+    {
+      "id": 126,
+      "naslov": "Kemija · SŠ 1. letnik · past (nemogoč podatek)",
+      "evklid": "Srednja šola, 1. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nV reaktor damo 28 g dušika in 6,0 g vodika. Poteče reakcija N₂ + 3 H₂ → 2 NH₃ in nastane 40 g amoniaka. Izračunaj izkoristek reakcije v odstotkih."
+    },
+    {
+      "id": 127,
+      "naslov": "Kemija · SŠ 2. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 2. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nZa reakcijo A + B → produkti so izmerili začetne hitrosti:\nposkus 1: [A] = 0,10 mol/L, [B] = 0,10 mol/L, v = 2,0 · 10⁻³ mol/(L s)\nposkus 2: [A] = 0,20 mol/L, [B] = 0,10 mol/L, v = 8,0 · 10⁻³ mol/(L s)\nposkus 3: [A] = 0,10 mol/L, [B] = 0,30 mol/L, v = 6,0 · 10⁻³ mol/(L s)\na) Določi red reakcije glede na A in glede na B ter zapiši hitrostni zakon.\nb) Izračunaj konstanto hitrosti k z enoto.\nc) Kolikšna je hitrost reakcije pri [A] = 0,15 mol/L in [B] = 0,20 mol/L?"
+    },
+    {
+      "id": 128,
+      "naslov": "Kemija · SŠ 2. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 2. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nV kisli raztopini permanganatni ioni oksidirajo železove(II) ione: MnO₄⁻ + Fe²⁺ + H⁺ → Mn²⁺ + Fe³⁺ + H₂O.\na) Določi oksidacijska števila, zapiši polreakciji oksidacije in redukcije ter uredi enačbo.\nb) Koliko mL raztopine KMnO₄ s koncentracijo 0,020 mol/L porabimo za oksidacijo 25,0 mL raztopine Fe²⁺ s koncentracijo 0,10 mol/L?"
+    },
+    {
+      "id": 129,
+      "naslov": "Kemija · SŠ 2. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 2. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nTopnostni produkt srebrovega klorida je Ksp(AgCl) = 1,8 · 10⁻¹⁰.\na) Izračunaj topnost AgCl v čisti vodi v mol/L in v g/L.\nb) Izračunaj topnost AgCl v raztopini NaCl s koncentracijo 0,010 mol/L. Zakaj je topnost manjša?"
+    },
+    {
+      "id": 130,
+      "naslov": "Kemija · SŠ 2. letnik · napačen dijakov odgovor",
+      "evklid": "Srednja šola, 2. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nKako se spreminja polmer atomov v 3. periodi od natrija do klora?\nJaz sem napisal: polmer narašča od Na proti Cl, ker imajo atomi z večjim vrstnim številom več elektronov in so zato večji. Ali je prav?"
+    },
+    {
+      "id": 131,
+      "naslov": "Kemija · SŠ 3. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nZapiši glavni organski produkt (formulo in ime) in vrsto reakcije:\na) propen + HBr\nb) etanol + etanojska (ocetna) kislina ob prisotnosti koncentrirane H₂SO₄\nc) propan-2-ol + oksidant (npr. kalijev dikromat v kislem). Kaj bi pri enaki oksidaciji nastalo iz propan-1-ola?"
+    },
+    {
+      "id": 132,
+      "naslov": "Kemija · SŠ 3. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\na) Polietilen nastane iz etena. Kako se imenuje ta vrsta polimerizacije? Zapiši ponavljajočo se enoto polimera.\nb) Molekula polietilena ima povprečno molsko maso 140 000 g/mol. Iz približno koliko molekul etena je nastala?\nc) Zapiši monomer polivinilklorida (PVC) in navedi en primer kondenzacijskega polimera."
+    },
+    {
+      "id": 133,
+      "naslov": "Kemija · SŠ 4. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 4. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik",
+        "subject": "KEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije.\na) Razvrsti vodne raztopine NaCl, NH₄Cl, CH₃COONa in Na₂CO₃ (vse s koncentracijo 0,10 mol/L) na kisle, nevtralne in bazične. Za kisle in bazične zapiši enačbo hidrolize.\nb) Izračunaj pH raztopine NH₄Cl s koncentracijo 0,10 mol/L. Kb(NH₃) = 1,8 · 10⁻⁵."
+    },
+    {
+      "id": 134,
+      "naslov": "Kemija · fakulteta 1. letnik · standardna (a/b)",
+      "evklid": "Univerza, Kemija (UL FKKT), 1. letnik, Kemija",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FKKT-KEM",
+        "study_course": "UNI-ULFKKT-SPLKEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika, predmet Splošna kemija.\nZa reakcijo N₂O₄(g) ⇌ 2 NO₂(g) je ΔH° = +57,2 kJ/mol in ΔS° = +175,8 J/(mol K). Predpostavi, da sta ΔH° in ΔS° neodvisna od temperature.\na) Izračunaj ΔG° in ravnotežno konstanto K pri 25 °C.\nb) Nad katero temperaturo je ΔG° < 0? Kako vpliva višanje temperature na lego ravnotežja in zakaj?"
+    },
+    {
+      "id": 135,
+      "naslov": "Biologija · OŠ 8. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 8. razred, Biologija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\na) Opiši pot krvi od desnega prekata srca do levega preddvora. Kje se kri obogati s kisikom?\nb) Zakaj ima levi prekat debelejšo mišično steno kot desni?"
+    },
+    {
+      "id": 136,
+      "naslov": "Biologija · OŠ 8. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 8. razred, Biologija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "8. razred",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 8. razredu osnovne šole.\na) Kje v prebavilih se začne prebava škroba, kje prebava beljakovin in kje prebava maščob?\nb) Kakšno vlogo ima pri prebavi maščob žolč in kje nastaja?"
+    },
+    {
+      "id": 137,
+      "naslov": "Biologija · OŠ 9. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 9. razred, Biologija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nOče ima krvno skupino AB, mati pa krvno skupino 0.\na) Katere krvne skupine lahko imajo njuni otroci in s kolikšno verjetnostjo?\nb) Ali ima lahko kateri od otrok krvno skupino AB ali 0? Utemelji."
+    },
+    {
+      "id": 138,
+      "naslov": "Biologija · OŠ 9. razred · napačen dijakov odgovor",
+      "evklid": "Osnovna šola, 9. razred, Biologija",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "9. razred",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 9. razredu osnovne šole.\nKako so žirafe dobile dolge vratove?\nJaz sem napisal: prednice žiraf so se ves čas stegovale do listov na visokih drevesih, zato so se jim vratovi podaljšali, in to so podedovali njihovi mladiči. Ali je prav?"
+    },
+    {
+      "id": 139,
+      "naslov": "Biologija · SŠ 1. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 1. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\na) Zapiši celotno enačbo celičnega dihanja glukoze in naštej njegove tri stopnje. Kje v celici poteka vsaka?\nb) Približno koliko molekul ATP nastane iz ene molekule glukoze pri celičnem dihanju in koliko pri mlečnokislinskem vrenju?\nc) Koliko molov kisika porabi celica za popolno razgradnjo 90 g glukoze?"
+    },
+    {
+      "id": 140,
+      "naslov": "Biologija · SŠ 1. letnik · razloži, zakaj",
+      "evklid": "Srednja šola, 1. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "1. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 1. letniku gimnazije.\nRdeče krvničke v destilirani vodi nabreknejo in počijo, celice listov vodne rastline v destilirani vodi pa ne počijo. Razloži, zakaj."
+    },
+    {
+      "id": 141,
+      "naslov": "Biologija · SŠ 2. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 2. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "2. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 2. letniku gimnazije.\nV mirovanju srce odraslega človeka utripne 70-krat na minuto, pri vsakem utripu pa levi prekat iztisne 70 mL krvi.\na) Kolikšen je minutni volumen srca v mirovanju?\nb) Med tekom utripne srce 150-krat na minuto, utripni volumen pa je 110 mL. Kolikšen je takrat minutni volumen?\nc) Zakaj se med telesnim naporom minutni volumen poveča? Kateri del živčevja pospeši srčni utrip?"
+    },
+    {
+      "id": 142,
+      "naslov": "Biologija · SŠ 3. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 3. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\na) Kaj je razlika med primarnim in sekundarnim imunskim odzivom? Katere celice omogočijo hitrejši sekundarni odziv?\nb) Kako deluje cepivo in zakaj je to aktivna imunizacija?\nc) Kakšna je vloga limfocitov B in kakšna vloga citotoksičnih limfocitov T?"
+    },
+    {
+      "id": 143,
+      "naslov": "Biologija · SŠ 3. letnik · standardna (a/b)",
+      "evklid": "Srednja šola, 3. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "3. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. letniku gimnazije.\nRaziskovalci so v ribniku ujeli 60 pupkov, jih označili in izpustili. Čez teden dni so ujeli 80 pupkov, med njimi jih je bilo 12 označenih.\na) Oceni velikost populacije pupkov v ribniku.\nb) Navedi dve predpostavki, ki morata veljati, da je ocena zanesljiva."
+    },
+    {
+      "id": 144,
+      "naslov": "Biologija · SŠ 4. letnik · standardna (a/b/c)",
+      "evklid": "Srednja šola, 4. letnik, Biologija",
+      "nastavitve": {
+        "educational_track": "SREDNJA_SOLA",
+        "curriculum_level": "4. letnik",
+        "subject": "BIO",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 4. letniku gimnazije.\nMatrična (prepisovana) veriga odseka DNA je 3'-TAC GGA TTC ACT-5'.\na) Zapiši zaporedje mRNA, ki nastane pri prepisovanju, z označenima koncema 5' in 3'.\nb) Zapiši zaporedje aminokislin, ki nastane pri prevajanju. (Kodoni: AUG = Met, CCU = Pro, AAG = Lys, UAG = stop, UGA = stop, UAA = stop.)\nc) Kaj se zgodi z beljakovino, če se v DNA tretja trojka TTC spremeni v ATC?"
+    },
+    {
+      "id": 145,
+      "naslov": "Naravoslovje · OŠ 3. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 3. razred, Naravoslovje",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "3. razred",
+        "subject": "NAR",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 3. razredu osnovne šole.\nV dva enaka lončka z zemljo posadimo fižol in ga enako zalivamo. En lonček postavimo na okensko polico, drugega v temno omaro.\na) Kaj opazimo čez dva tedna pri obeh rastlinah?\nb) Zakaj je tako?"
+    },
+    {
+      "id": 146,
+      "naslov": "Naravoslovje · OŠ 5. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 5. razred, Naravoslovje",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "5. razred",
+        "subject": "NAR",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 5. razredu osnovne šole.\nImamo baterijo, žarnico, stikalo in žice.\na) Nariši sklenjen električni krog, v katerem žarnico prižigamo in ugašamo s stikalom.\nb) Med dve žici vstavimo po vrsti: železen žebelj, radirko, aluminijasto folijo, leseno palčko in kovanec. Pri katerih predmetih bo žarnica svetila in zakaj?"
+    },
+    {
+      "id": 147,
+      "naslov": "Naravoslovje · OŠ 6. razred · standardna (a/b/c)",
+      "evklid": "Osnovna šola, 6. razred, Naravoslovje",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "6. razred",
+        "subject": "NAR",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 6. razredu osnovne šole.\nV akvariju so vodne rastline in ribe.\na) Zapiši besedno enačbo fotosinteze.\nb) Kaj rastline počnejo ponoči: ali fotosintetizirajo, dihajo ali oboje?\nc) Zakaj je v vodi akvarija proti koncu sončnega dne več kisika kot zjutraj?"
+    },
+    {
+      "id": 148,
+      "naslov": "Naravoslovje · OŠ 7. razred · standardna (a/b)",
+      "evklid": "Osnovna šola, 7. razred, Naravoslovje",
+      "nastavitve": {
+        "educational_track": "OSNOVNA_SOLA",
+        "curriculum_level": "7. razred",
+        "subject": "NAR",
+        "solving_mode": "B"
+      },
+      "q": "Sem v 7. razredu osnovne šole.\nImamo kis, limonin sok, milnico, raztopino sode bikarbone in destilirano vodo.\na) Razvrsti jih na kisle, nevtralne in bazične raztopine. Kakšen pH imajo približno?\nb) V vsako dodamo nekaj soka rdečega zelja (indikator). Kakšne barve bodo raztopine?"
+    },
+    {
+      "id": 149,
+      "naslov": "Temelji biokemije · fakulteta 1. letnik (Medicina) · standardna (a/b/c)",
+      "evklid": "Univerza, Medicina (UL MF), 1. letnik, predmet Temelji biokemije",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-MF-MED",
+        "study_course": "UNI-ULMF-TEMBIOKEM",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika medicine, predmet Temelji biokemije.\nEncim sledi kinetiki Michaelis-Mentenove. Vmax = 120 µmol/min, Km = 2,5 mmol/L.\na) Kolikšna je hitrost reakcije pri koncentraciji substrata 0,50 mmol/L?\nb) Pri kateri koncentraciji substrata doseže hitrost 90 % Vmax?\nc) Kompetitivni inhibitor poveča navidezni Km na 5,0 mmol/L. Kolikšna je hitrost pri [S] = 2,5 mmol/L brez inhibitorja in z njim? Kaj se zgodi z Vmax?"
+    },
+    {
+      "id": 150,
+      "naslov": "Računalništvo · fakulteta 1. letnik · standardna (a/b/c)",
+      "evklid": "Univerza, Računalništvo in informatika (UL FRI), 1. letnik, Računalništvo (Programiranje 1)",
+      "nastavitve": {
+        "educational_track": "UNIVERZA",
+        "curriculum_level": "1. letnik",
+        "study_program": "UL-FRI-RI",
+        "study_course": "UNI-ULFRI-P1",
+        "solving_mode": "B"
+      },
+      "q": "Sem študent 1. letnika računalništva.\ndef isci(a, x):\n    lo, hi = 0, len(a) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if a[mid] == x:\n            return mid\n        elif a[mid] < x:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n\na = [3, 8, 11, 15, 19, 23, 27, 31, 36, 42, 47, 53, 58, 64, 70]\na) Pokaži sled izvajanja (lo, hi, mid, a[mid]) za klic isci(a, 47). Kaj funkcija vrne?\nb) Pokaži sled za isci(a, 20). Kaj funkcija vrne?\nc) Največ kolikokrat se izvede zanka pri urejenem seznamu z 1 000 000 elementi? Kakšna je časovna zahtevnost in zakaj mora biti seznam urejen?"
+    }
+  ]
+}
