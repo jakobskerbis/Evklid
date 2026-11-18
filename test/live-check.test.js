@@ -526,6 +526,26 @@ test("live check (SŠ meritev 18. 11.): the fix adds no new facts and may only w
   assert.match(LIVE_REVIEW_SYSTEM, /give the correct fact in a few words/);
 });
 
+test("live check (meritev SŠ 18. 11. po #833): review catches generalisations, side causes, inconsistent exercises and plans", async () => {
+  // BIO-SS-2/nastanek-vrst: neplodnost mule le z lihim številom kromosomov, posplošeno v pravilo.
+  assert.match(LIVE_REVIEW_SYSTEM, /so is an empirical rule \(biology, chemistry, physics\) stated for all cases that is false for common cases at the student's level or that generalises the single case of the task/);
+  // Pregled #835: pravilna splošna učbeniška pravila, definicije in izreki ostanejo brez pogojev.
+  assert.match(LIVE_REVIEW_SYSTEM, /A correct general textbook rule \(»metals conduct electricity«\), a definition or a mathematical theorem needs no added conditions\./);
+  assert.match(LIVE_REVIEW_SYSTEM, /explanation of why something happens: it must give the textbook cause, not only a feature that merely goes with it/);
+  // BIO-SS-1/encimi-in-atp: vaja pripiše isti amilazi pri isti temperaturi drugo hitrost.
+  assert.match(LIVE_REVIEW_SYSTEM, /must not give the object of the task, under the same conditions, a value different from the task's/);
+  // BIO-SS-1/raziskovanje-v-biologiji: namenoma pomanjkljiv poskus v vaji je bil popravljen, neenake skupine v načrtu ne.
+  assert.match(LIVE_REVIEW_SYSTEM, /describes a flawed experiment or a wrong claim on purpose and asks the student to find the flaw is fine/);
+  assert.match(LIVE_REVIEW_SYSTEM, /every experiment plan: the group counts add up/);
+  // KEM-SS-2/sibke-kisline-in-baze, FIZ-SS-3/elektromagnetno-valovanje
+  assert.match(LIVE_REVIEW_SYSTEM, /what the task says must match the task \(a claim about what the student's textbook says that is not quoted in the question is an error\), and every warning must be unambiguous/);
+  assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.$/);
+  // BIO-SS-4/molekularna-genetika, KEM-SS-3: popravek ob pravilni pretvorbi ali zaokroženem vmesnem rezultatu.
+  let system = "";
+  await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
+  assert.match(system, /a correct unit conversion like 1 B = 8 bit or a value computed from unrounded intermediate results\), or the problem only says/);
+});
+
 test("live check (pregled PR #833): review and fix get the student's level", async () => {
   const { correction } = await import("../server/live-check.js");
   let user = "";

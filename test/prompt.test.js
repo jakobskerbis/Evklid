@@ -321,6 +321,21 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     // Doda ~1 800 znakov predpomnjenega dela (58 164 → 59 960; ~480 žetonov) s popravki pregleda #811, meja 1 800.
     // Meritev SŠ 18. 11. (pomen rezultata iz podatkov, Načrt in vmesne enačbe): +180 znakov (59 960 → 60 140; ~50 žetonov).
     // 60195 znakov po pregledu PR #833 (stavek o pomenu rezultata); rezerva ~300.
-    assert.ok(stat.length < 58164 + 1800 + 200 + 330, `stalni del ${stat.length} znakov`);
+    // Meritev SŠ 18. 11. po #833 (Pravila brez posploševanja, Zapomni si s pogoji) s popravki pregleda #835:
+    // +1030 znakov (60 195 → 61 225; ~290 žetonov); rezerva ~70.
+    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800, `stalni del ${stat.length} znakov`);
   });
+});
+
+test("accuracy SŠ round 2 (2026-11-18): rules with their conditions, no rule from one case, consistent exercise and plan, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const start = fixed.indexOf("- **Pravila brez posploševanja.**");
+  assert.ok(start > fixed.indexOf("- **Dodatne vaje in stranske trditve.**") && start < fixed.indexOf("## Način A"), "takoj za pravilom o vajah, v razdelku Pravilnost");
+  const row = fixed.slice(start, fixed.indexOf("\n", start));
+  for (const s of ["Empirično pravilo (BIO, KEM, FIZ;", "zapiši s pogoji, pod katerimi velja", "ne iz enega primera naloge", "vzrok pojava naj bo učbeniški", "Matematični izreki in definicije, ki veljajo splošno, ostanejo brez dodanih omejitev", "v okvir pri rešitvi naloge zapiši le postopek ali ga izpusti", "pri pojmovnem vprašanju in napačni predstavi ostanejo v okvirju", "neobvezno stransko opombo raje izpusti", "Vaja isti snovi, organizmu ali objektu v enakih pogojih ne pripiše drugačne lastnosti", "spremeni podatke, ki jih učenec vstavi", "ne lastnosti, ki jo določajo pogoji", "enako število ponovitev", "Opozorilo na napako naj bo nedvoumno", "trdiš le, kar vidiš v pogovoru (naloga, navedek, priložena lekcija)"]) assert.ok(row.includes(s), `»${s}«`);
+  assert.doesNotMatch(row, /predmetu|enako ponovitev\./);
+  // 1003 znaki po pregledu #835; rezerva ~45.
+  assert.ok(row.length < 1050, `točka naj ostane kratka (${row.length} znakov)`);
+  assert.match(fixed, /5\. Okvir »Zapomni si« le, kadar je v nalogi pravilo ali past, ki jo učenec zlahka pozabi, s pogoji, pod katerimi velja\./);
 });

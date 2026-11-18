@@ -25,6 +25,26 @@ function isConversionRatio(a, b, tol) {
   return CONVERSION_MANTISSAS.some((c0) => [c0, 10 / c0].some((c) => Math.abs(m - c) / c < tol || Math.abs(m / 10 - c) / c < tol));
 }
 
+// Enote podatkov (meritev SŠ 18. 11.: »2 MB = 2 · 10⁶ B · 8 bit/B = 1,6 · 10⁷ bit« je bil lažen »Popravek«).
+// Pregledi PR #835: pri enoti podatkov velja samo natančen količnik q = izraz / vrednost (ne le mantisa) za korak od
+// vrednosti z enoto podatkov k izrazu, ki jo pretvarja: bit → bajt 10^(3k)/8 ali 1024^k/8, bajt → bit 8 · 10^(3k) ali
+// 8 · 1024^k, ista vrsta (sprememba predpone) 10^(3k) ali 1024^k. Splošni količniki (isConversionRatio) pri enotah
+// podatkov ne veljajo, korak takoj za sprejeto pretvorbo pa se primerja strogo, da rezultat ne skrije napake ×10.
+const DATA_UNIT = /^(?:[kKMGTP]?i?B|[kKMGTP]?(?:bit(?:ov|a|i)?|b)|bajt\p{L}*|byte\p{L}*)(?:\/s)?$/u;
+const BIT_UNIT = /^[kKMGTP]?i?(?:bit(?:ov|a|i)?|b)(?:\/s)?$/u;
+const DATA_POWERS = [];
+for (let k = -4; k <= 4; k++) DATA_POWERS.push(10 ** (3 * k), 1024 ** k);
+const hasDataUnit = (x) => x.units.some((u) => DATA_UNIT.test(u));
+function isDataStep(a, b, tol) {
+  const unit = a.units.find((u) => DATA_UNIT.test(u));
+  if (!a.bare || b.bare || !unit || !a.value || !b.value) return false;
+  const q = b.value / a.value;
+  const near = (c) => Math.abs(q / c - 1) < tol;
+  if (DATA_POWERS.some(near)) return true; // ista vrsta enote, druga predpona
+  // bit → bajt deli z 8, bajt → bit množi z 8 (smer: 100 Mbit/s = 100 · 8 ni pretvorba)
+  return BIT_UNIT.test(unit) ? DATA_POWERS.some((p) => near(p / 8)) : DATA_POWERS.some((p) => near(8 * p));
+}
+
 // LaTeX → preprost aritmetični izraz. Vrne null, če del ni čisto številski.
 // pct: "div" bere »25\%« kot 25/100, "unit" kot število 25 z enoto %.
 export function normalizeTex(tex, pct = "div") {
@@ -166,7 +186,7 @@ export function evaluate(expr) {
 const halfUlp = (x, approx) => 0.5 * (approx && x.trailingZeros && x.ulp === 1 ? 10 ** x.trailingZeros : x.ulp);
 
 // Primerja dva izračunana dela. Vrne null (ujema se), "skip" (pretvorba, ustreznica, izjava) ali relativno razliko.
-function compare(a, b, approx, loose) {
+function compare(a, b, approx, loose, afterData = false) {
   const diff = Math.abs(a.value - b.value);
   const scale = Math.max(Math.abs(a.value), Math.abs(b.value), 1e-12);
   // 1 % rezultata (zaokrožanje, 3,14 za π) ali polovica zadnjega mesta; pri ocenah 15 %.
@@ -186,7 +206,9 @@ function compare(a, b, approx, loose) {
   if (a.units.includes("%") !== b.units.includes("%")) return "skip"; // 20 % = 60 €
   if (a.units.includes("°") !== b.units.includes("°")) return "skip"; // 150° = 5π/6
   if (ua !== ub && (a.units.length || b.units.length)) {
-    if ((a.bare || b.bare) && isConversionRatio(a.value, b.value, ratioTol)) return "skip"; // 3 kg = 3 · 100 = 300 dag
+    if (hasDataUnit(a) || hasDataUnit(b)) {
+      if (!afterData && isDataStep(a, b, ratioTol)) return "data"; // 2 MB = 2 · 10⁶ · 8, 100 Mbit/s = 100/8
+    } else if (!afterData && (a.bare || b.bare) && isConversionRatio(a.value, b.value, ratioTol)) return "skip"; // 3 kg = 3 · 100 = 300 dag
   }
   return diff / scale;
 }
@@ -198,17 +220,20 @@ function checkChain(tex, pct, loose) {
   let prev = null;
   let checked = 0;
   const mismatches = [];
+  let afterData = false; // prejšnji korak je bil sprejeta pretvorba enot podatkov
   for (let k = 0; k < parts.length; k += 2) {
     const n = normalizeTex(parts[k], pct);
     const value = n ? evaluate(n.expr) : NaN;
     if (!Number.isFinite(value)) {
       prev = null;
+      afterData = false;
       continue;
     }
     const cur = { ...n, value };
     if (prev) {
-      const r = compare(prev, cur, parts[k - 1] !== "=", loose);
-      if (r !== "skip") checked++;
+      const r = compare(prev, cur, parts[k - 1] !== "=", loose, afterData);
+      afterData = r === "data";
+      if (r !== "skip" && r !== "data") checked++;
       if (typeof r === "number") mismatches.push({ left: fmt(prev.value), right: fmt(cur.value), rel: r });
     }
     prev = cur;

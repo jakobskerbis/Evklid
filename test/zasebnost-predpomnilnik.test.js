@@ -165,3 +165,17 @@ test("Preizkus 3 (17. 11.): odgovori načina B in »samo rezultat« pred popravk
   // Običajno vprašanje v načinu A obdrži ključ.
   assert.equal(cacheKey(razstavi, a, "chat"), prej(razstavi, a));
 });
+
+test("#835 (18. 11.): odgovori načina B pred pravili brez posploševanja (»b3«) se ne vrnejo, način A ostane", async () => {
+  const { cacheKey } = await import("../server/app.js");
+  const crypto = await import("node:crypto");
+  const s = { subject: "BIO", track: "REGULAR", educational_track: "GIMNAZIJA", study_program: "", study_course: "", curriculum_level: "2. letnik", personality_setting: "nevtralna", language: "sl" };
+  const norm = (q) => q.toLowerCase().replace(/\s+/g, " ").replace(/[\s.!?]+$/, "").trim();
+  const prej = (q, st, ...extra) => crypto.createHash("sha256").update([norm(q), st.subject, st.track, st.educational_track, st.study_program, st.study_course, st.curriculum_level, st.solving_mode, st.personality_setting, 0, ...extra].join("|")).digest("hex");
+  const q = "Konj ima 64 kromosomov, osel 62. Koliko jih ima mula in zakaj je neplodna?";
+  const b = { ...s, solving_mode: "B" };
+  const a = { ...s, solving_mode: "A" };
+  assert.notEqual(cacheKey(q, b, "chat"), prej(q, b, "b3"), "način B: stari ključ");
+  assert.equal(cacheKey(q, b, "chat"), prej(q, b, "b4"), "način B: nov ključ");
+  assert.equal(cacheKey(q, a, "chat"), prej(q, a), "način A obdrži ključ");
+});
