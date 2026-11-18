@@ -310,9 +310,9 @@ function listHtml(icon, title, items) {
   return `<p style="margin:10px 0 0">${icon} <b>${title}:</b> ${items.join(", ")}</p>`;
 }
 
-// Poraba podrobnih razlag ta mesec v odstotkih (j 2026-11-01), brez zneskov; null = ni meje.
+// Poraba podrobnih razlag v tem obdobju (naročnina: od dneva plačila; pilot: koledarski mesec) v odstotkih (j 2026-11-01), brez zneskov; null = ni meje.
 const aiLine = (ai) =>
-  ai?.percent == null ? "" : ai.guaranteed ? `Podrobne razlage ta mesec: porabljenih ${ai.percent} %${ai.stage === "out" ? ", inštruktor odgovarja v hitrem načinu" : ""}.` : `Inštruktor ta mesec: porabljenih ${ai.percent} % mesečnega dela.`;
+  ai?.percent == null ? "" : ai.guaranteed ? `Podrobne razlage v tem obdobju: porabljenih ${ai.percent} %${ai.stage === "out" ? ", inštruktor odgovarja v hitrem načinu" : ""}.` : `Inštruktor ta mesec: porabljenih ${ai.percent} % mesečnega dela.`;
 
 function childBlock({ child, week: w, self, ai }) {
   const quiet = !w.active_days;

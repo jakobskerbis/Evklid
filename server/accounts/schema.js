@@ -124,6 +124,10 @@ export function migrateAccounts(db) {
   // Različica politike zasebnosti, o kateri je imetnik videl obvestilo (privacy_version ostane različica ob registraciji).
   if (!pcols.includes("privacy_seen")) db.exec("ALTER TABLE parents ADD COLUMN privacy_seen TEXT");
   if (!pcols.includes("pilot_at")) db.exec("ALTER TABLE parents ADD COLUMN pilot_at TEXT");
+  // Koda vabila v pilot (#751, server/vabila.js): zgoščena koda iz registracije (do potrditve e-naslova čaka) in kdaj je
+  // bila ob potrditvi porabljena (od takrat je račun član pilota, server/accounts/pilot-meja.js isPilotParent).
+  if (!pcols.includes("pilot_invite_hash")) db.exec("ALTER TABLE parents ADD COLUMN pilot_invite_hash TEXT");
+  if (!pcols.includes("pilot_invite_at")) db.exec("ALTER TABLE parents ADD COLUMN pilot_invite_at TEXT");
   // Gost (uporaba brez registracije, odstranjena 2026-10-29; stari gostje ostanejo): račun brez e-naslova, vezan na piškotek naprave.
   // guest_net = zgoščeni IP omrežja, da brisanje piškotkov ne da nove brezplačne kvote.
   if (!pcols.includes("is_guest")) db.exec("ALTER TABLE parents ADD COLUMN is_guest INTEGER NOT NULL DEFAULT 0");

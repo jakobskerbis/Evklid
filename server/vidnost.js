@@ -15,6 +15,7 @@ import { BRAND } from "./brand.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS, freeDailyQuestions } from "./accounts/plans.js";
 import { personalDailyQuestions } from "./placila/pravice.js";
 import { icon } from "../public/icons.js";
+import { storeAppRequest } from "./mobile/trgovina.js";
 import { latestMeasurement, measurementError, pctText, slDate } from "../scripts/meritev-natancnosti.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -264,17 +265,18 @@ function conditionals(html, vars) {
   } while (html !== prev);
   return html;
 }
-function staticPage(file, measurement) {
-  const vars = facts(measurement);
+// store: aplikacija iz trgovine (server/mobile/trgovina.js): deli <!--ce:!trgovina--> (cene, /prenesi) izpadejo.
+function staticPage(file, measurement, store = false) {
+  const vars = { ...facts(measurement), trgovina: !!store };
   const html = conditionals(fs.readFileSync(file, "utf8"), vars)
     .replace(/\{\{i:([\w-]+)\}\}/g, (_m, name) => icon(name))
     .replace(/\{\{\{(\w+)\}\}\}/g, (m, k) => (k in vars ? String(vars[k]) : m))
     .replace(/\{\{(\w+)\}\}/g, (m, k) => (k in vars ? esc(vars[k]) : m));
   return html.replace("</head>", `  ${ldScript(faqData(html))}\n</head>`);
 }
-export const aboutPage = () => staticPage(PAGE);
+export const aboutPage = (store = false) => staticPage(PAGE, undefined, store);
 // measurement: samo za teste (stran z drugo meritvijo); strežnik vedno pokaže zadnjo iz docs/meritve/.
-export const whyPage = (measurement) => staticPage(WHY_PAGE, measurement);
+export const whyPage = (measurement, store = false) => staticPage(WHY_PAGE, measurement, store);
 
 // Pred statičnimi datotekami (server/app.js), da predloga /o-evklidu.html ne gre ven s spremenljivkami {{…}}.
 export function mountVidnost(app) {
@@ -288,12 +290,15 @@ export function mountVidnost(app) {
   app.get("/robots.txt", text("text/plain; charset=utf-8", robotsTxt));
   app.get("/sitemap.xml", text("application/xml; charset=utf-8", sitemapXml));
   app.get("/llms.txt", text("text/plain; charset=utf-8", () => llmsTxt()));
-  for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, () => whyPage()]]) {
-    let page = null;
-    app.get(route, (_req, res) => {
-      const html = page || make();
-      if (process.env.NODE_ENV === "production") page = html; // v razvoju brez predpomnjenja (datoteko urejamo)
+  for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, (store) => whyPage(undefined, store)]]) {
+    const page = {}; // splet in aplikacija iz trgovine (brez cen in /prenesi)
+    app.get(route, (req, res) => {
+      const store = storeAppRequest(req) ? "trgovina" : "splet";
+      const html = page[store] || make(store === "trgovina");
+      if (process.env.NODE_ENV === "production") page[store] = html; // v razvoju brez predpomnjenja (datoteko urejamo)
       res.set("Cache-Control", "no-cache");
+      res.vary("User-Agent");
+      res.vary("X-App-Channel");
       res.type("html").send(html);
     });
     app.get(`${route}.html`, (_req, res) => res.redirect(301, route));

@@ -132,7 +132,9 @@ export function compressedStatic(mounts, { maxBytes = defaultStaticMax() } = {})
     } catch {
       return next(); // stiskanje ni uspelo: datoteko pošlje express.static nestisnjeno
     }
-    res.setHeader("Vary", "Accept-Encoding");
+    // Dopolni Vary poti (strani za aplikacijo iz trgovine: User-Agent, server/mobile/trgovina.js storeAppPages).
+    if (typeof res.vary === "function") res.vary("Accept-Encoding");
+    else res.setHeader("Vary", "Accept-Encoding");
     res.setHeader("ETag", hit.etag);
     res.setHeader("Cache-Control", found.prefix.startsWith("/vendor") ? "public, max-age=604800" : "no-cache");
     if (req.headers["if-none-match"] === hit.etag) return res.status(304).end();

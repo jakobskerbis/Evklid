@@ -52,8 +52,9 @@ function summary(v) {
 
 function render(v) {
   if (v.paid) return showPaid(v);
-  // Aplikacija iz trgovine: brez plačila s kartico (pravila trgovin; strežnik ga zavrne, server/mobile/trgovina.js).
-  if (isStoreApp()) return shell(`<div class="card">${summary(v)}<p>${esc(t("payp.inApp"))}</p></div>`);
+  // Aplikacija iz trgovine: brez plačila s kartico in brez cene (pravila trgovin; strežnik plačilo zavrne,
+  // server/mobile/trgovina.js).
+  if (isStoreApp()) return shell(`<div class="card"><p id="pay-in-app">${esc(t("payp.inApp"))}</p></div>`);
   shell(`
     <p>${esc(v.name ? t("payp.intro", { name: v.name }) : t("payp.introNoName"))} <a href="/starsi.html" target="_blank">${esc(t("payp.whatLink"))}</a></p>
     <div class="card">

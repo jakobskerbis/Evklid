@@ -1883,8 +1883,8 @@ const limitCardCtx = () => ({
 function addAllowanceNote(bubble, d) {
   const el = document.createElement("div");
   el.className = "cards-note allowance-note";
-  // Pri 80 % dve vrstici: obvestilo, pod njim preostanek (»Podrobne razlage ta mesec: še 6«).
-  // Pri 100 % še, kaj sledi hitremu načinu (do konca meseca vsak dan kot brezplačni paket, server/usage.js tailToday).
+  // Pri 80 % dve vrstici: obvestilo, pod njim preostanek (»Podrobne razlage v tem obdobju: še 6«).
+  // Pri 100 % še, kaj sledi hitremu načinu (do konca obdobja naročnine, aiPeriodEnd, vsak dan kot brezplačni paket, server/usage.js tailToday).
   const base = d.stage === "out" ? (d.spread ? `${escapeHtml(t("ai.out"))}<br><small>${escapeHtml(t("ai.then"))}</small>` : escapeHtml(t("ai.out"))) : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
   // Družina: obvestilo velja za skupen delež vseh profilov.
   const text = d.pool ? `${base}<br><small>${escapeHtml(t("ai.pool"))}</small>` : base;

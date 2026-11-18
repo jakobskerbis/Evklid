@@ -77,6 +77,7 @@ test("registracija z eno kodo: strežnik prepozna aktivacijsko, priporočila, da
 
     const inv = await reg(client(), "vabilo@primer.si", { code: "PILOT-ANA-2026" });
     assert.equal(inv.body.code_kind, "invite", "koda vabila (brez ozira na velike črke)");
+    assert.equal(inv.body.invite, "pending", "vpisana koda vabila pride do pendInvite (#819) prek req.body.invite");
 
     const bad = await reg(client(), "napacna@primer.si", { code: "NEZNANO1" });
     assert.equal(bad.status, 201, "neznana koda registracije ne ustavi");
