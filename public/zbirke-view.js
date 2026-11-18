@@ -1,4 +1,4 @@
-// Pogled »Zbirke in učni pass« (public/zbirke.js): vitrina, učni pass s 30 stopnjami, tri zbirke
+// Pogled »Zbirke in nagradna pot« (public/zbirke.js): vitrina, nagradna pot (pass) s 30 stopnjami, tri zbirke
 // znanja z vnaprej vidnimi pogoji in pogled »preglej« (katera snov in kdaj je prinesla predmet).
 import { t } from "./i18n.js";
 import { icon } from "./icons.js";
