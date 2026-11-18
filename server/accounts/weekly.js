@@ -312,7 +312,7 @@ function listHtml(icon, title, items) {
 
 // Poraba podrobnih razlag ta mesec v odstotkih (j 2026-11-01), brez zneskov; null = ni meje.
 const aiLine = (ai) =>
-  ai?.percent == null ? "" : ai.guaranteed ? `Podrobne razlage ta mesec: porabljenih ${ai.percent} %${ai.stage === "out" ? ", inštruktor odgovarja v hitrem načinu" : ""}.` : `Inštruktor ta mesec: porabljenih ${ai.percent} % mesečnega dela.`;
+  ai?.percent == null ? "" : ai.guaranteed ? `Podrobne razlage v tem obdobju: porabljenih ${ai.percent} %${ai.stage === "out" ? ", inštruktor odgovarja v hitrem načinu" : ""}.` : `Inštruktor ta mesec: porabljenih ${ai.percent} % mesečnega dela.`;
 
 function childBlock({ child, week: w, self, ai }) {
   const quiet = !w.active_days;

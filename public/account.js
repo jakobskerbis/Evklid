@@ -1103,11 +1103,11 @@ const statusText = (st) => (STATUS_KEYS.includes(st) ? t(`acct.st.${st}`) : st);
 
 
 // Poraba inštruktorja ta mesec kot delež mesečne omejitve (brez zneskov). Naročnik (zajamčeni delež,
-// j 2026-11-01): preostale podrobne razlage; ko so porabljene, inštruktor odgovarja v hitrem načinu.
+// j 2026-11-01): preostale podrobne razlage v obdobju naročnine (od dneva plačila, server/usage.js periodStart); ko so porabljene, inštruktor odgovarja v hitrem načinu.
 function aiPill(a) {
   if (!a || a.percent == null) return "";
   // Družina: skupen delež za vse profile (enak preostanek pri vsakem otroku, ai.pool v opisu).
-  // Porabljen tudi hitri način (a.tail): do konca meseca vsak dan kot brezplačni paket (server/usage.js tailToday).
+  // Porabljen tudi hitri način (a.tail): do konca obdobja naročnine (aiPeriodEnd) vsak dan kot brezplačni paket (server/usage.js tailToday).
   const outText = a.tail ? t("ai.tail") : a.spread ? `${t("ai.out")} ${t("ai.then")}` : t("ai.out");
   // Na telefonu title ni viden: v repu je besedilo ai.tail vidno v pilu (pregled #821).
   if (a.guaranteed) return `<span class="pill${a.stage === "out" ? " warn" : ""}" title="${esc((a.stage === "out" ? outText : t("ai.left", { n: a.explanations_left })) + (a.pool ? " " + t("ai.pool") : ""))}">${esc(a.tail ? t("ai.tail") : t("ai.left", { n: a.explanations_left }))}</span>`;
