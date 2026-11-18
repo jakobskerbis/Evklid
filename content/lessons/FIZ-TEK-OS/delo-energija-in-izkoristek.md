@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -48,7 +48,7 @@ Izkoristek nad $100\,\%$ bi pomenil, da naprava odda več energije, kot je prejm
 | $1\,\mathrm{min}$ | $3600\,\mathrm{J}$ |
 | $1\,\mathrm{h}$ | $216\,000\,\mathrm{J}$ |
 
-Joulov je hitro veliko, zato elektro podjetje računa v **kilovatnih urah**. Kilovatna ura je energija, ki jo naprava z močjo $1000\,\mathrm{W}$ porabi v eni uri: $1\,\mathrm{kWh} = 1000\,\mathrm{W} \cdot 3600\,\mathrm{s} = 3\,600\,000\,\mathrm{J}$. Na računu je cena za kilovatno uro, na škatli naprave pa moč.
+Joulov je hitro veliko, zato elektropodjetje računa v **kilovatnih urah**. Kilovatna ura je energija, ki jo naprava z močjo $1000\,\mathrm{W}$ porabi v eni uri: $1\,\mathrm{kWh} = 1000\,\mathrm{W} \cdot 3600\,\mathrm{s} = 3\,600\,000\,\mathrm{J}$. Na računu je cena za kilovatno uro, na škatli naprave pa moč.
 
 **Veriga pretvorb.** Energija pogosto gre skozi več naprav zapored. Elektrarna na premog pretvori v električno energijo okoli $40\,\%$ energije goriva, daljnovod od tega do hiše dostavi $90\,\%$, motor sesalnika pa od tega $80\,\%$ pretvori v gibanje. Sledimo $100\,\mathrm{J}$ energije premoga:
 

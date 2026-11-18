@@ -1,0 +1,22 @@
+/* Stran /vabilo (public/vabilo.html): telefon najprej, en glavni gumb. */
+body { display: block; }
+.vab { max-width: 560px; margin: 0 auto; padding: 8px 16px 60px; }
+.vab > p:first-child { margin: 0; }
+.vab h1 { font-size: 1.5rem; line-height: 1.25; }
+.vab a { color: var(--accent); }
+.vab form { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.vab input[type="text"] { width: 100%; box-sizing: border-box; min-height: 44px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg); color: inherit; font: inherit; }
+.vab button.primary, .vab a.btn-primary { min-height: 44px; width: 100%; box-sizing: border-box; }
+.vab .card { margin-top: 16px; }
+.vab-ok h2 { margin: 0 0 8px; font-size: 1.25rem; }
+.vab-ok h3 { margin: 14px 0 4px; font-size: 1rem; }
+.vab-ok ul { margin: 0 0 4px; padding-inline-start: 20px; }
+.vab-ok li { margin: 4px 0; }
+.vab-ok a.btn-primary { margin-top: 16px; color: var(--accent-text); }
+.vab-ok .small { margin-top: 10px; }
+.vab-bad h2 { margin: 0 0 6px; font-size: 1.1rem; }
+.vab-hint { color: var(--muted); }
+@media (min-width: 700px) { .vab { padding-top: 48px; } }
+.vab .small { font-size: 0.9rem; }
+/* Povezave (← Evklid, »Ustvari račun brez vabila«): dotik vsaj 44 px visok (docs/pregled.md §1, prehod 3). */
+.vab a:not(.btn-primary) { display: inline-flex; align-items: center; min-height: 44px; }

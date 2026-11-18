@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -40,7 +40,7 @@ Enakovredna sta še dva zapisa, ki sta pri nosilcih pogosto hitrejša:
 
 Pogoja nista okras: če bi $AB$ bila pravokotna na $x$, bi rezultanta, ki leži na premici $AB$, izpolnila vse tri enačbe, ne da bi bila nič.
 
-Ker je enačb v ravnini točno tri, iz njih lahko izračunamo največ tri neznane reakcije.
+Ker so enačbe v ravnini točno tri, iz njih lahko izračunamo največ tri neznane reakcije.
 
 :::premisli
 Na nosilcu iščeš reakciji v podporah $A$ in $B$. Okoli katere točke zapišeš prvo momentno enačbo, da ima ta le eno neznanko?
@@ -231,7 +231,7 @@ $B\cdot 4{,}0 - 4{,}5 \cdot 1{,}5 = 0$, torej $B = 6{,}75/4{,}0\,\mathrm{kN} \ap
 ## Pogoste napake
 
 - **»Vsaka podpora nosi polovico.«** To velja le pri simetrični obtežbi. Popravek: vedno zapiši momentno enačbo okoli ene podpore; dobiš reakcijo druge.
-- **Pozabljen moment vpetja.** Pri konzoli je reakcij tri, med njimi moment $M_A$. Brez njega momentna enačba nima rešitve, element pa bi »visel« le na sili.
+- **Pozabljen moment vpetja.** Pri konzoli so reakcije tri, med njimi moment $M_A$. Brez njega momentna enačba nima rešitve, element pa bi »visel« le na sili.
 - **Pomična podpora z dvema reakcijama.** Valjčna podpora ne more prevzeti sile vzdolž podlage. Če pri poševni podlagi to pozabiš, napačno izračunaš vodoravno reakcijo v nepomični podpori.
 - **Porazdeljena obtežba v momentni enačbi.** Študent vstavi $q$ namesto $q\,l$ ali postavi rezultanto trikotne obtežbe na sredino. Popravek: najprej rezultanta (ploščina) in njena lega (težišče), šele nato moment.
 - **Negativna reakcija »popravljena« sredi računa.** Če dobiš $A_x < 0$, je bila smer na skici napačna. Vrednost uporabljaj s predznakom naprej; sredi računa ne obračaj puščic.
@@ -281,7 +281,7 @@ Natančno navedi pogoje ravnotežja togega telesa v ravnini in dokaži: če sta 
 3. Druga oblika: iz $\sum M_A = 0$ sledi, da je sistem bodisi ničelni bodisi enakovreden rezultanti z nosilko skozi $A$ (dvojica bi imela moment). Iz $\sum M_B = 0$ mora nosilka iti tudi skozi $B$, torej leži na premici $AB$.
 4. Če $AB$ ni pravokotna na os $x$, ima neničelna sila na tej premici komponento $x$, zato $\sum F_x = 0$ zahteva $F_R = 0$. Če pa je $AB$ pravokotna na $x$, sila na premici $AB$ nima komponente $x$ in bi izpolnila vse tri enačbe, ne da bi bila nič – ravnotežje ne bi bilo zagotovljeno.
 5. (a) Dve nepomični členkasti podpori dasta $n = 4 > 3$ reakcije: nosilec je enkrat statično nedoločen (vodoravnih reakcij ne ločimo brez deformacij).
-6. (b) Tri pomične podpore: $n = 3$, a vse reakcije so navpične in vzporedne. Nobena ne prepreči vodoravnega premika, zato je nosilec geometrijsko labilen, čeprav je reakcij tri.
+6. (b) Tri pomične podpore: $n = 3$, a vse reakcije so navpične in vzporedne. Nobena ne prepreči vodoravnega premika, zato je nosilec geometrijsko labilen, čeprav so reakcije tri.
 
 ### Naloga 3
 

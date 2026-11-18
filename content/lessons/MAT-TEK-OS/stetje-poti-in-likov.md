@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -263,7 +263,7 @@ Od L do B: $\binom{5}{2} = 10$ poti. Skozi L: $3 \cdot 10 = 30$ poti. Za primerj
 - **Štetje le najmanjših likov.** V mreži $3 \times 3$ ni samo $9$ pravokotnikov, ker so pravokotniki tudi sestavljeni iz več kvadratkov. Tudi $14$ ni prav: to so le kvadrati. Šteti je treba izbire črt: $\binom{4}{2} \cdot \binom{4}{2} = 36$.
 - **Celice namesto črt.** Kdor pri omotu $2 \times 3$ računa $\binom{3}{2} \cdot \binom{2}{2} = 3$, je izbiral stolpce in vrstice celic. Stranice ležijo na črtah, teh je v vsaki smeri za ena več kot celic.
 - **Vsota namesto produkta skozi točko.** Poti skozi X niso $3 + 6 = 9$, ampak $3 \cdot 6 = 18$. Vsakega od $3$ začetkov lahko nadaljuješ na vsakega od $6$ načinov.
-- **Pozabljeni robovi.** Pri pahljači sta tudi stranici velikega trikotnika črti skozi oglišče, osnovnica pa je ena od vzporednic. Kdor ju izpusti, v Primeru 3 dobi $\binom{3}{2} \cdot 2 = 6$ namesto $30$.
+- **Pozabljeni robovi.** Pri pahljači sta tudi stranici velikega trikotnika črti skozi oglišče, osnovnica pa je ena od vzporednic. Kdor jih izpusti, v Primeru 3 dobi $\binom{3}{2} \cdot 2 = 6$ namesto $30$.
 
 ## Povzetek
 

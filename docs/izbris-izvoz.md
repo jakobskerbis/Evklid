@@ -23,12 +23,21 @@ Ostane brez povezave na račun (stolpci računa so `NULL`):
 | `audit_log` | dnevnik dostopov, 1 leto |
 | `answer_cache` | splošen odgovor inštruktorja brez imena učenca, deljen med učenci (uporabi se in hrani 30 dni) |
 | `pilot_mnenja_prenehalo` | naključna oznaka mnenja, da skrbnik umakne objavo |
+| `pilot_vabila` | porabljena koda vabila v pilot (samo zgoščena koda in čas, `parent_id` = `NULL`) do konca pilota (`EVKLID_PILOT_DO`), potem se izbriše: izbris in nova registracija ne dasta novega članstva |
 | `schools`, `class_assignments` | šola in naloga v razredu drugega učitelja ostaneta, avtor postane `NULL` |
 | `ai_school_use` | poraba AI, ki je šla pod mejo šole, ostane šoli (`student_id` = `NULL`) |
 | `school_licences`, `school_orders` | licenca in naročilo šole ostaneta s šolo (podatki šole, ne računa) |
 
 Ostane in še kaže na id: `ai_holds` (rezervacija klica v teku; pobriše jo konec klica ali ponovni zagon) in
 `guest_invites.created_by` (povabilo ustvari skrbnik aplikacije).
+
+Ista pot (`server/accounts/izbris.js` `eraseAccount`/`eraseProfiles`) velja še za (#747, pregled 2):
+- **samodejni izbris nepotrjenega računa** (`server/zasebnost.js` `deleteStaleUnverified`): brez profilov 30 dni po
+  registraciji brez veljavne seje (kot prej); s profili 30 dni brez dejavnosti (vprašanja, dogodki učenja, točke,
+  odprtje profila na napravi), seja tu ne šteje;
+- **prevzem nepotrjenega računa** (»Računa nisem ustvaril jaz«, novo geslo prek e-pošte, prijava z Apple): izbrišejo se
+  samo profili in shranjena aktivacijska koda, račun ostane lastniku naslova.
+V vseh primerih poraba ostane šteta za omrežje (`guest_spent`).
 
 ## Izbris profila (`DELETE /api/students/:id`)
 
@@ -41,7 +50,10 @@ Test preveri, da poraba kredita, garancija in strani zapiskov ostanejo računu i
 
 Za vsako tabelo z vrsticami računa ali profila je vsaj ena njena vrednost v izvozu; e-naslov, imena profilov, besedilo
 pogovora in urnik so v njem. Namenoma ni v izvozu (varnost): seje, gesla profilov, odklepi naprav, povezave za plačilo,
-kode za prevzem in potrditve skrbnika. Gesla in žetoni niso v izvozu (test to preveri). Fotografije nalog iz pogovorov
+kode za prevzem in potrditve skrbnika. Gesla in žetoni niso v izvozu (test to preveri). Tudi zgoščena koda vabila v
+pilot (`parents.pilot_invite_hash`, HMAC s strežniško skrivnostjo) namenoma ni v izvozu; čas porabe (`pilot_invite_at`)
+je. Vrstica porabljene kode v `pilot_vabila` (zgoščena koda, račun, čas) se ne izvozi: vsebuje samo zgoščeno kodo, čas
+porabe je že v `pilot_invite_at`; po koncu pilota se izbriše (#751, #819). Fotografije nalog iz pogovorov
 niso v izvozu (hranijo se 7 dni, varnost-podatkov.md).
 
 ## Varnostne kopije
@@ -50,7 +62,7 @@ Izbrisani podatki ostanejo v kopijah, dokler kopije ne potečejo:
 
 - dnevna kopija na disku: 7 dni;
 - posnetek diska pri Renderju: 7 dni;
-- šifrirana kopija v R2 (ko bo nastavljena): 30 dni (`EVKLID_KOPIJE_OBLAK_DNI`);
+- šifrirana kopija v R2 (nastavljena 17. 11. 2026, vedro v EU s pravilom »izbriši po 30 dneh«): 30 dni (`EVKLID_KOPIJE_OBLAK_DNI`);
 - **ročne kopije** (`obnovi-kopijo.js --zdaj`, tudi prenesene iz R2): zadnje 3, nobena pa ne starejša od 22 dni
   (22 + 7 dni posnetka diska + 1 dan do čiščenja = 30). Pobriše jih dnevna kopija, ročna kopija, zagon strežnika ali
   dnevno čiščenje po rokih hrambe (tudi z `EVKLID_BACKUPS=0`);
@@ -91,6 +103,7 @@ Zunaj baze (pregled 3; test jih ne vidi):
 10. **R2:** kopije, starejše od 30 dni, se brišejo samo ob uspešnem nalaganju; če nalaganje odpove, ostanejo. Kopija,
     prenesena iz R2 (`--oblak-prenesi`), je ročna kopija in spada pod točko 1 (ker ima datum izvirne kopije, se lahko
     pobriše že naslednji dan; pred obnovo jo po potrebi prenesi znova). Rok 30 dni nima rezerve: kopija se pobriše ob
-    prvem nalaganju po 30 dneh. Predlog: privzeto 28 dni (`EVKLID_KOPIJE_OBLAK_DNI`), ko bo R2 nastavljen.
+    prvem nalaganju po 30 dneh; če nalaganje odpove, kopijo po 30 dneh izbriše pravilo vedra (j potrdil 17. 11. 2026). Predlog:
+    privzeto 28 dni (`EVKLID_KOPIJE_OBLAK_DNI`).
 11. **Resend** hrani poslana sporočila (tudi ime otroka v opomniku cilja in tedenskem poročilu) po svojih pravilih;
     brez nastavljenega Resenda gre zadeva sporočila v dnevnik Renderja.

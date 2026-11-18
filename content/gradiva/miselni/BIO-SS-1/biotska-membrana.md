@@ -9,7 +9,7 @@ stanje: osnutek
 - Izbirna prepustnost
   - $\mathrm{O_2}$, $\mathrm{CO_2}$ neposredno skozi dvosloj
   - ioni in glukoza skozi beljakovine
-  - napaka: membrana ni sito
+  - napaka: »membrana je sito«
 - Difuzija
   - od večje k manjši koncentraciji
   - brez ATP, tudi olajšana difuzija

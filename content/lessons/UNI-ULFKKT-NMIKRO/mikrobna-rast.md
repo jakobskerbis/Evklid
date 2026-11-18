@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -85,7 +85,7 @@ Naklon ostane enak, ker je generacijski čas odvisen od vrste in razmer, ne od z
 
 | Merilo | Vrste | Primer |
 |---|---|---|
-| Konsistenca | tekoče, poltrdno, trdno | hranilni bujon; gojišče s $1{,}5\,\%$ agarja |
+| Konsistenca | tekoče, poltrdno, trdno | hranilni bujon; gojišče z $1{,}5\,\%$ agarja |
 | Sestava | kompleksno (nedefinirano), sintetično (definirano) | pepton in kvasni ekstrakt; glukoza in znane soli |
 | Namen | selektivno, diferencialno, obogatitveno | MacConkeyjev agar; krvni agar |
 

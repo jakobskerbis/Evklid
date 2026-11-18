@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -248,7 +248,7 @@ napis: 6; 4,3 | človek | nad
 > Čim bliže konicam se veji združita, tem bolj nedaven je skupni prednik. Gorila in šimpanz se združita v B, gorila in orangutan šele v C.
 
 ? Volk je *Canis lupus*, zlati šakal *Canis aureus*. Koliko od sedmih kategorij (od kraljestva do vrste) si delita?
-= 6
+= 6 | 0
 ~ 7 | Vrsta je različna: *lupus* in *aureus* sta različna pridevka, zato $r = 1$.
 ~ 5 | Pozabil si šteti rod: oba sta *Canis*, torej je tudi rod skupen.
 > Razlikujeta se le v vrsti, $r = 1$, zato $s = 7 - 1 = 6$.

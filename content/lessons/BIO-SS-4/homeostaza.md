@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -79,7 +79,7 @@ Telesna temperatura bo višja, znoja pa bo celo več. Vlažen zrak sprejme malo 
 
 Pri šahistu je obratno. Veliko čaja razredči kri, sproščanje ADH se zmanjša, ledvice vrnejo manj vode. Urina je veliko in je svetel. Ledvice v enem dnevu precedijo okoli $180\,\mathrm{L}$ tekočine iz krvi in večino vrnejo vanjo; ADH določa, kolikšen del ostane v urinu.
 
-Zdaj vlogo vsakega dela preizkusi sam: v simulaciji »Receptor, center, efektor« spodaj razvrsti dele uravnavanja temperature. Bodi pozoren na termoreceptorje v hipotalamusu: hipotalamus je hkrati sedež receptorjev in center, a vloge sta različni.
+Zdaj vlogo vsakega dela preizkusi sam: v simulaciji »Receptor, center, efektor« spodaj razvrsti dele uravnavanja temperature. Bodi pozoren na termoreceptorje v hipotalamusu: hipotalamus je hkrati sedež receptorjev in center, a vlogi sta različni.
 
 ## Rešeni primeri
 
@@ -103,7 +103,7 @@ Odstop $\Delta T = T - T_0$; receptor zazna → center primerja → efektor odgo
 5. Odstop je bil navzgor, odziv temperaturo zniža. Ko se vrne blizu $37\,^\circ\mathrm{C}$, odziv popusti.
 6. Odgovor: receptor so termoreceptorji, center hipotalamus, efektorja znojnice in žile v koži; zanka je negativna, ker odziv odpravlja odstop.
 
-### Primer 2: tehtanje pred in po tekmi
+### Primer 2: tehtanje pred tekmo in po njej
 
 Teniška igralka ima pred dvournim dvobojem maso $64\,\mathrm{kg}$, po njem $62{,}4\,\mathrm{kg}$. Med dvobojem je popila $0{,}8\,\mathrm{L}$ vode in ni šla na stranišče. Koliko znoja je izgubila, koliko odstotkov telesne mase manjka in koliko znoja je izgubila na uro? Privzemi, da $1\,\mathrm{L}$ vode ali znoja tehta $1\,\mathrm{kg}$.
 

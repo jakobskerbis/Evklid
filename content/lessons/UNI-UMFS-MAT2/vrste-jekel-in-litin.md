@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -231,8 +231,8 @@ Natezna vez mora prenesti $F = 120\,\mathrm{kN}$ z varnostnim faktorjem $1{,}5$ 
 1. Potrebni prerez: $A = \frac{F \cdot \nu}{R_\mathrm{e}}$.
 2. S235 z $235\,\mathrm{MPa}$: $A = \frac{120\,000 \cdot 1{,}5}{235} \approx 766\,\mathrm{mm^2}$ in $d = \sqrt{\frac{4A}{\pi}} \approx 31{,}2\,\mathrm{mm}$. To je nad $16\,\mathrm{mm}$, zato vrednost $235\,\mathrm{MPa}$ ne velja.
 3. S235 z $225\,\mathrm{MPa}$: $A = \frac{120\,000 \cdot 1{,}5}{225} = 800\,\mathrm{mm^2}$ in $d \approx 31{,}9\,\mathrm{mm}$; izberemo $32\,\mathrm{mm}$.
-4. S355 z $355\,\mathrm{MPa}$: $A \approx 507\,\mathrm{mm^2}$, $d \approx 25{,}4\,\mathrm{mm}$, spet nad $16\,\mathrm{mm}$.
-5. S355 z $345\,\mathrm{MPa}$: $A \approx 522\,\mathrm{mm^2}$, $d \approx 25{,}8\,\mathrm{mm}$; izberemo $26\,\mathrm{mm}$.
+4. S355 s $355\,\mathrm{MPa}$: $A \approx 507\,\mathrm{mm^2}$, $d \approx 25{,}4\,\mathrm{mm}$, spet nad $16\,\mathrm{mm}$.
+5. S355 s $345\,\mathrm{MPa}$: $A \approx 522\,\mathrm{mm^2}$, $d \approx 25{,}8\,\mathrm{mm}$; izberemo $26\,\mathrm{mm}$.
 6. Preizkus: pri $32\,\mathrm{mm}$ je napetost $\frac{120\,000}{804{,}2} \approx 149\,\mathrm{MPa} \le 150\,\mathrm{MPa}$; pri $26\,\mathrm{mm}$ je $\frac{120\,000}{530{,}9} \approx 226\,\mathrm{MPa} \le 230\,\mathrm{MPa}$. Oboje drži.
 7. Masa na meter: $m' = \rho \cdot \frac{\pi d^2}{4} \cdot 1\,\mathrm{m}$. Za $32\,\mathrm{mm}$: $7{,}85 \cdot 8{,}04 \cdot 100\,\mathrm{g} \approx 6{,}31\,\mathrm{kg}$; za $26\,\mathrm{mm}$: $\approx 4{,}17\,\mathrm{kg}$.
 8. Odgovor: S235JR potrebuje $32\,\mathrm{mm}$, S355J2 $26\,\mathrm{mm}$; vez iz S355 je okoli tretjino lažja ($\left(\frac{26}{32}\right)^2 \approx 0{,}66$).

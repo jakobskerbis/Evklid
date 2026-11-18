@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -62,7 +62,7 @@ Pri $3 \cdot x + 2 = 20$ si poskusil $x = 4$ in dobil $14$. Ali naj naslednjič 
 Večje. Leva stran ($14$) je premajhna, z večjim $x$ pa leva stran raste, ker $3 \cdot x$ postane večje.
 :::
 
-V simulaciji spodaj (»Enačba kot tehtnica«) nastavi $x + 3 = 10$. Z obeh strani odvzemi po $3$ in opazuj, da tehtnica ostane v ravnovesju. Nato odvzemi le z ene strani in poglej, kaj se zgodi.
+V simulaciji spodaj (»Enačba kot tehtnica«) je na tehtnici enačba $2 \cdot x + 3 = 11$ (tam zapisana kot $2x + 3 = 11$). Z drsnikom »preizkusi x =« poišči $x$, pri katerem je tehtnica v ravnovesju. Nato z obeh strani odvzemi po $1$ in opazuj, da tehtnica ostane v ravnovesju. Premisli, kaj bi se zgodilo, če bi odvzel le z ene strani.
 
 ## Rešeni primeri
 

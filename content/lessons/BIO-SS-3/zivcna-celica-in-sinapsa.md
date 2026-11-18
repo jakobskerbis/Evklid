@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -68,7 +68,7 @@ Akcijski potencial deluje po načelu **vse ali nič**. Če dražljaj ne doseže 
 Ni višji, ker velja »vse ali nič«. Pri močnejšem dražljaju nevron proži več akcijskih potencialov v sekundi (večja frekvenca), vzburijo pa se tudi sosednji nevroni. Moč je zapisana v pogostosti signalov, ne v njihovi velikosti.
 :::
 
-**4. Širjenje in mielin.** Akcijski potencial na enem mestu depolarizira sosednji del membrane, ta naslednjega in tako naprej. Ioni ne potujejo po aksonu od začetka do konca; potuje *val odpiranja kanalov*. Nazaj se val ne vrne, ker so kanali za sabo za trenutek neodzivni.
+**4. Širjenje in mielin.** Akcijski potencial na enem mestu depolarizira sosednji del membrane, ta naslednjega in tako naprej. Ioni ne potujejo po aksonu od začetka do konca; potuje *val odpiranja kanalov*. Nazaj se val ne vrne, ker so kanali za njim za trenutek neodzivni.
 
 Mnoge aksone ovija **mielinska ovojnica**. Zunaj možganov in hrbtenjače jo tvorijo **Schwannove celice**, ki se večkrat ovijejo okoli aksona, kot izolacijski trak okoli žice. Med njimi so kratke gole vrzeli, **Ranvierjevi zažemki**. Signal skače od zažemka do zažemka (**skokovito prevajanje**), zato je mielinizirano vlakno do stokrat hitrejše:
 
@@ -106,7 +106,7 @@ Ta pot traja okoli $0{,}5\,\mathrm{ms}$ in gre le v eno smer: mešički so samo 
 
 Pri ponavljanju se možgani prilagodijo, npr. z manj receptorji. Za enak učinek je potrebno več snovi (**toleranca**), brez nje pa se pojavijo neprijetni odtegnitveni znaki, ki kažejo na **odvisnost**.
 
-Simulacija »Akcijski potencial in sinapsa« spodaj ti dogodke pomeša. Postavi jih v pravo zaporedje in ob vsakem koraku ugotovi, kateri ioni gredo v celico in kateri iz nje.
+Simulacija »Akcijski potencial in sinapsa« spodaj ti dogodke pomeša. Vsakega uvrsti k pravi fazi in ob vsakem koraku ugotovi, kateri ioni gredo v celico in kateri iz nje.
 
 ## Rešeni primeri
 
@@ -245,7 +245,7 @@ Sinapse so lahko **vzburjevalne** (potencial premaknejo proti pragu) ali **zavir
 ~ Notranjost mirujoče celice je negativna, ne pozitivna. Predznaki so obrnjeni.
 > Iz mirovnega potenciala se ob vdoru $\mathrm{Na^+}$ dvigne do $+30\,\mathrm{mV}$, ob izstopu $\mathrm{K^+}$ pade malo pod mirovni potencial in se nato vrne.
 
-? Ukaz za premik palca na nogi potuje po mieliniziranem vlaknu dolgem okoli $1\,\mathrm{m}$ s hitrostjo okoli $100\,\mathrm{m/s}$. Približno koliko časa potrebuje?
+? Ukaz za premik palca na nogi potuje po mieliniziranem vlaknu, dolgem okoli $1\,\mathrm{m}$, s hitrostjo okoli $100\,\mathrm{m/s}$. Približno koliko časa potrebuje?
 - Okoli $1\,\mathrm{ms}$
 ~ To bi veljalo za $10\,\mathrm{cm}$. Meter je desetkrat daljši.
 + Okoli $10\,\mathrm{ms}$

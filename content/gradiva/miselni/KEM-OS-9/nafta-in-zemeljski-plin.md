@@ -7,7 +7,7 @@ stanje: osnutek
   - neobnovljivi, nastajata milijone let
 - Zemeljski plin
   - večinoma metan $\mathrm{CH_4}$
-  - napaka: jeklenka ima propan in butan
+  - pazi: jeklenka ima propan in butan
 - Nafta
   - tekoča zmes alkanov s $5$ do več kot $40$ C
   - vrelišče raste z dolžino verige

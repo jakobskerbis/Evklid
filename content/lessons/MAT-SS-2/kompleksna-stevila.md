@@ -21,7 +21,7 @@ Na zemljevidu ima vsaka točka dve koordinati, vzhod–zahod in sever–jug. Če
 | le $5$ vzhodno | $5$ |
 | le $3$ severno | $3i$ |
 
-Zdaj isto s simboli. **Kompleksno število** je $z = a + bi$, kjer sta $a$ in $b$ realni števili. Število $a$ je **realni del** ($\mathrm{Re}\,z = a$), $b$ pa **imaginarni del** ($\mathrm{Im}\,z = b$). Pozor: imaginarni del je realno število $b$, ne $bi$. Vodoravna os je **realna os**, navpična **imaginarna os**, vsa ravnina pa **kompleksna** ali **Gaussova ravnina**. Množico kompleksnih števil označimo z $\mathbb{C}$.
+Zdaj isto s simboli. **Kompleksno število** je $z = a + bi$, kjer sta $a$ in $b$ realni števili. Število $a$ je **realni del** ($\mathrm{Re}\,z = a$), $b$ pa **imaginarni del** ($\mathrm{Im}\,z = b$). Pozor: imaginarni del je realno število $b$, ne $bi$. Vodoravna os je **realna os**, navpična **imaginarna os**, vsa ravnina pa **kompleksna** ali **Gaussova ravnina**. Množico kompleksnih števil označimo s $\mathbb{C}$.
 
 - Pri $b = 0$ je $z = a$ realno število na realni osi. Zato je $\mathbb{R} \subset \mathbb{C}$.
 - Pri $a = 0$ in $b \ne 0$ je $z = bi$ **čisto imaginarno** število, na primer $3i$.

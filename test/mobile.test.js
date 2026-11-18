@@ -460,17 +460,67 @@ test("push tokens: only Expo tokens, tied to the account", async () => {
   });
 });
 
+test("download page: promises only apps that exist, in every language (dl.intro, dl.introWeb)", async () => {
+  // Brez APK in Google Play: ne obljublja nobene aplikacije (dl.introWeb).
+  await withServer(async ({ base }) => {
+    const en = await (await fetch(`${base}/prenesi?lang=en`)).text();
+    assert.doesNotMatch(en, /available as an app for Android/);
+    assert.match(en, /The phone app is coming soon\./);
+    const sl = await (await fetch(`${base}/prenesi?lang=sl`)).text();
+    assert.match(sl, /Aplikacija za telefon bo kmalu na voljo\./);
+  });
+  // APK za Android, za iPhone ni aplikacije: Android + »Dodaj na začetni zaslon« (dl.intro).
+  await withServer(
+    async ({ base }) => {
+      const en = await (await fetch(`${base}/prenesi?lang=en`)).text();
+      assert.doesNotMatch(en, /Android and iPhone/);
+      assert.match(en, /app for Android\. On iPhone and iPad, add it to your Home Screen/);
+      const sl = await (await fetch(`${base}/prenesi?lang=sl`)).text();
+      assert.match(sl, /aplikacija za Android\. Na iPhonu in iPadu ga v Safariju dodaš na začetni zaslon/);
+    },
+    { apkFile: fileURLToPath(new URL("./fixtures/apple-chain.json", import.meta.url)) },
+  );
+  // Vsi jeziki: uvoda brez aplikacije za iPhone omenita Safari, ime ostane Evklid.
+  const dir = new URL("../public/i18n/ui/", import.meta.url);
+  for (const f of fs.readdirSync(dir)) {
+    const d = JSON.parse(fs.readFileSync(new URL(f, dir), "utf8"));
+    for (const k of ["dl.intro", "dl.introWeb"]) {
+      assert.match(d[k], /Safari/, `${f} ${k}`);
+      assert.match(d[k], /Evklid/, `${f} ${k}`);
+    }
+    assert.notEqual(d["dl.intro"], d["dl.introApps"], f);
+  }
+});
+
 test("download page offers the APK when it exists and works without login", async () => {
   await withServer(
     async ({ base }) => {
       const page = await (await fetch(`${base}/prenesi?lang=en`)).text();
       assert.match(page, /\/prenesi\/evklid\.apk/);
       assert.match(page, /TestFlight/);
+      // Z aplikacijo za iPhone (TestFlight) uvod omeni obe napravi; APK brez Google Play pove, zakaj je datoteka.
+      assert.match(page, /available as an app for Android and iPhone/);
+      assert.match(page, /not in Google Play yet/);
+      // Noga z javnimi stranmi (ne v aplikaciji, ?app=1).
+      assert.match(page, /<footer><a href="\/">Evklid<\/a><a href="\/o-evklidu">/);
+      assert.ok(!(await (await fetch(`${base}/prenesi?lang=sl&app=1`)).text()).includes("<footer>"));
       const apk = await fetch(`${base}/prenesi/evklid.apk`);
       assert.equal(apk.status, 200);
       assert.equal(apk.headers.get("content-type"), "application/vnd.android.package-archive");
     },
     { apkFile: fileURLToPath(new URL("./fixtures/apple-chain.json", import.meta.url)), env: { EVKLID_TESTFLIGHT_URL: "https://testflight.apple.com/join/TEST" } },
+  );
+});
+
+// APK brez Google Play pove, zakaj je datoteka; noga z javnimi stranmi (uvod preveri test »promises only apps that exist«).
+test("download page: APK without Google Play explains why, footer links public pages", async () => {
+  await withServer(
+    async ({ base }) => {
+      const sl = await (await fetch(`${base}/prenesi?lang=sl`)).text();
+      assert.match(sl, /Aplikacije še ni v trgovini Google Play, zato jo preneseš kar s te strani\./);
+      assert.ok(sl.includes('<a href="/starsi.html">Za starše</a>'));
+    },
+    { apkFile: fileURLToPath(new URL("./fixtures/apple-chain.json", import.meta.url)) },
   );
 });
 

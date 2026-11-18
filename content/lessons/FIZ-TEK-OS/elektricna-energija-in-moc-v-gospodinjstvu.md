@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -153,7 +153,7 @@ $P' = \dfrac{207^2}{26{,}45} = 1620\,\mathrm{W}$. Napetost je padla za $10\,\%$,
 - **Vati namesto kilovatov.** Kdor računa $2000 \cdot 150$ in napiše $300\,000\,\mathrm{kWh}$, ima $1000$-krat preveč. Pred množenjem pretvori W v kW, ali pa dobljene Wh deli s $1000$.
 - **Minute kot decimalke.** $1\,\mathrm{h}\ 30\,\mathrm{min}$ ni $1{,}3\,\mathrm{h}$, ampak $1{,}5\,\mathrm{h}$. Minute deli s $60$.
 - **Zaporedni grelci seštejejo moč.** Napisna moč velja le pri napisani napetosti. Zaporedno vsak grelec dobi manjšo napetost, skupni upor zraste in moč pade, ne naraste.
-- **»Majhna moč pomeni majhen strošek.«** Pozabiš na čas. Naprava v stanju pripravljenosti z $5\,\mathrm{W}$ v letu porabi skoraj $44\,\mathrm{kWh}$.
+- **»Majhna moč pomeni majhen strošek.«** Pozabiš na čas. Naprava v stanju pripravljenosti s $5\,\mathrm{W}$ v letu porabi skoraj $44\,\mathrm{kWh}$.
 
 ## Povzetek
 

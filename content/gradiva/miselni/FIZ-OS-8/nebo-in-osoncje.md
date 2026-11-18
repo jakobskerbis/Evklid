@@ -15,7 +15,7 @@ stanje: osnutek
   - Sonce osvetljuje vedno njeno polovico
 - Lunine mene
   - mlaj, prvi krajec, ščip, zadnji krajec
-  - od ščipa do ščipa $29{,}5$ dni
+  - od ščipa do ščipa $29{,}5$ dneva
   - napaka: mene niso Zemljina senca
 - Sončev mrk
   - Luna med Soncem in Zemljo

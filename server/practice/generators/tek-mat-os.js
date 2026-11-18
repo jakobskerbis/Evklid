@@ -5,6 +5,8 @@ import {
   tx, res, num, sci, par, binom, fact, modpow, divisors, factorize, factorTex, gcd, ORD, cap, DAYS, choiceAns, withMistakes, choiceWhy, dat,
 } from "./tek-util.js";
 
+import { TEK_MAT_OS_MLADI } from "./tek-mat-os-mladi.js";
+
 const T = (slug) => `MAT-TEK-OS/${slug}`;
 const lazn = (n) => `${verbOf(n, "je", "sta", "so", "je")} natanko ${nOf(n, "lažnivec", "lažnivca", "lažnivci", "lažnivcev")}`;
 const laznVsaj = (n) => `${verbOf(n, "je", "sta", "so", "je")} vsaj ${nOf(n, "lažnivec", "lažnivca", "lažnivci", "lažnivcev")}`;
@@ -20,6 +22,7 @@ const digitSum = (n) => String(n).split("").reduce((a, c) => a + Number(c), 0);
 export const TEK_MAT_OS = [
   {
     id: "tek-vitezi-lazniveci",
+    minYear: 5, // mlajši (do 4. razreda) dobijo naloge iz tek-mat-os-mladi.js
     topics: [T("logicne-naloge-in-sklepanje")],
     gen(level, r) {
       const n = level === 1 ? r.int(4, 5) : level === 2 ? r.int(6, 7) : r.int(8, 10);
@@ -231,6 +234,7 @@ export const TEK_MAT_OS = [
   },
   {
     id: "tek-igre-vzigalice",
+    minYear: 5, // mlajši (do 4. razreda) dobijo naloge iz tek-mat-os-mladi.js
     topics: [T("igre-in-zmagovalne-strategije")],
     gen(level, r) {
       const [a, b] = r.shuffle(NAMES).slice(0, 2);
@@ -403,6 +407,7 @@ export const TEK_MAT_OS = [
   },
   {
     id: "tek-stevke",
+    minYear: 5, // mlajši (do 4. razreda) dobijo naloge iz tek-mat-os-mladi.js
     topics: [T("stevilske-uganke-in-zapisi")],
     gen(level, r) {
       if (level === 1) {
@@ -513,6 +518,7 @@ export const TEK_MAT_OS = [
   },
   {
     id: "tek-prestevanje",
+    minYear: 5, // mlajši (do 4. razreda) dobijo naloge iz tek-mat-os-mladi.js
     topics: [T("prestevanje-moznosti")],
     gen(level, r) {
       const ime = r.pick(NAMES);
@@ -782,6 +788,7 @@ export const TEK_MAT_OS = [
   },
   {
     id: "tek-poti-liki",
+    minYear: 5, // mlajši (do 4. razreda) dobijo naloge iz tek-mat-os-mladi.js
     topics: [T("stetje-poti-in-likov")],
     gen(level, r) {
       if (level === 1) {
@@ -1111,6 +1118,7 @@ export const TEK_MAT_OS = [
   },
   {
     id: "tek-ure-koledar",
+    minYear: 5, // mlajši (do 4. razreda) dobijo naloge iz tek-mat-os-mladi.js
     topics: [T("starosti-ure-in-koledar")],
     gen(level, r) {
       if (level === 1) {
@@ -1314,4 +1322,6 @@ export const TEK_MAT_OS = [
       };
     },
   },
+  // Naloge za 1.–4. razred (Kenguru za mlajše): manjša števila, brez stopinj, enačb in fakultet.
+  ...TEK_MAT_OS_MLADI,
 ];

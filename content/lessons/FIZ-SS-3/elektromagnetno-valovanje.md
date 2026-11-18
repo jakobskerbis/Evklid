@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -228,7 +228,7 @@ Elektromagnetno valovanje te obkroža ves dan, le z različnimi valovnimi dolži
 ~ Radijski valovi so elektromagnetno valovanje kot svetloba, le z daljšo valovno dolžino.
 > Obe valovanji potujeta s hitrostjo $c$. Rentgenska svetloba je v spektru na strani kratkih valovnih dolžin in visokih frekvenc, radijski valovi na nasprotni strani.
 
-? Strela udari $1\,\mathrm{km}$ od tebe. Po koliko časa vidiš blisk in po koliko slišiš grom? Hitrost zvoka je $340\,\mathrm{m/s}$.
+? Strela udari $1\,\mathrm{km}$ od tebe. Po kolikšnem času vidiš blisk in po kolikšnem slišiš grom? Hitrost zvoka je $340\,\mathrm{m/s}$.
 - Oboje hkrati, ker nastaneta hkrati.
 ~ Nastaneta res hkrati, a potujeta z zelo različnima hitrostma.
 - Grom prej, ker je zvok glasen in močan.

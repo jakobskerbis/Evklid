@@ -958,7 +958,7 @@ export const SETS = {
     cats: [["clov", "koža človeka"], ["clen", "hitinski oklep členonožcev"], ["drugo", "druge krovne strukture"]],
     items: [
       ["večplastna povrhnjica, znojnice, lasje", "clov", "Koža sesalcev ima žleze in dlake."],
-      ["mora se levit, da žival zraste", "clen", "Zunanji skelet ne raste skupaj z živaljo."],
+      ["mora se leviti, da žival zraste", "clen", "Zunanji skelet ne raste skupaj z živaljo."],
       ["luske rib", "drugo", "Luske ščitijo telo v vodi."],
       ["perje", "drugo", "Perje izolira in omogoča let."],
       ["melanociti ščitijo DNA pred UV", "clov", "Melanin vpija UV-sevanje."],
@@ -1005,7 +1005,7 @@ export const SETS = {
     items: [
       ["paramecij se razdeli na dva", "delit", "Nespolno: dva genetsko enaka potomca."],
       ["hidra dobi stranski poganjek, ki se loči", "brst", "Nespolno brstenje."],
-      ["iz neoplojenih jajčec trota se razvijejo samci čebel", "fragm", "Partenogeneza: razvoj iz neoplojene jajčne celice."],
+      ["iz neoplojenih jajčec matice se razvijejo troti (samci čebel)", "fragm", "Partenogeneza: razvoj iz neoplojene jajčne celice."],
       ["iz odtrganega kraka morske zvezde zraste nova zvezda", "fragm", "Fragmentacija in regeneracija."],
       ["vrtni polž je dvospolnik, a se pari z drugim polžem", "spol", "Hermafrodit z navzkrižno oploditvijo."],
       ["sesalci se parijo v sezoni parjenja", "spol", "Spolno razmnoževanje z oploditvijo."],

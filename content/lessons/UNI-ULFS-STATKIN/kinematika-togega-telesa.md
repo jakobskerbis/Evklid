@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -126,7 +126,7 @@ $P$ = presečišče navpičnice skozi $A$ in vodoravnice skozi $B$; $\omega = \d
 4. $v_B = \omega\,r_{PB} = 0{,}373 \cdot 3{,}83\,\mathrm{m/s} \approx 1{,}43\,\mathrm{m/s}$, navzdol. Isto da $v_A\cot\varphi = 1{,}2 \cdot 1{,}192\,\mathrm{m/s}$.
 5. Sredina $M$ je od pola oddaljena za polovico diagonale pravokotnika, torej $L/2$: $v_M = 0{,}373 \cdot 2{,}5\,\mathrm{m/s} \approx 0{,}93\,\mathrm{m/s}$.
 6. Preizkus s projekcijami na $AB$: $v_A\cos\varphi = 1{,}2 \cdot 0{,}766 \approx 0{,}919\,\mathrm{m/s}$ in $v_B\sin\varphi = 1{,}43 \cdot 0{,}643 \approx 0{,}919\,\mathrm{m/s}$. ✓
-7. Odgovor: lestev se vrti s $0{,}373\,\mathrm{s^{-1}}$, zgornji konec pada s $1{,}43\,\mathrm{m/s}$, sredina se giblje s $0{,}93\,\mathrm{m/s}$.
+7. Odgovor: lestev se vrti z $0{,}373\,\mathrm{s^{-1}}$, zgornji konec pada z $1{,}43\,\mathrm{m/s}$, sredina se giblje z $0{,}93\,\mathrm{m/s}$.
 
 ### Primer 3 (težji)
 
@@ -149,7 +149,7 @@ $v_A = \omega_1 r$, $\omega_2 = \dfrac{v_A}{r_{PA}}$, $v_B = \omega_2 r_{PB}$; $
 6. **Enačba pospeškov.** Z $\vec{\alpha}_2 = \alpha_2\vec{k}$ je $\vec{\alpha}_2 \times \vec{r}_{AB} = (0{,}0866\,\alpha_2;\ 0{,}3905\,\alpha_2)$, $\omega_2^2 \approx 6{,}557\,\mathrm{s^{-2}}$ in $\omega_2^2\vec{r}_{AB} \approx (2{,}561;\ -0{,}568)\,\mathrm{m/s^2}$. Pospešek bata je vodoraven, $\vec{a}_B = (a_B;\ 0)$.
 7. Komponenta $y$: $0 = -34{,}64 + 0{,}3905\,\alpha_2 + 0{,}568$, zato $\alpha_2 = 34{,}07/0{,}3905\,\mathrm{s^{-2}} \approx 87{,}3\,\mathrm{s^{-2}}$ (pozitivna smer).
 8. Komponenta $x$: $a_B = -20 + 0{,}0866 \cdot 87{,}25 - 2{,}561\,\mathrm{m/s^2} \approx -20 + 7{,}56 - 2{,}56 = -15{,}0\,\mathrm{m/s^2}$.
-9. Odgovor: ojnica se vrti z $2{,}56\,\mathrm{s^{-1}}$ v smeri urinega kazalca, bat se giblje s $1{,}95\,\mathrm{m/s}$ proti $O$; kotni pospešek ojnice je $87{,}3\,\mathrm{s^{-2}}$ v pozitivni smeri (nasprotno od urinega kazalca, ojnica se torej vrti vse počasneje), pospešek bata $15{,}0\,\mathrm{m/s^2}$ proti $O$. Čeprav se ročica vrti enakomerno, se bat ne giblje enakomerno.
+9. Odgovor: ojnica se vrti z $2{,}56\,\mathrm{s^{-1}}$ v smeri urinega kazalca, bat se giblje z $1{,}95\,\mathrm{m/s}$ proti $O$; kotni pospešek ojnice je $87{,}3\,\mathrm{s^{-2}}$ v pozitivni smeri (nasprotno od urinega kazalca, ojnica se torej vrti vse počasneje), pospešek bata $15{,}0\,\mathrm{m/s^2}$ proti $O$. Čeprav se ročica vrti enakomerno, se bat ne giblje enakomerno.
 
 ### Primer 4 – zdaj ti
 
@@ -227,7 +227,7 @@ Natančno navedi in dokaži izrek o hitrostih dveh točk togega telesa pri ravni
 2. Projekcije: pomnožimo izrek skalarno z $\vec{e}_{AB}$; ker je $\vec{\omega} \times \vec{r}_{AB} \perp \vec{e}_{AB}$, dobimo $\vec{v}_B \cdot \vec{e}_{AB} = \vec{v}_A \cdot \vec{e}_{AB}$.
 3. Pol: iz $\vec{v}_A + \vec{\omega} \times \vec{r}_{AP} = 0$ z vektorskim množenjem z $\vec{\omega}$ sledi edina rešitev $\vec{r}_{AP} = \vec{\omega} \times \vec{v}_A/\omega^2$.
 4. Primer pravokotne zveznice: $\vec{v}_B - \vec{v}_A = \vec{\omega} \times \vec{r}_{AB}$ je vzporedna s hitrostma, zato sta lahko različno veliki; $\omega = |v_B - v_A|/|AB|$, pol leži na premici $AB$ (kot pri valju med deskama).
-5. Če zveznica ni pravokotna na vzporedni hitrosti, izrek o projekcijah zahteva $v_A\cos\beta = v_B\cos\beta$ z $\cos\beta \ne 0$, torej $v_A = v_B$. Hitrosti morata biti enaki: to je trenutna translacija, $\omega = 0$.
+5. Če zveznica ni pravokotna na vzporedni hitrosti, izrek o projekcijah zahteva $v_A\cos\beta = v_B\cos\beta$ s $\cos\beta \ne 0$, torej $v_A = v_B$. Hitrosti morata biti enaki: to je trenutna translacija, $\omega = 0$.
 6. Odgovor: različno veliki vzporedni hitrosti sta mogoči le, če je zveznica točk pravokotna nanju.
 
 ### Naloga 3

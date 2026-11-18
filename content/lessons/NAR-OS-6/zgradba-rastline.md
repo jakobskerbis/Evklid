@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -97,7 +97,7 @@ Pomagaj si z znaki: korenina je v tleh, nima brstov in lahko shranjuje hrano, st
 4. Brokoli ima na vrhu na stotine drobnih zelenih popkov. Če ga ne utrgamo, se odprejo v rumene cvetove. Ješ torej **cvetove** (še zaprte).
 5. Odgovor: korenje je korenina, špargelj steblo, solata listi, brokoli cvetovi.
 
-### Primer 2: starost drevesa iz deske
+### Primer 2: starost drevesa iz hloda
 
 Mizar ima hlod smreke, odžagan tik nad tlemi, s premerom $36\,\mathrm{cm}$. Na prerezu izmeri, da so letnice v povprečju široke $4\,\mathrm{mm}$. Koliko let je bilo drevo staro?
 
@@ -244,7 +244,7 @@ napis: 5,3; 8,6 | 4 | desno | debelo
 - list
 ~ List je ploščat in zelen, ker lovi svetlobo. Novi poganjki ne poženejo iz lista, ampak iz brstov na steblu.
 - cvet
-~ Iz cveta nastanejo plodovi s semeni. »Očesa« pa so brsti, in brsti rastejo na steblu.
+~ Iz cveta nastanejo plodovi s semeni. »Očesa« pa so brsti in brsti rastejo na steblu.
 > To je krompirjev gomolj: odebeljeno podzemno steblo. »Očesa« so brsti, ti pa so značilni za steblo.
 
 ? Razvrsti, po katerih delih potuje kapljica vode od zemlje do zraka.

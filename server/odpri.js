@@ -51,7 +51,8 @@ export function parseOpenBlocks(text) {
   }
   for (const m of s.matchAll(GRAPH_RE)) {
     const exprs = parseGraph(m[1]);
-    if (exprs) found.push({ at: m.index, kind: "graph", exprs });
+    const view = parseGraphView(m[1]);
+    if (exprs) found.push({ at: m.index, kind: "graph", exprs, ...(view && { view }) });
   }
   for (const m of s.matchAll(SKETCH_RE)) {
     const spec = parseSketch(m[1]);
@@ -81,6 +82,29 @@ export function parseGraph(json) {
   if (!Array.isArray(list)) return null;
   const exprs = list.filter((x) => typeof x === "string" && x.trim() && x.length <= 120).map((x) => x.trim()).slice(0, 8);
   return exprs.length ? exprs : null;
+}
+
+// Neobvezno okno grafa v istem seznamu: {"x": [-2, 6], "y": [-5, 5]} (ena ali obe osi). Brez njega odjemalec sam
+// izbere okno z ničlami, poli in ekstremi (public/graph/okno.js); podano okno ostane nespremenjeno.
+export function parseGraphView(json) {
+  let list;
+  try {
+    list = JSON.parse(json);
+  } catch {
+    return null;
+  }
+  const o = Array.isArray(list) ? list.find((x) => x && typeof x === "object" && !Array.isArray(x)) : null;
+  if (!o) return null;
+  const view = {};
+  for (const ax of ["x", "y"]) {
+    const r = o[ax];
+    if (!Array.isArray(r) || r.length !== 2) continue;
+    const [a, b] = r;
+    if (typeof a !== "number" || typeof b !== "number" || !Number.isFinite(a) || !Number.isFinite(b) || !(b - a >= 1e-6 * Math.max(1, Math.abs(a), Math.abs(b))) || Math.max(Math.abs(a), Math.abs(b)) > 1e6) continue;
+    view[`${ax}min`] = a;
+    view[`${ax}max`] = b;
+  }
+  return Object.keys(view).length ? view : null;
 }
 
 // Skica: točke z imeni in koordinatami, daljice, vektorji (sile), krožnice, koti. Vse preverjeno, sicer null.
@@ -343,7 +367,7 @@ export async function resolveOpen(text, settings, { canOpen = null } = {}) {
     if (out.length >= OPEN_MAX) break;
     let r = null;
     try {
-      if (b.kind === "graph") r = { kind: "graph", exprs: b.exprs };
+      if (b.kind === "graph") r = { kind: "graph", exprs: b.exprs, ...(b.view && { view: b.view }) };
       else if (b.kind === "sketch") r = { kind: "sketch", spec: b.spec };
       else if (b.kind === "sim") r = findSim(b.q, settings, canOpen);
       else if (b.kind === "3d") r = await findModel(b.q, b.del);

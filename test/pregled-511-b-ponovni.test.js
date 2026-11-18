@@ -119,7 +119,7 @@ async function attack({ client, store, stripe, hook }, { legacy = false, bAfterS
   const a = client();
   const A = await registerVerified(a, stripe, "a@rr.si");
   store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(A.id);
-  assert.equal((await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } })).status, 200);
+  assert.equal((await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true } })).status, 200);
   const body = lastSession(stripe);
   const uidA = body["metadata[parent_uid]"];
   assert.ok(uidA, "uid v metadata seje");
@@ -185,7 +185,7 @@ test("RR5: pravi račun, mlajši od 24 h, povezava za plačilo z uid: sub.create
     store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z'").run();
     const link = await teen("/api/billing/pay-link", { method: "POST", body: { kind: "sub", seats: 1, interval: "month" } });
     const token = new URL(link.body.url).searchParams.get("t");
-    const co = await client()(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "mama@rr.si", adult: true, withdrawal: true } });
+    const co = await client()(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "mama@rr.si", adult: true, withdrawal: true, terms: true } });
     assert.equal(co.status, 200, JSON.stringify(co.body));
     const body = lastSession(stripe);
     const meta = { parent_id: String(P.id), parent_uid: body["subscription_data[metadata][parent_uid]"] };
@@ -239,7 +239,7 @@ test("RR8: dokup: dvojni dogodek (completed + async_payment_succeeded, ponovitev
   await withServer(async ({ client, store, stripe, hook }) => {
     const a = client();
     const A = await registerVerified(a, stripe, "kr@rr.si");
-    assert.equal((await a("/api/billing/credit", { method: "POST", body: { pack: "k10", adult: true, withdrawal: true } })).status, 200);
+    assert.equal((await a("/api/billing/credit", { method: "POST", body: { pack: "k10", adult: true, withdrawal: true, terms: true } })).status, 200);
     const body = lastSession(stripe);
     const meta = { kind: "credit", credit_id: body["metadata[credit_id]"], parent_id: String(A.id), parent_uid: body["metadata[parent_uid]"] };
     assert.ok(meta.parent_uid);
@@ -255,7 +255,7 @@ test("RR8: dokup: dvojni dogodek (completed + async_payment_succeeded, ponovitev
 
 test("RR9: B z istim id in istim id dokupa, uid: A-jevo plačilo ne aktivira B-jevega nakupa", async () => {
   await withServer(async ({ client, store, stripe, hook }) => {
-    const c = { adult: true, withdrawal: true };
+    const c = { adult: true, withdrawal: true, terms: true };
     const a = client();
     const A = await registerVerified(a, stripe, "d1@rr.si");
     await a("/api/billing/credit", { method: "POST", body: { pack: "k20", ...c } });

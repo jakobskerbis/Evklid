@@ -12,7 +12,7 @@ stanje: osnutek
   - antibiotik na viruse ne deluje
 - Presnova
   - avtotrof iz $\mathrm{CO_2}$, heterotrof iz organskih snovi
-  - fototrof s svetlobe, kemotrof iz reakcij
+  - fototrof iz svetlobe, kemotrof iz reakcij
   - nitrifikacijske bakterije: avtotrofi brez svetlobe
 - Vrenje
   - alkoholno: glukoza v etanol in $\mathrm{CO_2}$

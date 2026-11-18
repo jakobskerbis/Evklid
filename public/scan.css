@@ -99,6 +99,11 @@
 [dir="rtl"] .scan-step-math .katex-display > .katex, [dir="rtl"] .scan-why .katex-display > .katex { text-align: right; }
 [dir="rtl"] .scan-step-math .katex-display, [dir="rtl"] .scan-why .katex-display { text-align: right; }
 .scan-step-note { flex: none; color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+/* oznaka ob vrstici, na katero jo uporabimo (bledo), rezultat pod njo (j 14. 11. 2026) */
+.scan-step-izvor { flex-direction: column; align-items: flex-start; gap: 0; }
+.scan-step-izvor > .katex-display { margin-top: 0.2em; }
+.scan-step-from { display: flex; align-items: baseline; gap: 12px; color: var(--muted); padding-top: 0.4em; }
+.scan-step-from > .katex { font-size: 1.1em; }
 .scan-step-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; padding-inline-start: 38px; }
 .scan-step-actions .text-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
 .scan-step-actions .i { width: 16px; height: 16px; }
@@ -112,6 +117,7 @@
   .scan-why { margin-inline-start: 0; }
   .scan-actions > button { flex: 1 1 auto; justify-content: center; }
   .scan-step-math { flex-wrap: wrap; gap: 0 12px; }
+  .scan-step-izvor { flex-wrap: nowrap; }
   .scan-step-math .katex, .scan-why .katex { font-size: 1.02em; }
 }
 
@@ -139,4 +145,15 @@
 .scan-given-item { padding: 4px 10px; border-radius: 14px; background: var(--surface-2); max-width: 100%; }
 /* dolg pogoj (besedilo v \text{}) se prelomi v čipu, ne štrli čez rob */
 .scan-given-item .katex .katex-base { white-space: normal; width: auto; }
+/* iskano ni podatek: svoja vrstica brez čipa (j 16. 11. 2026) */
+.scan-sought-item { padding: 4px 0; max-width: 100%; }
 .scan-answer-tex .scan-fact { margin: 4px 0; text-align: center; font-size: 1.15rem; font-weight: 400; }
+
+/* Kamera v Inštruktorju (scan.js, renderTutorConfirm): prepis celotne naloge, ki ga učenec popravi, in fotografija zraven */
+.scan-tutor textarea { width: 100%; min-height: 7.5em; resize: vertical; font: inherit; line-height: 1.45; }
+.scan-tutor .scan-photo-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; min-height: 44px; cursor: pointer; }
+.scan-tutor .scan-photo-row img { width: 56px; height: 42px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); flex: none; }
+.scan-tutor .scan-photo-row span { display: grid; gap: 2px; }
+/* »Pošlji inštruktorju« ostane viden brez drsenja (telefon 360 × 740): vrstica gumbov se prilepi na spodnji rob. */
+.scan-tutor .scan-tutor-actions { position: sticky; bottom: 0; z-index: 2; margin: 12px -16px -16px; padding: 10px 16px calc(10px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); background: var(--surface); border-top: 1px solid var(--border); border-radius: 0 0 var(--radius, 14px) var(--radius, 14px); }
+@media (max-height: 760px) { .scan-tutor textarea { min-height: 5.5em; } }

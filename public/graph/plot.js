@@ -3,6 +3,7 @@
 // implicitne krivulje (marching squares), senčenje neenačb, posebne točke in sledenje krivulji.
 import { toNum, specialPoints, intersections } from "./model.js";
 import { integrate, niceNumber } from "./math.js";
+import { verticalAsymptotes, endAsymptotes, asymptoteLabel } from "./okno.js";
 
 // barve krivulj (kot CSS spremenljivke v graph.css, da delujejo v temnem načinu)
 export const PALETTE = ["--g-red", "--g-blue", "--g-green", "--g-purple", "--g-orange", "--g-black", "--g-teal", "--g-pink"];
@@ -172,6 +173,7 @@ export class GraphView {
       minor: mix(text, bg, 0.06),
       axis: mix(text, bg, 0.88),
       poi: muted,
+      accent: read("--accent", "#2f9e44"),
       palette: PALETTE.map((p, i) => read(p, ["#c74440", "#2d70b3", "#388c46", "#6042a6", "#e8710a", "#1f2937", "#0e8a8a", "#c2367f"][i])),
     };
     return this.cCache;
@@ -201,13 +203,16 @@ export class GraphView {
     // najprej senčenje, nato krivulje, nazadnje točke
     for (const o of visible) if (o.kind === "region" || o.kind === "ineq-y" || o.kind === "ineq-x") this.safe(() => this.drawShade(ctx, o, C, W, H));
     for (const o of visible) if (o.src?.tools?.area) this.safe(() => this.drawArea(ctx, o, C));
-    if (st.axes !== false) this.drawAxes(ctx, W, H, C, st);
+    if (this.hooks.oznaka) this.safe(() => this.drawOznaka(ctx, C, W, H, "pas"));
+    if (st.axes !== false) this.drawAxes(ctx, W, H, C, st, "osi");
     for (const o of visible) this.safe(() => this.drawItem(ctx, o, C, W, H));
     for (const o of visible) if (o.src?.tools?.tangent != null) this.safe(() => this.drawTangent(ctx, o, C));
-    if (!exporting) {
-      this.drawPois(ctx, C, items);
-      this.drawTrace(ctx, C);
-    }
+    if (!exporting) this.drawPois(ctx, C, items);
+    // številke na oseh nad krivuljami in točkami (s svetlim robom), da jih nič ne prekrije (j 14. 11. 2026)
+    if (st.axes !== false) this.drawAxes(ctx, W, H, C, st, "stevilke");
+    // rešitev na osi x (krožci so na osi, številke pod njo: se ne prekrivajo)
+    if (this.hooks.oznaka) this.safe(() => this.drawOznaka(ctx, C, W, H, "os"));
+    if (!exporting) this.drawTrace(ctx, C);
     ctx.restore();
   }
 
@@ -264,7 +269,8 @@ export class GraphView {
     return niceStep(v.xmax - v.xmin, this.W);
   }
 
-  drawAxes(ctx, W, H, C, st) {
+  // del: "osi" (črti, puščici, oznaki x in y), "stevilke" (številke in črtice); brez: vse
+  drawAxes(ctx, W, H, C, st, del) {
     const v = this.view;
     const x0 = this.X(0);
     const y0 = this.Y(0);
@@ -275,6 +281,7 @@ export class GraphView {
     ctx.fillStyle = C.axis;
     ctx.lineWidth = 1.5;
     const arrows = st.arrows !== false;
+    const osi = del !== "stevilke";
     const head = (x, y, dx, dy) => {
       ctx.beginPath();
       ctx.moveTo(x, y);
@@ -283,14 +290,14 @@ export class GraphView {
       ctx.closePath();
       ctx.fill();
     };
-    if (y0 >= 0 && y0 <= H) {
+    if (osi && y0 >= 0 && y0 <= H) {
       ctx.beginPath();
       ctx.moveTo(0, Math.round(y0) + 0.5);
       ctx.lineTo(W - (arrows ? 3 : 0), Math.round(y0) + 0.5);
       ctx.stroke();
       if (arrows) head(W - 1, Math.round(y0) + 0.5, 1, 0);
     }
-    if (x0 >= 0 && x0 <= W) {
+    if (osi && x0 >= 0 && x0 <= W) {
       ctx.beginPath();
       ctx.moveTo(Math.round(x0) + 0.5, H);
       ctx.lineTo(Math.round(x0) + 0.5, arrows ? 3 : 0);
@@ -309,9 +316,9 @@ export class GraphView {
       ctx.fillStyle = C.text;
       ctx.fillText(text, x, y);
     };
-    if (y0 >= 0 && y0 <= H) halo(st.xLabel ?? "x", W - 8, y0 - 16, "right");
-    if (x0 >= 0 && x0 <= W) halo(st.yLabel ?? "y", x0 + 14, 12, "left");
-    if (st.numbers === false) return;
+    if (osi && y0 >= 0 && y0 <= H) halo(st.xLabel ?? "x", W - 8, y0 - 16, "right");
+    if (osi && x0 >= 0 && x0 <= W) halo(st.yLabel ?? "y", x0 + 14, 12, "left");
+    if (st.numbers === false || del === "osi") return;
     ctx.font = "600 12px 'Nunito Variable', Nunito, system-ui, sans-serif";
     const gx = this.xGrid(st);
     const gy = niceStep(v.ymax - v.ymin, H);
@@ -325,7 +332,8 @@ export class GraphView {
       if (px < 12 || px > W - 12) continue;
       const lab = gx.pi ? piLabel(Math.round(k * gx.pi * 12), 12) : fmt(k * gx.step, dx);
       halo(lab, px, below, "center");
-      // kratka črtica na osi
+      // kratka črtica na osi (ne pod krožcem rešitve: barva ozadja je lahko prosojna in črtica bi se videla skozi)
+      if (this.hooks.oznaka && this.oznakaXs().some((x) => Math.abs(this.X(x) - px) < 8)) continue;
       ctx.strokeStyle = C.axis;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
@@ -375,7 +383,8 @@ export class GraphView {
   }
 
   // prilagodljivo vzorčenje z zaznavo asimptot; vrne seznam poti v zaslonskih koordinatah
-  sampleExplicit(f, swap = false) {
+  // poles: znani poli (navpične asimptote); črta se ob njih vedno prekine, tudi ko vzorec pola ne zadene
+  sampleExplicit(f, swap = false, poles = null) {
     const v = this.view;
     const [a, b] = swap ? [v.ymin, v.ymax] : [v.xmin, v.xmax];
     const span = swap ? this.W : this.H;
@@ -450,7 +459,15 @@ export class GraphView {
     for (let i = 1; i <= n; i++) {
       const t1 = a + ((b - a) * i) / n;
       const y1 = f(t1);
-      refine(t0, y0, t1, y1, 8);
+      const p = poles?.find((q) => q > t0 && q < t1);
+      if (p !== undefined) {
+        const d = (b - a) * 1e-7;
+        refine(t0, y0, p - d, f(p - d), 8);
+        end();
+        const yr = f(p + d);
+        if (Number.isFinite(yr)) push(p + d, yr);
+        refine(p + d, yr, t1, y1, 8);
+      } else refine(t0, y0, t1, y1, 8);
       t0 = t1;
       y0 = y1;
     }
@@ -550,8 +567,12 @@ export class GraphView {
     if (o.kind === "y" || o.kind === "x" || (o.kind === "func" && o.plot === "y")) {
       const swap = o.kind === "x";
       const all = [];
-      for (const f of this.branches(o.fn, swap ? (v.ymin + v.ymax) / 2 : (v.xmin + v.xmax) / 2)) {
-        const paths = this.sampleExplicit(f, swap);
+      const fs = this.branches(o.fn, swap ? (v.ymin + v.ymax) / 2 : (v.xmin + v.xmax) / 2);
+      // asimptote (graf v odgovoru inštruktorja, hooks.asimptote): črtkano pod krivuljo, črta se ob polu prekine
+      const asym = this.hooks.asimptote && !swap && fs.length === 1 ? this.asymptotes(o, fs[0]) : null;
+      if (asym) this.drawAsymptotes(ctx, asym, C);
+      for (const f of fs) {
+        const paths = this.sampleExplicit(f, swap, asym?.poles);
         all.push(...paths);
       }
       this.stroke(ctx, o, color, { width: w });
@@ -669,6 +690,93 @@ export class GraphView {
       }
     }
     ctx.setLineDash([]);
+  }
+
+  // Asimptote funkcije: konec (x → ±∞) enkrat na funkcijo, poli za vsako okno posebej.
+  asymptotes(o, f) {
+    const g = (x) => {
+      try {
+        return f(x);
+      } catch {
+        return NaN;
+      }
+    };
+    this.asymCache ||= new WeakMap();
+    let c = this.asymCache.get(o.fn);
+    if (!c) this.asymCache.set(o.fn, (c = { ends: endAsymptotes(g) }));
+    const v = this.view;
+    const key = `${v.xmin}|${v.xmax}|${this.W}`;
+    if (c.key !== key) {
+      c.key = key;
+      c.poles = verticalAsymptotes(g, v.xmin, v.xmax, Math.max(200, Math.round(this.W)), { fine: false });
+    }
+    return c;
+  }
+
+  drawAsymptotes(ctx, { poles, ends }, C) {
+    const v = this.view;
+    const W = this.W;
+    const H = this.H;
+    const labels = [];
+    ctx.save();
+    ctx.strokeStyle = C.poi;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 5]);
+    ctx.beginPath();
+    for (const x of poles) {
+      const px = this.X(x);
+      ctx.moveTo(px, 0);
+      ctx.lineTo(px, H);
+    }
+    for (const e of ends) {
+      ctx.moveTo(0, this.Y(e.k * v.xmin + e.n));
+      ctx.lineTo(W, this.Y(e.k * v.xmax + e.n));
+      // oznaka na vidnem delu premice, proti strani, kjer se ji krivulja približa
+      let [lo, hi] = [v.xmin, v.xmax];
+      if (e.k) {
+        const [a, b] = [(v.ymin - e.n) / e.k, (v.ymax - e.n) / e.k].sort((p, q) => p - q);
+        lo = Math.max(lo, a);
+        hi = Math.min(hi, b);
+      } else if (e.n < v.ymin || e.n > v.ymax) continue;
+      if (!(hi > lo)) continue;
+      // y = 0 leži na osi x, ki ima desno oznako »x«: tam oznako raje levo
+      const right = e.sides.includes(1) && !(e.k === 0 && e.n === 0 && e.sides.includes(-1));
+      const lx = right ? lo + 0.97 * (hi - lo) : lo + 0.03 * (hi - lo);
+      labels.push({ text: asymptoteLabel(e), px: this.X(lx), py: this.Y(e.k * lx + e.n) - 7, align: right ? "right" : "left", base: "bottom" });
+    }
+    ctx.stroke();
+    ctx.restore();
+    // oznake navpičnih asimptot: največ tri, najbližje sredini okna
+    const mid = (v.xmin + v.xmax) / 2;
+    for (const x of [...poles].sort((p, q) => Math.abs(p - mid) - Math.abs(q - mid)).slice(0, 3)) {
+      const px = this.X(x);
+      const left = px > W - 70;
+      // pod oznako osi y (»y« na vrhu osi)
+      // ob osi y nižje, da ne prekrije oznake »y«
+      const py = v.xmin < 0 && v.xmax > 0 && Math.abs(px - this.X(0)) < 24 ? 36 : 22;
+      labels.push({ text: asymptoteLabel({ x }), px: px + (left ? -5 : 5), py, align: left ? "right" : "left", base: "top" });
+    }
+    ctx.save();
+    ctx.font = "600 12px 'Nunito Variable', Nunito, system-ui, sans-serif";
+    ctx.lineJoin = "round";
+    const placed = []; // oznake, ki bi se prekrivale (tan x), izpustimo; oznaka osi »y« je že tam
+    if (v.xmin < 0 && v.xmax > 0) placed.push([this.X(0) - 2, 0, 16, 20]);
+    for (const l of labels) {
+      ctx.textAlign = l.align;
+      ctx.textBaseline = l.base;
+      const py = Math.max(l.base === "top" ? 2 : 16, Math.min(H - 4, l.py));
+      const w = ctx.measureText(l.text).width;
+      const x0 = l.align === "right" ? l.px - w : l.px;
+      const y0 = l.base === "top" ? py : py - 14;
+      if (placed.some((b) => x0 < b[0] + b[2] + 4 && b[0] < x0 + w + 4 && y0 < b[1] + b[3] && b[1] < y0 + 14)) continue;
+      placed.push([x0, y0, w, 14]);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = C.bg;
+      ctx.strokeText(l.text, l.px, py);
+      ctx.fillStyle = C.poi;
+      ctx.fillText(l.text, l.px, py);
+    }
+    ctx.restore();
   }
 
   pointLabel(ctx, C, px, py, text, color) {
@@ -878,6 +986,86 @@ export class GraphView {
       } else merged.push({ ...p, types: [p.type] });
     }
     this.pois = merged.filter((p) => p.x >= v.xmin && p.x <= v.xmax && p.y >= v.ymin && p.y <= v.ymax);
+  }
+
+  // Rešitev naloge (skeniranje): hooks.oznaka = { intervals: [{ lo, hi, loClosed, hiClosed } | { point }] } ali
+  // { points: [x…], curves }. Del "pas": rahlo osenčen navpičen pas nad intervalom (pod krivuljami), del "os":
+  // odebeljen del osi x s polnimi ali praznimi krožci kot na številski premici (nad krivuljami).
+  oznakaXs() {
+    const o = this.hooks.oznaka || {};
+    const xs = [...(o.points || [])];
+    for (const iv of o.intervals || []) for (const x of [iv.point, iv.lo, iv.hi]) if (x != null) xs.push(x);
+    return xs;
+  }
+
+  drawOznaka(ctx, C, W, H, del) {
+    const o = this.hooks.oznaka;
+    const y0 = Math.min(Math.max(this.Y(0), 6), H - 6);
+    const X = (x) => (x == null ? null : this.X(x));
+    const ivs = o.intervals || [];
+    if (del === "pas") {
+      ctx.save();
+      ctx.globalAlpha = 0.14;
+      ctx.fillStyle = C.accent;
+      for (const iv of ivs) {
+        if (iv.point != null) continue;
+        const a = Math.max(0, X(iv.lo) ?? 0);
+        const b = Math.min(W, X(iv.hi) ?? W);
+        if (b > a) ctx.fillRect(a, 0, b - a, H);
+      }
+      ctx.restore();
+      if (o.points && o.curves) {
+        // enačba z dvema stranema: navpična črta skozi presečišče do osi x
+        ctx.save();
+        ctx.strokeStyle = C.accent;
+        ctx.globalAlpha = 0.6;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 5]);
+        for (const x of o.points) {
+          const px = Math.round(this.X(x)) + 0.5;
+          ctx.beginPath();
+          ctx.moveTo(px, 0);
+          ctx.lineTo(px, H);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      return;
+    }
+    const krog = (x, polno) => {
+      const px = this.X(x);
+      if (px < -8 || px > W + 8) return;
+      ctx.beginPath();
+      ctx.arc(px, y0, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = polno ? C.accent : C.bg;
+      ctx.fill();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = C.accent;
+      ctx.stroke();
+    };
+    ctx.save();
+    ctx.strokeStyle = C.accent;
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+    for (const iv of ivs) {
+      if (iv.point != null) continue;
+      const a = Math.max(0, X(iv.lo) ?? 0);
+      const b = Math.min(W, X(iv.hi) ?? W);
+      if (b <= a) continue;
+      ctx.beginPath();
+      ctx.moveTo(a, y0);
+      ctx.lineTo(b, y0);
+      ctx.stroke();
+    }
+    for (const iv of ivs) {
+      if (iv.point != null) krog(iv.point, true);
+      else {
+        if (iv.lo != null) krog(iv.lo, iv.loClosed);
+        if (iv.hi != null) krog(iv.hi, iv.hiClosed);
+      }
+    }
+    for (const x of o.points || []) krog(x, true);
+    ctx.restore();
   }
 
   drawPois(ctx, C, items) {

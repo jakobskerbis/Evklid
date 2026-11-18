@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -296,7 +296,7 @@ Ista slika velja za špranjo pod podložko: v reži je kisika malo (anoda), zuna
 
 **Mešani potencial.** Na korodirajoči kovini sta anodni in katodni tok enako velika pri **korozijskem potencialu** $E_{kor}$; takrat teče korozijski tok $I_{kor}$. Evansov diagram riše oba toka v odvisnosti od potenciala, presečišče krivulj da $E_{kor}$ in $I_{kor}$. Pogosto katodna reakcija omejuje hitrost, ker kisik do površine prihaja le z difuzijo. Zato večja katodna ploščina pomeni večji tok in pojasni učinek razmerja ploščin.
 
-**Pasivnost.** Nad določenim potencialom se na Fe, Cr, Ni, Al ali Ti tvori nekaj nanometrov debela oksidna plast, in tok pade za več velikostnih razredov. Kromov oksid v nerjavnem jeklu (vsaj okoli $12\,\%$ Cr) se ob poškodbi sam obnovi. Kloridi lokalno prebijejo plast nad **potencialom jamičenja**. V jamici nastane kislo okolje, ki napad pospešuje.
+**Pasivnost.** Nad določenim potencialom se na Fe, Cr, Ni, Al ali Ti tvori nekaj nanometrov debela oksidna plast in tok pade za več velikostnih razredov. Kromov oksid v nerjavnem jeklu (vsaj okoli $12\,\%$ Cr) se ob poškodbi sam obnovi. Kloridi lokalno prebijejo plast nad **potencialom jamičenja**. V jamici nastane kislo okolje, ki napad pospešuje.
 
 **Termodinamika ni kinetika.** Pozitivna $\Delta E$ pove le, da reakcija lahko poteče. Hitrost določa $I_{kor}$, zato aluminij kljub zelo negativnemu $E^\circ$ v vodi korodira počasi.
 

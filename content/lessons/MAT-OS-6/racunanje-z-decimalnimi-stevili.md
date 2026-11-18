@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -73,7 +73,7 @@ Seštevanje in odštevanje: vejica pod vejico, manjkajoča mesta dopolni z ničl
 
 **Rešitev:**
 
-1. Dopolnimo ničlo, da imata števili enako decimalk: $1{,}25 + 0{,}60$.
+1. Dopišemo ničlo, da imata števili enako decimalk: $1{,}25 + 0{,}60$.
 2. Seštejemo: $1{,}25 + 0{,}6 = 1{,}85$. Ocena $1 + 1 = 2$ se ujema.
 3. Za ostanek zapišemo $2{,}00 - 1{,}85$, ker $2$ nima decimalk.
 4. Odštejemo: $2 - 1{,}85 = 0{,}15$. Preizkus: $1{,}85 + 0{,}15 = 2$.
@@ -145,7 +145,7 @@ Deljencu dopišemo ničlo: $30 : 6 = 5$, ostane $0$. V krožniku je $2{,}7 : 6 =
 - **Poravnava po desnem robu.** Pri $12{,}75 + 3{,}4$ učenec podpiše $4$ pod $5$, kot je navajen pri naravnih številih, in dobi $13{,}09$. Tako je seštel stotinke z desetinkami. Pravilno: $12{,}75 + 3{,}40 = 16{,}15$, vejica pod vejico.
 - **Premalo decimalk v zmnožku.** Pri $0{,}4 \cdot 0{,}3$ učenec misli: »Vsak faktor ima eno decimalko, zato jo ima tudi rezultat« in napiše $1{,}2$. Decimalke se seštejejo: $1 + 1 = 2$, torej $0{,}12$. Ocena pomaga: oba faktorja sta manjša od $1$, zato mora biti tudi zmnožek manjši od $1$.
 - **»Množenje vedno poveča.«** Pri naravnih številih to drži, pri decimalnih ne. Pomnožiti s številom pod $1$ pomeni vzeti del: $8 \cdot 0{,}5 = 4$. Podobno deljenje s številom pod $1$ rezultat poveča.
-- **Pozabljena ničla v količniku.** Pri $2{,}7 : 6$ učenec začne kar s $27 : 6$ in napiše $4{,}5$. Ker gre $6$ v $2$ ničkrat, mora količnik začeti z $0{,}$, torej $0{,}45$. Preizkus z množenjem napako takoj pokaže.
+- **Pozabljena ničla v količniku.** Pri $2{,}7 : 6$ učenec začne kar s $27 : 6$ in napiše $4{,}5$. Ker gre $6$ v $2$ ničkrat, se mora količnik začeti z $0{,}$, torej $0{,}45$. Preizkus z množenjem napako takoj pokaže.
 - **Pomnožen le delitelj.** Pri $6{,}3 : 0{,}7$ učenec delitelj spremeni v $7$, deljenca pa ne, in dobi $0{,}9$. Količnik ostane enak le, če oba člena pomnožimo z istim številom: $63 : 7 = 9$.
 
 ## Povzetek

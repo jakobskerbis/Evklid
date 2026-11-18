@@ -8,14 +8,27 @@ import { fileURLToPath } from "node:url";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { BRAND } from "../server/brand.js";
+import SL from "../public/i18n/sl.js";
+import { startupFiles } from "../server/startup-files.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS } from "../server/accounts/plans.js";
-import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, PUBLIC_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
+import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, PUBLIC_PAGES, DRAFT_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
 import { presolve, claimNote } from "../server/live-check.js";
 import { latestMeasurement, measurementError, pctText, slDate, summarize, tableMd, updateDoc, finalNumbers, codeResult, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
 
 const index = readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
+// Pristajalna stran brez JavaScripta: blok med oznakama scripts/pristajalna-noscript.js (ne <noscript> s slogom v glavi).
+const landingNoscript = () => index.slice(index.indexOf("<!-- pristajalna-noscript: začetek"), index.indexOf("<!-- pristajalna-noscript: konec"));
 const meta = (html, attr, name) => html.match(new RegExp(`<meta ${attr}="${name}" content="([^"]*)"`))?.[1];
 const textOf = (html) => html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ").replace(/\s+/g, " ");
+// Širina in višina slike JPEG iz glave SOF (brez knjižnic).
+const jpegSize = (b) => {
+  for (let i = 2; i < b.length; ) {
+    const m = b[i + 1], len = b.readUInt16BE(i + 2);
+    if (m >= 0xc0 && m <= 0xcf && m !== 0xc4 && m !== 0xc8 && m !== 0xcc) return [b.readUInt16BE(i + 7), b.readUInt16BE(i + 5)];
+    i += 2 + len;
+  }
+  return null;
+};
 const ldBlocks = (html) => [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
 
 async function withApp(fn) {
@@ -42,13 +55,36 @@ test("vstopna stran: naslov, opis, canonical, Open Graph in Twitter", () => {
   assert.equal(meta(index, "property", "og:site_name"), BRAND.name);
   assert.equal(meta(index, "property", "og:locale"), "sl_SI");
   assert.ok(meta(index, "property", "og:title") && meta(index, "property", "og:description") && meta(index, "property", "og:image"));
-  assert.equal(meta(index, "name", "twitter:card"), "summary");
+  assert.equal(meta(index, "name", "twitter:card"), "summary_large_image");
+  // Opis za iskalnike in predogled povezave: naslov in uvod pristajalne strani (#750, land.title in land.lead v sl.js).
+  assert.ok(desc.startsWith(SL["land.title"]) && desc.includes("Za gimnazijo, vse šolsko leto."), desc);
+  for (const k of ["og:description", "twitter:description"]) {
+    const d = meta(index, k.startsWith("og") ? "property" : "name", k);
+    assert.equal(d, `${SL["land.title"]} ${SL["land.lead"]}`, k);
+    assert.ok(d.length <= 220, `${k} ima ${d.length} znakov`);
+  }
+  assert.equal(meta(index, "name", "twitter:title"), meta(index, "property", "og:title"));
+  // Slika za predogled 1200 × 630 (scripts/og-slika.cjs) obstaja in je res te velikosti; ni del prvega odprtja (test/hitrost-proracun.test.js).
+  const og = meta(index, "property", "og:image");
+  const ogFile = new URL(`../public${og.slice(ORIGIN.length)}`, import.meta.url);
+  assert.ok(og.startsWith(`${ORIGIN}/`) && existsSync(ogFile), og);
+  assert.deepEqual(jpegSize(readFileSync(ogFile)), [1200, 630], og);
+  assert.equal(meta(index, "name", "twitter:image"), og);
+  assert.equal(meta(index, "property", "og:image:width"), "1200");
+  assert.equal(meta(index, "property", "og:image:height"), "630");
+  assert.ok(meta(index, "property", "og:image:alt").startsWith(`${BRAND.name} · ${BRAND.domain}`));
+  // Brez imen drugih aplikacij v opisih in predogledu (j 2026-11-17).
+  for (const k of ["description", "og:description", "twitter:description", "og:image:alt", "og:title", "twitter:title"]) {
+    const v = meta(index, k.startsWith("og") ? "property" : "name", k);
+    assert.ok(!/Euclid|Photomath|Khan|ChatGPT|Gemini|Brainly|Socratic/i.test(v), `${k}: ${v}`);
+  }
   assert.ok(!/hreflang/.test(index), "aplikacija nima jezikovnih naslovov URL, zato brez hreflang");
-  // Brez JavaScripta (pomočniki AI strani ne izrišejo) ostane kratek opis in povezava na /o-evklidu.
-  const noscript = index.match(/<noscript>([\s\S]*?)<\/noscript>/)[1];
+  // Brez JavaScripta (pomočniki AI strani ne izrišejo) je pristajalna stran s povezavo na /o-evklidu (scripts/pristajalna-noscript.js).
+  const noscript = landingNoscript();
   assert.ok(noscript.includes('href="/o-evklidu"') && noscript.includes(BRAND.domain));
-  // Povezave v <noscript> ne smejo kazati na datoteke v public/: server/startup-files.js bi jih štel k prvemu odprtju.
-  for (const [, href] of noscript.matchAll(/href="([^"]+)"/g)) assert.ok(!existsSync(new URL(`../public${href}`, import.meta.url)), href);
+  // Povezave v <noscript> (npr. /starsi.html) server/startup-files.js ne šteje k prvemu odprtju.
+  const first = startupFiles(fileURLToPath(new URL("../public/", import.meta.url)).replace(/\/$/, ""), "index.html");
+  for (const [, href] of noscript.matchAll(/href="(\/[^"]+)"/g)) assert.ok(!first.includes(href), href);
 });
 
 test("schema.org v vstopni strani se ujema s cenikom in jeziki vmesnika", () => {
@@ -96,6 +132,7 @@ test("robots.txt, sitemap.xml in llms.txt: vsebina", () => {
   assert.match(llms, /je slovenska aplikacija/);
   assert.match(llms, /Ni povezana s projekti z imenom »Euclid«/);
   assert.match(llms, /is not related to projects named "Euclid"/);
+  assert.ok(llms.includes(`družina s študentom (2–4 profili) ${eur(FAMILY_PRICES.druzina_student.month)} (${eur(FAMILY_PRICES.druzina_student.year)})`), "Družina s študentom v llms.txt");
   assert.ok(llms.includes(eur(LEVEL_PRICES.OS.month)) && llms.includes("9.99 EUR") && llms.includes(`${TRIAL_DAYS} dni brezplačno`));
   // Ime ponudnika modela (j, 10. 11. 2026): slovensko in angleško.
   assert.ok(llms.includes("pripravijo modeli Claude podjetja Anthropic") && llms.includes("Anthropic's Claude models"));
@@ -112,7 +149,7 @@ test("stran /o-evklidu: brez JavaScripta, cene iz cenika, pogosta vprašanja", (
     assert.ok(html.includes(`<td>${eur(c.month)}</td><td>${eur(c.year)}</td>`), `cena ${c.month}`);
   }
   assert.ok(html.includes("9,99 €") && html.includes("99 €"));
-  assert.ok(html.includes("33 jezikov") && html.includes(`${TRIAL_DAYS} dni brezplačno`));
+  assert.ok(html.includes("33 jezikih") && !html.includes("33 jezikov") && html.includes(`${TRIAL_DAYS} dni brezplačno`));
   assert.match(html, /Ni povezan s projekti z imenom »Euclid«/);
   assert.ok(html.includes("Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; izračune in rezultate preveri Evklidov program."));
   assert.ok(html.includes("vidijo samo njegov starš in, če je otrok v razredu, učitelj razreda") && !html.includes("Ime je dobil"));
@@ -132,7 +169,7 @@ test("stran /o-evklidu: brez JavaScripta, cene iz cenika, pogosta vprašanja", (
   const text = html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ");
   assert.ok(!/\b(tvoj\w*|tebe|moraš|lahko\s+(fotografiraš|izbereš)|vprašaš)\b/i.test(text), "brez tikanja");
   // Notranje povezave kažejo na javne strani.
-  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href), href);
+  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href.split("?")[0]) || DRAFT_PAGES.includes(href.split("?")[0]), href);
 });
 
 test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenika, brez imen in cen tekmecev", () => {
@@ -167,25 +204,27 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.equal(updateDoc(doc, m), doc, "docs/stroski-ai.md: node scripts/primerjava-modelov.js --iz-json <zadnja meritev>");
 
   // Primer na strani je resničen: reševalnik reši enačbo in učenčev napačni rezultat označi kot napačen.
-  assert.ok(text.includes("»Reši enačbo 3x + 5 = 20.«") && text.includes("Program enačbo reši sam: x = 5."));
+  // Od 16. 11. 2026 kot oblački pogovora (učenec predlaga x = 6, inštruktor vpraša, učenec popravi na x = 5).
+  assert.ok(text.includes("Reši enačbo 3x + 5 = 20. Mislim, da je x = 6.") && text.includes("Program enačbo reši sam: x = 5."));
+  assert.ok(text.includes("koliko je 3 · 6 + 5?") && text.includes("3 · 6 + 5 = 23") && text.includes("3x = 15, zato x = 5") && text.includes("3 · 5 + 5 = 20"));
   const pre = presolve("Reši enačbo 3x + 5 = 20.", { first: true });
   assert.equal(pre.problems[0].answer, "x = 5");
   assert.match(claimNote("x = 6", pre), /WRONG/);
   assert.match(claimNote("x = 5", pre), /CORRECT/);
   // Trditev o preverjanju je omejena na to, kar program res preveri (pregled #555).
   assert.ok(text.includes("Račune v enačbah, odvodih in daljših izračunih preveri program") && !/Račune preveri program|račune in rezultate/i.test(text));
-  assert.ok(text.includes("Pri nekaterih nalogah (na primer tekmovanja, fakulteta) odgovor v plačljivih paketih, do dnevne meje, pregleda še zmogljivejši model."));
+  assert.ok(text.includes("Pri nekaterih nalogah (na primer tekmovanja, fakulteta) v plačljivih paketih odgovor pregleda še zmogljivejši model. Teh pregledov je na dan omejeno število.") && !text.includes("do dnevne meje"));
 
   // Kaj dobite: cene, preizkus, brezplačni paket in jeziki iz kode.
-  for (const c of [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina]) {
+  for (const c of [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina, FAMILY_PRICES.druzina_student]) {
     assert.ok(html.includes(`<td>${eur(c.month)} na mesec ali ${eur(c.year)} na leto</td>`), `cena ${c.month}`);
   }
   assert.ok(html.includes(`<td>${TRIAL_DAYS} dni, brez kartice</td>`) && html.includes("<td>10 vprašanj inštruktorju na dan</td>") && html.includes("vmesnik v 33 jezikih"));
-  const known = [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina].flatMap((c) => [eur(c.month), eur(c.year)]);
+  const known = [LEVEL_PRICES.OS, LEVEL_PRICES.SS, LEVEL_PRICES.FAKS, FAMILY_PRICES.druzina, FAMILY_PRICES.druzina_student].flatMap((c) => [eur(c.month), eur(c.year)]);
   for (const [x] of text.matchAll(/\d+(?:,\d+)? €/g)) assert.ok(known.includes(x), x);
 
   // Pošteno: česa Evklid še ne zna.
-  for (const s of ["Česa Evklid (še) ne zna", "Aplikacije še ni v trgovinah Google Play in App Store", "Umetna inteligenca se lahko zmoti pri razlagi", "drugih predmetov ne pokriva"]) assert.ok(text.includes(s), s);
+  for (const s of ["Česa Evklid (še) ne zna", "Aplikacije še ni v trgovinah Google Play in App Store", "Pri besedni razlagi se umetna inteligenca lahko zmoti", "drugih predmetov ne pokriva"]) assert.ok(text.includes(s), s);
   // Primerjalno oglaševanje (j 10. 11.: brez imen tekmecev): brez imen, cen in slabosti tekmecev. Edino tuje ime je
   // Tudi splošni klepetalniki niso imenovani; imen modelov na strani ni.
   assert.ok(!/Photomath|Khan|Gemini|Copilot|Astra|Duolingo|Brainly|Mathway|Wolfram|Socratic|Claude|Haiku|Sonnet|Opus|ChatGPT|OpenAI|GPT|Grok|Perplexity|DeepSeek|Mistral/i.test(text + html.split("<body>")[0]), "brez imen tekmecev in modelov");
@@ -200,11 +239,11 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   assert.equal(css(html), css(aboutPage()), "temni način = /o-evklidu");
   assert.ok(html.includes('<meta name="color-scheme" content="light dark">'));
   assert.ok(!/\b(tvoj\w*|tebe|moraš|vprašaš)\b/i.test(text), "brez tikanja");
-  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href), href);
+  for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href.split("?")[0]) || DRAFT_PAGES.includes(href.split("?")[0]), href);
   for (const [, id] of html.matchAll(/href="#([\w-]+)"/g)) assert.ok(html.includes(`id="${id}"`), `sidro ${id}`);
   // Povezave na stran: /o-evklidu, vstopna stran brez JavaScripta, llms.txt (z isto meritvijo).
   assert.ok(aboutPage().includes('<a href="/zakaj-evklid">Zakaj Evklid</a>'));
-  assert.ok(index.match(/<noscript>([\s\S]*?)<\/noscript>/)[1].includes('href="/zakaj-evklid"'));
+  assert.ok(landingNoscript().includes('href="/zakaj-evklid"'));
   const llms = llmsTxt();
   assert.ok(llms.includes(`[Zakaj Evklid](${ORIGIN}/zakaj-evklid)`) && llms.includes(accuracy().sentence) && llms.includes(accuracy().sentenceEn));
   assert.ok(llms.includes("Natančnosti drugih orodij nismo merili.") && llms.includes("Other tools were not measured.") && !/\d+ od \d+ rešenih/.test(llms));
@@ -311,7 +350,7 @@ test("brez uporabne meritve strani delujejo: razdelek z meritvijo se skrije, ni�
   }
   // /o-evklidu in pristajalna stran: ista zožena trditev o preverjanju kot na /zakaj-evklid (pregled #555).
   const about = textOf(aboutPage());
-  assert.ok(about.includes("Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah odgovor pregleda še zmogljivejši model."));
+  assert.ok(about.includes("Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah v plačljivih paketih odgovor pregleda še zmogljivejši model."));
   assert.ok(!/Številke (torej )?(in rezultate )?izračuna program|ne umetna inteligenca/.test(about));
   assert.ok(readFileSync(new URL("../public/i18n/sl.js", import.meta.url), "utf8").includes('"land.f2.d": "Številske račune v enačbah, odvodih in daljših izračunih preračuna program. Pri nekaterih nalogah gre odgovor še skozi dodaten pregled."'));
 });
@@ -379,4 +418,45 @@ test("javne strani (Za starše, Za šole, Zasebnost) imajo videz po napravi, bre
   const app = read("v-aplikaciji.js").match(/\(function \(\) \{[\s\S]*\}\)\(\);/)[0];
   assert.ok(read("theme.js").includes(app), "v-aplikaciji.js = blok iz theme.js");
   for (const f of ["starsi.html", "sole.html", "zasebnost.html"]) assert.ok(read(f).includes('<script src="/v-aplikaciji.js"></script>'), f);
+});
+
+// Pregled kupca 16. 11. 2026 (Gemini): cenik pove, kaj doda naročnina, razdelek za maturante, pogosta vprašanja
+// staršev in noga na podstraneh. Trditve so preverjene v kodi; številke pridejo iz kode (server/placila/pravice.js).
+test("javne strani: kaj doda naročnina, matura, vprašanja staršev, noga podstrani", async () => {
+  const { personalDailyQuestions } = await import("../server/placila/pravice.js");
+  const { freeDailyQuestions } = await import("../server/accounts/plans.js");
+  const read = (f) => readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8");
+  const text = (html) => html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g, " ").replace(/\s+/g, " ");
+  const about = text(aboutPage());
+  assert.ok(about.includes(`Brezplačni paket ima ${freeDailyQuestions()} vprašanj inštruktorju na dan, naročnina pa ${personalDailyQuestions("SS")} (na fakulteti ${personalDailyQuestions("FAKS")}) in podrobne razlage.`));
+  assert.ok(about.includes(`${personalDailyQuestions("OS")} vprašanj inštruktorju na dan namesto ${freeDailyQuestions()} (na fakulteti ${personalDailyQuestions("FAKS")}).`));
+  assert.ok(about.includes("Kaj doda naročnina"));
+  // Brezplačni rep po dnevih (#821, server/usage.js tailToday): po hitrem načinu vsak dan kot brezplačni paket.
+  assert.ok(about.includes(`nato do konca mesečnega obdobja naročnine vsak dan kot v brezplačnem paketu (do ${freeDailyQuestions()} vprašanj na dan). Ko so vprašanja za tisti dan porabljena, jih spet dobite naslednji dan ali pa takoj nadaljujete z dokupom pogovorov.`));
+  for (const s of ["od 1. do 9. razreda", "vsi letniki in matura, tudi snov osnovne šole", "2–4 profili, osnovna in srednja šola", "2–4 profili, tudi fakulteta", "Priprava na maturo iz matematike, fizike, kemije in biologije", "Celotno rešitev pokaže, če jo otrok izrecno zahteva ali izbere način Celotna rešitev", "Samo rezultat brez razlage da le pri posamezni nalogi", "novo stopnjo odprto takoj in brez doplačila, najmanj do konca plačanega obdobja", "najmanj 30 dni pred podaljšanjem, s katerim začne veljati", "matematični in naravoslovni predmeti vašega študijskega programa"])
+    assert.ok(about.includes(s), s);
+  // Tri prednosti na vrhu /o-evklidu in strani za starše (Gemini, točka 3); brez poudarka na jezikih in »vajah, ki ne zmanjkajo« (točka 10).
+  const strengths = ["Program preveri račune", "Matura z inštruktorjem", "Varno za otroke", "Ni klepeta z drugimi uporabniki"];
+  for (const s of strengths) assert.ok(about.includes(s) && text(read("starsi.html")).includes(s), s);
+  assert.ok(about.indexOf("Program preveri račune") < about.indexOf("Kaj zna Evklid"));
+  assert.ok(!/ne zmanjkajo|neskončn/i.test(about) && about.includes("Na iPhonu Evklid odprete v Safariju"));
+  // Brez obljub, ki jih koda ne drži: naročnina ni neomejena.
+  assert.ok(!/neomejen\w* vprašanj|brez dnevne (meje|zapore)/i.test(about));
+  // Za starše: pet vprašanj, vikanje, brez obljube branja na glas ali omejitve časa.
+  const starsi = read("starsi.html");
+  assert.equal((starsi.match(/<details>/g) || []).length, 5);
+  const st = text(starsi);
+  for (const s of ["Odgovorov inštruktorja Evklid ne bere na glas", "Omejitve časa uporabe Evklid nima", "pri novi nalogi ne začne z rezultatom", "največ pri dveh nalogah v pogovoru", "samega rezultata ne dobi", "(privzeto je izklopljeno)", "okoli 15 minut"]) assert.ok(st.includes(s), s);
+  assert.ok(!/\b(tvoj\w*|tebe|moraš|vprašaš)\b/i.test(st), "vikanje");
+  // Noga na podstraneh in na /o-evklidu, /zakaj-evklid: povezave na vse javne strani.
+  for (const html of [read("starsi.html"), read("sole.html"), read("zasebnost.html"), read("garancija.html"), aboutPage(), whyPage()]) {
+    const foot = html.match(/<footer class="(?:mkt|land)-foot">([\s\S]*?)<\/footer>/)[1];
+    for (const href of ["/", "/o-evklidu", "/zakaj-evklid", "/starsi.html", "/sole", "/prenesi?lang=sl", "/zasebnost.html"].filter((h) => !html.includes(`<link rel="canonical" href="${ORIGIN}${h}">`)))
+      assert.ok(foot.includes(`href="${href}"`), href);
+  }
+  // Podstrani: tudi Pogoji uporabe; v aplikaciji (razred v-aplikaciji) noge ni.
+  for (const f of ["starsi.html", "sole.html", "zasebnost.html", "garancija.html"])
+    assert.ok(read(f).match(/<footer class="mkt-foot">([\s\S]*?)<\/footer>/)[1].includes('<a href="/pogoji.html">Pogoji uporabe</a>'), f);
+  assert.match(read("predstavitev.css"), /\.v-aplikaciji \.mkt-foot \{ display: none; \}/);
+  assert.ok(read("zasebnost.html").includes('href="/predstavitev.css"'));
 });

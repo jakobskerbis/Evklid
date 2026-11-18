@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -162,7 +162,7 @@ $\det A = \sum_j a_{1j} C_{1j}$, $C_{ij} = (-1)^{i+j} M_{ij}$, $A^{-1} = \dfrac{
 
 - **Množenje po elementih.** Študent zmnoži istoležne elemente, kot pri seštevanju. Pravilno: element produkta je vsota produktov vrstice prve in stolpca druge matrike.
 - **Zamenjan vrstni red.** Iz $AX = B$ sklepa $X = BA^{-1}$. Ker množenje ni komutativno, je pravilno $X = A^{-1}B$ (z leve pomnožimo z $A^{-1}$).
-- **Neobstoječ produkt.** Matriki $2 \times 3$ in $2 \times 3$ ne moremo zmnožiti; notranji dimenziji se morata ujemati.
+- **Neobstoječ produkt.** Matrik $2 \times 3$ in $2 \times 3$ ne moremo zmnožiti; notranji dimenziji se morata ujemati.
 - **$\det(\lambda A) = \lambda \det A$.** Pravilno je $\lambda^n \det A$, ker se z $\lambda$ pomnoži vsaka od $n$ vrstic.
 - **Pozabljen predznak kofaktorja** ali pozabljeno transponiranje pri prirejenki. Preveri: $AA^{-1}$ mora dati $I$.
 - **Sarrusovo pravilo za $4 \times 4$.** Velja samo za $3 \times 3$; za večje matrike razvijaj ali prevedi na trikotno obliko.
@@ -305,7 +305,7 @@ kjer vsota teče po vseh $n!$ permutacijah $\sigma$ množice $\{1, \dots, n\}$, 
 - $10$
 ~ Tako bi bilo, če bi z $2$ pomnožili le eno vrstico.
 - $30$
-~ Faktor $2$ ne množimo s številom vrstic, ampak ga potenciramo: $2^3$.
+~ Faktorja $2$ ne množimo s številom vrstic, ampak ga potenciramo: $2^3$.
 + $40$
 > Vsako od treh vrstic pomnožimo z $2$, zato $\det(2A) = 2^3 \cdot 5 = 40$.
 

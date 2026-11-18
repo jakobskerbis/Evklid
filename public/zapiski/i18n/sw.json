@@ -25,6 +25,7 @@
   "zap.noCards": "Siwezi kutengeneza kadi kutoka maelezo haya sasa.",
   "zap.practice": "Rudia kadi",
   "zap.printed": "Hatuhifadhi maandishi ya kurasa zilizochapishwa – mada na kadi tu.",
+  "zap.printedNoCards": "Hatuhifadhi maandishi ya kurasa zilizochapishwa.",
   "zap.list": "Maelezo yaliyohifadhiwa",
   "zap.empty": "Bado huna maelezo yaliyohifadhiwa.",
   "zap.open": "Fungua",
@@ -44,6 +45,7 @@
   "zap.keep": "Haya ni maelezo yangu – hifadhi",
   "zap.keepHint": "Bila alama ya tiki hatuhifadhi maandishi. Jaribio na kadi zinabaki.",
   "zap.notKept": "Hatukuhifadhi maandishi uliyobandika – mada na kadi tu.",
+  "zap.notKeptNoCards": "Hatukuhifadhi maandishi uliyobandika.",
   "zap.correctMark": "Jibu sahihi",
   "zap.yourMark": "Jibu lako"
 }

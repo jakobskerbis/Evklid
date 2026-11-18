@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -92,7 +92,7 @@ kjer je $z$ število prenesenih elektronov v enačbi reakcije in $F = 96\,485\,\
 
 **Izrek o spontanosti.** Pri konstantnih $T$ in $p$ poteka reakcija spontano v zapisani smeri natanko tedaj, ko je $\Delta_\mathrm{r}G < 0$, torej ko je $E_\text{člena} > 0$. Znak $E^\circ$ pove smer le pri standardnih pogojih; $E^\circ > 0$ pomeni, da je konstanta ravnotežja $K > 1$ (razdelek 7).
 
-Elektrodnih potencialov **ne množimo** s koeficienti. *Dokaz:* če enačbo pomnožimo z $k$, se $\Delta_\mathrm{r}G$ in $z$ povečata $k$-krat, zato $E = -\Delta_\mathrm{r}G/(zF)$ ostane enak; $E$ je intenzivna količina. Iz istega razloga potencialov ne smemo seštevati, kadar iz dveh polreakcij sestavimo tretjo **polreakcijo**: seštejemo Gibbsovi energiji, $z_3E_3^\circ = z_1E_1^\circ + z_2E_2^\circ$ (primer v Bolj natančno).
+Elektrodnih potencialov **ne množimo** s koeficienti. *Dokaz:* če enačbo pomnožimo s $k$, se $\Delta_\mathrm{r}G$ in $z$ povečata $k$-krat, zato $E = -\Delta_\mathrm{r}G/(zF)$ ostane enak; $E$ je intenzivna količina. Iz istega razloga potencialov ne smemo seštevati, kadar iz dveh polreakcij sestavimo tretjo **polreakcijo**: seštejemo Gibbsovi energiji, $z_3E_3^\circ = z_1E_1^\circ + z_2E_2^\circ$ (primer v Bolj natančno).
 
 :::premisli
 Alkalna baterija velikosti D je nekajkrat težja od baterije AAA. Katera ima večjo napetost?
@@ -295,7 +295,7 @@ napis: 4; 0,6 | cink se raztaplja | sredina
 napis: 12; 0,6 | baker se izloča | sredina
 :::
 
-Elektroni tečejo po žici od anode k katodi, ioni v solnem mostu pa tako, da nadomestijo naboj: kationi proti katodi, anioni proti anodi.
+Elektroni tečejo po žici od anode h katodi, ioni v solnem mostu pa tako, da nadomestijo naboj: kationi proti katodi, anioni proti anodi.
 
 Lestvico elektrodnih potencialov si predstavljaj kot navpično lestev: zgoraj so oksidanti, ki elektrone radi sprejemajo ($\mathrm{MnO_4^-}$, $\mathrm{Cl_2}$), spodaj reducenti, ki jih radi oddajajo ($\mathrm{Zn}$). Spontano »padajo« elektroni z nižje prečke na višjo; večja višinska razlika pomeni večjo napetost.
 

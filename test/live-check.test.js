@@ -508,6 +508,59 @@ test("live check: the fix call never solves a practice exercise", async () => {
   assert.match(system, /practice exercise, give corrected data or a replacement exercise; never give the exercise's solution/);
 });
 
+test("live check (SŠ meritev 18. 11.): the fix adds no new facts and may only withdraw an unsure side claim", async () => {
+  // BIO-SS-1/encimi-in-atp: popravek je trdil, da hitrost raste nad optimumom, in dodal termostabilne encime.
+  let system = "";
+  await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
+  assert.match(system, /^Except for corrected data or a replacement practice exercise, the correction fixes only the statement named in the problem, adds nothing else/m);
+  assert.match(system, /withdraw it instead \(Slovenian: "Popravek: trditve »…« ne upoštevaj; za to nalogo ni potrebna\."\)/);
+  assert.doesNotMatch(system, /ne drži; za to nalogo/);
+  // Pregled PR #833: »poenostavitev« ni izhod za napačno uporabljeno pravilo (K > 1 pri Kc z enoto).
+  assert.match(system, /correctly applied textbook rule of the student's level lacks a rare exception, reply exactly OK\. A rule applied where it does not hold \(for example comparing a quantity with a unit with 1\) is a real mistake\./);
+  assert.match(LIVE_REVIEW_SYSTEM, /applied where it holds is not an error just because it omits rare exceptions; a rule applied where it does not hold is an error/);
+  assert.match(LIVE_REVIEW_SYSTEM, /quote only the wrong words \(at most about ten\)/);
+  assert.match(LIVE_REVIEW_SYSTEM, /every written equality true \(a rounded value written with = is fine\)/);
+  // KEM-SS-2/kemijsko-ravnotezje: »K > 1, prevladujejo produkti« pri Kc z enoto pregled ni ujel.
+  assert.match(LIVE_REVIEW_SYSTEM, /every interpretation of a result/);
+  assert.match(LIVE_REVIEW_SYSTEM, /quantity with a unit cannot be compared with the pure number 1/);
+  assert.match(LIVE_REVIEW_SYSTEM, /give the correct fact in a few words/);
+});
+
+test("live check (meritev SŠ 18. 11. po #833): review catches generalisations, side causes, inconsistent exercises and plans", async () => {
+  // BIO-SS-2/nastanek-vrst: neplodnost mule le z lihim številom kromosomov, posplošeno v pravilo.
+  assert.match(LIVE_REVIEW_SYSTEM, /so is an empirical rule \(biology, chemistry, physics\) stated for all cases that is false for common cases at the student's level or that generalises the single case of the task/);
+  // Pregled #835: pravilna splošna učbeniška pravila, definicije in izreki ostanejo brez pogojev.
+  assert.match(LIVE_REVIEW_SYSTEM, /A correct general textbook rule \(»metals conduct electricity«\), a definition or a mathematical theorem needs no added conditions\./);
+  assert.match(LIVE_REVIEW_SYSTEM, /explanation of why something happens: it must give the textbook cause, not only a feature that merely goes with it/);
+  // BIO-SS-1/encimi-in-atp: vaja pripiše isti amilazi pri isti temperaturi drugo hitrost.
+  assert.match(LIVE_REVIEW_SYSTEM, /must not give the object of the task, under the same conditions, a value different from the task's/);
+  // BIO-SS-1/raziskovanje-v-biologiji: namenoma pomanjkljiv poskus v vaji je bil popravljen, neenake skupine v načrtu ne.
+  assert.match(LIVE_REVIEW_SYSTEM, /describes a flawed experiment or a wrong claim on purpose and asks the student to find the flaw is fine/);
+  assert.match(LIVE_REVIEW_SYSTEM, /every experiment plan: the group counts add up/);
+  // KEM-SS-2/sibke-kisline-in-baze, FIZ-SS-3/elektromagnetno-valovanje
+  assert.match(LIVE_REVIEW_SYSTEM, /what the task says must match the task \(a claim about what the student's textbook says that is not quoted in the question is an error\), and every warning must be unambiguous/);
+  assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.$/);
+  // BIO-SS-4/molekularna-genetika, KEM-SS-3: popravek ob pravilni pretvorbi ali zaokroženem vmesnem rezultatu.
+  let system = "";
+  await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
+  assert.match(system, /a correct unit conversion like 1 B = 8 bit or a value computed from unrounded intermediate results\), or the problem only says/);
+});
+
+test("live check (pregled PR #833): review and fix get the student's level", async () => {
+  const { correction } = await import("../server/live-check.js");
+  let user = "";
+  const createFn = async (p) => ((user = p.messages[0].content), { content: [{ type: "text", text: "OK" }], usage: {}, model: "m" });
+  await reviewAnswer({ question: "q", answer: "a", stopnja: "SS", createFn });
+  assert.match(user, /^Student's level: SŠ \(secondary school\)\n\nSTUDENT QUESTION:/);
+  await reviewAnswer({ question: "q", answer: "a", stopnja: "OS", createFn });
+  assert.match(user, /^Student's level: OŠ/);
+  await reviewAnswer({ question: "q", answer: "a", createFn });
+  assert.match(user, /^STUDENT QUESTION:/, "brez stopnje ni vrstice");
+  let fixUser = "";
+  await correction({ streamFn: async (a) => ((fixUser = a.messages[0].content[0].text), { text: "OK" }), mode: "think", answer: "x", issue: "y", stopnja: "FAKS" });
+  assert.match(fixUser, /^Student's level: faks \(university\)\n\nStudent's language code: sl/);
+});
+
 test("code check (2026-11-11 round 2): bonds v = 8 − z use outer electrons, not the atomic number", () => {
   // Meritev 11. 11., KEM-OS-8/kovalentna-vez: »v = 8 − 7 = 1« za dušik.
   assert.match(valenceIssue("1. Dušik ima vrstno število 7, zato $v = 8 - 7 = 1$.").issue, /N has 5 outer.*atomic number|atomic number.*5 outer/);

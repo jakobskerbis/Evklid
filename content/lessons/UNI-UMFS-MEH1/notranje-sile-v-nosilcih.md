@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -243,7 +243,7 @@ Diagram ni nič drugega kot zapis, kako močno morata vleči, podpirati in sukat
 
 ## Drugače: Bolj natančno
 
-Izrežimo kratek kos nosilca dolžine $\mathrm{d}x$ brez točkovnih sil. Levo deluje $T$ in $M$, desno $T + \mathrm{d}T$ in $M + \mathrm{d}M$, vmes obremenitev $q\,\mathrm{d}x$ navzdol. Navpično ravnotežje da $T - q\,\mathrm{d}x - (T + \mathrm{d}T) = 0$, torej $\mathrm{d}T/\mathrm{d}x = -q$. Momentno ravnotežje okoli desnega konca da $M + T\,\mathrm{d}x - q\,\mathrm{d}x \cdot \mathrm{d}x/2 - (M + \mathrm{d}M) = 0$. Člen z $(\mathrm{d}x)^2$ zanemarimo in dobimo $\mathrm{d}M/\mathrm{d}x = T$. Od tod $\mathrm{d}^2 M/\mathrm{d}x^2 = -q$: pri stalni $q$ je $M$ kvadratna funkcija, ekstrem pa je tam, kjer je $T = 0$.
+Izrežimo kratek kos nosilca dolžine $\mathrm{d}x$ brez točkovnih sil. Levo delujeta $T$ in $M$, desno $T + \mathrm{d}T$ in $M + \mathrm{d}M$, vmes obremenitev $q\,\mathrm{d}x$ navzdol. Navpično ravnotežje da $T - q\,\mathrm{d}x - (T + \mathrm{d}T) = 0$, torej $\mathrm{d}T/\mathrm{d}x = -q$. Momentno ravnotežje okoli desnega konca da $M + T\,\mathrm{d}x - q\,\mathrm{d}x \cdot \mathrm{d}x/2 - (M + \mathrm{d}M) = 0$. Člen z $(\mathrm{d}x)^2$ zanemarimo in dobimo $\mathrm{d}M/\mathrm{d}x = T$. Od tod $\mathrm{d}^2 M/\mathrm{d}x^2 = -q$: pri stalni $q$ je $M$ kvadratna funkcija, ekstrem pa je tam, kjer je $T = 0$.
 
 ## Preveri se
 

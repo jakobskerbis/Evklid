@@ -37,16 +37,18 @@
 .dd-opt[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); }
 .dd-opt[aria-disabled="true"] { color: var(--muted); opacity: 0.6; cursor: default; }
 .dd-check { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; visibility: hidden; }
-.dd-opt[aria-selected="true"] .dd-check { visibility: visible; }
+.dd-opt[aria-selected="true"] .dd-check, .dd-opt[aria-checked="true"] .dd-check { visibility: visible; }
+.dd-sep { border-top: 1px solid var(--border); margin: 4px 0; }
 .dd-group {
   padding: 10px 12px 4px; font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
 }
-.dd-group:not(:first-child) { margin-top: 4px; border-top: 1px solid var(--border); padding-top: 12px; }
+.dd-group:not(:first-child), .dd-grp:not(:first-child) > .dd-group { margin-top: 4px; border-top: 1px solid var(--border); padding-top: 12px; }
+.dd-grp { display: contents; } /* skupina z imenom za bralnik zaslona (dropdown.js), brez lastnega videza */
 .dd-opt[hidden], .dd-group[hidden] { display: none; }
 /* Iskalnik v dolgem seznamu (npr. jeziki) ostane na vrhu med pomikanjem. */
 .dd-search { position: sticky; top: -6px; z-index: 1; margin: -6px -6px 4px; padding: 8px; background: var(--surface); border-bottom: 1px solid var(--border); }
 .dd-search input { width: 100%; min-height: 40px; }
-.dd-search + .dd-group { border-top: 0; margin-top: 0; }
+.dd-search + .dd-group, .dd-search + .dd-grp > .dd-group { border-top: 0; margin-top: 0; }
 /* Seznam z iskalnikom leži čez gumb: okence je na mestu gumba in pokaže izbrano možnost,
    seznam se pomika pod njim (dropdown.js, place(…, true)). */
 .dd-list.over { transform-origin: top center; }
@@ -941,6 +943,10 @@ body.boot-down-on > :not(#boot-down) { visibility: hidden; }
 #view-settings > :is(h1, .set-cols) { width: min(100%, calc(3 * 460px + 2 * 20px)); margin-inline: auto; }
 :is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
 #exams-content > :is(h1, .comp-pickers), #competition-content > :is(h1, .comp-pickers), #path-content > .legend { column-span: all; }
+/* Učna pot: sklopi po vrsticah (1, 2, 3 v prvi vrsti, nato 4, 5, 6), ne po stolpcih (j, 17. 11. 2026); stolpci kot zgoraj
+   (vsaj 400 px, kolikor jih gre), višina vrstice po najvišjem sklopu v njej. */
+#path-content { columns: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr)); gap: 0 20px; align-items: start; }
+#path-content > :is(.legend, h1, h2, h3, p) { grid-column: 1 / -1; }
 /* Jaz: profil, raven, števci in zbirke v vrsti; seznam povezav pod njimi v stolpcih. */
 /* Vrstice vedno po vsebini: pogled ima stalno višino (drsi), zato bi jih mreža sicer stisnila do min-height
    (gumb s profilom na 44 px, velika ikona J bi segla čez kartico Raven; telefon, j 4. 11. 2026). */

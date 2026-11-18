@@ -52,8 +52,10 @@ test("izbirnik: ime gumba je samo besedilo oznake, brez možnosti", { skip }, as
   const page = await browser.newPage();
   await page.goto(`http://127.0.0.1:${server.address().port}/t.html`);
   await page.waitForFunction(() => window.ready && document.querySelectorAll(".dd-btn").length === 3);
-  const names = await page.$$eval(".dd-btn", (bs) => bs.map((b) => b.getAttribute("aria-label")));
-  assert.deepEqual(names, ["Jezik aplikacije", "Država", "Lastno ime"]);
+  // Ime: oznaka (prvi del aria-labelledby) in le izbrana vrednost, nikoli vse možnosti (pregled PR 786).
+  const names = await page.$$eval(".dd-btn", (bs) => bs.map((b) => (b.getAttribute("aria-labelledby") || "").split(" ").map((id) => document.getElementById(id)?.textContent || "")));
+  assert.deepEqual(names.map((n) => n[0]), ["Jezik aplikacije", "Država", "Lastno ime"]);
+  assert.ok(names.every((n) => n.length <= 2), JSON.stringify(names));
 });
 
 const lum = (h) => {

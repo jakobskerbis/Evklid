@@ -10,7 +10,7 @@ stanje: osnutek
   - morula, nato blastula (blastocista)
   - ugnezdenje okoli 7. dne
 - Zarodni listi
-  - ektoderm: koža, živčevje, čutila
+  - ektoderm: povrhnjica, živčevje, čutila
   - mezoderm: mišice, kosti, srce, kri
   - endoderm: sluznica prebavil, pljuča, jetra
 - Diferenciacija

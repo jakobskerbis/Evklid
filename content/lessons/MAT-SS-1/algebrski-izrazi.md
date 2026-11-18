@@ -126,7 +126,7 @@ Minus pred oklepajem spremeni predznak vsakemu členu v njem: $-(p + q - r) = -p
 **Rešitev:**
 
 1. Odpremo drugi oklepaj in spremenimo predznake: $2x^2 - 3x + 5 - x^2 - 4x + 7$.
-2. Združimo člene s $x^2$: $2x^2 - x^2 = x^2$. Združimo člene z $x$: $-3x - 4x = -7x$. Združimo števila: $5 + 7 = 12$.
+2. Združimo člene z $x^2$: $2x^2 - x^2 = x^2$. Združimo člene z $x$: $-3x - 4x = -7x$. Združimo števila: $5 + 7 = 12$.
 3. Poenostavljen izraz je $x^2 - 7x + 12$.
 4. Vrednost pri $x = 2$: $2^2 - 7 \cdot 2 + 12 = 4 - 14 + 12 = 2$.
 5. Preizkus z izvirnim izrazom: $(2 \cdot 4 - 6 + 5) - (4 + 8 - 7) = 7 - 5 = 2$. Rezultata se ujemata.
@@ -352,6 +352,11 @@ Vajenka zapiše še s črkami. Stari pekač ima stranico $a$, podaljšek je $b$.
 > $(100 + 3)(100 - 3) = 100^2 - 3^2 = 10\,000 - 9 = 9991$.
 
 <<RACUN
+enako: (2*x^2-3*x+5)-(x^2+4*x-7) | x^2-7*x+12
+vrednost: 2^2-7*2+12 | 2
+enako: (3*x-2)*(2*x+5)-(x-4)*(x+4) | 5*x^2+11*x+6
+enako: x^3-(x-2)^3 | 6*x^2-12*x+8
+vrednost: 6*10^2-12*10+8 | 488
 enako: (x+2)^3 | x^3+6*x^2+12*x+8
 enako: x*(x+3)^2 | x^3+6*x^2+9*x
 enako: (x+2)^3-x*(x+3)^2 | 3*x+8

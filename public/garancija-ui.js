@@ -2,11 +2,13 @@
 // server/placila/podari.js). Skrbniški kartici (zahtevki za vračilo, kode za šole) vidi samo skrbnik, zato sta v slovenščini.
 import { icon } from "./icons.js";
 import { t, locale, currentLang } from "./i18n.js";
+import { dateText } from "./datum.js";
+import { termsField, markCheckout } from "./pay-ui.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const $ = (sel, root = document) => root.querySelector(sel);
 const fmtEur = (c) => (c / 100).toLocaleString(locale(), { style: "currency", currency: "EUR" });
-const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" }) : "");
+const fmtDate = (iso) => (iso ? dateText(iso, locale()) : "");
 const SUBJ = (s) => t(`subj.${s}`);
 
 // Vrstica pri izbiri paketa: obljuba in povezava do pogojev.
@@ -84,6 +86,7 @@ export function podariBox(acc) {
         <form id="podari-form" class="form" novalidate>
           <label class="check pay-consent"><input type="checkbox" name="adult" required><span>${esc(t("pod.adult"))}</span></label>
           <label class="check pay-consent"><input type="checkbox" name="understand" required><span>${esc(t("pod.notDonation"))}</span></label>
+          ${termsField()}
           <p class="form-error" role="alert" hidden></p>
           <button class="primary" type="submit">${esc(t("pay.continue"))}</button>
         </form></details>`
@@ -162,7 +165,9 @@ export function bindGuarantee(acc, { api, toast, showError, refresh }) {
     btn.disabled = true;
     try {
       if (!e.target.adult.checked || !e.target.understand.checked) throw new Error(t("payp.consentMissing"));
-      const r = await api("/api/billing/podari", { method: "POST", body: { adult: true, understand: true, lang: currentLang() } });
+      if (!e.target.terms.checked) throw new Error(t("terms.missing"));
+      const r = await api("/api/billing/podari", { method: "POST", body: { adult: true, understand: true, terms: true, lang: currentLang() } });
+      markCheckout("podari"); // vrnitev v aplikacijo osveži stanje (public/pay-ui.js)
       location.href = r.url;
     } catch (err) {
       btn.disabled = false;

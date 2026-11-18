@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -50,7 +50,7 @@ Stranica je $20$, ker je $20 \cdot 20 = 400$. Povečala se je le $10$-krat, saj 
 
 $$\sqrt{a} = b \ \text{ pomeni } \ b^2 = a, \quad a \ge 0,\ b \ge 0$$
 
-Tako je $\sqrt{49} = 7$, ker je $7^2 = 49$. Korenjenje razveljavi kvadriranje: $\left(\sqrt{a}\right)^2 = a$.
+Tako je $\sqrt{49} = 7$, ker je $7^2 = 49$. Korenjenje in kvadriranje se razveljavita: $\left(\sqrt{a}\right)^2 = a$.
 
 Dve omejitvi:
 

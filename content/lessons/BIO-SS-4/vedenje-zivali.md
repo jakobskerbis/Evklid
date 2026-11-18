@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -31,7 +31,7 @@ Lorenz je gosi med kotaljenjem jajce izmaknil. Napovej, kaj je gos naredila.
 Gib je dokončala, kot da jajce še kotali, in vrat potegnila prav do gnezda. Ustaljeni vzorec se po sprožitvi izvede do konca, tudi kadar nima več smisla.
 :::
 
-**4. Ključni dražljaj.** Ustaljenega vzorca ne sproži celotna slika okolja, ampak en sam značilen del, **ključni dražljaj**. Mladič galeba kljuva v rdečo piko na starševem kljunu, starš pa mu nato izbljuva hrano. Tinbergen je pokazal, da mladič enako kljuva palico z rdečo piko, glavo brez pike pa veliko redkeje. Samec koljuške napade vsak predmet z rdečo spodnjo stranjo, četudi ni podoben ribi. Tvojo mačko k lovu sproži majhen predmet, ki hitro beži po tleh, na primer zamašek; oblika miši ni pomembna.
+**4. Ključni dražljaj.** Ustaljenega vzorca ne sproži celotna slika okolja, ampak en sam značilen del, **ključni dražljaj**. Mladič galeba kljuva v rdečo piko na starševem kljunu, starš pa mu nato izbljuva hrano. Tinbergen je pokazal, da mladič enako kljuva palico z rdečo piko, glavo brez pike pa veliko redkeje. Samec zeta, majhne sladkovodne ribe, napade vsak predmet z rdečo spodnjo stranjo, četudi ni podoben ribi. Tvojo mačko k lovu sproži majhen predmet, ki hitro beži po tleh, na primer zamašek; oblika miši ni pomembna.
 
 *Preveri:* Mladiči ptic pevk ob prihodu starša na široko odprejo kljun in pokažejo živo obarvano žrelo. Kaj je verjetno ključni dražljaj, ki starša sproži k hranjenju? *(Odprto, živo obarvano žrelo, ne mladič kot celota.)*
 

@@ -14,6 +14,7 @@ import { apkVersion } from "./apk-info.js";
 import { uiText, manifestLang } from "../webapp.js";
 import { RTL } from "../../public/i18n/languages.js";
 import { appLinkUrl } from "./app-link.js";
+import { IKONE_HEAD } from "../ikone.js";
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const httpsUrl = (u) => (/^https:\/\/[^\s"'<>]+$/.test(String(u || "")) ? u : null);
@@ -159,10 +160,12 @@ export function mountDownload(app, opts = {}) {
     const { apk, play, appStore, testflight } = links();
     const ua = String(req.get("user-agent") || "");
     const first = /iPhone|iPad|Macintosh.*Mobile/.test(ua) ? "ios" : "android";
+    // Uvod pove samo, kar res obstaja: brez App Store in TestFlight na iPhonu ni aplikacije, le »Dodaj na začetni zaslon«;
+    // brez APK in Google Play tudi za Android ne (dl.introWeb).
     const btn = (href, label, primary = true) => `<a class="btn${primary ? "" : " sec"}" href="${esc(href)}">${label}</a>`;
     const android = `<section><h2>${t("dl.android")}</h2>
       ${play ? btn(play, t("dl.play")) : ""}
-      ${apk ? `${btn(apk, t("dl.apk"), !play)}<p class="muted">${t("dl.apkSteps")}</p>` : play ? "" : `<p class="muted">${t("dl.soon")}</p>`}
+      ${apk ? `${btn(apk, t("dl.apk"), !play)}<p class="muted">${play ? "" : `${t("dl.apkWhy")} `}${t("dl.apkSteps")}</p>` : play ? "" : `<p class="muted">${t("dl.soon")}</p>`}
     </section>`;
     // Prijavljen v tem brskalniku na telefonu: enkratna povezava, ki odpre aplikacijo prijavljeno (app-link.js).
     // ?app=1: stran je odprla aplikacija (gumb na zaslonu za prijavo), zato je ta del na vrhu.
@@ -179,10 +182,14 @@ export function mountDownload(app, opts = {}) {
       ${!appStore && testflight ? `${btn(testflight, t("dl.testflight"))}<p class="muted">${t("dl.testflightSteps")}</p>` : ""}
       ${!appStore ? `<p class="muted">${t("dl.iosWeb")}</p>${btn("/", t("dl.openWeb"), false)}` : ""}
     </section>`;
+    // Noga z javnimi stranmi, kot na pristajalni strani (strani so v slovenščini); ne v aplikaciji (?app=1).
+    const footer = `<footer>${[["/", BRAND.name], ["/o-evklidu", t("land.what")], ["/zakaj-evklid", t("land.why")], ["/starsi.html", t("land.par.t")], ["/sole", t("land.sch.t")], ["/zasebnost.html", t("land.privacy")]]
+      .map(([href, label]) => `<a href="${href}">${href === "/" ? esc(label) : label}</a>`)
+      .join("")}</footer>`;
     // Enkratna povezava ne sme ostati v predpomnilniku.
     res.set("Cache-Control", appLink ? "no-store" : "no-cache").type("html").send(`<!doctype html>
 <html lang="${esc(lang)}" dir="${RTL.has(lang) ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(BRAND.name)} · ${t("dl.title")}</title><link rel="icon" href="/icons/icon-192.png">
+<title>${esc(BRAND.name)} · ${t("dl.title")}</title>${IKONE_HEAD}
 <style>
 :root{--bg:#F6F7F9;--surface:#fff;--text:#0f172a;--muted:#5b6474;--accent:#2353D1;--accent-text:#fff;--border:#e3e7ee}
 @media (prefers-color-scheme:dark){:root{--bg:#0D1117;--surface:#161b22;--text:#e6edf3;--muted:#9aa4b2;--accent:#6E9BFF;--accent-text:#0D1117;--border:#30363d}}
@@ -194,12 +201,15 @@ section{background:var(--surface);border:1px solid var(--border);border-radius:1
 .btn{display:block;text-align:center;background:var(--accent);color:var(--accent-text);font-weight:700;text-decoration:none;border-radius:10px;padding:14px;margin:8px 0}
 .btn.sec{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
 .muted{color:var(--muted);font-size:14px;margin:8px 0 0}
+footer{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 20px;margin:24px 0 0;font-size:14px}
+footer a{color:var(--accent);min-height:40px;display:inline-flex;align-items:center}
 </style></head><body><main>
 <header><img src="/icons/icon-192.png" alt=""><div><h1>${esc(BRAND.name)}</h1><div class="muted">${t("dl.title")}</div></div></header>
 ${req.query.app ? appLink : ""}
-<p>${t("dl.intro")}</p>
+<p>${t(appStore || testflight ? "dl.introApps" : apk || play ? "dl.intro" : "dl.introWeb")}</p>
 ${first === "ios" ? ios + android : android + ios}
 ${req.query.app ? "" : appLink}
+${req.query.app ? "" : footer}
 </main></body></html>`);
   });
 }

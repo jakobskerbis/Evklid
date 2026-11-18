@@ -17,6 +17,7 @@ import { useTopicFx } from "@/lib/useTopicFx";
 import Storage from "expo-sqlite/kv-store";
 import { key } from "@/lib/keys";
 import { expectedMs, progressAt, addDuration } from "../../../public/check-progress.js";
+import { withUnit } from "../../../public/enote-izbira.js";
 import { Banner, Body, Button, Card, ErrorView, Icon, Loading, ProgressBar, Screen, Title } from "@/components/ui";
 
 type Task = {
@@ -27,7 +28,8 @@ type Task = {
   figure?: Figure | null;
   inputHint?: string | null;
   answerType: "number" | "fraction" | "choice" | "coefficients";
-  unit?: string | null;
+  hasUnit?: boolean; // ali ima odgovor enoto (prave enote odjemalec ne dobi)
+  units?: string[] | null; // enote za izbiro (strežnik, public/enote-izbira.js)
   options?: string[] | null;
   optionsTex?: boolean; // možnosti so formule brez $ (kot renderMath na spletu)
   topicId?: string | null; // tema naloge (za pomen črk v formulah)
@@ -352,11 +354,19 @@ function AnswerInput({ task, value, onChange, onSubmit, inputRef }: { task: Task
       </View>
     );
   }
-  const placeholder = task.answerType === "coefficients" ? t("task.phCoef") : task.unit ? t("task.phUnit", { unit: task.unit }) : t("task.phResult");
-  const keys = ["−", ",", "/", ...(task.unit ? [task.unit] : [])];
+  const placeholder = task.answerType === "coefficients" ? t("task.phCoef") : task.hasUnit ? t("task.phUnit") : t("task.phResult");
+  // Enota je del odgovora: ne samo prava, ampak več enot predmeta po abecedi (public/enote-izbira.js).
+  const units: string[] = task.units || [];
+  const keys = ["−", ",", "/", ...units];
   const insert = (k: string) => {
     tap();
-    const add = k === "−" ? "-" : k === task.unit ? ` ${k}` : k;
+    if (units.includes(k)) {
+      // Nova enota zamenja prejšnjo (»1,2 V« → »1,2 mV«, tudi »N s«).
+      onChange(withUnit(value, k, units));
+      inputRef.current?.focus();
+      return;
+    }
+    const add = k === "−" ? "-" : k;
     onChange(value + add);
     inputRef.current?.focus();
   };

@@ -54,10 +54,10 @@ $$P(A + B) = P(A) + P(B).$$
 :::premisli
 V kuhinji je verjetnost, da je v hladilniku mleko, $0{,}7$, da so jajca, pa $0{,}6$. Ali je verjetnost, da je vsaj eno od obojega, $1{,}3$? Zakaj ne?
 ---
-Ne, verjetnost ne more biti večja od $1$. Dneve, ko sta v hladilniku oboje, smo šteli dvakrat. Odšteti moramo $P(A \cdot B)$; ta je vsaj $0{,}3$, saj mora biti vsota največ $1$.
+Ne, verjetnost ne more biti večja od $1$. Dneve, ko je v hladilniku oboje, smo šteli dvakrat. Odšteti moramo $P(A \cdot B)$; ta je vsaj $0{,}3$, saj mora biti vsota največ $1$.
 :::
 
-**5. Pogojna verjetnost (višja raven).** Verjetnost dogodka $A$ ob pogoju, da se je $B$ že zgodil (z $P(B) > 0$), je
+**5. Pogojna verjetnost (višja raven).** Verjetnost dogodka $A$ ob pogoju, da se je $B$ že zgodil (s $P(B) > 0$), je
 $$P(A \mid B) = \frac{P(A \cdot B)}{P(B)}.$$
 Pogoj $B$ »zoži svet« na izide, v katerih se je $B$ zgodil, in med njimi gledamo, kolikšen delež jih je ugodnih za $A$.
 
@@ -169,7 +169,7 @@ $P(A \cdot B) = P(A) \cdot P(B \mid A)$; za nezdružljiva dogodka $P(A + B) = P(
 **(a)**
 1. Dogodek $R_1$: prvo je rdeče, $R_2$: drugo je rdeče. Iščemo $P(R_1 \cdot R_2) = P(R_1) \cdot P(R_2 \mid R_1)$.
 2. $P(R_1) = \dfrac{5}{8}$, ker je $5$ rdečih od $8$.
-3. Če je bilo prvo rdeče, so v košari še $7$ jabolk, od tega $4$ rdeča, zato $P(R_2 \mid R_1) = \dfrac{4}{7}$. Pogojna verjetnost je tu nujna, ker se vsebina košare po prvem jemanju spremeni.
+3. Če je bilo prvo rdeče, je v košari še $7$ jabolk, od tega $4$ rdeča, zato $P(R_2 \mid R_1) = \dfrac{4}{7}$. Pogojna verjetnost je tu nujna, ker se vsebina košare po prvem jemanju spremeni.
 4. $P = \dfrac{5}{8} \cdot \dfrac{4}{7} = \dfrac{20}{56} = \dfrac{5}{14}$.
 
 **(b)**
@@ -331,7 +331,7 @@ Dogodka sta nezdružljiva, če se ne moreta zgoditi hkrati, torej je $P(A \cdot 
 
 Predstavljaj si pravokotnik s ploščino $1$, ki predstavlja vse izide. Dogodek $A$ je lik v njem, njegova ploščina pa je $P(A)$. Dogodek $B$ je drug lik.
 
-- Vsota $A + B$ je ploščina, ki jo pokrivata skupaj. Če se liki prekrivata, prekrito območje pri seštevanju ploščin štejemo dvakrat, zato ga enkrat odštejemo: to je $P(A \cdot B)$.
+- Vsota $A + B$ je ploščina, ki jo pokrivata skupaj. Če se lika prekrivata, prekrito območje pri seštevanju ploščin štejemo dvakrat, zato ga enkrat odštejemo: to je $P(A \cdot B)$.
 - Produkt $A \cdot B$ je ploščina prekritja.
 - (višja raven) Pogojna verjetnost $P(A \mid B)$: ostanemo samo znotraj lika $B$ in vprašamo, kolikšen del lika $B$ prekriva tudi $A$. To je ploščina prekritja, deljena s ploščino $B$.
 

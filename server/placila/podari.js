@@ -12,6 +12,8 @@ import { levelPlanFor } from "../accounts/plans.js";
 import { newCode } from "./darila.js";
 import { audit } from "../dnevnik-dostopov.js";
 import { BIRTH_MISSING_PAY } from "../accounts/age.js";
+import { insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText } from "../accounts/potrdilo.js";
+import { appMark } from "../mobile/trgovina.js";
 
 export const PODARI_DAYS = 90; // 3 mesece
 export const PODARI_MONTHS = 3;
@@ -129,16 +131,14 @@ export function mountPodari(app, ctx) {
     if (p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
     if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Podari lahko samo polnoletna oseba." });
-    if (req.body?.adult !== true || req.body?.understand !== true) return res.status(400).json({ error: "Pred plačilom sta potrebni obe potrditvi.", consent: true });
+    if (req.body?.adult !== true || req.body?.understand !== true) return res.status(400).json({ error: "Pred plačilom so potrebne vse potrditve.", consent: true });
+    if (!termsAccepted(req.body)) return res.status(400).json(TERMS_ERROR);
     const open = db.prepare("SELECT COUNT(*) AS n FROM podari_fund WHERE parent_id = ? AND status = 'pending' AND kind = 'month' AND created_at > datetime('now', '-1 day')").get(p.id).n;
     if (open >= 5) return res.status(429).json({ error: "Preveč odprtih nakupov. Poskusi jutri." });
     const amount = monthCents("OS");
     try {
       const customer = await ensureCustomer(p);
       const id = Number(db.prepare("INSERT INTO podari_fund (parent_id, kind, amount) VALUES (?, 'month', ?)").run(p.id, amount).lastInsertRowid);
-      const lang = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(req.body?.lang || "")) ? req.body.lang : "sl";
-      // Shrani se samo to, kar je kupec potrdil (polnoletnost in »ni donacija«), ne besedilo o odstopu pri naročnini.
-      db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'podari', ?)").run(p.id, p.email, `${PODARI_ADULT}\n${PODARI_TEXT}\n[jezik: ${lang}]`);
       const meta = { kind: "podari", fund_id: id, parent_id: p.id, parent_uid: p.uid || undefined };
       const base = baseUrl(req);
       const session = await stripe.request("POST", "/checkout/sessions", {
@@ -146,13 +146,15 @@ export function mountPodari(app, ctx) {
         customer,
         client_reference_id: String(p.id),
         line_items: [{ price_data: { currency: "eur", unit_amount: amount, tax_behavior: "inclusive", product_data: { name: "Podari Evklid – 1 mesec za otroka, ki ga izbere šola" } }, quantity: 1 }],
-        success_url: `${base}/?billing=podari&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${base}/?billing=podari${appMark(req)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: "sl",
         metadata: meta,
         payment_intent_data: { metadata: meta },
       });
       db.prepare("UPDATE podari_fund SET checkout_id = ? WHERE id = ?").run(session.id, id);
+      // Shrani se samo to, kar je kupec potrdil (polnoletnost, »ni donacija« in pogoji), ne besedilo o odstopu pri naročnini.
+      insertBillingConsent(db, { parentId: p.id, email: p.email, kind: "podari", lines: [PODARI_ADULT, PODARI_TEXT], lang: req.body?.lang, checkoutId: session.id, item: `Podari Evklid: 1 mesec za otroka, ki ga izbere šola, ${moneyText(amount, "EUR")}` });
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe podari:", err.message);

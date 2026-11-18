@@ -377,7 +377,7 @@ x: -3 .. 3 | 1
 y: -1 .. 6 | 1
 f: abs(x^2 - 4) | modra debelo
 :::
-= 2 | 0,1
+= 2 | 0
 ~ 3 | Pri $x = 0$ je vrh zaobljen: tam je $f(x) = 4 - x^2$, $f'(0) = 0$, tangenta je vodoravna.
 ~ 1 | Graf je simetričen: vogal je pri $x = 2$ in tudi pri $x = -2$.
 ~ 0 | Zvezna funkcija ni nujno odvedljiva. Poglej, kje ima graf ostre vogale.

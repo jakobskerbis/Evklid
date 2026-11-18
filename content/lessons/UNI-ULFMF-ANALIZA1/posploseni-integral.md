@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -21,7 +21,7 @@ Nariši krivulji $y = \frac{1}{x^2}$ (Lenina hitrost) in $y = \frac1x$ za $x \ge
 | $100$ | $0{,}99$ | $\approx 4{,}605$ |
 | $1000$ | $0{,}999$ | $\approx 6{,}908$ |
 
-Prvi stolpec se približuje $1$, drugi raste čez vse meje, čeprav počasi. Lik pod $\frac{1}{x^2}$ se proti desni tanjša tako hitro, da ima končno ploščino $1$: Lena nikoli ne prehodi več kot $1$ km. Lik pod $\frac1x$ se tanjša prepočasi.
+Srednji stolpec se približuje $1$, desni raste čez vse meje, čeprav počasi. Lik pod $\frac{1}{x^2}$ se proti desni tanjša tako hitro, da ima končno ploščino $1$: Lena nikoli ne prehodi več kot $1$ km. Lik pod $\frac1x$ se tanjša prepočasi.
 
 ### Definicija: zastavico pošljemo v neskončnost
 
@@ -169,7 +169,7 @@ $\int_1^b e^{-x}\,dx = e^{-1} - e^{-b} \to e^{-1} = \frac1e \approx 0{,}368$. In
 
 - **Singularnost v notranjosti spregledaš.** Napačno: $\int_{-1}^1 \frac{dx}{x^2} = \left[-\frac1x\right]_{-1}^1 = -2$. Negativna ploščina pozitivne funkcije je že znak, da je nekaj narobe. Newton-Leibnizove formule ne smemo uporabiti, če funkcija na intervalu ni omejena (zadošča pa, da je na celem zaprtem intervalu zvezna). Pravilno: razdeli v $0$; $\int_0^1 \frac{dx}{x^2}$ divergira, zato divergira ves integral.
 - **Simetrična limita.** Napačno: $\int_{-\infty}^\infty x\,dx = \lim_{a\to\infty}\int_{-a}^a x\,dx = 0$. Meji morata iti v neskončnost neodvisno. Pravilno: $\int_0^\infty x\,dx$ divergira, zato divergira ves integral.
-- **»Funkcija gre proti 0, torej integral konvergira.«** Pogoj ni zadosten: $\frac1x \to 0$, a $\int_1^\infty \frac{dx}{x}$ divergira. Pravilno: primerjaj s $\frac1{x^p}$ in preveri, ali je $p > 1$.
+- **»Funkcija gre proti 0, torej integral konvergira.«** Pogoj ni zadosten: $\frac1x \to 0$, a $\int_1^\infty \frac{dx}{x}$ divergira. Pravilno: primerjaj z $\frac1{x^p}$ in preveri, ali je $p > 1$.
 - **Zamenjaš smer pravila za potence.** Pri $\infty$ konvergira za $p > 1$, pri $0$ pa za $p < 1$. Kdor si zapomni samo »$p > 1$«, napačno sklepa, da $\int_0^1 \frac{dx}{\sqrt x}$ divergira. Pravilno: pri $0$ želimo, da funkcija ne raste prehitro, torej majhen $p$.
 - **»Neomejena funkcija ali neskončen interval pomeni divergenco.«** Primera 1 in 2 kažeta, da ima tak lik lahko končno ploščino. Vedno izračunaj limito ali uporabi primerjavo.
 
@@ -251,7 +251,7 @@ Postopek za vsak posplošeni integral:
 4. Izračunaj navadni določeni integral, npr. $\int_1^b \frac{dx}{x^3} = \frac12 - \frac{1}{2b^2}$.
 5. **Limita:** $b \to \infty$ da $\frac12$. Če je limita končna, del konvergira.
 6. Če kateri del divergira, divergira ves integral. Sicer seštej vrednosti.
-7. Če primitivne funkcije ni, preskoči korake 3–5 in primerjaj s $\frac{1}{x^p}$ ali $e^{-x}$.
+7. Če primitivne funkcije ni, preskoči korake 3–5 in primerjaj z $\frac{1}{x^p}$ ali $e^{-x}$.
 
 ## Drugače: Bolj natančno
 

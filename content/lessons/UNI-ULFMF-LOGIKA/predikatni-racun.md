@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -170,7 +170,7 @@ Znati moraš povedati:
 - pomen omejenih kvantifikatorjev: pri $\forall x \in A$ implikacija, pri $\exists x \in A$ konjunkcija, in kaj velja pri $A = \emptyset$;
 - pravili za negacijo, $\neg\, \forall x\, P \sim \exists x\, \neg P$ in $\neg\, \exists x\, P \sim \forall x\, \neg P$, z utemeljitvijo na končni domeni (De Morgan), ter negacijo $\forall x\,(P \Rightarrow Q)$;
 - negacijo izjave z več kvantifikatorji (vsak se obrne, vrstni red in domene ostanejo, na koncu zanikaš predikat);
-- zakaj vrstni red $\forall$ in $\exists$ ni vseeno: $\exists y\, \forall x\, P \models \forall x\, \exists y\, P$, obrat ne velja (protiprimer $y > x$ na $\mathbb{N}$);
+- zakaj je vrstni red $\forall$ in $\exists$ pomemben: $\exists y\, \forall x\, P \models \forall x\, \exists y\, P$, obrat ne velja (protiprimer $y > x$ na $\mathbb{N}$);
 - katere enakovrednosti in posledice veljajo med kvantifikatorji in vezniki $\wedge$, $\vee$, s protiprimeri za obrate.
 
 ### Naloga 1

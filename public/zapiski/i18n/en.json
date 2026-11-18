@@ -25,6 +25,7 @@
   "zap.noCards": "I can't make flashcards from these notes right now.",
   "zap.practice": "Review flashcards",
   "zap.printed": "We don't keep the text of printed pages – only the topics and flashcards.",
+  "zap.printedNoCards": "We don't keep the text of printed pages.",
   "zap.list": "Saved notes",
   "zap.empty": "You have no saved notes yet.",
   "zap.open": "Open",
@@ -44,6 +45,7 @@
   "zap.keep": "These are my notes – save",
   "zap.keepHint": "Without the tick we don't save the text. The quiz and cards stay.",
   "zap.notKept": "We didn't save the pasted text – only the topics and cards.",
+  "zap.notKeptNoCards": "We didn't save the pasted text.",
   "zap.correctMark": "Correct answer",
   "zap.yourMark": "Your answer"
 }

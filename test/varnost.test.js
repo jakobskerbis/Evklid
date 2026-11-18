@@ -119,7 +119,7 @@ test("varnostne glave: CSP, HSTS samo prek https, no-store za API", async () => 
     assert.equal((await call("/api/paths")).headers.get("cache-control"), "no-cache");
     // Strani brez vrinjenih skript (CSP script-src 'self'). Podatkovni blok schema.org (application/ld+json)
     // ni skripta: brskalnik ga ne izvede in CSP ga ne zadeva (server/vidnost.js).
-    for (const f of ["index.html", "starsi.html", "placaj.html", "ucitelj.html", "zasebnost.html", "garancija.html", "o-evklidu.html", "zakaj-evklid.html"]) {
+    for (const f of ["index.html", "starsi.html", "placaj.html", "ucitelj.html", "zasebnost.html", "garancija.html", "o-evklidu.html", "zakaj-evklid.html", "vabilo.html"]) {
       const html = fs.readFileSync(path.join("public", f), "utf8");
       assert.ok(!/<script(?![^>]*\bsrc=)(?![^>]*\btype="application\/ld\+json")[^>]*>/i.test(html), `${f}: vrinjena skripta`);
       assert.ok(!/\son[a-z]+\s*=/i.test(html), `${f}: on…= v HTML`);
@@ -254,13 +254,20 @@ test("roki hrambe: stare fotografije, potekle seje, nepotrjeni računi brez poda
     const convId = await chat(call, student.id, { text: "Poglej nalogo", image: PHOTO });
     const db = store.db;
     db.prepare("UPDATE messages SET created_at = datetime('now','-8 days') WHERE has_image = 1").run();
-    // Nepotrjena računa, stara 40 dni: prvi brez profilov se izbriše, drugi s pogovorom ostane.
+    // Nepotrjeni računi, stari 40 dni: brez profilov se izbriše; s profilom ostane, dokler je dejaven v zadnjih
+    // 30 dneh, sicer se izbriše (#747 pregled 2).
     const ins = db.prepare("INSERT INTO parents (email, password_hash, privacy_version, unsubscribe_token, referral_code, created_at) VALUES (?, 'x', 'v', ?, ?, datetime('now','-40 days'))");
     const gone = Number(ins.run("stari@x.si", "u1", "R1").lastInsertRowid);
     const kept = Number(ins.run("zdata@x.si", "u2", "R2").lastInsertRowid);
     const kid = store.createStudent("Zala");
     db.prepare("UPDATE students SET parent_id = ? WHERE id = ?").run(kept, kid.id);
     store.createConversation(kid.id);
+    db.prepare("INSERT INTO xp_events (student_id, amount, reason) VALUES (?, 5, 'test')").run(kid.id); // dejaven danes
+    const idle = Number(ins.run("mirni@x.si", "u4", "R4").lastInsertRowid);
+    const idleKid = store.createStudent("Miha");
+    db.prepare("UPDATE students SET parent_id = ? WHERE id = ?").run(idle, idleKid.id);
+    db.prepare("INSERT INTO xp_events (student_id, amount, reason, created_at) VALUES (?, 5, 'test', datetime('now','-35 days'))").run(idleKid.id);
+    db.prepare("INSERT INTO parent_sessions (token_hash, parent_id, expires_at) VALUES ('t-idle', ?, '2999-01-01T00:00:00.000Z')").run(idle); // seja ne šteje
     db.prepare("INSERT INTO parent_sessions (token_hash, parent_id, expires_at) VALUES ('t', ?, '2000-01-01T00:00:00.000Z')").run(parent.id);
     // Predpomnjen odgovor se uporablja 30 dni, nato izbriše (docs/izbris-izvoz.md, najdba 4).
     db.prepare("INSERT INTO answer_cache (key, text, created_at) VALUES ('star', 'x', datetime('now','-31 days')), ('nov', 'y', datetime('now','-29 days'))").run();
@@ -268,9 +275,11 @@ test("roki hrambe: stare fotografije, potekle seje, nepotrjeni računi brez poda
     assert.equal(out.answerCache, 1);
     assert.deepEqual(db.prepare("SELECT key FROM answer_cache WHERE key IN ('star','nov')").all().map((r) => r.key), ["nov"]);
     assert.equal(out.images, 1);
-    assert.equal(out.unverified, 1);
+    assert.equal(out.unverified, 2);
     assert.ok(out.sessions >= 1);
     assert.ok(!db.prepare("SELECT 1 FROM parents WHERE id = ?").get(gone));
+    assert.ok(!db.prepare("SELECT 1 FROM parents WHERE id = ?").get(idle), "s profilom, 30 dni brez dejavnosti");
+    assert.ok(!db.prepare("SELECT 1 FROM students WHERE id = ?").get(idleKid.id));
     assert.ok(db.prepare("SELECT 1 FROM parents WHERE id = ?").get(kept));
     assert.ok(db.prepare("SELECT 1 FROM parents WHERE id = ?").get(parent.id)); // potrjen
     const msg = store.listMessages(convId)[0];
@@ -438,14 +447,15 @@ test("izvoz želja za kozmetiko: šifrirano besedilo gre ven odšifrirano", asyn
   });
 });
 
-test("roki hrambe: nepotrjen račun s profilom ostane; selitev velikih vrstic po delih", async () => {
+test("roki hrambe: dejaven nepotrjen račun s profilom ostane; selitev velikih vrstic po delih", async () => {
   await withServer(async ({ store }) => {
     const db = store.db;
     const ins = db.prepare("INSERT INTO parents (email, password_hash, privacy_version, unsubscribe_token, referral_code, created_at) VALUES (?, 'x', 'v', ?, ?, datetime('now','-40 days'))");
-    // Gost, ki je kasneje dobil račun (brez potrditve): profil brez pogovorov (npr. samo grafi ali igre) ostane.
+    // Nepotrjen račun s profilom, ki je bil v zadnjih 30 dneh dejaven (vprašanje inštruktorju), ostane (#747).
     const kept = Number(ins.run("gost-prej@x.si", "u3", "R3").lastInsertRowid);
     const kid = store.createStudent("Lan");
     db.prepare("UPDATE students SET parent_id = ? WHERE id = ?").run(kept, kid.id);
+    db.prepare("INSERT INTO question_log (student_id, day, n) VALUES (?, date('now','-3 days'), 1)").run(kid.id);
     assert.equal(runRetention(db, { log: {} }).unverified, 0);
     assert.ok(db.prepare("SELECT 1 FROM students WHERE id = ?").get(kid.id));
     // Sporočila s fotografijami: paket se konča po ~8 MB, vse vrstice so na koncu šifrirane.

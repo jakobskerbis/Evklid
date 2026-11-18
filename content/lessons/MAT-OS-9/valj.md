@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -72,7 +72,7 @@ Ne, plašč se samo podvoji. V formuli $\mathrm{pl} = 2\pi r v$ polmer ni kvadri
 
 **Valj kot vrtenina.** **Vrtenina** je telo, ki ga opiše ravninski lik, ko ga zavrtimo za cel obrat okoli premice. Pravokotnik zavrtimo okoli ene od njegovih stranic. Ta stranica leži na osi valja in je njegova višina $v$. Sosednja stranica je pravokotna na os. Ko se zavrti, opiše krog, zato je njena dolžina polmer $r$, ne premer.
 
-**Osni presek.** Valj prerežemo z ravnino, ki vsebuje os. Presek je pravokotnik s stranicama $2r$ in $v$: to sta dva prvotna pravokotnika, iz katerih je valj nastal, položena drug ob drugega. Če je osni presek kvadrat, torej $v = 2r$, je valj **enakostraničen**.
+**Osni presek.** Valj prerežemo z ravnino, ki vsebuje os. Presek je pravokotnik s stranicama $2r$ in $v$: to sta dve kopiji prvotnega pravokotnika, iz katerega je valj nastal, položeni druga ob drugo. Če je osni presek kvadrat, torej $v = 2r$, je valj **enakostraničen**.
 
 V simulaciji spodaj »3D: Valj (plašč se razvije)« razgrni plašč. Opazuj, da je dolga stranica pravokotnika natanko tako dolga kot rob osnovne ploskve.
 

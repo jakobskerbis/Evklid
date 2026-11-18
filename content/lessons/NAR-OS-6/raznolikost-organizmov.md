@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -53,7 +53,7 @@ Ker za rast ne potrebujejo svetlobe, hrane ne izdelajo s fotosintezo. Hrano vsrk
 
 Večina bakterij ni škodljivih. Mlečnokislinske bakterije iz mleka naredijo jogurt, bakterije v našem črevesju pomagajo pri prebavi, v tleh pa razkrajajo odmrle ostanke. Le nekatere povzročajo bolezni.
 
-**5. Protisti.** Protisti imajo celično jedro, večinoma pa so iz ene celice. **Evglena** je zelena, ima klorofil in opravlja fotosintezo kot rastlina. Hkrati plava z bičkom kot žival. **Ameba** spreminja obliko in hrano obda ter požre. **Paramecij** (copatkar) je oblikovan kot copat in plava s tisoči kratkih migetalk.
+**5. Protisti.** Protisti imajo celično jedro, večinoma pa so iz ene celice. **Evglena** je zelena, ima klorofil in opravlja fotosintezo kot rastlina. Hkrati plava z bičkom kot žival. **Ameba** spreminja obliko in hrano obda ter požre. **Paramecij** je oblikovan kot copat in plava s tisoči kratkih migetalk.
 
 :::premisli
 Evglena ima klorofil kot rastlina in plava kot žival. Ali bi jo uvrstil med rastline ali med živali? Pomisli, po čem ločimo kraljestva, in utemelji.
@@ -166,7 +166,7 @@ $64$ bakterij: $1 \rightarrow 2 \rightarrow 4 \rightarrow 8 \rightarrow 16 \righ
 Na risbi so tri celice. Niso narisane v pravem razmerju: bakterija je v resnici veliko manjša od drugih dveh.
 
 :::risba skica
-opis: Tri celice drug ob drugi. Levo rastlinska celica: pravokotnik z debelo steno, v njej jedro in trije kloroplasti. V sredini kvasovka: okrogla celica z jedrom in manjšim brstom ob strani, brez kloroplastov. Desno bakterija: podolgovata celica brez jedra, z dolgim vijugastim bičkom.
+opis: Tri celice druga ob drugi. Levo rastlinska celica: pravokotnik z debelo steno, v njej jedro in trije kloroplasti. V sredini kvasovka: okrogla celica z jedrom in manjšim brstom ob strani, brez kloroplastov. Desno bakterija: podolgovata celica brez jedra, z dolgim vijugastim bičkom.
 območje: 0; 0 .. 12; 5
 enota: 25
 pravokotnik: 0,3; 1 .. 3,7; 4,4 | zelena | debelo

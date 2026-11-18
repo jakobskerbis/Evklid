@@ -397,7 +397,7 @@ Pri ploščini je izraz $u_1 v_2 - u_2 v_1$ ploščina paralelograma, ki ga nape
 > Obe točki imata $y = 3$, zato ležita na vodoravnici nad osjo $x$. Dolžina je $|4 - (-2)| = 6$.
 
 ? (brez računala) Oceni razdaljo med $O(0, 0)$ in $T(7, 7)$. Vpiši celo število, ki ji je najbližje.
-= 10
+= 10 | 0
 ~ 7 | To je samo ena kateta. Hipotenuza je daljša od vsake katete.
 ~ 14 | To je vsota katet, pot po kvadratkih. Poševna pot je krajša.
 ~ 49 | To je $7^2$, kvadrat ene razlike. Manjkata drugi kvadrat in koren.

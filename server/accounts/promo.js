@@ -79,6 +79,17 @@ export function createPromo(db, cfg) {
   const anyActive = () => !!db.prepare("SELECT 1 FROM promo_codes WHERE active = 1 AND (valid_until IS NULL OR valid_until >= ?)").get(today());
 
   // node:sqlite je sinhron, zato sta štetje in vpis skupaj atomarna (ni tekme za zadnje mesto).
+  // Preverjanje brez porabe (registracija: koda se porabi šele ob potrditvi e-naslova, #747 pregled 2): { ok, code } ali { error }.
+  function check(parent, raw) {
+    const code = String(raw || "").trim().toUpperCase();
+    if (!code) return { error: "Vpiši aktivacijsko kodo." };
+    const row = CODE_RE.test(code) ? get(code) : null;
+    if (!row || !row.active || (row.valid_until && row.valid_until < today())) return { error: "Ta aktivacijska koda ni veljavna." };
+    if (db.prepare("SELECT 1 FROM promo_redemptions WHERE parent_id = ?").get(parent.id)) return { error: "Na tem računu je bila aktivacijska koda že uporabljena." };
+    if (usedOf(code) >= row.max_uses) return { error: `Vseh ${row.max_uses} aktivacij te kode je že porabljenih.`, exhausted: true };
+    return { ok: true, code };
+  }
+
   function redeem(parent, raw) {
     const code = String(raw || "").trim().toUpperCase();
     if (!code) return { error: "Vpiši aktivacijsko kodo." };
@@ -135,5 +146,14 @@ export function createPromo(db, cfg) {
     return r.changes ? { ok: true } : { error: "Koda ne obstaja." };
   }
 
-  return { redeem, stats, used, codeOf, termsOf, list, create, setActive, anyActive };
+  // Ali je koda veljavna aktivacijska koda (vklopljena, ne pretečena): registracija z eno kodo (»Imam kodo«) tako ve,
+  // da je aktivacijska. Izklopljena ali pretečena koda ne zasenči vabila ali priporočila z istim zapisom (pregled #834).
+  const exists = (raw) => {
+    const code = String(raw || "").trim().toUpperCase();
+    if (!CODE_RE.test(code)) return false;
+    const row = get(code);
+    return !!row && !!row.active && !(row.valid_until && row.valid_until < today());
+  };
+
+  return { redeem, check, stats, used, codeOf, termsOf, list, create, setActive, anyActive, exists };
 }

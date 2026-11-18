@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -25,7 +25,7 @@ Jedra istega elementa z različnim številom nevtronov so **izotopi**. Ogljik-12
 | $\beta^-$ | elektron | masno število enako, $Z + 1$ | nekaj mm aluminija |
 | $\gamma$ | foton z energijo okoli MeV | masno in vrstno število enako | debel svinec, beton |
 
-Pri razpadu $\beta^-$ elektron ne pride iz elektronske ovojnice, ampak nastane v jedru: en nevtron se spremeni v proton in elektron (ter še skoraj neopazen delec, antinevtrino). Zato ostane število nukleonov enako, protonov pa je en več. Jedro, ki nastane po razpadu, je pogosto vzbujeno. Tako kot atom pri skoku elektrona na nižji nivo izseva foton, jedro izseva foton $\gamma$. Ta ima okoli milijonkrat več energije kot foton vidne svetlobe.
+Pri razpadu $\beta^-$ elektron ne pride iz elektronske ovojnice, ampak nastane v jedru: en nevtron se spremeni v proton in elektron (ter še skoraj neopazen delec, antinevtrino). Zato ostane število nukleonov enako, protonov pa je eden več. Jedro, ki nastane po razpadu, je pogosto vzbujeno. Tako kot atom pri skoku elektrona na nižji nivo izseva foton, jedro izseva foton $\gamma$. Ta ima okoli milijonkrat več energije kot foton vidne svetlobe.
 
 Pri zapisu razpada se na obeh straneh ohranita vsota masnih števil in vsota vrstnih števil (naboj). Uran-238 razpade z razpadom $\alpha$:
 
@@ -189,7 +189,7 @@ $W_v = 5{,}04\cdot10^{-29}\,\mathrm{kg} \cdot (3{,}00\cdot10^{8}\,\mathrm{m/s})^
 
 ## Pogoste napake
 
-- **»Po dveh razpolovnih časih ni ničesar več.«** Učenec misli, da vsak razpolovni čas odvzame polovico *začetnega* števila. V resnici razpade polovica *preostalih* jeder, zato ostane $1/2$, $1/4$, $1/8$ in nikoli točno nič. Vsak razpolovni čas deli s $2$, ne odšteva.
+- **»Po dveh razpolovnih časih ni ničesar več.«** Učenec misli, da vsak razpolovni čas odvzame polovico *začetnega* števila. V resnici razpade polovica *preostalih* jeder, zato ostane $1/2$, $1/4$, $1/8$ in nikoli točno nič. Vsak razpolovni čas deli z $2$, ne odšteva.
 - **Delež preveden v napačno število razpolovnih časov.** Ostala četrtina ne pomeni štirih razpolovnih časov, ampak dva, ker je $\tfrac14 = \left(\tfrac12\right)^2$. Vprašaj se: kolikokrat moram razpoloviti, da pridem do tega deleža?
 - **Elektron iz ovojnice.** Pri razpadu $\beta^-$ elektron nastane v jedru, ko se nevtron spremeni v proton. Kdor misli, da odleti elektron iz ovojnice, ne razume, zakaj se vrstno število poveča za $1$ in nastane drug element.
 - **Zamenjana števila pri razpadu $\alpha$.** Vrstno število se zmanjša za $2$, masno za $4$. Napaka »$Z - 4$« da napačen element. Pomaga, če se spomniš, kaj je delec $\alpha$: ${}^{4}_{2}\mathrm{He}$, zgoraj $4$, spodaj $2$.
@@ -249,7 +249,7 @@ Podobno izzveni ton klavirske strune: v vsaki sekundi izgubi približno enak del
 ~ Jedro pri razpadu ničesar ne sprejme, ampak izseva. Proton nastane v jedru samem.
 - Ker odleti foton, ki odnese negativni naboj.
 ~ Foton nima naboja; to je sevanje $\gamma$, ki $Z$ ne spremeni.
-> Pri $\beta^-$ velja nevtron $\rightarrow$ proton + elektron. Protonov je en več, masno število ostane enako.
+> Pri $\beta^-$ velja nevtron $\rightarrow$ proton + elektron. Protonov je eden več, masno število ostane enako.
 
 ? Ana določa starost lesa. (1) Aktivnost ogljika-14 je padla s $16$ na $4$ razpade na minuto na gram. (2) To je četrtina začetne aktivnosti. (3) Četrtina pomeni štiri razpolovne čase. (4) Starost je $4 \cdot 5730 = 22920$ let. Kateri korak je napačen?
 - Korak (1)

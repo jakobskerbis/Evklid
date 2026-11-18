@@ -18,21 +18,39 @@ import { audit } from "../dnevnik-dostopov.js";
 import { parentFromMeta, purchaseMismatch, logSafe } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
+import { migrateTerms, insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText, subItem, firstChargeText, consentText } from "./potrdilo.js";
+import { appMark } from "../mobile/trgovina.js";
 
-export const ADULT_TEXT = "Sem polnoleten/-na in plačujem za svoj profil ali kot starš oziroma skrbnik.";
-// Odstop v 14 dneh (j 2026-11-06): vrne se del plačila za neporabljeno storitev, sorazmerno PORABI: manjši od deleža
-// preostalega časa in deleža neporabljene meje AI (withdrawalRefundCents). Besedilo pred zagonom plačil preveri pravnik.
+// Enako kot pay.adult v public/i18n/sl.js (kar plačnik vidi); test/pogoji-potrditev.test.js primerja vsa besedila.
+export const ADULT_TEXT = "Sem polnoletna oseba in plačujem za svoj profil ali kot starš oziroma skrbnik.";
+// Odstop v 14 dneh (j 2026-11-16, #765, enako kot /pogoji.html 12. točka): naročnina in paket pred testom vrneta
+// plačilo × delež preostalega časa (withdrawalRefundCents); dokup pogovorov vrne delež neporabljenih pogovorov
+// (CREDIT_WITHDRAWAL_TEXT, izračun v /api/admin/withdrawal). Prej (j 2026-11-06) je veljal manjši od deleža časa in
+// deleža neporabljene meje AI. Besedilo pred zagonom plačil preveri pravnik.
 export const WITHDRAWAL_TEXT =
-  "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat dobim vrnjen del plačila za storitev, ki je še nisem porabil: manjši od deleža preostalega časa in deleža še neporabljenih vprašanj za inštruktorja.";
+  "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat plačam le sorazmerni del cene za čas do odstopa, ostalo mi vrnete.";
+export const CREDIT_WITHDRAWAL_TEXT =
+  "Želim, da se uporaba začne takoj. Vem, da lahko v 14 dneh odstopim od pogodbe. Takrat mi vrnete delež plačila za še neporabljene pogovore.";
+// Različica pravila o odstopu, zapisana v vsako novo soglasje (billing_consents.text). Starejši zapisi so brez nje
+// in hranijo besedilo, ki ga je plačnik takrat potrdil (pravilo min(čas, AI)); ostanejo veljavni, kot so.
+export const WITHDRAWAL_VERSION = "2026-11-16";
 export const WITHDRAWAL_DAYS = 14;
-// Vračilo ob odstopu v centih: plačilo × min(delež preostalega časa, delež neporabljene meje AI), navzdol na cent.
-// Brez meje AI (aiCapUsd 0) velja le delež časa.
+// Zapis soglasja: obe potrjeni besedili (slovenski izvirnik), različica pravila in jezik, v katerem ju je plačnik bral.
+// Vrstni red: potrditve, pogoji, [pogoji: V], [odstop: V], [jezik: l] (server/accounts/potrdilo.js consentText).
+export const withdrawalTextFor = (kind) => (String(kind || "").endsWith("credit") ? CREDIT_WITHDRAWAL_TEXT : WITHDRAWAL_TEXT);
+export function consentRecordText(kind, lang) {
+  return consentText({ lines: [ADULT_TEXT, withdrawalTextFor(kind)], lang, odstop: WITHDRAWAL_VERSION });
+}
+// Vračilo ob odstopu v centih: plačilo × delež preostalega časa, navzgor na cent (v korist kupca). Poraba AI ne zniža vračila
+// (j 2026-11-16); aiLeft se vrne samo za prikaz skrbniku.
 export function withdrawalRefundCents({ paidCents, startMs, endMs, nowMs = Date.now(), aiCapUsd = 0, aiSpentUsd = 0 }) {
   const clamp = (x) => Math.min(1, Math.max(0, Number.isFinite(x) ? x : 0));
   const timeLeft = endMs > startMs ? clamp((endMs - nowMs) / (endMs - startMs)) : 0;
   const aiLeft = aiCapUsd > 0 ? clamp(1 - aiSpentUsd / aiCapUsd) : 1;
-  return { cents: Math.max(0, Math.floor((Number(paidCents) || 0) * Math.min(timeLeft, aiLeft))), timeLeft, aiLeft };
+  return { cents: refundUp((Number(paidCents) || 0) * timeLeft), timeLeft, aiLeft };
 }
+// Vračilo v centih, zaokroženo navzgor (v korist kupca, #815 L5); 1e-9 popravi napako plavajoče vejice (566,0000001).
+export const refundUp = (cents) => Math.max(0, Math.ceil((Number(cents) || 0) - 1e-9));
 const PAY_LINK_DAYS = 7;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -89,6 +107,8 @@ export function migrateBilling(db) {
       error TEXT
     );
   `);
+  // Potrditev splošnih pogojev z različico, opis nakupa in plačilna seja (potrdilo po e-pošti, server/accounts/potrdilo.js).
+  migrateTerms(db);
   const cols = db.prepare("PRAGMA table_info(parents)").all().map((c) => c.name);
   // Začetek neuspelega plačila (status past_due): poln dostop ostane še GRACE_DAYS dni.
   if (!cols.includes("past_due_since")) db.exec("ALTER TABLE parents ADD COLUMN past_due_since TEXT");
@@ -242,12 +262,16 @@ export function mountBilling(app, ctx) {
     return true;
   };
   const consented = (body) => body?.adult === true && body?.withdrawal === true;
-  const consentError = { error: "Pred plačilom sta potrebni obe potrditvi.", consent: true };
+  const consentError = { error: "Pred plačilom so potrebne vse potrditve.", consent: true };
+  // Tri potrditve: polnoletnost, takojšen začetek z odstopom in splošni pogoji (#765 točka 2).
+  const consentFail = (body) => (!consented(body) ? consentError : !termsAccepted(body) ? TERMS_ERROR : null);
   // Shrani se slovensko besedilo in jezik, v katerem ju je plačnik prebral (prevod je v public/i18n).
-  function recordConsent(parentId, payerEmail, kind, lang) {
-    const l = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(lang || "")) ? lang : "sl";
-    db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, ?, ?)").run(parentId, payerEmail || "", kind, `${ADULT_TEXT}\n${WITHDRAWAL_TEXT}\n[jezik: ${l}]`);
+  // checkoutId in item: plačilna seja in opis nakupa za potrdilo po e-pošti (potrdilo.js). Dokup shrani besedilo
+  // odstopa za dokup (CREDIT_WITHDRAWAL_TEXT), ostalo besedilo naročnine (withdrawalTextFor).
+  function recordConsent(parentId, payerEmail, kind, lang, checkoutId = null, item = "", firstCharge = "") {
+    insertBillingConsent(db, { parentId, email: payerEmail, kind, lines: [ADULT_TEXT, withdrawalTextFor(kind)], lang, checkoutId, item, firstCharge, odstop: WITHDRAWAL_VERSION });
   }
+  const passItem = (plan) => `Paket pred testom: ${plan.label}, ${plan.days} dni, ${moneyText(plan.amount, plan.currency)}`;
 
   // Ali ima profil poln dostop iz paketa pred testom (dokler ni porabljena meja AI paketa).
   function passPremium(studentId) {
@@ -371,7 +395,7 @@ export function mountBilling(app, ctx) {
     if (isMinor(p)) return res.status(403).json({ error: "Paket plača starš. Pošlji mu povezavo za plačilo.", pay_link: true });
     const c = checkPass(req, p, req.body);
     if (c.status) return res.status(c.status).json(c.body);
-    if (!consented(req.body)) return res.status(400).json(consentError);
+    if (consentFail(req.body)) return res.status(400).json(consentFail(req.body));
     try {
       const customer = await ensureCustomer(p);
       const passId = passes.create({ parentId: p.id, studentId: c.studentId, plan: c.plan, testDate: c.test.date, testName: c.test.name });
@@ -382,14 +406,14 @@ export function mountBilling(app, ctx) {
         customer,
         client_reference_id: String(p.id),
         line_items: [passLineItem(c.plan)],
-        success_url: `${base}/?billing=pass&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${base}/?billing=pass${appMark(req)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: "sl",
         metadata: meta,
         payment_intent_data: { metadata: meta },
       });
       passes.setCheckout(passId, session.id);
-      recordConsent(p.id, p.email, "pass", req.body?.lang);
+      recordConsent(p.id, p.email, "pass", req.body?.lang, session.id, passItem(c.plan));
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe paket:", err.message);
@@ -448,7 +472,7 @@ export function mountBilling(app, ctx) {
     const pack = packById(req.body?.pack);
     if (!pack) return res.status(400).json({ error: "Neznan paket." });
     if (currencyOf(req, p) !== "EUR") return res.status(400).json({ error: "Dokup pogovorov je zaenkrat na voljo samo v evrih." });
-    if (!consented(req.body)) return res.status(400).json(consentError);
+    if (consentFail(req.body)) return res.status(400).json(consentFail(req.body));
     try {
       const customer = await ensureCustomer(p);
       const creditId = credits.create(p.id, pack);
@@ -469,14 +493,14 @@ export function mountBilling(app, ctx) {
             quantity: 1,
           },
         ],
-        success_url: `${base}/?billing=credit&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${base}/?billing=credit${appMark(req)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: "sl",
         metadata: meta,
         payment_intent_data: { metadata: meta },
       });
       credits.setCheckout(creditId, session.id);
-      recordConsent(p.id, p.email, "credit", req.body?.lang);
+      recordConsent(p.id, p.email, "credit", req.body?.lang, session.id, `Dokup pogovorov z inštruktorjem (število pogovorov: ${conversationsFor(creditUsdFor(pack.amount))}), ${moneyText(pack.amount, pack.currency)}`);
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe dokup porabe:", err.message);
@@ -621,7 +645,7 @@ export function mountBilling(app, ctx) {
     if (!l) return;
     const email = String(req.body?.email || "").trim().toLowerCase();
     if (!EMAIL_RE.test(email) || email.length > 200) return res.status(400).json({ error: "Vpišite veljaven e-naslov za račun." });
-    if (!consented(req.body)) return res.status(400).json(consentError);
+    if (consentFail(req.body)) return res.status(400).json(consentFail(req.body));
     const parent = getParent(l.parent_id);
     if (!parent) return res.status(404).json({ error: "Povezava za plačilo ne obstaja ali je potekla. Prosite za novo.", expired: true });
     // Imetnik povezave brez datuma rojstva: zaprto vsako plačilo (j 2026-11-06), tudi prek že izdane povezave.
@@ -633,6 +657,8 @@ export function mountBilling(app, ctx) {
     const back = `${base}/placaj.html?t=${encodeURIComponent(req.params.token)}`;
     try {
       let session;
+      let item = "";
+      let firstCharge = "";
       if (l.kind === "sub") {
         if (paidActive(parent)) return res.status(409).json({ error: "To je že plačano. Hvala!", paid: true });
         const plan = linkSubPlan(l, parent);
@@ -655,6 +681,8 @@ export function mountBilling(app, ctx) {
           subscription_data,
           metadata: { parent_id: parent.id, parent_uid: parent.uid || undefined, pay_link: l.token_hash },
         });
+        item = subItem(plan);
+        firstCharge = subscription_data.trial_end ? firstChargeText(subscription_data.trial_end, plan) : "";
       } else {
         const plan = passByKey(l.plan_key) || passByDays(l.days);
         if (!plan) return res.status(410).json({ error: "Povezava za plačilo ne velja več. Prosite za novo.", expired: true });
@@ -677,8 +705,9 @@ export function mountBilling(app, ctx) {
           payment_intent_data: { metadata: meta },
         });
         passes.setCheckout(passId, session.id);
+        item = passItem(plan);
       }
-      recordConsent(parent.id, email, `pay_link_${l.kind}`, req.body?.lang);
+      recordConsent(parent.id, email, `pay_link_${l.kind}`, req.body?.lang, session.id, item, firstCharge);
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe povezava za starše:", err.message);
@@ -711,22 +740,38 @@ export function mountBilling(app, ctx) {
     return false;
   };
   // Izračun vračila ob odstopu v 14 dneh (samo prikaz za skrbnika; vračilo izvede skrbnik v Stripu).
-  // Naročnina: tekoče plačano obdobje, meja AI = vrednost paketa × mesecev obdobja, poraba vseh profilov računa.
-  // Paketi pred testom: ves paket, meja paketa, poraba profila.
+  // refund_cents = plačilo × delež preostalega časa (j 2026-11-16), zaokroženo navzgor na cent (v korist kupca);
+  // ai_left je samo podatek, vračila ne zniža. ?at=<ISO> = čas izjave o odstopu (privzeto zdaj, nikoli v prihodnosti).
+  // Naročnina: tekoče plačano obdobje (začetek iz plačanega računa, sicer ocena: konec − 1 ali 12 mesecev),
+  // meja AI = vrednost paketa × mesecev obdobja, poraba vseh profilov računa. Paketi pred testom: ves paket.
+  // within_14_days se šteje od sklenitve pogodbe (contract_from): naročnina = zadnje soglasje ob nakupu naročnine
+  // do izjave, paket = začetek paketa, dokup = plačilo. Ali obnovitev naročnine začne nov rok za odstop, preveri pravnik.
   app.get("/api/admin/withdrawal/:parentId", (req, res) => {
     if (!admin(req, res)) return;
     const p = getParent(Number(req.params.parentId));
     if (!p) return res.status(404).json({ error: "Račun ne obstaja." });
-    const now = Date.now();
+    const realNow = Date.now();
+    let now = realNow;
+    if (req.query?.at != null && req.query.at !== "") {
+      const at = Date.parse(String(req.query.at));
+      if (!Number.isFinite(at)) return res.status(400).json({ error: "Neveljaven datum izjave (at)." });
+      now = Math.min(at, realNow);
+    }
     const sqlTime = (ms) => new Date(ms).toISOString().slice(0, 19).replace("T", " ");
-    const out = { subscription: null, passes: [] };
+    const fromSql = (t) => (t ? Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(t) ? t : `${String(t).replace(" ", "T")}Z`) : NaN);
+    const within = (fromMs) => Number.isFinite(fromMs) && now >= fromMs && now - fromMs <= WITHDRAWAL_DAYS * 86400000;
+    const out = { at: new Date(now).toISOString(), subscription: null, passes: [] };
     const plan = p.sub_plan ? planByKey(p.sub_plan) : null;
     const end = Date.parse(p.sub_period_end || "");
     if (plan && Number.isFinite(end)) {
       const months = plan.interval === "year" ? 12 : 1;
-      const startD = new Date(end);
-      startD.setUTCMonth(startD.getUTCMonth() - months);
-      const start = startD.getTime();
+      const real0 = p.sub_id && paidPeriods?.periodStart ? paidPeriods.periodStart(p.id, p.sub_id, end) : 0;
+      let start = real0;
+      if (!start) {
+        const startD = new Date(end);
+        startD.setUTCMonth(startD.getUTCMonth() - months);
+        start = startD.getTime();
+      }
       const g = planGuarantee(plan, p.country ? (!plan.currency || plan.currency === "EUR" ? eurVatFor(p.country) : vatRateFor(p.country)) : undefined);
       const since = sqlTime(start);
       const spent = [...childIds(p.id)].reduce((t, id) => t + (aiUsage?.spentSince?.(id, since) || 0), 0) + (aiUsage?.orphanSpent?.(p.id, since) || 0);
@@ -736,21 +781,48 @@ export function mountBilling(app, ctx) {
       // Meja AI obdobja tudi iz dejanskega plačila: 25 % plačila brez DDV, največ vrednost paketa.
       const capFromPaid = real?.currency ? aiCapFromNetEur(paidPeriods.eurIn(p.id, p.sub_id, start, end).eur) : Infinity;
       const r = withdrawalRefundCents({ paidCents, startMs: start, endMs: end, nowMs: now, aiCapUsd: Math.min((g?.total || 0) * months, capFromPaid), aiSpentUsd: spent });
-      out.subscription = { plan: plan.key, paid_cents: paidCents, currency: real?.currency || plan.currency || "EUR", refund_cents: r.cents, time_left: r.timeLeft, ai_left: r.aiLeft, within_14_days: now - start <= WITHDRAWAL_DAYS * 86400000 };
+      // Sklenitev pogodbe: zadnje soglasje ob nakupu naročnine (tudi prek povezave za starše) do izjave, sicer začetek obdobja.
+      const consent = db.prepare("SELECT created_at FROM billing_consents WHERE parent_id = ? AND kind IN ('sub', 'pay_link_sub') AND created_at <= ? ORDER BY created_at DESC, id DESC LIMIT 1").get(p.id, sqlTime(now));
+      const contractFrom = consent ? fromSql(consent.created_at) : start;
+      out.subscription = {
+        plan: plan.key,
+        paid_cents: paidCents,
+        currency: real?.currency || plan.currency || "EUR",
+        source: real?.currency ? "placilo" : "cenik",
+        period_start: new Date(start).toISOString(),
+        period_end: new Date(end).toISOString(),
+        period_start_source: real0 ? "placilo" : "ocena",
+        refund_cents: r.cents,
+        time_left: r.timeLeft,
+        ai_left: r.aiLeft,
+        contract_from: new Date(contractFrom).toISOString(),
+        contract_from_source: consent ? "soglasje" : "zacetek_obdobja",
+        within_14_days: within(contractFrom),
+        ...(now < start ? { at_before_period: true } : {}),
+      };
     }
     for (const ps of db.prepare("SELECT * FROM passes WHERE parent_id = ? AND status = 'active'").all(p.id)) {
       const start = Date.parse(ps.starts_at);
       const r = withdrawalRefundCents({ paidCents: ps.amount, startMs: start, endMs: Date.parse(ps.ends_at), nowMs: now, aiCapUsd: passCapUsd(ps), aiSpentUsd: passes.spentUsd(ps) });
-      out.passes.push({ id: ps.id, paid_cents: ps.amount, refund_cents: r.cents, time_left: r.timeLeft, ai_left: r.aiLeft, within_14_days: now - start <= WITHDRAWAL_DAYS * 86400000 });
+      // Rok od sklenitve: nakup (created_at, UTC) ali začetek paketa, kar je prej. Paket v čakalni vrsti (začne se
+      // po koncu prejšnjega) je kupljen prej, zato rok teče že od nakupa (#815).
+      const bought = fromSql(ps.created_at);
+      const from = Number.isFinite(bought) && !(bought >= start) ? bought : start;
+      const fromSrc = from === bought && from !== start ? "nakup" : "zacetek_paketa";
+      out.passes.push({ id: ps.id, paid_cents: ps.amount, currency: ps.currency || "EUR", refund_cents: r.cents, time_left: r.timeLeft, ai_left: r.aiLeft, created_at: ps.created_at, contract_from: Number.isFinite(from) ? new Date(from).toISOString() : null, contract_from_source: fromSrc, within_14_days: within(from) });
     }
     // Dokup: vrne se največ neporabljeni del (pregled #462 S1: credits.refund odvzame ves paket, porabljen AI ostane
     // plačan). Delež neporabljenega je za ves račun (preostanek / vsi aktivni paketi), previdno za vsak paket.
+    // Vračilo navzgor na cent (v korist kupca), kot pri naročnini.
     out.credits = [];
     if (credits) {
       const active = credits.list(p.id).filter((c) => c.status === "active");
       const total = active.reduce((t, c) => t + c.credit_usd, 0);
       const left = total > 0 ? Math.min(1, credits.balance(p.id) / total) : 0;
-      for (const c of active) out.credits.push({ id: c.id, paid_cents: c.amount, credit_usd: c.credit_usd, refund_cents: Math.floor(c.amount * left), ai_left: left });
+      for (const c of active) {
+        const from = fromSql(c.paid_at || c.created_at);
+        out.credits.push({ id: c.id, paid_cents: c.amount, currency: c.currency || "EUR", credit_usd: c.credit_usd, refund_cents: refundUp(c.amount * left), ai_left: left, created_at: c.created_at, paid_at: c.paid_at || null, contract_from: Number.isFinite(from) ? new Date(from).toISOString() : null, contract_from_source: "placilo", within_14_days: within(from) });
+      }
     }
     audit(db, { req, parentId: req.parent?.id, actor: "admin", action: "withdrawal_view", target: `parent:${p.id}` });
     res.json(out);
@@ -893,7 +965,9 @@ export function mountBilling(app, ctx) {
   }
 
   // Poraba podrobnih razlag (j 2026-11-01): pri profilu, mlajšem od 15 let, dobi starš e-pošto pri 80 % in 100 %
-  // (enkrat na mesec za vsako mejo, email_log). Starejši in polnoletni vidijo obvestilo v aplikaciji.
+  // (enkrat na obdobje za vsako mejo, email_log). Starejši in polnoletni vidijo obvestilo v aplikaciji.
+  // Obdobje je obdobje paketa (accounts/index.js aiPeriodStart/aiPeriodEnd; mesečno ali preizkus/bonus),
+  // sicer (pilot, brez paketa) koledarski mesec kot prej.
   async function allowanceMail(studentId, stage, now = new Date()) {
     if (stage !== "low" && stage !== "out") return 0;
     const age = ageOf(studentId, now);
@@ -901,15 +975,28 @@ export function mountBilling(app, ctx) {
     const p = getParent(ownerOf(studentId));
     if (!p || p.is_guest || !p.email_verified_at || isMinor(p)) return 0;
     const month = now.toISOString().slice(0, 7);
+    const start = Date.parse(aiUsage?.periodOf?.(studentId) || "");
+    // Ključ obdobja: dan začetka obdobja paketa (»YYYY-MM-DD«) ali koledarski mesec (»YYYY-MM«, nespremenjeno).
+    const period = Number.isFinite(start) ? new Date(start).toISOString().slice(0, 10) : month;
     const a = aiUsage?.studentMonth(studentId);
     // Skupen delež družine: ena e-pošta za ves račun (ne za vsak profil posebej).
     const kind = a?.pool ? `ai_${stage}:pool` : `ai_${stage}:${studentId}`;
-    if (db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = ? AND period = ?").get(p.id, kind, month)) return 0; // že poslano ta mesec
+    const sent = (sql, ...args) => !!db.prepare(`SELECT 1 FROM email_log WHERE parent_id = ? AND kind = ? AND ${sql}`).get(p.id, kind, ...args);
+    if (sent("period = ?", period)) return 0; // že poslano v tem obdobju
+    // Prehod: pred tem popravkom je bil ključ vedno koledarski mesec. E-pošta s starim ključem, poslana v tem obdobju
+    // paketa, velja (sicer bi starš v prvem obdobju po objavi dobil še eno). Ta pogoj se lahko odstrani približno
+    // eno obdobje (mesec) po objavi, ko v obdobjih paketa ni več e-pošt s starim ključem.
+    if (period !== month && sent("length(period) = 7 AND created_at >= ?", new Date(start).toISOString().slice(0, 19).replace("T", " "))) return 0;
+    // Plačano → brezplačno v istem koledarskem mesecu: e-pošta s ključem obdobja paketa, poslana v tem mesecu, velja
+    // (sicer bi starš v istem mesecu dobil drugo).
+    if (period === month && sent("length(period) = 10 AND created_at >= ?", `${month}-01 00:00:00`)) return 0;
     const st = store.getStudent(studentId);
-    const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+    // Nove razlage: ob koncu obdobja paketa (periodEndOf), sicer 1. naslednjega meseca (koledarski mesec).
+    const endMs = Date.parse(aiUsage?.periodEndOf?.(studentId) || "");
+    const next = Number.isFinite(endMs) && endMs > now.getTime() ? new Date(endMs) : new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
     // Pilot in lastnik (pregled #477 B3): e-pošta brez stavka o dokupu.
     const msg = allowanceEmail({ childName: st?.name || "", stage, left: a?.explanations_left ?? 0, untilText: fmtDate(next.toISOString()), pool: !!a?.pool, topup: !specialOf(p) }, baseUrl(null) + "/");
-    return remind(p, kind, month, msg);
+    return remind(p, kind, period, msg);
   }
 
   // Osebno ob šolski licenci po izteku licence (j 2026-10-30: »naj se naročnina ob poteku šolske licence

@@ -4,7 +4,7 @@ stanje: osnutek
 ---
 - Dinamično ravnotežje
   - hitrosti v obe smeri enaki
-  - napaka: koncentracije niso enake
+  - napaka: »koncentracije so enake«
 - Konstanta ravnotežja
   - $K = \frac{[\mathrm{C}]^c\,[\mathrm{D}]^d}{[\mathrm{A}]^a\,[\mathrm{B}]^b}$
   - samo ravnotežne koncentracije, koeficienti so potence

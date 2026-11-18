@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -250,7 +250,7 @@ Za zaporedni krog $RLC$ dokaži, da je pasovna širina $B = R/L = \omega_0/Q$ in
 1. Moč na uporu je $\tfrac{1}{2}RI_p^2$, tok pa $I_p = U_p/|Z|$. Moč pade na polovico, ko je $|Z| = \sqrt{2}R$, torej ko je $(\omega L - 1/(\omega C))^2 = R^2$.
 2. Dve enačbi: $\omega L - 1/(\omega C) = +R$ (nad resonanco) in $= -R$ (pod njo). Pomnožimo z $\omega/L$: $\omega^2 \mp (R/L)\omega - \omega_0^2 = 0$.
 3. Pozitivni rešitvi: $\omega_2 = \frac{R}{2L} + s$ in $\omega_1 = -\frac{R}{2L} + s$, kjer je $s = \sqrt{R^2/(4L^2) + \omega_0^2}$.
-4. $B = \omega_2 - \omega_1 = R/L$; z $Q = \omega_0 L/R$ je $R/L = \omega_0/Q$.
+4. $B = \omega_2 - \omega_1 = R/L$; s $Q = \omega_0 L/R$ je $R/L = \omega_0/Q$.
 5. $\omega_1\omega_2 = s^2 - R^2/(4L^2) = \omega_0^2$, torej $\omega_0 = \sqrt{\omega_1\omega_2}$.
 6. Pri resonanci je $i = I_p\sin\omega_0 t$, napetost na kondenzatorju zaostaja za $90^\circ$: $u_C = -X_0I_p\cos\omega_0 t$ z $X_0 = \sqrt{L/C}$.
 7. Energija: $\tfrac{1}{2}Li^2 + \tfrac{1}{2}Cu_C^2 = \tfrac{1}{2}LI_p^2\sin^2\omega_0 t + \tfrac{1}{2}C\frac{L}{C}I_p^2\cos^2\omega_0 t = \tfrac{1}{2}LI_p^2$, neodvisno od časa.
@@ -351,4 +351,9 @@ U_5 | napetost pete harmonske komponente | | V
 U_f | fazna napetost omrežja | | V
 W | shranjena energija | W = \frac{1}{2}LI_p^2 | J
 W_{izg} | izgube v eni periodi | | J
+T | perioda | T = \frac{2\pi}{\omega_0} | s
+s | pomožna količina v dokazu | | 1/s
+Q_C | jalova moč kondenzatorske baterije | | var
+S_k | kratkostična moč omrežja | | VA
+h | red harmonske komponente | | –
 :::

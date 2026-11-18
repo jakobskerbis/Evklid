@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -55,7 +55,7 @@ Kislina $\mathrm{HA}$ odda proton in nastane konjugirana baza $\mathrm{A^-}$. Pr
 
 $$\mathrm{pH} = \mathrm{p}K_\mathrm{a} + \log\frac{[\mathrm{A^-}]}{[\mathrm{HA}]}$$
 
-*Izpeljava.* Konstanta kisline je $K_\mathrm{a} = \dfrac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]}$. Logaritmiramo in pomnožimo z $-1$: $-\log[\mathrm{H^+}] = -\log K_\mathrm{a} + \log\dfrac{[\mathrm{A^-}]}{[\mathrm{HA}]}$, kar je enačba zgoraj z $\mathrm{pH} = -\log[\mathrm{H^+}]$ in $\mathrm{p}K_\mathrm{a} = -\log K_\mathrm{a}$. Iz nje sledi delež deprotonirane oblike $\alpha = \dfrac{[\mathrm{A^-}]}{[\mathrm{HA}] + [\mathrm{A^-}]} = \dfrac{1}{1 + 10^{\,\mathrm{p}K_\mathrm{a} - \mathrm{pH}}}$. **Povprečni naboj** molekule je vsota prispevkov vseh skupin: kisla skupina prispeva $-\alpha$, bazična (npr. $-\mathrm{NH_3^+}$) pa $+(1 - \alpha)$.
+*Izpeljava.* Konstanta kisline je $K_\mathrm{a} = \dfrac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]}$. Logaritmiramo in pomnožimo z $-1$: $-\log[\mathrm{H^+}] = -\log K_\mathrm{a} + \log\dfrac{[\mathrm{A^-}]}{[\mathrm{HA}]}$, kar je enačba zgoraj s $\mathrm{pH} = -\log[\mathrm{H^+}]$ in $\mathrm{p}K_\mathrm{a} = -\log K_\mathrm{a}$. Iz nje sledi delež deprotonirane oblike $\alpha = \dfrac{[\mathrm{A^-}]}{[\mathrm{HA}] + [\mathrm{A^-}]} = \dfrac{1}{1 + 10^{\,\mathrm{p}K_\mathrm{a} - \mathrm{pH}}}$. **Povprečni naboj** molekule je vsota prispevkov vseh skupin: kisla skupina prispeva $-\alpha$, bazična (npr. $-\mathrm{NH_3^+}$) pa $+(1 - \alpha)$.
 
 ### Izoelektrična točka
 
@@ -142,7 +142,7 @@ $\dfrac{[\mathrm{A}]}{[\mathrm{HA}]} = 10^{\,\mathrm{pH} - \mathrm{p}K_\mathrm{a
 
 ### Primer 3 (težji): izoelektrična točka kisle aminokisline
 
-Aspartat ima $\mathrm{p}K_1 = 1{,}88$ ($\alpha$-COOH), $\mathrm{p}K_R = 3{,}65$ (COOH v stranski verigi) in $\mathrm{p}K_2 = 9{,}60$ ($\alpha$-$\mathrm{NH_3^+}$). Izračunaj $\mathrm{pI}$ in napovej skupni naboj pri $\mathrm{pH}\ 7$. Nato s Henderson-Hasselbalchovo enačbo izračunaj povprečni naboj pri $\mathrm{pH} = 3{,}00$ in preveri, ali se ujema z $\mathrm{pI}$.
+Aspartat ima $\mathrm{p}K_1 = 1{,}88$ ($\alpha$-COOH), $\mathrm{p}K_R = 3{,}65$ (COOH v stranski verigi) in $\mathrm{p}K_2 = 9{,}60$ ($\alpha$-$\mathrm{NH_3^+}$). Izračunaj $\mathrm{pI}$ in napovej skupni naboj pri $\mathrm{pH}\ 7$. Nato s Henderson-Hasselbalchovo enačbo izračunaj povprečni naboj pri $\mathrm{pH} = 3{,}00$ in preveri, ali se ujema s $\mathrm{pI}$.
 
 **Podatki:** $\mathrm{p}K_1 = 1{,}88$, $\mathrm{p}K_R = 3{,}65$, $\mathrm{p}K_2 = 9{,}60$, $\mathrm{pH} = 7$ in $\mathrm{pH} = 3{,}00$
 **Iščemo:** $\mathrm{pI}$, naboj pri $\mathrm{pH}\ 7$ in povprečni naboj $z$ pri $\mathrm{pH} = 3{,}00$
@@ -246,8 +246,8 @@ Izpelji Henderson-Hasselbalchovo enačbo iz definicije konstante kisline. Nato n
 
 Nariši graf naboja v odvisnosti od pH za aspartat: na osi $x$ pH od $0$ do $14$, na osi $y$ naboj od $+1$ do $-2$.
 
-- Krivulja ima tri »stopnice« navzdol, vsako pri enem $\mathrm{p}K$: pri $1{,}88$ z $+1$ na $0$, pri $3{,}65$ z $0$ na $-1$, pri $9{,}60$ z $-1$ na $-2$.
-- Na sredi vsake stopnice je naboj točno polovičen (npr. $-0{,}5$ pri $\mathrm{pH} = 3{,}65$).
+- Krivulja ima tri »stopnice« navzdol, vsako pri enem $\mathrm{p}K$: pri $1{,}88$ s $+1$ na $0$, pri $3{,}65$ z $0$ na $-1$, pri $9{,}60$ z $-1$ na $-2$.
+- Na sredi vsake stopnice je naboj približno polovičen (npr. $-0{,}5$ pri $\mathrm{pH} = 3{,}65$).
 - $\mathrm{pI}$ je točka, kjer krivulja seka vodoravno os z nabojem $0$: na sredi med prvo in drugo stopnico, pri $2{,}77$.
 
 Pri elektroforezi to pomeni: pod $\mathrm{pI}$ molekula potuje h katodi ($-$), nad $\mathrm{pI}$ k anodi ($+$), pri $\mathrm{pI}$ pa obstane.
@@ -309,7 +309,7 @@ Zato je pravilo »dva sosednja $\mathrm{p}K$« približek, ki je dober, kadar so
 + $3{,}22$
 > Naboji: $+1$, nad $2{,}19$ $0$, nad $4{,}25$ $-1$. $\mathrm{pI} = \dfrac{2{,}19 + 4{,}25}{2} = 3{,}22$.
 
-? Protein s $\mathrm{pI} = 5{,}0$ nanesemo na gel z $\mathrm{pH} = 8{,}0$ in vklopimo električno polje. Kam potuje?
+? Protein s $\mathrm{pI} = 5{,}0$ nanesemo na gel s $\mathrm{pH} = 8{,}0$ in vklopimo električno polje. Kam potuje?
 - Proti katodi ($-$), ker je pozitivno nabit.
 ~ Pozitiven bi bil pri pH pod $\mathrm{pI}$. Tu je pH višji, zato je protein oddal protone in je negativen.
 + Proti anodi ($+$), ker je negativno nabit.

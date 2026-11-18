@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -19,7 +19,7 @@ $$Q = m \cdot c \cdot \Delta T$$
 
 Tu je $Q$ toplota (v J), $m$ masa, $c$ **specifična toplota** snovi in $\Delta T$ sprememba temperature. Specifična toplota pove, koliko toplote potrebuje $1\,\mathrm{kg}$ snovi, da se segreje za $1\,\mathrm{K}$. Za vodo je $c = 4200\,\mathrm{J/(kg\,K)}$. Sprememba za $1\,\mathrm{K}$ je enaka spremembi za $1\,^\circ\mathrm{C}$, zato $\Delta T$ lahko računaš kar v stopinjah Celzija.
 
-V simulaciji »Segrevanje in taljenje« segrevaj vodo z isto močjo grelnika najprej pri masi $1\,\mathrm{kg}$, nato pri $2\,\mathrm{kg}$. Opazi, da se v enakem času dvakrat večja masa segreje le za polovico toliko.
+V simulaciji »Segrevanje in vrenje« segrevaj vodo z isto močjo grelnika najprej pri masi $1\,\mathrm{kg}$, nato pri $2\,\mathrm{kg}$. Opazi, da se v enakem času dvakrat večja masa segreje le za polovico toliko.
 
 *Hitri preizkus:* koliko toplote potrebuje $0{,}5\,\mathrm{kg}$ vode, da se segreje za $10\,^\circ\mathrm{C}$? *(Odgovor: $Q = 0{,}5 \cdot 4200 \cdot 10\,\mathrm{J} = 21\,000\,\mathrm{J}$.)*
 
@@ -35,7 +35,7 @@ Taki enakosti rečemo **toplotna bilanca**. Pri Jakovem rezervoarju je končna t
 | $\Delta T$ | $10\,\mathrm{K}$ | $30\,\mathrm{K}$ |
 | $Q$ | $25\,200\,\mathrm{J}$ | $25\,200\,\mathrm{J}$ |
 
-Hladna voda se segreje s $20$ na $30\,^\circ\mathrm{C}$ in toploto prejme, topla se ohladi s $60$ na $30\,^\circ\mathrm{C}$ in jo odda. Toploti sta enaki, torej je $30\,^\circ\mathrm{C}$ pravi odgovor. Jaka se je zmotil za $10\,^\circ\mathrm{C}$.
+Hladna voda se segreje z $20$ na $30\,^\circ\mathrm{C}$ in toploto prejme, topla se ohladi s $60$ na $30\,^\circ\mathrm{C}$ in jo odda. Toploti sta enaki, torej je $30\,^\circ\mathrm{C}$ pravi odgovor. Jaka se je zmotil za $10\,^\circ\mathrm{C}$.
 
 :::premisli
 V tabeli se topla voda spremeni za $30\,\mathrm{K}$, hladna le za $10\,\mathrm{K}$, čeprav si izmenjata enako toploto. Zakaj ravno trikrat bolj? Kaj ima s tem masa?

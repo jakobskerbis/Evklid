@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -53,7 +53,7 @@ napis: 0; -1,1 | 0 | sredina
 podnapis: Čas v milijardah let pred danes
 :::
 
-Večina poti pripada enoceličnim bitjem. Vse rastline in živali, ki jih poznaš, se zgnetejo v zadnjih $450$ metrov.
+Večina poti pripada enoceličnim bitjem. Vse kopenske rastline in živali, ki jih poznaš, se zgnetejo v zadnjih $450$ metrov.
 
 **4. Fosili: kamnita sporočila.** Lupina v skali je **fosil**: ostanek ali sled organizma, ki je živel davno in se je ohranil v kamnini. Nastane redko. Žival mora po smrti hitro prekriti mulj ali pesek, da je ne pojedo in ne razgradijo bakterije. Mehki deli vseeno razpadejo. Trde dele (lupine, kosti in zobe) pa minerali iz vode počasi nadomestijo in jih spremenijo v kamen. Fosil je lahko tudi odtis lista ali sled stopala v strjenem blatu.
 
@@ -67,13 +67,13 @@ Meduza nima trdih delov. Mehko telo razpade, preden bi ga minerali spremenili v 
 
 Kako vemo, da je Zemlja stara $4{,}6$ milijarde let? Nekatere snovi v kamninah, na primer uran, enakomerno razpadajo, kot pesek teče v peščeni uri. Iz tega, koliko jih je že razpadlo, izračunamo starost kamnin in meteoritov.
 
-**5. Kako se je začelo.** Zrak mlade Zemlje ni imel kisika, imel pa je vodno paro, ogljikov dioksid, metan in amonijak. Strele in sončni ultravijolični (UV) žarki so dajali energijo, da so v morju iz teh preprostih snovi nastajale večje **organske molekule**, torej snovi, iz katerih so zgrajena živa bitja, na primer aminokisline. Leta $1953$ je Stanley Miller skozi zmes teh plinov spuščal električne iskre in po nekaj dneh našel aminokisline.
+**5. Kako se je začelo.** Zrak mlade Zemlje ni imel kisika, imel pa je vodno paro, ogljikov dioksid, metan in amonijak. Strele in sončni ultravijolični (UV) žarki so dajali energijo, da so v morju iz teh preprostih snovi nastajale večje **organske molekule**, torej snovi, iz katerih so zgrajena živa bitja, na primer aminokisline. Leta $1953$ je Stanley Miller skozi zmes takih plinov spuščal električne iskre in po nekaj dneh našel aminokisline.
 
 Prva živa bitja so se pojavila pred približno $3{,}5$ milijarde let. Bila so enocelična, brez jedra, podobna bakterijam, in so živela v vodi brez kisika.
 
 **6. Cianobakterije spremenijo svet.** Pri nekaterih bakterijah se je razvila fotosinteza. Imenujemo jih **cianobakterije**. Iz ogljikovega dioksida in vode so s sončno svetlobo delale glukozo, kot danes rastline, in pri tem sproščale kisik. Rasle so v tankih plasteh, ena na drugi, in te plasti so se ohranile kot kamniti **stromatoliti**.
 
-Kisik se je najprej vezal z železom, raztopljenim v morju, in nastala je rja. Šele nato se je začel kopičiti v zraku, od približno $2{,}4$ milijarde let naprej. To je imelo dve veliki posledici:
+Kisik se je najprej vezal z železom, raztopljenim v morju, in nastala je rja. Šele nato se je začel kopičiti v zraku, pred približno $2{,}4$ milijarde let. To je imelo dve veliki posledici:
 
 - Celično dihanje s kisikom da veliko več energije, kar je omogočilo večja, mnogocelična telesa.
 - Iz kisika je visoko v zraku nastal **ozon**. Ozonski plašč zadrži večino UV žarkov, ki poškodujejo DNA.
@@ -185,7 +185,7 @@ $d_2 = 0{,}66\,\text{cm} = 6{,}6\,\text{mm}$ od desnega konca. Za našo vrsto: $
 - Zemlja je stara približno $4{,}6$ milijarde let (iz razpada urana).
 - Fosil je ostanek ali sled organizma v kamnini. Nižje plasti so starejše. Mehka telesa se redko ohranijo.
 - Prva bitja (pred $3{,}5$ milijarde let) so bila enocelična, brez jedra in brez kisika; organske molekule so nastale iz plinov ob strelah in UV žarkih (Millerjev poskus).
-- Cianobakterije so s fotosintezo sproščale kisik; v zraku se je kopičil od $2{,}4$ milijarde let. Nastal je ozonski plašč, zato je bilo možno življenje na kopnem (pred $450$ mio. let).
+- Cianobakterije so s fotosintezo sproščale kisik; v zraku se je začel kopičiti pred $2{,}4$ milijarde let. Nastal je ozonski plašč, zato je bilo možno življenje na kopnem (pred $450$ mio. let).
 - Pet množičnih izumrtij; največje ob koncu perma ($252$ mio. let), dinozavri ob padcu asteroida ($66$ mio. let).
 - Človek in šimpanz imata skupnega prednika (Afrika, $6$ do $7$ mio. let). *Homo sapiens* je star okoli $300\,000$ let in se je iz Afrike razširil po svetu.
 - Časovni trak z merilom: $d = \dfrac{t}{k}$.

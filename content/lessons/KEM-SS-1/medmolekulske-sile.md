@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -41,8 +41,8 @@ Delujejo med vsemi molekulami. Večja kot je molekula in več elektronov ima, mo
    H                 H
     \                 \
      O — H ······· O — H
-      kovalentna   vodikova
-         vez         vez
+ kovalentna vodikova
+    vez       vez
 ```
 
 Ta privlak je **vodikova vez**. Ime zavaja: ni prava kemijska vez, ampak medmolekulska sila. Je približno dvajsetkrat šibkejša od kovalentne vezi $\mathrm{O{-}H}$, a nekajkrat močnejša od običajnih sil dipol-dipol.
@@ -50,7 +50,7 @@ Ta privlak je **vodikova vez**. Ime zavaja: ni prava kemijska vez, ampak medmole
 :::premisli
 Vodikov fluorid ($M_r = 20$) in vodikov klorid ($M_r = 36{,}5$) sta oba polarna. Napovej, kateri ima višje vrelišče, in pojasni zakaj.
 ---
-Vodikov fluorid, čeprav je lažji: vre pri $20\,°\mathrm{C}$, $\mathrm{HCl}$ pa pri $-85\,°\mathrm{C}$. Med molekulami $\mathrm{HF}$ so vodikove vezi, med molekulami $\mathrm{HCl}$ le dipol-dipol in disperzijske sile. Klor ni dovolj elektronegativen in je prevelik za vodikovo vez.
+Vodikov fluorid, čeprav je lažji: vre pri $20\,°\mathrm{C}$, $\mathrm{HCl}$ pa pri $-85\,°\mathrm{C}$. Med molekulami $\mathrm{HF}$ so vodikove vezi, med molekulami $\mathrm{HCl}$ le dipol-dipol in disperzijske sile. Klor je kljub veliki elektronegativnosti prevelik: njegov delni naboj je razpršen, zato vodikove vezi ne tvori.
 :::
 
 **5. Kaj se zgodi z lastnostmi.** Močnejše sile med molekulami pomenijo:

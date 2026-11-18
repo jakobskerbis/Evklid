@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -73,7 +73,7 @@ $$p_i = \frac{n_iRT}{V}.$$
 
 $$p = p_1 + p_2 + \dots = \sum_i p_i.$$
 
-*Dokaz:* $\sum_i p_i = \sum_i n_iRT/V = (\sum_i n_i)RT/V = nRT/V$, kar je tlak celotne množine $n$. Iz tega sledi zveza z **množinskim deležem** $x_i = n_i/n_{\text{skupna}}$: deljenje $p_i = n_iRT/V$ z $p = nRT/V$ da
+*Dokaz:* $\sum_i p_i = \sum_i n_iRT/V = (\sum_i n_i)RT/V = nRT/V$, kar je tlak celotne množine $n$. Iz tega sledi zveza z **množinskim deležem** $x_i = n_i/n_{\text{skupna}}$: deljenje $p_i = n_iRT/V$ s $p = nRT/V$ da
 
 $$p_i = x_i\,p, \qquad \sum_i x_i = 1.$$
 
@@ -142,7 +142,7 @@ $n_i = m_i/M_i$, $x_i = n_i/n$, $p = \dfrac{nRT}{V}$, $p_i = x_i\,p = \dfrac{n_i
 **Rešitev:**
 
 1. Množini: $n(\mathrm{He}) = 4{,}00 / 4{,}003\,\mathrm{mol} \approx 0{,}999\,\mathrm{mol}$, $n(\mathrm{O_2}) = 16{,}0 / 32{,}00\,\mathrm{mol} = 0{,}500\,\mathrm{mol}$; skupaj $n \approx 1{,}499\,\mathrm{mol}$.
-2. Množinska deleža: $x(\mathrm{He}) = 0{,}999 / 1{,}499 \approx 0{,}667$, $x(\mathrm{O_2}) \approx 0{,}333$. Čeprav je kisika po masi štirikrat več, je helija po množini dvakrat več.
+2. Množinska deleža: $x(\mathrm{He}) = 0{,}9993 / 1{,}4993 \approx 0{,}667$, $x(\mathrm{O_2}) \approx 0{,}333$. Čeprav je kisika po masi štirikrat več, je helija po množini dvakrat več.
 3. Skupni tlak: $T = 300{,}15\,\mathrm{K}$, $V = 1{,}00 \cdot 10^{-2}\,\mathrm{m^3}$, $p = \dfrac{1{,}499 \cdot 8{,}314 \cdot 300{,}15}{1{,}00 \cdot 10^{-2}}\,\mathrm{Pa} \approx 3{,}74 \cdot 10^5\,\mathrm{Pa} = 374\,\mathrm{kPa}$.
 4. Parcialna tlaka (po Daltonu je vsak sorazmeren z množinskim deležem): $p(\mathrm{He}) = 0{,}667 \cdot 374\,\mathrm{kPa} \approx 249\,\mathrm{kPa}$, $p(\mathrm{O_2}) = 0{,}333 \cdot 374\,\mathrm{kPa} \approx 125\,\mathrm{kPa}$.
 5. Preizkus: $p(\mathrm{O_2}) = \dfrac{0{,}500 \cdot 8{,}314 \cdot 300{,}15}{1{,}00 \cdot 10^{-2}}\,\mathrm{Pa} \approx 125\,\mathrm{kPa}$ in $249 + 125 = 374\,\mathrm{kPa}$.
@@ -223,7 +223,7 @@ Navedi predpostavke kinetične teorije idealnega plina in iz njih izpelji $pV = 
 **Rešitev:**
 
 1. Predpostavke: $N$ enakih molekul z maso $m$ v kocki s stranico $L$ ($V = L^3$); molekule so točkaste, med seboj se ne privlačijo, trki s stenami so prožni, trki med molekulami ne spremenijo porazdelitve hitrosti, smeri gibanja so naključne.
-2. Molekula s komponento hitrosti $v_x$ se od stene odbije s $-v_x$, zato se ji gibalna količina spremeni za $2mv_x$.
+2. Molekula s komponento hitrosti $v_x$ se od stene odbije z $-v_x$, zato se ji gibalna količina spremeni za $2mv_x$.
 3. Do iste stene se vrne po času $2L/v_x$, zato je povprečna sila ene molekule na steno $\dfrac{2mv_x}{2L/v_x} = \dfrac{mv_x^2}{L}$.
 4. Za vse molekule je sila $Nm\langle v_x^2 \rangle/L$, tlak pa sila na ploščino $L^2$: $p = Nm\langle v_x^2 \rangle/V$.
 5. Nobena smer ni izbrana, zato $\langle v_x^2 \rangle = \langle v_y^2 \rangle = \langle v_z^2 \rangle = \tfrac13\langle v^2 \rangle$ in $pV = \tfrac13 Nm\langle v^2 \rangle$.

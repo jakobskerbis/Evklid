@@ -219,12 +219,14 @@ T tkivo(vec2 p, float px) {
   float vl = 0.5 + 0.5 * sin(z.y * 2.5 + 2.0 * sum(z / vec2(40.0, 6.0)));
   t.dye = vec3(0.05, 0.3 + 0.08 * mix(0.5, vl, vid), 0.0);
   t.dye.y *= 1.0 - 0.5 * smoothstep(0.66, 0.72, sumL(z * vec2(0.3, 1.0), 4.0, px)) * vid;     // »vakuole« (izprani mielin)
-  // vrste oligodendrocitov
-  // vrste oligodendrocitov med snopi aksonov: valovite, prekinjene verige 3–10 jeder; vmes posamezni astrociti
+  // vrste oligodendrocitov med snopi aksonov: valovite, prekinjene verige 3–10 jeder; vmes posamezni astrociti.
+  // Pravi preparati (ref/mozgani): verige niso v enakih razmikih in ne enako goste; vsaka vrsta ima svoj zamik, val in
+  // gostoto, nekatere so skoraj prazne, jedra so različno velika in neenakomerno razmaknjena.
   float zy = z.y + 10.0 * (sum(vec2(z.x / 90.0, 4.0)) - 0.5);
   float i = floor(zy / 26.0);
-  vec2 oc = vec2(z.x, (i + 0.5) * 26.0);
-  float j = floor(z.x / 10.0);
+  vec4 hr = h42(vec2(i, 31.0));
+  float w = 8.0 + 5.0 * hr.x;                                   // razmik jeder v verigi: vsaka vrsta svoj
+  float j = floor(z.x / w);
   vec4 g = h42(vec2(j, i));
   vec4 as = krogci(z, 45.0, 3.2, 4.0, 0.35, 12.0);
   if (as.x < px) {
@@ -233,10 +235,15 @@ T tkivo(vec2 p, float px) {
     if (as.x < 0.0) { t.snov = S_JEDRO; t.tip = C_GLIJA; t.jedro = as.x; t.jc = p - (z - as.yz); t.cc = t.jc; t.cid = vec2(as.w, 12.0); t.meja = -as.x; }
     return t;
   }
-  if (g.z < 0.75 * smoothstep(0.42, 0.5, sum(vec2(z.x / 70.0, i * 1.7)))) {
-    vec2 q = vec2(z.x - (j + 0.5 + 0.3 * (g.w - 0.5)) * 10.0, zy - oc.y - 5.0 * (g.x - 0.5));
-    float dj = length(q) - 2.6;
-    float halo = length(q) - 4.6;
+  // sredina jedra je odvisna le od celice (j, i), zato je v jedru stalna (TEM, kromatin brez pasov)
+  float rj = 2.2 + 0.8 * g.y;
+  float xc = (j + 0.5) * w + 2.0 * (g.w - 0.5) * max(0.0, 0.5 * w - 1.2 * rj - 0.2);   // ostane v svojem stolpcu: pari in vrzeli
+  float yc = (i + 0.5) * 26.0 + 5.0 * (hr.w - 0.5) + 6.0 * (sum(vec2(xc / (60.0 + 50.0 * hr.x), i * 3.1)) - 0.5) + 8.0 * (g.x - 0.5);
+  float pr = 0.36 + 0.16 * hr.y;
+  if (hr.z > 0.3 && g.z < 0.8 * smoothstep(pr, pr + 0.1, sum(vec2(xc / (45.0 + 60.0 * hr.x), i * 1.7)))) {
+    vec2 q = vec2(z.x - xc, zy - yc);
+    float dj = length(q * vec2(1.0 / (1.0 + 0.2 * g.z), 1.0)) - rj;                // rahlo podolgovata vzdolž vlaken
+    float halo = length(q - 0.8 * (g.wx - 0.5)) - rj - 1.2 - 1.8 * g.x;           // svetel rob: različno širok, ne sredinski
     t.dye.y *= 1.0 - 0.7 * pokrij(halo, px);
     if (dj < px) {
       float k = pokrij(dj, px);

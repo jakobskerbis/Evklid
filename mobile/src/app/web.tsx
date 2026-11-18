@@ -13,25 +13,33 @@
 //   prvem izrisu (posnetek zadnjega zaslona), torej prej kot konec nalaganja; brez sporočila (starejši strežnik,
 //   stran z napako) ga kot prej umakne konec nalaganja.
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, BackHandler, Linking, Platform, Text, View } from "react-native";
+import { ActivityIndicator, AppState, BackHandler, Linking, Platform, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
 import Constants from "expo-constants";
 import * as Sharing from "expo-sharing";
 import { File, Paths } from "expo-file-system";
-import { API_URL, appHeaders, BUSY_WAIT } from "@/lib/api";
+import { API_URL, appHeaders, BUSY_WAIT, CHANNEL } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { font, useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui";
 import { setWebPending } from "@/lib/web-state";
 import { checkShareImage, shareResultJs, NATIVE_FLAG_JS } from "../../../public/deli-most.js";
+import { zaTisk as tiskPot } from "../../../public/tisk-v-chromu.js";
 
 const ORIGIN = API_URL.replace(/\/+$/, "");
-const START = `${ORIGIN}/api/mobile/web?to=${encodeURIComponent("/")}`;
+// Prvi naslov: /api/mobile/web prenese sejo in preusmeri na pot »to« (privzeto /). Druga pot pride kot parameter
+// zaslona, npr. /?pogled=racun za nakup naročnine v APK (src/lib/billing.ts openWebAccount). Samo pot na tem
+// strežniku in samo s seznama TO: povezava evklid:// lahko odpre zaslon /web s poljubnim »to«, zato aplikacija
+// prijavljenega WebViewa ne pošlje na nobeno drugo pot (strežnik jo preveri še sam, server/mobile/web-session.js safeTarget).
+const TO = new Set(["/", "/?pogled=racun"]);
+const webStart = (to?: string) => `${ORIGIN}/api/mobile/web?to=${encodeURIComponent(typeof to === "string" && TO.has(to) ? to : "/")}`;
+// Stran za tisk Evklida: odpre jo privzeti brskalnik (Chrome), kjer »Shrani kot PDF« dela (public/tisk-v-chromu.js).
+const zaTisk = (url: string) => tiskPot(url, ORIGIN);
 
 // Barva zgornjega in spodnjega roba strani (zgornja vrstica, spodnji zavihki ali polje za pisanje): vrstici
 // telefona (ura, gumbi) dobita isto barvo, tudi ko učenec zamenja slog ali zaslon. Pošlje le ob spremembi.
@@ -58,6 +66,9 @@ const BAR_JS = `(function(){
   new MutationObserver(send).observe(document.documentElement,{attributes:true});
   addEventListener('scroll',send,{passive:true,capture:true});addEventListener('resize',send);setInterval(send,1000);send();
 })();true;`;
+
+// Vrnitev v aplikacijo (npr. po plačilu v zavihku brskalnika): stran osveži stanje računa (public/pay-ui.js).
+const SPET_JS = "window.dispatchEvent(new Event('evklid:spet'));true;";
 
 // Izbrani profil iz aplikacije, če ga splet na tej napravi še nima (public/app.js bere »studentId«).
 const studentJs = (id: number | null) =>
@@ -105,7 +116,10 @@ export default function Web() {
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [key, setKey] = useState(0);
-  const [source] = useState(() => ({ uri: START, headers: appHeaders() }));
+  // »n« loči zaporedni odprtji iste poti: zaslon je morda že odprt pod naravnimi zasloni (router.dismissTo mu
+  // le zamenja parametre), zato ob novem parametru nov začetni naslov in nov WebView.
+  const { to, n } = useLocalSearchParams<{ to?: string; n?: string }>();
+  const [source, setSource] = useState(() => ({ uri: webStart(to), headers: appHeaders() }));
 
   // Android: gumb nazaj gre nazaj po spletni strani (zgodovina v public/app.js), na začetku zapre aplikacijo.
   useEffect(() => {
@@ -117,6 +131,23 @@ export default function Web() {
     });
     return () => sub.remove();
   }, [failed]);
+
+  // Plačilo s Stripom se odpre v zavihku brskalnika (Android: Custom Tab, openBrowserAsync se konča takoj), stran za
+  // uspeh se naloži tam. Ob vrnitvi iz ozadja stran izve, da naj vpraša strežnik za novo stanje (public/pay-ui.js),
+  // sicer zavihek Račun kaže staro stanje in starš lahko plača dvakrat.
+  const spet = useCallback(() => ref.current?.injectJavaScript(SPET_JS), []);
+  useEffect(() => {
+    let prev = AppState.currentState;
+    const sub = AppState.addEventListener("change", (st) => {
+      if (st === "active" && prev !== "active") spet();
+      prev = st;
+    });
+    return () => sub.remove();
+  }, [spet]);
+  // iOS: brskalnik v aplikaciji ne pošlje aplikacije v ozadje, openBrowserAsync pa se konča, ko ga zapre.
+  const openTab = useCallback((u: string) => {
+    WebBrowser.openBrowserAsync(u).then(() => Platform.OS === "ios" && spet()).catch(() => {});
+  }, [spet]);
 
   // Med objavo nove različice je strežnik ~1 minuto ustavljen (gostitelj vrne 502/503/504 ali prekine
   // povezavo). Takrat aplikacija ne pokaže »Ni povezave«, ampak ob vrtavki tiho poskusi znova (kot splet,
@@ -152,6 +183,15 @@ export default function Web() {
     setKey((k) => k + 1);
   }, []);
 
+  // Nov parameter zaslona (glej zgoraj »n«): kot »Poskusi znova«, a na novi poti.
+  const opened = useRef(n);
+  useEffect(() => {
+    if (n === opened.current) return;
+    opened.current = n;
+    setSource({ uri: webStart(to), headers: appHeaders() });
+    retry();
+  }, [to, n, retry]);
+
   // »Ni povezave« in vrtavka: vrstica stanja v barvi tega zaslona, ne zadnje (ali napake gostitelja) spletne strani.
   const top = (!failed && !loading && bar?.top) || th.bg;
   const bottom = (!loading && bar?.bottom) || th.bg;
@@ -177,12 +217,19 @@ export default function Web() {
             ref={ref}
             source={source}
             style={{ flex: 1, backgroundColor: th.bg }}
-            applicationNameForUserAgent={`EvklidApp/${Constants.expoConfig?.version ?? "1"}`}
+            // Kanal na koncu (»store« ali »direct«): splet v različici iz trgovine ne pokaže nakupa s kartico
+            // (public/pay-ui.js isStoreApp, server/mobile/trgovina.js).
+            applicationNameForUserAgent={`EvklidApp/${Constants.expoConfig?.version ?? "1"} ${CHANNEL}`}
             originWhitelist={["*"]}
-            // Povezave target=_blank (PDF učbenika) na Androidu pridejo sem, ne v onShouldStartLoadWithRequest.
+            // Povezave target=_blank: z setSupportMultipleWindows={false} jih Android pošlje v onShouldStartLoadWithRequest;
+            // tu za vsak primer (iOS, starejši WebView) enako.
             onOpenWindow={(e: { nativeEvent: { targetUrl: string } }) => {
               const u = e.nativeEvent.targetUrl;
-              if (/^https?:/.test(u)) WebBrowser.openBrowserAsync(u).catch(() => {});
+              if (zaTisk(u)) Linking.openURL(u).catch(() => {});
+              // Različica iz trgovine: strani Evklida ostanejo v aplikaciji (v brskalniku bi bil nakup s kartico mimo trgovine).
+              else if (CHANNEL === "store" && (u === ORIGIN || u.startsWith(ORIGIN + "/")))
+                ref.current?.injectJavaScript(`location.href=${JSON.stringify(u)};true;`);
+              else if (/^https?:/.test(u)) openTab(u);
             }}
             injectedJavaScriptBeforeContentLoaded={NATIVE_FLAG_JS + studentJs(student?.id ?? null)}
             injectedJavaScript={BAR_JS}
@@ -192,6 +239,9 @@ export default function Web() {
                 if (m?.t === "bar") setBar({ top: String(m.top || ""), bottom: String(m.bottom || "") });
                 // Prvi izris strani Evklida: zagonski zaslon se umakne (med čakanjem na strežnik ne).
                 else if (m?.t === "izris" && !waitTimer.current && (e.nativeEvent.url === ORIGIN || e.nativeEvent.url?.startsWith(ORIGIN + "/"))) setLoading(false);
+                // Stran za tisk (public/gradiva.js openPrintable): delovni list, poskus, projekt v brskalniku telefona.
+                else if (m?.t === "tisk" && typeof m.url === "string" && zaTisk(m.url) && (e.nativeEvent.url === ORIGIN || e.nativeEvent.url?.startsWith(ORIGIN + "/")))
+                  Linking.openURL(m.url).catch(() => {});
                 // Deljenje slike samo s strani Evklida (druge strani WebView odpre v brskalniku, a za vsak primer).
                 else if (m?.type === "evklid:share-image" && (e.nativeEvent.url === ORIGIN || e.nativeEvent.url?.startsWith(ORIGIN + "/")))
                   shareImage(m).then((r) => ref.current?.injectJavaScript(shareResultJs(r)));
@@ -204,10 +254,10 @@ export default function Web() {
             }}
             onShouldStartLoadWithRequest={(req: { url: string; isTopFrame?: boolean }) => {
               if (req.isTopFrame === false) return true;
-              if ((req.url.startsWith(ORIGIN + "/") && !(req.url.startsWith(ORIGIN + "/ucbenik/") || req.url.startsWith(ORIGIN + "/ucbenik-pdf/"))) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
-              // Učbenik za tisk/PDF (/ucbenik/… in vnaprej izdelan /ucbenik-pdf/…): WebView ne zna shraniti PDF-ja, zato ga odpre sistemski brskalnik.
-              if ((req.url.startsWith(ORIGIN + "/ucbenik/") || req.url.startsWith(ORIGIN + "/ucbenik-pdf/"))) WebBrowser.openBrowserAsync(req.url).catch(() => {});
-              else if (/^https?:/.test(req.url)) WebBrowser.openBrowserAsync(req.url).catch(() => {});
+              if ((req.url.startsWith(ORIGIN + "/") && !zaTisk(req.url)) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
+              // Strani za tisk in PDF učbenika odpre privzeti brskalnik (zaTisk), druge strani vgrajeni zavihek.
+              if (zaTisk(req.url)) Linking.openURL(req.url).catch(() => {});
+              else if (/^https?:/.test(req.url)) openTab(req.url);
               // mailto: (zasebnost, povabilo staršem), tel: … odpre sistem (originWhitelist "*" jih ne odpre sam).
               else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});
               return false;

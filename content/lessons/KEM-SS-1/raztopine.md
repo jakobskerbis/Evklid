@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -205,7 +205,7 @@ $$c_1 V_1 = c_2 V_2$$
 
 **Prostornine se ne seštevajo vedno natančno.** Pri redčenju razredčenih vodnih raztopin je $V_2 \approx V_1 + V(\text{dodana voda})$. Pri močno koncentriranih raztopinah ali mešanju različnih tekočin ta približek ni dober. Zato v laboratoriju končno prostornino vedno nastavimo z oznako na merilni bučki, ne z računanjem.
 
-**Masni delež in masa.** Masa je vedno aditivna (seštevajo se mase), zato pri masnem deležu velja $m(\text{raztopina}) = m(\text{topljenec}) + m(\text{topilo})$. Pri prostornini temu ni vedno tako, zato so naloge z masnim deležem in koncentracijo različne vrste računov.
+**Masni delež in masa.** Masa je vedno aditivna (seštevajo se mase), zato pri masnem deležu velja $m(\text{raztopina}) = m(\text{topljenec}) + m(\text{topilo})$. Pri prostornini ni vedno tako, zato so naloge z masnim deležem in koncentracijo različne vrste računov.
 
 ## Preveri se
 
@@ -258,7 +258,7 @@ c | množinska koncentracija | c = \frac{n}{V} | mol/L | tudi c = m : (M · V)
 n | množina topljenca | n = \dfrac{m}{M} | mol
 V | prostornina cele raztopine | | L
 M | molska masa topljenca | | g/mol
-n_1, n_2 | množina topljenca pred in po redčenju | | mol | pri redčenju je n₁ = n₂
+n_1, n_2 | množina topljenca pred redčenjem in po njem | | mol | pri redčenju je n₁ = n₂
 c_1 | koncentracija pred redčenjem | | mol/L
 c_2 | koncentracija po redčenju | c_2 = c_1 \cdot \dfrac{V_1}{V_2} | mol/L
 V_1 | prostornina raztopine pred redčenjem | V_1 = \dfrac{c_2 \cdot V_2}{c_1} | L | V₁ in V₂ sta lahko oba v mL

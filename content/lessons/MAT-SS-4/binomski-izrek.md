@@ -9,7 +9,7 @@ Na turističnem zemljevidu mesta s pravokotno mrežo ulic (tak je na primer Manh
 
 Večina ljudi ugiba $8$ ali $16$. Pravih je $70$. Še bolj nenavadno je, kje se isto število pojavi drugič: ko z množenjem razviješ $(a+b)^8$, stoji pred členom $a^4 b^4$ natanko koeficient $70$. Zemljevid in algebra štejeta isto stvar.
 
-To ni naključje. Binomski izrek pove, kako potenco dvočlenika $(a+b)^n$ razviješ v enem koraku, brez osmih zaporednih množenj. Potreboval ga boš pri verjetnosti zaporednih poskusov, pri približnem računanju potenc in povsod, kjer štejemo izbire »ali – ali«.
+To ni naključje. Binomski izrek pove, kako potenco dvočlenika $(a+b)^n$ razviješ v enem koraku, brez sedmih zaporednih množenj. Potreboval ga boš pri verjetnosti zaporednih poskusov, pri približnem računanju potenc in povsod, kjer štejemo izbire »ali – ali«.
 
 ## Razlaga
 

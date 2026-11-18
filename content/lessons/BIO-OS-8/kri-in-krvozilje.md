@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -44,7 +44,7 @@ V simulaciji spodaj (»Sestavine krvi«) razvrsti trditev »nimajo jedra in so o
 | vena (dovodnica) | v srce | tanjša, z zaklopkami |
 | kapilara (lasnica) | med njima | ena plast celic |
 
-V **arterijah** je kri pod velikim tlakom. Ko se srce skrči, se stena arterije razširi, kar na zapestju čutiš kot **utrip**. **Vene** imajo zaklopke, ki preprečujejo, da bi kri tekla nazaj. **Kapilare** so tako tanke, da gredo rdeče krvničke skozi njih ena za drugo. Skozi njihovo steno prehajajo kisik in hranila v celice, ogljikov dioksid in odpadne snovi pa v kri.
+V **arterijah** je kri pod velikim tlakom. Ko se srce skrči, se stena arterije razširi, kar na zapestju čutiš kot **utrip**. **Vene** imajo zaklopke, ki preprečujejo, da bi kri tekla nazaj. **Kapilare** so tako tanke, da gredo rdeče krvničke skoznje ena za drugo. Skozi njihovo steno prehajajo kisik in hranila v celice, ogljikov dioksid in odpadne snovi pa v kri.
 
 **4. Srce.** Pogosto slišiš: »srce je ena črpalka«. V resnici sta to dve črpalki, zraščeni v en organ, velik kot pest. Srce je iz srčne mišice in ima štiri votline: zgoraj levi in desni **preddvor**, spodaj levi in desni **prekat**. Leva in desna polovica sta ločeni s pregrado. Med preddvorom in prekatom ter na izhodu iz prekatov so **srčne zaklopke**, ki kri spuščajo le v eno smer. Levi prekat ima najdebelejšo steno, ker poganja kri po vsem telesu.
 

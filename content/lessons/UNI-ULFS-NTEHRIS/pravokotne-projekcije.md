@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -61,7 +61,7 @@ Med pogledi pustimo enak razmik. Skupne mere morajo biti poravnane: tloris je na
 
 **4. Aksonometrija.** Trije pogledi so natančni, a jih moraš v glavi sestaviti. Aksonometrija naredi nasprotno: telo zavrtimo glede na ravnino, da v *eni* pravokotni projekciji vidimo tri ploskve hkrati. Robove, vzporedne s tremi osmi telesa, nanašamo vzdolž treh **aksonometričnih osi**.
 
-- **Izometrija**: vse tri osi oklepajo $120^\circ$; os višine je navpična, osi širine in globine sta $30^\circ$ nad vodoravnico. Vse tri smeri se skrajšajo enako, s faktorjem $k \approx 0{,}82$. V praksi rišemo **poenostavljeno izometrijo** z $k = 1$: mere nanašamo nespremenjene, slika je zato malo povečana.
+- **Izometrija**: vse tri osi oklepajo $120^\circ$; os višine je navpična, osi širine in globine sta $30^\circ$ nad vodoravnico. Vse tri smeri se skrajšajo enako, s faktorjem $k \approx 0{,}82$. V praksi rišemo **poenostavljeno izometrijo** s $k = 1$: mere nanašamo nespremenjene, slika je zato malo povečana.
 - **Dimetrija**: ena os je $7^\circ$ nad vodoravnico z merilom $1$, druga, os globine, $42^\circ$ nad vodoravnico z merilom $\tfrac{1}{2}$. Globino zato nanesemo na polovico.
 
 Prave mere veljajo le vzdolž osi. Poševnega roba ali diagonale na aksonometrični sliki ne meriš z ravnilom.
@@ -250,7 +250,7 @@ Zakaj je v izometriji $k \approx 0{,}82$? Kocko gledamo v smeri njene prostorske
 
 $$k = \sqrt{1 - \tfrac{1}{3}} = \sqrt{\tfrac{2}{3}} \approx 0{,}82$$
 
-Enako velja za vse tri robove. Poenostavljena izometrija z $k = 1$ je zato povečana za faktor $\tfrac{1}{k} \approx 1{,}22$. Oblika je enaka, le mere slike niso prave.
+Enako velja za vse tri robove. Poenostavljena izometrija s $k = 1$ je zato povečana za faktor $\tfrac{1}{k} \approx 1{,}22$. Oblika je enaka, le mere slike niso prave.
 
 ## Preveri se
 
@@ -302,7 +302,7 @@ Enako velja za vse tri robove. Poenostavljena izometrija z $k = 1$ je zato pove�
 a | širina telesa | | mm
 h | višina telesa | | mm
 c | globina telesa | | mm
-c' | narisana globina v dimetriji | c' = \tfrac{1}{2} c | mm
+c' | narisana globina | | mm | v dimetriji $c' = \tfrac{1}{2} c$, v poenostavljeni izometriji $c' = c$
 d | razmik med pogledi | | mm
 B | širina skupine pogledov ali slike | | mm
 H | višina skupine pogledov ali slike | | mm

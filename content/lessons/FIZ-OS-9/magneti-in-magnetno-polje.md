@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -80,7 +80,7 @@ Na zemljevidu vidiš, da je planinska koča točno jugovzhodno od tebe. Kateri a
 **Iščemo:** azimut $\alpha$
 
 :::formula
-Vmesna smer leži na sredini med sosednjima: $\alpha = \dfrac{\alpha_1 + \alpha_2}{2}$ (pri smereh ob severu sever štejemo kot $360^\circ$, npr. severozahod $= \dfrac{270^\circ + 360^\circ}{2} = 315^\circ$)
+Vmesna smer leži na sredini med sosednjima: $\alpha = \dfrac{\alpha_1 + \alpha_2}{2}$ (med zahodom in severom sever štejemo kot $360^\circ$, npr. severozahod $= \dfrac{270^\circ + 360^\circ}{2} = 315^\circ$)
 :::
 
 **Rešitev:**

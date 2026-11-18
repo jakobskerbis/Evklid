@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -18,7 +18,7 @@ Danes ga uporabljaš v trgovini, ko primerjaš cene, pri receptu za več oseb in
 :::premisli
 Uporabi Mojčino pravilo za šest zvezkov. Najprej: tri zvezke in še tri zraven. Nato: dvakrat kupiš paket treh zvezkov. Kaj opaziš?
 ---
-Po Mojčinem pravilu bi šest zvezkov stalo $4{,}50 + 3 = 7{,}50$ €. Dva paketa po tri zvezke pa stanejo $2 \cdot 4{,}50 = 9$ €. Isti nakup ne more imeti dveh cen, zato je pravilo napačno. Pravilna cena je $9$ €.
+Po Mojčinem pravilu bi šest zvezkov stalo $4{,}50 + 3 = 7{,}50$ €. Dva paketa po tri zvezke pa staneta $2 \cdot 4{,}50 = 9$ €. Isti nakup ne more imeti dveh cen, zato je pravilo napačno. Pravilna cena je $9$ €.
 :::
 
 **Popravek: sklep na enoto.** Namesto ugibanja se vprašamo, koliko stane **en** zvezek. Tri zvezke plačamo $4{,}50$ €, zato en stane $4{,}50 : 3 = 1{,}5$ €. Pet zvezkov stane petkrat toliko: $5 \cdot 1{,}5 = 7{,}5$ €. Mojca bi torej plačala premalo.
@@ -184,7 +184,7 @@ $4{,}5 : 1{,}8 = 2{,}5$, torej $2{,}5$ kg. Imaš več denarja kot $2{,}70$ €, 
 
 Benetke, tržni dan. Trgovec Marco proda sedem laktov modrega sukna za $21$ zlatnikov. Popoldne pride kupec in želi deset laktov.
 
-Marcov vajenec takoj zakliče: »Tri lakti več, torej tri zlatnike več, $24$ zlatnikov!« Marco odkima. »Če bi tako računal, bi blago podaril. Povej mi najprej, koliko stane en sam laket.«
+Marcov vajenec takoj zakliče: »Tri lakte več, torej tri zlatnike več, $24$ zlatnikov!« Marco odkima. »Če bi tako računal, bi blago podaril. Povej mi najprej, koliko stane en sam laket.«
 
 Vajenec razdeli $21$ zlatnikov na sedem enakih kupčkov: v vsakem so trije zlatniki. »En laket, trije zlatniki.« Nato postavi deset kupčkov po tri: $10 \cdot 3 = 30$ zlatnikov.
 

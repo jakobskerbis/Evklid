@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -197,7 +197,7 @@ Lunarna baza nekoč v prihodnosti. Kuharica Maja ima v rezervoarju $1000\,\mathr
 
 Maja razmišlja: soli ne more vzeti ven, lahko pa doda vodo. Teh $20\,\mathrm{g}$ soli ostane v juhi, kar koli naredi. Če hoče $1\,\%$, mora biti $20\,\mathrm{g}$ ena stotina juhe, torej $2000\,\mathrm{g}$ juhe. Doda $1000\,\mathrm{g}$ vode.
 
-Naslednji dan je juha preredka. Maja ima še $500\,\mathrm{g}$ goste juhe s $4\,\%$ soli. Zmeša ju: soli je $20\,\mathrm{g} + 20\,\mathrm{g} = 40\,\mathrm{g}$ v $2500\,\mathrm{g}$, to je $1{,}6\,\%$. Ne $2{,}5\,\%$, kot bi dalo povprečje, ker je redke juhe veliko več. Majino pravilo: »Štej gram soli, ne odstotke.«
+Naslednji dan je juha preredka. Maja ima še $500\,\mathrm{g}$ goste juhe s $4\,\%$ soli. Zmeša ju: soli je $20\,\mathrm{g} + 20\,\mathrm{g} = 40\,\mathrm{g}$ v $2500\,\mathrm{g}$, to je $1{,}6\,\%$. Ne $2{,}5\,\%$, kot bi dalo povprečje, ker je redke juhe veliko več. Majino pravilo: »Štej grame soli, ne odstotke.«
 
 ## Preveri se
 

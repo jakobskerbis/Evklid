@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -267,7 +267,7 @@ Na kompleksni ravnini ničel: ničle na levi polravnini pomenijo pojemanje, na d
 
 **Kremenova mikrotehtnica (QCM).** Kremenov kristal niha pri lastni frekvenci reda $5$–$10\,\mathrm{MHz}$. Nalaganje tanke plasti poveča efektivno maso in zniža $\omega_0 = \sqrt{k/m}$; iz premika frekvence merijo maso adsorbiranih molekul do nanogramov natančno.
 
-**Merilni in regulacijski sistemi.** Analitska tehtnica, kazalni instrumenti in tipala tlaka so dušena blizu kritičnega, da odčitek hitro obstane brez nihanja. Regulacijo temperature reaktorja ali pretoka pogosto opišemo s sistemom drugega reda $\tau^2\ddot y + 2\zeta\tau\dot y + y = Ku(t)$: pri razmernem dušenju $\zeta < 1$ (podkritično) odziv preniha zastavljeno vrednost, pri $\zeta \ge 1$ ne.
+**Merilni in regulacijski sistemi.** Analitska tehtnica, kazalni instrumenti in tipala tlaka so dušena blizu kritičnega, da odčitek hitro obstane brez nihanja. Regulacijo temperature reaktorja ali pretoka pogosto opišemo s sistemom drugega reda $\tau^2\ddot y + 2\zeta\tau\dot y + y = Ku(t)$: pri razmerniku dušenja $\zeta < 1$ (podkritično) odziv preniha zastavljeno vrednost, pri $\zeta \ge 1$ ne.
 
 **Električni krog RLC.** Za naboj velja $L\ddot q + R\dot q + \frac{q}{C} = U(t)$, ista enačba kot pri nihalu ($L$ ↔ masa, $R$ ↔ dušenje, $\frac1C$ ↔ vzmet). Resonanca pri $\omega_0 = \frac{1}{\sqrt{LC}}$ je osnova nihajnih krogov v merilni elektroniki; sondo spektrometra NMR z nastavljivim kondenzatorjem uglasimo tako, da je $\omega_0$ enaka Larmorjevi frekvenci jeder.
 

@@ -35,8 +35,13 @@
 .tk-in { position: relative; max-width: 640px; margin: 0 auto; display: grid; gap: 6px; }
 .tk-ctx { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; min-height: 32px; padding: 0 2px; }
 .tk-ctx::-webkit-scrollbar { display: none; }
+/* Več enot vstran: rob zbledi na strani, kjer je še kaj (tudi v RTL, ker sledi smeri vrstice). */
+.tk-ctx.more-end { -webkit-mask-image: linear-gradient(to var(--tk-end, right), #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to var(--tk-end, right), #000 calc(100% - 28px), transparent); }
+.tk-ctx.more-start { -webkit-mask-image: linear-gradient(to var(--tk-start, left), #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to var(--tk-start, left), #000 calc(100% - 28px), transparent); }
+.tk-ctx.more-start.more-end { -webkit-mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
+[dir="rtl"] .tk-ctx { --tk-end: left; --tk-start: right; }
 .tk-chip { flex: none; min-height: 32px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: 700 0.86rem var(--font); padding: 4px 12px; border-radius: 99px; cursor: pointer; box-shadow: none; }
-.tk-chip.unit { border-color: var(--accent); color: var(--accent); }
+.tk-chip.unit { border-color: var(--accent); color: var(--accent); min-height: 40px; }
 .tk-ctx.words .tk-chip { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tk-tabs { display: flex; align-items: center; gap: 4px; min-height: 36px; }
 .tk-tablist { display: flex; gap: 3px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
@@ -211,3 +216,8 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
   .tk-multi .tk-rows[data-kem="kem"] .tk-k { height: 62px; min-height: 62px; }
   .tk-multi .tk-rows[data-kem="sym"] .tk-k { height: 52px; min-height: 52px; }
 }
+
+/* Tipkovnica v modalnem oknu (tipkovnica.js jo premakne vanj): okno se dvigne nad tipkovnico, list ustnega
+   spraševanja se skrajša in drsi, da polje in »Oddaj« nista pod tipkami. */
+dialog:has(> .tk:not([hidden])) { margin-bottom: calc(var(--tk-h, 0px) + var(--tk-vv, 0px)); }
+.us-okno:has(> .tk:not([hidden])) .us-box { max-height: calc(100dvh - var(--tk-h, 0px) - var(--tk-vv, 0px)); }

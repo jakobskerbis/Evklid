@@ -100,6 +100,18 @@ export function phi(n) {
 // Slovenski vrstilni števniki za naštevanje oseb.
 export const ORD = ["prvi", "drugi", "tretji", "četrti", "peti", "šesti", "sedmi", "osmi", "deveti", "deseti", "enajsti", "dvanajsti"];
 export const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+// Predlog s/z pred številom, kot ga preberemo: »s« pred nezvenečim soglasnikom (tri, štiri, pet, šest,
+// sedem, trinajst, sto, tisoč …), sicer »z« (ena, dva, osem, devet, deset, dvajset …). Dvomestna števila
+// beremo od enic (triindvajset), okrogla od desetic (trideset), stotice od stotic (dvesto, tristo).
+const S_SMALL = new Set([3, 4, 5, 6, 7, 13, 14, 15, 16, 17]);
+const sStart = (n) => {
+  n = Math.abs(Math.trunc(n));
+  if (n >= 1000) return n < 2000 || sStart(Math.floor(n / 1000));
+  if (n >= 100) return n < 200 || sStart(Math.floor(n / 100));
+  if (n >= 20) return sStart(n % 10 || n / 10);
+  return S_SMALL.has(n);
+};
+export const sz = (n) => (sStart(n) ? "s" : "z");
 export const DAYS = ["ponedeljek", "torek", "sreda", "četrtek", "petek", "sobota", "nedelja"];
 // Tožilnik dneva: "v sredo", "v soboto", "v nedeljo", "v ponedeljek".
 export const dayAcc = (d) => (d.endsWith("a") ? d.slice(0, -1) + "o" : d);

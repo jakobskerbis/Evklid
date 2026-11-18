@@ -11,7 +11,7 @@ Isto zamisel uporabljaš, ko na turističnem zemljevidu mesta iščeš grad v kv
 
 ## Razlaga
 
-**1. Zamikajoča napačna misel: par je kar množica dveh elementov.** Avtobusna vozovnica velja za vožnjo Ljubljana–Koper. Če bi jo zapisali kot množico $\{\text{Ljubljana}, \text{Koper}\}$, bi bila enaka množici $\{\text{Koper}, \text{Ljubljana}\}$, saj pri množici vrstni red ne šteje. Vozovnica v obratno smer pa je druga vozovnica. Za take primere množica ni pravo orodje.
+**1. Mamljiva napačna misel: par je kar množica dveh elementov.** Avtobusna vozovnica velja za vožnjo Ljubljana–Koper. Če bi jo zapisali kot množico $\{\text{Ljubljana}, \text{Koper}\}$, bi bila enaka množici $\{\text{Koper}, \text{Ljubljana}\}$, saj pri množici vrstni red ne šteje. Vozovnica v obratno smer pa je druga vozovnica. Za take primere množica ni pravo orodje.
 
 Popravek je **urejeni par** $(a, b)$. Element $a$ je **prva komponenta**, $b$ **druga komponenta**. Vozovnica Ljubljana–Koper je par $(\text{Ljubljana}, \text{Koper})$. Dva urejena para sta enaka le, če se ujemata v obeh komponentah:
 
@@ -25,7 +25,7 @@ $$A \times B = \{(a, b) \mid a \in A \wedge b \in B\}$$
 
 Beremo »$A$ krat $B$«. Za $A = \{1, 2\}$ in $B = \{x, y, z\}$ je $A \times B = \{(1, x), (1, y), (1, z), (2, x), (2, y), (2, z)\}$.
 
-**3. Druga zamikajoča misel: $A \times B = B \times A$, saj je množenje zamenljivo.** Ni res. V $S \times V$ je par $(c, 2)$, v $V \times S$ pa par $(2, c)$, ki je drugačen. Kartezični produkt v splošnem **ni zamenljiv**: $A \times B \neq B \times A$.
+**3. Druga mamljiva misel: $A \times B = B \times A$, saj je množenje zamenljivo.** Ni res. V $S \times V$ je par $(c, 2)$, v $V \times S$ pa par $(2, c)$, ki je drugačen. Kartezični produkt v splošnem **ni zamenljiv**: $A \times B \neq B \times A$.
 
 :::premisli
 Pri katerih množicah $A$ in $B$ pa vendarle velja $A \times B = B \times A$? Napovej, preden pogledaš.

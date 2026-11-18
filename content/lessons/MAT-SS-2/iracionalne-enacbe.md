@@ -191,7 +191,7 @@ Ostane $x = 1$. Preizkus: $\sqrt{4} = 2$ in $1 + 1 = 2$. Kandidat $x = -4$ ne iz
 **Formule**
 - $\sqrt{A} = B$: pogoja $A \ge 0$ in $B \ge 0$ (na pamet)
 - $\sqrt{A} = B \;\Rightarrow\; A = B^2$, nato preizkus (na pamet)
-- $(a + b)^2 = a^2 + 2ab + b^2$ (na pamet)
+- $(p + q)^2 = p^2 + 2pq + q^2$ (na pamet)
 - $x^n = a$, lihi $n$: $x = \sqrt[n]{a}$ (na pamet)
 - $x^n = a$, sodi $n$, $a > 0$: $x = \pm\sqrt[n]{a}$ (na pamet)
 
@@ -368,7 +368,7 @@ A | korenjenec (izraz pod korenom) | | | pogoj $A \ge 0$
 B | izraz na drugi strani enačbe | | | pogoj $B \ge 0$
 p, q | člena vsote, ki jo kvadriramo | | |
 n | eksponent v enačbi $x^n = a$ | | | naravno število
-a | desna stran enačbe $x^n = a$ | | |
+a | desna stran enačbe $x^n = a$; v pravilih (npr. $a^2 = b^2$) poljubno število | | |
 f | korenska funkcija | f(x) = \sqrt{x + 5} |
 g | korenska funkcija, premaknjena navzgor | g(x) = 1 + \sqrt{x - 2} |
 :::

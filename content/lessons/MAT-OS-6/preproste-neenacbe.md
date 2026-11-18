@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -75,7 +75,7 @@ točka: 8 | | prazna
 točka: 9 | | prazna
 :::
 
-V simulaciji spodaj »Neenačba na številski premici« nastavi $a = 1$, $b = 2$, znak $\le$ in $c = 9$. Premikaj »preizkusi x« od $6$ do $8$ in beri, kdaj se izpis zamenja iz »je rešitev« v »ni rešitev«. Premica pokaže tudi števila med celimi, mi beremo le naravna.
+V simulaciji spodaj »Neenačba na številski premici« nastavi $a = 1$, $b = 2$, znak $\le$ in $c = 8$, da dobiš $x + 2 \le 8$. Premikaj »preizkusi x« od $5$ do $7$ in beri, kdaj se izpis zamenja iz »je rešitev« v »ni rešitev«. Premica pokaže tudi števila med celimi, mi beremo le naravna.
 
 **6. Končno ali neskončno mnogo.** Če so rešitve pod mejo, jih je med naravnimi števili končno mnogo, saj se ustavimo pri $1$. Če so nad mejo, jih je neskončno mnogo.
 

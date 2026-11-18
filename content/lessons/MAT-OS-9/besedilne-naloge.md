@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -165,7 +165,7 @@ Prištejemo $3x$ in odštejemo $24$: $14 = 2x$, torej $x = 7$. Preizkus: Ana ima
 ## Pogoste napake
 
 - **Neznanka brez pomena in mešane enote.** Učenec napiše »$x$ = čas« in v Primeru 3 zapiše $90(t - 10)$, ker je zamik »$10$«. Hitrost je v km/h, zamik pa v minutah, zato rezultat nima smisla. Popravek: neznanko opiši z enoto ($t$ v urah) in vse podatke pretvori v iste enote: $10\,\mathrm{min} = \dfrac{1}{6}\,\mathrm{h}$.
-- **Prevajanje besedo za besedo.** »Vsako uro izteče $40\,\mathrm{ml}$, ostane $180\,\mathrm{ml}$, začetno je $500\,\mathrm{ml}$« učenec prepiše kot $40x - 500 = 180$, ker si sledijo v tem vrstnem redu. Odštevanje pa ni zamenljivo. Popravek: vprašaj se, kaj od česa odvzameš. Od začetne količine odvzameš iztečeno: $500 - 40x$.
+- **Prevajanje besedo za besedo.** »Vsako uro izteče $40\,\mathrm{ml}$, začetno je $500\,\mathrm{ml}$, ostane $180\,\mathrm{ml}$« učenec prepiše kot $40x - 500 = 180$, ker si sledijo v tem vrstnem redu. Odštevanje pa ni zamenljivo. Popravek: vprašaj se, kaj od česa odvzameš. Od začetne količine odvzameš iztečeno: $500 - 40x$.
 - **Pri dohitevanju seštete hitrosti.** Učenec misli: »Oba vozita, torej $v_1 + v_2$.« Pri dohitevanju pa vozita v isto smer in se razdalja manjša le za razliko hitrosti. Popravek: nariši skico in zapiši pot vsakega posebej; enačba $v_1 t = d + v_2 t$ sama da razliko.
 - **Preizkus le v enačbi.** Če je enačba napačno zapisana, rešitev zanjo vseeno »drži«. Popravek: preizkus delaj v besedilu, z dejanskimi količinami.
 - **Odgovor je samo število.** V Primeru 3 je rešitev enačbe $t = 0{,}5$, vprašanje pa je »ob kateri uri«. Popravek: preberi vprašanje še enkrat in odgovori nanj, $14.30$.
@@ -192,7 +192,7 @@ Kot zdravnik ne pozabi kontrolnega pregleda, tudi ti ne izpusti preizkusa. Šele
 
 ## Drugače: Bolj natančno
 
-Vsaka stran enačbe je opis iste količine. Če vsako stran enačbe zapišemo kot linearno funkcijo, dobimo dve premici. Pri Ani in Boru (Primer 4) sta to $y = -3x + 38$ in $y = -x + 24$. Rešitev enačbe je abscisa presečišča premic: $(7, 17)$.
+Vsaka stran enačbe je opis iste količine. Če vsako stran enačbe zapišemo kot linearno funkcijo, dobimo dve premici. Pri Ani in Boru (Primer 4) sta to $y = -3x + 38$ in $y = -x + 24$. Rešitev enačbe $x = 7$ je abscisa presečišča premic $(7, 17)$.
 
 Zato ima linearna enačba v besedilni nalogi lahko:
 

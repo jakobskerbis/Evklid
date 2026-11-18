@@ -305,6 +305,7 @@ const DOVOLJENO = {
   ai_school_use: "poraba AI, ki je šla pod mejo šole, ostane šoli (student_id → NULL)",
   school_orders: "naročilo šole iz obrazca za šole (kontakt šole, ne računa) ostane s šolo",
   class_assignments: "naloga, ki jo je učitelj dal v razredu drugega učitelja, ostane razredu (created_by → NULL)",
+  pilot_vabila: "porabljena koda vabila (samo zgoščena koda in čas, parent_id → NULL): izbris in nova registracija ne dasta novega članstva v pilotu (#751)",
 };
 // Ostane in še kaže na račun ali profil: z razlogom, zakaj to ni uhajanje.
 const POVEZANO = {

@@ -18,3 +18,9 @@ export const startTierFor = (stage, saved) => Math.min(3, Math.max(STAGES[stage]
 
 // Stikalo »Skrij igre« (nastavitev profila games: on | off).
 export const gamesOn = (settings) => settings?.games !== "off";
+
+// Prenos v ozadju (igre, orodja, 3D; public/app.js): samo na hitri povezavi brez omejitve podatkov (Wi-Fi, računalnik).
+// Ne ob varčevanju s podatki, na počasni povezavi (2G, 3G) in na mobilnih podatkih, kjer brskalnik to pove
+// (navigator.connection.type; večina brskalnikov tega ne pove, takrat odloča hitrost). Tam se vse naloži ob uporabi
+// (lahek zagon, j 17. 11. 2026). Kar učenec izrecno uporabi ali prenese za delo brez povezave, se naloži vedno.
+export const backgroundLoadOk = (c) => !c || !(c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType || "") || c.type === "cellular");

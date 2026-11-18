@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -213,7 +213,7 @@ Zakaj je kost razdeljena na osteone? Osteocit dobi hranila po kanalčkih iz žil
 4. Ena lamela je debela okoli $5\,\mu\mathrm{m}$, zato je v steni $\dfrac{75}{5} = 15$ lamel.
 5. Sklep: kost je iz mnogo tankih valjev z žilo v sredini, sicer bi notranji osteociti odmrli.
 
-Podobno pri kolagenu: v vijačnem delu verige z $1014$ aminokislinami je vsaka tretja glicin, torej $\dfrac{1014}{3} = 338$ glicinov. Glicin je najmanjša aminokislina in je edina dovolj majhna za sredino trojne vijačnice.
+Podobno pri kolagenu: v vijačnem delu verige s $1014$ aminokislinami je vsaka tretja glicin, torej $\dfrac{1014}{3} = 338$ glicinov. Glicin je najmanjša aminokislina in je edina dovolj majhna za sredino trojne vijačnice.
 
 ## Preveri se
 

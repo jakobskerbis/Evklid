@@ -1,10 +1,10 @@
 // Skeniranje nalog (zaslon »Skeniraj«, public/scan/):
-//   POST /api/students/:id/scan/read   { image: dataURL }  → { problems: [{ text, tex }] }  prepis s fotografije
-//   POST /api/students/:id/scan/solve  { text, goal? }     → { solution }                   AI rešitev po korakih
+//   POST /api/students/:id/scan/read   { image: dataURL }  → { problems: [{ text, tex, goal, given?, sought? }] }  prepis s fotografije
+//   POST /api/students/:id/scan/solve  { text, goal?, given?, sought? } → { solution }       AI rešitev po korakih
 // Večino nalog reši brez AI že vmesnik (public/scan/solvecore.js). AI pride na vrsto le pri nalogah, ki jih
 // ta ne zna (koreni, logaritmi, trigonometrija, integrali …). AI rešitev strežnik preveri z isto kodo kot vmesnik
 // (public/scan/verify.js); nepreverjena se pokaže z opozorilom, nikoli kot »preverjeno«.
-import { getClient, isMockMode, quickParams, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
+import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { prep, splitSystem } from "../public/scan/solvecore.js";
 import { casCheck } from "./cas.js";
@@ -45,6 +45,9 @@ const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d
 // Branje matematike z rokopisa zahteva natančen model; ena fotografija je ~1500 žetonov.
 const READ_MODEL = () => env("EVKLID_SCAN_MODEL", MODEL_MID);
 const SOLVE_MODEL = () => env("EVKLID_SCAN_SOLVE_MODEL", MODEL_MID);
+// Branje naloge za Inštruktorja (kamera v klepetu, j 17. 11.): privzeto hitri model inštruktorja (Haiku), ker učenec
+// prepis pregleda in popravi, preden gre inštruktorju; strošek in izbira modela: docs/stroski-ai.md »Skener v Inštruktorju«.
+const TASK_READ_MODEL = () => env("EVKLID_SCAN_TUTOR_MODEL", MODEL);
 const MAX_IMAGE = 6 * 1024 * 1024;
 const MAX_TEXT = 600;
 
@@ -77,15 +80,20 @@ export const READ_PROMPT =
   'Each "text" is one expression, one equation or one inequality (or a system): never chain several = or a definition and an inequality: give only the part that is the task (x^2>4 for h(x)=x^2>4, nCr(5,2) for nCr(5,2)=5!/(2!*3!)); a right-hand side that is working or a result is left out.\n' +
   '- "given": only if the task states data or conditions needed to solve it (a measured quantity with its unit such as a = 3 cm, m = 2 kg or α = 30°, ' +
   "a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5 or k=0, a set of allowed digits or elements such as {1,2,4,8}, also when written in a »dano:« / »podatki:« line, in a box or short notes beside the task that belong to it (not a theory, hint or example box), or only in the sentence): " +
-  'a list of them in LaTeX, one each, in the words of the page, keeping every unit and writing a decimal comma as {,} (e.g. ["a = 3\\\\ \\\\mathrm{cm}", "b = 2{,}5\\\\ \\\\mathrm{cm}", "T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Never drop a value stated in the task; never add a value from the student\'s working or a result, never invent one, and leave out a bare domain such as x ∈ ℝ. Otherwise leave it out.\n' +
+  'a list of them in LaTeX, one each, with the meaning of the page, keeping every unit and writing a decimal comma as {,} (e.g. ["a = 3\\\\ \\\\mathrm{cm}", "b = 2{,}5\\\\ \\\\mathrm{cm}", "T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Never drop a value stated in the task; never add a value from the student\'s working or a result, never invent one, and leave out a bare domain such as x ∈ ℝ. Otherwise leave it out.\n' +
+  '- "sought": what the task asks you to find is never data. If it is already "text" as <letter>=?, or it is what "goal" does to "text" (solve it, its zeros, simplify, factor, evaluate, differentiate), leave "sought" out. ' +
+  'Otherwise (e.g. the angle at which the graph cuts the x-axis, the vertex of the parabola) write it in "sought" as one short phrase (LaTeX for maths), in the language of the language line below, e.g. in Slovene "\\\\text{kot, pod katerim graf seka os x}".\n' +
   "For a word or geometry problem without one equation or expression, give as \"text\" only the unknown asked for in calculator syntax as <letter>=? (e.g. P=?, v=?), never a sentence, and every stated value in \"given\".\n" +
   '- "tex": the same problem in LaTeX.\n' +
   "Ignore task numbers (1., a)), the wording of instructions (but keep their conditions in \"given\") and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve; if there is neither such an instruction nor an equation or inequality to solve, leave \"goal\" out.\n" +
-  'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."]}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
+  'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."],"sought":"..."}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
   // Fotografije, ki niso učno gradivo, zavrnemo (j, 2026-10-30); slike strežnik nikoli ne shrani.
   'Accept schoolwork even if people appear in the frame (book illustrations, a teacher at a whiteboard, hands). Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, do not describe it and return only {"problems":[],"unrelated":true}. If unsure, read it.';
 
-export async function readMathPhoto({ imageBase64, mediaType = "image/jpeg" }) {
+// lang: jezik aplikacije (j 14. 11. 2026: besede v »Podatki« so bile v angleščini). V svojem bloku za READ_PROMPT,
+// da READ_PROMPT ostane enak za vse jezike (klic nima cache_control; slika je pred navodili).
+export const readLangLine = (lang) => `Language line: write every word in "given" and "sought" (inside \\text{}) in ${languagePrompt(lang || "sl")}, never in English unless that is the language; keep maths, units and symbols as written.`;
+export async function readMathPhoto({ imageBase64, mediaType = "image/jpeg", lang = "sl" }) {
   const model = READ_MODEL();
   if (isMockMode()) return { mock: true, problems: [], usage: null, model };
   const final = await getClient().messages.create({
@@ -98,6 +106,7 @@ export async function readMathPhoto({ imageBase64, mediaType = "image/jpeg" }) {
         content: [
           { type: "image", source: { type: "base64", media_type: mediaType, data: imageBase64 } },
           { type: "text", text: READ_PROMPT },
+          { type: "text", text: readLangLine(lang) },
         ],
       },
     ],
@@ -113,11 +122,13 @@ export function cleanProblems(list) {
     .slice(0, 6)
     .map((p) => {
       const given = cleanGiven(p.given);
+      const sought = cleanSought(p.sought);
       return {
         text: p.text.trim().slice(0, MAX_TEXT),
         tex: typeof p.tex === "string" ? p.tex.trim().slice(0, MAX_TEXT * 2) : "",
         goal: GOALS.includes(p.goal) ? p.goal : null,
         ...(given.length ? { given } : {}),
+        ...(sought ? { sought } : {}),
       };
     });
 }
@@ -131,6 +142,9 @@ export function cleanGiven(list) {
     .slice(0, MAX_GIVEN)
     .map((g) => g.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN)); // brez novih vrstic v pozivu
 }
+// Iskana količina (»kot, pod katerim graf seka os x«): ni podatek, zato ne v given (j 16. 11. 2026: »to ni podatek«).
+// Ne izklopi lastnega reševalnika ne SymPy (ti gledata le given); AI jo dobi, da ve, kaj iskati.
+export const cleanSought = (v) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN) : "");
 
 // Cilj, ki ga je učenec izbral na zaslonu (npr. »Razstavi«): brez njega bi AI izraz morda le poenostavil.
 const GOAL_TEXT = {
@@ -141,10 +155,11 @@ const GOAL_TEXT = {
   solve: "Task: solve it.",
 };
 
-export function solvePrompt(text, lang, feedback = null, goal = null, given = []) {
+export function solvePrompt(text, lang, feedback = null, goal = null, given = [], sought = "") {
   return (
     `A student wants a step-by-step solution of this maths problem (calculator syntax): ${text}\n` +
     (given.length ? `Data and conditions stated in the task (LaTeX; use them with their units, e.g. to find the parameters or the asked quantity, and give the answer with its unit): ${given.join("; ")}\n` : "") +
+    (sought ? `What the task asks to find (LaTeX/text): ${sought}\n` : "") +
     (GOAL_TEXT[goal] ? `${GOAL_TEXT[goal]}\n` : "") +
     `Write every title and explanation in ${lang}, simply, for a student at school level; use the notation of Slovenian schools (decimal comma in LaTeX as {,}, intervals with ( ) and [ ], »D« for the discriminant).\n` +
     "Solve it correctly; check your result yourself before answering. Steps must be small (one idea each), as a good teacher writes them on the board. Give a second method only if it is commonly taught.\n" +
@@ -179,7 +194,7 @@ export function cleanSolution(s) {
   };
 }
 
-export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }) {
+export async function solveWithAi({ text, lang = "sl", goal = null, given = [], sought = "" }) {
   const model = SOLVE_MODEL();
   if (isMockMode()) return { mock: true, solution: null, usage: null, model };
   const ask = async (feedback) => {
@@ -188,7 +203,7 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }
       max_tokens: 8000,
       thinking: { type: "adaptive" },
       output_config: { effort: "medium" },
-      messages: [{ role: "user", content: solvePrompt(text, languagePrompt(lang), feedback, goal, given) }],
+      messages: [{ role: "user", content: solvePrompt(text, languagePrompt(lang), feedback, goal, given, sought) }],
     });
     return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model };
   };
@@ -218,9 +233,73 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }
   return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null } : null, usage, model: out.model };
 }
 
+// Branje naloge za Inštruktorja: vse predmete (matematika, fizika, kemija, biologija), besedilo kot na listu, formule
+// v $…$, brez reševanja. figure: naloga ima skico, graf ali sliko, ki je besedilo ne nadomesti (inštruktor dobi še sliko).
+export const TASK_READ_PROMPT =
+  "The image shows a school task (maths, physics, chemistry or biology; printed or handwritten) that a student photographed to ask a tutor for help. " +
+  "Transcribe the task exactly as written, in its own language: the full wording with all numbers, units and sub-tasks a), b) …; maths and formulas in LaTeX between $ … $ (chemical formulas such as H₂O may stay plain). " +
+  "Do not solve, do not fix mistakes, do not add anything. If several separate tasks are visible, transcribe the most prominent one (the one in the middle or marked), set \"more\": true and \"tasks\" to how many separate tasks you see. Leave out the student's own working and crossed-out parts.\n" +
+  "Set \"figure\": true if the task depends on a drawing, graph, diagram, table image, circuit, geometric figure or structure formula that the text cannot fully replace; otherwise false.\n" +
+  'Return only JSON: {"text":"...","figure":false,"more":false,"tasks":1}. If no task is readable: {"text":""}.\n' +
+  'Accept schoolwork even if people appear in the frame. Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, return only {"text":"","unrelated":true}.';
+const TASK_READ_PROMPT_TOKENS = Buffer.byteLength(TASK_READ_PROMPT, "utf8") + 300;
+const TASK_READ_MAX = 1200; // izhodni žetoni: dolga besedilna naloga s podnalogami
+const MAX_TASK_TEXT = 3000;
+export async function readTaskPhoto({ imageBase64, mediaType = "image/jpeg" }) {
+  const model = TASK_READ_MODEL();
+  if (isMockMode()) return { mock: true, text: "", usage: null, model };
+  const final = await getClient().messages.create({
+    model,
+    max_tokens: TASK_READ_MAX,
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "image", source: { type: "base64", media_type: mediaType, data: imageBase64 } },
+          { type: "text", text: TASK_READ_PROMPT },
+        ],
+      },
+    ],
+  });
+  const data = jsonFrom(textOf(final)) || {};
+  const unrelated = data.unrelated === true;
+  const text = unrelated || typeof data.text !== "string" ? "" : data.text.trim().slice(0, MAX_TASK_TEXT);
+  const tasks = Number.isInteger(data.tasks) && data.tasks > 0 ? Math.min(data.tasks, 20) : data.more === true ? 2 : 1;
+  return { text, figure: data.figure === true, more: data.more === true || tasks > 1, tasks, unrelated, usage: final.usage, model: final.model || model };
+}
+
 // Navodila branja v žetonih za rezervo (žeton ≤ bajt, pregled #462 S7) + sporočilo in ovoj.
 const READ_PROMPT_TOKENS = Buffer.byteLength(READ_PROMPT, "utf8") + 500;
-export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, solveFn = solveWithAi }) {
+export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, solveFn = solveWithAi, readTaskFn = readTaskPhoto, dailyBlock = () => null, chatOff = () => false }) {
+  // Kamera v Inštruktorju: prepis naloge, ki ga učenec pregleda in pošlje inštruktorju (public/scan/scan.js, način tutor).
+  // Slike strežnik ne shrani; ob napaki učenec pošlje fotografijo ali nalogo vpiše (nikoli slepa ulica).
+  app.post("/api/students/:id/scan/read-task", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const m = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(String(req.body?.image || ""));
+    if (!m || m[2].length > MAX_IMAGE) return res.status(400).json({ error: "Slika manjka ali je prevelika." });
+    // Branje plačamo le, če bo naloga lahko šla k inštruktorju: klepet vklopljen in dnevna meja vprašanj ni dosežena.
+    if (chatOff()) return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true });
+    const dnevna = dailyBlock(s.id);
+    if (dnevna) return res.status(429).json(dnevna);
+    const blocked = usage?.blockInfo(s.id);
+    if (blocked) return res.status(429).json(blocked);
+    const hold = usage?.guard ? usage.guard(s.id, imageCallReserveUsd(TASK_READ_MODEL(), TASK_READ_MAX, 1, TASK_READ_PROMPT_TOKENS)) : null;
+    if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
+    try {
+      const out = await readTaskFn({ imageBase64: m[2], mediaType: m[1] });
+      if (out.mock) return res.json({ text: "", mock: true });
+      if (out.usage) usage?.log(s.id, out.model, out.usage, "skeniranje");
+      const more = !!out.more || out.tasks > 1;
+      res.json({ text: out.text || "", figure: !!out.figure, more, ...(more ? { tasks: Math.max(2, Number(out.tasks) || 2) } : {}), ...(out.unrelated ? { unrelated: true } : {}) });
+    } catch (err) {
+      console.error("[evklid] branje naloge:", err?.message || err);
+      res.status(502).json({ error: errorText(err, "Branje fotografije trenutno ne deluje. Nalogo vpiši s tipkami.") });
+    } finally {
+      hold?.release();
+    }
+  });
+
   app.post("/api/students/:id/scan/read", async (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
@@ -232,7 +311,7 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     const hold = usage?.guard ? usage.guard(s.id, imageCallReserveUsd(READ_MODEL(), 2000, 1, READ_PROMPT_TOKENS)) : null;
     if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
-      const out = await readFn({ imageBase64: m[2], mediaType: m[1] });
+      const out = await readFn({ imageBase64: m[2], mediaType: m[1], lang: s.settings?.language || "sl" });
       if (out.mock) return res.json({ problems: [], mock: true });
       if (out.usage) usage?.log(s.id, out.model, out.usage, "skeniranje");
       res.json({ problems: out.problems, ...(out.unrelated ? { unrelated: true } : {}) });
@@ -255,14 +334,17 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     if (!Array.isArray(rawGiven) || rawGiven.length > MAX_GIVEN || rawGiven.some((g) => typeof g !== "string" || g.length > MAX_GIVEN_LEN))
       return res.status(400).json({ error: "Podatki naloge niso veljavni." });
     const given = cleanGiven(rawGiven);
+    const rawSought = req.body?.sought ?? "";
+    if (typeof rawSought !== "string" || rawSought.length > MAX_GIVEN_LEN) return res.status(400).json({ error: "Podatki naloge niso veljavni." });
+    const sought = cleanSought(rawSought);
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
     // Do dva klica (ponovitev ob napačni rešitvi), vsak z navodili, nalogo in podatki ter do 8000 izhodnimi žetoni.
-    const input = 6000 + Buffer.byteLength(text + rawGiven.join(""), "utf8");
+    const input = 6000 + Buffer.byteLength(text + rawGiven.join("") + rawSought, "utf8");
     const hold = usage?.guard ? usage.guard(s.id, 2 * callMaxUsd(SOLVE_MODEL(), input, 8000)) : null;
     if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
-      const out = await solveFn({ text, goal, given, lang: s.settings?.language || "sl" });
+      const out = await solveFn({ text, goal, given, sought, lang: s.settings?.language || "sl" });
       if (out.mock) return res.json({ solution: null, mock: true });
       for (const u of [].concat(out.usage || [])) if (u) usage?.log(s.id, out.model, u, "skeniranje");
       if (!out.solution) return res.status(502).json({ error: "Rešitve ni bilo mogoče sestaviti. Poskusi znova ali vprašaj inštruktorja." });

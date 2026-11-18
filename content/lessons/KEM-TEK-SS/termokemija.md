@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -18,7 +18,7 @@ Na tekmovanjih so takšne naloge stalnica: podane so tri ali štiri enačbe s to
 | | Stehiometrija | Termokemija |
 |---|---|---|
 | šteješ | $n$ v mol | $Q$ v kJ |
-| koeficienti | razmerje množin | $Q$ raste s $\frac{n}{\nu}$ |
+| koeficienti | razmerje množin | $Q$ raste z $\frac{n}{\nu}$ |
 | ohranja se | masa | energija |
 | stanje snovi | nepomembno | para ima več energije |
 | smer | nepomembna | obrat: drug predznak |

@@ -10,6 +10,9 @@ import { BRAND } from "./brand.js";
 import { PLANS, SCHOOL_LICENCE_PRICES, PILOT_SCHOOLS_MAX, PILOT_HOLD_STATUSES, pilotPlaces, pilotOpenForOrder } from "./schools.js";
 import { schoolDailyQuestions } from "./placila/pravice.js";
 import { PODARI_MONTHS } from "./placila/podari.js";
+import { TRIAL_DAYS, freeDailyQuestions } from "./accounts/plans.js";
+import { USTNO_QUESTIONS } from "./ustno.js";
+import { IKONE_HEAD } from "./ikone.js";
 
 export const ORDER_STATUSES = ["new", "contacted", "offer_sent", "won", "lost"];
 export const PLAN_LABELS = { class: "Licenca za razrede", school: "Cela šola", pilot: "Pilotna šola" };
@@ -123,6 +126,15 @@ export function validateOrder(b, now = new Date()) {
   return { order: out };
 }
 
+// Slovenske dvojinske in množinske oblike (docs/besedila.md §4): 1 vprašanje, 2 vprašanji, 3 vprašanja, 5 vprašanj.
+const forms = (n, [one, two, few, many]) => {
+  const m = Math.abs(n) % 100;
+  return m === 1 ? one : m === 2 ? two : m === 3 || m === 4 ? few : many;
+};
+export const questionsWord = (n) => `${n} ${forms(n, ["vprašanje", "vprašanji", "vprašanja", "vprašanj"])}`;
+// »prvih 7 dni«, »prva 2 dneva«, »prvi 3 dnevi«, »prvi dan«.
+export const firstDays = (n) => (n === 1 ? "prvi dan" : `${forms(n, ["prvi", "prva", "prvi", "prvih"])} ${n} ${forms(n, ["dan", "dneva", "dnevi", "dni"])}`);
+
 // Stran /sole: statična datoteka, v katero strežnik vstavi cene in ime aplikacije (eno mesto za cene).
 // pilot: ali je pilotna cena še na voljo (prvih 10 šol); ko ni, stran pilotnega paketa ne pokaže.
 export function solePage({ pilot = true } = {}) {
@@ -137,6 +149,10 @@ export function solePage({ pilot = true } = {}) {
     "pilot.full": pilot ? "0" : "1",
     "podari.months": String(PODARI_MONTHS),
     dailyQuestions: schoolDailyQuestions() > 0 ? `do ${schoolDailyQuestions()} vprašanj inštruktorju na dan` : "neomejeno število vprašanj inštruktorju",
+    // Kaj ima učenec brez licence (vprašanje »Ali lahko najprej preizkusimo?«) in koliko vprašanj šteje ustno spraševanje.
+    trialDays: firstDays(TRIAL_DAYS),
+    freeDaily: String(freeDailyQuestions()),
+    ustnoQuestions: questionsWord(USTNO_QUESTIONS),
     consent: CONSENT_TEXT,
     maxStudents: String(ORDER_LIMITS.maxStudents),
     maxNote: String(ORDER_LIMITS.maxNote),
@@ -159,8 +175,7 @@ export function mountSolePage(app, store = null) {
 }
 
 // Predračun (natisni ali shrani kot PDF). Podatke prodajalca nastavi j v .env; manjkajoči so »[izpolni]«.
-// TODO(j): status DDV. Predlog besedila: »cene brez DDV, DDV po veljavni zakonodaji« – potrdi, preden
-// predračun pošlješ šoli, in vrstico »DDV« izpolni (ali odstrani, če nisi zavezanec za DDV).
+// DDV: j 16. 11. 2026 potrdil, da ni zavezanec za DDV (isto besedilo kot na public/sole.html).
 export function predracunHtml(o, now = new Date()) {
   const env = (k) => (process.env[`${BRAND.env}_SELLER_${k}`] || "").trim() || "[izpolni]";
   const number = orderNumber(o);
@@ -174,6 +189,7 @@ export function predracunHtml(o, now = new Date()) {
   return `<!doctype html>
 <html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Predračun ${esc(number)}</title>
+${IKONE_HEAD}
 <script src="/predracun.js" defer></script>
 <style>
   body { font-family: system-ui, sans-serif; color: #111; background: #fff; max-width: 800px; margin: 0 auto; padding: 24px 16px; line-height: 1.45; }
@@ -196,7 +212,7 @@ export function predracunHtml(o, now = new Date()) {
 <p>Datum izdaje: ${esc(issued)} · Rok plačila: ${PAYMENT_DAYS} dni (do ${esc(due)})</p>
 <div class="cols">
   <div class="box"><h2>Prodajalec</h2><table>
-    ${row("Naziv", env("NAME"))}${row("Naslov", env("ADDRESS"))}${row("ID za DDV / davčna št.", env("TAX_ID"))}${row("TRR (IBAN)", env("IBAN"))}
+    ${row("Naziv", env("NAME"))}${row("Naslov", env("ADDRESS"))}${row("Davčna številka", env("TAX_ID"))}${row("TRR (IBAN)", env("IBAN"))}
   </table></div>
   <div class="box"><h2>Kupec</h2><table>
     ${row("Šola", o.school_name)}${row("Naslov", o.address)}${row("Matična številka", o.registration_no)}${row("Davčna številka", o.tax_id)}${o.budget_user ? row("Šifra PU", o.budget_code) : ""}${row("Kontakt", `${o.contact_name}, ${o.email}${o.phone ? `, ${o.phone}` : ""}`)}
@@ -206,7 +222,7 @@ export function predracunHtml(o, now = new Date()) {
   <thead><tr><th scope="col">Postavka</th><th scope="col" class="num">Količina</th><th scope="col" class="num">Cena na učenca na leto</th><th scope="col" class="num">Znesek</th></tr></thead>
   <tbody><tr><td>${esc(item)}</td><td class="num">${esc(o.students)} učencev</td><td class="num">${esc(eur(o.price_eur))}</td><td class="num">${esc(eur(total))}</td></tr></tbody>
   <tfoot>
-    <tr><td colspan="3">DDV</td><td class="num">[izpolni]</td></tr>
+    <tr><td colspan="4">Izvajalec ni zavezanec za DDV.</td></tr>
     <tr class="total"><td colspan="3">Skupaj za plačilo</td><td class="num" data-total="${esc(total)}">${esc(eur(total))}</td></tr>
   </tfoot>
 </table>

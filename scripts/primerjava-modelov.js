@@ -44,7 +44,7 @@ import { lessonSummaryForPrompt } from "../server/textbook.js";
 import { EUR_PER_USD } from "../server/usage.js";
 import { PROGRAMS } from "../server/university-data.js";
 import { vpisiVKnjigo, knjigaFile } from "../server/meritev-po-objavi.js";
-import { runChecked, summarize, writeMeasurement, measurementError, examplesOf, CONDITIONS, MIN_PRIMERI, GRADER_FINAL_RULE } from "./meritev-natancnosti.js";
+import { runChecked, summarize, writeMeasurement, measurementError, examplesOf, CONDITIONS, MIN_PRIMERI, GRADER_FINAL_RULE, parseGrade } from "./meritev-natancnosti.js";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const arg = (name, d) => {
@@ -232,12 +232,8 @@ async function grade(ex, answer) {
     messages: [{ role: "user", content: `NALOGA:\n${ex.task}\n\nURADNA REŠITEV:\n${ex.solution}\n\nODGOVOR INŠTRUKTORJA:\n${answer}` }],
   });
   const text = res.content.filter((b) => b.type === "text").map((b) => b.text).join("");
-  let j = null;
-  try {
-    j = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
-  } catch {
-    j = { ocena: "neocenjeno", rezultat_podan: false, razlog: text.slice(0, 200) };
-  }
+  // LaTeX v »razlog« (\mathrm) ni veljaven JSON: parseGrade ga vseeno prebere (meritev SŠ 18. 11.: 3 neocenjeni).
+  const j = parseGrade(text);
   const ocena = String(j?.ocena ?? "neocenjeno").toLowerCase().replace("š", "s").replace(/\s+/g, "_");
   return { ...j, ocena, usd: costUsd(res.model || MODEL_DEEP, res.usage) };
 }

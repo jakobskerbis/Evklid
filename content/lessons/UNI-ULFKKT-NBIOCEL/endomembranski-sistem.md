@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -339,7 +339,7 @@ r | polmer | | µm
 d_c | premer celice | | µm
 d_v | premer mešička | | nm
 n | število mešičkov | n = \frac{A_c}{A_v} | –
-t | čas | | s
+t | čas | | s | v nalogi o kinetiki v min
 k | konstanta izhoda iz ER | | 1/min | kinetika prvega reda
 t_{1/2} | razpolovni čas | t_{1/2} = \frac{\ln 2}{k} | min
 :::

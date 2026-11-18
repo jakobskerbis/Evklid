@@ -98,6 +98,23 @@ cas("SymPy: zaokroženi rezultati in enote", async () => {
   assert.equal((await casCheck("value", ["sqrt(2)", "1.42"])).ok, false);
   assert.equal((await casCheck("value", ["3/4+2/5", "23/20"])).ok, true);
   assert.equal((await casCheck("value", ["sin(30*pi/180)", "1/2"])).ok, true);
+  // Meritev SŠ 18. 11. (KEM-SS-3): 17,46 mol je izpisan zaokrožen vmesni rezultat (17,4626), 1048,6 g je pravilno.
+  assert.equal((await casCheck("value", ["17.46*60.05", "1048.6"])).ok, true, "zaokrožen vmesni rezultat s 4 mesti");
+  assert.equal((await casCheck("value", ["17.46*60.05", "1049.5"])).ok, false, "prava napaka ostane napaka");
+  assert.equal((await casCheck("value", ["1.0487*4.80", "5.05"])).ok, false);
+  assert.equal((await casCheck("value", ["17.46*60.05", "1049"])).ok, true, "celo število: zaokrožitev 0,5");
+  assert.equal((await casCheck("value", ["12.34*5.6", "69"])).ok, true);
+  // FIZ-SS-2/notranja-energija-in-toplota (vrstici 404–405): zaokrožena temperatura zmesi 74,19 °C
+  assert.equal((await casCheck("value", ["4200*(80-74.19)", "24402"])).ok, true);
+  assert.equal((await casCheck("value", ["450*(74.19-20)", "24386"])).ok, true);
+  // Ponovni pregled #835: celo število pri |vrednost| < 10 ni zaokrožitev (kot same_value)
+  for (const [expr, claim] of [["2*3.1416", "6"], ["1.2345*0.3", "0"], ["1.2345*0.5", "1"], ["1.2345/4", "0"]]) {
+    assert.equal((await casCheck("value", [expr, claim])).ok, false, `${expr} | ${claim}`);
+  }
+  // Pregled #835: odstopanje zaradi zaokroženih vmesnih rezultatov je omejeno (≤ 0,1 % vrednosti, presežek ≤ 0,05 %).
+  for (const [expr, claim] of [["1234.5-1234.4", "0.2"], ["1234.5-1234.4", "0.15"], ["17.46*60.05", "1048.9"], ["1.0001^10000", "2.0"], ["1/(1.2345-1.2344)", "5000.0"], ["1/(1.2345-1.2344)", "12000.0"]]) {
+    assert.equal((await casCheck("value", [expr, claim])).ok, false, `${expr} | ${claim}`);
+  }
   assert.equal((await casCheck("units", ["3.2*kg*9.81*m/s^2", "31.4*N"])).ok, true);
   assert.equal((await casCheck("units", ["3.2*kg*9.81*m/s^2", "31.4*J"])).ok, false, "napačna enota");
   assert.equal((await casCheck("units", ["72*km/h", "20*m/s"])).ok, true);

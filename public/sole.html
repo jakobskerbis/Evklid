@@ -15,6 +15,7 @@
   <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="vendor/instrument-sans/index.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/predstavitev.css">
   <link rel="stylesheet" href="/videz-naprave.css">
   <link rel="stylesheet" href="tipkovnica.css">
   <style>
@@ -75,7 +76,16 @@
 </head>
 <body>
 <main class="doc" data-pilot-full="{{pilot.full}}">
-  <p><a href="/">← {{name}}</a></p>
+  <header class="mkt-top">
+    <a class="mkt-brand" href="/" aria-label="Evklid – na začetno stran"><img src="/icons/favicon.svg?v=kristal" alt="" width="28" height="28"><span class="mkt-name">Evkli<span>d</span></span></a>
+    <nav class="mkt-nav" aria-label="Glavni meni">
+      <a href="/zakaj-evklid">Zakaj Evklid</a>
+      <a href="/o-evklidu#cene">Cene</a>
+      <a href="/starsi.html">Za starše</a>
+      <a href="/sole" aria-current="page">Za šole</a>
+    </nav>
+    <a class="mkt-cta" href="/">Preizkusite brezplačno</a>
+  </header>
   <p class="who">Za ravnatelje, učitelje in računovodstvo</p>
   <h1>{{name}} za šole</h1>
   <p class="lead">Inštruktor AI za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu. Učitelj odpre razred, dodeli teme in vidi, kako razred napreduje. Šola plača z e-računom prek UJP.</p>
@@ -93,7 +103,7 @@
     <div class="tile"><h3>Izvoz CSV</h3><p>Rezultate razreda prenesete v preglednico z enim klikom.</p></div>
     <div class="tile"><h3>Zasebnost učencev</h3><p>Učitelj vidi samo razredne naloge in lige razreda, nikoli zasebnih pogovorov z inštruktorjem.</p></div>
   </div>
-  <p class="small">Prehod učenca na drugo šolo in izvoz njegovega napredka sta vedno brezplačna. Učenci z licenco dobijo vse vsebine predmetov, ki jih licenca zajema, in {{dailyQuestions}}.</p>
+  <p class="small">Prehod učenca na drugo šolo in izvoz njegovega napredka sta vedno brezplačna. Učenci z licenco dobijo vse vsebine predmetov, ki jih licenca zajema, in {{dailyQuestions}}. Eno vprašanje je eno sporočilo, ki ga učenec pošlje inštruktorju, tudi fotografija naloge ali klik na gumb »Razloži podrobneje«. Ustno spraševanje šteje kot {{ustnoQuestions}}. Vaje, lekcije in igre se ne štejejo.</p>
 
   <h2>Cene</h2>
   <div class="grid g3">
@@ -101,7 +111,7 @@
     <div class="tile price best"><h3>Cela šola</h3><span class="amt">{{price.school}}</span><span class="per">na učenca na leto</span><p>Za vse učence šole, po nižji ceni na učenca.</p></div>
     <div class="tile price pilot-only"><h3>Pilotna šola</h3><span class="amt">{{price.pilot}}</span><span class="per">na učenca na leto, za {{pilot.years}} leti</span><p>Samo za prvih {{pilot.max}} šol, ki z nami preizkusijo {{name}} in nam povedo, kaj naj izboljšamo.</p></div>
   </div>
-  <p class="small">Cena velja za vsakega učenca, ki ga licenca zajema. Končni znesek bo naveden na predračunu.</p>
+  <p class="small">Cena velja za vsakega učenca, ki ga licenca zajema, za 12 mesecev od dogovorjenega začetka. Izvajalec ni zavezanec za DDV, zato DDV ni obračunan. Končni znesek bo naveden na predračunu.</p>
 
   <section id="podari" hidden>
     <h2>Podari {{name}}</h2>
@@ -121,15 +131,17 @@
   <h2>Pogosta vprašanja</h2>
   <div class="faq">
     <details><summary>Kdo je upravljavec osebnih podatkov učencev?</summary>
-      <p>Pri šolski licenci je šola upravljavec osebnih podatkov, {{name}} pa obdelovalec, ki podatke obdeluje samo po navodilih šole. Pred začetkom skupaj podpišemo pogodbo o obdelavi osebnih podatkov (28. člen Splošne uredbe o varstvu podatkov). Podrobno: <a href="/zasebnost.html">Obvestilo o varstvu osebnih podatkov</a>.</p></details>
+      <p>Pri šolski licenci je za podatke razreda (učenčev vzdevek in avatar, oznaka, ki jo vpiše učitelj, točke na lestvici razreda ter rezultati pri temah in kvizih, ki jih učitelj da razredu) upravljavec šola, {{name}} pa obdelovalec, ki te podatke obdeluje samo po navodilih šole. Za učenčev profil (pogovori z inštruktorjem, napredek, nastavitve), ki ga ustvari starš ali učenec od 15. leta sam, je upravljavec Jakob Skerbiš. Pred začetkom skupaj podpišemo pogodbo o obdelavi osebnih podatkov (28. člen Splošne uredbe o varstvu podatkov). Podrobno: <a href="/zasebnost.html">Obvestilo o varstvu osebnih podatkov</a>.</p></details>
     <details><summary>Ali učitelj vidi pogovore učencev z inštruktorjem?</summary>
       <p>Ne. Učitelj vidi samo rezultate pri temah, ki jih je dodelil razredu, in lestvico lige razreda. Zasebni pogovori, druge teme in ostali podatki iz profila učenca ostanejo zasebni.</p></details>
     <details><summary>Ali lahko najprej preizkusimo?</summary>
-      <p>Da. Učiteljski račun je brezplačen, zato lahko učitelj razred odpre takoj: <a href="/ucitelj.html">Za učitelje</a>. <span class="pilot-only">Za prvih {{pilot.max}} šol, ki želijo daljši preizkus, je na voljo pilotna cena.</span></p></details>
+      <p>Da. Učiteljski račun je brezplačen, zato lahko učitelj razred odpre takoj: <a href="/ucitelj.html">Za učitelje</a>. Brez licence ima vsak učenec svoj paket: {{trialDays}} brezplačen preizkus, nato brezplačni paket z {{freeDaily}} vprašanji inštruktorju na dan. Razredne naloge in lige razreda delujejo tudi brez licence. <span class="pilot-only">Za prvih {{pilot.max}} šol, ki želijo daljši preizkus, je na voljo pilotna cena.</span></p></details>
     <details><summary>Kaj se zgodi, ko učenec zamenja šolo?</summary>
       <p>Učenec svoj napredek prenese na novo šolo ali ga izvozi. Oboje je vedno brezplačno, tudi brez licence.</p></details>
     <details><summary>Kako dolgo velja licenca?</summary>
       <p>Licenca velja 12 mesecev od dogovorjenega začetka.<span class="pilot-only"> Pilotna cena velja {{pilot.years}} leti.</span></p></details>
+    <details><summary>Kdo je izvajalec?</summary>
+      <p>Jakob Skerbiš, e-naslov: <a href="mailto:zasebnost@evklid.app">zasebnost@evklid.app</a>. Izvajalec ni zavezanec za DDV.</p></details>
   </div>
 
   <h2 id="narocilo">Naročilo ali povpraševanje</h2>
@@ -178,6 +190,16 @@
       <p class="small muted">Podatke uporabimo samo za odgovor na to naročilo in za predračun. Samodejnih sporočil ne pošiljamo.</p>
     </form>
   </div>
+  <footer class="mkt-foot">
+    <a href="/">Evklid</a>
+    <a href="/o-evklidu">O Evklidu</a>
+    <a href="/zakaj-evklid">Zakaj Evklid</a>
+    <a href="/starsi.html">Za starše</a>
+    <a href="/sole">Za učitelje in šole</a>
+    <a href="/prenesi?lang=sl">Prenesi aplikacijo</a>
+    <a href="/zasebnost.html">Zasebnost</a>
+    <a href="/pogoji.html">Pogoji uporabe</a>
+  </footer>
 </main>
 <script src="/sole.js"></script>
 <script type="module" src="/zagon.js" data-moduli="/tipkovnica-strani.js /vir.js"></script>

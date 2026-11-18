@@ -5,6 +5,7 @@ import { normCard } from "./flashcards.js";
 import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
 import { PHOTO_MAX_DAYS, dropFormerPhotos } from "./pilot-naloge.js";
 import { pocistiStare } from "./kopije.js";
+import { eraseAccount } from "./accounts/izbris.js";
 
 // Šifrirani stolpci (SEALED) in štetje neberljivih (encryptionStats) sta v crypto-polje.js: rabi ju tudi lahka nit
 // za nočni preizkus kopij (server/kopije-preizkus.js), ki ne sme naložiti tega modula in vsega, kar ta uvaža.
@@ -21,7 +22,7 @@ export const RETENTION = {
   emailLogDays: 365,
   // Dnevnik obvestil na telefon (enako): 90 dni.
   pushLogDays: 90,
-  // Račun, ki e-naslova ni potrdil v toliko dneh in nima profilov, plačil ali seje, se izbriše.
+  // Nepotrjen račun brez plačil: brez profilov in seje toliko dni po registraciji, s profili toliko dni brez dejavnosti.
   unverifiedDays: 30,
   // Odpiranje delov aplikacije (točka B2, server/odpiranje-delov.js MAX_DNI): po toliko dneh brez odprtja.
   odpiranjeDni: 120,
@@ -205,36 +206,46 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
   return out;
 }
 
-// Nepotrjeni računi: samo brez profilov (profil brez potrditve ustvari le gost, ki je kasneje dobil račun;
-// njegovi podatki so lahko v katerikoli tabeli: grafi, igre, urnik …), brez plačil ali kode, brez veljavne seje
-// in ne gostje (goste čisti server/accounts/guest.js). Previdno: ob dvomu račun ostane.
+// Nepotrjeni računi (ne gostje; goste čisti server/accounts/guest.js), brez plačil ali kode:
+// - brez profilov: po RETENTION.unverifiedDays od registracije, če nimajo veljavne seje;
+// - s profili (#747: profil in učenje že pred potrditvijo, pregled 2): po RETENTION.unverifiedDays brez dejavnosti
+//   (vprašanja, dogodki učenja, točke, odprtje profila na napravi). Seja tu ne šteje, ker velja dolgo.
+// Izbris kot DELETE /api/account (server/accounts/izbris.js): poraba ostane šteta za omrežje. Ob dvomu račun ostane.
 function deleteStaleUnverified(db, { nowIso, before }) {
   if (!hasTable(db, "parents") || !hasCol(db, "students", "parent_id")) return 0;
   const cols = db.prepare("PRAGMA table_info(parents)").all().map((c) => c.name);
   const paid = ["stripe_customer_id", "sub_id", "sub_status", "promo_until", "bonus_until"].filter((c) => cols.includes(c)).map((c) => `p.${c} IS NULL`);
+  const none = (table, sql) => (hasTable(db, table) ? `AND NOT EXISTS (${sql})` : "");
+  const active = [
+    none("question_log", "SELECT 1 FROM question_log q JOIN students s ON s.id = q.student_id WHERE s.parent_id = p.id AND q.day >= @day"),
+    none("events", "SELECT 1 FROM events e JOIN students s ON s.id = e.student_id WHERE s.parent_id = p.id AND e.created_at >= @before"),
+    none("xp_events", "SELECT 1 FROM xp_events x JOIN students s ON s.id = x.student_id WHERE s.parent_id = p.id AND x.created_at >= @before"),
+    none("profile_devices", "SELECT 1 FROM profile_devices d JOIN students s ON s.id = d.student_id WHERE s.parent_id = p.id AND d.last_seen >= @before"),
+  ].join(" ");
   const ids = db
     .prepare(
       `SELECT p.id FROM parents p
-       WHERE p.is_guest = 0 AND p.email_verified_at IS NULL AND p.created_at < ?
+       WHERE p.is_guest = 0 AND p.email_verified_at IS NULL AND p.created_at < @before
          ${paid.map((c) => `AND ${c}`).join(" ")}
-         AND NOT EXISTS (SELECT 1 FROM parent_sessions ps WHERE ps.parent_id = p.id AND ps.expires_at > ?)
-         AND NOT EXISTS (SELECT 1 FROM students s WHERE s.parent_id = p.id)`,
+         AND (
+           (NOT EXISTS (SELECT 1 FROM students s WHERE s.parent_id = p.id)
+             AND NOT EXISTS (SELECT 1 FROM parent_sessions ps WHERE ps.parent_id = p.id AND ps.expires_at > @now))
+           OR (EXISTS (SELECT 1 FROM students s WHERE s.parent_id = p.id) ${active})
+         )`,
     )
-    .all(before, nowIso)
+    .all({ before, now: nowIso, ...(hasTable(db, "question_log") ? { day: before.slice(0, 10) } : {}) })
     .map((r) => r.id);
+  let n = 0;
   for (const id of ids) {
-    db.exec("BEGIN IMMEDIATE");
     try {
-      db.prepare("DELETE FROM students WHERE parent_id = ?").run(id);
-      db.prepare("DELETE FROM parents WHERE id = ?").run(id);
-      db.prepare("UPDATE audit_log SET parent_id = NULL WHERE parent_id = ?").run(id);
-      db.exec("COMMIT");
+      eraseAccount(db, id, { transaction: true });
+      n++;
     } catch {
-      db.exec("ROLLBACK");
+      // račun ostane (naslednji dan znova)
     }
   }
-  if (ids.length) audit(db, { actor: "system", action: "unverified_deleted", target: `n:${ids.length}` });
-  return ids.length;
+  if (n) audit(db, { actor: "system", action: "unverified_deleted", target: `n:${n}` });
+  return n;
 }
 
 // Ob zagonu: opozorilo brez ključa, šifriranje v ozadju (paket za paketom, strežnik med tem odgovarja),

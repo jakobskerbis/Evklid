@@ -27,7 +27,7 @@ test("v aplikaciji z zastavico deli most, drugje brskalnik", () => {
 test("zastavica, ki jo vbrizga aplikacija, nastavi window.EvklidNative.shareImage", () => {
   const window = { EvklidNative: { other: 2 } };
   new Function("window", NATIVE_FLAG_JS)(window);
-  assert.deepEqual(window.EvklidNative, { other: 2, shareImage: 1 });
+  assert.deepEqual(window.EvklidNative, { other: 2, shareImage: 1, tisk: 1 });
   assert.equal(shareMode(APP_UA, window.EvklidNative), "bridge");
 });
 

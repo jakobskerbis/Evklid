@@ -20,5 +20,5 @@ stanje: osnutek
   - nenegativno celo število: največ $M$ potez
   - napaka: realna števila padajo v nedogled
 - Število inverzij
-  - zamenjava sosedov ga zmanjša za natanko $1$
+  - zamenjava napačno urejenih sosedov ga zmanjša za natanko $1$
   - $100$ dlet obratno: $4950$ zamenjav

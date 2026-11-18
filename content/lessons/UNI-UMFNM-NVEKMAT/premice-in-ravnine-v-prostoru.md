@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -60,7 +60,7 @@ Ne. Če imata skupno točko $T$ in nista vzporedni, je vektor $\vec n_1 \times \
 
 - *Točka $T(x_1, y_1, z_1)$ od ravnine:* vstavi $T$ v levo stran in deli z dolžino normale:
 $$\delta = \frac{|a x_1 + b y_1 + c z_1 - d|}{\sqrt{a^2 + b^2 + c^2}}.$$
-- *Točka $T$ od premice:* paralelogram z robovoma $\overrightarrow{AT}$ in $\vec e$ ima ploščino $|\overrightarrow{AT} \times \vec e|$; višina na osnovnico $|\vec e|$ je
+- *Točka $T$ od premice:* paralelogram s stranicama $\overrightarrow{AT}$ in $\vec e$ ima ploščino $|\overrightarrow{AT} \times \vec e|$; višina na osnovnico $|\vec e|$ je
 $$\delta = \frac{|\overrightarrow{AT} \times \vec e|}{|\vec e|}.$$
 - *Mimobežni premici:* paralelepiped z robovi $\overrightarrow{AB}$, $\vec e_1$, $\vec e_2$ ima prostornino $|\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2)|$; višina je
 $$\delta = \frac{|\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2)|}{|\vec e_1 \times \vec e_2|}.$$
@@ -265,7 +265,7 @@ Premica je množica $\{\vec r_A + t\,\vec e ;\ t \in \mathbb{R}\}$, torej premak
 
 **Hessova normalna oblika.** Če enačbo delimo z $|\vec n|$, dobimo $\vec n_0 \cdot \vec r = p$ z enotsko normalo $\vec n_0$. Pri $p \ge 0$ je $p$ razdalja ravnine od izhodišča, vrednost $\vec n_0 \cdot \vec r_T - p$ pa predznačena razdalja: predznak pove, na kateri strani ravnine leži $T$.
 
-**Povezava s sistemi.** Lega treh ravnin je rešljivost sistema treh linearnih enačb s tremi neznankami. Ena rešitev pomeni eno skupno točko, premica rešitev pomeni pramen ravnin skozi premico, brez rešitve pa vsaj dve vzporedni ravnini ali »prizmo«. Pogoj $\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2) = 0$ je mešani produkt, ki je enak determinanti matrike iz treh vektorjev. To bo pojasnila tema o determinantah.
+**Povezava s sistemi.** Lega treh ravnin je rešljivost sistema treh linearnih enačb s tremi neznankami. Ena rešitev pomeni eno skupno točko, premica rešitev pomeni šop ravnin skozi premico, brez rešitve pa vsaj dve vzporedni ravnini ali »prizmo«. Pogoj $\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2) = 0$ je mešani produkt, ki je enak determinanti matrike iz treh vektorjev. To bo pojasnila tema o determinantah.
 
 ## Preveri se
 
@@ -326,7 +326,7 @@ d | prosti člen enačbe ravnine | d = \vec n \cdot \vec r_A
 \vec n | normala ravnine | \vec n = (a, b, c) | | pravokotna na ravnino
 \delta | razdalja (točke od ravnine, premice; med premicama) | \delta = \frac{\lvert a x_1 + b y_1 + c z_1 - d \rvert}{\sqrt{a^2 + b^2 + c^2}} | | zveza velja za razdaljo točke T od ravnine
 \varphi | kot med premicama, med ravninama ali med premico in ravnino | \cos\varphi = \frac{\lvert \vec e_1 \cdot \vec e_2 \rvert}{\lvert \vec e_1 \rvert\,\lvert \vec e_2 \rvert} | | 0° ≤ φ ≤ 90°; pri premici in ravnini sin φ
-\Sigma, \Sigma_1, \Sigma_2 | ravnina (ime ravnine) | | | Σ₁, Σ₂ vzporedni ravnini
+\Sigma, \Sigma_1, \Sigma_2 | ravnina (ime ravnine) | | | Σ₁, Σ₂ dve različni ravnini
 A | dana točka premice (ravnine)
 B | točka druge premice | | | pri ravnini skozi tri točke druga točka
 C | tretja točka ravnine

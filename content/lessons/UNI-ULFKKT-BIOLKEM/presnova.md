@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -361,5 +361,6 @@ F | Faradayeva konstanta | | C/mol
 R | splošna plinska konstanta | | J/(mol\,K)
 T | temperatura | | K
 n_c | število podenot $c$ v obroču | | –
+c | oznaka citokroma $c$ in podenote $c$ ATP-sintaze | | – | ime beljakovine, ne koncentracija
 \eta | izkoristek | | –
 :::

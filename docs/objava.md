@@ -49,6 +49,7 @@ PDF razreda, poglavja in celega predmeta se ne izdela več na telefonu. Ob vsaki
 - `EVKLID_FREE_DAILY_QUESTIONS=10` – brezplačni paket: 10 vprašanj na dan.
 - `EVKLID_FREE_POOL_USD=10` – brezplačni paket: vsi brezplačni učenci skupaj porabijo največ 10 $ (≈ 8,7 €) na mesec, nato do 1. v mesecu samo Vadnica in lekcije.
 - `EVKLID_FREE_STUDENT_USD=0.2` – brezplačni paket: največ 0,2 $ na brezplačnega učenca na mesec.
+- `EVKLID_UNVERIFIED_DAY_USD=0.2` – vsi računi z nepotrjenim e-naslovom (in gostje) skupaj: največ 0,2 $ na dan (≈ 400 vprašanj s Haikujem), znotraj mesečne meje brezplačnih; nato do polnoči samo Vadnica in lekcije (»potrdi e-naslov«).
 - `EVKLID_MONTHLY_BUDGET_USD=50` – opozorilo v dnevniku pri 80 % porabe.
 - Ciljna meritev natančnosti po spremembi lekcij ali prompta **ne teče več na strežniku** (16. 11. 2026: strežnik in meritev
   skupaj sta presegla 512 MB paketa Starter in Render je strežnik ponovno zagnal). Teče v GitHubu ob vsaki združitvi v main,

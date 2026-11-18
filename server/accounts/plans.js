@@ -12,7 +12,9 @@ export const MAX_CHILDREN = 4;
 // 2026-11-11 (j 10. 11., združeno 11. 11.): eno obvestilo za Moje zapiske #563 (odstavek »Moji zapiski«: prepis rokopisa,
 // fotografija se ne shrani) in ustno spraševanje #564 (stikalo starša za glas, tudi mikrofon v Inštruktorju).
 // 2026-11-14 (j 14. 11., »Vse ja«): alineja »Kratka anketa po 7 dneh« (B3, #674).
-export const PRIVACY_VERSION = "2026-11-14";
+// 2026-11-18 (j 17. 11.): strani usklajene s kodo (#817): fotografije 7 dni, kdo vidi podatke, šola upravljavec
+// podatkov razreda, šifrirana kopija v EU (R2), študenti.
+export const PRIVACY_VERSION = "2026-11-18";
 
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.
 // Cene po stopnjah (j 2026-11-04, »Cene z najmanj 75 % dobička«, Predlog A): cena velja za profil in sledi
@@ -296,6 +298,9 @@ const envUsd = (k, d) => {
 };
 export const freeMonthlyPoolUsd = () => envUsd("EVKLID_FREE_POOL_USD", 10);
 export const freeStudentMonthlyUsd = () => envUsd("EVKLID_FREE_STUDENT_USD", 0.2);
+// Vsi nepotrjeni računi in gostje skupaj na dan (#747 pregled 2), znotraj skupne meje brezplačnih: 0,2 $ ≈ 400 vprašanj
+// s Haikujem (≈ 40 novincev po 10 vprašanj), da množica izmišljenih naslovov ne porabi mesečnega bazena v enem dnevu.
+export const unverifiedDayUsd = () => envUsd("EVKLID_UNVERIFIED_DAY_USD", 0.2);
 
 // ---------- paketi pred testom (enkratno plačilo, j 2026-10-30, cene j 2026-11-04) ----------
 // Poln dostop za en profil za 7 ali 14 dni, brez naročnine. aiUsd = največja poraba AI v času paketa; ko je
@@ -334,8 +339,9 @@ export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find
 // paketa (najslabši primer, worstProfit), skupaj z brezplačnim repom 0,2 $ na profil nad mejo (subscriptionCeiling
 // spodaj; meja paketa = vrednost − rep). Hitri način je vštet v mejo: podrobne razlage do meje / 1,15
 // (to se pokaže učencu kot »še N razlag«), nato hitri model (Haiku) še FAST_TAIL (15 % podrobnega dela) do meje. Nad
-// mejo velja dnevna meja brezplačnega paketa (freeDailyQuestions, 10 vprašanj na dan, hitri model) do 1. v mesecu
-// ali do dokupa (server/usage.js studentBudget/overCeiling, server/accounts/index.js dailyLimitFor).
+// mejo profil vsak dan do konca obdobja paketa (ali do dokupa) dela kot brezplačni paket: dnevna meja vprašanj
+// (freeDailyQuestions, 10 na dan, hitri model) in brezplačni rep, razporejen po dnevih (j 2026-11-17; server/usage.js
+// overCeiling/tailToday, server/accounts/index.js dailyLimitFor).
 export const AI_GUARANTEE_USD = { OS: 1.9, SS: 2.9, FAKS: 4.5 };
 export const AI_GUARANTEE_YEAR_USD = { OS: 1.7, SS: 2.6, FAKS: 3.8 };
 export const FAMILY_POOL_USD = { druzina: { month: 3.2, year: 2.6 }, druzina_student: { month: 5.5, year: 4.3 } };
@@ -354,7 +360,7 @@ export const guaranteeUsd = (level, interval = "month") => {
   return capTo(table[level] ?? table.OS, eurMonth);
 };
 // Brezplačni rep (j 2026-11-04): nad mejo paketa naročnik dela kot brezplačni profil, z enako mesečno mejo
-// (freeStudentMonthlyUsd, 0,2 $ na profil; server/usage.js overFreeTail). Ta rep je vštet v vrednosti iz tabele:
+// (freeStudentMonthlyUsd, 0,2 $ na profil; po dnevih server/usage.js tailToday, ves rep overFreeTail). Ta rep je vštet v vrednosti iz tabele:
 // meja paketa = vrednost − 0,2 $ × profili paketa (Družina 4), nikoli pod 0. Najslabši primer je tako
 // meja + rep = vrednost iz tabele (ali manj).
 export const subscriptionCeiling = (totalUsd, profiles = 1) => Math.max(0, Math.round(((totalUsd || 0) - freeStudentMonthlyUsd() * profiles) * 1000) / 1000);

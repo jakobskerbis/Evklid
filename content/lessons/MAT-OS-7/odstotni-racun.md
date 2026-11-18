@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -40,9 +40,9 @@ Pri Maji je osnova $20$ metov, delež $12$ zadetih metov, odstotek $60\,\%$.
 
 **Slika: dvojna premica.** Nad premico zapišemo odstotke, pod njo iste točke v metih. Obe lestvici se raztezata premo sorazmerno:
 
-| Odstotek | $0\,\%$ | $10\,\%$ | $60\,\%$ | $100\,\%$ |
-|---|---|---|---|---|
-| Maja (meti) | $0$ | $2$ | $12$ | $20$ |
+| Odstotek | $10\,\%$ | $60\,\%$ | $100\,\%$ |
+|---|---|---|---|
+| Maja (meti) | $2$ | $12$ | $20$ |
 
 Ker sta lestvici premo sorazmerni, velja zveza $\dfrac{d}{o} = \dfrac{p}{100}$. Iz nje dobimo:
 

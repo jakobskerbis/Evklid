@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 
 // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
 globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
-const { levelChoices } = await import("../public/level-picker.js");
+const { levelChoices, ravenChoices } = await import("../public/level-picker.js");
 
 // Glava Inštruktorja (j, 4. 11.): predmet, način in letnik se zamenjajo kar v glavi.
 test("tutor header: year choices keep the school type and mark the current year", () => {
@@ -32,4 +32,21 @@ test("tutor header: subject, mode and year are dropdowns, the programme stays te
   assert.match(fn, /schoolSubjectsFor\(next\.educational_track/, "predmet, ki ga novi razred nima, se zamenja");
   const css = readFileSync(new URL("../public/style.css", import.meta.url), "utf8");
   assert.match(css, /\.chat-head #chat-state \.chip-pick \.dd-btn \{[^}]*border: 0/, "tih meni brez okvirja");
+});
+
+test("tutor header: SŠ year and math level (OR/VR/not sure) share one dropdown so the header fits 360 px (2026-11-18)", () => {
+  const s = { educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik VR", subject: "MAT" };
+  const r = ravenChoices(s);
+  assert.deepEqual(r.map((x) => x.settings.curriculum_level), ["4. letnik OR", "4. letnik VR", "4. letnik"]);
+  assert.equal(r.find((x) => x.current).settings.curriculum_level, "4. letnik VR");
+  const y = levelChoices(s);
+  assert.equal(y.find((x) => x.current).settings.curriculum_level, "4. letnik VR", "letnik obdrži raven");
+  assert.ok(y.every((x) => / VR$/.test(x.label)), "raven je v napisu letnika");
+  assert.deepEqual(ravenChoices({ educational_track: "SREDNJA_SOLA", curriculum_level: "2. letnik gimnazija" }), []);
+  assert.deepEqual(ravenChoices({ educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred" }), []);
+  const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  const fn = app.slice(app.indexOf("function renderState("), app.indexOf("// Formule v odgovorih inštruktorja"));
+  assert.doesNotMatch(fn, /pick\("raven"/, "brez četrtega izbirnega seznama");
+  assert.match(fn, /<optgroup label=/);
+  assert.match(fn, /value\.startsWith\("r"\)/);
 });

@@ -9,6 +9,8 @@ import { lessonVersion } from "./tisk-predpomnilnik.js";
 import { splitFormulaCells } from "../public/rich.js";
 import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "../public/vodoravna-tabela.js";
 import { BRAND } from "./brand.js";
+import { dateText } from "../public/datum.js";
+import { IKONE_HEAD } from "./ikone.js";
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -117,7 +119,7 @@ export function lessonHtml(t, lesson, n) {
   </article>`;
 }
 
-const today = () => new Date().toLocaleDateString("sl-SI", { day: "numeric", month: "long", year: "numeric" });
+const today = () => dateText(new Date(), "sl-SI"); // »17. novembra 2026« (public/datum.js)
 const NOTE = `<p class="muted small">Interaktivni poskusi, simulacije, sprotno preverjanje in vaje so na voljo v aplikaciji Evklid.
         Lekcije, ki jih učitelj še ni pregledal, se lahko še spremenijo.</p>`;
 
@@ -401,7 +403,7 @@ const PRIPRAVA = (total) => `
 export function shell(title, content, css = "", total = 0) {
   return `<!doctype html>
 <html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(title)}</title>
+<title>${esc(title)}</title>${IKONE_HEAD}
 <link rel="stylesheet" href="/vendor/katex/katex.min.css">
 <link rel="stylesheet" href="/risbe.css">
 <style>
