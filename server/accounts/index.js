@@ -620,6 +620,34 @@ export function mountAccounts(app, store, opts = {}) {
         return null;
     }
   }
+  // Konec obdobja meje AI (ISO) za brezplačni rep po dnevih (server/usage.js tailToday): mesečno okno traja do istega
+  // dne naslednjega meseca, preizkus in bonus do svojega konca; null = koledarski mesec.
+  function aiPeriodEnd(studentId) {
+    const iso = aiPeriodStart(studentId);
+    const start = Date.parse(iso || "");
+    if (!Number.isFinite(start)) return null;
+    const r = rightsFor(studentId);
+    const p = getParent(ownerOf(studentId));
+    const tier = r.personalTier === "paid" ? unpaidTier(p) || "paid" : r.personalTier;
+    const until = tier === "trial" && Date.parse(p?.trial_ends_at || "") > Date.now() ? p.trial_ends_at : tier === "bonus" ? p?.bonus_until : null;
+    const end = Date.parse(until || "");
+    if (Number.isFinite(end) && end > start) return new Date(end).toISOString();
+    // Mesečna okna, sidrana na obnovitev (konec obdobja, darila, kode): konec okna je prvi datum sidra, štet nazaj, ki je
+    // za začetkom (obnovitev 31.: okno 28. 2. – 31. 3., ne do 28. 3.; pregled #821). Datum sidra velja le blizu meseca od
+    // začetka (± 3 dni) in v prihodnosti; okno zunaj mreže (preklop mesečno ↔ letno premakne sidro, paidWindow obdrži
+    // staro okno, npr. 1. 11. – 1. 12. s sidrom 10.): mesec od začetka, ne 10. 11. (sicer ves rep v enem dnevu).
+    const month = addMonthsUtc(start, 1);
+    const anchor = Date.parse((tier === "paid" ? p?.sub_period_end : tier === "gift" ? p?.gift_until : tier === "promo" ? p?.promo_until : null) || "");
+    if (Number.isFinite(anchor)) {
+      for (let k = 240; k >= 0; k--) {
+        const t = addMonthsUtc(anchor, -k);
+        if (t <= start) continue;
+        if (t >= month - 3 * DAY && t <= month + 3 * DAY && t > Date.now()) return new Date(t).toISOString();
+        break;
+      }
+    }
+    return new Date(month).toISOString();
+  }
   // Vrednost paketa (meja + brezplačni rep) v $: trda meja (server/usage.js capsFor), največ to.
   const guaranteeTotalFor = (studentId) => subGuarantee(studentId)?.total ?? null;
   // Meja paketa (brez brezplačnega repa, plans.js subscriptionCeiling); naročnik z mejo 0 ostane zajamčen (MIN_CEILING_USD).
@@ -696,6 +724,7 @@ export function mountAccounts(app, store, opts = {}) {
   // Besedilo zavrnitve: preizkus in bonus → poziv k naročnini (ne »spet jih dobiš«); brezplačni paket z namigom.
   function aiBlockFor(studentId, code) {
     const g = subGuarantee(studentId);
+    // Preizkus in bonus (nopay): rep ni razporejen po dnevih (spreadOf), ob koncu repa poziv k naročnini.
     if (/^block\.freeTail(Topup|Birth)?$/.test(code) && (g?.nopay === "trial" || g?.nopay === "bonus")) code = "block.trialOut";
     if (code === "block.freeMonth" || code === "block.freePool") return freeBlock(studentId, code);
     return { error: BLOCK_TEXT[code], code };
@@ -735,14 +764,15 @@ export function mountAccounts(app, store, opts = {}) {
       schools.clearCache();
     }
   }
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, priorSpentOf: pilotPriorSpent, pilotOf: (id) => rightsFor(id).personalTier === "pilot", onLog: schoolOnLog, onUse: pilotOnUse });
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, periodEndOf: aiPeriodEnd, spreadOf: (id) => !subGuarantee(id)?.nopay, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, priorSpentOf: pilotPriorSpent, pilotOf: (id) => rightsFor(id).personalTier === "pilot", onLog: schoolOnLog, onUse: pilotOnUse });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
   // null = brez meje (stari profili, meja 0 v nastavitvah). Mesečni delež še vedno omeji usage.blockReason.
   const dailyLimitFor = (studentId, r = rightsFor(studentId)) => {
     if (r.dailyQuestions === null || aiUnlimited(studentId)) return null;
-    // Nad trdo mesečno mejo naročnine (zajamčeni AI paketa: podrobni del in hitri način, plans.js FAST_TAIL): kot brezplačni paket.
+    // Nad trdo mesečno mejo naročnine (zajamčeni AI paketa: podrobni del in hitri način, plans.js FAST_TAIL): kot brezplačni
+    // paket vsak dan do konca obdobja (dnevni del brezplačnega repa preveri server/usage.js tailToday).
     if (aiUsage.overCeiling(studentId)) return freeDailyQuestions();
     const owner = ownerOf(studentId);
     const credit = owner ? credits.balance(owner) / Math.max(1, childIds(owner).length) : 0;
