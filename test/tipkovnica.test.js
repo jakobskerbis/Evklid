@@ -454,7 +454,11 @@ test("⌫ kot Gboard (j, 18. 11.): brez dvoklika/troklika; držanje po 1,5 s po 
   assert.doesNotMatch(js, /BS_MULTI_MS|deleteChunk|sentenceBack|bsAt/, "ni več dvoklika in troklika na ⌫");
   assert.match(js, /const BS_WORD_MS = 1500;/);
   assert.match(js, /if \(a\.word\) deleteWord\(f\);\s*else if \(!undoCorrection\(f, corr\)\) backspace\(f\);/, "dotik = en znak, prvi ⌫ po samopopravku ga razveljavi");
-  assert.match(js, /classList\.contains\("vnos-izrisan"\)\) return backspace\(f\)/, "v polju s formulo po znakih");
+  assert.match(js, /return !!r && r\[0\] === r\[1\] && !f\.classList\.contains\("vnos-izrisan"\)/, "po besedah samo navadno besedilo s kazalcem");
+  assert.match(js, /if \(!wordWise\(f\)\) return backspace\(f\)/, "v polju s formulo po znakih");
+  assert.match(js, /down !== d \|\| !wordWise\(target\(\)\)\) return;/, "kjer ni po besedah, ostane 75 ms po znakih");
+  assert.match(js, /nl === r\[0\] - 1 \? nl : Math\.max\(wordsBack\(f\.value, r\[0\], 1\), nl \+ 1\)/, "nova vrstica je svoj korak");
+  assert.match(js, /if \(S\.field !== field\) clearTimers\(\);[^\n]*\n\s*S\.field = field;/, "držan ⌫ ne briše v novem polju");
   assert.match(js, /a\.a === "bs" && lg\)/, "⌫ takoj po drsenju zbriše drsano besedo");
   assert.equal(wordsBack("Prva poved. Druga beseda", 24), 18);
 });

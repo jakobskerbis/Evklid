@@ -220,7 +220,7 @@ for (const [name, opts] of [
     assert.ok(held.length < 11 && held.length >= 4 && "ena dva tri".startsWith(held), `držanje: »${held}«`);
     await page.waitForTimeout(500);
     // dolgo držanje (> 1,5 s): po besedah, zato se ustavi na meji besede; v polju s formulo (vnos-izrisan) ostane po znakih
-    const long = Array(6).fill("abcdefghijklmnopqrstuvwxyz").join(" ");
+    const long = Array(6).fill("abcdefghijklmnopqrstuvwxyz".repeat(2)).join(" ");
     const hold = async (ms) => {
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.mouse.down();
@@ -235,9 +235,11 @@ for (const [name, opts] of [
     await page.waitForTimeout(500);
     await page.evaluate(() => document.getElementById("t").classList.add("vnos-izrisan"));
     await setText(long);
-    const chars = await hold(2100);
+    const chars = await hold(3000);
     await page.evaluate(() => document.getElementById("t").classList.remove("vnos-izrisan"));
     assert.ok(long.startsWith(chars) && chars.length < long.length && !chars.endsWith(" ") && !long.slice(chars.length).trim().includes(" "), `formula: po znakih »${chars}«`);
+    // tudi po 1,5 s še vedno na 75 ms (ne na 200 ms kot po besedah): v 3 s ~35 znakov, pri 200 ms bi jih bilo ~23
+    assert.ok(long.length - chars.length >= 28, `formula: hitro po znakih (${long.length - chars.length})`);
     await page.waitForTimeout(500);
 
     // enaka višina v vseh plasteh

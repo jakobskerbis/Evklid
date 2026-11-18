@@ -119,6 +119,7 @@ export function openKeyboard(field, { layer } = {}) {
   if (S.field && S.field !== field && !autoEligible(S.field)) release(S.field);
   if (S.sys === field) S.sys = null;
   S.explicit = !autoEligible(field);
+  if (S.field !== field) clearTimers(); // držan ⌫/←/→ ne briše naprej v novem polju
   S.field = field;
   S.cfg = cfg;
   S.kind = kind;
@@ -683,7 +684,14 @@ function backspace(f) {
 
 // ⌫ kot Gboard (j, 18. 11.): vsak dotik zbriše en znak; držanje ponavlja po en znak, po BS_WORD_MS držanja po besedah.
 const BS_WORD_MS = 1500;
-/** Držanje ⌫ dlje od BS_WORD_MS: zbriše besedo pred kazalcem (izbrano besedilo kot en ⌫). */
+/** Ali bi deleteWord res zbrisal celo besedo (navadno besedilo s kazalcem brez izbire; ne polje s formulo, število, e-pošta). */
+function wordWise(f) {
+  if (!f) return false;
+  if (f.isContentEditable) return !!getSelection()?.isCollapsed;
+  const r = sel(f);
+  return !!r && r[0] === r[1] && !f.classList.contains("vnos-izrisan");
+}
+/** Držanje ⌫ dlje od BS_WORD_MS: zbriše besedo pred kazalcem (izbrano besedilo kot en ⌫); nova vrstica je svoj korak. */
 function deleteWord(f) {
   if (f.isContentEditable) {
     const s = getSelection();
@@ -692,8 +700,9 @@ function deleteWord(f) {
   }
   const r = sel(f);
   // Polje s formulo (public/predogled-vnosa.js): »beseda« je ves zapis »(1)/(2« in bi pustila »)«; tam po en ⌫.
-  if (!r || r[0] !== r[1] || f.classList.contains("vnos-izrisan")) return backspace(f);
-  const from = wordsBack(f.value, r[0], 1);
+  if (!wordWise(f)) return backspace(f);
+  const nl = f.value.lastIndexOf("\n", r[0] - 1);
+  const from = nl === r[0] - 1 ? nl : Math.max(wordsBack(f.value, r[0], 1), nl + 1);
   if (from === r[0]) return;
   f.setRangeText("", from, r[0], "end");
   f.setSelectionRange(from, from);
@@ -1223,7 +1232,8 @@ function wireBoard() {
         if (a.a === "bs") {
           const d = down;
           d.wd = setTimeout(() => {
-            if (down !== d) return;
+            // samo kjer se res briše po besedah; drugje (polje s formulo v Inštruktorju, število, izbira) ostane po znakih na 75 ms
+            if (down !== d || !wordWise(target())) return;
             clearInterval(d.iv);
             const word = { ...rep, word: true };
             act(word);
