@@ -216,8 +216,9 @@ export const arterija = {
   osnova: "snop",
   ime: "Arterija",
   opis: "Prečni prerez mišične arterije v žilno-živčnem snopu. Stena ima tri plasti: notranjo (endotelij in valovita elastična membrana), srednjo (debela plast krožnih gladkih mišičnih celic) in zunanjo (vezivo).",
-  zacetek: { m: 40, sredisce: A },
-  sredisceBlizu: [A[0], A[1] + 690],
+  // začetek na steni (medija ob notranji elastični membrani), ne v sredini svetline: igla kaže na tkivo, pri 400× je v
+  // vidnem polju rob svetline, valovita elastična membrana in medija (svetlina r < ~520 µm, medija do ~770 µm)
+  zacetek: { m: 40, sredisce: [A[0], A[1] + 620] },
   isci: "Poišči valovito notranjo elastično membrano in krožno potekajoče gladke mišične celice v mediji. Primerjaj steno z veno desno.",
 };
 export const vena = {
@@ -226,7 +227,8 @@ export const vena = {
   osnova: "snop",
   ime: "Vena",
   opis: "Vena v istem snopu kot arterija: svetlina je večja in nepravilna, stena tanjša, srednja plast gladkih mišic je tanka, zunanja plast veziva pa debela.",
-  zacetek: { m: 40, sredisce: V },
+  // začetek na tanki steni (svetlina do ~345 µm v tej smeri, stena ~350–400 µm), ne v svetlini
+  zacetek: { m: 40, sredisce: [V[0], V[1] + 370] },
   isci: "Primerjaj debelino stene vene in arterije. V svetlini so eritrociti.",
 };
 export const zivec = {

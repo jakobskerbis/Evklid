@@ -373,8 +373,8 @@ test("mikroskop: pri atomih se sredina premakne na najbližjo molekulo, ne ostan
   assert.equal(najblizjaMolekula(id2, k, reze), null);
   const id3 = new Uint8Array(k * k); // prazno (0 = ni molekule)
   assert.equal(najblizjaMolekula(id3, k, reze), null);
-  // šiv sveta molekul ni blizu okroglih števil (začetki preparatov, npr. arterija pri y = 150 µm)
-  for (const x of [0, 0.5, 1, 2, 4, 150, -1100, 900, 1150.9]) {
+  // šiv sveta molekul ni blizu okroglih števil (začetki preparatov, npr. arterija pri y = 770 µm, vena pri y = 620 µm)
+  for (const x of [0, 0.5, 1, 2, 4, 150, 620, 770, -1100, 900, 1150.9]) {
     const f = fino(x);
     assert.ok(f > 100 && f < 3900, `${x} µm → ${f} nm`);
   }
