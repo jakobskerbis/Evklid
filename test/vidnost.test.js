@@ -11,7 +11,7 @@ import { BRAND } from "../server/brand.js";
 import SL from "../public/i18n/sl.js";
 import { startupFiles } from "../server/startup-files.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS } from "../server/accounts/plans.js";
-import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, PUBLIC_PAGES, DRAFT_PAGES, NOINDEX_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
+import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, OBJAVI_MERITEV, PUBLIC_PAGES, DRAFT_PAGES, NOINDEX_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
 import { presolve, claimNote } from "../server/live-check.js";
 import { latestMeasurement, measurementError, pctText, slDate, summarize, tableMd, updateDoc, finalNumbers, codeResult, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
 
@@ -172,8 +172,9 @@ test("stran /o-evklidu: brez JavaScripta, cene iz cenika, pogosta vprašanja", (
   for (const [, href] of html.matchAll(/<a [^>]*href="(\/[^"#]*)"/g)) assert.ok(PUBLIC_PAGES.includes(href.split("?")[0]) || DRAFT_PAGES.includes(href.split("?")[0]) || NOINDEX_PAGES.includes(href.split("?")[0]), href);
 });
 
-test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenika, brez imen in cen tekmecev", () => {
-  const html = whyPage();
+test("stran /zakaj-evklid (predloga z meritvijo, podano izrecno): številke iz docs/meritve, cene iz cenika, brez imen in cen tekmecev", () => {
+  // Javna stran meritve zdaj ne kaže (OBJAVI_MERITEV, glej naslednji test); tu preverimo, da predloga razdelka ostane pravilna.
+  const html = whyPage(latestMeasurement());
   assert.ok(!/\{\{[\w:-]+\}\}|<!--\/?ce:/.test(html), "vse spremenljivke in pogojni deli so obdelani");
   const scripts = [...html.matchAll(/<script\b([^>]*)>/g)].map((m) => m[1]);
   assert.ok(scripts.length === 1 && /application\/ld\+json/.test(scripts[0]), "edini <script> je podatkovni (schema.org)");
@@ -244,10 +245,41 @@ test("stran /zakaj-evklid: številke natančnosti iz docs/meritve, cene iz cenik
   // Povezave na stran: /o-evklidu, vstopna stran brez JavaScripta, llms.txt (z isto meritvijo).
   assert.ok(aboutPage().includes('<a href="/zakaj-evklid">Zakaj Evklid</a>'));
   assert.ok(landingNoscript().includes('href="/zakaj-evklid"'));
-  const llms = llmsTxt();
-  assert.ok(llms.includes(`[Zakaj Evklid](${ORIGIN}/zakaj-evklid)`) && llms.includes(accuracy().sentence) && llms.includes(accuracy().sentenceEn));
+  const llms = llmsTxt(m);
+  assert.ok(llms.includes(`[Zakaj Evklid](${ORIGIN}/zakaj-evklid)`) && llms.includes(accuracy(m).sentence) && llms.includes(accuracy(m).sentenceEn));
   assert.ok(llms.includes("Natančnosti drugih orodij nismo merili.") && llms.includes("Other tools were not measured.") && !/\d+ od \d+ rešenih/.test(llms));
   assert.ok(llms.includes("račune v enačbah, odvodih in daljših izračunih preveri Evklidov program") && !llms.includes("številke izračuna program"));
+});
+
+test("javne strani ne objavljajo odstotka napak, dokler meritev ni neodvisna (j, 18. 11. 2026)", () => {
+  assert.equal(OBJAVI_MERITEV, false);
+  // Kar dobi obiskovalec (whyPage brez argumenta), iskalnik (llms.txt) in aplikacija iz trgovine.
+  for (const html of [whyPage(), whyPage(undefined, true)]) {
+    const text = textOf(html);
+    assert.ok(!/\d+(?:,\d+)? ?%/.test(text), "brez odstotkov na strani");
+    assert.ok(!/\d+ od \d+/.test(text) && !text.includes("Kaj smo izmerili") && !/izmerjen\w* natančnost/i.test(text + html.split("<body>")[0]), "brez meritve in brez trditve o izmerjeni natančnosti");
+    assert.ok(text.includes("Natančnosti Evklida še nismo neodvisno izmerili, zato o njej ne objavljamo številk."));
+    assert.ok(text.includes("ocenil drug model umetne inteligence, ne človek") && text.includes("ocenili ljudje"));
+    assert.ok(text.includes("Natančnosti še nismo neodvisno izmerili, zato številk o napakah ne objavljamo."), "Česa Evklid (še) ne zna");
+    assert.ok(!/\{\{|<!--\/?ce:/.test(html));
+    for (const [, id] of html.matchAll(/href="#([\w-]+)"/g)) assert.ok(html.includes(`id="${id}"`), id);
+    const faq = ldBlocks(html)[0];
+    assert.equal(faq.mainEntity.length, (html.match(/<details/g) || []).length);
+    const q = faq.mainEntity.find((e) => e.name === "Kako natančen je Evklid?");
+    assert.ok(q && q.acceptedAnswer.text.startsWith("Natančnosti še nismo neodvisno izmerili") && !/%/.test(q.acceptedAnswer.text));
+  }
+  const llms = llmsTxt();
+  assert.ok(!/Izmerjena natančnost|Measured accuracy|% odgovorov|% of answers|\d+ od \d+/.test(llms));
+  assert.ok(llms.includes("Natančnosti inštruktorja še nismo neodvisno izmerili") && llms.includes("has not been independently measured yet"));
+  // Številke iz meritve ne gredo na nobeno drugo javno stran.
+  const m = latestMeasurement();
+  const pcts = [...new Set(m.vrstice.map((r) => `${pctText(r)} %`))];
+  for (const page of ["index.html", "o-evklidu.html", "starsi.html", "sole.html", "zasebnost.html", "garancija.html"]) {
+    const t = readFileSync(new URL(`../public/${page}`, import.meta.url), "utf8");
+    for (const p of pcts) assert.ok(!t.includes(p) && !t.includes(p.replace(" ", "&nbsp;")), `${page}: ${p}`);
+  }
+  for (const p of pcts) assert.ok(!aboutPage().includes(p) && !Object.values(SL).some((v) => typeof v === "string" && v.includes(p)), p);
+  assert.ok(!/kaj smo izmerili|izmerjen\w* natančnost/i.test(textOf(aboutPage())), "/o-evklidu ne obljublja meritve");
 });
 
 test("meritev 4. 11. 2026 (sam model): samo zapisani odstotki, z opozorili; meritve s preverjanjem stran ne izmišlja", () => {
@@ -337,12 +369,12 @@ test("brez uporabne meritve strani delujejo: razdelek z meritvijo se skrije, ni�
       const html = whyPage(bad);
       const text = textOf(html);
       assert.ok(html.includes("<h1>Zakaj Evklid</h1>") && !/\{\{|<!--\/?ce:/.test(html), "stran se sestavi");
-      assert.ok(!text.includes("Kaj smo izmerili") && !/\d %/.test(text) && !text.includes("Kako natančen je Evklid?") && !text.includes("Meritev natančnosti je majhna"), "brez razdelka in brez številk");
+      assert.ok(!text.includes("Kaj smo izmerili") && !/\d %/.test(text) && !text.includes("Meritev natančnosti je majhna") && text.includes("Natančnosti Evklida še nismo neodvisno izmerili"), "brez razdelka in brez številk, namesto njih pošten opis");
       for (const [, id] of html.matchAll(/href="#([\w-]+)"/g)) assert.ok(html.includes(`id="${id}"`), id);
       const faq = ldBlocks(html)[0];
       assert.equal(faq.mainEntity.length, (html.match(/<details/g) || []).length);
       const llms = llmsTxt(bad);
-      assert.ok(llms.includes("[Zakaj Evklid]") && !/Izmerjena natančnost|Measured accuracy|undefined|null/.test(llms));
+      assert.ok(llms.includes("[Zakaj Evklid]") && !/Izmerjena natančnost|Measured accuracy|undefined|null/.test(llms) && llms.includes("Natančnosti inštruktorja še nismo neodvisno izmerili"));
     }
     assert.ok(aboutPage().includes("<h1>Evklid je slovenski AI inštruktor za šolo</h1>"));
   } finally {
