@@ -166,6 +166,23 @@ test("Preizkus 3 (17. 11.): odgovori načina B in »samo rezultat« pred popravk
   assert.equal(cacheKey(razstavi, a, "chat"), prej(razstavi, a));
 });
 
+test("Preizkus 3, krog 2 (18. 11.): odgovori načina B z »b3« in »b4« se ne vrnejo, način A in samo rezultat v načinu A ostaneta", async () => {
+  const { cacheKey } = await import("../server/app.js");
+  const crypto = await import("node:crypto");
+  const s = { subject: "MAT", track: "REGULAR", educational_track: "OSNOVNA_SOLA", study_program: "", study_course: "", curriculum_level: "2. razred", personality_setting: "nevtralna", language: "sl" };
+  const norm = (q) => q.toLowerCase().replace(/\s+/g, " ").replace(/[\s.!?]+$/, "").trim();
+  const prej = (q, st, ...extra) => crypto.createHash("sha256").update([norm(q), st.subject, st.track, st.educational_track, st.study_program, st.study_course, st.curriculum_level, st.solving_mode, st.personality_setting, 0, ...extra].join("|")).digest("hex");
+  const b = { ...s, solving_mode: "B" };
+  const a = { ...s, solving_mode: "A" };
+  const tine = "Tine ima 45 centov. Kupi liziko, ki stane 28 centov. a) Koliko centov mu ostane? b) Babica mu da še 3 kovance po 10 centov. Koliko centov ima zdaj?";
+  assert.notEqual(cacheKey(tine, b, "chat"), prej(tine, b, "b3"), "način B: »b3« se ne vrne");
+  assert.notEqual(cacheKey(tine, b, "chat"), prej(tine, b, "b4"), "način B: »b4« (#835) se ne vrne");
+  assert.equal(cacheKey(tine, b, "chat"), prej(tine, b, "b5"));
+  assert.equal(cacheKey(tine, a, "chat"), prej(tine, a), "način A: ključ kot doslej");
+  const dva = "Samo končna rezultata, brez postopka: a) pH HCl s koncentracijo 0,0010 mol/L b) koncentracija 4,0 g NaOH v 250 mL";
+  assert.equal(cacheKey(dva, a, "chat"), prej(dva, a, "r2"), "samo rezultat v načinu A: »r2« ostane");
+});
+
 test("#835 (18. 11.): odgovori načina B pred pravili brez posploševanja (»b3«) se ne vrnejo, način A ostane", async () => {
   const { cacheKey } = await import("../server/app.js");
   const crypto = await import("node:crypto");
@@ -176,6 +193,7 @@ test("#835 (18. 11.): odgovori načina B pred pravili brez posploševanja (»b3�
   const b = { ...s, solving_mode: "B" };
   const a = { ...s, solving_mode: "A" };
   assert.notEqual(cacheKey(q, b, "chat"), prej(q, b, "b3"), "način B: stari ključ");
-  assert.equal(cacheKey(q, b, "chat"), prej(q, b, "b4"), "način B: nov ključ");
+  assert.notEqual(cacheKey(q, b, "chat"), prej(q, b, "b4"), "način B: »b4« (#835) se po #836 ne vrne več");
+  assert.equal(cacheKey(q, b, "chat"), prej(q, b, "b5"), "način B: nov ključ (#836)");
   assert.equal(cacheKey(q, a, "chat"), prej(q, a), "način A obdrži ključ");
 });

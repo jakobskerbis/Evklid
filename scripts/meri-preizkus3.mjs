@@ -18,6 +18,7 @@ import { normalizeSettings } from "../server/settings.js";
 import { SETTINGS_TOOLS } from "../server/chat-settings.js";
 import { stripMeta, stripChoices } from "../server/meta.js";
 import { parseOpenBlocks } from "../server/odpri.js";
+import { prepusceno, OGRODJE } from "./meri-preizkus3-ocena.mjs";
 
 const arg = (name, def) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -33,29 +34,23 @@ if (SUHO) process.env.EVKLID_MOCK = "1";
 const IZBRANE = arg("naloge", "") ? new Set(arg("naloge", "").split(",").map((x) => x.trim())) : null;
 
 // Stari prompt nastane iz trenutnega (brez git-a): vsaka sprememba popravka nazaj. Vsak kos mora biti v promptu natanko enkrat.
+// Od 18. 11. (Preizkus 3, krog 2, PR #836) je »stari« main po #811 (pred definicijo seznama vaj j 18. 11. in krajšo obliko
+// za OŠ 1.–4. brez »Preverimo«); primerjava s promptom pred #811 je v docs/spremembe-prompta.md (17. 11.).
 function stariPrompt(nov) {
   let s = nov;
   const zamenjaj = (od, v) => {
     if (s.split(od).length !== 2) throw new Error(`kos ni v promptu natanko enkrat: ${od.slice(0, 60)}`);
     s = s.replace(od, () => v);
   };
-  const izreži = (zacetek, konec) => {
-    const a = s.indexOf(zacetek);
-    const b = s.indexOf(konec, a);
-    if (a < 0 || b < 0 || s.indexOf(zacetek, a + 1) >= 0) throw new Error(`kos ni v promptu natanko enkrat: ${zacetek.slice(0, 60)}`);
-    s = s.slice(0, a) + s.slice(b + konec.length);
-  };
-  zamenjaj("ostane, kjer jo zahteva predmet; kar naloga naroči narisati, vedno nariši z blokom, kadar se da (Orodja aplikacije).", "ostane, kjer jo zahteva predmet.");
-  izreži("Naloga s podvprašanji (a, b, c …) je ena naloga:", "Vaja in gumbi so šele za zadnjim delom.\n");
-  izreži("OŠ 1.–4. razred (1.–4. leto šolanja):", "le z gumbi `IZBIRE`.\n");
-  zamenjaj("OŠ 5. razred (5. leto šolanja): namesto točk 1–6", "OŠ 1.–5. razred (1.–5. leto šolanja): namesto točk 1–6");
-  zamenjaj(
-    "v istem odgovoru odgovoriš na vsa, vsako v svoji vrstici (»a) **…**«, »b) **…**«), in nobenega ne prepustiš učencu; taka naloga šteje kot ena. Seznam vaj istega tipa pod eno številko (npr. »Izračunaj: a) …, b) …, c) …«) je več nalog: velja Domača naloga za oddajo.",
-    "velja to za eno podvprašanje; za več podvprašanj velja Domača naloga za oddajo."
-  );
-  zamenjaj("»moram oddati«; podvprašanja a), b), c) ene naloge niso več nalog, seznam vaj istega tipa pod eno številko pa je):", "»moram oddati«):");
-  zamenjaj("(v načinu B okoli 120 besed; pri nalogi s podvprašanji vsi deli v istem odgovoru, vsak zelo kratko)", "(v načinu B okoli 120 besed)");
-  izreži(" Kar naloga naroči narisati (graf, diagram", "`{\"x\": [a, b], \"y\": [c, d]}`.");
+  zamenjaj("tudi v načinu B je vsak korak razložen (za OŠ 1.–4. glej spodaj):", "tudi v načinu B je vsak korak razložen:");
+  zamenjaj("je ena naloga, tudi če deli med seboj niso povezani: v istem odgovoru", "je ena naloga: v istem odgovoru");
+  zamenjaj("veljata le za več ločenih nalog in za seznam vaj, kot ga določa Domača naloga za oddajo).", "veljata za več ločenih nalog, tudi za seznam vaj istega tipa pod eno številko).");
+  zamenjaj("Seznam vaj (glej Domača naloga za oddajo; npr. »Izračunaj: a) 3 · 4, b) 5 · 6, c) 7 · 8«) je več nalog", "Seznam vaj istega tipa pod eno številko (npr. »Izračunaj: a) …, b) …, c) …«) je več nalog");
+  zamenjaj("seznam vaj pa je: deli pod eno številko, ki se vsi rešijo z istim postopkom, le z drugimi števili; deli, ki zahtevajo drugo pravilo ali postopek, so ena naloga, tudi pod enim navodilom):", "seznam vaj istega tipa pod eno številko pa je):");
+  zamenjaj("V načinu B ločene naloge rešiš z razlago, eno za drugo, in po vsaki ponudiš, da naslednjo poskusi sam; pri seznamu vaj rešiš prvo z razlago in ponudiš, da ostale poskusi sam.", "V načinu B rešiš vse z razlago, eno za drugo, in po vsaki ponudiš, da naslednjo poskusi sam.");
+  zamenjaj("Preverbe ali »Preverimo« (razen kadar preizkus zahteva naloga ali otrok), okvirja", "Preverbe, okvirja");
+  zamenjaj("razen če otrok prosi za več ali za preverbo; podobno nalogo ponudiš le z gumbi `IZBIRE`, ne z novo nalogo v besedilu; ko jo otrok izbere ali zanjo prosi, jo napiši (brez rešitve).\n", "razen če otrok prosi za več; podobno nalogo ponudiš le z gumbi `IZBIRE`.\n");
+  zamenjaj("inženirski predmeti; v načinu B ne za OŠ 1.–4.):", "inženirski predmeti):");
   return s;
 }
 
@@ -70,6 +65,9 @@ const NALOGE = [
   { id: "4", vrsta: "deli", s: OS(7, "MAT"), q: "Sem v 7. razredu osnovne šole.\nJakna stane 48 €. Najprej jo pocenijo za 15 %, čez en mesec pa novo ceno podražijo za 15 %.\na) Koliko stane jakna po pocenitvi?\nb) Koliko stane po podražitvi?\nc) Za koliko odstotkov je končna cena nižja od prvotne?", deli: [n(/40[,.]80?\s*€/), n(/46[,.]92\s*€/), n(/2[,.]25\s*%/)] },
   { id: "100", vrsta: "deli", s: { educational_track: "UNIVERZA", curriculum_level: "1. letnik", subject: "MAT" }, q: "Sem študent 1. letnika matematike, predmet Algebra 1.\nDana je matrika A = [[4, 1], [2, 3]].\na) Izračunaj lastne vrednosti matrike A.\nb) Za vsako lastno vrednost določi lasten vektor.\nc) Zapiši A = P D P⁻¹ z diagonalno matriko D in s tem izračunaj A⁵.", deli: [n(/(?<![\d,])5(?![\d,])/), n(/\(1\s*,\s*-?\s*[-−]?2\)|\(1;\s*[-−]2\)|-2|−2/), n(/2\s?094/)] },
   { id: "121", vrsta: "deli", s: OS(9, "KEM"), q: "Sem v 9. razredu osnovne šole.\na) Zapiši racionalni formuli propana in propena. Kateri je nasičen in kateri nenasičen ogljikovodik?\nb) Kateri od njiju razbarva bromovico? Zapiši enačbo te reakcije in povej, kako se imenuje ta vrsta reakcije.\nc) Zapiši in uredi enačbo popolnega gorenja propana.", deli: [n(/C_?\{?3\}?H_?\{?8\}?/), n(/adicij/i), n(/3\s*CO_?\{?2/)] },
+  // 1b. seznam vaj (odločitev j 18. 11.): vsi deli z istim postopkom, le druga števila; v načinu B reši prvega (ali prve) in
+  // ponudi, da naslednje poskusi sam, ne da vseh rezultatov.
+  { id: "s1", vrsta: "seznam", s: OS(6, "MAT"), q: "Sem v 6. razredu osnovne šole.\nIzračunaj:\na) 3/4 + 1/8\nb) 2/3 + 1/6\nc) 5/6 + 1/4\nd) 1/2 + 3/10\ne) 2/5 + 3/10", deli: [n(/frac\{7\}\{8\}|(?<![\d,])7\s*\/\s*8/), n(/frac\{5\}\{6\}|(?<![\d,])5\s*\/\s*6/), n(/frac\{13\}\{12\}|13\s*\/\s*12|1\s*\\?frac\{1\}\{12\}/), n(/frac\{4\}\{5\}|(?<![\d,])4\s*\/\s*5|frac\{8\}\{10\}/), n(/frac\{7\}\{10\}|(?<![\d,])7\s*\/\s*10/)] },
   // 1. vsi deli pri »samo rezultat« in enodelni »samo rezultat« (regresija #799)
   { id: "45", vrsta: "rezultat", s: SS(4, "KEM"), q: "Sem v 4. letniku gimnazije.\nSamo končna rezultata, brez postopka:\na) Kolikšen je pH raztopine HCl s koncentracijo 0,0010 mol/L?\nb) Kolikšna je množinska koncentracija raztopine, ki v 250 mL vsebuje 4,0 g NaOH?", deli: [n(/(?<![\d,])3(?:[,.]0+)?(?![\d,])/), n(/0[,.]40?\s*(?:\\?\s*)?(?:\\mathrm\{)?mol/)] },
   { id: "17", vrsta: "rezultat", s: { ...SS(3, "MAT"), curriculum_level: "3. letnik OR" }, q: "Sem v 3. letniku gimnazije, maturo bom pisal na osnovni ravni.\nSamo končni rezultat, brez postopka: v aritmetičnem zaporedju je a₃ = 15 in a₇ = 31. Kolikšna je vsota prvih 20 členov?", deli: [n(/(?<![\d,])900(?![\d,])/)] },
@@ -126,9 +124,6 @@ const navadno = (t) =>
     .replace(/\\[,;:! ]|\\quad|~/g, " ")
     .replace(/−/g, "-");
 const besede = (t) => (t.replace(/\$[^$]*\$/g, " x ").match(/[\p{L}\p{N}]+/gu) || []).length;
-// Prepuščen del ali vprašanje, ali naj nadaljuje (Preizkus 3: »b) pa lahko nato poskusiš sam«, »Ju rešiva po vrsti?«).
-const PREPUSCENO = /(?:[b-e]\)|naloge? [b-e]\)?|ostal\w*|naslednj\w*)[^.\n]{0,60}(?:poskusi\w* sam|lahko poskusiš)|ali naj nadaljujem|rešujeva (?:po vrsti|eno za drugo)|ju rešiva po vrsti|nadaljujeva z [b-e]\)/i;
-const OGRODJE = /podatki\s*:|iščemo\s*:|načrt\s*:|preverba|zapomni si|\bvaja\s*:|naloga (?:je )?preverja/i;
 
 function oceni(n, raw) {
   const v = vidno(raw);
@@ -136,12 +131,14 @@ function oceni(n, raw) {
   const deli = n.deli.map((alts) => alts.some((re) => re.test(nv)));
   const bloki = parseOpenBlocks(raw).filter((b) => b.kind === "graph" || b.kind === "sketch");
   const vrstic = v.split("\n").filter((l) => l.trim()).length;
-  const o = { vsiRezultati: deli.every(Boolean), deli, prepusceno: PREPUSCENO.test(v), znakov: v.length, besed: besede(v), vrstic, ogrodje: OGRODJE.test(v), risba: bloki.length > 0, bloki: bloki.map((b) => b.kind) };
+  const o = { vsiRezultati: deli.every(Boolean), deli, prepusceno: prepusceno(v), znakov: v.length, besed: besede(v), vrstic, ogrodje: OGRODJE.test(v), risba: bloki.length > 0, bloki: bloki.map((b) => b.kind) };
   // Uspeh po vrsti naloge.
   if (n.vrsta === "deli" || n.vrsta === "drugo") o.ok = o.vsiRezultati && !o.prepusceno;
   if (n.vrsta === "rezultat") o.ok = o.vsiRezultati && !o.prepusceno && !o.ogrodje && vrstic <= n.deli.length * 2 + 1;
   if (n.vrsta === "mladi") o.ok = o.vsiRezultati && !o.prepusceno && !o.ogrodje && o.znakov <= 550;
   if (n.vrsta === "graf") o.ok = o.vsiRezultati && o.risba;
+  // Seznam vaj: prvi del pravilen, ponudba naslednjih, ne vsi rezultati (Domača naloga za oddajo, j 17. in 18. 11.).
+  if (n.vrsta === "seznam") o.ok = o.deli[0] && !o.vsiRezultati && o.prepusceno;
   return o;
 }
 
@@ -221,7 +218,7 @@ outer: for (let k = 0; k < PONOVI; k++) {
   }
 }
 
-const vrste = ["deli", "rezultat", "mladi", "graf", "drugo", "vodenje"];
+const vrste = ["deli", "seznam", "rezultat", "mladi", "graf", "drugo", "vodenje"];
 console.log("\n| vrsta | prompt | uspešno | povp. znakov |");
 console.log("|---|---|---|---|");
 const povzetek = [];
