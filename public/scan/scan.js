@@ -32,7 +32,7 @@ const fresh = () => ({
 const S = fresh();
 let owner = null; // profil, čigar naloga je v S (drug profil začne na praznem zaslonu)
 let aiSeq = 0; // odgovor AI za prejšnjo nalogo ne prepiše nove
-let aiOpomba = ""; // AI Act
+let aio = null; // public/ai-oznaka/ (AI Act)
 let stream = null;
 let frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
 let graphView = null;
@@ -836,7 +836,7 @@ async function solveAi() {
   if (S.sought) body.sought = S.sought;
   try {
     const out = await D.api(`/api/students/${sid()}/scan/solve`, { method: "POST", body });
-    aiOpomba = await import("../ai-oznaka/ai-oznaka.js").then((m) => m.opomba(D.getStudent()?.settings, "resitev")).catch(() => "");
+    aio ||= await import("../ai-oznaka/ai-oznaka.js").then(async (m) => (await m.nalozi(), m)).catch(() => null);
     if (seq !== aiSeq || S.mode !== "solution") return;
     if (out.mock || !out.solution) {
       S.ai = { error: t("scan.noSolve") };
@@ -920,7 +920,7 @@ function renderSolution(box) {
     <section class="card scan-answer" aria-label="${esc(t("scan.answer"))}"${r.ai ? ' data-ai-generated="true"' : ""}>
       <div class="scan-answer-head"><span class="scan-label">${esc(t("scan.answer"))}</span>${badge}</div>
       <div class="scan-answer-tex">${r.answer.key ? `<p>${esc(t(r.answer.key))}</p>` : ""}${answerTex(r.answer.tex)}</div>
-      ${r.answer.approx ? `<div class="scan-approx">${math(r.answer.approx)}</div>` : ""}${r.ai ? aiOpomba : ""}
+      ${r.answer.approx ? `<div class="scan-approx">${math(r.answer.approx)}</div>` : ""}${r.ai && aio ? aio.opombaHtml(D.getStudent()?.settings, "resitev") : ""}
     </section>
     ${r.methods.length > 1 ? `<div class="scan-methods"><span class="scan-label">${esc(t("scan.method"))}</span><div class="seg" role="tablist">${r.methods.map((mm, i) => `<button type="button" role="tab" data-method="${i}" class="${i === S.method ? "active" : ""}" aria-selected="${i === S.method}">${esc(mm.name || t(`scan.m.${mm.id}`))}</button>`).join("")}</div></div>` : ""}
     <section class="scan-steps" aria-label="${esc(t("scan.steps"))}"${r.ai ? ' data-ai-generated="true"' : ""}>

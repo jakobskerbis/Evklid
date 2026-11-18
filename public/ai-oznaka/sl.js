@@ -4,14 +4,14 @@
 // bere iste datoteke (mobile/src/lib/ai-oznaka.ts). »mlad« = OŠ 1.–5. razred, sicer »star«.
 export default {
   "aio.mlad": "Evklid je računalniški pomočnik (umetna inteligenca), ne človek. Včasih se zmoti.",
-  "aio.star": "Pogovarjaš se z umetno inteligenco (AI), ne s človekom. Lahko se zmoti.",
+  "aio.star": "Pogovarjaš se z umetno inteligenco (AI), ne s človekom. Lahko se zmoti – pomembne rezultate preveri.",
   "aio.znak": "Odgovarja umetna inteligenca (AI), ne človek",
   "aio.uvodMlad": "Evklid je računalniški pomočnik",
-  "aio.opisMlad": "Evklid ni človek, ampak računalniški program (umetna inteligenca). Pomaga ti pri nalogah, a se včasih zmoti. Če ti kaj ni jasno, vprašaj učitelja ali starše.",
+  "aio.opisMlad": "Evklid ni človek, ampak računalniški program (umetna inteligenca). Pomaga ti pri nalogah, a se včasih zmoti. Če ti kaj ni jasno ali se ti zdi narobe, vprašaj učitelja ali starše.",
   "aio.uvodStar": "Evklid je umetna inteligenca (AI)",
   "aio.opisStar": "Pogovarjaš se z umetno inteligenco (AI), ne s človekom. Evklid ti pomaga razumeti snov, a se lahko zmoti, zato pomembne rezultate preveri.",
   "aio.razumem": "Razumem",
   "aio.resitev": "Rešitev je pripravila umetna inteligenca (AI), ne človek. Lahko se zmoti.",
-  "aio.ocena": "Oceno je pripravila umetna inteligenca (AI), ne učitelj. Lahko se zmoti.",
+  "aio.ocena": "Točke in razlago je pripravila umetna inteligenca (AI), ne učitelj. Lahko se zmoti – če se ne strinjaš, klikni »Ne strinjam se«.",
   "aio.prepis": "Prepis je pripravila umetna inteligenca (AI). Preveri, ali je pravilen.",
 };

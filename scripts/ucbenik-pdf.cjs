@@ -185,7 +185,7 @@ function optimizePdf(buf) {
 // Cel predmet z več kot PDF_BOOK_MAX_LESSONS lekcijami: sestavi ga pypdf iz PDF-jev razredov (Chromium ga v enem
 // kosu ne izriše). Zaznamki (vsak razred ena veja) in povezave kazal razredov ostanejo. Vrne Buffer ali vrže napako.
 // Ob spremembi sestave ali pregleda povečaj PDF_MERGE_VERSION (server/ucbenik-pdf.js).
-// Strojno berljiva oznaka AI (EU AI Act čl. 50(2), server/ai-oznaka.js): Info in XMP (IPTC DigitalSourceType).
+// Podporni metapodatki AI (server/ai-oznaka.js): Info in XMP (IPTC DigitalSourceType).
 // meta = JSON { info, xmp }; brez meta ostane PDF brez oznake.
 const OZNACI_PY = `
 import json
@@ -648,14 +648,19 @@ async function main() {
         for (const px of [0, 3, 6, 9]) {
           zamik = px;
           made = await renderPdf(context, server.base, t, px ? { ...cfg, PDF_CSS: `${cfg.PDF_CSS}\n.lesson > .crumb { padding-top: ${px}px; }` } : cfg);
-          const marked = markAiPdf(made.buf, aiMeta);
-          if (marked) made.buf = marked;
           small = optimizePdf(made.buf);
           buf = small || made.buf;
           ({ errors, info } = await checkPdf(buf, made.dom, { domain: BRAND.domain, maxBytes: cfg.PDF_MAX_BYTES, tocPages: made.tocPages, fontNames: cfg.PDF_FONT_NAMES, requiredFonts: cfg.PDF_FONT_REQUIRED, strict }));
           if (!errors.some((e) => e.includes("odrezan košček"))) break;
         }
         const { dom } = made;
+        // Oznaka AI enkrat, po izbiri zamika (ne spremeni izrisa, pregled zgoraj velja); nato znova qpdf.
+        const marked = markAiPdf(made.buf, aiMeta);
+        if (marked) {
+          small = optimizePdf(marked);
+          buf = small || marked;
+          if (buf.length > cfg.PDF_MAX_BYTES) errors.push(`PDF z oznako AI ima ${(buf.length / 1e6).toFixed(1)} MB (meja ${(cfg.PDF_MAX_BYTES / 1e6).toFixed(1)} MB)`);
+        }
         if (!small && strict) errors.push("qpdf ni nameščen ali ni uspel (stiskanje in linearizacija)");
         if (strict && !(await hasAiMeta(buf).catch(() => false))) errors.push("PDF nima oznake AI (Info, XMP; pypdf)");
         if (dom.lessons.length !== t.lessons) errors.push(`stran za tisk ima ${dom.lessons.length} lekcij, razred jih ima ${t.lessons}`);

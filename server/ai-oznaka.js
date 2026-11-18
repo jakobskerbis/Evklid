@@ -1,4 +1,5 @@
-// Strojno berljiva oznaka vsebine, ki jo je ustvarila umetna inteligenca (EU AI Act, čl. 50(2); j 18. 11. 2026).
+// Podporni metapodatki za vsebino, ki jo je ustvarila umetna inteligenca (j 18. 11. 2026; v zvezi z AI Act čl. 50,
+// a sami po sebi ne pomenijo izpolnitve čl. 50(2): besedilo po kodeksu 2026 velja za eno plast).
 // Ena definicija za odgovore API (polje ai_generated), strani za tisk (meta v <head>) in PDF-je učbenika
 // (scripts/ucbenik-pdf.cjs: Info in XMP). Izraz za vrsto vira je iz besednjaka IPTC Digital Source Type
 // (»trainedAlgorithmicMedia« = vsebina, ki jo je ustvaril model AI); isti izraz uporabljata C2PA in IPTC Photo Metadata.

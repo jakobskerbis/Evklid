@@ -1,5 +1,5 @@
-// EU AI Act, čl. 50 (j 18. 11. 2026): učenec ve, da govori z AI (50(1), public/ai-oznaka/), vsebina AI je strojno
-// označena (50(2), server/ai-oznaka.js): odgovori API, DOM, strani za tisk in PDF-ji učbenika.
+// AI Act čl. 50 (j 18. 11. 2026): učenec ve, da govori z AI (50(1), public/ai-oznaka/); podporni metapodatki
+// (server/ai-oznaka.js): odgovori API, DOM, strani za tisk in PDF-ji učbenika.
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -10,7 +10,7 @@ import { createApp } from "../server/app.js";
 import { openDb } from "../server/db.js";
 import { startupFiles } from "../server/startup-files.js";
 import { shell } from "../server/textbook-print.js";
-import { pdfTemplateHash } from "../server/ucbenik-pdf.js";
+import { pdfTemplateHash, PDF_MERGE_VERSION, PDF_AI_MARK_VERSION } from "../server/ucbenik-pdf.js";
 import { AI_HEAD, IPTC_AI, PDF_AI_INFO, PDF_AI_XMP } from "../server/ai-oznaka.js";
 import SL from "../public/ai-oznaka/sl.js";
 import MAIN from "../public/i18n/sl.js";
@@ -112,6 +112,11 @@ test("tisk: strani z lekcijami in gradivi imajo meta oznako AI, pdfTemplateHash 
   assert.ok(shell("T", "C", "", 3, { ai: true }).includes(AI_HEAD));
   // Zgoščena vrednost predloge pred to spremembo (main 1ac517c7): oznaka v <head> ne spremeni PDF-jev.
   assert.equal(pdfTemplateHash(), "df45527bed788e2a");
+  // Že objavljeni PDF-ji so brez oznake: različica oznake je v zgoščeni vrednosti vsakega PDF-ja (in sestave), zato
+  // naslednji zagon »PDF učbenika« vse izdela znova enkrat (samo čas CI).
+  assert.equal(PDF_AI_MARK_VERSION, 1);
+  assert.equal(PDF_MERGE_VERSION, 2);
+  assert.match(fs.readFileSync(path.join(ROOT, "server", "ucbenik-pdf.js"), "utf8"), /sha\(JSON\.stringify\(\[pdfTemplateHash\(\), id, x\.label, body, PDF_AI_MARK_VERSION\]\)\)/);
   await withApp({}, async ({ req }) => {
     const book = await req("GET", "/ucbenik/MAT-OS-8");
     assert.equal(book.status, 200);
@@ -142,3 +147,81 @@ test("PDF učbenika: oznaka AI v Info in XMP ostane po qpdf in pri sestavljenem 
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+let chromium = null;
+try {
+  chromium = await require("playwright").chromium.launch();
+} catch {}
+test("brskalnik: obvestilo enkrat na profil (tudi brez localStorage), »Razumem« vrne fokus v polje, kopija z »— Evklid (AI)«", { skip: chromium ? false : "Playwright Chromium ni nameščen", timeout: 120000 }, async () => {
+  await withApp({}, async ({ base }) => {
+    const p = await chromium.newPage();
+    const errors = [];
+    p.on("pageerror", (e) => errors.push(e.message));
+    try {
+      await p.goto(base + "/healthz");
+      const r = await p.evaluate(async (SL) => {
+        document.head.innerHTML = "";
+        document.body.innerHTML = '<div class="chat-head"><h1 id="chat-title">Nov</h1></div><div id="messages"><div class="msg assistant" data-ai-generated="true">Rešitev je 68.</div><div class="msg user">Koliko je 23 + 45?</div></div><form id="composer"><textarea id="input"></textarea><div class="ai-note" data-i18n="chat.aiNote">x</div></form>';
+        localStorage.setItem("evklid.lang", "sl");
+        const m = await import("/ai-oznaka/ai-oznaka.js");
+        const out = {};
+        const mladi = { educational_track: "OSNOVNA_SOLA", curriculum_level: "3. razred" };
+        await m.oznaciKlepet({ id: 7, settings: mladi });
+        await m.oznaciKlepet({ id: 7, settings: mladi });
+        out.note = document.querySelector(".ai-note").textContent;
+        out.i18n = document.querySelector(".ai-note").hasAttribute("data-i18n");
+        out.uvod = document.querySelectorAll(".aio-uvod").length;
+        out.znak = document.querySelectorAll(".aio-znak").length;
+        out.naslov = document.querySelector(".aio-uvod strong").textContent;
+        document.querySelector(".aio-uvod button").click();
+        out.fokus = document.activeElement?.id;
+        out.poKliku = document.querySelectorAll(".aio-uvod").length;
+        await m.oznaciKlepet({ id: 7, settings: mladi });
+        out.znova = document.querySelectorAll(".aio-uvod").length;
+        await m.oznaciKlepet({ id: 8, settings: { educational_track: "SREDNJA_SOLA", curriculum_level: "2. letnik" } });
+        out.drugi = document.querySelectorAll(".aio-uvod").length;
+        out.noteStar = document.querySelector(".ai-note").textContent;
+        document.querySelector(".aio-uvod button").click();
+        // localStorage vrže (zasebno okno, polna shramba): obvestilo se pokaže in zapre brez napake
+        const [g, s] = [Storage.prototype.getItem, Storage.prototype.setItem];
+        Storage.prototype.getItem = () => { throw new Error("ni shrambe"); };
+        Storage.prototype.setItem = () => { throw new Error("ni shrambe"); };
+        try {
+          await m.oznaciKlepet({ id: 9, settings: {} });
+          out.brezShrambe = document.querySelectorAll(".aio-uvod").length;
+          document.querySelector(".aio-uvod button").click();
+          out.brezShrambePoKliku = document.querySelectorAll(".aio-uvod").length;
+        } finally {
+          [Storage.prototype.getItem, Storage.prototype.setItem] = [g, s];
+        }
+        // kopiranje: odgovor AI dobi oznako, učenčevo sporočilo ne
+        const copy = (el) => {
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          getSelection().removeAllRanges();
+          getSelection().addRange(range);
+          const ev = new ClipboardEvent("copy", { clipboardData: new DataTransfer(), bubbles: true, cancelable: true });
+          el.dispatchEvent(ev);
+          return ev.clipboardData.getData("text/plain");
+        };
+        out.kopijaAi = copy(document.querySelector(".msg.assistant"));
+        out.kopijaUcenec = copy(document.querySelector(".msg.user"));
+        return out;
+      }, SL);
+      assert.equal(r.note, SL["aio.mlad"]);
+      assert.equal(r.i18n, false);
+      assert.deepEqual([r.uvod, r.znak], [1, 1], "dvakratni klic: eno obvestilo, en znak");
+      assert.equal(r.naslov, SL["aio.uvodMlad"]);
+      assert.equal(r.fokus, "input");
+      assert.deepEqual([r.poKliku, r.znova, r.drugi], [0, 0, 1], "enkrat na profil");
+      assert.equal(r.noteStar, SL["aio.star"]);
+      assert.deepEqual([r.brezShrambe, r.brezShrambePoKliku], [1, 0]);
+      assert.equal(r.kopijaAi, "Rešitev je 68.\n\n— Evklid (AI)");
+      assert.equal(r.kopijaUcenec, "", "brez posega: brskalnik kopira sam (prazno v sintetičnem dogodku)");
+      assert.deepEqual(errors, []);
+    } finally {
+      await p.close();
+    }
+  });
+});
+test.after(() => chromium?.close());

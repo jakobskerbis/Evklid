@@ -311,7 +311,8 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const next = !dodatno && rec.dodatno ? `Dodatno vprašanje: ${rec.dodatno}` : qs[i + 1] ? `Vprašanje ${i + 2} od ${qs.length}: ${qs[i + 1].besedilo}` : "";
     addMsg(row.conversation_id, "assistant", [feedbackText(q, { ...out, points: rec.points }), next].filter(Boolean).join("\n\n"));
     res.json({
-      ...(!skip && answer && modelKps.length ? AI_JSON : {}), // oceno in razlago je napisala AI (čl. 50(2), server/ai-oznaka.js)
+      // podporni metapodatki: oceno ali razlago je napisala AI (model ali pregled »napačno«; server/ai-oznaka.js)
+      ...((!skip && answer && modelKps.length) || rec.points.some((p) => p.reviewed) ? AI_JSON : {}),
       tocke: out.tocke,
       max: out.max,
       dobro: out.dobro,

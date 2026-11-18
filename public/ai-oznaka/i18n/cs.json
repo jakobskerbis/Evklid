@@ -1,13 +1,13 @@
 {
   "aio.mlad": "Evklid je počítačový pomocník (umělá inteligence), ne člověk. Někdy se splete.",
-  "aio.star": "Mluvíš s umělou inteligencí (AI), ne s člověkem. Může se mýlit.",
+  "aio.star": "Mluvíš s umělou inteligencí (AI), ne s člověkem. Může se mýlit – důležité výsledky si ověř.",
   "aio.znak": "Odpovídá umělá inteligence (AI), ne člověk",
   "aio.uvodMlad": "Evklid je počítačový pomocník",
-  "aio.opisMlad": "Evklid není člověk, ale počítačový program (umělá inteligence). Pomáhá ti s úlohami, ale někdy se splete. Když ti něco není jasné, zeptej se učitele nebo rodičů.",
+  "aio.opisMlad": "Evklid není člověk, ale počítačový program (umělá inteligence). Pomáhá ti s úlohami, ale někdy se splete. Když ti něco není jasné nebo se ti zdá špatně, zeptej se učitele nebo rodičů.",
   "aio.uvodStar": "Evklid je umělá inteligence (AI)",
   "aio.opisStar": "Mluvíš s umělou inteligencí (AI), ne s člověkem. Evklid ti pomáhá pochopit látku, ale může se mýlit, proto si důležité výsledky ověř.",
   "aio.razumem": "Rozumím",
   "aio.resitev": "Toto řešení připravila umělá inteligence (AI), ne člověk. Může se mýlit.",
-  "aio.ocena": "Toto hodnocení připravila umělá inteligence (AI), ne učitel. Může se mýlit.",
+  "aio.ocena": "Tyto body a vysvětlení připravila umělá inteligence (AI), ne učitel. Může se mýlit.",
   "aio.prepis": "Tento přepis připravila umělá inteligence (AI). Ověř, že je správný."
 }

@@ -1,13 +1,13 @@
 {
-  "aio.mlad": "Evklid este un ajutor pe calculator (inteligență artificială), nu un om. Uneori greșește.",
-  "aio.star": "Vorbești cu o inteligență artificială (IA), nu cu un om. Poate greși.",
+  "aio.mlad": "Evklid este un asistent digital (inteligență artificială), nu un om. Uneori greșește.",
+  "aio.star": "Vorbești cu o inteligență artificială (IA), nu cu un om. Poate greși – verifică rezultatele importante.",
   "aio.znak": "Răspunde o inteligență artificială (IA), nu un om",
-  "aio.uvodMlad": "Evklid este un ajutor pe calculator",
-  "aio.opisMlad": "Evklid nu este un om, ci un program de calculator (inteligență artificială). Te ajută la exerciții, dar uneori greșește. Dacă ceva nu e clar, întreabă-ți profesorul sau părinții.",
+  "aio.uvodMlad": "Evklid este un asistent digital",
+  "aio.opisMlad": "Evklid nu este un om, ci un program de calculator (inteligență artificială). Te ajută la exerciții, dar uneori greșește. Dacă ceva nu e clar sau ți se pare greșit, întreabă-ți profesorul sau părinții.",
   "aio.uvodStar": "Evklid este o inteligență artificială (IA)",
   "aio.opisStar": "Vorbești cu o inteligență artificială (IA), nu cu un om. Evklid te ajută să înțelegi materia, dar poate greși, așa că verifică rezultatele importante.",
   "aio.razumem": "Am înțeles",
   "aio.resitev": "Această soluție a fost pregătită de o inteligență artificială (IA), nu de un om. Poate greși.",
-  "aio.ocena": "Această notă a fost dată de o inteligență artificială (IA), nu de un profesor. Poate greși.",
+  "aio.ocena": "Aceste puncte și explicația vin de la o inteligență artificială (IA), nu de la un profesor. Poate greși.",
   "aio.prepis": "Această transcriere a fost făcută de o inteligență artificială (IA). Verifică dacă este corectă."
 }

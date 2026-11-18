@@ -1,13 +1,13 @@
 {
   "aio.mlad": "Evklid is a computer helper (artificial intelligence), not a person. Sometimes it makes mistakes.",
-  "aio.star": "You are talking to an artificial intelligence (AI), not a person. It can make mistakes.",
+  "aio.star": "You are talking to an artificial intelligence (AI), not a person. It can make mistakes – check important results.",
   "aio.znak": "Answers come from an artificial intelligence (AI), not a person",
   "aio.uvodMlad": "Evklid is a computer helper",
-  "aio.opisMlad": "Evklid is not a person but a computer program (artificial intelligence). It helps you with tasks, but sometimes it makes mistakes. If something is unclear, ask your teacher or parents.",
+  "aio.opisMlad": "Evklid is not a person but a computer program (artificial intelligence). It helps you with tasks, but sometimes it makes mistakes. If something is unclear or seems wrong, ask your teacher or parents.",
   "aio.uvodStar": "Evklid is an artificial intelligence (AI)",
   "aio.opisStar": "You are talking to an artificial intelligence (AI), not a person. Evklid helps you understand the material, but it can make mistakes, so check important results.",
   "aio.razumem": "Got it",
   "aio.resitev": "This solution was made by an artificial intelligence (AI), not a person. It can make mistakes.",
-  "aio.ocena": "This grade was given by an artificial intelligence (AI), not a teacher. It can make mistakes.",
+  "aio.ocena": "These points and the explanation come from an artificial intelligence (AI), not a teacher. It can make mistakes.",
   "aio.prepis": "This transcript was made by an artificial intelligence (AI). Check that it is correct."
 }

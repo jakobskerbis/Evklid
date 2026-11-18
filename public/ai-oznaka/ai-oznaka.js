@@ -2,7 +2,7 @@
 // Klepet: stalna opomba pod poljem za vnos (.ai-note), znak »AI« v glavi in ob prvem pogovoru prijazno obvestilo
 // (enkrat na profil, »Razumem«). Skener, ustno spraševanje in zapiski pokažejo isto opombo ob besedilu AI.
 // Besedilo je prilagojeno starosti: OŠ 1.–5. razred preprosteje (»računalniški pomočnik«).
-// Strojno berljiva oznaka (čl. 50(2)): data-ai-generated="true" na besedilu AI (in ai_generated v odgovorih API,
+// Podporni metapodatki (ne celotna izpolnitev čl. 50(2)): data-ai-generated="true" na besedilu AI (in ai_generated v odgovorih API,
 // server/ai-oznaka.js). Modul se naloži z import() ob odprtju klepeta: prvo odprtje aplikacije ne raste.
 import { t as tGlobal, currentLang, srToLatin } from "../i18n.js";
 import { uiChain, UI_LANGUAGES } from "../i18n/languages.js";
@@ -58,7 +58,6 @@ export function besedilo(settings, vrsta = "klepet") {
 }
 /** Opomba pod besedilom AI (HTML); kliči po nalozi(). */
 export const opombaHtml = (settings, vrsta) => `<p class="aio-opomba" role="note">${icon("bot")}<span>${esc(besedilo(settings, vrsta))}</span></p>`;
-export const opomba = async (settings, vrsta) => (await nalozi(), opombaHtml(settings, vrsta));
 
 const CSS = `
 .aio-opomba { display: flex; gap: 6px; align-items: flex-start; margin: 8px 0 0; font-size: 0.8rem; line-height: 1.35; color: var(--muted); }
@@ -94,6 +93,23 @@ const ls = {
   },
 };
 
+// Kopiranje odgovora inštruktorja: besedilu se doda vidna oznaka »— Evklid (AI)« (brez skritih znakov v besedilu).
+const ime = () => document.querySelector(".topbar .brand-name")?.textContent.trim() || "Evklid";
+export function kopiranje(box) {
+  if (!box || box.dataset.aioKopija) return;
+  box.dataset.aioKopija = "1";
+  box.addEventListener("copy", (e) => {
+    const sel = document.getSelection();
+    if (!sel || sel.isCollapsed || !sel.rangeCount || !e.clipboardData) return;
+    const range = sel.getRangeAt(0);
+    if (![...box.querySelectorAll('.msg.assistant[data-ai-generated="true"]')].some((m) => range.intersectsNode(m))) return;
+    const text = sel.toString().replace(/\s+$/, "");
+    if (!text) return;
+    e.clipboardData.setData("text/plain", `${text}\n\n— ${ime()} (AI)`);
+    e.preventDefault();
+  });
+}
+
 /** Klepet z inštruktorjem: opomba pod poljem, znak v glavi in obvestilo ob prvem pogovoru tega profila. */
 export async function oznaciKlepet(student, root = document) {
   if (!student) return;
@@ -120,6 +136,7 @@ export async function oznaciKlepet(student, root = document) {
     znak.setAttribute("aria-label", tt("aio.znak"));
   }
   const box = root.querySelector("#messages");
+  kopiranje(box);
   const key = `${KEY}.${student.id}`;
   if (!box || ls.get(key)) return;
   box.querySelector(".aio-uvod")?.remove();

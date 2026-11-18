@@ -1460,7 +1460,7 @@ export function createApp(store, opts = {}) {
       posljiNujno(blagoLokalno);
       finished = true;
       send("done", {
-        ...AI_JSON, // EU AI Act čl. 50(2): besedilo je ustvarila AI (server/ai-oznaka.js)
+        ...AI_JSON, // podporni metapodatki: besedilo je ustvarila AI (server/ai-oznaka.js)
         id: assistantId,
         code: messageCode(assistantId),
         text: display,
