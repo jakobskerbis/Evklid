@@ -11,7 +11,7 @@ import { signWebhook } from "../server/accounts/stripe.js";
 const SECRET = "whsec_test";
 const YEAR = new Date().getFullYear();
 const ADULT = "1985-04-12";
-const OK = { adult: true, withdrawal: true };
+const OK = { adult: true, withdrawal: true, terms: true };
 const DAY = 86400;
 const now = () => Math.floor(Date.now() / 1000);
 const day = (n) => new Date(Date.now() + n * DAY * 1000).toISOString().slice(0, 10);

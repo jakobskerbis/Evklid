@@ -4,7 +4,7 @@
 // pogovorov, ne delež plačila ali znesek kredita (j 2026-10-30).
 import { t, locale } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
-import { consentFields, consentsOk, consentBody, markCheckout } from "./pay-ui.js";
+import { consentFields, consentsOk, consentMessage, consentBody, markCheckout } from "./pay-ui.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 // Cela vsota brez »,00« (10 €), sicer na cent (j 2026-11-15: »Nadaljuj za skupaj 10 €«).
@@ -82,7 +82,7 @@ export async function renderCreditCard(el, { api, buy = true }) {
     err.hidden = true;
     if (!canPay) return;
     if (!consentsOk(form)) {
-      err.textContent = t("pay.consentMissing");
+      err.textContent = consentMessage(form, "pay.consentMissing");
       err.hidden = false;
       return;
     }

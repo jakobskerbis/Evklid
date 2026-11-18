@@ -5,7 +5,7 @@ import { systemForCountry } from "./regions.js";
 import { currentLang, currentRegion, deviceRegion, locale, t } from "./i18n.js";
 import { dateText } from "./datum.js";
 import { openProfileMenu } from "./profile-menu.js";
-import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout, clearCheckout, watchReturnFromPay } from "./pay-ui.js";
+import { consentFields, termsField, consentsOk, consentMessage, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout, clearCheckout, watchReturnFromPay } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
 import { renderPilotAdmin, paintAccountPilot, paintAccountWtp, proofHtml, proofBody, wireProof } from "./pilot-naloge.js";
@@ -357,7 +357,9 @@ export async function initAccount({ onReady }) {
   const billing = q.get("billing");
   const sessionId = q.get("session_id");
   const payFromApp = q.get("app") === "1"; // nakup se je začel v aplikaciji (server/mobile/trgovina.js appMark)
-  if (q.toString()) history.replaceState(null, "", location.pathname);
+  // Poizvedbo umaknemo iz naslova, sidro pa ostane (#753): /?vir=pilot#registracija odpre registracijo, ne pristajalne strani.
+  // Oznako vira je public/vir.js shranil že ob uvozu, preden pridemo sem.
+  if (q.toString()) history.replaceState(null, "", location.pathname + location.hash);
   // Vrnitev s Stripa v istem oknu (splet): stanje se osveži spodaj, zapis nakupa ni več potreben (public/pay-ui.js).
   if (billing) clearCheckout();
   watchReturnFromPay({ api, onSynced: refreshAfterPay });
@@ -576,7 +578,8 @@ function renderLogin(mode = "login") {
         <label>Aktivacijska koda (neobvezno) <input name="promo_code" maxlength="40" autocapitalize="characters" value="${esc(koda)}"></label>
         <label>Koda priporočila (neobvezno) <input name="referral_code" maxlength="12" value="${esc(ref)}"></label>
         <label class="check"><input type="checkbox" name="accept_privacy" required>
-          <span>Prebral(a) sem <a href="/zasebnost.html" target="_blank">obvestilo o varstvu osebnih podatkov</a>. Račun ustvarjam zase (dijak ali študent) ali kot starš ali zakoniti zastopnik.</span></label>` : ""}
+          <span>Prebral(a) sem <a href="/zasebnost.html" target="_blank">obvestilo o varstvu osebnih podatkov</a>. Račun ustvarjam zase (dijak ali študent) ali kot starš ali zakoniti zastopnik.</span></label>
+        ${termsField("accept_terms")}` : ""}
       <p class="form-error" hidden></p>
       <button class="primary" type="submit">${mode === "login" ? "Prijava" : "Ustvari račun"}</button>
     </form>
@@ -596,7 +599,7 @@ function renderLogin(mode = "login") {
       } else {
         const r = await api("/api/auth/register", {
           method: "POST",
-          body: { name: f.name.value, email: f.email.value, password: f.password.value, referral_code: f.referral_code.value, promo_code: f.promo_code.value, accept_privacy: f.accept_privacy.checked, birth_date: f.birth_date.value, country: deviceRegion() },
+          body: { name: f.name.value, email: f.email.value, password: f.password.value, referral_code: f.referral_code.value, promo_code: f.promo_code.value, accept_privacy: f.accept_privacy.checked, accept_terms: f.accept_terms.checked, birth_date: f.birth_date.value, country: deviceRegion() },
         });
         store.set("evklid_ref", null);
         store.set("evklid_koda", null);
@@ -1104,7 +1107,10 @@ const statusText = (st) => (STATUS_KEYS.includes(st) ? t(`acct.st.${st}`) : st);
 function aiPill(a) {
   if (!a || a.percent == null) return "";
   // Družina: skupen delež za vse profile (enak preostanek pri vsakem otroku, ai.pool v opisu).
-  if (a.guaranteed) return `<span class="pill${a.stage === "out" ? " warn" : ""}" title="${esc((a.stage === "out" ? t("ai.out") : t("ai.left", { n: a.explanations_left })) + (a.pool ? " " + t("ai.pool") : ""))}">${esc(t("ai.left", { n: a.explanations_left }))}</span>`;
+  // Porabljen tudi hitri način (a.tail): do konca meseca vsak dan kot brezplačni paket (server/usage.js tailToday).
+  const outText = a.tail ? t("ai.tail") : a.spread ? `${t("ai.out")} ${t("ai.then")}` : t("ai.out");
+  // Na telefonu title ni viden: v repu je besedilo ai.tail vidno v pilu (pregled #821).
+  if (a.guaranteed) return `<span class="pill${a.stage === "out" ? " warn" : ""}" title="${esc((a.stage === "out" ? outText : t("ai.left", { n: a.explanations_left })) + (a.pool ? " " + t("ai.pool") : ""))}">${esc(a.tail ? t("ai.tail") : t("ai.left", { n: a.explanations_left }))}</span>`;
   if (a.hard_reached) return `<span class="pill warn" title="${esc(t("acct.aiOutTitle"))}">${esc(t("acct.aiOut"))}</span>`;
   const extra = a.soft_reached ? ` · ${esc(t("acct.aiSoft"))}` : "";
   return `<span class="pill" title="${esc(t("acct.aiPctTitle"))}">${esc(t("acct.aiPct", { pct: a.percent }))}${extra}</span>`;
@@ -1576,6 +1582,7 @@ function upgradeForm() {
       <label>${esc(t("guest.birth"))} <input name="birth_date" type="date" required min="1900-01-01" max="${localToday()}" autocomplete="bday"></label>
       <label class="check"><input type="checkbox" name="accept_privacy" required>
         <span>${esc(t("guest.accept"))} <a href="/zasebnost.html" target="_blank">${esc(t("guest.privacy"))}</a></span></label>
+      ${termsField("accept_terms")}
       <p class="form-error" hidden></p>
       <button class="primary" type="submit">${esc(t("guest.upgradeBtn"))}</button>
     </form>`;
@@ -1603,7 +1610,7 @@ function bindGuestForms(after) {
     try {
       const r = await api("/api/auth/upgrade", {
         method: "POST",
-        body: { name: f.name.value, email: f.email.value, password: f.password.value, birth_date: f.birth_date.value, accept_privacy: f.accept_privacy.checked, country: deviceRegion() },
+        body: { name: f.name.value, email: f.email.value, password: f.password.value, birth_date: f.birth_date.value, accept_privacy: f.accept_privacy.checked, accept_terms: f.accept_terms.checked, country: deviceRegion() },
       });
       if (r.dev_verify_url) store.set("evklid_dev_verify", r.dev_verify_url);
       toast(t("guest.created"));
@@ -1969,7 +1976,7 @@ export async function renderAccount() {
     const btn = $("button[type=submit]", e.target);
     btn.disabled = true;
     try {
-      if (!consentsOk(e.target)) throw new Error(t("payp.consentMissing"));
+      if (!consentsOk(e.target)) throw new Error(consentMessage(e.target, "payp.consentMissing"));
       const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody() } });
       markCheckout("sub"); // vrnitev v aplikacijo osveži stanje (public/pay-ui.js)
       location.href = r.url;
@@ -2008,7 +2015,7 @@ export async function renderAccount() {
     const btn = $("button[type=submit]", e.target);
     btn.disabled = true;
     try {
-      if (!consentsOk(e.target)) throw new Error(t("payp.consentMissing"));
+      if (!consentsOk(e.target)) throw new Error(consentMessage(e.target, "payp.consentMissing"));
       const r = await api("/api/billing/gift", { method: "POST", body: { ...consentBody(), ...(e.target.level ? { level: e.target.level.value } : {}) } });
       markCheckout("gift");
       location.href = r.url;

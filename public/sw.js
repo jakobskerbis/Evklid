@@ -243,9 +243,9 @@ function usable(hit, entry, page, cacheName, nav = false) {
 }
 // entry: vstopna stran (shranjena pod ENTRY, ne glede na poizvedbo); clientId: stran, ki je zahtevala datoteko;
 // onPage(v): različica vstopne strani, ki je bila postrežena (z omrežja ali shranjena kopija).
-async function networkFirst(req, cacheName, ms, { entry = false, page = "", onPage = null } = {}) {
+async function networkFirst(req, cacheName, ms, { entry = false, page = "", onPage = null, key: fileKey = null } = {}) {
   const cache = await caches.open(cacheName);
-  const key = entry ? ENTRY : req;
+  const key = entry ? ENTRY : fileKey || req;
   const net = fetch(req).then((res) => {
     if (tunnelDown(res)) throw new Error("tunnel down");
     const v = cacheName === STATIC ? noteVersion(res) : null;
@@ -278,13 +278,22 @@ async function networkFirst(req, cacheName, ms, { entry = false, page = "", onPa
   }
 }
 
+// Nov poskus uvoza po napaki (?r=, public/app.js, games/subjects/index.js) je ista datoteka: shranimo in iščemo jo
+// brez r, da jo naslednji zagon brez povezave (uvoz brez ?r=) najde v predpomnilniku.
+function appFileKey(req) {
+  const u = new URL(req.url);
+  if (!u.searchParams.has("r")) return req;
+  u.searchParams.delete("r");
+  return u.href;
+}
 // Datoteka aplikacije: kopija iste različice takoj (brez omrežja), sicer najprej omrežje.
 async function appFile(req, clientId) {
   const cache = await caches.open(STATIC);
-  const hit = await cache.match(req);
+  const key = appFileKey(req);
+  const hit = await cache.match(key);
   const page = hit ? await pageApp(clientId) : "";
   if (fresh(hit, page)) return hit;
-  return networkFirst(req, STATIC, TIMEOUT.static, { page });
+  return networkFirst(req, STATIC, TIMEOUT.static, { page, key });
 }
 
 async function cacheFirst(req) {

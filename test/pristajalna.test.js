@@ -2,7 +2,7 @@
 // eno sporočilo, en gumb, brez cen in nepreverljivih trditev, vsi napisi prevedeni, pot do prijave in registracije.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { plansFor } from "../server/accounts/plans.js";
 
 // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
@@ -11,6 +11,8 @@ const { landingHtml } = await import("../public/pristajalna.js");
 // Uvozi so pred prvim testom: po njem bi jih --test-force-exit izpustil skupaj s testi.
 const { guaranteeAdvertised, GUARANTEE } = await import("../server/placila/garancija.js");
 const { default: SL } = await import("../public/i18n/sl.js");
+const { PROVIDER } = await import("../public/pristajalna.js");
+const nos = await import("../scripts/pristajalna-noscript.js");
 
 const KEYS = ["land.subjects", "land.title", "land.lead", "land.start", "land.haveAccount", "land.demoLabel", "land.proofTitle",
   ...["q1", "a1", "q2", "a2", "q3", "a3"].map((k) => `land.demo.${k}`), ...[1, 2, 3].flatMap((n) => [`land.p${n}.t`, `land.p${n}.d`])];
@@ -157,4 +159,48 @@ test("/api/account/prices: garancija samo ob vklopu in samo pri cenah v evrih", 
   assert.deepEqual((await get("sk_live_x", on)).guarantee, { weeks: 8, min_days: 3, enroll_days: 14 });
   const inr = await get("sk_live_x", on, "/api/account/prices?country=IN");
   if (inr.currency !== "EUR") assert.equal(inr.guarantee, undefined, "druga valuta: brez garancije");
+});
+// Pregled »kupca« 16. 11. 2026: ponudnik in kontakt na vstopni strani, pristajalna stran tudi brez JavaScripta.
+
+test("ponudnik in kontakt v nogi sta ista kot upravljavec v obvestilu o zasebnosti", () => {
+  const html = landingHtml({ name: "Evklid" });
+  assert.match(html, /class="land-provider">Evklid trenutno upravlja Jakob Skerbiš · <span class="land-contact">Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
+  // Ista beseda kot v pogojih uporabe, točka 1 (#806): »Evklid trenutno upravlja Jakob Skerbiš kot fizična oseba«.
+  const terms = readFileSync(new URL("../public/pogoji.html", import.meta.url), "utf8");
+  assert.ok(terms.includes(SL["land.provider"].replace("{app}", "Evklid").replace("{name}", PROVIDER.name)), "public/pogoji.html točka 1 se ujema z land.provider");
+  const priv = readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
+  const sec = priv.slice(priv.indexOf("1. Upravljavec"), priv.indexOf("<h2>", priv.indexOf("1. Upravljavec")));
+  assert.ok(sec.includes(PROVIDER.name) && sec.includes(`mailto:${PROVIDER.email}`), "public/zasebnost.html točka 1 se ujema s PROVIDER");
+  const dir = new URL("../public/i18n/ui/", import.meta.url);
+  for (const f of readdirSync(dir).filter((x) => x.endsWith(".json"))) {
+    const d = JSON.parse(readFileSync(new URL(f, dir), "utf8"));
+    assert.ok(d["land.provider"]?.includes("{app}") && d["land.provider"].includes("{name}"), `${f}: land.provider`);
+    assert.ok(d["land.contact"] && /JavaScript/.test(d["land.noJs"] || ""), `${f}: land.contact, land.noJs`);
+  }
+});
+
+test("index.html: pristajalna stran v <noscript> je posodobljena (node scripts/pristajalna-noscript.js)", () => {
+  const src = readFileSync(nos.INDEX, "utf8");
+  assert.equal(nos.withBlock(src), src, "zaženi node scripts/pristajalna-noscript.js");
+});
+
+test("index.html brez JavaScripta: najprej pristajalna stran, lupina skrita, brez skritih obvestil v besedilu", () => {
+  const src = readFileSync(nos.INDEX, "utf8");
+  const body = src.slice(src.indexOf("<body>") + "<body>".length).trimStart();
+  assert.ok(body.startsWith(nos.START), "blok je prvi v <body>");
+  const block = src.slice(src.indexOf(nos.START), src.indexOf(nos.END));
+  assert.match(block, /<noscript>[\s\S]*<\/noscript>/);
+  assert.ok(block.includes(`<h1>${SL["land.title"]}</h1>`), "naslov pristajalne strani");
+  for (const k of ["land.lead", "land.proofTitle", "land.p1.t", "land.p3.d", "land.demo.q1"]) assert.ok(block.includes(SL[k]), k);
+  assert.match(block, /7 dni brezplačno, brez kartice\./);
+  assert.match(block, /Za mlajše od 15 let račun ustvari starš\./);
+  assert.match(block, /Jakob Skerbiš · <span class="land-contact">Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
+  assert.match(block, /href="\/zasebnost\.html"/);
+  assert.match(block, /class="land-nojs"/);
+  assert.doesNotMatch(block, /data-land=|<svg|land\.|undefined|garancija\.html|land-login/);
+  const head = src.slice(0, src.indexOf("</head>"));
+  assert.match(head, /<noscript><style>body > :not\(noscript\) \{ display: none !important; \}<\/style><\/noscript>/);
+  // Skrito obvestilo o izklopljenem klepetu napiše šele i18n.js (data-i18n), ko ga aplikacija res pokaže.
+  assert.doesNotMatch(src, /začasno izklopljen/);
+  assert.match(src, /<div id="chat-off" class="chat-off" role="status" data-i18n="chat\.off" hidden><\/div>/);
 });

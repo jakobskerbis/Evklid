@@ -2,11 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { CONCEPTS, AREAS, makeQuestion, setNumberStyle, fr, poly, cx } from "../public/games/topics.js";
+import { CONCEPTS, AREAS, makeQuestion, setNumberStyle, fr, poly, cx, loadAllSubjects } from "../public/games/topics.js";
 import { ENGINES, statement } from "../public/games/engines.js";
 import { PACE, gameLock, isCleared, topicYear } from "../public/games/unlock.js";
 import { LESSONS } from "../public/games/lessons.js";
 import { getTopic } from "../server/curriculum.js";
+
+// Generatorji drugih predmetov se v brskalniku naložijo šele ob uporabi (topics.js loadSubjects); tu vsi.
+await loadAllSubjects();
 
 test("games: every concept gives valid questions on every level, in both number styles", () => {
   for (const lang of ["sl", "en"]) {

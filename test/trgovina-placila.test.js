@@ -175,7 +175,7 @@ test("strežnik: aplikacija iz trgovine ne more začeti nakupa s kartico, APK in
   const s = setup();
   try {
     await s.account();
-    const body = { seats: 1, interval: "month", adult: true, withdrawal: true };
+    const body = { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true };
     const stripeCalls = () => s.calls.filter((c) => c.path.endsWith("/checkout/sessions")).length;
     for (const path of ["/api/billing/checkout", "/API/billing/Checkout", "/api/billing/gift", "/api/billing/credit", "/api/billing/pass", "/api/billing/upgrade", "/api/billing/podari", "/api/billing/pay-link", "/api/billing/portal", "/api/pay/abc123/checkout"]) {
       const r = await s.call(path, { method: "POST", body, headers: { "user-agent": `${CHROME} EvklidApp/1.4.0 store` } });

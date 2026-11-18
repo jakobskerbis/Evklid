@@ -2,7 +2,7 @@
 // starš vidi, kaj plačuje, potrdi obe izjavi in plača prek Stripa. Brez prijave v Evklid.
 // Strežnik: /api/pay/:token (server/accounts/billing.js).
 import { t, locale, applyI18n } from "./i18n.js";
-import { consentFields, consentsOk, consentBody, isStoreApp } from "./pay-ui.js";
+import { consentFields, consentsOk, consentMessage, consentBody, isStoreApp } from "./pay-ui.js";
 
 const root = document.getElementById("pay-root");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -82,7 +82,7 @@ function render(v) {
       f.email.setAttribute("aria-invalid", "true");
       return fail(new Error(t("payp.emailMissing")));
     }
-    if (!consentsOk(f)) return fail(new Error(t("payp.consentMissing")));
+    if (!consentsOk(f)) return fail(new Error(consentMessage(f, "payp.consentMissing")));
     const btn = f.querySelector("button[type=submit]");
     btn.disabled = true;
     try {

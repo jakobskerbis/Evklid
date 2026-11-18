@@ -5,7 +5,7 @@
 // Gumba »Prosi starše za plačilo« kartica ne ponuja sama: učenec ga odpre v »Kako lahko plača starš?«.
 import { t, locale } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
-import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout } from "./pay-ui.js";
+import { consentFields, consentsOk, consentMessage, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout } from "./pay-ui.js";
 import { accountsOn } from "./account.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -108,7 +108,7 @@ export async function renderPassOffer(el, { api, studentId, toast }) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     err.hidden = true;
-    if (!consentsOk(form)) return fail(new Error(t("pay.consentMissing")));
+    if (!consentsOk(form)) return fail(new Error(consentMessage(form, "pay.consentMissing")));
     const btn = form.querySelector("button[type=submit]");
     btn.disabled = true;
     try {
