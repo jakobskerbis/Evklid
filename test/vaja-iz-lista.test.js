@@ -151,6 +151,8 @@ test("kandidati za čiste račune (znaki → besede) in za list s prevladujočim
   has("$2^3 \\cdot 2^4$", st8, /potence/);
   has("$\\sqrt{49} + 3$", st8, /kvadratni-koren/);
   assert.match(searchText("Izračunaj 3 + 4 · 2"), /vrstni red/);
+  assert.doesNotMatch(searchText("Kos ima prostornino 1000 cm³ in maso 2,7 kg."), /potenc|decimaln/, "enota in podatek v fiziki nista račun");
+  assert.match(searchText("Izračunaj 2³ · 2²"), /potenc/);
   assert.doesNotMatch(searchText("Reši enačbo 3x + 4 = 10"), /vrstni red/);
   // prevladujoč predmet lista: drugi predmeti z utežjo 0,6 (avto → ne BIO, kemijska enačba → ne MAT)
   const st9 = { curriculum_level: "9. razred" };

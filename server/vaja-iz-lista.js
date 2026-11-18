@@ -132,7 +132,8 @@ export function searchText(text) {
     if (/[+\-−]/.test(s)) words.push("seštevanje in odštevanje ulomkov");
     if (/[·•×*:÷]|\\cdot|\\div/.test(s)) words.push("množenje in deljenje ulomkov");
   }
-  if (/\^|[²³⁴]/.test(s)) words.push("potence", "računanje s potencami");
+  // Potenca: »2^3«, »2³«; ne enota (»cm³«, »m²«).
+  if (/\^|(?<![a-zA-Zµ])[²³⁴]/.test(s)) words.push("potence", "računanje s potencami");
   if (/%|odstot/i.test(s)) words.push("odstotki", "odstotni račun");
   if (/\\sqrt|√|koren/i.test(s)) words.push("kvadratni koren");
   const plain = s
