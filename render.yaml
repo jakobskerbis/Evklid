@@ -45,6 +45,9 @@ services:
         sync: false
       - key: EVKLID_ADMIN_EMAILS
         sync: false
+      # Namestnik, ki dobi e-mail ob oznaki stiske (server/stiska-obvestilo.js); neobvezno. EVKLID_STISKA_EMAIL=0 izklopi e-mail.
+      - key: EVKLID_STISKA_EMAIL_NAMESTNIK
+        sync: false
       # Člani pilota (docs/stroski-ai.md »Pilot in lastnik«): e-naslovi z vejicami, zadnji dan pilota.
       - key: EVKLID_PILOT_EMAILS
         sync: false

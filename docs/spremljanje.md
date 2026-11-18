@@ -7,7 +7,7 @@ Tri poti, neodvisne ena od druge:
    (izmerjeno 8.–16. 11. 2026), zato hiter alarm ob izpadu da UptimeRobot (3.). Ko preizkus ne uspe, delovni tok
    pade in **GitHub pošlje e-pošto** (komu: spodaj, »Kaj narediš ročno«). Deluje tudi, ko strežnik ne teče.
 2. **Strežnik sam** pošlje e-pošto naslovom iz `EVKLID_ADMIN_EMAILS` (prek Resenda) ob dogodkih, ki jih vidi samo on:
-   dnevni strošek AI nad mejo in neuspel nočni preizkus varnostne kopije.
+   dnevni strošek AI nad mejo, neuspel nočni preizkus varnostne kopije in nova oznaka stiske.
 3. **UptimeRobot** (brezplačen račun j, 16. 11. 2026): vsakih 5 min odpre `https://evklid.app/healthz` in ob izpadu
    pošlje e-pošto »Down«, ob vrnitvi »Up«. Če ob objavi nove različice prideta »Down« in v nekaj minutah »Up«, je bil
    to le ponovni zagon.
@@ -20,6 +20,7 @@ Tri poti, neodvisne ena od druge:
 | Strežnik ne odgovori ali vrne napako (`/healthz`, domača stran, `app.js`, atlas, `/api/config`) | da, ob vsakem zagonu, dokler traja | – |
 | Strošek AI danes (UTC) nad `EVKLID_OPOZORILO_AI_USD` (privzeto 3 $) | da, prvo uro po preseganju (in prvo uro po drugem e-mailu) | da, z zneskom; drugič istega dne pri 3-kratniku meje |
 | Nočni preizkus obnove iz kopije ni uspel (4.30–8.00) | da, prvo uro po preizkusu (ne ob prehodni napaki, ki jo strežnik čez 10 min ponovi) | da, enkrat na dan, z razlogom (`server/kopije-preveri.js`) |
+| Nova oznaka stiske (inštruktor `flag=distress`; `server/stiska-obvestilo.js`) | – | da, takoj; v nizu največ en e-mail na 10 min s številom. Brez imena, vsebine in sporočila: vrsta, stopnja, čas in povezava `/api/admin/stiske` (prijava skrbnika), kjer oznako v 24 urah označiš kot pregledano (`pregledano_ob`). Tudi namestniku iz `EVKLID_STISKA_EMAIL_NAMESTNIK`; `EVKLID_STISKA_EMAIL=0` izklopi |
 | Dnevna kopija baze ni narejena (`kopije.napaka`) | da, dokler traja | – |
 | E-pošta ne gre ven (Resend zavrne ključ, preobremenjen, ni omrežja) | da, prvo uro po zadnji neuspeli pošiljki | – (e-pošta ne deluje) |
 | Pomnilnik nad 85 % meje v zadnjih 30 min | da | – |

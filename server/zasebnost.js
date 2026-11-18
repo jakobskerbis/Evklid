@@ -159,7 +159,8 @@ export function clearOldFlags(db, before, { log = console } = {}) {
   }
   if (unreadable) log.warn?.(`[evklid] neberljive oznake dogodkov, starejše od roka: ${unreadable} (manjka ključ v EVKLID_DATA_KEYS_OLD)`);
   if (!ids.length) return 0;
-  const upd = db.prepare("UPDATE events SET flag = 'none' WHERE id = ?");
+  // Z oznako gre tudi njen pregled (vrsta okna ob stiski, pregledano_ob; server/stiska-obvestilo.js).
+  const upd = db.prepare(`UPDATE events SET flag = 'none'${hasCol(db, "events", "pregled") ? ", pregled = NULL" : ""} WHERE id = ?`);
   const restore = secureDelete(db);
   try {
     db.exec("BEGIN IMMEDIATE");

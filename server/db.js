@@ -6,7 +6,7 @@ import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessList } from "./settings.js";
 import { Flashcards } from "./flashcards.js";
-import { seal, unseal, sealJson, unsealJson, UNREADABLE, sealFlag, openFlag } from "./crypto-polje.js";
+import { seal, unseal, sealJson, unsealJson, UNREADABLE, sealFlag, openFlag, sealPregled } from "./crypto-polje.js";
 
 // Šibke točke: kako dolgo hranimo dnevne vsote (skill_results) in oznake »že šteto« (skill_seen).
 export const SKILL_KEEP_DAYS = 365;
@@ -379,6 +379,8 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Tema učne poti pri dogodku (šibke točke iz vseh virov pod istim ključem, server/weaknesses.js).
   const eventCols = db.prepare("PRAGMA table_info(events)").all().map((c) => c.name);
   if (!eventCols.includes("topic_id")) db.exec("ALTER TABLE events ADD COLUMN topic_id TEXT");
+  // Pregled oznake (server/stiska-obvestilo.js): šifriran JSON ob vsaki oznaki razen »none« (vrsta okna ob stiski, pregledano_ob).
+  if (!eventCols.includes("pregled")) db.exec("ALTER TABLE events ADD COLUMN pregled TEXT");
   // Rok hrambe dnevnih vsot za šibke točke.
   db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
@@ -572,14 +574,18 @@ export class Store {
   }
 
   // --- analitika ---
+  // Vrne id dogodka (oznaka stiske → server/stiska-obvestilo.js).
   addEvent(e) {
-    this.db
+    const flag = e.flag ?? "none";
+    const info = this.db
       .prepare(
-        `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id, pregled)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       // Ob stiski brez teme (j 18. 11. 2026): tema bi v nešifriranem stolpcu ostala tudi po roku hrambe oznake.
-      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, e.flag === "distress" ? null : e.topic, e.error, e.mode, sealFlag(e.flag ?? "none"), e.flag === "distress" ? null : (e.topic_id ?? null));
+      // Pregled ob vsaki oznaki razen »none« (enako dolg), da iz baze ni vidno, katera je stiska.
+      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, flag === "distress" ? null : e.topic, e.error, e.mode, sealFlag(flag), flag === "distress" ? null : (e.topic_id ?? null), flag === "none" ? null : sealPregled({}));
+    return Number(info.lastInsertRowid);
   }
   // Oznaka je šifrirana (razen »none«); neberljiva šteje kot opozorilo (»unknown«), ne kot navaden odgovor.
   lastEvent(conversationId) {
