@@ -162,6 +162,9 @@ test("srce: stene iz CT (Rodero 2021) in prostorska tekstura reza z virom (Visib
   const ct = viri.find((x) => x.id === "rodero-2021-povprecno-srce");
   assert.ok(ct && ct.licenca === "CC BY 4.0" && ct.datoteke.includes("organi-3d/srce*.glb"));
   assert.match(fs.readFileSync(path.join(MAPA, "CREDITS.txt"), "utf8"), /Courtesy of the U\.S\. National Library of Medicine/);
+  // vir je viden tudi ob srcu (Podrobnosti organa → Viri), ne le v atlasu (j 18. 11.: teksture VH ostanejo)
+  const vo = (j.podrobnosti?.odseki || []).find((x) => x.naslov === "Viri");
+  assert.ok(vo && /Courtesy of the U\.S\. National Library of Medicine/.test(vo.besedilo) && /ne podpira/.test(vo.besedilo), "srce: Podrobnosti → Viri z navedbo NLM");
   // po peki s srce_ct (prerez.volumen v srce.json): tekstura reza ob GLB, stene CT kot svoji deli (en zaprt volumen)
   const v = j.prerez?.volumen;
   if (!v) return;

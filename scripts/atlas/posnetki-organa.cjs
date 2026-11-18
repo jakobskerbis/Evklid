@@ -3,7 +3,7 @@
 // Meri prenos (bajti datotek organi-3d/) in čas do prvega prikaza pri omrežju 4G (telefon) in kabel (računalnik).
 // Zagon: node scripts/atlas/posnetki-organa.cjs <organ> <izhodna mapa> [oznaka, npr. staro|novo]
 // Okolje: KOTI=1 (8 kotov, zgoraj, spodaj), ZILE=1 (žile od blizu), RAVEN=1|2|3 (raven razlage OŠ/SŠ/študij),
-// SAMO=telefon|racunalnik, UCNE=1 (učne barve), SKUPINA=<ime skupine> (npr. Zaklopke), MERE=<mere.json iz
+// TELEFON_SIRINA=360 (ožji telefon), KOTI_PREREZ=1 (8 kotov, zgoraj, spodaj tudi v prerezu), SAMO=telefon|racunalnik, UCNE=1 (učne barve), SKUPINA=<ime skupine> (npr. Zaklopke), MERE=<mere.json iz
 // scripts/atlas/mere-reza.py> (dodatna posnetka prerez-mere, prerez-blizu-mere: merilne črte debeline sten v mm čez sliko).
 // Izhod: <mapa>/<oznaka>-<telefon|racunalnik>-<pogled>.png in <mapa>/<oznaka>-meritve.json.
 // Potrebuje Playwright s Chromiumom (swiftshader: čas risanja ni čas pravega telefona, primerjaj staro z novim).
@@ -17,7 +17,7 @@ const PORT = +process.env.POSNETKI_PORT || 3996; // POSNETKI_PORT: več zagonov 
 const root = process.env.EVKLID_KOREN || path.join(__dirname, "..", ".."); // EVKLID_KOREN: pot brez mape s piko (express ne streže skozi .claude/)
 const NAPRAVE = {
   // 4G: 9 Mbit/s, 150 ms (»Fast 4G« v orodjih Chrome); kabel: 50 Mbit/s, 20 ms
-  telefon: { kakovost: "nizka", viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, omrezje: { down: 9e6, rtt: 150 } },
+  telefon: { kakovost: "nizka", viewport: { width: +process.env.TELEFON_SIRINA || 390, height: process.env.TELEFON_SIRINA ? 780 : 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, omrezje: { down: 9e6, rtt: 150 } },
   racunalnik: { kakovost: "visoka", viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1, isMobile: false, hasTouch: false, omrezje: { down: 50e6, rtt: 20 } },
 };
 
@@ -96,22 +96,23 @@ const NAPRAVE = {
         for (let i = 0; i < n; i++) await p.keyboard.press(tipka);
         await p.waitForTimeout(700);
       };
-      if (process.env.KOTI && !samoPrerez) {
+      const koti = async (pred = "") => {
         let kot = 0;
         for (let k = 1; k < 8; k++) {
           const cilj = Math.round((k * 45) / 10);
           await tipke("ArrowLeft", cilj - kot);
           kot = cilj;
-          await slikaj(`kot${String(k * 45).padStart(3, "0")}`);
+          await slikaj(`${pred}kot${String(k * 45).padStart(3, "0")}`);
         }
         await ponastavi();
         await tipke("ArrowUp", 9);
-        await slikaj("odzgoraj");
+        await slikaj(`${pred}odzgoraj`);
         await ponastavi();
         await tipke("ArrowDown", 9);
-        await slikaj("odspodaj");
+        await slikaj(`${pred}odspodaj`);
         await ponastavi();
-      }
+      };
+      if (process.env.KOTI && !samoPrerez) await koti();
       if (!samoPrerez) {
         // zadaj: od zadaj IN spodaj (diafragmalna ploskev, zadnji žlebovi; kot fotografija preparata od zadaj spodaj), ne
         // ponovitev kot180 (ocena srca n10: »zadaj« je bil enak kot180)
@@ -187,6 +188,7 @@ const NAPRAVE = {
         await ugasniNamig();
         await slikaj("prerez");
         await slikajMere("prerez");
+        if (process.env.KOTI_PREREZ) await koti("prerez-");
         const blizje = p.locator('[aria-label="Približaj"]').first();
         for (let i = 0; i < 2; i++) await blizje.click().catch(() => {});
         await slikaj("prerez-blizu");

@@ -154,6 +154,7 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
   const ex = { ...(vena.getExtras() || {}), cev: 1 };
   delete ex.debelinaCevi; // nova mreža ima pravi polmer; debelina-cevi.mjs je ne sme več raztegniti
   vena.setExtras(ex);
+  G.brezSirot(doc);
   await io.write(datoteka, doc);
   return por;
 }

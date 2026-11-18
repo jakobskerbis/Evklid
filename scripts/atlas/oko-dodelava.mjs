@@ -3,8 +3,11 @@
 // brez lobanje visi v prazno). Pravi živec v očnici je debel 3–4 mm (z ovojnicami), dolg ≈ 25–30 mm in v rahlem
 // loku S teče od papile do vrha očnice, kjer gre skozi skupni kitni obroč v vidni kanal. Skripta mrežo živca zamenja
 // s cevjo po tej poti: od papile (središče dela optic_disc) skozi kitni obroč (Common tendinous ring), raven odrezan
-// konec ob vidnem kanalu. Barva: UV in barva oglišča enega oglišča stare mreže (živec je enobarven).
-// Enkrat (vozlišče dobi extras »cev«); oko.glb in oko-telefon.glb na mestu.
+// konec ob vidnem kanalu. Barva: barva oglišča enega oglišča stare mreže (živec je enobarven); UV je majhna krpa okoli
+// točke, kjer so pečene mape enakomerne in normalna mapa ravna (kot pri ledvični veni). Ena sama točka UV za vsa oglišča
+// ne gre: senčilnik računa tangentni prostor normalne mape iz odvodov UV, brez njih je živec plosk in bled.
+// Enkrat (vozlišče dobi extras »cev«); živec, ki je že cev z eno samo točko UV, dobi samo krpo UV (extras »uv«).
+// oko.glb in oko-telefon.glb na mestu.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,6 +18,10 @@ import * as G from "./zile-mreza.mjs";
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const MAPA = path.join(ROOT, "public", "3d", "modeli", "organi-3d");
 export const POLMER = 0.00175; // 3,5 mm debel živec z ovojnicami
+// UV: v okolici 9 × 9 pik enakomerne mape (baza, ORM, normalna ≈ (128, 128, 255)), barva kot stara točka živca
+// (preverjeno na obeh slikah, 2048 in 1024 pik).
+export const UV = { racunalnik: [0.30688, 0.77563], telefon: [0.05029, 0.70068] };
+export const UV_KRPA = 0.0006;
 
 const sredina = (W) => { const c = [0, 0, 0]; for (const p of W) for (let k = 0; k < 3; k++) c[k] += p[k] / W.length; return c; };
 
@@ -74,6 +81,27 @@ export function cev(os, polmer, stranic) {
   return { P, N, F };
 }
 
+// Parametra točk cevi okoli osi: [po obodu, vzdolž osi], oba v [−0,5, 0,5]. Okvir je vzporedno prenesen kot v cev().
+export function parametri(os, tocke) {
+  const tang = (i) => G.v3.norm(G.v3.sub(os[Math.min(os.length - 1, i + 1)], os[Math.max(0, i - 1)]));
+  const okvir = [];
+  let x = null;
+  for (let i = 0; i < os.length; i++) {
+    const t = tang(i);
+    x = x ? G.v3.norm(G.v3.sub(x, G.v3.mul(t, G.v3.dot(x, t)))) : G.v3.norm(G.v3.cross(t, Math.abs(t[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0]));
+    okvir.push([x, G.v3.cross(t, x)]);
+  }
+  return tocke.map((p) => {
+    let bi = 0, bd = Infinity;
+    for (let i = 0; i < os.length; i++) { const d = G.v3.dist(p, os[i]); if (d < bd) { bd = d; bi = i; } }
+    const d = G.v3.sub(p, os[bi]);
+    const kot = Math.atan2(G.v3.dot(d, okvir[bi][1]), G.v3.dot(d, okvir[bi][0]));
+    return [kot / (2 * Math.PI), bi / (os.length - 1) - 0.5];
+  });
+}
+
+const uvKrpe = (uv0, T) => T.map(([a, b]) => [uv0[0] + a * 2 * UV_KRPA, uv0[1] + b * 2 * UV_KRPA]);
+
 export async function dodelaj(datoteka, { suho = false } = {}) {
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
   const doc = await io.read(datoteka);
@@ -81,9 +109,26 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
   const vozl = (rx) => doc.getRoot().listNodes().find((n) => n.getMesh() && rx.test(n.getName()));
   const zivec = vozl(/^Optic nerve/), papila = vozl(/^optic_disc/), belocnica = vozl(/^sclera/), obroc = vozl(/^Common tendinous ring/);
   if (!zivec || !papila || !belocnica || !obroc) throw new Error(`${path.basename(datoteka)}: manjka živec, papila, beločnica ali kitni obroč`);
-  if (zivec.getExtras()?.cev) return [`${path.basename(datoteka)}: vidni živec je že cev (brez sprememb)`];
   const W = (n) => G.preberi(n, n.getMesh().listPrimitives()[0]).W;
   const os = osZivca(sredina(W(papila)), sredina(W(belocnica)), sredina(W(obroc)), telefon ? 14 : 28);
+  const uv0 = UV[telefon ? "telefon" : "racunalnik"];
+  if (zivec.getExtras()?.cev) {
+    if (zivec.getExtras()?.uv) return [`${path.basename(datoteka)}: vidni živec je že cev s krpo UV (brez sprememb)`];
+    const prim = zivec.getMesh().listPrimitives()[0];
+    const m = G.preberi(zivec, prim);
+    const tc = m.A.get("TEXCOORD_0");
+    if (!tc) return [`${path.basename(datoteka)}: vidni živec nima UV (brez sprememb)`];
+    const n = m.P.length / 3;
+    const uv = uvKrpe(uv0, parametri(os, Array.from({ length: n }, (_, i) => G.pol(m, i))));
+    for (let i = 0; i < n; i++) { tc.d[i * tc.n] = uv[i][0]; tc.d[i * tc.n + 1] = uv[i][1]; }
+    const por = [`${path.basename(datoteka)}: vidni živec: krpa UV ±${UV_KRPA} okoli ${uv0} na ${n} ogliščih`];
+    if (suho) return por;
+    G.zapisi(doc, zivec, prim, m);
+    zivec.setExtras({ ...zivec.getExtras(), uv: 1 });
+    G.brezSirot(doc);
+    await io.write(datoteka, doc);
+    return por;
+  }
   const c = cev(os, POLMER, telefon ? 10 : 16);
   const prim = zivec.getMesh().listPrimitives()[0];
   const m = G.preberi(zivec, prim);
@@ -92,7 +137,13 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
   const sr = os[Math.floor(os.length / 2)];
   let vir = 0, bd = Infinity;
   for (let r = 0; r < n0; r++) { const d = G.v3.dist([m.P[r * 3], m.P[r * 3 + 1], m.P[r * 3 + 2]], sr); if (d < bd) { bd = d; vir = r; } }
-  for (let i = 0; i < c.P.length; i++) G.dodajOglisce(m, c.P[i], [[vir, 1]], m.A.has("NORMAL") ? { NORMAL: c.N[i] } : {});
+  const uv = uvKrpe(uv0, parametri(os, c.P));
+  for (let i = 0; i < c.P.length; i++) {
+    const attr = {};
+    if (m.A.has("NORMAL")) attr.NORMAL = c.N[i];
+    if (m.A.has("TEXCOORD_0")) attr.TEXCOORD_0 = uv[i];
+    G.dodajOglisce(m, c.P[i], [[vir, 1]], attr);
+  }
   // stara oglišča odpadejo
   m.P = m.P.slice(n0 * 3);
   for (const a of m.A.values()) a.d = a.d.slice(n0 * a.n);
@@ -104,7 +155,8 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
   const por = [`${path.basename(datoteka)}: vidni živec ${n0} → ${c.P.length} oglišč, cev ${(2 * POLMER * 1000).toFixed(1)} mm × ${(dol * 1000).toFixed(0)} mm`];
   if (suho) return por;
   G.zapisi(doc, zivec, prim, m);
-  zivec.setExtras({ ...(zivec.getExtras() || {}), cev: 1 });
+  zivec.setExtras({ ...(zivec.getExtras() || {}), cev: 1, uv: 1 });
+  G.brezSirot(doc);
   await io.write(datoteka, doc);
   return por;
 }

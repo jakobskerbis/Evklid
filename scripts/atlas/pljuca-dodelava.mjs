@@ -5,9 +5,12 @@
 // (črna senca okolice v barvi oglišč in v pečeni mapi, pokvarjena normalna mapa): temne oziroma sive lise z
 // nazobčanim robom ob levem hilusu in spodaj (j 16. 11.). Skripta v vsakem režnju poišče ploskve, ki si iz bližine
 // gledajo v obraz (strani lista v zamenjanem vrstnem redu), in jim posvetli pečeno senco okolice v ogliščih
-// (COLOR_0.r) ter nastavi normale iz geometrije. Oblike ne spreminja: razmik listov ne konvergira, ker si strani lista delita oglišča roba; pravi
-// popravek je izvoz, ki tankih robov ne skrči čez polovico debeline (scripts/atlas/izvozi-organe.py, »skrci«), in
-// nova peka. Pečeni mapi (senca, normalna) sta tam pokvarjeni, zato ju tkivo »pljuca« ne bere (pljuca.json:
+// (COLOR_0.r) ter nastavi normale iz geometrije. Pred tem lista razpre (razpri, j 18. 11. »dokončaj prereze«):
+// oglišča prekrižanih ploskev premakne za polovico razmika (+ 0,3 mm) vzdolž normale ploskve mimo sredine, nato jih z
+// enim korakom Laplacea zgladi skupaj z obročem sosedov; do 25 krogov, skupaj največ 10 mm na oglišče. Sam premik
+// ne konvergira (strani lista si delita oglišča roba), z glajenjem pa ostane le nekaj ploskev, ki jih posvetli
+// posvetli(). Enkrat na izvoz (vozlišče dobi extras »razprto«). Pravi popravek je še vedno izvoz, ki tankih robov ne
+// skrči čez polovico debeline (scripts/atlas/izvozi-organe.py, »skrci«), in nova peka. Pečeni mapi (senca, normalna) sta tam pokvarjeni, zato ju tkivo »pljuca« ne bere (pljuca.json:
 // orm false, normala 0). Ponovljivo: drugi zagon ne spremeni nič. pljuca.glb in pljuca-telefon.glb na mestu.
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -20,7 +23,8 @@ const MAPA = path.join(ROOT, "public", "3d", "modeli", "organi-3d");
 const { v3 } = G;
 export const SENCA = 0.85; // senca okolice (COLOR_0.r, 1 = brez sence) na prekrižanih ploskvah
 export const SENCA_OBROC = 0.6; // najmanj toliko v sosednjih ogliščih (mehak prehod)
-export const DOSEG = 0.006; // prekrižani ploskvi sta največ toliko narazen (skrček 1,8 mm na vsaki strani + rezerva)
+export const DOSEG = 0.006;
+export const RAZPRI = { krogov: 25, cez: 0.0003, gladi: 0.5, najvec: 0.01 }; // prekrižani ploskvi sta največ toliko narazen (skrček 1,8 mm na vsaki strani + rezerva)
 
 // Prekrižane ploskve: žarek iz težišča ploskve navzven najprej (bliže kot DOSEG) zadene ploskev iste mreže, ki gleda
 // proti njej (normali nasprotni). Pri pravem tankem listu gledata ploskvi narazen; ploskvi, ki si gledata v obraz
@@ -41,6 +45,63 @@ export function prekrizane(m) {
     if (v3.dot(nh, n) < -0.3) out.push({ f, t: h.t, n });
   }
   return out;
+}
+
+// Razpre prekrižane liste (glej uvod). Vrne { krogi: [prekrižanih po krogih], premaknjenih, najvec (m), zvarjena }.
+export function razpri(m, { krogov, cez, gladi, najvec } = RAZPRI) {
+  G.zvari(m);
+  const P0 = m.P.slice();
+  const krogi = [prekrizane(m).length];
+  const premaknjena = new Set();
+  for (let k = 0; k < krogov && krogi[krogi.length - 1]; k++) {
+    const o = prekrizane(m);
+    const D = new Map();
+    for (const { f, t, n } of o) for (let q = 0; q < 3; q++) {
+      const w = m.zvar[m.F[f * 3 + q]];
+      const d = D.get(w) || [0, 0, 0, 0];
+      for (let c = 0; c < 3; c++) d[c] += n[c] * (t / 2 + cez);
+      d[3]++;
+      D.set(w, d);
+    }
+    for (let i = 0; i < m.zvar.length; i++) { const d = D.get(m.zvar[i]); if (d) for (let c = 0; c < 3; c++) m.P[i * 3 + c] += d[c] / d[3]; }
+    G.zvari(m);
+    // en korak Laplacea na premaknjenih ogliščih (nove številke zvarjenih: po položaju prvega izrisnega oglišča)
+    const S = new Set();
+    for (const w of D.keys()) S.add(w);
+    const izr = new Set();
+    for (let i = 0; i < m.zvar.length; i++) if (D.has(m.zvar[i])) izr.add(i);
+    const jedro = new Set([...izr].map((i) => m.zvar[i]));
+    const sos = new Map();
+    for (let f = 0; f < m.F.length; f += 3) {
+      const w = [m.zvar[m.F[f]], m.zvar[m.F[f + 1]], m.zvar[m.F[f + 2]]];
+      for (const a of w) if (jedro.has(a)) for (const b of w) if (b !== a) { if (!sos.has(a)) sos.set(a, new Set()); sos.get(a).add(b); }
+    }
+    const nova = new Map();
+    for (const [a, s] of sos) {
+      const c = [0, 0, 0];
+      for (const b of s) for (let q = 0; q < 3; q++) c[q] += m.W[b][q] / s.size;
+      nova.set(a, v3.lerp(m.W[a], c, gladi));
+    }
+    for (let i = 0; i < m.zvar.length; i++) { const q = nova.get(m.zvar[i]); if (q) { for (let c = 0; c < 3; c++) m.P[i * 3 + c] = q[c]; premaknjena.add(i); } }
+    // skupni premik omejen
+    for (const i of premaknjena) {
+      const d = [0, 1, 2].map((c) => m.P[i * 3 + c] - P0[i * 3 + c]);
+      const l = v3.len(d);
+      if (l > najvec) for (let c = 0; c < 3; c++) m.P[i * 3 + c] = P0[i * 3 + c] + (d[c] * najvec) / l;
+    }
+    G.zvari(m);
+    krogi.push(prekrizane(m).length);
+  }
+  let mx = 0;
+  for (const i of premaknjena) mx = Math.max(mx, Math.hypot(m.P[i * 3] - P0[i * 3], m.P[i * 3 + 1] - P0[i * 3 + 1], m.P[i * 3 + 2] - P0[i * 3 + 2]));
+  // normale premaknjenih oglišč iz nove geometrije
+  const nor = m.A.get("NORMAL");
+  if (nor && premaknjena.size) {
+    const N = G.normaleZvarjenih(m);
+    for (const i of premaknjena) for (let c = 0; c < 3; c++) nor.d[i * nor.n + c] = N[m.zvar[i]][c];
+  }
+  if (premaknjena.size) m.spremenjeno = true;
+  return { krogi, premaknjenih: premaknjena.size, najvec: mx };
 }
 
 // Posvetli pečeno senco okolice (COLOR_0.r ≥ SENCA) v ogliščih prekrižanih ploskev in njihovih sosedov ter tem
@@ -87,12 +148,21 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
     if (!node.getMesh() || !/lobe of (left|right) lung/.test(node.getName())) continue;
     for (const prim of node.getMesh().listPrimitives()) {
       const m = G.preberi(node, prim);
+      let raz = null;
+      if (!node.getExtras()?.razprto) {
+        raz = razpri(m);
+        por.push(`${path.basename(datoteka)}: ${node.getName()}: razprto, prekrižanih po krogih ${raz.krogi.join(" → ")}, premaknjenih oglišč ${raz.premaknjenih}, največ ${(raz.najvec * 1000).toFixed(1)} mm`);
+      }
       const r = posvetli(m);
       por.push(`${path.basename(datoteka)}: ${node.getName()}: prekrižanih ploskev ${r.ploskev} od ${m.F.length / 3}, popravljenih oglišč ${r.oglisc}`);
-      if (r.oglisc && !suho) { G.zapisi(doc, node, prim, m); sprememb++; }
+      if ((raz || r.oglisc) && !suho) {
+        G.zapisi(doc, node, prim, m);
+        if (raz) node.setExtras({ ...(node.getExtras() || {}), razprto: 1 });
+        sprememb++;
+      }
     }
   }
-  if (sprememb && !suho) await io.write(datoteka, doc);
+  if (!suho && (G.brezSirot(doc) || sprememb)) await io.write(datoteka, doc);
   return por;
 }
 
