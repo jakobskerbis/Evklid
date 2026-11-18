@@ -436,11 +436,14 @@ test("live check: SŠ answer with an exercise is reviewed and corrected; without
   try {
     const s = await h.student({ educational_track: "SREDNJA_SOLA", curriculum_level: "2" });
     const r = await h.ask(s, "Koliko je pH raztopine CaO?");
-    assert.equal(h.reviewCalls.length, 1, "odgovor z vajo pregleda model");
-    assert.match(h.reviewCalls[0].system, /practice exercise/, "pregled z navodili za vaje");
+    // Odgovor z vajo: splošni pregled in vzporedni ciljni pregled vaje in načrta (meritev po #844).
+    assert.equal(h.reviewCalls.length, 2, "odgovor z vajo pregleda model (splošni in ciljni pregled)");
+    assert.ok(h.reviewCalls.some((c) => /practice exercise/.test(c.system) && /as strictly as the calculations/.test(c.system)), "splošni pregled z navodili za vaje");
+    assert.ok(h.reviewCalls.some((c) => /^You check only two parts/.test(c.system)), "ciljni pregled vaje");
     assert.match(r.messages.at(-1).display_text, /Popravek:/);
+    assert.equal(h.kinds()["preverjanje-sola"], 1, "oba klica sta en vpis porabe");
     await h.ask(s, "Koliko je pH raztopine CaO?");
-    assert.equal(h.reviewCalls.length, 1, "brez vaje in okvirja pri SŠ ni pregleda");
+    assert.equal(h.reviewCalls.length, 2, "brez vaje in okvirja pri SŠ ni pregleda");
   } finally {
     h.close();
   }
@@ -907,4 +910,142 @@ test("live check (pregled #840): all NAPAKA lines are collected; a 4-sentence fi
   assert.match(block, /^\n\n> \*\*Popravek:\*\* tudi mulo zapišemo kot \$2n\$/);
   assert.ok(block.includes("se v mejozi ne morejo pravilno spariti"));
   assert.equal(fixBlock("Popravek: " + "x".repeat(1600)), null, "predolg popravek ni prikazan");
+});
+
+test("live check (meritev SŠ po #844, pregled #848): SŠ answers with an exercise or experiment plan get a focused check with thinking in parallel", async () => {
+  const { reviewAnswer, needsExtraCheck, reviewCalls, hasPlan, EXTRA_SYSTEM, extraReason } = await import("../server/live-check.js");
+  const vaja = "Rešitev je **5 min**.\n\n**Vaja:** Fotografija velikosti 1 MB je zapisana s 4 biti na nukleotid. Koliko nukleotidov potrebujemo?";
+  const plan = "**Boljši načrt:**\n- Vzamemo 6 enakih desk.\n- Tri premazane in tri nepremazane na sonce, tri premazane in tri nepremazane v senco.";
+  assert.equal(needsExtraCheck(vaja, "SS"), true);
+  assert.equal(needsExtraCheck(plan, "SS"), true);
+  assert.equal(hasClaims(plan), true, "odgovor samo z načrtom gre v pregled");
+  assert.equal(hasPlan("Načrt: delimo maso s hitrostjo."), false, "Načrt iz vzorca računske naloge ni načrt poskusa");
+  assert.equal(needsExtraCheck("Rešitev je **5 min**.", "SS"), false);
+  assert.equal(needsExtraCheck(vaja, "FAKS"), false);
+  assert.equal(needsExtraCheck(vaja, "OS"), false, "OŠ le z EVKLID_LIVE_REVIEW_OS=1");
+  assert.equal(reviewCalls(vaja, "SS"), 2);
+  assert.equal(reviewCalls("Rešitev je **5 min**.", "SS"), 1);
+  for (const s of [
+    "list every value and fact it assumes", "agrees with the fixed facts of the task and of nature", "concentrations above solubility, probabilities or fractions above 1",
+    "the given values agree with each other, units included (no extra given value that contradicts the others)", "given to the right object (parent or offspring",
+    "has exactly one correct answer or solution set (several roots, or several items the exercise asks for, are fine), and solve it. An open question (propose, design, give examples, explain, justify) needs no single answer; for it check only that its data are possible and consistent.",
+    "Rounded textbook constants and values (g = 10 m/s², N_A = 6·10²³) are fine.", "count the items it assigns to every group and condition", "must add up to the stated total",
+    "every group or condition that is compared must have the same number of repeats (a plan need not combine every condition with every other). Check only the tutor's own plan; a plan quoted from the student or the task in order to criticise it is fine.",
+    "find, judge or improve it is fine", "clearly states as hypothetical", "Never write the exercise's result; name only the wrong data and the corrected data.",
+  ]) assert.ok(EXTRA_SYSTEM.includes(s), s);
+  assert.match(EXTRA_SYSTEM, /End with one final line: OK, or NAPAKA: /);
+  assert.doesNotMatch(EXTRA_SYSTEM, /in your thinking/);
+  // Sodba ciljnega pregleda je zadnja vrstica.
+  assert.equal(extraReason({ text: "Vaja predpostavlja 4 bite.\nNAPAKA: to je napačno\n\n**NAPAKA: »4 biti« – največ 2 bita**" }), "»4 biti« – največ 2 bita");
+  assert.equal(extraReason({ text: "NAPAKA: to bi bilo napačno, a je hipotetično.\nOK" }), null);
+
+  const systems = [];
+  const params = [];
+  const reply = (text) => ({ content: [{ type: "text", text }], stop_reason: "end_turn", usage: { input_tokens: 100, output_tokens: 10 }, model: "claude-sonnet-5-5" });
+  const createFn = async (p) => (systems.push(p.system), params.push(p), reply(p.system === EXTRA_SYSTEM ? "Preštejem: 1 MB …\nNAPAKA: »4 biti na nukleotid« – največ 2 bita" : "OK"));
+  const logged = [];
+  const usage = { log: (id, model, u, kind) => (logged.push({ u, kind }), 0.01) };
+  const r = await reviewAnswer({ question: "q", answer: vaja, stopnja: "SS", createFn, usage, kind: "preverjanje-sola" });
+  assert.equal(r.reason, "»4 biti na nukleotid« – največ 2 bita");
+  assert.equal(r.extra, true);
+  assert.equal(systems.length, 2);
+  assert.deepEqual(params.find((p) => p.system === EXTRA_SYSTEM).thinking, { type: "adaptive" }, "ciljni pregled z razmislekom");
+  assert.equal(params.find((p) => p.system !== EXTRA_SYSTEM).thinking, undefined, "splošni pregled brez spremembe");
+  assert.equal(logged.length, 1, "en vpis porabe (meja pregledov na učenca šteje en pregled)");
+  assert.equal(logged[0].u.input_tokens, 200);
+  assert.equal(logged[0].u.output_tokens, 20);
+  // Obe najdbi skupaj; enaki razlogi le enkrat
+  const both = async (p) => reply(p.system === EXTRA_SYSTEM ? "NAPAKA: 6 desk, razporejenih 12" : "NAPAKA: »2n« ne velja");
+  assert.equal((await reviewAnswer({ question: "q", answer: plan, stopnja: "SS", createFn: both })).reason, "»2n« ne velja; 6 desk, razporejenih 12");
+  const same = async () => reply("NAPAKA: 6 desk, razporejenih 12");
+  assert.equal((await reviewAnswer({ question: "q", answer: plan, stopnja: "SS", createFn: same })).reason, "6 desk, razporejenih 12");
+  // Brez vaje in načrta en klic; neuspel ciljni pregled ne ustavi splošnega.
+  systems.length = 0;
+  assert.equal((await reviewAnswer({ question: "q", answer: "Rešitev je **5 min**.", stopnja: "SS", createFn })).reason, null);
+  assert.equal(systems.length, 1);
+  const flaky = async (p) => { if (p.system === EXTRA_SYSTEM) throw new Error("rok"); return reply("OK"); };
+  const f = await reviewAnswer({ question: "q", answer: vaja, stopnja: "SS", createFn: flaky });
+  assert.equal(f.reason, null);
+  assert.equal(f.extra, false);
+  // Splošni pregled ne uspe, ciljni uspe: poraba ciljnega je zapisana (en vpis), napaka splošnega gre naprej (rok, preskok).
+  logged.length = 0;
+  const mainFails = async (p) => { if (p.system !== EXTRA_SYSTEM) throw Object.assign(new Error("rok"), { name: "TimeoutError" }); return reply("OK"); };
+  await assert.rejects(reviewAnswer({ question: "q", answer: vaja, stopnja: "SS", createFn: mainFails, usage, kind: "preverjanje-sola" }), { name: "TimeoutError" });
+  assert.equal(logged.length, 1);
+  assert.equal(logged[0].u.input_tokens, 100);
+});
+
+test("live check (pregled #848): two review calls reserve twice in the school pool and in the pupil's limit", async () => {
+  const { Usage } = await import("../server/usage.js");
+  const { checkReserveUsd } = await import("../server/meje-ai.js");
+  const { MODEL_MID } = await import("../server/claude.js");
+  const vaja = "Rešitev je pH = 12, ker je koncentracija 0,01 mol/L hidroksidnih ionov v raztopini.\n\n**Vaja:** V 0,50 L vode raztopimo 0,40 g CaO. Kolikšen je pH?";
+  const box = "**Podatki:** $c = 0{,}01$ mol/L\n**Iščemo:** pH\n\nRešitev je pH = 12, ker je koncentracija 0,01 mol/L.\n\n> 📌 **Zapomni si:** pH + pOH = 14 pri 25 °C.";
+  class Spy extends Usage {
+    constructor(db) {
+      super(db);
+      this.takes = [];
+    }
+    hold(id, capsFn) {
+      const h = super.hold(id, capsFn);
+      const take = h.take;
+      h.take = (usd) => (this.takes.push({ id, usd }), take(usd));
+      return h;
+    }
+  }
+  // Šolski del 0,03 $: dvojna rezerva (0,04 $) ne gre, enojna (0,02 $) gre.
+  process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD = "0.03";
+  const store = openDb(":memory:");
+  const usage = new Spy(store.db);
+  const reviewCalls = [];
+  const answers = [vaja, box];
+  const streamFn = async ({ mode, onText }) => {
+    const text = answers.shift() + META;
+    onText(text);
+    return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
+  };
+  const reviewCreateFn = async (p) => (reviewCalls.push(p), { content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 100, output_tokens: 10 } });
+  const server = createApp(store, { streamFn, reviewCreateFn, usage }).listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const call = async (path, body) => (await fetch(base + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })).json().catch(() => null);
+  try {
+    const s = await call("/api/students", { name: "Ana", settings: { educational_track: "SREDNJA_SOLA", curriculum_level: "2" } });
+    const c1 = await call(`/api/students/${s.id}/conversations`, {});
+    await fetch(`${base}/api/conversations/${c1.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "Koliko je pH?" }) }).then((r) => r.text());
+    assert.equal(reviewCalls.length, 0, "dvojna rezerva je večja od šolskega dela: brez klica");
+    const kv = JSON.parse(store.db.prepare("SELECT value FROM kv WHERE key = ?").get(SKIP_KV).value);
+    assert.equal(Object.values(kv)[0].SS.sola, 1, "preskok »sola«");
+    const c2 = await call(`/api/students/${s.id}/conversations`, {});
+    await fetch(`${base}/api/conversations/${c2.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "Koliko je pH raztopine?" }) }).then((r) => r.text());
+    assert.equal(reviewCalls.length, 1, "en klic gre pod mejo");
+    // Rezerva v meji učenca: 1 × za odgovor brez vaje; za odgovor z vajo bi bila 2 ×.
+    const one = checkReserveUsd(MODEL_MID, "Koliko je pH raztopine?" + box);
+    assert.ok(usage.takes.some((t) => t.id === s.id && Math.abs(t.usd - one) < 1e-12), "enojna rezerva učenca");
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD;
+    server.close();
+  }
+  // Dvojna rezerva učenca pri vaji (brez šolske meje).
+  const store2 = openDb(":memory:");
+  const usage2 = new Spy(store2.db);
+  const answers2 = [vaja];
+  const streamFn2 = async ({ mode, onText }) => {
+    const text = answers2.shift() + META;
+    onText(text);
+    return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
+  };
+  const calls2 = [];
+  const server2 = createApp(store2, { streamFn: streamFn2, reviewCreateFn: async (p) => (calls2.push(p), { content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 100, output_tokens: 10 } }), usage: usage2 }).listen(0);
+  const base2 = `http://127.0.0.1:${server2.address().port}`;
+  try {
+    const post = (path, body) => fetch(base2 + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const s = await (await post("/api/students", { name: "Ana", settings: { educational_track: "SREDNJA_SOLA", curriculum_level: "2" } })).json();
+    const c = await (await post(`/api/students/${s.id}/conversations`, {})).json();
+    await (await post(`/api/conversations/${c.id}/messages`, { text: "Koliko je pH?" })).text();
+    assert.equal(calls2.length, 2, "splošni in ciljni pregled");
+    const two = 2 * checkReserveUsd(MODEL_MID, "Koliko je pH?" + vaja);
+    assert.ok(usage2.takes.some((t) => t.id === s.id && Math.abs(t.usd - two) < 1e-12), "dvojna rezerva učenca");
+  } finally {
+    server2.close();
+  }
 });

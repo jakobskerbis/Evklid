@@ -64,7 +64,7 @@ import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js"
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
-import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
+import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewCalls, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity, schoolYear } from "./games.js";
 import { mountDailyPuzzle } from "./daily-puzzle.js";
@@ -1292,7 +1292,9 @@ export function createApp(store, opts = {}) {
         const risky = !!tekTopic || student.settings.track === "COMPETITION" || jeFaks(student.settings) || again;
         const stopnja = jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS";
         const school = !risky; // pregled SŠ/OŠ (vaja ali okvir v rešeni nalogi) ima svoj del dnevne meje
-        const reviewUsd = checkReserveUsd(MODEL_MID, text + plain);
+        // Pri SŠ z vajo ali načrtom poskusa dva vzporedna klica (splošni in ciljni pregled), zato dvojna rezerva.
+        const calls = reviewCalls(plain, stopnja);
+        const reviewUsd = calls * checkReserveUsd(MODEL_MID, text + plain);
         const spentKinds = (kinds) => kinds.reduce((t, k) => t + usage.kindToday(k), 0);
         const eligible =
           !issue &&
@@ -1300,7 +1302,7 @@ export function createApp(store, opts = {}) {
           !verdictChecked && // sodbo je model že pregledal
           liveReviewOn() &&
           needsReview({ model: answerModel, lite, premium, risky, claims: hasClaims(plain), claimLevel: claimReviewFor(stopnja), answerLength: plain.length, level: () => usage.budgetState().level });
-        const poolUsd = LIVE_REVIEW_POOL_RESERVE_USD();
+        const poolUsd = calls * LIVE_REVIEW_POOL_RESERVE_USD();
         const blockedBy = eligible ? reviewBlock({ school, needUsd: poolUsd, spent: spentKinds, pupilToday: () => usage.kindsCountToday(student.id, REVIEW_KINDS) }) : null;
         if (blockedBy) noteReviewSkip(store.db, stopnja, blockedBy);
         // Rezervacija v dnevnem bazenu (klici v teku štejejo, vzporedni pregledi meje ne prekoračijo) in v meji učenca.

@@ -19,7 +19,7 @@ import { parse, compile } from "../public/graph/math.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
-import { MODEL_MID } from "./claude.js";
+import { MODEL_MID, addUsage } from "./claude.js";
 
 export const liveCheckOn = () => process.env.EVKLID_LIVE_CHECK !== "0";
 // Največ toliko USD na dan za pregled z modelom (vrsta »preverjanje«); negativno = brez meje.
@@ -817,9 +817,13 @@ const EXERCISE_RE = /(?:^|\n)[ \t>*_]*(?:dodatna vaja|vaja|za vajo|practice(?: e
 const BOX_RE = /📌|zapomni si/iu;
 const SOLVED_RE = /(?:^|\n)[ \t>*_\d.]*(?:podatki|iščemo|preverba)[*_ \t]*[:：]/iu;
 export const hasExercise = (answer) => EXERCISE_RE.test(String(answer || ""));
+// Načrt poskusa v odgovoru (»Boljši načrt«, »Izboljšan načrt«, »načrt poskusa«, kontrolna skupina). Pregled PR #848: tudi
+// odgovor samo z načrtom (brez vaje ali okvirja) gre v pregled (j: natančnost).
+const PLAN_RE = /(?<!\p{L})(?:(?:boljši|izboljšan\p{L}*|popravljen\p{L}*|nov\p{L}*)\s+načrt|načrt\p{L}*\s+poskus\p{L}*|kontroln\p{L}*\s+skupin\p{L}*|improved\s+plan|experimental\s+design)/iu;
+export const hasPlan = (answer) => PLAN_RE.test(String(answer || ""));
 export const hasClaims = (answer) => {
   const a = String(answer || "");
-  return EXERCISE_RE.test(a) || (BOX_RE.test(a) && SOLVED_RE.test(a));
+  return EXERCISE_RE.test(a) || PLAN_RE.test(a) || (BOX_RE.test(a) && SOLVED_RE.test(a));
 };
 
 // Stopnje, kjer model pregleda odgovor z vajo ali okvirjem tudi brez tveganja (privzeto SŠ; OŠ z EVKLID_LIVE_REVIEW_OS=1).
@@ -1081,10 +1085,41 @@ export const levelLine = (stopnja) => (LEVEL_LABEL[stopnja] ? `Student's level: 
 /** Pregled s Sonnetom (navodila preverjevalca iz server/verify.js in LIVE_REVIEW_SYSTEM). Vrne { reason: razlog napake ali null, cost }. */
 // kind: »preverjanje« ali »preverjanje-sola« (reviewKindFor). signal: prekinitev zahteve; po LIVE_REVIEW_TIMEOUT_MS
 // askModel vrže napako z name »TimeoutError« (klicatelj odgovor pusti brez pregleda).
+// Ciljni pregled vaje in načrta poskusa (meritev SŠ 18. 11. po #844, 44333245684: obe napaki in ena manjša sta bili v
+// vaji ali načrtu, splošni pregled je odgovor pregledal in spustil kljub izrecnim pravilom). Drugi, kratek klic istega
+// modela vzporedno s splošnim pregledom, samo s tem opravilom in postopkom (preštej, reši, preveri vsako predpostavko).
+export const EXTRA_SYSTEM = `You check only two parts of an AI tutor's answer to a school student: the practice exercise (»Vaja«, »Practice«) and any plan of an experiment that the tutor proposes. Ignore everything else; the rest of the answer is checked separately.
+Think through these steps before you answer:
+1. Practice exercise: list every value and fact it assumes, also numbers changed from the task. For each, decide whether it can be true in reality and agrees with the fixed facts of the task and of nature (how much information one symbol of a few possible kinds can carry, how many chromosomes or atoms something can have, concentrations above solubility, probabilities or fractions above 1, sizes and rates that really occur). Check that the given values agree with each other, units included (no extra given value that contradicts the others), that every value is given to the right object (parent or offspring, reactant or product, sample or whole), and that the exercise can be solved with its own data and has exactly one correct answer or solution set (several roots, or several items the exercise asks for, are fine), and solve it. An open question (propose, design, give examples, explain, justify) needs no single answer; for it check only that its data are possible and consistent. Rounded textbook constants and values (g = 10 m/s², N_A = 6·10²³) are fine.
+2. Experiment plan: write down the total number of items, groups or repeats it states, then count the items it assigns to every group and condition. The counts must add up to the stated total, and every group or condition that is compared must have the same number of repeats (a plan need not combine every condition with every other). Check only the tutor's own plan; a plan quoted from the student or the task in order to criticise it is fine.
+An exercise that on purpose describes a flawed experiment, plan or wrong claim and asks the student to find, judge or improve it is fine, and so is a value the exercise clearly states as hypothetical. Spelling, style and wording that is correct are fine.
+End with one final line: OK, or NAPAKA: <the wrong words (at most about ten) and the corrected data or fact in a few words>; several errors in the same line, separated by »; «. Never write the exercise's result; name only the wrong data and the corrected data.`;
+
+/** Ali odgovor dobi še ciljni pregled vaje in načrta: SŠ (po izbiri OŠ, kot claimReviewFor), z vajo ali načrtom poskusa. */
+export const needsExtraCheck = (answer, stopnja) => claimReviewFor(stopnja) && (hasExercise(answer) || hasPlan(answer));
+/** Število klicev pregleda za rezervacijo v meji učenca in dnevnem bazenu (1 ali 2). */
+export const reviewCalls = (answer, stopnja) => (needsExtraCheck(answer, stopnja) ? 2 : 1);
+
 export async function reviewAnswer({ question, answer, stopnja = null, createFn = null, usage = null, studentId = null, kind = "preverjanje", signal = null, timeoutMs = LIVE_REVIEW_TIMEOUT_MS() }) {
-  const r = await askModel(MODEL_MID, levelLine(stopnja) + checkerUser({ question, answer }), createFn, LIVE_REVIEW_SYSTEM, { signal, timeoutMs });
-  const cost = usage ? usage.log(studentId, r.model, r.usage, kind) : 0;
-  return { reason: reviewReason(r), cost };
+  const user = levelLine(stopnja) + checkerUser({ question, answer });
+  const calls = [askModel(MODEL_MID, user, createFn, LIVE_REVIEW_SYSTEM, { signal, timeoutMs })];
+  // Ciljni pregled teče vzporedno, z razmislekom (thinking: adaptive); sodba je zadnja vrstica.
+  if (needsExtraCheck(answer, stopnja)) calls.push(askModel(MODEL_MID, user, createFn, EXTRA_SYSTEM, { signal, timeoutMs, thinking: true }));
+  const [main, extra] = await Promise.allSettled(calls);
+  // Poraba vseh uspelih klicev je en vpis (meja pregledov na učenca šteje en pregled), tudi ko splošni pregled ne uspe.
+  const done = [main, extra].filter((x) => x?.status === "fulfilled").map((x) => x.value);
+  const cost = usage && done.length ? usage.log(studentId, done[0].model, done.reduce((u, x) => addUsage(u, x.usage || {}), null), kind) : 0;
+  if (main.status === "rejected") throw Object.assign(main.reason, { cost }); // rok in prekinitev ostaneta kot prej (noteReviewSkip)
+  const x = extra?.status === "fulfilled" ? extra.value : null;
+  const reasons = [...new Set([reviewReason(main.value), x ? extraReason(x) : null].filter(Boolean))];
+  return { reason: reasons.length ? reasons.join("; ").slice(0, 600) : null, cost, extra: !!x };
+}
+
+/** Sodba ciljnega pregleda: zadnja neprazna vrstica (pred njo je lahko razmislek v besedilu). */
+export function extraReason(r) {
+  const last = String(r?.text || "").split("\n").map((l) => l.replace(/^[*`_\s#>-]+|[*`_\s]+$/g, "")).filter(Boolean).at(-1) || "";
+  const m = /^NAPAKA\s*:?\s*(.+)$/i.exec(last);
+  return m ? m[1].trim().slice(0, 600) : null;
 }
 
 // ---------------------------------------------------------------------------
