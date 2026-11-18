@@ -211,8 +211,10 @@ test("poraba AI: zajamčeni deleži naročnikov imajo prednost pred brezplačnim
   spend(sub, 5.1); // 5,11 $: nad mejo 5 $, v brezplačnem repu (0,2 $)
   u.shareCache = null;
   assert.ok(Math.abs(u.studentBudget(free1).allowance - (20 - 5.11) / 2) < 0.01);
-  // Naročnika skupni proračun ne ustavi; nad deležem odgovarja hitri model (Haiku), nad mejo brezplačni rep.
-  assert.equal(u.blockReason(sub), null);
+  // Naročnika skupni proračun ne ustavi; nad deležem odgovarja hitri model (Haiku), nad mejo brezplačni rep po dnevih:
+  // 0,11 $ repa v enem dnevu je več od današnjega dela (server/usage.js tailToday), zato »jutri spet«, ne konec obdobja.
+  assert.match(u.blockInfo(sub).code, /^block\.tailDay/);
+  assert.equal(u.overFreeTail(sub), false);
   assert.equal(u.overShare(sub), false);
   assert.ok(u.fastOnly(sub));
   const r = u.route(sub, "deep", { maxTier: "deep" });
@@ -884,11 +886,15 @@ test("Družina: en skupen delež za ves račun; obvestila in »še N razlag« za
     await api.billing.allowanceMail(bor, "low");
     assert.equal(mails().length, 1);
     assert.match(mails()[0].body.text, /Skupni delež družine/);
-    // Brezplačni rep družine: 0,2 $ na profil skupaj (2 profila = 0,4 $) nad mejo 2,4 $, nato oba profila čakata.
+    // Brezplačni rep družine: 0,2 $ na profil skupaj (2 profila = 0,4 $) nad mejo 2,4 $, razporejen po dnevih
+    // (server/usage.js tailToday): ves rep v enem dnevu presega današnji del obeh profilov (jutri spet) …
     spend(ana, 0.79); // 2,79 $
-    assert.equal(api.aiUsage.blockReason(bor), null);
+    assert.match(api.aiUsage.blockInfo(bor).code, /^block\.tailDay/);
+    assert.match(api.aiUsage.blockReason(ana), /Jutri jih spet dobiš/);
+    // … ves rep porabljen: oba profila čakata do novega obdobja paketa.
     spend(bor, 0.01); // 2,80 $
-    assert.ok(api.aiUsage.blockReason(ana) && api.aiUsage.blockReason(bor));
+    assert.match(api.aiUsage.blockReason(ana), /z novim obdobjem paketa/);
+    assert.match(api.aiUsage.blockReason(bor), /z novim obdobjem paketa/);
     // Paket za en profil: delež po profilu.
     subscribe("evklid_ss_year");
     assert.equal(api.poolFor(bor), null);
