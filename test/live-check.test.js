@@ -14,7 +14,7 @@ function harness({ answers = [], fixes = [], reviews = [] } = {}) {
   const calls = [];
   const reviewCalls = [];
   const streamFn = async ({ system, messages, mode, onText, canRound }) => {
-    const isFix = typeof system === "string" && system.startsWith("You fix one mistake");
+    const isFix = typeof system === "string" && system.startsWith("You fix the mistakes");
     calls.push({ system, messages, mode, isFix, canRound });
     const text = isFix ? fixes.shift() ?? "OK" : (answers.shift() ?? "Odgovor.") + META;
     if (!isFix) onText(text);
@@ -512,11 +512,11 @@ test("live check (SŠ meritev 18. 11.): the fix adds no new facts and may only w
   // BIO-SS-1/encimi-in-atp: popravek je trdil, da hitrost raste nad optimumom, in dodal termostabilne encime.
   let system = "";
   await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
-  assert.match(system, /^Except for corrected data or a replacement practice exercise, the correction fixes only the statement named in the problem, adds nothing else/m);
+  assert.match(system, /^Except for corrected data or a replacement practice exercise, the correction fixes only the statements named in the problem \(every one of them, briefly\), adds nothing else/m);
   assert.match(system, /withdraw it instead \(Slovenian: "Popravek: trditve »…« ne upoštevaj; za to nalogo ni potrebna\."\)/);
   assert.doesNotMatch(system, /ne drži; za to nalogo/);
   // Pregled PR #833: »poenostavitev« ni izhod za napačno uporabljeno pravilo (K > 1 pri Kc z enoto).
-  assert.match(system, /correctly applied textbook rule of the student's level lacks a rare exception, reply exactly OK\. A rule applied where it does not hold \(for example comparing a quantity with a unit with 1\) is a real mistake\./);
+  assert.match(system, /correctly applied textbook rule of the student's level lacks a rare exception, reply exactly OK \(do not name or fix its flaw\)\. A rule applied where it does not hold \(for example comparing a quantity with a unit with 1\) is a real mistake\./);
   assert.match(LIVE_REVIEW_SYSTEM, /applied where it holds is not an error just because it omits rare exceptions; a rule applied where it does not hold is an error/);
   assert.match(LIVE_REVIEW_SYSTEM, /quote only the wrong words \(at most about ten\)/);
   assert.match(LIVE_REVIEW_SYSTEM, /every written equality true \(a rounded value written with = is fine\)/);
@@ -535,7 +535,7 @@ test("live check (meritev SŠ 18. 11. po #833): review catches generalisations, 
   // BIO-SS-1/encimi-in-atp: vaja pripiše isti amilazi pri isti temperaturi drugo hitrost.
   assert.match(LIVE_REVIEW_SYSTEM, /must not give the object of the task, under the same conditions, a value different from the task's/);
   // BIO-SS-1/raziskovanje-v-biologiji: namenoma pomanjkljiv poskus v vaji je bil popravljen, neenake skupine v načrtu ne.
-  assert.match(LIVE_REVIEW_SYSTEM, /describes a flawed experiment or a wrong claim on purpose and asks the student to find the flaw is fine/);
+  assert.match(LIVE_REVIEW_SYSTEM, /An exercise that on purpose describes a flawed experiment, plan or wrong claim and asks the student to find, judge or improve it is not an error under any of the points above\./);
   assert.match(LIVE_REVIEW_SYSTEM, /every experiment plan: the group counts add up/);
   // KEM-SS-2/sibke-kisline-in-baze, FIZ-SS-3/elektromagnetno-valovanje
   assert.match(LIVE_REVIEW_SYSTEM, /what the task says must match the task \(a claim about what the student's textbook says that is not quoted in the question is an error\), and every warning must be unambiguous/);
@@ -859,3 +859,52 @@ test("ionRatioIssue (round 8): an ion ratio that does not balance the charges", 
   assert.match(codeFindings("Dušik je v 5. skupini. Na 2 iona Mg²⁺ pride en ion O²⁻.").issue, /15.*; ".*does not add up|15.*do not add up/);
 });
 
+
+test("live check (meritev SŠ 18. 11. po #835): all errors in one line, impossible exercise values, notation, swapped words; fix fixes all", async () => {
+  const { reviewAnswer, correction } = await import("../server/live-check.js");
+  // BIO-SS-4/molekularna-genetika#3: vaja s 4 biti na nukleotid
+  assert.match(LIVE_REVIEW_SYSTEM, /every value it assumes must be possible \(a changed number must not contradict known facts or limits/);
+  // BIO-SS-2/nastanek-vrst#2: »mule zaradi lihega števila ne moremo zapisati kot 2n«; molekularna#1: »Bite pretvorimo v bite«
+  assert.match(LIVE_REVIEW_SYSTEM, /statements about notation \(what a symbol such as n, 2n or a unit stands for\) must be correct, every sentence must say what is meant \(a swapped word, unit or quantity that changes the meaning, e\.g\. »bite pretvorimo v bite« for bytes, is an error; spelling, grammar, style and informal but correct wording are not\)/);
+  assert.match(LIVE_REVIEW_SYSTEM, /a value the exercise clearly states as hypothetical is fine\)/);
+  // izjema za namenoma pomanjkljivo vajo je v sklepnem odstavku (velja za vse točke, tudi skupine v načrtu)
+  assert.ok(LIVE_REVIEW_SYSTEM.indexOf("find, judge or improve it") > LIVE_REVIEW_SYSTEM.indexOf("every experiment plan"));
+  assert.match(LIVE_REVIEW_SYSTEM, /If there are several errors, name every one in the same line, separated by »; «/);
+  assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.$/);
+  // Razlog z več napakami ni odrezan pri 300 znakih (parseVerdict).
+  const long = "»a« ne drži; ".repeat(40).trim();
+  const createFn = async () => ({ content: [{ type: "text", text: `NAPAKA: ${long}` }], stop_reason: "end_turn", usage: {}, model: "m" });
+  const r = await reviewAnswer({ question: "q", answer: "a", createFn });
+  assert.ok(r.reason.length > 300 && r.reason.length <= 600, `razlog ${r.reason.length} znakov`);
+  assert.equal((await reviewAnswer({ question: "q", answer: "a", createFn: async () => ({ content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", usage: {}, model: "m" }) })).reason, null);
+  let system = "", user = "";
+  await correction({ streamFn: async (a) => ((system = a.system), (user = a.messages[0].content[0].text), { text: "OK" }), mode: "think", answer: "x", issue: "y".repeat(900) });
+  assert.match(system, /write a correction of 1 to 4 short sentences/);
+  assert.match(system, /^You fix the mistakes in an AI tutor's answer to a student\. You get the answer and the problems/);
+  assert.match(system, /If only some of the named problems are real, correct only those and ignore the rest\./);
+  assert.match(system, /a clearly hypothetical case \(»če bi …«, »predpostavimo«\), an exercise that on purpose contains a flawed experiment or wrong claim for the student to find, judge or improve,/);
+  assert.match(system, /reply exactly OK \(do not name or fix its flaw\)\./);
+  assert.doesNotMatch(system, /leave it as it is/);
+  assert.ok(user.includes("y".repeat(800)) && !user.includes("y".repeat(801)), "do 800 znakov ugotovitve");
+});
+
+test("live check (pregled #840): all NAPAKA lines are collected; a 4-sentence fix for two errors is shown", async () => {
+  const { reviewReason, reviewVerdict } = await import("../server/live-check.js");
+  const { parseVerdict } = await import("../server/verify.js");
+  const r = (text) => ({ text, verdict: parseVerdict(text) });
+  assert.equal(reviewReason(r("OK")), null);
+  assert.equal(reviewReason(r("Mula je pravilna.\nNAPAKA: x")), null, "NAPAKA ne na začetku ni sodba za popravek");
+  assert.equal(reviewReason(r("NAPAKA: »2n« ne velja; 2n = 63\nNAPAKA: **»4 bite«** – največ 2 bita**")), "»2n« ne velja; 2n = 63; **»4 bite«** – največ 2 bita");
+  assert.equal(reviewReason(r("NAPAKA: " + "a".repeat(700))).length, 600);
+  // sodba uporablja isto pomožno funkcijo
+  const two = "NAPAKA: potrdil je napačen rezultat\nNAPAKA: zavrnil je pravilen korak";
+  const v = await reviewVerdict({ context: "c", student: "s", answer: "a", createFn: async () => ({ content: [{ type: "text", text: two }], stop_reason: "end_turn", usage: {}, model: "m" }) });
+  assert.equal(v.reason, "potrdil je napačen rezultat; zavrnil je pravilen korak");
+  // Realen popravek dveh napak v štirih stavkih (nastanek-vrst#2) ostane prikazan (meja 1600 znakov).
+  const fix = "Popravek: tudi mulo zapišemo kot $2n$: v telesnih celicah ima $2n = 63$ kromosomov, oznaka $2n$ pove le, da je celica telesna in ima po en nabor od vsakega starša, ne pa, da je število sodo. Liho število ni razlog za neplodnost, zato trditve »Če skupno število ni sodo, je križanec neploden« ne upoštevaj. Mula je neplodna, ker kromosomi konja in osla niso homologni in se v mejozi ne morejo pravilno spariti. Zato pri mejozi ne nastanejo normalne spolne celice in mula nima potomcev.";
+  assert.ok(fix.length > 400 && fix.length < 1600);
+  const block = fixBlock(fix);
+  assert.match(block, /^\n\n> \*\*Popravek:\*\* tudi mulo zapišemo kot \$2n\$/);
+  assert.ok(block.includes("se v mejozi ne morejo pravilno spariti"));
+  assert.equal(fixBlock("Popravek: " + "x".repeat(1600)), null, "predolg popravek ni prikazan");
+});
