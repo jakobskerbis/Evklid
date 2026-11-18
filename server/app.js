@@ -61,6 +61,7 @@ import { compressedStatic, compressedJson, pickEncoding } from "./compress.js";
 import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
+import { createNameStream, withName, maskHistory, maskName } from "./ime-oznaka.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
@@ -767,8 +768,9 @@ export function createApp(store, opts = {}) {
     const list = await resolveOpen(raw, student.settings, { canOpen });
     return list.length ? list : undefined;
   };
-  const choicesOf = (raw) => {
-    const c = parseChoices(raw);
+  // Gumbi z izbirami nosijo oznako imena (server/ime-oznaka.js), učenec vidi pravo ime.
+  const choicesOf = (raw, name = "") => {
+    const c = parseChoices(raw).map((x) => withName(x, name));
     return c.length ? c : undefined;
   };
   // Surovo besedilo shranjenega odgovora (z bloki), za gumbe z izbirami ob ponovnem odprtju pogovora.
@@ -795,7 +797,7 @@ export function createApp(store, opts = {}) {
       topic: c.path_topic ? { id: c.path_topic, name: getTopic(c.path_topic)?.name } : null,
       messages: msgs.map((m) => ({
         full_offer: (offerOn && m === lastMsg) || undefined,
-        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || last.flag === "none") ? choicesOf(rawOf(m)) : undefined,
+        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || last.flag === "none") ? choicesOf(rawOf(m), owner?.name) : undefined,
         open: opens.get(m.id),
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
@@ -955,7 +957,8 @@ export function createApp(store, opts = {}) {
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
-    const zgodovina = store.apiHistory(conv.id);
+    // Odgovori inštruktorja iz časa, ko je model ime še poznal: ime → oznaka (server/ime-oznaka.js).
+    const zgodovina = maskHistory(store.apiHistory(conv.id), student.name);
     const prior = staleImages(zgodovina);
     const reserveFor = (m, fallback = true) =>
       replyReserveUsd({
@@ -1011,7 +1014,22 @@ export function createApp(store, opts = {}) {
       Connection: "keep-alive",
       "X-Accel-Buffering": "no",
     });
-    const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    const write = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    // Model piše oznako imena (server/ime-oznaka.js); pravo ime vstavimo šele v besedilo za učenca. Oznaka je lahko
+    // razdeljena med dva kosa toka: konec se zadrži do naslednjega kosa, ob umiku zavrže, pred koncem pošlje.
+    const named = createNameStream(student.name);
+    const send = (event, data) => {
+      if (event === "delta") {
+        const t = named.push(data?.text);
+        if (!t) return;
+        data = { ...data, text: t };
+      } else if (event === "retract") named.reset();
+      else if (event === "done" || event === "error") {
+        const t = named.end();
+        if (t) write("delta", { text: t });
+      }
+      write(event, data);
+    };
     // Faza za napis med čakanjem (public/app.js): »check«, ko koda ali pregled res preverja odgovor, »answer«, ko konča.
     let checking = false;
     const phase = (on) => {
@@ -1119,6 +1137,7 @@ export function createApp(store, opts = {}) {
           history,
           streamFn,
           signal: controller.signal,
+          mask: (t) => maskName(t, student.name),
           log: (r) => r?.usage && usage.log(student.id, r.model || modeParams("lite").model, r.usage, "povzetek"),
         });
         hold.settle(sumReserve);
@@ -1156,8 +1175,9 @@ export function createApp(store, opts = {}) {
       const klicZacetek = Date.now();
       const run = cached
         ? async ({ onText }) => {
-            // Ime učenca je v predpomnilniku shranjeno kot {{IME}}.
-            const t = cached.text.replaceAll("{{IME}}", student.name);
+            // Ime učenca je v predpomnilniku shranjeno kot oznaka {{IME}}; zamenja jo send (pravo ime samo za učenca),
+            // zgodovina za API obdrži oznako kot pri odgovoru modela.
+            const t = cached.text;
             for (let i = 0; i < t.length; i += 40) onText(t.slice(i, i + 40));
             if (!cached.hint) store.db.prepare("UPDATE answer_cache SET hits = hits + 1 WHERE key = ?").run(key);
             usage.logSaved(student.id, cached.hint ? "hint" : "reuse");
@@ -1409,6 +1429,8 @@ export function createApp(store, opts = {}) {
       const opomba = actionNote(settingsTools.state.done);
       if (opomba) content = [...content, { type: "text", text: opomba }];
 
+      // Prikaz s pravim imenom, zgodovina za API (content) z oznako (server/ime-oznaka.js).
+      display = withName(display, student.name);
       const assistantId = store.addMessage(conv.id, "assistant", content, display);
       // Način, v katerem je ta odgovor nastal (po morebitni spremembi z orodjem v tem odgovoru).
       const modeAfter = store.getStudent(student.id)?.settings?.solving_mode === "B" ? "B" : "A";
@@ -1476,7 +1498,7 @@ export function createApp(store, opts = {}) {
         full_offer: (meta?.mode === "A" && meta.flag === "none" && !meta.done && !settingsTools.state.used && fullOffer(conv.id)) || undefined,
         // Gumbi z izbirami (<<IZBIRE [...]>>): učenec tapne, odgovor se pošlje. Ne pri opozorilih in zavrnitvi.
         // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
-        choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : ""),
+        choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : "", student.name),
         // Gumbi za orodja aplikacije (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; server/odpri.js).
         open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student) : undefined,
         cost_usd: Math.round(cost * 10000) / 10000,

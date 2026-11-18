@@ -51,19 +51,24 @@ test("rezultati iz vadnice prvega otroka ne gredo drugemu otroku", async () => {
 });
 
 test("ime v drugi pisavi (ruščina) ne gre drugemu otroku", async () => {
-  // Pri pogovoru v ruščini model latinično ime zapiše v cirilici.
-  const reply = (sys) => (/Ime učenca: Zala/.test(sys) ? "Привет, Зала! 1/2 + 1/3 = 5/6." : "Привет! 1/2 + 1/3 = 5/6.");
+  // Pri pogovoru v ruščini bi model latinično ime zapisal v cirilici. Od 18. 11. 2026 imena sploh ne dobi
+  // (server/ime-oznaka.js): napiše oznako, strežnik vstavi ime, kot ga je vpisal učenec.
+  const reply = (sys) => (/Zala/.test(sys) ? "Привет, Зала! 1/2 + 1/3 = 5/6." : /Ime učenca: \{\{IME\}\}/.test(sys) ? "Привет, {{IME}}! 1/2 + 1/3 = 5/6." : "Привет! 1/2 + 1/3 = 5/6.");
   await withServer(reply, async ({ call }) => {
-    assert.match(await ask(call, await student(call, "Zala", { language: "ru" })), /Зала/);
-    assert.doesNotMatch(await ask(call, await student(call, "Bor", { language: "ru" })), /Зала/, "Bor ne sme dobiti Zalinega imena");
+    const a = await ask(call, await student(call, "Zala", { language: "ru" }));
+    assert.match(a, /Привет, Zala!/);
+    assert.doesNotMatch(a, /Зала/, "model imena ne pozna");
+    const b = await ask(call, await student(call, "Bor", { language: "ru" }));
+    assert.doesNotMatch(b, /Зала|Zala/, "Bor ne sme dobiti Zalinega imena");
   });
 });
 
 test("ime brez strešice (Žiga → Ziga) ne gre drugemu otroku", async () => {
-  const reply = (sys) => (/Ime učenca: Žiga/.test(sys) ? "Ziga, poglejva: 1/2 + 1/3 = 5/6." : "Poglejva: 1/2 + 1/3 = 5/6.");
+  // Model imena ne dobi (server/ime-oznaka.js), zato ga ne more zapisati brez strešice.
+  const reply = (sys) => (/Žiga/.test(sys) ? "Ziga, poglejva: 1/2 + 1/3 = 5/6." : "{{IME}}, poglejva: 1/2 + 1/3 = 5/6.");
   await withServer(reply, async ({ call }) => {
-    assert.match(await ask(call, await student(call, "Žiga")), /Ziga/);
-    assert.doesNotMatch(await ask(call, await student(call, "Bor")), /Ziga/, "Bor ne sme dobiti Žigovega imena");
+    assert.match(await ask(call, await student(call, "Žiga")), /Žiga, poglejva/);
+    assert.doesNotMatch(await ask(call, await student(call, "Bor")), /Ziga|Žiga/, "Bor ne sme dobiti Žigovega imena");
   });
 });
 

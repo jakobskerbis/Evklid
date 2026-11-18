@@ -6,6 +6,7 @@ import { goalPrompt } from "../public/goal-data.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { cleanText } from "./settings.js";
+import { IME_OZNAKA } from "./ime-oznaka.js";
 import { interestById } from "../public/interests.js";
 import { studyProgramPrompt } from "./curriculum.js";
 import { langInfo } from "../public/i18n/languages.js";
@@ -24,6 +25,13 @@ export function loadTemplate() {
   if (!cached) cached = fs.readFileSync(TEMPLATE_PATH, "utf8");
   return cached;
 }
+
+// Vrstica »Ime učenca« v delu za učenca (pod oznako NASTAVITVE, ni v predpomnjenem delu). Sklonjene oblike
+// strežnik ne more sestaviti, zato samo nagovor v imenovalniku.
+const NAME_LINE =
+  `${IME_OZNAKA} (oznaka namesto imena; aplikacija jo pred prikazom zamenja z učenčevim pravim imenom). ` +
+  `Ko ga nagovoriš po imenu, napiši oznako točno tako, brez končnic, npr. »Bravo, ${IME_OZNAKA}!«. ` +
+  "Kjer bi ime moral skloniti, ga raje izpusti. Oznake učencu ne omenjaj in je ne razlagaj.";
 
 const PLACEHOLDERS = [
   "student_name",
@@ -53,7 +61,8 @@ export function buildSystemPrompt({ settings, weaknesses = [], studentName = "",
     learning_path: learningPath || "(Prost pogovor: ni izbrane teme učne poti.)",
     ...settings,
     study_program: studyProgramPrompt(settings),
-    student_name: cleanText(studentName, 40) || "(ni podano)",
+    // Ime ne gre k ponudniku AI (server/ime-oznaka.js): model dobi oznako, strežnik jo v odgovoru zamenja z imenom.
+    student_name: cleanText(studentName, 40) ? NAME_LINE : "(ni podano)",
     personality_setting: settings.personality_setting || "nevtralna",
     weaknesses: weaknesses.length ? weaknesses.join(", ") : "(še ni podatkov)",
     student_results: results || "še ni podatkov. Predlagana začetna zahtevnost: osnovna.",

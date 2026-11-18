@@ -37,9 +37,12 @@ const ask = async (call, s) => {
 };
 
 test("ime v cirilici pri pogovoru v slovenščini (model ga prečrka v latinico) ne gre drugemu otroku", async () => {
-  const reply = (sys) => (/Ime učenca: Иван/.test(sys) ? "Ivan, poglejva: 1/2 + 1/3 = 5/6." : "Poglejva: 1/2 + 1/3 = 5/6.");
+  // Od 18. 11. 2026 model imena ne dobi (server/ime-oznaka.js): ne more ga prečrkati, piše oznako.
+  const reply = (sys) => (/Иван/.test(sys) ? "Ivan, poglejva: 1/2 + 1/3 = 5/6." : "{{IME}}, poglejva: 1/2 + 1/3 = 5/6.");
   await withServer(reply, async ({ call }) => {
-    assert.match(await ask(call, await student(call, "Иван")), /Ivan/);
+    const a = await ask(call, await student(call, "Иван"));
+    assert.match(a, /Иван, poglejva/);
+    assert.doesNotMatch(a, /Ivan/, "model imena ne pozna");
     assert.doesNotMatch(await ask(call, await student(call, "Bor")), /Ivan/, "Bor ne sme dobiti Ivanovega imena");
   });
 });
