@@ -86,5 +86,6 @@
   "vaja.fromPath": "Từ lộ trình học của em",
   "vaja.onlySi": "Hiện chỉ dành cho trường tiểu học và trung học Slovenia.",
   "vaja.tooFast": "Quá nhiều trang trong thời gian ngắn. Hãy thử lại sau vài phút.",
-  "vaja.expired": "Danh sách bài đã hết hạn. Hãy đọc lại trang."
+  "vaja.expired": "Danh sách bài đã hết hạn. Hãy đọc lại trang.",
+  "vaja.lengthHint": "Số kiến thức đã chọn: {k}. Với {n} bài, không phải kiến thức nào cũng được luyện."
 }

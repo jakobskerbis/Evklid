@@ -86,5 +86,6 @@
   "vaja.fromPath": "Do teu percurso de aprendizagem",
   "vaja.onlySi": "Por agora só para o ensino básico e secundário esloveno.",
   "vaja.tooFast": "Demasiadas folhas em pouco tempo. Tenta daqui a uns minutos.",
-  "vaja.expired": "A lista de exercícios expirou. Lê a folha outra vez."
+  "vaja.expired": "A lista de exercícios expirou. Lê a folha outra vez.",
+  "vaja.lengthHint": "Competências escolhidas: {k}. Com {n} exercícios, nem todas entram."
 }

@@ -86,6 +86,7 @@ export default {
   "vaja.again": "Še ena vaja",
   "vaja.unknown": "Nisem prepoznal znanja – izberi ga sam.",
   "vaja.fromPath": "Z tvoje učne poti",
+  "vaja.lengthHint": "Izbranih znanj: {k}. Pri {n} nalogah ne pridejo vsa na vrsto.",
   "vaja.onlySi": "Za zdaj samo za slovensko osnovno in srednjo šolo.",
   "vaja.tooFast": "Preveč listov v kratkem času. Poskusi čez nekaj minut.",
   "vaja.expired": "Seznam nalog je potekel. Preberi list znova.",

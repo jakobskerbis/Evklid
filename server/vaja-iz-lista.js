@@ -8,6 +8,8 @@
 // Naloge seje so v načinu »list« (server/progress.js startList, listSummary): namigi, rešen zgled, XP, obvladanje
 // in ponavljanje kot v Vadnici. Branje fotografij je obstoječi /zapiski/preberi (server/zapiski.js).
 // Samo za slovensko OŠ in SŠ (iskanje po učbeniku, searchOn); drugje zaslon pokaže eno vrstico in strežnik vrne 422.
+// Privzeto IZKLOPLJENO (j, 18. 11. 2026, do meritve natančnosti): EVKLID_VAJA_IZ_TESTA=1 (server/zapiski.js vajaFlag);
+// izklopljena: obe poti vrneta 404 { code: "vaja_off" }, GET /zapiski vrne vaja: null in zaslon razdelka ne pokaže.
 //
 // Veščine: koda najprej najde kratek seznam kandidatov za vsako nalogo (iskanje po učbeniku, server/lekcija-za-vprasanje.js,
 // z besedami za matematične znake, prednostjo predmeta lista in nekaj temami z učenčeve poti; samo teme z generatorjem,
@@ -36,7 +38,7 @@ import { LIST } from "./progress.js";
 import { lokalnaVrsta, nujnoZa } from "./nujno.js";
 import { auditSecret } from "./crypto-polje.js";
 import { uiLanguage } from "../public/i18n/languages.js";
-import { cleanNoteText, parsePages, pageLimit, pagesUsed, takePage, givePage, useReads, giveReads, nextMonth, MAX_PAGES } from "./zapiski.js";
+import { vajaFlag, cleanNoteText, parsePages, pageLimit, pagesUsed, takePage, givePage, useReads, giveReads, nextMonth, MAX_PAGES } from "./zapiski.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
 export const PICK_MODEL = () => env("EVKLID_VAJA_PICK_MODEL", MODEL);
@@ -53,27 +55,55 @@ export const SHEET_TTL_MS = 2 * 3600 * 1000;
 export const RATE = { max: 20, windowMs: 10 * 60 * 1000 }; // listov na profil
 
 // ---------- osebni podatki in razdelitev na naloge (brez AI) ----------
-// Vrstica glave testa (ime, razred, datum, ocena, točke, podpis, učitelj, šola): ključna beseda na začetku vrstice
-// (tudi v tabeli »| Ime | … |«, za »**«, »#«), brez »=« in »?«. Odstrani se, če ima dvopičje, črte, tri pike ali »|«, ali če je kratka
-// in brez »=« in »?« (»Datum 12. 11.«, »OŠ Prule«, »Učenec/ka«).
-const HEAD_WORD =
-  "ime(?:\\s+in\\s+priimek)?|priimek|učen(?:ec|ka)|dija(?:k|kinja)|razred|oddelek|datum|ocena|točk[ea]?|skupaj\\s+točk|podpis|učitelj(?:ica)?|profesor(?:ica)?|šola|oš|o\\.\\s*š\\.|osnovna\\s+šola|gimnazija|srednja\\s+šola|name(?:\\s+and\\s+surname)?|surname|class|date|grade|score|teacher|school";
-const HEAD_START = new RegExp(`^[\\s|*_#>\\-]*(?:${HEAD_WORD})(?![a-zčšžćđ])`, "i");
-const HEAD_MARK = /:|_{2,}|\.{3,}|…|\|/;
-export const isHeadLine = (l) => HEAD_START.test(l) && !/[=?]/.test(l) && (HEAD_MARK.test(l) || l.trim().length <= 60);
+// Glava testa se odstrani samo v obliki oznake (pregled PR #838, krog 3), ne po ključni besedi v stavku:
+//   LABEL  »Ime:«, »| Ime | … |«, »Ime in priimek učenca: …«, »**Razred:** 8.a«, »Ocena (1–5): ____«, »Podpis staršev«,
+//          »Točke: ___/20«, »Pripravila: Mojca Kos, OŠ Prule«, samostojna »Ime« (ključna beseda, največ ena beseda,
+//          kratek oklepaj, nato »:«, »|«, »__«, »...«, »…« ali konec vrstice);
+//   SHORT  »Datum 12. 11.«, »Oddelek 3.c«, »Razred 8.a« (za besedo samo številke in pike);
+//   SCHOOL »OŠ Prule«, »Gimnazija Bežigrad« (za imenom šole velika začetnica, brez enot).
+// Stavki z istimi besedami ostanejo (»Razred A ima 24 učencev …«, »Šola ima 3 nadstropja.«, »Točke A(2,3) in B(5,7) …«).
+const KW =
+  "ime(?:\\s+in\\s+priimek)?|priimek|učen(?:ec|ka)|dija(?:k|kinja)|razred|oddelek|datum|ocena|točke|skupaj\\s+točk|podpis|učitelj(?:ica)?|profesor(?:ica)?|šola|pripravil[a]?|avtor(?:ica)?|name(?:\\s+and\\s+surname)?|surname|class|date|grade|score|teacher|school";
+const LABEL = new RegExp(`^[\\s|*_#>-]*(?:${KW})(?:/\\p{L}{1,6})?(?:\\s+\\p{L}+)?\\s*(?:\\([^)]{0,10}\\))?[*_]*\\s*(?::|\\||_{2,}|\\.{3,}|…|$)`, "iu");
+const SHORT = /^[\s|*_#>-]*(?:razred|oddelek|datum)\s+\d[\d.\s/a-z]{0,11}$/i;
+const SCHOOL = /^[\s|*_#>-]*(?:OŠ|O\.\s*Š\.|[Oo]snovna\s+šola|[Gg]imnazija|[Ss]rednja\s+(?:\p{L}+\s+)?šola)\s+\p{Lu}/u;
+const UNIT = /\d\s*(?:km|cm|mm|m|kg|g|l|€|%|°|s|h|min)\b/i;
+// Vrednosti glave v svoji vrstici (OCR tabele »Razred« / »7. b« / »Datum« / »12. 11. 2026«).
+const CLASS_LINE = /^\s*\d{1,2}\.\s*[a-h]\s*$/i;
+const DATE_LINE = /^\s*\d{1,2}\.\s*\d{1,2}\.(?:\s*\d{2,4})?\s*$/;
+export const isHeadLine = (l) => LABEL.test(l) || SHORT.test(l) || (SCHOOL.test(l) && !UNIT.test(l)) || CLASS_LINE.test(l) || DATE_LINE.test(l);
+// Oznaka brez vrednosti (»Ime«, »Datum:«, »| Razred: |«): vrednost je v naslednji vrstici.
+const emptyLabel = (l) => {
+  const m = LABEL.exec(l);
+  return !!m && /^[\s|_.:…*]*$/.test(l.slice(m[0].length));
+};
+// Vrstica, ki je lahko vrednost glave (ime, »7. b«): kratka, brez številke naloge, vprašaja ali »=«.
+const valueLike = (l) => l.trim().length > 0 && l.trim().length <= 40 && !/[?=]/.test(l) && (numOf(l) == null || CLASS_LINE.test(l) || DATE_LINE.test(l));
 const EMAIL = /[\w.+-]+@[\w-]+\.[\w.-]+/g;
-// Telefon samo v strogi obliki (»041 123 456«, »01/234-56-78«, »+386 41 123 456«) ali v vrstici z besedo za telefon,
-// da števila v nalogah (»05 10 15 20 25«) ostanejo.
+// Telefon samo v strogi obliki (»041 123 456«, »01/234-56-78«, »+386 41 123 456«) ali v vrstici z besedo za telefon.
+// Kompromis (pregled #838): števila v nalogah (»05 10 15 20 25«, »1 234 567«) ostanejo, a številka, zapisana drugače
+// in brez besede za telefon (»41123456«), ostane tudi; redko število v nalogi v obliki »041 123 456« se odstrani.
+// Pred tem varujeta poziv za branje (zamenja osebne podatke z [ime]) in navodilo, naj na sliki ni osebnih podatkov.
 const PHONE_STRICT = /(?<![\d,.])(?:\+\d{3}[ ]?\d{1,2}|0[1-7]\d?)[ /-]?\d{3}[ /-]?\d{2,3}(?:[ -]\d{2})?(?!\d|[,.]\d|\s\d)/g;
 const PHONE_WORD = /\b(tel|telefon|gsm|mobi|mobitel|phone|kontakt)\b/i;
 export function stripPersonal(text) {
-  return String(text ?? "")
-    .split("\n")
-    .filter((l) => !isHeadLine(l))
-    .map((l) => (PHONE_WORD.test(l) ? l.replace(/\+?\d[\d /-]{6,}\d/g, "") : l.replace(PHONE_STRICT, "")))
-    .join("\n")
-    .replace(/\[ime\]/gi, "")
-    .replace(EMAIL, "");
+  const lines = String(text ?? "").split("\n");
+  const keep = [];
+  let skipValue = false;
+  for (const l of lines) {
+    if (skipValue && !l.trim()) continue;
+    if (skipValue && valueLike(l) && !isHeadLine(l)) {
+      skipValue = false;
+      continue; // vrednost oznake iz prejšnje vrstice (»Ana Novak«)
+    }
+    skipValue = false;
+    if (isHeadLine(l)) {
+      skipValue = emptyLabel(l);
+      continue;
+    }
+    keep.push(PHONE_WORD.test(l) ? l.replace(/\+?\d[\d /-]{6,}\d/g, "") : l.replace(PHONE_STRICT, ""));
+  }
+  return keep.join("\n").replace(/\[ime\]/gi, "").replace(EMAIL, "");
 }
 // Oznake, s katerimi bi besedilo naloge »zaprlo« podatek ali ponaredilo seznam možnosti.
 const TAGS = /[<＜‹〈﹤]\s*[\/／]?\s*(sheet|task|options?|student)\b[^>＞›〉﹥\n]{0,200}[>＞›〉﹥]?/gi;
@@ -81,13 +111,15 @@ export const cleanTaskText = (s) => cleanNoteText(stripPersonal(s).replace(TAGS,
 
 // Začetek naloge: »1.«, »1)«, »2. naloga«, »Naloga 3«, »### 4.«, »**5.**«; podnaloge (a, b, c) ostanejo v isti nalogi.
 // Nova številka velja samo, če je za ena večja od prejšnje (prva je lahko katera koli): »1.« v »3. … 1. korak« ne razdeli.
+// Vrstici razreda (»7. b«) in datuma (»12. 11. 2026«) nista številki naloge.
 const START = /^[\s*_#>-]*(?:(?:naloga|task|exercise)\s*(\d{1,2})\b|(\d{1,2})\s*[.)](?!\d)|(\d{1,2})\.\s*naloga\b)/i;
-const numOf = (l) => {
+function numOf(l) {
+  if (CLASS_LINE.test(l) || DATE_LINE.test(l)) return null;
   const m = START.exec(l);
   return m ? Number(m[1] || m[2] || m[3]) : null;
-};
-// Odstavek brez števk, operatorjev in vprašaja (glava, naslov testa) ni naloga.
-const looksLikeTask = (t) => /[\d=+\-−·:×÷^?%$]/.test(t);
+}
+// Odstavek brez števk, operatorjev in vprašaja (glava, naslov testa) ni naloga; dvopičje samo ni račun.
+const looksLikeTask = (t) => /[\d=+\-−·×÷^?%$]/.test(t);
 export function splitTasks(pages) {
   const out = [];
   for (const p of pages) {
@@ -146,7 +178,9 @@ export function searchText(text) {
   // Decimalna števila samo pri čistem računu (pri »2,7 kg« v fiziki bi besede potegnile matematiko).
   const pure = !/[a-zčšž]{2,}/i.test(plain);
   if (pure && /\d\s*(?:,|\{,\})\s*\d/.test(s)) words.push("decimalna števila", "računanje z decimalnimi števili");
-  if (pure && /\d\s*[·•×*:÷+\-−]\s*\(?\d/.test(plain) && !/[=<>^]/.test(plain)) words.push("računske operacije", "vrstni red računskih operacij");
+  // »:« šteje kot deljenje samo med števili (»Izračunaj: 3 + 4« ni deljenje).
+  const op = /\d\s*\)?\s*[·•×*÷+\-−]\s*\(?\s*\d/.test(plain) || /\d\s*\)?\s*:\s*\(?\s*\d/.test(plain);
+  if (pure && op && !/[=<>^]/.test(plain)) words.push("računske operacije", "vrstni red računskih operacij");
   return words.length ? `${s}\n${[...new Set(words)].join(", ")}` : s;
 }
 
@@ -207,6 +241,8 @@ const topicName = (id, lang = "sl") => {
   return t ? localTopic(t, lang)?.name || t.name : id;
 };
 const yearOf = (id) => getPath(getTopic(id)?.path)?.label || "";
+export const vajaOn = (settings) => vajaFlag() && searchOn(settings);
+const OFF = { error: "Te možnosti ni.", code: "vaja_off" };
 export const studentYear = (settings) => {
   const l = levelOf(settings);
   return l ? `${l.grade}. ${l.school === "SS" ? "letnik SŠ" : "razred OŠ"}` : "";
@@ -396,6 +432,7 @@ export function mountVajaIzLista(app, store, { loadStudent, usage, progress, rig
   }
 
   app.post("/api/students/:id/zapiski/vaja/naloge", async (req, res) => {
+    if (!vajaFlag()) return res.status(404).json(OFF);
     const s = loadStudent(req, res);
     if (!s) return;
     if (!searchOn(s.settings)) return res.status(422).json({ error: "Vaja iz testa je za zdaj samo za slovensko osnovno in srednjo šolo.", code: "vaja_stopnja" });
@@ -419,6 +456,7 @@ export function mountVajaIzLista(app, store, { loadStudent, usage, progress, rig
   });
 
   app.post("/api/students/:id/zapiski/vaja/zacni", (req, res) => {
+    if (!vajaFlag()) return res.status(404).json(OFF);
     const s = loadStudent(req, res);
     if (!s) return;
     // Telo mora biti predmet (pri seznamu bi bil »length« dolžina seznama, CodeQL).

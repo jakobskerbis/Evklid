@@ -86,5 +86,6 @@
   "vaja.fromPath": "Dari jalur belajarmu",
   "vaja.onlySi": "Untuk saat ini hanya untuk SD dan sekolah menengah Slovenia.",
   "vaja.tooFast": "Terlalu banyak lembar dalam waktu singkat. Coba lagi beberapa menit lagi.",
-  "vaja.expired": "Daftar soal sudah kedaluwarsa. Baca lembarnya lagi."
+  "vaja.expired": "Daftar soal sudah kedaluwarsa. Baca lembarnya lagi.",
+  "vaja.lengthHint": "Keterampilan dipilih: {k}. Dengan {n} soal, tidak semuanya kebagian."
 }

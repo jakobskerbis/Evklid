@@ -86,5 +86,6 @@
   "vaja.fromPath": "Öğrenme yolundan",
   "vaja.onlySi": "Şimdilik yalnızca Slovenya ilk ve ortaokulları için.",
   "vaja.tooFast": "Kısa sürede çok fazla kağıt. Birkaç dakika sonra tekrar dene.",
-  "vaja.expired": "Soru listesinin süresi doldu. Kağıdı yeniden okut."
+  "vaja.expired": "Soru listesinin süresi doldu. Kağıdı yeniden okut.",
+  "vaja.lengthHint": "Seçilen bilgi sayısı: {k}. {n} soruda hepsine sıra gelmez."
 }

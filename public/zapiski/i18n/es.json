@@ -86,5 +86,6 @@
   "vaja.fromPath": "De tu ruta de aprendizaje",
   "vaja.onlySi": "Por ahora solo para la escuela primaria y secundaria eslovena.",
   "vaja.tooFast": "Demasiadas hojas en poco tiempo. Inténtalo en unos minutos.",
-  "vaja.expired": "La lista de ejercicios ha caducado. Vuelve a leer la hoja."
+  "vaja.expired": "La lista de ejercicios ha caducado. Vuelve a leer la hoja.",
+  "vaja.lengthHint": "Habilidades elegidas: {k}. Con {n} ejercicios no todas entran."
 }

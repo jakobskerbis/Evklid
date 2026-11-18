@@ -86,5 +86,6 @@
   "vaja.fromPath": "Von deinem Lernpfad",
   "vaja.onlySi": "Vorerst nur für slowenische Grund- und Mittelschulen.",
   "vaja.tooFast": "Zu viele Blätter in kurzer Zeit. Versuche es in ein paar Minuten wieder.",
-  "vaja.expired": "Die Aufgabenliste ist abgelaufen. Lies das Blatt erneut ein."
+  "vaja.expired": "Die Aufgabenliste ist abgelaufen. Lies das Blatt erneut ein.",
+  "vaja.lengthHint": "Gewähltes Wissen: {k}. Bei {n} Aufgaben kommt nicht alles an die Reihe."
 }

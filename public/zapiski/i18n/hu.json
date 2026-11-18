@@ -86,5 +86,6 @@
   "vaja.fromPath": "A tanulási utadról",
   "vaja.onlySi": "Egyelőre csak a szlovén általános és középiskolához.",
   "vaja.tooFast": "Túl sok lap rövid idő alatt. Próbáld újra néhány perc múlva.",
-  "vaja.expired": "A feladatlista lejárt. Olvasd be újra a lapot."
+  "vaja.expired": "A feladatlista lejárt. Olvasd be újra a lapot.",
+  "vaja.lengthHint": "Kiválasztott tudás: {k}. {n} feladatnál nem kerül sorra mind."
 }

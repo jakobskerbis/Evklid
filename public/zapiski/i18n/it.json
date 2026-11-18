@@ -86,5 +86,6 @@
   "vaja.fromPath": "Dal tuo percorso di studio",
   "vaja.onlySi": "Per ora solo per la scuola primaria e secondaria slovena.",
   "vaja.tooFast": "Troppi fogli in poco tempo. Riprova tra qualche minuto.",
-  "vaja.expired": "L'elenco degli esercizi è scaduto. Rileggi il foglio."
+  "vaja.expired": "L'elenco degli esercizi è scaduto. Rileggi il foglio.",
+  "vaja.lengthHint": "Abilità scelte: {k}. Con {n} esercizi non tutte vengono esercitate."
 }

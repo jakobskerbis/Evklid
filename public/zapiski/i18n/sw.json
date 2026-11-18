@@ -86,5 +86,6 @@
   "vaja.fromPath": "Kutoka njia yako ya kujifunza",
   "vaja.onlySi": "Kwa sasa ni kwa shule za msingi na sekondari za Slovenia tu.",
   "vaja.tooFast": "Karatasi nyingi mno kwa muda mfupi. Jaribu tena baada ya dakika chache.",
-  "vaja.expired": "Orodha ya maswali imeisha muda. Soma karatasi tena."
+  "vaja.expired": "Orodha ya maswali imeisha muda. Soma karatasi tena.",
+  "vaja.lengthHint": "Ujuzi uliochaguliwa: {k}. Kwa maswali {n}, si wote watapata zamu."
 }

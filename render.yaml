@@ -27,6 +27,10 @@ services:
         value: "131072"
       - key: MALLOC_MMAP_THRESHOLD_
         value: "131072"
+      # »Vaja iz testa ali domače naloge« (server/vaja-iz-lista.js): privzeto izklopljeno (j, 18. 11.); vklop po meritvi
+      # natančnosti prepoznavanja znanja (≥ 90 %). Za vklop odstrani # v naslednjih dveh vrsticah.
+      # - key: EVKLID_VAJA_IZ_TESTA
+      #   value: "1"
       - key: EVKLID_DB
         value: /var/data/evklid.db
       - key: ANTHROPIC_API_KEY

@@ -86,5 +86,6 @@
   "vaja.fromPath": "Din traseul tău de învățare",
   "vaja.onlySi": "Deocamdată doar pentru școala primară și secundară din Slovenia.",
   "vaja.tooFast": "Prea multe foi într-un timp scurt. Încearcă din nou peste câteva minute.",
-  "vaja.expired": "Lista de exerciții a expirat. Citește din nou foaia."
+  "vaja.expired": "Lista de exerciții a expirat. Citește din nou foaia.",
+  "vaja.lengthHint": "Cunoștințe alese: {k}. La {n} exerciții nu ajung toate la rând."
 }

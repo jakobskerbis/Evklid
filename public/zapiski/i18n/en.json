@@ -86,5 +86,6 @@
   "vaja.fromPath": "From your learning path",
   "vaja.onlySi": "For now only for Slovenian primary and secondary school.",
   "vaja.tooFast": "Too many sheets in a short time. Try again in a few minutes.",
-  "vaja.expired": "The task list has expired. Read the sheet again."
+  "vaja.expired": "The task list has expired. Read the sheet again.",
+  "vaja.lengthHint": "Skills chosen: {k}. With {n} tasks, not all of them get a turn."
 }

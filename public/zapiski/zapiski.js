@@ -103,11 +103,11 @@ async function renderHome(msg = "", nujno = null) {
       <input type="file" accept="image/*" multiple data-file hidden>
       <p class="zap-msg" role="alert">${esc(msg)}</p>
     </section>
-    <section class="card zap-vaja">
+    ${data.vaja == null ? "" : `<section class="card zap-vaja">
       <h2 class="with-icon">${icon("clipboard-check")} ${esc(t("vaja.title"))}</h2>
       <p class="muted">${esc(t("vaja.teaser"))}</p>
       ${data.vaja === false ? `<p class="muted zap-note">${icon("info")} ${esc(t("vaja.onlySi"))}</p>` : `<div class="zap-btns"><button type="button" class="secondary" data-act="vaja">${icon("clipboard-check")} ${esc(t("vaja.open"))}</button></div>`}
-    </section>
+    </section>`}
     <section class="zap-list">
       <h2>${esc(t("zap.list"))}</h2>
       ${data.notes.length ? `<ul>${data.notes.map(noteRow).join("")}</ul>` : `<p class="muted">${esc(t("zap.empty"))}</p>`}

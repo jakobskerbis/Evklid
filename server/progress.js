@@ -740,9 +740,10 @@ export class Progress {
   startList(studentId, skills, length) {
     const ids = [...new Set(skills)].filter((id) => getTopic(id) && hasGenerator(id)).slice(0, LIST.maxSkills);
     if (!ids.length || !LIST.lengths.includes(length)) return null;
-    const order = shuffle(ids);
+    // Več veščin kot nalog: v vajo pride toliko (naključnih) veščin, kolikor je nalog; povzetek pozna samo te.
+    const order = shuffle(ids).slice(0, length);
     const plan = Array.from({ length }, (_, i) => ({ topic: order[i % order.length], mode: "list", level: 1 + Math.min(2, Math.floor((3 * i) / length)) }));
-    return this.sessionNext(this.createSession(studentId, "list", plan, { skills: ids }));
+    return this.sessionNext(this.createSession(studentId, "list", plan, { skills: order }));
   }
   // Povzetek po veščinah: »ok« (vsaj 2 nalogi in vsaj 3/4 v prvem poskusu), »more« (pod tem) ali »few« (ena sama
   // pravilna naloga: premalo za oceno). apply (enkrat, ob koncu seje): šibka tema, ki je bila obvladana že pred to
@@ -753,7 +754,8 @@ export class Progress {
       const rows = all.filter((t) => t.topic_id === id && t.first_try_correct !== null);
       const correct = rows.filter((t) => t.first_try_correct).length;
       const share = rows.length ? correct / rows.length : 0;
-      const status = rows.length >= 2 && share >= LIST.okShare ? "ok" : rows.length === 1 && correct === 1 ? "few" : "more";
+      // »none«: veščina brez odgovorjene naloge (odjemalec je ne pokaže).
+      const status = !rows.length ? "none" : rows.length >= 2 && share >= LIST.okShare ? "ok" : rows.length === 1 && correct === 1 ? "few" : "more";
       const st = this.state(sess.student_id, id);
       const before = st.status === "mastered" && st.mastered_at && st.mastered_at < sess.created_at;
       if (apply && rows.length && status === "more") {

@@ -13,6 +13,9 @@ import {
 import { LIST, Progress } from "../server/progress.js";
 import { fmt } from "../server/practice/check.js";
 
+// »Vaja iz testa« je privzeto izklopljena (j, 18. 11.); testi jo vklopijo, test zastavice jo izklopi in spet vklopi.
+process.env.EVKLID_VAJA_IZ_TESTA = "1";
+
 const SHEET = [
   "Ime in priimek: Ana Novak",
   "Razred: 9.b    Datum: 12. 11. 2026",
@@ -75,24 +78,27 @@ test("razdelitev: nova številka samo za ena večja od prejšnje, »### 1. nalog
   assert.deepEqual(para.map((t) => t.slice(0, 9)), ["Izračunaj", "Koliko je"]);
 });
 
-test("glava testa: imena, razred, datum, šola, podpis, tabela – odpade; naloge ostanejo", () => {
+test("glava testa: samo oblike oznak (LABEL, SHORT, SCHOOL) odpadejo; stavki z istimi besedami ostanejo", () => {
   for (const l of [
-    "Ime in priimek ____________ Razred ______",
-    "Ime in priimek učenca: Janez Novak",
-    "Učenec/ka: Ana",
-    "Podpis staršev: ________",
-    "| Ime | Janez Novak |",
-    "Name and surname: John",
-    "Datum 12. 11.",
-    "OŠ Prule, Ljubljana",
-    "**Razred:** 8.a",
-    "Točke: ___ / 40",
-    "Učitelj: g. Kos",
-  ]) assert.ok(isHeadLine(l), l);
-  for (const l of ["Razred ima 24 učencev. Koliko je deklet, če je fantov 10?", "Ime spojine zapiši s formulo: NaCl = ?", "1. Izračunaj 2 + 3.", "Datumi rojstev: koliko let je med 1990 in 2026? Izračunaj."]) assert.ok(!isHeadLine(l), l);
-  const t = splitTasks([{ text: "Ime in priimek ____ Razred ____\n| Ime | Janez Novak |\nOŠ Prule\n1. Izračunaj 2 + 3.\n2. Izračunaj 4 + 5.", kind: "test" }]);
+    "Ime:", "| Ime: | Razred: |", "Točke: ___/20", "OŠ Prule", "Podpis staršev", "Datum 12. 11.", "Oddelek 3.c", "Ocena (1–5): ____", "Ime",
+    "Ime in priimek učenca: Janez Novak", "**Razred:** 8.a", "Pripravila: Mojca Kos, OŠ Prule", "Avtorica: Mojca Kos",
+    "Ime in priimek ____________ Razred ______", "Učenec/ka: Ana", "Podpis staršev: ________", "| Ime | Janez Novak |",
+    "Name and surname: John", "OŠ Prule, Ljubljana", "Učitelj: g. Kos", "Gimnazija Bežigrad", "7. b", "12. 11. 2026",
+  ]) assert.ok(isHeadLine(l), `odpade: ${l}`);
+  for (const l of [
+    "Razred A ima 24 učencev, od tega 3/8 deklet.", "Šola ima 3 nadstropja.", "Točke A(2,3) in B(5,7) sta krajišči daljice.",
+    "Točka A ima koordinati (2, 3).", "Datum rojstva Prešerna: 3. december 1800", "Ocena napake meritve je 0,2 cm; izračunaj relativno napako.",
+    "Učitelj je kupil 12 zvezkov po 1,20 €. Koliko je plačal?", "Šola je od doma oddaljena 2,5 km. Koliko metrov je to?", "Razred ima 28 učencev",
+    "Ocena prebivalcev Slovenije: 2,1 milijona", "Ime spojine zapiši s formulo: NaCl = ?", "1. Izračunaj 2 + 3.", "Osnovna šola je 2 km od doma.",
+  ]) assert.ok(!isHeadLine(l), `ostane: ${l}`);
+  const t = splitTasks([{ text: "Ime in priimek ____ Razred ____\n| Ime | Janez Novak |\nOŠ Prule\n1. Izračunaj 2 + 3.\n2. Izračunaj 4 + 5.\nPripravila: Mojca Kos, OŠ Prule", kind: "test" }]);
   assert.equal(t.length, 2);
-  for (const x of t) assert.doesNotMatch(x, /Janez|Novak|Prule|priimek/);
+  for (const x of t) assert.doesNotMatch(x, /Janez|Novak|Prule|priimek|Mojca/);
+  // OCR tabele: oznaka in vrednost v ločenih vrsticah; razred in datum nista številki naloge, vrednosti odpadejo
+  const ocr = splitTasks([{ text: "Ime\nAna Novak\nRazred\n7. b\nDatum\n12. 11. 2026\n\n1. Izračunaj 2 + 3.\n2. Izračunaj 4 · 5.", kind: "test" }]);
+  assert.deepEqual(ocr, ["1. Izračunaj 2 + 3.", "2. Izračunaj 4 · 5."]);
+  assert.doesNotMatch(stripPersonal("Ime:\n\nAna Novak\n1. Reši enačbo."), /Ana/);
+  assert.match(stripPersonal("Datum:\n1. Koliko je 3 + 4?"), /1\. Koliko je 3 \+ 4\?/, "naloga za prazno oznako ostane");
 });
 
 test("osebni podatki in ponarejene oznake: koda jih odstrani, preden gre besedilo modelu", () => {
@@ -151,6 +157,9 @@ test("kandidati za čiste račune (znaki → besede) in za list s prevladujočim
   has("$2^3 \\cdot 2^4$", st8, /potence/);
   has("$\\sqrt{49} + 3$", st8, /kvadratni-koren/);
   assert.match(searchText("Izračunaj 3 + 4 · 2"), /vrstni red/);
+  assert.doesNotMatch(searchText("Izračunaj: obseg kvadrata s stranico 4"), /vrstni red/, "dvopičje za navodilom ni deljenje");
+  assert.match(searchText("Izračunaj: 12 : 4 + 3"), /vrstni red/);
+  assert.match(searchText("Izračunaj (8 + 4) : (2 + 1)"), /vrstni red/);
   assert.doesNotMatch(searchText("Kos ima prostornino 1000 cm³ in maso 2,7 kg."), /potenc|decimaln/, "enota in podatek v fiziki nista račun");
   assert.match(searchText("Izračunaj 2³ · 2²"), /potenc/);
   assert.doesNotMatch(searchText("Reši enačbo 3x + 4 = 10"), /vrstni red/);
@@ -413,6 +422,55 @@ test("povzetek: »Šlo ti je dobro« šele od 2 nalog; ponavljanje samo za teme,
     n2 = pr.sessionNext(n2.sessionId);
   }
   assert.ok(n2.list.every((k) => k.status === "few" && k.total === 1), JSON.stringify(n2.list));
+});
+
+test("zastavica EVKLID_VAJA_IZ_TESTA: brez nje obe poti 404 vaja_off (pred branjem telesa in omejitvijo), GET vaja: null", async () => {
+  const calls = [];
+  await withApp({ vajaPickFn: fakePick(calls) }, async ({ req, s }) => {
+    delete process.env.EVKLID_VAJA_IZ_TESTA;
+    try {
+      for (const flag of [undefined, "0", "true"]) {
+        if (flag === undefined) delete process.env.EVKLID_VAJA_IZ_TESTA;
+        else process.env.EVKLID_VAJA_IZ_TESTA = flag;
+        assert.equal((await req("GET", `/api/students/${s.id}/zapiski`)).body.vaja, null, `GET ${flag}`);
+        const a = await req("POST", `/api/students/${s.id}/zapiski/vaja/naloge`, { pages: [{ text: SHEET, kind: "besedilo" }] });
+        assert.deepEqual([a.status, a.body.code], [404, "vaja_off"]);
+        assert.equal((await req("POST", `/api/students/${s.id}/zapiski/vaja/naloge`, { pages: 5 })).status, 404, "pred parsePages");
+        const b = await req("POST", `/api/students/${s.id}/zapiski/vaja/zacni`, { again: "x", length: 6 });
+        assert.deepEqual([b.status, b.body.code], [404, "vaja_off"]);
+      }
+      // 25 zavrnitev ne porabi omejitve hitrosti
+      for (let i = 0; i < 25; i++) await req("POST", `/api/students/${s.id}/zapiski/vaja/naloge`, { pages: [{ text: SHEET, kind: "besedilo" }] });
+      assert.equal(calls.length, 0);
+      assert.equal((await req("GET", `/api/students/${s.id}/zapiski`)).body.pages.used, 0);
+    } finally {
+      process.env.EVKLID_VAJA_IZ_TESTA = "1";
+    }
+    // vklopljena (prebere se ob vsakem zahtevku, brez ponovnega zagona)
+    assert.equal((await req("GET", `/api/students/${s.id}/zapiski`)).body.vaja, true);
+    assert.equal((await req("POST", `/api/students/${s.id}/zapiski/vaja/naloge`, { pages: [{ text: SHEET, kind: "besedilo" }] })).status, 200);
+  });
+  const ui = fs.readFileSync(new URL("../public/zapiski/zapiski.js", import.meta.url), "utf8");
+  assert.match(ui, /data\.vaja == null \? ""/, "izklopljena: razdelka ni");
+  for (const f of ["../.env.example", "../render.yaml", "../docs/stroski-ai.md"]) assert.match(fs.readFileSync(new URL(f, import.meta.url), "utf8"), /EVKLID_VAJA_IZ_TESTA/, f);
+});
+
+test("več znanj kot nalog: v vajo pride toliko znanj, kolikor je nalog; znanje brez naloge ima status »none«", () => {
+  const store = openDb(":memory:");
+  const pr = new Progress(store);
+  const id = Number(store.db.prepare("INSERT INTO students (name, settings) VALUES ('A', '{\"curriculum_level\":\"9. razred\"}')").run().lastInsertRowid);
+  const many = ["FIZ-OS-8/gostota", "MAT-OS-8/linearne-enacbe", "FIZ-OS-8/enakomerno-gibanje", "MAT-OS-9/podobni-trikotniki", "MAT-OS-7/odstotni-racun", "MAT-OS-6/racunske-operacije-in-lastnosti", "MAT-OS-7/sestevanje-in-odstevanje-ulomkov", "KEM-OS-8/urejanje-kemijskih-enacb"];
+  const first = pr.startList(id, many, 6);
+  const sess = pr.getSession(first.sessionId);
+  assert.equal(sess.params.skills.length, 6);
+  assert.deepEqual(new Set(sess.plan.map((p) => p.topic)), new Set(sess.params.skills));
+  // seja, kjer ena veščina nima odgovorjene naloge (npr. stara seja) → »none«
+  const all = store.db.prepare("SELECT * FROM tasks WHERE session_id = ?").all(first.sessionId);
+  const out = pr.listSummary({ ...sess, params: { skills: [...sess.params.skills, "MAT-OS-8/linearne-enacbe-x"] } }, all, false);
+  assert.equal(out.at(-1).status, "none");
+  const vaja = fs.readFileSync(new URL("../public/zapiski/vaja.js", import.meta.url), "utf8");
+  assert.ok(!/by\("none"\)/.test(vaja), "»none« se ne pokaže");
+  assert.match(vaja, /vaja\.lengthHint/);
 });
 
 test("i18n: besedila vaje so v vseh jezikih zapiskov; nova seja »list« je v app.js", () => {

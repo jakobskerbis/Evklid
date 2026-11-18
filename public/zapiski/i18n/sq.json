@@ -86,5 +86,6 @@
   "vaja.fromPath": "Nga rruga jote e të mësuarit",
   "vaja.onlySi": "Për tani vetëm për shkollën fillore dhe të mesme sllovene.",
   "vaja.tooFast": "Shumë fletë në pak kohë. Provo përsëri pas disa minutash.",
-  "vaja.expired": "Lista e detyrave ka skaduar. Lexoje fletën përsëri."
+  "vaja.expired": "Lista e detyrave ka skaduar. Lexoje fletën përsëri.",
+  "vaja.lengthHint": "Dije të zgjedhura: {k}. Me {n} detyra nuk u vjen radha të gjithave."
 }

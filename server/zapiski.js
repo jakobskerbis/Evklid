@@ -34,6 +34,10 @@ import { SCHOOL_SUBJECTS } from "./subjects.js";
 import { stopnja } from "../public/stopnja.js";
 import { MAX_FROM_NOTES } from "./flashcards.js";
 
+// »Vaja iz testa« (server/vaja-iz-lista.js) je privzeto izklopljena (j, 18. 11. 2026): vklopi jo EVKLID_VAJA_IZ_TESTA=1,
+// ko je natančnost prepoznavanja znanja izmerjena. Prebere se ob vsakem zahtevku.
+export const vajaFlag = () => process.env.EVKLID_VAJA_IZ_TESTA === "1";
+
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
 // Rokopis bere Sonnet (odločitev j 2: dokler ne izmerimo Haikuja na ~30 fotografijah zvezkov).
 export const READ_MODEL = () => env("EVKLID_ZAPISKI_READ_MODEL", MODEL_MID);
@@ -372,8 +376,8 @@ export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null,
   app.get("/api/students/:id/zapiski", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    // vaja: »Vaja iz testa« je na voljo (slovenska OŠ in SŠ, server/vaja-iz-lista.js).
-    res.json({ notes: notesOf(db, s.id).map((r) => noteView(db, s.id, r)), pages: pagesInfo(s), vaja: searchOn(s.settings) });
+    // vaja: »Vaja iz testa« (server/vaja-iz-lista.js): null = izklopljena (zastavica), false = ni za to stopnjo, true = na voljo.
+    res.json({ notes: notesOf(db, s.id).map((r) => noteView(db, s.id, r)), pages: pagesInfo(s), vaja: vajaFlag() ? searchOn(s.settings) : null });
   });
 
   app.post("/api/students/:id/zapiski/preberi", async (req, res) => {

@@ -86,5 +86,6 @@
   "vaja.fromPath": "Z tvé učební cesty",
   "vaja.onlySi": "Zatím jen pro slovinskou základní a střední školu.",
   "vaja.tooFast": "Příliš mnoho listů v krátké době. Zkus to za pár minut.",
-  "vaja.expired": "Seznam úloh vypršel. Načti list znovu."
+  "vaja.expired": "Seznam úloh vypršel. Načti list znovu.",
+  "vaja.lengthHint": "Vybraných znalostí: {k}. Při {n} úlohách se nedostane na všechny."
 }

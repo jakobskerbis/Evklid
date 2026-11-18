@@ -86,5 +86,6 @@
   "vaja.fromPath": "来自你的学习路径",
   "vaja.onlySi": "目前只适用于斯洛文尼亚的中小学。",
   "vaja.tooFast": "短时间内纸张太多，请几分钟后再试。",
-  "vaja.expired": "题目列表已过期，请重新读取纸张。"
+  "vaja.expired": "题目列表已过期，请重新读取纸张。",
+  "vaja.lengthHint": "已选知识点：{k}。{n} 道题无法覆盖全部。"
 }

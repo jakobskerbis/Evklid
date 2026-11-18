@@ -86,5 +86,6 @@
   "vaja.fromPath": "Z twojej ścieżki nauki",
   "vaja.onlySi": "Na razie tylko dla słoweńskiej szkoły podstawowej i średniej.",
   "vaja.tooFast": "Za dużo kartek w krótkim czasie. Spróbuj za kilka minut.",
-  "vaja.expired": "Lista zadań wygasła. Wczytaj kartkę ponownie."
+  "vaja.expired": "Lista zadań wygasła. Wczytaj kartkę ponownie.",
+  "vaja.lengthHint": "Wybrane umiejętności: {k}. Przy {n} zadaniach nie wszystkie zostaną przećwiczone."
 }

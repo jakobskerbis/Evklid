@@ -232,7 +232,9 @@ function taskRow(x) {
 
 function renderList() {
   const el = box();
-  const len = V.lengths.includes(lastLength) ? lastLength : V.lengths[Math.min(1, V.lengths.length - 1)];
+  // Privzeta dolžina: najkrajša, pri kateri pride vsako izbrano znanje vsaj enkrat na vrsto (sicer prejšnja izbira).
+  const k0 = skillCount();
+  const len = V.lengths.find((n) => n >= k0 && n >= Math.min(lastLength, V.lengths.at(-1))) || V.lengths.at(-1);
   el.innerHTML = `
     <button type="button" class="ghost back zap-back">${icon("arrow-left")}<span>${esc(t("vaja.title"))}</span></button>
     ${V.nujno ? nujnoHtml(V.nujno) : ""}
@@ -241,6 +243,7 @@ function renderList() {
     <ol class="vaja-tasks">${V.tasks.map(taskRow).join("")}</ol>
     <fieldset class="card vaja-len"><legend>${esc(t("vaja.length"))}</legend>
       <div class="vaja-len-opts">${V.lengths.map((n) => `<label class="vaja-len-opt"><input type="radio" name="len" value="${n}"${n === len ? " checked" : ""}> <span>${esc(t("vaja.tasks", { n }))}</span></label>`).join("")}</div>
+      <p class="muted zap-note vaja-len-hint" aria-live="polite" hidden></p>
       <p class="muted zap-note">${icon("badge-check")} ${esc(t("vaja.ourTasks"))}</p>
     </fieldset>
     <p class="zap-msg" role="alert"></p>
@@ -265,7 +268,10 @@ function renderList() {
     }
     if (e.target.matches("[data-on]")) x.on = e.target.checked;
     li.classList.toggle("off", !!x.pick && !x.on);
+    lengthHint(el);
   });
+  el.querySelector(".vaja-len").addEventListener("change", () => lengthHint(el));
+  lengthHint(el);
   el.querySelector("[data-start]").addEventListener("click", () => {
     const tasks = V.tasks.filter((x) => x.on && x.pick).map((x) => ({ i: x.i, skill: x.pick }));
     if (!tasks.length) {
@@ -275,6 +281,16 @@ function renderList() {
     lastLength = Number(el.querySelector("[name=len]:checked")?.value) || len;
     D.startSession("list", { sheet: V.sheet, tasks, length: lastLength });
   });
+}
+
+// Število različnih izbranih znanj in opozorilo, če jih je več kot nalog (v vajo pridejo samo nekatera).
+const skillCount = () => new Set(V.tasks.filter((x) => x.on && x.pick).map((x) => x.pick)).size;
+function lengthHint(el) {
+  const k = skillCount();
+  const n = Number(el.querySelector("[name=len]:checked")?.value) || 0;
+  const hint = el.querySelector(".vaja-len-hint");
+  hint.hidden = !(k > n);
+  hint.textContent = k > n ? t("vaja.lengthHint", { k, n }) : "";
 }
 
 // --- povzetek po veščinah (konec serije v app.js) ---

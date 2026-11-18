@@ -86,5 +86,6 @@
   "vaja.fromPath": "S tvog puta učenja",
   "vaja.onlySi": "Za sada samo za slovensku osnovnu i srednju školu.",
   "vaja.tooFast": "Previše listova za kratko vrijeme. Pokušaj za nekoliko minuta.",
-  "vaja.expired": "Spisak zadataka je istekao. Ponovo pročitaj list."
+  "vaja.expired": "Spisak zadataka je istekao. Ponovo pročitaj list.",
+  "vaja.lengthHint": "Izabranih znanja: {k}. Kod {n} zadataka neće sva doći na red."
 }
