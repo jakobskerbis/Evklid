@@ -2,6 +2,13 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-18: vaja brez nemogočih vrednosti, pregled javi vse napake (meritev SŠ po #835)
+
+- Zakaj: Meritev 44310361769 (`--primeri 6,10,18,2,9,28 --ponovi 3`): 14 pravilno, 2 manjša napaka, 2 napaka od 18. (1) BIO-SS-2/nastanek-vrst#2: pregled je javil le eno od dveh napak (posplošitev v »Zapomni si«), popravek je popravil le njo, ostala je »mule zaradi lihega števila ne moremo zapisati kot 2n« (2n je število v telesnih celicah, tudi 63). (2) BIO-SS-4/molekularna-genetika#3: vaja s 4 biti na nukleotid (največ 2); pregled je spustil vajo, ki ji je spremenjeno število v nasprotju z naravo. (3) BIO-SS-1/raziskovanje#1: pregled je spet javil namenoma pomanjkljiv poskus v vaji (popravek ga je »popravil«), nejasno »les se manj ovija« pa ne. (4) molekularna#1: »Bite pretvorimo v bite« (zamenjana beseda).
+- Prompt (stalni del): »ne lastnosti, ki jo določajo pogoji ali narava« (+11 znakov, 61 734 → 61 745; meja 61 804).
+- Koda: `server/live-check.js` LIVE_REVIEW_SYSTEM: vrednost v vaji mora biti mogoča; trditve o zapisu (n, 2n, enota) in zamenjane besede; več napak v isti vrstici, ločenih z »; «. `reviewAnswer` vrne razlog do 600 znakov (prej 300 iz parseVerdict), popravek dobi ugotovitev do 800 znakov. FIX_SYSTEM: popravi vse navedene trditve (1–4 stavki); namenoma pomanjkljiv poskus v vaji pusti.
+- Test: `test/live-check.test.js`, `test/prompt.test.js`.
+
 ## 2026-11-18: ena definicija seznama vaj, deli z drugim postopkom so ena naloga, OŠ 1.–4. brez »Preverimo« (Preizkus 3, krog 2, PR #836)
 
 - Zakaj: slepo ocenjevanje Preizkusa 3 (3 krogi, 128 nalog; Evklid 97,4 %, Gemini 98,4 %, Astra 98,0 %) je pokazalo tri šibkosti: ogrodje pri OŠ 1.–4. (1, 55, 61, 62, 63), le del naloge v načinu B (19, 83) in postopek pri »samo rezultat« (45). Vsi trije krogi so tekli 17. 11. 10:00–11:30 UTC, torej pred #811 (združen 17:20 UTC), ki je te šibkosti že naslovil. Meritev #811 (Actions > Meritev 44271166045, 18. 11., Haiku, ena ponovitev): mladi 0/6 → 5/6, deli 5/5 → 4/5, rezultat 2/3 → 3/3 (45 zdaj OK). Ostanki: (1) 62 še vedno z vrstico »Preverba« (splošni vrstici »isto število … v Preverbi« in Vzorec Podatki/Iščemo veljata za vse), 61 konča z novo nalogo v besedilu; (2) 83 (»Razstavi izraze: a) … c)«) je po besedilu #811 lahko »seznam vaj istega tipa pod eno številko« → Domača naloga, 19 je model v krogih 2–3 imel za »tri različne naloge«; (3) 45: vzrok je bil #799 (»za več podvprašanj velja Domača naloga za oddajo«; odgovor kroga 2 to pove dobesedno), popravljen v #811.
