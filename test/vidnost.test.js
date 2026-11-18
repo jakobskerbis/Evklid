@@ -508,12 +508,17 @@ test("javne strani: brez obljube »od 1. razreda do fakultete«", () => {
     "index.html": index,
     "starsi.html": read("starsi.html"),
     "sole.html": read("sole.html"),
+    // Predloge tudi brez izrisa: skriti pogojni razdelki (npr. meritev, dokler je OBJAVI_MERITEV false) se ne smejo izmuzniti.
+    "o-evklidu.html (predloga)": read("o-evklidu.html"),
+    "zakaj-evklid.html (predloga)": read("zakaj-evklid.html"),
+    "server/vidnost.js": readFileSync(new URL("../server/vidnost.js", import.meta.url), "utf8"),
     "i18n sl land.*": land(SL),
     ...Object.fromEntries(ui.map((f) => [`i18n ${f} land.*`, land(JSON.parse(read(`i18n/ui/${f}`)))])),
   };
   const PROMISE = [
     /od\s+1\.\s*(razreda|do\s+9)/i,
     /od\s+prvega\s+razreda/i,
+    /od\s+osnovne\s+šole\s+do\s+(fakultete|univerze|faksa)/i,
     /razreda\s+osnovne\s+šole\s+do\s+(fakultete|univerze)/i,
     /srednj\w*\s+šol\w*,?\s+(ter|in)\s+fakultet/i,
     /več kot \d+ (slovenskih )?študijskih programov/i,
