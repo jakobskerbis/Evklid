@@ -1565,6 +1565,17 @@ async function phone(browser, app) {
     if (!(await p.locator("#tabbar").isVisible())) throw new Error("spodnja vrstica ni vidna");
     await screen(p, "pot");
   });
+  // Prvi zaslon: vrstica »Skeniraj nalogo« pod današnjim treningom odpre skener (j, 18. 11. 2026).
+  await step(p, "tel-pot-skeniraj", async () => {
+    await click(p, "#xp-card [data-scan-home]", { wait: 300 });
+    if ((await currentView(p)) !== "view-scan") throw new Error("»Skeniraj nalogo« na Učni poti ne odpre skenerja");
+    // »←« v skenerju vodi nazaj, od koder je učenec prišel (Učna pot), ne na Jaz.
+    await click(p, "#view-scan .me-back", { wait: 300 });
+    if ((await currentView(p)) !== "view-path") throw new Error(`»←« iz skenerja, odprtega z Učne poti, odpre ${await currentView(p)}`);
+    if (await p.locator('#goal-modes [data-gm="scan"]').count()) throw new Error("»Skeniraj nalogo« je na Učni poti dvakrat (tudi med bližnjicami cilja)");
+    await barTab(p, "path", { wait: 300 });
+    await expectVisible(p, "#view-path #xp-card .hero", "učna pot po vrnitvi iz skenerja", 8000);
+  });
   // Vodič na telefonu: »Ponovi uvodni ogled« v Nastavitvah, vsi koraki (zavihki pod »Jaz« se preskočijo).
   await step(p, "tel-vodic", async () => {
     await barTab(p, "me", { wait: 200 });
