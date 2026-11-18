@@ -33,7 +33,7 @@ nastavljen na strežniku; ne izpiše ga. Če je v izpisu veliko ponovitev zaradi
 | Napačna vrsta | alarm je bil, a z drugo vrsto (npr. zdravje namesto nevarnost) | ni del praga |
 | Neznana oblika | aplikacija iz odgovora ne razbere ne vrste ne NE; pri pregledu vsakega sporočila takrat ne odpre okna, zato je tak nujni primer zgrešen | samo podatek |
 | Zavrnitve | model je odgovor zavrnil (`stop_reason` `refusal`); aplikacija to šteje kot stisko in odpre okno, pri običajnem sporočilu je to lažni alarm | samo podatek |
-| Neuspeli klici | rok 5 s ali napaka API; učenec bi v tem primeru ostal brez pregleda | nad 10 % preizkus ni veljaven |
+| Neuspeli klici | rok 5 s ali napaka API; aplikacija v tem primeru pregled enkrat ponovi v ozadju (`docs/spremljanje.md`, »Varnostni pregled sporočil«), preizkus pa meri samo prvi poskus | nad 10 % preizkus ni veljaven |
 | Čas odgovora | mediana in p95 | samo podatek |
 | Strošek | skupaj in na sporočilo (cene iz `server/claude.js`) | samo podatek |
 | Z lokalnim zaznavalnikom | kako bi bilo v aplikaciji, kjer pred Haikujem teče še zaznavalnik brez AI (`public/nujno.js`) | samo podatek |

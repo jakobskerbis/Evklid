@@ -54,6 +54,26 @@ Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
   tednu pilota poglej v Števcu porabe običajno dnevno porabo in mejo nastavi malo nad njo.
 - Opozorilo ničesar ne ustavi. Strošek omejujejo meje AI na učenca, račun in aplikacijo (`docs/stroski-ai.md`).
 
+## Varnostni pregled sporočil
+
+- `server/nujno.js`: sporočilo inštruktorju, ki ga lokalni zaznavalnik ne ujame, pregleda še AI (Haiku). Če ponudnik
+  AI ne odgovori v 5 s ali vrne napako, aplikacija poskusi še enkrat v ozadju (do 20 s); učenec na to ne čaka. Če
+  ponovitev najde nujen primer, učenec dobi isto okno s številkami pomoči (še v istem odgovoru ali ob naslednjem).
+  Če ne uspe niti ponovitev, okna **ni** (izpad ponudnika ni razlog za alarm), sporočilo pa se prešteje kot
+  **nepregledano**.
+- **Kje to vidiš (enkrat na teden):** https://evklid.app/healthz/stanje → `varnostniPregled`. `vklopljen` mora biti
+  `true`, pri `danes` in `vceraj` pa `"nepregledano":0`. `rok` in `napaka` povesta, kolikokrat prvi poskus ni uspel
+  (posamezni so običajni, ponovitev jih večinoma reši); `zadnjeNepregledano` je čas zadnjega nepregledanega sporočila.
+  Javno so samo ta števila o ponudniku, nič o učencih ali zadetkih.
+- **Več (samo skrbnik):** prijavljen odpri https://evklid.app/api/usage → `varnost` → `dnevi` (zadnjih 7 dni, po UTC):
+  `pozni_zadetki` (ponovitev je našla nujen primer), `pozno_v_toku` in `pozno_naslednji` (učenec je okno dobil še v
+  istem odgovoru oziroma ob naslednjem), `pozno_ze_okno` (okno iste vrste je že imel), `pozno_poteklo` (v 1 uri ni
+  napisal ničesar več in okna ni videl), `nad_varovalko` (čez mejo več kot 10 pregledov profila na dan),
+  `brez_dobroimetja` (dobroimetje pri ponudniku AI je bilo porabljeno) in `neznano` (model ni odgovoril z vrsto ali NE).
+  `pozna_okna_cakajo` pove, koliko oken zdaj čaka na naslednji odgovor.
+- Ko `nepregledano` raste: v Anthropic Console preveri dobroimetje in omejitve ključa. E-pošte o tem strežnik (še) ne
+  pošlje.
+
 ## Kaj narediš ročno (enkrat)
 
 1. **Nastavitve e-pošte GitHuba.** GitHub → Settings → Notifications → System → Actions: »Email« vklopljen in
