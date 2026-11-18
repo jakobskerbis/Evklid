@@ -965,7 +965,9 @@ export function mountBilling(app, ctx) {
   }
 
   // Poraba podrobnih razlag (j 2026-11-01): pri profilu, mlajšem od 15 let, dobi starš e-pošto pri 80 % in 100 %
-  // (enkrat na mesec za vsako mejo, email_log). Starejši in polnoletni vidijo obvestilo v aplikaciji.
+  // (enkrat na obdobje za vsako mejo, email_log). Starejši in polnoletni vidijo obvestilo v aplikaciji.
+  // Obdobje je obdobje meje AI: pri paketu od dneva plačila do istega dne naslednji mesec (accounts/index.js
+  // aiPeriodStart/aiPeriodEnd), sicer (pilot, brez paketa) koledarski mesec kot prej.
   async function allowanceMail(studentId, stage, now = new Date()) {
     if (stage !== "low" && stage !== "out") return 0;
     const age = ageOf(studentId, now);
@@ -973,15 +975,24 @@ export function mountBilling(app, ctx) {
     const p = getParent(ownerOf(studentId));
     if (!p || p.is_guest || !p.email_verified_at || isMinor(p)) return 0;
     const month = now.toISOString().slice(0, 7);
+    const start = Date.parse(aiUsage?.periodOf?.(studentId) || "");
+    // Ključ obdobja: dan začetka obdobja paketa (»YYYY-MM-DD«) ali koledarski mesec (»YYYY-MM«, nespremenjeno).
+    const period = Number.isFinite(start) ? new Date(start).toISOString().slice(0, 10) : month;
     const a = aiUsage?.studentMonth(studentId);
     // Skupen delež družine: ena e-pošta za ves račun (ne za vsak profil posebej).
     const kind = a?.pool ? `ai_${stage}:pool` : `ai_${stage}:${studentId}`;
-    if (db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = ? AND period = ?").get(p.id, kind, month)) return 0; // že poslano ta mesec
+    const sent = (sql, ...args) => !!db.prepare(`SELECT 1 FROM email_log WHERE parent_id = ? AND kind = ? AND ${sql}`).get(p.id, kind, ...args);
+    if (sent("period = ?", period)) return 0; // že poslano v tem obdobju
+    // Prehod: pred tem popravkom je bil ključ vedno koledarski mesec. E-pošta s starim ključem, poslana v tem obdobju
+    // paketa, velja (sicer bi starš v prvem obdobju po objavi dobil še eno).
+    if (period !== month && sent("length(period) = 7 AND created_at >= ?", new Date(start).toISOString().slice(0, 19).replace("T", " "))) return 0;
     const st = store.getStudent(studentId);
-    const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+    // Nove razlage: ob koncu obdobja paketa (periodEndOf), sicer 1. naslednjega meseca (koledarski mesec).
+    const endMs = Date.parse(aiUsage?.periodEndOf?.(studentId) || "");
+    const next = Number.isFinite(endMs) && endMs > now.getTime() ? new Date(endMs) : new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
     // Pilot in lastnik (pregled #477 B3): e-pošta brez stavka o dokupu.
     const msg = allowanceEmail({ childName: st?.name || "", stage, left: a?.explanations_left ?? 0, untilText: fmtDate(next.toISOString()), pool: !!a?.pool, topup: !specialOf(p) }, baseUrl(null) + "/");
-    return remind(p, kind, month, msg);
+    return remind(p, kind, period, msg);
   }
 
   // Osebno ob šolski licenci po izteku licence (j 2026-10-30: »naj se naročnina ob poteku šolske licence

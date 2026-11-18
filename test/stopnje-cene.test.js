@@ -860,6 +860,67 @@ test("75 %: zajamčeni AI po paketih, skupen delež družine, regijske cene po p
   for (const c of [500, 1000, 2000, 12345]) assert.ok(((c / 100) * 0.985 - 0.25 - creditUsdFor(c) * 0.92) / (c / 100) >= 0.75 - 1e-9, `dokup ${c}`);
 });
 
+test("E-pošta o porabi razlag: enkrat na obdobje paketa (10. → 10.), datum konca obdobja; koledarski mesec brez paketa", async () => {
+  await withAccounts(async ({ db, api, kid, subscribe, stripe }) => {
+    const ana = kid("Ana", "OS", YEAR - 12);
+    const mails = () => stripe.calls.filter((c) => c.host === "api.resend.com" && /podrobne razlage/.test(c.body.subject || ""));
+    const sl = (t) => new Date(t).toLocaleDateString("sl-SI", { timeZone: "Europe/Ljubljana" });
+    const u = api.aiUsage;
+    // Preizkus novega računa ima lahko skupni delež (ključ »pool«): ključ kot v billing.js.
+    const kind = (sid, stage) => `ai_${stage}:${u.studentMonth(sid).pool ? "pool" : sid}`;
+    const periods = (sid, stage, len) => db.prepare("SELECT period FROM email_log WHERE kind = ? AND length(period) = ? ORDER BY id").all(kind(sid, stage), len).map((r) => r.period);
+    const [periodOf, periodEndOf] = [u.periodOf, u.periodEndOf];
+    const at = (startIso, endIso) => {
+      u.periodOf = () => startIso;
+      u.periodEndOf = () => endIso;
+    };
+    try {
+      // Obdobje 10. 10. – 10. 11.: e-pošta 20. 10. z datumom 10. 11. (ne 1. 11.), 5. 11. nič več (isto obdobje).
+      at("2026-10-10T08:00:00.000Z", "2026-11-10T08:00:00.000Z");
+      assert.equal(await api.billing.allowanceMail(ana, "out", new Date("2026-10-20T12:00:00Z")), 1);
+      assert.ok(mails().at(-1).body.text.includes(sl("2026-11-10T08:00:00.000Z")), mails().at(-1).body.text);
+      assert.equal(await api.billing.allowanceMail(ana, "out", new Date("2026-11-05T12:00:00Z")), 0, "isto obdobje");
+      // Novo obdobje 10. 11. – 10. 12.: spet ena (prej bi ključ »2026-11« iz 5. 11. to zamolčal).
+      at("2026-11-10T08:00:00.000Z", "2026-12-10T08:00:00.000Z");
+      assert.equal(await api.billing.allowanceMail(ana, "out", new Date("2026-11-12T12:00:00Z")), 1);
+      assert.equal(await api.billing.allowanceMail(ana, "out", new Date("2026-11-30T12:00:00Z")), 0);
+      assert.equal(mails().length, 2);
+      assert.deepEqual(periods(ana, "out", 10), ["2026-10-10", "2026-11-10"]);
+
+      // Prehod: e-pošta s starim ključem (koledarski mesec), poslana v tem obdobju, velja; poslana pred začetkom ne.
+      db.prepare("INSERT INTO email_log (parent_id, kind, period, created_at) VALUES (?, ?, '2026-12', '2026-12-15 09:00:00')").run(api.ownerOf(ana), kind(ana, "low"));
+      at("2026-12-10T08:00:00.000Z", "2027-01-10T08:00:00.000Z");
+      assert.equal(await api.billing.allowanceMail(ana, "low", new Date("2027-01-03T12:00:00Z")), 0, "stari ključ v tem obdobju");
+      at("2027-01-10T08:00:00.000Z", "2027-02-10T08:00:00.000Z");
+      db.prepare("INSERT INTO email_log (parent_id, kind, period, created_at) VALUES (?, ?, '2027-01', '2027-01-05 09:00:00')").run(api.ownerOf(ana), kind(ana, "low"));
+      assert.equal(await api.billing.allowanceMail(ana, "low", new Date("2027-01-20T12:00:00Z")), 1, "stari ključ iz prejšnjega obdobja ne šteje");
+
+      // Brez obdobja paketa (pilot, brez paketa): koledarski mesec in 1. naslednjega meseca kot prej.
+      const bor = kid("Bor", "OS", YEAR - 12);
+      at(null, null);
+      assert.equal(await api.billing.allowanceMail(bor, "out", new Date("2026-10-20T12:00:00Z")), 1);
+      assert.ok(mails().at(-1).body.text.includes(sl("2026-11-01T00:00:00Z")));
+      assert.equal(await api.billing.allowanceMail(bor, "out", new Date("2026-10-31T12:00:00Z")), 0);
+      assert.equal(await api.billing.allowanceMail(bor, "out", new Date("2026-11-01T12:00:00Z")), 1);
+      assert.deepEqual(periods(bor, "out", 7), ["2026-10", "2026-11"]);
+    } finally {
+      [u.periodOf, u.periodEndOf] = [periodOf, periodEndOf];
+    }
+  });
+  // Prava povezava (accounts/index.js aiPeriodStart/aiPeriodEnd): naročnina z obnovitvijo čez 20 dni → datum obnovitve.
+  await withAccounts(async ({ db, api, kid, subscribe, stripe }) => {
+    const mails = () => stripe.calls.filter((c) => c.host === "api.resend.com" && /podrobne razlage/.test(c.body.subject || ""));
+    const sl = (t) => new Date(t).toLocaleDateString("sl-SI", { timeZone: "Europe/Ljubljana" });
+    const periods = (sid) => db.prepare("SELECT period FROM email_log WHERE kind = ?").all(`ai_out:${api.aiUsage.studentMonth(sid).pool ? "pool" : sid}`).map((r) => r.period);
+    const end = iso(20);
+    subscribe("evklid_druzina_month", end);
+    const cene = kid("Cene", "OS", YEAR - 12);
+    assert.equal(await api.billing.allowanceMail(cene, "out"), 1);
+    assert.ok(mails().at(-1).body.text.includes(sl(end)), mails().at(-1).body.text);
+    assert.deepEqual(periods(cene), [new Date(Date.parse(api.aiUsage.periodOf(cene))).toISOString().slice(0, 10)], "ključ = dan začetka obdobja");
+  });
+});
+
 test("Družina: en skupen delež za ves račun; obvestila in »še N razlag« za skupni delež, ena e-pošta", async () => {
   await withAccounts(async ({ db, api, kid, subscribe, stripe }) => {
     const ana = kid("Ana", "OS", YEAR - 12);
