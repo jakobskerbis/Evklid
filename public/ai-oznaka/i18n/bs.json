@@ -1,0 +1,13 @@
+{
+  "aio.mlad": "Evklid je računarski pomoćnik (umjetna inteligencija), a ne čovjek. Ponekad pogriješi.",
+  "aio.star": "Razgovaraš s umjetnom inteligencijom (AI), a ne s čovjekom. Može pogriješiti.",
+  "aio.znak": "Odgovara umjetna inteligencija (AI), a ne čovjek",
+  "aio.uvodMlad": "Evklid je računarski pomoćnik",
+  "aio.opisMlad": "Evklid nije čovjek, nego računarski program (umjetna inteligencija). Pomaže ti sa zadacima, ali ponekad pogriješi. Ako ti nešto nije jasno, pitaj nastavnika ili roditelje.",
+  "aio.uvodStar": "Evklid je umjetna inteligencija (AI)",
+  "aio.opisStar": "Razgovaraš s umjetnom inteligencijom (AI), a ne s čovjekom. Evklid ti pomaže da razumiješ gradivo, ali može pogriješiti, zato provjeri važne rezultate.",
+  "aio.razumem": "Razumijem",
+  "aio.resitev": "Rješenje je pripremila umjetna inteligencija (AI), a ne čovjek. Može pogriješiti.",
+  "aio.ocena": "Ocjenu je pripremila umjetna inteligencija (AI), a ne nastavnik. Može pogriješiti.",
+  "aio.prepis": "Prepis je pripremila umjetna inteligencija (AI). Provjeri je li tačan."
+}

@@ -19,6 +19,7 @@
 // Strošek: vsak klic gre skozi trdo mejo AI (server/meje-ai.js, usage.guard). Zapiski imajo še ločeno mesečno mejo
 // strani po paketu (STRANI), da ne porabijo meje za vprašanja inštruktorju: stran je prebrana fotografija ali
 // prilepljeno besedilo (odločitev j 10. 11., pri vseh paketih enako).
+import { AI_JSON } from "./ai-oznaka.js";
 import crypto from "node:crypto";
 import { getClient, isMockMode, MODEL, MODEL_MID, quickParams, errorText } from "./claude.js";
 import { imageCallReserveUsd, callMaxUsd } from "./meje-ai.js";
@@ -405,7 +406,7 @@ export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null,
       const nujno = out.distress ? nujnoZa(out.distress, s.settings) : null;
       if (out.unrelated) return res.status(422).json({ error: "To niso zapiski za šolo.", code: "zapiski_neucno", pages: pagesInfo(s), ...(nujno ? { nujno } : {}) });
       if (out.text) addRead(db, s.id); // stran je plačana z branjem; v zapisku se ne šteje še enkrat
-      res.json({ text: out.text, kind: out.kind, pages: pagesInfo(s), ...(nujno ? { nujno } : {}) });
+      res.json({ text: out.text, kind: out.kind, pages: pagesInfo(s), ...(out.text ? AI_JSON : {}), ...(nujno ? { nujno } : {}) });
     } catch (err) {
       if (!paid) givePage(db, s.id); // neuspelo branje strani ne porabi
       console.error("[evklid] zapiski branje:", err?.message || err);

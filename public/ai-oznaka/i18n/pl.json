@@ -1,0 +1,13 @@
+{
+  "aio.mlad": "Evklid to komputerowy pomocnik (sztuczna inteligencja), a nie człowiek. Czasem się myli.",
+  "aio.star": "Rozmawiasz ze sztuczną inteligencją (AI), a nie z człowiekiem. Może się mylić.",
+  "aio.znak": "Odpowiada sztuczna inteligencja (AI), a nie człowiek",
+  "aio.uvodMlad": "Evklid to komputerowy pomocnik",
+  "aio.opisMlad": "Evklid nie jest człowiekiem, tylko programem komputerowym (sztuczną inteligencją). Pomaga ci w zadaniach, ale czasem się myli. Jeśli coś jest niejasne, zapytaj nauczyciela lub rodziców.",
+  "aio.uvodStar": "Evklid to sztuczna inteligencja (AI)",
+  "aio.opisStar": "Rozmawiasz ze sztuczną inteligencją (AI), a nie z człowiekiem. Evklid pomaga ci zrozumieć materiał, ale może się mylić, więc sprawdzaj ważne wyniki.",
+  "aio.razumem": "Rozumiem",
+  "aio.resitev": "To rozwiązanie przygotowała sztuczna inteligencja (AI), a nie człowiek. Może się mylić.",
+  "aio.ocena": "Tę ocenę przygotowała sztuczna inteligencja (AI), a nie nauczyciel. Może się mylić.",
+  "aio.prepis": "Ten zapis przygotowała sztuczna inteligencja (AI). Sprawdź, czy jest poprawny."
+}

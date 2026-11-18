@@ -94,6 +94,7 @@ import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
+import { AI_JSON } from "./ai-oznaka.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -793,6 +794,7 @@ export function createApp(store, opts = {}) {
         open: opens.get(m.id),
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
+        ai_generated: m.role === "assistant" || undefined,
         reported: reported.has(m.id) || undefined,
         role: m.role,
         text: m.display_text,
@@ -1458,6 +1460,7 @@ export function createApp(store, opts = {}) {
       posljiNujno(blagoLokalno);
       finished = true;
       send("done", {
+        ...AI_JSON, // EU AI Act čl. 50(2): besedilo je ustvarila AI (server/ai-oznaka.js)
         id: assistantId,
         code: messageCode(assistantId),
         text: display,

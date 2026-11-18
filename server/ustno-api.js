@@ -2,6 +2,7 @@
 // vidi in lahko popravi. Strošek gre skozi iste meje AI kot inštruktor (server/usage.js hold, server/meje-ai.js),
 // spraševanje šteje kot USTNO_QUESTIONS vprašanj na dan (accounts: brezplačni paket 3 od 10). Ne gre v lige, učitelj
 // ga ne vidi; prepis se hrani kot pogovor (šifrirano, kot drugi pogovori). Ugovor »Ne strinjam se« gre v prijave napak.
+import { AI_JSON } from "./ai-oznaka.js";
 import { getTopic, pathKeyFor } from "./curriculum.js";
 import { loadLesson } from "./textbook.js";
 import { hasGenerator } from "./practice/index.js";
@@ -310,6 +311,7 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const next = !dodatno && rec.dodatno ? `Dodatno vprašanje: ${rec.dodatno}` : qs[i + 1] ? `Vprašanje ${i + 2} od ${qs.length}: ${qs[i + 1].besedilo}` : "";
     addMsg(row.conversation_id, "assistant", [feedbackText(q, { ...out, points: rec.points }), next].filter(Boolean).join("\n\n"));
     res.json({
+      ...(!skip && answer && modelKps.length ? AI_JSON : {}), // oceno in razlago je napisala AI (čl. 50(2), server/ai-oznaka.js)
       tocke: out.tocke,
       max: out.max,
       dobro: out.dobro,
@@ -411,7 +413,7 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     addMsg(row.conversation_id, "user", `Ne strinjam se z oceno.${comment ? ` ${comment}` : ""}`);
     addMsg(row.conversation_id, "assistant", `Ponovni pregled: ${out.tocke} od ${out.max} točk.`);
     const used = db.prepare("SELECT ugovori FROM ustno_seje WHERE id = ?").get(row.id)?.ugovori ?? MAX_APPEALS;
-    res.json({ tocke: out.tocke, max: out.max, dobro: out.dobro, pojmi: publicPoints(q, points), ugovori: Math.max(0, MAX_APPEALS - used) });
+    res.json({ ...AI_JSON, tocke: out.tocke, max: out.max, dobro: out.dobro, pojmi: publicPoints(q, points), ugovori: Math.max(0, MAX_APPEALS - used) });
   }
 
   // Konec: povzetek (»4 od 5«, kaj znaš, kaj ponovi). Samoocena pošlje svoje ocene (brez AI).

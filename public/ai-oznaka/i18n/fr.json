@@ -1,0 +1,13 @@
+{
+  "aio.mlad": "Evklid est un assistant informatique (intelligence artificielle), pas une personne. Il se trompe parfois.",
+  "aio.star": "Tu parles à une intelligence artificielle (IA), pas à une personne. Elle peut se tromper.",
+  "aio.znak": "C'est une intelligence artificielle (IA) qui répond, pas une personne",
+  "aio.uvodMlad": "Evklid est un assistant informatique",
+  "aio.opisMlad": "Evklid n'est pas une personne, mais un programme informatique (intelligence artificielle). Il t'aide pour les exercices, mais il se trompe parfois. Si quelque chose n'est pas clair, demande à ton enseignant ou à tes parents.",
+  "aio.uvodStar": "Evklid est une intelligence artificielle (IA)",
+  "aio.opisStar": "Tu parles à une intelligence artificielle (IA), pas à une personne. Evklid t'aide à comprendre la matière, mais il peut se tromper : vérifie les résultats importants.",
+  "aio.razumem": "J'ai compris",
+  "aio.resitev": "Cette solution a été préparée par une intelligence artificielle (IA), pas par une personne. Elle peut se tromper.",
+  "aio.ocena": "Cette note a été donnée par une intelligence artificielle (IA), pas par un enseignant. Elle peut se tromper.",
+  "aio.prepis": "Cette transcription a été faite par une intelligence artificielle (IA). Vérifie qu'elle est correcte."
+}

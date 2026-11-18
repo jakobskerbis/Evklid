@@ -11,6 +11,7 @@ import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj
 import { zavrzi } from "../odgovor.js";
 import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer, hideKeyboard } from "../tipkovnica.js";
 import SL from "./besedila/sl.js";
+import { nalozi as aioNalozi, opombaHtml } from "../ai-oznaka/ai-oznaka.js";
 
 const KEY_NOTICE = "evklid.ustno.obvestilo"; // + ».<id profila>«: obvestilo vidi vsak profil na napravi (pregled B7)
 const KEY_PREFS = "evklid.ustno.nastavitve";
@@ -199,7 +200,7 @@ export async function odpri(src = {}, c = {}, typed = false) {
     const last = [...document.querySelectorAll("#messages .msg.user")].pop()?.textContent?.trim();
     src = src === "test" ? { test: true } : src === "pogovor" ? (c.topic ? { tema: c.topic } : last ? { besedilo: last.slice(0, 300) } : {}) : { tema: src };
   }
-  await loadDicts();
+  await Promise.all([loadDicts(), aioNalozi()]);
   paint(`<p class="muted">${esc(tt("u.nalagam"))}</p>`);
   const sid = c.student?.id;
   const q = new URLSearchParams();
@@ -483,8 +484,8 @@ function feedback(q, r, wasFollow) {
   const appeal = r.ugovori > 0 && r.pojmi.some((p) => p.stanje !== "povedal");
   const d = paint(
     `<p class="us-count">${esc(tt("u.vprasanje", { i: run.i + 1, n: run.qs.length }))} · <b>${esc(tt("u.tocke", { t: fmt(r.tocke), m: r.max }))}</b></p>
-    ${groups}
-    ${r.razlaga ? `<div class="us-expl" dir="auto">${rich(r.razlaga)}</div>` : ""}
+    <div${r.ai_generated ? ' data-ai-generated="true"' : ""}>${groups}
+    ${r.razlaga ? `<div class="us-expl" dir="auto">${rich(r.razlaga)}</div>` : ""}${r.ai_generated ? opombaHtml(ctx.student?.settings, "ocena") : ""}</div>
     <details class="us-sample"><summary>${esc(tt("u.vzorec"))}</summary><div dir="auto">${rich(r.vzorec)}</div></details>
     ${canFollow ? `<div class="us-follow"><h4>${esc(tt("u.dodatno"))}</h4><p dir="auto">${esc(r.dodatno)}</p></div>` : ""}
     <div class="us-appeal" hidden><label class="us-field"><span>${esc(tt("u.razlogPh"))}</span><input name="razlog" maxlength="500"></label><button type="button" class="secondary" data-us="appealSend">${esc(tt("u.poslji"))}</button></div>

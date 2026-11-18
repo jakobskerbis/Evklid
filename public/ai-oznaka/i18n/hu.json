@@ -1,0 +1,13 @@
+{
+  "aio.mlad": "Evklid számítógépes segítő (mesterséges intelligencia), nem ember. Néha téved.",
+  "aio.star": "Mesterséges intelligenciával (MI) beszélsz, nem emberrel. Tévedhet.",
+  "aio.znak": "Mesterséges intelligencia (MI) válaszol, nem ember",
+  "aio.uvodMlad": "Evklid számítógépes segítő",
+  "aio.opisMlad": "Evklid nem ember, hanem számítógépes program (mesterséges intelligencia). Segít a feladatokban, de néha téved. Ha valami nem világos, kérdezd meg a tanárodat vagy a szüleidet.",
+  "aio.uvodStar": "Evklid mesterséges intelligencia (MI)",
+  "aio.opisStar": "Mesterséges intelligenciával (MI) beszélsz, nem emberrel. Evklid segít megérteni a tananyagot, de tévedhet, ezért a fontos eredményeket ellenőrizd.",
+  "aio.razumem": "Értem",
+  "aio.resitev": "Ezt a megoldást mesterséges intelligencia (MI) készítette, nem ember. Tévedhet.",
+  "aio.ocena": "Ezt az értékelést mesterséges intelligencia (MI) készítette, nem tanár. Tévedhet.",
+  "aio.prepis": "Ezt az átiratot mesterséges intelligencia (MI) készítette. Ellenőrizd, hogy helyes-e."
+}

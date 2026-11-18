@@ -633,7 +633,7 @@ export default {
   "chat.full": "Pokaži celoten postopek",
   "chat.fullMsg": "Pokaži mi celoten postopek te naloge.",
   "chat.choices": "Hitri odgovori",
-  "chat.aiNote": "Evklid se lahko zmoti. Pomembne rezultate preveri.",
+  "chat.aiNote": "Pogovarjaš se z umetno inteligenco (AI), ne s človekom. Lahko se zmoti.",
   "chat.off": "Klepet z inštruktorjem je začasno izklopljen. Drugi deli aplikacije delujejo.",
   // prijava napake pod odgovorom inštruktorja (server/reports.js, docs/krizni-nacrt.md)
   "rep.btn": "Prijavi napako",

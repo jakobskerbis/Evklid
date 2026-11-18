@@ -1,0 +1,13 @@
+{
+  "aio.mlad": "Evklid është një ndihmës kompjuterik (inteligjencë artificiale), jo njeri. Ndonjëherë gabon.",
+  "aio.star": "Po flet me një inteligjencë artificiale (AI), jo me një njeri. Mund të gabojë.",
+  "aio.znak": "Përgjigjet një inteligjencë artificiale (AI), jo një njeri",
+  "aio.uvodMlad": "Evklid është një ndihmës kompjuterik",
+  "aio.opisMlad": "Evklid nuk është njeri, por një program kompjuterik (inteligjencë artificiale). Të ndihmon me detyrat, por ndonjëherë gabon. Nëse diçka nuk të është e qartë, pyet mësuesin ose prindërit.",
+  "aio.uvodStar": "Evklid është një inteligjencë artificiale (AI)",
+  "aio.opisStar": "Po flet me një inteligjencë artificiale (AI), jo me një njeri. Evklid të ndihmon të kuptosh mësimin, por mund të gabojë, prandaj kontrollo rezultatet e rëndësishme.",
+  "aio.razumem": "E kuptova",
+  "aio.resitev": "Këtë zgjidhje e ka përgatitur një inteligjencë artificiale (AI), jo një njeri. Mund të gabojë.",
+  "aio.ocena": "Këtë vlerësim e ka përgatitur një inteligjencë artificiale (AI), jo një mësues. Mund të gabojë.",
+  "aio.prepis": "Këtë transkriptim e ka përgatitur një inteligjencë artificiale (AI). Kontrollo nëse është i saktë."
+}

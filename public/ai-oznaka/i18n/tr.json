@@ -1,0 +1,13 @@
+{
+  "aio.mlad": "Evklid bir bilgisayar yardımcısıdır (yapay zekâ), insan değildir. Bazen yanılır.",
+  "aio.star": "Bir insanla değil, bir yapay zekâyla (YZ) konuşuyorsun. Hata yapabilir.",
+  "aio.znak": "Yanıtları bir insan değil, yapay zekâ (YZ) veriyor",
+  "aio.uvodMlad": "Evklid bir bilgisayar yardımcısıdır",
+  "aio.opisMlad": "Evklid bir insan değil, bir bilgisayar programıdır (yapay zekâ). Ödevlerinde sana yardım eder ama bazen yanılır. Bir şey anlamadıysan öğretmenine ya da ailene sor.",
+  "aio.uvodStar": "Evklid bir yapay zekâdır (YZ)",
+  "aio.opisStar": "Bir insanla değil, bir yapay zekâyla (YZ) konuşuyorsun. Evklid konuyu anlamana yardım eder ama hata yapabilir, bu yüzden önemli sonuçları kontrol et.",
+  "aio.razumem": "Anladım",
+  "aio.resitev": "Bu çözümü bir insan değil, yapay zekâ (YZ) hazırladı. Hata yapabilir.",
+  "aio.ocena": "Bu değerlendirmeyi bir öğretmen değil, yapay zekâ (YZ) yaptı. Hata yapabilir.",
+  "aio.prepis": "Bu metni yapay zekâ (YZ) çıkardı. Doğru olup olmadığını kontrol et."
+}
