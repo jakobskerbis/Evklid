@@ -40,16 +40,34 @@ export const storeHtml = (html, store) => String(html).replace(STORE_PART, (_m, 
 
 // Statične strani s takimi deli: v aplikaciji iz trgovine jih pošlje ta vmesnik (pred statičnimi datotekami),
 // drugim zahtevam pusti express.static. Vary: odgovor je odvisen od User-Agent in X-App-Channel.
-// Strani preberemo ob zagonu (brez dostopa do diska ob vsaki zahtevi); sprememba strani velja po ponovnem zagonu.
+// V produkciji strani preberemo ob zagonu (brez dostopa do diska ob vsaki zahtevi; sprememba velja po ponovnem zagonu),
+// v razvoju ob vsaki zahtevi (kot server/vidnost.js). Manjkajoča stran ne ustavi zagona: zahtevo dobi express.static.
+// Pot primerjamo dekodirano (/starsi%2Ehtml je za express.static ista datoteka kot /starsi.html).
 export const STORE_PAGES = ["/starsi.html", "/garancija.html"];
-export function storeAppPages(publicDir) {
-  const pages = new Map(STORE_PAGES.map((p) => [p, storeHtml(fs.readFileSync(path.join(publicDir, p.slice(1)), "utf8"), true)]));
+export function storeAppPages(publicDir, { cache = process.env.NODE_ENV === "production" } = {}) {
+  const load = (p) => {
+    try {
+      return storeHtml(fs.readFileSync(path.join(publicDir, p.slice(1)), "utf8"), true);
+    } catch {
+      return null;
+    }
+  };
+  const pages = cache ? new Map(STORE_PAGES.map((p) => [p, load(p)])) : null;
   return (req, res, next) => {
-    if ((req.method !== "GET" && req.method !== "HEAD") || !pages.has(req.path)) return next();
+    if (req.method !== "GET" && req.method !== "HEAD") return next();
+    let p;
+    try {
+      p = decodeURIComponent(req.path);
+    } catch {
+      return next();
+    }
+    if (!STORE_PAGES.includes(p)) return next();
     res.vary("User-Agent");
     res.vary("X-App-Channel");
     if (!storeAppRequest(req)) return next();
+    const html = cache ? pages.get(p) : load(p);
+    if (html == null) return next();
     res.set("Cache-Control", "no-cache");
-    res.type("html").send(pages.get(req.path));
+    res.type("html").send(html);
   };
 }

@@ -355,8 +355,49 @@ test("javne strani: aplikacija iz trgovine brez cen, razdelka s cenami in /prene
     assert.match(read("public/starsi.js"), /if \(!document\.getElementById\("prices"\)\) return;/);
     // /o-evklidu na spletu ne pusti oznak v HTML (gredo skozi pogojne dele server/vidnost.js).
     assert.doesNotMatch((await get("/o-evklidu", { "user-agent": CHROME })).html, /ce:!?trgovina/);
-    // Kratka pot /starsi preusmeri na /starsi.html, ki ga nato pošlje vmesnik za trgovino.
-    assert.equal((await get("/starsi", { "user-agent": STORE_UA })).status, 301);
+    // Kratki poti /starsi in /garancija preusmerita na .html, ki ga nato pošlje vmesnik za trgovino.
+    for (const short of ["/starsi", "/garancija"]) {
+      const r = await fetch(s.base + short, { headers: { "user-agent": STORE_UA }, redirect: "manual" });
+      assert.equal(r.status, 301, short);
+      const to = r.headers.get("location");
+      assert.equal(to, `${short}.html`, short);
+      const app = await get(to, { "user-agent": STORE_UA });
+      assert.equal(app.status, 200, to);
+      assert.doesNotMatch(app.html, /\/prenesi|#cene|ce:!?trgovina/, to);
+      assert.doesNotMatch(app.html, PRICE, to);
+    }
+    // Zakodirana pot (/starsi%2Ehtml) je za express.static ista datoteka: tudi ta gre skozi rezanje.
+    for (const path of ["/starsi%2Ehtml", "/garancija%2ehtml", "/%73tarsi.html"]) {
+      const app = await get(path, { "user-agent": STORE_UA });
+      assert.equal(app.status, 200, path);
+      assert.doesNotMatch(app.html, /\/prenesi|#cene|ce:!?trgovina/, path);
+    }
+    assert.ok((await get("/starsi%E0%A4%A.html", { "user-agent": STORE_UA })).status < 500, "napačno kodiranje ne podre strežnika");
+    // Za starše v trgovini: uvod se bere naravno brez »koliko stane«.
+    const intro = (await get("/starsi.html", { "user-agent": STORE_UA })).html;
+    assert.match(intro, /kako varuje otroka in kako date soglasje\./);
+    assert.match((await get("/starsi.html", { "user-agent": CHROME })).html, /kako varuje otroka<!--ce:!trgovina-->, koliko stane<!--\/ce:!trgovina--> in kako date soglasje\./);
+    // /o-evklidu: opis za iskalnike in predogled brez cen v trgovini, na spletu z njimi.
+    const meta = (html, attr, key) => html.match(new RegExp(`<meta ${attr}="${key}" content="([^"]*)">`))?.[1];
+    const aboutWeb = (await get("/o-evklidu", { "user-agent": CHROME })).html;
+    const aboutStore = (await get("/o-evklidu", { "user-agent": STORE_UA })).html;
+    assert.match(meta(aboutWeb, "name", "description"), /za koga je, cene in pogosta vprašanja\.$/);
+    assert.match(meta(aboutWeb, "property", "og:description"), /kaj zna, koliko stane in kako varuje podatke\.$/);
+    assert.match(meta(aboutStore, "name", "description"), /za koga je in pogosta vprašanja\.$/);
+    assert.match(meta(aboutStore, "property", "og:description"), /kaj zna in kako varuje podatke\.$/);
+    // HEAD: enake glave kot GET (Vary, vrsta), brez telesa; dolžina se ujema z različico za trgovino.
+    for (const path of ["/starsi.html", "/garancija.html", "/o-evklidu"]) {
+      for (const headers of [{ "user-agent": STORE_UA }, { "x-app-client": "android/1.4.0", "x-app-channel": "store" }, { "user-agent": CHROME }]) {
+        const head = await fetch(s.base + path, { method: "HEAD", headers: { ...headers, "accept-encoding": "identity" }, redirect: "manual" });
+        const full = await fetch(s.base + path, { headers: { ...headers, "accept-encoding": "identity" }, redirect: "manual" });
+        const body = Buffer.from(await full.arrayBuffer());
+        assert.equal(head.status, 200, `HEAD ${path}`);
+        assert.equal(await head.text(), "", `HEAD ${path}: brez telesa`);
+        assert.match(head.headers.get("vary") || "", /User-Agent/i, `HEAD ${path}: Vary`);
+        assert.match(head.headers.get("content-type") || "", /text\/html/, `HEAD ${path}`);
+        if (head.headers.get("content-length")) assert.equal(Number(head.headers.get("content-length")), body.length, `HEAD ${path}: dolžina`);
+      }
+    }
   } finally {
     s.server.close();
   }
@@ -415,10 +456,60 @@ test("nova stopnja (level-up.js): v aplikaciji iz trgovine brez »Poglej pakete�
 });
 
 test("učbenik in laboratorij: gumb »Poglej pakete« ne v aplikaciji iz trgovine", () => {
+  // Oba uporabita isStoreApp iz public/pay-ui.js (en preizkus za vse; pay-ui.js se naloži že ob zagonu).
   const tb = read("public/textbook.js");
-  assert.match(tb, /const storeApp = \(\) => \/ EvklidApp\\\/\\S\+ store\\b\/\.test/);
-  assert.match(tb, /\$\{!storeApp\(\) && \(!L\.offers \|\| \(L\.offers\.show && L\.offers\.prices\)\) \? `<button type="button" class="primary" id="tb-upgrade">/);
-  assert.match(read("public/laboratorij.js"), /const showOffer = !\/ EvklidApp\\\/\\S\+ store\\b\/\.test\(globalThis\.navigator\?\.userAgent \|\| ""\) && /);
+  const lab = read("public/laboratorij.js");
+  for (const [f, src] of [["textbook.js", tb], ["laboratorij.js", lab]]) {
+    assert.match(src, /^import \{ isStoreApp \} from "\.\/pay-ui\.js";/m, f);
+    assert.doesNotMatch(src, /EvklidApp/, `${f}: brez kopije preizkusa`);
+  }
+  assert.match(tb, /\$\{!isStoreApp\(\) && \(!L\.offers \|\| \(L\.offers\.show && L\.offers\.prices\)\) \? `<button type="button" class="primary" id="tb-upgrade">/);
+  assert.match(lab, /const showOffer = !isStoreApp\(\) && \(!offers \|\| \(offers\.show && offers\.prices\)\);/);
+  // Vedenje: isStoreApp() brez argumenta prebere navigator.userAgent ob klicu (tako ga kličeta oba).
+  const had = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  const as = (ua) => {
+    Object.defineProperty(globalThis, "navigator", { value: { userAgent: ua }, configurable: true, writable: true });
+    return isStoreApp();
+  };
+  try {
+    assert.equal(as(STORE_UA), true);
+    assert.equal(as(APK_UA), false);
+    assert.equal(as(CHROME), false);
+    assert.equal(as(undefined), false);
+  } finally {
+    if (had) Object.defineProperty(globalThis, "navigator", had);
+    else delete globalThis.navigator;
+  }
+});
+
+test("storeAppPages: v razvoju prebere stran ob vsaki zahtevi, manjkajoča stran ne podre zagona", async () => {
+  const os = await import("node:os");
+  const path = await import("node:path");
+  const { storeAppPages } = await import("../server/mobile/trgovina.js");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "trgovina-strani-"));
+  const run = (mw, url) => {
+    const out = { sent: null, nexted: false };
+    const req = { method: "GET", path: url, get: (h) => ({ "user-agent": STORE_UA })[h.toLowerCase()] };
+    const res = { vary() {}, set() {}, type() { return this; }, send(b) { out.sent = b; } };
+    mw(req, res, () => (out.nexted = true));
+    return out;
+  };
+  try {
+    fs.writeFileSync(path.join(dir, "starsi.html"), "a<!--ce:!trgovina-->X<!--/ce:!trgovina-->b");
+    for (const cache of [false, true]) assert.doesNotThrow(() => storeAppPages(dir, { cache }), "garancija.html manjka");
+    const dev = storeAppPages(dir, { cache: false });
+    const prod = storeAppPages(dir, { cache: true });
+    assert.equal(run(dev, "/starsi.html").sent, "ab");
+    fs.writeFileSync(path.join(dir, "starsi.html"), "c<!--ce:!trgovina-->X<!--/ce:!trgovina-->d");
+    assert.equal(run(dev, "/starsi.html").sent, "cd", "razvoj: sveža datoteka");
+    assert.equal(run(prod, "/starsi.html").sent, "ab", "produkcija: prebrano ob zagonu");
+    for (const mw of [dev, prod]) {
+      assert.equal(run(mw, "/garancija.html").nexted, true, "manjkajoča stran gre naprej");
+      assert.equal(run(mw, "/%E0%A4%A").nexted, true, "napačno kodiranje gre naprej");
+    }
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 test("payp.inApp: brez napotka v brskalnik, v vseh jezikih vmesnika", () => {

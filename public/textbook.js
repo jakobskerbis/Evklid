@@ -9,6 +9,7 @@ import { prilagodiSirino } from "./sirina.js";
 import { jeFaks, jeSs } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
 import { predmetiNaRavni, knjigaNaRavni } from "./ucbenik-ravni.js";
+import { isStoreApp } from "./pay-ui.js"; // aplikacija iz trgovine: brez ponudbe paketov mimo trgovine
 
 // Povezava na učbenik za tisk/PDF (server/textbook-print.js): ?l= je jezik besedil na strani (pregrada »Pripravljam
 // učbenik …«, navodilo za brskalnike brez tiskanja); ?poglavje= samo en sklop poti (manjši in hitrejši PDF).
@@ -24,8 +25,6 @@ const pdfHref = (path, { topic = "", unit = "" } = {}) => {
 
 let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView, openLab, open3d }
 const $ = (sel) => document.querySelector(sel);
-// Aplikacija iz trgovine: brez ponudbe paketov mimo trgovine (isti preizkus kot public/pay-ui.js isStoreApp).
-const storeApp = () => / EvklidApp\/\S+ store\b/.test(globalThis.navigator?.userAgent || "");
 // Zaporedni številki prikaza: odgovor starejše zahteve (prejšnja poizvedba iskanja, prej kliknjena lekcija,
 // domača stran po »Nazaj«) ne sme prepisati novejšega, ki je prišel prej.
 let navSeq = 0; // celoten pogled Učbenika (domača stran ali lekcija)
@@ -631,7 +630,7 @@ async function renderLesson(topicId, name = "") {
     : locked
       ? `<section class="card tb-locked"><h2>${ic("lock")}Poskus: ${esc(L.locked.demo)}</h2>
           <p>Interaktivni poskusi, simulacije in sprotno preverjanje so na voljo v plačljivem paketu in med 7-dnevnim preizkusom. Besedilo lekcije in PDF sta brezplačna.</p>
-          ${!storeApp() && (!L.offers || (L.offers.show && L.offers.prices)) ? `<button type="button" class="primary" id="tb-upgrade">${ic("sparkles")}Poglej pakete</button>` : ""}</section>`
+          ${!isStoreApp() && (!L.offers || (L.offers.show && L.offers.prices)) ? `<button type="button" class="primary" id="tb-upgrade">${ic("sparkles")}Poglej pakete</button>` : ""}</section>`
       : "";
   const altHtml = lesson?.alternatives?.length
     ? `<div class="tb-alt">
