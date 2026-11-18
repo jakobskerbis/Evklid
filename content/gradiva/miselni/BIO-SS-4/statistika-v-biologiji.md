@@ -10,7 +10,7 @@ stanje: osnutek
   - $s = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n - 1}}$
   - enota kot podatki
 - Standardna napaka
-  - natančnost povprečja, $SE = \frac{s}{\sqrt{n}}$
+  - natančnost povprečja, $\mathrm{SE} = \frac{s}{\sqrt{n}}$
   - štirikrat več meritev: pol manjša
   - napaka: več meritev zmanjša $s$
 - t-test

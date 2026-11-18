@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -73,7 +73,7 @@ Dve izjemi od naraščanja imata jasen vzrok:
 :::premisli
 Magnezij ima konfiguracijo $[\mathrm{Ne}]\,3s^2$. Med katerima zaporednima ionizacijskima energijama pričakuješ velik skok in zakaj?
 ---
-Med $I_2$ in $I_3$. Prva dva elektrona odvzamemo iz lupine $3s$, tretji pa mora priti iz notranje, močno vezane podlupine $2p^6$ (izmerjeno: $I_2 = 1451$, $I_3 = 7733\,\mathrm{kJ/mol}$).
+Med $I_2$ in $I_3$. Prva dva elektrona odvzamemo iz podlupine $3s$, tretji pa mora priti iz notranje, močno vezane podlupine $2p^6$ (izmerjeno: $I_2 = 1451$, $I_3 = 7733\,\mathrm{kJ/mol}$).
 :::
 
 **6. Elektronska afiniteta** $E_\mathrm{ea}$ je energija, ki se sprosti, ko izoliran atom v plinastem stanju sprejme elektron: $\mathrm{X(g) + e^- \to X^-(g)}$, $\Delta H \approx -E_\mathrm{ea}$. Pozitivna $E_\mathrm{ea}$ pomeni, da je anion stabilnejši od atoma; pri nekaterih atomih (Be, N, žlahtni plini) je negativna ali blizu nič, kar pomeni, da se energija porabi. Največjo afiniteto imajo halogeni (klor okoli $349\,\mathrm{kJ/mol}$ sproščene energije), saj z dodatnim elektronom dosežejo konfiguracijo žlahtnega plina. Trend je manj pravilen kot pri ionizacijski energiji.
@@ -222,7 +222,7 @@ Disociacijske energije vezi so $D(\mathrm{H{-}H}) = 436\,\mathrm{kJ/mol}$, $D(\m
 2. V eV na molekulo: $92{,}5 / 96{,}49 \approx 0{,}959$, zato $|\chi(\mathrm{Cl}) - \chi(\mathrm{H})| = \sqrt{0{,}959} \approx 0{,}98$.
 3. Klor je bolj elektronegativen od vodika (desno zgoraj v sistemu), zato $\chi(\mathrm{Cl}) = 2{,}20 + 0{,}98 = 3{,}18$, kar se dobro ujema s tabelirano $3{,}16$.
 4. Ionski značaj: $1 - \mathrm{e}^{-0{,}98^2/4} = 1 - \mathrm{e}^{-0{,}240} \approx 0{,}21$, torej okoli $21\,\%$. Ker je $0{,}4 \le 0{,}98 < 1{,}7$, je vez polarna kovalentna.
-5. (b) Razlika $\Delta\chi = 3{,}98 - 3{,}16 = 0{,}82$, zato je presežek $0{,}82^2 = 0{,}672\,\mathrm{eV}$ na molekulo, kar ustreza $0{,}672 \cdot 96{,}49\,\mathrm{kJ/mol} \approx 64{,}9\,\mathrm{kJ/mol}$.
+5. (b) Razlika $\Delta\chi = 3{,}98 - 3{,}16 = 0{,}82$, zato je presežek $0{,}82^2 = 0{,}6724\,\mathrm{eV}$ na molekulo, kar ustreza $0{,}6724 \cdot 96{,}49\,\mathrm{kJ/mol} \approx 64{,}9\,\mathrm{kJ/mol}$.
 6. Iz definicije: $D(\mathrm{Cl{-}F}) = \tfrac12(243 + 158) + 64{,}9 = 200{,}5 + 64{,}9 \approx 265\,\mathrm{kJ/mol}$.
 7. Ocena je za $265/251 \approx 1{,}06$, torej okoli $6\,\%$, previsoka: Paulingova zveza je empirična.
 8. Odgovor: $\chi(\mathrm{Cl}) \approx 3{,}18$, vez $\mathrm{H{-}Cl}$ je polarna kovalentna z okoli $21\,\%$ ionskega značaja; ocena $D(\mathrm{Cl{-}F}) \approx 265\,\mathrm{kJ/mol}$ je za okoli $6\,\%$ nad izmerjeno.
@@ -374,7 +374,7 @@ N_{n-1} | število elektronov v lupini n − 1 | | –
 N_{\le n-2} | število elektronov v lupinah n − 2 in nižje | | –
 n | glavno kvantno število zunanje lupine | | – | enako številki periode
 r | polmer atoma ali iona | | pm
-\Delta H | entalpija ionizacije | \Delta H \approx I_1 | kJ/mol | pozitivna: ionizacija porabi energijo
+\Delta H | sprememba entalpije pri ionizaciji ali sprejemu elektrona | | kJ/mol | ionizacija: ΔH ≈ I₁ > 0 (energija se porabi); sprejem elektrona: ΔH ≈ −Eₑₐ
 I_1 | prva ionizacijska energija | | kJ/mol | najmanjša pri alkalijskih kovinah
 I_2 | druga ionizacijska energija | | kJ/mol
 I_3 | tretja ionizacijska energija | | kJ/mol

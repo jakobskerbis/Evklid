@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -54,9 +54,9 @@ Lukova soigralka Ana ima prekratko zrklo. Kje se pri njej sekajo žarki, kaj vid
 | starostna daljnovidnost | za mrežnico (leča ni več prožna) | na blizu | zbiralna leča za branje |
 | barvna slepota | slika je ostra, čepki so okvarjeni | nekatere barve | leča ne pomaga |
 
-**Isti načrt pri ušesu.** Zvok je nihanje zraka. **Uhelj** ga ujame in usmeri v **sluhovod**. Na koncu sluhovoda je **bobnič**, tanka opna, ki zaniha skupaj z zrakom. Za bobničem je **srednje uho** z najmanjšimi kostmi v telesu, **slušnimi koščicami**: kladivcem, nakovalcem in stremencem. Koščice nihanje prenesejo in okrepijo do **notranjega uha**.
+**Isti načrt pri ušesu.** Zvok je nihanje zraka. **Uhelj** ga ujame in usmeri v **sluhovod**. Na koncu sluhovoda je **bobnič**, tanka opna, ki zaniha skupaj z zrakom. Za bobničem je **srednje uho** z najmanjšimi kostmi v telesu, **slušnimi koščicami**: kladivcem, nakovalcem in stremencem. Koščice nihanje prenesejo in okrepijo do **notranjega ušesa**.
 
-V notranjem uhu je **polž**, zavita cevka s tekočino in **lasastimi čutnicami**. Tekočina zaniha, lasaste čutnice se upognejo in sprožijo signal v **slušnem živcu**. Ta ga nese v velike možgane. Mlad človek sliši zvoke s približno $20$ do $20\,000$ nihaji na sekundo (enota je hertz, Hz). Glasna glasba v slušalkah lasaste čutnice trajno poškoduje, saj jih telo ne nadomesti.
+V notranjem ušesu je **polž**, zavita cevka s tekočino in **lasastimi čutnicami**. Tekočina zaniha, lasaste čutnice se upognejo in sprožijo signal v **slušnem živcu**. Ta ga nese v velike možgane. Mlad človek sliši zvoke s približno $20$ do $20\,000$ nihaji na sekundo (enota je hertz, Hz). Glasna glasba v slušalkah lasaste čutnice trajno poškoduje, saj jih telo ne nadomesti.
 
 Srednje uho je z žrelom povezano z **Evstahijevo cevjo** (ušesno trobljo). Skoznjo se tlak zraka v srednjem ušesu izenači z zunanjim, da bobnič lahko prosto niha.
 
@@ -66,7 +66,7 @@ Potapljač se spusti tri metre globoko v bazen in zabolijo ga ušesa. Ko pogoltn
 Voda od zunaj pritiska na bobnič močneje kot zrak v srednjem ušesu, zato se bobnič usloči navznoter in boli. Ob požiranju se odpre Evstahijeva cev. Iz žrela pride v srednje uho zrak in tlak na obeh straneh bobniča se izenači.
 :::
 
-**Ravnotežje: drugi del notranjega uha.** Tik ob polžu so trije **polkrožni kanali**, postavljeni pravokotno drug na drugega, in **preddvor**. V kanalih je tekočina. Ko se zavrtiš, tekočina zaostaja za glavo, kot čaj v skodelici, ki jo hitro zasučeš. Pri tem upogne čutnice in možgani izvedo, da se glava vrti in v katero smer. Čutnice v preddvoru zaznajo lego glave tudi, ko mirujemo. Gimnastičarka zato po saltu ve, kje je zgoraj. Signal nese **ravnotežni živec**.
+**Ravnotežje: drugi del notranjega ušesa.** Tik ob polžu so trije **polkrožni kanali**, postavljeni pravokotno drug na drugega, in **preddvor**. V kanalih je tekočina. Ko se zavrtiš, tekočina zaostaja za glavo, kot čaj v skodelici, ki jo hitro zasučeš. Pri tem upogne čutnice in možgani izvedo, da se glava vrti in v katero smer. Čutnice v preddvoru zaznajo lego glave tudi, ko mirujemo. Gimnastičarka zato po saltu ve, kje je zgoraj. Signal nese **ravnotežni živec**.
 
 **Okus in voh: kemični čutili.** Na jeziku so **brbončice** z **okušalnimi čutnicami**. Zaznajo snovi, raztopljene v slini. Ločimo pet osnovnih okusov: sladko, slano, kislo, grenko in umami (okus mesne juhe). Vsaka brbončica zazna vseh pet.
 
@@ -157,7 +157,7 @@ $s = 102\,\mathrm{m}$. Igralka je približno sto metrov daleč.
 
 - **»Vidimo z očmi.«** Oko svetlobo zbere na mrežnici, sliko pa sestavijo možgani. Ob poškodbi vidnega živca človek ne vidi, čeprav je oko zdravo.
 - **Kratkovidnim zbiralno lečo.** Pri kratkovidnosti se žarki sekajo že pred mrežnico; zbiralna leča bi jih zbrala še prej. Kratkovidnim pomaga razpršilna leča, zbiralna pa daljnovidnim.
-- **Sluh in ravnotežje kot ena stvar.** Oboje je v notranjem uhu, a sluh v polžu, ravnotežje v polkrožnih kanalih in preddvoru.
+- **Sluh in ravnotežje kot ena stvar.** Oboje je v notranjem ušesu, a sluh v polžu, ravnotežje v polkrožnih kanalih in preddvoru.
 - **»Zemljevid jezika« in okus samo z jezikom.** Ni posebnih področij za sladko ali grenko; vsaka brbončica zazna vseh pet okusov. Aromo hrane zazna nos, zato s prehladom hrana »nima okusa«.
 - **Zvok in slika prideta hkrati.** Svetloba je skoraj takoj pri nas, zvok pa v sekundi preleti le okoli $340\,\mathrm{m}$. Čas izračunaš tako, da razdaljo deliš s hitrostjo, ne obratno.
 
@@ -196,7 +196,7 @@ $s = 102\,\mathrm{m}$. Igralka je približno sto metrov daleč.
 + polkrožni kanali
 - polž
 ~ V polžu so lasaste čutnice za sluh; tam se nihanje spremeni v signal.
-> Polkrožni kanali so sicer v notranjem uhu, a zaznavajo vrtenje glave, torej služijo ravnotežju, ne sluhu.
+> Polkrožni kanali so sicer v notranjem ušesu, a zaznavajo vrtenje glave, torej služijo ravnotežju, ne sluhu.
 
 ? Po desetih hitrih obratih na vrtiljaku se ustaviš, a se ti še vedno zdi, da se vrtiš. Kaj je vzrok?
 - Na mrežnici je ostala slika vrteče se okolice.
@@ -205,7 +205,7 @@ $s = 102\,\mathrm{m}$. Igralka je približno sto metrov daleč.
 - Bobnič še niha od hrupa na vrtiljaku.
 ~ Bobnič je del poti zvoka, ne ravnotežja. Tudi v tihem prostoru bi se ti vrtelo.
 - Mali možgani so utrujeni in ne delujejo.
-~ Mali možgani usklajujejo gibanje, a signal »vrtim se« jim pošiljajo čutnice notranjega uha.
+~ Mali možgani usklajujejo gibanje, a signal »vrtim se« jim pošiljajo čutnice notranjega ušesa.
 > Ko se ustaviš, se tekočina v kanalih še nekaj časa giblje, kot čaj v skodelici. Čutnice javljajo vrtenje, čeprav že stojiš.
 
 ? Sodnik na drugem koncu nogometnega igrišča, $68\,\mathrm{m}$ od tebe, zažvižga. Zvok potuje s hitrostjo $340\,\mathrm{m/s}$. Čez koliko sekund zaslišiš žvižg?
@@ -245,7 +245,7 @@ napis: 7,2; 4,9 | mrežnica | desno
 3. kladivce, nakovalce in stremence prenesejo nihanje
 4. tekočina v polžu zaniha in upogne lasaste čutnice
 5. slušni živec nese signal v velike možgane
-> Zvok gre od zunanjega uha (uhelj, sluhovod) prek srednjega (bobnič, koščice) do notranjega (polž). Šele lasaste čutnice nihanje spremenijo v signal za slušni živec.
+> Zvok gre od zunanjega ušesa (uhelj, sluhovod) prek srednjega (bobnič, koščice) do notranjega (polž). Šele lasaste čutnice nihanje spremenijo v signal za slušni živec.
 
 <<RACUN
 vrednost: 120/6 | 20

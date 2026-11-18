@@ -4,7 +4,7 @@ stanje: osnutek
 ---
 - Osrednje in obkrajno
   - OŽ: možgani in hrbtenjača
-  - PŽ: $12 + 31$ parov živcev, prepleti, gangliji
+  - PŽ: $12 + 31$ parov živcev, pleteži, gangliji
   - napaka: »možganski živci so del OŽ«
 - Aferentno in eferentno
   - aferentno proti OŽ, čutilno
@@ -23,9 +23,9 @@ stanje: osnutek
 - Križanje proge
   - v podaljšani hrbtenjači
   - leva polobla vodi desno stran
-- Prepleti
-  - vratni, pazdušni, ledveni, križni
-  - prsni živci: medrebrni, brez prepleta
+- Pleteži
+  - vratni, nadlahtni, ledveni, križni
+  - prsni živci: medrebrni, brez pleteža
 - Avtonomno živčevje
   - simpatikus: prsni in zgornji ledveni segmenti
   - parasimpatikus: deblo in križni segmenti

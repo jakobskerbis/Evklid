@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -141,7 +141,7 @@ $m g h = \dfrac{m v^2}{2}$, torej $v = \sqrt{2 g h}$
 
 1. Na vrhu: $W_k = 0$, $W_p = 30 \cdot 10 \cdot 2 = 600\,\text{J}$.
 2. Na dnu je $W_p = 0$, zato je vsa energija kinetična: $W_k = 600\,\text{J}$.
-3. Iz $W_k = \dfrac{m v^2}{2}$ izračunaj $v^2$, nato $v$. Preveri še s $v = \sqrt{2 g h}$.
+3. Iz $W_k = \dfrac{m v^2}{2}$ izračunaj $v^2$, nato $v$. Preveri še z $v = \sqrt{2 g h}$.
 
 :::premisli
 Kolikšna je hitrost otroka na dnu?

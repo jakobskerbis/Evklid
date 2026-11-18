@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -259,7 +259,7 @@ točka: 3; 3 | D | desno
 + Se podvoji.
 > Naboj ostane enak, $C = \frac{\varepsilon_0 S}{d}$ se razpolovi, zato se $U = \frac{Q}{C}$ podvoji. Polje $E = \frac{U}{d}$ ostane enako.
 
-? Enaki kovinski kroglici z nabojema $+6\,\mathrm{nC}$ in $-2\,\mathrm{nC}$ sta $3\,\mathrm{cm}$ narazen. Dotaknemo ju in vrnemo na isto razdaljo. Kolikšna je zdaj sila med njima v mikronewtonih?
+? Enaki kovinski kroglici z nabojema $+6\,\mathrm{nC}$ in $-2\,\mathrm{nC}$ sta $3\,\mathrm{cm}$ narazen. Staknemo ju in vrnemo na isto razdaljo. Kolikšna je zdaj sila med njima v mikronewtonih?
 = 40 µN | 1
 ~ 120 | To je sila pred dotikom: $k \cdot 6 \cdot 2 \cdot 10^{-18}/0{,}03^2$. Po dotiku sta naboja drugačna.
 ~ 160 | Naboj si razdelita s predznaki: $(+6 - 2)/2 = +2\,\mathrm{nC}$, ne $(6 + 2)/2 = 4\,\mathrm{nC}$.

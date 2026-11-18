@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -286,7 +286,7 @@ Armiranobetonski steber s kvadratnim prerezom $300\,\mathrm{mm} \times 300\,\mat
 
 1. Naloga je statično nedoločena: ena ravnotežna enačba $N_b + N_s = F$ in dve neznanki. Dodamo pogoj skladnosti: beton in jeklo sta sprijeta, zato imata enako deformacijo $\varepsilon$.
 2. Prereza: $A_s = 4 \cdot \pi \cdot 20^2/4\,\mathrm{mm^2} \approx 1257\,\mathrm{mm^2}$, $A_b = 90\,000 - 1257 \approx 88\,743\,\mathrm{mm^2}$.
-3. Z Hookovim zakonom: $F = \varepsilon\,(E_bA_b + E_sA_s)$.
+3. S Hookovim zakonom: $F = \varepsilon\,(E_bA_b + E_sA_s)$.
 4. $E_bA_b + E_sA_s \approx 30\,000 \cdot 88\,743 + 200\,000 \cdot 1257\,\mathrm{N} \approx 2{,}914 \cdot 10^9\,\mathrm{N}$.
 5. $\varepsilon = 1{,}2 \cdot 10^6/2{,}914 \cdot 10^9 \approx 4{,}12 \cdot 10^{-4}$ (skrček).
 6. Napetosti: $\sigma_b = E_b\varepsilon \approx 30\,000 \cdot 4{,}12 \cdot 10^{-4}\,\mathrm{MPa} \approx 12{,}4\,\mathrm{MPa}$, $\sigma_s = E_s\varepsilon \approx 200\,000 \cdot 4{,}12 \cdot 10^{-4}\,\mathrm{MPa} \approx 82{,}4\,\mathrm{MPa}$ (oboje tlak).
@@ -310,7 +310,7 @@ Jeklena žica premera $2{,}0\,\mathrm{mm}$ in dolžine $3{,}0\,\mathrm{m}$ nosi 
 
 **Napetostni tenzor.** V splošnem napetost v točki ni en sam vektor: na vsako ploskvico skozi točko deluje drugačna napetost. Opiše jo simetrična matrika $3 \times 3$ (tenzor napetosti) s tremi normalnimi in tremi strižnimi komponentami. Hookov zakon za izotropen material poveže šest komponent napetosti s šestimi komponentami deformacije prek dveh konstant, $E$ in $\nu$. Enoosni zakon $\sigma = E\varepsilon$ je poseben primer.
 
-**Mejna stanja namesto dopustne napetosti.** Sodobni standardi za projektiranje konstrukcij (evrokodi) namesto enega varnostnega faktorja uporabljajo delne faktorje: obtežbe povečajo (npr. stalne s $1{,}35$, spremenljive z $1{,}5$), trdnost materiala zmanjšajo (npr. jeklo z $\gamma_{M0} = 1{,}0$, beton z $1{,}5$). Ideja je ista kot pri dopustni napetosti, a negotovosti obtežbe in materiala sta ločeni.
+**Mejna stanja namesto dopustne napetosti.** Sodobni standardi za projektiranje konstrukcij (evrokodi) namesto enega varnostnega faktorja uporabljajo delne faktorje: obtežbe povečajo (npr. stalne z $1{,}35$, spremenljive z $1{,}5$), trdnost materiala zmanjšajo (npr. jeklo z $\gamma_{M0} = 1{,}0$, beton z $1{,}5$). Ideja je ista kot pri dopustni napetosti, a negotovosti obtežbe in materiala sta ločeni.
 
 **Biološka tkiva.** Kite in vezi imajo diagram v obliki črke J: na začetku se ravnajo valovita kolagenska vlakna in je tkivo mehko, nato postane skoraj linearno. Zato $E$ za tkiva podajamo za linearni del, njihova trdnost pa je odvisna od hitrosti obremenjevanja (viskoelastičnost).
 

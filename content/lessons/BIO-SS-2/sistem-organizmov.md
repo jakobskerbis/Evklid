@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -60,7 +60,7 @@ Bakterije in arheje so **prokarionti**: celica nima jedra, DNA leži prosto v ci
 
 **Evkarionti** imajo celično jedro in organele z membrano. Delimo jih na štiri velike skupine:
 
-- **protisti**: enocelični evkarionti in alge (copatkar, evglena, ameba); raznolika skupina brez skupnega imenovalca,
+- **protisti**: enocelični evkarionti in alge (paramecij, evglena, ameba); raznolika skupina brez skupnega imenovalca,
 - **glive**: heterotrofne, celična stena iz hitina, večinoma razgrajevalci (kvasovka, jurček),
 - **rastline**: fotosinteza v kloroplastih, celična stena iz celuloze,
 - **živali**: heterotrofne, brez celične stene, večinoma gibljive.
@@ -195,7 +195,7 @@ $k \approx 154$. Na vsako vrsto sesalca poznamo okoli $154$ vrst žuželk. Žuž
 
 ## Drugače: Z analogijo
 
-Predstavljaj si veliko družinsko drevo. Brata imata skupne starše. Bratranca imata skupne stare starše. Daljni sorodniki se srečajo šele pri pra-pra-dedku.
+Predstavljaj si veliko družinsko drevo. Brata imata skupne starše. Bratranca imata skupne stare starše. Daljni sorodniki se srečajo šele pri prapradedku.
 
 Vrste v istem rodu so kot brata: njun skupni prednik je živel nedavno. Vrste iste družine so bratranci. Vrste, ki si delijo le kraljestvo, so zelo daljni sorodniki. Kozorog in domača koza sta »brata«, kozorog in gams »bratranca«.
 

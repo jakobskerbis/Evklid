@@ -4,7 +4,7 @@ import { videzCelic, BARVE as B } from "../../celice-videz.js";
 
 export const info = {
   id: "celica-paramecij",
-  naslov: "Paramecij (copatkar)",
+  naslov: "Paramecij",
   podrocje: "celice",
   predmet: "BIO",
   opis: "Enocelični migetalkar iz mlakuž, dolg okoli četrt milimetra. Plava z migetalkami, hrano pa mu v celična usta nažene ustna kotanja. Migetalk je zaradi preglednosti manj kot v resnici (okoli 5000).",

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -144,7 +144,7 @@ $n(\mathrm{C}) = n(\mathrm{CO_2})$, $\quad n(\mathrm{H}) = 2\,n(\mathrm{H_2O})$,
 
 ### Primer 4 – zdaj ti
 
-Na taborjenju kuhaš na gorilniku, ki porabi celo kartušo s $220\,\mathrm{g}$ propana $\mathrm{C_3H_8}$. Koliko gramov ogljikovega dioksida pri tem nastane? Reakcija: $\mathrm{C_3H_8 + 5\,O_2 \to 3\,CO_2 + 4\,H_2O}$; $A_\mathrm{r}(\mathrm{C}) = 12{,}01$, $A_\mathrm{r}(\mathrm{H}) = 1{,}008$, $M(\mathrm{CO_2}) = 44{,}01\,\mathrm{g/mol}$.
+Na taborjenju kuhaš na gorilniku, ki porabi celo kartušo z $220\,\mathrm{g}$ propana $\mathrm{C_3H_8}$. Koliko gramov ogljikovega dioksida pri tem nastane? Reakcija: $\mathrm{C_3H_8 + 5\,O_2 \to 3\,CO_2 + 4\,H_2O}$; $A_\mathrm{r}(\mathrm{C}) = 12{,}01$, $A_\mathrm{r}(\mathrm{H}) = 1{,}008$, $M(\mathrm{CO_2}) = 44{,}01\,\mathrm{g/mol}$.
 
 **Podatki:** $m(\mathrm{C_3H_8}) = 220\,\mathrm{g}$, $A_\mathrm{r}(\mathrm{C}) = 12{,}01$, $A_\mathrm{r}(\mathrm{H}) = 1{,}008$, $M(\mathrm{CO_2}) = 44{,}01\,\mathrm{g/mol}$, enačba $\mathrm{C_3H_8 + 5\,O_2 \to 3\,CO_2 + 4\,H_2O}$
 **Iščemo:** maso $m(\mathrm{CO_2})$
@@ -206,7 +206,7 @@ Acetilsalicilno kislino ($\mathrm{C_9H_8O_4}$, $M = 180{,}16\,\mathrm{g/mol}$) p
 3. Presežek: $0{,}074\,05 - 0{,}036\,20 = 0{,}037\,85\,\mathrm{mol}$ acetanhidrida, kar je $0{,}037\,85 \cdot 102{,}09\,\mathrm{g} \approx 3{,}86\,\mathrm{g}$.
 4. Teoretična masa: $m_\text{teor} = 0{,}036\,20 \cdot 180{,}16\,\mathrm{g} = 6{,}522\,\mathrm{g}$.
 5. Dejanska masa čistega produkta (nečistoče ne štejemo): $5{,}20 \cdot 0{,}950\,\mathrm{g} = 4{,}94\,\mathrm{g}$; $\eta = 4{,}94/6{,}522 \cdot 100\,\% \approx 75{,}7\,\%$.
-6. c) Za $100\,\mathrm{g}$ produkta potrebujemo teoretično $100/180{,}16\,\mathrm{mol} = 0{,}5551\,\mathrm{mol}$; pri izkoristku $\eta = 0{,}7575$ moramo vzeti $0{,}5551/0{,}7575\,\mathrm{mol} = 0{,}7328\,\mathrm{mol}$ salicilne kisline, kar je $0{,}7328 \cdot 138{,}12\,\mathrm{g} \approx 101\,\mathrm{g}$.
+6. c) Za $100\,\mathrm{g}$ produkta potrebujemo teoretično $100/180{,}16\,\mathrm{mol} = 0{,}5551\,\mathrm{mol}$; pri izkoristku $\eta = 0{,}7574$ moramo vzeti $0{,}5551/0{,}7574\,\mathrm{mol} = 0{,}7329\,\mathrm{mol}$ salicilne kisline, kar je $0{,}7329 \cdot 138{,}12\,\mathrm{g} \approx 101\,\mathrm{g}$.
 7. Odgovor: omejujoča je salicilna kislina, ostane okoli $3{,}86\,\mathrm{g}$ acetanhidrida, izkoristek je okoli $75{,}7\,\%$, za $100\,\mathrm{g}$ produkta potrebujemo okoli $101\,\mathrm{g}$ salicilne kisline.
 
 ### Naloga 2
@@ -260,7 +260,7 @@ Omejujoči reaktant si predstavljaj kot sestavljanje koles: vsako kolo potrebuje
 
 **Inženirstvo: zračna blazina.** Ob trku razpade natrijev azid: $\mathrm{2\,NaN_3 \to 2\,Na + 3\,N_2}$. Iz $65{,}0\,\mathrm{g}$ $\mathrm{NaN_3}$ ($M = 65{,}02\,\mathrm{g/mol}$, torej $1{,}000\,\mathrm{mol}$) nastane $1{,}500\,\mathrm{mol}$ dušika, pri $25\,^\circ\mathrm{C}$ in $100\,\mathrm{kPa}$ okoli $37{,}2\,\mathrm{L}$. Premalo azida pomeni mehko blazino, preveč nevarno trdo.
 
-**Fiziologija in klinična prehrana.** Pri popolni oksidaciji glukoze (Primer 1) se za vsak mol porabi $6\,\mathrm{mol}$ $\mathrm{O_2}$ in nastane $6\,\mathrm{mol}$ $\mathrm{CO_2}$. Razmerje $n(\mathrm{CO_2})/n(\mathrm{O_2})$, **respiracijski koeficient**, je za ogljikove hidrate $1$, za maščobe okoli $0{,}7$; z merjenjem v izdihanem zraku (posredna kalorimetrija) ocenijo, kaj telo porablja.
+**Fiziologija in klinična prehrana.** Pri popolni oksidaciji glukoze (Primer 1) se za vsak mol porabi $6\,\mathrm{mol}$ $\mathrm{O_2}$ in nastane $6\,\mathrm{mol}$ $\mathrm{CO_2}$. Razmerje $n(\mathrm{CO_2})/n(\mathrm{O_2})$, **respiracijski kvocient**, je za ogljikove hidrate $1$, za maščobe okoli $0{,}7$; z merjenjem v izdihanem zraku (posredna kalorimetrija) ocenijo, kaj telo porablja.
 
 **Agronomija.** Za $120\,\mathrm{kg}$ dušika na hektar je pri masnem deležu dušika v $\mathrm{NH_4NO_3}$ $2 \cdot 14{,}01 / 80{,}05 \approx 0{,}35$ treba posuti približno $343\,\mathrm{kg}$ gnojila.
 
@@ -286,7 +286,7 @@ Koliko gramov vode nastane, če zmešamo $3{,}00\,\mathrm{g}$ vodika in $16{,}0\
 
 ## Preveri se
 
-? Koliko mol je $4{,}0\,\mathrm{g}$ natrijevega hidroksida ($M = 40{,}0\,\mathrm{g/mol}$)?
+? Koliko molov je $4{,}0\,\mathrm{g}$ natrijevega hidroksida ($M = 40{,}0\,\mathrm{g/mol}$)?
 - $10\,\mathrm{mol}$
 ~ Delil si obratno, $M/m = 40{,}0/4{,}0$. Enote izdajo napako: $\mathrm{g/mol}$ deljeno z $\mathrm{g}$ da $\mathrm{mol^{-1}}$, ne mol.
 + $0{,}10\,\mathrm{mol}$

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -63,7 +63,7 @@ $$t_\mathrm{č} = t_\mathrm{o} - b$$
 Glavni algoritmi:
 
 - **FCFS** (kdor prej pride, prej melje): procesi tečejo po vrsti prihoda do konca. Preprost, a kratki procesi lahko dolgo čakajo za dolgim (*učinek konvoja*).
-- **SJF** (najkrajši najprej): izbere proces z najkrajšim trajanjem. Predkupna različica **SRTF** prekine tekoči proces, če pride nov z manjšim preostankom.
+- **SJF** (najkrajši najprej): izbere proces z najkrajšim trajanjem. Različica s prekinjanjem, **SRTF**, prekine tekoči proces, če pride nov z manjšim preostankom.
 - **Prioritetno razporejanje**: teče proces z najvišjo prioriteto. Nevarnost je **stradanje** procesov z nizko prioriteto; zdravilo je *staranje*, postopno višanje prioritete čakajočih.
 - **Krožno razporejanje** (round robin, RR): vsak proces dobi časovno rezino (kvant) $q$; če v njej ne konča, gre na konec vrste. Dober odzivni čas, a več preklopov.
 
@@ -144,7 +144,7 @@ $t_\mathrm{o} = t_\mathrm{k} - t_\mathrm{p}$, $t_\mathrm{č} = t_\mathrm{o} - b$
 
 ### Primer 3 (izpitna raven): procesi z različnimi prihodi
 
-Štirje procesi prispejo ob različnih časih (v ms): A ob $0$ s trajanjem $8$, B ob $1$ s $4$, C ob $2$ z $9$ in D ob $3$ s $5$. Za FCFS, nepredkupni SJF in SRTF določi razpored in povprečni čas čakanja. Kateri algoritem je najboljši po tem merilu?
+Štirje procesi prispejo ob različnih časih (v ms): A ob $0$ s trajanjem $8$, B ob $1$ s $4$, C ob $2$ z $9$ in D ob $3$ s $5$. Za FCFS, SJF brez prekinjanja in SRTF določi razpored in povprečni čas čakanja. Kateri algoritem je najboljši po tem merilu?
 
 **Podatki:** $(t_\mathrm{p}; b)$: A $(0; 8)$, B $(1; 4)$, C $(2; 9)$, D $(3; 5)$, vse v ms
 **Iščemo:** razpored in $\bar{t}$ za FCFS, SJF in SRTF
@@ -235,7 +235,7 @@ Natančno navedi izrek o optimalnosti SJF z vsemi pogoji in ga dokaži. Utemelji
 2. Dokaz z zamenjavo sosednjih procesov $X$, $Y$ z $b_X > b_Y$: drugi procesi čakajo enako, $Y$ čaka $b_X$ manj, $X$ pa $b_Y$ več, skupno čakanje se zmanjša za $b_X - b_Y > 0$. Razpored brez takega para je urejen po trajanju.
 3. Pri različnih prihodih razporejevalnik ne pozna prihodnjih procesov. Primer 3: SJF ob $0$ zažene A ($8\,\mathrm{ms}$), ker je edini, čeprav ob $1$ pride krajši B. Če bi procesor ob $0$ pustili $1\,\mathrm{ms}$ prazen in začeli z B, bi bilo povprečje lahko manjše.
 4. Preverimo: B $1$–$5$, D $5$–$10$, A $10$–$18$, C $18$–$27$ da čakanja $0$, $2$, $10$, $16$, povprečje $7\,\mathrm{ms}$, kar je manj od $7{,}75\,\mathrm{ms}$ pri SJF. Zamenjava sosedov tu ni dovoljena, ker proces ne more teči pred svojim prihodom.
-5. Zato pri različnih prihodih nepredkupni SJF ni nujno optimalen; s prekinjanjem pa je glede povprečnega čakanja optimalen SRTF.
+5. Zato pri različnih prihodih SJF brez prekinjanja ni nujno optimalen; s prekinjanjem pa je glede povprečnega čakanja optimalen SRTF.
 
 ### Naloga 3
 
@@ -328,6 +328,7 @@ t_\mathrm{p} | čas prihoda procesa | | ms
 t_\mathrm{č} | čas čakanja | t_\mathrm{č} = t_\mathrm{o} - b | ms
 b | trajanje procesa na procesorju | | ms
 \bar{t} | povprečni čas čakanja | | ms
+\bar{t}_{\mathrm{r}} | povprečni odzivni čas | | ms
 t_{\mathrm{č},1}, t_{\mathrm{č},2}, t_{\mathrm{č},3} | časi čakanja posameznih procesov | | ms
 n_\mathrm{b} | število blokov datoteke | n_\mathrm{b} = \lceil s/B \rceil | –
 s | velikost datoteke | | B

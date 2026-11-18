@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -308,7 +308,7 @@ Pri vzorčenju prahu pretok črpalke pred vzorčenjem in po njem preverijo s kal
 
 :::simboli
 \bar{x} | povprečje meritev | \bar{x} = \frac{x_1 + \dots + x_n}{n} | | enota kot merjena količina
-x_i, x_1, x_2, x_n | posamezne meritve | | | enota kot merjena količina
+x_i, x_1, x_2, x_n | posamezne meritve ali vhodne količine | | | enota kot merjena količina
 n | število ponovitev | | – |
 s | standardni odmik (raztros) | s = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n-1}} | | meri ponovljivost
 u_A | standardna negotovost tipa A | u_A = \frac{s}{\sqrt{n}} | | negotovost povprečja

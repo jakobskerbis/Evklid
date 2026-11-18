@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -152,7 +152,7 @@ $A = 200\,\mathrm{J}$. Majhna sila na zelo dolgi poti opravi kar veliko dela.
 - **Pot v centimetrih.** »$90\,\mathrm{J} : 250 = 0{,}36\,\mathrm{N}$.« Joule je newton krat **meter**, zato pot v centimetrih da stokrat premajhen rezultat. Najprej pretvori: $250\,\mathrm{cm} = 2{,}5\,\mathrm{m}$.
 - **Masa namesto teže.** »Dvignem $2\,\mathrm{kg}$ za $3\,\mathrm{m}$, delo je $6\,\mathrm{J}$.« V $A = F \cdot s$ je sila v newtonih, masa pa ni sila. Najprej $F_g = m \cdot g = 20\,\mathrm{N}$, nato $A = 60\,\mathrm{J}$.
 - **»Trudim se, torej delam.«** Kdor potiska zid ali drži težko vejo, se utrudi. Mišice res porabljajo energijo, a na zidu ali veji sila ne opravi dela, ker je $s = 0$.
-- **Pot, ki ni v smeri sile.** »Nesem vedro vode $100\,\mathrm{m}$ po ravnem, delo je teža krat $100\,\mathrm{m}$.« Sila drže kaže navzgor, premik je vodoraven, zato je to delo nič. Šteje le pot v smeri sile.
+- **Pot, ki ni v smeri sile.** »Nesem vedro vode $100\,\mathrm{m}$ po ravnem, delo je teža krat $100\,\mathrm{m}$.« Sila roke kaže navzgor, premik je vodoraven, zato je to delo nič. Šteje le pot v smeri sile.
 - **Napačna enota.** »Delo je $120\,\mathrm{N}$.« Newton je enota sile. Delo je sila krat pot, zato $\mathrm{N} \cdot \mathrm{m} = \mathrm{J}$.
 
 ## Povzetek
@@ -243,11 +243,11 @@ Formula $A = F \cdot s$ velja, ko je sila stalna in kaže v smeri gibanja. Če s
 
 ? Pohodnik nese težak nahrbtnik po ravni gozdni poti $2\,\mathrm{km}$ daleč. Koliko dela opravi sila, s katero nahrbtnik drži navzgor?
 - Veliko, ker je pot dolga in nahrbtnik težak.
-~ Množiš težo s potjo, ki ni v smeri sile. Sila drže kaže navzgor, pot pa je vodoravna.
+~ Množiš težo s potjo, ki ni v smeri sile. Sila na nahrbtnik kaže navzgor, pot pa je vodoravna.
 + Nič, ker je sila pravokotna na smer gibanja.
 - Nič, ker se pohodnik ne utrudi.
 ~ Utrudi se, saj mišice porabljajo energijo. Delo je nič zaradi smeri sile, ne zaradi utrujenosti.
-> Delo opravi le sila, ki ima smer gibanja. Sila drže je navpična, premik vodoraven, zato je to delo $0\,\mathrm{J}$.
+> Delo opravi le sila, ki ima smer gibanja. Sila na nahrbtnik je navpična, premik vodoraven, zato je to delo $0\,\mathrm{J}$.
 
 :::simboli
 A | delo | A = F \cdot s | J | pri dviganju $A = F_g \cdot h$

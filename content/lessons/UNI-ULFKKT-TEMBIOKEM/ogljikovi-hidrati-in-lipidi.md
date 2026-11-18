@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -52,7 +52,7 @@ Razvejanost glikogena ni naključna: vsaka veja ima prost konec, s katerega enci
 :::premisli
 Škrob in celuloza sta oba iz glukoze. Zakaj škrob prebavimo, celuloze pa ne, krava pa se s travo vseeno nahrani?
 ---
-Ker se razlikujeta v glikozidni vezi, ne v monomeru. Naši encimi (amilaze) imajo aktivno mesto, ki se prilega vezi $\alpha(1 \to 4)$. Za vez $\beta(1 \to 4)$ nimamo encima; prežvekovalci in termiti ga imajo le prek mikroorganizmov v prebavilih. Enako kot pri proteinih: oblika molekule določa, kateri encim jo prepozna.
+Ker se razlikujeta v glikozidni vezi, ne v monomeru. Naši encimi (amilaze) imajo aktivno mesto, ki se prilega vezi $\alpha(1 \to 4)$. Za vez $\beta(1 \to 4)$ med glukoznimi enotami celuloze nimamo encima (celulaze); prežvekovalci in termiti ga imajo le prek mikroorganizmov v prebavilih. Enako kot pri proteinih: oblika molekule določa, kateri encim jo prepozna.
 :::
 
 ### Kaj ogljikovi hidrati počnejo v celici
@@ -188,7 +188,7 @@ $[\alpha]_\text{ravn.} = x_\alpha [\alpha]_\alpha + x_\beta [\alpha]_\beta$, $\q
 3. Števec: $112 - 52{,}7 = 59{,}3$. Imenovalec: $112 - 18{,}7 = 93{,}3$.
 4. $x_\beta = \dfrac{59{,}3}{93{,}3} = 0{,}636$, torej $x_\alpha = 0{,}364$.
 5. Preverimo smiselnost: $52{,}7^\circ$ je bližje $18{,}7^\circ$ kot $112^\circ$, zato mora prevladovati $\beta$.
-6. Ravnotežna konstanta: $K = 0{,}636/0{,}364 \approx 1{,}74$.
+6. Ravnotežna konstanta (z nezaokroženima deležema): $K = 0{,}6356/0{,}3644 \approx 1{,}744$.
 7. $\Delta G^\circ = -8{,}314 \cdot 298{,}15 \cdot \ln 1{,}744\,\text{J/mol} \approx -1379\,\text{J/mol} \approx -1{,}4\,\text{kJ/mol}$. Negativna vrednost pomeni, da je $\beta$ stabilnejši, a le malo: razlika je manjša od energije ene vodikove vezi.
 8. Obratno vprašanje: takoj po raztapljanju mutarotacija še ni stekla, zato isto linearno zvezo uporabimo za trdni vzorec: $x_\alpha = \dfrac{[\alpha]_0 - [\alpha]_\beta}{[\alpha]_\alpha - [\alpha]_\beta} = \dfrac{40{,}0 - 18{,}7}{93{,}3} \approx 0{,}228$.
 9. Odgovor: v ravnotežju je približno $64\,\%$ glukoze v obliki $\beta$, $K \approx 1{,}74$ in $\Delta G^\circ \approx -1{,}4\,\text{kJ/mol}$; trdni vzorec vsebuje okoli $23\,\%$ $\alpha$ in $77\,\%$ $\beta$. Oblika $\beta$ je stabilnejša, ker so v njej v stolasti obliki obroča vse skupine $-\text{OH}$ ekvatorialne (glej »Bolj natančno«).
@@ -279,7 +279,7 @@ Natančno definiraj reducirajoči sladkor. Utemelji, ali so maltoza, laktoza, sa
 
 - **Živilska industrija**: škrob encimsko hidrolizirajo do glukoze, glukoza-izomeraza del nje pretvori v fruktozo.
 - **Analitika**: umiljevalno in jodno število olj; saharoza s polarimetrijo.
-- **Predelava maščob**: delna hidrogenacija olj daje trans maščobne kisline (EU: največ $2\,\text{g}$ na $100\,\text{g}$ maščobe); pretestrenje z metanolom da biodizel in glicerol.
+- **Predelava maščob**: delna hidrogenacija olj daje trans maščobne kisline (EU: največ $2\,\text{g}$ na $100\,\text{g}$ maščobe); preestrenje z metanolom da biodizel in glicerol.
 - **Detergenti in kozmetika**: milo (natrijev palmitat) z enim repom tvori micele, ki ujamejo maščobo; fosfolipid z dvema repoma raje tvori dvosloj.
 - **Farmacija**: liposomi in lipidni nanodelci (mRNA cepiva) prenašajo učinkovine.
 

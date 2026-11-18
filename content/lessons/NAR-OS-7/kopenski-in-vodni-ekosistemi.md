@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -26,7 +26,7 @@ Ribnik je plitek, zato svetloba sega do dna in rastline rastejo skoraj povsod: t
 :::premisli
 Bukev ima listne reže spodaj na listu. Kaj bi šlo narobe, če bi jih tam imel tudi lokvanj?
 ---
-Ker spodnja stran lokvanjevega lista leži na vodi. Skozi reže rastlina izmenjuje pline z zrakom; pod vodo ne bi prišle do zraka, zato jih ima na strani, ki gleda v zrak.
+Spodnja stran lokvanjevega lista leži na vodi. Skozi reže rastlina izmenjuje pline z zrakom; pod vodo ne bi prišle do zraka, zato jih ima na strani, ki gleda v zrak.
 :::
 
 **Drugi postanek: gozd.** Pot nas pelje v bukov gozd. Tu je pogoj okolja drugačen: visoka drevesa zastrejo svetlobo. Gozd ima zato **plasti**, ki jih kaže presek.
@@ -170,7 +170,7 @@ Ohladi se za $8 \cdot 0{,}6\,°\mathrm{C} = 4{,}8\,°\mathrm{C}$. Na gozdni meji
 
 - Prilagoditev je lastnost telesa ali vedenja, ki organizmu pomaga preživeti v njegovem okolju. Razložiš jo s koraki: pogoj okolja → lastnost → korist.
 - Gozd: plasti (drevesna, grmovna, zeliščna, mahovna), pri tleh malo svetlobe; detel, podlesna vetrnica.
-- Travnik: sončen, ga kosimo; trave rastejo iz dela ob tleh; brez košnje zaraste v gozd.
+- Travnik: sončen, kosimo ga; trave rastejo iz dela ob tleh; brez košnje zaraste v gozd.
 - Ribnik: stoječa sladka voda, plitek; žaba, lokvanj, vodni drsalec.
 - Morje: slana voda (v Jadranu okoli $38\,\mathrm{g/L}$), valovi, temno v globini; morska zvezda, klapavica, pozidonija.
 - Z višino se zrak ohlaja za okoli $0{,}6\,°\mathrm{C}$ na $100\,\mathrm{m}$; gozd zato v gorah preide v ruševje.

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -21,7 +21,7 @@ Od kod pride nova korenina? Celice v njej niso večje kot na začetku, le več j
 | dve skupini niti potujeta narazen | $2$ | $1\,\%$ |
 | dve skupini niti ob robovih, vmes nastaja stena | $5$ | $2{,}5\,\%$ |
 
-Večina celic ima navadno jedro. Le desetina kaže niti. Celice niso usklajene: vsaka je ujeta v drugem trenutku istega zaporedja dogodkov. Čim več celic ima nek videz, tem dlje celica v njem ostane. Iz deleža lahko torej sklepamo na trajanje.
+Večina celic ima navadno jedro. Le desetina kaže niti. Celice niso usklajene: vsaka je ujeta v drugem trenutku istega zaporedja dogodkov. Čim več celic ima neki videz, tem dlje celica v njem ostane. Iz deleža lahko torej sklepamo na trajanje.
 
 **Celični cikel.** Zaporedje od nastanka celice do njene delitve imenujemo **celični cikel**. Ima dva dela. **Interfaza** je čas med delitvama; to so celice z okroglim jedrom. **Mitoza** je delitev jedra, nato sledi **citokineza**, delitev citoplazme. Interfaza ni počitek. V fazi G1 celica raste in dela beljakovine. V fazi S se podvoji DNA, natanko tako, kot si spoznal pri podvojevanju DNA. V fazi G2 se pripravi na delitev.
 
@@ -49,7 +49,7 @@ $92$. Vsak od $46$ kromosomov razpade na dve kromatidi, $2 \cdot 46 = 92$, po $4
 3. **Anafaza.** Sestrski kromatidi se ločita. Vreteno ju vleče k nasprotnima poloma celice.
 4. **Telofaza.** Ob polih nastaneta dve novi jedri z ovojnico. Kromosomi se spet razpletejo.
 
-Citokineza pri živalski celici poteka z brazdo, ki celico zažame na pol. Rastlinska celica ima togo steno, zato med jedroma zgradi novo steno; to je stena, ki nastaja v zadnji vrstici prve tabele.
+Citokineza pri živalski celici poteka z brazdo, ki celico zažme na pol. Rastlinska celica ima togo steno, zato med jedroma zgradi novo steno; to je stena, ki nastaja v zadnji vrstici prve tabele.
 
 V simulaciji spodaj »3D: Mitoza, faza za fazo« ustavi prikaz v metafazi in nato v anafazi. Preštej, koliko krakov ima vsaka struktura, ki jo vleče vreteno. V metafazi je pripet cel kromosom z dvema kromatidama, v anafazi le še ena kromatida.
 

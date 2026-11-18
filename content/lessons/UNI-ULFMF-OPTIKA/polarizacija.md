@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -59,7 +59,7 @@ Ne. Srednji polarizator je vzporeden s prvim, zato prepusti vso svetlobo in ji s
 
 Bleščanje vodne gladine je delno polarizirano. Zakaj?
 
-Pri odboju razstavimo $\vec{E}$ na dve komponenti: **s** (pravokotno na vpadno ravnino, vzporedno z gladino) in **p** (v vpadni ravnini). Ti dve komponenti se odbijata različno močno. Za mejo, na kateri svetloba iz snovi z lomnim količnikom $n_1$ vpada na snov z $n_2$ (vpadni kot $\theta_1$, lomni kot $\theta_2$, $n_1\sin\theta_1 = n_2\sin\theta_2$) dajo Fresnelove enačbe razmerji amplitud
+Pri odboju razstavimo $\vec{E}$ na dve komponenti: **s** (pravokotno na vpadno ravnino, vzporedno z gladino) in **p** (v vpadni ravnini). Ti dve komponenti se odbijata različno močno. Za mejo, na kateri svetloba iz snovi z lomnim količnikom $n_1$ vpada na snov z $n_2$ (vpadni kot $\theta_1$, lomni kot $\theta_2$, $n_1\sin\theta_1 = n_2\sin\theta_2$), dajo Fresnelove enačbe razmerji amplitud
 
 $$r_s = -\frac{\sin(\theta_1 - \theta_2)}{\sin(\theta_1 + \theta_2)},$$
 
@@ -144,7 +144,7 @@ En vmesni: $I(\theta) = \dfrac{I_0}{2}\cos^2\theta\,\sin^2\theta = \dfrac{I_0}{8
 **Rešitev:**
 
 1. Za prvim polarizatorjem je $I_0/2 = 300\,\mathrm{W/m^2}$. Vmesni je zasukan za $\theta$, zadnji je glede nanj zasukan za $90^\circ - \theta$, zato $I(\theta) = \tfrac{I_0}{2}\cos^2\theta\cos^2(90^\circ - \theta) = \tfrac{I_0}{2}\cos^2\theta\sin^2\theta$.
-2. Z $\sin\theta\cos\theta = \tfrac12\sin 2\theta$ dobimo $I(\theta) = \tfrac{I_0}{8}\sin^2 2\theta$. Ta izraz je največji pri $\sin 2\theta = \pm 1$, torej pri $\theta = 45^\circ$ (ali $135^\circ$): $I_{max} = 600/8\,\mathrm{W/m^2} = 75\,\mathrm{W/m^2}$.
+2. S $\sin\theta\cos\theta = \tfrac12\sin 2\theta$ dobimo $I(\theta) = \tfrac{I_0}{8}\sin^2 2\theta$. Ta izraz je največji pri $\sin 2\theta = \pm 1$, torej pri $\theta = 45^\circ$ (ali $135^\circ$): $I_{max} = 600/8\,\mathrm{W/m^2} = 75\,\mathrm{W/m^2}$.
 3. Pri $\theta = 30^\circ$: $\sin^2 60^\circ = 0{,}75$, zato $I = 75 \cdot 0{,}75\,\mathrm{W/m^2} \approx 56{,}3\,\mathrm{W/m^2}$, kar je opazno manj od optimuma.
 4. Pri $N$ enakih korakih je vsak zasuk $90^\circ/N$; vsak od $N$ polarizatorjev za prvim prepusti delež $\cos^2(90^\circ/N)$, zato $I_N = \tfrac{I_0}{2}\cos^{2N}(90^\circ/N)$. Enaki koraki so optimalni, kar posplošuje rezultat iz (a).
 5. Pogoj $I_N \ge 0{,}40\,I_0$ je $\cos^{2N}(90^\circ/N) \ge 0{,}80$. Za $N = 11$: $\cos^2(8{,}18^\circ) \approx 0{,}97975$ in $0{,}97975^{11} \approx 0{,}7985$, torej $I_{11} \approx 239{,}5\,\mathrm{W/m^2}$, malo premalo.
@@ -213,7 +213,7 @@ Pravi polarizatorji niso idealni: vsak prepusti le $90\,\%$ gostote toka kompone
 3. Faktor $0{,}90^{N+1}$ z $N$ pada (izgube), faktor $\cos^{2N}(90^\circ/N)$ pa narašča proti $1$ (manjši zasuki). Pri $N = 1$ je produkt nič ($\cos 90^\circ = 0$), pri velikih $N$ pa gre zaradi izgub spet proti nič, zato ima vmes največjo vrednost.
 4. Vrednosti: $N = 3$: $0{,}5 \cdot 0{,}6561 \cdot 0{,}4219 \approx 0{,}138$; $N = 4$: $0{,}5 \cdot 0{,}5905 \cdot 0{,}5308 \approx 0{,}157$; $N = 5$: $0{,}5 \cdot 0{,}5314 \cdot 0{,}6054 \approx 0{,}161$; $N = 6$: $0{,}5 \cdot 0{,}4783 \cdot 0{,}6597 \approx 0{,}158$.
 5. Za $N \ge 6$ vrednosti padajo naprej (pri $N = 10$ le še $0{,}122$), ker izgube rastejo hitreje, kot se zmanjšujejo zasuki.
-6. Odgovor: $I/I_0 = \tfrac12 \cdot 0{,}9^{N+1}\cos^{2N}(90^\circ/N)$; največ, okoli $16{,}1\,\%$, prepusti veriga s $N = 5$ koraki po $18^\circ$, torej s štirimi vmesnimi polarizatorji. Z idealnimi bi bilo $30{,}3\,\%$.
+6. Odgovor: $I/I_0 = \tfrac12 \cdot 0{,}9^{N+1}\cos^{2N}(90^\circ/N)$; največ, okoli $16{,}1\,\%$, prepusti veriga z $N = 5$ koraki po $18^\circ$, torej s štirimi vmesnimi polarizatorji. Z idealnimi bi bilo $30{,}3\,\%$.
 
 ### Naloga 2
 
@@ -223,7 +223,7 @@ Natančno navedi in izpelji Malusov zakon. Nato dokaži Brewstrov zakon $\tan\th
 
 1. Malusov zakon: za linearno polarizirano svetlobo z gostoto toka $I_0$, katere smer polarizacije oklepa kot $\theta$ s prepustno osjo idealnega polarizatorja, je $I = I_0\cos^2\theta$. Izpeljava: prepuščena je komponenta $E_0\cos\theta$, $I \propto E^2$.
 2. Brewster: $r_p = \tan(\theta_1 - \theta_2)/\tan(\theta_1 + \theta_2)$ je nič, ko je $\theta_1 + \theta_2 = 90^\circ$ (in $\theta_1 \ne \theta_2$, torej $n_1 \ne n_2$).
-3. Lomni zakon z $\sin\theta_2 = \sin(90^\circ - \theta_1) = \cos\theta_1$ da $n_1\sin\theta_B = n_2\cos\theta_B$, torej $\tan\theta_B = n_2/n_1$.
+3. Lomni zakon s $\sin\theta_2 = \sin(90^\circ - \theta_1) = \cos\theta_1$ da $n_1\sin\theta_B = n_2\cos\theta_B$, torej $\tan\theta_B = n_2/n_1$.
 4. Pravokotnost: odbiti žarek oklepa z mejno ploskvijo kot $90^\circ - \theta_B$, lomljeni (na drugi strani pravokotnice) kot $90^\circ - \theta_2$. Kot med žarkoma je zato $(90^\circ - \theta_B) + (90^\circ - \theta_2) = 180^\circ - (\theta_B + \theta_2) = 90^\circ$.
 5. Voda–steklo: $\tan\theta_B = 1{,}52/1{,}33 \approx 1{,}143$, zato $\theta_B \approx 48{,}8^\circ$. Kot obstaja za vsak par $n_1 \ne n_2$, saj $\tan$ zavzame vse pozitivne vrednosti; ker je $n_2 > n_1$, totalnega odboja ni.
 6. Odgovor: $\theta_B \approx 48{,}8^\circ$; pri tem kotu je od vode na steklo odbita svetloba povsem s-polarizirana.

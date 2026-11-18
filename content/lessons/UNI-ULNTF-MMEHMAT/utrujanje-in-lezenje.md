@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -129,7 +129,7 @@ $\sigma_m = \dfrac{\sigma_{max} + \sigma_{min}}{2}$, $\sigma_a = \dfrac{\sigma_{
 1. $\sigma_m = (250 + 50)/2\,\mathrm{MPa} = 150\,\mathrm{MPa}$; $\sigma_a = (250 - 50)/2\,\mathrm{MPa} = 100\,\mathrm{MPa}$.
 2. $\frac{1}{n} = 100/270 + 150/600 \approx 0{,}370 + 0{,}250 = 0{,}620$.
 3. $n = 1/0{,}620 \approx 1{,}61$.
-4. Drug zorni kot: če bi $\sigma_m = 150\,\mathrm{MPa}$ ostala stalna (kot jo določa prednapetost), bi bila mejna amplituda $270 \cdot (1 - 150/600)\,\mathrm{MPa} = 202{,}5\,\mathrm{MPa}$, dvakrat več od dejanske. Faktor $1{,}61$ je manjši, ker Goodmanova enačba z $1/n$ predpostavi, da z istim faktorom narasteta $\sigma_a$ in $\sigma_m$. Kateri preizkus je pravi, je odvisno od tega, kako se obremenitev v resnici poveča.
+4. Drug zorni kot: če bi $\sigma_m = 150\,\mathrm{MPa}$ ostala stalna (kot jo določa prednapetost), bi bila mejna amplituda $270 \cdot (1 - 150/600)\,\mathrm{MPa} = 202{,}5\,\mathrm{MPa}$, dvakrat več od dejanske. Faktor $1{,}61$ je manjši, ker Goodmanova enačba z $1/n$ predpostavi, da z istim faktorjem narasteta $\sigma_a$ in $\sigma_m$. Kateri preizkus je pravi, je odvisno od tega, kako se obremenitev v resnici poveča.
 5. Odgovor: varnostni faktor je okoli $1{,}6$. Brez upoštevanja srednje napetosti bi dobili napačno $270/100 = 2{,}7$.
 
 ### Primer 3 (težji)
@@ -156,7 +156,7 @@ $N_i = N_D\left(\dfrac{\sigma_D}{\sigma_{ai}}\right)^k$, $D = \sum \dfrac{n_i}{N
 
 ### Primer 4 – zdaj ti
 
-Za jeklo parovoda pri obratovalni napetosti velja $P_{LM} = 2{,}1 \cdot 10^4$ (z $T$ v kelvinih, $t_r$ v urah, $C = 20$). Kolikšen je čas do loma pri $823\,\mathrm{K}$ ($550\,^\circ\mathrm{C}$) in kolikšen pri $873\,\mathrm{K}$ ($600\,^\circ\mathrm{C}$)?
+Za jeklo parovoda pri obratovalni napetosti velja $P_{LM} = 2{,}1 \cdot 10^4$ (s $T$ v kelvinih, $t_r$ v urah, $C = 20$). Kolikšen je čas do loma pri $823\,\mathrm{K}$ ($550\,^\circ\mathrm{C}$) in kolikšen pri $873\,\mathrm{K}$ ($600\,^\circ\mathrm{C}$)?
 
 **Podatki:** $P_{LM} = 2{,}1 \cdot 10^4$, $C = 20$, $T_1 = 823\,\mathrm{K}$, $T_2 = 873\,\mathrm{K}$
 **Iščemo:** $t_{r1}$ in $t_{r2}$
@@ -181,7 +181,7 @@ $\log t_{r2} = 21\,000/873 - 20 \approx 4{,}055$, torej $t_{r2} \approx 1{,}1 \c
 
 - **Pod mejo tečenja je varno.** Velja le za mirujočo obremenitev pri nizki temperaturi. Pri ponavljanju odloča amplituda glede na $\sigma_D$, pri visoki temperaturi pa čas.
 - **Amplituda je razlika napetosti.** Amplituda je **polovica** razlike $\sigma_{max} - \sigma_{min}$; razliki rečemo razpon napetosti.
-- **Pozabljena srednja napetost.** Natezna $\sigma_m$ zmanjša dopustno amplitudo (Primer 2); račun samo z $\sigma_a/\sigma_N$ je preoptimističen.
+- **Pozabljena srednja napetost.** Natezna $\sigma_m$ zmanjša dopustno amplitudo (Primer 2); račun samo s $\sigma_a/\sigma_N$ je preoptimističen.
 - **Linearna odvisnost $N$ od napetosti.** Pri $k = 8$ podvojitev amplitude ne razpolovi, ampak zmanjša število ciklov za faktor $2^8 = 256$.
 - **Temperatura v °C v Arrheniusovem členu in Larson-Millerjevem parametru.** Obe zvezi zahtevata absolutno temperaturo v kelvinih.
 
@@ -230,7 +230,7 @@ Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga
 3. Končni lom: ko preostali presek ne zdrži več največje sile, se zlomi naenkrat; to območje je grobo, zrnato ali žilavo potrgano.
 4. Zareze: koncentracija napetosti poveča lokalno amplitudo nad nazivno. Hrapava površina ima veliko mikrozarez; korozija ustvarja jamice in razpoka nastane prej. Zato $\sigma_D$ dela vedno zmanjšamo s faktorji površine, velikosti in oblike.
 5. Minerjeve predpostavke: poškodba se sešteva linearno, neodvisno od amplitude in vrstnega reda, cikli pod $\sigma_D$ ne škodijo.
-6. Vrstni red: velika amplituda na začetku ustvari razpoko, ki jo nato rastejo tudi manjše amplitude, celo pod $\sigma_D$; obratni vrstni red je manj škodljiv. Zato je dejanska $D$ ob lomu lahko precej različna od $1$.
+6. Vrstni red: velika amplituda na začetku ustvari razpoko, ki jo nato večajo tudi manjše amplitude, celo pod $\sigma_D$; obratni vrstni red je manj škodljiv. Zato je dejanska $D$ ob lomu lahko precej različna od $1$.
 7. Odgovor: utrujenostni lom ima tri faze in značilno prelomno ploskev s progami; zareze, površina in korozija pospešijo nastanek razpoke; Minerjevo pravilo je linearen približek, ki vrstnega reda ne upošteva.
 
 ## Drugače: Uporaba v stroki
@@ -245,7 +245,7 @@ Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga
 
 ## Drugače: Korak za korakom s številkami
 
-Gred z $\sigma_D = 240\,\mathrm{MPa}$, $N_D = 2 \cdot 10^6$ in $k = 8$. Kaj se zgodi z življenjsko dobo, ko amplitudo večamo?
+Gred s $\sigma_D = 240\,\mathrm{MPa}$, $N_D = 2 \cdot 10^6$ in $k = 8$. Kaj se zgodi z življenjsko dobo, ko amplitudo večamo?
 
 1. $\sigma_a = 250\,\mathrm{MPa}$: $N = 2 \cdot 10^6 \cdot 0{,}96^8 \approx 1{,}44 \cdot 10^6$.
 2. $\sigma_a = 300\,\mathrm{MPa}$: $N \approx 3{,}4 \cdot 10^5$ (Primer 1).

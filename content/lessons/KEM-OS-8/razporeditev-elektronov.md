@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -46,7 +46,7 @@ Tretja krožnica je skoraj prazna: na njej je en sam elektron.
 
 **Zunanji elektroni.** Elektronom v zadnji zasedeni lupini rečemo **zunanji** ali **valenčni elektroni**. So najdlje od jedra, zato jih jedro drži najšibkeje. Ko se atom sreča z drugim atomom, se srečajo prav zunanji elektroni. Zato odločajo o kemijskih lastnostih elementa. Notranji elektroni pri reakcijah ne sodelujejo.
 
-V simulaciji spodaj »Razporeditev elektronov po lupinah« dodajaj elektrone enega za drugim. Opazuj, pri katerem elektronu se odpre nova lupina in koliko elektronov je takrat v zunanji lupini.
+V simulaciji spodaj »Razporeditev elektronov po lupinah« z drsnikom povečuj vrstno število: tako dodajaš elektrone enega za drugim. Opazuj, pri katerem elektronu se odpre nova lupina in koliko elektronov je takrat v zunanji lupini.
 
 :::premisli
 Kalij ima $Z = 19$. Napovej razporeditev: v katero lupino gre njegov 19. elektron in zakaj?

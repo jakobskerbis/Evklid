@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -26,7 +26,7 @@ Okus in otip nista način preverjanja. Nekatere kisline in baze so **jedke**: ra
 **3. Indikatorski papirji.** V šoli največkrat uporabljaš papirje, prepojene z indikatorjem.
 
 - **Lakmusov papir** je lahko moder ali rdeč. Modri v kisli raztopini pordeči. Rdeči v bazični pomodri. V nevtralni se nobeden ne spremeni. Lakmus pove samo »kislo« ali »bazično«.
-- **Univerzalni indikatorski papir** je mešanica več indikatorjev. Ima veliko odtenkov: barvo primerjaš z barvno lestvico na škatlici in odčitaš število.
+- **Univerzalni indikatorski papir** je prepojen z mešanico več indikatorjev. Ima veliko odtenkov: barvo primerjaš z barvno lestvico na škatlici in odčitaš število.
 
 :::premisli
 Modri lakmusov papir pomočiš v tekočino in ostane moder. Ali lahko zaključiš, da je tekočina bazična?
@@ -132,7 +132,7 @@ Barve zeljnega soka iz tabele; kislina in baza se izničita, zato pH bazične ra
 :::premisli
 Kakšen bo pH in katere barve bo zeljni sok, če slikopleskar po vijolični barvi doda še veliko kisa?
 ---
-Baze ni več, ki bi kislino izničila, zato pH pade pod $7$: voda postane kisla. Zeljni sok se obarva rožnato, pri zelo veliko kisa celo rdeče.
+Baze ni več, ki bi kislino izničila, zato pH pade pod $7$: voda postane kisla. Zeljni sok se obarva rožnato, pri zelo veliki količini kisa celo rdeče.
 :::
 
 ## Pogoste napake

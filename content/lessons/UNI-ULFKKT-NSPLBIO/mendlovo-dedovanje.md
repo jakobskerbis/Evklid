@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -32,7 +32,7 @@ Danes vemo, zakaj: alela ležita na homolognih kromosomih, ki se pri mejozi razp
 
 Vsaka celica ima verjetnost $\tfrac{1}{4}$. Genotipi so v razmerju $RR : Rr : rr = 1 : 2 : 1$, fenotipi pa okroglo : nagubano $= 3 : 1$, ker sta $RR$ in $Rr$ oba okrogla.
 
-**Poimenovanje generacij.** Starša sta generacija P, njuni potomci F1, potomci F1 med seboj F2. Križanje dveh čistih linij ($RR \times rr$) da enotno F1 ($Rr$), F2 pa razcepi $3 : 1$.
+**Poimenovanje generacij.** Starša sta generacija P, njuni potomci F1, potomci F1 med seboj F2. Križanje dveh čistih linij ($RR \times rr$) da enotno F1 ($Rr$), F2 pa se razcepi $3 : 1$.
 
 :::premisli
 Zakaj se je v F2 nagubano seme pojavilo nespremenjeno, čeprav ga v F1 ni bilo? Kaj bi napovedalo »mešanje« lastnosti?
@@ -163,7 +163,7 @@ rožnata × rožnata (heterozigota): $1 : 2 : 1$; vsak genotip ima svoj fenotip
 
 Mendel je križal čisti liniji z okroglimi rumenimi ($RRYY$) in nagubanimi zelenimi semeni ($rryy$). Rastline F1 je samooplodil in v F2 dobil $315$ okroglih rumenih, $108$ okroglih zelenih, $101$ nagubano rumeno in $32$ nagubanih zelenih semen. a) Ali se podatki ujemajo z razmerjem $9 : 3 : 3 : 1$ (stopnja značilnosti $0{,}05$)? b) S kolikšno verjetnostjo je naključno izbrana okrogla rumena rastlina F2 dvojni heterozigot? c) Kaj bi dalo testno križanje take rastline?
 
-**Podatki:** F2: $315$ okroglih rumenih, $108$ okroglih zelenih, $101$ nagubanih rumenih, $32$ nagubanih zelenih; $R$ okroglo, $Y$ rumeno, oba dominantna; meja $\chi^2$ pri $3$ prostostnih stopnjah $7{,}81$
+**Podatki:** F2: $315$ okroglih rumenih, $108$ okroglih zelenih, $101$ nagubano rumeno, $32$ nagubanih zelenih; $R$ okroglo, $Y$ rumeno, oba dominantna; meja $\chi^2$ pri $3$ prostostnih stopnjah $7{,}81$
 **Iščemo:** $\chi^2$ in sklep, $P(RrYy \mid$ okrogla rumena$)$, izid testnega križanja
 
 :::formula
@@ -357,6 +357,6 @@ E | pričakovano število potomcev v razredu | | – | skupno število krat dele
 P | verjetnost | | – | število med 0 in 1
 n | število potomcev | | –
 R, r | alela za obliko semena (okroglo, nagubano) oz. barvo ploda | | | velika črka: dominanten alel
-Y, y | alela za barvo semena (rumeno, zeleno) | | | $Y$ dominanten
+Y, y | alela za barvo semena (rumeno, zeleno) oz. dlake pri miših | | | $Y$ dominanten
 A, a | dominantni in recesivni alel | | | pri albinizmu $a$ recesiven
 :::

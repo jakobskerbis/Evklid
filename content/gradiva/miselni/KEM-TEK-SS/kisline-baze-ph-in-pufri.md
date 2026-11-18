@@ -9,7 +9,7 @@ stanje: osnutek
   - ravnotežje, $K_\mathrm{a} = \dfrac{x^2}{c - x}$
   - približek $x \approx \sqrt{K_\mathrm{a} \cdot c}$ le pod $5\,\%$
   - napaka: $[\mathrm{H_3O^+}] = c$ kot pri močni
-- Redčenje
+- Redčenje 10-krat
   - močna kislina: pH zraste za $1$
   - šibka kislina: pH zraste za $0{,}5$
 - Konjugirani par

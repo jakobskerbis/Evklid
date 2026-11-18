@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -75,7 +75,7 @@ Tik pod peridermom, na zunanji strani. Kambij odlaga sekundarni floem navzven in
 - **oporne** pri dnu stebla koruze in **oprijemalne** pri bršljanu;
 - **zračne** korenine orhidej z **velamnom**, ki vpija vodo;
 - **dihalne (pnevmatofori)** mangrov, ki štrlijo iz blata;
-- **haustoriji** zajedavcev (omela, predenica), ki vrastejo v žile gostitelja;
+- **havstoriji** zajedavcev (omela, predenica), ki vrastejo v žile gostitelja;
 - **krčilne**, ki čebulico vlečejo globlje v tla.
 
 *Preveri:* Je krompir koreninski gomolj? (Ne, ima brste, zato je stebelni gomolj; batata je koreninski.)
@@ -180,7 +180,7 @@ $1 - 0{,}16 = 0{,}84$, torej $84\,\%$. Kambij korenčka navzven tvori veliko flo
 - Primarna zgradba: rizodermis brez kutikule, skorja, endoderm s Casparyjevim trakom (zapre apoplast), pericikel, radialni snop (dvokaličnice 2–5 krakov brez stržena, enokaličnice poliarhne s strženom).
 - Stranske korenine nastanejo endogeno iz pericikla.
 - Sekundarna zgradba: kambij tvori ksilem navznoter, floem navzven; felogen iz pericikla tvori periderm, skorja odpade.
-- Metamorfoze: založne, koreninski gomolji, oporne, oprijemalne, zračne, dihalne, haustoriji, krčilne.
+- Metamorfoze: založne, koreninski gomolji, oporne, oprijemalne, zračne, dihalne, havstoriji, krčilne.
 
 ## Za izpit
 

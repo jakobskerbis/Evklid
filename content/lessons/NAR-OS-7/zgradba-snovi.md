@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -201,7 +201,7 @@ Tako deluje difuzija. Vsak delec se giblje naključno, a skupaj se razširijo od
 > V plinu so delci daleč narazen in hitro letijo, zato je difuzija v zraku veliko hitrejša kot v vodi.
 
 ? V hladilniku stoji odprta polovica čebule. Čez dan ima nepokrito maslo na drugi polici vonj po čebuli. Zakaj?
-- Ker hladilnik s ventilatorjem prenese vonj, sicer bi ostal pri čebuli.
+- Ker hladilnik z ventilatorjem prenese vonj, sicer bi ostal pri čebuli.
 ~ Kroženje zraka širjenje le pospeši. Tudi brez njega bi delci vonja sami prišli do masla, ker se ves čas gibljejo.
 + Delci vonja iz čebule se gibljejo po zraku in pridejo tudi do masla.
 - V mrazu delci mirujejo, zato vonj potuje le, ko odpremo vrata.

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -56,7 +56,7 @@ Za kuhinjski poskus: $\dfrac{2 \cdot 0{,}5 \cdot 2}{0{,}5 + 2} = 0{,}8$, enako k
 | $20$ | $100$ | $180$ |
 | $40$ | $0$ | $160$ |
 
-V levem stolpcu se razmik vsako sekundo zmanjša za $5\,\mathrm{cm}$, kar je $3 + 2$. Vsaka mravlja prileze svoj del in oba dela se seštejeta. V desnem stolpcu se zmanjša le za $1\,\mathrm{cm}$, kar je $3 - 2$: hitrejša se v sekundi približa za $3\,\mathrm{cm}$, počasnejša pa se ji za $2\,\mathrm{cm}$ odmakne.
+V stolpcu »nasproti« se razmik vsako sekundo zmanjša za $5\,\mathrm{cm}$, kar je $3 + 2$. Vsaka mravlja prileze svoj del in oba dela se seštejeta. V stolpcu »lovljenje« se zmanjša le za $1\,\mathrm{cm}$, kar je $3 - 2$: hitrejša se v sekundi približa za $3\,\mathrm{cm}$, počasnejša pa se ji za $2\,\mathrm{cm}$ odmakne.
 
 **Srečevanje.** Telesi se gibljeta drugo proti drugemu, začetni razmik je $d$. Razmik se manjša s hitrostjo $v_1 + v_2$, zato se srečata po času
 
@@ -265,7 +265,7 @@ napis: 6; 200 | brat | desno
 
 ? Kuhinjska ura kaže točno 12.00 in oba kazalca se pokrivata. Veliki kazalec se zavrti za $6^\circ$ na minuto, mali za $0{,}5^\circ$ na minuto. Čez koliko minut se kazalca spet pokrijeta? Zaokroži na desetinko minute.
 = 65,5 min | 0,2
-~ 60 | Po eni uri je veliki kazalec spet na 12, mali pa se je medtem premaknil na 1. Velik ga mora še dohiteti.
+~ 60 | Po eni uri je veliki kazalec spet na 12, mali pa se je medtem premaknil na 1. Veliki ga mora še dohiteti.
 ~ 5,5 | To je čas po 13. uri. Vprašanje sprašuje, koliko minut mine od 12.00.
 > To je dohitevanje: veliki kazalec mora malega »prehiteti za cel krog«, $360^\circ$. Razmik se manjša s $6 - 0{,}5 = 5{,}5^\circ$ na minuto, zato $t = \dfrac{360}{5{,}5} \approx 65{,}5\,\mathrm{min}$, malo po 13.05.
 

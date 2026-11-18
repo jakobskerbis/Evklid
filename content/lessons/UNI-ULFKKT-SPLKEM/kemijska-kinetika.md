@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -259,7 +259,7 @@ Predlagani mehanizem razpada $\mathrm{H_2O_2}$ z jodidom je: (1) $\mathrm{H_2O_2
 
 1. (a) Seštevek: $2\,\mathrm{H_2O_2} \to 2\,\mathrm{H_2O} + \mathrm{O_2}$. $\mathrm{I^-}$ se v koraku 1 porabi in v koraku 2 vrne: katalizator (homogen). $\mathrm{IO^-}$ nastane in se porabi: vmesni produkt. Oba koraka sta dvomolekulska.
 2. (b) Počasni korak določa hitrost, za elementarni korak je red enak molekularnosti: $v = k_1[\mathrm{H_2O_2}][\mathrm{I^-}]$, 1. red glede na vsako snov, skupno 2. red.
-3. (c) Vsakemu počasnemu koraku takoj sledi hitri, ki porabi še eno molekulo $\mathrm{H_2O_2}$, zato je poraba $-\mathrm{d}[\mathrm{H_2O_2}]/\mathrm{d}t = 2v = 2k_1[\mathrm{I^-}][\mathrm{H_2O_2}]$. Ker je $[\mathrm{I^-}]$ stalna, je to $k'[\mathrm{H_2O_2}]$ z $k' = 2k_1[\mathrm{I^-}] = 2 \cdot 0{,}0115 \cdot 0{,}10\,\mathrm{s^{-1}} = 2{,}30 \cdot 10^{-3}\,\mathrm{s^{-1}}$: navidezno 1. red.
+3. (c) Vsakemu počasnemu koraku takoj sledi hitri, ki porabi še eno molekulo $\mathrm{H_2O_2}$, zato je poraba $-\mathrm{d}[\mathrm{H_2O_2}]/\mathrm{d}t = 2v = 2k_1[\mathrm{I^-}][\mathrm{H_2O_2}]$. Ker je $[\mathrm{I^-}]$ stalna, je to $k'[\mathrm{H_2O_2}]$ s $k' = 2k_1[\mathrm{I^-}] = 2 \cdot 0{,}0115 \cdot 0{,}10\,\mathrm{s^{-1}} = 2{,}30 \cdot 10^{-3}\,\mathrm{s^{-1}}$: navidezno 1. red.
 4. $t_{1/2} = \ln 2/k' = 0{,}6931/(2{,}30 \cdot 10^{-3})\,\mathrm{s} \approx 301\,\mathrm{s} \approx 5{,}0\,\mathrm{min}$.
 5. Odgovor: jodid je katalizator, $\mathrm{IO^-}$ vmesni produkt; $v = k_1[\mathrm{H_2O_2}][\mathrm{I^-}]$; pri stalnem jodidu $\mathrm{H_2O_2}$ razpada navidezno po 1. redu z razpolovnim časom okoli $5\,\mathrm{min}$. Podvojitev jodida bi ga razpolovila.
 

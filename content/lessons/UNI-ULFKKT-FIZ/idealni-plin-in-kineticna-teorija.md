@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -156,7 +156,7 @@ $C_V = \tfrac{5}{2}R$, $C_p = C_V + R = \tfrac{7}{2}R$; $Q_V = nC_V\Delta T$, $Q
 5. Delo plina pri stalnem tlaku: $A' = nR\Delta T = 2{,}0 \cdot 8{,}314 \cdot 100\,\mathrm{J} \approx 1{,}66\,\mathrm{kJ}$. Preizkus: $Q_p - \Delta W_n = 5{,}82 - 4{,}16 = 1{,}66\,\mathrm{kJ}$. ✓
 6. Obratno vprašanje: pri stalnem tlaku dovedemo $Q_V$, zato $\Delta T' = \dfrac{Q_V}{nC_p} = \dfrac{nC_V\Delta T}{nC_p} = \dfrac{\Delta T}{\kappa} = \dfrac{100\,\mathrm{K}}{1{,}40} \approx 71{,}4\,\mathrm{K}$ in $T' \approx 371{,}4\,\mathrm{K}$. Segretje je manjše, ker gre del toplote v delo.
 7. Začetna prostornina iz plinske enačbe: $V_1 = \dfrac{2{,}0 \cdot 8{,}314 \cdot 300}{1{,}00 \cdot 10^5}\,\mathrm{m^3} \approx 0{,}0499\,\mathrm{m^3} = 49{,}9\,\mathrm{L}$. Pri stalnem tlaku je $V \propto T$: $V' = V_1T'/T_1 = 49{,}9\,\mathrm{L} \cdot 371{,}4/300 \approx 61{,}8\,\mathrm{L}$.
-8. Odgovor: pri stalni prostornini potrebujemo približno $4{,}16\,\mathrm{kJ}$, pri stalnem tlaku približno $5{,}82\,\mathrm{kJ}$ toplote. Notranja energija se v obeh primerih poveča za $4{,}16\,\mathrm{kJ}$; pri stalnem tlaku gre razlika, $1{,}66\,\mathrm{kJ}$, v delo, ki ga plin opravi pri razširjanju. Če pri stalnem tlaku dovedemo le $4{,}16\,\mathrm{kJ}$, se plin segreje za okoli $71\,\mathrm{K}$ (na $371\,\mathrm{K}$), njegova prostornina pa naraste s $49{,}9\,\mathrm{L}$ na okoli $61{,}8\,\mathrm{L}$.
+8. Odgovor: pri stalni prostornini potrebujemo približno $4{,}16\,\mathrm{kJ}$, pri stalnem tlaku približno $5{,}82\,\mathrm{kJ}$ toplote. Notranja energija se v obeh primerih poveča za $4{,}16\,\mathrm{kJ}$; pri stalnem tlaku gre razlika, $1{,}66\,\mathrm{kJ}$, v delo, ki ga plin opravi pri razširjanju. Če pri stalnem tlaku dovedemo le $4{,}16\,\mathrm{kJ}$, se plin segreje za okoli $71\,\mathrm{K}$ (na $371\,\mathrm{K}$), njegova prostornina pa naraste z $49{,}9\,\mathrm{L}$ na okoli $61{,}8\,\mathrm{L}$.
 
 ### Primer 4 – zdaj ti
 
@@ -311,7 +311,7 @@ Iz nje sledijo najverjetnejša hitrost $\sqrt{2k_BT/m_0}$, povprečna $\sqrt{8k_
 ~ Zamenjano sorazmerje: pri stalni temperaturi sta $p$ in $V$ obratno sorazmerna, ker molekule v manjši posodi pogosteje zadevajo stene.
 + Podvoji se.
 - Ostane enak.
-~ Hitrost molekul se res ne spremeni, a v polovični prostornini zadene vsako steno dvakrat več molekul na sekundo.
+~ Hitrost molekul se res ne spremeni, a v polovični prostornini zadene vsak del stene dvakrat več molekul na sekundo.
 > Pri izotermni spremembi je $pV = \text{konst.}$, zato pri polovični prostornini tlak naraste na dvakratno vrednost.
 
 ? Absolutno temperaturo plina podvojimo. Kako se spremeni efektivna hitrost molekul?
@@ -379,6 +379,6 @@ A' | delo plina pri stalnem tlaku | A' = p\Delta V = nR\Delta T | J
 F | sila molekul na steno | | N
 \Delta t | čas, v katerem štejemo trke s steno | | s
 S | ploščina stene | | m^2
-f | Maxwellova porazdelitev hitrosti | | s/m | tudi število prostostnih stopenj v C_V = (f/2)R
+f | število prostostnih stopenj | | – | f(v) je Maxwellova porazdelitev hitrosti (enota s/m)
 e | osnova naravnega logaritma | | – | e ≈ 2,718
 :::

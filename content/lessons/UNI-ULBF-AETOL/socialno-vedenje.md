@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -237,7 +237,7 @@ Polna sorojenca imata dve poti (prek matere in prek očeta) dolžine $2$: $r = 2
 
 $$\bar r = 0{,}25 + \frac{0{,}5}{k}.$$
 
-Pri $k = 1$ je $0{,}75$, pri $k = 2$ je $0{,}5$, pri $k = 10$ le $0{,}3$. Pri medonosni čebeli je matica parjena s številnimi troti, pa je kolonija vseeno evsocialna. Evsocialnost se je razvila pri prednikih z monogamnimi maticami; poznejše večkratno parjenje je že obstoječo kolonijo le ohranilo.
+Pri $k = 1$ je $0{,}75$, pri $k = 2$ je $0{,}5$, pri $k = 10$ le $0{,}3$. Pri medonosni čebeli je matica parjena s številnimi troti, pa je kolonija vseeno evsocialna. Evsocialnost se je razvila pri prednikih z monogamnimi maticami; poznejše večkratno parjenje že uveljavljene evsocialnosti ni več odpravilo.
 
 **Razmerje spolov.** Ker delavke sestre »cenijo« trikrat bolj kot brate ($0{,}75 : 0{,}25$), bi z vidika delavk optimalna naložba v spola znašala $3 : 1$ v korist samic, z vidika matice pa $1 : 1$. Trivers in Hare sta pri mravljah res našla naložbe, ki se približajo razmerju $3 : 1$. To je eden močnejših dokazov, da sorodnost oblikuje vedenje delavk.
 

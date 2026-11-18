@@ -20,7 +20,7 @@ stanje: osnutek
   - $N' = kN$, $N = N_0 e^{kt}$
   - $t_{1/2} = \frac{\ln 2}{\lambda}$, $t_2 = \frac{\ln 2}{k}$
   - enota $k$ je $\mathrm{s^{-1}}$ ali $\mathrm{min^{-1}}$
-- Logistika in ohlajanje
+- Logistični model in ohlajanje
   - $N' = rN\left(1 - \frac{N}{K}\right)$, nosilnost $K$
   - $T = T_\mathrm{o} + (T_0 - T_\mathrm{o})e^{-kt}$
 - Picardov izrek

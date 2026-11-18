@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -132,7 +132,7 @@ $N_\mathrm{g} = \dfrac{900}{2} = 450$ molekul glukoze. To je $\dfrac{450}{30} = 
 - **»Kisik se pri dihanju spremeni v $\mathrm{CO_2}$.«** Ogljika v kisiku ni, zato iz njega $\mathrm{CO_2}$ ne more nastati. Ogljik pride iz glukoze, kisik pa na koncu dihalne verige postane voda.
 - **»Pri vrenju nastane ATP, ko piruvat postane mlečna kislina ali etanol.«** Ta korak ne da nobenega ATP. Vseh $2$ ATP nastane v glikolizi, vrenje samo obnovi $\mathrm{NAD^+}$, da glikoliza ne obstane.
 - **»Glikoliza poteka v mitohondriju.«** Glikoliza teče v citoplazmi in je zato možna tudi v bakterijah brez mitohondrijev. V mitohondrij vstopi šele piruvat.
-- **»Rastline ne dihajo, ker imajo fotosintezo.«** Mitohondrije imajo vse evkariontske celice, tudi rastlinske. Rastlina diha ves čas, podnevi in ponoči.
+- **»Rastline ne dihajo, ker imajo fotosintezo.«** Mitohondrije imajo skoraj vse evkariontske celice, tudi rastlinske. Rastlina diha ves čas, podnevi in ponoči.
 
 ## Povzetek
 

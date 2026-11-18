@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -314,7 +314,7 @@ Ostane $25$ temnih in $24 - 1 = 23$ belih polj, skupaj $48$. Za $48$ polj bi pot
 
 ## Drugače: Iz vsakdanjega življenja
 
-Luč na stikalo: vsak pritisk zamenja stanje. Če je luč ugasnjena in nekdo pritisne $17$-krat, ne rabiš šteti posameznih pritiskov. Ker je $17$ liho, je luč prižgana. Pomembna je le parnost števila pritiskov.
+Luč na stikalo: vsak pritisk zamenja stanje. Če je luč ugasnjena in nekdo pritisne $17$-krat, ti ni treba šteti posameznih pritiskov. Ker je $17$ liho, je luč prižgana. Pomembna je le parnost števila pritiskov.
 
 Podobno je z vrati, ki jih odpiraš in zapiraš, ali s kovancem, ki ga obračaš. Vsako stanje »izmenično« je nalogica o parnosti.
 
@@ -354,7 +354,7 @@ Sorodno orodje je **monovarianta**: količina, ki se pri vsakem koraku samo pove
 ~ Parnost vsote je odvisna le od števila lihih sumandov, ne od velikosti števil.
 > Vsota je liha natanko takrat, ko ima liho število lihih sumandov. Pet je liho število.
 
-? Pri tabli brez dveh polj šahovsko barvanje pokaže $31$ temnih in $31$ belih polj. Kaj sledi?
+? Pri tabli z nekaj izrezanimi polji šahovsko barvanje pokaže $31$ temnih in $31$ belih polj. Kaj sledi?
 - Pokritje z dominami gotovo obstaja.
 ~ Enako število polj obeh barv je le pogoj. Polja so lahko razporejena tako, da domin vseeno ne položiš.
 - Pokritje z dominami ni mogoče.

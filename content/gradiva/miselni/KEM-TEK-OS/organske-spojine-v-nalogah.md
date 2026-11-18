@@ -11,7 +11,7 @@ stanje: osnutek
 - Funkcionalne skupine
   - $\mathrm{-OH}$ alkohol, $\mathrm{-O-}$ eter
   - $\mathrm{-COOH}$ kislina, $\mathrm{-COO-}$ ester
-  - napaka: alkohol ni baza
+  - pazi: alkohol ni baza
 - Vrste izomerov
   - veriga: butan in 2-metilpropan
   - lega skupine: propan-1-ol, propan-2-ol

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: urejanje
 avtor: AI
 ---
@@ -191,7 +191,7 @@ Leva stran je $3(a^2 + b^2 + c^2)$, zato po deljenju s $3$ dobimo $a^2 + b^2 + c
 
 ## Pogoste napake
 
-- **Vsota v danem vrstnem redu je največja.** Kdor zmnoži $a_1 b_1 + \dots$ kar po vrsti, kot so podana, dobi neko vsoto, ne največje. Neenakost urejanja govori o *urejenih* zaporedjih: najprej uredi oba, nato pari.
+- **Vsota v danem vrstnem redu je največja.** Kdor zmnoži $a_1 b_1 + \dots$ kar po vrsti, kot so podana, dobi neko vsoto, ne največje. Neenakost urejanja govori o *urejenih* zaporedjih: najprej uredi obe, nato pari.
 - **Pozabljen pogoj o urejenosti.** Čebišev in sklep »$a$ in $a^2$ sta enako urejena« zahtevata, da sta zaporedji res enako urejeni. Pri negativnih številih to ne drži: $a^3 + b^3 \ge a^2 b + a b^2$ pri $a = -1$, $b = 0$ ne velja. Preveri predznake.
 - **Napačen pogoj za enakost.** Pri Cauchy-Schwarzu mnogi takoj vzamejo $x = y = z$. Enakost velja pri sorazmernih zaporedjih, $b_i = t a_i$; ena sama enakost $x = y$ je pravilna le, če so enaki tudi pripadajoči $a_i$. Brez preizkusa meja morda sploh ni dosežena.
 - **Manjkajoč kvadrat.** Neenakost $a_1 b_1 + \dots + a_n b_n \le (a_1^2 + \dots)(b_1^2 + \dots)$ brez kvadrata na levi ni Cauchy-Schwarz in je pri majhnih številih napačna. Na levi je kvadrat vsote, na desni produkt vsot kvadratov.
@@ -213,7 +213,7 @@ Neenakost urejanja je kot sestavljanje parov v plesni šoli po višini. Če najv
 
 ## Drugače: Iz vsakdanjega življenja
 
-V trgovini imaš tri kupone za $10\,\%$; $20\,\%$ in $30\,\%$ popusta, v košarici pa izdelke po $15$, $40$ in $80$ evrov. Na vsak izdelek gre en kupon. Največji kupon daš najdražjemu izdelku: prihranek je $0{,}3 \cdot 80 + 0{,}2 \cdot 40 + 0{,}1 \cdot 15 = 33{,}5$ evra. Če bi kupone razdelil obratno, bi prihranil le $0{,}1 \cdot 80 + 0{,}2 \cdot 40 + 0{,}3 \cdot 15 = 20{,}5$ evra. To je neenakost urejanja na blagajni.
+V trgovini imaš tri kupone za $10\,\%$, $20\,\%$ in $30\,\%$ popusta, v košarici pa izdelke po $15$, $40$ in $80$ evrov. Na vsak izdelek gre en kupon. Največji kupon daš najdražjemu izdelku: prihranek je $0{,}3 \cdot 80 + 0{,}2 \cdot 40 + 0{,}1 \cdot 15 = 33{,}5$ evra. Če bi kupone razdelil obratno, bi prihranil le $0{,}1 \cdot 80 + 0{,}2 \cdot 40 + 0{,}3 \cdot 15 = 20{,}5$ evra. To je neenakost urejanja na blagajni.
 
 Čebišev se skriva v treningu: če več ur treniraš na dneve, ko si bolj spočit, je povprečni učinek boljši, kot če bi ure razdelil enakomerno ali na slabe dneve.
 
@@ -227,14 +227,14 @@ V trgovini imaš tri kupone za $10\,\%$; $20\,\%$ in $30\,\%$ popusta, v košari
 + $a^3 + b^3 \ge a^2 b + a b^2$
 - $(a + b + c)^2 \le 3(a^2 + b^2 + c^2)$
 ~ To je Cauchy-Schwarz z $(1, 1, 1)$ in $(a, b, c)$; velja za vsa realna števila.
-> Pri $a = -1$, $b = 0$ je leva stran $-1$, desna $0$. Razlika obeh strani je $(a + b)(a - b)^2$, zato neenakost velja natanko pri $a + b \ge 0$. Za nenegativna števila jo da že neenakost urejanja, ker sta takrat $(a, b)$ in $(a^2, b^2)$ enako urejena.
+> Pri $a = -1$, $b = 0$ je leva stran $-1$, desna $0$. Razlika obeh strani je $(a + b)(a - b)^2$, zato neenakost velja natanko pri $a + b \ge 0$ ali $a = b$. Za nenegativna števila jo da že neenakost urejanja, ker sta takrat $(a, b)$ in $(a^2, b^2)$ enako urejena.
 
 ? Realna števila izpolnjujejo $2x + 3y + 6z = 14$. Kolikšna je najmanjša možna vrednost $x^2 + y^2 + z^2$?
 = 4 | 0,01
 ~ 196 | To je $14^2$. Deliti moraš še z $2^2 + 3^2 + 6^2 = 49$.
 ~ 2 | To je najmanjša razdalja $\sqrt{x^2 + y^2 + z^2}$, ne vsota kvadratov.
 ~ 0,29 | Pozabil si kvadrirati $14$: leva stran Cauchy-Schwarza je kvadrat vsote.
-> $14^2 \le 49(x^2 + y^2 + z^2)$, torej $x^2 + y^2 + z^2 \ge 4$. Enakost pri $(x, y, z) = t(2, 3, 6)$ z $t = \frac{2}{7}$.
+> $14^2 \le 49(x^2 + y^2 + z^2)$, torej $x^2 + y^2 + z^2 \ge 4$. Enakost pri $(x, y, z) = t(2, 3, 6)$ s $t = \frac{2}{7}$.
 
 ? Na risbi so pravokotniki s širinami $1$, $3$ in $5$ ter višinami $2$, $6$ in $4$. Kaj se zgodi s skupno ploščino, če zamenjaš višini drugega in tretjega pravokotnika, in zakaj?
 :::risba skica

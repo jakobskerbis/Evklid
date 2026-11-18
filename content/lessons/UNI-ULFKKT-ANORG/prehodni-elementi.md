@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -265,7 +265,7 @@ Zakaj kalcij ostane pri $+2$, mangan pa ne? Poglej zaporedne ionizacijske energi
 1. Pri Ca je $I_3$ več kot štirikrat večja od $I_2$: tretji elektron je iz notranje lupine $3p$. Energija mreže ali hidratacije tega ne pokrije, zato $\mathrm{Ca^{3+}}$ ne nastane.
 2. Pri Mn je $I_3$ le približno dvakrat večja od $I_2$: tretji elektron je še vedno valenčni elektron $3d$.
 3. Pri Mn naraščanje ostane zmerno vse do sedmega elektrona, potem pride skok (notranja lupina). Zato je najvišje število $+7$.
-4. Visokih ionov kot $\mathrm{Mn^{7+}}$ v resnici ni. Visoka števila so stabilna le v kovalentnih oksoanionih, kot je $\mathrm{MnO_4^-}$, kjer kisik »deli« naboj.
+4. Visoko nabitih ionov, kot je $\mathrm{Mn^{7+}}$, v resnici ni. Visoka števila so stabilna le v kovalentnih oksoanionih, kot je $\mathrm{MnO_4^-}$, kjer kisik »deli« naboj.
 
 ## Drugače: Bolj natančno
 

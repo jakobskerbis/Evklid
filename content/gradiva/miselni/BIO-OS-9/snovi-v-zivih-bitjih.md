@@ -9,7 +9,7 @@ stanje: osnutek
   - verige in obroči iz C
   - organske snovi zoglenijo, sol in pesek ne
 - Voda in soli
-  - anorganski snovi iz okolja
+  - anorganske snovi iz okolja
   - človek okoli $60\,\%$ vode, gobe $90\,\%$
   - kalcij v kosteh, železo v krvi
 - Ogljikovi hidrati

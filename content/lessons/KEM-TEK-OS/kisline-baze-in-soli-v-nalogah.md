@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -123,7 +123,7 @@ Fenolftalein je rožnat le v bazični raztopini. Kislina nevtralizira ione $\mat
 
 ### Primer 3 (težji): nevtralizacija z raztopinama
 
-Koliko gramov raztopine natrijevega hidroksida z $4\,\%$ $\mathrm{NaOH}$ potrebuješ za nevtralizacijo $50\,\mathrm{g}$ klorovodikove kisline s $3{,}65\,\%$ $\mathrm{HCl}$? Kolikšen je masni delež soli v nastali raztopini? $M(\mathrm{HCl}) = 36{,}5\,\mathrm{g/mol}$, $M(\mathrm{NaOH}) = 40\,\mathrm{g/mol}$, $M(\mathrm{NaCl}) = 58{,}5\,\mathrm{g/mol}$.
+Koliko gramov raztopine natrijevega hidroksida s $4\,\%$ $\mathrm{NaOH}$ potrebuješ za nevtralizacijo $50\,\mathrm{g}$ klorovodikove kisline s $3{,}65\,\%$ $\mathrm{HCl}$? Kolikšen je masni delež soli v nastali raztopini? $M(\mathrm{HCl}) = 36{,}5\,\mathrm{g/mol}$, $M(\mathrm{NaOH}) = 40\,\mathrm{g/mol}$, $M(\mathrm{NaCl}) = 58{,}5\,\mathrm{g/mol}$.
 
 **Podatki:** $m_{\mathrm{r}}(\text{kisline}) = 50\,\mathrm{g}$, $w(\mathrm{HCl}) = 3{,}65\,\%$, $w(\mathrm{NaOH}) = 4\,\%$, molske mase zgoraj
 **Iščemo:** maso raztopine baze in $w(\mathrm{NaCl})$

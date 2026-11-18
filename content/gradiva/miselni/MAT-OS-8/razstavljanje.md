@@ -7,9 +7,9 @@ stanje: osnutek
   - dva pravokotnika z enako višino zložimo v enega
 - Skupni faktor
   - $ab + ac = a(b + c)$
-  - pravilo o razdeljevanju, brano v obratni smeri
+  - zakon o razčlenjevanju, bran v obratni smeri
 - Največji skupni delitelj
-  - $\text{NSD}(12, 18) = 6$
+  - $D(12, 18) = 6$
   - napaka: $12x + 18 = 2(6x + 9)$ ni končano
 - Spremenljivke
   - samo tiste, ki so v vseh členih

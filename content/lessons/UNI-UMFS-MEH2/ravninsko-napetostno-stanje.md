@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -9,7 +9,7 @@ Vzemi kos krede in ga zvij med prsti. Ne poči naravnost prečno. Poči po poše
 
 Druga slika je z urgence. Smučar pade, vez se ne sprosti in smučka mu zasuka nogo. Na rentgenski sliki se lom golenice vije okrog kosti kot navoj vijaka. Ortopedi mu rečejo **spiralni zlom**.
 
-Kreda in kost sta povsem različni snovi. Obremenitev pa je v obeh primerih ista: torzija. Iz torzije znaš izračunati strižno napetost na prečnem prerezu. Normalne napetosti, ki bi material trgala, tam ni. Zakaj se potem oba lomita, kot bi ju nekdo vlekel narazen, in to poševno?
+Kreda in kost sta povsem različni snovi. Obremenitev pa je v obeh primerih ista: torzija. Iz torzije znaš izračunati strižno napetost na prečnem prerezu. Normalne napetosti, ki bi material trgala, tam ni. Zakaj se potem obe lomita, kot bi ju nekdo vlekel narazen, in to poševno?
 
 Odgovor skriva ista ideja: napetost v točki je odvisna od tega, **kako obrnemo ploskev**, na kateri jo opazujemo. Ko to obvladaš, poiščeš smer, v kateri je material obremenjen najbolj. Tam napoveš lom kosti, vsadka ali strojnega dela.
 
@@ -253,7 +253,7 @@ Iz elementa izrežemo klin. Poševna ploskev ima površino $A$ in normalo pod ko
 
 $$\sigma_\varphi A = \sigma_x A\cos^2\varphi + \sigma_y A\sin^2\varphi + 2\tau_{xy} A\sin\varphi\cos\varphi$$
 
-Z $\cos^2\varphi = \tfrac{1}{2}(1 + \cos 2\varphi)$, $\sin^2\varphi = \tfrac{1}{2}(1 - \cos 2\varphi)$ in $2\sin\varphi\cos\varphi = \sin 2\varphi$ dobimo formulo za $\sigma_\varphi$ iz točke 4. Ravnovesje v smeri poševne ploskve na enak način da $\tau_\varphi$.
+S $\cos^2\varphi = \tfrac{1}{2}(1 + \cos 2\varphi)$, $\sin^2\varphi = \tfrac{1}{2}(1 - \cos 2\varphi)$ in $2\sin\varphi\cos\varphi = \sin 2\varphi$ dobimo formulo za $\sigma_\varphi$ iz točke 4. Ravnovesje v smeri poševne ploskve na enak način da $\tau_\varphi$.
 
 Obe formuli kvadriramo in seštejemo, pa se kot izloči:
 

@@ -174,7 +174,7 @@ for (const leaves of [false, true]) {
     await withAccounts({}, async ({ call, store, kid, members, app }) => {
       // Sošolec z drugim (brezplačnim) računom staršev.
       const other = store.createStudent("Odhod");
-      const op = store.db.prepare("INSERT INTO parents (email, password_hash, privacy_version, unsubscribe_token, referral_code) VALUES ('o@x.si', 'x', 1, 'tok_o', 'ref_o')").run().lastInsertRowid;
+      const op = store.db.prepare("INSERT INTO parents (email, password_hash, privacy_version, unsubscribe_token, referral_code, email_verified_at) VALUES ('o@x.si', 'x', 1, 'tok_o', 'ref_o', datetime('now'))").run().lastInsertRowid; // potrjen: šolska licenca nepotrjenemu ne velja (#747)
       store.db.prepare("UPDATE students SET parent_id = ? WHERE id = ?").run(op, other.id);
       members.push(kid.id, other.id);
       // Licenca pomočnika: 5 $ na mesec za šolo. Sošolec porabi 4,99 $, ta učenec 0,3 $ (nad brezplačno mejo 0,2 $).

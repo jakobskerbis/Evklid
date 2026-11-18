@@ -30,6 +30,14 @@ Ostane brez povezave na račun (stolpci računa so `NULL`):
 Ostane in še kaže na id: `ai_holds` (rezervacija klica v teku; pobriše jo konec klica ali ponovni zagon) in
 `guest_invites.created_by` (povabilo ustvari skrbnik aplikacije).
 
+Ista pot (`server/accounts/izbris.js` `eraseAccount`/`eraseProfiles`) velja še za (#747, pregled 2):
+- **samodejni izbris nepotrjenega računa** (`server/zasebnost.js` `deleteStaleUnverified`): brez profilov 30 dni po
+  registraciji brez veljavne seje (kot prej); s profili 30 dni brez dejavnosti (vprašanja, dogodki učenja, točke,
+  odprtje profila na napravi), seja tu ne šteje;
+- **prevzem nepotrjenega računa** (»Računa nisem ustvaril jaz«, novo geslo prek e-pošte, prijava z Apple): izbrišejo se
+  samo profili in shranjena aktivacijska koda, račun ostane lastniku naslova.
+V vseh primerih poraba ostane šteta za omrežje (`guest_spent`).
+
 ## Izbris profila (`DELETE /api/students/:id`)
 
 Od profila ne ostane nič, račun in drugi profil ostaneta cela. Pri računu ostanejo: poraba kredita (`ai_credit_use`),

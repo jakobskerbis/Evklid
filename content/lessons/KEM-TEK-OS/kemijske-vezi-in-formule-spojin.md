@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -67,7 +67,7 @@ $$v = 8 - z$$
 Kisik ($z = 6$) ima vezavnost 2, dušik 3, ogljik 4. Vodik ima vezavnost 1, ker mu do dveh manjka en elektron. V molekuli vode ima kisik dve vezi in dva **nevezna** elektronska para, ki nista v nobeni vezi. Skupaj ima tako okoli sebe 8 elektronov:
 
 :::risba molekula
-opis: Strukturna formula vode: atom kisika O v sredini, levo in desno je nanj z enojno vezjo vezan atom vodika H. Nad kisikom sta dva nevezna elektronska para.
+opis: Strukturna formula vode: atom kisika O v sredini, levo in desno je nanj z enojno vezjo vezan atom vodika H. Nad kisikom in pod njim je po en nevezni elektronski par.
 ---
    ··
 H – O – H

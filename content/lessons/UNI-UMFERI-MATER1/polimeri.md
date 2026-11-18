@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -301,7 +301,7 @@ Plošča tiskanega vezja gre med spajkanjem brez svinca skozi peč z okoli $240\
 ~ To bi dobil, če bi enoto štel kot pol stirena. Ponavljajoča enota PS je cela molekula stirena $\mathrm{C_8H_8}$.
 > $n = M/M_0 = 208\,300 / 104{,}15 = 2000$.
 
-? Vzorec ima $40\,\%$ verig (po številu) z $20\,000\,\mathrm{g/mol}$ in $60\,\%$ z $60\,000\,\mathrm{g/mol}$. Kolikšna je številsko povprečna molska masa $M_n$?
+? Vzorec ima $40\,\%$ verig (po številu) z $20\,000\,\mathrm{g/mol}$ in $60\,\%$ s $60\,000\,\mathrm{g/mol}$. Kolikšna je številsko povprečna molska masa $M_n$?
 - $40\,000\,\mathrm{g/mol}$
 ~ To je navadno povprečje obeh vrednosti. Razreda nista enako velika, zato ju moraš utežiti z deležema.
 + $44\,000\,\mathrm{g/mol}$

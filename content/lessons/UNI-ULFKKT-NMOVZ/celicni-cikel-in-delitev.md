@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -76,7 +76,7 @@ Trditev iz uvoda torej ne drži: dve mitozi bi zahtevali dve S fazi in dali šti
 :::premisli
 Sošolec trdi: »Vsaka delitev razpolovi število kromosomov, saj iz ene celice nastaneta dve.« Za DNA to drži ($4c \to 2c \to c$). Zakaj pa število kromosomov razpolovi le mejoza I, mejoza II pa ne?
 ---
-Ker v anafazi I gresta homologna kromosoma vsak na svoj pol: vsaka celica dobi le enega iz para. V mejozi II se ločita sestrski kromatidi, kar število kromosomov ohrani (kot v mitozi), razpolovi pa količino DNA s $2c$ na $c$.
+Ker v anafazi I gresta homologna kromosoma vsak na svoj pol: vsaka celica dobi le enega iz para. V mejozi II se ločita sestrski kromatidi, kar število kromosomov ohrani (kot v mitozi), razpolovi pa količino DNA z $2c$ na $c$.
 :::
 
 **Kontrolne točke: gradbeni nadzor celice.** Prehode med fazami poganjajo **od ciklinov odvisne kinaze** (CDK). To so encimi, ki fosforilirajo tarčne proteine, aktivni pa so le, kadar je nanje vezan ustrezen ciklin. Koncentracija ciklinov v ciklu narašča in pada, ker jih celica sintetizira in nato razgradi. Kontrolna točka je mehanizem, ki zadrži aktivacijo naslednjega koraka, dokler pogoj ni izpolnjen.

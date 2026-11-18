@@ -18,7 +18,7 @@ stanje: osnutek
   - napaka: obrat ne velja ($A_4$)
 - Permutacije
   - $S_n$ ima $n!$ elementov
-  - red je $\operatorname{nzv}$ dolžin ciklov
+  - red je $\operatorname{lcm}$ dolžin ciklov
   - cikel dolžine $k$: $k - 1$ transpozicij
 - Homomorfizem
   - $f(ab) = f(a)f(b)$, $f(e) = e$

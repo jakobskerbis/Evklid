@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -261,7 +261,7 @@ Theveninova in Nortonova shema sta torej dva načina, kako narisati isto premico
 
 **Elektrofiziologija.** Celična membrana se na elektrodi obnaša kot Theveninov vir: mirovni potencial (okoli $-70\,\mathrm{mV}$) z notranjo upornostjo, ki je pri stekleni mikroelektrodi lahko več deset megaohmov. Ojačevalnik mora imeti vhodno upornost veliko večjo od te, sicer meri premalo. To je isti račun kot v Nalogi 1, le pri drugih številih.
 
-**Biosenzorji.** Termistorji, merilni lističi in elektrokemijski senzorji so pogosto v mostičnem vezju. Inženir most nadomesti s Theveninovim virom, da izbere ojačevalnik in oceni šum, ki je sorazmeren z $\sqrt{R_\mathrm{Th}}$.
+**Biosenzorji.** Termistorji, merilni lističi in elektrokemijski senzorji so pogosto v mostičnem vezju. Inženir most nadomesti s Theveninovim virom, da izbere ojačevalnik in oceni šum, ki je sorazmeren s $\sqrt{R_\mathrm{Th}}$.
 
 **Pridobivanje energije.** Pri mikrobnih gorivnih celicah in vsadkih, ki se napajajo iz telesne toplote, je vir šibek in moč dragocena. Tu breme *namerno* prilagodijo: elektronika sproti išče $R_\mathrm{L} = R_\mathrm{Th}$ (sledenje točki največje moči). V elektrarni je ravno obratno: generator ima majhno notranjo upornost, ker želimo velik izkoristek.
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -166,7 +166,7 @@ $v = k\,[\mathrm{RX}]\,[\mathrm{Nu}]$
 **Rešitev:**
 
 1. Terciarni substrat: $\mathrm{S_N2}$ odpade v vseh treh primerih.
-2. (a) Močna baza in toplota: E2. Odtrganje $\mathrm{H}$ s $\mathrm{CH_2}$ da $\mathrm{(CH_3)_2C{=}CHCH_3}$ (trisubstituiran), z $\mathrm{CH_3}$ pa $\mathrm{CH_2{=}C(CH_3)CH_2CH_3}$ (disubstituiran). Po Zajcevu prevlada **2-metilbut-2-en**.
+2. (a) Močna baza in toplota: E2. Odtrganje $\mathrm{H}$ s $\mathrm{CH_2}$ da $\mathrm{(CH_3)_2C{=}CHCH_3}$ (trisubstituiran), s $\mathrm{CH_3}$ pa $\mathrm{CH_2{=}C(CH_3)CH_2CH_3}$ (disubstituiran). Po Zajcevu prevlada **2-metilbut-2-en**.
 3. (b) Velika baza: E2, a odtrga lažje dosegljiv vodik s $\mathrm{CH_3}$. Prevlada **2-metilbut-1-en** (Hofmannov produkt).
 4. (c) Brez močne baze terciarni substrat počasi ionizira v terciarni karbokation: $\mathrm{S_N1}$. Etanol napade kation, po odcepu $\mathrm{H^+}$ nastane eter **2-etoksi-2-metilbutan**; ob njem nekaj alkenov po E1.
 5. (d) Ionizacija določa hitrost, zato velja kinetika prvega reda. Pri $90\,\%$ pretvorbe je $[\mathrm{RX}]_0/[\mathrm{RX}] = 10$, torej $t = \ln 10/k = 2{,}303/(1{,}4 \cdot 10^{-5}\,\mathrm{s^{-1}}) = 1{,}64 \cdot 10^{5}\,\mathrm{s}$, kar je približno $45{,}7\,\mathrm{h}$.
@@ -200,7 +200,7 @@ $\mathrm{S_N2}$; nastane 1-jodopropan $\mathrm{CH_3CH_2CH_2I}$. $\mathrm{I^-}$ i
 
 ## Pogoste napake
 
-- **»$\mathrm{OH}$ v alkoholu zamenjam kar z $\mathrm{Br^-}$.«** $\mathrm{OH^-}$ je močna baza in ne odide. Alkohol moraš najprej protonirati ($\mathrm{HBr}$, $\mathrm{H_2SO_4}$) ali pretvoriti v tozilat; tedaj odide voda.
+- **»$\mathrm{OH}$ v alkoholu zamenjam kar z $\mathrm{Br^-}$.«** $\mathrm{OH^-}$ je močna baza in ne odide. Alkohol moraš najprej protonirati ($\mathrm{HBr}$, $\mathrm{H_2SO_4}$) ali pretvoriti v tozilat; tedaj odide voda oziroma tozilatni ion.
 - **»$\mathrm{S_N1}$ da inverzijo, $\mathrm{S_N2}$ racemat.«** Ravno obratno. $\mathrm{S_N2}$ ima en sam hrbtni napad (inverzija), pri $\mathrm{S_N1}$ pa nukleofil napade ravninski kation z obeh strani (racemat). Popravek: pomisli, ali obstaja ravninski vmesni delec.
 - **»Terciarni substrat najhitreje reagira po $\mathrm{S_N2}$, ker tvori stabilen kation.«** Pri $\mathrm{S_N2}$ kation sploh ne nastane; odloča sterična ovira hrbtnega napada, ki je pri 3° prevelika. Stabilnost kationa je argument za $\mathrm{S_N1}$.
 - **»Močnejši nukleofil pospeši $\mathrm{S_N1}$.«** Hitrost $\mathrm{S_N1}$ je $k[\mathrm{RX}]$, nukleofila v njej ni. Močan nukleofil (ki je pogosto tudi baza) prej preusmeri reakcijo v $\mathrm{S_N2}$ ali E2.
@@ -212,7 +212,7 @@ $\mathrm{S_N2}$; nastane 1-jodopropan $\mathrm{CH_3CH_2CH_2I}$. $\mathrm{I^-}$ i
 - $\mathrm{S_N2}$: en korak, hrbtni napad, inverzija, $v = k[\mathrm{RX}][\mathrm{Nu}]$; metil $>$ 1° $>$ 2°, 3° ne; aprotična topila.
 - $\mathrm{S_N1}$: prek karbokationa, racemizacija, možne premestitve, $v = k[\mathrm{RX}]$; 3° $>$ 2°; protična topila, solvoliza.
 - $\mathrm{E2}$: en korak, močna baza, antiperiplanarna $\mathrm{H}$ in $\mathrm{X}$, $v = k[\mathrm{RX}][\mathrm{B}]$; Zajcev, z veliko bazo Hofmann.
-- $\mathrm{E1}$: prek karbokationa, tekmuje s $\mathrm{S_N1}$; toplota daje prednost eliminaciji.
+- $\mathrm{E1}$: prek karbokationa, tekmuje z $\mathrm{S_N1}$; toplota daje prednost eliminaciji.
 - Odločanje: najprej substrat (metil/1°/2°/3°), nato reagent (nukleofil ali baza, močan ali šibek), nato topilo in temperatura.
 
 ## Za izpit

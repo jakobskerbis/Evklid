@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Naredi kratek poskus. Na list z velikimi tiskanimi črkami napiši besedi TAT in SOS. List drži pred sprednjo kamero telefona (večina telefonov predogled selfija zrcali) ali pred ogledalom. Beseda TAT ostane enaka, v besedi SOS pa sta obe črki S obrnjeni. Nato list obrni na glavo, torej ga zasukaj za pol kroga. Zdaj ostane enaka beseda SOS, TAT pa ne.
+Naredi kratek poskus. Na list z velikimi tiskanimi črkami napiši besedi TAT in SOS. List drži pred sprednjo kamero telefona (večina telefonov predogled selfija zrcali) ali pred ogledalom. Beseda TAT ostane enaka, v besedi SOS pa sta obe črki S obrnjeni. Nato list poglej naravnost (brez kamere) in ga obrni na glavo, torej ga zasukaj za pol kroga. Zdaj ostane enaka beseda SOS, TAT pa ne.
 
 Kamera je naredila **zrcaljenje**, tvoja roka pa **vrtenje**. Ti dve preslikavi sta orodje za veliko tekmovalnih nalog: koliko različnih likov lahko sestaviš, ali se vzorec ploščic sklene brez vrzeli, ali lahko mrežo pokriješ z dominami. Kdor zna lik v mislih zrcaliti in vrteti, take naloge reši hitro in brez risanja vseh možnosti.
 
@@ -30,7 +30,7 @@ Krog ima neskončno osi: vsaka premica skozi središče je os.
 :::premisli
 Zakaj diagonala pravokotnika, ki ni kvadrat, ni njegova os simetrije? Napovej, preden pogledaš.
 ---
-Pri zrcaljenju čez diagonalo bi se daljša stranica preslikala na premico, po kateri teče krajša stranica. Ker nista enako dolgi, se slika ne prekrije s pravokotnikom. Pri kvadratu sta stranici enaki, zato je tam diagonala os.
+Oglišči na diagonali pri zrcaljenju čez diagonalo ostaneta na mestu. Daljša stranica iz takega oglišča bi se zato morala preslikati na krajšo stranico iz istega oglišča. Zrcaljenje dolžine ohranja, stranici pa nista enako dolgi, zato se slika ne prekrije s pravokotnikom. Pri kvadratu sta stranici enaki, zato je tam diagonala os.
 :::
 
 **3. Vrtenje.** Izberemo **središče vrtenja** $O$ in kot $\alpha$. Vsaka točka $P$ se premakne po krožnici s središčem $O$, tako da je $|OP'| = |OP|$ in $\angle POP' = \alpha$. Središče ostane na mestu. Pri vrtenju je slika skladna z likom in **orientacija ostane enaka**. Vrtenje za $180^\circ$ se imenuje **središčna simetrija**: $O$ je takrat razpolovišče daljice $PP'$.
@@ -46,7 +46,7 @@ V simulaciji spodaj (Zrcaljenje in vrtenje) izberi »Navpična os« in poglej, v
 :::premisli
 Lik ima dve osi simetrije, ki se sekata pod kotom $45^\circ$. Kateri lik iz tabele zgoraj bi to lahko bil? Pomagaj si s pravilom o dvakratnem zrcaljenju.
 ---
-Za $2 \cdot 45^\circ = 90^\circ$. Primer je kvadrat: diagonala in srednjica (simetrala stranice) oklepata kot $45^\circ$, kvadrat pa se prekrije pri zasuku za $90^\circ$.
+Lik se sme zasukati za $2 \cdot 45^\circ = 90^\circ$. Primer je kvadrat: diagonala in srednjica (simetrala stranice) oklepata kot $45^\circ$, kvadrat pa se prekrije pri zasuku za $90^\circ$.
 :::
 
 **5. Tlakovanje.** Ravnino **tlakujemo**, ko jo pokrijemo z liki brez vrzeli in brez prekrivanja. Ključ je v oglišču: koti, ki se stikajo v eni točki, dajo skupaj natanko $360^\circ$. Notranji kot pravilnega $n$-kotnika je $\dfrac{(n-2) \cdot 180^\circ}{n}$. Zato ravnino z enim samim pravilnim likom pokrijejo le trikotniki ($6 \cdot 60^\circ$), kvadrati ($4 \cdot 90^\circ$) in šestkotniki ($3 \cdot 120^\circ$). Pravilni petkotnik ima kot $108^\circ$, kar ne deli $360^\circ$.
@@ -208,9 +208,9 @@ Zakaj so pravilni tlakovalni liki le trije: v oglišču se morajo srečati vsaj 
 
 ? Katera vrstica opisuje pravokotnik, ki ni kvadrat?
 - $4$ osi, najmanjši zasuk $90^\circ$
-~ To velja za kvadrat. Pri pravokotniku z različnima stranicama se zasuk za $90^\circ$ ne prekrije.
+~ To velja za kvadrat. Pravokotnik z različnima stranicama se pri zasuku za $90^\circ$ ne prekrije sam s sabo.
 - $2$ osi (diagonali), najmanjši zasuk $180^\circ$
-~ Diagonala ni os pravokotnika, saj bi daljšo stranico preslikala na smer krajše.
+~ Diagonala ni os pravokotnika: daljšo stranico bi morala preslikati na krajšo, ti pa nista enako dolgi.
 + $2$ osi (simetrali stranic), najmanjši zasuk $180^\circ$
 - $0$ osi, najmanjši zasuk $180^\circ$
 ~ To opisuje paralelogram brez pravih kotov. Pravokotnik pa ima dve osi.

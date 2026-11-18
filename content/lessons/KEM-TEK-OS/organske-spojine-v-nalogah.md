@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -55,7 +55,7 @@ Zgornja je etanol: kisik je na koncu verige in nosi vodik. Spodnja je dimetil et
 | etri | $\mathrm{-O-}$ med dvema C | dimetil eter $\mathrm{CH_3OCH_3}$ |
 | ketoni | $\mathrm{C{=}O}$ med dvema C | propanon (aceton) $\mathrm{CH_3COCH_3}$ |
 | karboksilne kisline | $\mathrm{-COOH}$ (karboksilna) | etanojska kislina $\mathrm{CH_3COOH}$ |
-| estri | $\mathrm{-COO-}$ med dvema C | etil etanoat $\mathrm{CH_3COOCH_2CH_3}$ |
+| estri | $\mathrm{-COO-}$ s C na kisiku | etil etanoat $\mathrm{CH_3COOCH_2CH_3}$ |
 
 Pozor pri branju: $\mathrm{-OH}$ v alkoholu ni hidroksidni ion. Kisik je na ogljik vezan kovalentno, zato alkohol v vodi ne odcepi $\mathrm{OH^-}$ in ni baza.
 
@@ -103,7 +103,7 @@ Na polici so štiri snovi: (a) čistilo za strune $\mathrm{CH_3CH(OH)CH_3}$, (b)
 **Iščemo:** skupino spojin za vsako snov in snov, ki razbarva bromovico
 
 :::formula
-Poišči funkcionalno skupino: $\mathrm{-OH}$ alkohol, $\mathrm{-COO-}$ med dvema C ester, $\mathrm{C{=}C}$ alken; samo C in H z $y = 2x + 2$ je alkan.
+Poišči funkcionalno skupino: $\mathrm{-OH}$ alkohol, $\mathrm{-COO-}$ s C na kisiku ester, $\mathrm{C{=}C}$ alken; samo C in H z $y = 2x + 2$ je alkan.
 :::
 
 **Rešitev:**

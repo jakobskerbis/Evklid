@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -37,7 +37,7 @@ Luka je imel pred poškodbo moč $600\,\mathrm{W}$, danes $375\,\mathrm{W}$. Ve�
 **4. Še dve obliki.** Iz $P = \dfrac{A}{t}$ sledi $A = P \cdot t$ (koliko dela opravimo z znano močjo v danem času) in $t = \dfrac{A}{P}$ (koliko časa potrebujemo). Ker se pri delu spremeni energija, moč pove tudi, koliko energije se v eni sekundi pretvori.
 
 :::premisli
-Luka naslednji teden teče z nahrbtnikom z maso $10\,\text{kg}$, in spet potrebuje $4\,\text{s}$. Ali je njegova moč zdaj večja, manjša ali enaka kot brez nahrbtnika?
+Luka naslednji teden teče z nahrbtnikom z maso $10\,\text{kg}$ in spet potrebuje $4\,\text{s}$. Ali je njegova moč zdaj večja, manjša ali enaka kot brez nahrbtnika?
 ---
 Večja. Dviga $60\,\text{kg}$, zato opravi $A = 60 \cdot 10 \cdot 3 = 1800\,\text{J}$ v istem času. Moč je $\frac{1800\,\text{J}}{4\,\text{s}} = 450\,\mathrm{W}$ namesto $375\,\mathrm{W}$.
 :::
@@ -196,7 +196,7 @@ Formula $P = \dfrac{A}{t}$ da **povprečno moč** v času $t$. Lukova moč med t
 ~ Joule na sekundo je ravno definicija vata.
 + $\mathrm{kWh}$
 - $\mathrm{W}$
-~ Vat je osnovna enota za moč.
+~ Vat je enota za moč.
 > Kilovatna ura je moč, pomnožena s časom, torej energija: $1\,\mathrm{kWh} = 3\,600\,000\,\text{J}$.
 
 ? Planinec z nahrbtnikom ima maso $60\,\text{kg}$. V $1\,\text{h}$ se povzpne $600\,\text{m}$ višje. Kolikšna je njegova povprečna moč pri dviganju? ($g = 10\,\frac{\text{N}}{\text{kg}}$)

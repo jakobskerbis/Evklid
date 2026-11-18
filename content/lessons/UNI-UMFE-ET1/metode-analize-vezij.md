@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -260,7 +260,7 @@ Električni potencial si predstavljaj kot nadmorsko višino na planinskem zemlje
 
 - Vir je žičnica: ljudi dvigne za stalno višino $U$.
 - Upornik je pešpot navzdol: višina pada, in bolj ko je pot »uporna«, večji padec potrebuje isti tok ljudi.
-- KZN: kdor gre na krožni izlet in se vrne na izhodišče, je skupaj prav toliko spustil, kot se je dvignil.
+- KZN: kdor gre na krožni izlet in se vrne na izhodišče, se je skupaj prav toliko spustil, kot se je dvignil.
 - KZT: na razpotju se pohodniki razdelijo, nihče ne izgine.
 
 Vozliščna metoda vpraša, na kateri višini je vsako razpotje. Zančna metoda spremlja skupine pohodnikov, ki krožijo po posameznih krožnih poteh. Thevenin pove, da je za obiskovalca enega razgledišča vsa pokrajina za njim enakovredna eni žičnici in eni poti. Zvezda in trikot sta dve mreži poti, ki med tremi kočami dasta enak »napor«.
@@ -295,13 +295,13 @@ Vozliščna metoda vpraša, na kateri višini je vsako razpotje. Zančna metoda 
 ~ To je vsota $R_{AB} + R_{CA}$. Upornika množimo in delimo z vsoto vseh treh.
 > $R_A = \frac{R_{AB} R_{CA}}{R_{AB} + R_{BC} + R_{CA}} = \frac{10 \cdot 30}{60} = 5\,\Omega$.
 
-? Na sponke Theveninovega vira priključujemo vse večje breme $R_\mathrm{p}$. Kaj se zgodi z napetostjo na bremenu?
+? Na sponke Theveninovega vira priključujemo breme z vse večjo upornostjo $R_\mathrm{p}$. Kaj se zgodi z napetostjo na bremenu?
 - Pada proti nič, ker večji upor zmanjša tok.
 ~ Tok res pada, a napetost na bremenu je $R_\mathrm{p} I_\mathrm{p}$. Pada proti nič, ko gre $R_\mathrm{p}$ proti nič.
 - Ostane enaka $U_\mathrm{Th}$ pri vsakem bremenu.
 ~ Ne, ker skozi $R_\mathrm{Th}$ teče tok in na njej se izgubi del napetosti.
 + Narašča in se približuje $U_\mathrm{Th}$.
-> Večji $R_\mathrm{p}$ pomeni manjši tok, zato manjši padec na $R_\mathrm{Th}$. Pri zelo velikem bremenu je vezje skoraj odprto in napetost je skoraj $U_\mathrm{Th}$.
+> Večji $R_\mathrm{p}$ pomeni manjši tok, zato manjši padec na $R_\mathrm{Th}$. Pri zelo veliki upornosti bremena je vezje skoraj odprto in napetost je skoraj $U_\mathrm{Th}$.
 
 ? Študent rešuje vezje z zemljevida z zančnimi tokovi. (1) Izbere $I_a$ in $I_b$ v smeri urinega kazalca. (2) Levo okence: $U_1 = R_1 I_a + R_3 I_a$. (3) Desno okence: $-U_2 = R_3 (I_b - I_a) + R_2 I_b$. (4) Reši sistem dveh enačb. Kateri korak je napačen?
 - Korak 1

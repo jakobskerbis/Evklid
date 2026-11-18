@@ -652,14 +652,14 @@ T tkivo(vec2 p, float px) {
 export const kapljica = {
   id: "kapljica",
   ime: "Kapljica vode iz ribnika",
-  opis: "Živa kapljica iz ribnika brez barvanja. V njej plavajo praživali: copatkar z migetalkami, evglena z zelenimi kloroplasti in rdečo očesno pego, ameba s panožicami. Diagonalno leži nitasta alga zelenica s spiralnim kloroplastom (uvijačka).",
+  opis: "Živa kapljica iz ribnika brez barvanja. V njej plavajo praživali: paramecij z migetalkami, evglena z zelenimi kloroplasti in rdečo očesno pego, ameba s panožicami. Diagonalno leži nitasta alga zelenica s spiralnim kloroplastom (uvijačka).",
   barvanje: "naravno",
   velikost: [1200, 800],
   zacetek: { m: 100, sredisce: [0, 0] },
   sredisceBlizu: [-50, 66],
   imena: { 12: "pražival", 6: "celica alge" },
   snovi: { 25: "kloroplast", 12: "voda ali vakuola", 11: "celična stena alge" },
-  isci: "Poišči copatkarja in njegovo veliko jedro, utripajoči vakuoli in migetalke. Pri evgleni poišči rdečo očesno pego in bičeka.",
+  isci: "Poišči paramecija in njegovo veliko jedro, utripajoči vakuoli in migetalke. Pri evgleni poišči rdečo očesno pego in bičeka.",
   glsl: "#define SEM_PROSTE\n" + RASTLINSKA + /* glsl */ `
 T voda(vec2 p, float px) {
   T t = prazno();

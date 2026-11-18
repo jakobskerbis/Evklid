@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -140,7 +140,7 @@ Leibniz za konvergenco; primerjava z $\sum \frac1n$ za absolutno konvergenco
 **Rešitev:**
 
 1. $\frac{1}{\sqrt n}$ pada in gre proti $0$, zato po Leibnizu vrsta konvergira.
-2. Za absolutno konvergenco primerjaj $\frac{1}{\sqrt n}$ s $\frac1n$ in sklepaj sam:
+2. Za absolutno konvergenco primerjaj $\frac{1}{\sqrt n}$ z $\frac1n$ in sklepaj sam:
 
 :::premisli
 Konvergira $\sum \frac{1}{\sqrt n}$ ali ne? Kaj to pomeni za dano vrsto?

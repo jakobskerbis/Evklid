@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -36,7 +36,7 @@ Razlika je torej v tem, *kje* je ovira: pri geografski izolaciji v prostoru, pri
 | gametna | pred oploditvijo | semenčica ne prepozna jajčeca (morski ježki) |
 | hibrid ne preživi | po oploditvi | zarodek propade |
 | hibrid je neploden | po oploditvi | mula, liger |
-| propad hibridov | po oploditvi | vnuki hibridov so slabotni |
+| propad hibridov | po oploditvi | potomci hibridov so slabotni |
 
 **Predoploditvene (prezigotne) pregrade** preprečijo nastanek zigote. **Pooploditvene (postzigotne)**, ponekod imenovane poporoditvene, delujejo, ko zigota že obstaja. Rezultat je pri obeh enak: geni se ne mešajo.
 
@@ -248,7 +248,7 @@ Jeziki se razvijajo kot vrste. Iz praslovanščine so nastali slovenščina, hrv
 ~ To je $60 \cdot 4$: hitrost si pravilno izračunal, a razlike z njo pomnožil namesto delil.
 > $r = \dfrac{32}{8} = 4$ razlike na milijon let, $t = \dfrac{60}{4} = 15$, torej $15\,\mathrm{Ma}$.
 
-? Žiga o kladogramu treh domen napiše: »Bakterije so narisane tik ob arhejah, zato sta si bakterije in arheje najbližji sorodnici.« Kje je napaka?
+? Žiga o kladogramu treh domen napiše: »Bakterije so narisane tik ob arhejah, zato so si bakterije in arheje najbližje sorodnice.« Kje je napaka?
 - Napake ni, sosednji veji na sliki sta najbližji sorodnici.
 ~ Veje se okoli vozlišča lahko zavrtijo. Sosednost na sliki ne pove sorodnosti.
 + Sorodnost se bere po najmlajšem skupnem vozlišču, ne po tem, kateri konci vej so sosednji.
