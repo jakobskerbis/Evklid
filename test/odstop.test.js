@@ -160,7 +160,8 @@ test("oznake funkcije in potrdila sta iz zakona (138.a člen ZVPot-1A) in enaki 
   assert.match(submittedText("2026-07-01T08:00:09Z"), /^1\. 7\. 2026 ob 10\.00\.09 \(CEST\)$/);
   // Povezava na funkcijo v nogi vseh javnih strani in na pristajalni strani.
   for (const f of ["index.html", "zasebnost.html", "starsi.html", "sole.html", "garancija.html", "o-evklidu.html", "zakaj-evklid.html"])
-    assert.ok(fs.readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8").includes('<a href="/odstop.html" data-i18n="land.withdraw">Odstop od pogodbe</a>'), f);
+    // index.html: noga je izpis pristajalne strani (scripts/pristajalna-noscript.js), drugod z data-i18n.
+    assert.match(fs.readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8"), f === "index.html" ? /<a href="\/odstop\.html">Odstop od pogodbe<\/a>/ : /<a href="\/odstop\.html" data-i18n="land\.withdraw">Odstop od pogodbe<\/a>/, f);
   assert.ok(fs.readFileSync(new URL("../public/pristajalna.js", import.meta.url), "utf8").includes('href="/odstop.html"'));
 });
 
