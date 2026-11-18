@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -9,7 +9,7 @@ Najbližja zvezda za Soncem, Proksima Kentavra, je od nas oddaljena $4{,}24$ sve
 
 Na prvi pogled je to nemogoče. Če prepotuješ $4{,}24$ svetlobnega leta v $0{,}86$ leta, si šel skoraj petkrat hitreje od svetlobe. Nič pa ne gre hitreje od svetlobe. Nekje se torej skriva napaka v našem vsakdanjem razmišljanju o času in razdalji.
 
-Napaka je v predpostavki, da imajo vsi opazovalci isti čas in isti zemljevid. Einstein je leta 1905 izhajal iz dveh načel: fizikalni zakoni so enaki v vseh inercialnih sistemih, in hitrost svetlobe v vakuumu je za vse opazovalce enaka, $c \approx 3{,}00 \cdot 10^8\,\mathrm{m/s}$. Iz njiju sledijo Lorentzove transformacije, relativistična energija in gibalna količina. Brez njih ne delujejo pospeševalniki, satelitska navigacija ne bi bila natančna, in tudi naslednje teme o fotonih in atomih bi ostale nerazumljive.
+Napaka je v predpostavki, da imajo vsi opazovalci isti čas in isti zemljevid. Einstein je leta 1905 izhajal iz dveh načel: fizikalni zakoni so enaki v vseh inercialnih sistemih (to so opazovalni sistemi, v katerih telo brez zunanjih sil miruje ali se giblje premo enakomerno), in hitrost svetlobe v vakuumu je za vse opazovalce enaka, $c \approx 3{,}00 \cdot 10^8\,\mathrm{m/s}$. Iz njiju sledijo Lorentzove transformacije, relativistična energija in gibalna količina. Brez njih ne delujejo pospeševalniki, satelitska navigacija ne bi bila natančna, in tudi naslednje teme o fotonih in atomih bi ostale nerazumljive.
 
 ## Razlaga
 

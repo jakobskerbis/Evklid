@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -126,7 +126,7 @@ Tu sta $V_\mathrm{v}$ in $V_\mathrm{m} = 1 - V_\mathrm{v}$ prostorninska deleža
 Kratka vlakna prevzamejo silo prek strižne napetosti na meji z matrico. Da se vlakno obremeni do svoje trdnosti $\sigma_\mathrm{v}$, mora biti dolgo vsaj **kritično dolžino** $l_\mathrm{c} = \frac{\sigma_\mathrm{v}d}{2\tau_\mathrm{c}}$, kjer je $d$ premer vlakna in $\tau_\mathrm{c}$ strižna trdnost meje.
 
 :::premisli
-Kompozit z $60\,\%$ ogljikovih vlaken je vzdolž vlaken okoli $16$-krat bolj tog kot prečno. Kaj to pomeni za konstruktorja okvirja kolesa in kako to rešijo?
+Kompozit s $60\,\%$ ogljikovih vlaken je vzdolž vlaken okoli $16$-krat bolj tog kot prečno. Kaj to pomeni za konstruktorja okvirja kolesa in kako to rešijo?
 ---
 Enosmerni kompozit je močno anizotropen: prečno je skoraj tako mehak kot matrica. Okvir obremenijo sile v več smereh, zato zložijo **laminat** iz plasti z različno usmeritvijo vlaken (npr. $0°$, $\pm 45°$, $90°$), tako da je tog v vseh potrebnih smereh.
 :::

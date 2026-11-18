@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Pred nekaj sto leti je trgovec z blagom dolžino meril s svojo roko. Ena takih enot je bil **laket**, pri nas **vatel**: približno dolžina od komolca do konca prstov. Poznali so še **palec**, **čevelj** in **korak**. Težava je očitna. Roke in noge niso pri vseh ljudeh enako dolge. Vatel v enem mestu ni bil enak vatlu v drugem. Kupci in prodajalci so se prepirali, koliko blaga so v resnici dobili.
+Pred nekaj sto leti je trgovec z blagom dolžino meril s svojo roko. Ena takih enot je bil **laket**, pri nas **vatel**: ime ima po podlakti, meril pa je približno toliko kot iztegnjena roka odraslega, slabih $80\,\mathrm{cm}$. Poznali so še **palec**, **čevelj** in **korak**. Težava je očitna. Roke in noge niso pri vseh ljudeh enako dolge. Vatel v enem mestu ni bil enak vatlu v drugem. Kupci in prodajalci so se prepirali, koliko blaga so v resnici dobili.
 
 Konec 18. stoletja so v Franciji zato uvedli novo enoto, **meter**. Razdaljo od severnega tečaja do ekvatorja so si zamislili razdeljeno na deset milijonov enakih delov. En tak del je meter. Nihče ga ni nosil na svojem telesu, zato je bil za vse enak. Iz metra so izpeljali še enote za prostornino in maso. Leta 1875 se je o skupnih enotah dogovorilo več držav, danes jih uporablja skoraj ves svet.
 

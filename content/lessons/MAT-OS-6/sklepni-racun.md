@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -18,7 +18,7 @@ Danes ga uporabljaš v trgovini, ko primerjaš cene, pri receptu za več oseb in
 :::premisli
 Uporabi Mojčino pravilo za šest zvezkov. Najprej: tri zvezke in še tri zraven. Nato: dvakrat kupiš paket treh zvezkov. Kaj opaziš?
 ---
-Po Mojčinem pravilu bi šest zvezkov stalo $4{,}50 + 3 = 7{,}50$ €. Dva paketa po tri zvezke pa stanejo $2 \cdot 4{,}50 = 9$ €. Isti nakup ne more imeti dveh cen, zato je pravilo napačno. Pravilna cena je $9$ €.
+Po Mojčinem pravilu bi šest zvezkov stalo $4{,}50 + 3 = 7{,}50$ €. Dva paketa po tri zvezke pa staneta $2 \cdot 4{,}50 = 9$ €. Isti nakup ne more imeti dveh cen, zato je pravilo napačno. Pravilna cena je $9$ €.
 :::
 
 **Popravek: sklep na enoto.** Namesto ugibanja se vprašamo, koliko stane **en** zvezek. Tri zvezke plačamo $4{,}50$ €, zato en stane $4{,}50 : 3 = 1{,}5$ €. Pet zvezkov stane petkrat toliko: $5 \cdot 1{,}5 = 7{,}5$ €. Mojca bi torej plačala premalo.

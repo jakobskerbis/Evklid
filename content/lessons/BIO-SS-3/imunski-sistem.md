@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -171,7 +171,7 @@ $t = \dfrac{N_0 - N_\mathrm{m}}{v}$
 2. Ta upad deli z letnim upadom in zapiši odgovor. Nato preveri:
 
 :::premisli
-Koliko let traja, da število pade s $800$ na $200$ celic v mikrolitru?
+Koliko let traja, da število pade z $800$ na $200$ celic v mikrolitru?
 ---
 $\dfrac{600}{60} = 10$ let. Ves ta čas se lahko počuti zdravega, virus pa vseeno širi.
 :::

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: ph
 avtor: AI
 ---

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -66,7 +66,7 @@ Pljuča hranita dva obtoka. Pljučne arterije prinesejo vso kri za izmenjavo pli
 
 **Alveole.** Pljuča imajo okoli $300$–$500$ milijonov alveol s skupno površino okoli $70\,\mathrm{m^2}$. Steno alveole gradijo ploščati **pnevmociti tipa I** (izmenjava plinov) in kockasti **pnevmociti tipa II**, ki izločajo **surfaktant**. Ta zmanjša površinsko napetost, da se alveole ob izdihu ne sesedejo. **Krvno-zračna pregrada** (pnevmocit I, zlita bazalna membrana, endotelij kapilare) je debela le okoli $0{,}5\,\mathrm{\mu m}$. V alveolah so še makrofagi, ki požirajo prah.
 
-**Popljučnica (plevra).** Kot pri vseh seroznih mrenah ima dva lista. **Visceralni** list prekriva pljuča in sega v fisure. **Parietalni** prekriva notranjo stran prsne stene, prepono, sredoprsje in nad vrhom pljuč tvori **plevralno kupolo**. Med listoma je reža z nekaj mililitri tekočine. Tam, kjer se parietalni list z ene stene obrne na drugo, nastanejo **recesusi**, žepi, v katere pljuča sežejo le ob globokem vdihu. Največji je **rebrno-prepončni recesus**.
+**Plevra (poprsnica).** Kot pri vseh seroznih mrenah ima dva lista. **Visceralni** list (popljučnica) prekriva pljuča in sega v fisure. **Parietalni** (porebrnica) prekriva notranjo stran prsne stene, prepono, sredoprsje in nad vrhom pljuč tvori **plevralno kupolo**. Med listoma je reža z nekaj mililitri tekočine. Tam, kjer se parietalni list z ene stene obrne na drugo, nastanejo **recesusi**, žepi, v katere pljuča sežejo le ob globokem vdihu. Največji je **rebrno-prepončni recesus**.
 
 **Meje.** Pri mirnem dihanju je spodnji rob pljuč in plevre takšen (pravilo »6–8–10« in »8–10–12«):
 
@@ -161,7 +161,7 @@ $V_\mathrm{cev} = \pi \left(\frac{d}{2}\right)^2 l$, $V_\mathrm{A} = (V_\mathrm{
 :::premisli
 Kolikšna je alveolarna ventilacija in za koliko odstotkov se zmanjša?
 ---
-$(500 - 150 - 94) \cdot 12 = 3072\,\mathrm{mL/min}$, okoli $3{,}1\,\mathrm{L/min}$ namesto $4{,}2\,\mathrm{L/min}$, kar je okoli četrtino manj. Zato so dihalke kratke in potapljač z njo diha globlje.
+$(500 - 150 - 94) \cdot 12 = 3072\,\mathrm{mL/min}$, okoli $3{,}1\,\mathrm{L/min}$ namesto $4{,}2\,\mathrm{L/min}$, kar je okoli četrtino manj. Zato so dihalke kratke in potapljač z dihalko diha globlje.
 :::
 
 ## Pogoste napake

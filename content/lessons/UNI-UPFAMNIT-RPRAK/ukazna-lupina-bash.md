@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -173,7 +173,7 @@ Kolikšen je izhodni status zadnjega ukaza?
 
 ### Primer 3 (težji): vroči dnevi po postajah
 
-Iz `meritve.csv` ugotovi: (a) koliko meritev ima vsaka postaja, urejeno po številu; (b) tri najtoplejše meritve; (c) koliko vročih dni ($t_\mathrm{max} \ge 30\,^\circ\mathrm C$) je imela vsaka postaja. Glava se ne sme šteti.
+Iz `meritve.csv` ugotovi: (a) koliko meritev ima vsaka postaja, urejeno po številu; (b) tri najtoplejše meritve; (c) koliko vročih dni ($t_\mathrm{max} \ge 30\,^\circ\mathrm{C}$) je imela vsaka postaja. Glava se ne sme šteti.
 
 **Podatki:** `meritve.csv` z glavo in $11$ vrsticami; polja ločena z vejico: datum, postaja, tmax, padavine
 **Iščemo:** tri cevi in njihove izpise
@@ -214,7 +214,7 @@ grep -E ',3[0-9]\.[0-9],' \
 
    Izpis: `3 Ljubljana`, `2 Maribor`, `2 Koper`; skupaj $3 + 2 + 2 = 7$ vročih dni. Glave ni treba odstraniti, ker se z vzorcem ne ujema.
 4. Zakaj ne `uniq -c` brez `sort`: vrstice so urejene po datumu, zato bi se ista postaja pojavila večkrat ločeno.
-5. Odgovor: Maribor in Ljubljana imata po $4$ meritve, Koper $3$; najtoplejša je Ljubljana 2. 7. s $33{,}5\,^\circ\mathrm C$; vročih dni je imela Ljubljana $3$, Maribor in Koper po $2$. Vzorec bi za vrednosti od $40$ naprej moral zajeti tudi `4[0-9]`.
+5. Odgovor: Maribor in Ljubljana imata po $4$ meritve, Koper $3$; najtoplejša je Ljubljana 2. 7. s $33{,}5\,^\circ\mathrm{C}$; vročih dni je imela Ljubljana $3$, Maribor in Koper po $2$. Vzorec bi za vrednosti od $40$ naprej moral zajeti tudi `4[0-9]`.
 
 ### Primer 4 – zdaj ti: urejanje na mestu
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -280,7 +280,7 @@ Pri $550\,^\circ\mathrm{C}$ ($823\,\mathrm{K}$) dobimo isti učinek, ko je $\log
 > Podevtektoidno jeklo segrejemo na $A_3 + 30$–$50\,^\circ\mathrm{C}$, da je ves kos avstenit.
 
 ? Isti kos istega jekla enkrat kalimo v vodi, drugič v olju. Kaj velja?
-+ V vodi je ohlajanje hitrejše, kos je trši, a je nevarnost zvijanja in razpok večja.
++ V vodi je ohlajanje hitrejše, kos je enako trd ali trši, a je nevarnost zvijanja in razpok večja.
 - V olju je kos trši, ker se olje segreje počasneje.
 ~ Olje odvaja toploto počasneje od vode, zato je ohlajanje počasnejše in trdota nižja ali enaka.
 - Razlike ni, ker je trdota odvisna le od vsebnosti ogljika.

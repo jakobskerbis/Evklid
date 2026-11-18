@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -127,7 +127,7 @@ $N = \dfrac{L_v}{L_0}$; I-pas $= L - l_d$; H-cona $= L - 2l_t$
 
 ### Primer 2
 
-Ekotoksikologinja pregleduje histološke preparate tkiv rib iz onesnažene reke. Na enem preparatu vidi progaste celice, ki se razvejujejo, imajo eno jedro v sredini in jih na več mestih prečno sekajo temne stopničaste črte. Na drugem so vretenaste celice brez prog z enim jedrom v sredini, zložene v plasti. Za katero tkivo gre v vsakem primeru in iz katerega organa bi bil lahko preparat?
+Ekotoksikologinja pregleduje histološke preparate tkiv malih sesalcev z brega onesnažene reke. Na enem preparatu vidi progaste celice, ki se razvejujejo, imajo eno jedro v sredini in jih na več mestih prečno sekajo temne stopničaste črte. Na drugem so vretenaste celice brez prog z enim jedrom v sredini, zložene v plasti. Za katero tkivo gre v vsakem primeru in iz katerega organa bi bil lahko preparat?
 
 **Podatki:** preparat 1: progaste, razvejane celice, jedro v sredini, temne prečne stopničaste črte; preparat 2: vretenaste celice, brez prog, eno osrednje jedro, v plasteh
 **Iščemo:** vrsto mišičnine in verjeten organ

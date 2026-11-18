@@ -357,7 +357,7 @@
    "o": "D"
   },
   "BIO-SS-2/glive#p0": {
-   "h": "b5739ec4db0d",
+   "h": "4d7c4c215864",
    "o": "D"
   },
   "BIO-SS-2/glive#p1": {
@@ -511,7 +511,7 @@
    "o": "D"
   },
   "BIO-SS-3/hormonski-sistem#p0": {
-   "h": "2b7d66fbd686",
+   "h": "c576c87d118d",
    "o": "D"
   },
   "BIO-SS-3/hormonski-sistem#p1": {
@@ -3855,11 +3855,11 @@
    "o": "D"
   },
   "MAT-TEK-OS/logicne-naloge-in-sklepanje#p0": {
-   "h": "42b332501660",
+   "h": "389fa32583ed",
    "o": "D"
   },
   "MAT-TEK-OS/logicne-naloge-in-sklepanje#p2": {
-   "h": "c3d64d7cee10",
+   "h": "b66e0dd5826b",
    "o": "I",
    "r": "sklic na nalogo iz lekcije"
   },
@@ -4011,7 +4011,7 @@
    "r": "sklic na primer s cevmi"
   },
   "MAT-TEK-SS/invariante-in-monovariante#p2": {
-   "h": "3d6827c8bc1f",
+   "h": "f1926117dc5d",
    "o": "I",
    "r": "sklic na primer s ploščicami"
   },
@@ -4365,7 +4365,7 @@
    "r": "enaka odločitev kot prej; odgovor zdaj najprej pove, kje se tekočina zbere"
   },
   "UNI-ULBF-AANAT/anatomsko-izrazoslovje#p2": {
-   "h": "f3a4a765d96f",
+   "h": "82daf376c7ab",
    "o": "D"
   },
   "UNI-ULBF-AANAT/dihala#p0": {
@@ -4482,7 +4482,7 @@
    "o": "D"
   },
   "UNI-ULBF-ABIOKEM/presnova-aminokislin#p2": {
-   "h": "d1b447dd9f28",
+   "h": "328c27d7774c",
    "o": "I",
    "r": "sklic na poskus iz lekcije"
   },
@@ -5027,7 +5027,7 @@
    "o": "D"
   },
   "UNI-ULFKKT-NMOVZ/celicni-cikel-in-delitev#p1": {
-   "h": "7c54b4c0190d",
+   "h": "48e449dcdf70",
    "o": "D"
   },
   "UNI-ULFKKT-NMOVZ/uravnavanje-izrazanja-genov#p0": {
@@ -5123,7 +5123,7 @@
    "o": "D"
   },
   "UNI-ULFKKT-ORG1/aromatske-spojine#p1": {
-   "h": "5ee13f7fd163",
+   "h": "271afe207a63",
    "o": "D"
   },
   "UNI-ULFKKT-ORG1/aromatske-spojine#p2": {
@@ -5133,6 +5133,10 @@
   },
   "UNI-ULFKKT-ORG1/nomenklatura-organskih-spojin#p0": {
    "h": "9bd76470fce6",
+   "o": "D"
+  },
+  "UNI-ULFKKT-ORG1/nomenklatura-organskih-spojin#p1": {
+   "h": "975746eba4e1",
    "o": "D"
   },
   "UNI-ULFKKT-ORG1/nukleofilne-substitucije-in-eliminacije#p0": {
@@ -5223,7 +5227,7 @@
    "o": "D"
   },
   "UNI-ULFKKT-TEMBIOKEM/ogljikovi-hidrati-in-lipidi#p0": {
-   "h": "0f47183263f6",
+   "h": "27d47106a14f",
    "o": "D"
   },
   "UNI-ULFKKT-TEMBIOKEM/ogljikovi-hidrati-in-lipidi#p1": {
@@ -5535,7 +5539,7 @@
    ]
   },
   "UNI-UMFERI-MATER1/keramika-in-kompoziti#p1": {
-   "h": "7a8689f78335",
+   "h": "87f3c8802de0",
    "o": "D"
   },
   "UNI-UMFERI-MATER1/polimeri#p0": {
@@ -5597,7 +5601,7 @@
    "o": "D"
   },
   "UNI-UMFS-MAT1/atomska-zgradba-in-vezi#p0": {
-   "h": "ef3408bea6e5",
+   "h": "44b8b921bc10",
    "o": "D"
   },
   "UNI-UMFS-MAT1/atomska-zgradba-in-vezi#p1": {
@@ -5625,9 +5629,8 @@
    "o": "D"
   },
   "UNI-UMFS-MAT2/lahke-kovine#p1": {
-   "h": "67645857206c",
-   "o": "D",
-   "r": "kot prej; jasnejša ubeseditev vprašanja"
+   "h": "7c4e3c0cfcf1",
+   "o": "D"
   },
   "UNI-UMFS-MAT2/vrste-jekel-in-litin#p0": {
    "h": "cc9c4f36d229",

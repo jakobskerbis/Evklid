@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: ohm
 avtor: AI
 ---
@@ -155,7 +155,7 @@ Primerjava ima meje: v žici se elektroni ne »porabijo« in ne »iztečejo«, a
 
 ## Drugače: Na sliki
 
-V poskusu zgoraj so pikice elektroni. Opazuj:
+V simulaciji te lekcije so pikice elektroni. Opazuj:
 
 - Ko povečaš napetost, pikice tečejo hitreje in upornik se bolj segreva (močneje žari). Na grafu desno se točka pomakne gor po premici.
 - Ko povečaš upor, se pikice upočasnijo, premica na grafu postane bolj položna.

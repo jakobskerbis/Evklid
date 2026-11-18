@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -235,7 +235,7 @@ Natančno definiraj diferenciabilnost funkcije dveh spremenljivk v točki in dok
 Nivojnice funkcije $T(x, y) = 100 - x^2 - 2y^2$ iz Primera 2 so elipse okoli izhodišča (vrh »hriba« je v $(0, 0)$, kjer je $T = 100$):
 
 :::risba graf
-opis: Koordinatni sistem z dvema elipsama s središčem v izhodišču. Zunanja elipsa je nivojnica T = 91 skozi točko (1, 2); os x seka pri −3 in 3, os y pri približno −2,12 in 2,12. Notranja elipsa je nivojnica T = 96; os x seka pri −2 in 2, os y pri približno −1,41 in 1,41. V izhodišču je vrh, T = 100. Iz točke (1, 2) kaže puščica v smeri gradienta (−2, −8) pravokotno na zunanjo elipso navznoter, proti vrhu.
+opis: Koordinatni sistem z dvema elipsama s središčem v izhodišču. Zunanja elipsa je nivojnica T = 91 skozi točko (1, 2); os x seka pri −3 in 3, os y pri približno −2,12 in 2,12. Notranja elipsa je nivojnica T = 96; os x seka pri −2 in 2, os y pri približno −1,41 in 1,41. V izhodišču je vrh, T = 100. Iz točke (1, 2) kaže puščica v smeri gradienta (−2, −8) pravokotno na zunanjo elipso navznoter, navkreber.
 x: -4 .. 4 | 1 | x
 y: -3 .. 3 | 1 | y
 enako: da
@@ -248,10 +248,10 @@ napis: -0,9; -0,7 | T = 96 | sredina | siva
 točka: 0; 0 | T = 100 | nad levo
 puščica: 1; 2 -> 0,75; 1 | ∇T | desno | oranžna debelo
 točka: 1; 2 | (1, 2) | nad desno
-podnapis: Nivojnici T = 91 in T = 96 funkcije T(x, y) = 100 − x² − 2y²; gradient v točki (1, 2) kaže proti vrhu
+podnapis: Nivojnici T = 91 in T = 96 funkcije T(x, y) = 100 − x² − 2y²; gradient v točki (1, 2) kaže navkreber, pravokotno na nivojnico
 :::
 
-V točki $(1, 2)$ gradient $(-2, -8)$ kaže pravokotno na elipso navznoter, proti vrhu. Dolžina gradienta je velika tam, kjer so nivojnice gosto skupaj (strm breg), in majhna, kjer so redke (položen teren).
+V točki $(1, 2)$ gradient $(-2, -8)$ kaže pravokotno na elipso navznoter, torej navkreber (ne nujno naravnost v vrh). Dolžina gradienta je velika tam, kjer so nivojnice gosto skupaj (strm breg), in majhna, kjer so redke (položen teren).
 
 Parcialni odvod $f_x(a, b)$ si predstavljaj tako: graf prerežeš z navpično ravnino $y = b$, dobiš krivuljo in odčitaš njen naklon. Za $f_y$ prerežeš z ravnino $x = a$. Tangentna ravnina vsebuje obe tangenti teh dveh krivulj.
 

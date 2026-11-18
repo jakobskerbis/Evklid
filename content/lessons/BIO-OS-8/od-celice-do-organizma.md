@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -66,7 +66,7 @@ Da, kri je tkivo (tekoče vezivno tkivo). Sestavljajo jo celice, kot so rdeče k
 | odzivanje | živčevje | možgani |
 | razmnoževanje | razmnožila | jajčnik |
 
-Gibala sta okostje in mišičje skupaj. Celica sama ne more opravljati vsega, organizem iz specializiranih celic pa lahko, ker si celice delo razdelijo.
+Gibala sta okostje in mišičje skupaj. Specializirana celica sama ne more opravljati vsega, organizem iz specializiranih celic pa lahko, ker si celice delo razdelijo.
 
 ## Rešeni primeri
 

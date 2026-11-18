@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -354,7 +354,7 @@ Razlika od mreže: vrvica prenese le nateg, palica pa tudi tlak. Zato so paličj
 + korak 3
 - korak 4
 ~ Ta korak bi bil pravilen, če bi bil korak 3 pravilen.
-> Momentno enačbo je treba zapisati okoli presečišča zgornjega pasu in diagonale (Ritterjeve točke). Okoli krajišča spodnjega pasu nima momenta prav iskana sila, v enačbi pa ostaneta drugi dve neznanki.
+> Momentno enačbo je treba zapisati okoli presečišča zgornjega pasu in diagonale (Ritterjeve točke). Okoli krajišča spodnjega pasu nima momenta prav iskana sila, zato je iz te enačbe ni mogoče izračunati.
 
 ? Pri pregledu odra statik ugotovi, da je pri lastni teži ena izmed diagonal ničelna. Monter predlaga, da jo odstrani in prihrani material. Kaj je pravilno?
 - Prav ima: palica ne nosi ničesar, zato ni potrebna.

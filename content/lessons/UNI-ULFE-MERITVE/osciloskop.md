@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Leta 1897 je Ferdinand Braun v stekleno cev usmeril curek elektronov in ga odklonil z merjeno napetostjo. Svetla pika na zaslonu je prvič pokazala, kako se napetost spreminja s časom. Prvi osciloskopi s prostotekočim časovnim odklonom pa niso dali mirne slike: pri vsakem preletu zaslona je krivulja začela na drugem mestu in slika je drsela. Pravi preboj so prinesli šele osciloskopi s **proženjem**, ki prelet začnejo vedno v isti točki signala. Od takrat se na zaslonu ponavljajoč signal ustavi, kot bi ga fotografirali.
+Leta 1897 je Ferdinand Braun v stekleno cev usmeril curek elektronov in ga odklonil z merjenim električnim signalom. Svetla pika na zaslonu je prvič pokazala, kako se tak signal spreminja s časom. Prvi osciloskopi s prostotekočim časovnim odklonom pa niso dali mirne slike: pri vsakem preletu zaslona je krivulja začela na drugem mestu in slika je drsela. Pravi preboj so prinesli šele osciloskopi s **proženjem**, ki prelet začnejo vedno v isti točki signala. Od takrat se na zaslonu ponavljajoč signal ustavi, kot bi ga fotografirali.
 
 V kemijskem laboratoriju osciloskop odgovori na vprašanja, ki jih voltmeter ne more: ali ultrazvočna kopel res niha s $40\,\mathrm{kHz}$, zakaj pH-meter kaže nemirno vrednost, kako hitro naraste svetlobni impulz pri meritvi fluorescence. Voltmeter da eno število, osciloskop pa celo obliko signala in, če ga preklopimo v **frekvenčni prikaz**, tudi iz katerih frekvenc je signal sestavljen.
 

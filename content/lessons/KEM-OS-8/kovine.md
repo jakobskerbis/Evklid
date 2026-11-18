@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -95,7 +95,7 @@ Kovina ima kovinski sijaj, dobro prevaja električni tok in toploto ter je kovna
 
 **Rešitev:**
 
-1. Kos A ima vse tri preverjene lastnosti kovin, zato je kovina (lahko je na primer cink).
+1. Kos A ima vse tri preverjene lastnosti kovin, zato je kovina (lahko je na primer aluminij).
 2. Kos B ima sijaj, a slabo prevaja tok in je krhek. Krhkost kovino izključi, ker se kovina pod udarci oblikuje. Tako se vede polkovina silicij.
 3. Odgovor: kovina je kos A. Kos B ni kovina, čeprav se sveti.
 

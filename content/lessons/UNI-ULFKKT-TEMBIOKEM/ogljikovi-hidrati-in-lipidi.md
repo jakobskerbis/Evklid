@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -52,7 +52,7 @@ Razvejanost glikogena ni naključna: vsaka veja ima prost konec, s katerega enci
 :::premisli
 Škrob in celuloza sta oba iz glukoze. Zakaj škrob prebavimo, celuloze pa ne, krava pa se s travo vseeno nahrani?
 ---
-Ker se razlikujeta v glikozidni vezi, ne v monomeru. Naši encimi (amilaze) imajo aktivno mesto, ki se prilega vezi $\alpha(1 \to 4)$. Za vez $\beta(1 \to 4)$ nimamo encima; prežvekovalci in termiti ga imajo le prek mikroorganizmov v prebavilih. Enako kot pri proteinih: oblika molekule določa, kateri encim jo prepozna.
+Ker se razlikujeta v glikozidni vezi, ne v monomeru. Naši encimi (amilaze) imajo aktivno mesto, ki se prilega vezi $\alpha(1 \to 4)$. Za vez $\beta(1 \to 4)$ med glukoznimi enotami celuloze nimamo encima (celulaze); prežvekovalci in termiti ga imajo le prek mikroorganizmov v prebavilih. Enako kot pri proteinih: oblika molekule določa, kateri encim jo prepozna.
 :::
 
 ### Kaj ogljikovi hidrati počnejo v celici

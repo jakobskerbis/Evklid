@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -369,7 +369,7 @@ C | integracijska konstanta | | | določimo jo iz začetnega pogoja
 N | velikost populacije | | | eksponentna rast: $N(t) = N_0 e^{kt}$
 N_0 | začetna velikost populacije | |
 t | čas | |
-k | konstanta rasti oziroma hitrosti | | | k > 0 rast, k < 0 upadanje; v kinetiki s⁻¹
+k | konstanta rasti oziroma hitrosti | | | v N' = kN: k > 0 rast, k < 0 upadanje; v kinetiki (c' = −kc) je k > 0, enota s⁻¹
 \lambda | razpadna konstanta | \lambda = -k | | pri razpadu ($k < 0$); $t_{1/2} = \ln 2/\lambda$
 r | stopnja rasti v logističnem modelu | |
 K | nosilnost okolja | | | drugje tudi poljubna konstanta v rešitvi

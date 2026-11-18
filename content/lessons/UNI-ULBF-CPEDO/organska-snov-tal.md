@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -281,7 +281,7 @@ Leva veja je mineralizacija, desna humifikacija. Srednja veja je ozko grlo za du
 
 ? Ornica je globoka $0{,}3\,\mathrm{m}$, gostota tal je $1{,}3\,\mathrm{t/m^3}$, organske snovi je $3\,\%$. Koliko organske snovi je približno na hektarju?
 - okrog $1{,}2\,\mathrm{t}$
-~ Verjetno si pozabil, da ima hektar $10\,000\,\mathrm{m^2}$, ali si dvakrat delil s $100$.
+~ Verjetno si za hektar vzel $100\,\mathrm{m^2}$ namesto $10\,000\,\mathrm{m^2}$ ali si dvakrat delil s $100$.
 - okrog $12\,\mathrm{t}$
 ~ Za faktor $10$ premalo; preveri globino ($0{,}3\,\mathrm{m}$, ne $0{,}03\,\mathrm{m}$).
 + okrog $120\,\mathrm{t}$

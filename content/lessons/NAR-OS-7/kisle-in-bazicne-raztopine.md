@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -132,7 +132,7 @@ Barve zeljnega soka iz tabele; kislina in baza se izničita, zato pH bazične ra
 :::premisli
 Kakšen bo pH in katere barve bo zeljni sok, če slikopleskar po vijolični barvi doda še veliko kisa?
 ---
-Baze ni več, ki bi kislino izničila, zato pH pade pod $7$: voda postane kisla. Zeljni sok se obarva rožnato, pri zelo veliko kisa celo rdeče.
+Baze ni več, ki bi kislino izničila, zato pH pade pod $7$: voda postane kisla. Zeljni sok se obarva rožnato, pri zelo veliki količini kisa celo rdeče.
 :::
 
 ## Pogoste napake

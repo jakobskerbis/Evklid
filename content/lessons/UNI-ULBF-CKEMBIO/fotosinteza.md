@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -125,10 +125,10 @@ $E = \dfrac{h c}{\lambda}$, $E_\mathrm{m} = N_\mathrm{A} E$
 
 **Rešitev:**
 
-1. Pri $680\,\mathrm{nm}$: $E = \dfrac{6{,}626 \cdot 10^{-34} \cdot 2{,}998 \cdot 10^{8}}{680 \cdot 10^{-9}} \approx 2{,}92 \cdot 10^{-19}\,\mathrm J$.
+1. Pri $680\,\mathrm{nm}$: $E = \dfrac{6{,}626 \cdot 10^{-34} \cdot 2{,}998 \cdot 10^{8}}{680 \cdot 10^{-9}} \approx 2{,}92 \cdot 10^{-19}\,\mathrm{J}$.
 2. Na mol: $E_\mathrm{m} \approx 2{,}921 \cdot 10^{-19} \cdot 6{,}022 \cdot 10^{23} \approx 1{,}76 \cdot 10^{5}\,\mathrm{J/mol} = 176\,\mathrm{kJ/mol}$.
-3. Pri $700\,\mathrm{nm}$: $E \approx 2{,}84 \cdot 10^{-19}\,\mathrm J$, $E_\mathrm{m} \approx 171\,\mathrm{kJ/mol}$.
-4. Odgovor: foton pri $680\,\mathrm{nm}$ nosi $2{,}92 \cdot 10^{-19}\,\mathrm J$ ($176\,\mathrm{kJ/mol}$), pri $700\,\mathrm{nm}$ $2{,}84 \cdot 10^{-19}\,\mathrm J$ ($171\,\mathrm{kJ/mol}$). Daljša valovna dolžina pomeni manj energije, zato je P700 vzbujen z nekoliko šibkejšimi fotoni.
+3. Pri $700\,\mathrm{nm}$: $E \approx 2{,}84 \cdot 10^{-19}\,\mathrm{J}$, $E_\mathrm{m} \approx 171\,\mathrm{kJ/mol}$.
+4. Odgovor: foton pri $680\,\mathrm{nm}$ nosi $2{,}92 \cdot 10^{-19}\,\mathrm{J}$ ($176\,\mathrm{kJ/mol}$), pri $700\,\mathrm{nm}$ $2{,}84 \cdot 10^{-19}\,\mathrm{J}$ ($171\,\mathrm{kJ/mol}$). Daljša valovna dolžina pomeni manj energije, zato je P700 vzbujen z nekoliko šibkejšimi fotoni.
 
 ### Primer 2: bilanca za eno molekulo glukoze
 
@@ -233,7 +233,7 @@ Za rastlino C3 vzemi, da na vsako karboksilacijo pride $\varphi$ oksigenacij, da
 5. Pri $\varphi = 0{,}15$: $n = \dfrac{9 \cdot 1{,}15}{0{,}925} \approx 11{,}19$, manj kot C4.
 6. Pri $\varphi = 0{,}4$: $n = \dfrac{9 \cdot 1{,}4}{0{,}8} = 15{,}75$, več kot C4.
 7. (c) Enačba $\dfrac{9\,(1 + \varphi)}{1 - \varphi/2} = \dfrac{41}{3}$ da $9 + 9\varphi = \dfrac{41}{3} - \dfrac{41}{6}\varphi$, torej $\varphi \left(9 + \dfrac{41}{6}\right) = \dfrac{14}{3}$ in $\varphi = \dfrac{28}{95} \approx 0{,}295$.
-8. Odgovor: rastlina C4 potrebuje okoli $13{,}7$ fotona na $\mathrm{CO_2}$; rastlina C3 okoli $11{,}2$ v hladnem in $15{,}75$ v vročem; meja je pri $\varphi \approx 0{,}29$, kar okvirno ustreza temperaturam lista okoli $25$ do $30\,^\circ\mathrm C$. Zato je pšenica uspešnejša v hladni pomladi, koruza v vročem poletju.
+8. Odgovor: rastlina C4 potrebuje okoli $13{,}7$ fotona na $\mathrm{CO_2}$; rastlina C3 okoli $11{,}2$ v hladnem in $15{,}75$ v vročem; meja je pri $\varphi \approx 0{,}29$, kar okvirno ustreza temperaturam lista okoli $25$ do $30\,^\circ\mathrm{C}$. Zato je pšenica uspešnejša v hladni pomladi, koruza v vročem poletju.
 
 ### Naloga 2
 
@@ -263,7 +263,7 @@ Calvinov cikel je tekoči trak v tovarni, ki vsakič naloži en ogljikov atom. T
 
 ## Drugače: Bolj natančno
 
-**Redoks potenciali.** Z-shema je narisana v merilu redoks potencialov: par $\mathrm{O_2/H_2O}$ ima okoli $+0{,}82\,\mathrm V$, $\mathrm{NADP^+/NADPH}$ okoli $-0{,}32\,\mathrm V$. Razlika $1{,}14\,\mathrm V$ za dva elektrona pomeni $\Delta G = -n F \Delta E$, okoli $220\,\mathrm{kJ}$ na mol NADPH. Na mol elektronov je to okoli $110\,\mathrm{kJ}$, foton pri $680\,\mathrm{nm}$ pa prinese $176\,\mathrm{kJ/mol}$. Termodinamično bi en foton zadoščal, a ločitev nabojev mora biti hitra in nepovratna, kar porabi velik del energije. En reakcijski center ne more ustvariti hkrati tako močnega oksidanta, kot je $\mathrm{P680^+}$, in tako močnega reducenta, kot je vzbujeni P700. Zato sta dva.
+**Redoks potenciali.** Z-shema je narisana v merilu redoks potencialov: par $\mathrm{O_2/H_2O}$ ima okoli $+0{,}82\,\mathrm{V}$, $\mathrm{NADP^+/NADPH}$ okoli $-0{,}32\,\mathrm{V}$. Razlika $1{,}14\,\mathrm{V}$ za dva elektrona pomeni $\Delta G = -n F \Delta E$, okoli $220\,\mathrm{kJ}$ na mol NADPH. Na mol elektronov je to okoli $110\,\mathrm{kJ}$, foton pri $680\,\mathrm{nm}$ pa prinese $176\,\mathrm{kJ/mol}$. Termodinamično bi en foton zadoščal, a ločitev nabojev mora biti hitra in nepovratna, kar porabi velik del energije. En reakcijski center ne more ustvariti hkrati tako močnega oksidanta, kot je $\mathrm{P680^+}$, in tako močnega reducenta, kot je vzbujeni P700. Zato sta dva.
 
 **Uravnavanje Calvinovega cikla.** Na svetlobi se poveča pH strome (okoli $8$) in koncentracija $\mathrm{Mg^{2+}}$, kar aktivira RuBisCO. Tioredoksin, ki ga reducira feredoksin, aktivira več encimov cikla (npr. fosforibulokinazo). Cikel zato teče le, ko svetlobne reakcije dovajajo ATP in NADPH.
 

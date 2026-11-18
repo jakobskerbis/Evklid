@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Junija po večdnevnem dežju sadjarji pogosto najdejo češnje, ki so na drevesu razpokale. Kožica češnje nima nobene luknjice, sadež ni bil ranjen, pa je vseeno nabreknil in počil. Kako je voda prišla v češnjo, čeprav ni bilo odprtine? Premisli, preden bereš naprej; odgovor boš potrdil v Primeru 1.
+Junija po večdnevnem dežju sadjarji pogosto najdejo češnje, ki so na drevesu razpokale. Kožica češnje nima nobene vidne luknjice, sadež ni bil ranjen, pa je vseeno nabreknil in počil. Kako je voda prišla v češnjo, čeprav ni bilo odprtine? Premisli, preden bereš naprej; odgovor boš potrdil v Primeru 1.
 
 Za odgovor moraš poznati mejo vsake celice, **biotsko membrano**. Ista meja odloča, zakaj trava ob posoljeni cesti spomladi porjavi, zakaj zdravnik v žilo ne vbrizga čiste vode in zakaj so celice tako majhne.
 

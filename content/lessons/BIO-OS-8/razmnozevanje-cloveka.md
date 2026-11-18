@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -33,7 +33,7 @@ Kaj bi se zgodilo, če bi spolne celice nastajale z navadno delitvijo in bi imel
 Otrok bi imel $92$, vnuki $184$, število bi se v vsakem rodu podvojilo. Mejoza število razpolovi, oploditev ga spet dopolni, zato ostaja $46$ iz roda v rod.
 :::
 
-**3. Moški spolni organi.** Semenčice nastajajo v **modih**. Moda so v **mošnji** zunaj trebušne votline, kjer je temperatura za $2$ do $3\,^\circ\mathrm{C}$ nižja kot v telesu. Pri $37\,^\circ\mathrm{C}$ semenčice ne bi dozorele. Od pubertete do starosti nastaja več deset milijonov semenčic na dan. Dozorijo v **nadmodku**, po **semenovodu** potujejo naprej. Žleze (**semenska mešička** in **prostata** ali obsečnica) dodajo tekočino, s katero nastane **semenska tekočina**. Ta izteče skozi sečnico v **spolnem udu**. Moda izdelujejo tudi hormon **testosteron**.
+**3. Moški spolni organi.** Semenčice nastajajo v **modih**. Moda so v **mošnji** zunaj trebušne votline, kjer je temperatura za $2$ do $3\,^\circ\mathrm{C}$ nižja kot v telesu. Pri $37\,^\circ\mathrm{C}$ semenčice ne bi dozorele. Od pubertete do starosti nastaja okoli sto milijonov semenčic na dan. Dozorijo v **nadmodku**, po **semenovodu** potujejo naprej. Žleze (**semenska mešička** in **prostata** ali obsečnica) dodajo tekočino, s katero nastane **semenska tekočina**. Ta izteče skozi sečnico v **spolnem udu**. Moda izdelujejo tudi hormon **testosteron**.
 
 *Preveri:* Zakaj moda niso v trebušni votlini? *(Tam je pretoplo za nastanek semenčic.)*
 

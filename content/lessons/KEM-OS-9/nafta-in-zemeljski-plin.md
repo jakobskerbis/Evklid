@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -19,7 +19,7 @@ Isto vodo vidiš tudi pozimi. Na mrzlo jutro se iz izpušne cevi avtomobila vali
 
 | | zemeljski plin | nafta |
 |---|---|---|
-| atomi C v molekuli | $1$ do $4$, večinoma $1$ | od $5$ do več kot $40$ |
+| atomi C v molekuli | $1$ do $4$, večinoma $1$ | večinoma od $5$ do več kot $40$ |
 | stanje pri sobni temperaturi | plin | gosta, temna tekočina |
 | glavna sestavina | metan $\mathrm{CH_4}$ | zmes zelo veliko alkanov |
 | pot do uporabnika | po plinovodu | v rafinerijo |
@@ -159,7 +159,7 @@ $m \approx 2160\,\text{g} \approx 2{,}2\,\text{kg}$. Iz enega litra bencina ($70
 ## Povzetek
 
 - Nafta in zemeljski plin sta fosilni, neobnovljivi gorivi iz ostankov davnih morskih organizmov.
-- Zemeljski plin je večinoma metan $\mathrm{CH_4}$; nafta je tekoča zmes alkanov s $5$ do več kot $40$ atomi C.
+- Zemeljski plin je večinoma metan $\mathrm{CH_4}$; nafta je tekoča zmes alkanov, večinoma s $5$ do več kot $40$ atomi C.
 - Frakcionirna destilacija loči nafto na frakcije po vreliščih: zgoraj plin in bencin, spodaj olja in bitumen.
 - Popolno gorenje ogljikovodika: nastaneta $\mathrm{CO_2}$ in $\mathrm{H_2O}$ (npr. $\mathrm{CH_4 + 2\,O_2 \rightarrow CO_2 + 2\,H_2O}$).
 - Ob premalo kisika je gorenje nepopolno: nastajata strupeni $\mathrm{CO}$ brez vonja in saje.
@@ -189,7 +189,7 @@ Gorenje pa nariši kot razstavljanje kock. Molekula $\mathrm{CH_4}$ je ena črna
 
 - **Plinska jeklenka za žar** vsebuje propan in butan. Pri kuhanju na vrtu nastajata $\mathrm{CO_2}$ in vodna para. Na prostem je zraka dovolj, gorenje je popolno.
 - **Plinski grelnik v majhni kopalnici** porablja kisik iz prostora. Če ni zračenja, kisika zmanjka in nastaja $\mathrm{CO}$. Ljudje se ga ne zavedajo, ker ga ne zavohajo. Zato zračenje in javljalnik.
-- **Bencinska črpalka**: bencin, dizel in kurilno olje so različne frakcije iste nafte. Dizel je gostejši in manj hlapen od bencina, ker ima daljše molekule.
+- **Bencinska črpalka**: bencin in dizel sta različni frakciji iste nafte; kurilno olje je iz iste frakcije kot dizel. Dizel je gostejši in manj hlapen od bencina, ker ima daljše molekule.
 - **Megla v kotlini**: pozimi se v hladnih kotlinah nad mesti nabira megla in dim iz kurišč. Saje in drugi delci iz nepopolnega gorenja v mirnem, mrzlem zraku obstanejo pri tleh. Temu rečemo smog.
 
 ## Preveri se

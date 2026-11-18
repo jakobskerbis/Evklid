@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -101,7 +101,7 @@ Pogoj: $n_+ \cdot q_+ + n_- \cdot q_- = 0$; križno pravilo, nato indeksa skraj�
 
 ### Primer 2: od imena do formule
 
-Mnogi antiperspiranti vsebujejo aluminijev klorid. Zapiši formulo te spojine in povej, koliko ionov je v eni formulski enoti.
+Nekateri antiperspiranti vsebujejo aluminijev klorid. Zapiši formulo te spojine in povej, koliko ionov je v eni formulski enoti.
 
 **Podatki:** ime aluminijev klorid; aluminij je v 13. skupini (3 zunanji elektroni); klor je v 17. skupini (7 zunanjih elektronov)
 **Iščemo:** formulo in število ionov v formulski enoti

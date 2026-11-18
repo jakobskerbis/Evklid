@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -88,7 +88,7 @@ Titracijo vedno ponovimo vsaj trikrat in rezultat podamo kot povprečje z interv
 
 ### Primer 1: koncentracija kisline v kopeli
 
-Iz jedkalne kopeli za tiskana vezja vzamemo vzorec, ga razredčimo in odpipetiramo $20{,}00\,\mathrm{mL}$. Titriramo z NaOH ($0{,}1000\,\mathrm{mol/L}$); ob preskoku fenolftaleina je poraba $18{,}40\,\mathrm{mL}$. Kolikšna je koncentracija HCl v razredčenem vzorcu?
+Iz sveže jedkalne kopeli za tiskana vezja vzamemo vzorec, ga razredčimo in odpipetiramo $20{,}00\,\mathrm{mL}$. Titriramo z NaOH ($0{,}1000\,\mathrm{mol/L}$); ob preskoku fenolftaleina je poraba $18{,}40\,\mathrm{mL}$. Kolikšna je koncentracija HCl v razredčenem vzorcu?
 
 **Podatki:** $V(\mathrm{HCl}) = 20{,}00\,\mathrm{mL}$, $c(\mathrm{NaOH}) = 0{,}1000\,\mathrm{mol/L}$, $V_\mathrm{EP}(\mathrm{NaOH}) = 18{,}40\,\mathrm{mL}$
 **Iščemo:** $c(\mathrm{HCl})$
@@ -198,7 +198,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-$0{,}3050\,\mathrm{g}$ neznane enoprotonske šibke kisline raztopimo v vodi do $50{,}00\,\mathrm{mL}$ in titriramo z NaOH ($0{,}1000\,\mathrm{mol/L}$). EP je pri $25{,}00\,\mathrm{mL}$, po dodatku $10{,}00\,\mathrm{mL}$ pa pH-elektroda pokaže $4{,}02$. Izračunaj molsko maso kisline, $K_\mathrm{a}$ in pH v EP ter izberi indikator. $K_\mathrm{w} = 1{,}0 \cdot 10^{-14}$.
+$0{,}3050\,\mathrm{g}$ neznane enoprotonske šibke kisline raztopimo v malo etanola, dopolnimo z vodo do $50{,}00\,\mathrm{mL}$ in titriramo z NaOH ($0{,}1000\,\mathrm{mol/L}$). EP je pri $25{,}00\,\mathrm{mL}$, po dodatku $10{,}00\,\mathrm{mL}$ pa pH-elektroda pokaže $4{,}02$. Izračunaj molsko maso kisline, $K_\mathrm{a}$ in pH v EP ter izberi indikator. $K_\mathrm{w} = 1{,}0 \cdot 10^{-14}$.
 
 **Rešitev:**
 

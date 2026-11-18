@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -51,7 +51,7 @@ Kmetica Ana namesto škropiva v rastlinjak spusti pikapolonice, ki pojedo listne
 Ker mora razumeti živa bitja in odnose med njimi: kaj pikapolonice jedo, kdaj se razmnožujejo, pri kateri temperaturi so dejavne in koliko jih potrebuje. Škropivo deluje po navodilih na embalaži, pikapolonica pa je živ organizem v prehranjevalnem spletu.
 :::
 
-**Od radovednosti do izdelka.** Leta 1969 so raziskovalci v vročih vrelcih narodnega parka Yellowstone v ZDA odkrili bakterijo, ki živi v zelo vroči vodi, pri okoli $70\,\text{°C}$. Zanimalo jih je le, kako preživi tako vročino.
+**Od radovednosti do izdelka.** Leta 1969 so raziskovalci opisali bakterijo, ki živi v vročih vrelcih narodnega parka Yellowstone v ZDA, v vodi s temperaturo okoli $70\,^\circ\mathrm{C}$. Zanimalo jih je le, kako preživi tako vročino.
 
 :::premisli
 Je bilo to temeljno ali uporabno raziskovanje? In kaj napoveš: zakaj bi bila bakterija, ki ji vroča voda ne škodi, nekoč lahko komu koristna?

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -241,7 +241,7 @@ Generator tehnecija vsebuje ${}^{99}\mathrm{Mo}$ ($t_{1/2,1} = 65{,}94\,\mathrm{
 5. (b) Maksimum: $\mathrm{d}R_2/\mathrm{d}t = 0$ da $\lambda_1e^{-\lambda_1t} = \lambda_2e^{-\lambda_2t}$, torej $t_{max} = \ln(\lambda_2/\lambda_1)/(\lambda_2 - \lambda_1) \approx \ln 10{,}97/0{,}1048\,\mathrm{h} \approx 22{,}9\,\mathrm{h}$.
 6. $R_2(t_{max}) \approx 10{,}0 \cdot 1{,}100 \cdot (e^{-0{,}2402} - e^{-2{,}636})\,\mathrm{GBq} \approx 10{,}0 \cdot 1{,}100 \cdot (0{,}7865 - 0{,}0716)\,\mathrm{GBq} \approx 7{,}86\,\mathrm{GBq}$.
 7. (c) Po $24\,\mathrm{h}$: $R_1 = 10{,}0\,e^{-0{,}2523}\,\mathrm{GBq} \approx 7{,}77\,\mathrm{GBq}$ in $R_2 \approx 7{,}86\,\mathrm{GBq}$, razmerje $\approx 1{,}01$: smo tik za maksimumom, v katerem je $R_2 = R_1$ (iz $\lambda_1N_1 = \lambda_2N_2$). Po $72\,\mathrm{h}$: $R_1 \approx 4{,}69\,\mathrm{GBq}$, $R_2 \approx 5{,}16\,\mathrm{GBq}$, razmerje $\approx 1{,}10$.
-8. Splošno je $R_2/R_1 = \frac{\lambda_2}{\lambda_2 - \lambda_1}\left(1 - e^{-(\lambda_2 - \lambda_1)t}\right)$. Ker je $\lambda_2 \gg \lambda_1$, po nekaj razpolovnih časih tehnecija člen $e^{-(\lambda_2 - \lambda_1)t}$ izgine in ostane $R_2/R_1 = \lambda_2/(\lambda_2 - \lambda_1) \approx 1{,}10$ – **prehodno ravnovesje**: tehnecij »sledi« molibdenu.
+8. Splošno je $R_2/R_1 = \frac{\lambda_2}{\lambda_2 - \lambda_1}\left(1 - e^{-(\lambda_2 - \lambda_1)t}\right)$. Ker je $\lambda_2 > \lambda_1$, po nekaj razpolovnih časih tehnecija člen $e^{-(\lambda_2 - \lambda_1)t}$ izgine in ostane $R_2/R_1 = \lambda_2/(\lambda_2 - \lambda_1) \approx 1{,}10$ – **prehodno ravnovesje**: tehnecij »sledi« molibdenu.
 9. Odgovor: $R_2(t) = R_{10}\frac{\lambda_2}{\lambda_2 - \lambda_1}(e^{-\lambda_1t} - e^{-\lambda_2t})$; največja aktivnost okoli $7{,}9\,\mathrm{GBq}$ po približno $23\,\mathrm{h}$, zato bolnišnice generator izpirajo enkrat na dan.
 
 ### Naloga 2

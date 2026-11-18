@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -65,7 +65,7 @@ $$c = \lambda \nu$$
 
 Pri **prečnem** valovanju delci nihajo pravokotno na smer širjenja (vrv, struna), pri **vzdolžnem** v smeri širjenja (zvok v zraku).
 
-*Preizkus:* valovi na juhi imajo $\nu = 4\,\mathrm{Hz}$ in $\lambda = 3\,\mathrm{cm}$. Potujejo s hitrostjo $12\,\mathrm{cm/s}$.
+*Preizkus:* valovi na juhi imajo $\nu = 8\,\mathrm{Hz}$ in $\lambda = 3\,\mathrm{cm}$. Potujejo s hitrostjo $24\,\mathrm{cm/s}$.
 
 **6. Stoječe valovanje.** Val, ki pride do vpetega konca strune, se odbije in vrne. Po struni tedaj potujeta dva enaka vala v nasprotnih smereh. Njuna vsota ne potuje: nekatere točke strune ves čas mirujejo, to so **vozli**; vmes so **hrbti**, kjer struna niha najbolj. Sosednja vozla sta razmaknjena za $\frac{\lambda}{2}$, prav tako sosednja hrbta.
 
@@ -299,7 +299,7 @@ vrednost: 40/50 | 0.8
 vrednost: 50/40 | 1.25
 vrednost: 200*0.03 | 6
 vrednost: 2*pi*sqrt(0.2/20) | 0.63
-vrednost: 4*3 | 12
+vrednost: 8*3 | 24
 vrednost: 1.0*9.81/0.025 | 392.4
 vrednost: 2*pi*sqrt(1.0/392.4) | 0.317
 vrednost: 2*0.061 | 0.122

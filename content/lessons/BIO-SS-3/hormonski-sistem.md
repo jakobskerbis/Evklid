@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -24,9 +24,9 @@ Snov gradimo po kosih. Za vsakim kosom je kratko vprašanje za preverjanje.
 *Preveri:* kateri del uganke ustreza receptorju? *(Natakarjeva naučenost, da se odzove na zvonec.)*
 
 :::premisli
-Adrenalin v stresu pride s krvjo do srca in do celic očesne leče. Srce začne biti hitreje, leča pa se ne spremeni. Kaj lahko sklepaš o celicah teh dveh tkiv?
+Hormon glukagon pride s krvjo do jeter in do skeletnih mišic. Jetra začnejo v kri sproščati glukozo, mišice pa se nanj ne odzovejo. Kaj lahko sklepaš o celicah teh dveh tkiv?
 ---
-Srčne mišične celice imajo receptorje za adrenalin, celice leče pa ne. Odziv ni odvisen od tega, kam hormon pride, ampak od tega, ali ga celica lahko »prebere«.
+Jetrne celice imajo receptorje za glukagon, mišične celice pa ne. Odziv ni odvisen od tega, kam hormon pride, ampak od tega, ali ga celica lahko »prebere«.
 :::
 
 **3. Nadzornik: hipotalamus in hipofiza.** **Hipofiza** je žleza velikosti graha pod možgani. Povezana je s **hipotalamusom**, delom možganov, ki ji s svojimi hormoni ukazuje. Hipofiza izloča hormone, ki ukazujejo drugim žlezam. Primer: **TSH** (ščitnico spodbujajoči hormon) spodbudi ščitnico.

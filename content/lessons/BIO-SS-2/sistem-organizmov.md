@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -60,7 +60,7 @@ Bakterije in arheje so **prokarionti**: celica nima jedra, DNA leži prosto v ci
 
 **Evkarionti** imajo celično jedro in organele z membrano. Delimo jih na štiri velike skupine:
 
-- **protisti**: enocelični evkarionti in alge (copatkar, evglena, ameba); raznolika skupina brez skupnega imenovalca,
+- **protisti**: enocelični evkarionti in alge (paramecij, evglena, ameba); raznolika skupina brez skupnega imenovalca,
 - **glive**: heterotrofne, celična stena iz hitina, večinoma razgrajevalci (kvasovka, jurček),
 - **rastline**: fotosinteza v kloroplastih, celična stena iz celuloze,
 - **živali**: heterotrofne, brez celične stene, večinoma gibljive.

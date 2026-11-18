@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -127,8 +127,8 @@ $\Psi = N B A \cos\alpha$, $\lvert u_i \rvert = \dfrac{\Delta \Psi}{\Delta t}$ (
 
 Študent hitro izvleče merilno tuljavico ($200$ ovojev, $A = 1{,}0\,\mathrm{cm^2}$) iz reže močnega magneta daleč stran, kjer je polje zanemarljivo. Merilna kartica zapiše napetost vsaki $2\,\mathrm{ms}$:
 
-- $t = 0$: $0\,\mathrm V$; $t = 2\,\mathrm{ms}$: $0{,}6\,\mathrm V$; $t = 4\,\mathrm{ms}$: $1{,}0\,\mathrm V$
-- $t = 6\,\mathrm{ms}$: $0{,}8\,\mathrm V$; $t = 8\,\mathrm{ms}$: $0{,}4\,\mathrm V$; $t = 10\,\mathrm{ms}$: $0\,\mathrm V$
+- $t = 0$: $0\,\mathrm{V}$; $t = 2\,\mathrm{ms}$: $0{,}6\,\mathrm{V}$; $t = 4\,\mathrm{ms}$: $1{,}0\,\mathrm{V}$
+- $t = 6\,\mathrm{ms}$: $0{,}8\,\mathrm{V}$; $t = 8\,\mathrm{ms}$: $0{,}4\,\mathrm{V}$; $t = 10\,\mathrm{ms}$: $0\,\mathrm{V}$
 
 Kolikšna je bila gostota polja v reži? Normala tuljavice je bila vzporedna s poljem.
 
@@ -142,16 +142,16 @@ $\Delta\Psi = \int u_i\,\mathrm{d}t \approx h\left(\tfrac{u_0}{2} + u_1 + \dots 
 **Rešitev:**
 
 1. Napetost je odvod pretoka, zato je sprememba pretoka ploščina pod krivuljo napetosti. Ne potrebujemo hitrosti, s katero smo tuljavico vlekli.
-2. Krajna vzorca sta nič, zato ostane vsota notranjih: $0{,}6 + 1{,}0 + 0{,}8 + 0{,}4 = 2{,}8\,\mathrm V$.
+2. Krajna vzorca sta nič, zato ostane vsota notranjih: $0{,}6 + 1{,}0 + 0{,}8 + 0{,}4 = 2{,}8\,\mathrm{V}$.
 3. Integral: $\Delta\Psi \approx 0{,}002 \cdot 2{,}8 = 0{,}0056\,\mathrm{Wb}$.
 4. Gostota: $B_1 = \dfrac{0{,}0056}{200 \cdot 1{,}0 \cdot 10^{-4}} = 0{,}28\,\mathrm{T}$.
-5. Odgovor: v reži je bilo približno $0{,}28\,\mathrm T$. Na tem temelji fluksmeter: integrator napetosti merilne tuljave.
+5. Odgovor: v reži je bilo približno $0{,}28\,\mathrm{T}$. Na tem temelji fluksmeter: integrator napetosti merilne tuljave.
 
 ### Primer 3 (težji): zanka ob kablu
 
-Po dolgem ravnem kablu tok enakomerno naraste od $0$ do $100\,\mathrm A$ v $5\,\mathrm{ms}$. V isti ravnini kot kabel leži pravokotna tuljava z $10$ ovoji. Njeni stranici dolžine $20\,\mathrm{cm}$ sta vzporedni s kablom, na razdaljah $2\,\mathrm{cm}$ in $10\,\mathrm{cm}$. Upornost tuljave je $0{,}5\,\mathrm{\Omega}$, njene sponke so kratko sklenjene. Izračunaj inducirano napetost in tok ter določi smer toka.
+Po dolgem ravnem kablu tok enakomerno naraste od $0$ do $100\,\mathrm{A}$ v $5\,\mathrm{ms}$. V isti ravnini kot kabel leži pravokotna tuljava z $10$ ovoji. Njeni stranici dolžine $20\,\mathrm{cm}$ sta vzporedni s kablom, na razdaljah $2\,\mathrm{cm}$ in $10\,\mathrm{cm}$. Upornost tuljave je $0{,}5\,\mathrm{\Omega}$, njene sponke so kratko sklenjene. Izračunaj inducirano napetost in tok ter določi smer toka.
 
-**Podatki:** $\Delta i = 100\,\mathrm A$, $\Delta t = 5\,\mathrm{ms}$, $N = 10$, $b = 0{,}20\,\mathrm m$, $r_1 = 0{,}02\,\mathrm m$, $r_2 = 0{,}10\,\mathrm m$, $R = 0{,}5\,\mathrm{\Omega}$, $\mu_0 = 4\pi \cdot 10^{-7}\,\mathrm{V\,s/(A\,m)}$
+**Podatki:** $\Delta i = 100\,\mathrm{A}$, $\Delta t = 5\,\mathrm{ms}$, $N = 10$, $b = 0{,}20\,\mathrm{m}$, $r_1 = 0{,}02\,\mathrm{m}$, $r_2 = 0{,}10\,\mathrm{m}$, $R = 0{,}5\,\mathrm{\Omega}$, $\mu_0 = 4\pi \cdot 10^{-7}\,\mathrm{V\,s/(A\,m)}$
 **Iščemo:** $\lvert u_i \rvert$, tok $i_z$ v zanki in njegovo smer
 
 :::formula
@@ -163,16 +163,16 @@ $\Psi = N\dfrac{\mu_0 i b}{2\pi} \ln\dfrac{r_2}{r_1}$, $\lvert u_i \rvert = \lef
 1. Razmerje razdalj: $r_2 / r_1 = 5$, $\ln 5 \approx 1{,}609$.
 2. Pretok skozi en ovoj pri končnem toku: $\Phi = 2 \cdot 10^{-7} \cdot 100 \cdot 0{,}20 \cdot 1{,}609 \approx 6{,}44 \cdot 10^{-6}\,\mathrm{Wb}$ (ker je $\mu_0 / (2\pi) = 2 \cdot 10^{-7}\,\mathrm{V\,s/(A\,m)}$).
 3. Sklopljeni pretok: $\Psi = 10 \cdot 6{,}44 \cdot 10^{-6} = 6{,}44 \cdot 10^{-5}\,\mathrm{Wb}$.
-4. Tok narašča enakomerno, zato je napetost stalna: $\lvert u_i \rvert = 6{,}44 \cdot 10^{-5} / 0{,}005 \approx 0{,}0129\,\mathrm V = 12{,}9\,\mathrm{mV}$.
-5. Tok v zanki: $i_z = 0{,}0129 / 0{,}5 \approx 0{,}0258\,\mathrm A = 25{,}8\,\mathrm{mA}$.
+4. Tok narašča enakomerno, zato je napetost stalna: $\lvert u_i \rvert = 6{,}44 \cdot 10^{-5} / 0{,}005 \approx 0{,}0129\,\mathrm{V} = 12{,}9\,\mathrm{mV}$.
+5. Tok v zanki: $i_z = 0{,}0129 / 0{,}5 \approx 0{,}0258\,\mathrm{A} = 25{,}8\,\mathrm{mA}$.
 6. Smer: na strani zanke kaže polje kabla v zanko (glej skico). Pretok narašča, zato inducirani tok ustvarja polje iz zanke. To pomeni, da na bližnji stranici teče *nasproti* toku v kablu. Nasprotna tokova se odbijata: zanko odriva stran, kjer je pretok manjši, tako kot zahteva Lenzovo pravilo.
 7. Odgovor: inducira se $12{,}9\,\mathrm{mV}$, teče $25{,}8\,\mathrm{mA}$; na stranici ob kablu v nasprotni smeri kot tok v kablu.
 
 ### Primer 4 – zdaj ti
 
-Generator v laboratoriju ima tuljavo s $100$ ovoji in ploščino $0{,}020\,\mathrm{m^2}$, ki se vrti s $1500$ vrtljaji na minuto v homogenem polju $0{,}25\,\mathrm T$. Kolikšni sta amplituda in efektivna vrednost inducirane napetosti?
+Generator v laboratoriju ima tuljavo s $100$ ovoji in ploščino $0{,}020\,\mathrm{m^2}$, ki se vrti s $1500$ vrtljaji na minuto v homogenem polju $0{,}25\,\mathrm{T}$. Kolikšni sta amplituda in efektivna vrednost inducirane napetosti?
 
-**Podatki:** $N = 100$, $A = 0{,}020\,\mathrm{m^2}$, $n = 1500\,\mathrm{min^{-1}}$, $B = 0{,}25\,\mathrm T$
+**Podatki:** $N = 100$, $A = 0{,}020\,\mathrm{m^2}$, $n = 1500\,\mathrm{min^{-1}}$, $B = 0{,}25\,\mathrm{T}$
 **Iščemo:** $\hat u$ in $U$
 
 :::formula
@@ -188,12 +188,12 @@ $\omega = 2\pi n$, $\hat u = N B A \omega$, $U = \dfrac{\hat u}{\sqrt 2}$
 :::premisli
 Kolikšna sta $\hat u$ in $U$?
 ---
-$\hat u = 100 \cdot 0{,}25 \cdot 0{,}020 \cdot 157{,}1 \approx 78{,}5\,\mathrm V$, $U = 78{,}5 / \sqrt 2 \approx 55{,}5\,\mathrm V$.
+$\hat u = 100 \cdot 0{,}25 \cdot 0{,}020 \cdot 157{,}1 \approx 78{,}5\,\mathrm{V}$, $U = 78{,}5 / \sqrt 2 \approx 55{,}5\,\mathrm{V}$.
 :::
 
 ## Pogoste napake
 
-- **»Močno polje inducira veliko napetost.«** Tuljava, ki miruje v stalnem polju $1\,\mathrm T$, nima inducirane napetosti. Odločilna je hitrost spremembe sklopljenega pretoka, ne velikost polja.
+- **»Močno polje inducira veliko napetost.«** Tuljava, ki miruje v stalnem polju $1\,\mathrm{T}$, nima inducirane napetosti. Odločilna je hitrost spremembe sklopljenega pretoka, ne velikost polja.
 - **Lenzovo pravilo kot »nasprotuje polju«.** Inducirani tok ne nasprotuje polju, ampak spremembi pretoka. Pri padajočem pretoku inducirani tok polje celo krepi.
 - **Pozabljeno število ovojev ali kot.** Pretok skozi en ovoj je $BA\cos\alpha$, sklopljeni pretok $N$-krat večji. Če pozabiš $N$, je rezultat napačen za faktor $N$.
 - **Gostota polja ob vodniku kot stalna.** Pri zanki ob kablu ne smeš vzeti $B$ v sredini zanke in pomnožiti s ploščino. Polje pada z $1/r$, zato pride logaritem.
@@ -220,19 +220,19 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Po dolgem ravnem vodniku teče stalni tok $200\,\mathrm A$. V isti ravnini je pravokotna tuljava s $50$ ovoji in upornostjo $2\,\mathrm{\Omega}$. Stranici dolžine $b = 0{,}30\,\mathrm m$ sta vzporedni z vodnikom, širina tuljave je $a = 0{,}10\,\mathrm m$. Tuljavo odmikamo od vodnika s stalno hitrostjo $5\,\mathrm{m/s}$. (a) Kolikšna napetost se inducira v trenutku, ko je bližnja stranica $x = 5\,\mathrm{cm}$ od vodnika? Izračunaj jo na dva načina. (b) Kolikšna sta tok in sila, s katero moramo tuljavo vleči? Pokaži, da je mehanska moč enaka toplotni. (c) Kolikšna je napetost, ko je $x = 15\,\mathrm{cm}$?
+Po dolgem ravnem vodniku teče stalni tok $200\,\mathrm{A}$. V isti ravnini je pravokotna tuljava s $50$ ovoji in upornostjo $2\,\mathrm{\Omega}$. Stranici dolžine $b = 0{,}30\,\mathrm{m}$ sta vzporedni z vodnikom, širina tuljave je $a = 0{,}10\,\mathrm{m}$. Tuljavo odmikamo od vodnika s stalno hitrostjo $5\,\mathrm{m/s}$. (a) Kolikšna napetost se inducira v trenutku, ko je bližnja stranica $x = 5\,\mathrm{cm}$ od vodnika? Izračunaj jo na dva načina. (b) Kolikšna sta tok in sila, s katero moramo tuljavo vleči? Pokaži, da je mehanska moč enaka toplotni. (c) Kolikšna je napetost, ko je $x = 15\,\mathrm{cm}$?
 
 **Rešitev:**
 
-1. Polje ob bližnji stranici: $B_1 = 2 \cdot 10^{-7} \cdot 200 / 0{,}05 = 8{,}0 \cdot 10^{-4}\,\mathrm T$; ob daljni ($0{,}15\,\mathrm m$): $B_2 = 2 \cdot 10^{-7} \cdot 200 / 0{,}15 \approx 2{,}67 \cdot 10^{-4}\,\mathrm T$.
-2. Gibalna napetost bližnje stranice: $N B_1 b v = 50 \cdot 8{,}0 \cdot 10^{-4} \cdot 0{,}30 \cdot 5 = 0{,}060\,\mathrm V$; daljne: $50 \cdot 2{,}67 \cdot 10^{-4} \cdot 0{,}30 \cdot 5 \approx 0{,}020\,\mathrm V$.
-3. Napetosti stranic v zanki delujeta druga proti drugi (obe stranici se gibljeta v isto smer), zato je $u_i = 0{,}060 - 0{,}020 = 0{,}040\,\mathrm V$. Stranici, pravokotni na vodnik, k napetosti ne prispevata, ker je zanje $\vec v$ vzporeden s palico.
+1. Polje ob bližnji stranici: $B_1 = 2 \cdot 10^{-7} \cdot 200 / 0{,}05 = 8{,}0 \cdot 10^{-4}\,\mathrm{T}$; ob daljni ($0{,}15\,\mathrm{m}$): $B_2 = 2 \cdot 10^{-7} \cdot 200 / 0{,}15 \approx 2{,}67 \cdot 10^{-4}\,\mathrm{T}$.
+2. Gibalna napetost bližnje stranice: $N B_1 b v = 50 \cdot 8{,}0 \cdot 10^{-4} \cdot 0{,}30 \cdot 5 = 0{,}060\,\mathrm{V}$; daljne: $50 \cdot 2{,}67 \cdot 10^{-4} \cdot 0{,}30 \cdot 5 \approx 0{,}020\,\mathrm{V}$.
+3. Napetosti stranic v zanki delujeta druga proti drugi (obe stranici se gibljeta v isto smer), zato je $u_i = 0{,}060 - 0{,}020 = 0{,}040\,\mathrm{V}$. Stranici, pravokotni na vodnik, k napetosti ne prispevata, ker je zanje $\vec v$ vzporeden s palico.
 4. Drugi način: $\Psi(x) = N \dfrac{\mu_0 I b}{2\pi} \ln\dfrac{x + a}{x}$. Odvod po času je $\dfrac{\mathrm{d}\Psi}{\mathrm{d}t} = N\dfrac{\mu_0 I b}{2\pi}\left(\dfrac{1}{x + a} - \dfrac{1}{x}\right) v$.
-5. Številke: $50 \cdot 2 \cdot 10^{-7} \cdot 200 \cdot 0{,}30 \cdot (6{,}667 - 20) \cdot 5 \approx -0{,}040\,\mathrm{V}$, torej $\lvert u_i \rvert = 0{,}040\,\mathrm V$, enako kot zgoraj.
-6. Tok: $i_z = 0{,}040 / 2 = 0{,}020\,\mathrm A$. Pretok pada, zato tok na bližnji stranici teče v isti smeri kot v vodniku in jo privlači; daljno stranico odbija.
-7. Rezultanta sil: $F = N i_z b (B_1 - B_2) = 50 \cdot 0{,}020 \cdot 0{,}30 \cdot 5{,}33 \cdot 10^{-4} \approx 1{,}6 \cdot 10^{-4}\,\mathrm N$, usmerjena proti vodniku. S tako silo moramo vleči.
-8. Moči: $F v = 1{,}6 \cdot 10^{-4} \cdot 5 = 8{,}0 \cdot 10^{-4}\,\mathrm W$ in $u_i i_z = 0{,}040 \cdot 0{,}020 = 8{,}0 \cdot 10^{-4}\,\mathrm W$. Vloženo delo se v celoti spremeni v toploto.
-9. (c) Pri $x = 0{,}15\,\mathrm m$: $\dfrac{1}{0{,}15} - \dfrac{1}{0{,}25} \approx 2{,}667\,\mathrm{m^{-1}}$ namesto $13{,}33\,\mathrm{m^{-1}}$, zato je napetost $5$-krat manjša, $0{,}0080\,\mathrm V$.
+5. Številke: $50 \cdot 2 \cdot 10^{-7} \cdot 200 \cdot 0{,}30 \cdot (6{,}667 - 20) \cdot 5 \approx -0{,}040\,\mathrm{V}$, torej $\lvert u_i \rvert = 0{,}040\,\mathrm{V}$, enako kot zgoraj.
+6. Tok: $i_z = 0{,}040 / 2 = 0{,}020\,\mathrm{A}$. Pretok pada, zato tok na bližnji stranici teče v isti smeri kot v vodniku in jo privlači; daljno stranico odbija.
+7. Rezultanta sil: $F = N i_z b (B_1 - B_2) = 50 \cdot 0{,}020 \cdot 0{,}30 \cdot 5{,}33 \cdot 10^{-4} \approx 1{,}6 \cdot 10^{-4}\,\mathrm{N}$, usmerjena proti vodniku. S tako silo moramo vleči.
+8. Moči: $F v = 1{,}6 \cdot 10^{-4} \cdot 5 = 8{,}0 \cdot 10^{-4}\,\mathrm{W}$ in $u_i i_z = 0{,}040 \cdot 0{,}020 = 8{,}0 \cdot 10^{-4}\,\mathrm{W}$. Vloženo delo se v celoti spremeni v toploto.
+9. (c) Pri $x = 0{,}15\,\mathrm{m}$: $\dfrac{1}{0{,}15} - \dfrac{1}{0{,}25} \approx 2{,}667\,\mathrm{m^{-1}}$ namesto $13{,}33\,\mathrm{m^{-1}}$, zato je napetost $5$-krat manjša, $0{,}0080\,\mathrm{V}$.
 10. Odgovor: (a) $40\,\mathrm{mV}$; (b) $20\,\mathrm{mA}$, sila $0{,}16\,\mathrm{mN}$, obe moči $0{,}80\,\mathrm{mW}$; (c) $8{,}0\,\mathrm{mV}$.
 
 ### Naloga 2
@@ -282,15 +282,15 @@ Za gibajoče se zanke velja splošneje, da je inducirana napetost vsota dveh del
 ~ Naraščajoč tok spremeni pretok tudi skozi sosednjo tuljavo; tako deluje transformator.
 > Inducirana napetost je sorazmerna s hitrostjo spremembe pretoka. Pri mirujoči tuljavi v stalnem polju je ta nič, ne glede na velikost polja.
 
-? Tuljava ima $100$ ovojev s ploščino $10\,\mathrm{cm^2}$ pravokotno na polje. Gostota polja enakomerno pade z $0{,}5\,\mathrm T$ na $0$ v $0{,}1\,\mathrm s$. Kolikšna je inducirana napetost?
+? Tuljava ima $100$ ovojev s ploščino $10\,\mathrm{cm^2}$ pravokotno na polje. Gostota polja enakomerno pade z $0{,}5\,\mathrm{T}$ na $0$ v $0{,}1\,\mathrm{s}$. Kolikšna je inducirana napetost?
 - $5\,\mathrm{mV}$
 ~ To je napetost enega ovoja. Pozabljeno je število ovojev.
-+ $0{,}5\,\mathrm V$
-- $50\,\mathrm V$
++ $0{,}5\,\mathrm{V}$
+- $50\,\mathrm{V}$
 ~ Ploščina je pretvorjena kot dolžina, s faktorjem $10^{-2}$: $10\,\mathrm{cm^2} = 10^{-3}\,\mathrm{m^2}$, ne $10^{-1}\,\mathrm{m^2}$.
 - $0$, ker je končno polje nič.
 ~ Odločilna je sprememba pretoka, ne končna vrednost polja.
-> $\lvert u_i \rvert = 100 \cdot 10^{-3} \cdot 0{,}5 / 0{,}1 = 0{,}5\,\mathrm V$.
+> $\lvert u_i \rvert = 100 \cdot 10^{-3} \cdot 0{,}5 / 0{,}1 = 0{,}5\,\mathrm{V}$.
 
 ? Na železno jedro tuljave položimo aluminijast obroč. Ko vklopimo izmenični tok v tuljavi, obroč odskoči navzgor. Zakaj?
 - Aluminij je feromagneten in ga tuljava privlači.
@@ -300,25 +300,25 @@ Za gibajoče se zanke velja splošneje, da je inducirana napetost vsota dveh del
 ~ Segrevanje je prepočasno in prešibko za sunkovit skok ob vklopu.
 > Po Lenzovem pravilu tok v obroču teče nasproti toku v tuljavi; nasprotna tokova se odbijata.
 
-? Krožna tuljava s $100$ ovoji ima polmer $2\,\mathrm{cm}$. Polje skozi njo pravokotno naraste od $0$ na $0{,}2\,\mathrm T$ v $10\,\mathrm{ms}$. Rešitev: »1. $A = \pi d^2 = \pi \cdot 0{,}04^2 \approx 5{,}03 \cdot 10^{-3}\,\mathrm{m^2}$. 2. $\Delta\Psi = 100 \cdot 5{,}03 \cdot 10^{-3} \cdot 0{,}2 \approx 0{,}10\,\mathrm{Wb}$. 3. $u_i = 0{,}10 / 0{,}01 \approx 10\,\mathrm V$.« Kateri korak je napačen?
-+ Korak 1: ploščina je $\pi r^2 \approx 1{,}26 \cdot 10^{-3}\,\mathrm{m^2}$, zato je pravilno $u_i \approx 2{,}5\,\mathrm V$.
+? Krožna tuljava s $100$ ovoji ima polmer $2\,\mathrm{cm}$. Polje skozi njo pravokotno naraste od $0$ na $0{,}2\,\mathrm{T}$ v $10\,\mathrm{ms}$. Rešitev: »1. $A = \pi d^2 = \pi \cdot 0{,}04^2 \approx 5{,}03 \cdot 10^{-3}\,\mathrm{m^2}$. 2. $\Delta\Psi = 100 \cdot 5{,}03 \cdot 10^{-3} \cdot 0{,}2 \approx 0{,}10\,\mathrm{Wb}$. 3. $u_i = 0{,}10 / 0{,}01 \approx 10\,\mathrm{V}$.« Kateri korak je napačen?
++ Korak 1: ploščina je $\pi r^2 \approx 1{,}26 \cdot 10^{-3}\,\mathrm{m^2}$, zato je pravilno $u_i \approx 2{,}5\,\mathrm{V}$.
 - Korak 2: pretok bi moral biti brez faktorja $100$.
 ~ Sklopljeni pretok tuljave je $N\Phi$, zato faktor $100$ spada zraven.
-- Korak 3: napetost bi bila $0{,}10 \cdot 0{,}01\,\mathrm V$.
+- Korak 3: napetost bi bila $0{,}10 \cdot 0{,}01\,\mathrm{V}$.
 ~ Napetost je sprememba pretoka, *deljena* s časom, ne pomnožena z njim.
 - Vsi koraki so pravilni.
 ~ Ploščina kroga je $\pi r^2$ ali $\pi d^2/4$, ne $\pi d^2$; napaka da štirikrat preveliko napetost.
-> $A = \pi \cdot 0{,}02^2 \approx 1{,}257 \cdot 10^{-3}\,\mathrm{m^2}$, $u_i = 100 \cdot 1{,}257 \cdot 10^{-3} \cdot 0{,}2 / 0{,}01 \approx 2{,}51\,\mathrm V$.
+> $A = \pi \cdot 0{,}02^2 \approx 1{,}257 \cdot 10^{-3}\,\mathrm{m^2}$, $u_i = 100 \cdot 1{,}257 \cdot 10^{-3} \cdot 0{,}2 / 0{,}01 \approx 2{,}51\,\mathrm{V}$.
 
-? Elektromagnetni merilnik pretoka ima cev s premerom $10\,\mathrm{cm}$ in polje $0{,}010\,\mathrm T$. Voda teče s povprečno hitrostjo $2\,\mathrm{m/s}$. Kolikšno napetost izmerita elektrodi?
-- $0{,}2\,\mathrm V$
-~ Premer je vstavljen v centimetrih: $0{,}010 \cdot 10 \cdot 2 = 0{,}2$. Pred računom pretvori $d = 0{,}10\,\mathrm m$.
+? Elektromagnetni merilnik pretoka ima cev s premerom $10\,\mathrm{cm}$ in polje $0{,}010\,\mathrm{T}$. Voda teče s povprečno hitrostjo $2\,\mathrm{m/s}$. Kolikšno napetost izmerita elektrodi?
+- $0{,}2\,\mathrm{V}$
+~ Premer je vstavljen v centimetrih: $0{,}010 \cdot 10 \cdot 2 = 0{,}2$. Pred računom pretvori $d = 0{,}10\,\mathrm{m}$.
 + $2\,\mathrm{mV}$
 - $0$, ker voda ni kovina.
 ~ Voda iz vodovoda vsebuje ione in je dovolj prevodna. Napetost se inducira zaradi gibanja nabojev v polju.
 - $20\,\mathrm{mV}$
-~ To je $Bv = 0{,}010 \cdot 2 = 0{,}02\,\mathrm V$: pozabljen je premer. Dolžina »palice« med elektrodama je ves premer $d$.
-> Tekočina med elektrodama je kot palica dolžine $d = 0{,}10\,\mathrm m$: $u = Bdv = 0{,}010 \cdot 0{,}10 \cdot 2 = 0{,}002\,\mathrm V$.
+~ To je $Bv = 0{,}010 \cdot 2 = 0{,}02\,\mathrm{V}$: pozabljen je premer. Dolžina »palice« med elektrodama je ves premer $d$.
+> Tekočina med elektrodama je kot palica dolžine $d = 0{,}10\,\mathrm{m}$: $u = Bdv = 0{,}010 \cdot 0{,}10 \cdot 2 = 0{,}002\,\mathrm{V}$.
 
 :::simboli
 \Phi | magnetni pretok | \Phi = B A \cos\alpha | Wb | v homogenem polju

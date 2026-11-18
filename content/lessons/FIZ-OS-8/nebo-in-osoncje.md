@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -127,7 +127,7 @@ Sončev mrk je lahko le ob mlaju, mlaj je pol poti po ščipu: $\Delta t = \dfra
 
 1. Lunin mrk je, ko je Zemlja med Soncem in Luno. Takrat vidimo vso osvetljeno polovico, torej je bil **ščip**.
 2. Sončev mrk zahteva Luno med Soncem in Zemljo, torej **mlaj**, ki je pol poti naprej.
-3. $\Delta t = \dfrac{29{,}5\,\text{dneva}}{2} = 14{,}75\,\text{dneva}$.
+3. $\Delta t = \dfrac{29{,}5\,\text{dneva}}{2}$, to je $14{,}75$ dneva.
 4. Luna je ob mrku na črti Sonce–Zemlja in gre čez dva tedna, ob mlaju, spet blizu nje, zato je Sončev mrk ob mlaju mogoč (ni pa nujen).
 5. Odgovor: bil je ščip; Sončev mrk je lahko najprej čez približno $15$ dni.
 

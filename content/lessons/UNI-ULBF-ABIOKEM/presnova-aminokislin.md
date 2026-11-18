@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -175,7 +175,7 @@ ALT: alanin + α-ketoglutarat → piruvat + glutamat; AST: glutamat + oksaloacet
 :::premisli
 Kako pride $^{15}\mathrm{N}$ na drugi dušik sečnine?
 ---
-Z AST: označeni glutamat preda amino skupino oksaloacetatu, nastane aspartat s $^{15}\mathrm{N}$. Ta v koraku 3 cikla vnese drugi dušik. Ker oba dušika izhajata iz glutamata, so molekule z dvema $^{15}\mathrm{N}$ možne.
+Z AST: označeni glutamat preda amino skupino oksaloacetatu, nastane aspartat z $^{15}\mathrm{N}$. Ta v koraku 3 cikla vnese drugi dušik. Ker oba dušika izhajata iz glutamata, so molekule z dvema $^{15}\mathrm{N}$ možne.
 :::
 
 ## Pogoste napake

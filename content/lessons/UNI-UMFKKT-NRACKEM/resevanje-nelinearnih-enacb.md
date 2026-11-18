@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -323,7 +323,7 @@ za neki $\xi_n$ med $x_n$ in $r$. Zato obstaja okolica ničle, v kateri metoda k
 + Prvi korak skoči na $t_1 \approx -1{,}74$, nato metoda konvergira k drugi ničli $t \approx 0{,}22$.
 - Metoda se takoj ustavi, ker je $f'(12) = 0$.
 ~ Odvod je ničeln le pri vrhu, $t = 2$. Pri $t = 12$ je majhen, $f'(12) \approx -0{,}124$, zato je skok ogromen, deljenja z nič pa ni.
-> $t_1 = 12 - \frac{-1{,}703}{-0{,}124} \approx -1{,}74$. Od tam metoda konvergira, a k ničli $0{,}22\,\mathrm{h}$. Konvergenca ni zagotovljena k ničli, ki jo želimo.
+> $t_1 = 12 - \frac{-1{,}7025}{-0{,}1239} \approx -1{,}74$. Od tam metoda konvergira, a k ničli $0{,}22\,\mathrm{h}$. Konvergenca ni zagotovljena k ničli, ki jo želimo.
 
 ? Z Newtonovo metodo rešujemo $x^2 - 2 = 0$ in začnemo pri $x_0 = 1$. Koliko je $x_1$?
 - $0{,}5$

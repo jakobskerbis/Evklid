@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -53,7 +53,7 @@ stolpec: po odboju | 4
 Pretvorila sta se v toploto in zvok. Ob udarcu se žoga in tla malo segrejeta, slišiš pok, med letom pa žoga drgne ob zrak. Skupaj je energije še vedno $6\,\mathrm{J}$, le da sta $2\,\mathrm{J}$ zdaj v obliki, ki žoge ne dvigne več.
 :::
 
-**Kaj torej pomeni »porabiti«.** Ko rečemo, da smo energijo porabili, mislimo: pretvorila se je v toploto, ki se razprši v okolico. Ta toplota še obstaja, a je ne moremo več zlahka uporabiti, na primer za pogon igrače. Del energije, ki ga naprava pretvori v obliko, ki jo želimo, imenujemo **koristna energija**. Zato skoraj vsaka naprava »izgublja« del energije kot toploto: polnilnik je topel, motor kolesa se segreje.
+**Kaj torej pomeni »porabiti«.** Ko rečemo, da smo energijo porabili, mislimo: pretvorila se je v toploto, ki se razprši v okolico. Ta toplota še obstaja, a je ne moremo več zlahka uporabiti, na primer za pogon igrače. Del energije, ki ga naprava pretvori v obliko, ki jo želimo, imenujemo **koristna energija**. Zato skoraj vsaka naprava »izgublja« del energije kot toploto: polnilnik je topel, motor avtomobila se segreje.
 
 V simulaciji spodaj, »Pretvorbe energije«, spusti skejterja najprej brez trenja, nato trenje povečaj. Opazi, da se pri trenju skejter ne vrne do začetne višine, stolpec skupne energije pa ostane enako visok: manjkajoči del je toplota $Q$.
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -173,7 +173,7 @@ Pri vsakem spoju dveh kosov odpade drobna ploščica (molekula vode). Ko progo r
 
 - **Krompir na pohodu.** Kuhan krompir je poln škroba. Če na prerezan surov krompir kaneš jodovico, se obarva temno modro.
 - **Tableta glukoze pred vrhom.** Glukoze ni treba prebavljati, zato hitro pride v kri. Škrob iz kruha energijo sprošča počasneje, ker ga mora telo najprej razgraditi.
-- **Papirnat zemljevid v dežju.** Postane mehak, a se ne raztopi, ker je celuloza netopna. Iz istega razloga se v dežju ne raztopita bombažna majica in vrv.
+- **Papirnat zemljevid v dežju.** Postane mehak, a se ne raztopi, ker je celuloza netopna. Iz istega razloga se v dežju ne raztopita bombažna majica in konopljena vrv.
 - **Kosmiči in polnozrnat kruh.** Vsebujejo več celuloze kot bel kruh. Ta da občutek sitosti brez dodatne energije in pomaga črevesju.
 
 ## Preveri se

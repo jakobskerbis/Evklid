@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -117,7 +117,7 @@ kodirajoče zaporedje $= L_\mathrm{mRNA} - L_5 - L_3$; kodonov $= \frac{\text{ko
 
 ### Primer 3 (težji)
 
-Zrela mRNA ima na začetku zaporedje $5'$-CUGCC AUG GCU CAA UGG AAA UGC UAA GG-$3'$ (presledki le zaradi preglednosti). (a) Določi bralni okvir in peptid. (b) Napovej učinek mutacij: (i) GCU → GCC; (ii) C v CAA → U; (iii) G na tretjem mestu UGG → U; (iv) vstavitev G takoj za AUG. Razvrsti jih kot tihe, smiselne (*missense*), nesmiselne (*nonsense*) ali s premikom okvira. (c) V zaporedju sta še dva AUG (v »CAA UGG« in »AAA UGC«). Zakaj ribosom ne začne tam?
+Zrela mRNA ima na začetku zaporedje $5'$-CUGCC AUG GCU CAA UGG AAA UGC UAA GG-$3'$ (presledki le zaradi preglednosti). (a) Določi bralni okvir in peptid. (b) Napovej učinek mutacij: (i) GCU → GCC; (ii) C v CAA → U; (iii) G na tretjem mestu UGG → U; (iv) vstavitev G takoj za AUG. Razvrsti jih kot tihe, drugačnosmiselne (*missense*), nesmiselne (*nonsense*) ali s premikom okvira. (c) V zaporedju sta še dva AUG (v »CAA UGG« in »AAA UGC«). Zakaj ribosom ne začne tam?
 
 **Podatki:** mRNA $5'$-CUGCC AUG GCU CAA UGG AAA UGC UAA GG-$3'$; mutacije (i)–(iv)
 **Iščemo:** peptid, vrsta in učinek vsake mutacije, razlog za izbiro AUG
@@ -132,10 +132,10 @@ Kodoni: GCU in GCC Ala, CAA Gln, UAA stop, UGG Trp, UGU Cys, AAA Lys, UGC Cys, G
 2. Peptid: Met–Ala–Gln–Trp–Lys–Cys (šest aminokislin).
 3. (b)(i) GCC je prav tako Ala: **tiha** mutacija, peptid enak.
 4. (ii) CAA → UAA: tretji kodon postane stop kodon, **nesmiselna** mutacija; peptid se konča z Met–Ala.
-5. (iii) UGG → UGU: Trp → Cys, **smiselna** mutacija (ena aminokislina drugačna).
+5. (iii) UGG → UGU: Trp → Cys, **drugačnosmiselna** mutacija (ena aminokislina drugačna).
 6. (iv) Nov okvir: AUG GGC UCA AUG GAA AUG CUA AGG …: Met–Gly–Ser–Met–Glu–Met–Leu–Arg …; prvotni stop UAA ni več v okviru, branje teče naprej do prvega stop kodona v novem okviru. **Premik bralnega okvira**: vse za mestom vstavitve je drugače.
 7. (c) Notranja AUG (drugi in tretji, CA**AUG**G in AA**AUG**C) ležita v drugem bralnem okviru, zamaknjenem za en nukleotid; v (iv) sta zato postala Met. Evkariontski ribosom skenira od kape in začne pri prvem ustreznem AUG; od tam je okvir določen.
-8. Odgovor: peptid Met–Ala–Gln–Trp–Lys–Cys; (i) tiha, (ii) nesmiselna (Met–Ala), (iii) smiselna (Trp → Cys), (iv) premik okvira, najhujša posledica. Notranja AUG sta zunaj okvira in se ne uporabita.
+8. Odgovor: peptid Met–Ala–Gln–Trp–Lys–Cys; (i) tiha, (ii) nesmiselna (Met–Ala), (iii) drugačnosmiselna (Trp → Cys), (iv) premik okvira, najhujša posledica. Notranja AUG sta zunaj okvira in se ne uporabita.
 
 ### Primer 4 – zdaj ti
 

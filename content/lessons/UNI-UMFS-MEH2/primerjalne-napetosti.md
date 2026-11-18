@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -23,7 +23,7 @@ Kako iz stanja izračunati $\sigma_{\mathrm{pr}}$, pove hipoteza o porušitvi. V
 
 *Preveri:* kolikšna je $\sigma_{\mathrm{pr}}$ pri čistem nategu s $\sigma = 90\,\mathrm{MPa}$? (Odgovor: $90\,\mathrm{MPa}$, saj je to že enoosno stanje.)
 
-**Korak 3 – glavne napetosti po vrsti.** Iz lekcije o ravninskem napetostnem stanju znaš izračunati glavni napetosti v ravnini, $\sigma'$ in $\sigma''$. Tretja glavna napetost, pravokotno na ravnino, je $0$. Vse tri razvrstimo po velikosti: $\sigma_1 \ge \sigma_2 \ge \sigma_3$. Ničla dobi svoje mesto v vrsti kot vsaka druga vrednost.
+**Korak 3 – glavne napetosti po vrsti.** Iz lekcije o ravninskem napetostnem stanju znaš izračunati glavni napetosti v ravnini (tam $\sigma_1$ in $\sigma_2$); tu ju označimo $\sigma'$ in $\sigma''$, ker indekse potrebujemo za razvrstitev vseh treh. Tretja glavna napetost, pravokotno na ravnino, je $0$. Vse tri razvrstimo po velikosti: $\sigma_1 \ge \sigma_2 \ge \sigma_3$. Ničla dobi svoje mesto v vrsti kot vsaka druga vrednost.
 
 *Preveri:* $\sigma' = 80\,\mathrm{MPa}$, $\sigma'' = -20\,\mathrm{MPa}$. Kaj so $\sigma_1$, $\sigma_2$, $\sigma_3$? (Odgovor: $80$, $0$ in $-20\,\mathrm{MPa}$.)
 
@@ -147,7 +147,7 @@ $\tau_{\max} = \sqrt{\dfrac{150^2 - 50{,}93^2}{4}} \approx 70{,}5\,\mathrm{MPa}$
 - **Pozabljena ničla pri Tresci.** Ko sta obe glavni napetosti v ravnini pozitivni, je najmanjša $\sigma_3 = 0$. Kdor vzame $\sigma' - \sigma''$, upošteva le strig v ravnini, ne največjega, ki deluje na ploskvah zunaj nje. Pri sifonu bi to dalo $22{,}5$ namesto $45\,\mathrm{MPa}$.
 - **$\sqrt{\sigma^2 + 3\tau^2}$ za vsako stanje.** Ta oblika velja le, ko je ena normalna napetost $0$ (upogib s torzijo). Za stanje $\sigma_x$, $\sigma_y$, $\tau_{xy}$ najprej izračunaj glavne napetosti in uporabi splošno formulo.
 - **»Von Mises je bolj varen, ker je novejši.«** Ravno obratno: von Mises da manjšo ali enako $\sigma_{\mathrm{pr}}$. Tresca je konservativnejša, von Mises natančnejši za duktilne kovine.
-- **Duktilna hipoteza za krhko snov.** Za steklen pokrov ali keramično posodo von Mises precenjuje nosilnost. Krhke snovi popustijo zaradi natega, zato uporabi $\sigma_{\mathrm{pr}} = \sigma_1$ in primerjaj z $R_m$.
+- **Duktilna hipoteza za krhko snov.** Za steklen pokrov ali keramično posodo von Mises lahko preceni nosilnost. Krhke snovi popustijo zaradi natega, zato uporabi $\sigma_{\mathrm{pr}} = \sigma_1$ in primerjaj z $R_m$.
 - **Primerjava s $\tau_{\mathrm{dop}}$.** $\sigma_{\mathrm{pr}}$ je normalna napetost in jo primerjaš s $\sigma_{\mathrm{dop}}$ iz nateznega preizkusa, ne s strižno dopustno napetostjo.
 
 ## Povzetek

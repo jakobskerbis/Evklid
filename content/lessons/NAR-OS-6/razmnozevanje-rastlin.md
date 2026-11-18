@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -97,9 +97,9 @@ Iz pritlike. Rastlina iz pritlike je nastala nespolno in je enaka materi. Rastli
 
 ### Primer 1: marelice ob atletski stezi
 
-Na marelici ob atletski stezi je $600$ cvetov. Oprašenih in oplojenih je $450$. Vsak cvet marelice ima eno plodnico z eno semensko zasnovo. Koliko marelic lahko zraste? Koliko cvetov ne bo dalo ploda in kolikšen del vseh cvetov je to?
+Na marelici ob atletski stezi je $600$ cvetov. Oprašenih in oplojenih je $450$. Vsak cvet marelice ima eno plodnico, iz katere lahko zraste en plod. Koliko marelic lahko zraste? Koliko cvetov ne bo dalo ploda in kolikšen del vseh cvetov je to?
 
-**Podatki:** $n_c = 600$ cvetov, $n_o = 450$ oplojenih cvetov, ena plodnica z eno semensko zasnovo na cvet
+**Podatki:** $n_c = 600$ cvetov, $n_o = 450$ oplojenih cvetov, ena plodnica (en plod) na cvet
 **Iščemo:** število marelic, število cvetov brez ploda $n_n$ in njihov delež
 
 :::formula

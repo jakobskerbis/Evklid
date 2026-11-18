@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -140,7 +140,7 @@ Opazuj razlike med števili ploščic posameznih barv in njihovo deljivost s $3$
 :::premisli
 Ali je katera od začetnih razlik deljiva s $3$? Kaj to pomeni za cilj?
 ---
-Razlike so $15 - 13 = 2$, $17 - 15 = 2$ in $17 - 13 = 4$. Nobena ni deljiva s $3$ in tudi nikoli ne bo. Na cilju pa bi bila ena razlika $0$. Vse ploščice iste barve keramičar ne more nikoli dobiti.
+Razlike so $15 - 13 = 2$, $17 - 15 = 2$ in $17 - 13 = 4$. Nobena ni deljiva s $3$ in tudi nikoli ne bo. Na cilju pa bi bila ena razlika $0$. Keramičar zato nikoli ne more doseči, da bi bile vse ploščice iste barve.
 :::
 
 ## Pogoste napake

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -73,7 +73,7 @@ Dve izjemi od naraščanja imata jasen vzrok:
 :::premisli
 Magnezij ima konfiguracijo $[\mathrm{Ne}]\,3s^2$. Med katerima zaporednima ionizacijskima energijama pričakuješ velik skok in zakaj?
 ---
-Med $I_2$ in $I_3$. Prva dva elektrona odvzamemo iz lupine $3s$, tretji pa mora priti iz notranje, močno vezane podlupine $2p^6$ (izmerjeno: $I_2 = 1451$, $I_3 = 7733\,\mathrm{kJ/mol}$).
+Med $I_2$ in $I_3$. Prva dva elektrona odvzamemo iz podlupine $3s$, tretji pa mora priti iz notranje, močno vezane podlupine $2p^6$ (izmerjeno: $I_2 = 1451$, $I_3 = 7733\,\mathrm{kJ/mol}$).
 :::
 
 **6. Elektronska afiniteta** $E_\mathrm{ea}$ je energija, ki se sprosti, ko izoliran atom v plinastem stanju sprejme elektron: $\mathrm{X(g) + e^- \to X^-(g)}$, $\Delta H \approx -E_\mathrm{ea}$. Pozitivna $E_\mathrm{ea}$ pomeni, da je anion stabilnejši od atoma; pri nekaterih atomih (Be, N, žlahtni plini) je negativna ali blizu nič, kar pomeni, da se energija porabi. Največjo afiniteto imajo halogeni (klor okoli $349\,\mathrm{kJ/mol}$ sproščene energije), saj z dodatnim elektronom dosežejo konfiguracijo žlahtnega plina. Trend je manj pravilen kot pri ionizacijski energiji.

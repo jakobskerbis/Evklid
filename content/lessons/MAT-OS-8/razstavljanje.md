@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -29,7 +29,7 @@ Faktorju $a$ pravimo **skupni faktor**, postopku pa **izpostavljanje skupnega fa
 
 *Hitra preizkušnja:* $5 \cdot 4 + 5 \cdot 6 = 5 \cdot (\ldots)$. (V oklepaj gre $4 + 6 = 10$.)
 
-**3. Števila pred črkami.** Pri koeficientih poiščemo **največji skupni delitelj** (NSD). Za $12$ in $18$ je to $D(12, 18) = 6$, saj $6$ deli oba, večje število pa ne.
+**3. Števila pred črkami.** Pri koeficientih poiščemo **največji skupni delitelj** (NSD, oznaka $D$). Za $12$ in $18$ je to $D(12, 18) = 6$, saj $6$ deli oba, večje število pa ne.
 
 *Hitra preizkušnja:* koliko je $D(8, 12)$? (To je $4$.)
 

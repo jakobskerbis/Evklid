@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -26,7 +26,7 @@ Ribnik je plitek, zato svetloba sega do dna in rastline rastejo skoraj povsod: t
 :::premisli
 Bukev ima listne reže spodaj na listu. Kaj bi šlo narobe, če bi jih tam imel tudi lokvanj?
 ---
-Ker spodnja stran lokvanjevega lista leži na vodi. Skozi reže rastlina izmenjuje pline z zrakom; pod vodo ne bi prišle do zraka, zato jih ima na strani, ki gleda v zrak.
+Spodnja stran lokvanjevega lista leži na vodi. Skozi reže rastlina izmenjuje pline z zrakom; pod vodo ne bi prišle do zraka, zato jih ima na strani, ki gleda v zrak.
 :::
 
 **Drugi postanek: gozd.** Pot nas pelje v bukov gozd. Tu je pogoj okolja drugačen: visoka drevesa zastrejo svetlobo. Gozd ima zato **plasti**, ki jih kaže presek.

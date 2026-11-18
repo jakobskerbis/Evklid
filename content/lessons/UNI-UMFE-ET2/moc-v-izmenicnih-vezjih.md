@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -180,7 +180,7 @@ $P = \dfrac{U_g^2 R_\mathrm{L}}{(R_g + R_\mathrm{L})^2 + X_g^2}$, $\dfrac{\mathr
 :::premisli
 Kolikšna sta tok in moč?
 ---
-$I = 12 / 17{,}89 \approx 0{,}671\,\mathrm A$, $P = 0{,}671^2 \cdot 10 \approx 4{,}5\,\mathrm W$. To je $75\,\%$ največje moči $6\,\mathrm W$: brez kompenzacije reaktance vira breme ne dobi vse moči.
+$I = 12 / 17{,}89 \approx 0{,}671\,\mathrm{A}$, $P = 0{,}671^2 \cdot 10 \approx 4{,}5\,\mathrm{W}$. To je $75\,\%$ največje moči $6\,\mathrm{W}$: brez kompenzacije reaktance vira breme ne dobi vse moči.
 :::
 
 ## Pogoste napake

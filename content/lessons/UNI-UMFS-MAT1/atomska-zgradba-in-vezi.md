@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -90,7 +90,7 @@ podnapis: Kovalentna: par med dvema atomoma. Ionska: sosedi so nasprotni. Kovins
 :::premisli
 Kovalentna vez je pri diamantu zelo močna. Napovej: ali je diamant zaradi tega tudi težko zlomiti z udarcem kladiva?
 ---
-Ne. Diamant je zelo trd (težko ga razi), a krhek. Usmerjene vezi ne dovolijo, da bi plast atomov zdrsnila na novo mesto. Ob prevelikem udarcu se vezi pretrgajo naenkrat in kristal poči. Trdota in žilavost nista isto.
+Ne. Diamant je zelo trd (težko ga je raziti), a krhek. Usmerjene vezi ne dovolijo, da bi plast atomov zdrsnila na novo mesto. Ob prevelikem udarcu se vezi pretrgajo naenkrat in kristal poči. Trdota in žilavost nista isto.
 :::
 
 **5. Iz vezi do lastnosti.** Lastnosti sledijo iz dveh vprašanj: *ali so elektroni prosti* in *ali je vez usmerjena*.

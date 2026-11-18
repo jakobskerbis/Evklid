@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -205,7 +205,7 @@ Jablani so poleti okrog debla odstranili ozek pas skorje z ličjem, les je ostal
 2. (a) Ne drži. Voda in mineralne snovi potujejo po ksilemu od korenin navzgor, ta pot ni prekinjena, zato listi še naprej dobivajo vodo.
 3. (b) Drži. Poleti so zreli listi vir, korenine pa ponor. Sladkor potuje po floemu, ki je prekinjen, zato do korenin ne pride.
 4. Posledica: korenine porabijo zaloge in odmrejo; nato drevo ne more več črpati vode in propade tudi nadzemni del. Propad je zato počasen.
-5. (c) Drži. Spomladi so vir založne korenine, ponor pa brsti. Sladkor gre po floemu navzgor, obroč to pot prekine, zato brsti nad njim ne dobijo zalog iz korenin. Ostanejo jim le zaloge v vejah nad obročem, zato odganjajo slabše.
+5. (c) Drži. Spomladi so vir založne korenine, ponor pa brsti. Sladkor gre po floemu navzgor, obroč to pot prekine, zato brsti nad njim ne dobijo zalog iz korenin. Ostanejo jim zaloge v vejah nad obročem in tisti del zalog, ki pri drevesih spomladi potuje navzgor s ksilemskim sokom, zato odganjajo slabše, a ne propadejo.
 6. Sklep: smer floemskega toka določata vir in ponor, ne težnost. Isti obroč poleti prizadene korenine, spomladi pa brste.
 
 ## Drugače: Na sliki

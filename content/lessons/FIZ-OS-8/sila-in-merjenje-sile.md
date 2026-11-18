@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -47,7 +47,7 @@ $15\,\mathrm{cm}$. Vsaka utež doda $3\,\mathrm{cm}$, pet uteži pa $5 \cdot 3\,
 
 **7. Vzmetna tehtnica (silomer).** Na tem pravilu je zgrajen merilnik sile, ki mu pravimo **vzmetna tehtnica** ali **silomer**. V ohišju je vzmet, na njej kavelj, ob vzmeti lestvica. Ko na kavelj deluje sila, se vzmet raztegne in kazalec se premakne. Ker je raztezek sorazmeren s silo, so oznake $1\,\mathrm{N}$, $2\,\mathrm{N}$, $3\,\mathrm{N}$ … enako narazen. Lestvica je enakomerna.
 
-V simulaciji spodaj »Vzmet in silomer« nastavi maso uteži na $100\,\mathrm{g}$, nato na $200\,\mathrm{g}$ in $300\,\mathrm{g}$. Opazuj, ali se raztezek ob vsakem koraku poveča za enako dolžino.
+V simulaciji spodaj »Vzmet in silomer« nastavi maso uteži na $100\,\mathrm{g}$, nato na $200\,\mathrm{g}$ in $300\,\mathrm{g}$. Opazuj, ali se raztezek ob vsakem koraku poveča za enako dolžino (izpis je zaokrožen, zato se prirastka lahko razlikujeta za desetinko centimetra).
 
 **8. Kako pravilno merimo s silomerom.**
 

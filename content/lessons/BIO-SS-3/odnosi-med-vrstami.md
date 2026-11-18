@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -49,7 +49,7 @@ V šolskih učbenikih beseda simbioza najpogosteje pomeni tak tesen mutualizem. 
 
 V simulaciji spodaj (Odnosi med vrstami) razvrsti primere v štiri skupine. Pozorno poglej primer »klop sesa kri srne«: znaka sta enaka kot pri plenilstvu. Opazi, po čem ga vseeno ločiš: po tem, ali drugi organizem preživi.
 
-**Ločevanje niš.** Iz teme o ekološki niši veš, da vrsti z enako nišo tekmujeta in da je uresničena niša ožja od temeljne. Kaj se zgodi, če tekmovanje traja zelo dolgo? V znanem poskusu sta v isti posodi z isto hrano živeli dve vrsti migetalkarjev iz rodu *Paramecium* (copatkarji). Čez nekaj tednov je ena vrsta drugo popolnoma izpodrinila. Temu pravimo **načelo izključevanja tekmecev**: dve vrsti z enako nišo ne moreta dolgo živeti skupaj.
+**Ločevanje niš.** Iz teme o ekološki niši veš, da vrsti z enako nišo tekmujeta in da je uresničena niša ožja od temeljne. Kaj se zgodi, če tekmovanje traja zelo dolgo? V znanem poskusu sta v isti posodi z isto hrano živeli dve vrsti migetalkarjev iz rodu *Paramecium* (parameciji). Čez nekaj tednov je ena vrsta drugo popolnoma izpodrinila. Temu pravimo **načelo izključevanja tekmecev**: dve vrsti z enako nišo ne moreta dolgo živeti skupaj.
 
 Vrste, ki vseeno živijo skupaj, si vir razdelijo. To je **ločevanje niš**. V gozdovih Severne Amerike več vrst drobnih ptic pevk lovi žuželke na istih smrekah, vsaka pa večinoma v svojem delu krošnje: ena na vrhu, druga na zunanjih vejah, tretja nižje ob deblu. V marsovskem rastlinjaku bi isto naredil načrtovalec: visok paradižnik z globokimi koreninami in nizko solato s plitvimi koreninami pod njim.
 

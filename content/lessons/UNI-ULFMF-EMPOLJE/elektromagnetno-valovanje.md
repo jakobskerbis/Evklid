@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -332,7 +332,7 @@ $$r_s = \frac{n_1\cos\alpha - n_2\cos\beta}{n_1\cos\alpha + n_2\cos\beta}, \qqua
 
 Odbojnost je $R = r^2$. Pri $\alpha = 0$ obe dasta formulo iz Razlage. Koeficient $r_p$ je nič, ko je $n_2\cos\alpha = n_1\cos\beta$; skupaj z lomnim zakonom to da $\alpha + \beta = 90^\circ$ in $\tan\alpha_B = n_2/n_1$ – Brewstrov kot. Pri vpadu skoraj vzporedno s površino gre $R$ za obe polarizaciji proti $1$, zato se tudi mat površine pod zelo položnim kotom svetijo.
 
-**Evanescentno valovanje.** Pri totalnem odboju polje za mejo ne izgine povsem: v redkejši snovi ostane val, ki eksponentno pojema z razdaljo od meje na globini nekaj desetin valovne dolžine in v povprečju ne prenaša energije. Če na to razdaljo približamo drugo gostejšo snov, se del svetlobe prebije (oslabljeni totalni odboj). To izkoriščajo mikroskopija TIRF, ki osvetli le tanko plast celice ob steklu, in spektroskopija ATR.
+**Evanescentno valovanje.** Pri totalnem odboju polje za mejo ne izgine povsem: v redkejši snovi ostane val, ki eksponentno pojema z razdaljo od meje na globini nekaj desetin valovne dolžine in v povprečju ne prenaša energije. Če na to razdaljo približamo drugo gostejšo snov, se del svetlobe prebije (moteni oziroma frustrirani totalni odboj). To izkoriščajo mikroskopija TIRF, ki osvetli le tanko plast celice ob steklu, in spektroskopija ATR.
 
 **Valovanje v prevodniku.** V snovi s specifično prevodnostjo $\sigma_e$ val pojema z globino; pri dobrih prevodnikih je značilna globina (kožni pojav) $\delta = \sqrt{2/(\mu_0\sigma_e\omega)}$. Za baker pri $50\,\mathrm{Hz}$ je okoli $9\,\mathrm{mm}$, pri $1\,\mathrm{GHz}$ le okoli $2\,\mathrm{\mu m}$ – zato kovinski oklop zaduši mikrovalove in zato kovine dobro odbijajo svetlobo.
 

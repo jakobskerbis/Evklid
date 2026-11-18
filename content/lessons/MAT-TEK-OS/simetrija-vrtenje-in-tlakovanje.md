@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -30,7 +30,7 @@ Krog ima neskončno osi: vsaka premica skozi središče je os.
 :::premisli
 Zakaj diagonala pravokotnika, ki ni kvadrat, ni njegova os simetrije? Napovej, preden pogledaš.
 ---
-Pri zrcaljenju čez diagonalo bi se daljša stranica preslikala na premico, po kateri teče krajša stranica. Ker nista enako dolgi, se slika ne prekrije s pravokotnikom. Pri kvadratu sta stranici enaki, zato je tam diagonala os.
+Oglišči na diagonali pri zrcaljenju čez diagonalo ostaneta na mestu. Daljša stranica iz takega oglišča bi se zato morala preslikati na krajšo stranico iz istega oglišča. Zrcaljenje dolžine ohranja, stranici pa nista enako dolgi, zato se slika ne prekrije s pravokotnikom. Pri kvadratu sta stranici enaki, zato je tam diagonala os.
 :::
 
 **3. Vrtenje.** Izberemo **središče vrtenja** $O$ in kot $\alpha$. Vsaka točka $P$ se premakne po krožnici s središčem $O$, tako da je $|OP'| = |OP|$ in $\angle POP' = \alpha$. Središče ostane na mestu. Pri vrtenju je slika skladna z likom in **orientacija ostane enaka**. Vrtenje za $180^\circ$ se imenuje **središčna simetrija**: $O$ je takrat razpolovišče daljice $PP'$.
@@ -46,7 +46,7 @@ V simulaciji spodaj (Zrcaljenje in vrtenje) izberi »Navpična os« in poglej, v
 :::premisli
 Lik ima dve osi simetrije, ki se sekata pod kotom $45^\circ$. Kateri lik iz tabele zgoraj bi to lahko bil? Pomagaj si s pravilom o dvakratnem zrcaljenju.
 ---
-Za $2 \cdot 45^\circ = 90^\circ$. Primer je kvadrat: diagonala in srednjica (simetrala stranice) oklepata kot $45^\circ$, kvadrat pa se prekrije pri zasuku za $90^\circ$.
+Lik se sme zasukati za $2 \cdot 45^\circ = 90^\circ$. Primer je kvadrat: diagonala in srednjica (simetrala stranice) oklepata kot $45^\circ$, kvadrat pa se prekrije pri zasuku za $90^\circ$.
 :::
 
 **5. Tlakovanje.** Ravnino **tlakujemo**, ko jo pokrijemo z liki brez vrzeli in brez prekrivanja. Ključ je v oglišču: koti, ki se stikajo v eni točki, dajo skupaj natanko $360^\circ$. Notranji kot pravilnega $n$-kotnika je $\dfrac{(n-2) \cdot 180^\circ}{n}$. Zato ravnino z enim samim pravilnim likom pokrijejo le trikotniki ($6 \cdot 60^\circ$), kvadrati ($4 \cdot 90^\circ$) in šestkotniki ($3 \cdot 120^\circ$). Pravilni petkotnik ima kot $108^\circ$, kar ne deli $360^\circ$.

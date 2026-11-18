@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -55,7 +55,7 @@ napis: 5; 0,3 | micelij iz hif | sredina
 :::
 
 :::premisli
-Na rezini kruha vidiš zeleno plesen le v enem kotu. Napovej: ali je ostanek rezine varen za jesti? Zakaj?
+Na rezini kruha vidiš zeleno plesen le v enem kotu. Napovej: ali je varno pojesti ostanek rezine? Zakaj?
 ---
 Ni. Vidni so le trosi na površini. Hife micelija so neopazno prerasle mehak kruh daleč od pege in lahko izločajo strupe, **mikotoksine**. Mehko plesnivo hrano zato zavržemo v celoti.
 :::

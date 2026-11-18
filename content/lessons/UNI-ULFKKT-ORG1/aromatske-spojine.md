@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -57,7 +57,7 @@ Nastane ciklopentadienidni anion, ki je aromatski. Ogljik, ki je bil $sp^3$, pos
 
 ### Nazaj k Ninini nalogi: zakaj substitucija in ne adicija
 
-Elektrofil $\text{E}^+$ napade oblak $\pi$ benzena podobno kot pri alkenih. Pri tem nastane karbokation, imenovan **areniumski ion** (kompleks $\sigma$). Pozitivni naboj je delokaliziran na treh ogljikih (orto, para glede na mesto napada), a aromatičnost je izgubljena, zato je ta korak počasen in določa hitrost. Nato ima ion dve možnosti:
+Elektrofil $\text{E}^+$ napade oblak $\pi$ benzena podobno kot pri alkenih. Pri tem nastane karbokation, imenovan **arenijev ion** (kompleks $\sigma$). Pozitivni naboj je delokaliziran na treh ogljikih (orto, para glede na mesto napada), a aromatičnost je izgubljena, zato je ta korak počasen in določa hitrost. Nato ima ion dve možnosti:
 
 - adira nukleofil, kot pri alkenih: produkt ni več aromatski, kar bi stalo okoli $150\,\text{kJ/mol}$;
 - odda proton z ogljika, na katerega se je vezal E: aromatski obroč se obnovi.
@@ -84,13 +84,13 @@ Alkil obroč aktivira, zato pri alkiliranju nastajajo tudi polialkilirani produk
 
 ### Drugi substituent: kako hitro in kam
 
-Skupina, ki je že na obroču, odloči, kako hitro poteče naslednja substitucija in kam gre nova skupina. Skupina je **aktivirajoča**, če je substitucija na substituiranem benzenu hitrejša kot na benzenu, in **deaktivirajoča**, če je počasnejša. Odloča stabilnost areniumskega iona:
+Skupina, ki je že na obroču, odloči, kako hitro poteče naslednja substitucija in kam gre nova skupina. Skupina je **aktivirajoča**, če je substitucija na substituiranem benzenu hitrejša kot na benzenu, in **deaktivirajoča**, če je počasnejša. Odloča stabilnost arenijevega iona:
 
 - **Aktivirajoče skupine** ($-\text{OH}$, $-\text{OR}$, $-\text{NH}_2$, alkil) dajejo obroču elektrone. Pri napadu na orto ali para mesto pride pozitivni naboj na ogljik s to skupino, ki ga stabilizira (pri $-\text{OH}$ celo z neveznim parom kisika). Usmerjajo **orto/para**, reakcija je hitrejša kot pri benzenu.
 - **Deaktivirajoče skupine** ($-\text{NO}_2$, $-\text{CN}$, $-\text{CHO}$, $-\text{COR}$, $-\text{COOH}$, $-\text{SO}_3\text{H}$) elektrone odvzemajo. Pri orto/para napadu bi pozitivni naboj sedel tik ob skupini, ki ga ne prenese. Ostane **meta**, reakcija je počasnejša.
 - **Halogeni** so izjema: z induktivnim učinkom obroč deaktivirajo, z neveznim parom pa stabilizirajo orto/para ion. Usmerjajo **orto/para**, a je reakcija počasnejša kot pri benzenu.
 
-**Utemeljitev usmerjanja.** Naj bo skupina G na C1. Narišemo resonančne strukture areniumskega iona za napad na C2 (orto), C3 (meta) in C4 (para).
+**Utemeljitev usmerjanja.** Naj bo skupina G na C1. Narišemo resonančne strukture arenijevega iona za napad na C2 (orto), C3 (meta) in C4 (para).
 1. Pozitivni naboj je vedno na ogljikih v orto in para položaju glede na mesto napada.
 2. Pri napadu na C2 ali C4 je zato v eni strukturi naboj na C1, ki nosi G; pri napadu na C3 nikoli.
 3. Donor (alkil, nevezni par) to strukturo stabilizira, pri $-\text{OH}$ celo z dodatno strukturo $\text{C{=}O}^+\text{H}$, v kateri imajo vsi atomi oktet. Akceptor jo destabilizira.
@@ -99,7 +99,7 @@ Skupina, ki je že na obroču, odloči, kako hitro poteče naslednja substitucij
 :::premisli
 Pri nitrobenzenu so vsi trije položaji počasnejši kot pri benzenu. Napovej, kateri kljub temu prevlada pri nadaljnjem nitriranju, in pojasni, zakaj. Namig: kakšen naboj nosi dušik v $-\text{NO}_2$?
 ---
-Ker je meta napad »najmanj slab«. Pri orto in para napadu ena resonančna struktura areniumskega iona postavi pozitivni naboj na ogljik, vezan na $-\text{NO}_2$, ki ima tudi sam pozitivni dušik. Pri meta napadu se tej strukturi izogne, zato je meta ion najmanj nestabilen in nastaja najhitreje.
+Ker je meta napad »najmanj slab«. Pri orto in para napadu ena resonančna struktura arenijevega iona postavi pozitivni naboj na ogljik, vezan na $-\text{NO}_2$, ki ima tudi sam pozitivni dušik. Pri meta napadu se tej strukturi izogne, zato je meta ion najmanj nestabilen in nastaja najhitreje.
 :::
 
 ## Rešeni primeri
@@ -136,7 +136,7 @@ $\text{ArH} + \text{E}^+ \to [\text{Ar(H)E}]^+ \to \text{ArE} + \text{H}^+$
 **Rešitev:**
 
 1. Nastanek elektrofila: $\text{FeBr}_3$ sprejme par z enega broma. Vez Br–Br se polarizira, zunanji brom postane $\text{Br}^{\delta+}$. To je potrebno, ker je sam brom za benzen prešibak elektrofil.
-2. Napad: par $\pi$ benzena napade $\text{Br}^{\delta+}$, nastaneta areniumski ion in $\text{FeBr}_4^-$. Aromatičnost se začasno izgubi, zato je to počasni korak.
+2. Napad: par $\pi$ benzena napade $\text{Br}^{\delta+}$, nastaneta arenijev ion in $\text{FeBr}_4^-$. Aromatičnost se začasno izgubi, zato je to počasni korak.
 3. Deprotonacija: $\text{FeBr}_4^-$ odvzame proton z ogljika, ki nosi brom. Obroč je spet aromatski, nastaneta $\text{HBr}$ in spet $\text{FeBr}_3$, torej je ta res katalizator.
 4. Odgovor: nastane bromobenzen ($\text{C}_6\text{H}_5\text{Br}$) in $\text{HBr}$; obroč ostane aromatski.
 
@@ -175,7 +175,7 @@ $-\text{OR}$: aktivirajoča skupina, usmerja orto/para.
 **Rešitev:**
 
 1. Elektrofil je nitronijev ion $\text{NO}_2^+$, ki nastane iz $\text{HNO}_3$ v močni kislini.
-2. Kisik skupine $-\text{OCH}_3$ ima nevezni par, ki stabilizira areniumski ion pri orto in para napadu.
+2. Kisik skupine $-\text{OCH}_3$ ima nevezni par, ki stabilizira arenijev ion pri orto in para napadu.
 3. Zapiši produkta in hitrost sam, nato preveri:
 
 :::premisli
@@ -196,7 +196,7 @@ Nastaneta 2-nitroanizol (orto) in 4-nitroanizol (para); para pogosto prevladuje,
 - Aromatska spojina je ciklična, ravna, s sklenjenim sistemom orbital $p$ in $4n + 2$ elektroni $\pi$ ($2, 6, 10$ …); s $4n$ elektroni je antiaromatska.
 - Benzen je za okoli $150\,\text{kJ/mol}$ stabilnejši od »cikloheksatriena«; vse vezi C–C so enake ($139\,\text{pm}$).
 - Nevezni par šteje le, če je v orbitali $p$ kroga (pirol da, piridin ne); $\text{C}^+$ prispeva $0$, $\text{C}^-$ $2$ elektrona.
-- Elektrofilna aromatska substitucija: nastanek $\text{E}^+$, počasni napad do areniumskega iona, hitra deprotonacija, ki obnovi aromatičnost.
+- Elektrofilna aromatska substitucija: nastanek $\text{E}^+$, počasni napad do arenijevega iona, hitra deprotonacija, ki obnovi aromatičnost.
 - Reakcije: halogeniranje ($\text{FeX}_3$), nitriranje ($\text{NO}_2^+$), sulfoniranje, Friedel-Craftsovo alkiliranje (premestitve) in aciliranje.
 - Aktivirajoče skupine in halogeni usmerjajo orto/para, ostale deaktivirajoče skupine meta; v sintezi je vrstni red korakov pomemben.
 
@@ -207,7 +207,7 @@ Znati moraš povedati:
 - definicije aromatske, antiaromatske in nearomatske spojine (Hücklovo pravilo z vsemi pogoji) in utemeljitev pravila $4n + 2$ s teorijo MO;
 - izpeljavo resonančne stabilizacije benzena iz hidrogenacijskih entalpij in delokalizacijske energije $2\beta$;
 - mehanizem elektrofilne aromatske substitucije in nastanek elektrofila v petih osnovnih reakcijah;
-- definicijo aktivirajoče in deaktivirajoče skupine ter utemeljitev usmerjanja z resonančnimi strukturami areniumskega iona;
+- definicijo aktivirajoče in deaktivirajoče skupine ter utemeljitev usmerjanja z resonančnimi strukturami arenijevega iona;
 - omejitve Friedel-Craftsovega alkiliranja (premestitve, polialkiliranje, deaktivirani obroči).
 
 ### Naloga 1
@@ -266,8 +266,8 @@ Benzen je od strani kot miza s šestimi ogljiki; orbitale $p$ štrlijo kot ročk
 - Ker benzen nima dvojnih vezi.
 ~ Elektroni $\pi$ so prisotni, le delokalizirani. Napad elektrofila na oblak $\pi$ se res zgodi.
 - Ker $\text{FeBr}_3$ prepreči nastanek karbokationa.
-~ $\text{FeBr}_3$ ustvari elektrofil; karbokation (areniumski ion) vseeno nastane kot vmesni produkt.
-+ Ker oddaja protona iz areniumskega iona obnovi aromatičnost, adicija pa bi jo trajno uničila.
+~ $\text{FeBr}_3$ ustvari elektrofil; karbokation (arenijev ion) vseeno nastane kot vmesni produkt.
++ Ker oddaja protona iz arenijevega iona obnovi aromatičnost, adicija pa bi jo trajno uničila.
 > Substitucijski produkt ohrani okoli $150\,\text{kJ/mol}$ aromatske stabilizacije, zato je ta pot ugodnejša.
 
 ? Klorobenzen reagira z nitrirno zmesjo. Kaj velja?

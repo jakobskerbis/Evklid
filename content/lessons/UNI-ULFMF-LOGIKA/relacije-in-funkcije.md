@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -297,5 +297,5 @@ x_1, x_2 | elementa domene funkcije f
 y | element kodomene
 m, k | celi števili | | | 3 deli m natanko tedaj, ko je m = 3k
 q | količnik pri deljenju s 3 (v nalogi 1 za izpit s 5)
-r | ostanek pri deljenju s 3 (v nalogi 1 za izpit s 5) | r = x - 3q | | r ∈ {0, 1, 2}; pri deljenju s 5 je r = x - 5q, r ∈ {0, 1, 2, 3, 4}
+r | ostanek pri deljenju s 3 (v nalogi 1 za izpit s 5) | r = x - 3q | | r ∈ {0, 1, 2}; pri deljenju s 5 je r = x − 5q, r ∈ {0, 1, 2, 3, 4}
 :::

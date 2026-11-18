@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -76,7 +76,7 @@ Pri spojinah z dvojnimi vezmi pride v poštev še **stereodeskriptor** *(E)* ali
 :::premisli
 Spojino $\mathrm{CH_3{-}CH{=}CH{-}CH(OH){-}CH_3}$ lahko oštevilčiš z leve ali z desne: enkrat dobi nižji lokant dvojna vez, drugič skupina OH. Je pravilno *pent-2-en-4-ol* ali *pent-3-en-2-ol*?
 ---
-Najnižji lokant dobi najprej glavna skupina ($\mathrm{{-}OH}$), šele nato dvojna vez.
+Pravilno je *pent-3-en-2-ol*. Najnižji lokant dobi najprej glavna skupina ($\mathrm{{-}OH}$), šele nato dvojna vez.
 :::
 
 **7. Splošna formula in stopnja nenasičenosti.** Iz imena izračunamo formulo, iz formule pa preverimo ime.

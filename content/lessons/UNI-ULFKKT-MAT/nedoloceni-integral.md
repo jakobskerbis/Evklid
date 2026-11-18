@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -186,7 +186,7 @@ $\frac{r(x)}{(x - a)(x^2 + px + q)} = \frac{A}{x - a} + \frac{Bx + C}{x^2 + px +
 5. Prvi člen: $\int \frac{dx}{x - 1} = \ln|x - 1|$.
 6. Drugi člen razdelimo na odvod imenovalca in konstanto: $x + 3 = \frac12(2x + 2) + 2$, zato $\int \frac{x + 3}{x^2 + 2x + 5}\, dx = \frac12\ln(x^2 + 2x + 5) + 2\int \frac{dx}{(x + 1)^2 + 4}$.
 7. S $t = x + 1$: $2\int \frac{dt}{t^2 + 2^2} = 2 \cdot \frac12 \arctan\frac t2 = \arctan\frac{x + 1}{2}$.
-8. Odgovor: $\int \frac{2x^2 + 4x + 2}{(x - 1)(x^2 + 2x + 5)}\, dx = \ln|x - 1| + \frac12\ln(x^2 + 2x + 5) + \arctan\frac{x + 1}{2} + C$ (absolutna vrednost pri drugem logaritmu ni potrebna, ker je $x^2 + 2x + 5 > 0$).
+8. Odgovor: $\int \frac{2x^2 + 4x + 2}{(x - 1)(x^2 + 2x + 5)}\, dx = \ln|x - 1| + \frac12\ln(x^2 + 2x + 5) + \arctan\frac{x + 1}{2} + C$ (tu je $C$ spet integracijska konstanta, ne koeficient iz nastavka; absolutna vrednost pri drugem logaritmu ni potrebna, ker je $x^2 + 2x + 5 > 0$).
 
 ## Pogoste napake
 
@@ -226,8 +226,8 @@ Poišči tisto primitivno funkcijo $F$ funkcije $f(x) = \dfrac{2x^3 + 2x^2 + x +
 2. Nastavek: $\frac{2x^3 + 2x^2 + x + 1}{x^2(x^2 + 1)} = \frac Ax + \frac{B}{x^2} + \frac{Cx + D}{x^2 + 1}$, torej $2x^3 + 2x^2 + x + 1 = Ax(x^2 + 1) + B(x^2 + 1) + (Cx + D)x^2$.
 3. Primerjamo koeficiente: $x^3$: $A + C = 2$; $x^2$: $B + D = 2$; $x$: $A = 1$; prosti člen: $B = 1$. Torej $A = B = C = D = 1$.
 4. Integriramo člen za členom: $\int \frac{dx}{x} = \ln x$ (na $(0, \infty)$), $\int \frac{dx}{x^2} = -\frac1x$, $\int \frac{x\, dx}{x^2 + 1} = \frac12\ln(x^2 + 1)$, $\int \frac{dx}{x^2 + 1} = \arctan x$.
-5. $F(x) = \ln x - \frac1x + \frac12\ln(x^2 + 1) + \arctan x + C$.
-6. Pogoj: $F(1) = 0 - 1 + \frac12\ln 2 + \frac\pi4 + C = 0$, torej $C = 1 - \frac12\ln 2 - \frac\pi4 \approx -0{,}132$.
+5. $F(x) = \ln x - \frac1x + \frac12\ln(x^2 + 1) + \arctan x + K$ (integracijsko konstanto pišemo $K$, ker je $C$ že koeficient v nastavku).
+6. Pogoj: $F(1) = 0 - 1 + \frac12\ln 2 + \frac\pi4 + K = 0$, torej $K = 1 - \frac12\ln 2 - \frac\pi4 \approx -0{,}132$.
 7. Odgovor: $F(x) = \ln x - \frac1x + \frac12\ln(x^2 + 1) + \arctan x + 1 - \frac12\ln 2 - \frac\pi4$. Ker je $(0, \infty)$ interval, je ta $F$ po izreku o konstanti ena sama.
 
 ### Naloga 2

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -220,7 +220,7 @@ Eno vrstico: `SUM(kolicina)` je $8 + 40 = 48$ desk, `COUNT(*)` pa $2$ (dva proje
 ## Pogoste napake
 
 - **Agregat v WHERE.** Napišeš `WHERE SUM(kolicina) > 20`, ker »pogoj je pogoj«. Baza javi napako: `WHERE` dela z vrsticami pred združevanjem, ko vsote še ni. Pogoj na skupino spada v `HAVING`.
-- **JOIN brez pravega pogoja.** Izpustiš `ON` ali napišeš `ON p.material_id = p.material_id`, ker je pogoj »samo formalnost«. Dobiš vse kombinacije vrstic ($7 \cdot 5 = 35$) in vsote so napihnjene. Vedno poveži tuji ključ s primarnim ključem druge tabele.
+- **JOIN brez pravega pogoja.** Napišeš `ON p.material_id = p.material_id`, ker je pogoj »samo formalnost«, ali `ON` izpustiš (MySQL in SQLite to dovolita, drugod je to napaka). Dobiš vse kombinacije vrstic ($7 \cdot 5 = 35$) in vsote so napihnjene. Vedno poveži tuji ključ s primarnim ključem druge tabele.
 - **Stolpec, ki ni ne v GROUP BY ne v agregatu.** `SELECT projekt, naziv, SUM(...) … GROUP BY projekt` se zdi smiseln, a skupina »lopa« ima štiri nazive in baza ne ve, katerega izpisati. V `SELECT` so le stolpci iz `GROUP BY` in agregati.
 - **Besedilo brez narekovajev.** `WHERE projekt = greda` baza razume kot primerjavo s *stolpcem* `greda`, ki ne obstaja. Besedilne vrednosti piši v enojnih narekovajih: `'greda'`.
 

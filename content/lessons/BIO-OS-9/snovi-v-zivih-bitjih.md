@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -33,7 +33,7 @@ Kos kruha, ki ga pozabiš v opekaču, počrni. Kuhinjska sol ali pesek v vroči 
 Kruh je iz organskih snovi (škrob, beljakovine). Vročina razbije njihove molekule, voda in drugi plini uidejo, ostane črn ogljik iz ogrodja. Sol in pesek sta anorganski snovi brez ogljikovih verig, zato ni česa zogleneti.
 :::
 
-**Voda in soli.** Obe najdeš tudi v neživi naravi: v rekah, morju in kamninah. Živa bitja ju sprejmejo iz okolja. Voda je največji del telesa: pri človeku približno $60\,\%$ mase, v listu ali gobi tudi $90\,\%$. V njej se raztapljajo druge snovi, z njo kri in rastlinski sok prenašata snovi po telesu, s potenjem pa se ohlajamo.
+**Voda in soli.** Oboje najdeš tudi v neživi naravi: v rekah, morju in kamninah. Živa bitja oboje sprejmejo iz okolja. Voda je največji del telesa: pri človeku približno $60\,\%$ mase, v listu ali gobi tudi $90\,\%$. V njej se raztapljajo druge snovi, z njo kri in rastlinski sok prenašata snovi po telesu, s potenjem pa se ohlajamo.
 
 Soli so v telesu v majhnih količinah, a brez njih ne gre: kalcij gradi kosti in zobe, železo je v krvnem barvilu, magnezij v listnem zelenilu (klorofilu).
 

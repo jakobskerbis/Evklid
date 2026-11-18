@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -260,7 +260,7 @@ Omejujoči reaktant si predstavljaj kot sestavljanje koles: vsako kolo potrebuje
 
 **Inženirstvo: zračna blazina.** Ob trku razpade natrijev azid: $\mathrm{2\,NaN_3 \to 2\,Na + 3\,N_2}$. Iz $65{,}0\,\mathrm{g}$ $\mathrm{NaN_3}$ ($M = 65{,}02\,\mathrm{g/mol}$, torej $1{,}000\,\mathrm{mol}$) nastane $1{,}500\,\mathrm{mol}$ dušika, pri $25\,^\circ\mathrm{C}$ in $100\,\mathrm{kPa}$ okoli $37{,}2\,\mathrm{L}$. Premalo azida pomeni mehko blazino, preveč nevarno trdo.
 
-**Fiziologija in klinična prehrana.** Pri popolni oksidaciji glukoze (Primer 1) se za vsak mol porabi $6\,\mathrm{mol}$ $\mathrm{O_2}$ in nastane $6\,\mathrm{mol}$ $\mathrm{CO_2}$. Razmerje $n(\mathrm{CO_2})/n(\mathrm{O_2})$, **respiracijski koeficient**, je za ogljikove hidrate $1$, za maščobe okoli $0{,}7$; z merjenjem v izdihanem zraku (posredna kalorimetrija) ocenijo, kaj telo porablja.
+**Fiziologija in klinična prehrana.** Pri popolni oksidaciji glukoze (Primer 1) se za vsak mol porabi $6\,\mathrm{mol}$ $\mathrm{O_2}$ in nastane $6\,\mathrm{mol}$ $\mathrm{CO_2}$. Razmerje $n(\mathrm{CO_2})/n(\mathrm{O_2})$, **respiracijski kvocient**, je za ogljikove hidrate $1$, za maščobe okoli $0{,}7$; z merjenjem v izdihanem zraku (posredna kalorimetrija) ocenijo, kaj telo porablja.
 
 **Agronomija.** Za $120\,\mathrm{kg}$ dušika na hektar je pri masnem deležu dušika v $\mathrm{NH_4NO_3}$ $2 \cdot 14{,}01 / 80{,}05 \approx 0{,}35$ treba posuti približno $343\,\mathrm{kg}$ gnojila.
 

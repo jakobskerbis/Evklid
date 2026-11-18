@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -146,7 +146,7 @@ dobra definiranost: iz $(a, b) \sim (a', b')$ sledi $(ad + bc, bd) \sim (a'd + b
 2. Tranzitivnost: naj bo $ad = bc$ in $cf = de$. Prvo enačbo pomnožimo s $f$, drugo z $b$: $adf = bcf = bde$. Torej $d(af - be) = 0$.
 3. Ker je $d \neq 0$ in $\mathbb Z$ nima deliteljev niča, je $af = be$, torej $(a, b) \sim (e, f)$. Tu potrebujemo, da imenovalci niso nič.
 4. Razred: $(x, y) \sim (1, 2) \iff 2x = y$, torej $[(1, 2)] = \{(k, 2k) ;\ k \in \mathbb Z \setminus \{0\}\}$: vsi zapisi ulomka $\frac{1}{2}$.
-5. Dobra definiranost: naj bo $ab' = a'b$. Primerjamo $(ad + bc)\,b'd$ in $(a'd + b'c)\,bd$.
+5. Dobra definiranost: ker je $b \neq 0$ in $d \neq 0$, je $bd \neq 0$, zato par $(ad + bc, bd)$ leži v $A$. Naj bo $ab' = a'b$. Primerjamo $(ad + bc)\,b'd$ in $(a'd + b'c)\,bd$.
 6. Levo: $ab'd^2 + bb'cd$. Desno: $a'bd^2 + bb'cd$. Ker je $ab' = a'b$, sta enaka. Spremembo predstavnika drugega argumenta obravnavamo simetrično.
 7. Odgovor: $\sim$ je ekvivalenca, razredi so racionalna števila, $[(1, 2)]$ so vsi pari $(k, 2k)$, seštevanje je dobro definirano. Tako $\mathbb Q$ zgradimo iz $\mathbb Z$.
 

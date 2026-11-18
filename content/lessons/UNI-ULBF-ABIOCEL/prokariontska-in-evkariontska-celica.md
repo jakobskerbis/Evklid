@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -53,7 +53,7 @@ Dokazi so ti:
 - imata lastno **krožno DNA**, podobno bakterijski;
 - imata ribosome bakterijskega tipa, **$70\mathrm{S}$** (mitohondrijski so pri sesalcih manjši, okoli $55\mathrm{S}$), zato nekateri antibiotiki, ki zavirajo bakterijske ribosome, delno zavirajo tudi mitohondrijske;
 - delita se **z delitvijo na dvoje**, podobno bakterijam, nove pa celica ne more zgraditi sama;
-- po velikosti sta podobna bakterijam, približno $1\,\mu\mathrm{m}$;
+- po velikosti sta podobna bakterijam, od približno $1$ do nekaj $\mu\mathrm{m}$;
 - zaporedja njunih genov so najbolj podobna genom določenih bakterij.
 
 :::premisli
@@ -196,7 +196,7 @@ Natančno navedi endosimbiontsko teorijo in dokaze zanjo. Pri vsakem dokazu utem
 3. Lastna krožna DNA: taka je značilna za prokarionte, v jedru pa so kromosomi linearni in s histoni.
 4. Ribosomi bakterijskega tipa $70\mathrm{S}$ (pri sesalcih okoli $55\mathrm{S}$), v citosolu iste celice pa $80\mathrm{S}$. Zato nekateri antibiotiki, ki zavirajo bakterijske ribosome, delno zavirajo tudi mitohondrijske.
 5. Delitev na dvoje: organela nastaneta le iz obstoječih, tako kot bakterije; celica novega ne more zgraditi sama.
-6. Velikost okoli $1\,\mu\mathrm{m}$, enaka kot pri bakterijah.
+6. Velikost od okoli $1$ do nekaj $\mu\mathrm{m}$, podobna kot pri bakterijah.
 7. Zaporedja genov so najbolj podobna genom določenih bakterij, ne genom v jedru iste celice. To je najmočnejši dokaz, ker podobnosti zaporedij ne razloži nič drugega kot skupen izvor.
 8. Mitohondrij danes ni prokariont in ni samostojen organizem. Večina genov prvotne bakterije se je preselila v jedro gostiteljice, zato večino beljakovin dobi iz citosola in zunaj celice ne preživi.
 

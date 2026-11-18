@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -77,7 +77,7 @@ Si na mrazu in telesna temperatura začne padati. Napovej, kaj naredi ista zanka
 Receptorji v koži zaznajo padec, hipotalamus sproži drgetanje: mišice se hitro krčijo in pri tem grejejo telo. Odziv spet deluje nasprotno od spremembe, zato temperatura naraste proti $37\,\mathrm{°C}$. Zato zanki rečemo »negativna«: ne pomeni »slaba«, ampak »v nasprotni smeri«.
 :::
 
-**6. Enoceličnost.** Enocelični organizem reši vse probleme z eno celico. **Copatkar** v sladki vodi ima migetalke za gibanje, celična usta in prebavne vakuole za hrano. Iz okolja vanj stalno vdira voda, zato ima **krčljivo vakuolo**, ki to vodo sproti črpa ven. **Ameba** se premika in lovi hrano s panožkami, izrastki citoplazme, ki jih izteguje proti plenu. Enoceličar ostane majhen, saj mu razmerje $P/V$ ne dovoli zrasti.
+**6. Enoceličnost.** Enocelični organizem reši vse probleme z eno celico. **Paramecij** v sladki vodi ima migetalke za gibanje, celična usta in prebavne vakuole za hrano. Iz okolja vanj stalno vdira voda, zato ima **krčljivo vakuolo**, ki to vodo sproti črpa ven. **Ameba** se premika in lovi hrano s panožkami, izrastki citoplazme, ki jih izteguje proti plenu. Enoceličar ostane majhen, saj mu razmerje $P/V$ ne dovoli zrasti.
 
 **7. Večceličnost in diferenciacija.** Večcelični organizem je zgrajen iz mnogo majhnih celic, zato ima vsaka dovolj membrane. Celice si razdelijo delo. Ta proces se imenuje **diferenciacija**: celice dobijo posebno obliko in nalogo (mišične se krčijo, živčne prenašajo signale, črevesne vsrkavajo hrano). Vse imajo iste gene, a vsaka uporablja drugačen del. Podobne celice tvorijo **tkivo**, tkiva **organ**, organi **organski sistem**.
 
@@ -150,7 +150,7 @@ $\dfrac{600\,000}{60\,000} = 10$, torej desetkrat več. Kot pri siru, narezanem 
 - **»Večja celica je boljša, ker ima več prostora.«** Prostornina raste hitreje od površine. Pri večji celici pride na vsak del citoplazme manj membrane, zato je oskrba slabša.
 - **»Negativna povratna zanka je škodljiva.«** Beseda »negativna« opisuje smer: odziv nasprotuje spremembi. Prav ta zanka ohranja temperaturo in sladkor v krvi.
 - **»Rastline ne dihajo, ker imajo fotosintezo.«** Fotosinteza izdela hrano, celično dihanje pa iz nje sprosti energijo. Rastline dihajo v vseh celicah, podnevi in ponoči.
-- **»Enoceličarji so preprosti in ne rešujejo vseh problemov.«** Copatkar mora sam jesti, se gibati, izločati vodo in se razmnoževati. Za vsako nalogo ima svoj organel.
+- **»Enoceličarji so preprosti in ne rešujejo vseh problemov.«** Paramecij mora sam jesti, se gibati, izločati vodo in se razmnoževati. Za vsako nalogo ima svoj organel.
 - **»Diferencirane celice imajo različne gene.«** Vse celice telesa imajo enake gene. Razlikujejo se po tem, katere gene uporabljajo.
 
 ## Povzetek
@@ -160,11 +160,11 @@ $\dfrac{600\,000}{60\,000} = 10$, torej desetkrat več. Kot pri siru, narezanem 
 - Avtotrofi hrano izdelajo, heterotrofi jo jemljejo. Vsi energijo sprostijo s celičnim dihanjem (ATP).
 - Homeostaza je ohranjanje stalnega notranjega okolja. Vzdržuje jo negativna povratna zanka: receptor, center, efektor, odziv nasprotuje spremembi.
 - Za kocko $\dfrac{P}{V} = \dfrac{6}{a}$: večja celica ima manj membrane na enoto prostornine, zato celice ostanejo majhne.
-- Enoceličar reši vse z eno celico (copatkar, ameba). Večceličar ima mnogo celic, ki se diferencirajo v tkiva, organe in organske sisteme.
+- Enoceličar reši vse z eno celico (paramecij, ameba). Večceličar ima mnogo celic, ki se diferencirajo v tkiva, organe in organske sisteme.
 
 ## Drugače: Z analogijo
 
-Copatkar je kot prodajalec na stojnici na tržnici. Sam nabavi blago, ga prodaja, pospravlja in šteje denar. Vse dela sam, zato je stojnica lahko le majhna.
+Paramecij je kot prodajalec na stojnici na tržnici. Sam nabavi blago, ga prodaja, pospravlja in šteje denar. Vse dela sam, zato je stojnica lahko le majhna.
 
 Večcelični organizem je kot velika trgovska veriga. Blagajničarke delajo le na blagajni, skladiščniki le v skladišču, vozniki le razvažajo. To je diferenciacija. Veriga je lahko ogromna, a nihče v njej ne preživi sam: blagajna brez dostave ostane prazna. Tovornjaki so njen krvni obtok, telefoni in računalniki pa njeni živci.
 
@@ -204,14 +204,14 @@ Homeostaza ni mirovanje, ampak **dinamično ravnovesje**: vrednost stalno niha o
 + organ
 > Podobne celice tvorijo tkivo, več tkiv organ, organi organski sistem, sistemi organizem. Želodec je organ prebavil.
 
-? Kaj se zgodi s copatkarjem v sladki vodi, če mu odpove krčljiva vakuola?
+? Kaj se zgodi s paramecijem v sladki vodi, če mu odpove krčljiva vakuola?
 - Nič, saj ga membrana loči od okolja.
 ~ Membrana je selektivno prepustna in vodo prepušča. Brez črpanja se voda kopiči.
 - Celica se skrči, ker izgubi vodo.
 ~ V sladki vodi je soli manj kot v celici, zato voda vdira v celico, ne iz nje.
 + Voda vdira v celico, ta nabrekne in lahko poči.
-- Copatkar začne delati fotosintezo.
-~ Copatkar nima kloroplastov. Krčljiva vakuola ne skrbi za energijo, ampak za vodo.
+- Paramecij začne delati fotosintezo.
+~ Paramecij nima kloroplastov. Krčljiva vakuola ne skrbi za energijo, ampak za vodo.
 > Krčljiva vakuola sproti črpa vodo, ki vdira v celico. Ko odpove, notranjega okolja ni več mogoče ohraniti.
 
 ? Celica ima obliko kocke z robom $5\,\mu\mathrm{m}$. Kolikšno je razmerje $P/V$?

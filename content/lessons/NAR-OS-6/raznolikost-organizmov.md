@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -53,7 +53,7 @@ Ker za rast ne potrebujejo svetlobe, hrane ne izdelajo s fotosintezo. Hrano vsrk
 
 Večina bakterij ni škodljivih. Mlečnokislinske bakterije iz mleka naredijo jogurt, bakterije v našem črevesju pomagajo pri prebavi, v tleh pa razkrajajo odmrle ostanke. Le nekatere povzročajo bolezni.
 
-**5. Protisti.** Protisti imajo celično jedro, večinoma pa so iz ene celice. **Evglena** je zelena, ima klorofil in opravlja fotosintezo kot rastlina. Hkrati plava z bičkom kot žival. **Ameba** spreminja obliko in hrano obda ter požre. **Paramecij** (copatkar) je oblikovan kot copat in plava s tisoči kratkih migetalk.
+**5. Protisti.** Protisti imajo celično jedro, večinoma pa so iz ene celice. **Evglena** je zelena, ima klorofil in opravlja fotosintezo kot rastlina. Hkrati plava z bičkom kot žival. **Ameba** spreminja obliko in hrano obda ter požre. **Paramecij** je oblikovan kot copat in plava s tisoči kratkih migetalk.
 
 :::premisli
 Evglena ima klorofil kot rastlina in plava kot žival. Ali bi jo uvrstil med rastline ali med živali? Pomisli, po čem ločimo kraljestva, in utemelji.

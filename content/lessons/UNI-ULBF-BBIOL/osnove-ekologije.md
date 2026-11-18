@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -93,7 +93,7 @@ $\text{gostota} = \dfrac{N}{A}$
 
 ### Primer 2: ulov, označitev, ponovni ulov
 
-Vseh osebkov skoraj nikoli ne moremo prešteti. Biologi v narodnem parku na območju $12\,\mathrm{km^2}$ ujamejo in označijo $60$ planinskih voluharic ter jih izpustijo. Teden kasneje ujamejo $45$ voluharic, med njimi je $9$ označenih. Oceni velikost in gostoto populacije.
+Vseh osebkov skoraj nikoli ne moremo prešteti. Biologi v narodnem parku na območju $12\,\mathrm{km^2}$ ujamejo in označijo $60$ snežnih voluharic ter jih izpustijo. Teden kasneje ujamejo $45$ voluharic, med njimi je $9$ označenih. Oceni velikost in gostoto populacije.
 
 **Podatki:** označenih $M = 60$, v drugem ulovu $C = 45$, od tega označenih $R = 9$, površina $A = 12\,\mathrm{km^2}$
 **Iščemo:** velikost populacije $N$ in gostoto

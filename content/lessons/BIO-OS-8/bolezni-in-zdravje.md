@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -50,7 +50,7 @@ Potrebnih je $7$ podvojitev, saj je $2^6 = 64$ še premalo, $2^7 = 128$ pa dovol
 
 | Vrsta | Primeri bolezni | Pomaga |
 |---|---|---|
-| bakterija | angina, tetanus | antibiotik |
+| bakterija | angina, škrlatinka | antibiotik |
 | virus | gripa, norice | cepljenje vnaprej |
 | zajedavec | uši, gliste | zdravila |
 
