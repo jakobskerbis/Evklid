@@ -86,9 +86,12 @@ export function checkerUser({ question, answer, kind = "answer" }) {
 // opts.signal: prekinitev (npr. učenec zapre pogovor); opts.timeoutMs: rok, po njem napaka z name »TimeoutError«
 // (tudi če createFn signala ne upošteva).
 // opts.cards: število oštevilčenih kartic; verdict ima tedaj še cards (sodba za vsako kartico).
-export async function askModel(model, user, createFn, system = SYSTEM, { signal = null, timeoutMs = 0, cards = 0 } = {}) {
+export async function askModel(model, user, createFn, system = SYSTEM, { signal = null, timeoutMs = 0, cards = 0, thinking = false } = {}) {
   const create = createFn || ((p, o) => getClient().messages.create(p, o));
   const params = { model, max_tokens: 8000, output_config: { effort: EFFORT }, system, messages: [{ role: "user", content: user }] };
+  // opts.thinking: razmislek pred sodbo (ciljni pregled vaje in načrta, server/live-check.js); šteje v max_tokens 8000,
+  // ki ga pokrije rezerva checkReserveUsd (CHECK_MAX_TOKENS).
+  if (thinking) params.thinking = { type: "adaptive" };
   let r;
   if (!signal && !(timeoutMs > 0)) r = await create(params);
   else {
