@@ -22,6 +22,8 @@ export const POLMER = 0.00175; // 3,5 mm debel živec z ovojnicami
 // (preverjeno na obeh slikah, 2048 in 1024 pik).
 export const UV = { racunalnik: [0.30688, 0.77563], telefon: [0.05029, 0.70068] };
 export const UV_KRPA = 0.0006;
+// stranic cevi: 16/10 je bil od zadaj oglat valj (ocena 18. 11.); --znova zgradi cev na novo s tem številom
+export const STRANIC = { racunalnik: 32, telefon: 16 };
 
 const sredina = (W) => { const c = [0, 0, 0]; for (const p of W) for (let k = 0; k < 3; k++) c[k] += p[k] / W.length; return c; };
 
@@ -102,7 +104,7 @@ export function parametri(os, tocke) {
 
 const uvKrpe = (uv0, T) => T.map(([a, b]) => [uv0[0] + a * 2 * UV_KRPA, uv0[1] + b * 2 * UV_KRPA]);
 
-export async function dodelaj(datoteka, { suho = false } = {}) {
+export async function dodelaj(datoteka, { suho = false, znova = false } = {}) {
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
   const doc = await io.read(datoteka);
   const telefon = /-telefon\.glb$/.test(datoteka);
@@ -112,7 +114,7 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
   const W = (n) => G.preberi(n, n.getMesh().listPrimitives()[0]).W;
   const os = osZivca(sredina(W(papila)), sredina(W(belocnica)), sredina(W(obroc)), telefon ? 14 : 28);
   const uv0 = UV[telefon ? "telefon" : "racunalnik"];
-  if (zivec.getExtras()?.cev) {
+  if (zivec.getExtras()?.cev && !(znova && zivec.getExtras()?.stranic !== STRANIC[telefon ? "telefon" : "racunalnik"])) {
     if (zivec.getExtras()?.uv) return [`${path.basename(datoteka)}: vidni živec je že cev s krpo UV (brez sprememb)`];
     const prim = zivec.getMesh().listPrimitives()[0];
     const m = G.preberi(zivec, prim);
@@ -129,7 +131,7 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
     await io.write(datoteka, doc);
     return por;
   }
-  const c = cev(os, POLMER, telefon ? 10 : 16);
+  const c = cev(os, POLMER, STRANIC[telefon ? "telefon" : "racunalnik"]);
   const prim = zivec.getMesh().listPrimitives()[0];
   const m = G.preberi(zivec, prim);
   // vir atributov: oglišče stare mreže najbližje sredini osi (stran od zrkla in od kavlja)
@@ -155,7 +157,7 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
   const por = [`${path.basename(datoteka)}: vidni živec ${n0} → ${c.P.length} oglišč, cev ${(2 * POLMER * 1000).toFixed(1)} mm × ${(dol * 1000).toFixed(0)} mm`];
   if (suho) return por;
   G.zapisi(doc, zivec, prim, m);
-  zivec.setExtras({ ...(zivec.getExtras() || {}), cev: 1, uv: 1 });
+  zivec.setExtras({ ...(zivec.getExtras() || {}), cev: 1, uv: 1, stranic: STRANIC[telefon ? "telefon" : "racunalnik"] });
   G.brezSirot(doc);
   await io.write(datoteka, doc);
   return por;
@@ -163,10 +165,11 @@ export async function dodelaj(datoteka, { suho = false } = {}) {
 
 async function glavni() {
   const suho = process.argv.includes("--suho");
+  const znova = process.argv.includes("--znova");
   const j = path.join(MAPA, "oko.json");
   const podatki = JSON.parse(fs.readFileSync(j, "utf8"));
   for (const [ime, kljuc] of [["oko.glb", "racunalnik"], ["oko-telefon.glb", "telefon"]]) {
-    for (const v of await dodelaj(path.join(MAPA, ime), { suho })) console.log(v);
+    for (const v of await dodelaj(path.join(MAPA, ime), { suho, znova })) console.log(v);
     if (suho) continue;
     const doc = await new NodeIO().registerExtensions(ALL_EXTENSIONS).read(path.join(MAPA, ime));
     let tri = 0;

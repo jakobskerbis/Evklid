@@ -11,8 +11,14 @@ import * as G from "./zile-mreza.mjs";
 
 const MODELI = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "public", "3d", "modeli");
 export const NACRT = {
+  // več kot 2,8 mm ne pomaga (4 mm: segmenti se prekrijejo v stopnice, preizkus 18. 11.); že napihnjeno vozlišče dobi
+  // ob spremembi odmika samo razliko
   "organi-3d/jetra.glb": { tkivo: "jetra", odmik: 0.0028 },
   "organi-3d/jetra-telefon.glb": { tkivo: "jetra", odmik: 0.0028 },
+  // Pljuča: režnji so pri izvozu skrčeni za 1,8 mm, v prerezu sta bili reži med režnji 3,6 mm široki črni progi čez obe
+  // krili (ocena 18. 11.). +1,5 mm: reža ostane 0,6 mm (prava fisura je tanka črta), robovi režnjev se ne prekrijejo.
+  "organi-3d/pljuca.glb": { tkivo: "pljuca", odmik: 0.0015 },
+  "organi-3d/pljuca-telefon.glb": { tkivo: "pljuca", odmik: 0.0015 },
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -24,6 +30,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     let spremenjeno = 0;
     for (const node of doc.getRoot().listNodes()) {
       if (!node.getMesh() || node.getExtras()?.tkivo !== tkivo || node.getExtras().napihnjeno === odmik) continue;
+      const korak = odmik - (node.getExtras().napihnjeno || 0);
       for (const prim of node.getMesh().listPrimitives()) {
         const m = G.preberi(node, prim);
         // normala oglišča: povprečje normal vseh oglišč na istem mestu (šivi UV), da se mreža ob šivu ne razpre
@@ -41,12 +48,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
         for (let i = 0; i < n; i++) {
           const v = vsota.get(kl[i]);
           const l = Math.hypot(...v) || 1;
-          for (let c = 0; c < 3; c++) m.P[i * 3 + c] += (v[c] / l) * odmik;
+          for (let c = 0; c < 3; c++) m.P[i * 3 + c] += (v[c] / l) * korak;
         }
         if (!suho) G.zapisi(doc, node, prim, m);
       }
       node.setExtras({ ...node.getExtras(), napihnjeno: odmik });
-      console.log(`${rel}: ${node.getName()}: +${(odmik * 1000).toFixed(1)} mm`);
+      console.log(`${rel}: ${node.getName()}: +${(korak * 1000).toFixed(1)} mm (skupaj ${(odmik * 1000).toFixed(1)} mm)`);
       spremenjeno++;
     }
     // stari dostopniki zamenjanih mrež ne smejo ostati v datoteki

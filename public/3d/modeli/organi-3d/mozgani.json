@@ -45,8 +45,8 @@
   "mali": {
    "barva": "#a85850",
    "hrap": 0.38,
-   "lak": 0.9,
-   "lakHrap": 0.08,
+   "lak": 0.6,
+   "lakHrap": 0.16,
    "sijaj": 0.5,
    "sijajBarva": "#ffbfb4",
    "rob": 0.22,
@@ -87,7 +87,8 @@
     ],
     "izrez": true,
     "visina": 0.5
-   }
+   },
+   "normala": 0.4
   },
   "deblo": {
    "barva": "#e3c4b4",
@@ -564,8 +565,8 @@
     "medmozgani": {
      "aoTekstura": 0.12,
      "barva": "#b9aca6",
-     "lak": 0.12,
-     "sijaj": 0.1
+     "lak": 0,
+     "sijaj": 0
     },
     "sredina": {
      "aoTekstura": 0.12,

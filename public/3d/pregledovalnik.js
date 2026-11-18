@@ -1143,7 +1143,10 @@ export function odpriModel(el, mod, opts = {}) {
     if (model.postavitev === "organ" && !ozekZaslon.matches) oder.append(nadzorEl);
     else if (nadzorEl.parentNode !== spodaj) spodaj.insertBefore(nadzorEl, deliGlava || deliEl);
     // telefon pokonci: stikala organa (Učne barve, Prerez) pod gumbi; model nižje, da ga ne prekrijejo (3d.css ≤ 480 px)
-    kit.zamikZgoraj?.(model.postavitev === "organ" && opts.stran && matchMedia("(max-width: 480px)").matches ? 48 : 0);
+    // Organi na strani /3d (tudi tkiva pod povečavo): orodna vrstica lebdi čez vrh odra tudi na računalniku in pri tkivih
+    // (mrežnica, mešički, nefron, režnjič so segali podnjo, ocena posnetkov 18. 11.), zato zamik tudi tam.
+    const organi = opts.stran && (model.postavitev === "organ" || info.podrocje === "organi");
+    kit.zamikZgoraj?.(organi ? (matchMedia("(max-width: 480px)").matches ? 48 : 40) : 0);
     if (model.group) kit.scene.add(model.group);
     kit.nastaviOkolje(model.okolje === "studio" ? "studio" : "soba");
     kit.nastaviLuci(model.luci !== false);

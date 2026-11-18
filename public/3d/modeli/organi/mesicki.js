@@ -531,8 +531,8 @@ export function zgradi(THREE, ctx = {}) {
       svet.scale.setScalar(S * (1 + 0.018 * Math.sin(t * 1.5))); // dihanje
     },
     pogled: [0.28, 0.32, 1],
-    // telefon (ozek oder): orodna vrstica leži čez zgornji rob odra, zato manjši kader in model nižje (posnetek 360 px 18. 11.)
-    okvir: () => (globalThis.innerWidth < 640 ? { sredisce: [0, 0.1, 0], polmer: 1.2 } : { sredisce: [0, -0.02, 0], polmer: 0.9 }),
+    // celoten grozd z rezervo (0,9 je bil na računalniku čez rob in pod orodno vrstico, ocena 18. 11.)
+    okvir: { sredisce: [0, 0.02, 0], polmer: 1.12 },
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
       for (const x of odpad) x.dispose();

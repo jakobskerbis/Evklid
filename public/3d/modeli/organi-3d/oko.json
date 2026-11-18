@@ -470,7 +470,7 @@
      -0.0018,
      0.0145
     ],
-    "polmer": 0.8
+    "polmer": 0.86
    },
    "skrijTkiva": [
     "leča",
@@ -534,6 +534,9 @@
     "roženica": {
      "prosojnost": 0.3,
      "barva": "#eaf4fa"
+    },
+    "beločnica": {
+     "aoTekstura": 0.15
     }
    }
   }
@@ -565,8 +568,8 @@
  },
  "velikost": 0.0816,
  "trikotniki": {
-  "racunalnik": 179545,
-  "telefon": 40100
+  "racunalnik": 180473,
+  "telefon": 40280
  },
  "luci": [
   {

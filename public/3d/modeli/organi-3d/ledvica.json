@@ -678,6 +678,9 @@
  },
  "pogledi": {
   "celota": {
+   "okvir": {
+    "polmer": 1.12
+   },
    "pogled": [
     -0.35,
     0.1,

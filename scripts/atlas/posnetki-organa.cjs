@@ -3,7 +3,7 @@
 // Meri prenos (bajti datotek organi-3d/) in čas do prvega prikaza pri omrežju 4G (telefon) in kabel (računalnik).
 // Zagon: node scripts/atlas/posnetki-organa.cjs <organ> <izhodna mapa> [oznaka, npr. staro|novo]
 // Okolje: KOTI=1 (8 kotov, zgoraj, spodaj), ZILE=1 (žile od blizu), RAVEN=1|2|3 (raven razlage OŠ/SŠ/študij),
-// TELEFON_SIRINA=360 (ožji telefon), KOTI_PREREZ=1 (8 kotov, zgoraj, spodaj tudi v prerezu), SAMO=telefon|racunalnik, UCNE=1 (učne barve), SKUPINA=<ime skupine> (npr. Zaklopke), MERE=<mere.json iz
+// TELEFON_SIRINA=360 (ožji telefon), PODROBNOSTI=1 (list Podrobnosti organa, zadnji odsek), KOTI_PREREZ=1 (8 kotov, zgoraj, spodaj tudi v prerezu), SAMO=telefon|racunalnik, UCNE=1 (učne barve), SKUPINA=<ime skupine> (npr. Zaklopke), MERE=<mere.json iz
 // scripts/atlas/mere-reza.py> (dodatna posnetka prerez-mere, prerez-blizu-mere: merilne črte debeline sten v mm čez sliko).
 // Izhod: <mapa>/<oznaka>-<telefon|racunalnik>-<pogled>.png in <mapa>/<oznaka>-meritve.json.
 // Potrebuje Playwright s Chromiumom (swiftshader: čas risanja ni čas pravega telefona, primerjaj staro z novim).
@@ -83,6 +83,16 @@ const NAPRAVE = {
       await ugasniNamig();
       const samoPrerez = !!process.env.SAMO_PREREZ; // SAMO_PREREZ=1: samo prerez (hitro preverjanje reza)
       if (!samoPrerez) await slikaj("celota");
+      // PODROBNOSTI=1: list »Podrobnosti organa«, pomaknjen na zadnji odsek (npr. Viri pri srcu)
+      if (process.env.PODROBNOSTI && !samoPrerez) {
+        await p.locator(".k3-podrobnosti-gumb").first().click().catch(() => {});
+        await p.waitForTimeout(800);
+        await p.locator(".k3-list-vsebina article").last().scrollIntoViewIfNeeded().catch(() => {});
+        await p.waitForTimeout(500);
+        await p.screenshot({ path: path.join(izhod, `${oznaka}-${ime}-podrobnosti.png`), timeout: 180000 });
+        await p.keyboard.press("Escape");
+        await p.waitForTimeout(500);
+      }
       // Vrtenje s tipkovnico na platnu (puščica = 10°, enako na telefonu in računalniku; vlečenje z miško na telefonu z
       // dotikom ne zavrti, zato je bil prejšnji »zadaj« sprednja stran). KOTI=1: 8 kotov okoli navpičnice (0°, 45°, …;
       // lihi koti ±5°, ker je korak 10°) ter od zgoraj in spodaj; ZILE=1: bližnji posnetki žil spredaj in zadaj.
