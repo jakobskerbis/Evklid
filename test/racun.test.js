@@ -215,7 +215,7 @@ cas("klepet: napačna trditev v bloku RACUN sproži en popravek; blok ni viden",
   const calls = [];
   const answer = "Enačbo razstaviva: $(x-2)(x-3)=0$, zato je $x = 2$." + "\n<<RACUN\nresi: x^2-5*x+6=0 | x | 2\n>>" + META;
   const streamFn = async ({ system, mode, onText, messages }) => {
-    const isFix = typeof system === "string" && system.startsWith("You fix one mistake");
+    const isFix = typeof system === "string" && system.startsWith("You fix the mistakes");
     calls.push({ isFix, messages });
     const text = isFix ? "Popravek: rešitvi sta $x = 2$ in $x = 3$." : answer;
     if (!isFix) onText(text);

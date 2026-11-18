@@ -20,7 +20,7 @@ test("runChecked: pravi klepet v obeh pogojih, popravek samo s preverjanjem, oce
   const calls = { answers: 0, fixes: 0 };
   // Vstavljeni model: odgovor z napačnim računom; popravek, ko ga zahteva sprotno preverjanje (server/live-check.js).
   const streamFn = async ({ system, onText }) => {
-    const fix = String(system).startsWith("You fix one mistake");
+    const fix = String(system).startsWith("You fix the mistakes");
     const text = fix ? "Popravek: pravilno je $12 \\cdot 3 + 4 = 40$." : "Najprej izračunamo: $12 \\cdot 3 + 4 = 41$. To je vmesni rezultat naloge, s katerim nadaljujemo v naslednjem koraku rešitve.";
     fix ? calls.fixes++ : calls.answers++;
     onText?.(text);
