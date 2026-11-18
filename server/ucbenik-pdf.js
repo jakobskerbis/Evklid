@@ -136,7 +136,10 @@ export function pdfTemplateHash() {
 export const PDF_BOOK_MAX_LESSONS = 45;
 // Različica sestave (MERGE_PY, checkMerged v scripts/ucbenik-pdf.cjs): povečaj ob spremembi, da se sestavljeni
 // PDF-ji izdelajo znova (sicer bi ostali stari, ker se razredi niso spremenili).
-export const PDF_MERGE_VERSION = 1;
+export const PDF_MERGE_VERSION = 2; // 2: oznaka AI (Info, XMP) tudi v sestavljenih PDF-jih
+// Različica oznake AI v PDF-ju (podporni metapodatki, scripts/ucbenik-pdf.cjs markAiPdf): povečaj ob spremembi oznake,
+// da se vsi PDF-ji izdelajo znova enkrat (oznaka ne spremeni izrisa, zato ni v pdfTemplateHash). 1: j 18. 11. 2026.
+export const PDF_AI_MARK_VERSION = 1;
 
 const unitFile = (key, unit) => `${key}--${slugify(unit).slice(0, 40) || "sklop"}-${sha(unit).slice(0, 6)}`;
 
@@ -201,7 +204,7 @@ export function pdfHash(key, unit = null) {
     return hash;
   }
   const body = x.topics.map((t, i) => [t.id, t.name, t.unit, t.goals || "", simsFor(t.id, lessons[i])[0]?.title || "", lessons[i].sections, lessons[i].alternatives, lessons[i].checks]);
-  const hash = sha(JSON.stringify([pdfTemplateHash(), id, x.label, body])).slice(0, 20);
+  const hash = sha(JSON.stringify([pdfTemplateHash(), id, x.label, body, PDF_AI_MARK_VERSION])).slice(0, 20);
   hashes.set(id, { sig, hash });
   return hash;
 }

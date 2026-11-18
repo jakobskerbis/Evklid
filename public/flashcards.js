@@ -32,6 +32,11 @@ const setName = (s) => (s.kind === "own" ? t("cards.setOwn") : s.kind === "other
 const keyName = (key) => (key === null ? t("cards.allSets") : key === OWN ? t("cards.setOwn") : key === OTHER ? t("cards.setOther") : key);
 const icons = (el) => el.querySelectorAll("i[data-icon]").forEach((i) => (i.outerHTML = icon(i.dataset.icon)));
 
+// Moji zapiski (public/zapiski/): modul, besedila in slog se naložijo šele zdaj.
+export async function showNotes() {
+  if (sid()) (await import("./zapiski/zapiski.js")).showZapiski({ ...D, box, back: showFlashcards });
+}
+
 export async function showFlashcards() {
   if (!sid()) return;
   const v = box();
@@ -88,7 +93,7 @@ function renderOverview() {
   v.querySelectorAll(".fc-set").forEach((b) => b.addEventListener("click", () => startSession(sets[Number(b.dataset.i)].key)));
   v.querySelector("#fc-add").addEventListener("submit", addOwn);
   // Moji zapiski (public/zapiski/): modul, besedila in slog se naložijo šele zdaj.
-  v.querySelector("[data-notes]").addEventListener("click", async () => (await import("./zapiski/zapiski.js")).showZapiski({ ...D, box, back: showFlashcards }));
+  v.querySelector("[data-notes]").addEventListener("click", showNotes);
   v.querySelector(".fc-list").addEventListener("click", onListClick);
 }
 

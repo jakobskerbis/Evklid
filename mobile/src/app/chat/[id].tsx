@@ -9,6 +9,7 @@ import { api, ApiError } from "@/lib/api";
 import { sendMessage, type ChatEvent } from "@/lib/chat";
 import { useSession, useStudent } from "@/lib/session";
 import { t } from "@/lib/i18n";
+import { aiOpomba, aiUvod } from "@/lib/ai-oznaka";
 import { radius, useTheme } from "@/lib/theme";
 import { celebrate, failure, success, tap } from "@/lib/haptics";
 import { pickPhoto, takePendingPhoto, type Photo } from "@/lib/images";
@@ -300,6 +301,11 @@ export default function Chat() {
             <Card>
               <Text style={{ color: th.text, fontSize: 18, fontWeight: "700" }}>{t("chat.hello", { name: student.name })}</Text>
               <Text style={{ color: th.muted, fontSize: 15 }}>{t("chat.intro")}</Text>
+              {/* EU AI Act čl. 50(1): ob začetku pogovora jasno, da odgovarja AI (mobile/src/lib/ai-oznaka.ts) */}
+              <View accessibilityRole="text" style={{ marginTop: 10, padding: 12, borderRadius: radius.button, backgroundColor: th.accentSoft, borderWidth: 1, borderColor: th.accent, gap: 4 }}>
+                <Text style={{ color: th.text, fontWeight: "700", fontSize: 15 }}>{aiUvod(student.settings).naslov}</Text>
+                <Text style={{ color: th.text, fontSize: 14 }}>{aiUvod(student.settings).opis}</Text>
+              </View>
             </Card>
           }
           renderItem={({ item }) => <Bubble m={item} conv={id} onClose={() => setMessages((all) => all.filter((x) => x.id !== item.id))} />}
@@ -398,6 +404,7 @@ export default function Chat() {
               <Icon name={busy ? { ios: "stop.fill", android: "stop" } : { ios: "arrow.up", android: "arrow_upward" }} color={busy || text.trim() || photo ? th.accentText : th.muted} size={20} />
             </Pressable>
           </View>
+          <Text style={{ color: th.muted, fontSize: 12, textAlign: "center" }}>{aiOpomba(student.settings)}</Text>
         </View>
       </KeyboardAvoidingView>
     </View>

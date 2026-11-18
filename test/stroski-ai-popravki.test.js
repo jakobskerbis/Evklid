@@ -222,7 +222,7 @@ test("popravek: rezerva po načinu popravka (think, 8000 žetonov); najslabši s
   const fixModes = [];
   // Vsak klic stane največ, kolikor sme (ves vhod po najvišji ceni, izhod = max_tokens načina); odgovor ima napačen račun.
   const streamFn = async ({ system, messages, mode, onText, tools }) => {
-    const isFix = typeof system === "string" && system.startsWith("You fix one mistake");
+    const isFix = typeof system === "string" && system.startsWith("You fix the mistakes");
     if (isFix) fixModes.push(mode);
     const { model, max_tokens } = modeParams(mode);
     const bound = systemTokens(system) + messageTokens(messages) + (tools?.length ? Math.ceil(Buffer.byteLength(JSON.stringify(tools)) / 2) : 0);

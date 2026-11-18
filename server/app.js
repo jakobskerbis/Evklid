@@ -64,7 +64,7 @@ import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js"
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
-import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
+import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewCalls, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity, schoolYear } from "./games.js";
 import { mountDailyPuzzle } from "./daily-puzzle.js";
@@ -79,6 +79,7 @@ import { mountSchedule } from "./schedule-api.js";
 import { mountUstno } from "./ustno-api.js";
 import { mountScan } from "./scan.js";
 import { mountZapiski } from "./zapiski.js";
+import { mountVajaIzLista } from "./vaja-iz-lista.js";
 import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { BRAND } from "./brand.js";
@@ -96,6 +97,7 @@ import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
+import { AI_JSON } from "./ai-oznaka.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -132,10 +134,15 @@ export function cacheKey(text, settings, mode, lite = false, pathTopic = null, w
   // »b3« (17. 11., Preizkus 3): vsi deli naloge v enem odgovoru, krajše za OŠ 1.–4., graf narisan; odgovori z »b2« se ne vrnejo.
   // »b5« (18. 11., Preizkus 3, krog 2, PR #836; »b4« je #835): ena definicija seznama vaj, deli z drugim postopkom so ena
   // naloga, OŠ 1.–4. brez »Preverimo«; odgovori z »b3« in »b4« se ne vrnejo.
-  if (settings.solving_mode === "B" || /celo\w* rešit|načinu? b\b/i.test(norm)) parts.push("b5");
+  // »b6« (18. 11., meritev po #836): OŠ 1.–4. kratko tudi pri »zakaj«; odgovori z »b5« se ne vrnejo.
+  if (settings.solving_mode === "B" || /celo\w* rešit|načinu? b\b/i.test(norm)) parts.push("b6");
+  // »a1« (18. 11., pregled #841): v načinu A je Pojmovno vprašanje za OŠ 1.–4. krajše (dva do trije stavki); le ti ključi
+  // načina A se zamenjajo, ključi drugih razredov ostanejo.
+  else if (jeOs(settings) && /^[1-4]\.\s*razred/.test(String(settings.curriculum_level || ""))) parts.push("a1");
   // Samo rezultat pri eni nalogi (17. 11., #799): shranjeni dolgi odgovori na isto besedilo se ne vrnejo več.
   // »r2« (17. 11., Preizkus 3): pri podvprašanjih rezultat vsakega dela; odgovori z »r1« se ne vrnejo.
-  if (/samo (?:končn\w* )?rezultat|brez postopka/i.test(norm)) parts.push("r2");
+  // »r3« (18. 11., meritev po #836): samo rezultat brez okvirja »Zapomni si«; odgovori z »r2« se ne vrnejo.
+  if (/samo (?:končn\w* )?rezultat|brez postopka/i.test(norm)) parts.push("r3");
   // »moram oddati« (17. 11., Preizkus 3, pregled #811): Domača naloga za oddajo loči podvprašanja od seznama vaj;
   // shranjeni odgovori na tako besedilo se ne vrnejo (tudi v načinu A).
   if (/moram oddat/i.test(norm)) parts.push("o1");
@@ -782,11 +789,13 @@ export function createApp(store, opts = {}) {
     const lastMsg = msgs.at(-1);
     // done ni v tabeli events: prebere se iz META zadnjega odgovora (kot v done ob pošiljanju).
     const lastText = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
-    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && last.flag === "none" && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
-    const owner = store.getStudent(c.student_id);
-    const opens = new Map();
     // Kot ob pošiljanju: brez orodij pri opozorilih (flag ni none).
     const flagOk = (raw) => (parseMeta(raw)?.flag || "none") === "none";
+    // Oznaka v events se po 90 dneh izbriše (server/zasebnost.js clearOldFlags): META odgovora še velja.
+    const lastOk = last?.flag === "none" && !!lastMsg && flagOk(lastText(lastMsg));
+    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && lastOk && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
+    const owner = store.getStudent(c.student_id);
+    const opens = new Map();
     if (owner) for (const m of msgs) if (m.role === "assistant" && flagOk(rawOf(m))) opens.set(m.id, await openOf(rawOf(m), owner).catch(() => undefined));
     res.json({
       ...c,
@@ -794,10 +803,11 @@ export function createApp(store, opts = {}) {
       topic: c.path_topic ? { id: c.path_topic, name: getTopic(c.path_topic)?.name } : null,
       messages: msgs.map((m) => ({
         full_offer: (offerOn && m === lastMsg) || undefined,
-        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || last.flag === "none") ? choicesOf(rawOf(m)) : undefined,
+        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || lastOk) ? choicesOf(rawOf(m)) : undefined,
         open: opens.get(m.id),
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
+        ai_generated: m.role === "assistant" || undefined,
         reported: reported.has(m.id) || undefined,
         role: m.role,
         text: m.display_text,
@@ -1291,7 +1301,9 @@ export function createApp(store, opts = {}) {
         const risky = !!tekTopic || student.settings.track === "COMPETITION" || jeFaks(student.settings) || again;
         const stopnja = jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS";
         const school = !risky; // pregled SŠ/OŠ (vaja ali okvir v rešeni nalogi) ima svoj del dnevne meje
-        const reviewUsd = checkReserveUsd(MODEL_MID, text + plain);
+        // Pri SŠ z vajo ali načrtom poskusa dva vzporedna klica (splošni in ciljni pregled), zato dvojna rezerva.
+        const calls = reviewCalls(plain, stopnja);
+        const reviewUsd = calls * checkReserveUsd(MODEL_MID, text + plain);
         const spentKinds = (kinds) => kinds.reduce((t, k) => t + usage.kindToday(k), 0);
         const eligible =
           !issue &&
@@ -1299,7 +1311,7 @@ export function createApp(store, opts = {}) {
           !verdictChecked && // sodbo je model že pregledal
           liveReviewOn() &&
           needsReview({ model: answerModel, lite, premium, risky, claims: hasClaims(plain), claimLevel: claimReviewFor(stopnja), answerLength: plain.length, level: () => usage.budgetState().level });
-        const poolUsd = LIVE_REVIEW_POOL_RESERVE_USD();
+        const poolUsd = calls * LIVE_REVIEW_POOL_RESERVE_USD();
         const blockedBy = eligible ? reviewBlock({ school, needUsd: poolUsd, spent: spentKinds, pupilToday: () => usage.kindsCountToday(student.id, REVIEW_KINDS) }) : null;
         if (blockedBy) noteReviewSkip(store.db, stopnja, blockedBy);
         // Rezervacija v dnevnem bazenu (klici v teku štejejo, vzporedni pregledi meje ne prekoračijo) in v meji učenca.
@@ -1377,7 +1389,11 @@ export function createApp(store, opts = {}) {
         }
       }
       if (settingsTools.state.proposal) send("proposal", settingsTools.state.proposal);
-      if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text) {
+      // Varnostni odgovor ob stiski ni splošen odgovor in v nešifriranem predpomnilniku ne sme ostati sled, da je bil kdo
+      // v stiski (j 18. 11. 2026, pregled #846): ne ob flag=distress, ne ob zadetku lokalnega zaznavalnika ali pregleda B
+      // (tudi poslanem oknu »nujno«). Na pregled B počakamo kot spodaj (največ do NUJNO_ROK_MS od začetka).
+      const stiska = meta?.flag === "distress" || !!vrstaLokalno || nujnoPoslano || !!(await pocakajNujno());
+      if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text && !stiska) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
         // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
         const generic = genericAnswer(result.text, student.name);
@@ -1463,6 +1479,7 @@ export function createApp(store, opts = {}) {
       posljiNujno(blagoLokalno);
       finished = true;
       send("done", {
+        ...AI_JSON, // podporni metapodatki: besedilo je ustvarila AI (server/ai-oznaka.js)
         id: assistantId,
         code: messageCode(assistantId),
         text: display,
@@ -1970,6 +1987,8 @@ export function createApp(store, opts = {}) {
   ustno = mountUstno(app, store, { loadStudent, usage, progress, accounts, createFn: opts.ustnoFn }); // ustno spraševanje »Vprašaj me« (server/ustno.js)
   // Uči se iz svojih zapiskov (korak 1): meja strani po paketu, vsak klic skozi trdo mejo AI.
   mountZapiski(app, store, { loadStudent, usage, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, readFn: opts.zapiskiReadFn, cardsFn: opts.zapiskiCardsFn });
+  // Vaja iz testa ali domače naloge (faza 1): veščine nalog → naše naloge iz Vadnice; strani iz iste meje kot zapiski.
+  mountVajaIzLista(app, store, { loadStudent, usage, progress, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, ...(opts.vajaPickFn ? { pickFn: opts.vajaPickFn } : {}) });
 
   // --- poraba AI ---
   // Poraba AI za vse profile: brez računov samo na računalniku, kjer teče strežnik
