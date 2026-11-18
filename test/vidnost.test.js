@@ -526,6 +526,6 @@ test("javne strani: brez obljube »od 1. razreda do fakultete«", () => {
   }
   // Iskrena navedba je prisotna na glavnih mestih.
   for (const name of ["o-evklidu", "zakaj-evklid", "llms.txt", "schema.org", "starsi.html"]) assert.match(textOf(pages[name]), /6\.–9\. razred osnovne šole in gimnazij/, name);
-  for (const name of ["o-evklidu", "llms.txt", "starsi.html"]) assert.match(textOf(pages[name]), /začetni izbor (za nekatere fakultetne predmete \(v razvoju\)|\(v razvoju\))/, name);
+  for (const name of ["o-evklidu", "llms.txt", "starsi.html"]) assert.match(textOf(pages[name]), /začetni izbor za nekatere fakultetne predmete \(v razvoju\)/, name);
   assert.match(pages["llms.txt"], /grades 6–9 of primary school and gimnazija/);
 });

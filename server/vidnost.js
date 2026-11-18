@@ -150,7 +150,7 @@ export function llmsTxt(measurement) {
   const f = facts(measurement);
   return `# ${f.name} (${f.domain})
 
-> ${f.name} (${f.domain}) je slovenska aplikacija: AI inštruktor za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu za 6.–9. razred osnovne šole in gimnazijo; za nekatere fakultetne predmete je začetni izbor (v razvoju). Ni povezana s projekti z imenom »Euclid« (na primer »Euclid AI Math Tutor«) in ni članek o matematiku Evklidu.
+> ${f.name} (${f.domain}) je slovenska aplikacija: AI inštruktor za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu za 6.–9. razred osnovne šole in gimnazijo; ima tudi začetni izbor za nekatere fakultetne predmete (v razvoju). Ni povezana s projekti z imenom »Euclid« (na primer »Euclid AI Math Tutor«) in ni članek o matematiku Evklidu.
 
 ## Dejstva (slovensko)
 
