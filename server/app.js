@@ -784,11 +784,13 @@ export function createApp(store, opts = {}) {
     const lastMsg = msgs.at(-1);
     // done ni v tabeli events: prebere se iz META zadnjega odgovora (kot v done ob pošiljanju).
     const lastText = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
-    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && last.flag === "none" && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
-    const owner = store.getStudent(c.student_id);
-    const opens = new Map();
     // Kot ob pošiljanju: brez orodij pri opozorilih (flag ni none).
     const flagOk = (raw) => (parseMeta(raw)?.flag || "none") === "none";
+    // Oznaka v events se po 90 dneh izbriše (server/zasebnost.js clearOldFlags): META odgovora še velja.
+    const lastOk = last?.flag === "none" && !!lastMsg && flagOk(lastText(lastMsg));
+    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && lastOk && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
+    const owner = store.getStudent(c.student_id);
+    const opens = new Map();
     if (owner) for (const m of msgs) if (m.role === "assistant" && flagOk(rawOf(m))) opens.set(m.id, await openOf(rawOf(m), owner).catch(() => undefined));
     res.json({
       ...c,
@@ -796,7 +798,7 @@ export function createApp(store, opts = {}) {
       topic: c.path_topic ? { id: c.path_topic, name: getTopic(c.path_topic)?.name } : null,
       messages: msgs.map((m) => ({
         full_offer: (offerOn && m === lastMsg) || undefined,
-        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || last.flag === "none") ? choicesOf(rawOf(m)) : undefined,
+        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || lastOk) ? choicesOf(rawOf(m)) : undefined,
         open: opens.get(m.id),
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
@@ -1382,7 +1384,11 @@ export function createApp(store, opts = {}) {
         }
       }
       if (settingsTools.state.proposal) send("proposal", settingsTools.state.proposal);
-      if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text) {
+      // Varnostni odgovor ob stiski ni splošen odgovor in v nešifriranem predpomnilniku ne sme ostati sled, da je bil kdo
+      // v stiski (j 18. 11. 2026, pregled #846): ne ob flag=distress, ne ob zadetku lokalnega zaznavalnika ali pregleda B
+      // (tudi poslanem oknu »nujno«). Na pregled B počakamo kot spodaj (največ do NUJNO_ROK_MS od začetka).
+      const stiska = meta?.flag === "distress" || !!vrstaLokalno || nujnoPoslano || !!(await pocakajNujno());
+      if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text && !stiska) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
         // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
         const generic = genericAnswer(result.text, student.name);
