@@ -532,7 +532,7 @@ export function zgradi(THREE, ctx = {}) {
     },
     pogled: [0.28, 0.32, 1],
     // telefon (ozek oder): orodna vrstica leži čez zgornji rob odra, zato manjši kader in model nižje (posnetek 360 px 18. 11.)
-    okvir: () => (globalThis.innerWidth < 640 ? { sredisce: [0, 0.08, 0], polmer: 1.04 } : { sredisce: [0, -0.02, 0], polmer: 0.9 }),
+    okvir: () => (globalThis.innerWidth < 640 ? { sredisce: [0, 0.1, 0], polmer: 1.2 } : { sredisce: [0, -0.02, 0], polmer: 0.9 }),
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
       for (const x of odpad) x.dispose();
