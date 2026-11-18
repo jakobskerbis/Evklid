@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { newKey, isEncrypted, openPregled } from "../server/crypto-polje.js";
-import { runRetention } from "../server/zasebnost.js";
+import { runRetention, migrateEncryption } from "../server/zasebnost.js";
 import { startStiskaObvestila, stiskaEmail, prejemniki, seznamStisk, OKNO_MS, POSKUSOV, POT } from "../server/stiska-obvestilo.js";
 
 const ADULT = "1985-04-12";
@@ -55,8 +55,13 @@ test("stiska e-mail: samo vrsta, stopnja, čas in povezava; brez imena, vsebine 
   assert.ok(m.text.includes(`https://primer.app${POT}`));
   assert.ok(m.html.includes(`https://primer.app${POT}`));
   const vec = stiskaEmail([{ ob: "2026-11-18T13:05:00Z", vrsta: "pogovor" }, { ob: "2026-11-18T13:06:00Z", vrsta: "zdravje" }, { ob: "2026-11-18T13:07:00Z", vrsta: null }], {});
-  assert.match(vec.subject, /3 novih oznak stiske \(stopnja nujno \(112\)\)/);
-  assert.match(vec.text, /vrsta ni zapisana, stopnja neznana/);
+  assert.match(vec.subject, /: 3 nove oznake stiske \(najvišja stopnja nujno \(112\)\)/);
+  assert.match(vec.text, /vrsta ni zapisana\), stopnja neznana/);
+  const ob = { ob: "2026-11-18T13:05:00Z", vrsta: "stiska" };
+  assert.match(stiskaEmail([ob, ob], {}).subject, /: 2 novi oznaki stiske/);
+  assert.match(stiskaEmail(Array(5).fill(ob), {}).subject, /: 5 novih oznak stiske/);
+  assert.match(stiskaEmail(Array(101).fill(ob), {}).subject, /: 101 nova oznaka stiske/);
+  assert.match(stiskaEmail(Array(25).fill(ob), {}).text, /… in še 5/);
 });
 
 test("stiska e-mail: prejemniki, stikalo EVKLID_STISKA_EMAIL in namestnik", () => {
@@ -93,10 +98,9 @@ test("stiska e-mail: v nizu oznak največ en e-mail na 10 minut, nato en s štev
   ura = new Date(Date.parse("2026-11-18T10:00:00Z") + OKNO_MS);
   assert.equal(await o.run(), "poslano");
   assert.equal(mailer.poslano.length, 4);
-  assert.match(mailer.poslano[2].subject, /3 novih oznak stiske \(stopnja nujno \(112\)\)/);
+  assert.match(mailer.poslano[2].subject, /3 nove oznake stiske \(najvišja stopnja nujno \(112\)\)/);
   assert.equal(o.stanje().cakajo, 0);
   assert.equal(await o.run(), null, "nič ne čaka");
-  // Čakajoče oznake v kv so šifrirane, kadar je ključ.
   store.db.close();
 });
 
@@ -155,6 +159,26 @@ test("stiska e-mail: pregled oznake šifriran in enako dolg pri vseh oznakah; ro
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM events WHERE pregled IS NOT NULL").get().n, 0);
     store.db.close();
   });
+});
+
+test("stiska e-mail: pregled, zapisan brez ključa, se ob vklopu ključa zašifrira in šteje posebej", async () => {
+  const store = openDb(":memory:");
+  const s = store.createStudent("Miha");
+  const c = store.createConversation(s.id);
+  const o = startStiskaObvestila(store.db, { scheduler: false, env: {}, mailer: postar(), log: belezka() });
+  o.nova(oznaka(store, s, c), "zdravje");
+  assert.equal(isEncrypted(store.db.prepare("SELECT pregled FROM events").get().pregled), false);
+  await withEnv({ EVKLID_DATA_KEY: newKey() }, () => {
+    const out = migrateEncryption(store.db);
+    assert.equal(out.events, 1, "oznaka");
+    assert.equal(out["events.pregled"], 1, "pregled posebej, ne prepiše števila oznak");
+    const r = store.db.prepare("SELECT flag, pregled FROM events").get();
+    assert.ok(isEncrypted(r.flag) && isEncrypted(r.pregled));
+    assert.equal(openPregled(r.pregled).v, "zdravje");
+    assert.equal(seznamStisk(store.db)[0].vrsta, "zdravje");
+    assert.deepEqual(migrateEncryption(store.db), {}, "idempotentno");
+  });
+  store.db.close();
 });
 
 async function withServer(store, fn, { fetchFail = false } = {}) {

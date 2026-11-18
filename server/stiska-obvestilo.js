@@ -59,20 +59,30 @@ export function cas(iso) {
 // SQLite datetime('now') (UTC brez pasu) → ISO.
 const isoIzBaze = (s) => (s && !/[zZ]|[+-]\d\d:?\d\d$/.test(s) ? `${String(s).replace(" ", "T")}Z` : s);
 
+// Slovenska dvojina in množina: 1 nova oznaka, 2 novi oznaki, 3–4 nove oznake, 5+ novih oznak (101 kot 1 …).
+export function oznak(n) {
+  const r = n % 100;
+  if (r === 1) return "nova oznaka";
+  if (r === 2) return "novi oznaki";
+  if (r === 3 || r === 4) return "nove oznake";
+  return "novih oznak";
+}
+
 /** E-mail za seznam oznak [{ ob, vrsta }]. Samo vrsta, stopnja in čas; nič o učencu ali pogovoru. */
 export function stiskaEmail(oznake, env = process.env) {
   const n = oznake.length;
   const naj = oznake.reduce((a, o) => (vrstaOpis(o.vrsta).red > vrstaOpis(a.vrsta).red ? o : a), oznake[0]);
   const stopnja = vrstaOpis(naj?.vrsta).stopnja;
   const url = `${baseUrl(env)}${POT}`;
-  const subject = `${BRAND.name}: ${n === 1 ? "nova oznaka stiske" : `${n} novih oznak stiske`} (stopnja ${stopnja}) – preglej v ${ROK_UR} urah`;
+  const koliko = `${n === 1 ? "" : `${n} `}${oznak(n)} stiske`;
+  const subject = `${BRAND.name}: ${koliko} (${n === 1 ? "stopnja" : "najvišja stopnja"} ${stopnja}) – preglej v ${ROK_UR} urah`;
   const vrstice = oznake.slice(0, NAJVEC_V_EMAILU).map((o) => `${cas(o.ob)} – ${vrstaOpis(o.vrsta).opis}, stopnja ${vrstaOpis(o.vrsta).stopnja}`);
   if (n > NAJVEC_V_EMAILU) vrstice.push(`… in še ${n - NAJVEC_V_EMAILU}`);
-  const uvod = n === 1 ? "Inštruktor je označil novo stisko pri enem od učencev." : `Inštruktor je označil ${n} novih stisk (zbrano v zadnjih ${OKNO_MS / MIN} minutah).`;
+  const uvod = n === 1 ? "Inštruktor je pri enem od učencev označil stisko." : `Od zadnjega e-maila: ${koliko} (e-mail gre največ enkrat na ${OKNO_MS / MIN} minut).`;
   const opomba = "Učenec je varnostno okno s številkami za pomoč že dobil. V tem e-mailu namenoma ni imena, vsebine pogovora ali sporočila. Prijavi se kot skrbnik, odpri stran in oznako označi kot pregledano.";
   const text = `${uvod}\n\n${vrstice.map((v) => `- ${v}`).join("\n")}\n\nPreglej v ${ROK_UR} urah: ${url}\n\n${opomba}`;
   const html = layout(
-    n === 1 ? "Nova oznaka stiske" : `${n} novih oznak stiske`,
+    n === 1 ? "Nova oznaka stiske" : `${n} ${oznak(n)} stiske`,
     `<p>${esc(uvod)}</p><ul>${vrstice.map((v) => `<li>${esc(v)}</li>`).join("")}</ul><p>Preglej v ${ROK_UR} urah.</p>${button(url, "Odpri oznake stiske")}<p style="font-size:13px;color:#5f6779">${esc(opomba)}</p>`,
   );
   return { subject, text, html };
@@ -266,7 +276,7 @@ export function mountStiske(app, store, { isAdmin }) {
       db.prepare("UPDATE events SET pregled = ? WHERE id = ?").run(sealPregled({ ...p, pregledano_ob: new Date().toISOString(), pregledal: req.parent?.id ?? null }), id);
       audit(db, { req, actor: "admin", parentId: req.parent?.id ?? null, action: "stiska_pregledano", target: `event:${id}` });
     }
-    if (req.query.json || req.is("application/json")) return res.json({ ok: true, pregledano_ob: openPregled(db.prepare("SELECT pregled FROM events WHERE id = ?").get(id).pregled, {}).pregledano_ob });
+    if (req.query.json) return res.json({ ok: true, pregledano_ob: openPregled(db.prepare("SELECT pregled FROM events WHERE id = ?").get(id).pregled, {}).pregledano_ob });
     res.redirect(303, POT);
   });
 }

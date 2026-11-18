@@ -190,7 +190,7 @@ export const SEALED = [
   // pad: dopolnitev pred šifriranjem (sealFlag); clearIf: ob stiski se ob selitvi pobriše tudi tema (kot v addEvent).
   { table: "events", cols: ["flag"], where: "flag <> 'none'", pad: FLAG_PAD, clearIf: { value: "distress", cols: ["topic", "topic_id"] } },
   // Pregled oznake (vrsta okna ob stiski, pregledano_ob; server/stiska-obvestilo.js), dopolnjen kot oznaka.
-  { table: "events", cols: ["pregled"], where: "pregled IS NOT NULL", pad: PREGLED_PAD },
+  { table: "events", cols: ["pregled"], where: "pregled IS NOT NULL", pad: PREGLED_PAD, label: "events.pregled" },
 ];
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);

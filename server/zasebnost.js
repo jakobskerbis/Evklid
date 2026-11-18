@@ -133,7 +133,8 @@ function* sealSteps(db, batch) {
         db.exec("ROLLBACK");
         throw e;
       }
-      yield { table: t.table, changed };
+      // label: drugi vnos za isto tabelo (events.pregled) se šteje posebej, ne prepiše števila prvega.
+      yield { table: t.label || t.table, changed };
     }
   }
 }
