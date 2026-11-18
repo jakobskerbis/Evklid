@@ -106,7 +106,7 @@ async function renderHome(msg = "", nujno = null) {
     <section class="card zap-vaja">
       <h2 class="with-icon">${icon("clipboard-check")} ${esc(t("vaja.title"))}</h2>
       <p class="muted">${esc(t("vaja.teaser"))}</p>
-      <div class="zap-btns"><button type="button" class="secondary" data-act="vaja">${icon("clipboard-check")} ${esc(t("vaja.open"))}</button></div>
+      ${data.vaja === false ? `<p class="muted zap-note">${icon("info")} ${esc(t("vaja.onlySi"))}</p>` : `<div class="zap-btns"><button type="button" class="secondary" data-act="vaja">${icon("clipboard-check")} ${esc(t("vaja.open"))}</button></div>`}
     </section>
     <section class="zap-list">
       <h2>${esc(t("zap.list"))}</h2>
@@ -122,7 +122,7 @@ async function renderHome(msg = "", nujno = null) {
   for (const inp of el.querySelectorAll("input[type=file]")) inp.addEventListener("change", () => readPhotos([...inp.files].slice(0, MAX)));
   el.querySelector(".zap-list").addEventListener("click", onListClick);
   // Vaja iz testa ali domače naloge (public/zapiski/vaja.js): modul se naloži šele ob kliku.
-  el.querySelector('[data-act="vaja"]').addEventListener("click", async () => (await import("./vaja.js")).showVaja(D, { home: () => renderHome(), quota: p }));
+  el.querySelector('[data-act="vaja"]')?.addEventListener("click", async () => (await import("./vaja.js")).showVaja(D, { home: () => renderHome(), quota: p }));
 }
 
 function noteRow(n) {

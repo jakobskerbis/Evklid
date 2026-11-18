@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Bài mới cho các kiến thức trên trang của em, từ dễ đến khó.",
   "vaja.done": "Đã luyện xong",
   "vaja.score": "Đúng ngay lần đầu: {correct} trên {total}",
-  "vaja.ok": "Em đã nắm vững",
+  "vaja.ok": "Em làm tốt lắm",
   "vaja.more": "Luyện thêm",
-  "vaja.moreNote": "Những gì em còn đang luyện, Evklid sẽ đưa lại khi ôn tập.",
   "vaja.again": "Luyện thêm một lượt",
-  "vaja.errEmpty": "Mình không tìm thấy bài nào trên trang. Hãy chụp gần hơn hoặc dán văn bản."
+  "vaja.errEmpty": "Mình không tìm thấy bài nào trên trang. Hãy chụp gần hơn hoặc dán văn bản.",
+  "vaja.few": "Quá ít bài để đánh giá",
+  "vaja.review": "Trong buổi ôn ngày mai: {list}.",
+  "vaja.againHint": "Phần còn lại hãy luyện tiếp với »Luyện thêm một lượt«.",
+  "vaja.xp": "+{n} XP cho các bài",
+  "vaja.unknown": "Mình chưa nhận ra kiến thức – em tự chọn nhé.",
+  "vaja.fromPath": "Từ lộ trình học của em",
+  "vaja.onlySi": "Hiện chỉ dành cho trường tiểu học và trung học Slovenia.",
+  "vaja.tooFast": "Quá nhiều trang trong thời gian ngắn. Hãy thử lại sau vài phút.",
+  "vaja.expired": "Danh sách bài đã hết hạn. Hãy đọc lại trang."
 }

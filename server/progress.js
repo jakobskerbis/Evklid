@@ -744,23 +744,26 @@ export class Progress {
     const plan = Array.from({ length }, (_, i) => ({ topic: order[i % order.length], mode: "list", level: 1 + Math.min(2, Math.floor((3 * i) / length)) }));
     return this.sessionNext(this.createSession(studentId, "list", plan, { skills: ids }));
   }
-  // Povzetek po veščinah: »obvladaš« (vsaj 3/4 v prvem poskusu) ali »še vadi«. apply (enkrat, ob koncu seje):
-  // šibka obvladana tema gre jutri v ponavljanje, šibka nova tema dobi stanje »učim se« (vidna na poti in v treningu).
+  // Povzetek po veščinah: »ok« (vsaj 2 nalogi in vsaj 3/4 v prvem poskusu), »more« (pod tem) ali »few« (ena sama
+  // pravilna naloga: premalo za oceno). apply (enkrat, ob koncu seje): šibka tema, ki je bila obvladana že pred to
+  // sejo, gre jutri v ponavljanje (review: true); šibka nova tema dobi stanje »učim se« (vidna na poti).
   listSummary(sess, all, apply) {
     const lang = this.uiLang(sess.student_id);
     return (sess.params.skills || []).map((id) => {
       const rows = all.filter((t) => t.topic_id === id && t.first_try_correct !== null);
       const correct = rows.filter((t) => t.first_try_correct).length;
-      const ok = rows.length > 0 && correct / rows.length >= LIST.okShare;
-      if (apply && rows.length && !ok) {
-        const st = this.state(sess.student_id, id);
-        if (st.status === "mastered") this.advanceReview(sess.student_id, id, false);
+      const share = rows.length ? correct / rows.length : 0;
+      const status = rows.length >= 2 && share >= LIST.okShare ? "ok" : rows.length === 1 && correct === 1 ? "few" : "more";
+      const st = this.state(sess.student_id, id);
+      const before = st.status === "mastered" && st.mastered_at && st.mastered_at < sess.created_at;
+      if (apply && rows.length && status === "more") {
+        if (before) this.advanceReview(sess.student_id, id, false);
         else if (st.status === "new") {
           st.status = "learning";
           this.saveState(st);
         }
       }
-      return { id, name: localTopic(getTopic(id), lang)?.name || getTopic(id)?.name || id, correct, total: rows.length, ok };
+      return { id, name: localTopic(getTopic(id), lang)?.name || getTopic(id)?.name || id, correct, total: rows.length, status, ok: status === "ok", review: status === "more" && !!before };
     });
   }
 

@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Novi zadaci za znanje s tvog lista, od lakših ka težim.",
   "vaja.done": "Vježba je završena",
   "vaja.score": "Tačno iz prve: {correct} od {total}",
-  "vaja.ok": "Savladao si",
+  "vaja.ok": "Išlo ti je dobro",
   "vaja.more": "Još vježbaj",
-  "vaja.moreNote": "Ono što još vježbaš, Evklid će ti ponuditi u ponavljanju.",
   "vaja.again": "Još jedna vježba",
-  "vaja.errEmpty": "Na listu nisam pronašao zadatke. Fotografiši bliže ili zalijepi tekst."
+  "vaja.errEmpty": "Na listu nisam pronašao zadatke. Fotografiši bliže ili zalijepi tekst.",
+  "vaja.few": "Premalo zadataka za ocjenu",
+  "vaja.review": "U ponavljanju sutra: {list}.",
+  "vaja.againHint": "Ostalo vježbaj dalje dugmetom »Još jedna vježba«.",
+  "vaja.xp": "+{n} XP za zadatke",
+  "vaja.unknown": "Nisam prepoznao znanje – izaberi ga sam.",
+  "vaja.fromPath": "S tvog puta učenja",
+  "vaja.onlySi": "Za sada samo za slovensku osnovnu i srednju školu.",
+  "vaja.tooFast": "Previše listova za kratko vrijeme. Pokušaj za nekoliko minuta.",
+  "vaja.expired": "Spisak zadataka je istekao. Ponovo pročitaj list."
 }

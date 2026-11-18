@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "用紙のスキルの新しい問題を、やさしい順に。",
   "vaja.done": "練習終了",
   "vaja.score": "1回目で正解：{total} 問中 {correct} 問",
-  "vaja.ok": "できている",
+  "vaja.ok": "よくできました",
   "vaja.more": "もっと練習",
-  "vaja.moreNote": "まだ練習中のものは、Evklid が復習でまた出します。",
   "vaja.again": "もう一度練習",
-  "vaja.errEmpty": "用紙に問題が見つかりませんでした。もっと近くで撮るか、テキストを貼り付けてね。"
+  "vaja.errEmpty": "用紙に問題が見つかりませんでした。もっと近くで撮るか、テキストを貼り付けてね。",
+  "vaja.few": "評価するには問題が少なすぎます",
+  "vaja.review": "明日の復習：{list}。",
+  "vaja.againHint": "残りは「もう一度練習」で続けて練習してね。",
+  "vaja.xp": "問題で +{n} XP",
+  "vaja.unknown": "スキルを見分けられませんでした。自分で選んでね。",
+  "vaja.fromPath": "あなたの学習パスから",
+  "vaja.onlySi": "今のところスロベニアの小中学校・高校のみ対応です。",
+  "vaja.tooFast": "短時間に用紙が多すぎます。数分後にもう一度試してね。",
+  "vaja.expired": "問題リストの期限が切れました。もう一度用紙を読み込んでね。"
 }

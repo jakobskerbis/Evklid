@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "针对你纸上知识点的新题目，由易到难。",
   "vaja.done": "练习完成",
   "vaja.score": "一次答对：{correct} / {total}",
-  "vaja.ok": "已掌握",
+  "vaja.ok": "做得不错",
   "vaja.more": "继续练习",
-  "vaja.moreNote": "还在练的内容，Evklid 会在复习时再给你。",
   "vaja.again": "再练一次",
-  "vaja.errEmpty": "纸上没有找到题目。请拍近一点或粘贴文字。"
+  "vaja.errEmpty": "纸上没有找到题目。请拍近一点或粘贴文字。",
+  "vaja.few": "题目太少，无法评估",
+  "vaja.review": "明天复习：{list}。",
+  "vaja.againHint": "其余的用「再练一次」继续练习。",
+  "vaja.xp": "题目得 +{n} XP",
+  "vaja.unknown": "我没认出知识点，请自己选择。",
+  "vaja.fromPath": "来自你的学习路径",
+  "vaja.onlySi": "目前只适用于斯洛文尼亚的中小学。",
+  "vaja.tooFast": "短时间内纸张太多，请几分钟后再试。",
+  "vaja.expired": "题目列表已过期，请重新读取纸张。"
 }

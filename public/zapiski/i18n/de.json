@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Neue Aufgaben zum Wissen von deinem Blatt, von leicht bis schwer.",
   "vaja.done": "Übung beendet",
   "vaja.score": "Beim ersten Mal richtig: {correct} von {total}",
-  "vaja.ok": "Kannst du",
+  "vaja.ok": "Das lief gut",
   "vaja.more": "Weiter üben",
-  "vaja.moreNote": "Was du noch übst, bringt dir Evklid bei der Wiederholung wieder.",
   "vaja.again": "Noch eine Übung",
-  "vaja.errEmpty": "Auf dem Blatt habe ich keine Aufgaben gefunden. Fotografiere näher oder füge den Text ein."
+  "vaja.errEmpty": "Auf dem Blatt habe ich keine Aufgaben gefunden. Fotografiere näher oder füge den Text ein.",
+  "vaja.few": "Zu wenige Aufgaben für eine Aussage",
+  "vaja.review": "Morgen in der Wiederholung: {list}.",
+  "vaja.againHint": "Den Rest übst du mit »Noch eine Übung« weiter.",
+  "vaja.xp": "+{n} XP für Aufgaben",
+  "vaja.unknown": "Ich habe das Wissen nicht erkannt – wähle es selbst.",
+  "vaja.fromPath": "Von deinem Lernpfad",
+  "vaja.onlySi": "Vorerst nur für slowenische Grund- und Mittelschulen.",
+  "vaja.tooFast": "Zu viele Blätter in kurzer Zeit. Versuche es in ein paar Minuten wieder.",
+  "vaja.expired": "Die Aufgabenliste ist abgelaufen. Lies das Blatt erneut ein."
 }

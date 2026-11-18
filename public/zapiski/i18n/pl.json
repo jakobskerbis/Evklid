@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Nowe zadania z umiejętności z twojej kartki, od łatwiejszych do trudniejszych.",
   "vaja.done": "Ćwiczenie zakończone",
   "vaja.score": "Dobrze za pierwszym razem: {correct} z {total}",
-  "vaja.ok": "Opanowane",
+  "vaja.ok": "Dobrze ci poszło",
   "vaja.more": "Ćwicz dalej",
-  "vaja.moreNote": "To, co jeszcze ćwiczysz, Evklid zaproponuje ci w powtórkach.",
   "vaja.again": "Jeszcze jedno ćwiczenie",
-  "vaja.errEmpty": "Nie znalazłem zadań na kartce. Zrób zdjęcie z bliska lub wklej tekst."
+  "vaja.errEmpty": "Nie znalazłem zadań na kartce. Zrób zdjęcie z bliska lub wklej tekst.",
+  "vaja.few": "Za mało zadań do oceny",
+  "vaja.review": "Jutro w powtórce: {list}.",
+  "vaja.againHint": "Resztę ćwicz dalej przyciskiem »Jeszcze jedno ćwiczenie«.",
+  "vaja.xp": "+{n} XP za zadania",
+  "vaja.unknown": "Nie rozpoznałem umiejętności – wybierz ją sam.",
+  "vaja.fromPath": "Z twojej ścieżki nauki",
+  "vaja.onlySi": "Na razie tylko dla słoweńskiej szkoły podstawowej i średniej.",
+  "vaja.tooFast": "Za dużo kartek w krótkim czasie. Spróbuj za kilka minut.",
+  "vaja.expired": "Lista zadań wygasła. Wczytaj kartkę ponownie."
 }

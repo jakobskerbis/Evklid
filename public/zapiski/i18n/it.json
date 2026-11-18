@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Esercizi nuovi sulle abilità del tuo foglio, dai più facili ai più difficili.",
   "vaja.done": "Esercizio finito",
   "vaja.score": "Giusti al primo colpo: {correct} su {total}",
-  "vaja.ok": "La padroneggi",
+  "vaja.ok": "Ti è andata bene",
   "vaja.more": "Esercitati ancora",
-  "vaja.moreNote": "Quello che stai ancora esercitando, Evklid te lo riproporrà nei ripassi.",
   "vaja.again": "Un altro esercizio",
-  "vaja.errEmpty": "Non ho trovato esercizi sul foglio. Fotografa più da vicino o incolla il testo."
+  "vaja.errEmpty": "Non ho trovato esercizi sul foglio. Fotografa più da vicino o incolla il testo.",
+  "vaja.few": "Troppo pochi esercizi per valutare",
+  "vaja.review": "Nel ripasso di domani: {list}.",
+  "vaja.againHint": "Continua a esercitarti sul resto con »Un altro esercizio«.",
+  "vaja.xp": "+{n} XP per gli esercizi",
+  "vaja.unknown": "Non ho riconosciuto l'abilità: sceglila tu.",
+  "vaja.fromPath": "Dal tuo percorso di studio",
+  "vaja.onlySi": "Per ora solo per la scuola primaria e secondaria slovena.",
+  "vaja.tooFast": "Troppi fogli in poco tempo. Riprova tra qualche minuto.",
+  "vaja.expired": "L'elenco degli esercizi è scaduto. Rileggi il foglio."
 }

@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "네 종이에 있는 기술의 새 문제, 쉬운 것부터 어려운 것까지.",
   "vaja.done": "연습 끝",
   "vaja.score": "첫 시도에 정답: {total}문제 중 {correct}문제",
-  "vaja.ok": "잘하고 있어",
+  "vaja.ok": "잘했어",
   "vaja.more": "더 연습하기",
-  "vaja.moreNote": "아직 연습 중인 것은 Evklid가 복습 때 다시 줄게.",
   "vaja.again": "한 번 더 연습",
-  "vaja.errEmpty": "종이에서 문제를 찾지 못했어. 더 가까이 찍거나 텍스트를 붙여 넣어 줘."
+  "vaja.errEmpty": "종이에서 문제를 찾지 못했어. 더 가까이 찍거나 텍스트를 붙여 넣어 줘.",
+  "vaja.few": "평가하기에는 문제가 너무 적어",
+  "vaja.review": "내일 복습: {list}.",
+  "vaja.againHint": "나머지는 »한 번 더 연습«으로 계속 연습해.",
+  "vaja.xp": "문제로 +{n} XP",
+  "vaja.unknown": "기술을 알아보지 못했어 – 직접 골라 줘.",
+  "vaja.fromPath": "네 학습 경로에서",
+  "vaja.onlySi": "지금은 슬로베니아 초·중등학교만 지원해.",
+  "vaja.tooFast": "짧은 시간에 종이가 너무 많아. 몇 분 뒤에 다시 해 봐.",
+  "vaja.expired": "문제 목록이 만료됐어. 종이를 다시 읽어 줘."
 }

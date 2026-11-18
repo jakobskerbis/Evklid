@@ -31,6 +31,7 @@ export function showVaja(deps, home) {
     back: "zapiski",
     doneHtml,
     wire,
+    errorText: codeText,
   });
   V = { pages: [], photos: 0, msg: "" };
   renderStart();
@@ -68,6 +69,17 @@ function renderStart(msg = "", nujno = null) {
   el.querySelector("[data-shot]").addEventListener("change", (e) => readImages([...e.target.files].slice(0, MAX)));
   el.querySelector("[data-file]").addEventListener("change", (e) => readImages([...e.target.files].slice(0, MAX)));
   el.querySelector("[data-pdf]").addEventListener("change", (e) => e.target.files[0] && readPdf(e.target.files[0]));
+}
+
+// Kode napak strežnika (server/vaja-iz-lista.js) v jeziku vmesnika; drugo kot pri zapiskih.
+function codeText(err) {
+  const c = err?.body?.code;
+  if (c === "vaja_potekla") return t("vaja.expired");
+  if (c === "vaja_brez") return t("vaja.noneOn");
+  if (c === "vaja_stopnja") return t("vaja.onlySi");
+  if (c === "vaja_hitro") return t("vaja.tooFast");
+  if (c === "vaja_prazno") return t("vaja.errEmpty");
+  return errText(err);
 }
 
 const wait = (text) => (box().innerHTML = `<div class="card zap-wait" aria-live="polite"><p>${icon("scan-text")} ${esc(text)}</p></div>`);
@@ -185,7 +197,7 @@ async function findSkills() {
     renderList();
   } catch (err) {
     V.nujno = err?.body?.nujno || nujno;
-    V.msg = err?.body?.code === "vaja_prazno" ? t("vaja.errEmpty") : errText(err);
+    V.msg = codeText(err);
     renderCheck();
   }
 }
@@ -194,11 +206,15 @@ async function findSkills() {
 function taskRow(x) {
   const id = `vaja-t${x.i}`;
   // Številka naloge z lista (»3.«, »3)«) gre v naslov, sicer bi jo prikaz besedila naredil za oštevilčen seznam.
-  const m = /^\s*(\d{1,2})\s*[.)]\s*/.exec(x.text);
+  const m = /^[\s*_#>-]*(\d{1,2})\s*[.)]\s*/.exec(x.text);
   const body = m ? x.text.slice(m[0].length) : x.text;
   const preview = body.length > 220 ? `${body.slice(0, 220)} …` : body;
   const none = !x.options.length;
-  return `<li class="card vaja-task${x.on ? "" : " off"}" data-i="${x.i}">
+  const opt = (o) => `<option value="${esc(o.id)}"${o.id === x.pick ? " selected" : ""}>${esc(o.name)}${o.year ? ` (${esc(o.year)})` : ""}</option>`;
+  const found = x.options.filter((o) => !o.path);
+  const path = x.options.filter((o) => o.path);
+  // Prečrtano samo, kar je učenec sam izklopil (naloga brez izbranega znanja ni prečrtana).
+  return `<li class="card vaja-task${x.pick && !x.on ? " off" : ""}" data-i="${x.i}">
     <div class="vaja-task-head">
       <b>${esc(t("vaja.task", { i: m ? Number(m[1]) : x.i + 1 }))}</b>
       ${none ? "" : `<label class="zap-keep vaja-on"><input type="checkbox" data-on${x.on ? " checked" : ""}${x.pick ? "" : " disabled"}> <span>${esc(t("vaja.use"))}</span></label>`}
@@ -208,8 +224,8 @@ function taskRow(x) {
       none
         ? `<p class="vaja-none">${icon("info")} <span>${esc(t("vaja.none"))}</span></p>`
         : `<label class="vaja-skill" for="${id}"><span>${esc(t("vaja.skill"))}</span>
-      <select id="${id}" data-skill dir="auto">${x.pick ? "" : `<option value="">${esc(t("vaja.pick"))}</option>`}${x.options.map((o) => `<option value="${esc(o.id)}"${o.id === x.pick ? " selected" : ""}>${esc(o.name)}${o.year ? ` (${esc(o.year)})` : ""}</option>`).join("")}</select></label>
-      ${!x.skill ? `<p class="vaja-none">${icon("info")} <span>${esc(t("vaja.none"))}</span></p>` : !x.sure ? `<p class="vaja-unsure">${icon("circle-help")} <span>${esc(t("vaja.unsure"))}</span></p>` : ""}`
+      <select id="${id}" data-skill dir="auto">${x.pick ? "" : `<option value="">${esc(t("vaja.pick"))}</option>`}${found.map(opt).join("")}${path.length ? `<optgroup label="${esc(t("vaja.fromPath"))}">${path.map(opt).join("")}</optgroup>` : ""}</select></label>
+      ${!x.skill && !x.pick ? `<p class="vaja-none">${icon("info")} <span>${esc(t("vaja.unknown"))}</span></p>` : x.skill && !x.sure && x.pick === x.skill.id ? `<p class="vaja-unsure">${icon("circle-help")} <span>${esc(t("vaja.unsure"))}</span></p>` : ""}`
     }
   </li>`;
 }
@@ -245,7 +261,7 @@ function renderList() {
       if (cb) (cb.disabled = !x.pick), (cb.checked = x.on);
     }
     if (e.target.matches("[data-on]")) x.on = e.target.checked;
-    li.classList.toggle("off", !x.on);
+    li.classList.toggle("off", !!x.pick && !x.on);
   });
   el.querySelector("[data-start]").addEventListener("click", () => {
     const tasks = V.tasks.filter((x) => x.on && x.pick).map((x) => ({ i: x.i, skill: x.pick }));
@@ -261,18 +277,21 @@ function renderList() {
 // --- povzetek po veščinah (konec serije v app.js) ---
 function doneHtml(n) {
   const list = n.list || [];
-  const ok = list.filter((k) => k.ok);
-  const more = list.filter((k) => !k.ok);
+  const by = (st) => list.filter((k) => k.status === st);
   const group = (items, cls, ic, title) =>
     items.length
       ? `<h3 class="with-icon vaja-sum-h">${icon(ic)} ${esc(title)}</h3><ul class="vaja-sum ${cls}">${items.map((k) => `<li dir="auto">${icon(ic)} <span>${esc(k.name)}</span> <small class="muted">${k.correct}/${k.total}</small></li>`).join("")}</ul>`
       : "";
-  const gained = n.listXp;
+  const more = by("more");
+  // Ponavljanje obljubimo samo za teme, ki jih strežnik res postavi v ponavljanje (obvladane že pred to vajo).
+  const review = more.filter((k) => k.review).map((k) => k.name);
   return `<div class="card result celebrate vaja-done"><div class="result-icon">${icon("trophy")}</div><h2>${esc(t("vaja.done"))}</h2>
-    <p>${esc(t("vaja.score", { correct: n.correct, total: n.total }))}${gained ? ` · <bdi dir="ltr">+${gained} XP</bdi>` : ""}</p>
-    ${group(ok, "vaja-ok", "circle-check", t("vaja.ok"))}
+    <p>${esc(t("vaja.score", { correct: n.correct, total: n.total }))}${n.listXp ? ` · <bdi>${esc(t("vaja.xp", { n: n.listXp }))}</bdi>` : ""}</p>
+    ${group(by("ok"), "vaja-ok", "circle-check", t("vaja.ok"))}
     ${group(more, "vaja-more", "repeat", t("vaja.more"))}
-    ${more.length ? `<p class="muted">${esc(t("vaja.moreNote"))}</p>` : ""}
+    ${group(by("few"), "vaja-few", "info", t("vaja.few"))}
+    ${review.length ? `<p class="muted" dir="auto">${esc(t("vaja.review", { list: review.join(", ") }))}</p>` : ""}
+    ${more.length > review.length ? `<p class="muted">${esc(t("vaja.againHint"))}</p>` : ""}
     <div class="actions zap-actions">
       <button type="button" class="primary" data-vaja-again>${icon("refresh-cw")} ${esc(t("vaja.again"))}</button>
       <button type="button" class="secondary" id="fb-back">${icon("notebook-pen")} ${esc(t("cards.notes"))}</button>

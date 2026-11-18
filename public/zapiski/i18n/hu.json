@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Új feladatok a lapodon lévő tudáshoz, a könnyebbektől a nehezebbekig.",
   "vaja.done": "Vége a gyakorlásnak",
   "vaja.score": "Elsőre jó: {correct} / {total}",
-  "vaja.ok": "Megy",
+  "vaja.ok": "Jól ment",
   "vaja.more": "Még gyakorold",
-  "vaja.moreNote": "Amit még gyakorolsz, azt Evklid az ismétlésnél újra felajánlja.",
   "vaja.again": "Még egy gyakorlás",
-  "vaja.errEmpty": "Nem találtam feladatot a lapon. Fényképezz közelebbről, vagy illeszd be a szöveget."
+  "vaja.errEmpty": "Nem találtam feladatot a lapon. Fényképezz közelebbről, vagy illeszd be a szöveget.",
+  "vaja.few": "Túl kevés feladat az értékeléshez",
+  "vaja.review": "Holnap az ismétlésben: {list}.",
+  "vaja.againHint": "A többit gyakorold tovább a »Még egy gyakorlás« gombbal.",
+  "vaja.xp": "+{n} XP a feladatokért",
+  "vaja.unknown": "Nem ismertem fel a tudást – válaszd ki magad.",
+  "vaja.fromPath": "A tanulási utadról",
+  "vaja.onlySi": "Egyelőre csak a szlovén általános és középiskolához.",
+  "vaja.tooFast": "Túl sok lap rövid idő alatt. Próbáld újra néhány perc múlva.",
+  "vaja.expired": "A feladatlista lejárt. Olvasd be újra a lapot."
 }

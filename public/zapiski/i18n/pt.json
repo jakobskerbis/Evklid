@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Exercícios novos das competências da tua folha, dos mais fáceis aos mais difíceis.",
   "vaja.done": "Prática concluída",
   "vaja.score": "Certo à primeira: {correct} de {total}",
-  "vaja.ok": "Dominas",
+  "vaja.ok": "Correu-te bem",
   "vaja.more": "Continua a praticar",
-  "vaja.moreNote": "O que ainda estás a praticar, o Evklid volta a propor-te nas revisões.",
   "vaja.again": "Mais uma prática",
-  "vaja.errEmpty": "Não encontrei exercícios na folha. Tira a foto mais perto ou cola o texto."
+  "vaja.errEmpty": "Não encontrei exercícios na folha. Tira a foto mais perto ou cola o texto.",
+  "vaja.few": "Poucos exercícios para avaliar",
+  "vaja.review": "Na revisão de amanhã: {list}.",
+  "vaja.againHint": "Continua a praticar o resto com »Mais uma prática«.",
+  "vaja.xp": "+{n} XP pelos exercícios",
+  "vaja.unknown": "Não reconheci a competência – escolhe-a tu.",
+  "vaja.fromPath": "Do teu percurso de aprendizagem",
+  "vaja.onlySi": "Por agora só para o ensino básico e secundário esloveno.",
+  "vaja.tooFast": "Demasiadas folhas em pouco tempo. Tenta daqui a uns minutos.",
+  "vaja.expired": "A lista de exercícios expirou. Lê a folha outra vez."
 }

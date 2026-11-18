@@ -25,7 +25,7 @@ import { imageCallReserveUsd, callMaxUsd } from "./meje-ai.js";
 import { seal, unseal, blindIndex, encryptionOn } from "./crypto-polje.js";
 import { codeCheck } from "./verify.js";
 import { checkAnswerClaims } from "./racun.js";
-import { rankLessons, topicForName } from "./lekcija-za-vprasanje.js";
+import { rankLessons, topicForName, searchOn } from "./lekcija-za-vprasanje.js";
 import { getTopic } from "./curriculum.js";
 import { generateTask, hasGenerator } from "./practice/index.js";
 import { toChoice } from "./practice/choice.js";
@@ -372,7 +372,8 @@ export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null,
   app.get("/api/students/:id/zapiski", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    res.json({ notes: notesOf(db, s.id).map((r) => noteView(db, s.id, r)), pages: pagesInfo(s) });
+    // vaja: »Vaja iz testa« je na voljo (slovenska OŠ in SŠ, server/vaja-iz-lista.js).
+    res.json({ notes: notesOf(db, s.id).map((r) => noteView(db, s.id, r)), pages: pagesInfo(s), vaja: searchOn(s.settings) });
   });
 
   app.post("/api/students/:id/zapiski/preberi", async (req, res) => {

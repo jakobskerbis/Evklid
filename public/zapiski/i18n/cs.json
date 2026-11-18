@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Nové úlohy ke znalostem z tvého listu, od lehčích k těžším.",
   "vaja.done": "Procvičování dokončeno",
   "vaja.score": "Napoprvé správně: {correct} z {total}",
-  "vaja.ok": "Umíš",
+  "vaja.ok": "Šlo ti to dobře",
   "vaja.more": "Ještě procvičuj",
-  "vaja.moreNote": "Co ještě procvičuješ, ti Evklid nabídne při opakování.",
   "vaja.again": "Ještě jedno procvičování",
-  "vaja.errEmpty": "Na listu jsem nenašel žádné úlohy. Vyfoť to blíž nebo vlož text."
+  "vaja.errEmpty": "Na listu jsem nenašel žádné úlohy. Vyfoť to blíž nebo vlož text.",
+  "vaja.few": "Příliš málo úloh na hodnocení",
+  "vaja.review": "Zítra při opakování: {list}.",
+  "vaja.againHint": "Zbytek procvičuj dál tlačítkem »Ještě jedno procvičování«.",
+  "vaja.xp": "+{n} XP za úlohy",
+  "vaja.unknown": "Znalost jsem nepoznal – vyber ji sám.",
+  "vaja.fromPath": "Z tvé učební cesty",
+  "vaja.onlySi": "Zatím jen pro slovinskou základní a střední školu.",
+  "vaja.tooFast": "Příliš mnoho listů v krátké době. Zkus to za pár minut.",
+  "vaja.expired": "Seznam úloh vypršel. Načti list znovu."
 }

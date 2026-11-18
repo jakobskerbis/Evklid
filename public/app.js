@@ -3522,7 +3522,7 @@ async function startSession(kind, body = {}) {
   try {
     out = await api(`/api/students/${state.student.id}/${cfg.endpoint || kind}`, { method: "POST", body });
   } catch (err) {
-    toast(err.message);
+    toast(cfg.errorText?.(err) || err.message); // seje modulov prevedejo svoje kode napak (vaja_potekla …)
     return;
   }
   state.topicFx = false; // naloge serije niso iz odprte teme

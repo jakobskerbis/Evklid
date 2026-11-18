@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "De nouveaux exercices sur les compétences de ta feuille, du plus facile au plus difficile.",
   "vaja.done": "Entraînement terminé",
   "vaja.score": "Juste du premier coup : {correct} sur {total}",
-  "vaja.ok": "Acquis",
+  "vaja.ok": "Ça s'est bien passé",
   "vaja.more": "À retravailler",
-  "vaja.moreNote": "Ce que tu dois encore travailler, Evklid te le proposera dans les révisions.",
   "vaja.again": "Encore un entraînement",
-  "vaja.errEmpty": "Je n'ai trouvé aucun exercice sur la feuille. Prends la photo de plus près ou colle le texte."
+  "vaja.errEmpty": "Je n'ai trouvé aucun exercice sur la feuille. Prends la photo de plus près ou colle le texte.",
+  "vaja.few": "Trop peu d'exercices pour juger",
+  "vaja.review": "Dans ta révision de demain : {list}.",
+  "vaja.againHint": "Continue à t'entraîner sur le reste avec »Encore un entraînement«.",
+  "vaja.xp": "+{n} XP pour les exercices",
+  "vaja.unknown": "Je n'ai pas reconnu la compétence – choisis-la toi-même.",
+  "vaja.fromPath": "De ton parcours d'apprentissage",
+  "vaja.onlySi": "Pour l'instant uniquement pour l'école primaire et secondaire slovène.",
+  "vaja.tooFast": "Trop de feuilles en peu de temps. Réessaie dans quelques minutes.",
+  "vaja.expired": "La liste d'exercices a expiré. Relis la feuille."
 }

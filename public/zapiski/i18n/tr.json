@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Kağıdındaki bilgiler için kolaydan zora yeni sorular.",
   "vaja.done": "Alıştırma bitti",
   "vaja.score": "İlk seferde doğru: {total} sorudan {correct}",
-  "vaja.ok": "Biliyorsun",
+  "vaja.ok": "İyi gitti",
   "vaja.more": "Biraz daha çalış",
-  "vaja.moreNote": "Hâlâ çalıştığın konuları Evklid tekrarlarda yeniden sunacak.",
   "vaja.again": "Bir alıştırma daha",
-  "vaja.errEmpty": "Kağıtta soru bulamadım. Daha yakından çek veya metni yapıştır."
+  "vaja.errEmpty": "Kağıtta soru bulamadım. Daha yakından çek veya metni yapıştır.",
+  "vaja.few": "Değerlendirmek için çok az soru",
+  "vaja.review": "Yarınki tekrarda: {list}.",
+  "vaja.againHint": "Kalanları »Bir alıştırma daha« ile çalışmaya devam et.",
+  "vaja.xp": "Sorular için +{n} XP",
+  "vaja.unknown": "Bilgiyi tanıyamadım – kendin seç.",
+  "vaja.fromPath": "Öğrenme yolundan",
+  "vaja.onlySi": "Şimdilik yalnızca Slovenya ilk ve ortaokulları için.",
+  "vaja.tooFast": "Kısa sürede çok fazla kağıt. Birkaç dakika sonra tekrar dene.",
+  "vaja.expired": "Soru listesinin süresi doldu. Kağıdı yeniden okut."
 }

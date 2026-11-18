@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "針對你紙上知識點的新題目，由易到難。",
   "vaja.done": "練習完成",
   "vaja.score": "一次答對：{correct} / {total}",
-  "vaja.ok": "已掌握",
+  "vaja.ok": "做得不錯",
   "vaja.more": "繼續練習",
-  "vaja.moreNote": "還在練的內容，Evklid 會在複習時再給你。",
   "vaja.again": "再練一次",
-  "vaja.errEmpty": "紙上沒有找到題目。請拍近一點或貼上文字。"
+  "vaja.errEmpty": "紙上沒有找到題目。請拍近一點或貼上文字。",
+  "vaja.few": "題目太少，無法評估",
+  "vaja.review": "明天複習：{list}。",
+  "vaja.againHint": "其餘的用「再練一次」繼續練習。",
+  "vaja.xp": "題目得 +{n} XP",
+  "vaja.unknown": "我沒認出知識點，請自己選擇。",
+  "vaja.fromPath": "來自你的學習路徑",
+  "vaja.onlySi": "目前只適用於斯洛維尼亞的中小學。",
+  "vaja.tooFast": "短時間內紙張太多，請幾分鐘後再試。",
+  "vaja.expired": "題目清單已過期，請重新讀取紙張。"
 }

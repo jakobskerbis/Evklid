@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Ejercicios nuevos de las habilidades de tu hoja, de más fáciles a más difíciles.",
   "vaja.done": "Práctica terminada",
   "vaja.score": "Bien a la primera: {correct} de {total}",
-  "vaja.ok": "Lo dominas",
+  "vaja.ok": "Te ha ido bien",
   "vaja.more": "Sigue practicando",
-  "vaja.moreNote": "Lo que aún practicas, Evklid te lo ofrecerá en los repasos.",
   "vaja.again": "Otra práctica",
-  "vaja.errEmpty": "No encontré ejercicios en la hoja. Haz la foto más de cerca o pega el texto."
+  "vaja.errEmpty": "No encontré ejercicios en la hoja. Haz la foto más de cerca o pega el texto.",
+  "vaja.few": "Muy pocos ejercicios para valorarlo",
+  "vaja.review": "En el repaso de mañana: {list}.",
+  "vaja.againHint": "Sigue practicando el resto con »Otra práctica«.",
+  "vaja.xp": "+{n} XP por los ejercicios",
+  "vaja.unknown": "No reconocí la habilidad: elígela tú.",
+  "vaja.fromPath": "De tu ruta de aprendizaje",
+  "vaja.onlySi": "Por ahora solo para la escuela primaria y secundaria eslovena.",
+  "vaja.tooFast": "Demasiadas hojas en poco tiempo. Inténtalo en unos minutos.",
+  "vaja.expired": "La lista de ejercicios ha caducado. Vuelve a leer la hoja."
 }

@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "New tasks for the skills on your sheet, from easier to harder.",
   "vaja.done": "Practice finished",
   "vaja.score": "Right first time: {correct} of {total}",
-  "vaja.ok": "You've got it",
+  "vaja.ok": "You did well",
   "vaja.more": "Keep practising",
-  "vaja.moreNote": "Evklid will bring back what you're still practising in your reviews.",
   "vaja.again": "One more practice",
-  "vaja.errEmpty": "I didn't find any tasks on the sheet. Take the photo closer or paste the text."
+  "vaja.errEmpty": "I didn't find any tasks on the sheet. Take the photo closer or paste the text.",
+  "vaja.few": "Too few tasks to tell",
+  "vaja.review": "In your review tomorrow: {list}.",
+  "vaja.againHint": "Keep practising the rest with »One more practice«.",
+  "vaja.xp": "+{n} XP for tasks",
+  "vaja.unknown": "I didn't recognise the skill – choose it yourself.",
+  "vaja.fromPath": "From your learning path",
+  "vaja.onlySi": "For now only for Slovenian primary and secondary school.",
+  "vaja.tooFast": "Too many sheets in a short time. Try again in a few minutes.",
+  "vaja.expired": "The task list has expired. Read the sheet again."
 }

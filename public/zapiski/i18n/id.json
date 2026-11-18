@@ -74,9 +74,17 @@
   "vaja.sessionIntro": "Soal baru untuk keterampilan dari lembarmu, dari yang mudah ke yang sulit.",
   "vaja.done": "Latihan selesai",
   "vaja.score": "Benar pada percobaan pertama: {correct} dari {total}",
-  "vaja.ok": "Sudah kamu kuasai",
+  "vaja.ok": "Kamu sudah bagus",
   "vaja.more": "Terus berlatih",
-  "vaja.moreNote": "Yang masih kamu latih akan ditawarkan lagi oleh Evklid saat mengulang.",
   "vaja.again": "Satu latihan lagi",
-  "vaja.errEmpty": "Aku tidak menemukan soal di lembar. Foto lebih dekat atau tempel teksnya."
+  "vaja.errEmpty": "Aku tidak menemukan soal di lembar. Foto lebih dekat atau tempel teksnya.",
+  "vaja.few": "Terlalu sedikit soal untuk dinilai",
+  "vaja.review": "Di pengulangan besok: {list}.",
+  "vaja.againHint": "Terus latih sisanya dengan »Satu latihan lagi«.",
+  "vaja.xp": "+{n} XP untuk soal",
+  "vaja.unknown": "Aku tidak mengenali keterampilannya – pilih sendiri.",
+  "vaja.fromPath": "Dari jalur belajarmu",
+  "vaja.onlySi": "Untuk saat ini hanya untuk SD dan sekolah menengah Slovenia.",
+  "vaja.tooFast": "Terlalu banyak lembar dalam waktu singkat. Coba lagi beberapa menit lagi.",
+  "vaja.expired": "Daftar soal sudah kedaluwarsa. Baca lembarnya lagi."
 }
