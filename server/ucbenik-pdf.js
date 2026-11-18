@@ -17,6 +17,7 @@ import { pipeline } from "node:stream/promises";
 import { getPath, topicOrder, slugify } from "./curriculum.js";
 import { loadLesson, listBooks, getBook, simsFor } from "./textbook.js";
 import { lessonHtml, shell, unitTopics } from "./textbook-print.js";
+import { IKONE_HEAD } from "./ikone.js";
 import { lessonVersion } from "./tisk-predpomnilnik.js";
 import { BRAND } from "./brand.js";
 import { verifyAttestation } from "./pdf-potrdilo.js";
@@ -118,7 +119,8 @@ let template;
 export function pdfTemplateHash() {
   return (template ||= sha(
     [
-      shell("T", "C", "", 3),
+      // Ikone zavihka (server/ikone.js) na PDF ne vplivajo: nova različica ikon ne sme znova izdelati vseh PDF-jev.
+      shell("T", "C", "", 3).replace(IKONE_HEAD, ""),
       lessonHtml({ id: "X-Y-1/poskus", name: "Poskus", unit: "Sklop", goals: "cilji" }, PROBE, 1),
       PDF_CSS,
       JSON.stringify([PDF_FONTS, PDF_FONT_DIRS]),

@@ -14,6 +14,7 @@ import { generateTask, hasGenerator, optionsAreTex } from "./practice/index.js";
 import { GRADIVA_DIR, hasGradivo, gradivoPage, videoFor } from "./gradiva-vsebina.js";
 import { weakTopicsFor } from "./weaknesses.js";
 import { dateText } from "../public/datum.js";
+import { IKONE_HEAD } from "./ikone.js";
 
 // free: brezplačno kot besedilo učbenika (narejeno iz lekcije, brez stroškov).
 // Ostalo velja za šolsko licenco (šolski predmeti) in Evklid Osebno (vsi predmeti).
@@ -355,7 +356,7 @@ export function createTiskPovezave({ now = Date.now } = {}) {
   };
 }
 
-const TISK_POTEKLA = `<!doctype html><html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Evklid</title></head><body style="font-family:system-ui,sans-serif;max-width:32rem;margin:3rem auto;padding:0 16px;line-height:1.5"><h1 style="font-size:1.3rem">Povezava je potekla</h1><p>Povezava za tisk velja 10 minut. Vrni se v aplikacijo Evklid in gumb pritisni še enkrat.</p></body></html>`;
+const TISK_POTEKLA = `<!doctype html><html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Evklid</title>${IKONE_HEAD}</head><body style="font-family:system-ui,sans-serif;max-width:32rem;margin:3rem auto;padding:0 16px;line-height:1.5"><h1 style="font-size:1.3rem">Povezava je potekla</h1><p>Povezava za tisk velja 10 minut. Vrni se v aplikacijo Evklid in gumb pritisni še enkrat.</p></body></html>`;
 const NO_STORE = { "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex" };
 
 export function mountGradiva(app, store, { loadStudent, accounts, leagues = null, tisk = createTiskPovezave() }) {

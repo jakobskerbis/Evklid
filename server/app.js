@@ -266,6 +266,7 @@ export function createApp(store, opts = {}) {
   mountOldLinkRedirect(app, opts.homeCheck);
   app.get("/healthz", (_req, res) => res.send("ok")); // za gostovanje, brez gesla
   // Brskalniki, Google in zaznamki iščejo /favicon.ico tudi brez <link rel="icon">: pošljemo logotip (scripts/logotip.cjs).
+  // Ta naslov nima različice, zato ga Chrome dolgo hrani (star klobuček): vsaka stran naj ima IKONE_HEAD (server/ikone.js).
   app.get("/favicon.ico", (_req, res) => {
     res.set("Cache-Control", "public, max-age=86400");
     res.type("image/x-icon").sendFile(path.join(here, "..", "assets", "evklid.ico"));

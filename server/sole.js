@@ -12,6 +12,7 @@ import { schoolDailyQuestions } from "./placila/pravice.js";
 import { PODARI_MONTHS } from "./placila/podari.js";
 import { TRIAL_DAYS, freeDailyQuestions } from "./accounts/plans.js";
 import { USTNO_QUESTIONS } from "./ustno.js";
+import { IKONE_HEAD } from "./ikone.js";
 
 export const ORDER_STATUSES = ["new", "contacted", "offer_sent", "won", "lost"];
 export const PLAN_LABELS = { class: "Licenca za razrede", school: "Cela šola", pilot: "Pilotna šola" };
@@ -188,6 +189,7 @@ export function predracunHtml(o, now = new Date()) {
   return `<!doctype html>
 <html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Predračun ${esc(number)}</title>
+${IKONE_HEAD}
 <script src="/predracun.js" defer></script>
 <style>
   body { font-family: system-ui, sans-serif; color: #111; background: #fff; max-width: 800px; margin: 0 auto; padding: 24px 16px; line-height: 1.45; }

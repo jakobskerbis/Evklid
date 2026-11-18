@@ -50,6 +50,7 @@ import { parentFromMeta, unmatchedRecorder } from "./ponoven-id.js";
 import { isInviteCode, inviteHash, inviteHashValid, inviteUsed, ensureInviteUses, claimInvite } from "../vabila.js";
 import { setInviteSecret } from "../vabila-kode.js";
 import { appMark } from "../mobile/trgovina.js";
+import { IKONE_HEAD } from "../ikone.js";
 
 export const CONSENT_TEXT =
   "Izjavljam, da sem starš ali zakoniti zastopnik tega otroka in soglašam, da Evklid obdeluje otrokove osebne podatke " +
@@ -2221,7 +2222,7 @@ export function mountAccounts(app, store, opts = {}) {
     const p = token && db.prepare("SELECT id FROM parents WHERE unsubscribe_token = ?").get(token);
     if (p) update(p.id, { weekly_email: 0 });
     res.type("html").send(
-      `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Evklid</title>` +
+      `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Evklid</title>${IKONE_HEAD}` +
         `<body style="font-family:sans-serif;max-width:480px;margin:40px auto;padding:0 16px"><h1>Evklid</h1><p>${
           p ? "Tedenskih poročil ne boste več prejemali. Ponovno jih vklopite v zavihku Račun." : "Povezava ni veljavna."
         }</p><p><a href="/">Odpri Evklid</a></p></body>`,
