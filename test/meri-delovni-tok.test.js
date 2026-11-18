@@ -6,6 +6,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 const y = fs.readFileSync(new URL("../.github/workflows/meri.yml", import.meta.url), "utf8");
 
@@ -115,7 +116,28 @@ test("meri-preizkus3 --suho nikoli ne kliče API (0 $), tudi s ključem", () => 
 test("plačane meri-*.mjs upoštevajo --max-usd (sicer jih delovni tok zavrne)", () => {
   const vzorec = /arg\("(--)?max-usd"/; // isti vzorec kot korak »Skripta upošteva --max-usd«
   assert.ok(y.includes(`grep -Eq '${vzorec.source}'`));
-  for (const s of ["meri-preizkus3.mjs", "meri-nacin-b.mjs", "meri-hitri-korak.mjs"]) {
+  for (const s of ["meri-preizkus3.mjs", "meri-nacin-b.mjs", "meri-hitri-korak.mjs", "meri-natancnost-ss.mjs"]) {
     assert.match(fs.readFileSync(new URL(`../scripts/${s}`, import.meta.url), "utf8"), vzorec, s);
   }
+});
+
+test("meri-natancnost-ss: meja in izbor se preverita pred klicem; privzeto samo odgovor s preverjanjem", () => {
+  const src = fs.readFileSync(new URL("../scripts/meri-natancnost-ss.mjs", import.meta.url), "utf8");
+  assert.match(src, /"--samo", ids\.join\(","\), "--ponovi", "1", "--max-usd", String\(MEJA\)/); // mejo uveljavi primerjava-modelov.js
+  assert.match(src, /if \(!process\.argv\.includes\("--oba"\)\) ukaz\.push\("--pogoj", "s"\);/);
+  assert.match(src, /if \(SUHO\) ukaz\.push\("--dry"\);/); // --suho nikoli ne kliče modela
+});
+
+test("meri-natancnost-ss --suho: izbor brez klica; neveljavni argumenti končajo z 1", () => {
+  const skripta = fileURLToPath(new URL("../scripts/meri-natancnost-ss.mjs", import.meta.url));
+  const zagon = (...a) => spawnSync(process.execPath, ["--disable-warning=ExperimentalWarning", skripta, ...a], { encoding: "utf8", env: { ...process.env, EVKLID_MOCK: "1", ANTHROPIC_API_KEY: "" } });
+  const suho = zagon("--suho", "--del", "1-2");
+  assert.equal(suho.status, 0, suho.stderr);
+  const n = Number(/primerov (\d+)/.exec(suho.stdout)?.[1]);
+  assert.ok(n >= 5 && n <= 30, `primerov ${n}`);
+  assert.match(suho.stdout, /suho \(brez klicev\)/);
+  assert.doesNotMatch(suho.stdout, /IZID/); // suhi tek ne zapiše izida
+  assert.equal(zagon("--del", "3-2").status, 1);
+  assert.equal(zagon("--stopnje", "x").status, 1);
+  assert.equal(zagon("--max-usd", "6").status, 1);
 });
