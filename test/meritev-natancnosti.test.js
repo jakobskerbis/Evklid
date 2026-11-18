@@ -211,3 +211,16 @@ test("meritev: ocena z LaTeXom v razlogu ni več neocenjena (SŠ 18. 11.: 3 od 3
   assert.equal(parseGrade(String.raw`{"ocena":"napaka","razlog":"odrezan $\mathrm`).ocena, "neocenjeno", "brez zaključka in brez polja: neocenjeno");
   assert.equal(parseGrade("ni JSON").ocena, "neocenjeno");
 });
+
+test("meritev: dva nasprotujoča predmeta sta neocenjena, LaTeX z ubegom JSON ostane cel (pregled PR #833)", () => {
+  const two = '{"ocena":"pravilno","rezultat_podan":true,"razlog":"a"}\nPopravek: {"ocena":"napaka","rezultat_podan":true,"razlog":"b"}';
+  assert.equal(parseGrade(two).ocena, "neocenjeno", "ocenjevalec se je premislil: ne vzamemo prve ocene");
+  const same = '{"ocena":"napaka","razlog":"a"} {"ocena":"napaka","razlog":"b"}';
+  assert.equal(parseGrade(same).ocena, "napaka", "enaki oceni: ta ocena");
+  const g = parseGrade(String.raw`{"ocena":"manjsa_napaka","rezultat_podan":true,"razlog":"$rac{1}{2}$, $	heta$, $
+u$, $ho$, $eta$ in $	imes$"}`);
+  assert.equal(g.ocena, "manjsa_napaka");
+  assert.equal(g.razlog, String.raw`$rac{1}{2}$, $	heta$, $
+u$, $ho$, $eta$ in $	imes$`, "brez \\f, \\t, \\n, \\r, \\b v razlogu");
+  assert.equal(parseGrade('{"ocena":"pravilno","razlog":"vrstica\\nnova"}').razlog, "vrstica\nnova", "pravi ubeg \\n ostane nova vrstica");
+});

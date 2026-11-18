@@ -512,13 +512,33 @@ test("live check (SŠ meritev 18. 11.): the fix adds no new facts and may only w
   // BIO-SS-1/encimi-in-atp: popravek je trdil, da hitrost raste nad optimumom, in dodal termostabilne encime.
   let system = "";
   await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
-  assert.match(system, /fixes only the statement named in the problem and adds nothing else/);
-  assert.match(system, /withdraw it instead/);
-  assert.match(system, /simplification that is correct at the student's school level.*reply exactly OK/s);
+  assert.match(system, /^Except for corrected data or a replacement practice exercise, the correction fixes only the statement named in the problem, adds nothing else/m);
+  assert.match(system, /withdraw it instead \(Slovenian: "Popravek: trditve »…« ne upoštevaj; za to nalogo ni potrebna\."\)/);
+  assert.doesNotMatch(system, /ne drži; za to nalogo/);
+  // Pregled PR #833: »poenostavitev« ni izhod za napačno uporabljeno pravilo (K > 1 pri Kc z enoto).
+  assert.match(system, /correctly applied textbook rule of the student's level lacks a rare exception, reply exactly OK\. A rule applied where it does not hold \(for example comparing a quantity with a unit with 1\) is a real mistake\./);
+  assert.match(LIVE_REVIEW_SYSTEM, /applied where it holds is not an error just because it omits rare exceptions; a rule applied where it does not hold is an error/);
+  assert.match(LIVE_REVIEW_SYSTEM, /quote only the wrong words \(at most about ten\)/);
+  assert.match(LIVE_REVIEW_SYSTEM, /every written equality true \(a rounded value written with = is fine\)/);
   // KEM-SS-2/kemijsko-ravnotezje: »K > 1, prevladujejo produkti« pri Kc z enoto pregled ni ujel.
   assert.match(LIVE_REVIEW_SYSTEM, /every interpretation of a result/);
   assert.match(LIVE_REVIEW_SYSTEM, /quantity with a unit cannot be compared with the pure number 1/);
   assert.match(LIVE_REVIEW_SYSTEM, /give the correct fact in a few words/);
+});
+
+test("live check (pregled PR #833): review and fix get the student's level", async () => {
+  const { correction } = await import("../server/live-check.js");
+  let user = "";
+  const createFn = async (p) => ((user = p.messages[0].content), { content: [{ type: "text", text: "OK" }], usage: {}, model: "m" });
+  await reviewAnswer({ question: "q", answer: "a", stopnja: "SS", createFn });
+  assert.match(user, /^Student's level: SŠ \(secondary school\)\n\nSTUDENT QUESTION:/);
+  await reviewAnswer({ question: "q", answer: "a", stopnja: "OS", createFn });
+  assert.match(user, /^Student's level: OŠ/);
+  await reviewAnswer({ question: "q", answer: "a", createFn });
+  assert.match(user, /^STUDENT QUESTION:/, "brez stopnje ni vrstice");
+  let fixUser = "";
+  await correction({ streamFn: async (a) => ((fixUser = a.messages[0].content[0].text), { text: "OK" }), mode: "think", answer: "x", issue: "y", stopnja: "FAKS" });
+  assert.match(fixUser, /^Student's level: faks \(university\)\n\nStudent's language code: sl/);
 });
 
 test("code check (2026-11-11 round 2): bonds v = 8 − z use outer electrons, not the atomic number", () => {

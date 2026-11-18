@@ -1052,15 +1052,19 @@ Also check, as strictly as the calculations:
 - every practice exercise the tutor sets for the student: the quantities must be realistic (sizes, masses, speeds, concentrations that really occur), the substances and objects must behave as the exercise assumes (solubility, state, reactions, biology), the data must be consistent, and it must have exactly one correct answer (in a classification every item fits exactly one group and every offered group is used);
 - every side remark, »remember« box and check step, also when the final result is right: definitions, structures, charges, formulas and rules must be correct, and nothing may contradict the tutor's own calculation or the task;
 - every interpretation of a result (what a value means, which side or quantity prevails, larger or smaller, faster or slower): it must follow from the given data, not from a rule of thumb that does not apply (a quantity with a unit cannot be compared with the pure number 1);
-- the plan and every intermediate equation: relations in the right direction (»a divides b« is not »b divides a«) and every written equality true.
-A textbook rule stated for the school level without rare exceptions is not an error. In the reason, quote the wrong statement and give the correct fact in a few words.
+- the plan and every intermediate equation: relations in the right direction (»a divides b« is not »b divides a«) and every written equality true (a rounded value written with = is fine).
+A textbook rule of the student's level that is applied where it holds is not an error just because it omits rare exceptions; a rule applied where it does not hold is an error. In the reason, quote only the wrong words (at most about ten) and then give the correct fact in a few words.
 Reply with exactly one line: OK, or NAPAKA: <short reason>.`;
+
+// Stopnja učenca za pregled in popravek (stopnja iz app.js: »OS«, »SS«, »FAKS«).
+const LEVEL_LABEL = { OS: "OŠ (primary school)", SS: "SŠ (secondary school)", FAKS: "faks (university)" };
+export const levelLine = (stopnja) => (LEVEL_LABEL[stopnja] ? `Student's level: ${LEVEL_LABEL[stopnja]}\n\n` : "");
 
 /** Pregled s Sonnetom (navodila preverjevalca iz server/verify.js in LIVE_REVIEW_SYSTEM). Vrne { reason: razlog napake ali null, cost }. */
 // kind: »preverjanje« ali »preverjanje-sola« (reviewKindFor). signal: prekinitev zahteve; po LIVE_REVIEW_TIMEOUT_MS
 // askModel vrže napako z name »TimeoutError« (klicatelj odgovor pusti brez pregleda).
-export async function reviewAnswer({ question, answer, createFn = null, usage = null, studentId = null, kind = "preverjanje", signal = null, timeoutMs = LIVE_REVIEW_TIMEOUT_MS() }) {
-  const r = await askModel(MODEL_MID, checkerUser({ question, answer }), createFn, LIVE_REVIEW_SYSTEM, { signal, timeoutMs });
+export async function reviewAnswer({ question, answer, stopnja = null, createFn = null, usage = null, studentId = null, kind = "preverjanje", signal = null, timeoutMs = LIVE_REVIEW_TIMEOUT_MS() }) {
+  const r = await askModel(MODEL_MID, levelLine(stopnja) + checkerUser({ question, answer }), createFn, LIVE_REVIEW_SYSTEM, { signal, timeoutMs });
   const cost = usage ? usage.log(studentId, r.model, r.usage, kind) : 0;
   // Samo izrecna NAPAKA; odrezan ali nejasen odgovor preverjevalca ni dovolj za popravek.
   return { reason: !r.verdict.ok && /^[\s*`_]*NAPAKA/i.test(r.text || "") ? r.verdict.reason : null, cost };
@@ -1072,9 +1076,9 @@ export async function reviewAnswer({ question, answer, createFn = null, usage = 
 
 const FIX_SYSTEM = `You fix one mistake in an AI tutor's answer to a student. You get the answer and a problem that an exact check or a reviewer found in it.
 If the problem is real (the answer states something wrong as true), write a correction of 1 to 3 short sentences addressed to the student, in the language of the answer, that starts with the word for "Correction" in that language followed by a colon (Slovenian: "Popravek:"). Give the correct value or fact. If the answer leaves later steps to the student, correct only the wrong part and do not solve the rest. Write maths as $…$. Do not mention a program, a check or a reviewer, and do not repeat the answer.
-The correction itself must be certainly right, so it fixes only the statement named in the problem and adds nothing else: no new facts, rules, exceptions, examples, organisms, substances or numbers that are not in the answer or the problem. Use only a correct value or fact given in the problem or computed in the answer, or textbook knowledge of the student's level that you are sure of. If the wrong statement is a side remark the task does not need and you cannot state the correct fact with certainty, withdraw it instead (Slovenian: "Popravek: trditev »…« ne drži; za to nalogo ni potrebna.").
+Except for corrected data or a replacement practice exercise, the correction fixes only the statement named in the problem, adds nothing else and must be certainly right: no new facts, rules, exceptions, examples, organisms, substances or numbers that are not in the answer or the problem. Use only a correct value or fact given in the problem or computed in the answer, or textbook knowledge at the student's level that you are sure of. If the wrong statement is a side remark the task does not need and you cannot state the correct fact with certainty, withdraw it instead (Slovenian: "Popravek: trditve »…« ne upoštevaj; za to nalogo ni potrebna.").
 If the problem is in a practice exercise, give corrected data or a replacement exercise; never give the exercise's solution.
-If the answer does not really claim the wrong thing (for example it shows the student's mistake, a hypothetical case, or the check misread it), or the problem only objects to a simplification that is correct at the student's school level (a textbook rule stated without rare exceptions), reply exactly OK.`;
+If the answer does not really claim the wrong thing (for example it shows the student's mistake, a hypothetical case, or the check misread it), or the problem only says that a correctly applied textbook rule of the student's level lacks a rare exception, reply exactly OK. A rule applied where it does not hold (for example comparing a quantity with a unit with 1) is a real mistake.`;
 
 // Odgovor modela → blok za prikaz (»> **Popravek:** …«) ali null.
 export function fixBlock(text) {
@@ -1094,9 +1098,9 @@ export function fixBlock(text) {
  */
 // Način popravka: isti model pri podrobni razlagi, sicer hitri model z več razmisleka (think).
 export const fixModeFor = (mode) => (mode === "deep" || mode === "mid" ? mode : "think");
-export async function correction({ streamFn, mode, answer, issue, language = "sl", signal }) {
+export async function correction({ streamFn, mode, answer, issue, language = "sl", stopnja = null, signal }) {
   const fixMode = fixModeFor(mode);
-  const user = `Student's language code: ${language}\n\nANSWER:\n${String(answer).slice(0, 8000)}\n\nPROBLEM FOUND:\n${String(issue).slice(0, 600)}`;
+  const user = `${levelLine(stopnja)}Student's language code: ${language}\n\nANSWER:\n${String(answer).slice(0, 8000)}\n\nPROBLEM FOUND:\n${String(issue).slice(0, 600)}`;
   const r = await streamFn({ system: FIX_SYSTEM, messages: [{ role: "user", content: [{ type: "text", text: user }] }], mode: fixMode, deep: fixMode === "deep" || fixMode === "mid", onText: () => {}, signal });
   return { block: r?.stopReason === "refusal" ? null : fixBlock(r?.text), usage: r?.usage, model: r?.model, mode: fixMode };
 }
