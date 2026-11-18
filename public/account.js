@@ -30,6 +30,7 @@ const money = (minor, currency = "EUR") => {
 };
 const date = (iso) => (iso ? dateText(iso, locale()) : ""); // »do 23. novembra 2026« (public/datum.js)
 const GUEST_INVITE = "evklid_gost";
+const INVITE_KEY = "evklid.vabilo"; // koda vabila v pilot (public/vabilo.js KEY)
 const store = {
   get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
@@ -418,9 +419,10 @@ export async function initAccount({ onReady }) {
 }
 
 // Po vrnitvi v aplikacijo s plačila (public/pay-ui.js): novo stanje; zavihek Račun znova samo, ko se je kupljeno
-// spremenilo (paket, preostali pogovori, darilne kode, paket pred testom), zahvala ob novi naročnini.
+// spremenilo (paket, preostali pogovori, darilne kode, paket pred testom, števec »Podari Evklid«), zahvala ob novi naročnini.
 let shownSig = null;
-const paySig = (acc, balance) => JSON.stringify([acc?.access?.tier, (acc?.gifts || []).length, (acc?.children || []).map((c) => c.pass?.ends_at || ""), balance || 0]);
+const podariSig = (s) => (s ? [s.donated_months, s.evklid_months, s.in_use_months] : null);
+export const paySig = (acc, balance) => JSON.stringify([acc?.access?.tier, (acc?.gifts || []).length, (acc?.children || []).map((c) => c.pass?.ends_at || ""), balance || 0, podariSig(acc?.podari)]);
 async function refreshAfterPay({ acc, becamePaid }) {
   status = await api("/api/account/status").catch(() => status);
   const view = $("#view-account");
@@ -606,10 +608,13 @@ function renderLogin(mode = "login") {
       } else {
         const r = await api("/api/auth/register", {
           method: "POST",
-          body: { name: f.name.value, email: f.email.value, password: f.password.value, referral_code: f.referral_code.value, promo_code: f.promo_code.value, accept_privacy: f.accept_privacy.checked, accept_terms: f.accept_terms.checked, birth_date: f.birth_date.value, country: deviceRegion() },
+          // invite: koda vabila v pilot s strani /vabilo (public/vabilo.js); po potrditvi e-naslova račun samodejno v pilotu (#751).
+          body: { name: f.name.value, email: f.email.value, password: f.password.value, referral_code: f.referral_code.value, promo_code: f.promo_code.value, accept_privacy: f.accept_privacy.checked, accept_terms: f.accept_terms.checked, birth_date: f.birth_date.value, country: deviceRegion(), invite: store.get(INVITE_KEY) || undefined },
         });
         store.set("evklid_ref", null);
         store.set("evklid_koda", null);
+        store.set(INVITE_KEY, null);
+        if (r.invite) toast(t({ pending: "vab.regPending", ended: "vab.regEnded" }[r.invite] || "vab.regBad"));
         if (r.promo_until) toast(`Aktivacijska koda velja ✓ Poln dostop do ${date(r.promo_until)}.`);
         if (r.promo_pending) toast(t("acct.promoAfterVerify"));
         if (r.promo_error) toast(`Račun je ustvarjen, koda pa ni bila sprejeta: ${r.promo_error}`);
@@ -1118,11 +1123,11 @@ const statusText = (st) => (STATUS_KEYS.includes(st) ? t(`acct.st.${st}`) : st);
 
 
 // Poraba inštruktorja ta mesec kot delež mesečne omejitve (brez zneskov). Naročnik (zajamčeni delež,
-// j 2026-11-01): preostale podrobne razlage; ko so porabljene, inštruktor odgovarja v hitrem načinu.
+// j 2026-11-01): preostale podrobne razlage v obdobju naročnine (od dneva plačila, server/usage.js periodStart); ko so porabljene, inštruktor odgovarja v hitrem načinu.
 function aiPill(a) {
   if (!a || a.percent == null) return "";
   // Družina: skupen delež za vse profile (enak preostanek pri vsakem otroku, ai.pool v opisu).
-  // Porabljen tudi hitri način (a.tail): do konca meseca vsak dan kot brezplačni paket (server/usage.js tailToday).
+  // Porabljen tudi hitri način (a.tail): do konca obdobja naročnine (aiPeriodEnd) vsak dan kot brezplačni paket (server/usage.js tailToday).
   const outText = a.tail ? t("ai.tail") : a.spread ? `${t("ai.out")} ${t("ai.then")}` : t("ai.out");
   // Na telefonu title ni viden: v repu je besedilo ai.tail vidno v pilu (pregled #821).
   if (a.guaranteed) return `<span class="pill${a.stage === "out" ? " warn" : ""}" title="${esc((a.stage === "out" ? outText : t("ai.left", { n: a.explanations_left })) + (a.pool ? " " + t("ai.pool") : ""))}">${esc(a.tail ? t("ai.tail") : t("ai.left", { n: a.explanations_left }))}</span>`;

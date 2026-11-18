@@ -83,7 +83,7 @@ import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
-import { blockStoreAppPurchases, storeAppRequest } from "./mobile/trgovina.js";
+import { blockStoreAppPurchases, storeAppRequest, storeAppPages } from "./mobile/trgovina.js";
 import { mount3d } from "./tri-d.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
 import { startFxJobs } from "./tecaji.js";
@@ -298,7 +298,7 @@ export function createApp(store, opts = {}) {
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   app.use(blockStoreAppPurchases); // aplikacija iz trgovine: brez nakupa s kartico (server/mobile/trgovina.js)
-  mountInviteApi(app); // koda vabila v pilot (javno, pred prijavo; server/vabila.js)
+  mountInviteApi(app, { db: store.db }); // koda vabila v pilot (javno, pred prijavo; server/vabila.js; porabljene kode #751)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
   app.use((req, res, next) => (req.nekanonicnaApi ? res.status(404).json({ error: "Pot ne obstaja." }) : next())); // točka A1
   mountMobile(app, accounts, { scheduler: opts.scheduler, fetchFn: opts.fetchFn, ...opts.mobile }); // prijava z Apple, nakupi v trgovinah, obvestila, /prenesi
@@ -377,6 +377,7 @@ export function createApp(store, opts = {}) {
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   mountInvitePage(app); // stran /vabilo (public/vabilo.html, server/vabila.js)
+  app.use(storeAppPages(publicDir)); // Za starše in Garancija v aplikaciji iz trgovine brez cen in /prenesi (server/mobile/trgovina.js)
   mountVidnost(app); // robots.txt, sitemap.xml, llms.txt in stran /o-evklidu za iskalnike (server/vidnost.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,

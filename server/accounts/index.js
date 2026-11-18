@@ -13,7 +13,7 @@ import { openReport } from "../reports.js";
 import { unseal, auditSecret } from "../crypto-polje.js";
 import { createHmac } from "node:crypto";
 import { exportOtherTables } from "../zasebnost.js";
-import { pilotSummary, pilotWtp } from "../pilot-naloge.js";
+import { pilotSummary, pilotWtp, endAccountPilot } from "../pilot-naloge.js";
 import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
 import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES, PILOT_LOCK_PROFILES, pilotLastDay } from "./pilot-meja.js";
 import { createPaidPeriods } from "../placila/placano.js";
@@ -47,6 +47,8 @@ import { mountPodari } from "../placila/podari.js";
 import { Schedules, nowParts } from "../schedule.js";
 import { setSource } from "../rast.js";
 import { parentFromMeta, unmatchedRecorder } from "./ponoven-id.js";
+import { isInviteCode, inviteHash, inviteHashValid, inviteUsed, ensureInviteUses, claimInvite } from "../vabila.js";
+import { setInviteSecret } from "../vabila-kode.js";
 import { appMark } from "../mobile/trgovina.js";
 
 export const CONSENT_TEXT =
@@ -84,6 +86,8 @@ export function mountAccounts(app, store, opts = {}) {
 
   const db = store.db;
   migrateAccounts(db);
+  ensureInviteUses(db); // porabljene kode vabila v pilot (#751, server/vabila.js)
+  setInviteSecret(auditSecret(db)); // zgoščene kode vabila: HMAC s strežniško skrivnostjo (server/vabila-kode.js)
   migrateBilling(db);
   const aiUsage = new Usage(db);
   // Uporaba brez registracije je odstranjena: vedno izklopljena, vklopijo jo le testi (opts.guest).
@@ -386,11 +390,53 @@ export function mountAccounts(app, store, opts = {}) {
     const keep = prev?.level ? prev : lock || prev || {};
     kv.set(pilotKey(p.email), JSON.stringify({ usd: (prev?.usd || 0) + usd, level: keep.level || null, family: !!keep.family }));
   }
-  // Brisanje zapisov pilota: preteklih mesecev vedno, po koncu pilota vseh.
+  // Kratka transakcija (node:sqlite nima pomočnika za transakcije); znotraj že odprte samo izvede fn.
+  function inTx(fn) {
+    if (db.isTransaction) return fn();
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      const out = fn();
+      db.exec("COMMIT");
+      return out;
+    } catch (err) {
+      db.exec("ROLLBACK");
+      throw err;
+    }
+  }
+  // Brisanje zapisov pilota: preteklih mesecev vedno, po koncu pilota vseh (tudi porabljenih kod vabila in kod na
+  // računih, #751/#819: po koncu pilota nimajo več namena). Med pilotom konča članstvo iz umaknjenih kod.
   function purgePilotKv(now = Date.now()) {
     const like = "(key LIKE 'pilot\\_prej\\_%' ESCAPE '\\' OR key LIKE 'pilot\\_stopnja\\_%' ESCAPE '\\')";
-    if (now >= pilotEndMs()) return db.prepare(`DELETE FROM kv WHERE ${like}`).run().changes;
+    if (now >= pilotEndMs()) {
+      inTx(() => {
+        db.prepare("DELETE FROM pilot_vabila").run();
+        db.prepare("UPDATE parents SET pilot_invite_hash = NULL, pilot_invite_at = NULL WHERE pilot_invite_hash IS NOT NULL OR pilot_invite_at IS NOT NULL").run();
+      });
+      return db.prepare(`DELETE FROM kv WHERE ${like}`).run().changes;
+    }
+    endRevokedInvites();
     return db.prepare(`DELETE FROM kv WHERE ${like} AND substr(key, -7) <> ?`).run(new Date(now).toISOString().slice(0, 7)).changes;
+  }
+  // Koda člana je bila umaknjena iz EVKLID_VABILA (j člana izključi): kot skrbnikov »Odstrani« (server/pilot-naloge.js)
+  // odpadejo oznaka pilota (naloge, »Povej mnenje«, seznam skrbnika) in fotografije pilota; meja plačanega paketa
+  // odpade že sama (pilot-meja.js isPilotParent). Ob zagonu in vsakih 30 min (purgePilotKv). Vrne število računov.
+  // Enkratno (#819): koda odpade z računa (pilot_invite_hash/at = NULL), zato naslednje čiščenje računa ne najde več in
+  // skrbnikov »Dodaj« po izključitvi ostane (naloge in mnenje; meje iz kode ni več, ta je samo z EVKLID_PILOT_EMAILS).
+  // Vrstica v pilot_vabila ostane: koda je porabljena.
+  function endRevokedInvites() {
+    const rows = db.prepare("SELECT id, pilot_invite_hash FROM parents WHERE pilot_invite_at IS NOT NULL").all();
+    let n = 0;
+    for (const r of rows) {
+      if (inviteHashValid(r.pilot_invite_hash)) continue;
+      inTx(() => {
+        const photos = endAccountPilot(db, r.id);
+        db.prepare("UPDATE parents SET pilot_invite_hash = NULL, pilot_invite_at = NULL WHERE id = ?").run(r.id);
+        audit(db, { parentId: r.id, actor: "system", action: "pilot_invite_revoked", ok: false, target: photos ? `photos:${photos}` : null });
+      });
+      n++;
+    }
+    if (n) log.info?.(`[vabilo] umaknjene kode: ${n} računov ni več v pilotu`);
+    return n;
   }
   try {
     purgePilotKv(); // ob zagonu
@@ -1194,6 +1240,7 @@ export function mountAccounts(app, store, opts = {}) {
     const refCode = String(req.body?.referral_code || "").trim().toUpperCase();
     const referrer = refCode ? db.prepare("SELECT id FROM parents WHERE referral_code = ? AND is_guest = 0").get(refCode) : null;
     const { id, verifyToken: token } = createParent(req, { email, passwordHash: await hashPassword(password), name: req.body?.name, birthIso: v.birthIso, referrerId: referrer?.id ?? null });
+    const invite = pendInvite(req, id);
     // Do potrditve e-naslova se račun uči z brezplačnim paketom (personalOf) in šteje v kvoto omrežja kot nekdanji gost
     // (guest_net, server/accounts/guest.js): novi računi z izmišljenimi naslovi ne dobijo vsak svoje kvote (#747).
     update(id, { guest_net: guestNet(req) });
@@ -1213,6 +1260,7 @@ export function mountAccounts(app, store, opts = {}) {
     res.status(201).json({
       parent: publicParent(getParent(id)),
       referred: !!referrer,
+      ...(invite ? { invite } : {}),
       ...(promoResult?.ok ? { promo_pending: true } : promoResult ? { promo_error: promoResult.error } : {}),
       ...(devLinks(req, getParent(id)?.email) ? { dev_verify_url: url } : {}),
     });
@@ -1290,7 +1338,7 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   // Potrditev e-naslova: gost zapusti kvoto omrežja, skrbnik prevzame učence iz časa pred računi.
-  function confirmEmail(parentId) {
+  function confirmEmail(parentId, req = null) {
     // Nekdanji gost: s potrditvijo zapusti kvoto omrežja in dobi 7-dnevni preizkus. Poraba gosta ostane šteta za
     // omrežje (guest_spent), zapisana, dokler je račun še na omrežju (pred potrditvijo; pregled #462).
     const before = getParent(parentId);
@@ -1309,6 +1357,59 @@ export function mountAccounts(app, store, opts = {}) {
       update(parentId, { is_admin: 1 });
       db.prepare("UPDATE students SET parent_id = ? WHERE parent_id IS NULL").run(parentId);
     }
+    claimPilotInvite(parentId, req);
+  }
+
+  // Koda vabila v pilot (#751, j 2026-11-15: koda za vsako osebo, velja enkrat). Registracija z veljavno, še neporabljeno
+  // kodo (polje invite, public/vabilo.js jo hrani v brskalniku) shrani samo zgoščeno kodo; brez potrjenega e-naslova
+  // ne velja nič. Vrne "pending", "invalid", "ended" (pilot je končan) ali null (brez kode). Ugibanje kod tu omejuje meja registracij na omrežje.
+  function pendInvite(req, parentId) {
+    const code = typeof req.body?.invite === "string" ? req.body.invite.trim() : "";
+    if (!code) return null;
+    // Po koncu pilota koda ne velja več (claimPilotInvite je ne bi porabil): ne obljubimo »čaka«.
+    if (Date.now() >= pilotEndMs()) {
+      audit(db, { req, parentId, action: "pilot_invite_ended", ok: false });
+      return "ended";
+    }
+    if (!isInviteCode(code) || inviteUsed(db, code)) {
+      audit(db, { req, parentId, action: "pilot_invite_rejected", ok: false });
+      return "invalid";
+    }
+    update(parentId, { pilot_invite_hash: inviteHash(code) });
+    audit(db, { req, parentId, action: "pilot_invite_pending" });
+    return "pending";
+  }
+  // Ob potrditvi e-naslova (in ob ogledu stanja za račune, potrjene drugače, npr. ponastavitev gesla že potrjenega) se koda
+  // porabi in račun postane član pilota (pilot-meja.js isPilotParent) z oznako za naloge in mnenja (pilot_at, kot ga
+  // nastavi skrbnik). Koda mora biti še na seznamu EVKLID_VABILA in pilot še ne končan; porabljena koda (drug račun
+  // jo je potrdil prej) se ne podeli dvakrat. Vsak izid gre v dnevnik dostopov (pilot_invite_*).
+  function claimPilotInvite(parentId, req = null) {
+    const p = getParent(parentId);
+    if (!p || p.is_guest || !p.email_verified_at || !p.pilot_invite_hash || p.pilot_invite_at) return false;
+    const drop = (action) => {
+      update(parentId, { pilot_invite_hash: null });
+      audit(db, { req, parentId, action, ok: false });
+      return false;
+    };
+    if (Date.now() >= pilotEndMs()) return drop("pilot_invite_ended");
+    if (!inviteHashValid(p.pilot_invite_hash)) return drop("pilot_invite_revoked");
+    // Poraba kode in oznaka na računu skupaj (#819): brez pol porabljene kode ob napaki vmes.
+    const claimed = inTx(() => {
+      if (!claimInvite(db, p.pilot_invite_hash, parentId)) return false;
+      db.prepare("UPDATE parents SET pilot_invite_at = datetime('now'), pilot_at = COALESCE(pilot_at, datetime('now')) WHERE id = ?").run(parentId);
+      return true;
+    });
+    if (!claimed) return drop("pilot_invite_taken");
+    audit(db, { req, parentId, action: "pilot_invite_used" });
+    log.info?.(`[vabilo] račun ${parentId} je s kodo vabila član pilota do ${pilotLastDay()}`);
+    return true;
+  }
+  // Kodo je vnesel tisti, ki je račun ustvaril, ne nujno lastnik naslova (»Računa nisem ustvaril jaz«, ponastavitev gesla
+  // nepotrjenega računa, prijava z Apple na nepotrjen račun): ne porabi se (#751, #819).
+  function dropPilotInvite(parentId, req = null) {
+    if (!getParent(parentId)?.pilot_invite_hash) return;
+    update(parentId, { pilot_invite_hash: null });
+    audit(db, { req, parentId, action: "pilot_invite_rejected", ok: false });
   }
   // Povezava velja VERIFY_DAYS dni (#493), za GET in POST: potekla se ne more več uporabiti (nova: »Pošlji znova« v Računu).
   const byVerifyToken = (token) => {
@@ -1331,7 +1432,7 @@ export function mountAccounts(app, store, opts = {}) {
     // Samo seja tega računa potrdi takoj; brez nje (tudi račun brez gesla) GET ne potrdi ničesar, ker povezavo odprejo
     // tudi pregledovalniki pošte (pregled #492/#500 A P3-1).
     if (req.parent?.id === p.id) {
-      confirmEmail(p.id);
+      confirmEmail(p.id, req);
       return res.redirect("/?verified=1");
     }
     res.redirect(`/?verify=${encodeURIComponent(token)}`);
@@ -1352,12 +1453,13 @@ export function mountAccounts(app, store, opts = {}) {
     }
     // Seja istega računa (povezava odprta v brskalniku, kjer je lastnik prijavljen): potrdi brez gesla.
     if (req.parent?.id === p.id && req.body?.not_mine !== true) {
-      confirmEmail(p.id);
+      confirmEmail(p.id, req);
       return res.json({ ok: true });
     }
     if (req.body?.not_mine === true) {
       dropPreConfirm(p, req, "not_mine");
-      confirmEmail(p.id);
+      dropPilotInvite(p.id, req); // kodo je vnesel tujec, ne lastnik naslova (#751)
+      confirmEmail(p.id, req);
       const reset = randomToken();
       // Tujčev Apple ID (če ga je povezal) odpade z njegovim geslom (pregled #492 A P3-7).
       update(p.id, { password_hash: unusablePasswordHash(), reset_token_hash: sha256(reset), reset_expires_at: isoIn(1 / 24) });
@@ -1381,7 +1483,7 @@ export function mountAccounts(app, store, opts = {}) {
       audit(db, { req, parentId: p.id, action: "verify_password_fail", ok: false });
       return res.status(401).json({ error: "Napačno geslo." });
     }
-    confirmEmail(p.id);
+    confirmEmail(p.id, req);
     audit(db, { req, parentId: p.id, action: "verify_password" });
     // Geslo in dostop do e-pošte: kot prijava (Safari po registraciji v aplikaciji je potem tudi prijavljen).
     if (!req.parent) {
@@ -1510,7 +1612,9 @@ export function mountAccounts(app, store, opts = {}) {
     // Povezava velja enkrat: ob hkratnih zahtevah z istim žetonom uspe le prva.
     if (!db.prepare("SELECT 1 FROM parents WHERE id = ? AND reset_token_hash = ?").get(p.id, p.reset_token_hash)) return res.status(400).json({ error: "Povezava je potekla. Zahtevaj novo." });
     // Nepotrjen račun: novo geslo nastavi lastnik nabiralnika, račun pa je lahko ustvaril kdo drug (#747 pregled 2).
+    // Tudi kodo vabila je vnesel tisti, ki ga je ustvaril, ne nujno lastnik nabiralnika (#819).
     dropPreConfirm(p, req, "reset");
+    if (!p.email_verified_at) dropPilotInvite(p.id, req);
     update(p.id, {
       password_hash: hash,
       reset_token_hash: null,
@@ -1528,6 +1632,7 @@ export function mountAccounts(app, store, opts = {}) {
     // bil potrjen (prevzem pred registracijo), sicer jih je dobil lastnik sam (pregled #492 A P2-4).
     dropForeignAccess(p.id, { classKeys: !p.email_verified_at });
     audit(db, { req, parentId: p.id, action: "password_reset" });
+    claimPilotInvite(p.id, req); // potrjen račun s čakajočo kodo (sicer odpade zgoraj)
     accountLocks.unlock(p.id, req.deviceId);
     setSessionCookie(req, res, sessions.create(p.id));
     res.json({ ok: true });
@@ -1535,7 +1640,8 @@ export function mountAccounts(app, store, opts = {}) {
 
   // --- račun ---
   app.get("/api/account/status", (req, res) => {
-    const p = req.parent;
+    let p = req.parent;
+    if (p?.pilot_invite_hash && !p.pilot_invite_at && p.email_verified_at && claimPilotInvite(p.id, req)) p = getParent(p.id);
     res.json({
       enabled: true,
       guest_mode: guestAllowed(p),
@@ -1900,7 +2006,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     audit(db, { req, parentId: p.id, action: "export" });
     const parent = { ...p };
-    for (const k of ["password_hash", "verify_token_hash", "verify_expires_at", "reset_token_hash", "reset_expires_at", "unsubscribe_token", "store_account_token"]) delete parent[k];
+    for (const k of ["password_hash", "verify_token_hash", "verify_expires_at", "reset_token_hash", "reset_expires_at", "unsubscribe_token", "store_account_token", "pilot_invite_hash"]) delete parent[k];
     const q = (sql, ...a) => db.prepare(sql).all(...a);
     const data = {
       exported_at: new Date().toISOString(),

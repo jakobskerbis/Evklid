@@ -24,6 +24,8 @@ function prihranekStarsi(pairs) {
   if (ime) {
     document.getElementById("ask").textContent = ime + " bi rad(a) uporabljal(a) Evklid. Otroci, mlajši od 15 let, v Sloveniji ne morejo sami privoliti v obdelavo osebnih podatkov, zato je potrebno vaše soglasje. Na tej strani je vse, kar potrebujete za odločitev.";
   }
+  // Aplikacija iz trgovine: strežnik razdelka s cenami ne pošlje (server/mobile/trgovina.js storeAppPages).
+  if (!document.getElementById("prices")) return;
   var region = ((navigator.language || "").split("-")[1] || "").toUpperCase();
   fetch("/api/account/prices" + (region ? "?country=" + region : ""))
     .then(function (r) { return import("/odgovor.js").then(function (m) { return m.jsonAliNic(r); }); })

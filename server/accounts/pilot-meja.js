@@ -1,10 +1,13 @@
 // Meja inštruktorja za pilot in lastnika (j 2026-11-06 12:14).
-// - Član pilota: potrjen e-naslov v EVKLID_PILOT_EMAILS, do vključno EVKLID_PILOT_DO (privzeto 2026-12-15, po
+// - Član pilota: potrjen e-naslov v EVKLID_PILOT_EMAILS ali porabljena koda vabila, ki je še na seznamu EVKLID_VABILA
+//   (#751, server/vabila.js; koda se porabi šele ob potrditvi e-naslova), do vključno EVKLID_PILOT_DO (privzeto 2026-12-15, po
 //   slovenskem času). Do konca pilota ima VSAK profil računa (j 2026-11-06 17:0x) brezplačno mejo PLAČANEGA paketa
 //   svoje stopnje (stopnja na začetku meseca, strošek AI krije j), potem samodejno spet svoj običajni paket.
 // - Lastnik: potrjen e-naslov v EVKLID_ADMIN_EMAILS. Inštruktor brez meje (brez zaustavitve), poraba se še vedno
 //   zapiše (server/usage.js log), poročilo marže jo prikaže ločeno (server/advice.js).
 // Brez potrjenega e-naslova ne velja nič od tega: sicer bi se kdorkoli registriral s tujim naslovom.
+
+import { inviteHashValid } from "../vabila-kode.js";
 
 export const PILOT_DO_DEFAULT = "2026-12-15";
 // Največ profilov na računu člana pilota, dokler pilot traja (j 2026-11-06 18:3x). Po koncu pilota obstoječi profili
@@ -77,7 +80,11 @@ export function privilegedEmail(email, env = process.env) {
 // Ali je račun (vrstica parents) član pilota ob času now.
 export function isPilotParent(p, now = Date.now(), env = process.env) {
   const email = verifiedEmail(p);
-  return !!email && now < pilotEndMs(env, now) && list(env.EVKLID_PILOT_EMAILS).includes(email);
+  if (!email || now >= pilotEndMs(env, now)) return false;
+  // Član iz kode: koda porabljena, še na seznamu in oznaka pilota (pilot_at) še stoji. Ko jo skrbnik odstrani
+  // (»Odstrani«, server/pilot-naloge.js) ali ko je koda umaknjena (endRevokedInvites v server/accounts/index.js), se
+  // konča tudi meja (#819).
+  return list(env.EVKLID_PILOT_EMAILS).includes(email) || (!!p.pilot_invite_at && !!p.pilot_at && inviteHashValid(p.pilot_invite_hash, env));
 }
 
 // Ali je račun lastnik (skrbnik po EVKLID_ADMIN_EMAILS s potrjenim e-naslovom). Zastavica is_admin v bazi sama

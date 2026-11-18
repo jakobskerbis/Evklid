@@ -115,6 +115,11 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
           ).run(unusablePasswordHash(), birthIso, ctx.privacyVersion ?? byEmail.privacy_version, name, byEmail.id);
           dropForeignAccess(byEmail.id);
           audit(db, { req, parentId: byEmail.id, action: "apple_link_unverified" });
+          // Kodo vabila v pilot je vnesel tisti, ki je račun ustvaril, ne lastnik naslova: ne porabi se (#751, #819).
+          if (byEmail.pilot_invite_hash) {
+            db.prepare("UPDATE parents SET pilot_invite_hash = NULL WHERE id = ?").run(byEmail.id);
+            audit(db, { req, parentId: byEmail.id, action: "pilot_invite_rejected", ok: false });
+          }
         } else if (hasPassword) {
           // Potrjen račun z geslom: sem pride samo, kdor ima Apple ID s potrjenim istim naslovom (v praksi lastnik
           // nabiralnika), zato naprav ne odjavimo (otrokove tablice, obvestila; pregled #492 A P2-2). Lastnik dobi
@@ -126,7 +131,7 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
         // Apple je naslov potrdil: kot povezava za potrditev (nekdanji gost zapusti kvoto omrežja in dobi preizkus,
         // skrbnik iz EVKLID_ADMIN_EMAILS; pregled #492/#500 B P3-2).
         if (!byEmail.email_verified_at) {
-          if (ctx.confirmEmail) ctx.confirmEmail(byEmail.id);
+          if (ctx.confirmEmail) ctx.confirmEmail(byEmail.id, req);
           else db.prepare("UPDATE parents SET email_verified_at = ? WHERE id = ?").run(new Date().toISOString(), byEmail.id);
         }
         p = getParent(byEmail.id);

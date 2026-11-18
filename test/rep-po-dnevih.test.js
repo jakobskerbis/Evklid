@@ -132,7 +132,7 @@ test("rep po dnevih: brezplačni profili in profili brez zajamčenega paketa ost
   assert.equal(u.blockInfo(free), null);
 });
 
-test("rep po dnevih: števec pokaže »do konca meseca vsak dan kot brezplačni paket«", () => {
+test("rep po dnevih: števec pokaže »do konca obdobja naročnine vsak dan kot brezplačni paket«", () => {
   const { u, ids, spend } = setup();
   const [s] = ids;
   spend(s, 1.5, Date.now() - 2 * DAY);

@@ -4,6 +4,7 @@
 import { t } from "./i18n.js";
 import { icon } from "./icons.js";
 import { mountSim } from "./sim/index.js";
+import { isStoreApp } from "./pay-ui.js";
 
 let D = null; // { api, escapeHtml, getStudent, openLesson }
 let data = null; // { sid, myPath, experiments, offers }
@@ -149,7 +150,8 @@ function renderExperiment() {
   shownKey = openKey;
   view().classList.add("lab-open");
   const offers = data.offers;
-  const showOffer = !offers || (offers.show && offers.prices);
+  // Aplikacija iz trgovine: brez ponudbe paketov mimo trgovine.
+  const showOffer = !isStoreApp() && (!offers || (offers.show && offers.prices));
   box().innerHTML = `<div class="lab-stage">
     <button type="button" class="ghost back lab-back" data-lab-back>${icon("arrow-left")}<span>${esc(t("nav.lab"))}</span></button>
     <h2 class="lab-title" dir="auto">${icon("flask-conical")}<span>${esc(x.title)}</span></h2>
