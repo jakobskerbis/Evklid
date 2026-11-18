@@ -5,6 +5,11 @@
 import { icon } from "./icons.js";
 import { t } from "./i18n.js";
 
+// Kdo stoji za aplikacijo (pregled »kupca« 16. 11. 2026: starši na vstopni strani niso našli ponudnika in kontakta).
+// Isto kot v public/zasebnost.html, točka 1 »Upravljavec«, in v public/pogoji.html, točka 1 (»Evklid trenutno upravlja …«);
+// test/pristajalna.test.js preveri, da se ne razidejo.
+export const PROVIDER = Object.freeze({ name: "Jakob Skerbiš", email: "zasebnost@evklid.app" });
+
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
 // Trije dokazi (j 2026-11-15): vsak je nekaj, kar obiskovalec preveri v aplikaciji takoj po registraciji.
@@ -26,7 +31,10 @@ const DEMO = [
 
 // Eno sporočilo in en gumb (j 2026-11-15): prvi segment so gimnazijci med letom (domača naloga, testi).
 // Brez cen, stopenj in trditev, ki jih obiskovalec ne more preveriti; cene so pri izbiri paketa po registraciji.
-export function landingHtml({ name, prices = null } = {}) {
+// noscript: stran za brskalnike brez JavaScripta in bralnike besedila (iskalniki, predogledi, orodja AI), ki jo
+// scripts/pristajalna-noscript.js zapiše v <noscript> v public/index.html. Namesto gumba za registracijo in povezave
+// za prijavo (delujeta le z JavaScriptom) je opomba.
+export function landingHtml({ name, prices = null, noscript = false } = {}) {
   const days = prices?.trial_days;
   const age = prices?.min_age;
   const trial = days ? `<p class="land-trial">${icon("gift")}<span>${esc(t("land.trial", { n: days }))}</span></p>` : "";
@@ -47,10 +55,10 @@ export function landingHtml({ name, prices = null } = {}) {
         <p class="land-eyebrow">${esc(t("land.subjects"))}</p>
         <h1>${esc(t("land.title"))}</h1>
         <p class="land-lead">${esc(t("land.lead"))}</p>
-        <div class="land-actions">
+        ${noscript ? `<p class="land-nojs">${esc(t("land.noJs"))}</p>` : `<div class="land-actions">
           <a class="btn-primary" href="#registracija" data-land="register">${esc(t("land.start"))}</a>
         </div>
-        <p class="land-login">${esc(t("land.haveAccount"))} <a href="#prijava" data-land="login">${esc(t("mob.signIn"))}</a></p>
+        <p class="land-login">${esc(t("land.haveAccount"))} <a href="#prijava" data-land="login">${esc(t("mob.signIn"))}</a></p>`}
         ${trial}
         ${ageNote}
       </div>
@@ -71,6 +79,7 @@ export function landingHtml({ name, prices = null } = {}) {
       <a href="/starsi.html">${esc(t("land.par.t"))}</a>
       <a href="/sole.html">${esc(t("land.sch.t"))}</a>
       <a href="/prenesi">${esc(t("land.app.go"))}</a>
+      <p class="land-provider">${esc(t("land.provider", { app: name, name: PROVIDER.name }))} · <span class="land-contact">${esc(t("land.contact"))}: <a href="mailto:${PROVIDER.email}">${PROVIDER.email}</a></span></p>
     </footer>
   </div>`;
 }

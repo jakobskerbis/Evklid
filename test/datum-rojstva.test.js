@@ -299,13 +299,13 @@ test("brez datuma rojstva (»Pozneje«) ni mogoče plačati ničesar; sporočilo
       store.db.prepare("UPDATE parents SET email_verified_at = datetime('now') WHERE email = ?").run("placa@primer.si");
       await a("/api/account/birth-date", { method: "POST", body: { later: true } });
       for (const [path, body] of [
-        ["/api/billing/checkout", { seats: 1, interval: "month", adult: true, withdrawal: true }],
+        ["/api/billing/checkout", { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true }],
         ["/api/billing/upgrade", { plan: "x" }],
-        ["/api/billing/pass", { student_id: 1, days: 7, adult: true, withdrawal: true }],
-        ["/api/billing/credit", { pack: "p10", adult: true, withdrawal: true }],
-        ["/api/billing/gift", { adult: true, withdrawal: true }],
+        ["/api/billing/pass", { student_id: 1, days: 7, adult: true, withdrawal: true, terms: true }],
+        ["/api/billing/credit", { pack: "p10", adult: true, withdrawal: true, terms: true }],
+        ["/api/billing/gift", { adult: true, withdrawal: true, terms: true }],
         ["/api/billing/pay-link", { kind: "sub", seats: 1, interval: "month" }],
-        ["/api/billing/podari", { adult: true, understand: true }],
+        ["/api/billing/podari", { adult: true, understand: true, terms: true }],
         ["/api/guarantee/enroll", {}],
       ]) {
         const r = await a(path, { method: "POST", body });
@@ -319,7 +319,7 @@ test("brez datuma rojstva (»Pozneje«) ni mogoče plačati ničesar; sporočilo
       assert.ok(!acc.guarantee?.can_enroll);
       // Po vpisu datuma polnoleten spet plača sam (checkout pride do Stripa).
       assert.equal((await a("/api/account/birth-date", { method: "POST", body: { birth_date: ymd(40) } })).status, 200);
-      const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } });
+      const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true, terms: true } });
       assert.notEqual(co.body.birth_missing, true);
     },
     { stripeKey: "sk_test_x", webhookSecret: "whsec_x" },
@@ -336,7 +336,7 @@ test("povezava za plačilo: imetnik brez datuma rojstva je ne more ustvariti, ž
       assert.equal(made.status, 201, JSON.stringify(made.body));
       const token = String(made.body.url).split("t=").pop();
       store.db.prepare("UPDATE parents SET birth_date = NULL, birth_asked_at = NULL WHERE email = ?").run("povezava@primer.si");
-      const r = await client()(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", adult: true, withdrawal: true } });
+      const r = await client()(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", adult: true, withdrawal: true, terms: true } });
       assert.equal(r.status, 403, JSON.stringify(r.body));
       assert.equal(r.body.birth_missing, true);
     },

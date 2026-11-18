@@ -40,7 +40,7 @@ import { initFeedback, showFeedback, renderFeedbackCard } from "./feedback.js";
 import { openAdminBug, openMsgReport } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
-// Igre (games/, ~2 MB kode s predmeti) se naložijo šele, ko jih učenec odpre, ali v mirnem trenutku po
+// Igre (games/, ~0,7 MB kode; naloge predmetov še ~0,1–0,4 MB na predmet, games/subjects/) se naložijo šele, ko jih učenec odpre, ali v mirnem trenutku po
 // zagonu: prvo odprtje Evklida mora prenesti in zagnati pol manj kode (j, 2026-11-04: »stran deluje počasi«).
 let gamesMod = null;
 let gamesCtx = null;
@@ -51,6 +51,7 @@ const loadGames = () =>
   (gamesP ||= (gamesTries++ ? import(`./games/index.js?r=${gamesTries}`) : import("./games/index.js")).then((m) => {
     gamesMod = m;
     if (gamesCtx) m.initGames(gamesCtx);
+    m.prepareSubjects?.(); // naloge le za učenčev predmet (ostali predmeti ob izbiri v Igrah)
     return m;
   }).catch((err) => {
     gamesP = null; // brez povezave ali napaka: naslednji poskus znova
@@ -59,6 +60,7 @@ const loadGames = () =>
 const initGames = (c) => {
   gamesCtx = c;
   gamesMod?.initGames(c);
+  gamesMod?.prepareSubjects?.();
 };
 const gamesNote = (key) =>
   document.querySelector("#games-content")?.replaceChildren(Object.assign(document.createElement("p"), { className: "muted", textContent: t(key) }));
@@ -68,7 +70,7 @@ const showGames = () => {
 };
 const gamesBack = () => gamesMod?.gamesBack() ?? false;
 const leaveGames = () => gamesMod?.leaveGames();
-import { gamesOn, stageOf, STAGES } from "./games/stage.js";
+import { gamesOn, stageOf, STAGES, backgroundLoadOk } from "./games/stage.js";
 import { rewardOffer } from "./games/reward.js";
 import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskInterests, interestsSummary } from "./corner.js";
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
@@ -613,7 +615,7 @@ document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () 
 // APK (mobile/src/app/web.tsx) gre nazaj po isti zgodovini (goBack), zato tam ni treba ničesar spreminjati.
 let currentView = "path";
 let prevView = "path"; // za gumb Nazaj v glavi klepeta (telefon)
-const BACK_ORIGIN = ["schedule", "exams", "competition"]; // »←« na teh podstraneh: meBackTarget
+const BACK_ORIGIN = ["schedule", "exams", "competition", "scan"]; // »←« na teh podstraneh: meBackTarget (skener se odpre tudi z Učne poti)
 const meBackFrom = {};
 let fromBack = false;
 let skipPop = 0;
@@ -799,7 +801,7 @@ const podJazZgoraj = (name) => name !== "me" && !TOP_MAIN.includes(name) && (meV
 const ME_VIEWS = ["me", "progress", "league", "settings", "account", "feedback", "graph", "games", "corner", "schedule", "zbirke", "scan", "pilot"];
 // Četrto mesto spodnje vrstice: Laboratorij ali »NPZ in matura« (ko je cilj NPZ/matura); kar ni tam, je pod »Jaz«.
 const meView = (name) => ME_VIEWS.includes(name) || (!!name && offTabbarViews().includes(name));
-// Zbirke in učni pass: odpre pogled, po želji s predmetom v pogledu »preglej« (from = pogled za Nazaj).
+// Zbirke in nagradna pot: odpre pogled, po želji s predmetom v pogledu »preglej« (from = pogled za Nazaj).
 let zbOpen = {};
 function openZbirke(item = null, from = null) {
   zbOpen = { item, from };
@@ -1877,7 +1879,8 @@ function addAllowanceNote(bubble, d) {
   const el = document.createElement("div");
   el.className = "cards-note allowance-note";
   // Pri 80 % dve vrstici: obvestilo, pod njim preostanek (»Podrobne razlage ta mesec: še 6«).
-  const base = d.stage === "out" ? escapeHtml(t("ai.out")) : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
+  // Pri 100 % še, kaj sledi hitremu načinu (do konca meseca vsak dan kot brezplačni paket, server/usage.js tailToday).
+  const base = d.stage === "out" ? (d.spread ? `${escapeHtml(t("ai.out"))}<br><small>${escapeHtml(t("ai.then"))}</small>` : escapeHtml(t("ai.out"))) : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
   // Družina: obvestilo velja za skupen delež vseh profilov.
   const text = d.pool ? `${base}<br><small>${escapeHtml(t("ai.pool"))}</small>` : base;
   el.innerHTML = `<div class="cn-head">${icon("info")} <span>${text}</span></div>${d.buy ? `<button type="button" class="text-btn">${escapeHtml(t("ai.buy"))} ${icon("chevron-right")}</button>` : ""}`;
@@ -2664,8 +2667,10 @@ function renderGoalModes() {
     .map((k) => (k === "games" && !gamesOn(s) ? "chat" : k))
     .filter((k) => !(k === "exams" && !siExams()) && !(k === "izpiti" && !regionalExams()))
     .filter((k) => !shown.includes(k))
+    .filter((k) => k !== "scan") // »Skeniraj nalogo« je že vrstica v #xp-card tik pod današnjim treningom (j, 18. 11. 2026)
     .filter((k, i, a) => a.indexOf(k) === i);
-  for (const alt of ["scan", "chat"]) if (list.length < 2 && !list.includes(alt)) list.push(alt);
+  // Nadomestki ne smejo podvojiti kartice stopnje (shown) niti ponuditi izklopljenih iger.
+  for (const alt of ["chat", "textbook", "games"]) if (list.length < 2 && !list.includes(alt) && !shown.includes(alt) && (alt !== "games" || gamesOn(s))) list.push(alt);
   box.innerHTML = list
     .map((k) => {
       const [ic, name, sub] = GOAL_MODES[k];
@@ -3185,6 +3190,7 @@ async function loadPath(key = state.pathKey) {
       <div class="hero-text"><h2>${t("daily.title")}</h2><p>${done ? t("daily.doneText") : t("daily.text")}</p></div>
       <button class="primary big" data-daily>${done ? t("daily.again") : t("daily.start")}</button>
     </div>
+    ${document.getElementById("view-scan") ? `<button type="button" class="next-row scan-path-row" data-scan-home><span class="eyebrow">${t("scan.title")}</span><span class="next-name">${t("scan.meSub")}</span>${icon("camera")}</button>` : ""}
     ${
       p.next
         ? `<button class="next-row" data-open="${p.next.id}"><span class="eyebrow">${t("path.next")}</span><span class="next-name">${escapeHtml(p.next.name)}</span>${icon("chevron-right")}</button>`
@@ -3261,6 +3267,8 @@ document.addEventListener("click", (e) => {
   const un = e.target.closest("[data-unit]");
   if (un) startSession("unit-practice", { path: state.pathKey, unit: Number(un.dataset.unit) });
   if (e.target.closest("[data-daily]")) startSession("daily", { path: state.pathKey });
+  // Prvi zaslon: »Skeniraj nalogo« tik pod današnjim treningom (j, 18. 11. 2026: pristajalna stran obljublja pomoč pri domači nalogi).
+  if (e.target.closest("[data-scan-home]")) showView("scan");
   if (e.target.closest("[data-dnevna]")) {
     showView("games");
     loadGames().then((m) => m.openDailyPuzzle()).catch(() => {});
@@ -3311,7 +3319,8 @@ function syncGamesTab() {
 }
 // Igre so se pravkar skrile (Nastavitve, inštruktor, menjava profila): odprto okno se zapre, glavni pogled gre na Jaz.
 function leaveHiddenGames() {
-  if (!state.student || gamesOn(state.student.settings)) return;
+  // Igre so vklopljene: naložene igre pripravijo naloge novega predmeta ali profila (tudi za delo brez povezave).
+  if (!state.student || gamesOn(state.student.settings)) return void gamesMod?.prepareSubjects?.();
   if (isFloating("games")) closeWindow("games");
   if (currentView === "games") showView("me");
 }
@@ -4790,19 +4799,30 @@ async function setCalcMode(mode) {
 }
 function prefetchNext() {
   if (navigator.connection?.saveData || document.documentElement.classList.contains("lite") || !state.student) return;
+  // Lahki koraki (pregledovalnik prenesene pole, uvodni ogled) na vsaki povezavi, da delujejo tudi brez povezave;
+  // težki (kalkulator, grafi, 3D, three.js) le na hitri povezavi brez omejitve podatkov (backgroundLoadOk, j 17. 11. 2026).
+  const heavy = backgroundLoadOk(navigator.connection);
   const steps = [
-    () => calcTool(calcMode === "formulas" ? "sci" : calcMode),
-    () => import("./graph/sci.js"),
-    () => import("./graph/tools.js"),
-    () => import("./graph/calc.js"),
-    () => import("./3d/modeli.js"),
+    ...(heavy
+      ? [
+          () => calcTool(calcMode === "formulas" ? "sci" : calcMode),
+          () => import("./graph/sci.js"),
+          () => import("./graph/tools.js"),
+          () => import("./graph/calc.js"),
+          () => import("./3d/modeli.js"),
+        ]
+      : []),
     () => loadPaperViewer(), // pregledovalnik prenesene pole (in paper-tasks.js): odpre se tudi brez povezave
     // 3D pregledovalnik (stran /3d v okvirju) in three.js: samo v predpomnilnik service workerja, brez izvajanja,
     // da se prvi model odpre brez čakanja na omrežje.
     () =>
       navigator.serviceWorker?.controller?.postMessage({
         type: "precache",
-        urls: ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js", "/uvodni-ogled.js", ...(usageAdmin ? ["/poraba-skrbnik.js"] : [])],
+        urls: [
+          ...(heavy ? ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"] : []),
+          "/uvodni-ogled.js",
+          ...(usageAdmin ? ["/poraba-skrbnik.js"] : []),
+        ],
       }),
   ];
   const next = () => {
@@ -5173,7 +5193,9 @@ initOpen({
 // Bližnjica z ikone aplikacije (dolg pritisk na ikono): /?pogled=chat odpre Inštruktorja. Iz 3D atlasa (/3d)
 // »Vprašaj inštruktorja«: /?pogled=chat&vprasaj=… odpre klepet z vpisanim vprašanjem (pošlje ga učenec sam).
 // Pogled »Uči se« z zadnjim zavihkom: ?pogled=uci; določen zavihek: ?pogled=textbook, lab ali 3d.
+// Zavihek Račun: ?pogled=racun (APK s strani /prenesi pošlje nakup naročnine sem, mobile/src/lib/billing.ts).
 const START_VIEW = ["chat", "graph", "uci", ...UCI_TABS].find((v) => v === new URLSearchParams(location.search).get("pogled"));
+const START_ACCOUNT = new URLSearchParams(location.search).get("pogled") === "racun";
 const START_ASK = START_VIEW === "chat" ? (new URLSearchParams(location.search).get("vprasaj") || "").slice(0, 2000) : "";
 if (new URLSearchParams(location.search).has("pogled")) history.replaceState(null, "", location.pathname);
 initInstall({ toast, onSheet: (open) => (open ? overlayOpened() : overlayClosed()) });
@@ -5194,10 +5216,11 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   syncBugButton();
   initFeedback({ api, getStudent: () => state.student, showView, toast, currentLang }, cfg);
   initGames({ api, getStudent: () => state.student, setStudent: studentUpdated, toast: (m, ic = "check") => toast(m, ic), refreshXp, currentLang });
-  // Igre v ozadju, ko se je stran že odprla (zavihek Igre se nato odpre takoj); ne ob »Skrij igre« in ne ob varčevanju s podatki.
+  // Igre v ozadju, ko se je stran že odprla (zavihek Igre se nato odpre takoj); ne ob »Skrij igre« in ne ob varčevanju
+  // s podatki, počasni ali mobilni povezavi (backgroundLoadOk): takrat se igre naložijo ob dotiku zavihka Igre.
   const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1500));
   setTimeout(() => idle(() => {
-    if ((state.student && !gamesOn(state.student.settings)) || navigator.connection?.saveData) return;
+    if ((state.student && !gamesOn(state.student.settings)) || !backgroundLoadOk(navigator.connection)) return;
     loadGames().catch(() => {});
   }), 3000);
   // Takojšnje odpiranje (j 6. 11. 2026): ob nedejavnosti po odprtju se pripravijo verjetni naslednji zasloni.
@@ -5236,11 +5259,13 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     if (first) initUsageMeter({ escapeHtml, showView, toast, allowed: () => usageAdmin });
     else refreshUsageMeter();
     // Prvo odprtje: bližnjica (?pogled=) ali zadnji zaslon (≤ 12 ur); Učna pot se pripravi pod njim.
-    const z = first && !o?.keepView && !START_VIEW ? startScreen() : null;
+    const z = first && !o?.keepView && !START_VIEW && !START_ACCOUNT ? startScreen() : null;
     if (!o?.keepView) showView("path");
     const mark = apiSeq; // klici do sem so od profila in Učne poti
-    const other = z || (first && START_VIEW && !o?.keepView);
+    const other = z || (first && (START_VIEW || START_ACCOUNT) && !o?.keepView);
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
+    // Kot dotik zavihka Račun (account.js renderAccount); brez računov je zavihek skrit in ostane Učna pot.
+    if (first && START_ACCOUNT && !o?.keepView && !$("#account-tab").hidden) $("#account-tab").click();
     if (z) {
       brezStetja = true;
       try {

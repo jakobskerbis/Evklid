@@ -2,9 +2,11 @@
 // - Različica za trgovine (CHANNEL "store"): Apple In-App Purchase / Google Play Billing (expo-iap).
 //   Trgovini to zahtevata za digitalne naročnine. Nakup potrdi strežnik (server/mobile/store-billing.js),
 //   šele nato ga aplikacija zaključi (finishTransaction).
-// - Neposredni prenos (CHANNEL "direct", APK z evklid.app): obstoječe plačilo prek Stripa v brskalniku.
+// - Neposredni prenos (CHANNEL "direct", APK z evklid.app): nakup na spletnem zavihku Račun v aplikaciji
+//   (openWebAccount), kjer so vse potrditve pred plačilom (polnoletnost, odstop, pogoji) in plačilo prek Stripa.
 import { Platform } from "react-native";
 import * as WebBrowser from "expo-web-browser";
+import { router } from "expo-router";
 import { api, CHANNEL } from "./api";
 
 export type StoreProduct = { id: string; seats: number; interval: "month" | "year"; price?: string; level?: string | null; family?: boolean };
@@ -133,11 +135,13 @@ export async function manageInStore() {
   await lib().deepLinkToSubscriptions({}).catch(() => {});
 }
 
-// Neposredni prenos: Stripe v brskalniku, po vrnitvi osvežimo naročnino.
-export async function buyOnWeb(seats: number, interval: string) {
-  const { url } = await api<{ url: string }>("/api/billing/checkout", { body: { seats, interval } });
-  await WebBrowser.openAuthSessionAsync(url, null);
-  return api("/api/billing/sync", { body: {} });
+// Neposredni prenos: nakup naročnine na spletnem zavihku Račun, prijavljen s sejo aplikacije (src/app/web.tsx,
+// /api/mobile/web). Aplikacija sama ne kliče /api/billing/checkout: strežnik zahteva potrditve, ki jih da
+// samo obrazec na spletu (public/account.js), zato je bil nakup od tu vedno zavrnjen. Paket izbere tam.
+// dismissTo: spletni zaslon je navadno spodaj v skladu (naravni zasloni so odprti nad njim), zato se zapro in
+// ostane en WebView; če ga ni, ga odpre namesto tega zaslona.
+export function openWebAccount() {
+  router.dismissTo({ pathname: "/web", params: { to: "/?pogled=racun", n: String(Date.now()) } });
 }
 export async function manageOnWeb() {
   const { url } = await api<{ url: string }>("/api/billing/portal", { body: {} });

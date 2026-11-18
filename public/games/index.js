@@ -2,7 +2,7 @@
 // igra se odpre v istem pogledu. Igra = vrsta igre (engines.js) × matematični pojem (topics.js).
 import { t, locale } from "../i18n.js";
 import { icon } from "../icons.js";
-import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, loadConceptNames, makeQuestion, shuffle } from "./topics.js";
+import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, loadConceptNames, makeQuestion, shuffle, loadSubjects, subjectsReady, conceptReady } from "./topics.js";
 import { gameLock as ruleLock, clearedPace, lessonsOf, PACE, CLEAR_CORRECT, CHECK_TASKS, CHECK_PASS, LOCKS_ON } from "./unlock.js";
 // Zapora iger je izklopljena (LOCKS_ON v unlock.js): vse igre so odprte.
 const gameLock = (...a) => (LOCKS_ON ? ruleLock(...a) : null);
@@ -102,11 +102,22 @@ export function initGames(c) {
     if (!SUBJECTS.includes(filter.subject)) filter.subject = "MAT";
   } catch {}
 }
+// Lahek zagon (j 17. 11. 2026): generatorji nalog se naložijo le za učenčev predmet in predmet, ki ga portal
+// pokaže (shranjena izbira, sicer matematika); ob nalaganju iger v ozadju (public/app.js) in ob menjavi predmeta
+// v profilu. Tako so igre tega predmeta v predpomnilniku service workerja in delujejo tudi brez povezave. Na mobilnih
+// podatkih ali počasni povezavi se igre v ozadju ne prenesejo (games/stage.js backgroundLoadOk): tam delujejo brez
+// povezave šele, ko je učenec po zadnji objavi vsaj enkrat odprl Igre s povezavo.
+// Igra drugega predmeta naloži svoj paket šele ob izbiri predmeta ali odprtju igre (openGame).
+export const currentSubjects = () => [ctx?.getStudent()?.settings?.subject, filter.subject].filter((x) => SUBJECTS.includes(x));
+export const prepareSubjects = () => loadSubjects(currentSubjects()).catch(() => {});
 export const allGamesCount = () => ENGINES.reduce((n, e) => n + (e.fits ? CONCEPTS.filter((c) => e.fits(c)).length : CONCEPTS.length), 0);
 
+// Predmeti, za katere je portal v tem odprtju Iger že začel prenos paketov (največ enkrat na predmet).
+const portalTried = new Set();
 export async function showGames() {
   root = document.querySelector("#games-content");
   if (!root || !ctx) return;
+  portalTried.clear();
   setNumberStyle(ctx.currentLang());
   await loadConceptNames(ctx.currentLang());
   applyStageLook();
@@ -277,6 +288,11 @@ function renderPortal() {
   const hidden = !subjects.includes(filter.subject);
   const subj = hidden ? (subjects.includes("MAT") ? "MAT" : subjects[0]) : filter.subject;
   const fArea = hidden && !["you", "all"].includes(filter.area) ? "you" : filter.area;
+  // Igre prikazanega predmeta pripravimo že zdaj; brez povezave ne (in največ enkrat na predmet v tem odprtju Iger).
+  if (!subjectsReady([subj]) && navigator.onLine !== false && !portalTried.has(subj)) {
+    portalTried.add(subj);
+    loadSubjects([subj]).catch(() => {});
+  }
   // Iskanje gre čez vse predmete, sicer le izbrani predmet.
   // »Zate« brez iger za ta predmet (npr. fakultetni predmet v OŠ) → vsa področja predmeta.
   const anyForYou = CONCEPTS.some((c) => c.subject === subj && forYou(c));
@@ -635,6 +651,7 @@ function openGame(id) {
   const engine = ENGINES.find((e) => e.id === eid);
   const concept = CONCEPTS.find((c) => c.id === cid);
   if (!engine || !concept || !fits(engine, concept)) return;
+  if (!conceptReady(cid)) return waitForPack(id, concept);
   const lock = gameLock(eid, concept, LS);
   if (lock) return showLock(engine, concept, lock);
   root.innerHTML = `<div class="gm-host"></div>`;
@@ -679,6 +696,21 @@ function openGame(id) {
     },
   });
   window.scrollTo(0, 0);
+}
+
+// Igra predmeta, katerega paket še ni naložen (npr. iz iskanja čez vse predmete): kratko čakanje, nato igra.
+// Brez povezave ostane portal z obvestilom (paketi učenčevega predmeta so že v predpomnilniku).
+function waitForPack(id, concept) {
+  root.innerHTML = `<div class="gm-portal"><p class="muted gm-wait">${esc(t("common.loading"))}</p></div>`;
+  const wait = root.querySelector(".gm-wait");
+  loadSubjects([concept.subject]).then(
+    () => wait.isConnected && !game && conceptReady(concept.id) && openGame(id),
+    () => {
+      if (!wait.isConnected || game) return;
+      renderPortal();
+      ctx.toast?.(t("off.noConnection"));
+    },
+  );
 }
 
 // Zaklenjena igra: kaj manjka in pot do odklepa (snov na učni poti, preizkus ali najprej mirnejša igra).
@@ -937,6 +969,7 @@ function closeGame() {
 
 // Ob odhodu iz pogleda igro ustavimo.
 export function leaveGames() {
+  root?.querySelector(".gm-wait")?.remove(); // čakanje na paket ne odpre igre v skritem pogledu (waitForPack)
   if (game) {
     game.destroy();
     game = null;

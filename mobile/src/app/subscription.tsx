@@ -11,7 +11,7 @@ import { t } from "@/lib/i18n";
 import { radius, useTheme } from "@/lib/theme";
 import { useLoad } from "@/lib/useLoad";
 import { celebrate } from "@/lib/haptics";
-import { buyInStore, buyOnWeb, loadProducts, manageInStore, manageOnWeb, restorePurchases, usesStoreBilling, type StoreProduct } from "@/lib/billing";
+import { buyInStore, loadProducts, manageInStore, manageOnWeb, openWebAccount, restorePurchases, usesStoreBilling, type StoreProduct } from "@/lib/billing";
 import { Banner, Body, Button, Card, Chip, ErrorView, Icon, Loading, Screen, Title } from "@/components/ui";
 
 type Access = { tier: "paid" | "promo" | "trial" | "bonus" | "free"; seats: number; until: string | null };
@@ -54,19 +54,19 @@ export default function Subscription() {
     return plan ? new Intl.NumberFormat(undefined, { style: "currency", currency: plan.currency }).format(plan.amount / 100) : "";
   };
   const buy = async (p: StoreProduct) => {
+    // APK s strani /prenesi: nakup s potrditvami na spletnem zavihku Račun (src/lib/billing.ts).
+    if (!usesStoreBilling) return openWebAccount();
     setBuying(p.id);
     try {
-      const out = usesStoreBilling ? await buyInStore(p, info.account_token) : await buyOnWeb(p.seats, p.interval);
+      const out = await buyInStore(p, info.account_token);
       await refresh();
       await reload();
-      if (usesStoreBilling) {
-        // Nakup je zapisan, a ne velja (račun že plačuje drugje) ali še čaka na potrditev.
-        if (out?.conflict) Alert.alert(t("mob.subConflict"));
-        else if (out?.pending) Alert.alert(t("mob.purchasePending"));
-        else {
-          celebrate();
-          Alert.alert(t("mob.thanks"), t("mob.subActive"));
-        }
+      // Nakup je zapisan, a ne velja (račun že plačuje drugje) ali še čaka na potrditev.
+      if (out?.conflict) Alert.alert(t("mob.subConflict"));
+      else if (out?.pending) Alert.alert(t("mob.purchasePending"));
+      else {
+        celebrate();
+        Alert.alert(t("mob.thanks"), t("mob.subActive"));
       }
     } catch (err: any) {
       if (err?.cancelled) return;
