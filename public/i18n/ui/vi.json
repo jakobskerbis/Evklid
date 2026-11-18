@@ -2482,7 +2482,7 @@
     "other": "Mở khóa toàn bộ Evklid (gia sư, bài luyện tập, bài kiểm tra thử) trong {n} ngày kể từ khi thanh toán."
   },
   "payp.consentMissing": "Vui lòng đánh dấu tất cả các ô xác nhận trước khi thanh toán.",
-  "payp.inApp": "Không thể thanh toán trong ứng dụng. Hãy mở liên kết này trong trình duyệt web.",
+  "payp.inApp": "Không thể thanh toán trong ứng dụng.",
   "pass.until": "đến {date}",
   "pass.parentInfo": "Bài kiểm tra “{name}” ({date}) sắp đến. Bố mẹ em có thể chọn gói ôn thi cho em.",
   "pass.parentInfoLink": "Thông tin cho phụ huynh",

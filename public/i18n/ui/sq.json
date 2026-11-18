@@ -2496,7 +2496,7 @@
     "other": "Hap të gjithë Evklid (tutori, ushtrime, teste provë) për {n} ditë nga pagesa."
   },
   "payp.consentMissing": "Para pagesës shënoni të gjitha konfirmimet.",
-  "payp.inApp": "Pagesa nuk është e mundur në aplikacion. Hapeni këtë lidhje në një shfletues uebi.",
+  "payp.inApp": "Pagesa nuk është e mundur në aplikacion.",
   "pass.until": "deri më {date}",
   "pass.parentInfo": "Testi «{name}» ({date}) është afër. Prindërit e tu mund të zgjedhin një paketë para testit.",
   "pass.parentInfoLink": "Informacion për prindërit",

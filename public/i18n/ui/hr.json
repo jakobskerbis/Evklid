@@ -2516,7 +2516,7 @@
     "other": "Otključava cijeli Evklid (instruktor, vježbe, probni testovi) na {n} dana od plaćanja."
   },
   "payp.consentMissing": "Prije plaćanja označite sve potvrde.",
-  "payp.inApp": "U aplikaciji plaćanje nije moguće. Otvorite poveznicu u web-pregledniku.",
+  "payp.inApp": "U aplikaciji plaćanje nije moguće.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Ispit „{name}” ({date}) je blizu. Roditelji mogu odabrati paket prije ispita.",
   "pass.parentInfoLink": "Informacije za roditelje",

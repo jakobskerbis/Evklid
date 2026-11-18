@@ -2496,7 +2496,7 @@
     "other": "Unlocks all of Evklid (tutor, practice, quizzes) for {n} days from payment."
   },
   "payp.consentMissing": "Please tick all the boxes before paying.",
-  "payp.inApp": "Payment isn't possible in the app. Open this link in a web browser.",
+  "payp.inApp": "Payment isn't possible in the app.",
   "pass.until": "until {date}",
   "pass.parentInfo": "Your test “{name}” ({date}) is coming up. Your parents can choose a pre-test pack to help you prepare.",
   "pass.parentInfoLink": "Information for parents",

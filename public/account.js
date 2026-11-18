@@ -418,9 +418,10 @@ export async function initAccount({ onReady }) {
 }
 
 // Po vrnitvi v aplikacijo s plačila (public/pay-ui.js): novo stanje; zavihek Račun znova samo, ko se je kupljeno
-// spremenilo (paket, preostali pogovori, darilne kode, paket pred testom), zahvala ob novi naročnini.
+// spremenilo (paket, preostali pogovori, darilne kode, paket pred testom, števec »Podari Evklid«), zahvala ob novi naročnini.
 let shownSig = null;
-const paySig = (acc, balance) => JSON.stringify([acc?.access?.tier, (acc?.gifts || []).length, (acc?.children || []).map((c) => c.pass?.ends_at || ""), balance || 0]);
+const podariSig = (s) => (s ? [s.donated_months, s.evklid_months, s.in_use_months] : null);
+export const paySig = (acc, balance) => JSON.stringify([acc?.access?.tier, (acc?.gifts || []).length, (acc?.children || []).map((c) => c.pass?.ends_at || ""), balance || 0, podariSig(acc?.podari)]);
 async function refreshAfterPay({ acc, becamePaid }) {
   status = await api("/api/account/status").catch(() => status);
   const view = $("#view-account");

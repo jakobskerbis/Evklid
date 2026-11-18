@@ -2536,7 +2536,7 @@
     "other": "Odemkne celý Evklid (doučovatel, cvičení, testy nanečisto) na {n} dní od zaplacení."
   },
   "payp.consentMissing": "Před platbou zaškrtněte všechna potvrzení.",
-  "payp.inApp": "V aplikaci nelze platit. Otevřete tento odkaz ve webovém prohlížeči.",
+  "payp.inApp": "V aplikaci nelze platit.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Test „{name}“ ({date}) se blíží. Rodiče ti mohou vybrat balíček přípravy na test.",
   "pass.parentInfoLink": "Informace pro rodiče",

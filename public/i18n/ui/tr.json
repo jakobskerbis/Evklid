@@ -2496,7 +2496,7 @@
     "other": "Ödemeden itibaren {n} gün boyunca Evklid'in tamamını açar (özel öğretmen, alıştırmalar, deneme testleri)."
   },
   "payp.consentMissing": "Ödemeden önce tüm onay kutularını işaretleyin.",
-  "payp.inApp": "Uygulamada ödeme yapılamaz. Bu bağlantıyı bir web tarayıcısında açın.",
+  "payp.inApp": "Uygulamada ödeme yapılamaz.",
   "pass.until": "{date} tarihine kadar",
   "pass.parentInfo": "“{name}” sınavı ({date}) yaklaşıyor. Ailen sınav öncesi hazırlık paketini seçebilir.",
   "pass.parentInfoLink": "Veliler için bilgi",
