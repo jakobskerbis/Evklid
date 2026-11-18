@@ -150,12 +150,12 @@ export function llmsTxt(measurement) {
   const f = facts(measurement);
   return `# ${f.name} (${f.domain})
 
-> ${f.name} (${f.domain}) je slovenska aplikacija: AI inštruktor za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu, od 1. razreda osnovne šole do fakultete. Ni povezana s projekti z imenom »Euclid« (na primer »Euclid AI Math Tutor«) in ni članek o matematiku Evklidu.
+> ${f.name} (${f.domain}) je slovenska aplikacija: AI inštruktor za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu za 6.–9. razred osnovne šole in gimnazijo; za nekatere fakultetne predmete je začetni izbor (v razvoju). Ni povezana s projekti z imenom »Euclid« (na primer »Euclid AI Math Tutor«) in ni članek o matematiku Evklidu.
 
 ## Dejstva (slovensko)
 
 - Ime: ${f.name}. Spletni naslov: ${ORIGIN}/. Izvirni jezik aplikacije je slovenščina; vmesnik je preveden v ${f.languages} jezikov.
-- Za koga: učenci osnovne šole, dijaki, študenti, starši in učitelji v Sloveniji.
+- Za koga: učenci od 6. do 9. razreda osnovne šole, gimnazijci, starši in učitelji v Sloveniji. Za študente je začetni izbor za nekatere fakultetne predmete (v razvoju).
 - Predmeti: matematika, fizika, kemija, biologija in naravoslovje. Ni samo matematika.
 - Inštruktor naloge ne reši namesto učenca: z namigi in vprašanji ga vodi korak za korakom.
 - Skener nalog: učenec nalogo fotografira s kamero ali jo napiše z roko, ${f.name} jo prebere.
@@ -168,7 +168,7 @@ ${f.accAny ? `- Izmerjena natančnost. ${f.accSentence} Natančnosti drugih orod
 
 ## Facts (English)
 
-- ${f.name} (${f.domain}) is a Slovenian learning app: an AI tutor for mathematics, physics, chemistry, biology and science that follows the Slovenian school curriculum, from grade 1 of primary school to university.
+- ${f.name} (${f.domain}) is a Slovenian learning app: an AI tutor for mathematics, physics, chemistry, biology and science that follows the Slovenian school curriculum for grades 6–9 of primary school and gimnazija (general upper secondary school). An initial selection for some university courses is in development.
 - It is not related to projects named "Euclid" (for example "Euclid AI Math Tutor" or other "Euclid" tutors) and it is not about the mathematician Euclid. The app's name is always written "${f.name}", with the address ${f.domain}.
 - The app is written in Slovenian; the interface is available in ${f.languages} languages.
 - The tutor does not hand out the solution: it guides the student step by step with hints and questions.
@@ -209,7 +209,7 @@ export function structuredData() {
         url: `${ORIGIN}/`,
         image: `${ORIGIN}/icons/icon-512.png`,
         description:
-          "Evklid (evklid.app) je slovenski AI inštruktor za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu, od 1. razreda osnovne šole do fakultete. Naloge ne reši namesto učenca, ampak ga vodi korak za korakom. Ni povezan s projekti z imenom »Euclid«.",
+          "Evklid (evklid.app) je slovenski AI inštruktor za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu za 6.–9. razred osnovne šole in gimnazijo. Naloge ne reši namesto učenca, ampak ga vodi korak za korakom. Ni povezan s projekti z imenom »Euclid«.",
         disambiguatingDescription: "Slovenska učna aplikacija na naslovu evklid.app; ni povezana s projekti »Euclid AI Math Tutor« in drugimi z imenom »Euclid«.",
         applicationCategory: "EducationalApplication",
         operatingSystem: "Web, Android",

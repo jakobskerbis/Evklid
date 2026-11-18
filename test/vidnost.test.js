@@ -465,7 +465,7 @@ test("javne strani: kaj doda naročnina, matura, vprašanja staršev, noga podst
   assert.ok(about.includes("Kaj doda naročnina"));
   // Brezplačni rep po dnevih (#821, server/usage.js tailToday): po hitrem načinu vsak dan kot brezplačni paket.
   assert.ok(about.includes(`nato do konca mesečnega obdobja naročnine vsak dan kot v brezplačnem paketu (do ${freeDailyQuestions()} vprašanj na dan). Ko so vprašanja za tisti dan porabljena, jih spet dobite naslednji dan ali pa takoj nadaljujete z dokupom pogovorov.`));
-  for (const s of ["od 1. do 9. razreda", "vsi letniki in matura, tudi snov osnovne šole", "2–4 profili, osnovna in srednja šola", "2–4 profili, tudi fakulteta", "Priprava na maturo iz matematike, fizike, kemije in biologije", "Celotno rešitev pokaže, če jo otrok izrecno zahteva ali izbere način Celotna rešitev", "Samo rezultat brez razlage da le pri posamezni nalogi", "novo stopnjo odprto takoj in brez doplačila, najmanj do konca plačanega obdobja", "najmanj 30 dni pred podaljšanjem, s katerim začne veljati", "matematični in naravoslovni predmeti vašega študijskega programa"])
+  for (const s of ["učna pot od 6. do 9. razreda", "vsi letniki in matura, tudi snov osnovne šole", "2–4 profili, osnovna in srednja šola", "2–4 profili, tudi fakulteta", "Priprava na maturo iz matematike, fizike, kemije in biologije", "Celotno rešitev pokaže, če jo otrok izrecno zahteva ali izbere način Celotna rešitev", "Samo rezultat brez razlage da le pri posamezni nalogi", "novo stopnjo odprto takoj in brez doplačila, najmanj do konca plačanega obdobja", "najmanj 30 dni pred podaljšanjem, s katerim začne veljati", "začetni izbor za nekatere fakultetne predmete (v razvoju), tudi snov osnovne in srednje šole"])
     assert.ok(about.includes(s), s);
   // Tri prednosti na vrhu /o-evklidu in strani za starše (Gemini, točka 3); brez poudarka na jezikih in »vajah, ki ne zmanjkajo« (točka 10).
   const strengths = ["Program preveri račune", "Matura z inštruktorjem", "Varno za otroke", "Ni klepeta z drugimi uporabniki"];
@@ -491,4 +491,41 @@ test("javne strani: kaj doda naročnina, matura, vprašanja staršev, noga podst
     assert.ok(read(f).match(/<footer class="mkt-foot">([\s\S]*?)<\/footer>/)[1].includes('<a href="/pogoji.html">Pogoji uporabe</a>'), f);
   assert.match(read("predstavitev.css"), /\.v-aplikaciji \.mkt-foot \{ display: none; \}/);
   assert.ok(read("zasebnost.html").includes('href="/predstavitev.css"'));
+});
+
+// Iskrena obljuba o stopnjah (j, 18. 11. 2026): vsebina je za 6.–9. razred OŠ in gimnazijo, fakulteta le kot začetni izbor
+// (v razvoju). Javne strani, meta, schema.org, llms.txt in nizi pristajalne strani ne smejo spet obljubiti »od 1. razreda
+// do fakultete«. Izbira 1.–5. razreda in fakultete v aplikaciji ostane.
+test("javne strani: brez obljube »od 1. razreda do fakultete«", () => {
+  const read = (f) => readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8");
+  const ui = readdirSync(new URL("../public/i18n/ui/", import.meta.url)).filter((f) => f.endsWith(".json"));
+  const land = (o) => Object.entries(o).filter(([k]) => k.startsWith("land.")).map(([, v]) => JSON.stringify(v)).join("\n");
+  const pages = {
+    "o-evklidu": aboutPage(),
+    "zakaj-evklid": whyPage(),
+    "llms.txt": llmsTxt(),
+    "schema.org": JSON.stringify(structuredData()),
+    "index.html": index,
+    "starsi.html": read("starsi.html"),
+    "sole.html": read("sole.html"),
+    "i18n sl land.*": land(SL),
+    ...Object.fromEntries(ui.map((f) => [`i18n ${f} land.*`, land(JSON.parse(read(`i18n/ui/${f}`)))])),
+  };
+  const PROMISE = [
+    /od\s+1\.\s*(razreda|do\s+9)/i,
+    /od\s+prvega\s+razreda/i,
+    /razreda\s+osnovne\s+šole\s+do\s+(fakultete|univerze)/i,
+    /srednj\w*\s+šol\w*,?\s+(ter|in)\s+fakultet/i,
+    /več kot \d+ (slovenskih )?študijskih programov/i,
+    /šolo in študij\b/i,
+    /from (grade 1|first grade|1st grade)|primary school to university|grade 1 of primary/i,
+  ];
+  for (const [name, html] of Object.entries(pages)) {
+    const t = textOf(html);
+    for (const re of PROMISE) assert.ok(!re.test(t), `${name}: obljuba ${re} (glavna ponudba je 6.–9. razred OŠ in gimnazija)`);
+  }
+  // Iskrena navedba je prisotna na glavnih mestih.
+  for (const name of ["o-evklidu", "zakaj-evklid", "llms.txt", "schema.org", "starsi.html"]) assert.match(textOf(pages[name]), /6\.–9\. razred osnovne šole in gimnazij/, name);
+  for (const name of ["o-evklidu", "llms.txt", "starsi.html"]) assert.match(textOf(pages[name]), /začetni izbor (za nekatere fakultetne predmete \(v razvoju\)|\(v razvoju\))/, name);
+  assert.match(pages["llms.txt"], /grades 6–9 of primary school and gimnazija/);
 });
