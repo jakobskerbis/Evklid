@@ -11,6 +11,24 @@ export const TERMS_TEXT = "Strinjam se s splošnimi pogoji uporabe.";
 export const TERMS_ERROR = { error: "Pred plačilom potrdite, da se strinjate s splošnimi pogoji uporabe.", consent: true, terms: true };
 export const CONTACT_EMAIL = `zasebnost@${BRAND.domain}`;
 export const termsAccepted = (body) => body?.terms === true;
+// Pogoji so objavljeni (j in pravnik sta potrdila besedilo): EVKLID_POGOJI_OBJAVLJENI=1. Privzeto izklopljeno: stran
+// /pogoji.html pokaže, da so pogoji v pripravi (osnutek), plačila s pravim ključem Stripa (sk_live_) so zaprta, testni
+// način deluje naprej. Ponovna potrditev ob novi različici (terms_notice) se pokaže šele z objavljenimi pogoji.
+export const termsPublished = () => process.env.EVKLID_POGOJI_OBJAVLJENI === "1";
+export const LIVE_BLOCKED = { error: "Plačila še niso odprta: splošni pogoji so v pripravi.", terms_draft: true };
+export const livePayBlocked = (stripe) => !termsPublished() && !!stripe?.enabled && !stripe.testMode;
+// Zadnja različica pogojev, ki jo je imetnik potrdil (registracija, ponovna potrditev ali nakup); "" = nikoli.
+export function acceptedTermsVersion(db, parentId) {
+  const a = db.prepare("SELECT MAX(version) AS v FROM consents WHERE parent_id = ? AND student_id IS NULL AND text = ?").get(parentId, TERMS_TEXT)?.v || "";
+  let b = "";
+  try {
+    b = db.prepare("SELECT MAX(terms_version) AS v FROM billing_consents WHERE parent_id = ?").get(parentId)?.v || "";
+  } catch {
+    b = "";
+  }
+  return a > b ? a : b;
+}
+export const termsNotice = (db, p) => (termsPublished() && p && !p.is_guest && acceptedTermsVersion(db, p.id) < TERMS_VERSION ? TERMS_VERSION : null);
 // »2026-11-17« → »17. 11. 2026« (kot na strani).
 export const termsVersionText = (v = TERMS_VERSION) => {
   const [y, m, d] = String(v).split("-").map(Number);
@@ -106,7 +124,7 @@ export async function sendPurchaseConfirmation({ db, session, sendMail, appUrl, 
     withdrawal: withdrawalNote(c.kind),
     termsUrl: `${base}/pogoji.html`,
     termsVersion: termsVersionText(c.terms_version || TERMS_VERSION),
-    withdrawUrl: `${base}/pogoji.html#obrazec`,
+    withdrawUrl: `${base}/odstop.html`,
     contact: CONTACT_EMAIL,
     appUrl: `${base}/`,
   });

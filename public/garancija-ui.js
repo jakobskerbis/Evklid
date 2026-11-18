@@ -3,7 +3,7 @@
 import { icon } from "./icons.js";
 import { t, locale, currentLang } from "./i18n.js";
 import { dateText } from "./datum.js";
-import { termsField, markCheckout } from "./pay-ui.js";
+import { termsField, markCheckout, withdrawInfo } from "./pay-ui.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -87,6 +87,7 @@ export function podariBox(acc) {
           <label class="check pay-consent"><input type="checkbox" name="adult" required><span>${esc(t("pod.adult"))}</span></label>
           <label class="check pay-consent"><input type="checkbox" name="understand" required><span>${esc(t("pod.notDonation"))}</span></label>
           ${termsField()}
+          ${withdrawInfo()}
           <p class="form-error" role="alert" hidden></p>
           <button class="primary" type="submit">${esc(t("pay.continue"))}</button>
         </form></details>`
