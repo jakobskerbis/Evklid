@@ -197,9 +197,25 @@ test("vabilo → pilot: umaknjena koda konča mejo, oznako pilota in fotografije
     assert.equal(p.pilot_at, null);
     assert.equal(photos("ana@primer.si"), 0, "fotografije pilota izbrisane (public/zasebnost.html)");
     assert.ok(store.db.prepare("SELECT 1 FROM audit_log WHERE parent_id = ? AND action = 'pilot_invite_revoked' AND actor = 'system'").get(p.id));
-    // Koda spet na seznamu: članstvo se samo ne vrne (izključitev velja, dokler skrbnik računa ne doda znova).
+    assert.equal(p.pilot_invite_hash, null, "izključitev je enkratna: koda odpade z računa");
+    assert.equal(p.pilot_invite_at, null);
+    // Koda spet na seznamu: članstvo se samo ne vrne.
     process.env.EVKLID_VABILA = `${CODE} ${OTHER}`;
     assert.equal(isPilotParent(parent("ana@primer.si")), false);
+    // Skrbnik račun znova doda (»Dodaj«): naslednje čiščenje ga ne odstrani znova in fotografij ne briše.
+    process.env.EVKLID_VABILA = OTHER;
+    const admin = client();
+    await register(admin, "skrbnik@primer.si");
+    await verify(admin, "skrbnik@primer.si");
+    store.db.prepare("UPDATE parents SET is_admin = 1 WHERE email = ?").run("skrbnik@primer.si");
+    assert.equal((await admin("/api/admin/pilot-naloge/clani", { method: "POST", body: { email: "ana@primer.si", on: true } })).status, 200);
+    addPhoto("ana@primer.si");
+    restart();
+    restart();
+    assert.ok(parent("ana@primer.si").pilot_at, "ponovni »Dodaj« ostane");
+    assert.equal(photos("ana@primer.si"), 1, "fotografije po ponovnem »Dodaj« ostanejo");
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE parent_id = ? AND action = 'pilot_invite_revoked'").get(p.id).n, 1, "izključitev samo enkrat");
+    process.env.EVKLID_VABILA = `${CODE} ${OTHER}`;
 
     // Izbris računa: vrstica porabljene kode ostane brez povezave na račun, koda ostane porabljena.
     const del = await a("/api/account", { method: "DELETE", body: { password: "geslo1234", confirm: true } });

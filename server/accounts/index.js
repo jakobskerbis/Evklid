@@ -391,13 +391,19 @@ export function mountAccounts(app, store, opts = {}) {
   // Koda člana je bila umaknjena iz EVKLID_VABILA (j člana izključi): kot skrbnikov »Odstrani« (server/pilot-naloge.js)
   // odpadejo oznaka pilota (naloge, »Povej mnenje«, seznam skrbnika) in fotografije pilota; meja plačanega paketa
   // odpade že sama (pilot-meja.js isPilotParent). Ob zagonu in vsakih 30 min (purgePilotKv). Vrne število računov.
+  // Enkratno (#819): koda odpade z računa (pilot_invite_hash/at = NULL), zato naslednje čiščenje računa ne najde več in
+  // skrbnikov »Dodaj« po izključitvi ostane (naloge in mnenje; meje iz kode ni več, ta je samo z EVKLID_PILOT_EMAILS).
+  // Vrstica v pilot_vabila ostane: koda je porabljena.
   function endRevokedInvites() {
-    const rows = db.prepare("SELECT id, pilot_invite_hash FROM parents WHERE pilot_invite_at IS NOT NULL AND pilot_at IS NOT NULL").all();
+    const rows = db.prepare("SELECT id, pilot_invite_hash FROM parents WHERE pilot_invite_at IS NOT NULL").all();
     let n = 0;
     for (const r of rows) {
       if (inviteHashValid(r.pilot_invite_hash)) continue;
-      const photos = endAccountPilot(db, r.id);
-      audit(db, { parentId: r.id, actor: "system", action: "pilot_invite_revoked", ok: false, target: photos ? `photos:${photos}` : null });
+      inTx(() => {
+        const photos = endAccountPilot(db, r.id);
+        db.prepare("UPDATE parents SET pilot_invite_hash = NULL, pilot_invite_at = NULL WHERE id = ?").run(r.id);
+        audit(db, { parentId: r.id, actor: "system", action: "pilot_invite_revoked", ok: false, target: photos ? `photos:${photos}` : null });
+      });
       n++;
     }
     if (n) log.info?.(`[vabilo] umaknjene kode: ${n} računov ni več v pilotu`);

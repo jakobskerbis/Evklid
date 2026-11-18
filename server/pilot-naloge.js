@@ -163,10 +163,23 @@ export function photoAllowed(db, studentId, now = new Date()) {
 // Izstop računa iz pilota (skrbnik »Odstrani« ali umaknjena koda vabila, server/accounts/index.js): oznaka pilota_at
 // odpade (naloge, »Povej mnenje«, seznam skrbnika, pri članu iz kode tudi meja plačanega paketa), fotografije profilov
 // tega računa izbrišemo takoj (soglasje velja za sodelovanje v pilotu; public/zasebnost.html). Vrne število fotografij.
+// Oba koraka v eni transakciji (znotraj že odprte, npr. endRevokedInvites, se ne odpre nova).
 export function endAccountPilot(db, parentId) {
-  db.prepare("UPDATE parents SET pilot_at = NULL WHERE id = ?").run(parentId);
-  if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_photos'").get()) return 0;
-  return Number(db.prepare("DELETE FROM pilot_photos WHERE student_id IN (SELECT id FROM students WHERE parent_id = ?)").run(parentId).changes);
+  const run = () => {
+    db.prepare("UPDATE parents SET pilot_at = NULL WHERE id = ?").run(parentId);
+    if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_photos'").get()) return 0;
+    return Number(db.prepare("DELETE FROM pilot_photos WHERE student_id IN (SELECT id FROM students WHERE parent_id = ?)").run(parentId).changes);
+  };
+  if (db.isTransaction) return run();
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    const n = run();
+    db.exec("COMMIT");
+    return n;
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
+  }
 }
 
 // Bivši člani (šoli je potekla pilotna licenca, učenec je zapustil razred): fotografije izbrišemo pri dnevnem čiščenju

@@ -4,7 +4,8 @@ Pošlje j sam, vsakemu posebej. Pred pošiljanjem zamenjaj `KODA` (koda te osebe
 `[IME]` in `[KONTAKT]` (npr. e-naslov ali telefon). Datum je zadnji dan pilota (`EVKLID_PILOT_DO`, privzeto 15. 12. 2026);
 če ga spremeniš, popravi tudi tukaj. Članstvo je samodejno (#751): registracija iz povezave s kodo in potrditev e-naslova
 porabita kodo in račun je v pilotu. Koda velja za en račun. Za izključitev kodo umakneš iz `EVKLID_VABILA` (najpozneje v
-30 min odpadejo meja, naloge in »Povej mnenje«, fotografije pilota se izbrišejo; koda na seznamu nazaj članstva ne vrne)
+30 min odpadejo meja, naloge in »Povej mnenje«, fotografije pilota se izbrišejo; koda na seznamu nazaj članstva ne vrne;
+ponovni »Dodaj« ostane, mejo plačanega paketa pa da potem samo e-naslov v `EVKLID_PILOT_EMAILS`)
 ali račun odstraniš v Račun → »Pilot: naloge članov« (takoj, enako). Ponastavitev gesla ali prijava z Apple na račun, ki
 ni bil nikoli potrjen, kode ne porabi (vnesel jo je morda kdo drug): taki osebi pošlji novo kodo ali račun dodaj ročno.
 
