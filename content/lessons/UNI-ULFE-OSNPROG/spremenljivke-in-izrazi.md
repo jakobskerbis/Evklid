@@ -51,7 +51,7 @@ V Pythonu tip pripada **vrednosti**, ne imenu: po `a = 5` in nato `a = "pet"` je
 
 **Pravilo (tip rezultata).** Pri `+`, `-`, `*`, `//`, `%` in `**` z nenegativnim celim eksponentom je rezultat `int`, če sta oba operanda `int`; če je vsaj eden `float`, je rezultat `float`.
 
-**Definicija.** Za celi števili $a$ in $b \neq 0$ je `a // b` največje celo število $q$ z $q \le \frac{a}{b}$, ostanek pa `a % b` $= a - bq$. Za $b > 0$ velja $0 \le$ `a % b` $< b$. Primeri: `17 // 5` je `3` in `17 % 5` je `2`; `-17 // 5` je `-4` in `-17 % 5` je `3`, ker je $-17 = 5 \cdot (-4) + 3$.
+**Definicija.** Za celi števili $a$ in $b \neq 0$ je `a // b` največje celo število $q$ s $q \le \frac{a}{b}$, ostanek pa `a % b` $= a - bq$. Za $b > 0$ velja $0 \le$ `a % b` $< b$. Primeri: `17 // 5` je `3` in `17 % 5` je `2`; `-17 // 5` je `-4` in `-17 % 5` je `3`, ker je $-17 = 5 \cdot (-4) + 3$.
 
 **4. Kdo ima prednost? Najprej opazuj.** Python vrne:
 
@@ -158,7 +158,7 @@ Podjetje pakira izdelke v škatle po $12$. Za naročilo $100$ izdelkov potrebuje
 **Iščemo:** število škatel in vsebino zadnje škatle
 
 :::formula
-Za $k > 0$: $n = k \cdot q + r$ z $q =$ `n // k`, $r =$ `n % k`, $0 \le r < k$. Zaokrožitev navzgor: `(n + k - 1) // k`.
+Za $k > 0$: $n = k \cdot q + r$ s $q =$ `n // k`, $r =$ `n % k`, $0 \le r < k$. Zaokrožitev navzgor: `(n + k - 1) // k`.
 :::
 
 **Rešitev:**
@@ -283,7 +283,7 @@ print(5 + 3 // 2 ** 2 * 3 - 1, not 0 or 5, 4 % 3 ** 2)
 
 **Rešitev:**
 
-1. (a) `a // b` je največje celo število $q$ z $q \le \frac{a}{b}$; `a % b` je $r = a - bq$.
+1. (a) `a // b` je največje celo število $q$ s $q \le \frac{a}{b}$; `a % b` je $r = a - bq$.
 2. Iz definicije je $q \le \frac{a}{b} < q + 1$. Pomnožimo z $b > 0$: $bq \le a < bq + b$.
 3. Odštejemo $bq$: $0 \le a - bq < b$, torej $0 \le r < b$. $\square$
 4. (b) $\frac{-17}{5} = -3{,}4$; največje celo število, ki ni večje, je $-4$. Torej `-17 // 5` je `-4` in `-17 % 5` je $-17 - 5 \cdot (-4) = 3$. Preizkus: $5 \cdot (-4) + 3 = -17$.

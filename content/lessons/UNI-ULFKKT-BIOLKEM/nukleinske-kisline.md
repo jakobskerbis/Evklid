@@ -82,11 +82,11 @@ Dodatna skupina 2'-OH naredi RNA kemijsko manj stabilno. V bazični raztopini na
 
 ### Blok 5: podvajanje je semikonzervativno
 
-Pri podvajanju (replikaciji) se verigi ločita in vsaka služi kot **matrica** za novo verigo. Vsaka hčerinska molekula ima eno staro in eno novo verigo. To je leta 1958 pokazal poskus Meselsona in Stahla s težkim dušikom $^{15}\mathrm{N}$ in centrifugiranjem v gradientu CsCl.
+Pri podvajanju (replikaciji) se verigi ločita in vsaka služi kot **matrica** za novo verigo. Vsaka hčerinska molekula ima eno staro in eno novo verigo. To je leta 1958 pokazal poskus Meselsona in Stahla s težkim dušikom $\mathrm{^{15}N}$ in centrifugiranjem v gradientu CsCl.
 
-**Napoved poskusa.** Naj se molekula z dvema težkima verigama ($^{15}\mathrm{N}$) podvaja semikonzervativno v gojišču s $^{14}\mathrm{N}$. Potem je po $n \ge 1$ generacijah med $2^n$ molekulami natanko $2$ hibridnih (težka + lahka), vse druge so lahke; delež hibridnih je $2/2^n = 2^{1-n}$.
+**Napoved poskusa.** Naj se molekula z dvema težkima verigama ($\mathrm{^{15}N}$) podvaja semikonzervativno v gojišču s $\mathrm{^{14}N}$. Potem je po $n \ge 1$ generacijah med $2^n$ molekulami natanko $2$ hibridnih (težka + lahka), vse druge so lahke; delež hibridnih je $2/2^n = 2^{1-n}$.
 
-*Izpeljava.* Stari verigi se nikoli ne razgradita in pri vsakem podvajanju vsaka dobi novo, lahko partnerico. Ker sta ločeni že po prvi generaciji, sta vedno v dveh različnih molekulah. Vse druge verige so nastale v $^{14}\mathrm{N}$, zato so molekule brez stare verige lahke. Pri konzervativnem modelu pa bi ostala ena težka molekula in $2^n - 1$ lahkih, hibridne nikoli.
+*Izpeljava.* Stari verigi se nikoli ne razgradita in pri vsakem podvajanju vsaka dobi novo, lahko partnerico. Ker sta ločeni že po prvi generaciji, sta vedno v dveh različnih molekulah. Vse druge verige so nastale v $\mathrm{^{14}N}$, zato so molekule brez stare verige lahke. Pri konzervativnem modelu pa bi ostala ena težka molekula in $2^n - 1$ lahkih, hibridne nikoli.
 
 ### Blok 6: replikacijske vilice
 
@@ -236,7 +236,7 @@ $n \approx 86{,}8$, zaokrožimo **navzgor** na $87$ izvorov: s $86$ izvori podva
 - **Chargaff za vsako verigo.** »RNA ima $20\,\%$ A, torej ima $20\,\%$ U.« To velja le za dvoverižno molekulo, kjer je vsak A sparjen. Enoverižna RNA in posamezna veriga DNA tega ne izpolnjujeta.
 - **Komplementarna veriga brez obrata.** Pod 5'-ATGC-3' napišeš TACG in ga bereš kot 5'-TACG-3'. Verigi sta antiparalelni, zato je to v resnici 3'-TACG-5'. Pravilno: 5'-GCAT-3'. Vedno označi oba konca.
 - **Polimeraza gradi v obe smeri.** »Na drugi matrici polimeraza pač gradi $3' \to 5'$.« Ne zna: nukleotid veže le na 3'-OH. Zato ena veriga nastaja v Okazakijevih fragmentih.
-- **Konzervativno podvajanje.** »Stara vijačnica ostane cela.« Po enem krogu v $^{14}\mathrm{N}$ so imele vse molekule vmesno gostoto, torej po eno staro in eno novo verigo.
+- **Konzervativno podvajanje.** »Stara vijačnica ostane cela.« Po enem krogu v $\mathrm{^{14}N}$ so imele vse molekule vmesno gostoto, torej po eno staro in eno novo verigo.
 - **»DNA drže skupaj samo vodikove vezi.«** Vodikove vezi določajo pravilno parjenje, k stabilnosti pa največ prispeva zlaganje baz.
 
 ## Povzetek
@@ -277,7 +277,7 @@ Linearni dvoverižni fragment DNA ima $1200$ baznih parov. Ena njegova veriga vs
 
 ### Naloga 2
 
-Natančno navedi Chargaffova pravila in jih dokaži iz komplementarnega parjenja. Utemelji, ali veljajo za enoverižno RNA. Nato izpelji, kakšne lise po $1$, $2$ in $3$ generacijah v gojišču s $^{14}\mathrm{N}$ da ultracentrifugiranje DNA, ki je bila na začetku v celoti označena s $^{15}\mathrm{N}$, pri semikonzervativnem in pri konzervativnem modelu.
+Natančno navedi Chargaffova pravila in jih dokaži iz komplementarnega parjenja. Utemelji, ali veljajo za enoverižno RNA. Nato izpelji, kakšne lise po $1$, $2$ in $3$ generacijah v gojišču s $\mathrm{^{14}N}$ da ultracentrifugiranje DNA, ki je bila na začetku v celoti označena s $\mathrm{^{15}N}$, pri semikonzervativnem in pri konzervativnem modelu.
 
 **Rešitev:**
 
@@ -321,7 +321,7 @@ Natančno navedi Chargaffova pravila in jih dokaži iz komplementarnega parjenja
 ~ Polimeraza nikoli ne gradi $3' \to 5'$; nukleotid veže le na prosto 3'-OH skupino.
 > Na eni matrici smer $5' \to 3'$ sovpada s smerjo vilice, na drugi je nasprotna, zato mora polimeraza vedno znova začeti na novem primerju.
 
-? Bakterije z DNA iz $^{15}\mathrm{N}$ se enkrat podvojijo v gojišču s $^{14}\mathrm{N}$. Kakšno DNA dobimo?
+? Bakterije z DNA iz $\mathrm{^{15}N}$ se enkrat podvojijo v gojišču s $\mathrm{^{14}N}$. Kakšno DNA dobimo?
 - Pol težke in pol lahke DNA.
 ~ Tako bi bilo pri konzervativnem podvajanju, kjer stara vijačnica ostane cela.
 + Samo DNA vmesne gostote.
@@ -350,6 +350,7 @@ G | gvanin | | | %G: delež gvanina med bazami
 C | citozin | | | %C: delež citozina; %C = %G
 A | adenin | | | %A: delež adenina; %A = %T
 T | timin | | | %T: delež timina
+A_{260}, A_{280} | absorbanca pri 260 nm oziroma 280 nm | | –
 n_{AT} | število baznih parov A–T | | – | vsak par ima 2 vodikovi vezi
 n_{GC} | število baznih parov G–C | | – | vsak par ima 3 vodikove vezi
 t | čas podvajanja DNA | t = \dfrac{N/2}{v} | s
@@ -357,5 +358,5 @@ n_\mathrm{F} | število Okazakijevih fragmentov v enem krogu | n_\mathrm{F} = \d
 l | povprečna dolžina Okazakijevega fragmenta | | nt
 N | dolžina genoma | | bp | v baznih parih
 v | hitrost ene replikacijske vilice | | bp/s
-n | najmanjše število izvorov podvajanja | n = \dfrac{N}{2 \cdot v \cdot t} | – | vsak izvor ima dve vilici
+n | najmanjše število izvorov podvajanja | n = \dfrac{N}{2 \cdot v \cdot t} | – | vsak izvor ima dve vilici; pri poskusu Meselsona in Stahla je $n$ število generacij
 :::

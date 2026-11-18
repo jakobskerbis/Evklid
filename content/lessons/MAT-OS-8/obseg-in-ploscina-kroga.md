@@ -100,7 +100,7 @@ $r = \dfrac{d}{2}$, $\quad p = \pi r^2$
 
 1. Obrazec potrebuje polmer, zato premer razpolovimo: $r = 122 : 2 = 61\,\text{cm}$.
 2. Kvadriramo: $61^2 = 3721$.
-3. $p = 3{,}14 \cdot 3721 = 11683{,}94\,\text{cm}^2$.
+3. $p = 3{,}14 \cdot 3721 = 11\,683{,}94\,\text{cm}^2$.
 4. En kvadratni meter ima $10\,000\,\text{cm}^2$, zato delimo z $10\,000$ in dobimo približno $1{,}17\,\text{m}^2$.
 5. Odgovor: za eno tarčo potrebujejo približno $1{,}17\,\text{m}^2$ papirja. Kdor bi namesto polmera vstavil premer, bi dobil štirikrat preveč.
 

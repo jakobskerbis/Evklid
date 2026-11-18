@@ -231,7 +231,7 @@ Izpiše `120`, ker se `tocke` v `main` ni spremenila. Popravek: `int dodaj_bonus
 - **Celoštevilsko deljenje.** `int` deljeno z `int` je `int`: `7 / 2` je `3`. Tudi če rezultat shraniš v `double`, je decimalni del že izgubljen. Pretvori operand: `(double) a / b`.
 - **Spremenljivka brez začetne vrednosti.** `int vsota;` nato `vsota += x;` v zanki daje naključne rezultate. Napiši `int vsota = 0;`.
 - **`=` namesto `==` v pogoju.** `if (zivljenja = 0)` vrednost priredi, pogoj je vedno neresničen. Za primerjavo piši `==`; `-Wall` na to opozori.
-- **Funkcija spremeni argument.** Parametri so kopije; spremembo vrneš z `return` in jo priredi spremenljivki v klicoči funkciji.
+- **Funkcija spremeni argument.** Parametri so kopije; spremembo vrneš z `return` in jo prirediš spremenljivki v klicoči funkciji.
 
 ## Povzetek
 

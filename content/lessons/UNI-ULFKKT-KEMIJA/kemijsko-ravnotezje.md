@@ -48,7 +48,7 @@ kjer oglati oklepaji pomenijo **ravnotežne** množinske koncentracije. Produkti
 
 $$\Delta_\mathrm{r}G^\circ = -RT\ln K.$$
 
-Ker je $\Delta_\mathrm{r}G^\circ$ odvisna le od temperature, je od nje odvisna le tudi $K$.
+Ker je $\Delta_\mathrm{r}G^\circ$ odvisna le od temperature, je le od nje odvisna tudi $K$.
 
 ### Heterogena ravnotežja
 
@@ -248,10 +248,10 @@ Za reakcijo $\mathrm{N_2O_4(g) \rightleftharpoons 2\,NO_2(g)}$ je pri $298\,\mat
 2. Pretvorba v $K_c$ ($\Delta n = 1$): $RT = 0{,}083\,14 \cdot 350 = 29{,}10$, $K_c = \dfrac{4{,}57}{29{,}10} = 0{,}157$.
 3. Preglednica: $c_0(\mathrm{N_2O_4}) = 0{,}0200\,\mathrm{mol/L}$; v ravnotežju $[\mathrm{N_2O_4}] = 0{,}0200 - x$, $[\mathrm{NO_2}] = 2x$.
 4. Enačba: $\dfrac{4x^2}{0{,}0200 - x} = 0{,}157$, urejeno $4x^2 + 0{,}157\,x - 0{,}003\,14 = 0$.
-5. $x = \dfrac{-0{,}157 + \sqrt{0{,}157^2 + 16 \cdot 0{,}003\,14}}{8} = \dfrac{-0{,}157 + 0{,}2737}{8} = 0{,}014\,58\,\mathrm{mol/L}$; negativna rešitev nima pomena.
+5. $x = \dfrac{-0{,}157 + \sqrt{0{,}157^2 + 16 \cdot 0{,}003\,14}}{8} = \dfrac{-0{,}157 + 0{,}273\,66}{8} = 0{,}014\,58\,\mathrm{mol/L}$; negativna rešitev nima pomena.
 6. Stopnja disociacije: $\alpha = \dfrac{0{,}014\,58}{0{,}0200} = 0{,}729$.
 7. Skupna koncentracija plina: $0{,}0200 - x + 2x = 0{,}0346\,\mathrm{mol/L}$, skupni tlak $p = cRT = 0{,}0346 \cdot 29{,}10 = 1{,}01\,\mathrm{bar}$.
-8. Preizkus s parcialnimi tlaki: $p(\mathrm{NO_2}) = 0{,}0292 \cdot 29{,}10 = 0{,}849\,\mathrm{bar}$; $p(\mathrm{N_2O_4}) = 0{,}005\,42 \cdot 29{,}10 = 0{,}158\,\mathrm{bar}$; $0{,}849^2/0{,}158 \approx 4{,}56 \approx K_p$.
+8. Preizkus s parcialnimi tlaki: $p(\mathrm{NO_2}) = 0{,}029\,16 \cdot 29{,}10 = 0{,}849\,\mathrm{bar}$; $p(\mathrm{N_2O_4}) = 0{,}005\,42 \cdot 29{,}10 = 0{,}158\,\mathrm{bar}$; $0{,}849^2/0{,}158 \approx 4{,}56 \approx K_p$.
 9. Odgovor: pri $350\,\mathrm{K}$ razpade $72{,}9\,\%$ $\mathrm{N_2O_4}$, skupni tlak v ravnotežju je približno $1{,}01\,\mathrm{bar}$.
 
 ### Naloga 2
@@ -360,7 +360,7 @@ Ravnotežno zmes iz Primera 1 ($[\mathrm{N_2O_4}] = 0{,}0400\,\mathrm{mol/L}$, $
 > Pravilno je $K_c = 0{,}0120^2/0{,}0400 = 3{,}6 \cdot 10^{-3}$ (Primer 1). Brez kvadrata dobi vrednost, ki je več kot osemdesetkrat prevelika.
 
 :::simboli
-a, b | stehiometrična koeficienta reaktantov A in B | | –
+a, b | stehiometrična koeficienta reaktantov A in B | | – | a z indeksom (aᵢ) je drugje aktivnost snovi
 c, d | stehiometrična koeficienta produktov C in D | | – | c je drugje tudi množinska koncentracija
 K_c | konstanta ravnotežja s koncentracijami | K_c = \frac{[\mathrm{C}]^c\,[\mathrm{D}]^d}{[\mathrm{A}]^a\,[\mathrm{B}]^b} | | odvisna le od temperature
 K_p | konstanta ravnotežja s parcialnimi tlaki | K_p = K_c\,(RT)^{\Delta n} | | tlaki v barih

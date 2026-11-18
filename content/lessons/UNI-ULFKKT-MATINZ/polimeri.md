@@ -96,7 +96,7 @@ Modul amorfnega polimera pri segrevanju gre skozi štiri stopnje: steklasto (oko
 Natezni preizkus poznaš pri kovinah. Pri polimerih isti preizkus pokaže tri tipe krivulj:
 
 - **krhki** (PS, duromeri pod $T_g$): skoraj linearno do loma pri nekaj odstotkih raztezka;
-- **duktilni termoplasti** (PE, PP, PA): meja tečenja, nato **vrat**, ki se razširi po vsej preizkušanki (**hladno vlečenje**); verige se v vratu uredijo vzdolž smeri vleka in material se utrdi, raztezek je lahko več sto odstotkov;
+- **duktilni termoplasti** (PE, PP, PA): meja tečenja, nato **vrat**, ki se razširi po vsem preizkušancu (**hladno vlečenje**); verige se v vratu uredijo vzdolž smeri vleka in material se utrdi, raztezek je lahko več sto odstotkov;
 - **elastomeri**: nizek modul, velik povraten raztezek, brez izrazite meje tečenja.
 
 Odločilna razlika od kovin: lastnosti polimerov so močno odvisne od **temperature** in **hitrosti** obremenitve. Polimer je **viskoelastičen**: pri stalni obremenitvi se počasi deformira naprej (**lezenje**), pri stalni deformaciji napetost počasi pada (**relaksacija**). Pri jeklu je lezenje pomembno šele nad nekaj sto stopinjami, pri plastični cevi pa že pri sobni temperaturi. Zato plastične tlačne cevi dimenzioniramo na trdnost po $50$ letih, ne na kratkotrajno natezno trdnost.
@@ -413,7 +413,7 @@ s | standardni odklon molske mase | | g/mol
 m_i | masa frakcije | | g
 n_i | množina verig v frakciji | n_i = \frac{m_i}{M_i} | mol
 \chi | stopnja kristaliničnosti (masni delež) | \chi = \frac{\rho_c(\rho - \rho_a)}{\rho(\rho_c - \rho_a)} | –
-\rho | gostota vzorca | | g/cm^3
+\rho | gostota vzorca | | g/cm^3 | v G = ρRT/M_c v kg/m³
 \rho_c | gostota povsem kristalnega polimera | | g/cm^3
 \rho_a | gostota povsem amorfnega polimera | | g/cm^3
 m | masa | m = \rho V | kg

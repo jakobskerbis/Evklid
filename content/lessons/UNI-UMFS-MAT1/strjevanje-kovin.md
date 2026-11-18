@@ -289,11 +289,11 @@ Meja analogije: atomi ne izbirajo kraja. Kal nastane po naključju in preživi l
 
 ? Pri podhladitvi $100\,\mathrm{K}$ je kritični radij kali $2\,\mathrm{nm}$. Kolikšen je pri podhladitvi $200\,\mathrm{K}$?
 - $4\,\mathrm{nm}$
-~ To bi veljalo, če bi bil $r_{kr}$ sorazmeren s $\Delta T$. Podhladitev je v imenovalcu.
+~ To bi veljalo, če bi bil $r_{kr}$ sorazmeren z $\Delta T$. Podhladitev je v imenovalcu.
 - $0{,}5\,\mathrm{nm}$
 ~ S kvadratom $\Delta T$ pada ovira $\Delta G_{kr}$, ne radij.
 + $1\,\mathrm{nm}$
-> $r_{kr} = \dfrac{2\gamma\,T_m}{\Delta H_f\,\Delta T}$ je obratno sorazmeren s $\Delta T$: dvakrat večja podhladitev da pol manjši radij.
+> $r_{kr} = \dfrac{2\gamma\,T_m}{\Delta H_f\,\Delta T}$ je obratno sorazmeren z $\Delta T$: dvakrat večja podhladitev da pol manjši radij.
 
 ? Na mikroposnetku pri povečavi $100\times$ seka črta dolžine $50\,\mathrm{mm}$ skupno $20$ mej zrn. Kolikšna je povprečna dolžina odseka $\bar{l}$?
 - $2{,}5\,\mathrm{mm}$

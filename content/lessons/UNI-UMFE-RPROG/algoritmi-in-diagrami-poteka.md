@@ -57,7 +57,7 @@ napis: 154; 18 | konec | sredina
 Algoritem lahko zapišemo z naravnim jezikom, s **psevdokodo** (strukturiran zapis, podoben programu, a brez pravil določenega jezika), z **diagramom poteka** ali v programskem jeziku.
 
 **Simboli diagrama poteka** (po standardu ISO 5807):
-- zaobljen pravokotnik (ovalno): začetek in konec;
+- zaobljen pravokotnik (oval): začetek in konec;
 - pravokotnik: obdelava, na primer račun ali prireditev;
 - paralelogram: vhod ali izhod podatkov;
 - romb: odločitev, iz njega gresta dve puščici, »da« in »ne«;
@@ -350,7 +350,7 @@ Navigacija v avtu dela enako. Na vsakem križišču preveri pogoj (»sem že na 
 ~ Zaobljen pravokotnik označi začetek ali konec, zato je pravilen.
 > Odločitev ima vedno dva izhoda. Z enim samim diagram za del vhodov ne pove, kaj storiti, kar krši določenost.
 
-? Algoritem: $s = 0$; za $k$ od $1$ do $4$: $s \leftarrow s + k^2$; izpiši $s$. Kaj izpiše?
+? Algoritem: $\text{vsota} = 0$; za $k$ od $1$ do $4$: $\text{vsota} \leftarrow \text{vsota} + k^2$; izpiši vsoto. Kaj izpiše?
 - $10$
 ~ To je vsota $1 + 2 + 3 + 4$, brez kvadriranja.
 - $16$
@@ -393,9 +393,9 @@ E | porabljena energija | E = \frac{P \cdot t}{1000} | kWh
 U | izmerjena napetost | | V
 n | število meritev | | –
 r | ostanek pri deljenju | r = a \bmod b | –
-a, b | števili v Evklidovem algoritmu
+a, b | števili v Evklidovem algoritmu; pri bisekciji krajišči intervala
 D | največji skupni delitelj
 s | sredina intervala | s = \frac{a + b}{2}
-x | meritev (vhodni podatek) | | | negativna vrednost je mejnik
+x | vhodni podatek (v Primeru 3 meritev); pri $f(x)$ spremenljivka funkcije | | | v Primeru 3 je negativna vrednost mejnik
 k | števec zanke | | –
 :::

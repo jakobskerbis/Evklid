@@ -77,7 +77,7 @@ S spektralnim izrekom uvedemo nove koordinate $u = Q^T x$. Ker je $Q$ ortogonaln
 
 $$q = \lambda_1 u_1^2 + \lambda_2 u_2^2 + \dots + \lambda_n u_n^2.$$
 
-Smeri lastnih vektorjev so **glavne osi** forme. Krivulja $q = c$ z $c > 0$ in $\lambda_1, \lambda_2 > 0$ je elipsa s polosema $\sqrt{c/\lambda_1}$ in $\sqrt{c/\lambda_2}$.
+Smeri lastnih vektorjev so **glavne osi** forme. Krivulja $q = c$ s $c > 0$ in $\lambda_1, \lambda_2 > 0$ je elipsa s polosema $\sqrt{c/\lambda_1}$ in $\sqrt{c/\lambda_2}$.
 
 :::premisli
 Lastni vrednosti forme sta $6$ in $1$. Vzdolž katere lastne smeri je elipsa $q = 6$ daljša? Zakaj?

@@ -64,7 +64,7 @@ napis: 2; -0,3 | 4 pobarvani
 napis: 5; -0,3 | 2 prazna
 :::
 
-Pravokotnik na sliki je razdeljen na $6$ enakih delov, pobarvani so $4$. Pobarvan je torej $\dfrac{4}{6}$ celote, prazna sta $2$ dela, to je $\dfrac{2}{6}$. Ulomek z lika pa preberemo obratno: preštejemo vse enake dele (imenovalec) in med njimi pobarvane (števec).
+Pravokotnik na sliki je razdeljen na $6$ enakih delov, pobarvani so $4$. Pobarvane so torej $\dfrac{4}{6}$ celote, prazna sta $2$ dela, to je $\dfrac{2}{6}$. Ulomek z lika pa preberemo obratno: preštejemo vse enake dele (imenovalec) in med njimi pobarvane (števec).
 
 Poskusi z interaktivno simulacijo spodaj: z drsnikoma spreminjaš števec in imenovalec ter opazuješ, kako se pobarva krog in kam se postavi točka na številski premici.
 
@@ -139,7 +139,7 @@ $\dfrac{\text{število izbranih delov}}{\text{število vseh enakih delov}}$
 
 ### Primer 2 (srednji)
 
-Na zvezek narišeš številsko premico, na kateri je enota (razdalja od $0$ do $1$) dolga $10$ kvadratkov. a) Enoto razdeli na petine in označi točke $\dfrac{3}{5}$, $\dfrac{5}{5}$ in $\dfrac{7}{5}$. b) Koliko kvadratkov desno od $0$ leži vsaka od njih? c) Zapiši $\dfrac{7}{5}$ kot mešano število.
+V zvezek narišeš številsko premico, na kateri je enota (razdalja od $0$ do $1$) dolga $10$ kvadratkov. a) Enoto razdeli na petine in označi točke $\dfrac{3}{5}$, $\dfrac{5}{5}$ in $\dfrac{7}{5}$. b) Koliko kvadratkov desno od $0$ leži vsaka od njih? c) Zapiši $\dfrac{7}{5}$ kot mešano število.
 
 **Podatki:** enota od $0$ do $1$ je dolga $10$ kvadratkov, ulomki $\dfrac{3}{5}$, $\dfrac{5}{5}$ in $\dfrac{7}{5}$
 **Iščemo:** lego točk (v kvadratkih od $0$) in $\dfrac{7}{5}$ kot mešano število

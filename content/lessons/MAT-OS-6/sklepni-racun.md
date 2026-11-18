@@ -184,7 +184,7 @@ $4{,}5 : 1{,}8 = 2{,}5$, torej $2{,}5$ kg. Imaš več denarja kot $2{,}70$ €, 
 
 Benetke, tržni dan. Trgovec Marco proda sedem laktov modrega sukna za $21$ zlatnikov. Popoldne pride kupec in želi deset laktov.
 
-Marcov vajenec takoj zakliče: »Tri lakti več, torej tri zlatnike več, $24$ zlatnikov!« Marco odkima. »Če bi tako računal, bi blago podaril. Povej mi najprej, koliko stane en sam laket.«
+Marcov vajenec takoj zakliče: »Tri lakte več, torej tri zlatnike več, $24$ zlatnikov!« Marco odkima. »Če bi tako računal, bi blago podaril. Povej mi najprej, koliko stane en sam laket.«
 
 Vajenec razdeli $21$ zlatnikov na sedem enakih kupčkov: v vsakem so trije zlatniki. »En laket, trije zlatniki.« Nato postavi deset kupčkov po tri: $10 \cdot 3 = 30$ zlatnikov.
 

@@ -17,7 +17,7 @@ Tekmovalne naloge iz kombinatorike redko dovolijo, da vse možnosti našteješ. 
 
 ## Razlaga
 
-**1. Štetje brez štetja.** Na strehi vasi gnezdijo štorklje. Vsaka stoji na svojem gnezdu in nobeno gnezdo ni prazno. Ne da bi štorklje šteli, vemo: štorkelj je toliko kot gnezd.
+**1. Štetje brez štetja.** Na strehah v vasi gnezdijo štorklje. Vsaka stoji na svojem gnezdu in nobeno gnezdo ni prazno. Ne da bi štorklje šteli, vemo: štorkelj je toliko kot gnezd.
 
 To je ideja **bijekcije**. Bijekcija med množicama $A$ in $B$ je pravilo, ki vsakemu elementu $A$ priredi natanko en element $B$, in to tako, da vsak element $B$ dobi natanko enega iz $A$. Z $|A|$ označimo **moč** množice, torej število njenih elementov. Če med končnima množicama obstaja bijekcija, je $|A| = |B|$.
 
@@ -103,7 +103,7 @@ $N = \binom{3}{1} \cdot \binom{5}{2}$ (pot $A \to C$ in pot $C \to B$ izbiramo n
 
 1. Od $A$ do $C$: $2$ koraka V in $1$ korak S, izberemo mesto za S: $\binom{3}{1} = 3$.
 2. Od $C$ do $B$: $3$ koraki V in $2$ koraka S: $\binom{5}{2} = 10$.
-3. Vsak del prve poti lahko združimo z vsakim delom druge: $N = 3 \cdot 10 = 30$.
+3. Vsako pot prvega dela lahko združimo z vsako potjo drugega dela: $N = 3 \cdot 10 = 30$.
 4. Odgovor: skozi cvet vodi $30$ od skupno $56$ poti.
 
 ### Primer 2: dežurstva na taboru
@@ -232,7 +232,7 @@ $$\binom{r}{1} - \binom{r}{2} + \dots \pm \binom{r}{r} = 1 - (1 - 1)^r = 1$$
 
 Uporabili smo binomski izrek za $(1 - 1)^r$. Prav to je pokazala tabela v razdelku »Na sliki« za $r = 1, 2, 3$.
 
-Zgled: števil od $1$ do $1000$, ki niso deljiva z $2$, $3$ ali $5$. Vsa deljiva z vsaj enim so unija treh množic: $S_1 = 500 + 333 + 200 = 1033$, $S_2 = 166 + 100 + 66 = 332$, $S_3 = 33$. Unija ima $1033 - 332 + 33 = 734$ števil, ostane jih $1000 - 734 = 266$.
+Zgled: števila od $1$ do $1000$, ki niso deljiva z $2$, $3$ ali $5$. Vsa deljiva z vsaj enim so unija treh množic: $S_1 = 500 + 333 + 200 = 1033$, $S_2 = 166 + 100 + 66 = 332$, $S_3 = 33$. Unija ima $1033 - 332 + 33 = 734$ števil, ostane jih $1000 - 734 = 266$.
 
 ## Preveri se
 

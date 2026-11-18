@@ -7,7 +7,7 @@ avtor: AI
 
 V predalu imaš star telefon, ki ga nihče več ne uporablja. V njem je približno $0{,}03\,\mathrm{g}$ zlata. Koliko takih telefonov bi morali zbrati za en sam gram zlata?
 
-$1 : 0{,}03 \approx 33$. Trideset in več telefonov za košček zlata, manjši od zrna riža. Zlato pa ne leži v telefonu ločeno. Pomešano je s plastiko, steklom, železom, bakrom in drugimi kovinami: telefon je **zmes** veliko snovi.
+$1 : 0{,}03 \approx 33$. Trideset in več telefonov za košček zlata, majhen kot poprovo zrno. Zlato pa ne leži v telefonu ločeno. Pomešano je s plastiko, steklom, železom, bakrom in drugimi kovinami: telefon je **zmes** veliko snovi.
 
 Obrati za reciklažo zato telefone zmeljejo in koščke ločujejo korak za korakom: po velikosti, z magnetom, z vodo, s segrevanjem. Isti postopki ti pomagajo v kuhinji (cedilo za testenine), na morju (soline) in v laboratoriju. Spoznal boš šest najpogostejših.
 

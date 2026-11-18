@@ -304,7 +304,7 @@ Zornova lema je kot vzpon po grebenu, ki se cepi. Vsaka veriga je ena smer vzpon
 :::simboli
 S | naslednik | S(n) = n \cup \{n\}
 n | naravno število (kot množica)
-V | število vozovnic na progi z n postajami | V(n) = \frac{n(n-1)}{2} | | »množica vseh množic« V ne obstaja
+V | število vozovnic na progi z n postajami | V(n) = \frac{n(n-1)}{2} | | »množica vseh množic« V ne obstaja; v Primeru 3 je V množica krajev grafa
 P | delno urejena množica v Zornovi lemi | | | P(n) je tudi trditev pri indukciji
-a, b | naravni števili | | | pri aksiomu para poljubni množici
+a, b | naravni števili | | | pri aksiomu para poljubni množici, v Primeru 3 kraja
 :::

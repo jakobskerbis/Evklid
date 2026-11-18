@@ -21,7 +21,7 @@ $$\sigma_{\mathrm{pr}} \le \sigma_{\mathrm{dop}}$$
 
 Kako iz stanja izračunati $\sigma_{\mathrm{pr}}$, pove hipoteza o porušitvi. Vsaka hipoteza izbere eno količino, ki naj bi odločala o porušitvi.
 
-*Preveri:* kolikšna je $\sigma_{\mathrm{pr}}$ pri čistem nategu z $\sigma = 90\,\mathrm{MPa}$? (Odgovor: $90\,\mathrm{MPa}$, saj je to že enoosno stanje.)
+*Preveri:* kolikšna je $\sigma_{\mathrm{pr}}$ pri čistem nategu s $\sigma = 90\,\mathrm{MPa}$? (Odgovor: $90\,\mathrm{MPa}$, saj je to že enoosno stanje.)
 
 **Korak 3 – glavne napetosti po vrsti.** Iz lekcije o ravninskem napetostnem stanju znaš izračunati glavni napetosti v ravnini, $\sigma'$ in $\sigma''$. Tretja glavna napetost, pravokotno na ravnino, je $0$. Vse tri razvrstimo po velikosti: $\sigma_1 \ge \sigma_2 \ge \sigma_3$. Ničla dobi svoje mesto v vrsti kot vsaka druga vrednost.
 
@@ -148,7 +148,7 @@ $\tau_{\max} = \sqrt{\dfrac{150^2 - 50{,}93^2}{4}} \approx 70{,}5\,\mathrm{MPa}$
 - **$\sqrt{\sigma^2 + 3\tau^2}$ za vsako stanje.** Ta oblika velja le, ko je ena normalna napetost $0$ (upogib s torzijo). Za stanje $\sigma_x$, $\sigma_y$, $\tau_{xy}$ najprej izračunaj glavne napetosti in uporabi splošno formulo.
 - **»Von Mises je bolj varen, ker je novejši.«** Ravno obratno: von Mises da manjšo ali enako $\sigma_{\mathrm{pr}}$. Tresca je konservativnejša, von Mises natančnejši za duktilne kovine.
 - **Duktilna hipoteza za krhko snov.** Za steklen pokrov ali keramično posodo von Mises precenjuje nosilnost. Krhke snovi popustijo zaradi natega, zato uporabi $\sigma_{\mathrm{pr}} = \sigma_1$ in primerjaj z $R_m$.
-- **Primerjava s $\tau_{\mathrm{dop}}$.** $\sigma_{\mathrm{pr}}$ je normalna napetost in jo primerjaš z $\sigma_{\mathrm{dop}}$ iz nateznega preizkusa, ne s strižno dopustno napetostjo.
+- **Primerjava s $\tau_{\mathrm{dop}}$.** $\sigma_{\mathrm{pr}}$ je normalna napetost in jo primerjaš s $\sigma_{\mathrm{dop}}$ iz nateznega preizkusa, ne s strižno dopustno napetostjo.
 
 ## Povzetek
 
@@ -212,7 +212,7 @@ Izpelji primerjalno napetost po Tresci in po von Misesu za vlakno, v katerem del
 1. Stanje je $\sigma_x = \sigma$, $\sigma_y = 0$, $\tau_{xy} = \tau$. Glavni napetosti v ravnini sta $\dfrac{\sigma}{2} \pm \sqrt{\dfrac{\sigma^2}{4} + \tau^2}$.
 2. Koren je večji od $\dfrac{|\sigma|}{2}$ (če je $\tau \ne 0$), zato je ena glavna napetost pozitivna, druga negativna. Ničla iz tretje smeri je vmes: $\sigma_2 = 0$.
 3. Tresca: $\sigma_{\mathrm{pr,T}} = \sigma_1 - \sigma_3 = 2\sqrt{\dfrac{\sigma^2}{4} + \tau^2} = \sqrt{\sigma^2 + 4\tau^2}$.
-4. Von Mises z $\sigma_2 = 0$: $\sigma_{\mathrm{pr}}^2 = \tfrac{1}{2}\left[\sigma_1^2 + \sigma_3^2 + (\sigma_3 - \sigma_1)^2\right] = \sigma_1^2 - \sigma_1\sigma_3 + \sigma_3^2 = (\sigma_1 + \sigma_3)^2 - 3\sigma_1\sigma_3$.
+4. Von Mises s $\sigma_2 = 0$: $\sigma_{\mathrm{pr}}^2 = \tfrac{1}{2}\left[\sigma_1^2 + \sigma_3^2 + (\sigma_3 - \sigma_1)^2\right] = \sigma_1^2 - \sigma_1\sigma_3 + \sigma_3^2 = (\sigma_1 + \sigma_3)^2 - 3\sigma_1\sigma_3$.
 5. Vsota je $\sigma_1 + \sigma_3 = \sigma$, produkt $\sigma_1\sigma_3 = \dfrac{\sigma^2}{4} - \left(\dfrac{\sigma^2}{4} + \tau^2\right) = -\tau^2$. Sledi $\sigma_{\mathrm{pr,M}} = \sqrt{\sigma^2 + 3\tau^2}$.
 6. Razmerje hipotez: $\dfrac{\sigma_{\mathrm{pr,T}}}{\sigma_{\mathrm{pr,M}}} = \sqrt{\dfrac{\sigma^2 + 4\tau^2}{\sigma^2 + 3\tau^2}} = \sqrt{1 + \dfrac{\tau^2}{\sigma^2 + 3\tau^2}}$. Pri $\tau = 0$ je $1$ (čisti upogib, hipotezi se ujemata).
 7. Ulomek $\dfrac{\tau^2}{\sigma^2 + 3\tau^2}$ raste, ko raste $\dfrac{\tau}{\sigma}$, in je največ $\dfrac{1}{3}$ pri $\sigma = 0$. Največje razmerje je zato $\sqrt{\dfrac{4}{3}} = \dfrac{2}{\sqrt{3}} \approx 1{,}155$.
@@ -237,7 +237,7 @@ Nariši ravnino z osema $\sigma'$ (vodoravno) in $\sigma''$ (navpično), tretja 
 
 ## Drugače: Bolj natančno
 
-**Od kod $\sqrt{\sigma^2 + 4\tau^2}$ in $\sqrt{\sigma^2 + 3\tau^2}$.** Pri $\sigma_x = \sigma$, $\sigma_y = 0$, $\tau_{xy} = \tau$ sta glavni napetosti v ravnini $\dfrac{\sigma}{2} \pm \sqrt{\dfrac{\sigma^2}{4} + \tau^2}$. Prva je pozitivna, druga negativna, zato je $\sigma_2 = 0$. Tresca: $\sigma_1 - \sigma_3 = 2\sqrt{\dfrac{\sigma^2}{4} + \tau^2} = \sqrt{\sigma^2 + 4\tau^2}$. Pri von Misesu z $\sigma_2 = 0$ dobimo $\sigma_{\mathrm{pr}}^2 = \sigma_1^2 - \sigma_1\sigma_3 + \sigma_3^2$. Ker je $\sigma_1 + \sigma_3 = \sigma$ in $\sigma_1\sigma_3 = -\tau^2$, sledi $\sigma_{\mathrm{pr}}^2 = \sigma^2 - 3\sigma_1\sigma_3 = \sigma^2 + 3\tau^2$.
+**Od kod $\sqrt{\sigma^2 + 4\tau^2}$ in $\sqrt{\sigma^2 + 3\tau^2}$.** Pri $\sigma_x = \sigma$, $\sigma_y = 0$, $\tau_{xy} = \tau$ sta glavni napetosti v ravnini $\dfrac{\sigma}{2} \pm \sqrt{\dfrac{\sigma^2}{4} + \tau^2}$. Prva je pozitivna, druga negativna, zato je $\sigma_2 = 0$. Tresca: $\sigma_1 - \sigma_3 = 2\sqrt{\dfrac{\sigma^2}{4} + \tau^2} = \sqrt{\sigma^2 + 4\tau^2}$. Pri von Misesu s $\sigma_2 = 0$ dobimo $\sigma_{\mathrm{pr}}^2 = \sigma_1^2 - \sigma_1\sigma_3 + \sigma_3^2$. Ker je $\sigma_1 + \sigma_3 = \sigma$ in $\sigma_1\sigma_3 = -\tau^2$, sledi $\sigma_{\mathrm{pr}}^2 = \sigma^2 - 3\sigma_1\sigma_3 = \sigma^2 + 3\tau^2$.
 
 **Energija spremembe oblike.** Specifično deformacijsko energijo lahko razdelimo na del, ki spremeni prostornino, in del, ki spremeni obliko. Za linearno elastično izotropno snov je drugi del
 
@@ -245,7 +245,7 @@ $$u_d = \frac{(\sigma_1 - \sigma_2)^2 + (\sigma_2 - \sigma_3)^2 + (\sigma_3 - \s
 
 kjer je $G$ strižni modul. Pri enoosnem nategu je $u_d = \dfrac{\sigma^2}{6G}$. Von Mises trdi, da tečenje nastopi, ko $u_d$ doseže vrednost iz preizkusa. Izenačitev da natanko formulo za $\sigma_{\mathrm{pr,M}}$. Enak rezultat dobiš iz strižne napetosti na oktaedrski ploskvi, ki je enako nagnjena na vse tri glavne smeri.
 
-**Meje hipotez.** Obe duktilni hipotezi predpostavljata, da hidrostatični del ($\sigma_1 = \sigma_2 = \sigma_3$) ne povzroči tečenja, in da je material enak v nategu in tlaku. Za krhke snovi, ki so v tlaku mnogo močnejše, se uporabljajo še Mohrova in Coulomb-Mohrova hipoteza.
+**Meje hipotez.** Obe duktilni hipotezi predpostavljata, da hidrostatični del ($\sigma_1 = \sigma_2 = \sigma_3$) ne povzroči tečenja in da je material enak v nategu in tlaku. Za krhke snovi, ki so v tlaku mnogo močnejše, se uporabljajo še Mohrova in Coulomb-Mohrova hipoteza.
 
 ## Preveri se
 
@@ -270,7 +270,7 @@ kjer je $G$ strižni modul. Pri enoosnem nategu je $u_d = \dfrac{\sigma^2}{6G}$.
 ? Zakaj se suh špaget pri zvijanju zlomi po vijačnici pod $45^\circ$?
 - Ker je strižna napetost pri torziji največja na ploskvah pod $45^\circ$.
 ~ Pri čisti torziji je strig največji v prečnem in vzdolžnem prerezu. Pod $45^\circ$ je največja normalna napetost.
-+ Ker je krhka in poči po ploskvi, na katero deluje največja natezna napetost $\sigma_1 = \tau$.
++ Ker je krhek in poči po ploskvi, na katero deluje največja natezna napetost $\sigma_1 = \tau$.
 - Ker po Tresci duktilne snovi tečejo pod $45^\circ$.
 ~ Špaget ni duktilen: ne teče, ampak takoj poči. Tresca opisuje tečenje duktilnih kovin.
 > Pri čisti torziji je $\sigma_1 = \tau$ na ploskvi pod $45^\circ$. Krhka snov sledi največjemu nategu, zato razpoka zavije v vijačnico.

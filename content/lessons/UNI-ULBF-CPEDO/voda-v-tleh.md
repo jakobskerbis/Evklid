@@ -169,7 +169,7 @@ $0{,}12 \cdot 300\,\mathrm{mm} = 36\,\mathrm{mm}$, kar je $36\,\mathrm{L/m^2}$. 
 - $\Psi = \Psi_m + \Psi_o + \Psi_g$: matrični (pore, površine), osmotski (soli), gravitacijski.
 - Poljska kapaciteta: vsebnost vode po odteku gravitacijske vode, $-10$ do $-33\,\mathrm{kPa}$ (pF $\approx 2$–$2{,}5$).
 - Točka venenja: $-1500\,\mathrm{kPa}$ (pF $\approx 4{,}2$), rastlina trajno ovene.
-- Rastlinam dostopna voda: $\mathrm{RDV} = (\theta_{PK} - \theta_{TV}) \cdot z$; $1\,\mathrm{mm} = 1\,\mathrm{L/m^2}$. Masni delež pretvori z $\theta = w\,\rho_v/\rho_{\text{voda}}$.
+- Rastlinam dostopna voda: $\mathrm{RDV} = (\theta_{PK} - \theta_{TV}) \cdot z$; $1\,\mathrm{mm} = 1\,\mathrm{L/m^2}$. Masni delež pretvori s $\theta = w\,\rho_v/\rho_{\text{voda}}$.
 - Pesek: malo vode, skoraj vsa dostopna. Glina: veliko vode, velik del nedostopen. Ilovica: največ dostopne vode.
 - Soli znižajo $\Psi_o$ in zmanjšajo dostopnost tudi v mokrih tleh.
 

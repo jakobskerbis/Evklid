@@ -247,7 +247,7 @@ napis: 3,48; 1,78 | 35° | desno
 ? Rok je konstruiral simetralo daljice $AB$, dolge $6\,\text{cm}$. 1. korak: lok s središčem $A$ in polmerom $4\,\text{cm}$. 2. korak: lok s središčem $B$ in polmerom $5\,\text{cm}$. 3. korak: presečišči lokov poveže. Kje je napaka?
 + V 2. koraku: polmer v $B$ mora biti enak kot v $A$.
 - V 1. koraku: polmer $4\,\text{cm}$ je premajhen.
-~ $4\,\text{cm}$ je več od polovice daljice, ki meri $3\,\text{cm}$, zato je primeren.
+~ $4\,\text{cm}$ je več od polovice daljice, to je od $3\,\text{cm}$, zato je primeren.
 - V 3. koraku: presečišči bi moral povezati s krajiščem $A$.
 ~ Simetrala gre skozi obe presečišči lokov. Črta skozi $A$ ne bi šla skozi razpolovišče.
 - Napake ni, saj sta oba polmera večja od $3\,\text{cm}$.

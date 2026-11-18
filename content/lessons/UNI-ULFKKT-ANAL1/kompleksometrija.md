@@ -256,7 +256,7 @@ Pri $\mathrm{pH}\ 10$ prevladujeta zadnja dva člena, zato je $\alpha \approx \d
 
 $$K_f = \frac{[\mathrm{CaY^{2-}}]}{[\mathrm{Ca^{2+}}]\,\alpha_{\mathrm{Y^{4-}}}[\mathrm{EDTA}]'} \;\Rightarrow\; \frac{[\mathrm{CaY^{2-}}]}{[\mathrm{Ca^{2+}}][\mathrm{EDTA}]'} = \alpha_{\mathrm{Y^{4-}}} K_f = K'_f$$
 
-**Ekvivalentna točka.** Tam je $[\mathrm{Ca^{2+}}] = [\mathrm{EDTA}]'$, zato $[\mathrm{Ca^{2+}}] = \sqrt{c(\mathrm{CaY^{2-}})/K'_f}$. Pri $c = 0{,}00500\ \mathrm{mol/L}$ in $K'_f = 1{,}3 \cdot 10^{10}$ dobimo $[\mathrm{Ca^{2+}}] = 6{,}1 \cdot 10^{-7}\ \mathrm{mol/L}$ in $\mathrm{pCa} = 6{,}21$.
+**Ekvivalentna točka.** Tam je $[\mathrm{Ca^{2+}}] = [\mathrm{EDTA}]'$, zato $[\mathrm{Ca^{2+}}] = \sqrt{c(\mathrm{CaY^{2-}})/K'_f}$. Pri $c = 0{,}00500\ \mathrm{mol/L}$ in $K'_f = 1{,}3 \cdot 10^{10}$ dobimo $[\mathrm{Ca^{2+}}] = 6{,}2 \cdot 10^{-7}\ \mathrm{mol/L}$ in $\mathrm{pCa} = 6{,}21$.
 
 **Pomožni ligandi.** Če v raztopini kovino veže še kak drug ligand (npr. $\mathrm{NH_3}$ iz pufra), uvedemo še delež proste kovine $\alpha_{\mathrm{M}}$ in $K''_f = \alpha_{\mathrm{M}}\,\alpha_{\mathrm{Y^{4-}}}\,K_f$. Pomožni ligand prepreči obarjanje hidroksida, a hkrati zmanjša preskok.
 
@@ -320,7 +320,7 @@ K_f | konstanta tvorbe kompleksa | K_f = \frac{[\mathrm{ML}]}{[\mathrm{M}]\,[\ma
 K'_f | pogojna konstanta tvorbe | K'_f = \alpha_{\mathrm{Y^{4-}}} \cdot K_f | L/mol | za titracijo mora biti log K'_f ≥ 8
 \alpha_{\mathrm{Y^{4-}}} | delež EDTA v obliki Y⁴⁻ | \alpha_{\mathrm{Y^{4-}}} = \frac{K_1K_2K_3K_4}{[\mathrm{H^+}]^4 + K_1[\mathrm{H^+}]^3 + K_1K_2[\mathrm{H^+}]^2 + K_1K_2K_3[\mathrm{H^+}] + K_1K_2K_3K_4} | – | raste z naraščajočim pH
 K_1, K_2, K_3, K_4 | kislinske konstante EDTA | | mol/L | drugje: stopenjske konstante tvorbe kompleksa
-n | množina snovi | | mol | v EP: n(M) = n(EDTA)
+n | množina snovi | | mol | v ekvivalentni točki: n(M) = n(EDTA)
 c | množinska koncentracija | | mol/L
 V | prostornina | | mL
 V_{10} | prostornina EDTA pri titraciji pri pH 10 | | mL | določimo Ca in Mg skupaj

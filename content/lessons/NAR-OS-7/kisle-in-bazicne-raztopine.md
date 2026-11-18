@@ -26,7 +26,7 @@ Okus in otip nista način preverjanja. Nekatere kisline in baze so **jedke**: ra
 **3. Indikatorski papirji.** V šoli največkrat uporabljaš papirje, prepojene z indikatorjem.
 
 - **Lakmusov papir** je lahko moder ali rdeč. Modri v kisli raztopini pordeči. Rdeči v bazični pomodri. V nevtralni se nobeden ne spremeni. Lakmus pove samo »kislo« ali »bazično«.
-- **Univerzalni indikatorski papir** je mešanica več indikatorjev. Ima veliko odtenkov: barvo primerjaš z barvno lestvico na škatlici in odčitaš število.
+- **Univerzalni indikatorski papir** je prepojen z mešanico več indikatorjev. Ima veliko odtenkov: barvo primerjaš z barvno lestvico na škatlici in odčitaš število.
 
 :::premisli
 Modri lakmusov papir pomočiš v tekočino in ostane moder. Ali lahko zaključiš, da je tekočina bazična?

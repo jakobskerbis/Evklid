@@ -191,7 +191,7 @@ Dve krožnici sta kot dve trgovini z različnima ponudbama. Radikalna os so mest
 
 ## Drugače: Iz vsakdanjega življenja
 
-Kako daleč vidiš obzorje? Tvoje oko $P$ je $h = 1{,}7\,\mathrm{m}$ nad morjem, Zemlja je krogla s polmerom $R = 6371\,\mathrm{km}$. Pogled proti obzorju je tangenta, navpična črta skozi središče Zemlje pa sekanta. Bližje presečišče je pod tvojimi nogami ($h$), daljše na drugi strani Zemlje ($h + 2R$). Zato je razdalja do obzorja
+Kako daleč vidiš obzorje? Tvoje oko $P$ je $h = 1{,}7\,\mathrm{m}$ nad morjem, Zemlja je krogla s polmerom $R = 6371\,\mathrm{km}$. Pogled proti obzorju je tangenta, navpična črta skozi središče Zemlje pa sekanta. Bližje presečišče je pod tvojimi nogami ($h$), daljno na drugi strani Zemlje ($h + 2R$). Zato je razdalja do obzorja
 
 $$d = \sqrt{h(2R + h)}$$
 

@@ -287,7 +287,7 @@ Za gibajoče se zanke velja splošneje, da je inducirana napetost vsota dveh del
 ~ To je napetost enega ovoja. Pozabljeno je število ovojev.
 + $0{,}5\,\mathrm V$
 - $50\,\mathrm V$
-~ Ploščina je ostala v $\mathrm{cm^2}$: $10\,\mathrm{cm^2} = 10^{-3}\,\mathrm{m^2}$, ne $10^{-1}\,\mathrm{m^2}$.
+~ Ploščina je pretvorjena kot dolžina, s faktorjem $10^{-2}$: $10\,\mathrm{cm^2} = 10^{-3}\,\mathrm{m^2}$, ne $10^{-1}\,\mathrm{m^2}$.
 - $0$, ker je končno polje nič.
 ~ Odločilna je sprememba pretoka, ne končna vrednost polja.
 > $\lvert u_i \rvert = 100 \cdot 10^{-3} \cdot 0{,}5 / 0{,}1 = 0{,}5\,\mathrm V$.

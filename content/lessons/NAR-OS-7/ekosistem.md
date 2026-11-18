@@ -5,9 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-V 19. stoletju je nemški zoolog Karl Möbius dobil praktično nalogo: ugotoviti, ali bi ob nemški obali lahko gojili več ostrig. Ostrige so bile cenjena hrana, zato je oblast želela vedeti, ali se gojenje splača. Möbius je raziskoval ostrižne klopi v morju.
+V 19. stoletju je nemški zoolog Karl Möbius dobil praktično nalogo: ugotoviti, ali bi ob nemški obali lahko gojili več ostrig. Ostrige so bile cenjena hrana, zato je oblast želela vedeti, ali se gojenje splača. Möbius je raziskoval nahajališča ostrig na morskem dnu.
 
-Kmalu je spoznal, da ostriga ne živi sama. Na klopi so bili še polži, školjke, raki, morske zvezde in drobne alge, s katerimi se ostrige hranijo. Od njih in od morske vode je bilo odvisno, koliko ostrig lahko tam sploh živi. Za tako skupnost organizmov na enem mestu je leta 1877 predlagal posebno ime. Danes ji rečemo **življenjska združba**.
+Kmalu je spoznal, da ostriga ne živi sama. Tam so bili še polži, školjke, raki, morske zvezde in drobne alge, s katerimi se ostrige hranijo. Od njih in od morske vode je bilo odvisno, koliko ostrig lahko tam sploh živi. Za tako skupnost organizmov na enem mestu je leta 1877 predlagal posebno ime. Danes ji rečemo **življenjska združba**.
 
 Isto idejo danes uporabljajo zdravniki. V tvojem črevesju živi več sto vrst bakterij. Ko jemlješ antibiotik, ta ne pobije le bakterij, ki povzročajo bolezen, ampak tudi koristne bakterije v črevesju. Zato ima marsikdo po zdravljenju z antibiotiki drisko. Da to razumeš, moraš črevesje gledati kot **ekosistem**.
 
@@ -41,7 +41,7 @@ Na travniku pa ne rastejo le regrati. Tam so še trave, deteljica, kobilice, de�
 |---|---|---|
 | prostor | črevo | voda, dno |
 | neživi | $37\,°\mathrm{C}$, malo kisika | svetloba, kisik |
-| populacija | bakterije ene vrste | vsi paglavci |
+| populacija | bakterije ene vrste | paglavci ene vrste |
 | združba | vse bakterije, glive | alge, paglavci, polži |
 
 **6. Vpliv gre v obe smeri.** Neživi dejavniki določajo, kdo lahko kje živi. A tudi organizmi spreminjajo nežive dejavnike. Deževniki rahljajo prst, zato vanjo pride več zraka in vode.

@@ -170,7 +170,7 @@ Ohladi se za $8 \cdot 0{,}6\,°\mathrm{C} = 4{,}8\,°\mathrm{C}$. Na gozdni meji
 
 - Prilagoditev je lastnost telesa ali vedenja, ki organizmu pomaga preživeti v njegovem okolju. Razložiš jo s koraki: pogoj okolja → lastnost → korist.
 - Gozd: plasti (drevesna, grmovna, zeliščna, mahovna), pri tleh malo svetlobe; detel, podlesna vetrnica.
-- Travnik: sončen, ga kosimo; trave rastejo iz dela ob tleh; brez košnje zaraste v gozd.
+- Travnik: sončen, kosimo ga; trave rastejo iz dela ob tleh; brez košnje zaraste v gozd.
 - Ribnik: stoječa sladka voda, plitek; žaba, lokvanj, vodni drsalec.
 - Morje: slana voda (v Jadranu okoli $38\,\mathrm{g/L}$), valovi, temno v globini; morska zvezda, klapavica, pozidonija.
 - Z višino se zrak ohlaja za okoli $0{,}6\,°\mathrm{C}$ na $100\,\mathrm{m}$; gozd zato v gorah preide v ruševje.

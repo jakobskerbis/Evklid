@@ -158,7 +158,7 @@ podnapis: Dolžina puščice je hitrost na tisti oddaljenosti od osi; črtkano j
 **Hagen-Poiseuillov zakon.** Naj nestisljiva newtonska tekočina teče stacionarno, laminarno in polno razvito po ravni okrogli cevi s polmerom $R$, ob steni naj ne drsi. Potem za profil hitrosti, povprečno hitrost $\bar v$ in tlačni padec $\Delta p$ na dolžini $L$ (premer $D = 2R$) velja
 $$v(r) = v_\mathrm{max}\left(1 - \frac{r^2}{R^2}\right),\quad \bar v = \frac{v_\mathrm{max}}{2},$$
 $$\Delta p = \frac{32\, \mu\, L\, \bar v}{D^2}.$$
-*Izpeljava:* na koaksialni valj tekočine s polmerom $r$ in dolžino $L$ deluje tlačna sila $\Delta p\, \pi r^2$, po plašču pa zavira strižna sila $\tau\, 2\pi r L$. Valj se ne pospešuje, zato sta enaki: $\tau = \dfrac{\Delta p\, r}{2L}$. Z $\tau = -\mu \dfrac{\mathrm{d}v}{\mathrm{d}r}$ (hitrost proti steni pada) dobimo $\dfrac{\mathrm{d}v}{\mathrm{d}r} = -\dfrac{\Delta p\, r}{2\mu L}$, z integracijo in pogojem $v(R) = 0$ pa $v(r) = \dfrac{\Delta p}{4\mu L}(R^2 - r^2)$, torej $v_\mathrm{max} = \dfrac{\Delta p R^2}{4\mu L}$. Pretok je $Q = \int_0^R v\, 2\pi r\, \mathrm{d}r = \dfrac{\pi \Delta p R^4}{8 \mu L}$, zato $\bar v = \dfrac{Q}{\pi R^2} = \dfrac{\Delta p R^2}{8\mu L} = \dfrac{v_\mathrm{max}}{2}$. Z $R = D/2$ izrazimo $\Delta p = \dfrac{8\mu L \bar v}{R^2} = \dfrac{32\mu L \bar v}{D^2}$. Pri turbulentnem toku zakon ne velja.
+*Izpeljava:* na koaksialni valj tekočine s polmerom $r$ in dolžino $L$ deluje tlačna sila $\Delta p\, \pi r^2$, po plašču pa zavira strižna sila $\tau\, 2\pi r L$. Valj se ne pospešuje, zato sta enaki: $\tau = \dfrac{\Delta p\, r}{2L}$. S $\tau = -\mu \dfrac{\mathrm{d}v}{\mathrm{d}r}$ (hitrost proti steni pada) dobimo $\dfrac{\mathrm{d}v}{\mathrm{d}r} = -\dfrac{\Delta p\, r}{2\mu L}$, z integracijo in pogojem $v(R) = 0$ pa $v(r) = \dfrac{\Delta p}{4\mu L}(R^2 - r^2)$, torej $v_\mathrm{max} = \dfrac{\Delta p R^2}{4\mu L}$. Pretok je $Q = \int_0^R v\, 2\pi r\, \mathrm{d}r = \dfrac{\pi \Delta p R^4}{8 \mu L}$, zato $\bar v = \dfrac{Q}{\pi R^2} = \dfrac{\Delta p R^2}{8\mu L} = \dfrac{v_\mathrm{max}}{2}$. Z $R = D/2$ izrazimo $\Delta p = \dfrac{8\mu L \bar v}{R^2} = \dfrac{32\mu L \bar v}{D^2}$. Pri turbulentnem toku zakon ne velja.
 
 :::premisli
 Skozi cev teče stalen prostorninski pretok. Cev zamenjamo s cevjo z dvakrat večjim premerom. Ali se Re poveča, zmanjša ali ostane enak?
@@ -304,7 +304,7 @@ Natančno navedi pogoje in izpelji profil hitrosti laminarnega toka v ravni okro
 
 1. Pogoji: nestisljiva newtonska tekočina, stacionaren, laminaren, polno razvit tok, ravna okrogla cev s polmerom $R$, na steni $v = 0$.
 2. Ravnovesje sil na valj s polmerom $r$ in dolžino $L$: $\Delta p\,\pi r^2 = \tau\, 2\pi r L$, torej $\tau = \dfrac{\Delta p\, r}{2L}$.
-3. Z $\tau = -\mu\dfrac{\mathrm{d}v}{\mathrm{d}r}$: $\dfrac{\mathrm{d}v}{\mathrm{d}r} = -\dfrac{\Delta p\, r}{2\mu L}$; integracija s $v(R) = 0$ da $v(r) = \dfrac{\Delta p}{4\mu L}(R^2 - r^2)$, parabolo z $v_\mathrm{max} = \dfrac{\Delta p R^2}{4\mu L}$ v osi.
+3. S $\tau = -\mu\dfrac{\mathrm{d}v}{\mathrm{d}r}$: $\dfrac{\mathrm{d}v}{\mathrm{d}r} = -\dfrac{\Delta p\, r}{2\mu L}$; integracija z $v(R) = 0$ da $v(r) = \dfrac{\Delta p}{4\mu L}(R^2 - r^2)$, parabolo z $v_\mathrm{max} = \dfrac{\Delta p R^2}{4\mu L}$ v osi.
 4. $Q = \int_0^R v(r)\,2\pi r\,\mathrm{d}r = \dfrac{2\pi \Delta p}{4\mu L}\left(\dfrac{R^4}{2} - \dfrac{R^4}{4}\right) = \dfrac{\pi\Delta p R^4}{8\mu L}$.
 5. $\bar v = \dfrac{Q}{\pi R^2} = \dfrac{\Delta p R^2}{8\mu L} = \dfrac{v_\mathrm{max}}{2}$.
 6. Iz koraka 5: $\Delta p = \dfrac{8\mu L\bar v}{R^2}$, z $R = D/2$ pa $\Delta p = \dfrac{32\mu L\bar v}{D^2}$.
@@ -353,7 +353,7 @@ Primer za občutek pri vodi ($\nu \approx 10^{-6}\,\mathrm{m^2/s}$): $\mathrm{Re
 - Hitrost tekočine, preračunano v brezdimenzijsko obliko.
 ~ Hitrost je le en del Re. Ista hitrost da pri medu in vodi povsem različna Re.
 - Koliko energije se izgubi zaradi trenja na enoto dolžine cevi.
-~ To so tlačne izgube, ki so od Re odvisne, a niso Re sam.
+~ To so tlačne izgube, ki so od Re odvisne, a niso Re samo.
 > $\mathrm{Re} = \dfrac{\rho v D}{\mu}$ primerja vztrajnost ($\rho v^2$) z viskoznim trenjem ($\mu v/D$). Pri velikem Re trenje ne uspe zadušiti motenj in tok postane turbulenten.
 
 ? Olje laminarno teče po cevi pri $\mathrm{Re} = 1800$. Olje segrejemo, pretok ostane enak. Kaj se zgodi?

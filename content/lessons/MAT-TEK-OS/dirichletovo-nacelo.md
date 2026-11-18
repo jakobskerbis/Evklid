@@ -220,5 +220,5 @@ V vseh primerih se vprašaš isto: kaj so predali, koliko jih je in koliko je pr
 
 :::simboli
 n | število predalov | | |
-k | največje število predmetov v predalu | | | pri več kot k · n predmetih ima neki predal vsaj k + 1
+k | število predmetov na predal, ki ga neki predal preseže | | | pri več kot k · n predmetih ima neki predal vsaj k + 1
 :::

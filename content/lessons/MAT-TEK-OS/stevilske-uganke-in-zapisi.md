@@ -159,7 +159,7 @@ $81 : 3 = 27$ trimestnih strani. Prva je $100$, zato je zadnja $99 + 27 = 126$ (
 
 ## Pogoste napake
 
-- **Zapis števk kot zmnožek ali vsota.** »$\overline{ab}$ je $a \cdot b$« ali »$a + b$« pozabi na mesta. Števka desetic je vredna desetkrat več: $\overline{ab} = 10a + b$. Zapis z mestnimi vrednostmi naredi vsako uganko z obrnjenimi števkami v enačbo.
+- **Zapis števk kot zmnožek ali vsota.** »$\overline{ab}$ je $a \cdot b$« ali »$a + b$« pozabi na mesta. Števka desetic je vredna desetkrat več: $\overline{ab} = 10a + b$. Zapis z mestnimi vrednostmi spremeni vsako uganko z obrnjenimi števkami v enačbo.
 - **Ostanek $0$ kot prvo mesto.** Kdor misli, da ostanek $0$ pomeni začetek kroga, se zmoti za eno mesto. Ostanek $0$ dobiš pri $4$, $8$, $12$ …, ti dnevi pa so zadnji v krogu dolžine $4$.
 - **Pozabljen prenos.** V kriptogramu kdo zapiše $\mathrm{A} + \mathrm{B} = \mathrm{C}$ v stolpcu, čeprav je iz desnega stolpca prišla $1$. Vsak stolpec ima lahko prenos $0$ ali $1$; obe možnosti preveri.
 - **Pozabljeni pogoji.** Rešitev, kjer imata dve črki isto števko ali se število začne z $0$, ni rešitev. Na koncu vedno preveri vsa pravila in cel račun, ne le en stolpec.
@@ -266,7 +266,7 @@ a_0 | števka enic | | |
 a_1 | števka desetic | | | drugje: prvi člen zaporedja s stalno razliko
 a_k | števka na najvišjem mestu | | | njeno mesto ima vrednost 10ᵏ
 k | mesto najvišje števke | | | drugje: dolžina ponavljajočega se vzorca
-n | zaporedna številka člena (dneva) | | |
+n | zaporedna številka člena (dneva) | | | drugje: zadnje število pri štetju od m do n
 x | števka desetic (v trimestnem številu stotic) | | |
 y | števka enic (v trimestnem številu desetic) | | |
 z | števka enic trimestnega števila | | |

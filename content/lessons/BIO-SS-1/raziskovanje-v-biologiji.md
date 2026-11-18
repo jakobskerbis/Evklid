@@ -241,7 +241,7 @@ Sklep skoraj vedno odpre novo vprašanje, na primer: »Ali premaz deluje tudi na
 - Da poskus traja manj časa.
 ~ Kontrola ne skrajša poskusa, saj teče hkrati z ostalimi skupinami.
 + Da vidimo, kaj se zgodi brez preverjanega vpliva, in lahko rezultat primerjamo.
-> Brez kontrole ne vemo, ali bi do spremembe prišlo tudi sama od sebe. Primerjava s kontrolo pokaže učinek neodvisne spremenljivke.
+> Brez kontrole ne vemo, ali bi do spremembe prišlo tudi samo od sebe. Primerjava s kontrolo pokaže učinek neodvisne spremenljivke.
 
 ? Pek dodaja v testo $0$, $5$ ali $10\,\text{g}$ sladkorja in meri prostornino plina, ki ga sprostijo kvasovke. Katero hipotezo preverja?
 - Ali količina sladkorja vpliva na nastajanje plina?
@@ -264,4 +264,5 @@ Sklep skoraj vedno odpre novo vprašanje, na primer: »Ali premaz deluje tudi na
 h | napovedana višina testa pri 35 °C | h = \dfrac{h_{30} + h_{40}}{2} | cm | sredina med 30 °C in 40 °C
 h_1, h_2, h_3 | višine testa v treh skledah | | cm
 h_{30}, h_{40} | povprečna višina testa pri 30 °C oziroma 40 °C | | cm
+n | število meritev pri eni temperaturi | | –
 :::

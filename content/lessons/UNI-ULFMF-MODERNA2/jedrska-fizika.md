@@ -105,7 +105,7 @@ Enota je **becquerel**, $1\,\mathrm{Bq} = 1$ razpad na sekundo. Starejša enota 
 
 $$R(t) = R_0\,e^{-\lambda t}.$$
 
-Iz $R = \lambda N$ sledi pomembna posledica: pri enaki aktivnosti ima izotop z daljšim razpolovnim časom **več** jeder. Zato je ${}^{238}\mathrm{U}$ z $t_{1/2} \approx 4{,}5 \cdot 10^9$ let v kamninah prisoten v velikih količinah, a ima majhno aktivnost na gram, ${}^{18}\mathrm{F}$ z $t_{1/2} \approx 110\,\mathrm{min}$ pa ima že v desetinki nanograma aktivnost, primerno za slikanje.
+Iz $R = \lambda N$ sledi pomembna posledica: pri enaki aktivnosti ima izotop z daljšim razpolovnim časom **več** jeder. Zato je ${}^{238}\mathrm{U}$ s $t_{1/2} \approx 4{,}5 \cdot 10^9$ let v kamninah prisoten v velikih količinah, a ima majhno aktivnost na gram, ${}^{18}\mathrm{F}$ s $t_{1/2} \approx 110\,\mathrm{min}$ pa ima že v desetinki nanograma aktivnost, primerno za slikanje.
 
 Razpolovni časi izotopov, ki jih pogosto srečaš v medicinski fiziki, biologiji in datiranju:
 
@@ -193,7 +193,7 @@ $\lambda = \dfrac{\ln 2}{t_{1/2}}$, $t = \dfrac{1}{\lambda}\ln\dfrac{R_0}{R}$
 
 1. Razpadna konstanta: $\lambda = 0{,}6931/5730$ na leto $\approx 1{,}210 \cdot 10^{-4}$ na leto.
 2. Živ organizem izmenjuje ogljik z ozračjem, zato ima stalno razmerje ${}^{14}\mathrm{C}/{}^{12}\mathrm{C}$; po smrti ${}^{14}\mathrm{C}$ le razpada.
-3. Zdaj ti: izračunaj $t$ in preveri, ali je med dvema in tremi razpolovnimi časi.
+3. Zdaj ti: izračunaj $t$ in preveri, ali je med enim in dvema razpolovnima časoma.
 
 :::premisli
 Koliko let je star ostanek?
@@ -277,7 +277,7 @@ Koliko jeder ${}^{18}\mathrm{F}$ je v odmerku za PET z aktivnostjo $370\,\mathrm
 2. **Razpadna konstanta:** $\lambda = 0{,}6931/6588\,\mathrm{s^{-1}} \approx 1{,}052 \cdot 10^{-4}\,\mathrm{s^{-1}}$.
 3. **Število jeder:** $N = R/\lambda = 3{,}7 \cdot 10^8/1{,}052 \cdot 10^{-4} \approx 3{,}52 \cdot 10^{12}$.
 4. **Masa:** $m = 3{,}52 \cdot 10^{12} \cdot 18{,}0 \cdot 1{,}66054 \cdot 10^{-27}\,\mathrm{kg} \approx 1{,}05 \cdot 10^{-13}\,\mathrm{kg}$, okoli $0{,}1\,\mathrm{ng}$.
-5. **Po dveh urah transporta:** $R = 370 \cdot 2^{-120/109{,}8}\,\mathrm{MBq} \approx 370 \cdot 0{,}469\,\mathrm{MBq} \approx 174\,\mathrm{MBq}$. Zato ciklotroni za PET stojijo blizu bolnišnic.
+5. **Po dveh urah transporta:** $R = 370 \cdot 2^{-120/109{,}8}\,\mathrm{MBq} \approx 370 \cdot 0{,}4688\,\mathrm{MBq} \approx 173\,\mathrm{MBq}$. Zato ciklotroni za PET stojijo blizu bolnišnic.
 
 ## Drugače: Bolj natančno
 

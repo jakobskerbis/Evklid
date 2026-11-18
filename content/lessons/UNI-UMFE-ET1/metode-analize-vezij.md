@@ -260,7 +260,7 @@ Električni potencial si predstavljaj kot nadmorsko višino na planinskem zemlje
 
 - Vir je žičnica: ljudi dvigne za stalno višino $U$.
 - Upornik je pešpot navzdol: višina pada, in bolj ko je pot »uporna«, večji padec potrebuje isti tok ljudi.
-- KZN: kdor gre na krožni izlet in se vrne na izhodišče, je skupaj prav toliko spustil, kot se je dvignil.
+- KZN: kdor gre na krožni izlet in se vrne na izhodišče, se je skupaj prav toliko spustil, kot se je dvignil.
 - KZT: na razpotju se pohodniki razdelijo, nihče ne izgine.
 
 Vozliščna metoda vpraša, na kateri višini je vsako razpotje. Zančna metoda spremlja skupine pohodnikov, ki krožijo po posameznih krožnih poteh. Thevenin pove, da je za obiskovalca enega razgledišča vsa pokrajina za njim enakovredna eni žičnici in eni poti. Zvezda in trikot sta dve mreži poti, ki med tremi kočami dasta enak »napor«.

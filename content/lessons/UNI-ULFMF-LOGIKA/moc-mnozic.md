@@ -65,7 +65,7 @@ Recimo, da so vsa števila iz $(0, 1)$ v zaporedju $a_1, a_2, a_3, \dots$, zapis
 | $3$ | $0{,}71\mathbf{4}2\ldots$ | $4$ | $5$ |
 | $4$ | $0{,}123\mathbf{4}\ldots$ | $4$ | $5$ |
 
-Dobimo $x = 0{,}5455\ldots$. Število $x$ se od $a_k$ razlikuje v $k$-ti decimalki, torej $x \neq a_k$ za vsak $k$. A $x \in (0, 1)$, zato ga seznam ne vsebuje. Protislovje: nobeno zaporedje ne zajame vseh števil iz $(0, 1)$. Števki $4$ in $5$ izberemo zato, da se izognemo dvojnim zapisom, kot je $0{,}0999\ldots = 0{,}1$.
+Dobimo $x = 0{,}5455\ldots$. Število $x$ se od $a_k$ razlikuje v $k$-ti decimalki, torej $x \neq a_k$ za vsak $k$. A $x \in (0, 1)$, zato bi moral biti na seznamu. Protislovje: nobeno zaporedje ne zajame vseh števil iz $(0, 1)$. Števki $4$ in $5$ izberemo zato, da se izognemo dvojnim zapisom, kot je $0{,}0999\ldots = 0{,}1$.
 
 Ker je $(0, 1) \subseteq \mathbb{R}$, je neštevna tudi $\mathbb{R}$. Moč $\mathbb{R}$ imenujemo **kontinuum** in jo označimo s $\mathfrak{c}$.
 

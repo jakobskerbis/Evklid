@@ -15,7 +15,7 @@ Ta bela sluz sama ne naredi ničesar. Je zapis, kot aplikacija, ki je v pomnilni
 
 *Hitri preizkus:* kateri del nukleotida nosi informacijo? (Baza.)
 
-**2. Dvojna vijačnica.** Molekula DNA ima dve verigi, zviti v **dvojno vijačnico**, kot zasukana lestev. Prečke lestve so pari baz. Baze se parijo vedno enako: A z T in G s C. Takim parom rečemo **komplementarni pari**. Med A in T sta dve vodikovi vezi, med G in C tri. Zaradi pravila parjenja zaporedje ene verige natanko določa drugo. Iz tega sledi tudi, da je v DNA adenina toliko kot timina in gvanina toliko kot citozina.
+**2. Dvojna vijačnica.** Molekula DNA ima dve verigi, zviti v **dvojno vijačnico**, kot zasukana lestev. Prečke lestve so pari baz. Baze se parijo vedno enako: A s T in G s C. Takim parom rečemo **komplementarni pari**. Med A in T sta dve vodikovi vezi, med G in C tri. Zaradi pravila parjenja zaporedje ene verige natanko določa drugo. Iz tega sledi tudi, da je v DNA adenina toliko kot timina in gvanina toliko kot citozina.
 
 *Hitri preizkus:* ena veriga se glasi AGGT. Kakšna je nasprotna? (TCCA.)
 
@@ -27,9 +27,9 @@ Ta bela sluz sama ne naredi ničesar. Je zapis, kot aplikacija, ki je v pomnilni
 | baze | A, T, G, C | A, **U**, G, C |
 | verigi | dve | ena |
 
-Namesto timina ima RNA **uracil** (U), ki se parja z A. Vrste RNA: **informacijska** (mRNA) nese prepis gena, **prenašalna** (tRNA) prinaša aminokisline, **ribosomska** (rRNA) gradi ribosome.
+Namesto timina ima RNA **uracil** (U), ki se pari z A. Vrste RNA: **informacijska** (mRNA) nese prepis gena, **prenašalna** (tRNA) prinaša aminokisline, **ribosomska** (rRNA) gradi ribosome.
 
-*Hitri preizkus:* s katero bazo se v RNA parja adenin? (Z uracilom.)
+*Hitri preizkus:* s katero bazo se v RNA pari adenin? (Z uracilom.)
 
 **4. Podvojevanje DNA.** Ob delitvi mora vsaka hčerinska celica dobiti celoten zapis. Zato se DNA pred delitvijo **podvoji**. Encim helikaza razpre dvojno vijačnico kot zadrgo. Ob vsaki stari verigi encim **DNA-polimeraza** po pravilu parjenja dodaja nove nukleotide. Nastaneta dve enaki molekuli. Vsaka ima eno staro in eno novo verigo, zato pravimo, da je podvojevanje **semikonzervativno** (napol ohranjevalno).
 
@@ -220,7 +220,7 @@ Prokarionti nimajo jedra, zato prepis in prevod potekata hkrati v citoplazmi. Ge
 + TAC
 - UAC
 ~ Zaporedje je pravo, vendar DNA nima uracila; namesto U je T.
-> Antikodon UAC se parja s kodonom AUG. Kodon AUG nastane s prepisom matričnega trojčka TAC. Antikodon in matrična veriga se razlikujeta le v U in T.
+> Antikodon UAC se pari s kodonom AUG. Kodon AUG nastane s prepisom matričnega trojčka TAC. Antikodon in matrična veriga se razlikujeta le v U in T.
 
 ? Bakterijam vstavijo človeški gen za inzulin in bakterije izdelujejo človeški inzulin. Kaj to pokaže?
 + Genetski kod je univerzalen: bakterija bere človeške kodone tako kot človeška celica.

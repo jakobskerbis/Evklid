@@ -51,7 +51,7 @@ Kam se odbije žarek, ki pade na zrcalo pravokotno, torej z vpadnim kotom $0^\ci
 Nazaj vase, po isti poti. Ker je $\alpha = 0^\circ$, je tudi $\beta = 0^\circ$: odbiti žarek leži kar na vpadni pravokotnici.
 :::
 
-**Kje je slika v resnici.** Zdaj lahko popravimo napačno slutnjo. Iz konice Majinega nosu gre svetloba na vse strani. Nekaj žarkov zadene zrcalo, se odbije po odbojnem zakonu in pride v Majino oko. Oko ne ve, da je svetloba zavila. Odbite žarke podaljša naravnost nazaj, za zrcalo. Vsi podaljški se sekajo v eni točki, ki je **za zrcalom, enako daleč kot je nos pred njim**. Tam Maja vidi sliko nosu.
+**Kje je slika v resnici.** Zdaj lahko popravimo napačno slutnjo. Iz konice Majinega nosu gre svetloba na vse strani. Nekaj žarkov zadene zrcalo, se odbije po odbojnem zakonu in pride v Majino oko. Oko ne ve, da je svetloba zavila. Odbite žarke podaljša naravnost nazaj, za zrcalo. Vsi podaljški se sekajo v eni točki, ki je **za zrcalom, enako daleč, kot je nos pred njim**. Tam Maja vidi sliko nosu.
 
 Slika v ravnem zrcalu je zato:
 

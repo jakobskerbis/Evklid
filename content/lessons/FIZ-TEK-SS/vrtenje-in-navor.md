@@ -216,7 +216,7 @@ Tina izdeluje glasbeni mobil za mlajšo sestro. Na lahko palico obesi dva zvonč
 
 Zakaj ravno tam? Težji zvonček je trikrat težji, a ima trikrat krajšo ročico. Produkta sta enaka: $60 \cdot 10 = 20 \cdot 30$. Navora na obeh straneh sta enako velika in nasprotna, zato se palica ne zavrti.
 
-Ko mobil zapiha veter, se zavrti okoli vrvice. Tina opazi, da se mobil z zvončki na koncih dolge palice vrti počasi in lenobno, enak mobil s krajšo palico pa živahno. To je vztrajnostni moment: masa daleč od osi se upira vrtenju.
+Ko v mobil zapiha veter, se ta zavrti okoli vrvice. Tina opazi, da se mobil z zvončki na koncih dolge palice vrti počasi in lenobno, enak mobil s krajšo palico pa živahno. To je vztrajnostni moment: masa daleč od osi se upira vrtenju.
 
 ## Drugače: Korak za korakom s številkami
 

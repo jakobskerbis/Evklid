@@ -157,7 +157,7 @@ $\mathrm{FN} = V - N - \tfrac{1}{2}B$. Resonančne strukture se razlikujejo le v
 
 1. Struktura I: $\mathrm{CH_3{-}C({=}O){-}O^-}$. Dvojno vezani kisik ima dva nevezana para: $\mathrm{FN} = 6 - 4 - \frac{1}{2} \cdot 4 = 0$. Enojno vezani kisik ima tri nevezane pare: $\mathrm{FN} = 6 - 6 - \frac{1}{2} \cdot 2 = -1$.
 2. Karboksilni ogljik ima štiri vezi brez nevezanih parov: $\mathrm{FN} = 4 - 0 - 4 = 0$. Vsota nabojev je $-1$, kar se ujema z nabojem iona.
-3. Struktura II nastane, ko nevezani par negativnega kisika tvori vez $\pi$ s C, vez $\pi$ druge skupine $\mathrm{C{=}O}$ pa preide na drugi kisik kot nevezani par. Kisika zamenjata vlogi: $\mathrm{CH_3{-}C(O^-){=}O}$.
+3. Struktura II nastane, ko nevezani par negativnega kisika tvori vez $\pi$ s C, vez $\pi$ prvotne skupine $\mathrm{C{=}O}$ pa preide na drugi kisik kot nevezani par. Kisika zamenjata vlogi: $\mathrm{CH_3{-}C(O^-){=}O}$.
 4. Strukturi sta **enakovredni** (enako število vezi, polni okteti, en negativni naboj na kisiku), zato prispevata enako.
 5. Hibrid: vsaka vez $\mathrm{C{-}O}$ je »vez in pol« (red vezi $1{,}5$), na vsakem kisiku je naboj $-\frac{1}{2}$. Karboksilni ogljik je $sp^2$, skupina $\mathrm{COO^-}$ je ravninska.
 6. Dolžina vezi z redom $1{,}5$ mora biti med dolžinama enojne in dvojne vezi; $126\,\mathrm{pm}$ je res med $123\,\mathrm{pm}$ in $143\,\mathrm{pm}$.
@@ -307,13 +307,13 @@ Akrilonitril $\mathrm{CH_2{=}CH{-}C{\equiv}N}$, $\mathrm{C_3H_3N}$:
 
 :::simboli
 \mathrm{FN} | formalni naboj | \mathrm{FN} = V - N - \tfrac{1}{2}B | – |
-V | število valenčnih elektronov prostega atoma | | – |
+V | število valenčnih elektronov prostega atoma | | – | v Primeru 3 je $V$ prostornina plina (L)
 N | število nevezanih elektronov atoma | | – |
 B | število elektronov v vezeh atoma | | – |
 \mathrm{SN} | stopnja nenasičenosti | \mathrm{SN} = \frac{2c + 2 + n - h - x}{2} | – | število obročev + vezi π
 c | število ogljikovih atomov | | – |
-n | število dušikovih atomov | | – |
-h | število vodikovih atomov | | – |
+n | število dušikovih atomov | | – | v računih z maso je $n$ množina snovi (mol)
+h | število vodikovih atomov | | – | v izpeljavi kotov je $h$ hibridna orbitala
 x | število halogenih atomov | | – |
 \lambda | razmerje deleža p in s v hibridu sp^λ | | – | λ = 3, 2, 1 za sp³, sp², sp
 \theta | kot med hibridnima orbitalama | \cos\theta = -\frac{1}{\lambda} | ° | 109,5°, 120°, 180°

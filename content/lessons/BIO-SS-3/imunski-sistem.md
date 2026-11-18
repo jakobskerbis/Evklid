@@ -84,9 +84,9 @@ Ker telo dobi le protitelesa, ne pa limfocitov, ki bi jih znali izdelovati. Prot
 
 **6. Ko obramba zgreši.** Obrambni sistem se lahko zmoti na tri načine: odzove se premočno, napade napačno tarčo ali oslabi.
 
-**Alergija** je premočan odziv na neškodljiv antigen, **alergen** (cvetni prah, pršice, strup žuželk). Ob prvem stiku ni simptomov, telo se le **senzibilizira**: nastane posebna vrsta protiteles, IgE, ki se pripnejo na **mastocite**, celice polne histamina. Ob naslednjem stiku mastociti sprostijo histamin: kihanje, solzenje, srbenje, astma. Cvetnega prahu je največ ob suhem, vetrovnem vremenu, po dežju malo. Najhujši je **anafilaktični šok**, na primer po piku ose, ko pomaga le takojšen adrenalin.
+**Alergija** je premočan odziv na neškodljiv antigen, **alergen** (cvetni prah, pršice, strup žuželk). Ob prvem stiku ni simptomov, telo se le **senzibilizira**: nastane posebna vrsta protiteles, IgE, ki se pripnejo na **mastocite**, celice, polne histamina. Ob naslednjem stiku mastociti sprostijo histamin: kihanje, solzenje, srbenje, astma. Cvetnega prahu je največ ob suhem, vetrovnem vremenu, po dežju malo. Najhujši je **anafilaktični šok**, na primer po piku ose, ko pomaga le takojšen adrenalin.
 
-Pri **avtoimunski bolezni** limfociti napadejo lastne celice, ker jih imajo za tuje. Pri sladkorni bolezni tipa 1 uničijo celice trebušne slinavke, ki izdelujejo insulin. Pri multipli sklerozi napadejo mielinsko ovojnico živčnih vlaken, pri revmatoidnem artritisu sklepe. Imunski sistem tu ni prešibak, ampak cilja narobe.
+Pri **avtoimunski bolezni** limfociti napadejo lastne celice, ker jih imajo za tuje. Pri sladkorni bolezni tipa 1 uničijo celice trebušne slinavke, ki izdelujejo inzulin. Pri multipli sklerozi napadejo mielinsko ovojnico živčnih vlaken, pri revmatoidnem artritisu sklepe. Imunski sistem tu ni prešibak, ampak cilja narobe.
 
 **AIDS** (sindrom pridobljene imunske pomanjkljivosti) povzroča virus **HIV**. Okuži in uniči ravno celice T pomagalke, ki usmerjajo specifično obrambo. Njihovo število leta počasi pada. Ko jih je manj kot $200$ v mikrolitru krvi, govorimo o AIDS-u. Takrat človeka ogrožajo **oportunistične okužbe**: mikrobi, ki zdravemu ne škodijo.
 

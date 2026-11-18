@@ -150,7 +150,7 @@ $B(z) = \dfrac{\mu_0 N I R^2}{2\left(R^2 + z^2\right)^{3/2}}$, v središču $B_0
 3. Na osi delimo $B(z)$ z $B_0$; tok in število ovojev se krajšata: $B(z)/B_0 = \left(R^2/(R^2 + z^2)\right)^{3/2}$.
 4. $R^2/(R^2 + z^2) = 0{,}04/0{,}05 = 0{,}8$, in $0{,}8^{3/2} \approx 0{,}716$.
 5. $B(z) \approx 0{,}716 \cdot 50\,\mu\mathrm{T} \approx 35{,}8\,\mu\mathrm{T}$.
-6. Odgovor: potrebujemo tok okoli $0{,}40\,\mathrm{A}$. Že $10\,\mathrm{cm}$ od središča pa je polje za skoraj tretjino manjše, zato ena tuljava polja ne izniči v večjem prostoru.
+6. Odgovor: potrebujemo tok okoli $0{,}40\,\mathrm{A}$. Že $10\,\mathrm{cm}$ od središča pa je polje za dobro četrtino manjše, zato ena tuljava polja ne izniči v večjem prostoru.
 
 ### Primer 3 (težji)
 
@@ -191,7 +191,7 @@ $B_1 = \dfrac{\mu_0 I}{2\pi r}$ za vsak kabel; vektorska vsota; od daleč $B \ap
 2. Velikost polja vsakega kabla v $P$: $B_1 = \mu_0 I/(2\pi r) \approx 2{,}397 \cdot 10^{-4}\,\mathrm{T}$. Velikosti sta enaki, smeri pa ne.
 3. Vsak vektor je pravokoten na zveznico kabel–$P$. Ker sta tokova nasprotna, se **vodoravni** komponenti odštejeta, **navpični** pa seštejeta. Navpična komponenta posameznega polja je $B_1 \cdot (d/2)/r$.
 4. Skupaj: $B_P = 2B_1 \cdot \dfrac{d/2}{r} = \dfrac{\mu_0 I d}{2\pi r^2}$.
-5. $B_P = 2 \cdot 10^{-7} \cdot 1200 \cdot 0{,}10/1{,}0025\,\mathrm{T} \approx 2{,}39 \cdot 10^{-5}\,\mathrm{T} = 23{,}9\,\mu\mathrm{T}$, navpično.
+5. $B_P = 2 \cdot 10^{-7} \cdot 1200 \cdot 0{,}10/1{,}0025\,\mathrm{T} \approx 2{,}39 \cdot 10^{-5}\,\mathrm{T} = 23{,}9\,\mu\mathrm{T}$, navpično navzgor (pri smereh tokov na sliki).
 6. b) En kabel na razdalji $1{,}0\,\mathrm{m}$ (Primer 1) da $240\,\mu\mathrm{T}$; razmerje je $240/23{,}9 \approx 10$.
 7. c) Pri $h_2 = 6{,}0\,\mathrm{m}$ je $d/2$ zanemarljiv: $B \approx 2 \cdot 10^{-7} \cdot 1200 \cdot 0{,}10/36\,\mathrm{T} \approx 6{,}7 \cdot 10^{-7}\,\mathrm{T} = 0{,}67\,\mu\mathrm{T}$.
 8. En kabel: $2 \cdot 10^{-7} \cdot 1200/6{,}0\,\mathrm{T} = 4{,}0 \cdot 10^{-5}\,\mathrm{T} = 40\,\mu\mathrm{T}$; razmerje $40/0{,}67 \approx 60$.

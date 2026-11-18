@@ -215,7 +215,7 @@ Pri vsakem spoju dveh kosov odpade drobna ploščica (molekula vode). Ko progo r
 ~ To je molska masa člena verige $\mathrm{C_6H_{10}O_5}$, ko voda že odide.
 + $180\,\text{g/mol}$
 - $198\,\text{g/mol}$
-~ Vodi ne prištevaš: glukoza je ena molekula, vodik in kisik sta že všteta.
+~ Vode ne prištevaš: glukoza je ena molekula, vodik in kisik sta že všteta.
 > $6 \cdot 12 + 12 \cdot 1 + 6 \cdot 16 = 72 + 12 + 96 = 180\,\text{g/mol}$.
 
 ? Koliko glukoze nastane pri popolni hidrolizi $81\,\text{g}$ škroba? (člen $162\,\text{g/mol}$, glukoza $180\,\text{g/mol}$)

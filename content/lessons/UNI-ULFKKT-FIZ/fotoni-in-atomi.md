@@ -364,5 +364,5 @@ r_n | polmer n-te Bohrove orbite | r_n = n^2 \cdot 0{,}0529\,\mathrm{nm} | m
 N | število fotonov | N = \frac{Pt}{W_f} | –
 P | moč svetlobnega toka | | W
 t | čas | | s
-\hbar | reducirana Planckova konstanta | \hbar = \frac{h}{2\pi} | J s | ≈ 1,055 · 10⁻³⁴ J s
+\hbar | reducirana Planckova konstanta | \hbar = \frac{h}{2\pi} | J\,s | ≈ 1,055 · 10⁻³⁴ J s
 :::

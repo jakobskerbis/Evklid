@@ -266,7 +266,7 @@ Preizkušanec iz S235 ima $d_0 = 10\,\mathrm{mm}$ ($S_0 \approx 78{,}54\,\mathrm
 | 10 | 0,0303 | 127,3 | 0,000606 |
 | 15 | 0,0455 | 191,0 | 0,000910 |
 
-1. Vsako silo deli s $S_0$: dobiš stolpec $\sigma$.
+1. Vsako silo deli z $S_0$: dobiš stolpec $\sigma$.
 2. Vsak podaljšek deli z $L_0 = 50\,\mathrm{mm}$: dobiš stolpec $\varepsilon$.
 3. Preveri sorazmernost: sila se podvoji, podaljšek tudi. Smo v elastičnem področju.
 4. Naklon: $191{,}0 / 0{,}000910 \approx 210\,000\,\mathrm{MPa} = 210\,\mathrm{GPa}$. To je $E$.
@@ -298,7 +298,7 @@ Pozimi so v njegovo železno ograjo zadele sani in prečka se je odlomila kot su
 
 ? Jeklena palica s premerom $20\,\mathrm{mm}$ se pretrga pri sili $141\,\mathrm{kN}$. Kolikšna je natezna trdnost?
 - $112\,\mathrm{MPa}$
-~ To dobiš s $S_0 = \pi d_0^2$. Presek kroga je $\pi d_0^2/4$, sicer je štirikrat prevelik.
+~ To dobiš z $S_0 = \pi d_0^2$. Presek kroga je $\pi d_0^2/4$, sicer je štirikrat prevelik.
 - $353\,\mathrm{MPa}$
 ~ To dobiš, če presek izračunaš kot $d_0^2 = 400\,\mathrm{mm^2}$, torej kot kvadrat namesto kroga.
 + $449\,\mathrm{MPa}$

@@ -303,7 +303,7 @@ Namesto štirih množenj matrik $2 \times 2$ smo potenco izračunali na števili
 + Matrika z $n$ različnimi lastnimi vrednostmi je diagonalizabilna.
 - Matrika z dvojno lastno vrednostjo ni diagonalizabilna.
 ~ Odloča razsežnost lastnega podprostora: enotska matrika ima večkratno lastno vrednost $1$ in je diagonalna.
-> Lastni vektorji za različne lastne vrednosti so linearno neodvisni, zato tvorijo bazo. Matrika zasuka nima realnih lastnih vrednosti, matrika $I$ pa ima dvojno lastno vrednost $1$ in je diagonalna.
+> Lastni vektorji za različne lastne vrednosti so linearno neodvisni, zato tvorijo bazo. Matrika zasuka za $90^\circ$ nima realnih lastnih vrednosti, matrika $I$ pa ima dvojno lastno vrednost $1$ in je diagonalna.
 
 ? Za vektor $\vec{v}$ velja $A\vec{v} = 3\vec{v}$. Čemu je enako $A^2\vec{v}$?
 - $6\vec{v}$

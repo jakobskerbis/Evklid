@@ -13,7 +13,7 @@ Danes poznamo $118$ elementov, urejenih kot karte v roki dobrega igralca. Iz mes
 
 ## Razlaga
 
-**1. Mamljiva, a napačna misel.** V isti vrstici tabele sedijo sosedje: natrij, magnezij, aluminij ... Imajo zaporedna vrstna števila, zato bi pričakoval, da so si najbolj podobni. Niso. Natrij je mehka kovina, ki burno reagira z vodo, klor na koncu iste vrstice pa strupen rumenozelen plin. Natriju je najbolj podoben kalij, ki ne stoji ob njem, ampak *pod* njim.
+**1. Mamljiva, a napačna misel.** V isti vrstici tabele sedijo sosedje: natrij, magnezij, aluminij ... Imajo zaporedna vrstna števila, zato bi pričakoval, da so si najbolj podobni. Niso. Natrij je mehka kovina, ki burno reagira z vodo, klor proti koncu iste vrstice pa strupen rumenozelen plin. Natriju je najbolj podoben kalij, ki ne stoji ob njem, ampak *pod* njim.
 
 **2. Vrstice in stolpci.** Elementi si sledijo po naraščajočem vrstnem številu $Z$. Vodoravne vrstice so **periode**; teh je $7$. Navpični stolpci so **skupine**; teh je $18$. Lego elementa povemo s periodo in skupino: klor je v 3. periodi in 17. skupini. Spodaj je prvih $18$ elementov. Skupin od $3$ do $12$ tu ni, ker se začnejo šele v 4. periodi:
 

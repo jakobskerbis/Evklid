@@ -48,7 +48,7 @@ Pri rumenem ne: lahko je $AA$ ali $Aa$, saj dominantni alel prekrije recesivnega
 | $A$ | $AA$ | $Aa$ |
 | $a$ | $Aa$ | $aa$ |
 
-Vsako polje predstavlja četrtino potomcev. Genotipi so v razmerju $AA : Aa : aa = 1 : 2 : 1$, fenotipi pa v razmerju rumena : zelena $= 3 : 1$. Mendel je v $\mathrm{F_2}$ preštel $6022$ rumenih in $2001$ zelenih semen, kar je $\dfrac{6022}{2001} \approx 3{,}01$ rumenega na eno zeleno.
+Vsako polje predstavlja četrtino potomcev. Genotipi so v razmerju $AA : Aa : aa = 1 : 2 : 1$, fenotipi pa v razmerju rumena : zelena $= 3 : 1$. Mendel je v $\mathrm{F_2}$ preštel $6022$ rumenih in $2001$ zeleno seme, kar je $\dfrac{6022}{2001} \approx 3{,}01$ rumenega na eno zeleno.
 
 V simulaciji spodaj (»Križanje: Punnettov kvadrat«) nastavi oba starša na $Aa$ in opazuj, koliko od štirih polj kaže recesivni fenotip. Nato enega starša zamenjaj z $aa$: delež recesivnih potomcev naraste na polovico.
 

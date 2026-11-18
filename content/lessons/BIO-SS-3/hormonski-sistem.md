@@ -35,7 +35,7 @@ Količino hormona telo drži v mejah z **negativno povratno zanko**. Pomisli na 
 
 *Preveri:* kaj naredi termostat, ko je pečica prehladna? *(Vklopi grelec, temperatura naraste.)*
 
-**4. Ščitnica in jod.** **Ščitnica** leži na vratu pred grlom. Izloča **tiroksin**, ki pospeši presnovo: celice porabijo več kisika in hranil, telo proizvede več toplote. Za tiroksin ščitnica potrebuje **jod**. Ker ga je v hrani v Sloveniji malo, ga dodajajo kuhinjski soli (jodirana sol).
+**4. Ščitnica in jod.** **Ščitnica** leži na vratu pod grlom, pred sapnikom. Izloča **tiroksin**, ki pospeši presnovo: celice porabijo več kisika in hranil, telo proizvede več toplote. Za tiroksin ščitnica potrebuje **jod**. Ker ga je v hrani v Sloveniji malo, ga dodajajo kuhinjski soli (jodirana sol).
 
 *Preveri:* zakaj je na embalaži soli napis »jodirana«? *(Da dobimo dovolj joda za tiroksin.)*
 
@@ -53,7 +53,7 @@ Hormona delujeta **antagonistično** (nasprotno). Tako je glukoza v krvi na teš
 | Žleza | Hormon | Učinek | Motnja |
 |---|---|---|---|
 | hipofiza | rastni hormon | rast kosti in mišic | premalo: pritlikavost; preveč: velikanska rast |
-| ščitnica | tiroksin | pospeši presnovo | premalo joda: golša; preveč: hipertiroza |
+| ščitnica | tiroksin | pospeši presnovo | premalo joda: golša; preveč tiroksina: hipertiroza |
 | trebušna slinavka | inzulin | zniža glukozo v krvi | sladkorna bolezen |
 | nadledvična žleza | adrenalin, kortizol | odziv na stres | preveč kortizola: Cushingov sindrom |
 

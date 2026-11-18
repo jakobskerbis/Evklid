@@ -265,7 +265,7 @@ napis: 4; 1 | C | desno
 ~ 5 | Goriščne razdalje ne deliš s povečavo. Uporabi $b = 4a$ v enačbi leče.
 > $b = 4a$, zato $\dfrac{1}{a} + \dfrac{1}{4a} = \dfrac{5}{4a} = \dfrac{1}{20}$ in $a = 25\,\mathrm{cm}$ (slika je $100\,\mathrm{cm}$ za lečo).
 
-? Na Luni so astronavti pustili odsevnike iz zrcal, ki so pravokotna drug na drugega. Laserski žarek z Zemlje se odbije od obeh. Kam gre žarek po drugem odboju (v ravnini, pravokotni na obe zrcali)?
+? Na Luni so astronavti pustili odsevnike iz zrcal, ki so pravokotna drugo na drugo. Laserski žarek z Zemlje se odbije od obeh. Kam gre žarek po drugem odboju (v ravnini, pravokotni na obe zrcali)?
 - Pravokotno na vpadni žarek.
 ~ Pravokotno bi šel le po odboju od enega zrcala pod kotom $45^\circ$. Po drugem odboju se zasuka še enkrat.
 - Odvisno od kota, pod katerim pade na prvo zrcalo.

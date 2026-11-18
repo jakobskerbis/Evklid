@@ -16,7 +16,7 @@ print(b)
 
 Zapiši svojo napoved, preden bereš naprej. Ena skupina ugiba $6$, ker »sta `a` in `b` povezana«. Druga ugiba $5$. Pravilno je $5$, razlog pa je jedro prve ideje programiranja: **spremenljivka**.
 
-Telefon vsak trenutek dela s takimi spremenljivkami: odstotek baterije, število korakov, porabljeni megabajti. Aplikacija si vrednosti zapomni, jih ponavlja v zanki in svoje delo zapre v funkcije. Prav te tri gradnike spoznaš tukaj. V preglednici si formule vpisoval v celice. V Pythonu iste izračune zapišeš kot program. Poženeš ga iz ukazne vrstice z `python3 program.py`, tudi na tisočih podatkih.
+Telefon vsak trenutek dela s takimi spremenljivkami: odstotek baterije, število korakov, porabljeni megabajti. Aplikacija si vrednosti zapomni, jih ponavlja v zanki in svoje delo zapre v funkcije. Prav te tri gradnike spoznaš tukaj. V preglednici si formule vpisoval v celice. V Pythonu iste izračune zapišeš kot program. Poženeš ga iz ukazne vrstice s `python3 program.py`, tudi na tisočih podatkih.
 
 ## Razlaga
 
@@ -196,7 +196,7 @@ Vrne $3$. Baterija gre $80 \to 55 \to 30 \to 5$. Ko je $5$, pogoj $5 \geq 20$ ne
 - **`=` kot enačba.** Kdor bere `b = a` kot »za vedno enaka«, pričakuje, da se `b` spremeni z `a`. Prireditev shrani le *trenutno* vrednost. Popravek: ob vsaki vrstici si zapiši tabelo vrednosti.
 - **`range(5)` vsebuje $5$.** Ne: `range(5)` da `0 1 2 3 4`. Kdor šteje do $5$, dobi eno ponovitev preveč (npr. vsoto $15$ namesto $10$). Popravek: konec ni vključen, ponovitev je `b - a`.
 - **Napačen zamik.** `print` ali akumulator na napačni globini spremeni program: vsota se izpiše vsak korak ali pa se `skupaj = 0` ponastavi v vsakem koraku. Popravek: preveri, katere vrstice so v telesu zanke.
-- **`print` namesto `return`.** Funkcija z `print` pokaže število, a vrne `None`. Klic `x = f(4)` potem shrani `None`, in `x + 1` javi napako. Popravek: funkcija, katere rezultat potrebuješ, ima `return`.
+- **`print` namesto `return`.** Funkcija s `print` pokaže število, a vrne `None`. Klic `x = f(4)` potem shrani `None`, in `x + 1` javi napako. Popravek: funkcija, katere rezultat potrebuješ, ima `return`.
 - **Besedilo namesto števila.** `"5" + "3"` je `"53"`. Vrednost, ki jo uporabnik vtipka in jo prebereš z `input()`, je vedno besedilo. Popravek: pretvori z `int(...)` ali `float(...)`. Decimalna števila pišeš s piko: `3.5`.
 
 ## Povzetek
@@ -207,7 +207,7 @@ Vrne $3$. Baterija gre $80 \to 55 \to 30 \to 5$. Ko je $5$, pogoj $5 \geq 20$ ne
 - `while pogoj:` ponavlja, dokler pogoj velja; uporabimo jo, ko število ponovitev ni znano vnaprej.
 - Telo zanke ali funkcije je zamaknjeno za $4$ presledke.
 - `def ime(parametri):` definira funkcijo; `return` vrne rezultat, `print` ga le pokaže. Brez `return` funkcija vrne `None`.
-- Program poženeš v ukazni vrstici z `python3 ime.py`.
+- Program poženeš v ukazni vrstici s `python3 ime.py`.
 
 ## Za izpit
 

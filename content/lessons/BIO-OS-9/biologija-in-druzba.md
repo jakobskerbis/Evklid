@@ -51,7 +51,7 @@ Kmetica Ana namesto škropiva v rastlinjak spusti pikapolonice, ki pojedo listne
 Ker mora razumeti živa bitja in odnose med njimi: kaj pikapolonice jedo, kdaj se razmnožujejo, pri kateri temperaturi so dejavne in koliko jih potrebuje. Škropivo deluje po navodilih na embalaži, pikapolonica pa je živ organizem v prehranjevalnem spletu.
 :::
 
-**Od radovednosti do izdelka.** Leta 1969 so raziskovalci v vročih vrelcih narodnega parka Yellowstone v ZDA odkrili bakterijo, ki živi v skoraj vreli vodi. Zanimalo jih je le, kako preživi tako vročino.
+**Od radovednosti do izdelka.** Leta 1969 so raziskovalci v vročih vrelcih narodnega parka Yellowstone v ZDA odkrili bakterijo, ki živi v zelo vroči vodi, pri okoli $70\,\text{°C}$. Zanimalo jih je le, kako preživi tako vročino.
 
 :::premisli
 Je bilo to temeljno ali uporabno raziskovanje? In kaj napoveš: zakaj bi bila bakterija, ki ji vroča voda ne škodi, nekoč lahko komu koristna?
@@ -75,7 +75,7 @@ $$\text{čas do uporabe} = \text{leto uporabe} - \text{leto odkritja}$$
 
 Cepivo proti rumeni mrzlici zaščiti telo šele po približno 10 dneh, zato potrdilo velja od 10. dne po cepljenju. Maja prispe v Gano 24. julija. Kateri je zadnji dan, ko se še lahko cepi?
 
-**Podatki:** prihod v državo 24. julija, potrdilo velja $10$ dni po cepljenju
+**Podatki:** prihod v državo 24. julija, potrdilo začne veljati $10$ dni po cepljenju
 **Iščemo:** zadnji dan za cepljenje
 
 :::formula
@@ -210,7 +210,7 @@ Biologija ni le predmet v urniku; srečaš jo od jutra do večera.
 + Čez nekaj let bi zmanjkalo novih odkritij, na katerih gradi uporabna znanost.
 > Uporabna znanost uporablja znanje temeljne. Brez novih odkritij ni novih zdravil in sort.
 
-? Nik bo 28. junija prispel v državo, kjer zahtevajo cepljenje proti rumeni mrzlici. Potrdilo velja 10 dni po cepljenju. Kateri je zadnji dan za cepljenje?
+? Nik bo 28. junija prispel v državo, kjer zahtevajo cepljenje proti rumeni mrzlici. Potrdilo začne veljati 10 dni po cepljenju. Kateri je zadnji dan za cepljenje?
 - 27. junij
 ~ Cepivo ne deluje takoj; telo potrebuje približno 10 dni, da izdela zaščito.
 + 18. junij
@@ -223,7 +223,7 @@ Biologija ni le predmet v urniku; srečaš jo od jutra do večera.
 ~ $1\,500\,000\,\text{cm}$ je $15\,\text{km}$, ker ima kilometer $100\,000\,\text{cm}$, ne $1\,000\,000$.
 + $15\,\text{km}$
 - $150\,\text{km}$
-~ Pri pretvorbi si delil s $10\,000$ namesto s $100\,000$.
+~ Pri pretvorbi si delil z $10\,000$ namesto s $100\,000$.
 > $6 \cdot 250\,000 = 1\,500\,000\,\text{cm} = 15\,\text{km}$.
 
 :::simboli

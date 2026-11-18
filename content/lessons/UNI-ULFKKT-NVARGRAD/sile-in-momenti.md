@@ -354,7 +354,7 @@ Izvirni sistem, redukcija na $A$ in ena sama sila opisujejo **isto obremenitev t
 
 ## Drugače: Z analogijo
 
-**Gugalnica.** Moment si predstavljaj z gugalnico na igrišču. Težji otrok sede bližje osi, lažji dlje, in gugalnica miruje, ko sta zmnožka »teža krat razdalja od osi« enaka. Ne šteje, kdo je težji, ampak kdo ima večji moment. To je ista enačba kot pri bicepsu iz uvoda, le da je pri roki mišica »lahek otrok« na zelo kratki ročici – zato mora vleči z veliko silo.
+**Gugalnica.** Moment si predstavljaj z gugalnico na igrišču. Težji otrok sede bližje osi, lažji dlje, in gugalnica miruje, ko sta zmnožka »teža krat razdalja od osi« enaka. Ne šteje, kdo je težji, ampak kdo ima večji moment. To je ista enačba kot pri bicepsu iz uvoda, le da je pri roki mišica »otrok« na zelo kratki ročici – zato mora vleči z veliko silo.
 
 **Volan kot dvojica.** Ko volan vrtiš z obema rokama, ena roka potiska navzgor, druga navzdol. Avto se zaradi tega ne premakne vstran (rezultanta je nič), volan pa se zavrti. Če roki primeš bliže skupaj, potrebuješ za isti zasuk večjo silo: moment dvojice je $F\,d$. In ne glede na to, kje na volanu sta roki – zgoraj, ob strani ali spodaj –, je učinek enak, če sta razmik in sila enaka. To je neodvisnost momenta dvojice od točke.
 

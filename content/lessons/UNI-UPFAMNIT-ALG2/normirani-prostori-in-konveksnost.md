@@ -352,6 +352,6 @@ I | identična (enotska) matrika
 d | vektor odmika sonde od točke srečanja | | km
 d_i | komponente vektorja odmika | | km
 e | napaka usmeritve teleskopa | | ″ | v kotnih sekundah
-v | os rotacije (vektor z Qv = v)
+v | os rotacije (vektor s Qv = v)
 \varphi | kot rotacije
 :::

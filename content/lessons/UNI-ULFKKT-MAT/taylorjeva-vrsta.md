@@ -378,7 +378,7 @@ Ta oblika ne potrebuje neznane točke $\xi$ in iz nje po izreku o povprečni vre
 
 ? Zakaj vrsta $2 - \frac{2^2}{2} + \frac{2^3}{3} - \dots$ ne da $\ln 3$, čeprav je to vrsta za $\ln(1 + x)$ pri $x = 2$?
 - Ker je vrsta alternirajoča in zato konvergira k drugi vrednosti.
-~ Alternirajoča vrsta konvergira le, če členi padajo proti $0$; tu členi $\frac{2^n}{n}$ rastejo.
+~ Alternirajoča vrsta konvergira le, če gredo členi proti $0$; tu členi $\frac{2^n}{n}$ rastejo.
 + Ker je $x = 2$ zunaj konvergenčnega intervala $(-1, 1]$ in vrsta divergira.
 - Ker $\ln 3$ ni mogoče zapisati z nobeno vrsto.
 ~ Lahko: $\ln 3 = \ln\frac{1 + 1/2}{1 - 1/2} = 2\left(\frac12 + \frac{1}{24} + \dots\right)$, kot v Primeru 3.

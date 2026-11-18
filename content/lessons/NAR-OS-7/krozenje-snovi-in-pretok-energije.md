@@ -65,7 +65,7 @@ Tudi voda kroži. Njeno pot prikaže tabela:
 | padavine | Kapljice se združijo in padejo kot dež ali sneg. |
 | odtekanje | Voda teče po površju ali pronica v podtalnico, do rek in morja. |
 
-**Transpiracija** je izhlapevanje vode skozi drobne reže na listih. Veliko drevo tako v vročem dnevu odda več sto litrov vode. Kroženje vode in ogljika se torej srečata v vsakem listu: list jemlje $\mathrm{CO_2}$ in oddaja vodno paro.
+**Transpiracija** je izhlapevanje vode skozi drobne reže na listih. Veliko drevo tako v vročem dnevu odda več sto litrov vode. Kroženji vode in ogljika se torej srečata v vsakem listu: list jemlje $\mathrm{CO_2}$ in oddaja vodno paro.
 
 V simulaciji spodaj »Kroženje vode in ogljika« razvrsti procese v dve skupini. Pozorno poglej »izhlapevanje skozi listne reže« in »fotosintezo«. Opazi, da se oba procesa dogajata v istem listu, pa vendar spadata v različni kroženji.
 
@@ -140,7 +140,7 @@ Fotosinteza: ogljikov dioksid + voda → sladkor + kisik (ob svetlobi).
 3. Pšenica ga pri fotosintezi vzame skozi listne reže in ogljik vgradi v sladkor ter škrob v zrnu.
 4. Pot na koži izhlapi, ker ga segreje telo. Para se v višini ohladi, nastane oblak.
 5. Dež pade na polje, voda pronica v tla, korenine pšenice jo vsrkajo.
-6. Odgovor: ogljik se vrne po poti dihanje → zrak → fotosinteza, voda pa po poti izhlapevanje → oblak → padavine → korenine. Iz zrna spet speče kruh.
+6. Odgovor: ogljik se vrne po poti dihanje → zrak → fotosinteza, voda pa po poti izhlapevanje → oblak → padavine → korenine. Iz zrna spet spečemo kruh.
 
 ### Primer 3: obrok nogometaša
 
@@ -185,7 +185,7 @@ Vodne bolhe $10 \cdot 10\,\mathrm{kJ} = 100\,\mathrm{kJ}$, alge $10 \cdot 100\,\
 ## Pogoste napake
 
 - **»Energija kroži tako kot snov.«** Kdor tako misli, nariše puščico od kače nazaj k travi. Toplota, ki jo oddajo bitja, gre v okolico, rastline pa uporabijo le svetlobo. Pravilno: snov kroži, energija teče v eno smer in jo Sonce stalno dovaja.
-- **»Rastlina zraste iz prsti.«** Tako je mislil tudi van Helmont, dokler ni stehtal prsti. Prst da le malo rudninskih snovi. Večino mase rastlina naredi iz ogljikovega dioksida iz zraka in iz vode.
+- **»Rastlina zraste iz prsti.«** Tako so mislili mnogi, dokler van Helmont ni stehtal prsti. Prst da le malo rudninskih snovi. Večino mase rastlina naredi iz ogljikovega dioksida iz zraka in iz vode.
 - **»Rastline ne dihajo, samo fotosintetizirajo.«** Dihajo vse žive celice, tudi rastlinske, podnevi in ponoči. Podnevi rastlina s fotosintezo vzame več $\mathrm{CO_2}$, kot ga z dihanjem odda, zato se dihanje ne opazi.
 - **»Pri dihanju se ogljik spremeni v energijo.«** Ogljik ne izgine. Energija se sprosti, ko celica razgradi sladkor, ogljik pa telo zapusti v ogljikovem dioksidu.
 - **»Na višji stopnji je več energije, ker so živali večje.«** Velikost osebka ne odloča. Na vsaki stopnji ostane le okoli desetina energije, zato je plenilcev na vrhu malo.

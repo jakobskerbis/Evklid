@@ -190,7 +190,7 @@ Na sliki so vsi trije načini hkrati. Dno lonca in ročaj sta kovinska, zato top
 - **Kuhinjski lonec** ima kovinsko dno, da toplota hitro pride do hrane, in plastičen ročaj, da te ne opeče.
 - **Okna z dvojnim steklom** imajo med stekloma tanko plast zraka ali drugega plina. Ta toploto prevaja slabše od stekla, zato pozimi skozi okno odhaja manj toplote.
 - **Polnilnik in telefon** sta topla, ker se del električne energije pretvori v toploto. Če telefon med polnjenjem pokriješ z blazino, se toplota ne more oddati in telefon se pregreje.
-- **Radiator** je ponavadi pod oknom. Topel zrak se nad njim dviga, hladen zrak ob oknu se spušča, in zrak po sobi zakroži. To je konvekcija.
+- **Radiator** je ponavadi pod oknom. Topel zrak se nad njim dviga, hladen zrak ob oknu se spušča in zrak po sobi zakroži. To je konvekcija.
 
 ## Preveri se
 

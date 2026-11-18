@@ -126,7 +126,7 @@ $F_{g,\text{Z}} = 1\,\mathrm{kg} \cdot 9{,}81\,\mathrm{N/kg} = 9{,}81\,\mathrm{N
 - **»Moja teža je $50\,\mathrm{kg}$.«** V vsakdanjem govoru je to običajno, v fiziki pa napačno, ker je kilogram enota za maso, teža pa je sila. Popravek: »moja masa je $50\,\mathrm{kg}$, moja teža je približno $490\,\mathrm{N}$«.
 - **»Na Luni ni gravitacije« ali »na Luni se masa zmanjša«.** Astronavti na Luni visoko skačejo, zato se zdi, da jih nič ne vleče. Narobe: Luna jih privlači, a šibkeje ($g = 1{,}62\,\mathrm{N/kg}$). Snovi v telesu pa je enako kot na Zemlji. Popravek: na Luni se zmanjša teža, masa ostane enaka.
 - **Deljenje namesto množenja.** »Teža $3\,\mathrm{kg}$ moke je $3 : 9{,}81 = 0{,}31\,\mathrm{N}$.« Narobe, ker $g$ pove, koliko newtonov pride na vsak kilogram, zato kilograme množimo z $g$. Popravek: za težo množi, $F_g = m \cdot g = 29{,}43\,\mathrm{N}$; deli le, ko iščeš maso.
-- **Grami v formuli.** »Maslo s $250\,\mathrm{g}$ ima težo $250 \cdot 9{,}81 = 2452{,}5\,\mathrm{N}$.« Narobe, ker $g$ pove newtone na kilogram, ne na gram. Popravek: najprej $250\,\mathrm{g} = 0{,}25\,\mathrm{kg}$, nato $F_g = 0{,}25 \cdot 9{,}81 = 2{,}4525\,\mathrm{N}$, približno $2{,}45\,\mathrm{N}$.
+- **Grami v formuli.** »Maslo z $250\,\mathrm{g}$ ima težo $250 \cdot 9{,}81 = 2452{,}5\,\mathrm{N}$.« Narobe, ker $g$ pove newtone na kilogram, ne na gram. Popravek: najprej $250\,\mathrm{g} = 0{,}25\,\mathrm{kg}$, nato $F_g = 0{,}25 \cdot 9{,}81 = 2{,}4525\,\mathrm{N}$, približno $2{,}45\,\mathrm{N}$.
 - **Isto število za maso in težo.** »Silomer kaže $98{,}1\,\mathrm{N}$, torej je masa $98{,}1\,\mathrm{kg}$.« Narobe, ker sta to različni količini. Popravek: $m = 98{,}1 : 9{,}81 = 10\,\mathrm{kg}$.
 
 ## Povzetek

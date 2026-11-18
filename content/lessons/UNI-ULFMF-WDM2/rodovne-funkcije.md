@@ -290,7 +290,7 @@ Formalne potenčne vrste tvorijo kolobar; $\frac{1}{1-x}$ je inverz $1-x$ v tem 
 
 ? Koliko je pravilnih zaporedij s $6$ pari oklepajev?
 - $924$
-~ To je $\binom{12}{6}$, vsa zaporedja s šestimi »(« in šestimi »)«, tudi taka, ki »zaprejo« preden odprejo.
+~ To je $\binom{12}{6}$, vsa zaporedja s šestimi »(« in šestimi »)«, tudi taka, ki »zaprejo«, preden odprejo.
 - $154$
 ~ To je $\frac{1}{6}\binom{12}{6}$. Imenovalec je $n+1 = 7$, ne $n$.
 + $132$

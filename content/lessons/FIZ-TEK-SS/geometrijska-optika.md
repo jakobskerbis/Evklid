@@ -111,7 +111,7 @@ Ostane cela slika, le temnejša. Vsaka točka predmeta pošilja žarke skozi vso
 
 - **Fotoaparat:** $a \gg f$, zato je $b$ le malo večji od $f$.
 - **Projektor:** $a$ malo večji od $f$, slika je daleč in močno povečana.
-- **Lupa:** predmet tik znotraj gorišča. Povečava je približno $\frac{25\,\mathrm{cm}}{f}$, kjer je $25\,\mathrm{cm}$ razločna razdalja: najmanjša razdalja, na kateri oko še brez napora izostri.
+- **Lupa:** predmet tik znotraj gorišča. Povečava je približno $\frac{25\,\mathrm{cm}}{f}$, kjer je $25\,\mathrm{cm}$ normalna zorna razdalja: najmanjša razdalja, na kateri oko še brez napora izostri.
 - **Keplerjev daljnogled:** objektiv z veliko $f_\mathrm{ob}$ naredi realno sliko oddaljenega predmeta, okular z majhno $f_\mathrm{ok}$ jo opazuje kot lupa. Leči sta narazen $f_\mathrm{ob} + f_\mathrm{ok}$. **Kotna povečava** pove, kolikokrat večji je kot, pod katerim vidiš predmet skozi daljnogled, kot brez njega:
 
 $$M = \frac{f_\mathrm{ob}}{f_\mathrm{ok}}$$

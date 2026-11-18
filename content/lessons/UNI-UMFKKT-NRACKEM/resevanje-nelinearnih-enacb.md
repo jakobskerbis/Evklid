@@ -269,7 +269,7 @@ Maja je bisekcija, Nina Newtonova metoda. Najboljša je ekipa: Maja za grobo oce
 
 ## Drugače: Korak za korakom s številkami
 
-Tabela napak za ničlo $r \approx 7{,}154304$ (iz Newtona začnemo pri $8$, bisekcijo na $[6, 8]$):
+Tabela napak za ničlo $r \approx 7{,}154304$ (Newtonovo metodo začnemo pri $8$, bisekcijo na $[6, 8]$):
 
 | $n$ | širina pri bisekciji | Newton $t_n$ | napaka Newtona |
 |---|---|---|---|
@@ -289,7 +289,7 @@ V preglednici: stolpec A $t_n$, B $f(t_n)$, C $f'(t_n)$, naslednja celica v A pa
 
 ## Drugače: Bolj natančno
 
-*Bisekcija.* Če je $f$ zvezna na $[a, b]$ in je $f(a)\,f(b) < 0$, po Bolzanovem izreku obstaja $r \in (a, b)$ s $f(r) = 0$. Sredine $m_n$ zadoščajo $|m_n - r| \le \frac{b-a}{2^{n+1}}$, zato $m_n \to r$.
+*Bisekcija.* Če je $f$ zvezna na $[a, b]$ in je $f(a)\,f(b) < 0$, po Bolzanovem izreku obstaja $r \in (a, b)$ z $f(r) = 0$. Sredine $m_n$ zadoščajo $|m_n - r| \le \frac{b-a}{2^{n+1}}$, zato $m_n \to r$.
 
 *Newton.* Naj bo $f$ dvakrat zvezno odvedljiva, $f(r) = 0$ in $f'(r) \ne 0$. Taylorjev razvoj okoli $x_n$ da
 
@@ -331,7 +331,7 @@ za neki $\xi_n$ med $x_n$ in $r$. Zato obstaja okolica ničle, v kateri metoda k
 - $3$
 ~ To dobiš z obrnjenim ulomkom, $x_0 - \frac{f'}{f} = 1 - \frac{2}{-1}$.
 + $1{,}5$
-> $f(1) = -1$, $f'(1) = 2$, zato $x_1 = 1 - \frac{-1}{2} = 1{,}5$. Naslednji koraki dajo $1{,}41667$ in $1{,}414216$, kar je $\sqrt{2}$.
+> $f(1) = -1$, $f'(1) = 2$, zato $x_1 = 1 - \frac{-1}{2} = 1{,}5$. Naslednji koraki dajo $1{,}41667$ in $1{,}414216$, kar je že skoraj $\sqrt{2}$.
 
 ? Bisekcijo začnemo na $[0, 1]$. Koliko korakov potrebujemo, da je širina intervala največ $0{,}001$?
 - $3$
@@ -345,6 +345,7 @@ za neki $\xi_n$ med $x_n$ in $r$. Zato obstaja okolica ničle, v kateri metoda k
 c | koncentracija zdravila v krvi | | mg/L | v zgledu $c(t) = 10\,t\,e^{-t/2}$; deluje pri $c \ge 2\,\mathrm{mg/L}$
 t | čas od zaužitja | | h
 e | Eulerjevo število | | | e ≈ 2,718
+e_n, e_{n+1}, e_0, e_1, e_2 | napaka približka | e_n = \lvert x_n - r \rvert
 f | funkcija, katere ničlo iščemo | | | v zgledu f(t) = c(t) − 2
 f' | odvod funkcije f
 f'' | drugi odvod funkcije f

@@ -243,6 +243,9 @@ opis: Struna dolžine 0,9 m, vpeta na obeh koncih. Polna in črtkana krivulja st
 x: 0 .. 0,9 | 0,15 | x [m]
 y: -1,5 .. 1,5 | 1 | odmik
 oznake: ne
+oznakax: 0 | 0
+oznakax: 0,45 | 0,45
+oznakax: 0,9 | 0,9
 f: sin(pi*x/0.225) | modra
 f: -sin(pi*x/0.225) | modra črtkano
 točka: 0; 0 | | pod

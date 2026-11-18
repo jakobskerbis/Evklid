@@ -226,7 +226,7 @@ Smer $A \to C$ je $(0{,}6; 0{,}8)$. Navpično: $3{,}33 + 0{,}8\,S_{AC} = 0$, tor
 
 ## Pogoste napake
 
-- **Sila palice v napačno smer.** Študent pri enem vozlišču nariše nateg proti vozlišču, pri drugem stran od njega in dobi nasprotne predznake za isto palico. Popravek: v vsakem vozlišču riši silo stran od vozlišča; predznak je potem lastnost palice.
+- **Sila palice v napačno smer.** Študent pri enem vozlišču nariše silo proti vozlišču, pri drugem stran od njega in dobi nasprotne predznake za isto palico. Popravek: v vsakem vozlišču riši silo stran od vozlišča; predznak je potem lastnost palice.
 - **Ničelna palica, ki ni ničelna.** Pravilo treh palic velja le za neobremenjeno vozlišče. V Primeru 2 vertikala $U_1L_1$ ni ničelna, ker v $L_1$ visi breme.
 - **Prerez skozi štiri palice.** Iz treh enačb ne dobiš štirih neznank. Prerez izberi tako, da prereže največ tri palice z neznano silo.
 - **Napačna Ritterjeva točka.** Moment se računa glede na presečišče drugih dveh rezanih palic, ne glede na krajišče iskane palice. Če vzameš napačno točko, v enačbi ostaneta dve neznanki.

@@ -209,7 +209,7 @@ Za vsakega od treh bolnikov utemelji, kje je okvara in ali je v osrednjem ali ob
 
 **Rešitev:**
 
-1. Bolnik A: roka in noga iste strani imata različne živce in različna prepleta (pazdušni, ledveni in križni), zato ena okvara v PŽ obeh ne razloži. Skupna jima je gibalna proga v OŽ.
+1. Bolnik A: roka in noga iste strani imata različne živce in različne preplete (pazdušni, ledveni in križni), zato ena okvara v PŽ obeh ne razloži. Skupna jima je gibalna proga v OŽ.
 2. Gibalna proga se prekriža v podaljšani hrbtenjači. Okvara nad križanjem prizadene nasprotno stran, zato je pri nenadni desni ohromelosti brez poškodbe okvara najverjetneje v levi polobli velikih možganov (kap): v gibalni skorji čelnega režnja ali v progi pod njo.
 3. Bolnik B: v pazduhi poteka pazdušni preplet iz sprednjih vej vratnih živcev, ki oživčuje roko. Rana je zunaj hrbteničnega kanala, torej v PŽ.
 4. Hrbtenjačni živci so mešani, zato izpadeta gib in občutek. Izpad je na strani rane, ker je okvara pod križanjem. Nogi oživčujeta ledveni in križni preplet, ki nista prizadeta.
@@ -230,7 +230,7 @@ Meje analogije: signal v živcu potuje le $1$ do $120\,\mathrm{m/s}$, hrbtenjač
 
 ## Drugače: Bolj natančno
 
-- **Razvoj.** Iz nevralne cevi nastanejo tri možganske vezikle (prozencefalon, mezencefalon, rombencefalon), nato pet: telencefalon (veliki možgani), diencefalon (medmožgani), mezencefalon (srednji možgani), metencefalon (most in mali možgani) in mielencefalon (podaljšana hrbtenjača). Votlina cevi postane prekati in osrednji kanal hrbtenjače.
+- **Razvoj.** Iz nevralne cevi nastanejo trije možganski vezikli (prozencefalon, mezencefalon, rombencefalon), nato pet: telencefalon (veliki možgani), diencefalon (medmožgani), mezencefalon (srednji možgani), metencefalon (most in mali možgani) in mielencefalon (podaljšana hrbtenjača). Votlina cevi postane prekati in osrednji kanal hrbtenjače.
 - **Vidni živec** je v razvoju izrastek medmožganov in ga obdajajo vse tri ovojnice, zato je po zgradbi proga OŽ, čeprav ga štejemo med možganske živce.
 - **Dermatomi.** Vsak hrbtenjačni živec oživčuje pas kože, dermatom. Mezinec in notranji rob dlani pripadata segmentu C8, palec C6. Po izpadu občutka v dermatomu nevrolog oceni višino okvare.
 - **Bela snov hrbtenjače** ima zadnje, stranske in sprednje snopiče. V stranskih se spušča lateralna kortikospinalna proga; tvori jo okoli $90\,\%$ vlaken piramidne proge, ki se prekrižajo v piramidah podaljšane hrbtenjače.

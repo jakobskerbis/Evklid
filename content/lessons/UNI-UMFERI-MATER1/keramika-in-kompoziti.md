@@ -153,7 +153,7 @@ Razmerje $\frac{r_\mathrm{K}}{r_\mathrm{A}}$: $0{,}225$–$0{,}414$ da $4$; $0{,
 
 ### Primer 2
 
-Ploščica iz $\mathrm{Al_2O_3}$ ima lomno žilavost $4\,\mathrm{MPa\,\sqrt{m}}$. Pri pregledu je največja najdena razpoka dolga $50\,\mu\mathrm{m}$ ($Y = 1$). Pri kolikšni natezni napetosti se ploščica zlomi? Kako dolga sme biti razpoka, da ploščica zdrži $500\,\mathrm{MPa}$? Za primerjavo izračunaj kritično napetost za jeklo z $K_\mathrm{Ic} = 50\,\mathrm{MPa\,\sqrt{m}}$ in enako razpoko.
+Ploščica iz $\mathrm{Al_2O_3}$ ima lomno žilavost $4\,\mathrm{MPa\,\sqrt{m}}$. Pri pregledu je največja najdena razpoka dolga $50\,\mu\mathrm{m}$ ($Y = 1$). Pri kolikšni natezni napetosti se ploščica zlomi? Kako dolga sme biti razpoka, da ploščica zdrži $500\,\mathrm{MPa}$? Za primerjavo izračunaj kritično napetost za jeklo s $K_\mathrm{Ic} = 50\,\mathrm{MPa\,\sqrt{m}}$ in enako razpoko.
 
 **Podatki:** $K_\mathrm{Ic} = 4\,\mathrm{MPa\,\sqrt{m}}$, $a = 50\,\mu\mathrm{m}$, $Y = 1$, zahtevana napetost $500\,\mathrm{MPa}$; jeklo $K_\mathrm{Ic} = 50\,\mathrm{MPa\,\sqrt{m}}$
 **Iščemo:** $\sigma_\mathrm{c}$ za keramiko in jeklo, največjo dopustno dolžino razpoke
@@ -241,7 +241,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Za ojačitev nosilca potrebujemo enosmerni ogljik–epoksidni kompozit ($E_\mathrm{v} = 230\,\mathrm{GPa}$, $E_\mathrm{m} = 3{,}5\,\mathrm{GPa}$, $\rho_\mathrm{v} = 1{,}8\,\mathrm{g/cm^3}$, $\rho_\mathrm{m} = 1{,}2\,\mathrm{g/cm^3}$) z modulom vzdolž vlaken $100\,\mathrm{GPa}$. (a) Kolikšen mora biti prostorninski delež vlaken in kolikšna je gostota? (b) Kompozit vzdolž obremenimo z $500\,\mathrm{MPa}$. Kolikšne so deformacija ter napetosti v vlaknih in matrici? (c) Cenejša različica bi imela kratka vlakna dolžine $0{,}2\,\mathrm{mm}$ s premerom $7\,\mu\mathrm{m}$ in trdnostjo $3500\,\mathrm{MPa}$; strižna trdnost meje je $40\,\mathrm{MPa}$. Ali so vlakna dovolj dolga?
+Za ojačitev nosilca potrebujemo enosmerni ogljik–epoksidni kompozit ($E_\mathrm{v} = 230\,\mathrm{GPa}$, $E_\mathrm{m} = 3{,}5\,\mathrm{GPa}$, $\rho_\mathrm{v} = 1{,}8\,\mathrm{g/cm^3}$, $\rho_\mathrm{m} = 1{,}2\,\mathrm{g/cm^3}$) z modulom vzdolž vlaken $100\,\mathrm{GPa}$. (a) Kolikšen mora biti prostorninski delež vlaken in kolikšna je gostota? (b) Kompozit vzdolž obremenimo s $500\,\mathrm{MPa}$. Kolikšne so deformacija ter napetosti v vlaknih in matrici? (c) Cenejša različica bi imela kratka vlakna dolžine $0{,}2\,\mathrm{mm}$ s premerom $7\,\mu\mathrm{m}$ in trdnostjo $3500\,\mathrm{MPa}$; strižna trdnost meje je $40\,\mathrm{MPa}$. Ali so vlakna dovolj dolga?
 
 **Rešitev:**
 
@@ -330,7 +330,7 @@ Armirani beton je najstarejši vsakdanji kompozit. Beton je kot keramika: v tlak
 ~ Koordinacijsko število $12$ se pojavi pri kovinah z gostim zlogom, ne v ionski keramiki s tem razmerjem.
 > $\frac{0{,}100}{0{,}180} = 0{,}556$, kar je med $0{,}414$ in $0{,}732$: oktaedrska koordinacija.
 
-? Aluminij ($E_\mathrm{m} = 70\,\mathrm{GPa}$) ojačimo z $30\,\%$ enosmernih SiC vlaken ($E_\mathrm{v} = 400\,\mathrm{GPa}$). Kolikšen je modul vzdolž vlaken?
+? Aluminij ($E_\mathrm{m} = 70\,\mathrm{GPa}$) ojačimo s $30\,\%$ enosmernih SiC vlaken ($E_\mathrm{v} = 400\,\mathrm{GPa}$). Kolikšen je modul vzdolž vlaken?
 - $93\,\mathrm{GPa}$
 ~ To je modul prečno na vlakna (harmonično pravilo).
 + $169\,\mathrm{GPa}$

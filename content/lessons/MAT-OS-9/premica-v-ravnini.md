@@ -56,13 +56,13 @@ Ne. $\dfrac{50 - 110}{2 - 6} = \dfrac{-60}{-4} = 15$. Obe razliki zamenjata pred
 **5. Vzporedni premici.** Na tla postavimo še dva roverja. Rover B pelje enako hitro kot A, a je ob $0\,\text{s}$ pri oznaki $50\,\text{cm}$: $y = 15x + 50$. Rover C je ob $0\,\text{s}$ pri oznaki $0$, pelje pa hitreje: $y = 20x$.
 
 :::risba graf
-opis: Graf lege treh roverjev. Vodoravna os je čas od 0 do 10 sekund, navpična lega od 0 do 200 centimetrov. Premica A gre skozi (0; 20) in (8; 140). Premica B je vzporedna premici A, 30 cm višje, in gre skozi (0; 50). Premica C je bolj strma, gre skozi izhodišče in seka premico A v točki (4; 80).
+opis: Graf lege treh roverjev. Vodoravna os je čas od 0 do 10 sekund, navpična lega od 0 do 200 centimetrov. Premica A gre skozi (0, 20) in (8, 140). Premica B je vzporedna premici A, 30 cm višje, in gre skozi (0, 50). Premica C je bolj strma, gre skozi izhodišče in seka premico A v točki (4, 80).
 x: 0 .. 10 | 1 | x (s)
 y: 0 .. 200 | 20 | y (cm)
 f: 15*x + 20 | modra
 f: 15*x + 50 | oranžna črtkano
 f: 20*x | zelena
-točka: 4; 80 | (4; 80) | desno
+točka: 4; 80 | (4, 80) | desno
 napis: 8; 140 | A | pod desno
 napis: 2; 80 | B | nad levo
 napis: 9; 180 | C | desno

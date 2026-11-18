@@ -193,7 +193,7 @@ $g = \left\lceil \frac{100}{20} \right\rceil = 5$. Šest ni zagotovljenih: po $5
 - Za zagotovljenih $m + 1$ predmetov v istem predalu potrebuješ najmanj $n \cdot m + 1$ predmetov; manj ne zadošča zaradi enakomerne razporeditve.
 - »Zagotovo« preverjaš z najbolj neugodno, najbolj enakomerno razporeditvijo.
 - Predale iznajdeš sam: ostanki, pari z dano vsoto, intervali, delne vsote.
-- Posplošitve: vsaj eno število je večje ali enako povprečju; neskončno predmetov v končno predalih da predal z neskončno predmeti.
+- Posplošitve: vsaj eno število je večje ali enako povprečju; neskončno predmetov v končno mnogo predalih da predal z neskončno predmeti.
 
 ## Drugače: Z analogijo
 

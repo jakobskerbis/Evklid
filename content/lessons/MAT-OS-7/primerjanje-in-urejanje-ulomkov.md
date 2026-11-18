@@ -155,7 +155,7 @@ Razširi na skupni imenovalec $v(10, 9)$ in primerjaj števca.
 
 **Rešitev:**
 
-1. Primerjava s $1$ in s $\dfrac{1}{2}$ ne odloči: oba ulomka sta med $\dfrac{1}{2}$ in $1$.
+1. Primerjava z $1$ in z $\dfrac{1}{2}$ ne odloči: oba ulomka sta med $\dfrac{1}{2}$ in $1$.
 2. Števili $10$ in $9$ sta tuji, zato je $v(10, 9) = 10 \cdot 9 = 90$.
 3. Razširimo: $\dfrac{9}{10} = \dfrac{81}{90}$ in $\dfrac{8}{9} = \dfrac{80}{90}$.
 4. Primerjaj števca sam in zapiši odgovor s prvotnima ulomkoma.

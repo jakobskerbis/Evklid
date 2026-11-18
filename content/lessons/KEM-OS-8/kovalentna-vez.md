@@ -139,9 +139,9 @@ $v = 8 - z$; vsaka črtica je en skupni par, dvojna vez šteje kot dve vezi
 4. Narišemo:
 
 ```
- ··       ··
+ ··      ··
  O = C = O
- ··       ··
+ ··      ··
 ```
 
 5. Preverimo ogljik: $2 \cdot 4 = 8$. Preverimo kisik: $4 + 2 \cdot 2 = 8$.

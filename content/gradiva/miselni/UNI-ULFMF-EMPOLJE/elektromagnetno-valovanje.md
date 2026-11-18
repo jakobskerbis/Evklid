@@ -19,6 +19,6 @@ stanje: osnutek
 - Odboj in lom
   - $n_1\sin\alpha = n_2\sin\beta$
   - $R = ((n_1 - n_2)/(n_1 + n_2))^2$
+  - Brewster $\tan\alpha_B = n_2/n_1$
 - Totalni odboj
   - $\sin\alpha_m = n_2/n_1$, optično vlakno
-  - Brewster $\tan\alpha_B = n_2/n_1$

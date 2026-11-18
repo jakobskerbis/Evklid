@@ -161,10 +161,10 @@ Skripta izvaja ukaze v imeniku, iz katerega jo poženeš, ne v imeniku, kjer je 
 
 **Rešitev:**
 
-1. Prvi zagon iz `noc`: nastane `noc/surovi` z $40$ posnetki.
+1. Prvi zagon iz `noc`: nastane `noc/surovi` s $40$ posnetki.
 2. Drugi zagon iz `~`: `mkdir -p surovi` ustvari *nov*, prazen imenik `~/surovi`, ker se relativna pot bere od `~`.
 3. `mv *.fits surovi/` išče posnetke v `~`, kjer jih ni. Ukaz javi napako (`cannot stat '*.fits'`), novih $35$ posnetkov ostane v `noc`.
-4. Pravilno: `cd ~/noc` in nato `bash uredi.sh`. Tokrat `mkdir -p` ne javi napake, ker `surovi` že obstaja.
+4. Pravilno: `cd ~/noc` in nato `bash uredi.sh`. Tokrat `mkdir -p` ne javi napake, čeprav `surovi` že obstaja.
 5. V `surovi` je nato $40 + 35 = 75$ posnetkov.
 6. Odgovor: zagon iz napačnega imenika ustvari prazen `~/surovi` in ničesar ne premakne. Po zagonu iz `noc` je v `noc/surovi` $75$ posnetkov.
 

@@ -317,7 +317,7 @@ w_S | relativni fitnes občutljivih | | – |
 t | število generacij | | – | pri molekulski uri čas razcepa v milijonih let
 N_\text{odp} | število preživelih odpornih celic | | – |
 N_\text{obč} | število preživelih občutljivih celic | | – |
-p | delež odpornih v tej generaciji | | – |
+p | delež odpornih v tej generaciji ali frekvenca alela A | | – |
 p' | delež odpornih v naslednji generaciji | p' = \dfrac{p \cdot w_R}{p \cdot w_R + (1 - p) \cdot w_S} | – |
 t_\text{ref} | znani čas razcepa za referenčni par | | milijon let |
 d | genetska razdalja med vrstama | | – | število razlik v zaporedju

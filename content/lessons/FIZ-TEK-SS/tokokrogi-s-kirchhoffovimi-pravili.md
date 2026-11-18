@@ -23,7 +23,7 @@ Napetost na pedalu, ki je hkrati napetost na sponkah baterije:
 
 $$U = 0{,}025 \cdot 300\,\mathrm{V} = 7{,}5\,\mathrm{V}$$
 
-Manjkajoči $1{,}5\,\mathrm{V}$ sta ostala na notranjem uporu. Brez obremenitve ni toka in ni padca, zato voltmeter na neobremenjeni bateriji kaže polnih $9{,}0\,\mathrm{V}$. Stare baterije tako ne prepoznaš.
+Manjkajočih $1{,}5\,\mathrm{V}$ je ostalo na notranjem uporu. Brez obremenitve ni toka in ni padca, zato voltmeter na neobremenjeni bateriji kaže polnih $9{,}0\,\mathrm{V}$. Stare baterije tako ne prepoznaš.
 
 | baterija | $R_i$ | $I$ | $U$ |
 |---|---|---|---|

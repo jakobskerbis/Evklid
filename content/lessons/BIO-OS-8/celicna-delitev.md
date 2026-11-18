@@ -161,7 +161,7 @@ $2^7 = 128$, kar je prvič vsaj $100$. Čas: $t = 7 \cdot 20\,\mathrm{h} = 140\,
 ## Drugače: Na sliki
 
 :::risba skica
-opis: Tri stopnje delitve, od leve proti desni. Levo je ena celica z jedrom, v katerem sta dva kromosoma. Na sredini je celica, v kateri sta dva podvojena kromosoma v obliki črke X v navpični vrsti na sredini. Desno sta dve manjši hčerinski celici, vsaka ima jedro z dvema kromosomoma. Med stopnjami sta puščici.
+opis: Tri stopnje delitve, od leve proti desni. Levo je ena celica z jedrom, v katerem sta dva kromosoma. Na sredini je celica, v kateri sta dva podvojena kromosoma v obliki črke X v vodoravni vrsti na sredini. Desno sta dve manjši hčerinski celici, vsaka ima jedro z dvema kromosomoma. Med stopnjami sta puščici.
 območje: 0; -1 .. 12; 5
 enota: 24
 krog: 2; 2,5 | 1,6 | modra
@@ -170,10 +170,10 @@ krog: 2; 2,5 | 0,8 | siva črtkano
 črta: 2,3; 2,2 -> 2,3; 2,8 | oranžna debelo
 puščica: 3,8; 2,5 -> 4,2; 2,5 | | nad | puščica
 krog: 6; 2,5 | 1,6 | modra
-črta: 5,8; 2,75 -> 6,2; 3,25 | oranžna debelo
-črta: 5,8; 3,25 -> 6,2; 2,75 | oranžna debelo
-črta: 5,8; 1,75 -> 6,2; 2,25 | oranžna debelo
-črta: 5,8; 2,25 -> 6,2; 1,75 | oranžna debelo
+črta: 5,2; 2,25 -> 5,6; 2,75 | oranžna debelo
+črta: 5,2; 2,75 -> 5,6; 2,25 | oranžna debelo
+črta: 6,4; 2,25 -> 6,8; 2,75 | oranžna debelo
+črta: 6,4; 2,75 -> 6,8; 2,25 | oranžna debelo
 puščica: 7,8; 2,5 -> 8,6; 2,5 | | nad | puščica
 krog: 10; 3,6 | 0,9 | modra
 krog: 10; 3,6 | 0,45 | siva črtkano

@@ -24,7 +24,7 @@ O toku se hitro ustalijo štiri mamljive predstave. Vse so napačne ali vsaj nep
 
 $$I = \frac{\mathrm{d}Q}{\mathrm{d}t}, \qquad [I] = \mathrm{A} = \mathrm{C/s}.$$
 
-Naboj označujemo s $Q$, osnovni naboj pa z $e_0 = 1{,}602 \cdot 10^{-19}\,\mathrm{C}$. Dogovorjena smer toka je smer gibanja pozitivnih nosilcev; v kovinah se elektroni gibljejo v nasprotni smeri. **Gostota toka** je tok na enoto preseka, $j = I/S$. Če je v enoti prostornine $n$ nosilcev z nabojem $e_0$, ki se v povprečju premikajo z **hitrostjo potovanja** $v$, velja
+Naboj označujemo s $Q$, osnovni naboj pa z $e_0 = 1{,}602 \cdot 10^{-19}\,\mathrm{C}$. Dogovorjena smer toka je smer gibanja pozitivnih nosilcev; v kovinah se elektroni gibljejo v nasprotni smeri. **Gostota toka** je tok na enoto preseka, $j = I/S$. Če je v enoti prostornine $n$ nosilcev z nabojem $e_0$, ki se v povprečju premikajo s **hitrostjo potovanja** $v$, velja
 
 $$I = n e_0 v S.$$
 

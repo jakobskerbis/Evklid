@@ -146,7 +146,7 @@ $k = \dfrac{y_2 - y_1}{x_2 - x_1}$, nato v $y = kx + n$ vstavimo eno izmerjeno t
 **Rešitev:**
 
 1. Čas štejemo od 6.00, zato je 8.00 pri $x = 2$ in 11.00 pri $x = 5$. Imamo točki $(2, 9)$ in $(5, 18)$.
-2. Smerni koeficient: $k = \dfrac{18 - 9}{5 - 2} = \dfrac{9}{3} = 3$. Vsako uro zapade $3\,\mathrm{cm}$ snega.
+2. Smerni koeficient: $k = \dfrac{18 - 9}{5 - 2} = \dfrac{9}{3} = 3$. Vsako uro zapadejo $3\,\mathrm{cm}$ snega.
 3. Predpis je $y = 3x + n$. Ostane še $n$: vstavi točko $(2, 9)$ in izračunaj sam.
 
 :::premisli

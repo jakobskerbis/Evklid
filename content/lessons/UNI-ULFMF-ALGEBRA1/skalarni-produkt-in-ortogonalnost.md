@@ -135,7 +135,7 @@ $\|v\| = \sqrt{\langle v, v \rangle}$, $\quad \cos \varphi = \dfrac{\langle u, v
 1. Skalarni produkt: $\langle u, v \rangle = 1 \cdot 3 + 2 \cdot 0 + 2 \cdot 4 = 11$.
 2. Normi: $\|u\| = \sqrt{1 + 4 + 4} = 3$ in $\|v\| = \sqrt{9 + 0 + 16} = 5$.
 3. Kosinus kota: $\cos \varphi = \dfrac{11}{3 \cdot 5} \approx 0{,}733$. Pozitiven je, zato je kot oster.
-4. $\varphi = \arccos 0{,}733 \approx 42{,}8^\circ$.
+4. $\varphi = \arccos \tfrac{11}{15} \approx 42{,}8^\circ$.
 5. Odgovor: $\|u\| = 3$, $\|v\| = 5$, kot med vektorjema je približno $42{,}8^\circ$.
 
 ### Primer 2: projekcija na premico
@@ -299,7 +299,7 @@ Gram-Schmidt je zaporedje takih slik. Drugi vektor »poravnaš« tako, da mu odr
 
 Gram-Schmidt za $v_1 = (1, 1, 0)$, $v_2 = (1, 0, 1)$, $v_3 = (0, 1, 1)$ v tabeli:
 
-| korak | od česa odštejemo | rezultat | $\langle u, u\rangle$ |
+| korak | kaj odštejemo | rezultat | $\langle u, u\rangle$ |
 |---|---|---|---|
 | $u_1$ | nič | $(1, 1, 0)$ | $2$ |
 | $u_2$ | $\tfrac12 u_1$ | $\left(\tfrac12, -\tfrac12, 1\right)$ | $\tfrac32$ |

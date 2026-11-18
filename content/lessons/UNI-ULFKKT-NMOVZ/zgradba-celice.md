@@ -128,7 +128,7 @@ $S_\mathrm{zun} = 6 a^2$, $\quad S_\mathrm{skupaj} = \dfrac{S_\mathrm{zun}}{0{,}
 
 **Rešitev:**
 
-1. Površina kocke ima $6$ ploskev: $S_\mathrm{zun} = 6 \cdot (20\,\mu\mathrm{m})^2 = 2400\,\mu\mathrm{m}^2$.
+1. Kocka ima $6$ ploskev: $S_\mathrm{zun} = 6 \cdot (20\,\mu\mathrm{m})^2 = 2400\,\mu\mathrm{m}^2$.
 2. Celična membrana je $2\,\%$ vseh, torej je skupna površina $50$-krat večja: $S_\mathrm{skupaj} = \dfrac{2400\,\mu\mathrm{m}^2}{0{,}02} = 120\,000\,\mu\mathrm{m}^2$.
 3. Notranje membrane: $S_\mathrm{notr} = 120\,000 - 2400 = 117\,600\,\mu\mathrm{m}^2$.
 4. Razmerje: $\dfrac{117\,600}{2400} = 49$.
@@ -192,7 +192,7 @@ V poenostavljenem modelu celica porabi $q = 1{,}2 \cdot 10^5$ molekul kisika na 
 
 **Rešitev:**
 
-1. Sprejem je $j \cdot S$, poraba $q \cdot V$. Celica zadošča, če $j S \ge q V$, torej $\dfrac{S}{V} \ge \dfrac{q}{j} = \dfrac{1{,}2 \cdot 10^5}{2 \cdot 10^5} = 0{,}6\,\mu\mathrm{m}^{-1}$.
+1. Sprejem je $j \cdot S$, poraba $q \cdot V$. Sprejem zadošča, če $j S \ge q V$, torej $\dfrac{S}{V} \ge \dfrac{q}{j} = \dfrac{1{,}2 \cdot 10^5}{2 \cdot 10^5} = 0{,}6\,\mu\mathrm{m}^{-1}$.
 2. Krogla: $\dfrac{3}{r} \ge 0{,}6\,\mu\mathrm{m}^{-1}$, zato $r \le \dfrac{3}{0{,}6}\,\mu\mathrm{m} = 5\,\mu\mathrm{m}$.
 3. Kocka: $\dfrac{6}{a} \ge 0{,}6\,\mu\mathrm{m}^{-1}$, zato $a \le 10\,\mu\mathrm{m}$.
 4. Prostornini: krogla $\frac{4}{3}\pi \cdot 5^3 \approx 524\,\mu\mathrm{m}^3$, kocka $10^3 = 1000\,\mu\mathrm{m}^3$.

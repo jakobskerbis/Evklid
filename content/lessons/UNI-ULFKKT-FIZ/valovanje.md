@@ -149,7 +149,7 @@ Mirujoč opazovalec: $\nu_\mathrm{p} = \nu\,\dfrac{c}{c - v_i}$, $\nu_\mathrm{o}
 3. Frekvenca sirene: $\nu = \nu_\mathrm{p}\,(c - v_i)/c = 760\,\mathrm{Hz} \cdot 313{,}5/340 \approx 701\,\mathrm{Hz}$.
 4. Preizkus z drugo enačbo: $\nu = \nu_\mathrm{o}\,(c + v_i)/c = 650\,\mathrm{Hz} \cdot 366{,}5/340 \approx 701\,\mathrm{Hz}$ ✓.
 5. Kolesar je pred avtom, kjer je valovna dolžina skrajšana: $\lambda' = (c - v_i)/\nu = c/\nu_\mathrm{p} = 340/760\,\mathrm{m} \approx 0{,}447\,\mathrm{m}$. Fronte srečuje z relativno hitrostjo $c + v_o = 346\,\mathrm{m/s}$, zato $\nu_\mathrm{k} = (c + v_o)/\lambda' = 346 \cdot 760/340\,\mathrm{Hz} \approx 773\,\mathrm{Hz}$.
-6. Odgovor: avto pelje s hitrostjo približno $26{,}5\,\mathrm{m/s}$ (okoli $95\,\mathrm{km/h}$), sirena oddaja frekvenco približno $700\,\mathrm{Hz}$, kolesar pa sliši približno $773\,\mathrm{Hz}$.
+6. Odgovor: avto pelje s hitrostjo približno $26{,}5\,\mathrm{m/s}$ (okoli $95\,\mathrm{km/h}$), sirena oddaja frekvenco približno $701\,\mathrm{Hz}$, kolesar pa sliši približno $773\,\mathrm{Hz}$.
 
 ### Primer 4 – zdaj ti
 
@@ -209,7 +209,7 @@ Jeklena struna z dolžino $0{,}60\,\mathrm{m}$ in maso $3{,}0\,\mathrm{g}$ je vp
 **Rešitev:**
 
 1. Osnovni ton zaprte piščali: $\nu_1 = c/(4l) = 343/(4 \cdot 0{,}25)\,\mathrm{Hz} = 343\,\mathrm{Hz}$.
-2. Drugi ton strune je $\nu_2 = 2c_s/(2l_s) = c_s/l_s$; enačimo z $343\,\mathrm{Hz}$: $c_s = 343\,\mathrm{Hz} \cdot 0{,}60\,\mathrm{m} = 205{,}8\,\mathrm{m/s}$.
+2. Drugi ton strune je $\nu_2 = 2c_s/(2l_s) = c_s/l_s$; enačimo s $343\,\mathrm{Hz}$: $c_s = 343\,\mathrm{Hz} \cdot 0{,}60\,\mathrm{m} = 205{,}8\,\mathrm{m/s}$.
 3. Dolžinska gostota: $\mu = 3{,}0 \cdot 10^{-3}\,\mathrm{kg}/0{,}60\,\mathrm{m} = 5{,}0 \cdot 10^{-3}\,\mathrm{kg/m}$.
 4. Sila iz $c_s = \sqrt{F/\mu}$: $F = \mu c_s^2 = 5{,}0 \cdot 10^{-3} \cdot 205{,}8^2\,\mathrm{N} \approx 212\,\mathrm{N}$.
 5. Hitrost zvoka je sorazmerna s $\sqrt{T}$: $c' = 343\,\mathrm{m/s} \cdot \sqrt{303{,}15/293{,}15} \approx 348{,}8\,\mathrm{m/s}$, zato ima piščal ($4l = 1{,}0\,\mathrm{m}$) $\nu_1' = 348{,}8/1{,}0\,\mathrm{Hz} \approx 348{,}8\,\mathrm{Hz}$.
@@ -345,7 +345,7 @@ Zvočnik seva enakomerno na vse strani z zvočno močjo $0{,}10\,\mathrm{W}$. Ko
 
 **D'Alembertova rešitev.** Z novima spremenljivkama $\xi = x - ct$ in $\eta = x + ct$ se valovna enačba prevede v $\partial^2s/\partial\xi\,\partial\eta = 0$, katere splošna rešitev je $s = f(\xi) + g(\eta)$. Funkciji določita začetna oblika in začetna hitrost strune.
 
-**Lastna nihanja in barva zvoka.** Robni problem za lastna nihanja je rešen v Nalogi 2. Splošno nihanje strune je vsota (Fourierjeva vrsta) lastnih nihanj; razmerje amplitud višjih harmonik določa barvo zvoka.
+**Lastna nihanja in barva zvoka.** Robni problem za lastna nihanja je rešen v Nalogi 2. Splošno nihanje strune je vsota (Fourierjeva vrsta) lastnih nihanj; razmerje amplitud višjih harmonikov določa barvo zvoka.
 
 **Newtonova napaka.** Newton je za zrak vzel izotermni stisljivostni modul $K = p$ namesto adiabatnega $K = \kappa p$ in dobil $\sqrt{1{,}4} \approx 1{,}18$-krat, torej približno $15\,\%$ premajhno hitrost.
 

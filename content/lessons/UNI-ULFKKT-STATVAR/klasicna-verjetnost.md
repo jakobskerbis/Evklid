@@ -9,7 +9,7 @@ Preden prebereš razlago, poskusi uganiti. Redka genetska bolezen prizadene eneg
 
 Večina reče »okoli $95\,\%$« ali »$99\,\%$«. Pravilen odgovor je **okoli $2\,\%$**. Med $100\,000$ testiranimi je bolnih okoli $100$, od teh jih test zazna $99$. Zdravih je $99\,900$, od teh jih test napačno označi $5\,\%$, kar je skoraj $5000$. Med vsemi pozitivnimi je bolnih torej le $99$ od približno $5100$.
 
-Intuicija je zamenjala dve različni verjetnosti: verjetnost pozitivnega izida pri bolnem ($99\,\%$) in verjetnost bolezni pri pozitivnem izidu ($2\,\%$). Kako ju računamo in ločimo, pove pogojna verjetnost z Bayesovo formulo. Da do njih pridemo, potrebujemo najprej štetje izidov – kombinatoriko – in klasično definicijo verjetnosti. Ista orodja uporabljaš pri genetskih križanjih, vzorčenju v laboratoriju, oceni kontaminacije, zanesljivosti varnostnih sistemov in razlagi diagnostičnih testov.
+Intuicija je zamenjala dve različni verjetnosti: verjetnost pozitivnega izida pri bolnem ($99\,\%$) in verjetnost bolezni pri pozitivnem izidu ($2\,\%$). Kako ju računamo in ločimo, pove pogojna verjetnost z Bayesovo formulo. Da do njiju pridemo, potrebujemo najprej štetje izidov – kombinatoriko – in klasično definicijo verjetnosti. Ista orodja uporabljaš pri genetskih križanjih, vzorčenju v laboratoriju, oceni kontaminacije, zanesljivosti varnostnih sistemov in razlagi diagnostičnih testov.
 
 ## Razlaga
 
@@ -23,7 +23,7 @@ $$P(A) = \frac{|A|}{|\Omega|},$$
 
 število ugodnih izidov deljeno s številom vseh.
 
-Splošneje verjetnost opišejo **Kolmogorovi aksiomi**: $P(A) \geq 0$, $P(\Omega) = 1$ in za nezdružljive dogodke ($A \cap B = \emptyset$) $P(A \cup B) = P(A) + P(B)$ (natančneje: verjetnost unije števno mnogo paroma nezdružljivih dogodkov je vsota njihovih verjetnosti). Klasična definicija jih izpolnjuje. Iz aksiomov sledita pravili, ki ju stalno uporabljamo:
+Splošneje verjetnost opišejo **Kolmogorovovi aksiomi**: $P(A) \geq 0$, $P(\Omega) = 1$ in za nezdružljive dogodke ($A \cap B = \emptyset$) $P(A \cup B) = P(A) + P(B)$ (natančneje: verjetnost unije števno mnogo paroma nezdružljivih dogodkov je vsota njihovih verjetnosti). Klasična definicija jih izpolnjuje. Iz aksiomov sledita pravili, ki ju stalno uporabljamo:
 
 - **nasprotni dogodek**: $P(A^c) = 1 - P(A)$, ker sta $A$ in $A^c$ nezdružljiva in skupaj dasta $\Omega$;
 - **vsota poljubnih dogodkov**:
@@ -220,7 +220,7 @@ Heterozigot je $E = \{Aa, aA\}$, kar je v celoti v $B$; $P(E \cap B) = 2/4$. Tor
 
 Znati moraš povedati:
 
-- klasično definicijo verjetnosti in Kolmogorove aksiome ter dokaz formule za $P(A \cup B)$;
+- klasično definicijo verjetnosti in Kolmogorovove aksiome ter dokaz formule za $P(A \cup B)$;
 - osnovni izrek kombinatorike in izpeljavo $\binom{n}{k}$;
 - definicijo pogojne verjetnosti in pravilo množenja;
 - formulo o popolni verjetnosti in Bayesovo formulo s pogoji in dokazoma;
@@ -361,7 +361,7 @@ Laboratorij dobiva vzorce iz treh obratov: $50\,\%$ iz prvega, $30\,\%$ iz druge
 A, B | dogodka | | –
 E | dogodek v nalogi (heterozigot, »oba meta enaka«, »natanko ena kontaminirana«) | | –
 P | verjetnost | | – | pri enako verjetnih izidih delež ugodnih izidov
-n | število elementov (možnosti) | | –
+n | število elementov (možnosti) | | – | v Primeru 2 število izbranih epruvet
 k | število izbranih elementov | | –
 k_1, k_2 | števila enakih elementov | | –
 n_i | število možnosti v i-tem koraku | | –

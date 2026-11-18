@@ -206,7 +206,7 @@ Maščobe je dovolj približno $324\,\mathrm{g}$, ogljikovih hidratov pa pribli�
 ## Povzetek
 
 - Celica je večinoma iz vode (pri človeku okoli $60\,\%$ mase); voda je polarna, dobro topilo in blaži nihanje temperature.
-- Anorganske snovi so ioni ($\mathrm{Na^+}$, $\mathrm{K^+}$, $\mathrm{Ca^{2+}}$, železo, fosfat): malo jih je, a so nujni.
+- Anorganske so poleg vode še mineralne snovi, večinoma ioni ($\mathrm{Na^+}$, $\mathrm{K^+}$, $\mathrm{Ca^{2+}}$, železo, fosfat): malo jih je, a so nujne.
 - Makromolekule nastanejo iz gradnikov s kondenzacijo (odcepi se voda) in razpadejo s hidrolizo; iz $n$ gradnikov nastane $n - 1$ vezi.
 - Ogljikovi hidrati: monosaharidi (glukoza) → disaharidi (maltoza, saharoza, laktoza) → polisaharidi (škrob, glikogen, celuloza).
 - Lipidi niso polimeri: maščoba je glicerol s tremi maščobnimi kislinami; fosfolipid ima hidrofilno glavo in dva hidrofobna repa.

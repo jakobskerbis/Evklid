@@ -171,7 +171,7 @@ Pri $\mathrm{S_N1}$ bi namesto puščice z leve najprej odšel Br. Ostal bi plo�
 
 Pomisli na menjavo baterije v telefonu.
 
-- **$\mathrm{S_N2}$** je menjava, pri kateri novo baterijo potiskaš v ležišče z ene strani in ta staro izrine na drugo. Delo je hitrejše, če imaš več novih baterij pri roki, in če ležišče z zadnje strani ni zastrto.
+- **$\mathrm{S_N2}$** je menjava, pri kateri novo baterijo potiskaš v ležišče z ene strani in ta staro izrine na drugo. Delo je hitrejše, če imaš več novih baterij pri roki in če ležišče z zadnje strani ni zastrto.
 - **$\mathrm{S_N1}$** je servis, kjer najprej počasi odlepijo staro baterijo. Ko je zunaj, novo vstavijo v trenutku. Tempo določa le odlepljanje, zato ga kup novih baterij ne pospeši.
 - **Eliminacija** je kot to, da serviser namesto nove baterije odstrani še sosednji vijak in ohišje stisne skupaj: nič novega ne pride notri, dva dela gresta ven.
 

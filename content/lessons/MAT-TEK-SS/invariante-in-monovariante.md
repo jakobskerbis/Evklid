@@ -157,7 +157,7 @@ Razlike so $15 - 13 = 2$, $17 - 15 = 2$ in $17 - 13 = 4$. Nobena ni deljiva s $3
 - Pogoste invariante: parnost vsote, ostanek pri deljenju s $3$ ali $4$, razlika števila polj dveh barv pri barvanju.
 - Barvanje izberi tako, da vsak kos pokrije enako število polj vsake barve, na tleh pa barve niso enako zastopane: šahovsko za $1 \times 2$, ostanki $i + j$ pri deljenju s $4$ za $1 \times 4$.
 - Monovarianta se pri vsaki potezi spremeni v isto smer. Če je nenegativno celo število z začetno vrednostjo $M$, se postopek konča po največ $M$ potezah.
-- Število inverzij je monovarianta pri menjavah sosednjih elementov: vsaka zamenjava ga zmanjša za natanko $1$.
+- Število inverzij je monovarianta pri menjavah sosednjih elementov v napačnem vrstnem redu: vsaka taka zamenjava ga zmanjša za natanko $1$.
 
 ## Drugače: Na sliki
 
@@ -191,7 +191,7 @@ pravokotnik: 2; 0,85 .. 6; 2,15 | oranžna debelo
 napis: 4; 0,4 | ploščica 1 × 4 | sredina | oranžna
 :::
 
-Barve se ponavljajo v krogu $0, 1, 2, 3$. Kamorkoli v vrstici položiš ploščico, pokrije štiri zaporedne kvadrate in zato vsako barvo enkrat. V stolpcu je enako, saj se tam spreminja $i$ namesto $j$. Ker na tleh ni enako mnogo kvadratov vseh štirih barv, jih ploščice ne morejo pokriti.
+Barve se ponavljajo v krogu $0, 1, 2, 3$. Kamor koli v vrstici položiš ploščico, pokrije štiri zaporedne kvadrate in zato vsako barvo enkrat. V stolpcu je enako, saj se tam spreminja $i$ namesto $j$. Ker na tleh ni enako mnogo kvadratov vseh štirih barv, jih ploščice ne morejo pokriti.
 
 ## Drugače: Iz vsakdanjega življenja
 

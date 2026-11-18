@@ -42,7 +42,7 @@ Iz $c \sim a$ in $c \sim b$ po simetriji dobimo $a \sim c$ in $c \sim b$, po tra
 
 Funkcija $f$ je:
 
-- **injektivna**, če različni elementi dobijo različni sliki: $f(a_1) = f(a_2) \Rightarrow a_1 = a_2$. V vsako točko $B$ pride *največ ena* puščica.
+- **injektivna**, če različna elementa dobita različni sliki: $f(a_1) = f(a_2) \Rightarrow a_1 = a_2$. V vsako točko $B$ pride *največ ena* puščica.
 - **surjektivna**, če je vsak element kodomene slika česa: $\forall b \in B\ \exists a \in A:\ f(a) = b$, torej $f(A) = B$. V vsako točko $B$ pride *vsaj ena* puščica.
 - **bijektivna**, če je oboje. V vsako točko $B$ pride *natanko ena* puščica. Bijekcija ima **inverz** $f^{-1}: B \to A$.
 
@@ -227,7 +227,7 @@ Funkcijo nariši kot dva stolpca točk s puščicami iz levega v desnega. Štej 
 
 ## Drugače: Uporaba v stroki
 
-- **Ekvivalenca:** z njo matematik gradi nove objekte. Racionalna števila so razredi parov celih števil pri $(a, b) \sim (c, d) \iff ad = bc$, zato sta $\frac{1}{2}$ in $\frac{3}{6}$ isto število. V algebri in kriptografiji računamo z razredi ostankov $\mathbb{Z}_n$.
+- **Ekvivalenca:** z njo matematik gradi nove objekte. Racionalna števila so razredi parov celih števil $(a, b)$, $b \neq 0$, pri $(a, b) \sim (c, d) \iff ad = bc$, zato sta $\frac{1}{2}$ in $\frac{3}{6}$ isto število. V algebri in kriptografiji računamo z razredi ostankov $\mathbb{Z}_n$.
 - **Delna urejenost:** v računalništvu so odvisnosti med opravili ali programskimi paketi delna urejenost. Algoritem topološkega urejanja jo razširi v linearno, torej v vrstni red izvajanja. Takih vrstnih redov je navadno več.
 - **Injektivnost:** šifrirna funkcija mora biti injektivna, sicer dveh sporočil z isto šifro ne bi mogel razločiti. Zgoščevalna funkcija, ki poljubno dolga sporočila slika v $256$ bitov, ne more biti injektivna; zahtevamo le, da je trk težko najti.
 - **Surjektivnost:** v linearni algebri je sistem $A\vec{x} = \vec{b}$ rešljiv za vsak $\vec{b}$ natanko tedaj, ko je preslikava $\vec{x} \mapsto A\vec{x}$ surjektivna. Rešitev je enolična natanko tedaj, ko je preslikava injektivna.
@@ -296,6 +296,6 @@ f | funkcija (preslikava)
 x_1, x_2 | elementa domene funkcije f
 y | element kodomene
 m, k | celi števili | | | 3 deli m natanko tedaj, ko je m = 3k
-q | količnik pri deljenju s 3
-r | ostanek pri deljenju s 3 | r = x - 3q | | r ∈ {0, 1, 2}
+q | količnik pri deljenju s 3 (v nalogi 1 za izpit s 5)
+r | ostanek pri deljenju s 3 (v nalogi 1 za izpit s 5) | r = x - 3q | | r ∈ {0, 1, 2}; pri deljenju s 5 je r = x - 5q, r ∈ {0, 1, 2, 3, 4}
 :::

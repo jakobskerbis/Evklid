@@ -196,7 +196,7 @@ Formula $P = \dfrac{A}{t}$ da **povprečno moč** v času $t$. Lukova moč med t
 ~ Joule na sekundo je ravno definicija vata.
 + $\mathrm{kWh}$
 - $\mathrm{W}$
-~ Vat je osnovna enota za moč.
+~ Vat je enota za moč.
 > Kilovatna ura je moč, pomnožena s časom, torej energija: $1\,\mathrm{kWh} = 3\,600\,000\,\text{J}$.
 
 ? Planinec z nahrbtnikom ima maso $60\,\text{kg}$. V $1\,\text{h}$ se povzpne $600\,\text{m}$ višje. Kolikšna je njegova povprečna moč pri dviganju? ($g = 10\,\frac{\text{N}}{\text{kg}}$)

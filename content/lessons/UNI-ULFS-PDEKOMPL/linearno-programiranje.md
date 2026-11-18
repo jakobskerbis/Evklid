@@ -67,7 +67,7 @@ Za vsak dopusten par velja $z \le w$ (**šibka dualnost**). V optimumu sta enaka
 Ne. Pečica bi dopustila največ $5$ pic oziroma $10$ pit, moke pa bi porabil največ $10\,\mathrm{kg}$. Ostala bi neporabljena, zato dodatni kilogram ne prinese nič: $u = 0$. Senčna cena je pozitivna le pri surovini, ki jo porabiš do konca.
 :::
 
-*Hiter preizkus:* koliko dualnih omejitev ima problem z $30$ jedmi? (Trideset, ena za vsako primalno spremenljivko.)
+*Hiter preizkus:* koliko dualnih omejitev ima problem s $30$ jedmi? (Trideset, ena za vsako primalno spremenljivko.)
 
 ## Rešeni primeri
 
@@ -285,8 +285,8 @@ x | število pladnjev pice | | | v splošnem zapisu vektor spremenljivk; pri pre
 y | število pladnjev pite | | | v dualu vektor dualnih spremenljivk; pri prehrani porcije jogurta
 s_1 | dopolnilna spremenljivka (neporabljena moka) | s_1 = 6 - x - y | | s₁ ≥ 0
 s_2 | dopolnilna spremenljivka (neizkoriščen čas pečice) | s_2 = 10 - 2x - y | | s₂ ≥ 0
-u | cena kilograma moke (dualna spremenljivka)
-v | cena ure pečice (dualna spremenljivka)
+u | cena kilograma moke (dualna spremenljivka) | | | pri livarni vrednost kilograma mangana
+v | cena ure pečice (dualna spremenljivka) | | | pri livarni vrednost kilograma silicija
 w | vrednost dualne namenske funkcije | w = 6u + 10v | | z ≤ w, v optimumu z = w
 c | koeficienti namenske funkcije (vektor) | | | pri prehrani cena obrokov c = 0,5x + y
 A | matrika koeficientov omejitev

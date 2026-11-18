@@ -44,9 +44,9 @@ Zakaj se reža na suši zapre tudi sredi sončnega dne, ko bi rastlina CO₂ nuj
 Skozi odprto režo izhlapeva voda. Če je korenine ne morejo nadomestiti, bi celice izgubile turgor in list bi ovenel. Korenine in list pri pomanjkanju vode tvorijo hormon abscizinsko kislino, ki sproži izstop K⁺ iz zapiralk. Rastlina za ceno manj fotosinteze ohrani vodo.
 :::
 
-**Blok 5: kompromis CO₂ proti vodi.** Izhlapevanju vode skozi reže pravimo **transpiracija**. Vleče vodo po ksilemu od korenin do lista in list hladi. Kutikula ne prepušča ne vode ne CO₂, zato izmenjava plinov teče skozi reže. Spodaj so reže v senci, zato izhlapi manj vode. List z režami le spodaj je **hipostomatičen**, z režami na obeh straneh **amfistomatičen**.
+**Blok 5: kompromis CO₂ proti vodi.** Izhlapevanju vode skozi reže pravimo **transpiracija**. Vleče vodo po ksilemu od korenin do lista in list hladi. Kutikula skoraj ne prepušča vode in CO₂, zato izmenjava plinov teče skozi reže. Spodaj so reže v senci, zato izhlapi manj vode. List z režami le spodaj je **hipostomatičen**, z režami na obeh straneh **amfistomatičen**.
 
-*Preveri:* Kaj bi se zgodilo z izmenjavo plinov, če bi bil list povsod prekrit z debelo kutikulo brez rež? (Ustavila bi se: kutikula ne prepušča niti CO₂.)
+*Preveri:* Kaj bi se zgodilo z izmenjavo plinov, če bi bil list povsod prekrit z debelo kutikulo brez rež? (Skoraj povsem bi se ustavila: kutikula tudi CO₂ skoraj ne prepušča.)
 
 **Blok 6: prilagoditve na okolje.** Ista zgradba se v različnih okoljih spremeni:
 
@@ -192,7 +192,7 @@ Na odtisu spodnje strani lista v krožnem vidnem polju s premerom $0{,}5\,\mathr
 7. Delež spodaj: polji sta enaki, zato se ploščina pokrajša in zadošča štetje: $\delta = \dfrac{55}{55 + 5} \approx 0{,}917$, torej okoli $92\,\%$.
 8. Ploščina ene pore v $\mathrm{mm^2}$: $1\,\mathrm{mm^2} = 10^6\,\mathrm{\mu m^2}$, zato $80\,\mathrm{\mu m^2} = 0{,}00008\,\mathrm{mm^2}$.
 9. Pore na $1\,\mathrm{mm^2}$ spodnje strani: $280 \cdot 0{,}00008 = 0{,}0224$, torej $0{,}0224\,\mathrm{mm^2}$ por na $1\,\mathrm{mm^2}$ lista. To je $2{,}24\,\%$.
-10. Odgovor: (a) spodaj $280$, zgoraj $25$ rež na $\mathrm{mm^2}$; (b) list ima okoli $1{,}8$ milijona rež, okoli $92\,\%$ jih je spodaj, list je skoraj hipostomatičen; (c) odprte pore zavzemajo le okoli $2\,\%$ spodnje površine, a skoznje teče skoraj vsa izmenjava plinov, ker kutikula ne prepušča ne vode ne CO₂.
+10. Odgovor: (a) spodaj $280$, zgoraj $25$ rež na $\mathrm{mm^2}$; (b) list ima okoli $1{,}8$ milijona rež, okoli $92\,\%$ jih je spodaj, list je skoraj hipostomatičen; (c) odprte pore zavzemajo le okoli $2\,\%$ spodnje površine, a skoznje teče skoraj vsa izmenjava plinov, ker kutikula skoraj ne prepušča vode in CO₂.
 
 ### Naloga 2
 

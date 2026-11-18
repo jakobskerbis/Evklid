@@ -117,7 +117,7 @@ Dva ulomka sta enakovredna, če ju skrajšamo do istega okrajšanega ulomka.
 2. Prvi dan: $18 = 2 \cdot 3^2$ in $45 = 3^2 \cdot 5$, zato $D(18, 45) = 9$ in $\dfrac{18 : 9}{45 : 9} = \dfrac{2}{5}$.
 3. Drugi dan: $24 = 2^3 \cdot 3$ in $60 = 2^2 \cdot 3 \cdot 5$, zato $D(24, 60) = 12$ in $\dfrac{24 : 12}{60 : 12} = \dfrac{2}{5}$.
 4. Okrajšana ulomka sta enaka, zato sta deleža enakovredna.
-5. Odgovor: da, oba dneva je skupino A imel $2$ od vsakih $5$ krvodajalcev.
+5. Odgovor: da, oba dneva sta skupino A imela $2$ od vsakih $5$ krvodajalcev.
 
 ### Primer 4 – zdaj ti
 

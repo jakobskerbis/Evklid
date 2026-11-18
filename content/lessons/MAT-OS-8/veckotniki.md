@@ -155,7 +155,7 @@ $n = 10$, to je desetkotnik. Preizkus: $8 \cdot 180^\circ = 1440^\circ$.
 - **Diagonale brez deljenja z $2$.** Za osemkotnik izračunaš $8 \cdot 5 = 40$. Tako vsako diagonalo šteješ iz obeh krajišč. Popravek: $D_8 = \dfrac{8 \cdot 5}{2} = 20$. Pazi tudi, da $n - 3$ ni število vseh diagonal, ampak le tistih iz enega oglišča.
 - **Notranji kot je $\dfrac{360^\circ}{n}$.** Za pravilni šestkotnik dobiš $60^\circ$. To je zunanji (in središčni) kot. Popravek: $\alpha = 180^\circ - \dfrac{360^\circ}{n}$, za šestkotnik $120^\circ$.
 - **Pravilen pomeni le enake stranice.** Romb ima enake stranice, a ni pravilen, ker njegovi koti niso vsi enaki. Popravek: pravilni večkotnik ima enake stranice **in** enake kote.
-- **Vsak kot je vsota deljena z $n$.** »V vsakem petkotniku meri kot $108^\circ$« velja le za pravilni petkotnik. Popravek: vsota $(n - 2) \cdot 180^\circ$ velja za vse večkotnike, deljenje z $n$ pa le za pravilne.
+- **Vsak kot je vsota, deljena z $n$.** »V vsakem petkotniku meri kot $108^\circ$« velja le za pravilni petkotnik. Popravek: vsota $(n - 2) \cdot 180^\circ$ velja za vse večkotnike, deljenje z $n$ pa le za pravilne.
 
 ## Povzetek
 

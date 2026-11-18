@@ -143,7 +143,7 @@ Konstruktor shrani argumente v atribute; v metodi je `self` objekt pred piko. Ra
 
 **Rešitev:**
 
-1. Klic `Tocka(3, 4)` ustvari objekt in pokliče `__init__` z `self` = novi objekt, `x = 3`, `y = 4`.
+1. Klic `Tocka(3, 4)` ustvari objekt in pokliče `__init__` s `self` = novi objekt, `x = 3`, `y = 4`.
 2. Konstruktor nastavi `self.x = 3` in `self.y = 4`, zato `t.x` vrne `3`.
 3. Pri `t.razdalja()` je `self` objekt `t`, zato metoda računa s `self.x = 3` in `self.y = 4`.
 4. $3^2 + 4^2 = 25$, koren iz $25$ je $5$; ker je eksponent `0.5` tipa `float`, Python vrne `5.0`.

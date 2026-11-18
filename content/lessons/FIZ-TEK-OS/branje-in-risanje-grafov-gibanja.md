@@ -109,7 +109,7 @@ Hitrost je naklon grafa $s(t)$: $v = \dfrac{\Delta s}{\Delta t}$
 
 ### Primer 2: natakar s pladnjem
 
-Natakar z juho na pladnju iz mirovanja enakomerno pospešuje $2\,\mathrm{s}$, da doseže hitrost $1{,}2\,\mathrm{m/s}$. Nato $5\,\mathrm{s}$ hodi s to hitrostjo, potem pa v $1\,\mathrm{s}$ enakomerno ustavi pri mizi. Nariši graf $v(t)$. Kolikšen je pospešek v prvem delu in kako daleč je miza od kuhinje?
+Natakar z juho na pladnju iz mirovanja enakomerno pospešuje $2\,\mathrm{s}$, da doseže hitrost $1{,}2\,\mathrm{m/s}$. Nato $5\,\mathrm{s}$ hodi s to hitrostjo, potem pa se v $1\,\mathrm{s}$ enakomerno ustavi pri mizi. Nariši graf $v(t)$. Kolikšen je pospešek v prvem delu in kako daleč je miza od kuhinje?
 
 **Podatki:** začetna hitrost $0$; pospeševanje $t_1 = 2\,\mathrm{s}$; največja hitrost $v = 1{,}2\,\mathrm{m/s}$; enakomerna hoja $t_2 = 5\,\mathrm{s}$; zaviranje $t_3 = 1\,\mathrm{s}$
 **Iščemo:** pospešek $a$ in celotno pot $s$

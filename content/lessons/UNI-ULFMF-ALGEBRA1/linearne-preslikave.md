@@ -295,7 +295,7 @@ Recept za zamenjavo baze:
 
 Torej $\dim \operatorname{im} L = n - k$. Posledica za $L\colon U \to U$: $L$ je injektivna $\iff$ surjektivna $\iff$ obrnljiva. Pri kvadratni matriki je to isto kot $\det A \neq 0$.
 
-**Kompozitum.** Če imata $L$ in $K$ matriki $A$ in $B$ v ustreznih bazah, ima $K \circ L$ matriko $BA$. Zato je množenje matrik definirano tako, kot je.
+**Kompozitum.** Če imata $L$ in $K$ matriki $A$ in $M$ v ustreznih bazah, ima $K \circ L$ matriko $MA$. Zato je množenje matrik definirano tako, kot je.
 
 **Izpeljava $A' = P^{-1}AP$.** Iz $[u]_B = P[u]_{B'}$ in $[L(u)]_B = A[u]_B$ dobimo $[L(u)]_{B'} = P^{-1}[L(u)]_B = P^{-1}AP\,[u]_{B'}$. Matriki $A$ in $A'$ sta **podobni**. Podobne matrike imajo enako determinanto in rang, saj opisujejo isto preslikavo.
 

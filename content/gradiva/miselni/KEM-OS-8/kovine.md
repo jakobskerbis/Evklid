@@ -11,7 +11,7 @@ stanje: osnutek
   - z nekovinami tvori ionske spojine, npr. $\mathrm{NaCl}$
 - Alkalijske kovine
   - 1. skupina, en zunanji elektron, ion $1+$
-  - mehke, lažje od vode, hranimo pod oljem
+  - mehke, lahke, hranimo pod oljem
 - Reakcija z vodo
   - $2\,\mathrm{Na} + 2\,\mathrm{H_2O} \rightarrow 2\,\mathrm{NaOH} + \mathrm{H_2}$
   - nastane bazična raztopina hidroksida

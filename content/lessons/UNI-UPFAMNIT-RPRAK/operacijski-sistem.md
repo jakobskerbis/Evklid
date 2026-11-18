@@ -328,6 +328,7 @@ t_\mathrm{p} | čas prihoda procesa | | ms
 t_\mathrm{č} | čas čakanja | t_\mathrm{č} = t_\mathrm{o} - b | ms
 b | trajanje procesa na procesorju | | ms
 \bar{t} | povprečni čas čakanja | | ms
+\bar{t}_{\mathrm{r}} | povprečni odzivni čas | | ms
 t_{\mathrm{č},1}, t_{\mathrm{č},2}, t_{\mathrm{č},3} | časi čakanja posameznih procesov | | ms
 n_\mathrm{b} | število blokov datoteke | n_\mathrm{b} = \lceil s/B \rceil | –
 s | velikost datoteke | | B

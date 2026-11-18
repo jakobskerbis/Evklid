@@ -22,7 +22,7 @@ Presenečenje: oba sta enako slana. Natrij in sol nista ista snov. Natrij je **e
 - **Element** je čista snov, ki je zgrajena iz ene same vrste atomov. Primeri: aluminij, baker, železo, kisik.
 - **Spojina** je čista snov, zgrajena iz dveh ali več vrst atomov, ki so med seboj trdno povezani. Primeri: voda (iz vodika in kisika), sol (iz natrija in klora), sladkor (iz ogljika, vodika in kisika).
 
-**Zmes in spojina drugo ob drugem.** Slana voda in sol imata nekaj skupnega: obe vsebujeta več kot en element. A razlike so velike. V delčni sliki vsak znak pomeni en atom, različni znaki različne vrste atomov (■ baker, ● vodik, ○ kisik, ◆ natrij, ◇ klor):
+**Zmes in spojina druga ob drugi.** Slana voda in sol imata nekaj skupnega: obe vsebujeta več kot en element. A razlike so velike. V delčni sliki vsak znak pomeni en atom, različni znaki različne vrste atomov (■ baker, ● vodik, ○ kisik, ◆ natrij, ◇ klor):
 
 ```
 element (baker):   ■ ■ ■ ■     vsi atomi enaki

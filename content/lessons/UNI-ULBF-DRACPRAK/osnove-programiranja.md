@@ -11,7 +11,7 @@ Vse, kar dela, je ponavljanje istih korakov z drugimi številkami. Kratek progra
 
 ## Razlaga
 
-**1. Mamljiva napaka: »enačaj pomeni enako«.** Iz matematike znaš, da $x = x + 3$ nima rešitve. V programu pa je vrstica
+**1. Mamljiva napaka: »enačaj pomeni enako«.** Iz matematike veš, da $x = x + 3$ nima rešitve. V programu pa je vrstica
 
 ```vb
 tocke = tocke + 3

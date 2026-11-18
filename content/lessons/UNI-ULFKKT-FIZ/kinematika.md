@@ -246,7 +246,7 @@ Natančno definiraj trenutno hitrost in pospešek točkastega telesa. Dokaži, d
 **Rešitev:**
 
 1. Naj bo $\vec{r}(t)$ odvedljiva. Trenutna hitrost je $\vec{v}(t) = \lim_{\Delta t \to 0}[\vec{r}(t + \Delta t) - \vec{r}(t)]/\Delta t = \mathrm{d}\vec{r}/\mathrm{d}t$, pospešek pa $\vec{a} = \mathrm{d}\vec{v}/\mathrm{d}t = \mathrm{d}^2\vec{r}/\mathrm{d}t^2$; oba odvajamo po komponentah.
-2. Kroženje: $\vec{r} = r(\cos\varphi, \sin\varphi)$ z $\varphi = \omega t$ in stalnima $r$, $\omega$.
+2. Kroženje: $\vec{r} = r(\cos\varphi, \sin\varphi)$ s $\varphi = \omega t$ in stalnima $r$, $\omega$.
 3. Odvajamo: $\vec{v} = \omega r(-\sin\varphi, \cos\varphi)$; $\vec{v}\cdot\vec{r} = 0$, zato je hitrost tangentna, njena velikost pa $\omega r$.
 4. Še enkrat odvajamo: $\vec{a} = -\omega^2 r(\cos\varphi, \sin\varphi) = -\omega^2\vec{r}$. Pospešek je nasprotno usmerjen kot krajevni vektor, torej proti središču, z velikostjo $\omega^2 r = v^2/r$.
 5. (a) Da: pri enakomernem kroženju je $|\vec{v}| = \omega r$ stalna, $\vec{a} \ne 0$, ker se spreminja smer hitrosti. Splošno je $\mathrm{d}(v^2)/\mathrm{d}t = 2\vec{v}\cdot\vec{a}$, zato je $v$ stalna natanko takrat, ko je $\vec{a}$ ves čas pravokoten na $\vec{v}$.
@@ -292,7 +292,7 @@ V grafu $v(t)$ za enakomerno pospešeno gibanje je premica. Naklon je pospešek,
 
 ## Drugače: Korak za korakom s številkami
 
-Gibanje delca je podano s $\vec{r}(t) = (3{,}0\,\mathrm{m/s} \cdot t)\,\vec{i} + (4{,}0\,\mathrm{m/s} \cdot t - 1{,}0\,\mathrm{m/s^2} \cdot t^2)\,\vec{j}$. Kje je delec, kako hitro se giblje in kolikšen je njegov pospešek ob $t = 1{,}0\,\mathrm{s}$?
+Gibanje delca je podano z $\vec{r}(t) = (3{,}0\,\mathrm{m/s} \cdot t)\,\vec{i} + (4{,}0\,\mathrm{m/s} \cdot t - 1{,}0\,\mathrm{m/s^2} \cdot t^2)\,\vec{j}$. Kje je delec, kako hitro se giblje in kolikšen je njegov pospešek ob $t = 1{,}0\,\mathrm{s}$?
 
 1. **Lega:** $x = 3{,}0\,\mathrm{m}$, $y = 4{,}0 - 1{,}0 = 3{,}0\,\mathrm{m}$.
 2. **Hitrost po komponentah** (odvajamo): $v_x = 3{,}0\,\mathrm{m/s}$, $v_y = 4{,}0\,\mathrm{m/s} - 2{,}0\,\mathrm{m/s^2} \cdot t = 2{,}0\,\mathrm{m/s}$.
@@ -313,7 +313,7 @@ Ker je $|\vec{e}_t| = 1$, je $\mathrm{d}\vec{e}_t/\mathrm{d}t$ pravokoten na $\v
 
 **Kroženje v polarnih koordinatah.** Za $\vec{r} = r(\cos\varphi, \sin\varphi)$ s stalnim $r$ in $\varphi(t)$ odvajamo: $\vec{v} = r\dot{\varphi}(-\sin\varphi, \cos\varphi)$ in $\vec{a} = r\ddot{\varphi}(-\sin\varphi, \cos\varphi) - r\dot{\varphi}^2(\cos\varphi, \sin\varphi)$. Prvi člen je tangentni pospešek $\alpha r$, drugi radialni $-\omega^2\vec{r}$.
 
-**Domet poševnega meta.** Iz $y = x\tan\alpha - \frac{g x^2}{2v_0^2\cos^2\alpha}$ in $y = 0$ sledi $D = \frac{2v_0^2\sin\alpha\cos\alpha}{g} = \frac{v_0^2\sin 2\alpha}{g}$. Odvod po $\alpha$ je $\frac{2v_0^2\cos 2\alpha}{g}$, ki je nič pri $\alpha = 45^\circ$; tam je domet največji. Z zračnim uporom, sorazmernim s $v$ ali $v^2$, tir ni več parabola in najugodnejši kot je manjši od $45^\circ$.
+**Domet poševnega meta.** Iz $y = x\tan\alpha - \frac{g x^2}{2v_0^2\cos^2\alpha}$ in $y = 0$ sledi $D = \frac{2v_0^2\sin\alpha\cos\alpha}{g} = \frac{v_0^2\sin 2\alpha}{g}$. Odvod po $\alpha$ je $\frac{2v_0^2\cos 2\alpha}{g}$, ki je nič pri $\alpha = 45^\circ$; tam je domet največji. Z zračnim uporom, sorazmernim z $v$ ali $v^2$, tir ni več parabola in najugodnejši kot je manjši od $45^\circ$.
 
 ## Preveri se
 
@@ -341,7 +341,7 @@ Ker je $|\vec{e}_t| = 1$, je $\mathrm{d}\vec{e}_t/\mathrm{d}t$ pravokoten na $\v
 ~ Drugi kot ni dvakratnik prvega, ampak dopolnilo do $90^\circ$; $\sin 40^\circ \neq \sin 80^\circ$.
 > $D \propto \sin 2\alpha$ in $\sin 60^\circ = \sin 120^\circ$. Kota, ki se seštejeta v $90^\circ$, dasta enak domet.
 
-? Točka na obodu kolesa s polmerom $0{,}50\,\mathrm{m}$ enakomerno kroži s $2{,}0$ obrata na sekundo. Kolikšen je njen radialni pospešek?
+? Točka na obodu kolesa s polmerom $0{,}50\,\mathrm{m}$ enakomerno kroži z $2{,}0$ obrata na sekundo. Kolikšen je njen radialni pospešek?
 - $6{,}3\,\mathrm{m/s^2}$
 ~ To je obodna hitrost $v = \omega r$ v $\mathrm{m/s}$; radialni pospešek je $\omega^2 r$.
 - $2{,}0\,\mathrm{m/s^2}$

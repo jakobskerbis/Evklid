@@ -15,7 +15,7 @@ Isto vodo vidiš tudi pozimi. Na mrzlo jutro se iz izpušne cevi avtomobila vali
 
 **1. Dva zaklada iz globin.** Nafta in zemeljski plin sta nastala v naravi. Pred milijoni let so ostanki drobnih morskih organizmov (planktona) potonili na dno in jih je prekrilo blato. Brez zraka, pri visokem tlaku in temperaturi so se počasi spremenili v ogljikovodike. Ker sta nastala iz ostankov davnih organizmov, ju imenujemo **fosilni gorivi**. Nastajata tako počasi, da sta **neobnovljiva**.
 
-**2. Podobna, a različna.** Obe snovi sta zmesi alkanov, ki jih poznaš iz prejšnje lekcije. Razlikujeta se v dolžini verig.
+**2. Podobna, a različna.** Obe snovi sta zmesi ogljikovodikov, predvsem alkanov, ki jih poznaš iz prejšnje lekcije. Razlikujeta se v dolžini verig.
 
 | | zemeljski plin | nafta |
 |---|---|---|
@@ -228,7 +228,7 @@ Gorenje pa nariši kot razstavljanje kock. Molekula $\mathrm{CH_4}$ je ena črna
 ~ Butan ima $4$ atome C in bi dal $4\,\text{mol}$ $\mathrm{CO_2}$.
 - metan $\mathrm{CH_4}$
 ~ Metan ima $1$ atom C in da le $1\,\text{mol}$ $\mathrm{CO_2}$.
-> $3\,\text{mol}$ $\mathrm{CO_2}$ pomeni $3$ atome C, $4\,\text{mol}$ vode pomeni $4 \cdot 2 = 8$ atomov H. To je $\mathrm{C_3H_8}$, kar se ujema z $\mathrm{C}_n\mathrm{H}_{2n+2}$.
+> $3\,\text{mol}$ $\mathrm{CO_2}$ pomeni $3$ atome C, $4\,\text{mol}$ vode pomeni $4 \cdot 2 = 8$ atomov H. To je $\mathrm{C_3H_8}$, kar se ujema s $\mathrm{C}_n\mathrm{H}_{2n+2}$.
 
 ? V zaprti kleti brez okna gori plinska peč. Kisika je čedalje manj. Kaj je najbolj nevarno?
 - Nastaja več $\mathrm{CO_2}$, ki bi ga takoj zavohali.

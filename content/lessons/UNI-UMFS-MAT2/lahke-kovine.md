@@ -33,7 +33,7 @@ Gnetne zlitine označujemo s štirimi števkami (EN AW-xxxx). Prva pove glavni l
 - 6xxx: magnezij in silicij, profili in okvirji (6061, 6082);
 - 7xxx: cink z magnezijem in bakrom, najtrdnejše zlitine (7075).
 
-Zlitine 1xxx, 3xxx in 5xxx utrjujemo le s hladnim preoblikovanjem (stanje H). Zlitine 2xxx, 6xxx in 7xxx so **toplotno utrjevalne**. Livne zlitine (EN AC) so večinoma zlitine Al-Si (silumini), ki se dobro livajo. Stanje zapišemo za pomišljajem: O žarjeno, T4 raztopno žarjeno in naravno starano, T6 raztopno žarjeno in umetno starano do največje trdnosti.
+Zlitine 1xxx, 3xxx in 5xxx utrjujemo le s hladnim preoblikovanjem (stanje H). Zlitine 2xxx, 6xxx in 7xxx so **toplotno utrjevalne**. Livne zlitine (EN AC) so večinoma zlitine Al-Si (silumini), ki se dobro livajo. Stanje zapišemo za vezajem: O žarjeno, T4 raztopno žarjeno in naravno starano, T6 raztopno žarjeno in umetno starano do največje trdnosti.
 
 ### Izločevalno utrjevanje: primerjava s kaljenjem jekla
 
@@ -150,8 +150,8 @@ vzvodno pravilo: $W_\theta = \dfrac{w_0 - w_\alpha}{w_\theta - w_\alpha}$; $t_2 
 1. (a) Temperatura mora biti nad solvusom, da se ves baker raztopi, in pod evtektično, sicer se ob mejah zrn začne taliti evtektik (»sežig«). Okno je torej od okoli $500$ do $548\,^\circ\mathrm C$; v praksi blizu $510$ do $520\,^\circ\mathrm C$ z varnostjo na obeh straneh.
 2. (b) Vzvodno pravilo: $W_\theta = \dfrac{4 - 0{,}1}{53 - 0{,}1} \approx 0{,}074$, torej okoli $7{,}4\,\%$ faze $\theta$. Prav ta baker lahko pri staranju tvori izločke.
 3. (c) Razmerje $Q/R = 130\,000 / 8{,}314 \approx 15\,636\,\mathrm K$.
-4. Razlika recipročnih temperatur: $\dfrac{1}{443{,}15} - \dfrac{1}{463{,}15} \approx 9{,}745 \cdot 10^{-5}\,\mathrm{K^{-1}}$.
-5. Eksponent: $15\,636 \cdot 9{,}745 \cdot 10^{-5} \approx 1{,}524$; $\mathrm e^{1{,}524} \approx 4{,}59$.
+4. Razlika recipročnih temperatur: $\dfrac{1}{443{,}15} - \dfrac{1}{463{,}15} \approx 9{,}744 \cdot 10^{-5}\,\mathrm{K^{-1}}$.
+5. Eksponent: $15\,636 \cdot 9{,}744 \cdot 10^{-5} \approx 1{,}524$; $\mathrm e^{1{,}524} \approx 4{,}59$.
 6. Čas: $t_2 \approx 10 \cdot 4{,}59 \approx 45{,}9\,\mathrm h$.
 7. Odgovor: (a) med okoli $500$ in $548\,^\circ\mathrm C$; (b) okoli $7{,}4\,\%$ faze $\theta$; (c) okoli $46\,\mathrm h$. Nižja temperatura pomeni daljši čas, a navadno nekoliko višji vrh, ker so izločki drobnejši.
 

@@ -138,7 +138,7 @@ Skupina za podnebne podatke ima datoteko `meritve.csv` in skripto `uvoz.sh`. Las
 1. Meritve: u $4 + 2 = 6$, g $4$, o $0$, torej `chmod 640 meritve.csv`.
 2. Skripta: u $4 + 2 + 1 = 7$, g $4 + 1 = 5$, o $0$, torej `chmod 750 uvoz.sh`.
 3. `-rw-r-----` je navadna datoteka (`-`) s pravicami `rw-` (6), `r--` (4), `---` (0), torej `640`, kar je ravno prva zahteva.
-4. Umask `027` odvzame skupini `w` (2), ostalim vse (7). Datoteka: od `666` ostane `640`. Imenik: od `777` ostane `750`. Preizkus z `touch` in `stat -c '%a'` res izpiše `640` in `750`.
+4. Umask `027` odvzame skupini `w` (2), ostalim vse (7). Datoteka: od `666` ostane `640`. Imenik: od `777` ostane `750`. Preizkus s `touch` in `stat -c '%a'` res izpiše `640` in `750`.
 5. Odgovor: `chmod 640 meritve.csv`, `chmod 750 uvoz.sh`; pri `umask 027` dobijo nove datoteke `640`, novi imeniki `750`.
 
 ### Primer 2: kam gre izpis
@@ -287,7 +287,7 @@ Na koncu izpišemo izhodni status zadnje cevi (<code>echo &#36;?</code>).
 1. (a) `grep -q` ne najde Kredarice in vrne $1$, zato se `echo "ok"` ne izvede, izvede pa se `echo "manjka"`. Preusmeritev `>>` velja le za ta zadnji `echo`, zato `porocilo.txt` dobi vrstico `manjka`.
 2. V drugi cevi `2>> porocilo.txt` stoji ob `sort`, ne ob `cut`. Napaka `cut` (datoteka ne obstaja) gre zato na zaslon, ne v poročilo. `sort` dobi prazen vhod, zato je `postaje.txt` prazna ($0$ bajtov).
 3. (b) Izpiše $0$: status cevi je status zadnjega ukaza `sort`, ki je uspel, čeprav `cut` ni.
-4. (c) Pred cevjo `set -o pipefail`; tedaj je status cevi status zadnjega neuspelega ukaza. Napako `cut` v poročilo ujamemo z `cut … 2>> porocilo.txt`.
+4. (c) Pred cevjo `set -o pipefail`; tedaj je status cevi status zadnjega neuspelega ukaza. Napako `cut` v poročilo ujamemo s `cut … 2>> porocilo.txt`.
 5. (d) Cev in število vrstic:
 
 <pre><code>tail -n +2 meritve.csv |
@@ -360,7 +360,7 @@ Opazi, da umask ni odštevanje: `666` z umaskom `027` da `640`. Osmiško odštev
 ## Drugače: Uporaba v stroki
 
 - **Podnebne in okoljske podatkovne zbirke.** Meritve postaj, satelitski podatki in rezultati modelov so pogosto v tisočih besedilnih datotekah. Prvi pregled (koliko datotek, katere postaje, manjkajoče vrednosti) naredimo s cevmi `find`, `grep`, `cut`, `sort`, `uniq`, preden podatke naložimo v Python ali R.
-- **Strežniki in računski grozdi.** Na strežnikih in superračunalnikih ni grafičnega vmesnika. Naloge za računski grozd so skripte bash, dnevniki pa se pregledujejo z `tail -f dnevnik | grep NAPAKA`.
+- **Strežniki in računski grozdi.** Na strežnikih in superračunalnikih ni grafičnega vmesnika. Naloge za računski grozd so skripte bash, dnevniki pa se pregledujejo s `tail -f dnevnik | grep NAPAKA`.
 - **Varnost.** Pravice in umask določajo, kdo vidi osebne podatke na skupnem strežniku. Napaka `chmod 777` je pogost vzrok za uhajanje podatkov.
 - **Razvoj programske opreme.** Prevajanje in preizkušanje programov v C teče iz lupine; samodejni preizkusi preverjajo izhodni status (`make && ./test || echo napaka`).
 
@@ -390,7 +390,7 @@ Opazi, da umask ni odštevanje: `666` z umaskom `027` da `640`. Osmiško odštev
 - Dnevnik raste z vsakim dnem.
 ~ To bi veljalo za `>>`; enojni `>` datoteko vsakič izprazni.
 - Lupina javi napako, ker datoteka že obstaja.
-~ Bash privzeto obstoječe datoteke prepiše brez vprašanja (razen z `set -o noclobber`).
+~ Bash privzeto obstoječe datoteke prepiše brez vprašanja (razen s `set -o noclobber`).
 + V dnevniku je vedno le zadnji povzetek.
 - Povzetki se zapišejo na zaslon in v datoteko.
 ~ Preusmeritev pošlje stdout samo v datoteko; za oboje bi rabil `tee`.

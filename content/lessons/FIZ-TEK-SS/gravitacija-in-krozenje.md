@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Maja s staršema z avtodomom potuje na Hvar. Na izvozu z avtoceste, v tesni zanki, jih vse potegne v stran, čeprav oče drži stalno hitrost. Na kampu mora Maja sama nastaviti satelitsko anteno za televizijo. Navodila so kratka: »Krožnik obrni proti jugu, nagni ga približno $40^\circ$ nad obzorje in ga privij. Potem ga ne premikaj več.«
+Maja s staršema z avtodomom potuje na Hvar. Na izvozu z avtoceste, v tesni zanki, jih vse potegne v stran, čeprav oče drži stalno hitrost. V kampu mora Maja sama nastaviti satelitsko anteno za televizijo. Navodila so kratka: »Krožnik obrni proti jugu, nagni ga približno $40^\circ$ nad obzorje in ga privij. Potem ga ne premikaj več.«
 
 Maja se čudi. Navigacija v njenem telefonu ves čas lovi satelite GPS, ki se po nebu premikajo, in na vsakih nekaj minut uporablja druge. Zakaj bi bil televizijski satelit pri miru? In kako visoko ga je treba »parkirati«?
 

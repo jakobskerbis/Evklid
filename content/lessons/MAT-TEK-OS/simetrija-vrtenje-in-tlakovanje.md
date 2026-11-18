@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Naredi kratek poskus. Na list z velikimi tiskanimi črkami napiši besedi TAT in SOS. List drži pred sprednjo kamero telefona (večina telefonov predogled selfija zrcali) ali pred ogledalom. Beseda TAT ostane enaka, v besedi SOS pa sta obe črki S obrnjeni. Nato list obrni na glavo, torej ga zasukaj za pol kroga. Zdaj ostane enaka beseda SOS, TAT pa ne.
+Naredi kratek poskus. Na list z velikimi tiskanimi črkami napiši besedi TAT in SOS. List drži pred sprednjo kamero telefona (večina telefonov predogled selfija zrcali) ali pred ogledalom. Beseda TAT ostane enaka, v besedi SOS pa sta obe črki S obrnjeni. Nato list poglej naravnost (brez kamere) in ga obrni na glavo, torej ga zasukaj za pol kroga. Zdaj ostane enaka beseda SOS, TAT pa ne.
 
 Kamera je naredila **zrcaljenje**, tvoja roka pa **vrtenje**. Ti dve preslikavi sta orodje za veliko tekmovalnih nalog: koliko različnih likov lahko sestaviš, ali se vzorec ploščic sklene brez vrzeli, ali lahko mrežo pokriješ z dominami. Kdor zna lik v mislih zrcaliti in vrteti, take naloge reši hitro in brez risanja vseh možnosti.
 
@@ -208,9 +208,9 @@ Zakaj so pravilni tlakovalni liki le trije: v oglišču se morajo srečati vsaj 
 
 ? Katera vrstica opisuje pravokotnik, ki ni kvadrat?
 - $4$ osi, najmanjši zasuk $90^\circ$
-~ To velja za kvadrat. Pri pravokotniku z različnima stranicama se zasuk za $90^\circ$ ne prekrije.
+~ To velja za kvadrat. Pravokotnik z različnima stranicama se pri zasuku za $90^\circ$ ne prekrije sam s sabo.
 - $2$ osi (diagonali), najmanjši zasuk $180^\circ$
-~ Diagonala ni os pravokotnika, saj bi daljšo stranico preslikala na smer krajše.
+~ Diagonala ni os pravokotnika: daljšo stranico bi morala preslikati na krajšo, ti pa nista enako dolgi.
 + $2$ osi (simetrali stranic), najmanjši zasuk $180^\circ$
 - $0$ osi, najmanjši zasuk $180^\circ$
 ~ To opisuje paralelogram brez pravih kotov. Pravokotnik pa ima dve osi.

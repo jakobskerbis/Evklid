@@ -9,7 +9,7 @@ Zmečkaj tri zrele jagode v plastični vrečki. Dodaj žličko detergenta za pos
 
 Te niti so **DNA** iz milijonov celic jagode. Detergent je raztopil membrane celic in jeder. V hladnem alkoholu se DNA ne raztaplja, zato se sprime v vidne niti.
 
-Zakaj je ta snov tako pomembna? Iz želoda na gozdni jasi vedno zraste hrast, nikoli bukev. Iz jajčeca kosa se izvali kos, ne vrabec. Navodila, kakšno bo bitje, so zapisana v DNA. Ko razumeš, kako so zapisana, razumeš tudi, zakaj si v nečem podoben mami, v nečem pa očetu.
+Zakaj je ta snov tako pomembna? Iz želoda na gozdni jasi vedno zraste hrast, nikoli bukev. Iz jajca kosa se izvali kos, ne vrabec. Navodila, kakšno bo bitje, so zapisana v DNA. Ko razumeš, kako so zapisana, razumeš tudi, zakaj si v nečem podoben mami, v nečem pa očetu.
 
 ## Razlaga
 

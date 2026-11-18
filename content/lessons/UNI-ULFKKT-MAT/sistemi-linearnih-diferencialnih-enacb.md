@@ -166,7 +166,7 @@ $\vec{x} = C_1(0, 1)^Te^{-kt} + C_2e^{-kt}\left((0, 1)^Tt + (1/k, 0)^T\right)$. 
 
 - **Lastne vrednosti brez lastnih vektorjev.** Rešitev ni $C_1e^{\lambda_1t} + C_2e^{\lambda_2t}$ za vsako komponento z istimi konstantami. Vsak način nosi svoj lastni vektor, ki pove, v kakšnem razmerju se komponente spreminjajo.
 - **Kompleksna rešitev kot končni odgovor.** Pri realnem problemu vzemi realni in imaginarni del ene kompleksne rešitve; drugo konjugirano lastno vrednost lahko izpustiš, ker da isti rešitvi.
-- **Predpostavka, da je vsaka matrika diagonalizabilna.** Pri dvojni lastni vrednosti preveri, koliko je lastnih vektorjev (rang $A - \lambda I$). Če je le en, potrebuješ člen s faktorjem $t$, kot v primeru 4.
+- **Predpostavka, da je vsaka matrika diagonalizabilna.** Pri dvojni lastni vrednosti preveri, koliko je lastnih vektorjev (rang $A - \lambda I$). Če je le eden, potrebuješ člen s faktorjem $t$, kot v primeru 4.
 - **»Prej je vrh, hitrejši je prvi korak.«** Čas vrha je simetričen v $k_1$ in $k_2$. O tem, kateri korak je hitrejši, povesta višina vrha in potek $a(t)$.
 - **Začetni pogoj vstavljen pred superpozicijo.** Konstante določiš šele iz *splošne* rešitve; če jih vstaviš v en sam člen, rešitev ne bo zadoščala vsem komponentam.
 
@@ -261,7 +261,7 @@ kar je posplošitev integrirajočega množitelja iz enačb prvega reda. Primer: 
 ? Kaj v sistemu za A → B → C pomeni lastni vektor $(0, 1, -1)^T$ za lastno vrednost $-k_2$?
 - Ravnotežno sestavo, ko se vse pretvori.
 ~ Ravnotežje je lastni vektor za lastno vrednost $0$, to je $(0, 0, 1)^T$.
-+ Način, pri katerem se B pretvarja v C, A pa ga ni.
++ Način, pri katerem se B pretvarja v C, snovi A pa ni.
 - Smer, v kateri rešitev neomejeno raste.
 ~ Lastna vrednost $-k_2$ je negativna, zato ta način pojema, ne raste.
 > Pri tem načinu je $a = 0$, B pojema z $e^{-k_2t}$ in za enako se poveča C (vsota komponent je $0$, množina se ohranja).
@@ -320,7 +320,7 @@ I | enotska matrika | |
 C_1, C_2, C_i | konstante splošne rešitve | | | določi jih začetni pogoj
 a, b, c | koncentracije snovi A, B, C | | mol/L
 a_0 | začetna koncentracija A | | mol/L
-k_1, k_2, k | konstanti hitrosti | | min^{-1}
+k_1, k_2, k | konstante hitrosti | | min^{-1}
 k_3 | konstanta hitrosti B → D | | h^{-1}
 s | vsota $k_2 + k_3$ | s = k_2 + k_3 | h^{-1}
 d | koncentracija snovi D | | mol/L

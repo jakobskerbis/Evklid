@@ -53,8 +53,8 @@ Dokazi so ti:
 - imata lastno **krožno DNA**, podobno bakterijski;
 - imata ribosome bakterijskega tipa, **$70\mathrm{S}$** (mitohondrijski so pri sesalcih manjši, okoli $55\mathrm{S}$), zato nekateri antibiotiki, ki zavirajo bakterijske ribosome, delno zavirajo tudi mitohondrijske;
 - delita se **z delitvijo na dvoje**, podobno bakterijam, nove pa celica ne more zgraditi sama;
-- po velikosti so podobni bakterijam, približno $1\,\mu\mathrm{m}$;
-- zaporedja njihovih genov so najbolj podobna genom določenih bakterij.
+- po velikosti sta podobna bakterijam, približno $1\,\mu\mathrm{m}$;
+- zaporedja njunih genov so najbolj podobna genom določenih bakterij.
 
 :::premisli
 Zakaj mitohondrij danes ne more preživeti zunaj celice, čeprav je nekoč bil samostojna bakterija?
@@ -231,7 +231,7 @@ Velikosti celic so težko predstavljive, zato jih povečajmo tako, da je bakteri
 5. Celica kvasovke ($5\,\mu\mathrm{m}$): $5 \cdot 2500 = 12\,500\,\mu\mathrm{m} = 12{,}5\,\mathrm{mm}$, velikost kovanca.
 6. Jetrna celica ($20\,\mu\mathrm{m}$): $20 \cdot 2500 = 50\,000\,\mu\mathrm{m} = 50\,\mathrm{mm}$, velikost limone.
 
-Na tej lestvici je mitohondrij po velikosti skoraj enak bakteriji, kar se ujema z endosimbiontsko teorijo. Evkariontska celica je limona, v kateri so zrna riža.
+Na tej lestvici je mitohondrij po velikosti podoben bakteriji, kar se ujema z endosimbiontsko teorijo. Evkariontska celica je limona, v kateri so zrna riža.
 
 ## Preveri se
 

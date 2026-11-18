@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Med drugo svetovno vojno so v Veliki Britaniji gradili prve reaktivne motorje. Plinska turbina je delovala, a lopatice turbine so se v vročem plinu pod veliko centrifugalno silo počasi raztezale in pokale. Jekla in lahke kovine pri teh temperaturah niso zdržala. Metalurgi so zato razvili nikljevo zlitino s kromom ter malo titana in aluminija, imenovano Nimonic 80. Njena trdnost je izvirala iz drobnih izločkov, ki ostanejo stabilni tudi pri okoli $750\,^\circ\mathrm C$. Aluminijeva zlitina T6 se prestara že nad okoli $200\,^\circ\mathrm C$, pri $750\,^\circ\mathrm C$ pa bi se celo stalila.
+Med drugo svetovno vojno so v Veliki Britaniji gradili prve reaktivne motorje. Plinska turbina je delovala, a lopatice turbine so se v vročem plinu pod veliko centrifugalno silo počasi raztezale in pokale. Jekla in lahke kovine pri teh temperaturah niso zdržale. Metalurgi so zato razvili nikljevo zlitino s kromom ter malo titana in aluminija, imenovano Nimonic 80. Njena trdnost je izvirala iz drobnih izločkov, ki ostanejo stabilni tudi pri okoli $750\,^\circ\mathrm C$. Aluminijeva zlitina T6 se prestara že nad okoli $200\,^\circ\mathrm C$, pri $750\,^\circ\mathrm C$ pa bi se celo stalila.
 
 Iz bakra in niklja so vodniki, izmenjevalniki, ventili, propelerji, kovanci, vzmeti in lopatice motorjev. Lekcija gre od enega konkretnega primera (zakaj se baker in nikelj mešata v vsakem razmerju) do splošnih pravil za medenine, brone in superzlitine.
 
@@ -13,7 +13,7 @@ Iz bakra in niklja so vodniki, izmenjevalniki, ventili, propelerji, kovanci, vzm
 
 ### Konkreten primer: zlitina Cu-Ni
 
-Baker in nikelj imata enako kristalno mrežo (ploskovno centrirano kubično), skoraj enak atomski polmer (Cu $128\,\mathrm{pm}$, Ni $125\,\mathrm{pm}$), podobno elektronegativnost in valenco. Zato atom niklja lahko zamenja atom bakra na katerem koli mestu mreže. Nastane **neomejena trdna raztopina**: vsaka sestava od čistega bakra do čistega niklja je v trdnem stanju ena sama faza $\alpha$.
+Baker in nikelj imata enako kristalno mrežo (ploskovno centrirano kubično, FCC), skoraj enak atomski polmer (Cu $128\,\mathrm{pm}$, Ni $125\,\mathrm{pm}$), podobno elektronegativnost in valenco. Zato atom niklja lahko zamenja atom bakra na katerem koli mestu mreže. Nastane **neomejena trdna raztopina**: vsaka sestava od čistega bakra do čistega niklja je v trdnem stanju ena sama faza $\alpha$.
 
 Fazni diagram takega para je **izomorfni** diagram: zgoraj talina, spodaj $\alpha$, vmes leča, kjer sta talina in $\alpha$ skupaj.
 
@@ -72,7 +72,7 @@ Vsak tuj atom v mreži siplje elektrone in zmanjša prevodnost, že majhni dele�
 **Definicija.** **Medenina** je zlitina bakra s cinkom kot glavnim legirnim elementom.
 
 - **Medenina $\alpha$** (do okoli $37\,\%$ Zn): trdna raztopina z mrežo bakra, zelo dobro se hladno preoblikuje. CuZn30 se uporablja za globoko vlečenje (tulci, cevi). Do okoli $30\,\%$ Zn cink poveča *hkrati* trdnost in raztezek, kar je pri zlitinah redko.
-- **Medenina $\alpha + \beta$** ($37$ do $45\,\%$ Zn): vsebuje fazo $\beta$ s kubično telesno centrirano mrežo. Pri sobni temperaturi je $\beta$ urejena ($\beta'$), trša in krhkejša. Nad okoli $450\,^\circ\mathrm C$ postane neurejena in duktilna, zato te medenine **vroče** preoblikujemo (kovanje, iztiskanje). Primer je CuZn40.
+- **Medenina $\alpha + \beta$** ($37$ do $45\,\%$ Zn): vsebuje fazo $\beta$ s kubično telesno centrirano mrežo (BCC). Pri sobni temperaturi je $\beta$ urejena ($\beta'$), trša in krhkejša. Nad okoli $450\,^\circ\mathrm C$ postane neurejena in duktilna, zato te medenine **vroče** preoblikujemo (kovanje, iztiskanje). Primer je CuZn40.
 - **Avtomatna medenina** CuZn39Pb3: svinec se v bakru ne raztaplja in ostane v drobnih kroglicah. Ostružki se lomijo na kratko, struženje je hitro. Za pitno vodo so nove medenine s silicijem ali bizmutom.
 
 Dve slabosti medenine:
@@ -154,7 +154,7 @@ $R = \dfrac{L}{\sigma A}$, prevodnost v $\%$ IACS $= \dfrac{\sigma}{58{,}0\,\mat
 
 ### Primer 2: strjevanje zlitine Cu-Ni
 
-Talino z $35\,\%$ Ni (masni delež) ohlajamo. Pri $1250\,^\circ\mathrm C$ seka vezna črta likvidus pri $31{,}5\,\%$ Ni in solidus pri $42{,}5\,\%$ Ni. Kolikšna sta deleža faz in masi faz v $5\,\mathrm{kg}$ zlitine? Preveri z bilanco niklja.
+Talino s $35\,\%$ Ni (masni delež) ohlajamo. Pri $1250\,^\circ\mathrm C$ seka vezna črta likvidus pri $31{,}5\,\%$ Ni in solidus pri $42{,}5\,\%$ Ni. Kolikšna sta deleža faz in masi faz v $5\,\mathrm{kg}$ zlitine? Preveri z bilanco niklja.
 
 **Podatki:** $C_0 = 35\,\%$, $C_\mathrm{L} = 31{,}5\,\%$, $C_\alpha = 42{,}5\,\%$, $m = 5\,\mathrm{kg}$, $T = 1250\,^\circ\mathrm C$
 **Iščemo:** $W_\mathrm{L}$, $W_\alpha$, masi faz
@@ -190,12 +190,12 @@ napetost v korenu lopatice s stalnim prerezom: $\sigma = \dfrac{\rho\,\omega^2 (
 3. (a) $\sigma = \dfrac{8700 \cdot 7{,}018 \cdot 10^{5} \cdot 0{,}07}{2} \approx 2{,}137 \cdot 10^{8}\,\mathrm{Pa} \approx 214\,\mathrm{MPa}$. Napetost ni odvisna od prereza: večji prerez nosi večjo maso.
 4. Interpolacija: $P$ pade za $1500$ na $100\,\mathrm{MPa}$, torej $P \approx 27\,000 - 15 \cdot 13{,}7 \approx 26\,794$.
 5. (b) $T = \dfrac{P}{C + \log_{10} t_\mathrm{r}} = \dfrac{26\,794}{20 + 4} \approx 1116\,\mathrm K$, to je okoli $843\,^\circ\mathrm C$.
-6. (c) Pri $T = 1166{,}4\,\mathrm K$: $\log_{10} t_\mathrm{r} = \dfrac{26\,794}{1166{,}4} - 20 \approx 2{,}97$, torej $t_\mathrm{r} \approx 10^{2{,}97} \approx 940\,\mathrm h$.
+6. (c) Pri $T = 1166{,}4\,\mathrm K$: $\log_{10} t_\mathrm{r} = \dfrac{26\,794}{1166{,}4} - 20 \approx 2{,}972$, torej $t_\mathrm{r} \approx 10^{2{,}972} \approx 940\,\mathrm h$.
 7. Odgovor: napetost v korenu je okoli $214\,\mathrm{MPa}$, kovina sme biti vroča največ okoli $843\,^\circ\mathrm C$, pri $50\,\mathrm K$ višji temperaturi pa se čas do loma skrajša z $10\,000$ na okoli $940\,\mathrm h$, več kot desetkrat. Zato so hlajenje lopatic in toplotne zaščitne plasti tako pomembni.
 
 ### Primer 4 – zdaj ti: merilni upor
 
-Merilni upor (šant) ima pri $20\,^\circ\mathrm C$ upornost $0{,}0100\,\Omega$ in skozenj teče $20\,\mathrm A$. Med obratovanjem se segreje na $70\,^\circ\mathrm C$. Temperaturni koeficient upornosti bakra je $0{,}0039\,\mathrm{K^{-1}}$, konstantana okoli $2 \cdot 10^{-5}\,\mathrm{K^{-1}}$. Za koliko odstotkov se spremeni upornost in kakšno napetost pokaže voltmeter na šantu iz vsakega materiala?
+Merilni upor (šant) ima pri $20\,^\circ\mathrm C$ upornost $0{,}0100\,\Omega$ in skozenj teče $20\,\mathrm A$. Med obratovanjem se segreje na $70\,^\circ\mathrm C$. Temperaturni koeficient upornosti bakra je $0{,}0039\,\mathrm{K^{-1}}$, konstantana okoli $2 \cdot 10^{-5}\,\mathrm{K^{-1}}$. Za koliko odstotkov se spremeni upornost in kolikšno napetost pokaže voltmeter na šantu iz vsakega materiala?
 
 **Podatki:** $R_0 = 0{,}0100\,\Omega$, $I = 20\,\mathrm A$, $\Delta T = 50\,\mathrm K$, $\alpha_\mathrm{Cu} = 0{,}0039\,\mathrm{K^{-1}}$, $\alpha_\mathrm{K} = 2 \cdot 10^{-5}\,\mathrm{K^{-1}}$
 **Iščemo:** relativni spremembi upornosti, napetosti $U$

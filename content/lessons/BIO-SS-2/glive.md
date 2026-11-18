@@ -15,7 +15,7 @@ Zakaj zdravilo, ki ubija bakterije, glive niti ne opraska? In zakaj bi Luka potr
 
 *Kdo je povzročitelj?* Lukovo težavo imenujemo **atletsko stopalo**. Povzroča ga gliva, ki raste v vlažni, topli koži med prsti. Bazeni in tuši so zanjo idealni. Gliva v koži tvori tanke cevaste niti, **hife**. Prepletene hife sestavljajo **micelij**: mrežo, ki se širi po koži.
 
-*Kako se gliva hrani?* Hife nimajo klorofila, zato je gliva **heterotrof**. Usta ali prebavila tudi nima. V okolico izloča encime, ki razgradijo keratin, beljakovino poroženele kože, na majhne molekule. Te nato vsrka skozi steno in membrano. Temu rečemo **zunanja prebava**: hrano gliva prebavi zunaj sebe.
+*Kako se gliva hrani?* Hife nimajo klorofila, zato je gliva **heterotrof**. Ust ali prebavil tudi nima. V okolico izloča encime, ki razgradijo keratin, beljakovino poroženele kože, na majhne molekule. Te nato vsrka skozi steno in membrano. Temu rečemo **zunanja prebava**: hrano gliva prebavi zunaj sebe.
 
 *Zakaj antibiotik ni pomagal?* Pri bakterijah si videl, da penicilin napade steno iz peptidoglikana. Glivna celica je **evkariontska**: ima jedro in mitohondrije kot naše celice, njena stena pa je iz **hitina**, snovi iz oklepa žuželk. Antibiotik nima kaj napasti. **Antimikotik** (zdravilo proti glivam) pa zavre gradnjo ergosterola, snovi v membrani glive, ki je naše celice nimajo.
 
@@ -95,7 +95,7 @@ $n = \dfrac{t}{t_g}$, nato $N = N_0 \cdot 2^n$
 
 **Rešitev:**
 
-1. Uri pretvorimo v minute: $t = 6 \cdot 60\,\mathrm{min} = 360\,\mathrm{min}$.
+1. Ure pretvorimo v minute: $t = 6 \cdot 60\,\mathrm{min} = 360\,\mathrm{min}$.
 2. Število generacij: $n = \dfrac{360}{90} = 4$, ker vsako brstenje traja $90$ minut.
 3. Število se v vsaki generaciji podvoji: $N = 1000 \cdot 2^4 = 16000$.
 4. Odgovor: po šestih urah je v gojišču $16\,000$ kvasovk. Toliko jih laboratorij potrebuje, da preveri, kateri antimikotik deluje.

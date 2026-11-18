@@ -210,7 +210,7 @@ $f(x_1) \approx 0{,}5875$, $f'(x_1) \approx 22{,}535$, zato $x_2 = x_1 - \frac{f
 
 ## Pogoste napake
 
-- **Napačen predznak v Newtonovem predpisu.** Kdo zapiše $x_{n+1} = x_n + \frac{f(x_n)}{f'(x_n)}$, ker si zapomni »popravek«, ne pa njegove smeri. Približki se tako oddaljujejo od ničle. Pravilno: odštej količnik; preizkus je, da se mora $|f|$ v naslednjem koraku zmanjšati.
+- **Napačen predznak v Newtonovem predpisu.** Marsikdo zapiše $x_{n+1} = x_n + \frac{f(x_n)}{f'(x_n)}$, ker si zapomni »popravek«, ne pa njegove smeri. Približki se tako oddaljujejo od ničle. Pravilno: odštej količnik; preizkus je, da se mora $|f|$ v naslednjem koraku zmanjšati.
 - **Bisekcija obdrži napačno polovico.** Študent vidi $f(a) < 0$ in $f(c) < 0$ ter obdrži $[a;\ c]$, »ker sta oba negativna«. Ničla pa je tam, kjer se predznak **zamenja**, torej v $[c;\ b]$. Primerjaj predznaka krajišč, ne vrednosti s sredino.
 - **»Enak predznak v krajiščih pomeni, da ničle ni.«** Za $x^2 - 2$ na $[-2;\ 2]$ je $f(-2) = f(2) = 2$, ničli pa sta dve. Enak predznak pomeni le, da bisekcije na tem intervalu ne moreš začeti. Interval razdeli ali si nariši graf.
 - **»Newton vedno konvergira k najbližji ničli.«** Iz $x_0 = 6$ so približki odskočili do $-18$ in končali pri bolj oddaljeni ničli $1{,}34$, iz $x_0 = 5$ smo delili z nič. Kvadratična hitrost velja le dovolj blizu ničle; daleč od nje lahko metoda skače ali se oddalji.

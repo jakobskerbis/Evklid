@@ -13,7 +13,7 @@ Odgovor je bil da, in spremenil je naravoslovje. To, kar je skupno toploti in gi
 
 **Mamljiva ideja: energija se porabi.** »Baterija v igralni konzoli je prazna, energijo smo porabili.« Tako govorimo vsak dan, in zveni, kot da je energija izginila. Joule je pokazal, da to ne drži.
 
-Njegov poskus: utež je padala in prek vrvice vrtela lopatice v posodi z vodo. Lopatice so mešale vodo, ta pa se je **segrela**. Več kot je utež padla, bolj se je voda segrela, in to vedno v enakem razmerju. Gibanje uteži ni izginilo. Postalo je toplota vode.
+Njegov poskus: utež je padala in prek vrvice vrtela lopatice v posodi z vodo. Lopatice so mešale vodo, ta pa se je **segrela**. Globlje ko je utež padla, bolj se je voda segrela, in to vedno v enakem razmerju. Gibanje uteži ni izginilo. Postalo je toplota vode.
 
 **Kaj je energija.** Energija je zmožnost, da nekaj premaknemo, segrejemo, osvetlimo ali spremenimo. Merimo jo v joulih, večje količine v kilojoulih: $1\,\mathrm{kJ} = 1000\,\mathrm{J}$.
 
@@ -61,7 +61,7 @@ V simulaciji spodaj, »Pretvorbe energije«, spusti skejterja najprej brez trenj
 
 - Rastline s pomočjo sončne svetlobe izdelajo hrano. V njej je kemijska energija, ki jo dobiš, ko poješ kruh ali sadje.
 - Sonce segreva Zemljo neenakomerno, zato se zrak premika: nastane **veter**.
-- Sonce izparja vodo iz morij. Para se v višini ohladi in pade kot dež na hribe. Reke tečejo navzdol in poganjajo **hidroelektrarne**.
+- Sonce segreva morja, zato voda iz njih izpareva. Para se v višini ohladi in pade kot dež na hribe. Reke tečejo navzdol in poganjajo **hidroelektrarne**.
 - Premog, nafta in zemeljski plin so nastali pred milijoni let iz ostankov rastlin in drobnih živih bitij. V njih je shranjena sončna energija iz davnine.
 
 Izjeme so redke: jedrska energija urana, toplota iz notranjosti Zemlje (geotermalna energija) in plimovanje, ki ga povzroča predvsem Luna.
@@ -160,7 +160,7 @@ V lučki $30 - 9 = 21\,\mathrm{J}$. Skupaj $20 + 21 = 41\,\mathrm{J}$ toplote. P
 - **»Energija se porabi in izgine.«** Energija se ne uniči. Pretvori se, večinoma v toploto, ki se razprši v okolico. Ko po spustu manjka gibalne energije, išči toploto in zvok.
 - **»Elektrika iz vtičnice je vir energije.«** Električna energija ni vir v naravi. Vtičnica le pripelje energijo iz elektrarne, ki jo je dobila iz vode, premoga, urana, vetra ali Sonca.
 - **»Sonce daje energijo samo sončnim celicam.«** Sonce je izvor energije hrane, vetra, rek in tudi premoga, nafte in plina.
-- **»Jedrska energija je obnovljiva, ker elektrarna ne kadi.«** Obnovljiv pomeni, da se vir sproti obnavlja. Urana v Zemlji je omejeno, zato je neobnovljiv vir. Les pa je obnovljiv, čeprav gori, ker drevesa spet zrastejo.
+- **»Jedrska energija je obnovljiva, ker elektrarna ne kadi.«** Obnovljiv pomeni, da se vir sproti obnavlja. Zaloge urana v Zemlji so omejene, zato je uran neobnovljiv vir. Les pa je obnovljiv, čeprav gori, ker drevesa spet zrastejo.
 - **»Pri pretvorbi lahko dobiš več energije, kot si je vložil.«** Koristna energija in toplota sta skupaj enaki vloženi energiji, nikoli več.
 
 ## Povzetek

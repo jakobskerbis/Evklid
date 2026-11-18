@@ -160,7 +160,7 @@ Negativno, ker je $3 \cdot \frac{5}{6}$ več kot $2$. $3 \cdot \frac{5}{6} = \fr
 
 - **Večje številke, večje število.** Luka je mislil, da je $-2{,}8 > -2{,}5$, ker je $2{,}8 > 2{,}5$. To velja le za pozitivna števila. Pri negativnih je večje tisto, ki je bližje $0$, zato $-2{,}8 < -2{,}5$.
 - **Seštevanje števcev in imenovalcev.** $\frac{1}{2} + \frac{1}{3} = \frac{2}{5}$ je napačno, ker seštevamo različno velike dele. Prava pot gre prek skupnega imenovalca: $\frac{3}{6} + \frac{2}{6} = \frac{5}{6}$.
-- **Deljenje brez obrata.** Kdo izračuna $\frac{1}{2} : \frac{1}{4} = \frac{1}{8}$, ker namesto deljenja kar zmnoži. Polovica vsebuje dve četrtini, zato $\frac{1}{2} \cdot 4 = 2$.
+- **Deljenje brez obrata.** Marsikdo izračuna $\frac{1}{2} : \frac{1}{4} = \frac{1}{8}$, ker namesto deljenja kar zmnoži. Polovica vsebuje dve četrtini, zato $\frac{1}{2} \cdot 4 = 2$.
 - **Izgubljen predznak pri ulomku.** Pri $\left(-\frac{1}{2}\right)\cdot\left(-\frac{4}{3}\right)$ kdo zapiše $-\frac{2}{3}$, ker je minus v ulomku manj opazen. Dva negativna faktorja dasta pozitiven zmnožek: $\frac{2}{3}$.
 - **Napačen vrstni red.** V $2 - 3 \cdot (-4)$ najprej odštejejo in dobijo $4$. Množenje ima prednost, zato je pravilno $14$.
 
@@ -254,7 +254,7 @@ Množenje z negativnim številom pa točko prezrcali čez $0$ in jo raztegne: $(
 
 :::simboli
 a | števec ulomka | | | celo število
-b | imenovalec ulomka | | | $b \neq 0$
+b | imenovalec ulomka; pri seštevanju števec drugega ulomka | | | kot imenovalec $b \neq 0$
 c | imenovalec (pri seštevanju) ali števec drugega ulomka (pri deljenju) | | | pri deljenju $c \neq 0$
 d | imenovalec drugega ulomka | | | $d \neq 0$
 \bar{t} | povprečna temperatura | \bar{t} = (t_1 + t_2 + t_3) : 3 | ^\circ\mathrm{C}

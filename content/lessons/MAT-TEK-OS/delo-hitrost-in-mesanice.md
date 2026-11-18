@@ -154,7 +154,7 @@ Za pot nazaj ostane $3 - 2 = 1$ ura, zato je $v_2 = 60\,\mathrm{km} : 1\,\mathrm
 
 - Hitrost dela: kdor konča v času $t$, opravi $\dfrac{1}{t}$ dela na uro. Pri skupnem delu se hitrosti seštevajo: $\dfrac{1}{t} = \dfrac{1}{t_1} + \dfrac{1}{t_2}$.
 - Povprečna hitrost je celotna pot, deljena s celotnim časom. Za enaki poti: $\dfrac{2v_1v_2}{v_1 + v_2}$, pri različnih hitrostih vedno manj od navadnega povprečja.
-- Srečevanje: čas je razdalja, deljena s $v_1 + v_2$ (nasproti) ali $v_1 - v_2$ (dohitevanje).
+- Srečevanje: čas je razdalja, deljena z $v_1 + v_2$ (nasproti) ali $v_1 - v_2$ (dohitevanje).
 - Mešanice: seštevaj količine snovi, ne odstotkov. Pri dodajanju se spremeni tudi celotna količina.
 - Rezultat preveri: skupni čas je krajši od najkrajšega, mešanica je med obema odstotkoma.
 

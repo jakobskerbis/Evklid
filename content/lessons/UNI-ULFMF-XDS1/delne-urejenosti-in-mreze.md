@@ -325,7 +325,7 @@ Vsaka enoelementna množica je povezana z dvema dvoelementnima, ki jo vsebujeta 
 P | delno urejena množica | |
 S | podmnožica delno urejene množice | |
 a, b, c | elementi delno urejene množice | |
-x, y | komplementa elementa $a$ | |
+x, y | elementa delno urejene množice | | | v dokazu enoličnosti: komplementa elementa $a$
 a' | komplement elementa $a$ | | | $a \wedge a' = 0$, $a \vee a' = 1$
 D_n | množica deliteljev števila $n$ | |
 d | delitelj števila $n$ | |

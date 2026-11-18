@@ -148,7 +148,7 @@ izotermno: $p_1 V_1 = p_2 V_2$
 3. Čas: $t_\mathrm{p} = \dfrac{600}{25}\,\mathrm{min} = 24\,\mathrm{min}$.
 4. Odgovor: potapljač lahko na $20\,\mathrm{m}$ ostane $24$ minut. Na površini (pri $1\,\mathrm{bar}$) bi z istim zrakom dihal trikrat dlje.
 
-Strategija: pri izotermnih nalogah računaj kar z $pV$ v $\mathrm{bar\,L}$. Pretvarjati v pascale in kubične metre ni treba, ker se enote pokrajšajo.
+Strategija: pri izotermnih nalogah računaj kar s $pV$ v $\mathrm{bar\,L}$. Pretvarjati v pascale in kubične metre ni treba, ker se enote pokrajšajo.
 
 ### Primer 4: zdaj ti – en krog toplotnega stroja
 
@@ -191,7 +191,7 @@ $A_\mathrm{pl} = 600\,\mathrm{J} + 0 - 200\,\mathrm{J} = 400\,\mathrm{J}$, kar j
 - **Nadtlak namesto absolutnega tlaka.** Manometer kaže, za koliko je tlak večji od zunanjega. Prištej $p_0$, izračunaj, na koncu po potrebi spet odštej.
 - **»Pri izotermni spremembi plin ne prejme toplote.«** Toplota in temperatura nista isto. Pri stalni $T$ je $\Delta W_n = 0$, toplota pa je enaka delu plina.
 - **»Delo plina je $pV$« ali »pri izohorni spremembi plin opravi delo, ker tlak raste«.** Delo je povezano s *spremembo* prostornine: ploščina pod krivuljo. Brez $\Delta V$ ni dela.
-- **Predznak dela.** Pri stiskanju je delo plina negativno. Kdor ga šteje pozitivno, v krožni spremembi sešteje ploščini namesto da ju odšteje.
+- **Predznak dela.** Pri stiskanju je delo plina negativno. Kdor ga šteje pozitivno, v krožni spremembi sešteje ploščini, namesto da ju odšteje.
 
 ## Povzetek
 

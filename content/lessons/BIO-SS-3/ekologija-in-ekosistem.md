@@ -166,7 +166,7 @@ Predstavljaj si nakupovalni center.
 - Stavba, elektrika, ogrevanje in svetloba so kot **biotop**. Vsi ljudje v centru skupaj, prodajalci in kupci, so kot **združba**. Center z ljudmi in vsem, kar se v njem dogaja, je kot **ekosistem**.
 - Vsi prodajalci iste trgovske verige so kot **populacija**: ista »vrsta«, isti prostor.
 - **Habitat** je naslov: pekarna je v pritličju ob vhodu. **Niša** je poklic: peče kruh, odprta je od šestih zjutraj, kupci so tisti, ki zajtrkujejo.
-- Če ob vhod odpre še druga pekarna z istim kruhom in istim časom, se trgovini borita za iste kupce. Ena navadno zapre. Prav tako se godi dvema vrstama z enako nišo. Cvetličarna poleg pekarne pa preživi brez težav, ker ima drug »poklic«.
+- Če ob vhodu odpre še druga pekarna z istim kruhom in istim časom, se trgovini borita za iste kupce. Ena navadno zapre. Prav tako se godi dvema vrstama z enako nišo. Cvetličarna poleg pekarne pa preživi brez težav, ker ima drug »poklic«.
 
 Analogija ima meje: trgovine si poklic izberejo same, vrste pa so se svojim nišam prilagajale skozi dolgo evolucijo.
 

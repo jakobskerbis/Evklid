@@ -42,7 +42,7 @@ Mesto bi bilo zapisano pri vsakem igralcu kluba posebej. Ob selitvi bi ga morali
 
 **Imena delov.** Tabeli v relacijskem modelu rečemo **relacija**. Vrstica je **zapis** (ena stvar iz sveta, npr. en igralec). Stolpec je **atribut** (ena lastnost, npr. goli). Vsak atribut ima **domeno**, to je nabor dovoljenih vrednosti: goli so cela števila od $0$ naprej, ime je besedilo.
 
-**Ključi.** **Primarni ključ** je atribut (ali skupina atributov), ki vsak zapis enolično določi. V tabeli igralcev je to `id_igralca`: dva igralca se lahko imenujeta Ana, številke $101$ pa ima le eden. **Tuji ključ** je atribut, ki kaže na primarni ključ druge tabele. `id_kluba` v tabeli igralcev je tuji ključ. Baza ne dovoli vpisati igralca s številko kluba, ki je ni v tabeli klubov.
+**Ključi.** **Primarni ključ** je atribut (ali skupina atributov), ki vsak zapis enolično določi. V tabeli igralcev je to `id_igralca`: dva igralca se lahko imenujeta Ana, številko $101$ pa ima le eden. **Tuji ključ** je atribut, ki kaže na primarni ključ druge tabele. `id_kluba` v tabeli igralcev je tuji ključ. Baza ne dovoli vpisati igralca s številko kluba, ki je ni v tabeli klubov.
 
 En klub ima več igralcev, vsak igralec pa en klub. Taki povezavi rečemo **ena proti mnogo** ($1 : N$). Tuji ključ je vedno na strani »mnogo«.
 

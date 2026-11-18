@@ -231,7 +231,7 @@ Ana je naredila destilacijo: v lončku ima pitno vodo. Ko voda v jami izpari do 
 ~ Zrna soli in mletega popra so podobno velika, zato sito ne pomaga.
 - Iz zmesi poberem sol z magnetom.
 ~ Niti sol niti poper nista magnetna.
-+ Zmes raztopim v vodi, precedim skozi filter in filtrat izparim.
++ Zmes stresem v vodo in premešam, precedim skozi filter in filtrat izparim.
 > Sol se raztopi, poper ne: poper ostane na filtru, sol pa dobiš nazaj, ko voda izpari.
 
 :::simboli

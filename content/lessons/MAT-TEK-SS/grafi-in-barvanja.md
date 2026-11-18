@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Poskus za odmor: zberi šest prijateljev. Za vsak par preverite, ali imata oba drug drugega shranjena v imeniku telefona. Na list nariši šest pik, po eno za vsakega. Če imata oba v paru drug drugega shranjena, pike poveži s polno črto, sicer s črtkano.
+Poskus za odmor: zberi šest prijateljev. Za vsak par preverite, ali imata oba drug drugega shranjena v imeniku telefona. Na list nariši šest pik, po eno za vsakega. Če imata oba v paru drug drugega shranjena, njuni piki poveži s polno črto, sicer s črtkano.
 
 Parov je $15$. Ko so vse črte narisane, poišči tri pike, med katerimi so vse tri črte enake: vse polne ali vse črtkane. Našel jih boš. Ne zaradi sreče: pri šestih ljudeh se jim ni mogoče izogniti, ne glede na to, kdo ima koga shranjenega. Pri petih ljudeh to ni več res.
 
@@ -190,7 +190,7 @@ točka: 4,5; 1 | F | desno
 - Sive črte $BC$, $CD$ in $BD$ še čakajo na barvo. Če katerokoli pobarvaš polno, se zapre poln trikotnik z $A$.
 - Če vse tri pobarvaš črtkano, je trikotnik $BCD$ črtkan.
 
-Povezav $E$ in $F$ ter vseh drugih sploh ne potrebujemo. To je tipično za tekmovalne dokaze: odločilen je majhen del slike.
+Povezav do $E$ in $F$ ter vseh drugih sploh ne potrebujemo. To je tipično za tekmovalne dokaze: odločilen je majhen del slike.
 
 ## Drugače: Bolj natančno
 
@@ -243,7 +243,7 @@ točka: 4; -0,5 | E | pod
 > Za »pet ne zadošča« je potrebno eno konkretno barvanje $K_5$ brez enobarvnega trikotnika. Petkotnik z zvezdo je tak.
 
 ? V omrežju je $15$ naprav in $45$ povezav. Vsaka naprava je povezana z enakim številom drugih. S koliko?
-= 6
+= 6 | 0
 ~ 3 | Delil si $45$ s $15$ in pozabil, da vsako povezavo štejeta obe krajišči: $15d = 2 \cdot 45$.
 > Po lemi o rokovanju je $15 \cdot d = 2 \cdot 45 = 90$, zato $d = 6$.
 

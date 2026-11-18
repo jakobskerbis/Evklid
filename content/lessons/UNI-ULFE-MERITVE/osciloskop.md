@@ -231,7 +231,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Sonda 10:1 ima v konici upor $R_1 = 9\,\mathrm{M\Omega}$ z nastavljivim kondenzatorjem $C_1$. Vhod osciloskopa ima $R_2 = 1\,\mathrm{M\Omega}$ in $C_2 = 20\,\mathrm{pF}$ (kabel vštet). a) Kolikšen mora biti $C_1$? b) Kolikšna je impedanca, ki jo kompenzirana sonda pokaže merjencu pri $10\,\mathrm{MHz}$ (upornost zanemari, ker je mnogo večja)? c) Kondenzator je pomotoma nastavljen na $3\,\mathrm{pF}$. Na sondo pripeljemo pravokotni signal od $0$ do $5\,\mathrm{V}$. Kakšna je napetost na vhodu tik po robu in v ustaljenem stanju, za koliko odstotkov rob prenihi in s katero časovno konstanto se prenihaj umiri?
+Sonda 10:1 ima v konici upor $R_1 = 9\,\mathrm{M\Omega}$ z nastavljivim kondenzatorjem $C_1$. Vhod osciloskopa ima $R_2 = 1\,\mathrm{M\Omega}$ in $C_2 = 20\,\mathrm{pF}$ (kabel vštet). a) Kolikšen mora biti $C_1$? b) Kolikšna je impedanca, ki jo kompenzirana sonda pokaže merjencu pri $10\,\mathrm{MHz}$ (upornost zanemari, ker je mnogo večja)? c) Kondenzator je pomotoma nastavljen na $3\,\mathrm{pF}$. Na sondo pripeljemo pravokotni signal od $0$ do $5\,\mathrm{V}$. Kakšna je napetost na vhodu tik po robu in v ustaljenem stanju, za koliko odstotkov rob preniha in s katero časovno konstanto se prenihaj umiri?
 
 **Rešitev:**
 
@@ -310,7 +310,7 @@ Pasovna širina je kot vztrajnost kazalca: težak kazalec ne sledi hitrim sunkom
 ~ Previsok nivo prepreči proženje in slika drsi ali zamrzne, oblike vrhov pa ne spremeni.
 - Vhod je v sklopitvi AC.
 ~ AC sklopitev povzroči počasno povešanje ravnih vrhov, ne kratkih konic na robovih.
-> Pri $C_1 > R_2C_2/R_1$ visoke frekvence (robovi) pridejo skozi z večjim razmerjem kot enosmerna komponenta; rob prenihi in se nato umiri (Naloga 1).
+> Pri $C_1 > R_2C_2/R_1$ visoke frekvence (robovi) pridejo skozi z večjim razmerjem kot enosmerna komponenta; rob preniha in se nato umiri (Naloga 1).
 
 ? Študent izračuna pravi čas vzpona: »$t_o = 0{,}35/200\,\mathrm{MHz} = 1{,}75\,\mathrm{ns}$; izmerjeno $t_m = 2{,}5\,\mathrm{ns}$; torej $t_s = t_m - t_o = 0{,}75\,\mathrm{ns}$.« Kateri korak je napačen?
 - izračun $t_o$
@@ -320,7 +320,7 @@ Pasovna širina je kot vztrajnost kazalca: težak kazalec ne sledi hitrim sunkom
 + odštevanje $t_m - t_o$
 > Časa vzpona se seštevata kvadratno: $t_s = \sqrt{2{,}5^2 - 1{,}75^2}\,\mathrm{ns} \approx 1{,}79\,\mathrm{ns}$, ne $0{,}75\,\mathrm{ns}$.
 
-? Tehnik v laboratoriju posname valovitost napajalnika s $f_s = 50\,\mathrm{kS/s}$. V spektru vidi močno črto pri $10\,\mathrm{kHz}$, proizvajalec pa pravi, da stikalni napajalnik dela pri $60\,\mathrm{kHz}$. Kaj je najverjetnejša razlaga?
+? Tehnik v laboratoriju posname valovitost napajalnika z $f_s = 50\,\mathrm{kS/s}$. V spektru vidi močno črto pri $10\,\mathrm{kHz}$, proizvajalec pa pravi, da stikalni napajalnik dela pri $60\,\mathrm{kHz}$. Kaj je najverjetnejša razlaga?
 - Napajalnik je pokvarjen in dela s šestkrat nižjo frekvenco.
 ~ Zrcaljenje razloži črto brez okvare; preden sklepamo na okvaro, preverimo pogoj vzorčenja.
 + Komponenta pri $60\,\mathrm{kHz}$ je nad $f_s/2$ in se zrcali na $|60 - 50|\,\mathrm{kHz} = 10\,\mathrm{kHz}$.

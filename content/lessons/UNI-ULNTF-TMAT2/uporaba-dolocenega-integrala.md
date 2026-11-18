@@ -23,7 +23,7 @@ ploščina lika med grafom, osjo $x$ in navpičnicama $x = a$, $x = b$. Lik razr
 
 Ploščina je vedno pozitivna, zato vzamemo absolutno vrednost:
 $$A = \int_a^b |f(x)|\,dx.$$
-V praksi poiščemo ničle $f$, interval razdelimo nanje in seštejemo absolutne vrednosti posameznih integralov. Za sinus: $A = 2 + |-2| = 4$. Prva misel iz uvoda je s tem ovržena.
+V praksi poiščemo ničle $f$, interval pri njih razdelimo in seštejemo absolutne vrednosti posameznih integralov. Za sinus: $A = 2 + |-2| = 4$. Prva misel iz uvoda je s tem ovržena.
 
 :::premisli
 Napovej, koliko vrne $\int_{-1}^{1} x^3\,dx$ in kolikšna je ploščina lika med $y = x^3$ in osjo $x$ na $[-1, 1]$.
@@ -82,7 +82,7 @@ $A = \displaystyle\int_a^b \big(f(x) - g(x)\big)\,dx$, kjer je $f$ zgoraj
 **Rešitev:**
 
 1. Presečišči: $x^2 = 2x \Rightarrow x(x - 2) = 0$, torej $a = 0$, $b = 2$.
-2. Kdo je zgoraj: pri $x = 1$ je $2x = 2$ in $x^2 = 1$, zato je premica nad parabolo.
+2. Katera je zgoraj: pri $x = 1$ je $2x = 2$ in $x^2 = 1$, zato je premica nad parabolo.
 3. $A = \int_0^2 (2x - x^2)\,dx = \left[x^2 - \frac{x^3}{3}\right]_0^2 = 4 - \frac{8}{3} = \frac{4}{3}$.
 4. Odgovor: ikona ima ploščino $\frac{4}{3}\,\mathrm{cm^2} \approx 1{,}33\,\mathrm{cm^2}$.
 
@@ -150,7 +150,7 @@ $\int_0^2 (x^3 - 4x)\,dx = (4 - 8) - 0 = -4$, graf je tam pod osjo. Ploščina j
 ## Pogoste napake
 
 - **Integral enačimo s ploščino.** »$\int_{-2}^{2} (x^3 - 4x)\,dx = 0$, torej je ploščina $0$.« Kosi pod osjo se štejejo negativno in odštejejo od kosov nad osjo. Popravek: poišči ničle, integriraj po delih in seštej absolutne vrednosti.
-- **Spodnja minus zgornja.** Kdor računa $\int (g - f)\,dx$, dobi negativno »ploščino« ali pa zamenja meje, da znak popravi na slepo. Popravek: s točko med presečiščema preveri, kdo je zgoraj, in odštevaj zgornja minus spodnja.
+- **Spodnja minus zgornja.** Kdor računa $\int (g - f)\,dx$, dobi negativno »ploščino« ali pa zamenja meje, da znak popravi na slepo. Popravek: s točko med presečiščema preveri, katera je zgoraj, in odštevaj zgornja minus spodnja.
 - **Pozabljen kvadrat pri vrtenini.** $V = \pi \int f\,dx$ je napačno, ker je presek krog s ploščino $\pi f^2$. Prav tako je narobe $\pi \left(\int f\,dx\right)^2$: kvadriramo funkcijo, ne integrala.
 - **Obroč kot kvadrat razlike.** Pri votlem telesu ni $\pi \int (f - g)^2\,dx$, ker ploščina obroča ni $\pi(f - g)^2$. Prav je $\pi(f^2 - g^2)$: velik krog minus luknja.
 - **$f$ namesto $f'$ v dolžini loka.** $\int \sqrt{1 + f^2}\,dx$ meša višino z naklonom. Vodoravna premica $y = 5$ ima na $[0, 1]$ dolžino $1$, ne $\sqrt{26}$. Popravek: pod korenom je vedno odvod.
@@ -179,7 +179,7 @@ Lik omejujeta parabola $y = x^2 + 1$ in premica $y = x + 3$. (a) Izračunaj plo�
 **Rešitev:**
 
 1. Presečišči: $x^2 + 1 = x + 3 \Rightarrow x^2 - x - 2 = (x - 2)(x + 1) = 0$, torej $a = -1$, $b = 2$.
-2. Kdo je zgoraj: pri $x = 0$ je $x + 3 = 3$ in $x^2 + 1 = 1$, zato je premica nad parabolo. Na $[-1, 2]$ sta obe funkciji pozitivni, torej velja $0 \le g \le f$ za $f(x) = x + 3$, $g(x) = x^2 + 1$.
+2. Katera je zgoraj: pri $x = 0$ je $x + 3 = 3$ in $x^2 + 1 = 1$, zato je premica nad parabolo. Na $[-1, 2]$ sta obe funkciji pozitivni, torej velja $0 \le g \le f$ za $f(x) = x + 3$, $g(x) = x^2 + 1$.
 3. Ploščina: $A = \int_{-1}^{2} (x + 2 - x^2)\,dx = \left[\frac{x^2}{2} + 2x - \frac{x^3}{3}\right]_{-1}^{2} = \frac{10}{3} - \left(-\frac{7}{6}\right) = \frac{9}{2}$.
 4. Razlika kvadratov: $f^2 - g^2 = (x^2 + 6x + 9) - (x^4 + 2x^2 + 1) = -x^4 - x^2 + 6x + 8$.
 5. Integral: $\int_{-1}^{2} (-x^4 - x^2 + 6x + 8)\,dx = \left[-\frac{x^5}{5} - \frac{x^3}{3} + 3x^2 + 8x\right]_{-1}^{2} = \frac{284}{15} - \left(-\frac{67}{15}\right) = \frac{117}{5}$.

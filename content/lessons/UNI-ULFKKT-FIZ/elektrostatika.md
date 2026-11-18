@@ -212,7 +212,7 @@ $Q = \sigma S = 7{,}0 \cdot 10^{-4} \cdot 1{,}0 \cdot 10^{-12}\,\mathrm{C} = 7{,
 ## Povzetek
 
 - Coulombov zakon: $F = \dfrac{|q_1q_2|}{4\pi\varepsilon\varepsilon_0r^2}$; v snovi z dielektričnostjo $\varepsilon$ je sila $\varepsilon$-krat manjša.
-- Poljska jakost $\vec{E} = \vec{F}/q$; točkasti naboj $E = Q/(4\pi\varepsilon_0r^2)$; polja seštevamo vektorsko.
+- Poljska jakost $\vec{E} = \vec{F}/q$; točkasti naboj $E = |Q|/(4\pi\varepsilon_0r^2)$; polja seštevamo vektorsko.
 - Potencial $\varphi = Q/(4\pi\varepsilon_0r)$ je skalar; napetost $U = \varphi_A - \varphi_B$, delo $A = qU$; $E_x = -\mathrm{d}\varphi/\mathrm{d}x$, homogeno polje $E = U/d$.
 - Kondenzator: $C = Q/U$, ploščati $C = \varepsilon\varepsilon_0S/d$; vzporedno $C = \sum C_k$, zaporedno $1/C = \sum 1/C_k$.
 - Energija $W = \tfrac{1}{2}CU^2 = Q^2/(2C)$, gostota energije $w = \tfrac{1}{2}\varepsilon\varepsilon_0E^2$.

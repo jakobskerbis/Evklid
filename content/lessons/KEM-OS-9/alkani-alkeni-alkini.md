@@ -119,7 +119,7 @@ Alken: $\mathrm{C}_n\mathrm{H}_{2n}$, ime = koren + številka prvega C v dvojni 
 1. V verigi so $4$ atomi C, zato koren but-.
 2. Ena dvojna vez pomeni alken, končnica -en.
 3. Številčimo z leve: dvojna vez je med C2 in C3. Z desne je prav tako med C2 in C3, zato je številka $2$.
-4. Vodikov je $3 + 1 + 1 + 3 = 8$, kar se ujema s $2 \cdot 4 = 8$.
+4. Vodikov je $3 + 1 + 1 + 3 = 8$, kar se ujema z $2 \cdot 4 = 8$.
 5. Odgovor: spojina je but-2-en, $\mathrm{C_4H_8}$.
 
 ### Primer 3: kateri plin je v jeklenki

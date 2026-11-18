@@ -198,8 +198,8 @@ Evkariontski gen ima tri eksone: ekson 1 ima $210\,\mathrm{nt}$, od tega prvih $
 2. Kodonov je $\frac{606}{3} = 202$, aminokislin $201$.
 3. (b) Brez eksona 2 manjka $145$ nukleotidov. Ker je $145 = 3 \cdot 48 + 1$, ostanek pri deljenju s $3$ ni nič.
 4. Ekson 3 se zato bere v premaknjenem okviru: od stika eksonov 1 in 3 naprej so kodoni drugačni, prvotni stop kodon ni v okviru. Beljakovina ima enakih le prvih okoli $53$ aminokislin iz eksona 1 ($160 = 3 \cdot 53 + 1$), nato drugačno zaporedje do naključnega stop kodona.
-5. (c) Celotna mRNA ima tedaj $160 + 144 + 302 = 606\,\mathrm{nt}$, spet $201$ aminokislin. Ker je $144 = 3 \cdot 48$, izpust eksona 2 okvir ohrani: ostane $160 + 302 = 462\,\mathrm{nt}$, torej $154$ kodonov in $153$ aminokisline, $48$ manj. Konec C je enak; spremeni se lahko le aminokislina na stiku eksonov 1 in 3 (kodon na stiku sestavljata en nukleotid eksona 1 in dva nukleotida eksona 3).
-6. Odgovor: (a) $201$ aminokislin; (b) izpust eksona s $145\,\mathrm{nt}$ premakne okvir za ekson 3, ker $145$ ni deljivo s $3$; (c) pri $144\,\mathrm{nt}$ bi nastala krajša beljakovina z ohranjenim koncem C. Zato so eksoni, ki se alternativno izrezujejo, pogosto dolgi večkratnik $3$.
+5. (c) Celotna mRNA ima tedaj $160 + 144 + 302 = 606\,\mathrm{nt}$, spet za $201$ aminokislino. Ker je $144 = 3 \cdot 48$, izpust eksona 2 okvir ohrani: ostane $160 + 302 = 462\,\mathrm{nt}$, torej $154$ kodonov in $153$ aminokislin, $48$ manj. Konec C je enak; spremeni se lahko le aminokislina na stiku eksonov 1 in 3 (kodon na stiku sestavljata en nukleotid eksona 1 in dva nukleotida eksona 3).
+6. Odgovor: (a) $201$ aminokislina; (b) izpust eksona s $145\,\mathrm{nt}$ premakne okvir za ekson 3, ker $145$ ni deljivo s $3$; (c) pri $144\,\mathrm{nt}$ bi nastala krajša beljakovina z ohranjenim koncem C. Zato so eksoni, ki se alternativno izrezujejo, pogosto dolgi večkratnik $3$.
 
 ### Naloga 2
 

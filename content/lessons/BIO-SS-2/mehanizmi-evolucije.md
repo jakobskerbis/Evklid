@@ -41,7 +41,7 @@ Ker izbor vidi le fenotip, se **recesivni** alel (izrazi se le, če ga ima osebe
 |---|---|---|
 | mutacija | doda nov alel | bakterija dobi alel za encim, ki razgradi penicilin |
 | naravni izbor | poveča delež alelov z boljšim fenotipom | antibiotik ubije občutljive, odporne ostanejo |
-| migracija | priseljenci prinesejo ali odnesejo alele (pretok genov) | bolnik prenese odporne bakterije v drugo bolnišnico |
+| migracija | selitve prinesejo ali odnesejo alele (pretok genov) | bolnik prenese odporne bakterije v drugo bolnišnico |
 | genski zdrs | naključno spremeni pogostost v majhni populaciji | po močnem zdravljenju preživi le peščica bakterij, ne nujno najboljših |
 
 Simulacija spodaj »Genski sklad: zdrs in izbor« prikazuje pogostost $p$ alela A skozi generacije. Izberi $N = 20$ in nekajkrat pritisni »10 generacij«, nato enako ponovi z $N = 1000$. Preden pritisneš, napovej, v kateri populaciji bo $p$ bolj naključno skakal, in napoved preveri. Nato vklopi izbor proti aa in opazuj, kako počasi pada delež alela a, ko postane redek.

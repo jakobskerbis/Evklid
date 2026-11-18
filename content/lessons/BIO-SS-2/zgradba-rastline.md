@@ -47,7 +47,7 @@ Sosednje celice povezujejo kanalčki skozi steno, **plazmodezmije**.
 
 **Oporno tkivo** rastlino drži pokonci. **Kolenhim** ima žive celice, odebeljene v vogalih, in je prožen; najdeš ga v rebrih listnih pecljev zelene. **Sklerenhim** ima odmrle celice z debelimi olesenelimi stenami; iz njega so vlakna lanu in trdna lupina oreha.
 
-**Prevajalno tkivo** sta dve vrsti cevi. **Ksilem (les)** prevaja vodo in mineralne snovi od korenin navzgor. Sestavljajo ga **traheide** in **traheje** (dolge cevi iz celic brez prečnih sten); obe sta odmrli. **Floem (ličje)** prevaja raztopine organskih snovi, predvsem sladkorja, iz listov v druge dele rastline. Njegove **sitaste cevi** so žive, prečne stene imajo luknjičaste kot sito. Ksilem in floem ležita skupaj v **žilah** (žilnih snopih).
+**Prevajalno tkivo** sta dve vrsti cevi. **Ksilem (les)** prevaja vodo in mineralne snovi od korenin navzgor. Sestavljajo ga **traheide** in **traheje** (dolge cevi iz celic brez prečnih sten); oboje so odmrle. **Floem (ličje)** prevaja raztopine organskih snovi, predvsem sladkorja, iz listov v druge dele rastline. Njegove **sitaste cevi** so žive, prečne stene imajo luknjičaste kot sito. Ksilem in floem ležita skupaj v **žilah** (žilnih snopih).
 
 :::premisli
 Celice ksilema morajo odmreti, da začnejo opravljati svojo nalogo. Predstavljaj si, da bi ostale žive, s citoplazmo in tanko steno kot celice parenhima. Kaj bi šlo pri prevajanju vode narobe?

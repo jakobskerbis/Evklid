@@ -42,7 +42,7 @@ V simulaciji spodaj »Stopnje točk v grafu« s klikom na dve točki dodajaj pov
 
 **Neskončni spust.** V prejšnji lekciji je monovarianta, ki je nenegativno celo število, zagotovila, da se postopek konča. Neskončni spust je ista misel, obrnjena v dokaz, da nekaj **ne obstaja**. Zaporedje pozitivnih celih števil ne more strogo padati v nedogled. Če iz vsake rešitve naloge znaš sestaviti manjšo, rešitve ni.
 
-Lep primer prihaja iz glasbe. V enakomerni uglasitvi je oktava razdeljena na $12$ enakih poltonov. Vsak polton pomnoži frekvenco z istim faktorom $f$, po $12$ poltonih pa se frekvenca podvoji. Tritonus obsega $6$ poltonov, pol oktave. Če ga zaigraš dvakrat zapored, dobiš oktavo, zato velja $f^6 \cdot f^6 = 2$ in tritonus pomnoži frekvenco z $\sqrt{2}$. Ton, ki je tritonus nad $440\,\mathrm{Hz}$, ima frekvenco približno $440 \cdot 1{,}4142 \approx 622{,}3\,\mathrm{Hz}$. Čista kvinta ima razmerje frekvenc $3 : 2$, razmerje dveh celih števil. Ali ga ima tudi tritonus?
+Lep primer prihaja iz glasbe. V enakomerni uglasitvi je oktava razdeljena na $12$ enakih poltonov. Vsak polton pomnoži frekvenco z istim faktorom $f$, po $12$ poltonih pa se frekvenca podvoji. Tritonus obsega $6$ poltonov, pol oktave. Če ga zaigraš dvakrat zapored, dobiš oktavo, zato velja $f^6 \cdot f^6 = 2$ in tritonus pomnoži frekvenco z $\sqrt{2}$. Ton, ki je tritonus nad $440\,\mathrm{Hz}$, ima frekvenco približno $440 \cdot 1{,}4142 \approx 622{,}25\,\mathrm{Hz}$. Čista kvinta ima razmerje frekvenc $3 : 2$, razmerje dveh celih števil. Ali ga ima tudi tritonus?
 
 Recimo, da je $\sqrt{2} = \frac{p}{q}$ za pozitivni celi števili $p$ in $q$. Med vsemi takimi zapisi izberemo tistega z najmanjšim $p$. Kvadriramo in dobimo enačbo $p^2 = 2q^2$. Desna stran je soda, kvadrat lihega števila pa je lih, zato je $p$ sod: $p = 2r$. Vstavimo in dobimo $4r^2 = 2q^2$, torej enačbo $q^2 = 2r^2$. Zdaj je tudi $\sqrt{2} = \frac{q}{r}$, pri tem pa je $q < p$, ker je $q = \frac{p}{\sqrt{2}}$. Našli smo zapis z manjšim števcem, kar nasprotuje izbiri. Tritonus v enakomerni uglasitvi nima razmerja celih števil.
 
@@ -209,7 +209,7 @@ $z^3$ je sod, zato je $z = 2c$. Iz $2a^3 + 4b^3 = 8c^3$ po deljenju z $2$ dobimo
 <<RACUN
 vrednost: 4*3/2 | 6
 vrednost: 2+2+1+1 | 6
-vrednost: 440*sqrt(2) | 622.3
+vrednost: 440*sqrt(2) | 622.25
 enako: (2*r)^2 | 4*r^2
 enako: 9*t^2+6*t+1 | (3*t+1)^2
 enako: 9*t^2-6*t+1 | (3*t-1)^2

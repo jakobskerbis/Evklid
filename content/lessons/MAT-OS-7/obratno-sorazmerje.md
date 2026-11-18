@@ -121,7 +121,7 @@ $x_1 \cdot y_1 = x_2 \cdot y_2$
 
 Osem delavcev bi tlakovalo dvorišče v $15$ dneh. Po $5$ dneh dela se jim pridružita še dva enako hitra delavca. Koliko dni skupaj traja tlakovanje?
 
-**Podatki:** $8$ delavcev, $15$ dni za celo delo; po $5$ dneh pridejo še $2$ delavca
+**Podatki:** $8$ delavcev, $15$ dni za celo delo; po $5$ dneh prideta še $2$ delavca
 **Iščemo:** skupno število dni
 
 :::formula
@@ -175,7 +175,7 @@ $12 \cdot y = 720$, torej $y = 720 : 12 = 60$ desk. Deske so ožje, zato jih je 
 - Količini sta obratno sorazmerni, če se ob povečanju ene za nekajkrat druga zmanjša za enakokrat.
 - Stalen je **zmnožek**: $x \cdot y = k$; $k$ je koeficient obratnega sorazmerja.
 - Za dva para velja $x_1 \cdot y_1 = x_2 \cdot y_2$.
-- Če eno količino pomnožimo z ulomkom $\dfrac{p}{q}$, se druga pomnoži z $\dfrac{q}{p}$.
+- Če eno količino pomnožimo z ulomkom $\dfrac{p}{q}$, se druga pomnoži s $\dfrac{q}{p}$.
 - Pri premem sorazmerju je stalen količnik, pri obratnem zmnožek. Padanje samo še ni dokaz.
 - Tipični primeri: delavci in dnevi, širina in število desk, dolžina in število kosov.
 - Rezultat preveri s smerjo: več delavcev, manj dni.
@@ -231,7 +231,7 @@ Zveza $x + y = 100$ pri deski je tretja vrsta: stalna je vsota. Ko $x$ raste, $y
 - Vsaki zvezi, kjer ena količina raste in druga pada, rečemo obratno sorazmerje.
 ~ Pri deski $100\,\text{cm}$ ostanek pada, a zmnožek ni stalen. Padati mora enakokrat.
 - Ko se ena podvoji, se druga zmanjša za $2$.
-~ Ne »za $2$«, ampak »na polovico«: obratno sorazmerje govori o kolikokratnikih.
+~ Ne »za $2$«, ampak »na polovico«: obratno sorazmerje govori o »kolikokrat«.
 > Pri obratnem sorazmerju velja $x \cdot y = k$ za vse pare.
 
 ? Tina je rešila nalogo: »$4$ zidarji pozidajo zid v $6$ dneh. V koliko dneh ga pozida $8$ zidarjev?« Zapisala je $\dfrac{4}{6} = \dfrac{8}{y}$ in dobila $y = 12$ dni. Kje je napaka?

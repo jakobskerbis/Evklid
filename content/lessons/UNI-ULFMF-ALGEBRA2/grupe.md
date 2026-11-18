@@ -217,7 +217,7 @@ Znati moraš povedati:
 8. Vsota: $1 + 10 + 15 + 20 + 20 + 30 + 24 = 120$.
 9. (b) Število transpozicij po tipih: $0, 1, 2, 2, 3, 3, 4$. Sode so identiteta, dvojne transpozicije, trojni in petkratni cikli: $1 + 15 + 20 + 24 = 60 = \frac{5!}{2}$.
 10. (c) Red $10$ bi zahteval cikla dolžin $5$ in $2$, torej $7$ točk. V $S_5$ jih je le $5$, zato elementa reda $10$ ni (čeprav $10$ deli $120$).
-11. Odgovor: redi $1, 2, 3, 4, 5, 6$ s $1, 25, 20, 30, 24, 20$ elementi; $A_5$ ima $60$ elementov; elementa reda $10$ ni. (Grupa vrtenj ikozaedra iz Primera 2 je izomorfna $A_5$: ima prav tako $15$ elementov reda $2$, $20$ reda $3$ in $24$ reda $5$.)
+11. Odgovor: redi $1, 2, 3, 4, 5, 6$ z $1, 25, 20, 30, 24, 20$ elementi; $A_5$ ima $60$ elementov; elementa reda $10$ ni. (Grupa vrtenj ikozaedra iz Primera 2 je izomorfna $A_5$: ima prav tako $15$ elementov reda $2$, $20$ reda $3$ in $24$ reda $5$.)
 
 ### Naloga 2
 
@@ -253,7 +253,7 @@ točka: 4; 0 | 3 | desno
 - Zrcaljenje čez os skozi $1$ zamenja $2$ in $3$: $(2\;3)$; podobno $(1\;3)$ in $(1\;2)$.
 - Z identiteto je to $6$ simetrij, natanko vseh $3! = 6$ permutacij oglišč. Grupa simetrij trikotnika je torej $S_3$.
 
-Vrtenja $\{\mathrm{id}, (1\;2\;3), (1\;3\;2)\}$ tvorijo podgrupo reda $3$ (to je $A_3$), zrcaljenja so liha. Dve zrcaljenji zaporedoma data vrtenje: $(1\;2)(2\;3) = (1\;2\;3)$. Predznak tu pove, ali simetrija ohranja smer obhoda oglišč.
+Vrtenja $\{\mathrm{id}, (1\;2\;3), (1\;3\;2)\}$ tvorijo podgrupo reda $3$ (to je $A_3$), zrcaljenja so liha. Dve zrcaljenji zaporedoma dasta vrtenje: $(1\;2)(2\;3) = (1\;2\;3)$. Predznak tu pove, ali simetrija ohranja smer obhoda oglišč.
 
 ## Drugače: Uporaba v stroki
 
@@ -331,7 +331,7 @@ h, h_1, h_2 | elementi podgrupe $H$ | |
 g | generator ali poljuben element | |
 k | število odsekov, eksponent ali dolžina cikla | |
 p | praštevilo | |
-n | stopnja simetrične grupe | |
+n | naravno število: stopnja $S_n$, modul v $\mathbb Z_n$ ali velikost matrike | |
 S_n | simetrična grupa | | | $n!$ elementov
 A_n | alternirajoča grupa | | | sode permutacije
 \sigma, \tau, \rho | permutacije | |

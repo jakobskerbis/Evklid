@@ -337,7 +337,7 @@ Pet meritev upora: $99{,}6$; $100{,}4$; $100{,}1$; $99{,}8$ in $100{,}6\,\Omega$
 ~ Uporabil si $\sigma$ namesto standardne napake $\sigma/\sqrt n$; to je razpon posameznih meritev.
 + $[48{,}04; 51{,}96]$
 - $[49{,}51; 50{,}49]$
-~ Delil si s $n$ namesto s $\sqrt n$; standardna napaka je $4{,}0/4 = 1{,}0$, ne $0{,}25$.
+~ Delil si z $n$ namesto s $\sqrt n$; standardna napaka je $4{,}0/4 = 1{,}0$, ne $0{,}25$.
 > $\sigma/\sqrt n = 4{,}0/4 = 1{,}0$; $1{,}96 \cdot 1{,}0 = 1{,}96$; interval $50{,}0 \pm 1{,}96$.
 
 ? Raziskovalec poveča število meritev s $25$ na $100$, vse drugo ostane enako. Kaj se zgodi?

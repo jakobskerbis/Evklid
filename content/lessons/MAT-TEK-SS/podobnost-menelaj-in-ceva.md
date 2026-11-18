@@ -13,7 +13,7 @@ Prizora sta videti različna: v prvem je ena premica, v drugem tri, ki se sreča
 
 ## Razlaga
 
-**Zemljevid je podoben pokrajini.** Pri merilu $1 : 25\,000$ je vsaka razdalja v naravi $25\,000$-krat daljša kot na papirju, koti pa ostanejo enaki. Taka lika sta **podobna**, število $k = 25\,000$ je **koeficient podobnosti**. Razmerje dveh razdalj je na zemljevidu in v naravi enako. Ploščina pa se poveča za $k^2$, saj se raztegneta obe smeri.
+**Zemljevid je podoben pokrajini.** Pri merilu $1 : 25\,000$ je vsaka razdalja v naravi $25\,000$-krat daljša kot na papirju, koti pa ostanejo enaki. Taka lika sta **podobna**, število $k = 25\,000$ je **koeficient podobnosti**. Razmerje dveh razdalj je na zemljevidu in v naravi enako. Ploščina pa se poveča $k^2$-krat, saj se raztegneta obe smeri.
 
 Za razmerja na stranicah trikotnika potrebujemo dve orodji:
 
@@ -273,7 +273,7 @@ Q | presečišče ceste $EF$ s podaljškom $BC$ | | |
 G | presečišče transverzale z vzporednico skozi $C$ | | | v dokazu Menelajevega izreka
 S | ploščina trikotnika | | | $S_{ABP}$ je ploščina trikotnika $ABP$
 q, x | iskana razdalja od $B$ do točke na podaljšku | | km |
-k | koeficient podobnosti | | – | ploščine se spremenijo za $k^2$
+k | koeficient podobnosti | | – | ploščine se povečajo $k^2$-krat
 :::
 
 <<RACUN

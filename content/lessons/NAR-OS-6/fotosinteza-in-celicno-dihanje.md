@@ -44,7 +44,7 @@ Iz glukoze rastlina zgradi vse, kar potrebuje: les, liste, plodove. Viške shran
 
 **Druga napačna ideja: »Rastline ne dihajo, ker delajo kisik.«** Ali pa: »Podnevi delajo fotosintezo, ponoči dihajo.« Obe trditvi sta napačni.
 
-Rastlina potrebuje energijo, da raste, odpira cvetove in vsrkava vodo. To energijo dobi iz glukoze. Glukozo »razgradi« s kisikom v vsakem živem delu: v listu, steblu, korenini in cvetu. Ta proces je **celično dihanje**:
+Rastlina potrebuje energijo, da raste, odpira cvetove in vsrkava rudninske snovi. To energijo dobi iz glukoze. Glukozo »razgradi« s kisikom v vsakem živem delu: v listu, steblu, korenini in cvetu. Ta proces je **celično dihanje**:
 
 **glukoza + kisik → ogljikov dioksid + voda + energija**
 
@@ -154,7 +154,7 @@ Sledi enemu delcu ogljikovega dioksida. Zjutraj ga izdihne violinist, ki vadi ob
 
 V iglici sonce posveti na klorofil. Delec ogljikovega dioksida se sreča z vodo, ki je prišla iz tal po deblu, in skupaj postaneta del glukoze. Kisik, ki pri tem nastane, uide skozi režo nazaj v zrak.
 
-Glukoza potuje po deblu navzdol. Del je porabi korenina za dihanje, da dobi energijo za vsrkavanje vode. Del pa postane les, nova letnica. Čez sto let iz tega lesa nastane resonančna plošča nove violine. Na njej morda nekoč zaigra vnuk tistega violinista.
+Glukoza potuje po deblu navzdol. Del je porabi korenina za dihanje, da dobi energijo za vsrkavanje rudninskih snovi. Del pa postane les, nova letnica. Čez sto let iz tega lesa nastane resonančna plošča nove violine. Na njej morda nekoč zaigra vnuk tistega violinista.
 
 ## Drugače: Korak za korakom s številkami
 

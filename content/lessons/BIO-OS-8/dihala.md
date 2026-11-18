@@ -108,7 +108,7 @@ $V = n \cdot V_1$
 
 ### Primer 2: koliko kisika ostane v telesu
 
-Astronavt vdihne $0{,}5\,\mathrm{L}$ zraka s $21\,\%$ kisika in približno enako količino izdihne, a z le $16\,\%$ kisika. Koliko kisika iz enega vdiha ostane v telesu?
+Astronavt vdihne $0{,}5\,\mathrm{L}$ zraka z $21\,\%$ kisika in približno enako količino izdihne, a z le $16\,\%$ kisika. Koliko kisika iz enega vdiha ostane v telesu?
 
 **Podatki:** $V_1 = 0{,}5\,\mathrm{L}$, delež kisika v vdihanem zraku $21\,\% = 0{,}21$, v izdihanem $16\,\% = 0{,}16$
 **Iščemo:** kisik, ki ostane v telesu, $\Delta V$

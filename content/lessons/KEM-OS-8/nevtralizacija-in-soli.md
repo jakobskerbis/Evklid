@@ -153,7 +153,7 @@ $\mathrm{HNO_3 + KOH \longrightarrow KNO_3 + H_2O}$. Kislina ima en vodik, baza 
 - **Sol je samo kuhinjska sol.** Beseda sol pomeni celo skupino ionskih spojin. Kalijev nitrat, kalcijev klorid in kalijev sulfat so prav tako soli.
 - **Nevtralizacija vedno da pH 7.** Le, če se količini kisline in baze točno ujemata. Če baze dodaš preveč, je raztopina bazična, kot v simulaciji pri več kot $20\,\mathrm{mL}$.
 - **Razbita skupina v formuli soli.** Zapis $\mathrm{KSO_4}$ ali $\mathrm{K(SO_4)_2}$ je napačen. Sulfat ima naboj $2-$, zato potrebuješ dva iona $\mathrm{K^+}$: $\mathrm{K_2SO_4}$.
-- **Indeks namesto koeficienta.** Kdor uredi enačbo z $\mathrm{H_4O_2}$ namesto $2\,\mathrm{H_2O}$, je spremenil snov. Število molekul vode spreminjaš samo s koeficientom.
+- **Indeks namesto koeficienta.** Kdor uredi enačbo s $\mathrm{H_4O_2}$ namesto $2\,\mathrm{H_2O}$, je spremenil snov. Število molekul vode spreminjaš samo s koeficientom.
 
 ## Povzetek
 

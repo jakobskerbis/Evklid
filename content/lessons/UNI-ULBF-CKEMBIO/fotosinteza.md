@@ -333,7 +333,7 @@ n_\mathrm{f} | število fotonov na $\mathrm{CO_2}$ | | –
 \eta | izkoristek pretvorbe energije | \eta = \frac{\Delta G}{n_\mathrm{f} E_\mathrm{m}} | –
 \Delta G | sprememba Gibbsove energije na mol $\mathrm{CO_2}$ | | kJ/mol | okoli 478
 \varphi | razmerje oksigenacij proti karboksilacijam | | –
-n | število molekul ali fotonov | | mol
+n | množina molekul ali fotonov | | mol | v Nalogi 1 število fotonov na neto $\mathrm{CO_2}$
 m | masa | m = n M | g
 M | molska masa | | g/mol
 e | elektron | | | v zapisu $e^-$

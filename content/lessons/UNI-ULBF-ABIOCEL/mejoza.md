@@ -141,7 +141,7 @@ $\dfrac{6{,}4\,\mathrm{pg}}{2} = 3{,}2\,\mathrm{pg}$, to je $1C$, polovica koli�
 
 ## Pogoste napake
 
-- **»Mejoza I je kot mitoza, le dvakrat zapored.«** Kdor tako misli, v anafazi I loči sestrske kromatide. V resnici gresta v anafazi I narazen homologna kromosoma, kromatidi pa ostaneta skupaj. Zato se število kromosomov prepolovi že v mejozi I.
+- **»Mejoza je kot mitoza, le dvakrat zapored.«** Kdor tako misli, v anafazi I loči sestrske kromatide. V resnici gresta v anafazi I narazen homologna kromosoma, kromatidi pa ostaneta skupaj. Zato se število kromosomov prepolovi že v mejozi I.
 - **Štetje kromatid namesto kromosomov.** Po mejozi I celica s $4$ kromosomi kaže $8$ kromatid, zato jo kdo razglasi za diploidno. Kromosome štej po centromerah; pomembno je, ali je iz vsakega para eden ali oba.
 - **»Pred mejozo II se DNA spet podvoji.«** Ne: med mejozo I in II ni faze S. Prav zato iz $4C$ pridemo do $1C$ in ne nazaj do $2C$.
 - **»Prekrižanje poteka med sestrskima kromatidama.«** Te so enake, izmenjava ne bi spremenila ničesar. Rekombinacijo da izmenjava med nesestrskima kromatidama homolognih kromosomov.

@@ -157,7 +157,7 @@ $\dfrac{140}{400} = 0{,}35$, torej $35\,\%$. Timina je prav tako $35\,\%$, gvani
 
 ## Pogoste napake
 
-- **»Kožna celica ima samo gene za kožo.«** Ker kožna celica dela le kožo, se zdi, da ji ostala navodila manjkajo. Vsaka celica z jedrom ima vseh $46$ kromosomov in vse gene, uporablja pa le nekatere. Zato genski test lahko naredijo iz celic lica.
+- **»Kožna celica ima samo gene za kožo.«** Ker kožna celica dela le kožo, se zdi, da ji ostala navodila manjkajo. Vsaka telesna celica z jedrom ima vseh $46$ kromosomov in vse gene, uporablja pa le nekatere. Zato genski test lahko naredijo iz celic lica.
 - **»Gen in kromosom sta isto« ali »gen je večji od kromosoma«.** Oba sta iz DNA, zato ju zamenjujemo. Kromosom je cela molekula DNA z beljakovinami, gen pa je njen kratek odsek. En kromosom ima od nekaj sto do nekaj tisoč genov.
 - **»Pri mitozi se število kromosomov razpolovi.«** To se zgodi pri mejozi. Mitoza iz celice s $46$ kromosomi naredi $2$ celici s po $46$ kromosomi, ker se DNA pred tem podvoji.
 - **Napačni pari baz pri računu.** Kdor misli, da je $A = G$, ali kdor od $100\,\%$ odšteje le en delež, dobi napačne deleže. Pravilo je $A = T$ in $G = C$, zato iz $G = 18\,\%$ sledi $A = \dfrac{100 - 2 \cdot 18}{2} = 32$, torej $32\,\%$.
@@ -190,7 +190,7 @@ Sledi številu kromosomov skozi življenje ene celice in nastanek otroka.
 3. Mitoza: vsaka od $2$ novih celic dobi $46$ kromosomov. Ponoviš lahko od 1. koraka.
 4. Mejoza, prva delitev (DNA je že podvojena kot v 2. koraku): iz vsakega para gre v novo celico en kromosom, zato ima vsaka celica $23$ kromosomov (še vedno po $2$ kromatidi).
 5. Mejoza, druga delitev: kromatidi se ločita, nastanejo $4$ spolne celice s po $23$ kromosomi.
-6. Oploditev: $23 + 23 = 46$. Prva celica otroka ima spet $46$ kromosomov in začne se deliti z mitozo.
+6. Oploditev: $23 + 23 = 46$. Prva celica otroka ima spet $46$ kromosomov in se začne deliti z mitozo.
 
 Na vsakem koraku se vprašaj: ali se je DNA podvojila ali razdelila? Podvojevanje podvoji kromatide, delitev jih razdeli.
 

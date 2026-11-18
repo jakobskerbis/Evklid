@@ -64,7 +64,7 @@ $$\int_a^b f(x)\, dx = f(\xi)(b - a).$$
 
 Število $\bar f = \dfrac{1}{b - a} \displaystyle\int_a^b f(x)\, dx$ je **povprečna vrednost** funkcije na $[a, b]$. Pravokotnik z višino $\bar f$ ima enako ploščino kot lik pod grafom.
 
-*Dokaz.* Zvezna funkcija na $[a, b]$ zavzame najmanjšo vrednost $m$ in največjo $M$. Po oceni je $m \le \bar f \le M$, po izreku o vmesnih vrednostih pa obstaja $\xi \in [a, b]$ s $f(\xi) = \bar f$. Brez zveznosti izrek ne velja: za $f = 0$ na $[0, 1)$ in $f = 1$ na $[1, 2]$ je $\bar f = \frac{1}{2}$, vrednosti $\frac12$ pa $f$ ne zavzame.
+*Dokaz.* Zvezna funkcija na $[a, b]$ zavzame najmanjšo vrednost $m$ in največjo $M$. Po oceni je $m \le \bar f \le M$, po izreku o vmesnih vrednostih pa obstaja $\xi \in [a, b]$ z $f(\xi) = \bar f$. Brez zveznosti izrek ne velja: za $f = 0$ na $[0, 1)$ in $f = 1$ na $[1, 2]$ je $\bar f = \frac{1}{2}$, vrednosti $\frac12$ pa $f$ ne zavzame.
 
 **5. Osnovni izrek analize.** Naj bo $f$ zvezna na $[a, b]$. Funkcija
 
@@ -301,7 +301,7 @@ Približno izračunajmo $\int_0^1 x^2\, dx$ z Riemannovimi vsotami za $n = 4$ in
 
 ## Drugače: Bolj natančno
 
-**Darbouxove vsote.** Za delitev $P$ naj bo $m_i = \inf_{[x_{i-1}, x_i]} f$ in $M_i = \sup_{[x_{i-1}, x_i]} f$. **Spodnja** in **zgornja** vsota sta $s(P) = \sum m_i \Delta x_i$ in $S(P) = \sum M_i \Delta x_i$. Funkcija je integrabilna natanko tedaj, ko za vsak $\varepsilon > 0$ obstaja delitev $P$ s $S(P) - s(P) < \varepsilon$. Tedaj je integral skupna vrednost $\sup_P s(P) = \inf_P S(P)$.
+**Darbouxove vsote.** Za delitev $P$ naj bo $m_i = \inf_{[x_{i-1}, x_i]} f$ in $M_i = \sup_{[x_{i-1}, x_i]} f$. **Spodnja** in **zgornja** vsota sta $s(P) = \sum m_i \Delta x_i$ in $S(P) = \sum M_i \Delta x_i$. Funkcija je integrabilna natanko tedaj, ko za vsak $\varepsilon > 0$ obstaja delitev $P$ z $S(P) - s(P) < \varepsilon$. Tedaj je integral skupna vrednost $\sup_P s(P) = \inf_P S(P)$.
 
 Za zvezno funkcijo na $[a, b]$ to sledi iz **enakomerne zveznosti**: za $\varepsilon > 0$ obstaja $\delta$, da je $|f(x) - f(y)| < \frac{\varepsilon}{b - a}$, kadar je $|x - y| < \delta$. Za delitev s podintervali, krajšimi od $\delta$, je $M_i - m_i < \frac{\varepsilon}{b - a}$ in zato $S(P) - s(P) < \varepsilon$.
 
@@ -357,28 +357,27 @@ x | spremenljivka integracije | |
 a | spodnja meja integracije | |
 b | zgornja meja integracije | |
 d | oznaka diferenciala | | | dx pove, po kateri spremenljivki integriramo
-R | Riemannova vsota | R = \sum_{i=1}^{n} f(\xi_i)\, \Delta x_i |
-n | število podintervalov | | | v ∫xⁿ dx eksponent potence, n ≠ −1
-i | zaporedna številka podintervala | | | i = 1, …, n
+R | Riemannova vsota | R = \sum_{i=1}^{n} f(\xi_i)\, \Delta x_i | | pri delu plina splošna plinska konstanta
+n | število podintervalov | | | v ∫xⁿ dx eksponent potence, n ≠ −1; pri delu plina množina
+i | zaporedna številka podintervala; v primeru 4 jakost padavin (v mm/h) | | | i = 1, …, n
 \xi_i | izbrana točka v i-tem podintervalu | |
 \Delta x_i | dolžina i-tega podintervala | \Delta x_i = x_i - x_{i-1} |
 \Delta x | dolžina podintervala pri enakomerni delitvi | \Delta x = \frac{b - a}{n} |
 \xi | točka iz izreka o povprečni vrednosti | | | ξ leži na [a, b]
-F | primitivna funkcija funkcije f | F' = f |
+F | primitivna funkcija funkcije f | F' = f | | v točki 9 je $F(x)$ sila
 F' | odvod primitivne funkcije | F' = f |
 t | spremenljivka pod integralom | | | v primeru z zdravilom čas v urah
 h | prirastek spremenljivke x; v primeru 3 višina gladine, v primeru 4 višina padavin | | | h ≠ 0, nato h → 0
-i | jakost padavin | | mm/h | v primeru 4
 \bar i | povprečna jakost padavin | \bar i = \frac{1}{b - a} \int_a^b i(t)\, dt | mm/h |
 \xi_h | točka med x in x + h | |
-S | ploščina lika med grafoma | S = \int_a^b \big(f(x) - g(x)\big)\, dx | | velja, če je f ≥ g na [a, b]
-g | spodnja funkcija (spodnji graf) | |
-V | prostornina vrtenine | V = \pi \int_a^b f(x)^2\, dx |
+S | ploščina lika med grafoma | S = \int_a^b \big(f(x) - g(x)\big)\, dx | | velja, če je f ≥ g na [a, b]; $S(P)$ je zgornja vsota
+g | spodnja funkcija (spodnji graf) | | | pri substituciji notranja funkcija $t = g(x)$
+V | prostornina vrtenine | V = \pi \int_a^b f(x)^2\, dx | | pri delu plina prostornina plina
 A | ploščina prereza vrtenine | A(x) = \pi f(x)^2 |
 \bar A | povprečna ploščina prereza | \bar A = \frac{1}{b - a} \int_a^b A(x)\, dx |
 k | smerni koeficient premice y = kx | | | Naloga 1
 G | integral z zgornjo mejo x² | G(x) = \int_0^{x^2} e^{-t^2}\, dt | | Naloga 2
 \Phi | integral s spremenljivo zgornjo mejo | \Phi(x) = \int_a^x f(t)\, dt | | primitivna funkcija f
-Q | prostorninski pretok | | m³/s
-\bar c | povprečna koncentracija zdravila v krvi | \bar c = \frac{1}{b - a} \int_a^b c(t)\, dt | mg/L | v zgledu na intervalu od 0 do 6 h
+Q | prostorninski pretok | | m³/s | v točki 9 poljubna količina
+\bar c | povprečna koncentracija zdravila v plazmi | \bar c = \frac{1}{b - a} \int_a^b c(t)\, dt | mg/L | v zgledu na intervalu od 0 do 6 h
 :::

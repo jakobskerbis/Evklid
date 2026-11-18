@@ -114,7 +114,7 @@ $n_\text{roka} = n_\text{zapestnice} + n_\text{dlančnice} + n_\text{prstnice}$,
 
 **Rešitev:**
 
-1. Popolna roka: $8 + 5 + 14 = 27$ kosti, saj podlaket (koželjnica in podlahtnica) v vrečki ni.
+1. Popolna roka: $8 + 5 + 14 = 27$ kosti, saj podlakti (koželjnice in podlahtnice) v vrečki ni.
 2. Manjka $27 - 25 = 2$ kosti.
 3. Strošek: $2 \cdot 3{,}50 = 7$, torej $7{,}00$ €.
 4. Odgovor: manjkata dve kosti, ki bosta Niko stali $7{,}00$ €. Prej mora ugotoviti, kateri, da naroči pravi.

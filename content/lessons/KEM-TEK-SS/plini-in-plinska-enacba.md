@@ -60,7 +60,7 @@ V simulaciji spodaj (»Plinska enačba«) drži prostornino stalno in temperatur
 
 $$\rho = \frac{pM}{RT}$$
 
-Pri isti temperaturi in tlaku je liter plina tem težji, čim večja je molska masa njegovih molekul. Zato helijev balon lebdi, balon z $\mathrm{CO_2}$ pa pade na tla.
+Pri isti temperaturi in tlaku je liter plina tem težji, čim večja je molska masa njegovih molekul. Zato helijev balon lebdi, balon s $\mathrm{CO_2}$ pa pade na tla.
 
 **5. Zmesi plinov.** Zrak je zmes. Vsak plin v zmesi se obnaša, kot da bi bil v posodi sam: trka ob stene in prispeva svoj **delni tlak** $p_i$. Delni tlaki se seštejejo v skupni tlak (Daltonov zakon). Pri zraku s tlakom $100\,\mathrm{kPa}$:
 

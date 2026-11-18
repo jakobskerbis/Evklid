@@ -177,7 +177,7 @@ Recept za zapis z desetiško potenco:
 1. Poišči prvo neničelno števko.
 2. Vejico postavi takoj za njo. Tako dobiš $a$.
 3. Preštej, za koliko mest si premaknil vejico.
-4. Če je bilo število večje od $10$, je eksponent pozitiven; če je manjše od $1$, negativen.
+4. Če je bilo število $10$ ali večje, je eksponent pozitiven; če je manjše od $1$, negativen.
 
 | Običajni zapis | Premik vejice | Z desetiško potenco |
 |---|---|---|

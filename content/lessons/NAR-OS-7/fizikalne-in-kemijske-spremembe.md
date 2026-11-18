@@ -136,7 +136,7 @@ $m_\text{plina} = 230\,\mathrm{g} - 227\,\mathrm{g} = 3\,\mathrm{g}$. Snov ni iz
 
 - **»Pri raztapljanju nastane nova snov.«** Sladkor v čaju res ni več viden, a ni izginil: čaj je sladek in ko voda izhlapi, sladkor ostane. Raztapljanje je fizikalna sprememba. Preveri, ali lahko snov dobiš nazaj in ali ima stare lastnosti.
 - **»Mehurčki ali nova barva pomenijo kemijsko spremembo.«** Pri vrenju so mehurčki vodna para, torej voda. Znaki samo namignejo, ne dokažejo. Vprašaj se, ali je nastala nova snov.
-- **»Pri gorenju snov izgine.«** Sveča je po gorenju lažja, ker so produkti plini in odidejo v zrak. V zaprti posodi bi bila masa pred in po enaka. Snov se le spremeni, ne izgine.
+- **»Pri gorenju snov izgine.«** Sveča je po gorenju lažja, ker so produkti plini in odidejo v zrak. V zaprti posodi bi bila masa pred gorenjem in po njem enaka. Snov se le spremeni, ne izgine.
 - **»Kemijska sprememba vedno zmanjša maso.«** Pri jekleni volni in pri rjavenju se masa na tehtnici poveča, ker se veže kisik iz zraka. Vedno pomisli, ali plin odhaja ali prihaja.
 - **»Rjavenje ni podobno gorenju, ker ni plamena.«** Pri obeh se snov poveže s kisikom v novo snov. Razlika je v hitrosti: gorenje je hitro, rjavenje traja tedne.
 
@@ -197,7 +197,7 @@ Vosek sestavljajo spojine ogljika in vodika. Zato pri gorenju nastaneta spojini 
 > Za gorenje so potrebni gorivo, kisik in dovolj visoka temperatura. Ko plamen porabi kisik pod kozarcem, ugasne.
 
 ? Sveča je pred koncertom tehtala $24\,\mathrm{g}$, po koncertu pa $15\,\mathrm{g}$. Vosek ni kapljal. Koliko gramov voska je zgorelo?
-= 9 g
+= 9 g | 0
 ~ 39 | Mase si seštel. Zgorelo je toliko, kolikor je sveča izgubila: odštej.
 ~ 15 | To je masa sveče po koncertu, ne masa zgorelega voska.
 > $24\,\mathrm{g} - 15\,\mathrm{g} = 9\,\mathrm{g}$. Teh $9\,\mathrm{g}$ voska ni izginilo: z vezanim kisikom je odšlo v zrak kot ogljikov dioksid in vodna para.

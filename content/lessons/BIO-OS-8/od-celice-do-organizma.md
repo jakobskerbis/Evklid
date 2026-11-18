@@ -36,7 +36,7 @@ Zdaj si oglej, kako so celice razporejene. V steni želodca ležijo tisoči miš
 
 Vzorec je spet isti: podobne celice z isto nalogo so skupaj. Taki skupini rečemo **tkivo**. Pri človeku ločimo štiri glavne vrste:
 
-- **krovno tkivo** pokriva telo in obdaja votline (koža, notranja plast črevesa);
+- **krovno tkivo** pokriva telo in obdaja votline (vrhnja plast kože, notranja plast črevesa);
 - **vezivno in oporno tkivo** povezuje in podpira (kost, hrustanec, maščevje);
 - **mišično tkivo** se krči in omogoča gibanje;
 - **živčno tkivo** sprejema in prenaša signale.

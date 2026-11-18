@@ -33,7 +33,7 @@ Tekačev je trikrat več kot palic, a zmanjka prav njih: sestavi le 4 štafete. 
 
 $$\mathrm{N_2} + 3\,\mathrm{H_2} \rightarrow 2\,\mathrm{NH_3}$$
 
-vzemimo $0{,}30\,\mathrm{mol}$ dušika in $0{,}60\,\mathrm{mol}$ vodika. Vodika je dvakrat več, a vsaka molekula dušika jih potrebuje tri. Množino vsakega reaktanta delimo z njegovim koeficientom. Dobljeni **količnik** $\frac{n}{\nu}$ pove, za koliko »receptov« zadošča reaktant, tako kot zgornja vrstica pri štafetah:
+vzemimo $0{,}30\,\mathrm{mol}$ dušika in $0{,}60\,\mathrm{mol}$ vodika. Vodika je dvakrat več, a vsaka molekula dušika jih potrebuje tri. Množino vsakega reaktanta delimo z njegovim koeficientom. Dobljeni **količnik** $\frac{n}{\nu}$ pove, za koliko »receptov« zadošča reaktant, tako kot zadnja vrstica pri štafetah:
 
 :::risba stolpci
 opis: Stolpca kažeta množino, deljeno s koeficientom. Dušik 0,30 mol, vodik 0,60 mol deljeno s 3, torej 0,20 mol. Nižji je stolpec vodika.
@@ -112,7 +112,7 @@ $n = \dfrac{m}{M}$, nato primerjaj količnika $\dfrac{n}{\nu}$
 1. Množina magnezija: $\dfrac{2{,}43}{24{,}31} = 0{,}1000$, torej $n(\mathrm{Mg}) = 0{,}1000\,\mathrm{mol}$.
 2. Množina vode: $\dfrac{3{,}00}{18{,}02} = 0{,}1665$, torej $n(\mathrm{H_2O}) = 0{,}1665\,\mathrm{mol}$.
 3. Količnika: pri magneziju $0{,}1000\,\mathrm{mol}$ (koeficient 1), pri vodi polovica množine, $0{,}0832\,\mathrm{mol}$ (koeficient 2). Manjši je pri vodi, zato je **voda omejitveni reaktant**, čeprav ima večjo maso.
-4. Vodika nastane pol toliko molov kot zreagira vode: $n(\mathrm{H_2}) = 0{,}0832\,\mathrm{mol}$. Masa: $0{,}0832 \cdot 2{,}016 = 0{,}168$, torej $0{,}168\,\mathrm{g}$.
+4. Vodika nastane pol toliko molov, kot zreagira vode: $n(\mathrm{H_2}) = 0{,}0832\,\mathrm{mol}$. Masa: $0{,}0832 \cdot 2{,}016 = 0{,}168$, torej $0{,}168\,\mathrm{g}$.
 5. Zreagira $0{,}0832\,\mathrm{mol}$ magnezija, to je $0{,}0832 \cdot 24{,}31 = 2{,}02$ grama. Ostane $2{,}43 - 2{,}02 = 0{,}41$ grama magnezija.
 6. Odgovor: omejitveni reaktant je voda; nastane $0{,}168\,\mathrm{g}$ vodika, ostane $0{,}41\,\mathrm{g}$ magnezija.
 

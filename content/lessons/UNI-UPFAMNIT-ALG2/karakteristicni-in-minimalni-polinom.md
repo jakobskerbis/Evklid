@@ -48,7 +48,7 @@ Ker je $p_A(A)$ matrika, $\det(\ldots)$ pa število. Zamenjava $\lambda \to A$ z
 
 **Minimalni polinom.** Če $p_A(A) = 0$, se morda da $A$ uničiti (dobiti ničelno matriko) že s polinomom nižje stopnje. **Minimalni polinom** $m_A$ je moničen polinom najmanjše stopnje, za katerega je $m_A(A) = 0$. Iz deljenja polinomov z ostankom sledi:
 
-- $m_A$ deli vsak polinom $q$ z $q(A) = 0$, torej tudi $p_A$;
+- $m_A$ deli vsak polinom $q$ s $q(A) = 0$, torej tudi $p_A$;
 - $m_A$ in $p_A$ imata **iste ničle**, le večkratnosti v $m_A$ so lahko manjše.
 
 Druga točka velja, ker iz $Av = \mu v$ sledi $m_A(A)v = m_A(\mu)v$; leva stran je $0$, $v \ne 0$, zato $m_A(\mu) = 0$.
@@ -59,7 +59,7 @@ Pri modelu zdravila je $p_A = (\lambda - 0{,}7)(\lambda - 0{,}4)$. Kandidati za 
 
 > $A$ je diagonalizabilna natanko tedaj, ko $m_A$ razpade na **različne** linearne faktorje (vsaka ničla je enostavna).
 
-Model zdravila je diagonalizabilen. V bazi lastnih vektorjev razpade na dva neodvisna načina: eden upada s faktorjem $0{,}7$ na uro, drugi s faktorjem $0{,}4$. Dolgoročno prevlada počasnejši, $0{,}7^n$.
+Model zdravila je diagonalizabilen. V bazi lastnih vektorjev razpade na dva neodvisna načina: eden upada s faktorjem $0{,}7$ na uro, drugi s faktorjem $0{,}4$. Dolgoročno prevlada počasnejši, $0{,}7^k$.
 
 **Shema postopka** (od podatkov do sklepa):
 
@@ -312,7 +312,7 @@ I | identična (enotska) matrika
 n | velikost matrike (stopnja polinoma)
 c_0, c_k | koeficienti karakterističnega polinoma | | | p_A(λ) = λⁿ + cₙ₋₁λⁿ⁻¹ + … + c₀
 B, C | matriki iz primera
-B_0, B_1, B_k, B_{k-1}, B_{n-1} | matrični koeficienti adjungiranke adj(λI − A) | | | v dokazu Cayley-Hamiltonovega izreka
+B_0, B_1, B_k, B_{k-1}, B_{n-1} | matrični koeficienti prirejenke adj(λI − A) | | | v dokazu Cayley-Hamiltonovega izreka
 M | matrika iz primera
 p_M | karakteristični polinom matrike M
 m | minimalni polinom | | | deli p in ima iste ničle

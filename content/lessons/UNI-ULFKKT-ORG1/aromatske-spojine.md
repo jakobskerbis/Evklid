@@ -189,7 +189,7 @@ Nastaneta 2-nitroanizol (orto) in 4-nitroanizol (para); para pogosto prevladuje,
 - **»Tri dvojne vezi v obroču pomenijo aromatičnost.«** Šteje število elektronov $\pi$ v sklenjenem, ravnem sistemu, ne število vezi. Ciklooktatetraen ima štiri dvojne vezi in $8$ elektronov, je upognjen in nearomatski.
 - **»Benzen reagira kot alken.«** Benzen brez katalizatorja ne adira broma, s katalizatorjem pa da substitucijski produkt, ker se tako aromatičnost obnovi. Adicija bi stala okoli $150\,\text{kJ/mol}$ stabilizacije.
 - **»Halogeni deaktivirajo, torej usmerjajo meta.«** Hitrost in usmerjanje sta dve različni vprašanji. Halogeni zmanjšajo hitrost (induktivno), a z neveznim parom stabilizirajo orto/para ion. Rezultat: počasneje, a orto/para.
-- **Alkiliranje z 1-kloropropanom da propilbenzen.** Primarni karbokation se premesti v sekundarnega, zato nastane predvsem izopropilbenzen (kumen). Ravno verigo dobiš z aciliranjem in redukcijo.
+- **»Alkiliranje z 1-kloropropanom da propilbenzen.«** Primarni karbokation se premesti v sekundarnega, zato nastane predvsem izopropilbenzen (kumen). Ravno verigo dobiš z aciliranjem in redukcijo.
 
 ## Povzetek
 
@@ -298,4 +298,9 @@ Benzen je od strani kot miza s šestimi ogljiki; orbitale $p$ štrlijo kot ročk
 
 :::simboli
 n | nenegativno celo število v Hücklovem pravilu | | – | n = 0, 1, 2, …; 4n + 2 elektronov π je aromatsko
+E_k | energija molekulske orbitale π z indeksom $k$ | E_k = \alpha + 2\beta\cos\dfrac{2\pi k}{N} | kJ/mol | Hücklova metoda
+\alpha | Coulombov integral: energija elektrona v orbitali $p$ ogljika | | kJ/mol |
+\beta | resonančni integral: interakcija sosednjih orbital $p$ | | kJ/mol | negativen, $\beta < 0$
+N | število orbital $p$ (atomov) v obroču | | – |
+k | indeks molekulske orbitale | | – | $k = 0, 1, \ldots, N - 1$
 :::

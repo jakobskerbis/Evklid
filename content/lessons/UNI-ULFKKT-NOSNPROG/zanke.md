@@ -42,13 +42,13 @@ Iz primera razberemo štiri stvari, ki veljajo za vsako zanko `while`:
 3. Telo mora pogoj sčasoma spremeniti, sicer se zanka nikoli ne konča.
 4. Po zanki pogoj ne velja več (tu: `h < 0.01`).
 
-Rezultat lahko preverimo z matematiko: po $n$ odbojih je $h = 0{,}64^n$; iščemo najmanjši $n$ s $0{,}64^n < 0{,}01$, torej $n > \ln 0{,}01/\ln 0{,}64 \approx 10{,}3$, zato $n = 11$. ✓ Enajsti odboj je torej prvi pod $1\,\mathrm{cm}$; višjih od centimetra je $10$ odbojev.
+Rezultat lahko preverimo z matematiko: po $n$ odbojih je $h = 0{,}64^n$; iščemo najmanjši $n$ z $0{,}64^n < 0{,}01$, torej $n > \ln 0{,}01/\ln 0{,}64 \approx 10{,}3$, zato $n = 11$. ✓ Enajsti odboj je torej prvi pod $1\,\mathrm{cm}$; višjih od centimetra je $10$ odbojev.
 
 ### Zanka `while`
 
 **Pravilo (pomen zanke `while`).** Naj bo `P` izraz in `B` zamaknjen blok pod `while P:`. Python izračuna `bool(P)`. Če je `True`, izvede `B` in se vrne na začetek (spet izračuna `P`); če je `False`, nadaljuje za zanko. En izvedbeni krog telesa imenujemo **obhod** (iteracija).
 
-Telo se lahko izvede tudi nič-krat: če je pogoj že na začetku neresničen, Python blok preskoči. Če pa telo pogoja nikoli ne spremeni, dobimo **neskončno zanko**; program prekineš s Ctrl + C.
+Telo se lahko izvede tudi ničkrat: če je pogoj že na začetku neresničen, Python blok preskoči. Če pa telo pogoja nikoli ne spremeni, dobimo **neskončno zanko**; program prekineš s Ctrl + C.
 
 **Kdaj se zanka konča.** Zanesljivo vemo, da se `while` konča, če najdemo **mero napredka**: celoštevilsko količino, ki je med izvajanjem nenegativna in se v vsakem obhodu zmanjša vsaj za $1$. Ker nenegativno celo število ne more padati neskončno dolgo, je obhodov končno mnogo. Pri žogici je to na primer število množenj z $0{,}64$, ki še manjkajo, da `h` pade pod $0{,}01$ (pred zanko $11$) – manj formalno: `h` se v vsakem obhodu pomnoži z $0{,}64 < 1$ in zato pade pod vsako pozitivno mejo.
 
@@ -301,7 +301,7 @@ Drugi obhod: `s` $= 6 + 2 = 8$, `x` $= 20$, `k` $= 2$. Tretji: `s` $= 8 + 0 = 8$
 
 Znati moraš povedati:
 
-- natančen pomen zank `while` in `for` ter kdaj se telo izvede nič-krat;
+- natančen pomen zank `while` in `for` ter kdaj se telo izvede ničkrat;
 - kako zapišeš `for` po `range` z `while` in koliko obhodov da `range(a, b, k)`;
 - pojem invariante zanke in dokaz pravilnosti seštevalnika z indukcijo;
 - pojem mere napredka in zakaj zagotavlja, da se zanka konča;

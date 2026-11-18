@@ -158,7 +158,7 @@ Poves je premo sorazmeren s silo, ta pa z $g$. Razmerje je $9{,}81/1{,}62 \appro
 - Iz upogiba: $1/\rho = M/(E I)$; za položno os velja diferencialna enačba upogibnice $E I\, w'' = -M(x)$ ($w$ navzdol).
 - Dve integraciji dasta $C_1$, $C_2$; določita ju robna pogoja: vpetje $w = 0$, $w' = 0$; členek $w = 0$.
 - Konzola s silo na koncu: $w_{\max} = F L^3/(3 E I)$, $\varphi_{\max} = F L^2/(2 E I)$.
-- Prostoležeči nosilec z $q$: $w(L/2) = 5 q L^4/(384 E I)$, $\varphi(0) = q L^3/(24 E I)$.
+- Prostoležeči nosilec s $q$: $w(L/2) = 5 q L^4/(384 E I)$, $\varphi(0) = q L^3/(24 E I)$.
 - Poves je sorazmeren z obtežbo in obratno sorazmeren z $E I$; z dolžino raste s potenco.
 
 ## Za izpit

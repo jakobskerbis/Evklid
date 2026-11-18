@@ -183,7 +183,7 @@ Jeklena plošča je sestavljena iz pravokotnika z oglišči $(0, 0)$, $(120, 0)$
 **Rešitev:**
 
 1. Ploščine: pravokotnik $A_1 = 120 \cdot 80 = 9600\,\text{mm}^2$, trikotnik $A_2 = \dfrac{60 \cdot 80}{2} = 2400\,\text{mm}^2$, luknja $A_3 = \pi \cdot 20^2 \approx 1256{,}6\,\text{mm}^2$.
-2. Težišča delov: pravokotnik $(60, 40)$, luknja $(40, 40)$. Težišče trikotnika je tretjino kraka od pravega kota: $x_2 = 120 + \dfrac{60}{3} = 140\,\text{mm}$, $y_2 = \dfrac{80}{3} \approx 26{,}67\,\text{mm}$.
+2. Težišča delov: pravokotnik $(60, 40)$, luknja $(40, 40)$. Težišče trikotnika je tretjino katete od pravega kota: $x_2 = 120 + \dfrac{60}{3} = 140\,\text{mm}$, $y_2 = \dfrac{80}{3} \approx 26{,}67\,\text{mm}$.
 3. Skupna ploščina (luknjo odštejemo): $A \approx 9600 + 2400 - 1256{,}6 = 10743{,}4\,\text{mm}^2$.
 4. Statični moment glede na os $y$: $9600 \cdot 60 + 2400 \cdot 140 - 1256{,}6 \cdot 40 \approx 576000 + 336000 - 50265 = 861735\,\text{mm}^3$.
 5. Statični moment glede na os $x$: $9600 \cdot 40 + 2400 \cdot \dfrac{80}{3} - 1256{,}6 \cdot 40 \approx 384000 + 64000 - 50265 = 397735\,\text{mm}^3$.

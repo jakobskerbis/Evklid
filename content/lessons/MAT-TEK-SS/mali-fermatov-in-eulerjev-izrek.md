@@ -214,7 +214,7 @@ puščica: 1,4; 3,4 -> 2,6; 4,6 | · 5 | levo | puščica
 ~ 12 | Zamaknil si štetje: $5^1 = 5$ je prvi korak, $5^3$ je tretji ostanek v ciklu.
 > Cikel $5 \to 12 \to 8 \to 1$ ima dolžino $4$, torej $\mathrm{ord}_{13}(5) = 4$. Ker je $2027 = 506 \cdot 4 + 3$, je $5^{2027} \equiv 5^3 \equiv 8 \pmod{13}$.
 
-? Kateri red ne more imeti nobeno število po modulu $13$?
+? Katerega reda ne more imeti nobeno število po modulu $13$?
 - $3$
 ~ $3$ deli $12$; tak red ima na primer število $3$, saj je $3^3 = 27 \equiv 1 \pmod{13}$.
 + $5$

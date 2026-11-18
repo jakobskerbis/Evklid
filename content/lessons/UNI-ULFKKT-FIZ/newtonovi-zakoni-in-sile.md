@@ -120,7 +120,7 @@ Zdrsne, če $\tan\alpha > k_l$. Vzdolž klanca: $ma = mg\sin\alpha - k_t\,mg\cos
 1. $\tan 30^\circ \approx 0{,}577 > 0{,}25$, zato lepenje klade ne more zadržati: klada zdrsne.
 2. Komponenta teže vzdolž klanca vleče klado navzdol: $mg\sin\alpha = 5{,}0 \cdot 9{,}81 \cdot 0{,}5\,\mathrm{N} \approx 24{,}5\,\mathrm{N}$.
 3. Pravokotno na klanec ni pospeška, zato je normalna sila $F_N = mg\cos\alpha = 5{,}0 \cdot 9{,}81 \cdot 0{,}866\,\mathrm{N} \approx 42{,}5\,\mathrm{N}$; trenje $F_{tr} = 0{,}20 \cdot 42{,}5\,\mathrm{N} \approx 8{,}50\,\mathrm{N}$.
-4. Rezultanta vzdolž klanca: $24{,}5\,\mathrm{N} - 8{,}50\,\mathrm{N} \approx 16{,}0\,\mathrm{N}$, pospešek $a = 16{,}0\,\mathrm{N} / 5{,}0\,\mathrm{kg} \approx 3{,}21\,\mathrm{m/s^2}$.
+4. Rezultanta vzdolž klanca: $24{,}5\,\mathrm{N} - 8{,}50\,\mathrm{N} \approx 16{,}0\,\mathrm{N}$, pospešek $a = 16{,}0\,\mathrm{N} / 5{,}0\,\mathrm{kg} \approx 3{,}21\,\mathrm{m/s^2}$ (z nezaokroženimi vmesnimi vrednostmi).
 5. Klada začne iz mirovanja ($v_0 = 0$), zato $v = \sqrt{2as} = \sqrt{2 \cdot 3{,}21\,\mathrm{m/s^2} \cdot 2{,}0\,\mathrm{m}} \approx 3{,}58\,\mathrm{m/s}$.
 6. Odgovor: klada zdrsne s pospeškom približno $3{,}21\,\mathrm{m/s^2}$ in po $2{,}0\,\mathrm{m}$ doseže hitrost približno $3{,}58\,\mathrm{m/s}$.
 
@@ -139,8 +139,8 @@ $G\dfrac{mM_Z}{r^2} = m\omega^2 r$, $\omega = \dfrac{2\pi}{T}$ $\Rightarrow$ $r 
 
 1. Gravitacija je edina sila in opravlja vlogo radialne sile; masa satelita se pokrajša.
 2. $GM_Z = 6{,}674 \cdot 10^{-11} \cdot 5{,}972 \cdot 10^{24}\,\mathrm{m^3/s^2} \approx 3{,}986 \cdot 10^{14}\,\mathrm{m^3/s^2}$.
-3. $r^3 = \dfrac{3{,}986 \cdot 10^{14} \cdot (86\,164)^2}{4\pi^2}\,\mathrm{m^3} \approx 7{,}50 \cdot 10^{22}\,\mathrm{m^3}$.
-4. $r = \sqrt[3]{7{,}50 \cdot 10^{22}}\,\mathrm{m} \approx 4{,}216 \cdot 10^{7}\,\mathrm{m} \approx 42\,160\,\mathrm{km}$.
+3. $r^3 = \dfrac{3{,}986 \cdot 10^{14} \cdot (86\,164)^2}{4\pi^2}\,\mathrm{m^3} \approx 7{,}496 \cdot 10^{22}\,\mathrm{m^3}$.
+4. $r = \sqrt[3]{7{,}496 \cdot 10^{22}}\,\mathrm{m} \approx 4{,}216 \cdot 10^{7}\,\mathrm{m} \approx 42\,160\,\mathrm{km}$.
 5. Višina: $h = 42\,160\,\mathrm{km} - 6371\,\mathrm{km} \approx 35\,790\,\mathrm{km}$.
 6. Hitrost: $v = \dfrac{2\pi \cdot 4{,}216 \cdot 10^7\,\mathrm{m}}{86\,164\,\mathrm{s}} \approx 3{,}07 \cdot 10^3\,\mathrm{m/s}$. Preizkus: $\sqrt{GM_Z/r} = \sqrt{3{,}986 \cdot 10^{14} / 4{,}216 \cdot 10^7}\,\mathrm{m/s} \approx 3{,}07 \cdot 10^3\,\mathrm{m/s}$.
 7. Satelit je ravno na obzorju, ko je zveznica opazovalec–satelit tangenta na Zemljo, torej pravokotna na polmer do opazovalca. V pravokotnem trikotniku središče–opazovalec–satelit je $\cos\varphi_{\max} = R_Z/r = 6371/42\,160 \approx 0{,}1511$.
@@ -175,7 +175,7 @@ Ne zdrsne, ker je potrebna sila $0{,}80\,\mathrm{N}$ manjša od največjega lepe
 
 - **Gibanje potrebuje silo.** Sila ne vzdržuje hitrosti, ampak jo spreminja. Pri enakomernem gibanju je vsota sil nič; potiskanje le uravnoteži trenje.
 - **$F_N = mg$ vedno.** Na klancu je $F_N = mg\cos\alpha$, če vlečemo poševno navzgor ali smo v pospešenem dvigalu, pa je drugačna. Normalno silo vedno izračunaj iz ravnovesja pravokotno na podlago.
-- **Lepenje kot $k_l F_N$ tudi v mirovanju.** $k_l F_N$ je le **največja** sila lepenja. Če omaro potiskamo s $20\,\mathrm{N}$ in se ne premakne, je sila lepenja $20\,\mathrm{N}$, ne $k_l F_N$.
+- **Lepenje kot $k_l F_N$ tudi v mirovanju.** $k_l F_N$ je le **največja** sila lepenja. Če omaro potiskamo z $20\,\mathrm{N}$ in se ne premakne, je sila lepenja $20\,\mathrm{N}$, ne $k_l F_N$.
 - **Centripetalna ali centrifugalna sila kot dodatna sila v diagramu.** V diagram sil rišemo le prave sile (teža, vrv, trenje, gravitacija). Njihova radialna rezultanta je $mv^2/r$. Telo v ovinku ne »vleče navzven«; ko sila proti središču popusti, telo nadaljuje po tangenti.
 - **Par sil po tretjem zakonu se odšteje.** Sili $\vec{F}_{AB}$ in $\vec{F}_{BA}$ delujeta na različni telesi, zato ne moreta biti v ravnovesju na istem telesu.
 - **Razdalja pri gravitaciji od površja.** V $G\frac{m_1 m_2}{r^2}$ je $r$ razdalja med središčema, ne višina nad tlemi. Razdalje pretvori v metre pred vstavljanjem v $G$, pri klancih pa preveri, da je kalkulator v stopinjah.
@@ -260,7 +260,7 @@ Pri kroženju si predstavljaj kamen na vrvici, ki ga vrtiš nad glavo. Hitrost j
 
 ## Drugače: Uporaba v stroki
 
-**Centrifuga v laboratoriju.** Epruveta se vrti s $10\,000$ obrati na minuto pri polmeru $10\,\mathrm{cm}$. Kotna hitrost je $\omega = 2\pi \cdot 10\,000 / 60\,\mathrm{s^{-1}} \approx 1047\,\mathrm{s^{-1}}$, radialni pospešek $\omega^2 r \approx 1{,}1 \cdot 10^5\,\mathrm{m/s^2}$, kar je okoli $11\,000\,g$. V protokolih zato raje kot obrate navajamo relativno centrifugalno silo (RCF), razmerje $\omega^2 r/g$, ki je odvisno tudi od polmera rotorja. Delci z večjo gostoto (celice, beljakovine) se v takem polju hitro posedejo.
+**Centrifuga v laboratoriju.** Epruveta se vrti z $10\,000$ obrati na minuto pri polmeru $10\,\mathrm{cm}$. Kotna hitrost je $\omega = 2\pi \cdot 10\,000 / 60\,\mathrm{s^{-1}} \approx 1047\,\mathrm{s^{-1}}$, radialni pospešek $\omega^2 r \approx 1{,}1 \cdot 10^5\,\mathrm{m/s^2}$, kar je okoli $11\,000\,g$. V protokolih zato raje kot obrate navajamo relativno centrifugalno silo (RCF), razmerje $\omega^2 r/g$, ki je odvisno tudi od polmera rotorja. Delci z večjo gostoto (celice, beljakovine) se v takem polju hitro posedejo.
 
 **Tehtanje.** Tehtnica meri silo podlage, ne mase. Težni pospešek je na ekvatorju okoli $9{,}78\,\mathrm{m/s^2}$, na polih $9{,}83\,\mathrm{m/s^2}$, zato analitske tehtnice umerijo z utežjo na mestu uporabe.
 
@@ -316,7 +316,7 @@ Na mokri cesti je $k_l$ lahko le okoli $0{,}4$; ker je $v_{\max} \propto \sqrt{k
 ~ Masi se res ne spremenita, a sila je odvisna tudi od razdalje med središčema.
 > Sila je obratno sorazmerna s kvadratom razdalje: $1/2^2 = 1/4$.
 
-? Človek z maso $60\,\mathrm{kg}$ stoji v dvigalu, ki pospešuje navzgor s $2{,}0\,\mathrm{m/s^2}$. Kolikšna je normalna sila tal nanj ($g = 9{,}81\,\mathrm{m/s^2}$)?
+? Človek z maso $60\,\mathrm{kg}$ stoji v dvigalu, ki pospešuje navzgor z $2{,}0\,\mathrm{m/s^2}$. Kolikšna je normalna sila tal nanj ($g = 9{,}81\,\mathrm{m/s^2}$)?
 - $589\,\mathrm{N}$
 ~ To je teža $mg$. Dvigalo pospešuje, zato vsota sil ni nič in mora biti $F_N$ večja od teže.
 - $469\,\mathrm{N}$

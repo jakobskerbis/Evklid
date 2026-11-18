@@ -158,7 +158,7 @@ Sledi polni črti (zajci). Ko se vzpne, se nekaj kasneje vzpne tudi črtkana (ri
 
 ## Drugače: Iz vsakdanjega življenja
 
-- **Tekmovanje:** dve pekarni v isti ulici. Kupcev je omejeno, zato obe prodata manj, kot bi sami.
+- **Tekmovanje:** dve pekarni v isti ulici. Kupcev je omejeno število, zato obe prodata manj, kot bi sami.
 - **Ločevanje niš:** ena od pekarn začne prodajati zgodaj zjutraj in samo kruh, druga popoldne in samo pecivo. Kupce si razdelita in obe preživita.
 - **Mutualizem:** sošolca, ki si pomagata. Eden razloži matematiko, drugi slovenščino.
 - **Zajedavstvo:** klop, ki ga po sprehodu najdeš na koži. Več dni pije tvojo kri, a te ne ubije.

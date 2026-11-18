@@ -45,7 +45,7 @@ Današnji zrak vsebuje kisik. Kisik organske molekule oksidira in jih razgradi, 
 
 **3. Prvi organizmi.** Najstarejše sledi celic so stare okoli $3{,}8$ milijarde let, okoli $3{,}5$ milijarde let pa so stari **stromatoliti**, plastoviti kamni, ki so jih zgradile kolonije bakterij. Prvi organizmi so bili **prokarionti**: celice brez jedra. Bili so **anaerobni** (živeli so brez kisika) in najverjetneje **heterotrofni**, kar pomeni, da so organske snovi jemali iz okolja.
 
-**4. Fotosinteza in kisik.** Heterotrofi so porabljali organske snovi, ki so nastale s kemijsko evolucijo, zato je hrane v oceanu zmanjkovalo. Prednost so dobile celice, ki so si hrano izdelale same iz svetlobe, vode in ogljikovega dioksida. **Cianobakterije** so pri tem kot stranski produkt sproščale kisik. Kisik se je najprej vezal na železo v morju (nastale so rjave plasti železovih oksidov v kamninah), nato se je pred približno $2{,}4$ milijarde let začel kopičiti v ozračju. Posledici sta bili dve:
+**4. Fotosinteza in kisik.** Heterotrofi so porabljali organske snovi, ki so nastale s kemijsko evolucijo, zato je hrane v oceanu zmanjkovalo. Prednost so dobile celice, ki so si hrano s svetlobo izdelale same iz vode in ogljikovega dioksida. **Cianobakterije** so pri tem kot stranski produkt sproščale kisik. Kisik se je najprej vezal na železo v morju (nastale so rjave plasti železovih oksidov v kamninah), nato se je pred približno $2{,}4$ milijarde let začel kopičiti v ozračju. Posledici sta bili dve:
 
 - Iz kisika je v visoki atmosferi nastal **ozon**, ki zadrži velik del UV-svetlobe.
 - Razvilo se je **aerobno dihanje**, ki iz glukoze pridobi veliko več energije (ATP) kot vrenje, ki poteka brez kisika.

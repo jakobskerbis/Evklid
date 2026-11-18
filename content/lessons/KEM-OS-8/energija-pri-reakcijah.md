@@ -30,7 +30,7 @@ Pri vsaki reakciji se zgodi oboje. Odločilno je, česa je več.
 
 **Eksotermna reakcija.** Če se pri nastanku novih vezi sprosti *več* energije, kot je je bilo potrebne za trganje starih, ostane presežek. Ta preide v okolico kot toplota (včasih tudi kot svetloba). Taki reakciji pravimo **eksotermna** (»ekso« pomeni ven). Okolica se segreje. Primera: gorenje lesa, gorenje zemeljskega plina.
 
-**Endotermna reakcija.** Če trganje vezi porabi *več* energije, kot se je sprosti ob nastanku novih, mora manjkajoči del priti iz okolice. Taki reakciji pravimo **endotermna** (»endo« pomeni noter). Okolica se ohladi ali pa ji moramo energijo ves čas dovajati: z gretjem, s svetlobo ali z električnim tokom. Primer: fotosinteza, ki jemlje energijo sončne svetlobe.
+**Endotermna reakcija.** Če trganje vezi porabi *več* energije, kot se je sprosti ob nastanku novih, mora manjkajoči del priti iz okolice. Taki reakciji pravimo **endotermna** (»endo« pomeni noter). Okolica se ohladi ali pa moramo reakciji energijo ves čas dovajati: z gretjem, s svetlobo ali z električnim tokom. Primer: fotosinteza, ki jemlje energijo sončne svetlobe.
 
 :::premisli
 Kozarec, v katerem poteka endotermna reakcija, se na dotik zdi hladen. Zakaj? Ali reakcija »oddaja mraz«?
@@ -155,7 +155,7 @@ Večje je $E_\mathrm{t}$, zato je reakcija endotermna: $E_\mathrm{sprejme} = 144
 
 - Pri kemijski reakciji se vezi trgajo (energija se porabi) in nastajajo (energija se sprosti).
 - **Eksotermna** reakcija odda energijo okolici (toplota, svetloba), okolica se segreje: gorenje, dihanje.
-- **Endotermna** reakcija sprejme energijo iz okolice, okolica se ohladi ali ji moramo energijo dovajati: fotosinteza, razpad pecilnega praška v pečici.
+- **Endotermna** reakcija sprejme energijo iz okolice, okolica se ohladi ali moramo reakciji energijo dovajati: fotosinteza, razpad pecilnega praška v pečici.
 - Iz meritve: $\Delta T = T_2 - T_1$; $\Delta T > 0$ eksotermna, $\Delta T < 0$ endotermna.
 - Iz vezi: če je sproščene energije več kot porabljene, je reakcija eksotermna.
 - Tudi eksotermna reakcija potrebuje začetni sunek, aktivacijsko energijo (vžigalica, iskra).

@@ -88,7 +88,7 @@ Tla kopalnice merijo $3{,}2\,\mathrm{m} \times 2{,}5\,\mathrm{m}$. Keramik kupi 
 **Iščemo:** število škatel in ceno
 
 :::formula
-$S = a \cdot b$; s $10\,\%$ dodatka: $1{,}1 \cdot S$; število škatel $= \dfrac{\text{potrebna ploščina}}{\text{ploščina ene škatle}}$, zaokroženo navzgor
+$S = a \cdot b$; z $10\,\%$ dodatka: $1{,}1 \cdot S$; število škatel $= \dfrac{\text{potrebna ploščina}}{\text{ploščina ene škatle}}$, zaokroženo navzgor
 :::
 
 **Rešitev:**

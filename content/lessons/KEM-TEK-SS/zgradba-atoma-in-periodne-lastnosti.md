@@ -129,7 +129,7 @@ Izračunaj količnike $\dfrac{E_{\mathrm{i},k+1}}{E_{\mathrm{i},k}}$. Največji 
 
 ### Primer 3: svetloba, ki ionizira natrij
 
-Prva ionizacijska energija natrija je $496\,\mathrm{kJ/mol}$. Kolikšna je največja valovna dolžina svetlobe, ki še ionizira atom natrija? Kolikšna je njena frekvenca, primerjana s komornim tonom $440\,\mathrm{Hz}$? Ali natrij ionizira lastna rumena svetloba z $589\,\mathrm{nm}$?
+Prva ionizacijska energija natrija je $496\,\mathrm{kJ/mol}$. Kolikšna je največja valovna dolžina svetlobe, ki še ionizira atom natrija? Kolikšna je njena frekvenca, primerjana s komornim tonom $440\,\mathrm{Hz}$? Ali natrij ionizira lastna rumena svetloba s $589\,\mathrm{nm}$?
 
 **Podatki:** $E_{\mathrm{i},1} = 496\,\mathrm{kJ/mol}$, $N_\mathrm{A} = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$, $h = 6{,}626 \cdot 10^{-34}\,\mathrm{J\,s}$, $c = 2{,}998 \cdot 10^{8}\,\mathrm{m/s}$, $f_\mathrm{a} = 440\,\mathrm{Hz}$, $\lambda_\mathrm{rum} = 589\,\mathrm{nm}$
 **Iščemo:** največjo valovno dolžino $\lambda$, frekvenco $f$ in odgovor da/ne
@@ -175,7 +175,7 @@ $|\chi_\mathrm{Cl} - \chi_\mathrm{H}| = \sqrt{\dfrac{92}{96{,}5}} \approx 0{,}98
 - **»Več protonov pomeni močnejši privlak.«** Navzdol po skupini $Z$ raste, ionizacijska energija in elektronegativnost pa padata. Šteje $Z_\mathrm{ef}$ in razdalja od jedra, ne golo število protonov.
 - **Napačne vrednosti $l$ in $m_l$.** Orbitala $2d$ ne obstaja, ker je $l \le n - 1$. Vrednosti $m_l$ gredo od $-l$ do $+l$, ne od $0$ do $l$, zato ima $p$ tri orbitale, ne dve.
 - **Napačno mesto skoka.** Pri zaporednih ionizacijskih energijah je število valenčnih elektronov enako številu energij *pred* največjim skokom. Kdor prišteje še energijo za skokom, dobi skupino previsoko.
-- **Pauling brez korena ali brez $96{,}5$.** Razlika elektronegativnosti je koren iz $\Delta$ v elektronvoltih. Brez korena dobiš premajhno razliko, brez deljenja pa nesmiselno veliko.
+- **Pauling brez korena ali brez $96{,}5$.** Razlika elektronegativnosti je koren iz $\Delta$ v elektronvoltih. Brez korena dobiš napačno razliko, brez deljenja pa nesmiselno veliko.
 
 ## Povzetek
 
@@ -244,9 +244,9 @@ stolpec: 2. | 1451
 stolpec: 3. | 7733
 stolpec: 4. | 10543
 :::
-= 2
+= 2 | 0
 ~ 3 | Šteješ tudi tretjo energijo, ki je že za skokom. Valenčni so elektroni pred skokom.
-~ 4 | Vsi narisani elektroni niso valenčni. Poišči največji skok med sosednjima stolpcema.
+~ 4 | Niso vsi narisani elektroni valenčni. Poišči največji skok med sosednjima stolpcema.
 ~ 1 | Druga energija je sicer dvakrat večja od prve, a to je običajna rast. Pravi skok je med drugo in tretjo, za faktor približno 5.
 > Med 2. in 3. energijo je skok za faktor $7733 / 1451 \approx 5{,}3$. X ima dva valenčna elektrona: to je magnezij.
 

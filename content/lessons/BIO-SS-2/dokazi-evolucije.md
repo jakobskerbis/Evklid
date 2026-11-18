@@ -52,7 +52,7 @@ Očesi sta analogni, nastali sta s konvergenco. Če bi ju podedovali od skupnega
 
 **Zakrneli organi** so homologni organi, ki so izgubili prvotno nalogo ali jo opravljajo le še delno. Pri človeku so to trtica (ostanek repa), mišice za premikanje uhlja, mišice, ki vzdigujejo dlake (kurja polt), in modrostni zobje. Slepič (črvasti izrastek slepega črevesa) je ostanek daljšega dela črevesa, ki pri rastlinojedih sesalcih prebavlja rastlinsko hrano. Ob vnetju ga kirurg odstrani.
 
-**3. Embriologija.** **Zarodek** (embrio) je organizem v zgodnjem razvoju. Zgodnji zarodki rib, ptic in sesalcev so si zelo podobni. Človeški zarodek ima pri štirih do petih tednih rep in **žrelne (škržne) loke**, take kot jih imajo ribji zarodki. Pri ribi iz njih nastanejo škrge, pri človeku spodnja čeljust, kostice srednjega ušesa in deli grla. Rep se skrči v trtico. Zarodek nikoli ne diha s škrgami; podobnost pove, da smo podedovali isti začetni razvojni načrt. Če se prostor med žrelnimi loki ne zaraste do konca, lahko na vratu nastane cista.
+**3. Embriologija.** **Zarodek** (embrio) je organizem v zgodnjem razvoju. Zgodnji zarodki rib, ptic in sesalcev so si zelo podobni. Človeški zarodek ima pri štirih do petih tednih rep in **žrelne (škržne) loke**, take, kot jih imajo ribji zarodki. Pri ribi iz njih nastanejo škrge, pri človeku spodnja čeljust, kostice srednjega ušesa in deli grla. Rep se skrči v trtico. Zarodek nikoli ne diha s škrgami; podobnost pove, da smo podedovali isti začetni razvojni načrt. Če se prostor med žrelnimi loki ne zaraste do konca, lahko na vratu nastane cista.
 
 **4. Biogeografija.** **Biogeografija** proučuje, kje na Zemlji živijo katere vrste. V Avstraliji, dolgo ločeni od drugih celin, prevladujejo **vrečarji**. Razvili so se v oblike, podobne volkovom, mišim in krtom drugod: spet konvergenca. Otoške vrste so najbolj podobne vrstam z najbližje celine, Darwinovi ščinkavci južnoameriškim pticam. Vrste so torej nastale tam, kamor so prišli predniki.
 
@@ -185,7 +185,7 @@ $r = 3\,000\,000\,000 \cdot 0{,}012 = 36\,000\,000$ baznih parov. Število je ve
 - Fosili: globlje plasti so starejše; prehodne oblike (arheopteriks, tiktaalik) povezujejo skupine; starost določimo z radioaktivnim razpadom (ogljik-14, $t_{1/2} = 5730$ let).
 - Homologni organi: enaka zgradba, skupni izvor, lahko različna naloga (divergenca). Analogni organi: ista naloga, različen izvor (konvergenca). Zakrneli organi: trtica, slepič.
 - Embriologija: zarodki vretenčarjev so si podobni (žrelni loki, rep), ker imajo isti razvojni načrt.
-- Biogeografija: vrste so tam, kamor so prišli predniki (vrečarji v Avstraliji, ščinkavci na Galapagih).
+- Biogeografija: vrste so tam, kamor so prišli predniki (vrečarji v Avstraliji, ščinkavci na Galapagosu).
 - Molekule: isti genetski kod pri vseh; bolj sorodne vrste imajo bolj podobne beljakovine in DNA. Delež razlik $d = \dfrac{r}{a} \cdot 100\,\%$.
 - Človek in šimpanz imata skupnega prednika pred $6$ do $7$ milijoni let; najprej pokončna hoja, nato večji možgani; *Homo sapiens* pred okoli $300\,000$ leti v Afriki.
 
@@ -244,7 +244,7 @@ Dokaze evolucije nosiš v sebi.
 + 2. korak
 - 3. korak
 ~ 3. korak le nadaljuje 2. korak. Prva napaka je v 2. koraku, kjer je podobnost oblike napačno poimenovana.
-> Podobna oblika je posledica podobnega okolja, ne skupnega izvora: delfin ima okostje sesalca, morski pes hrustančnico. Telesi sta analogni (konvergenca), zato iz njiju ne sklepamo na bližnjo sorodnost.
+> Podobna oblika je posledica podobnega okolja, ne skupnega izvora: delfin ima okostje sesalca, morski pes pa hrustančno. Telesi sta analogni (konvergenca), zato iz njiju ne sklepamo na bližnjo sorodnost.
 
 ? Desetletja so ljudi s sladkorno boleznijo zdravili s svinjskim inzulinom. Zakaj je deloval?
 - Ker je svinja človekov najbližji sorodnik.

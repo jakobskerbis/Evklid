@@ -244,7 +244,7 @@ puščica: 3; 2,6 -> 3; 1,8
 
 ? Med štetjem utripa si gledal štoparico $10\,\mathrm{s}$ in izračunal utrip $120$ udarcev na minuto. Koliko udarcev si naštel?
 = 20
-~ 12 | Delil si s $10$. Minuta ima šest odsekov po $10\,\mathrm{s}$, zato deli s $6$.
+~ 12 | Delil si z $10$. Minuta ima šest odsekov po $10\,\mathrm{s}$, zato deli s $6$.
 ~ 1200 | Množil si z $10$. Naštetih udarcev je manj, kot jih je v celi minuti.
 > $10\,\mathrm{s}$ je šestina minute: $N = \dfrac{120}{6} = 20$ udarcev.
 

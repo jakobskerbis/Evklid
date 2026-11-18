@@ -49,7 +49,7 @@ $$B = \frac{\mu_0NI}{l}.$$
 
 Polje v središču krožne zanke s polmerom $R$ je $B = \mu_0I/(2R)$; to izračunamo z Biot-Savartovim zakonom, ker Amperov tu ni dovolj.
 
-**6. Sila med vzporednima vodnikoma.** Vodnik 1 ustvari na mestu vodnika 2 polje $\mu_0I_1/(2\pi r)$, ki deluje na vodnik 2 s silo $F/l = \mu_0I_1I_2/(2\pi r)$. Vodnika z istosmernima tokovoma se privlačita, z nasprotnima se odbijata.
+**6. Sila med vzporednima vodnikoma.** Vodnik 1 ustvari na mestu vodnika 2 polje $\mu_0I_1/(2\pi r)$, ki deluje na vodnik 2 s silo $F/l = \mu_0I_1I_2/(2\pi r)$. Vodnika z enako usmerjenima tokovoma se privlačita, z nasprotno usmerjenima se odbijata.
 
 **7. Magnetni pretok.** Skozi ploskev s površino $S$ v homogenem polju je **magnetni pretok**
 
@@ -110,7 +110,7 @@ $B = \dfrac{\mu_0I_1}{2\pi r}$, $F = I_2lB$
 1. Vodnik je dolg in raven, zato velja $B = \mu_0I_1/(2\pi r)$ iz Amperovega zakona: $B = 4\pi \cdot 10^{-7} \cdot 10/(2\pi \cdot 0{,}020)\,\mathrm{T} = 2 \cdot 10^{-7} \cdot 10/0{,}020\,\mathrm{T} = 1{,}0 \cdot 10^{-4}\,\mathrm{T}$.
 2. To je $100\,\mu\mathrm{T}$, dvakrat več od zemeljskega polja; zato vodniki s tokom motijo kompas.
 3. Polje je pravokotno na drugi vodnik, zato $F = I_2lB = 5{,}0 \cdot 1{,}0 \cdot 1{,}0 \cdot 10^{-4}\,\mathrm{N} = 5{,}0 \cdot 10^{-4}\,\mathrm{N}$.
-4. Odgovor: polje na razdalji $2{,}0\,\mathrm{cm}$ je $1{,}0 \cdot 10^{-4}\,\mathrm{T}$; vodnika se privlačita, ker sta tokova istosmerna, sila na meter drugega vodnika je $0{,}50\,\mathrm{mN}$.
+4. Odgovor: polje na razdalji $2{,}0\,\mathrm{cm}$ je $1{,}0 \cdot 10^{-4}\,\mathrm{T}$; vodnika se privlačita, ker tokova tečeta v isto smer, sila na meter drugega vodnika je $0{,}50\,\mathrm{mN}$.
 
 ### Primer 2
 
@@ -301,7 +301,7 @@ Za središče krožne zanke so vsi prispevki vzporedni in $r = R$, zato je $B = 
 ~ Uporabil si padanje z $1/r^2$, ki velja za točkast naboj; polje dolgega ravnega vodnika pada z $1/r$.
 + $B/2$
 - $2B$
-~ Polje z razdaljo ne narašča: dlje od vodnika so silnice redkejše, ker se isti »tok« silnic razporedi po daljši krožnici.
+~ Polje z razdaljo ne narašča: dlje od vodnika so silnice redkejše, ker se isti $\mu_0I$ iz Amperovega zakona razporedi po daljši krožnici.
 > $B = \mu_0I/(2\pi r)$ pada z $1/r$.
 
 ? Dolga tuljava ima $500$ ovojev na dolžini $25\,\mathrm{cm}$, po njej teče tok $2{,}0\,\mathrm{A}$. Kolikšna je gostota polja v notranjosti?

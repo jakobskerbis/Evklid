@@ -173,7 +173,7 @@ Bolzanov izrek: $f$ zvezna na $[a, b]$ in $f(a) f(b) < 0 \Rightarrow$ obstaja $c
 - **Vstavljanje v nedoločeni izraz.** Študent pri $\frac{0}{0}$ napiše, da je limita $0$ ali $1$. Izraz $\frac{0}{0}$ ni število; najprej ga preoblikuj.
 - **$\infty - \infty = 0$ in $1^\infty = 1$.** Oba izraza sta nedoločena. Na primer $\lim_{x \to \infty} (1 + \frac{1}{x})^x = e$, ne $1$.
 - **Zamenjava $\frac{\sin x}{x}$ za $x \to \infty$.** Znana limita $1$ velja za $x \to 0$. Za $x \to \infty$ je $\lim \frac{\sin x}{x} = 0$ (izrek o sendviču).
-- **Spregledana enostranska limita.** Pri funkcijah s $|x|$, korenom ali s predpisom po kosih vedno preveri levo in desno limito posebej.
+- **Spregledana enostranska limita.** Pri funkcijah z $|x|$, korenom ali s predpisom po kosih vedno preveri levo in desno limito posebej.
 - **»Zvezna« pomeni »definirana«.** Funkcija $\frac{1}{x}$ je zvezna na svojem definicijskem območju $\mathbb{R} \setminus \{0\}$, a je na $[-1, 1]$ ne moremo obravnavati kot zvezne, saj v $0$ ni definirana. Bolzanovega izreka zato ne smemo uporabiti: $\frac{1}{x}$ menja predznak, a ničle nima.
 - **Pozabljeni pogoji izrekov.** Weierstrassov in Bolzanov izrek potrebujeta zaprt interval in zveznost na vsem intervalu.
 
@@ -313,13 +313,13 @@ Pogoj $0 < |x - a|$ izloči točko $a$ samo: limita ne vidi vrednosti $f(a)$. Ne
 :::simboli
 f | funkcija | |
 x | neodvisna spremenljivka | |
-a | točka, ki se ji x približuje | | | pri intervalu [a, b] levo krajišče
+a | točka, ki se ji x približuje | | | pri intervalu [a, b] levo krajišče; v primeru 2 in nalogi 1 parameter
 L | limita funkcije v točki a | \lim_{x \to a} f(x) = L |
 e | Eulerjevo število | | | e ≈ 2,718
 \varepsilon | dovoljeno odstopanje od limite L | | | poljubno majhno pozitivno število
 \delta | polmer okolice točke a | | | odvisen od izbranega ε
 u | pomožna spremenljivka | | | u → 0
-b | desno krajišče intervala [a, b] | |
+b | desno krajišče intervala [a, b] | | | v nalogi 1 parameter
 c | ničla funkcije na intervalu (a, b) | | | obstaja po Bolzanovem izreku
 m | razpolovišče intervala | m = \frac{a + b}{2} | | metoda bisekcije
 n | število korakov bisekcije | \frac{b - a}{2^n} | | v nalogi 2 stopnja polinoma

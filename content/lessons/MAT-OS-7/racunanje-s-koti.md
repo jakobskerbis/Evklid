@@ -312,7 +312,7 @@ vrednost: 0.7*60 | 42
 
 :::simboli
 \alpha | dani kot | | ° | $1^\circ = 60'$ (kotnih minut)
-\beta | sokot kota $\alpha$ | \beta = 180^\circ - \alpha | ° | v primeru 3: $\beta = 3 \cdot \alpha$
+\beta | sokot kota $\alpha$ | \beta = 180^\circ - \alpha | ° | v primeru 1 drugi seštevanec, v primeru 3: $\beta = 3 \cdot \alpha$
 \gamma | komplementarni kot kota $\alpha$ | \gamma = 90^\circ - \alpha | ° | v primeru 3 sokot kota $\beta$
 \varphi | zemljepisna širina | | ° | Ljubljana: $46^\circ 03'$
 \varepsilon | nagib zemeljske osi | | ° | približno $23^\circ 26'$

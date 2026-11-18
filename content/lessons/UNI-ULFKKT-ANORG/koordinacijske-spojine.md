@@ -29,7 +29,7 @@ Kompleks v oglatem oklepaju je **notranja sfera**; ioni zunaj nje (**zunanja sfe
 
 1. V soli najprej imenujemo kation, nato anion (kot pri $\mathrm{NaCl}$: natrijev klorid).
 2. V kompleksu najprej ligande **po abecedi**, nato kovino. Množilne predpone (di-, tri-, tetra-, penta-, heksa-; pri zapletenih ligandih bis-, tris-) pri abecedi ne štejejo.
-3. Anionski ligandi dobijo končnico -o: klorido ($\mathrm{Cl^-}$), cianido ($\mathrm{CN^-}$), hidroksido, okso, oksalato; v starejših knjigah kloro, ciano. Nevtralni: akva ($\mathrm{H_2O}$), amin ($\mathrm{NH_3}$), karbonil ($\mathrm{CO}$), etilendiamin.
+3. Anionski ligandi dobijo končnico -o: klorido ($\mathrm{Cl^-}$), cianido ($\mathrm{CN^-}$), hidroksido, oksido, oksalato; v starejših knjigah kloro, ciano, okso. Nevtralni: akva ($\mathrm{H_2O}$), amin ($\mathrm{NH_3}$), karbonil ($\mathrm{CO}$), etilendiamin.
 4. Oksidacijsko število kovine z rimsko številko v oklepaju. V kationu je kovina pridevnik (kobaltov, bakrov), v nevtralnem kompleksu samostalnik (platina), v anionu dobi končnico -at: ferat (Fe), kuprat (Cu), kobaltat, platinat, kromat, nikljat.
 
 Zgledi: $[\mathrm{Cu(NH_3)_4}]\mathrm{SO_4}$ je tetraaminbakrov(II) sulfat; $\mathrm{K_4[Fe(CN)_6]}$ je kalijev heksacianidoferat(II); $[\mathrm{PtCl_2(NH_3)_2}]$ je diamindikloridoplatina(II).

@@ -325,8 +325,8 @@ kjer smo prepoznali Taylorjevi vrsti kosinusa in sinusa. Iz $e^{z + w} = e^z e^w
 
 :::simboli
 z | kompleksno število | z = a + bi | |
-a | realni del števila z | a = \operatorname{Re} z | |
-b | imaginarni del števila z | b = \operatorname{Im} z | | realno število, brez i
+a | realni del števila z | a = \operatorname{Re} z | | v formuli za kvadratno enačbo koeficient pri z²
+b | imaginarni del števila z | b = \operatorname{Im} z | | realno število, brez i; v formuli za kvadratno enačbo koeficient pri z
 i | imaginarna enota | i^2 = -1 | |
 c | realni del drugega števila c + di | | |
 d | imaginarni del drugega števila c + di | | | pri deljenju c + di ≠ 0

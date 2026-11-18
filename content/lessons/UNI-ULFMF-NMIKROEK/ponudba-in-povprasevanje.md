@@ -266,7 +266,7 @@ Pomisli na borzo električne energije, kjer analitik trgovalca vsak dan napovedu
 
 Zdaj zapiha in vetrnice ponudijo še $300$ MW skoraj zastonj. Ponudba se premakne desno. Brez plina je na voljo $1600$ MW, kar zadošča. Cena pade na $70$ €/MWh. Premogovna elektrarna ni spremenila ničesar, spremenil se je trg okoli nje.
 
-Enak izračun presečišča naredi borza vrednostnih papirjev v otvoritveni avkciji in zakladnica pri prodaji državnih menic.
+Enak izračun presečišča naredi borza vrednostnih papirjev v otvoritveni avkciji in zakladnica pri prodaji zakladnih menic.
 
 ## Drugače: Bolj natančno
 

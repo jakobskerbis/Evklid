@@ -21,7 +21,7 @@ Odvajanje je »mehanično«: za vsako elementarno funkcijo imamo pravila, ki ved
 
 **Izrek.** Naj bosta $F$ in $G$ primitivni funkciji iste funkcije $f$ na **intervalu** $I$. Potem obstaja konstanta $C$, da je $G(x) = F(x) + C$ za vse $x \in I$.
 
-*Dokaz.* Za $H = G - F$ je $H' = f - f = 0$ na $I$. Za poljubna $x_1 < x_2$ iz $I$ po Lagrangeovem izreku obstaja $\xi \in (x_1, x_2)$ z $H(x_2) - H(x_1) = H'(\xi)(x_2 - x_1) = 0$, torej je $H$ konstantna. $\square$
+*Dokaz.* Za $H = G - F$ je $H' = f - f = 0$ na $I$. Za poljubna $x_1 < x_2$ iz $I$ po Lagrangeovem izreku obstaja $\xi \in (x_1, x_2)$ s $H(x_2) - H(x_1) = H'(\xi)(x_2 - x_1) = 0$, torej je $H$ konstantna. $\square$
 
 Pogoj »interval« je bistven: na $\mathbb R \setminus \{0\}$ je konstanta lahko na vsakem delu drugačna. Vsaka **zvezna** funkcija na intervalu ima primitivno funkcijo (osnovni izrek analize), ni pa nujno elementarna. **Nedoločeni integral** je množica vseh primitivnih funkcij:
 
@@ -291,7 +291,7 @@ Izračunajmo $\displaystyle \int \frac{x^3 + 2x}{x^2 - 1}\, dx$.
 
 **Trditev.** Če je $F' = G'$ na intervalu $I$, je $G - F$ konstantna na $I$.
 
-*Dokaz.* Naj bo $H = G - F$, torej $H' = 0$ na $I$. Za poljubna $x_1 < x_2$ iz $I$ po Lagrangeovem izreku obstaja $\xi \in (x_1, x_2)$ z $H(x_2) - H(x_1) = H'(\xi)(x_2 - x_1) = 0$. Torej je $H(x_1) = H(x_2)$. $\square$
+*Dokaz.* Naj bo $H = G - F$, torej $H' = 0$ na $I$. Za poljubna $x_1 < x_2$ iz $I$ po Lagrangeovem izreku obstaja $\xi \in (x_1, x_2)$ s $H(x_2) - H(x_1) = H'(\xi)(x_2 - x_1) = 0$. Torej je $H(x_1) = H(x_2)$. $\square$
 
 Pogoj, da je $I$ **interval**, je bistven. Funkciji $\ln|x|$ in $\ln|x| + \operatorname{sgn}(x)$ imata obe odvod $\frac{1}{x}$ na $\mathbb{R} \setminus \{0\}$, a njuna razlika ni konstantna. Na vsakem delu definicijskega območja je lahko konstanta drugačna.
 
@@ -334,7 +334,7 @@ f | funkcija pod integralom (integrand) | | | F'(x) = f(x)
 x | neodvisna spremenljivka (integracijska spremenljivka) | | |
 d | oznaka diferenciala (dx, dt, du, dv) | | | pove, po kateri spremenljivki integriramo
 F | primitivna funkcija | F'(x) = f(x) | |
-C | integracijska konstanta | | | poljubno realno število
+C | integracijska konstanta | | | poljubno realno število; v nastavku Bx + C koeficient parcialnega ulomka
 g | notranja funkcija pri substituciji | | | njen odvod g' mora biti v integrandu
 t | nova spremenljivka pri substituciji | t = g(x) | | dt = g′(x) dx
 g' | odvod notranje funkcije g | | |

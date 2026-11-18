@@ -62,7 +62,7 @@ Luskolisti čebule so skriti v čebulici, kamor svetloba ne pride. Brez svetlobe
 
 **Glivna celica.** Kvasovke v sladki vodi so ovalne celice; na nekaterih raste manjši brst, nova celica. Plesen s kruha je spletena iz dolgih nitk. Glivna celica ima jedro in celično steno, vendar stena ni iz celuloze. Kloroplastov nima, zato si gliva hrane ne izdela sama, ampak jo razkraja.
 
-**Bakterijska celica.** Kapljico jogurta opazuješ pri povečavi $1000$-krat (okular $10\times$, oljni objektiv $100\times$). Vidiš le drobne paličice, brez podrobnosti. Bakterije so velike nekaj mikrometrov. Imajo membrano, citoplazmo in celično steno, **nimajo pa jedra**: njihova dedna snov (DNK) leži prosto v citoplazmi.
+**Bakterijska celica.** Kapljico jogurta opazuješ pri povečavi $1000$-krat (okular $10\times$, oljni objektiv $100\times$). Vidiš le drobne paličice, brez podrobnosti. Bakterije so velike nekaj mikrometrov. Imajo membrano, citoplazmo in celično steno, **nimajo pa jedra**: njihova dedna snov (DNA) leži prosto v citoplazmi.
 
 | Celica | Celična stena | Jedro | Kloroplasti |
 |---|---|---|---|
@@ -71,7 +71,7 @@ Luskolisti čebule so skriti v čebulici, kamor svetloba ne pride. Brez svetlobe
 | glivna (kvasovka) | da, ni iz celuloze | da | ne |
 | bakterijska | da, ni iz celuloze | ne | ne |
 
-Membrano in citoplazmo imajo vse štiri. V simulaciji spodaj »Bakterijska, rastlinska in živalska celica« uvrsti značilnosti k celicam. Opazuj, katere značilnosti imajo vse celice in katera ima samo bakterija.
+Membrano in citoplazmo imajo vse štiri. V simulaciji spodaj »Bakterijska, rastlinska in živalska celica« uvrsti značilnosti k celicam. Opazuj, katere značilnosti imajo vse celice in katere ima samo bakterija.
 
 ## Rešeni primeri
 
@@ -178,7 +178,7 @@ Predstavljaj si, da so celice bivališča v kampu.
 - **Človeška celica je šotor.** Mehko platno (membrana) se prilagodi obliki, zato so lične celice nepravilnih oblik. Notri je prostor s stvarmi (citoplazma) in zaklenjena torba z zemljevidom in navodili za pot (jedro z dedno informacijo).
 - **Rastlinska celica je šotor v leseni brunarici.** Okoli platna stoji trden zid (celična stena). Na strehi so sončni paneli (kloroplasti), sredi prostora pa velik rezervoar vode (vakuola).
 - **Glivna celica je brunarica brez sončnih panelov.** Ima zid, hrano pa mora prinesti od drugod.
-- **Bakterijska celica je majhen bivak.** Ima platno in ogrodje, a zemljevid leži kar na tleh, ne v posebni torbi: DNK ni zaprta v jedro.
+- **Bakterijska celica je majhen bivak.** Ima platno in ogrodje, a zemljevid leži kar na tleh, ne v posebni torbi: DNA ni zaprta v jedro.
 
 Primerjava ima meje: šotor ni živ, celica pa se hrani, raste in deli.
 

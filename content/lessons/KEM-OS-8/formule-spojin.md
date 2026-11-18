@@ -76,7 +76,7 @@ Ogljik in kisik tvorita dve različni spojini, $\mathrm{CO}$ in $\mathrm{CO_2}$.
 Kalcij in klor tvorita ione s stalnima nabojema ($\mathrm{Ca^{2+}}$, $\mathrm{Cl^-}$), zato je razmerje vedno $1 : 2$ in ime ga ne rabi povedati. Med nekovinama ionov ni, isti dve nekovini lahko tvorita več različnih molekul. Brez predpone ne bi vedeli, ali gre za $\mathrm{CO}$ ali $\mathrm{CO_2}$.
 :::
 
-**6. Preizkusi sam.** V simulaciji spodaj »Sestavljanje formul iz ionov« izberi $\mathrm{Al^{3+}}$ in $\mathrm{O^{2-}}$ ter dodajaj ione, dokler skupni naboj ni nič. Opazi, da se ničla prvič pojavi pri dveh aluminijevih in treh oksidnih ionih. Nato poskusi še $\mathrm{Mg^{2+}}$ in $\mathrm{Cl^-}$.
+**6. Preizkusi sam.** V simulaciji spodaj »Sestavljanje formul iz ionov« izberi $\mathrm{Al^{3+}}$ in $\mathrm{O^{2-}}$ ter preštej ione na sliki. Opazi, da se naboja izravnata pri dveh aluminijevih in treh oksidnih ionih. Nato poskusi še $\mathrm{Mg^{2+}}$ in $\mathrm{Cl^-}$.
 
 ## Rešeni primeri
 

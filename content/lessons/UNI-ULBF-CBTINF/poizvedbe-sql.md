@@ -65,7 +65,7 @@ SELECT projekt, kolicina * 2 AS dvojno
 FROM poraba ORDER BY kolicina DESC;
 ```
 
-*Preveri:* katera vrstica je v rezultatu prva? *(lopa z $40$ deskami, `dvojno` je $80$.)*
+*Preveri:* katera vrstica je v rezultatu prva? *(lopa s $40$ deskami, `dvojno` je $80$.)*
 
 **Blok 4: JOIN.** V tabeli `poraba` ni ne imena ne cene, le `material_id`. Da bi izvedeli ceno, vrstice dveh tabel **združimo**:
 

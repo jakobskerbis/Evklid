@@ -37,7 +37,7 @@ napis: 0,3; 3,06 | mikrotubul | desno
 napis: 24,8; 3,06 | ~25 nm | desno
 :::
 
-**Aktinski filamenti** (mikrofilamenti) so zgrajeni iz kroglastega **G-aktina**, ki z vezanim ATP polimerizira v vijačni **F-aktin**. Filament je **polaren**: na koncu plus (»bodičastem«) se monomeri pripenjajo hitreje kot na koncu minus. Po vezavi se ATP hidrolizira v ADP. Aktin je zgoščen pod plazmalemo (celična skorja), gradi mikrovile in filopodije, s **miozinom** pa tvori krčljiv aparat (mišice, delitveni obroč pri citokinezi).
+**Aktinski filamenti** (mikrofilamenti) so zgrajeni iz kroglastega **G-aktina**, ki z vezanim ATP polimerizira v vijačni **F-aktin**. Filament je **polaren**: na koncu plus (»bodičastem«) se monomeri pripenjajo hitreje kot na koncu minus. Po vezavi se ATP hidrolizira v ADP. Aktin je zgoščen pod plazmalemo (celična skorja), gradi mikrovile in filopodije, z **miozinom** pa tvori krčljiv aparat (mišice, delitveni obroč pri citokinezi).
 
 **Mikrotubuli** so votle cevke iz heterodimerov **$\alpha$- in $\beta$-tubulina**. Dimer je dolg približno $8\,\mathrm{nm}$. Dimeri se nizajo v protofilamente, $13$ protofilamentov pa tvori steno cevke z zunanjim premerom okoli $25\,\mathrm{nm}$. Tudi mikrotubul je polaren: na koncu plus je izpostavljen $\beta$-tubulin, ki veže GTP. Konec minus je navadno zasidran v **centru za organizacijo mikrotubulov** (MTOC), pri živalskih celicah v **centrosomu** s parom centriolov.
 

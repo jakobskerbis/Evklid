@@ -166,7 +166,7 @@ $64$ bakterij: $1 \rightarrow 2 \rightarrow 4 \rightarrow 8 \rightarrow 16 \righ
 Na risbi so tri celice. Niso narisane v pravem razmerju: bakterija je v resnici veliko manjša od drugih dveh.
 
 :::risba skica
-opis: Tri celice drug ob drugi. Levo rastlinska celica: pravokotnik z debelo steno, v njej jedro in trije kloroplasti. V sredini kvasovka: okrogla celica z jedrom in manjšim brstom ob strani, brez kloroplastov. Desno bakterija: podolgovata celica brez jedra, z dolgim vijugastim bičkom.
+opis: Tri celice druga ob drugi. Levo rastlinska celica: pravokotnik z debelo steno, v njej jedro in trije kloroplasti. V sredini kvasovka: okrogla celica z jedrom in manjšim brstom ob strani, brez kloroplastov. Desno bakterija: podolgovata celica brez jedra, z dolgim vijugastim bičkom.
 območje: 0; 0 .. 12; 5
 enota: 25
 pravokotnik: 0,3; 1 .. 3,7; 4,4 | zelena | debelo

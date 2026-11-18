@@ -155,7 +155,7 @@ Prednost: karboksilna kislina $>$ alkohol. Glavna veriga: glavna skupina, nato d
 
 ## Pogoste napake
 
-- **Veriga ni najdaljša.** Ime *2-etilpropan* je napačno: etilna skupina na C2 podaljša verigo na $4$ atome, pravilno ime je *2-metilbutan*. Etilna skupina na C2 ali metilna na C1 sta vedno znak, da veriga ni najdaljša.
+- **Veriga ni najdaljša.** Ime *2-etilpropan* je napačno: etilna skupina na C2 podaljša verigo na $4$ atome, pravilno ime je *2-metilbutan*. Etilna skupina na C2 ali metilna na C1 sta v alkanu vedno znak, da veriga ni najdaljša.
 - **Oštevilčenje z napačnega konca.** *3-metilbutan* ni pravilno; z drugega konca dobimo nižji lokant: *2-metilbutan*. Pri alkoholih: *butan-3-ol* je v resnici *butan-2-ol*.
 - **Množilne predpone pri abecednem vrstnem redu.** *2,2-dimetil-3-etilpentan* je napačno, ker *di-* ne šteje: *e* (etil) je pred *m* (metil), pravilno je *3-etil-2,2-dimetilpentan*.
 - **Napačna glavna skupina.** Pri $\mathrm{HO{-}CH_2{-}CH_2{-}CO{-}CH_3}$ ima keton prednost pred alkoholom: *4-hidroksibutan-2-on*, ne *3-oksobutan-1-ol*.

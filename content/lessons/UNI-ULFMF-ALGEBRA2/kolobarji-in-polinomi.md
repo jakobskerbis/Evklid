@@ -309,6 +309,6 @@ r | ostanek pri deljenju | r = f - q\,g | | deg r < deg g
 q_1, q_2 | kvocienta v korakih Evklidovega algoritma
 r_1, r_2 | ostanka v korakih Evklidovega algoritma | | | zadnji neničelni ostanek je gcd
 a, b | elementa kolobarja | | | pri x − a število, v katerem računamo f(a)
-n | modul (število ostankov v ℤₙ)
+n | modul (število ostankov v ℤₙ) ali stopnja polinoma
 x | spremenljivka polinoma
 :::

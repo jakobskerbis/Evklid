@@ -218,7 +218,7 @@ Homeostaza ni mirovanje, ampak **dinamično ravnovesje**: vrednost stalno niha o
 - $0{,}83\,\mu\mathrm{m}^{-1}$
 ~ To je $\dfrac{V}{P} = \dfrac{125}{150}$, obrnjeno razmerje.
 - $0{,}24\,\mu\mathrm{m}^{-1}$
-~ Deliš s $a^2 = 25$ namesto z $a$. Velja $\dfrac{6a^2}{a^3} = \dfrac{6}{a}$.
+~ Deliš z $a^2 = 25$ namesto z $a$. Velja $\dfrac{6a^2}{a^3} = \dfrac{6}{a}$.
 + $1{,}2\,\mu\mathrm{m}^{-1}$
 - $150\,\mu\mathrm{m}^{-1}$
 ~ $150\,\mu\mathrm{m}^2$ je samo površina. Deliti jo moraš s prostornino $125\,\mu\mathrm{m}^3$.
@@ -226,7 +226,7 @@ Homeostaza ni mirovanje, ampak **dinamično ravnovesje**: vrednost stalno niha o
 
 ? Na vrečki čipsa piše $2\,300\,\mathrm{kJ}$ na $100\,\mathrm{g}$. Poješ $30\,\mathrm{g}$. Koliko energije dobiš?
 - $2\,300\,\mathrm{kJ}$
-~ To je vrednost za $100\,\mathrm{g}$. Pojedel si manj, zato jo pomnoži z $\dfrac{30}{100}$.
+~ To je vrednost za $100\,\mathrm{g}$. Pojedel si manj, zato jo pomnoži s $\dfrac{30}{100}$.
 - $7\,667\,\mathrm{kJ}$
 ~ Ulomek si obrnil: $\dfrac{100}{30}$ namesto $\dfrac{30}{100}$. Manjša porcija ne more dati več energije.
 + $690\,\mathrm{kJ}$

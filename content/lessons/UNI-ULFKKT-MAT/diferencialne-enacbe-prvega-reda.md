@@ -284,7 +284,7 @@ Kjer velja Picardov izrek, se rešitvi ne moreta sekati (v presečišču bi imel
 
 ## Drugače: Korak za korakom s številkami
 
-Vzorec s $90\,^\circ\mathrm{C}$ postavimo v prostor s $20\,^\circ\mathrm{C}$; po $5\,\mathrm{min}$ ima $70\,^\circ\mathrm{C}$. Kdaj bo imel $40\,^\circ\mathrm{C}$?
+Vzorec z $90\,^\circ\mathrm{C}$ postavimo v prostor z $20\,^\circ\mathrm{C}$; po $5\,\mathrm{min}$ ima $70\,^\circ\mathrm{C}$. Kdaj bo imel $40\,^\circ\mathrm{C}$?
 
 1. **Model:** $\frac{dT}{dt} = -k(T - 20)$, torej $T(t) = 20 + 70\, e^{-kt}$.
 2. **Konstanta:** $70 = 20 + 70e^{-5k}$, $e^{-5k} = \frac{5}{7}$, $k = \frac{1}{5}\ln\frac{7}{5} = \frac{0{,}3365}{5} = 0{,}0673\,\mathrm{min^{-1}}$.

@@ -245,7 +245,7 @@ Za šest organizmov so znani znaki v tabeli. Glista ima psevdocelom, zato je pri
 
 ### Naloga 2
 
-Natančno navedi definicije monofiletske, parafiletske in polifiletske skupine. Nato utemelji, v katero od teh vrst spadajo: (a) Linnéjevi »črvi«, ki združujejo ploske črve, gliste in kolobarnike; (b) prvousti; (c) »nevretenčarji«, tj. vse živali brez vretenčarjev.
+Natančno navedi definicije monofiletske, parafiletske in polifiletske skupine. Nato utemelji, v katero od teh vrst spadajo: (a) »črvi«, ki združujejo ploske črve, gliste in kolobarnike; (b) prvousti; (c) »nevretenčarji«, tj. vse živali brez vretenčarjev.
 
 **Rešitev:**
 

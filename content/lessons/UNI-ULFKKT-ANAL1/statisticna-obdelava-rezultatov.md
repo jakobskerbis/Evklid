@@ -307,13 +307,13 @@ x | izmerjena vrednost | | mm
 \bar{x} | povprečje meritev (aritmetična sredina) | \bar x = \dfrac{\sum x_i}{n} | mm
 x_i | i-ta meritev | | mm
 i | zaporedna številka meritve | | – | od 1 do n
-n | število meritev | | –
+n | število meritev | | – | v Nalogi 1 tudi množina kisline (mol)
 s | standardni odklon vzorca | s = \sqrt{\dfrac{\sum (x_i - \bar x)^2}{n-1}} | mm | raztros meritev okoli povprečja
 \mu | prava vrednost | \mu = \bar x \pm \dfrac{t \cdot s}{\sqrt{n}} | mm | interval zaupanja, navadno 95 %
 t | Studentov faktor | | – | odvisen od n in izbrane verjetnosti
 \rho | gostota opeke | \rho = \dfrac{m}{a \cdot b \cdot c} | kg/m^3
 m | masa opeke | | kg
-a | dolžina opeke | | m
+a | dolžina opeke | | m | v trditvi o povprečju poljubno število
 b | širina opeke | | m
-c | višina opeke | | m
+c | višina opeke | | m | v Nalogi 1 koncentracija NaOH (mol/L)
 :::

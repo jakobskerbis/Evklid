@@ -152,7 +152,7 @@ Helij, ker je žlahtni plin in ne gori. Vodik gori, zato za otroke ni varen. $n 
 
 ## Pogoste napake
 
-- **Halogen kot en atom.** Kdo zapiše plin klor kot $\mathrm{Cl}$, ker tako piše v periodnem sistemu. Kot element je klor iz dvoatomnih molekul, zato $\mathrm{Cl_2}$. Pri žlahtnih plinih je obratno: $\mathrm{He}$, ne $\mathrm{He_2}$.
+- **Halogen kot en atom.** Marsikdo zapiše plin klor kot $\mathrm{Cl}$, ker tako piše v periodnem sistemu. Kot element je klor iz dvoatomnih molekul, zato $\mathrm{Cl_2}$. Pri žlahtnih plinih je obratno: $\mathrm{He}$, ne $\mathrm{He_2}$.
 - **»Vsi halogeni so plini.«** Fluor in klor sta res plina, a brom je tekočina, jod trdna snov. Stanje se navzdol po skupini spreminja.
 - **»Reaktivnost navzdol narašča, kot pri alkalijskih kovinah.«** Kovina elektron odda, halogen ga sprejme. Velik atom elektron lažje odda, a ga teže pritegne. Pri halogenih reaktivnost navzdol pada: fluor je najreaktivnejši.
 - **»Vsi žlahtni plini so lažji od zraka.«** Ker helij dvigne balon, se zdi, da to velja za vse. Liter argona ima maso $1{,}66\,\mathrm{g}$, liter zraka $1{,}20\,\mathrm{g}$. Lažja od zraka sta le helij in neon.

@@ -178,7 +178,7 @@ $2\,600\,000\,\mathrm{kg} \cdot 1{,}603\,\mathrm{g/kg} \approx 4\,168\,000\,\mat
 - pH $= -\log[\mathrm{H^+}]$; ena enota pomeni desetkratno razliko. Merimo v vodi ($1 : 2{,}5$) ali v $\mathrm{CaCl_2}$.
 - Glineni minerali in humus imajo negativen naboj in izmenljivo vežejo katione; njihovo skupno množino na kilogram tal imenujemo KIK, v $\text{cmol(+)/kg}$.
 - Humus ima na kilogram največjo KIK ($150$ do $300$), sledijo smektit, illit, kaolinit in pesek.
-- Bazična nasičenost $V$ je delež Ca, Mg, K in Na v KIK; nad $50\,\%$ so tla evtrična, pod njo distrična.
+- Bazična nasičenost $V$ je delež Ca, Mg, K in Na v KIK; nad $50\,\%$ so tla evtrična, pod to mejo distrična.
 - Organska snov $\approx 1{,}724 \cdot C_\mathrm{org}$; daje KIK, zalogo N, P, S, strukturo in blaži pH.
 - Hranila so v mineralih, na izmenjalnih mestih in v raztopini; dostopnost uravnava pH (P najbolje pri $6$ do $7$, Fe v kislem, Mo v bazičnem).
 

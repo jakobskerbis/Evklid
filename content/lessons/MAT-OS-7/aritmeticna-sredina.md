@@ -147,10 +147,10 @@ $\bar{x}_\text{nova} = \dfrac{945\,\text{cm}}{5} = 189\,\text{cm}$. Novi igralec
 
 ## Pogoste napake
 
-- **Ničla ni podatek.** Podatki $4$, $0$, $5$, $3$: učenec izračuna $12 : 3 = 4$, ker ničle ne šteje. Ničla je pravi podatek (npr. tekma brez gola). Popravek: $12 : 4 = 3$.
+- **»Ničla ni podatek.«** Podatki $4$, $0$, $5$, $3$: učenec izračuna $12 : 3 = 4$, ker ničle ne šteje. Ničla je pravi podatek (npr. tekma brez gola). Popravek: $12 : 4 = 3$.
 - **Pri tabeli seštejejo le različne vrednosti.** Učenec izračuna $(5 + 4 + 3 + 2 + 1) : 5 = 3$ in pozabi, koliko učencev ima posamezno oceno. Popravek: vsako vrednost pomnoži s frekvenco in deli s številom vseh podatkov.
 - **»Sredina mora biti eden od podatkov ali celo število.«** Povprečno število otrok v družini je lahko $1{,}6$, čeprav nobena družina nima $1{,}6$ otroka. Sredina je rezultat poštene delitve, ne izmerjen podatek.
-- **Povprečje povprečij.** Po dveh testih s povprečjem $70$ in tretjem testu z $85$ točkami učenec izračuna $(70 + 85) : 2 = 77{,}5$. A $70$ predstavlja dva testa. Popravek: $(140 + 85) : 3 = 75$.
+- **Povprečje povprečij.** Po dveh testih s povprečjem $70$ in tretjem testu s $85$ točkami učenec izračuna $(70 + 85) : 2 = 77{,}5$. A $70$ predstavlja dva testa. Popravek: $(140 + 85) : 3 = 75$.
 - **»Sredina je podatek na sredini seznama.«** Pri podatkih $2$, $9$, $4$ na sredini stoji $9$, sredina pa je $15 : 3 = 5$. Popravek: vedno računaj vsoto, deljeno s številom podatkov.
 
 ## Povzetek

@@ -101,7 +101,7 @@ $P = 4\pi r^2$ in $V = \dfrac{4}{3}\pi r^3$
 3. Zaokrožimo: $P \approx 452{,}39\,\text{cm}^2$.
 4. **Prostornina:** $V = \frac{4}{3}\pi r^3 = \frac{4}{3}\pi \cdot 6^3$.
 5. $6^3 = 6 \cdot 6 \cdot 6 = 216$. Velja $\frac{4}{3} \cdot 216 = 4 \cdot 72 = 288$. Torej $V = 288\pi\,\text{cm}^3 \approx 904{,}78\,\text{cm}^3$.
-6. Preverimo smiselnost: kocka s stranico $12\,\text{cm}$ ($= 2r$), v katero se krogla ravno prilega, ima prostornino $12^3 = 1728\,\text{cm}^3$. Krogla ima manj, $904{,}78\,\text{cm}^3$, kar je nekaj več kot polovica kocke (približno $52\,\%$). Rezultat je smiseln.
+6. Preverimo smiselnost: kocka z robom $12\,\text{cm}$ ($= 2r$), v katero se krogla ravno prilega, ima prostornino $12^3 = 1728\,\text{cm}^3$. Krogla ima manj, $904{,}78\,\text{cm}^3$, kar je nekaj več kot polovica kocke (približno $52\,\%$). Rezultat je smiseln.
 7. Odgovor: površina krogle je $144\pi\,\text{cm}^2 \approx 452{,}39\,\text{cm}^2$, prostornina $288\pi\,\text{cm}^3 \approx 904{,}78\,\text{cm}^3$.
 
 ### Primer 2: podan je premer

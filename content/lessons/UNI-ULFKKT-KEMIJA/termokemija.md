@@ -187,7 +187,7 @@ $q = 0{,}1388 \cdot 2802{,}5\,\mathrm{kJ} \approx 389\,\mathrm{kJ}$. S paro bi b
 - **Obrnjen vrstni red.** $\Delta_\mathrm{r}H^\circ$ je »produkti minus reaktanti«, ne obratno. Pri obrnjenem vrstnem redu dobiš pravo vrednost z napačnim predznakom.
 - **Pozabljeni koeficienti.** Tvorbene entalpije veljajo za $1\,\mathrm{mol}$ snovi; v Primeru 3 je treba $\Delta_\mathrm{f}H^\circ(\mathrm{H_2O})$ pomnožiti s $3$.
 - **Tvorbena entalpija elementa.** $\Delta_\mathrm{f}H^\circ(\mathrm{O_2, g}) = 0$, ne pa $\Delta_\mathrm{f}H^\circ(\mathrm{O_3, g})$ ali $\Delta_\mathrm{f}H^\circ(\mathrm{H, g})$; nič velja le za najstabilnejšo obliko elementa.
-- **Agregatno stanje vode.** Z $\mathrm{H_2O(g)}$ namesto $\mathrm{H_2O(l)}$ dobiš pri sežigu metana $-802\,\mathrm{kJ/mol}$ namesto $-890\,\mathrm{kJ/mol}$.
+- **Agregatno stanje vode.** S $\mathrm{H_2O(g)}$ namesto $\mathrm{H_2O(l)}$ dobiš pri sežigu metana $-802\,\mathrm{kJ/mol}$ namesto $-890\,\mathrm{kJ/mol}$.
 - **Predznak v kalorimetriji.** Če se raztopina segreje, je $q$ raztopine pozitiven, $\Delta H$ reakcije pa negativen.
 - **Enote $R$.** $R = 8{,}314\,\mathrm{J\,mol^{-1}\,K^{-1}}$; pri seštevanju s $\mathrm{kJ/mol}$ ga pretvori v $0{,}008\,314\,\mathrm{kJ\,mol^{-1}\,K^{-1}}$.
 - **Hessov zakon brez obrata predznaka.** Ko reakcijo obrneš, obrni tudi predznak $\Delta H$; ko jo pomnožiš, pomnoži tudi $\Delta H$.
@@ -267,7 +267,7 @@ Tvorbene entalpije si predstavljaj kot »nadmorske višine« spojin, merjene od 
 
 **Kurilnost goriv.** Laboratoriji kurilnost premoga, biomase in goriv merijo v bombnem kalorimetru, ki ga umerijo s sežigom benzojske kisline z znano $\Delta_\mathrm{c}U$ (okoli $-26{,}4\,\mathrm{kJ/g}$). Bomba da zgornjo kurilnost (voda tekoča), za metan $890{,}3/16{,}04 \approx 55{,}5\,\mathrm{MJ/kg}$; spodnja (voda kot para) je $802{,}3/16{,}04 \approx 50{,}0\,\mathrm{MJ/kg}$. Kondenzacijski kotli izkoristijo prav to razliko, izparilno entalpijo vode v dimnih plinih.
 
-**Varnost procesov.** Pred povečanjem sinteze z laboratorija v obrat izmerijo $\Delta_\mathrm{r}H$ v reakcijskem kalorimetru in ocenijo adiabatni dvig temperature, če hlajenje odpove: $\Delta T_\mathrm{ad} = c\,|\Delta_\mathrm{r}H|/(\rho\,c_p)$. Za $1\,\mathrm{mol/L}$ reakcije z $-100\,\mathrm{kJ/mol}$ v vodni raztopini je to $100\,000\,\mathrm{J}/(1000\,\mathrm{g} \cdot 4{,}18\,\mathrm{J\,g^{-1}\,K^{-1}}) \approx 24\,\mathrm{K}$; če temperatura pri tem doseže vrelišče topila ali območje razkroja produkta, postopek spremenijo (počasnejše dodajanje, razredčenje).
+**Varnost procesov.** Pred povečanjem sinteze iz laboratorija v obrat izmerijo $\Delta_\mathrm{r}H$ v reakcijskem kalorimetru in ocenijo adiabatni dvig temperature, če hlajenje odpove: $\Delta T_\mathrm{ad} = c\,|\Delta_\mathrm{r}H|/(\rho\,c_p)$. Za $1\,\mathrm{mol/L}$ reakcije z $-100\,\mathrm{kJ/mol}$ v vodni raztopini je to $100\,000\,\mathrm{J}/(1000\,\mathrm{g} \cdot 4{,}18\,\mathrm{J\,g^{-1}\,K^{-1}}) \approx 24\,\mathrm{K}$; če temperatura pri tem doseže vrelišče topila ali območje razkroja produkta, postopek spremenijo (počasnejše dodajanje, razredčenje).
 
 **Žganje apna.** Razkroj $\mathrm{CaCO_3}$ ima $\Delta_\mathrm{r}H^\circ = +178{,}3\,\mathrm{kJ/mol}$, torej okoli $1{,}78\,\mathrm{MJ}$ na kilogram apnenca. Iz tega inženirji izračunajo najmanjšo porabo goriva apnenice, dejanska je večja zaradi toplotnih izgub.
 
@@ -367,5 +367,7 @@ R | splošna plinska konstanta | | J/(mol K) | RT = 2,48 kJ/mol pri 298 K
 C_p | toplotna kapaciteta pri stalnem tlaku | | J/K | ΔᵣCp°: razlika kapacitet produktov in reaktantov
 C_{p,\mathrm{m}} | molska toplotna kapaciteta pri stalnem tlaku | | J/(mol K)
 n | množina snovi | n = \frac{m}{M} | mol
+c | množinska koncentracija | | mol/L
+\rho | gostota raztopine | | g/L
 M | molska masa | | g/mol
 :::

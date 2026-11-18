@@ -287,7 +287,7 @@ Spolovila v mediani ravnini: pri ženski od spredaj nazaj mehur, maternica, dank
 
 **Protitočni mehanizem.** Henlejeva zanka ima dva kraka z različno prepustnostjo. Spust je prepusten za vodo, vzpon ni, a aktivno črpa $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ v intersticij. Ker tekočina v krakih teče v nasprotnih smereh, se majhna razlika na vsaki višini sešteje v velik gradient: od okoli $300\,\mathrm{mOsm/L}$ v skorji do okoli $1200\,\mathrm{mOsm/L}$ na vrhu papile. Zbiralce prehaja ta gradient; ob antidiuretičnem hormonu so v njegovi steni vodne pore (akvaporini) in urin se koncentrira.
 
-**Skupni izvor.** Sečila in spolovila se razvijejo iz vmesnega mezoderma. Mezonefrični vod pri moškem postane nadmodek, semenovod in semenski mešiček, pri ženski skoraj izgine. Paramezonefrični vod pri ženski postane jajcevoda, maternica in zgornji del nožnice. Zato so organi homologni: moda in jajčnika, mošnja in velike sramne ustne.
+**Skupni izvor.** Sečila in spolovila se razvijejo iz vmesnega mezoderma. Mezonefrični vod pri moškem postane nadmodek, semenovod in semenski mešiček, pri ženski skoraj izgine. Paramezonefrični vod pri ženski postane jajcevoda, maternica in zgornji del nožnice. Zato so organi homologni: modi in jajčnika, mošnja in velike sramne ustne.
 
 ## Preveri se
 

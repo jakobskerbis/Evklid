@@ -17,7 +17,7 @@ Kako je lahko ista žival videti tako različno? In kako sploh nastane nova živ
 
 **Nova žival iz dveh celic.** Pri mački, kokoši, postrvi in trdoglavcu najdemo samce in samice. Samec v **modih** tvori moške spolne celice, **semenčice** (spermije). Samica v **jajčnikih** tvori ženske spolne celice, **jajčne celice**. Ko se semenčica in jajčna celica združita, govorimo o **oploditvi**. Nastane ena sama celica, **oplojena jajčna celica**. Ta se deli znova in znova in iz nje zraste **zarodek**.
 
-Taki razmnoževanji pravimo **spolno razmnoževanje**. Mladič dobi lastnosti od obeh staršev, zato si bratje in sestre niso povsem enaki. Pri **nespolnem razmnoževanju** pa nova žival nastane iz enega samega starša, na primer nov trdoživnjak (drobna vodna žival, sorodnica meduze) iz brsta na telesu starša.
+Takemu razmnoževanju pravimo **spolno razmnoževanje**. Mladič dobi lastnosti od obeh staršev, zato si bratje in sestre niso povsem enaki. Pri **nespolnem razmnoževanju** pa nova žival nastane iz enega samega starša, na primer nov trdoživnjak (drobna vodna žival, sorodnica meduze) iz brsta na telesu starša.
 
 **Dve zelo različni celici.** Semenčica je drobna in gibljiva: plava s pomočjo dolgega bička. Jajčna celica je mnogo večja in se ne giblje, ker nosi zalogo hrane za zarodek. Rumenjak kokošjega jajca je ena sama, izjemno velika jajčna celica. V simulacijah spodaj »3D: Semenčica (spermij)« in »3D: Jajčna celica« zavrti oba modela in primerjaj, kje je jedro in koliko prostora zavzame.
 

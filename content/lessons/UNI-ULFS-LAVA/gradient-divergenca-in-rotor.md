@@ -90,10 +90,10 @@ Divergenca je $0 + 0 + 0 = 0$: tok kroži, nikjer ne izvira. Rotor je $(0, 0, 2)
 
 ### Primer 1 (lažji)
 
-Za $f(x, y, z) = x^2y + yz^3$ določi smerni odvod v točki $T(1, 2, 1)$ v smeri vektorja $\vec a = (2, -1, 2)$ in največjo hitrost naraščanja $f$ v tej točki.
+Za $f(x, y, z) = x^2y + yz^3$ določi smerni odvod v točki $(1, 2, 1)$ v smeri vektorja $\vec a = (2, -1, 2)$ in največjo hitrost naraščanja $f$ v tej točki.
 
 **Podatki:** $f = x^2y + yz^3$, točka $(1, 2, 1)$, smer $\vec a = (2, -1, 2)$
-**Iščemo:** $D_{\vec e}f$ in $|\nabla f|$ v točki $T$
+**Iščemo:** $D_{\vec e}f$ in $|\nabla f|$ v točki $(1, 2, 1)$
 
 :::formula
 $D_{\vec e}f = \nabla f \cdot \vec e$, $\vec e = \frac{\vec a}{|\vec a|}$; največja hitrost je $|\nabla f|$
@@ -102,7 +102,7 @@ $D_{\vec e}f = \nabla f \cdot \vec e$, $\vec e = \frac{\vec a}{|\vec a|}$; najve
 **Rešitev:**
 
 1. Gradient: $\nabla f = (2xy,\; x^2 + z^3,\; 3yz^2)$.
-2. V točki $T$: $\nabla f = (4, 2, 6)$.
+2. V točki $(1, 2, 1)$: $\nabla f = (4, 2, 6)$.
 3. $|\vec a| = \sqrt{4 + 1 + 4} = 3$, zato $\vec e = \frac13(2, -1, 2)$; smer mora biti enotska.
 4. $D_{\vec e}f = \frac{8 - 2 + 12}{3} = 6$.
 5. $|\nabla f| = \sqrt{16 + 4 + 36} = \sqrt{56} = 7{,}48$.
@@ -129,7 +129,7 @@ Pri majhnih deformacijah je relativna sprememba prostornine $\frac{\Delta V}{V} 
 
 ### Primer 3 (težji)
 
-Dano je polje $\vec F = (2xy + z^3,\; x^2 + 2yz,\; axz^2 + y^2)$. Določi $a$, da bo $\vec F$ potencialno, poišči potencial $\varphi$ z $\varphi(0, 0, 0) = 0$ in izračunaj $\operatorname{div}\vec F$ v točki $(1, -1, 2)$.
+Dano je polje $\vec F = (2xy + z^3,\; x^2 + 2yz,\; axz^2 + y^2)$. Določi $a$, da bo $\vec F$ potencialno, poišči potencial $\varphi$ s $\varphi(0, 0, 0) = 0$ in izračunaj $\operatorname{div}\vec F$ v točki $(1, -1, 2)$.
 
 **Podatki:** $\vec F = (2xy + z^3,\; x^2 + 2yz,\; axz^2 + y^2)$, $\varphi(0, 0, 0) = 0$, točka $(1, -1, 2)$
 **Iščemo:** $a$, $\varphi$ in $\operatorname{div}\vec F(1, -1, 2)$
@@ -292,7 +292,7 @@ Predstavljaj si pokrajino in reko.
 
 ? Kolikšen je smerni odvod funkcije $f = xy$ v točki $(2, 3)$ v smeri vektorja $\vec a = (3, 4)$?
 - $17$
-~ To je $\nabla f \cdot \vec a$; smer ni enotska ($|\vec a| = 5$), zato je treba še deliti z $5$.
+~ To je $\nabla f \cdot \vec a$; smer ni enotska ($|\vec a| = 5$), zato je treba še deliti s $5$.
 + $3{,}4$
 - $85$
 ~ Z dolžino $|\vec a| = 5$ je treba deliti, ne množiti.

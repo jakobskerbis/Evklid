@@ -233,7 +233,7 @@ Dve vzmeti s koeficientoma $k_1 = 60\,\mathrm{N/m}$ in $k_2 = 30\,\mathrm{N/m}$ 
 5. Fazni zamik: $\cos\delta = x(0)/x_0 = 0{,}030/0{,}04637 \approx 0{,}647$, $\sin\delta = -v(0)/(\omega_0x_0) = 0{,}25/(7{,}071 \cdot 0{,}04637) \approx 0{,}762$, torej $\delta \approx 0{,}867\,\mathrm{rad}$.
 6. Najvišja lega je $x = -x_0$, kar zahteva $\omega_0t + \delta = \pi$: $t = (\pi - 0{,}867)/7{,}071\,\mathrm{s} \approx 0{,}322\,\mathrm{s}$.
 7. Sila v vzmeteh je $F = k(mg/k + x) = mg + kx$: največja v spodnji legi, $F_{\max} = 3{,}924 + 20 \cdot 0{,}04637 \approx 4{,}85\,\mathrm{N}$, najmanjša v zgornji, $F_{\min} = 3{,}924 - 0{,}927 \approx 3{,}00\,\mathrm{N}$.
-8. Odgovor: vzmeti sta v mirovanju raztegnjeni za $6{,}5\,\mathrm{cm}$ in $13{,}1\,\mathrm{cm}$; utež niha z $t_0 \approx 0{,}89\,\mathrm{s}$ in amplitudo $4{,}6\,\mathrm{cm}$ ter je prvič v najvišji legi ob $t \approx 0{,}32\,\mathrm{s}$. Sila v vzmeteh se giblje med $3{,}0\,\mathrm{N}$ in $4{,}9\,\mathrm{N}$; ker je ves čas pozitivna, sta vzmeti ves čas napeti in model velja.
+8. Odgovor: vzmeti sta v mirovanju raztegnjeni za $6{,}5\,\mathrm{cm}$ in $13{,}1\,\mathrm{cm}$; utež niha s $t_0 \approx 0{,}89\,\mathrm{s}$ in amplitudo $4{,}6\,\mathrm{cm}$ ter je prvič v najvišji legi ob $t \approx 0{,}32\,\mathrm{s}$. Sila v vzmeteh se giblje med $3{,}0\,\mathrm{N}$ in $4{,}9\,\mathrm{N}$; ker je ves čas pozitivna, sta vzmeti ves čas napeti in model velja.
 
 ### Naloga 2
 

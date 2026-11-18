@@ -245,7 +245,7 @@ Utemelji, ali velja: (a) dva nezdružljiva dogodka s pozitivnima verjetnostma st
 
 ## Drugače: Korak za korakom s številkami
 
-Masa tablet je normalno porazdeljena s $\mu = 500\,\mathrm{mg}$ in $\sigma = 10\,\mathrm{mg}$. Kolikšen delež tablet ima maso nad $520\,\mathrm{mg}$ in kolikšen med $480\,\mathrm{mg}$ in $520\,\mathrm{mg}$?
+Masa tablet je normalno porazdeljena z $\mu = 500\,\mathrm{mg}$ in $\sigma = 10\,\mathrm{mg}$. Kolikšen delež tablet ima maso nad $520\,\mathrm{mg}$ in kolikšen med $480\,\mathrm{mg}$ in $520\,\mathrm{mg}$?
 
 1. **Standardizacija:** $z = \frac{520 - 500}{10} = 2$ in $z = \frac{480 - 500}{10} = -2$.
 2. **Tabela:** $\Phi(2) = 0{,}9772$.

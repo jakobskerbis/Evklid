@@ -34,7 +34,7 @@ Ne. Vrstica je »da, ne, ne«: raste, a nima celic, nima presnove in nima dedne 
 **2. Pravilo: značilnosti živega.** Živo bitje ali **organizem** ima *vse* naslednje značilnosti hkrati:
 
 - **celična zgradba**: zgrajen je iz ene ali več celic; **celica** je najmanjša enota, ki je živa;
-- **presnova** (metabolizem): sprejema snovi in energijo, ju pretvarja in oddaja odpadne snovi;
+- **presnova** (metabolizem): sprejema snovi in energijo, jih pretvarja in oddaja odpadne snovi;
 - **rast in razvoj**;
 - **odzivanje na dražljaje**, na primer na svetlobo, mraz ali dotik;
 - **homeostaza**: ohranja stalne razmere v telesu; tvoja telesna temperatura na primer ostaja okoli $37\,^\circ\text{C}$ poleti in pozimi;

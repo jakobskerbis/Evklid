@@ -46,7 +46,7 @@ Zakaj mora graf vsakega premega sorazmerja iti skozi izhodišče? Odgovori na pr
 
 Večji kot je $k$, strmejša je premica. Na zemljevidu, kjer $1\,\text{cm}$ pomeni $5\,\text{km}$, se premica dviga hitreje kot pri $2\,\text{km}$.
 
-V simulaciji spodaj »Premo sorazmerje« premakni drsnik za kilograme s $2$ na $4$. Opazuj, da se cena podvoji in da točka ostane na isti premici skozi izhodišče. Nato spremeni ceno za $1\,\text{kg}$ in poglej, kako se premica nagne.
+V simulaciji spodaj »Premo sorazmerje« premakni drsnik za kilograme z $2$ na $4$. Opazuj, da se cena podvoji in da točka ostane na isti premici skozi izhodišče. Nato spremeni ceno za $1\,\text{kg}$ in poglej, kako se premica nagne.
 
 **Sklepni račun.** Ko poznaš en par, gre račun v dveh korakih:
 

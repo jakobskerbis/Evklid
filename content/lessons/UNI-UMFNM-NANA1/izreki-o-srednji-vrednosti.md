@@ -15,7 +15,7 @@ Iz Lagrangeovega izreka sledi, da je funkcija z odvodom $0$ konstantna, da pozit
 
 Gradimo po kosih. Za vsakim kosom je kratko vprašanje v eni vrstici; odgovori nanj, preden bereš naprej.
 
-**Kos 1: v vrhu je tangenta vodoravna.** Funkcija $f$ ima v notranji točki $c$ **lokalni maksimum**, če je $f(x) \le f(c)$ za vse $x$ blizu $c$. Če je $f$ v $c$ odvedljiva, je $f'(c) = 0$. Razlog: levo od $c$ je diferenčni količnik $\frac{f(x)-f(c)}{x-c} \ge 0$, desno $\le 0$; limita obeh je ista številka $f'(c)$, torej $0$. Enako velja za lokalni minimum (Fermatov izrek).
+**Kos 1: v vrhu je tangenta vodoravna.** Funkcija $f$ ima v notranji točki $c$ **lokalni maksimum**, če je $f(x) \le f(c)$ za vse $x$ blizu $c$. Če je $f$ v $c$ odvedljiva, je $f'(c) = 0$. Razlog: levo od $c$ je diferenčni količnik $\frac{f(x)-f(c)}{x-c} \ge 0$, desno $\le 0$; limita obeh je isto število $f'(c)$, torej $0$. Enako velja za lokalni minimum (Fermatov izrek).
 
 *Preveri:* ali iz $f'(c) = 0$ sledi, da je v $c$ ekstrem? *Ne: $f(x) = x^3$ ima $f'(0) = 0$, a v $0$ samo naraste skozi vodoravno tangento.*
 

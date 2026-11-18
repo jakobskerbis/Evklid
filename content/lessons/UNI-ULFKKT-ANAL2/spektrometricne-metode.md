@@ -253,7 +253,7 @@ napis: 10,5; 1,7 | detektor | sredina
 
 Pri UV-VIS monokromator stoji *pred* vzorcem in izbere eno barvo iz mavrice. Pri AAS stoji *za* plamenom: plamen sam sveti, monokromator pa izloči vse razen črte elementa.
 
-Graf $A$ proti $c$ je premica skozi izhodišče, ki se pri velikih $A$ ukrivi navzdol. Graf $T$ proti $c$ je krivulja, ki se kot senca v vse globljem jezeru bliža nič, a je nikoli ne doseže.
+Graf $A$ proti $c$ je premica skozi izhodišče, ki se pri velikih $A$ ukrivi navzdol. Graf $T$ proti $c$ je krivulja, ki se kot senca v vse globljem jezeru bliža ničli, a je nikoli ne doseže.
 
 ## Drugače: Bolj natančno
 
@@ -278,7 +278,7 @@ Pri AAS je absorpcijska črta široka le okoli $0{,}005\,\mathrm{nm}$, pas monok
 - $0{,}32$
 ~ $0{,}32$ je prepustnost $T = 10^{-0{,}50}$, ne absorbanca.
 - $8{,}0 \cdot 10^{8}$
-~ Koncentracijo si delil namesto množil. Velja $A = \varepsilon\, b\, c$.
+~ S koncentracijo si delil namesto množil. Velja $A = \varepsilon\, b\, c$.
 > $A = 2{,}0 \cdot 10^4 \cdot 1{,}00 \cdot 2{,}5 \cdot 10^{-5} = 0{,}50$.
 
 ? Sošolec piše: »Vzorec ima v kiveti $1\,\mathrm{cm}$ prepustnost $0{,}60$. V kiveti $2\,\mathrm{cm}$ bo prepustnost $0{,}60/2 = 0{,}30$.« Kje je napaka?

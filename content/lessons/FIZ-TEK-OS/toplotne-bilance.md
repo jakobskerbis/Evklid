@@ -35,7 +35,7 @@ Taki enakosti rečemo **toplotna bilanca**. Pri Jakovem rezervoarju je končna t
 | $\Delta T$ | $10\,\mathrm{K}$ | $30\,\mathrm{K}$ |
 | $Q$ | $25\,200\,\mathrm{J}$ | $25\,200\,\mathrm{J}$ |
 
-Hladna voda se segreje s $20$ na $30\,^\circ\mathrm{C}$ in toploto prejme, topla se ohladi s $60$ na $30\,^\circ\mathrm{C}$ in jo odda. Toploti sta enaki, torej je $30\,^\circ\mathrm{C}$ pravi odgovor. Jaka se je zmotil za $10\,^\circ\mathrm{C}$.
+Hladna voda se segreje z $20$ na $30\,^\circ\mathrm{C}$ in toploto prejme, topla se ohladi s $60$ na $30\,^\circ\mathrm{C}$ in jo odda. Toploti sta enaki, torej je $30\,^\circ\mathrm{C}$ pravi odgovor. Jaka se je zmotil za $10\,^\circ\mathrm{C}$.
 
 :::premisli
 V tabeli se topla voda spremeni za $30\,\mathrm{K}$, hladna le za $10\,\mathrm{K}$, čeprav si izmenjata enako toploto. Zakaj ravno trikrat bolj? Kaj ima s tem masa?

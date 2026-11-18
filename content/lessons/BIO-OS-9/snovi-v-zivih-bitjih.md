@@ -163,7 +163,7 @@ $m_\mathrm{suho} = 50\,\mathrm{g}$. Iz pol kilograma svežih gob dobiš le za pe
 ## Povzetek
 
 - Živa bitja so iz istih elementov kot neživa narava, a več kot $95\,\%$ njihove mase je iz C, H, O, N, P in S.
-- Ogljik tvori verige in obroče, zato je ogrodje organskih snovi. Voda in soli sta anorganski snovi.
+- Ogljik tvori verige in obroče, zato je ogrodje organskih snovi. Voda in soli so anorganske snovi.
 - Voda je največji del telesa (človek okoli $60\,\%$, gobe in listi do $90\,\%$); soli gradijo kosti, so v krvi in klorofilu.
 - Ogljikovi hidrati (C, H, O) dajo hitro energijo ($17\,\mathrm{kJ/g}$), maščobe (C, H, O, malo O) so zaloga ($37\,\mathrm{kJ/g}$), beljakovine (dodatno N, S) gradijo telo in so encimi, DNA (dodatno P) nosi dedni zapis.
 - Presnova: fotosinteza gradi glukozo iz $\mathrm{CO_2}$ in vode, celično dihanje jo razgradi nazaj in sprosti energijo.

@@ -57,7 +57,7 @@ To je dogovor o predznakih, ki ga uporabljata tudi IUPAC in kemija ($\Delta U = 
 **6. Posebne spremembe idealnega plina.** Za $n$ molov idealnega plina:
 
 - **Izohorna** ($V$ stalna): $A = 0$, $Q = \Delta W_n = nC_V\Delta T$.
-- **Izobarna** ($p$ stalen): $A = -p\Delta V = -nR\Delta T$, $Q = nC_p\Delta T$, $\Delta W_n = nC_V\Delta T$. Iz prvega zakona je $Q = \Delta W_n - A = nC_V\Delta T + nR\Delta T$; primerjava z $Q = nC_p\Delta T$ da **Mayerjevo zvezo** $C_p = C_V + R$.
+- **Izobarna** ($p$ stalen): $A = -p\Delta V = -nR\Delta T$, $Q = nC_p\Delta T$, $\Delta W_n = nC_V\Delta T$. Iz prvega zakona je $Q = \Delta W_n - A = nC_V\Delta T + nR\Delta T$; primerjava s $Q = nC_p\Delta T$ da **Mayerjevo zvezo** $C_p = C_V + R$.
 - **Izotermna** ($T$ stalna): $\Delta W_n = 0$, zato $Q = -A$. Pri reverzibilni spremembi je $p = nRT/V$, zato
 
 $$A = -\int_{V_1}^{V_2}\frac{nRT}{V}\,\mathrm{d}V = -nRT\ln\frac{V_2}{V_1}.$$

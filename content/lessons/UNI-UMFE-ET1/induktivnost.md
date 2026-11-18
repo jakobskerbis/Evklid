@@ -208,7 +208,7 @@ $W = 0{,}5 \cdot 0{,}50 \cdot 0{,}060^2\,\mathrm{J} = 0{,}90\,\mathrm{mJ}$. Ob i
 - **Napetost sorazmerna s tokom.** »Pri $60\,\mathrm{mA}$ ne more nastati $3000\,\mathrm{V}$« meša tuljavo z upornikom. Na tuljavi je napetost sorazmerna z $\mathrm{d}i/\mathrm{d}t$; velik tok s stalno vrednostjo da nič, majhen tok, ki hitro pade, pa ogromno napetost.
 - **$L$ linearno z $N$.** Podvojitev ovojev podvoji induktivnost? Ne: $L = N^2/R_m$, zato štirikrat. Ovoji dvakrat povečajo pretok in dvakrat več ovojev ga objame.
 - **Reža je zanemarljiva.** »Reža je le $1\,\%$ dolžine« pozabi, da je upor zraka $\mu_r$-krat večji. Reža pogosto odloča o celotni induktivnosti.
-- **Napačen predznak $M$.** Pri zaporedni vezavi sklopljenih tuljav $L_1 + L_2$ ni pravilno; odvisno od navijanja je $\pm 2M$. Smer določijo piki ali meritev obeh vezav.
+- **Napačen predznak $M$.** Pri zaporedni vezavi sklopljenih tuljav $L_1 + L_2$ ni pravilno; odvisno od navijanja je $\pm 2M$. Smer določita piki ali meritev obeh vezav.
 - **Energija v železu.** Ker je železo »magnetno«, se zdi, da tam sedi energija. Pri enaki gostoti $B$ je gostota energije $B^2/(2\mu)$ v zraku $\mu_r$-krat večja; v jedru z režo je skoraj vsa energija v reži.
 
 ## Povzetek

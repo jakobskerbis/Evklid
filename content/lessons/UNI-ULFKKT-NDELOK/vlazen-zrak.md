@@ -269,7 +269,7 @@ Analogija ima mejo: v zraku »sedeži« niso prava mesta. Para in zrak sta meša
 - rosišče $8\,^\circ\mathrm{C}$
 ~ Rosišče je določeno samo s količino pare: več pare pomeni višje rosišče.
 + relativna vlažnost $40\,\%$
-> Relativna vlažnost pove le, kako blizu nasičenja je zrak. Isti $40\,\%$ pri $0\,^\circ\mathrm{C}$ in pri $30\,^\circ\mathrm{C}$ pomeni zelo različno količino vode.
+> Relativna vlažnost pove le, kako blizu nasičenja je zrak. Istih $40\,\%$ pri $0\,^\circ\mathrm{C}$ in pri $30\,^\circ\mathrm{C}$ pomeni zelo različno količino vode.
 
 ? Zrak ima $25\,^\circ\mathrm{C}$ in absolutno vlažnost $6{,}9\,\mathrm{g/m^3}$. Kolikšna je relativna vlažnost? Uporabi tabelo iz razlage.
 - $6{,}9\,\%$

@@ -209,7 +209,7 @@ Tangenta: $y = f(x_0) + f'(x_0)(x - x_0)$. Normala: $y = f(x_0) - \dfrac{1}{f'(x
 - **Odvod v točki pred odvajanjem.** Študent najprej vstavi $x_0$ in nato odvaja konstanto, kar da $0$. Najprej odvajaj, nato vstavi.
 - **Tangenta z napačno točko.** V enačbo tangente vstavi $f(x_0)$, ne $f'(x_0)$, kot ordinato točke.
 - **Koti v stopinjah.** $(\sin x)' = \cos x$ velja samo, če je $x$ v radianih.
-- **Odvod konstante z $\pi$ ali $e$.** Študent napiše $(e^2)' = 2e$ ali $(\pi^3)' = 3\pi^2$. Števili $e^2$ in $\pi^3$ sta konstanti, zato je njun odvod $0$.
+- **Odvod konstante s $\pi$ ali $e$.** Študent napiše $(e^2)' = 2e$ ali $(\pi^3)' = 3\pi^2$. Števili $e^2$ in $\pi^3$ sta konstanti, zato je njun odvod $0$.
 - **Napačna spremenljivka.** Pri $f(t) = e^{-kt}$ odvajamo po $t$, $k$ je konstanta: $f'(t) = -k e^{-kt}$. Vedno preveri, po kateri spremenljivki odvajaš.
 
 ## Povzetek
@@ -241,7 +241,7 @@ Dana je funkcija $f(x) = ax^2 + b$ za $x \le 1$ in $f(x) = \dfrac{\ln x}{x}$ za 
 
 1. Na $(-\infty, 1)$ in $(1, \infty)$ je $f$ odvedljiva kot polinom oziroma kvocient odvedljivih funkcij z neničelnim imenovalcem. Preveriti moramo le $x = 1$.
 2. Odvedljiva funkcija je zvezna, zato mora veljati $\lim_{x \to 1^+} \frac{\ln x}{x} = f(1)$: $0 = a + b$.
-3. Levi odvod v $1$ je $2a \cdot 1 = 2a$. Desni odvod po definiciji, s $f(1) = a + b = 0$: $\frac{f(1 + h) - f(1)}{h} = \frac{\ln(1 + h)}{h} \cdot \frac{1}{1 + h} \to 1 \cdot 1 = 1$ za $h \to 0^+$ (znana limita $\lim_{h \to 0}\frac{\ln(1 + h)}{h} = 1$). Pogoj $2a = 1$ da $a = \frac{1}{2}$, $b = -\frac{1}{2}$.
+3. Levi odvod v $1$ je $2a \cdot 1 = 2a$. Desni odvod po definiciji, z $f(1) = a + b = 0$: $\frac{f(1 + h) - f(1)}{h} = \frac{\ln(1 + h)}{h} \cdot \frac{1}{1 + h} \to 1 \cdot 1 = 1$ za $h \to 0^+$ (znana limita $\lim_{h \to 0}\frac{\ln(1 + h)}{h} = 1$). Pogoj $2a = 1$ da $a = \frac{1}{2}$, $b = -\frac{1}{2}$.
 4. Za $x > 1$ je $f'(x) = \left(\frac{\ln x}{x}\right)' = \frac{1 - \ln x}{x^2}$ (pravilo za kvocient), za $x < 1$ pa $f'(x) = 2ax = x$.
 5. Vodoravne tangente ($f' = 0$): za $x < 1$ pri $x = 0$, $f(0) = -\frac{1}{2}$. Za $x > 1$ pri $\ln x = 1$, torej $x = e$, $f(e) = \frac{1}{e} \approx 0{,}368$. V $x = 1$ je $f'(1) = 1 \neq 0$.
 6. Tangenta v $x_0 = e^2$: $f(e^2) = \frac{2}{e^2}$, $f'(e^2) = \frac{1 - 2}{e^4} = -\frac{1}{e^4}$, zato $y = \frac{2}{e^2} - \frac{1}{e^4}(x - e^2)$.

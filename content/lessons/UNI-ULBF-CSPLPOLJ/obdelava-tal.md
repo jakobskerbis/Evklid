@@ -134,7 +134,7 @@ $D = \dfrac{\text{zadetki}}{\text{vse oznake}}$, $\Delta G = (g_\text{prej} - g_
 3. Poraba prej: $22 + 10 + 5 = 37\,\mathrm{L/ha}$; zdaj: $9 + 5 = 14\,\mathrm{L/ha}$.
 4. Na celi kmetiji prej $37 \cdot 35 = 1295\,\mathrm{L}$, zdaj $14 \cdot 35 = 490\,\mathrm{L}$.
 5. Prihranek: $1295 - 490 = 805\,\mathrm{L}$.
-6. Odgovor: s $32\,\%$ pokritosti obdelava ustreza merilu, kmetija pa letno prihrani okoli $805\,\mathrm{L}$ goriva.
+6. Odgovor: z $32\,\%$ pokritosti obdelava ustreza merilu, kmetija pa letno prihrani okoli $805\,\mathrm{L}$ goriva.
 
 ### Primer 4: zdaj ti
 

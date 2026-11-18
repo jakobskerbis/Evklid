@@ -328,7 +328,7 @@ Koliko se skrajša mišica dolžine $30\,\mathrm{cm}$, če se sarkomere skrajša
 2. **Vse sarkomere so zaporedne,** zato se miofibrila (in mišica, če so vlakna vzporedna z mišico) skrajša za enak delež.
 3. **Skrajšanje:** $30\,\mathrm{cm} \cdot 0{,}192 \approx 5{,}8\,\mathrm{cm}$.
 4. **I-pas** se v vsaki sarkomeri skrajša za $0{,}5\,\mathrm{\mu m}$ (z $1{,}0$ na $0{,}5\,\mathrm{\mu m}$), A-pas ostane $1{,}6\,\mathrm{\mu m}$.
-5. **Pomen:** skrajšanje mišice za nekaj centimetrov je vsota premikov po pol mikrometra v več deset tisoč zaporednih sarkomerah.
+5. **Pomen:** skrajšanje mišice za nekaj centimetrov je vsota premikov po pol mikrometra v več kot sto tisoč zaporednih sarkomerah.
 
 ## Preveri se
 
@@ -364,7 +364,7 @@ Koliko se skrajša mišica dolžine $30\,\mathrm{cm}$, če se sarkomere skrajša
 ~ Pretvoril si centimetre v mikrometre z $10^5$ namesto $10^4$.
 > $3{,}0\,\mathrm{cm} = 3{,}0 \cdot 10^4\,\mathrm{\mu m}$, deljeno z $2{,}5\,\mathrm{\mu m}$ je $12\,000$.
 
-? Hitrost prevajanja v motoričnem aksonu je $50\,\mathrm{m/s}$, akson je dolg $1{,}0\,\mathrm{m}$. Koliko časa potrebuje signal, in koliko bi ga potreboval nemieliniziran akson s hitrostjo $1{,}0\,\mathrm{m/s}$?
+? Hitrost prevajanja v motoričnem aksonu je $50\,\mathrm{m/s}$, akson je dolg $1{,}0\,\mathrm{m}$. Koliko časa potrebuje signal in koliko bi ga potreboval nemieliniziran akson s hitrostjo $1{,}0\,\mathrm{m/s}$?
 - $50\,\mathrm{ms}$ in $1{,}0\,\mathrm{ms}$
 ~ Čas je pot deljena s hitrostjo, ne hitrost deljena s potjo; večja hitrost da krajši čas.
 + $20\,\mathrm{ms}$ in $1{,}0\,\mathrm{s}$

@@ -51,7 +51,7 @@ Sošolčeva prva napaka je zdaj jasna: amonijak se ne sprosti pri transaminaciji
 Koraki potekajo v jetrih, prva dva v mitohondriju, ostali v citosolu:
 
 1. **Karbamoil fosfat sintetaza I:** $\mathrm{NH_4^+} + \mathrm{HCO_3^-} + 2\,\mathrm{ATP} \to$ karbamoil fosfat $+ 2\,\mathrm{ADP} + \mathrm{P_i}$. Prvi dušik vstopi.
-2. **Ornitin transkarbamoilaza:** karbamoil fosfat + ornitin → citrulin. Citrulin zapusti mitohondrij.
+2. **Ornitin transkarbamoilaza:** karbamoil fosfat + ornitin → citrulin $+ \mathrm{P_i}$. Citrulin zapusti mitohondrij.
 3. **Argininosukcinat sintetaza:** citrulin + aspartat + ATP → argininosukcinat + AMP + $\mathrm{PP_i}$. Drugi dušik vstopi z **aspartatom**.
 4. **Argininosukcinat liaza:** argininosukcinat → arginin + fumarat.
 5. **Arginaza:** arginin + $\mathrm{H_2O}$ → **sečnina** + ornitin. Ornitin se vrne v mitohondrij.

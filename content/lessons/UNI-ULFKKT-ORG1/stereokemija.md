@@ -201,7 +201,7 @@ $\mathrm{ee} = \dfrac{24{,}0}{30{,}0} \cdot 100\,\% = 80\,\%$. Delež (S) je $\d
 
 ## Pogoste napake
 
-- **Predznak vrtenja = R ali S.** »(R) pomeni $(+)$, torej desno.« Napačno: R/S je dogovor o risanju, $(+)/(-)$ pa meritev. (R)-glicerinaldehid je $(+)$, (R)-mlečna kislina pa $(-)$. Predznak vedno izmeriš.
+- **Predznak vrtenja = R ali S.** »(R) pomeni $(+)$, torej desno.« Napačno: R/S je dogovor o poimenovanju, $(+)/(-)$ pa meritev. (R)-glicerinaldehid je $(+)$, (R)-mlečna kislina pa $(-)$. Predznak vedno izmeriš.
 - **Pozabljen obrat, ko je H spredaj.** Smer prebereš z risbe, čeprav je skupina 4 na klinu. Dobiš ravno nasprotno konfiguracijo. Preveri, kam kaže skupina 4; če kaže proti tebi, rezultat obrni.
 - **Prioriteta po velikosti skupine.** »Propil je večji od $-\mathrm{CH_2OH}$, zato ima višjo prioriteto.« Pravila CIP ne gledajo mase cele skupine, ampak prvo razliko po atomih: (O, H, H) premaga (C, H, H).
 - **Vsak stereocenter pomeni kiralno molekulo.** Spojina mezo ima dva stereocentra, a je akiralna zaradi notranje zrcalne ravnine. Zato $2^n$ velja le kot zgornja meja.
@@ -264,7 +264,7 @@ Stereocenter je **volan**: steber je vez do skupine 4 in kaže stran od tebe, na
 
 - **Analitika.** Enantiomera na navadni koloni HPLC izstopita skupaj. Kiralna stacionarna faza z vsakim tvori diastereomerni kompleks z drugačno energijo in ju loči; tako merijo $\mathrm{ee}$ učinkovin.
 - **Farmacija.** Pri ibuprofenu je aktiven (S), (R) pa se v telesu deloma pretvori v (S). Talidomid v telesu racemizira, zato čisti enantiomer ne bi preprečil škode.
-- **Sinteza.** Asimetrična kataliza s kiralnimi kompleksi (Knowles, Noyori, Nobelova nagrada 2001) da en enantiomer brez ločevanja; tako so prvič industrijsko izdelali L-DOPA.
+- **Sinteza.** Asimetrična kataliza s kiralnimi kompleksi (Knowles, Noyori, Nobelova nagrada 2001) da en enantiomer brez ločevanja; prva industrijska uporaba je bila sinteza L-DOPA.
 
 ## Drugače: Bolj natančno
 

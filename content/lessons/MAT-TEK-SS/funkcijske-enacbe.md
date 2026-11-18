@@ -168,7 +168,7 @@ $k = \frac{500\,\mathrm{mL}}{4\,\mathrm{min}} = 125\,\mathrm{mL/min}$. Nato $t =
 
 ## Pogoste napake
 
-- **Ugibanje namesto reševanja.** »Funkcija $f(x) = x$ ustreza, torej je to rešitev naloge.« Naloga sprašuje po *vseh* rešitvah. Primer 3 ima dve, in druge ne bi našel z ugibanjem. Ugib je dober začetek, dokaz pa mora pokazati, da drugih ni.
+- **Ugibanje namesto reševanja.** »Funkcija $f(x) = x$ ustreza, torej je to rešitev naloge.« Naloga sprašuje po *vseh* rešitvah. Primer 3 ima dve in druge ne bi našel z ugibanjem. Ugib je dober začetek, dokaz pa mora pokazati, da drugih ni.
 - **Brez preizkusa.** »Izpeljal sem $f(y) = a - y$, končano.« Substitucije dajo le potrebne pogoje. V primeru 2 šele preizkus določi $a = \frac{1}{2}$; brez njega bi navedel neskončno funkcij, od katerih je prava ena.
 - **Krajšanje $f$ brez injektivnosti.** Iz $f(A) = f(B)$ ne smeš kar sklepati $A = B$. Pri $f(x) = x^2$ je $f(-3) = f(3)$, a $-3 \ne 3$. Najprej dokaži, da je $f$ injektivna.
 - **Cauchy na $\mathbb{R}$ brez pogoja.** »Velja $f(x + y) = f(x) + f(y)$, torej $f(x) = cx$.« Na $\mathbb{Q}$ je to res, na $\mathbb{R}$ pa le ob dodatnem pogoju (zveznost, monotonost, omejenost na intervalu). V rešitvi ga vedno navedi.

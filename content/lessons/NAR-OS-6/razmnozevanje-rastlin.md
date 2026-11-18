@@ -184,7 +184,7 @@ Dobra podaja še ni gol, tako kot oprašen cvet še ni oplojen. Nespolno razmno�
 
 ## Drugače: Bolj natančno
 
-Cvet se lahko opraši s svojim pelodom (**samoopraševanje**) ali s pelodom drugega cveta iste vrste (**navzkrižno opraševanje**). Mnoge sorte češenj in jablan se same ne morejo oprašiti, zato sadjarji ob nasade postavijo panje in sadijo več sort skupaj.
+Cvet se lahko opraši s svojim pelodom (**samoopraševanje**) ali s pelodom druge rastline iste vrste (**navzkrižno opraševanje**). Mnoge sorte češenj in jablan se s svojim pelodom ne morejo oploditi, zato sadjarji ob nasade postavijo panje in sadijo več sort skupaj.
 
 Pelodno zrno ima dve moški spolni celici. Ena oplodi jajčno celico in iz nje nastane zarodek. Druga se združi z drugo celico v semenski zasnovi in iz nje nastane zaloga hrane v semenu. Zato vsaka zasnova potrebuje svoje pelodno zrno.
 
@@ -202,7 +202,7 @@ Nespolno razmnoževanje je hitro: ni treba čakati na opraševalce. Ima pa slabo
 ~ Pri prenosu peloda gre za spolne celice, torej za spolno razmnoževanje.
 > Opraševanje je prenos peloda s prašnika na brazdo. Oploditev pride šele potem, ko pelodno zrno požene cevko.
 
-? Med cvetenjem češenj ves teden dežuje in je mrzlo, zato čebele ne letajo. Ta sorta se ne more oprašiti s svojim pelodom. Kaj se zgodi?
+? Med cvetenjem češenj ves teden dežuje in je mrzlo, zato čebele ne letajo. Ta sorta se s svojim pelodom ne more oploditi. Kaj se zgodi?
 - Češnje zrastejo enako, saj plod nastane iz vsakega cveta sam od sebe.
 ~ Plod iz plodnice zraste le po oploditvi. Neoplojen cvet odpade.
 + Večina cvetov ne bo oplojena, zato bo češenj zelo malo.

@@ -63,7 +63,7 @@ Pri zvezdi je $\sqrt{3}$ pri napetosti, pri trikotu pri toku:
 
 $$P = 3\, U_{\mathrm{f}} I_{\mathrm{f}} \cos\varphi$$
 
-Na tablici in z merilniki pa so dostopne medfazna napetost in tok v vodniku. Če vstaviš zveze iz tabele, za obe vezavi dobiš isti izraz:
+Na tablici in z merilniki pa sta dostopna medfazna napetost in tok v vodniku. Če vstaviš zveze iz tabele, za obe vezavi dobiš isti izraz:
 
 $$P = \sqrt{3}\, U_{\mathrm{m}} I_{\mathrm{v}} \cos\varphi$$
 

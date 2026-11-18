@@ -222,7 +222,7 @@ oznakay: 150,9 | 150,9
 = 2,10 g | 0,02
 ~ 1,10 | To je masa ogljikovega dioksida, ki je ušel. Iz nje izračunaj še maso sode.
 ~ 0,58 | Molski masi si uporabil v obratnem razmerju. $m = n \cdot M(\mathrm{NaHCO_3})$, kjer je $n = \dfrac{1{,}10}{44{,}01}$.
-> Izguba mase je $152{,}0 - 150{,}9 = 1{,}1\,\mathrm{g}$ $\mathrm{CO_2}$, to je $0{,}0250\,\mathrm{mol}$. Sode je enako množino, $0{,}0250 \cdot 84{,}01 = 2{,}10\,\mathrm{g}$.
+> Izguba mase je $152{,}0 - 150{,}9 = 1{,}1\,\mathrm{g}$ $\mathrm{CO_2}$, to je $0{,}0250\,\mathrm{mol}$. Množina sode je enaka, $0{,}0250 \cdot 84{,}01 = 2{,}10\,\mathrm{g}$.
 
 ? Razvrsti korake poskusa, s katerim preveriš, ali prašek iz trgovine vsebuje sodo bikarbono.
 1. Nadeni zaščitna očala.

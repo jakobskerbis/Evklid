@@ -9,7 +9,7 @@ Tilen pripravlja predstavitev za biologijo. Krvni obtok je narisal kot zemljevid
 
 Njegova sestra Eva je medicinska sestra. Pogleda zemljevid in reče: »Ena rdeča proga je napačna. Pa tudi ena modra.« Tilen ima do jutri čas, da najde obe napaki.
 
-Da jih najde, mora vedeti, kam kri potuje, kaj vozi in kako je zgrajeno »omrežje«. Isto znanje potrebuješ, da razumeš krvni tlak, srčni infarkt ali nasvet, naj se na dolgem letu sprehodiš po letalu.
+Da ju najde, mora vedeti, kam kri potuje, kaj vozi in kako je zgrajeno »omrežje«. Isto znanje potrebuješ, da razumeš krvni tlak, srčni infarkt ali nasvet, naj se na dolgem letu sprehodiš po letalu.
 
 ## Razlaga
 

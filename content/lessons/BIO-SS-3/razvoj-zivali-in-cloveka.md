@@ -164,7 +164,7 @@ Ker je $2^{40}$ približno $10^{12}$, je to okoli $40$ podvojitev. Do odraslega 
 ## Povzetek
 
 - Ontogeneza: zigota, brazdanje (morula, blastula), gastrula s tremi zarodnimi listi, organogeneza, rast, spolna zrelost, staranje.
-- Ektoderm: koža, živčevje. Mezoderm: mišice, kosti, kri, srce. Endoderm: sluznica prebavil, pljuča, jetra. Človek je do $8$. tedna zarodek, nato plod.
+- Ektoderm: povrhnjica, živčevje. Mezoderm: mišice, kosti, kri, srce. Endoderm: sluznica prebavil, pljuča, jetra. Človek je do $8$. tedna zarodek, nato plod.
 - Diferenciacija: enaki geni, v vsaki vrsti celic vključeni drugi. Matične celice še niso diferencirane.
 - Neposreden razvoj: mladič podoben odraslemu. Popolna preobrazba ima bubo, nepopolna ne. Paglavca preobrazi tiroksin.
 - Žuželke rastejo le kot ličinke ob levitvah. Človek najhitreje raste v prvem letu in v puberteti; rast se ustavi, ko rastne plošče zakostenijo.
@@ -248,7 +248,7 @@ Organi nastanejo v prvih osmih tednih, zato so takrat alkohol, nekatera zdravila
 > Mišice, kosti, srce in kri nastanejo iz srednjega zarodnega lista, mezoderma.
 
 ? V vrečki moke v shrambi najdeš bele ličinke in nekaj negibnih rjavih bub. Kaj lahko pričakuješ v naslednjih tednih?
-- Bube so poginule ličinke, ostale ličinke bodo zrasle in leže jajca.
+- Bube so poginule ličinke, ostale ličinke bodo zrasle in legle jajca.
 ~ Buba je stopnja preobrazbe, ne poginula ličinka. Ličinke niso spolno zrele.
 + Ličinke se bodo zabubile, iz bub pa bodo prilezle odrasle žuželke, ki ne bodo več rasle, a bodo legle jajca.
 - Iz bub prilezejo majhne žuželke, ki bodo rasle, dokler ne bodo velike kot ličinke.

@@ -160,10 +160,10 @@ $S = xy + 2xz + 2yz$, pogoj $g = xyz - V = 0$. Lagrange: $\nabla S = \lambda \na
 5. Drugo enačbo pomnožimo z $y$, tretjo z $z$: $xy + 2yz = \lambda xyz = 2xz + 2yz$, zato $xy = 2xz$ in $y = 2z$. Torej $x = y = 2z$.
 6. Vstavimo v pogoj: $2z \cdot 2z \cdot z = 4z^3 = 32$, $z^3 = 8$, $z = 2\,\mathrm{dm}$, $x = y = 4\,\mathrm{dm}$.
 7. Površina: $S = 4 \cdot 4 + 2 \cdot 4 \cdot 2 + 2 \cdot 4 \cdot 2 = 16 + 16 + 16 = 48\,\mathrm{dm^2}$.
-8. To je res minimum: ko gre katerakoli mera proti $0$ ali $\infty$, gre $S$ proti $\infty$, zato zvezna funkcija na tej ploskvi zavzame najmanjšo vrednost, edina kandidatka pa je najdena točka. Za primerjavo: kocka z robom $\sqrt[3]{32} \approx 3{,}17\,\mathrm{dm}$ bi porabila $5 \cdot 3{,}17^2 \approx 50{,}4\,\mathrm{dm^2}$.
+8. To je res minimum: ko gre katerakoli mera proti $0$ ali $\infty$, gre $S$ proti $\infty$, zato zvezna funkcija na tej ploskvi zavzame najmanjšo vrednost, edina kandidatka pa je najdena točka. Za primerjavo: kocka z robom $\sqrt[3]{32} \approx 3{,}175\,\mathrm{dm}$ bi porabila $5 \cdot 3{,}175^2 \approx 50{,}4\,\mathrm{dm^2}$.
 9. Multiplikator iz prve enačbe: $4 + 2 \cdot 2 = \lambda \cdot 4 \cdot 2$, torej $\lambda = 1\,\mathrm{dm^{-1}}$.
 10. Preverimo pomen: za poljuben $V$ je $x = y = 2z$ in $4z^3 = V$, torej $S_{\min} = 12z^2 = 12\left(\frac{V}{4}\right)^{2/3}$ in $\frac{dS_{\min}}{dV} = \frac{2}{z}$, kar je pri $z = 2\,\mathrm{dm}$ ravno $1\,\mathrm{dm^{-1}} = \lambda$.
-11. Ocena: $\Delta S \approx \lambda\, \Delta V = 1\,\mathrm{dm^{-1}} \cdot 1\,\mathrm{dm^3} = 1\,\mathrm{dm^2}$. Natančno: $12 \cdot 8{,}25^{2/3} = 49{,}0\,\mathrm{dm^2}$, torej $\Delta S = 0{,}995\,\mathrm{dm^2}$.
+11. Ocena: $\Delta S \approx \lambda\, \Delta V = 1\,\mathrm{dm^{-1}} \cdot 1\,\mathrm{dm^3} = 1\,\mathrm{dm^2}$. Natančno: $12 \cdot 8{,}25^{2/3} \approx 48{,}995\,\mathrm{dm^2}$, torej $\Delta S = 0{,}995\,\mathrm{dm^2}$.
 12. Odgovor: škatla naj ima dno $4\,\mathrm{dm} \times 4\,\mathrm{dm}$ in višino $2\,\mathrm{dm}$; porabimo $48\,\mathrm{dm^2}$ materiala. Multiplikator je $\lambda = 1\,\mathrm{dm^{-1}}$, zato dodatni $\mathrm{dm^3}$ prostornine zahteva približno $1\,\mathrm{dm^2}$ materiala več.
 
 ### Primer 4 – zdaj ti

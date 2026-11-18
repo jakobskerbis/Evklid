@@ -41,7 +41,7 @@ Termometer iz sobe ($20\,^\circ\mathrm{C}$) potisneš v čaj s $70\,^\circ\mathr
 Manj. Alkohol v bučki še ni prejel dovolj energije, da bi se segrel na temperaturo čaja. Stolpec še leze navzgor; odčitaš šele, ko obstane. V ledeni vodi je ravno obratno: alkohol še ni oddal dovolj energije, zato bi termometer pokazal preveč, stolpec pa bi še lezel navzdol.
 :::
 
-Poleg tekočinskih poznamo še druge termometre. **Digitalni** ima elektronski senzor, katerega lastnosti se s temperaturo spreminjajo. **Infrardeči** (na primer na čelu) meri nevidno svetlobo, ki jo oddaja površina, in se telesa sploh ne dotakne. **Bimetalni** ima dva sprijeta trakova različnih kovin, ki se pri segrevanju različno raztezata in zato ukrivita kazalec.
+Poleg tekočinskih poznamo še druge termometre. **Digitalni** ima elektronski senzor, katerega lastnosti se s temperaturo spreminjajo. **Infrardeči** (na primer na čelu) meri nevidno svetlobo, ki jo oddaja površina, in se telesa sploh ne dotakne. **Bimetalni** ima dva sprijeta trakova različnih kovin, ki se pri segrevanju različno raztezata, zato se ukrivita in premakneta kazalec.
 
 **4. Tri lestvice druga ob drugi.** Predstavljaj si tri termometre, postavljene drug ob drugem. Na vsakem je svoja lestvica, a vsi trije kažejo iste dogodke na isti višini:
 

@@ -93,7 +93,7 @@ Ne. Primer je $12$: deljivo je z $2$ in s $4$, z $8$ pa ne. Števili $2$ in $4$ 
 
 Ko se pojavi števka $1$, se krog začne znova. Zadnje števke tečejo v krogu dolžine $4$: $7, 9, 3, 1$.
 
-V simulaciji spodaj, »Ostanki potenc in zadnja števka«, nastavi modul (to je delitelj) $m = 10$ in osnovo $a = 7$. Opazuj, da se puščice zaprejo v krog štirih ostankov. Nato preizkusi še $a = 4$ in $a = 5$. Pri $4$ je krog dolg samo $2$, pri $5$ pa se zadnja števka sploh ne spremeni.
+V simulaciji spodaj, »Ostanki potenc in zadnja števka«, nastavi modul (to je delitelj) $m = 10$ in osnovo $a = 7$. Opazuj, da se črte zaprejo v krog štirih ostankov. Nato preizkusi še $a = 4$ in $a = 5$. Pri $4$ je krog dolg samo $2$, pri $5$ pa se zadnja števka sploh ne spremeni.
 
 **Na koncu še zapis.** Matematiki pišejo $a \equiv b \pmod{m}$ in berejo »$a$ je kongruentno $b$ po modulu $m$«. To pomeni le, da dasta $a$ in $b$ pri deljenju z $m$ enak ostanek. Na primer $23 \equiv 3 \pmod{5}$ in $7^5 \equiv 7 \pmod{10}$.
 
@@ -244,7 +244,7 @@ Pri blagajni se ostanki srečujejo vsak dan.
 ~ Število je drugačno, vsota števk pa ostane $17$. Prav vsota števk določa ostanek pri $9$.
 + Ostane enak, ker se vsota števk ne spremeni.
 - Ostane enak, enako pa velja tudi za ostanek pri deljenju s $4$.
-~ Pri $4$ štejeta zadnji dve števki, te pa so se zamenjale. $5381$ da pri $4$ ostanek $1$, $1835$ pa $3$.
+~ Pri $4$ štejeta zadnji dve števki, ti pa sta se zamenjali. $5381$ da pri $4$ ostanek $1$, $1835$ pa $3$.
 > Vsako mesto prispeva k ostanku pri $9$ le svojo števko, zato vrstni red števk ne vpliva na ostanek. Obe števili dasta ostanek $8$.
 
 ? Tina išče zadnjo števko števila $2^{100}$. Kateri korak je napačen? (1) Zadnje števke tečejo v krogu $2, 4, 8, 6$. (2) $100 = 4 \cdot 25$, ostanek je $0$. (3) Ostanek $0$ pomeni prvo mesto v krogu, zato je zadnja števka $2$.

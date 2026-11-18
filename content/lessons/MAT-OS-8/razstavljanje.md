@@ -25,13 +25,13 @@ Iz ure o množenju izrazov znaš pot od produkta k vsoti: $3(2x + 5) = 6x + 15$.
 
 $$ab + ac = a(b + c)$$
 
-Faktorju $a$ pravimo **skupni faktor**, postopku pa **izpostavljanje skupnega faktorja**. To je pravilo o razdeljevanju, prebrano od desne proti levi.
+Faktorju $a$ pravimo **skupni faktor**, postopku pa **izpostavljanje skupnega faktorja**. To je zakon o razčlenjevanju, prebran od desne proti levi.
 
 *Hitra preizkušnja:* $5 \cdot 4 + 5 \cdot 6 = 5 \cdot (\ldots)$. (V oklepaj gre $4 + 6 = 10$.)
 
-**3. Števila pred črkami.** Pri koeficientih poiščemo **največji skupni delitelj** (NSD). Za $12$ in $18$ je to $6$, saj $6$ deli oba, večje število pa ne.
+**3. Števila pred črkami.** Pri koeficientih poiščemo **največji skupni delitelj** (NSD). Za $12$ in $18$ je to $D(12, 18) = 6$, saj $6$ deli oba, večje število pa ne.
 
-*Hitra preizkušnja:* koliko je $\text{NSD}(8, 12)$? (To je $4$.)
+*Hitra preizkušnja:* koliko je $D(8, 12)$? (To je $4$.)
 
 **4. Spremenljivke.** Izpostavimo samo spremenljivko, ki je v **vseh** členih, in sicer z **najmanjšim** eksponentom. Za $12x^3$ in $18x^2$ to pokaže tabela:
 
@@ -86,7 +86,7 @@ $ab + ac = a(b + c)$
 
 **Rešitev:**
 
-1. Največji skupni delitelj koeficientov: $\text{NSD}(6, 9) = 3$. Člen $9$ nima $x$, zato $x$ ne izpostavimo.
+1. Največji skupni delitelj koeficientov: $D(6, 9) = 3$. Člen $9$ nima $x$, zato $x$ ne izpostavimo.
 2. Skupni faktor je $3$; zapišemo ga pred oklepaj.
 3. V oklepaj gre $2x$, ker je $3 \cdot 2x = 6x$, in $3$, ker je $3 \cdot 3 = 9$.
 4. Preverimo: $3 \cdot 2x + 3 \cdot 3 = 6x + 9$.
@@ -105,7 +105,7 @@ $ab + ac + ad = a(b + c + d)$
 
 **Rešitev:**
 
-1. Koeficienti: $\text{NSD}(12, 18, 6) = 6$.
+1. Koeficienti: $D(12, 18, 6) = 6$.
 2. Spremenljivka $x$ je v vseh členih z eksponenti $2$, $1$, $1$. Najmanjši je $1$, zato izpostavimo $x$.
 3. Spremenljivka $y$ ima eksponente $1$, $2$, $1$, zato izpostavimo $y$. Skupni faktor je $6xy$.
 4. V oklepaj zapišemo, s čim pomnožimo $6xy$:
@@ -129,7 +129,7 @@ $S = \text{stranica} \cdot \text{stranica}$; ker je $8x^2 + 12x = 4x(\ldots)$, j
 **Rešitev:**
 
 1. Ploščina pravokotnika je produkt stranic, zato moramo $8x^2 + 12x$ zapisati kot $4x \cdot (\ldots)$. To je razstavljanje.
-2. $4x$ je res skupni faktor: $\text{NSD}(8, 12) = 4$, najmanjši eksponent pri $x$ je $1$.
+2. $4x$ je res skupni faktor: $D(8, 12) = 4$, najmanjši eksponent pri $x$ je $1$.
 3. $4x \cdot 2x = 8x^2$ in $4x \cdot 3 = 12x$, zato je $S = 4x(2x + 3)$.
 4. Preverimo s številom $x = 5$: $8 \cdot 25 + 12 \cdot 5 = 200 + 60 = 260$ in $4 \cdot 5 \cdot 13 = 260$. Obe obliki dasta isto ploščino, $260\,\text{m}^2$.
 5. Odgovor: druga stranica je dolga $(2x + 3)$ metrov; pri $x = 5$ je terasa velika $20\,\text{m} \times 13\,\text{m}$.
@@ -147,7 +147,7 @@ $-ab - ac = -a(b + c)$
 
 **Rešitev:**
 
-1. $\text{NSD}(6, 15) = 3$, spremenljivka $x$ je v obeh členih z najmanjšim eksponentom $1$.
+1. $D(6, 15) = 3$, spremenljivka $x$ je v obeh členih z najmanjšim eksponentom $1$.
 2. Ker je prvi člen negativen, izpostavimo $-3x$.
 3. Zdaj ti: poišči, s čim moraš pomnožiti $-3x$, da dobiš $-6x^2$ in $-15x$. Nato rezultat preveri z množenjem.
 
@@ -168,7 +168,7 @@ $-6x^2 - 15x = -3x(2x + 5)$. Preverimo: $-3x \cdot 2x = -6x^2$ in $-3x \cdot 5 =
 ## Povzetek
 
 - Razstaviti izraz pomeni zapisati vsoto kot produkt faktorjev.
-- Izpostavljanje skupnega faktorja je obrnjeno pravilo o razdeljevanju: $ab + ac = a(b + c)$.
+- Izpostavljanje skupnega faktorja je obrnjen zakon o razčlenjevanju: $ab + ac = a(b + c)$.
 - Skupni faktor sestavljata NSD koeficientov in vsaka spremenljivka, ki je v vseh členih, z najmanjšim eksponentom.
 - V oklepaj zapišemo, s čim pomnožimo skupni faktor, da dobimo posamezni člen. Kadar je člen enak faktorju, ostane $1$.
 - Pri negativnem skupnem faktorju se predznaki v oklepaju obrnejo.
@@ -199,7 +199,7 @@ Izpostavljanje skupnega faktorja torej pomeni, da dva pravokotnika z enako viši
 
 ## Drugače: Bolj natančno
 
-Pravilo o razdeljevanju velja za poljubna števila ali izraze: $a(b + c) = ab + ac$. Enakost beremo v obe smeri. Od leve proti desni odpravljamo oklepaj, od desne proti levi izpostavljamo skupni faktor.
+Zakon o razčlenjevanju velja za poljubna števila ali izraze: $a(b + c) = ab + ac$. Enakost beremo v obe smeri. Od leve proti desni odpravljamo oklepaj, od desne proti levi izpostavljamo skupni faktor.
 
 **Zakaj prav največji skupni faktor?** Iz $12x + 18$ lahko izpostavimo tudi $2$:
 

@@ -32,7 +32,7 @@ Razrede, objekte, konstruktorje in metode že poznaš. Zdaj jih bomo povezali v 
 
 **1. Razred proti podrazredu.** Doslej je vsak razred stal sam zase: polja, konstruktor, metode. Pri **dedovanju** novi razred ne začne iz nič, ampak iz obstoječega.
 
-**Definicija.** Z `class B extends A` je `B` **podrazred** (izpeljani razred), `A` pa **nadrazred** razreda `B`. `B` podeduje polja in metode razreda `A`, razen zasebnih (`private`): ta so v objektu sicer prisotna, a jih `B` ne vidi in se po specifikaciji Jave ne dedujejo. `B` lahko doda nove člane ali prekrije podedovane metode. Java dovoli natanko en neposredni nadrazred; vsak razred brez `extends` deduje od `Object`.
+**Definicija.** S `class B extends A` je `B` **podrazred** (izpeljani razred), `A` pa **nadrazred** razreda `B`. `B` podeduje polja in metode razreda `A`, razen zasebnih (`private`): ta so v objektu sicer prisotna, a jih `B` ne vidi in se po specifikaciji Jave ne dedujejo. `B` lahko doda nove člane ali prekrije podedovane metode. Java dovoli natanko en neposredni nadrazred; vsak razred brez `extends` deduje od `Object`.
 
 Dedovanje opisuje razmerje **»je«**: akcijski izdelek *je* izdelek. Če razmerje ni »je« (košarica *ima* izdelke), uporabimo polje, ne dedovanje.
 
@@ -169,7 +169,7 @@ Varčevanje: $D_1 = Z_1\big((1 + p_1)^n - 1\big)$; obveznica: $D_2 = Z_2\,p_2\,n
 **Rešitev:**
 
 1. V zanki je statični tip `n` vedno `Nalozba`; `donos` obstaja (abstraktno), zato se klic prevede.
-2. Prvi element je `Varcevanje`: $D_1 = 10\,000 \cdot (1{,}03^5 - 1) = 1592{,}74$ €.
+2. Prvi element je `Varcevanje`: $D_1 = 10\,000 \cdot (1{,}03^5 - 1) \approx 1592{,}74$ €.
 3. Drugi element je `Obveznica`: $D_2 = 5000 \cdot 0{,}04 \cdot 5 = 1000$ €.
 4. $D = 1592{,}74 + 1000 = 2592{,}74$ €.
 5. Odgovor: `vsota` je približno $2592{,}74$ €. Zanka ne ve za vrste naložb; nova vrsta (na primer delnica) bi zahtevala le nov podrazred.
@@ -240,7 +240,7 @@ Storitev: $200 \cdot 0{,}095 = 19$ €; skupaj $11 + 19 = 30$ €.
 
 - **»Klic izbere statični tip.«** Napačno sklepanje: `Izdelek i` je izdelek, torej `i.cena()` iz `Izdelek`. Pri prekritih metodah odloča objekt. Statični tip odloča le, *ali* se klic prevede in kateri podpis velja.
 - **Preobteževanje namesto prekrivanja.** `double cena(int kolicina)` v podrazredu ne prekrije `double cena()`, ampak doda novo metodo; klic `i.cena()` ostane stari. Oznaka `@Override` takšno napako ujame že pri prevajanju.
-- **Dinamična izbira po argumentu.** Kot v Primeru 3: `cena(s)` z `Stranka s = new Stalna()` ne izbere `cena(Stalna)`. Preobteženo metodo izbere prevajalnik po statičnih tipih argumentov.
+- **Dinamična izbira po argumentu.** Kot v Primeru 3: `cena(s)` s `Stranka s = new Stalna()` ne izbere `cena(Stalna)`. Preobteženo metodo izbere prevajalnik po statičnih tipih argumentov.
 - **Instanciranje abstraktnega razreda ali vmesnika.** `new Nalozba(100, 0.03)` se ne prevede. Ustvarimo konkretni podrazred, spremenljivka pa je lahko tipa `Nalozba`.
 - **Pozabljen `super(...)`.** Če nadrazred nima konstruktorja brez argumentov, mora podrazred v prvi vrstici konstruktorja poklicati `super(...)` z argumenti.
 
@@ -324,9 +324,9 @@ static Nalozba najboljsa(
 ```
 
 2. Metoda ne pozna podrazredov; `donos` vsakega elementa se izbere dinamično.
-3. Varčevanje 1: $8000 \cdot (1{,}025^4 - 1) = 830{,}50$ €.
+3. Varčevanje 1: $8000 \cdot (1{,}025^4 - 1) \approx 830{,}50$ €.
 4. Obveznica: $6000 \cdot 0{,}045 \cdot 4 = 1080$ €.
-5. Varčevanje 2: $4000 \cdot (1{,}05^4 - 1) = 862{,}03$ €.
+5. Varčevanje 2: $4000 \cdot (1{,}05^4 - 1) \approx 862{,}03$ €.
 6. Odgovor: metoda vrne obveznico (donos $1080$ €). Najvišja obrestna mera ($5\,\%$) ne zmaga, ker je znesek majhen.
 
 ### Naloga 3

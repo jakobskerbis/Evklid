@@ -207,7 +207,7 @@ Pravokotna loputa v navpični steni rezervoarja z vodo je široka $1{,}5\,\mathr
 5. Ročica sile glede na tečaj: $2{,}1667 - 1{,}0 = 1{,}1667\,\mathrm{m}$; moment $M = 58\,860 \cdot 1{,}1667\,\mathrm{N\,m} \approx 68\,670\,\mathrm{N\,m}$.
 6. Zapah je $2{,}0\,\mathrm{m}$ od tečaja; ravnovesje momentov: $F_\mathrm{z} = \dfrac{68\,670}{2{,}0}\,\mathrm{N} \approx 34\,335\,\mathrm{N}$.
 7. Ravnovesje sil: $F_\mathrm{t} = 58\,860 - 34\,335 = 24\,525\,\mathrm{N}$.
-8. Odgovor: voda pritiska na loputo s $58{,}9\,\mathrm{kN}$, središče tlaka je na globini $2{,}17\,\mathrm{m}$, zapah nosi $34{,}3\,\mathrm{kN}$, tečaj $24{,}5\,\mathrm{kN}$. Če bi silo napačno postavili v težišče, bi zapahu pripisali le polovico, $29{,}4\,\mathrm{kN}$.
+8. Odgovor: voda pritiska na loputo z $58{,}9\,\mathrm{kN}$, središče tlaka je na globini $2{,}17\,\mathrm{m}$, zapah nosi $34{,}3\,\mathrm{kN}$, tečaj $24{,}5\,\mathrm{kN}$. Če bi silo napačno postavili v težišče, bi zapahu pripisali le polovico, $29{,}4\,\mathrm{kN}$.
 
 ### Naloga 2
 

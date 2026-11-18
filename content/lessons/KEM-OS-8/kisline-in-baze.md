@@ -51,7 +51,7 @@ Hidroksid že poznaš. Pri kovinah si spoznal, da natrij z vodo da bazično razt
 
 $$\mathrm{2\,Na + 2\,H_2O \rightarrow 2\,NaOH + H_2}$$
 
-**3. Kisline in baze drug ob drugem.** Najlaže si jih zapomniš, če jih primerjaš:
+**3. Kisline in baze druga ob drugi.** Najlaže si jih zapomniš, če jih primerjaš:
 
 | Lastnost | Kisline | Baze |
 |---|---|---|
@@ -106,7 +106,7 @@ Tri snovi so povezane s poleti v vesolje. Oblaki Venere so iz kapljic $\mathrm{H
 **Iščemo:** ali je posamezna snov kislina ali baza
 
 :::formula
-Formula kisline se navadno začne z H. Formula hidroksida (baze) ima na koncu skupino OH.
+Formula kisline se navadno začne s H. Formula hidroksida (baze) ima na koncu skupino OH.
 :::
 
 **Rešitev:**
@@ -144,9 +144,9 @@ Lakmus: rdeč pomeni kislo, vijoličen nevtralno, moder bazično. Fenolftalein: 
 
 ### Primer 3: ohišje za sondo na Veneri (težji, dokončaj sam)
 
-Inženirji izbirajo snov za zunanji del sonde, ki bo letela skozi oblake Venere iz kapljic žveplove kisline. Na Zemlji preizkusijo tri ploščice: iz magnezija, iz marmorja in iz zlata. Vsako potopijo v razredčeno žveplovo kislino. Marmor je vrsta apnenca, zlato pa je zelo nereaktivna kovina. Kaj opazijo pri vsaki ploščici in katero snov izberejo?
+Inženirji izbirajo snov za zunanji del sonde, ki bo letela skozi oblake Venere iz kapljic žveplove kisline. Na Zemlji preizkusijo tri ploščice: iz magnezija, iz marmorja in iz zlata. Vsako potopijo v razredčeno žveplovo kislino. Marmor je tako kot apnenec iz kalcijevega karbonata, zlato pa je zelo nereaktivna kovina. Kaj opazijo pri vsaki ploščici in katero snov izberejo?
 
-**Podatki:** ploščice iz magnezija (Mg), marmorja (apnenec, kalcijev karbonat) in zlata (Au); razredčena žveplova kislina $\mathrm{H_2SO_4}$; zlato je zelo nereaktivno
+**Podatki:** ploščice iz magnezija (Mg), marmorja (kalcijev karbonat, kot apnenec) in zlata (Au); razredčena žveplova kislina $\mathrm{H_2SO_4}$; zlato je zelo nereaktivno
 **Iščemo:** kaj se zgodi s posamezno ploščico in katera je primerna za sondo
 
 :::formula
@@ -156,7 +156,7 @@ Kislina + nekatere kovine (Mg, Zn) $\rightarrow$ nastane vodik. Kislina + apnene
 **Rešitev:**
 
 1. **Magnezij.** Je reaktivna kovina, zato s kislino reagira. Na ploščici nastajajo mehurčki vodika, ploščica se manjša.
-2. **Marmor.** Je apnenec, zato s kislino reagira. Kislina zapeni, ker nastaja ogljikov dioksid.
+2. **Marmor.** Je iz kalcijevega karbonata kot apnenec, zato s kislino reagira. Kislina zapeni, ker nastaja ogljikov dioksid.
 3. **Zlato.** Dokončaj sam: kaj opazijo pri zlati ploščici in katero snov izberejo?
 
 :::premisli
@@ -175,7 +175,7 @@ Pri zlatu ni mehurčkov in ploščica ostane enaka, ker zlato s kislino ne reagi
 
 ## Povzetek
 
-- Kisline z vodo dajo kislo raztopino; formula se navadno začne z H ($\mathrm{HCl}$, $\mathrm{H_2SO_4}$, pri $\mathrm{CH_3COOH}$ je kisli H na koncu).
+- Kisline z vodo dajo kislo raztopino; formula se navadno začne s H ($\mathrm{HCl}$, $\mathrm{H_2SO_4}$, pri $\mathrm{CH_3COOH}$ je kisli H na koncu).
 - Baze z vodo dajo bazično (alkalno) raztopino; hidroksidi imajo skupino OH ($\mathrm{NaOH}$, $\mathrm{Ca(OH)_2}$).
 - Kisline reagirajo z nekaterimi kovinami (nastane vodik) in z apnencem (nastane ogljikov dioksid). Raztopine baz so spolzke.
 - Skupno: raztopine kislin in baz vsebujejo ione in prevajajo električni tok; močne kisline in baze so jedke.
@@ -203,7 +203,7 @@ V simulaciji spodaj (»Kisline, baze in pH«) to sliko razširiš v trak od $0$ 
 
 **Higiena.** Milnica in čistilni praški so bazični in na otip spolzki. Čistila za odtoke vsebujejo močne baze (npr. natrijev hidroksid), zato so jedka in jih uporabljamo samo z rokavicami.
 
-**Rdeče zelje kot domač indikator.** Če skuhaš rdeče zelje, dobiš vijoličen sok. Če ga kapneš v kis, postane rdeč do roza. Če ga kapneš v raztopino sode bikarbone, postane moder do modro-zelen. Sok je tako preprost domač indikator.
+**Rdeče zelje kot domač indikator.** Če skuhaš rdeče zelje, dobiš vijoličen sok. Če ga kapneš v kis, postane rdeč do roza. Če ga kapneš v raztopino sode bikarbone, postane moder do modrozelen. Sok je tako preprost domač indikator.
 
 **Telo.** Želodčni sok je zelo kisel, ker vsebuje klorovodikovo kislino. Kisla raztopina pomaga pri prebavi. Če je kisline preveč ali se vrača v požiralnik, nastane zgaga, zato pomagajo zdravila z bazičnimi snovmi (antacidi), ki odvečno kislino nevtralizirajo.
 
@@ -249,7 +249,7 @@ V simulaciji spodaj (»Kisline, baze in pH«) to sliko razširiš v trak od $0$ 
 - Nič, ker je limonin sok živilo.
 ~ Tudi kislina v živilu je kislina. Citronska kislina z apnencem reagira.
 + Sok zapeni, ker nastaja ogljikov dioksid.
-> Marmor je apnenec. Kislina z apnencem tvori ogljikov dioksid, zato sok zapeni, polica pa na tem mestu izgubi sijaj.
+> Marmor je iz kalcijevega karbonata, tako kot apnenec. Kislina z apnencem tvori ogljikov dioksid, zato sok zapeni, polica pa na tem mestu izgubi sijaj.
 
 :::simboli
 \mathrm{pH} | pH vrednost (merilo kislosti raztopine) | | – | pod 7 kislo, 7 nevtralno, nad 7 bazično

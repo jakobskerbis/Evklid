@@ -62,7 +62,7 @@ Rdeča krvnička v čisti vodi nabrekne in poči. Ali v čisti vodi poči tudi c
 Ne poči. Voda vanjo vstopa enako kot v krvničko, a celica solate ima okoli membrane trdno celično steno. Stena se upre raztezanju, celica postane napeta (turgor). Krvnička stene nima, zato se membrana raztrga.
 :::
 
-**5. Aktivni transport: proti toku.** Difuzija, olajšana difuzija in osmoza so **pasivni transport**: snov teče po gradientu, kot voda po strugi navzdol. Celica pa pogosto potrebuje snov kopičiti tam, kjer je je že veliko. Prenos proti koncentracijskemu gradientu je **aktivni transport**. Opravljajo ga prenašalne beljakovine, imenovane črpalke. Pri tem porabljajo energijo iz **ATP**, molekule, s katero vse celice prenašajo energijo. Najbolj znana je natrijeva-kalijeva črpalka: za vsak porabljeni ATP iz celice prečrpa tri natrijeve ione in vanjo dva kalijeva.
+**5. Aktivni transport: proti toku.** Difuzija, olajšana difuzija in osmoza so **pasivni transport**: snov teče po gradientu, kot voda po strugi navzdol. Celica pa mora snov pogosto kopičiti tam, kjer je je že veliko. Prenos proti koncentracijskemu gradientu je **aktivni transport**. Opravljajo ga prenašalne beljakovine, imenovane črpalke. Pri tem porabljajo energijo iz **ATP**, molekule, s katero vse celice prenašajo energijo. Najbolj znana je natrijeva-kalijeva črpalka: za vsak porabljeni ATP iz celice prečrpa tri natrijeve ione in vanjo dva kalijeva.
 
 **6. Velikost celice.** Vse, kar celica potrebuje, pride skozi njeno površino, porablja pa ga celotna prostornina. Celico si predstavljaj kot kocko s stranico $a$:
 
@@ -211,7 +211,7 @@ Krogi so hidrofilne glave fosfolipidov, ob vodi na obeh straneh. Črtice so hidr
 ## Drugače: Iz vsakdanjega življenja
 
 - **Difuzija:** ko v sobi odpreš parfum, ga čez nekaj minut zavoha vsak, tudi brez prepiha.
-- **Osmoza v kuhinji:** narezane kumare posoliš in čez pol ure v skledi plava voda. Sol je ostala zunaj celic, voda je iz celic odtekla k večji koncentraciji.
+- **Osmoza v kuhinji:** narezane kumare posoliš in čez pol ure se v skledi nabere voda. Sol je ostala zunaj celic, voda je iz celic odtekla k večji koncentraciji.
 - **Zakaj se marmelada ne pokvari:** v njej je toliko sladkorja, da je za bakterije hipertonična. Bakterije izgubijo vodo in se ne morejo razmnoževati.
 - **Aktivni transport:** je kot črpanje vode v hišo na hribu. Navzdol voda teče sama, navzgor jo potisne le črpalka, ki porablja elektriko; v celici je to ATP.
 

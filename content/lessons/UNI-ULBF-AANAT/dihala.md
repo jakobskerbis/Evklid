@@ -168,7 +168,7 @@ $(500 - 150 - 94) \cdot 12 = 3072\,\mathrm{mL/min}$, okoli $3{,}1\,\mathrm{L/min
 
 - **»Sapnik je ves iz hrustančnih obročev.«** Hrustanci so v obliki črke C; zadnja stena je mišična in se dotika požiralnika. Zato grižljaj v požiralniku lahko pritisne na sapnik.
 - **»Levo pljučno krilo ima tri režnje, ker sta krili simetrični.«** Levo ima dva režnja in le poševno fisuro; prostor tretjega zavzame srce (srčna zareza, lingula).
-- **»Pljuča in plevra se končata na isti višini.«** Plevra sega dve rebri niže. Ta razlika je recesus, ki je ključen za torakocentezo in za razumevanje, kam steče tekočina.
+- **»Pljuča in plevra se končajo na isti višini.«** Plevra sega dve rebri niže. Ta razlika je recesus, ki je ključen za torakocentezo in za razumevanje, kam steče tekočina.
 - **Vbod ob spodnjem robu rebra.** Medrebrni snop teče na spodnjem robu zgornjega rebra; igla gre nad zgornjim robom spodnjega.
 - **»Ves vdihnjeni zrak pride do alveol.«** Okoli $150\,\mathrm{mL}$ vsakega vdiha ostane v prevodnem delu. Plitvo dihanje zato zelo zmanjša alveolarno ventilacijo (Naloga 1).
 
@@ -253,7 +253,7 @@ Drevo je posajeno v dve vreči z mokro notranjostjo: to sta plevralni votlini. V
 > Razlika med mejo plevre in pljuč je rebrno-prepončni recesus.
 
 ? Pljuča imajo okoli $70\,\mathrm{m^2}$ površine alveol. Približno kolikšen del te površine ostane, če emfizem uniči polovico alveolarnih sten in je pregrada nespremenjena?
-- skoraj vsa, ker alveol je več sto milijonov
+- skoraj vsa, ker je alveol več sto milijonov
 ~ Število ne pomaga, če je uničena polovica sten; površina se zmanjša sorazmerno.
 + okoli polovica, torej okoli $35\,\mathrm{m^2}$
 - okoli četrtina

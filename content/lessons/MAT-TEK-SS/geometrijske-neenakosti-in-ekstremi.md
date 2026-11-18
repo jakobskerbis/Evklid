@@ -7,7 +7,7 @@ avtor: AI
 
 Na dan izstrelitve sonde je Zemlja od Sonca oddaljena približno $150$ milijonov km, Mars pa $228$ milijonov km. Aplikacija na telefonu trdi, da je razdalja med planetoma tisti dan $400$ milijonov km. Ali je to sploh mogoče? In $50$ milijonov km?
 
-Odgovor dobiš brez astronomskih tabel. Sonce, Zemlja in Mars so oglišča trikotnika, ki je lahko tudi sploščen v daljico. Razdalja Zemlja–Mars zato ne more biti večja od $150 + 228 = 378$ milijonov km in ne manjša od $228 - 150 = 78$ milijonov km. Obe trditvi aplikacije sta napačni.
+Odgovor dobiš brez astronomskih tabel. Sonce, Zemlja in Mars so oglišča trikotnika, ki je lahko tudi sploščen v daljico. Razdalja Zemlja–Mars zato ne more biti večja od $150 + 228 = 378$ milijonov km in ne manjša od $228 - 150 = 78$ milijonov km. Nobena od obeh razdalj torej ni mogoča.
 
 Ta preprosta misel, **trikotniška neenakost**, je skupaj z zrcaljenjem glavno orodje za tekmovalne naloge tipa »poišči najkrajšo pot« ali »dokaži, da je ta dolžina vsaj …«. Pri takih nalogah ne računamo odvodov, ampak pot preoblikujemo, dokler ni ravna.
 

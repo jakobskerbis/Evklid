@@ -201,9 +201,9 @@ Znati moraš povedati:
 
 1. BCC: $a_\mathrm{B} = \dfrac{4R}{\sqrt3} = \dfrac{4 \cdot 0{,}1258}{\sqrt3}\,\mathrm{nm} \approx 0{,}2905\,\mathrm{nm}$.
 2. FCC: $a_\mathrm{F} = 2\sqrt2\,R = 2\sqrt2 \cdot 0{,}1292\,\mathrm{nm} \approx 0{,}3654\,\mathrm{nm}$.
-3. Število atomov se ne spremeni, zato primerjamo prostornino na atom. BCC: $\dfrac{a_\mathrm{B}^3}{2} = \dfrac{0{,}024521}{2}\,\mathrm{nm^3} \approx 0{,}012261\,\mathrm{nm^3}$.
+3. Število atomov se ne spremeni, zato primerjamo prostornino na atom. BCC: $\dfrac{a_\mathrm{B}^3}{2} = \dfrac{0{,}024521}{2}\,\mathrm{nm^3} \approx 0{,}0122605\,\mathrm{nm^3}$.
 4. FCC: $\dfrac{a_\mathrm{F}^3}{4} = \dfrac{0{,}048800}{4}\,\mathrm{nm^3} \approx 0{,}012200\,\mathrm{nm^3}$.
-5. Relativna sprememba: $\dfrac{0{,}012200 - 0{,}012261}{0{,}012261} \approx -0{,}0049 = -0{,}49\,\%$.
+5. Relativna sprememba: $\dfrac{0{,}012200 - 0{,}0122605}{0{,}0122605} \approx -0{,}0049 = -0{,}49\,\%$.
 6. Gostota je masa atoma, deljena s prostornino na atom: $\rho_\mathrm{B} = \dfrac{55{,}85}{6{,}022\cdot10^{23} \cdot 1{,}2261\cdot10^{-23}}\,\mathrm{g/cm^3} \approx 7{,}56\,\mathrm{g/cm^3}$ ($1\,\mathrm{nm^3} = 10^{-21}\,\mathrm{cm^3}$).
 7. $\rho_\mathrm{F} = \dfrac{55{,}85}{6{,}022\cdot10^{23} \cdot 1{,}2200\cdot10^{-23}}\,\mathrm{g/cm^3} \approx 7{,}60\,\mathrm{g/cm^3}$.
 8. Odgovor: $a_\mathrm{BCC} \approx 0{,}2905\,\mathrm{nm}$, $a_\mathrm{FCC} \approx 0{,}3654\,\mathrm{nm}$; železo se ob segrevanju čez $912\,^\circ\mathrm{C}$ skrči za okoli $0{,}5\,\%$ prostornine, gostota naraste s $7{,}56$ na $7{,}60\,\mathrm{g/cm^3}$. Skrček je manjši, kot bi ga dalo samo razmerje $0{,}74/0{,}68$, ker je polmer atoma v FCC večji.

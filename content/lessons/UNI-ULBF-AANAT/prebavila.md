@@ -185,7 +185,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Jetra iz krvi, ki gre skoznje, odstranijo $70\,\%$ zdravila (razmerje izločanja $E = 0{,}7$); pretok krvi skozi jetra je $1{,}5\,\mathrm{L/min}$. Zdravilo se iz črevesa vsrka v celoti. (a) Kolikšen delež peroralnega odmerka pride v veliki obtok? (b) Kolikšen peroralni odmerek da enako količino v obtoku kot $10\,\mathrm{mg}$ v veno? (c) Kolikšen je jetrni očistek $Q \cdot E$? (d) Zakaj se učinek prvega prehoda pri zdravilu pod jezik ne pojavi?
+Jetra iz krvi, ki gre skoznje, odstranijo $70\,\%$ zdravila (ekstrakcijsko razmerje $E = 0{,}7$); pretok krvi skozi jetra je $1{,}5\,\mathrm{L/min}$. Zdravilo se iz črevesa vsrka v celoti. (a) Kolikšen delež peroralnega odmerka pride v veliki obtok? (b) Kolikšen peroralni odmerek da enako količino v obtoku kot $10\,\mathrm{mg}$ v veno? (c) Kolikšen je jetrni očistek $Q \cdot E$? (d) Zakaj se učinek prvega prehoda pri zdravilu pod jezik ne pojavi?
 
 **Rešitev:**
 
@@ -303,6 +303,6 @@ Q_\mathrm{j} | pretok krvi skozi jetra | | L/min
 Q_\mathrm{p} | pretok po portalni veni | Q_\mathrm{p} = 0{,}75\,Q_\mathrm{j} | L/min
 Q_\mathrm{a} | pretok po jetrni arteriji | Q_\mathrm{a} = Q_\mathrm{j} - Q_\mathrm{p} | L/min
 Q | pretok krvi skozi jetra (Naloga 1) | | L/min
-E | razmerje izločanja v jetrih | | – | delež, ki ga jetra odstranijo
+E | ekstrakcijsko razmerje jeter | | – | delež, ki ga jetra odstranijo
 F | biološka uporabnost | F = 1 - E | – | delež, ki pride v obtok
 :::

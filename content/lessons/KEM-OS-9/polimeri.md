@@ -236,7 +236,7 @@ Po treningu: plastenko napolni znova, prazno stisni in odvrzi v zabojnik za emba
 
 ? Zakaj plastenka v naravi ostane več sto let, bombažna majica pa razpade v nekaj mesecih?
 - Ker plastenka ni polimer, majica pa je.
-~ Oba sta polimera: PET in celuloza sta obe dolgi verigi.
+~ Oba sta polimera: PET in celuloza sta oba dolgi verigi.
 + Ker imajo mikroorganizmi encime za razgradnjo celuloze, za PET pa jih skoraj ni.
 - Ker je plastenka težja od majice.
 ~ Masa ni vzrok; tudi tanka vrečka ostane v naravi zelo dolgo.

@@ -334,11 +334,11 @@ print(list(razredi.values()))
 
 :::simboli
 A | osnovna množica | | |
-a, b, c, x, y | elementi množice $A$ | | |
+a, b, c, x, y | elementi množice $A$ | | | v Primeru 3 cela števila (komponente parov)
 \pi | kanonična projekcija | \pi(a) = [a] | | surjektivna
 f | preslikava | | | jedro: $f(a) = f(b)$
 \bar f | inducirana preslikava | | | bijekcija na $f(A)$
 n, k | naravni števili | | |
 R | relacija ali kos razbitja | | |
-d | število pozitivnih deliteljev | | | $d(12) = 6$
+d | število pozitivnih deliteljev | | | $d(12) = 6$; v Primeru 3 je $d$ celo število
 :::

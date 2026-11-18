@@ -117,7 +117,7 @@ $R = \dfrac{U}{I}$
 **Rešitev:**
 
 1. Neznanka je upor, zato vzamemo obliko $R = \dfrac{U}{I}$.
-2. Enote so že osnovne (V in A), pretvarjati ni treba.
+2. Enote so že prave (V in A), pretvarjati ni treba.
 3. Izračunaj sam, nato preveri:
 
 :::premisli
@@ -177,7 +177,7 @@ napis: 3; 1 | R · I | sredina | debelo
 :::
 
 1. Izpiši podatke z enotami.
-2. Pretvori v osnovne enote (A, V, Ω).
+2. Pretvori v enote brez predpon (A, V, Ω).
 3. Na trikotniku pokrij neznanko:
    - pokrijem $I$: ostane $\dfrac{U}{R}$,
    - pokrijem $U$: ostane $R \cdot I$,

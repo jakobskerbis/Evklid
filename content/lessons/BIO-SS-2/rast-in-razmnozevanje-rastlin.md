@@ -179,7 +179,7 @@ $l_2 = 3 + 9 + 2 + 2 = 16$, torej $16\,\mathrm{mm}$, in $\Delta l = 16 - 8 = 8$,
 - **»Oprašitev je isto kot oploditev.«** Pelod na brazdi še ni oploditev. Pelodna cev mora zrasti do semenske zasnove, šele tam se spolni celici združita. Če cev ne zraste (npr. pelod druge vrste), ploda ni.
 - **»Seme potrebuje za kalitev svetlobo, ker rastline delajo fotosintezo.«** Kalček ima hrano s sabo, zato večina semen vzkali tudi v temi (fižol na brisači pod pokrovom). Potrebuje vodo, kisik in toploto.
 - **»Svetel in temen pas sta dve leti.«** Ena letnica ima oba: svetel spomladanski in temen poletni les. Šteješ samo meje med temnim in naslednjim svetlim pasom.
-- **»Rastline iz potaknjencev so raznolike kot iz semen.«** Potaknjenec je del ene rastline, zato je klon. Raznolikost prinese le spolno razmnoževanje, kjer se združita dedni zapis dveh staršev.
+- **»Rastline iz potaknjencev so raznolike kot iz semen.«** Potaknjenec je del ene rastline, zato je klon. Raznolikost prinese le spolno razmnoževanje, kjer se združita dedna zapisa dveh staršev.
 
 ## Povzetek
 

@@ -7,7 +7,7 @@ avtor: AI
 
 Konec vročega julija ribiči na plitvem jezeru opazijo, da ribe lovijo zrak tik pod gladino. Topla voda raztopi manj kisika, alge pa ga ponoči porabljajo. Koliko kisika je res ostalo v vodi, izmerimo z **jodometrijo**. Kako močno je reka obremenjena z organskimi snovmi, ki kisik porabljajo, pove **manganometrija**. Obe sta **redoks titraciji**: titrant in analit si izmenjata elektrone.
 
-»Titracija je titracija,« pravi Luka pred vajo. »Pri $\mathrm{NaOH}$ in $\mathrm{HCl}$ je razmerje 1 : 1, pri EDTA tudi. Torej en mol $\mathrm{KMnO_4}$ porabi en mol železa.« Če bi imel prav, bi vsi njegovi rezultati za železo prišli petkrat premajhni. Kje se zmoti, bomo razčistili spotoma.
+»Titracija je titracija,« pravi Luka pred vajo. »Pri $\mathrm{NaOH}$ in $\mathrm{HCl}$ je razmerje 1 : 1, pri EDTA tudi. Torej en mol $\mathrm{KMnO_4}$ porabi en mol železa.« Če bi tako računal, bi vsi njegovi rezultati za železo prišli petkrat premajhni. Kje se zmoti, bomo razčistili spotoma.
 
 ## Razlaga
 
@@ -60,7 +60,7 @@ Pri polovični titraciji kisline velja $\mathrm{pH} = \mathrm{p}K_a$. Pri polovi
 
 **Manganometrija.** Titrant je $\mathrm{KMnO_4}$ ($E^\circ = 1{,}51\ \mathrm{V}$), zelo močan oksidant. Ion $\mathrm{MnO_4^-}$ je vijoličast, $\mathrm{Mn^{2+}}$ skoraj brezbarven. Do ekvivalentne točke se vsaka kapljica takoj razbarva. Prva kapljica v prebitku obarva raztopino trajno rožnato. Za to potrebujemo:
 
-- **močno kisel medij z $\mathrm{H_2SO_4}$**, sicer nastaja rjav $\mathrm{MnO_2}$ in elektronov je samo 3;
+- **močno kisel medij s $\mathrm{H_2SO_4}$**, sicer nastaja rjav $\mathrm{MnO_2}$ in elektronov je samo 3;
 - **ne $\mathrm{HCl}$**, ker bi permanganat oksidiral $\mathrm{Cl^-}$ v $\mathrm{Cl_2}$, in ne $\mathrm{HNO_3}$, ki je sama oksidant;
 - **standardizacijo**, ker $\mathrm{KMnO_4}$ ni primarni standard: počasi razpada. Umerimo ga z natrijevim oksalatom pri $60$–$70\,^\circ\mathrm{C}$. Reakcija je na začetku počasna, nastali $\mathrm{Mn^{2+}}$ pa jo pospeši (**avtokataliza**).
 
@@ -68,7 +68,7 @@ Pri polovični titraciji kisline velja $\mathrm{pH} = \mathrm{p}K_a$. Pri polovi
 
 $$\mathrm{I_2 + 2\,S_2O_3^{2-} \rightarrow 2\,I^- + S_4O_6^{2-}}$$
 
-Prebitka $\mathrm{KI}$ ni treba odmeriti natančno, saj tiosulfat meri le sproščeni jod. Pri **jodimetriji** pa je titrant sam jod in z njim neposredno titriramo **reducent** (npr. vitamin C). Tiosulfat umerimo z $\mathrm{KIO_3}$, ki je primarni standard: $\mathrm{IO_3^- + 5\,I^- + 6\,H^+ \rightarrow 3\,I_2 + 3\,H_2O}$.
+Prebitka $\mathrm{KI}$ ni treba odmeriti natančno, saj tiosulfat meri le sproščeni jod. Pri **jodimetriji** pa je titrant sam jod in z njim neposredno titriramo **reducent** (npr. vitamin C). Tiosulfat umerimo s $\mathrm{KIO_3}$, ki je primarni standard: $\mathrm{IO_3^- + 5\,I^- + 6\,H^+ \rightarrow 3\,I_2 + 3\,H_2O}$.
 
 :::premisli
 Med titracijo joda s tiosulfatom se raztopina razbarva od rjave prek rumene do brezbarvne. Zakaj škrob dodamo šele, ko je raztopina bledo rumena, in ne že na začetku?
@@ -149,7 +149,7 @@ $n(\mathrm{O_2}) = \dfrac{n(\mathrm{S_2O_3^{2-}})}{4}$, $\quad \gamma(\mathrm{O_
 ## Pogoste napake
 
 - **»Vedno 1 : 1«.** Luka je prenesel razmerje iz kislinsko-baznih titracij in EDTA. Pri redoksu razmerje določa število elektronov: $\mathrm{MnO_4^-}$ sprejme 5, $\mathrm{Fe^{2+}}$ odda 1. Najprej uravnoteži elektrone, šele nato računaj množine.
-- **Nakisanje s $\mathrm{HCl}$.** »Kislina je kislina.« Permanganat oksidira tudi klorid, zato porabimo preveč titranta in dobimo previsok rezultat. Pri manganometriji nakisamo z $\mathrm{H_2SO_4}$.
+- **Nakisanje s $\mathrm{HCl}$.** »Kislina je kislina.« Permanganat oksidira tudi klorid, zato porabimo preveč titranta in dobimo previsok rezultat. Pri manganometriji nakisamo s $\mathrm{H_2SO_4}$.
 - **Škrob na začetku.** Zdi se, da je zgodnji indikator varnejši. Pri veliki koncentraciji joda pa se jod ujame v škrob in sprošča počasi, končna točka zamuja. Škrob dodaj pri bledo rumeni barvi.
 - **Winkler 1 : 2.** Ker $\mathrm{I_2}$ porabi dva tiosulfata, študenti pišejo $n(\mathrm{O_2}) = n(\mathrm{S_2O_3^{2-}})/2$. Pozabijo, da en $\mathrm{O_2}$ sprosti dva $\mathrm{I_2}$. Pravilno: $n(\mathrm{O_2}) = n(\mathrm{S_2O_3^{2-}})/4$.
 - **Zamenjava jodometrije in jodimetrije.** Pri jodometriji je analit oksidant in titrant tiosulfat; pri jodimetriji je analit reducent in titrant jod. Najprej se vprašaj: ali analit jod sprošča ali porablja?

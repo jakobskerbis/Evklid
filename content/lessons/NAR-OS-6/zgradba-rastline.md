@@ -244,7 +244,7 @@ napis: 5,3; 8,6 | 4 | desno | debelo
 - list
 ~ List je ploščat in zelen, ker lovi svetlobo. Novi poganjki ne poženejo iz lista, ampak iz brstov na steblu.
 - cvet
-~ Iz cveta nastanejo plodovi s semeni. »Očesa« pa so brsti, in brsti rastejo na steblu.
+~ Iz cveta nastanejo plodovi s semeni. »Očesa« pa so brsti in brsti rastejo na steblu.
 > To je krompirjev gomolj: odebeljeno podzemno steblo. »Očesa« so brsti, ti pa so značilni za steblo.
 
 ? Razvrsti, po katerih delih potuje kapljica vode od zemlje do zraka.

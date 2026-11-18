@@ -207,7 +207,7 @@ $$P = \frac{A}{t} = U \cdot I$$
 
 Enote se ujemajo: $1\,\mathrm{V} = 1\,\mathrm{J/As}$ in $1\,\mathrm{A} = 1\,\mathrm{As/s}$, zato je $1\,\mathrm{V} \cdot 1\,\mathrm{A} = 1\,\mathrm{J/s} = 1\,\mathrm{W}$.
 
-**Kam gre delo?** V grelniku in kuhalniku se vse električno delo pretvori v toploto, zato velja $Q = A = P \cdot t$. To je ista zveza $Q = P \cdot t$, s katero si računal segrevanje. V žarnici se del dela pretvori v svetlobo, preostanek v toploto. Halogenka večino dela pretvori v toploto, zato je vroča. LED žarnica ima veliko večji izkoristek: večji del dela pretvori v svetlobo. Zato za enako svetlobo potrebuje le $6\,\mathrm{W}$ namesto $42\,\mathrm{W}$.
+**Kam gre delo?** V grelniku in kuhalniku se vse električno delo pretvori v toploto, zato velja $Q = A = P \cdot t$. To je ista zveza $Q = P \cdot t$, s katero si računal segrevanje. V žarnici se del dela pretvori v svetlobo, preostanek v toploto. Halogenka večino dela pretvori v toploto, zato je vroča. LED žarnica ima veliko večji izkoristek: v svetlobo pretvori večji delež dela kot halogenka. Zato za enako svetlobo potrebuje le $6\,\mathrm{W}$ namesto $42\,\mathrm{W}$.
 
 ## Preveri se
 

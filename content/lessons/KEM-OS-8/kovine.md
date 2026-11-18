@@ -154,9 +154,9 @@ Za malto gašeno apno sicer pripravijo iz žganega apna in vode, ne iz dragega �
 
 - **»Kovina je trda in težka.«** Misel: železo in baker sta taka, torej vse. A natrij režemo z nožem, kalij plava na vodi, živo srebro je tekoče. Skupni so sijaj, prevodnost in kovnost; trdota in gostota se med kovinami močno razlikujeta.
 - **»Kar se sveti, je kovina.«** Silicij se sveti, a se pod kladivom zdrobi in slabo prevaja tok. Preveri več lastnosti, zlasti kovnost in prevodnost.
-- **Napačen naboj iona.** Kdo napiše $\mathrm{Mg^+}$, ker »kovine dajo $1+$«, ali $\mathrm{Mg^{2-}}$, ker »sprejme dva elektrona«. Kovina elektrone odda, zato je ion pozitiven, naboj pa je enak številu zunanjih elektronov: 1. skupina $1+$, 2. skupina $2+$.
+- **Napačen naboj iona.** Marsikdo napiše $\mathrm{Mg^+}$, ker »kovine dajo $1+$«, ali $\mathrm{Mg^{2-}}$, ker »sprejme dva elektrona«. Kovina elektrone odda, zato je ion pozitiven, naboj pa je enak številu zunanjih elektronov: 1. skupina $1+$, 2. skupina $2+$.
 - **»Navzdol po skupini reaktivnost pada, ker so atomi težji.«** Masa tu ni pomembna: večji atom zunanji elektron drži šibkeje in ga lažje odda. Reaktivnost navzdol narašča, cezij je reaktivnejši od kalija.
-- **Neurejena enačba.** Kdo uredi le kalij: $2\,\mathrm{K} + \mathrm{H_2O} \rightarrow 2\,\mathrm{KOH} + \mathrm{H_2}$. Vodika je levo $2$, desno $4$. Po vsakem koeficientu preštej vse elemente.
+- **Neurejena enačba.** Marsikdo uredi le kalij: $2\,\mathrm{K} + \mathrm{H_2O} \rightarrow 2\,\mathrm{KOH} + \mathrm{H_2}$. Vodika je levo $2$, desno $4$. Po vsakem koeficientu preštej vse elemente.
 
 ## Povzetek
 

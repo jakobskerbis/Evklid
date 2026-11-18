@@ -25,7 +25,7 @@ Za vsakim koščkom je kratko vprašanje; odgovor je v oklepaju.
 
 *Preveri:* ali `Integer.parseInt("dvajset")` vrne $0$? (Ne, vrže `NumberFormatException`.)
 
-**2. Ujemanje s `try`–`catch`.** Kodo, ki lahko vrže izjemo, damo v blok `try`. Za njim v blok `catch` napišemo, kaj naredimo ob napaki.
+**2. Lovljenje s `try`–`catch`.** Kodo, ki lahko vrže izjemo, damo v blok `try`. Za njim v blok `catch` napišemo, kaj naredimo ob napaki.
 
 ```java
 try {
@@ -252,7 +252,7 @@ Kolikšna sta `imenik.size()` in `imenik.get("Ana")`?
 - Izjema je objekt, ki ga Java vrže ob napaki med izvajanjem; potuje navzgor po klicih, dokler je kdo ne ujame.
 - `try { … } catch (Tip e) { … } finally { … }`: `catch` ujame tip in njegove podrazrede; specifični tipi pred splošnimi; `finally` se izvede vedno.
 - S `throw new …` izjemo vržemo sami; preverjene izjeme je treba ujeti ali napovedati s `throws`.
-- `ArrayList`: urejen seznam spremenljive dolžine; `add`, `add(i, x)`, `get(i)`, `set(i, x)`, `remove(i)`, `size()`.
+- `ArrayList`: urejen seznam spremenljive dolžine; `add`, `add(i, x)`, `get(i)`, `remove(i)`, `size()`.
 - `HashMap`: pari ključ → vrednost, ključi enolični; `put` prepiše, `get` vrne `null`, če ključa ni.
 - Generiki (`List<String>`, `Par<A, B>`) dajo preverjanje tipov ob prevajanju; parametri so razredi (`Integer`, ne `int`).
 
@@ -337,7 +337,7 @@ Seznam z $n$ elementi zgradimo iz praznega `ArrayList` na dva načina: (A) $n$-k
 
 **Rešitev:**
 
-1. `add(0, x)` vstavi na indeks $0$, zato se vsi obstoječi elementi zamaknejo za eno mesto desno. Če je v seznamu $k$ elementov, je premikov $k$.
+1. `add(0, x)` vstavi na indeks $0$, zato se vsi obstoječi elementi zamaknejo za eno mesto desno. Če je v seznamu $m$ elementov, je premikov $m$.
 2. Način A: pri zaporednih klicih je v seznamu $0, 1, 2, \dots, n - 1$ elementov, skupaj $0 + 1 + \dots + (n - 1) = \dfrac{n(n - 1)}{2}$ premikov. To je $O(n^2)$.
 3. Način B: `add(x)` doda na konec in ne premakne nobenega elementa, skupaj $0$ premikov; vseh $n$ klicev je $O(n)$.
 4. Za $n = 2000$: način A povzroči $\dfrac{2000 \cdot 1999}{2} = 1\,999\,000$ premikov, to je povprečno $\dfrac{1\,999\,000}{2000} = 999{,}5$ premika na klic; način B nobenega.
@@ -385,7 +385,7 @@ Pri seznamu iščeš po številki predala, pri slovarju po nalepki. Vstavljanje 
 
 **Hierarhija.** Vse, kar lahko vržemo, deduje od `Throwable`. Ta ima dva podrazreda: `Error` (resne težave okolja, npr. `StackOverflowError` pri neskončni rekurziji; teh običajno ne lovimo) in `Exception`. Podrazredi `RuntimeException` so nepreverjeni, ostali `Exception` so preverjeni: prevajalnik zahteva `catch` ali `throws`. Lastno izjemo naredimo z dedovanjem, npr. `class PraznaBaterija extends Exception`.
 
-**Časovna zahtevnost.** `ArrayList.get(i)` je $O(1)$, `add(x)` na konec povprečno $O(1)$ (notranja tabela se ob polnosti poveča za konstanten faktor), `add(0, x)` in `remove(0)` pa $O(n)$, ker se zamaknejo vsi elementi. `HashMap.get` in `put` sta povprečno $O(1)$: ključ se z `hashCode()` preslika v predal, enakost se preveri z `equals()`. Zato mora razred, ki ga uporabljaš kot ključ, imeti usklajena `equals` in `hashCode`.
+**Časovna zahtevnost.** `ArrayList.get(i)` je $O(1)$, `add(x)` na konec povprečno $O(1)$ (notranja tabela se ob polnosti poveča za konstanten faktor), `add(0, x)` in `remove(0)` pa $O(n)$, ker se zamaknejo vsi elementi. `HashMap.get` in `put` sta povprečno $O(1)$: ključ se s `hashCode()` preslika v predal, enakost se preveri z `equals()`. Zato mora razred, ki ga uporabljaš kot ključ, imeti usklajena `equals` in `hashCode`.
 
 **Brisanje tipov.** Generiki obstajajo le ob prevajanju; v izvedljivi kodi je `List<String>` samo `List` (*type erasure*). Zato ne moreš napisati `new T()` ali `new T[10]`, in zato `List<int>` ni mogoč: notranje so elementi tipa `Object`.
 
@@ -440,7 +440,7 @@ Pri seznamu iščeš po številki predala, pri slovarju po nalepki. Vstavljanje 
 > Slovar najde vrednost po ključu v povprečju v konstantnem času, ne glede na število prijateljev.
 
 :::simboli
-i | indeks elementa v seznamu | | | šteje od 0
+i | indeks elementa v seznamu ali števec zanke | | | šteje od 0
 k | ključ v slovarju (mapi)
 T | tip (razred) izjeme | | | catch ujame tudi podrazrede
 :::

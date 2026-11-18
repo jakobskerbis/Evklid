@@ -180,7 +180,7 @@ $h = 15\,\mathrm{m}$. Smiselno: vsakih $10\,\mathrm{m}$ vode da približno $100\
 - Tekočina pritiska v vse smeri, pravokotno na ploskve; na isti globini je tlak enak.
 - Hidrostatični tlak: $p = \rho g h$, $h$ je globina pod gladino. Ni odvisen od oblike posode ali količine tekočine.
 - V vodi tlak naraste za približno $100\,000\,\mathrm{Pa}$ na vsakih $10\,\mathrm{m}$.
-- Silo na ploskev dobimo s $F = p \cdot S$.
+- Silo na ploskev dobimo z $F = p \cdot S$.
 
 ## Drugače: Na sliki
 
