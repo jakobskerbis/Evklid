@@ -15,7 +15,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, BackHandler, Linking, Platform, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
@@ -32,7 +32,12 @@ import { checkShareImage, shareResultJs, NATIVE_FLAG_JS } from "../../../public/
 import { zaTisk as tiskPot } from "../../../public/tisk-v-chromu.js";
 
 const ORIGIN = API_URL.replace(/\/+$/, "");
-const START = `${ORIGIN}/api/mobile/web?to=${encodeURIComponent("/")}`;
+// Prvi naslov: /api/mobile/web prenese sejo in preusmeri na pot »to« (privzeto /). Druga pot pride kot parameter
+// zaslona, npr. /?pogled=racun za nakup naročnine v APK (src/lib/billing.ts openWebAccount). Samo pot na tem
+// strežniku in samo s seznama TO: povezava evklid:// lahko odpre zaslon /web s poljubnim »to«, zato aplikacija
+// prijavljenega WebViewa ne pošlje na nobeno drugo pot (strežnik jo preveri še sam, server/mobile/web-session.js safeTarget).
+const TO = new Set(["/", "/?pogled=racun"]);
+const webStart = (to?: string) => `${ORIGIN}/api/mobile/web?to=${encodeURIComponent(typeof to === "string" && TO.has(to) ? to : "/")}`;
 // Stran za tisk Evklida: odpre jo privzeti brskalnik (Chrome), kjer »Shrani kot PDF« dela (public/tisk-v-chromu.js).
 const zaTisk = (url: string) => tiskPot(url, ORIGIN);
 
@@ -108,7 +113,10 @@ export default function Web() {
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [key, setKey] = useState(0);
-  const [source] = useState(() => ({ uri: START, headers: appHeaders() }));
+  // »n« loči zaporedni odprtji iste poti: zaslon je morda že odprt pod naravnimi zasloni (router.dismissTo mu
+  // le zamenja parametre), zato ob novem parametru nov začetni naslov in nov WebView.
+  const { to, n } = useLocalSearchParams<{ to?: string; n?: string }>();
+  const [source, setSource] = useState(() => ({ uri: webStart(to), headers: appHeaders() }));
 
   // Android: gumb nazaj gre nazaj po spletni strani (zgodovina v public/app.js), na začetku zapre aplikacijo.
   useEffect(() => {
@@ -154,6 +162,15 @@ export default function Web() {
     setBar(null);
     setKey((k) => k + 1);
   }, []);
+
+  // Nov parameter zaslona (glej zgoraj »n«): kot »Poskusi znova«, a na novi poti.
+  const opened = useRef(n);
+  useEffect(() => {
+    if (n === opened.current) return;
+    opened.current = n;
+    setSource({ uri: webStart(to), headers: appHeaders() });
+    retry();
+  }, [to, n, retry]);
 
   // »Ni povezave« in vrtavka: vrstica stanja v barvi tega zaslona, ne zadnje (ali napake gostitelja) spletne strani.
   const top = (!failed && !loading && bar?.top) || th.bg;
