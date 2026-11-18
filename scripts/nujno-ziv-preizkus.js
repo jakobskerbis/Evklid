@@ -3,13 +3,13 @@
 // PRAVO funkcijo varnostniPregled iz server/nujno.js: isti model, navodilo, max_tokens, rok in nastavitve kot
 // v aplikaciji. Skripta meri lažne alarme, zgrešene nujne primere, obliko odgovora, zavrnitve, čas in strošek.
 //
-//   node scripts/nujno-ziv-preizkus.js                 zažene (potrebuje ANTHROPIC_API_KEY; ~220 klicev, pod 0,01 $)
+//   node scripts/nujno-ziv-preizkus.js                 zažene (potrebuje ANTHROPIC_API_KEY; 271 klicev, ~0,01–0,02 $)
 //   node scripts/nujno-ziv-preizkus.js --vzporedno 2   manj klicev hkrati (privzeto 4)
 //
 // Brez ključa (ali z EVKLID_MOCK=1) izpiše obvestilo in konča z 0, brez klica API (zato v CI ne teče).
 // Izhodna koda: 0 = prag dosežen, 1 = prag ni dosežen, 2 = preizkus ni veljaven (ključ, preveč napak klica).
 // Zasebnost: nič ne zapiše (ne v bazo, ne v datoteko, ne v Števec porabe); izpiše samo povzetek in id-je primerov.
-// Navodila: docs/nujno-ziv-preizkus.md.
+// Navodila: docs/nujno-ziv-preizkus.md. Zagon z mejo stroška v GitHub Actions (Meritev): scripts/meri-nujno-ziv.mjs.
 import "../server/env.js";
 import fs from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -32,7 +32,7 @@ const pocakaj = (ms) => new Promise((r) => setTimeout(r, ms));
 // sporočila pod mejo (možnost B): tam neznan odgovor NE odpre okna, zavrnitev modela pa šteje kot »stiska«.
 const BREZ_ZAPISA = { log() {}, kvGet: () => 0, kvSet() {}, creditOut: () => false };
 // Isti klic kot v server/nujno.js (rok ROK_MS, brez ponovitev).
-const klicApi = (body) => getClient().messages.create(body, { timeout: ROK_MS, maxRetries: 0 });
+export const klicApi = (body) => getClient().messages.create(body, { timeout: ROK_MS, maxRetries: 0 });
 const kodaNapake = (err) => (err?.status ? `HTTP ${err.status}` : /timeout|timed out/i.test(`${err?.name} ${err?.message}`) ? "rok" : err?.name || "napaka");
 
 /**
@@ -181,15 +181,24 @@ export function izpis(s) {
   return v.join("\n");
 }
 
-/** Vsi primeri z največ `vzporedno` klici hkrati. Prvi gre sam: napačen ključ ali model ustavi preizkus po enem klicu. */
-export async function pozeni(primeri, { create, vzporedno = 4, premor } = {}) {
+/**
+ * Vsi primeri z največ `vzporedno` klici hkrati. Prvi gre sam: napačen ključ ali model ustavi preizkus po enem klicu.
+ * `ustavi()` (meja stroška v scripts/meri-nujno-ziv.mjs) se vpraša pred vsakim primerom: true = novih primerov ni več.
+ * `poPrimeru(izidi)` se pokliče po vsakem končanem primeru (vmesni zapis).
+ */
+export async function pozeni(primeri, { create, vzporedno = 4, premor, ustavi = () => false, poPrimeru = () => {} } = {}) {
   const izidi = [];
+  if (!primeri.length || ustavi()) return { izidi };
   const prvi = await enPrimer(primeri[0], { create, premor });
   izidi.push(prvi);
+  poPrimeru(izidi);
   if ([400, 401, 403, 404].includes(prvi.status)) return { izidi, ustavljeno: prvi.napaka };
   let i = 1;
   const delavec = async () => {
-    while (i < primeri.length) izidi.push(await enPrimer(primeri[i++], { create, premor }));
+    while (i < primeri.length && !ustavi()) {
+      izidi.push(await enPrimer(primeri[i++], { create, premor }));
+      poPrimeru(izidi);
+    }
   };
   await Promise.all(Array.from({ length: Math.max(1, vzporedno) }, delavec));
   return { izidi };
