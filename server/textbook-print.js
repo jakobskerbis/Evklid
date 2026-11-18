@@ -10,6 +10,7 @@ import { splitFormulaCells } from "../public/rich.js";
 import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "../public/vodoravna-tabela.js";
 import { BRAND } from "./brand.js";
 import { dateText } from "../public/datum.js";
+import { IKONE_HEAD } from "./ikone.js";
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -402,7 +403,7 @@ const PRIPRAVA = (total) => `
 export function shell(title, content, css = "", total = 0) {
   return `<!doctype html>
 <html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(title)}</title>
+<title>${esc(title)}</title>${IKONE_HEAD}
 <link rel="stylesheet" href="/vendor/katex/katex.min.css">
 <link rel="stylesheet" href="/risbe.css">
 <style>
