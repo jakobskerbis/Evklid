@@ -18,7 +18,7 @@ import { audit } from "../dnevnik-dostopov.js";
 import { parentFromMeta, purchaseMismatch, logSafe } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
-import { migrateTerms, insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText, subItem, firstChargeText, consentText, livePayBlocked, LIVE_BLOCKED } from "./potrdilo.js";
+import { migrateTerms, insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText, subItem, firstChargeText, consentText, livePayBlocked, LIVE_BLOCKED, TERMS_VERSION } from "./potrdilo.js";
 import { appMark } from "../mobile/trgovina.js";
 
 // Enako kot pay.adult v public/i18n/sl.js (kar plačnik vidi); test/pogoji-potrditev.test.js primerja vsa besedila.
@@ -614,6 +614,7 @@ export function mountBilling(app, ctx) {
       grace_days: GRACE_DAYS,
       adult_text: ADULT_TEXT,
       withdrawal_text: WITHDRAWAL_TEXT,
+      terms_version: TERMS_VERSION,
     };
   }
 

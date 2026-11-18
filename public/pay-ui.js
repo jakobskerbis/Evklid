@@ -15,25 +15,17 @@ export const consentFields = (kind = "") => `
   ${termsField()}`;
 
 // Potrditev splošnih pogojev (#765 točka 2): pred vsakim plačilom in ob registraciji. Strežnik shrani različico;
-// ob povezavi je različica pogojev (iz /api/config, ko pride; prej je prazna in skrita).
+// ob povezavi je različica pogojev (setTermsVersion: zavihek Račun iz /api/account, stran za starše iz /api/pay).
 let termsVersion = "";
+export const setTermsVersion = (v) => (termsVersion = /^\d{4}-\d{2}-\d{2}$/.test(String(v || "")) ? String(v) : "");
 const versionLabel = (v) => {
   const [y, m, d] = String(v).split("-").map(Number);
   return y ? t("terms.version", { date: new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString(locale(), { day: "numeric", month: "numeric", year: "numeric", timeZone: "UTC" }) }) : "";
 };
-const fillVersions = () => document.querySelectorAll(".terms-version").forEach((el) => ((el.textContent = ` ${versionLabel(termsVersion)}`), (el.hidden = !termsVersion)));
-if (typeof document !== "undefined" && typeof fetch === "function")
-  fetch("/api/config")
-    .then((r) => (r.ok ? r.json() : null))
-    .then((c) => {
-      termsVersion = String(c?.terms?.version || "");
-      fillVersions();
-    })
-    .catch(() => {});
 export const termsField = (name = "terms") => {
   const [before, after = ""] = t("terms.accept").split("{link}");
   const v = termsVersion ? ` ${esc(versionLabel(termsVersion))}` : "";
-  return `<label class="check pay-consent"><input type="checkbox" name="${name}" required><span>${esc(before)}<a href="/pogoji.html" target="_blank" rel="noopener">${esc(t("terms.link"))}</a>${esc(after)}<span class="terms-version muted"${v ? "" : " hidden"}>${v}</span></span></label>`;
+  return `<label class="check pay-consent"><input type="checkbox" name="${name}" required><span>${esc(before)}<a href="/pogoji.html" target="_blank" rel="noopener">${esc(t("terms.link"))}</a>${esc(after)}${v ? `<span class="terms-version muted">${v}</span>` : ""}</span></label>`;
 };
 
 export const consentsOk = (form) => !!form.adult?.checked && !!form.withdrawal?.checked && !!form.terms?.checked;

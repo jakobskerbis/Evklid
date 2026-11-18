@@ -5,7 +5,7 @@ import { systemForCountry } from "./regions.js";
 import { currentLang, currentRegion, deviceRegion, locale, t } from "./i18n.js";
 import { dateText } from "./datum.js";
 import { openProfileMenu } from "./profile-menu.js";
-import { consentFields, termsField, consentsOk, consentMessage, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout, clearCheckout, watchReturnFromPay } from "./pay-ui.js";
+import { setTermsVersion, consentFields, termsField, consentsOk, consentMessage, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout, clearCheckout, watchReturnFromPay } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
 import { renderPilotAdmin, paintAccountPilot, paintAccountWtp, proofHtml, proofBody, wireProof } from "./pilot-naloge.js";
@@ -1918,6 +1918,7 @@ export async function renderAccount() {
     return;
   }
   if (acc.parent.guest) return renderGuestAccount(view, acc);
+  setTermsVersion(acc.terms_version); // različica ob potrditvi pogojev pred plačilom (public/pay-ui.js)
   const paid = acc.access.tier === "paid";
   // Aplikacija iz trgovine: brez nakupa s kartico (naročnina, nadgradnja, darilo, Podari, dokup; public/pay-ui.js).
   // Kupljeno ostane vidno (stanje naročnine, darilne kode, preostali pogovori).

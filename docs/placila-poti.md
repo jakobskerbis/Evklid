@@ -78,6 +78,6 @@ noindex, plačila s pravim ključem Stripa (`sk_live_`) vrnejo 409 (`terms_draft
 strežnik odstrani dele med `<!-- osnutek -->` in `<!-- /osnutek -->` (`server/pogoji-stran.js`), plačila se odprejo
 in imetnik, ki zadnje različice (`TERMS_VERSION`) še ni potrdil, v zavihku Račun dobi pasico »Novi splošni pogoji«
 (`POST /api/account/terms`, zapis različice in časa v `consents`). Ob vsaki potrditvi pred plačilom se različica
-zapiše v `billing_consents.terms_version`; ob potrditvi je prikazana različica (iz `/api/config`).
+zapiše v `billing_consents.terms_version`; ob potrditvi je prikazana različica (`terms_version` v `/api/account` in `/api/pay/:token`).
 Objava novega besedila: zamenjaj besedilo v `public/pogoji.html`, popravi datum »Različica« in `TERMS_VERSION`
 (`server/accounts/potrdilo.js`; test preveri, da se ujemata), nato nastavi zastavico.
