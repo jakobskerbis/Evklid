@@ -8,6 +8,7 @@ import { t as tGlobal, currentLang, srToLatin } from "../i18n.js";
 import { uiChain, UI_LANGUAGES } from "../i18n/languages.js";
 import { mlad } from "./mlad.js";
 import { icon } from "../icons.js";
+import { zavrzi } from "../odgovor.js";
 import SL from "./sl.js";
 
 const KEY = "evklid.aiObvestilo"; // + ».<id profila>«: vsak profil na napravi vidi obvestilo enkrat
@@ -31,7 +32,7 @@ export function nalozi() {
       if (!UI_LANGUAGES.includes(file)) return null;
       try {
         const res = await fetch(`/ai-oznaka/i18n/${file}.json`);
-        if (!res.ok) return null;
+        if (!res.ok) return zavrzi(res), null;
         const d = await res.json();
         return code === "sr-Latn" ? Object.fromEntries(Object.entries(d).map(([k, v]) => [k, srToLatin(v)])) : d;
       } catch {
