@@ -1050,7 +1050,7 @@ test("live check (pregled #848): two review calls reserve twice in the school po
   }
 });
 
-test("live check: Render turns on review in OŠ with a 3 $ daily pool (j 18. 11.), and every paid plan keeps AI ≤ 25 % and profit ≥ 75 %", async () => {
+test("live check: Render turns on review in OŠ with a 3 $ daily pool (j 18. 11.)", async () => {
   const fs = await import("node:fs");
   const yaml = fs.readFileSync(new URL("../render.yaml", import.meta.url), "utf8");
   const env = (k) => yaml.match(new RegExp(`- key: ${k}\\n\\s+value: "([^"]*)"`))?.[1];
@@ -1070,12 +1070,51 @@ test("live check: Render turns on review in OŠ with a 3 $ daily pool (j 18. 11.
   } finally {
     for (const [k, v] of [["EVKLID_LIVE_CHECK_DAILY_USD", keep.d], ["EVKLID_LIVE_REVIEW_OS", keep.o]]) if (v === undefined) delete process.env[k]; else process.env[k] = v;
   }
-  // Pregled gre v mejo učenca (server/app.js hold.take), zato je najslabši strošek AI na profil zajamčeni AI paketa.
-  const { PLANS, LEGACY_PLANS, SCHOOL_PLANS, planGuarantee, planEurMonth, aiCapFromEur, worstProfit, VAT_MAX, COST } = await import("../server/accounts/plans.js");
-  for (const p of [...PLANS, ...LEGACY_PLANS, ...SCHOOL_PLANS]) {
-    const g = planGuarantee(p);
-    const eur = planEurMonth(p);
-    assert.ok(g.total <= aiCapFromEur(eur, VAT_MAX) + 1e-9, `${p.key}: AI ≤ 25 % cene brez DDV`);
-    assert.ok(worstProfit(eur, g.total, { months: p.interval === "year" ? 12 : 1, profiles: p.seats || 1 }) >= COST.minProfit, `${p.key}: dobiček ≥ 75 %`);
+  // Najslabši strošek AI na profil je zajamčeni AI paketa (≤ 25 %, dobiček ≥ 75 %): test/stopnje-cene.test.js »75 %«.
+  // Da to velja tudi s pregledom, gre pregled v mejo učenca: naslednji test.
+});
+
+test("live check: OŠ review (EVKLID_LIVE_REVIEW_OS=1) is reserved in the pupil's AI limit and skipped when it does not fit", async () => {
+  const { Usage } = await import("../server/usage.js");
+  const vaja = "Rešitev je pH = 12, ker je koncentracija 0,01 mol/L hidroksidnih ionov v raztopini.\n\n**Vaja:** V 0,50 L vode raztopimo 0,40 g CaO. Kolikšen je pH?";
+  // capUsd: meja AI učenca (kot zajamčeni AI paketa iz računov, usage.capsOf); null = brez meje.
+  const run = async (capUsd) => {
+    const store = openDb(":memory:");
+    const usage = new Usage(store.db);
+    let pupil = null;
+    if (capUsd != null) usage.configure({ capsOf: (id) => (id === pupil ? [{ key: `test:${id}`, usd: capUsd, spent: 0 }] : []) });
+    const reviewCalls = [];
+    const streamFn = async ({ mode, onText }) => {
+      const text = vaja + META;
+      onText(text);
+      return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
+    };
+    const reviewCreateFn = async (p) => (reviewCalls.push(p), { content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 100, output_tokens: 10 } });
+    const server = createApp(store, { streamFn, reviewCreateFn, usage }).listen(0);
+    const base = `http://127.0.0.1:${server.address().port}`;
+    const post = (path, body) => fetch(base + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    try {
+      const s = await (await post("/api/students", { name: "Ana", settings: { educational_track: "OSNOVNA_SOLA", grade: 8 } })).json();
+      pupil = s.id;
+      const c = await (await post(`/api/students/${s.id}/conversations`, {})).json();
+      await (await post(`/api/conversations/${c.id}/messages`, { text: "Koliko je pH?" })).text();
+      const kv = JSON.parse(store.db.prepare("SELECT value FROM kv WHERE key = ?").get(SKIP_KV)?.value || "{}");
+      return { calls: reviewCalls.length, skips: Object.values(kv)[0]?.OS || {}, answered: store.listMessages(c.id).some((m) => m.role === "assistant") };
+    } finally {
+      server.close();
+    }
+  };
+  process.env.EVKLID_LIVE_REVIEW_OS = "1";
+  try {
+    const open = await run(null);
+    assert.equal(open.calls, 2, "OŠ odgovor z vajo: splošni in ciljni pregled");
+    // Meja učenca ima prostor za odgovor (Haiku), ne pa za pregled (rezerva Sonneta ~0,1 $ na klic).
+    const tight = await run(0.05);
+    assert.ok(tight.answered, "učenec odgovor dobi");
+    assert.equal(tight.calls, 0, "pregled ne gre čez mejo učenca");
+    assert.equal(tight.skips.meja_ucenca, 1, "preskok »meja_ucenca«");
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_OS;
   }
+  assert.equal((await run(null)).calls, 0, "brez stikala (privzeto v kodi) OŠ nima pregleda");
 });
