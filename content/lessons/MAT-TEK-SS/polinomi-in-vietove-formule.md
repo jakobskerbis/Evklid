@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: vieta
 avtor: AI
 ---
@@ -213,7 +213,7 @@ Vrtičkar ima $20\,\mathrm{m}$ mreže za ograjo pravokotne grede in želi ploš�
 ## Preveri se
 
 ? Ničli enačbe $x^2 - 5x + 2 = 0$ sta $x_1$ in $x_2$. Koliko je $x_1^2 + x_2^2$?
-= 21
+= 21 | 0
 ~ 25 | To je $(x_1 + x_2)^2$. Odšteti moraš še $2x_1 x_2 = 4$.
 ~ 29 | Dvojni produkt si prištel. Pravilno: $(x_1 + x_2)^2 - 2x_1 x_2$.
 ~ 23 | Odštel si samo $x_1 x_2 = 2$, ne dvojnega produkta $4$.

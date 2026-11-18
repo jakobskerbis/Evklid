@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -151,7 +151,7 @@ $Q_D(P^*) = Q_S(P^*)$
 :::premisli
 Koliko sta $P^*$ in $Q^*$? Primerjaj s prvotnim ravnovesjem $(600, 30)$.
 ---
-$P^* = 38$ €/m² in $Q^* = 1450 - 20 \cdot 38 = 690$ m². Oba premika dvigujeta ceno, zato je ta zrasla izrazito. Količina je zrasla, ker je bil premik povpraševanja večji od premika ponudbe.
+$P^* = 38$ €/m² in $Q^* = 1450 - 20 \cdot 38 = 690$ m². Oba premika dvigujeta ceno, zato je ta zrasla izrazito. Količina je zrasla, ker jo je premik povpraševanja povečal bolj, kot jo je premik ponudbe zmanjšal.
 :::
 
 ## Pogoste napake
@@ -266,7 +266,7 @@ Pomisli na borzo električne energije, kjer analitik trgovalca vsak dan napovedu
 
 Zdaj zapiha in vetrnice ponudijo še $300$ MW skoraj zastonj. Ponudba se premakne desno. Brez plina je na voljo $1600$ MW, kar zadošča. Cena pade na $70$ €/MWh. Premogovna elektrarna ni spremenila ničesar, spremenil se je trg okoli nje.
 
-Enak izračun presečišča naredi borza vrednostnih papirjev v otvoritveni avkciji in zakladnica pri prodaji državnih menic.
+Enak izračun presečišča naredi borza vrednostnih papirjev v otvoritveni avkciji in zakladnica pri prodaji zakladnih menic.
 
 ## Drugače: Bolj natančno
 

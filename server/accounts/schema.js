@@ -113,6 +113,8 @@ export function migrateAccounts(db) {
   }
   // Poln dostop iz aktivacijske kode (glej promo.js).
   if (!pcols.includes("promo_until")) db.exec("ALTER TABLE parents ADD COLUMN promo_until TEXT");
+  // Aktivacijska koda, vpisana ob registraciji: porabi se šele ob potrditvi e-naslova (#747 pregled 2, P3).
+  if (!pcols.includes("promo_pending")) db.exec("ALTER TABLE parents ADD COLUMN promo_pending TEXT");
   if (!pcols.includes("gift_until")) db.exec("ALTER TABLE parents ADD COLUMN gift_until TEXT"); // darilna koda (server/placila/darila.js)
   // Datum rojstva imetnika računa (preverjanje starosti, glej age.js). Nov račun ga mora imeti (registracija ga zahteva); stari računi: NULL, dokler ga ne vpišejo.
   if (!pcols.includes("birth_date")) db.exec("ALTER TABLE parents ADD COLUMN birth_date TEXT");
@@ -176,4 +178,6 @@ export function migrateAccounts(db) {
     INSERT INTO kv (key, value) VALUES ('kv_parent_orphans_cleaned', datetime('now'));`);
   }
   db.exec("CREATE INDEX IF NOT EXISTS idx_parents_guest_net ON parents(guest_net) WHERE is_guest = 1");
+  // Nepotrjeni računi štejejo v kvoto omrežja (guest.js ON_NET, #747): iskanje po guest_net tudi za ne-goste.
+  db.exec("CREATE INDEX IF NOT EXISTS idx_parents_guest_net_all ON parents(guest_net) WHERE guest_net IS NOT NULL");
 }

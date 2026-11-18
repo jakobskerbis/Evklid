@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,11 +15,11 @@ Isto vodo vidiš tudi pozimi. Na mrzlo jutro se iz izpušne cevi avtomobila vali
 
 **1. Dva zaklada iz globin.** Nafta in zemeljski plin sta nastala v naravi. Pred milijoni let so ostanki drobnih morskih organizmov (planktona) potonili na dno in jih je prekrilo blato. Brez zraka, pri visokem tlaku in temperaturi so se počasi spremenili v ogljikovodike. Ker sta nastala iz ostankov davnih organizmov, ju imenujemo **fosilni gorivi**. Nastajata tako počasi, da sta **neobnovljiva**.
 
-**2. Podobna, a različna.** Obe snovi sta zmesi alkanov, ki jih poznaš iz prejšnje lekcije. Razlikujeta se v dolžini verig.
+**2. Podobna, a različna.** Obe snovi sta zmesi ogljikovodikov, predvsem alkanov, ki jih poznaš iz prejšnje lekcije. Razlikujeta se v dolžini verig.
 
 | | zemeljski plin | nafta |
 |---|---|---|
-| atomi C v molekuli | $1$ do $4$, večinoma $1$ | od $5$ do več kot $40$ |
+| atomi C v molekuli | $1$ do $4$, večinoma $1$ | večinoma od $5$ do več kot $40$ |
 | stanje pri sobni temperaturi | plin | gosta, temna tekočina |
 | glavna sestavina | metan $\mathrm{CH_4}$ | zmes zelo veliko alkanov |
 | pot do uporabnika | po plinovodu | v rafinerijo |
@@ -159,7 +159,7 @@ $m \approx 2160\,\text{g} \approx 2{,}2\,\text{kg}$. Iz enega litra bencina ($70
 ## Povzetek
 
 - Nafta in zemeljski plin sta fosilni, neobnovljivi gorivi iz ostankov davnih morskih organizmov.
-- Zemeljski plin je večinoma metan $\mathrm{CH_4}$; nafta je tekoča zmes alkanov s $5$ do več kot $40$ atomi C.
+- Zemeljski plin je večinoma metan $\mathrm{CH_4}$; nafta je tekoča zmes alkanov, večinoma s $5$ do več kot $40$ atomi C.
 - Frakcionirna destilacija loči nafto na frakcije po vreliščih: zgoraj plin in bencin, spodaj olja in bitumen.
 - Popolno gorenje ogljikovodika: nastaneta $\mathrm{CO_2}$ in $\mathrm{H_2O}$ (npr. $\mathrm{CH_4 + 2\,O_2 \rightarrow CO_2 + 2\,H_2O}$).
 - Ob premalo kisika je gorenje nepopolno: nastajata strupeni $\mathrm{CO}$ brez vonja in saje.
@@ -189,7 +189,7 @@ Gorenje pa nariši kot razstavljanje kock. Molekula $\mathrm{CH_4}$ je ena črna
 
 - **Plinska jeklenka za žar** vsebuje propan in butan. Pri kuhanju na vrtu nastajata $\mathrm{CO_2}$ in vodna para. Na prostem je zraka dovolj, gorenje je popolno.
 - **Plinski grelnik v majhni kopalnici** porablja kisik iz prostora. Če ni zračenja, kisika zmanjka in nastaja $\mathrm{CO}$. Ljudje se ga ne zavedajo, ker ga ne zavohajo. Zato zračenje in javljalnik.
-- **Bencinska črpalka**: bencin, dizel in kurilno olje so različne frakcije iste nafte. Dizel je gostejši in manj hlapen od bencina, ker ima daljše molekule.
+- **Bencinska črpalka**: bencin in dizel sta različni frakciji iste nafte; kurilno olje je iz iste frakcije kot dizel. Dizel je gostejši in manj hlapen od bencina, ker ima daljše molekule.
 - **Megla v kotlini**: pozimi se v hladnih kotlinah nad mesti nabira megla in dim iz kurišč. Saje in drugi delci iz nepopolnega gorenja v mirnem, mrzlem zraku obstanejo pri tleh. Temu rečemo smog.
 
 ## Preveri se
@@ -228,7 +228,7 @@ Gorenje pa nariši kot razstavljanje kock. Molekula $\mathrm{CH_4}$ je ena črna
 ~ Butan ima $4$ atome C in bi dal $4\,\text{mol}$ $\mathrm{CO_2}$.
 - metan $\mathrm{CH_4}$
 ~ Metan ima $1$ atom C in da le $1\,\text{mol}$ $\mathrm{CO_2}$.
-> $3\,\text{mol}$ $\mathrm{CO_2}$ pomeni $3$ atome C, $4\,\text{mol}$ vode pomeni $4 \cdot 2 = 8$ atomov H. To je $\mathrm{C_3H_8}$, kar se ujema z $\mathrm{C}_n\mathrm{H}_{2n+2}$.
+> $3\,\text{mol}$ $\mathrm{CO_2}$ pomeni $3$ atome C, $4\,\text{mol}$ vode pomeni $4 \cdot 2 = 8$ atomov H. To je $\mathrm{C_3H_8}$, kar se ujema s $\mathrm{C}_n\mathrm{H}_{2n+2}$.
 
 ? V zaprti kleti brez okna gori plinska peč. Kisika je čedalje manj. Kaj je najbolj nevarno?
 - Nastaja več $\mathrm{CO_2}$, ki bi ga takoj zavohali.

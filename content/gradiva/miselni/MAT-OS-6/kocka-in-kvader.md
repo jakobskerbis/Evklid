@@ -13,7 +13,7 @@ stanje: osnutek
   - Kocka: $P = 6 \cdot a^2$
   - Kvader: $P = 2 \cdot (a \cdot b + a \cdot c + b \cdot c)$
 - Prostornina
-  - Plasti enotnih kock, enota $\text{cm}^3$
+  - Plasti enotskih kock, enota $\text{cm}^3$
   - Kvader: $V = a \cdot b \cdot c$, kocka: $V = a^3$
 - Enote prostornine
   - $1\,\text{dm}^3 = 1000\,\text{cm}^3 = 1\,\text{l}$

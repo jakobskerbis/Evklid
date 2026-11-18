@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -59,7 +59,7 @@ $$21 = 462 - 3 \cdot (1071 - 2 \cdot 462) = 7 \cdot 462 - 3 \cdot 1071$$
 
 Število $21$ smo zapisali kot $1071x + 462y$ s celima $x = -3$ in $y = 7$. Izrazu $ax + by$ pravimo **celoštevilska linearna kombinacija** števil $a$ in $b$.
 
-**Bézoutova enakost.** Za cela števila $a$ in $b$, ki nista obe $0$, obstajata celi števili $x$ in $y$, da je
+**Bézoutova enakost.** Za celi števili $a$ in $b$, ki nista obe $0$, obstajata celi števili $x$ in $y$, da je
 
 $$ax + by = D(a, b)$$
 
@@ -177,7 +177,7 @@ $3(5n + 3) - 5(3n + 2) = 15n + 9 - 15n - 10 = -1$. Torej $d \mid -1$, zato je $d
 
 - $a \mid b$ pomeni $b = ka$ za celi $k$. Če $d$ deli $a$ in $b$, deli tudi vsako $ax + by$.
 - Evklidov algoritem: $a = qb + r$, $D(a, b) = D(b, r)$; zadnji neničelni ostanek je $D(a, b)$.
-- Bézout: obstajata cela $x$, $y$ z $ax + by = D(a, b)$; najdemo ju z vstavljanjem ostankov od spodaj navzgor.
+- Bézout: obstajata celi $x$, $y$ z $ax + by = D(a, b)$; najdemo ju z vstavljanjem ostankov od spodaj navzgor.
 - $ax + by = c$ ima cele rešitve natanko tedaj, ko $D(a, b) \mid c$; vse rešitve: $x = x_0 + \frac{b}{d}t$, $y = y_0 - \frac{a}{d}t$, kjer je $d = D(a, b)$.
 - Evklidova lema: $a \mid bc$ in $D(a, b) = 1$ da $a \mid c$. Za dve naravni števili $D \cdot v = a \cdot b$.
 

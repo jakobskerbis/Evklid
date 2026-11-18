@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -17,11 +17,11 @@ Iz srednje šole poznaš silo kot vektor: ima velikost, smer in usmerjenost. V r
 
 $$F_x = F\cos\alpha, \qquad F_y = F\sin\alpha.$$
 
-**Definicija.** Sile, katerih nosilke se sekajo v isti točki, so **sočasne** (konkurentne). Njihova **rezultanta** je vektorska vsota
+**Definicija.** Sile, katerih nosilke se sekajo v isti točki, so **konkurentne**. Njihova **rezultanta** je vektorska vsota
 
 $$\vec{F}_R = \sum_i \vec{F}_i, \qquad F_{Rx} = \sum_i F_{ix}, \quad F_{Ry} = \sum_i F_{iy}.$$
 
-Velikost je $F_R = \sqrt{F_{Rx}^2 + F_{Ry}^2}$, smer pa določa $\tan\alpha_R = F_{Ry}/F_{Rx}$ (kvadrant izberemo po predznakih komponent). Za delec, kjer so vse sile sočasne, je to vse, kar potrebujemo: delec, ki miruje, ostane v mirovanju natanko tedaj, ko je $\vec{F}_R = 0$.
+Velikost je $F_R = \sqrt{F_{Rx}^2 + F_{Ry}^2}$, smer pa določa $\tan\alpha_R = F_{Ry}/F_{Rx}$ (kvadrant izberemo po predznakih komponent). Za delec, kjer so vse sile konkurentne, je to vse, kar potrebujemo: delec, ki miruje, ostane v mirovanju natanko tedaj, ko je $\vec{F}_R = 0$.
 
 ### Kaj je pri togem telesu drugače
 
@@ -58,7 +58,7 @@ Iz definicije sledijo tri lastnosti, ki jih pri računanju stalno uporabljamo:
 
 $$M_O = xF_y - yF_x.$$
 
-**Varignonov izrek.** Moment rezultante sočasnih sil glede na katero koli točko je enak vsoti momentov posameznih sil glede na isto točko.
+**Varignonov izrek.** Moment rezultante konkurentnih sil glede na katero koli točko je enak vsoti momentov posameznih sil glede na isto točko.
 
 **Dokaz.** Naj sile $\vec{F}_1, \dots, \vec{F}_n$ prijemljejo v isti točki s krajevnim vektorjem $\vec{r}$. Vektorski produkt je distributiven, zato je $\vec{r}\times\vec{F}_1 + \dots + \vec{r}\times\vec{F}_n = \vec{r}\times(\vec{F}_1 + \dots + \vec{F}_n) = \vec{r}\times\vec{F}_R$. $\square$
 
@@ -156,7 +156,7 @@ $M = F\,d$, ročica $d = r\cos\beta$ (vodoravna razdalja od kolena do navpične 
 
 Na pločevinasto vozliščno ploščo delujejo tri sile s skupnim prijemališčem: $F_1 = 400\,\mathrm{N}$ v smeri osi $x$, $F_2 = 300\,\mathrm{N}$ pod kotom $60^\circ$ in $F_3 = 250\,\mathrm{N}$ pod kotom $210^\circ$ (koti so merjeni od pozitivne osi $x$ v nasprotni smeri urnega kazalca). Določi velikost in smer rezultante.
 
-**Podatki:** $F_1 = 400\,\mathrm{N}$, $\alpha_1 = 0^\circ$; $F_2 = 300\,\mathrm{N}$, $\alpha_2 = 60^\circ$; $F_3 = 250\,\mathrm{N}$, $\alpha_3 = 210^\circ$; sile so sočasne
+**Podatki:** $F_1 = 400\,\mathrm{N}$, $\alpha_1 = 0^\circ$; $F_2 = 300\,\mathrm{N}$, $\alpha_2 = 60^\circ$; $F_3 = 250\,\mathrm{N}$, $\alpha_3 = 210^\circ$; sile so konkurentne
 **Iščemo:** $F_R$ in kot $\alpha_R$
 
 :::formula
@@ -177,7 +177,7 @@ $F_{Rx} = \sum F_i\cos\alpha_i$, $F_{Ry} = \sum F_i\sin\alpha_i$, $F_R = \sqrt{F
 2. Pri $F_3$ sta obe komponenti negativni, ker je $210^\circ$ v tretjem kvadrantu: $\cos 210^\circ \approx -0{,}866$, $\sin 210^\circ = -0{,}5$.
 3. Velikost: $F_R = \sqrt{333{,}5^2 + 134{,}8^2}\,\mathrm{N} \approx 359{,}7\,\mathrm{N}$.
 4. Smer: obe komponenti sta pozitivni, rezultanta je v prvem kvadrantu; $\alpha_R = \arctan(134{,}8/333{,}5) \approx 22{,}0^\circ$.
-5. Odgovor: rezultanta ima velikost približno $360\,\mathrm{N}$ in z osjo $x$ oklepa kot približno $22^\circ$. Ker so sile sočasne, prijemlje v isti točki in ni nobene dvojice.
+5. Odgovor: rezultanta ima velikost približno $360\,\mathrm{N}$ in z osjo $x$ oklepa kot približno $22^\circ$. Ker so sile konkurentne, prijemlje v isti točki in ni nobene dvojice.
 
 ### Primer 3 (težji)
 
@@ -354,7 +354,7 @@ Izvirni sistem, redukcija na $A$ in ena sama sila opisujejo **isto obremenitev t
 
 ## Drugače: Z analogijo
 
-**Gugalnica.** Moment si predstavljaj z gugalnico na igrišču. Težji otrok sede bližje osi, lažji dlje, in gugalnica miruje, ko sta zmnožka »teža krat razdalja od osi« enaka. Ne šteje, kdo je težji, ampak kdo ima večji moment. To je ista enačba kot pri bicepsu iz uvoda, le da je pri roki mišica »lahek otrok« na zelo kratki ročici – zato mora vleči z veliko silo.
+**Gugalnica.** Moment si predstavljaj z gugalnico na igrišču. Težji otrok sede bližje osi, lažji dlje, in gugalnica miruje, ko sta zmnožka »teža krat razdalja od osi« enaka. Ne šteje, kdo je težji, ampak kdo ima večji moment. To je ista enačba kot pri bicepsu iz uvoda, le da je pri roki mišica »otrok« na zelo kratki ročici – zato mora vleči z veliko silo.
 
 **Volan kot dvojica.** Ko volan vrtiš z obema rokama, ena roka potiska navzgor, druga navzdol. Avto se zaradi tega ne premakne vstran (rezultanta je nič), volan pa se zavrti. Če roki primeš bliže skupaj, potrebuješ za isti zasuk večjo silo: moment dvojice je $F\,d$. In ne glede na to, kje na volanu sta roki – zgoraj, ob strani ali spodaj –, je učinek enak, če sta razmik in sila enaka. To je neodvisnost momenta dvojice od točke.
 

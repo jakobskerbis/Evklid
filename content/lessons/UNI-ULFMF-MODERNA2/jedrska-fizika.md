@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -105,7 +105,7 @@ Enota je **becquerel**, $1\,\mathrm{Bq} = 1$ razpad na sekundo. Starejša enota 
 
 $$R(t) = R_0\,e^{-\lambda t}.$$
 
-Iz $R = \lambda N$ sledi pomembna posledica: pri enaki aktivnosti ima izotop z daljšim razpolovnim časom **več** jeder. Zato je ${}^{238}\mathrm{U}$ z $t_{1/2} \approx 4{,}5 \cdot 10^9$ let v kamninah prisoten v velikih količinah, a ima majhno aktivnost na gram, ${}^{18}\mathrm{F}$ z $t_{1/2} \approx 110\,\mathrm{min}$ pa ima že v desetinki nanograma aktivnost, primerno za slikanje.
+Iz $R = \lambda N$ sledi pomembna posledica: pri enaki aktivnosti ima izotop z daljšim razpolovnim časom **več** jeder. Zato je ${}^{238}\mathrm{U}$ s $t_{1/2} \approx 4{,}5 \cdot 10^9$ let v kamninah prisoten v velikih količinah, a ima majhno aktivnost na gram, ${}^{18}\mathrm{F}$ s $t_{1/2} \approx 110\,\mathrm{min}$ pa ima že v desetinki nanograma aktivnost, primerno za slikanje.
 
 Razpolovni časi izotopov, ki jih pogosto srečaš v medicinski fiziki, biologiji in datiranju:
 
@@ -193,7 +193,7 @@ $\lambda = \dfrac{\ln 2}{t_{1/2}}$, $t = \dfrac{1}{\lambda}\ln\dfrac{R_0}{R}$
 
 1. Razpadna konstanta: $\lambda = 0{,}6931/5730$ na leto $\approx 1{,}210 \cdot 10^{-4}$ na leto.
 2. Živ organizem izmenjuje ogljik z ozračjem, zato ima stalno razmerje ${}^{14}\mathrm{C}/{}^{12}\mathrm{C}$; po smrti ${}^{14}\mathrm{C}$ le razpada.
-3. Zdaj ti: izračunaj $t$ in preveri, ali je med dvema in tremi razpolovnimi časi.
+3. Zdaj ti: izračunaj $t$ in preveri, ali je med enim in dvema razpolovnima časoma.
 
 :::premisli
 Koliko let je star ostanek?
@@ -241,7 +241,7 @@ Generator tehnecija vsebuje ${}^{99}\mathrm{Mo}$ ($t_{1/2,1} = 65{,}94\,\mathrm{
 5. (b) Maksimum: $\mathrm{d}R_2/\mathrm{d}t = 0$ da $\lambda_1e^{-\lambda_1t} = \lambda_2e^{-\lambda_2t}$, torej $t_{max} = \ln(\lambda_2/\lambda_1)/(\lambda_2 - \lambda_1) \approx \ln 10{,}97/0{,}1048\,\mathrm{h} \approx 22{,}9\,\mathrm{h}$.
 6. $R_2(t_{max}) \approx 10{,}0 \cdot 1{,}100 \cdot (e^{-0{,}2402} - e^{-2{,}636})\,\mathrm{GBq} \approx 10{,}0 \cdot 1{,}100 \cdot (0{,}7865 - 0{,}0716)\,\mathrm{GBq} \approx 7{,}86\,\mathrm{GBq}$.
 7. (c) Po $24\,\mathrm{h}$: $R_1 = 10{,}0\,e^{-0{,}2523}\,\mathrm{GBq} \approx 7{,}77\,\mathrm{GBq}$ in $R_2 \approx 7{,}86\,\mathrm{GBq}$, razmerje $\approx 1{,}01$: smo tik za maksimumom, v katerem je $R_2 = R_1$ (iz $\lambda_1N_1 = \lambda_2N_2$). Po $72\,\mathrm{h}$: $R_1 \approx 4{,}69\,\mathrm{GBq}$, $R_2 \approx 5{,}16\,\mathrm{GBq}$, razmerje $\approx 1{,}10$.
-8. Splošno je $R_2/R_1 = \frac{\lambda_2}{\lambda_2 - \lambda_1}\left(1 - e^{-(\lambda_2 - \lambda_1)t}\right)$. Ker je $\lambda_2 \gg \lambda_1$, po nekaj razpolovnih časih tehnecija člen $e^{-(\lambda_2 - \lambda_1)t}$ izgine in ostane $R_2/R_1 = \lambda_2/(\lambda_2 - \lambda_1) \approx 1{,}10$ – **prehodno ravnovesje**: tehnecij »sledi« molibdenu.
+8. Splošno je $R_2/R_1 = \frac{\lambda_2}{\lambda_2 - \lambda_1}\left(1 - e^{-(\lambda_2 - \lambda_1)t}\right)$. Ker je $\lambda_2 > \lambda_1$, po nekaj razpolovnih časih tehnecija člen $e^{-(\lambda_2 - \lambda_1)t}$ izgine in ostane $R_2/R_1 = \lambda_2/(\lambda_2 - \lambda_1) \approx 1{,}10$ – **prehodno ravnovesje**: tehnecij »sledi« molibdenu.
 9. Odgovor: $R_2(t) = R_{10}\frac{\lambda_2}{\lambda_2 - \lambda_1}(e^{-\lambda_1t} - e^{-\lambda_2t})$; največja aktivnost okoli $7{,}9\,\mathrm{GBq}$ po približno $23\,\mathrm{h}$, zato bolnišnice generator izpirajo enkrat na dan.
 
 ### Naloga 2
@@ -277,7 +277,7 @@ Koliko jeder ${}^{18}\mathrm{F}$ je v odmerku za PET z aktivnostjo $370\,\mathrm
 2. **Razpadna konstanta:** $\lambda = 0{,}6931/6588\,\mathrm{s^{-1}} \approx 1{,}052 \cdot 10^{-4}\,\mathrm{s^{-1}}$.
 3. **Število jeder:** $N = R/\lambda = 3{,}7 \cdot 10^8/1{,}052 \cdot 10^{-4} \approx 3{,}52 \cdot 10^{12}$.
 4. **Masa:** $m = 3{,}52 \cdot 10^{12} \cdot 18{,}0 \cdot 1{,}66054 \cdot 10^{-27}\,\mathrm{kg} \approx 1{,}05 \cdot 10^{-13}\,\mathrm{kg}$, okoli $0{,}1\,\mathrm{ng}$.
-5. **Po dveh urah transporta:** $R = 370 \cdot 2^{-120/109{,}8}\,\mathrm{MBq} \approx 370 \cdot 0{,}469\,\mathrm{MBq} \approx 174\,\mathrm{MBq}$. Zato ciklotroni za PET stojijo blizu bolnišnic.
+5. **Po dveh urah transporta:** $R = 370 \cdot 2^{-120/109{,}8}\,\mathrm{MBq} \approx 370 \cdot 0{,}4688\,\mathrm{MBq} \approx 173\,\mathrm{MBq}$. Zato ciklotroni za PET stojijo blizu bolnišnic.
 
 ## Drugače: Bolj natančno
 

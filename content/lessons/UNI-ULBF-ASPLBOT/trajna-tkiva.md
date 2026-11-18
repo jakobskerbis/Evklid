@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -130,7 +130,7 @@ $N = (g_\mathrm{sp} + g_\mathrm{zg}) \cdot S$
 **Rešitev:**
 
 1. Pretvorimo ploščino: $1\,\mathrm{cm^2} = 100\,\mathrm{mm^2}$, zato $24 \cdot 100 = 2400$, torej $2400\,\mathrm{mm^2}$.
-2. Spodnja stran: $250 \cdot 2400 = 600000$ rež.
+2. Spodnja stran: $250 \cdot 2400 = 600\,000$ rež.
 3. Zgornjo stran in vsoto izračunaj sam, nato preveri:
 
 :::premisli
@@ -163,7 +163,7 @@ Znati moraš povedati:
 - vrste parenhima po nalogi in zakaj se prav parenhim lahko dediferencira;
 - razlike med kolenhimom in sklerenhimom (stena, lignin, žive ali mrtve celice, lega in naloga) ter med vlakni in sklereidami;
 - primerjavo ksilema in floema: kaj prevajata, smer, prevajalne celice in njihovo stanje ob zrelosti, povezave med celicami (piknje, razgrajene prečne stene, sitaste plošče, plazmodezme);
-- pojma vir in ponor ter zakaj je pretok skozi cev sorazmeren z $r^4$, presek pa z $r^2$.
+- pojma vir in ponor ter da je pretok skozi cev sorazmeren z $r^4$, presek pa z $r^2$.
 
 ### Naloga 1
 
@@ -205,7 +205,7 @@ Jablani so poleti okrog debla odstranili ozek pas skorje z ličjem, les je ostal
 2. (a) Ne drži. Voda in mineralne snovi potujejo po ksilemu od korenin navzgor, ta pot ni prekinjena, zato listi še naprej dobivajo vodo.
 3. (b) Drži. Poleti so zreli listi vir, korenine pa ponor. Sladkor potuje po floemu, ki je prekinjen, zato do korenin ne pride.
 4. Posledica: korenine porabijo zaloge in odmrejo; nato drevo ne more več črpati vode in propade tudi nadzemni del. Propad je zato počasen.
-5. (c) Drži. Spomladi so vir založne korenine, ponor pa brsti. Sladkor gre po floemu navzgor, obroč to pot prekine, zato brsti nad njim ne dobijo zalog iz korenin. Ostanejo jim le zaloge v vejah nad obročem, zato odganjajo slabše.
+5. (c) Drži. Spomladi so vir založne korenine, ponor pa brsti. Sladkor gre po floemu navzgor, obroč to pot prekine, zato brsti nad njim ne dobijo zalog iz korenin. Ostanejo jim zaloge v vejah nad obročem in tisti del zalog, ki pri drevesih spomladi potuje navzgor s ksilemskim sokom, zato odganjajo slabše, a ne propadejo.
 6. Sklep: smer floemskega toka določata vir in ponor, ne težnost. Isti obroč poleti prizadene korenine, spomladi pa brste.
 
 ## Drugače: Na sliki
@@ -230,7 +230,7 @@ Opazi dve stvari. Floem je v snopu stebla praviloma bliže površju kot ksilem. 
 - **Histološki preparat:** v botaničnem laboratoriju prerez stebla obarvaš s floroglucinolom in solno kislino. Olesenele stene (ksilem, sklerenhim) se obarvajo rdeče, kolenhim, parenhim in floem ostanejo neobarvani. Tako tkiva ločiš po ligninu.
 - **Lesarstvo in gozdarstvo:** les je ksilem drevesa. Les iglavcev je skoraj ves iz traheid, les listavcev ima tudi traheje in vlakna, zato vrsto lesa določajo po prerezu pod mikroskopom.
 - **Predivnice:** pri lanu in konoplji pridelujejo sklerenhimska vlakna iz stebla; ločijo jih od preostalih tkiv in spredejo. Pri bombažu so surovina laski povrhnjice semena.
-- **Plutarstvo:** pluto hrasta plutovca lupijo na približno $9$ let. Plutni kambij ostane na deblu in pluto obnovi.
+- **Plutarstvo:** pluto hrasta plutovca lupijo na približno $9$ let. Pod odluščeno pluto nastane nov plutni kambij, ki pluto obnovi.
 - **Sadjarstvo in vinogradništvo:** z obročkanjem namerno prekinejo floem na veji ali deblu z nekaj milimetrov širokim obročem. Sladkor ostane nad obročem, v plodovih; ozek obroč se zaraste, preden korenine propadejo.
 - **Tkivne kulture:** v biotehnološkem laboratoriju se košček parenhima na gojišču dediferencira in spet začne deliti. Iz nastalih celic vzgojijo nove rastline.
 - **Ekofiziologija:** gostoto listnih rež štejejo na odtisu povrhnjice pod mikroskopom, v režah na $\mathrm{mm^2}$, in iz nje sklepajo, koliko vode izgublja sorta.

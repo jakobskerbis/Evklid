@@ -22,7 +22,7 @@ stanje: osnutek
   - $\|A\|_2 = \sqrt{\lambda_{\max}(A^{\mathsf T}A)}$, ne lastna vrednost $A$
 - Izometrije
   - $f(x) = Qx + b$, $Q^{\mathsf T}Q = I$
-  - $\det Q = 1$ rotacija, $\det Q = -1$ zrcaljenje
+  - v $\mathbb{R}^2$: $\det Q = 1$ rotacija, $\det Q = -1$ zrcaljenje
 - Rotacija v prostoru
   - os: $Qv = v$
   - kot: $\operatorname{sl} Q = 1 + 2\cos\varphi$

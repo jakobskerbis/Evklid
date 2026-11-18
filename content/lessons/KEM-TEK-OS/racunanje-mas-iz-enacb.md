@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -226,7 +226,7 @@ stolpec: O_2 | 2
 = 275 g | 15
 ~ 100 | Masa se ne prenese iz reaktanta v produkt. Razmerje $1 : 1$ velja za mole, $\mathrm{CO_2}$ pa je skoraj trikrat težji od metana.
 ~ 36 | Molski masi si zamenjal. Množina metana je $\tfrac{100}{16}$, ne $\tfrac{100}{44}$.
-> $n(\mathrm{CH_4}) = \dfrac{100}{16} = 6{,}25\,\mathrm{mol}$, enako mola $\mathrm{CO_2}$: $m = 6{,}25 \cdot 44 = 275\,\mathrm{g}$. Hitra ocena: $100 \cdot \tfrac{44}{16} \approx 100 \cdot 2{,}75$.
+> $n(\mathrm{CH_4}) = \dfrac{100}{16} = 6{,}25\,\mathrm{mol}$, enaka je množina $\mathrm{CO_2}$: $m = 6{,}25 \cdot 44 = 275\,\mathrm{g}$. Hitra ocena: $100 \cdot \tfrac{44}{16} \approx 100 \cdot 2{,}75$.
 
 ? Koliko gramov magnezija potrebuješ, da nastane $10\,\mathrm{g}$ magnezijevega oksida? ($\mathrm{2\,Mg + O_2 \rightarrow 2\,MgO}$; $M(\mathrm{Mg}) = 24\,\mathrm{g/mol}$, $M(\mathrm{MgO}) = 40\,\mathrm{g/mol}$)
 = 6,0 g | 0,1

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -218,7 +218,7 @@ Telo si predstavljaj kot hišo s protipožarnim sistemom.
 
 - **Zjutraj:** zvonjenje budilke (dražljaj) zaznajo čutnice v polžu, možgani se odločijo, roka jo utiša.
 - **Pri zajtrku:** vonj toasta zaznaš z nosom, še preden ga ugrizneš. Ko te opeče vroč čaj, odmakneš skodelico z refleksom.
-- **Na soncu:** zenica se sama zoži, veke se priprejo. Tudi to je refleks, ki varuje mrežnico.
+- **Na soncu:** zenica se sama zoži, veke se priprejo. Tudi to je refleks, ki varuje mrežnico; njegova pot ne gre prek hrbtenjače, ampak prek spodnjega dela možganov, a prav tako brez odločanja.
 - **Pri zdravniku:** kladivce pod kolenom, lučka v oko, test sluha s slušalkami. Vse to preverja, ali dražljaj pride do živčevja in odziv nazaj.
 - **Skrb za čutila:** zelo glasna glasba v slušalkah poškoduje čutnice v polžu, ki se ne obnovijo. Nikoli ne glej naravnost v sonce. Čelada pri kolesarjenju varuje možgane.
 

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -76,7 +76,7 @@ Ogljik in kisik tvorita dve različni spojini, $\mathrm{CO}$ in $\mathrm{CO_2}$.
 Kalcij in klor tvorita ione s stalnima nabojema ($\mathrm{Ca^{2+}}$, $\mathrm{Cl^-}$), zato je razmerje vedno $1 : 2$ in ime ga ne rabi povedati. Med nekovinama ionov ni, isti dve nekovini lahko tvorita več različnih molekul. Brez predpone ne bi vedeli, ali gre za $\mathrm{CO}$ ali $\mathrm{CO_2}$.
 :::
 
-**6. Preizkusi sam.** V simulaciji spodaj »Sestavljanje formul iz ionov« izberi $\mathrm{Al^{3+}}$ in $\mathrm{O^{2-}}$ ter dodajaj ione, dokler skupni naboj ni nič. Opazi, da se ničla prvič pojavi pri dveh aluminijevih in treh oksidnih ionih. Nato poskusi še $\mathrm{Mg^{2+}}$ in $\mathrm{Cl^-}$.
+**6. Preizkusi sam.** V simulaciji spodaj »Sestavljanje formul iz ionov« izberi $\mathrm{Al^{3+}}$ in $\mathrm{O^{2-}}$ ter preštej ione na sliki. Opazi, da se naboja izravnata pri dveh aluminijevih in treh oksidnih ionih. Nato poskusi še $\mathrm{Mg^{2+}}$ in $\mathrm{Cl^-}$.
 
 ## Rešeni primeri
 
@@ -101,7 +101,7 @@ Pogoj: $n_+ \cdot q_+ + n_- \cdot q_- = 0$; križno pravilo, nato indeksa skraj�
 
 ### Primer 2: od imena do formule
 
-Mnogi antiperspiranti vsebujejo aluminijev klorid. Zapiši formulo te spojine in povej, koliko ionov je v eni formulski enoti.
+Nekateri antiperspiranti vsebujejo aluminijev klorid. Zapiši formulo te spojine in povej, koliko ionov je v eni formulski enoti.
 
 **Podatki:** ime aluminijev klorid; aluminij je v 13. skupini (3 zunanji elektroni); klor je v 17. skupini (7 zunanjih elektronov)
 **Iščemo:** formulo in število ionov v formulski enoti

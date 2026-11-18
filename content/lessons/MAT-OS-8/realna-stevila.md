@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -13,7 +13,7 @@ Taka števila srečuješ pogosto. Kvadratna nalepka za telefon s ploščino $2\,
 
 ## Razlaga
 
-**1. Racionalna števila.** Število je **racionalno**, če ga lahko zapišemo kot ulomek $\dfrac{m}{n}$, kjer je $m$ celo število, $n$ pa naravno število. Množico racionalnih števil označimo z $\mathbb{Q}$. Sem sodijo naravna števila ($5 = \dfrac{5}{1}$), cela števila ($-3 = \dfrac{-3}{1}$), ulomki, končna decimalna števila ($0{,}75 = \dfrac{3}{4}$) in neskončna **periodična** decimalna števila ($0{,}333\ldots = \dfrac{1}{3}$).
+**1. Racionalna števila.** Število je **racionalno**, če ga lahko zapišemo kot ulomek $\dfrac{m}{n}$, kjer je $m$ celo število, $n$ pa naravno število. Množico racionalnih števil označimo s $\mathbb{Q}$. Sem sodijo naravna števila ($5 = \dfrac{5}{1}$), cela števila ($-3 = \dfrac{-3}{1}$), ulomki, končna decimalna števila ($0{,}75 = \dfrac{3}{4}$) in neskončna **periodična** decimalna števila ($0{,}333\ldots = \dfrac{1}{3}$).
 
 *Hitra preizkušnja:* je $-1{,}5$ racionalno? (Da, $-1{,}5 = \dfrac{-3}{2}$.)
 
@@ -251,8 +251,8 @@ Predpostavka je bila napačna, zato $\sqrt{2}$ ni racionalno število. Podoben r
 
 :::simboli
 m | števec ulomka | | | celo število
-n | imenovalec ulomka | | | naravno število
-k | največje celo število, manjše od korena | | | $k < \sqrt{x} < k + 1$
+n | imenovalec ulomka; v točki 3 naravno število pod korenom | | | naravno število
+k | največje celo število, manjše od korena | | | $k < \sqrt{x} < k + 1$; v dokazu $m = 2k$
 x | število pod korenom (korenjenec) | |
 S | ploščina kvadrata | S = a^2 | cm^2 | v Primeru 4 v pikslih
 a | stranica kvadrata | a = \sqrt{S} | cm | v Primeru 4 v pikslih

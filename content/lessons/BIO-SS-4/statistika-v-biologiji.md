@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -145,7 +145,7 @@ $E = \text{delež} \cdot \text{skupno število}$, $\quad \chi^2 = \sum \dfrac{(O
 
 ### Primer 4: zdaj ti
 
-Šestdeset dijakov izbere eno od treh glasbenih zvrsti, ob kateri se najlažje uči: klasično jih izbere $28$, pop $18$, elektronsko $14$. Ali imajo dijaki kakšno zvrst raje, ali so razlike naključne?
+Šestdeset dijakov izbere eno od treh glasbenih zvrsti, ob kateri se najlažje uči: klasično jih izbere $28$, pop $18$, elektronsko $14$. Ali imajo dijaki kakšno zvrst raje ali so razlike naključne?
 
 **Podatki:** $O = 28, 18, 14$; skupaj $60$; $3$ kategorije; $p = 0{,}05$; kritična vrednost za $2$ stopinji prostosti je $5{,}99$
 **Iščemo:** $\chi^2$ in odločitev

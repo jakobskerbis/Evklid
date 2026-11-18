@@ -219,7 +219,7 @@ export function prenos(el) {
       });
       label(svg, 170, 60, `palica iz: ${COND.find((q) => q[0] === mat)[1]}`, "lbl small");
       label(svg, 170, 206, "čas na sliki teče 10-krat hitreje", "tick small");
-      html = `<p><b>Prevajanje:</b> delci na vročem koncu nihajo močneje in z trki predajajo energijo sosednjim delcem. Snov se pri tem ne premika.</p>
+      html = `<p><b>Prevajanje:</b> delci na vročem koncu nihajo močneje in s trki predajajo energijo sosednjim delcem. Snov se pri tem ne premika.</p>
         <p class="muted">Kovine (zlasti baker in aluminij) so dobri toplotni prevodniki, les, steklo in zrak so dobri izolatorji. Po ${fmt(t, 0)} s je drugi konec ${fmt(u[u.length - 1], 0)} °C.</p>`;
     } else if (kind === "konvekcija") {
       s("path", { d: "M90,40 V190 H250 V40", class: "beaker" }, svg);

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -268,7 +268,7 @@ napis: 6; 0,4 | vsak del je eno vedro | sredina
 
 ? Luka okrajša razmerje $24 : 36$ tako, da od obeh členov odšteje $12$, in dobi $12 : 24$. Zakaj to ni prav?
 - Ker bi moral od obeh členov odšteti $6$.
-~ Odštevanje istega števila nikoli ne ohrani razmerja, ne glede na to, katero število odšteješ.
+~ Odštevanje istega števila ne ohrani razmerja $24 : 36$, ne glede na to, katero število odšteješ.
 + Ker smeš oba člena le množiti ali deliti z istim številom; $12 : 24 = 1 : 2$, $24 : 36$ pa je $2 : 3$.
 - Rezultat je pravilen, le okrajšan ni do konca.
 ~ Rezultat ni pravilen: vrednost $\dfrac{12}{24} = \dfrac{1}{2}$ ni enaka $\dfrac{24}{36} = \dfrac{2}{3}$.

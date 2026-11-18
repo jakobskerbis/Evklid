@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -285,7 +285,7 @@ ker je le del raztopljenega aniona v obliki $\mathrm{A^-}$. Pri $[\mathrm{H^+}] 
 
 **Termodinamika raztapljanja.** $K_\mathrm{sp}$ je povezan s standardno Gibbsovo energijo raztapljanja, $\Delta G^\circ = -RT\ln K_\mathrm{sp}$. Za $\mathrm{AgCl}$ je $\Delta G^\circ = -8{,}314 \cdot 298 \cdot \ln(1{,}8 \cdot 10^{-10})\,\mathrm{J/mol} \approx +55{,}6\,\mathrm{kJ/mol}$. Temperaturno odvisnost opisuje van 't Hoffova enačba; večina soli je pri višji temperaturi bolj topna, ker je raztapljanje endotermno.
 
-**Kakovost gravimetrične oborine.** Velikost delcev je odvisna od **relativne prenasičenosti** $(Q - S)/S$ (von Weimarn), kjer je $S$ ravnotežna topnost. Velika prenasičenost da veliko drobnih kristalnih jeder (koloidna oborina, težko filtrabilna), majhna pa manj večjih kristalov. Zato obarjamo iz razredčenih, vročih raztopin s počasnim dodajanjem reagenta ob mešanju in oborino pustimo zoreti (Ostwaldovo zorenje: majhni kristali se raztapljajo, veliki rastejo). Nečistote v oborini (**soobarjanje**, okluzija, adsorpcija) so glavni vir sistematskih napak gravimetrije.
+**Kakovost gravimetrične oborine.** Velikost delcev je odvisna od **relativne prenasičenosti** $(Q - S)/S$ (von Weimarn), kjer je $Q$ tu trenutna koncentracija raztopljene snovi, $S$ pa ravnotežna topnost. Velika prenasičenost da veliko drobnih kristalnih jeder (koloidna oborina, težko filtrabilna), majhna pa manj večjih kristalov. Zato obarjamo iz razredčenih, vročih raztopin s počasnim dodajanjem reagenta ob mešanju in oborino pustimo zoreti (Ostwaldovo zorenje: majhni kristali se raztapljajo, veliki rastejo). Nečistote v oborini (**soobarjanje**, okluzija, adsorpcija) so glavni vir sistematskih napak gravimetrije.
 
 ## Preveri se
 
@@ -339,8 +339,10 @@ K_\mathrm{sp} | topnostni produkt | K_\mathrm{sp} = (ms)^m(ns)^n | – | koncent
 Q | ionski produkt | Q = [\mathrm{A}]^m[\mathrm{B}]^n | – | trenutne koncentracije po mešanju
 s | množinska topnost | | mol/L
 \gamma | masna topnost | \gamma = s\,M | g/L
+\gamma_i | aktivnostni koeficient iona | | –
+a_i | aktivnost iona | | –
 M | molska masa | | g/mol
-a, b | števili, ki uravnata atome ključnega elementa | | – | gravimetrični faktor; za BaSO₄ a = b = 1
+a, b | števili, ki uravnata atome ključnega elementa | | – | gravimetrični faktor; za BaSO₄ a = b = 1; a(…) pomeni aktivnost
 K_\mathrm{a} | konstanta kislosti šibke kisline HA | | –
 w | masni delež iskane snovi v vzorcu | w = \frac{m(\text{iskane snovi})}{m(\text{vzorca})} | –
 :::

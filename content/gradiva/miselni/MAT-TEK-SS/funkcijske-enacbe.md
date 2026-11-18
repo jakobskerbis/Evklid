@@ -15,7 +15,7 @@ stanje: osnutek
 - Injektivnost
   - iz $f(a) = f(b)$ sledi $a = b$
   - šele nato krajšaj $f$
-  - napaka: $x^2$ ni injektivna
+  - pazi: $x^2$ ni injektivna
 - Cauchyjeva enačba
   - $f(x + y) = f(x) + f(y)$
   - na $\mathbb{Q}$: $f(x) = cx$, $c = f(1)$

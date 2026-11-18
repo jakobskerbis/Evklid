@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -16,7 +16,7 @@ Zala ni upoštevala, iz kakšnega okolja rastlina izvira. Vsaka rastlina ima las
 **Najprej en primer: kaktus na oknu.** Na južnem oknu nad radiatorjem je veliko sonca, zrak je vroč in suh. Zemlja v lončku se hitro izsuši. Rastlina tam izgubi veliko vode, dobi pa je malo. Voda izhlapeva predvsem skozi **listne reže**: to so drobne odprtinice v listu, skozi katere rastlina tudi sprejema ogljikov dioksid in oddaja kisik. Kaktus ima tri lastnosti, ki to težavo rešujejo:
 
 - debelo, mesnato steblo, v katerem shrani vodo, ko jo dobi;
-- bodice namesto listov: bodice so spremenjeni listi z zelo majhno površino, zato skoznje izhlapi malo vode;
+- bodice namesto listov: bodice (strokovno trni) so spremenjeni listi z zelo majhno površino, zato skoznje izhlapi malo vode;
 - voščeno prevleko na steblu, ki vode ne prepušča.
 
 Fotosintezo opravlja zeleno steblo, saj listov skoraj nima. V temnem kotu kaktusu manjka svetloba, ne voda, zato tam ne uspeva.

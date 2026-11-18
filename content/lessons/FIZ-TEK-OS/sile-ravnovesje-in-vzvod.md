@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -145,7 +145,7 @@ $F_1 \cdot r_1 = F_2 \cdot r_2$, nato iz ravnovesja sil $F_o = F_1 + F_2$
 2. Navor telefona: $M = 1{,}6\,\mathrm{N} \cdot 0{,}8\,\mathrm{m} = 1{,}28\,\mathrm{N\,m}$.
 3. Mezinec mora dati enak navor: $F_2 = \dfrac{1{,}28\,\mathrm{N\,m}}{0{,}08\,\mathrm{m}} = 16\,\mathrm{N}$.
 4. Sili telefona in mezinca kažeta navzdol, kazalec pa navzgor. Za ravnovesje sil: $F_o = 1{,}6\,\mathrm{N} + 16\,\mathrm{N} = 17{,}6\,\mathrm{N}$.
-5. Odgovor: mezinec pritiska s silo $16\,\mathrm{N}$, kazalec podpira s silo $17{,}6\,\mathrm{N}$. Pri palici, dolgi le $20\,\mathrm{cm}$, bi mezinec pritiskal z $4\,\mathrm{N}$, torej štirikrat manj.
+5. Odgovor: mezinec pritiska s silo $16\,\mathrm{N}$, kazalec podpira s silo $17{,}6\,\mathrm{N}$. Pri palici, dolgi le $20\,\mathrm{cm}$, bi mezinec pritiskal s $4\,\mathrm{N}$, torej štirikrat manj.
 
 ### Primer 3 (težji): antena na stolpu
 

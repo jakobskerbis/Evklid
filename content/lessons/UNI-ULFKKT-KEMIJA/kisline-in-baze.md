@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -53,7 +53,7 @@ Tu se skušnjava z začetka razreši: šibka kislina je le delno protolizirana. 
 
 $$K_a = \frac{[\mathrm{H_3O^+}][\mathrm{A^-}]}{[\mathrm{HA}]}, \qquad \mathrm{p}K_a = -\log K_a.$$
 
-Manjši $K_a$ (večji $\mathrm{p}K_a$) pomeni šibkejšo kislino. Za raztopino s **začetno** koncentracijo $c$ naredimo tabelo začetek-sprememba-ravnotežje: $[\mathrm{H_3O^+}] = [\mathrm{A^-}] = x$, $[\mathrm{HA}] = c - x$, zato
+Manjši $K_a$ (večji $\mathrm{p}K_a$) pomeni šibkejšo kislino. Za raztopino z **začetno** koncentracijo $c$ naredimo tabelo začetek-sprememba-ravnotežje: $[\mathrm{H_3O^+}] = [\mathrm{A^-}] = x$, $[\mathrm{HA}] = c - x$, zato
 
 $$K_a = \frac{x^2}{c - x}.$$
 

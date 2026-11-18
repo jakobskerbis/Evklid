@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -220,7 +220,7 @@ Napaka za faktor $2$ te pusti v istem nadstropju ali v sosednjem stanovanju. Nap
 ~ Izračunal si le števec $0{,}5 \cdot 400 = 200$ in pozabil deliti z $0{,}098$.
 + $2000$
 - $20\,000$
-~ Število $0{,}098$ si zaokrožil na $0{,}01$ namesto na $0{,}1$. Prva neničelna števka je na mestu desetink.
+~ Število $0{,}098$ si zaokrožil na $0{,}01$ namesto na $0{,}1$. Število $0{,}098$ je skoraj desetina, ne stotina.
 > $0{,}52 \cdot 397 \approx 0{,}5 \cdot 400 = 200$, nato $200 : 0{,}1 = 2000$. Natančna vrednost je približno $2107$.
 
 ? Tina vse cene v košarici zaokroži **navzdol** na pol evra in dobi $15$ €. V denarnici ima $20$ €. Kaj lahko zanesljivo sklepa?

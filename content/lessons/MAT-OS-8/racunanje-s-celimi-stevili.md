@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -56,7 +56,7 @@ $$a - b = a + (-b)$$
 
 Zato $(-4) - 3 = (-4) + (-3) = -7$ in $(-6) - (-10) = (-6) + 10 = 4$.
 
-**Množenje: še en vzorec.** Baterija med igranjem vsakih $10$ minut pade za $3$ odstotne točke. V $40$ minutah, to so štiri desetminutni deli, pade za $4 \cdot (-3) = -12$. Pozitivno število krat negativno da negativno.
+**Množenje: še en vzorec.** Baterija med igranjem vsakih $10$ minut pade za $3$ odstotne točke. V $40$ minutah, to so štirje desetminutni deli, pade za $4 \cdot (-3) = -12$. Pozitivno število krat negativno da negativno.
 
 Kaj pa negativno krat negativno? Spet si pomagaj s stolpcem, kjer se prvi faktor zmanjšuje za $1$:
 

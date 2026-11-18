@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -67,7 +67,7 @@ Da. Tudi njegove mišice znajo samo vleči. Ena mišica nogo upogne, druga jo iz
 
 **»Ptiči letijo, ker so zelo lahki.«** Lahkota pomaga, a sama ne zadošča. Zrak telo nosi najmanj od vseh okolij, zato mora ptič zrak s **krili** močno odrivati navzdol. Za to ima zelo močne **prsne mišice**, pripete na visok greben **prsnice** (ploščate kosti na sredini prsnega koša). Prav te mišice kupiš kot piščančji file. Mnoge ptičje kosti so **votle**, z zrakom in tankimi oporniki v notranjosti. Perje daje krilom veliko površino. Netopir leti s kožno opno, napeto med podaljšanimi prsti, žuželke s tankimi krili iz oklepa.
 
-V simulaciji spodaj (»Notranje in zunanje ogrodje«) razvrsti rakovico, krapa, deževnika in polža slinarja. Opazi, da »brez kosti« še ne pomeni »brez opore«.
+V simulaciji spodaj (»Notranje in zunanje ogrodje«) razvrsti raka, krapa, deževnika in polža slinarja. Opazi, da »brez kosti« še ne pomeni »brez opore«.
 
 ## Rešeni primeri
 
@@ -213,7 +213,7 @@ Enako računaš pri nakupu: del deliš s celoto in pomnožiš s $100\,\%$, ali p
 ? Kupiš $2\,\mathrm{kg}$ rakov po $12\,\text{€/kg}$. Meso je $25\,\%$ mase. Koliko evrov te stane $1\,\mathrm{kg}$ mesa?
 = 48 € | 0,5
 ~ 12 | To je cena celih rakov, ne mesa. Oklepa ne poješ, a ga plačaš.
-~ 16 | Delil si s $0{,}75$, to je delež oklepa. Meso je le $0{,}25$ mase.
+~ 16 | Delil si z $0{,}75$, to je delež oklepa. Meso je le $0{,}25$ mase.
 ~ 3 | Ceno si pomnožil z deležem. Ker je mesa manj, je njegov kilogram dražji, ne cenejši.
 > Plačaš $2 \cdot 12 = 24\,\text{€}$, mesa je $2 \cdot 0{,}25 = 0{,}5\,\mathrm{kg}$, zato $\dfrac{24\,\text{€}}{0{,}5\,\mathrm{kg}} = 48\,\text{€/kg}$.
 

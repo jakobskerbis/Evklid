@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -64,9 +64,9 @@ $10$. Trosovnik je sporofit ($2n = 20$), blazinica pa je gametofit, ki je zrasel
 | Prašnik (moški del) | prašna nit in prašnica | v prašnici nastaja pelod |
 | Pestič (ženski del) | brazda, vrat, plodnica | brazda sprejme pelod, v plodnici so semenske zasnove |
 
-**Moški gametofit.** V prašnici se matične celice ($2n$) delijo z mejozo. Iz vsake nastanejo štiri **mikrospore** ($n$). Mikrospora se z mitozo razdeli na veliko vegetativno celico in majhno generativno celico. Tako nastane **pelodno zrno**. Generativna celica se z mitozo razdeli še enkrat, v dve **semenski celici**. Pelodno zrno je torej drobcen moški gametofit, ne gameta.
+**Moški gametofit.** V prašnici se matične celice ($2n$) delijo z mejozo. Iz vsake nastanejo štiri **mikrospore** ($n$). Mikrospora se z mitozo razdeli na veliko vegetativno celico in majhno generativno celico. Tako nastane **pelodno zrno**. Generativna celica se z mitozo razdeli še enkrat, v dve **semenski celici** (spermalni celici). Pelodno zrno je torej drobcen moški gametofit, ne gameta.
 
-**Ženski gametofit.** **Semenska zasnova** je drobna tvorba v plodnici, iz katere po oploditvi nastane seme. V njej se matična celica razdeli z mejozo na štiri megaspore. Tri propadejo. Jedro preživele se trikrat zaporedoma deli z mitozo, zato nastane osem jeder. Iz njih se oblikuje **zarodni mešiček** s sedmimi celicami: celic je ena manj kot jeder, ker dve jedri, **polarni jedri**, ostaneta v isti osrednji celici. Narišimo ga od vrha proti odprtini zasnove, **mikropili**:
+**Ženski gametofit.** **Semenska zasnova** je drobna tvorba v plodnici, iz katere po oploditvi nastane seme. V njej se matična celica razdeli z mejozo na štiri megaspore. Tri propadejo. Jedro preživele se trikrat zaporedoma deli z mitozo, zato nastane osem jeder. Iz njih se oblikuje **zarodni mešiček** (embrionalna vrečka) s sedmimi celicami: celic je ena manj kot jeder, ker dve jedri, **polarni jedri**, ostaneta v isti osrednji celici. Narišimo ga od vrha proti odprtini zasnove, **mikropili**:
 
 :::risba skica
 opis: Zarodni mešiček, narisan kot pokončen pravokotnik. Na vrhu so tri antipode (n). V sredini je osrednja celica z dvema polarnima jedroma. Spodaj je jajčna celica (n), levo in desno ob njej sta sinergidi (n). Pod mešičkom je mikropila; puščica kaže, da pelodna cev vstopi od spodaj.

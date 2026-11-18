@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -46,7 +46,7 @@ Iz F₂ naključno izbereš rastlino z vijoličnimi cvetovi. Kolikšna je verjet
 $\frac{2}{3}$, ne $\frac{2}{4}$. Bele rastline si že izločil, zato ostanejo le tri polja: eno $VV$ in dve $Vv$. Torej je $m = 3$ in $k = 2$.
 :::
 
-**5. Testno križanje.** Na oko ne ločiš, ali je vijolična rastlina $VV$ ali $Vv$. Zato jo križaš z belo $vv$. Če so vsi potomci vijolični, je bila $VV$. Če je približno polovica belih, je bila $Vv$: polja $Vv$ in $vv$ sta v razmerju $1 : 1$.
+**5. Testno križanje.** Na oko ne ločiš, ali je vijolična rastlina $VV$ ali $Vv$. Zato jo križaš z belo $vv$. Če so vsi potomci vijolični, je bila $VV$. Če je približno polovica belih, je bila $Vv$: polja $Vv$ in $vv$ so v razmerju $1 : 1$.
 
 **6. Dve lastnosti hkrati.** Mendel je spremljal tudi semena: barvo (rumena $A$, zelena $a$) in obliko (gladka $B$, nagubana $b$). Takemu križanju rečemo **dihibridno**, križanju z eno lastnostjo pa **monohibridno**. Gena ležita na različnih kromosomih. Pri mejozi se kromosomi razporedijo neodvisno, zato heterozigot $AaBb$ naredi štiri enako pogoste gamete: $AB$, $Ab$, $aB$ in $ab$. Na splošno da $n$ heterozigotnih genov $2^n$ vrst gamet.
 

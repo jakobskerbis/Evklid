@@ -19,7 +19,7 @@ stanje: osnutek
   - receptor, center, efektor
   - odziv nasprotuje spremembi (potenje, inzulin)
 - Enoceličnost
-  - copatkar: migetalke, prebavne in krčljiva vakuola
+  - paramecij: migetalke, prebavne in krčljiva vakuola
   - ameba: panožke
 - Večceličnost in diferenciacija
   - celica, tkivo, organ, organski sistem

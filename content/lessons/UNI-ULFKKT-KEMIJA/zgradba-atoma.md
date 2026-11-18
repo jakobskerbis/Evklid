@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -230,7 +230,7 @@ Vodikov atom v osnovnem stanju absorbira foton z valovno dolžino $97{,}25\,\mat
 4. Prehodi na $n = 1$ imajo $\Delta E \ge 1{,}634 \cdot 10^{-18}\,\mathrm{J}$ ($\lambda \le 122\,\mathrm{nm}$, ultravijolično), $4 \to 3$ pa $\lambda = 1875\,\mathrm{nm}$ (infrardeče); vidni sta le črti na $n = 2$.
 5. $4 \to 2$: $\Delta E = 2{,}179 \cdot 10^{-18}\,(\tfrac14 - \tfrac1{16})\,\mathrm{J} = 4{,}086 \cdot 10^{-19}\,\mathrm{J}$, $\lambda = 1{,}986 \cdot 10^{-25}/4{,}086 \cdot 10^{-19}\,\mathrm{m} = 486\,\mathrm{nm}$ (modrozelena).
 6. $3 \to 2$: $\Delta E = 3{,}026 \cdot 10^{-19}\,\mathrm{J}$, $\lambda = 656\,\mathrm{nm}$ (rdeča).
-7. Ionizacija z $n = 4$: $\Delta E = 2{,}179 \cdot 10^{-18}/16\,\mathrm{J} = 1{,}362 \cdot 10^{-19}\,\mathrm{J}$, $\lambda_\mathrm{max} = 1{,}986 \cdot 10^{-25}/1{,}362 \cdot 10^{-19}\,\mathrm{m} = 1{,}459 \cdot 10^{-6}\,\mathrm{m}$; daljša valovna dolžina ima premalo energije.
+7. Ionizacija z $n = 4$: $\Delta E = 2{,}179 \cdot 10^{-18}/16\,\mathrm{J} = 1{,}3619 \cdot 10^{-19}\,\mathrm{J}$, $\lambda_\mathrm{max} = 1{,}9865 \cdot 10^{-25}/1{,}3619 \cdot 10^{-19}\,\mathrm{m} = 1{,}459 \cdot 10^{-6}\,\mathrm{m}$; daljša valovna dolžina ima premalo energije.
 8. Odgovor: elektron preide na $n = 4$; mogočih je $6$ črt, vidni sta $486\,\mathrm{nm}$ in $656\,\mathrm{nm}$; ionizira še svetloba z $\lambda \le 1459\,\mathrm{nm}$.
 
 ### Naloga 2
