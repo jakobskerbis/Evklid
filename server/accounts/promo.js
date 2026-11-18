@@ -146,5 +146,11 @@ export function createPromo(db, cfg) {
     return r.changes ? { ok: true } : { error: "Koda ne obstaja." };
   }
 
-  return { redeem, check, stats, used, codeOf, termsOf, list, create, setActive, anyActive };
+  // Ali koda obstaja (tudi neaktivna ali porabljena): registracija z eno kodo (»Imam kodo«) tako ve, da je aktivacijska.
+  const exists = (raw) => {
+    const code = String(raw || "").trim().toUpperCase();
+    return CODE_RE.test(code) && !!get(code);
+  };
+
+  return { redeem, check, stats, used, codeOf, termsOf, list, create, setActive, anyActive, exists };
 }

@@ -82,10 +82,11 @@
   .chat-head > .chat-calc { margin-inline-end: -8px; }
   .chat-head h1 { white-space: nowrap; text-overflow: ellipsis; }
   /* Oznake pogovora v svoji vrstici pod naslovom, cele in berljive (j 2026-11-04: prej »Mat…«, »…lekci«); če jih je
-     več, kot gre v vrstico, se vrstica pomika vstran. Odprt seznam pogovorov jih skrije (glava spet ena vrstica). */
+     več, kot gre v vrstico, se prelomijo v drugo vrstico (brez pomikanja vstran, ovire na telefonu 2026-11-18). Odprt
+     seznam pogovorov jih skrije (glava spet ena vrstica). */
   .chat-head { flex-wrap: wrap; row-gap: 2px; }
   .chat-head #chat-state {
-    order: 10; flex: 1 1 100%; max-width: none; min-width: 0; overflow-x: auto; scrollbar-width: none;
+    order: 10; flex: 1 1 100%; max-width: none; min-width: 0; overflow: visible; flex-wrap: wrap;
     margin-inline: -16px; padding: 0 16px 4px;
   }
   .chat-head #chat-state::-webkit-scrollbar { display: none; }

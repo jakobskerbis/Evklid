@@ -106,7 +106,7 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
   .chat-head h1 { flex: 1; min-width: 0; }
   /* Oznake pogovora v svoji vrstici pod naslovom (kot na telefonu, touch.css). */
   .chat-head { flex-wrap: wrap; row-gap: 2px; }
-  .chat-head #chat-state { order: 10; flex: 1 1 100%; max-width: none; min-width: 0; overflow-x: auto; scrollbar-width: none; margin-inline: -12px; padding: 0 12px 4px; }
+  .chat-head #chat-state { order: 10; flex: 1 1 100%; max-width: none; min-width: 0; overflow: visible; flex-wrap: wrap; margin-inline: -12px; padding: 0 12px 4px; }
   .chat-head #chat-state .chip { display: inline-flex; max-width: none; overflow: visible; }
   .chat-head #chat-state .chip-btn { order: -1; }
   .chat-head #chat-state:empty, .chat-view:has(.sidebar.open) #chat-state { display: none; }

@@ -144,13 +144,15 @@ test("Potrdi e-naslov na telefonu: sporočilo »še ni potrjeno«, Pošlji znova
       assert.equal(await page.locator("#verify-state").isVisible(), false);
       await ctx.close();
     }
-    // 2) Polnoleten imetnik: stavek o staršu ali zakonitem zastopniku ostane.
+    // 2) Polnoleten imetnik s profilom »Zame« (dijak, ovire na telefonu 2026-11-18): besedilo za učenca, brez
+    // stavka o staršu in otrokovem profilu (status.self_only).
     {
       const { ctx, page } = await phone();
       const link = await register(page, "stars@example.com", 40);
       const adultNote = await page.locator(".verify-note").innerText();
-      assert.match(adultNote, PARENT_LINE);
-      assert.equal(adultNote, SL["verify.parentNote"], "polnoletni: pogojni stavek (samo če ustvari profil za otroka)");
+      assert.doesNotMatch(adultNote, PARENT_LINE);
+      assert.equal(adultNote, SL["verify.selfNote"], "polnoleten s profilom »Zame«: besedilo za učenca");
+      assert.equal(await page.locator(".verify-later").innerText(), SL["verify.laterNote"], "brez »Profil za otroka dodate …«");
       // 3) Povezava v drugem brskalniku: mirno besedilo, rdeči gumb skrit pod »Težave?«.
       const other = await phone();
       await other.page.goto(link);

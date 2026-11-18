@@ -30,6 +30,7 @@ import { Usage, BLOCK_TEXT } from "../usage.js";
 import { USTNO_QUESTIONS } from "../ustno.js";
 import { NOPAY_USD, nopayPoolUsd } from "../meje-ai.js";
 import { promoConfig, createPromo } from "./promo.js";
+import * as vabila from "../vabila.js"; // koda vabila v pilot (registracija z eno kodo; imenski uvoz ima PR #819)
 import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestInvites, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
 import { eraseAccount, eraseProfiles } from "./izbris.js";
@@ -1191,6 +1192,12 @@ export function mountAccounts(app, store, opts = {}) {
     signupThrottle.fail(signupKey);
     const { email, password } = v;
 
+    // Ena koda (»Imam kodo«): vrsto določi strežnik in jo zapiše v staro polje (promo_code, referral_code, invite),
+    // ki ga spodnja koda (in #819 pendInvite) bere kot prej. Stara polja (mobilna aplikacija) veljajo naprej.
+    const codeKind = signupCodeKind(req.body?.code);
+    if (codeKind === "promo") req.body.promo_code = req.body.code;
+    else if (codeKind === "referral") req.body.referral_code = req.body.code;
+    else if (codeKind === "invite") req.body.invite = req.body.code;
     const refCode = String(req.body?.referral_code || "").trim().toUpperCase();
     const referrer = refCode ? db.prepare("SELECT id FROM parents WHERE referral_code = ? AND is_guest = 0").get(refCode) : null;
     const { id, verifyToken: token } = createParent(req, { email, passwordHash: await hashPassword(password), name: req.body?.name, birthIso: v.birthIso, referrerId: referrer?.id ?? null });
@@ -1213,10 +1220,26 @@ export function mountAccounts(app, store, opts = {}) {
     res.status(201).json({
       parent: publicParent(getParent(id)),
       referred: !!referrer,
+      ...(codeKind ? { code_kind: codeKind } : {}),
       ...(promoResult?.ok ? { promo_pending: true } : promoResult ? { promo_error: promoResult.error } : {}),
       ...(devLinks(req, getParent(id)?.email) ? { dev_verify_url: url } : {}),
     });
   });
+
+  // Vrsta kode iz polja »Imam kodo« ob registraciji: darilna (DAR-XXXX-XXXX, velja šele v Računu po potrditvi), aktivacijska
+  // (obstaja v promo_codes, 4–30 znakov A–Z, 0–9, -), priporočila (7 znakov iz CODE_CHARS, obstoječ račun), vabilo v pilot
+  // (na seznamu EVKLID_VABILA, 8–64 poljubnih znakov) ali "unknown". Oblike se prekrivajo, zato odloči zapis v bazi ali
+  // okolju, ne oblika sama; vrstni red je od najožje oblike naprej. Ugibanje omejuje meja registracij na omrežje.
+  function signupCodeKind(raw) {
+    const code = typeof raw === "string" ? raw.trim() : "";
+    if (!code) return null;
+    const up = code.toUpperCase();
+    if (gifts?.isGift(up)) return "gift";
+    if (promo.exists(up)) return "promo";
+    if (/^[A-Z0-9]{7}$/.test(up) && db.prepare("SELECT 1 FROM parents WHERE referral_code = ? AND is_guest = 0").get(up)) return "referral";
+    if (vabila.isInviteCode(code)) return "invite";
+    return "unknown";
+  }
 
   // --- uporaba brez registracije (gost) ---
   app.post("/api/auth/guest", json, (req, res) => {
@@ -1542,6 +1565,7 @@ export function mountAccounts(app, store, opts = {}) {
       logged_in: !!p,
       parent: p ? publicParent(p) : null,
       children: p ? childIds(p.id).length : 0,
+      self_only: p ? selfOnly(p.id) : false,
       billing: stripe.enabled,
       email: mailer.enabled,
       account_lock: p ? lockable(p) : false,
@@ -1742,6 +1766,8 @@ export function mountAccounts(app, store, opts = {}) {
     return {
       parent: { ...publicParent(p), is_admin: admin },
       access,
+      // Vsi profili so »Zame« (dijak ali študent sam): Račun brez besedil za starše (ovire na telefonu 2026-11-18).
+      self_only: selfOnly(p.id),
       // Pilot: poln paket brezplačno do zadnjega dne pilota (LLLL-MM-DD); lastnik: brez meje (public/account.js planText).
       pilot: special ? { kind: special, last_day: special === "pilot" ? pilotLastDay() : null, profiles: profileSeats(p) } : null,
       free_daily_questions: freeDailyQuestions(),
@@ -2746,6 +2772,13 @@ export function mountAccounts(app, store, opts = {}) {
   const selfPrefix = SELF_CONSENT_TEXT.slice(0, SELF_CONSENT_TEXT.indexOf(".") + 1);
   const selfIds = (parentId) =>
     db.prepare("SELECT student_id FROM consents WHERE parent_id = ? AND substr(text, 1, ?) = ?").all(parentId, selfPrefix.length, selfPrefix).map((r) => r.student_id);
+  // Račun ima profile in vsi so »Zame« (soglasje dal učenec sam): zasloni ga nagovorijo kot učenca, ne kot starša.
+  function selfOnly(parentId) {
+    const ids = childIds(parentId);
+    if (!ids.length) return false;
+    const own = new Set(selfIds(parentId));
+    return ids.every((id) => own.has(id));
+  }
   const reportFor = (p, req) =>
     buildWeeklyReport(db, p, children(p.id), {
       appUrl: baseUrl(req) + "/",

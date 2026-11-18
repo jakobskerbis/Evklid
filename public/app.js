@@ -1246,9 +1246,13 @@ function renderState(convState) {
     MODE_NAMES[mode] && pick("mode", t("set.mode"), Object.entries(MODE_NAMES).map(([k, v]) => opt(k, v, k === mode)).join("")),
     program && `<span class="chip">${escapeHtml(program)}</span>`,
     // Zadnja izbira »Druga šola ali stopnja …« odpre Jaz → Šola in letnik (prehod OŠ ↔ SŠ ↔ fakulteta, drug sistem; #792).
+    // SŠ: letnik in raven matematike v enem seznamu (»3. letnik OR«), da glava na telefonu (360 px) ne gre čez rob.
     levelLabel(s.curriculum_level) &&
-      pick("level", t("set.school"), (levels.length ? levels.map((x, i) => opt(i, x.label, x.current)).join("") : opt("", levelLabel(s.curriculum_level), true)) + opt("other", t("chat.levelOther"), false)),
-    ravni.length > 1 && pick("raven", t("tbk.level"), ravni.map((x, i) => opt(i, x.label, x.current)).join("")),
+      pick("level", t("set.school"), (() => {
+        const years = levels.length ? levels.map((x, i) => opt(i, x.label, x.current)).join("") : opt("", levelLabel(s.curriculum_level), true);
+        const grp = (label, html) => `<optgroup label="${escapeHtml(label)}">${html}</optgroup>`;
+        return (ravni.length ? grp(t("tbk.year"), years) + grp(t("tbk.level"), ravni.map((x, i) => opt(`r${i}`, x.label, false)).join("")) : years) + opt("other", t("chat.levelOther"), false);
+      })()),
   ]
     .filter(Boolean)
     .join("");
@@ -1276,6 +1280,12 @@ async function wireStatePicks(head, subject, levels, ravni = []) {
   );
   head.querySelector('[data-pick="level"]')?.addEventListener("change", (e) => {
     if (e.target.value === "other") return renderState(null), openSchoolSettings(); // izbira v glavi ostane sedanja
+    // Raven matematike (SŠ, »r0«…): ostaneta letnik in predmet, spremeni se le OR/VR/še ne vem.
+    if (e.target.value.startsWith("r")) {
+      const r = ravni[Number(e.target.value.slice(1))];
+      if (!r || r.current) return renderState(null);
+      return save({ ...r.settings }, t("tbk.level"), r.label).catch(() => renderState(null));
+    }
     if (!levels[Number(e.target.value)]) return;
     const next = { ...levels[Number(e.target.value)].settings };
     // Predmet, ki ga novi razred nima (npr. fizika v 7. razredu), zamenja prvi predmet razreda.
@@ -1284,11 +1294,6 @@ async function wireStatePicks(head, subject, levels, ravni = []) {
       if (list.length && !list.includes(state.student.settings.subject)) next.subject = list.includes("NAR") && ["FIZ", "KEM", "BIO"].includes(state.student.settings.subject) ? "NAR" : list[0];
     } else next.study_course = "";
     save(next, t("set.school"), levels[Number(e.target.value)].label).catch(() => renderState(null));
-  });
-  // Raven matematike (SŠ): ostaneta letnik in predmet, spremeni se le OR/VR.
-  head.querySelector('[data-pick="raven"]')?.addEventListener("change", (e) => {
-    const r = ravni[Number(e.target.value)];
-    if (r) save({ ...r.settings }, t("tbk.level"), r.label).catch(() => renderState(null));
   });
   const sel = head.querySelector('[data-pick="subject"]');
   if (!sel) return;

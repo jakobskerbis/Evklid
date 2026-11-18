@@ -34,18 +34,19 @@ test("tutor header: subject, mode and year are dropdowns, the programme stays te
   assert.match(css, /\.chat-head #chat-state \.chip-pick \.dd-btn \{[^}]*border: 0/, "tih meni brez okvirja");
 });
 
-test("tutor header: SŠ math level (OR/VR) is its own dropdown, the year label drops it (j 17. 11.)", () => {
+test("tutor header: SŠ year and math level (OR/VR/not sure) share one dropdown so the header fits 360 px (2026-11-18)", () => {
   const s = { educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik VR", subject: "MAT" };
   const r = ravenChoices(s);
-  assert.deepEqual(r.map((x) => x.settings.curriculum_level), ["4. letnik OR", "4. letnik VR"]);
+  assert.deepEqual(r.map((x) => x.settings.curriculum_level), ["4. letnik OR", "4. letnik VR", "4. letnik"]);
   assert.equal(r.find((x) => x.current).settings.curriculum_level, "4. letnik VR");
   const y = levelChoices(s);
   assert.equal(y.find((x) => x.current).settings.curriculum_level, "4. letnik VR", "letnik obdrži raven");
-  assert.ok(y.every((x) => !/VR|OR/.test(x.label)), "raven ni podvojena v napisu letnika");
+  assert.ok(y.every((x) => / VR$/.test(x.label)), "raven je v napisu letnika");
   assert.deepEqual(ravenChoices({ educational_track: "SREDNJA_SOLA", curriculum_level: "2. letnik gimnazija" }), []);
   assert.deepEqual(ravenChoices({ educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred" }), []);
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   const fn = app.slice(app.indexOf("function renderState("), app.indexOf("// Formule v odgovorih inštruktorja"));
-  assert.match(fn, /pick\("raven"/);
-  assert.match(fn, /data-pick="raven"/);
+  assert.doesNotMatch(fn, /pick\("raven"/, "brez četrtega izbirnega seznama");
+  assert.match(fn, /<optgroup label=/);
+  assert.match(fn, /value\.startsWith\("r"\)/);
 });
