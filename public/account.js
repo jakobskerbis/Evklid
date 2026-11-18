@@ -55,6 +55,10 @@ let onReadyCb = null;
 export const accountsOn = () => enabled;
 // Zadnje znano stanje računa (/api/account/status), npr. za opomnik za potrditev po prvi nalogi.
 export const accountStatus = () => status;
+// Svežje stanje istega računa (npr. opomnik je ugotovil, da je e-naslov medtem potrjen v drugem zavihku).
+export const noteAccountStatus = (st) => {
+  if (st?.logged_in && st.parent?.id === status?.parent?.id) status = st;
+};
 
 // Profil je lahko hkrati odprt samo na eni napravi. Če ga ima druga naprava,
 // strežnik vrne 409 { taken }; ponudimo prevzem.
@@ -569,6 +573,7 @@ function renderLogin(mode = "login") {
         store.set("evklid_ref", null);
         store.set("evklid_koda", null);
         if (r.promo_until) toast(`Aktivacijska koda velja ✓ Poln dostop do ${date(r.promo_until)}.`);
+        if (r.promo_pending) toast(t("acct.promoAfterVerify"));
         if (r.promo_error) toast(`Račun je ustvarjen, koda pa ni bila sprejeta: ${r.promo_error}`);
         if (r.dev_verify_url) store.set("evklid_dev_verify", r.dev_verify_url);
       }
@@ -934,7 +939,8 @@ function renderVerify() {
       tick();
     } catch (err) {
       resend.disabled = false;
-      say(err instanceof TypeError ? t("lock.offline") : err.message);
+      const min = Math.max(1, Math.ceil((Number(err.data?.retry_after) || 900) / 60));
+      say(err instanceof TypeError ? t("lock.offline") : err.data?.net ? t("verify.tooManyNet", { min }) : err.data?.retry_after ? t("verify.tooMany", { min }) : err.message);
     }
   });
   $("#verify-logout").addEventListener("click", logout);
@@ -1059,7 +1065,7 @@ async function renderAddChild() {
   shell(`
     <h1>Ustvari profil</h1>
     <p class="muted">Vsak učenec, dijak ali študent ima svoj profil z učno potjo in napredkom. Za otroke, mlajše od 15 let, je potrebno soglasje starša.</p>
-    ${status?.parent && !status.parent.verified && !status.parent.guest ? `<p class="muted">${esc(t("verify.laterNote"))}</p>` : ""}
+    ${status?.parent && !status.parent.verified && !status.parent.guest ? `<p class="muted">${esc(t("verify.laterNote"))}${status.parent.minor ? "" : ` ${esc(t("verify.laterNoteChild"))}`}</p>` : ""}
     ${childForm(acc.consent_text, programs, acc.children?.length > 0)}
     <p class="auth-links"><a href="#" id="add-child-logout">Odjava</a></p>`);
   $("#add-child-logout").addEventListener("click", (e) => (e.preventDefault(), logout()));

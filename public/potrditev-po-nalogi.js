@@ -3,7 +3,7 @@
 // »Pošlji znova« pošlje novo povezavo (strežnik: 3 na 15 min), »Pozneje« jo skrije za en dan. Ko je e-naslov potrjen
 // (ali račun ni pravi račun z e-naslovom), se ne pokaže nič.
 import { t } from "./i18n.js";
-import { accountStatus } from "./account.js";
+import { accountStatus, noteAccountStatus } from "./account.js";
 import { jsonAliNic } from "./odgovor.js";
 
 export const LATER_KEY = "evklid.potrdi_pozneje";
@@ -28,6 +28,7 @@ export async function potrdiPoNalogi(slot) {
   } catch {
     return;
   }
+  noteAccountStatus(st);
   if (!needs(st) || !slot.isConnected) return;
   slot.innerHTML = `<div class="card potrdi-kartica">
     <h3>${esc(t("verify.nudgeTitle"))}</h3>
@@ -43,7 +44,7 @@ export async function potrdiPoNalogi(slot) {
       const res = await fetch("/api/auth/resend-verification", { method: "POST", headers: { "Content-Type": "application/json" } });
       const r = await res.json().catch(() => ({}));
       if (r.verified) return (slot.innerHTML = "");
-      if (res.status === 429) note.textContent = t("verify.tooMany", { min: Math.max(1, Math.ceil((Number(r.retry_after) || 900) / 60)) });
+      if (res.status === 429) note.textContent = t(r.net ? "verify.tooManyNet" : "verify.tooMany", { min: Math.max(1, Math.ceil((Number(r.retry_after) || 900) / 60)) });
       else if (!res.ok) throw new Error(r.error || String(res.status));
       else note.textContent = t("verify.sent");
     } catch (err) {

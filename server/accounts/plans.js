@@ -298,6 +298,9 @@ const envUsd = (k, d) => {
 };
 export const freeMonthlyPoolUsd = () => envUsd("EVKLID_FREE_POOL_USD", 10);
 export const freeStudentMonthlyUsd = () => envUsd("EVKLID_FREE_STUDENT_USD", 0.2);
+// Vsi nepotrjeni računi in gostje skupaj na dan (#747 pregled 2), znotraj skupne meje brezplačnih: 0,2 $ ≈ 400 vprašanj
+// s Haikujem (≈ 40 novincev po 10 vprašanj), da množica izmišljenih naslovov ne porabi mesečnega bazena v enem dnevu.
+export const unverifiedDayUsd = () => envUsd("EVKLID_UNVERIFIED_DAY_USD", 0.2);
 
 // ---------- paketi pred testom (enkratno plačilo, j 2026-10-30, cene j 2026-11-04) ----------
 // Poln dostop za en profil za 7 ali 14 dni, brez naročnine. aiUsd = največja poraba AI v času paketa; ko je

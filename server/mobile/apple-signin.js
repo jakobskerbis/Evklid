@@ -107,6 +107,8 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
           // odpadeta, geslo, žetoni, seje, obvestila na telefon in ključi razredov ne veljajo več (pregled #492 A, B).
           const birthIso = signup(true);
           if (!birthIso) return;
+          // Profili in aktivacijska koda tistega, ki je račun ustvaril, odpadejo (#747 pregled 2, accounts dropPreConfirm).
+          ctx.dropPreConfirm?.(byEmail, req, "apple");
           db.prepare(
             `UPDATE parents SET password_hash = ?, verify_token_hash = NULL, reset_token_hash = NULL, reset_expires_at = NULL,
                birth_date = ?, privacy_version = ?, privacy_accepted_at = datetime('now'), name = ?, referred_by = NULL, referral_rewarded = 0 WHERE id = ?`,

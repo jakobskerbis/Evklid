@@ -17,7 +17,7 @@ import { pilotSummary, pilotWtp } from "../pilot-naloge.js";
 import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
 import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES, PILOT_LOCK_PROFILES, pilotLastDay } from "./pilot-meja.js";
 import { createPaidPeriods } from "../placila/placano.js";
-import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
+import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, unverifiedDayUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail, skrbnikKodaEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
@@ -31,6 +31,7 @@ import { NOPAY_USD, nopayPoolUsd } from "../meje-ai.js";
 import { promoConfig, createPromo } from "./promo.js";
 import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestInvites, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
+import { eraseAccount, eraseProfiles } from "./izbris.js";
 import { AccountLocks, ownerOnly } from "./account-lock.js";
 import { ProfileLocks, checkProfilePassword } from "./profile-lock.js";
 import { rights as rightsOf, lessonInteractive as lessonOpen } from "../placila/pravice.js";
@@ -226,6 +227,27 @@ export function mountAccounts(app, store, opts = {}) {
     } catch (err) {
       if (!/no such table|no such column/.test(String(err.message))) throw err;
     }
+  }
+
+  // Nepotrjen račun je lahko ustvaril nekdo drug kot lastnik naslova (napačno vpisan e-naslov, prevzem pred
+  // registracijo; #747 pregled 2, P1). Ko lastnik nabiralnika račun prevzame (»Računa nisem ustvaril jaz«, novo geslo
+  // prek povezave iz e-pošte, povezava z Apple), profili iz časa pred potrditvijo in shranjena aktivacijska koda
+  // odpadejo: sicer bi tujec videl in vodil profil (lahko mladoletnega) pod tujim naslovom ali obratno. Izbris kot
+  // DELETE /api/account (server/accounts/izbris.js), poraba ostane šteta za omrežje. how: not_mine | reset | apple.
+  function dropPreConfirm(p, req, how) {
+    if (!p || p.is_guest || p.email_verified_at) return 0;
+    db.exec("BEGIN IMMEDIATE");
+    let n;
+    try {
+      n = eraseProfiles(db, p.id, { guests });
+      update(p.id, { promo_pending: null });
+      db.exec("COMMIT");
+    } catch (err) {
+      db.exec("ROLLBACK");
+      throw err;
+    }
+    if (n || p.promo_pending) audit(db, { req, parentId: p.id, action: "unverified_takeover_cleared", target: `${how}:${n}` });
+    return n;
   }
 
   // Skrbnik po e-naslovu (EVKLID_ADMIN_EMAILS) šele po potrditvi e-naslova: sicer bi se kdorkoli registriral z njim.
@@ -428,8 +450,14 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Vse pravice učenca iz vseh virov (server/placila/pravice.js): osebni paket in šolska licenca se seštejeta.
   const levelOf = (studentId) => stopnja(store.getStudent(studentId)?.settings);
+  // Šolska licenca ne velja za profil nepotrjenega računa (#747 pregled 2: rezerva, če bi pridružitev šli mimo
+  // UNVERIFIED_BLOCKED, npr. star zapis članstva).
+  const unverifiedOwner = (studentId) => {
+    const p = getParent(ownerOf(studentId));
+    return !!p && !p.is_guest && !p.email_verified_at;
+  };
   const rightsFor = (studentId) =>
-    rightsOf({ personal: personalOf(studentId), schools: schools.forStudent(studentId), freeDaily: freeDailyQuestions(), ownLevel: levelOf(studentId) });
+    rightsOf({ personal: personalOf(studentId), schools: unverifiedOwner(studentId) ? [] : schools.forStudent(studentId), freeDaily: freeDailyQuestions(), ownLevel: levelOf(studentId) });
 
   // Poln dostop iz katerega koli vira (osebni paket ali šolska licenca).
   function premiumFor(studentId) {
@@ -700,13 +728,16 @@ export function mountAccounts(app, store, opts = {}) {
     if (per) caps.push({ key: scope.net ? `net:${scope.net}` : `s:${studentId}`, usd: per, spent: freeSpent(studentId, owner, scope), code: "block.freeMonth" });
     const pool = freeMonthlyPoolUsd();
     if (pool) caps.push({ key: "freepool", usd: pool, spent: freePoolSpent() + over, code: "block.freePool" });
+    // Nepotrjeni računi in gostje (kvota omrežja): še skupna dnevna meja za vse njih (#747 pregled 2).
+    const day = scope.net ? unverifiedDayUsd() : 0;
+    if (day) caps.push({ key: "unverifiedday", usd: day, spent: unverifiedDaySpent(), code: "block.unverifiedDay" });
     return caps;
   }
   // Besedilo zavrnitve: preizkus in bonus → poziv k naročnini (ne »spet jih dobiš«); brezplačni paket z namigom.
   function aiBlockFor(studentId, code) {
     const g = subGuarantee(studentId);
     if (/^block\.freeTail(Topup|Birth)?$/.test(code) && (g?.nopay === "trial" || g?.nopay === "bonus")) code = "block.trialOut";
-    if (code === "block.freeMonth" || code === "block.freePool") return freeBlock(studentId, code);
+    if (code === "block.freeMonth" || code === "block.freePool" || code === "block.unverifiedDay") return freeBlock(studentId, code);
     return { error: BLOCK_TEXT[code], code };
   }
   // Paket pred testom: poraba nad mejo paketa (brez dela iz kredita), ki jo plača kredit; null brez paketa.
@@ -862,6 +893,19 @@ export function mountAccounts(app, store, opts = {}) {
   function nopayPoolSpent() {
     return memo("nopay", () => monthUsdByStudent().filter((r) => r.id != null && subGuarantee(r.id)?.nopay).reduce((t, r) => t + r.usd, 0));
   }
+  // Današnja poraba vseh nepotrjenih računov in gostov (tudi izbrisanih profilov, guest_spent), brez varnostnih pregledov.
+  function unverifiedDaySpent() {
+    return memo("unverifiedday", () => {
+      const live = db
+        .prepare(
+          `SELECT COALESCE(SUM(u.cost_usd),0) AS usd FROM usage u INDEXED BY idx_usage JOIN students s ON s.id = u.student_id JOIN parents p ON p.id = s.parent_id
+           WHERE u.created_at >= date('now') AND u.kind != 'varnost' AND (p.is_guest = 1 OR (p.guest_net IS NOT NULL AND p.email_verified_at IS NULL))`,
+        )
+        .get().usd;
+      const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day = date('now')").get().usd;
+      return live + gone;
+    });
+  }
   function freePoolSpent() {
     return memo("free", () => {
       const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day >= date('now','start of month')").get().usd;
@@ -946,7 +990,15 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Izvoz in stanje prijav (server/reports.js): brez seje s ključem ali na računalniku s strežnikom; s sejo gredo skozi
   // preverjanje spodaj (zaklep računa, OWNER_ONLY), da otrok na skrbnikovi napravi ne vidi prijav mimo zaklepa.
-  const UNVERIFIED_BLOCKED = [/^\/billing\//i, /^\/account\/(export|profile-password|promo|weekly-report\/send)\/?$/i];
+  // Pred potrditvijo e-naslova (#747) tudi pridružitve, kjer drugi vidijo ime profila (pregled 2, P3): razred (urnik in
+  // liga), šola, prenos profila, skupina prijateljev in kviz v živo.
+  const UNVERIFIED_BLOCKED = [
+    /^\/billing\//i,
+    /^\/account\/(export|profile-password|promo|weekly-report\/send)\/?$/i,
+    /^\/students\/\d+\/(class|classes|transfer|friend-groups)\/?$/i,
+    /^\/students\/\d+\/kviz\/[^/]+\/join\/?$/i,
+    /^\/schools\/join\/?$/i,
+  ];
   const SESSIONLESS = [/^\/kozmetika\/prijave\/izvoz$/, /^\/kozmetika\/prijave\/(message|lesson|app)\/\d+\/stanje$/];
   const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
   // Nekanonična pot /api (server/app.js, točka A1): 404, le zaklenjen račun ostane 403 (enako kot kanonična pot).
@@ -1099,7 +1151,7 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   app.post("/api/auth/register", json, async (req, res) => {
-    // Ključ je omrežje (IPv6: /64), sicer bi en priključek z menjavo naslovov v svojem /64 ustvaril neomejeno računov.
+    // Ključ je omrežje (IPv6: /56, guest.js netKey), sicer bi en priključek z menjavo naslovov v svojem omrežju ustvaril neomejeno računov.
     const signupKey = netKey(req.ip);
     if (!isLocalRequest(req) && signupThrottle.blocked(signupKey)) return res.status(429).json({ error: "S tega omrežja je danes ustvarjenih že preveč računov. Poskusi jutri." });
     const v = checkSignup(req, res);
@@ -1116,15 +1168,17 @@ export function mountAccounts(app, store, opts = {}) {
 
     const url = `${baseUrl(req)}/api/auth/verify?token=${token}`;
     await sendMail(email, pismoPotrditve(getParent(id), url));
-    // Aktivacijska koda ob registraciji; napačna koda registracije ne ustavi.
+    // Aktivacijska koda ob registraciji; napačna koda registracije ne ustavi. Veljavna se shrani in porabi šele ob
+    // potrditvi e-naslova (confirmEmail; #747 pregled 2): sicer bi izmišljeni naslovi porabili mesta kode.
     const promoRaw = String(req.body?.promo_code || "").trim();
-    const promoResult = promoRaw ? promo.redeem(getParent(id), promoRaw) : null;
+    const promoResult = promoRaw ? promo.check(getParent(id), promoRaw) : null;
+    if (promoResult?.ok) update(id, { promo_pending: promoResult.code });
     accountLocks.unlock(id, req.deviceId);
     setSessionCookie(req, res, sessions.create(id));
     res.status(201).json({
       parent: publicParent(getParent(id)),
       referred: !!referrer,
-      ...(promoResult?.ok ? { promo_until: promoResult.until } : promoResult ? { promo_error: promoResult.error } : {}),
+      ...(promoResult?.ok ? { promo_pending: true } : promoResult ? { promo_error: promoResult.error } : {}),
       ...(devLinks(req, getParent(id)?.email) ? { dev_verify_url: url } : {}),
     });
   });
@@ -1208,6 +1262,12 @@ export function mountAccounts(app, store, opts = {}) {
     update(parentId, { email_verified_at: new Date().toISOString(), verify_token_hash: null, verify_expires_at: null });
     const full = getParent(parentId);
     if (full.guest_net && !full.is_guest) update(parentId, { guest_net: null, trial_ends_at: full.trial_ends_at || isoIn(TRIAL_DAYS) });
+    // Aktivacijska koda iz registracije (#747 pregled 2): zdaj se porabi. Če medtem ni več veljavna, ostane brez nje.
+    if (full.promo_pending) {
+      const r = promo.redeem(full, full.promo_pending);
+      update(parentId, { promo_pending: null });
+      audit(db, { parentId, action: "promo_redeem_verified", ok: !!r.ok });
+    }
     // Skrbnik (potrjen e-naslov iz EVKLID_ADMIN_EMAILS) prevzame učence iz časa pred računi.
     if (isAdminEmail(full)) {
       update(parentId, { is_admin: 1 });
@@ -1260,6 +1320,7 @@ export function mountAccounts(app, store, opts = {}) {
       return res.json({ ok: true });
     }
     if (req.body?.not_mine === true) {
+      dropPreConfirm(p, req, "not_mine");
       confirmEmail(p.id);
       const reset = randomToken();
       // Tujčev Apple ID (če ga je povezal) odpade z njegovim geslom (pregled #492 A P3-7).
@@ -1301,11 +1362,15 @@ export function mountAccounts(app, store, opts = {}) {
     if (p.email_verified_at) return res.json({ ok: true, verified: true });
     const acct = `resend${p.id}`;
     const net = netKey(req.ip);
-    const hit = resendThrottle.blocked(acct) ? resendThrottle.hits.get(acct) : resendNetThrottle.blocked(net) ? resendNetThrottle.hits.get(net) : null;
+    const own = resendThrottle.blocked(acct);
+    const hit = own ? resendThrottle.hits.get(acct) : resendNetThrottle.blocked(net) ? resendNetThrottle.hits.get(net) : null;
     if (hit && !isLocalRequest(req)) {
       const retry = Math.max(1, Math.ceil((hit.start + resendThrottle.windowMs - Date.now()) / 1000));
+      const min = Math.ceil(retry / 60);
       res.set("Retry-After", String(retry));
-      return res.status(429).json({ error: `Povezavo smo poslali že večkrat. Poišči jo v e-pošti (tudi v mapah Promocije in Vsiljena pošta) ali poskusi znova čez ${Math.ceil(retry / 60)} min.`, retry_after: retry });
+      // Meja omrežja (šola, skupna povezava): nevtralno besedilo, ne »smo ti poslali« (#747 pregled 3).
+      if (!own) return res.status(429).json({ error: `Iz tega omrežja je bilo poslanih veliko povezav. Poskusi znova čez ${min} min.`, code: "verify.tooManyNet", retry_after: retry, net: true });
+      return res.status(429).json({ error: `Povezavo smo poslali že večkrat. Poišči jo v e-pošti (tudi v mapah Promocije in Vsiljena pošta) ali poskusi znova čez ${min} min.`, retry_after: retry });
     }
     resendThrottle.fail(acct);
     resendNetThrottle.fail(net);
@@ -1408,6 +1473,8 @@ export function mountAccounts(app, store, opts = {}) {
     const hash = await hashPassword(password);
     // Povezava velja enkrat: ob hkratnih zahtevah z istim žetonom uspe le prva.
     if (!db.prepare("SELECT 1 FROM parents WHERE id = ? AND reset_token_hash = ?").get(p.id, p.reset_token_hash)) return res.status(400).json({ error: "Povezava je potekla. Zahtevaj novo." });
+    // Nepotrjen račun: novo geslo nastavi lastnik nabiralnika, račun pa je lahko ustvaril kdo drug (#747 pregled 2).
+    dropPreConfirm(p, req, "reset");
     update(p.id, {
       password_hash: hash,
       reset_token_hash: null,
@@ -1973,22 +2040,11 @@ export function mountAccounts(app, store, opts = {}) {
         return res.status(502).json({ error: "Naročnine ni bilo mogoče preklicati. Poskusi znova ali jo prekliči z gumbom »Upravljaj naročnino in račune«." });
       }
     }
-    guests.snapshotParent(p.id); // poraba gosta ostane šteta za omrežje
     // Zapis pilota in izbris v eni transakciji (pregled #477 B3 P3-3): če izbris pade, zapis pilot_prej_* ne ostane.
-    db.exec("BEGIN IMMEDIATE");
-    try {
-      recordPilotDeletion(p);
-      clearPilotLevels(p.id);
-      db.prepare("DELETE FROM students WHERE parent_id = ?").run(p.id);
-      db.prepare("DELETE FROM parents WHERE id = ?").run(p.id);
-      db.exec("COMMIT");
-    } catch (err) {
-      db.exec("ROLLBACK");
-      throw err;
-    }
-    // Dnevnik dostopov ostane brez povezave na izbrisani račun (brez e-naslova).
+    // Poraba gosta in nepotrjenega računa ostane šteta za omrežje (server/accounts/izbris.js).
     audit(db, { req, parentId: p.id, action: "account_delete" });
-    detachAudit(db, p.id);
+    // Dnevnik dostopov ostane brez povezave na izbrisani račun (brez e-naslova).
+    eraseAccount(db, p.id, { guests, transaction: true, before: () => (recordPilotDeletion(p), clearPilotLevels(p.id)) });
     clearSessionCookie(req, res);
     res.json({ ok: true });
   });
@@ -2724,7 +2780,7 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
-  const mobile = { dropForeignAccess, confirmEmail, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
+  const mobile = { dropForeignAccess, dropPreConfirm, confirmEmail, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
   return { ageOfStudent, dailyBlock, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

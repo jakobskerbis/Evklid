@@ -698,10 +698,11 @@ test("brez e-pošte: povezava za potrditev in novo geslo samo na računalniku s 
       // Največ 5 novih računov z enega naslova na dan (prvi je že zgoraj).
       for (let i = 0; i < 4; i++) assert.equal((await client()("/api/auth/register", { method: "POST", body: body(`r${i}@primer.si`), headers: remote })).status, 201);
       assert.equal((await client()("/api/auth/register", { method: "POST", body: body("r9@primer.si"), headers: remote })).status, 429);
-      // IPv6: vsi naslovi istega /64 štejejo skupaj.
+      // IPv6: vsi naslovi istega /56 štejejo skupaj (#747).
       for (let i = 1; i <= 5; i++) assert.equal((await client()("/api/auth/register", { method: "POST", body: body(`v${i}@primer.si`), headers: { "X-Forwarded-For": `2001:db8:1:2::${i}` } })).status, 201);
       assert.equal((await client()("/api/auth/register", { method: "POST", body: body("v6@primer.si"), headers: { "X-Forwarded-For": "2001:db8:1:2:abcd::9" } })).status, 429);
-      assert.equal((await client()("/api/auth/register", { method: "POST", body: body("v7@primer.si"), headers: { "X-Forwarded-For": "2001:db8:1:3::1" } })).status, 201);
+      assert.equal((await client()("/api/auth/register", { method: "POST", body: body("v8@primer.si"), headers: { "X-Forwarded-For": "2001:db8:1:3::1" } })).status, 429, "drug /64 v istem /56");
+      assert.equal((await client()("/api/auth/register", { method: "POST", body: body("v7@primer.si"), headers: { "X-Forwarded-For": "2001:db8:1:100::1" } })).status, 201);
     },
     { resendKey: "" },
   );
@@ -822,8 +823,13 @@ test("aktivacijska koda: poln dostop za prve N računov, enkrat na račun", asyn
     const a = client();
     const reg = await a("/api/auth/register", { method: "POST", body: { email: "a@kod.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT, promo_code: " evklid100 " } });
     assert.equal(reg.status, 201);
-    assert.equal((await a(verifyLink(calls))).status, 302); // koda velja s potrditvijo e-naslova (#747)
-    const days = (Date.parse(reg.body.promo_until) - Date.now()) / 86400000;
+    // Koda se shrani in porabi šele ob potrditvi e-naslova (#747 pregled 2): pred tem ni porabljena.
+    assert.equal(reg.body.promo_pending, true);
+    assert.equal(reg.body.promo_until, undefined);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM promo_redemptions").get().n, 0);
+    assert.equal((await a(verifyLink(calls))).status, 302);
+    const promoUntil = store.db.prepare("SELECT promo_until FROM parents WHERE email = 'a@kod.si'").get().promo_until;
+    const days = (Date.parse(promoUntil) - Date.now()) / 86400000;
     assert.ok(days > 364.9 && days <= 365, String(days));
     let acc = (await a("/api/account")).body;
     assert.equal(acc.access.tier, "promo");
@@ -1239,6 +1245,9 @@ test("guest mode is removed: off everywhere, EVKLID_GUEST cannot turn it on", as
   assert.equal(guestModeOn({ EVKLID_GUEST: "1" }), false);
   assert.equal(netKey("::ffff:10.0.0.7"), "10.0.0.7");
   assert.equal(netKey("2001:db8:1:2:aaaa::1"), netKey("2001:db8:1:2:bbbb:cccc:dddd:eeee"));
+  assert.equal(netKey("2001:db8:1:2::1"), netKey("2001:db8:1:ff::1"));
+  assert.equal(netKey("2001:db8:1:ff::1"), "2001:0db8:0001:0000::/56");
+  assert.notEqual(netKey("2001:db8:1:100::1"), netKey("2001:db8:1:ff::1"));
 });
 
 test("potrdi-racun.js potrdi e-naslov brez e-pošte (strežnik brez Resend)", async () => {

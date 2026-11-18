@@ -87,6 +87,8 @@ export const BLOCK_TEXT = {
   "block.freePool": "Brezplačna vprašanja za inštruktorja so ta mesec za vse porabljena. Vadnica in lekcije delujejo naprej neomejeno.",
   "block.hintGuest": "Za več vprašanj ustvari račun v zavihku Račun.",
   // Račun z nepotrjenim e-naslovom (#747): s potrditvijo dobi preizkus in s tem več vprašanj.
+  // Skupna dnevna meja vseh nepotrjenih računov (#747 pregled 2, EVKLID_UNVERIFIED_DAY_USD).
+  "block.unverifiedDay": "Brezplačna vprašanja za inštruktorja so danes za vse nove račune porabljena. Vadnica in lekcije delujejo naprej neomejeno.",
   "block.hintVerify": "Za več vprašanj potrdi e-naslov (povezava je v e-pošti).",
   "block.hintParent": "Za več vprašanj naj starš izbere naročnino v zavihku Račun.",
   "block.hintAdult": "Za več vprašanj izberi naročnino v zavihku Račun.",

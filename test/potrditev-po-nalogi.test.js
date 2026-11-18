@@ -10,7 +10,9 @@ import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
+import { DatabaseSync } from "node:sqlite";
 import { openDb } from "../server/db.js";
+import { checkAnswer } from "../server/practice/check.js";
 import { createApp } from "../server/app.js";
 
 const META = '\n<<META subject=MAT topic="-" error=0 mode=A flag=none>>';
@@ -72,6 +74,19 @@ async function withServer(env, fn) {
     server.close();
     for (const [k, v] of Object.entries(prev)) v === undefined ? delete process.env[k] : (process.env[k] = v);
   }
+}
+
+// Pravilen odgovor za nalogo iz baze (kot scripts/preveri-aplikacijo.cjs answersFor).
+function rightAnswer(a) {
+  const round = (v, d) => (d == null ? String(v) : (Math.round(v * 10 ** d + 1e-9) / 10 ** d).toFixed(d));
+  const u = a.unit ? ` ${a.unit}` : "";
+  const c =
+    a.type === "number" ? [round(a.value, a.decimals).replace(".", ",") + u, round(a.value, a.decimals) + u, String(a.value).replace(".", ",") + u]
+    : a.type === "fraction" ? [`${a.num}/${a.den}`]
+    : a.type === "choice" ? [String(a.index)]
+    : a.type === "coefficients" ? [a.values.join(", ")]
+    : [];
+  return c.find((x) => checkAnswer(a, x).kind === "correct");
 }
 
 const ask = async (call, kidId, n) => {
@@ -182,6 +197,58 @@ test("#747 točka 4: ponovno pošiljanje povezave ima mejo na strežniku (3 na 1
   });
 });
 
+test("#747 točka 4: 11. ponovno pošiljanje z istega omrežja – nevtralno sporočilo za omrežje", async () => {
+  await withServer({}, async ({ client, register }) => {
+    const net = { "x-forwarded-for": "203.0.113.50" };
+    const calls = [];
+    for (let k = 0; k < 4; k++) {
+      const a = client(net);
+      await register(a, `omrezje${k}@primer.si`, "1990-01-01");
+      for (let i = 0; i < (k < 3 ? 3 : 1); i++) calls.push((await a("/api/auth/resend-verification", { method: "POST" })).status);
+      if (k === 3) {
+        const r = await a("/api/auth/resend-verification", { method: "POST" });
+        assert.deepEqual(calls, Array(10).fill(200));
+        assert.equal(r.status, 429);
+        assert.equal(r.body.net, true);
+        assert.equal(r.body.code, "verify.tooManyNet");
+        assert.match(r.body.error, /^Iz tega omrežja je bilo poslanih veliko povezav\. Poskusi znova čez \d+ min\.$/);
+      }
+    }
+  });
+});
+
+test("#747 pregled 2: pred potrditvijo ni pridružitve razredu, šoli, skupini ali kvizu in ni prenosa profila", async () => {
+  await withServer({}, async ({ client, register, verify }) => {
+    const a = client();
+    await register(a, "pridruzi@primer.si", `${YEAR - 16}-03-04`);
+    const kid = (await a("/api/students", { method: "POST", body: { name: "Ana", birth_year: YEAR - 16, consent: true } })).body;
+    for (const p of [`/api/students/${kid.id}/class`, `/api/students/${kid.id}/classes`, `/api/students/${kid.id}/transfer`, `/api/students/${kid.id}/friend-groups`, `/api/students/${kid.id}/kviz/ABC123/join`, "/api/schools/join"]) {
+      const r = await a(p, { method: "POST", body: { code: "ABC123", name: "x" } });
+      assert.equal(r.status, 403, `${p}: ${r.status} ${JSON.stringify(r.body)}`);
+      assert.equal(r.body.verify, true, p);
+    }
+    await verify(a, "pridruzi@primer.si");
+    const r = await a(`/api/students/${kid.id}/friend-groups`, { method: "POST", body: { name: "Prijatelji" } });
+    assert.notEqual(r.status, 403, "po potrditvi gre");
+  });
+});
+
+test("#747 pregled 2: skupna dnevna meja AI za vse nepotrjene račune (EVKLID_UNVERIFIED_DAY_USD)", async () => {
+  await withServer({ EVKLID_UNVERIFIED_DAY_USD: "0.000001" }, async ({ client, register, verify }) => {
+    const a = client();
+    await register(a, "dnevna@primer.si", `${YEAR - 16}-03-04`);
+    const kid = (await a("/api/students", { method: "POST", body: { name: "Ana", birth_year: YEAR - 16, consent: true } })).body;
+    const [r] = await ask(a, kid.id, 1);
+    assert.equal(r.status, 429, JSON.stringify(r.body));
+    assert.equal(r.body.code, "block.unverifiedDay");
+    assert.equal(r.body.hint, "block.hintVerify");
+    // Potrjen račun ni v tej meji.
+    await verify(a, "dnevna@primer.si");
+    const [ok] = await ask(a, kid.id, 1);
+    assert.equal(ok.status, 200, JSON.stringify(ok.body));
+  });
+});
+
 // Spletni del: po registraciji ni zaslona »Potrdi e-naslov«, ampak obrazec za lasten profil; po pravilno rešeni nalogi
 // kartica s »Pošlji znova« in »Pozneje«. Lasten strežnik (vrata 3561), testni način.
 let chromium = null;
@@ -197,7 +264,8 @@ const opts = { skip: chromium ? false : "Playwright Chromium ni nameščen", tim
 test("#747 splet: registracija → lasten profil brez potrditve → po rešeni nalogi opomnik za potrditev", opts, async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "potrdi-"));
   const port = 3561 + Math.floor(Math.random() * 300);
-  const env = { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_MOCK_DELAY_MS: "0", EVKLID_NEWS: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", ANTHROPIC_API_KEY: "", RESEND_API_KEY: "", STRIPE_SECRET_KEY: "", EVKLID_ACCOUNTS: "1" };
+  const dbPath = path.join(dir, "t.db");
+  const env = { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_MOCK_DELAY_MS: "0", EVKLID_NEWS: "0", EVKLID_DB: dbPath, EVKLID_PASSWORD: "", ANTHROPIC_API_KEY: "", RESEND_API_KEY: "", STRIPE_SECRET_KEY: "", EVKLID_ACCOUNTS: "1" };
   const srv = spawn(process.execPath, ["server/index.js"], { cwd: new URL("..", import.meta.url).pathname, env, stdio: "ignore" });
   const base = `http://127.0.0.1:${port}`;
   let browser;
@@ -213,6 +281,16 @@ test("#747 splet: registracija → lasten profil brez potrditve → po rešeni n
     const page = await ctx.newPage();
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
+    // Id zadnje naloge iz odgovorov strežnika (Vadnica, test predznanja, preskok).
+    let lastTask = null;
+    page.on("response", async (r) => {
+      if (!r.ok() || !/\/api\/students\/\d+\/(practice\/next|answer|skip|pretest[^/]*|placement)$/.test(new URL(r.url()).pathname)) return;
+      try {
+        const j = await r.json();
+        const t = j.task || j.next?.task;
+        if (t?.id) lastTask = t.id;
+      } catch {}
+    });
     await page.goto(base + "/#registracija");
     await page.waitForSelector("#auth-form");
     const f = page.locator("#auth-form");
@@ -226,34 +304,64 @@ test("#747 splet: registracija → lasten profil brez potrditve → po rešeni n
     assert.equal(await page.locator("#verify-done").count(), 0, "zaslon »Potrdi e-naslov« se ne pokaže");
     assert.ok((await page.locator("#view-auth").innerText()).includes("E-naslov lahko potrdiš pozneje"));
 
-    // Opomnik po rešeni nalogi: modul neposredno (naloga v testnem načinu je naključna).
-    const pid = await page.evaluate(async () => {
-      const r = await fetch("/api/students", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: "Splet", birth_year: new Date().getFullYear() - 16, consent: true }) });
-      return (await r.json()).id;
-    });
-    assert.ok(pid);
-    await page.goto(base + "/");
-    await page.waitForFunction(() => !document.body.classList.contains("auth-mode"), null, { timeout: 30000 }).catch(() => {});
-    await page.evaluate(async () => {
-      const slot = document.createElement("div");
-      slot.id = "test-slot";
-      document.body.prepend(slot);
-      const acc = await import("/account.js");
-      // Stanje računa je naloženo ob zagonu aplikacije.
-      for (let i = 0; i < 50 && !acc.accountStatus(); i++) await new Promise((r) => setTimeout(r, 100));
-      await (await import("/potrditev-po-nalogi.js")).potrdiPoNalogi(slot);
-    });
-    const card = page.locator("#test-slot .potrdi-kartica");
+    // Lasten profil v obrazcu (dijak 16: srednja šola, prvi letnik, prva smer), nato prava naloga na Učni poti.
+    await page.fill('#child-form input[name="name"]', "Tia");
+    for (let i = 0; i < 4 && (await page.locator("#child-form .lp-opt").count()); i++) {
+      await page.locator("#child-form .lp-opt").nth(i === 0 ? 1 : 0).click(); // Srednja šola, nato prva možnost
+      await page.waitForTimeout(150);
+    }
+    await page.check('#child-form input[name="consent"]');
+    await page.click('#child-form button[type="submit"]');
+    await page.locator("#view-path #xp-card .next-row[data-open]").waitFor({ timeout: 20000 });
+    await page.click("#xp-card .next-row[data-open]");
+    await page.locator("#view-topic .topic-head, #view-topic #practice .task").first().waitFor({ timeout: 15000 });
+    for (let i = 0; i < 6 && (await page.locator("#p-skip").isVisible()); i++) {
+      await page.click("#p-skip");
+      await page.waitForTimeout(400);
+    }
+    if (await page.locator(".pretest-result").isVisible()) await page.click("#pt-practice");
+    else if (await page.locator("#t-practice").isVisible()) await page.click("#t-practice");
+    await page.waitForTimeout(800);
+    if (await page.locator("#ex-next").isVisible()) await page.click("#ex-next");
+    await page.locator("#practice .task .task-text").waitFor({ timeout: 15000 });
+    await page.waitForTimeout(300);
+    // Pravilen odgovor iz baze (kot scripts/preveri-aplikacijo.cjs answerTask), vpisan ali izbran v vmesniku.
+    const solve = async () => {
+      assert.ok(lastTask, "id naloge");
+      const db = new DatabaseSync(dbPath, { readOnly: true });
+      const ans = JSON.parse(db.prepare("SELECT payload FROM tasks WHERE id = ?").get(Number(lastTask)).payload).answer;
+      db.close();
+      const v = rightAnswer(ans);
+      assert.ok(v !== undefined, `odgovor za ${ans.type}`);
+      const choice = page.locator("#practice .task .choices .choice");
+      if (await choice.count()) await choice.nth(Number(v)).click();
+      else {
+        await page.fill("#answer", v);
+        await page.locator("#practice .answer-row button.primary").click();
+      }
+      await page.locator("#feedback .fb.ok").waitFor({ timeout: 10000 });
+    };
+    await solve();
+    const card = page.locator("#feedback .potrdi-kartica");
     await card.waitFor({ timeout: 10000 });
     assert.ok((await card.innerText()).includes("splet@primer.si"));
     const resend = card.locator('[data-potrdi="znova"]');
     const box = await resend.boundingBox();
     assert.ok(box.height >= 40, `gumb ${box.height} px`);
     await resend.tap();
-    await page.waitForFunction(() => document.querySelector('#test-slot [role="status"]')?.textContent.startsWith("Poslano"));
+    await page.waitForFunction(() => document.querySelector('#feedback .potrdi-kartica [role="status"]')?.textContent.startsWith("Poslano"));
     await card.locator('[data-potrdi="pozneje"]').tap();
-    assert.equal(await page.locator("#test-slot .potrdi-kartica").count(), 0);
+    assert.equal(await page.locator("#feedback .potrdi-kartica").count(), 0);
     assert.ok(await page.evaluate(() => Number(localStorage.getItem("evklid.potrdi_pozneje")) > 0));
+    // Naslednja pravilno rešena naloga: po »Pozneje« kartice ni (en dan).
+    const prev = lastTask;
+    await page.click("#fb-next");
+    await page.locator("#practice .task .task-text").waitFor({ timeout: 15000 });
+    for (let i = 0; i < 50 && lastTask === prev; i++) await page.waitForTimeout(100);
+    assert.notEqual(lastTask, prev, "nova naloga");
+    await solve();
+    await page.waitForTimeout(1200);
+    assert.equal(await page.locator("#feedback .potrdi-kartica").count(), 0, "po »Pozneje« brez kartice");
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, "brez vodoravnega drsenja");
     assert.deepEqual(errors, []);
   } finally {
