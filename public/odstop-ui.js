@@ -15,7 +15,7 @@ const versionText = (v) => {
 
 // Povezava v kartici naročnine, dokler je kaka pogodba v roku za odstop.
 export const withdrawalLink = (acc) =>
-  acc.withdrawal_open ? `<p class="wd-link"><a href="/odstop.html">${icon("external-link")}<span>${esc(t("acct.withdraw"))}</span></a></p>` : "";
+  acc.withdrawal_open ? `<p class="wd-link"><a class="btn-secondary" href="/odstop.html">${icon("arrow-right")}<span>${esc(t("acct.withdraw"))}</span></a></p>` : "";
 
 export function termsBanner(acc) {
   const v = acc.parent?.terms_notice;

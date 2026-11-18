@@ -9,13 +9,15 @@ import { termsPublished } from "./accounts/potrdilo.js";
 export const DRAFT_RE = /<!-- osnutek -->[\s\S]*?<!-- \/osnutek -->\s*/g;
 export const publishedHtml = (html) => String(html).replace(DRAFT_RE, "");
 
-export function pogojiStran(publicDir) {
+// V produkciji stran preberemo enkrat (sprememba velja po ponovnem zagonu, kot server/mobile/trgovina.js), v razvoju ob vsaki zahtevi.
+export function pogojiStran(publicDir, { cache = process.env.NODE_ENV === "production" } = {}) {
   const file = path.join(publicDir, "pogoji.html");
-  let cache = { mtime: 0, html: "" };
+  let kept = null;
   const read = () => {
-    const st = fs.statSync(file);
-    if (st.mtimeMs !== cache.mtime) cache = { mtime: st.mtimeMs, html: fs.readFileSync(file, "utf8") };
-    return cache.html;
+    if (cache && kept != null) return kept;
+    const html = fs.readFileSync(file, "utf8");
+    if (cache) kept = html;
+    return html;
   };
   return (req, res, next) => {
     if (!termsPublished()) return next(); // osnutek: statična datoteka, kot je
