@@ -9,7 +9,7 @@ import fs from "node:fs";
 import "../server/env.js";
 import { DatabaseSync } from "node:sqlite";
 import { BRAND } from "../server/brand.js";
-import { Mailer, privacyChangeEmail } from "../server/accounts/email.js";
+import { Mailer, privacyChangeEmail, privacyDateText } from "../server/accounts/email.js";
 import { PRIVACY_VERSION } from "../server/accounts/plans.js";
 
 export function recipients(db, version = PRIVACY_VERSION) {
@@ -25,7 +25,7 @@ export function recipients(db, version = PRIVACY_VERSION) {
 }
 
 export async function sendAll(db, mailer, { version = PRIVACY_VERSION, baseUrl = process.env.EVKLID_BASE_URL || "", pause = 600 } = {}) {
-  const msg = privacyChangeEmail(`${baseUrl.replace(/\/$/, "")}/zasebnost.html`);
+  const msg = privacyChangeEmail(`${baseUrl.replace(/\/$/, "")}/zasebnost.html`, privacyDateText(version));
   let sent = 0;
   let failed = 0;
   for (const r of recipients(db, version)) {
@@ -51,7 +51,7 @@ const main = async () => {
   const i = process.argv.indexOf("--poslji");
   const n = recipients(db).length;
   const link = `${(process.env.EVKLID_BASE_URL || "").replace(/\/$/, "")}/zasebnost.html`;
-  const msg = privacyChangeEmail(link);
+  const msg = privacyChangeEmail(link, privacyDateText(PRIVACY_VERSION));
   if (i < 0) {
     console.log(`Zadeva: ${msg.subject}\n\n${msg.text}\n\nPovezava: ${link}\nPrejemnikov: ${n}. Nič ni poslano (za pošiljanje: --poslji ${PRIVACY_VERSION}).`);
     return;

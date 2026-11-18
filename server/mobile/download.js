@@ -164,7 +164,7 @@ export function mountDownload(app, opts = {}) {
     const btn = (href, label, primary = true) => `<a class="btn${primary ? "" : " sec"}" href="${esc(href)}">${label}</a>`;
     const android = `<section><h2>${t("dl.android")}</h2>
       ${play ? btn(play, t("dl.play")) : ""}
-      ${apk ? `${btn(apk, t("dl.apk"), !play)}<p class="muted">${t("dl.apkSteps")}</p>` : play ? "" : `<p class="muted">${t("dl.soon")}</p>`}
+      ${apk ? `${btn(apk, t("dl.apk"), !play)}<p class="muted">${play ? "" : `${t("dl.apkWhy")} `}${t("dl.apkSteps")}</p>` : play ? "" : `<p class="muted">${t("dl.soon")}</p>`}
     </section>`;
     // Prijavljen v tem brskalniku na telefonu: enkratna povezava, ki odpre aplikacijo prijavljeno (app-link.js).
     // ?app=1: stran je odprla aplikacija (gumb na zaslonu za prijavo), zato je ta del na vrhu.
@@ -181,6 +181,10 @@ export function mountDownload(app, opts = {}) {
       ${!appStore && testflight ? `${btn(testflight, t("dl.testflight"))}<p class="muted">${t("dl.testflightSteps")}</p>` : ""}
       ${!appStore ? `<p class="muted">${t("dl.iosWeb")}</p>${btn("/", t("dl.openWeb"), false)}` : ""}
     </section>`;
+    // Noga z javnimi stranmi, kot na pristajalni strani (strani so v slovenščini); ne v aplikaciji (?app=1).
+    const footer = `<footer>${[["/", BRAND.name], ["/o-evklidu", t("land.what")], ["/zakaj-evklid", t("land.why")], ["/starsi.html", t("land.par.t")], ["/sole", t("land.sch.t")], ["/zasebnost.html", t("land.privacy")]]
+      .map(([href, label]) => `<a href="${href}">${href === "/" ? esc(label) : label}</a>`)
+      .join("")}</footer>`;
     // Enkratna povezava ne sme ostati v predpomnilniku.
     res.set("Cache-Control", appLink ? "no-store" : "no-cache").type("html").send(`<!doctype html>
 <html lang="${esc(lang)}" dir="${RTL.has(lang) ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -196,12 +200,15 @@ section{background:var(--surface);border:1px solid var(--border);border-radius:1
 .btn{display:block;text-align:center;background:var(--accent);color:var(--accent-text);font-weight:700;text-decoration:none;border-radius:10px;padding:14px;margin:8px 0}
 .btn.sec{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
 .muted{color:var(--muted);font-size:14px;margin:8px 0 0}
+footer{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 20px;margin:24px 0 0;font-size:14px}
+footer a{color:var(--accent);min-height:40px;display:inline-flex;align-items:center}
 </style></head><body><main>
 <header><img src="/icons/icon-192.png" alt=""><div><h1>${esc(BRAND.name)}</h1><div class="muted">${t("dl.title")}</div></div></header>
 ${req.query.app ? appLink : ""}
 <p>${t(appStore || testflight ? "dl.introApps" : apk || play ? "dl.intro" : "dl.introWeb")}</p>
 ${first === "ios" ? ios + android : android + ios}
 ${req.query.app ? "" : appLink}
+${req.query.app ? "" : footer}
 </main></body></html>`);
   });
 }

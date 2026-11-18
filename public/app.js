@@ -615,7 +615,7 @@ document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () 
 // APK (mobile/src/app/web.tsx) gre nazaj po isti zgodovini (goBack), zato tam ni treba ničesar spreminjati.
 let currentView = "path";
 let prevView = "path"; // za gumb Nazaj v glavi klepeta (telefon)
-const BACK_ORIGIN = ["schedule", "exams", "competition"]; // »←« na teh podstraneh: meBackTarget
+const BACK_ORIGIN = ["schedule", "exams", "competition", "scan"]; // »←« na teh podstraneh: meBackTarget (skener se odpre tudi z Učne poti)
 const meBackFrom = {};
 let fromBack = false;
 let skipPop = 0;
@@ -1879,7 +1879,8 @@ function addAllowanceNote(bubble, d) {
   const el = document.createElement("div");
   el.className = "cards-note allowance-note";
   // Pri 80 % dve vrstici: obvestilo, pod njim preostanek (»Podrobne razlage ta mesec: še 6«).
-  const base = d.stage === "out" ? escapeHtml(t("ai.out")) : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
+  // Pri 100 % še, kaj sledi hitremu načinu (do konca meseca vsak dan kot brezplačni paket, server/usage.js tailToday).
+  const base = d.stage === "out" ? (d.spread ? `${escapeHtml(t("ai.out"))}<br><small>${escapeHtml(t("ai.then"))}</small>` : escapeHtml(t("ai.out"))) : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
   // Družina: obvestilo velja za skupen delež vseh profilov.
   const text = d.pool ? `${base}<br><small>${escapeHtml(t("ai.pool"))}</small>` : base;
   el.innerHTML = `<div class="cn-head">${icon("info")} <span>${text}</span></div>${d.buy ? `<button type="button" class="text-btn">${escapeHtml(t("ai.buy"))} ${icon("chevron-right")}</button>` : ""}`;
@@ -2666,8 +2667,10 @@ function renderGoalModes() {
     .map((k) => (k === "games" && !gamesOn(s) ? "chat" : k))
     .filter((k) => !(k === "exams" && !siExams()) && !(k === "izpiti" && !regionalExams()))
     .filter((k) => !shown.includes(k))
+    .filter((k) => k !== "scan") // »Skeniraj nalogo« je že vrstica v #xp-card tik pod današnjim treningom (j, 18. 11. 2026)
     .filter((k, i, a) => a.indexOf(k) === i);
-  for (const alt of ["scan", "chat"]) if (list.length < 2 && !list.includes(alt)) list.push(alt);
+  // Nadomestki ne smejo podvojiti kartice stopnje (shown) niti ponuditi izklopljenih iger.
+  for (const alt of ["chat", "textbook", "games"]) if (list.length < 2 && !list.includes(alt) && !shown.includes(alt) && (alt !== "games" || gamesOn(s))) list.push(alt);
   box.innerHTML = list
     .map((k) => {
       const [ic, name, sub] = GOAL_MODES[k];
@@ -3187,6 +3190,7 @@ async function loadPath(key = state.pathKey) {
       <div class="hero-text"><h2>${t("daily.title")}</h2><p>${done ? t("daily.doneText") : t("daily.text")}</p></div>
       <button class="primary big" data-daily>${done ? t("daily.again") : t("daily.start")}</button>
     </div>
+    ${document.getElementById("view-scan") ? `<button type="button" class="next-row scan-path-row" data-scan-home><span class="eyebrow">${t("scan.title")}</span><span class="next-name">${t("scan.meSub")}</span>${icon("camera")}</button>` : ""}
     ${
       p.next
         ? `<button class="next-row" data-open="${p.next.id}"><span class="eyebrow">${t("path.next")}</span><span class="next-name">${escapeHtml(p.next.name)}</span>${icon("chevron-right")}</button>`
@@ -3263,6 +3267,8 @@ document.addEventListener("click", (e) => {
   const un = e.target.closest("[data-unit]");
   if (un) startSession("unit-practice", { path: state.pathKey, unit: Number(un.dataset.unit) });
   if (e.target.closest("[data-daily]")) startSession("daily", { path: state.pathKey });
+  // Prvi zaslon: »Skeniraj nalogo« tik pod današnjim treningom (j, 18. 11. 2026: pristajalna stran obljublja pomoč pri domači nalogi).
+  if (e.target.closest("[data-scan-home]")) showView("scan");
   if (e.target.closest("[data-dnevna]")) {
     showView("games");
     loadGames().then((m) => m.openDailyPuzzle()).catch(() => {});
@@ -5183,7 +5189,9 @@ initOpen({
 // Bližnjica z ikone aplikacije (dolg pritisk na ikono): /?pogled=chat odpre Inštruktorja. Iz 3D atlasa (/3d)
 // »Vprašaj inštruktorja«: /?pogled=chat&vprasaj=… odpre klepet z vpisanim vprašanjem (pošlje ga učenec sam).
 // Pogled »Uči se« z zadnjim zavihkom: ?pogled=uci; določen zavihek: ?pogled=textbook, lab ali 3d.
+// Zavihek Račun: ?pogled=racun (APK s strani /prenesi pošlje nakup naročnine sem, mobile/src/lib/billing.ts).
 const START_VIEW = ["chat", "graph", "uci", ...UCI_TABS].find((v) => v === new URLSearchParams(location.search).get("pogled"));
+const START_ACCOUNT = new URLSearchParams(location.search).get("pogled") === "racun";
 const START_ASK = START_VIEW === "chat" ? (new URLSearchParams(location.search).get("vprasaj") || "").slice(0, 2000) : "";
 if (new URLSearchParams(location.search).has("pogled")) history.replaceState(null, "", location.pathname);
 initInstall({ toast, onSheet: (open) => (open ? overlayOpened() : overlayClosed()) });
@@ -5247,11 +5255,13 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     if (first) initUsageMeter({ escapeHtml, showView, toast, allowed: () => usageAdmin });
     else refreshUsageMeter();
     // Prvo odprtje: bližnjica (?pogled=) ali zadnji zaslon (≤ 12 ur); Učna pot se pripravi pod njim.
-    const z = first && !o?.keepView && !START_VIEW ? startScreen() : null;
+    const z = first && !o?.keepView && !START_VIEW && !START_ACCOUNT ? startScreen() : null;
     if (!o?.keepView) showView("path");
     const mark = apiSeq; // klici do sem so od profila in Učne poti
-    const other = z || (first && START_VIEW && !o?.keepView);
+    const other = z || (first && (START_VIEW || START_ACCOUNT) && !o?.keepView);
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
+    // Kot dotik zavihka Račun (account.js renderAccount); brez računov je zavihek skrit in ostane Učna pot.
+    if (first && START_ACCOUNT && !o?.keepView && !$("#account-tab").hidden) $("#account-tab").click();
     if (z) {
       brezStetja = true;
       try {
