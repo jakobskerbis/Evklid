@@ -256,6 +256,11 @@ test("AI solutions are verified: substitution, missing roots, derivatives, integ
   assert.equal(verifyAi("∫_0^1 x^2 dx", { kind: "integral", value: "1/2" }).verified, false);
   assert.equal(verifyAi("x+y=3; x-y=1", { kind: "system", solutions: ["x=2; y=1"] }).verified, true);
   assert.equal(verifyAi("x+y=3; x-y=1", { kind: "system", solutions: ["x=1; y=2"] }).verified, false);
+  // sovražni ključi v rešitvi sistema ne postanejo spremenljivke in ne onesnažijo prototipa (CodeQL js/remote-property-injection)
+  assert.equal(verifyAi("x+y=5; x-y=1", { kind: "system", solutions: ["__proto__=1, x=3, y=2"] }).verified, true);
+  assert.equal(verifyAi("x+y=5; x-y=1", { kind: "system", solutions: ["constructor=3, y=2"] }).verified, false);
+  assert.equal(({}).x, undefined);
+  assert.equal(Object.prototype.hasOwnProperty.call(Object.prototype, "x"), false);
   assert.equal(verifyAi("(x^2-1)/(x-1)", { kind: "expression", value: "x+1" }).verified, true);
   // »ni rešitve« ni preverjeno, kadar ničla obstaja zunaj [−50, 50], na robu območja ali kot dotikalna ničla
   for (const t of ["x/200 = 1", "e^x = 100000", "log(x) = 3", "sqrt(x-60) = 0", "abs(x-1.1) = 0"]) assert.equal(verifyAi(t, { kind: "equation", solutions: [] }).verified, false, t);
