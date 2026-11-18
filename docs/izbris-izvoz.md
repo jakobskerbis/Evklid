@@ -39,6 +39,28 @@ Ista pot (`server/accounts/izbris.js` `eraseAccount`/`eraseProfiles`) velja še 
   samo profili in shranjena aktivacijska koda, račun ostane lastniku naslova.
 V vseh primerih poraba ostane šteta za omrežje (`guest_spent`).
 
+## Neaktivni računi (j 18. 11. 2026; privzeto izklopljeno)
+
+Vklop: `EVKLID_NEAKTIVNI=1` v Render → Environment (v `render.yaml` zakomentirano; j vklopi po posvetu s pravnikom).
+Koda: `server/accounts/neaktivni.js`, test `test/neaktivni.test.js`. Teče enkrat na dan po 10.00 (Ljubljana).
+
+- **Dejavnost:** prijava (nova seja), vsak klic API s sejo (`parents.last_active_at`, enkrat na dan), vprašanja,
+  dogodki učenja, točke in odprtje profila na napravi (tudi otrokova uporaba na računu starša).
+- **12 mesecev brez dejavnosti:** eno kratko e-sporočilo v slovenščini na e-naslov imetnika računa (povezava za
+  prijavo in za izbris v zavihku Račun, datum izbrisa). Za isto obdobje mirovanja nikoli dvakrat (`email_log`
+  `neaktivni`, period = dan zadnje dejavnosti; zapis ostane 760 dni). Če pošiljanje ne uspe, nov poskus naslednji dan.
+- **24 mesecev brez dejavnosti** in vsaj 30 dni po poslanem obvestilu: izbris po isti poti kot `DELETE /api/account`
+  (`eraseAccount`, zapis pilota), dnevnik dostopov `inactive_deleted` (samo število). Prijava vmes izbris ustavi.
+- **Brez e-pošte mladoletnim:** imetnik, mlajši od 18 let (račun zase), ali račun samo »Zame« brez datuma rojstva ne
+  dobi sporočila; izbriše se po 24 mesecih brez obvestila (odprto vprašanje za pravnika). Profili otrok nimajo
+  e-naslova; sporočilo gre vedno samo imetniku računa.
+- **Izvzeti:** gostje in nepotrjeni računi (svoji roki zgoraj), skrbniki, plačana ali podarjena doba (naročnina,
+  koda, darilo, bonus), učitelji šole z veljavno licenco.
+- **Brez Resenda** (`RESEND_API_KEY`) ne gre nobeno obvestilo in ni nobenega izbrisa.
+- **Poročilo brez dejanj** (skrbnik): `GET /api/admin/neaktivni` → `{ vklopljeno, eposta, obvestilo, izbris, cakaRok,
+  mladoletniBrezObvestila }` (samo števila, brez e-naslovov).
+- **Kopije:** izbrisan račun ostane v varnostnih kopijah do njihovega poteka (spodaj, največ 30 dni).
+
 ## Izbris profila (`DELETE /api/students/:id`)
 
 Od profila ne ostane nič, račun in drugi profil ostaneta cela. Pri računu ostanejo: poraba kredita (`ai_credit_use`),

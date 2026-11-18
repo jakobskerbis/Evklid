@@ -87,6 +87,12 @@ export function canOpen(value) {
   return unseal(value, null) !== null;
 }
 
+// Oznaka dogodka (events.flag, j 18. 11. 2026): »none« ostane berljiv (SQL loči opozorila od navadnih odgovorov),
+// vse ostale (distress, unsafe, injection, offtopic, photo) se zašifrirajo, da se iz baze ne vidi, katera je stiska.
+export const sealFlag = (flag) => (flag === null || flag === undefined || flag === "none" ? flag : seal(flag));
+// Odšifrirana oznaka; neberljiva (manjka ključ) vrne `fallback` (privzeto null).
+export const openFlag = (flag, fallback = null) => (isEncrypted(flag) ? unseal(flag, fallback) : flag);
+
 // JSON polje: zašifriran niz JSON; ob neberljivem zapisu vrne `fallback`.
 export const sealJson = (obj) => seal(JSON.stringify(obj));
 export function unsealJson(value, fallback) {
@@ -154,6 +160,9 @@ export const SEALED = [
   { table: "pilot_mnenja", cols: ["liked", "bothers"] },
   // Učenčevi zapiski (server/zapiski.js): naslov in prepis rokopisa.
   { table: "zapiski", cols: ["naslov", "prepis"] },
+  // Oznaka dogodka učenja (stiska, nevarna vsebina …; j 18. 11. 2026). »none« ostane berljiv (where), rok hrambe
+  // stiske 90 dni: server/zasebnost.js RETENTION.distressDays.
+  { table: "events", cols: ["flag"], where: "flag <> 'none'" },
 ];
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);
@@ -167,7 +176,7 @@ export function encryptionStats(db) {
     for (const c of t.cols.filter((x) => hasCol(db, t.table, x))) {
       const s = { table: t.table, col: c, encrypted: 0, plain: 0, unreadable: 0, oldKey: 0 };
       const cur = currentKeyId();
-      for (const r of db.prepare(`SELECT ${c} AS v FROM ${t.table} WHERE ${c} IS NOT NULL`).iterate()) {
+      for (const r of db.prepare(`SELECT ${c} AS v FROM ${t.table} WHERE ${c} IS NOT NULL${t.where ? ` AND (${t.where})` : ""}`).iterate()) {
         if (!isEncrypted(r.v)) s.plain++;
         else if (!canOpen(r.v)) s.unreadable++;
         else {

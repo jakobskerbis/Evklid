@@ -1,6 +1,6 @@
 // Varstvo podatkov učencev (docs/varnost-podatkov.md): šifriranje obstoječih vrstic ob zagonu,
 // roki hrambe in dnevno čiščenje. Šifriranje polj: server/crypto-polje.js.
-import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, blindIndex, warnIfNoKey, SEALED, encryptionStats } from "./crypto-polje.js";
+import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, blindIndex, warnIfNoKey, SEALED, encryptionStats, openFlag } from "./crypto-polje.js";
 import { normCard } from "./flashcards.js";
 import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
 import { PHOTO_MAX_DAYS, dropFormerPhotos } from "./pilot-naloge.js";
@@ -20,6 +20,8 @@ export const RETENTION = {
   auditDays: 365,
   // Dnevnik poslanih e-poštnih sporočil (samo za preprečevanje dvojnega pošiljanja): eno leto.
   emailLogDays: 365,
+  // Zapis obvestila o neaktivnem računu (kind »neaktivni«): izbris je 12 mesecev po obvestilu, zato dlje kot ostali.
+  inactiveLogDays: 760,
   // Dnevnik obvestil na telefon (enako): 90 dni.
   pushLogDays: 90,
   // Nepotrjen račun brez plačil: brez profilov in seje toliko dni po registraciji, s profili toliko dni brez dejavnosti.
@@ -35,6 +37,9 @@ export const RETENTION = {
   // Soglasje plačnika ob nakupu (billing_consents, z e-naslovom plačnika) po izbrisu računa: dokaz soglasja.
   // j 2026-11-16: 5 let po nakupu (splošni zastaralni rok, OZ 346).
   billingConsentDays: 1826,
+  // Oznaka stiske (events.flag »distress«: stiska, samopoškodovanje, nasilje, nujno zdravje; j 18. 11. 2026): 90 dni
+  // od dogodka. Dogodek učenja (predmet, tema, napaka) ostane, oznaka postane »none« (clearOldDistress).
+  distressDays: 90,
   // Potekle seje in odklepi profilov se izbrišejo takoj (niso več veljavni).
 };
 
@@ -54,18 +59,41 @@ export function withoutImages(content, text) {
 // Zašifrira nešifrirane vrstice in znova zašifrira tiste s starim ključem. Idempotentno, ena transakcija na paket.
 // Neberljive vrstice (neznan ključ) pusti pri miru. Vrne { [tabela]: število spremenjenih }.
 const BATCH_BYTES = 8 * 1024 * 1024;
+// Med selitvijo secure_delete (SQLite): staro nešifrirano besedilo (tudi oznaka »distress«) ne ostane v prostem
+// prostoru strani baze. Po koncu nazaj na prejšnjo nastavitev.
 export function* encryptionSteps(db, batch = 200) {
+  if (!currentKeyId()) return;
+  const restore = secureDelete(db);
+  try {
+    yield* sealSteps(db, batch);
+  } finally {
+    restore();
+  }
+}
+function secureDelete(db) {
+  let prev = null;
+  try {
+    prev = db.prepare("PRAGMA secure_delete").get()?.secure_delete ?? null;
+    db.exec("PRAGMA secure_delete = ON");
+  } catch {}
+  return () => {
+    try {
+      if (prev !== null && db.isOpen !== false) db.exec(`PRAGMA secure_delete = ${Number(prev) ? "ON" : "OFF"}`);
+    } catch {}
+  };
+}
+function* sealSteps(db, batch) {
   const cur = currentKeyId();
-  if (!cur) return;
   const fresh = `enc1:${cur}:%`;
   for (const t of SEALED) {
     if (!hasTable(db, t.table)) continue;
     const cols = t.cols.filter((c) => hasCol(db, t.table, c));
     const need = cols.map((c) => `(${c} IS NOT NULL AND ${c} NOT LIKE '${fresh}')`);
     if (t.norm) need.push(`norm NOT LIKE 'h1:${cur}:%'`);
+    const only = t.where ? ` AND (${t.where})` : "";
     // Najprej samo rowid, vrstice nato ena po ena: sporočila s fotografijo imajo do 7 MB, 200 naenkrat bi na
     // strežniku s 512 MB pomnilnika lahko sprožilo OOM. Paket se konča tudi po ~8 MB besedila (zanka dogodkov).
-    const pick = db.prepare(`SELECT rowid AS rid FROM ${t.table} WHERE rowid > ? AND (${need.join(" OR ")}) ORDER BY rowid LIMIT ?`);
+    const pick = db.prepare(`SELECT rowid AS rid FROM ${t.table} WHERE rowid > ? AND (${need.join(" OR ")})${only} ORDER BY rowid LIMIT ?`);
     const one = db.prepare(`SELECT ${cols.join(", ")}${t.norm ? ", norm" : ""} FROM ${t.table} WHERE rowid = ?`);
     const upd = db.prepare(`UPDATE ${t.table} SET ${cols.map((c) => `${c} = ?`).join(", ")}${t.norm ? ", norm = ?" : ""} WHERE rowid = ?`);
     let last = 0;
@@ -112,6 +140,34 @@ export function migrateEncryption(db, batch = 200) {
   return out;
 }
 
+
+// Oznaka stiske starejša od RETENTION.distressDays → »none«. Oznake razen »none« so šifrirane (crypto-polje.js sealFlag),
+// zato SQL izbere vse stare oznake in vsako odšifrira. Neberljiva oznaka (manjka ključ) se tudi izbriše: lahko je
+// stiska, prebrati je ne more nihče. Idempotentno; secure_delete, da staro besedilo ne ostane v prostih straneh.
+export function clearOldDistress(db, before) {
+  if (!hasTable(db, "events")) return 0;
+  const rows = db.prepare("SELECT id, flag FROM events WHERE flag <> 'none' AND created_at < ?").all(before);
+  const gone = rows.filter((r) => {
+    const f = openFlag(r.flag);
+    return f === "distress" || f === null;
+  });
+  if (!gone.length) return 0;
+  const upd = db.prepare("UPDATE events SET flag = 'none' WHERE id = ?");
+  const restore = secureDelete(db);
+  try {
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      for (const r of gone) upd.run(r.id);
+      db.exec("COMMIT");
+    } catch (e) {
+      db.exec("ROLLBACK");
+      throw e;
+    }
+  } finally {
+    restore();
+  }
+  return gone.length;
+}
 
 // --- dnevno čiščenje ---
 // Hramba zapisa neujemajočega se plačila Stripa (dni).
@@ -174,12 +230,17 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
   if (hasTable(db, "parent_sessions")) out.sessions = Number(db.prepare("DELETE FROM parent_sessions WHERE expires_at < ?").run(nowIso).changes);
   if (hasTable(db, "profile_unlocks")) out.unlocks = Number(db.prepare("DELETE FROM profile_unlocks WHERE expires_at < ?").run(now).changes);
   const ago = (d) => new Date(now - d * 86400000).toISOString().replace("T", " ").slice(0, 19);
-  if (hasTable(db, "email_log")) out.emailLog = Number(db.prepare("DELETE FROM email_log WHERE created_at < ?").run(ago(RETENTION.emailLogDays)).changes);
+  if (hasTable(db, "email_log")) {
+    // Obvestilo o neaktivnem računu (server/accounts/neaktivni.js) mora ostati do izbrisa (12 mesecev po obvestilu) in še malo.
+    out.emailLog = Number(db.prepare("DELETE FROM email_log WHERE kind <> 'neaktivni' AND created_at < ?").run(ago(RETENTION.emailLogDays)).changes);
+    out.emailLog += Number(db.prepare("DELETE FROM email_log WHERE kind = 'neaktivni' AND created_at < ?").run(ago(RETENTION.inactiveLogDays)).changes);
+  }
   if (hasTable(db, "push_log")) {
     // period se začne z datumom (YYYY-MM-DD:učenec).
     out.pushLog = Number(db.prepare("DELETE FROM push_log WHERE period GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*' AND substr(period, 1, 10) < ?").run(ago(RETENTION.pushLogDays).slice(0, 10)).changes);
   }
   if (hasTable(db, "odpiranje_delov")) out.odpiranje = Number(db.prepare("DELETE FROM odpiranje_delov WHERE zadnji < ?").run(ago(RETENTION.odpiranjeDni).slice(0, 10)).changes);
+  out.distress = clearOldDistress(db, ago(RETENTION.distressDays));
   if (hasTable(db, "answer_cache")) out.answerCache = Number(db.prepare("DELETE FROM answer_cache WHERE created_at < ?").run(ago(RETENTION.answerCacheDays)).changes);
   // Rok hrambe varnostnih kopij na disku tudi z EVKLID_BACKUPS=0 (ko ne teče dnevna kopija): docs/izbris-izvoz.md.
   try {

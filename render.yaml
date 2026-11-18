@@ -61,6 +61,10 @@ services:
         value: "1"
       # Ciljna meritev natančnosti po objavi teče v GitHubu (.github/workflows/meritev-po-objavi.yml), ne na strežniku:
       # strežnik in meritev skupaj presežeta 512 MB (16. 11. 2026). Strežnik spremenljivke EVKLID_MERITEV_PO_OBJAVI ne bere več.
+      # Neaktivni računi (server/accounts/neaktivni.js, docs/izbris-izvoz.md): obvestilo po 12 mesecih, izbris po 24.
+      # Privzeto izklopljeno; j vklopi po posvetu s pravnikom (odkomentiraj). Poročilo brez dejanj: /api/admin/neaktivni.
+      # - key: EVKLID_NEAKTIVNI
+      #   value: "1"
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET

@@ -11,7 +11,7 @@ import fs from "node:fs";
 import { BRAND } from "../server/brand.js";
 import { messageCode, parseMessageCode, purgeCachedAnswer, openReport } from "../server/reports.js";
 import { openMessage } from "../server/db.js";
-import { unseal } from "../server/crypto-polje.js";
+import { unseal, openFlag } from "../server/crypto-polje.js";
 
 const file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`;
 if (!fs.existsSync(file)) {
@@ -33,7 +33,7 @@ function show(id) {
   const around = db.prepare("SELECT * FROM messages WHERE conversation_id = ? AND id BETWEEN ? AND ? ORDER BY id").all(m.conversation_id, id - 6, id + 1).map(openMessage);
   for (const x of around) console.log(`\n${x.id === id ? ">>" : "  "} [${x.role === "user" ? "učenec" : "inštruktor"} ${messageCode(x.id)}] ${cut(x.display_text, x.id === id ? 4000 : 600)}`);
   const ev = db.prepare("SELECT subject, topic, error, mode, flag FROM events WHERE message_id = ?").get(id);
-  if (ev) console.log(`\nMETA: predmet ${ev.subject}, tema ${ev.topic}, napaka ${ev.error}, način ${ev.mode}, oznaka ${ev.flag}`);
+  if (ev) console.log(`\nMETA: predmet ${ev.subject}, tema ${ev.topic}, napaka ${ev.error}, način ${ev.mode}, oznaka ${openFlag(ev.flag, "neberljiva")}`);
   const raw = m.api_content.find?.((b) => b.type === "text")?.text || "";
   if (hasTable("answer_cache")) {
     const name = db.prepare("SELECT name FROM students WHERE id = ?").get(conv?.student_id ?? -1)?.name || "";

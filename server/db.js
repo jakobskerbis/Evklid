@@ -6,7 +6,7 @@ import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessList } from "./settings.js";
 import { Flashcards } from "./flashcards.js";
-import { seal, unseal, sealJson, unsealJson, UNREADABLE } from "./crypto-polje.js";
+import { seal, unseal, sealJson, unsealJson, UNREADABLE, sealFlag, openFlag } from "./crypto-polje.js";
 
 // Šibke točke: kako dolgo hranimo dnevne vsote (skill_results) in oznake »že šteto« (skill_seen).
 export const SKILL_KEEP_DAYS = 365;
@@ -578,12 +578,12 @@ export class Store {
         `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, e.topic, e.error, e.mode, e.flag, e.topic_id ?? null);
+      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, e.topic, e.error, e.mode, sealFlag(e.flag ?? "none"), e.topic_id ?? null);
   }
+  // Oznaka je šifrirana (razen »none«); neberljiva šteje kot opozorilo (»unknown«), ne kot navaden odgovor.
   lastEvent(conversationId) {
-    return this.db
-      .prepare("SELECT * FROM events WHERE conversation_id = ? ORDER BY id DESC LIMIT 1")
-      .get(conversationId);
+    const r = this.db.prepare("SELECT * FROM events WHERE conversation_id = ? ORDER BY id DESC LIMIT 1").get(conversationId);
+    return r && { ...r, flag: openFlag(r.flag, "unknown") };
   }
   topicStats(studentId, days = 60) {
     return this.db
@@ -596,16 +596,24 @@ export class Store {
       )
       .all(studentId, `-${days} days`);
   }
+  // Oznake so šifrirane (crypto-polje.js sealFlag), zato se »photo« in neberljive izločijo po odšifriranju.
   flagEvents(studentId, limit = 50) {
-    return this.db
+    const out = [];
+    const rows = this.db
       .prepare(
         `SELECT e.flag, e.created_at, e.conversation_id, c.title
          FROM events e JOIN conversations c ON c.id = e.conversation_id
-         WHERE e.student_id = ? AND e.flag NOT IN ('none', 'photo') -- zavrnjena fotografija ni opozorilo za starše
-         ORDER BY e.id DESC LIMIT ?`,
+         WHERE e.student_id = ? AND e.flag <> 'none'
+         ORDER BY e.id DESC`,
       )
-      .all(studentId, limit)
-      .map(openConv);
+      .iterate(studentId);
+    for (const r of rows) {
+      const flag = openFlag(r.flag);
+      if (!flag || flag === "photo") continue; // zavrnjena fotografija ni opozorilo za starše
+      out.push(openConv({ ...r, flag }));
+      if (out.length >= limit) break;
+    }
+    return out;
   }
   // XP po dnevih (vse dejavnosti: lekcije, vaje, igre, inštruktor) za koledar aktivnosti na Napredku in strani Jaz.
   xpByDay(studentId, days = 371) {

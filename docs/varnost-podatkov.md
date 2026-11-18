@@ -16,6 +16,7 @@ odgovor, ki je zakrožil): [krizni-nacrt.md](krizni-nacrt.md).
 | Ugibanje kod vabila v pilot (`/api/vabilo`) | IP (10 / 15 min), vse napačne kode skupaj (200 / uro); koda samo v telesu POST (ne v naslovu in dnevnikih), odgovor samo da/ne (in »porabljena«), seznama kod ne vrne nič; v bazi samo zgoščena koda na računu in porabljene kode (`pilot_vabila`, ob izbrisu računa brez povezave na račun), izidi v dnevniku dostopov (`pilot_invite_*`) | `server/vabila.js`, `server/vabila-kode.js` |
 | Brskalnik | varnostne glave (helmet): CSP brez vrinjenih skript, HSTS, nosniff, COOP, Permissions-Policy (kamera, mikrofon in senzorji le za Evklid; lokacija, plačila in USB izklopljeni), API brez predpomnjenja | `server/app.js` |
 | Moji zapiski (`zapiski`: naslov, prepis rokopisa, prilepljeno besedilo samo z izbiro »To so moji zapiski – shrani«) | šifrirano v bazi (brez `EVKLID_DATA_KEY` se prepis ne shrani); fotografija se ne shrani, prepis tiskanih strani tudi ne; sklop kartic (`flashcards.topic`, nešifriran) je ime teme ali »Zapiski«, nikoli naslov; izbris posameznega zapiska izbriše tudi njegove kartice (`flashcards.zapisek_id`, ON DELETE CASCADE); v izvozu pod `other.zapiski` | `server/zapiski.js`, `server/crypto-polje.js` |
+| Oznaka dogodka učenja (`events.flag`: stiska `distress`, nevarna vsebina, poskus vrivanja, tema zunaj predmetov, zavrnjena fotografija; j 18. 11. 2026) | šifrirano v bazi razen `none` (iz baze se ne vidi, katera oznaka je stiska); varnostni odgovor ob stiski se ne shrani v `answer_cache`; Napredek, izvoz in `najdi-sporocilo.js` jo odšifrirajo | `server/crypto-polje.js` (`sealFlag`, `SEALED`), `server/db.js` |
 | Fotografije, ki niso učno gradivo | inštruktor jih zavrne (`flag=photo`), strežnik sliko takoj izbriše; skeniranje jih zavrne | `prompts/system_prompt.md`, `server/scan.js` |
 | Dnevniki strežnika | brez e-naslovov, besedil pogovorov, žetonov in teles zahtev | |
 | Odvisnosti | Dependabot (npm tedensko, GitHub Actions mesečno) | `.github/dependabot.yml` |
@@ -58,7 +59,9 @@ Vse vrednosti so v `server/zasebnost.js` (`RETENTION`); čiščenje teče ob zag
 | Fotografija, ki ni učno gradivo | se ne shrani |
 | Fotografija zapiskov (Moji zapiski) | se ne shrani; prepis rokopisa (in prilepljeno besedilo z izbiro »shrani«) ostane, dokler ga učenec ne izbriše ali ne izbriše profila; prilepljeno besedilo brez izbire se zavrže takoj po izdelavi kartic |
 | Potekle seje in odklepi profilov | izbrisani takoj po poteku |
-| Dnevnik e-pošte (preprečuje dvojna sporočila) | 1 leto |
+| Dnevnik e-pošte (preprečuje dvojna sporočila) | 1 leto; obvestilo o neaktivnem računu 760 dni (do izbrisa) |
+| Oznaka stiske (`events.flag` `distress`; tudi neberljiva stara oznaka) | 90 dni (`RETENTION.distressDays`); nato `none`, dogodek učenja (predmet, tema, napaka) ostane |
+| Potrjen račun brez dejavnosti (samo z `EVKLID_NEAKTIVNI=1`) | obvestilo po 12 mesecih, izbris po 24 mesecih (najprej 30 dni po obvestilu); docs/izbris-izvoz.md »Neaktivni računi« |
 | Dnevnik obvestil na telefon | 90 dni |
 | Predpomnjen splošen odgovor inštruktorja (`answer_cache`, brez imena učenca) | 30 dni |
 | Ročna varnostna kopija baze (`obnovi-kopijo.js --zdaj`) | zadnje 3, največ 22 dni (`server/kopije.js`; + 7 dni posnetka diska = 30); dnevne 7 dni; baza pred obnovo 14 dni |

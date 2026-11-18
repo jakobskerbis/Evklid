@@ -295,3 +295,16 @@ export function purchaseEmail({ item, paidText, firstCharge = "", dateText, stat
     ].join("\n"),
   };
 }
+
+// Neaktiven račun (server/accounts/neaktivni.js): 12 mesecev brez prijave. Samo imetniku računa (polnoletnemu).
+export function inactiveEmail({ appUrl, accountUrl, dateText }) {
+  const body = `V Evklid se že eno leto niste prijavili. Če se ne prijavite do ${dateText}, bomo račun in vse podatke profilov izbrisali.`;
+  return {
+    subject: "Evklid: vaš račun bomo izbrisali, če se ne prijavite",
+    text: `Pozdravljeni,\n\n${body}\n\nRačun obdržite s prijavo: ${appUrl}\nČe ga ne potrebujete več, ga izbrišete sami v zavihku Račun (»Izbriši račun in vse podatke«): ${accountUrl}\n\nEkipa Evklid`,
+    html: layout(
+      "Vaš račun bomo izbrisali",
+      `<p>${esc(body)}</p><p>Račun obdržite s prijavo.</p>${button(appUrl, "Prijavite se")}<p style="font-size:13px;color:#5f6779">Če računa ne potrebujete več, ga lahko <a href="${esc(accountUrl)}">izbrišete sami</a> v zavihku Račun (»Izbriši račun in vse podatke«).</p>`,
+    ),
+  };
+}
