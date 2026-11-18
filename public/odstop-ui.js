@@ -14,9 +14,9 @@ const versionText = (v) => {
 };
 
 // Povezava na funkcijo za odstop: v zavihku Račun vedno, nad karticami (ZVPot-1A: stalno na voljo, na vidnem mestu).
-// withdrawal_open (pogodba v roku ali nakup v trgovini): poudarjen gumb.
+// Gumb (dotik ≥ 40 px); withdrawal_open (pogodba v roku ali nakup v trgovini): razred wd-open.
 export const withdrawalLink = (acc) =>
-  `<p class="wd-link"><a class="${acc.withdrawal_open ? "btn-secondary" : ""}" href="/odstop.html">${icon("arrow-right")}<span>${esc(t("acct.withdraw"))}</span></a></p>`;
+  `<p class="wd-link"><a class="btn-secondary${acc.withdrawal_open ? " wd-open" : ""}" href="/odstop.html">${icon("arrow-right")}<span>${esc(t("acct.withdraw"))}</span></a></p>`;
 
 export function termsBanner(acc) {
   const v = acc.parent?.terms_notice;

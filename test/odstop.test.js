@@ -519,7 +519,7 @@ test("prijavljen imetnik: potrdilo samo na e-naslov računa (vpisan naslov je sa
     const r = await acct.a("/api/withdrawal", { method: "POST", body: { name: "Ana", email: "tuj@primer.si", details: "nakup" } });
     assert.equal(r.status, 201);
     assert.equal(r.body.withdrawal.email, "lastnik@primer.si");
-    const w = store.db.prepare("SELECT email, ack_to FROM withdrawals").get();
+    const w = { ...store.db.prepare("SELECT email, ack_to FROM withdrawals").get() };
     assert.deepEqual(w, { email: "tuj@primer.si", ack_to: "lastnik@primer.si" });
     assert.ok(!mails(stripe).some((m) => m.to[0] === "tuj@primer.si"));
     assert.ok(mails(stripe).some((m) => m.to[0] === "lastnik@primer.si" && /odstopa/.test(m.subject)));
@@ -534,7 +534,7 @@ test("zadržana potrdila: skrbnik dobi največ eno povzetno opozorilo na dan; ne
       await anon("/api/withdrawal", { method: "POST", body: { name: "A", email: "z@primer.si", details: "x x x" } });
       stripe.state.mailFail = false;
       for (let i = 0; i < 3; i++) await anon("/api/withdrawal", { method: "POST", body: { name: "A", email: "z@primer.si", details: "x x x" } });
-      assert.equal(mails(stripe).filter((m) => m.to[0] === "z@primer.si").length, 1, "drugo poslano, tretje in četrto zadržano");
+      assert.equal(mails(stripe).filter((m) => m.to[0] === "z@primer.si").length, 2, "prvo neuspelo, drugo poslano, tretje in četrto zadržano");
       const summary = mails(stripe).filter((m) => m.to[0] === "skrbnik@primer.si" && /povzetek/.test(m.text));
       assert.equal(summary.length, 1, "en povzetek za dve zadržani");
     },
