@@ -130,10 +130,12 @@ export function cacheKey(text, settings, mode, lite = false, pathTopic = null, w
   // »b3« (17. 11., Preizkus 3): vsi deli naloge v enem odgovoru, krajše za OŠ 1.–4., graf narisan; odgovori z »b2« se ne vrnejo.
   // »b5« (18. 11., Preizkus 3, krog 2, PR #836; »b4« je #835): ena definicija seznama vaj, deli z drugim postopkom so ena
   // naloga, OŠ 1.–4. brez »Preverimo«; odgovori z »b3« in »b4« se ne vrnejo.
-  if (settings.solving_mode === "B" || /celo\w* rešit|načinu? b\b/i.test(norm)) parts.push("b5");
+  // »b6« (18. 11., meritev po #836): OŠ 1.–4. kratko tudi pri »zakaj«; odgovori z »b5« se ne vrnejo.
+  if (settings.solving_mode === "B" || /celo\w* rešit|načinu? b\b/i.test(norm)) parts.push("b6");
   // Samo rezultat pri eni nalogi (17. 11., #799): shranjeni dolgi odgovori na isto besedilo se ne vrnejo več.
   // »r2« (17. 11., Preizkus 3): pri podvprašanjih rezultat vsakega dela; odgovori z »r1« se ne vrnejo.
-  if (/samo (?:končn\w* )?rezultat|brez postopka/i.test(norm)) parts.push("r2");
+  // »r3« (18. 11., meritev po #836): samo rezultat brez okvirja »Zapomni si«; odgovori z »r2« se ne vrnejo.
+  if (/samo (?:končn\w* )?rezultat|brez postopka/i.test(norm)) parts.push("r3");
   // »moram oddati« (17. 11., Preizkus 3, pregled #811): Domača naloga za oddajo loči podvprašanja od seznama vaj;
   // shranjeni odgovori na tako besedilo se ne vrnejo (tudi v načinu A).
   if (/moram oddat/i.test(norm)) parts.push("o1");

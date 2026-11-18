@@ -10,3 +10,13 @@ export function prepusceno(vidno) {
 }
 // Ogrodje (Preizkus 3: za OŠ 1.–4. in »samo rezultat« preveč): Podatki, Iščemo, Načrt, Preverba, Preizkus, Zapomni si, Vaja.
 export const OGRODJE = /podatki\s*:|iščemo\s*:|načrt\s*:|preverba|preverimo|preizkus\s*:|zapomni si|\bvaja\s*:|naloga (?:je )?preverja/i;
+// Seznam vaj (j 17. in 18. 11.): prvi del pravilno rešen, naslednji ne (ponujeni učencu). Ogrodje je od 5. razreda dovoljeno.
+// Ponudba ni vedno v obliki »poskusi sam« (»Začni z b) …: na katero število …?«), zato je ne zahtevamo.
+export const seznamOk = (deli) => Boolean(deli[0]) && !deli.slice(1).some(Boolean);
+// Vodenje: vsak odgovor ima vprašanje ali v zadnjem odstavku nalogo za učenca (»Zapiši …«, »povej …«); vrne razlog ali "".
+const NALOGA_UCENCU = /(?<![\p{L}])(?:zapiši|povej|poskusi|naštej|izračunaj|preveri|razmisli|pomisli|napiši|določi|nariši)(?![\p{L}])/iu;
+export function vodenjeBrezVprasanja(t) {
+  const s = String(t).trim();
+  const zadnji = s.split(/\n\s*\n/).pop();
+  return /\?/.test(s) || NALOGA_UCENCU.test(zadnji) ? "" : "BREZ VPRAŠANJA";
+}

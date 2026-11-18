@@ -18,7 +18,7 @@ import { normalizeSettings } from "../server/settings.js";
 import { SETTINGS_TOOLS } from "../server/chat-settings.js";
 import { stripMeta, stripChoices } from "../server/meta.js";
 import { parseOpenBlocks } from "../server/odpri.js";
-import { prepusceno, OGRODJE } from "./meri-preizkus3-ocena.mjs";
+import { prepusceno, OGRODJE, seznamOk, vodenjeBrezVprasanja } from "./meri-preizkus3-ocena.mjs";
 
 const arg = (name, def) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -34,23 +34,17 @@ if (SUHO) process.env.EVKLID_MOCK = "1";
 const IZBRANE = arg("naloge", "") ? new Set(arg("naloge", "").split(",").map((x) => x.trim())) : null;
 
 // Stari prompt nastane iz trenutnega (brez git-a): vsaka sprememba popravka nazaj. Vsak kos mora biti v promptu natanko enkrat.
-// Od 18. 11. (Preizkus 3, krog 2, PR #836) je »stari« main po #811 (pred definicijo seznama vaj j 18. 11. in krajšo obliko
-// za OŠ 1.–4. brez »Preverimo«); primerjava s promptom pred #811 je v docs/spremembe-prompta.md (17. 11.).
+// Od meritve po #836 (18. 11., Actions 44313564198) je »stari« main po #836; primerjave s starejšimi prompti so v
+// docs/spremembe-prompta.md (#811 17. 11., #836 18. 11.).
 function stariPrompt(nov) {
   let s = nov;
   const zamenjaj = (od, v) => {
     if (s.split(od).length !== 2) throw new Error(`kos ni v promptu natanko enkrat: ${od.slice(0, 60)}`);
     s = s.replace(od, () => v);
   };
-  zamenjaj("tudi v načinu B je vsak korak razložen (za OŠ 1.–4. glej spodaj):", "tudi v načinu B je vsak korak razložen:");
-  zamenjaj("je ena naloga, tudi če deli med seboj niso povezani: v istem odgovoru", "je ena naloga: v istem odgovoru");
-  zamenjaj("veljata le za več ločenih nalog in za seznam vaj, kot ga določa Domača naloga za oddajo).", "veljata za več ločenih nalog, tudi za seznam vaj istega tipa pod eno številko).");
-  zamenjaj("Seznam vaj (glej Domača naloga za oddajo; npr. »Izračunaj: a) 3 · 4, b) 5 · 6, c) 7 · 8«) je več nalog", "Seznam vaj istega tipa pod eno številko (npr. »Izračunaj: a) …, b) …, c) …«) je več nalog");
-  zamenjaj("seznam vaj pa je: deli pod eno številko, ki se vsi rešijo z istim postopkom, le z drugimi števili; deli, ki zahtevajo drugo pravilo ali postopek, so ena naloga, tudi pod enim navodilom):", "seznam vaj istega tipa pod eno številko pa je):");
-  zamenjaj("V načinu B ločene naloge rešiš z razlago, eno za drugo, in po vsaki ponudiš, da naslednjo poskusi sam; pri seznamu vaj rešiš prvo z razlago in ponudiš, da ostale poskusi sam.", "V načinu B rešiš vse z razlago, eno za drugo, in po vsaki ponudiš, da naslednjo poskusi sam.");
-  zamenjaj("Preverbe ali »Preverimo« (razen kadar preizkus zahteva naloga ali otrok), okvirja", "Preverbe, okvirja");
-  zamenjaj("razen če otrok prosi za več ali za preverbo; podobno nalogo ponudiš le z gumbi `IZBIRE`, ne z novo nalogo v besedilu; ko jo otrok izbere ali zanjo prosi, jo napiši (brez rešitve).\n", "razen če otrok prosi za več; podobno nalogo ponudiš le z gumbi `IZBIRE`.\n");
-  zamenjaj("inženirski predmeti; v načinu B ne za OŠ 1.–4.):", "inženirski predmeti):");
+  zamenjaj("potrdi, kar je prav (ne začni s »Prav« ali »Pravilno«), in z enim", "potrdi, kar je prav, in z enim");
+  zamenjaj("Za vsak del (tudi pri »zakaj«) en do dva kratka stavka", "Za vsak del en do dva kratka stavka");
+  zamenjaj("Brez Podatkov, Iščemo, Preverbe, »Zapomni si« in razlage", "Brez Podatkov, Iščemo, Preverbe in razlage");
   return s;
 }
 
@@ -138,7 +132,7 @@ function oceni(n, raw) {
   if (n.vrsta === "mladi") o.ok = o.vsiRezultati && !o.prepusceno && !o.ogrodje && o.znakov <= 550;
   if (n.vrsta === "graf") o.ok = o.vsiRezultati && o.risba;
   // Seznam vaj: prvi del pravilen, ponudba naslednjih, ne vsi rezultati (Domača naloga za oddajo, j 17. in 18. 11.).
-  if (n.vrsta === "seznam") o.ok = o.deli[0] && !o.vsiRezultati && o.prepusceno;
+  if (n.vrsta === "seznam") o.ok = seznamOk(o.deli);
   return o;
 }
 
@@ -209,11 +203,13 @@ outer: for (let k = 0; k < PONOVI; k++) {
       const izdal = vid.some((t) => v.resitev.test(navadno(t)));
       const potrdil = /^\s*(?:\*\*)?(?:prav|pravilno|odlično|bravo|tako je|super|drži)\b/i.test(vid[1]);
       const najvecBesed = Math.max(...vid.map(besede));
-      const ok = !izdal && !potrdil && vid.every((t) => /\?/.test(t));
+      // Razlog za NE se izpiše (meritev 44313564198: 40, 25, 112 brez razloga = prvi odgovor konča z »Zapiši …«, ne z »?«).
+      const brez = vid.map(vodenjeBrezVprasanja).find(Boolean) || "";
+      const ok = !izdal && !potrdil && !brez;
       const odrezano = odgovori.some((r) => r.stopReason === "max_tokens");
-      izid.push({ naloga: v.id, vrsta: "vodenje", prompt: ime, ok, izdal, potrdil, najvecBesed, odrezano, stopReasons: odgovori.map((r) => r.stopReason), cena: odgovori.reduce((a, r) => a + r.cena, 0), vidno: vid });
+      izid.push({ naloga: v.id, vrsta: "vodenje", prompt: ime, ok, izdal, potrdil, brez, najvecBesed, odrezano, stopReasons: odgovori.map((r) => r.stopReason), cena: odgovori.reduce((a, r) => a + r.cena, 0), vidno: vid });
       zapisiVmesno();
-      console.log(`${v.id} (vodenje) ${ime}: ${ok ? "OK" : "NE"}${izdal ? " · IZDAL REŠITEV" : ""}${potrdil ? " · POTRDIL NAPAČEN KORAK" : ""}${odrezano ? " · ODREZANO" : ""} · največ ${najvecBesed} besed`);
+      console.log(`${v.id} (vodenje) ${ime}: ${ok ? "OK" : "NE"}${izdal ? " · IZDAL REŠITEV" : ""}${potrdil ? " · POTRDIL NAPAČEN KORAK" : ""}${brez ? ` · ${brez}` : ""}${odrezano ? " · ODREZANO" : ""} · največ ${najvecBesed} besed`);
     }
   }
 }

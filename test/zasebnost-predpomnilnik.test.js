@@ -177,10 +177,12 @@ test("Preizkus 3, krog 2 (18. 11.): odgovori načina B z »b3« in »b4« se ne 
   const tine = "Tine ima 45 centov. Kupi liziko, ki stane 28 centov. a) Koliko centov mu ostane? b) Babica mu da še 3 kovance po 10 centov. Koliko centov ima zdaj?";
   assert.notEqual(cacheKey(tine, b, "chat"), prej(tine, b, "b3"), "način B: »b3« se ne vrne");
   assert.notEqual(cacheKey(tine, b, "chat"), prej(tine, b, "b4"), "način B: »b4« (#835) se ne vrne");
-  assert.equal(cacheKey(tine, b, "chat"), prej(tine, b, "b5"));
+  assert.notEqual(cacheKey(tine, b, "chat"), prej(tine, b, "b5"), "način B: »b5« (#836) se po meritvi ne vrne več");
+  assert.equal(cacheKey(tine, b, "chat"), prej(tine, b, "b6"));
   assert.equal(cacheKey(tine, a, "chat"), prej(tine, a), "način A: ključ kot doslej");
   const dva = "Samo končna rezultata, brez postopka: a) pH HCl s koncentracijo 0,0010 mol/L b) koncentracija 4,0 g NaOH v 250 mL";
-  assert.equal(cacheKey(dva, a, "chat"), prej(dva, a, "r2"), "samo rezultat v načinu A: »r2« ostane");
+  assert.notEqual(cacheKey(dva, a, "chat"), prej(dva, a, "r2"), "samo rezultat: »r2« se ne vrne");
+  assert.equal(cacheKey(dva, a, "chat"), prej(dva, a, "r3"), "samo rezultat v načinu A: »r3«");
 });
 
 test("#835 (18. 11.): odgovori načina B pred pravili brez posploševanja (»b3«) se ne vrnejo, način A ostane", async () => {
@@ -194,6 +196,7 @@ test("#835 (18. 11.): odgovori načina B pred pravili brez posploševanja (»b3�
   const a = { ...s, solving_mode: "A" };
   assert.notEqual(cacheKey(q, b, "chat"), prej(q, b, "b3"), "način B: stari ključ");
   assert.notEqual(cacheKey(q, b, "chat"), prej(q, b, "b4"), "način B: »b4« (#835) se po #836 ne vrne več");
-  assert.equal(cacheKey(q, b, "chat"), prej(q, b, "b5"), "način B: nov ključ (#836)");
+  assert.notEqual(cacheKey(q, b, "chat"), prej(q, b, "b5"), "način B: »b5« (#836) se ne vrne");
+  assert.equal(cacheKey(q, b, "chat"), prej(q, b, "b6"), "način B: nov ključ");
   assert.equal(cacheKey(q, a, "chat"), prej(q, a), "način A obdrži ključ");
 });
