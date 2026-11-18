@@ -66,7 +66,7 @@ import { openMessage } from "./db.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
-import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
+import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewCalls, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity, schoolYear } from "./games.js";
 import { mountDailyPuzzle } from "./daily-puzzle.js";
@@ -97,6 +97,7 @@ import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
+import { AI_JSON } from "./ai-oznaka.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -811,11 +812,13 @@ export function createApp(store, opts = {}) {
     const lastMsg = msgs.at(-1);
     // done ni v tabeli events: prebere se iz META zadnjega odgovora (kot v done ob pošiljanju).
     const lastText = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
-    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && last.flag === "none" && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
-    const owner = store.getStudent(c.student_id);
-    const opens = new Map();
     // Kot ob pošiljanju: brez orodij pri opozorilih (flag ni none).
     const flagOk = (raw) => (parseMeta(raw)?.flag || "none") === "none";
+    // Oznaka v events se po 90 dneh izbriše (server/zasebnost.js clearOldFlags): META odgovora še velja.
+    const lastOk = last?.flag === "none" && !!lastMsg && flagOk(lastText(lastMsg));
+    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && lastOk && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
+    const owner = store.getStudent(c.student_id);
+    const opens = new Map();
     if (owner) for (const m of msgs) if (m.role === "assistant" && flagOk(rawOf(m))) opens.set(m.id, await openOf(rawOf(m), owner).catch(() => undefined));
     res.json({
       ...c,
@@ -823,10 +826,11 @@ export function createApp(store, opts = {}) {
       topic: c.path_topic ? { id: c.path_topic, name: getTopic(c.path_topic)?.name } : null,
       messages: msgs.map((m) => ({
         full_offer: (offerOn && m === lastMsg) || undefined,
-        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || last.flag === "none") ? choicesOf(rawOf(m), owner?.name) : undefined,
+        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || lastOk) ? choicesOf(rawOf(m), owner?.name) : undefined,
         open: opens.get(m.id),
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
+        ai_generated: m.role === "assistant" || undefined,
         reported: reported.has(m.id) || undefined,
         role: m.role,
         text: m.display_text,
@@ -1343,7 +1347,9 @@ export function createApp(store, opts = {}) {
         const risky = !!tekTopic || student.settings.track === "COMPETITION" || jeFaks(student.settings) || again;
         const stopnja = jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS";
         const school = !risky; // pregled SŠ/OŠ (vaja ali okvir v rešeni nalogi) ima svoj del dnevne meje
-        const reviewUsd = checkReserveUsd(MODEL_MID, text + plain);
+        // Pri SŠ z vajo ali načrtom poskusa dva vzporedna klica (splošni in ciljni pregled), zato dvojna rezerva.
+        const calls = reviewCalls(plain, stopnja);
+        const reviewUsd = calls * checkReserveUsd(MODEL_MID, text + plain);
         const spentKinds = (kinds) => kinds.reduce((t, k) => t + usage.kindToday(k), 0);
         const eligible =
           !issue &&
@@ -1351,7 +1357,7 @@ export function createApp(store, opts = {}) {
           !verdictChecked && // sodbo je model že pregledal
           liveReviewOn() &&
           needsReview({ model: answerModel, lite, premium, risky, claims: hasClaims(plain), claimLevel: claimReviewFor(stopnja), answerLength: plain.length, level: () => usage.budgetState().level });
-        const poolUsd = LIVE_REVIEW_POOL_RESERVE_USD();
+        const poolUsd = calls * LIVE_REVIEW_POOL_RESERVE_USD();
         const blockedBy = eligible ? reviewBlock({ school, needUsd: poolUsd, spent: spentKinds, pupilToday: () => usage.kindsCountToday(student.id, REVIEW_KINDS) }) : null;
         if (blockedBy) noteReviewSkip(store.db, stopnja, blockedBy);
         // Rezervacija v dnevnem bazenu (klici v teku štejejo, vzporedni pregledi meje ne prekoračijo) in v meji učenca.
@@ -1429,7 +1435,11 @@ export function createApp(store, opts = {}) {
         }
       }
       if (settingsTools.state.proposal) send("proposal", settingsTools.state.proposal);
-      if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text) {
+      // Varnostni odgovor ob stiski ni splošen odgovor in v nešifriranem predpomnilniku ne sme ostati sled, da je bil kdo
+      // v stiski (j 18. 11. 2026, pregled #846): ne ob flag=distress, ne ob zadetku lokalnega zaznavalnika ali pregleda B
+      // (tudi poslanem oknu »nujno«). Na pregled B počakamo kot spodaj (največ do NUJNO_ROK_MS od začetka).
+      const stiska = meta?.flag === "distress" || !!vrstaLokalno || nujnoPoslano || !!(await pocakajNujno());
+      if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text && !stiska) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
         // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
         const generic = genericAnswer(result.text, student.name);
@@ -1517,6 +1527,7 @@ export function createApp(store, opts = {}) {
       posljiNujno(blagoLokalno);
       finished = true;
       send("done", {
+        ...AI_JSON, // podporni metapodatki: besedilo je ustvarila AI (server/ai-oznaka.js)
         id: assistantId,
         code: messageCode(assistantId),
         text: display,

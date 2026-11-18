@@ -9,6 +9,7 @@ import { icon } from "../icons.js";
 import { dateText } from "../datum.js";
 import { zaznajNujno, izsiljevanje, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, opomba } from "../nujno.js";
 import SL from "./sl.js";
+import { nalozi as aioNalozi, opombaHtml } from "../ai-oznaka/ai-oznaka.js";
 
 const MAX = 5;
 let D = null; // { api, renderRich, escapeHtml, toast, getStudent, box, back }
@@ -70,7 +71,7 @@ export async function showZapiski(deps) {
   D = deps;
   loadCss();
   loaded ||= loadDicts();
-  await loaded;
+  await Promise.all([loaded, aioNalozi()]);
   S = { mode: "home", pages: [], photos: 0 };
   renderHome();
 }
@@ -199,7 +200,7 @@ async function readPhotos(files) {
         msg = t("zap.errNoPhoto");
         break;
       }
-      if (r.text) pages.push({ text: r.text, kind: r.kind });
+      if (r.text) pages.push({ text: r.text, kind: r.kind, ai: !!r.ai_generated });
       else msg = t("zap.errRead");
     } catch (err) {
       msg = errText(err);
@@ -220,10 +221,11 @@ function renderCheck() {
     <button type="button" class="ghost back zap-back">${icon("arrow-left")}<span>${esc(t("cards.notes"))}</span></button>
     <h1 class="with-icon">${icon("notebook-pen")} ${esc(paste ? t("zap.paste") : t("zap.check"))}</h1>
     ${S.msg ? `<p class="zap-msg" role="alert">${esc(S.msg)}</p>` : ""}
+    ${S.pages.some((p) => p.ai) ? opombaHtml(D.getStudent()?.settings, "prepis") : ""}
     <form class="zap-check">
       ${S.pages
         .map(
-          (p, i) => `<label class="zap-page">${paste ? "" : `<span>${esc(t("zap.page", { i: i + 1 }))}</span>`}
+          (p, i) => `<label class="zap-page"${p.ai ? ' data-ai-generated="true"' : ""}>${paste ? "" : `<span>${esc(t("zap.page", { i: i + 1 }))}</span>`}
         <textarea name="p${i}" rows="${paste ? 12 : 8}" maxlength="6000" dir="auto" ${paste ? `placeholder="${esc(t("zap.pastePh"))}"` : ""}>${esc(p.text)}</textarea></label>`,
         )
         .join("")}

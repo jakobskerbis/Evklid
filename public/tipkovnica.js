@@ -17,7 +17,7 @@ import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
 import { brisiNazaj } from "./vnos-formul.js";
 import {
   layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, KEM_LETTERS, KEM_CHARGE, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
-  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
+  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
 } from "./tipkovnica-data.js";
 
 const touch = () => typeof matchMedia !== "undefined" && matchMedia("(pointer: coarse)").matches;
@@ -119,6 +119,7 @@ export function openKeyboard(field, { layer } = {}) {
   if (S.field && S.field !== field && !autoEligible(S.field)) release(S.field);
   if (S.sys === field) S.sys = null;
   S.explicit = !autoEligible(field);
+  if (S.field !== field) clearTimers(); // držan ⌫/←/→ ne briše naprej v novem polju
   S.field = field;
   S.cfg = cfg;
   S.kind = kind;
@@ -375,13 +376,15 @@ function numHtml() {
       .join("")}</div>`;
   }
   const math = S.cfg.math || S.layers.some((l) => layerId(l) === "fx");
-  const top = (math ? NUM_TOP_MATH : NUM_TOP_TEXT).map(([l, ins]) => key(l, { a: "ins", v: ins }, { cls: "fn sm" })).join("");
+  // način »calc«: tipka = je izračunaj (GO), zato je zgoraj ni še enkrat kot znak
+  const topKeys = (math ? NUM_TOP_MATH : NUM_TOP_TEXT).filter(([l]) => !(l === "=" && enterMode() === "calc"));
+  const top = topKeys.map(([l, ins]) => key(l, { a: "ins", v: ins }, { cls: "fn sm" })).join("");
   const cells = ["7", "8", "9", "÷", "BS", "4", "5", "6", "×", "L", "1", "2", "3", "−", "R", "0", "D", math ? "x" : "=", "+", "GO"];
   const ins = { "÷": ":", "×": "·", "−": "-" };
   const grid = cells
     .map((c) => (c === "BS" ? bsKey("fn") : c === "L" ? leftKey() : c === "R" ? rightKey() : c === "GO" ? goKey("") : c === "D" ? key(d, { a: "ins", v: d }) : key(c, { a: "ins", v: ins[c] || c }, { cls: /\d/.test(c) ? "dig" : "" })))
     .join("");
-  return `<div class="tk-grid" style="--cols:6">${top}</div><div class="tk-grid" style="--cols:5">${grid}</div>`;
+  return `<div class="tk-grid" style="--cols:${topKeys.length}">${top}</div><div class="tk-grid" style="--cols:5">${grid}</div>`;
 }
 
 function subtabs(list, cur, act) {
@@ -679,19 +682,27 @@ function backspace(f) {
   fire(f, "deleteContentBackward");
 }
 
-// Najdaljši razmik med dotiki ⌫, ki še šteje kot dvoklik ali troklik.
-const BS_MULTI_MS = 350;
-/** Dvoklik/troklik na ⌫: zbriše besedo ali poved pred kazalcem (izbrano besedilo kot en ⌫). */
-function deleteChunk(f, kind) {
+// ⌫ kot Gboard (j, 18. 11.): vsak dotik zbriše en znak; držanje ponavlja po en znak, po BS_WORD_MS držanja po besedah.
+const BS_WORD_MS = 1500;
+/** Ali bi deleteWord res zbrisal celo besedo (navadno besedilo s kazalcem brez izbire; ne polje s formulo, število, e-pošta). */
+function wordWise(f) {
+  if (!f) return false;
+  if (f.isContentEditable) return !!getSelection()?.isCollapsed;
+  const r = sel(f);
+  return !!r && r[0] === r[1] && !f.classList.contains("vnos-izrisan");
+}
+/** Držanje ⌫ dlje od BS_WORD_MS: zbriše besedo pred kazalcem (izbrano besedilo kot en ⌫); nova vrstica je svoj korak. */
+function deleteWord(f) {
   if (f.isContentEditable) {
     const s = getSelection();
-    if (s?.isCollapsed) s.modify?.("extend", "backward", kind);
+    if (s?.isCollapsed) s.modify?.("extend", "backward", "word");
     return document.execCommand("delete");
   }
   const r = sel(f);
-  // Polje s formulo (public/predogled-vnosa.js): »beseda« je ves zapis »(1)/(2« in bi pustila »)«; vsak tap je en ⌫.
-  if (!r || r[0] !== r[1] || f.classList.contains("vnos-izrisan")) return backspace(f);
-  const from = kind === "word" ? wordsBack(f.value, r[0], 1) : sentenceBack(f.value, r[0]);
+  // Polje s formulo (public/predogled-vnosa.js): »beseda« je ves zapis »(1)/(2« in bi pustila »)«; tam po en ⌫.
+  if (!wordWise(f)) return backspace(f);
+  const nl = f.value.lastIndexOf("\n", r[0] - 1);
+  const from = nl === r[0] - 1 ? nl : Math.max(wordsBack(f.value, r[0], 1), nl + 1);
   if (from === r[0]) return;
   f.setRangeText("", from, r[0], "end");
   f.setSelectionRange(from, from);
@@ -784,7 +795,6 @@ function finishGlide(pts, centers) {
     if (f.maxLength >= 0 && f.value.length - (r[1] - r[0]) + sp.length + w.length > f.maxLength) return;
     S.corr = null;
     S.lastSpace = 0;
-    S.bsAt = 0;
     insertText(f, sp + w, true);
     const e = sel(f);
     if (!e) return;
@@ -860,7 +870,6 @@ async function paste(f) {
 
 function act(a) {
   if (!a) return;
-  if (a.a !== "bs") S.bsAt = 0; // dvoklik na ⌫ šteje le, če vmes ni bilo druge tipke
   if (a.a === "layer") {
     S.layer = a.v;
     S.shift = 0;
@@ -907,11 +916,8 @@ function act(a) {
     if (S.shift === 1) S.shift = 0;
   } else if (a.a === "sp") space(f, !!lg);
   else if (a.a === "bs") {
-    // dvoklik na ⌫ izbriše besedo, troklik poved (j, 4. 11.); držanje (rep) ponavlja po en znak
-    const now = Date.now();
-    const n = !a.rep && now - (S.bsAt || 0) < BS_MULTI_MS ? (S.bsN || 1) + 1 : 1;
-    if (!a.rep) Object.assign(S, { bsN: n, bsAt: now });
-    if (n >= 2) deleteChunk(f, n === 2 ? "word" : "sentence");
+    // kot Gboard (j, 18. 11.): en dotik = en znak (prvi ⌫ po samopopravku ga razveljavi); dolgo držanje (word) po besedah
+    if (a.word) deleteWord(f);
     else if (!undoCorrection(f, corr)) backspace(f);
   }
   else if (a.a === "l") moveCaret(f, -1);
@@ -1042,7 +1048,6 @@ function showPop(btn, base, shift = S.shift) {
   return true;
 }
 function popInsert(v) {
-  S.bsAt = 0;
   const f = target();
   S.lastGlide = null;
   if (f) insertText(f, v);
@@ -1082,6 +1087,7 @@ function clearTimers() {
   clearTimeout(down.lp);
   clearTimeout(down.rep);
   clearInterval(down.iv);
+  clearTimeout(down.wd);
 }
 
 // Sled prsta med drsenjem (kot Gboard: barvna črta, ki bledi); platno znotraj plošče, brez dogodkov dotika.
@@ -1219,9 +1225,21 @@ function wireBoard() {
       }
       down.rep = setTimeout(() => {
         down.moved = true;
-        const rep = { ...a, rep: true }; // ponavljanje ni dvoklik
+        const rep = { ...a, rep: true };
         act(rep);
         down.iv = setInterval(() => act(rep), 75);
+        // ⌫ držan BS_WORD_MS (od pritiska): naprej po besedah, počasneje (kot Gboard)
+        if (a.a === "bs") {
+          const d = down;
+          d.wd = setTimeout(() => {
+            // samo kjer se res briše po besedah; drugje (polje s formulo v Inštruktorju, število, izbira) ostane po znakih na 75 ms
+            if (down !== d || !wordWise(target())) return;
+            clearInterval(d.iv);
+            const word = { ...rep, word: true };
+            act(word);
+            d.iv = setInterval(() => act(word), 200);
+          }, BS_WORD_MS - 450);
+        }
       }, 450);
     }
   });

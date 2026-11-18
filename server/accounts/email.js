@@ -295,3 +295,44 @@ export function purchaseEmail({ item, paidText, firstCharge = "", dateText, stat
     ].join("\n"),
   };
 }
+
+// Neaktiven račun (server/accounts/neaktivni.js): več kot 12 mesecev brez prijave. Samo imetniku računa; minor:
+// mladoletni imetnik ali račun samo »Zame« brez datuma rojstva dobi besedilo s »ti«. Servisno sporočilo, ne oglas.
+export const INACTIVE_FOOTER =
+  `To sporočilo dobite kot imetnik računa Evklid; ni oglasno. Namesto klika lahko odprete ${BRAND.domain} sami. Upravljavec: Jakob Skerbiš, zasebnost@${BRAND.domain}.`;
+const INACTIVE_FOOTER_TI =
+  `To sporočilo dobiš kot imetnik računa Evklid; ni oglasno. Namesto klika lahko odpreš ${BRAND.domain} sam(a). Upravljavec: Jakob Skerbiš, zasebnost@${BRAND.domain}.`;
+export function inactiveEmail({ appUrl, accountUrl, dateText, minor = false }) {
+  const t = minor
+    ? {
+        body: `V Evklid se že več kot eno leto nisi prijavil(a). Če računa do ${dateText} ne uporabiš (s prijavo ali uporabo aplikacije), ga bomo z vsemi podatki profilov izbrisali.`,
+        keep: "Račun obdržiš s prijavo.",
+        btn: "Prijavi se",
+        del: (a) => `Če računa ne potrebuješ več, ga lahko ${a} sam(a) v zavihku Račun (»Izbriši račun in vse podatke«).`,
+        delWord: "izbrišeš",
+        hello: "Živjo",
+        subject: "Evklid: ali še uporabljaš svoj račun?",
+        title: "Ali še uporabljaš svoj račun?",
+        foot: INACTIVE_FOOTER_TI,
+      }
+    : {
+        body: `V Evklid se že več kot eno leto niste prijavili. Če računa do ${dateText} ne uporabite (s prijavo ali uporabo aplikacije), ga bomo z vsemi podatki profilov izbrisali.`,
+        keep: "Račun obdržite s prijavo.",
+        btn: "Prijavite se",
+        del: (a) => `Če računa ne potrebujete več, ga lahko ${a} sami v zavihku Račun (»Izbriši račun in vse podatke«).`,
+        delWord: "izbrišete",
+        hello: "Pozdravljeni",
+        subject: "Evklid: ali še uporabljate svoj račun?",
+        title: "Ali še uporabljate svoj račun?",
+        foot: INACTIVE_FOOTER,
+      };
+  return {
+    subject: t.subject,
+    text: `${t.hello},\n\n${t.body}\n\n${t.keep} ${appUrl}\n${t.del(t.delWord)} ${accountUrl}\n\nEkipa Evklid\n\n${t.foot}`,
+    html: layout(
+      t.title,
+      `<p>${esc(t.body)}</p><p>${esc(t.keep)}</p>${button(appUrl, t.btn)}<p style="font-size:13px;color:#5f6779">${t.del(`<a href="${esc(accountUrl)}">${t.delWord}</a>`)}</p>`,
+      esc(t.foot),
+    ),
+  };
+}

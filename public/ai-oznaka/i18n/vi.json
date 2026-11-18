@@ -1,0 +1,13 @@
+{
+  "aio.mlad": "Evklid là trợ lý máy tính (trí tuệ nhân tạo), không phải con người. Đôi khi nó nhầm.",
+  "aio.star": "Bạn đang trò chuyện với trí tuệ nhân tạo (AI), không phải con người. AI có thể nhầm – hãy kiểm tra các kết quả quan trọng.",
+  "aio.znak": "Người trả lời là trí tuệ nhân tạo (AI), không phải con người",
+  "aio.uvodMlad": "Evklid là trợ lý máy tính",
+  "aio.opisMlad": "Evklid không phải con người mà là một chương trình máy tính (trí tuệ nhân tạo). Evklid giúp bạn làm bài, nhưng đôi khi nhầm. Nếu có gì chưa rõ hoặc có vẻ sai, hãy hỏi thầy cô hoặc bố mẹ.",
+  "aio.uvodStar": "Evklid là trí tuệ nhân tạo (AI)",
+  "aio.opisStar": "Bạn đang trò chuyện với trí tuệ nhân tạo (AI), không phải con người. Evklid giúp bạn hiểu bài, nhưng có thể nhầm, vì vậy hãy kiểm tra các kết quả quan trọng.",
+  "aio.razumem": "Tôi hiểu rồi",
+  "aio.resitev": "Lời giải này do trí tuệ nhân tạo (AI) soạn, không phải con người. Có thể có sai sót.",
+  "aio.ocena": "Điểm số và lời giải thích này do trí tuệ nhân tạo (AI) đưa ra, không phải giáo viên. Có thể có sai sót.",
+  "aio.prepis": "Bản chép này do trí tuệ nhân tạo (AI) tạo ra. Hãy kiểm tra xem có đúng không."
+}
