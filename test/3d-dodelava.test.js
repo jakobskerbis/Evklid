@@ -4,7 +4,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { cevSSteno, osVene, POLMER, STENA } from "../scripts/atlas/ledvica-dodelava.mjs";
 import { razdaljaStene, delezStene, PAS } from "../scripts/atlas/rez-stena.mjs";
-import { prekrizane } from "../scripts/atlas/pljuca-dodelava.mjs";
+import { prekrizane, razpri } from "../scripts/atlas/pljuca-dodelava.mjs";
+import { osZivca, cev, parametri, UV_KRPA } from "../scripts/atlas/oko-dodelava.mjs";
 import * as G from "../scripts/atlas/zile-mreza.mjs";
 
 const { v3 } = G;
@@ -72,4 +73,43 @@ test("pljuča: prekrižani listi (ploskvi si iz bližine gledata v obraz) so zaz
   };
   assert.equal(prekrizane(list(0, 0.001)).length, 0, "pravi list");
   assert.equal(prekrizane(list(0.001, 0)).length, 4, "strani v zamenjanem vrstnem redu");
+});
+
+test("pljuča: razpri razmakne prekrižana lista (strani spet v pravem vrstnem redu), pravega lista ne premakne", () => {
+  const list = (z1, z2) => {
+    const P = [0, 0, z1, 0.01, 0, z1, 0.01, 0.01, z1, 0, 0.01, z1, 0, 0, z2, 0.01, 0, z2, 0.01, 0.01, z2, 0, 0.01, z2];
+    const N = [];
+    for (let i = 0; i < 8; i++) N.push(0, 0, i < 4 ? -1 : 1);
+    return { P, F: [0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7], A: new Map([["NORMAL", { n: 3, d: N }]]) };
+  };
+  const m = list(0.001, 0);
+  const r = razpri(m);
+  assert.equal(r.krogi[0], 4);
+  assert.equal(prekrizane(m).length, 0, "po razpri ni prekrižanih ploskev");
+  assert.ok(m.P[2] < m.P[14], "spodnji list je spet pod zgornjim");
+  const p = list(0, 0.001);
+  const P0 = p.P.slice();
+  assert.equal(razpri(p).premaknjenih, 0);
+  assert.deepEqual(p.P, P0);
+});
+
+test("oko: vidni živec ima UV, ki se po cevi spreminja (krpa), ne ene same točke", () => {
+  const os = osZivca([0, 0, -0.012], [0, 0, 0], [0.002, 0.003, -0.04], 20);
+  const c = cev(os, 0.00175, 12);
+  const T = parametri(os, c.P);
+  const u = new Set(T.map((t) => t[0].toFixed(3))), v = new Set(T.map((t) => t[1].toFixed(3)));
+  assert.ok(u.size >= 12 && v.size >= 20, "UV se spreminja po obodu in vzdolž osi");
+  for (const [a, b] of T) assert.ok(Math.abs(a) <= 0.5 + 1e-9 && Math.abs(b) <= 0.5 + 1e-9);
+  assert.ok(UV_KRPA > 0 && UV_KRPA < 0.002, "krpa ostane v enakomernem delu teksture");
+});
+
+test("zile-mreza: brezSirot odstrani dostopnike brez starša", async () => {
+  const { Document } = await import("@gltf-transform/core");
+  const doc = new Document();
+  const b = doc.createBuffer();
+  const a1 = doc.createAccessor().setType("SCALAR").setArray(new Float32Array([1])).setBuffer(b);
+  doc.createAccessor().setType("SCALAR").setArray(new Float32Array([2])).setBuffer(b);
+  doc.createMesh().addPrimitive(doc.createPrimitive().setAttribute("POSITION", a1));
+  assert.equal(G.brezSirot(doc), 1);
+  assert.equal(doc.getRoot().listAccessors().length, 1);
 });

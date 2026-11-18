@@ -383,6 +383,9 @@ export function zgradi(THREE, ctx = {}) {
     nadzor,
     korak(t) { if (gib) tok(t); },
     pogled: [0.18, 0.12, 1],
+    // telefon (ozek oder): orodna vrstica leži čez zgornji rob odra, zato manjši kader in model nižje (posnetek 360 px
+    // 18. 11.); na računalniku brez okvirja (kader iz vidnega obsega)
+    get okvir() { return globalThis.innerWidth < 640 ? { sredisce: [0, 0.08, 0], polmer: 1.12 } : undefined; },
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
       for (const x of odpad) x.dispose();

@@ -506,7 +506,8 @@ export function zgradi(THREE, ctx = {}) {
     nadzor,
     korak,
     pogled: [0.62, 0.16, 1],
-    okvir: { sredisce: [0, -0.05, 0], polmer: 1 },
+    // telefon (ozek oder): orodna vrstica leži čez zgornji rob odra, zato manjši kader in model nižje (posnetek 360 px 18. 11.)
+    okvir: () => (globalThis.innerWidth < 640 ? { sredisce: [0, 0.06, 0], polmer: 1.14 } : { sredisce: [0, -0.05, 0], polmer: 1 }),
     dispose() {
       for (const m of mreze) { m.geometry.dispose(); if (m.isInstancedMesh) m.dispose(); }
       for (const x of odpad) x.dispose();

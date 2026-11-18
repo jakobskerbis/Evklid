@@ -317,7 +317,9 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       m.clearcoatRoughness = t.lakHrap ?? 0.6;
     }
   }
-  if (tex?.normalMap && t.tekstura !== false) {
+  // normala: 0 = brez normalne mape. normalScale 0 ne zadošča: three skalira le x in y, pokvarjena pika (z < 0, pljuča
+  // pod prekrižanimi robovi režnjev) obrne normalo navznoter, ploskev je siva z ostrim robom (sonda 18. 11.).
+  if (tex?.normalMap && t.tekstura !== false && (t.normala ?? 1) > 0) {
     m.normalMap = tex.normalMap;
     m.normalScale.copy(tex.normalScale).multiplyScalar(t.normala ?? 1);
     // Lak z normalno mapo samo na računalniku: telefon prihrani vzorčenje in izračun druge normale (lak je tam gladek).
@@ -1279,8 +1281,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
       const tk = podatki.tkiva?.[tkivo] || {};
       const narava = mat(tkivo, id);
       const reze = !!ravnine && !tk.brezReza;
-      const umat = new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0, normalMap: teksture?.normalMap || null, clippingPlanes: rezi && reze ? ravnine.seznam : [], depthWrite: narava.depthWrite });
-      if (teksture?.normalScale) umat.normalScale.copy(teksture.normalScale).multiplyScalar(0.6);
+      const umat = new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0, normalMap: (tk.normala ?? 1) > 0 ? teksture?.normalMap || null : null, clippingPlanes: rezi && reze ? ravnine.seznam : [], depthWrite: narava.depthWrite });
+      if (teksture?.normalScale) umat.normalScale.copy(teksture.normalScale).multiplyScalar(0.6 * (tk.normala ?? 1)); // normala 0: brez mape (glej mat)
       umat.userData.rezan = reze;
       // Stene s prostorsko teksturo reza (srce): pokrov na globini ravnine kot v naravnih barvah, sicer bi notranji deli
       // (prevodni sistem, dno papilarnih mišic, venčne veje) v pretinu silili skozi rez kot raznobarvni drobci (ocena n9).

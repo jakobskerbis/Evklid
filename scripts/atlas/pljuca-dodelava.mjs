@@ -24,6 +24,7 @@ const { v3 } = G;
 export const SENCA = 0.85; // senca okolice (COLOR_0.r, 1 = brez sence) na prekrižanih ploskvah
 export const SENCA_OBROC = 0.6; // najmanj toliko v sosednjih ogliščih (mehak prehod)
 export const DOSEG = 0.006;
+export const OBROCEV = 3; // mehak prehod normal okoli razprtih oglišč
 export const RAZPRI = { krogov: 25, cez: 0.0003, gladi: 0.5, najvec: 0.01 }; // prekrižani ploskvi sta največ toliko narazen (skrček 1,8 mm na vsaki strani + rezerva)
 
 // Prekrižane ploskve: žarek iz težišča ploskve navzven najprej (bliže kot DOSEG) zadene ploskev iste mreže, ki gleda
@@ -94,11 +95,29 @@ export function razpri(m, { krogov, cez, gladi, najvec } = RAZPRI) {
   }
   let mx = 0;
   for (const i of premaknjena) mx = Math.max(mx, Math.hypot(m.P[i * 3] - P0[i * 3], m.P[i * 3 + 1] - P0[i * 3 + 1], m.P[i * 3 + 2] - P0[i * 3 + 2]));
-  // normale premaknjenih oglišč iz nove geometrije
+  // normale: premaknjena oglišča iz nove geometrije, v OBROCEV obročih okoli njih mehak prehod v shranjene (prenesene z
+  // gostejše mreže), brez ostrega roba med obojimi. (Siva lisa z ostrim robom je bila pečena normalna mapa z z < 0,
+  // ki jo organ.js pri normala 0 zdaj izpusti.)
   const nor = m.A.get("NORMAL");
   if (nor && premaknjena.size) {
     const N = G.normaleZvarjenih(m);
-    for (const i of premaknjena) for (let c = 0; c < 3; c++) nor.d[i * nor.n + c] = N[m.zvar[i]][c];
+    const raz = new Map();
+    for (const i of premaknjena) raz.set(m.zvar[i], 0);
+    const sos = Array.from({ length: m.W.length }, () => new Set());
+    for (let f = 0; f < m.F.length; f += 3) for (let k = 0; k < 3; k++) for (let q = 0; q < 3; q++) if (k !== q) sos[m.zvar[m.F[f + k]]].add(m.zvar[m.F[f + q]]);
+    let rob = [...raz.keys()];
+    for (let d = 1; d <= OBROCEV; d++) {
+      const nov = [];
+      for (const w of rob) for (const x of sos[w]) if (!raz.has(x)) { raz.set(x, d); nov.push(x); }
+      rob = nov;
+    }
+    for (let i = 0; i < m.zvar.length; i++) {
+      const d = raz.get(m.zvar[i]);
+      if (d === undefined) continue;
+      const u = 1 - d / (OBROCEV + 1);
+      const n = v3.norm(v3.lerp([nor.d[i * nor.n], nor.d[i * nor.n + 1], nor.d[i * nor.n + 2]], N[m.zvar[i]], u));
+      for (let c = 0; c < 3; c++) nor.d[i * nor.n + c] = n[c];
+    }
   }
   if (premaknjena.size) m.spremenjeno = true;
   return { krogi, premaknjenih: premaknjena.size, najvec: mx };

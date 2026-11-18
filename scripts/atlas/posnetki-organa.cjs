@@ -104,13 +104,16 @@ const NAPRAVE = {
           kot = cilj;
           await slikaj(`${pred}kot${String(k * 45).padStart(3, "0")}`);
         }
-        await ponastavi();
+        // »Ponastavi« zgradi model na novo in izklopi prerez: v prerezu nazaj na začetni kot s tipkami
+        const nazaj = async () => (pred ? tipke("ArrowLeft", 36 - kot) : ponastavi());
+        await nazaj();
+        kot = 0;
         await tipke("ArrowUp", 9);
         await slikaj(`${pred}odzgoraj`);
-        await ponastavi();
+        if (pred) await tipke("ArrowDown", 9); else await ponastavi();
         await tipke("ArrowDown", 9);
         await slikaj(`${pred}odspodaj`);
-        await ponastavi();
+        if (pred) await tipke("ArrowUp", 9); else await ponastavi();
       };
       if (process.env.KOTI && !samoPrerez) await koti();
       if (!samoPrerez) {
