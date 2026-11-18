@@ -19,6 +19,7 @@ import { parentFromMeta, purchaseMismatch, logSafe } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
 import { migrateTerms, insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText, subItem, firstChargeText, consentText } from "./potrdilo.js";
+import { appMark } from "../mobile/trgovina.js";
 
 // Enako kot pay.adult v public/i18n/sl.js (kar plačnik vidi); test/pogoji-potrditev.test.js primerja vsa besedila.
 export const ADULT_TEXT = "Sem polnoletna oseba in plačujem za svoj profil ali kot starš oziroma skrbnik.";
@@ -405,7 +406,7 @@ export function mountBilling(app, ctx) {
         customer,
         client_reference_id: String(p.id),
         line_items: [passLineItem(c.plan)],
-        success_url: `${base}/?billing=pass&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${base}/?billing=pass${appMark(req)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: "sl",
         metadata: meta,
@@ -492,7 +493,7 @@ export function mountBilling(app, ctx) {
             quantity: 1,
           },
         ],
-        success_url: `${base}/?billing=credit&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${base}/?billing=credit${appMark(req)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: "sl",
         metadata: meta,

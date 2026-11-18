@@ -8,7 +8,7 @@ zaslon (`mobile/src/app/web.tsx`), zato sta videz in delovanje vedno enaka splet
 Evklidova tipkovnica, laboratorij, NPZ, vse nove stvari s spleta. Seja je ena: WebView najprej odpre
 `/api/mobile/web` z glavami aplikacije, strežnik isto sejo zapiše v piškotek WebView-a
 (`server/mobile/web-session.js`). Odjava na spletu odjavi tudi aplikacijo. Splet aplikacijo prepozna po
-`EvklidApp/<različica>` v User-Agent (`public/install.js` → `isStandalone()`: brez ponudbe »Namesti aplikacijo«).
+`EvklidApp/<različica> <kanal>` v User-Agent (`public/install.js` → `isStandalone()`: brez ponudbe »Namesti aplikacijo«).
 Vrstici telefona (ura, gumbi) dobita barvo roba strani. Gumb nazaj na Androidu gre nazaj po strani, povezave na
 druge strani odpre brskalnik. Povezava iz e-pošte `https://evklid.app/vabilo?koda=…` (vabilo v pilot, `server/vabila.js`) se vedno odpre v
 brskalniku (aplikacija nima univerzalnih povezav); registracija tam je ista kot v aplikaciji, zato posebnega zaslona v aplikaciji ni.
@@ -57,6 +57,19 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
 - **Naročnina**: v trgovinah nakup v aplikaciji (Apple In-App Purchase, Google Play Billing), v APK za
   neposredni prenos plačilo na spletu (Stripe): naravni zaslon Naročnina odpre spletni zavihek Račun v aplikaciji
   (`/api/mobile/web?to=/?pogled=racun`), kjer so potrditve pred plačilom; aplikacija sama nakupa ne pošilja.
+  Kanal na koncu User-Agent (`store` ali `direct`) in glava `X-App-Channel`. V različici iz trgovine
+  (`public/pay-ui.js` isStoreApp) splet ne pokaže: naročnine, nadgradnje, gumba »Upravljaj naročnino« (portal),
+  darila, vpisa aktivacijske ali darilne kode, kartice Podari, dokupa (le preostali pogovori), paketa pred testom,
+  povezave za plačilo staršu, obrazca na `placaj.html` (besedilo `payp.inApp`), ponudbe naročnine ob novi stopnji
+  (`public/level-up.js`), gumba za dokup ob obvestilu o porabi (`server/app.js` `allowance.buy`) ter povezav na cene
+  in `/prenesi` na javnih straneh (`theme.js`, `v-aplikaciji.js`); povezave `target=_blank` na strani Evklida ostanejo
+  v aplikaciji (`web.tsx` onOpenWindow). Strežnik nakup zavrne s 403 (`server/mobile/trgovina.js`: `/api/billing/`
+  checkout, upgrade, gift, credit, pass, podari, pay-link, portal in `/api/pay/<žeton>/checkout`).
+  Plačilo v APK se odpre v zavihku brskalnika; stran za uspeh ima `&app=1` (nakup iz aplikacije) in brez prijave
+  pove »Vrni se v aplikacijo Evklid«. Ob vrnitvi v aplikacijo (`evklid:spet` iz `web.tsx`) splet pokliče
+  `/api/billing/sync` (strežnik največ en klic Stripa na 5 s na starša) in zavihek Račun izriše znova, ko se je
+  kupljeno spremenilo (zapis nakupa v sessionStorage: naročnina do plačila ali 2 uri, drugo ena osvežitev), da
+  starš ne plača dvakrat.
 - Svetla in temna tema, 33 jezikov vmesnika (isti prevodi kot splet), iPad, dostopnost (VoiceOver,
   TalkBack).
 

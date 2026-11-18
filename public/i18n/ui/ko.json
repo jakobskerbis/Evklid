@@ -2404,6 +2404,8 @@
   "acct.freeToday": "무료 요금제 · 오늘 {used}/{max}",
   "acct.secondChild": "둘째 자녀는 자녀 2명용 요금제를 선택하세요.",
   "acct.subThanks": "감사합니다! 구독이 활성화되었습니다.",
+  "acct.paidBackToApp": "결제가 완료되었습니다. Evklid 앱으로 돌아가세요.",
+  "acct.paidLogin": "결제가 완료되었습니다. 로그인하세요.",
   "acct.aiOut": "이번 달 튜터 소진",
   "acct.aiOutTitle": "튜터는 매월 1일에 다시 이용할 수 있습니다. 연습은 계속됩니다.",
   "acct.aiSoft": "월말까지 설명이 덜 자세해집니다",
@@ -2480,6 +2482,7 @@
     "other": "결제일부터 {n}일 동안 Evklid 전체(튜터, 연습 문제, 모의 테스트)를 이용할 수 있습니다."
   },
   "payp.consentMissing": "결제하기 전에 모든 확인 항목에 체크해 주십시오.",
+  "payp.inApp": "앱에서는 결제할 수 없습니다. 이 링크를 웹 브라우저에서 여세요.",
   "pass.until": "{date}까지",
   "pass.parentInfo": "‘{name}’ 시험({date})이 다가와요. 부모님이 시험 대비 패키지를 선택하실 수 있어요.",
   "pass.parentInfoLink": "부모님을 위한 안내",

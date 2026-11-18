@@ -13,7 +13,7 @@
 //   prvem izrisu (posnetek zadnjega zaslona), torej prej kot konec nalaganja; brez sporočila (starejši strežnik,
 //   stran z napako) ga kot prej umakne konec nalaganja.
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, BackHandler, Linking, Platform, Text, View } from "react-native";
+import { ActivityIndicator, AppState, BackHandler, Linking, Platform, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
 import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -22,7 +22,7 @@ import * as WebBrowser from "expo-web-browser";
 import Constants from "expo-constants";
 import * as Sharing from "expo-sharing";
 import { File, Paths } from "expo-file-system";
-import { API_URL, appHeaders, BUSY_WAIT } from "@/lib/api";
+import { API_URL, appHeaders, BUSY_WAIT, CHANNEL } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { font, useTheme } from "@/lib/theme";
@@ -66,6 +66,9 @@ const BAR_JS = `(function(){
   new MutationObserver(send).observe(document.documentElement,{attributes:true});
   addEventListener('scroll',send,{passive:true,capture:true});addEventListener('resize',send);setInterval(send,1000);send();
 })();true;`;
+
+// Vrnitev v aplikacijo (npr. po plačilu v zavihku brskalnika): stran osveži stanje računa (public/pay-ui.js).
+const SPET_JS = "window.dispatchEvent(new Event('evklid:spet'));true;";
 
 // Izbrani profil iz aplikacije, če ga splet na tej napravi še nima (public/app.js bere »studentId«).
 const studentJs = (id: number | null) =>
@@ -128,6 +131,23 @@ export default function Web() {
     });
     return () => sub.remove();
   }, [failed]);
+
+  // Plačilo s Stripom se odpre v zavihku brskalnika (Android: Custom Tab, openBrowserAsync se konča takoj), stran za
+  // uspeh se naloži tam. Ob vrnitvi iz ozadja stran izve, da naj vpraša strežnik za novo stanje (public/pay-ui.js),
+  // sicer zavihek Račun kaže staro stanje in starš lahko plača dvakrat.
+  const spet = useCallback(() => ref.current?.injectJavaScript(SPET_JS), []);
+  useEffect(() => {
+    let prev = AppState.currentState;
+    const sub = AppState.addEventListener("change", (st) => {
+      if (st === "active" && prev !== "active") spet();
+      prev = st;
+    });
+    return () => sub.remove();
+  }, [spet]);
+  // iOS: brskalnik v aplikaciji ne pošlje aplikacije v ozadje, openBrowserAsync pa se konča, ko ga zapre.
+  const openTab = useCallback((u: string) => {
+    WebBrowser.openBrowserAsync(u).then(() => Platform.OS === "ios" && spet()).catch(() => {});
+  }, [spet]);
 
   // Med objavo nove različice je strežnik ~1 minuto ustavljen (gostitelj vrne 502/503/504 ali prekine
   // povezavo). Takrat aplikacija ne pokaže »Ni povezave«, ampak ob vrtavki tiho poskusi znova (kot splet,
@@ -197,14 +217,19 @@ export default function Web() {
             ref={ref}
             source={source}
             style={{ flex: 1, backgroundColor: th.bg }}
-            applicationNameForUserAgent={`EvklidApp/${Constants.expoConfig?.version ?? "1"}`}
+            // Kanal na koncu (»store« ali »direct«): splet v različici iz trgovine ne pokaže nakupa s kartico
+            // (public/pay-ui.js isStoreApp, server/mobile/trgovina.js).
+            applicationNameForUserAgent={`EvklidApp/${Constants.expoConfig?.version ?? "1"} ${CHANNEL}`}
             originWhitelist={["*"]}
             // Povezave target=_blank: z setSupportMultipleWindows={false} jih Android pošlje v onShouldStartLoadWithRequest;
             // tu za vsak primer (iOS, starejši WebView) enako.
             onOpenWindow={(e: { nativeEvent: { targetUrl: string } }) => {
               const u = e.nativeEvent.targetUrl;
               if (zaTisk(u)) Linking.openURL(u).catch(() => {});
-              else if (/^https?:/.test(u)) WebBrowser.openBrowserAsync(u).catch(() => {});
+              // Različica iz trgovine: strani Evklida ostanejo v aplikaciji (v brskalniku bi bil nakup s kartico mimo trgovine).
+              else if (CHANNEL === "store" && (u === ORIGIN || u.startsWith(ORIGIN + "/")))
+                ref.current?.injectJavaScript(`location.href=${JSON.stringify(u)};true;`);
+              else if (/^https?:/.test(u)) openTab(u);
             }}
             injectedJavaScriptBeforeContentLoaded={NATIVE_FLAG_JS + studentJs(student?.id ?? null)}
             injectedJavaScript={BAR_JS}
@@ -232,7 +257,7 @@ export default function Web() {
               if ((req.url.startsWith(ORIGIN + "/") && !zaTisk(req.url)) || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
               // Strani za tisk in PDF učbenika odpre privzeti brskalnik (zaTisk), druge strani vgrajeni zavihek.
               if (zaTisk(req.url)) Linking.openURL(req.url).catch(() => {});
-              else if (/^https?:/.test(req.url)) WebBrowser.openBrowserAsync(req.url).catch(() => {});
+              else if (/^https?:/.test(req.url)) openTab(req.url);
               // mailto: (zasebnost, povabilo staršem), tel: … odpre sistem (originWhitelist "*" jih ne odpre sam).
               else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});
               return false;

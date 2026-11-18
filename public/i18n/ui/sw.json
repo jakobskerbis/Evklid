@@ -2415,6 +2415,8 @@
   "acct.freeToday": "mpango wa bure · leo {used}/{max}",
   "acct.secondChild": "Kwa mtoto wa pili, chagua mpango wa watoto 2.",
   "acct.subThanks": "Asante! Usajili unatumika.",
+  "acct.paidBackToApp": "Malipo yamefaulu. Rudi kwenye programu ya Evklid.",
+  "acct.paidLogin": "Malipo yamefaulu. Ingia.",
   "acct.aiOut": "mwalimu amekwisha mwezi huu",
   "acct.aiOutTitle": "Mwalimu atapatikana tena tarehe 1 ya mwezi. Mazoezi yanaendelea kufanya kazi.",
   "acct.aiSoft": "maelezo hayana kina sana hadi mwisho wa mwezi",
@@ -2494,6 +2496,7 @@
     "other": "Inafungua Evklid yote (mwalimu, mazoezi, majaribio) kwa siku {n} tangu malipo."
   },
   "payp.consentMissing": "Tafadhali weka alama kwenye uthibitisho wote kabla ya kulipa.",
+  "payp.inApp": "Malipo hayawezekani ndani ya programu. Fungua kiungo hiki kwenye kivinjari.",
   "pass.until": "hadi {date}",
   "pass.parentInfo": "Mtihani “{name}” ({date}) unakaribia. Wazazi wako wanaweza kuchagua kifurushi cha kabla ya mtihani.",
   "pass.parentInfoLink": "Taarifa kwa wazazi",

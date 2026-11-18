@@ -54,7 +54,8 @@ export async function loadSession() {
 
 export const hasSession = () => !!session;
 // Za spletno stran v aplikaciji (src/app/web.tsx): ista seja in naprava kot zahteve aplikacije.
-export const appHeaders = (): Record<string, string> => ({ "x-app-client": APP_HEADER, "x-app-device": device || "", ...(session ? { authorization: `Bearer ${session}` } : {}) });
+// X-App-Channel: strežnik različici iz trgovine ne dovoli nakupa s kartico (server/mobile/trgovina.js).
+export const appHeaders = (): Record<string, string> => ({ "x-app-client": APP_HEADER, "x-app-channel": CHANNEL, "x-app-device": device || "", ...(session ? { authorization: `Bearer ${session}` } : {}) });
 export const onSessionChange = (fn: () => void) => {
   listeners.add(fn);
   return () => {
@@ -100,6 +101,7 @@ export async function request(path: string, opts: Opts = {}) {
   const headers: Record<string, string> = {
     accept: opts.stream ? "text/event-stream" : "application/json",
     "x-app-client": APP_HEADER,
+    "x-app-channel": CHANNEL,
     "x-app-device": device || "",
     // Aplikacija zna vprašanja »Preveri se« z vpisom števila in razvrščanjem (server/textbook.js legacyClient).
     "x-app-kviz": "2",
