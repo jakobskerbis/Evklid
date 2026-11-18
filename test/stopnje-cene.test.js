@@ -272,7 +272,7 @@ test("tedensko poročilo pokaže odstotek porabe; predlog za skrbnika po stopnja
   const store = openDb(":memory:");
   const kid = { id: 1, name: "Ana" };
   const r = buildWeeklyReport(store.db, { name: "Mama" }, [kid], { appUrl: "http://x/", unsubscribeUrl: "http://x/u", aiOf: () => ({ guaranteed: true, percent: 45, stage: "ok" }) });
-  assert.match(r.html, /Podrobne razlage ta mesec: porabljenih 45 %/);
+  assert.match(r.html, /Podrobne razlage v tem obdobju: porabljenih 45 %/);
   assert.match(r.text, /porabljenih 45 %/);
   assert.doesNotMatch(r.html + r.text, /\$|€\s*\d|\d\s*€/, "brez zneskov");
   const none = buildWeeklyReport(store.db, { name: "Mama" }, [kid], { appUrl: "http://x/", unsubscribeUrl: "http://x/u" });

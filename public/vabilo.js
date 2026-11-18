@@ -1,7 +1,7 @@
 // Stran /vabilo (j 2026-11-15, 4. korak načrta pilota): koda iz povezave (?koda=…) ali vpisana, preverjanje
 // POST /api/vabilo (server/vabila.js). Veljavna koda: dobrodošlica pilota in en gumb »Ustvari račun« (registracija
-// z virom pilot, public/vir.js → students.vir). Koda ostane samo v tem brskalniku (localStorage evklid.vabilo), za
-// samodejno članstvo, ko ga doda drugi profil (GitHub issue #751); na strežniku se ne shrani nič.
+// z virom pilot, public/vir.js → students.vir). Koda ostane v tem brskalniku (localStorage evklid.vabilo), registracija
+// (public/account.js) jo pošlje kot invite: po potrditvi e-naslova je račun samodejno v pilotu (#751, server/vabila.js).
 import { t, locale } from "./i18n.js";
 
 export const KEY = "evklid.vabilo";
@@ -46,11 +46,14 @@ function showOk(day) {
   $("#vab-create").focus({ preventScroll: true });
 }
 
+// Naslov k besedilu; porabljena koda (#751) vodi na prijavo, neznana na navadno registracijo.
+const BAD_TITLE = { "vab.badText": "vab.badTitle", "vab.usedText": "vab.usedTitle" };
 function showBad(key) {
+  const link = key === "vab.badText" ? ["/#registracija", "vab.register"] : key === "vab.usedText" ? ["/#prijava", "vab.login"] : null;
   out.innerHTML = `<div class="card vab-bad" role="alert">
-    <h2>${esc(t(key === "vab.badText" ? "vab.badTitle" : "vab.errTitle"))}</h2>
+    <h2>${esc(t(BAD_TITLE[key] || "vab.errTitle"))}</h2>
     <p>${esc(t(key))}</p>
-    ${key === "vab.badText" ? `<p><a href="/#registracija">${esc(t("vab.register"))}</a></p>` : ""}
+    ${link ? `<p><a href="${link[0]}">${esc(t(link[1]))}</a></p>` : ""}
   </div>`;
 }
 
@@ -68,7 +71,7 @@ async function check(code) {
     // tooMany: preveč napačnih kod s tega naslova (15 min); busy: skupna meja napačnih kod, brez obljube časa.
     if (res.status === 429) return showBad(r.busy ? "vab.busy" : "vab.tooMany");
     if (!res.ok) return showBad("vab.error");
-    if (!r.ok) return showBad("vab.badText");
+    if (!r.ok) return showBad(r.used ? "vab.usedText" : "vab.badText");
     remember(code.toLowerCase());
     showOk(r.do);
   } catch {

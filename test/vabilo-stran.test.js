@@ -54,11 +54,11 @@ test("vabilo: telefon 360×740 – veljavna koda, gumb Ustvari račun, napačna 
     await p.waitForSelector(".vab-ok");
     const text = await p.locator(".vab-ok").innerText();
     assert.match(text, /Lepo, da si z nami!/);
-    assert.match(text, /Ko te dodamo v pilot/, "ugodnost šele po ročnem vpisu v pilot");
+    assert.match(text, /Ko potrdiš e-naslov/, "ugodnost šele po potrditvi e-naslova (#751)");
     assert.doesNotMatch(text, /mejo plačanega paketa/);
     assert.match(text, /15\. 12\. 2026/, "datum konca pilota s strežnika");
     assert.match(text, /zavihku Jaz gumb »Povej mnenje«/);
-    assert.match(text, /v pilot dodamo ročno/);
+    assert.match(text, /potrdiš e-naslov, si samodejno v pilotu/);
     assert.doesNotMatch(text, /€|garant|zagotovo/i);
     assert.equal(await p.locator("#vab-form").isHidden(), true);
     assert.equal(await p.locator("main a.btn-primary, main button.primary:visible").count(), 1, "en glavni gumb");
