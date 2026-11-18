@@ -179,10 +179,10 @@ test("Preizkus 3, krog 2 (18. 11.): odgovori načina B z »b3« in »b4« se ne 
   assert.notEqual(cacheKey(tine, b, "chat"), prej(tine, b, "b4"), "način B: »b4« (#835) se ne vrne");
   assert.notEqual(cacheKey(tine, b, "chat"), prej(tine, b, "b5"), "način B: »b5« (#836) se po meritvi ne vrne več");
   assert.equal(cacheKey(tine, b, "chat"), prej(tine, b, "b6"));
-  assert.equal(cacheKey(tine, a, "chat"), prej(tine, a), "način A: ključ kot doslej");
+  assert.equal(cacheKey(tine, a, "chat"), prej(tine, a, "a1"), "način A, 2. razred: »a1« (pregled #841)");
   const dva = "Samo končna rezultata, brez postopka: a) pH HCl s koncentracijo 0,0010 mol/L b) koncentracija 4,0 g NaOH v 250 mL";
   assert.notEqual(cacheKey(dva, a, "chat"), prej(dva, a, "r2"), "samo rezultat: »r2« se ne vrne");
-  assert.equal(cacheKey(dva, a, "chat"), prej(dva, a, "r3"), "samo rezultat v načinu A: »r3«");
+  assert.equal(cacheKey(dva, a, "chat"), prej(dva, a, "a1", "r3"), "samo rezultat v načinu A: »r3« (2. razred tudi »a1«)");
 });
 
 test("#835 (18. 11.): odgovori načina B pred pravili brez posploševanja (»b3«) se ne vrnejo, način A ostane", async () => {
@@ -199,4 +199,26 @@ test("#835 (18. 11.): odgovori načina B pred pravili brez posploševanja (»b3�
   assert.notEqual(cacheKey(q, b, "chat"), prej(q, b, "b5"), "način B: »b5« (#836) se ne vrne");
   assert.equal(cacheKey(q, b, "chat"), prej(q, b, "b6"), "način B: nov ključ");
   assert.equal(cacheKey(q, a, "chat"), prej(q, a), "način A obdrži ključ");
+});
+
+test("pregled #841 (18. 11.): način A za OŠ 1.–4. dobi »a1«, drugi razredi in način B ostanejo", async () => {
+  const { cacheKey } = await import("../server/app.js");
+  const crypto = await import("node:crypto");
+  const norm = (q) => q.toLowerCase().replace(/\s+/g, " ").replace(/[\s.!?]+$/, "").trim();
+  const prej = (q, st, ...extra) => crypto.createHash("sha256").update([norm(q), st.subject, st.track, st.educational_track, st.study_program, st.study_course, st.curriculum_level, st.solving_mode, st.personality_setting, 0, ...extra].join("|")).digest("hex");
+  const s = { subject: "NAR", track: "REGULAR", educational_track: "OSNOVNA_SOLA", study_program: "", study_course: "", personality_setting: "nevtralna", language: "sl" };
+  const q = "Zakaj je fižol v temni omari bled?";
+  for (const r of ["1. razred", "3. razred", "4. razred"]) {
+    const a = { ...s, curriculum_level: r, solving_mode: "A" };
+    assert.notEqual(cacheKey(q, a, "chat"), prej(q, a), r);
+    assert.equal(cacheKey(q, a, "chat"), prej(q, a, "a1"), r);
+    const b = { ...s, curriculum_level: r, solving_mode: "B" };
+    assert.equal(cacheKey(q, b, "chat"), prej(q, b, "b6"), `${r}, način B brez »a1«`);
+  }
+  for (const r of ["5. razred", "8. razred"]) {
+    const a = { ...s, curriculum_level: r, solving_mode: "A" };
+    assert.equal(cacheKey(q, a, "chat"), prej(q, a), `${r}: ključ kot doslej`);
+  }
+  const ss = { ...s, educational_track: "SREDNJA_SOLA", curriculum_level: "1. letnik", solving_mode: "A" };
+  assert.equal(cacheKey(q, ss, "chat"), prej(q, ss));
 });

@@ -272,17 +272,23 @@ test("result only (j 2026-11-17): one task, asked only for the result → result
   assert.ok(stat.length > 56791, `stalni del ${stat.length} znakov`);
 });
 
-test("Preizkus 3, meritev po #836 (2026-11-18): no »Prav« opener on a wrong step, short »zakaj« for grades 1–4, no »Zapomni si« for result only", () => {
+test("Preizkus 3, meritev po #836 (2026-11-18): no praise opener on a wrong step, short »zakaj« for grades 1–4, no »Zapomni si« for result only", () => {
   const [stat] = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8").split(SPLIT_MARKER);
   const line = (start) => stat.split("\n").find((l) => l.startsWith(start)) || "";
-  // 6 in 112 (Vodenje): »Pravilno, …« ob napačnem koraku tudi pred #836; v Načinu A le ta oklepaj, drugo ostane.
-  assert.ok(line("- Delno pravilen odgovor").includes("potrdi, kar je prav (ne začni s »Prav« ali »Pravilno«), in z enim vprašanjem pokaži, da nekaj manjka"));
-  // 145: »zakaj« pri najmlajših kratko (pravilo Pojmovno vprašanje z okvirjem velja za način A).
-  assert.ok(line("OŠ 1.–4. razred (1.–4. leto šolanja):").includes("Za vsak del (tudi pri »zakaj«) en do dva kratka stavka"));
+  // 6 in 112 (Vodenje): »Pravilno, …« ob napačnem koraku tudi pred #836; splošno pravilo v Načinu A, točka 2 (pregled #841).
+  const p2 = line("2. Eno vprašanje naenkrat;");
+  assert.ok(p2.endsWith("Ko je v koraku napaka, ne začni s pohvalo ali potrditvijo (»Prav«, »Pravilno«, »Dobro«, »Odlično«, »Res je«); najprej pokaži napako, nato povej, kaj je prav."), "Način A, točka 2");
+  assert.ok(line("- Delno pravilen odgovor").includes("potrdi, kar je prav, in z enim vprašanjem pokaži, da nekaj manjka"), "oklepaj iz prve različice ni več potreben");
+  assert.doesNotMatch(line("- Delno pravilen odgovor"), /ne začni s/);
+  // Pohvala pravilnega koraka v OŠ 6.–9. ostane (ne nasprotuje: velja le za pravilen korak).
+  assert.match(line("- **OŠ (6.–9. razred):**"), /ko učenec naredi korak prav, v nekaj besedah povej, kaj je naredil dobro/);
+  // 145: »zakaj« pri najmlajših kratko v obeh načinih.
+  assert.ok(line("OŠ 1.–4. razred (1.–4. leto šolanja):").includes("Za vsak del (tudi pri »zakaj«; vprašanje »zakaj« ni prošnja za več) en do dva kratka stavka"));
+  assert.ok(line("- Pojmovno vprašanje").includes("preprosto in s primerom (pri OŠ 1.–4. dva do trije kratki stavki),"));
   // 45: samo rezultat brez okvirja »Zapomni si«.
   assert.ok(line("- **Samo rezultat pri eni nalogi**").includes("Brez Podatkov, Iščemo, Preverbe, »Zapomni si« in razlage"));
-  // +64 znakov (61 734 → 61 798; ~20 žetonov), v okviru meje iz #836 (61 804).
-  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510, `stalni del ${stat.length} znakov`);
+  // +266 znakov (61 734 → 62 000; ~75 žetonov) po pregledu #841; s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
+  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226, `stalni del ${stat.length} znakov`);
 });
 
 test("Preizkus 3, krog 2 (2026-11-18): one definition of a drill list, parts with another method are one task, grades 1–4 short", () => {
@@ -314,7 +320,10 @@ test("Preizkus 3, krog 2 (2026-11-18): one definition of a drill list, parts wit
   // 5. razred in način A ostaneta.
   assert.match(line("OŠ 5. razred (5. leto šolanja):"), /namesto točk 1–6 velja Podatki → Iščemo/);
   const a = stat.slice(stat.indexOf("## Način A – vodenje"), stat.indexOf("## Način B – celotna rešitev"));
-  assert.doesNotMatch(a, /podvprašanj|OŠ 1\.–4\./);
+  assert.doesNotMatch(a, /podvprašanj/);
+  // V Načinu A je OŠ 1.–4. le v Pojmovnem vprašanju (pregled #841, oznaka predpomnilnika »a1«).
+  assert.deepEqual(a.match(/OŠ 1\.–4\./g), ["OŠ 1.–4."]);
+  assert.match(a, /preprosto in s primerom \(pri OŠ 1\.–4\. dva do trije kratki stavki\)/);
   assert.doesNotMatch(dyn, /OŠ 1\.–4\.|seznam vaj/);
   // +506 znakov predpomnjenega dela (61 224 → 61 730 po #835; ~140 žetonov); meja rasti v testu »Preizkus 3« +510.
   assert.ok(kids.length < 760 && parts.length < 520 && home.length < 1500, `kratke vrstice (${kids.length}, ${parts.length}, ${home.length})`);
@@ -373,7 +382,8 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     // Meritev SŠ 18. 11. po #833 (Pravila brez posploševanja, Zapomni si s pogoji) s popravki pregleda #835:
     // +1019 znakov (60 195 → 61 214; ~290 žetonov).
     // Preizkus 3, krog 2 (18. 11., PR #836: definicija seznama vaj, OŠ 1.–4.): +506 znakov (61 224 → 61 730; ~140 žetonov), meja +510.
-    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510, `stalni del ${stat.length} znakov`);
+    // Meritev po #836 s pregledom #841: +266 znakov (61 734 → 62 000); s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
+    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226, `stalni del ${stat.length} znakov`);
   });
 });
 

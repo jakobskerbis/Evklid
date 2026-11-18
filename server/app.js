@@ -132,6 +132,9 @@ export function cacheKey(text, settings, mode, lite = false, pathTopic = null, w
   // naloga, OŠ 1.–4. brez »Preverimo«; odgovori z »b3« in »b4« se ne vrnejo.
   // »b6« (18. 11., meritev po #836): OŠ 1.–4. kratko tudi pri »zakaj«; odgovori z »b5« se ne vrnejo.
   if (settings.solving_mode === "B" || /celo\w* rešit|načinu? b\b/i.test(norm)) parts.push("b6");
+  // »a1« (18. 11., pregled #841): v načinu A je Pojmovno vprašanje za OŠ 1.–4. krajše (dva do trije stavki); le ti ključi
+  // načina A se zamenjajo, ključi drugih razredov ostanejo.
+  else if (jeOs(settings) && /^[1-4]\.\s*razred/.test(String(settings.curriculum_level || ""))) parts.push("a1");
   // Samo rezultat pri eni nalogi (17. 11., #799): shranjeni dolgi odgovori na isto besedilo se ne vrnejo več.
   // »r2« (17. 11., Preizkus 3): pri podvprašanjih rezultat vsakega dela; odgovori z »r1« se ne vrnejo.
   // »r3« (18. 11., meritev po #836): samo rezultat brez okvirja »Zapomni si«; odgovori z »r2« se ne vrnejo.

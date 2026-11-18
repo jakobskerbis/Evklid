@@ -18,7 +18,7 @@ import { normalizeSettings } from "../server/settings.js";
 import { SETTINGS_TOOLS } from "../server/chat-settings.js";
 import { stripMeta, stripChoices } from "../server/meta.js";
 import { parseOpenBlocks } from "../server/odpri.js";
-import { prepusceno, OGRODJE, seznamOk, vodenjeBrezVprasanja } from "./meri-preizkus3-ocena.mjs";
+import { prepusceno, OGRODJE, seznamOk, rezultati, POTRDIL, vodenjeBrezVprasanja } from "./meri-preizkus3-ocena.mjs";
 
 const arg = (name, def) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -42,8 +42,9 @@ function stariPrompt(nov) {
     if (s.split(od).length !== 2) throw new Error(`kos ni v promptu natanko enkrat: ${od.slice(0, 60)}`);
     s = s.replace(od, () => v);
   };
-  zamenjaj("potrdi, kar je prav (ne začni s »Prav« ali »Pravilno«), in z enim", "potrdi, kar je prav, in z enim");
-  zamenjaj("Za vsak del (tudi pri »zakaj«) en do dva kratka stavka", "Za vsak del en do dva kratka stavka");
+  zamenjaj(" Ko je v koraku napaka, ne začni s pohvalo ali potrditvijo (»Prav«, »Pravilno«, »Dobro«, »Odlično«, »Res je«); najprej pokaži napako, nato povej, kaj je prav.\n", "\n");
+  zamenjaj("preprosto in s primerom (pri OŠ 1.–4. dva do trije kratki stavki),", "preprosto in s primerom,");
+  zamenjaj("Za vsak del (tudi pri »zakaj«; vprašanje »zakaj« ni prošnja za več) en do dva kratka stavka", "Za vsak del en do dva kratka stavka");
   zamenjaj("Brez Podatkov, Iščemo, Preverbe, »Zapomni si« in razlage", "Brez Podatkov, Iščemo, Preverbe in razlage");
   return s;
 }
@@ -122,7 +123,9 @@ const besede = (t) => (t.replace(/\$[^$]*\$/g, " x ").match(/[\p{L}\p{N}]+/gu) |
 function oceni(n, raw) {
   const v = vidno(raw);
   const nv = navadno(v);
-  const deli = n.deli.map((alts) => alts.some((re) => re.test(nv)));
+  // Seznam vaj: rezultat le za »=« ali krepko, da ponovljeno besedilo naloge ne šteje kot rešen del.
+  const iskano = n.vrsta === "seznam" ? rezultati(nv) : nv;
+  const deli = n.deli.map((alts) => alts.some((re) => re.test(iskano)));
   const bloki = parseOpenBlocks(raw).filter((b) => b.kind === "graph" || b.kind === "sketch");
   const vrstic = v.split("\n").filter((l) => l.trim()).length;
   const o = { vsiRezultati: deli.every(Boolean), deli, prepusceno: prepusceno(v), znakov: v.length, besed: besede(v), vrstic, ogrodje: OGRODJE.test(v), risba: bloki.length > 0, bloki: bloki.map((b) => b.kind) };
@@ -132,7 +135,7 @@ function oceni(n, raw) {
   if (n.vrsta === "mladi") o.ok = o.vsiRezultati && !o.prepusceno && !o.ogrodje && o.znakov <= 550;
   if (n.vrsta === "graf") o.ok = o.vsiRezultati && o.risba;
   // Seznam vaj: prvi del pravilen, ponudba naslednjih, ne vsi rezultati (Domača naloga za oddajo, j 17. in 18. 11.).
-  if (n.vrsta === "seznam") o.ok = seznamOk(o.deli);
+  if (n.vrsta === "seznam") o.ok = seznamOk(o.deli, o.znakov);
   return o;
 }
 
@@ -181,7 +184,7 @@ outer: for (let k = 0; k < PONOVI; k++) {
       const o = oceni(n, r.text);
       izid.push({ naloga: n.id, vrsta: n.vrsta, prompt: ime, stopReason: r.stopReason, odrezano: r.stopReason === "max_tokens", model: r.model, cena: r.cena, izhod: r.izhod, konec: r.konec, ...o, vidno: vidno(r.text), surovo: r.text });
       zapisiVmesno();
-      console.log(`${n.id} (${n.vrsta}) ${ime}: ${o.ok ? "OK" : "NE"} · deli ${o.deli.map((x) => (x ? "✓" : "✗")).join("")}${o.prepusceno ? " · PREPUŠČENO" : ""}${o.ogrodje ? " · ogrodje" : ""}${o.risba ? ` · risba ${o.bloki.join("+")}` : ""}${r.stopReason === "max_tokens" ? " · ODREZANO" : ""} · ${o.znakov} zn. · ${s1(r.konec)} s · ${r.cena.toFixed(4)} $`);
+      console.log(`${n.id} (${n.vrsta}) ${ime}: ${o.ok ? "OK" : "NE"} · deli ${o.deli.map((x) => (x ? "✓" : "✗")).join("")}${o.prepusceno ? " · PREPUŠČENO" : ""}${n.vrsta === "seznam" && !o.prepusceno ? " · brez ponudbe" : ""}${o.ogrodje ? " · ogrodje" : ""}${o.risba ? ` · risba ${o.bloki.join("+")}` : ""}${r.stopReason === "max_tokens" ? " · ODREZANO" : ""} · ${o.znakov} zn. · ${s1(r.konec)} s · ${r.cena.toFixed(4)} $`);
     }
   }
   for (const v of VODENJE) {
@@ -201,7 +204,7 @@ outer: for (let k = 0; k < PONOVI; k++) {
       if (odgovori.length < 3) continue;
       const vid = odgovori.map((r) => vidno(r.text));
       const izdal = vid.some((t) => v.resitev.test(navadno(t)));
-      const potrdil = /^\s*(?:\*\*)?(?:prav|pravilno|odlično|bravo|tako je|super|drži)\b/i.test(vid[1]);
+      const potrdil = POTRDIL.test(vid[1]);
       const najvecBesed = Math.max(...vid.map(besede));
       // Razlog za NE se izpiše (meritev 44313564198: 40, 25, 112 brez razloga = prvi odgovor konča z »Zapiši …«, ne z »?«).
       const brez = vid.map(vodenjeBrezVprasanja).find(Boolean) || "";
