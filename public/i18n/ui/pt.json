@@ -2497,7 +2497,7 @@
     "other": "Desbloqueia todo o Evklid (tutor, exercícios, testes de treino) durante {n} dias a partir do pagamento."
   },
   "payp.consentMissing": "Marque todas as caixas antes de pagar.",
-  "payp.inApp": "Não é possível pagar na aplicação. Abra esta ligação num navegador web.",
+  "payp.inApp": "Não é possível pagar na aplicação.",
   "pass.until": "até {date}",
   "pass.parentInfo": "O teste «{name}» ({date}) está perto. Os teus pais podem escolher um pacote de preparação para o teste.",
   "pass.parentInfoLink": "Informação para os pais",

@@ -3061,7 +3061,7 @@ export default {
   "payp.passTest": "Za test »{name}« ({date})",
   "payp.passWhat": { one: "Odklene ves Evklid (inštruktor AI, vaje, preizkusi) za {n} dan od plačila.", two: "Odklene ves Evklid (inštruktor AI, vaje, preizkusi) za {n} dneva od plačila.", few: "Odklene ves Evklid (inštruktor AI, vaje, preizkusi) za {n} dni od plačila.", other: "Odklene ves Evklid (inštruktor AI, vaje, preizkusi) za {n} dni od plačila." },
   "payp.consentMissing": "Pred plačilom označite vse potrditve.",
-  "payp.inApp": "V aplikaciji plačilo ni mogoče. Povezavo odprite v spletnem brskalniku.",
+  "payp.inApp": "Plačilo v aplikaciji ni mogoče.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Test »{name}« ({date}) je blizu. Za pripravo lahko starši izberejo paket pred testom.",
   "pass.parentInfoLink": "Podatki za starše",

@@ -2482,7 +2482,7 @@
     "other": "自付款起 {n} 天內解鎖 Evklid 的全部功能（輔導老師、練習、小測驗）。"
   },
   "payp.consentMissing": "請您在付款前勾選所有確認。",
-  "payp.inApp": "無法在應用程式內付款。請在網頁瀏覽器中開啟此連結。",
+  "payp.inApp": "無法在應用程式內付款。",
   "pass.until": "至{date}",
   "pass.parentInfo": "「{name}」考試（{date}）快到了。你的家長可以為你選擇考前方案。",
   "pass.parentInfoLink": "給家長的資訊",

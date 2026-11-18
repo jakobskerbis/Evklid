@@ -316,3 +316,262 @@ test("splet v aplikaciji: trgovina brez nakupov, APK osveži Račun ob vrnitvi s
     s.server.close();
   }
 });
+
+// ---------- #825, nadaljevanje: javne strani, ponudbe paketov, besedila ----------
+
+const STORE_UA = `${CHROME} EvklidApp/1.4.0 store`;
+const APK_UA = `${CHROME} EvklidApp/1.4.0 direct`;
+const PRICE = /\d+(,\d+)?\s?€/;
+
+test("javne strani: aplikacija iz trgovine brez cen, razdelka s cenami in /prenesi; splet in APK vse", async () => {
+  const s = setup();
+  try {
+    const get = async (path, headers = {}) => {
+      const r = await fetch(s.base + path, { headers, redirect: "manual" });
+      return { status: r.status, vary: r.headers.get("vary") || "", html: await r.text() };
+    };
+    const pages = { "/o-evklidu": true, "/zakaj-evklid": true, "/starsi.html": true, "/garancija.html": false };
+    for (const [path, prices] of Object.entries(pages)) {
+      for (const headers of [{ "user-agent": CHROME }, { "user-agent": APK_UA }, { "user-agent": `${CHROME} EvklidApp/1.3.0` }]) {
+        const web = await get(path, headers);
+        assert.equal(web.status, 200, path);
+        assert.match(web.html, /href="\/prenesi/, `${path}: /prenesi (${headers["user-agent"]})`);
+        assert.match(web.html, /href="[^"]*#cene"/, `${path}: povezava na cene`);
+        if (prices) assert.match(web.html, PRICE, `${path}: cene na spletu`);
+        assert.match(web.vary, /User-Agent/i, `${path}: Vary`);
+      }
+      for (const headers of [{ "user-agent": STORE_UA }, { "x-app-client": "android/1.4.0", "x-app-channel": "store" }]) {
+        const app = await get(path, headers);
+        assert.equal(app.status, 200, path);
+        assert.doesNotMatch(app.html, /\/prenesi/, `${path}: brez /prenesi v trgovini`);
+        assert.doesNotMatch(app.html, /#cene/, `${path}: brez povezave na cene`);
+        assert.doesNotMatch(app.html, PRICE, `${path}: brez cen v trgovini`);
+        assert.doesNotMatch(app.html, /ce:!?trgovina/, `${path}: brez oznak`);
+        assert.match(app.html, /<\/html>\s*$/, `${path}: cela stran`);
+        assert.match(app.vary, /User-Agent/i);
+      }
+    }
+    // Strani brez razdelka s cenami za Za starše ne pokvarijo skripte (#prices manjka).
+    assert.match(read("public/starsi.js"), /if \(!document\.getElementById\("prices"\)\) return;/);
+    // /o-evklidu na spletu ne pusti oznak v HTML (gredo skozi pogojne dele server/vidnost.js).
+    assert.doesNotMatch((await get("/o-evklidu", { "user-agent": CHROME })).html, /ce:!?trgovina/);
+    // Kratka pot /starsi preusmeri na /starsi.html, ki ga nato pošlje vmesnik za trgovino.
+    assert.equal((await get("/starsi", { "user-agent": STORE_UA })).status, 301);
+  } finally {
+    s.server.close();
+  }
+});
+
+test("theme.js in v-aplikaciji.js: aplikacija iz trgovine skrije povezave na cene in /prenesi, splet in APK ne", async () => {
+  const vm = await import("node:vm");
+  const run = (file, ua) => {
+    const classes = new Set();
+    const styles = [];
+    const el = () => ({ setAttribute() {}, style: {}, classList: { add() {} } });
+    const document = {
+      documentElement: { classList: { add: (c) => classes.add(c), remove() {}, contains: (c) => classes.has(c), toggle() {} }, style: { setProperty() {}, removeProperty() {} }, dataset: {}, setAttribute() {}, removeAttribute() {} },
+      head: { appendChild: (n) => styles.push(n.textContent || "") },
+      createElement: el,
+      querySelector: () => null,
+      querySelectorAll: () => [],
+      addEventListener() {},
+    };
+    const ctx = { navigator: { userAgent: ua }, document, localStorage: { getItem: () => null, setItem() {} }, matchMedia: () => ({ matches: false, addEventListener() {} }), addEventListener() {}, setTimeout, console };
+    ctx.window = ctx;
+    vm.runInNewContext(read(file), ctx);
+    return { store: classes.has("v-trgovini"), app: classes.has("v-aplikaciji"), css: styles.join("\n") };
+  };
+  for (const file of ["public/theme.js", "public/v-aplikaciji.js"]) {
+    const store = run(file, STORE_UA);
+    assert.ok(store.app && store.store, `${file}: oznaki v trgovini`);
+    assert.match(store.css, /\.v-trgovini a\[href\*="#cene"\],\.v-trgovini a\[href\^="\/prenesi"\]\{display:none!important\}/, file);
+    for (const ua of [APK_UA, CHROME]) {
+      const other = run(file, ua);
+      assert.equal(other.store, false, `${file}: ${ua}`);
+      assert.doesNotMatch(other.css, /v-trgovini/, `${file}: ${ua}`);
+    }
+  }
+});
+
+test("nova stopnja (level-up.js): v aplikaciji iz trgovine brez »Poglej pakete«", async () => {
+  const { renderWelcome } = await import("../public/level-up.js");
+  const had = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  const show = (ua) => {
+    Object.defineProperty(globalThis, "navigator", { value: { userAgent: ua }, configurable: true, writable: true });
+    const box = { innerHTML: "", hidden: true, querySelector: (sel) => (sel === '[data-lc="account"]' && !box.innerHTML.includes('data-lc="account"') ? null : {}) };
+    renderWelcome(box, { stage: "SS", premium: false, accounts: true, offers: { show: true, prices: true }, onAccount() {}, onClose() {} });
+    return box.innerHTML;
+  };
+  try {
+    assert.match(show(CHROME), /data-lc="account"/, "splet: ponudba");
+    assert.match(show(APK_UA), /data-lc="account"/, "APK: ponudba");
+    const store = show(STORE_UA);
+    assert.doesNotMatch(store, /data-lc="account"|Poglej pakete/);
+    assert.match(store, /Začnimo/);
+  } finally {
+    if (had) Object.defineProperty(globalThis, "navigator", had);
+    else delete globalThis.navigator;
+  }
+});
+
+test("učbenik in laboratorij: gumb »Poglej pakete« ne v aplikaciji iz trgovine", () => {
+  const tb = read("public/textbook.js");
+  assert.match(tb, /const storeApp = \(\) => \/ EvklidApp\\\/\\S\+ store\\b\/\.test/);
+  assert.match(tb, /\$\{!storeApp\(\) && \(!L\.offers \|\| \(L\.offers\.show && L\.offers\.prices\)\) \? `<button type="button" class="primary" id="tb-upgrade">/);
+  assert.match(read("public/laboratorij.js"), /const showOffer = !\/ EvklidApp\\\/\\S\+ store\\b\/\.test\(globalThis\.navigator\?\.userAgent \|\| ""\) && /);
+});
+
+test("payp.inApp: brez napotka v brskalnik, v vseh jezikih vmesnika", () => {
+  const sl = read("public/i18n/sl.js");
+  assert.match(sl, /"payp\.inApp": "Plačilo v aplikaciji ni mogoče\.",/);
+  const dir = new URL("../public/i18n/ui/", import.meta.url);
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".json"));
+  assert.equal(files.length, 32);
+  for (const f of files) {
+    const v = JSON.parse(fs.readFileSync(new URL(f, dir), "utf8"))["payp.inApp"];
+    assert.ok(v && v.length < 60, `${f}: ${v}`);
+    assert.doesNotMatch(v, /browser|navegador|Browser|navigateur|brskal|preglednik|pregledač|прелист|браузер|оглядач|przeglądar|prehliadač|prohlížeč|böngész|tarayıcı|ブラウザ|브라우저|浏览器|瀏覽器|trình duyệt|peramban|kivinjari|เบราว์เซอร์|ब्राउज़र|ব্রাউজার|مرورگر|متصفح|براؤزر|shfletues|browser/u, f);
+  }
+  // Srbski vmesnik je v cirilici (kot ostali ključi).
+  assert.match(JSON.parse(read("public/i18n/ui/sr.json"))["payp.inApp"], /^[Ѐ-ӿ\s.]+$/);
+});
+
+test("allowance.buy: obvestilo o porabi v aplikaciji iz trgovine brez gumba za dokup, na spletu z njim", async () => {
+  const { costUsd, modeParams } = await import("../server/claude.js");
+  const model = modeParams("chat").model;
+  const tokens = Math.round(0.02 / costUsd(model, { output_tokens: 1 }));
+  process.env.EVKLID_AI_GUARANTEE_FAKS_USD = process.env.EVKLID_AI_GUARANTEE_OS_USD = "0.2575";
+  const lowEvent = async (headers) => {
+    const store = openDb(":memory:");
+    const calls = [];
+    const fetchFn = async (url, init = {}) => {
+      const u = new URL(url);
+      const body = init.body ? (init.headers?.["Content-Type"]?.includes("json") ? JSON.parse(init.body) : Object.fromEntries(new URLSearchParams(init.body))) : null;
+      calls.push({ host: u.host, path: u.pathname, body });
+      return { ok: true, status: 200, json: async () => ({ id: "x", data: [] }) };
+    };
+    const app = createApp(store, {
+      accounts: true,
+      scheduler: false,
+      stripeKey: "sk_test_x",
+      resendKey: "re_x",
+      fetchFn,
+      log: { error() {}, warn() {}, info() {} },
+      streamFn: async ({ onText }) => {
+        const text = 'Odgovor.\n<<META subject=MAT topic="-" error=0 mode=A flag=none>>';
+        onText(text);
+        return { text, stopReason: "end_turn", model, usage: { input_tokens: 0, output_tokens: tokens } };
+      },
+    });
+    const server = app.listen(0);
+    const base = `http://127.0.0.1:${server.address().port}`;
+    const jar = {};
+    const call = async (path, o = {}) => {
+      const res = await fetch(base + path, { method: o.method || "GET", redirect: "manual", headers: { "Content-Type": "application/json", cookie: Object.entries(jar).map(([k, v]) => `${k}=${v}`).join("; "), ...headers }, body: o.body ? JSON.stringify(o.body) : undefined });
+      for (const c of res.headers.getSetCookie()) {
+        const [kv] = c.split(";");
+        jar[kv.slice(0, kv.indexOf("="))] = kv.slice(kv.indexOf("=") + 1);
+      }
+      return { status: res.status, body: (res.headers.get("content-type") || "").includes("json") ? await res.json() : await res.text() };
+    };
+    try {
+      const reg = await call("/api/auth/register", { method: "POST", body: { email: "ana@p.si", password: "geslo1234", accept_privacy: true, birth_date: `${YEAR - 30}-03-01` } });
+      assert.equal(reg.status, 201, JSON.stringify(reg.body));
+      await call(/\/api\/auth\/verify\?token=[\w-]+/.exec(calls.filter((c) => c.host === "api.resend.com").at(-1).body.text)[0]);
+      const kid = (await call("/api/students", { method: "POST", body: { name: "Ana", birth_year: YEAR - 30, consent: true } })).body;
+      store.db.prepare("UPDATE parents SET sub_status = 'active', sub_plan = 'evklid_1_month', sub_seats = 1, sub_period_end = ?, sub_id = 'sub_k', trial_ends_at = '2020-01-01T00:00:00Z', birth_asked_at = datetime('now') WHERE id = ?").run(new Date(Date.now() + 20 * 86400000).toISOString(), reg.body.parent.id);
+      const conv = (await call(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
+      const events = [];
+      for (let n = 1; n <= 3 && !events.length; n++) {
+        const sse = (await call(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: `Koliko je 2 + ${n}?` } })).body;
+        events.push(...[...String(sse).matchAll(/event: allowance\ndata: (.*)/g)].map((m) => JSON.parse(m[1])));
+      }
+      return events[0];
+    } finally {
+      server.close();
+    }
+  };
+  try {
+    const web = await lowEvent({ "user-agent": CHROME });
+    assert.ok(web, "splet: obvestilo o porabi");
+    assert.equal(web.buy, true, "splet: gumb za dokup (polnoletna naročnica)");
+    const app = await lowEvent({ "user-agent": STORE_UA });
+    assert.ok(app, "trgovina: obvestilo o porabi");
+    assert.equal(app.stage, web.stage);
+    assert.equal(app.buy, false, "trgovina: brez gumba za dokup");
+  } finally {
+    delete process.env.EVKLID_AI_GUARANTEE_OS_USD;
+    delete process.env.EVKLID_AI_GUARANTEE_FAKS_USD;
+  }
+});
+
+test("/api/billing/sync: meja 5 s velja za vsakega starša posebej", async () => {
+  const s = setup();
+  try {
+    await s.account();
+    const subsCalls = () => s.calls.filter((c) => c.path.endsWith("/subscriptions") && c.method === "GET").length;
+    s.store.db.prepare("UPDATE parents SET stripe_customer_id = 'cus_a'").run();
+    const before = subsCalls();
+    assert.equal((await s.call("/api/billing/sync", { method: "POST" })).status, 200);
+    assert.equal(subsCalls() - before, 1);
+    // Drug starš (nov piškotek) takoj za prvim: tudi on dobi klic Stripa.
+    for (const k of Object.keys(s.jar)) delete s.jar[k];
+    const reg = await s.call("/api/auth/register", { method: "POST", body: { email: "oce@primer.si", password: "geslo1234", accept_privacy: true, birth_date: `${YEAR - 45}-05-01` } });
+    assert.equal(reg.status, 201, JSON.stringify(reg.body));
+    await s.call(/\/api\/auth\/verify\?token=[\w-]+/.exec(s.calls.filter((c) => c.host === "api.resend.com").at(-1).body.text)[0]);
+    s.store.db.prepare("UPDATE parents SET stripe_customer_id = 'cus_b', birth_asked_at = datetime('now') WHERE id = ?").run(reg.body.parent.id);
+    assert.equal((await s.call("/api/billing/sync", { method: "POST" })).status, 200);
+    assert.equal(subsCalls() - before, 2, "drug starš ni čakal na prvega");
+    assert.equal((await s.call("/api/billing/sync", { method: "POST" })).status, 200);
+    assert.equal(subsCalls() - before, 2, "isti starš v 5 s: brez novega klica");
+  } finally {
+    s.server.close();
+  }
+});
+
+test("placaj.html v aplikaciji iz trgovine: samo »Plačilo v aplikaciji ni mogoče.«; paySig zazna nakup Podari", opts, async () => {
+  const s = setup();
+  const browser = await playwright.chromium.launch();
+  try {
+    const link = { kind: "sub", name: "Lara", plan: { seats: 1, amount: 999, currency: "EUR", interval: "month" }, expires_at: new Date(Date.now() + 86400000).toISOString() };
+    const open = async (ua) => {
+      const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, locale: "sl-SI", serviceWorkers: "block", userAgent: ua });
+      await ctx.addInitScript(() => localStorage.setItem("evklid.lang", "sl"));
+      const page = await ctx.newPage();
+      const errors = [];
+      page.on("pageerror", (e) => errors.push(e.message));
+      await page.route("**/api/pay/abc123", (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(link) }));
+      await page.goto(s.base + "/placaj.html?t=abc123", { waitUntil: "load" });
+      await page.locator("#pay-root h1").waitFor({ timeout: 20_000 });
+      await page.waitForTimeout(200);
+      return { ctx, page, errors };
+    };
+    const app = await open(STORE_UA);
+    assert.equal(await app.page.locator("#pay-in-app").innerText(), "Plačilo v aplikaciji ni mogoče.");
+    assert.equal(await app.page.locator("#pay-form").count(), 0);
+    assert.doesNotMatch(await app.page.locator("#pay-root").innerText(), /€|brskalnik/);
+    assert.deepEqual(app.errors, []);
+    await app.ctx.close();
+    const web = await open(APK_UA);
+    assert.equal(await web.page.locator("#pay-form").count(), 1);
+    assert.equal(await web.page.locator("#pay-in-app").count(), 0);
+    await web.ctx.close();
+
+    // paySig (public/account.js): po nakupu Podari se števec spremeni, zato se zavihek Račun izriše znova.
+    const ctx = await browser.newContext({ serviceWorkers: "block" });
+    const page = await ctx.newPage();
+    await page.goto(s.base + "/", { waitUntil: "load" });
+    const sig = await page.evaluate(async () => {
+      const { paySig } = await import("/account.js");
+      const acc = (months) => ({ access: { tier: "free" }, gifts: [], children: [], podari: { donated_months: months, evklid_months: 2, in_use_months: 1 } });
+      return [paySig(acc(3), 0), paySig(acc(3), 0), paySig(acc(4), 0), paySig({ access: { tier: "free" } }, 0)];
+    });
+    assert.equal(sig[0], sig[1]);
+    assert.notEqual(sig[0], sig[2], "Podari: nov mesec v skladu");
+    assert.ok(sig[3]);
+    await ctx.close();
+  } finally {
+    await browser.close();
+    s.server.close();
+  }
+});

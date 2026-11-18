@@ -2496,7 +2496,7 @@
     "other": "Inafungua Evklid yote (mwalimu, mazoezi, majaribio) kwa siku {n} tangu malipo."
   },
   "payp.consentMissing": "Tafadhali weka alama kwenye uthibitisho wote kabla ya kulipa.",
-  "payp.inApp": "Malipo hayawezekani ndani ya programu. Fungua kiungo hiki kwenye kivinjari.",
+  "payp.inApp": "Malipo hayawezekani ndani ya programu.",
   "pass.until": "hadi {date}",
   "pass.parentInfo": "Mtihani “{name}” ({date}) unakaribia. Wazazi wako wanaweza kuchagua kifurushi cha kabla ya mtihani.",
   "pass.parentInfoLink": "Taarifa kwa wazazi",

@@ -2536,7 +2536,7 @@
     "other": "Odomkne celý Evklid (tútor, cvičenia, skúšobné testy) na {n} dní od zaplatenia."
   },
   "payp.consentMissing": "Pred platbou zaškrtnite všetky potvrdenia.",
-  "payp.inApp": "V aplikácii nie je možné platiť. Otvorte tento odkaz vo webovom prehliadači.",
+  "payp.inApp": "V aplikácii nie je možné platiť.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Test „{name}“ ({date}) sa blíži. Rodičia ti môžu vybrať balík prípravy na test.",
   "pass.parentInfoLink": "Informácie pre rodičov",

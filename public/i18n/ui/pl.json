@@ -2536,7 +2536,7 @@
     "other": "Odblokowuje cały Evklid (korepetytor, ćwiczenia, testy próbne) na {n} dnia od płatności."
   },
   "payp.consentMissing": "Przed płatnością prosimy zaznaczyć wszystkie potwierdzenia.",
-  "payp.inApp": "W aplikacji nie można zapłacić. Otwórz ten link w przeglądarce internetowej.",
+  "payp.inApp": "W aplikacji nie można zapłacić.",
   "pass.until": "do {date}",
   "pass.parentInfo": "Sprawdzian „{name}” ({date}) już niedługo. Rodzice mogą wybrać pakiet przygotowania do sprawdzianu.",
   "pass.parentInfoLink": "Informacje dla rodziców",

@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 // Različica aplikacije iz trgovine (Google Play, App Store) ne sme ponuditi nakupa s kartico (Apple 3.1.1, Google Play
 // Payments): tam velja nakup v trgovini (server/mobile/store-billing.js). Splet v aplikaciji teh obrazcev ne pokaže
 // (public/pay-ui.js); to je varovalo na strežniku, če bi jih kdo vseeno poslal.
@@ -26,4 +29,31 @@ const normal = (p) => String(p || "").toLowerCase().replace(/\/{2,}/g, "/").repl
 export function blockStoreAppPurchases(req, res, next) {
   if (req.method !== "POST" || !BUY.test(normal(req.path)) || !storeAppRequest(req)) return next();
   res.status(403).json({ error: "V tej aplikaciji nakup ni mogoč.", store_app: true });
+}
+
+// Javne strani v različici iz trgovine: brez cen, brez povezav na razdelek s cenami in brez prenosa APK mimo trgovine
+// (/prenesi). Strani, ki nimajo theme.js ali v-aplikaciji.js ali jim CSS ne zadošča (besedilo s cenami), označijo take
+// dele z <!--ce:!trgovina-->…<!--/ce:!trgovina-->; strežnik jih za aplikacijo iz trgovine izreže, sicer ostanejo.
+// /o-evklidu in /zakaj-evklid gresta skozi server/vidnost.js (isti zapis v njegovih pogojnih delih).
+const STORE_PART = /<!--ce:!trgovina-->\n?([\s\S]*?)<!--\/ce:!trgovina-->\n?/g;
+export const storeHtml = (html, store) => String(html).replace(STORE_PART, (_m, body) => (store ? "" : body));
+
+// Statične strani s takimi deli: v aplikaciji iz trgovine jih pošlje ta vmesnik (pred statičnimi datotekami),
+// drugim zahtevam pusti express.static. Vary: odgovor je odvisen od User-Agent in X-App-Channel.
+export const STORE_PAGES = ["/starsi.html", "/garancija.html"];
+export function storeAppPages(publicDir) {
+  const cache = new Map();
+  return (req, res, next) => {
+    if ((req.method !== "GET" && req.method !== "HEAD") || !STORE_PAGES.includes(req.path)) return next();
+    res.vary("User-Agent");
+    res.vary("X-App-Channel");
+    if (!storeAppRequest(req)) return next();
+    let html = cache.get(req.path);
+    if (!html) {
+      html = storeHtml(fs.readFileSync(path.join(publicDir, req.path.slice(1)), "utf8"), true);
+      if (process.env.NODE_ENV === "production") cache.set(req.path, html); // v razvoju datoteko urejamo
+    }
+    res.set("Cache-Control", "no-cache");
+    res.type("html").send(html);
+  };
 }

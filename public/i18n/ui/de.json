@@ -2496,7 +2496,7 @@
     "other": "Schaltet ganz Evklid (Tutor, Übungen, Probetests) für {n} Tage ab der Zahlung frei."
   },
   "payp.consentMissing": "Bitte setzen Sie vor dem Bezahlen alle Häkchen.",
-  "payp.inApp": "In der App ist keine Zahlung möglich. Öffnen Sie diesen Link im Webbrowser.",
+  "payp.inApp": "In der App ist keine Zahlung möglich.",
   "pass.until": "bis {date}",
   "pass.parentInfo": "Der Test „{name}“ ({date}) steht bald an. Deine Eltern können ein Paket zur Testvorbereitung wählen.",
   "pass.parentInfoLink": "Infos für Eltern",

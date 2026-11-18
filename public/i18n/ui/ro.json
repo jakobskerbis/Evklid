@@ -2516,7 +2516,7 @@
     "other": "Deblochează tot Evklid (tutore, exerciții, teste de probă) timp de {n} de zile de la plată."
   },
   "payp.consentMissing": "Bifați toate confirmările înainte de plată.",
-  "payp.inApp": "Plata nu este posibilă în aplicație. Deschideți acest link într-un browser web.",
+  "payp.inApp": "Plata nu este posibilă în aplicație.",
   "pass.until": "până pe {date}",
   "pass.parentInfo": "Testul „{name}” ({date}) se apropie. Părinții tăi pot alege un pachet de pregătire pentru test.",
   "pass.parentInfoLink": "Informații pentru părinți",

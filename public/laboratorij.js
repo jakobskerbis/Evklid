@@ -149,7 +149,8 @@ function renderExperiment() {
   shownKey = openKey;
   view().classList.add("lab-open");
   const offers = data.offers;
-  const showOffer = !offers || (offers.show && offers.prices);
+  // Aplikacija iz trgovine: brez ponudbe paketov mimo trgovine (isti preizkus kot public/pay-ui.js isStoreApp).
+  const showOffer = !/ EvklidApp\/\S+ store\b/.test(globalThis.navigator?.userAgent || "") && (!offers || (offers.show && offers.prices));
   box().innerHTML = `<div class="lab-stage">
     <button type="button" class="ghost back lab-back" data-lab-back>${icon("arrow-left")}<span>${esc(t("nav.lab"))}</span></button>
     <h2 class="lab-title" dir="auto">${icon("flask-conical")}<span>${esc(x.title)}</span></h2>
