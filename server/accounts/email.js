@@ -298,8 +298,9 @@ export function purchaseEmail({ item, paidText, firstCharge = "", dateText, stat
 
 // Potrdilo o prejemu spletnega obvestila o odstopu od pogodbe (ZVPot-1A, 138.a člen, 4. odstavek): na trajnem nosilcu
 // (e-pošta), brez nepotrebnega odlašanja, z vsebino obvestila ter datumom in uro oddaje. Vikanje (plačnik je odrasel).
-// auto: odstop bo izveden takoj (prijavljen imetnik, pogodba v roku); sicer ga pregledamo in vam odgovorimo.
-export function withdrawalAckEmail({ name, email, contract, details = "", submitted, refundText = "", auto = false, contact, appUrl }) {
+// auto: odstop izvedemo takoj (prijavljen imetnik, pogodba v roku); sicer ga pregledamo in vam odgovorimo.
+// Brez prijave pošljemo samo besedilo (text), brez HTML in povezav (server/placila/odstop.js).
+export function withdrawalAckEmail({ name, email, contract, details = "", submitted, refundText = "", auto = false, contact, appUrl = "" }) {
   const n = BRAND.name;
   const next = auto
     ? `Odstop izvedemo takoj: naročnino ali nakup prekličemo${refundText ? `, vračilo ${refundText} pa pošljemo na isto plačilno sredstvo (banka ga običajno pripiše v 5–10 dneh)` : ""}. Če kaj ne uspe, vam pišemo.`
@@ -311,26 +312,30 @@ export function withdrawalAckEmail({ name, email, contract, details = "", submit
     ...(details ? [["Dodatno", details]] : []),
     ["Oddano", submitted],
   ];
+  const intro = "Prejeli smo vaše obvestilo o odstopu od pogodbe. To sporočilo je potrdilo o prejemu vašega obvestila z datumom in uro oddaje.";
   return {
     subject: `${n}: potrdilo o prejemu odstopa od pogodbe`,
     html: layout(
       "Potrdilo o prejemu odstopa od pogodbe",
-      `<p>Prejeli smo vaše obvestilo o odstopu od pogodbe. To sporočilo shranite: je potrdilo, da ste odstopili pravočasno.</p>
+      `<p>${esc(intro)}</p>
 <p><b>Vsebina obvestila</b></p>
 <p>Obveščam vas, da odstopam od pogodbe.<br>${rows.map(([k, v]) => `<b>${esc(k)}:</b> ${esc(v)}`).join("<br>")}</p>
 <p>${esc(next)}</p>
-<p>Vprašanja: <a href="mailto:${esc(contact)}">${esc(contact)}</a></p>${button(appUrl, `Odprite ${n}`)}`,
+<p>Vprašanja: ${esc(contact)}</p>${appUrl ? button(appUrl, `Odprite ${n}`) : ""}`,
     ),
-    text: [
-      "Potrdilo o prejemu odstopa od pogodbe",
-      "Prejeli smo vaše obvestilo o odstopu od pogodbe. To sporočilo shranite: je potrdilo, da ste odstopili pravočasno.",
-      "",
-      "Vsebina obvestila:",
-      "Obveščam vas, da odstopam od pogodbe.",
-      ...rows.map(([k, v]) => `${k}: ${v}`),
-      "",
-      next,
-      `Vprašanja: ${contact}`,
-    ].join("\n"),
+    text: ["Potrdilo o prejemu odstopa od pogodbe", intro, "", "Vsebina obvestila:", "Obveščam vas, da odstopam od pogodbe.", ...rows.map(([k, v]) => `${k}: ${v}`), "", next, `Vprašanja: ${contact}`].join("\n"),
   };
+}
+
+// Skrbniku: obvestilo o odstopu, ki ni bilo izvedeno samodejno (vračilo mora biti v 14 dneh od prejema).
+export function withdrawalAdminEmail({ id, status, source, submitted, contract, note = "", ackOk }) {
+  const text = [
+    `Novo obvestilo o odstopu od pogodbe št. ${id} čaka obdelavo.`,
+    `Oddano: ${submitted} (${source === "app" ? "prijavljen imetnik" : "brez prijave"})`,
+    `Pogodba: ${contract}`,
+    `Stanje: ${status}${note ? ` (${note})` : ""}`,
+    `Potrdilo kupcu: ${ackOk === 1 ? "poslano" : ackOk === -1 ? "zadržano (meja)" : "NI poslano"}`,
+    "Obdelaj v zavihku Račun → Odstopi od pogodbe. Vračilo mora biti izvedeno najpozneje v 14 dneh od prejema.",
+  ];
+  return { subject: `${BRAND.name}: odstop od pogodbe čaka (št. ${id})`, text: text.join("\n"), html: layout("Odstop od pogodbe čaka", text.map((l) => `<p>${esc(l)}</p>`).join("")) };
 }

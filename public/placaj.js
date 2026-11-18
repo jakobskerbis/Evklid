@@ -63,7 +63,7 @@ function render(v) {
       <form id="pay-form" novalidate>
         <label for="pay-email">${esc(t("payp.email"))}</label>
         <input id="pay-email" name="email" type="email" required autocomplete="email" maxlength="200">
-        ${consentFields()}
+        ${consentFields("", { vi: true })}
         <p class="form-error" role="alert" hidden></p>
         <button class="primary" type="submit">${esc(t("payp.pay"))}</button>
         <p class="muted">${esc(t("payp.secure"))}</p>

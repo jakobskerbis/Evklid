@@ -611,6 +611,12 @@ function renderLogin(mode = "login") {
     try {
       if (mode === "login") {
         await api("/api/auth/login", { method: "POST", body: { email: f.email.value, password: f.password.value } });
+        // Prijava s strani za odstop od pogodbe (public/odstop.js): nazaj na to stran.
+        if (sessionStorage.getItem("evklid.poPrijavi") === "/odstop.html") {
+          sessionStorage.removeItem("evklid.poPrijavi");
+          location.href = "/odstop.html";
+          return;
+        }
       } else {
         // Vrsto kode določi strežnik (signupCodeKind). Koda vabila s strani /vabilo (že preverjena) gre vedno v polje
         // invite kot v #819, tudi če je v vrstici aktivacijska koda iz ?koda= ali jo je uporabnik spremenil (pregled #834);
@@ -1929,6 +1935,7 @@ export async function renderAccount() {
     <h1>${esc(t("nav.account"))}</h1>
     ${privacyBanner(acc)}
     ${termsBanner(acc)}
+    ${withdrawalLink(acc)}
     ${acc.parent.verified ? "" : `<div class="card" id="verify-card">
       <h2>${esc(t("verify.nudgeTitle"))}</h2>
       <p>${esc(t("verify.nudgeText", { email: acc.parent.email }))}</p>
@@ -1942,7 +1949,6 @@ export async function renderAccount() {
       ${storeApp
         ? paid && acc.parent.has_customer ? `<p class="muted">${esc(t("mob.subElsewhere"))}</p>` : ""
         : acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">${esc(t("acct.portal"))}</button>` : ""}
-      ${withdrawalLink(acc)}
       ${promoBox(acc, paid || storeApp)}
     </div>
     <div class="card" id="pn-wtp" hidden></div>

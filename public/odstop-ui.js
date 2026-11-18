@@ -13,9 +13,10 @@ const versionText = (v) => {
   return y ? new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString(locale(), { day: "numeric", month: "numeric", year: "numeric" }) : "";
 };
 
-// Povezava v kartici naročnine, dokler je kaka pogodba v roku za odstop.
+// Povezava na funkcijo za odstop: v zavihku Račun vedno, nad karticami (ZVPot-1A: stalno na voljo, na vidnem mestu).
+// withdrawal_open (pogodba v roku ali nakup v trgovini): poudarjen gumb.
 export const withdrawalLink = (acc) =>
-  acc.withdrawal_open ? `<p class="wd-link"><a class="btn-secondary" href="/odstop.html">${icon("arrow-right")}<span>${esc(t("acct.withdraw"))}</span></a></p>` : "";
+  `<p class="wd-link"><a class="${acc.withdrawal_open ? "btn-secondary" : ""}" href="/odstop.html">${icon("arrow-right")}<span>${esc(t("acct.withdraw"))}</span></a></p>`;
 
 export function termsBanner(acc) {
   const v = acc.parent?.terms_notice;
@@ -38,10 +39,12 @@ function adminHtml(v) {
     .map((w) => {
       const open = ["received", "failed", "processing"].includes(w.status);
       const refund = w.refund_target != null ? ` · vračilo ${esc(money(w.refund_cents || 0, w.currency || "EUR"))} od ${esc(money(w.refund_target, w.currency || "EUR"))} (${esc(w.refund_mode || "")})` : "";
-      return `<li class="code-row"><div><b>${esc(w.name)}</b> · ${esc(w.email)}${w.account_email && w.account_email !== w.email ? ` (račun ${esc(w.account_email)})` : ""}
-        <span class="pill${w.status === "failed" || w.status === "received" ? " warn" : w.status === "done" ? " ok" : ""}">${esc(STATUS[w.status] || w.status)}</span>
-        <br><small class="muted">${esc(w.submitted_text)} · ${esc(w.source === "app" ? "prijavljen" : "brez prijave")} · ${esc(w.contract_text)}${w.details ? ` · »${esc(w.details)}«` : ""}${refund} · potrdilo ${w.ack_ok ? "poslano" : "NI poslano"}${w.note ? ` · ${esc(w.note)}` : ""}</small></div>
-        ${open ? `<div class="code-actions">${w.parent_id && w.contract !== "other" ? `<button type="button" data-wd-process="${w.id}">Izvedi odstop</button>` : `<button type="button" data-wd-link="${w.id}">Poveži z računom</button>`}<button type="button" data-wd-close="${w.id}">Zaključi ročno</button></div>` : ""}</li>`;
+      const old = w.overdue ? ` <span class="pill warn">več kot 7 dni</span>` : "";
+      const ack = w.ack_ok === 1 ? "poslano" : w.ack_ok === -1 ? "ZADRŽANO (meja)" : "NI poslano";
+      return `<li class="code-row${w.overdue ? " wd-overdue" : ""}"><div><b>${esc(w.name)}</b> · ${esc(w.email)}${w.account_email && w.account_email !== w.email ? ` (račun ${esc(w.account_email)})` : ""}
+        <span class="pill${w.status === "failed" || w.status === "received" ? " warn" : w.status === "done" ? " ok" : ""}">${esc(STATUS[w.status] || w.status)}</span>${old}
+        <br><small class="muted">${esc(w.submitted_text)} · ${esc(w.source === "app" ? "prijavljen" : "brez prijave")} · ${esc(w.contract_text)}${w.details ? ` · »${esc(w.details)}«` : ""}${refund} · potrdilo ${ack}${w.note ? ` · ${esc(w.note)}` : ""}</small></div>
+        ${open ? `<div class="code-actions">${w.parent_id && w.contract !== "other" ? `<button type="button" data-wd-process="${w.id}">Izvedi odstop</button>` : `<button type="button" data-wd-link="${w.id}">Poveži z računom</button>`}<button type="button" data-wd-close="${w.id}">Zaključi ročno</button>${!w.parent_id && w.source === "public" && !w.refund_cents ? `<button type="button" data-wd-delete="${w.id}">Izbriši (neželeno)</button>` : ""}</div>` : ""}${w.ack_ok !== 1 ? `<div class="code-actions"><button type="button" data-wd-ack="${w.id}">Pošlji potrdilo znova</button></div>` : ""}</li>`;
     })
     .join("")}</ul>`;
 }
@@ -88,6 +91,18 @@ export function bindWithdrawal(acc, { api, toast, refresh }) {
       if (!pid) return;
       const contract = prompt("Pogodba: sub, pass:<id> ali credit:<id>", "sub");
       if (contract) run(b, `/api/admin/withdrawals/${b.dataset.wdLink}/process`, { parent_id: Number(pid), contract });
+    });
+    act("[data-wd-ack]", (b) => run(b, `/api/admin/withdrawals/${b.dataset.wdAck}/ack`, {}));
+    act("[data-wd-delete]", async (b) => {
+      if (!confirm("Izbrišem to obvestilo brez prijave kot neželeno?")) return;
+      b.disabled = true;
+      try {
+        await api(`/api/admin/withdrawals/${b.dataset.wdDelete}`, { method: "DELETE" });
+        toast("Izbrisano.");
+      } catch (ex) {
+        toast(ex.message);
+      }
+      load();
     });
     act("[data-wd-close]", (b) => {
       const note = prompt("Razlog (npr. urejeno pri trgovini, vrnjeno ročno v Stripu, prepozno):");

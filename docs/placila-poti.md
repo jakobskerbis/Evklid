@@ -56,12 +56,29 @@ pogodba v roku). Strežnik: `server/placila/odstop.js`, test `test/odstop.test.j
 
 | Korak | Kaj | Test |
 |---|---|---|
-| Funkcija | gumb »Kliknite tukaj za odstop od pogodbe« → obrazec (ime, e-naslov za potrdilo, pogodba) → »Potrdi odstop od pogodbe« | O »oznake …« |
+| Funkcija | naslov »Kliknite tukaj za odstop od pogodbe« in takoj obrazec (ime, e-naslov za potrdilo, pogodba) → »Potrdi odstop od pogodbe« | O »oznake …« |
 | Brez prijave | zapis + potrdilo o prejemu (vsebina, datum in ura s sekundami, CET/CEST); obdela skrbnik | O »brez prijave …« |
 | Prijavljen imetnik | izbere pogodbo v roku 14 dni (naročnina, paket, dokup); vračilo v Stripu, nato takojšen preklic | O »prijavljen imetnik …« |
 | Znesek | sorazmerno (pogoji 12. točka), če je plačnik pred plačilom izrecno potrdil takojšen začetek, sicer celotno | O »… celotno vračilo« |
 | Skrbnik | Račun → »Odstopi od pogodbe«: izvedi, poveži obvestilo brez prijave z računom, zaključi ročno (razlog) | O »skrbnik …« |
 | Pravi ključ | samodejno vračilo samo v testnem načinu, dokler ni `EVKLID_ODSTOP_LIVE=1` | O »pravi ključ …« |
+
+Varovalke (pregled #843, 18. 11. 2026):
+- Vračilo je idempotentno: ključ `withdrawal-<id>-<payment_intent>`, oznaka »pending« pred klicem; ob ponovitvi strežnik
+  najprej poišče vračilo z `metadata.withdrawal_id` (`GET /refunds`). Pri paketu in dokupu se vrne največ
+  prejeto − že vrnjeno (`GET /payment_intents/:id`). Znesek ob oddaji obvestila je zgornja meja.
+- Pogodba z neuspelim, izvedenim ali delno vrnjenim odstopom ni več na seznamu (ni drugega vračila).
+- Manj vrnjeno od zneska → stanje »ni uspelo« z zapisom »vrnjeno X od Y, uredi ročno«; skrbnik dobi e-pošto za vsako
+  obvestilo, ki ni bilo izvedeno samodejno; neobdelano dlje kot 7 dni je v seznamu označeno.
+- Obrazec brez prijave: največ 2 potrdili na isti naslov v 24 urah in 50 obvestil skupaj (nad tem zapis brez e-pošte,
+  opozorilo v dnevniku); potrdilo samo kot besedilo, brez povezav in e-naslovov iz vpisanega besedila. Skrbnik
+  neželeno obvestilo brez prijave izbriše ali potrdilo pošlje znova.
+- Potrdilo, ki ni bilo poslano, se poskusi znova enkrat na dan (največ 5-krat); na zaslonu »Prenesi potrdilo«.
+- Preklic samo naročnine, od katere je kupec odstopil (`p.sub_id`); že preklicana šteje kot uspeh.
+- Izrecna zahteva za takojšen začetek šteje le, če je soglasje zapisano pred začetkom pogodbe (+10 min) ali je
+  povezano z isto plačilno sejo (paket, dokup).
+- Pred vsakim plačilom (naročnina, paket, dokup, darilo, Podari, stran za starše) je vrstica o funkciji za odstop
+  (130. člen 6. točka); povezava »Odstop od pogodbe« je v zavihku Račun vedno, nad karticami.
 
 Nastavitve (Render → Environment):
 - `EVKLID_ODSTOP_VRACILO=celotno`: vedno celotno plačilo (če pravnik reče, da sorazmerni del ni dovoljen).

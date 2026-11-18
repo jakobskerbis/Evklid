@@ -9,10 +9,16 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 // kind "gift": izjavi za nakup darilne kode (uporaba se začne šele ob vpisu kode).
 // kind "credit": dokup pogovorov (ob odstopu se vrne delež neporabljenih pogovorov, ne delež časa).
 const WITHDRAWAL_KEY = { gift: "pay.giftWithdrawal", credit: "pay.creditWithdrawal" };
-export const consentFields = (kind = "") => `
+// vi: stran za starše (placaj.html) vika. Pod potrditvami informacija o funkciji za odstop (ZVPot-1A, 130. člen 6. točka).
+export const consentFields = (kind = "", { vi = false } = {}) => `
   <label class="check pay-consent"><input type="checkbox" name="adult" required><span>${esc(t(kind === "gift" ? "pay.giftAdult" : "pay.adult"))}</span></label>
   <label class="check pay-consent"><input type="checkbox" name="withdrawal" required><span>${esc(t(WITHDRAWAL_KEY[kind] || "pay.withdrawal"))}</span></label>
-  ${termsField()}`;
+  ${termsField()}
+  ${withdrawInfo(vi)}`;
+export const withdrawInfo = (vi = false) => {
+  const [before, after = ""] = t(vi ? "payp.withdrawInfo" : "pay.withdrawInfo").split("{link}");
+  return `<p class="muted small pay-withdraw-info">${esc(before)}<a href="/odstop.html" target="_blank" rel="noopener">evklid.app/odstop</a>${esc(after)}</p>`;
+};
 
 // Potrditev splošnih pogojev (#765 točka 2): pred vsakim plačilom in ob registraciji. Strežnik shrani različico;
 // ob povezavi je različica pogojev (setTermsVersion: zavihek Račun iz /api/account, stran za starše iz /api/pay).

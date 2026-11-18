@@ -192,6 +192,7 @@ export function mountAccounts(app, store, opts = {}) {
   if (promoCfg.code) log.info?.(`[evklid] aktivacijska koda ${promoCfg.code}: porabljenih ${promo.used()}/${promoCfg.limit}, ${promoCfg.days} dni`);
   // Število profilov pri aktivacijski kodi je lastnost kode, ki jo je račun porabil.
   const accessOf = (p) => accessFor(p, Date.now(), p.promo_until ? promo.termsOf(p.id).seats : promoCfg.seats);
+  let withdrawals = null; // funkcija za odstop (server/placila/odstop.js)
   let billing = null; // paketi pred testom, povezave za starše (mountBilling spodaj)
   let gifts = null; // darilne kode (mountGifts spodaj)
   let guarantee = null; // garancija »Boljša ocena ali vrnemo denar« (mountGuarantee spodaj)
@@ -1879,7 +1880,7 @@ export function mountAccounts(app, store, opts = {}) {
   function withdrawalOpen(p) {
     try {
       const c = contractsFor(db, p, billing.withdrawalQuote);
-      return c.options.length > 0;
+      return c.options.length > 0 || !!c.store;
     } catch (err) {
       log.error?.("[evklid] odstop (seznam pogodb):", err.message);
       return false;
@@ -2719,16 +2720,28 @@ export function mountAccounts(app, store, opts = {}) {
     const sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
     await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } }, { noFallback: true });
   }
+  // Odstop od pogodbe: prekliče samo naročnino, od katere je kupec odstopil (p.sub_id); že preklicana = uspeh.
+  async function cancelOneSubscription(p) {
+    if (!String(p?.sub_id || "").startsWith("sub_")) return;
+    let sub = null;
+    try {
+      sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
+    } catch (err) {
+      const gone = err?.stripe?.code === "resource_missing" || /cancel/i.test(String(err?.message || ""));
+      if (!gone) throw err;
+    }
+    await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } }, { noFallback: true });
+  }
   guarantee = mountGuarantee(app, { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, birthMissing, cancelSubscription, addonOf: podari.addonOf });
   // Funkcija za odstop od pogodbe (ZVPot-1A 138.a člen): /odstop.html, potrdilo o prejemu, vračilo in preklic (server/placila/odstop.js).
-  mountWithdrawal(app, {
+  withdrawals = mountWithdrawal(app, {
     db,
     stripe,
     json,
     log,
     getParent,
     quote: (p, now) => billing.withdrawalQuote(p, now),
-    cancelSubscription,
+    cancelSub: cancelOneSubscription,
     passes: billing.passes,
     credits,
     sendMail,
@@ -2736,6 +2749,7 @@ export function mountAccounts(app, store, opts = {}) {
     isMinor,
     ownerOk: (req) => !lockable(req.parent) || accountLocks.isUnlocked(req.parent.id, req.deviceId),
   });
+  app.locals.withdrawals = withdrawals; // testi: dnevni ponovni poskus potrdil (retryAcks)
 
   // Naročnina iz dogodka: sveže stanje iz Stripa (dogodki lahko pridejo v napačnem vrstnem redu).
   async function freshSubscription(obj) {
@@ -2989,6 +3003,7 @@ export function mountAccounts(app, store, opts = {}) {
       if (process.env.EVKLID_WEEKLY_EMAIL !== "0" && isSendTime()) sendWeeklyAll().catch((e) => log.error?.("[evklid] tedenska poročila:", e.message));
       if (process.env.EVKLID_GOAL_EMAIL !== "0" && isNoonTime()) sendGoalRemindersAll().catch((e) => log.error?.("[evklid] opomniki cilja:", e.message));
       billing.billingDaily().catch((e) => log.error?.("[evklid] dnevna opravila plačil:", e.message));
+      withdrawals?.retryAcks().catch((e) => log.error?.("[evklid] potrdila o odstopu (ponovno):", e.message));
       try {
         guests.cleanup();
       } catch (e) {
