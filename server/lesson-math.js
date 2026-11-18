@@ -17,12 +17,17 @@ const WORDS = /\b(sqrt|root|abs|pi)\b/g;
 // 2,4 (24 h), 1,44 (1440 min), 8,64 (86400 s), 2,7778 (1/3,6), 1,6667 (1/60); konstante
 // 1,602 (eV ↔ J), 1,66 (u ↔ kg), 4,184 (cal ↔ J), 1,013 (atm ↔ Pa), 2,54 (in ↔ cm).
 const CONVERSION_MANTISSAS = [1, 3.6, 6, 2.4, 1.44, 8.64, 2.77778, 1.66667, 1.602, 1.66, 4.184, 1.013, 2.54];
-function isConversionRatio(a, b, tol) {
+// Enote podatkov: 1 B = 8 bit (meritev SŠ 18. 11.: »2 MB = 2 · 10⁶ B · 8 bit/B = 1,6 · 10⁷ bit« je bil lažen
+// »Popravek«). Količnik 8 velja samo, če je na kateri strani bit ali bajt, da ne skrije drugih napak.
+const DATA_UNIT = /^(?:[kMGTP]?i?B|[kMGTP]?bit(?:ov|a|i)?|bajt\p{L}*|byte\p{L}*)$/u;
+const DATA_MANTISSAS = [8, 1.024];
+function isConversionRatio(a, b, tol, data = false) {
   if (!a || !b) return false;
   const r = Math.abs(a / b) >= 1 ? Math.abs(a / b) : Math.abs(b / a);
   const m = r / 10 ** Math.floor(Math.log10(r) + 1e-9);
   // tudi obratne vrednosti (1/1,602 → 6,242; 1/3,6 → 2,778)
-  return CONVERSION_MANTISSAS.some((c0) => [c0, 10 / c0].some((c) => Math.abs(m - c) / c < tol || Math.abs(m / 10 - c) / c < tol));
+  const list = data ? [...CONVERSION_MANTISSAS, ...DATA_MANTISSAS] : CONVERSION_MANTISSAS;
+  return list.some((c0) => [c0, 10 / c0].some((c) => Math.abs(m - c) / c < tol || Math.abs(m / 10 - c) / c < tol));
 }
 
 // LaTeX → preprost aritmetični izraz. Vrne null, če del ni čisto številski.
@@ -186,7 +191,8 @@ function compare(a, b, approx, loose) {
   if (a.units.includes("%") !== b.units.includes("%")) return "skip"; // 20 % = 60 €
   if (a.units.includes("°") !== b.units.includes("°")) return "skip"; // 150° = 5π/6
   if (ua !== ub && (a.units.length || b.units.length)) {
-    if ((a.bare || b.bare) && isConversionRatio(a.value, b.value, ratioTol)) return "skip"; // 3 kg = 3 · 100 = 300 dag
+    const data = [...a.units, ...b.units].some((u) => DATA_UNIT.test(u));
+    if ((a.bare || b.bare) && isConversionRatio(a.value, b.value, ratioTol, data)) return "skip"; // 3 kg = 3 · 100 = 300 dag
   }
   return diff / scale;
 }

@@ -98,6 +98,10 @@ cas("SymPy: zaokroženi rezultati in enote", async () => {
   assert.equal((await casCheck("value", ["sqrt(2)", "1.42"])).ok, false);
   assert.equal((await casCheck("value", ["3/4+2/5", "23/20"])).ok, true);
   assert.equal((await casCheck("value", ["sin(30*pi/180)", "1/2"])).ok, true);
+  // Meritev SŠ 18. 11. (KEM-SS-3): 17,46 mol je izpisan zaokrožen vmesni rezultat (17,4626), 1048,6 g je pravilno.
+  assert.equal((await casCheck("value", ["17.46*60.05", "1048.6"])).ok, true, "zaokrožen vmesni rezultat s 4 mesti");
+  assert.equal((await casCheck("value", ["17.46*60.05", "1049.5"])).ok, false, "prava napaka ostane napaka");
+  assert.equal((await casCheck("value", ["1.0487*4.80", "5.05"])).ok, false);
   assert.equal((await casCheck("units", ["3.2*kg*9.81*m/s^2", "31.4*N"])).ok, true);
   assert.equal((await casCheck("units", ["3.2*kg*9.81*m/s^2", "31.4*J"])).ok, false, "napačna enota");
   assert.equal((await casCheck("units", ["72*km/h", "20*m/s"])).ok, true);

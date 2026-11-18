@@ -321,6 +321,18 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     // Doda ~1 800 znakov predpomnjenega dela (58 164 → 59 960; ~480 žetonov) s popravki pregleda #811, meja 1 800.
     // Meritev SŠ 18. 11. (pomen rezultata iz podatkov, Načrt in vmesne enačbe): +180 znakov (59 960 → 60 140; ~50 žetonov).
     // 60195 znakov po pregledu PR #833 (stavek o pomenu rezultata); rezerva ~300.
-    assert.ok(stat.length < 58164 + 1800 + 200 + 330, `stalni del ${stat.length} znakov`);
+    // Meritev SŠ 18. 11. po #833 (Pravila brez posploševanja, Zapomni si s pogoji): +773 znakov (60 195 → 60 968; ~220 žetonov).
+    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800, `stalni del ${stat.length} znakov`);
   });
+});
+
+test("accuracy SŠ round 2 (2026-11-18): rules with their conditions, no rule from one case, consistent exercise and plan, in the cached part", () => {
+  const src = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8");
+  const fixed = src.split(SPLIT_MARKER)[0];
+  const start = fixed.indexOf("- **Pravila brez posploševanja.**");
+  assert.ok(start > fixed.indexOf("- **Dodatne vaje in stranske trditve.**") && start < fixed.indexOf("## Način A"), "takoj za pravilom o vajah, v razdelku Pravilnost");
+  const row = fixed.slice(start, fixed.indexOf("\n", start));
+  for (const s of ["zapiši s pogoji, pod katerimi velja", "ga ne izpelji iz enega primera naloge", "vzrok pojava naj bo učbeniški", "okvir izpusti", "neobvezno stransko opombo raje izpusti", "v enakih pogojih ne pripiše drugačne vrednosti", "vsaka kombinacija pogojev ima enako ponovitev", "Opozorilo na napako zapiši nedvoumno", "trdiš le, kar je v nalogi"]) assert.ok(row.includes(s), `»${s}«`);
+  assert.ok(row.length < 800, `točka naj ostane kratka (${row.length} znakov)`);
+  assert.match(fixed, /5\. Okvir »Zapomni si« le, kadar je v nalogi pravilo ali past, ki jo učenec zlahka pozabi, s pogoji, pod katerimi velja\./);
 });

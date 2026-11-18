@@ -588,6 +588,29 @@ def op_limit(f, var, point, claimed):
     return ok, "" if ok else f"limita je {sp.sstr(val)}"
 
 
+DEC_LIT = re.compile(r"(?<![\w.])(\d+)\.(\d+)(?![\w.])")
+
+
+def operand_rounding(expr_text):
+    """Odstopanje vrednosti zaradi zaokroženih vmesnih rezultatov v izrazu (meritev SŠ 18. 11.: »17.46*60.05 | 1048.6«
+    je pravilno iz nezaokroženih 17,4626 mol, koda pa je dala lažen »Popravek«). Šteje le števila z vsaj 4 veljavnimi
+    mesti (izpisani vmesni rezultati; podatki naloge imajo navadno 2–3): pol zadnjega mesta, razširjeno skozi izraz."""
+    s = clean(expr_text)
+    total = 0.0
+    for m in DEC_LIT.finditer(s):
+        digits = (m.group(1) + m.group(2)).lstrip("0")
+        if len(digits) < 4:
+            continue
+        h = 0.5 * 10 ** -len(m.group(2))
+        try:
+            hi = complex(sp.N(parse(s[: m.start()] + repr(float(m.group(0)) + h) + s[m.end():]), 30))
+            lo = complex(sp.N(parse(s[: m.start()] + repr(float(m.group(0)) - h) + s[m.end():]), 30))
+        except Exception:
+            return 0.0
+        total += abs(hi - lo) / 2
+    return total
+
+
 def op_value(expr, claimed):
     e = parse(expr)
     if isinstance(e, sp.MatrixBase) or clean(claimed).startswith("Matrix"):
@@ -599,6 +622,13 @@ def op_value(expr, claimed):
     if e.free_symbols:
         raise Unsure("izraz ima neznanke")
     ok = same_value(e, claimed)
+    if ok is False and decimals_tol(claimed) is not None:
+        slack = operand_rounding(expr)
+        if slack > 0:
+            try:
+                ok = abs(complex(sp.N(e, 30)) - complex(sp.N(parse(claimed), 30))) <= decimals_tol(claimed) + slack
+            except Exception:
+                pass
     if ok is None:
         raise Unsure("vrednosti ne znam primerjati")
     return ok, "" if ok else f"pravilno je {sp.sstr(sp.nsimplify(e) if e.is_Float else e)} ≈ {complex(sp.N(e)).real:.6g}"

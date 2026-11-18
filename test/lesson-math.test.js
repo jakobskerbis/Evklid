@@ -170,3 +170,10 @@ Besedilo.
   assert.ok(r.errors.some((e) => /račun se ne ujema/.test(e) && /6 ≠ 7/.test(e)), r.errors.join("\n"));
   assert.equal(r.calcChecked, 2);
 });
+
+test("lesson-math: bajt in bit (meritev SŠ 18. 11.: lažen popravek »2 MB ni 1,6 · 10⁷ bit«)", () => {
+  assert.equal(one("2\\ \\mathrm{MB} = 2 \\cdot 10^6\\ \\mathrm{B} \\cdot 8\\ \\frac{\\mathrm{bit}}{\\mathrm{B}} = 1{,}6 \\cdot 10^7\\ \\mathrm{bit}").mismatches.length, 0);
+  // napačen račun z biti ostane najden; količnik 8 brez enot podatkov ni pretvorba
+  assert.equal(one("2\\ \\mathrm{MB} = 2 \\cdot 10^6 \\cdot 8 = 1{,}7 \\cdot 10^7\\ \\mathrm{bit}").mismatches.length, 1);
+  assert.equal(one("5\\ \\mathrm{kg} = 5 \\cdot 8 = 40\\ \\mathrm{N}").mismatches.length, 1);
+});
