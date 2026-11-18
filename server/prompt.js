@@ -6,7 +6,7 @@ import { goalPrompt } from "../public/goal-data.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { cleanText } from "./settings.js";
-import { IME_OZNAKA } from "./ime-oznaka.js";
+import { IME_OZNAKA, pupilGender } from "./ime-oznaka.js";
 import { interestById } from "../public/interests.js";
 import { studyProgramPrompt } from "./curriculum.js";
 import { langInfo } from "../public/i18n/languages.js";
@@ -27,14 +27,23 @@ export function loadTemplate() {
 }
 
 // Vrstica »Ime učenca« v delu za učenca (pod oznako NASTAVITVE, ni v predpomnjenem delu). Sklonjene oblike
-// strežnik ne more sestaviti, zato samo nagovor v imenovalniku.
+// strežnik ne more sestaviti, zato samo nagovor v imenovalniku (besedilo pregledal Opus, PR #845).
 const NAME_LINE =
-  `${IME_OZNAKA} (oznaka namesto imena; aplikacija jo pred prikazom zamenja z učenčevim pravim imenom). ` +
-  `Ko ga nagovoriš po imenu, napiši oznako točno tako, brez končnic, npr. »Bravo, ${IME_OZNAKA}!«. ` +
-  "Kjer bi ime moral skloniti, ga raje izpusti. Oznake učencu ne omenjaj in je ne razlagaj.";
+  `\`${IME_OZNAKA}\` – oznaka namesto učenčevega imena; aplikacija jo pred prikazom zamenja s pravim imenom. ` +
+  `Uporabljaj jo samo v nagovoru, natanko tako in brez končnic, npr. »Bravo, ${IME_OZNAKA}!«, »${IME_OZNAKA}, poglejva drugi korak.« ` +
+  `Nikoli je ne skloni, ne dodajaj ji končnic in ne delaj iz nje svojilnega pridevnika (namesto »${IME_OZNAKA}ova rešitev« reci »tvoja rešitev«); ` +
+  "kjer bi ime moral skloniti, ga izpusti. To velja v vseh jezikih pogovora. Oznake učencu ne omenjaj in je ne razlagaj.";
+
+// Slovnični spol namesto imena (j, 18. 11. 2026): iz nastavitve ali uganjen iz imena (server/ime-oznaka.js).
+const GENDER_LINE = {
+  m: "Slovnični spol učenca: moški",
+  z: "Slovnični spol učenca: ženski",
+  "": "Spola učenca ne poznaš; dokler ga ne razbereš iz njegovih sporočil, se izogibaj spolno zaznamovanim oblikam v 2. osebi (namesto »si rešil« piši »rešitev je pravilna«, »odlično ti gre«); nikoli »rešil/a«.",
+};
 
 const PLACEHOLDERS = [
   "student_name",
+  "student_gender",
   "subject",
   "track",
   "educational_track",
@@ -63,6 +72,7 @@ export function buildSystemPrompt({ settings, weaknesses = [], studentName = "",
     study_program: studyProgramPrompt(settings),
     // Ime ne gre k ponudniku AI (server/ime-oznaka.js): model dobi oznako, strežnik jo v odgovoru zamenja z imenom.
     student_name: cleanText(studentName, 40) ? NAME_LINE : "(ni podano)",
+    student_gender: GENDER_LINE[pupilGender(settings, cleanText(studentName, 40))] ?? GENDER_LINE[""],
     personality_setting: settings.personality_setting || "nevtralna",
     weaknesses: weaknesses.length ? weaknesses.join(", ") : "(še ni podatkov)",
     student_results: results || "še ni podatkov. Predlagana začetna zahtevnost: osnovna.",

@@ -53,7 +53,7 @@ test("rezultati iz vadnice prvega otroka ne gredo drugemu otroku", async () => {
 test("ime v drugi pisavi (ruščina) ne gre drugemu otroku", async () => {
   // Pri pogovoru v ruščini bi model latinično ime zapisal v cirilici. Od 18. 11. 2026 imena sploh ne dobi
   // (server/ime-oznaka.js): napiše oznako, strežnik vstavi ime, kot ga je vpisal učenec.
-  const reply = (sys) => (/Zala/.test(sys) ? "Привет, Зала! 1/2 + 1/3 = 5/6." : /Ime učenca: \{\{IME\}\}/.test(sys) ? "Привет, {{IME}}! 1/2 + 1/3 = 5/6." : "Привет! 1/2 + 1/3 = 5/6.");
+  const reply = (sys) => (/Zala/.test(sys) ? "Привет, Зала! 1/2 + 1/3 = 5/6." : /\{\{IME\}\}/.test(sys) ? "Привет, {{IME}}! 1/2 + 1/3 = 5/6." : "Привет! 1/2 + 1/3 = 5/6.");
   await withServer(reply, async ({ call }) => {
     const a = await ask(call, await student(call, "Zala", { language: "ru" }));
     assert.match(a, /Привет, Zala!/);

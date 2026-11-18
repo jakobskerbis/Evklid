@@ -36,7 +36,7 @@ test("buildSystemPrompt fills placeholders and keeps LaTeX braces", () => {
     studentName: "Zarjanka",
   });
   assert.match(p, /Predmet: KEM/);
-  assert.match(p, /Ime učenca: \{\{IME\}\} \(oznaka/); // ime ne gre k ponudniku AI (server/ime-oznaka.js)
+  assert.match(p, /Ime učenca: `\{\{IME\}\}` – oznaka/); // ime ne gre k ponudniku AI (server/ime-oznaka.js)
   assert.doesNotMatch(p, /Zarjanka/);
   assert.match(p, /šibke točke učenca: ulomki/);
   assert.match(p, /\$3\{,\}5\$/);

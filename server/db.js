@@ -554,9 +554,9 @@ export class Store {
   }
   // Sprotni povzetek pogovora (server/povzetek.js): { text, upto } ali null (tudi neberljiv po menjavi ključa).
   getSummary(conversationId) {
-    const r = this.db.prepare("SELECT text, upto FROM conversation_summaries WHERE conversation_id = ?").get(conversationId);
+    const r = this.db.prepare("SELECT text, upto, updated_at FROM conversation_summaries WHERE conversation_id = ?").get(conversationId);
     const text = r ? unseal(r.text, null) : null;
-    return text ? { text, upto: r.upto } : null;
+    return text ? { text, upto: r.upto, at: r.updated_at } : null;
   }
   setSummary(conversationId, text, upto) {
     this.db

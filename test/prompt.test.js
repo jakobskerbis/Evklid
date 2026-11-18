@@ -19,7 +19,7 @@ test("static part of the prompt is identical for every student and goes first", 
   // Vse nastavitve so v drugem bloku, v prvem ni nobenega vstavljenega podatka.
   assert.doesNotMatch(sa.text, /Zarja|Tilen|ulomki z neznanko|Mejoza|Ime učenca:/);
   // Ime ne gre k ponudniku AI (server/ime-oznaka.js): v promptu je samo oznaka.
-  assert.match(da.text, /Ime učenca: \{\{IME\}\}/);
+  assert.match(da.text, /Ime učenca: `\{\{IME\}\}`/);
   assert.doesNotMatch(da.text + db.text, /Zarja|Tilen/);
   assert.match(da.text, /šibke točke učenca: ulomki z neznanko/);
   assert.match(db.text, /Šola: UNIVERZA/);

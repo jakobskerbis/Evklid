@@ -9,7 +9,10 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { setClient } from "../server/claude.js";
-import { withName, createNameStream, maskName, maskHistory, IME_OZNAKA } from "../server/ime-oznaka.js";
+import { withName, createNameStream, maskName, maskHistory, IME_OZNAKA, choiceAsToken, genderFromName, pupilGender } from "../server/ime-oznaka.js";
+import { buildSystemPrompt, systemBlocks } from "../server/prompt.js";
+import { normalizeSettings } from "../server/settings.js";
+import { cacheKey } from "../server/app.js";
 import { summarizedHistory } from "../server/povzetek.js";
 
 const NAME = "Zarjana Kovačič";
@@ -18,29 +21,36 @@ const META = '\n<<META subject=MAT topic="seštevanje" error=0 mode=A flag=none 
 
 // --- enote ---
 
-test("withName: oznaka → ime, prilepljene črke odpadejo, brez oznake nespremenjeno", () => {
+test("withName: oznaka → ime; končnica le pri imenu na soglasnik; skoraj prave oznake; prazno ime z vejico", () => {
   assert.equal(withName("Bravo, {{IME}}! Še enkrat, {{IME}}.", "Ana"), "Bravo, Ana! Še enkrat, Ana.");
-  assert.equal(withName("Hvala, {{IME}}u.", "Ana"), "Hvala, Ana.", "sklonjena oznaka: ime v imenovalniku, ne »Anau«");
-  assert.equal(withName("{{IME}}-jev korak", "Ana"), "Ana-jev korak");
+  assert.equal(withName("Hvala, {{IME}}u.", "Ana"), "Hvala, Ana.", "ime na samoglasnik: končnica odpade, ne »Anau«");
+  assert.equal(withName("Hvala, {{IME}}u.", "Jakob"), "Hvala, Jakobu.", "ime na soglasnik: končnica ostane");
+  assert.equal(withName("Hvala, {{IME}}-u in {{IME}}’u.", "Jakob"), "Hvala, Jakobu in Jakobu.", "ločilo pred končnico odpade");
+  assert.equal(withName("{{IME}}-jev korak", "Ana"), "Ana korak");
+  assert.equal(withName("{{ IME }} in {{Ime}} in {{ime}}u", "Ana"), "Ana in Ana in Ana", "skoraj prave oznake");
+  assert.equal(withName("Bravo, {{IME}}! {{IME}}, poglejva. Gremo {{IME}}.", ""), "Bravo! poglejva. Gremo.", "prazno ime: oznaka s sosednjo vejico in presledkom");
   assert.equal(withName("$\\frac{{a}}{b}$ in {{IM", "Ana"), "$\\frac{{a}}{b}$ in {{IM");
   assert.equal(withName("brez oznake", "Ana"), "brez oznake");
 });
 
 test("createNameStream: oznaka, razdeljena na katerem koli mestu, pride cela; umik zavrže zadržano", () => {
-  const full = `Bravo, ${IME_OZNAKA}! Poglejva ${IME_OZNAKA}u skupaj {{ in {x}.`;
-  const want = withName(full, "Ana");
-  for (let size = 1; size <= full.length; size++) {
-    const s = createNameStream("Ana");
-    let out = "";
-    for (let i = 0; i < full.length; i += size) out += s.push(full.slice(i, i + size));
-    assert.ok(!/\{\{I|ME\}\}/.test(out), `kos ${size}: oznaka je ušla: ${out}`);
-    out += s.end();
-    assert.equal(out, want, `kos ${size}`);
-  }
-  // Na vsakem mestu reza posebej (dva kosa).
-  for (let cut = 0; cut <= full.length; cut++) {
-    const s = createNameStream("Ana");
-    assert.equal(s.push(full.slice(0, cut)) + s.push(full.slice(cut)) + s.end(), want, `rez ${cut}`);
+  const full = `Bravo, ${IME_OZNAKA}! Poglejva ${IME_OZNAKA}u skupaj {{ in {x}, {{ IME }}-ju in {{Ime}}: $\\frac{{a}}{b}$.`;
+  for (const name of ["Ana", "Jakob", ""]) {
+    const want = withName(full, name);
+    assert.doesNotMatch(want, /\{\{\s*IME|IME\s*\}\}/i);
+    for (let size = 1; size <= full.length; size++) {
+      const s = createNameStream(name);
+      let out = "";
+      for (let i = 0; i < full.length; i += size) out += s.push(full.slice(i, i + size));
+      assert.doesNotMatch(out, /\{\{\s*IME|IME\s*\}\}/i, `»${name}«, kos ${size}: oznaka je ušla: ${out}`);
+      out += s.end();
+      assert.equal(out, want, `»${name}«, kos ${size}`);
+    }
+    // Na vsakem mestu reza posebej (dva kosa).
+    for (let cut = 0; cut <= full.length; cut++) {
+      const s = createNameStream(name);
+      assert.equal(s.push(full.slice(0, cut)) + s.push(full.slice(cut)) + s.end(), want, `»${name}«, rez ${cut}`);
+    }
   }
   const s = createNameStream("Ana");
   assert.equal(s.push("Uvod {{IM"), "Uvod ");
@@ -48,16 +58,59 @@ test("createNameStream: oznaka, razdeljena na katerem koli mestu, pride cela; um
   assert.equal(s.push("Nov začetek") + s.end(), "Nov začetek", "umik (retract) zavrže zadržani konec");
 });
 
+test("gumb z izbiro: učenec vidi ime, model dobi izbiro z oznako", () => {
+  const ch = ["Da, {{IME}} razume", "Ne"];
+  assert.equal(choiceAsToken("Da, Ana razume", ch, "Ana"), "Da, {{IME}} razume");
+  assert.equal(choiceAsToken("Da, Ana razume, a še to", ch, "Ana"), "Da, {{IME}} razume, a še to");
+  assert.equal(choiceAsToken("Ana je moje ime", ch, "Ana"), "Ana je moje ime", "lastno besedilo ostane");
+  assert.equal(choiceAsToken("Ne", ch, "Ana"), "Ne");
+});
+
+test("slovnični spol: nastavitev ima prednost, sicer iz imena, ob dvomu neznan", () => {
+  const g = (n) => genderFromName(n);
+  assert.deepEqual(["Ana", "Nika", "Zarjana Kovačič", "Urška", "Ines", "Karmen"].map(g), ["z", "z", "z", "z", "z", "z"]);
+  assert.deepEqual(["Luka", "Jaka", "Miha", "Žiga", "Matija", "Jakob", "Marko", "Nik"].map(g), ["m", "m", "m", "m", "m", "m", "m", "m"]);
+  assert.deepEqual(["Saša", "Andrea", "Vanja", "Lili", "Иван", "", "x", "Ana1"].map(g), ["", "", "", "", "", "", "", ""]);
+  assert.equal(pupilGender({ gender: "m" }, "Ana"), "m");
+  assert.equal(pupilGender({ gender: "z" }, "Luka"), "z");
+  assert.equal(pupilGender({ gender: "" }, "Luka"), "m");
+  assert.equal(normalizeSettings({ gender: "x" }).gender, "");
+  assert.equal(normalizeSettings({ gender: "z" }).gender, "z");
+});
+
+test("prompt: ime samo kot oznaka v delu za učenca, spol ali navodilo za neznan spol, stalni del enak", () => {
+  const p = (name, settings = {}) => buildSystemPrompt({ settings: normalizeSettings(settings), studentName: name });
+  const dyn = (x) => systemBlocks(x)[1].text;
+  assert.match(dyn(p("Zarjanka")), /- Slovnični spol učenca: ženski\n/);
+  assert.match(dyn(p("Mitja")), /- Slovnični spol učenca: moški\n/);
+  assert.match(dyn(p("Mitja", { gender: "z" })), /- Slovnični spol učenca: ženski\n/);
+  assert.match(dyn(p("Saša")), /- Spola učenca ne poznaš; .*nikoli »rešil\/a«\./);
+  assert.match(dyn(p("")), /Spola učenca ne poznaš/);
+  assert.match(dyn(p("Zarjanka")), /Ime učenca: `\{\{IME\}\}` – oznaka .*svojilnega pridevnika.*v vseh jezikih/);
+  for (const n of ["Zarjanka", "Mitja", "Saša"]) assert.ok(!new RegExp(`(?<!\\p{L})${n}(?!\\p{L})`, "u").test(p(n)), `ime ${n} v promptu`);
+  assert.equal(systemBlocks(p("Zarjanka"))[0].text, systemBlocks(p("Saša", { gender: "m" }))[0].text, "stalni (predpomnjeni) del enak");
+});
+
+test("ključ predpomnilnika: znan spol loči odgovore, neznan ohrani dosedanji ključ", () => {
+  const s = normalizeSettings({});
+  const q = "Kako seštejem dva ulomka z različnima imenovalcema?";
+  const k = (g) => cacheKey(q, s, "chat", false, null, [], "osnovna", g);
+  assert.equal(k(""), cacheKey(q, s, "chat", false, null, [], "osnovna"));
+  assert.notEqual(k("m"), k("z"));
+  assert.notEqual(k("m"), k(""));
+});
+
 test("maskName in maskHistory: samo odgovori inštruktorja, cele besede, sporočila učenca ostanejo", () => {
   assert.equal(maskName("Bravo, Zarjana! Zarjana Kovačič, Kovačič.", NAME), "Bravo, {{IME}}! {{IME}}, {{IME}}.");
-  assert.equal(maskName("Ana in Anatomija", "Ana"), "{{IME}} in Anatomija");
+  assert.equal(maskName("Ana in Anatomija, ANA", "ana"), "{{IME}} in Anatomija, {{IME}}", "ne glede na velike črke");
+  assert.equal(maskName("Kovac\u030cic\u030c je tu", NAME), "{{IME}} je tu", "NFC");
   const h = [
     { role: "user", content: [{ type: "text", text: "Ime mi je Zarjana." }] },
     { role: "assistant", content: [{ type: "text", text: "Živjo, Zarjana!" }] },
     { role: "assistant", content: "Zarjana, poglej." },
   ];
   const m = maskHistory(h, NAME);
-  assert.equal(m[0], h[0], "sporočilo učenca ostane, kot ga je napisal");
+  assert.deepEqual(m[0], h[0], "sporočilo učenca ostane, kot ga je napisal");
   assert.equal(m[1].content[0].text, "Živjo, {{IME}}!");
   assert.equal(m[2].content, "{{IME}}, poglej.");
 });
@@ -89,7 +142,7 @@ function spyClient(calls) {
         stream: (p) => {
           record("stream", p);
           // Oznaka razdeljena med dva kosa toka.
-          const chunks = isTutor(p) ? ["Bravo, {{I", "ME}}! Poglejva ", "skupaj: koliko je $2 + 3$?" + META] : ["ok"];
+          const chunks = isTutor(p) ? ["Bravo, {{I", "ME}}! Poglejva ", 'skupaj: koliko je $2 + 3$?\n<<KARTICA\nV: Kaj zna {{IME}}?\nO: Seštevati.\n>>\n<<IZBIRE ["Razumem, {{IME}} gre naprej", "Ne vem"]>>' + META] : ["ok"];
           const text = chunks.join("");
           return {
             async *[Symbol.asyncIterator]() {
@@ -166,14 +219,29 @@ test("noben klic modela ne nese imena: klepet, vodenje, podrobna razlaga, ustno,
     assert.match(done1.text, /Bravo, Zarjana Kovačič!/);
     const tutorCalls = calls.filter((c) => c.kind === "stream" && /Aktivne nastavitve/.test(c.body));
     assert.ok(tutorCalls.length >= 1);
-    assert.match(tutorCalls[0].body, /Ime učenca: \{\{IME\}\}/);
+    assert.ok(/Ime učenca: `\{\{IME\}\}`/.test(tutorCalls[0].body), "oznaka v promptu");
     // Shranjeno: prikaz z imenom, zgodovina za API z oznako.
     const row = store.listMessages(conv.id).find((m) => m.role === "assistant");
+    assert.ok(/Slovnični spol učenca: ženski/.test(tutorCalls[0].body), "spol v promptu");
     assert.match(row.display_text, /Bravo, Zarjana Kovačič!/);
     assert.match(JSON.stringify(row.api_content), /\{\{IME\}\}/);
     assert.doesNotMatch(JSON.stringify(row.api_content), LEAK);
 
-    // 2. Star odgovor z imenom v zgodovini (pred spremembo): pri naslednji potezi gre k modelu z oznako.
+    assert.deepEqual(done1.choices, ["Razumem, Zarjana Kovačič gre naprej", "Ne vem"], "gumbi z imenom");
+    // Tapnjen gumb: učenec vidi ime, model dobi izbiro z oznako.
+    const tap = calls.length;
+    const evTap = await say({ text: "Razumem, Zarjana Kovačič gre naprej" });
+    assert.ok(evTap.some((e) => e.event === "done"));
+    const tapCall = calls.slice(tap).find((c) => c.kind === "stream" && /Aktivne nastavitve/.test(c.body));
+    assert.ok(/Razumem, \{\{IME\}\} gre naprej/.test(tapCall.body), "izbira z oznako");
+    const userRow = store.listMessages(conv.id).filter((m) => m.role === "user").at(-1);
+    assert.equal(userRow.display_text, "Razumem, Zarjana Kovačič gre naprej");
+
+    // Kartica z oznako se ne shrani (ime ne sodi v kartico, preverjanje kartic bi ga poslalo modelu).
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM flashcards WHERE student_id = ?").get(s.id).n, 0);
+
+    // 2. Star odgovor z imenom v zgodovini (pred spremembo; meja maskiranja v kv): pri naslednji potezi gre k modelu z oznako.
+    store.db.prepare("UPDATE kv SET value = ? WHERE key = 'ime_oznaka_meja'").run(JSON.stringify({ id: row.id, at: "2026-11-18 00:00:00" }));
     store.setMessageContent(row.id, [{ type: "text", text: `Super, Zarjana! Koliko je 2 + 3?${META}` }], 0);
     const ev2 = await say({ text: "5" });
     assert.ok(ev2.some((e) => e.event === "done"), "druga poteza (vodenje)");
@@ -222,6 +290,23 @@ test("kar učenec sam napiše (svoje ime), ostane v njegovem sporočilu; prompt 
   });
 });
 
+test("nov odgovor z besedo, ki je enaka imenu (»Vid je čutilo«), se ne maskira; star (pred mejo) se", async () => {
+  await withSpy(async ({ call, sse, calls, store }) => {
+    const s = (await call("/api/students", { name: "Vid" })).body;
+    const conv = (await call(`/api/students/${s.id}/conversations`, {})).body;
+    sse((await call(`/api/conversations/${conv.id}/messages`, { text: "Koliko je 2 + 3?" })).text);
+    const row = store.listMessages(conv.id).find((m) => m.role === "assistant");
+    store.setMessageContent(row.id, [{ type: "text", text: `Vid je čutilo. Koliko čutil imamo?${META}` }], 0);
+    const n = calls.length;
+    sse((await call(`/api/conversations/${conv.id}/messages`, { text: "pet" })).text);
+    const tutor = calls.slice(n).find((c) => c.kind === "stream" && /Aktivne nastavitve/.test(c.body));
+    assert.ok(tutor.body.includes("Vid je čutilo."), "nov odgovor ostane, kot ga je napisal model");
+    assert.ok(!tutor.body.includes("{{IME}} je čutilo"));
+  });
+  const old = [{ id: 2, role: "assistant", content: "Vid je čutilo." }, { id: 9, role: "assistant", content: "Vid je čutilo." }];
+  assert.deepEqual(maskHistory(old, "Vid", 5).map((m) => m.content), ["{{IME}} je čutilo.", "Vid je čutilo."]);
+});
+
 // --- skupni predpomnilnik: obnašanje enako kot prej ---
 
 test("predpomnilnik: shranjen odgovor z oznako, drugi otrok ga dobi s svojim imenom brez novega klica", async () => {
@@ -250,14 +335,18 @@ test("predpomnilnik: shranjen odgovor z oznako, drugi otrok ga dobi s svojim ime
     const cached = store.db.prepare("SELECT text FROM answer_cache").all().map((r) => r.text);
     assert.equal(cached.length, 1);
     assert.match(cached[0], /Bravo, \{\{IME\}\}!/, "v predpomnilniku je oznaka");
-    const b = await ask("Bor");
-    assert.equal(n, 1, "drugi otrok dobi shranjen odgovor");
-    assert.match(b.text, /Bravo, Bor!/);
+    const b = await ask("Mojca");
+    assert.equal(n, 1, "drugi otrok (istega slovničnega spola) dobi shranjen odgovor");
+    assert.match(b.text, /Bravo, Mojca!/);
     assert.doesNotMatch(b.text, /Zala|\{\{IME\}\}/);
     const row = store.listMessages(b.conv).find((m) => m.role === "assistant");
-    assert.match(row.display_text, /Bravo, Bor!/);
-    assert.doesNotMatch(JSON.stringify(row.api_content), /Bor/, "zgodovina za API z oznako tudi pri shranjenem odgovoru");
-    assert.ok(seen.every((x) => !/Zala|Bor/.test(x)));
+    assert.match(row.display_text, /Bravo, Mojca!/);
+    assert.doesNotMatch(JSON.stringify(row.api_content), /Mojca/, "zgodovina za API z oznako tudi pri shranjenem odgovoru");
+    // Drug slovnični spol: drug ključ (odgovor s »si rešila« ne gre fantu), nov klic.
+    const c = await ask("Bor");
+    assert.equal(n, 2);
+    assert.match(c.text, /Bravo, Bor!/);
+    assert.ok(seen.every((x) => !/Zala|Mojca|Bor/.test(x)));
   } finally {
     server.close();
   }

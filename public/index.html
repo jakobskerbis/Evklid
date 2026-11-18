@@ -336,6 +336,14 @@
       <label><span data-i18n="set.personality">Osebnost / tema razlage</span>
         <input name="personality_setting" maxlength="200" placeholder="npr. strog, šaljiv, primeri iz nogometa" data-i18n-ph="set.personalityPh">
       </label>
+      <label><span data-i18n="set.gender">Kako naj ti inštruktor piše</span>
+        <select name="gender">
+          <option value="" data-i18n="set.genderAuto">Samodejno (po imenu)</option>
+          <option value="z" data-i18n="set.genderF">V ženski obliki (»si rešila«)</option>
+          <option value="m" data-i18n="set.genderM">V moški obliki (»si rešil«)</option>
+        </select>
+        <small class="muted" data-i18n="set.genderNote">Neobvezno. Inštruktor tvojega imena ne dobi, le obliko, v kateri ti piše.</small>
+      </label>
       <label id="dialect-row" hidden><span data-i18n="set.dialect">Narečje inštruktorja</span>
         <select name="dialect"></select>
         <small class="muted" data-i18n="set.dialectNote">Spremeni se le ton pogovora. Strokovni izrazi, formule, povzetki in naloge ostanejo v knjižnem jeziku.</small>

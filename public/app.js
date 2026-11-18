@@ -2408,6 +2408,7 @@ async function fillSettingsForm() {
   fillDeleteCard();
   const programs = await loadPrograms(api);
   f.personality_setting.value = s.personality_setting;
+  f.gender.value = s.gender || "";
   f.data_mode.value = s.data_mode || "auto";
   f.games.checked = !gamesOn(s);
   f.xp_goal.value = String(s.xp_goal || 50);
@@ -2471,6 +2472,7 @@ $("#settings-form").addEventListener("submit", async (e) => {
         curriculum_level: f.curriculum_level.value,
         solving_mode: f.querySelector("input[name=solving_mode]:checked").value,
         personality_setting: f.personality_setting.value,
+        gender: f.gender.value,
         dialect: f.dialect.value,
         data_mode: f.data_mode.value,
         games: f.games.checked ? "off" : "on",

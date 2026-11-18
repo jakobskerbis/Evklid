@@ -136,8 +136,9 @@ test("P3: odgovor iz predpomnilnika nima imena prejšnjega učenca, sklonjeno im
     assert.match(cached, /^Bravo, \{\{IME\}\}\. Analiza/);
     store.db.prepare("UPDATE answer_cache SET verified = 1").run();
     reply = "NE SME PRITI (odgovor mora priti iz predpomnilnika)";
-    const second = await ask("Ana", "koliko je 8 krat 7");
-    assert.match(second, /^Bravo, Ana\. Analiza/);
+    // Isti slovnični spol (ključ predpomnilnika ga loči, server/ime-oznaka.js).
+    const second = await ask("Luka", "koliko je 8 krat 7");
+    assert.match(second, /^Bravo, Luka\. Analiza/);
     assert.doesNotMatch(second, /Nik/);
 
     reply = "Jakobu bom pomagal: 9 · 6 = 54. Bravo, Jakob!";
