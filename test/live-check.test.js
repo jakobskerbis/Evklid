@@ -508,6 +508,19 @@ test("live check: the fix call never solves a practice exercise", async () => {
   assert.match(system, /practice exercise, give corrected data or a replacement exercise; never give the exercise's solution/);
 });
 
+test("live check (SŠ meritev 18. 11.): the fix adds no new facts and may only withdraw an unsure side claim", async () => {
+  // BIO-SS-1/encimi-in-atp: popravek je trdil, da hitrost raste nad optimumom, in dodal termostabilne encime.
+  let system = "";
+  await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
+  assert.match(system, /fixes only the statement named in the problem and adds nothing else/);
+  assert.match(system, /withdraw it instead/);
+  assert.match(system, /simplification that is correct at the student's school level.*reply exactly OK/s);
+  // KEM-SS-2/kemijsko-ravnotezje: »K > 1, prevladujejo produkti« pri Kc z enoto pregled ni ujel.
+  assert.match(LIVE_REVIEW_SYSTEM, /every interpretation of a result/);
+  assert.match(LIVE_REVIEW_SYSTEM, /quantity with a unit cannot be compared with the pure number 1/);
+  assert.match(LIVE_REVIEW_SYSTEM, /give the correct fact in a few words/);
+});
+
 test("code check (2026-11-11 round 2): bonds v = 8 − z use outer electrons, not the atomic number", () => {
   // Meritev 11. 11., KEM-OS-8/kovalentna-vez: »v = 8 − 7 = 1« za dušik.
   assert.match(valenceIssue("1. Dušik ima vrstno število 7, zato $v = 8 - 7 = 1$.").issue, /N has 5 outer.*atomic number|atomic number.*5 outer/);

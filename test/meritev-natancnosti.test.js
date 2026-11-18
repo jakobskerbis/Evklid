@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { runChecked, summarize, neutralize, measurementError, latestMeasurement, writeMeasurement, loadProgress, GRADER_FINAL_RULE, MIN_PRIMERI, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
+import { runChecked, summarize, neutralize, measurementError, latestMeasurement, writeMeasurement, loadProgress, parseGrade, GRADER_FINAL_RULE, MIN_PRIMERI, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
 import { DEFAULT_SETTINGS } from "../server/settings.js";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -197,4 +197,17 @@ test("ciljna ponovitev (krog 2): en pogoj, ponovitve z lastnim id-jem in isto te
     assert.match(r2.stderr, /Nič ni bilo poklicano/);
     assert.ok(!/\[\d+\/\d+\]/.test(r2.stdout));
   }
+});
+
+test("meritev: ocena z LaTeXom v razlogu ni več neocenjena (SŠ 18. 11.: 3 od 30)", () => {
+  const raw = String.raw`{"ocena":"pravilno","rezultat_podan":true,"vrsta":"ni","razlog":"Izračun $[\mathrm{H_3O^+}] = 3{,}0 \cdot 10^{-3}\,\mathrm{mol/L}$ je pravilen."}`;
+  assert.throws(() => JSON.parse(raw), "stari JSON.parse je padel");
+  const g = parseGrade(raw);
+  assert.equal(g.ocena, "pravilno");
+  assert.equal(g.rezultat_podan, true);
+  assert.match(g.razlog, /\\mathrm\{mol\/L\}/);
+  assert.equal(parseGrade(String.raw`Ocena: {"ocena":"napaka","razlog":"K > 1 \upsilon"}`).ocena, "napaka");
+  assert.equal(parseGrade('{"ocena":"manjsa_napaka","razlog":"ok \\\\ dvojna"}').ocena, "manjsa_napaka", "veljavna dvojna poševnica ostane");
+  assert.equal(parseGrade(String.raw`{"ocena":"napaka","razlog":"odrezan $\mathrm`).ocena, "neocenjeno", "brez zaključka in brez polja: neocenjeno");
+  assert.equal(parseGrade("ni JSON").ocena, "neocenjeno");
 });

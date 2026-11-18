@@ -1044,13 +1044,16 @@ export const verdictNote = (reason) =>
   `</${NOTE_TAG}>`;
 
 // Navodila preverjevalca iz server/verify.js in dodatek za vaje in trditve (meritev 10. 11.: bakterija 300 μm,
-// »raztopljen« MgO, razvrščanje brez enolične rešitve, napačna trditev ob pravilnem rezultatu).
+// »raztopljen« MgO, razvrščanje brez enolične rešitve, napačna trditev ob pravilnem rezultatu; meritev SŠ 18. 11.: »K > 1, prevladujejo produkti« za Kc z enoto, obrnjena deljivost v načrtu).
 export const LIVE_REVIEW_SYSTEM =
   CHECKER_SYSTEM +
   `
 Also check, as strictly as the calculations:
 - every practice exercise the tutor sets for the student: the quantities must be realistic (sizes, masses, speeds, concentrations that really occur), the substances and objects must behave as the exercise assumes (solubility, state, reactions, biology), the data must be consistent, and it must have exactly one correct answer (in a classification every item fits exactly one group and every offered group is used);
-- every side remark, »remember« box and check step, also when the final result is right: definitions, structures, charges, formulas and rules must be correct, and nothing may contradict the tutor's own calculation or the task.
+- every side remark, »remember« box and check step, also when the final result is right: definitions, structures, charges, formulas and rules must be correct, and nothing may contradict the tutor's own calculation or the task;
+- every interpretation of a result (what a value means, which side or quantity prevails, larger or smaller, faster or slower): it must follow from the given data, not from a rule of thumb that does not apply (a quantity with a unit cannot be compared with the pure number 1);
+- the plan and every intermediate equation: relations in the right direction (»a divides b« is not »b divides a«) and every written equality true.
+A textbook rule stated for the school level without rare exceptions is not an error. In the reason, quote the wrong statement and give the correct fact in a few words.
 Reply with exactly one line: OK, or NAPAKA: <short reason>.`;
 
 /** Pregled s Sonnetom (navodila preverjevalca iz server/verify.js in LIVE_REVIEW_SYSTEM). Vrne { reason: razlog napake ali null, cost }. */
@@ -1064,12 +1067,14 @@ export async function reviewAnswer({ question, answer, createFn = null, usage = 
 }
 
 // ---------------------------------------------------------------------------
-// Popravek: en kratek klic istega modela
+// Popravek: en kratek klic istega modela. Meritev SŠ 18. 11. (BIO-SS-1/encimi-in-atp): popravek je dodal napačno trditev
+// (hitrost raste nad optimumom) in nova dejstva, zato popravi samo navedeno trditev ali jo umakne, nič ne doda.
 
 const FIX_SYSTEM = `You fix one mistake in an AI tutor's answer to a student. You get the answer and a problem that an exact check or a reviewer found in it.
 If the problem is real (the answer states something wrong as true), write a correction of 1 to 3 short sentences addressed to the student, in the language of the answer, that starts with the word for "Correction" in that language followed by a colon (Slovenian: "Popravek:"). Give the correct value or fact. If the answer leaves later steps to the student, correct only the wrong part and do not solve the rest. Write maths as $…$. Do not mention a program, a check or a reviewer, and do not repeat the answer.
+The correction itself must be certainly right, so it fixes only the statement named in the problem and adds nothing else: no new facts, rules, exceptions, examples, organisms, substances or numbers that are not in the answer or the problem. Use only a correct value or fact given in the problem or computed in the answer, or textbook knowledge of the student's level that you are sure of. If the wrong statement is a side remark the task does not need and you cannot state the correct fact with certainty, withdraw it instead (Slovenian: "Popravek: trditev »…« ne drži; za to nalogo ni potrebna.").
 If the problem is in a practice exercise, give corrected data or a replacement exercise; never give the exercise's solution.
-If the answer does not really claim the wrong thing (for example it shows the student's mistake, a hypothetical case, or the check misread it), reply exactly OK.`;
+If the answer does not really claim the wrong thing (for example it shows the student's mistake, a hypothetical case, or the check misread it), or the problem only objects to a simplification that is correct at the student's school level (a textbook rule stated without rare exceptions), reply exactly OK.`;
 
 // Odgovor modela → blok za prikaz (»> **Popravek:** …«) ali null.
 export function fixBlock(text) {

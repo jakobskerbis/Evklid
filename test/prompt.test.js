@@ -126,7 +126,7 @@ test("extra exercises and side claims (2026-11-11): one labelled exercise, reali
   const start = fixed.indexOf("- **Dodatne vaje in stranske trditve.**");
   assert.ok(start > fixed.indexOf("### Pravilnost"), "pravilo je v razdelku Pravilnost, v predpomnjenem delu");
   const rule = fixed.slice(start, fixed.indexOf("\n- ", start + 10));
-  for (const s of ["»**Vaja:**«", "največ eno na sporočilo", "po običajnih pravilih", "izjeme, ki jih naloga ne potrebuje", "ista situacija z drugimi števili", "resničnem obsegu", "topnost", "natanko ena pravilna rešitev", "natanko eno skupino", "»Zapomni si«", "Preverbi", "učbeniško definicijo", "Preverba preveri samo tvoj rezultat", "mejni ali posebni primer", "ne dodaja novih dejstev"]) {
+  for (const s of ["»**Vaja:**«", "največ eno na sporočilo", "po običajnih pravilih", "izjeme, ki jih naloga ne potrebuje", "ista situacija z drugimi števili", "resničnem obsegu", "topnost", "natanko ena pravilna rešitev", "natanko eno skupino", "»Zapomni si«", "Preverbi", "učbeniško definicijo", "Preverba preveri samo tvoj rezultat", "mejni ali posebni primer", "ne dodaja novih dejstev", "Pomen rezultata", "ne primerjaš z 1", "Načrt in vmesne enačbe"]) {
     assert.ok(rule.includes(s), `pravilo vsebuje »${s}«`);
   }
   assert.ok(rule.length < 2000, `pravilo naj ostane kratko (${rule.length} znakov)`);
@@ -318,6 +318,7 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     for (const ex of ["y = 12 {4 <= x <= 10}", "x = 1 {1 <= y <= 3}", "0 <= y <= {0 <= x < 2: 3, 2 <= x < 4: 5}"]) assert.ok(graf.includes("`" + ex + "`"), ex);
     assert.doesNotMatch(dyn, /škatlo z brki|OŠ 1\.–4\. razred/);
     // Doda ~1 800 znakov predpomnjenega dela (58 164 → 59 960; ~480 žetonov) s popravki pregleda #811, meja 1 800.
-    assert.ok(stat.length < 58164 + 1800, `stalni del ${stat.length} znakov`);
+    // Meritev SŠ 18. 11. (pomen rezultata iz podatkov, Načrt in vmesne enačbe): +180 znakov (59 960 → 60 140; ~50 žetonov).
+    assert.ok(stat.length < 58164 + 1800 + 200, `stalni del ${stat.length} znakov`);
   });
 });
