@@ -2412,6 +2412,7 @@
   "acct.freeToday": "free plan · today {used}/{max}",
   "acct.secondChild": "For a second child, choose a plan for 2 children.",
   "acct.subThanks": "Thank you! Your subscription is active.",
+  "acct.paidBackToApp": "Payment successful. Go back to the Evklid app.",
   "acct.aiOut": "tutor used up this month",
   "acct.aiOutTitle": "The tutor will be available again on the 1st of the month. Practice keeps working.",
   "acct.aiSoft": "explanations are less detailed until the end of the month",

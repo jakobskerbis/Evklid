@@ -2401,6 +2401,7 @@
   "acct.freeToday": "無料プラン · 今日 {used}/{max}",
   "acct.secondChild": "2人目の子どもには2人用のプランを選んでください。",
   "acct.subThanks": "ありがとうございます！サブスクリプションが有効になりました。",
+  "acct.paidBackToApp": "お支払いが完了しました。Evklid アプリに戻ってください。",
   "acct.aiOut": "今月のチューターは上限に達しました",
   "acct.aiOutTitle": "チューターは毎月1日に再び使えます。練習はそのまま使えます。",
   "acct.aiSoft": "月末まで説明が簡潔になります",

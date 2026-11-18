@@ -83,6 +83,7 @@ import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
+import { blockStoreAppPurchases } from "./mobile/trgovina.js";
 import { mount3d } from "./tri-d.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
 import { startFxJobs } from "./tecaji.js";
@@ -296,6 +297,7 @@ export function createApp(store, opts = {}) {
     next();
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
+  app.use(blockStoreAppPurchases); // aplikacija iz trgovine: brez nakupa s kartico (server/mobile/trgovina.js)
   mountInviteApi(app); // koda vabila v pilot (javno, pred prijavo; server/vabila.js)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
   app.use((req, res, next) => (req.nekanonicnaApi ? res.status(404).json({ error: "Pot ne obstaja." }) : next())); // točka A1

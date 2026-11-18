@@ -2426,6 +2426,7 @@
   "acct.freeToday": "besplatni paket · danas {used}/{max}",
   "acct.secondChild": "Za drugo dijete odaberi paket za 2 djece.",
   "acct.subThanks": "Hvala! Pretplata je aktivna.",
+  "acct.paidBackToApp": "Plaćanje je uspjelo. Vrati se u aplikaciju Evklid.",
   "acct.aiOut": "instruktor ovaj mjesec potrošen",
   "acct.aiOutTitle": "Instruktor će opet biti dostupan 1. u mjesecu. Vježbanje radi dalje.",
   "acct.aiSoft": "objašnjenja su do kraja mjeseca manje detaljna",

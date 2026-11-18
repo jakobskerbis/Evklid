@@ -2412,6 +2412,7 @@
   "acct.freeToday": "ücretsiz plan · bugün {used}/{max}",
   "acct.secondChild": "İkinci çocuk için 2 çocuklu bir plan seç.",
   "acct.subThanks": "Teşekkürler! Abonelik etkin.",
+  "acct.paidBackToApp": "Ödeme başarılı. Evklid uygulamasına geri dön.",
   "acct.aiOut": "öğretmen bu ay tükendi",
   "acct.aiOutTitle": "Öğretmen ayın 1'inde yeniden kullanılabilir. Alıştırmalar çalışmaya devam eder.",
   "acct.aiSoft": "açıklamalar ay sonuna kadar daha az ayrıntılı",

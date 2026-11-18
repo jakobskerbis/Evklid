@@ -2412,6 +2412,7 @@
   "acct.freeToday": "ingyenes csomag · ma {used}/{max}",
   "acct.secondChild": "Második gyereknek válassz 2 gyerekes csomagot.",
   "acct.subThanks": "Köszönjük! Az előfizetés aktív.",
+  "acct.paidBackToApp": "Sikeres fizetés. Térj vissza az Evklid alkalmazásba.",
   "acct.aiOut": "a tanár ebben a hónapban elfogyott",
   "acct.aiOutTitle": "A tanár a hónap 1-jén lesz újra elérhető. A gyakorlás továbbra is működik.",
   "acct.aiSoft": "a magyarázatok a hónap végéig kevésbé részletesek",

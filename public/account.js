@@ -7,6 +7,7 @@ import { dateText } from "./datum.js";
 import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
+import { isStoreApp, markCheckout, clearCheckout, watchReturnFromPay } from "./po-placilu.js";
 import { renderAdminReports } from "./prijave.js";
 import { renderPilotAdmin, paintAccountPilot, paintAccountWtp, proofHtml, proofBody, wireProof } from "./pilot-naloge.js";
 import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
@@ -357,6 +358,9 @@ export async function initAccount({ onReady }) {
   const billing = q.get("billing");
   const sessionId = q.get("session_id");
   if (q.toString()) history.replaceState(null, "", location.pathname);
+  // Vrnitev s Stripa v istem oknu (splet): stanje se osveži spodaj, zapis nakupa ni več potreben (public/po-placilu.js).
+  if (billing) clearCheckout();
+  watchReturnFromPay({ api, onSynced: refreshAfterPay });
   if (verified === "1") toast("E-naslov je potrjen ✓");
   if (verified === "0") toast("Povezava za potrditev ni veljavna, je potekla ali je že uporabljena. Novo pošlješ v zavihku Račun.");
 
@@ -392,12 +396,36 @@ export async function initAccount({ onReady }) {
     if (billing === "success") billNote(t("acct.subThanks"));
     status = await api("/api/account/status");
   }
+  // Plačilo je uspelo v zavihku brskalnika, kjer obiskovalec ni prijavljen (APK: Stripe se odpre v Custom Tab).
+  if (billing && billing !== "cancel" && billing !== "portal" && !status.logged_in && !reset && !verifyToken) {
+    renderPaidElsewhere();
+    return false;
+  }
   if (parentInvite) route.firstMode = "register";
   const ready = await route();
   route.firstMode = null;
   if (ready && billing) setTimeout(() => ($("#account-tab").click(), notes.forEach((m) => toast(m))), 0);
   else notes.forEach((m) => toast(m));
   return ready;
+}
+
+// Po vrnitvi v aplikacijo s plačila (public/po-placilu.js): novo stanje, zavihek Račun znova, zahvala ob novi naročnini.
+async function refreshAfterPay({ becamePaid }) {
+  status = await api("/api/account/status").catch(() => status);
+  const view = $("#view-account");
+  if (view && !view.hidden && view.getClientRects().length && status?.logged_in) await renderAccount();
+  if (becamePaid) {
+    toast(t("acct.subThanks"));
+    await onReadyCb?.({ keepView: true });
+  }
+}
+
+// Plačilo je uspelo, a ta brskalnik ni prijavljen (navadno zavihek brskalnika iz aplikacije): kratko obvestilo,
+// ne pristajalna stran. Na računalniku se obiskovalec lahko prijavi.
+function renderPaidElsewhere() {
+  shell(`<h1>${esc(t("acct.paidBackToApp"))}</h1>
+    <div class="form-actions"><button type="button" class="secondary" id="paid-login">${esc(t("mob.signIn"))}</button></div>`);
+  $("#paid-login")?.addEventListener("click", () => goAuth("login"));
 }
 
 // Na zaslonih prijave logotip ne odpira menija »Nadaljuj z učenjem« (brez profila ne deluje).
@@ -1825,6 +1853,10 @@ export async function renderAccount() {
   }
   if (acc.parent.guest) return renderGuestAccount(view, acc);
   const paid = acc.access.tier === "paid";
+  // Aplikacija iz trgovine: brez nakupa s kartico (naročnina, nadgradnja, darilo, Podari, dokup; public/po-placilu.js).
+  // Kupljeno ostane vidno (stanje naročnine, darilne kode, preostali pogovori).
+  const storeApp = isStoreApp();
+  const shown = storeApp ? { ...acc, upgrade: null, gift_buy: false } : acc;
   view.innerHTML = `
     <button type="button" class="ghost back me-back">${icon("arrow-left")}${esc(t("nav.me"))}</button>
     <h1>${esc(t("nav.account"))}</h1>
@@ -1832,9 +1864,11 @@ export async function renderAccount() {
     <div class="kolone">
     <div class="card">
       <h2>${esc(t("mob.subscription"))}</h2>
-      ${planText(acc)}
-      ${!acc.billing ? `<p class="muted">${esc(t("credit.off"))}</p>` : paid || acc.pilot ? "" : plansPicker(acc)}
-      ${acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">${esc(t("acct.portal"))}</button>` : ""}
+      ${planText(shown)}
+      ${!acc.billing ? `<p class="muted">${esc(t("credit.off"))}</p>` : paid || acc.pilot || storeApp ? "" : plansPicker(acc)}
+      ${storeApp
+        ? paid && acc.parent.has_customer ? `<p class="muted">${esc(t("mob.subElsewhere"))}</p>` : ""
+        : acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">${esc(t("acct.portal"))}</button>` : ""}
       ${promoBox(acc, paid)}
     </div>
     <div class="card" id="pn-wtp" hidden></div>
@@ -1842,8 +1876,8 @@ export async function renderAccount() {
     ${acc.promo?.codes ? adminCodes(acc) : ""}
     ${acc.guest_invite ? guestInviteCard() : ""}
     ${guaranteeBox(acc)}
-    ${giftBox(acc)}
-    ${podariBox(acc)}
+    ${giftBox(shown)}
+    ${podariBox(storeApp ? { ...acc, billing: false } : acc)}
     ${adminCards(acc)}
     ${acc.promo?.codes ? `<div class="card" id="pilot-card"><h2>${esc(t("pilot.title"))}</h2><div id="pilot-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="pilot-tasks-card"><h2>${esc(t("pilot.n.title"))}</h2><div id="pilot-tasks-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
@@ -1930,6 +1964,7 @@ export async function renderAccount() {
     try {
       if (!consentsOk(e.target)) throw new Error(t("payp.consentMissing"));
       const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody() } });
+      markCheckout("sub"); // vrnitev v aplikacijo osveži stanje (public/po-placilu.js)
       location.href = r.url;
     } catch (err) {
       btn.disabled = false;
@@ -1957,7 +1992,7 @@ export async function renderAccount() {
   paintAccountWtp($("#pn-wtp"), acc.pilot_wtp, { api, toast, hasPassword }); // pilot: »Ali bi za Evklid plačali?« (enkrat)
   wirePrivacyBanner(hasPassword); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
-  renderCreditCard($("#credit-card"), { api });
+  renderCreditCard($("#credit-card"), { api, buy: !storeApp });
   import("./ustno/starsi.js").then((m) => m.karticaStarsev($("#ustno-starsi"), api)).catch(() => {}); // glas pri ustnem (ob odprtju)
   $("#gift-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -1966,6 +2001,7 @@ export async function renderAccount() {
     try {
       if (!consentsOk(e.target)) throw new Error(t("payp.consentMissing"));
       const r = await api("/api/billing/gift", { method: "POST", body: { ...consentBody(), ...(e.target.level ? { level: e.target.level.value } : {}) } });
+      markCheckout("gift");
       location.href = r.url;
     } catch (err) {
       btn.disabled = false;

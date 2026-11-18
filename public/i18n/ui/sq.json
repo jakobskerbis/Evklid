@@ -2412,6 +2412,7 @@
   "acct.freeToday": "paketa falas · sot {used}/{max}",
   "acct.secondChild": "Për një fëmijë të dytë, zgjidh paketën për 2 fëmijë.",
   "acct.subThanks": "Faleminderit! Abonimi është aktiv.",
+  "acct.paidBackToApp": "Pagesa u krye. Kthehu te aplikacioni Evklid.",
   "acct.aiOut": "mësuesi u harxhua këtë muaj",
   "acct.aiOutTitle": "Mësuesi do të jetë sërish në dispozicion më 1 të muajit. Ushtrimet vazhdojnë të funksionojnë.",
   "acct.aiSoft": "shpjegimet janë më pak të hollësishme deri në fund të muajit",

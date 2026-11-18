@@ -2401,6 +2401,7 @@
   "acct.freeToday": "免费套餐 · 今天 {used}/{max}",
   "acct.secondChild": "第二个孩子请选择 2 个孩子的套餐。",
   "acct.subThanks": "谢谢！订阅已生效。",
+  "acct.paidBackToApp": "付款成功。请返回 Evklid 应用。",
   "acct.aiOut": "本月辅导老师已用完",
   "acct.aiOutTitle": "辅导老师将于每月 1 日恢复可用。练习照常进行。",
   "acct.aiSoft": "本月剩余时间讲解会简略一些",

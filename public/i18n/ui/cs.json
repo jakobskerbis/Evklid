@@ -2440,6 +2440,7 @@
   "acct.freeToday": "bezplatný tarif · dnes {used}/{max}",
   "acct.secondChild": "Pro druhé dítě vyber tarif pro 2 děti.",
   "acct.subThanks": "Děkujeme! Předplatné je aktivní.",
+  "acct.paidBackToApp": "Platba proběhla. Vrať se do aplikace Evklid.",
   "acct.aiOut": "doučovatel tento měsíc vyčerpán",
   "acct.aiOutTitle": "Doučovatel bude znovu dostupný 1. dne v měsíci. Procvičování funguje dál.",
   "acct.aiSoft": "do konce měsíce jsou vysvětlení méně podrobná",

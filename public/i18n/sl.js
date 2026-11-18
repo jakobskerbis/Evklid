@@ -3033,6 +3033,7 @@ export default {
   "acct.freeToday": "brezplačni paket · danes {used}/{max}",
   "acct.secondChild": "Za drugega otroka izberi paket za 2 otroka.",
   "acct.subThanks": "Hvala! Naročnina je aktivna.",
+  "acct.paidBackToApp": "Plačilo je uspelo. Vrni se v aplikacijo Evklid.",
   "acct.aiOut": "inštruktor ta mesec porabljen",
   "acct.aiOutTitle": "Inštruktor bo spet na voljo 1. v mesecu. Vadnica deluje naprej.",
   "acct.aiSoft": "razlage so do konca meseca manj podrobne",

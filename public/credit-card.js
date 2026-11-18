@@ -5,6 +5,7 @@
 import { t, locale } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { consentFields, consentsOk, consentBody } from "./pay-ui.js";
+import { markCheckout } from "./po-placilu.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 // Cela vsota brez »,00« (10 €), sicer na cent (j 2026-11-15: »Nadaljuj za skupaj 10 €«).
@@ -14,13 +15,21 @@ const money = (cents, currency) =>
 // Enočrkovni predlog (»z«, »v«, »s«) ostane ob naslednji besedi, da ne visi sam na koncu vrstice.
 const glue = (s) => s.replace(/(^|\s)(\p{L})\s/gu, "$1$2\u00a0");
 
-export async function renderCreditCard(el, { api }) {
+// buy: false v aplikaciji iz trgovine (public/po-placilu.js): samo preostali pogovori, brez dokupa.
+export async function renderCreditCard(el, { api, buy = true }) {
   if (!el) return;
   let d;
   try {
     d = await api("/api/billing/credit");
   } catch {
     el.innerHTML = "";
+    return;
+  }
+  if (!buy) {
+    el.innerHTML = d.balance_conversations
+      ? `<div class="card credit-card"><h2>${icon("zap")} ${esc(t("credit.title"))}</h2><p><b>${esc(t("credit.balance", { n: d.balance_conversations }))}</b></p></div>`
+      : "";
+    hydrateIcons?.(el);
     return;
   }
   if (!d.packs?.length && !d.balance_conversations) {
@@ -81,6 +90,7 @@ export async function renderCreditCard(el, { api }) {
     btn.disabled = true;
     try {
       const r = await api("/api/billing/credit", { method: "POST", body: { pack: form.pack.value, ...consentBody() } });
+      markCheckout("credit");
       location.href = r.url;
     } catch (x) {
       btn.disabled = false;

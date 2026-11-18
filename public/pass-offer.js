@@ -7,6 +7,7 @@ import { t, locale } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { accountsOn } from "./account.js";
+import { isStoreApp, markCheckout } from "./po-placilu.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const money = (cents, currency) => (cents / 100).toLocaleString(locale(), { style: "currency", currency });
@@ -31,7 +32,8 @@ export async function renderPassOffer(el, { api, studentId, toast }) {
     return;
   }
   const o = d.offer;
-  if (!o) {
+  // Aplikacija iz trgovine: brez nakupa s kartico in brez povezave za plačilo (public/po-placilu.js).
+  if (!o || isStoreApp()) {
     el.innerHTML = "";
     return;
   }
@@ -112,6 +114,7 @@ export async function renderPassOffer(el, { api, studentId, toast }) {
     btn.disabled = true;
     try {
       const r = await api("/api/billing/pass", { method: "POST", body: { ...body(), ...consentBody() } });
+      markCheckout("pass");
       location.href = r.url;
     } catch (x) {
       btn.disabled = false;

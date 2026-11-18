@@ -8,7 +8,7 @@ zaslon (`mobile/src/app/web.tsx`), zato sta videz in delovanje vedno enaka splet
 Evklidova tipkovnica, laboratorij, NPZ, vse nove stvari s spleta. Seja je ena: WebView najprej odpre
 `/api/mobile/web` z glavami aplikacije, strežnik isto sejo zapiše v piškotek WebView-a
 (`server/mobile/web-session.js`). Odjava na spletu odjavi tudi aplikacijo. Splet aplikacijo prepozna po
-`EvklidApp/<različica>` v User-Agent (`public/install.js` → `isStandalone()`: brez ponudbe »Namesti aplikacijo«).
+`EvklidApp/<različica> <kanal>` v User-Agent (`public/install.js` → `isStandalone()`: brez ponudbe »Namesti aplikacijo«).
 Vrstici telefona (ura, gumbi) dobita barvo roba strani. Gumb nazaj na Androidu gre nazaj po strani, povezave na
 druge strani odpre brskalnik. Povezava iz e-pošte `https://evklid.app/vabilo?koda=…` (vabilo v pilot, `server/vabila.js`) se vedno odpre v
 brskalniku (aplikacija nima univerzalnih povezav); registracija tam je ista kot v aplikaciji, zato posebnega zaslona v aplikaciji ni.
@@ -57,6 +57,11 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
 - **Naročnina**: v trgovinah nakup v aplikaciji (Apple In-App Purchase, Google Play Billing), v APK za
   neposredni prenos plačilo na spletu (Stripe): naravni zaslon Naročnina odpre spletni zavihek Račun v aplikaciji
   (`/api/mobile/web?to=/?pogled=racun`), kjer so potrditve pred plačilom; aplikacija sama nakupa ne pošilja.
+  Kanal na koncu User-Agent (`store` ali `direct`) in glava `X-App-Channel`: v različici iz trgovine splet ne pokaže
+  naročnine, nadgradnje, darila, Podari, dokupa, paketa pred testom ali povezave za plačilo staršu
+  (`public/po-placilu.js`), strežnik take zahteve zavrne s 403 (`server/mobile/trgovina.js`). Plačilo v APK se odpre
+  v zavihku brskalnika; ob vrnitvi v aplikacijo (`evklid:spet` iz `web.tsx`) splet pokliče `/api/billing/sync` in
+  zavihek Račun izriše znova (zapis nakupa v sessionStorage, največ 2 uri), da starš ne plača dvakrat.
 - Svetla in temna tema, 33 jezikov vmesnika (isti prevodi kot splet), iPad, dostopnost (VoiceOver,
   TalkBack).
 
