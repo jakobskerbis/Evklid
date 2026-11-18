@@ -23,6 +23,7 @@ Ostane brez povezave na račun (stolpci računa so `NULL`):
 | `audit_log` | dnevnik dostopov, 1 leto |
 | `answer_cache` | splošen odgovor inštruktorja brez imena učenca, deljen med učenci (uporabi se in hrani 30 dni) |
 | `pilot_mnenja_prenehalo` | naključna oznaka mnenja, da skrbnik umakne objavo |
+| `pilot_vabila` | porabljena koda vabila v pilot (samo zgoščena koda in čas, `parent_id` = `NULL`) do konca pilota (`EVKLID_PILOT_DO`), potem se izbriše: izbris in nova registracija ne dasta novega članstva |
 | `schools`, `class_assignments` | šola in naloga v razredu drugega učitelja ostaneta, avtor postane `NULL` |
 | `ai_school_use` | poraba AI, ki je šla pod mejo šole, ostane šoli (`student_id` = `NULL`) |
 | `school_licences`, `school_orders` | licenca in naročilo šole ostaneta s šolo (podatki šole, ne računa) |
@@ -49,7 +50,10 @@ Test preveri, da poraba kredita, garancija in strani zapiskov ostanejo računu i
 
 Za vsako tabelo z vrsticami računa ali profila je vsaj ena njena vrednost v izvozu; e-naslov, imena profilov, besedilo
 pogovora in urnik so v njem. Namenoma ni v izvozu (varnost): seje, gesla profilov, odklepi naprav, povezave za plačilo,
-kode za prevzem in potrditve skrbnika. Gesla in žetoni niso v izvozu (test to preveri). Fotografije nalog iz pogovorov
+kode za prevzem in potrditve skrbnika. Gesla in žetoni niso v izvozu (test to preveri). Tudi zgoščena koda vabila v
+pilot (`parents.pilot_invite_hash`, HMAC s strežniško skrivnostjo) namenoma ni v izvozu; čas porabe (`pilot_invite_at`)
+je. Vrstica porabljene kode v `pilot_vabila` (zgoščena koda, račun, čas) se ne izvozi: vsebuje samo zgoščeno kodo, čas
+porabe je že v `pilot_invite_at`; po koncu pilota se izbriše (#751, #819). Fotografije nalog iz pogovorov
 niso v izvozu (hranijo se 7 dni, varnost-podatkov.md).
 
 ## Varnostne kopije

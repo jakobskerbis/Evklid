@@ -298,7 +298,7 @@ export function createApp(store, opts = {}) {
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   app.use(blockStoreAppPurchases); // aplikacija iz trgovine: brez nakupa s kartico (server/mobile/trgovina.js)
-  mountInviteApi(app); // koda vabila v pilot (javno, pred prijavo; server/vabila.js)
+  mountInviteApi(app, { db: store.db }); // koda vabila v pilot (javno, pred prijavo; server/vabila.js; porabljene kode #751)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
   app.use((req, res, next) => (req.nekanonicnaApi ? res.status(404).json({ error: "Pot ne obstaja." }) : next())); // točka A1
   mountMobile(app, accounts, { scheduler: opts.scheduler, fetchFn: opts.fetchFn, ...opts.mobile }); // prijava z Apple, nakupi v trgovinah, obvestila, /prenesi

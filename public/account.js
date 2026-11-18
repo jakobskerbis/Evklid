@@ -30,6 +30,7 @@ const money = (minor, currency = "EUR") => {
 };
 const date = (iso) => (iso ? dateText(iso, locale()) : ""); // »do 23. novembra 2026« (public/datum.js)
 const GUEST_INVITE = "evklid_gost";
+const INVITE_KEY = "evklid.vabilo"; // koda vabila v pilot (public/vabilo.js KEY)
 const store = {
   get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
@@ -607,10 +608,13 @@ function renderLogin(mode = "login") {
       } else {
         const r = await api("/api/auth/register", {
           method: "POST",
-          body: { name: f.name.value, email: f.email.value, password: f.password.value, referral_code: f.referral_code.value, promo_code: f.promo_code.value, accept_privacy: f.accept_privacy.checked, accept_terms: f.accept_terms.checked, birth_date: f.birth_date.value, country: deviceRegion() },
+          // invite: koda vabila v pilot s strani /vabilo (public/vabilo.js); po potrditvi e-naslova račun samodejno v pilotu (#751).
+          body: { name: f.name.value, email: f.email.value, password: f.password.value, referral_code: f.referral_code.value, promo_code: f.promo_code.value, accept_privacy: f.accept_privacy.checked, accept_terms: f.accept_terms.checked, birth_date: f.birth_date.value, country: deviceRegion(), invite: store.get(INVITE_KEY) || undefined },
         });
         store.set("evklid_ref", null);
         store.set("evklid_koda", null);
+        store.set(INVITE_KEY, null);
+        if (r.invite) toast(t({ pending: "vab.regPending", ended: "vab.regEnded" }[r.invite] || "vab.regBad"));
         if (r.promo_until) toast(`Aktivacijska koda velja ✓ Poln dostop do ${date(r.promo_until)}.`);
         if (r.promo_pending) toast(t("acct.promoAfterVerify"));
         if (r.promo_error) toast(`Račun je ustvarjen, koda pa ni bila sprejeta: ${r.promo_error}`);
