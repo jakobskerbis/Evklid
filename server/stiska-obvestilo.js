@@ -16,6 +16,7 @@ import { emailList } from "./accounts/pilot-meja.js";
 import { seal, unseal, openFlag, openPregled, sealPregled } from "./crypto-polje.js";
 import { audit } from "./dnevnik-dostopov.js";
 import { messageCode } from "./reports.js";
+import { IKONE_HEAD } from "./ikone.js";
 
 const KV_KEY = "stiska_obvestilo";
 const MIN = 60 * 1000;
@@ -240,7 +241,7 @@ function stran(seznam) {
       : `<b>${s.zamuda ? "NEPREGLEDANO, rok 24 h potekel" : "nepregledano"}</b> <form method="post" action="${POT}/${s.id}/pregledano"><button type="submit">Označi kot pregledano</button></form>`;
     return `<tr><td>${esc(cas(s.ob))}</td><td>${esc(vrstaOpis(s.vrsta).opis)}</td><td>${esc(s.stopnja)}</td><td>${esc(s.profil)}</td><td>${esc(s.koda || "–")}</td><td>${stanje}</td></tr>`;
   };
-  return `<!doctype html><html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Oznake stiske – ${esc(BRAND.name)}</title>
+  return `<!doctype html><html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">${IKONE_HEAD}<title>Oznake stiske – ${esc(BRAND.name)}</title>
 <style>body{font-family:system-ui,sans-serif;margin:16px;color:#1d2433}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #dde;padding:8px;text-align:left;vertical-align:top}form{display:inline}button{min-height:40px;padding:6px 12px}</style></head><body>
 <h1>Oznake stiske</h1>
 <p>Zadnjih 90 dni (rok hrambe oznak). Vsako oznako preglej v ${ROK_UR} urah. Pregledanih ${p.pregledanih} od ${p.vseh}, od tega v ${ROK_UR} urah ${p.v_roku}; odprtih ${p.odprtih}, od tega po roku ${p.zamujenih}.</p>
