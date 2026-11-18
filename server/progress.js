@@ -46,6 +46,9 @@ export const RULES = {
   offlinePacksPerDay: 8, // paketov brez povezave na dan na profil (menjava poti, več naprav)
 };
 
+// Vaja iz testa ali domače naloge (server/vaja-iz-lista.js): dolžine, ki jih učenec izbere, in meja »obvladaš«.
+export const LIST = { lengths: [6, 12, 20], maxSkills: 20, okShare: 0.75 };
+
 const XP = {
   base: (level) => 5 + 5 * level, // 10 / 15 / 20
   minWithHelp: 2,
@@ -55,6 +58,9 @@ const XP = {
   daily: 15,
   dailyStreak: (days) => 5 * Math.min(days, 7),
 };
+
+// XP za rešeno nalogo (brez bonusa za obvladanje in niz dni); attempts > 1 doda bonus za popravljeno napako.
+const taskXp = (level, helped, attempts) => (helped ? Math.max(XP.minWithHelp, Math.floor(XP.base(level) / 2)) : XP.base(level)) + (attempts > 1 ? XP.fixBonus : 0);
 
 const nowSql = () => new Date().toISOString().replace("T", " ").slice(0, 19);
 const addDays = (d) => new Date(Date.now() + d * 86400000).toISOString().replace("T", " ").slice(0, 19);
@@ -306,7 +312,10 @@ export class Progress {
       if (sess && !sess.finished) {
         this.db.prepare("UPDATE sessions SET finished = 1 WHERE id = ?").run(sessionId);
         if (sess.kind === "daily") out.xp = this.award(sess.student_id, [[XP.daily, "dnevni trening"]]);
+        if (sess.kind === "list") out.list = this.listSummary(sess, all, true);
       }
+      if (sess?.kind === "list" && !out.list) out.list = this.listSummary(sess, all, false);
+      if (sess?.kind === "list") out.listXp = all.reduce((n, t) => n + (t.solved ? taskXp(t.level, t.hint_used || t.attempts > 1, t.attempts) : 0), 0);
       return out;
     }
     const payload = JSON.parse(open.payload);
@@ -724,6 +733,37 @@ export class Progress {
     return this.sessionNext(this.createSession(studentId, "test", items, { date: plan.date }));
   }
 
+  // ---------- vaja iz testa ali domače naloge (server/vaja-iz-lista.js) ----------
+  // skills: id-ji tem z generatorji (veščine, ki jih je učenec potrdil na seznamu). Naloge so samo naše (Vadnica),
+  // od lažjih k težjim: prva tretjina stopnja 1, druga 2, zadnja 3; veščine se izmenjujejo. V seji so shranjeni samo
+  // id-ji tem (nikoli besedilo izvirnih nalog).
+  startList(studentId, skills, length) {
+    const ids = [...new Set(skills)].filter((id) => getTopic(id) && hasGenerator(id)).slice(0, LIST.maxSkills);
+    if (!ids.length || !LIST.lengths.includes(length)) return null;
+    const order = shuffle(ids);
+    const plan = Array.from({ length }, (_, i) => ({ topic: order[i % order.length], mode: "list", level: 1 + Math.min(2, Math.floor((3 * i) / length)) }));
+    return this.sessionNext(this.createSession(studentId, "list", plan, { skills: ids }));
+  }
+  // Povzetek po veščinah: »obvladaš« (vsaj 3/4 v prvem poskusu) ali »še vadi«. apply (enkrat, ob koncu seje):
+  // šibka obvladana tema gre jutri v ponavljanje, šibka nova tema dobi stanje »učim se« (vidna na poti in v treningu).
+  listSummary(sess, all, apply) {
+    const lang = this.uiLang(sess.student_id);
+    return (sess.params.skills || []).map((id) => {
+      const rows = all.filter((t) => t.topic_id === id && t.first_try_correct !== null);
+      const correct = rows.filter((t) => t.first_try_correct).length;
+      const ok = rows.length > 0 && correct / rows.length >= LIST.okShare;
+      if (apply && rows.length && !ok) {
+        const st = this.state(sess.student_id, id);
+        if (st.status === "mastered") this.advanceReview(sess.student_id, id, false);
+        else if (st.status === "new") {
+          st.status = "learning";
+          this.saveState(st);
+        }
+      }
+      return { id, name: localTopic(getTopic(id), lang)?.name || getTopic(id)?.name || id, correct, total: rows.length, ok };
+    });
+  }
+
   // Pregled za spodnjo vrstico.
   modes(studentId, pathKey) {
     const dueCount = this.dueTopics(studentId, getPath(pathKey)?.subject).length;
@@ -894,7 +934,7 @@ export class Progress {
       out.correct = true;
       out.solution = task.solution;
       const helped = row.hint_used || attempts > 1;
-      let xp = helped ? Math.max(XP.minWithHelp, Math.floor(XP.base(row.level) / 2)) : XP.base(row.level);
+      const xp = taskXp(row.level, helped, 1);
       const reasons = [[xp, helped ? "pravilno (s pomočjo)" : "pravilno"]];
       if (attempts > 1) reasons.push([XP.fixBonus, "popravljena napaka"]);
       out.xp = giveXp ? this.award(studentId, reasons) : null;
@@ -916,6 +956,12 @@ export class Progress {
         }
       }
       if (row.mode === "review" && firstTry) this.advanceReview(studentId, row.topic_id, true);
+      // Vaja iz testa: naloge štejejo v obvladanje teme (kot vaja), stopnje teme ne spreminjajo (načrt je od lažjih k težjim).
+      if (row.mode === "list" && s.status !== "mastered" && this.checkMastery(studentId, row.topic_id)) {
+        this.markMastered(studentId, row.topic_id, "practice");
+        out.mastered = true;
+        if (giveXp) out.xp = this.award(studentId, [[XP.mastery, "obvladana tema"]], out.xp);
+      }
       if (row.session_id) out.next = this.sessionNext(row.session_id);
       // Samorazlaga: občasno vprašanje »zakaj?«
       if (Math.random() < 0.3) out.selfExplain = "Razloži sam sebi v enem stavku: zakaj je bil ključni korak pravilen?";
@@ -978,7 +1024,7 @@ export class Progress {
     const last = this.db
       .prepare(
         `SELECT first_try_correct, level FROM tasks
-         WHERE student_id = ? AND topic_id = ? AND mode IN ('practice','review') AND first_try_correct IS NOT NULL
+         WHERE student_id = ? AND topic_id = ? AND mode IN ('practice','review','list') AND first_try_correct IS NOT NULL
          ORDER BY id DESC LIMIT ?`,
       )
       .all(studentId, topicId, RULES.masteryWindow);

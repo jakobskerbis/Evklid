@@ -89,11 +89,11 @@ export function takePage(db, studentId, limit, now = new Date(), n = 1) {
   rowFor(db, studentId, m);
   return db.prepare(`UPDATE zapiski_strani SET strani = strani + ? WHERE student_id = ? AND mesec = ? AND strani + ${ORPHANS} + ? <= ?`).run(n, studentId, m, n, limit).changes > 0;
 }
-const givePage = (db, studentId, n = 1, now = new Date()) =>
+export const givePage = (db, studentId, n = 1, now = new Date()) =>
   db.prepare("UPDATE zapiski_strani SET strani = MAX(0, strani - ?) WHERE student_id = ? AND mesec = ?").run(n, studentId, month(now));
 // Prebrana fotografija: stran je porabljena ob branju, v zapisku je ne štejemo še enkrat (branja = dobropis).
 const addRead = (db, studentId, now = new Date()) => db.prepare("UPDATE zapiski_strani SET branja = branja + 1 WHERE student_id = ? AND mesec = ?").run(studentId, month(now));
-function useReads(db, studentId, want, now = new Date()) {
+export function useReads(db, studentId, want, now = new Date()) {
   if (want <= 0) return 0;
   const m = month(now);
   rowFor(db, studentId, m);
@@ -103,9 +103,9 @@ function useReads(db, studentId, want, now = new Date()) {
   if (n && !db.prepare("UPDATE zapiski_strani SET branja = branja - ? WHERE student_id = ? AND mesec = ? AND branja >= ?").run(n, studentId, m, n).changes) return 0;
   return n;
 }
-const giveReads = (db, studentId, n, now = new Date()) => n > 0 && db.prepare("UPDATE zapiski_strani SET branja = branja + ? WHERE student_id = ? AND mesec = ?").run(n, studentId, month(now));
+export const giveReads = (db, studentId, n, now = new Date()) => n > 0 && db.prepare("UPDATE zapiski_strani SET branja = branja + ? WHERE student_id = ? AND mesec = ?").run(n, studentId, month(now));
 // Prvi dan naslednjega meseca (za besedilo »Nove dobiš …«).
-const nextMonth = (now = new Date()) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString().slice(0, 10);
+export const nextMonth = (now = new Date()) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString().slice(0, 10);
 
 // ---------- zaščita pred navodili v besedilu ----------
 // Prepis gre modelu vedno kot podatek v oznakah <notes>. Iz njega odstranimo naše ukazne bloke (<<…>>, kot

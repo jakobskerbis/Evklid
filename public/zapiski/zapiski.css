@@ -38,3 +38,32 @@
 .zap-text div { margin-top: 8px; overflow-wrap: anywhere; }
 .zap-check .nujno-card, .view > .nujno-card, #view-cards > .nujno-card { padding-inline-end: 16px; margin-bottom: 12px; }
 .zap-card-list p, .zap-q-text p { margin: 0 0 4px; }
+/* Vaja iz testa ali domače naloge (public/zapiski/vaja.js) */
+.zap-vaja { margin-top: 16px; }
+.zap-vaja h2 { margin-top: 0; }
+.vaja-tasks { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
+.vaja-task.off { opacity: 0.7; }
+.vaja-task.off .vaja-text { text-decoration: line-through; text-decoration-color: var(--muted); }
+.vaja-task-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.vaja-on { font-weight: 400; }
+.vaja-text { margin: 6px 0 10px; overflow-wrap: anywhere; max-height: 9.5em; overflow: hidden; }
+.vaja-text p { margin: 0 0 4px; }
+.vaja-skill { display: grid; gap: 4px; font-weight: 600; }
+.vaja-skill select { min-height: 44px; width: 100%; max-width: 100%; box-sizing: border-box; font: inherit; font-weight: 400; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); }
+.vaja-none, .vaja-unsure { display: flex; gap: 6px; align-items: flex-start; margin: 8px 0 0; font-size: 0.92rem; }
+.vaja-none svg, .vaja-unsure svg { width: 18px; height: 18px; flex: none; margin-top: 2px; }
+.vaja-unsure { font-weight: 600; }
+.vaja-len { margin-top: 14px; border: 1px solid var(--border); }
+.vaja-len legend { font-weight: 600; padding: 0 4px; }
+.vaja-len-opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.vaja-len-opt { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid var(--border); border-radius: 999px; cursor: pointer; }
+.vaja-len-opt:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.vaja-len-opt input { width: 20px; height: 20px; margin: 0; }
+.vaja-len .zap-note { display: flex; gap: 6px; align-items: center; }
+.vaja-len .zap-note svg { width: 16px; height: 16px; flex: none; }
+.vaja-done { text-align: start; }
+.vaja-sum-h { font-size: 1.05rem; margin: 14px 0 6px; }
+.vaja-sum { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.vaja-sum li { display: flex; gap: 8px; align-items: center; overflow-wrap: anywhere; }
+.vaja-sum li svg { width: 18px; height: 18px; flex: none; }
+.vaja-ok li svg { color: var(--ok); }
