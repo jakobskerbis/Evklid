@@ -7,6 +7,7 @@
 // public/paper-viewer.js). Kadar kaj manjka (leto, raven, pola …), opomba vpraša z gumbi; »Pošlji kot navadno
 // vprašanje« pošlje besedilo.
 import { currentLang } from "../i18n.js";
+import { zavrzi } from "../odgovor.js";
 import { uiChain, UI_LANGUAGES } from "../i18n/languages.js";
 import { mentionsPaperTask, parsePaperTask, resolvePaper, findPaperTask, originalFiles, ricFileName, fileMatches, looksLikeRicFile } from "../naloga-pole.js";
 import SL from "./besedila/sl.js";
@@ -29,7 +30,7 @@ async function naloziBesedila() {
   if (dictsLang === lang) return;
   const chain = uiChain(lang);
   const want = chain.slice(0, chain.indexOf("sl")).map((c) => (c === "sr-Latn" ? "sr" : c)).filter((c) => UI_LANGUAGES.includes(c) && c !== "sl");
-  const got = await Promise.all(want.map((c) => fetch(`/naloga-pole/besedila/${c}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)));
+  const got = await Promise.all(want.map((c) => fetch(`/naloga-pole/besedila/${c}.json`).then((r) => (r.ok ? r.json() : (zavrzi(r), null))).catch(() => null)));
   dicts = [...got.filter(Boolean), SL];
   dictsLang = lang;
 }
