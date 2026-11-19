@@ -40,6 +40,10 @@ export const LIMITS = {
   // Srednja šola: hitri model z več razmisleka namesto navadnega (j 2026-11-04 po primerjavi modelov:
   // napake Haikuja pri SŠ 27 % → 7 %, Sonnet 0 %, a ~15× dražji). 0 = navadni hitri model.
   secondaryThink: () => process.env.EVKLID_SS_THINK !== "0",
+  // Korak ali rezultat učenca (trditev, live-check.js isClaim) v SŠ in na faksu presodi hitri model z več razmisleka
+  // tudi v brezplačnem paketu (j 19. 11., kartica; meritev scripts/meri-prav-matura.mjs: brez razmisleka je ~1 od 10
+  // napačnih korakov dobilo »Pravilno«, z njim 0 od 86). Ostala sporočila brezplačnega paketa ostanejo pri navadnem. 0 = izklop.
+  stepThink: () => process.env.EVKLID_STEP_THINK !== "0",
   // Fakulteta (j 2026-11-01, načrt stopenj: »daljše razlage, več dokazov, pogosteje Sonnet«): privzeto hitri model z
   // več razmisleka (kot SŠ), prva »Razloži podrobneje« pri naročnini Sonnet. 0 = kot drugi učenci.
   universityMid: () => process.env.EVKLID_UNI_MID !== "0",
