@@ -64,7 +64,8 @@ import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js"
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
-import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewCalls, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
+import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewCalls, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
+import { stepVerdict, verdictIgnored } from "./sodba-koraka.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity, schoolYear } from "./games.js";
 import { mountDailyPuzzle } from "./daily-puzzle.js";
@@ -1216,8 +1217,10 @@ export function createApp(store, opts = {}) {
         }
         if (firstPre && earlier.slice(at + 1).some(looksLikeTask)) firstPre = null;
       }
-      const codeVerdict = claim ? claimNote(text, firstPre) : null;
-      const notes = [pre?.note, codeVerdict].filter(Boolean).join("\n");
+      // Sodba kode (server/sodba-koraka.js): računi v sporočilu, enačba proti nalogi ali inštruktorjevi zadnji enačbi,
+      // končna vrednost. { wrong, finding, note } ali null, ko koda ne more soditi (tedaj sodbo pregleda model).
+      const codeVerdict = claim ? stepVerdict(text, { pre: firstPre, prevTutor: prevTutorText }) : null;
+      const notes = [pre?.note, codeVerdict?.note].filter(Boolean).join("\n");
       const held = []; // zadržani deli odgovora, dokler sodba ni preverjena
       // Poskus brez razmišljanja za lahek prvi korak (privzeto izklopljen, server/hitri-korak.js).
       const brezRazmisleka = !cached && hitriKorak({ mode, settings: student.settings, pre, image: !!image, competition: !!tekTopic, isFirst });
@@ -1290,21 +1293,31 @@ export function createApp(store, opts = {}) {
       let verdictChecked = false;
       let extraCost = 0;
       const verdictReserve = checkReserveUsd(MODEL_MID, `${prevTutorText}${text}${result.text || ""}`);
-      if (claim && !codeVerdict && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used && liveReviewOn() && needsVerdictReview({ answer: stripMeta(result.text), lite, spentToday: () => usage.kindToday("sodba") }) && hold.take(verdictReserve)) {
-        verdictChecked = true;
+      const judgeable = claim && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used;
+      // Koda je sodila, inštruktor pa ji ni sledil (»Prav!« ob napačnem koraku ali zavrnitev pravilnega): brez modela za
+      // pregled takoj ponovni odgovor z ugotovitvijo kode (Gemini 18. 11.).
+      const codeIgnored = judgeable && codeVerdict && verdictIgnored(stripMeta(result.text), codeVerdict);
+      const modelReview = judgeable && !codeVerdict && liveReviewOn() && needsVerdictReview({ answer: stripMeta(result.text), lite, spentToday: () => usage.kindToday("sodba") }) && hold.take(verdictReserve);
+      if (codeIgnored || modelReview) {
+        verdictChecked = !!modelReview;
         phase(true); // učenec vidi »Preverjam odgovor …« (public/app.js), dokler sodba ni preverjena
         try {
-          const rv = await reviewVerdict({ context: prevTutorText, student: text, answer: stripMeta(result.text), createFn: opts.reviewCreateFn, usage, studentId: student.id });
-          extraCost += rv.cost;
-          hold.settle(verdictReserve);
+          let reason = codeIgnored ? codeVerdict.finding : null;
+          if (modelReview) {
+            const rv = await reviewVerdict({ context: prevTutorText, student: text, answer: stripMeta(result.text), createFn: opts.reviewCreateFn, usage, studentId: student.id });
+            extraCost += rv.cost;
+            hold.settle(verdictReserve);
+            reason = rv.reason;
+          }
           // Ponovni odgovor samo, če je zanj prostor pod mejo (sicer ostane prvi odgovor).
-          if (rv.reason && hold.take(mainReserve)) {
+          if (reason && hold.take(mainReserve)) {
             // Napačna sodba: isti model odgovori še enkrat z ugotovitvijo preverjevalca v skriti opombi.
             const again2 = createStreamFilter();
             held.length = 0;
             const r2 = await streamFn({
               system,
-              messages: withNote(history, [notes, verdictNote(rv.reason)].filter(Boolean).join("\n")),
+              // Ob sodbi kode le ugotovitev za ponovni odgovor (prva opomba kode bi ji le ponovila).
+              messages: withNote(history, [pre?.note, codeIgnored ? null : codeVerdict?.note, verdictNote(reason)].filter(Boolean).join("\n")),
               deep,
               mode,
               tools: SETTINGS_TOOLS,
