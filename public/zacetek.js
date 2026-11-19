@@ -359,7 +359,7 @@
     }
     tpl.parentNode.replaceChild(tpl.content, tpl);
   }
-  function takoj(pm) {
+  function brezPristajalne(pm) {
     moduli();
     if (!pm) return;
     html.setAttribute("data-zacetek-slogi", "");
@@ -384,7 +384,7 @@
   try {
     pm = document.querySelector('meta[name="evklid-pristajalna"]');
     var prist = !!pm && !html.hasAttribute("data-zacetek") && pristajalnaVelja(pm);
-    if (!prist) takoj(pm);
+    if (!prist) brezPristajalne(pm);
     else {
       poIzrisu = new Promise(function (ok) {
         var konc = false;
@@ -432,7 +432,7 @@
     poIzrisu = null;
     html.removeAttribute("data-pristajalna");
     try {
-      takoj(pm);
+      brezPristajalne(pm);
     } catch (e2) {}
   }
   window.evklidZacetek.poIzrisu = poIzrisu || Promise.resolve();

@@ -169,9 +169,22 @@ test("brskalnik: pristajalna stran vidna brez JavaScripta aplikacije, app.js jo 
       const ctx = await browser.newContext(ctxOpts);
       await ctx.addInitScript(() => localStorage.setItem("evklid.racun", "1"));
       const p = await ctx.newPage();
-      await p.addInitScript(() => document.addEventListener("DOMContentLoaded", () => (window.__pre = document.documentElement.hasAttribute("data-pristajalna"))));
+      // Slogi drugih zaslonov naj zamudijo: stran mora ostati skrita do njih (brez izrisa brez slogov).
+      await p.route(/\/textbook\.css$/, async (r) => {
+        await new Promise((ok) => setTimeout(ok, 1500));
+        await r.continue();
+      });
+      await p.addInitScript(() => {
+        // Vse odloči zacetek.js v <head>, ne šele zagon.js: ob razčlenjeni strani so moduli in slogi že vklopljeni.
+        document.addEventListener("DOMContentLoaded", () => {
+          const h = document.documentElement;
+          window.__pre = h.hasAttribute("data-pristajalna");
+          window.__dcl = { slogi: h.hasAttribute("data-zacetek-slogi"), moduli: !!document.getElementById("evklid-moduli"), tpl: !!document.getElementById("evklid-slogi"), vis: getComputedStyle(document.body).visibility };
+        });
+      });
       await p.goto(base + "/");
       await p.waitForSelector("#auth-form", { timeout: 30_000 });
+      assert.deepEqual(await p.evaluate(() => window.__dcl), { slogi: true, moduli: false, tpl: false, vis: "hidden" });
       const s = await p.evaluate(() => ({
         pre: window.__pre,
         land: !!document.querySelector("#view-auth .land"),

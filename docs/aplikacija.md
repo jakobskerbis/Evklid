@@ -83,7 +83,7 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   (`modulepreload`) v `<template id="evklid-moduli">`, slogi za druge zaslone (vsi za `account.css`) pa v
   `<template id="evklid-slogi">` takoj za `account.css` (zamenja se z njimi na istem mestu, vrstni red ostane): ob pokazani strani jih `zacetek.js` vklopi po prvem izrisu
   (`evklidZacetek.poIzrisu`: `first-contentful-paint`, varovalo 3 s; `zagon.js` šele nato začne module), sicer
-  takoj (`takoj`), stran pa ostane skrita do konca teh slogov (`html[data-zacetek-slogi]`, varovalo 8 s). Če
+  takoj (`brezPristajalne`), stran pa ostane skrita do konca teh slogov (`html[data-zacetek-slogi]`, varovalo 8 s). Če
   `zacetek.js` ne teče, jih vklopi `zagon.js`. `account.js renderLanding` stran prevzame brez ponovnega izrisa
   (`sameMarkup`; animacija pogovora se ne ponovi), vsak drug zaslon jo umakne (`endPrerenderedLanding` v `authMode`
   in po `initAccount`). Moduli vstopne strani imajo `fetchpriority="low"` (ne tekmujejo s slogi). Izklop za primerjavo:
