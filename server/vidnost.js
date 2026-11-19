@@ -301,7 +301,7 @@ export const aboutPage = (store = false) => staticPage(PAGE, undefined, store);
 export const whyPage = (measurement, store = false) => staticPage(WHY_PAGE, measurement, store);
 
 // Prijavljene napake na /zakaj-evklid (točka 47 izboljšav): koliko odgovorov inštruktorja in korakov lekcij so učenci
-// prijavili kot napačne in koliko jih je že popravljenih. Samo števila (brez besedil, učencev ali datumov prijav);
+// prijavili kot napačne in koliko jih je že rešenih (skrbnik jih zapre kot »Popravljeno«; stanja »ni napaka« ni, zato »rešene«, ne »popravljene«). Samo števila (brez besedil, učencev ali datumov prijav);
 // skrbnikove prijave iz klepeta (bug_reports kind = app) ne štejejo. Brez tabel (stara baza) → null.
 const sl4 = (n, [one, two, few, many]) => {
   const m = Math.abs(n) % 100;
@@ -321,9 +321,9 @@ export function reportStatsHtml(st) {
   if (!st) return "";
   if (!st.total) return `<p class="about-text">Prijav doslej še ni bilo.</p>`;
   const prijav = `${st.total} ${sl4(st.total, ["prijava", "prijavi", "prijave", "prijav"])}`;
-  // Naslonki pred številom: »od tega sta 2 že popravljeni«, »od tega jih je 5 že popravljenih«.
-  const [pred, part] = sl4(st.fixed, [["je", "popravljena"], ["sta", "popravljeni"], ["so", "popravljene"], ["jih je", "popravljenih"]]);
-  const popr = st.fixed === 0 ? "še nobena ni popravljena" : `${pred} <b>${st.fixed}</b> že ${part}`;
+  // Naslonki pred številom: »od tega sta 2 že rešeni«, »od tega jih je 5 že rešenih«.
+  const [pred, part] = sl4(st.fixed, [["je", "rešena"], ["sta", "rešeni"], ["so", "rešene"], ["jih je", "rešenih"]]);
+  const popr = st.fixed === 0 ? "še nobena ni rešena" : `${pred} <b>${st.fixed}</b> že ${part}`;
   return `<p class="about-text">Doslej: <b>${prijav}</b>, od tega ${popr}.</p>`;
 }
 
