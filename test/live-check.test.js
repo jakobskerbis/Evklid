@@ -508,7 +508,7 @@ test("live check: a review that times out is skipped, the answer stays", async (
 test("live check: the fix call never solves a practice exercise", async () => {
   let system = "";
   await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
-  assert.match(system, /practice exercise, write the whole corrected or replacement exercise again, with every given it needs; never give the exercise's solution/);
+  assert.match(system, /practice exercise, write the whole corrected or replacement exercise again, with every given it needs, no hints or intermediate results and the same difficulty; it must not be the task that the answer has already solved; never give the exercise's solution/);
 });
 
 test("live check (SŠ meritev 18. 11.): the fix adds no new facts and may only withdraw an unsure side claim", async () => {
@@ -1055,15 +1055,19 @@ test("live check (meritev SŠ po #848): the focused check also checks explanatio
   assert.match(EXTRA_SYSTEM, /^You check only three things in an AI tutor's answer to a school student: the practice exercise \(»Vaja«, »Practice«\), any plan of an experiment that the tutor proposes, and every explanation of how or why something happens\./);
   // molekularna-genetika#3 (vilici »na nasprotnih straneh«), nastanek-vrst#5 (haploidnost iz oploditve)
   assert.match(EXTRA_SYSTEM, /3\. Explanations and notation: for every sentence that says how or why something happens \(mechanism, cause, order of events, where a process starts and where it ends, what halves or doubles a number\)/);
-  assert.match(EXTRA_SYSTEM, /a reason that reverses cause and effect or names the wrong process or place is an error, a simplification that is correct at that level is fine\./);
+  assert.match(EXTRA_SYSTEM, /a reason that reverses cause and effect, names the wrong process or place, or gives the wrong order or direction of a process \(»zaostajajočo verigo gradi v smeri 3'→5'«, »vilici začneta na nasprotnih straneh«\) is an error; a simplification that is correct at that level, or a true purpose or function given instead of a mechanism, is fine\./);
   // nastanek-vrst#3 (»63 ni oblike 2n«), raziskovanje#2 (»razlika 40 %«)
-  assert.match(EXTRA_SYSTEM, /2n is the chromosome number of a diploid cell, such as a human body cell, also when it is odd/);
-  assert.match(EXTRA_SYSTEM, /A difference found by subtracting two percentages is in percentage points, not per cent \(a relative change in per cent is fine\)\./);
-  assert.match(LIVE_REVIEW_SYSTEM, /a difference found by subtracting two percentages is in percentage points\);/);
+  assert.match(EXTRA_SYSTEM, /in biology 2n is the chromosome number of a diploid body cell, such as a human body cell, also when it is odd, and a polyploid's body-cell number may be written 2n = 33 or 3n = 33; in mathematics 2n is an even number\)/);
+  assert.match(EXTRA_SYSTEM, /When two percentages are compared, their difference is in percentage points, not per cent; the rest of a whole \(100 % − 36 % = 64 %\) and a relative change are correctly in per cent\./);
+  assert.match(LIVE_REVIEW_SYSTEM, /the difference between two compared percentages is in percentage points, while the rest of a whole \(100 % − 36 % = 64 %\) and a relative change are correctly in per cent\);/);
   // molekularna-genetika#4: vaji je manjkal podatek o dveh vilicah
   assert.match(EXTRA_SYSTEM, /states every given its solution needs \(also givens taken over from the task/);
+  // pregled #853: sklic in znane ali tabelne vrednosti štejejo kot podani (prompts/system_prompt.md, »Tabelna vrednost«)
+  assert.match(EXTRA_SYSTEM, /a clear reference such as »enako kot zgoraj« counts as stating them, and constants, table values and facts the student is expected to know or look up need not be stated\)/);
   assert.match(EXTRA_SYSTEM, /End with one final line: OK, or NAPAKA: /);
   let system = "";
   await correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
   assert.match(system, /write the whole corrected or replacement exercise again, with every given it needs/);
+  // pregled #853: nadomestna vaja brez namigov, enako težka, ne naloga, ki jo je odgovor že rešil
+  assert.match(system, /no hints or intermediate results and the same difficulty; it must not be the task that the answer has already solved/);
 });
