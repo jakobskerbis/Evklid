@@ -130,7 +130,7 @@ export function summaryItems(md) {
     const z = zadnja();
     if (lines.every((l) => /^\$\$[\s\S]*\$\$$/.test(l))) {
       const f = lines.map((l) => `$${l.slice(2, -2).trim()}$`).join(", ");
-      if (z?.vrsta === "odstavek" && !z.zaprt) (z.t += `${z.math ? "," : ""} ${f}`), (z.math = true);
+      if ((z?.vrsta === "odstavek" && !z.zaprt) || (z?.vrsta === "alineja" && !z.math && /:\**\s*$/.test(z.t))) (z.t += `${z.math ? "," : ""} ${f}`), (z.math = true);
       else items.push({ t: f, vrsta: "formula", math: true });
       continue;
     }
@@ -225,7 +225,7 @@ export function lessonQuestions(topicId, lesson, name = "", { raw = false, pregl
     const vsi = sum.map((b) => b.replace(/\*\*/g, "").replace(/[.;]\s*$/, ""));
     // Pojmi za točkovnik: alineje kot prej (prve štiri); trditve, ki jih sestavi summaryItems, le cele (ne uvod brez
     // vsebine, ne kratka formula (tudi kot alineja), ne odlomek z malo začetnico; »pH« ostane), vrstice tabele pa za ostalimi.
-    const cela = (p, i) => (sum.vrste[i] === "alineja" && plainLen(p) >= 4) || (plainLen(p) >= 12 && !/^\p{Ll}[^\s\p{Lu}]*(?:\s|$)/u.test(p) && !/:\s*$/.test(p));
+    const cela = (p, i) => (sum.vrste[i] === "alineja" && plainLen(p) >= 4 && !/:\s*$/.test(p)) || (plainLen(p) >= 12 && !/^\p{Ll}[^\s\p{Lu}]*(?:\s|$)/u.test(p) && !/:\s*$/.test(p));
     const izbrani = vsi.map((p, i) => ({ p, i })).filter(({ p, i }) => cela(p, i));
     izbrani.sort((a, b) => (sum.vrste[a.i] === "tabela") - (sum.vrste[b.i] === "tabela"));
     const pojmi = (izbrani.length >= 2 ? izbrani.map((x) => x.p) : vsi).slice(0, 4);
