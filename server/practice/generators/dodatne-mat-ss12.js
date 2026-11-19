@@ -803,7 +803,7 @@ export const DODATNE_MAT_SS12 = [
         const val = askX ? m : n;
         return T({
           text: `Izraz $${expr}$ ($x, y \\ne 0$) zapiši v obliki $x^{m} y^{n}$. Koliko je $${askX ? "m" : "n"}$?`,
-          answer: num(val, null, null, askX ? [[a + c + d - e, "Pri potenciranju potence eksponente zmnožimo: (x^a)^c = x^(a·c)."], [a * c + d + e, "Pri deljenju eksponent imenovalca odštejemo."]] : [[b + c - f, "Pri potenciranju potence eksponente zmnožimo: (y^b)^c = y^(b·c)."], [b * c + f, "Pri deljenju eksponent imenovalca odštejemo."]]),
+          answer: { ...num(val, null, null, askX ? [[a + c + d - e, "Pri potenciranju potence eksponente zmnožimo: (x^a)^c = x^(a·c)."], [a * c + d + e, "Pri deljenju eksponent imenovalca odštejemo."]] : [[b + c - f, "Pri potenciranju potence eksponente zmnožimo: (y^b)^c = y^(b·c)."], [b * c + f, "Pri deljenju eksponent imenovalca odštejemo."]]), form: { expr: "x^m*y^n", vals: { m, n }, ask: askX ? "m" : "n" } },
           hint: "Najprej potenciraj oklepaj (eksponente pomnoži), nato pri isti osnovi eksponente seštej oziroma odštej.",
           data: { given: [`x^{m} y^{n} = ${expr}`], find: [askX ? "m" : "n"] },
           formula: RULES.slice(0, 3),
@@ -831,7 +831,7 @@ export const DODATNE_MAT_SS12 = [
       const B = `${bm} \\cdot 10^{${qq}}`;
       return T({
         text: `${C.s(A, B)} Rezultat zapiši v obliki $c \\cdot 10^{n}$, kjer je $1 \\le c < 10$. Koliko je $n$?`,
-        answer: num(e, null, null, [[p + qq, "Če je zmnožek mantis 10 ali več, ga zapiši kot c · 10 in povečaj eksponent za 1."], [p * qq, "Pri množenju potenc z osnovo 10 eksponente seštejemo."], [p - qq, "Pri množenju eksponente seštejemo, ne odštejemo."]]),
+        answer: { ...num(e, null, null, [[p + qq, "Če je zmnožek mantis 10 ali več, ga zapiši kot c · 10 in povečaj eksponent za 1."], [p * qq, "Pri množenju potenc z osnovo 10 eksponente seštejemo."], [p - qq, "Pri množenju eksponente seštejemo, ne odštejemo."]]), form: { expr: "c*10^n", vals: { c: prod, n: e }, ask: "n" } },
         hint: "Posebej zmnoži števili pred potencama in posebej potenci števila 10. Na koncu preveri, ali je $1 \\le c < 10$.",
         data: { given: [`${C.sym} = ${qty(A, C.u)}`, `N = ${B}`], find: ["n"] },
         formula: ["(a \\cdot 10^{p}) \\cdot (b \\cdot 10^{q}) = (a \\cdot b) \\cdot 10^{p + q}"],
@@ -2010,7 +2010,7 @@ export const DODATNE_MAT_SS12 = [
           const ms = askA ? [[s * s, "Iz kvadrata moraš še koreniti: √(a²) = a."], [part, "Razcep ni dokončan – izpostavi največji kvadrat, ki deli število."]] : [[n / s, "Pod korenom ostane število, deljeno s kvadratom a², ne z a."], [s * k, "Pod korenom ostane le faktor, ki ni popoln kvadrat."]];
           return T({
             text: `Delno koreni $\\sqrt{${n}}$, tako da dobiš obliko $a\\sqrt{b}$, kjer je $b$ čim manjše naravno število. Koliko je $${askA ? "a" : "b"}$?`,
-            answer: num(askA ? s : k, null, null, ms),
+            answer: { ...num(askA ? s : k, null, null, ms), form: { expr: "a√(b)", vals: { a: s, b: k }, ask: askA ? "a" : "b" } },
             hint: `Poišči največji popolni kvadrat, ki deli $${n}$.`,
             data: { given: [`\\sqrt{${n}} = a\\sqrt{b}`], find: [askA ? "a" : "b"] },
             formula: "\\sqrt{a^2 b} = a\\sqrt{b}",
@@ -2048,7 +2048,7 @@ export const DODATNE_MAT_SS12 = [
         const E = ms.map((m, i) => term(cs[i], m, i === 0)).join("");
         return T({
           text: r.pick([`Izraz $${E}$ zapiši v obliki $K\\sqrt{${k}}$. Koliko je $K$?`, `Poenostavi $${E}$. Rezultat ima obliko $K\\sqrt{${k}}$ – koliko je $K$?`]),
-          answer: num(K, null, null, [[sum(cs), "Vsak koren najprej delno koreni – pred koren pride tudi faktor."], [sum(ms.map((m, i) => m * m * cs[i])), "Iz kvadrata pod korenom pride pred koren njegov koren, ne kvadrat."]]),
+          answer: { ...num(K, null, null, [[sum(cs), "Vsak koren najprej delno koreni – pred koren pride tudi faktor."], [sum(ms.map((m, i) => m * m * cs[i])), "Iz kvadrata pod korenom pride pred koren njegov koren, ne kvadrat."]]), form: { expr: `K√(${k})`, vals: { K }, ask: "K" } },
           hint: `Vsak koren delno koreni, da dobiš $\\sqrt{${k}}$, nato seštej podobne člene.`,
           data: { given: [`${E} = K\\sqrt{${k}}`], find: ["K"] },
           formula: ["\\sqrt{a^2 b} = a\\sqrt{b}", "m\\sqrt{b} + n\\sqrt{b} = (m + n)\\sqrt{b}"],
@@ -2109,7 +2109,7 @@ export const DODATNE_MAT_SS12 = [
       const den = `${p === 1 ? "" : p}\\sqrt{${b}}`;
       return T({
         text: `Racionaliziraj imenovalec ulomka $${dfr(k, den)}$ in ga zapiši v obliki $m\\sqrt{${b}}$. Koliko je $m$? (Ulomek okrajšaj.)`,
-        answer: rat(m, [[k / p, `Pri množenju s √${b} dobiš v imenovalcu še ${b}.`], [k * b, "√b · √b = b pride v imenovalec, ne v števec."]]),
+        answer: { ...rat(m, [[k / p, `Pri množenju s √${b} dobiš v imenovalcu še ${b}.`], [k * b, "√b · √b = b pride v imenovalec, ne v števec."]]), form: { expr: `m√(${b})`, vals: { m: m[0] / m[1] }, ask: "m" } },
         hint: `Števec in imenovalec pomnoži s $\\sqrt{${b}}$.`,
         data: { given: [`${dfr(k, den)} = m\\sqrt{${b}}`], find: ["m"] },
         formula: "\\dfrac{a}{\\sqrt{b}} = \\dfrac{a\\sqrt{b}}{b}",

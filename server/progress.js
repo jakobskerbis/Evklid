@@ -7,6 +7,7 @@ import { sameSubject } from "./subjects.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { generateTask, hasGenerator, publicTask, hintSteps } from "./practice/index.js";
 import { checkAnswer } from "./practice/check.js";
+import * as MATH from "../public/graph/math.js";
 import { CONTEST, TRAINING_TASKS, isCompetitionPath, topicsForYear } from "./competition.js";
 import { isExamPath, mockPlan, scaledScore, examGrade } from "./exams.js";
 import { toChoice } from "./practice/choice.js";
@@ -878,7 +879,8 @@ export class Progress {
 
     const task = row.payload;
     // Pravilno pretvorjen rezultat (druga predpona) velja povsod, kjer besedilo ne zahteva enote (j, 17. 11. 2026).
-    const res = checkAnswer(task.answer, input, { convert: true, text: task.text });
+    // math: cel zapis (»5√7«, »y = −9x + 6«) in izraz namesto števila; find: »b = 7« pri iskani količini b.
+    const res = checkAnswer(task.answer, input, { convert: true, text: task.text, find: task.data?.find, math: MATH });
     // code/params: prevod sporočila v jeziku vmesnika (message ostane slovenski).
     const out = { kind: res.kind, message: res.message || null, ...(res.code ? { code: res.code, params: res.params || {} } : {}) };
 

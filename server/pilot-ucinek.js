@@ -17,6 +17,7 @@
 // izbris profila ali računa ju pobriše (ON DELETE CASCADE).
 import { generateTask, publicTask } from "./practice/index.js";
 import { checkAnswer } from "./practice/check.js";
+import * as MATH from "../public/graph/math.js";
 import { ageOn, ADULT_AGE } from "./accounts/age.js";
 
 export const QUIZ_LEVELS = [1, 1, 2, 2, 3, 3];
@@ -273,8 +274,9 @@ export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nex
     let ok = false;
     if (b.skip !== true) {
       const input = typeof b.answer === "string" || typeof b.answer === "number" ? String(b.answer).slice(0, 200) : "";
-      let r = checkAnswer(task.answer, input);
-      if (r.kind === "unit" && r.code === "chk.addUnit" && task.answer.unit) r = checkAnswer(task.answer, `${input} ${task.answer.unit}`);
+      const opts = { find: task.data?.find, text: task.text, math: MATH };
+      let r = checkAnswer(task.answer, input, opts);
+      if (r.kind === "unit" && r.code === "chk.addUnit" && task.answer.unit) r = checkAnswer(task.answer, `${input} ${task.answer.unit}`, opts);
       // Napaka v zapisu ni odgovor: učenec popravi (kot v kvizu).
       if (r.kind === "format" || r.kind === "unit") return res.status(422).json({ retry: true, code: r.code, params: r.params, message: r.message });
       ok = r.kind === "correct" || r.kind === "rounding" || r.kind === "simplify";
