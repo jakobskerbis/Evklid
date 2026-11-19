@@ -148,6 +148,7 @@ test("napis chat.waitQueue v slovenščini in vseh 32 jezikih, z {n}", () => {
 });
 
 // --- v aplikaciji (preizkusni način brez ključa API) ---
+const vprasanj = (store, id) => store.db.prepare("SELECT COALESCE(SUM(n), 0) AS n FROM question_log WHERE student_id = ?").get(id).n;
 function events(body) {
   return body
     .split("\n\n")
@@ -165,7 +166,7 @@ async function zAplikacijo(env, fn) {
   const server = createApp(store, { scheduler: false }).listen(0, "127.0.0.1");
   await new Promise((r) => server.once("listening", r));
   const base = `http://127.0.0.1:${server.address().port}`;
-  const post = (p, body) => fetch(base + p, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) });
+  const post = (p, body, signal) => fetch(base + p, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}), signal });
   const nov = async (name) => {
     const s = await (await post("/api/students", { name, settings: { educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred", subject: "MAT" } })).json();
     const c = await (await post(`/api/students/${s.id}/conversations`)).json();
@@ -209,5 +210,28 @@ test("aplikacija: predolgo čakanje v vrsti → napaka 529 kot ob preobremenitvi
     assert.equal(events(await prvo).at(-1).event, "done");
     // Neuspelo sporočilo se ne shrani in ne šteje v dnevno mejo (kot ob vsaki napaki API).
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM messages WHERE conversation_id = ?").get(b.c.id).n, 0);
+    assert.equal(vprasanj(store, b.s.id), 0, "čakanje brez odgovora ne šteje v dnevno mejo");
+    assert.equal(vprasanj(store, a.s.id), 1);
+  });
+});
+
+test("aplikacija: učenec zapre aplikacijo med čakanjem v vrsti → vprašanje ne šteje, mesto se sprosti", async () => {
+  await zAplikacijo({ EVKLID_AI_SOCASNO: "1", EVKLID_AI_VRSTA_MS: "30000", EVKLID_MOCK_DELAY_MS: "30" }, async ({ store, post, nov }) => {
+    const [a, b, c] = [await nov("Ana"), await nov("Bor"), await nov("Cene")];
+    const prvo = post(`/api/conversations/${a.c.id}/messages`, { text: "Koliko je 17 krat 23?" }).then((r) => r.text());
+    await sleep(15);
+    const ac = new AbortController();
+    const rb = await post(`/api/conversations/${b.c.id}/messages`, { text: "Koliko je 19 krat 21?" }, ac.signal);
+    const prvi = new TextDecoder().decode((await rb.body.getReader().read()).value);
+    assert.match(prvi, /"queue"/, "Bor čaka v vrsti");
+    ac.abort();
+    await sleep(100);
+    assert.equal(vprasanj(store, b.s.id), 0, "zaprto med čakanjem ne šteje");
+    assert.equal(events(await prvo).at(-1).event, "done");
+    assert.equal(vprasanj(store, a.s.id), 1);
+    // Mesto se je sprostilo: naslednji učenec ne čaka.
+    const ec = events(await (await post(`/api/conversations/${c.c.id}/messages`, { text: "Koliko je 11 krat 23?" })).text());
+    assert.ok(!ec.some((e) => e.event === "phase" && e.data.phase === "queue"), ec.map((e) => e.event).join(","));
+    assert.equal(ec.at(-1).event, "done");
   });
 });
