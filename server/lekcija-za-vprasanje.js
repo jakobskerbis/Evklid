@@ -175,10 +175,16 @@ export function rankLessons(text, settings) {
 }
 
 // Skrita opomba za inštruktorja (kot opomba pole): povzetek lekcije in kje jo učenec najde.
-// mode: način učenca (A/B); pri B (celotna rešitev) opomba ne zadrži rešitve (j 14. 11.).
+// mode: način učenca (A/B); pri B (celotna rešitev) opomba ne zadrži rešitve (j 14. 11.); B1 = način A, a učenec v tem
+// sporočilu izrecno prosi za rešitev (server/nacin.js asksForSolution).
 export function lessonNote(hit, mode = "A") {
   if (!hit) return "";
-  const pace = mode === "B" ? "The student has chosen način B (celotna rešitev): follow the rules of način B." : "Keep your usual step-by-step pace and do not give formulas or the answer before the student tries.";
+  const pace =
+    mode === "B"
+      ? "The student has chosen način B (celotna rešitev): follow the rules of način B."
+      : mode === "B1"
+        ? "The student explicitly asks for the full solution of this task: follow the rules of način B for it."
+        : "Keep your usual step-by-step pace and do not give formulas or the answer before the student tries.";
   const summary = expandFormulaBlocks(hit.summary, "plain").replace(/\n{3,}/g, "\n\n").trim().slice(0, 1200);
   return [
     LESSON_NOTE_HEAD,

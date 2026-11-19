@@ -47,7 +47,7 @@ import { cleanText, plainTitle, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
 import { isHiddenNote } from "./skrite-opombe.js";
 import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
-import { modeSwitchNote } from "./nacin.js";
+import { modeSwitchNote, asksForSolution, solveRequestNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
@@ -1019,7 +1019,10 @@ export function createApp(store, opts = {}) {
     if (image) userContent.push({ type: "image", source: { type: "base64", media_type: image.media_type, data: image.data } });
     // Naloga iz pretekle pole: navodilo za inštruktorja kot skrit blok (server/paper-context.js), učenec vidi le text.
     const solvingMode = student.settings.solving_mode === "B" ? "B" : "A";
-    const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper, mode: solvingMode });
+    // Izrecna prošnja za rešitev v načinu A (»Reši to nalogo«, »pokaži postopek«): opombi pole in lekcije je ne zadržita,
+    // skrita opomba pove, da gre za izrecno zahtevo za celotno rešitev (server/nacin.js, j 19. 11.).
+    const solveAsk = solvingMode === "A" && asksForSolution(text);
+    const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper, mode: solveAsk ? "B1" : solvingMode });
     if (paperNote) userContent.push({ type: "text", text: paperNote });
     // D3: praznost z EXISTS; zgodovino pogovora naložimo (in odšifriramo) samo enkrat, spodaj (prior).
     const isFirst = !store.hasMessages(conv.id);
@@ -1031,12 +1034,13 @@ export function createApp(store, opts = {}) {
     } catch (err) {
       console.warn(`[evklid] iskanje lekcije ni uspelo: ${err?.message || err}`);
     }
-    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson, solvingMode) });
+    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson, solveAsk ? "B1" : solvingMode) });
     // Zamenjava načina A/B med pogovorom (j 14. 11.): skrita opomba, sicer zgodovina vleče nazaj v stari način.
     // Prej: način, s katerim je inštruktor nazadnje odgovoril (stolpec; pri starih pogovorih iz META zadnjega odgovora).
     const modeBefore = isFirst ? null : conv.solving_mode || store.lastEvent(conv.id)?.mode || null;
     const modeNote = modeSwitchNote(modeBefore, solvingMode);
     if (modeNote) userContent.push({ type: "text", text: modeNote });
+    if (solveAsk && !modeNote) userContent.push({ type: "text", text: solveRequestNote() });
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).

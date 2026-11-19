@@ -24,11 +24,13 @@ const wrap = (lines) => `${PAPER_NOTE_HEAD}\n${lines.join(" ")}\nNever mention t
 const GUIDE = "Guide the student with hints in the style of this exam and do not reveal the solution before the student has tried it.";
 // Način B (celotna rešitev, j 14. 11.): navodilo »vodi z namigi« bi preglasilo izbrani način.
 const GUIDE_B = "The student has chosen način B (celotna rešitev): give the full solution by the rules of način B, in the style of this exam.";
+// B1: način A, a učenec v tem sporočilu izrecno prosi za rešitev (server/nacin.js asksForSolution, j 19. 11.).
+const GUIDE_B1 = "The student explicitly asks for the full solution of this task: give it by the rules of način B, in the style of this exam.";
 
 // loadOurs(id) → pola ali null (server/our-papers.js); p.ours je id naše pole, kadar učenec rešuje njo.
-// mode: način učenca (A/B) iz nastavitev na strežniku.
+// mode: način učenca (A/B) iz nastavitev na strežniku; B1 = način A z izrecno prošnjo za rešitev v tem sporočilu.
 export function paperContext(p, { loadOurs = null, mode = "A" } = {}) {
-  const guide = mode === "B" ? GUIDE_B : GUIDE;
+  const guide = mode === "B" ? GUIDE_B : mode === "B1" ? GUIDE_B1 : GUIDE;
   if (!p || typeof p !== "object") return "";
   const paper = cleanText(String(p.paper ?? ""), 120).replace(/[<>[\]]/g, "");
   if (!paper) return "";
