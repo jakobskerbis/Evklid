@@ -87,10 +87,11 @@ test("varenJson: besedilo iz baze ne konča <script> in ne odpre komentarja; JSO
 });
 
 test("samo navigacija brskalnika s piškotkom seje (ne service worker, ne fetch, ne mobilni odjemalec API)", () => {
-  const req = (h) => ({ method: "GET", headers: { cookie: "sm_session=abc; sm_device=d", ...NAV, ...h } });
+  const req = (h) => ({ method: "GET", headers: { cookie: "sm_session=abc; sm_device=dddddddddddddddddddddd", ...NAV, ...h } });
   assert.equal(zaZacetnePodatke(req({})), true);
   assert.equal(zaZacetnePodatke(req({ cookie: "sm_device=x" })), false);
   assert.equal(zaZacetnePodatke(req({ cookie: "sm_session=abc" })), false, "brez naprave: vsak notranji klic bi ustvaril svojo");
+  assert.equal(zaZacetnePodatke(req({ cookie: "sm_session=abc; sm_device=kratek" })), false, "prekratek žeton: strežnik ga zavrže");
   assert.equal(zaZacetnePodatke(req({ "sec-purpose": "prefetch" })), false, "predhodno nalaganje ne zasede profila");
   assert.equal(zaZacetnePodatke(req({ purpose: "prefetch" })), false);
   assert.equal(zaZacetnePodatke(req({ "sec-purpose": "prefetch;prerender" })), false);

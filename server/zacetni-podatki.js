@@ -22,7 +22,7 @@ import { jeFaks } from "../public/stopnja.js";
 import { gamesOn } from "../public/games/stage.js";
 
 const SEJA = /(?:^|;\s*)sm_session=[^;\s]/;
-const NAPRAVA = /(?:^|;\s*)sm_device=[^;\s]/;
+const NAPRAVA = /(?:^|;\s*)sm_device=[^;\s]{20,}/; // krajši žeton strežnik zavrže (server/accounts/devices.js)
 const ROK_MS = 1500;
 const NAJVEC = 256 * 1024; // večji odgovor (npr. zelo dolg seznam pogovorov) ostane klic API
 // Glave prvotne zahteve, ki jih notranja zahteva ne podeduje: pogojne (304 brez telesa), stiskanje (telo je JSON).
