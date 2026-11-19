@@ -8,6 +8,7 @@ import { plansFor } from "../server/accounts/plans.js";
 // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
 globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
 const { landingHtml } = await import("../public/pristajalna.js");
+const { t } = await import("../public/i18n.js");
 // Uvozi so pred prvim testom: po njem bi jih --test-force-exit izpustil skupaj s testi.
 const { guaranteeAdvertised, GUARANTEE } = await import("../server/placila/garancija.js");
 const { default: SL } = await import("../public/i18n/sl.js");
@@ -20,7 +21,7 @@ const primaries = (html) => (html.match(/class="btn-primary/g) || []).length;
 
 test("en gumb, prijava kot navadna povezava, brez cen in stopenj (j 2026-11-15)", () => {
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, min_age: 15 };
-  for (const html of [landingHtml({ name: "Evklid" }), landingHtml({ name: "Evklid", prices })]) {
+  for (const html of [landingHtml(t, { name: "Evklid" }), landingHtml(t, { name: "Evklid", prices })]) {
     assert.equal(primaries(html), 1, "natanko en glavni gumb");
     assert.doesNotMatch(html, /btn-secondary|<button/);
     assert.equal((html.match(/data-land="register"/g) || []).length, 1);
@@ -33,7 +34,7 @@ test("en gumb, prijava kot navadna povezava, brez cen in stopenj (j 2026-11-15)"
     assert.equal((html.match(/class="land-msg /g) || []).length, 6);
     assert.ok(html.indexOf('data-land="register"') < html.indexOf("land-demo"), "gumb je pred zgledom pogovora");
   }
-  const html = landingHtml({ name: "Evklid", prices });
+  const html = landingHtml(t, { name: "Evklid", prices });
   assert.match(html, /7 dni brezplačno, brez kartice\./);
   assert.match(html, /Za mlajše od 15 let račun ustvari starš\./);
 });
@@ -70,7 +71,7 @@ test("vsi napisi pristajalne strani so v vseh jezikih, prevedeni in z isto matem
 });
 
 test("brez odgovora strežnika stran deluje brez cen in brez starosti", () => {
-  const html = landingHtml({ name: "Evklid" });
+  const html = landingHtml(t, { name: "Evklid" });
   assert.doesNotMatch(html, /na mesec|undefined|land\./);
   assert.match(html, /data-land="register"/);
   assert.match(html, /data-land="login"/);
@@ -92,14 +93,14 @@ test("account.js: nov obiskovalec dobi pristajalno stran, znana naprava prijavo;
 
 test("pas pri vrhu: brez stikala garancije ni pasu", () => {
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, min_age: 15 };
-  for (const html of [landingHtml({ name: "Evklid" }), landingHtml({ name: "Evklid", prices })]) {
+  for (const html of [landingHtml(t, { name: "Evklid" }), landingHtml(t, { name: "Evklid", prices })]) {
     assert.doesNotMatch(html, /garancija\.html|land-gar|land-top|Boljša ocena/);
   }
 });
 
 test("pas pri vrhu: z oglašano garancijo pokaže obljubo, pogoje v eni vrstici in povezavo na pogoje", () => {
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, guarantee: { weeks: GUARANTEE.weeks, min_days: GUARANTEE.minDays, enroll_days: GUARANTEE.enrollDays } };
-  const html = landingHtml({ name: "Evklid", prices });
+  const html = landingHtml(t, { name: "Evklid", prices });
   assert.match(html, /class="land-gar"/);
   assert.match(html, /Boljša ocena ali vrnemo denar/);
   assert.match(html, /href="\/garancija\.html"/);
@@ -163,7 +164,7 @@ test("/api/account/prices: garancija samo ob vklopu in samo pri cenah v evrih", 
 // Pregled »kupca« 16. 11. 2026: ponudnik in kontakt na vstopni strani, pristajalna stran tudi brez JavaScripta.
 
 test("ponudnik in kontakt v nogi sta ista kot upravljavec v obvestilu o zasebnosti", () => {
-  const html = landingHtml({ name: "Evklid" });
+  const html = landingHtml(t, { name: "Evklid" });
   assert.match(html, /class="land-provider">Evklid trenutno upravlja Jakob Skerbiš · <span class="land-contact">Kontakt: <a href="mailto:zasebnost@evklid\.app">/);
   // Ista beseda kot v pogojih uporabe, točka 1 (#806): »Evklid trenutno upravlja Jakob Skerbiš kot fizična oseba«.
   const terms = readFileSync(new URL("../public/pogoji.html", import.meta.url), "utf8");

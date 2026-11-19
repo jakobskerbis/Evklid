@@ -22,14 +22,15 @@ test("registry covers every Settings form field and device setting; no financial
   const fields = [...new Set([...form.matchAll(/name="([a-z_]+)"/g)].map((m) => m[1]))];
   // ime je osebni podatek; manual_weaknesses = weak_points; pace = reply_speed (naprava)
   const alias = { manual_weaknesses: "weak_points", pace: "reply_speed" };
-  const exempt = ["name"];
+  // gender (slovnični spol, PR #845): samo v Nastavitvah, ne iz klepeta, da se orodja (predpomnjen začetek) ne spremenijo.
+  const exempt = ["name", "gender"];
   for (const f of fields) {
     if (exempt.includes(f)) continue;
     const key = alias[f] || f;
     assert.ok(PROFILE_SETTINGS[key] || DEVICE_SETTINGS[key], `nastavitev ${f} manjka v public/settings-registry.js`);
   }
   // Vse nastavitve profila na strežniku (razen regije, ki sledi jeziku) so v seznamu.
-  for (const k of Object.keys(DEFAULT_SETTINGS)) if (k !== "region") assert.ok(PROFILE_SETTINGS[k], k);
+  for (const k of Object.keys(DEFAULT_SETTINGS)) if (k !== "region" && k !== "gender") assert.ok(PROFILE_SETTINGS[k], k);
   assert.deepEqual(PROFILE_SETTINGS.subject.values, ALL_SUBJECTS);
   for (const k of ["track", "solving_mode", "data_mode", "educational_track"]) assert.deepEqual(PROFILE_SETTINGS[k].values, ENUMS[k], k);
   const all = JSON.stringify(SETTINGS_TOOLS.find((x) => x.name === "change_settings").input_schema.properties.changes.properties);

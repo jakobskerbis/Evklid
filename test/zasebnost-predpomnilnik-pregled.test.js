@@ -70,10 +70,10 @@ test("osebnost (prosto besedilo) prvega otroka ne gre drugemu", async () => {
 test("ime: drugi otrok dobi shranjen odgovor s svojim imenom", async () => {
   await withServer("Ime učenca", async ({ ask, calls }) => {
     await ask("Zala");
-    const b = await ask("Bor");
+    const b = await ask("Mojca"); // isti slovnični spol (del ključa)
     assert.equal(calls(), 1);
     assert.doesNotMatch(b, /Zala/);
-    assert.match(b, /Bor/);
+    assert.match(b, /Mojca/);
   });
 });
 

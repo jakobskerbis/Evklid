@@ -8,22 +8,36 @@ import "./dotik.js"; // pridržana povezava: brez oblačka in menija (public/dot
 
 const tag = document.querySelector("script[data-moduli]");
 const mods = (tag?.dataset.moduli || "").split(/\s+/).filter(Boolean).map((m) => new URL(m, document.baseURI).href);
-// Najprej prenos modulov strani (brez izvajanja), hkrati s prevodi: brez čakanja v vrsti.
-for (const href of mods) {
-  const l = document.createElement("link");
-  l.rel = "modulepreload";
-  l.href = href;
-  document.head.append(l);
-}
-// Neuspel modul ne ustavi ostalih (prej je vsak <script> tekel zase); napaka gre še v window.onerror.
-const run = (href) =>
-  import(href).catch((e) => {
-    console.error("zagon:", href, e);
-    setTimeout(() => {
-      throw e;
+// Pristajalna stran s strežnika (public/zacetek.js): moduli se začnejo prenašati šele po njenem prvem izrisu, da na
+// počasni povezavi ne jemljejo pasovne širine slogom in pisavam. Sicer takoj. (Brez top-level await, glej zgoraj.)
+const zacni = () => {
+  // Če zacetek.js ni tekel: slogi za druge zaslone in moduli iz <template> (server/vstopna-stran.js withLanding).
+  for (const t of document.querySelectorAll("template[data-evklid-slogi]")) t.replaceWith(t.content);
+  const tpl = document.getElementById("evklid-moduli");
+  if (tpl) {
+    tpl.remove();
+    document.head.append(tpl.content);
+  }
+  // Najprej prenos modulov strani (brez izvajanja), hkrati s prevodi: brez čakanja v vrsti.
+  for (const href of mods) {
+    const l = document.createElement("link");
+    l.rel = "modulepreload";
+    l.href = href;
+    document.head.append(l);
+  }
+  // Neuspel modul ne ustavi ostalih (prej je vsak <script> tekel zase); napaka gre še v window.onerror.
+  const run = (href) =>
+    import(href).catch((e) => {
+      console.error("zagon:", href, e);
+      setTimeout(() => {
+        throw e;
+      });
     });
-  });
-import("./i18n.js")
-  .then((m) => m.ready)
-  .catch(() => null)
-  .then(() => mods.reduce((p, href) => p.then(() => run(href)), Promise.resolve()));
+  return import("./i18n.js")
+    .then((m) => m.ready)
+    .catch(() => null)
+    .then(() => mods.reduce((p, href) => p.then(() => run(href)), Promise.resolve()));
+};
+const izris = window.evklidZacetek?.poIzrisu;
+if (izris) izris.then(zacni, zacni);
+else zacni();

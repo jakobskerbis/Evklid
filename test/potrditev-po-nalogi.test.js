@@ -263,7 +263,8 @@ const opts = { skip: chromium ? false : "Playwright Chromium ni nameščen", tim
 
 test("#747 splet: registracija → lasten profil brez potrditve → po rešeni nalogi opomnik za potrditev", opts, async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "potrdi-"));
-  const port = 3561 + Math.floor(Math.random() * 300);
+  // 3659 je na Chromovem seznamu nevarnih vrat (ERR_UNSAFE_PORT, CI 18. 11. 2026): preskoči ga.
+  const port = ((p) => (p === 3659 ? 3660 : p))(3561 + Math.floor(Math.random() * 300));
   const dbPath = path.join(dir, "t.db");
   const env = { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_MOCK_DELAY_MS: "0", EVKLID_NEWS: "0", EVKLID_DB: dbPath, EVKLID_PASSWORD: "", ANTHROPIC_API_KEY: "", RESEND_API_KEY: "", STRIPE_SECRET_KEY: "", EVKLID_ACCOUNTS: "1" };
   const srv = spawn(process.execPath, ["server/index.js"], { cwd: new URL("..", import.meta.url).pathname, env, stdio: "ignore" });

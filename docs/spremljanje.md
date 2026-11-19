@@ -7,7 +7,7 @@ Tri poti, neodvisne ena od druge:
    (izmerjeno 8.–16. 11. 2026), zato hiter alarm ob izpadu da UptimeRobot (3.). Ko preizkus ne uspe, delovni tok
    pade in **GitHub pošlje e-pošto** (komu: spodaj, »Kaj narediš ročno«). Deluje tudi, ko strežnik ne teče.
 2. **Strežnik sam** pošlje e-pošto naslovom iz `EVKLID_ADMIN_EMAILS` (prek Resenda) ob dogodkih, ki jih vidi samo on:
-   dnevni strošek AI nad mejo in neuspel nočni preizkus varnostne kopije.
+   dnevni strošek AI nad mejo, neuspel nočni preizkus varnostne kopije in nova oznaka stiske.
 3. **UptimeRobot** (brezplačen račun j, 16. 11. 2026): vsakih 5 min odpre `https://evklid.app/healthz` in ob izpadu
    pošlje e-pošto »Down«, ob vrnitvi »Up«. Če ob objavi nove različice prideta »Down« in v nekaj minutah »Up«, je bil
    to le ponovni zagon.
@@ -20,6 +20,7 @@ Tri poti, neodvisne ena od druge:
 | Strežnik ne odgovori ali vrne napako (`/healthz`, domača stran, `app.js`, atlas, `/api/config`) | da, ob vsakem zagonu, dokler traja | – |
 | Strošek AI danes (UTC) nad `EVKLID_OPOZORILO_AI_USD` (privzeto 3 $) | da, prvo uro po preseganju (in prvo uro po drugem e-mailu) | da, z zneskom; drugič istega dne pri 3-kratniku meje |
 | Nočni preizkus obnove iz kopije ni uspel (4.30–8.00) | da, prvo uro po preizkusu (ne ob prehodni napaki, ki jo strežnik čez 10 min ponovi) | da, enkrat na dan, z razlogom (`server/kopije-preveri.js`) |
+| Nova oznaka stiske (inštruktor `flag=distress`; `server/stiska-obvestilo.js`) | – | da, takoj; v nizu največ en e-mail na 10 min s številom. Brez imena, vsebine in sporočila: vrsta, stopnja, čas in povezava `/api/admin/stiske` (prijava skrbnika), kjer oznako v 24 urah označiš kot pregledano (`pregledano_ob`). Tudi namestniku iz `EVKLID_STISKA_EMAIL_NAMESTNIK`; stran `/api/admin/stiske` odpre samo skrbnik, zato mora biti namestnik, ki naj oznake tudi pregleduje, še v `EVKLID_ADMIN_EMAILS`. E-mail velja za poslan, ko uspe vsaj enemu prejemniku (neuspeh drugemu gre samo v dnevnik). `EVKLID_STISKA_EMAIL=0` izklopi |
 | Dnevna kopija baze ni narejena (`kopije.napaka`) | da, dokler traja | – |
 | E-pošta ne gre ven (Resend zavrne ključ, preobremenjen, ni omrežja) | da, prvo uro po zadnji neuspeli pošiljki | – (e-pošta ne deluje) |
 | Pomnilnik nad 85 % meje v zadnjih 30 min | da | – |
@@ -53,6 +54,26 @@ Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
   šteti tudi pregledi odgovorov, ki jih plača aplikacija (med pilotom do 1 $ na dan, `docs/stroski-ai.md`). Po prvem
   tednu pilota poglej v Števcu porabe običajno dnevno porabo in mejo nastavi malo nad njo.
 - Opozorilo ničesar ne ustavi. Strošek omejujejo meje AI na učenca, račun in aplikacijo (`docs/stroski-ai.md`).
+
+## Varnostni pregled sporočil
+
+- `server/nujno.js`: sporočilo inštruktorju, ki ga lokalni zaznavalnik ne ujame, pregleda še AI (Haiku). Če ponudnik
+  AI ne odgovori v 5 s ali vrne napako, aplikacija poskusi še enkrat v ozadju (do 20 s); učenec na to ne čaka. Če
+  ponovitev najde nujen primer, učenec dobi isto okno s številkami pomoči (še v istem odgovoru ali ob naslednjem).
+  Če ne uspe niti ponovitev, okna **ni** (izpad ponudnika ni razlog za alarm), sporočilo pa se prešteje kot
+  **nepregledano**.
+- **Kje to vidiš (enkrat na teden):** https://evklid.app/healthz/stanje → `varnostniPregled`. `vklopljen` mora biti
+  `true`, pri `danes` in `vceraj` pa `"nepregledano":0`. `rok` in `napaka` povesta, kolikokrat prvi poskus ni uspel
+  (posamezni so običajni, ponovitev jih večinoma reši); `zadnjeNepregledano` je datum (brez ure) zadnjega nepregledanega sporočila.
+  Javno so samo ta števila o ponudniku, nič o učencih ali zadetkih.
+- **Več (samo skrbnik):** prijavljen odpri https://evklid.app/api/usage → `varnost` → `dnevi` (zadnjih 7 dni, po UTC):
+  `pozni_zadetki` (ponovitev je našla nujen primer), `pozno_v_toku` in `pozno_naslednji` (učenec je okno dobil še v
+  istem odgovoru oziroma ob naslednjem), `pozno_ze_okno` (okno iste vrste je že imel), `pozno_poteklo` (v 1 uri ni
+  napisal ničesar več in okna ni videl), `nad_varovalko` (čez mejo več kot 10 pregledov profila na dan),
+  `brez_dobroimetja` (dobroimetje pri ponudniku AI je bilo porabljeno) in `neznano` (model ni odgovoril z vrsto ali NE).
+  `pozna_okna_cakajo` pove, koliko oken zdaj čaka na naslednji odgovor.
+- Ko `nepregledano` raste: v Anthropic Console preveri dobroimetje in omejitve ključa. E-pošte o tem strežnik (še) ne
+  pošlje.
 
 ## Kaj narediš ročno (enkrat)
 

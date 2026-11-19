@@ -28,6 +28,9 @@ export const ENUMS = {
   news_lang: NEWS_LANGS,
   // Stikalo »Skrij igre« (j, 2. 11. 2026): off skrije razdelek Igre na vseh napravah profila.
   games: ["on", "off"],
+  // Slovnični spol, v katerem inštruktor piše učencu (j, 18. 11. 2026; »« = po imenu, server/ime-oznaka.js).
+  // Namesto imena gre k ponudniku AI samo spol.
+  gender: ["", "m", "z"],
 };
 
 export const DEFAULT_SETTINGS = {
@@ -58,6 +61,7 @@ export const DEFAULT_SETTINGS = {
   game_childhood: null,
   games: "on", // razdelek Igre: on = viden, off = skrit (»Skrij igre«)
   game_titles: [], // lastni naslovi iger iz vprašalnika (childhood.js matchTitle)
+  gender: "", // »m«, »z« ali »« (po imenu)
 };
 
 // Naslov pogovora iz prvega sporočila (j 17. 11., pregled: naslov skeniranega pogovora je bil surov zapis): formule v

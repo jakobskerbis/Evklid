@@ -294,7 +294,20 @@ function toast(msg) {
   toast.timer = setTimeout(() => (t.hidden = true), 4000);
 }
 
+// Pristajalna stran s strežnika (server/pristajalna-takoj.js, public/zacetek.js): renderLanding jo prevzame brez ponovnega
+// izrisa; ko aplikacija pokaže kaj drugega (prijava, Učna pot, računi izklopljeni), jo umaknemo.
+export function endPrerenderedLanding() {
+  const box = $("#view-auth");
+  if (box?.hasAttribute("data-vnaprej")) {
+    box.removeAttribute("data-vnaprej");
+    box.textContent = "";
+    if (!document.body.classList.contains("auth-mode")) box.hidden = true;
+  }
+  document.documentElement.removeAttribute("data-pristajalna");
+}
+
 function authMode(on) {
+  endPrerenderedLanding();
   document.body.classList.toggle("auth-mode", on);
   $("#view-auth").hidden = !on;
   if (on) document.querySelectorAll(".view").forEach((v) => (v.hidden = v.id !== "view-auth"));
@@ -325,7 +338,7 @@ export async function initAccount({ onReady }) {
   status = await (statusEarly || api("/api/account/status").catch(() => ({ enabled: false })));
   statusEarly = null;
   enabled = !!status.enabled;
-  if (!enabled) return true;
+  if (!enabled) return endPrerenderedLanding(), true;
   // Seja je končana (odjava drugje, iztek, »odjavi druge naprave«): osebni podatki prejšnjega lastnika naprave
   // se pobrišejo, preden si zapomnimo ključe iz te povezave (povabilo, koda). Brez povezave sem ne pridemo.
   if (!status.logged_in) await endedSession();
@@ -508,20 +521,35 @@ function loadLandingPrices() {
   return landingPrices;
 }
 
+const landLinks = new WeakSet();
+function sameMarkup(box, html) {
+  const tpl = document.createElement("template");
+  tpl.innerHTML = html;
+  return tpl.innerHTML === box.innerHTML;
+}
+
 async function renderLanding() {
   const prices = await loadLandingPrices();
   // Med čakanjem na cene je obiskovalec morda že odšel na prijavo ali registracijo.
   if (status?.logged_in || hashMode()) return;
-  authMode(true);
-  document.body.classList.add("land-mode");
   const name = document.querySelector(".topbar .brand-name")?.textContent || "";
-  $("#view-auth").innerHTML = landingHtml({ name, prices });
-  $("#view-auth").querySelectorAll("[data-land]").forEach((a) =>
+  const html = landingHtml(t, { name, prices });
+  const box = $("#view-auth");
+  // Stran s strežnika ostane, ko je enaka (sicer bi se pogovor v primeru znova animiral); brez cen (počasna povezava)
+  // ostane tudi, ker ima cene s strežnika. Enak izris: brez utripa in brez ponovne animacije, ko cene pridejo pozneje.
+  const pre = box.hasAttribute("data-vnaprej");
+  box.removeAttribute("data-vnaprej");
+  document.body.classList.add("land-mode");
+  authMode(true);
+  if (!(pre && !prices) && !sameMarkup(box, html)) box.innerHTML = html;
+  box.querySelectorAll("[data-land]").forEach((a) => {
+    if (landLinks.has(a)) return;
+    landLinks.add(a);
     a.addEventListener("click", (e) => {
       e.preventDefault();
       goAuth(a.dataset.land);
-    }),
-  );
+    });
+  });
   // Podatki s strežnika so prišli po izrisu (počasna povezava): preizkus in garancijo dopolnimo, ko pridejo.
   if (!prices) landingReq.then((p) => p && document.body.classList.contains("land-mode") && renderLanding());
 }

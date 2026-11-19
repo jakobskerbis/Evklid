@@ -12,7 +12,7 @@ import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
 hydrateIcons();
-import { initAccount, prefetchAccountStatus, accountsOn, accountStatus, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { initAccount, endPrerenderedLanding, prefetchAccountStatus, accountsOn, accountStatus, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
 import { povabiPoUspehu } from "./povabi.js";
 import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
@@ -2415,6 +2415,7 @@ async function fillSettingsForm() {
   fillDeleteCard();
   const programs = await loadPrograms(api);
   f.personality_setting.value = s.personality_setting;
+  f.gender.value = s.gender || "";
   f.data_mode.value = s.data_mode || "auto";
   f.games.checked = !gamesOn(s);
   f.xp_goal.value = String(s.xp_goal || 50);
@@ -2478,6 +2479,7 @@ $("#settings-form").addEventListener("submit", async (e) => {
         curriculum_level: f.curriculum_level.value,
         solving_mode: f.querySelector("input[name=solving_mode]:checked").value,
         personality_setting: f.personality_setting.value,
+        gender: f.gender.value,
         dialect: f.dialect.value,
         data_mode: f.data_mode.value,
         games: f.games.checked ? "off" : "on",
@@ -5323,7 +5325,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     first = false;
   };
   captureSource(); // oznaka vira iz povezave (public/vir.js), pred prijavo, ki lahko preusmeri
-  if (await initAccount({ onReady: start })) await start({ cfgFresh: true });
+  if (await initAccount({ onReady: start }).finally(endPrerenderedLanding)) await start({ cfgFresh: true });
   else {
     // Prijava ali pristajalna stran: po prijavi se odpre Učna pot, ne zadnji zaslon pred odjavo.
     startRec = null;

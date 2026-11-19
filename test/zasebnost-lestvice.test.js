@@ -129,21 +129,28 @@ test("P3: odgovor iz predpomnilnika nima imena prejšnjega učenca, sklonjeno im
     return JSON.parse(/event: done\ndata: (.*)/.exec(sse)[1]).text;
   };
   try {
-    reply = "Bravo, Nik. Analiza pokaže, da je 8 · 7 = 56.";
-    await ask("Nik", "koliko je 8 krat 7");
+    // Model imena ne pozna, piše oznako (#845); ime vstavi strežnik.
+    reply = "Bravo, {{IME}}. Analiza pokaže, da je 8 · 7 = 56.";
+    assert.match(await ask("Nik", "koliko je 8 krat 7"), /^Bravo, Nik\. Analiza/);
     const cached = store.db.prepare("SELECT text FROM answer_cache").get()?.text;
     assert.ok(cached, "odgovor je v predpomnilniku");
     assert.match(cached, /^Bravo, \{\{IME\}\}\. Analiza/);
     store.db.prepare("UPDATE answer_cache SET verified = 1").run();
     reply = "NE SME PRITI (odgovor mora priti iz predpomnilnika)";
-    const second = await ask("Ana", "koliko je 8 krat 7");
-    assert.match(second, /^Bravo, Ana\. Analiza/);
+    // Isti slovnični spol (ključ predpomnilnika ga loči, server/ime-oznaka.js).
+    const second = await ask("Luka", "koliko je 8 krat 7");
+    assert.match(second, /^Bravo, Luka\. Analiza/);
     assert.doesNotMatch(second, /Nik/);
 
     reply = "Jakobu bom pomagal: 9 · 6 = 54. Bravo, Jakob!";
     await ask("Jakob", "koliko je 9 krat 6");
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM answer_cache").get().n, 1, "sklonjeno ime: odgovor ni shranjen");
     assert.ok(!store.db.prepare("SELECT 1 FROM answer_cache WHERE text LIKE '%Jakob%'").get());
+
+    // Ime, ki je hkrati beseda iz naloge (pregled #845): odgovor ni skupen, ker bi drugi učenec dobil svoje ime namesto besede.
+    reply = "Bor ima 3 zunanje elektrone. Bravo, {{IME}}!";
+    await ask("Bor", "koliko zunanjih elektronov ima bor");
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM answer_cache").get().n, 1, "beseda = ime: odgovor ni shranjen");
   } finally {
     server.close();
   }

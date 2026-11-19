@@ -230,7 +230,7 @@ test("task help: explain and review send the answer and the student's steps to t
 test("path topic start is reused across students; deep goes to Opus with a short history", async () => {
   await withServer(async ({ call, seen }) => {
     const topic = "MAT-OS-6/deljivost";
-    for (const name of ["Ana", "Bor"]) {
+    for (const name of ["Ana", "Mojca"]) { // isti slovnični spol (del ključa predpomnilnika, server/ime-oznaka.js)
       const s = (await call("/api/students", { method: "POST", body: { name } })).body;
       const c = (await call(`/api/students/${s.id}/conversations`, { method: "POST", body: { topic_id: topic } })).body;
       await call(`/api/conversations/${c.id}/messages`, { method: "POST", body: { text: "Začniva s temo: Deljivost." } });

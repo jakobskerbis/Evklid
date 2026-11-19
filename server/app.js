@@ -61,6 +61,8 @@ import { compressedStatic, compressedJson, pickEncoding } from "./compress.js";
 import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
+import { createNameStream, withName, maskHistory, nameMasker, choiceAsToken, pupilGender, IME_OZNAKA } from "./ime-oznaka.js";
+import { openMessage } from "./db.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
@@ -83,6 +85,7 @@ import { mountZapiski } from "./zapiski.js";
 import { mountVajaIzLista } from "./vaja-iz-lista.js";
 import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
+import { landingPage } from "./pristajalna-takoj.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { blockStoreAppPurchases, storeAppRequest, storeAppPages } from "./mobile/trgovina.js";
@@ -93,11 +96,12 @@ import { pogojiStran } from "./pogoji-stran.js";
 import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs, jeOs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
-import { nujnoPredZavrnitvijo, nujnoZa, lokalnaVrsta, varnostniPregled, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
+import { nujnoPredZavrnitvijo, nujnoZa, lokalnaVrsta, pregledSPonovitvijo, vrstaPoznihOken, poznoOkno, odjemalecZeKazeOkno, stej as stejNujno, varnostStanje, varnostPorocilo, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
 import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
+import { startStiskaObvestila, mountStiske } from "./stiska-obvestilo.js";
 import { AI_JSON } from "./ai-oznaka.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -116,7 +120,7 @@ function nonLatinScript(code) {
 
 // Ključ za ponovno uporabo odgovora: isto prvo vprašanje pri istih nastavitvah.
 // mode: način klica (chat/lite/think/deep); pathTopic: tema učne poti (npr. »Začniva s temo …«).
-export function cacheKey(text, settings, mode, lite = false, pathTopic = null, weak = [], tier = "osnovna") {
+export function cacheKey(text, settings, mode, lite = false, pathTopic = null, weak = [], tier = "osnovna", gender = "") {
   const norm = text.toLowerCase().replace(/\s+/g, " ").replace(/[\s.!?]+$/, "").trim();
   if (norm.length < 8) return null;
   const parts = [norm, settings.subject, settings.track, settings.educational_track, settings.study_program, settings.study_course, settings.curriculum_level, settings.solving_mode, settings.personality_setting, mode === "deep" ? 1 : 0];
@@ -129,6 +133,9 @@ export function cacheKey(text, settings, mode, lite = false, pathTopic = null, w
   if (settings.region && settings.region !== "SI") parts.push(settings.region);
   if (settings.school_system && settings.school_system !== "SI") parts.push(settings.school_system);
   if (settings.dialect) parts.push(`d:${settings.dialect}`);
+  // Slovnični spol (server/ime-oznaka.js, j 18. 11.): odgovor s »si rešila« ne gre fantu. Neznan spol ostane brez
+  // dela ključa (model se spolnim oblikam izogiba), zato shranjeni odgovori ostanejo veljavni.
+  if (gender === "m" || gender === "z") parts.push(`g:${gender}`);
   if (lite) parts.push("lite");
   // Način B v krajši obliki (rezultat v prvem stavku, 17. 11.): shranjeni dolgi odgovori se ne vrnejo več, tudi ne ob
   // prošnji za celo rešitev v načinu A; ključi običajnih vprašanj v načinu A ostanejo.
@@ -292,12 +299,13 @@ export function createApp(store, opts = {}) {
   let cloudBackups = null; // ista kopija še zunaj strežnika (server/kopije-oblak.js)
   let backupChecks = null; // nočni preizkus obnove iz kopije (server/kopije-preveri.js)
   let aiCostAlert = null; // opozorilo o dnevnem strošku AI (server/opozorilo-ai.js)
+  let stiskaObvestila = null; // e-mail skrbniku ob oznaki stiske (server/stiska-obvestilo.js)
   // Pomnilnik (točka D4): vzorci RSS po 10 s, Straža opozori nad 85 % meje gostovanja (server/pomnilnik.js).
   const pomnilnik = createPomnilnik({ zacni: opts.pomnilnik !== false });
   app.locals.pomnilnik = pomnilnik;
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage) });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -396,7 +404,13 @@ export function createApp(store, opts = {}) {
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,
   // in z različico datotek (service worker in app.js ne mešata stare in nove različice).
-  app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0" })); // =0: brez seznama (primerjava)
+  // Obiskovalec brez seje dobi pristajalno stran že izrisano (server/pristajalna-takoj.js), ne šele po ~130 modulih.
+  // EVKLID_PRISTAJALNA_TAKOJ=0 jo izklopi (primerjava hitrosti).
+  const landing =
+    accounts && process.env.EVKLID_PRISTAJALNA_TAKOJ !== "0"
+      ? (req) => landingPage(req, { publicDir, name: BRAND.name, prices: accounts.pricesFor, mock: isMockMode(), testNotice: testNotice() })
+      : null;
+  app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0", landing })); // =0: brez seznama (primerjava)
   // Ikone vej drevesa 3D sveta in sličice modelov (slike, ki se spremenijo le z novim izrisom): brskalnik jih dan
   // vzame iz svojega predpomnilnika brez vprašanja strežniku, nato še teden prikaže staro in v ozadju preveri novo.
   // Prej max-age=0: po vsaki objavi (service worker zavrže kopije stare različice) je vsaka ikona čakala na
@@ -559,6 +573,11 @@ export function createApp(store, opts = {}) {
   // Isti števec porabe kot računi (server/accounts/index.js): skupne meje, skupen delež družine (poolOf) in
   // rezervacije klicev v teku (trda meja AI, server/meje-ai.js). opts.usage: testi.
   const usage = opts.usage || accounts?.aiUsage || new Usage(store.db);
+  // Pozna okna varnostnega pregleda (server/nujno.js): zadetek ponovitve v ozadju, ki čaka na naslednji odgovor učencu.
+  // opts.varnostCasi: krajši roki za teste.
+  const poznaOkna = vrstaPoznihOken({ veljaMs: opts.varnostCasi?.veljaMs, obPoteku: () => stejNujno(usage, "pozno_poteklo") });
+  // Izbrisan profil: njegovo čakajoče okno ne sme preiti na nov profil, ki dobi isti id.
+  afterDelete.push(() => poznaOkna.obdrzi((id, ustvarjen) => (store.getStudent(id)?.created_at ?? null) === ustvarjen));
   // Rezervacije klicev, ki so tekli ob prejšnjem zaustavitvi strežnika, se zapišejo kot poraba (pregled #462 S4).
   usage.recoverHolds?.();
   app.locals.usage = usage; // server/index.js: ob zaustavitvi počaka na klice v teku
@@ -650,6 +669,8 @@ export function createApp(store, opts = {}) {
 
   // Izid samodejne meritve natančnosti po objavi (server/meritev-po-objavi.js), samo za skrbnika.
   mountMeritevPoObjavi(app, { isAdmin: (req) => !!req.parent?.is_admin || isLocalRequest(req) });
+  // Oznake stiske in »Označi kot pregledano« (pregledano_ob), samo za skrbnika (server/stiska-obvestilo.js).
+  mountStiske(app, store, { isAdmin: (req) => !!req.parent?.is_admin || isLocalRequest(req) });
 
   // Obvestilo »Testna verzija«: kaj še ne dela. EVKLID_TESTNA_VERZIJA=off ga skrije (ob javni objavi).
   const testNotice = () => {
@@ -774,9 +795,32 @@ export function createApp(store, opts = {}) {
     const list = await resolveOpen(raw, student.settings, { canOpen });
     return list.length ? list : undefined;
   };
-  const choicesOf = (raw) => {
-    const c = parseChoices(raw);
+  // Gumbi z izbirami nosijo oznako imena (server/ime-oznaka.js), učenec vidi pravo ime.
+  const choicesOf = (raw, name = "") => {
+    const c = parseChoices(raw).map((x) => withName(x, name));
     return c.length ? c : undefined;
+  };
+  // Meja za maskiranje imena (server/ime-oznaka.js maskHistory): zadnje sporočilo in čas ob prvem zagonu s to
+  // spremembo. Odgovori z id ≤ meja so nastali, ko je model ime še poznal; novejših ne maskiramo (»Vid je čutilo«).
+  const nameCutoff = () => {
+    const k = "ime_oznaka_meja";
+    let v = store.db.prepare("SELECT value FROM kv WHERE key = ?").get(k)?.value;
+    if (!v) {
+      const id = store.db.prepare("SELECT COALESCE(MAX(id), 0) AS id FROM messages").get().id;
+      const at = store.db.prepare("SELECT datetime('now') AS t").get().t;
+      v = JSON.stringify({ id, at });
+      store.db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES (?, ?)").run(k, v);
+      v = store.db.prepare("SELECT value FROM kv WHERE key = ?").get(k).value;
+    }
+    return JSON.parse(v);
+  };
+  nameCutoff();
+  // Izbire zadnjega odgovora inštruktorja (z oznako imena), za tapnjen gumb (choiceAsToken).
+  const lastChoices = (convId) => {
+    const row = store.db.prepare("SELECT * FROM messages WHERE conversation_id = ? AND role = 'assistant' ORDER BY id DESC LIMIT 1").get(convId);
+    if (!row) return [];
+    const m = openMessage(row);
+    return Array.isArray(m.api_content) ? parseChoices(m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n")) : [];
   };
   // Surovo besedilo shranjenega odgovora (z bloki), za gumbe z izbirami ob ponovnem odprtju pogovora.
   const rawOf = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
@@ -804,7 +848,7 @@ export function createApp(store, opts = {}) {
       topic: c.path_topic ? { id: c.path_topic, name: getTopic(c.path_topic)?.name } : null,
       messages: msgs.map((m) => ({
         full_offer: (offerOn && m === lastMsg) || undefined,
-        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || lastOk) ? choicesOf(rawOf(m)) : undefined,
+        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || lastOk) ? choicesOf(rawOf(m), owner?.name) : undefined,
         open: opens.get(m.id),
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
@@ -835,11 +879,45 @@ export function createApp(store, opts = {}) {
     // Dnevna meja vprašanj (točka A1) se preverja tu, v obdelavi sporočila, ne po obliki poti v vmesniku. Od tod do
     // rezervacije za klic AI in store.logQuestion spodaj ni nobenega await (razen na poteh, ki vrnejo odgovor), zato
     // je ne obide nobena oblika poti in ne dve sočasni sporočili v različnih pogovorih.
-    const dnevna = accounts?.dailyBlock?.(student.id);
-    if (dnevna) return res.status(429).json(dnevna);
+    // Zavrnitev računov (dnevna meja vprašanj, mesečna meja brezplačnega paketa; server/accounts/index.js) pride sem z
+    // že pripravljenim telesom (req.zavrnitevRacunov), da strežnik pred zavrnitvijo prebere sporočilo (varnostni pregled).
+    const dnevna = req.zavrnitevRacunov || accounts?.dailyBlock?.(student.id);
 
-    const text = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_TEXT) : "";
+    // Tapnjen gumb z izbiro nosi ime za prikaz; model dobi izbiro z oznako (server/ime-oznaka.js). text gre k modelu,
+    // učenec vidi withName(text).
+    const typed = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_TEXT) : "";
+    const text = typed && student.name ? choiceAsToken(typed, lastChoices(conv.id), student.name) : typed;
     const image = req.body?.image;
+    // Pozno okno (server/nujno.js): zadetek ponovljenega varnostnega pregleda prejšnjega sporočila tega učenca, ki ga v
+    // svojem odgovoru ni bilo več mogoče pokazati. Odgovor si ga rezervira (zaostalo); okno tega sporočila ima prednost
+    // (največ eno okno na odgovor). Če ga odgovor ne odda do konca (prekinjena povezava, mesto zasedeno z drugo vrsto),
+    // gre nazaj v vrsto. oknoVrsta: vrsta okna, ki ga ta odgovor nosi. brezZaostalega: odjemalec okna strežnika v tem
+    // odgovoru ne bi pokazal (mobilna aplikacija z lastnim blažjim oknom), zato pozno okno počaka.
+    let oknoVrsta = null;
+    let zaostalo = null;
+    const brezZaostalega = odjemalecZeKazeOkno(req, text);
+    // zaprto: povezava je prekinjena; pozno okno, ki ga odgovor še ni rezerviral, ostane v vrsti (pregled #858).
+    let zaprto = false;
+    res.once("close", () => {
+      zaprto = true;
+      if (!zaostalo) return;
+      if (res.writableFinished && oknoVrsta === zaostalo.vrsta) stejNujno(usage, "pozno_naslednji");
+      else poznaOkna.vrni(student, zaostalo);
+    });
+    // Zavrnitev (JSON): okno tega sporočila, sicer čakajoče pozno okno; blažje okno »pogovor« se umakne poznemu.
+    const zZaostalim = (n) => {
+      if (!brezZaostalega && !zaprto) zaostalo ||= poznaOkna.vzemi(student);
+      const okno = n && n.vrsta !== "pogovor" ? n : poznoOkno(zaostalo, student.settings) || n;
+      oknoVrsta = okno?.vrsta ?? null;
+      return okno;
+    };
+    // Varnost pred mejo porabe (server/nujno.js, j 6. 11.): pred vsako zavrnitvijo lokalni zaznavalnik, nato kratek
+    // varnostni pregled z AI na strošek aplikacije; odjemalec pokaže potrjen varnostni odgovor (nujno).
+    const nujnoPred = async () => zZaostalim(await nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn, pozna: poznaOkna, casi: opts.varnostCasi }));
+    if (dnevna) {
+      const nujno = await nujnoPred();
+      return res.status(429).json({ ...dnevna, nujno: nujno || undefined });
+    }
     if (image && (!IMAGE_TYPES.includes(image.media_type) || typeof image.data !== "string" || image.data.length > MAX_IMAGE_B64)) {
       return res.status(400).json({ error: "Slika mora biti JPG, PNG, WEBP ali GIF in manjša od 5 MB." });
     }
@@ -848,9 +926,6 @@ export function createApp(store, opts = {}) {
     // ustnem spraševanju, server/ustno-api.js). Odjemalec pošlje nacin: "glas", ko je besedilo narekoval; tipkanje dela vedno.
     if (req.body?.nacin === "glas" && ustno && !ustno.voice(student.id).dovoljen) return res.status(403).json({ error: "Govor v besedilo mora najprej dovoliti starš (zavihek Račun). Do takrat vprašanje napiši.", code: "u.glasStarsKlepet", glas: false });
     // Stikalo za nujne primere (docs/krizni-nacrt.md): klepet izklopljen, Vadnica in lekcije delujejo.
-    // Varnost pred mejo porabe (server/nujno.js, j 6. 11.): pred vsako zavrnitvijo lokalni zaznavalnik, nato kratek
-    // varnostni pregled z AI na strošek aplikacije; odjemalec pokaže potrjen varnostni odgovor (nujno).
-    const nujnoPred = () => nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn });
     if (chatOff()) {
       const nujno = await nujnoPred();
       return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true, nujno: nujno || undefined });
@@ -965,7 +1040,9 @@ export function createApp(store, opts = {}) {
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
-    const zgodovina = store.apiHistory(conv.id);
+    // Odgovori inštruktorja iz časa, ko je model ime še poznal: ime → oznaka (server/ime-oznaka.js).
+    const meja = nameCutoff();
+    const zgodovina = maskHistory(store.listMessages(conv.id).map((m) => ({ id: m.id, role: m.role, content: m.api_content })), student.name, meja.id);
     const prior = staleImages(zgodovina);
     const reserveFor = (m, fallback = true) =>
       replyReserveUsd({
@@ -1001,7 +1078,7 @@ export function createApp(store, opts = {}) {
     // Dodaten krog orodij (nastavitve iz klepeta) je nov klic: rezerva še enkrat, z izhodom prejšnjega kroga na vhodu.
     const roundReserve = () => mainReserve + callMaxUsd(modeParams(mode).model, modeParams(mode).max_tokens + 2000, 0);
     // Dnevna meja vprašanj šteje tu (server/db.js question_log), ne po sporočilih: izbris pogovora je ne obide.
-    userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
+    userMsgId = store.addMessage(conv.id, "user", userContent, withName(text, student.name), !!image);
     store.logQuestion(student.id);
     counted = true;
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
@@ -1010,9 +1087,9 @@ export function createApp(store, opts = {}) {
     // Skupni predpomnilnik samo za odgovor brez osebnih podatkov v promptu (test/zasebnost-predpomnilnik*.test.js):
     // inštruktor primere vzame iz zanimanj, pozna cilj, urnik s testi, šibke točke in rezultate. Kdor jih ima, odgovora
     // ne shrani za druge (tudi brez dvojnega preverjanja, ki ga plača aplikacija) in ne vzame shranjenega.
-    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !hasPersonalPrompt(student, conv.path_topic, weak, results) && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
+    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !hasPersonalPrompt(student, conv.path_topic, weak, results) && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier, pupilGender(student.settings, student.name)) : null;
     if (conv.title === "Nov pogovor") {
-      store.renameConversation(conv.id, cleanText(plainTitle(text), 50) || "Naloga s fotografije");
+      store.renameConversation(conv.id, cleanText(plainTitle(withName(text, student.name)), 50) || "Naloga s fotografije");
     }
 
     res.writeHead(200, {
@@ -1021,7 +1098,22 @@ export function createApp(store, opts = {}) {
       Connection: "keep-alive",
       "X-Accel-Buffering": "no",
     });
-    const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    const write = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    // Model piše oznako imena (server/ime-oznaka.js); pravo ime vstavimo šele v besedilo za učenca. Oznaka je lahko
+    // razdeljena med dva kosa toka: konec se zadrži do naslednjega kosa, ob umiku zavrže, pred koncem pošlje.
+    const named = createNameStream(student.name);
+    const send = (event, data) => {
+      if (event === "delta") {
+        const t = named.push(data?.text);
+        if (!t) return;
+        data = { ...data, text: t };
+      } else if (event === "retract") named.reset();
+      else if (event === "done" || event === "error") {
+        const t = named.end();
+        if (t) write("delta", { text: t });
+      }
+      write(event, data);
+    };
     // Faza za napis med čakanjem (public/app.js): »check«, ko koda ali pregled res preverja odgovor, »answer«, ko konča.
     let checking = false;
     const phase = (on) => {
@@ -1038,30 +1130,64 @@ export function createApp(store, opts = {}) {
     if (nujnoLokalno) send("nujno", nujnoLokalno);
     // Največ en varnostni odgovor na sporočilo (lokalno, Haiku ali META flag=distress).
     let nujnoPoslano = !!nujnoLokalno;
+    // Vrsta poslanega okna: samo za obvestilo skrbniku ob oznaki stiske (server/stiska-obvestilo.js).
+    let nujnoVrsta = nujnoLokalno?.vrsta ?? null;
     const posljiNujno = (n) => {
       if (!n || nujnoPoslano || res.writableEnded || res.destroyed) return;
       nujnoPoslano = true;
+      nujnoVrsta = n.vrsta ?? null;
       send("nujno", n);
+      oknoVrsta = n.vrsta ?? null; // vrsta okna, ki ga nosi ta odgovor (pozna okna spodaj)
     };
     // Možnost B (j 10. 11.): kratek pregled s Haikujem vzporedno z odgovorom inštruktorja, na strošek aplikacije.
-    // Ne ob »Razloži podrobneje« (isto sporočilo je bilo pregledano že prej). EVKLID_VARNOST_VSAKO=0 izklopi.
+    // Vsako besedilo, tudi ob »Razloži podrobneje« (deep): odjemalec tam pošlje stalno besedilo, strežnik pa zastavici
+    // ne sme verjeti, sicer bi prosto besedilo z njo obšlo pregled (j 18. 11.). EVKLID_VARNOST_VSAKO=0 izklopi.
     const nujnoZacetek = Date.now();
-    const pregledB =
-      !nujnoLokalno && text && !again && vsakoVklopljeno()
-        ? varnostniPregled({ text, usage, studentId: student.id, createFn: opts.varnostFn, varovalka: false })
-            .then((vrsta) => {
-              if (vrsta) posljiNujno({ ...nujnoZa(vrsta, student.settings), ai: true });
-              return vrsta;
-            })
-            .catch(() => null)
-        : null;
+    const pregled = !nujnoLokalno && text && vsakoVklopljeno() ? pregledSPonovitvijo({ text, usage, studentId: student.id, createFn: opts.varnostFn, varovalka: false, casi: opts.varnostCasi }) : null;
+    const pregledB = pregled
+      ? pregled.prvi
+          .then(({ vrsta }) => {
+            if (vrsta) posljiNujno({ ...nujnoZa(vrsta, student.settings), ai: true });
+            return vrsta;
+          })
+          .catch(() => null)
+      : null;
+    if (nujnoLokalno) oknoVrsta = nujnoLokalno.vrsta; // lokalno okno je šlo v tok že zgoraj
+    // Ponudnik ni odgovoril (rok, napaka): en ponovni poskus teče v ozadju in odgovora inštruktorja ne zadržuje.
+    // Pozni zadetek naredi isto kot pravočasni: potrjeno okno (v tem toku, če je še odprt in okna še ni; sicer ob
+    // naslednjem odgovoru temu učencu, razen če je okno iste vrste že dobil) in odgovor, ki ne ostane v predpomnilniku
+    // za druge. Če ne uspe niti ponovitev, okna ni; sporočilo je prešteto kot nepregledano (server/nujno.js).
+    let pozniVrsta = null;
+    pregled?.pozno
+      .then((p) => {
+        if (!p?.vrsta) return;
+        pozniVrsta = p.vrsta;
+        // Odgovor na to sporočilo je morda pravkar shranjen za ponovno uporabo (pregled #846: ob zadetku ne sme ostati).
+        // Samo pravkar shranjen: starejšega, že prej preverjenega odgovora tudi pravočasen zadetek ne izbriše.
+        if (key) store.db.prepare("DELETE FROM answer_cache WHERE key = ? AND created_at >= datetime('now', '-5 minutes')").run(key);
+        const prej = nujnoPoslano;
+        posljiNujno({ ...nujnoZa(p.vrsta, student.settings), ai: true });
+        if (!prej && nujnoPoslano) stejNujno(usage, "pozno_v_toku");
+        else if (oknoVrsta === p.vrsta) stejNujno(usage, "pozno_ze_okno");
+        else poznaOkna.dodaj(student, { vrsta: p.vrsta });
+      })
+      .catch((e) => console.warn(`[evklid] pozni zadetek varnostnega pregleda: ${e?.message || e}`));
+    // Čakajoče pozno okno prejšnjega sporočila gre v prosto mesto tega odgovora: takoj ko prvi poskus pregleda tega
+    // sporočila ne najde svojega okna (to ima prednost), in še enkrat pred koncem odgovora (zadetek, ki je prišel vmes).
+    const oddajZaostalo = () => {
+      if (brezZaostalega || zaprto || res.writableEnded || res.destroyed) return;
+      zaostalo ||= poznaOkna.vzemi(student);
+      posljiNujno(poznoOkno(zaostalo, student.settings));
+    };
+    Promise.resolve(pregledB).then(oddajZaostalo).catch(() => {});
     // Pred koncem odgovora počakamo na pregled, a največ do NUJNO_ROK_MS od začetka (običajno je že končan).
+    // Vrne vrsto prvega poskusa ali, če je medtem že prišel, poznega zadetka.
     const pocakajNujno = async () => {
       if (!pregledB) return null;
       let timer;
       const rok = new Promise((r) => (timer = setTimeout(() => r(null), Math.max(0, NUJNO_ROK_MS - (Date.now() - nujnoZacetek)))));
       try {
-        return await Promise.race([pregledB, rok]);
+        return (await Promise.race([pregledB, rok])) || pozniVrsta;
       } finally {
         clearTimeout(timer);
       }
@@ -1129,6 +1255,8 @@ export function createApp(store, opts = {}) {
           history,
           streamFn,
           signal: controller.signal,
+          // Samo povzetek izpred spremembe (model je ime še poznal).
+          mask: (t, saved) => (saved?.at && saved.at <= meja.at ? (nameMasker(student.name) || String)(t) : t),
           log: (r) => r?.usage && usage.log(student.id, r.model || modeParams("lite").model, r.usage, "povzetek"),
         });
         hold.settle(sumReserve);
@@ -1168,8 +1296,9 @@ export function createApp(store, opts = {}) {
       const klicZacetek = Date.now();
       const run = cached
         ? async ({ onText }) => {
-            // Ime učenca je v predpomnilniku shranjeno kot {{IME}}.
-            const t = cached.text.replaceAll("{{IME}}", student.name);
+            // Ime učenca je v predpomnilniku shranjeno kot oznaka {{IME}}; zamenja jo send (pravo ime samo za učenca),
+            // zgodovina za API obdrži oznako kot pri odgovoru modela.
+            const t = cached.text;
             for (let i = 0; i < t.length; i += 40) onText(t.slice(i, i + 40));
             if (!cached.hint) store.db.prepare("UPDATE answer_cache SET hits = hits + 1 WHERE key = ?").run(key);
             usage.logSaved(student.id, cached.hint ? "hint" : "reuse");
@@ -1409,7 +1538,10 @@ export function createApp(store, opts = {}) {
       if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text && !stiska) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
         // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
-        const generic = genericAnswer(result.text, student.name);
+        // Model imena ne pozna več (oznaka {{IME}}): ime v odgovoru je beseda iz naloge (»Bor ima 3 elektrone«) ali
+        // učenčevo lastno besedilo, zato odgovor gre v skupni predpomnilnik samo, ko ga maska ne bi spremenila (pregled #845).
+        const g = genericAnswer(result.text, student.name);
+        const generic = g === result.text ? g : null;
         const plain = stripMeta(result.text);
         const live = verifyLive();
         // Preverjanje dveh modelov plača aplikacija (dnevni znesek); brez prostora se odgovor ne shrani za druge.
@@ -1437,13 +1569,15 @@ export function createApp(store, opts = {}) {
       const opomba = actionNote(settingsTools.state.done);
       if (opomba) content = [...content, { type: "text", text: opomba }];
 
+      // Prikaz s pravim imenom, zgodovina za API (content) z oznako (server/ime-oznaka.js).
+      display = withName(display, student.name);
       const assistantId = store.addMessage(conv.id, "assistant", content, display);
       // Način, v katerem je ta odgovor nastal (po morebitni spremembi z orodjem v tem odgovoru).
       const modeAfter = store.getStudent(student.id)?.settings?.solving_mode === "B" ? "B" : "A";
       if (conv.solving_mode !== modeAfter) store.db.prepare("UPDATE conversations SET solving_mode = ? WHERE id = ?").run(modeAfter, conv.id);
       // Kartice za ponavljanje iz odgovora (ne pri zavrnitvi in ne pri opozorilih).
       // Kartice so vidne šele po trojnem preverjanju; z napačnim računom se sploh ne shranijo.
-      const parsedCards = result.stopReason !== "refusal" && !fix && !claimFailed && (!meta || meta.flag === "none") ? parseCards(result.text) : [];
+      const parsedCards = result.stopReason !== "refusal" && !fix && !claimFailed && (!meta || meta.flag === "none") ? parseCards(result.text).filter((c) => !`${c.front}\n${c.back}`.includes(IME_OZNAKA)) : [];
       const cardsText = parsedCards.map((c) => `${c.front} → ${c.back}`).join("\n");
       const liveCards = verifyLive();
       // Kartice so vidne šele po preverjanju (plača aplikacija); brez prostora v dnevnem znesku se ne shranijo.
@@ -1474,10 +1608,11 @@ export function createApp(store, opts = {}) {
       }
       // Nepreverjenih kartic učenec še ne vidi (tudi ne v obvestilu »dodane kartice«).
       if (cards.length && !liveCards) send("cards", { cards: cards.map((c) => ({ id: c.id, front: c.front })), due: store.cards.dueCount(student.id, student.settings.subject || null) });
+      let eventId = null;
       if (meta) {
         // Tema učne poti: tema pogovora, sicer ime iz META, preslikano lokalno (šibke točke iz vseh virov).
         const topicId = meta.topic ? (conv.path_topic && getTopic(conv.path_topic) ? conv.path_topic : topicIdFor(student.settings, meta.subject, meta.topic)) : null;
-        store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, ...meta, topic_id: topicId });
+        eventId = store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, ...meta, topic_id: topicId });
         if (meta.done && conv.path_topic && progress.markMastered(student.id, conv.path_topic, "chat")) {
           send("mastered", { topic: getTopic(conv.path_topic)?.name, unlocked: knowledge.sync(student.id) });
         }
@@ -1488,8 +1623,17 @@ export function createApp(store, opts = {}) {
       // Vrsta iz pregleda B, če ga je našel; sicer iz odgovora inštruktorja (samo 112 brez linije za pogovor →
       // zdravje ali nevarnost, sicer stiska; brez vsake številke blažje okno »pogovor«, j 10. 11.; EVKLID_NUJNO_BLAGO=0 ga izklopi).
       const vrstaB = await pocakajNujno();
-      if (meta?.flag === "distress") posljiNujno(nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings));
+      if (meta?.flag === "distress") {
+        const okno = nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings);
+        // Mesto je že zasedlo pozno okno prejšnjega sporočila druge vrste: okno tega sporočila pride ob naslednjem odgovoru.
+        if (nujnoPoslano && zaostalo && oknoVrsta === zaostalo.vrsta && okno?.vrsta && okno.vrsta !== oknoVrsta) poznaOkna.dodaj(student, { vrsta: okno.vrsta });
+        else posljiNujno(okno);
+      }
+      oddajZaostalo(); // pozno okno prejšnjega sporočila pred blažjim oknom tega (server/nujno.js)
       posljiNujno(blagoLokalno);
+      // Oznaka stiske → e-mail skrbniku (brez vsebine in imena, največ en na 10 min). Sinhrono zapiše vrsto, pošta teče
+      // v ozadju; napaka nikoli ne ustavi odgovora učencu.
+      if (meta?.flag === "distress" && eventId) stiskaObvestila?.nova(eventId, nujnoVrsta);
       finished = true;
       send("done", {
         ...AI_JSON, // podporni metapodatki: besedilo je ustvarila AI (server/ai-oznaka.js)
@@ -1505,7 +1649,7 @@ export function createApp(store, opts = {}) {
         full_offer: (meta?.mode === "A" && meta.flag === "none" && !meta.done && !settingsTools.state.used && fullOffer(conv.id)) || undefined,
         // Gumbi z izbirami (<<IZBIRE [...]>>): učenec tapne, odgovor se pošlje. Ne pri opozorilih in zavrnitvi.
         // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
-        choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : ""),
+        choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : "", student.name),
         // Gumbi za orodja aplikacije (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; server/odpri.js).
         open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student) : undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
@@ -1536,6 +1680,7 @@ export function createApp(store, opts = {}) {
         // Ob napaki AI ostane lokalni zaznavalnik (če varnostni odgovor še ni bil poslan).
         // Pregled B (če teče) ima še do NUJNO_ROK_MS od začetka; njegov zadetek gre kot dogodek »nujno« pred napako.
         await pocakajNujno();
+        oddajZaostalo(); // čakajoče pozno okno prejšnjega sporočila gre kot dogodek »nujno« pred napako
         send("error", { error: errorText(err), nujno: nujnoPoslano ? undefined : nujnoZa(lokalnaVrsta(text), student.settings) || undefined });
       }
       res.end();
@@ -2010,7 +2155,8 @@ export function createApp(store, opts = {}) {
     if (!accounts && !isLocalRequest(req)) return res.status(403).json({ error: "Samo za skrbnika." });
     const claim = !!accounts && isLocalRequest(req) && !req.parent?.is_admin;
     const sum = usage.summary();
-    res.json({ ...sum, can_claim: claim, advice: pricingAdvice(store.db, sum, { groupOf: (id) => accounts?.marginGroupOf?.(id) ?? null }) });
+    // varnost: števci varnostnega pregleda sporočil (rok, napaka, pozni zadetki, nepregledano; server/nujno.js).
+    res.json({ ...sum, can_claim: claim, advice: pricingAdvice(store.db, sum, { groupOf: (id) => accounts?.marginGroupOf?.(id) ?? null }), varnost: varnostPorocilo(usage, poznaOkna) });
   });
   // Mesečni proračun API: skrbnik nastavi znesek ali doda kupljeni kredit za ta mesec (server/proracun.js).
   // Ni v nastavitvah iz klepeta (finančni podatek, public/settings-registry.js).
@@ -2051,6 +2197,7 @@ export function createApp(store, opts = {}) {
   backupChecks = startBackupChecks(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, isBusy: () => activity.active > 0 });
   // Vsakih 10 min: današnji strošek AI nad EVKLID_OPOZORILO_AI_USD → e-mail skrbnikom, največ enkrat na dan.
   aiCostAlert = startAiCostAlert(store.db, usage, { scheduler: opts.scheduler !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
+  stiskaObvestila = startStiskaObvestila(store.db, { scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
   app.use(notFound); // neznana pot: stran v slogu aplikacije namesto »Cannot GET« (server/ni-strani.js)
   return app;
 }

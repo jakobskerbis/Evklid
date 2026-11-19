@@ -283,6 +283,7 @@ Nastavitve učenca so na koncu prompta. Možne vrednosti: predmet MAT | FIZ | KE
 
 ## Aktivne nastavitve (vstavi strežnik)
 - Ime učenca: {student_name}
+- {student_gender}
 - Predmet: {subject}
 - Program: {track}
 - Šola: {educational_track}

@@ -1161,11 +1161,17 @@ export function mountAccounts(app, store, opts = {}) {
       }
     }
 
+    // Sporočilo inštruktorju: zavrnitev zaradi meje (dnevna meja vprašanj, mesečna meja brezplačnega paketa) pošlje
+    // obdelava sporočila (server/app.js), ki pred tem prebere besedilo in doda varnostni odgovor (server/nujno.js,
+    // j 18. 11. 2026: prej je bilo sporočilo čez mejo zavrnjeno, še preden ga je strežnik prebral). Telo zavrnitve
+    // ostane isto; do klica AI ali štetja vprašanja ne pride.
+    const sporocilo = !!c && req.method === "POST" && /^\/conversations\/\d+\/messages$/i.test(req.path);
+    const zavrni = (telo) => (sporocilo ? ((req.zavrnitevRacunov = telo), next()) : res.status(429).json(telo));
     // Dnevna meja vprašanj inštruktorju (dailyBlock zgoraj). Tu samo zgodnja zavrnitev pred drugimi preverjanji; meja
     // velja v obdelavi sporočila (server/app.js), ne glede na obliko poti (točka A1).
     if (c && req.method === "POST" && /\/messages$/i.test(req.path)) {
       const dnevna = dailyBlock(studentId);
-      if (dnevna) return res.status(429).json(dnevna);
+      if (dnevna) return zavrni(dnevna);
     }
     // Ustno spraševanje (server/ustno-api.js) šteje kot USTNO_QUESTIONS vprašanj (j 10. 11.: 3 od 10 v brezplačnem paketu);
     // začne se le, če jih je danes še toliko na voljo. Samoocena (brez AI, /ustno/samoocena) ne šteje.
@@ -1177,7 +1183,7 @@ export function mountAccounts(app, store, opts = {}) {
     // Z dokupljenim kreditom ta meja ne velja (poraba gre iz kredita, server/usage.js chargeCredit).
     if (studentId !== null && req.method === "POST" && /(\/messages|\/tasks\/\d+\/read|\/schedule\/photo|\/ustno\/(zacni|\d+\/odgovor|\d+\/ugovor))$/i.test(req.path) && !aiPremiumFor(studentId) && !(credits.balance(ownerOf(studentId)) > 0)) {
       const blocked = freeBudgetInfo(studentId);
-      if (blocked) return res.status(429).json({ ...blocked, limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) });
+      if (blocked) return zavrni({ ...blocked, limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) });
     }
     next();
   });
@@ -2004,14 +2010,16 @@ export function mountAccounts(app, store, opts = {}) {
   });
 
   // Cene in preizkus za stran za starše (starsi.html), brez prijave.
-  app.get("/api/account/prices", (req, res) => {
-    const country = String(req.query.country || "").toUpperCase();
+  // Isti podatki gredo tudi v pristajalno stran, ki jo strežnik pošlje že izrisano (server/pristajalna-takoj.js).
+  const pricesFor = (req, countryParam) => {
+    const country = String(countryParam || "").toUpperCase();
     const currency = currencyOf(req, /^[A-Z]{2}$/.test(country) ? { country } : null);
     // Garancija na pristajalni strani: samo ob vklopljenem stikalu in živih plačilih (garancija.js guaranteeAdvertised),
     // samo pri cenah v evrih (garancija velja za slovensko lestvico ocen 1–5).
     const guarantee = currency === "EUR" && guaranteeAdvertised(stripe) ? { weeks: GUARANTEE.weeks, min_days: GUARANTEE.minDays, enroll_days: GUARANTEE.enrollDays } : null;
-    res.json({ currency, plans: plansFor(currency), trial_days: TRIAL_DAYS, free_daily_questions: freeDailyQuestions(), min_age: minAgeOf(String(req.headers["cf-ipcountry"] || ""), country), ...(guarantee ? { guarantee } : {}) });
-  });
+    return { currency, plans: plansFor(currency), trial_days: TRIAL_DAYS, free_daily_questions: freeDailyQuestions(), min_age: minAgeOf(String(req.headers["cf-ipcountry"] || ""), country), ...(guarantee ? { guarantee } : {}) };
+  };
+  app.get("/api/account/prices", (req, res) => res.json(pricesFor(req, req.query.country)));
 
   app.post("/api/account/promo", json, (req, res) => {
     if (req.parent.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
@@ -3079,6 +3087,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { dropForeignAccess, dropPreConfirm, confirmEmail, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { inactiveDaily, ageOfStudent, dailyBlock, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { pricesFor, inactiveDaily, ageOfStudent, dailyBlock, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 
