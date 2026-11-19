@@ -1,0 +1,54 @@
+// Pedagoške mere (scripts/meri-pedagogika.mjs, točka 25 načrta izboljšav): brez klicev API.
+// --suho ne kliče modela, neveljavni argumenti končajo z 1, --preizkus pelje vseh 12 pogovorov po 3 sporočila skozi
+// pravo aplikacijo (0 $), rezultat in napaka iz vzorca nikoli ne gresta modelu.
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
+import { asksForSolution } from "../server/nacin.js";
+
+const env = { ...process.env, ANTHROPIC_API_KEY: "", EVKLID_DATA_KEY: "" };
+const skripta = "scripts/meri-pedagogika.mjs";
+const { pogovori } = JSON.parse(fs.readFileSync(new URL("./fixtures/pedagogika-12.json", import.meta.url), "utf8"));
+
+test("pedagogika-12: 12 pogovorov, 8 napačnih in 4 pravilni koraki, nobeno sporočilo ne prosi za rešitev", () => {
+  assert.equal(pogovori.length, 12);
+  assert.equal(new Set(pogovori.map((p) => p.id)).size, 12);
+  assert.equal(pogovori.filter((p) => p.korak_pravilen === false).length, 8);
+  for (const p of pogovori) {
+    for (const k of ["naloga", "korak", "tretje", "rezultat"]) assert.ok(p[k]?.length > 0, `${p.id} ${k}`);
+    assert.equal(!!p.napaka, !p.korak_pravilen, `${p.id}: napaka le pri napačnem koraku`);
+    // Način A brez izrecne prošnje (server/nacin.js): meri se vodenje, ne celotna rešitev.
+    for (const t of [p.naloga, p.korak, p.tretje]) assert.equal(asksForSolution(t), false, `${p.id}: ${t}`);
+  }
+});
+
+test("meri-pedagogika: --suho brez klica; neveljavni argumenti končajo z 1", () => {
+  const suho = spawnSync(process.execPath, [skripta, "--suho"], { encoding: "utf8", env });
+  assert.equal(suho.status, 0, suho.stderr);
+  assert.match(suho.stdout, /12 pogovorov po 3 sporočila; način think/);
+  for (const slab of [["--max-usd", "9"], ["--nacin", "deep"], ["--max-usd=1"], ["--model", "sonnet"]]) {
+    assert.equal(spawnSync(process.execPath, [skripta, "--suho", ...slab], { encoding: "utf8", env }).status, 1, slab.join(" "));
+  }
+});
+
+test("meri-pedagogika --preizkus: 12 pogovorov po 3 sporočila skozi pravo aplikacijo, prepisi v datoteki in dnevniku", () => {
+  const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "evklid-pedagogika-test-")), "izid.json");
+  const r = spawnSync(process.execPath, [skripta, "--preizkus"], { encoding: "utf8", env: { ...env, EVKLID_MERI_IZID: out }, timeout: 180000 });
+  assert.equal(r.status, 0, r.stderr + r.stdout.slice(-500));
+  const izid = JSON.parse(fs.readFileSync(out, "utf8"));
+  assert.equal(izid.koncano, true);
+  assert.equal(izid.izid.length, 12);
+  for (const x of izid.izid) {
+    assert.equal(x.prepis.length, 3, x.id);
+    const p = pogovori.find((q) => q.id === x.id);
+    assert.ok(x.prepis[0].ucenec.endsWith(p.naloga));
+    // Rezultat in opis napake sta samo za ocenjevalca (pri pravilnih korakih učenec do rezultata pride sam).
+    if (!p.korak_pravilen) assert.ok(x.prepis.every((s) => !s.ucenec.includes(p.rezultat) && !s.ucenec.includes(p.napaka)), x.id);
+  }
+  const m = /ODGOVORI-ZACETEK\n(.*)\nODGOVORI-KONEC/.exec(r.stdout);
+  assert.ok(m, "prepisi v dnevniku");
+  assert.equal(JSON.parse(m[1]).length, 12);
+});
