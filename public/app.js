@@ -12,7 +12,7 @@ import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
 hydrateIcons();
-import { initAccount, prefetchAccountStatus, accountsOn, accountStatus, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { initAccount, endPrerenderedLanding, prefetchAccountStatus, accountsOn, accountStatus, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
 import { povabiPoUspehu } from "./povabi.js";
 import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
@@ -5325,7 +5325,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     first = false;
   };
   captureSource(); // oznaka vira iz povezave (public/vir.js), pred prijavo, ki lahko preusmeri
-  if (await initAccount({ onReady: start })) await start({ cfgFresh: true });
+  if (await initAccount({ onReady: start }).finally(endPrerenderedLanding)) await start({ cfgFresh: true });
   else {
     // Prijava ali pristajalna stran: po prijavi se odpre Učna pot, ne zadnji zaslon pred odjavo.
     startRec = null;

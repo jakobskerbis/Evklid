@@ -51,7 +51,7 @@ test("vstopna stran vnaprej naloži vse module prvega odprtja (brez slapa uvozov
   assert.ok(modules.includes("/app.js") && modules.length > 20);
   for (const u of modules) {
     assert.ok(fs.existsSync(path.join(pub, u)), `${u} ne obstaja`);
-    assert.ok(html.includes(`<link rel="modulepreload" href="${u}">`), u);
+    assert.ok(html.includes(`<link rel="modulepreload" href="${u}" fetchpriority="low">`), u);
   }
   // navadne skripte (theme.js, knjižnice) niso moduli
   assert.ok(!html.includes('modulepreload" href="/theme.js"'));
@@ -68,7 +68,7 @@ test("strežnik pošlje vstopno stran z modulepreload, stisnjeno in s 304", asyn
     assert.equal(res.status, 200);
     assert.match(res.headers.get("content-type"), /text\/html/);
     const text = await res.text();
-    assert.match(text, /<link rel="modulepreload" href="\/app\.js">/);
+    assert.match(text, /<link rel="modulepreload" href="\/app\.js" fetchpriority="low">/);
     const again = await fetch(`${base}/index.html`, { headers: { "accept-encoding": "br", "if-none-match": res.headers.get("etag") } });
     assert.equal(again.status, 304);
   } finally {

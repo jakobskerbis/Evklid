@@ -70,6 +70,26 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   pred `#tabbar`; različica `r` se preveri ob vstavitvi, ker je `meta` na koncu `<head>`; `nadgradi` za profil z
   geslom po `/api/students`), `vnaprejZacni`/`vnaprej` (GET, 15 s, enkrat, brez roka; neuspeh → `null`), na koncu
   sporočilo »izris« za APK.
+- Pristajalna stran takoj (j 19. 11. 2026, zunanji pregled »LCP ~18 s na počasnem 4G«): obiskovalec brez seje
+  (brez piškotka `sm_session`, ne aplikacija `EvklidApp/`, računi vklopljeni) dobi pristajalno stran že v HTML
+  (`server/pristajalna-takoj.js landingPage`, `server/vstopna-stran.js withLanding`): isti izris kot v brskalniku
+  (`public/pristajalna.js landingHtml(t, …)`, cene kot `/api/account/prices`), v jeziku, ki ga izbere brskalnik
+  (`detectLanguage` prve oznake `Accept-Language`; srbska latinica ne), skrita v `<main id="view-auth" hidden
+  data-vnaprej>`. `zacetek.js` (`pristajalnaVelja`) jo pokaže pred prvim izrisom (`html[data-pristajalna]`, videti kot
+  `body.auth-mode`) samo, ko bi jo pokazal tudi app.js: brez sidra, poizvedba le `utm_*`/`fbclid`/`gclid`/`vir`, na
+  napravi ni `evklid.racun`, `studentId`, `evklid_gost`, posnetka ali lastnika, prva oznaka `navigator.languages` je
+  ista kot na strežniku, shranjen jezik isti, ne angleščina v pasu Europe/Ljubljana (`homeLanguage`). Pasici
+  »Preizkusni način« in »Testna različica« pokaže takoj (`data-mock`, `data-tn`). V tej različici strani so moduli
+  (`modulepreload`) v `<template id="evklid-moduli">`, slogi za druge zaslone (vsi za `account.css`) (razen `touch.css`: pravila za
+  zgornjo vrstico na tablicah) pa v `<template data-evklid-slogi>` na svojem mestu (zamenja se z njimi, vrstni red ostane;
+  v strani brez pristajalne že med razčlenjevanjem glave), pisavi pristajalne strani pa imata `preload`: ob pokazani strani jih `zacetek.js` vklopi po prvem izrisu
+  (`evklidZacetek.poIzrisu`: `first-contentful-paint`, varovalo 3 s; `zagon.js` šele nato začne module), sicer
+  takoj (`brezPristajalne`), stran pa ostane skrita do konca teh slogov (`html[data-zacetek-slogi]`, varovalo 8 s). Če
+  `zacetek.js` ne teče, jih vklopi `zagon.js`. `account.js renderLanding` stran prevzame brez ponovnega izrisa
+  (`sameMarkup`; animacija pogovora se ne ponovi), vsak drug zaslon jo umakne (`endPrerenderedLanding` v `authMode`
+  in po `initAccount`). Moduli vstopne strani imajo `fetchpriority="low"` (ne tekmujejo s slogi). Izklop za primerjavo:
+  `EVKLID_PRISTAJALNA_TAKOJ=0`. Meritev (Lighthouse 12, telefon, počasen 4G, lokalno): LCP 10,7 → 2,8 s (simulirano),
+  21 → 2,2 s (pravo upočasnjevanje); test `test/pristajalna-takoj.test.js`.
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).
 - Posnetki zaslona za okno »Namesti« so v `public/icons/screen-*.png`; ob večji spremembi videza
   jih je dobro posneti znova (telefon 390 × 844 pri 2×, računalnik 1440 × 900).

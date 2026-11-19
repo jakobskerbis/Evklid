@@ -85,6 +85,7 @@ import { mountZapiski } from "./zapiski.js";
 import { mountVajaIzLista } from "./vaja-iz-lista.js";
 import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
+import { landingPage } from "./pristajalna-takoj.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { blockStoreAppPurchases, storeAppRequest, storeAppPages } from "./mobile/trgovina.js";
@@ -403,7 +404,13 @@ export function createApp(store, opts = {}) {
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,
   // in z različico datotek (service worker in app.js ne mešata stare in nove različice).
-  app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0" })); // =0: brez seznama (primerjava)
+  // Obiskovalec brez seje dobi pristajalno stran že izrisano (server/pristajalna-takoj.js), ne šele po ~130 modulih.
+  // EVKLID_PRISTAJALNA_TAKOJ=0 jo izklopi (primerjava hitrosti).
+  const landing =
+    accounts && process.env.EVKLID_PRISTAJALNA_TAKOJ !== "0"
+      ? (req) => landingPage(req, { publicDir, name: BRAND.name, prices: accounts.pricesFor, mock: isMockMode(), testNotice: testNotice() })
+      : null;
+  app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0", landing })); // =0: brez seznama (primerjava)
   // Ikone vej drevesa 3D sveta in sličice modelov (slike, ki se spremenijo le z novim izrisom): brskalnik jih dan
   // vzame iz svojega predpomnilnika brez vprašanja strežniku, nato še teden prikaže staro in v ozadju preveri novo.
   // Prej max-age=0: po vsaki objavi (service worker zavrže kopije stare različice) je vsaka ikona čakala na

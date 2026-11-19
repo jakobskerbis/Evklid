@@ -315,6 +315,130 @@
         if (s == null && nadgradi) nadgradi();
       });
   } catch (e) {}
+  function pristajalnaVelja(pm) {
+    if (location.hash) return false;
+    var q = location.search.replace(/^\?/, "").split("&");
+    for (var i = 0; i < q.length; i++) if (q[i] && !/^(utm_[a-z_]+|fbclid|gclid|vir)(=|$)/i.test(q[i])) return false;
+    var ls = localStorage;
+    if (ls.getItem("evklid.racun") || ls.getItem("studentId") || ls.getItem("evklid_gost") || ls.getItem(POSNETEK) || ls.getItem(OWNER) !== null) return false;
+    var lang = pm.getAttribute("content") || "";
+    var tag = pm.getAttribute("data-oznaka") || "";
+    var nav = (navigator.languages && navigator.languages[0]) || navigator.language || "";
+    if (!lang || !tag || String(nav).toLowerCase() !== tag.toLowerCase()) return false;
+    var izbran = jezik();
+    if (izbran) return izbran === lang;
+    var tz = "";
+    try {
+      tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    } catch (e) {}
+    return !(lang === "en" && tz === "Europe/Ljubljana");
+  }
+  function moduli() {
+    var tpl = document.getElementById("evklid-moduli");
+    if (!tpl || !tpl.content) return;
+    tpl.parentNode.removeChild(tpl);
+    document.head.appendChild(tpl.content);
+  }
+  var slogiCaka = 0;
+  var slogiVsi = false;
+  function slogiPreveri() {
+    if (slogiVsi && slogiCaka <= 0) html.removeAttribute("data-zacetek-slogi");
+  }
+  function slogDone() {
+    slogiCaka--;
+    slogiPreveri();
+  }
+  function slogi(cakaj, vsi) {
+    var t = document.querySelectorAll("template[data-evklid-slogi]");
+    for (var j = 0; j < t.length; j++) {
+      var tpl = t[j];
+      if (!tpl.content || (!vsi && !tpl.nextSibling)) continue;
+      var l = tpl.content.querySelectorAll("link");
+      for (var i = 0; cakaj && i < l.length; i++) {
+        slogiCaka++;
+        l[i].addEventListener("load", slogDone);
+        l[i].addEventListener("error", slogDone);
+      }
+      tpl.parentNode.replaceChild(tpl.content, tpl);
+    }
+  }
+  function brezPristajalne(pm) {
+    moduli();
+    if (!pm) return;
+    html.setAttribute("data-zacetek-slogi", "");
+    setTimeout(function () {
+      slogiVsi = true;
+      slogiCaka = 0;
+      slogiPreveri();
+    }, 8000);
+    koLupina(
+      function () {
+        slogi(true, true);
+        slogiVsi = true;
+        slogiPreveri();
+      },
+      function () {
+        slogi(true, !!document.body);
+      }
+    );
+  }
+  var poIzrisu = null;
+  var pm = null;
+  try {
+    pm = document.querySelector('meta[name="evklid-pristajalna"]');
+    var prist = !!pm && !html.hasAttribute("data-zacetek") && pristajalnaVelja(pm);
+    if (!prist) brezPristajalne(pm);
+    else {
+      poIzrisu = new Promise(function (ok) {
+        var konc = false;
+        function fin() {
+          if (konc) return;
+          konc = true;
+          ok();
+        }
+        setTimeout(fin, 3000);
+        try {
+          var po = new PerformanceObserver(function (l) {
+            if (!l.getEntriesByName("first-contentful-paint").length) return;
+            po.disconnect();
+            setTimeout(fin, 0);
+          });
+          po.observe({ type: "paint", buffered: true });
+        } catch (e) {
+          koLupina(function () {
+            requestAnimationFrame(function () {
+              requestAnimationFrame(fin);
+            });
+          });
+        }
+      });
+      poIzrisu.then(function () {
+        slogi(false, true);
+        moduli();
+      });
+      html.setAttribute("data-pristajalna", "");
+      html.lang = pm.getAttribute("content");
+      html.dir = pm.getAttribute("data-smer") === "rtl" ? "rtl" : "ltr";
+      koLupina(function () {
+        var va = document.getElementById("view-auth");
+        if (!va || !va.hasAttribute("data-vnaprej") || !html.hasAttribute("data-pristajalna")) return;
+        va.hidden = false;
+        var tn = pm.getAttribute("data-tn") || "";
+        var pasovi = [pm.getAttribute("data-mock") === "1" ? "mock-banner" : "", tn && localStorage.getItem("evklid.testnaVerzija") !== tn ? "test-notice" : ""];
+        for (var j = 0; j < pasovi.length; j++) {
+          var el = pasovi[j] && document.getElementById(pasovi[j]);
+          if (el) el.hidden = false;
+        }
+      });
+    }
+  } catch (e) {
+    poIzrisu = null;
+    html.removeAttribute("data-pristajalna");
+    try {
+      brezPristajalne(pm);
+    } catch (e2) {}
+  }
+  window.evklidZacetek.poIzrisu = poIzrisu || Promise.resolve();
   try {
     html.setAttribute("data-zacetek-lupina", "");
     var pokaziLupino = function () {
