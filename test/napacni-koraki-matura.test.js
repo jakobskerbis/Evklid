@@ -8,6 +8,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { presolve, isClaim, looksLikeTask } from "../server/live-check.js";
 import { stepVerdict } from "../server/sodba-koraka.js";
+import { vrstaOcene } from "../scripts/ocena-koraka.mjs";
 
 const { primeri } = JSON.parse(fs.readFileSync(new URL("./fixtures/napacni-koraki-matura.json", import.meta.url), "utf8"));
 const VRSTE = ["predznak", "racun", "formula", "delni", "vecstopenjski", "odstotki", "enote", "vprasanje", "besedilo", "pravilen"];
@@ -73,4 +74,15 @@ test("meri-prav-matura: --suho brez klica, --preizkus pelje korak skozi pravo ap
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test("meri-prav-matura: sodba ocenjevalca tudi za razmislekom (zadnja vrstica z oznako)", () => {
+  assert.equal(vrstaOcene("OK"), "OK");
+  assert.equal(vrstaOcene("**POTRDI:** pohvali napačen korak."), "POTRDI");
+  assert.equal(vrstaOcene("The student's answer is wrong, and the tutor does not confirm it.\n\nOK"), "OK");
+  assert.equal(vrstaOcene("Tutor praises it.\nZAVRNE: rejects a right step."), "ZAVRNE");
+  assert.equal(vrstaOcene("NAPAKA: one\nOK"), "OK", "šteje zadnja oznaka");
+  assert.equal(vrstaOcene("The reply looks fine to me."), "NEJASNO");
+  assert.equal(vrstaOcene("OKAY then"), "NEJASNO");
+  assert.equal(vrstaOcene(""), "NEJASNO");
 });

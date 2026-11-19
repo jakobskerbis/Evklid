@@ -6,6 +6,7 @@ import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
 import { presolve, isClaim, givesVerdict } from "../server/live-check.js";
 import { stepVerdict, arithmeticErrors, verdictIgnored } from "../server/sodba-koraka.js";
+import { reviewVerdict } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const verdict = (text, o) => stepVerdict(text, o);
@@ -176,4 +177,32 @@ test("sodba koraka: brez lažnega alarma (pregled 2)", () => {
   assert.equal(verdictIgnored("Ne pozabi še preizkusa.", { wrong: false }), false);
   // »Prav, preverimo …« ob napačnem koraku je potrditev, ne opozorilo.
   for (const a of ["Prav, preverimo še z vstavitvijo.", "Dobro, poglejmo naslednji korak."]) assert.equal(verdictIgnored(a, { wrong: true }), true, a);
+});
+
+test("sodba koraka: nepopoln odgovor (ena od dveh rešitev) opomba označi kot NEPOPOLN, ne kot pravilen (meritev 19. 11.)", () => {
+  const pre = presolve("Reši (x - 2)^2 = 9", { first: true });
+  const v = verdict("korenim, x - 2 = 3, torej x = 5", { pre, prevTutor: "Kaj narediš z obema stranema enačbe?" });
+  assert.equal(v.wrong, false);
+  assert.equal(v.partial, true);
+  assert.match(v.note, /INCOMPLETE: the task has 2 solutions/);
+  assert.match(v.note, /do not call the answer .* right or complete/);
+  assert.doesNotMatch(v.note, /is CORRECT/);
+  assert.match(v.note, /do not state the missing solutions/);
+  // Obe rešitvi: opomba ostane »CORRECT«.
+  assert.match(verdict("x1 = 5, x2 = -1", { pre, prevTutor: "Kaj dobiš?" }).note, /is CORRECT/);
+  // »Skoraj, manjka še ena« ob nepopolnem odgovoru še vedno ni zavrnitev pravilnega (brez ponovnega odgovora).
+  assert.equal(verdictIgnored("Skoraj! Manjka še ena rešitev.", v), false);
+});
+
+test("pregled sodbe: navodila zajamejo »Pravilno« pred namigom, dvom o pravilnem računu in namig na napačno mesto", async () => {
+  let system = "";
+  const createFn = async (p) => {
+    system = p.system;
+    return { content: [{ type: "text", text: "NAPAKA: 6 - 2x ≥ 0, the tutor opened with »Pravilno«." }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 10, output_tokens: 5 } };
+  };
+  const r = await reviewVerdict({ context: "Kaj mora veljati za izraz pod korenom?", student: "6 - 2x > 0, torej x < 3", answer: "Pravilno, Ana. Pod korenom mora biti nenegativno število.", createFn });
+  assert.match(r.reason, /Pravilno/);
+  assert.match(system, /Opening with praise or a confirmation .* is an error even when a hint about the error follows later/);
+  assert.match(system, /casting doubt on a right result or step/);
+  assert.match(system, /pointing at a wrong place while the real error is elsewhere/);
 });
