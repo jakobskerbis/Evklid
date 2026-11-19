@@ -135,9 +135,15 @@ export const questionsWord = (n) => `${n} ${forms(n, ["vprašanje", "vprašanji"
 // »prvih 7 dni«, »prva 2 dneva«, »prvi 3 dnevi«, »prvi dan«.
 export const firstDays = (n) => (n === 1 ? "prvi dan" : `${forms(n, ["prvi", "prva", "prvi", "prvih"])} ${n} ${forms(n, ["dan", "dneva", "dnevi", "dni"])}`);
 
+// Naročila šolskih licenc (cene, obrazec, POST /api/school-orders) so zaprta, dokler pravnik ne preveri pravil za UI v
+// šolah (j 19. 11. 2026, točka 37 izboljšav): namesto cen stran pove »kmalu«. Odpre jih EVKLID_SOLE_NAROCILA=1.
+export const soleNarocilaOdprta = () => (process.env[`${BRAND.env}_SOLE_NAROCILA`] || "").trim() === "1";
+
 // Stran /sole: statična datoteka, v katero strežnik vstavi cene in ime aplikacije (eno mesto za cene).
 // pilot: ali je pilotna cena še na voljo (prvih 10 šol); ko ni, stran pilotnega paketa ne pokaže.
-export function solePage({ pilot = true } = {}) {
+// narocila: ali stran kaže cene in obrazec (bloki <!--narocila-->…<!--/narocila-->) ali »kmalu«
+// (<!--brez-narocil-->…<!--/brez-narocil-->); drugi blok strežnik odstrani.
+export function solePage({ pilot = true, narocila = soleNarocilaOdprta() } = {}) {
   const P = SCHOOL_LICENCE_PRICES;
   const vars = {
     name: BRAND.name,
@@ -158,7 +164,12 @@ export function solePage({ pilot = true } = {}) {
     maxNote: String(ORDER_LIMITS.maxNote),
     prices: JSON.stringify(Object.fromEntries(Object.entries(P).map(([k, v]) => [k, v.eur]))),
   };
-  return fs.readFileSync(PAGE, "utf8").replace(/\{\{([\w.]+)\}\}/g, (m, k) => (k in vars ? esc(vars[k]) : m));
+  const [ven, ostane] = narocila ? ["brez-narocil", "narocila"] : ["narocila", "brez-narocil"];
+  return fs
+    .readFileSync(PAGE, "utf8")
+    .replace(new RegExp(`<!--${ven}-->[\\s\\S]*?<!--/${ven}-->`, "g"), "")
+    .replace(new RegExp(`<!--/?${ostane}-->`, "g"), "")
+    .replace(/\{\{([\w.]+)\}\}/g, (m, k) => (k in vars ? esc(vars[k]) : m));
 }
 
 // Stran /sole in /sole.html (pred statičnimi datotekami in za števcem obiskov v pilot.js).
@@ -167,8 +178,10 @@ export function mountSolePage(app, store = null) {
   app.get(["/sole", "/sole.html"], (_req, res) => {
     // Brez predpomnjenja v razvoju (datoteko lahko urejamo), sicer enkrat na zagon za vsako stanje pilota.
     const pilot = store?.db ? pilotOpenForOrder(store.db) : true;
-    const html = cached[pilot] || solePage({ pilot });
-    if (process.env.NODE_ENV === "production") cached[pilot] = html;
+    const narocila = soleNarocilaOdprta();
+    const key = `${pilot}:${narocila}`;
+    const html = cached[key] || solePage({ pilot, narocila });
+    if (process.env.NODE_ENV === "production") cached[key] = html;
     res.set("Cache-Control", "no-cache");
     res.type("html").send(html);
   });
@@ -243,6 +256,7 @@ export function mountSchoolOrders(app, store, { accounts, isLocalRequest }) {
   const recent = (ip, now) => (hits.get(ip) || []).filter((t) => now - t < 3600000);
 
   app.post("/api/school-orders", (req, res) => {
+    if (!soleNarocilaOdprta()) return res.status(403).json({ error: "Naročila šolskih licenc trenutno niso odprta. Učiteljski račun je brezplačen." });
     const b = req.body || {};
     const now = Date.now();
     const ip = ipOf(req);

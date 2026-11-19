@@ -1,6 +1,8 @@
 // Javne poti brez prijave (iskalec 6): veliko telo JSON se ne razčleni (413 takoj), s prijavo pa slike v pogovoru
 // (do 10 MB) delujejo kot prej (točka A9: druge poti s prijavo imajo 100 kb). Prej je 5 MB telo na /api/school-orders ali /api/auth/<karkoli> porabilo 0,3–0,4 s
 // procesorja še pred omejitvijo naročil na IP.
+// Naročila šol so privzeto zaprta (točka 37, server/sole.js soleNarocilaOdprta); ta test preverja odprta.
+process.env.EVKLID_SOLE_NAROCILA = "1";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { withAccounts } from "./racuni-pomoc.js";
