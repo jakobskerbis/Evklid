@@ -61,6 +61,8 @@ import { compressedStatic, compressedJson, pickEncoding } from "./compress.js";
 import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
+import { createNameStream, withName, maskHistory, nameMasker, choiceAsToken, pupilGender, IME_OZNAKA } from "./ime-oznaka.js";
+import { openMessage } from "./db.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
@@ -117,7 +119,7 @@ function nonLatinScript(code) {
 
 // Ključ za ponovno uporabo odgovora: isto prvo vprašanje pri istih nastavitvah.
 // mode: način klica (chat/lite/think/deep); pathTopic: tema učne poti (npr. »Začniva s temo …«).
-export function cacheKey(text, settings, mode, lite = false, pathTopic = null, weak = [], tier = "osnovna") {
+export function cacheKey(text, settings, mode, lite = false, pathTopic = null, weak = [], tier = "osnovna", gender = "") {
   const norm = text.toLowerCase().replace(/\s+/g, " ").replace(/[\s.!?]+$/, "").trim();
   if (norm.length < 8) return null;
   const parts = [norm, settings.subject, settings.track, settings.educational_track, settings.study_program, settings.study_course, settings.curriculum_level, settings.solving_mode, settings.personality_setting, mode === "deep" ? 1 : 0];
@@ -130,6 +132,9 @@ export function cacheKey(text, settings, mode, lite = false, pathTopic = null, w
   if (settings.region && settings.region !== "SI") parts.push(settings.region);
   if (settings.school_system && settings.school_system !== "SI") parts.push(settings.school_system);
   if (settings.dialect) parts.push(`d:${settings.dialect}`);
+  // Slovnični spol (server/ime-oznaka.js, j 18. 11.): odgovor s »si rešila« ne gre fantu. Neznan spol ostane brez
+  // dela ključa (model se spolnim oblikam izogiba), zato shranjeni odgovori ostanejo veljavni.
+  if (gender === "m" || gender === "z") parts.push(`g:${gender}`);
   if (lite) parts.push("lite");
   // Način B v krajši obliki (rezultat v prvem stavku, 17. 11.): shranjeni dolgi odgovori se ne vrnejo več, tudi ne ob
   // prošnji za celo rešitev v načinu A; ključi običajnih vprašanj v načinu A ostanejo.
@@ -783,9 +788,32 @@ export function createApp(store, opts = {}) {
     const list = await resolveOpen(raw, student.settings, { canOpen });
     return list.length ? list : undefined;
   };
-  const choicesOf = (raw) => {
-    const c = parseChoices(raw);
+  // Gumbi z izbirami nosijo oznako imena (server/ime-oznaka.js), učenec vidi pravo ime.
+  const choicesOf = (raw, name = "") => {
+    const c = parseChoices(raw).map((x) => withName(x, name));
     return c.length ? c : undefined;
+  };
+  // Meja za maskiranje imena (server/ime-oznaka.js maskHistory): zadnje sporočilo in čas ob prvem zagonu s to
+  // spremembo. Odgovori z id ≤ meja so nastali, ko je model ime še poznal; novejših ne maskiramo (»Vid je čutilo«).
+  const nameCutoff = () => {
+    const k = "ime_oznaka_meja";
+    let v = store.db.prepare("SELECT value FROM kv WHERE key = ?").get(k)?.value;
+    if (!v) {
+      const id = store.db.prepare("SELECT COALESCE(MAX(id), 0) AS id FROM messages").get().id;
+      const at = store.db.prepare("SELECT datetime('now') AS t").get().t;
+      v = JSON.stringify({ id, at });
+      store.db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES (?, ?)").run(k, v);
+      v = store.db.prepare("SELECT value FROM kv WHERE key = ?").get(k).value;
+    }
+    return JSON.parse(v);
+  };
+  nameCutoff();
+  // Izbire zadnjega odgovora inštruktorja (z oznako imena), za tapnjen gumb (choiceAsToken).
+  const lastChoices = (convId) => {
+    const row = store.db.prepare("SELECT * FROM messages WHERE conversation_id = ? AND role = 'assistant' ORDER BY id DESC LIMIT 1").get(convId);
+    if (!row) return [];
+    const m = openMessage(row);
+    return Array.isArray(m.api_content) ? parseChoices(m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n")) : [];
   };
   // Surovo besedilo shranjenega odgovora (z bloki), za gumbe z izbirami ob ponovnem odprtju pogovora.
   const rawOf = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
@@ -813,7 +841,7 @@ export function createApp(store, opts = {}) {
       topic: c.path_topic ? { id: c.path_topic, name: getTopic(c.path_topic)?.name } : null,
       messages: msgs.map((m) => ({
         full_offer: (offerOn && m === lastMsg) || undefined,
-        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || lastOk) ? choicesOf(rawOf(m)) : undefined,
+        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || lastOk) ? choicesOf(rawOf(m), owner?.name) : undefined,
         open: opens.get(m.id),
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
@@ -848,7 +876,10 @@ export function createApp(store, opts = {}) {
     // že pripravljenim telesom (req.zavrnitevRacunov), da strežnik pred zavrnitvijo prebere sporočilo (varnostni pregled).
     const dnevna = req.zavrnitevRacunov || accounts?.dailyBlock?.(student.id);
 
-    const text = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_TEXT) : "";
+    // Tapnjen gumb z izbiro nosi ime za prikaz; model dobi izbiro z oznako (server/ime-oznaka.js). text gre k modelu,
+    // učenec vidi withName(text).
+    const typed = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_TEXT) : "";
+    const text = typed && student.name ? choiceAsToken(typed, lastChoices(conv.id), student.name) : typed;
     const image = req.body?.image;
     // Pozno okno (server/nujno.js): zadetek ponovljenega varnostnega pregleda prejšnjega sporočila tega učenca, ki ga v
     // svojem odgovoru ni bilo več mogoče pokazati. Odgovor si ga rezervira (zaostalo); okno tega sporočila ima prednost
@@ -1002,7 +1033,9 @@ export function createApp(store, opts = {}) {
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
-    const zgodovina = store.apiHistory(conv.id);
+    // Odgovori inštruktorja iz časa, ko je model ime še poznal: ime → oznaka (server/ime-oznaka.js).
+    const meja = nameCutoff();
+    const zgodovina = maskHistory(store.listMessages(conv.id).map((m) => ({ id: m.id, role: m.role, content: m.api_content })), student.name, meja.id);
     const prior = staleImages(zgodovina);
     const reserveFor = (m, fallback = true) =>
       replyReserveUsd({
@@ -1038,7 +1071,7 @@ export function createApp(store, opts = {}) {
     // Dodaten krog orodij (nastavitve iz klepeta) je nov klic: rezerva še enkrat, z izhodom prejšnjega kroga na vhodu.
     const roundReserve = () => mainReserve + callMaxUsd(modeParams(mode).model, modeParams(mode).max_tokens + 2000, 0);
     // Dnevna meja vprašanj šteje tu (server/db.js question_log), ne po sporočilih: izbris pogovora je ne obide.
-    userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
+    userMsgId = store.addMessage(conv.id, "user", userContent, withName(text, student.name), !!image);
     store.logQuestion(student.id);
     counted = true;
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
@@ -1047,9 +1080,9 @@ export function createApp(store, opts = {}) {
     // Skupni predpomnilnik samo za odgovor brez osebnih podatkov v promptu (test/zasebnost-predpomnilnik*.test.js):
     // inštruktor primere vzame iz zanimanj, pozna cilj, urnik s testi, šibke točke in rezultate. Kdor jih ima, odgovora
     // ne shrani za druge (tudi brez dvojnega preverjanja, ki ga plača aplikacija) in ne vzame shranjenega.
-    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !hasPersonalPrompt(student, conv.path_topic, weak, results) && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
+    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !hasPersonalPrompt(student, conv.path_topic, weak, results) && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier, pupilGender(student.settings, student.name)) : null;
     if (conv.title === "Nov pogovor") {
-      store.renameConversation(conv.id, cleanText(plainTitle(text), 50) || "Naloga s fotografije");
+      store.renameConversation(conv.id, cleanText(plainTitle(withName(text, student.name)), 50) || "Naloga s fotografije");
     }
 
     res.writeHead(200, {
@@ -1058,7 +1091,22 @@ export function createApp(store, opts = {}) {
       Connection: "keep-alive",
       "X-Accel-Buffering": "no",
     });
-    const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    const write = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    // Model piše oznako imena (server/ime-oznaka.js); pravo ime vstavimo šele v besedilo za učenca. Oznaka je lahko
+    // razdeljena med dva kosa toka: konec se zadrži do naslednjega kosa, ob umiku zavrže, pred koncem pošlje.
+    const named = createNameStream(student.name);
+    const send = (event, data) => {
+      if (event === "delta") {
+        const t = named.push(data?.text);
+        if (!t) return;
+        data = { ...data, text: t };
+      } else if (event === "retract") named.reset();
+      else if (event === "done" || event === "error") {
+        const t = named.end();
+        if (t) write("delta", { text: t });
+      }
+      write(event, data);
+    };
     // Faza za napis med čakanjem (public/app.js): »check«, ko koda ali pregled res preverja odgovor, »answer«, ko konča.
     let checking = false;
     const phase = (on) => {
@@ -1200,6 +1248,8 @@ export function createApp(store, opts = {}) {
           history,
           streamFn,
           signal: controller.signal,
+          // Samo povzetek izpred spremembe (model je ime še poznal).
+          mask: (t, saved) => (saved?.at && saved.at <= meja.at ? (nameMasker(student.name) || String)(t) : t),
           log: (r) => r?.usage && usage.log(student.id, r.model || modeParams("lite").model, r.usage, "povzetek"),
         });
         hold.settle(sumReserve);
@@ -1239,8 +1289,9 @@ export function createApp(store, opts = {}) {
       const klicZacetek = Date.now();
       const run = cached
         ? async ({ onText }) => {
-            // Ime učenca je v predpomnilniku shranjeno kot {{IME}}.
-            const t = cached.text.replaceAll("{{IME}}", student.name);
+            // Ime učenca je v predpomnilniku shranjeno kot oznaka {{IME}}; zamenja jo send (pravo ime samo za učenca),
+            // zgodovina za API obdrži oznako kot pri odgovoru modela.
+            const t = cached.text;
             for (let i = 0; i < t.length; i += 40) onText(t.slice(i, i + 40));
             if (!cached.hint) store.db.prepare("UPDATE answer_cache SET hits = hits + 1 WHERE key = ?").run(key);
             usage.logSaved(student.id, cached.hint ? "hint" : "reuse");
@@ -1480,7 +1531,10 @@ export function createApp(store, opts = {}) {
       if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text && !stiska) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
         // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
-        const generic = genericAnswer(result.text, student.name);
+        // Model imena ne pozna več (oznaka {{IME}}): ime v odgovoru je beseda iz naloge (»Bor ima 3 elektrone«) ali
+        // učenčevo lastno besedilo, zato odgovor gre v skupni predpomnilnik samo, ko ga maska ne bi spremenila (pregled #845).
+        const g = genericAnswer(result.text, student.name);
+        const generic = g === result.text ? g : null;
         const plain = stripMeta(result.text);
         const live = verifyLive();
         // Preverjanje dveh modelov plača aplikacija (dnevni znesek); brez prostora se odgovor ne shrani za druge.
@@ -1508,13 +1562,15 @@ export function createApp(store, opts = {}) {
       const opomba = actionNote(settingsTools.state.done);
       if (opomba) content = [...content, { type: "text", text: opomba }];
 
+      // Prikaz s pravim imenom, zgodovina za API (content) z oznako (server/ime-oznaka.js).
+      display = withName(display, student.name);
       const assistantId = store.addMessage(conv.id, "assistant", content, display);
       // Način, v katerem je ta odgovor nastal (po morebitni spremembi z orodjem v tem odgovoru).
       const modeAfter = store.getStudent(student.id)?.settings?.solving_mode === "B" ? "B" : "A";
       if (conv.solving_mode !== modeAfter) store.db.prepare("UPDATE conversations SET solving_mode = ? WHERE id = ?").run(modeAfter, conv.id);
       // Kartice za ponavljanje iz odgovora (ne pri zavrnitvi in ne pri opozorilih).
       // Kartice so vidne šele po trojnem preverjanju; z napačnim računom se sploh ne shranijo.
-      const parsedCards = result.stopReason !== "refusal" && !fix && !claimFailed && (!meta || meta.flag === "none") ? parseCards(result.text) : [];
+      const parsedCards = result.stopReason !== "refusal" && !fix && !claimFailed && (!meta || meta.flag === "none") ? parseCards(result.text).filter((c) => !`${c.front}\n${c.back}`.includes(IME_OZNAKA)) : [];
       const cardsText = parsedCards.map((c) => `${c.front} → ${c.back}`).join("\n");
       const liveCards = verifyLive();
       // Kartice so vidne šele po preverjanju (plača aplikacija); brez prostora v dnevnem znesku se ne shranijo.
@@ -1586,7 +1642,7 @@ export function createApp(store, opts = {}) {
         full_offer: (meta?.mode === "A" && meta.flag === "none" && !meta.done && !settingsTools.state.used && fullOffer(conv.id)) || undefined,
         // Gumbi z izbirami (<<IZBIRE [...]>>): učenec tapne, odgovor se pošlje. Ne pri opozorilih in zavrnitvi.
         // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
-        choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : ""),
+        choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : "", student.name),
         // Gumbi za orodja aplikacije (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; server/odpri.js).
         open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student) : undefined,
         cost_usd: Math.round(cost * 10000) / 10000,

@@ -2,6 +2,13 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-18: ime učenca ne gre k ponudniku AI, samo slovnični spol (PR #845)
+
+- Zakaj: j 18. 11. po osnutku DPIA: ime otroka ne sme k Anthropic. Model dobi oznako `{{IME}}`, strežnik jo zamenja z imenom samo v besedilu za učenca (`server/ime-oznaka.js`). Namesto imena (iz katerega je model sklepal na spol) dobi slovnični spol: iz nove neobvezne nastavitve »Kako naj ti inštruktor piše« (`settings.gender`) ali uganjen iz imena (-a → ženski z izjemami Luka, Jaka, Miha, Žiga …; soglasnik ali -o → moški z izjemami Ines, Karmen …; dvoumna in druga imena → neznan).
+- Prompt (samo del za učenca, stalni del nespremenjen): vrstica »Ime učenca« je oznaka z navodilom (samo v nagovoru, brez končnic in svojilnih pridevnikov, kjer bi ga sklanjal, ga izpusti, v vseh jezikih); nova vrstica `{student_gender}`: »Slovnični spol učenca: ženski/moški« ali, ko ga ne vemo, navodilo, naj se izogiba spolno zaznamovanim oblikam v 2. osebi (nikoli »rešil/a«).
+- Koda: `server/app.js` `cacheKey` → `g:m` / `g:z` pri znanem spolu (neznan brez dela ključa, obstoječi ključi ostanejo); končnica na oznaki ostane le pri imenu na soglasnik (»Jakobu«), skoraj prave oznake (»{{ IME }}«, »{{Ime}}«) se zamenjajo; prazno ime odstrani oznako s sosednjo vejico; gumbi z izbirami: učenec vidi ime, model dobi izbiro z oznako.
+- Test: `test/zasebnost-ime-ai.test.js`, `test/prompt.test.js`, `test/meta.test.js`.
+
 ## 2026-11-18: ciljni pregled preveri še razlage pojavov, zapis 2n in odstotne točke (Pravilnost SŠ, krog 5, PR #853)
 
 - Zakaj: meritev 44367261406 po #848 (`--primeri 6,18,2 --ponovi 5`): 10 pravilno, 4 manjše napake, 1 napaka od 15. Napaka: »vilici začneta na nasprotnih straneh kroga« (molekularna-genetika#3), nihče ni javil. Manjše: haploidnost spolnih celic razložena z oploditvijo namesto z mejozo (nastanek-vrst#5); »63 ni oblike 2n« (nastanek-vrst#3, popravek je vajo le ponovil); vaji manjka podatek o dveh vilicah (molekularna-genetika#4, popravek vaje ni zapisal celotne); »razlika 40 %« namesto 40 odstotnih točk (raziskovanje#2).
