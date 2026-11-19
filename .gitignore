@@ -6,3 +6,6 @@ sim-results/
 __pycache__/
 .ikone-drevo/
 .meritev/
+
+# Preizkus 3: naloge v čistem besedilu nikoli v repozitorij (šifrirane so v scripts/preizkus3-naloge.enc)
+preizkus3-naloge*.json

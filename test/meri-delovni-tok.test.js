@@ -22,10 +22,16 @@ test("meri.yml: le ročni zagon z main, samo branje, en zagon naenkrat, časovna
 });
 
 test("meri.yml: skrivnost le v koraku Meritev, nikjer ${{ }} v skriptah run", () => {
-  assert.equal((y.match(/secrets\./g) || []).length, 1);
-  const korak = y.split(/\n      - /).find((k) => k.includes("secrets."));
+  // Dve skrivnosti (ključ API in ključ šifriranih nalog Preizkusa 3), obe samo v koraku Meritev.
+  assert.equal((y.match(/secrets\./g) || []).length, 2);
+  const s = y.split(/\n      - /).filter((k) => k.includes("secrets."));
+  assert.equal(s.length, 1);
+  const korak = s[0];
   assert.match(korak, /^name: Meritev\n/);
   assert.match(korak, /ANTHROPIC_API_KEY: \$\{\{ secrets\.ANTHROPIC_API_KEY \}\}/);
+  assert.match(korak, /PREIZKUS3_KLJUC: \$\{\{ secrets\.PREIZKUS3_KLJUC \}\}/);
+  assert.match(korak, /grep -qF "\$PREIZKUS3_KLJUC" meri\.log data\/meri-\*\.json/);
+  assert.ok(korak.indexOf('grep -qF "$PREIZKUS3_KLJUC"') < korak.indexOf("GITHUB_STEP_SUMMARY"), "pregled ključa nalog pred povzetkom");
   assert.match(korak, /--max-usd "\$MAX"/);
   assert.match(korak, /EVKLID_DB: \$\{\{ runner\.temp \}\}/);
   // Korak se konča sam pred časovno mejo posla, ključ ne gre v izhod, povzetek ob vsakem izidu.
