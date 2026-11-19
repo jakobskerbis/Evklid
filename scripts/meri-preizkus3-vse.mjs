@@ -24,13 +24,16 @@
 //   --del 1-2   le vsaka druga naloga (1., 3., 5. …), za zagon v dveh delih; nato --del 2-2
 //   --hkrati 4  toliko nalog hkrati (1–6; privzeto 4), čas posameznega odgovora se meri posebej
 //   --suho      preizkusni odgovori brez klica modela (0 $), tudi kadar je ključ nastavljen
+//   --nabor slepa-ocena  namesto Preizkusa 3 nabor slepe ocene inštruktorja (j 19. 11. 2026: 64 novih maturitetnih
+//               nalog MAT, eno sporočilo na nalogo): scripts/slepa-ocena-naloge.enc, ključ SLEPA_OCENA_KLJUC, izid
+//               data/meri-slepa-ocena*.json, šifriran z istim ključem. Ocene dijakov niso del skripte.
 // Zagon: GitHub Actions > Meritev > Run workflow, skripta scripts/meri-preizkus3-vse.mjs (docs/stroski-ai.md).
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { odsifriraj, sifriraj, kljucIz } from "./preizkus3-sifra.mjs";
 
-const ZNANI = { "--max-usd": 1, "--naloge": 1, "--del": 1, "--hkrati": 1, "--out": 1, "--naloge-datoteka": 1, "--kot-produkcija": 0, "--s-pregledom": 0, "--suho": 0 };
+const ZNANI = { "--max-usd": 1, "--nabor": 1, "--naloge": 1, "--del": 1, "--hkrati": 1, "--out": 1, "--naloge-datoteka": 1, "--kot-produkcija": 0, "--s-pregledom": 0, "--suho": 0 };
 for (let i = 2; i < process.argv.length; i++) {
   const a = process.argv[i];
   if (!(a in ZNANI)) {
@@ -53,11 +56,18 @@ const PRODUKCIJA = process.argv.includes("--kot-produkcija");
 const PREGLED = process.argv.includes("--s-pregledom");
 const HKRATI = Number(arg("hkrati", 4));
 const DEL = arg("del", "");
-const OUT = arg("out", `data/meri-preizkus3-vse${DEL ? `-${DEL}` : ""}.json`);
+// Nabori nalog: vsak s svojo šifrirano datoteko, ključem (skrivnost v GitHubu) in imenom izida.
+const NABORI = {
+  preizkus3: { enc: "./preizkus3-naloge.enc", kljuc: "PREIZKUS3_KLJUC", izid: "meri-preizkus3-vse", ime: "Preizkus 3 v celoti" },
+  "slepa-ocena": { enc: "./slepa-ocena-naloge.enc", kljuc: "SLEPA_OCENA_KLJUC", izid: "meri-slepa-ocena", ime: "Slepa ocena inštruktorja" },
+};
+const NABOR = NABORI[arg("nabor", "preizkus3")];
+const OUT = arg("out", `data/${NABOR?.izid}${DEL ? `-${DEL}` : ""}.json`);
 const napaka = (m) => {
   console.error(`${m} Nič ni bilo poklicano.`);
   process.exit(1);
 };
+if (!NABOR || !Object.hasOwn(NABORI, arg("nabor", "preizkus3"))) napaka(`Neznan --nabor »${arg("nabor", "")}« (dovoljeno: ${Object.keys(NABORI).join(", ")}).`);
 if (!(MAX_USD > 0) || MAX_USD > 5) napaka(`Neveljavna meja --max-usd »${arg("max-usd", "")}« (večja od 0, največ 5).`);
 if (!Number.isInteger(HKRATI) || HKRATI < 1 || HKRATI > 6) napaka("--hkrati mora biti celo število od 1 do 6.");
 const delM = DEL ? /^([1-9])-([1-9])$/.exec(DEL) : null;
@@ -68,10 +78,11 @@ if (PRODUKCIJA && process.env.GITHUB_ACTIONS) napaka("--kot-produkcija ni dovolj
 
 // Naloge: šifrirana datoteka in ključ iz okolja ali lokalna datoteka s čistim besedilom. Ključ se takoj odstrani iz
 // okolja, da ga noben del strežnika ne vidi in ne zapiše.
-const KLJUC = process.env.PREIZKUS3_KLJUC;
-delete process.env.PREIZKUS3_KLJUC;
+// Oba ključa se odstranita ne glede na nabor.
+const KLJUC = process.env[NABOR.kljuc];
+for (const n of Object.values(NABORI)) delete process.env[n.kljuc];
 // V GitHub Actions vedno s ključem: izid v artefaktu mora biti šifriran.
-if (process.env.GITHUB_ACTIONS && !KLJUC) napaka("Ni ključa PREIZKUS3_KLJUC (skrivnost v GitHubu): v GitHub Actions mora biti izid šifriran.");
+if (process.env.GITHUB_ACTIONS && !KLJUC) napaka(`Ni ključa ${NABOR.kljuc} (skrivnost v GitHubu): v GitHub Actions mora biti izid šifriran.`);
 let IZID_KLJUC = null;
 let NALOGE;
 try {
@@ -79,8 +90,8 @@ try {
   const datoteka = arg("naloge-datoteka", "");
   if (datoteka) NALOGE = JSON.parse(fs.readFileSync(datoteka, "utf8")).naloge;
   else {
-    if (!KLJUC) napaka("Ni ključa PREIZKUS3_KLJUC (GitHub Actions: skrivnost PREIZKUS3_KLJUC; lokalno: --naloge-datoteka <pot>).");
-    NALOGE = JSON.parse(odsifriraj(fs.readFileSync(new URL("./preizkus3-naloge.enc", import.meta.url), "utf8"), IZID_KLJUC)).naloge;
+    if (!KLJUC) napaka(`Ni ključa ${NABOR.kljuc} (GitHub Actions: skrivnost ${NABOR.kljuc}; lokalno: --naloge-datoteka <pot>).`);
+    NALOGE = JSON.parse(odsifriraj(fs.readFileSync(new URL(NABOR.enc, import.meta.url), "utf8"), IZID_KLJUC)).naloge;
   }
 } catch (e) {
   napaka(`Naloge ni bilo mogoče prebrati: ${e.message}`);
@@ -207,6 +218,10 @@ async function sporocilo(studentId, convId, text, res) {
   }
 }
 
+// V nešifriran dnevnik le vrsta napake (»HTTP 500«, »rok 300 s«), ne besedilo odgovora strežnika, ki bi lahko
+// navajalo nalogo; cela napaka ostane v (šifriranem) izidu.
+const kratko = (m) => String(m || "").split(":")[0].slice(0, 60);
+
 async function naloga(n) {
   const v = { conv: null, ts: new Date().toISOString(), tsEnd: null, nastavitve: null, out: [] };
   let s;
@@ -237,10 +252,10 @@ async function naloga(n) {
   if (!popolna) v.napake = v.out.length; // delna naloga: pretvornik je ne vzame
   zapisi(false);
   const t = v.out.map((o) => (o.ms / 1000).toFixed(1)).join("+");
-  console.log(`${String(n.id).padStart(3)} ${popolna ? "OK" : `NAPAKA (${v.napaka})`} · ${t} s · ${v.out.reduce((a, o) => a + o.cena, 0).toFixed(4)} $ · ${v.out.map((o) => o.model).join(",")}`);
+  console.log(`${String(n.id).padStart(3)} ${popolna ? "OK" : `NAPAKA (${kratko(v.napaka)})`} · ${t} s · ${v.out.reduce((a, o) => a + o.cena, 0).toFixed(4)} $ · ${v.out.map((o) => o.model).join(",")}`);
 }
 
-console.log(`Preizkus 3 v celoti: ${izbor.length} nalog${DEL ? ` (del ${DEL})` : ""}, hkrati ${HKRATI}, meja ${MAX_USD} $${PRODUKCIJA ? ", kot produkcija (nadgradnje)" : ""}${PREGLED ? ", s pregledom" : ""}${SUHO ? ", suho (brez klicev)" : ""}.`);
+console.log(`${NABOR.ime}: ${izbor.length} nalog${DEL ? ` (del ${DEL})` : ""}, hkrati ${HKRATI}, meja ${MAX_USD} $${PRODUKCIJA ? ", kot produkcija (nadgradnje)" : ""}${PREGLED ? ", s pregledom" : ""}${SUHO ? ", suho (brez klicev)" : ""}.`);
 const vrsta = [...izbor];
 await Promise.all(
   Array.from({ length: HKRATI }, async () => {
@@ -255,7 +270,7 @@ const med = (a) => (a.length ? (a[Math.floor((a.length - 1) / 2)] / 1000).toFixe
 const ok = Object.values(izid).filter((v) => !v.napaka).length;
 console.log(`\nNalog: ${ok}/${izbor.length} brez napake; odgovorov ${vsi.length}; mediana prvega odgovora ${med(prvi)} s, vseh ${med(vsi)} s.`);
 const nap = Object.entries(izid).filter(([, v]) => v.napaka);
-if (nap.length) console.log(`Napake: ${nap.map(([k, v]) => `${k} (${v.napaka})`).join("; ")}`);
+if (nap.length) console.log(`Napake: ${nap.map(([k, v]) => `${k} (${kratko(v.napaka)})`).join("; ")}`);
 const manjka = izbor.filter((n) => !izid[n.id] || izid[n.id].napaka).map((n) => n.id);
 console.log(`Strošek ${stroskek().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}.${manjka.length ? ` Manjkajo: ${manjka.join(",")}.` : ""}`);
 console.log(`Odgovori: ${OUT}${IZID_KLJUC ? " (šifrirano, scripts/preizkus3-sifra.mjs --odsifriraj)" : ""}`);
