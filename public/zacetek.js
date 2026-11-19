@@ -26,8 +26,13 @@
   } catch (e) {}
   var html = document.documentElement;
   var prej = [];
+  var slogiPoKoncu = false;
   function konec() {
     prej = [];
+    if (slogiPoKoncu) {
+      slogiPoKoncu = false;
+      slogi(false, true);
+    }
     html.removeAttribute("data-zacetek");
     html.removeAttribute("data-zacetek-pod");
     var p = document.querySelectorAll("main[data-posnetek]");
@@ -128,6 +133,8 @@
     } catch (e) {}
   }
   var OKOSTJE = '<div class="card zo-a"></div><div class="card zo-b"></div><div class="card zo-b"></div>';
+  var OKOSTJE_POT = '<div class="zo-stran"><div class="zo-glava"><i></i><i></i><i></i></div><div class="card zo-xp"></div><div class="card zo-nacini"></div></div><div class="zo-vsebina"><div class="card zo-sklop"></div><div class="card zo-sklop"></div></div>';
+  var okostjePot = false;
   function posnetekZa(v, zapis, sid, zdaj) {
     var p;
     try {
@@ -178,12 +185,13 @@
     var m = null;
     var bar0 = null;
     function napolni(p) {
-      m.className = p ? p.c : "view narrow zagon-okostje";
+      var pot = !p && okostjePot && v === "path";
+      m.className = p ? p.c : pot ? "view narrow zagon-okostje zo-pot" : "view narrow zagon-okostje";
       if (p) m.id = "view-" + v;
       if (p) {
         m.textContent = "";
         m.appendChild(ociscen(p.h));
-      } else m.innerHTML = OKOSTJE;
+      } else m.innerHTML = pot ? OKOSTJE_POT : OKOSTJE;
       var zs = m.querySelectorAll("[data-zs]");
       for (var i = 0; i < zs.length; i++) zs[i].scrollTop = Number(zs[i].getAttribute("data-zs")) || 0;
     }
@@ -259,7 +267,22 @@
   }
   var pred = {};
   var predOd = Date.now();
+  var seme = {};
+  var semeDo = 0;
+  function izSemena(url) {
+    if (!Object.prototype.hasOwnProperty.call(seme, url) || Date.now() > semeDo) return null;
+    try {
+      return Promise.resolve(JSON.parse(seme[url]));
+    } catch (e) {
+      return null;
+    }
+  }
+  function pozabiVnaprej() {
+    seme = {};
+  }
   function vnaprejZacni(url) {
+    var s0 = izSemena(url);
+    if (s0) return s0;
     try {
       pred[url] = fetch(url, { headers: { "Content-Type": "application/json" } })
         .then(function (r) {
@@ -276,11 +299,48 @@
     return pred[url] || null;
   }
   function vnaprej(url) {
+    var s0 = izSemena(url);
+    if (s0) return s0;
     var p = pred[url];
     delete pred[url];
     return p && Date.now() - predOd < 15000 ? p : null;
   }
-  window.evklidZacetek = { KEY: KEY, POSNETEK: POSNETEK, PRENOS: PRENOS, OWNER: OWNER, MAX: MAX, JEZIK: JEZIK, izberi: izberi, beri: beri, vnaprej: vnaprej, konec: konec, pozabi: pozabi, lahkoShrani: lahkoShrani, znova: znova, ociscen: ociscen };
+  function zacetni() {
+    try {
+      var el = document.getElementById("evklid-zacetni");
+      if (!el) return null;
+      el.parentNode.removeChild(el);
+      var z = JSON.parse(el.textContent || "null");
+      if (!z || typeof z !== "object" || !z.d || typeof z.d !== "object") return null;
+      for (var u in z.d) if (Object.prototype.hasOwnProperty.call(z.d, u) && /^\/api\//.test(u) && z.d[u] != null) seme[u] = JSON.stringify(z.d[u]);
+      semeDo = Date.now() + 60000;
+      var f0 = window.fetch;
+      if (typeof f0 === "function")
+        window.fetch = function (u, o) {
+          try {
+            var m = String((o && o.method) || (u && typeof u === "object" && u.method) || "GET").toUpperCase();
+            if (m !== "GET" && m !== "HEAD") pozabiVnaprej();
+          } catch (e) {}
+          return f0.apply(this, arguments);
+        };
+      return z;
+    } catch (e) {
+      return null;
+    }
+  }
+  var zp = zacetni();
+  function pasovi(mock, tn) {
+    var zaprto = null;
+    try {
+      zaprto = localStorage.getItem("evklid.testnaVerzija");
+    } catch (e) {}
+    var ids = [mock ? "mock-banner" : "", tn && zaprto !== tn ? "test-notice" : ""];
+    for (var j = 0; j < ids.length; j++) {
+      var el = ids[j] && document.getElementById(ids[j]);
+      if (el) el.hidden = false;
+    }
+  }
+  window.evklidZacetek = { KEY: KEY, POSNETEK: POSNETEK, PRENOS: PRENOS, OWNER: OWNER, MAX: MAX, JEZIK: JEZIK, izberi: izberi, beri: beri, vnaprej: vnaprej, pozabiVnaprej: pozabiVnaprej, konec: konec, pozabi: pozabi, lahkoShrani: lahkoShrani, znova: znova, ociscen: ociscen };
   try {
     var z = beri();
     var sid = localStorage.getItem("studentId");
@@ -289,11 +349,18 @@
     var v = q || (moj ? izberi(z, Date.now()) : "path");
     var pos = !q && sid && v && IME.test(v) ? posnetekZa(v, moj ? z : null, sid, Date.now()) : null;
     var takoj = pos && !pos.z ? pos : null;
-    if (v && IME.test(v) && (v !== "path" || pos)) {
+    okostjePot = !!(zp && zp.s != null && v === "path" && !pos);
+    if (v && IME.test(v) && (v !== "path" || pos || okostjePot)) {
+      slogiPoKoncu = !!zp && v === "path";
       html.setAttribute("data-zacetek", v);
-      setTimeout(konec, 8000);
+      setTimeout(konec, okostjePot ? 20000 : 8000);
       pokazi(v, takoj, pos && pos.z ? pos : null);
     }
+    var cfg = zp && zp.d["/api/config"];
+    if (cfg && typeof cfg === "object")
+      koLupina(function () {
+        pasovi(!!cfg.mock, Array.isArray(cfg.test_notice) ? cfg.test_notice.join(",") : "");
+      });
     var stanje = vnaprejZacni("/api/account/status");
     vnaprejZacni("/api/config");
     var profili = sid && /^\d+$/.test(sid) ? vnaprejZacni("/api/students") : null;
@@ -387,7 +454,7 @@
   try {
     pm = document.querySelector('meta[name="evklid-pristajalna"]');
     var prist = !!pm && !html.hasAttribute("data-zacetek") && pristajalnaVelja(pm);
-    if (!prist) brezPristajalne(pm);
+    if (!prist) brezPristajalne(pm || (zp && !slogiPoKoncu));
     else {
       poIzrisu = new Promise(function (ok) {
         var konc = false;
@@ -423,19 +490,14 @@
         var va = document.getElementById("view-auth");
         if (!va || !va.hasAttribute("data-vnaprej") || !html.hasAttribute("data-pristajalna")) return;
         va.hidden = false;
-        var tn = pm.getAttribute("data-tn") || "";
-        var pasovi = [pm.getAttribute("data-mock") === "1" ? "mock-banner" : "", tn && localStorage.getItem("evklid.testnaVerzija") !== tn ? "test-notice" : ""];
-        for (var j = 0; j < pasovi.length; j++) {
-          var el = pasovi[j] && document.getElementById(pasovi[j]);
-          if (el) el.hidden = false;
-        }
+        pasovi(pm.getAttribute("data-mock") === "1", pm.getAttribute("data-tn") || "");
       });
     }
   } catch (e) {
     poIzrisu = null;
     html.removeAttribute("data-pristajalna");
     try {
-      brezPristajalne(pm);
+      brezPristajalne(pm || (zp && !slogiPoKoncu));
     } catch (e2) {}
   }
   window.evklidZacetek.poIzrisu = poIzrisu || Promise.resolve();
