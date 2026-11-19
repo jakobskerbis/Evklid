@@ -11,10 +11,11 @@ test("reportStatsHtml: slovenske oblike in brez prijav", () => {
   assert.equal(reportStatsHtml(null), "");
   assert.match(reportStatsHtml({ total: 0, fixed: 0 }), /Prijav doslej še ni bilo/);
   assert.match(reportStatsHtml({ total: 1, fixed: 0 }), /<b>1 prijava<\/b>, od tega še nobena ni popravljena\./);
-  assert.match(reportStatsHtml({ total: 2, fixed: 1 }), /<b>2 prijavi<\/b>, od tega <b>1<\/b> je že popravljena\./);
-  assert.match(reportStatsHtml({ total: 3, fixed: 2 }), /<b>3 prijave<\/b>, od tega <b>2<\/b> sta že popravljeni\./);
-  assert.match(reportStatsHtml({ total: 5, fixed: 3 }), /<b>5 prijav<\/b>, od tega <b>3<\/b> so že popravljene\./);
-  assert.match(reportStatsHtml({ total: 105, fixed: 5 }), /<b>105 prijav<\/b>, od tega <b>5<\/b> jih je že popravljenih\./);
+  assert.match(reportStatsHtml({ total: 2, fixed: 1 }), /<b>2 prijavi<\/b>, od tega je <b>1<\/b> že popravljena\./);
+  assert.match(reportStatsHtml({ total: 3, fixed: 2 }), /<b>3 prijave<\/b>, od tega sta <b>2<\/b> že popravljeni\./);
+  assert.match(reportStatsHtml({ total: 5, fixed: 3 }), /<b>5 prijav<\/b>, od tega so <b>3<\/b> že popravljene\./);
+  assert.match(reportStatsHtml({ total: 102, fixed: 101 }), /<b>102 prijavi<\/b>, od tega je <b>101<\/b> že popravljena\./);
+  assert.match(reportStatsHtml({ total: 105, fixed: 5 }), /<b>105 prijav<\/b>, od tega jih je <b>5<\/b> že popravljenih\./);
 });
 
 test("/zakaj-evklid: števec iz baze, brez prijav skrbnika in brez besedil prijav", async () => {
@@ -31,7 +32,7 @@ test("/zakaj-evklid: števec iz baze, brez prijav skrbnika in brez besedil prija
   try {
     const html = await (await fetch(`http://127.0.0.1:${server.address().port}/zakaj-evklid`)).text();
     assert.match(html, /<h2 id="h-prijave">Prijavljene napake<\/h2>/);
-    assert.match(html, /<b>3 prijave<\/b>, od tega <b>2<\/b> sta že popravljeni\./);
+    assert.match(html, /<b>3 prijave<\/b>, od tega sta <b>2<\/b> že popravljeni\./);
     assert.ok(!html.includes("<!--prijave-->") && !html.includes("Skrivnost 42"));
   } finally {
     server.close();

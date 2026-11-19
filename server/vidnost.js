@@ -321,8 +321,10 @@ export function reportStatsHtml(st) {
   if (!st) return "";
   if (!st.total) return `<p class="about-text">Prijav doslej še ni bilo.</p>`;
   const prijav = `${st.total} ${sl4(st.total, ["prijava", "prijavi", "prijave", "prijav"])}`;
-  const popr = `${st.fixed} ${sl4(st.fixed, ["je že popravljena", "sta že popravljeni", "so že popravljene", "jih je že popravljenih"])}`;
-  return `<p class="about-text">Doslej: <b>${prijav}</b>, od tega ${st.fixed === 0 ? "še nobena ni popravljena" : popr.replace(/^(\d+) /, "<b>$1</b> ")}.</p>`;
+  // Naslonki pred številom: »od tega sta 2 že popravljeni«, »od tega jih je 5 že popravljenih«.
+  const [pred, part] = sl4(st.fixed, [["je", "popravljena"], ["sta", "popravljeni"], ["so", "popravljene"], ["jih je", "popravljenih"]]);
+  const popr = st.fixed === 0 ? "še nobena ni popravljena" : `${pred} <b>${st.fixed}</b> že ${part}`;
+  return `<p class="about-text">Doslej: <b>${prijav}</b>, od tega ${popr}.</p>`;
 }
 
 // Pred statičnimi datotekami (server/app.js), da predloga /o-evklidu.html ne gre ven s spremenljivkami {{…}}.
@@ -344,12 +346,12 @@ export function mountVidnost(app, store = null) {
   app.get("/robots.txt", text("text/plain; charset=utf-8", robotsTxt));
   app.get("/sitemap.xml", text("application/xml; charset=utf-8", sitemapXml));
   app.get("/llms.txt", text("text/plain; charset=utf-8", () => llmsTxt()));
-  for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, (store) => whyPage(undefined, store)]]) {
+  for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, (inStore) => whyPage(undefined, inStore)]]) {
     const page = {}; // splet in aplikacija iz trgovine (brez cen in /prenesi)
     app.get(route, (req, res) => {
-      const store = storeAppRequest(req) ? "trgovina" : "splet";
-      const html = page[store] || make(store === "trgovina");
-      if (process.env.NODE_ENV === "production") page[store] = html; // v razvoju brez predpomnjenja (datoteko urejamo)
+      const variant = storeAppRequest(req) ? "trgovina" : "splet"; // ne zasenči store (baza za števec prijav)
+      const html = page[variant] || make(variant === "trgovina");
+      if (process.env.NODE_ENV === "production") page[variant] = html; // v razvoju brez predpomnjenja (datoteko urejamo)
       res.set("Cache-Control", "no-cache");
       res.vary("User-Agent");
       res.vary("X-App-Channel");
