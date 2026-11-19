@@ -9,7 +9,7 @@ const low = (s) => String(s ?? "").toLowerCase().replace(/[čć]/g, "c").replace
 // Hitro preverjanje pred nalaganjem kataloga: izpit in »naloga 5« ali »5. naloga«.
 const EXAM_RE = /\b(matur[aeiou]?|maturitetn\w*|npz\w*|poklicn\w*|nacionaln\w* preizkus\w*)\b/;
 // »naloga B4b«, »nalogo št. 5«, »naloga 5 b)«, »naloga 5 b« na koncu; nato »5. naloga«, »B4. b) naloga«.
-const TASK_A = /\bnalog\w*\s*(?:st(?:evilka|\.)?\s*)?([abc])?\s*(\d{1,2})(?!\d)(?:\s*\.)?(?:\s*([a-j])\)|([a-j])(?![\wčšž])|\s+([a-j])(?=\s*(?:$|[,.?!])))?/;
+const TASK_A = /\bnalog\w*\s*(?:st(?:evilka|\.)?\s*)?([abc])?\s*(\d{1,2})(?!\d)(?!\s*\.\s*termin)(?:\s*\.)?(?:\s*([a-j])\)|([a-j])(?![\wčšž])|\s+([a-j])(?=\s*(?:$|[,.?!])))?/;
 const TASK_B = /\b([abc])?\s*(\d{1,2})\s*\.\s*(?:([a-j])\)\s*)?nalog\w*/;
 // Samo kratka omemba (učenec želi odpreti nalogo), ne vprašanje s svojim besedilom naloge ali računom
 // (»Na maturi 2024 je bila 5. naloga taka: …«): tisto gre inštruktorju kot navadno vprašanje.
@@ -24,7 +24,7 @@ export const mentionsPaperTask = (text) => {
 };
 
 // Prebere omembo naloge. Vrne null, kadar sporočilo ne omenja izpita in številke naloge; sicer
-// { exam: MATURA|POKLICNA|NPZ6|NPZ9|NPZ, subject?, level?, year?, term?, pola?, section?, n, part? }.
+// { exam: MATURA|POKLICNA|NPZ6|NPZ9|NPZ, subject?, level?, year?, term?, session?, pola?, section?, n, part? }.
 export function parsePaperTask(text) {
   let s = low(text).replace(/\s+/g, " ");
   if (!EXAM_RE.test(s)) return null;
@@ -59,6 +59,14 @@ export function parsePaperTask(text) {
   else if (/\bzimsk/.test(s)) ref.term = "zimski";
   else if (/\bnaknadn/.test(s)) ref.term = "naknadni";
   else if (/\bredn/.test(s)) ref.term = "redni";
+  // Rok z več termini (jesenski rok BIO, FIZ, KEM): »2. termin«, »termin 2«, »2 termin«, »drugi termin«. Pred polo
+  // in brez nje naprej (»termin 2 pola 1«, »pola 2 termin 1«): termin s piko je nedvoumen, nato »termin N«.
+  const ses = s.match(/\b([123])\s*\.\s*termin\w*/) || s.match(/\btermin\w*\s*([123])(?!\d)/) || s.match(/\b([123])\s*termin\w*/);
+  if (ses) {
+    ref.session = Number(ses[1]);
+    s = `${s.slice(0, ses.index)} # ${s.slice(ses.index + ses[0].length)}`;
+  } else if (/\bprv\w* termin/.test(s)) ref.session = 1;
+  else if (/\bdrug\w* termin/.test(s)) ref.session = 2;
   const p = s.match(/\bpol[aiou]?\s*(?:st\.?\s*)?([12])(?!\d)/) || s.match(/\b([12])\s*\.?\s*(?:izpitn\w* )?pol[aiou]?\b/);
   if (p) ref.pola = Number(p[1]);
   else if (/\bprv\w* (?:izpitn\w* )?pol[aiou]?\b/.test(s)) ref.pola = 1;
@@ -68,7 +76,7 @@ export function parsePaperTask(text) {
   return ref;
 }
 
-// Kaj manjka: { ask: "exam"|"subject"|"level"|"year", options: [{ value, add }] } (add: besedilo, ki ga gumb doda
+// Kaj manjka: { ask: "exam"|"subject"|"level"|"year"|"session", options: [{ value, add }] } (add: besedilo, ki ga gumb doda
 // k učenčevemu sporočilu), { entry } (najdena pola) ali { none: true } (pole ni v katalogu).
 const SUBJECT_WORD = { MAT: "matematika", FIZ: "fizika", KEM: "kemija", BIO: "biologija" };
 const MAIN_TERM = ["spomladanski", "redni"];
@@ -97,8 +105,17 @@ export function resolvePaper(ref, papers) {
     if (years.length > 1) return { ask: "year", options: pick.map((y) => ({ value: y, add: String(y) })) };
   }
   if (ref.term) c = c.filter((e) => e.term === ref.term);
-  else if (c.some((e) => MAIN_TERM.includes(e.term))) c = c.filter((e) => MAIN_TERM.includes(e.term));
-  // Več rokov istega dne (jesenski rok 1 in 2): prvi.
+  else {
+    // Brez roka velja glavni rok, razen kadar izbrani termin obstaja samo v drugem (»2. termin« = jesenski rok).
+    const fit = ref.session ? c.filter((e) => (e.session || 1) === ref.session) : c;
+    if (fit.some((e) => MAIN_TERM.includes(e.term))) c = c.filter((e) => MAIN_TERM.includes(e.term));
+  }
+  // Več terminov istega roka (jesenski rok 1 in 2): izbrani, sicer vprašamo.
+  if (ref.session) c = c.filter((e) => (e.session || 1) === ref.session);
+  else {
+    const sessions = [...new Set(c.map((e) => e.session || 1))].sort();
+    if (sessions.length > 1) return { ask: "session", options: sessions.map((x) => ({ value: x, add: `${x}. termin` })) };
+  }
   c.sort((a, b) => (a.session || 0) - (b.session || 0));
   return c.length ? { entry: c[0] } : { none: true };
 }

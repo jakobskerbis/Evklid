@@ -4,6 +4,7 @@
   "np.ask.level": "Základná, alebo vyššia úroveň?",
   "np.ask.year": "Z akého roku je skúška?",
   "np.ask.pola": "Z ktorej časti skúšky je úloha {n}?",
+  "np.ask.session": "Ktorý termín?",
   "np.ask.section": "Z ktorého oddielu skúšky je úloha {n}?",
   "np.plain": "Poslať ako bežnú otázku",
   "np.ours": "Toto je Evklidova úloha v štýle skúšky „{paper}“, nie pôvodná úloha RIC. Originál je voľne dostupný na ric.si.",

@@ -4,6 +4,7 @@
   "np.ask.level": "Tingkat dasar atau lanjut?",
   "np.ask.year": "Lembar soal dari tahun berapa?",
   "np.ask.pola": "Soal {n} dari lembar soal yang mana?",
+  "np.ask.session": "Sesi yang mana?",
   "np.ask.section": "Soal {n} dari bagian mana?",
   "np.plain": "Kirim sebagai pertanyaan biasa",
   "np.ours": "Ini soal Evklid dengan gaya lembar soal «{paper}», bukan soal asli RIC. Soal asli tersedia gratis di ric.si.",

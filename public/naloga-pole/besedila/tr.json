@@ -4,6 +4,7 @@
   "np.ask.level": "Temel mi, ileri düzey mi?",
   "np.ask.year": "Sınav hangi yıldan?",
   "np.ask.pola": "{n}. soru hangi sınav kitapçığından?",
+  "np.ask.session": "Hangi oturum?",
   "np.ask.section": "{n}. soru sınavın hangi bölümünden?",
   "np.plain": "Normal soru olarak gönder",
   "np.ours": "Bu, RIC'in özgün sorusu değil, «{paper}» sınavı tarzında Evklid'in sorusudur. Özgün sınav ric.si'de ücretsiz olarak bulunur.",

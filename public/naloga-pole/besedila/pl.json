@@ -4,6 +4,7 @@
   "np.ask.level": "Poziom podstawowy czy rozszerzony?",
   "np.ask.year": "Z którego roku jest arkusz?",
   "np.ask.pola": "Z którego arkusza jest zadanie {n}?",
+  "np.ask.session": "Który termin?",
   "np.ask.section": "Z której części arkusza jest zadanie {n}?",
   "np.plain": "Wyślij jako zwykłe pytanie",
   "np.ours": "To jest zadanie Evklida w stylu arkusza „{paper}”, a nie oryginalne zadanie RIC. Oryginał jest bezpłatnie dostępny na ric.si.",

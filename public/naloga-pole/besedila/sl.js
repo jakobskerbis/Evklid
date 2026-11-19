@@ -6,6 +6,7 @@ export default {
   "np.ask.level": "Osnovna ali višja raven?",
   "np.ask.year": "Iz katerega leta je pola?",
   "np.ask.pola": "Iz katere izpitne pole je {n}. naloga?",
+  "np.ask.session": "Kateri termin?",
   "np.ask.section": "Iz katerega dela pole je {n}. naloga?",
   "np.plain": "Pošlji kot navadno vprašanje",
   "np.ours": "To je Evklidova naloga v slogu pole »{paper}«, ne izvirna naloga RIC. Izvirnik je prosto dostopen na ric.si.",

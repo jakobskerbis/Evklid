@@ -4,6 +4,7 @@
   "np.ask.level": "Grund- oder höheres Niveau?",
   "np.ask.year": "Aus welchem Jahr ist die Prüfung?",
   "np.ask.pola": "Aus welchem Prüfungsteil ist Aufgabe {n}?",
+  "np.ask.session": "Welcher Termin?",
   "np.ask.section": "Aus welchem Teil der Prüfung ist Aufgabe {n}?",
   "np.plain": "Als normale Frage senden",
   "np.ours": "Das ist eine Aufgabe von Evklid im Stil der Prüfung „{paper}“, nicht die Originalaufgabe des RIC. Das Original ist frei auf ric.si verfügbar.",

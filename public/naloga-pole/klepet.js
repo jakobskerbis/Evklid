@@ -162,6 +162,7 @@ export async function odpri(shown, { over = {}, fromInput = true } = {}) {
         subject: (o) => subjectName(o.value),
         level: (o) => t(o.value === "VR" ? "lp.vr" : "lp.or"),
         year: (o) => String(o.value),
+        session: (o) => t("pp.session", { n: o.value }),
       }[r.ask];
       return askPaperNote(shown, tt(`np.ask.${r.ask}`), r.options, label, r.ask, over);
     }

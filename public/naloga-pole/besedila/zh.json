@@ -4,6 +4,7 @@
   "np.ask.level": "基础水平还是高级水平？",
   "np.ask.year": "这份试卷是哪一年的？",
   "np.ask.pola": "第 {n} 题来自哪份试卷？",
+  "np.ask.session": "哪一场？",
   "np.ask.section": "第 {n} 题来自试卷的哪个部分？",
   "np.plain": "作为普通问题发送",
   "np.ours": "这是 Evklid 仿照试卷“{paper}”风格出的题，不是 RIC 的原题。原卷可在 ric.si 免费获取。",
