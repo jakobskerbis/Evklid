@@ -32,7 +32,7 @@ const zagon = (a, env = {}) => {
     cwd,
     encoding: "utf8",
     timeout: 120000,
-    env: { ...process.env, ANTHROPIC_API_KEY: "sk-ni-pravi", EVKLID_MOCK: "", PREIZKUS3_KLJUC: "", GITHUB_ACTIONS: "", ...env },
+    env: { ...process.env, ANTHROPIC_API_KEY: "sk-ni-pravi", EVKLID_MOCK: "", PREIZKUS3_KLJUC: "", SLEPA_OCENA_KLJUC: "", GITHUB_ACTIONS: "", ...env },
   });
   return { ...r, cwd };
 };
@@ -198,8 +198,47 @@ test("okolje kot plačljivi paket: brez predpomnilnika, kartic, pregleda OŠ in 
   assert.match(src, /process\.env\.EVKLID_LIVE_REVIEW_OS = "0";/);
   assert.match(src, /const NUJNO = 0\.01;/); // dodatek za varnostni pregled pred zavrnitvijo (zunaj rezerve odgovora)
   assert.match(src, /\+ pregled \+ NUJNO;/);
-  assert.match(src, /const KLJUC = process\.env\.PREIZKUS3_KLJUC;\ndelete process\.env\.PREIZKUS3_KLJUC;/);
+  assert.match(src, /const KLJUC = process\.env\[NABOR\.kljuc\];\nfor \(const n of Object\.values\(NABORI\)\) delete process\.env\[n\.kljuc\];/);
   // Okolje se nastavi pred uvozom strežnika.
   assert.ok(src.indexOf('EVKLID_VERIFY_DAILY_USD = "0"') < src.indexOf('await import("../server/app.js")'));
   for (const a of ["--del 1-2 --hkrati 4", "--del 2-2 --s-pregledom"]) assert.match(a, /^[a-z0-9 ,=.-]*$/); // polje »argumenti«
+});
+
+// Nabor slepe ocene inštruktorja (j 19. 11. 2026): 64 maturitetnih nalog MAT, šifrirane z lastnim ključem.
+const encSlepa = fs.readFileSync(path.join(root, "scripts/slepa-ocena-naloge.enc"), "utf8");
+
+test("--nabor slepa-ocena: svoja datoteka, ključ SLEPA_OCENA_KLJUC in izid; neznan nabor konča z 1", () => {
+  const o = JSON.parse(encSlepa);
+  assert.equal(o.oblika, OBLIKA);
+  assert.ok(Buffer.from(o.data, "base64").length > 10000, "vseh 64 nalog");
+  assert.doesNotMatch(encSlepa, /letnik|Reši|matura/);
+  assert.ok(!fs.existsSync(path.join(root, "scripts/slepa-ocena-naloge.json")), "čisto besedilo ni v repozitoriju");
+  assert.match(fs.readFileSync(path.join(root, ".gitignore"), "utf8"), /^slepa-ocena-naloge\*\.json$/m);
+  const r = zagon(["--suho", "--nabor", "slepa-ocena"]);
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /Ni ključa SLEPA_OCENA_KLJUC/);
+  // Ključ drugega nabora ne odpre te datoteke.
+  const n = zagon(["--suho", "--nabor", "slepa-ocena"], { PREIZKUS3_KLJUC: crypto.randomBytes(32).toString("base64") });
+  assert.match(n.stderr, /Ni ključa SLEPA_OCENA_KLJUC/);
+  const k = crypto.randomBytes(32).toString("base64");
+  const l = zagon(["--suho", "--nabor", "slepa-ocena", "--naloge-datoteka", datoteka], { SLEPA_OCENA_KLJUC: k });
+  assert.equal(l.status, 0, l.stderr);
+  assert.match(l.stdout, /^Slepa ocena inštruktorja: 3 nalog/m);
+  const d = JSON.parse(odsifriraj(fs.readFileSync(path.join(l.cwd, "data/meri-slepa-ocena.json"), "utf8"), kljucIz(k)));
+  assert.deepEqual(Object.keys(d.naloge), ["1", "2", "3"]);
+  assert.ok(!fs.existsSync(path.join(l.cwd, "data/meri-preizkus3-vse.json")));
+  const gh = zagon(["--suho", "--nabor", "slepa-ocena", "--naloge-datoteka", datoteka], { GITHUB_ACTIONS: "true", PREIZKUS3_KLJUC: k });
+  assert.equal(gh.status, 1);
+  assert.match(gh.stderr, /Ni ključa SLEPA_OCENA_KLJUC .*mora biti izid šifriran/);
+  for (const x of ["toString", "x", ""]) assert.equal(zagon(["--suho", "--naloge-datoteka", datoteka, "--nabor", x]).status, 1, x);
+});
+
+test("prave naloge slepe ocene (le s ključem SLEPA_OCENA_KLJUC): 64, eno sporočilo, nastavitve SŠ MAT matura veljavne", { skip: !process.env.SLEPA_OCENA_KLJUC }, () => {
+  const { naloge } = JSON.parse(odsifriraj(encSlepa, kljucIz(process.env.SLEPA_OCENA_KLJUC)));
+  assert.deepEqual(naloge.map((n) => n.id), Array.from({ length: 64 }, (_, i) => i + 1));
+  for (const n of naloge) {
+    assert.ok(!n.odgovori && n.q && n.kljuc, `naloga ${n.id}`);
+    const s = normalizeSettings(n.nastavitve);
+    for (const [k, v] of Object.entries(n.nastavitve)) assert.equal(s[k], v, `naloga ${n.id}: ${k}`);
+  }
 });
