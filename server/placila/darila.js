@@ -11,7 +11,7 @@ export const GIFT_WITHDRAWAL_TEXT =
   "Vem, da lahko v 14 dneh od nakupa odstopim in dobim vrnjeno celotno plačilo, če koda še ni vpisana. Ko je koda vpisana, se uporaba začne in pravica do odstopa preneha.";
 import { giftFor, isoIn } from "../accounts/plans.js";
 import { BIRTH_MISSING_PAY } from "../accounts/age.js";
-import { insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText } from "../accounts/potrdilo.js";
+import { insertBillingConsent, termsAccepted, TERMS_ERROR, moneyText, livePayBlocked, LIVE_BLOCKED } from "../accounts/potrdilo.js";
 import { STOPNJE, visja } from "../../public/stopnja.js";
 import { appMark } from "../mobile/trgovina.js";
 
@@ -193,6 +193,7 @@ export function mountGifts(app, ctx) {
       return res
         .status(400)
         .json({ error: "Pred plačilom so potrebne vse potrditve.", consent: true });
+    if (livePayBlocked(stripe)) return res.status(409).json(LIVE_BLOCKED);
     if (!termsAccepted(req.body)) return res.status(400).json(TERMS_ERROR);
     const open = db
       .prepare(

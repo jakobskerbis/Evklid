@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex"><!-- osnutek do pregleda pravnika (j 2026-11-16) -->
+  <!-- osnutek --><meta name="robots" content="noindex"><!-- /osnutek --><!-- osnutek do pregleda pravnika (j 2026-11-16); ko je EVKLID_POGOJI_OBJAVLJENI=1, strežnik odstrani vse dele med oznakama osnutka (server/pogoji-stran.js) -->
   <title>Splošni pogoji uporabe – Evklid</title>
   <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
   <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
@@ -20,13 +20,20 @@
     .doc { max-width: 760px; margin: 0 auto; padding: 24px 16px 60px; }
     .doc h2 { margin-top: 28px; font-size: 1.15rem; }
     a { color: var(--accent); }
+    .draft-note { border: 2px solid var(--warn, #b26b00); border-radius: var(--radius-sm, 8px); padding: 12px 14px; margin: 12px 0 20px; }
+    .draft-note p { margin: 0; }
+    .draft-note p + p { margin-top: 6px; }
   </style>
 </head>
 <body>
 <div class="doc">
   <p><a href="/">← Evklid</a></p>
   <h1>Splošni pogoji uporabe</h1>
-  <p class="muted">Različica 17. 11. 2026 · osnutek, pred zagonom pravih plačil ga pregleda pravnik</p>
+  <p class="muted">Različica 17. 11. 2026<!-- osnutek --> · osnutek<!-- /osnutek --></p>
+  <!-- osnutek --><div class="draft-note" role="note">
+    <p><b>Splošni pogoji so v pripravi.</b> Spodnje besedilo je osnutek, ki ga še pregledujeta upravljavec in pravnik, in še ne velja kot končno besedilo.</p>
+    <p>Dokler pogoji niso objavljeni, prava plačila niso odprta (plačila delujejo samo v testnem načinu).</p>
+  </div><!-- /osnutek -->
 
   <p>Ti pogoji veljajo za uporabo Evklida na spletni strani evklid.app in v mobilni aplikaciji. Evklid je inštruktor AI za matematiko, fiziko, kemijo, biologijo in naravoslovje za osnovnošolce, dijake in študente. Pogoji določajo, kaj Evklid ponuja, kaj lahko pričakujete vi in kaj pričakujemo mi. S pogoji se strinjate, ko jih potrdite ob registraciji ali nakupu. Pogodbo sklenemo v slovenskem jeziku.</p>
 
@@ -102,7 +109,7 @@
   <p>Naročnino lahko kadar koli prekličete v zavihku Račun (pri nakupu v App Store ali Google Play v nastavitvah te trgovine). Po preklicu naročnina deluje do konca že plačanega obdobja in se ne podaljša več. Preklic ni odstop od pogodbe (glejte 12. točko).</p>
 
   <h2>12. Odstop od pogodbe v 14 dneh</h2>
-  <p>Kot potrošnik lahko od pogodbe, sklenjene na daljavo, odstopite v 14 dneh od sklenitve brez navedbe razloga. Odstop sporočite z jasno izjavo na <a href="mailto:zasebnost@evklid.app">zasebnost@evklid.app</a>; uporabite lahko <a href="#obrazec">obrazec za odstop</a> spodaj. Zadošča, da izjavo pošljete pred iztekom roka.</p>
+  <p>Kot potrošnik lahko od pogodbe, sklenjene na daljavo, odstopite v 14 dneh od sklenitve brez navedbe razloga. Najhitreje odstopite na strani <a href="/odstop.html" data-i18n="land.withdraw">Odstop od pogodbe</a> (»Kliknite tukaj za odstop od pogodbe«): povezava je v nogi strani in v zavihku Račun in je na voljo ves čas roka. Na e-pošto takoj dobite potrdilo o prejemu z datumom in uro. Odstop lahko sporočite tudi z jasno izjavo na <a href="mailto:zasebnost@evklid.app">zasebnost@evklid.app</a>; uporabite lahko <a href="#obrazec">obrazec za odstop</a> spodaj. Zadošča, da izjavo oddate pred iztekom roka.</p>
   <p>Če želite storitev začeti uporabljati takoj, to pred plačilom izrecno potrdite. Če potem odstopite v 14 dneh, plačate le sorazmerni del cene za čas do odstopa, ostalo vam vrnemo. Vračilo izvedemo na isto plačilno sredstvo najpozneje v 14 dneh od prejema izjave.</p>
   <ul>
     <li><b>Dokup pogovorov</b>: vrnemo delež še neporabljenih pogovorov.</li>
@@ -161,7 +168,7 @@
   <p>Za te pogoje velja pravo Republike Slovenije. Če ste potrošnik z bivališčem v drugi državi, vam ostane varstvo po obveznih predpisih te države. Spor bomo najprej poskušali rešiti sporazumno; pišite nam. Izvajalca izvensodnega reševanja potrošniških sporov (IRPS) ne priznavamo kot pristojnega za reševanje sporov z našimi uporabniki. Če spora ne rešimo sporazumno, odloča pristojno sodišče; potrošnik lahko vedno toži pred sodiščem, ki je pristojno po obveznih predpisih.</p>
 
   <h2 id="obrazec">Obrazec za odstop od pogodbe</h2>
-  <p>(Izpolnite in pošljite ta obrazec samo, če želite odstopiti od pogodbe.)</p>
+  <p>(Izpolnite in pošljite ta obrazec samo, če želite odstopiti od pogodbe. Hitreje gre na strani <a href="/odstop.html" data-i18n="land.withdraw">Odstop od pogodbe</a>.)</p>
   <p>Za: Jakob Skerbiš (Evklid), e-naslov: <a href="mailto:zasebnost@evklid.app">zasebnost@evklid.app</a></p>
   <p>Obveščam vas, da odstopam od pogodbe za naslednjo storitev: ______________________<br>
   Datum nakupa: ____________<br>
