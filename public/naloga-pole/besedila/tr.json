@@ -1,0 +1,18 @@
+{
+  "np.ask.exam": "Hangi NPZ'yi kastediyorsun?",
+  "np.ask.subject": "Soru hangi dersten?",
+  "np.ask.level": "Temel mi, ileri düzey mi?",
+  "np.ask.year": "Sınav hangi yıldan?",
+  "np.ask.pola": "{n}. soru hangi sınav kitapçığından?",
+  "np.ask.section": "{n}. soru sınavın hangi bölümünden?",
+  "np.plain": "Normal soru olarak gönder",
+  "np.ours": "Bu, RIC'in özgün sorusu değil, «{paper}» sınavı tarzında Evklid'in sorusudur. Özgün sınav ric.si'de ücretsiz olarak bulunur.",
+  "np.figure": "Sorunun şekli Evklid'in sınavında.",
+  "np.openOurs": "Evklid'in sınavında aç",
+  "np.noOurs": "«{paper}» için henüz Evklid sürümü yok. Özgün sınavı ric.si'den indir, burada aç ve {n}. soruda «{help}» düğmesine dokun.",
+  "np.missing": "«{paper}» sınavının Evklid sürümünde {n}. soru yok. Soru numarasını kontrol et.",
+  "np.download": "Özgün sınavı indir: {file}",
+  "np.openOriginal": "Özgün sınavı aç",
+  "np.pickHint": "Önce özgün sınavı indir, sonra «Özgün sınavı aç» ile {name} dosyasını seç.",
+  "np.wrongFile": "Bu başka bir sınav. {name} dosyasını seç."
+}

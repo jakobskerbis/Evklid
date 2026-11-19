@@ -23,8 +23,8 @@ export function closeOurPaper() {
 // paper: JSON pole; title: oznaka (»Naša pola v slogu NPZ 9 – Matematika, 2026«); rich(md) → HTML;
 // onTutor(task, part): vprašaj inštruktorja; score: { get() → { "1a": true }, set(obj) } (shrani napravo);
 // onChecked([{ key, ok }]): ob zaprtju deli, pri katerih je učenec odprl rešitev ali (od)označil »Imam prav«
-// (za šibke točke; ok = označeno).
-export function openOurPaper(paper, { title, rich, onTutor, score = null, onChecked = null }) {
+// (za šibke točke; ok = označeno). focus: indeks naloge v paper.tasks, pri kateri se pola odpre (klepet, naloga-pole.js).
+export function openOurPaper(paper, { title, rich, onTutor, score = null, onChecked = null, focus = null }) {
   closeOurPaper();
   const back = document.activeElement;
   const got = { ...(score?.get?.() || {}) };
@@ -107,7 +107,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
       <p class="op-about">${icon("info")}<span>${esc(t("pp.oursAbout"))}</span></p>
       ${paper.tools && !(paper.polas?.length && paper.polas.every((x) => x.tools)) ? `<p class="op-tools">${esc(paper.tools)}</p>` : ""}
       ${paper.tasks
-        .map((tk, i) => `${headings(tk, paper.tasks[i - 1])}<article class="op-task"><h3>${esc(t("pp.oursTask", { n: `${tk.section || ""}${tk.n}` }))}</h3>${tk.intro ? rich(tk.intro) : ""}${fig(tk.figure)}<ol class="op-parts">${tk.parts.map((p) => partHtml(tk, p)).join("")}</ol></article>`)
+        .map((tk, i) => `${headings(tk, paper.tasks[i - 1])}<article class="op-task" data-op-i="${i}"><h3>${esc(t("pp.oursTask", { n: `${tk.section || ""}${tk.n}` }))}</h3>${tk.intro ? rich(tk.intro) : ""}${fig(tk.figure)}<ol class="op-parts">${tk.parts.map((p) => partHtml(tk, p)).join("")}</ol></article>`)
         .join("")}
     </div></div>`;
   const showScore = () => (el.querySelector(".op-score").textContent = t("pp.oursScore", { got: sum(), max }));
@@ -176,5 +176,6 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
   // skrite rešitve se prilagodijo, ko se pokažejo.
   prilagodiSirino(el, { vrstice: false });
   sprosti = zadrziFokus(el, { zacetni: el.querySelector("[data-op-close]"), prej: back });
+  if (Number.isInteger(focus)) el.querySelector(`[data-op-i="${focus}"]`)?.scrollIntoView({ block: "start" });
   return el;
 }

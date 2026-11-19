@@ -11,8 +11,12 @@ export const PAPER_TAG = "kontekst_pole";
 export const PAPER_NOTE_HEAD = `<${PAPER_TAG}>`;
 
 // Del naše pole (server/our-papers.js) po oznaki »3b«: inštruktor dobi našo rešitev kot skrit kontekst.
+// Oznaka cele naloge (»1-B4« pri nalogi z deli a, b; klepet, public/naloga-pole.js) da rešitve vseh delov.
 function ourPart(paper, label) {
-  for (const tk of paper?.tasks || []) for (const part of tk.parts || []) if (partKey(tk, part) === label) return { tk, part };
+  for (const tk of paper?.tasks || []) {
+    for (const part of tk.parts || []) if (partKey(tk, part) === label) return { tk, parts: [part] };
+    if ((tk.parts || []).length && partKey(tk, {}) === label) return { tk, parts: tk.parts };
+  }
   return null;
 }
 
@@ -33,7 +37,8 @@ export function paperContext(p, { loadOurs = null, mode = "A" } = {}) {
   const where = task ? `, task ${task}` : page ? `, page ${page}` : "";
   const ours = typeof p.ours === "string" && task && loadOurs ? ourPart(loadOurs(p.ours), task) : null;
   if (ours) {
-    const sol = [ours.part.answer, ours.part.ways?.[0]?.text].filter(Boolean).join("\n").replace(/<svg[\s\S]*?<\/svg>/g, "").slice(0, 1500);
+    const one = (part) => [ours.parts.length > 1 && part.id ? `${part.id})` : "", part.answer, part.ways?.[0]?.text].filter(Boolean).join("\n");
+    const sol = ours.parts.map(one).join("\n").replace(/<svg[\s\S]*?<\/svg>/g, "").slice(0, ours.parts.length > 1 ? 3000 : 1500);
     return wrap([
       `The Evklid app opened this task from its own practice paper in the style of: ${paper}${where}.`,
       guide,
@@ -42,7 +47,12 @@ export function paperContext(p, { loadOurs = null, mode = "A" } = {}) {
   }
   return wrap([
     `The Evklid app opened this task from a past exam paper: ${paper}${where}.`,
-    p.fromPdf ? "The task text in the message comes from the PDF text layer: formulas may be garbled, the picture is authoritative." : "The student sends the task as a photo or typed text.",
+    // noText: učenec je v klepetu le omenil nalogo pole, ki je v naši različici nimamo (public/naloga-pole.js).
+    p.noText
+      ? "The student has not sent the task text yet: ask for a photo or the typed task and never guess what the task says."
+      : p.fromPdf
+        ? "The task text in the message comes from the PDF text layer: formulas may be garbled, the picture is authoritative."
+        : "The student sends the task as a photo or typed text.",
     guide,
     "When the student has solved it, say which topic to practise next.",
   ]);

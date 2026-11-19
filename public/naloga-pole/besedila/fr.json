@@ -1,0 +1,18 @@
+{
+  "np.ask.exam": "De quel NPZ parles-tu ?",
+  "np.ask.subject": "De quelle matière est l'exercice ?",
+  "np.ask.level": "Niveau de base ou supérieur ?",
+  "np.ask.year": "De quelle année est l'épreuve ?",
+  "np.ask.pola": "De quelle épreuve est l'exercice {n} ?",
+  "np.ask.section": "De quelle partie de l'épreuve est l'exercice {n} ?",
+  "np.plain": "Envoyer comme question normale",
+  "np.ours": "Ceci est un exercice d'Evklid dans le style de l'épreuve « {paper} », pas l'exercice original du RIC. L'original est librement disponible sur ric.si.",
+  "np.figure": "La figure de l'exercice se trouve dans l'épreuve d'Evklid.",
+  "np.openOurs": "Ouvrir dans l'épreuve d'Evklid",
+  "np.noOurs": "Nous n'avons pas encore de version Evklid de « {paper} ». Télécharge l'original sur ric.si, ouvre-le ici et, à l'exercice {n}, touche « {help} ».",
+  "np.missing": "La version Evklid de « {paper} » n'a pas d'exercice {n}. Vérifie le numéro de l'exercice.",
+  "np.download": "Télécharger l'original : {file}",
+  "np.openOriginal": "Ouvrir l'original",
+  "np.pickHint": "Télécharge d'abord l'original, puis dans « Ouvrir l'original » choisis le fichier {name}.",
+  "np.wrongFile": "C'est une autre épreuve. Choisis le fichier {name}."
+}

@@ -1,0 +1,18 @@
+{
+  "np.ask.exam": "你指的是哪個 NPZ？",
+  "np.ask.subject": "這道題是哪個科目的？",
+  "np.ask.level": "基礎程度還是進階程度？",
+  "np.ask.year": "這份試卷是哪一年的？",
+  "np.ask.pola": "第 {n} 題來自哪份試卷？",
+  "np.ask.section": "第 {n} 題來自試卷的哪個部分？",
+  "np.plain": "作為一般問題送出",
+  "np.ours": "這是 Evklid 仿照試卷「{paper}」風格出的題，不是 RIC 的原題。原卷可在 ric.si 免費取得。",
+  "np.figure": "本題的圖在 Evklid 的試卷中。",
+  "np.openOurs": "在 Evklid 的試卷中開啟",
+  "np.noOurs": "我們還沒有「{paper}」的 Evklid 版本。請從 ric.si 下載原卷，在這裡開啟，並在第 {n} 題點「{help}」。",
+  "np.missing": "「{paper}」的 Evklid 版本沒有第 {n} 題。請檢查題號。",
+  "np.download": "下載原卷：{file}",
+  "np.openOriginal": "開啟原卷",
+  "np.pickHint": "先下載原卷，然後在「開啟原卷」中選擇檔案 {name}。",
+  "np.wrongFile": "這是另一份試卷。請選擇檔案 {name}。"
+}
