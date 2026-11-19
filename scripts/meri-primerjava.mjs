@@ -65,10 +65,12 @@ const nastavitve = (t) =>
   normalizeSettings({ educational_track: "SREDNJA_SOLA", curriculum_level: `4. letnik ${t.raven === "višja" ? "VR" : "OR"}`, subject: "MAT", solving_mode: "A" });
 const { model, max_tokens } = modeParams(NACIN);
 const system = buildSystemPrompt({ settings: nastavitve(naloge[0]), studentName: "Ana" });
-// Najslabši primer ene naloge: odgovor, pregled sodbe (Sonnet), ponovni odgovor, krog orodij, varnostni pregled.
+// Najslabši primer ene naloge (prvo sporočilo, zato brez sodbe koraka): odgovor in popravek (Haiku) ali odgovor s krogi
+// orodij; sprotni pregled s Sonnetom, pri SŠ z »Vaja:« dva vzporedna klica (server/live-check.js reviewCalls), vhod z
+// odgovorom; varnostni pregled (Haiku).
 const najdaljsa = Math.max(...naloge.map((t) => navodilo(t).length));
 const klicUsd = callMaxUsd(model, Math.ceil(system.length / 3) + najdaljsa + 4000, max_tokens);
-const najslabse = 3 * klicUsd + callMaxUsd(MODEL_MID, 4000 + najdaljsa, 8000) + 0.01;
+const najslabse = 3 * klicUsd + 2 * callMaxUsd(MODEL_MID, 4000 + najdaljsa + max_tokens, 8000) + 0.01;
 console.log(`${naloge.length} nalog; način ${NACIN} (${model}); najslabši primer na nalogo ${najslabse.toFixed(3)} $; meja ${MAX_USD} $.`);
 if (SUHO) process.exit(0);
 if (PREIZKUS !== isMockMode()) {
