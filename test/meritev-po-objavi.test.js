@@ -278,3 +278,19 @@ test("delovni tok: le main, brez PR, skrivnost le v koraku meritve, stanje se sh
   assert.match(y, /restore-keys: meritev-po-objavi-\n/);
   assert.ok(kljuci[0].startsWith("meritev-po-objavi-"));
 });
+
+test("pravi zagon skripte: proces počaka na meritev (brez izhodne kode 13 in ubitega otroka)", async () => {
+  const { spawnSync } = await import("node:child_process");
+  const { root } = repo();
+  // Nadomestna »meritev«: počaka 300 ms in zapiše izid; z child.unref() bi starš končal prej (koda 13) in jo ubil.
+  fs.writeFileSync(path.join(root, "lazna-meritev.mjs"), `import fs from "node:fs";\nconst i = process.argv.indexOf("--izid-json");\nsetTimeout(() => fs.writeFileSync(process.argv[i + 1], "{}"), 300);\n`);
+  const izid = path.join(root, "izid.json");
+  const modul = new URL("../server/meritev-po-objavi.js", import.meta.url).href;
+  const koda = `const { zaženiSkripto } = await import(${JSON.stringify(modul)});
+const r = await zaženiSkripto({ idji: ["X/y"], maxUsd: 1, izidFile: ${JSON.stringify(izid)}, logFile: ${JSON.stringify(path.join(root, "m.log"))}, root: ${JSON.stringify(root)}, skripta: "lazna-meritev.mjs" });
+console.log(JSON.stringify(r));`;
+  const p = spawnSync(process.execPath, ["--disable-warning=ExperimentalWarning", "--input-type=module", "-e", koda], { encoding: "utf8", timeout: 20000 });
+  assert.equal(p.status, 0, p.stderr);
+  assert.deepEqual(JSON.parse(p.stdout.trim()), { code: 0 });
+  assert.ok(fs.existsSync(izid), "meritev je tekla do konca");
+});
