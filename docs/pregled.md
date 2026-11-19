@@ -36,6 +36,11 @@ commands below and the checklist of their lens.
   redrawn every frame, or taps on iPad/iPhone do nothing; `gumbi-na-dotik-aplikacija.cjs` for app-wide screens), `node scripts/check-lesson.js -q <files>`,
   `node scripts/preveri-formule.cjs` (sims, `public/sirina.js` or KaTeX output: no formula may scroll at 360 px)
 
+**Code scope rule (j, 2026-11-19, external review point 42):** a PR that adds a new module (a new `.js` file in
+`server/` or a new client module in `public/`) says in its body which existing module it replaces or merges into,
+or why none can go. On the 1st of each month run `node scripts/zemljevid-kode.mjs` and commit
+`docs/zemljevid-kode.md`; its »Vsote« table is the code size the external review tracks (code and data separately).
+
 **Pass 2 – function (reviewer agent 1):** reads the diff and the code paths it touches, and uses the
 feature in the running app (test mode, throwaway `EVKLID_DB`). Checklist: does every button and
 input do what it says; state refreshes after the action; back/close/Esc work; empty, error, offline
