@@ -30,19 +30,25 @@ Windows Task Scheduler ni potreben.
 
 ## Render (evklid.app, od 30. 10. 2026)
 
-Ob vsaki združitvi v `main` GitHub zažene preverbo, ki počaka na miren trenutek in vmes preverja vsakih
-5 minut; novejša združitev jo zamenja. Urnik vsako uro je le rezerva, ker GitHub urnike pogosto zamakne za ure
-(`.github/workflows/render-posodobitev.yml`,
-pravila v `scripts/render-objava.js`; v `render.yaml` je `autoDeploy: false`). Ponovni zagon s trajnim
-diskom pomeni približno minuto izpada, zato (začasno do nedelje 15. 11. 2026 00:00, začetka pilota, se vsaka združitev objavi takoj, `TAKOJ_DO` v `scripts/render-objava.js`; j, 14. 11.):
+Ob vsaki združitvi v `main` GitHub zažene preverbo (`.github/workflows/render-posodobitev.yml`, pravila v
+`scripts/render-objava.js`; v `render.yaml` je `autoDeploy: false`). Ponovni zagon s trajnim diskom pomeni
+približno minuto izpada, zato se nove različice objavljajo **samo ponoči med 3. in 5. uro** po ljubljanskem
+času (j, 19. 11. 2026, »Noč zdaj, baza po pilotu«). Po pilotu (po 15. 12. 2026) se baza preseli izven
+Renderja; takrat objava ne bo več pomenila izpada in nočno okno ne bo več potrebno.
 
 | Stanje | Kdaj se objavi |
 |---|---|
-| Nihče ne uporablja Evklida (10 minut nihče nič ne pošlje, nihče ne čaka na odgovor) | takoj (v nekaj minutah) |
-| Nekdo se ravno uči | počaka na miren trenutek, najdlje 3 ure od združitve spremembe |
-| Zadnja objava pred manj kot 1 uro | počaka (razen po 3 urah čakanja) |
+| Podnevi (izven 3.–5. ure) | počaka na naslednjo noč |
+| Ponoči, nihče ne uporablja Evklida (10 minut nihče nič ne pošlje, nihče ne čaka na odgovor) | takoj (v nekaj minutah) |
+| Ponoči, nekdo se ravno uči | počaka na miren trenutek, najkasneje ob 4.30 |
+| Zadnja objava pred manj kot 1 uro | počaka (tudi ob 4.30) |
 | Ista različica je bila že sprožena, a ne teče (objava ni uspela) | ne ponavlja 3 ure |
+| Nujen popravek: `[nujno]` v naslovu PR (sporočilu združitve) | takoj, tudi podnevi |
 | Ročno: GitHub → Actions → Render → Run workflow | takoj |
+
+Tek ob združitvi počaka na okno le, če se odpre v naslednjih ~3 urah; sicer objavo opravi nočni urnik
+(0:47 in 1:47 UTC) ali urnik vsako uro. Ker se podnevi nič ne objavi, združitev med dnevom ne prekine
+testa v Render Shell.
 
 Strežnik pove svojo različico in zasedenost na `/healthz/stanje`. Enkratna nastavitev: v Renderju
 odpri storitev evklid > Settings > Deploy Hook in povezavo kopiraj v GitHub > Settings > Secrets and
