@@ -804,6 +804,7 @@
   "chk.partOnly": "L'espressione completa è corretta, ma il compito chiede solo {sym}. Inserisci solo quel numero.",
   "chk.partOnlyAsk": "Il compito chiede solo {sym}, non l'espressione completa. Inserisci solo quel numero.",
   "chk.partOnlyWrong": "Hai inserito l'espressione completa e contiene un errore. Il compito chiede solo {sym}: inserisci solo quel numero.",
+  "chk.partOnlyForm": "Il valore è giusto, ma l'espressione non è ancora nella forma richiesta. Il compito chiede solo {sym}: inserisci solo quel numero.",
   "chk.calcFully": "Il valore è giusto. Calcolalo fino in fondo e inserisci un solo numero.",
   "chk.expression": "Il compito chiede un solo numero, ma hai inserito un'espressione. Controlla quale numero si cerca e inserisci solo quello.",
   "chk.coef": "Scrivi {n} numeri interi separati da virgole (scrivi anche il coefficiente 1).",

@@ -34,7 +34,7 @@ test("√175 = a√b, iščemo b: 5√7 je pravilen cel zapis (ne poskus), 7 in 
   const w = checkAnswer(A, "4√7", opts());
   assert.equal(w.kind, "wrong");
   assert.equal(w.mistake.code, "chk.partOnlyWrong");
-  assert.equal(kind(A, "√175"), "chk.partOnlyWrong");
+  assert.equal(kind(A, "√175"), "chk.partOnlyForm"); // prava vrednost, zapis še ni a√b
   assert.equal(kind(A, "5"), "wrong");
   // Druga črka pred enačajem ni iskana: ostane opozorilo o zapisu.
   assert.equal(kind(A, "a = 5"), "chk.number");
@@ -152,7 +152,7 @@ test("vaja (progress): pravilen cel zapis ne porabi poskusa, prvi pravi odgovor 
 });
 
 test("sporočila so prevedena v vse jezike in ne izdajo števila", () => {
-  const codes = ["chk.partOnly", "chk.partOnlyAsk", "chk.partOnlyWrong", "chk.calcFully", "chk.expression"];
+  const codes = ["chk.partOnly", "chk.partOnlyAsk", "chk.partOnlyWrong", "chk.partOnlyForm", "chk.calcFully", "chk.expression"];
   for (const c of codes) {
     assert.ok(SL[c], c);
     assert.doesNotMatch(SL[c], /\d/, c);
@@ -164,4 +164,40 @@ test("sporočila so prevedena v vse jezike in ne izdajo števila", () => {
       assert.equal(ui[c].includes("{sym}"), SL[c].includes("{sym}"), `${f} ${c}`);
     }
   }
+});
+
+// Pregled 2 (PR #868): napačen izraz brez števila na začetku je poskus, sicer bi »(1)«, »(2)« … brez poskusov
+// iskali vrednost, pri kateri pride »Vrednost je prava«.
+test("izraz z napačno vrednostjo je poskus tudi brez števila na začetku (ni brezplačnega ugibanja)", () => {
+  const A = { type: "number", value: 7 };
+  assert.equal(kind(A, "(7)"), "chk.calcFully");
+  assert.equal(kind(A, "√49"), "chk.calcFully");
+  for (const s of ["(8)", "√50", "-(7)"]) assert.equal(checkAnswer(A, s, opts()).kind, "wrong", s);
+});
+
+test("cel zapis z x kot znakom za množenje (3,2x10^4) in varovalo: iskana vrednost mora biti odgovor", () => {
+  const A = { type: "number", value: 4, form: { expr: "a*10^n", vals: { a: 3.2, n: 4 }, ask: "n" } };
+  assert.equal(kind(A, "3,2x10^4"), "chk.partOnly");
+  assert.equal(kind(A, "3,2 X 10^4"), "chk.partOnly");
+  assert.equal(kind(A, "3,2x10^5"), "chk.partOnlyWrong");
+  // form.vals v nasprotju z answer.value: cel zapis ni »pravilen«.
+  const B = { type: "number", value: 6, form: { expr: "a√(b)", vals: { a: 5, b: 7 }, ask: "b" } };
+  assert.equal(kind(B, "5√7"), "chk.partOnlyWrong");
+});
+
+test("dolgi nizi presledkov v znanstvenem zapisu in pri »b = …« se preverijo hitro (brez kvadratnega časa)", () => {
+  const A = { type: "number", value: 3 };
+  for (const s of ["0*10^(" + " ".repeat(10000), "0*10^" + " ".repeat(10000) + "x", "A=" + " ".repeat(10000), "A=" + " ".repeat(10000) + "=", "0*10^5" + " ".repeat(10000) + "\nx\ny"]) {
+    const t = Date.now();
+    checkAnswer(A, s, opts({ find: ["A"] }));
+    assert.ok(Date.now() - t < 200, `${s.slice(0, 8)}… ${Date.now() - t} ms`);
+  }
+  assert.equal(kind(A, "A =  3 ", { find: ["A"] }), "correct");
+  assert.equal(kind(A, "A = 3 = 3", { find: ["A"] }), "chk.number");
+  assert.equal(kind({ type: "number", value: 2.5, unit: "m" }, "2,5 · 10^( - 3 ) km", { convert: true }), "correct");
+});
+
+test("iskana črka iz besedila je le črka v $…$ (»Koliko je v posodi« ne pomeni črke v)", () => {
+  assert.equal(kind({ type: "number", value: 5 }, "v = 5", { text: "Koliko je v posodi vode?" }), "chk.number");
+  assert.equal(kind({ type: "number", value: 5 }, "n = 5", { text: "Koliko je $n$?" }), "correct");
 });

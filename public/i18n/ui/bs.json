@@ -810,6 +810,7 @@
   "chk.partOnly": "Cijeli zapis je tačan, ali zadatak traži samo {sym}. Upiši samo taj broj.",
   "chk.partOnlyAsk": "Zadatak traži samo {sym}, a ne cijeli zapis. Upiši samo taj broj.",
   "chk.partOnlyWrong": "Upisao si cijeli zapis, a u njemu je greška. Zadatak traži samo {sym}: upiši samo taj broj.",
+  "chk.partOnlyForm": "Vrijednost je tačna, ali zapis još nije u traženom obliku. Zadatak traži samo {sym}: upiši samo taj broj.",
   "chk.calcFully": "Vrijednost je tačna. Izračunaj je do kraja i upiši samo jedan broj.",
   "chk.expression": "Zadatak traži jedan broj, a ti si upisao izraz. Provjeri koji se broj traži i upiši samo njega.",
   "chk.coef": "Upiši {n} cijelih brojeva odvojenih zarezom (zapiši i koeficijent 1).",

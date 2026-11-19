@@ -810,6 +810,7 @@
   "chk.partOnly": "Întreaga expresie este corectă, dar sarcina cere doar {sym}. Introdu doar acest număr.",
   "chk.partOnlyAsk": "Sarcina cere doar {sym}, nu întreaga expresie. Introdu doar acest număr.",
   "chk.partOnlyWrong": "Ai introdus întreaga expresie și are o greșeală. Sarcina cere doar {sym}: introdu doar acest număr.",
+  "chk.partOnlyForm": "Valoarea este corectă, dar expresia nu este încă în forma cerută. Sarcina cere doar {sym}: introdu doar acest număr.",
   "chk.calcFully": "Valoarea este corectă. Calculeaz-o până la capăt și introdu un singur număr.",
   "chk.expression": "Sarcina cere un singur număr, dar tu ai introdus o expresie. Verifică ce număr se cere și introdu doar acel număr.",
   "chk.coef": "Scrie {n} numere întregi separate prin virgulă (scrie și coeficientul 1).",

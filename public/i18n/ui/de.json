@@ -804,6 +804,7 @@
   "chk.partOnly": "Der ganze Ausdruck stimmt, aber gefragt ist nur {sym}. Gib nur diese Zahl ein.",
   "chk.partOnlyAsk": "Gefragt ist nur {sym}, nicht der ganze Ausdruck. Gib nur diese Zahl ein.",
   "chk.partOnlyWrong": "Du hast den ganzen Ausdruck eingegeben, und er enthält einen Fehler. Gefragt ist nur {sym}: Gib nur diese Zahl ein.",
+  "chk.partOnlyForm": "Der Wert stimmt, aber der Ausdruck hat noch nicht die verlangte Form. Gefragt ist nur {sym}: Gib nur diese Zahl ein.",
   "chk.calcFully": "Der Wert stimmt. Rechne ihn noch fertig aus und gib eine einzige Zahl ein.",
   "chk.expression": "Gefragt ist eine Zahl, du hast aber einen Ausdruck eingegeben. Prüfe, welche Zahl gesucht ist, und gib nur diese ein.",
   "chk.coef": "Gib {n} ganze Zahlen ein, durch Kommas getrennt (schreib auch den Koeffizienten 1).",

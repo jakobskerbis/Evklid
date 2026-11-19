@@ -126,7 +126,8 @@ function parseQuotient(input, { dot = false } = {}) {
 const SUPER = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
 function parseScientific(input) {
   const s = westernDigits(String(input).trim()).replace(/[−–]/g, "-");
-  const m = s.match(/^([+-]?\s*\d+(?:[.,]\d+)?)\s*[·*×xX]\s*10\s*(?:\^\s*(?:\(\s*([+-]?\s*\d+)\s*\)|\{\s*([+-]?\s*\d+)\s*\}|([+-]?\s*\d+))|([⁻⁺]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+))(?![\d⁰¹²³⁴⁵⁶⁷⁸⁹])\s*(.*)$/);
+  // Brez dveh zaporednih delov, ki oba sprejmeta presledke (»[+-]?\s*« za »\s*«, »\s*(.*)«): sicer kvadratni čas pri dolgem nizu presledkov.
+  const m = s.match(/^((?:[+-]\s*)?\d+(?:[.,]\d+)?)\s*[·*×xX]\s*10\s*(?:\^\s*(?:\(\s*((?:[+-]\s*)?\d+)\s*\)|\{\s*((?:[+-]\s*)?\d+)\s*\}|((?:[+-]\s*)?\d+))|([⁻⁺]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+))(?![\d⁰¹²³⁴⁵⁶⁷⁸⁹])([\s\S]*)$/);
   if (!m) return null;
   const exp = (m[2] ?? m[3] ?? m[4] ?? [...m[5]].map((c) => SUPER[c]).join("")).replace(/\s/g, "");
   const value = Number(`${m[1].replace(/\s/g, "").replace(",", ".")}e${exp}`);
@@ -198,7 +199,8 @@ function checkNumber(ans, input, opts = {}) {
       // S π je točen zapis pravilen kot pri »2π« (»2π/3«, »π/4«).
       if (/π|\\pi/.test(s) && sameValue(ans, v)) return checkConverted(ans, { value: v, decimals: effDecimals(v), unit: "" });
       if (sameValue(ans, v)) return { kind: "format", code: "chk.calcFully", message: "Vrednost je prava. Izračunaj jo še do konca in vpiši eno samo število." };
-      if (p) return { kind: "wrong", mistake: { code: "chk.expression", params: {}, message: "Naloga sprašuje po enem številu, ti pa si vpisal izraz. Preveri, katero število iščemo, in vpiši samo to število." } };
+      // Tudi brez števila na začetku (»(8)«, »√50«): sicer bi učenec brez poskusov ugibal, dokler ne dobi »Vrednost je prava«.
+      return { kind: "wrong", mistake: { code: "chk.expression", params: {}, message: "Naloga sprašuje po enem številu, ti pa si vpisal izraz. Preveri, katero število iščemo, in vpiši samo to število." } };
     }
   }
   if (!p) return { kind: "format", code: "chk.number", message: "Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
@@ -514,8 +516,10 @@ function askedSymbols(answer, opts) {
   return new Set([answer.form?.ask, askedLetter(opts), ...[].concat(opts.find || [])].filter(Boolean).map(symKey).filter(Boolean));
 }
 function stripAsked(input, answer, opts) {
-  const m = String(input).match(/^\s*([A-Za-zͰ-Ͽ][A-Za-z0-9_Ͱ-Ͽ']*)\s*=\s*([^=]+)$/);
-  return m && askedSymbols(answer, opts).has(symKey(m[1])) ? m[2] : input;
+  // Brez »\s*« ob razredu, ki tudi sprejme presledke (kvadratni čas pri »A=« + mnogo presledkov).
+  const m = String(input).trim().match(/^([A-Za-zͰ-Ͽ][A-Za-z0-9_Ͱ-Ͽ']*)\s*=([\s\S]*)$/);
+  if (!m || m[2].includes("=") || !m[2].trim()) return input;
+  return askedSymbols(answer, opts).has(symKey(m[1])) ? m[2].trim() : input;
 }
 
 const ungrp = (n) => (n && n.k === "grp" ? ungrp(n.a) : n);
@@ -691,8 +695,9 @@ const IMPLIED = [
 function askedLetter(opts) {
   const find = [].concat(opts.find || []).map(symKey).filter(Boolean);
   if (find.length === 1 && /^[a-zA-Z]$/.test(find[0])) return find[0];
-  const all = [...String(opts.text || "").matchAll(/(?:Koliko je|Vpiši|Izračunaj|Določi|find)\s+\$?([a-zA-Z])\$?(?![\w{(\\])/g)];
-  return all.length ? all[all.length - 1][1] : null;
+  const all = [...String(opts.text || "").matchAll(/(?:Koliko je|Vpiši|Izračunaj|Določi)\s+\$([a-zA-Z])\$|\bfind\s+\$?([a-zA-Z])\$?(?![\w{(\\])/g)];
+  // V slovenskem besedilu je črka v $…$ (»Koliko je v posodi« ni črka v).
+  return all.length ? all[all.length - 1][1] || all[all.length - 1][2] : null;
 }
 function impliedForm(answer, opts) {
   if (answer.form) return answer.form;
@@ -714,13 +719,25 @@ function impliedForm(answer, opts) {
 function checkForm(answer, input, opts) {
   const f = impliedForm(answer, opts);
   if (!f || !opts.math || !/[A-Za-zͰ-Ͽ√∛^=π⁰¹²³⁴⁵⁶⁷⁸⁹]/.test(String(input))) return null;
-  const got = formValues(f, input, opts.math);
+  // »3,2x10^4«: x je tu znak za množenje (kot v parseScientific), ne spremenljivka.
+  const inp = /10\^/.test(f.expr) ? String(input).replace(/(\d)\s*[xX]\s*(?=10)/g, "$1*") : input;
+  const got = formValues(f, inp, opts.math);
   if (!got) return null;
   const sym = f.ask;
-  if (Object.entries(f.vals).every(([k, v]) => close(got[k], v))) {
+  // Iskana vrednost mora biti tudi enaka odgovoru naloge (če bi se form.vals in answer kdaj razšla, ne izdamo »pravilno«).
+  const want = answer.type === "fraction" ? answer.num / answer.den : answer.value;
+  if (sym in got && close(got[sym], want) && Object.entries(f.vals).every(([k, v]) => close(got[k], v))) {
     // Drugih črk ne poznamo (oblika iz besedila): ne trdimo, da je cel zapis pravilen.
     if (f.free?.length) return { kind: "format", code: "chk.partOnlyAsk", params: { sym }, message: `Naloga sprašuje samo po ${sym}, ne po celem zapisu. Vpiši le to število.` };
     return { kind: "format", code: "chk.partOnly", params: { sym }, message: `Celoten zapis je pravilen, naloga pa sprašuje samo po ${sym}. Vpiši le to število.` };
+  }
+  // »√175« pri obliki a√b: vrednost je prava, zapis pa še ni v zahtevani obliki (ni »napaka v zapisu«).
+  if (!f.free?.length && !Object.entries(f.vals).every(([k, v]) => close(got[k], v))) {
+    const whole = exprValue(f.expr.replace(/\b[a-zA-Z]\b/g, (c) => (c in f.vals ? `(${f.vals[c]})` : c)), opts.math);
+    const own = exprValue(inp, opts.math);
+    if (whole !== null && own !== null && close(whole, own)) {
+      return { kind: "wrong", mistake: { code: "chk.partOnlyForm", params: { sym }, message: `Vrednost je prava, a zapis še ni v zahtevani obliki. Naloga sprašuje samo po ${sym}: vpiši le to število.` } };
+    }
   }
   return { kind: "wrong", mistake: { code: "chk.partOnlyWrong", params: { sym }, message: `Vpisal si celoten zapis, v njem pa je napaka. Naloga sprašuje samo po ${sym}: vpiši le to število.` } };
 }

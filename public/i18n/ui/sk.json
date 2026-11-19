@@ -816,6 +816,7 @@
   "chk.partOnly": "Celý zápis je správny, úloha sa však pýta len na {sym}. Zadaj len toto číslo.",
   "chk.partOnlyAsk": "Úloha sa pýta len na {sym}, nie na celý zápis. Zadaj len toto číslo.",
   "chk.partOnlyWrong": "Zadal si celý zápis a je v ňom chyba. Úloha sa pýta len na {sym}: zadaj len toto číslo.",
+  "chk.partOnlyForm": "Hodnota je správna, ale zápis ešte nie je v požadovanom tvare. Úloha sa pýta len na {sym}: zadaj len toto číslo.",
   "chk.calcFully": "Hodnota je správna. Dopočítaj ju a zadaj jediné číslo.",
   "chk.expression": "Úloha sa pýta na jedno číslo, ty si však zadal výraz. Skontroluj, ktoré číslo hľadáme, a zadaj len to.",
   "chk.coef": "Napíš {n} celých čísel oddelených čiarkou (napíš aj koeficient 1).",

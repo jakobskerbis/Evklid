@@ -804,6 +804,7 @@
   "chk.partOnly": "A teljes kifejezés helyes, de a feladat csak a(z) {sym} értékét kérdezi. Csak ezt a számot írd be.",
   "chk.partOnlyAsk": "A feladat csak a(z) {sym} értékét kérdezi, nem a teljes kifejezést. Csak ezt a számot írd be.",
   "chk.partOnlyWrong": "A teljes kifejezést írtad be, és hiba van benne. A feladat csak a(z) {sym} értékét kérdezi: csak ezt a számot írd be.",
+  "chk.partOnlyForm": "Az érték helyes, de a kifejezés még nincs a kért alakban. A feladat csak a(z) {sym} értékét kérdezi: csak ezt a számot írd be.",
   "chk.calcFully": "Az érték helyes. Számold ki teljesen, és egyetlen számot írj be.",
   "chk.expression": "A feladat egy számot kérdez, te viszont kifejezést írtál be. Nézd meg, melyik számot keressük, és csak azt írd be.",
   "chk.coef": "Írj be {n} egész számot vesszővel elválasztva (az 1-es együtthatót is írd ki).",

@@ -351,6 +351,7 @@ export default {
   "chk.partOnly": "Celoten zapis je pravilen, naloga pa sprašuje samo po {sym}. Vpiši le to število.",
   "chk.partOnlyAsk": "Naloga sprašuje samo po {sym}, ne po celem zapisu. Vpiši le to število.",
   "chk.partOnlyWrong": "Vpisal si celoten zapis, v njem pa je napaka. Naloga sprašuje samo po {sym}: vpiši le to število.",
+  "chk.partOnlyForm": "Vrednost je prava, a zapis še ni v zahtevani obliki. Naloga sprašuje samo po {sym}: vpiši le to število.",
   "chk.calcFully": "Vrednost je prava. Izračunaj jo še do konca in vpiši eno samo število.",
   "chk.expression": "Naloga sprašuje po enem številu, ti pa si vpisal izraz. Preveri, katero število iščemo, in vpiši samo to število.",
   "chk.coef": "Vpiši {n} celih števil, ločenih z vejico (koeficient 1 tudi zapiši).",

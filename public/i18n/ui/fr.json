@@ -804,6 +804,7 @@
   "chk.partOnly": "L'expression complète est juste, mais la tâche ne demande que {sym}. Saisis seulement ce nombre.",
   "chk.partOnlyAsk": "La tâche ne demande que {sym}, pas l'expression complète. Saisis seulement ce nombre.",
   "chk.partOnlyWrong": "Tu as saisi l'expression complète et elle contient une erreur. La tâche ne demande que {sym} : saisis seulement ce nombre.",
+  "chk.partOnlyForm": "La valeur est juste, mais l'expression n'est pas encore sous la forme demandée. La tâche ne demande que {sym} : saisis seulement ce nombre.",
   "chk.calcFully": "La valeur est juste. Termine le calcul et saisis un seul nombre.",
   "chk.expression": "La tâche demande un seul nombre, mais tu as saisi une expression. Vérifie quel nombre est cherché et saisis seulement celui-ci.",
   "chk.coef": "Écris {n} nombres entiers séparés par des virgules (écris aussi le coefficient 1).",

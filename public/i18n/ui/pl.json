@@ -816,6 +816,7 @@
   "chk.partOnly": "Cały zapis jest poprawny, ale zadanie pyta tylko o {sym}. Wpisz tylko tę liczbę.",
   "chk.partOnlyAsk": "Zadanie pyta tylko o {sym}, a nie o cały zapis. Wpisz tylko tę liczbę.",
   "chk.partOnlyWrong": "Wpisałeś cały zapis i jest w nim błąd. Zadanie pyta tylko o {sym}: wpisz tylko tę liczbę.",
+  "chk.partOnlyForm": "Wartość jest poprawna, ale zapis nie ma jeszcze wymaganej postaci. Zadanie pyta tylko o {sym}: wpisz tylko tę liczbę.",
   "chk.calcFully": "Wartość jest poprawna. Oblicz ją do końca i wpisz jedną liczbę.",
   "chk.expression": "Zadanie pyta o jedną liczbę, a ty wpisałeś wyrażenie. Sprawdź, której liczby szukamy, i wpisz tylko ją.",
   "chk.coef": "Wpisz {n} liczb całkowitych oddzielonych przecinkami (zapisz też współczynnik 1).",

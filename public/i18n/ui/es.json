@@ -804,6 +804,7 @@
   "chk.partOnly": "La expresión completa es correcta, pero la tarea solo pide {sym}. Escribe solo ese número.",
   "chk.partOnlyAsk": "La tarea solo pide {sym}, no la expresión completa. Escribe solo ese número.",
   "chk.partOnlyWrong": "Escribiste la expresión completa y tiene un error. La tarea solo pide {sym}: escribe solo ese número.",
+  "chk.partOnlyForm": "El valor es correcto, pero la expresión aún no tiene la forma pedida. La tarea solo pide {sym}: escribe solo ese número.",
   "chk.calcFully": "El valor es correcto. Termina el cálculo y escribe un solo número.",
   "chk.expression": "La tarea pide un solo número, pero escribiste una expresión. Comprueba qué número se busca y escribe solo ese.",
   "chk.coef": "Escribe {n} números enteros separados por comas (escribe también el coeficiente 1).",
