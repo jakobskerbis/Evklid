@@ -115,9 +115,6 @@ export function verifyAi(problemText, ai) {
 function check(problemText, ai) {
   const kind = ai?.kind;
   const v = /^[a-zA-Z]$/.test(ai?.variable || "") ? ai.variable : "x";
-  // Določeni ali nedoločeni integral preveri le vrsta »integral«: kot »derivative« bi odvod konstante (vrednosti
-  // integrala) dal 0 in napačno rešitev »0« potrdil (meritev skenerja 19. 11., naloga s11).
-  if (/∫|\\int\b/.test(String(problemText)) && kind !== "integral") return { verified: false, reason: "kind" };
   try {
     if (kind === "system") {
       const parts = splitSystem(problemText) || String(problemText).split(/;|\n/).filter((s) => s.includes("="));
@@ -157,9 +154,16 @@ function check(problemText, ai) {
       return { verified: equalNumerically(a, b), reason: "wrong" };
     }
     if (kind === "derivative") {
-      const f = fnOf(String(problemText).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, ""));
+      const izraz = String(problemText).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, "");
+      const f = fnOf(izraz);
       const g = fnOf(ai.value);
       if (!f || !g) return { verified: false, reason: "parse" };
+      // Naloga brez »d/dx« ali »f(x) =«, ki je konstanta (npr. določeni integral): odvod bi bil 0 in bi potrdil napačno
+      // rešitev »0«, ki jo AI označi kot odvod (meritev skenerja 19. 11., naloga s11).
+      if (izraz === String(problemText)) {
+        const y = [0.3, 1.7, -2.1].map((t) => f({ [v]: t }));
+        if (y.every((w) => fin(w) && Math.abs(w - y[0]) < 1e-9)) return { verified: false, reason: "kind" };
+      }
       return { verified: compareFns((x) => (f({ [v]: x + 1e-5 }) - f({ [v]: x - 1e-5 })) / 2e-5, (x) => g({ [v]: x })), reason: "wrong" };
     }
     if (kind === "integral") {
