@@ -47,7 +47,7 @@ import { cleanText, plainTitle, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
 import { isHiddenNote } from "./skrite-opombe.js";
 import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
-import { modeSwitchNote } from "./nacin.js";
+import { modeSwitchNote, asksForSolution, solveRequestNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
@@ -143,7 +143,8 @@ export function cacheKey(text, settings, mode, lite = false, pathTopic = null, w
   // »b5« (18. 11., Preizkus 3, krog 2, PR #836; »b4« je #835): ena definicija seznama vaj, deli z drugim postopkom so ena
   // naloga, OŠ 1.–4. brez »Preverimo«; odgovori z »b3« in »b4« se ne vrnejo.
   // »b6« (18. 11., meritev po #836): OŠ 1.–4. kratko tudi pri »zakaj«; odgovori z »b5« se ne vrnejo.
-  if (settings.solving_mode === "B" || /celo\w* rešit|načinu? b\b/i.test(norm)) parts.push("b6");
+  // Izrecna prošnja za rešitev v načinu A (server/nacin.js, #879): shranjeni odgovori z vodenjem se ne vrnejo.
+  if (settings.solving_mode === "B" || /celo\w* rešit|načinu? b\b/i.test(norm) || asksForSolution(norm)) parts.push("b6");
   // »a1« (18. 11., pregled #841): v načinu A je Pojmovno vprašanje za OŠ 1.–4. krajše (dva do trije stavki); le ti ključi
   // načina A se zamenjajo, ključi drugih razredov ostanejo.
   else if (jeOs(settings) && /^[1-4]\.\s*razred/.test(String(settings.curriculum_level || ""))) parts.push("a1");
@@ -1019,7 +1020,10 @@ export function createApp(store, opts = {}) {
     if (image) userContent.push({ type: "image", source: { type: "base64", media_type: image.media_type, data: image.data } });
     // Naloga iz pretekle pole: navodilo za inštruktorja kot skrit blok (server/paper-context.js), učenec vidi le text.
     const solvingMode = student.settings.solving_mode === "B" ? "B" : "A";
-    const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper, mode: solvingMode });
+    // Izrecna prošnja za rešitev v načinu A (»Reši to nalogo«, »pokaži postopek«): opombi pole in lekcije je ne zadržita,
+    // skrita opomba pove, da gre za izrecno zahtevo za celotno rešitev (server/nacin.js, j 19. 11.).
+    const solveAsk = solvingMode === "A" && asksForSolution(text);
+    const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper, mode: solveAsk ? "B1" : solvingMode });
     if (paperNote) userContent.push({ type: "text", text: paperNote });
     // D3: praznost z EXISTS; zgodovino pogovora naložimo (in odšifriramo) samo enkrat, spodaj (prior).
     const isFirst = !store.hasMessages(conv.id);
@@ -1031,12 +1035,14 @@ export function createApp(store, opts = {}) {
     } catch (err) {
       console.warn(`[evklid] iskanje lekcije ni uspelo: ${err?.message || err}`);
     }
-    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson, solvingMode) });
+    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson, solveAsk ? "B1" : solvingMode) });
     // Zamenjava načina A/B med pogovorom (j 14. 11.): skrita opomba, sicer zgodovina vleče nazaj v stari način.
     // Prej: način, s katerim je inštruktor nazadnje odgovoril (stolpec; pri starih pogovorih iz META zadnjega odgovora).
     const modeBefore = isFirst ? null : conv.solving_mode || store.lastEvent(conv.id)?.mode || null;
     const modeNote = modeSwitchNote(modeBefore, solvingMode);
     if (modeNote) userContent.push({ type: "text", text: modeNote });
+    // Tudi ob zamenjavi v A v istem sporočilu: opomba o prošnji gre zadnja in velja za to nalogo (pregled #879).
+    if (solveAsk) userContent.push({ type: "text", text: solveRequestNote() });
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
@@ -1298,7 +1304,7 @@ export function createApp(store, opts = {}) {
       const notes = [pre?.note, codeVerdict?.note].filter(Boolean).join("\n");
       const held = []; // zadržani deli odgovora, dokler sodba ni preverjena
       // Poskus brez razmišljanja za lahek prvi korak (privzeto izklopljen, server/hitri-korak.js).
-      const brezRazmisleka = !cached && hitriKorak({ mode, settings: student.settings, pre, image: !!image, competition: !!tekTopic, isFirst });
+      const brezRazmisleka = !cached && hitriKorak({ mode, settings: student.settings, pre, image: !!image, competition: !!tekTopic, isFirst, solveAsk });
       let besediloPoslano = !!note; // obvestilo (meja, nižji model) je že poslano: »Razmišljam« ga ne zamenja
       let razmisljamPoslano = false;
       const klicZacetek = Date.now();
