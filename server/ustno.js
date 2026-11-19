@@ -115,6 +115,52 @@ const bullets = (md) =>
     .map((l) => /^\s*[-*]\s+(.*)$/.exec(l)?.[1]?.trim())
     .filter(Boolean);
 
+// Trditve »Povzetka« (j 2026-11-19: ena trditev v alineji, formule v svoji vrstici, majhne tabele). Vrne besedila
+// trditev, out.vrste pa vrsto vsake: »alineja«, »odstavek« (z dvopičjem ali brez, skupaj s formulami $$…$$, ki mu
+// sledijo), »formula« (formula brez uvoda) ali »tabela« (ena vrstica tabele). Odstavek z malo začetnico za formulo
+// (»je $k_1$ stopnja ničle«) nadaljuje prejšnjo trditev, alineje brez velike začetnice za uvodom z dvopičjem
+// (»**Zaporedje neodvisnih poskusov:** isti poskus $n$-krat; …«) pa uvod. Prej so štele le alineje, zato so
+// formule in tabele iz vzorca izpadle.
+export function summaryItems(md) {
+  const items = [];
+  const zadnja = () => items[items.length - 1];
+  for (const block of clean(md).split(/\n\s*\n/)) {
+    const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+    if (!lines.length) continue;
+    const z = zadnja();
+    if (lines.every((l) => /^\$\$[\s\S]*\$\$$/.test(l))) {
+      const f = lines.map((l) => `$${l.slice(2, -2).trim()}$`).join(", ");
+      if (z?.vrsta === "odstavek" && !z.zaprt) (z.t += `${z.math ? "," : ""} ${f}`), (z.math = true);
+      else items.push({ t: f, vrsta: "formula", math: true });
+      continue;
+    }
+    if (lines.every((l) => /^(?:[-*]|\d+\.)\s+/.test(l))) {
+      const al = lines.map((l) => l.replace(/^(?:[-*]|\d+\.)\s+/, "").trim());
+      if (z?.vrsta === "odstavek" && !z.math && !z.zaprt && /:\**\s*$/.test(z.t) && al.every((t) => !/^(?:\*\*)?\p{Lu}/u.test(t))) {
+        z.t += ` ${al.join(" ")}`;
+        z.zaprt = true;
+      } else items.push(...al.map((t) => ({ t, vrsta: "alineja" })));
+      continue;
+    }
+    if (lines.every((l) => l.startsWith("|"))) {
+      const rows = lines.filter((l) => !/^\|[\s:|-]+\|?$/.test(l)).map((l) => l.replace(/^\||\|$/g, "").split("|").map((c) => c.trim()));
+      const [head, ...body] = rows;
+      // Prazna prva glava: »vrstica – glava: celica; …«, sicer vsak stolpec »glava: celica«.
+      for (const r of body) {
+        const pari = r.map((c, i) => (head[i] ? `${head[i]}: ${c}` : c));
+        items.push({ t: head[0] ? pari.join("; ") : `${r[0]} – ${pari.slice(1).join("; ")}`, vrsta: "tabela" });
+      }
+      continue;
+    }
+    const text = lines.join(" ").replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => `$${t.trim()}$`);
+    if (z?.math && /^\p{Ll}/u.test(text)) (z.t += ` ${text}`), (z.zaprt = true);
+    else items.push({ t: text, vrsta: "odstavek" });
+  }
+  const out = items.map((x) => x.t);
+  out.vrste = items.map((x) => x.vrsta);
+  return out;
+}
+
 function section(lesson, re) {
   return lesson?.sections?.find((s) => re.test(s.title))?.md || "";
 }
@@ -174,9 +220,15 @@ export function lessonQuestions(topicId, lesson, name = "", { raw = false, pregl
     const ask = pojmi.some((p) => ORIGIN_RE.test(p)) ? "Zakaj se ljudje tako zmotijo, kaj je narobe in kako je prav?" : "Pojasni, kaj je tu narobe in kako je prav.";
     out.push({ id: `${topicId}#n${j}`, topicId, vrsta: "napaka", naslov, besedilo: `Pogosta napaka pri tej snovi: ${quoted}. ${ask}`, vzorec: clean(m[2]), pojmi, hn: textHash(b, "") });
   });
-  const sum = bullets(section(lesson, /^povzetek$/i));
+  const sum = summaryItems(section(lesson, /^povzetek$/i));
   if (sum.length >= 2) {
-    const pojmi = sum.slice(0, 4).map((b) => b.replace(/\*\*/g, "").replace(/[.;]\s*$/, ""));
+    const vsi = sum.map((b) => b.replace(/\*\*/g, "").replace(/[.;]\s*$/, ""));
+    // Pojmi za točkovnik: alineje kot prej (prve štiri); trditve, ki jih sestavi summaryItems, le cele (ne uvod brez
+    // vsebine, ne kratka formula (tudi kot alineja), ne odlomek z malo začetnico; »pH« ostane), vrstice tabele pa za ostalimi.
+    const cela = (p, i) => (sum.vrste[i] === "alineja" && plainLen(p) >= 4) || (plainLen(p) >= 12 && !/^\p{Ll}[^\s\p{Lu}]*(?:\s|$)/u.test(p) && !/:\s*$/.test(p));
+    const izbrani = vsi.map((p, i) => ({ p, i })).filter(({ p, i }) => cela(p, i));
+    izbrani.sort((a, b) => (sum.vrste[a.i] === "tabela") - (sum.vrste[b.i] === "tabela"));
+    const pojmi = (izbrani.length >= 2 ? izbrani.map((x) => x.p) : vsi).slice(0, 4);
     out.push({ id: `${topicId}#s`, topicId, vrsta: "povzetek", naslov: name, besedilo: `Povej, kaj veš o temi »${name || "te lekcije"}«. Omeni glavne stvari.`, vzorec: sum.join("\n"), pojmi });
   }
   if (raw) return out;
