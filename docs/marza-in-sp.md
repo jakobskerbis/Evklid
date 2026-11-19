@@ -10,14 +10,14 @@ cena − Stripe (1,5 % + 0,25 € na plačilo) − strežnik (0,30 € na profil
 `server/meje-ai.js`), brez DDV, 1 $ = 0,92 €. Zajamčeni AI je **najslabši** primer: učenec, ki porabi vso mejo. Tipični
 učenec porabi manj (točka 21: pravi podatki iz pilota).
 
-Zajamčeni AI na profil na mesec: OŠ 1,9 $ (letno 1,7 $), SŠ 2,9 $ (2,58 $), faks 4,452 $ (3,693 $).
+Zajamčeni AI na profil na mesec: OŠ 1,9 $ (letno 1,7 $), SŠ 2,9 $ (letno 1,7 $ od 19. 11., ko je letna cena SŠ 99 €), faks 4,452 $ (3,693 $).
 
 | Paket | Cena na mesec | A: zdaj v kodi (pod pragom DDV, 1 $ = 0,92 €) | B: pod pragom, 1 $ = 1 € | C: pod pragom, identificiran za DDV (obrnjena davčna obveznost na AI in strežnik, brez odbitka), 1 $ = 1 € | D: nad pragom 60.000 € (cena vsebuje 22 % DDV, vstopni DDV se odbije), 1 $ = 1 € |
 |---|---:|---:|---:|---:|---:|
 | OŠ mesečno | 9,99 € | 75,5 % | 74,0 % | 69,1 % | 68,3 % |
 | OŠ letno | 8,25 € | 75,7 % | 74,0 % | 68,7 % | 68,3 % |
 | SŠ mesečno | 13,99 € | 75,5 % | 73,8 % | 68,8 % | 68,1 % |
-| SŠ letno | 11,58 € | 75,2 % | 73,5 % | 68,0 % | 67,6 % |
+| SŠ letno (99 € od 19. 11.) | 8,25 € | 75,7 % | 74,0 % | 68,7 % | 68,3 % |
 | Faks mesečno | 19,99 € | 75,3 % | 73,5 % | 68,2 % | 67,6 % |
 | Faks letno | 16,58 € | 76,1 % | 74,3 % | 69,0 % | 68,6 % |
 

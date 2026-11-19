@@ -1920,7 +1920,7 @@ export function mountAccounts(app, store, opts = {}) {
       gift_buy: !isPilotParent(p),
       guarantee: guarantee ? guarantee.viewFor(p) : null,
       podari: podari && !isPilotParent(p) ? podari.stats() : null,
-      // Darilna koda po letni ceni stopnje (99 / 139 / 199 €).
+      // Darilna koda po letni ceni stopnje (99 / 99 / 199 €).
       gift_prices: GIFT_PRICES,
       gift_price: GIFT_PRICES.OS,
       // Stopnja profila s sedežem (cena paketa za en profil) in ali je Družina na izbiro (vsaj 2 profila).

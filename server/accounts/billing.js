@@ -937,7 +937,7 @@ export function mountBilling(app, ctx) {
           db.prepare(
             "INSERT INTO plan_changes (parent_id, sub_id, from_key, to_key, effective_at, notified_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(parent_id) DO UPDATE SET sub_id = excluded.sub_id, from_key = excluded.from_key, to_key = excluded.to_key, effective_at = excluded.effective_at, notified_at = excluded.notified_at, applied_at = NULL",
           ).run(p.id, p.sub_id, plan.key, to.key, effective, iso(now.getTime()));
-          const msg = planChangeEmail({ planText: to.label, amountText: fmtMoney(to.amount, "EUR"), dateText: fmtDate(effective), up }, appUrl);
+          const msg = planChangeEmail({ planText: to.label, amountText: fmtMoney(to.amount, "EUR"), dateText: fmtDate(effective), up, same: to.amount === plan.amount }, appUrl);
           const period = `${to.key}:${effective.slice(0, 10)}`;
           const sent = await remind(p, "plan_change", period, msg);
           // Višja cena brez poslane e-pošte ne sme začeti veljati: jutri znova (z novim rokom vsaj 30 dni).

@@ -73,13 +73,13 @@ const SETTINGS = {
   FAKS: { educational_track: "UNIVERZA", curriculum_level: "1. letnik", study_program: listPrograms()[0].id },
 };
 
-test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/139, faks 19,99/199, Družina 18,99/189, s študentom 27,99/269", () => {
+test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/99, faks 19,99/199, Družina 18,99/189, s študentom 27,99/269", () => {
   const by = Object.fromEntries(PLANS.map((p) => [p.key, [p.amount, p.seats, p.level, !!p.family]]));
   assert.deepEqual(by, {
     evklid_1_month: [999, 1, "OS", false],
     evklid_1_year: [9900, 1, "OS", false],
     evklid_ss_month: [1399, 1, "SS", false],
-    evklid_ss_year: [13900, 1, "SS", false],
+    evklid_ss_year: [9900, 1, "SS", false],
     evklid_faks_month: [1999, 1, "FAKS", false],
     evklid_faks_year: [19900, 1, "FAKS", false],
     evklid_druzina_month: [1899, 4, "SS", true],
@@ -117,11 +117,11 @@ test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/139, faks 19,99/199, Druž
   assert.equal(passByKey("evklid_pass_faks_30"), null);
   assert.equal(passByDays(30, "SS"), null);
   // Darilna koda = letna cena stopnje.
-  assert.deepEqual(GIFT_PRICES, { OS: 9900, SS: 13900, FAKS: 19900 });
+  assert.deepEqual(GIFT_PRICES, { OS: 9900, SS: 9900, FAKS: 19900 });
   // Trgovine z aplikacijami: 2 € dražje kot splet.
   for (const p of PLANS) assert.equal(storeAmount(p), p.amount + 200);
   assert.deepEqual(STORE_PRICES_EUR.month, { 1: 11.99, ss: 15.99, faks: 21.99, druzina: 20.99, druzina_student: 29.99 });
-  assert.deepEqual(STORE_PRICES_EUR.year, { 1: 101, ss: 141, faks: 201, druzina: 191, druzina_student: 271 });
+  assert.deepEqual(STORE_PRICES_EUR.year, { 1: 101, ss: 101, faks: 201, druzina: 191, druzina_student: 271 });
   assert.equal(STORE_PRODUCTS.find((p) => p.id.endsWith(".month.2")).legacy, true, "stari izdelek ostane prepoznan");
 });
 
@@ -189,9 +189,9 @@ function usageSetup() {
 }
 
 test("poraba AI: zajamčeni deleži naročnikov imajo prednost pred brezplačnimi v proračunu", () => {
-  // Faks in SŠ letno omejeni na 25 % cene brez DDV (trda meja AI, j 2026-11-06).
+  // Faks omejen na 25 % cene brez DDV (trda meja AI, j 2026-11-06); SŠ letno 99 € → 1,7 $ (j 2026-11-19).
   assert.deepEqual(["OS", "SS", "FAKS"].map((l) => guaranteeUsd(l)), [1.9, 2.9, 4.452]);
-  assert.deepEqual(["OS", "SS", "FAKS"].map((l) => guaranteeUsd(l, "year")), [1.7, 2.58, 3.693]);
+  assert.deepEqual(["OS", "SS", "FAKS"].map((l) => guaranteeUsd(l, "year")), [1.7, 1.7, 3.693]);
   const { u, id, spend } = usageSetup();
   const sub = id("Naročnik");
   const free1 = id("Brez 1");
@@ -365,7 +365,7 @@ test("Račun: cena stopnje profila, Družina pri ≥ 2 profilih; nakup po stopnj
     let acc = (await call("/api/account")).body;
     assert.equal(acc.plan_level, "FAKS");
     assert.equal(acc.family_ok, false, "Družina samo pri vsaj 2 profilih");
-    assert.deepEqual(acc.gift_prices, { OS: 9900, SS: 13900, FAKS: 19900 });
+    assert.deepEqual(acc.gift_prices, { OS: 9900, SS: 9900, FAKS: 19900 });
     const co = await call("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "year", adult: true, withdrawal: true, terms: true } });
     assert.equal(co.status, 200, JSON.stringify(co.body));
     assert.equal(stripe.calls.find((c) => c.path === "/v1/checkout/sessions").body["line_items[0][price]"], "price_evklid_faks_year");
@@ -377,7 +377,7 @@ test("Račun: cena stopnje profila, Družina pri ≥ 2 profilih; nakup po stopnj
     const gifts = db.prepare("SELECT text FROM billing_consents WHERE kind = 'gift'").all();
     assert.equal(gifts.length, 1, JSON.stringify(gifts));
     assert.ok(gifts[0].text.includes(GIFT_WITHDRAWAL_TEXT) && !/čas do odstopa/.test(gifts[0].text), gifts[0].text);
-    assert.equal(stripe.calls.filter((c) => c.path === "/v1/checkout/sessions").at(-1).body["line_items[0][price_data][unit_amount]"], "13900");
+    assert.equal(stripe.calls.filter((c) => c.path === "/v1/checkout/sessions").at(-1).body["line_items[0][price_data][unit_amount]"], "9900");
   });
 });
 
@@ -698,7 +698,8 @@ test("prehod navzdol: nižja cena že ob naslednjem podaljšanju; zamujena izved
 
 test("prehod navzgor: brez poslane e-pošte nova cena ne začne veljati; letni opomnik navede novo ceno", async () => {
   await withAccounts(async ({ db, api, stripe, kid, subscribe, pid }) => {
-    kid("Ana", "SS");
+    // Faks: OŠ in SŠ letno sta od 2026-11-19 enako dragi (99 €), zato višja cena le pri faksu (199 €).
+    kid("Ana", "FAKS", YEAR - 20);
     subscribe("evklid_1_year", iso(20));
     const run = (now = new Date()) => api.billing.billingDaily(now, { force: true });
     stripe.state.failMail = true;
@@ -707,12 +708,32 @@ test("prehod navzgor: brez poslane e-pošte nova cena ne začne veljati; letni o
     stripe.state.failMail = false;
     assert.equal((await run()).plan_notified, 1, "naslednji dan znova");
     const row = db.prepare("SELECT * FROM plan_changes WHERE parent_id = ?").get(pid);
-    assert.equal(row.to_key, "evklid_ss_year");
-    // Leto pozneje: obdobje se konča ob effective_at, opomnik o obnovitvi 20 dni prej navede 139 €, ne 99 €.
+    assert.equal(row.to_key, "evklid_faks_year");
+    // Leto pozneje: obdobje se konča ob effective_at, opomnik o obnovitvi 20 dni prej navede 199 €, ne 99 €.
     db.prepare("UPDATE parents SET sub_period_end = ? WHERE id = ?").run(row.effective_at, pid);
     await run(new Date(Date.parse(row.effective_at) - 20 * day));
     const renewal = stripe.calls.filter((c) => c.host === "api.resend.com" && /obnovila/.test(c.body.text)).at(-1);
-    assert.match(renewal.body.text, /139,00/);
+    assert.match(renewal.body.text, /199,00/);
+  });
+});
+
+test("prehod OŠ → SŠ letno pri isti ceni (99 €): paket se zamenja ob podaljšanju, e-pošta ne govori o novi ali nižji ceni", async () => {
+  await withAccounts(async ({ db, api, stripe, kid, subscribe, pid }) => {
+    kid("Ana", "SS");
+    const end = iso(20);
+    subscribe("evklid_1_year", end);
+    const run = (now = new Date()) => api.billing.billingDaily(now, { force: true });
+    assert.equal((await run()).plan_notified, 1);
+    const row = db.prepare("SELECT * FROM plan_changes WHERE parent_id = ?").get(pid);
+    assert.equal(row.to_key, "evklid_ss_year");
+    assert.equal(row.effective_at, end, "cena se ne zviša: brez 30-dnevnega čakanja, ob naslednjem podaljšanju");
+    const mail = stripe.calls.filter((c) => c.host === "api.resend.com" && /sprememba paketa/.test(c.body.subject)).at(-1).body;
+    assert.match(mail.text, /Cena ostane enaka: 99,00/);
+    assert.doesNotMatch(mail.text, /cenejša/);
+    assert.doesNotMatch(mail.subject, /nova cena/);
+    await run(new Date(Date.parse(end) - 2 * day));
+    const post = stripe.calls.find((c) => c.path === "/v1/subscriptions/sub_a" && c.method === "POST");
+    assert.equal(post.body["items[0][price]"], "price_evklid_ss_year");
   });
 });
 
@@ -795,7 +816,7 @@ test("75 %: zajamčeni AI po paketih, skupen delež družine, regijske cene po p
   // total = vrednost iz tabele (Predlog A), usd = meja paketa = total − brezplačni rep 0,2 $ na profil (Družina 4 profili).
   const tot = (key) => [g(key).total, g(key).usd];
   assert.deepEqual(["evklid_1_month", "evklid_ss_month", "evklid_faks_month"].map(tot), [[1.9, 1.7], [2.9, 2.7], [4.452, 4.252]]);
-  assert.deepEqual(["evklid_1_year", "evklid_ss_year", "evklid_faks_year"].map(tot), [[1.7, 1.5], [2.58, 2.38], [3.693, 3.493]]);
+  assert.deepEqual(["evklid_1_year", "evklid_ss_year", "evklid_faks_year"].map(tot), [[1.7, 1.5], [1.7, 1.5], [3.693, 3.493]]);
   assert.deepEqual(g("evklid_druzina_month"), { usd: 2.4, total: 3.2, profiles: 4, pool: true });
   assert.deepEqual(g("evklid_druzina_year"), { usd: 1.8, total: 2.6, profiles: 4, pool: true });
   assert.deepEqual(g("evklid_druzina_student_month"), { usd: 4.7, total: 5.5, profiles: 4, pool: true });
@@ -855,7 +876,7 @@ test("75 %: zajamčeni AI po paketih, skupen delež družine, regijske cene po p
   // Stalni tečaj z rezervo 20 % (brez svežih tečajev, j 2026-11-06 12:53).
   assert.equal(regionalGuaranteeUsd(inr[0]), guaranteeFromPrice(399 * 0.0098 * 0.8));
   // Darilo = letna cena stopnje; dokup 75 % (kredit nima hitrega načina): 5 / 10 / 20 € → 1,00 / 2,28 / 4,83 $.
-  assert.deepEqual(GIFT_PRICES, { OS: 9900, SS: 13900, FAKS: 19900 });
+  assert.deepEqual(GIFT_PRICES, { OS: 9900, SS: 9900, FAKS: 19900 });
   assert.deepEqual(CREDIT_PACKS.map((p) => creditUsdFor(p.amount)), [1, 2.13, 4.27]); // največ 25 % plačila brez DDV po najvišji stopnji EU (27 %)
   for (const c of [500, 1000, 2000, 12345]) assert.ok(((c / 100) * 0.985 - 0.25 - creditUsdFor(c) * 0.92) / (c / 100) >= 0.75 - 1e-9, `dokup ${c}`);
 });
