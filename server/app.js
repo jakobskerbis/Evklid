@@ -2156,7 +2156,7 @@ export function createApp(store, opts = {}) {
   mountCorner(app, store, { loadStudent, fetchFn: opts.newsFetch, offline: opts.newsOffline });
   mountSchedule(app, store, { loadStudent, progress, usage, schedules, photoFn: opts.schedulePhotoFn, fetchFn: opts.fetchFn, lookup: opts.lookup, modelCapFor: (id) => accounts?.modelCapFor?.(id) ?? null });
   mountScan(app, { loadStudent, usage, readFn: opts.scanReadFn, solveFn: opts.scanSolveFn, readTaskFn: opts.scanReadTaskFn, dailyBlock: (id) => accounts?.dailyBlock?.(id), chatOff });
-  ustno = mountUstno(app, store, { loadStudent, usage, progress, accounts, createFn: opts.ustnoFn }); // ustno spraševanje »Vprašaj me« (server/ustno.js)
+  ustno = mountUstno(app, store, { loadStudent, usage, progress, accounts, createFn: opts.ustnoFn, glasFn: opts.glasFn }); // ustno spraševanje »Vprašaj me« (server/ustno.js)
   // Uči se iz svojih zapiskov (korak 1): meja strani po paketu, vsak klic skozi trdo mejo AI.
   mountZapiski(app, store, { loadStudent, usage, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, readFn: opts.zapiskiReadFn, cardsFn: opts.zapiskiCardsFn });
   // Vaja iz testa ali domače naloge (faza 1): veščine nalog → naše naloge iz Vadnice; strani iz iste meje kot zapiski.

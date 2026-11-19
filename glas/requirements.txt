@@ -1,0 +1,3 @@
+# Glasovni strežnik Evklida (glas/streznik.py): odprt slovenski glas Piper (MIT/GPL koda, glas artur CC BY 4.0).
+piper-tts==1.8.0
+soundfile==0.14.0

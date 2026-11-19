@@ -1,6 +1,7 @@
 // Besedilo lekcije (Markdown + LaTeX) → slovensko besedilo za branje na glas (zvočni povzetek).
 // Brskalnik ga prebere s slovenskim glasom (speechSynthesis), strežnik nič ne stane.
 // Formule beremo, kot jih prebere učitelj: »I je enako U deljeno z R«, »v nič«, »deset na minus tri«.
+import "./env.js";
 import { DRAW_RE, drawingText } from "./risbe.js";
 
 // Enote: [ednina, dvojina, 3–4, 5 in več, rodilnik ednine (decimalno število), tožilnik ednine (»na sekundo«)].
@@ -293,4 +294,42 @@ export function speakMarkdown(md) {
     .filter(Boolean)
     .map((l) => (/[.!?:]$/.test(l) ? l : `${l}.`))
     .join("\n");
+}
+
+// --- Slovenski glas strežnika (MP3) ---
+// Ustno spraševanje: besedilo vprašanja gre k zasebnemu glasovnemu strežniku (glas/streznik.py, Render pserv
+// »evklid-glas«, odprt glas Piper), nazaj pride MP3. Glas naprave slovenščino pozna skoraj samo v Edgu, zato je to edina
+// pot, da Evklid bere na glas v Chromu, v aplikaciji za Android in na iPhonu (j, 19. 11. 2026).
+// Brez EVKLID_GLAS_URL (lokalno, testi) strežnika ni: odjemalec uporabi glas naprave kot prej.
+export const MAX_GLAS = 1200; // znakov besedila na branje (vprašanje + dodatno vprašanje sta krajša)
+const TIMEOUT_MS = 20_000;
+
+// Render da pri fromService (property: hostport) »ime:vrata« brez sheme.
+export function glasUrl(raw = process.env.EVKLID_GLAS_URL) {
+  const v = String(raw || "").trim();
+  if (!v) return null;
+  return (/^https?:\/\//i.test(v) ? v : `http://${v}`).replace(/\/+$/, "");
+}
+
+/**
+ * Besedilo → MP3 (Buffer) ali null, ko strežnika ni ali ne odgovori.
+ * @param {string} text
+ * @param {{ url?: string|null, fetchFn?: typeof fetch }} [o]
+ */
+export async function govorMp3(text, { url = glasUrl(), fetchFn = fetch } = {}) {
+  const besedilo = String(text || "").replace(/\s+/g, " ").trim().slice(0, MAX_GLAS);
+  if (!url || !besedilo) return null;
+  try {
+    const r = await fetchFn(`${url}/govor`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ besedilo }),
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (!r.ok || !/audio\/mpeg/.test(r.headers.get("content-type") || "")) return null;
+    const buf = Buffer.from(await r.arrayBuffer());
+    return buf.length ? buf : null;
+  } catch {
+    return null;
+  }
 }

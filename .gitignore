@@ -9,3 +9,4 @@ __pycache__/
 
 # Preizkus 3: naloge v čistem besedilu nikoli v repozitorij (šifrirane so v scripts/preizkus3-naloge.enc)
 preizkus3-naloge*.json
+glas/model/
