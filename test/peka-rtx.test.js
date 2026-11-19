@@ -1,0 +1,170 @@
+// Peka na j-jevem prenosniku (Windows, Nvidia RTX; scripts/atlas/rtx/, docs/3d.md »Baking on j's laptop«):
+// viri s SHA-256, peci.bat usklajen z viri.json, rtx.py --nacrt, paket z vsemi moduli, peka.py izbira naprave.
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { execFileSync, spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+const ATLAS = path.join(ROOT, "scripts", "atlas");
+const RTX = path.join(ATLAS, "rtx");
+const beri = (p) => fs.readFileSync(p, "utf8");
+const python = spawnSync("python3", ["--version"]).status === 0;
+
+test("viri.json: vsak vhod ima https izvor, SHA-256 in licenco; Blender je ista različica kot v peci.bat", () => {
+  const v = JSON.parse(beri(path.join(RTX, "viri.json")));
+  const hex = /^[0-9a-f]{64}$/;
+  assert.match(v.blender.sha256, hex);
+  assert.ok(v.blender.url.startsWith("https://download.blender.org/") && v.blender.url.includes(v.blender.razlicica));
+  for (const x of v.vhodi) {
+    assert.ok(x.url.startsWith("https://"), x.ime);
+    assert.match(x.sha256, hex, x.ime);
+    assert.ok(x.licenca && !/NC/.test(x.licenca), x.ime);
+    if (x.razpakiraj) assert.match(x.razpakiraj.sha256, hex);
+  }
+  assert.ok(v.vhodi.some((x) => x.razpakiraj?.ime === "Startup.blend"));
+  const bat = beri(path.join(RTX, "peci.bat"));
+  assert.ok(bat.includes(`set "BSHA=${v.blender.sha256}"`), "peci.bat: SHA-256 Blenderja");
+  assert.ok(bat.includes(`set "BURL=${v.blender.url}"`), "peci.bat: URL Blenderja");
+  assert.ok(bat.includes("KONČANO") && bat.includes("pause") && bat.includes('chcp.com" 65001'));
+  // sistemski programi po polni poti (ne curl.bat ali tar.exe iz mape paketa)
+  for (const ukaz of ["curl", "tar", "powershell", "chcp"]) {
+    for (const v of bat.split(/\r?\n/).filter((v) => !/^\s*(rem|echo)\b/i.test(v) && new RegExp(`(^|[\\s"(])${ukaz}(\\.exe|\\.com)?\\s`, "i").test(v))) {
+      assert.match(v, new RegExp(`\\\\${ukaz}(\\.exe|\\.com)"`, "i"), `peci.bat: ${ukaz} po polni poti: ${v}`);
+    }
+  }
+  assert.ok(!/'%TU%/.test(bat), "PowerShell: pot prek okolja, ne v narekovajih");
+  assert.match(beri(path.join(ROOT, ".gitattributes")), /^\*\.bat text eol=crlf$/m);
+});
+
+test("peka.py: PEKA_NAPRAVA (CPU privzeto, OPTIX, CUDA), brez tihega preklopa na CPU", () => {
+  const s = beri(path.join(ATLAS, "peka.py"));
+  assert.match(s, /NAPRAVE = \("CPU", "OPTIX", "CUDA"\)/);
+  assert.match(s, /os\.environ\.get\("PEKA_NAPRAVA", "CPU"\)/);
+  assert.match(s, /gpu = naprava\(sc\)/);
+  assert.match(s, /ne preklopim na CPU/);
+  const p = beri(path.join(ATLAS, "peci.py"));
+  assert.match(p, /PEKA_BLENDER/);
+  assert.match(p, /NADZOR = os\.path\.exists\("\/proc\/meminfo"\)/);
+});
+
+test("rtx.py --nacrt: organi iz izvozi-organe.py, neznan organ je napaka", { skip: !python }, () => {
+  const out = JSON.parse(execFileSync("python3", [path.join(RTX, "rtx.py"), "--nacrt", "srce"], { encoding: "utf8" }).trim().split("\n").pop());
+  assert.deepEqual(out.organi, ["srce"]);
+  assert.ok(out.znani.includes("srce") && out.znani.includes("mozgani"));
+  const r = spawnSync("python3", [path.join(RTX, "rtx.py"), "--nacrt", "ni-organ"], { encoding: "utf8" });
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /organa »ni-organ« ni/);
+  assert.ok(!fs.existsSync(path.join(ATLAS, "dnevnik.txt")), "--nacrt ne piše dnevnika");
+});
+
+test("paket.sh: peci.bat in NAVODILO s CRLF, koda z vsemi lokalnimi moduli", { skip: process.platform === "win32" }, () => {
+  const cilj = fs.mkdtempSync(path.join(os.tmpdir(), "peka-rtx-"));
+  try {
+    execFileSync("sh", [path.join(RTX, "paket.sh"), cilj, "srce", "oko"], { stdio: "ignore" });
+    assert.ok(beri(path.join(cilj, "peci.bat")).split("\n").slice(0, -1).every((v) => v.endsWith("\r")));
+    assert.equal(beri(path.join(cilj, "organi.txt")).split("\r\n").filter((v) => v && !v.startsWith("#")).join(","), "srce,oko");
+    const koda = fs.readdirSync(path.join(cilj, "koda"));
+    for (const f of ["rtx.py", "viri.json", "peci.py", "peka.py", "izvozi-organe.py"]) assert.ok(koda.includes(f), f);
+    // prehodno: vsak lokalni modul, ki ga uvozi katerakoli datoteka paketa (tudi znotraj funkcij), je v paketu in
+    // enak izvoru (peka na prenosniku ne sme teči na stari kopiji, pregled #461 n4)
+    for (const ime of koda.filter((f) => f.endsWith(".py"))) {
+      for (const [, m] of beri(path.join(cilj, "koda", ime)).matchAll(/^\s*(?:from|import) ([a-z_]+)/gm)) {
+        if (fs.existsSync(path.join(ATLAS, m + ".py"))) assert.ok(koda.includes(m + ".py"), `${ime} uvozi ${m}`);
+      }
+      const izvor = ime === "rtx.py" ? path.join(RTX, ime) : path.join(ATLAS, ime);
+      assert.equal(beri(path.join(cilj, "koda", ime)), beri(izvor), `${ime} ni enak izvoru`);
+    }
+  } finally {
+    fs.rmSync(cilj, { recursive: true, force: true });
+  }
+});
+
+test("paket.sh: IZVOR, ki ni v HEAD, ustavi sestavo (ne pošlje stare kode)", { skip: process.platform === "win32" || spawnSync("git", ["-C", ATLAS, "rev-parse", "HEAD"]).status !== 0 }, () => {
+  const cilj = fs.mkdtempSync(path.join(os.tmpdir(), "peka-rtx-"));
+  try {
+    // prazen commit na HEAD ni prednik HEAD → zavrnjeno; HEAD sam je → sprejeto
+    const glava = execFileSync("git", ["-C", ATLAS, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+    const drevo = execFileSync("git", ["-C", ATLAS, "rev-parse", "HEAD^{tree}"], { encoding: "utf8" }).trim();
+    const tuj = execFileSync("git", ["-C", ATLAS, "commit-tree", drevo, "-p", glava, "-m", "test"], { encoding: "utf8",
+      env: { ...process.env, GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@t", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@t" } }).trim();
+    const r = spawnSync("sh", [path.join(RTX, "paket.sh"), cilj], { encoding: "utf8", env: { ...process.env, IZVOR: tuj } });
+    assert.equal(r.status, 2);
+    assert.match(r.stderr, /ni v HEAD/);
+    assert.ok(!fs.existsSync(path.join(cilj, "koda")), "brez kode ob zavrnitvi");
+    const ok = spawnSync("sh", [path.join(RTX, "paket.sh"), cilj], { encoding: "utf8", env: { ...process.env, IZVOR: glava } });
+    assert.equal(ok.status, 0, ok.stderr);
+    assert.match(ok.stdout, /izvozi-organe\.py: [0-9a-f]+ /);
+  } finally {
+    fs.rmSync(cilj, { recursive: true, force: true });
+  }
+});
+
+test("primerjaj-peko.py: PSNR enakih slik je ∞, znane razlike pravilen", { skip: !python || spawnSync("python3", ["-c", "import numpy"]).status !== 0 }, () => {
+  const out = execFileSync("python3", ["-c",
+    "import runpy, sys, numpy as np; g = runpy.run_path(sys.argv[1] + '/primerjaj-peko.py', run_name='x')\n" +
+    "a = np.zeros((4, 4, 3)); b = a.copy(); b[0, 0, 0] = 255\n" +
+    "print(g['psnr'](a, a), round(g['psnr'](a, b), 3))", ATLAS], { encoding: "utf8" }).trim();
+  // MSE = 255² / 48 → PSNR = 10·log10(48) = 16,812 dB
+  assert.equal(out, "inf 16.812");
+});
+
+test("rtx.py način čakanja: koda samo po manifestu (SHA-256), naloga.txt preverjena", { skip: !python || process.platform === "win32" }, () => {
+  const cilj = fs.mkdtempSync(path.join(os.tmpdir(), "peka-rtx-"));
+  try {
+    execFileSync("sh", [path.join(RTX, "paket.sh"), cilj], { stdio: "ignore", env: { ...process.env, RAZLICICA: "t1" } });
+    const out = execFileSync("python3", ["-c", `
+import runpy, sys, os, json
+sys.argv = ["rtx.py"]
+g = runpy.run_path(os.path.join(${JSON.stringify(cilj)}, "koda", "rtx.py"), run_name="x")
+k, n = g["KODA"], g["KODA_NOVA"]
+r = [g["manifest_napaka"](k), g["manifest_napaka"](n, "t1"), g["manifest_napaka"](n, "t2")]
+open(os.path.join(n, "peci.py"), "a").write("#")
+r.append(g["manifest_napaka"](n, "t1"))
+open(os.path.join(n, "zlo.py"), "w").write("x")
+r.append(g["manifest_napaka"](n, "t1"))
+def naloga(t):
+    open(g["NALOGA"], "w").write(t); return list(g["beri_nalogo"]())
+r += [naloga('{"id": "n1", "organi": ["mozgani"], "koda": "t1"}'), naloga('{"id": "../x", "organi": ["srce"]}')[1],
+      naloga('{"id": "n2", "organi": ["srce; del"]}')[1], naloga("ni json")[1],
+      naloga('{"id": "n2\\\\n", "organi": ["srce"]}')[1], naloga("[" * 100000)[1], naloga('["seznam"]')[1]]
+# zamenjava: __pycache__ iz koda-nova se ne prenese; neuspelo drugo preimenovanje vrne staro kodo
+os.makedirs(os.path.join(n, "__pycache__")); open(os.path.join(n, "__pycache__", "peka.cpython-311.pyc"), "w").write("x")
+os.remove(os.path.join(n, "zlo.py")); open(os.path.join(n, "peci.py"), "w").write(open(os.path.join(k, "peci.py")).read())
+stara = g["zamenjaj_kodo"]("t1")
+r.append([os.path.isdir(stara), os.path.exists(os.path.join(k, "__pycache__")), g["manifest_napaka"](k)])
+pravi = os.rename
+def slab(a, b):
+    if a.endswith("-zacasna"): raise PermissionError("zaklenjeno")
+    pravi(a, b)
+g["os"].rename = slab; g["time"].sleep = lambda s: None
+try:
+    g["zamenjaj_kodo"]("t1"); r.append("ni napake")
+except SystemExit as e:
+    r.append([e.sporocilo, g["manifest_napaka"](k)])
+g["os"].rename = pravi
+print(json.dumps(r, ensure_ascii=False))`], { encoding: "utf8" });
+    const [ok, okNova, drugaRazl, sha, odvecna, naloga, slabId, slabOrgan, niJson, novaVrstica, globoko, seznam, zamenjava, vrnjena] =
+      JSON.parse(out.trim().split("\n").pop());
+    assert.equal(ok, null);
+    assert.equal(okNova, null);
+    assert.match(drugaRazl, /različico 't1'/);
+    assert.match(sha, /peci\.py: SHA-256 se ne ujema/);
+    assert.match(odvecna, /odvečne: \['zlo\.py'\]/);
+    assert.deepEqual(naloga, ["n1", ["mozgani"], "t1"]);
+    assert.match(slabId, /id sme imeti/);
+    assert.match(slabOrgan, /organi morajo biti/);
+    assert.match(niJson, /ni veljaven JSON/);
+    assert.match(novaVrstica, /id sme imeti/, "fullmatch: »n2\\n« ni veljaven id");
+    assert.match(globoko, /RecursionError/, "globoko gnezden JSON ne podre zanke");
+    assert.match(seznam, /ni veljaven JSON/);
+    assert.deepEqual(zamenjava, [true, false, null], "zamenjava brez __pycache__, nova koda ustreza manifestu");
+    assert.match(vrnjena[0], /stara koda vrnjena/);
+    assert.equal(vrnjena[1], null, "po neuspeli zamenjavi je koda/ cela");
+  } finally {
+    fs.rmSync(cilj, { recursive: true, force: true });
+  }
+});

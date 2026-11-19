@@ -173,6 +173,14 @@ export function zapisi(doc, node, prim, m) {
   prim.setIndices(doc.createAccessor(starI ? starI.getName() : "").setType("SCALAR").setBuffer((starI && starI.getBuffer()) || buf).setArray(arrI));
 }
 
+// zapisi() pusti stare dostopnike v dokumentu (brez starša razen korena); io.write bi jih zapisal v GLB (do 185 kB
+// odvečnih bajtov na model). Pred pisanjem jih odstrani. Vrne število odstranjenih.
+export function brezSirot(doc) {
+  let n = 0;
+  for (const a of doc.getRoot().listAccessors()) if (!a.listParents().some((p) => p.propertyType !== "Root")) { a.dispose(); n++; }
+  return n;
+}
+
 // ---------------------------------------------------------------------------------------------------------------
 // Topologija
 // ---------------------------------------------------------------------------------------------------------------

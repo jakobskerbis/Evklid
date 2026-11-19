@@ -6,7 +6,7 @@ export const info = {
   podrocje: "organi",
   predmet: "BIO",
   opis: "Zrklo s plastmi stene, roženico, šarenico, lečo in steklovino ter očesne mišice; prerez pokaže debelino sten.",
-  merilo: { m: 0.024, oznaka: "2,4 cm" },
+  merilo: { m: 0.08, oznaka: "8 cm" }, // obseg modela z mišicami in živcem (organ.js ga povozi z izmerjenim)
 };
 export const organ = "oko";
 export const zgradi = (THREE, ctx) => ctx.organ(organ);

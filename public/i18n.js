@@ -10,6 +10,8 @@ import { DEFAULT_LANGUAGE, LANGUAGES, isLanguage, langInfo, uiChain, UI_LANGUAGE
 const KEY = "evklid.lang";
 let lang = DEFAULT_LANGUAGE;
 let dicts = [SL]; // od izbranega jezika proti izvirniku
+// Dodatna izvirna besedila dela strani, ki se naloži kasneje (public/i18n/sl-3d.js na strani /3d).
+export const dodajIzvirnik = (d) => Object.assign(SL, d);
 
 function stored() {
   try {

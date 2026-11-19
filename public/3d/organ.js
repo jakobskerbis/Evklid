@@ -11,6 +11,8 @@ import { mergeGeometries } from "/vendor/three/examples/jsm/utils/BufferGeometry
 import { THREE } from "./scena.js";
 import { seznamDatotek } from "./modeli.js";
 import { prostorOrgana, brezPregrad } from "./organ-prostor.js";
+import { presekMreze } from "./organ-presek.js";
+import { barvniNacin, nastaviBarvniNacin, ucnaBarva } from "./barve.js";
 
 const BAZA = new URL("./modeli/organi-3d/", import.meta.url).href;
 const scene = new Map(); // url → Promise<THREE.Group> (surova scena glTF)
@@ -63,6 +65,9 @@ function ploskaKopija(mesh) {
   mesh.updateWorldMatrix(true, false);
   o.applyMatrix4(mesh.matrixWorld);
   if (!g.attributes.normal) o.computeVertexNormals();
+  // Pečena normalna mapa brez tangent v GLB (izvoz brez tangent, manjša datoteka): tangente po ogliščih iz UV (kot
+  // MikkTSpace pri peki), sicer jih three računa iz odvodov in na šivih UV otokov (cevi žil) nastanejo črte (pregled #461).
+  else if (!g.attributes.tangent && g.attributes.uv && mesh.material?.normalMap) o.computeTangents();
   return o;
 }
 const stranImena = (ime) => (/\.l$/.test(ime) ? "l" : /\.r$/.test(ime) ? "r" : "s");
@@ -107,7 +112,14 @@ function pripravi(url, napredek) {
       koren.traverse((o) => {
         if (!o.isMesh) return;
         if (!teksture && (o.material?.map || o.material?.normalMap)) {
-          teksture = { map: o.material.map || null, normalMap: o.material.normalMap || null, normalScale: o.material.normalScale.clone() };
+          // PBR (peka.py): aoMap in roughnessMap sta ista slika ORM (R senca okolice, G hrapavost); map je prava
+          // osnovna barva (podatki.pbr), pri starejši peki pa množilnik barve tkiva.
+          teksture = {
+            map: o.material.map || null,
+            normalMap: o.material.normalMap || null,
+            normalScale: o.material.normalScale.clone(),
+            orm: o.material.aoMap || o.material.roughnessMap || null,
+          };
         }
         // Ime in dodatki so na vozlišču; GLTFLoader ga pri več primitivih ovije v skupino.
         const v = o.userData?.tkivo ? o : o.parent;
@@ -121,12 +133,17 @@ function pripravi(url, napredek) {
         skupine.get(k).vozlisca.push(ime);
       });
       const kosi = [...skupine.values()].map((s) => {
+        // obsegi indeksov posameznih vozlišč v združeni mreži (pravi presek reza se računa za vsako zaprto telo posebej)
+        let zac = 0;
+        let obsegi = s.geos.map((g) => [(zac += g.index.count) - g.index.count, g.index.count]); // [začetek, število]
+        // tangente ima vsa skupina ali nobena mreža (mešano: mergeGeometries vrne null)
+        if (s.geos.some((g) => g.attributes.tangent) && !s.geos.every((g) => g.attributes.tangent)) for (const g of s.geos) g.deleteAttribute("tangent");
         const geo = s.geos.length === 1 ? s.geos[0] : mergeGeometries(s.geos, false);
         if (s.geos.length > 1) for (const g of s.geos) g.dispose();
         // deli iste žile s steno (extras »stik«): brez pregrade na stiku, sicer se v prerezu vidi črtkan drugi obroč
         const brez = s.stik && s.geos.length > 1 ? brezPregrad(geo.attributes.position.array, geo.index.array) : null;
-        if (brez) geo.setIndex(new THREE.BufferAttribute(brez, 1));
-        return { del: s.del, tkivo: s.tkivo, stran: s.stran, geo, vozlisca: s.vozlisca };
+        if (brez) (geo.setIndex(new THREE.BufferAttribute(brez, 1)), (obsegi = null));
+        return { del: s.del, tkivo: s.tkivo, stran: s.stran, geo, vozlisca: s.vozlisca, obsegi };
       });
       const box = new THREE.Box3();
       for (const k of kosi) {
@@ -165,6 +182,45 @@ float orgSum(vec3 x){ vec3 i = floor(x); vec3 f = fract(x); f = f*f*(3.0-2.0*f);
   return mix(mix(mix(orgHash(i),orgHash(i+vec3(1,0,0)),f.x), mix(orgHash(i+vec3(0,1,0)),orgHash(i+vec3(1,1,0)),f.x),f.y),
              mix(mix(orgHash(i+vec3(0,0,1)),orgHash(i+vec3(1,0,1)),f.x), mix(orgHash(i+vec3(0,1,1)),orgHash(i+vec3(1,1,1)),f.x),f.y), f.z); }
 `;
+// Celični šum (Worley): x = razdalja do najbližjega jedra, y = do drugega (y − x = 0 na steni med celicama), z = naključno
+// število celice. Za režnjiče (jetra, pljuča), pljučno gobo in ledvična telesca; samo v senčilnikih, ki ga uporabijo.
+const GLSL_CEL = `
+vec3 orgH3(vec3 p){ p = vec3(dot(p,vec3(127.1,311.7,74.7)), dot(p,vec3(269.5,183.3,246.1)), dot(p,vec3(113.5,271.9,124.6))); return fract(sin(p)*43758.5453); }
+vec3 orgCel(vec3 x){ vec3 i = floor(x); vec3 f = fract(x); float d1 = 8.0; float d2 = 8.0; float id = 0.0;
+  for(int a=-1;a<=1;a++) for(int b=-1;b<=1;b++) for(int c=-1;c<=1;c++){ vec3 g = vec3(float(a),float(b),float(c)); vec3 o = orgH3(i+g); vec3 r = g + o - f; float d = dot(r,r);
+    if(d<d1){ d2 = d1; d1 = d; id = o.x; } else if(d<d2){ d2 = d; } }
+  return vec3(sqrt(d1), sqrt(d2), id); }
+`;
+// Plasti celičnega vzorca (tkivo.celice na površini, tkivo.rezCelice na pokrovu reza; predmet ali seznam): mera (velikost
+// celice v metrih), moc/stena/sirina (stene med celicami: vezivni pretini režnjičev, stene mešičkov), jedroMoc/jedro/jedroR
+// (pika sredi celice: centralna vena, zračni prostor, ledvično telesce), ton (vsaka celica malo svetlejša ali temnejša),
+// zvitost (nepravilne oblike), relief (površina: stene vdolbene, metri) oziroma vdolbina (pokrov: jedra vdolbena 0–1),
+// samoVisoka (plast samo na računalniku). Vzorec, ožji od ~3 pikslov, zbledi (brez migetanja).
+function celiceGLSL(plasti, merilo, P, visoka, visina) {
+  return []
+    .concat(plasti || [])
+    .filter((c) => visoka || !c.samoVisoka)
+    .map((c, i) => {
+      const k = 1 / ((c.mera ?? 0.001) * merilo);
+      const r = c.jedroR ?? 0.3;
+      return `{
+          vec3 cX = ${P} * ${fl(+k.toPrecision(5))} + ${fl(i * 7.3)};
+          float cLod = clamp( 1.7 - length( fwidth( cX ) ) * 2.4, 0.0, 1.0 );
+          if ( cLod > 0.0 ) {
+            ${c.zvitost ? `cX += ${fl(c.zvitost)} * ( vec3( orgSum( cX * 1.9 ), orgSum( cX * 1.9 + 5.2 ), orgSum( cX * 1.9 + 9.7 ) ) - 0.5 );` : ""}
+            vec3 cC = orgCel( cX );
+            float cRob = ( 1.0 - smoothstep( 0.0, ${fl(c.sirina ?? 0.12)}, cC.y - cC.x ) ) * cLod;
+            float cJed = ( 1.0 - smoothstep( ${fl(r * 0.45)}, ${fl(r)}, cC.x ) ) * cLod;
+            diffuseColor.rgb *= 1.0 + ${fl(c.ton ?? 0)} * ( cC.z - 0.5 ) * cLod;
+            ${c.moc ? `diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(c.stena || "#ffffff")}, ${fl(c.moc)} * cRob );` : ""}
+            ${c.jedroMoc ? `diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(c.jedro || "#000000")}, ${fl(c.jedroMoc)} * cJed );` : ""}
+            ${visina(c, "cRob", "cJed", "cLod")}
+          }
+        }`;
+    })
+    .join("\n");
+}
+
 const fl = (x) => (Number.isInteger(x) ? `${x}.0` : String(x));
 const vec3 = (c) => {
   const b = new THREE.Color(c);
@@ -185,14 +241,14 @@ function ohraniSencilnik(m) {
 }
 
 // t = nastavitve tkiva iz JSON: barva, hrap (hrapavost), lak, lakHrap, sijaj (sheen), sijajBarva, rob (presevnost ob
-// robu), robBarva, ao (moč zapečene sence 0–1), aoExp (kontrast sence, privzeto 1,6), zrno (barvna zrnatost), relief, f (frekvenca šuma v enotah organa),
+// robu), robBarva, ao (moč zapečene sence 0–1), aoExp (kontrast sence, privzeto 1,6), lakSenca (lak oslabi v zasenčenih kotanjah, 0–1), zrno (barvna zrnatost), relief, f (frekvenca šuma v enotah organa),
 // lise (velike tople lise), prosojnost (1 = neprozorno), fresnel (prozorno spredaj, mlečno ob robu), dvostransko,
 // znotraj (iz dela v »deli«, ne iz tkiva: cev z enojno steno, npr. aorta; vidna z obeh strani, notranjost pomnožena s tem faktorjem, brez pokrova reza in presevnosti),
 // prepustnost (transmission, samo visoka), masca/mascaBarva (rumena maščoba v brazdah, kjer je zapečena senca globoka), senca/sencaBarva (topel temnejši
 // odtenek v gubah, kot prekrvljeno tkivo v globini).
 // Skorja iz MRI (COLOR_0.g = globina brazde 0 vrh … 1 dno, COLOR_0.b = krajevna globina, 0,5 = rob brazde): brazde/brazdeBarva (globoke brazde temnejše in bolj rdeče),
 // vrh/vrhBarva (krone vijug svetlejše), lise2/lise2Barva/lise2F (drobnejše lise), zile (moč), zileBarva, zileBarva2,
-// zileSirina (polovična širina v metrih), zileRaven (globina, ob kateri tečejo): tanke žilice mehke možganske ovojnice, ki
+// zileSirina (polovična širina v metrih), zileRaven (globina, ob kateri tečejo), zileMaska (frekvenca zaplat z vejami čez vijuge; majhen organ, npr. beločnica: večja): tanke žilice mehke možganske ovojnice, ki
 // sledijo brazdam (izočrta globine) in redke veje čez vijuge (izočrta zvitega šuma), ostre pri vsaki povečavi, brez tekstur.
 // vrstni (renderOrder), brezGlobine (ne piše globine), brezIzbire (dotik gre skozi): ozadje v prerezu.
 // studio (pregledovalnik: studioNaprave, ne na šibkih napravah): moker lak na svežem neprosojnem tkivu (lak ≥ 0,45, ne
@@ -201,18 +257,22 @@ function ohraniSencilnik(m) {
 // okolja z zadnje strani (presevnost, privzeto 0,45 maščoba in 0,35 listi; 0 = brez). Pokrov reza ostane MeshBasic.
 // izh: središče škatle modela v metrih GLB (mere tkiv v metrih so glede na izhodišče GLB, organ-prostor.js).
 function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = false, izh = [0, 0, 0]) {
+  t = { ...t };
   const prosojno = (t.prosojnost ?? 1) < 1;
   const mokro = studio && !prosojno && (t.lak ?? 0) >= 0.45 && !t.suho;
   const omeji = (v, a, b) => Math.min(b, Math.max(a, v));
   const presevnoList = studio && !prosojno && t.dvostransko ? t.presevnost ?? 0.35 : 0;
-  const presevnoMasca = studio && t.masca ? t.mascaPresevnost ?? 0.45 : 0;
+  // PBR: maščoba je v pečeni barvi (t.masca se spodaj izklopi, senčilnik nima orgMas) → brez presevnosti maščobe
+  const presevnoMasca = studio && t.masca && !(tex?.pbr && t.tekstura !== false) ? t.mascaPresevnost ?? 0.45 : 0;
   const m = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color(t.barva || "#cccccc"),
     roughness: t.hrap ?? 0.45,
     metalness: 0,
     clearcoat: mokro ? omeji(t.lak, 0.6, 0.8) : t.lak ?? 0,
     clearcoatRoughness: mokro ? omeji(t.lakHrap ?? 0.25, 0.15, 0.3) : t.lakHrap ?? 0.25,
-    sheen: visoka ? t.sijaj ?? 0 : (t.sijaj ?? 0) * 0.6,
+    // Telefon (kakovost nizka): manj sijaja; pri PBR še manj (tretjina), ker ima šibek telefon sicer skoraj enak
+    // fizikalni senčilnik kot računalnik (pregled kode #461).
+    sheen: visoka ? t.sijaj ?? 0 : (t.sijaj ?? 0) * (tex?.pbr ? 0.3 : 0.6),
     sheenColor: new THREE.Color(t.sijajBarva || t.barva || "#ffffff"),
     sheenRoughness: t.sijajHrap ?? 0.45,
     specularIntensity: t.spekular ?? 1,
@@ -234,18 +294,51 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
   m.clipIntersection = !!ravnine?.presek;
   // Zapečene teksture: osnovna barva je množilnik barve tkiva (gube temnejše, žilice), normalna mapa nosi drobni relief;
   // isto mapo dobi lak (mokri odsevi sledijo gubam).
-  if (tex?.map && t.tekstura !== false) m.map = tex.map;
-  if (tex?.normalMap && t.tekstura !== false) {
+  const pbr = !!(tex?.pbr && t.tekstura !== false);
+  // mapa: false (samo PBR): tkivo brez pečene osnovne barve (barva iz JSON kot pri modelih brez tekstur), pečena senca
+  // okolice, hrapavost in normalna mapa ostanejo. Za tkiva, kjer je pečena barva enobarvna ali slabo berljiva (žile).
+  const brezMape = pbr && t.mapa === false;
+  if (tex?.map && t.tekstura !== false && !brezMape) m.map = tex.map;
+  if (pbr) {
+    // Pečena osnovna barva je prava barva tkiva: barva iz JSON je samo odtenek (privzeto bela, `odtenek`).
+    const osnova = brezMape ? t.barva || "#cccccc" : t.odtenek || "#ffffff";
+    m.color.set(osnova);
+    m.userData.pbrBarva = osnova; // pogledi (uporabi) ohranijo odtenek namesto barve tkiva
+    // orm: false: tkivo ne bere pečene mape sence in hrapavosti (hrapavost in lak iz JSON). Za tkiva, kjer ima mapa
+    // nepečene (črne) lise: hrapavost 0 je tam zrcalila okolje kot sivo steklo (spodnja režnja pljuč, j 16. 11.).
+    if (tex.orm && t.orm !== false) {
+      m.aoMap = tex.orm; // R: senca okolice (Cycles, z žarki po vsem organu)
+      m.aoMapIntensity = t.aoTekstura ?? 1;
+      m.roughnessMap = tex.orm; // G: hrapavost (maščoba bolj mat, endokard in zaklopke bolj sijoči)
+      m.roughness = t.hrapMnozilnik ?? 1;
+      // Vlažna plast (lak) sledi isti hrapavosti (three bere G): maščoba ostane mat, endokard sije; `lakHrap` je pri
+      // PBR množilnik. Šibek lak z mehkejšim odsevom in zmanjšan zrcalni odboj podlage: vlažno, ne plastično.
+      m.clearcoatRoughnessMap = tex.orm;
+      m.clearcoatRoughness = t.lakHrap ?? 0.6;
+    }
+  }
+  // normala: 0 = brez normalne mape. normalScale 0 ne zadošča: three skalira le x in y, pokvarjena pika (z < 0, pljuča
+  // pod prekrižanimi robovi režnjev) obrne normalo navznoter, ploskev je siva z ostrim robom (sonda 18. 11.).
+  if (tex?.normalMap && t.tekstura !== false && (t.normala ?? 1) > 0) {
     m.normalMap = tex.normalMap;
     m.normalScale.copy(tex.normalScale).multiplyScalar(t.normala ?? 1);
-    if (m.clearcoat > 0) {
+    // Lak z normalno mapo samo na računalniku: telefon prihrani vzorčenje in izračun druge normale (lak je tam gladek).
+    if (m.clearcoat > 0 && (visoka || !pbr)) {
       m.clearcoatNormalMap = tex.normalMap;
       m.clearcoatNormalScale.copy(tex.normalScale).multiplyScalar((t.normala ?? 1) * 0.6);
     }
   }
   const f = t.f ?? 14;
-  const zrno = t.zrno ?? 0.08;
-  const relief = visoka ? t.relief ?? 0.5 : 0;
+  // S pečenimi teksturami so zrno, relief, lise, maščoba in senca že v slikah: senčilnik jih ne dodaja še enkrat.
+  // detajl: true (samo PBR): pečene mape tega organa so gladke (enobarvne, ravna normalna mapa), zato proceduralni
+  // zrno, relief, lise in senca ostanejo tudi ob teksturah (možgani, pljuča, ledvica, jetra, oko).
+  const det = pbr && !!t.detajl;
+  const zrno = pbr && !det ? 0 : t.zrno ?? 0.08;
+  const relief = pbr && !det ? 0 : visoka ? t.relief ?? 0.5 : 0;
+  if (pbr) t = { ...t, ...(det ? {} : { lise: 0, lise2: 0, masca: 0, senca: 0 }), aoExp: t.aoExp ?? 1.6, ao: t.aoPbr ?? 0.35 };
+  const celice = celiceGLSL(t.celice, merilo, "vOrgPos", visoka, (c, rob) => (c.relief ? `orgCelH += ${rob} * ${((c.relief ?? 0) * merilo).toExponential(3)};` : ""));
+  // ↑ PBR: senca okolice je že v aoMap (Cycles) in v zaslonskem GTAO, zato barva oglišč COLOR_0 doda le šibko senco
+  // (`aoPbr`, privzeto 0,35); `ao` tkiva (0,8–0,9) velja samo za modele brez pečenih tekstur.
   const rob = t.rob ?? 0.12;
   const ao = t.ao ?? 0.85;
   m.onBeforeCompile = (sh) => {
@@ -264,7 +357,13 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       )
       .replace("#include <begin_vertex>", "#include <begin_vertex>\nvOrgPos = position;");
     sh.fragmentShader = sh.fragmentShader
-      .replace("#include <common>", `#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;\n${GLSL_SUM}`)
+      .replace("#include <common>", `#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;\n${GLSL_SUM}${celice ? GLSL_CEL : ""}`)
+      // lakSenca (0–1): v zasenčenih kotanjah (pečena senca okolice) vlažni lak oslabi. Navzdol obrnjene kotanje (spodnja
+      // ploskev pljuč, mediastinalna stran brez srca) so sicer zrcalile temno dno okolja: sive »steklene« lise (j 16. 11.).
+      .replace(
+        "#include <lights_physical_fragment>",
+        `#include <lights_physical_fragment>${t.lakSenca ? `\n#ifdef USE_CLEARCOAT\nmaterial.clearcoat *= mix( 1.0, smoothstep( 0.35, 0.9, vOrgAO ), ${fl(t.lakSenca)} );\n#endif` : ""}`,
+      )
       .replace(
         "#include <color_fragment>",
         `float orgAO = mix( 1.0, pow( vOrgAO, ${fl(t.aoExp ?? 1.6)} ), ${fl(ao)} );
@@ -281,6 +380,8 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         ${t.mreznicaZile ? mreznicaGLSL(t, merilo, izh) : ""}
         ${t.sarenica ? sarenicaGLSL(t, merilo, izh) : ""}
         float orgListi = 0.0;
+        float orgCelH = 0.0;
+        ${celice}
         ${t.listi ? listiGLSL(t, merilo, izh) : ""}
         ${t.senca ? `diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(t.sencaBarva || "#6a1f1f")} * vOrgAO, ${fl(t.senca)} * smoothstep( 0.95, 0.35, vOrgAO ) ); // topla globina v gubah` : ""}
         ${
@@ -289,12 +390,13 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         float orgMas = ${fl(t.masca)} * smoothstep( ${fl(t.mascaMeja ?? 0.8)}, ${fl((t.mascaMeja ?? 0.8) - 0.35)}, vOrgAO ) * ( 0.75 + 0.5 * orgZ )${t.mascaZunaj ? " * smoothstep( 0.015, 0.1, vOrgD.x )" : ""};
         diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(t.mascaBarva || "#e7c46e")} * mix( 0.75, 1.0, vOrgAO ) * ( 0.86 + 0.24 * orgLob ), clamp( orgMas, 0.0, 1.0 ) ); // maščoba v brazdah (samo zunaj: mascaZunaj)`
             : ""
-        }`,
+        }
+        ${ravnine?.temnenje && !t.brezReza ? temnenjeGLSL(ravnine.temnenje, merilo, t.kljuc) : ""}`,
       )
       .replace(
         "#include <roughnessmap_fragment>",
         `#include <roughnessmap_fragment>
-        roughnessFactor = clamp( roughnessFactor + ( orgZ - 0.5 ) * 0.18 + ( 1.0 - vOrgAO ) * 0.25, 0.04, 1.0 );`,
+        roughnessFactor = clamp( roughnessFactor + ( orgZ - 0.5 ) * 0.18 + ( 1.0 - vOrgAO ) * ${pbr ? "0.08" : "0.25"}, 0.04, 1.0 );`,
       )
       .replace(
         "#include <normal_fragment_maps>",
@@ -302,7 +404,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         ${
           relief > 0
             ? `{
-          float orgH = orgZ * ${(0.012 * relief / f).toExponential(3)} - orgListi * ${((t.listiRazmik ?? 0.0025) * merilo * 0.12).toExponential(3)};
+          float orgH = orgZ * ${(0.012 * relief / f).toExponential(3)} - orgListi * ${((t.listiRazmik ?? 0.0025) * merilo * 0.12).toExponential(3)} - orgCelH;
           vec3 orgDx = dFdx( -vViewPosition ); vec3 orgDy = dFdy( -vViewPosition );
           vec3 orgR1 = cross( orgDy, normal ); vec3 orgR2 = cross( normal, orgDx );
           float orgDet = dot( orgDx, orgR1 ) * faceDirection;
@@ -341,7 +443,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         #include <opaque_fragment>`,
       );
   };
-  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}`;
+  m.customProgramCacheKey = () => `org-${t.lakSenca || 0}${t.orm === false ? "brezOrm" : ""}-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
   return ohraniSencilnik(m);
 }
 
@@ -363,7 +465,7 @@ function zileGLSL(t, merilo) {
           float zN = orgSum( zQ ) - 0.5;
           float zW2 = zW * 0.6;
           float zL2 = 1.0 - smoothstep( zW2 - 0.5, zW2 + 0.6, abs( zN ) / max( length( vec2( dFdx( zN ), dFdy( zN ) ) ), 1e-6 ) );
-          zL2 *= smoothstep( 0.45, 0.62, orgSum( zP * 3.2 + 41.0 ) ) * mix( 0.45, 1.0, smoothstep( 0.42, 0.55, vOrgD.y ) ) * 0.8;
+          zL2 *= smoothstep( 0.45, 0.62, orgSum( zP * ${fl(t.zileMaska ?? 3.2)} + 41.0 ) ) * mix( 0.45, 1.0, smoothstep( 0.42, 0.55, vOrgD.y ) ) * 0.8;
           float zL = max( zL1, zL2 ) * zA;
           vec3 zB = mix( ${vec3(t.zileBarva || "#8a1f2a")}, ${vec3(t.zileBarva2 || "#57223f")}, smoothstep( 0.35, 0.65, orgSum( zP * 2.3 + 17.0 ) ) );
           diffuseColor.rgb = mix( diffuseColor.rgb, zB * mix( 0.6, 1.0, vOrgAO ), ${fl(t.zile)} * zL );
@@ -454,28 +556,356 @@ function listiGLSL(t, merilo, izh) {
         }`;
 }
 
-// Pokrov reza: zadnje ploskve iste mreže v barvi reza (osvetljene z rahlim zrnom), vidne samo v prerezu.
-function materialPokrova(t, ravnine) {
-  const m = new THREE.MeshBasicMaterial({ color: new THREE.Color(t.rez || t.barva || "#cccccc"), side: THREE.BackSide, clippingPlanes: ravnine.seznam, clipIntersection: !!ravnine.presek });
+// Globina votlin v prerezu (prerez.temnenje: { razdalja m, moc 0–1, odprtost }): ploskve dlje za ravnino reza so
+// temnejše (votlina prekata ima globino kot pri pravem razrezanem srcu: rob reza svetel, dno votline v senci). Z
+// `odprtost` (G barve oglišč: zunaj 1, votline 0) velja samo za notranjost votlin, zunanjost ob zasuku ostane svetla.
+function temnenjeGLSL(o, merilo, tkivo) {
+  return `#if NUM_CLIPPING_PLANES > 0
+        { float orgGl = 1e9;
+          for ( int i = 0; i < NUM_CLIPPING_PLANES; i ++ ) orgGl = min( orgGl, abs( clippingPlanes[ i ].w - dot( vClipPosition, clippingPlanes[ i ].xyz ) ) );
+          float orgT = 1.0 - exp( - orgGl / ${fl(+((o.razdalja ?? 0.03) * merilo).toPrecision(4))} );
+          float orgVo = ${o.odprtost ? "1.0 - smoothstep( 0.05, 0.4, vOrgD.x )" : "1.0"}; // 1 = stena votline
+          ${o.endokard && (o.endokardTkiva || []).includes(tkivo) ? `diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(o.endokard)} * ( 0.75 + 0.5 * dot( diffuseColor.rgb, vec3( 0.6, 0.3, 0.1 ) ) / max( 0.05, dot( ${vec3(o.endokard)}, vec3( 0.6, 0.3, 0.1 ) ) ) * 0.5 ), ${fl(o.endokardMoc ?? 0.5)} * orgVo ); // bled sijoč endokard (pod njim rdeča mišica)` : ""}
+          diffuseColor.rgb *= 1.0 - ${fl(o.moc ?? 0.6)} * orgT * orgVo; }
+        #endif`;
+}
+
+// Pokrov reza (j 6. 11.: »najboljši približek pravemu srcu, razrezanemu na pol«): zadnje ploskve iste mreže, a
+// osvetljene kot ravna rezna ploskev. Za vsak piksel poiščemo točko na ravnini reza vzdolž pogleda (ne zadnje ploskve, ki
+// je globlje), zato vzorec vlaken leži na ravnini in se pri vrtenju ne premika; normala je normala ravnine (proti kameri),
+// iz vzorca vlaken pa izbočenost (bump), da luč riše snope vlaken. Mat (hrap ~0,6) z rahlim vlažnim lakom.
+// t: rez (barva), rezVlakna (gostota vlaken), rezPore/rezPoreMoc (gobasto tkivo), rezHrap, rezLak, rezRelief.
+// Prostorska tekstura reza (srce: scripts/atlas/srce_ct.py volumen, tkivo scripts/atlas/vhp/tkivo.py): `vol` = { tex, meta,
+// tkivo, lo, k, tkK } (lo, k, tkK v enotah modela). RGB = smer mišičnih vlaken, A = maščoba; tkivo = kocki pravega tkiva
+// (Visible Woman, Courtesy of the U.S. National Library of Medicine) za miokard in maščobo, zrcaljeno ponovljeni. Vzorec je
+// odvisen samo od točke v prostoru, zato je rez v vsaki ravnini enak in enako oster (čelni, bočni, prečni, prosti).
+// Vlakna: šum v ravnini, pravokotni na vlakno (vzdolž vlakna stalen): rez vzdolž vlaken kaže proge, prečni rez pike.
+const GLSL_VOL = `
+uniform sampler2D orgVol; uniform vec3 orgVolN; uniform vec2 orgVolP; uniform vec3 orgVolLo; uniform float orgVolK;
+uniform sampler2D orgTk; uniform float orgTkK;
+vec4 orgVolumen( vec3 p ) {
+  vec3 g = clamp( ( p - orgVolLo ) / orgVolK - 0.5, vec3( 0.0 ), orgVolN - 1.0 );
+  float z0 = floor( g.z ), fz = g.z - z0, z1 = min( z0 + 1.0, orgVolN.z - 1.0 );
+  vec2 pl = orgVolN.xy + 2.0, vel = orgVolP * pl, xy = g.xy + 1.5;
+  vec2 a = ( vec2( mod( z0, orgVolP.x ), floor( z0 / orgVolP.x ) ) * pl + xy ) / vel;
+  vec2 b = ( vec2( mod( z1, orgVolP.x ), floor( z1 / orgVolP.x ) ) * pl + xy ) / vel;
+  return mix( texture2D( orgVol, a ), texture2D( orgVol, b ), fz );
+}
+vec3 orgTkivo( vec3 p, float blok ) {
+  vec3 g = abs( fract( p / orgTkK * 0.5 ) * 2.0 - 1.0 ) * 47.0;
+  float z0 = floor( g.z ), fz = g.z - z0, z1 = min( z0 + 1.0, 47.0 );
+  vec2 vel = vec2( 800.0, 300.0 ), xy = g.xy + 1.5;
+  vec2 a = ( vec2( mod( z0, 8.0 ) + blok * 8.0, floor( z0 / 8.0 ) ) * 50.0 + xy ) / vel;
+  vec2 b = ( vec2( mod( z1, 8.0 ) + blok * 8.0, floor( z1 / 8.0 ) ) * 50.0 + xy ) / vel;
+  return mix( texture2D( orgTk, a ).rgb, texture2D( orgTk, b ).rgb, fz );
+}
+`;
+
+// Delež stene (R) in drugih polnih teles s pokrovom, npr. venčnih žil (G), iz mreže: rezine kot pri orgVolumen (svoja
+// mreža vokslov, lahko gostejša).
+const GLSL_STENA = `
+uniform sampler2D orgSt; uniform vec3 orgStN; uniform vec2 orgStP; uniform vec3 orgStLo; uniform float orgStK;
+vec3 orgSt3;
+vec3 orgStena( vec3 p ) {
+  vec3 g = clamp( ( p - orgStLo ) / orgStK - 0.5, vec3( 0.0 ), orgStN - 1.0 );
+  float z0 = floor( g.z ), fz = g.z - z0, z1 = min( z0 + 1.0, orgStN.z - 1.0 );
+  vec2 pl = orgStN.xy + 2.0, vel = orgStP * pl, xy = g.xy + 1.5;
+  vec2 a = ( vec2( mod( z0, orgStP.x ), floor( z0 / orgStP.x ) ) * pl + xy ) / vel;
+  vec2 b = ( vec2( mod( z1, orgStP.x ), floor( z1 / orgStP.x ) ) * pl + xy ) / vel;
+  return mix( texture2D( orgSt, a ).rgb, texture2D( orgSt, b ).rgb, fz );
+}
+`;
+
+// rezCelice (plasti celičnega vzorca, glej celiceGLSL): jetrni režnjiči, pljučna goba, ledvična telesca v skorji.
+// rezZarki { sredisce [m], sredisce2 [m] (neobvezno: os od sredisce do sredisce2 namesto točke), visina (relief prog 0–1), gostota, moc, barva, notranja, notranjaMoc, r0, r1 [m] }: žarkaste proge iz središča (ledvične
+// piramide: zbiralca tečejo proti papili v ledvičnem sinusu) in svetlejša notranja sredica bliže središču (r0 → r1).
+// izh: središče škatle modela v metrih GLB (kot pri materialTkiva).
+// rezPiramide { seznam: [[vrh x, y, z, os x, y, z, dolžina, tangens polkota, polmer vrha] …] (metri GLB), barva (zunanja
+// sredica), notranja (notranja sredica proti papili), proge, gostota, moc, val (valovitost obrisa, m), zile (ločne žile ob
+// osnovi 0–1), sinus { kapsule: [[a x, y, z, b x, y, z, r] …] (m), barva, pretini, zile, mera, zileMera } }: ledvične piramide kot stožci v prostoru
+// (rez v ravnini je njihov pravi presek) na ploskvi skorje; med njimi ostanejo ledvični stebri. sinus: maščoba ledvičnega
+// sinusa in hilusa (unija kapsul okoli daljic a–b) s prerezanimi vejami žil; del in osnovaDel: dela za učne barve. Brez teh nastavitev se pokrov ne spremeni.
+// presek (pravi presek, rezPresek): { robBarva, luknjaBarva (barvi obrobe in zapolnjenih lukenj; atribut orgVr), slika:
+// { uniform, c0, lo, mera, U, V } (naslikana rezna ploskev, tkivo.rezSlika: RGB barva, A moč) }.
+function materialPokrova(t, ravnine, merilo = 1, vol = null, izh = [0, 0, 0], presek = null) {
+  const n = ravnine.seznam.length;
+  vol = t.rezVolumen && vol ? vol : null;
+  const m = new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color(t.rez || t.barva || "#cccccc"),
+    roughness: t.rezHrap ?? 0.62,
+    metalness: 0,
+    clearcoat: t.rezLak ?? 0.18,
+    clearcoatRoughness: t.rezLakHrap ?? 0.45,
+    sheen: t.rezSijaj ?? 0,
+    sheenColor: new THREE.Color(t.rezSijajBarva || "#ffffff"),
+    sheenRoughness: 0.5,
+    specularIntensity: t.rezSpekular ?? 1,
+    side: THREE.BackSide,
+    clippingPlanes: ravnine.seznam,
+    clipIntersection: !!ravnine.presek,
+  });
+  // kamera v prostoru modela: nastavi jo mreža pokrova pred risanjem (kameraModela), ne senčilnik za vsako oglišče
+  if (vol) m.orgKamera = { value: new THREE.Vector3() };
+  const relief = (t.rezRelief ?? 0.00012) * merilo;
+  const vlCt = t.rezVlaknaCt ?? 1400; // gostota vlaken (1/m) v teksturi CT
+  const rezCelice = celiceGLSL(t.rezCelice, merilo, "orgQ", true, (c, rob, jed, lod) => (c.vdolbina ? `orgH = mix( orgH, 1.0 - ${jed}, ${fl(c.vdolbina)} * ${lod} );` : ""));
+  const zarki = t.rezZarki || null;
+  const pir = t.rezPiramide?.seznam?.length ? t.rezPiramide : null;
+  const tm = (p) => p.map((x, i) => fl(+((x - izh[i]) * merilo).toFixed(5))).join(", "); // točka v metrih GLB → enote modela
+  const dm = (x) => fl(+(x * merilo).toPrecision(5)); // dolžina v metrih → enote modela
+  const dm2 = (k) => fl(+(k / merilo).toPrecision(5)); // prostorska frekvenca (1/m) → 1/enoto modela
+  const vr = !!presek && !!(presek.robBarva || presek.luknjaBarva);
+  const sl = presek?.slika || null;
+  const sumMoc = t.rezSum ?? 1; // moč lis in zrnatosti pokrova (srce n11: enakomeren vlažen miokard, ne »šmirgl«)
+  // vol.stena (prerez.volumen.stena, scripts/atlas/rez-stena.mjs): delež voksla v polni steni, izračunan iz končne
+  // mreže (ne iz CT). Rob pokrova se zato ujema z obrisom mreže; prej je bil stopničast, kjer se mreža (endokard,
+  // premaknjen v votlino, relief maščobe) in tekstura CT nista ujemali (»luske« ob robu reza).
+  const st = vol?.stena || null;
   m.onBeforeCompile = (sh) => {
-    sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vOrgPos;").replace("#include <begin_vertex>", "#include <begin_vertex>\nvOrgPos = position;");
+    sh.uniforms.orgRav = { value: ravnine.seznam.map((p) => new THREE.Vector4(p.normal.x, p.normal.y, p.normal.z, p.constant)) };
+    if (vol) {
+      const v = vol.meta;
+      Object.assign(sh.uniforms, {
+        orgVol: { value: vol.tex }, orgVolN: { value: new THREE.Vector3(...v.n) }, orgVolP: { value: new THREE.Vector2(...v.ploscice) },
+        orgVolLo: { value: new THREE.Vector3(...vol.lo) }, orgVolK: { value: vol.k }, orgTk: { value: vol.tkivo }, orgTkK: { value: vol.tkK },
+      });
+      if (st) Object.assign(sh.uniforms, { orgSt: { value: st.tex }, orgStN: { value: new THREE.Vector3(...st.n) }, orgStP: { value: new THREE.Vector2(...st.ploscice) }, orgStLo: { value: new THREE.Vector3(...st.lo) }, orgStK: { value: st.k } });
+    }
+    if (sl) sh.uniforms.orgSl = sl.uniform;
+    if (vol) sh.uniforms.orgCmU = m.orgKamera;
+    sh.vertexShader = sh.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec3 vOrgW;" + (vr ? "\nattribute float orgVr; varying float vOrgVr;" : "") + (vol ? "\nvarying vec3 vOrgM; varying vec3 vOrgCm; uniform vec3 orgCmU;" : ""))
+      .replace(
+        "#include <worldpos_vertex>",
+        "#include <worldpos_vertex>\nvOrgW = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;" +
+          (vr ? "\nvOrgVr = orgVr;" : "") +
+          (vol ? "\nvOrgM = transformed; vOrgCm = orgCmU;" : ""),
+      );
+    const pars = `#include <common>\nvarying vec3 vOrgW;\nuniform mat4 projectionMatrix;\nuniform vec4 orgRav[ ${n} ];\nvec3 orgQ; vec3 orgNw; float orgH;\n${vr ? "varying float vOrgVr;\n" : ""}${sl ? "uniform sampler2D orgSl;\n" : ""}${GLSL_SUM}${rezCelice || pir?.sinus ? GLSL_CEL : ""}${
+      vol ? `\nvarying vec3 vOrgM; varying vec3 vOrgCm; vec3 orgQm; vec4 orgV4;\n${GLSL_VOL}${st ? GLSL_STENA : ""}` : ""
+    }`;
     sh.fragmentShader = sh.fragmentShader
-      .replace("#include <common>", `#include <common>\nvarying vec3 vOrgPos;\n${GLSL_SUM}`)
+      .replace("#include <common>", pars)
+      .replace(
+        "#include <clipping_planes_fragment>",
+        `#include <clipping_planes_fragment>
+        { // najbližja ravnina in točka na njej vzdolž pogleda
+          float orgDm = 1e9; vec4 orgP = orgRav[ 0 ];
+          for ( int i = 0; i < ${n}; i ++ ) { float dd = abs( dot( orgRav[ i ].xyz, vOrgW ) + orgRav[ i ].w ); if ( dd < orgDm ) { orgDm = dd; orgP = orgRav[ i ]; } }
+          vec3 orgS = vOrgW - cameraPosition;
+          float orgDen = dot( orgP.xyz, orgS );
+          float orgT = abs( orgDen ) > 1e-6 ? clamp( - ( dot( orgP.xyz, cameraPosition ) + orgP.w ) / orgDen, 0.0, 1.0 ) : 1.0;
+          orgQ = cameraPosition + orgS * orgT;
+          orgNw = - orgP.xyz;
+${
+            vol
+              ? `
+          orgQm = vOrgCm + ( vOrgM - vOrgCm ) * orgT; // ista točka v enotah modela (afina preslikava ohrani razmerje)
+          orgV4 = orgVolumen( orgQm );
+          #ifndef USE_LOGDEPTHBUF
+          // Točka ravnine je v steni (|vlakno| > 0,5) ali v maščobi (A > 0,15; n11: »luske maščobe zunaj obrisa« – maščoba
+          // brez vlaken je bila narisana na globini zadnje ploskve): pokrov na globini ravnine, zato so žile v maščobi
+          // in dno papilarnih mišic za ravnino skriti (kot pri pravem rezu). Sicer (votlina; A ≈ 1 = venčna žila v maščobi,
+          // katere prerez nariše njen pokrov) ostane globina zadnje ploskve.
+          { vec4 orgC = projectionMatrix * viewMatrix * vec4( orgQ, 1.0 );
+            ${st ? "orgSt3 = orgStena( orgQm );" : ""}
+            gl_FragDepth = ${st ? "orgSt3.x > 0.5 && orgSt3.y < 0.5" : "( length( orgV4.rgb * 2.0 - 1.0 ) > 0.5 || orgV4.a > 0.15 ) && orgV4.a < 0.8"} ? clamp( ( orgC.z / orgC.w ) * 0.5 + 0.5, 0.0, 1.0 ) : gl_FragCoord.z; }
+          #endif`
+              : ""
+          }
+          // vlakna: snopi, ki menjajo smer (zvito polje), prekinjeni; drobna vlakna od blizu; lise krvi in vezivnih pretinov
+          vec3 orgSm = normalize( vec3( 0.4, 1.0, 0.25 ) + 0.9 * ( vec3( orgSum( orgQ * 3.1 ), orgSum( orgQ * 3.1 + 7.0 ), orgSum( orgQ * 3.1 + 13.0 ) ) - 0.5 ) );
+          float orgV = 0.5 + 0.5 * sin( dot( orgQ, orgSm ) * ${fl(t.rezVlakna || 0)} + 9.0 * orgSum( orgQ * 22.0 ) + 3.0 * orgSum( orgQ * 90.0 ) );
+          float orgV2 = 0.5 + 0.5 * sin( dot( orgQ, orgSm ) * ${fl((t.rezVlakna || 0) * 3.3)} + 5.0 * orgSum( orgQ * 160.0 ) );
+          float orgFw = length( fwidth( orgQ ) );
+          float orgLod = clamp( 2.0 - orgFw * ${fl(t.rezVlakna || 1)}, 0.0, 1.0 ), orgLod2 = clamp( 2.0 - orgFw * ${fl((t.rezVlakna || 1) * 3.3)}, 0.0, 1.0 ); // ožje od ~4 px zbledi (brez moiréja)
+          orgH = ${t.rezVlakna ? "mix( 0.5, orgV, orgLod ) * 0.7 + mix( 0.5, orgV2, orgLod2 ) * 0.3" : "0.5"};
+        }`,
+      )
       .replace(
         "#include <color_fragment>",
-        `#include <color_fragment>\n diffuseColor.rgb *= 0.9 + 0.2 * orgSum( vOrgPos * 60.0 ) * orgSum( vOrgPos * 13.0 );${
-          t.rezVlakna ? `\n diffuseColor.rgb *= 1.0 - 0.07 * smoothstep( 0.2, 0.9, 0.5 + 0.5 * sin( dot( vOrgPos, normalize( vec3( 0.4, 1.0, 0.25 ) ) ) * ${fl(t.rezVlakna)} + 5.0 * orgSum( vOrgPos * 18.0 ) ) ); // snopi mišičnih vlaken na rezu` : ""
+        `#include <color_fragment>
+        diffuseColor.rgb *= 1.0 - ${fl(0.12 * sumMoc)} + ${fl(0.24 * sumMoc)} * orgSum( orgQ * 60.0 ) * orgSum( orgQ * 13.0 );
+        diffuseColor.rgb *= 1.0 - ${fl(0.09 * sumMoc)} * ( orgSum( orgQ * 7.0 ) - 0.5 ) * 2.0; // večje lise (prekrvavitev)
+        ${t.rezVlakna && !vol ? "diffuseColor.rgb *= 0.9 + 0.2 * orgH;" : ""}${
+          vol && t.rezRavna
+            ? "" // učne barve: enobarven pokrov (globina ravnine ostane)
+            : vol
+            ? `
+        { // pravo tkivo (Visible Woman) in smer vlaken iz CT: miokard rdeče rjav z vlakni, maščoba rumena z režnjiči
+          vec3 orgF = orgV4.rgb * 2.0 - 1.0; float orgFl = length( orgF ); orgF = orgFl > 0.2 ? orgF / orgFl : vec3( 0.0, 1.0, 0.0 );
+          ${
+            t.rezVlaknaOs
+              ? `// rezVlaknaOs (vzdolžna os organa): vzorec se raztegne vzdolž projekcije vlakna na ravnino reza, kjer vlakno
+          // ravnino prebada (prej pikčast šum), pa vzdolž osi: rezna ploskev se bere kot snopi vlaken
+          vec3 orgNm = normalize( cross( dFdx( orgQm ), dFdy( orgQm ) ) );
+          vec3 orgOs = vec3( ${t.rezVlaknaOs.map((x) => fl(+x.toFixed(4))).join(", ")} ); orgOs = normalize( orgOs - orgNm * dot( orgOs, orgNm ) );
+          vec3 orgFp = orgF - orgNm * dot( orgF, orgNm ); orgFp = normalize( orgFp * ( dot( orgFp, orgOs ) < 0.0 ? -1.0 : 1.0 ) + 0.6 * orgOs );
+          vec3 orgPq = orgQm - orgFp * dot( orgQm, orgFp ) * 0.93;`
+              : "vec3 orgPq = orgQm - orgF * dot( orgQm, orgF );"
+          }
+          float orgFw2 = length( fwidth( orgQm ) );
+          float orgS1 = orgSum( orgPq * ${fl(+(vlCt / merilo).toPrecision(4))} ), orgS2 = orgSum( orgPq * ${fl(+((vlCt * 3.2) / merilo).toPrecision(4))} );
+          float orgL1 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 3) / merilo).toPrecision(4))}, 0.0, 1.0 ), orgL2 = clamp( 2.0 - orgFw2 * ${fl(+((vlCt * 9.6) / merilo).toPrecision(4))}, 0.0, 1.0 );
+          float orgVl = mix( 0.5, orgS1, orgL1 ) * 0.6 + mix( 0.5, orgS2, orgL2 ) * 0.4;
+          vec3 orgMi = ${vec3(t.rez || "#7a2a20")} * mix( vec3( 1.0 ), orgTkivo( orgQm, 0.0 ) / ${vec3(t.rezTkivoMio || "#5d3125")}, ${fl(t.rezTkivoMoc ?? 1)} );
+          vec3 orgMaT = orgTkivo( orgQm, 1.0 );
+          vec3 orgMa = ${vec3(t.rezMasca || "#d8b060")} * orgMaT / ${vec3(t.rezTkivoMasca || "#af9361")};
+          orgMi *= ${fl(1 - 0.14 * (t.rezVlaknaMoc ?? 1))} + ${fl(0.28 * (t.rezVlaknaMoc ?? 1))} * orgVl;
+          float orgFa = smoothstep( ${fl((t.rezMascaMeja || [0.17, 0.37])[0])}, ${fl((t.rezMascaMeja || [0.17, 0.37])[1])}, orgV4.a )${st ? " * ( 1.0 - smoothstep( 0.25, 0.6, orgSt3.z ) )" : ""}; // A: maščoba 0–0,6, venčna žila 1; stena.b: papilarne mišice in trabekule v votlini niso maščoba
+          diffuseColor.rgb = mix( orgMi, orgMa, orgFa );
+          orgH = mix( orgVl, clamp( orgMaT.g / ${fl(+(new THREE.Color(t.rezTkivoMasca || "#af9361").g).toPrecision(4))} * 0.5, 0.0, 1.0 ), orgFa );
+        }`
+            : ""
         }${
           t.rezPore
-            ? `\n { float orgPw = length( fwidth( vOrgPos ) ) * 2.0; // pore (pljučna goba): temne luknjice in svetli pretini; manjše od ~2 px zbledijo (brez migetanja)
- float orgP = mix( 0.5, orgSum( vOrgPos * ${fl(t.rezPore)} ), clamp( 1.5 - orgPw * ${fl(t.rezPore)}, 0.0, 1.0 ) ) * 0.65 + mix( 0.5, orgSum( vOrgPos * ${fl(t.rezPore * 2.3)} ), clamp( 1.5 - orgPw * ${fl(t.rezPore * 2.3)}, 0.0, 1.0 ) ) * 0.35;
- diffuseColor.rgb *= 1.0 - ${fl(t.rezPoreMoc ?? 0.4)} * smoothstep( 0.52, 0.66, orgP ) + 0.12 * ( 1.0 - smoothstep( 0.2, 0.4, orgP ) ); }`
+            ? `\n { float orgPw = length( fwidth( orgQ ) ) * 2.0; // pore (pljučna goba): temne luknjice in svetli pretini; manjše od ~2 px zbledijo (brez migetanja)
+ float orgPo = mix( 0.5, orgSum( orgQ * ${fl(t.rezPore)} ), clamp( 1.5 - orgPw * ${fl(t.rezPore)}, 0.0, 1.0 ) ) * 0.65 + mix( 0.5, orgSum( orgQ * ${fl(t.rezPore * 2.3)} ), clamp( 1.5 - orgPw * ${fl(t.rezPore * 2.3)}, 0.0, 1.0 ) ) * 0.35;
+ diffuseColor.rgb *= 1.0 - ${fl(t.rezPoreMoc ?? 0.4)} * smoothstep( 0.52, 0.66, orgPo ) + 0.12 * ( 1.0 - smoothstep( 0.2, 0.4, orgPo ) ); orgH = mix( orgH, 1.0 - orgPo, 0.7 ); }`
             : ""
+        }${
+          zarki
+            ? `\n { vec3 zA = vec3( ${(zarki.sredisce || [0, 0, 0]).map((x, i) => fl(+((x - izh[i]) * merilo).toFixed(5))).join(", ")} ); // žarkaste proge (ledvične piramide)
+ vec3 zB = vec3( ${(zarki.sredisce2 || zarki.sredisce || [0, 0, 0]).map((x, i) => fl(+((x - izh[i]) * merilo).toFixed(5))).join(", ")} ) - zA; // sredisce2: os (daljica) namesto točke
+ vec3 zD = orgQ - zA - zB * clamp( dot( orgQ - zA, zB ) / max( dot( zB, zB ), 1e-9 ), 0.0, 1.0 ); float zR = length( zD );
+ vec3 zX = zD / max( zR, 1e-5 ) * ${fl(zarki.gostota ?? 90)};
+ float zLod = clamp( 1.7 - length( fwidth( zX ) ) * 2.2, 0.0, 1.0 );
+ float zS = mix( 0.5, orgSum( zX ) * 0.55 + orgSum( zX * 2.9 + 3.0 ) * 0.45, zLod );
+ diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(zarki.notranja || "#d9a08c")}, ${fl(zarki.notranjaMoc ?? 0)} * ( 1.0 - smoothstep( ${fl(+((zarki.r0 ?? 0.01) * merilo).toFixed(5))}, ${fl(+((zarki.r1 ?? 0.02) * merilo).toFixed(5))}, zR ) ) );
+ diffuseColor.rgb = mix( diffuseColor.rgb * ${fl(1 - (zarki.moc ?? 0.4) * 0.35)}, ${vec3(zarki.barva || "#e0a090")}, ${fl(zarki.moc ?? 0.4)} * smoothstep( 0.4, 0.72, zS ) );
+ orgH = mix( orgH, zS, ${fl(zarki.visina ?? 0.6)} * zLod ); }`
+            : ""
+        }${rezCelice ? `\n${rezCelice}` : ""}${
+          pir
+            ? `\n { // ledvične piramide (stožci) in maščoba sinusa
+ float pD = 1e9; vec3 pDir = vec3( 0.0, 1.0, 0.0 ); float pT = 0.0;
+ vec3 pW = orgQ + ${dm(pir.val ?? 0.0012)} * ( vec3( orgSum( orgQ * ${dm2(260)} ), orgSum( orgQ * ${dm2(260)} + 4.1 ), orgSum( orgQ * ${dm2(260)} + 8.3 ) ) - 0.5 );
+${pir.seznam
+  .map(
+    (c) => ` { vec3 q = pW - vec3( ${tm(c.slice(0, 3))} ); vec3 u = vec3( ${c.slice(3, 6).map((x) => fl(+x.toFixed(4))).join(", ")} ); float t = dot( q, u ); float r = length( q - t * u ); float R = length( q );
+   float dS = r - ( ${dm(c[8] ?? 0.0015)} + max( t, 0.0 ) * ${fl(c[7] ?? 0.45)} ); float dK = R - ${dm(c[6])}; float pH = max( ${dm(pir.zaobljeno ?? 0)} - abs( dS - dK ), 0.0 );
+   float d = max( max( dS, dK ) + pH * pH * ${fl(0.25 / Math.max(dm(pir.zaobljeno ?? 0), 1e-9))}, - t - ${dm(c[8] ?? 0.0015)} ); // zaobljeno: zaobljen stik stranice in osnove piramide (m)
+   if ( d < pD ) { pD = d; pDir = q / max( R, 1e-5 ); pT = R / ${dm(c[6])}; } }`,
+  )
+  .join("\n")}
+ float pAa = max( length( fwidth( orgQ ) ), ${dm(pir.mehko ?? 0.00012)} ); // mehko: širina mehkega prehoda sredica–skorja (m)
+ float pM = 1.0 - smoothstep( - pAa, pAa, pD );
+ vec3 pX = pDir * ${fl(pir.gostota ?? 46)};
+ float pLod = clamp( 1.7 - length( fwidth( pX ) ) * 2.2, 0.0, 1.0 ) * pM;
+ float pS = mix( 0.5, orgSum( pX ) * 0.55 + orgSum( pX * 2.9 + 3.0 ) * 0.45, pLod );
+ vec3 pC = mix( ${vec3(pir.notranja || "#d9a58f")}, ${vec3(pir.barva || "#8f3b33")}, smoothstep( ${fl(pir.notranjaR0 ?? 0.3)}, ${fl(pir.notranjaR1 ?? 0.72)}, pT ) );
+ pC = mix( pC * ${fl(1 - (pir.moc ?? 0.5) * 0.3)}, ${vec3(pir.proge || "#d08a76")}, ${fl(pir.moc ?? 0.5)} * smoothstep( 0.4, 0.72, pS ) * smoothstep( 0.1, 0.45, pT ) );
+ pC *= 0.93 + 0.14 * orgSum( orgQ * ${dm2(1500)} );
+${
+  pir.sinus
+    ? ` { float sD = 1e9; // maščoba ledvičnega sinusa in hilusa (unija kapsul) s prerezanimi žilami
+${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec3 sB = vec3( ${tm(c.slice(3, 6))} ) - sA; sD = min( sD, length( pW - sA - sB * clamp( dot( pW - sA, sB ) / max( dot( sB, sB ), 1e-9 ), 0.0, 1.0 ) ) - ${dm(c[6])} ); }`).join("\n")}
+   float sM = ( 1.0 - smoothstep( - pAa, pAa, sD ) ) * ( 1.0 - pM );
+   if ( sM > 0.0 ) {
+     vec3 fX = orgQ * ${dm2(1 / (pir.sinus.mera ?? 0.0016))}; fX += 0.6 * ( vec3( orgSum( fX * 1.9 ), orgSum( fX * 1.9 + 5.2 ), orgSum( fX * 1.9 + 9.7 ) ) - 0.5 );
+     vec3 fC = orgCel( fX );
+     vec3 sC = ${vec3(pir.sinus.barva || "#e0c27c")} * ( 0.88 + 0.24 * fC.z );
+     sC = mix( sC, ${vec3(pir.sinus.pretini || "#b89a5a")}, 0.5 * ( 1.0 - smoothstep( 0.0, 0.1, fC.y - fC.x ) ) * clamp( 1.7 - length( fwidth( fX ) ) * 2.4, 0.0, 1.0 ) );
+     ${
+       pir.sinus.zile
+         ? `vec3 vX = orgQ * ${dm2(1 / (pir.sinus.zileMera ?? 0.0055))} + 3.7; vec3 vC = orgCel( vX );
+     if ( vC.z < ${fl(pir.sinus.zile)} ) { // prerezane veje: arterija (debela rdeča stena, okrogla) ali vena (tanka modrikasta stena, širša svetlina)
+       float vA = step( 0.5, fract( vC.z * 13.7 ) ); float vR = 0.13 + 0.12 * fract( vC.z * 7.3 ) + 0.05 * ( 1.0 - vA ); float vE = length( fwidth( vX ) );
+       float vO = 1.0 - smoothstep( vR - vE, vR + vE, vC.x ); float vL = 1.0 - smoothstep( vR * mix( 0.8, 0.55, vA ) - vE, vR * mix( 0.8, 0.55, vA ) + vE, vC.x );
+       sC = mix( sC, mix( ${vec3(pir.sinus.vena || "#4d4a86")}, ${vec3(pir.sinus.arterija || "#b23a30")}, vA ), vO );
+       sC = mix( sC, mix( ${vec3(pir.sinus.venaSvetlina || "#221631")}, ${vec3(pir.sinus.arterijaSvetlina || "#3d0c0c")}, vA ), vL );
+       orgH = mix( orgH, 0.5 - 0.5 * vL, sM );
+     }`
+         : ""
+     }
+     diffuseColor.rgb = mix( diffuseColor.rgb, sC, sM );
+   } }`
+    : ""
+}
+ diffuseColor.rgb = mix( diffuseColor.rgb, pC, pM );
+ orgH = mix( orgH, mix( 0.5, pS, ${fl(pir.visina ?? 0.35)} ), pM );
+ ${
+   pir.zile
+     ? `{ float pV = ( 1.0 - smoothstep( ${dm(0.00025)}, ${dm(0.00055)}, abs( pD ) ) ) * smoothstep( 0.6, 0.75, pT ) * smoothstep( 0.6, 0.7, orgSum( pW * ${dm2(700)} ) ); // ločne žile ob osnovi piramid
+ diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(pir.zileBarva || "#5e1414")}, ${fl(pir.zile)} * pV ); }`
+     : ""
+ } }`
+            : ""
+        }${
+          sl
+            ? `\n { // naslikana rezna ploskev (rezSlika): barva iz slike v koordinatah ravnine, A = moč
+ vec2 sUv = ( vec2( dot( orgQ, vec3( ${sl.U.map((x) => fl(+x.toFixed(6))).join(", ")} ) ), dot( orgQ, vec3( ${sl.V.map((x) => fl(+x.toFixed(6))).join(", ")} ) ) ) / ${fl(+merilo.toPrecision(7))} + vec2( ${fl(+(sl.c0[0] - sl.lo[0]).toFixed(6))}, ${fl(+(sl.c0[1] - sl.lo[1]).toFixed(6))} ) ) / vec2( ${fl(sl.mera[0])}, ${fl(sl.mera[1])} );
+ vec4 sT = texture2D( orgSl, vec2( sUv.x, 1.0 - sUv.y ) );
+ float sIn = step( 0.0, sUv.x ) * step( sUv.x, 1.0 ) * step( 0.0, sUv.y ) * step( sUv.y, 1.0 ) * sT.a;
+ ${t.rezSlika?.izrez ? "if ( sIn < 0.5 ) discard; sIn = 1.0; // izrez: zunaj naslikanega obrisa ploskve ni (nazobčan obris listov, razpoke)" : ""}
+ diffuseColor.rgb = mix( diffuseColor.rgb, sT.rgb * ( 0.94 + 0.12 * orgSum( orgQ * ${dm2(1200)} ) ), sIn );
+ orgH = mix( orgH, dot( sT.rgb, vec3( 0.333 ) ), sIn * ${fl(t.rezSlika?.visina ?? 0.5)} ); }`
+            : ""
+        }${
+          vr
+            ? `\n if ( vOrgVr > 1.5 ) { diffuseColor.rgb = ${vec3(presek.luknjaBarva || "#200808")}; orgH = 0.0; } else if ( vOrgVr > 0.5 ) { diffuseColor.rgb = ${vec3(presek.robBarva || t.rez || "#cccccc")}; orgH = 0.6; }`
+            : ""
+        }`,
+      )
+      .replace(
+        "#include <normal_fragment_begin>",
+        `#include <normal_fragment_begin>
+        { // ravna rezna ploskev: normala ravnine (v prostoru pogleda, proti kameri) + izbočenost vlaken
+          vec3 orgN = normalize( ( viewMatrix * vec4( orgNw, 0.0 ) ).xyz );
+          if ( dot( orgN, vViewPosition ) < 0.0 ) orgN = - orgN;
+          vec3 orgQv = ( viewMatrix * vec4( orgQ, 1.0 ) ).xyz;
+          vec3 orgDx = dFdx( orgQv ), orgDy = dFdy( orgQv );
+          vec3 orgR1 = cross( orgDy, orgN ), orgR2 = cross( orgN, orgDx );
+          float orgDet = dot( orgDx, orgR1 );
+          float orgHh = orgH * ${relief.toExponential(3)};
+          vec3 orgG = sign( orgDet ) * ( dFdx( orgHh ) * orgR1 + dFdy( orgHh ) * orgR2 );
+          normal = abs( orgDet ) > 1e-12 ? normalize( abs( orgDet ) * orgN - orgG ) : orgN;
+          nonPerturbedNormal = orgN;
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov-${t.rez || t.barva}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}`;
+  m.customProgramCacheKey = () => `org-pokrov4-${st ? "s" : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez])}` : ""}`;
   return m;
+}
+
+// Notranjost prerezane votline (tkivo.rezVotlina { barva, hrap, lak, globina [m], senca, sencaMoc, okolje, vrsta }):
+// zadnje ploskve mreže, osvetljene kot vlažna notranja stena (ledvični meh in čašice: v votlino se vidi), z globino temnejše.
+// Ploskve drugih tkiv na ravnini reza v obrisu votline zakrije nevidna maska (zgradiOrgan), zato je votlina odprta.
+function materialVotline(v, ravnina, merilo) {
+  const m = new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color(v.barva || "#e6d3c2"),
+    roughness: v.hrap ?? 0.36,
+    metalness: 0,
+    clearcoat: v.lak ?? 0.6,
+    clearcoatRoughness: 0.18,
+    envMapIntensity: v.okolje ?? 0.55,
+    side: THREE.BackSide,
+    clippingPlanes: [ravnina],
+  });
+  const g = (v.globina ?? 0.006) * merilo;
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.orgRv = { value: new THREE.Vector4(ravnina.normal.x, ravnina.normal.y, ravnina.normal.z, ravnina.constant) };
+    sh.vertexShader = sh.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec3 vOrgW;")
+      .replace("#include <worldpos_vertex>", "#include <worldpos_vertex>\nvOrgW = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;");
+    sh.fragmentShader = sh.fragmentShader
+      .replace("#include <common>", `#include <common>\nvarying vec3 vOrgW;\nuniform vec4 orgRv;\n${GLSL_SUM}`)
+      .replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        { float orgGl = clamp( ( dot( orgRv.xyz, vOrgW ) + orgRv.w ) / ${g.toExponential(4)}, 0.0, 1.0 ); // globina za ravnino reza
+          diffuseColor.rgb *= 0.92 + 0.16 * orgSum( vOrgW * ${fl(+(900 / merilo).toPrecision(4))} );
+          diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(v.senca || "#7a4a3c")}, ${fl(v.sencaMoc ?? 0.75)} * smoothstep( 0.0, 1.0, orgGl ) ); }`,
+      );
+  };
+  m.customProgramCacheKey = () => `org-votlina-${JSON.stringify(v)}-${g}`;
+  return m;
+}
+
+// Pokrov s prostorsko teksturo: položaj kamere v prostoru modela (uniform orgCmU) pred risanjem mreže.
+const obratna = new THREE.Matrix4();
+function kameraModela(renderer, scena, kamera, geo, material) {
+  if (material.orgKamera) material.orgKamera.value.setFromMatrixPosition(kamera.matrixWorld).applyMatrix4(obratna.copy(this.matrixWorld).invert());
 }
 
 // Privzeta točka dela: zunanje oglišče blizu premice iz središča organa skozi središče dela.
@@ -535,12 +965,38 @@ export async function zgradiOrgan(ime, ctx = {}) {
     pripravljeno = await pripravi(vir.url, napredek);
   }
   await okolje; // brez preskoka sobe → studio po prvem prikazu
-  const { kosi, polmer, sredisce, teksture } = pripravljeno;
+  const { kosi, polmer, sredisce } = pripravljeno;
   // Metri organa (koordinate GLB) → enote modela: model je prestavljen v središče svoje škatle (organ-prostor.js).
   const prostor = prostorOrgana(sredisce, polmer);
-  const s = prostor.s;
+  // prostorska tekstura reza (podatki.prerez.volumen): smer vlaken in maščoba + kocki pravega tkiva (Visible Woman, NLM)
+  const pv = podatki.prerez?.volumen;
+  let vol = null;
+  const volCaka = []; // prostorske teksture reza: prenos ob prvem prerezu
+  if (pv) {
+    // Ne čakamo: teksturi reza (≈ 0,8 MB) se naložita v ozadju po GLB, prvi prikaz (celota) je zato hitrejši (telefon
+    // 4G: ocena n9 4,8 s). Do naložitve vzorčenje vrne 0 (pokrov kot brez stene, nekaj sto ms, samo če je prerez že vklopljen).
+    const nalozi = (ime, srgb = false) => {
+      const tx = new THREE.Texture(); // prazna do prvega prereza (volCaka): celota teh slik ne potrebuje
+      volCaka.push({ tx, pot: ime });
+      tx.flipY = false;
+      tx.generateMipmaps = false;
+      tx.minFilter = THREE.LinearFilter;
+      tx.magFilter = THREE.LinearFilter;
+      tx.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace; // tkivo: fotografija (linearne vrednosti kot barve iz JSON)
+      return tx;
+    };
+    const s0 = prostor.s;
+    vol = { tex: nalozi(pv.slika), tkivo: nalozi(pv.tkivo || `${ime}-tkivo.png`, true), meta: pv, lo: prostor.tocka(pv.lo), k: pv.korak * s0, tkK: (pv.tkivoMera ?? 0.016) * s0 };
+    // delež stene iz mreže (rez-stena.mjs): telefon ima svojo mrežo, zato svojo sliko (stena.telefon)
+    const ps = pv.stena;
+    if (ps) vol.stena = { tex: nalozi((!visoka && ps.telefon) || ps.slika), n: ps.n, ploscice: ps.ploscice, lo: prostor.tocka(ps.lo), k: ps.korak * s0 };
+  }
+  const teksture = pripravljeno.teksture ? { ...pripravljeno.teksture, pbr: !!podatki.pbr } : null;
+  if (teksture?.orm) teksture.orm.channel = 0; // aoMap bere isti UV kot ostale mape (three privzeto: uv1 za aoMap v starejših)
+  const s = prostor.s; // metri organa → enote modela
   const group = new THREE.Group();
   group.name = ime;
+  group.userData.merilo = s; // metri organa → enote modela (preizkusi: merilne črte, posnetki-organa.cjs MERE=1)
   // Luči organa (poleg studijske svetlobe kompleta): topla glavna luč za ostre vlažne odseve in zadnja luč za obris.
   for (const l of podatki.luci || [{ smer: [0.5, 1, 0.8], moc: 1.1, barva: "#fff1e6" }, { smer: [-0.7, 0.4, -1], moc: 0.6, barva: "#ffd8d0" }]) {
     const d = new THREE.DirectionalLight(new THREE.Color(l.barva || "#ffffff"), (l.moc ?? 1) * (visoka ? 1 : 1.1));
@@ -557,6 +1013,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
           return new THREE.Plane(new THREE.Vector3(...p.n), p.d);
         }),
         presek: !!prerez.presek,
+        temnenje: prerez.temnenje || null,
       }
     : null;
   const brezRavnin = { seznam: [], presek: false };
@@ -564,12 +1021,20 @@ export async function zgradiOrgan(ime, ctx = {}) {
 
   const materiali = new Map();
   const pokrovi = new Map();
+  const preseki = new Map(); // tkivo → material pravega preseka (tkivo.rezPresek)
+  const presekGeo = [];
+  const leniRez = []; // gradnja presekov in votlin posameznih kosov, izvede se ob prvem prerezu
+  const enaRavnina0 = !!ravnine && ravnine.seznam.length === 1 && !ravnine.presek;
+  const votline = new Map(); // tkivo → material notranjosti votline (tkivo.rezVotlina)
+  const maskaMat = new THREE.MeshBasicMaterial({ colorWrite: false, side: THREE.DoubleSide }); // samo globina: odprtina votline v ploskvah reza
+  const slike = []; // naslikane rezne ploskve (tkivo.rezSlika): naložijo se ob prvem prerezu
+  const ucni = new Map(); // id dela → { mat, pokrov }: »Učne barve« (barve.js)
   // Del z »znotraj« (žila z enojno steno, npr. aorta) dobi svoj material tkiva: venčne žile istega tkiva so zaprte cevi.
   const znotrajDela = new Map((podatki.deli || []).filter((d) => d.znotraj).map((d) => [d.id, d.znotraj]));
   const mat = (tkivo, del) => {
     const zn = znotrajDela.get(del);
     const kljuc = zn ? `${tkivo}#z` : tkivo;
-    if (!materiali.has(kljuc)) materiali.set(kljuc, materialTkiva({ ...(podatki.tkiva?.[tkivo] || {}), ...(zn ? { znotraj: zn } : {}) }, visoka, ravnine || brezRavnin, teksture, s, studio, prostor.sredisce));
+    if (!materiali.has(kljuc)) materiali.set(kljuc, materialTkiva({ ...(podatki.tkiva?.[tkivo] || {}), kljuc: tkivo, ...(zn ? { znotraj: zn } : {}) }, visoka, ravnine || brezRavnin, teksture, s, studio, prostor.sredisce));
     return materiali.get(kljuc);
   };
   const proxyMat = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
@@ -603,12 +1068,102 @@ export async function zgradiOrgan(ime, ctx = {}) {
     group.add(mesh);
     meshi.push(mesh);
     const t = podatki.tkiva?.[k.tkivo] || {};
-    if (ravnine && !t.brezReza && !t.dvostransko && !znotrajDela.has(k.del) && (t.prosojnost ?? 1) >= 1) {
-      if (!pokrovi.has(k.tkivo)) pokrovi.set(k.tkivo, materialPokrova(t, ravnine));
+    // brez pokrova reza: notranje strukture, ki se sekajo s steno (trabekule, papilarne mišice …), sicer drobir na rezu
+    // Pravi presek (tkivo.rezPresek: { vrsta, polno, ovoj, povecaj, rob [m], robBarva, luknjaBarva, samoRob }; ena ravnina): zapolnjen obris preseka na ravnini reza namesto
+    // pokrova iz zadnjih ploskev, za vsako vozlišče GLB (zaprto telo) posebej. vrsta = vrstni red plasti (višja je bliže
+    // gledalcu: sredica čez skorjo, meh čez oboje); polno = brez lukenj; ovoj = izbočena ovojnica preseka (podlaga: maščoba
+    // ledvičnega sinusa pod skorjo, sredico in mehom).
+    // Geometrija pravega preseka in votlin nastane šele ob prvem prerezu (leniRez; pregled krog 3: ob nalaganju je
+    // presek vseh vozlišč zadrževal glavno nit, celota pa ga ne potrebuje).
+    if (enaRavnina0 && (t.rezPresek || t.rezVotlina)) leniRez.push(() => {
+    let presek = null;
+    const enaRavnina = ravnine && ravnine.seznam.length === 1 && !ravnine.presek;
+    const trianguliraj = (obris, luknje) => THREE.ShapeUtils.triangulateShape(obris.map((q) => new THREE.Vector2(q[0], q[1])), luknje.map((l) => l.map((q) => new THREE.Vector2(q[0], q[1]))));
+    const deliMreze = () => ((idx) => (k.obsegi || [[0, idx.length]]).map(([a, st]) => idx.subarray(a, a + st)))(k.geo.index.array);
+    if (enaRavnina && t.rezPresek) {
+      const rav = ravnine.seznam[0];
+      const n = rav.normal.toArray();
+      // robBarva: obroba v svoji barvi (stena žile, ovojnica); luknjaBarva: zapolnjene luknje (temna svetlina cevi z dvojno
+      // steno); samoRob: brez ploskve (stena votline, glej rezVotlina)
+      const r = presekMreze(k.geo.attributes.position.array, deliMreze(), n, rav.constant, {
+        polno: !!t.rezPresek.polno,
+        ovoj: !!t.rezPresek.ovoj,
+        luknje: !!t.rezPresek.luknjaBarva,
+        brezPloskve: !!t.rezPresek.samoRob,
+        stena: (t.rezPresek.stena || 0) * s, // ozek obris brez lukenj je stena (vzdolž prerezana odprta cev), ne svetlina (m)
+        skleni: (t.rezPresek.skleni || 0) * s, // odprtina v mreži (hilus): obris se sklene z ravno črto do te širine (m)
+        povecaj: t.rezPresek.povecaj ?? 1,
+        rob: (t.rezPresek.rob ?? 0) * s, // metri → enote modela
+        trianguliraj,
+      });
+      if (r) {
+        // malenkost pred ravnino (na odrezani strani), plasti druga pred drugo: brez migetanja globine
+        const odmik = -(0.0004 + 0.0004 * (t.rezPresek.vrsta ?? 0));
+        // svetlina cevi (vrsta 2) malenkost pred obrobami: stena sosednje veje iste žile ne riše črt čez svetlino (stik vej)
+        for (let i = 0; i < r.polozaji.length; i += 3) for (let c = 0; c < 3; c++) r.polozaji[i + c] += n[c] * (r.vrste[i / 3] === 2 ? odmik - 0.00015 : odmik);
+        const g = new THREE.BufferGeometry();
+        g.setAttribute("position", new THREE.BufferAttribute(r.polozaji, 3));
+        g.setAttribute("normal", new THREE.BufferAttribute(Float32Array.from({ length: r.polozaji.length }, (_, i) => -n[i % 3]), 3));
+        g.setAttribute("orgVr", new THREE.BufferAttribute(r.vrste, 1));
+        g.setIndex(r.indeksi);
+        presekGeo.push(g);
+        if (!preseki.has(k.tkivo)) {
+          // naslikana rezna ploskev (rezSlika { slika, lo [m, koordinati ravnine], mera [m], izrez, visina }): tekstura se naloži ob prvem prerezu
+          let slika = null;
+          if (t.rezSlika) {
+            const prazna = new THREE.DataTexture(new Uint8Array([0, 0, 0, 0]), 1, 1);
+            prazna.needsUpdate = true;
+            slika = { uniform: { value: prazna }, U: r.os.U, V: r.os.V, c0: [0, 1].map((i) => prostor.sredisce.reduce((a, x, c) => a + x * (i ? r.os.V : r.os.U)[c], 0)), lo: t.rezSlika.lo, mera: t.rezSlika.mera };
+            slike.push({ uniform: slika.uniform, prazna, pot: t.rezSlika.slika, tex: null });
+          }
+          const pm = materialPokrova(t, ravnine, s, null, prostor.sredisce, { robBarva: t.rezPresek.robBarva, luknjaBarva: t.rezPresek.luknjaBarva, slika });
+          pm.clippingPlanes = [];
+          pm.side = THREE.DoubleSide;
+          preseki.set(k.tkivo, pm);
+        }
+        presek = new THREE.Mesh(g, preseki.get(k.tkivo));
+        presek.raycast = () => {};
+        presek.renderOrder = (tk.vrstni ?? 0) + 0.01 * (t.rezPresek.vrsta ?? 0);
+        presek.userData = { pokrov: true, presek: true, tkivo: k.tkivo, stran: k.stran, del: k.del };
+        mesh.add(presek);
+      }
+    }
+    // Odprta votlina (tkivo.rezVotlina, ena ravnina): notranjost mreže (zadnje ploskve, osvetljene) in nevidna maska v obrisu
+    // preseka, ki v globino zapiše ravnino reza malo pred ploskvami drugih tkiv (vrsta nižja od maske) – tam ostane odprtina.
+    // Vrstni red risanja: notranjost in mreža votline (−3), maska (−2), nato pokrovi in ploskve reza.
+    if (enaRavnina && t.rezVotlina) {
+      const rav = ravnine.seznam[0];
+      const n = rav.normal.toArray();
+      if (!votline.has(k.tkivo)) votline.set(k.tkivo, materialVotline(t.rezVotlina, rav, s));
+      const v = new THREE.Mesh(k.geo, votline.get(k.tkivo));
+      v.raycast = () => {};
+      v.renderOrder = -3;
+      v.userData = { pokrov: true, votlina: true, tkivo: k.tkivo, stran: k.stran, del: k.del };
+      mesh.add(v);
+      mesh.renderOrder = -3;
+      const r = presekMreze(k.geo.attributes.position.array, deliMreze(), n, rav.constant, { polno: true, trianguliraj });
+      if (r) {
+        const odmik = -(0.0004 + 0.0004 * (t.rezVotlina.vrsta ?? (t.rezPresek?.vrsta ?? 0) - 0.5));
+        for (let i = 0; i < r.polozaji.length; i += 3) for (let c = 0; c < 3; c++) r.polozaji[i + c] += n[c] * odmik;
+        const g = new THREE.BufferGeometry();
+        g.setAttribute("position", new THREE.BufferAttribute(r.polozaji, 3));
+        g.setIndex(r.indeksi);
+        presekGeo.push(g);
+        const maska = new THREE.Mesh(g, maskaMat);
+        maska.raycast = () => {};
+        maska.renderOrder = -2;
+        maska.userData = { pokrov: true, maska: true, tkivo: k.tkivo, stran: k.stran, del: k.del };
+        mesh.add(maska);
+      }
+    }
+    });
+    if (!(enaRavnina0 && (t.rezPresek || t.rezVotlina)) && ravnine && !t.brezReza && !t.dvostransko && !znotrajDela.has(k.del) && (t.prosojnost ?? 1) >= 1 && !(prerez.brezPokrova || []).includes(k.del)) {
+      if (!pokrovi.has(k.tkivo)) pokrovi.set(k.tkivo, materialPokrova(t, ravnine, s, vol, prostor.sredisce));
       const p = new THREE.Mesh(k.geo, pokrovi.get(k.tkivo));
       p.raycast = () => {};
       p.renderOrder = tk.vrstni ? tk.vrstni - 0.5 : -1; // pokrov pred svojo mrežo (in za ozadjem z manjšim vrstnim redom)
       p.userData = { pokrov: true, tkivo: k.tkivo, stran: k.stran, del: k.del };
+      p.onBeforeRender = kameraModela;
       mesh.add(p);
     }
   }
@@ -623,6 +1178,10 @@ export async function zgradiOrgan(ime, ctx = {}) {
     const skrijTkiva = new Set(p.skrijTkiva || []);
     const skrijDele = new Set(p.skrijDele || []);
     const rezi = vPrerezu() && !!ravnine && p.rez !== false;
+    if (rezi && leniRez.length) {
+      for (const f of leniRez.splice(0)) f();
+      if (ucne) barvePokrovov();
+    }
     for (const m of meshi) {
       m.visible = m.userData.stran !== skrijStran && !skrijTkiva.has(m.userData.tkivo) && !skrijDele.has(m.userData.del);
       for (const c of m.children) c.visible = rezi;
@@ -633,10 +1192,14 @@ export async function zgradiOrgan(ime, ctx = {}) {
       const tk = kljuc.replace(/#z$/, "");
       const t = podatki.tkiva?.[tk] || {};
       const o = nast[tk] || {};
-      mm.color.set(o.barva || t.barva || "#cccccc");
+      mm.color.set(o.barva || mm.userData.pbrBarva || t.barva || "#cccccc");
+      if (o.svetlost) mm.color.multiplyScalar(o.svetlost); // npr. prerez: svetlejši vlažen endokard v votlinah (pravo srce)
       mm.userData.osnova ||= { sheen: mm.sheen, clearcoat: mm.clearcoat };
       mm.sheen = o.sijaj ?? mm.userData.osnova.sheen;
+      mm.userData.osnova.lakHrap ??= mm.clearcoatRoughness;
       mm.clearcoat = o.lak ?? mm.userData.osnova.clearcoat;
+      mm.clearcoatRoughness = o.lakHrap ?? mm.userData.osnova.lakHrap; // npr. prerez: gladek moker endokard
+      if (mm.aoMap) mm.aoMapIntensity = o.aoTekstura ?? t.aoTekstura ?? 1; // pogled lahko omili pečeno senco (prerez: ploskve, ki jih je pri peki zakrivala odrezana polovica)
       const op = o.prosojnost ?? t.prosojnost ?? 1;
       const side = o.dvostransko ?? (t.dvostransko || kljuc !== tk) ? THREE.DoubleSide : THREE.FrontSide;
       if (mm.opacity !== op || mm.side !== side) {
@@ -646,12 +1209,37 @@ export async function zgradiOrgan(ime, ctx = {}) {
         mm.needsUpdate = true;
       }
     }
+    // Učne barve: iste zastavice tkiva in nastavitve pogleda kot naravni material (prosojnost, stran, svetlost).
+    for (const u of ucni.values()) {
+      const t = podatki.tkiva?.[u.tkivo] || {};
+      const o = nast[u.tkivo] || {};
+      u.mat.color.copy(u.barva);
+      if (o.svetlost) u.mat.color.multiplyScalar(o.svetlost);
+      const op = o.prosojnost ?? t.prosojnost ?? 1;
+      const side = o.dvostransko ?? (t.dvostransko || znotrajDela.has(u.id)) ? THREE.DoubleSide : THREE.FrontSide;
+      if (u.mat.opacity !== op || u.mat.side !== side) {
+        u.mat.transparent = op < 1;
+        u.mat.opacity = op;
+        u.mat.side = side;
+        u.mat.needsUpdate = true;
+      }
+    }
     if (ravnine) {
-      for (const mm of materiali.values()) {
+      for (const mm of [...materiali.values(), ...[...ucni.values()].flatMap((u) => [u.mat, u.pokrov])]) {
         if (!mm.clippingPlanes?.length && !mm.userData.rezan) continue;
         mm.userData.rezan = true;
         mm.clippingPlanes = rezi ? ravnine.seznam : [];
         mm.needsUpdate = true;
+      }
+    }
+    // naslikane rezne ploskve: prenos šele ob prvem prerezu (celota jih ne potrebuje)
+    if (rezi) {
+      for (const c of volCaka.splice(0)) new THREE.ImageLoader().load(`${BAZA}${c.pot}`, (img) => { c.tx.image = img; c.tx.needsUpdate = true; ctx.narisi?.(); }, undefined, (e) => console.warn("organ: prostorska tekstura reza ni naložena", e));
+      for (const sl of slike) {
+        if (sl.tex) continue;
+        sl.tex = new THREE.TextureLoader().load(`${BAZA}${sl.pot}`, (tx) => { sl.uniform.value = tx; ctx.narisi?.(); }, undefined, (e) => console.warn("organ: slika reza ni naložena", e));
+        sl.tex.colorSpace = THREE.SRGBColorSpace;
+        sl.tex.flipY = false; // vrstica 0 slike = največji y ravnine (senčilnik bere 1 − y)
       }
     }
     // Pregledovalnik pri izbiri klonira material: kopije sledijo prerezu prek tega poslušalca.
@@ -659,11 +1247,16 @@ export async function zgradiOrgan(ime, ctx = {}) {
   }
 
   // Deli: vsak del iz JSON z mrežami, ki jih ima ta model; točka iz JSON ali privzeta.
+  // Skupina (»skupina« v delu): skupni del (npr. venčne arterije) obsega tudi mreže svojih posameznih delov (LAD, …),
+  // zato ga OŠ izbere kot celoto (tap), SŠ in študij pa vsako žilo posebej; vsi deli so na vseh ravneh v seznamu.
+  const otroci = new Map();
+  for (const d of podatki.deli || []) if (d.skupina) otroci.set(d.skupina, [...(otroci.get(d.skupina) || []), d.id]);
   const vsiDeli = (podatki.deli || [])
     .map((d) => {
-      const moje = meshi.filter((m) => m.userData.del === d.id);
+      const ids = new Set([d.id, ...(otroci.get(d.id) || [])]);
+      const moje = meshi.filter((m) => ids.has(m.userData.del));
       if (!moje.length) return null;
-      const privzeta = d.tocka ? prostor.tocka(d.tocka) : privzetaTocka(kosi.filter((k) => k.del === d.id));
+      const privzeta = d.tocka ? prostor.tocka(d.tocka) : privzetaTocka(kosi.filter((k) => ids.has(k.del)));
       return { d, moje, privzeta };
     })
     .filter(Boolean);
@@ -672,6 +1265,65 @@ export async function zgradiOrgan(ime, ctx = {}) {
     return t ? prostor.tocka(t) : x.privzeta;
   };
   let deliPogleda = [];
+  // Barvni način (barve.js): učne barve zamenjajo material vsake mreže z enobarvnim po delu (relief normalne mape
+  // ostane), pokrov reza dobi temnejšo barvo dela; naravne vrnejo pečene materiale tkiv.
+  const poId = new Map((podatki.deli || []).map((d) => [d.id, d]));
+  const imaUcne = (podatki.deli || []).length > 1;
+  let ucne = false;
+  const ucniZa = (id, tkivo) => {
+    const kljuc = `${id}|${tkivo}`;
+    if (!ucni.has(kljuc)) {
+      const c = new THREE.Color(ucnaBarva(poId.get(id), poId));
+      const rezi = vPrerezu() && !!ravnine;
+      // Učni material ohrani zastavice tkiva (pregled krog 3): prosojnost (roženica, steklovina: šarenica ostane vidna in
+      // dotik gre skozi), dvostransko (lističi zaklopk, žile z enojno steno), brezReza (tkivo se v prerezu ne reže) in
+      // globino kot naravni material. Prosojnost, stran in nastavitve pogleda nastavi uporabi().
+      const tk = podatki.tkiva?.[tkivo] || {};
+      const narava = mat(tkivo, id);
+      const reze = !!ravnine && !tk.brezReza;
+      const umat = new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0, normalMap: (tk.normala ?? 1) > 0 ? teksture?.normalMap || null : null, clippingPlanes: rezi && reze ? ravnine.seznam : [], depthWrite: narava.depthWrite });
+      if (teksture?.normalScale) umat.normalScale.copy(teksture.normalScale).multiplyScalar(0.6 * (tk.normala ?? 1)); // normala 0: brez mape (glej mat)
+      umat.userData.rezan = reze;
+      // Stene s prostorsko teksturo reza (srce): pokrov na globini ravnine kot v naravnih barvah, sicer bi notranji deli
+      // (prevodni sistem, dno papilarnih mišic, venčne veje) v pretinu silili skozi rez kot raznobarvni drobci (ocena n9).
+      const pokrov =
+        ravnine && vol && tk.rezVolumen
+          ? materialPokrova({ ...tk, rez: `#${c.clone().multiplyScalar(0.62).getHexString()}`, rezVlakna: 0, rezRavna: true }, ravnine, s, vol, prostor.sredisce)
+          : new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(0.62), side: THREE.BackSide, clippingPlanes: ravnine ? ravnine.seznam : [], clipIntersection: !!ravnine?.presek });
+      // pravi presek (rezPresek): enobarvna ploskev na ravnini, brez rezanja
+      // piramide na ploskvi skorje (rezPiramide.del): v učnih barvah enobarvne v barvi svojega dela
+      let presek;
+      if (tk.rezPiramide?.seznam?.length && tk.rezPresek && enaRavnina0) {
+        const hex = (b, k = 0.62) => `#${new THREE.Color(b).multiplyScalar(k).getHexString()}`;
+        const cp = hex(ucnaBarva(poId.get(tk.rezPiramide.del) || poId.get(id), poId));
+        const cs = tk.rezPiramide.sinus ? hex(ucnaBarva(poId.get(tk.rezPiramide.sinus.del) || poId.get(id), poId)) : null;
+        presek = materialPokrova(
+          { rez: tk.rezPiramide.osnovaDel ? hex(ucnaBarva(poId.get(tk.rezPiramide.osnovaDel) || poId.get(id), poId)) : hex(c), rezSum: 0, rezHrap: 1, rezLak: 0, rezRelief: 0, rezPiramide: { ...tk.rezPiramide, barva: cp, notranja: cp, proge: cp, moc: 0, zile: 0, visina: 0, sinus: cs ? { ...tk.rezPiramide.sinus, barva: cs, pretini: cs, zile: 0 } : null } },
+          ravnine, s, null, prostor.sredisce,
+        );
+        presek.clippingPlanes = [];
+        presek.side = THREE.DoubleSide;
+      } else presek = new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(0.62), side: THREE.DoubleSide });
+      ucni.set(kljuc, { mat: umat, pokrov, presek, tkivo, id, barva: c.clone() });
+    }
+    return ucni.get(kljuc);
+  };
+  // materiali pokrovov in presekov po barvnem načinu (tudi za ploskve, zgrajene ob prvem prerezu)
+  function barvePokrovov() {
+    for (const m of meshi) {
+      const u = ucne ? ucniZa(m.userData.del, m.userData.tkivo) : null;
+      for (const c of m.children) if (c.userData.pokrov && !c.userData.maska && !c.userData.votlina) c.material = c.userData.presek ? (u ? u.presek : preseki.get(m.userData.tkivo)) : u ? u.pokrov : pokrovi.get(m.userData.tkivo);
+    }
+  }
+  function barve(n) {
+    ucne = imaUcne && n === "ucne";
+    for (const m of meshi) {
+      const u = ucne ? ucniZa(m.userData.del, m.userData.tkivo) : null;
+      m.material = u ? u.mat : mat(m.userData.tkivo, m.userData.del);
+      for (const c of m.children) if (c.userData.pokrov && !c.userData.maska && !c.userData.votlina) c.material = c.userData.presek ? (u ? u.presek : preseki.get(m.userData.tkivo)) : u ? u.pokrov : pokrovi.get(m.userData.tkivo);
+    }
+    uporabi(); // tudi brez prereza: prosojnost in stran učnih materialov
+  }
   const sestavi = () => {
     const p = pogledi[pogled] || {};
     const tocke = new Set(p.tocke || []);
@@ -681,18 +1333,35 @@ export async function zgradiOrgan(ime, ctx = {}) {
         id: x.d.id,
         ime: x.d.ime,
         la: x.d.la,
+        sinonimi: x.d.sinonimi, // skupine.js delPoImenu (»mitralna zaklopka« → Jadrasti zaklopki)
         opis: x.d.opis,
-        barva: x.d.barva || "#6E9BFF",
+        barva: (ucne ? ucnaBarva(x.d, poId) : x.d.barva) || "#6E9BFF",
         meshes: x.moje.filter((m) => m.visible),
         tocka: tockaZa(x),
         skrijTocko: !tocke.has(x.d.id),
         povecava: x.d.povecava, // id modela za »Poglej pod povečavo« (npr. mrežnica → organ-mreznica)
+        opisOs: x.d.opisOs, // razlaga po ravni (raven.js): OŠ preprosto, študij podrobneje
+        opisStudij: x.d.opisStudij,
+        skupina: x.d.skupina,
       }));
   };
   uporabi();
+  barve(barvniNacin(ctx.raven === 1 ? "ucne" : "naravne"));
   sestavi();
 
   const nadzor = [];
+  if (imaUcne) {
+    nadzor.push({
+      tip: "stikalo",
+      id: "ucne-barve",
+      oznaka: ctx.t?.("a3.teachColors") || "Učne barve",
+      vrednost: ucne,
+      ob: (v) => {
+        barve(nastaviBarvniNacin(v ? "ucne" : "naravne"));
+        sestavi();
+      },
+    });
+  }
   if (pogledi.prerez) {
     nadzor.push({
       tip: "stikalo",
@@ -712,19 +1381,30 @@ export async function zgradiOrgan(ime, ctx = {}) {
   // Okvir pogleda: središče (metri organa) in polmer (1 = cel organ), npr. zrklo brez mišic večje in na sredini.
   const okvir = (p) => {
     const o = pogledi[p]?.okvir || podatki.okvir || {};
-    // brez središča v JSON: središče škatle modela (izhodišče enot modela)
-    return { sredisce: o.sredisce ? prostor.tocka(o.sredisce) : [0, 0, 0], polmer: o.polmer ?? 1 };
+    // brez središča v JSON: središče škatle modela (izhodišče enot modela); vse v metrih GLB (organ-prostor.js)
+    let c = (o.sredisce || prostor.sredisce).slice();
+    // Prerez z eno ravnino: središče kadra na ravnini reza, da merilo (na globini cilja) velja za rezno ploskev. Prej je
+    // bilo srce 3,5 cm pred rezom in stena na sliki ~20 % tanjša od merila (ocena srca n9: »LV 5–7 mm«).
+    const rv = prerez?.ravnine;
+    if (p !== "celota" && !pogledi[p]?.okvir?.sredisce && rv?.length === 1 && !prerez.presek) {
+      const n = new THREE.Vector3(...rv[0].n).normalize();
+      const k = n.dot(new THREE.Vector3(...c)) + (rv[0].d || 0) / new THREE.Vector3(...rv[0].n).length();
+      c = c.map((x, i) => x - n.getComponent(i) * k);
+    }
+    return { sredisce: prostor.tocka(c), polmer: o.polmer ?? 1 };
   };
   return {
     group,
     get deli() {
       return deliPogleda;
     },
+    steviloDelov: vsiDeli.length, // vsi deli modela (števec v seznamu se ob prerezu ne spreminja)
     nadzor,
     postavitev: "organ",
     okolje: studio ? "studio" : undefined,
     podrobnosti: podatki.podrobnosti || null,
     merilo: { m: 2 * polmer, oznaka: "" },
+    mere: podatki.mere || null, // legenda s pravimi merami (pregledovalnik)
     pogled: () => smer(pogled),
     okvir: () => okvir(pogled),
     ao: () => !vPrerezu() || !ravnine,
@@ -732,6 +1412,13 @@ export async function zgradiOrgan(ime, ctx = {}) {
     dispose() {
       for (const m of materiali.values()) m.dispose();
       for (const m of pokrovi.values()) m.dispose();
+      if (vol) (vol.tex.dispose(), vol.tkivo.dispose(), vol.stena?.tex.dispose());
+      for (const u of ucni.values()) (u.mat.dispose(), u.pokrov.dispose(), u.presek.dispose());
+      for (const m of preseki.values()) m.dispose();
+      for (const g of presekGeo) g.dispose();
+      for (const m of votline.values()) m.dispose();
+      maskaMat.dispose();
+      for (const sl of slike) (sl.prazna.dispose(), sl.tex?.dispose());
       proxyMat.dispose();
       // Geometrija ostane v predpomnilniku (»Ponastavi« zgradi znova brez prenosa).
     },

@@ -315,6 +315,11 @@ export function zgradi(THREE, ctx = {}) {
       sp.scale.set(0.72, 0.18, 1); // berljivo tudi na telefonu
       sp.position.set(-600 * S, (y - YC) * S, 0);
       sp.raycast = () => {};
+      // od zgoraj ali spodaj bi se napisa prekrila (ocena 18. 11.): pri strmem pogledu zbledita
+      sp.onBeforeRender = (r, sc, cam) => {
+        const v = cam.getWorldDirection(new THREE.Vector3());
+        sm.opacity = 1 - THREE.MathUtils.smoothstep(Math.abs(v.y), 0.6, 0.8);
+      };
       group.add(sp);
     }
   }
@@ -383,6 +388,7 @@ export function zgradi(THREE, ctx = {}) {
     nadzor,
     korak(t) { if (gib) tok(t); },
     pogled: [0.18, 0.12, 1],
+    okvir: { sredisce: [0, 0.03, 0], polmer: 1.08 }, // z rezervo pod orodno vrstico (ocena 18. 11.)
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
       for (const x of odpad) x.dispose();

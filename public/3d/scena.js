@@ -235,6 +235,8 @@ export function ustvariSceno(el, opts = {}) {
   const camera = new THREE.PerspectiveCamera(opts.fov ?? 35, 1, 0.01, 200);
   camera.position.set(0, 0, 3.6);
   const controls = new OrbitControls(camera, canvas);
+  // Preizkusi (scripts/atlas/posnetki-organa.cjs MERE=1: merilne črte čez prerez): kamera in scena, samo s ?preizkus=1
+  if (typeof location !== "undefined" && /[?&]preizkus=1(&|$)/.test(location.search)) globalThis.__scena = { camera, scene, canvas };
   controls.enableDamping = gib;
   controls.dampingFactor = 0.09;
   controls.rotateSpeed = 0.85;
@@ -522,6 +524,7 @@ export function ustvariSceno(el, opts = {}) {
 
   let w = 0;
   let h = 1;
+  let zamikZg = 0;
   // prisilno: nov composer ali ločljivost; sicer brez dela, če se velikost odra ni spremenila (posodobiVelikost ob izbiri)
   function velikost(prisilno = false) {
     const r = el.getBoundingClientRect();
@@ -532,6 +535,10 @@ export function ustvariSceno(el, opts = {}) {
     h = nh;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
+    // zamik slike navzdol (px): na telefonu lebdijo gumbi in stikala organa levo zgoraj čez oder; model narišemo nižje in
+    // malo manjšega (zgornji del navidezno višje slike), da jih ne prekrije (ocena srca n7). Žarki izbire to upoštevajo.
+    if (zamikZg > 0 && h > 200) camera.setViewOffset(w, h + 2 * zamikZg, 0, 0, w, h);
+    else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     composer?.setPixelRatio(locljivost);
     composer?.setSize(w, h);
@@ -860,7 +867,10 @@ export function ustvariSceno(el, opts = {}) {
   function posodobiMerilo() {
     if (!merilo || !meriloEl) return;
     const d = camera.position.distanceTo(controls.target);
-    const pxNaEnoto = h / 2 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * d);
+    // zamik slike (telefon, setViewOffset): zorni kot zajame navidezno višino h + 2·zamik, na zaslonu je izrez 1 : 1, zato
+    // piksli na enoto sledijo navidezni višini (ocena srca n10: merilo na telefonu ≈ 1,3× prekratko)
+    const hv = camera.view?.enabled ? camera.view.fullHeight : h;
+    const pxNaEnoto = hv / 2 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * d);
     const mNaEnoto = merilo.m / merilo.enota;
     const maksPx = Math.min(140, w * 0.3);
     const l = lepaDolzina((maksPx / pxNaEnoto) * mNaEnoto);
@@ -966,6 +976,10 @@ export function ustvariSceno(el, opts = {}) {
     nacinVrtenja,
     hodi: (n) => (gumbHoje = Math.sign(n) || 0),
     fitRazdalja,
+    zamikZgoraj(px) {
+      zamikZg = Math.max(0, px | 0);
+      velikost(true);
+    },
     obrni,
     priblizaj,
     naTap,

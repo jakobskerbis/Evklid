@@ -51,6 +51,15 @@ export function mrezeOvojev(THREE, deli, d, { group = null, raycaster = new THRE
   if (!d || !Array.isArray(deli)) return out;
   const izbrane = new Set();
   for (const m of d.meshes || []) m?.traverse((o) => izbrane.add(o));
+  // Skupina delov (»skupina-<id>«, npr. Zaklopke): vidni so samo člani, vse druge mreže se skrijejo. Brez žarkov,
+  // zato je tap poceni tudi na šibkem telefonu (pregled #461 B2-N3: ob zaklopkah naj ne ostanejo trabekule ali vene).
+  if (d.skupinaDelov && d.clani?.length) {
+    for (const p of deli) {
+      if (p === d || d.clani.includes(p)) continue;
+      for (const m of p.meshes || []) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) out.push(o); });
+    }
+    return out;
+  }
   const bS = okvirDela(THREE, d);
   if (bS.isEmpty()) return out;
   const c = bS.getCenter(new THREE.Vector3());
