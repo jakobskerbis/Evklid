@@ -140,8 +140,10 @@ async function korak(p) {
   const body = await res.text();
   const vrstice = store.db.prepare("SELECT kind, model, cost_usd FROM usage WHERE id > ? ORDER BY id").all(zacetek);
   const klici = vrstice.map((r) => `${r.kind}:${String(r.model).replace(/^claude-/, "")}`);
-  // Strošek aplikacije za ta korak (brez ocenjevalca): inštruktor (chat, popravek) in vse skupaj (s pregledom, varnostjo).
-  const usd = { instruktor: vrstice.filter((r) => r.kind === "chat" || r.kind === "popravek").reduce((a, r) => a + (r.cost_usd || 0), 0), aplikacija: vrstice.reduce((a, r) => a + (r.cost_usd || 0), 0) };
+  // Strošek aplikacije za ta korak (brez ocenjevalca): inštruktor (chat ali boost z rundami orodij, popravek, prekinjeno)
+  // in vse skupaj (s pregledom, sodbo, varnostjo; pregled v ozadju po dogodku done lahko pade v naslednji korak).
+  const TUTOR = new Set(["chat", "boost", "popravek", "prekinjeno"]);
+  const usd = { instruktor: vrstice.filter((r) => TUTOR.has(r.kind)).reduce((a, r) => a + (r.cost_usd || 0), 0), aplikacija: vrstice.reduce((a, r) => a + (r.cost_usd || 0), 0) };
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`);
   const done = [...body.matchAll(/event: done\ndata: (.*)\n/g)].at(-1);
   if (!done) throw new Error(`brez dogodka done: ${body.slice(-200)}`);
