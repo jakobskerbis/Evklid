@@ -21,7 +21,9 @@ test("pedagogika-12: 12 pogovorov, 8 napačnih in 4 pravilni koraki, nobeno spor
     for (const k of ["naloga", "korak", "tretje", "rezultat"]) assert.ok(p[k]?.length > 0, `${p.id} ${k}`);
     assert.equal(!!p.napaka, !p.korak_pravilen, `${p.id}: napaka le pri napačnem koraku`);
     // Način A brez izrecne prošnje (server/nacin.js): meri se vodenje, ne celotna rešitev.
-    for (const t of [p.naloga, p.korak, p.tretje]) assert.equal(asksForSolution(t), false, `${p.id}: ${t}`);
+    for (const t of [p.naloga, p.korak, p.tretje, `Pomagaj mi pri tej nalogi, rada bi jo rešila sama.\n\n${p.naloga}`]) {
+      assert.equal(asksForSolution(t), false, `${p.id}: ${t}`);
+    }
   }
 });
 
@@ -51,4 +53,14 @@ test("meri-pedagogika --preizkus: 12 pogovorov po 3 sporočila skozi pravo aplik
   const m = /ODGOVORI-ZACETEK\n(.*)\nODGOVORI-KONEC/.exec(r.stdout);
   assert.ok(m, "prepisi v dnevniku");
   assert.equal(JSON.parse(m[1]).length, 12);
+});
+
+test("meri-pedagogika: ustavi se pred mejo stroška in zapiše ustavljeno", () => {
+  const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "evklid-pedagogika-test-")), "izid.json");
+  const r = spawnSync(process.execPath, [skripta, "--preizkus", "--max-usd", "0.3"], { encoding: "utf8", env: { ...env, EVKLID_MERI_IZID: out }, timeout: 60000 });
+  assert.equal(r.status, 1, r.stdout.slice(-500));
+  const izid = JSON.parse(fs.readFileSync(out, "utf8"));
+  assert.equal(izid.ustavljeno, true);
+  assert.equal(izid.izid.length, 0);
+  assert.match(r.stdout, /ustavljeno pred mejo 0.3 \$/);
 });

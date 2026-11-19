@@ -45,7 +45,7 @@ if (!["think", "chat"].includes(NACIN)) {
 
 const { pogovori } = JSON.parse(fs.readFileSync(new URL("../test/fixtures/pedagogika-12.json", import.meta.url), "utf8"));
 // Sporočila učenca v pogovoru; rezultat in napaka ostaneta ocenjevalcu.
-const sporocila = (p) => [`Pomagaj mi pri tej nalogi, rad bi jo rešil sam.\n\n${p.naloga}`, p.korak, p.tretje];
+const sporocila = (p) => [`Pomagaj mi pri tej nalogi, rada bi jo rešila sama.\n\n${p.naloga}`, p.korak, p.tretje];
 
 // Okolje pred uvozom aplikacije: začasna baza (nikoli prava).
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-pedagogika-"));
@@ -58,7 +58,7 @@ process.env.EVKLID_VERIFY_DAILY_USD = "0";
 process.env.EVKLID_MONTHLY_BUDGET_USD = "0";
 // Sprotni pregled (Sonnet), ki ga ustavi časovna meja, ne zapiše porabe (server/live-check.js reviewAnswer), plačan pa je
 // lahko vseeno: brez zapisa bi ga porabljeno() spodaj ne videlo. Z daljšo mejo se vsak pregled konča in zapiše. Razlika od
-// produkcije (tam se počasen pregled po 25 s opusti) je zapisana v poročilu primerjave.
+// produkcije (tam se počasen pregled po 25 s opusti) je zapisana v glavi te skripte (meritev ni produkcija).
 process.env.EVKLID_LIVE_REVIEW_TIMEOUT_MS = "300000";
 const { openDb } = await import("../server/db.js");
 const { createApp } = await import("../server/app.js");
@@ -70,8 +70,9 @@ const { normalizeSettings } = await import("../server/settings.js");
 const nastavitve = () => normalizeSettings({ educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik OR", subject: "MAT", solving_mode: "A" });
 const { model, max_tokens } = modeParams(NACIN);
 const system = buildSystemPrompt({ settings: nastavitve(), studentName: "Ana" });
-// Najslabši primer enega sporočila: odgovor in popravek (Haiku) ali odgovor s krogi orodij, sodba koraka, sprotni pregled
-// (Sonnet, pri SŠ dva vzporedna klica) in varnostni pregled (Haiku). Zgodovina pogovora (do dve izmenjavi) je v vhodu.
+// Najslabši primer enega sporočila: štirje klici Haiku (odgovor, ponovljen odgovor ali krog orodij, popravek, varnostni
+// pregled) in dva klica Sonnet (sprotni pregled pri SŠ dva vzporedna klica; sodba učenčevega koraka je tudi Sonnet, a
+// izključi sprotni pregled). Zgodovina pogovora (do dve izmenjavi) je v vhodu.
 const najdaljsa = Math.max(...pogovori.flatMap((p) => sporocila(p).map((s) => s.length)));
 const klicUsd = callMaxUsd(model, Math.ceil(system.length / 3) + 3 * najdaljsa + 2 * max_tokens + 4000, max_tokens);
 const najslabse = 4 * klicUsd + 2 * callMaxUsd(MODEL_MID, 4000 + 3 * najdaljsa + 2 * max_tokens, 8000) + 0.01;
