@@ -197,6 +197,7 @@ export async function zazeniHttp2Posrednik({ cilj, mapa }) {
     });
     req.on("error", () => stream.destroyed || stream.close(http2.constants.NGHTTP2_INTERNAL_ERROR));
     stream.on("close", () => koncano || req.destroy()); // prekinjen tok (SSE, zaprta stran): prekini tudi zahtevo
+    stream.on("error", () => req.destroy()); // brskalnik prekine tok (RST_STREAM): brez tega bi napaka ustavila meritev
     stream.pipe(req);
   });
   srv.on("sessionError", () => {});

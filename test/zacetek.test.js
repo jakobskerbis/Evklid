@@ -464,9 +464,10 @@ test("hiter zagon: klici zagona stečejo že v <head>, app.js jih prevzame enkra
   const web = read("mobile/src/app/web.tsx");
   assert.match(web, /m\?\.t === "izris" && !waitTimer\.current && \(e\.nativeEvent\.url === ORIGIN \|\| e\.nativeEvent\.url\?\.startsWith\(ORIGIN \+ "\/"\)\)\) setLoading\(false\);/);
   assert.match(web, /onLoadEnd=\{\(\) => !waitTimer\.current && setLoading\(false\)\}/, "rezerva brez sporočila");
-  // Vstopna stran čaka omrežje največ 1 s (j 10. 11. 2026); knjižnice ne ustavijo razčlenjevanja strani.
+  // Vstopna stran čaka omrežje največ 1 s (j 10. 11. 2026); knjižnice (KaTeX, marked, DOMPurify) niso več v strani:
+  // rich.js jih naloži po prvem izrisu ali ob prvi potrebi (naloziKnjiznice), zato ne zadržijo zagona modulov.
   assert.match(read("public/sw.js"), /const TIMEOUT = \{ entry: 1000, /);
-  assert.equal((read("public/index.html").match(/<script defer src="vendor\//g) || []).length, 3);
+  assert.equal((read("public/index.html").match(/<script[^>]*src="vendor\//g) || []).length, 0);
 });
 
 test("začetni podatki s strežnika (prijavljen, prvi obisk): app.js jih dobi brez klicev; okostje Učne poti in pasici takoj", async () => {
@@ -780,6 +781,7 @@ test("plasti v app.js: okno <dialog>, Evklidova tipkovnica (samo prek API) in pl
   assert.ok(at("isOpen3d()") < graphLayer && at("setSidebar(false)") < graphLayer && graphLayer < views);
   assert.ok(views < at("closeByEsc()") && at("closeByEsc()") < at('if (currentView === "path") return false;'));
   assert.match(step, /currentView === "topic" && \["competition", "exams"\]\.includes\(state\.backTo\) \? state\.backTo : "path"/);
-  // Tipkovnice se dotaknemo samo prek izvoženih funkcij (PR #543 spreminja public/tipkovnica.js).
-  assert.match(app, /import \{[^}]*\bhideKeyboard\b[^}]*\bkeyboardOpenFor\b[^}]*\} from "\.\/tipkovnica\.js";/);
+  // Tipkovnice se dotaknemo samo prek izvoženih funkcij (PR #543 spreminja public/tipkovnica.js), ob zagonu prek
+  // lene različice (tipkovnica-lena.js: tipkovnica ni del prvega izrisa Učne poti).
+  assert.match(app, /import \{[^}]*\bhideKeyboard\b[^}]*\bkeyboardOpenFor\b[^}]*\} from "\.\/tipkovnica-lena\.js";/);
 });

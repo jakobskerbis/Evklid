@@ -2,7 +2,7 @@ import { icon } from "./icons.js";
 import { loadPrograms, programsCache } from "./programs.js";
 import { mountLevelPicker, schoolSystemOptions } from "./level-picker.js";
 import { systemForCountry } from "./regions.js";
-import { currentLang, currentRegion, deviceRegion, locale, t } from "./i18n.js";
+import { currentLang, currentRegion, deviceRegion, locale, t } from "./i18n-osnova.js";
 import { dateText } from "./datum.js";
 import { openProfileMenu } from "./profile-menu.js";
 import { setTermsVersion, consentFields, termsField, consentsOk, consentMessage, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout, clearCheckout, watchReturnFromPay } from "./pay-ui.js";

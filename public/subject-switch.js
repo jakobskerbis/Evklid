@@ -3,7 +3,7 @@
 // v obstoječem meniju, ki se razpre v seznam predmetov (šola: po predmetniku razreda,
 // fakulteta: predmeti letnika in izbirni predmeti).
 import { icon } from "./icons.js";
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 

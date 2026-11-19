@@ -361,6 +361,7 @@
       koLupina(function () {
         pasovi(!!cfg.mock, Array.isArray(cfg.test_notice) ? cfg.test_notice.join(",") : "");
       });
+    if (cfg && cfg.admin) vnaprejZacni("/api/usage");
     var stanje = vnaprejZacni("/api/account/status");
     vnaprejZacni("/api/config");
     var profili = sid && /^\d+$/.test(sid) ? vnaprejZacni("/api/students") : null;

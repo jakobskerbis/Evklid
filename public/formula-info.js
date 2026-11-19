@@ -4,7 +4,7 @@ import { cardFor, configureCard, claimMarks, createMarkPage, pruneTones } from "
 
 configureCard({ t, lang: currentLang, katex: () => window.katex });
 
-export { annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-data.js";
+export { annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary, plainTex } from "./formula-data.js";
 
 // Kartice ne pokažemo pri testih (Preizkus znanja, tekmovanje), ker bi zveza izdala rešitev.
 const blocked = (el) => !!el.closest(".no-fx, button, .choice, label, input, textarea, .sym-key, [contenteditable]");

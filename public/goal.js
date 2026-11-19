@@ -1,7 +1,7 @@
 // Cilj in datum cilja: vprašamo enkrat (nov profil), nato le vrstica z odštevanjem na Učni poti,
 // v Napredku in v zgornji vrstici. Spremeni ali izbriši se v Nastavitvah. Opomnik ob 12.00:
 // kartica v aplikaciji (ko jo odpreš po 12.00) in, z računom, e-pošta (server/accounts/goal-reminder.js).
-import { t, locale } from "./i18n.js";
+import { t, locale } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { goalsFor, daysUntil, validDate, DEFAULT_GOAL } from "./goal-data.js";
 

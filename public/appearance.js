@@ -1,7 +1,7 @@
 // Nastavitve → Videz: slog (Čist / Igriv in zgodovinski slogi iz theme.js → ERAS), svetli/temni način, poudarki, barve oken, menijev in pisave, naključne barve.
 // Vse se zgodi takoj in velja za to napravo (theme.js).
 import { icon } from "./icons.js";
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 
 const T = window.STEMTheme;
 const ACCENTS = [

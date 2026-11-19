@@ -3,7 +3,7 @@
 // Nabor dejstev: v zgodovinskem slogu njegov (theme.js → ERAS[slog].facts, npr. era.renesansa.f1 …), sicer
 // Grški matematiki (greek.f1 … greek.f11). »Evklid« je tu matematik, ne ime aplikacije.
 import { icon } from "./icons.js";
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 
 const GREEK = ["greek", 11];
 // [predpona, število] za trenutni slog.

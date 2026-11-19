@@ -3,7 +3,7 @@
 // Izbira se zapiše v skrita polja obrazca (educational_track, study_program,
 // curriculum_level), zato jo obrazci berejo kot prej.
 
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { imaStopnjo, jeOs, jeSs, jeFaks } from "./stopnja.js";
 import { SCHOOL_SYSTEMS, isRegional, gradesOf, gradeInfo, trackForLevel } from "./regions.js";
 

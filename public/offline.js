@@ -4,12 +4,25 @@
 // in jih preverja v brskalniku (isti check.js kot strežnik). Odgovori čakajo v vrsti in
 // se ob ponovni povezavi pošljejo strežniku, ki vsako nalogo iz semena ustvari znova,
 // odgovor preveri še enkrat in podeli XP.
-import { checkAnswer } from "/practice/check.js";
 import { isStalePack, offlineTask } from "./enote-izbira.js";
 
-// Razčlenjevalnik izrazov za cel zapis (»5√7« pri iskanem b) naložimo ob strani: brez njega preverjanje dela kot prej.
+// Preverjanje (check.js) in razčlenjevalnik izrazov za cel zapis (»5√7« pri iskanem b) nista del prvega izrisa Učne poti
+// (~30 KB stisnjeno): app.js ju naloži po njem (zasloniPozneje), da ju service worker shrani za delo brez povezave.
+// Klic iz paketa pred tem ju počaka (offlineApi vrne obljubo). Brez razčlenjevalnika preverjanje dela kot prej.
+let checkAnswer = null;
 let MATH = null;
-import("./graph/math.js").then((m) => (MATH = m)).catch(() => {});
+let preverjanje = null;
+export const pripraviPreverjanje = () =>
+  (preverjanje ||= Promise.all([import("/practice/check.js"), import("./graph/math.js").catch(() => null)]).then(
+    ([c, m]) => {
+      checkAnswer = c.checkAnswer;
+      MATH = m;
+    },
+    (err) => {
+      preverjanje = null; // brez povezave in brez kopije: naslednji klic poskusi znova
+      throw err;
+    },
+  ));
 
 // Enako kot hintSteps v server/practice/index.js: podatki → formula → namig.
 function hintSteps(t) {
@@ -105,6 +118,10 @@ export function offlineApi(sid, url, opts = {}) {
   if (!pack) return undefined;
   const u = new URL(url, location.origin);
   const p = u.pathname;
+  // Naloga ali odgovor iz paketa potrebuje check.js: če še ni naložen, počakamo nanj (app.js apiCall počaka obljubo).
+  if (!checkAnswer && (p === `/api/students/${sid}/practice/next` || /^\/api\/students\/\d+\/tasks\/off-[^/]+\/answer$/.test(p))) {
+    return pripraviPreverjanje().then(() => offlineApi(sid, url, opts));
+  }
   const body = typeof opts.body === "string" ? JSON.parse(opts.body || "{}") : opts.body || {};
 
   if (p === "/api/topic") {

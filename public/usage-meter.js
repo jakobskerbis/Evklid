@@ -2,7 +2,7 @@
 // računalniku, kjer teče Evklid, ali skrbniku z računom). Pokaže porabo vseh profilov
 // danes in ta mesec; klik odpre pregled po profilih.
 import { icon } from "./icons.js";
-import { t, locale } from "./i18n.js";
+import { t, locale } from "./i18n-osnova.js";
 import { zavrzi } from "./odgovor.js";
 
 const $ = (sel) => document.querySelector(sel);
@@ -32,10 +32,11 @@ export function initUsageMeter(deps) {
     if (e.key === "Escape" && !$("#usage-pop")?.hidden) $("#usage-pop").hidden = true;
   });
   document.addEventListener("visibilitychange", () => document.visibilityState === "visible" && refreshUsageMeter());
-  refreshUsageMeter();
+  return refreshUsageMeter(); // app.js počaka prvi odgovor pred koncem zagona (števec v glavi, brez premika)
 }
 
 // Ponovno prebere porabo (ob zagonu, po odgovoru inštruktorja, vsako minuto).
+let prvic = true;
 export async function refreshUsageMeter() {
   const btn = $("#usage-meter");
   if (!btn || !D) return;
@@ -47,13 +48,17 @@ export async function refreshUsageMeter() {
     $("#usage-pop").hidden = true;
     return;
   }
+  // Prvič klic, ki ga je skrbniku začel že public/zacetek.js v <head> (če ga je), sicer klic zdaj.
+  const zgodnji = prvic ? await Promise.resolve(window.evklidZacetek?.vnaprej?.("/api/usage")).catch(() => null) : null;
+  prvic = false;
   let res = null;
-  try {
-    res = await fetch("/api/usage");
-  } catch {
-    return; // brez povezave: pusti zadnje stanje
-  }
-  const u = res.ok ? await res.json().catch(() => null) : (zavrzi(res), null); // 403 ne-skrbnik: telo zavržemo
+  if (!zgodnji)
+    try {
+      res = await fetch("/api/usage");
+    } catch {
+      return; // brez povezave: pusti zadnje stanje
+    }
+  const u = zgodnji || (res.ok ? await res.json().catch(() => null) : (zavrzi(res), null)); // 403 ne-skrbnik: telo zavržemo
   if (!u) {
     // Ni dovoljenja (ni skrbnik, odpira prek povezave za telefon): števec je skrit.
     last = null;

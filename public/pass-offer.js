@@ -3,7 +3,7 @@
 // ko je v urniku test v naslednjih 14 dneh. Pravila ponudb (server/placila/ponudbe.js): ne med poukom,
 // ne, če jih je učitelj izklopil; pod 15 let brez cene, le povezava s podatki za starše (parent_info).
 // Gumba »Prosi starše za plačilo« kartica ne ponuja sama: učenec ga odpre v »Kako lahko plača starš?«.
-import { t, locale } from "./i18n.js";
+import { t, locale } from "./i18n-osnova.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { consentFields, consentsOk, consentMessage, consentBody, linkBox, bindLinkBox, isStoreApp, markCheckout } from "./pay-ui.js";
 import { accountsOn } from "./account.js";

@@ -1729,6 +1729,15 @@ async function prijavljenVBrskalniku(vhod, u, naprava) {
       await page.goto(vhod.base + "/", { waitUntil: "commit", timeout: 180_000 });
       await page.waitForSelector("#view-path #xp-card .hero", { timeout: 180_000 }).catch(() => napake.push(`${obisk}: Učna pot ni uporabna v 180 s`));
       const potMs = await page.evaluate(() => window.__tPot).catch(() => null);
+      // Datoteke, prenesene do uporabne Učne poti (za iskanje, kaj jo še zadržuje): pot, KB po omrežju, konec v ms.
+      const viri = await page
+        .evaluate(() =>
+          performance
+            .getEntriesByType("resource")
+            .filter((e) => e.responseEnd <= (window.__tPot ?? Infinity))
+            .map((e) => [new URL(e.name).pathname, Math.round(e.transferSize / 102.4) / 10, Math.round(e.responseEnd)]),
+        )
+        .catch(() => []);
       const okno = await page.evaluate(() => document.querySelector("dialog[open]")?.id || document.querySelector("dialog[open] h2")?.textContent || null).catch(() => null);
       if (okno) napake.push(`${obisk}: odprto okno čez Učno pot (${okno})`);
       log(`prijavljen ${naprava} ${obisk}: Učna pot po ${r1(potMs)} ms`);
@@ -1803,6 +1812,7 @@ async function prijavljenVBrskalniku(vhod, u, naprava) {
       const dolge0 = v0.dolge;
       out.obiski[obisk] = {
         potMs: r1(potMs),
+        viriDoPoti: viri,
         loadMs: r1(loadMs),
         ttiMs,
         fcpMs: r1(v0.fcp),

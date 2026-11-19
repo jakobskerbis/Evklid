@@ -14,6 +14,7 @@ import { startupFiles } from "./startup-files.js";
 import { pickEncoding } from "./compress.js";
 import { icon } from "../public/icons.js";
 import { translateStatic } from "./pristajalna-takoj.js";
+import { slJedro } from "./i18n-jedro.js";
 
 // Navadni (ne-modulski) <script src> v index.html: teh ne nalagamo kot modul.
 const CLASSIC = /<script(?![^>]*type="module")[^>]*\ssrc="([^"?#]+)/g;
@@ -42,7 +43,22 @@ export function entryHtml(publicDir, { version = "", preload = true } = {}) {
   // fetchpriority="low": moduli ne tekmujejo s slogi in pisavami za prvi izris (počasen 4G, j 19. 11. 2026). Prej so vsi
   // hkrati jemali pasovno širino slogom, zato je bil prvi izris v Lighthouse (telefon, počasen 4G) šele po ~9 s.
   if (preload) for (const u of mods) head.push(`  <link rel="modulepreload" href="${u}" fetchpriority="low">`);
+  // Cel slovar (public/i18n.js, i18n/sl.js) zagon naloži z import(): brez jedra besedil (withSlJedro) ga počaka.
+  if (preload) for (const u of CEL_SLOVAR) head.push(`  <link rel="modulepreload" href="${u}" fetchpriority="low">`);
   return { html: head.length ? html.replace("</head>", `${head.join("\n")}\n</head>`) : html, modules: preload ? mods : [] };
+}
+
+const CEL_SLOVAR = ["/i18n.js", "/i18n/sl.js"];
+// Stran prijavljenega učenca: jedro slovenskih besedil (server/i18n-jedro.js) namesto vnaprejšnjega prenosa celega
+// slovarja, ki ga app.js naloži šele po prvem izrisu Učne poti (public/i18n-osnova.js).
+export function withSlJedro(html, json) {
+  if (!json) return html;
+  for (const u of CEL_SLOVAR) html = html.replace(`  <link rel="modulepreload" href="${u}" fetchpriority="low">\n`, "");
+  // Na koncu strani (pred zagon.js): ni potreben za prvi izris okostja, zato ga ne zadrži (prebere ga šele i18n-osnova.js).
+  const zagon = html.lastIndexOf('<script type="module" src="zagon.js"');
+  const at = zagon >= 0 ? zagon : html.lastIndexOf("</body>");
+  if (at < 0) return html;
+  return `${html.slice(0, at)}<script type="application/json" id="evklid-sl-jedro">${json}</script>\n  ${html.slice(at)}`;
 }
 
 // Zadnji slog, ki ga pristajalna stran potrebuje za prvi izris (pred njim pisave, KaTeX, style.css, ui.css).
@@ -115,7 +131,9 @@ export function withSession(html, json) {
 // enaka). Na strani s podatki seje gredo v <template data-evklid-slogi> na svojem mestu (vrstni red ostane); zacetek.js
 // jih vstavi, ko je prvi zaslon izrisan (Učna pot), ali takoj, ko je prvi zaslon drug. Prej so si s slogi Učne poti in
 // moduli delili počasno povezavo pred prvim izrisom.
-export const SEJA_POZNEJE = ["vendor/nunito/index.css", "vendor/katex/katex.min.css", "textbook.css", "risbe.css", "leagues.css", "scan.css", "games.css", "zbirke.css", "lab.css", "uci.css", "corner.css"];
+// kviz.css, competition.css in tipkovnica.css (tipkovnica se naloži po prvem izrisu, public/tipkovnica-lena.js): preverjeno
+// s posnetki Učne poti brez njih (telefon 390×844 in računalnik 1280×800, enaki do piksla).
+export const SEJA_POZNEJE = ["vendor/nunito/index.css", "vendor/katex/katex.min.css", "textbook.css", "risbe.css", "leagues.css", "kviz.css", "competition.css", "scan.css", "games.css", "zbirke.css", "lab.css", "uci.css", "corner.css", "tipkovnica.css"];
 export function withSessionStyles(html) {
   const end = html.indexOf("</head>");
   if (end < 0) return html;
@@ -143,6 +161,9 @@ export function withSessionStyles(html) {
 export function entryPage(publicDir, { version = "", preload = true, landing = null, seja = null } = {}) {
   const ver = typeof version === "function" ? version : () => version;
   const file = path.join(publicDir, "index.html");
+  // Jedro besedil se izračuna enkrat ob zagonu (EVKLID_SL_JEDRO=0: brez, za primerjavo); napaka: stran brez jedra.
+  const jedroP = seja && process.env.EVKLID_SL_JEDRO !== "0" ? slJedro(publicDir).catch(() => null) : Promise.resolve(null);
+  let jedro = null;
   let built = null; // { mtime, v, html, variants: Map(ključ → { raw, etag, enc }) }
   const variant = (raw) => ({ raw, etag: `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}"`, enc: {} });
   const build = (req) => {
@@ -169,7 +190,7 @@ export function entryPage(publicDir, { version = "", preload = true, landing = n
   };
   // Osebna stran (začetni podatki): sestavljena in stisnjena za vsako zahtevo (hitrejša stopnja stiskanja), nikjer shranjena.
   const osebna = (req, res, page, json) => {
-    built.seja ||= withSessionStyles(built.html);
+    built.seja ||= withSlJedro(withSessionStyles(built.html), jedro);
     const raw = Buffer.from(withSession(built.seja, json));
     const enc = process.env.EVKLID_COMPRESS === "0" ? null : pickEncoding(req.headers["accept-encoding"]);
     res.setHeader("Cache-Control", "no-store");
@@ -195,6 +216,7 @@ export function entryPage(publicDir, { version = "", preload = true, landing = n
     if (seja) {
       let p = null;
       try {
+        jedro ??= await jedroP;
         p = await seja(req);
       } catch {
         p = null; // napaka pri zbiranju: navadna stran (app.js pokliče API sam)

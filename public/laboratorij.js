@@ -1,7 +1,7 @@
 // Laboratorij (zavihek v »Uči se«, public/uci-se.js): vsi virtualni poskusi na enem mestu, po predmetih,
 // najprej učenčev predmet in razred. Klik na poskus ga odpre čez celo širino; »← Laboratorij«, Esc ali
 // tipka Nazaj (labBack v app.js) vrnejo na seznam. Strežnik: server/laboratorij.js (zaklep kot v učbeniku).
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { mountSim } from "./sim/index.js";
 import { isStoreApp } from "./pay-ui.js";

@@ -1,7 +1,7 @@
 // Zavihek Račun: garancija »Boljša ocena ali vrnemo denar« in »Podari Evklid« (strežnik: server/placila/garancija.js,
 // server/placila/podari.js). Skrbniški kartici (zahtevki za vračilo, kode za šole) vidi samo skrbnik, zato sta v slovenščini.
 import { icon } from "./icons.js";
-import { t, locale, currentLang } from "./i18n.js";
+import { t, locale, currentLang } from "./i18n-osnova.js";
 import { dateText } from "./datum.js";
 import { termsField, markCheckout, withdrawInfo } from "./pay-ui.js";
 
