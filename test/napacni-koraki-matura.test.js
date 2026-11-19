@@ -84,5 +84,7 @@ test("meri-prav-matura: sodba ocenjevalca tudi za razmislekom (zadnja vrstica z 
   assert.equal(vrstaOcene("NAPAKA: one\nOK"), "OK", "šteje zadnja oznaka");
   assert.equal(vrstaOcene("The reply looks fine to me."), "NEJASNO");
   assert.equal(vrstaOcene("OKAY then"), "NEJASNO");
+  assert.equal(vrstaOcene("OK\nNapaka učenca je v predznaku."), "OK", "slovenska »napaka« v razmisleku ni oznaka");
+  assert.equal(vrstaOcene("POTRDI: pohvali.\nOk, so that is it."), "POTRDI");
   assert.equal(vrstaOcene(""), "NEJASNO");
 });

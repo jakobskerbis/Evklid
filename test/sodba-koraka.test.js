@@ -190,6 +190,8 @@ test("sodba koraka: nepopoln odgovor (ena od dveh rešitev) opomba označi kot N
   assert.match(v.note, /do not state the missing solutions/);
   // Obe rešitvi: opomba ostane »CORRECT«.
   assert.match(verdict("x1 = 5, x2 = -1", { pre, prevTutor: "Kaj dobiš?" }).note, /is CORRECT/);
+  // Obe rešitvi brez indeksov (rootList ju ne bere): opomba ne sme reči INCOMPLETE (pregled 2).
+  for (const a of ["x = 5 ali x = -1", "x = -1, 5", "x = 2 ± 3, torej x = 5 in x = -1"]) assert.doesNotMatch(verdict(a, { pre, prevTutor: "Kaj dobiš?" }).note, /INCOMPLETE/, a);
   // »Skoraj, manjka še ena« ob nepopolnem odgovoru še vedno ni zavrnitev pravilnega (brez ponovnega odgovora).
   assert.equal(verdictIgnored("Skoraj! Manjka še ena rešitev.", v), false);
 });
