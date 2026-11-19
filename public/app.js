@@ -24,7 +24,6 @@ import { initQuickStart, closeQuickStart } from "./quick-start.js";
 import { openPrintable, stopReading } from "./gradiva.js";
 import { initSubjectSwitch } from "./subject-switch.js";
 import { initTextbook, showTextbook, openLesson, textbookBack, openTextbookLower, openLessonId } from "./textbook.js";
-import { loadLeague } from "./leagues.js";
 import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
 import { createIzrisBlokov, enIzrisNaSlicico } from "./izpis-toka.js";
 import { createRenderer, streamSafe } from "./rich.js";
@@ -78,12 +77,10 @@ import { initFullscreen } from "./fullscreen.js";
 import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
 import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./schedule.js";
 import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
-import { initScan, showScan, leaveScan, scanBack, startPilotScan, startTutorScan } from "./scan/scan.js";
 import { initPilot, loadPilot, showPilot, scanTask, isPilotMember } from "./pilot-naloge.js";
 import { initAnketa, preveriAnketo } from "./anketa-teden.js";
 import { initLab, showLab, labBack, openLabExperiment } from "./laboratorij.js";
 import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, UCI_TABS } from "./uci-se.js";
-import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
 import { initTestNotice } from "./testna-verzija.js";
 import { initFormulaInfo, closeFormulaPop, annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-info.js";
 import { plainTex } from "./formula-data.js";
@@ -92,6 +89,83 @@ import { heatmapHtml, weeksHtml } from "./aktivnost.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
 import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, fileText, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
+// Zasloni, ki niso Učna pot (naloga hitrost, docs/meritve/prijavljen-mobilno-2026-11-19.md točka 2): skener z
+// reševalnikom (scan/, ~65 KB stisnjeno) ter zbirke, avatar in lige (~55 KB) niso več del zagona. Naložijo se takoj po
+// prvem izrisu zaslona (zasloniPozneje, ob koncu zagona) ali ob prvi uporabi, če je ta prej; prvi izris Učne poti na
+// počasni povezavi tako ne čaka nanje. Ob neuspehu (brez povezave, nova različica) nov poskus z drugim naslovom (?r=).
+const lenModul = (url, ob) => {
+  let p = null;
+  let n = 0;
+  let mod = null;
+  const load = () =>
+    (p ||= (n++ ? import(`${url}?r=${n}`) : import(url)).then((m) => {
+      if (mod !== m) {
+        mod = m;
+        ob?.(m);
+      }
+      return m;
+    }).catch((err) => {
+      p = null;
+      throw err;
+    }));
+  return { load, now: () => mod };
+};
+const viewNote = (sel, key, force = false) => {
+  const el = document.querySelector(sel);
+  if (el && (force || !el.childElementCount)) el.replaceChildren(Object.assign(document.createElement("p"), { className: "muted", textContent: t(key) }));
+};
+let scanDeps = null;
+let scanSeq = 0; // skener, zapuščen pred prihodom modula, se ne odpre (ne zažene kamere) za drugim zaslonom
+const scanMod = lenModul("./scan/scan.js", (m) => scanDeps && m.initScan(scanDeps));
+const initScan = (deps) => {
+  scanDeps = deps;
+  scanMod.now()?.initScan(deps);
+};
+const showScan = (o) => {
+  const n = ++scanSeq;
+  if (!scanMod.now()) viewNote("#view-scan .scan-body", "common.loading");
+  return scanMod.load().then((m) => n === scanSeq && m.showScan(o)).catch(() => scanMod.now() || viewNote("#view-scan .scan-body", "off.noConnection", true));
+};
+const leaveScan = () => {
+  scanSeq++;
+  scanMod.now()?.leaveScan();
+};
+const scanBack = () => scanMod.now()?.scanBack() ?? false;
+const startPilotScan = (task) => scanMod.load().then((m) => m.startPilotScan(task)).catch(() => {});
+const startTutorScan = (onSend) => scanMod.load().then((m) => m.startTutorScan(onSend)).catch(() => {});
+let zbCtx = null;
+const zbMod = lenModul("./zbirke-view.js", (m) => zbCtx && m.initZbirke(zbCtx));
+const initZbirke = (c) => {
+  zbCtx = c;
+  zbMod.now()?.initZbirke(c);
+};
+const showZbirke = (item, from) => {
+  return zbMod.load().then((m) => m.showZbirke(item, from)).catch(() => zbMod.now() || viewNote("#zbirke-content", "off.noConnection", true));
+};
+const meCard = (el) => zbMod.load().then((m) => m.meCard(el)).catch(() => {});
+// Obvestilo o novem predmetu po nalogi ali pogovoru: modul je do takrat že naložen (zasloniPozneje); sicer brez obvestila.
+const unlockedText = (ids) => zbMod.now()?.unlockedText(ids) ?? "";
+const itemThumb = (id, size) => zbMod.now()?.itemThumb(id, size) ?? "";
+const leagueMod = lenModul("./leagues.js");
+const loadLeague = (id) => {
+  return leagueMod.load().then((m) => m.loadLeague(id)).catch(() => leagueMod.now() || viewNote("#league-content", "off.noConnection", true));
+};
+let pozneje = false;
+const zasloniPozneje = () => {
+  if (pozneje) return;
+  pozneje = true;
+  const idle = window.requestIdleCallback || ((f) => setTimeout(f, 200));
+  idle(
+    () =>
+      [scanMod, zbMod, leagueMod]
+        .reduce((p, x) => p.then(() => x.load().catch(() => null)), Promise.resolve())
+        // Za delo brez povezave: service worker shrani tudi te module (ob prvem obisku je seznam »precache« že poslan).
+        .then(() => navigator.serviceWorker?.ready)
+        .then((reg) => reg?.active?.postMessage({ type: "precache", urls: performance.getEntriesByType("resource").map((e) => e.name).filter((u) => /\.js(\?|$)/.test(u)) }))
+        .catch(() => null),
+    { timeout: 1500 },
+  );
+};
 // Pregledovalnik prenesene pole (paper-viewer.js, paper-tasks.js) šele ob odprtju pole: ni del zagona.
 // Ob neuspehu (brez povezave, nova različica) se obljuba pozabi in naslednji poskus gre z drugim naslovom (?r=), kot loadGames.
 let paperViewer = null;
@@ -371,6 +445,7 @@ let startHold = true; // do konca zagona (start) Učna pot ostane skrita: vmesni
 // Konec zagona: oznaki na <html> in posnetek zadnjega zaslona izginejo skupaj, pravi pogled se pokaže v istem izrisu.
 const startShot = () => document.querySelector("main[data-posnetek]");
 const startDone = () => {
+  zasloniPozneje(); // moduli drugih zaslonov po prvem izrisu (zgoraj)
   if (ZACETEK?.konec) return ZACETEK.konec();
   document.documentElement.removeAttribute("data-zacetek");
 };
@@ -4975,7 +5050,7 @@ function calcTool(mode) {
           if (!document.getElementById("view-scan")) return;
           closeCalcOverlay();
           showView("scan");
-          (await import("./scan/scan.js")).showScan?.({ text, goal });
+          showScan({ text, goal });
         },
       });
     if (mode === "tools") return m.createTools(host, { ...base, subject: calcSubject });

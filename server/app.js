@@ -86,6 +86,9 @@ import { mountVajaIzLista } from "./vaja-iz-lista.js";
 import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { landingPage } from "./pristajalna-takoj.js";
+import { zacetniPodatki } from "./zacetni-podatki.js";
+// Moduli drugih zaslonov, ki jih app.js naloži po prvem izrisu (public/app.js lenModul): stisnemo jih ob zagonu kot igre.
+const ZASLONI_POZNEJE = ["scan/scan.js", "zbirke-view.js", "leagues.js"];
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { blockStoreAppPurchases, storeAppRequest, storeAppPages } from "./mobile/trgovina.js";
@@ -412,7 +415,10 @@ export function createApp(store, opts = {}) {
     accounts && process.env.EVKLID_PRISTAJALNA_TAKOJ !== "0"
       ? (req) => landingPage(req, { publicDir, name: BRAND.name, prices: accounts.pricesFor, mock: isMockMode(), testNotice: testNotice() })
       : null;
-  app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0", landing })); // =0: brez seznama (primerjava)
+  // Prijavljen učenec dobi začetne podatke Učne poti v strani (server/zacetni-podatki.js), brez verige klicev API po
+  // zagonu app.js. EVKLID_ZACETNI_PODATKI=0 jih izklopi (primerjava hitrosti).
+  const seja = accounts && process.env.EVKLID_ZACETNI_PODATKI !== "0" ? zacetniPodatki(app) : null;
+  app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0", landing, seja })); // =0: brez seznama (primerjava)
   // Ikone vej drevesa 3D sveta in sličice modelov (slike, ki se spremenijo le z novim izrisom): brskalnik jih dan
   // vzame iz svojega predpomnilnika brez vprašanja strežniku, nato še teden prikaže staro in v ozadju preveri novo.
   // Prej max-age=0: po vsaki objavi (service worker zavrže kopije stare različice) je vsaka ikona čakala na
@@ -438,7 +444,7 @@ export function createApp(store, opts = {}) {
     // server/index.js po zagonu vnaprej stisne datoteke prvega odprtja strani (prvi obiski po posodobitvi hitri).
     // Paketi nalog iger (games/subjects/*.js) se v brskalniku naložijo z import() po predmetih, zato jih naštejemo posebej.
     const gamePacks = () => fs.readdirSync(path.join(publicDir, "games", "subjects")).filter((f) => f.endsWith(".js")).map((f) => `games/subjects/${f}`);
-    app.locals.warmStatic = () => statics.warm(startupFiles(publicDir, "index.html", ["games/index.js", ...gamePacks()]));
+    app.locals.warmStatic = () => statics.warm(startupFiles(publicDir, "index.html", ["games/index.js", ...ZASLONI_POZNEJE, ...gamePacks()]));
     app.use("/api", compressedJson());
   }
   app.use(express.static(publicDir));
