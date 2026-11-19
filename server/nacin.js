@@ -31,7 +31,8 @@ const SOLVE_ASK = [
   /\bre[sš]i[sš]?\s+mi\b/,
   /\bmi\s+(?:lahko\s+)?re[sš]i[sš](?![a-zčšž])/,
   /\bkar\s+re[sš]i[sš]?(?![a-zčšž])/,
-  /\bpoka[zž](?:i|e[sš])\s+(?:mi\s+)?(?:cel\w*\s+|ves\s+)?(?:postopek|re[sš]itev)\b/,
+  // »Pokaži postopek« brez »mi« je navodilo naloge (»Reši enačbo … Pokaži postopek.«), ne prošnja.
+  /(?:\bpoka[zž](?:i|e[sš])\s+mi|\bmi\s+(?:lahko\s+)?poka[zž](?:i|e[sš]))\s+(?:cel\w*\s+|ves\s+)?(?:postopek|re[sš]itev)\b/,
   /\b(?:daj|poka[zž]i|napi[sš]i|povej|rabim|ho[cč]em|potrebujem)\s+(?:mi\s+)?(?:\w+\s+)?cel(?:o|otno)\s+re[sš]itev\b/,
   /\b(?:daj|napi[sš]i|povej)\s+mi\s+(?:cel\w*\s+)?re[sš]itev\b/,
 ];

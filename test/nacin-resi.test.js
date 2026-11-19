@@ -23,7 +23,6 @@ test("asksForSolution: jasne prošnje da, navodila naloge in zanikanja ne", () =
     "daj mi celo rešitev",
     "lahko kar reši?",
     "Prosim reši nalogo 3",
-    "pokazi resitev",
     "Napiši mi rešitev",
     "Ne dajem ti več časa, reši mi nalogo",
     "Mi lahko rešiš to nalogo?",
@@ -53,6 +52,8 @@ test("asksForSolution: jasne prošnje da, navodila naloge in zanikanja ne", () =
     "Zapiši celotno rešitev naloge.",
     "Preveri mojo celo rešitev: x = 3",
     "ne rešiš mi, samo pomagaj",
+    "Reši enačbo 2x + 3 = 7. Pokaži postopek.",
+    "Izračunaj ploščino. Pokaži postopek",
     "ne daj mi namigov, reši mi", // zanikanje velja za vse sporočilo (varneje)
     "",
     null,
