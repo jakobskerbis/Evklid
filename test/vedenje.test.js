@@ -48,6 +48,21 @@ test("vedenje: dnevi z rešeno nalogo in aktivnost pred testom", () => {
   assert.deepEqual([v.tests, v.beforeTest, v.beforeTestPct, v.days], [2, 1, 0.5, 3], "izlet ni test; Ana je bila aktivna 2 dni pred testom, Bor ne");
 });
 
+test("vedenje: test na prvi dan obdobja šteje aktivnost pred obdobjem (7 dni: začetek tedna = začetek obdobja)", () => {
+  const { db } = openDb(":memory:");
+  const DAY = 86400000;
+  const now = Date.now();
+  const midnight = Date.parse(new Date(now).toISOString().slice(0, 10));
+  const at = (daysAgo) => new Date(midnight - daysAgo * DAY + 10 * 3600000).toISOString().replace("T", " ").slice(0, 19);
+  const s = db.prepare("INSERT INTO students (name, settings, created_at) VALUES ('Cene', '{}', ?)").run(at(40)).lastInsertRowid;
+  const c = db.prepare("INSERT INTO conversations (student_id, created_at, updated_at) VALUES (?, ?, ?)").run(s, at(8), at(8)).lastInsertRowid;
+  db.prepare("INSERT INTO messages (conversation_id, role, api_content, display_text, created_at) VALUES (?, 'user', '\"x\"', 'x', ?)").run(c, at(8));
+  db.prepare("INSERT INTO test_plans (student_id, path_key, units, test_date) VALUES (?, 'MAT-SS-4', '[]', ?)").run(s, at(6).slice(0, 10));
+  const r = growthReport(db, { days: 7, now });
+  assert.deepEqual([r.vedenje.tests, r.vedenje.beforeTest, r.vedenje.activeDays], [1, 1, 0], "aktivnost 8 dni nazaj je 2 dni pred testom 6 dni nazaj, a izven obdobja");
+  assert.deepEqual([r.weeklyActive, r.activeProfiles ?? 0], [0, 0], "aktivnost pred obdobjem ne šteje med aktivne v tednu");
+});
+
 test("vedenje: brez podatkov ni deljenja z nič", () => {
   const { db } = openDb(":memory:");
   const v = growthReport(db, { days: 30 }).vedenje;

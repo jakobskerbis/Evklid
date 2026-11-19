@@ -103,6 +103,8 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
   const from = addDays(today, -(n - 1));
   const weeks = Math.ceil(n / 7);
   const floor = addDays(today, -(weeks * 7 - 1)); // začetek najstarejšega tedna (≤ from)
+  // Aktivni dnevi se berejo tudi PRED_TESTOM_DNI pred `from` (test na začetku obdobja, vedenjeReport); pri 7 in 90 dneh je floor = from ali le dan prej.
+  const actFloor = [floor, addDays(from, -PRED_TESTOM_DNI)].sort()[0];
 
   const only = schoolId ? new Set(schoolStudents(db, schoolId)) : null;
   const admins = adminStudentIds(db, adminEmails);
@@ -123,7 +125,7 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
          WHERE c.updated_at >= ? AND m.role = 'user' AND m.created_at >= ?
        UNION SELECT student_id, substr(created_at, 1, 10) FROM xp_events WHERE created_at >= ? AND COALESCE(reason, '') NOT LIKE 'pilot:%'`,
     )
-    .all(floor, floor, floor, floor);
+    .all(actFloor, actFloor, actFloor, actFloor);
   for (const { s, d } of acts) {
     if (!counted(s) || d > today) continue;
     if (!active.has(s)) active.set(s, new Set());
@@ -291,7 +293,8 @@ export function vedenjeReport(db, { from, today, active, counted = () => true })
       if (!counted(id)) continue;
       let events = [];
       try {
-        events = JSON.parse(unseal(data)).events || [];
+        const ev = JSON.parse(unseal(data))?.events;
+        if (Array.isArray(ev)) events = ev;
       } catch {}
       for (const e of events) if (TEST_KINDS.includes(e?.kind) && e.date >= from && e.date <= today) pari.add(`${id}|${e.date}`);
     }
