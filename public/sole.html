@@ -7,8 +7,10 @@
   <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
   <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
-  <meta name="description" content="Šolska licenca {{name}}: brezplačen učiteljski račun, razredi in razredne naloge. Plačilo z e-računom prek UJP.">
-  <!-- Strežnik (server/sole.js) vstavi {{…}}: ime iz brand.json, cene iz server/schools.js (SCHOOL_LICENCE_PRICES). -->
+  <!--narocila--><meta name="description" content="Šolska licenca {{name}}: brezplačen učiteljski račun, razredi in razredne naloge. Plačilo z e-računom prek UJP."><!--/narocila-->
+  <!--brez-narocil--><meta name="description" content="{{name}} za šole: brezplačen učiteljski račun, razredi in razredne naloge. Šolske licence bodo na voljo kmalu."><!--/brez-narocil-->
+  <!-- Strežnik (server/sole.js) vstavi {{…}}: ime iz brand.json, cene iz server/schools.js (SCHOOL_LICENCE_PRICES).
+       Bloke narocila (cene, obrazec) pokaže samo z EVKLID_SOLE_NAROCILA=1, sicer bloke brez-narocil (»kmalu«). -->
   <script src="/v-aplikaciji.js"></script>
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -88,10 +90,11 @@
   </header>
   <p class="who">Za ravnatelje, učitelje in računovodstvo</p>
   <h1>{{name}} za šole</h1>
-  <p class="lead">Inštruktor AI za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu. Učitelj odpre razred, dodeli teme in vidi, kako razred napreduje. Šola plača z e-računom prek UJP.</p>
+  <p class="lead">Inštruktor AI za matematiko, fiziko, kemijo, biologijo in naravoslovje po slovenskem učnem načrtu. Učitelj odpre razred, dodeli teme in vidi, kako razred napreduje.<!--narocila--> Šola plača z e-računom prek UJP.<!--/narocila--></p>
   <div class="cta-row">
-    <a class="cta main" href="#narocilo">Naročilo ali povpraševanje</a>
-    <a class="cta alt" href="/ucitelj.html">Brezplačen učiteljski račun</a>
+    <!--narocila--><a class="cta main" href="#narocilo">Naročilo ali povpraševanje</a>
+    <a class="cta alt" href="/ucitelj.html">Brezplačen učiteljski račun</a><!--/narocila-->
+    <!--brez-narocil--><a class="cta main" href="/ucitelj.html">Brezplačen učiteljski račun</a><!--/brez-narocil-->
   </div>
 
   <h2>Kaj dobi učitelj</h2>
@@ -105,6 +108,7 @@
   </div>
   <p class="small">Prehod učenca na drugo šolo in izvoz njegovega napredka sta vedno brezplačna. Učenci z licenco dobijo vse vsebine predmetov, ki jih licenca zajema, in {{dailyQuestions}}. Eno vprašanje je eno sporočilo, ki ga učenec pošlje inštruktorju, tudi fotografija naloge ali klik na gumb »Razloži podrobneje«. Ustno spraševanje šteje kot {{ustnoQuestions}}. Vaje, lekcije in igre se ne štejejo.</p>
 
+  <!--narocila-->
   <h2>Cene</h2>
   <div class="grid g3">
     <div class="tile price"><h3>Licenca za razrede</h3><span class="amt">{{price.class}}</span><span class="per">na učenca na leto</span><p>Za posamezne razrede ali predmete.</p></div>
@@ -113,12 +117,19 @@
   </div>
   <p class="small">Cena velja za vsakega učenca, ki ga licenca zajema, za 12 mesecev od dogovorjenega začetka. Izvajalec ni zavezanec za DDV, zato DDV ni obračunan. Končni znesek bo naveden na predračunu.</p>
 
+  <!--/narocila-->
+  <!--brez-narocil-->
+  <h2>Šolske licence</h2>
+  <div class="tile"><h3>Kmalu</h3><p>Šolske licence bodo na voljo, ko preverimo pravila za uporabo umetne inteligence v šolah. Do takrat je učiteljski račun brezplačen, razredi, razredne naloge in lige razreda pa delujejo tudi brez licence.</p></div>
+  <!--/brez-narocil-->
+
   <section id="podari" hidden>
     <h2>Podari {{name}}</h2>
     <p>Učenci, ki si naročnine ne morejo privoščiti, dobijo kodo za {{podari.months}} mesece brezplačne uporabe. Kode pošljemo šoli, učence pa izbere šola sama: o dohodkih ne sprašujemo nikogar, na profilu učenca ni nobene oznake. Mesece podarijo starši in drugi odrasli, ki uporabljajo {{name}}, del pa jih podarimo mi.</p>
     <p class="small" id="podari-count" hidden>Podarjenih mesecev: <b data-podari="months"></b> · že v uporabi: <b data-podari="used"></b></p>
   </section>
 
+  <!--narocila-->
   <h2>Kako poteka plačilo</h2>
   <ol class="steps">
     <li><b>Naročilo.</b> Šola izpolni obrazec spodaj; številko naročilnice, če jo ima, vpiše v opombo.</li>
@@ -127,6 +138,7 @@
     <li><b>Plačilo na TRR.</b> Šola plača na transakcijski račun v 30 dneh.</li>
   </ol>
   <p class="small">Za e-račun potrebujemo matično in davčno številko šole, pri proračunskih uporabnikih pa še šifro proračunskega uporabnika. Vse to vpišete v obrazec.</p>
+  <!--/narocila-->
 
   <h2>Pogosta vprašanja</h2>
   <div class="faq">
@@ -135,15 +147,16 @@
     <details><summary>Ali učitelj vidi pogovore učencev z inštruktorjem?</summary>
       <p>Ne. Učitelj vidi samo rezultate pri temah, ki jih je dodelil razredu, in lestvico lige razreda. Zasebni pogovori, druge teme in ostali podatki iz profila učenca ostanejo zasebni.</p></details>
     <details><summary>Ali lahko najprej preizkusimo?</summary>
-      <p>Da. Učiteljski račun je brezplačen, zato lahko učitelj razred odpre takoj: <a href="/ucitelj.html">Za učitelje</a>. Brez licence ima vsak učenec svoj paket: {{trialDays}} brezplačen preizkus, nato brezplačni paket z {{freeDaily}} vprašanji inštruktorju na dan. Razredne naloge in lige razreda delujejo tudi brez licence. <span class="pilot-only">Za prvih {{pilot.max}} šol, ki želijo daljši preizkus, je na voljo pilotna cena.</span></p></details>
+      <p>Da. Učiteljski račun je brezplačen, zato lahko učitelj razred odpre takoj: <a href="/ucitelj.html">Za učitelje</a>. Brez licence ima vsak učenec svoj paket: {{trialDays}} brezplačen preizkus, nato brezplačni paket z {{freeDaily}} vprašanji inštruktorju na dan. Razredne naloge in lige razreda delujejo tudi brez licence. <!--narocila--><span class="pilot-only">Za prvih {{pilot.max}} šol, ki želijo daljši preizkus, je na voljo pilotna cena.</span><!--/narocila--></p></details>
     <details><summary>Kaj se zgodi, ko učenec zamenja šolo?</summary>
       <p>Učenec svoj napredek prenese na novo šolo ali ga izvozi. Oboje je vedno brezplačno, tudi brez licence.</p></details>
     <details><summary>Kako dolgo velja licenca?</summary>
-      <p>Licenca velja 12 mesecev od dogovorjenega začetka.<span class="pilot-only"> Pilotna cena velja {{pilot.years}} leti.</span></p></details>
+      <p>Licenca velja 12 mesecev od dogovorjenega začetka.<!--narocila--><span class="pilot-only"> Pilotna cena velja {{pilot.years}} leti.</span><!--/narocila--></p></details>
     <details><summary>Kdo je izvajalec?</summary>
       <p>Jakob Skerbiš, e-naslov: <a href="mailto:zasebnost@evklid.app">zasebnost@evklid.app</a>. Izvajalec ni zavezanec za DDV.</p></details>
   </div>
 
+  <!--narocila-->
   <h2 id="narocilo">Naročilo ali povpraševanje</h2>
   <p class="small">Oddaja obrazca šole ne zavezuje k ničemur. Odgovorimo vam s predračunom ali z vprašanji.</p>
   <div class="order" id="order-box">
@@ -190,6 +203,7 @@
       <p class="small muted">Podatke uporabimo samo za odgovor na to naročilo in za predračun. Samodejnih sporočil ne pošiljamo.</p>
     </form>
   </div>
+  <!--/narocila-->
   <footer class="mkt-foot">
     <a href="/">Evklid</a>
     <a href="/o-evklidu">O Evklidu</a>
