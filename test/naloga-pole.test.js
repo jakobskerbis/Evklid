@@ -34,7 +34,7 @@ test("parsePaperTask: izpit, predmet, raven, leto, pola, del, številka in del n
 });
 
 test("mentionsPaperTask: samo kratka omemba s predmetom ali letom, ne vprašanje z nalogo", () => {
-  for (const s of ["Koliko časa imam na maturi za 1. nalogo?", "maturantski ples, naloga 3", "Na maturi 2024 iz mat OR je bila 5. naloga taka: koliko je 3/4 od 20?", "Rešujem nalogo 3 iz zbirke za maturo, x^2=4", `matura mat OR 2024 naloga 5 ${"in še nekaj besedila ".repeat(5)}`])
+  for (const s of ["Koliko časa imam na maturi za 1. nalogo?", "maturantski ples, naloga 3", "Na maturi 2024 iz mat OR je bila 5. naloga taka: koliko je 3/4 od 20?", "Rešujem nalogo 3 iz zbirke za maturo, x^2=4", "Na maturi 2024 iz mat OR je bila 5. naloga taka, kako jo rešim", "Matura mat or 2024, v nalogi 5 imam 3 rešitve", `matura mat OR 2024 naloga 5 ${"in še nekaj besedila ".repeat(5)}`])
     assert.equal(mentionsPaperTask(s), false, s);
   for (const s of ["matura mat OR 2024 pola 1 naloga 5", "matura 2024 naloga 3", "npz 9 fizika naloga 12"]) assert.equal(mentionsPaperTask(s), true, s);
 });
@@ -92,6 +92,8 @@ test("izvirnik: povezava na polo (brez navodil za ocenjevanje) in ime datoteke n
   assert.equal(ricFileName("https://www.ric.si/mma/n111-401mat-2-1/x/"), "n111-401-2-1.pdf");
   assert.equal(fileMatches("P042-C101-1-1.pdf", "https://www.ric.si/mma/m042-c101-1-1/x/"), true);
   assert.equal(fileMatches("M212-421-2-2 novo .pdf", "https://www.ric.si/mma/M212-421-2-2_novo_.pdf/x/"), true);
+  assert.equal(fileMatches("P061-C101-1-1.pdf", "https://www.ric.si/mma/p061-c101-1/x/"), true);
+  assert.equal(fileMatches("M241-401-1-12.pdf", "https://www.ric.si/mma/M241-401-1-1.pdf/x/"), false);
   assert.equal(looksLikeRicFile("P241-C101-1-2.pdf"), true);
   assert.equal(looksLikeRicFile("moja-pola.pdf"), false);
   // vsaka pola v katalogu ima prepoznavno ime datoteke

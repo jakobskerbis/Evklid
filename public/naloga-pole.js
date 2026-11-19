@@ -14,9 +14,11 @@ const TASK_B = /\b([abc])?\s*(\d{1,2})\s*\.\s*(?:([a-j])\)\s*)?nalog\w*/;
 // Samo kratka omemba (učenec želi odpreti nalogo), ne vprašanje s svojim besedilom naloge ali računom
 // (»Na maturi 2024 je bila 5. naloga taka: …«): tisto gre inštruktorju kot navadno vprašanje.
 const MAX_REF = 100;
+// Učenec opisuje svojo nalogo ali rešitev (»kako jo rešim«, »imam 3 rešitve«, »je bila taka«): navadno vprašanje.
+const OWN_TASK = /\b(kako|zakaj|imam|imel\w*|resi[lm]\w*|dobi[lm]\w*|razumem|vem|bila|bil|taka|takole|tako)\b/;
 export const mentionsPaperTask = (text) => {
   const s = String(text ?? "").trim();
-  if (s.length > MAX_REF || /[=$:^*+]/.test(s)) return false;
+  if (s.length > MAX_REF || /[=$:^*+]/.test(s) || OWN_TASK.test(low(s))) return false;
   const ref = parsePaperTask(s);
   return !!ref && !!(ref.subject || ref.year);
 };
@@ -139,11 +141,13 @@ export function ricFileName(url) {
 }
 const code = (name) => {
   const c = low(name).match(RIC_CODE);
-  return c ? `${c[2]}${c[3]}${c[4]}`.replace(/[^a-z0-9]/g, "") : "";
+  return c ? `${c[2]}-${c[3]}-${c[4]}` : "";
 };
 // Ime je ime neke pole RIC (za opozorilo »to je druga pola«; preimenovana datoteka ni).
 export const looksLikeRicFile = (fileName) => !!code(fileName);
 export function fileMatches(fileName, url) {
+  // Povezava ima lahko krajšo kodo kot prenesena datoteka (»p061-c101-1« → »P061-C101-1-1.pdf«).
   const want = code(ricFileName(url));
-  return !!want && code(fileName) === want;
+  const got = code(fileName);
+  return !!want && !!got && (got === want || got.startsWith(`${want}-`));
 }
