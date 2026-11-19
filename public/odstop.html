@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Odstop od pogodbe – Evklid</title>
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
+  <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="vendor/instrument-sans/index.css">
+  <link rel="stylesheet" href="vendor/nunito/index.css">
+  <link rel="stylesheet" href="vendor/ibm-plex-sans/index.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="tipkovnica.css">
+  <link rel="stylesheet" href="account.css">
+  <style>
+    body { display: block; }
+    .doc { max-width: 560px; margin: 0 auto; padding: 24px 16px 60px; }
+    .doc .card { margin-top: 16px; }
+    .doc button.primary, .doc button.secondary { min-height: 44px; }
+    .doc textarea { width: 100%; box-sizing: border-box; min-height: 88px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg); color: inherit; font: inherit; }
+    .wd-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .wd-receipt { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; overflow-wrap: anywhere; }
+    .wd-receipt dt { font-weight: 700; }
+    .wd-receipt dd { margin: 0; }
+    .ok-mark { color: var(--ok); }
+    @media (max-width: 420px) { .wd-receipt { grid-template-columns: 1fr; } .wd-receipt dd { margin-bottom: 6px; } }
+  </style>
+</head>
+<body>
+<main class="doc" id="wd-root">
+  <p><a href="/">← Evklid</a></p>
+  <h1 data-i18n="odstop.title">Odstop od pogodbe</h1>
+  <p class="muted" data-i18n="common.loading">Nalagam …</p>
+  <noscript><p>Odstop lahko sporočite tudi z jasno izjavo na <a href="mailto:zasebnost@evklid.app">zasebnost@evklid.app</a> (<a href="/pogoji.html#obrazec">obrazec za odstop</a>).</p></noscript>
+</main>
+<script type="module" src="/zagon.js" data-moduli="odstop.js /tipkovnica-strani.js"></script>
+</body>
+</html>
