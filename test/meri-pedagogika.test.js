@@ -21,9 +21,7 @@ test("pedagogika-12: 12 pogovorov, 8 napačnih in 4 pravilni koraki, nobeno spor
     for (const k of ["naloga", "korak", "tretje", "rezultat"]) assert.ok(p[k]?.length > 0, `${p.id} ${k}`);
     assert.equal(!!p.napaka, !p.korak_pravilen, `${p.id}: napaka le pri napačnem koraku`);
     // Način A brez izrecne prošnje (server/nacin.js): meri se vodenje, ne celotna rešitev.
-    for (const t of [p.naloga, p.korak, p.tretje, `Pomagaj mi pri tej nalogi, rada bi jo rešila sama.\n\n${p.naloga}`]) {
-      assert.equal(asksForSolution(t), false, `${p.id}: ${t}`);
-    }
+    for (const t of [p.naloga, p.korak, p.tretje]) assert.equal(asksForSolution(t), false, `${p.id}: ${t}`);
   }
 });
 
@@ -47,6 +45,10 @@ test("meri-pedagogika --preizkus: 12 pogovorov po 3 sporočila skozi pravo aplik
     assert.equal(x.prepis.length, 3, x.id);
     const p = pogovori.find((q) => q.id === x.id);
     assert.ok(x.prepis[0].ucenec.endsWith(p.naloga));
+    assert.equal(x.prepis[1].ucenec, p.korak, x.id);
+    assert.equal(x.prepis[2].ucenec, p.tretje, x.id);
+    // Sporočila, kot jih skripta res pošlje (z uvodnim stavkom), ne prosijo za rešitev.
+    for (const s of x.prepis) assert.equal(asksForSolution(s.ucenec), false, `${x.id}: ${s.ucenec}`);
     // Rezultat in opis napake sta samo za ocenjevalca (pri pravilnih korakih učenec do rezultata pride sam).
     if (!p.korak_pravilen) assert.ok(x.prepis.every((s) => !s.ucenec.includes(p.rezultat) && !s.ucenec.includes(p.napaka)), x.id);
   }

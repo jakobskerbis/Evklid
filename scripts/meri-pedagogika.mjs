@@ -63,19 +63,21 @@ process.env.EVKLID_LIVE_REVIEW_TIMEOUT_MS = "300000";
 const { openDb } = await import("../server/db.js");
 const { createApp } = await import("../server/app.js");
 const { buildSystemPrompt } = await import("../server/prompt.js");
-const { isMockMode, modeParams, MODEL_MID } = await import("../server/claude.js");
+const { isMockMode, modeParams, MODEL_MID, MAX_TOKENS, MAX_TOOL_ROUNDS } = await import("../server/claude.js");
 const { callMaxUsd } = await import("../server/meje-ai.js");
 const { normalizeSettings } = await import("../server/settings.js");
 
 const nastavitve = () => normalizeSettings({ educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik OR", subject: "MAT", solving_mode: "A" });
 const { model, max_tokens } = modeParams(NACIN);
 const system = buildSystemPrompt({ settings: nastavitve(), studentName: "Ana" });
-// Najslabši primer enega sporočila: štirje klici Haiku (odgovor, ponovljen odgovor ali krog orodij, popravek, varnostni
-// pregled) in dva klica Sonnet (sprotni pregled pri SŠ dva vzporedna klica; sodba učenčevega koraka je tudi Sonnet, a
-// izključi sprotni pregled). Zgodovina pogovora (do dve izmenjavi) je v vhodu.
+// Najslabši primer enega sporočila: odgovor in ponovljen odgovor (Haiku, vsak z do MAX_TOOL_ROUNDS krogi orodij),
+// popravek in varnostni pregled (Haiku) ter dva klica Sonnet (sprotni pregled pri SŠ dva vzporedna klica; sodba
+// učenčevega koraka je tudi Sonnet, a izključi sprotni pregled). Popravek in sporočila s trditvijo tečejo v načinu think
+// (do MAX_TOKENS.think izhoda) tudi pri --nacin chat. Vhod: navodila, zgodovina (do dve izmenjavi) in izhodi prejšnjih krogov.
 const najdaljsa = Math.max(...pogovori.flatMap((p) => sporocila(p).map((s) => s.length)));
-const klicUsd = callMaxUsd(model, Math.ceil(system.length / 3) + 3 * najdaljsa + 2 * max_tokens + 4000, max_tokens);
-const najslabse = 4 * klicUsd + 2 * callMaxUsd(MODEL_MID, 4000 + 3 * najdaljsa + 2 * max_tokens, 8000) + 0.01;
+const izhod = Math.max(max_tokens, MAX_TOKENS.think);
+const klicUsd = callMaxUsd(model, Math.ceil(system.length / 3) + 3 * najdaljsa + (MAX_TOOL_ROUNDS + 3) * izhod + 4000, izhod);
+const najslabse = (2 * (MAX_TOOL_ROUNDS + 1) + 2) * klicUsd + 2 * callMaxUsd(MODEL_MID, 4000 + 3 * najdaljsa + 2 * max_tokens, 8000) + 0.01;
 console.log(`${pogovori.length} pogovorov po 3 sporočila; način ${NACIN} (${model}); najslabši primer na sporočilo ${najslabse.toFixed(3)} $; meja ${MAX_USD} $.`);
 if (SUHO) process.exit(0);
 if (PREIZKUS !== isMockMode()) {

@@ -334,7 +334,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   return { content, text, stopReason, usage, model: finalModel, toolCalls, timing };
 }
 
-const MAX_TOOL_ROUNDS = 3;
+export const MAX_TOOL_ROUNDS = 3;
 
 // Največja hitrost pisanja (žetonov na sekundo, zgornja meja z rezervo; pregled #462 S3): za razmišljanje, ki ga
 // prekinjen tok ne pokaže v celoti. Neznan model: najhitrejši.
