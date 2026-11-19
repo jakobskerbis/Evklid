@@ -93,7 +93,7 @@ import { pogojiStran } from "./pogoji-stran.js";
 import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs, jeOs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
-import { nujnoPredZavrnitvijo, nujnoZa, lokalnaVrsta, varnostniPregled, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
+import { nujnoPredZavrnitvijo, nujnoZa, lokalnaVrsta, pregledSPonovitvijo, vrstaPoznihOken, poznoOkno, odjemalecZeKazeOkno, stej as stejNujno, varnostStanje, varnostPorocilo, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
 import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
@@ -297,7 +297,7 @@ export function createApp(store, opts = {}) {
   app.locals.pomnilnik = pomnilnik;
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage) });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -559,6 +559,11 @@ export function createApp(store, opts = {}) {
   // Isti števec porabe kot računi (server/accounts/index.js): skupne meje, skupen delež družine (poolOf) in
   // rezervacije klicev v teku (trda meja AI, server/meje-ai.js). opts.usage: testi.
   const usage = opts.usage || accounts?.aiUsage || new Usage(store.db);
+  // Pozna okna varnostnega pregleda (server/nujno.js): zadetek ponovitve v ozadju, ki čaka na naslednji odgovor učencu.
+  // opts.varnostCasi: krajši roki za teste.
+  const poznaOkna = vrstaPoznihOken({ veljaMs: opts.varnostCasi?.veljaMs, obPoteku: () => stejNujno(usage, "pozno_poteklo") });
+  // Izbrisan profil: njegovo čakajoče okno ne sme preiti na nov profil, ki dobi isti id.
+  afterDelete.push(() => poznaOkna.obdrzi((id, ustvarjen) => (store.getStudent(id)?.created_at ?? null) === ustvarjen));
   // Rezervacije klicev, ki so tekli ob prejšnjem zaustavitvi strežnika, se zapišejo kot poraba (pregled #462 S4).
   usage.recoverHolds?.();
   app.locals.usage = usage; // server/index.js: ob zaustavitvi počaka na klice v teku
@@ -835,11 +840,42 @@ export function createApp(store, opts = {}) {
     // Dnevna meja vprašanj (točka A1) se preverja tu, v obdelavi sporočila, ne po obliki poti v vmesniku. Od tod do
     // rezervacije za klic AI in store.logQuestion spodaj ni nobenega await (razen na poteh, ki vrnejo odgovor), zato
     // je ne obide nobena oblika poti in ne dve sočasni sporočili v različnih pogovorih.
-    const dnevna = accounts?.dailyBlock?.(student.id);
-    if (dnevna) return res.status(429).json(dnevna);
+    // Zavrnitev računov (dnevna meja vprašanj, mesečna meja brezplačnega paketa; server/accounts/index.js) pride sem z
+    // že pripravljenim telesom (req.zavrnitevRacunov), da strežnik pred zavrnitvijo prebere sporočilo (varnostni pregled).
+    const dnevna = req.zavrnitevRacunov || accounts?.dailyBlock?.(student.id);
 
     const text = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_TEXT) : "";
     const image = req.body?.image;
+    // Pozno okno (server/nujno.js): zadetek ponovljenega varnostnega pregleda prejšnjega sporočila tega učenca, ki ga v
+    // svojem odgovoru ni bilo več mogoče pokazati. Odgovor si ga rezervira (zaostalo); okno tega sporočila ima prednost
+    // (največ eno okno na odgovor). Če ga odgovor ne odda do konca (prekinjena povezava, mesto zasedeno z drugo vrsto),
+    // gre nazaj v vrsto. oknoVrsta: vrsta okna, ki ga ta odgovor nosi. brezZaostalega: odjemalec okna strežnika v tem
+    // odgovoru ne bi pokazal (mobilna aplikacija z lastnim blažjim oknom), zato pozno okno počaka.
+    let oknoVrsta = null;
+    let zaostalo = null;
+    const brezZaostalega = odjemalecZeKazeOkno(req, text);
+    // zaprto: povezava je prekinjena; pozno okno, ki ga odgovor še ni rezerviral, ostane v vrsti (pregled #858).
+    let zaprto = false;
+    res.once("close", () => {
+      zaprto = true;
+      if (!zaostalo) return;
+      if (res.writableFinished && oknoVrsta === zaostalo.vrsta) stejNujno(usage, "pozno_naslednji");
+      else poznaOkna.vrni(student, zaostalo);
+    });
+    // Zavrnitev (JSON): okno tega sporočila, sicer čakajoče pozno okno; blažje okno »pogovor« se umakne poznemu.
+    const zZaostalim = (n) => {
+      if (!brezZaostalega && !zaprto) zaostalo ||= poznaOkna.vzemi(student);
+      const okno = n && n.vrsta !== "pogovor" ? n : poznoOkno(zaostalo, student.settings) || n;
+      oknoVrsta = okno?.vrsta ?? null;
+      return okno;
+    };
+    // Varnost pred mejo porabe (server/nujno.js, j 6. 11.): pred vsako zavrnitvijo lokalni zaznavalnik, nato kratek
+    // varnostni pregled z AI na strošek aplikacije; odjemalec pokaže potrjen varnostni odgovor (nujno).
+    const nujnoPred = async () => zZaostalim(await nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn, pozna: poznaOkna, casi: opts.varnostCasi }));
+    if (dnevna) {
+      const nujno = await nujnoPred();
+      return res.status(429).json({ ...dnevna, nujno: nujno || undefined });
+    }
     if (image && (!IMAGE_TYPES.includes(image.media_type) || typeof image.data !== "string" || image.data.length > MAX_IMAGE_B64)) {
       return res.status(400).json({ error: "Slika mora biti JPG, PNG, WEBP ali GIF in manjša od 5 MB." });
     }
@@ -848,9 +884,6 @@ export function createApp(store, opts = {}) {
     // ustnem spraševanju, server/ustno-api.js). Odjemalec pošlje nacin: "glas", ko je besedilo narekoval; tipkanje dela vedno.
     if (req.body?.nacin === "glas" && ustno && !ustno.voice(student.id).dovoljen) return res.status(403).json({ error: "Govor v besedilo mora najprej dovoliti starš (zavihek Račun). Do takrat vprašanje napiši.", code: "u.glasStarsKlepet", glas: false });
     // Stikalo za nujne primere (docs/krizni-nacrt.md): klepet izklopljen, Vadnica in lekcije delujejo.
-    // Varnost pred mejo porabe (server/nujno.js, j 6. 11.): pred vsako zavrnitvijo lokalni zaznavalnik, nato kratek
-    // varnostni pregled z AI na strošek aplikacije; odjemalec pokaže potrjen varnostni odgovor (nujno).
-    const nujnoPred = () => nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn });
     if (chatOff()) {
       const nujno = await nujnoPred();
       return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true, nujno: nujno || undefined });
@@ -1042,26 +1075,57 @@ export function createApp(store, opts = {}) {
       if (!n || nujnoPoslano || res.writableEnded || res.destroyed) return;
       nujnoPoslano = true;
       send("nujno", n);
+      oknoVrsta = n.vrsta ?? null; // vrsta okna, ki ga nosi ta odgovor (pozna okna spodaj)
     };
     // Možnost B (j 10. 11.): kratek pregled s Haikujem vzporedno z odgovorom inštruktorja, na strošek aplikacije.
-    // Ne ob »Razloži podrobneje« (isto sporočilo je bilo pregledano že prej). EVKLID_VARNOST_VSAKO=0 izklopi.
+    // Vsako besedilo, tudi ob »Razloži podrobneje« (deep): odjemalec tam pošlje stalno besedilo, strežnik pa zastavici
+    // ne sme verjeti, sicer bi prosto besedilo z njo obšlo pregled (j 18. 11.). EVKLID_VARNOST_VSAKO=0 izklopi.
     const nujnoZacetek = Date.now();
-    const pregledB =
-      !nujnoLokalno && text && !again && vsakoVklopljeno()
-        ? varnostniPregled({ text, usage, studentId: student.id, createFn: opts.varnostFn, varovalka: false })
-            .then((vrsta) => {
-              if (vrsta) posljiNujno({ ...nujnoZa(vrsta, student.settings), ai: true });
-              return vrsta;
-            })
-            .catch(() => null)
-        : null;
+    const pregled = !nujnoLokalno && text && vsakoVklopljeno() ? pregledSPonovitvijo({ text, usage, studentId: student.id, createFn: opts.varnostFn, varovalka: false, casi: opts.varnostCasi }) : null;
+    const pregledB = pregled
+      ? pregled.prvi
+          .then(({ vrsta }) => {
+            if (vrsta) posljiNujno({ ...nujnoZa(vrsta, student.settings), ai: true });
+            return vrsta;
+          })
+          .catch(() => null)
+      : null;
+    if (nujnoLokalno) oknoVrsta = nujnoLokalno.vrsta; // lokalno okno je šlo v tok že zgoraj
+    // Ponudnik ni odgovoril (rok, napaka): en ponovni poskus teče v ozadju in odgovora inštruktorja ne zadržuje.
+    // Pozni zadetek naredi isto kot pravočasni: potrjeno okno (v tem toku, če je še odprt in okna še ni; sicer ob
+    // naslednjem odgovoru temu učencu, razen če je okno iste vrste že dobil) in odgovor, ki ne ostane v predpomnilniku
+    // za druge. Če ne uspe niti ponovitev, okna ni; sporočilo je prešteto kot nepregledano (server/nujno.js).
+    let pozniVrsta = null;
+    pregled?.pozno
+      .then((p) => {
+        if (!p?.vrsta) return;
+        pozniVrsta = p.vrsta;
+        // Odgovor na to sporočilo je morda pravkar shranjen za ponovno uporabo (pregled #846: ob zadetku ne sme ostati).
+        // Samo pravkar shranjen: starejšega, že prej preverjenega odgovora tudi pravočasen zadetek ne izbriše.
+        if (key) store.db.prepare("DELETE FROM answer_cache WHERE key = ? AND created_at >= datetime('now', '-5 minutes')").run(key);
+        const prej = nujnoPoslano;
+        posljiNujno({ ...nujnoZa(p.vrsta, student.settings), ai: true });
+        if (!prej && nujnoPoslano) stejNujno(usage, "pozno_v_toku");
+        else if (oknoVrsta === p.vrsta) stejNujno(usage, "pozno_ze_okno");
+        else poznaOkna.dodaj(student, { vrsta: p.vrsta });
+      })
+      .catch((e) => console.warn(`[evklid] pozni zadetek varnostnega pregleda: ${e?.message || e}`));
+    // Čakajoče pozno okno prejšnjega sporočila gre v prosto mesto tega odgovora: takoj ko prvi poskus pregleda tega
+    // sporočila ne najde svojega okna (to ima prednost), in še enkrat pred koncem odgovora (zadetek, ki je prišel vmes).
+    const oddajZaostalo = () => {
+      if (brezZaostalega || zaprto || res.writableEnded || res.destroyed) return;
+      zaostalo ||= poznaOkna.vzemi(student);
+      posljiNujno(poznoOkno(zaostalo, student.settings));
+    };
+    Promise.resolve(pregledB).then(oddajZaostalo).catch(() => {});
     // Pred koncem odgovora počakamo na pregled, a največ do NUJNO_ROK_MS od začetka (običajno je že končan).
+    // Vrne vrsto prvega poskusa ali, če je medtem že prišel, poznega zadetka.
     const pocakajNujno = async () => {
       if (!pregledB) return null;
       let timer;
       const rok = new Promise((r) => (timer = setTimeout(() => r(null), Math.max(0, NUJNO_ROK_MS - (Date.now() - nujnoZacetek)))));
       try {
-        return await Promise.race([pregledB, rok]);
+        return (await Promise.race([pregledB, rok])) || pozniVrsta;
       } finally {
         clearTimeout(timer);
       }
@@ -1488,7 +1552,13 @@ export function createApp(store, opts = {}) {
       // Vrsta iz pregleda B, če ga je našel; sicer iz odgovora inštruktorja (samo 112 brez linije za pogovor →
       // zdravje ali nevarnost, sicer stiska; brez vsake številke blažje okno »pogovor«, j 10. 11.; EVKLID_NUJNO_BLAGO=0 ga izklopi).
       const vrstaB = await pocakajNujno();
-      if (meta?.flag === "distress") posljiNujno(nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings));
+      if (meta?.flag === "distress") {
+        const okno = nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings);
+        // Mesto je že zasedlo pozno okno prejšnjega sporočila druge vrste: okno tega sporočila pride ob naslednjem odgovoru.
+        if (nujnoPoslano && zaostalo && oknoVrsta === zaostalo.vrsta && okno?.vrsta && okno.vrsta !== oknoVrsta) poznaOkna.dodaj(student, { vrsta: okno.vrsta });
+        else posljiNujno(okno);
+      }
+      oddajZaostalo(); // pozno okno prejšnjega sporočila pred blažjim oknom tega (server/nujno.js)
       posljiNujno(blagoLokalno);
       finished = true;
       send("done", {
@@ -1536,6 +1606,7 @@ export function createApp(store, opts = {}) {
         // Ob napaki AI ostane lokalni zaznavalnik (če varnostni odgovor še ni bil poslan).
         // Pregled B (če teče) ima še do NUJNO_ROK_MS od začetka; njegov zadetek gre kot dogodek »nujno« pred napako.
         await pocakajNujno();
+        oddajZaostalo(); // čakajoče pozno okno prejšnjega sporočila gre kot dogodek »nujno« pred napako
         send("error", { error: errorText(err), nujno: nujnoPoslano ? undefined : nujnoZa(lokalnaVrsta(text), student.settings) || undefined });
       }
       res.end();
@@ -2010,7 +2081,8 @@ export function createApp(store, opts = {}) {
     if (!accounts && !isLocalRequest(req)) return res.status(403).json({ error: "Samo za skrbnika." });
     const claim = !!accounts && isLocalRequest(req) && !req.parent?.is_admin;
     const sum = usage.summary();
-    res.json({ ...sum, can_claim: claim, advice: pricingAdvice(store.db, sum, { groupOf: (id) => accounts?.marginGroupOf?.(id) ?? null }) });
+    // varnost: števci varnostnega pregleda sporočil (rok, napaka, pozni zadetki, nepregledano; server/nujno.js).
+    res.json({ ...sum, can_claim: claim, advice: pricingAdvice(store.db, sum, { groupOf: (id) => accounts?.marginGroupOf?.(id) ?? null }), varnost: varnostPorocilo(usage, poznaOkna) });
   });
   // Mesečni proračun API: skrbnik nastavi znesek ali doda kupljeni kredit za ta mesec (server/proracun.js).
   // Ni v nastavitvah iz klepeta (finančni podatek, public/settings-registry.js).
