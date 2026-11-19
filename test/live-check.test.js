@@ -1052,13 +1052,15 @@ test("live check (pregled #848): two review calls reserve twice in the school po
 
 test("live check (meritev SŠ po #848): the focused check also checks explanations, notation and percentage points; exercises state every given", async () => {
   const { EXTRA_SYSTEM, correction } = await import("../server/live-check.js");
-  assert.match(EXTRA_SYSTEM, /^You check only three things in an AI tutor's answer to a school student: the practice exercise \(»Vaja«, »Practice«\), any plan of an experiment that the tutor proposes, and every explanation of how or why something happens\./);
+  assert.match(EXTRA_SYSTEM, /^You check only three things in an AI tutor's answer to a school student: the practice exercise \(»Vaja«, »Practice«\), any plan of an experiment that the tutor proposes, and every explanation of how or why something happens, with its notation and percentages\./);
   // molekularna-genetika#3 (vilici »na nasprotnih straneh«), nastanek-vrst#5 (haploidnost iz oploditve)
   assert.match(EXTRA_SYSTEM, /3\. Explanations and notation: for every sentence that says how or why something happens \(mechanism, cause, order of events, where a process starts and where it ends, what halves or doubles a number\)/);
   assert.match(EXTRA_SYSTEM, /a reason that reverses cause and effect, names the wrong process or place, or gives the wrong order or direction of a process \(»zaostajajočo verigo gradi v smeri 3'→5'«, »vilici začneta na nasprotnih straneh«\) is an error; a simplification that is correct at that level, or a true purpose or function given instead of a mechanism, is fine\./);
   // nastanek-vrst#3 (»63 ni oblike 2n«), raziskovanje#2 (»razlika 40 %«)
-  assert.match(EXTRA_SYSTEM, /in biology 2n is the chromosome number of a diploid body cell, such as a human body cell, also when it is odd, and a polyploid's body-cell number may be written 2n = 33 or 3n = 33; in mathematics 2n is an even number\)/);
-  assert.match(EXTRA_SYSTEM, /When two percentages are compared, their difference is in percentage points, not per cent; the rest of a whole \(100 % − 36 % = 64 %\) and a relative change are correctly in per cent\./);
+  assert.match(EXTRA_SYSTEM, /in biology 2n is the chromosome number of a diploid body cell, such as a human body cell, also when it is odd, and a polyploid's body-cell number may be written 2n = 33 or 3n = 33; in mathematics 2n with a whole number n is even\)/);
+  assert.match(EXTRA_SYSTEM, /When two percentages are compared, their difference is in percentage points, not per cent; the rest of a whole \(100 % − 36 % = 64 %\), a share of the same whole found by adding or subtracting shares, and a relative change are correctly in per cent\./);
+  // drugi krog pregleda #853: navedena napačna ideja ni napaka inštruktorja
+  assert.match(EXTRA_SYSTEM, /Check only the tutor's own explanations; a wrong idea quoted from the student or named as a misconception in order to correct it is fine\./);
   assert.match(LIVE_REVIEW_SYSTEM, /the difference between two compared percentages is in percentage points, while the rest of a whole \(100 % − 36 % = 64 %\) and a relative change are correctly in per cent\);/);
   // molekularna-genetika#4: vaji je manjkal podatek o dveh vilicah
   assert.match(EXTRA_SYSTEM, /states every given its solution needs \(also givens taken over from the task/);
