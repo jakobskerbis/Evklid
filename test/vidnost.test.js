@@ -187,7 +187,7 @@ test("stran /zakaj-evklid (predloga z meritvijo, podano izrecno): številke iz d
   assert.ok(m && m.datoteka.startsWith("docs/meritve/natancnost-"), "meritev obstaja");
   for (const r of m.vrstice) {
     assert.ok(Number.isFinite(r.napake) ? r.napake <= r.primeri : Number.isFinite(r.napake_pct), r.kljuc);
-    const cell = Number.isFinite(r.napake) ? `<td>${pctText(r)} % <small>${r.napake} od ${r.primeri}, 95-% interval ${wilson(r.napake, r.primeri).join("–")} %</small></td>` : `<td>${pctText(r)} %</td>`;
+    const cell = Number.isFinite(r.napake) ? `<td>${pctText(r)} % <small>${r.napake} od ${r.primeri}</small> <small class="why-ci">95-% interval ${wilson(r.napake, r.primeri).join("–")}\u00a0%</small></td>` : `<td>${pctText(r)} %</td>`;
     // Celica je vezana na ime svoje vrstice (ne samo »nekje na strani«).
     const head = `<tr><th scope="row">${r.ime}${r.opomba ? `<small>${r.opomba}</small>` : ""}</th>`;
     assert.ok(html.includes(`${head}${cell}<td>${r.primeri}</td></tr>`), `vrstica ${r.kljuc}`);
@@ -328,8 +328,8 @@ test("meritev s preverjanjem: povzetek, tabela in stran iz istih številk; skrip
   assert.equal(updateDoc(updateDoc(doc, sum), sum), updateDoc(doc, sum));
   const html = whyPage(sum);
   const text = textOf(html);
-  assert.ok(html.includes('<tr><th scope="row">Sam model, brez preverjanja</th><td>12,5 % <small>5 od 40, 95-% interval 5,5–26,1 %</small></td><td>40</td></tr>'));
-  assert.ok(html.includes('<tr><th scope="row">Cel Evklidov odgovor, s preverjanjem</th><td>2,5 % <small>1 od 40, 95-% interval 0,4–12,9 %</small></td><td>40</td></tr>'));
+  assert.ok(html.includes('<tr><th scope="row">Sam model, brez preverjanja</th><td>12,5 % <small>5 od 40</small> <small class="why-ci">95-% interval 5,5–26,1\u00a0%</small></td><td>40</td></tr>'));
+  assert.ok(html.includes('<tr><th scope="row">Cel Evklidov odgovor, s preverjanjem</th><td>2,5 % <small>1 od 40</small> <small class="why-ci">95-% interval 0,4–12,9\u00a0%</small></td><td>40</td></tr>'));
   // Viden pripis, kaj je bilo merjeno: plačljivi paket brez dnevne meje pregledov; z --resnicna-meja drugo besedilo.
   assert.ok(text.includes("enkrat s preverjanjem (program preveri račune, pri delu nalog odgovor pregleda še zmogljivejši model), z nastavitvami plačljivega paketa") && !text.includes("kot odgovor vidi učenec"));
   assert.ok(text.includes("Merili smo plačljivi paket brez dnevne meje pregledov z zmogljivejšim modelom.") && !text.includes("z dnevno mejo pregledov z zmogljivejšim modelom, kot velja"));
