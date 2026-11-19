@@ -1,9 +1,10 @@
 // Prvi izris Učne poti brez kode drugih zaslonov (naloga hitrost, docs/meritve/prijavljen-mobilno-2026-11-19.md točka 2):
 // KaTeX, marked in DOMPurify (public/rich.js naloziKnjiznice), cel slovenski slovar (public/i18n-osnova.js + jedro s
-// strežnika, server/i18n-jedro.js), Učbenik, oznake formul, varnostni zaznavalnik (nujno.js), Evklidova tipkovnica
-// (tipkovnica-lena.js) in preverjanje brez povezave se naložijo po prvem izrisu ali ob prvi potrebi. Test preveri, da se
-// Učna pot izriše, medtem ko brskalnik teh datotek še ne dobi, da ji ne manjka nobeno besedilo in da se nato vsak glavni
-// zaslon prvič odpre pravilno (z besedili, formulami in tipkovnico).
+// strežnika, server/i18n-jedro.js), Učbenik, oznake formul, Evklidova tipkovnica (tipkovnica-lena.js) in preverjanje brez
+// povezave se naložijo po prvem izrisu ali ob prvi potrebi. Test preveri, da se Učna pot izriše, medtem ko brskalnik teh
+// datotek še ne dobi, da ji ne manjka nobeno besedilo in da se nato vsak glavni zaslon prvič odpre pravilno (z besedili,
+// formulami in tipkovnico). Varnostni zaznavalnik (nujno.js) ostane del prvega odprtja (pregled varnosti #888): okno
+// nujne pomoči mora delovati takoj, brez povezave in s pravim besedilom tudi pred celim slovarjem.
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -27,11 +28,12 @@ test.after(() => chromium?.close());
 const quiet = { error() {}, warn() {}, info() {}, log() {} };
 
 // Datoteke, ki jih prvi izris Učne poti ne sme čakati.
-const POZNEJE = ["/vendor/katex/katex.min.js", "/vendor/marked/lib/marked.umd.js", "/vendor/dompurify/purify.min.js", "/i18n.js", "/i18n/sl.js", "/textbook.js", "/formula-info.js", "/formula-data.js", "/sirina.js", "/nujno.js", "/tipkovnica.js", "/tipkovnica-data.js", "/our-paper.js"];
+const POZNEJE = ["/vendor/katex/katex.min.js", "/vendor/marked/lib/marked.umd.js", "/vendor/dompurify/purify.min.js", "/i18n.js", "/i18n/sl.js", "/textbook.js", "/formula-info.js", "/formula-data.js", "/sirina.js", "/tipkovnica.js", "/tipkovnica-data.js", "/our-paper.js"];
 
 test("prvo odprtje: knjižnice za izris, cel slovar in moduli drugih zaslonov niso v statičnem grafu", () => {
   const list = startupFiles(PUB, "index.html");
   for (const u of POZNEJE) assert.ok(!list.includes(u), `${u} je del prvega odprtja`);
+  assert.ok(list.includes("/nujno.js"), "varnostni zaznavalnik je del prvega odprtja");
   // Moduli prvega odprtja uvozijo i18n-osnova.js; i18n.js (cel slovar) samo moduli, ki se naložijo pozneje.
   for (const u of list.filter((x) => x.endsWith(".js") && !x.startsWith("/vendor/"))) {
     const src = fs.readFileSync(path.join(PUB, u), "utf8");
@@ -41,6 +43,8 @@ test("prvo odprtje: knjižnice za izris, cel slovar in moduli drugih zaslonov ni
   const jedro = new Set(kljuciJedra(PUB, SL));
   for (const m of fs.readFileSync(path.join(PUB, "index.html"), "utf8").matchAll(/data-i18n(?:-ph|-title|-aria|-alt)?="([^"]+)"/g)) if (SL[m[1]] !== undefined) assert.ok(jedro.has(m[1]), m[1]);
   for (const k of ["nav.path", "daily.title", "unit.label", "xp.r.correct", "block.daily"]) assert.ok(jedro.has(k), k);
+  // Okno nujne pomoči: vsa besedila v jedru (ključi pridejo iz podatkov public/nujno.js, ne kot nizi v kodi).
+  for (const k of Object.keys(SL).filter((k) => k.startsWith("nujno."))) assert.ok(jedro.has(k), k);
   assert.ok(jedro.size < Object.keys(SL).length * 0.7, `jedro ${jedro.size} od ${Object.keys(SL).length} ključev`);
 });
 
@@ -125,7 +129,7 @@ test("Učna pot se izriše brez lenih datotek, brez manjkajočih besedil; nato s
       assert.equal(await page.locator("#poskus-izrisa .rich-caka").count(), 0);
       await page.waitForFunction(() => import("/i18n-osnova.js").then((m) => m.vseNalozeno()), null, { timeout: 30000 });
       // Po prvem izrisu se naloži vse za druge zaslone (tudi za delo brez povezave).
-      await page.waitForFunction((n) => n.every((u) => performance.getEntriesByType("resource").some((e) => new URL(e.name).pathname === u)), ["/nujno.js", "/tipkovnica.js", "/textbook.js", "/formula-info.js", "/vendor/katex/katex.min.js"], { timeout: 30000 });
+      await page.waitForFunction((n) => n.every((u) => performance.getEntriesByType("resource").some((e) => new URL(e.name).pathname === u)), ["/tipkovnica.js", "/textbook.js", "/formula-info.js", "/vendor/katex/katex.min.js"], { timeout: 30000 });
       const zavihek = async (v) => {
         await page.evaluate((v) => document.querySelector(`#tabbar .tab[data-view="${v}"], .topbar .tab[data-view="${v}"]`).click(), v);
         await page.waitForSelector(`#view-${v}:not([hidden])`, { timeout: 20000 });
@@ -155,6 +159,48 @@ test("Učna pot se izriše brez lenih datotek, brez manjkajočih besedil; nato s
       assert.deepEqual(napake, []);
       assert.ok(zadrzane.includes("/vendor/katex/katex.min.js") && zadrzane.includes("/i18n/sl.js"), zadrzane.join(" "));
       assert.ok(id > 0);
+    } finally {
+      await ctx.close();
+    }
+  }),
+);
+
+test("okno nujne pomoči pred celim slovarjem: pravo slovensko besedilo, nobenega ključa", opts, () =>
+  streznik(async ({ base, jar }) => {
+    const ctx = await chromium.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, locale: "sl-SI", serviceWorkers: "block" });
+    try {
+      await ctx.addCookies(Object.entries(jar).map(([name, value]) => ({ name, value, url: base })));
+      await ctx.addInitScript(() => {
+        localStorage.setItem("evklid.tour", "done");
+        localStorage.setItem("evklid.interests.asked", "1");
+      });
+      const page = await ctx.newPage();
+      const napake = [];
+      page.on("pageerror", (e) => napake.push(e.message));
+      // Cel slovar ne pride (npr. počasna povezava): okno mora imeti besedila iz jedra.
+      let spusti = null;
+      const spusceno = new Promise((ok) => (spusti = ok));
+      await page.route(
+        (url) => url.pathname === "/i18n.js" || url.pathname === "/i18n/sl.js",
+        async (route) => {
+          await spusceno;
+          await route.continue().catch(() => {});
+        },
+      );
+      await page.goto(base + "/", { waitUntil: "commit" });
+      await page.waitForSelector("#view-path #xp-card .hero", { timeout: 60000 });
+      await page.evaluate(() => document.querySelector('#tabbar .tab[data-view="chat"], .topbar .tab[data-view="chat"]').click());
+      await page.waitForSelector("#input", { state: "visible", timeout: 20000 });
+      await page.fill("#input", "razmišljam o samomoru");
+      await page.evaluate(() => document.querySelector("#send").click());
+      await page.waitForSelector(".nujno-card", { timeout: 20000 });
+      assert.equal(await page.evaluate(() => import("/i18n-osnova.js").then((m) => m.vseNalozeno())), false, "cel slovar je bil zadržan");
+      const besedilo = await page.locator(".nujno-card").first().innerText();
+      assert.doesNotMatch(besedilo, /nujno\.[a-zA-Z]/, besedilo);
+      assert.ok(besedilo.includes(SL["nujno.stiska.naslov"].replace(/\{[^}]*\}/g, "").trim().slice(0, 12)), besedilo);
+      assert.deepEqual(await page.evaluate(() => import("/i18n-osnova.js").then((m) => m.manjkajoci())), []);
+      spusti();
+      assert.deepEqual(napake, []);
     } finally {
       await ctx.close();
     }

@@ -118,7 +118,8 @@ export function offlineApi(sid, url, opts = {}) {
   if (!pack) return undefined;
   const u = new URL(url, location.origin);
   const p = u.pathname;
-  // Naloga ali odgovor iz paketa potrebuje check.js: če še ni naložen, počakamo nanj (app.js apiCall počaka obljubo).
+  // Naloga ali odgovor iz paketa potrebuje check.js: če še ni naložen, počakamo nanj (app.js fromPack počaka obljubo;
+  // undefined ali neuspel uvoz tam postane prevedeno sporočilo brez povezave).
   if (!checkAnswer && (p === `/api/students/${sid}/practice/next` || /^\/api\/students\/\d+\/tasks\/off-[^/]+\/answer$/.test(p))) {
     return pripraviPreverjanje().then(() => offlineApi(sid, url, opts));
   }

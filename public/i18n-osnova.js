@@ -16,7 +16,7 @@ let SL = {}; // slovenska besedila: jedro s strežnika ali cel public/i18n/sl.js
 let vse = false; // cel slovar je naložen
 let dicts = [SL]; // od izbranega jezika proti izvirniku
 let prevodi = []; // naloženi prevodi izbranega jezika (pred slovenščino)
-// Ključi, ki jih je kdo zahteval pred celim slovarjem in jih ni bilo v jedru (test/i18n-jedro.test.js jih preveri).
+// Ključi, ki jih je kdo zahteval pred celim slovarjem in jih ni bilo v jedru (test/zacetek-leno.test.js preveri, da jih ni).
 const manjka = new Set();
 export const manjkajoci = () => [...manjka];
 const zamenjajSL = (d) => {

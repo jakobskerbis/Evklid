@@ -51,11 +51,10 @@ test("zaznavalnik: ogrej() po kosih prevede vzorce, rezultati zaznavanja ostanej
   assert.equal(rezultati(m), brez);
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   assert.match(app, /if \(name === "chat"\) \{[^}]*pripraviZaznavalnik\(\);/);
-  assert.match(app, /const kos = \(\) => whenIdle\(\(\) => m\.ogrej\(8\) \|\| kos\(\)\);/);
-  // Modul zaznavalnika ni del prvega izrisa (lenModul); send ga počaka, preden karkoli pošlje.
-  assert.match(app, /const nujnoMod = lenModul\("\.\/nujno\.js"\);/);
-  assert.doesNotMatch(app, /^import[^\n]*from "\.\/nujno\.js"/m);
-  assert.match(app, /async function send\([^\n]*\n  if \(state\.sending\) return;\n[^\n]*\n  if \(!nujnoMod\.now\(\)\) \{\n    state\.sending = true;\n    try \{\n      await nujnoMod\.load\(\);/);
+  assert.match(app, /const kos = \(\) => whenIdle\(\(\) => ogrejNujno\(8\) \|\| kos\(\)\);/);
+  // Zaznavalnik je statično uvožen (pregled varnosti #888): na voljo takoj ob pošiljanju, brez povezave in ob zavrnitvi.
+  assert.match(app, /^import \{ zaznajNujno,[^\n]*\} from "\.\/nujno\.js";$/m);
+  assert.doesNotMatch(app, /lenModul\("\.\/nujno\.js"\)/);
 });
 
 test("dolg pogovor: zadnjih 20 takoj in na dnu, starejša ob drsenju navzgor brez premika; Pošlji brez sinhronih meritev", opts, async () => {

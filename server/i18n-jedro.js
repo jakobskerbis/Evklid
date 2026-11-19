@@ -16,7 +16,8 @@ const PREDPONA = /[`"'}]([A-Za-z][\w-]*\.[\w.-]*)(?:\$\{|["'`]\s*\+)/g;
 // Kode napak s strežnika (app.js serverError: block.*, gr.*, kv.*, comp.*, chk.*) in sporočila brez povezave: lahko
 // pridejo že takoj po prvem izrisu, besedila pa ni v kodi kot niza. Dejstva na dnu Učne poti (greek.js: greek.f1 …,
 // v zgodovinskem slogu era.<slog>.f1 … iz theme.js) imajo ključ iz podatkov.
-const VEDNO = ["block.", "gr.", "kv.", "comp.", "chk.", "off.", "common.", "greek.", "era."];
+// Varnostni odgovor (nujno.*, public/nujno.js vrstice/opomba): vedno v jedru, da kartica nikoli ne pokaže ključa (pregled #888).
+const VEDNO = ["block.", "gr.", "kv.", "comp.", "chk.", "off.", "common.", "greek.", "era.", "nujno."];
 
 export function kljuciJedra(publicDir, SL) {
   const vsi = Object.keys(SL);

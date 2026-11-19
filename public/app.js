@@ -6,6 +6,7 @@ import { attachPad, closePad, openPad, padIsSheet } from "./pad.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion, naloziVse } from "./i18n-osnova.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba, ogrej as ogrejNujno } from "./nujno.js";
 import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
 import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
@@ -159,7 +160,7 @@ const zasloniPozneje = () => {
     () =>
       // Najprej izris formul (rabi ga skoraj vsak drug zaslon), nato moduli zaslonov po verjetnosti uporabe.
       // Najprej cel slovar (public/i18n.js): moduli, ki dobijo t() od app.js (kalkulator), ga rabijo takoj.
-      [{ load: naloziVse }, nujnoMod, { load: naloziTipkovnico }, { load: pripraviIzris }, tbMod, scanMod, zbMod, leagueMod, ourMod, { load: pripraviPreverjanje }]
+      [{ load: naloziVse }, { load: naloziTipkovnico }, { load: pripraviIzris }, tbMod, scanMod, zbMod, leagueMod, ourMod, { load: pripraviPreverjanje }]
         .reduce((p, x) => p.then(() => x.load().catch(() => null)), Promise.resolve())
         // Za delo brez povezave: service worker shrani tudi te module (ob prvem obisku je seznam »precache« že poslan).
         .then(() => navigator.serviceWorker?.ready)
@@ -198,7 +199,18 @@ const whenIdle = (fn, timeout = 2000) => (window.requestIdleCallback ? requestId
 const whenQuiet = (fn) => whenIdle(() => (Date.now() - lastInput < 800 ? setTimeout(() => whenQuiet(fn), 400) : fn()));
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
 // Za zagon brez povezave še seznam profilov (osebni odgovori API niso v predpomnilniku, P7).
-const fromPack = (url, opts) => (state.student ? offlineApi(state.student.id, url, opts) : undefined) ?? offlineBootApi(url, opts);
+// Naloga ali odgovor iz paketa lahko čaka na check.js (offline.js pripraviPreverjanje vrne obljubo): če klica paket ne
+// zna (undefined) ali se check.js ne naloži (brez povezave in brez kopije), klicatelj dobi isto prevedeno sporočilo
+// brez povezave (offline: true) kot pri vsakem drugem klicu, nikoli undefined ali surove napake uvoza.
+const fromPack = (url, opts, napaka) => {
+  const v = (state.student ? offlineApi(state.student.id, url, opts) : undefined) ?? offlineBootApi(url, opts);
+  if (!(v instanceof Promise)) return v;
+  return v.then(
+    (r) => (r === undefined ? Promise.reject(napaka()) : r),
+    () => Promise.reject(napaka()),
+  );
+};
+const brezPovezave = (msg) => () => Object.assign(new Error(msg()), { offline: true });
 // Računalnik z Evklidom je ugasnjen ali okno ni odprto: ngrok ali Cloudflare vrneta
 // svojo napako. Takrat delamo kot brez povezave (vaje iz shranjenega paketa).
 // Napaka v JSON pride od našega strežnika (npr. 502, ko branje rokopisa ne uspe):
@@ -289,9 +301,10 @@ const apiCall = async (url, opts = {}) => {
     if (early != null) return early;
   }
   if (/\/tasks\/off-/.test(url)) {
-    const local = fromPack(url, opts);
+    const napaka = brezPovezave(() => t("off.noConnection"));
+    const local = fromPack(url, opts, napaka);
     if (local !== undefined) return local;
-    throw Object.assign(new Error(t("off.noConnection")), { offline: true });
+    throw napaka();
   }
   const res = await fetchThroughRestart(url, {
     ...opts,
@@ -299,11 +312,12 @@ const apiCall = async (url, opts = {}) => {
     body: opts.body && typeof opts.body !== "string" ? JSON.stringify(opts.body) : opts.body,
   });
   if (!res || (res.status === 503 && res.headers.get("X-Offline")) || serverDown(res)) {
-    const local = fromPack(url, opts);
-    if (local !== undefined) return local;
     // Gostitelj odgovori, naš strežnik pa ne (npr. med objavo nove različice): ne pišemo »Ni povezave z internetom«.
     // offline: sporočilo je že prevedeno in pove, ali manjka povezava ali odgovor strežnika (npr. 502 med objavo).
-    throw Object.assign(new Error(!res || navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy")), { offline: true });
+    const napaka = brezPovezave(() => (!res || navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy")));
+    const local = fromPack(url, opts, napaka);
+    if (local !== undefined) return local;
+    throw napaka();
   }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -387,8 +401,10 @@ const showTextbook = () => {
 const openLesson = (id) => {
   const m = tbMod.now();
   if (m && fxMod.now() && sirinaMod.now()) return m.openLesson(id);
-  ++tbSeq;
-  return tbReady().then((x) => x.openLesson(id)).catch(() => viewNote("#view-textbook", "off.noConnection", true));
+  const n = ++tbSeq; // novejša zahteva (druga lekcija, kazalo) med čakanjem na modul prevlada
+  return tbReady()
+    .then((x) => n === tbSeq && x.openLesson(id))
+    .catch(() => n === tbSeq && viewNote("#view-textbook", "off.noConnection", true));
 };
 const textbookBack = () => tbMod.now()?.textbookBack() ?? false;
 const openLessonId = () => tbMod.now()?.openLessonId() ?? null;
@@ -1625,20 +1641,14 @@ function dopolniKmalu() {
 // sprožil nalaganje starejših); kratek pogovor, ki ne napolni zaslona, dobi starejša sporočila.
 // Varnostni zaznavalnik (public/nujno.js ogrej) prevede svoje vzorce vnaprej, ko se Inštruktor prvič pokaže, v kosih po
 // 8 ms v času mirovanja: prvi tap »Pošlji« je sicer čakal nanj (telefon ~0,8 s, docs/meritve/prijavljen-mobilno-2026-11-19.md).
-// Modul zaznavalnika (~32 KB stisnjeno) ni del prvega izrisa Učne poti: naloži se po njem (zasloniPozneje), ob prvem
-// prikazu Inštruktorja ali najpozneje ob pošiljanju (send ga počaka, preden karkoli pošlje).
-const nujnoMod = lenModul("./nujno.js");
+// Modul zaznavalnika je namenoma statično uvožen (del prvega odprtja): varnostni odgovor mora biti na voljo vedno,
+// tudi brez povezave in ob zavrnitvi strežnika (pregled varnosti #888: varnost pred ~32 KB).
 let zaznavalnikPripravljen = false;
 function pripraviZaznavalnik() {
   if (zaznavalnikPripravljen) return;
   zaznavalnikPripravljen = true;
-  nujnoMod.load().then(
-    (m) => {
-      const kos = () => whenIdle(() => m.ogrej(8) || kos());
-      kos();
-    },
-    () => (zaznavalnikPripravljen = false), // brez povezave: ob naslednjem prikazu znova
-  );
+  const kos = () => whenIdle(() => ogrejNujno(8) || kos());
+  kos();
 }
 function zgodovinaVidna() {
   const box = $("#messages");
@@ -1794,17 +1804,6 @@ document.addEventListener("click", (e) => (e = e.target.closest?.("[data-ustno]"
 // neuspehu vrne v polje (namesto sestavljenega sporočila z nalogo).
 async function send(text, { deep = false, image: attached = null, paper: paperOpt = null, afterUser = null, plain = false, draft = null } = {}) {
   if (state.sending) return;
-  // Lokalni varnostni zaznavalnik mora biti tu, preden gre karkoli naprej (navadno je že naložen: pripraviZaznavalnik).
-  if (!nujnoMod.now()) {
-    state.sending = true;
-    try {
-      await nujnoMod.load();
-    } catch {
-      // brez povezave in brez kopije: varnostni odgovor pošlje strežnik (ob povezavi), lokalno ga ni mogoče pokazati
-    } finally {
-      state.sending = false;
-    }
-  }
   if (nalogaPole?.busy() && !plain) return; // Evklid še odpira nalogo pole: novo sporočilo počaka (besedilo ostane v polju)
   if (!attached && !state.image && /^\s*vprašaj me\b/i.test(text)) return ($("#input").value = ""), openUstno({ besedilo: text });
   // Samodejno sestavljeno sporočilo (Razloži, Vprašaj o temi, izbire …) ni iz polja: učenčev osnutek in
@@ -1833,13 +1832,13 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
   const showNujno = (n, opts = {}) => {
     if (nujnoEl) {
       if (opts.meja) {
-        nujnoEl.querySelector(".nujno-opomba").textContent = t(nujnoMod.now().opomba(nujnoEl._st, true));
+        nujnoEl.querySelector(".nujno-opomba").textContent = t(opomba(nujnoEl._st, true));
         nujnoNaVrh(nujnoEl);
       }
       return;
     }
     // Izsiljevanje prepozna vmesnik sam iz besedila (tudi, ko vrsto pošlje AI pregled).
-    if (n?.vrsta && nujnoMod.now()) nujnoEl = addNujno({ ...n, izs: nujnoMod.now().izsiljevanje(text) }, opts);
+    if (n?.vrsta) nujnoEl = addNujno({ ...n, izs: izsiljevanje(text) }, opts);
   };
   state.sending = true;
   state.sendSeq = (state.sendSeq || 0) + 1; // »Razloži podrobneje« v čakanju ve, ali je vmes šlo novo sporočilo
@@ -2127,10 +2126,8 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
 // --- varnostni odgovor (public/nujno.js, besedila potrdil j 6. 11.) ---
 // Lokalni zaznavalnik v brskalniku: brez povezave in kot rezerva, ko strežnik ne pošlje vrste.
 function lokalnoNujno(text) {
-  const N = nujnoMod.now();
-  if (!N) return null;
-  const vrsta = N.zaznajNujno(text);
-  return vrsta ? { vrsta, izs: N.izsiljevanje(text) } : null;
+  const vrsta = zaznajNujno(text);
+  return vrsta ? { vrsta, izs: izsiljevanje(text) } : null;
 }
 // Okno na vrh vidnega dela klepeta, razen če je učenec seznam sam odmaknil navzgor (pregled B2).
 function nujnoNaVrh(el) {
@@ -2148,7 +2145,6 @@ function krepke(html, p) {
 // Okno z varnostnim odgovorom: ni napaka, se zapre (×), inštruktorja ne ustavi. before: nad tem mehurčkom.
 // meja: učenec ni dobil odgovora inštruktorja (opomba, da se ne šteje med vprašanja).
 function addNujno(n, { before = null, meja = false } = {}) {
-  const { stevilke, drzavaNaprave, izoliraj, vrstice, klici, telHref, opomba } = nujnoMod.now();
   const box = $("#messages");
   box.querySelector(".empty")?.remove();
   const el = document.createElement("section");
