@@ -179,7 +179,7 @@ test("nakup: potrditve z različico pogojev in opisom; po plačilu eno potrdilo 
     assert.ok(m.text.includes(WITHDRAWAL_TEXT), "izjava o odstopu, ki jo je kupec potrdil");
     assert.doesNotMatch(m.text, /\[(jezik|pogoji|odstop):/, "oznake niso v e-pošti");
     assert.ok(m.text.includes(`različica ${termsVersionText(TERMS_VERSION)}`) && m.text.includes("/pogoji.html"));
-    assert.ok(m.text.includes("zasebnost@evklid.app") && m.text.includes("/pogoji.html#obrazec"), "kako odstopi");
+    assert.ok(m.text.includes("zasebnost@evklid.app") && m.text.includes("/odstop.html") && m.text.includes("Kliknite tukaj za odstop od pogodbe"), "kako odstopi: funkcija za odstop (ZVPot-1A)");
     assert.ok(m.html.includes("zasebnost@evklid.app"));
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM email_log WHERE kind = 'purchase' AND ok = 1").get().n, 1);
   }));
