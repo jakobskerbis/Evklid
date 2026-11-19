@@ -4524,5 +4524,21 @@
   "povabi.reward": "Keď si rodina, ktorú pozveš, objedná predplatné a prvýkrát zaplatí, obe rodiny dostanú jeden mesiac zadarmo.",
   "povabi.later": "Teraz nie",
   "povabi.link": "Odkaz pre kamaráta",
-  "povabi.shareText": "Učím sa s Evklidom. Skús to aj ty:"
+  "povabi.shareText": "Učím sa s Evklidom. Skús to aj ty:",
+  "np.ask.exam": "Ktoré NPZ myslíš?",
+  "np.ask.subject": "Z akého predmetu je úloha?",
+  "np.ask.level": "Základná, alebo vyššia úroveň?",
+  "np.ask.year": "Z akého roku je skúška?",
+  "np.ask.pola": "Z ktorej časti skúšky je úloha {n}?",
+  "np.ask.section": "Z ktorého oddielu skúšky je úloha {n}?",
+  "np.plain": "Poslať ako bežnú otázku",
+  "np.ours": "Toto je úloha Evklidu v štýle skúšky „{paper}“, nie pôvodná úloha RIC. Originál je voľne dostupný na ric.si.",
+  "np.figure": "Obrázok k úlohe je v Evklidovej skúške.",
+  "np.openOurs": "Otvoriť v Evklidovej skúške",
+  "np.noOurs": "Pre „{paper}“ zatiaľ nemáme verziu Evklidu. Stiahni originál z ric.si, otvor ho tu a pri úlohe {n} ťukni na „{help}“.",
+  "np.missing": "Verzia Evklidu pre „{paper}“ nemá úlohu {n}. Skontroluj číslo úlohy.",
+  "np.download": "Stiahnuť originál: {file}",
+  "np.openOriginal": "Otvoriť originál",
+  "np.pickHint": "Najprv stiahni originál a potom pri „Otvoriť originál“ vyber súbor {name}.",
+  "np.wrongFile": "To je iná skúška. Vyber súbor {name}."
 }

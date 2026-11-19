@@ -4430,5 +4430,21 @@
   "povabi.reward": "你邀请的家庭订阅并首次付款后，两个家庭都可免费使用一个月。",
   "povabi.later": "以后再说",
   "povabi.link": "给朋友的链接",
-  "povabi.shareText": "我在用 Evklid 学习，你也来试试："
+  "povabi.shareText": "我在用 Evklid 学习，你也来试试：",
+  "np.ask.exam": "你指的是哪个 NPZ？",
+  "np.ask.subject": "这道题是哪个科目的？",
+  "np.ask.level": "基础水平还是高级水平？",
+  "np.ask.year": "这份试卷是哪一年的？",
+  "np.ask.pola": "第 {n} 题来自哪份试卷？",
+  "np.ask.section": "第 {n} 题来自试卷的哪个部分？",
+  "np.plain": "作为普通问题发送",
+  "np.ours": "这是 Evklid 仿照试卷“{paper}”风格出的题，不是 RIC 的原题。原卷可在 ric.si 免费获取。",
+  "np.figure": "本题的图在 Evklid 的试卷中。",
+  "np.openOurs": "在 Evklid 的试卷中打开",
+  "np.noOurs": "我们还没有“{paper}”的 Evklid 版本。请从 ric.si 下载原卷，在这里打开，并在第 {n} 题点“{help}”。",
+  "np.missing": "“{paper}”的 Evklid 版本没有第 {n} 题。请检查题号。",
+  "np.download": "下载原卷：{file}",
+  "np.openOriginal": "打开原卷",
+  "np.pickHint": "先下载原卷，然后在“打开原卷”中选择文件 {name}。",
+  "np.wrongFile": "这是另一份试卷。请选择文件 {name}。"
 }

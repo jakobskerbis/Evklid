@@ -4430,5 +4430,21 @@
   "povabi.reward": "招待した家族が登録して初めて支払うと、両方の家族が1か月無料になります。",
   "povabi.later": "今はしない",
   "povabi.link": "友だち用のリンク",
-  "povabi.shareText": "Evklidで勉強しているよ。きみも試してみて："
+  "povabi.shareText": "Evklidで勉強しているよ。きみも試してみて：",
+  "np.ask.exam": "どのNPZのこと？",
+  "np.ask.subject": "どの教科の問題？",
+  "np.ask.level": "基礎レベル、それとも上級レベル？",
+  "np.ask.year": "何年の試験？",
+  "np.ask.pola": "問題{n}はどの試験問題冊子？",
+  "np.ask.section": "問題{n}は試験のどの部分？",
+  "np.plain": "普通の質問として送る",
+  "np.ours": "これはRICの原問題ではなく、「{paper}」の形式に合わせたEvklidの問題です。原本はric.siで無料公開されています。",
+  "np.figure": "問題の図はEvklidの試験にあります。",
+  "np.openOurs": "Evklidの試験で開く",
+  "np.noOurs": "「{paper}」のEvklid版はまだありません。ric.siから原本をダウンロードしてここで開き、問題{n}で「{help}」をタップしてください。",
+  "np.missing": "「{paper}」のEvklid版に問題{n}はありません。問題番号を確認してください。",
+  "np.download": "原本をダウンロード：{file}",
+  "np.openOriginal": "原本を開く",
+  "np.pickHint": "まず原本をダウンロードし、「原本を開く」でファイル{name}を選んでください。",
+  "np.wrongFile": "別の試験です。ファイル{name}を選んでください。"
 }

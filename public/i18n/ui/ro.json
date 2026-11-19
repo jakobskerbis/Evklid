@@ -4492,5 +4492,21 @@
   "povabi.reward": "Când o familie pe care o inviți se abonează și plătește prima dată, ambele familii primesc o lună gratuit.",
   "povabi.later": "Nu acum",
   "povabi.link": "Link pentru un prieten",
-  "povabi.shareText": "Învăț cu Evklid. Încearcă și tu:"
+  "povabi.shareText": "Învăț cu Evklid. Încearcă și tu:",
+  "np.ask.exam": "La ce NPZ te referi?",
+  "np.ask.subject": "Din ce materie este problema?",
+  "np.ask.level": "Nivel de bază sau superior?",
+  "np.ask.year": "Din ce an este lucrarea?",
+  "np.ask.pola": "Din ce lucrare este problema {n}?",
+  "np.ask.section": "Din ce parte a lucrării este problema {n}?",
+  "np.plain": "Trimite ca întrebare obișnuită",
+  "np.ours": "Aceasta este o problemă Evklid în stilul lucrării „{paper}”, nu problema originală RIC. Originalul este disponibil gratuit pe ric.si.",
+  "np.figure": "Figura pentru problemă este în lucrarea Evklid.",
+  "np.openOurs": "Deschide în lucrarea Evklid",
+  "np.noOurs": "Încă nu avem o versiune Evklid pentru „{paper}”. Descarcă originalul de pe ric.si, deschide-l aici și, la problema {n}, atinge „{help}”.",
+  "np.missing": "Versiunea Evklid a lucrării „{paper}” nu are problema {n}. Verifică numărul problemei.",
+  "np.download": "Descarcă originalul: {file}",
+  "np.openOriginal": "Deschide originalul",
+  "np.pickHint": "Mai întâi descarcă originalul, apoi la „Deschide originalul” alege fișierul {name}.",
+  "np.wrongFile": "Aceasta este altă lucrare. Alege fișierul {name}."
 }

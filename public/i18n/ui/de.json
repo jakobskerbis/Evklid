@@ -4458,5 +4458,21 @@
   "povabi.reward": "Wenn eine Familie, die du einlädst, ein Abo abschließt und zum ersten Mal bezahlt, bekommen beide Familien einen Monat gratis.",
   "povabi.later": "Nicht jetzt",
   "povabi.link": "Link für einen Freund",
-  "povabi.shareText": "Ich lerne mit Evklid. Probier es auch aus:"
+  "povabi.shareText": "Ich lerne mit Evklid. Probier es auch aus:",
+  "np.ask.exam": "Welchen NPZ meinst du?",
+  "np.ask.subject": "Aus welchem Fach ist die Aufgabe?",
+  "np.ask.level": "Grund- oder höheres Niveau?",
+  "np.ask.year": "Aus welchem Jahr ist die Prüfung?",
+  "np.ask.pola": "Aus welchem Prüfungsteil ist Aufgabe {n}?",
+  "np.ask.section": "Aus welchem Teil der Prüfung ist Aufgabe {n}?",
+  "np.plain": "Als normale Frage senden",
+  "np.ours": "Das ist eine Aufgabe von Evklid im Stil der Prüfung „{paper}“, nicht die Originalaufgabe des RIC. Das Original ist frei auf ric.si verfügbar.",
+  "np.figure": "Die Abbildung zur Aufgabe ist in Evklids Prüfung.",
+  "np.openOurs": "In Evklids Prüfung öffnen",
+  "np.noOurs": "Für „{paper}“ gibt es noch keine Evklid-Version. Lade das Original von ric.si herunter, öffne es hier und tippe bei Aufgabe {n} auf „{help}“.",
+  "np.missing": "Evklids Version von „{paper}“ hat keine Aufgabe {n}. Prüfe die Aufgabennummer.",
+  "np.download": "Original herunterladen: {file}",
+  "np.openOriginal": "Original öffnen",
+  "np.pickHint": "Lade zuerst das Original herunter und wähle dann bei „Original öffnen“ die Datei {name}.",
+  "np.wrongFile": "Das ist eine andere Prüfung. Wähle die Datei {name}."
 }

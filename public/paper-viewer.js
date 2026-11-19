@@ -39,8 +39,9 @@ export function closePaperViewer() {
 }
 
 // file: izbrani PDF; title: oznaka pole; onHelp({ label, page, text, image }) odpre inštruktorja; onClose: zaprl jo je
-// učenec (gumb, Esc, Nazaj), ne »Pomoč pri tej nalogi«; page: stran (od 1), ki se pokaže ob odprtju.
-export async function openPaperViewer(file, { title, onHelp, onClose, page: startPage = 0 }) {
+// učenec (gumb, Esc, Nazaj), ne »Pomoč pri tej nalogi«; page: stran (od 1), ki se pokaže ob odprtju; task: oznaka
+// naloge (»5«, »A5«), pri kateri se pola odpre, če jo besedilna plast najde (klepet, public/naloga-pole.js).
+export async function openPaperViewer(file, { title, onHelp, onClose, page: startPage = 0, task: startTask = "" }) {
   closePaperViewer();
   const back = document.activeElement;
   const el = document.createElement("div");
@@ -218,7 +219,8 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   pages.forEach((p) => observer.observe(p.el));
   // Naslovnica in navodila nimajo nalog: začnemo pri prvi najdeni nalogi.
   // Ponovno odprta pola (po pomoči pri nalogi) se odpre pri zadnji nalogi.
-  const start = startPage ? startPage - 1 : tasks.length ? tasks[0].regions[0].page : -1;
+  const want = startTask ? tasks.find((x) => x.label === startTask) : null;
+  const start = want ? want.regions[0].page : startPage ? startPage - 1 : tasks.length ? tasks[0].regions[0].page : -1;
   if (pages[start]) scroller.scrollTop = pages[start].el.offsetTop - 8;
 
   // Številka strani in premik na prejšnjo/naslednjo.

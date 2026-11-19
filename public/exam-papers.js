@@ -27,7 +27,7 @@ export async function loadPapers(api) {
 const termText = (e) => [t(`pp.term.${e.term}`), e.session ? t("pp.session", { n: e.session }) : ""].filter(Boolean).join(" · ");
 // RIC pri NPZ: »preizkus znanja« in »navodila za vrednotenje«, pri maturi »izpitna pola« in »navodila za ocenjevanje«.
 const NPZ_FILE = { paper: "pp.file.test", scoring: "pp.file.scoringNpz" };
-const fileText = (f, e) => t((e.exam.startsWith("NPZ") && NPZ_FILE[f.kind]) || `pp.file.${f.kind}`);
+export const fileText = (f, e) => t((e.exam.startsWith("NPZ") && NPZ_FILE[f.kind]) || `pp.file.${f.kind}`);
 
 // Koraki izbire: [ključ, vprašanje, možnosti [vrednost, oznaka, opis], izbrana oznaka].
 function steps(v, papers, subjectName) {

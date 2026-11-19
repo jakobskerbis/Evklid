@@ -91,7 +91,8 @@ import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from 
 import { heatmapHtml, weeksHtml } from "./aktivnost.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
 import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
-import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
+import { loadPapers, mountPapers, paperLabel, fileText, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
+import { mentionsPaperTask, parsePaperTask, resolvePaper, findPaperTask, originalFiles, ricFileName, fileMatches } from "./naloga-pole.js";
 // Pregledovalnik prenesene pole (paper-viewer.js, paper-tasks.js) šele ob odprtju pole: ni del zagona.
 // Ob neuspehu (brez povezave, nova različica) se obljuba pozabi in naslednji poskus gre z drugim naslovom (?r=), kot loadGames.
 let paperViewer = null;
@@ -1048,6 +1049,7 @@ async function selectStudent(id) {
   state.student = target;
   state.aiOut = false; // delež drugega profila ne skrije »Razloži podrobneje« (osveži ga naslednji odgovor)
   keptPaper = null;
+  keptOriginals.clear();
   state.paperCtx = null; // skrit kontekst pole ne gre v pogovor drugega profila
   // Jezik je del profila: ob menjavi učenca se vmesnik preklopi v njegov jezik (stran se naloži znova).
   const want = state.student.settings.language;
@@ -1503,7 +1505,9 @@ function addMessage(role, text, hasImage = false, info = null) {
 // Ustno spraševanje (public/ustno/ustno.js, naloži se ob odprtju).
 const openUstno = (src) => state.student && import("./ustno/ustno.js").then((m) => m.odpri(src, { api, student: state.student, renderRich, openLesson, topic: state.chatFx?.topic?.id }));
 document.addEventListener("click", (e) => (e = e.target.closest?.("[data-ustno]")) && openUstno(e.dataset.ustno));
-async function send(text, { deep = false, image: attached = null } = {}) {
+// paper: skrit kontekst pole za to sporočilo (naloga, omenjena v klepetu); afterUser(el): po učenčevem oblačku
+// (opomba »Evklidova naloga« s povezavo na izvirnik); plain: ne išči omembe pole znova.
+async function send(text, { deep = false, image: attached = null, paper: paperOpt = null, afterUser = null, plain = false } = {}) {
   if (state.sending) return;
   if (!attached && !state.image && /^\s*vprašaj me\b/i.test(text)) return ($("#input").value = ""), openUstno({ besedilo: text });
   // Samodejno sestavljeno sporočilo (Razloži, Vprašaj o temi, izbire …) ni iz polja: učenčev osnutek in
@@ -1519,6 +1523,8 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     if (n) addNujno(n, { meja: true });
     return;
   }
+  // »matura mat OR 2024 pola 1 naloga 5«: Evklid v klepetu odpre našo nalogo s to številko (public/naloga-pole.js).
+  if (fromInput && !image && !plain && !deep && state.student && mentionsPaperTask(text)) return odpriNalogoPole(text);
   let userEl = null;
   let bubble = null;
   let pacer = null;
@@ -1549,10 +1555,11 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     }
     const sentTo = state.conversationId;
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
-    const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
+    const paperCtx = paperOpt || (state.paperCtx?.conv === sentTo ? state.paperCtx : null);
     document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
     const nacin = fromInput && state.dictated ? "glas" : undefined; // narekovano z mikrofonom (strežnik preveri stikalo starša)
     userEl = addMessage("user", text, !!image);
+    afterUser?.(userEl);
     if (fromInput) {
       $("#input").value = "";
       autoGrow();
@@ -4277,6 +4284,13 @@ async function showPapers(c) {
     },
   });
 }
+// Besedilo naloge naše pole za učenčev oblaček: brez slik (SVG), formule v $$…$$ kot $…$ v eni vrstici, ker oblaček
+// (renderUserText) izriše samo $…$.
+const taskMdForChat = (md) =>
+  String(md || "")
+    .replace(/<svg[\s\S]*?<\/svg>/g, "")
+    .replace(/\$\$\s*([\s\S]+?)\s*\$\$/g, (_, tex) => `$${tex.replace(/\s*\n\s*/g, " ")}$`)
+    .trim();
 // »Rešuj z inštruktorjem« pri pretekli poli: nov pogovor z vnaprej napisanim kratkim sporočilom (katera pola);
 // učenec doda nalogo s fotografijo ali prepisom in pošlje sam. Pole RIC ne pošiljamo. Navodilo za inštruktorja
 // (namigi namesto rešitve) gre s prvim sporočilom kot skrit kontekst (state.paperCtx), učenec ga ne vidi.
@@ -4299,7 +4313,7 @@ async function paperTutor(entry, subjectName) {
 // »Reši našo polo v tem slogu« (public/our-paper.js): naloge Evklida z zgradbo izvirne pole. Točke, ki si jih
 // učenec označi, ostanejo v tej napravi. »Vprašaj inštruktorja«: nov pogovor z nalogo, naša rešitev gre
 // inštruktorju kot skrit kontekst (server/paper-context.js), učenec vidi le nalogo.
-async function openOurs(entry, subjectName) {
+async function openOurs(entry, subjectName, focus = null) {
   if (!entry?.ours || paperBusy) return;
   paperBusy = true;
   try {
@@ -4319,6 +4333,7 @@ async function openOurs(entry, subjectName) {
         },
         set: (v) => localStorageSet(key, JSON.stringify(v)),
       },
+      focus,
       onTutor: (task, part) => oursTutor(entry, title, task, part),
       // Šibke točke: deli z odprto rešitvijo ali oznako »Imam prav« (strežnik vsak del šteje enkrat).
       onChecked: (parts) => api(`/api/students/${state.student.id}/paper-check`, { method: "POST", body: { paper: entry.id, parts } }).catch(() => {}),
@@ -4336,7 +4351,7 @@ async function oursTutor(entry, title, task, part) {
     await newTutorChat();
     const n = partLabel(task, part);
     const pola = task.pola ? `${t("pp.oursPola", { n: task.pola })} · ` : "";
-    const strip = (md) => String(md || "").replace(/<svg[\s\S]*?<\/svg>/g, "").trim();
+    const strip = taskMdForChat;
     const choices = part.format === "choice" && part.choices ? part.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
     const body = [strip(task.intro), strip(part.text), choices].filter(Boolean).join("\n\n").slice(0, 1500);
     state.paperCtx = { conv: state.conversationId, paper: title, task: partKey(task, part), ours: entry.id };
@@ -4347,15 +4362,169 @@ async function oursTutor(entry, title, task, part) {
     paperBusy = false;
   }
 }
+// ---------- naloga iz pretekle pole, omenjena v klepetu (j 19. 11. 2026) ----------
+// Učenec napiše npr. »matura mat OR 2024 pola 1 naloga 5«: Evklid najde polo v katalogu in v klepetu odpre NAŠO
+// nalogo s to številko (naloge RIC ne prepisujemo, j 30. 10.), inštruktor dobi našo rešitev kot skrit kontekst.
+// Pod učenčevim oblačkom je opomba (samo na tej napravi, ne shrani se), da je naloga Evklidova, s povezavo na
+// izvirnik na ric.si in z »Odpri izvirnik« (PDF, ki ga je učenec prenesel, ostane v napravi; public/paper-viewer.js).
+// Kadar kaj manjka (leto, raven, pola …), opomba vpraša z gumbi; »Pošlji kot navadno vprašanje« pošlje besedilo.
+const keptOriginals = new Map(); // `${učenec}|${povezava}` → izbrani PDF izvirnika (dokler je aplikacija odprta)
+let nalogaBusy = false;
+function paperNote(html, after = null) {
+  const el = document.createElement("div");
+  el.className = "msg assistant paper-note";
+  el.setAttribute("role", "note");
+  el.innerHTML = html;
+  const box = $("#messages");
+  box.querySelector(".empty")?.remove();
+  after ? after.after(el) : box.appendChild(el);
+  prilagodiZdaj();
+  box.scrollTop = box.scrollHeight;
+  return el;
+}
+const chip = (label, attrs) => `<button type="button" class="secondary small choice-btn" ${attrs}>${escapeHtml(label)}</button>`;
+function askPaperNote(text, question, options, label, shown = text) {
+  document.querySelectorAll(".paper-note .choice-row").forEach((x) => x.remove()); // samo zadnje vprašanje
+  const el = paperNote(`<p class="np-quote" dir="auto">»${escapeHtml(shown.trim().slice(0, 200))}«</p><p>${escapeHtml(question)}</p><div class="choice-row" role="group" aria-label="${escapeHtml(t("chat.choices"))}">${options
+    .map((o, i) => chip(label(o), `data-np-add="${i}"`))
+    .join("")}${chip(t("np.plain"), "data-np-plain")}</div>`);
+  el.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-np-add], [data-np-plain]");
+    if (!b || state.sending || nalogaBusy) return;
+    el.querySelector(".choice-row")?.remove();
+    if (b.dataset.npPlain !== undefined) return send(shown, { plain: true });
+    odpriNalogoPole(`${text} ${options[Number(b.dataset.npAdd)].add}`, shown);
+  });
+}
+// Opomba pod nalogo: Evklidova naloga ali še ni naše različice; povezave na izvirnik in »Odpri izvirnik«.
+function originalNote(userEl, { entry, ref, ours = null, focus = null, label = "", hasFigure = false }) {
+  const subjectName = (k) => SUBJECT_NAMES[k] || k;
+  const paper = paperLabel(entry, subjectName);
+  const pola = ours?.task?.pola || ref.pola || null;
+  const files = originalFiles(entry, pola);
+  const head = ours
+    ? `<p>${icon("info")} ${escapeHtml(t("np.ours", { paper }))}${hasFigure ? ` ${escapeHtml(t("np.figure"))}` : ""}</p>`
+    : `<p>${icon("info")} ${escapeHtml(t("np.noOurs", { paper, n: label, help: t("pp.taskHelp") }))}</p>`;
+  const oursBtn = ours ? `<button type="button" class="secondary small" data-np-ours>${icon("notebook-pen")}<span>${escapeHtml(t("np.openOurs"))}</span></button>` : "";
+  const links = files
+    .map((f) => `<a class="btn-secondary small" href="${escapeHtml(f.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(t("pp.opens"))}">${icon("download")}<span>${escapeHtml(t("np.download", { file: fileText(f, entry) }))}</span></a>`)
+    .join("");
+  const names = files.map((f) => ricFileName(f.url)).filter(Boolean);
+  const open = `<label class="btn-secondary small np-open">${icon("folder-open")}<span>${escapeHtml(t("np.openOriginal"))}</span><input type="file" accept="application/pdf,.pdf" data-np-file></label>`;
+  const hint = names.length ? `<p class="np-hint muted">${escapeHtml(t("np.pickHint", { name: names.join(", ") }))}</p>` : "";
+  const el = paperNote(`${head}<div class="np-acts">${oursBtn}${links}${open}</div>${hint}`, userEl);
+  const sid = state.student.id;
+  const taskLabel = ours ? `${ours.task.section || ""}${ours.task.n}` : `${ref.section || ""}${ref.n}`;
+  const openFile = (file, f) => {
+    keptOriginals.set(`${sid}|${f.url}`, file);
+    openLocalPaper(entry, file, subjectName, 0, taskLabel);
+  };
+  el.addEventListener("click", (e) => {
+    if (e.target.closest("[data-np-ours]")) return openOurs(entry, subjectName, focus);
+    // Izvirnik je že izbran (ta seja): odpre se brez ponovnega izbiranja.
+    if (e.target.closest(".np-open") && state.student?.id === sid) {
+      const f = files.find((x) => keptOriginals.has(`${sid}|${x.url}`));
+      if (f) {
+        e.preventDefault();
+        openFile(keptOriginals.get(`${sid}|${f.url}`), f);
+      }
+    }
+  });
+  el.addEventListener("change", (e) => {
+    const input = e.target.closest("[data-np-file]");
+    const file = input?.files?.[0];
+    if (!file) return;
+    input.value = "";
+    const f = files.find((x) => fileMatches(file.name, x.url));
+    // Druga pola RIC (ime »M241-401-1-2.pdf« namesto »…-1-1.pdf«): opozorilo; neznano ime (preimenovana datoteka) se odpre.
+    if (!f && /^[mnp]\d{3}-\d{3}/i.test(file.name)) return toast(t("np.wrongFile", { name: names.join(", ") }), "circle-x");
+    openFile(file, f || files[0]);
+  });
+}
+// text: učenčevo sporočilo z dodatki gumbov (»… 2025 pola 1«); shown: kar je učenec napisal (gre v oblaček).
+async function odpriNalogoPole(text, shown = text) {
+  if (nalogaBusy || state.sending) return;
+  nalogaBusy = true;
+  const typed = $("#input").value;
+  const restore = () => {
+    if (!$("#input").value) {
+      $("#input").value = typed;
+      autoGrow();
+    }
+  };
+  try {
+    const ref = parsePaperTask(text);
+    let papers = [];
+    try {
+      papers = await loadPapers(api);
+    } catch {
+      /* brez kataloga: navadno vprašanje */
+    }
+    const r = resolvePaper(ref, papers);
+    if (r.none) return void (await send(shown, { plain: true }));
+    const subjectName = (k) => SUBJECT_NAMES[k] || k;
+    $("#input").value = "";
+    autoGrow();
+    if (r.ask) {
+      const label = {
+        exam: (o) => siExamName(o.value),
+        subject: (o) => subjectName(o.value),
+        level: (o) => t(o.value === "VR" ? "lp.vr" : "lp.or"),
+        year: (o) => String(o.value),
+      }[r.ask];
+      return askPaperNote(text, t(`np.ask.${r.ask}`), r.options, label, shown);
+    }
+    const entry = r.entry;
+    const paper = paperLabel(entry, subjectName);
+    const label = `${ref.section || ""}${ref.n}${ref.part || ""}`;
+    if (!entry.ours) {
+      const ctx = { paper, task: label };
+      return void (await send(shown, { plain: true, paper: ctx, afterUser: (el) => originalNote(el, { entry, ref, label }) }));
+    }
+    const ours = await api(`/api/exam-papers/ours/${encodeURIComponent(entry.id)}`);
+    const found = findPaperTask(ours, ref);
+    if (found.missing) return askPaperNote(text, t("np.missing", { paper, n: label }), [], String, shown);
+    if (found.ask) {
+      const ask = { pola: (o) => t("pp.oursPola", { n: o.value }), section: (o) => t("pp.oursTask", { n: `${o.value}${ref.n}` }) }[found.ask];
+      return askPaperNote(text, t(`np.ask.${found.ask}`, { n: ref.n }), found.options, ask, shown);
+    }
+    const { task, part } = found;
+    const parts = part ? [part] : task.parts;
+    const strip = taskMdForChat;
+    const partText = (p) => {
+      const choices = p.format === "choice" && p.choices ? p.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
+      return [parts.length > 1 && p.id ? `${p.id}) ${strip(p.text)}` : strip(p.text), choices].filter(Boolean).join("\n");
+    };
+    const body = [strip(task.intro), ...parts.map(partText)].filter(Boolean).join("\n\n").slice(0, 3000);
+    const title = t("pp.oursTitle", { paper });
+    const n = part ? partLabel(task, part) : `${task.section || ""}${task.n}`;
+    const polaTxt = task.pola ? `${t("pp.oursPola", { n: task.pola })} · ` : "";
+    const hasFigure = !!(task.figure || parts.some((p) => p.figure));
+    const ctx = { paper: title, task: part ? partKey(task, part) : partKey(task, {}), ours: entry.id };
+    const focus = ours.tasks.indexOf(task);
+    await send(`${shown.trim()}\n\n${title} · ${polaTxt}${t("pp.oursTask", { n })}\n\n${body}`, {
+      plain: true,
+      paper: ctx,
+      afterUser: (el) => originalNote(el, { entry, ref, ours: { task }, focus, hasFigure }),
+    });
+  } catch (err) {
+    restore();
+    toast(err.message);
+  } finally {
+    nalogaBusy = false;
+  }
+}
+
 // Prenesena pola ostane v pomnilniku (ta seja, ta učenec): po »Pomoč pri tej nalogi« jo »Odpri preneseno polo« pri isti
 // poli odpre znova pri isti strani, brez ponovne izbire datoteke. Zapiranje pole ali menjava profila jo pozabi.
 let keptPaper = null;
-function openLocalPaper(entry, file, subjectName, page = 0) {
+function openLocalPaper(entry, file, subjectName, page = 0, task = "") {
   const key = paperLabel(entry, subjectName);
   const sid = state.student.id;
   loadPaperViewer().then(({ openPaperViewer }) => openPaperViewer(file, {
     title: key,
     page,
+    task,
     onClose: () => (keptPaper = null),
     onHelp: (task) => {
       keptPaper = { sid, key, file, page: task.page };
