@@ -77,6 +77,7 @@ const PAGE = `<!doctype html><meta charset="utf-8"><meta name="viewport" content
 <form class="answer-row"><input id="answer" placeholder="${SL["task.phUnit"]}"><button type="button" class="pad-open-btn">Piši</button><button class="primary">Preveri</button></form>
 <div class="task"></div>
 <script type="module">
+import "/i18n.js"; // cel slovar (v aplikaciji ga naloži zagon.js ali jedro s strežnika)
 import { attachPad, openPad } from "/pad.js";
 const form = document.querySelector("form");
 form.addEventListener("submit", (e) => { e.preventDefault(); window.sent = document.getElementById("answer").value; });
