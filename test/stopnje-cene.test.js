@@ -748,6 +748,11 @@ test("znižana cena (SŠ letno 139 → 99 €): stara naročnina preide na novo 
     const run = (now = new Date()) => api.billing.billingDaily(now, { force: true });
     const posts = () => stripe.calls.filter((c) => c.path === "/v1/subscriptions/sub_a" && c.method === "POST");
     assert.equal((await run()).price_dropped, 0, "10 dni prej: še ne");
+    // Zastarela baza: v Stripu drug paket (Družina 189 €) → nič.
+    const real = stripe.subs.sub_a.items.data[0].price;
+    stripe.subs.sub_a.items.data[0].price = { id: "price_d", lookup_key: "evklid_druzina_year", currency: "eur", recurring: { interval: "year" }, unit_amount: 18900 };
+    assert.equal((await run(new Date(Date.parse(end) - 2 * day))).price_dropped, 0);
+    stripe.subs.sub_a.items.data[0].price = real;
     assert.equal(posts().length, 0);
     assert.equal((await run(new Date(Date.parse(end) - 2 * day))).price_dropped, 1);
     assert.equal(posts()[0].body["items[0][price]"], "price_evklid_ss_year");

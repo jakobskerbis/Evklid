@@ -8,7 +8,7 @@
 // - dnevna opravila: usklajevanje naročnin s Stripom, opomnik pred koncem kode in pred letno obnovitvijo.
 import express from "express";
 import { randomToken, sha256, Throttle } from "./auth.js";
-import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd, planGuarantee, vatRateFor, eurVatFor, aiCapFromNetEur } from "./plans.js";
+import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, planOfPrice, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd, planGuarantee, vatRateFor, eurVatFor, aiCapFromNetEur } from "./plans.js";
 import { BIRTH_MISSING_PAY } from "./age.js";
 import { Schedules, nowParts, cleanDate, TEST_KINDS } from "../schedule.js";
 import { cleanText } from "../settings.js";
@@ -981,12 +981,14 @@ export function mountBilling(app, ctx) {
       if (!plan || plan.legacy || plan.school || (plan.currency && plan.currency !== "EUR")) continue;
       const left = Date.parse(p.sub_period_end) - now.getTime();
       if (!(left > 0 && left <= APPLY_BEFORE_MS)) continue;
+      // Prehod stopnje ob TEM podaljšanju ima prednost (isti pogoj kot opomnik o obnovitvi); poznejši ali zastarel ne.
       const row = changeOf(p.id);
-      if (row && !row.applied_at) continue;
+      if (row && !row.applied_at && row.sub_id === p.sub_id && Math.abs(Date.parse(row.effective_at) - Date.parse(p.sub_period_end)) <= 86400000) continue;
       try {
         const sub = await stripe.request("GET", `/subscriptions/${p.sub_id}`);
         const item = sub.items?.data?.[0];
-        if (!item?.id || !(Number(item.price?.unit_amount) > plan.amount)) continue;
+        // Samo ista cena paketa v Stripu (zastarela baza ne sme naročnine premakniti na drug paket).
+        if (!item?.id || planOfPrice(item.price)?.key !== plan.key || !(Number(item.price?.unit_amount) > plan.amount)) continue;
         const { prices } = await stripe.ensurePrices("EUR");
         if (!prices[plan.key] || prices[plan.key] === item.price.id) continue;
         const updated = await stripe.request("POST", `/subscriptions/${p.sub_id}`, { items: [{ id: item.id, price: prices[plan.key] }], proration_behavior: "none" });
