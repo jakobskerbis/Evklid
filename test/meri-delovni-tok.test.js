@@ -83,6 +83,7 @@ test("meri.yml: preverjanje vnosov sprejme veljavne in zniža mejo na 2 $", () =
   assert.equal(preveri({ MAX_USD: "100" }).izhod.max, "2");
   assert.equal(preveri({ MAX_USD: "2.5" }).izhod.max, "2");
   assert.equal(preveri({ SKRIPTA: "scripts/meri-hitri-korak.mjs", SHA: MAIN }).status, 0);
+  assert.equal(preveri({ SKRIPTA: "scripts/meri-nujno-ziv.mjs", MAX_USD: "0.5", ARGUMENTI: "--vzporedno 2" }).status, 0, "živi preizkus varnostnega filtra");
   assert.equal(preveri({ ARGUMENTI: "--suho" }).status, 0, "brezplačen preizkus");
 });
 
@@ -122,7 +123,7 @@ test("meri-preizkus3 --suho nikoli ne kliče API (0 $), tudi s ključem", () => 
 test("plačane meri-*.mjs upoštevajo --max-usd (sicer jih delovni tok zavrne)", () => {
   const vzorec = /arg\("(--)?max-usd"/; // isti vzorec kot korak »Skripta upošteva --max-usd«
   assert.ok(y.includes(`grep -Eq '${vzorec.source}'`));
-  for (const s of ["meri-preizkus3.mjs", "meri-nacin-b.mjs", "meri-hitri-korak.mjs", "meri-natancnost-ss.mjs", "meri-napacne-korake.mjs"]) {
+  for (const s of ["meri-preizkus3.mjs", "meri-nacin-b.mjs", "meri-hitri-korak.mjs", "meri-natancnost-ss.mjs", "meri-napacne-korake.mjs", "meri-nujno-ziv.mjs"]) {
     assert.match(fs.readFileSync(new URL(`../scripts/${s}`, import.meta.url), "utf8"), vzorec, s);
   }
 });

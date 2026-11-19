@@ -2,10 +2,26 @@
 
 Varnostni filter iz PR #479 (`server/nujno.js`) pri vsakem sporočilu učenca vpraša Haiku, ali gre za nujen primer
 (zdravje, stiska, nasilje, nevarnost). Običajni testi ga preverjajo z lažnim modelom. Ta preizkus pošlje pravemu
-modelu 222 **izmišljenih** sporočil (`test/nujno-ziv-nabor.json`: 144 običajnih, 78 nujnih) skozi isto funkcijo,
+modelu 271 **izmišljenih** sporočil (`test/nujno-ziv-nabor.json`: 154 običajnih, 117 nujnih, od teh 13 manj jasnih) skozi isto funkcijo,
 kot jo uporablja aplikacija pri pregledu vsakega sporočila (isti model, navodilo, `max_tokens`, rok 5 s), in pove, ali filter dela dovolj dobro.
 
 ## Kako ga zaženeš
+
+**V GitHub Actions (priporočeno, z mejo stroška; j, 2026-11-18):** Actions → **Meritev** → Run workflow (veja `main`),
+v polje **skripta** vpiši `scripts/meri-nujno-ziv.mjs`, v **max_usd** `0.5`; **argumenti** lahko ostanejo prazni
+(ob omejitvi hitrosti `--vzporedno 2`). Skripta uporabi isto logiko kot spodnji ukaz (`scripts/nujno-ziv-preizkus.js`),
+doda pa mejo `--max-usd` (nov primer se ne začne, če bi najslabši klic presegel mejo), tabelo po plasteh in zadnjo
+vrstico **IZID**. Stran Summary zagona pokaže zadnjih 40 vrstic; JSON z izidi po primerih (samo id-ji, vrste, skupine,
+števila, brez besedil) je v artefaktu **meritev** (`data/meri-nujno-ziv.json`). Zeleni zagon = prag dosežen; rdeč z
+»PRAG NI DOSEŽEN« = meritev je uspela, filter pa praga ne doseže; rdeč z »ni ključa API«, »NI POPOLN« ali
+»NI VELJAVEN« = izid ne velja. Objava na Renderju zagona ne prekine.
+
+Tabela po plasteh: lokalni zaznavalnik (`public/nujno.js`, brez AI); model pri pregledu vsakega sporočila (neznan
+odgovor ne odpre okna); model pri pregledu pred zavrnitvijo čez mejo (isti klic, neznan odgovor odpre okno »zdravje«,
+zato ga skripta izračuna brez dodatnega klica); in obe kombinaciji z lokalnim zaznavalnikom, kot v aplikaciji. Prag velja
+za vrstico »model: pregled vsakega sporočila«.
+
+**V lupini Renderja:**
 
 1. Počakaj, da je objava na Renderju končana (Render → evklid → Events: zadnja objava je »Live«).
 2. Render → evklid → **Shell** in vpiši:
@@ -19,7 +35,7 @@ kot jo uporablja aplikacija pri pregledu vsakega sporočila (isti model, navodil
 **Med preizkusom ne združuj ničesar v main.** Združitev sproži novo objavo, ta pa prekine Render Shell in preizkus
 z njim. Če se to zgodi, po končani objavi ukaz zaženi znova (škode ni, le nekaj klicev je plačanih dvakrat).
 
-Strošek enega zagona je manj kot 0,01 $ (222 kratkih klicev Haikuja). Uporabi ključ `ANTHROPIC_API_KEY`, ki je že
+Strošek enega zagona je približno 0,01–0,02 $ (271 kratkih klicev Haikuja, ~430 vhodnih žetonov na klic). Uporabi ključ `ANTHROPIC_API_KEY`, ki je že
 nastavljen na strežniku; ne izpiše ga. Če je v izpisu veliko ponovitev zaradi omejitve hitrosti, zaženi počasneje:
 `node scripts/nujno-ziv-preizkus.js --vzporedno 2`.
 
@@ -50,5 +66,7 @@ Model ni povsem ponovljiv: primer na meji lahko enkrat uspe in drugič ne, zato 
 - Vsa sporočila v naboru so izmišljena; nobeno ni od resničnega učenca. Primeri stiske so namenoma splošni.
   V naboru so tudi mešana sporočila (naloga in stavek o nuji), poskusi, da bi sporočilo filtru ukazalo odgovor NE, in nujni stavek sredi dolgega besedila.
 - Skripta ne bere baze in ne zapiše ničesar: ne v bazo, ne v datoteko, ne v Števec porabe. Izpiše samo povzetek.
+  `scripts/meri-nujno-ziv.mjs` zapiše še `data/meri-nujno-ziv.json` (id-ji primerov, vrste, skupine, jeziki, števila; brez besedil sporočil in odgovorov modela).
 - Brez ključa API (tudi v CI in v preizkusnem načinu `EVKLID_MOCK=1`) se ne zažene: izpiše obvestilo in konča z 0.
   To in obliko nabora preverja `test/nujno-ziv-preizkus.test.js` (z lažnim lokalnim strežnikom namesto API).
+  `scripts/meri-nujno-ziv.mjs` brez ključa konča s kodo 2 (rdeč zagon v Actions); mejo, plasti in zapis brez besedil preverja `test/meri-nujno-ziv.test.js`.
