@@ -439,7 +439,7 @@ test("live check: SŠ answer with an exercise is reviewed and corrected; without
     // Odgovor z vajo: splošni pregled in vzporedni ciljni pregled vaje in načrta (meritev po #844).
     assert.equal(h.reviewCalls.length, 2, "odgovor z vajo pregleda model (splošni in ciljni pregled)");
     assert.ok(h.reviewCalls.some((c) => /practice exercise/.test(c.system) && /as strictly as the calculations/.test(c.system)), "splošni pregled z navodili za vaje");
-    assert.ok(h.reviewCalls.some((c) => /^You check only two parts/.test(c.system)), "ciljni pregled vaje");
+    assert.ok(h.reviewCalls.some((c) => /^You check only three things/.test(c.system)), "ciljni pregled vaje");
     assert.match(r.messages.at(-1).display_text, /Popravek:/);
     assert.equal(h.kinds()["preverjanje-sola"], 1, "oba klica sta en vpis porabe");
     await h.ask(s, "Koliko je pH raztopine CaO?");
@@ -508,7 +508,7 @@ test("live check: a review that times out is skipped, the answer stays", async (
 test("live check: the fix call never solves a practice exercise", async () => {
   let system = "";
   await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
-  assert.match(system, /practice exercise, give corrected data or a replacement exercise; never give the exercise's solution/);
+  assert.match(system, /practice exercise, write the whole corrected or replacement exercise again, with every given it needs, no hints or intermediate results and the same difficulty; it must not be the task that the answer has already solved; never give the exercise's solution/);
 });
 
 test("live check (SŠ meritev 18. 11.): the fix adds no new facts and may only withdraw an unsure side claim", async () => {
@@ -1048,4 +1048,97 @@ test("live check (pregled #848): two review calls reserve twice in the school po
   } finally {
     server2.close();
   }
+});
+
+test("live check (meritev SŠ po #848): the focused check also checks explanations, notation and percentage points; exercises state every given", async () => {
+  const { EXTRA_SYSTEM, correction } = await import("../server/live-check.js");
+  assert.match(EXTRA_SYSTEM, /^You check only three things in an AI tutor's answer to a school student: the practice exercise \(»Vaja«, »Practice«\), any plan of an experiment that the tutor proposes, and every explanation of how or why something happens, with its notation and percentages\./);
+  // molekularna-genetika#3 (vilici »na nasprotnih straneh«), nastanek-vrst#5 (haploidnost iz oploditve)
+  assert.match(EXTRA_SYSTEM, /3\. Explanations and notation: for every sentence that says how or why something happens \(mechanism, cause, order of events, where a process starts and where it ends, what halves or doubles a number\)/);
+  assert.match(EXTRA_SYSTEM, /a reason that reverses cause and effect, names the wrong process or place, or gives the wrong order or direction of a process \(»zaostajajočo verigo gradi v smeri 3'→5'«, »vilici začneta na nasprotnih straneh«\) is an error; a simplification that is correct at that level, or a true purpose or function given instead of a mechanism, is fine\./);
+  // nastanek-vrst#3 (»63 ni oblike 2n«), raziskovanje#2 (»razlika 40 %«)
+  assert.match(EXTRA_SYSTEM, /in biology 2n is the chromosome number of a diploid body cell, such as a human body cell, also when it is odd, and a polyploid's body-cell number may be written 2n = 33 or 3n = 33; in mathematics 2n with a whole number n is even\)/);
+  assert.match(EXTRA_SYSTEM, /When two percentages are compared, their difference is in percentage points, not per cent; the rest of a whole \(100 % − 36 % = 64 %\), a share of the same whole found by adding or subtracting shares, and a relative change are correctly in per cent\./);
+  // drugi krog pregleda #853: navedena napačna ideja ni napaka inštruktorja
+  assert.match(EXTRA_SYSTEM, /Check only the tutor's own explanations; a wrong idea quoted from the student or named as a misconception in order to correct it is fine\./);
+  assert.match(LIVE_REVIEW_SYSTEM, /the difference between two compared percentages is in percentage points, while the rest of a whole \(100 % − 36 % = 64 %\) and a relative change are correctly in per cent\);/);
+  // molekularna-genetika#4: vaji je manjkal podatek o dveh vilicah
+  assert.match(EXTRA_SYSTEM, /states every given its solution needs \(also givens taken over from the task/);
+  // pregled #853: sklic in znane ali tabelne vrednosti štejejo kot podani (prompts/system_prompt.md, »Tabelna vrednost«)
+  assert.match(EXTRA_SYSTEM, /a clear reference such as »enako kot zgoraj« counts as stating them, and constants, table values and facts the student is expected to know or look up need not be stated\)/);
+  assert.match(EXTRA_SYSTEM, /End with one final line: OK, or NAPAKA: /);
+  let system = "";
+  await correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
+  assert.match(system, /write the whole corrected or replacement exercise again, with every given it needs/);
+  // pregled #853: nadomestna vaja brez namigov, enako težka, ne naloga, ki jo je odgovor že rešil
+  assert.match(system, /no hints or intermediate results and the same difficulty; it must not be the task that the answer has already solved/);
+});
+
+test("live check: Render turns on review in OŠ with a 3 $ daily pool (j 18. 11.)", async () => {
+  const fs = await import("node:fs");
+  const yaml = fs.readFileSync(new URL("../render.yaml", import.meta.url), "utf8");
+  const env = (k) => yaml.match(new RegExp(`- key: ${k}\\n\\s+value: "([^"]*)"`))?.[1];
+  assert.equal(env("EVKLID_LIVE_CHECK_DAILY_USD"), "3");
+  assert.equal(env("EVKLID_LIVE_REVIEW_OS"), "1");
+  const { LIVE_CHECK_DAILY_USD } = await import("../server/live-check.js");
+  const keep = { d: process.env.EVKLID_LIVE_CHECK_DAILY_USD, o: process.env.EVKLID_LIVE_REVIEW_OS };
+  process.env.EVKLID_LIVE_CHECK_DAILY_USD = env("EVKLID_LIVE_CHECK_DAILY_USD");
+  process.env.EVKLID_LIVE_REVIEW_OS = env("EVKLID_LIVE_REVIEW_OS");
+  try {
+    assert.equal(LIVE_CHECK_DAILY_USD(), 3);
+    assert.equal(LIVE_REVIEW_SS_DAILY_USD(), 1.5, "šolski del (OŠ + SŠ) je polovica");
+    assert.equal(claimReviewFor("OS"), true);
+    assert.equal(claimReviewFor("SS"), true);
+    assert.equal(claimReviewFor("FAKS"), false, "faks gre v pregled kot tvegan odgovor, ne po stopnji");
+    assert.equal(LIVE_REVIEW_PER_PUPIL(), 6);
+  } finally {
+    for (const [k, v] of [["EVKLID_LIVE_CHECK_DAILY_USD", keep.d], ["EVKLID_LIVE_REVIEW_OS", keep.o]]) if (v === undefined) delete process.env[k]; else process.env[k] = v;
+  }
+  // Najslabši strošek AI na profil je zajamčeni AI paketa (≤ 25 %, dobiček ≥ 75 %): test/stopnje-cene.test.js »75 %«.
+  // Da to velja tudi s pregledom, gre pregled v mejo učenca: naslednji test.
+});
+
+test("live check: OŠ review (EVKLID_LIVE_REVIEW_OS=1) is reserved in the pupil's AI limit and skipped when it does not fit", async () => {
+  const { Usage } = await import("../server/usage.js");
+  const vaja = "Rešitev je pH = 12, ker je koncentracija 0,01 mol/L hidroksidnih ionov v raztopini.\n\n**Vaja:** V 0,50 L vode raztopimo 0,40 g CaO. Kolikšen je pH?";
+  // capUsd: meja AI učenca (kot zajamčeni AI paketa iz računov, usage.capsOf); null = brez meje.
+  const run = async (capUsd) => {
+    const store = openDb(":memory:");
+    const usage = new Usage(store.db);
+    let pupil = null;
+    if (capUsd != null) usage.configure({ capsOf: (id) => (id === pupil ? [{ key: `test:${id}`, usd: capUsd, spent: 0 }] : []) });
+    const reviewCalls = [];
+    const streamFn = async ({ mode, onText }) => {
+      const text = vaja + META;
+      onText(text);
+      return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
+    };
+    const reviewCreateFn = async (p) => (reviewCalls.push(p), { content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 100, output_tokens: 10 } });
+    const server = createApp(store, { streamFn, reviewCreateFn, usage }).listen(0);
+    const base = `http://127.0.0.1:${server.address().port}`;
+    const post = (path, body) => fetch(base + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    try {
+      const s = await (await post("/api/students", { name: "Ana", settings: { educational_track: "OSNOVNA_SOLA", grade: 8 } })).json();
+      pupil = s.id;
+      const c = await (await post(`/api/students/${s.id}/conversations`, {})).json();
+      await (await post(`/api/conversations/${c.id}/messages`, { text: "Koliko je pH?" })).text();
+      const kv = JSON.parse(store.db.prepare("SELECT value FROM kv WHERE key = ?").get(SKIP_KV)?.value || "{}");
+      return { calls: reviewCalls.length, skips: Object.values(kv)[0]?.OS || {}, answered: store.listMessages(c.id).some((m) => m.role === "assistant") };
+    } finally {
+      server.close();
+    }
+  };
+  process.env.EVKLID_LIVE_REVIEW_OS = "1";
+  try {
+    const open = await run(null);
+    assert.equal(open.calls, 2, "OŠ odgovor z vajo: splošni in ciljni pregled");
+    // Meja učenca ima prostor za odgovor (Haiku), ne pa za pregled (rezerva Sonneta ~0,1 $ na klic).
+    const tight = await run(0.05);
+    assert.ok(tight.answered, "učenec odgovor dobi");
+    assert.equal(tight.calls, 0, "pregled ne gre čez mejo učenca");
+    assert.equal(tight.skips.meja_ucenca, 1, "preskok »meja_ucenca«");
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_OS;
+  }
+  assert.equal((await run(null)).calls, 0, "brez stikala (privzeto v kodi) OŠ nima pregleda");
 });

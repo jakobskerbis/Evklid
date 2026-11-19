@@ -626,7 +626,10 @@ test("strežnik: izklopljen klepet (503) vrne varnostni odgovor; brez AI pregled
 test("varnostni pregled: privzeto Haiku, kratek rok brez ponovitev", () => {
   const src = readFileSync(new URL("../server/nujno.js", import.meta.url), "utf8");
   assert.match(src, /env\("EVKLID_VARNOST_MODEL", "claude-haiku-5-5"\)/);
-  assert.match(src, /timeout: ROK_MS, maxRetries: 0/);
+  // Prvi poskus (nanj učenec čaka): rok ROK_MS, brez ponovitev SDK. En ponovni poskus v ozadju ima svoj rok
+  // (test/nujno-ponovitev.test.js).
+  assert.match(src, /rokMs = ROK_MS \}\)/);
+  assert.match(src, /timeout: rokMs, maxRetries: 0/);
   assert.match(readFileSync(new URL("../public/app.js", import.meta.url), "utf8"), /if \(!\$\("#chat-off"\)\.hidden\) \{\n\s+const n = lokalnoNujno\(text\);/);
 });
 
