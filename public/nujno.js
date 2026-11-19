@@ -697,6 +697,33 @@ export function izsiljevanje(text) {
   return any(IZSILJEVANJE, norms, low) || norms.some((n) => IZRAZI.nasilje.some((r) => r.izs && r.re.test(n)));
 }
 
+// Prvo zaznavanje v seji je počasno (računalnik ~0,4 s, telefon s CPU 4× ~0,8 s): V8 ob prvi uporabi prevede vsakega od
+// nekaj tisoč vzorcev, zato je tap »Pošlji« zamrznil stran (docs/meritve/prijavljen-mobilno-2026-11-19.md, 3. točka).
+// ogrej(ms) jih prevede vnaprej, po kosih največ ms milisekund (app.js v času mirovanja); vrne true, ko je končano.
+// Zaznavanja ne spremeni: vzorci z zastavico g se ne uporabijo sami (kopija z istim izvirom in zastavicami), drugi so
+// brez stanja.
+let zaOgreti = null;
+export function ogrej(ms = 8) {
+  if (!zaOgreti) {
+    zaOgreti = [];
+    const dodaj = (re) => re && zaOgreti.push(re.global || re.sticky ? new RegExp(re.source, re.flags) : re);
+    for (const pats of [...Object.values(PATTERNS), P_VROCINA, P_TEMP, P_OSEBA, P_DOJENCEK, P_DOJENCEK_ZNAK, IZSILJEVANJE]) for (const p of pats) dodaj(p.re);
+    for (const p of [...P_VROCINA, ...P_TEMP]) if (p.re) zaOgreti.push(new RegExp(p.re.source, "gu")); // fever()
+    for (const r of Object.values(IZRAZI).flat()) {
+      dodaj(r.re);
+      dodaj(r.brez);
+    }
+  }
+  const konec = performance.now() + ms;
+  while (zaOgreti.length && performance.now() < konec) {
+    const re = zaOgreti.pop();
+    re.test("a"); // dvakrat: V8 vzorec najprej prevede za tolmač, ob drugi uporabi v strojno kodo
+    re.test("a");
+    re.test("a");
+  }
+  return !zaOgreti.length;
+}
+
 const NESRECA =
   /(?:^| )(?:po nesreci|nehote|pomotoma|pri kuhanju|pri rezanju|z nozem|s nozem|z noz\S*|na steklo|s steklom|z zago|accidentally|by accident|while cooking|with a knife|slucajno|nozem)(?=[ ,.]|$)/;
 const SAMOMOR = /(?:samomor|samoubi|ubi[tlj]\S* se|se ubi|umr|umre|zivet|ziveti|zivjet|suicid|kill myself|want to die|nocem vec|namenoma|namerno|nalasc|on purpose)/;

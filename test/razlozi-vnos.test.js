@@ -17,7 +17,9 @@ test("send: on a usage limit the input stays empty, on any other failure text an
   // Polje se izprazni ob pošiljanju iz polja; samodejno sporočilo (Razloži, izbire …) osnutka in fotografije ne pobriše.
   assert.match(send, /const fromInput = !attached && \(\$\("#input"\)\.value\.trim\(\) \|\| ""\) === \(text \|\| ""\)\.trim\(\);/);
   assert.match(send, /const image = attached \|\| \(fromInput \? state\.image : null\);/);
-  assert.match(send, /userEl = addMessage\("user", text, !!image\);\s*if \(fromInput\) \{\s*\$\("#input"\)\.value = "";\s*autoGrow\(\);\s*clearImage\(\);/);
+  // Višino polja izmeri naDno v naslednji sličici skupaj z mehurčkoma (test/klepet-zgodovina.test.js).
+  assert.match(send, /userEl = addMessage\("user", text, !!image, null, \{ meri: false \}\);\s*naDnoRaf = requestAnimationFrame\(naDno\);\s*if \(fromInput\) \{\s*\$\("#input"\)\.value = "";\s*clearImage\(\);/);
+  assert.match(send, /const naDno = \(\) => \{[\s\S]{0,160}if \(fromInput\) autoGrow\(true\);/);
   // V catch se besedilo in fotografija vrneta samo, kadar napaka ni meja porabe; nobena pot ne piše v polje mimo restoreDraft.
   const tail = send.slice(send.indexOf("const dropped"));
   assert.match(tail, /if \(!err\.limit && !deep\) restoreDraft\(draft \?\? text, image\);/);
