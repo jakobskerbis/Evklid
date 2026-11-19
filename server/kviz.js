@@ -6,6 +6,7 @@ import crypto from "node:crypto";
 import { getTopic } from "./curriculum.js";
 import { hasGenerator } from "./practice/index.js";
 import { checkAnswer } from "./practice/check.js";
+import * as MATH from "../public/graph/math.js";
 import { worksheetTasks, answerHtml, optionHtml } from "./gradiva.js";
 import { renderMd } from "./textbook-print.js";
 import { recordSkill } from "./weaknesses.js";
@@ -131,9 +132,10 @@ export class Kvizi {
     const now = this.now();
     if (now > g.endsAt + KVIZ.graceMs) return { error: "Čas je potekel.", code: "comp.timeUp", status: 409 };
     const task = g.tasks[q];
-    let r = checkAnswer(task.answer, input);
+    const opts = { find: task.data?.find, text: task.text, math: MATH };
+    let r = checkAnswer(task.answer, input, opts);
     // Enoto pokaže vnosno polje; učenec vpiše samo število.
-    if (r.kind === "unit" && r.code === "chk.addUnit" && task.answer.unit) r = checkAnswer(task.answer, `${input} ${task.answer.unit}`);
+    if (r.kind === "unit" && r.code === "chk.addUnit" && task.answer.unit) r = checkAnswer(task.answer, `${input} ${task.answer.unit}`, opts);
     if (r.kind === "format" || r.kind === "unit") return { retry: true, code: r.code, params: r.params, message: r.message };
     // Zaokroženo drugače (npr. 0,03 namesto 0,028) in neokrajšan ulomek ali koeficienti (6/8 namesto 3/4)
     // štejejo: kviz preverja razumevanje, ne zapisa. Ponovni vnos pri »simplify« bi pred zaprtjem izdal,

@@ -7,6 +7,10 @@
 import { checkAnswer } from "/practice/check.js";
 import { isStalePack, offlineTask } from "./enote-izbira.js";
 
+// Razčlenjevalnik izrazov za cel zapis (»5√7« pri iskanem b) naložimo ob strani: brez njega preverjanje dela kot prej.
+let MATH = null;
+import("./graph/math.js").then((m) => (MATH = m)).catch(() => {});
+
 // Enako kot hintSteps v server/practice/index.js: podatki → formula → namig.
 function hintSteps(t) {
   const steps = [];
@@ -127,7 +131,7 @@ export function offlineApi(sid, url, opts = {}) {
       return { steps: steps.slice(0, Math.max(1, Number(body.step) || 1)), total: steps.length, offline: true };
     }
     if (m[2] !== "answer") throw new OfflineError();
-    const res = checkAnswer(lastTask.answer, body.answer, { convert: true, text: lastTask.task?.text });
+    const res = checkAnswer(lastTask.answer, body.answer, { convert: true, text: lastTask.task?.text, find: lastTask.task?.data?.find, math: MATH });
     const out = { kind: res.kind, message: res.message || null, ...(res.code ? { code: res.code, params: res.params || {} } : {}), offline: true };
     if (["format", "unit", "simplify"].includes(res.kind)) return { ...out, retry: true };
     lastTask.attempts += 1;

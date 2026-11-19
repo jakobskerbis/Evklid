@@ -1026,7 +1026,7 @@ export const MAT_GENERATORS = [
       const shown = neg ? val.toFixed(e + 1).replace(".", ",") : String(Math.round(val));
       return {
         text: `Število $${shown.replace(",", "{,}")}$ zapiši v obliki $a \\cdot 10^n$, kjer je $1 \\le a < 10$. Koliko je $n$?`,
-        answer: withMistakes({ type: "number", value: neg ? -e : e }, [
+        answer: withMistakes({ type: "number", value: neg ? -e : e, form: { expr: "a*10^n", vals: { a: mant, n: neg ? -e : e }, ask: "n" } }, [
           [neg ? e : -e, neg ? "Število je manjše od 1, zato je eksponent negativen." : "Število je večje od 10, zato je eksponent pozitiven."],
           [neg ? -(e - 1) : e + 1, neg ? "Ne štej le ničel za vejico: štej, za koliko mest premakneš vejico do prve neničelne števke." : "Ne štej vseh števk: štej, za koliko mest premakneš vejico, da ostane ena števka pred njo."],
         ]),
@@ -1074,7 +1074,7 @@ export const MAT_GENERATORS = [
       const s = r.int(2, 6);
       return {
         text: `Delno koreni: $\\sqrt{${s * s * k}} = a\\sqrt{${k}}$. Koliko je $a$?`,
-        answer: withMistakes({ type: "number", value: s }, [
+        answer: withMistakes({ type: "number", value: s, form: { expr: `a√(${k})`, vals: { a: s }, ask: "a" } }, [
           [s * s, "To je popolni kvadrat pod korenom; pred koren pride njegov koren."],
           [(s * s * k) / k / 2, "Koren ni polovica: iz popolnega kvadrata izračunaj koren."],
         ]),
