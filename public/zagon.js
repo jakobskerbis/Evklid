@@ -11,11 +11,9 @@ const mods = (tag?.dataset.moduli || "").split(/\s+/).filter(Boolean).map((m) =>
 // Pristajalna stran s strežnika (public/zacetek.js): moduli se začnejo prenašati šele po njenem prvem izrisu, da na
 // počasni povezavi ne jemljejo pasovne širine slogom in pisavam. Sicer takoj. (Brez top-level await, glej zgoraj.)
 const zacni = () => {
-  // Če zacetek.js ni tekel: slogi za druge zaslone (link[data-pozneje], server/vstopna-stran.js) in moduli iz <template>.
-  for (const l of document.querySelectorAll("link[data-pozneje]")) {
-    l.removeAttribute("data-pozneje");
-    if (l.dataset.href) l.href = l.dataset.href;
-  }
+  // Če zacetek.js ni tekel: slogi za druge zaslone in moduli iz <template> (server/vstopna-stran.js withLanding).
+  const slogi = document.getElementById("evklid-slogi");
+  if (slogi) slogi.replaceWith(slogi.content);
   const tpl = document.getElementById("evklid-moduli");
   if (tpl) {
     tpl.remove();

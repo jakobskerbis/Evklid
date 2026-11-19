@@ -61,14 +61,17 @@ export function withLanding(html, page) {
   const links = [];
   html = html.replace(/^ *<link rel="modulepreload"[^>]*>\n/gm, (l) => (links.push(l.trim()), ""));
   const tpl = links.length ? `\n  <template id="evklid-moduli">${links.join("")}</template>` : "";
-  // Slogi za druge zaslone (vsi za account.css, vrstni red ostane): brez href, zacetek.js jih vklopi na istem mestu po
-  // prvem izrisu pristajalne strani (je ne spremenijo, test/pristajalna-takoj.test.js) ali takoj, ko je ne pokaže.
+  // Slogi za druge zaslone (vsi za account.css, vrstni red ostane) gredo v <template id="evklid-slogi"> takoj za
+  // account.css: zacetek.js ga na istem mestu zamenja z njegovimi povezavami po prvem izrisu pristajalne strani (je ne
+  // spremenijo, test/pristajalna-takoj.test.js) ali takoj, ko je ne pokaže.
   const head = html.slice(0, html.indexOf("</head>"));
   const zadnji = `<link rel="stylesheet" href="${ZADNJI_SLOG}">`;
   const last = head.indexOf(zadnji);
   if (last > 0) {
     const from = last + zadnji.length;
-    html = html.slice(0, from) + head.slice(from).replace(/<link rel="stylesheet" href="([^"]+)">/g, '<link rel="stylesheet" data-href="$1" data-pozneje>') + html.slice(head.length);
+    const slogi = [];
+    const rest = head.slice(from).replace(/\n? *<link rel="stylesheet" href="[^"]+">/g, (l) => (slogi.push(l.trim()), ""));
+    if (slogi.length) html = html.slice(0, from) + `<template id="evklid-slogi">${slogi.join("")}</template>` + rest + html.slice(head.length);
   }
   // Pred public/zacetek.js (navaden skript v <head>), ki ju prebere pred prvim izrisom.
   let out = html.replace('<meta charset="utf-8">', `<meta charset="utf-8">\n${meta}${tpl}`).replace(AUTH_MAIN, `<main id="view-auth" class="view narrow" hidden data-vnaprej>${page.html}</main>`);

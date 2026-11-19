@@ -349,19 +349,15 @@
     slogiPreveri();
   }
   function slogi(cakaj) {
-    var l = document.querySelectorAll("link[data-pozneje]");
-    for (var i = 0; i < l.length; i++) {
-      var el = l[i];
-      var h = el.getAttribute("data-href");
-      el.removeAttribute("data-pozneje");
-      if (!h) continue;
-      if (cakaj) {
-        slogiCaka++;
-        el.addEventListener("load", slogDone);
-        el.addEventListener("error", slogDone);
-      }
-      el.setAttribute("href", h);
+    var tpl = document.getElementById("evklid-slogi");
+    if (!tpl || !tpl.content) return;
+    var l = tpl.content.querySelectorAll("link");
+    for (var i = 0; cakaj && i < l.length; i++) {
+      slogiCaka++;
+      l[i].addEventListener("load", slogDone);
+      l[i].addEventListener("error", slogDone);
     }
+    tpl.parentNode.replaceChild(tpl.content, tpl);
   }
   function takoj(pm) {
     moduli();

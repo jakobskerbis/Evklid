@@ -5,6 +5,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
+import { readFileSync } from "node:fs";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { acceptTags, landingLanguage, translator, translateStatic } from "../server/pristajalna-takoj.js";
@@ -72,8 +73,13 @@ test("strežnik: obiskovalec brez seje dobi pristajalno stran, enako izrisu v br
     const head = html.slice(0, html.indexOf("</head>"));
     assert.ok(!/^\s*<link rel="modulepreload"/m.test(head), "nobenega modulepreload zunaj <template>");
     for (const f of ["style.css", "ui.css", "account.css", "vendor/katex/katex.min.css"]) assert.ok(head.includes(`<link rel="stylesheet" href="${f}">`), f);
-    for (const f of LATE_CSS) assert.ok(head.includes(`<link rel="stylesheet" data-href="${f}" data-pozneje>`), f);
-    assert.ok(head.indexOf('href="account.css"') < head.indexOf('data-href="textbook.css"'));
+    const tplSlogi = /<link rel="stylesheet" href="account\.css"><template id="evklid-slogi">(.*?)<\/template>/.exec(head);
+    assert.ok(tplSlogi, "slogi drugih zaslonov v <template> takoj za account.css");
+    for (const f of LATE_CSS) {
+      assert.ok(tplSlogi[1].includes(`<link rel="stylesheet" href="${f}">`), f);
+      assert.equal(head.split(`href="${f}"`).length, 2, `${f} samo v <template>`);
+    }
+    assert.ok(tplSlogi[1].indexOf("textbook.css") < tplSlogi[1].indexOf("drsniki.css"), "vrstni red ostane");
 
     // Angleščina: stran in pasica »Testna različica« v angleščini.
     const en = await (await fetch(`${base}/`, { headers: { "accept-language": "en-US,en;q=0.9" } })).text();
@@ -84,7 +90,7 @@ test("strežnik: obiskovalec brez seje dobi pristajalno stran, enako izrisu v br
     // Seja, aplikacija za telefon ali brez jezika: navadna stran (z modulepreload v <head>), kot prej.
     for (const headers of [{ "accept-language": "sl", cookie: "sm_session=abc" }, { "accept-language": "sl", "user-agent": "EvklidApp/1.0" }, {}]) {
       const plain = await (await fetch(`${base}/`, { headers })).text();
-      assert.ok(!plain.includes("evklid-pristajalna") && !plain.includes("data-vnaprej") && !plain.includes("data-pozneje"), JSON.stringify(headers));
+      assert.ok(!plain.includes("evklid-pristajalna") && !plain.includes("data-vnaprej") && !plain.includes("evklid-slogi"), JSON.stringify(headers));
       assert.match(plain, /<link rel="modulepreload" href="\/app\.js" fetchpriority="low">/);
     }
     // 304 za isto različico, druga različica (jezik) ima drug ETag.
@@ -102,7 +108,7 @@ test("brez računov ni pristajalne strani: navadna vstopna stran", async () => {
   const { server, base } = start({ accounts: false });
   try {
     const html = await (await fetch(`${base}/`, { headers: { "accept-language": "sl-SI" } })).text();
-    assert.ok(!html.includes("evklid-pristajalna") && !html.includes("data-pozneje"));
+    assert.ok(!html.includes("evklid-pristajalna") && !html.includes("evklid-slogi"));
   } finally {
     server.close();
   }
@@ -139,14 +145,19 @@ test("brskalnik: pristajalna stran vidna brez JavaScripta aplikacije, app.js jo 
       await p.addInitScript(() => document.addEventListener("DOMContentLoaded", () => (window.__land = document.querySelector("#view-auth .land"))));
       await p.goto(base + "/");
       await p.waitForSelector("body.land-mode #view-auth .land", { timeout: 30_000 });
-      await p.waitForFunction(() => !document.querySelector("link[data-pozneje]") && !document.getElementById("evklid-moduli"));
+      await p.waitForFunction(() => !document.getElementById("evklid-slogi") && !document.getElementById("evklid-moduli"));
       const s = await p.evaluate(() => ({
         same: !!window.__land && document.querySelector("#view-auth .land") === window.__land,
         attr: document.documentElement.hasAttribute("data-pristajalna"),
         vnaprej: document.getElementById("view-auth").hasAttribute("data-vnaprej"),
-        hrefs: [...document.querySelectorAll('link[rel="stylesheet"][data-href]')].every((l) => l.getAttribute("href") === l.dataset.href),
+        css: [...document.querySelectorAll('head > link[rel="stylesheet"]')].map((l) => l.getAttribute("href")).join(" "),
       }));
-      assert.deepEqual(s, { same: true, attr: false, vnaprej: false, hrefs: true });
+      const css = s.css;
+      delete s.css;
+      assert.deepEqual(s, { same: true, attr: false, vnaprej: false });
+      // Vsi slogi v strani in v istem vrstnem redu kot v public/index.html.
+      const order = [...readFileSync(new URL("../public/index.html", import.meta.url), "utf8").matchAll(/<link rel="stylesheet" href="([^"]+)">/g)].map((m) => m[1]).join(" ");
+      assert.equal(css, order);
       await p.click('[data-land="register"]');
       await p.waitForSelector("#auth-form", { timeout: 10_000 });
       assert.equal(new URL(p.url()).hash, "#registracija");
@@ -165,7 +176,7 @@ test("brskalnik: pristajalna stran vidna brez JavaScripta aplikacije, app.js jo 
         pre: window.__pre,
         land: !!document.querySelector("#view-auth .land"),
         slogi: document.documentElement.hasAttribute("data-zacetek-slogi"),
-        pozneje: document.querySelectorAll("link[data-pozneje]").length,
+        pozneje: document.querySelectorAll("#evklid-slogi").length,
         visible: getComputedStyle(document.body).visibility,
       }));
       assert.deepEqual(s, { pre: false, land: false, slogi: false, pozneje: 0, visible: "visible" });

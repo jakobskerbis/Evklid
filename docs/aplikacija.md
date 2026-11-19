@@ -80,8 +80,8 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   napravi ni `evklid.racun`, `studentId`, `evklid_gost`, posnetka ali lastnika, prva oznaka `navigator.languages` je
   ista kot na strežniku, shranjen jezik isti, ne angleščina v pasu Europe/Ljubljana (`homeLanguage`). Pasici
   »Preizkusni način« in »Testna različica« pokaže takoj (`data-mock`, `data-tn`). V tej različici strani so moduli
-  (`modulepreload`) v `<template id="evklid-moduli">`, slogi za druge zaslone (vsi za `account.css`) pa brez `href`
-  (`link[data-pozneje]`, isto mesto, isti vrstni red): ob pokazani strani jih `zacetek.js` vklopi po prvem izrisu
+  (`modulepreload`) v `<template id="evklid-moduli">`, slogi za druge zaslone (vsi za `account.css`) pa v
+  `<template id="evklid-slogi">` takoj za `account.css` (zamenja se z njimi na istem mestu, vrstni red ostane): ob pokazani strani jih `zacetek.js` vklopi po prvem izrisu
   (`evklidZacetek.poIzrisu`: `first-contentful-paint`, varovalo 3 s; `zagon.js` šele nato začne module), sicer
   takoj (`takoj`), stran pa ostane skrita do konca teh slogov (`html[data-zacetek-slogi]`, varovalo 8 s). Če
   `zacetek.js` ne teče, jih vklopi `zagon.js`. `account.js renderLanding` stran prevzame brez ponovnega izrisa
