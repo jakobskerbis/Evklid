@@ -8,7 +8,9 @@ import os
 import sys
 import urllib.request
 
-BASE = "https://huggingface.co/rhasspy/piper-voices/resolve/main/sl/sl_SI/artur/medium/"
+# Pripeta različica repozitorija glasov (sprememba na »main« ne spremeni gradnje).
+REVISION = "04ca88f5685ca5253c701af3687e155b113bd512"
+BASE = f"https://huggingface.co/rhasspy/piper-voices/resolve/{REVISION}/sl/sl_SI/artur/medium/"
 FILES = {
     "sl_SI-artur-medium.onnx": "9222ed93ef425524ad4be0b083369af8ea8db18455576a6016b154192f4ed38c",
     "sl_SI-artur-medium.onnx.json": "741283430f1fa2be5c61717c6f1fe795a7b9f537491927340dd12f90f3b3cc04",

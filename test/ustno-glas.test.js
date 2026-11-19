@@ -16,6 +16,7 @@ const MP3 = Buffer.from([0xff, 0xf3, 0x44, 0xc4, 1, 2, 3, 4]);
 
 async function local({ glasFn, followup = "" }, fn) {
   const said = [];
+  const opts_ = [];
   const ustnoFn = async (p) => {
     const user = p.messages[0].content;
     const kps = [...user.matchAll(/^KP(\d+): /gm)].map((m) => Number(m[1]));
@@ -24,7 +25,9 @@ async function local({ glasFn, followup = "" }, fn) {
     return { content: [{ type: "text", text: JSON.stringify(out) }], usage: { input_tokens: 10, output_tokens: 10 }, model: p.model, stop_reason: "end_turn" };
   };
   const store = openDb(":memory:");
-  const app = createApp(store, { scheduler: false, ustnoFn, glasFn: async (t) => (said.push(t), glasFn(t)) });
+  const opts = { scheduler: false, ustnoFn };
+  if (glasFn) opts.glasFn = async (t, o) => (said.push(t), opts_.push(o), glasFn(t));
+  const app = createApp(store, opts);
   const server = app.listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
   const call = async (p, body) => {
@@ -35,7 +38,7 @@ async function local({ glasFn, followup = "" }, fn) {
   try {
     const a = (await call("/api/students", { name: "Ana", grade: 9 })).body;
     const b = (await call("/api/students", { name: "Bor", grade: 9 })).body;
-    await fn({ call, sid: a.id, other: b.id, said });
+    await fn({ call, sid: a.id, other: b.id, said, opts: opts_ });
   } finally {
     server.close();
   }
@@ -61,7 +64,7 @@ test("glas strežnika prebere vprašanje seje (MP3), drugega besedila ne sprejme
 });
 
 test("glas strežnika prebere dodatno vprašanje, ki ga je seja dobila", async () => {
-  await local({ glasFn: async () => MP3, followup: "Kaj pa **enota** upora?" }, async ({ call, sid, said }) => {
+  await local({ glasFn: async () => MP3, followup: "Kaj pa **enota** upora?" }, async ({ call, sid, said, opts }) => {
     const r = await call(`/api/students/${sid}/ustno/zacni`, { tema: OHM, n: 3, nacin: "tipkanje" });
     const i = r.body.vprasanja.findIndex((q) => q.vrsta !== "izracunaj");
     const a = await call(`/api/students/${sid}/ustno/${r.body.id}/odgovor`, { i, besedilo: "tok in napetost", nacin: "tipkanje" });
@@ -70,15 +73,33 @@ test("glas strežnika prebere dodatno vprašanje, ki ga je seja dobila", async (
     const g = await call(`/api/students/${sid}/ustno/${r.body.id}/govor`, { i, dodatno: true });
     assert.equal(g.status, 200);
     assert.equal(said.at(-1), "Kaj pa enota upora?", "brez ostankov markdowna");
+    assert.deepEqual(opts.at(-1), { shrani: false }, "dodatno vprašanje (iz učenčevega odgovora) se ne shrani na disk");
+    await call(`/api/students/${sid}/ustno/${r.body.id}/govor`, { i });
+    assert.deepEqual(opts.at(-1), { shrani: true });
   });
 });
 
 test("brez glasovnega strežnika 503 (odjemalec uporabi glas naprave)", async () => {
+  // napaka ali gneča: 503 brez code (odjemalec poskusi ob naslednjem branju znova)
   await local({ glasFn: async () => null }, async ({ call, sid }) => {
     const r = await call(`/api/students/${sid}/ustno/zacni`, { tema: OHM, n: 3, nacin: "tipkanje" });
     const g = await call(`/api/students/${sid}/ustno/${r.body.id}/govor`, { i: 0 });
     assert.equal(g.status, 503);
+    assert.equal(g.body.code, undefined);
   });
+  // ni nastavljen (EVKLID_GLAS_URL prazen): code »ni«, odjemalec v tem odprtju ne poskuša več
+  const prej = process.env.EVKLID_GLAS_URL;
+  delete process.env.EVKLID_GLAS_URL;
+  try {
+    await local({ glasFn: null }, async ({ call, sid }) => {
+      const r = await call(`/api/students/${sid}/ustno/zacni`, { tema: OHM, n: 3, nacin: "tipkanje" });
+      const g = await call(`/api/students/${sid}/ustno/${r.body.id}/govor`, { i: 0 });
+      assert.equal(g.status, 503);
+      assert.equal(g.body.code, "ni");
+    });
+  } finally {
+    if (prej !== undefined) process.env.EVKLID_GLAS_URL = prej;
+  }
 });
 
 test("govorMp3: naslov iz Renderja (ime:vrata), samo audio/mpeg, napaka → null", async () => {
@@ -90,6 +111,8 @@ test("govorMp3: naslov iz Renderja (ime:vrata), samo audio/mpeg, napaka → null
   const ok = async (u, o) => (seen.push([u, JSON.parse(o.body)]), new Response(MP3, { headers: { "Content-Type": "audio/mpeg" } }));
   assert.deepEqual(await govorMp3("  Kaj   je upor? ", { url: "http://g:1", fetchFn: ok }), MP3);
   assert.deepEqual(seen[0], ["http://g:1/govor", { besedilo: "Kaj je upor?" }]);
+  await govorMp3("Dodatno?", { url: "http://g:1", fetchFn: ok, shrani: false });
+  assert.deepEqual(seen.pop()[1], { besedilo: "Dodatno?", shrani: false });
   await govorMp3("x".repeat(5000), { url: "http://g:1", fetchFn: ok });
   assert.equal(seen[1][1].besedilo.length, MAX_GLAS);
   assert.equal(await govorMp3("x", { url: "http://g:1", fetchFn: async () => new Response("{}", { headers: { "Content-Type": "application/json" } }) }), null);

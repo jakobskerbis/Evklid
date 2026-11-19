@@ -20,7 +20,7 @@ import tempfile
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-MAX_CHARS = 1200
+MAX_CHARS = 600
 MAX_BODY = 16_000
 DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.environ.get("EVKLID_GLAS_MODEL_DIR") or os.path.join(DIR, "model")
@@ -59,19 +59,33 @@ def to_mp3(chunks):
     return out.getvalue()
 
 
-def synthesize(text):
-    """Besedilo → MP3 (bytes). Uporabi predpomnilnik na disku."""
+class Busy(Exception):
+    pass
+
+
+WAIT_S = 4  # v vrsti največ toliko: glavni strežnik po 11 s odneha, odjemalec po 12 s uporabi glas naprave
+
+
+def synthesize(text, cache=True):
+    """Besedilo → MP3 (bytes). cache=False: brez zapisa na disk (dodatno vprašanje je iz učenčevega odgovora)."""
     key = hashlib.sha256(f"{VERSION}\n{text}".encode("utf-8")).hexdigest()
     path = os.path.join(CACHE, key[:2], key + ".mp3")
+    if cache:
+        try:
+            with open(path, "rb") as f:
+                return f.read()
+        except OSError:
+            pass
+    if not _lock.acquire(timeout=WAIT_S):
+        raise Busy()
     try:
-        with open(path, "rb") as f:
-            return f.read()
-    except OSError:
-        pass
-    with _lock:
         from piper import SynthesisConfig
 
         data = to_mp3(voice().synthesize(text, SynthesisConfig(length_scale=1.05)))
+    finally:
+        _lock.release()
+    if not data or not cache:
+        return data
     try:
         os.makedirs(os.path.dirname(path), exist_ok=True)
         tmp = path + ".del"
@@ -135,16 +149,22 @@ class Handler(BaseHTTPRequestHandler):
             n = int(self.headers.get("Content-Length") or 0)
             if n <= 0 or n > MAX_BODY:
                 return self.send(413, b'{"error":"prevelika zahteva"}')
-            text = clean(json.loads(self.rfile.read(n).decode("utf-8")).get("besedilo"))
+            body = json.loads(self.rfile.read(n).decode("utf-8"))
+            text = clean(body.get("besedilo"))
+            cache = body.get("shrani", True) is not False
         except (ValueError, AttributeError):
             return self.send(400, b'{"error":"napacna zahteva"}')
         if not text:
             return self.send(400, b'{"error":"ni besedila"}')
         try:
-            data = synthesize(text)
+            data = synthesize(text, cache)
+        except Busy:
+            return self.send(503, b'{"error":"zasedeno"}')
         except Exception as e:  # noqa: BLE001 – strežnik ostane živ
             print("glas: napaka", type(e).__name__, file=sys.stderr)
             return self.send(500, b'{"error":"glas ni uspel"}')
+        if not data:  # samo ločila: nič za brati
+            return self.send(422, b'{"error":"ni besed"}')
         self.send(200, data, "audio/mpeg")
 
 

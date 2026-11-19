@@ -12,7 +12,7 @@ import { seal, sealJson, unsealJson } from "./crypto-polje.js";
 import { callMaxUsd } from "./meje-ai.js";
 import { lokalnaVrsta, nujnoZa } from "./nujno.js";
 import { audit } from "./dnevnik-dostopov.js";
-import { speakMarkdown, govorMp3 } from "./govor.js";
+import { speakMarkdown, govorMp3, glasUrl } from "./govor.js";
 import {
   pickQuestions, publicQuestion, forSpeech, gradeUser, reviewUser, callModel, pointsFrom, resultStatus, score, better, cleanFollowup, cleanFeedback,
   GRADE_SYSTEM, REVIEW_SYSTEM, USTNO_MODEL, USTNO_REVIEW_MODEL, GRADE_MAX_TOKENS, REVIEW_MAX_TOKENS, USTNO_QUESTIONS, COUNTS, MAX_ANSWER, MAX_APPEALS, POINTS,
@@ -474,8 +474,11 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const recent = (reads.get(s.id) || []).filter((t) => now - t < 3_600_000);
     if (recent.length >= READS_PER_HOUR) return res.status(429).json({ error: "Preveč branj. Poskusi čez nekaj minut." });
     recent.push(now);
+    if (reads.size > 2000) for (const [k, v] of reads) if (!v.some((t) => now - t < 3_600_000)) reads.delete(k);
     reads.set(s.id, recent);
-    const mp3 = await glasFn(text);
+    // Brez glasovnega strežnika (code »ni«) odjemalec v tem odprtju ne poskuša več; ob napaki ali gneči ob naslednjem branju.
+    if (!glasUrl() && glasFn === govorMp3) return res.status(503).json({ error: "Glas strežnika ni nastavljen.", code: "ni" });
+    const mp3 = await glasFn(text, { shrani: !follow });
     if (!mp3) return res.status(503).json({ error: "Glas strežnika ni na voljo." });
     res.set({ "Content-Type": "audio/mpeg", "Content-Length": String(mp3.length), "Cache-Control": "private, max-age=86400" });
     res.end(mp3);

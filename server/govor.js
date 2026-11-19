@@ -301,8 +301,8 @@ export function speakMarkdown(md) {
 // »evklid-glas«, odprt glas Piper), nazaj pride MP3. Glas naprave slovenščino pozna skoraj samo v Edgu, zato je to edina
 // pot, da Evklid bere na glas v Chromu, v aplikaciji za Android in na iPhonu (j, 19. 11. 2026).
 // Brez EVKLID_GLAS_URL (lokalno, testi) strežnika ni: odjemalec uporabi glas naprave kot prej.
-export const MAX_GLAS = 1200; // znakov besedila na branje (vprašanje + dodatno vprašanje sta krajša)
-const TIMEOUT_MS = 20_000;
+export const MAX_GLAS = 600; // znakov besedila na branje (vprašanje + dodatno vprašanje sta krajša)
+const TIMEOUT_MS = 11_000; // odjemalec po 12 s uporabi glas naprave
 
 // Render da pri fromService (property: hostport) »ime:vrata« brez sheme.
 export function glasUrl(raw = process.env.EVKLID_GLAS_URL) {
@@ -314,16 +314,17 @@ export function glasUrl(raw = process.env.EVKLID_GLAS_URL) {
 /**
  * Besedilo → MP3 (Buffer) ali null, ko strežnika ni ali ne odgovori.
  * @param {string} text
- * @param {{ url?: string|null, fetchFn?: typeof fetch }} [o]
+ * shrani: false – glasovni strežnik posnetka ne shrani na disk (dodatno vprašanje izhaja iz učenčevega odgovora).
+ * @param {{ url?: string|null, fetchFn?: typeof fetch, shrani?: boolean }} [o]
  */
-export async function govorMp3(text, { url = glasUrl(), fetchFn = fetch } = {}) {
+export async function govorMp3(text, { url = glasUrl(), fetchFn = fetch, shrani = true } = {}) {
   const besedilo = String(text || "").replace(/\s+/g, " ").trim().slice(0, MAX_GLAS);
   if (!url || !besedilo) return null;
   try {
     const r = await fetchFn(`${url}/govor`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ besedilo }),
+      body: JSON.stringify(shrani ? { besedilo } : { besedilo, shrani: false }),
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
     if (!r.ok || !/audio\/mpeg/.test(r.headers.get("content-type") || "")) return null;

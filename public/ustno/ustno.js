@@ -80,7 +80,7 @@ const recLang = () => (currentLang() === "sl" ? "sl-SI" : locale());
 const SILENT = "/ustno/tiho.mp3"; // 0,25 s tišine (CSP media-src ne dovoli data:)
 let player = null;
 let unlocked = false;
-let serverVoice = true; // po 503 (strežnik nima glasu) v tem odprtju ne poskušamo več
+let serverVoice = true; // strežnik glasu nima (503, code »ni«): v tem odprtju ne poskušamo več
 let speakSeq = 0;
 const clips = new Map(); // »seja:i:dodatno« → Promise<objectURL | null>
 function audio() {
@@ -100,9 +100,9 @@ function unlock() {
 function clip(i, dodatno) {
   const key = `${run.id}:${i}:${dodatno ? 1 : 0}`;
   if (!clips.has(key)) {
-    const p = fetch(`/api/students/${ctx.student.id}/ustno/${run.id}/govor`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ i, dodatno: !!dodatno }) })
+    const p = fetch(`/api/students/${ctx.student.id}/ustno/${run.id}/govor`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ i, dodatno: !!dodatno }), signal: AbortSignal.timeout?.(12_000) })
       .then(async (r) => {
-        if (r.status === 503) serverVoice = false;
+        if (r.status === 503 && (await r.clone().json().catch(() => ({}))).code === "ni") serverVoice = false;
         if (!r.ok || !/audio\//.test(r.headers.get("content-type") || "")) return null;
         return URL.createObjectURL(await r.blob());
       })
@@ -137,11 +137,13 @@ async function speak(text, onNoVoice, src = null) {
         unlocked = true;
         return;
       } catch (e) {
-        // brez dotika predvajanje ni dovoljeno: »Preberi vprašanje« ga prebere (dotik)
-        if (e?.name === "NotAllowedError") return;
+        // AbortError: medtem ustavljeno (naslednje vprašanje, zaprto okno). NotAllowedError: brez dotika predvajanje ni
+        // dovoljeno, »Preberi vprašanje« ga prebere (dotik). Ne beremo z glasom naprave.
+        if (seq !== speakSeq || e?.name === "AbortError" || e?.name === "NotAllowedError") return;
       }
     }
   }
+  if (seq !== speakSeq) return;
   deviceSpeak(text, onNoVoice);
 }
 function deviceSpeak(text, onNoVoice) {
@@ -226,6 +228,7 @@ function sheet() {
     stopRec();
     stopSpeak();
     dropClips();
+    serverVoice = true; // ob naslednjem odprtju glas strežnika znova (morda je medtem nastavljen)
     hideKeyboard(); // tipkovnica je v oknu (tipkovnica.js): ob zaprtju se zapre, sicer ostane spodnji odmik
   });
   document.body.append(dlg);
