@@ -72,6 +72,9 @@ if (delM) primeri = primeri.filter((_, i) => i % Number(delM[2]) === Number(delM
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-prav-"));
 process.env.EVKLID_DB = path.join(tmp, "meritev.db");
 if (NACIN === "chat") process.env.EVKLID_SS_THINK = "0";
+// Preverjanje kartic (Sonnet + Opus, do ~0,3 $) teče po dogodku done v ozadju, zunaj meje in štetja te skripte; na
+// odgovor, ki ga vidi učenec, ne vpliva (brez prostora se kartice le ne shranijo), zato je tu izklopljeno.
+process.env.EVKLID_VERIFY_DAILY_USD = "0";
 const { openDb } = await import("../server/db.js");
 const { createApp } = await import("../server/app.js");
 const { buildSystemPrompt } = await import("../server/prompt.js");
@@ -79,14 +82,17 @@ const { isMockMode, modeParams, costUsd, MODEL_DEEP, MODEL_MID } = await import(
 const { callMaxUsd } = await import("../server/meje-ai.js");
 const { normalizeSettings } = await import("../server/settings.js");
 const { askModel } = await import("../server/verify.js");
+const { lessonForQuestion, lessonNote } = await import("../server/lekcija-za-vprasanje.js");
 
 const settings = normalizeSettings({ educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik VR", subject: "MAT", solving_mode: "A" });
 const META = '\n<<META subject=MAT topic="matematika" error=0 mode=A flag=none done=0>>';
 const { model, max_tokens } = modeParams(NACIN);
 const system = buildSystemPrompt({ settings, studentName: "Ana" });
 // Najslabši primer enega koraka: odgovor, pregled sodbe (Sonnet), ponovni odgovor, en krog orodij, ocena (Opus), varnostni pregled.
+// Ocenjevalec dobi pogovor in odgovor (do dvakrat max_tokens: odgovor in morebitni popravek), zato vhod po najdaljšem primeru.
 const klicUsd = callMaxUsd(model, Math.ceil(system.length / 3) + 4000, max_tokens);
-const najslabse = 3 * klicUsd + callMaxUsd(MODEL_MID, 4000, 8000) + callMaxUsd(MODEL_DEEP, 4000, 8000) + 0.01;
+const pogovorZnakov = Math.max(0, ...primeri.map((p) => [p.naloga, ...p.pogovor, p.ucenec, p.zakaj].join("").length));
+const najslabse = 3 * klicUsd + callMaxUsd(MODEL_MID, 4000, 8000) + callMaxUsd(MODEL_DEEP, Math.ceil(pogovorZnakov / 2) + 2 * max_tokens + 1000, 8000) + 0.01;
 console.log(`${primeri.length} primerov (${primeri.filter((p) => !p.pravilen).length} napačnih, ${primeri.filter((p) => p.pravilen).length} pravilnih korakov); način ${NACIN} (${model}); najslabši primer ${najslabse.toFixed(3)} $; meja ${MAX_USD} $.`);
 if (SUHO) process.exit(0);
 if (PREIZKUS !== isMockMode()) {
@@ -124,7 +130,9 @@ async function oceni(p, odgovor) {
 async function korak(p) {
   const s = store.createStudent("Ana", settings); // nov učenec za vsak primer: dnevne meje enega učenca ne vplivajo
   const conv = store.createConversation(s.id);
-  store.addMessage(conv.id, "user", [{ type: "text", text: p.naloga }], p.naloga);
+  // Kot prvo sporočilo prostega pogovora v aplikaciji: s skrito opombo ujemajoče se lekcije, če jo najde (server/app.js).
+  const lekcija = lessonForQuestion(p.naloga, settings);
+  store.addMessage(conv.id, "user", [...(lekcija ? [{ type: "text", text: lessonNote(lekcija, "A") }] : []), { type: "text", text: p.naloga }], p.naloga);
   p.pogovor.forEach((t, i) => (i % 2 === 0 ? store.addMessage(conv.id, "assistant", [{ type: "text", text: t + META }], t) : store.addMessage(conv.id, "user", [{ type: "text", text: t }], t)));
   const zacetek = store.db.prepare("SELECT COALESCE(MAX(id), 0) AS m FROM usage").get().m;
   const res = await fetch(`${base}/api/conversations/${conv.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: p.ucenec }) });
@@ -176,4 +184,5 @@ if (slabi.length) console.log(`Ne OK: ${slabi.map((r) => `${r.id} (${r.ocena})`)
 console.log(`\nIZID: napačni ${n(napacni, (r) => r.ok)}/${napacni.length} pravilno obravnavanih, pravilni ${n(pravilni, (r) => r.ok)}/${pravilni.length}; strošek ${porabljeno().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}. Odgovori: ${OUT}`);
 zapisi(true);
 fs.rmSync(tmp, { recursive: true, force: true });
-process.exit(0);
+// Brez enega ocenjenega primera (npr. vsi klici so padli) je zagon rdeč, da izid »0/0« ne izgleda kot uspeh.
+process.exit(izid.length ? 0 : 1);
