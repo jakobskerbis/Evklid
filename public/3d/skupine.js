@@ -23,7 +23,7 @@ export const SKUPINE = {
     { id: "velike-zile", deli: ["aorta", "pljucno-deblo", "votli-veni", "pljucne-vene"], sinonimi: ["glavne žile", "žile ob srcu", "velike krvne žile"],
       opisOs: "Glavne žile, ki kri pripeljejo v srce in jo odpeljejo iz njega.",
       opis: "Votli veni pripeljeta kri iz telesa, pljučne vene iz pljuč; aorta odvaja kri v telo, pljučno deblo v pljuča.",
-      opisStudij: "Koren aorte meri ≈ 3 cm, pljučno deblo ≈ 2,5 cm; arterijska vez je ostanek ductus arteriosus. Pljučne arterije nosijo kri z malo kisika, pljučne vene s kisikom bogato kri." },
+      opisStudij: "Koren aorte meri ≈ 3 cm, pljučno deblo ≈ 2,5–3 cm; arterijska vez je ostanek ductus arteriosus. Pljučne arterije nosijo kri z malo kisika, pljučne vene s kisikom bogato kri." },
     { id: "vencne-zile", deli: ["vencne-arterije", "vencne-vene"], sinonimi: ["koronarne žile", "koronarke", "žile srca"],
       opisOs: "Žile, ki hranijo srčno mišico.",
       opis: "Venčne arterije izhajajo iz korena aorte tik nad aortno zaklopko; venčne vene se zbirajo v venčni sinus, ki se izliva v desni preddvor.",
@@ -41,7 +41,7 @@ export const SKUPINE = {
     { id: "medmozgani", deli: ["talamus", "hipotalamus"], sinonimi: ["diencefalon", "vmesni možgani"],
       opisOs: "Del sredi možganov, ki prenaša sporočila in uravnava telo.",
       opis: "Talamus je postaja za skoraj vse čutne poti do skorje, hipotalamus uravnava telesno temperaturo, lakoto, žejo in hormone (prek hipofize).",
-      opisStudij: "Diencephalon obdaja tretji ventrikel; talamus ima jedrne skupine (VPL/VPM za tip, LGN za vid, MGN za sluh), hipotalamus je s hipofizo povezan prek infundibula (oksitocin, ADH, sproščujoči hormoni)." },
+      opisStudij: "Diencephalon obdaja tretji ventrikel; talamus ima jedrne skupine (VPL/VPM za tip, LGN za vid, MGN za sluh), hipotalamus je s hipofizo povezan prek infundibula (oksitocin, ADH, sproščajoči hormoni)." },
   ],
   "organ-oko": [
     { id: "lomni-deli", deli: ["rozenica", "leca", "steklovina"], sinonimi: ["optični deli", "deli, ki lomijo svetlobo"],
@@ -74,8 +74,8 @@ export const SKUPINE = {
       opisStudij: "Leva ledvična vena je daljša in teče med aorto in a. mesenterica superior; arterija se v hilusu deli v segmentne arterije, ki so končne (brez povezav med seboj)." },
     { id: "odvodne-poti", deli: ["meh", "secevod"], sinonimi: ["sečne poti", "votli sistem ledvice", "ledvični meh in sečevod"],
       opisOs: "Poti, po katerih seč odteka iz ledvice.",
-      opis: "Seč s papil kaplja v male in velike čašice, ti se zlijejo v ledvični meh, iz njega gre seč po sečevodu v sečni mehur.",
-      opisStudij: "7–14 malih čašic se zlije v 2–3 velike in v meh; sečevod meri ≈ 25–30 cm in ima tri zožitve (ob mehu, ob prehodu čez črevnične žile, ob vstopu v mehur), kjer se zagozdijo kamni." },
+      opis: "Seč s papil kaplja v male in velike čašice, te se zlijejo v ledvični meh, iz njega gre seč po sečevodu v sečni mehur.",
+      opisStudij: "7–13 malih čašic se zlije v 2–3 velike in v meh; sečevod meri ≈ 25–30 cm in ima tri zožitve (ob mehu, ob prehodu čez črevnične žile, ob vstopu v mehur), kjer se zagozdijo kamni." },
   ],
   "organ-jetra": [
     { id: "reznji", deli: ["desni-rezenj", "levi-rezenj", "kvadratni-rezenj", "repasti-rezenj"], sinonimi: ["jetrni režnji", "lobusi"],

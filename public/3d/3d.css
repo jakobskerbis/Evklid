@@ -631,6 +631,8 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   /* telefon: deli v več vrstah (brez vodoravnega drsenja), najprej skupine in prvih 6 delov, ostali za »Pokaži vse« */
   .k3-organ .k3-deli { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; mask-image: none; }
   .k3-organ .k3-deli:not(.k3-deli-odprti) .k3-del-vec:not([aria-pressed="true"]) { display: none; }
+  /* dolgo ime dela (»Zaklopki spodnje votle vene in venčnega sinusa«) se prelomi, ne seže čez rob pri 360 px */
+  .k3-organ .k3-del { flex: 0 1 auto; max-width: 100%; }
   .k3-organ .k3-deli:not(.k3-deli-odprti) .k3-deli-vsi { display: inline-flex; }
   .k3-namig { max-width: calc(100% - 32px); bottom: 10px; }
   .k3-namig-viden .k3-merilo { bottom: 62px; }
