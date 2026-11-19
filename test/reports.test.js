@@ -4,8 +4,9 @@ import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { messageCode, parseMessageCode } from "../server/reports.js";
 
-// Napaka, ki je koda ne ujame (račun ni zapisan v $…$); ujela bi jo AI pregleda.
-const REPLY = 'Ana, 7 krat 8 je 54.\n<<META subject=MAT topic="poštevanka" error=0 mode=A flag=none done=0>>';
+// Napaka, ki je koda ne ujame (račun ni zapisan v $…$); ujela bi jo AI pregleda. Model imena ne pozna in nagovori z
+// oznako {{IME}} (server/ime-oznaka.js, #845); odgovor z imenom v besedilu se ne shrani za druge.
+const REPLY = '{{IME}}, 7 krat 8 je 54.\n<<META subject=MAT topic="poštevanka" error=0 mode=A flag=none done=0>>';
 
 async function withServer(fn) {
   const store = openDb(":memory:");

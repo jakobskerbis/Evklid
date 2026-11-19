@@ -100,6 +100,24 @@ export function openFlag(flag, fallback = null) {
   return v === null ? fallback : v.trim();
 }
 
+// Pregled oznake (events.pregled, server/stiska-obvestilo.js): vrsta varnostnega okna ob stiski in čas, ko je skrbnik
+// oznako pregledal. Zapiše se ob vsaki oznaki razen »none« (ne samo ob stiski) in je dopolnjen na PREGLED_PAD znakov,
+// zato se iz baze po prisotnosti ali dolžini ne vidi, katera oznaka je stiska ali je bila pregledana.
+export const PREGLED_PAD = 96;
+export const sealPregled = (obj) => seal(JSON.stringify(obj || {}).padEnd(PREGLED_PAD));
+// Odšifriran pregled ({} ali { v, pregledano_ob, pregledal }); NULL ali neberljiv vrne `fallback` (privzeto null).
+export function openPregled(value, fallback = null) {
+  if (value === null || value === undefined) return fallback;
+  const s = unseal(value, null);
+  if (s === null) return fallback;
+  try {
+    const o = JSON.parse(s.trim());
+    return o && typeof o === "object" ? o : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 // JSON polje: zašifriran niz JSON; ob neberljivem zapisu vrne `fallback`.
 export const sealJson = (obj) => seal(JSON.stringify(obj));
 export function unsealJson(value, fallback) {
@@ -171,6 +189,8 @@ export const SEALED = [
   // oznak 90 dni: server/zasebnost.js RETENTION.flagDays.
   // pad: dopolnitev pred šifriranjem (sealFlag); clearIf: ob stiski se ob selitvi pobriše tudi tema (kot v addEvent).
   { table: "events", cols: ["flag"], where: "flag <> 'none'", pad: FLAG_PAD, clearIf: { value: "distress", cols: ["topic", "topic_id"] } },
+  // Pregled oznake (vrsta okna ob stiski, pregledano_ob; server/stiska-obvestilo.js), dopolnjen kot oznaka.
+  { table: "events", cols: ["pregled"], where: "pregled IS NOT NULL", pad: PREGLED_PAD, label: "events.pregled" },
 ];
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);

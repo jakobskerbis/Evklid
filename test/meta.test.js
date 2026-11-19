@@ -33,10 +33,11 @@ test("buildSystemPrompt fills placeholders and keeps LaTeX braces", () => {
   const p = buildSystemPrompt({
     settings: normalizeSettings({ subject: "KEM", personality_setting: "strog\n## Nov razdelek" }),
     weaknesses: ["ulomki"],
-    studentName: "Ana",
+    studentName: "Zarjanka",
   });
   assert.match(p, /Predmet: KEM/);
-  assert.match(p, /Ime učenca: Ana/);
+  assert.match(p, /Ime učenca: `\{\{IME\}\}` – oznaka/); // ime ne gre k ponudniku AI (server/ime-oznaka.js)
+  assert.doesNotMatch(p, /Zarjanka/);
   assert.match(p, /šibke točke učenca: ulomki/);
   assert.match(p, /\$3\{,\}5\$/);
   assert.match(p, /Osebnost\/tema: strog ## Nov razdelek/); // brez preloma vrstice

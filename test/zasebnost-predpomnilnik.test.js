@@ -60,7 +60,7 @@ test("odgovor z lastnim zanimanjem prvega otroka ne gre drugemu otroku", async (
 test("brez osebnih podatkov se odgovor še vedno ponovno uporabi (strošek)", async () => {
   await withServer(async ({ call, calls }) => {
     await ask(call, {}, "Ana");
-    await ask(call, {}, "Bor");
+    await ask(call, {}, "Mojca"); // isti slovnični spol (del ključa)
     assert.equal(calls(), 1, "drugi učenec dobi shranjen odgovor");
   });
 });
