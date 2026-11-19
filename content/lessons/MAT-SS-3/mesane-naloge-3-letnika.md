@@ -164,13 +164,23 @@ $x = \frac{20 \pm \sqrt{400 - 100}}{2} = 10 \pm 5\sqrt{3}$, torej $x \approx 1{,
 
 ## Povzetek
 
-- Mešana naloga je veriga: neznanka in omejitve, prevod v enačbo ali vektor, račun po poglavjih, izbor rešitev z omejitvami.
-- Število rešitev sistema je število skupnih točk krivulj; pri kvadratni enačbi ga pove diskriminanta, $D = 0$ pomeni tangento.
-- Kot med vektorjema: $\cos\varphi = \frac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$; pravokotnost: $\vec a \cdot \vec b = 0$.
-- Ploščina trikotnika iz dveh stranic in vmesnega kota: $S = \frac{1}{2}ab\sin\gamma$.
-- (višja raven) Racionalna neenačba: vse na eno stran, ničle in poli, tabela predznakov; z imenovalcem ne množi.
+- **Mešana naloga** je veriga: neznanka in omejitve, prevod v enačbo ali vektor, račun po poglavjih, izbor rešitev z omejitvami.
+- **Število rešitev** sistema je število skupnih točk krivulj.
+- Pri kvadratni enačbi ga pove diskriminanta; $D = 0$ pomeni tangento.
+
+**Kot med vektorjema:**
+
+$$\cos\varphi = \frac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$$
+
+- **Pravokotnost:** $\vec a \cdot \vec b = 0$.
+
+**Ploščina trikotnika** iz dveh stranic in vmesnega kota:
+
+$$S = \frac{1}{2}ab\sin\gamma$$
+
 - Polinom tretje stopnje z znano ničlo $x_0$ deliš z $x - x_0$ (Horner) in rešiš kvadratni faktor.
-- Podobna telesa: prostornina se spremeni s $k^3$.
+- **Podobna telesa:** prostornina se spremeni s $k^3$.
+- (višja raven) **Racionalna neenačba:** vse na eno stran, ničle in poli, tabela predznakov; z imenovalcem ne množi.
 
 ## Ponovitev
 

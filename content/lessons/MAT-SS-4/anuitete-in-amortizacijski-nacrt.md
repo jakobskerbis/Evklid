@@ -194,12 +194,28 @@ $D_3 = 3811{,}2512 - 2418{,}4854 \approx 1392{,}77$ €. Preizkus: $\dfrac{759{,
 
 ## Povzetek
 
-- Glavnica je znesek ob izbranem trenutku; naprej jo preračunamo z $\cdot r^k$, nazaj z $: r^k$, $r = 1 + \frac{p}{100}$.
-- Načelo ekvivalence glavnic: plačila so enakovredna, če so njihove vrednosti na isti trenutek enake.
-- Anuiteta $a$ je enak obrok ob koncu vsakega obdobja: $G_0 r^n = a \cdot \frac{r^n - 1}{r - 1}$, torej $a = G_0 \cdot \frac{r^n (r - 1)}{r^n - 1}$.
-- Ostanek dolga po $k$ obdobjih: $D_k = G_0 r^k - a \cdot \frac{r^k - 1}{r - 1}$.
-- Amortizacijski načrt: $o_k = D_{k-1} \cdot \frac{p}{100}$, $R_k = a - o_k$, $D_k = D_{k-1} - R_k$; zadnja vrstica se zapre z $D_n = 0$.
-- Obresti padajo, razdolžnine rastejo s faktorjem $r$; vsota razdolžnin je posojilo.
+- **Glavnica** je znesek ob izbranem trenutku.
+- Naprej jo preračunamo z $\cdot r^k$, nazaj z $: r^k$, kjer je $r = 1 + \frac{p}{100}$.
+- **Načelo ekvivalence glavnic**: plačila so enakovredna, če so njihove vrednosti na isti trenutek enake.
+
+**Anuiteta** $a$ je enak obrok ob koncu vsakega obdobja:
+
+$$G_0 r^n = a \cdot \frac{r^n - 1}{r - 1}$$
+
+$$a = G_0 \cdot \frac{r^n (r - 1)}{r^n - 1}$$
+
+**Ostanek dolga** po $k$ obdobjih:
+
+$$D_k = G_0 r^k - a \cdot \frac{r^k - 1}{r - 1}$$
+
+**Amortizacijski načrt**, vrstica $k$:
+
+- obresti $o_k = D_{k-1} \cdot \frac{p}{100}$,
+- razdolžnina $R_k = a - o_k$,
+- ostanek $D_k = D_{k-1} - R_k$.
+- Zadnja vrstica se zapre z $D_n = 0$.
+- Obresti padajo, razdolžnine rastejo s faktorjem $r$.
+- Vsota razdolžnin je posojilo.
 
 ## Ponovitev
 

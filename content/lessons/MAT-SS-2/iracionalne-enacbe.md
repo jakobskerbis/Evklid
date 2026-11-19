@@ -178,12 +178,24 @@ Ostane $x = 1$. Preizkus: $\sqrt{4} = 2$ in $1 + 1 = 2$. Kandidat $x = -4$ ne iz
 
 ## Povzetek
 
-- Iracionalna enačba ima neznanko pod korenom. Rešujemo jo tako, da koren osamimo in obe strani kvadriramo.
-- Pogoja za $\sqrt{A} = B$: $A \ge 0$ in $B \ge 0$, saj je koren nenegativen.
-- Kvadriranje ni ekvivalentno preoblikovanje: iz $a^2 = b^2$ sledi $a = b$ ali $a = -b$. Lahko doda navidezne rešitve, zato je preizkus v prvotni enačbi obvezen.
-- Na grafu: navidezna rešitev je presečišče z zrcalno krivuljo $y = -\sqrt{A}$.
+- **Iracionalna enačba** ima neznanko pod korenom.
+- Rešuješ jo tako, da koren osamiš in obe strani kvadriraš.
+- **Pogoja** za $\sqrt{A} = B$: $A \ge 0$ in $B \ge 0$, saj je koren nenegativen.
+- **Kvadriranje** ni ekvivalentno preoblikovanje: iz $a^2 = b^2$ sledi $a = b$ ali $a = -b$.
+- Zato lahko doda **navidezne rešitve**; preizkus v prvotni enačbi je obvezen.
+- Na grafu je navidezna rešitev presečišče z zrcalno krivuljo $y = -\sqrt{A}$.
 - Dva korena: osami enega, kvadriraj, osami drugega, kvadriraj še enkrat; pazi na dvojni zmnožek.
-- Enačba $x^n = a$: pri lihem $n$ je $x = \sqrt[n]{a}$; pri sodem $n$ in $a > 0$ je $x = \pm\sqrt[n]{a}$; pri sodem $n$ in $a < 0$ ni realne rešitve. Isto dobiš z razstavljanjem.
+
+**Enačba** $x^n = a$:
+
+| $n$ | $a$ | Rešitev |
+|:-:|:-:|:-:|
+| lih | vsak | $x = \sqrt[n]{a}$ |
+| sod | $a > 0$ | $x = \pm\sqrt[n]{a}$ |
+| sod | $a < 0$ | ni realne rešitve |
+
+Isto dobiš z razstavljanjem.
+
 - Pri nalogi z besedilom rezultat razloži: kandidat, ki nima smisla (negativna površina), odpade.
 
 ## Ponovitev

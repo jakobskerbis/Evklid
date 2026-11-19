@@ -217,13 +217,26 @@ $p(x) = (x - z_1)(x - z_2)(x - z_3)$; pri realnih koeficientih je z $z$ ničla t
 
 ## Povzetek
 
-- Polinom: $p(x) = a_n x^n + \dots + a_1 x + a_0$, $a_n \ne 0$; $n$ je stopnja, $a_n$ vodilni koeficient, $a_0$ prosti člen.
-- Deljenje: $p(x) = q(x)\,k(x) + r(x)$, stopnja ostanka je manjša od stopnje delitelja. Delimo vodilna člena, pomnožimo nazaj, odštejemo cel izraz.
-- Izrek o ostanku: ostanek pri deljenju z $x - a$ je $p(a)$. Število $a$ je ničla natanko tedaj, ko $x - a$ deli $p$.
-- Hornerjev algoritem da hkrati $p(a)$ in količnik; manjkajoče potence nadomesti $0$, pri $x + c$ vzemi $a = -c$.
-- Cele ničle polinoma s celimi koeficienti so med delitelji prostega člena (oba predznaka). Polinom stopnje $n$ ima največ $n$ ničel.
-- Linearna funkcija je polinomska funkcija stopnje $1$, kvadratna funkcija stopnje $2$.
-- Osnovni izrek algebre: polinom stopnje $n \ge 1$ ima kompleksno ničlo, zato natanko $n$ kompleksnih ničel (štetih s stopnjo). Pri realnih koeficientih so nerealne ničle v konjugiranih parih; polinom lihe stopnje ima vsaj eno realno ničlo.
+**Polinom** stopnje $n$ ($a_n \ne 0$):
+
+$$p(x) = a_n x^n + \dots + a_1 x + a_0$$
+
+- $a_n$ je **vodilni koeficient**, $a_0$ **prosti člen**.
+- Linearna funkcija je polinomska funkcija stopnje $1$, kvadratna stopnje $2$.
+
+**Deljenje:**
+
+$$p(x) = q(x)\,k(x) + r(x)$$
+
+- Stopnja ostanka je manjša od stopnje delitelja.
+- Delimo vodilna člena, pomnožimo nazaj, odštejemo cel izraz.
+- **Izrek o ostanku:** ostanek pri deljenju z $x - a$ je $p(a)$.
+- Število $a$ je ničla natanko tedaj, ko $x - a$ deli $p$.
+- **Hornerjev algoritem** da hkrati $p(a)$ in količnik; manjkajoče potence nadomesti $0$, pri $x + c$ vzemi $a = -c$.
+- **Cele ničle** polinoma s celimi koeficienti so med delitelji prostega člena (oba predznaka).
+- Polinom stopnje $n$ ima največ $n$ ničel.
+- **Osnovni izrek algebre:** polinom stopnje $n \ge 1$ ima kompleksno ničlo, zato natanko $n$ kompleksnih ničel (štetih s stopnjo).
+- Pri realnih koeficientih so nerealne ničle v konjugiranih parih, zato ima polinom lihe stopnje vsaj eno realno ničlo.
 
 ## Ponovitev
 

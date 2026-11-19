@@ -183,12 +183,33 @@ $\int x^2\,e^x\,dx = x^2\,e^x - 2(x\,e^x - e^x) + C = (x^2 - 2x + 2)\,e^x + C$. 
 
 ## Povzetek
 
-- Integral produkta ni produkt integralov; rezultat vedno preveri z odvajanjem.
-- Per partes: $\int u\,v'\,dx = u\,v - \int u'\,v\,dx$; izhaja iz pravila za odvod produkta.
-- Za $u$ izberi del, ki se z odvajanjem poenostavi (polinom, $\ln x$), za $v'$ del, ki ga znaš integrirati ($e^x$, $\sin x$, $\cos x$, tudi $1$).
-- $\int x\,e^x\,dx = (x - 1)e^x + C$, $\int x \sin x\,dx = -x\cos x + \sin x + C$, $\int \ln x\,dx = x\ln x - x + C$; pri $x^2$ per partes dvakrat.
-- Racionalna funkcija: če je stopnja števca vsaj tolikšna kot stopnja imenovalca, najprej deli; imenovalec razcepi na različne linearne faktorje; $\frac{A}{x - a} + \frac{B}{x - b}$; $A$ in $B$ dobiš z vstavljanjem ničel imenovalca.
-- $\int \frac{k}{x - a}\,dx = k\ln\lvert x - a\rvert + C$, pri $\frac{1}{a - x}$ pa pride minus.
+- Integral produkta ni produkt integralov.
+- Rezultat vedno preveri z odvajanjem.
+
+**Per partes** (izhaja iz pravila za odvod produkta):
+
+$$\int u\,v'\,dx = u\,v - \int u'\,v\,dx$$
+
+- Za $u$ izberi del, ki se z odvajanjem poenostavi (polinom, $\ln x$).
+- Za $v'$ izberi del, ki ga znaš integrirati ($e^x$, $\sin x$, $\cos x$, tudi $1$).
+
+$$\int x\,e^x\,dx = (x - 1)e^x + C$$
+
+$$\int x \sin x\,dx = -x\cos x + \sin x + C$$
+
+$$\int \ln x\,dx = x\ln x - x + C$$
+
+- Pri $x^2$ uporabi per partes dvakrat.
+
+**Racionalna funkcija:**
+
+- Če je stopnja števca vsaj tolikšna kot stopnja imenovalca, najprej deli.
+- Imenovalec razcepi na različne linearne faktorje in zapiši $\frac{A}{x - a} + \frac{B}{x - b}$.
+- $A$ in $B$ dobiš z vstavljanjem ničel imenovalca.
+
+$$\int \frac{k}{x - a}\,dx = k\ln\lvert x - a\rvert + C$$
+
+- Pri $\frac{1}{a - x}$ pa pride minus.
 
 ## Ponovitev
 

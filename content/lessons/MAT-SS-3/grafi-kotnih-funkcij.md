@@ -384,12 +384,20 @@ $b = \frac{2\pi}{4} = \frac{\pi}{2}$. Val se začne na srednji črti pri $x = 1$
 
 ## Povzetek
 
-- Sinus in kosinus imata osnovno periodo $2\pi$ in zalogo vrednosti $[-1, 1]$; tangens ima periodo $\pi$ in asimptote pri $x = \frac{\pi}{2} + k\pi$; $\tan(bx)$ ima periodo $\frac{\pi}{|b|}$.
-- Ničle: $\sin x = 0$ pri $x = k\pi$, $\cos x = 0$ pri $x = \frac{\pi}{2} + k\pi$.
-- $f(x) = A\sin\big(b(x - c)\big) + d$: amplituda $|A|$, perioda $T = \dfrac{2\pi}{|b|}$.
+- **Sinus** in **kosinus** imata osnovno periodo $2\pi$ in zalogo vrednosti $[-1, 1]$.
+- **Tangens** ima periodo $\pi$ in asimptote pri $x = \frac{\pi}{2} + k\pi$; $\tan(bx)$ ima periodo $\frac{\pi}{|b|}$.
+- **Ničle:** $\sin x = 0$ pri $x = k\pi$, $\cos x = 0$ pri $x = \frac{\pi}{2} + k\pi$.
+
+**Splošna sinusna funkcija:**
+
+$$f(x) = A\sin\big(b(x - c)\big) + d$$
+
+- **Amplituda** je $|A|$, **perioda** $T = \dfrac{2\pi}{|b|}$.
 - $c > 0$: premik v desno za $c$; $d > 0$: premik navzgor za $d$.
-- Zaloga vrednosti: $[d - |A|,\ d + |A|]$.
-- Pred branjem premika izpostavi $b$: $\sin(bx - p) = \sin\big(b(x - \frac{p}{b})\big)$.
+- **Zaloga vrednosti:** $[d - |A|,\ d + |A|]$.
+- Pred branjem premika izpostavi $b$:
+
+$$\sin(bx - p) = \sin\big(b(x - \tfrac{p}{b})\big)$$
 
 ## Ponovitev
 

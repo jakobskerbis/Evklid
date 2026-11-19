@@ -225,11 +225,27 @@ $\binom{5}{2} \cdot 8 \cdot 1 = 10 \cdot 8 = 80$. Predznak je pozitiven, ker je 
 
 ## Povzetek
 
-- Pascalov trikotnik: robovi so $1$, notranje število je vsota sosedov nad njim; vrstica $n$ (štejemo od $0$) ima vsoto $2^n$.
-- Binomski simbol $\binom{n}{k} = C_n^k = \frac{n!}{k!\,(n-k)!}$ je $k$-to število vrstice $n$.
-- Binomski izrek: $(a+b)^n = \binom{n}{0}a^n + \binom{n}{1}a^{n-1}b + \dots + \binom{n}{n}b^n$; $n + 1$ členov, eksponenti pri $a$ padajo, pri $b$ rastejo, vsota je vedno $n$.
-- Splošni člen $T_{k+1} = \binom{n}{k}a^{n-k}b^k$; za člen z $x^m$ izenači eksponent z $m$ in izračunaj $k$.
-- $(a-b)^n$: predznaki se izmenjujejo; potenciraj cel člen, tudi število.
+- **Pascalov trikotnik**: robovi so $1$, notranje število je vsota sosedov nad njim.
+- Vrstica $n$ (štejemo od $0$) ima vsoto $2^n$.
+
+**Binomski simbol** je $k$-to število vrstice $n$:
+
+$$\binom{n}{k} = C_n^k = \frac{n!}{k!\,(n-k)!}$$
+
+**Binomski izrek:**
+
+$$(a+b)^n = \binom{n}{0}a^n + \dots + \binom{n}{n}b^n$$
+
+- Drugi člen je $\binom{n}{1}a^{n-1}b$; vseh členov je $n + 1$.
+- Eksponenti pri $a$ padajo, pri $b$ rastejo, vsota je vedno $n$.
+
+**Splošni člen:**
+
+$$T_{k+1} = \binom{n}{k}a^{n-k}b^k$$
+
+- Za člen z $x^m$ izenači eksponent z $m$ in izračunaj $k$.
+- Pri $(a-b)^n$ se predznaki izmenjujejo.
+- Potenciraj cel člen, tudi število.
 
 ## Ponovitev
 

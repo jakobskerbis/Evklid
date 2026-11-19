@@ -166,13 +166,17 @@ Povezanost je negativna in precej močna: ob vetrovnejših dneh je bilo v povpre
 
 ## Povzetek
 
-- Statistična naloga: tema, preiskovalno vprašanje, zbiranje, urejanje, analiza, prikaz in interpretacija.
-- Populacija so vse enote, vzorec izmerjeni del; vzorec mora biti reprezentativen.
-- Podatki iz merjenja, opazovanja, ankete ali obstoječih virov; spremenljivka je številska ali opisna.
-- Dve številski spremenljivki prikažemo z razsevnim diagramom: vsaka enota je točka $(x_i, y_i)$.
-- Povezanost je pozitivna, negativna ali je ni; močna, če so točke blizu premice. Korelacijski koeficient je med $-1$ in $1$.
+- **Statistična naloga:** tema, preiskovalno vprašanje, zbiranje, urejanje, analiza, prikaz in interpretacija.
+- **Populacija** so vse enote, **vzorec** izmerjeni del.
+- Vzorec mora biti **reprezentativen**.
+- Podatki so iz merjenja, opazovanja, ankete ali obstoječih virov.
+- **Spremenljivka** je številska ali opisna.
+- Dve številski spremenljivki prikažemo z **razsevnim diagramom**: vsaka enota je točka $(x_i, y_i)$.
+- **Povezanost** je pozitivna, negativna ali je ni; močna je, če so točke blizu premice.
+- **Korelacijski koeficient** je med $-1$ in $1$.
 - Pri opisni in številski spremenljivki primerjamo sredini (in mediani) skupin.
-- Povezanost ni dokaz vzroka; v interpretaciji navedi omejitve.
+- Povezanost ni dokaz vzroka.
+- V interpretaciji navedi omejitve.
 
 ## Ponovitev
 

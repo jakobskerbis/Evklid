@@ -168,11 +168,26 @@ Odštejemo $3$: $1{,}2x = 24$. Delimo z $1{,}2$: $x = 20$. Preizkus: $1{,}2 \cdo
 
 ## Povzetek
 
-- Linearna funkcija: $f(x) = kx + n$, graf je premica.
-- $k$ je smerni koeficient: $k > 0$ narašča, $k < 0$ pada, $k = 0$ je konstantna funkcija.
-- $n$ je začetna vrednost: premica seka os $y$ v točki $(0, n)$.
-- Iz dveh točk: $k = \dfrac{y_2 - y_1}{x_2 - x_1}$, nato $n$ dobimo z vstavitvijo ene točke.
-- Ničla: $x_0 = -\dfrac{n}{k}$ (za $k \ne 0$), presečišče z osjo $x$.
+**Linearna funkcija** (graf je premica):
+
+$$f(x) = kx + n$$
+
+- $k$ je **smerni koeficient**:
+
+| $k > 0$ | $k < 0$ | $k = 0$ |
+|:-:|:-:|:-:|
+| narašča | pada | konstantna |
+
+- $n$ je **začetna vrednost**: premica seka os $y$ v točki $(0, n)$.
+- **Iz dveh točk** najprej izračunaj:
+
+$$k = \dfrac{y_2 - y_1}{x_2 - x_1}$$
+
+- Nato $n$ dobimo z vstavitvijo ene točke.
+- **Ničla** je presečišče z osjo $x$; za $k \ne 0$:
+
+$$x_0 = -\dfrac{n}{k}$$
+
 - Vedno preveri z vstavljanjem v funkcijo.
 
 ## Ponovitev

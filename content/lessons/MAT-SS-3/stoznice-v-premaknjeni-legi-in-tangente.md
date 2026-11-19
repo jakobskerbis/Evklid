@@ -265,13 +265,32 @@ $0{,}2x - 0{,}4 + 0{,}4y + 1{,}2 = 1$, torej $0{,}2x + 0{,}4y = 0{,}2$ in po mno
 
 ## Povzetek
 
-- Elipsa s središčem $S(x_0, y_0)$: $\frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1$; gorišči $(x_0 \pm e, y_0)$, $e = \sqrt{a^2 - b^2}$. Krožnica je primer $a = b = r$.
-- Splošno obliko prevedeš z dopolnjevanjem do popolnega kvadrata; dodano odšteješ, pomnoženo s koeficientom; nato deliš, da je desno $1$.
+**Elipsa** s središčem $S(x_0, y_0)$:
+
+$$\frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1$$
+
+- Gorišči $(x_0 \pm e, y_0)$, $e = \sqrt{a^2 - b^2}$.
+- **Krožnica** je primer $a = b = r$.
+- **Splošno obliko** prevedeš z dopolnjevanjem do popolnega kvadrata; dodano odšteješ, pomnoženo s koeficientom; nato deliš, da je desno $1$.
 - (višja raven) Elipsa nastane iz krožnice $x^2 + y^2 = a^2$ z raztegom vzdolž osi $y$ s faktorjem $\frac{b}{a}$.
-- (višja raven) Hiperbola: $\frac{(x - x_0)^2}{a^2} - \frac{(y - y_0)^2}{b^2} = 1$, asimptoti $y - y_0 = \pm\frac{b}{a}(x - x_0)$, $e = \sqrt{a^2 + b^2}$.
-- (višja raven) Parabola: $(y - y_0)^2 = 2p(x - x_0)$, gorišče $\left(x_0 + \frac{p}{2}, y_0\right)$, vodnica $x = x_0 - \frac{p}{2}$.
-- Presečišča stožnice s premico: eno spremenljivko iz premice vstaviš v enačbo stožnice; vsaka rešitev da eno presečišče.
-- (višja raven) Tangenta v točki stožnice: en faktor vsakega kvadrata zamenjaš s koordinato točke. Tangenta z dano smerjo ali skozi zunanjo točko: vstaviš $y = kx + n$ in zahtevaš $D = 0$.
+
+**Hiperbola** (višja raven):
+
+$$\frac{(x - x_0)^2}{a^2} - \frac{(y - y_0)^2}{b^2} = 1$$
+
+- Asimptoti $y - y_0 = \pm\frac{b}{a}(x - x_0)$, $e = \sqrt{a^2 + b^2}$.
+
+**Parabola** (višja raven):
+
+$$(y - y_0)^2 = 2p(x - x_0)$$
+
+- Gorišče $\left(x_0 + \frac{p}{2}, y_0\right)$, vodnica $x = x_0 - \frac{p}{2}$.
+
+**Stožnica in premica:**
+
+- **Presečišča**: eno spremenljivko iz premice vstaviš v enačbo stožnice; vsaka rešitev da eno presečišče.
+- (višja raven) **Tangenta v točki** stožnice: en faktor vsakega kvadrata zamenjaš s koordinato točke.
+- (višja raven) **Tangenta z dano smerjo** ali skozi zunanjo točko: vstaviš $y = kx + n$ in zahtevaš $D = 0$.
 
 ## Ponovitev
 

@@ -186,12 +186,32 @@ $d = \sqrt{48100} \approx 219{,}3\,\text{cm}$. Obe diagonali morata meriti pribl
 
 ## Povzetek
 
-- Vsota kotov v štirikotniku: $360^\circ$. Paralelogram: $S = a \cdot v_a$; diagonali se razpolavljata.
-- Romb in deltoid: $S = \dfrac{e \cdot f}{2}$, diagonali sta pravokotni. Trapez: $S = \dfrac{(a + c)\, v}{2}$.
-- Diagonala kvadrata $a\sqrt{2}$, pravokotnika $\sqrt{a^2 + b^2}$.
-- Krog: $o = 2\pi r$, $S = \pi r^2$. Lok $l = \dfrac{\pi r \alpha}{180^\circ}$, izsek $S = \dfrac{\pi r^2 \alpha}{360^\circ}$.
-- Obodni kot je polovica središčnega; obodni kot nad premerom je pravi (Talesov izrek).
-- Tetivni štirikotnik: vsota nasprotnih kotov je $180^\circ$. Tangentni: $a + c = b + d$.
+- Vsota kotov v štirikotniku je $360^\circ$.
+
+| Lik | Ploščina |
+|:-:|:-:|
+| paralelogram | $a \cdot v_a$ |
+| romb, deltoid | $\frac{e \cdot f}{2}$ |
+| trapez | $\frac{(a + c)\, v}{2}$ |
+
+- Diagonali paralelograma se razpolavljata.
+- Diagonali romba in deltoida sta pravokotni.
+- Diagonala kvadrata je $a\sqrt{2}$, pravokotnika $\sqrt{a^2 + b^2}$.
+
+**Krog:**
+
+$$o = 2\pi r \qquad S = \pi r^2$$
+
+**Lok** in **izsek** za središčni kot $\alpha$:
+
+$$l = \dfrac{\pi r \alpha}{180^\circ}$$
+
+$$S = \dfrac{\pi r^2 \alpha}{360^\circ}$$
+
+- **Obodni kot** je polovica središčnega.
+- **Talesov izrek**: obodni kot nad premerom je pravi.
+- **Tetivni štirikotnik**: vsota nasprotnih kotov je $180^\circ$.
+- **Tangentni štirikotnik**: $a + c = b + d$.
 
 ## Ponovitev
 

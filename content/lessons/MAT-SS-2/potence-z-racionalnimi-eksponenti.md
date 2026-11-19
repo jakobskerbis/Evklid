@@ -168,11 +168,28 @@ $\dfrac{4 \cdot \sqrt{4}}{8} = \dfrac{4 \cdot 2}{8} = 1$. Preverjanje v prvotnem
 
 ## Povzetek
 
-- Za $a > 0$, $m \in \mathbb{Z}$, $n \in \mathbb{N}$, $n \ge 2$: $a^{\frac{m}{n}} = \sqrt[n]{a^m} = \left(\sqrt[n]{a}\right)^m$; posebej $a^{\frac{1}{n}} = \sqrt[n]{a}$ in $a^{\frac{1}{2}} = \sqrt{a}$.
-- Imenovalec eksponenta je stopnja korena, števec je eksponent potence.
-- $a^{-\frac{m}{n}} = \dfrac{1}{a^{\frac{m}{n}}}$: negativni eksponent pomeni obratno vrednost.
-- Osnova mora biti pozitivna (pri osnovi $0$ eksponent pozitiven); potenc z negativno osnovo in racionalnim eksponentom ne pišemo.
-- Pravila: $a^r a^s = a^{r+s}$, $a^r : a^s = a^{r-s}$, $(a^r)^s = a^{rs}$, $(ab)^r = a^r b^r$.
+**Definicija** za $a > 0$, $m \in \mathbb{Z}$, $n \in \mathbb{N}$, $n \ge 2$:
+
+$$a^{\frac{m}{n}} = \sqrt[n]{a^m} = \left(\sqrt[n]{a}\right)^m$$
+
+Posebej:
+
+$$a^{\frac{1}{n}} = \sqrt[n]{a}, \quad a^{\frac{1}{2}} = \sqrt{a}$$
+
+- **Imenovalec** eksponenta je stopnja korena, **števec** je eksponent potence.
+- **Negativni eksponent** pomeni obratno vrednost:
+
+$$a^{-\frac{m}{n}} = \frac{1}{a^{\frac{m}{n}}}$$
+
+- Osnova mora biti pozitivna (pri osnovi $0$ eksponent pozitiven).
+- Potenc z negativno osnovo in racionalnim eksponentom ne pišemo.
+
+**Pravila:**
+
+$$a^r a^s = a^{r+s}, \quad a^r : a^s = a^{r-s}$$
+
+$$(a^r)^s = a^{rs}, \quad (ab)^r = a^r b^r$$
+
 - Korene pretvori v potence, uporabi pravila in rezultat zapiši nazaj s korenom.
 
 ## Ponovitev

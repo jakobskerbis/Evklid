@@ -280,13 +280,34 @@ Večina napak ni v formulah, ampak v predznakih in vrstnem redu.
 
 ## Povzetek
 
-- Točka v ravnini je $T(x, y)$: najprej abscisa, nato ordinata. Osi razdelita ravnino na štiri kvadrante.
-- Razdalja: $d(A, B) = \sqrt{(x_B - x_A)^2 + (y_B - y_A)^2}$; to je Pitagorov izrek za kateti $|x_B - x_A|$ in $|y_B - y_A|$. Vrstni red točk ni pomemben.
-- Razpolovišče: $S_{AB}\left(\dfrac{x_A + x_B}{2}, \dfrac{y_A + y_B}{2}\right)$, povprečje koordinat krajišč. Iz $A$ in $S_{AB}$ dobiš $B$ z $x_B = 2x_S - x_A$, $y_B = 2y_S - y_A$.
-- Ploščina trikotnika: $u_1, u_2$ in $v_1, v_2$ sta premika od $A$ do $B$ in do $C$; $S = \frac{1}{2}|u_1 v_2 - u_2 v_1|$. Preizkus: očrtan pravokotnik minus trije robni trikotniki.
-- Ploščina $0$ pomeni, da so točke kolinearne.
-- Množica točk ob pogojih: $x \ge a$ je polravnina, $|y| < b$ pas $-b < y < b$; pri »in« vzamemo presek, pri »ali« unijo. Rob z $\le$, $\ge$ je poln, z $<$, $>$ črtkan.
+- **Točka** $T(x, y)$: najprej **abscisa**, nato **ordinata**.
+- Osi razdelita ravnino na štiri **kvadrante**.
 - Negativne koordinate piši v oklepaje.
+
+**Razdalja** $d = d(A, B)$ (Pitagorov izrek za kateti $|x_B - x_A|$ in $|y_B - y_A|$):
+
+$$d = \sqrt{(x_B - x_A)^2 + (y_B - y_A)^2}$$
+
+- Vrstni red točk ni pomemben.
+
+**Razpolovišče** je povprečje koordinat krajišč:
+
+$$S_{AB}\left(\dfrac{x_A + x_B}{2}, \dfrac{y_A + y_B}{2}\right)$$
+
+- Iz $A$ in $S_{AB}$ dobiš $B$: $x_B = 2x_S - x_A$, $y_B = 2y_S - y_A$.
+
+**Ploščina trikotnika** ($u_1, u_2$ in $v_1, v_2$ sta premika od $A$ do $B$ in do $C$):
+
+$$S = \frac{1}{2}|u_1 v_2 - u_2 v_1|$$
+
+- Preizkus: očrtan pravokotnik minus trije robni trikotniki.
+- Ploščina $0$ pomeni, da so točke **kolinearne**.
+
+**Množice točk:**
+
+- $x \ge a$ je polravnina, $|y| < b$ je pas $-b < y < b$.
+- Pri »in« vzamemo presek, pri »ali« unijo.
+- Rob z $\le$, $\ge$ je poln, z $<$, $>$ črtkan.
 
 ## Ponovitev
 

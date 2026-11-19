@@ -191,13 +191,29 @@ $c = d\tan 60^\circ = 5\sqrt{3} \approx 8{,}66\,\mathrm{cm}$.
 
 ## Povzetek
 
-- Dve premici v prostoru: sekajoči, vzporedni ali mimobežni (ni skupne točke, ni skupne ravnine).
-- Premica je pravokotna na ravnino, če je pravokotna na dve sekajoči se premici ravnine; potem je pravokotna na vsako premico ravnine.
-- Ravnini sta vzporedni ali se sekata v premici; pravokotni sta, če ena vsebuje pravokotnico na drugo.
-- Pravokotna projekcija točke je nožišče pravokotnice; kot med premico in ravnino je kot med premico in njeno projekcijo.
-- V pravokotnem trikotniku daljica–projekcija–razdalja: $\sin\varphi = \frac{v}{l}$, $\cos\varphi = \frac{p}{l}$, $\tan\varphi = \frac{v}{p}$.
+- **Dve premici** v prostoru se sekata, sta vzporedni ali mimobežni.
+- **Mimobežni** premici nimata skupne točke in ne ležita v skupni ravnini.
+- Premica je **pravokotna na ravnino**, če je pravokotna na dve sekajoči se premici ravnine; potem je pravokotna na vsako premico ravnine.
+- **Dve ravnini** sta vzporedni ali se sekata v premici.
+- Ravnini sta **pravokotni**, če ena vsebuje pravokotnico na drugo.
+- **Pravokotna projekcija** točke je nožišče pravokotnice.
+- **Kot med premico in ravnino** je kot med premico in njeno projekcijo.
+
+V pravokotnem trikotniku daljica $l$ – projekcija $p$ – razdalja $v$:
+
+$$\sin\varphi = \frac{v}{l},\quad \cos\varphi = \frac{p}{l}$$
+
+$$\tan\varphi = \frac{v}{p}$$
+
 - Telesna diagonala kocke oklepa z osnovno ploskvijo kot $\approx 35{,}26^\circ$, ne glede na rob.
-- (višja raven) Enako oddaljene od dveh točk: simetralna ravnina; od točke: sfera; od premice: valjasta ploskev.
+
+**Enako oddaljene točke** (višja raven):
+
+| Od | Ploskev |
+|---|---|
+| dveh točk | simetralna ravnina |
+| točke | sfera |
+| premice | valjasta ploskev |
 
 ## Ponovitev
 

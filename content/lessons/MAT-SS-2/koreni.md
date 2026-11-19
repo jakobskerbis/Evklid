@@ -246,14 +246,39 @@ $b = \sqrt[n]{a}$ pomeni $b^n = a$; na računalu tipka $\sqrt[\square]{\square}$
 
 ## Povzetek
 
-- $\sqrt{a}$ je definiran za $a \ge 0$ in je nenegativen; $\left(\sqrt{a}\right)^2 = a$, $\sqrt{x^2} = |x|$.
-- Za $a, b \ge 0$: $\sqrt{ab} = \sqrt{a}\sqrt{b}$ in $\sqrt{\dfrac{a}{b}} = \dfrac{\sqrt{a}}{\sqrt{b}}$ ($b > 0$); pri vsoti pravila ni: $\sqrt{a + b} \ne \sqrt{a} + \sqrt{b}$.
-- Sodi koren negativnega števila ni realen; lihi koren je: $\sqrt[3]{-8} = -2$.
-- Seštevamo samo istovrstne korene: $p\sqrt{b} + q\sqrt{b} = (p + q)\sqrt{b}$.
-- Delno korenjenje: $\sqrt{a^2 b} = a\sqrt{b}$ za $a, b \ge 0$; izvleči moraš največji popolni kvadrat.
-- Racionalizacija: $\dfrac{a}{\sqrt{b}} = \dfrac{a\sqrt{b}}{b}$.
-- Konjugirani izraz: $\left(\sqrt{a} - \sqrt{b}\right)\left(\sqrt{a} + \sqrt{b}\right) = a - b$.
-- Daljico $\sqrt{n}$ konstruiramo s Pitagorovim izrekom: kot hipotenuzo $\sqrt{p^2 + q^2}$ ali kot kateto $\sqrt{h^2 - p^2}$.
+- $\sqrt{a}$ je definiran za $a \ge 0$ in je nenegativen.
+
+$$\left(\sqrt{a}\right)^2 = a, \quad \sqrt{x^2} = |x|$$
+
+**Pravila** za $a, b \ge 0$ (pri ulomku $b > 0$):
+
+$$\sqrt{ab} = \sqrt{a}\,\sqrt{b}$$
+
+$$\sqrt{\frac{a}{b}} = \frac{\sqrt{a}}{\sqrt{b}}$$
+
+Pri vsoti pravila ni:
+
+$$\sqrt{a + b} \ne \sqrt{a} + \sqrt{b}$$
+
+- **Sodi koren** negativnega števila ni realen; **lihi** je: $\sqrt[3]{-8} = -2$.
+
+**Seštevaš samo istovrstne korene:**
+
+$$p\sqrt{b} + q\sqrt{b} = (p + q)\sqrt{b}$$
+
+**Delno korenjenje** ($a, b \ge 0$); izvleči moraš največji popolni kvadrat:
+
+$$\sqrt{a^2 b} = a\sqrt{b}$$
+
+**Racionalizacija:**
+
+$$\frac{a}{\sqrt{b}} = \frac{a\sqrt{b}}{b}$$
+
+**Konjugirani izraz:**
+
+$$\left(\sqrt{a} - \sqrt{b}\right)\left(\sqrt{a} + \sqrt{b}\right) = a - b$$
+
+- Daljico $\sqrt{n}$ konstruiraš s Pitagorovim izrekom: kot hipotenuzo $\sqrt{p^2 + q^2}$ ali kot kateto $\sqrt{h^2 - p^2}$.
 - Na računalu: tipka za $n$-ti koren ali potenca $a^{1/n}$ z eksponentom v oklepaju; rezultat preveri s potenciranjem.
 
 ## Ponovitev

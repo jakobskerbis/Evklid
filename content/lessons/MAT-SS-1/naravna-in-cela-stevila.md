@@ -232,14 +232,31 @@ $a + b = b + a$, $\; a \cdot b = b \cdot a$, $\; (a + b) + c = a + (b + c)$, $\;
 
 ## Povzetek
 
-- $\mathbb{N} = \{1, 2, 3, \dots\}$, $\mathbb{N}_0 = \mathbb{N} \cup \{0\}$, $\mathbb{Z} = \{\dots, -2, -1, 0, 1, 2, \dots\}$ in $\mathbb{N} \subset \mathbb{N}_0 \subset \mathbb{Z}$.
-- Seštevanje in množenje sta zamenljivi in združevalni, povezuje ju razčlenitev $a \cdot (b + c) = a \cdot b + a \cdot c$. Odštevanje in deljenje nista zamenljivi.
-- $a \mid b$ pomeni, da obstaja celo število $k$ z $b = k \cdot a$. Če $a \mid b$ in $a \mid c$, potem $a \mid (b \pm c)$.
-- Merila: $2$ (zadnja števka), $3$ in $9$ (vsota števk), $4$ (zadnji dve števki), $5$ (zadnja števka), $8$ (zadnje tri števke). Sestavljeno merilo (npr. za $6$) velja le za tuja delitelja.
-- Deljenje z ostankom: $a = q \cdot b + r$ z $0 \le r < b$.
-- Praštevilo ima natanko dva pozitivna delitelja; $1$ ni praštevilo. Vsako število $n > 1$ je na en sam način produkt praštevil.
-- $D(a, b)$: skupni prafaktorji z manjšim eksponentom. $v(a, b)$: vsi prafaktorji z večjim eksponentom. (Višja raven) velja $D(a, b) \cdot v(a, b) = a \cdot b$.
-- (višja raven) Evklidov algoritem: $D(a, b) = D(b, r)$, ponavljamo do ostanka $0$.
+- $\mathbb{N} = \{1, 2, 3, \dots\}$ in $\mathbb{N}_0 = \mathbb{N} \cup \{0\}$.
+- $\mathbb{Z} = \{\dots, -2, -1, 0, 1, 2, \dots\}$ in $\mathbb{N} \subset \mathbb{N}_0 \subset \mathbb{Z}$.
+- Seštevanje in množenje sta zamenljivi in združevalni; odštevanje in deljenje nista zamenljivi.
+- **Razčlenitev** ju povezuje:
+
+$$a \cdot (b + c) = a \cdot b + a \cdot c$$
+
+- $a \mid b$ pomeni, da obstaja celo število $k$ z $b = k \cdot a$.
+- Če $a \mid b$ in $a \mid c$, potem $a \mid (b \pm c)$.
+
+| deljivost z | glej |
+|:-:|:-:|
+| $2$, $5$ | zadnjo števko |
+| $4$ | zadnji dve števki |
+| $8$ | zadnje tri števke |
+| $3$, $9$ | vsoto števk |
+
+- Sestavljeno merilo (npr. za $6$) velja le za **tuja** delitelja.
+- **Deljenje z ostankom:** $a = q \cdot b + r$ z $0 \le r < b$.
+- **Praštevilo** ima natanko dva pozitivna delitelja; $1$ ni praštevilo.
+- Vsako število $n > 1$ je na en sam način produkt praštevil.
+- $D(a, b)$: skupni prafaktorji z manjšim eksponentom.
+- $v(a, b)$: vsi prafaktorji z večjim eksponentom.
+- (višja raven) $D(a, b) \cdot v(a, b) = a \cdot b$.
+- (višja raven) **Evklidov algoritem:** $D(a, b) = D(b, r)$, ponavljamo do ostanka $0$.
 
 ## Ponovitev
 

@@ -239,13 +239,26 @@ $x' = x_S + k\,(x - x_S)$, $\;y' = y_S + k\,(y - y_S)$; ploščina slike je $k^2
 
 ## Povzetek
 
-- Trikotnika sta podobna, če imata enake ustrezne kote in enaka razmerja ustreznih stranic. Razmerje je koeficient podobnosti $k$.
+- Trikotnika sta **podobna**, če imata enake ustrezne kote in enaka razmerja ustreznih stranic.
+- To razmerje je **koeficient podobnosti** $k$.
 - Dovolj je ujemanje v dveh kotih (KK) ali eden od izrekov SSS, SKS, SSK.
 - Razmerje dolžin je $k$, razmerje ploščin je $k^2$.
-- V pravokotnem trikotniku višina na hipotenuzo razdeli hipotenuzo na odseka $c_a$ in $c_b$ ter trikotnik na dva podobna trikotnika.
-- Evklidov izrek: $a^2 = c \cdot c_a$, $b^2 = c \cdot c_b$.
-- Višinski izrek: $v_c^2 = c_a \cdot c_b$.
-- Središčni razteg s središčem $S$ in koeficientom $k \ne 0$: $|ST'| = |k| \cdot |ST|$; pri $k < 0$ je $T'$ na drugi strani $S$. Slika je podobna liku s koeficientom $|k|$, ploščina se pomnoži s $k^2$.
+- V pravokotnem trikotniku višina na hipotenuzo razdeli hipotenuzo na odseka $c_a$ in $c_b$, trikotnik pa na dva podobna trikotnika.
+
+**Evklidov izrek:**
+
+$$a^2 = c \cdot c_a, \quad b^2 = c \cdot c_b$$
+
+**Višinski izrek:**
+
+$$v_c^2 = c_a \cdot c_b$$
+
+**Središčni razteg** s središčem $S$ in koeficientom $k \ne 0$:
+
+$$|ST'| = |k| \cdot |ST|$$
+
+- Pri $k < 0$ je $T'$ na drugi strani $S$.
+- Slika je podobna liku s koeficientom $|k|$; ploščina se pomnoži s $k^2$.
 - Pri nalogah najprej nariši skico, označi enake kote in šele nato zapiši sorazmerje.
 
 ## Ponovitev

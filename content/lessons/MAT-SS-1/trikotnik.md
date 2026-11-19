@@ -230,14 +230,34 @@ Zunanji kot $\varphi' = 180^\circ - \varphi = \dfrac{360^\circ}{n}$; $\;d_n = \d
 
 ## Povzetek
 
-- Vsota notranjih kotov: $\alpha + \beta + \gamma = 180^\circ$; zunanji kot je enak vsoti nenaležnih notranjih.
-- Trikotniška neenakost: $|a - b| < c < a + b$ (za vse tri stranice).
-- Skladnost: SSS, SKS, KSK, SsK (kot nasproti daljše stranice).
-- Simetrale stranic dajo središče očrtane krožnice, simetrale kotov središče včrtane krožnice.
-- Težiščnice se sekajo v težišču, ki deli težiščnico $2:1$ od oglišča; višine se sekajo v višinski točki.
-- Včrtana krožnica: $r = \dfrac{S}{s}$; v pravokotnem trikotniku je $R = \dfrac{c}{2}$.
-- Pitagorov izrek v pravokotnem trikotniku: $a^2 + b^2 = c^2$.
-- $n$-kotnik: vsota notranjih kotov $(n - 2) \cdot 180^\circ$, vsota zunanjih $360^\circ$, diagonal $\frac{n(n - 3)}{2}$; pravilni $n$-kotnik ima zunanji kot $\frac{360^\circ}{n}$.
+**Vsota notranjih kotov:**
+
+$$\alpha + \beta + \gamma = 180^\circ$$
+
+- **Zunanji kot** je enak vsoti nenaležnih notranjih.
+
+**Trikotniška neenakost** (za vse tri stranice):
+
+$$|a - b| < c < a + b$$
+
+- **Skladnost**: SSS, SKS, KSK, SsK (kot nasproti daljše stranice).
+
+- **Simetrale stranic** se sekajo v središču očrtane krožnice.
+- **Simetrale kotov** se sekajo v središču včrtane krožnice.
+- **Težiščnice** se sekajo v težišču, ki deli težiščnico v razmerju $2:1$ od oglišča.
+- **Višine** se sekajo v višinski točki.
+- **Včrtana krožnica**: $r = \dfrac{S}{s}$.
+- V pravokotnem trikotniku je $R = \dfrac{c}{2}$.
+
+**Pitagorov izrek** (pravokotni trikotnik):
+
+$$a^2 + b^2 = c^2$$
+
+**$n$-kotnik:**
+
+- Vsota notranjih kotov je $(n - 2) \cdot 180^\circ$, vsota zunanjih $360^\circ$.
+- Število diagonal je $\dfrac{n(n - 3)}{2}$.
+- Pravilni $n$-kotnik ima zunanji kot $\dfrac{360^\circ}{n}$.
 
 ## Ponovitev
 

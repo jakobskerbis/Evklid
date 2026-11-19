@@ -176,12 +176,31 @@ $f''(1) = -e^{-1} < 0$, zato je v $x = 1$ maksimum $f(1) = e^{-1} \approx 0{,}37
 
 ## Povzetek
 
-- Drugi odvod je odvod odvoda: $f''(x) = \bigl(f'(x)\bigr)'$; pove, kako se spreminja naklon tangente (pri gibanju: pospešek).
-- $f'' > 0$: funkcija je konveksna (graf nad tangentami, $\cup$); $f'' < 0$: konkavna (graf pod tangentami, $\cap$).
-- Prevoj je točka grafa, kjer se konveksnost in konkavnost zamenjata; tam $f''$ zamenja predznak in tangenta preseka graf.
-- $f''(x_0) = 0$ je le potreben pogoj: pri $x^4$ v $0$ prevoja ni.
-- Iskanje: $f''$, ničle $f''$, predznak na intervalih, ordinata $f(x_0)$.
-- Test ekstrema: $f'(a) = 0$ in $f''(a) > 0$ minimum, $f''(a) < 0$ maksimum, $f''(a) = 0$ ne odloči.
+**Drugi odvod** je odvod odvoda:
+
+$$f''(x) = \bigl(f'(x)\bigr)'$$
+
+- Pove, kako se spreminja naklon tangente (pri gibanju: pospešek).
+
+| $f''$ | funkcija | oblika |
+|:-:|:-:|:-:|
+| $> 0$ | konveksna | $\cup$ |
+| $< 0$ | konkavna | $\cap$ |
+
+- Graf konveksne funkcije leži nad tangentami, konkavne pod njimi.
+
+- **Prevoj** je točka grafa, kjer se konveksnost in konkavnost zamenjata.
+- V prevoju $f''$ zamenja predznak in tangenta preseka graf.
+- $f''(x_0) = 0$ je le **potreben** pogoj: pri $x^4$ v $0$ prevoja ni.
+- **Iskanje prevoja**: $f''$, ničle $f''$, predznak na intervalih, ordinata $f(x_0)$.
+
+**Test ekstrema** pri $f'(a) = 0$:
+
+| $f''(a)$ | v $a$ je |
+|:-:|:-:|
+| $> 0$ | minimum |
+| $< 0$ | maksimum |
+| $= 0$ | ne odloči |
 
 ## Ponovitev
 

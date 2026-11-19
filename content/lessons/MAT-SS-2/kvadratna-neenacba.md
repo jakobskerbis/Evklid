@@ -151,12 +151,27 @@ Nima. $D = 25600 - 26000 = -400 < 0$, parabola je odprta navzgor in je vsa nad o
 
 ## Povzetek
 
-- Kvadratna neenačba: $ax^2 + bx + c > 0$ (ali $\ge$, $<$, $\le$), $a \ne 0$; rešitev je množica števil, zapisana z intervali.
+- **Kvadratna neenačba**: $ax^2 + bx + c > 0$ (ali $\ge$, $<$, $\le$), $a \ne 0$.
+- Rešitev je množica števil, zapisana z intervali.
 - Najprej vse prenesi na levo, da je na desni $0$.
-- Ničle poišči z $D = b^2 - 4ac$ in $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$; nariši skico parabole.
+
+**Ničle** poišči z diskriminanto in formulo, nato nariši skico parabole:
+
+$$D = b^2 - 4ac$$
+
+$$x_{1,2} = \frac{-b \pm \sqrt{D}}{2a}$$
+
 - $f(x) > 0$: graf nad osjo $x$; $f(x) < 0$: graf pod osjo $x$.
-- Za $a > 0$, $D > 0$: $f(x) < 0$ za $x \in (x_1, x_2)$, $f(x) > 0$ za $x \in (-\infty, x_1) \cup (x_2, \infty)$.
-- Strog neenačaj: ničle izključimo $( \;)$; nestrog: vključimo $[\;]$.
+
+**Za $a > 0$, $D > 0$:**
+
+| Neenačba | Rešitev |
+|:-:|:-:|
+| $f(x) < 0$ | $(x_1, x_2)$ |
+| $f(x) > 0$ | $(-\infty, x_1) \cup (x_2, \infty)$ |
+
+- **Strog** neenačaj ($<$, $>$): ničle izključiš, oklepaj $(\;)$.
+- **Nestrog** neenačaj ($\le$, $\ge$): ničle vključiš, oklepaj $[\;]$.
 - Pri $D < 0$ ima $ax^2 + bx + c$ za vse $x$ predznak koeficienta $a$.
 - Pri množenju ali deljenju z negativnim številom obrni neenačaj.
 

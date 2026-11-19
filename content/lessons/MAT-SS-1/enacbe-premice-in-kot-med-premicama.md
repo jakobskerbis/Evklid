@@ -212,11 +212,32 @@ $\alpha = \tan^{-1} \dfrac{4}{3} \approx 53{,}13^\circ$, zato $\varphi = 90^\cir
 
 ## Povzetek
 
-- Eksplicitna oblika $y = kx + n$; splošna $ax + by + c = 0$ (pri $b \neq 0$ je $k = -\frac{a}{b}$, pri $b = 0$ navpična premica $x = \text{konst.}$ brez $k$); odsekovna $\frac{x}{m} + \frac{y}{n} = 1$ ($m$, $n$ odseka na oseh).
-- Premica skozi točko: $y - y_1 = k(x - x_1)$; skozi dve točki najprej $k = \frac{y_2 - y_1}{x_2 - x_1}$.
-- Vzporedni premici: $k_1 = k_2$; pravokotni: $k_1 \cdot k_2 = -1$.
-- Naklonski kot: $k = \tan\alpha$, $0^\circ \le \alpha < 180^\circ$; na računalu $\tan^{-1}$ v stopinjah (DEG).
-- Kot med premicama: $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$, $0^\circ \le \varphi \le 90^\circ$; pri navpični premici uporabi naklonska kota.
+| oblika | enačba premice |
+|:-:|:-:|
+| eksplicitna | $y = kx + n$ |
+| splošna | $ax + by + c = 0$ |
+| odsekovna | $\frac{x}{m} + \frac{y}{n} = 1$ |
+
+- V odsekovni obliki sta $m$, $n$ odseka na oseh.
+- Iz splošne oblike pri $b \neq 0$ dobiš $k = -\frac{a}{b}$.
+- Pri $b = 0$ je premica **navpična**, $x = \text{konst.}$, in nima $k$.
+- **Premica skozi točko** $T(x_1, y_1)$:
+
+$$y - y_1 = k(x - x_1)$$
+
+- **Skozi dve točki** najprej izračunaj:
+
+$$k = \frac{y_2 - y_1}{x_2 - x_1}$$
+
+- **Vzporedni** premici: $k_1 = k_2$.
+- **Pravokotni** premici: $k_1 \cdot k_2 = -1$.
+- **Naklonski kot**: $k = \tan\alpha$, $0^\circ \le \alpha < 180^\circ$.
+- Na računalu uporabi $\tan^{-1}$ v stopinjah (DEG).
+- **Kot med premicama**, $0^\circ \le \varphi \le 90^\circ$:
+
+$$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$
+
+- Pri navpični premici uporabi naklonska kota.
 
 ## Ponovitev
 

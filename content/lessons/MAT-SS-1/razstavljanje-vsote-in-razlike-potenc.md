@@ -198,13 +198,31 @@ $31$ je prvi faktor, drugi faktor pa je $33 = 3 \cdot 11$. Torej je $1023 = 3 \c
 
 ## Povzetek
 
-- Razlika kubov: $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$. Vsota kubov: $a^3 + b^3 = (a + b)(a^2 - ab + b^2)$.
-- Znaki: v prvem oklepaju isti kot v nalogi, srednji člen nasprotni, zadnji vedno plus. Drugi oklepaj se z realnimi števili ne razstavi naprej.
-- $a^3 \pm b^3 \neq (a \pm b)^3$, drugi oklepaj ni $(a \pm b)^2$.
-- Postopek: najprej izpostavi skupni faktor, nato prepoznaj kube ($8x^3 = (2x)^3$), na koncu preizkus z množenjem.
-- (višja raven) $a^n - b^n = (a - b)(a^{n-1} + a^{n-2}b + \ldots + b^{n-1})$ za vsak $n$; $a^n + b^n = (a + b)(a^{n-1} - a^{n-2}b + \ldots + b^{n-1})$ le za lih $n$.
-- (višja raven) $a^2 + b^2$ in $a^4 + b^4$ nimata faktorja $a \pm b$. Uporaba: krajšanje ulomkov, npr. $\dfrac{x^5 - 1}{x - 1}$.
-- Pri razliki sodih potenc najprej razlika kvadratov ($x^6 - 1$). Deljivost: $2^{10} - 1 = 31 \cdot 33$, $1001 = 7 \cdot 11 \cdot 13$.
+**Razlika kubov:**
+
+$$a^3 - b^3 = (a - b)(a^2 + ab + b^2)$$
+
+**Vsota kubov:**
+
+$$a^3 + b^3 = (a + b)(a^2 - ab + b^2)$$
+
+- **Znaki**: v prvem oklepaju isti kot v nalogi, srednji člen nasprotni, zadnji vedno plus.
+- Drugi oklepaj se z realnimi števili ne razstavi naprej.
+- $a^3 \pm b^3 \neq (a \pm b)^3$, drugi oklepaj pa ni $(a \pm b)^2$.
+- **Postopek**: izpostavi skupni faktor, prepoznaj kube ($8x^3 = (2x)^3$), na koncu preizkus z množenjem.
+- Pri razliki sodih potenc najprej razlika kvadratov ($x^6 - 1$).
+- Deljivost: $2^{10} - 1 = 31 \cdot 33$, $1001 = 7 \cdot 11 \cdot 13$.
+
+**Višja raven** – za vsak $n$ ima $a^n - b^n$ faktor $a - b$, drugi faktor je
+
+$$a^{n-1} + a^{n-2}b + \ldots + b^{n-1}$$
+
+Le za lih $n$ ima $a^n + b^n$ faktor $a + b$, drugi faktor je
+
+$$a^{n-1} - a^{n-2}b + \ldots + b^{n-1}$$
+
+- $a^2 + b^2$ in $a^4 + b^4$ nimata faktorja $a \pm b$.
+- Uporaba: krajšanje ulomkov, npr. $\dfrac{x^5 - 1}{x - 1}$.
 
 ## Ponovitev
 

@@ -222,11 +222,26 @@ $k = -\frac{2 + 2}{1 + 4} = -\frac{4}{5} = -0{,}8$. Tangenta: $y - 2 = -0{,}8(x 
 
 ## Povzetek
 
-- $f$ je odvedljiva v $a$, če obstaja $f'(a)$: limiti diferenčnega količnika z leve in z desne obstajata in sta enaki.
+- $f$ je **odvedljiva** v $a$, če obstaja $f'(a)$: limiti diferenčnega količnika z leve in z desne obstajata in sta enaki.
 - Na grafu $f$ ni odvedljiva v vogalu ($|x|$), osti ($\sqrt[3]{x^2}$), pri navpični tangenti ($\sqrt[3]{x}$) in v točki nezveznosti.
-- (višja raven) Odvedljiva funkcija je zvezna, v točki in na intervalu; obrat ne velja ($|x|$). Nezvezna funkcija ni odvedljiva.
-- (višja raven) Implicitni odvod: obe strani enačbe odvajaj po $x$, $y$ je funkcija od $x$: $(y^2)' = 2y\,y'$, $(xy)' = y + x\,y'$; izrazi $y'$ in nato vstavi točko.
-- (višja raven) Krožnica $x^2 + y^2 = r^2$: $y' = -\frac{x}{y}$; pri $y = 0$ je tangenta navpična.
+
+**Višja raven:**
+
+- Odvedljiva funkcija je zvezna, v točki in na intervalu.
+- Obrat ne velja ($|x|$).
+- Nezvezna funkcija ni odvedljiva.
+- **Implicitni odvod:** obe strani enačbe odvajaj po $x$, $y$ je funkcija od $x$:
+
+$$(y^2)' = 2y\,y'$$
+
+$$(xy)' = y + x\,y'$$
+
+- Izrazi $y'$ in nato vstavi točko.
+- **Krožnica** $x^2 + y^2 = r^2$:
+
+$$y' = -\frac{x}{y}$$
+
+- Pri $y = 0$ je tangenta navpična.
 
 ## Ponovitev
 

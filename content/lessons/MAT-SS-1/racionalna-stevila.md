@@ -225,14 +225,31 @@ točka: 1,25 | 5/4 | modra
 
 ## Povzetek
 
-- Racionalno število je število oblike $\dfrac{a}{b}$, $a \in \mathbb{Z}$, $b \in \mathbb{N}$; velja $\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q}$.
-- Enakost ulomkov: $\dfrac{a}{b} = \dfrac{c}{d} \iff ad = bc$; krajšamo z največjim skupnim deliteljem, rezultat naj bo nekrajšljiv.
-- Vsota in razlika: skupni imenovalec. Zmnožek: $\dfrac{ac}{bd}$. Količnik: množi z obratno vrednostjo.
-- Decimalni zapis je končen ali periodičen. Nekrajšljiv ulomek ima končen zapis natanko tedaj, ko ima v imenovalcu samo praštevili $2$ in $5$.
-- Periodično število v ulomek: pomnoži z $10$, $100$, … in odštej, da »rep« izgine.
-- Primerjanje: skupni imenovalec ali $\dfrac{a}{b} < \dfrac{c}{d} \iff ad < bc$ ($b, d > 0$); levo na številski premici je manjše.
-- Gostost: med dvema racionalnima številoma je vedno še eno, npr. $\dfrac{p+q}{2}$.
-- V $\mathbb{Q}$ veljajo zamenljivost, združevalnost in razčlenitev; vsako število razen $0$ ima obratno vrednost. Odstotek je stotina: $\dfrac{5}{8} = 62{,}5\,\%$.
+**Racionalno število** je oblike $\dfrac{a}{b}$, $a \in \mathbb{Z}$, $b \in \mathbb{N}$. Velja:
+
+$$\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q}$$
+
+**Enakost ulomkov:**
+
+$$\dfrac{a}{b} = \dfrac{c}{d} \iff ad = bc$$
+
+- **Krajšamo** z največjim skupnim deliteljem; rezultat naj bo nekrajšljiv.
+- **Vsota in razlika**: skupni imenovalec.
+- **Zmnožek**: $\dfrac{a}{b} \cdot \dfrac{c}{d} = \dfrac{ac}{bd}$.
+- **Količnik**: množi z obratno vrednostjo.
+- **Decimalni zapis** je končen ali periodičen.
+- Nekrajšljiv ulomek ima končen zapis natanko tedaj, ko ima v imenovalcu samo praštevili $2$ in $5$.
+- **Periodično število** v ulomek: pomnoži z $10$, $100$, … in odštej, da »rep« izgine.
+
+**Primerjanje**: skupni imenovalec ali (za $b, d > 0$)
+
+$$\dfrac{a}{b} < \dfrac{c}{d} \iff ad < bc$$
+
+- Levo na številski premici je manjše.
+- **Gostost**: med racionalnima številoma $p$ in $q$ je vedno še eno, npr. $\dfrac{p+q}{2}$.
+- V $\mathbb{Q}$ veljajo zamenljivost, združevalnost in razčlenitev.
+- Vsako število razen $0$ ima obratno vrednost.
+- **Odstotek** je stotina: $\dfrac{5}{8} = 62{,}5\,\%$.
 
 ## Ponovitev
 

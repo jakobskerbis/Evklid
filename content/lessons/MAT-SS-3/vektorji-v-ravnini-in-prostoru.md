@@ -211,14 +211,31 @@ $\vec F = k\vec a + m\vec b$, po komponentah: $k a_x + m b_x = F_x$ in $k a_y + 
 
 ## Povzetek
 
-- Vektor ima dolžino, smer in usmerjenost; enaki puščici na različnih mestih sta isti vektor.
-- Vsota: pravilo trikotnika (puščico pripneš na konec prve) ali pravilo paralelograma (diagonala).
-- Po komponentah: $\vec a + \vec b = (a_x + b_x,\ a_y + b_y,\ a_z + b_z)$, $k\vec a = (ka_x,\ ka_y,\ ka_z)$.
-- Dolžina: $|\vec a| = \sqrt{a_x^2 + a_y^2 + a_z^2}$; v ravnini brez $a_z$.
-- $|\vec a + \vec b| \le |\vec a| + |\vec b|$; enakost le pri enako usmerjenih vektorjih.
-- $k < 0$ obrne usmerjenost, $|k\vec a| = |k| \cdot |\vec a|$; $\vec a - \vec b = \vec a + (-\vec b)$.
-- Krajevni vektor $\vec r_T = \overrightarrow{OT}$ ima za komponente koordinate točke $T$; $\overrightarrow{AB} = \vec r_B - \vec r_A$.
-- Bazo ravnine tvorita dva nekolinearna vektorja, bazo prostora trije nekoplanarni. Razstavljanje sile na dani smeri je razvoj po bazi (paralelogram).
+- **Vektor** ima dolžino, smer in usmerjenost.
+- Enaki puščici na različnih mestih sta isti vektor.
+- **Vsota**: pravilo trikotnika (puščico pripneš na konec prve) ali pravilo paralelograma (diagonala).
+
+**Po komponentah:**
+
+$$\vec a + \vec b = (a_x + b_x,\ a_y + b_y,\ a_z + b_z)$$
+
+$$k\vec a = (ka_x,\ ka_y,\ ka_z)$$
+
+- $k < 0$ obrne usmerjenost; $|k\vec a| = |k| \cdot |\vec a|$.
+- **Razlika**: $\vec a - \vec b = \vec a + (-\vec b)$.
+
+**Dolžina** (v ravnini brez $a_z$):
+
+$$|\vec a| = \sqrt{a_x^2 + a_y^2 + a_z^2}$$
+
+**Trikotniška neenakost** (enakost le pri enako usmerjenih vektorjih):
+
+$$|\vec a + \vec b| \le |\vec a| + |\vec b|$$
+
+- **Krajevni vektor** $\vec r_T = \overrightarrow{OT}$ ima za komponente koordinate točke $T$.
+- Velja $\overrightarrow{AB} = \vec r_B - \vec r_A$.
+- **Bazo** ravnine tvorita dva nekolinearna vektorja, bazo prostora trije nekoplanarni.
+- Razstavljanje sile na dani smeri je razvoj po bazi (paralelogram).
 
 ## Ponovitev
 

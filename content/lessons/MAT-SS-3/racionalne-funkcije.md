@@ -192,12 +192,31 @@ Pogoji: imenovalci $\ne 0$; obe strani pomnožimo z najmanjšim skupnim imenoval
 
 ## Povzetek
 
-- Racionalna funkcija: $f(x) = \dfrac{p(x)}{q(x)}$, definirana povsod razen v ničlah imenovalca.
-- Po krajšanju: ničle iz števca, poli iz imenovalca; okrajšan skupni faktor pusti luknjo.
-- Pol lihe stopnje: veji na nasprotnih straneh; pol sode stopnje: obe v isto smer. Pri polu je navpična asimptota.
-- Vodoravna asimptota: števec nižji $\Rightarrow y = 0$; enaki stopnji $\Rightarrow y = \frac{a_n}{b_n}$; števec višji za $1$ $\Rightarrow$ poševna asimptota (količnik pri deljenju).
-- Graf vodoravno asimptoto lahko seka, navpične nikoli.
-- Racionalna enačba: pogoji (imenovalci $\ne 0$), množenje z najmanjšim skupnim imenovalcem, rešitev, preizkus. Kandidat, ki je ničla kakega imenovalca, je navidezna rešitev.
+**Racionalna funkcija:**
+
+$$f(x) = \frac{p(x)}{q(x)}$$
+
+- Definirana je povsod razen v ničlah imenovalca.
+- Po krajšanju so **ničle** iz števca, **poli** iz imenovalca.
+- Okrajšan skupni faktor pusti **luknjo**.
+- Pri polu je **navpična asimptota**; graf je nikoli ne seka.
+
+- Pri polu **lihe stopnje** sta veji na nasprotnih straneh.
+- Pri polu **sode stopnje** gresta obe veji v isto smer.
+
+**Vodoravna asimptota** (primerjaj stopnji števca in imenovalca):
+
+| Stopnja števca | Asimptota |
+|---|---|
+| nižja | $y = 0$ |
+| enaka | $y = \frac{a_n}{b_n}$ |
+| višja za $1$ | poševna |
+
+- **Poševna asimptota** je količnik pri deljenju.
+
+- Graf **vodoravno asimptoto** lahko seka.
+- **Racionalna enačba:** pogoji (imenovalci $\ne 0$), množenje z najmanjšim skupnim imenovalcem, rešitev, preizkus.
+- Kandidat, ki je ničla kakega imenovalca, je **navidezna rešitev**.
 
 ## Ponovitev
 

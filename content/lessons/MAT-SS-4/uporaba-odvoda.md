@@ -208,13 +208,29 @@ $k_n = -\frac{1}{f'(a)}$; $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\rig
 
 ## Povzetek
 
-- Tangenta v $\bigl(a, f(a)\bigr)$: $y = f(a) + f'(a)(x - a)$; smerni koeficient je $f'(a)$.
-- Normala: pravokotna na tangento, $k_n = -\frac{1}{f'(a)}$; pri $f'(a) = 0$ je $x = a$.
-- Presečni kot (med tangentama): $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$; $k_1 k_2 = -1$: pravokotno.
+**Tangenta** v $\bigl(a, f(a)\bigr)$ ima smerni koeficient $f'(a)$:
+
+$$y = f(a) + f'(a)(x - a)$$
+
+**Normala** je pravokotna na tangento:
+
+$$k_n = -\frac{1}{f'(a)}$$
+
+- Pri $f'(a) = 0$ je normala $x = a$.
+
+**Presečni kot** med tangentama:
+
+$$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$
+
+- Pri $k_1 k_2 = -1$ sta pravokotni.
+
+**Naraščanje in ekstremi:**
+
 - $f' > 0$ na intervalu: $f$ narašča; $f' < 0$: $f$ pada.
-- Stacionarna točka: $f'(a) = 0$. Ekstrem je tam le, če $f'$ zamenja predznak ($+ \to -$ maksimum, $- \to +$ minimum).
+- **Stacionarna točka:** $f'(a) = 0$.
+- Ekstrem je tam le, če $f'$ zamenja predznak: $+ \to -$ maksimum, $- \to +$ minimum.
 - Vrednost ekstrema dobiš z vstavljanjem v $f$.
-- Ekstremalni problem: sestavi funkcijo ene spremenljivke, določi smiselni interval, reši $f' = 0$, preveri predznak in robove, odgovori v stavku z enotami.
+- **Ekstremalni problem:** sestavi funkcijo ene spremenljivke, določi smiselni interval, reši $f' = 0$, preveri predznak in robove, odgovori v stavku z enotami.
 
 ## Ponovitev
 

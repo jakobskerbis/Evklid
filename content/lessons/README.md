@@ -53,6 +53,13 @@ $s = v \cdot t$
 
 ## Povzetek
 Nekaj vrstic. Tutor ga dobi v kontekst, da razlaga skladno z učbenikom.
+Ob temi se pokaže kot »Bistvo«, zato mora biti pregleden na telefonu (j, 19. 11. 2026):
+- v alineji je **ena trditev** (ena definicija, eno pravilo); ključni pojem je odebeljen (`**Tavtologija** je …`);
+- ključna formula ali veriga enakosti stoji v svoji vrstici `$$…$$`, ne sredi stavka; deli z ⇒ ali ∨ v oklepajih,
+  da se dolga veriga zloži le pri ≡ ali =;
+- primerjavo (vezniki, vrste, lastnosti) povzame majhna tabela: največ 5 kratkih stolpcev, na 360 px brez pomikanja;
+- najdaljši je 1150 znakov (tutor dobi prvih 1200), vsebina ostane enaka kot v lekciji.
+Zgled: `MAT-SS-1/osnove-logike.md`.
 
 ## Drugače: Na sliki
 ## Drugače: Iz vsakdanjega življenja
