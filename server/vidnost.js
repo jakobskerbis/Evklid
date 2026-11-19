@@ -300,8 +300,42 @@ export const aboutPage = (store = false) => staticPage(PAGE, undefined, store);
 // measurement: samo za teste (stran z meritvijo); strežnik meritev pokaže le, če je OBJAVI_MERITEV (zdaj ne).
 export const whyPage = (measurement, store = false) => staticPage(WHY_PAGE, measurement, store);
 
+// Prijavljene napake na /zakaj-evklid (točka 47 izboljšav): koliko odgovorov inštruktorja in korakov lekcij so učenci
+// prijavili kot napačne in koliko jih je že rešenih (skrbnik jih zapre kot »Popravljeno«; stanja »ni napaka« ni, zato »rešene«, ne »popravljene«). Samo števila (brez besedil, učencev ali datumov prijav);
+// skrbnikove prijave iz klepeta (bug_reports kind = app) ne štejejo. Brez tabel (stara baza) → null.
+const sl4 = (n, [one, two, few, many]) => {
+  const m = Math.abs(n) % 100;
+  return m === 1 ? one : m === 2 ? two : m === 3 || m === 4 ? few : many;
+};
+export function reportStats(db) {
+  try {
+    const q = (sql) => db.prepare(sql).get();
+    const msg = q("SELECT COUNT(*) AS n, COALESCE(SUM(status = 'fixed'), 0) AS f FROM message_reports");
+    const les = q("SELECT COUNT(*) AS n, COALESCE(SUM(status = 'fixed'), 0) AS f FROM bug_reports WHERE kind = 'lesson'");
+    return { total: msg.n + les.n, fixed: msg.f + les.f };
+  } catch {
+    return null;
+  }
+}
+export function reportStatsHtml(st) {
+  if (!st) return "";
+  if (!st.total) return `<p class="about-text">Prijav doslej še ni bilo.</p>`;
+  const prijav = `${st.total} ${sl4(st.total, ["prijava", "prijavi", "prijave", "prijav"])}`;
+  // Naslonki pred številom: »od tega sta 2 že rešeni«, »od tega jih je 5 že rešenih«.
+  const [pred, part] = sl4(st.fixed, [["je", "rešena"], ["sta", "rešeni"], ["so", "rešene"], ["jih je", "rešenih"]]);
+  const popr = st.fixed === 0 ? "še nobena ni rešena" : `${pred} <b>${st.fixed}</b> že ${part}`;
+  return `<p class="about-text">Doslej: <b>${prijav}</b>, od tega ${popr}.</p>`;
+}
+
 // Pred statičnimi datotekami (server/app.js), da predloga /o-evklidu.html ne gre ven s spremenljivkami {{…}}.
-export function mountVidnost(app) {
+// store: baza za števec prijav na /zakaj-evklid (osveži se največ vsakih 10 minut); brez nje razdelek ostane brez števil.
+export function mountVidnost(app, store = null) {
+  let stats = { at: 0, html: "" };
+  const statsHtml = () => {
+    if (!store?.db) return "";
+    if (Date.now() - stats.at > 600_000) stats = { at: Date.now(), html: reportStatsHtml(reportStats(store.db)) };
+    return stats.html;
+  };
   const text = (type, make) => {
     let body = null;
     return (_req, res) => {
@@ -312,16 +346,16 @@ export function mountVidnost(app) {
   app.get("/robots.txt", text("text/plain; charset=utf-8", robotsTxt));
   app.get("/sitemap.xml", text("application/xml; charset=utf-8", sitemapXml));
   app.get("/llms.txt", text("text/plain; charset=utf-8", () => llmsTxt()));
-  for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, (store) => whyPage(undefined, store)]]) {
+  for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, (inStore) => whyPage(undefined, inStore)]]) {
     const page = {}; // splet in aplikacija iz trgovine (brez cen in /prenesi)
     app.get(route, (req, res) => {
-      const store = storeAppRequest(req) ? "trgovina" : "splet";
-      const html = page[store] || make(store === "trgovina");
-      if (process.env.NODE_ENV === "production") page[store] = html; // v razvoju brez predpomnjenja (datoteko urejamo)
+      const variant = storeAppRequest(req) ? "trgovina" : "splet"; // ne zasenči store (baza za števec prijav)
+      const html = page[variant] || make(variant === "trgovina");
+      if (process.env.NODE_ENV === "production") page[variant] = html; // v razvoju brez predpomnjenja (datoteko urejamo)
       res.set("Cache-Control", "no-cache");
       res.vary("User-Agent");
       res.vary("X-App-Channel");
-      res.type("html").send(html);
+      res.type("html").send(html.replace("<!--prijave-->", () => statsHtml()));
     });
     app.get(`${route}.html`, (_req, res) => res.redirect(301, route));
   }
