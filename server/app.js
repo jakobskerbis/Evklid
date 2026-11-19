@@ -1043,6 +1043,14 @@ export function createApp(store, opts = {}) {
     // Odgovori inštruktorja iz časa, ko je model ime še poznal: ime → oznaka (server/ime-oznaka.js).
     const meja = nameCutoff();
     const zgodovina = maskHistory(store.listMessages(conv.id).map((m) => ({ id: m.id, role: m.role, content: m.api_content })), student.name, meja.id);
+    // Učenčev korak v načinu brez razmisleka (brezplačni paket SŠ in faks): sodbo naj izreče hitri model z več
+    // razmisleka, kot v plačljivem paketu (LIMITS.stepThink, j 19. 11.). Meja porabe velja kot vedno: če rezerva za
+    // razmislek ne gre pod mejo, spodaj odgovori cenejši način (FALLBACK_MODES).
+    if (mode === "chat" && LIMITS.stepThink() && !image && !isFirst && (jeSs(student.settings) || jeFaks(student.settings))) {
+      const zadnji = zgodovina.filter((m) => m.role === "assistant").at(-1);
+      const zadnjiText = zadnji ? stripMeta((Array.isArray(zadnji.content) ? zadnji.content : [{ text: zadnji.content }]).map((b) => b.text || "").join("\n")) : "";
+      if (isClaim(text, zadnjiText)) mode = "think";
+    }
     const prior = staleImages(zgodovina);
     const reserveFor = (m, fallback = true) =>
       replyReserveUsd({
