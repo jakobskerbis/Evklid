@@ -1,8 +1,9 @@
-# Render: nova različica Evklida, ko nihče ne uporablja aplikacije. Tek se začne ob vsaki združitvi
-# v main in počaka na miren trenutek (preverja vsakih 5 min); novejša združitev ga zamenja.
-# Urnik vsako uro je le rezerva (GitHub urnike pogosto zamakne za ure).
-# Pravila v scripts/render-objava.js: miren strežnik → objava takoj; med uporabo največ 3 ure
-# čakanja; med objavama vsaj 1 ura (ponovni zagon s trajnim diskom pomeni ~1 minuto izpada).
+# Render: nova različica Evklida samo ponoči (3.–5. ura po ljubljanskem času), ko se nihče ne uči
+# (ponovni zagon s trajnim diskom pomeni ~1 minuto izpada; j, 19. 11. 2026). Tek ob združitvi v main
+# počaka na nočno okno, če je to v naslednjih ~3 urah, sicer konča; nočna urnika (0:47 in 1:47 UTC, tj.
+# 1:47/2:47 pozimi, 2:47/3:47 poleti) in urnik vsako uro (rezerva) objavo opravijo v oknu.
+# Pravila v scripts/render-objava.js: v oknu miren strežnik → takoj, zadnjih 30 min okna v vsakem primeru;
+# [nujno] na začetku naslova ali ročni zagon → takoj; med objavama vsaj 1 ura.
 # Deluje, ko je v GitHubu nastavljena skrivnost RENDER_DEPLOY_HOOK (Render > evklid > Settings > Deploy Hook).
 # Ročni zagon (Actions > Render > Run workflow) objavi takoj. Navodila: docs/posodobitve.md
 name: Render
@@ -11,6 +12,7 @@ on:
     branches: [main]
   schedule:
     - cron: "23 * * * *"
+    - cron: "47 0,1 * * *"
   workflow_dispatch:
 permissions:
   contents: read
