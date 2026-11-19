@@ -4459,21 +4459,5 @@
   "povabi.reward": "Cuando una familia a la que invites se suscriba y pague por primera vez, ambas familias recibirán un mes gratis.",
   "povabi.later": "Ahora no",
   "povabi.link": "Enlace para un amigo",
-  "povabi.shareText": "Estoy aprendiendo con Evklid. Pruébalo tú también:",
-  "np.ask.exam": "¿A qué NPZ te refieres?",
-  "np.ask.subject": "¿De qué asignatura es el ejercicio?",
-  "np.ask.level": "¿Nivel básico o superior?",
-  "np.ask.year": "¿De qué año es la prueba?",
-  "np.ask.pola": "¿De qué prueba es el ejercicio {n}?",
-  "np.ask.section": "¿De qué parte de la prueba es el ejercicio {n}?",
-  "np.plain": "Enviar como pregunta normal",
-  "np.ours": "Este es un ejercicio de Evklid al estilo de la prueba «{paper}», no el ejercicio original del RIC. El original está disponible gratis en ric.si.",
-  "np.figure": "La figura del ejercicio está en la prueba de Evklid.",
-  "np.openOurs": "Abrir en la prueba de Evklid",
-  "np.noOurs": "Aún no tenemos la versión de Evklid de «{paper}». Descarga el original de ric.si, ábrelo aquí y en el ejercicio {n} toca «{help}».",
-  "np.missing": "La versión de Evklid de «{paper}» no tiene el ejercicio {n}. Revisa el número del ejercicio.",
-  "np.download": "Descargar original: {file}",
-  "np.openOriginal": "Abrir original",
-  "np.pickHint": "Primero descarga el original y luego, en «Abrir original», elige el archivo {name}.",
-  "np.wrongFile": "Es otra prueba. Elige el archivo {name}."
+  "povabi.shareText": "Estoy aprendiendo con Evklid. Pruébalo tú también:"
 }

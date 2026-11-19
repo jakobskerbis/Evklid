@@ -1,0 +1,18 @@
+{
+  "np.ask.exam": "Bạn muốn nói NPZ nào?",
+  "np.ask.subject": "Bài này thuộc môn nào?",
+  "np.ask.level": "Mức cơ bản hay nâng cao?",
+  "np.ask.year": "Đề thi năm nào?",
+  "np.ask.pola": "Bài {n} thuộc đề nào?",
+  "np.ask.section": "Bài {n} thuộc phần nào của đề?",
+  "np.plain": "Gửi như câu hỏi thường",
+  "np.ours": "Đây là bài của Evklid theo phong cách đề «{paper}», không phải bài gốc của RIC. Đề gốc có miễn phí trên ric.si.",
+  "np.figure": "Hình của bài nằm trong đề của Evklid.",
+  "np.openOurs": "Mở trong đề của Evklid",
+  "np.noOurs": "Chưa có phiên bản Evklid cho «{paper}». Hãy tải đề gốc từ ric.si, mở ở đây và chạm «{help}» ở bài {n}.",
+  "np.missing": "Phiên bản Evklid của «{paper}» không có bài {n}. Hãy kiểm tra số bài.",
+  "np.download": "Tải đề gốc: {file}",
+  "np.openOriginal": "Mở đề gốc",
+  "np.pickHint": "Trước tiên tải đề gốc, sau đó ở «Mở đề gốc» chọn tệp {name}.",
+  "np.wrongFile": "Đây là đề khác. Hãy chọn tệp {name}."
+}

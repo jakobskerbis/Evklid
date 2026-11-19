@@ -110,3 +110,19 @@ test("paperContext: cela naloga z deli da inštruktorju rešitve vseh delov", ()
   assert.match(none, /has not sent the task text yet/);
   assert.match(none, /task 1-7/);
 });
+
+test("besedila naloge pole v klepetu: vsak jezik ima vse ključe in iste spremenljivke", async () => {
+  const { default: SL } = await import("../public/naloga-pole/besedila/sl.js");
+  const { UI_LANGUAGES } = await import("../public/i18n/languages.js");
+  const fs = await import("node:fs");
+  const vars = (s) => [...String(s).matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join();
+  for (const code of UI_LANGUAGES.filter((c) => c !== "sl")) {
+    const d = JSON.parse(fs.readFileSync(new URL(`../public/naloga-pole/besedila/${code}.json`, import.meta.url), "utf8"));
+    assert.deepEqual(Object.keys(d).sort(), Object.keys(SL).sort(), code);
+    for (const k of Object.keys(SL)) assert.equal(vars(d[k]), vars(SL[k]), `${code} ${k}`);
+  }
+  // modul se naloži šele ob omembi pole: ni statičnega uvoza v app.js
+  const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  assert.match(app, /import\("\.\/naloga-pole\/klepet\.js"\)/);
+  assert.doesNotMatch(app, /from "\.\/naloga-pole\/klepet\.js"/);
+});

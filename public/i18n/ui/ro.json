@@ -4492,21 +4492,5 @@
   "povabi.reward": "Când o familie pe care o inviți se abonează și plătește prima dată, ambele familii primesc o lună gratuit.",
   "povabi.later": "Nu acum",
   "povabi.link": "Link pentru un prieten",
-  "povabi.shareText": "Învăț cu Evklid. Încearcă și tu:",
-  "np.ask.exam": "La ce NPZ te referi?",
-  "np.ask.subject": "Din ce materie este exercițiul?",
-  "np.ask.level": "Nivel de bază sau superior?",
-  "np.ask.year": "Din ce an este lucrarea?",
-  "np.ask.pola": "Din ce lucrare este exercițiul {n}?",
-  "np.ask.section": "Din ce parte a lucrării este exercițiul {n}?",
-  "np.plain": "Trimite ca întrebare obișnuită",
-  "np.ours": "Acesta este un exercițiu Evklid în stilul lucrării „{paper}”, nu exercițiul original RIC. Originalul este disponibil gratuit pe ric.si.",
-  "np.figure": "Figura pentru exercițiu este în lucrarea Evklid.",
-  "np.openOurs": "Deschide în lucrarea Evklid",
-  "np.noOurs": "Încă nu avem o versiune Evklid pentru „{paper}”. Descarcă originalul de pe ric.si, deschide-l aici și, la exercițiul {n}, atinge „{help}”.",
-  "np.missing": "Versiunea Evklid a lucrării „{paper}” nu are exercițiul {n}. Verifică numărul exercițiului.",
-  "np.download": "Descarcă originalul: {file}",
-  "np.openOriginal": "Deschide originalul",
-  "np.pickHint": "Mai întâi descarcă originalul, apoi la „Deschide originalul” alege fișierul {name}.",
-  "np.wrongFile": "Aceasta este altă lucrare. Alege fișierul {name}."
+  "povabi.shareText": "Învăț cu Evklid. Încearcă și tu:"
 }

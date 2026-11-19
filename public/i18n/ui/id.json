@@ -4430,21 +4430,5 @@
   "povabi.reward": "Saat keluarga yang kamu undang berlangganan dan membayar pertama kali, kedua keluarga mendapat gratis satu bulan.",
   "povabi.later": "Nanti saja",
   "povabi.link": "Tautan untuk teman",
-  "povabi.shareText": "Aku belajar dengan Evklid. Coba juga, yuk:",
-  "np.ask.exam": "NPZ mana yang kamu maksud?",
-  "np.ask.subject": "Soal ini dari mata pelajaran apa?",
-  "np.ask.level": "Tingkat dasar atau lanjut?",
-  "np.ask.year": "Lembar soal dari tahun berapa?",
-  "np.ask.pola": "Soal {n} dari lembar soal yang mana?",
-  "np.ask.section": "Soal {n} dari bagian mana?",
-  "np.plain": "Kirim sebagai pertanyaan biasa",
-  "np.ours": "Ini soal Evklid dengan gaya lembar soal «{paper}», bukan soal asli RIC. Soal asli tersedia gratis di ric.si.",
-  "np.figure": "Gambar soal ada di lembar soal Evklid.",
-  "np.openOurs": "Buka di lembar soal Evklid",
-  "np.noOurs": "Belum ada versi Evklid untuk «{paper}». Unduh soal asli dari ric.si, buka di sini, lalu di soal {n} ketuk «{help}».",
-  "np.missing": "Versi Evklid «{paper}» tidak punya soal {n}. Periksa nomor soalnya.",
-  "np.download": "Unduh asli: {file}",
-  "np.openOriginal": "Buka asli",
-  "np.pickHint": "Unduh dulu soal aslinya, lalu di «Buka asli» pilih file {name}.",
-  "np.wrongFile": "Ini lembar soal lain. Pilih file {name}."
+  "povabi.shareText": "Aku belajar dengan Evklid. Coba juga, yuk:"
 }

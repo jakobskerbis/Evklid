@@ -4456,21 +4456,5 @@
   "povabi.reward": "Amikor egy általad meghívott család előfizet és először fizet, mindkét család egy hónapot ingyen kap.",
   "povabi.later": "Most nem",
   "povabi.link": "Link egy barátnak",
-  "povabi.shareText": "Az Evkliddel tanulok. Próbáld ki te is:",
-  "np.ask.exam": "Melyik NPZ-re gondolsz?",
-  "np.ask.subject": "Melyik tantárgyból van a feladat?",
-  "np.ask.level": "Közép- vagy emelt szint?",
-  "np.ask.year": "Melyik évből való a feladatlap?",
-  "np.ask.pola": "Melyik feladatlapból van a(z) {n}. feladat?",
-  "np.ask.section": "A feladatlap melyik részéből van a(z) {n}. feladat?",
-  "np.plain": "Küldés sima kérdésként",
-  "np.ours": "Ez Evklid feladata a(z) „{paper}” feladatlap stílusában, nem az RIC eredeti feladata. Az eredeti szabadon elérhető a ric.si oldalon.",
-  "np.figure": "A feladathoz tartozó ábra Evklid feladatlapjában van.",
-  "np.openOurs": "Megnyitás Evklid feladatlapjában",
-  "np.noOurs": "A(z) „{paper}” feladatlapnak még nincs Evklid-változata. Töltsd le az eredetit a ric.si oldalról, nyisd meg itt, és a(z) {n}. feladatnál koppints a „{help}” gombra.",
-  "np.missing": "A(z) „{paper}” Evklid-változatában nincs {n}. feladat. Ellenőrizd a feladat számát.",
-  "np.download": "Eredeti letöltése: {file}",
-  "np.openOriginal": "Eredeti megnyitása",
-  "np.pickHint": "Először töltsd le az eredetit, majd az „Eredeti megnyitása” gombnál válaszd a(z) {name} fájlt.",
-  "np.wrongFile": "Ez egy másik feladatlap. Válaszd a(z) {name} fájlt."
+  "povabi.shareText": "Az Evkliddel tanulok. Próbáld ki te is:"
 }

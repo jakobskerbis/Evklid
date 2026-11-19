@@ -1,0 +1,18 @@
+{
+  "np.ask.exam": "Which NPZ do you mean?",
+  "np.ask.subject": "Which subject is the task from?",
+  "np.ask.level": "Basic or higher level?",
+  "np.ask.year": "Which year is the paper from?",
+  "np.ask.pola": "Which exam paper is task {n} from?",
+  "np.ask.section": "Which part of the paper is task {n} from?",
+  "np.plain": "Send as a normal question",
+  "np.ours": "This is Evklid's task in the style of the paper “{paper}”, not the original RIC task. The original is freely available at ric.si.",
+  "np.figure": "The figure for this task is in Evklid's paper.",
+  "np.openOurs": "Open in Evklid's paper",
+  "np.noOurs": "We don't have Evklid's version of “{paper}” yet. Download the original from ric.si, open it here and tap “{help}” at task {n}.",
+  "np.missing": "Evklid's version of “{paper}” has no task {n}. Check the task number.",
+  "np.download": "Download original: {file}",
+  "np.openOriginal": "Open original",
+  "np.pickHint": "First download the original, then choose the file {name} under “Open original”.",
+  "np.wrongFile": "That is a different paper. Choose the file {name}."
+}

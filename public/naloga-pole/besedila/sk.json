@@ -1,0 +1,18 @@
+{
+  "np.ask.exam": "Ktoré NPZ myslíš?",
+  "np.ask.subject": "Z akého predmetu je úloha?",
+  "np.ask.level": "Základná, alebo vyššia úroveň?",
+  "np.ask.year": "Z akého roku je skúška?",
+  "np.ask.pola": "Z ktorej časti skúšky je úloha {n}?",
+  "np.ask.section": "Z ktorého oddielu skúšky je úloha {n}?",
+  "np.plain": "Poslať ako bežnú otázku",
+  "np.ours": "Toto je Evklidova úloha v štýle skúšky „{paper}“, nie pôvodná úloha RIC. Originál je voľne dostupný na ric.si.",
+  "np.figure": "Obrázok k úlohe je v Evklidovej skúške.",
+  "np.openOurs": "Otvoriť v Evklidovej skúške",
+  "np.noOurs": "Pre „{paper}“ zatiaľ nemáme Evklidovu verziu. Stiahni originál z ric.si, otvor ho tu a pri úlohe {n} ťukni na „{help}“.",
+  "np.missing": "Evklidova verzia „{paper}“ nemá úlohu {n}. Skontroluj číslo úlohy.",
+  "np.download": "Stiahnuť originál: {file}",
+  "np.openOriginal": "Otvoriť originál",
+  "np.pickHint": "Najprv stiahni originál a potom pri „Otvoriť originál“ vyber súbor {name}.",
+  "np.wrongFile": "To je iná skúška. Vyber súbor {name}."
+}
