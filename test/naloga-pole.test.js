@@ -59,6 +59,20 @@ test("resolvePaper: manjkajoče vpraša z gumbi, sicer najde polo (privzeto spom
   assert.equal(ask("matura biologija 2023 jesenski rok, termin 1, naloga 5").entry.id, "MATURA-BIO-2023-jesenski-1");
   assert.equal(ask("matura biologija 2023 jesenski drugi termin naloga 5").entry.id, "MATURA-BIO-2023-jesenski-2");
   assert.equal(parsePaperTask("matura bio 2023 jesenski 2. termin naloga 1").n, 1);
+  // termin za številko pole ali naloge, brez »jesenski«, enotermenski rok ne vpraša
+  const r1 = parsePaperTask("matura bio 2023 jesenski pola 2 termin 1 naloga 5");
+  assert.deepEqual([r1.pola, r1.session, r1.n], [2, 1, 5]);
+  const r2 = parsePaperTask("matura bio 2023 jesenski termin 2 pola 1 naloga 5");
+  assert.deepEqual([r2.pola, r2.session, r2.n], [1, 2, 5]);
+  const r3 = parsePaperTask("matura bio 2023 jesenski 5. naloga 2. termin");
+  assert.deepEqual([r3.n, r3.session], [5, 2]);
+  const r4 = parsePaperTask("matura bio 2023 naloga 2 termin 1");
+  assert.deepEqual([r4.n, r4.session], [2, 1]);
+  assert.equal(ask("matura bio 2023 2. termin naloga 5").entry.id, "MATURA-BIO-2023-jesenski-2");
+  assert.equal(ask("matura bio 2023 drugi termin naloga 5").entry.id, "MATURA-BIO-2023-jesenski-2");
+  assert.equal(ask("matura bio 2023 1. termin naloga 5").entry.id, "MATURA-BIO-2023-spomladanski");
+  assert.equal(ask("matura bio 2018 jesenski naloga 5").entry?.term, "jesenski");
+  assert.equal(ask("matura bio 2023 naloga 5").entry.id, "MATURA-BIO-2023-spomladanski");
   // gumb doda besedilo, ki ga parser prepozna
   for (const o of ask("matura mat naloga 5").options) assert.equal(parsePaperTask(`matura mat naloga 5 ${o.add}`).level, o.value);
   for (const o of ask("matura naloga 5").options) assert.equal(parsePaperTask(`matura naloga 5 ${o.add}`).subject, o.value);
