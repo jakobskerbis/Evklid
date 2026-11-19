@@ -312,6 +312,8 @@ function equationFindings(text, pre, prevTutor) {
 
 const WRONG_RULES =
   "Your reply must agree with this check: do not confirm or praise the wrong part (no »Prav«, »Pravilno«, »Dobro«, »Odlično«, »Točno« for it) and do not simply continue from it. If the student sent only a result without working, ask for the working; otherwise show where the error is and help them fix it. Confirm only what is really right. In način A never state the final result or the full solution. Never mention a program, a check or this note.";
+const PARTIAL_RULES =
+  "Your reply must agree with this check: do not call the answer or the step that lost a solution right or complete (no »Prav«, »Pravilno«, »Točno«, »Tako je«, »Dobro« for it); say that the value(s) they found do solve it but that the task has more solutions, and help them find what they missed (for example, whichever applies: ± when taking a square root, a factor with the unknown that was divided away, a second angle). In način A do not state the missing solutions. Never mention a program, a check or this note.";
 const RIGHT_RULES =
   "Your reply must agree with this check: never reject or \"correct\" this step. In način A do not state the final result before the student gets there. Never mention a program, a check or this note.";
 
@@ -343,6 +345,16 @@ export function stepVerdict(text, { pre = null, prevTutor = "" } = {}) {
     const sols = solverValues((pre.problems || []).find((x) => x.type === "equation")?.answerTex);
     const roots = sols.length > 1 ? rootList(text, sols[0].v) : null;
     const partial = sols.length > 1 && !(roots && sameSet(roots.map((r) => r.x), sols.map((s) => s.x), Math.max(...roots.map((r) => decimalsTol(r.src)))));
+    // Nepopoln odgovor: opomba »CORRECT« je inštruktorja zavedla v »sta pravilna« brez druge rešitve (meritev 19. 11.,
+    // brezplačni paket, (x - 2)^2 = 9 → »x = 5«). Opomba zato pove, da je odgovor nepopoln.
+    // rootList bere le oštevilčene rešitve (x1 = …, x2 = …): »x = 5 ali x = -1« je zanj tudi partial. Opomba
+    // »INCOMPLETE« bi tedaj zavrnila popoln odgovor, zato le, ko kakšne rešitve ni nikjer med števili v sporočilu.
+    const nums = [...plain(text).matchAll(/(?<![\d.,])([-−]?\d+(?:[.,]\d+)?)(?:\s*\/\s*(\d+))?/g)].map((m) => ({ x: Number(m[1].replace("−", "-").replace(",", ".")) / (m[2] ? Number(m[2]) : 1), tol: m[2] ? 0 : decimalsTol(m[1]) }));
+    const incomplete = partial && sols.some((s) => !nums.some((n) => has([n.x], s.x, n.tol)));
+    if (incomplete) {
+      const finding = `the student's value is one of the solutions, but the answer is INCOMPLETE: the task has ${sols.length} solutions (exact result of the task: ${/is CORRECT \(exact result of the task: (.+?)\)\.\n/.exec(claim)?.[1] || "several values"})`;
+      return { wrong: false, partial, finding, note: `<${NOTE_TAG}>\nAn exact check compared the student's last message with the task: ${finding}.\n${PARTIAL_RULES}\n</${NOTE_TAG}>` };
+    }
     return { wrong: false, partial, finding: right[0], note: claim };
   }
   if (right.length) {

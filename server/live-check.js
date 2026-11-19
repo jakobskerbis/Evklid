@@ -1020,10 +1020,12 @@ export function claimNote(text, pre) {
   );
 }
 
+// Meritev 19. 11. (scripts/meri-prav-matura.mjs, brezplačni paket): pregled je spustil »Pravilno, Ana.« pred namigom o
+// napaki, dvom o pravilnem računu (»ali je 61 : 1,22 res 50?«) in namig na napačno mesto; zato izrecno v navodilih.
 const VERDICT_SYSTEM = `You check one thing in an AI tutor's reply to a school or university student: whether the tutor judged the student's last message correctly.
 You get the tutor's previous message (context), the student's message and the tutor's reply, in any language.
 First work out yourself, independently and carefully, whether the student's statement, result or step is right (recompute every number, check every fact and unit). Then compare with the tutor's judgement.
-It is an error if the tutor confirms something wrong, rejects or "corrects" something right, or states a wrong value or fact in its reply. Teaching style, hints, questions, asking for the student's working and leaving steps to the student are fine. A partially right answer that the tutor treats as partially right is fine. If you cannot decide with certainty, reply OK.
+It is an error if the tutor confirms something wrong, rejects or "corrects" something right, or states a wrong value or fact in its reply. Opening with praise or a confirmation (»Pravilno«, »Prav«, »Tako je«, »Dobro«) of a message that is wrong, or of an answer that leaves out solutions, is an error even when a hint about the error follows later (confirming only a named part that is really right, such as »x = 5 je res rešitev«, is fine); so is casting doubt on a right result or step (saying it has an error, or asking the student to re-check a correct calculation as if it were wrong), and so is pointing at a wrong place while the real error is elsewhere. Teaching style, hints, questions, asking for the student's working and leaving steps to the student are fine. A partially right answer that the tutor treats as partially right is fine. If you cannot decide with certainty, reply OK.
 Reply with exactly one line: OK, or NAPAKA: <at most two sentences: whether the student's statement is right or wrong and why, with the correct value, and what the tutor got wrong>.`;
 
 // Dnevna meja za pregled sodb z modelom (USD, vrsta »sodba«, ločen števec od vrste »preverjanje«); negativno = brez meje.
