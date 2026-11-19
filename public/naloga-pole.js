@@ -24,7 +24,7 @@ export const mentionsPaperTask = (text) => {
 };
 
 // Prebere omembo naloge. Vrne null, kadar sporočilo ne omenja izpita in številke naloge; sicer
-// { exam: MATURA|POKLICNA|NPZ6|NPZ9|NPZ, subject?, level?, year?, term?, pola?, section?, n, part? }.
+// { exam: MATURA|POKLICNA|NPZ6|NPZ9|NPZ, subject?, level?, year?, term?, session?, pola?, section?, n, part? }.
 export function parsePaperTask(text) {
   let s = low(text).replace(/\s+/g, " ");
   if (!EXAM_RE.test(s)) return null;
@@ -63,12 +63,17 @@ export function parsePaperTask(text) {
   if (p) ref.pola = Number(p[1]);
   else if (/\bprv\w* (?:izpitn\w* )?pol[aiou]?\b/.test(s)) ref.pola = 1;
   else if (/\bdrug\w* (?:izpitn\w* )?pol[aiou]?\b/.test(s)) ref.pola = 2;
+  // Rok z več termini (jesenski rok BIO, FIZ, KEM): »2. termin«, »termin 2«, »drugi termin«.
+  const ses = s.match(/\b([123])\s*\.?\s*termin\w*/) || s.match(/\btermin\w*\s*([123])(?!\d)/);
+  if (ses) ref.session = Number(ses[1]);
+  else if (/\bprv\w* termin/.test(s)) ref.session = 1;
+  else if (/\bdrug\w* termin/.test(s)) ref.session = 2;
   const d = s.match(/\b(?:del|delu|dela)\s*([abc])\b/) || s.match(/\b([abc])\s*del\b/);
   if (d && !ref.section) ref.section = d[1].toUpperCase();
   return ref;
 }
 
-// Kaj manjka: { ask: "exam"|"subject"|"level"|"year", options: [{ value, add }] } (add: besedilo, ki ga gumb doda
+// Kaj manjka: { ask: "exam"|"subject"|"level"|"year"|"session", options: [{ value, add }] } (add: besedilo, ki ga gumb doda
 // k učenčevemu sporočilu), { entry } (najdena pola) ali { none: true } (pole ni v katalogu).
 const SUBJECT_WORD = { MAT: "matematika", FIZ: "fizika", KEM: "kemija", BIO: "biologija" };
 const MAIN_TERM = ["spomladanski", "redni"];
@@ -98,7 +103,12 @@ export function resolvePaper(ref, papers) {
   }
   if (ref.term) c = c.filter((e) => e.term === ref.term);
   else if (c.some((e) => MAIN_TERM.includes(e.term))) c = c.filter((e) => MAIN_TERM.includes(e.term));
-  // Več rokov istega dne (jesenski rok 1 in 2): prvi.
+  // Več terminov istega roka (jesenski rok 1 in 2): izbrani, sicer vprašamo.
+  if (ref.session) c = c.filter((e) => (e.session || 1) === ref.session);
+  else {
+    const sessions = [...new Set(c.map((e) => e.session || 1))].sort();
+    if (sessions.length > 1) return { ask: "session", options: sessions.map((x) => ({ value: x, add: `${x}. termin` })) };
+  }
   c.sort((a, b) => (a.session || 0) - (b.session || 0));
   return c.length ? { entry: c[0] } : { none: true };
 }

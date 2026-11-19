@@ -4,6 +4,7 @@
   "np.ask.level": "Nivel de bază sau superior?",
   "np.ask.year": "Din ce an este lucrarea?",
   "np.ask.pola": "Din ce lucrare este exercițiul {n}?",
+  "np.ask.session": "Care sesiune?",
   "np.ask.section": "Din ce parte a lucrării este exercițiul {n}?",
   "np.plain": "Trimite ca întrebare obișnuită",
   "np.ours": "Acesta este un exercițiu Evklid în stilul lucrării „{paper}”, nu exercițiul original RIC. Originalul este disponibil gratuit pe ric.si.",

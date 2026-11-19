@@ -4,6 +4,7 @@
   "np.ask.level": "Basic or higher level?",
   "np.ask.year": "Which year is the paper from?",
   "np.ask.pola": "Which exam paper is task {n} from?",
+  "np.ask.session": "Which sitting?",
   "np.ask.section": "Which part of the paper is task {n} from?",
   "np.plain": "Send as a normal question",
   "np.ours": "This is Evklid's task in the style of the paper “{paper}”, not the original RIC task. The original is freely available at ric.si.",

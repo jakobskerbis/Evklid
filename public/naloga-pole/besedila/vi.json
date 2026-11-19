@@ -4,6 +4,7 @@
   "np.ask.level": "Mức cơ bản hay nâng cao?",
   "np.ask.year": "Đề thi năm nào?",
   "np.ask.pola": "Bài {n} thuộc đề nào?",
+  "np.ask.session": "Đợt thi nào?",
   "np.ask.section": "Bài {n} thuộc phần nào của đề?",
   "np.plain": "Gửi như câu hỏi thường",
   "np.ours": "Đây là bài của Evklid theo phong cách đề «{paper}», không phải bài gốc của RIC. Đề gốc có miễn phí trên ric.si.",

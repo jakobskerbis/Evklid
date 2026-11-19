@@ -4,6 +4,7 @@
   "np.ask.level": "Livello base o superiore?",
   "np.ask.year": "Di quale anno è la prova?",
   "np.ask.pola": "Da quale prova è l'esercizio {n}?",
+  "np.ask.session": "Quale sessione?",
   "np.ask.section": "Da quale parte della prova è l'esercizio {n}?",
   "np.plain": "Invia come domanda normale",
   "np.ours": "Questo è un esercizio di Evklid nello stile della prova «{paper}», non l'esercizio originale del RIC. L'originale è liberamente disponibile su ric.si.",

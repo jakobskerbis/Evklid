@@ -4,6 +4,7 @@
   "np.ask.level": "Kiwango cha msingi au cha juu?",
   "np.ask.year": "Karatasi ni ya mwaka gani?",
   "np.ask.pola": "Swali la {n} ni la karatasi ipi?",
+  "np.ask.session": "Kipindi kipi?",
   "np.ask.section": "Swali la {n} ni la sehemu ipi ya karatasi?",
   "np.plain": "Tuma kama swali la kawaida",
   "np.ours": "Hili ni swali la Evklid kwa mtindo wa karatasi «{paper}», si swali asili la RIC. Karatasi asili inapatikana bure kwenye ric.si.",

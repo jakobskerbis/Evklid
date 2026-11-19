@@ -4,6 +4,7 @@
   "np.ask.level": "基礎程度還是進階程度？",
   "np.ask.year": "這份試卷是哪一年的？",
   "np.ask.pola": "第 {n} 題來自哪份試卷？",
+  "np.ask.session": "哪一場？",
   "np.ask.section": "第 {n} 題來自試卷的哪個部分？",
   "np.plain": "作為一般問題送出",
   "np.ours": "這是 Evklid 仿照試卷「{paper}」風格出的題，不是 RIC 的原題。原卷可在 ric.si 免費取得。",

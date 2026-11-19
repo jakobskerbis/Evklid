@@ -4,6 +4,7 @@
   "np.ask.level": "基礎レベル、それとも上級レベル？",
   "np.ask.year": "何年の試験？",
   "np.ask.pola": "問題{n}はどの試験問題冊子？",
+  "np.ask.session": "どの回？",
   "np.ask.section": "問題{n}は試験のどの部分？",
   "np.plain": "普通の質問として送る",
   "np.ours": "これはRICの原問題ではなく、「{paper}」の形式に合わせたEvklidの問題です。原本はric.siで無料公開されています。",

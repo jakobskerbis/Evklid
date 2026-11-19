@@ -53,6 +53,12 @@ test("resolvePaper: manjkajoče vpraša z gumbi, sicer najde polo (privzeto spom
   assert.equal(ask("matura mat OR 2024 jesenski naloga 5").entry.id, "MATURA-MAT-OR-2024-jesenski");
   assert.equal(ask("npz 9 matematika 2025 naloga 3").entry.id, "NPZ9-MAT-2025-redni");
   assert.ok(ask("matura mat OR 2001 naloga 5").none);
+  // jesenski rok z dvema terminoma: vpraša ali izbere izbranega
+  assert.equal(ask("matura biologija 2023 jesenski naloga 5").ask, "session");
+  assert.equal(ask("matura biologija 2023 jesenski 2. termin naloga 5").entry.id, "MATURA-BIO-2023-jesenski-2");
+  assert.equal(ask("matura biologija 2023 jesenski rok, termin 1, naloga 5").entry.id, "MATURA-BIO-2023-jesenski-1");
+  assert.equal(ask("matura biologija 2023 jesenski drugi termin naloga 5").entry.id, "MATURA-BIO-2023-jesenski-2");
+  assert.equal(parsePaperTask("matura bio 2023 jesenski 2. termin naloga 1").n, 1);
   // gumb doda besedilo, ki ga parser prepozna
   for (const o of ask("matura mat naloga 5").options) assert.equal(parsePaperTask(`matura mat naloga 5 ${o.add}`).level, o.value);
   for (const o of ask("matura naloga 5").options) assert.equal(parsePaperTask(`matura naloga 5 ${o.add}`).subject, o.value);
