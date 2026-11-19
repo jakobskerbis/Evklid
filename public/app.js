@@ -7,7 +7,7 @@ import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion } from "./i18n.js";
 import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
-import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba } from "./nujno.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba, ogrej as ogrejNujno } from "./nujno.js";
 import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
@@ -499,7 +499,11 @@ function odprto(del) {
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.
 function initView(name, notes = false) {
   odprto(DEL_POGLEDA[name]);
-  if (name === "chat") freshChatIfStale();
+  if (name === "chat") {
+    freshChatIfStale();
+    zgodovinaVidna();
+    pripraviZaznavalnik();
+  }
   if (name === "me") renderMe();
   if (name === "settings") {
     fillSettingsForm();
@@ -1163,6 +1167,7 @@ function renderConversationList() {
 }
 
 function renderEmptyChat() {
+  zgodovina = { conv: null, ostala: [], prvo: null, zadnji: {} };
   state.chatFx = null; // nov pogovor (tudi po brisanju odprtega ali menjavi profila): predmet iz nastavitev
   $("#chat-title").textContent = t("chat.new");
   state.ideasNow = null; // nov prazen klepet: novi predlogi
@@ -1185,7 +1190,7 @@ function renderEmptyChat() {
 }
 // AI Act čl. 50 (public/ai-oznaka/)
 function aiOznaka() {
-  import("./ai-oznaka/ai-oznaka.js").then((m) => m.oznaciKlepet(state.student)).catch(() => {});
+  return import("./ai-oznaka/ai-oznaka.js").then((m) => m.oznaciKlepet(state.student)).catch(() => {});
 }
 $("#messages").addEventListener("click", ideaClick); // enkrat: predlogi se ob osvežitvi zamenjajo
 function ideaClick(e) {
@@ -1412,14 +1417,114 @@ async function openConversation(id, { mark = true } = {}) {
   const box = $("#messages");
   box.innerHTML = "";
   if (!conv.messages.length) renderEmptyChat();
-  for (const m of conv.messages) addMessage(m.role, m.text, m.has_image, m);
+  izrisiZgodovino(conv.id, conv.messages);
   renderState(conv.state);
   renderConversationList();
-  aiOznaka();
+  const oznaka = aiOznaka();
   prilagodiZdaj(); // zložene formule (sirina.js) so višje: na dno šele zdaj
   box.scrollTop = box.scrollHeight;
+  // Obvestilo »AI« nad pogovorom (prvi pogovor profila) pride za pomikom; brskalnik ga ne izravna vedno: še enkrat na dno,
+  // če se učenec vmes ni premaknil.
+  const st = box.scrollTop;
+  oznaka.then(() => state.conversationId === conv.id && box.scrollTop === st && (box.scrollTop = box.scrollHeight));
+  zgodovina.naDno = !box.clientHeight; // skrit Inštruktor (zagon, menjava profila): na dno, ko se pokaže
   refreshBubble();
+  dopolniKmalu(); // kratka zadnja sporočila ne napolnijo zaslona: starejša takoj za prvo sliko
 }
+
+// Dolg pogovor se odpre takoj (docs/meritve/prijavljen-mobilno-2026-11-19.md, 1. točka: 120 sporočil je na telefonu
+// trajalo 11 s, ker je vsako sporočilo posebej merilo formule in pomikalo na dno). Izrišemo zadnjih ZGODOVINA_NAJPREJ
+// sporočil brez meritev, formule prilagodimo in na dno pomaknemo enkrat; starejša pridejo po ZGODOVINA_PO, ko se
+// učenec pomakne proti vrhu (dopolniZgodovino), mesto na zaslonu pa ostane isto.
+const ZGODOVINA_NAJPREJ = 20;
+const ZGODOVINA_PO = 20;
+// conv: pogovor, ostala: še neizrisana starejša sporočila (od najstarejšega), prvo: najstarejše izrisano sporočilo (starejša gredo pred njega), zadnji: kateremu od neizrisanih pripadajo gumbi,
+// ki so samo pri zadnjem takem odgovoru (addDeepButton, addFullButton, addChoices).
+let zgodovina = { conv: null, ostala: [], prvo: null, zadnji: {} };
+// Po naslednji sliki, v svoji nalogi (ne v tapu ali drsenju), največ ena čakajoča naenkrat.
+let dopolniCaka = false;
+function dopolniKmalu() {
+  if (dopolniCaka || !zgodovina.ostala.length) return;
+  dopolniCaka = true;
+  requestAnimationFrame(() =>
+    setTimeout(() => {
+      dopolniCaka = false;
+      dopolniZgodovino();
+    }, 0),
+  );
+}
+// Inštruktor se pokaže (initView): pogovor, odprt, ko je bil skrit, gre na dno (sicer bi se pokazal njegov vrh in
+// sprožil nalaganje starejših); kratek pogovor, ki ne napolni zaslona, dobi starejša sporočila.
+// Varnostni zaznavalnik (public/nujno.js ogrej) prevede svoje vzorce vnaprej, ko se Inštruktor prvič pokaže, v kosih po
+// 8 ms v času mirovanja: prvi tap »Pošlji« je sicer čakal nanj (telefon ~0,8 s, docs/meritve/prijavljen-mobilno-2026-11-19.md).
+let zaznavalnikPripravljen = false;
+function pripraviZaznavalnik() {
+  if (zaznavalnikPripravljen) return;
+  zaznavalnikPripravljen = true;
+  const kos = () => whenIdle(() => ogrejNujno(8) || kos());
+  kos();
+}
+function zgodovinaVidna() {
+  const box = $("#messages");
+  if (zgodovina.naDno && box.clientHeight) {
+    zgodovina.naDno = false;
+    box.scrollTop = box.scrollHeight;
+    // Formule skritega pogovora se prilagodijo šele zdaj (sirina.js; na telefonu tudi ~0,7 s dolgo opravilo, ki
+    // pogovor podaljša): do 2 s ga v vsaki sličici drži na dnu, razen ko se učenec sam pomakne navzgor.
+    let st = box.scrollTop;
+    const konec = performance.now() + 2000;
+    const drzi = () => {
+      if (box.scrollTop < st - 2 || !box.clientHeight) return; // učenec se je pomaknil ali je zapustil Inštruktor
+      box.scrollTop = box.scrollHeight;
+      st = box.scrollTop;
+      if (performance.now() < konec) requestAnimationFrame(drzi);
+    };
+    requestAnimationFrame(drzi);
+  }
+  dopolniKmalu();
+}
+
+function izrisiZgodovino(convId, msgs) {
+  const n = Math.max(0, msgs.length - ZGODOVINA_NAJPREJ);
+  // Kot da bi bila izrisana vsa: gumb ima zadnji odgovor, ki ga sme imeti (pogoji kot v addMessage in add…Button).
+  const zadnji = {};
+  msgs.forEach((m, i) => {
+    if (m.role === "user" || !m.text || m.error) return;
+    zadnji.deep = i;
+    if (m.full_offer) zadnji.full = i;
+    if (Array.isArray(m.choices) && m.choices.length >= 2) zadnji.choices = i;
+  });
+  for (const k of Object.keys(zadnji)) if (zadnji[k] >= n) delete zadnji[k];
+  zgodovina = { conv: convId, ostala: msgs.slice(0, n), prvo: null, zadnji };
+  for (const m of msgs.slice(n)) {
+    const el = addMessage(m.role, m.text, m.has_image, m, { meri: false });
+    zgodovina.prvo ||= el;
+  }
+}
+
+// Učenec je blizu vrha izrisanega dela: še ZGODOVINA_PO starejših sporočil nad njim, brez premika vidnega dela.
+function dopolniZgodovino() {
+  const box = $("#messages");
+  const z = zgodovina;
+  // Skrit klepet (clientHeight 0) počaka: initView("chat") pokliče znova, ko se pokaže.
+  if (!z.ostala.length || z.conv !== state.conversationId || !box.clientHeight || box.scrollTop > box.clientHeight) return;
+  const pred = z.prvo?.isConnected ? z.prvo : box.querySelector(".msg");
+  const y0 = pred?.getBoundingClientRect().top; // to sporočilo ostane na istem mestu na zaslonu
+  const kos = z.ostala.splice(-ZGODOVINA_PO);
+  const zac = z.ostala.length;
+  let prvo = null;
+  kos.forEach((m, j) => {
+    const i = zac + j;
+    const info = { ...m, full_offer: z.zadnji.full === i ? m.full_offer : undefined, choices: z.zadnji.choices === i ? m.choices : undefined };
+    const el = addMessage(m.role, m.text, m.has_image, info, { meri: false, pred, globoko: z.zadnji.deep === i });
+    prvo ||= el;
+  });
+  z.prvo = prvo || z.prvo;
+  prilagodiZdaj();
+  if (pred) box.scrollTop += pred.getBoundingClientRect().top - y0;
+  dopolniKmalu(); // zaslon še ni poln: naslednji kos v svoji nalogi
+}
+$("#messages").addEventListener("scroll", dopolniKmalu, { passive: true });
 
 // Telefon: seznam pogovorov se odpre čez klepet; gumb ostane viden in ga zapre (tudi Esc).
 const setSidebar = (open) => {
@@ -1471,7 +1576,9 @@ $("#new-chat").addEventListener("click", () => {
 
 // ---------- sporočila ----------
 
-function addMessage(role, text, hasImage = false, info = null) {
+// meri: false = brez meritev (klicatelj enkrat za vsa sporočila prilagodi formule in pomakne na dno); pred: starejše
+// sporočilo gre pred ta element; globoko: false = brez »Razloži podrobneje« (ima ga novejši odgovor).
+function addMessage(role, text, hasImage = false, info = null, { meri = true, pred = null, globoko = true } = {}) {
   const box = $("#messages");
   box.querySelector(".empty")?.remove();
   const el = document.createElement("div");
@@ -1488,14 +1595,16 @@ function addMessage(role, text, hasImage = false, info = null) {
   } else {
     el.innerHTML = chatRich(text);
     if (!info?.error) el.dataset.aiGenerated = "true";
-    if (text) addDeepButton(el, false);
+    if (text && globoko) addDeepButton(el, false);
     if (text && info?.full_offer) addFullButton(el);
     if (text && info?.choices) addChoices(el, info.choices);
     if (text && info?.open) addOpen(el, info.open);
     if (text && !info?.open?.some((x) => x.kind === "graph")) addGraphButton(el, text);
     if (text && info?.id) addMsgFoot(el, info);
   }
-  box.appendChild(el);
+  if (pred?.parentNode === box) box.insertBefore(el, pred);
+  else box.appendChild(el);
+  if (!meri) return el;
   prilagodiZdaj();
   box.scrollTop = box.scrollHeight;
   return el;
@@ -1559,17 +1668,33 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
     const paperCtx = paperOpt || (state.paperCtx?.conv === sentTo ? state.paperCtx : null);
     document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
+    zgodovina.zadnji = {}; // tudi starejši, še neizrisani odgovori teh gumbov ne dobijo več
     const nacin = fromInput && state.dictated ? "glas" : undefined; // narekovano z mikrofonom (strežnik preveri stikalo starša)
-    userEl = addMessage("user", text, !!image);
+    // Tap »Pošlji« (INP, docs/meritve/prijavljen-mobilno-2026-11-19.md, 3. točka): oba mehurčka in prazno polje brez
+    // sinhronih meritev; formule, višino polja in pomik na dno naredi naDno enkrat, tik pred izrisom sličice (ali prej,
+    // če kaj drugega meri prej: varnostno okno, izris odgovora).
+    const box = $("#messages");
+    let naDnoRaf = 0;
+    const naDno = () => {
+      if (!naDnoRaf) return;
+      cancelAnimationFrame(naDnoRaf);
+      naDnoRaf = 0;
+      if (fromInput) autoGrow(true);
+      prilagodiZdaj();
+      box.scrollTop = box.scrollHeight;
+    };
+    userEl = addMessage("user", text, !!image, null, { meri: false });
+    naDnoRaf = requestAnimationFrame(naDno);
     if (fromInput) {
       $("#input").value = "";
-      autoGrow();
       clearImage();
       state.dictated = false;
     }
+    if (afterUser) naDno(); // opomba pod učenčevim oblačkom (public/naloga-pole/klepet.js) meri sama
     afterUser?.(userEl);
+    if (afterUser) naDnoRaf = requestAnimationFrame(naDno); // še enkrat na dno, ko sta opomba in mehurček odgovora dodana
 
-    bubble = addMessage("assistant", "");
+    bubble = addMessage("assistant", "", false, null, { meri: false });
     bubble.classList.add("typing");
     // Napis med čakanjem (j 16. 11.): takoj, ob piki »piše«; #messages je aria-live, zato ga bralnik prebere.
     // Pravo fazo pove strežnik (dogodek phase: »check«, ko koda ali pregled preverja račun); nikoli izmišljene.
@@ -1580,23 +1705,30 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     // Takoj, brez čakanja na strežnik (objava nove različice, počasen AI pregled): pregled A V4.
     // Blažje okno »pogovor« (posredna stiska) počaka na strežnik, ki lahko pošlje močnejšo vrsto.
     const takoj = lokalnoNujno(text);
-    if (takoj?.vrsta !== "pogovor") showNujno(takoj, { before: bubble });
-    const box = $("#messages");
+    if (takoj?.vrsta && takoj.vrsta !== "pogovor") {
+      naDno(); // okno meri, ali je učenec na dnu
+      showNujno(takoj, { before: bubble });
+    }
     // D5: med izpisom dokončani bloki iz predpomnilnika in največ en izris na sličico; končni izris cel in takoj.
     const izrisBlokov = createIzrisBlokov(chatRich);
-    const paint = enIzrisNaSlicico((shown, koncno) => {
-      const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+    const narisi = (shown, koncno) => {
       shownText = shown || "";
       const html = koncno ? chatRich(shown) : izrisBlokov(streamSafe(shown));
       // Napis med čakanjem: dokler odgovora ni, in med preverjanjem računa pod že izpisanim besedilom.
       // Zadnji odstavek nosi piko »piše« (style.css).
       bubble.innerHTML = (html ? html + (bubble.classList.contains("checking") ? noteHtml() : "") : noteHtml()) || "<p></p>";
+    };
+    // Največ en izris na sličico: ena meritev (formule, pomik na dno) na sličico, ne na žeton.
+    const paint = enIzrisNaSlicico((shown, koncno) => {
+      naDno();
+      const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+      narisi(shown, koncno);
       prilagodiZdaj(); // dolgo enačbo zloži že zdaj, da pomik na dno šteje njeno pravo višino
       if (atBottom) box.scrollTop = box.scrollHeight;
       // Varnostno okno ostane v celoti vidno: izpis odgovora ga ne potisne nad zgornji rob (pregled B2).
       if (atBottom && nujnoEl?.isConnected) box.scrollTop = Math.min(box.scrollTop, box.scrollTop + nujnoEl.getBoundingClientRect().top - box.getBoundingClientRect().top - 8);
     });
-    paint("", true);
+    narisi("", true); // napis med čakanjem takoj, izmeri ga naDno
     // Odgovor se izpisuje z berljivim tempom; dotik sporočila pokaže vse naenkrat.
     pacer = createPacer(currentPace(), paint);
     state.pacer = pacer;
@@ -5108,7 +5240,8 @@ initOkna({
   mainView: () => currentView,
   onResize: (name) => name === "graph" && calcTool(calcMode).then((tool) => tool.resize?.()),
   chatInfo: () => {
-    const n = document.querySelectorAll("#messages .msg").length;
+    // Z neizrisanimi starejšimi sporočili (dopolniZgodovino): ključ se ob drsenju navzgor ne spremeni.
+    const n = document.querySelectorAll("#messages .msg").length + (zgodovina.conv === state.conversationId ? zgodovina.ostala.length : 0);
     const body = document.body.classList;
     return {
       key: state.conversationId && n ? `${state.conversationId}:${n}` : null,

@@ -231,8 +231,10 @@ test("a folded formula keeps the original MathML; the chat scrolls to the bottom
   // D5 (#684): izris med tokom gre prek predpomnilnika blokov (izrisBlokov), končni prek chatRich; vrstni red ostane.
   // Napis med čakanjem (#790): HTML odgovora najprej v html, nato v mehurček (z napisom ali brez); vrstni red ostane.
   assert.match(app, /const html = koncno \? chatRich\(shown\) : izrisBlokov\(streamSafe\(shown\)\);/);
-  assert.match(app, /bubble\.innerHTML = \(html \? [^\n]*\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
-  assert.match(app, /box\.appendChild\(el\);\n\s*prilagodiZdaj\(\);\n\s*box\.scrollTop = box\.scrollHeight;/);
+  assert.match(app, /bubble\.innerHTML = \(html \? [^\n]*\n\s*\};/);
+  assert.match(app, /narisi\(shown, koncno\);\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
+  // Sporočilo z meritvami (meri: false = klicatelj prilagodi in pomakne enkrat za vsa, test/klepet-zgodovina.test.js).
+  assert.match(app, /else box\.appendChild\(el\);\n\s*if \(!meri\) return el;\n\s*prilagodiZdaj\(\);\n\s*box\.scrollTop = box\.scrollHeight;/);
   // kemijska enačba: znak na začetku nadaljevanja ostane zunaj \mathrm (sicer predznak brez razmika)
   const { zlozTex } = await import("../public/sirina.js");
   const z = zlozTex("\\mathrm{2Mg + O_2 \\rightarrow 2MgO + 2H_2O + CO_2 + NaCl + KCl + HCl}", 3, 20);
