@@ -98,6 +98,7 @@ import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
+import { startStiskaObvestila, mountStiske } from "./stiska-obvestilo.js";
 import { AI_JSON } from "./ai-oznaka.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -292,6 +293,7 @@ export function createApp(store, opts = {}) {
   let cloudBackups = null; // ista kopija še zunaj strežnika (server/kopije-oblak.js)
   let backupChecks = null; // nočni preizkus obnove iz kopije (server/kopije-preveri.js)
   let aiCostAlert = null; // opozorilo o dnevnem strošku AI (server/opozorilo-ai.js)
+  let stiskaObvestila = null; // e-mail skrbniku ob oznaki stiske (server/stiska-obvestilo.js)
   // Pomnilnik (točka D4): vzorci RSS po 10 s, Straža opozori nad 85 % meje gostovanja (server/pomnilnik.js).
   const pomnilnik = createPomnilnik({ zacni: opts.pomnilnik !== false });
   app.locals.pomnilnik = pomnilnik;
@@ -655,6 +657,8 @@ export function createApp(store, opts = {}) {
 
   // Izid samodejne meritve natančnosti po objavi (server/meritev-po-objavi.js), samo za skrbnika.
   mountMeritevPoObjavi(app, { isAdmin: (req) => !!req.parent?.is_admin || isLocalRequest(req) });
+  // Oznake stiske in »Označi kot pregledano« (pregledano_ob), samo za skrbnika (server/stiska-obvestilo.js).
+  mountStiske(app, store, { isAdmin: (req) => !!req.parent?.is_admin || isLocalRequest(req) });
 
   // Obvestilo »Testna verzija«: kaj še ne dela. EVKLID_TESTNA_VERZIJA=off ga skrije (ob javni objavi).
   const testNotice = () => {
@@ -1071,9 +1075,12 @@ export function createApp(store, opts = {}) {
     if (nujnoLokalno) send("nujno", nujnoLokalno);
     // Največ en varnostni odgovor na sporočilo (lokalno, Haiku ali META flag=distress).
     let nujnoPoslano = !!nujnoLokalno;
+    // Vrsta poslanega okna: samo za obvestilo skrbniku ob oznaki stiske (server/stiska-obvestilo.js).
+    let nujnoVrsta = nujnoLokalno?.vrsta ?? null;
     const posljiNujno = (n) => {
       if (!n || nujnoPoslano || res.writableEnded || res.destroyed) return;
       nujnoPoslano = true;
+      nujnoVrsta = n.vrsta ?? null;
       send("nujno", n);
       oknoVrsta = n.vrsta ?? null; // vrsta okna, ki ga nosi ta odgovor (pozna okna spodaj)
     };
@@ -1538,10 +1545,11 @@ export function createApp(store, opts = {}) {
       }
       // Nepreverjenih kartic učenec še ne vidi (tudi ne v obvestilu »dodane kartice«).
       if (cards.length && !liveCards) send("cards", { cards: cards.map((c) => ({ id: c.id, front: c.front })), due: store.cards.dueCount(student.id, student.settings.subject || null) });
+      let eventId = null;
       if (meta) {
         // Tema učne poti: tema pogovora, sicer ime iz META, preslikano lokalno (šibke točke iz vseh virov).
         const topicId = meta.topic ? (conv.path_topic && getTopic(conv.path_topic) ? conv.path_topic : topicIdFor(student.settings, meta.subject, meta.topic)) : null;
-        store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, ...meta, topic_id: topicId });
+        eventId = store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, ...meta, topic_id: topicId });
         if (meta.done && conv.path_topic && progress.markMastered(student.id, conv.path_topic, "chat")) {
           send("mastered", { topic: getTopic(conv.path_topic)?.name, unlocked: knowledge.sync(student.id) });
         }
@@ -1560,6 +1568,9 @@ export function createApp(store, opts = {}) {
       }
       oddajZaostalo(); // pozno okno prejšnjega sporočila pred blažjim oknom tega (server/nujno.js)
       posljiNujno(blagoLokalno);
+      // Oznaka stiske → e-mail skrbniku (brez vsebine in imena, največ en na 10 min). Sinhrono zapiše vrsto, pošta teče
+      // v ozadju; napaka nikoli ne ustavi odgovora učencu.
+      if (meta?.flag === "distress" && eventId) stiskaObvestila?.nova(eventId, nujnoVrsta);
       finished = true;
       send("done", {
         ...AI_JSON, // podporni metapodatki: besedilo je ustvarila AI (server/ai-oznaka.js)
@@ -2123,6 +2134,7 @@ export function createApp(store, opts = {}) {
   backupChecks = startBackupChecks(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, isBusy: () => activity.active > 0 });
   // Vsakih 10 min: današnji strošek AI nad EVKLID_OPOZORILO_AI_USD → e-mail skrbnikom, največ enkrat na dan.
   aiCostAlert = startAiCostAlert(store.db, usage, { scheduler: opts.scheduler !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
+  stiskaObvestila = startStiskaObvestila(store.db, { scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
   app.use(notFound); // neznana pot: stran v slogu aplikacije namesto »Cannot GET« (server/ni-strani.js)
   return app;
 }
