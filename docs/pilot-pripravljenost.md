@@ -47,7 +47,7 @@ Kako preveriš sam: odpri https://evklid.app/healthz/stanje v brskalniku ali pog
 | 4 | E-pošta GitHuba za neuspele delovne tokove: »Email« vklopljen, »Only notify for failed workflows« obkljukan | GitHub → Settings → Notifications → System → Actions | Brez tega Straža pade tiho | `docs/spremljanje.md` |
 | 5 | Poskusni alarm (Run workflow z `https://evklid.app/ni-strani`) | GitHub → Actions → Straža | Preveri, da e-pošta res pride | `docs/spremljanje.md` |
 | 6 | Zadnja sprememba vrstice `cron` v `straza.yml` mora biti tvoja | GitHub → straza.yml → History | Samodejni alarmi gredo tistemu, ki jo je zadnji spremenil | `docs/spremljanje.md` |
-| 7 | Preveri `EVKLID_ADMIN_EMAILS` in Resend (`RESEND_API_KEY`) | Render → Environment | Sicer strežnik e-pošte o strošku AI in kopiji ne pošlje | `docs/spremljanje.md` |
+| 7 | Preveri `EVKLID_ADMIN_EMAILS` in Resend (`RESEND_API_KEY`) | Render → Environment | Sicer strežnik e-pošte o strošku AI, kopiji in oznaki stiske (#856) ne pošlje | `docs/spremljanje.md` |
 | 8 | Pobriši `data/povratne-informacije-povzetek.md` in `data/povratne-informacije.json`, če obstajata | Render → Shell | Lahko vsebujeta imena in mnenja, izbris računa ju ne doseže | `docs/izbris-izvoz.md` (7) |
 | 8a | Zunanji nadzor UptimeRobot na `https://evklid.app/healthz`, vsakih 5 min, e-pošta | uptimerobot.com (brezplačen račun) | Stražo GitHub zažene le na nekaj ur; izpad mora priti v minutah | `docs/spremljanje.md` |
 | 9 | Mesečna meja porabe | Anthropic Console → Settings → Limits | Varovalka zunaj aplikacije (šteje tudi meritve po objavi) | `docs/spremljanje.md` |

@@ -381,6 +381,16 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   if (!eventCols.includes("topic_id")) db.exec("ALTER TABLE events ADD COLUMN topic_id TEXT");
   // Pregled oznake (server/stiska-obvestilo.js): šifriran JSON ob vsaki oznaki razen »none« (vrsta okna ob stiski, pregledano_ob).
   if (!eventCols.includes("pregled")) db.exec("ALTER TABLE events ADD COLUMN pregled TEXT");
+  // Starejše oznake (pred stolpcem pregled) dobijo prazen pregled, kot ga dobi vsaka nova oznaka razen »none«, da se iz
+  // baze po prisotnosti pregleda ne vidi, katera stara oznaka je stiska (pregled #856).
+  {
+    const brez = db.prepare("SELECT id FROM events WHERE pregled IS NULL AND flag IS NOT NULL AND flag <> 'none'").all();
+    if (brez.length) {
+      const upd = db.prepare("UPDATE events SET pregled = ? WHERE id = ?");
+      db.exec("BEGIN");
+      try { for (const r of brez) upd.run(sealPregled({}), r.id); db.exec("COMMIT"); } catch (e) { db.exec("ROLLBACK"); throw e; }
+    }
+  }
   // Rok hrambe dnevnih vsot za šibke točke.
   db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);

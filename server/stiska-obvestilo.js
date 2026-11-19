@@ -76,11 +76,11 @@ export function stiskaEmail(oznake, env = process.env) {
   const stopnja = vrstaOpis(naj?.vrsta).stopnja;
   const url = `${baseUrl(env)}${POT}`;
   const koliko = `${n === 1 ? "" : `${n} `}${oznak(n)} stiske`;
-  const subject = `${BRAND.name}: ${koliko} (${n === 1 ? "stopnja" : "najvišja stopnja"} ${stopnja}) – preglej v ${ROK_UR} urah`;
+  const subject = `${BRAND.name}: ${koliko}, ${n === 1 ? "stopnja" : "najvišja stopnja"}: ${stopnja} – preglej v ${ROK_UR} urah`;
   const vrstice = oznake.slice(0, NAJVEC_V_EMAILU).map((o) => `${cas(o.ob)} – ${vrstaOpis(o.vrsta).opis}, stopnja ${vrstaOpis(o.vrsta).stopnja}`);
   if (n > NAJVEC_V_EMAILU) vrstice.push(`… in še ${n - NAJVEC_V_EMAILU}`);
   const uvod = n === 1 ? "Inštruktor je pri enem od učencev označil stisko." : `Od zadnjega e-maila: ${koliko} (e-mail gre največ enkrat na ${OKNO_MS / MIN} minut).`;
-  const opomba = "Učenec je varnostno okno s številkami za pomoč že dobil. V tem e-mailu namenoma ni imena, vsebine pogovora ali sporočila. Prijavi se kot skrbnik, odpri stran in oznako označi kot pregledano.";
+  const opomba = "Ob oznaki aplikacija učencu pokaže varnostno okno s številkami za pomoč, če je povezava še odprta. V tem e-mailu namenoma ni imena, vsebine pogovora ali sporočila. Prijavi se kot skrbnik, odpri stran in oznako označi kot pregledano.";
   const text = `${uvod}\n\n${vrstice.map((v) => `- ${v}`).join("\n")}\n\nPreglej v ${ROK_UR} urah: ${url}\n\n${opomba}`;
   const html = layout(
     n === 1 ? "Nova oznaka stiske" : `${n} ${oznak(n)} stiske`,
@@ -238,11 +238,11 @@ function stran(seznam) {
   const vrstica = (s) => {
     const stanje = s.pregledano_ob
       ? `pregledano ${esc(cas(s.pregledano_ob))} (po ${String(s.ur_do_pregleda).replace(".", ",")} h${s.v_roku ? "" : ", po roku"})`
-      : `<b>${s.zamuda ? "NEPREGLEDANO, rok 24 h potekel" : "nepregledano"}</b> <form method="post" action="${POT}/${s.id}/pregledano"><button type="submit">Označi kot pregledano</button></form>`;
-    return `<tr><td>${esc(cas(s.ob))}</td><td>${esc(vrstaOpis(s.vrsta).opis)}</td><td>${esc(s.stopnja)}</td><td>${esc(s.profil)}</td><td>${esc(s.koda || "–")}</td><td>${stanje}</td></tr>`;
+      : `<b>${s.zamuda ? "nepregledano, rok 24 ur je potekel" : "nepregledano"}</b> <form method="post" action="${POT}/${s.id}/pregledano"><button type="submit">Označi kot pregledano</button></form>`;
+    return `<tr><td data-l="Čas">${esc(cas(s.ob))}</td><td data-l="Vrsta">${esc(vrstaOpis(s.vrsta).opis)}</td><td data-l="Stopnja">${esc(s.stopnja)}</td><td data-l="Profil">${esc(s.profil)}</td><td data-l="Koda sporočila">${esc(s.koda || "–")}</td><td>${stanje}</td></tr>`;
   };
   return `<!doctype html><html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">${IKONE_HEAD}<title>Oznake stiske – ${esc(BRAND.name)}</title>
-<style>body{font-family:system-ui,sans-serif;margin:16px;color:#1d2433}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #dde;padding:8px;text-align:left;vertical-align:top}form{display:inline}button{min-height:40px;padding:6px 12px}</style></head><body>
+<style>:root{color-scheme:light dark}body{font-family:system-ui,sans-serif;margin:16px;color:#1d2433;background:#fff}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #dde;padding:8px;text-align:left;vertical-align:top}form{display:inline}button{min-height:40px;padding:6px 12px}code{overflow-wrap:anywhere}@media (prefers-color-scheme:dark){body{color:#e6e9f0;background:#12151c}td,th{border-color:#333a48}}@media (max-width:640px){thead{display:none}tr{display:block;border-bottom:1px solid #dde;padding:8px 0}td{display:block;border:0;padding:2px 0}td[data-l]::before{content:attr(data-l) ": ";font-weight:600}}</style></head><body>
 <h1>Oznake stiske</h1>
 <p>Zadnjih 90 dni (rok hrambe oznak). Vsako oznako preglej v ${ROK_UR} urah. Pregledanih ${p.pregledanih} od ${p.vseh}, od tega v ${ROK_UR} urah ${p.v_roku}; odprtih ${p.odprtih}, od tega po roku ${p.zamujenih}.</p>
 <p>Brez imen in vsebine. Profil je številka profila; koda sporočila je za <code>node scripts/najdi-sporocilo.js</code> na strežniku.</p>

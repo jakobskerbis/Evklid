@@ -50,12 +50,12 @@ function oznaka(store, s, c) {
 
 test("stiska e-mail: samo vrsta, stopnja, čas in povezava; brez imena, vsebine in id-jev", () => {
   const m = stiskaEmail([{ ob: "2026-11-18T13:05:00Z", vrsta: "stiska" }], { EVKLID_BASE_URL: "https://primer.app/" });
-  assert.match(m.subject, /nova oznaka stiske \(stopnja visoka\) – preglej v 24 urah/);
+  assert.match(m.subject, /nova oznaka stiske, stopnja: visoka – preglej v 24 urah/);
   assert.match(m.text, /18\. 11\. 2026 14\.05 – stiska, stopnja visoka/);
   assert.ok(m.text.includes(`https://primer.app${POT}`));
   assert.ok(m.html.includes(`https://primer.app${POT}`));
   const vec = stiskaEmail([{ ob: "2026-11-18T13:05:00Z", vrsta: "pogovor" }, { ob: "2026-11-18T13:06:00Z", vrsta: "zdravje" }, { ob: "2026-11-18T13:07:00Z", vrsta: null }], {});
-  assert.match(vec.subject, /: 3 nove oznake stiske \(najvišja stopnja nujno \(112\)\)/);
+  assert.match(vec.subject, /: 3 nove oznake stiske, najvišja stopnja: nujno \(112\) – /);
   assert.match(vec.text, /vrsta ni zapisana\), stopnja neznana/);
   const ob = { ob: "2026-11-18T13:05:00Z", vrsta: "stiska" };
   assert.match(stiskaEmail([ob, ob], {}).subject, /: 2 novi oznaki stiske/);
@@ -98,7 +98,7 @@ test("stiska e-mail: v nizu oznak največ en e-mail na 10 minut, nato en s štev
   ura = new Date(Date.parse("2026-11-18T10:00:00Z") + OKNO_MS);
   assert.equal(await o.run(), "poslano");
   assert.equal(mailer.poslano.length, 4);
-  assert.match(mailer.poslano[2].subject, /3 nove oznake stiske \(najvišja stopnja nujno \(112\)\)/);
+  assert.match(mailer.poslano[2].subject, /3 nove oznake stiske, najvišja stopnja: nujno \(112\)/);
   assert.equal(o.stanje().cakajo, 0);
   assert.equal(await o.run(), null, "nič ne čaka");
   store.db.close();
@@ -344,4 +344,33 @@ test("stiska e-mail v aplikaciji: Resend ne dela → učenec vseeno dobi varnost
     });
     store.db.close();
   });
+});
+
+test("stiska e-mail: stare oznake brez pregleda ga dobijo ob zagonu (iz baze se ne vidi, katera je stiska)", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const path = await import("node:path");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "stiska-mig-"));
+  const file = path.join(dir, "e.db");
+  try {
+    await withEnv({ EVKLID_DATA_KEY: newKey() }, async () => {
+      let store = openDb(file);
+      const s = store.createStudent("Miha");
+      const c = store.createConversation(s.id);
+      oznaka(store, s, c);
+      store.addEvent({ student_id: s.id, conversation_id: c.id, subject: "MAT", topic: "x", error: 0, mode: "A", flag: "unsafe" });
+      store.addEvent({ student_id: s.id, conversation_id: c.id, subject: "MAT", topic: "x", error: 0, mode: "A", flag: "none" });
+      store.db.exec("UPDATE events SET pregled = NULL"); // kot pred stolpcem pregled
+      store.db.close();
+      store = openDb(file);
+      const rows = store.db.prepare("SELECT pregled FROM events ORDER BY id").all();
+      assert.ok(isEncrypted(rows[0].pregled) && isEncrypted(rows[1].pregled), "obe oznaki dobita pregled");
+      assert.equal(rows[0].pregled.length, rows[1].pregled.length);
+      assert.equal(rows[2].pregled, null, "»none« ostane brez pregleda");
+      assert.deepEqual(openPregled(rows[0].pregled), {});
+      store.db.close();
+    });
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });
