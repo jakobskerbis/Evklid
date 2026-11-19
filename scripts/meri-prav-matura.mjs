@@ -138,11 +138,14 @@ async function korak(p) {
   const zacetek = store.db.prepare("SELECT COALESCE(MAX(id), 0) AS m FROM usage").get().m;
   const res = await fetch(`${base}/api/conversations/${conv.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: p.ucenec }) });
   const body = await res.text();
-  const klici = store.db.prepare("SELECT kind, model FROM usage WHERE id > ? ORDER BY id").all(zacetek).map((r) => `${r.kind}:${String(r.model).replace(/^claude-/, "")}`);
+  const vrstice = store.db.prepare("SELECT kind, model, cost_usd FROM usage WHERE id > ? ORDER BY id").all(zacetek);
+  const klici = vrstice.map((r) => `${r.kind}:${String(r.model).replace(/^claude-/, "")}`);
+  // Strošek aplikacije za ta korak (brez ocenjevalca): inštruktor (chat, popravek) in vse skupaj (s pregledom, varnostjo).
+  const usd = { instruktor: vrstice.filter((r) => r.kind === "chat" || r.kind === "popravek").reduce((a, r) => a + (r.cost_usd || 0), 0), aplikacija: vrstice.reduce((a, r) => a + (r.cost_usd || 0), 0) };
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`);
   const done = [...body.matchAll(/event: done\ndata: (.*)\n/g)].at(-1);
   if (!done) throw new Error(`brez dogodka done: ${body.slice(-200)}`);
-  return { odgovor: JSON.parse(done[1]).text, klici };
+  return { odgovor: JSON.parse(done[1]).text, klici, usd };
 }
 
 const izid = [];
@@ -158,9 +161,9 @@ for (const p of primeri) {
     break;
   }
   try {
-    const { odgovor, klici } = await korak(p);
+    const { odgovor, klici, usd } = await korak(p);
     const o = await oceni(p, odgovor);
-    izid.push({ id: p.id, vrsta: p.vrsta, pravilen: p.pravilen, ocena: o.vrsta, ok: o.ok, razlog: o.besedilo, klici, odgovor });
+    izid.push({ id: p.id, vrsta: p.vrsta, pravilen: p.pravilen, ocena: o.vrsta, ok: o.ok, razlog: o.besedilo, klici, usd, odgovor });
     console.log(`${p.id}: ${o.vrsta} (${p.pravilen ? "pravilen" : "napačen"} korak; ${klici.join(" ") || "brez klicev"}), skupaj ${porabljeno().toFixed(3)} $`);
   } catch (e) {
     // Nedokončan primer ne šteje v izid; morebitna poraba je že v tabeli usage.
@@ -182,6 +185,8 @@ const vrste = [...new Set(napacni.map((r) => r.vrsta))];
 console.log(`\nNapačni koraki po vrsti (pravilno obravnavani): ${vrste.map((v) => `${v} ${n(napacni, (r) => r.vrsta === v && r.ok)}/${n(napacni, (r) => r.vrsta === v)}`).join(", ")}`);
 const slabi = izid.filter((r) => !r.ok);
 if (slabi.length) console.log(`Ne OK: ${slabi.map((r) => `${r.id} (${r.ocena})`).join(", ")}`);
+const povp = (k) => (izid.length ? izid.reduce((a, r) => a + r.usd[k], 0) / izid.length : 0);
+console.log(`Strošek aplikacije na korak (brez ocenjevalca): inštruktor ${(100 * povp("instruktor")).toFixed(3)} ¢, vse skupaj ${(100 * povp("aplikacija")).toFixed(3)} ¢.`);
 console.log(`\nIZID: napačni ${n(napacni, (r) => r.ok)}/${napacni.length} pravilno obravnavanih, pravilni ${n(pravilni, (r) => r.ok)}/${pravilni.length}; strošek ${porabljeno().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}. Odgovori: ${OUT}`);
 zapisi(true);
 fs.rmSync(tmp, { recursive: true, force: true });
