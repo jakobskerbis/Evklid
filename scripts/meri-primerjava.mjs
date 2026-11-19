@@ -41,7 +41,7 @@ if (!(MAX_USD > 0) || MAX_USD > 5) {
 }
 const MODELI = { haiku: "claude-haiku-5-5", sonnet: "claude-sonnet-5-5" };
 const MODEL_IME = arg("--model", "haiku");
-if (!(MODEL_IME in MODELI)) {
+if (!Object.hasOwn(MODELI, MODEL_IME)) {
   console.error(`--model mora biti haiku ali sonnet (ne »${MODEL_IME}«). Nič ni bilo poklicano.`);
   process.exit(1);
 }

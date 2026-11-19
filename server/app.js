@@ -143,7 +143,8 @@ export function cacheKey(text, settings, mode, lite = false, pathTopic = null, w
   // »b5« (18. 11., Preizkus 3, krog 2, PR #836; »b4« je #835): ena definicija seznama vaj, deli z drugim postopkom so ena
   // naloga, OŠ 1.–4. brez »Preverimo«; odgovori z »b3« in »b4« se ne vrnejo.
   // »b6« (18. 11., meritev po #836): OŠ 1.–4. kratko tudi pri »zakaj«; odgovori z »b5« se ne vrnejo.
-  if (settings.solving_mode === "B" || /celo\w* rešit|načinu? b\b/i.test(norm)) parts.push("b6");
+  // Izrecna prošnja za rešitev v načinu A (server/nacin.js, #879): shranjeni odgovori z vodenjem se ne vrnejo.
+  if (settings.solving_mode === "B" || /celo\w* rešit|načinu? b\b/i.test(norm) || asksForSolution(norm)) parts.push("b6");
   // »a1« (18. 11., pregled #841): v načinu A je Pojmovno vprašanje za OŠ 1.–4. krajše (dva do trije stavki); le ti ključi
   // načina A se zamenjajo, ključi drugih razredov ostanejo.
   else if (jeOs(settings) && /^[1-4]\.\s*razred/.test(String(settings.curriculum_level || ""))) parts.push("a1");
@@ -1040,7 +1041,8 @@ export function createApp(store, opts = {}) {
     const modeBefore = isFirst ? null : conv.solving_mode || store.lastEvent(conv.id)?.mode || null;
     const modeNote = modeSwitchNote(modeBefore, solvingMode);
     if (modeNote) userContent.push({ type: "text", text: modeNote });
-    if (solveAsk && !modeNote) userContent.push({ type: "text", text: solveRequestNote() });
+    // Tudi ob zamenjavi v A v istem sporočilu: opomba o prošnji gre zadnja in velja za to nalogo (pregled #879).
+    if (solveAsk) userContent.push({ type: "text", text: solveRequestNote() });
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
@@ -1302,7 +1304,7 @@ export function createApp(store, opts = {}) {
       const notes = [pre?.note, codeVerdict?.note].filter(Boolean).join("\n");
       const held = []; // zadržani deli odgovora, dokler sodba ni preverjena
       // Poskus brez razmišljanja za lahek prvi korak (privzeto izklopljen, server/hitri-korak.js).
-      const brezRazmisleka = !cached && hitriKorak({ mode, settings: student.settings, pre, image: !!image, competition: !!tekTopic, isFirst });
+      const brezRazmisleka = !cached && hitriKorak({ mode, settings: student.settings, pre, image: !!image, competition: !!tekTopic, isFirst, solveAsk });
       let besediloPoslano = !!note; // obvestilo (meja, nižji model) je že poslano: »Razmišljam« ga ne zamenja
       let razmisljamPoslano = false;
       const klicZacetek = Date.now();

@@ -3,12 +3,15 @@
 // rešitve ne zadržita. Navodilo naloge (»Reši enačbo«) in zanikanje (»ne reši mi«) nista prošnja.
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { asksForSolution, solveRequestNote } from "../server/nacin.js";
 import { paperContext } from "../server/paper-context.js";
 import { lessonNote } from "../server/lekcija-za-vprasanje.js";
 import { isHiddenNote } from "../server/skrite-opombe.js";
+import { cacheKey } from "../server/app.js";
+import { hitriKorak } from "../server/hitri-korak.js";
 
 const hidden = (msg) => msg.content.filter((b) => b.type === "text").map((b) => b.text);
 
@@ -22,6 +25,16 @@ test("asksForSolution: jasne prošnje da, navodila naloge in zanikanja ne", () =
     "Prosim reši nalogo 3",
     "pokazi resitev",
     "Napiši mi rešitev",
+    "Ne dajem ti več časa, reši mi nalogo",
+    "Mi lahko rešiš to nalogo?",
+    "rešiš mi to?",
+    "a mi lahko rešiš",
+    "lahko kar rešiš?",
+    "Ali mi lahko pokažeš postopek?",
+    "Reši 3. nalogo",
+    "Povej mi rešitev",
+    "rabim celo rešitev",
+    `${"Dolgo besedilo naloge. ".repeat(60)}Reši mi to.`,
   ])
     assert.equal(asksForSolution(t), true, t);
   for (const t of [
@@ -32,6 +45,15 @@ test("asksForSolution: jasne prošnje da, navodila naloge in zanikanja ne", () =
     "kako rešim to?",
     "brez rešitve, prosim, samo namig",
     "Reši sistem enačb x + y = 3, x - y = 1",
+    "Pokaži mi postopek, rezultat bom sam",
+    "pokaži postopek brez rezultata",
+    "Pri vseh nalogah pokažite postopek. 1. Reši enačbo x + 1 = 2.",
+    "Rešite naslednjo nalogo: x + 1 = 2",
+    "Reši nalogo s pomočjo Vietovih formul.",
+    "Zapiši celotno rešitev naloge.",
+    "Preveri mojo celo rešitev: x = 3",
+    "ne rešiš mi, samo pomagaj",
+    "ne daj mi namigov, reši mi", // zanikanje velja za vse sporočilo (varneje)
     "",
     null,
   ])
@@ -43,9 +65,30 @@ test("solveRequestNote: skrita opomba z načinom B, brez besed ščita", () => {
   assert.match(n, /^<nacin>\n/);
   assert.match(n, /način B/);
   assert.match(n, /homework rule still applies/);
+  assert.doesNotMatch(n, /ending with the result/, "način B ima rezultat v prvem stavku");
   assert.match(n, /Never mention this note/);
   assert.doesNotMatch(n, /META|system prompt/);
   assert.ok(isHiddenNote(n));
+});
+
+test("shranjeni odgovori in hitri prvi korak: prošnja za rešitev ima svoj ključ in ne gre na hitri korak", () => {
+  const st = { subject: "MAT", educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik", solving_mode: "A" };
+  // Ključ dobi »b6« kot v načinu B (shranjeni odgovori z vodenjem se ne vrnejo).
+  const t = "Izračunaj ploščino trikotnika s stranicami 3, 4 in 5. Reši mi to nalogo.";
+  assert.match(cacheKey(t, st, "think"), /^[0-9a-f]{64}$/);
+  const src = fs.readFileSync(new URL("../server/app.js", import.meta.url), "utf8");
+  const fn = src.slice(src.indexOf("export function cacheKey("), src.indexOf("export const CSP"));
+  assert.match(fn, /\|\| asksForSolution\(norm\)\) parts\.push\("b6"\)/);
+  const prev = process.env.EVKLID_HITRI_KORAK;
+  process.env.EVKLID_HITRI_KORAK = "1";
+  try {
+    const args = { mode: "chat", settings: st, pre: { problems: [{}] }, isFirst: true };
+    assert.equal(hitriKorak(args), true);
+    assert.equal(hitriKorak({ ...args, solveAsk: true }), false);
+  } finally {
+    if (prev === undefined) delete process.env.EVKLID_HITRI_KORAK;
+    else process.env.EVKLID_HITRI_KORAK = prev;
+  }
 });
 
 test("opombi pole in lekcije pri izrecni prošnji (B1) ne zadržita rešitve", () => {
