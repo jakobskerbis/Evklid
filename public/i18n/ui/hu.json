@@ -3560,7 +3560,7 @@
   "a3.cutPos": "A metszet helye",
   "a3.xray": "Röntgen",
   "a3.xrayHint": "A kiválasztott struktúrán kívül minden átlátszó lesz.",
-  "a3.detail": "Részletesség",
+  "a3.detail": "Magyarázat szintje",
   "a3.levelOS": "Alap",
   "a3.levelSS": "Haladó",
   "a3.levelAll": "Összes",

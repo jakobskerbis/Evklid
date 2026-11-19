@@ -3563,7 +3563,7 @@
   "a3.cutPos": "Posición del corte",
   "a3.xray": "Rayos X",
   "a3.xrayHint": "Todo menos la estructura elegida se vuelve transparente.",
-  "a3.detail": "Detalle",
+  "a3.detail": "Nivel de explicación",
   "a3.levelOS": "Básico",
   "a3.levelSS": "Avanzado",
   "a3.levelAll": "Todo",

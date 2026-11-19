@@ -3622,7 +3622,7 @@
   "a3.cutPos": "Poloha řezu",
   "a3.xray": "Rentgen",
   "a3.xrayHint": "Vše kromě vybrané struktury zprůhlední.",
-  "a3.detail": "Podrobnost",
+  "a3.detail": "Úroveň výkladu",
   "a3.levelOS": "Základ",
   "a3.levelSS": "Pokročilé",
   "a3.levelAll": "Vše",

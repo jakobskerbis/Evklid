@@ -3560,7 +3560,7 @@
   "a3.cutPos": "Kesit konumu",
   "a3.xray": "Röntgen",
   "a3.xrayHint": "Seçilen yapı dışında her şey saydamlaşır.",
-  "a3.detail": "Ayrıntı",
+  "a3.detail": "Açıklama düzeyi",
   "a3.levelOS": "Temel",
   "a3.levelSS": "İleri",
   "a3.levelAll": "Tümü",

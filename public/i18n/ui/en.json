@@ -3562,7 +3562,7 @@
   "a3.cutPos": "Section position",
   "a3.xray": "X-ray",
   "a3.xrayHint": "Everything except the selected structure becomes see-through.",
-  "a3.detail": "Detail",
+  "a3.detail": "Explanation level",
   "a3.levelOS": "Basic",
   "a3.levelSS": "Advanced",
   "a3.levelAll": "All",

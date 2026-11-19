@@ -3535,7 +3535,7 @@
   "a3.cutPos": "断面の位置",
   "a3.xray": "X線",
   "a3.xrayHint": "選んだ構造以外が透明になります。",
-  "a3.detail": "詳しさ",
+  "a3.detail": "説明のレベル",
   "a3.levelOS": "基本",
   "a3.levelSS": "発展",
   "a3.levelAll": "すべて",

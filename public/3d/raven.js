@@ -1,8 +1,8 @@
 // Raven razlage 3D modelov (j, 6. 11. 14:37): vsi deli so na vseh ravneh vidni; po ravni (1 Osnovno, 2 Srednja šola,
 // 3 Študij) se prilagodi samo razlaga dela: OŠ preprosto (»opisOs«), SŠ »opis« z latinskim imenom, študij še
 // »opisStudij«. Globlje besedilo je vedno dosegljivo pod »Več o tem« (nič ni zaklenjeno). Začetna raven je raven
-// profila: aplikacija poda vir nastavitev (app.js: nastaviVirRavni(() => state.student?.settings)), okvir »Uči se«
-// jo dobi v naslovu (uci-se.js: /3d?raven=…), samostojna stran /3d brez profila »?raven=« ali SŠ.
+// profila: okvir »Uči se« jo dobi v naslovu (uci-se.js: /3d?raven=…), samostojna stran /3d brez profila »?raven=«
+// ali SŠ. nastaviVirRavni(fn) lahko poda vir nastavitev neposredno (zdaj ga kliče le test; aplikacija 3D odpre v okvirju).
 import { stopnja } from "../stopnja.js";
 
 let vir = () => null;

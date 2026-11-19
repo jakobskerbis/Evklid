@@ -3562,7 +3562,7 @@
   "a3.cutPos": "Lage des Schnitts",
   "a3.xray": "Röntgen",
   "a3.xrayHint": "Alles außer der gewählten Struktur wird durchsichtig.",
-  "a3.detail": "Detailgrad",
+  "a3.detail": "Erklärungsstufe",
   "a3.levelOS": "Basis",
   "a3.levelSS": "Erweitert",
   "a3.levelAll": "Alle",

@@ -3628,7 +3628,7 @@
   "a3.cutPos": "Położenie przekroju",
   "a3.xray": "Rentgen",
   "a3.xrayHint": "Wszystko oprócz wybranej struktury staje się przezroczyste.",
-  "a3.detail": "Szczegółowość",
+  "a3.detail": "Poziom wyjaśnień",
   "a3.levelOS": "Podstawy",
   "a3.levelSS": "Rozszerzone",
   "a3.levelAll": "Wszystko",
