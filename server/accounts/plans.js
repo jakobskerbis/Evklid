@@ -266,6 +266,19 @@ export const ALL_PLANS = [...PLANS.map((p) => ({ ...p, currency: "EUR" })), ...L
 // Cene, ustvarjene pod prejšnjim imenom aplikacije (brand.json → legacy), imajo v Stripu lookup_key »<staro>_…«.
 const currentKey = (key) => LEGACY.reduce((k, l) => (k.startsWith(`${l.slug}_`) ? `${BRAND.slug}_${k.slice(l.slug.length + 1)}` : k), String(key ?? ""));
 export const planByKey = (key) => ALL_PLANS.find((p) => p.key === currentKey(key)) || null;
+// Paket cene v Stripu. Ob spremembi zneska (npr. SŠ letno 139 → 99 €, j 2026-11-19) ensurePrices prenese lookup_key na
+// novo ceno in staro arhivira; obstoječe naročnine ostanejo na stari ceni brez lookup_key. Takrat paket po
+// metadata.plan_key (cene od 2026-11-19) ali po nazivu (nickname = label, v drugih valutah »label (VALUTA)«),
+// valuti in obdobju, ki so med paketi enolični.
+export const planOfPrice = (price) => {
+  if (!price) return null;
+  const byKey = planByKey(price.lookup_key) || planByKey(price.metadata?.plan_key);
+  if (byKey) return byKey;
+  const cur = String(price.currency || "").toUpperCase();
+  const interval = price.recurring?.interval;
+  if (!price.nickname || !cur || !interval) return null;
+  return ALL_PLANS.find((p) => p.currency === cur && p.interval === interval && (cur === "EUR" ? p.label : `${p.label} (${cur})`) === price.nickname) || null;
+};
 export const isSchoolPlan = (key) => !!planByKey(key)?.school;
 // Paket za nakup: v evrih 1 profil po stopnji profila, 2 ali več profilov Družina (s študentom, če je stopnja
 // faks); v regijskih valutah kot doslej po številu otrok (1 ali 2).

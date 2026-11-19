@@ -97,7 +97,7 @@ export class Stripe {
         transfer_lookup_key: old ? true : undefined,
         nickname: currency === "EUR" ? plan.label : `${plan.label} (${currency})`,
         recurring: { interval: plan.interval },
-        metadata: { seats: plan.seats },
+        metadata: { seats: plan.seats, plan_key: plan.key },
       });
       byKey[plan.key] = price.id;
       if (old) {

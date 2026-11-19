@@ -17,7 +17,7 @@ import { pilotSummary, pilotWtp, endAccountPilot } from "../pilot-naloge.js";
 import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
 import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES, PILOT_LOCK_PROFILES, pilotLastDay } from "./pilot-meja.js";
 import { createPaidPeriods } from "../placila/placano.js";
-import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, unverifiedDayUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
+import { planByKey, planOfPrice, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, unverifiedDayUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, inactiveEmail, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail, skrbnikKodaEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT, CREDIT_WITHDRAWAL_TEXT, WITHDRAWAL_VERSION } from "./billing.js";
@@ -1886,7 +1886,9 @@ export function mountAccounts(app, store, opts = {}) {
     if (!level || plan.legacy) return null;
     const options = plan.family
       ? level === "FAKS" ? [] : [familyPlanFor(true, plan.interval)]
-      : STOPNJE.filter((l) => rang(l) > rang(level)).map((l) => levelPlanFor(l, plan.interval));
+      : STOPNJE.filter((l) => rang(l) > rang(level)).map((l) => levelPlanFor(l, plan.interval)).filter((o) => o && o.amount > plan.amount);
+    // Višja stopnja po isti ceni (OŠ → SŠ letno, oboje 99 € od 2026-11-19) ni nadgradnja z doplačilom 0 €: profil za en sedež
+    // ima stopnjo odprto že zdaj (pravice.js grace), paket se zamenja ob podaljšanju (billing.js levelChanges).
     return options.length ? { from: plan.key, options: options.map((o) => ({ key: o.key, level: o.level, family: !!o.family, label: o.label, amount: o.amount, interval: o.interval, currency: "EUR" })) } : null;
   }
 
@@ -2562,7 +2564,7 @@ export function mountAccounts(app, store, opts = {}) {
   async function applySubscription(parentId, sub, opts = {}) {
     const item = sub.items?.data?.[0];
     const price = item?.price || {};
-    const plan = planByKey(price.lookup_key);
+    const plan = planOfPrice(price);
     const seats = plan?.seats || Number(price.metadata?.seats) || 1;
     const end = sub.current_period_end ?? item?.current_period_end;
     const before = getParent(parentId);
@@ -2577,7 +2579,7 @@ export function mountAccounts(app, store, opts = {}) {
     // trenutna ni več active/trialing (npr. past_due v odlogu) ali je druga višji paket (nakup višje stopnje). Obnova
     // druge naročnine istega ali nižjega paketa tako ne preklaplja trenutne.
     const good = (s) => s?.status === "active" || s?.status === "trialing";
-    const rank = (s) => monthlyOf(planByKey(s?.items?.data?.[0]?.price?.lookup_key))?.amount ?? 0;
+    const rank = (s) => monthlyOf(planOfPrice(s?.items?.data?.[0]?.price))?.amount ?? 0;
     const curRank = monthlyOf(planByKey(before?.sub_plan))?.amount ?? 0;
     if (!opts.adopt && before?.sub_id && sub.id !== before.sub_id && paidActive(before)) {
       const curGood = before.sub_status === "active" || before.sub_status === "trialing";
@@ -2630,7 +2632,7 @@ export function mountAccounts(app, store, opts = {}) {
     const list = await stripe.request("GET", "/subscriptions", { customer: p.stripe_customer_id, status: "all", limit: 10 });
     const subs = list.data || [];
     // Najprej active/trialing z najvišjim paketom (ne past_due pred aktivno, pregled #497 B P3-2), nato past_due, nato najnovejša.
-    const rank = (s) => monthlyOf(planByKey(s?.items?.data?.[0]?.price?.lookup_key))?.amount ?? 0;
+    const rank = (s) => monthlyOf(planOfPrice(s?.items?.data?.[0]?.price))?.amount ?? 0;
     const good = subs.filter((s) => s.status === "active" || s.status === "trialing").sort((a, b) => rank(b) - rank(a));
     const best = good[0] || subs.find((s) => PAID.has(s.status)) || [...subs].sort((a, b) => b.created - a.created)[0];
     if (best) await applySubscription(p.id, best, { adopt: true });

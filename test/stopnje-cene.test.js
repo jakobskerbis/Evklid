@@ -728,12 +728,51 @@ test("prehod OŠ → SŠ letno pri isti ceni (99 €): paket se zamenja ob podal
     assert.equal(row.to_key, "evklid_ss_year");
     assert.equal(row.effective_at, end, "cena se ne zviša: brez 30-dnevnega čakanja, ob naslednjem podaljšanju");
     const mail = stripe.calls.filter((c) => c.host === "api.resend.com" && /sprememba paketa/.test(c.body.subject)).at(-1).body;
-    assert.match(mail.text, /Cena ostane enaka: 99,00/);
+    assert.match(mail.text, /Cena se ne spremeni: 99,00/);
+    assert.match(mail.text, /Profil ima novo stopnjo odprto že zdaj/);
     assert.doesNotMatch(mail.text, /cenejša/);
     assert.doesNotMatch(mail.subject, /nova cena/);
     await run(new Date(Date.parse(end) - 2 * day));
     const post = stripe.calls.find((c) => c.path === "/v1/subscriptions/sub_a" && c.method === "POST");
     assert.equal(post.body["items[0][price]"], "price_evklid_ss_year");
+  });
+});
+
+test("znižana cena (SŠ letno 139 → 99 €): stara naročnina preide na novo ceno tik pred podaljšanjem, ne prej", async () => {
+  await withAccounts(async ({ db, api, stripe, kid, subscribe }) => {
+    kid("Ana", "SS");
+    const end = iso(10);
+    subscribe("evklid_ss_year", end);
+    // Arhivirana stara cena: lookup_key je prešel na novo ceno (ensurePrices), ostanejo naziv, valuta in obdobje.
+    stripe.subs.sub_a.items.data[0].price = { id: "price_staro", lookup_key: null, nickname: "SŠ, šolsko leto", currency: "eur", recurring: { interval: "year" }, unit_amount: 13900 };
+    const run = (now = new Date()) => api.billing.billingDaily(now, { force: true });
+    const posts = () => stripe.calls.filter((c) => c.path === "/v1/subscriptions/sub_a" && c.method === "POST");
+    assert.equal((await run()).price_dropped, 0, "10 dni prej: še ne");
+    assert.equal(posts().length, 0);
+    assert.equal((await run(new Date(Date.parse(end) - 2 * day))).price_dropped, 1);
+    assert.equal(posts()[0].body["items[0][price]"], "price_evklid_ss_year");
+    assert.equal(posts()[0].body.proration_behavior, "none");
+    // Že po današnji ceni: nič več.
+    stripe.subs.sub_a.items.data[0].price = { id: "price_evklid_ss_year", lookup_key: "evklid_ss_year", unit_amount: 9900 };
+    assert.equal((await run(new Date(Date.parse(end) - 1 * day))).price_dropped, 0);
+    assert.equal(db.prepare("SELECT sub_plan FROM parents").get().sub_plan, "evklid_ss_year");
+  });
+});
+
+test("arhivirana cena v Stripu (po spremembi zneska): paket po metadata.plan_key ali nazivu; nadgradnja 0 € se ne ponudi", async () => {
+  const { planOfPrice } = await import("../server/accounts/plans.js");
+  assert.equal(planOfPrice({ lookup_key: "evklid_ss_year" }).key, "evklid_ss_year");
+  assert.equal(planOfPrice({ lookup_key: null, metadata: { plan_key: "evklid_faks_month" } }).key, "evklid_faks_month");
+  assert.equal(planOfPrice({ nickname: "SŠ, šolsko leto", currency: "eur", recurring: { interval: "year" } }).key, "evklid_ss_year");
+  assert.equal(planOfPrice({ nickname: "SŠ, šolsko leto", currency: "eur", recurring: { interval: "month" } }), null, "obdobje se mora ujemati");
+  assert.equal(planOfPrice({ nickname: "neznano", currency: "eur", recurring: { interval: "year" } }), null);
+  assert.equal(planOfPrice(null), null);
+  await withAccounts(async ({ call, kid, subscribe }) => {
+    kid("Ana", "OS");
+    subscribe("evklid_1_year");
+    // OŠ letno → SŠ letno je ista cena (99 €): ni nadgradnje z doplačilom, faks (199 €) ostane.
+    const acc = (await call("/api/account")).body;
+    assert.deepEqual(acc.upgrade.options.map((o) => o.key), ["evklid_faks_year"]);
   });
 });
 
