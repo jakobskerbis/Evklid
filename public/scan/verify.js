@@ -154,9 +154,16 @@ function check(problemText, ai) {
       return { verified: equalNumerically(a, b), reason: "wrong" };
     }
     if (kind === "derivative") {
-      const f = fnOf(String(problemText).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, ""));
+      const izraz = String(problemText).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, "");
+      const f = fnOf(izraz);
       const g = fnOf(ai.value);
       if (!f || !g) return { verified: false, reason: "parse" };
+      // Naloga brez »d/dx« ali »f(x) =«, ki je konstanta (npr. določeni integral): odvod bi bil 0 in bi potrdil napačno
+      // rešitev »0«, ki jo AI označi kot odvod (meritev skenerja 19. 11., naloga s11).
+      if (izraz === String(problemText)) {
+        const y = [0.3, 1.7, -2.1].map((t) => f({ [v]: t }));
+        if (y.every((w) => fin(w) && Math.abs(w - y[0]) < 1e-9)) return { verified: false, reason: "kind" };
+      }
       return { verified: compareFns((x) => (f({ [v]: x + 1e-5 }) - f({ [v]: x - 1e-5 })) / 2e-5, (x) => g({ [v]: x })), reason: "wrong" };
     }
     if (kind === "integral") {
