@@ -177,7 +177,11 @@ test("neveljavni argumenti končajo z 1 pred vsakim klicem; --kot-produkcija ne 
   const gh = zagon(["--suho", "--naloge-datoteka", datoteka, "--kot-produkcija"], { GITHUB_ACTIONS: "true" });
   assert.equal(gh.status, 1);
   assert.match(gh.stderr, /ni dovoljen v GitHub Actions/);
-  assert.equal(zagon(["--suho", "--naloge-datoteka", datoteka, "--naloge", "1", "--kot-produkcija"]).status, 0, "lokalno dovoljen");
+  // Lokalno dovoljen (ni zavrnjen s kodo 1); rezerva Opusa je nad privzeto mejo 2 $, zato ustavi pred mejo s kodo 2.
+  const lok = zagon(["--suho", "--naloge-datoteka", datoteka, "--naloge", "1", "--kot-produkcija"]);
+  assert.equal(lok.status, 2, "lokalno dovoljen, ustavljen pred mejo");
+  assert.match(lok.stdout, /IZID: 0\/1 nalog brez napake, .* · NI POPOLN/);
+  assert.equal(zagon(["--suho", "--naloge-datoteka", datoteka, "--naloge"]).status, 1, "argument brez vrednosti");
   const brez = zagon(["--naloge-datoteka", datoteka, "--naloge", "1"], { ANTHROPIC_API_KEY: "", ANTHROPIC_AUTH_TOKEN: "" });
   assert.equal(brez.status, 1);
   assert.match(brez.stderr, /Ni ključa API/);

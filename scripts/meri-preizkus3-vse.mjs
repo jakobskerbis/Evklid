@@ -37,6 +37,10 @@ for (let i = 2; i < process.argv.length; i++) {
     console.error(`Neznan argument »${a}« (dovoljeni: ${Object.keys(ZNANI).join(", ")}; vrednost za presledkom). Nič ni bilo poklicano.`);
     process.exit(1);
   }
+  if (ZNANI[a] && (i + 1 >= process.argv.length || process.argv[i + 1].startsWith("--"))) {
+    console.error(`Argument »${a}« nima vrednosti. Nič ni bilo poklicano.`);
+    process.exit(1);
+  }
   i += ZNANI[a];
 }
 const arg = (name, def) => {
@@ -128,10 +132,12 @@ const vidno = (t) => stripChoices(stripMeta(String(t))).replace(/<<[A-ZČŠŽ_]+
 // Sonneta. Z nadgradnjami (lokalno): 2× najslabši odgovor Opusa (server/meje-ai.js) + 2× pregled Sonneta.
 // Varnostni pregled sporočila pred zavrnitvijo (server/nujno.js, na strošek aplikacije, zunaj rezerve odgovora) lahko
 // mejo preseže za nekaj desetink centa: zato stalen dodatek 0,01 $ na sporočilo.
+// Nadaljnja sporočila pri Vodenju (napačen korak, »Ne vem.«) lahko sprožijo pregled sodbe koraka s Sonnetom
+// (server/app.js, modelReview; dnevna meja EVKLID_VERDICT_DAILY_USD, kot v aplikaciji), zato še njegova rezerva (pregled #842).
 const NUJNO = 0.01;
 function rezerva(n, text, korak) {
   const pregled = PREGLED || PRODUKCIJA ? 2 * checkReserveUsd(MODEL_MID, text + "x".repeat(8000)) : 0;
-  if (!PRODUKCIJA) return (korak ? 0.12 : 0.08) + pregled + NUJNO;
+  if (!PRODUKCIJA) return (korak ? 0.12 + checkReserveUsd(MODEL_MID, text + "x".repeat(8000)) : 0.08) + pregled + NUJNO;
   const system = buildSystemPrompt({ settings: n.nastavitve, studentName: IME });
   const zgodovina = [n.q, ...(n.odgovori || [])].slice(0, korak + 1).map((t) => ({ role: "user", content: t + "x".repeat(korak ? 12000 : 0) }));
   return 2 * replyReserveUsd({ mode: "deep", system, messages: zgodovina, tools: SETTINGS_TOOLS, extraTokens: 2000 }) + pregled + NUJNO;
@@ -253,3 +259,7 @@ if (nap.length) console.log(`Napake: ${nap.map(([k, v]) => `${k} (${v.napaka})`)
 const manjka = izbor.filter((n) => !izid[n.id] || izid[n.id].napaka).map((n) => n.id);
 console.log(`Strošek ${stroskek().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}.${manjka.length ? ` Manjkajo: ${manjka.join(",")}.` : ""}`);
 console.log(`Odgovori: ${OUT}${IZID_KLJUC ? " (šifrirano, scripts/preizkus3-sifra.mjs --odsifriraj)" : ""}`);
+// Koda 2 (kot ostale meri-*.mjs): ustavljeno pred mejo ali nobena naloga brez napake, da zagon v Actions ni zelen.
+const koda = ustavljeno || ok === 0 ? 2 : 0;
+console.log(`IZID: ${ok}/${izbor.length} nalog brez napake, strošek ${stroskek().toFixed(4)} $, meja ${MAX_USD} $${koda ? " · NI POPOLN" : ""}`);
+process.exit(koda);
