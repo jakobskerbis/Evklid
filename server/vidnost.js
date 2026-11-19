@@ -300,8 +300,40 @@ export const aboutPage = (store = false) => staticPage(PAGE, undefined, store);
 // measurement: samo za teste (stran z meritvijo); strežnik meritev pokaže le, če je OBJAVI_MERITEV (zdaj ne).
 export const whyPage = (measurement, store = false) => staticPage(WHY_PAGE, measurement, store);
 
+// Prijavljene napake na /zakaj-evklid (točka 47 izboljšav): koliko odgovorov inštruktorja in korakov lekcij so učenci
+// prijavili kot napačne in koliko jih je že popravljenih. Samo števila (brez besedil, učencev ali datumov prijav);
+// skrbnikove prijave iz klepeta (bug_reports kind = app) ne štejejo. Brez tabel (stara baza) → null.
+const sl4 = (n, [one, two, few, many]) => {
+  const m = Math.abs(n) % 100;
+  return m === 1 ? one : m === 2 ? two : m === 3 || m === 4 ? few : many;
+};
+export function reportStats(db) {
+  try {
+    const q = (sql) => db.prepare(sql).get();
+    const msg = q("SELECT COUNT(*) AS n, COALESCE(SUM(status = 'fixed'), 0) AS f FROM message_reports");
+    const les = q("SELECT COUNT(*) AS n, COALESCE(SUM(status = 'fixed'), 0) AS f FROM bug_reports WHERE kind = 'lesson'");
+    return { total: msg.n + les.n, fixed: msg.f + les.f };
+  } catch {
+    return null;
+  }
+}
+export function reportStatsHtml(st) {
+  if (!st) return "";
+  if (!st.total) return `<p class="about-text">Prijav doslej še ni bilo.</p>`;
+  const prijav = `${st.total} ${sl4(st.total, ["prijava", "prijavi", "prijave", "prijav"])}`;
+  const popr = `${st.fixed} ${sl4(st.fixed, ["je že popravljena", "sta že popravljeni", "so že popravljene", "jih je že popravljenih"])}`;
+  return `<p class="about-text">Doslej: <b>${prijav}</b>, od tega ${st.fixed === 0 ? "še nobena ni popravljena" : popr.replace(/^(\d+) /, "<b>$1</b> ")}.</p>`;
+}
+
 // Pred statičnimi datotekami (server/app.js), da predloga /o-evklidu.html ne gre ven s spremenljivkami {{…}}.
-export function mountVidnost(app) {
+// store: baza za števec prijav na /zakaj-evklid (osveži se največ vsakih 10 minut); brez nje razdelek ostane brez števil.
+export function mountVidnost(app, store = null) {
+  let stats = { at: 0, html: "" };
+  const statsHtml = () => {
+    if (!store?.db) return "";
+    if (Date.now() - stats.at > 600_000) stats = { at: Date.now(), html: reportStatsHtml(reportStats(store.db)) };
+    return stats.html;
+  };
   const text = (type, make) => {
     let body = null;
     return (_req, res) => {
@@ -321,7 +353,7 @@ export function mountVidnost(app) {
       res.set("Cache-Control", "no-cache");
       res.vary("User-Agent");
       res.vary("X-App-Channel");
-      res.type("html").send(html);
+      res.type("html").send(html.replace("<!--prijave-->", () => statsHtml()));
     });
     app.get(`${route}.html`, (_req, res) => res.redirect(301, route));
   }

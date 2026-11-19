@@ -400,7 +400,7 @@ export function createApp(store, opts = {}) {
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   mountInvitePage(app); // stran /vabilo (public/vabilo.html, server/vabila.js)
   app.use(storeAppPages(publicDir)); // Za starše in Garancija v aplikaciji iz trgovine brez cen in /prenesi (server/mobile/trgovina.js)
-  mountVidnost(app); // robots.txt, sitemap.xml, llms.txt in stran /o-evklidu za iskalnike (server/vidnost.js)
+  mountVidnost(app, store); // robots.txt, sitemap.xml, llms.txt in stran /o-evklidu za iskalnike (server/vidnost.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov,
   // in z različico datotek (service worker in app.js ne mešata stare in nove različice).
