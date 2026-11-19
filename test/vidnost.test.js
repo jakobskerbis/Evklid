@@ -11,7 +11,7 @@ import { BRAND } from "../server/brand.js";
 import SL from "../public/i18n/sl.js";
 import { startupFiles } from "../server/startup-files.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS } from "../server/accounts/plans.js";
-import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, OBJAVI_MERITEV, PUBLIC_PAGES, DRAFT_PAGES, NOINDEX_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
+import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, wilson, eur, OBJAVI_MERITEV, PUBLIC_PAGES, DRAFT_PAGES, NOINDEX_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
 import { presolve, claimNote } from "../server/live-check.js";
 import { latestMeasurement, measurementError, pctText, slDate, summarize, tableMd, updateDoc, finalNumbers, codeResult, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
 
@@ -187,13 +187,14 @@ test("stran /zakaj-evklid (predloga z meritvijo, podano izrecno): številke iz d
   assert.ok(m && m.datoteka.startsWith("docs/meritve/natancnost-"), "meritev obstaja");
   for (const r of m.vrstice) {
     assert.ok(Number.isFinite(r.napake) ? r.napake <= r.primeri : Number.isFinite(r.napake_pct), r.kljuc);
-    const cell = Number.isFinite(r.napake) ? `<td>${pctText(r)} % <small>${r.napake} od ${r.primeri}</small></td>` : `<td>${pctText(r)} %</td>`;
+    const cell = Number.isFinite(r.napake) ? `<td>${pctText(r)} % <small>${r.napake} od ${r.primeri}</small> <small class="why-ci">95-% interval ${wilson(r.napake, r.primeri).join("–")}\u00a0%</small></td>` : `<td>${pctText(r)} %</td>`;
     // Celica je vezana na ime svoje vrstice (ne samo »nekje na strani«).
     const head = `<tr><th scope="row">${r.ime}${r.opomba ? `<small>${r.opomba}</small>` : ""}</th>`;
     assert.ok(html.includes(`${head}${cell}<td>${r.primeri}</td></tr>`), `vrstica ${r.kljuc}`);
   }
   const allowed = m.vrstice.map(pctText);
-  const pcts = [...text.matchAll(/(\d+(?:,\d+)?) %/g)].map((x) => x[1]);
+  // Intervali zaupanja (točka 16) so izračunani iz »X od N«, ne iz meritve: iz preverjanja odstotkov jih izpustimo.
+  const pcts = [...text.replace(/95-% interval [\d,]+–[\d,]+ %/g, "").matchAll(/(\d+(?:,\d+)?) %/g)].map((x) => x[1]);
   assert.ok(pcts.length >= 2 * m.vrstice.length && pcts.every((p) => allowed.includes(p)), pcts.join(" "));
   // Števila »X od N« samo, če so res zapisana v meritvi (pregled #555).
   const counts = [...text.matchAll(/(\d+) od (\d+)/g)].map((x) => `${x[1]}/${x[2]}`);
@@ -327,8 +328,8 @@ test("meritev s preverjanjem: povzetek, tabela in stran iz istih številk; skrip
   assert.equal(updateDoc(updateDoc(doc, sum), sum), updateDoc(doc, sum));
   const html = whyPage(sum);
   const text = textOf(html);
-  assert.ok(html.includes('<tr><th scope="row">Sam model, brez preverjanja</th><td>12,5 % <small>5 od 40</small></td><td>40</td></tr>'));
-  assert.ok(html.includes('<tr><th scope="row">Cel Evklidov odgovor, s preverjanjem</th><td>2,5 % <small>1 od 40</small></td><td>40</td></tr>'));
+  assert.ok(html.includes('<tr><th scope="row">Sam model, brez preverjanja</th><td>12,5 % <small>5 od 40</small> <small class="why-ci">95-% interval 5,5–26,1\u00a0%</small></td><td>40</td></tr>'));
+  assert.ok(html.includes('<tr><th scope="row">Cel Evklidov odgovor, s preverjanjem</th><td>2,5 % <small>1 od 40</small> <small class="why-ci">95-% interval 0,4–12,9\u00a0%</small></td><td>40</td></tr>'));
   // Viden pripis, kaj je bilo merjeno: plačljivi paket brez dnevne meje pregledov; z --resnicna-meja drugo besedilo.
   assert.ok(text.includes("enkrat s preverjanjem (program preveri račune, pri delu nalog odgovor pregleda še zmogljivejši model), z nastavitvami plačljivega paketa") && !text.includes("kot odgovor vidi učenec"));
   assert.ok(text.includes("Merili smo plačljivi paket brez dnevne meje pregledov z zmogljivejšim modelom.") && !text.includes("z dnevno mejo pregledov z zmogljivejšim modelom, kot velja"));
@@ -533,4 +534,11 @@ test("javne strani: brez obljube »od 1. razreda do fakultete«", () => {
   for (const name of ["o-evklidu", "zakaj-evklid", "llms.txt", "schema.org", "starsi.html"]) assert.match(textOf(pages[name]), /6\.–9\. razred osnovne šole in gimnazij/, name);
   for (const name of ["o-evklidu", "llms.txt", "starsi.html"]) assert.match(textOf(pages[name]), /začetni izbor za nekatere fakultetne predmete \(v razvoju\)/, name);
   assert.match(pages["llms.txt"], /grades 6–9 of primary school and gimnazija/);
+});
+
+test("Wilsonov 95-% interval za delež napak (točka 16): 3 od 91 ≈ 1,1–9,2 %", () => {
+  assert.deepEqual(wilson(3, 91), ["1,1", "9,2"]);
+  assert.deepEqual(wilson(0, 50), ["0", "7,1"]);
+  assert.equal(wilson(1, 0), null);
+  assert.equal(wilson(5, 3), null);
 });

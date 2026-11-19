@@ -59,12 +59,24 @@ export function accuracy(m = latestMeasurement()) {
     return null;
   }
 }
+// 95-% interval zaupanja (Wilsonov) za delež k od n, v odstotkih z decimalno vejico (točka 16 izboljšav): pri majhnem
+// vzorcu pove, kako negotov je odstotek (3 od 91 → približno 1–9 %).
+export function wilson(k, n, z = 1.96) {
+  if (!(n > 0) || !(k >= 0) || k > n) return null;
+  const p = k / n, d = 1 + (z * z) / n;
+  const c = (p + (z * z) / (2 * n)) / d, h = (z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n))) / d;
+  const f = (x) => { const v = Math.round(Math.min(1, Math.max(0, x)) * 1000) / 10; return String(v).replace(".", ","); };
+  return [f(c - h), f(c + h)];
+}
+
 function accuracyOf(m) {
   const rows = m.vrstice.map((r) => ({ ...r, pct: pctText(r), counted: Number.isFinite(r.napake) }));
   const part = (r, en) =>
     en
       ? `${r.ime_en || r.ime}: ${r.pct.replace(",", ".")}% of answers had an error (${r.primeri} tasks${r.opomba_en ? `, ${r.opomba_en}` : ""})`
       : `${r.ime}: ${r.pct} % odgovorov z napako (${r.primeri} nalog${r.opomba ? `, ${r.opomba}` : ""})`;
+  // Interval v svoji vrstici celice (.why-ci), da tabela pri 360 px ne preseže širine; nedeljivi presledek pred %.
+  const ci = (r) => { const w = wilson(r.napake, r.primeri); return w ? ` <small class="why-ci">95-% interval ${w[0]}–${w[1]}\u00a0%</small>` : ""; };
   const app = m.vrsta === "aplikacija";
   const realCap = m.meja_pregledov === "resnicna";
   const date = slDate(m.datum);
@@ -75,7 +87,7 @@ function accuracyOf(m) {
     date,
     rows,
     rowsHtml: rows
-      .map((r) => `<tr><th scope="row">${esc(r.ime)}${r.opomba ? `<small>${esc(r.opomba)}</small>` : ""}</th><td>${r.pct} %${r.counted ? ` <small>${r.napake} od ${r.primeri}</small>` : ""}</td><td>${r.primeri}</td></tr>`)
+      .map((r) => `<tr><th scope="row">${esc(r.ime)}${r.opomba ? `<small>${esc(r.opomba)}</small>` : ""}</th><td>${r.pct} %${r.counted ? ` <small>${r.napake} od ${r.primeri}</small>${ci(r)}` : ""}</td><td>${r.primeri}</td></tr>`)
       .join("\n          "),
     sentence:
       `Meritev ${date}, ${m.primeri} rešenih primerov iz lekcij. ${rows.map((r) => part(r, false)).join(". ")}. ` +
@@ -108,6 +120,7 @@ export function facts(measurement = OBJAVI_MERITEV ? latestMeasurement() : null)
     accAny: !!acc,
     accApp: !!acc?.app,
     accModel: !!acc && !acc.app,
+    accCi: !!acc?.rows.some((r) => r.counted), // »X od N« in z njim 95-% interval (Wilson) v tabeli
     accNoCap: !!acc?.app && !acc.realCap,
     accRealCap: !!acc?.app && !!acc.realCap,
     accPairs: !!acc?.app && Number.isInteger(acc.pari?.bolje) && Number.isInteger(acc.pari?.slabse),
