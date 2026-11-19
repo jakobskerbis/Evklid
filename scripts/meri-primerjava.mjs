@@ -54,6 +54,9 @@ process.env.EVKLID_DB = path.join(tmp, "meritev.db");
 if (NACIN === "chat") process.env.EVKLID_SS_THINK = "0";
 // Preverjanje kartic v ozadju (Sonnet + Opus) ni del odgovora, ki ga vidi učenec: izklopljeno, da ostane pod mejo.
 process.env.EVKLID_VERIFY_DAILY_USD = "0";
+// Brez mesečnega proračuna (server/proracun.js budgetMode): z njim bi prazna baza nadgradila Haiku v Sonnet ali Opus in
+// najslabši primer spodaj ne bi več veljal (lokalni zagon z okoljem strežnika).
+process.env.EVKLID_MONTHLY_BUDGET_USD = "0";
 const { openDb } = await import("../server/db.js");
 const { createApp } = await import("../server/app.js");
 const { buildSystemPrompt } = await import("../server/prompt.js");
@@ -79,7 +82,9 @@ if (PREIZKUS !== isMockMode()) {
 }
 
 const store = openDb(process.env.EVKLID_DB);
-const server = createApp(store).listen(0);
+// Brez opravil v ozadju (kopije, tudi v oblak) in samo na 127.0.0.1: strežnik s pravim ključem ni dosegljiv od drugod.
+const server = createApp(store, { scheduler: false }).listen(0, "127.0.0.1");
+await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}`;
 const porabljeno = () => store.db.prepare("SELECT COALESCE(SUM(cost_usd), 0) AS s FROM usage").get().s;
 
