@@ -262,10 +262,11 @@ export function oceniResitev(n, dobljeno) {
       const t = tol > 0 ? tol : 1e-6;
       // Del odgovora za drugo količino (»R = 2 Ω« ob iskanem I) ne šteje.
       const ime = besedilna ? zgostiResitev(n.racun.replace(/=\s*\?$/, "")) : null;
-      const deli = surovi(dobljeno).filter((d) => {
-        const m = /^\s*([^=≈\s]+)\s*(?:=|≈|\\approx)/.exec(normalizirajBesedilo(d));
-        return !ime || !m || zgostiResitev(m[1]) === ime;
-      });
+      // Filter le, če odgovor iskano količino imenuje (sicer jo AI lahko imenuje drugače: c namesto x, P namesto S).
+      const imeDela = (d) => /^\s*([^=≈\s]+)\s*(?:=|≈|\\approx)/.exec(normalizirajBesedilo(d))?.[1];
+      const vsiDeli = surovi(dobljeno);
+      const imenuje = ime && vsiDeli.some((d) => imeDela(d) && zgostiResitev(imeDela(d)) === ime);
+      const deli = imenuje ? vsiDeli.filter((d) => !imeDela(d) || zgostiResitev(imeDela(d)) === ime) : vsiDeli;
       return deli.some((k) => {
         const x = rezultat(k);
         return x !== null && Math.abs(x - cilj) <= t * Math.max(1, Math.abs(cilj));

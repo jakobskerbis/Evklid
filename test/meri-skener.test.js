@@ -231,6 +231,8 @@ test("sken: ocena odgovorov AI z enotami, predznakom, sistemom in obliko", () =>
     ["o03-trapez", { answer_tex: "S = 32\\ \\mathrm{cm}^2" }],
     ["s07-trikotnik", { answer_tex: "\\alpha \\approx 22{,}62^\\circ" }],
     ["f03-vezje", { answer_tex: "I = 2\\ \\mathrm{A}" }],
+    ["s15-odstotki", { answer_tex: "c = 400\\ €" }],
+    ["o03-trapez", { answer_tex: "P = 32\\ \\mathrm{cm}^2" }],
     ["s06-dve-nalogi", { answer_tex: "(x, y) = (2, 1)" }],
     ["s06-dve-nalogi", { solutions: ["x=2; y=1"] }],
     ["s16-razstavi", { value: "(x-2)*(x-3)*(x+3)" }],
