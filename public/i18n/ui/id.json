@@ -3222,7 +3222,7 @@
   "rast.qCol": "Pertanyaan per siswa per hari",
   "rast.aiCol": "AI per siswa per bulan",
   "rast.vedenje.title": "Perilaku",
-  "rast.vedenje.solved": "hari aktif dengan tugas yang diselesaikan ({a} dari {b})",
+  "rast.vedenje.solved": "hari aktif dengan soal yang diselesaikan ({a} dari {b})",
   "rast.vedenje.beforeTest": "ujian yang didahului aktivitas siswa dalam {n} hari sebelumnya ({a} dari {b})",
   "rast.funnel.title": "Corong akun",
   "rast.funnel.registered": "akun baru dalam periode",

@@ -3279,7 +3279,7 @@
   "rast.aiCol": "AI по ученику месечно",
   "rast.vedenje.title": "Понашање",
   "rast.vedenje.solved": "активних дана са решеним задатком ({a} од {b})",
-  "rast.vedenje.beforeTest": "тестова пре којих је ученик био активан у {n} дана пре теста ({a} од {b})",
+  "rast.vedenje.beforeTest": "тестова са активношћу ученика у {n} дана пре теста ({a} од {b})",
   "rast.funnel.title": "Левак налога",
   "rast.funnel.registered": "нових налога у периоду",
   "rast.funnel.verified": "потврдило је е-адресу ({a} од {b})",

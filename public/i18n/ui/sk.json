@@ -3311,7 +3311,7 @@
   "rast.aiCol": "AI na žiaka za mesiac",
   "rast.vedenje.title": "Správanie",
   "rast.vedenje.solved": "aktívnych dní s vyriešenou úlohou ({a} z {b})",
-  "rast.vedenje.beforeTest": "testov, pred ktorými bol žiak aktívny v {n} dňoch pred testom ({a} z {b})",
+  "rast.vedenje.beforeTest": "testov s aktivitou žiaka v {n} dňoch pred testom ({a} z {b})",
   "rast.funnel.title": "Lievik účtov",
   "rast.funnel.registered": "nových účtov v období",
   "rast.funnel.verified": "potvrdilo e-mail ({a} z {b})",

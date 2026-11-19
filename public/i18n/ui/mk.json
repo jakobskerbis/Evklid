@@ -3249,7 +3249,7 @@
   "rast.aiCol": "AI по ученик месечно",
   "rast.vedenje.title": "Однесување",
   "rast.vedenje.solved": "активни денови со решена задача ({a} од {b})",
-  "rast.vedenje.beforeTest": "тестови пред кои ученикот бил активен во {n} дена пред тестот ({a} од {b})",
+  "rast.vedenje.beforeTest": "тестови со активност на ученикот во {n} дена пред тестот ({a} од {b})",
   "rast.funnel.title": "Инка на сметки",
   "rast.funnel.registered": "нови сметки во периодот",
   "rast.funnel.verified": "ја потврдија е-поштата ({a} од {b})",

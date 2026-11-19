@@ -3307,7 +3307,7 @@
   "rast.aiCol": "AI na žáka za měsíc",
   "rast.vedenje.title": "Chování",
   "rast.vedenje.solved": "aktivních dnů s vyřešenou úlohou ({a} z {b})",
-  "rast.vedenje.beforeTest": "testů, před kterými byl žák aktivní v {n} dnech před testem ({a} z {b})",
+  "rast.vedenje.beforeTest": "testů s aktivitou žáka v {n} dnech před testem ({a} z {b})",
   "rast.funnel.title": "Trychtýř účtů",
   "rast.funnel.registered": "nových účtů v období",
   "rast.funnel.verified": "potvrdilo e-mail ({a} z {b})",

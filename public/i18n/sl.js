@@ -3607,7 +3607,7 @@ export default {
   "rast.aiCol": "AI na učenca na mesec",
   "rast.vedenje.title": "Vedenje",
   "rast.vedenje.solved": "aktivnih dni z rešeno nalogo ({a} od {b})",
-  "rast.vedenje.beforeTest": "testov, pred katerimi je bil učenec aktiven v {n} dneh pred testom ({a} od {b})",
+  "rast.vedenje.beforeTest": "testov, pred katerimi je bil učenec aktiven v zadnjih {n} dneh ({a} od {b})",
   "rast.funnel.title": "Lijak računov",
   "rast.funnel.registered": "novih računov v obdobju",
   "rast.funnel.verified": "jih je potrdilo e-naslov ({a} od {b})",

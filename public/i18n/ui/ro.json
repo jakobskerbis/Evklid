@@ -3280,7 +3280,7 @@
   "rast.qCol": "Întrebări per elev pe zi",
   "rast.aiCol": "AI per elev pe lună",
   "rast.vedenje.title": "Comportament",
-  "rast.vedenje.solved": "din zilele active cu o sarcină rezolvată ({a} din {b})",
+  "rast.vedenje.solved": "din zilele active cu un exercițiu rezolvat ({a} din {b})",
   "rast.vedenje.beforeTest": "din teste înaintea cărora elevul a fost activ în cele {n} zile anterioare ({a} din {b})",
   "rast.funnel.title": "Pâlnia conturilor",
   "rast.funnel.registered": "conturi noi în perioadă",

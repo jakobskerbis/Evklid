@@ -3253,7 +3253,7 @@
   "rast.qCol": "Perguntas por aluno por dia",
   "rast.aiCol": "IA por aluno por mês",
   "rast.vedenje.title": "Comportamento",
-  "rast.vedenje.solved": "dos dias ativos com uma tarefa resolvida ({a} de {b})",
+  "rast.vedenje.solved": "dos dias ativos com um exercício resolvido ({a} de {b})",
   "rast.vedenje.beforeTest": "dos testes antes dos quais o aluno esteve ativo nos {n} dias anteriores ({a} de {b})",
   "rast.funnel.title": "Funil de contas",
   "rast.funnel.registered": "contas novas no período",

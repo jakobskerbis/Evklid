@@ -3246,7 +3246,7 @@
   "rast.qCol": "प्रति छात्र प्रति दिन प्रश्न",
   "rast.aiCol": "प्रति छात्र मासिक AI",
   "rast.vedenje.title": "व्यवहार",
-  "rast.vedenje.solved": "सक्रिय दिनों में से जिनमें कोई प्रश्न हल हुआ ({b} में से {a})",
+  "rast.vedenje.solved": "सक्रिय दिनों में से जिनमें कोई सवाल हल हुआ ({b} में से {a})",
   "rast.vedenje.beforeTest": "टेस्ट जिनसे पहले के {n} दिनों में छात्र सक्रिय था ({b} में से {a})",
   "rast.funnel.title": "खाता फ़नल",
   "rast.funnel.registered": "नए खाते (इस अवधि में)",

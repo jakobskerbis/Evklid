@@ -3313,7 +3313,7 @@
   "rast.aiCol": "AI na ucznia miesięcznie",
   "rast.vedenje.title": "Zachowanie",
   "rast.vedenje.solved": "aktywnych dni z rozwiązanym zadaniem ({a} z {b})",
-  "rast.vedenje.beforeTest": "sprawdzianów, przed którymi uczeń był aktywny w ciągu {n} dni przed nimi ({a} z {b})",
+  "rast.vedenje.beforeTest": "sprawdzianów z aktywnością ucznia w ciągu {n} dni przed sprawdzianem ({a} z {b})",
   "rast.funnel.title": "Lejek kont",
   "rast.funnel.registered": "nowych kont w okresie",
   "rast.funnel.verified": "potwierdziło e-mail ({a} z {b})",

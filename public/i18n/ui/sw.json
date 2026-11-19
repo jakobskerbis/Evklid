@@ -3246,7 +3246,7 @@
   "rast.qCol": "Maswali kwa mwanafunzi kwa siku",
   "rast.aiCol": "AI kwa mwanafunzi kwa mwezi",
   "rast.vedenje.title": "Tabia",
-  "rast.vedenje.solved": "ya siku amilifu zenye kazi iliyotatuliwa ({a} kati ya {b})",
+  "rast.vedenje.solved": "ya siku amilifu zenye zoezi lililotatuliwa ({a} kati ya {b})",
   "rast.vedenje.beforeTest": "ya majaribio ambayo mwanafunzi alikuwa amilifu siku {n} kabla yake ({a} kati ya {b})",
   "rast.funnel.title": "Mfereji wa akaunti",
   "rast.funnel.registered": "akaunti mpya katika kipindi",
