@@ -170,7 +170,7 @@ export function withNote(messages, note) {
 
 // Vrstice, kjer napačna vrednost lahko stoji namenoma (učenčeva napaka, vprašanje, »če bi …«).
 // Tudi učenčev zapis (»Ti si napisal …«), zavrnjeni kandidati (»$x = 1$ odpade«) in poskusi.
-const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})/iu;
+export const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})/iu;
 
 // Zadnja navedena vrednost vsake neznanke (»$x = 4$«, »$x_1 = \frac{1}{2}$«, »$x = \frac{8}{2} = 4$«).
 function statedValues(answer, vars) {
@@ -210,7 +210,7 @@ const num = (t) => {
 };
 
 // Vrednosti iz rešitve reševalnika (»x_{1} = -\\sqrt{2},\\quad x_{2} = \\sqrt{2}«) po neznankah.
-function solverValues(answerTex) {
+export function solverValues(answerTex) {
   const out = [];
   for (const part of String(answerTex || "").split(/,?\s*\\quad\s*|;/)) {
     const m = /^\s*([a-zA-Z])(?:_\{?\d+\}?)?\s*=([^=]+)$/.exec(part);
@@ -929,9 +929,15 @@ export function isClaim(text, prevTutor = "") {
 }
 
 // Inštruktorjev odgovor izreče sodbo o učenčevem koraku (potrdi ali zavrne).
+// Gemini 18. 11.: sam »Prav!«, »Dobro, zdaj …«, »Lepo.« sodbe niso sprožili, zato je napačna potrditev šla mimo pregleda.
 const VERDICT_RE =
-  /(?<!\p{L})(?:točno|tako je|pravilno|pravilen|pravilna|pravilni|prav imaš|prav si|drži|res je|bravo|odlično|super|izvrstno|krasno|ni (?:čisto |povsem |še |ravno )?(?:prav|pravilno|res|tako|to)|narobe|napačn\p{L}*|napak\p{L}*|ne drži|ne velja|zmotil\p{L}*|skoraj|correct|incorrect|exactly|right|wrong|not quite|almost)(?!\p{L})/iu;
-export const givesVerdict = (answer) => VERDICT_RE.test(String(answer || "").slice(0, 600));
+  /(?<!\p{L})(?:točno|tako je|pravilno|pravilen|pravilna|pravilni|prav|dobro|lepo|natanko|perfektno|drži|res je|bravo|odlično|super|izvrstno|krasno|ni (?:čisto |povsem |še |ravno )?(?:prav|pravilno|res|tako|to|enako)|narobe|napačn\p{L}*|napak\p{L}*|ne drži|ne velja|zmotil\p{L}*|skoraj|correct|incorrect|exactly|right|wrong|not quite|almost)(?!\p{L})/iu;
+// Kratka potrditev ali zavrnitev na začetku stavka (»Da, …«, »Ja.«, »Seveda!«, »Okej, …«, »Tako.«, »Ne, …«, »Ni čisto: …«).
+const VERDICT_OPEN_RE = /(?:^|[.!?:\n]\s*)[\s>*_"'»«„“(]*(?:da|ja|seveda|okej|ok|tako|ne|ni čisto|ni povsem|yes|good|great|nice|well done|no|nope)(?=[\s,.!:;—–-]|$)/imu;
+export const givesVerdict = (answer) => {
+  const head = String(answer || "").slice(0, 600);
+  return VERDICT_RE.test(head) || VERDICT_OPEN_RE.test(head);
+};
 
 // Učenčeva vrednost neznanke ali rezultata (»x = 3«, »x1 = 2, x2 = -2«, golo število »11/12«).
 function claimValues(text, vars) {

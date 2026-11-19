@@ -76,6 +76,7 @@ export function landingHtml({ name, prices = null, noscript = false } = {}) {
       <a href="/zakaj-evklid">${esc(t("land.why"))}</a>
       <a href="/zasebnost.html">${esc(t("land.privacy"))}</a>
       <a href="/pogoji.html">${esc(t("land.terms"))}</a>
+      <a href="/odstop.html">${esc(t("land.withdraw"))}</a>
       <a href="/starsi.html">${esc(t("land.par.t"))}</a>
       <a href="/sole.html">${esc(t("land.sch.t"))}</a>
       <a href="/prenesi">${esc(t("land.app.go"))}</a>

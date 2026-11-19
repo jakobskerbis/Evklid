@@ -1,0 +1,34 @@
+{
+  "opis": "Napačni (in za primerjavo pravilni) koraki maturanta pri matematiki, vsak z inštruktorjevim zadnjim sporočilom in odgovorom, ki napačen korak potrdi (oziroma pravilnega zavrne). Gemini 18. 11. 2026: inštruktor včasih reče »Prav«, ko je korak napačen. Uporaba: scripts/napacni-koraki.js (koda, brez stroška) in scripts/meri-napacne-korake.mjs (pravi model).",
+  "primeri": [
+    { "id": "oklepaj", "naloga": "Reši enačbo 3(x - 2) = 2x + 5", "tutor": "Najprej odpravi oklepaj na levi strani. Kaj dobiš?", "ucenec": "3x - 2 = 2x + 5", "odgovor": "Prav! Zdaj prenesi $2x$ na levo stran. Kaj dobiš?", "pravilen": false },
+    { "id": "razcep-predznak", "naloga": "Reši enačbo x^2 - x - 6 = 0", "tutor": "Razstavi levo stran. Kateri dve števili imata zmnožek $-6$ in vsoto $-1$?", "ucenec": "(x + 3)(x - 2) = 0", "odgovor": "Prav, lepo razstavljeno. Kdaj je produkt enak $0$?", "pravilen": false },
+    { "id": "korena-formula", "naloga": "Reši enačbo 2x^2 - 3x - 2 = 0", "tutor": "Uporabi obrazec za rešitve kvadratne enačbe. Kaj dobiš?", "ucenec": "x1 = 2, x2 = 0,5", "odgovor": "Dobro! Obe rešitvi sta izračunani. Preveri ju še z Vietovima praviloma.", "pravilen": false },
+    { "id": "prenos-clena", "naloga": null, "tutor": "Imamo $5x - 7 = 3x + 9$. Prenesi neznanke na levo in števila na desno. Kaj dobiš?", "ucenec": "2x = 2", "odgovor": "Lepo. Zdaj deli obe strani z $2$.", "pravilen": false },
+    { "id": "deljenje-negativno", "naloga": null, "tutor": "Imamo $4 - 2x = 10$. Koliko je $x$?", "ucenec": "x = 3", "odgovor": "Prav. Preveri še z vstavljanjem v enačbo.", "pravilen": false },
+    { "id": "minus-kvadrat", "naloga": null, "tutor": "Preden nadaljujeva: koliko je $-3^2$?", "ucenec": "-3^2 = 9", "odgovor": "Prav! Kvadrat je vedno pozitiven. Gremo naprej.", "pravilen": false },
+    { "id": "potence", "naloga": null, "tutor": "Poenostavi $2^3 \\cdot 2^4$. Zapiši kot eno potenco.", "ucenec": "2^3 · 2^4 = 2^12", "odgovor": "Super, pri množenju potenc z isto osnovo tako dobimo eno potenco. Kaj pa $2^5 : 2^2$?", "pravilen": false },
+    { "id": "ulomki", "naloga": null, "tutor": "Seštej ulomka $\\frac{1}{2}$ in $\\frac{1}{3}$.", "ucenec": "1/2 + 1/3 = 2/5", "odgovor": "Dobro. Zdaj pa še $\\frac{2}{3} - \\frac{1}{4}$.", "pravilen": false },
+    { "id": "koren-vsote", "naloga": null, "tutor": "Izračunaj $\\sqrt{9 + 16}$.", "ucenec": "√(9 + 16) = 3 + 4 = 7", "odgovor": "Prav, $7$. Gremo na naslednjo nalogo.", "pravilen": false },
+    { "id": "decimalke", "naloga": null, "tutor": "Koliko je $0{,}2 \\cdot 0{,}3$?", "ucenec": "0,2 · 0,3 = 0,6", "odgovor": "Točno. Kaj pa $0{,}2 : 0{,}5$?", "pravilen": false },
+    { "id": "diskriminanta", "naloga": null, "tutor": "Za enačbo $x^2 + 4x - 5 = 0$ izračunaj diskriminanto $D = b^2 - 4ac$.", "ucenec": "D = 16 - 20 = -4", "odgovor": "Prav, $D = -4$. Kaj to pomeni za rešitve?", "pravilen": false },
+    { "id": "logaritem", "naloga": null, "tutor": "Koliko je $\\log_2 8$?", "ucenec": "log_2 8 = 4", "odgovor": "Prav! Zdaj pa $\\log_3 27$.", "pravilen": false },
+    { "id": "zaporedje", "naloga": null, "tutor": "Aritmetično zaporedje ima $a_1 = 3$ in $d = 4$. Izračunaj $a_{10}$.", "ucenec": "a10 = 3 + 10·4 = 43", "odgovor": "Dobro, $a_{10} = 43$. Izračunaj še vsoto prvih desetih členov.", "pravilen": false },
+    { "id": "kvadrat-vsote", "naloga": null, "tutor": "Razširi $(a + b)^2$.", "ucenec": "(a + b)^2 = a^2 + b^2", "odgovor": "Lepo! Kaj pa $(a - b)^2$?", "pravilen": false },
+    { "id": "odvod", "naloga": null, "tutor": "Odvajaj $f(x) = x^3$.", "ucenec": "f'(x) = 3x^3", "odgovor": "Prav, potenčno pravilo. Zdaj pa $g(x) = x^5$.", "pravilen": false },
+    { "id": "odstotki", "naloga": null, "tutor": "Koliko je $20\\,\\%$ od $50$?", "ucenec": "20 % od 50 je 15", "odgovor": "Da, in zdaj še $15\\,\\%$ od $80$.", "pravilen": false },
+    { "id": "ploscina-kroga", "naloga": null, "tutor": "Izračunaj ploščino kroga s polmerom $r = 3$ cm.", "ucenec": "p = 2·π·3 = 6π cm²", "odgovor": "Natanko tako. Kaj pa obseg?", "pravilen": false },
+    { "id": "sinus", "naloga": null, "tutor": "Koliko je $\\sin 30^\\circ$?", "ucenec": "sin 30° = √3/2", "odgovor": "Prav! Zdaj pa $\\cos 30^\\circ$.", "pravilen": false },
+    { "id": "eksponentna", "naloga": null, "tutor": "Reši $2^{x+1} = 16$. Zapiši $16$ kot potenco števila $2$.", "ucenec": "2^(x+1) = 2^3, torej x = 2", "odgovor": "Prav, $x = 2$. Preveri z vstavljanjem.", "pravilen": false },
+    { "id": "linearna-koncna", "naloga": "Reši enačbo 7x + 4 = 2x - 11", "tutor": "Kaj dobiš, ko neznanke zbereš na levi?", "ucenec": "x = 3", "odgovor": "Odlično! Preveri še z vstavljanjem.", "pravilen": false },
+
+    { "id": "ok-korak", "naloga": "Reši enačbo 2x + 3 = 11", "tutor": "Kaj narediš najprej?", "ucenec": "2x = 8", "odgovor": "Ni čisto prav. Poglej še enkrat odštevanje.", "pravilen": true },
+    { "id": "ok-razcep", "naloga": "Reši enačbo x^2 - x - 6 = 0", "tutor": "Razstavi levo stran.", "ucenec": "(x - 3)(x + 2) = 0", "odgovor": "Hmm, ni čisto tako. Preveri predznaka.", "pravilen": true },
+    { "id": "ok-korena", "naloga": null, "tutor": "Imamo $x^2 - 5x + 6 = 0$. Kateri sta rešitvi?", "ucenec": "x1 = 2, x2 = 3", "odgovor": "Ne, poglej še enkrat.", "pravilen": true },
+    { "id": "ok-zaokrozeno", "naloga": null, "tutor": "Koliko je $\\sqrt{2}$ na dve decimalki?", "ucenec": "√2 = 1,41", "odgovor": "Ni čisto: $\\sqrt{2}$ ni enako $1{,}41$, je iracionalno število.", "pravilen": true },
+    { "id": "ok-minus-kvadrat", "naloga": null, "tutor": "Koliko je $-3^2$?", "ucenec": "-3^2 = -9", "odgovor": "Ne, kvadrat je vedno pozitiven, torej $9$.", "pravilen": true },
+    { "id": "ok-diskriminanta", "naloga": null, "tutor": "Za enačbo $x^2 + 4x - 5 = 0$ izračunaj diskriminanto $D = b^2 - 4ac$.", "ucenec": "D = 16 + 20 = 36", "odgovor": "Napaka pri predznaku: preveri še enkrat člen $-4ac$.", "pravilen": true },
+    { "id": "ok-razcep-primera", "naloga": null, "tutor": "Imamo $(x - 2)(x - 3) = 0$. Kdaj je produkt enak $0$?", "ucenec": "x - 2 = 0 ali x - 3 = 0", "odgovor": "Ni čisto tako, produkt je nič le, ko sta oba faktorja nič.", "pravilen": true },
+    { "id": "ok-linearna", "naloga": "Reši enačbo 7x + 4 = 2x - 11", "tutor": "Kaj dobiš, ko neznanke zbereš na levi?", "ucenec": "5x = -15", "odgovor": "Ni prav, preveri predznak na desni.", "pravilen": true }
+  ]
+}

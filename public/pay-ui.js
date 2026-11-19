@@ -1,7 +1,7 @@
 // Skupni deli plačilnih zaslonov: tri potrditve pred plačilom (polnoletnost, odstop, pogoji) in povezava »Prosi starše za plačilo«.
 // Uporabljajo jih zavihek Račun (account.js), kartica paketa pred testom (pass-offer.js) in stran za starše (placaj.js).
 // Spodaj še aplikacija iz trgovine (isStoreApp) in vrnitev v aplikacijo po plačilu (watchReturnFromPay).
-import { t, currentLang } from "./i18n.js";
+import { t, currentLang, locale } from "./i18n.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -9,15 +9,29 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 // kind "gift": izjavi za nakup darilne kode (uporaba se začne šele ob vpisu kode).
 // kind "credit": dokup pogovorov (ob odstopu se vrne delež neporabljenih pogovorov, ne delež časa).
 const WITHDRAWAL_KEY = { gift: "pay.giftWithdrawal", credit: "pay.creditWithdrawal" };
-export const consentFields = (kind = "") => `
+// vi: stran za starše (placaj.html) vika. Pod potrditvami informacija o funkciji za odstop (ZVPot-1A, 130. člen 6. točka).
+export const consentFields = (kind = "", { vi = false } = {}) => `
   <label class="check pay-consent"><input type="checkbox" name="adult" required><span>${esc(t(kind === "gift" ? "pay.giftAdult" : "pay.adult"))}</span></label>
   <label class="check pay-consent"><input type="checkbox" name="withdrawal" required><span>${esc(t(WITHDRAWAL_KEY[kind] || "pay.withdrawal"))}</span></label>
-  ${termsField()}`;
+  ${termsField()}
+  ${withdrawInfo(vi)}`;
+export const withdrawInfo = (vi = false) => {
+  const [before, after = ""] = t(vi ? "payp.withdrawInfo" : "pay.withdrawInfo").split("{link}");
+  return `<p class="muted small pay-withdraw-info">${esc(before)}<a href="/odstop.html" target="_blank" rel="noopener">evklid.app/odstop</a>${esc(after)}</p>`;
+};
 
-// Potrditev splošnih pogojev (#765 točka 2): pred vsakim plačilom in ob registraciji. Strežnik shrani različico.
+// Potrditev splošnih pogojev (#765 točka 2): pred vsakim plačilom in ob registraciji. Strežnik shrani različico;
+// ob povezavi je različica pogojev (setTermsVersion: zavihek Račun iz /api/account, stran za starše iz /api/pay).
+let termsVersion = "";
+export const setTermsVersion = (v) => (termsVersion = /^\d{4}-\d{2}-\d{2}$/.test(String(v || "")) ? String(v) : "");
+const versionLabel = (v) => {
+  const [y, m, d] = String(v).split("-").map(Number);
+  return y ? t("terms.version", { date: new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString(locale(), { day: "numeric", month: "numeric", year: "numeric", timeZone: "UTC" }) }) : "";
+};
 export const termsField = (name = "terms") => {
   const [before, after = ""] = t("terms.accept").split("{link}");
-  return `<label class="check pay-consent"><input type="checkbox" name="${name}" required><span>${esc(before)}<a href="/pogoji.html" target="_blank" rel="noopener">${esc(t("terms.link"))}</a>${esc(after)}</span></label>`;
+  const v = termsVersion ? ` ${esc(versionLabel(termsVersion))}` : "";
+  return `<label class="check pay-consent"><input type="checkbox" name="${name}" required><span>${esc(before)}<a href="/pogoji.html" target="_blank" rel="noopener">${esc(t("terms.link"))}</a>${esc(after)}${v ? `<span class="terms-version muted">${v}</span>` : ""}</span></label>`;
 };
 
 export const consentsOk = (form) => !!form.adult?.checked && !!form.withdrawal?.checked && !!form.terms?.checked;
