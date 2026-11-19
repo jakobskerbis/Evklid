@@ -18,7 +18,9 @@ test("static part of the prompt is identical for every student and goes first", 
   assert.equal(db.cache_control, undefined);
   // Vse nastavitve so v drugem bloku, v prvem ni nobenega vstavljenega podatka.
   assert.doesNotMatch(sa.text, /Zarja|Tilen|ulomki z neznanko|Mejoza|Ime učenca:/);
-  assert.match(da.text, /Ime učenca: Zarja/);
+  // Ime ne gre k ponudniku AI (server/ime-oznaka.js): v promptu je samo oznaka.
+  assert.match(da.text, /Ime učenca: `\{\{IME\}\}`/);
+  assert.doesNotMatch(da.text + db.text, /Zarja|Tilen/);
   assert.match(da.text, /šibke točke učenca: ulomki z neznanko/);
   assert.match(db.text, /Šola: UNIVERZA/);
   assert.match(db.text, /Tema: Mejoza\./);
@@ -251,7 +253,7 @@ test("mode B (j 2026-11-17): short solution with the result in the first sentenc
 test("result only (j 2026-11-17): one task, asked only for the result → result with the formula in one line; homework rule stays", () => {
   const [stat, dyn] = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8").split(SPLIT_MARKER);
   const row = stat.split("\n").find((l) => l.startsWith("- **Samo rezultat pri eni nalogi**")) || "";
-  for (const s of ["pri eni nalogi izrecno prosi le za rezultat", "v obeh načinih takoj odgovori v eni vrstici z rezultatom (krepko, z enoto) in formulo z vstavljenimi števili", "**$W_k = 9{,}0\\ \\mathrm{J}$**", "skupaj največ dve vrstici", "Brez Podatkov, Iščemo, Preverbe in razlage", "načina ne preklopiš; brez uvoda in napovedi (»Rezultat ti dam …«)", "`IZBIRE`", "Pri več nalogah hkrati ali »moram oddati« velja Domača naloga za oddajo", "\\frac{2{,}0\\ \\mathrm{kg} \\cdot (3{,}0\\ \\mathrm{m/s})^2}{2} = 9{,}0\\ \\mathrm{J}$).«", "ki se konča z rezultatom", "Pri OŠ 1.–5. namesto formule račun s števili, npr. »**12 jabolk** (3 · 4 = 12)«", "(račun vseeno preveri zase in dodaj blok RACUN)", "Pri nalogi s podvprašanji (a, b, c …) v istem odgovoru odgovoriš na vsa, vsako v svoji vrstici", "Ne velja za naloge, ki jih je dal Evklid (Vaja, učna pot, Vadnica, Priprava na test, pole), za tekmovalne naloge in za nalogo, ki jo že rešujeta po korakih"]) assert.ok(row.includes(s), `samo rezultat: »${s}«`);
+  for (const s of ["pri eni nalogi izrecno prosi le za rezultat", "v obeh načinih takoj odgovori v eni vrstici z rezultatom (krepko, z enoto) in formulo z vstavljenimi števili", "**$W_k = 9{,}0\\ \\mathrm{J}$**", "skupaj največ dve vrstici", "Brez Podatkov, Iščemo, Preverbe, »Zapomni si« in razlage", "načina ne preklopiš; brez uvoda in napovedi (»Rezultat ti dam …«)", "`IZBIRE`", "Pri več nalogah hkrati ali »moram oddati« velja Domača naloga za oddajo", "\\frac{2{,}0\\ \\mathrm{kg} \\cdot (3{,}0\\ \\mathrm{m/s})^2}{2} = 9{,}0\\ \\mathrm{J}$).«", "ki se konča z rezultatom", "Pri OŠ 1.–5. namesto formule račun s števili, npr. »**12 jabolk** (3 · 4 = 12)«", "(račun vseeno preveri zase in dodaj blok RACUN)", "Pri nalogi s podvprašanji (a, b, c …) v istem odgovoru odgovoriš na vsa, vsako v svoji vrstici", "Ne velja za naloge, ki jih je dal Evklid (Vaja, učna pot, Vadnica, Priprava na test, pole), za tekmovalne naloge in za nalogo, ki jo že rešujeta po korakih"]) assert.ok(row.includes(s), `samo rezultat: »${s}«`);
   assert.ok(row.endsWith("Če je v tem pogovoru že dobil samo rezultat pri dveh nalogah, pri naslednjih velja Domača naloga za oddajo."), "zadnji stavek točke");
   const i = (x) => stat.indexOf(x);
   assert.ok(i("## Pedagoške situacije") < i("- **Samo rezultat pri eni nalogi**") && i("- **Samo rezultat pri eni nalogi**") < i("- **Domača naloga za oddajo, prepisovanje**"));
@@ -264,11 +266,69 @@ test("result only (j 2026-11-17): one task, asked only for the result → result
   assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjema: Samo rezultat pri eni nalogi\)/);
   assert.match(stat, /Končnega odgovora nikoli ne izdaš kot prvi odziv na novo nalogo \(izjema: Samo rezultat pri eni nalogi v Pedagoških situacijah\)\./);
   assert.match(stat, /Pravilen rezultat brez postopka ali z napačnim postopkom ni rešen/);
-  assert.ok(row.length < 1450, `točka naj ostane kratka (${row.length} znakov)`);
+  // 1 452 znakov po PR #836 (sklic na definicijo seznama vaj in skladen zgled); rezerva ~20.
+  assert.ok(row.length < 1475, `točka naj ostane kratka (${row.length} znakov)`);
   assert.doesNotMatch(dyn, /Samo rezultat pri eni nalogi/);
   // Doda 1 373 znakov predpomnjenega dela (56 791 → 58 164; ~370 žetonov) po pregledih #799. Zgornja meja rasti je odslej
   // v testu »Preizkus 3« (17. 11.); tu ostane le spodnja.
   assert.ok(stat.length > 56791, `stalni del ${stat.length} znakov`);
+});
+
+test("Preizkus 3, meritev po #836 (2026-11-18): no praise opener on a wrong step, short »zakaj« for grades 1–4, no »Zapomni si« for result only", () => {
+  const [stat] = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8").split(SPLIT_MARKER);
+  const line = (start) => stat.split("\n").find((l) => l.startsWith(start)) || "";
+  // 6 in 112 (Vodenje): »Pravilno, …« ob napačnem koraku tudi pred #836; splošno pravilo v Načinu A, točka 2 (pregled #841).
+  const p2 = line("2. Eno vprašanje naenkrat;");
+  assert.ok(p2.endsWith("Ko je v koraku napaka, ne začni s pohvalo ali potrditvijo (»Prav«, »Pravilno«, »Dobro«, »Odlično«, »Res je«); najprej pokaži napako, nato povej, kaj je prav."), "Način A, točka 2");
+  assert.ok(line("- Delno pravilen odgovor").includes("potrdi, kar je prav, in z enim vprašanjem pokaži, da nekaj manjka"), "oklepaj iz prve različice ni več potreben");
+  assert.doesNotMatch(line("- Delno pravilen odgovor"), /ne začni s/);
+  // Pohvala pravilnega koraka v OŠ 6.–9. ostane (ne nasprotuje: velja le za pravilen korak).
+  assert.match(line("- **OŠ (6.–9. razred):**"), /ko učenec naredi korak prav, v nekaj besedah povej, kaj je naredil dobro/);
+  // 145: »zakaj« pri najmlajših kratko v obeh načinih.
+  assert.ok(line("OŠ 1.–4. razred (1.–4. leto šolanja):").includes("Za vsak del (tudi pri »zakaj«; vprašanje »zakaj« ni prošnja za več) en do dva kratka stavka"));
+  assert.ok(line("- Pojmovno vprašanje").includes("preprosto in s primerom (pri OŠ 1.–4. dva do trije kratki stavki),"));
+  // 45: samo rezultat brez okvirja »Zapomni si«.
+  assert.ok(line("- **Samo rezultat pri eni nalogi**").includes("Brez Podatkov, Iščemo, Preverbe, »Zapomni si« in razlage"));
+  // +266 znakov (61 734 → 62 000; ~75 žetonov) po pregledu #841; s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
+  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226, `stalni del ${stat.length} znakov`);
+});
+
+test("Preizkus 3, krog 2 (2026-11-18): one definition of a drill list, parts with another method are one task, grades 1–4 short", () => {
+  const [stat, dyn] = readFileSync(new URL("../prompts/system_prompt.md", import.meta.url), "utf8").split(SPLIT_MARKER);
+  const line = (start) => stat.split("\n").find((l) => l.startsWith(start)) || "";
+  const sec = stat.slice(stat.indexOf("## Način B – celotna rešitev"), stat.indexOf("## Vzorec za računske naloge"));
+  // Odločitev j 18. 11.: ena definicija seznama vaj (v Domači nalogi), Način B in Samo rezultat se nanjo sklicujeta.
+  const DEF = "seznam vaj pa je: deli pod eno številko, ki se vsi rešijo z istim postopkom, le z drugimi števili; deli, ki zahtevajo drugo pravilo ali postopek, so ena naloga, tudi pod enim navodilom)";
+  const home = line("- **Domača naloga za oddajo, prepisovanje**");
+  assert.ok(home.includes("podvprašanja a), b), c) ene naloge niso več nalog, " + DEF), "definicija v Domači nalogi");
+  // Način B: ločene naloge eno za drugo, pri seznamu vaj prva z razlago, ostale ponujene (j 17. in 18. 11.; meritev s1).
+  assert.ok(home.includes("V načinu B ločene naloge rešiš z razlago, eno za drugo, in po vsaki ponudiš, da naslednjo poskusi sam; pri seznamu vaj rešiš prvo z razlago in ponudiš, da ostale poskusi sam."), "Način B: seznam vaj");
+  assert.equal(stat.split("z istim postopkom, le z drugimi števili").length, 2, "definicija je v promptu le enkrat");
+  // 19, 83: deli z drugim postopkom (limita, integral, matrika; razlika kvadratov, tričlenik, izpostavljanje) so ena naloga.
+  const parts = line("Naloga s podvprašanji (a, b, c …) je ena naloga");
+  assert.ok(parts.startsWith("Naloga s podvprašanji (a, b, c …) je ena naloga, tudi če deli med seboj niso povezani: v istem odgovoru rešiš vse dele"), "deli niso povezani");
+  assert.ok(parts.includes("(Več vprašanj hkrati in Domača naloga za oddajo veljata le za več ločenih nalog in za seznam vaj, kot ga določa Domača naloga za oddajo)"), "Način B: sklic na definicijo");
+  const row = line("- **Samo rezultat pri eni nalogi**");
+  assert.ok(row.includes("Seznam vaj (glej Domača naloga za oddajo; npr. »Izračunaj: a) 3 · 4, b) 5 · 6, c) 7 · 8«) je več nalog: velja Domača naloga za oddajo."), "Samo rezultat: sklic in skladen zgled");
+  assert.doesNotMatch(stat, /seznam vaj istega tipa/i);
+  // OŠ 1.–4.: glava Načina B kaže na posebno obliko; brez »Preverimo«, razen ko preizkus zahteva naloga ali otrok; nova naloga šele na prošnjo.
+  assert.match(sec, /tudi v načinu B je vsak korak razložen \(za OŠ 1\.–4\. glej spodaj\):/);
+  const kids = line("OŠ 1.–4. razred (1.–4. leto šolanja):");
+  assert.ok(kids.includes("brez Podatkov, Iščemo, Načrta, Preverbe ali »Preverimo« (razen kadar preizkus zahteva naloga ali otrok), okvirja"), "brez Preverimo");
+  assert.ok(kids.includes("razen če otrok prosi za več ali za preverbo"), "preverba na prošnjo");
+  assert.ok(kids.endsWith("podobno nalogo ponudiš le z gumbi `IZBIRE`, ne z novo nalogo v besedilu; ko jo otrok izbere ali zanjo prosi, jo napiši (brez rešitve)."), "nova naloga na prošnjo");
+  // Vzorec Podatki/Iščemo: izjema za najmlajše le v načinu B (način A ostane, zato brez nove oznake predpomnilnika).
+  assert.match(stat, /inženirski predmeti; v načinu B ne za OŠ 1\.–4\.\):/);
+  // 5. razred in način A ostaneta.
+  assert.match(line("OŠ 5. razred (5. leto šolanja):"), /namesto točk 1–6 velja Podatki → Iščemo/);
+  const a = stat.slice(stat.indexOf("## Način A – vodenje"), stat.indexOf("## Način B – celotna rešitev"));
+  assert.doesNotMatch(a, /podvprašanj/);
+  // V Načinu A je OŠ 1.–4. le v Pojmovnem vprašanju (pregled #841, oznaka predpomnilnika »a1«).
+  assert.deepEqual(a.match(/OŠ 1\.–4\./g), ["OŠ 1.–4."]);
+  assert.match(a, /preprosto in s primerom \(pri OŠ 1\.–4\. dva do trije kratki stavki\)/);
+  assert.doesNotMatch(dyn, /OŠ 1\.–4\.|seznam vaj/);
+  // +506 znakov predpomnjenega dela (61 224 → 61 730 po #835; ~140 žetonov); meja rasti v testu »Preizkus 3« +510.
+  assert.ok(kids.length < 760 && parts.length < 520 && home.length < 1500, `kratke vrstice (${kids.length}, ${parts.length}, ${home.length})`);
 });
 
 test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers for grades 1–4, requested graphs drawn", () => {
@@ -276,26 +336,26 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
   const line = (start) => stat.split("\n").find((l) => l.startsWith(start)) || "";
   const sec = stat.slice(stat.indexOf("## Način B – celotna rešitev"), stat.indexOf("## Vzorec za računske naloge"));
   // 1. Vsi deli: način B, Samo rezultat, in pravili za več nalog ne veljata za podvprašanja ene naloge.
-  assert.match(sec, /Naloga s podvprašanji \(a, b, c …\) je ena naloga: v istem odgovoru rešiš vse dele, vsakega s svojimi koraki; nobenega dela ne prepustiš učencu in ne vprašaš, ali naj nadaljuješ/);
+  assert.match(sec, /Naloga s podvprašanji \(a, b, c …\) je ena naloga, tudi če deli med seboj niso povezani: v istem odgovoru rešiš vse dele, vsakega s svojimi koraki; nobenega dela ne prepustiš učencu in ne vprašaš, ali naj nadaljuješ/);
   assert.match(sec, /Vaja in gumbi so šele za zadnjim delom\./);
   const row = line("- **Samo rezultat pri eni nalogi**");
   assert.ok(row.includes("v istem odgovoru odgovoriš na vsa, vsako v svoji vrstici (»a) **…**«, »b) **…**«), in nobenega ne prepustiš učencu; taka naloga šteje kot ena."), "samo rezultat: vsi deli");
-  // Seznam vaj istega tipa ni pot do prepisovanja (pregled #811).
-  assert.ok(row.includes("Seznam vaj istega tipa pod eno številko (npr. »Izračunaj: a) …, b) …, c) …«) je več nalog: velja Domača naloga za oddajo."), "samo rezultat: seznam vaj");
-  assert.match(sec, /veljata za več ločenih nalog, tudi za seznam vaj istega tipa pod eno številko\)/);
+  // Seznam vaj ni pot do prepisovanja (pregled #811; definicija j 18. 11. v Domači nalogi, test »Preizkus 3, krog 2«).
+  assert.ok(row.includes("je več nalog: velja Domača naloga za oddajo."), "samo rezultat: seznam vaj");
+  assert.match(sec, /veljata le za več ločenih nalog in za seznam vaj, kot ga določa Domača naloga za oddajo\)/);
   // Lahki način: vsi deli, vsak zelo kratko.
   assert.match(line("- Če je »Dolžina odgovorov« kratka"), /v načinu B okoli 120 besed; pri nalogi s podvprašanji vsi deli v istem odgovoru, vsak zelo kratko\), en korak naenkrat/);
   assert.doesNotMatch(row, /za več podvprašanj velja Domača naloga/);
   // »Več vprašanj hkrati« ostane (Način B pove, da velja za ločene naloge).
   assert.doesNotMatch(line("- **Več vprašanj hkrati:**"), /podvprašanj/);
-  assert.match(line("- **Domača naloga za oddajo, prepisovanje**"), /podvprašanja a\), b\), c\) ene naloge niso več nalog, seznam vaj istega tipa pod eno številko pa je\)/);
+  assert.match(line("- **Domača naloga za oddajo, prepisovanje**"), /podvprašanja a\), b\), c\) ene naloge niso več nalog, seznam vaj pa je: /);
   // Vodenje (način A) ostane nespremenjeno.
   const a = stat.slice(stat.indexOf("## Način A – vodenje"), stat.indexOf("## Način B – celotna rešitev"));
   assert.doesNotMatch(a, /podvprašanj/);
   assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjema: Samo rezultat pri eni nalogi\)/);
   // 2. OŠ 1.–4.: brez ogrodja, kratko; 5. razred ohrani vrstni red.
   const kids = line("OŠ 1.–4. razred (1.–4. leto šolanja):");
-  for (const s of ["namesto točk 1–6 brez Podatkov, Iščemo, Načrta, Preverbe, okvirja »Zapomni si«, stavka, kaj je naloga preverjala, in Vaje", "en do dva kratka stavka s preprostimi besedami", "rezultat krepko", "Skupaj do okoli 450 znakov, razen če otrok prosi za več", "le z gumbi `IZBIRE`"]) assert.ok(kids.includes(s), `OŠ 1.–4.: »${s}«`);
+  for (const s of ["namesto točk 1–6 brez Podatkov, Iščemo, Načrta, Preverbe ali »Preverimo« (razen kadar preizkus zahteva naloga ali otrok), okvirja »Zapomni si«, stavka, kaj je naloga preverjala, in Vaje", "en do dva kratka stavka s preprostimi besedami", "rezultat krepko", "Skupaj do okoli 450 znakov, razen če otrok prosi za več", "le z gumbi `IZBIRE`"]) assert.ok(kids.includes(s), `OŠ 1.–4.: »${s}«`);
   assert.match(line("OŠ 5. razred (5. leto šolanja):"), /namesto točk 1–6 velja Podatki → Iščemo/);
   // 3. Graf, ki ga naloga zahteva, je vedno blok; zgledi se razčlenijo v app (server/odpri.js).
   const graf = line("- `GRAF`:");
@@ -322,8 +382,10 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     // Meritev SŠ 18. 11. (pomen rezultata iz podatkov, Načrt in vmesne enačbe): +180 znakov (59 960 → 60 140; ~50 žetonov).
     // 60195 znakov po pregledu PR #833 (stavek o pomenu rezultata); rezerva ~300.
     // Meritev SŠ 18. 11. po #833 (Pravila brez posploševanja, Zapomni si s pogoji) s popravki pregleda #835:
-    // +1030 znakov (60 195 → 61 225; ~290 žetonov); rezerva ~70.
-    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800, `stalni del ${stat.length} znakov`);
+    // +1019 znakov (60 195 → 61 214; ~290 žetonov).
+    // Preizkus 3, krog 2 (18. 11., PR #836: definicija seznama vaj, OŠ 1.–4.): +506 znakov (61 224 → 61 730; ~140 žetonov), meja +510.
+    // Meritev po #836 s pregledom #841: +266 znakov (61 734 → 62 000); s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
+    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226, `stalni del ${stat.length} znakov`);
   });
 });
 
@@ -333,7 +395,7 @@ test("accuracy SŠ round 2 (2026-11-18): rules with their conditions, no rule fr
   const start = fixed.indexOf("- **Pravila brez posploševanja.**");
   assert.ok(start > fixed.indexOf("- **Dodatne vaje in stranske trditve.**") && start < fixed.indexOf("## Način A"), "takoj za pravilom o vajah, v razdelku Pravilnost");
   const row = fixed.slice(start, fixed.indexOf("\n", start));
-  for (const s of ["Empirično pravilo (BIO, KEM, FIZ;", "zapiši s pogoji, pod katerimi velja", "ne iz enega primera naloge", "vzrok pojava naj bo učbeniški", "Matematični izreki in definicije, ki veljajo splošno, ostanejo brez dodanih omejitev", "v okvir pri rešitvi naloge zapiši le postopek ali ga izpusti", "pri pojmovnem vprašanju in napačni predstavi ostanejo v okvirju", "neobvezno stransko opombo raje izpusti", "Vaja isti snovi, organizmu ali objektu v enakih pogojih ne pripiše drugačne lastnosti", "spremeni podatke, ki jih učenec vstavi", "ne lastnosti, ki jo določajo pogoji", "enako število ponovitev", "Opozorilo na napako naj bo nedvoumno", "trdiš le, kar vidiš v pogovoru (naloga, navedek, priložena lekcija)"]) assert.ok(row.includes(s), `»${s}«`);
+  for (const s of ["Empirično pravilo (BIO, KEM, FIZ;", "zapiši s pogoji, pod katerimi velja", "ne iz enega primera naloge", "vzrok pojava naj bo učbeniški", "Matematični izreki in definicije, ki veljajo splošno, ostanejo brez dodanih omejitev", "v okvir pri rešitvi naloge zapiši le postopek ali ga izpusti", "pri pojmovnem vprašanju in napačni predstavi ostanejo v okvirju", "neobvezno stransko opombo raje izpusti", "Vaja isti snovi, organizmu ali objektu v enakih pogojih ne pripiše drugačne lastnosti", "spremeni podatke, ki jih učenec vstavi", "ne lastnosti, ki jo določajo pogoji ali narava", "enako število ponovitev", "Opozorilo na napako naj bo nedvoumno", "trdiš le, kar vidiš v pogovoru (naloga, navedek, priložena lekcija)"]) assert.ok(row.includes(s), `»${s}«`);
   assert.doesNotMatch(row, /predmetu|enako ponovitev\./);
   // 1003 znaki po pregledu #835; rezerva ~45.
   assert.ok(row.length < 1050, `točka naj ostane kratka (${row.length} znakov)`);

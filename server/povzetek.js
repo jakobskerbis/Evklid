@@ -62,12 +62,14 @@ export function withSummary(history, summary) {
 /**
  * Vrne zgodovino za model s povzetkom odrezanega dela. Po potrebi povzetek posodobi (en klic hitrega
  * modela, največ 8 s; ob napaki gre zgodovina brez povzetka, kot doslej).
- * @param {{store, conversationId, fullHistory, history, streamFn, log?: (r) => void, signal?}} o
+ * mask(text, saved): shranjen povzetek iz časa, ko je model ime učenca še poznal → ime zamenjano z oznako (server/ime-oznaka.js).
+ * @param {{store, conversationId, fullHistory, history, streamFn, log?: (r) => void, signal?, mask?: (t: string, saved: {text, upto, at}) => string}} o
  */
-export async function summarizedHistory({ store, conversationId, fullHistory, history, streamFn, log, signal }) {
+export async function summarizedHistory({ store, conversationId, fullHistory, history, streamFn, log, signal, mask = (t) => t }) {
   const dropped = fullHistory.length - history.length;
   if (!summaryOn() || dropped <= 0) return history;
   let saved = store.getSummary(conversationId);
+  if (saved?.text) saved = { ...saved, text: mask(saved.text, saved) };
   // Pogovor se je skrajšal (izbrisana sporočila): povzetek ne velja več, naredimo ga znova.
   if (saved && saved.upto > dropped) saved = null;
   if (saved?.upto === dropped) return withSummary(history, saved.text);

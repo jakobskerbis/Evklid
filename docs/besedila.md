@@ -9,7 +9,7 @@ The bar for content (lessons, tasks) stays `docs/kakovost.md`; this file is abou
 - **Students and the account owner inside the app: `ti`** (tikanje). »Dokupiš«, »tvoj profil«, »Preveri e-naslov«.
 - **Parents, teachers, schools and payers on their own pages: `vi`** (vikanje): the parent payment page
   (`payp.*`, `placaj.html`), parent pages (`starsi.*`), teacher and school pages (`tc.*`, `sole.*`, `orders.*`,
-  `ucitelj.html`, `sole.html`) and e-mails to parents or schools.
+  `ucitelj.html`, `sole.html`), the withdrawal page (`odstop.*`, `odstop.html`) and e-mails to parents or schools.
 - **Never both in one string or on one screen.** »Ko ga porabi, lahko tukaj dokupite … jih lahko dobiš« is the
   error this file exists for.
 - Admin-only screens (`meter.*`, `admin.*`, `usage.*`, `pilot.*`, only j sees them) may name models, API, tokens.

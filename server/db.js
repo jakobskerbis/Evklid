@@ -6,7 +6,7 @@ import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessList } from "./settings.js";
 import { Flashcards } from "./flashcards.js";
-import { seal, unseal, sealJson, unsealJson, UNREADABLE } from "./crypto-polje.js";
+import { seal, unseal, sealJson, unsealJson, UNREADABLE, sealFlag, openFlag, sealPregled } from "./crypto-polje.js";
 
 // Šibke točke: kako dolgo hranimo dnevne vsote (skill_results) in oznake »že šteto« (skill_seen).
 export const SKILL_KEEP_DAYS = 365;
@@ -379,6 +379,18 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Tema učne poti pri dogodku (šibke točke iz vseh virov pod istim ključem, server/weaknesses.js).
   const eventCols = db.prepare("PRAGMA table_info(events)").all().map((c) => c.name);
   if (!eventCols.includes("topic_id")) db.exec("ALTER TABLE events ADD COLUMN topic_id TEXT");
+  // Pregled oznake (server/stiska-obvestilo.js): šifriran JSON ob vsaki oznaki razen »none« (vrsta okna ob stiski, pregledano_ob).
+  if (!eventCols.includes("pregled")) db.exec("ALTER TABLE events ADD COLUMN pregled TEXT");
+  // Starejše oznake (pred stolpcem pregled) dobijo prazen pregled, kot ga dobi vsaka nova oznaka razen »none«, da se iz
+  // baze po prisotnosti pregleda ne vidi, katera stara oznaka je stiska (pregled #856).
+  {
+    const brez = db.prepare("SELECT id FROM events WHERE pregled IS NULL AND flag IS NOT NULL AND flag <> 'none'").all();
+    if (brez.length) {
+      const upd = db.prepare("UPDATE events SET pregled = ? WHERE id = ?");
+      db.exec("BEGIN");
+      try { for (const r of brez) upd.run(sealPregled({}), r.id); db.exec("COMMIT"); } catch (e) { db.exec("ROLLBACK"); throw e; }
+    }
+  }
   // Rok hrambe dnevnih vsot za šibke točke.
   db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
@@ -554,9 +566,9 @@ export class Store {
   }
   // Sprotni povzetek pogovora (server/povzetek.js): { text, upto } ali null (tudi neberljiv po menjavi ključa).
   getSummary(conversationId) {
-    const r = this.db.prepare("SELECT text, upto FROM conversation_summaries WHERE conversation_id = ?").get(conversationId);
+    const r = this.db.prepare("SELECT text, upto, updated_at FROM conversation_summaries WHERE conversation_id = ?").get(conversationId);
     const text = r ? unseal(r.text, null) : null;
-    return text ? { text, upto: r.upto } : null;
+    return text ? { text, upto: r.upto, at: r.updated_at } : null;
   }
   setSummary(conversationId, text, upto) {
     this.db
@@ -572,18 +584,23 @@ export class Store {
   }
 
   // --- analitika ---
+  // Vrne id dogodka (oznaka stiske → server/stiska-obvestilo.js).
   addEvent(e) {
-    this.db
+    const flag = e.flag ?? "none";
+    const info = this.db
       .prepare(
-        `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id, pregled)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, e.topic, e.error, e.mode, e.flag, e.topic_id ?? null);
+      // Ob stiski brez teme (j 18. 11. 2026): tema bi v nešifriranem stolpcu ostala tudi po roku hrambe oznake.
+      // Pregled ob vsaki oznaki razen »none« (enako dolg), da iz baze ni vidno, katera je stiska.
+      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, flag === "distress" ? null : e.topic, e.error, e.mode, sealFlag(flag), flag === "distress" ? null : (e.topic_id ?? null), flag === "none" ? null : sealPregled({}));
+    return Number(info.lastInsertRowid);
   }
+  // Oznaka je šifrirana (razen »none«); neberljiva šteje kot opozorilo (»unknown«), ne kot navaden odgovor.
   lastEvent(conversationId) {
-    return this.db
-      .prepare("SELECT * FROM events WHERE conversation_id = ? ORDER BY id DESC LIMIT 1")
-      .get(conversationId);
+    const r = this.db.prepare("SELECT * FROM events WHERE conversation_id = ? ORDER BY id DESC LIMIT 1").get(conversationId);
+    return r && { ...r, flag: openFlag(r.flag, "unknown") };
   }
   topicStats(studentId, days = 60) {
     return this.db
@@ -596,16 +613,24 @@ export class Store {
       )
       .all(studentId, `-${days} days`);
   }
+  // Oznake so šifrirane (crypto-polje.js sealFlag), zato se »photo« in neberljive izločijo po odšifriranju.
   flagEvents(studentId, limit = 50) {
-    return this.db
+    const out = [];
+    const rows = this.db
       .prepare(
         `SELECT e.flag, e.created_at, e.conversation_id, c.title
          FROM events e JOIN conversations c ON c.id = e.conversation_id
-         WHERE e.student_id = ? AND e.flag NOT IN ('none', 'photo') -- zavrnjena fotografija ni opozorilo za starše
-         ORDER BY e.id DESC LIMIT ?`,
+         WHERE e.student_id = ? AND e.flag <> 'none'
+         ORDER BY e.id DESC`,
       )
-      .all(studentId, limit)
-      .map(openConv);
+      .iterate(studentId);
+    for (const r of rows) {
+      const flag = openFlag(r.flag);
+      if (!flag || flag === "photo") continue; // zavrnjena fotografija ni opozorilo za starše
+      out.push(openConv({ ...r, flag }));
+      if (out.length >= limit) break;
+    }
+    return out;
   }
   // XP po dnevih (vse dejavnosti: lekcije, vaje, igre, inštruktor) za koledar aktivnosti na Napredku in strani Jaz.
   xpByDay(studentId, days = 371) {

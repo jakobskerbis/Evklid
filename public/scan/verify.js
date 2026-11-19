@@ -119,12 +119,13 @@ function check(problemText, ai) {
     if (kind === "system") {
       const parts = splitSystem(problemText) || String(problemText).split(/;|\n/).filter((s) => s.includes("="));
       for (const sol of ai.solutions || []) {
-        const env = {};
+        const vals = new Map(); // ključ je ena črka; Map namesto pisanja v objekt (CodeQL js/remote-property-injection)
         for (const m of String(sol).matchAll(/([a-zA-Z])\s*=\s*([^;,]+(?:,\d+)?)/g)) {
           const val = values(m[2])[0];
           if (val === undefined) return { verified: false, reason: "parse" };
-          env[m[1]] = val;
+          vals.set(m[1], val);
         }
+        const env = Object.fromEntries(vals);
         if (!parts.length || parts.some((p) => satisfies(p, env) !== true)) return { verified: false, reason: "wrong" };
       }
       return { verified: (ai.solutions || []).length > 0, reason: (ai.solutions || []).length ? null : "empty" };

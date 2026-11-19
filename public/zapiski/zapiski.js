@@ -9,6 +9,7 @@ import { icon } from "../icons.js";
 import { dateText } from "../datum.js";
 import { zaznajNujno, izsiljevanje, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, opomba } from "../nujno.js";
 import SL from "./sl.js";
+import { nalozi as aioNalozi, opombaHtml } from "../ai-oznaka/ai-oznaka.js";
 
 const MAX = 5;
 let D = null; // { api, renderRich, escapeHtml, toast, getStudent, box, back }
@@ -17,7 +18,7 @@ let loaded = null;
 let S = null; // { mode, pages: [{ text, kind }], photos, result, note }
 
 // Besedila v jeziku vmesnika: prevodi zapiskov, nato skupni (i18n.js), nato ključ.
-function t(key, vars = {}) {
+export function t(key, vars = {}) {
   for (const d of dicts) {
     if (d[key] !== undefined) return d[key].replace(/\{(\w+)\}/g, (m, k) => (vars[k] !== undefined ? String(vars[k]) : m));
   }
@@ -57,7 +58,7 @@ const tag = (ok) =>
   ok
     ? `<span class="zap-tag zap-ok">${icon("badge-check")} ${esc(t("scan.verified"))}</span>`
     : `<span class="zap-tag zap-unchecked">${icon("info")} ${esc(t("cards.notesUnchecked"))}</span>`;
-const errText = (err) => {
+export const errText = (err) => {
   const c = err?.body?.code;
   if (c === "zapiski_strani") return t("zap.errPages", { date: dateText(err.body.pages?.renews || Date.now(), currentLang(), { day: "numeric", month: "long" }) });
   if (c === "zapiski_neucno") return t("zap.errUnrelated");
@@ -70,7 +71,7 @@ export async function showZapiski(deps) {
   D = deps;
   loadCss();
   loaded ||= loadDicts();
-  await loaded;
+  await Promise.all([loaded, aioNalozi()]);
   S = { mode: "home", pages: [], photos: 0 };
   renderHome();
 }
@@ -103,6 +104,11 @@ async function renderHome(msg = "", nujno = null) {
       <input type="file" accept="image/*" multiple data-file hidden>
       <p class="zap-msg" role="alert">${esc(msg)}</p>
     </section>
+    ${data.vaja == null ? "" : `<section class="card zap-vaja">
+      <h2 class="with-icon">${icon("clipboard-check")} ${esc(t("vaja.title"))}</h2>
+      <p class="muted">${esc(t("vaja.teaser"))}</p>
+      ${data.vaja === false ? `<p class="muted zap-note">${icon("info")} ${esc(t("vaja.onlySi"))}</p>` : `<div class="zap-btns"><button type="button" class="secondary" data-act="vaja">${icon("clipboard-check")} ${esc(t("vaja.open"))}</button></div>`}
+    </section>`}
     <section class="zap-list">
       <h2>${esc(t("zap.list"))}</h2>
       ${data.notes.length ? `<ul>${data.notes.map(noteRow).join("")}</ul>` : `<p class="muted">${esc(t("zap.empty"))}</p>`}
@@ -116,6 +122,8 @@ async function renderHome(msg = "", nujno = null) {
   });
   for (const inp of el.querySelectorAll("input[type=file]")) inp.addEventListener("change", () => readPhotos([...inp.files].slice(0, MAX)));
   el.querySelector(".zap-list").addEventListener("click", onListClick);
+  // Vaja iz testa ali domače naloge (public/zapiski/vaja.js): modul se naloži šele ob kliku.
+  el.querySelector('[data-act="vaja"]')?.addEventListener("click", async () => (await import("./vaja.js")).showVaja(D, { home: () => renderHome(), quota: p }));
 }
 
 function noteRow(n) {
@@ -158,7 +166,7 @@ async function onListClick(e) {
 }
 
 // --- branje fotografij: ena za drugo, slika se po branju zavrže ---
-function shrink(file) {
+export function shrink(file) {
   return new Promise((ok, fail) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
@@ -192,7 +200,7 @@ async function readPhotos(files) {
         msg = t("zap.errNoPhoto");
         break;
       }
-      if (r.text) pages.push({ text: r.text, kind: r.kind });
+      if (r.text) pages.push({ text: r.text, kind: r.kind, ai: !!r.ai_generated });
       else msg = t("zap.errRead");
     } catch (err) {
       msg = errText(err);
@@ -213,10 +221,11 @@ function renderCheck() {
     <button type="button" class="ghost back zap-back">${icon("arrow-left")}<span>${esc(t("cards.notes"))}</span></button>
     <h1 class="with-icon">${icon("notebook-pen")} ${esc(paste ? t("zap.paste") : t("zap.check"))}</h1>
     ${S.msg ? `<p class="zap-msg" role="alert">${esc(S.msg)}</p>` : ""}
+    ${S.pages.some((p) => p.ai) ? opombaHtml(D.getStudent()?.settings, "prepis") : ""}
     <form class="zap-check">
       ${S.pages
         .map(
-          (p, i) => `<label class="zap-page">${paste ? "" : `<span>${esc(t("zap.page", { i: i + 1 }))}</span>`}
+          (p, i) => `<label class="zap-page"${p.ai ? ' data-ai-generated="true"' : ""}>${paste ? "" : `<span>${esc(t("zap.page", { i: i + 1 }))}</span>`}
         <textarea name="p${i}" rows="${paste ? 12 : 8}" maxlength="6000" dir="auto" ${paste ? `placeholder="${esc(t("zap.pastePh"))}"` : ""}>${esc(p.text)}</textarea></label>`,
         )
         .join("")}
@@ -242,7 +251,7 @@ function renderCheck() {
 }
 
 // Okno z nujno pomočjo (isti zaznavalnik in iste številke kot v klepetu, public/nujno.js; strošek 0).
-function nujnoHtml(n) {
+export function nujnoHtml(n) {
   const st = stevilke(D.getStudent()?.settings, drzavaNaprave());
   const tr = ([k, p]) => t(k, Object.fromEntries(Object.entries(izoliraj(p)).map(([a, x]) => [a, Array.isArray(x) ? t(x[0], x[1]) : x ?? ""])));
   const [head, ...rest] = vrstice(n.vrsta, st, { izsiljevanje: !!n.izs });
@@ -252,7 +261,7 @@ function nujnoHtml(n) {
     <div class="nujno-klici">${calls.map((c) => `<a class="nujno-klic" href="${telHref(c)}">${icon("phone")} ${esc(t("nujno.klic", izoliraj({ n: c })))}</a>`).join("")}</div>
     <p class="nujno-opomba">${esc(t(opomba(st, false)))}</p></section>`;
 }
-function localNujno(text) {
+export function localNujno(text) {
   const vrsta = zaznajNujno(text);
   return vrsta ? { vrsta: vrsta === "pogovor" ? "pogovor" : vrsta, izs: izsiljevanje(text) } : null;
 }

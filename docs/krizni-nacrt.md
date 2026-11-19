@@ -24,6 +24,10 @@ Dogodek javi v projektni niti »Pripravi krizni načrt za neljube dogodke«. Jav
   10 sporočil pogovora). Prijave pregledamo in popravimo v nekaj dneh, nato jih označimo »Popravljeno«.
 - **Koda sporočila** (npr. `#00YA`) pod vsakim odgovorom. Če kroži posnetek zaslona, s kodo takoj najdemo
   sporočilo v bazi; če ga ni, je posnetek ponarejen ali iz druge aplikacije.
+- **Oznaka stiske** (#856): ko inštruktor označi stisko, skrbnik (in neobvezni namestnik) dobi e-mail brez imena
+  in vsebine. Vsako oznako v 24 urah odpri na `/api/admin/stiske` (prijava skrbnika), po potrebi pogovor najdi s
+  kodo sporočila (`node scripts/najdi-sporocilo.js`) in oznako označi »Označi kot pregledano«. Stran pokaže, koliko
+  oznak je čez rok.
 - **Opozorilo** pod poljem za pisanje: »Evklid se lahko zmoti. Pomembne rezultate preveri.«
   (preglednost po AI Act, čl. 50).
 - **Stikalo** `EVKLID_CHAT_OFF=1` v `.env` (nato ponovni zagon): klepet z inštruktorjem je izklopljen za

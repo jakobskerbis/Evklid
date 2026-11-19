@@ -293,6 +293,7 @@ const steviloRacuna = (db, parent, students, razen = -1) =>
 const DOVOLJENO = {
   audit_log: "dnevnik dostopov (1 leto, varnostna sled) brez povezave na račun (detachAudit)",
   billing_consents: "soglasje plačnika (e-naslov, potrjeno besedilo): dokaz o soglasju pri plačilu (odstop od pogodbe)",
+  withdrawals: "obvestilo o odstopu od pogodbe (ime, e-naslov, pogodba): dokaz o pravočasnem odstopu in potrdilu o prejemu (ZVPot-1A), parent_id → NULL",
   gifts: "plačana darilna koda: zapis plačila za vračilo in računovodstvo",
   guarantees: "garancija: zapis plačila in vračila (e-naslov samo kot zgoščena vrednost)",
   podari_fund: "nakup »Podari«: zapis plačila",

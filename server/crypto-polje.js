@@ -87,6 +87,37 @@ export function canOpen(value) {
   return unseal(value, null) !== null;
 }
 
+// Oznaka dogodka (events.flag, j 18. 11. 2026): »none« ostane berljiv (SQL loči opozorila od navadnih odgovorov),
+// vse ostale (distress, unsafe, injection, offtopic, photo) se zašifrirajo, da se iz baze ne vidi, katera je stiska.
+// Pred šifriranjem dopolnjena na FLAG_PAD znakov: vsi zapisi so enako dolgi, dolžina ne izda vrste oznake.
+export const FLAG_PAD = 12;
+// Brez ključa ostane nedopolnjena (kot vsa polja brez ključa: nešifrirano).
+export const sealFlag = (flag) => (flag === null || flag === undefined || flag === "none" || !keys() ? flag : seal(String(flag).padEnd(FLAG_PAD)));
+// Odšifrirana oznaka; neberljiva (manjka ključ) vrne `fallback` (privzeto null).
+export function openFlag(flag, fallback = null) {
+  if (!isEncrypted(flag)) return typeof flag === "string" ? flag.trim() : flag;
+  const v = unseal(flag, null);
+  return v === null ? fallback : v.trim();
+}
+
+// Pregled oznake (events.pregled, server/stiska-obvestilo.js): vrsta varnostnega okna ob stiski in čas, ko je skrbnik
+// oznako pregledal. Zapiše se ob vsaki oznaki razen »none« (ne samo ob stiski) in je dopolnjen na PREGLED_PAD znakov,
+// zato se iz baze po prisotnosti ali dolžini ne vidi, katera oznaka je stiska ali je bila pregledana.
+export const PREGLED_PAD = 96;
+export const sealPregled = (obj) => seal(JSON.stringify(obj || {}).padEnd(PREGLED_PAD));
+// Odšifriran pregled ({} ali { v, pregledano_ob, pregledal }); NULL ali neberljiv vrne `fallback` (privzeto null).
+export function openPregled(value, fallback = null) {
+  if (value === null || value === undefined) return fallback;
+  const s = unseal(value, null);
+  if (s === null) return fallback;
+  try {
+    const o = JSON.parse(s.trim());
+    return o && typeof o === "object" ? o : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 // JSON polje: zašifriran niz JSON; ob neberljivem zapisu vrne `fallback`.
 export const sealJson = (obj) => seal(JSON.stringify(obj));
 export function unsealJson(value, fallback) {
@@ -154,6 +185,12 @@ export const SEALED = [
   { table: "pilot_mnenja", cols: ["liked", "bothers"] },
   // Učenčevi zapiski (server/zapiski.js): naslov in prepis rokopisa.
   { table: "zapiski", cols: ["naslov", "prepis"] },
+  // Oznaka dogodka učenja (stiska, nevarna vsebina …; j 18. 11. 2026). »none« ostane berljiv (where), rok hrambe
+  // oznak 90 dni: server/zasebnost.js RETENTION.flagDays.
+  // pad: dopolnitev pred šifriranjem (sealFlag); clearIf: ob stiski se ob selitvi pobriše tudi tema (kot v addEvent).
+  { table: "events", cols: ["flag"], where: "flag <> 'none'", pad: FLAG_PAD, clearIf: { value: "distress", cols: ["topic", "topic_id"] } },
+  // Pregled oznake (vrsta okna ob stiski, pregledano_ob; server/stiska-obvestilo.js), dopolnjen kot oznaka.
+  { table: "events", cols: ["pregled"], where: "pregled IS NOT NULL", pad: PREGLED_PAD, label: "events.pregled" },
 ];
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);
@@ -167,7 +204,7 @@ export function encryptionStats(db) {
     for (const c of t.cols.filter((x) => hasCol(db, t.table, x))) {
       const s = { table: t.table, col: c, encrypted: 0, plain: 0, unreadable: 0, oldKey: 0 };
       const cur = currentKeyId();
-      for (const r of db.prepare(`SELECT ${c} AS v FROM ${t.table} WHERE ${c} IS NOT NULL`).iterate()) {
+      for (const r of db.prepare(`SELECT ${c} AS v FROM ${t.table} WHERE ${c} IS NOT NULL${t.where ? ` AND (${t.where})` : ""}`).iterate()) {
         if (!isEncrypted(r.v)) s.plain++;
         else if (!canOpen(r.v)) s.unreadable++;
         else {

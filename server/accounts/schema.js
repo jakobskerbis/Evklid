@@ -120,6 +120,8 @@ export function migrateAccounts(db) {
   if (!pcols.includes("birth_date")) db.exec("ALTER TABLE parents ADD COLUMN birth_date TEXT");
   // Star račun brez datuma rojstva: kdaj smo ga ob prijavi vprašali (vprašamo samo enkrat, j 2026-11-06).
   if (!pcols.includes("birth_asked_at")) db.exec("ALTER TABLE parents ADD COLUMN birth_asked_at TEXT");
+  // Zadnja dejavnost računa (klic API s sejo, enkrat na dan): neaktivni računi, server/accounts/neaktivni.js.
+  if (!pcols.includes("last_active_at")) db.exec("ALTER TABLE parents ADD COLUMN last_active_at TEXT");
   // Član pilota (server/pilot-naloge.js): skrbnik označi račun v zavihku Račun; vsi profili računa vidijo naloge.
   // Različica politike zasebnosti, o kateri je imetnik videl obvestilo (privacy_version ostane različica ob registraciji).
   if (!pcols.includes("privacy_seen")) db.exec("ALTER TABLE parents ADD COLUMN privacy_seen TEXT");

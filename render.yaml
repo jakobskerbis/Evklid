@@ -27,6 +27,10 @@ services:
         value: "131072"
       - key: MALLOC_MMAP_THRESHOLD_
         value: "131072"
+      # »Vaja iz testa ali domače naloge« (server/vaja-iz-lista.js): privzeto izklopljeno (j, 18. 11.); vklop po meritvi
+      # natančnosti prepoznavanja znanja (≥ 90 %). Za vklop odstrani # v naslednjih dveh vrsticah.
+      # - key: EVKLID_VAJA_IZ_TESTA
+      #   value: "1"
       - key: EVKLID_DB
         value: /var/data/evklid.db
       - key: ANTHROPIC_API_KEY
@@ -40,6 +44,9 @@ services:
       - key: EVKLID_BASE_URL
         sync: false
       - key: EVKLID_ADMIN_EMAILS
+        sync: false
+      # Namestnik, ki dobi e-mail ob oznaki stiske (server/stiska-obvestilo.js); neobvezno. EVKLID_STISKA_EMAIL=0 izklopi e-mail.
+      - key: EVKLID_STISKA_EMAIL_NAMESTNIK
         sync: false
       # Člani pilota (docs/stroski-ai.md »Pilot in lastnik«): e-naslovi z vejicami, zadnji dan pilota.
       - key: EVKLID_PILOT_EMAILS
@@ -57,10 +64,19 @@ services:
         value: "1.5"
       - key: EVKLID_MONTHLY_BUDGET_USD
         value: "200"
-      - key: EVKLID_LIVE_CHECK_DAILY_USD   # pregled z zmogljivejšim modelom, vsi učenci skupaj na dan (j 11. 11.: 1 $ med pilotom; SŠ polovica)
+      # Pregled odgovora z zmogljivejšim modelom (server/live-check.js, docs/stroski-ai.md »Meje pregleda«): vsi učenci
+      # skupaj na dan; šolski del (OŠ + SŠ) je polovica. j 18. 11.: med pilotom 3 $ (prej 1 $) in pregled tudi v OŠ.
+      # Strošek gre v mejo učenca (marža ≥ 75 % ostane); dnevni bazen največ ~90 $ na mesec.
+      - key: EVKLID_LIVE_CHECK_DAILY_USD
+        value: "3"
+      - key: EVKLID_LIVE_REVIEW_OS
         value: "1"
       # Ciljna meritev natančnosti po objavi teče v GitHubu (.github/workflows/meritev-po-objavi.yml), ne na strežniku:
       # strežnik in meritev skupaj presežeta 512 MB (16. 11. 2026). Strežnik spremenljivke EVKLID_MERITEV_PO_OBJAVI ne bere več.
+      # Neaktivni računi (server/accounts/neaktivni.js, docs/izbris-izvoz.md): obvestilo po 12 mesecih, izbris po 24.
+      # Privzeto izklopljeno; j vklopi po posvetu s pravnikom (odkomentiraj). Poročilo brez dejanj: /api/admin/neaktivni.
+      # - key: EVKLID_NEAKTIVNI
+      #   value: "1"
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET

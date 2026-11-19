@@ -55,10 +55,22 @@ configureKeyboard(document.getElementById("v"), { layers: ["abc", "num", "fx", "
 window.ready = true;
 </script>`;
 
+// tipka »=« (j, 18. 11.): v Inštruktorju druga predloga, v 123 pri matematiki zgoraj; v načinu »calc« je = izračunaj
+const PAGE_EQ = `<!doctype html><html lang="sl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/tipkovnica.css">
+<input id="m" style="width:300px"> <input id="c" style="width:300px">
+<script type="module">
+import { initKeyboard, configureKeyboard } from "/tipkovnica.js";
+initKeyboard();
+configureKeyboard(document.getElementById("m"), { math: true, layers: ["num", "fx", "sym", "abc"], start: "num", enter: "go" });
+configureKeyboard(document.getElementById("c"), { math: true, layers: ["num", "fx", "sym", "abc"], start: "num", enter: "calc" });
+window.ready = true;
+</script>`;
+
 function serve() {
   const server = http.createServer((req, res) => {
     const url = req.url.split("?")[0];
     if (url === "/t.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(PAGE);
+    if (url === "/e.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(PAGE_EQ);
     if (url === "/v.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(PAGE_CHIPS);
     const file = path.join(PUB, path.normalize(url));
     if (!file.startsWith(PUB) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return res.writeHead(404).end();
@@ -130,7 +142,7 @@ for (const [name, opts] of [
     assert.equal(await page.inputValue("#t"), "AnaQ");
     assert.equal(await page.locator(letter("q")).count(), 1, "enkratni ⇧ ugasne");
 
-    // ⌫: en dotik = znak, dvoklik = beseda, troklik = poved; držanje briše po znakih (j, 4. 11.)
+    // ⌫ kot Gboard (j, 18. 11.): vsak dotik = en znak (tudi hitro zaporedje); držanje po znakih, po 1,5 s po besedah
     const bsSel = await page.evaluate(() => {
       const b = [...document.querySelectorAll("#tipkovnica .tk-rows .tk-k")].find((x) => /briši|izbriši|delete/i.test(x.getAttribute("aria-label") || ""));
       b.dataset.bs = "1";
@@ -147,20 +159,15 @@ for (const [name, opts] of [
     await setText("Prva poved. Druga beseda");
     await tapBs(1);
     assert.equal(await page.inputValue("#t"), "Prva poved. Druga besed", "en dotik");
-    await page.waitForTimeout(500);
     await tapBs(2);
-    assert.equal(await page.inputValue("#t"), "Prva poved. Druga ", "dvoklik");
-    await page.waitForTimeout(500);
-    await setText("Prva poved. Druga beseda");
+    assert.equal(await page.inputValue("#t"), "Prva poved. Druga bes", "dva hitra dotika = dva znaka (ni več dvoklika)");
     await tapBs(3);
-    assert.equal(await page.inputValue("#t"), "Prva poved. ", "troklik");
-    await page.waitForTimeout(500);
-    // druga tipka vmes prekine dvoklik
+    assert.equal(await page.inputValue("#t"), "Prva poved. Druga ", "trije hitri dotiki = trije znaki (ni več troklika)");
     await setText("abc def");
     await tapBs(1);
     await press(letter("x"));
     await tapBs(1);
-    assert.equal(await page.inputValue("#t"), "abc de", "⌫ x ⌫ ni dvoklik");
+    assert.equal(await page.inputValue("#t"), "abc de", "⌫ x ⌫");
     await page.waitForTimeout(500);
     // črka se vpiše že ob pritisku; dolg pritisk na »s« in dvig izbere »š« (ne »sš«)
     {
@@ -211,6 +218,28 @@ for (const [name, opts] of [
     await page.mouse.up();
     const held = await page.inputValue("#t");
     assert.ok(held.length < 11 && held.length >= 4 && "ena dva tri".startsWith(held), `držanje: »${held}«`);
+    await page.waitForTimeout(500);
+    // dolgo držanje (> 1,5 s): po besedah, zato se ustavi na meji besede; v polju s formulo (vnos-izrisan) ostane po znakih
+    const long = Array(6).fill("abcdefghijklmnopqrstuvwxyz".repeat(2)).join(" ");
+    const hold = async (ms) => {
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      await page.waitForTimeout(ms);
+      await page.mouse.up();
+      await page.waitForTimeout(40);
+      return page.inputValue("#t");
+    };
+    await setText(long);
+    const words = await hold(2100);
+    assert.ok(long.startsWith(words) && long.length - words.length > 27 && (words === "" || words.endsWith(" ")), `držanje po besedah: »${words}«`);
+    await page.waitForTimeout(500);
+    await page.evaluate(() => document.getElementById("t").classList.add("vnos-izrisan"));
+    await setText(long);
+    const chars = await hold(3000);
+    await page.evaluate(() => document.getElementById("t").classList.remove("vnos-izrisan"));
+    assert.ok(long.startsWith(chars) && chars.length < long.length && !chars.endsWith(" ") && !long.slice(chars.length).trim().includes(" "), `formula: po znakih »${chars}«`);
+    // tudi po 1,5 s še vedno na 75 ms (ne na 200 ms kot po besedah): v 3 s ~35 znakov, pri 200 ms bi jih bilo ~23
+    assert.ok(long.length - chars.length >= 28, `formula: hitro po znakih (${long.length - chars.length})`);
     await page.waitForTimeout(500);
 
     // enaka višina v vseh plasteh
@@ -263,4 +292,36 @@ test("swiping the template row scrolls it and inserts nothing; a clean tap inser
   await page.locator("#tipkovnica .tk-ctx .tk-chip").filter({ hasText: "π" }).tap();
   await page.waitForTimeout(60);
   assert.equal(await page.inputValue("#v"), "π", "čist dotik vpiše");
+});
+
+test("tipka = v 123 pri matematiki: druga v zgornji vrsti, vse tipke na 360 px; v načinu calc je = samo izračunaj (j, 18. 11.)", async (t) => {
+  if (!browser) return t.skip("Playwright/Chromium ni nameščen");
+  const server = await serve();
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, locale: "sl-SI" });
+  t.after(async () => {
+    await ctx.close();
+    server.close();
+  });
+  const page = await ctx.newPage();
+  await page.goto(`http://127.0.0.1:${server.address().port}/e.html`);
+  await page.waitForFunction(() => window.ready);
+  const top = () => page.$$eval("#tipkovnica .tk-rows .tk-grid:first-child button", (b) => b.map((x) => ({ l: x.textContent.trim(), r: x.getBoundingClientRect() })));
+  await page.tap("#m");
+  await page.waitForSelector("#tipkovnica:not([hidden]) .tk-rows .tk-grid");
+  await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running"), null, { timeout: 5000 });
+  const row = await top();
+  assert.deepEqual(row.map((k) => k.l), ["x²", "=", "√", "xⁿ", "π", "( )", "a/b"]);
+  assert.equal(new Set(row.map((k) => Math.round(k.r.top))).size, 1, "zgornja vrsta je ena vrstica");
+  for (const k of row) assert.ok(k.r.left >= 0 && k.r.right <= 360 && k.r.width >= 40, `${k.l} ${JSON.stringify(k.r)}`);
+  await page.locator("#tipkovnica .tk-rows .tk-grid:first-child button").nth(1).tap();
+  await page.waitForTimeout(60);
+  assert.equal(await page.inputValue("#m"), "=", "vstavi znak =");
+  // calc: = je tipka izračunaj (GO), zgoraj je ni še enkrat
+  await page.tap("#c");
+  await page.waitForFunction(() => document.activeElement?.id === "c");
+  await page.waitForTimeout(200);
+  const calcRow = await top();
+  assert.ok(!calcRow.some((k) => k.l === "="), "v načinu calc ni znaka = v zgornji vrsti");
+  assert.equal(calcRow.length, 6);
+  assert.equal(await page.locator("#tipkovnica .tk-k.go").first().textContent(), "=");
 });

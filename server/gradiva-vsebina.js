@@ -204,7 +204,7 @@ export function gradivoPage(vrsta, topicId) {
     ${body}
     ${g.meta.stanje !== "pregledano" ? `<p class="muted small">Osnutek: gradivo še pregleduje učitelj.</p>` : ""}
   </section>`;
-  return shell(`${g.meta.naslov || t.name} · ${kind.toLowerCase()}`, content, PAGE_CSS);
+  return shell(`${g.meta.naslov || t.name} · ${kind.toLowerCase()}`, content, PAGE_CSS, 0, { ai: true });
 }
 
 // Kratek video: scenarij za predvajalnik v aplikaciji (public/gradiva.js), ki upravlja simulacijo.

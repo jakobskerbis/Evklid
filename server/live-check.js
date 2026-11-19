@@ -19,7 +19,7 @@ import { parse, compile } from "../public/graph/math.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
-import { MODEL_MID } from "./claude.js";
+import { MODEL_MID, addUsage } from "./claude.js";
 
 export const liveCheckOn = () => process.env.EVKLID_LIVE_CHECK !== "0";
 // Največ toliko USD na dan za pregled z modelom (vrsta »preverjanje«); negativno = brez meje.
@@ -170,7 +170,7 @@ export function withNote(messages, note) {
 
 // Vrstice, kjer napačna vrednost lahko stoji namenoma (učenčeva napaka, vprašanje, »če bi …«).
 // Tudi učenčev zapis (»Ti si napisal …«), zavrnjeni kandidati (»$x = 1$ odpade«) in poskusi.
-const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})/iu;
+export const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})/iu;
 
 // Zadnja navedena vrednost vsake neznanke (»$x = 4$«, »$x_1 = \frac{1}{2}$«, »$x = \frac{8}{2} = 4$«).
 function statedValues(answer, vars) {
@@ -210,7 +210,7 @@ const num = (t) => {
 };
 
 // Vrednosti iz rešitve reševalnika (»x_{1} = -\\sqrt{2},\\quad x_{2} = \\sqrt{2}«) po neznankah.
-function solverValues(answerTex) {
+export function solverValues(answerTex) {
   const out = [];
   for (const part of String(answerTex || "").split(/,?\s*\\quad\s*|;/)) {
     const m = /^\s*([a-zA-Z])(?:_\{?\d+\}?)?\s*=([^=]+)$/.exec(part);
@@ -817,9 +817,13 @@ const EXERCISE_RE = /(?:^|\n)[ \t>*_]*(?:dodatna vaja|vaja|za vajo|practice(?: e
 const BOX_RE = /📌|zapomni si/iu;
 const SOLVED_RE = /(?:^|\n)[ \t>*_\d.]*(?:podatki|iščemo|preverba)[*_ \t]*[:：]/iu;
 export const hasExercise = (answer) => EXERCISE_RE.test(String(answer || ""));
+// Načrt poskusa v odgovoru (»Boljši načrt«, »Izboljšan načrt«, »načrt poskusa«, kontrolna skupina). Pregled PR #848: tudi
+// odgovor samo z načrtom (brez vaje ali okvirja) gre v pregled (j: natančnost).
+const PLAN_RE = /(?<!\p{L})(?:(?:boljši|izboljšan\p{L}*|popravljen\p{L}*|nov\p{L}*)\s+načrt|načrt\p{L}*\s+poskus\p{L}*|kontroln\p{L}*\s+skupin\p{L}*|improved\s+plan|experimental\s+design)/iu;
+export const hasPlan = (answer) => PLAN_RE.test(String(answer || ""));
 export const hasClaims = (answer) => {
   const a = String(answer || "");
-  return EXERCISE_RE.test(a) || (BOX_RE.test(a) && SOLVED_RE.test(a));
+  return EXERCISE_RE.test(a) || PLAN_RE.test(a) || (BOX_RE.test(a) && SOLVED_RE.test(a));
 };
 
 // Stopnje, kjer model pregleda odgovor z vajo ali okvirjem tudi brez tveganja (privzeto SŠ; OŠ z EVKLID_LIVE_REVIEW_OS=1).
@@ -925,9 +929,15 @@ export function isClaim(text, prevTutor = "") {
 }
 
 // Inštruktorjev odgovor izreče sodbo o učenčevem koraku (potrdi ali zavrne).
+// Gemini 18. 11.: sam »Prav!«, »Dobro, zdaj …«, »Lepo.« sodbe niso sprožili, zato je napačna potrditev šla mimo pregleda.
 const VERDICT_RE =
-  /(?<!\p{L})(?:točno|tako je|pravilno|pravilen|pravilna|pravilni|prav imaš|prav si|drži|res je|bravo|odlično|super|izvrstno|krasno|ni (?:čisto |povsem |še |ravno )?(?:prav|pravilno|res|tako|to)|narobe|napačn\p{L}*|napak\p{L}*|ne drži|ne velja|zmotil\p{L}*|skoraj|correct|incorrect|exactly|right|wrong|not quite|almost)(?!\p{L})/iu;
-export const givesVerdict = (answer) => VERDICT_RE.test(String(answer || "").slice(0, 600));
+  /(?<!\p{L})(?:točno|tako je|pravilno|pravilen|pravilna|pravilni|prav|dobro|lepo|natanko|perfektno|drži|res je|bravo|odlično|super|izvrstno|krasno|ni (?:čisto |povsem |še |ravno )?(?:prav|pravilno|res|tako|to|enako)|narobe|napačn\p{L}*|napak\p{L}*|ne drži|ne velja|zmotil\p{L}*|skoraj|correct|incorrect|exactly|right|wrong|not quite|almost)(?!\p{L})/iu;
+// Kratka potrditev ali zavrnitev na začetku stavka (»Da, …«, »Ja.«, »Seveda!«, »Okej, …«, »Tako.«, »Ne, …«, »Ni čisto: …«).
+const VERDICT_OPEN_RE = /(?:^|[.!?:\n]\s*)[\s>*_"'»«„“(]*(?:da|ja|seveda|okej|ok|tako|ne|ni čisto|ni povsem|yes|good|great|nice|well done|no|nope)(?=[\s,.!:;—–-]|$)/imu;
+export const givesVerdict = (answer) => {
+  const head = String(answer || "").slice(0, 600);
+  return VERDICT_RE.test(head) || VERDICT_OPEN_RE.test(head);
+};
 
 // Učenčeva vrednost neznanke ali rezultata (»x = 3«, »x1 = 2, x2 = -2«, golo število »11/12«).
 function claimValues(text, vars) {
@@ -1010,10 +1020,12 @@ export function claimNote(text, pre) {
   );
 }
 
+// Meritev 19. 11. (scripts/meri-prav-matura.mjs, brezplačni paket): pregled je spustil »Pravilno, Ana.« pred namigom o
+// napaki, dvom o pravilnem računu (»ali je 61 : 1,22 res 50?«) in namig na napačno mesto; zato izrecno v navodilih.
 const VERDICT_SYSTEM = `You check one thing in an AI tutor's reply to a school or university student: whether the tutor judged the student's last message correctly.
 You get the tutor's previous message (context), the student's message and the tutor's reply, in any language.
 First work out yourself, independently and carefully, whether the student's statement, result or step is right (recompute every number, check every fact and unit). Then compare with the tutor's judgement.
-It is an error if the tutor confirms something wrong, rejects or "corrects" something right, or states a wrong value or fact in its reply. Teaching style, hints, questions, asking for the student's working and leaving steps to the student are fine. A partially right answer that the tutor treats as partially right is fine. If you cannot decide with certainty, reply OK.
+It is an error if the tutor confirms something wrong, rejects or "corrects" something right, or states a wrong value or fact in its reply. Opening with praise or a confirmation (»Pravilno«, »Prav«, »Tako je«, »Dobro«) of a message that is wrong, or of an answer that leaves out solutions, is an error even when a hint about the error follows later (confirming only a named part that is really right, such as »x = 5 je res rešitev«, is fine); so is casting doubt on a right result or step (saying it has an error, or asking the student to re-check a correct calculation as if it were wrong), and so is pointing at a wrong place while the real error is elsewhere. Teaching style, hints, questions, asking for the student's working and leaving steps to the student are fine. A partially right answer that the tutor treats as partially right is fine. If you cannot decide with certainty, reply OK.
 Reply with exactly one line: OK, or NAPAKA: <at most two sentences: whether the student's statement is right or wrong and why, with the correct value, and what the tutor got wrong>.`;
 
 // Dnevna meja za pregled sodb z modelom (USD, vrsta »sodba«, ločen števec od vrste »preverjanje«); negativno = brez meje.
@@ -1029,12 +1041,24 @@ export function needsVerdictReview({ answer, lite, spentToday }) {
   return !(cap >= 0 && val(spentToday) >= cap);
 }
 
+/**
+ * Razlog pregleda ali null. Samo izrecna NAPAKA na začetku; odrezan ali nejasen odgovor preverjevalca ni dovolj za popravek.
+ * Zbere vse vrstice »NAPAKA: …« (pregled jih lahko vrne več ali več napak v eni vrstici, ločenih z »; «; meritev 18. 11.
+ * po #835: popravljena je bila le ena od dveh napak), združi jih z »; « in odreže pri 600 znakih (parseVerdict: 300).
+ */
+export function reviewReason(r) {
+  const text = String(r?.text || "");
+  if (r?.verdict?.ok || !/^[\s*`_]*NAPAKA/i.test(text)) return null;
+  const all = [...text.matchAll(/NAPAKA\s*:?\s*(.+)/gi)].map((m) => m[1].replace(/[*`_\s]+$/, "").trim()).filter(Boolean);
+  return (all.join("; ").slice(0, 600) || r.verdict?.reason) ?? null;
+}
+
 /** Pregled sodbe s Sonnetom. Vrne { reason: ugotovitev preverjevalca ali null, cost }. */
 export async function reviewVerdict({ context, student, answer, createFn = null, usage = null, studentId = null }) {
   const user = `TUTOR'S PREVIOUS MESSAGE:\n${String(context || "(none)").slice(0, 3000)}\n\nSTUDENT'S MESSAGE:\n${String(student || "").slice(0, 2000)}\n\nTUTOR'S REPLY:\n${String(answer || "").slice(0, 6000)}`;
   const r = await askModel(MODEL_MID, user, createFn, VERDICT_SYSTEM);
   const cost = usage ? usage.log(studentId, r.model, r.usage, "sodba") : 0;
-  return { reason: !r.verdict.ok && /^[\s*`_]*NAPAKA/i.test(r.text || "") ? r.verdict.reason : null, cost };
+  return { reason: reviewReason(r), cost };
 }
 
 // Opomba za ponovni odgovor po napačni sodbi.
@@ -1046,19 +1070,20 @@ export const verdictNote = (reason) =>
 // Navodila preverjevalca iz server/verify.js in dodatek za vaje in trditve (meritev 10. 11.: bakterija 300 μm,
 // »raztopljen« MgO, razvrščanje brez enolične rešitve, napačna trditev ob pravilnem rezultatu; meritev SŠ 18. 11.: »K > 1, prevladujejo produkti« za Kc z enoto, obrnjena deljivost v načrtu;
 // meritev SŠ 18. 11. po #833: en primer posplošen v pravilo, vzrok le s spremljajočo lastnostjo, vaja z drugo vrednostjo za isti
-// encim, neenake skupine v načrtu poskusa, dvoumno opozorilo; namenoma pomanjkljiv poskus v vaji ni napaka).
+// encim, neenake skupine v načrtu poskusa, dvoumno opozorilo; namenoma pomanjkljiv poskus v vaji ni napaka; meritev po #835:
+// vaja z nemogočo vrednostjo (4 biti na nukleotid), trditev o zapisu 2n, zamenjana beseda, več napak v enem odgovoru).
 export const LIVE_REVIEW_SYSTEM =
   CHECKER_SYSTEM +
   `
 Also check, as strictly as the calculations:
-- every practice exercise the tutor sets for the student: the quantities must be realistic (sizes, masses, speeds, concentrations that really occur), the substances and objects must behave as the exercise assumes (solubility, state, reactions, biology), the data must be consistent, it must have exactly one correct answer (in a classification every item fits exactly one group and every offered group is used), and it must not give the object of the task, under the same conditions, a value different from the task's (an exercise that describes a flawed experiment or a wrong claim on purpose and asks the student to find the flaw is fine);
-- every side remark, »remember« box and check step, also when the final result is right: definitions, structures, charges, formulas and rules must be correct, and nothing may contradict the tutor's own calculation or the task;
-- every interpretation of a result (what a value means, which side or quantity prevails, larger or smaller, faster or slower): it must follow from the given data, not from a rule of thumb that does not apply (a quantity with a unit cannot be compared with the pure number 1);
+- every practice exercise the tutor sets for the student: the quantities must be realistic (sizes, masses, speeds, concentrations that really occur), the substances and objects must behave as the exercise assumes (solubility, state, reactions, biology), the data must be consistent, it must have exactly one correct answer (in a classification every item fits exactly one group and every offered group is used), every value it assumes must be possible (a changed number must not contradict known facts or limits, such as how much information one symbol of a few possible kinds can carry; a value the exercise clearly states as hypothetical is fine), and it must not give the object of the task, under the same conditions, a value different from the task's;
+- every side remark, »remember« box and check step, also when the final result is right: definitions, structures, charges, formulas, rules and statements about notation (what a symbol such as n, 2n or a unit stands for) must be correct, every sentence must say what is meant (a swapped word, unit or quantity that changes the meaning, e.g. »bite pretvorimo v bite« for bytes, is an error; spelling, grammar, style and informal but correct wording are not), and nothing may contradict the tutor's own calculation or the task;
+- every interpretation of a result (what a value means, which side or quantity prevails, larger or smaller, faster or slower): it must follow from the given data, not from a rule of thumb that does not apply (a quantity with a unit cannot be compared with the pure number 1; the difference between two compared percentages is in percentage points, while the rest of a whole (100 % − 36 % = 64 %) and a relative change are correctly in per cent);
 - the plan and every intermediate equation: relations in the right direction (»a divides b« is not »b divides a«) and every written equality true (a rounded value written with = is fine);
 - every explanation of why something happens: it must give the textbook cause, not only a feature that merely goes with it;
 - every experiment plan: the group counts add up (every combination of conditions has the same number of repeats);
 - every statement about what the task says must match the task (a claim about what the student's textbook says that is not quoted in the question is an error), and every warning must be unambiguous (a sentence that, read literally, rejects the correct formula is an error).
-A textbook rule of the student's level that is applied where it holds is not an error just because it omits rare exceptions; a rule applied where it does not hold is an error, and so is an empirical rule (biology, chemistry, physics) stated for all cases that is false for common cases at the student's level or that generalises the single case of the task. A correct general textbook rule (»metals conduct electricity«), a definition or a mathematical theorem needs no added conditions. In the reason, quote only the wrong words (at most about ten) and then give the correct fact in a few words.
+A textbook rule of the student's level that is applied where it holds is not an error just because it omits rare exceptions; a rule applied where it does not hold is an error, and so is an empirical rule (biology, chemistry, physics) stated for all cases that is false for common cases at the student's level or that generalises the single case of the task. A correct general textbook rule (»metals conduct electricity«), a definition or a mathematical theorem needs no added conditions. An exercise that on purpose describes a flawed experiment, plan or wrong claim and asks the student to find, judge or improve it is not an error under any of the points above. In the reason, quote only the wrong words (at most about ten) and then give the correct fact in a few words. If there are several errors, name every one in the same line, separated by »; «, so that all of them can be fixed.
 Reply with exactly one line: OK, or NAPAKA: <short reason>.`;
 
 // Stopnja učenca za pregled in popravek (stopnja iz app.js: »OS«, »SS«, »FAKS«).
@@ -1068,28 +1093,62 @@ export const levelLine = (stopnja) => (LEVEL_LABEL[stopnja] ? `Student's level: 
 /** Pregled s Sonnetom (navodila preverjevalca iz server/verify.js in LIVE_REVIEW_SYSTEM). Vrne { reason: razlog napake ali null, cost }. */
 // kind: »preverjanje« ali »preverjanje-sola« (reviewKindFor). signal: prekinitev zahteve; po LIVE_REVIEW_TIMEOUT_MS
 // askModel vrže napako z name »TimeoutError« (klicatelj odgovor pusti brez pregleda).
+// Ciljni pregled vaje in načrta poskusa (meritev SŠ 18. 11. po #844, 44333245684: obe napaki in ena manjša sta bili v
+// vaji ali načrtu, splošni pregled je odgovor pregledal in spustil kljub izrecnim pravilom). Drugi, kratek klic istega
+// modela vzporedno s splošnim pregledom, samo s tem opravilom in postopkom (preštej, reši, preveri vsako predpostavko).
+export const EXTRA_SYSTEM = `You check only three things in an AI tutor's answer to a school student: the practice exercise (»Vaja«, »Practice«), any plan of an experiment that the tutor proposes, and every explanation of how or why something happens, with its notation and percentages. Ignore everything else; the rest of the answer is checked separately.
+Think through these steps before you answer:
+1. Practice exercise: list every value and fact it assumes, also numbers changed from the task. For each, decide whether it can be true in reality and agrees with the fixed facts of the task and of nature (how much information one symbol of a few possible kinds can carry, how many chromosomes or atoms something can have, concentrations above solubility, probabilities or fractions above 1, sizes and rates that really occur). Check that the given values agree with each other, units included (no extra given value that contradicts the others), that every value is given to the right object (parent or offspring, reactant or product, sample or whole), that it states every given its solution needs (also givens taken over from the task, such as how many units work at once or which process runs; a clear reference such as »enako kot zgoraj« counts as stating them, and constants, table values and facts the student is expected to know or look up need not be stated), and that the exercise can be solved with its own data and has exactly one correct answer or solution set (several roots, or several items the exercise asks for, are fine), and solve it. An open question (propose, design, give examples, explain, justify) needs no single answer; for it check only that its data are possible and consistent. Rounded textbook constants and values (g = 10 m/s², N_A = 6·10²³) are fine.
+2. Experiment plan: write down the total number of items, groups or repeats it states, then count the items it assigns to every group and condition. The counts must add up to the stated total, and every group or condition that is compared must have the same number of repeats (a plan need not combine every condition with every other). Check only the tutor's own plan; a plan quoted from the student or the task in order to criticise it is fine.
+3. Explanations and notation: for every sentence that says how or why something happens (mechanism, cause, order of events, where a process starts and where it ends, what halves or doubles a number), compare it with the textbook account at the student's level; a reason that reverses cause and effect, names the wrong process or place, or gives the wrong order or direction of a process (»zaostajajočo verigo gradi v smeri 3'→5'«, »vilici začneta na nasprotnih straneh«) is an error; a simplification that is correct at that level, or a true purpose or function given instead of a mechanism, is fine. Every symbol is used as defined (in biology 2n is the chromosome number of a diploid body cell, such as a human body cell, also when it is odd, and a polyploid's body-cell number may be written 2n = 33 or 3n = 33; in mathematics 2n with a whole number n is even). When two percentages are compared, their difference is in percentage points, not per cent; the rest of a whole (100 % − 36 % = 64 %), a share of the same whole found by adding or subtracting shares, and a relative change are correctly in per cent. Check only the tutor's own explanations; a wrong idea quoted from the student or named as a misconception in order to correct it is fine.
+An exercise that on purpose describes a flawed experiment, plan or wrong claim and asks the student to find, judge or improve it is fine, and so is a value the exercise clearly states as hypothetical. Spelling, style and wording that is correct are fine.
+End with one final line: OK, or NAPAKA: <the wrong words (at most about ten) and the corrected data or fact in a few words>; several errors in the same line, separated by »; «. Never write the exercise's result; name only the wrong data and the corrected data.`;
+
+// Meritev po #848 (44367261406): vilici »začneta na nasprotnih straneh«, haploidnost iz oploditve, »63 ni oblike 2n«,
+// »razlika 40 %« in vaja brez podatka o dveh vilicah; zato ciljni pregled preveri še razlage pojavov in zapis, popravek vaje
+// pa jo zapiše celo z vsemi podatki.
+/** Ali odgovor dobi še ciljni pregled vaje in načrta: SŠ (po izbiri OŠ, kot claimReviewFor), z vajo ali načrtom poskusa. */
+export const needsExtraCheck = (answer, stopnja) => claimReviewFor(stopnja) && (hasExercise(answer) || hasPlan(answer));
+/** Število klicev pregleda za rezervacijo v meji učenca in dnevnem bazenu (1 ali 2). */
+export const reviewCalls = (answer, stopnja) => (needsExtraCheck(answer, stopnja) ? 2 : 1);
+
 export async function reviewAnswer({ question, answer, stopnja = null, createFn = null, usage = null, studentId = null, kind = "preverjanje", signal = null, timeoutMs = LIVE_REVIEW_TIMEOUT_MS() }) {
-  const r = await askModel(MODEL_MID, levelLine(stopnja) + checkerUser({ question, answer }), createFn, LIVE_REVIEW_SYSTEM, { signal, timeoutMs });
-  const cost = usage ? usage.log(studentId, r.model, r.usage, kind) : 0;
-  // Samo izrecna NAPAKA; odrezan ali nejasen odgovor preverjevalca ni dovolj za popravek.
-  return { reason: !r.verdict.ok && /^[\s*`_]*NAPAKA/i.test(r.text || "") ? r.verdict.reason : null, cost };
+  const user = levelLine(stopnja) + checkerUser({ question, answer });
+  const calls = [askModel(MODEL_MID, user, createFn, LIVE_REVIEW_SYSTEM, { signal, timeoutMs })];
+  // Ciljni pregled teče vzporedno, z razmislekom (thinking: adaptive); sodba je zadnja vrstica.
+  if (needsExtraCheck(answer, stopnja)) calls.push(askModel(MODEL_MID, user, createFn, EXTRA_SYSTEM, { signal, timeoutMs, thinking: true }));
+  const [main, extra] = await Promise.allSettled(calls);
+  // Poraba vseh uspelih klicev je en vpis (meja pregledov na učenca šteje en pregled), tudi ko splošni pregled ne uspe.
+  const done = [main, extra].filter((x) => x?.status === "fulfilled").map((x) => x.value);
+  const cost = usage && done.length ? usage.log(studentId, done[0].model, done.reduce((u, x) => addUsage(u, x.usage || {}), null), kind) : 0;
+  if (main.status === "rejected") throw Object.assign(main.reason, { cost }); // rok in prekinitev ostaneta kot prej (noteReviewSkip)
+  const x = extra?.status === "fulfilled" ? extra.value : null;
+  const reasons = [...new Set([reviewReason(main.value), x ? extraReason(x) : null].filter(Boolean))];
+  return { reason: reasons.length ? reasons.join("; ").slice(0, 600) : null, cost, extra: !!x };
+}
+
+/** Sodba ciljnega pregleda: zadnja neprazna vrstica (pred njo je lahko razmislek v besedilu). */
+export function extraReason(r) {
+  const last = String(r?.text || "").split("\n").map((l) => l.replace(/^[*`_\s#>-]+|[*`_\s]+$/g, "")).filter(Boolean).at(-1) || "";
+  const m = /^NAPAKA\s*:?\s*(.+)$/i.exec(last);
+  return m ? m[1].trim().slice(0, 600) : null;
 }
 
 // ---------------------------------------------------------------------------
 // Popravek: en kratek klic istega modela. Meritev SŠ 18. 11. (BIO-SS-1/encimi-in-atp): popravek je dodal napačno trditev
-// (hitrost raste nad optimumom) in nova dejstva, zato popravi samo navedeno trditev ali jo umakne, nič ne doda.
+// (hitrost raste nad optimumom) in nova dejstva, zato popravi samo navedene trditve ali jih umakne, nič ne doda.
 
-const FIX_SYSTEM = `You fix one mistake in an AI tutor's answer to a student. You get the answer and a problem that an exact check or a reviewer found in it.
-If the problem is real (the answer states something wrong as true), write a correction of 1 to 3 short sentences addressed to the student, in the language of the answer, that starts with the word for "Correction" in that language followed by a colon (Slovenian: "Popravek:"). Give the correct value or fact. If the answer leaves later steps to the student, correct only the wrong part and do not solve the rest. Write maths as $…$. Do not mention a program, a check or a reviewer, and do not repeat the answer.
-Except for corrected data or a replacement practice exercise, the correction fixes only the statement named in the problem, adds nothing else and must be certainly right: no new facts, rules, exceptions, examples, organisms, substances or numbers that are not in the answer or the problem. Use only a correct value or fact given in the problem or computed in the answer, or textbook knowledge at the student's level that you are sure of. If the wrong statement is a side remark the task does not need and you cannot state the correct fact with certainty, withdraw it instead (Slovenian: "Popravek: trditve »…« ne upoštevaj; za to nalogo ni potrebna.").
-If the problem is in a practice exercise, give corrected data or a replacement exercise; never give the exercise's solution.
-If the answer does not really claim the wrong thing (for example it shows the student's mistake, a hypothetical case, or the check misread it, such as a correct unit conversion like 1 B = 8 bit or a value computed from unrounded intermediate results), or the problem only says that a correctly applied textbook rule of the student's level lacks a rare exception, reply exactly OK. A rule applied where it does not hold (for example comparing a quantity with a unit with 1) is a real mistake.`;
+const FIX_SYSTEM = `You fix the mistakes in an AI tutor's answer to a student. You get the answer and the problems that an exact check or a reviewer found in it.
+If the problem is real (the answer states something wrong as true), write a correction of 1 to 4 short sentences addressed to the student, in the language of the answer, that starts with the word for "Correction" in that language followed by a colon (Slovenian: "Popravek:"). Give the correct value or fact. If the answer leaves later steps to the student, correct only the wrong part and do not solve the rest. Write maths as $…$. Do not mention a program, a check or a reviewer, and do not repeat the answer.
+Except for corrected data or a replacement practice exercise, the correction fixes only the statements named in the problem (every one of them, briefly), adds nothing else and must be certainly right: no new facts, rules, exceptions, examples, organisms, substances or numbers that are not in the answer or the problem. Use only a correct value or fact given in the problem or computed in the answer, or textbook knowledge at the student's level that you are sure of. If the wrong statement is a side remark the task does not need and you cannot state the correct fact with certainty, withdraw it instead (Slovenian: "Popravek: trditve »…« ne upoštevaj; za to nalogo ni potrebna.").
+If the problem is in a practice exercise, write the whole corrected or replacement exercise again, with every given it needs, no hints or intermediate results and the same difficulty; it must not be the task that the answer has already solved; never give the exercise's solution. If only some of the named problems are real, correct only those and ignore the rest.
+If the answer does not really claim the wrong thing (for example it shows the student's mistake, a clearly hypothetical case (»če bi …«, »predpostavimo«), an exercise that on purpose contains a flawed experiment or wrong claim for the student to find, judge or improve, or the check misread it, such as a correct unit conversion like 1 B = 8 bit or a value computed from unrounded intermediate results), or the problem only says that a correctly applied textbook rule of the student's level lacks a rare exception, reply exactly OK (do not name or fix its flaw). A rule applied where it does not hold (for example comparing a quantity with a unit with 1) is a real mistake.`;
 
 // Odgovor modela → blok za prikaz (»> **Popravek:** …«) ali null.
 export function fixBlock(text) {
   const t = String(text || "").trim();
   // »OK« z razlago (»OK – odgovor kaže učenčevo napako.«) ali besedilo brez naslova »Popravek:« ni popravek.
-  if (!t || /^[*`_\s]*OK(?![\p{L}])/iu.test(t) || t.length > 1200) return null;
+  if (!t || /^[*`_\s]*OK(?![\p{L}])/iu.test(t) || t.length > 1600) return null; // do 4 stavki za več navedenih trditev
   // Naslov v vseh pisavah (hindijščina in tajščina imata znake \p{M}, kitajščina »更正：«, vietnamščina »Sửa lỗi:«).
   const m = /^[*_\s]*([\p{L}\p{M}]{2,20}(?: [\p{L}\p{M}]{2,20})?)[*_\s]*[:：][*_\s]*/u.exec(t);
   if (!m) return null;
@@ -1105,7 +1164,7 @@ export function fixBlock(text) {
 export const fixModeFor = (mode) => (mode === "deep" || mode === "mid" ? mode : "think");
 export async function correction({ streamFn, mode, answer, issue, language = "sl", stopnja = null, signal }) {
   const fixMode = fixModeFor(mode);
-  const user = `${levelLine(stopnja)}Student's language code: ${language}\n\nANSWER:\n${String(answer).slice(0, 8000)}\n\nPROBLEM FOUND:\n${String(issue).slice(0, 600)}`;
+  const user = `${levelLine(stopnja)}Student's language code: ${language}\n\nANSWER:\n${String(answer).slice(0, 8000)}\n\nPROBLEM FOUND:\n${String(issue).slice(0, 800)}`;
   const r = await streamFn({ system: FIX_SYSTEM, messages: [{ role: "user", content: [{ type: "text", text: user }] }], mode: fixMode, deep: fixMode === "deep" || fixMode === "mid", onText: () => {}, signal });
   return { block: r?.stopReason === "refusal" ? null : fixBlock(r?.text), usage: r?.usage, model: r?.model, mode: fixMode };
 }

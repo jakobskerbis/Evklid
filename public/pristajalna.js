@@ -2,8 +2,10 @@
 // Pokaže jo account.js, ko obiskovalec ni prijavljen in na tej napravi še ni bil (glej SEEN v account.js).
 // Dnevi preizkusa, starost za lasten račun in garancija pridejo s strežnika (/api/account/prices), da se ne
 // razidejo s cenikom; brez odgovora strežnika se ti deli skrijejo, ostalo deluje.
+// Brez odvisnosti od public/i18n.js: prevajalnik t dobi izris kot argument (account.js da t iz i18n.js). Tako isti izris
+// uporabi tudi strežnik, ki stran pošlje že izrisano v jeziku obiskovalca (server/pristajalna-takoj.js, naloga hitrost
+// prvega nalaganja, j 19. 11. 2026); account.js jo potem prevzame brez ponovnega izrisa.
 import { icon } from "./icons.js";
-import { t } from "./i18n.js";
 
 // Kdo stoji za aplikacijo (pregled »kupca« 16. 11. 2026: starši na vstopni strani niso našli ponudnika in kontakta).
 // Isto kot v public/zasebnost.html, točka 1 »Upravljavec«, in v public/pogoji.html, točka 1 (»Evklid trenutno upravlja …«);
@@ -34,7 +36,7 @@ const DEMO = [
 // noscript: stran za brskalnike brez JavaScripta in bralnike besedila (iskalniki, predogledi, orodja AI), ki jo
 // scripts/pristajalna-noscript.js zapiše v <noscript> v public/index.html. Namesto gumba za registracijo in povezave
 // za prijavo (delujeta le z JavaScriptom) je opomba.
-export function landingHtml({ name, prices = null, noscript = false } = {}) {
+export function landingHtml(t, { name, prices = null, noscript = false } = {}) {
   const days = prices?.trial_days;
   const age = prices?.min_age;
   const trial = days ? `<p class="land-trial">${icon("gift")}<span>${esc(t("land.trial", { n: days }))}</span></p>` : "";
@@ -76,6 +78,7 @@ export function landingHtml({ name, prices = null, noscript = false } = {}) {
       <a href="/zakaj-evklid">${esc(t("land.why"))}</a>
       <a href="/zasebnost.html">${esc(t("land.privacy"))}</a>
       <a href="/pogoji.html">${esc(t("land.terms"))}</a>
+      <a href="/odstop.html">${esc(t("land.withdraw"))}</a>
       <a href="/starsi.html">${esc(t("land.par.t"))}</a>
       <a href="/sole.html">${esc(t("land.sch.t"))}</a>
       <a href="/prenesi">${esc(t("land.app.go"))}</a>
