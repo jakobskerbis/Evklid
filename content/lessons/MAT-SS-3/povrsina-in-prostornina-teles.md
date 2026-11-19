@@ -209,14 +209,25 @@ Opazi: rob je položnejši od ploskve ($50{,}8^\circ < 60^\circ$), ker je njegov
 
 ## Povzetek
 
-- Površina je vsota ploščin mejnih ploskev, prostornina pove, koliko prostora telo zavzema.
-- Prizma: $P = 2S + S_p$, $V = S\,v$.
-- Piramida: $P = S + S_p$, $V = \dfrac{S\,v}{3}$.
-- Valj: $P = 2\pi r(r+v)$, $V = \pi r^2 v$.
-- Stožec: $P = \pi r(r+s)$, $V = \dfrac{\pi r^2 v}{3}$, $s = \sqrt{r^2+v^2}$.
-- Krogla: $P = 4\pi r^2$, $V = \dfrac{4\pi r^3}{3}$.
+- **Površina** je vsota ploščin mejnih ploskev.
+- **Prostornina** pove, koliko prostora telo zavzema.
+
+| Telo | $P$ | $V$ |
+|---|:-:|:-:|
+| prizma | $2S + S_p$ | $S\,v$ |
+| piramida | $S + S_p$ | $\dfrac{S\,v}{3}$ |
+| valj | $2\pi r(r+v)$ | $\pi r^2 v$ |
+| stožec | $\pi r(r+s)$ | $\dfrac{\pi r^2 v}{3}$ |
+| krogla | $4\pi r^2$ | $\dfrac{4\pi r^3}{3}$ |
+
+- Pri stožcu je $s = \sqrt{r^2+v^2}$.
 - Pri sestavljenih telesih računaj posebej vsak del in pazi, katere ploskve so res zunaj.
-- Kote v telesih računaš v pravokotnih trikotnikih z višino: naklon stranske ploskve z $\frac{a}{2}$ in $v_s$, naklon stranskega roba s polovico diagonale, naklon stranice stožca z $r$ in $s$.
+
+**Kote** v telesih računaš v pravokotnih trikotnikih z višino:
+
+- naklon stranske ploskve z $\frac{a}{2}$ in $v_s$;
+- naklon stranskega roba s polovico diagonale;
+- naklon stranice stožca z $r$ in $s$.
 
 ## Ponovitev
 

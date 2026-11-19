@@ -219,14 +219,27 @@ Po krajšanju ostane $\dfrac{1}{\sqrt{x} + 2}$. Pri $x = 4$: $\dfrac{1}{2 + 2} =
 
 ## Povzetek
 
-- $\lim\limits_{x \to a} f(x) = L$: ko se $x$ ($x \ne a$) približuje $a$, se $f(x)$ približuje $L$; vrednost $f(a)$ ne vpliva.
+**Limita:** ko se $x$ ($x \ne a$) približuje $a$, se $f(x)$ približuje $L$:
+
+$$\lim\limits_{x \to a} f(x) = L$$
+
+- Vrednost $f(a)$ na limito ne vpliva.
 - Limita obstaja, ko sta leva in desna limita enaki.
-- Pravila: limita vsote, razlike, produkta in količnika (imenovalec $\ne 0$) je vsota, razlika, produkt in količnik limit.
-- $\frac{0}{0}$ in $\frac{\infty}{\infty}$ sta nedoločena izraza: razstavi in okrajšaj, razširi pri korenih, deli z najvišjo potenco.
-- $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$, $\lim\limits_{x \to \infty} \dfrac{1}{x} = 0$.
-- $f$ je zvezna v $a$, če $f(a)$ obstaja in je enaka limiti. Nezveznosti: luknja, skok, pol.
-- Elementarne funkcije so zvezne na definicijskem območju: tam je limita kar vrednost.
-- Intervali zveznosti: definicijsko območje razdeli v točkah, kjer funkcija ni definirana; pri funkciji z več predpisi preveri še točke stika.
+- Limita vsote, razlike, produkta in količnika (imenovalec $\ne 0$) je vsota, razlika, produkt in količnik limit.
+- $\frac{0}{0}$ in $\frac{\infty}{\infty}$ sta **nedoločena izraza**: razstavi in okrajšaj, razširi pri korenih, deli z najvišjo potenco.
+
+$$\lim\limits_{x \to 0} \frac{\sin x}{x} = 1$$
+
+$$\lim\limits_{x \to \infty} \frac{1}{x} = 0$$
+
+**Zveznost:** $f$ je zvezna v $a$, če $f(a)$ obstaja in je enaka limiti:
+
+$$\lim\limits_{x \to a} f(x) = f(a)$$
+
+- **Nezveznosti:** luknja, skok, pol.
+- **Elementarne funkcije** so zvezne na definicijskem območju: tam je limita kar vrednost.
+- **Intervali zveznosti:** definicijsko območje razdeli v točkah, kjer funkcija ni definirana.
+- Pri funkciji z več predpisi preveri še točke stika.
 
 ## Ponovitev
 

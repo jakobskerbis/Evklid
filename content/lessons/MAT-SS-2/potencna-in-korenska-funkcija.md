@@ -260,14 +260,36 @@ podnapis: Siva hiperbola y = 2/x, premaknjena za 1 v desno in za 1 navzdol, da h
 
 ## Povzetek
 
-- Potenčna funkcija: $f(x) = x^n$, $n \in \mathbb{Z}$.
-- Sodi $n \ge 2$: soda funkcija, $Z_f = [0, \infty)$, graf skozi $(-1, 1)$ in $(1, 1)$. Lihi $n \ge 3$: liha, narašča, $Z_f = \mathbb{R}$, graf skozi $(-1, -1)$ in $(1, 1)$.
+**Potenčna funkcija:**
+
+$$f(x) = x^n,\quad n \in \mathbb{Z}$$
+
+Za $n \ge 2$:
+
+| | sodi $n$ | lihi $n$ |
+|---|:-:|:-:|
+| vrsta | soda | liha, narašča |
+| $Z_f$ | $[0, \infty)$ | $\mathbb{R}$ |
+
+- Sodi $n$: graf gre skozi $(-1, 1)$ in $(1, 1)$.
+- Lihi $n$: graf gre skozi $(-1, -1)$ in $(1, 1)$.
 - Večji eksponent: na $(-1, 1)$ bolj sploščen graf, zunaj strmejši.
-- Negativni eksponent: $x^{-n} = \frac{1}{x^n}$, $D_f = \mathbb{R} \setminus \{0\}$, hiperbola z asimptotama $x = 0$ in $y = 0$.
-- $\sqrt[n]{x}$ je inverz od $x^n$; lihi $n$: $D = \mathbb{R}$; sodi $n$: le za $x \ge 0$, potenco zožimo na $[0, \infty)$. Graf zrcalimo čez $y = x$.
-- $\sqrt{x^2} = |x|$; pri modeliranju: $V = a^3$ ima inverz $a = \sqrt[3]{V}$.
-- $y = a \cdot (x - p)^n + q$: $(0, 0)$ preide v $(p, q)$; pri $n < 0$ imata asimptoti enačbi $x = p$ in $y = q$.
-- $y = c \cdot x^n$: količnik $\frac{y}{x^n}$ je stalen, podvojeni $x$ pomnoži $y$ z $2^n$; premo sorazmerje ima $n = 1$. Model preveri na vseh podatkih.
+
+**Negativni eksponent:**
+
+$$x^{-n} = \frac{1}{x^n}$$
+
+- $D_f = \mathbb{R} \setminus \{0\}$, graf je hiperbola z asimptotama $x = 0$ in $y = 0$.
+
+- **Koren** $\sqrt[n]{x}$ je inverz od $x^n$; graf zrcalimo čez $y = x$.
+- Lihi $n$: $D = \mathbb{R}$. Sodi $n$: le za $x \ge 0$, potenco zožimo na $[0, \infty)$.
+
+$$\sqrt{x^2} = |x|$$
+
+- Pri modeliranju: $V = a^3$ ima inverz $a = \sqrt[3]{V}$.
+- Pri $y = a \cdot (x - p)^n + q$ točka $(0, 0)$ preide v $(p, q)$; pri $n < 0$ sta asimptoti $x = p$ in $y = q$.
+- **Model** $y = c \cdot x^n$: količnik $\frac{y}{x^n}$ je stalen, podvojeni $x$ pomnoži $y$ z $2^n$.
+- Premo sorazmerje ima $n = 1$. Model preveri na vseh podatkih.
 
 ## Ponovitev
 

@@ -199,16 +199,29 @@ Na obeh straneh enačbe naredimo isto operacijo. Ko je na vsaki strani en sam ul
 
 ## Povzetek
 
-- Funkcija $f$ vsakemu $x \in D_f$ priredi natanko eno vrednost $f(x)$; $Z_f$ so vse dosežene vrednosti.
-- $D_f$: koren sode stopnje zahteva nenegativen izraz, imenovalec mora biti različen od $0$.
-- Ničla: rešitev enačbe $f(x) = 0$, tam graf seka os $x$.
-- Narašča: iz $x_1 < x_2$ sledi $f(x_1) < f(x_2)$; pada: $f(x_1) > f(x_2)$.
-- Soda: $f(-x) = f(x)$, simetrija glede na os $y$. Liha: $f(-x) = -f(x)$, simetrija glede na izhodišče. Večina funkcij ni nič od tega.
-- Injektivna: različni $x$ dajo različne vrednosti; vodoravna premica seka graf največ enkrat.
-- Surjektivna $f\colon A \to B$: $Z_f = B$. Bijektivna: injektivna in surjektivna, vsak $y \in B$ je vrednost natanko enega $x$.
-- Količino iz formule izraziš kot pri inverzni funkciji: operacije odpravljaš v obratnem vrstnem redu, vsako na obeh straneh.
-- $(g \circ f)(x) = g(f(x))$, najprej $f$.
-- $f^{-1}$ obstaja natanko za injektivno $f$; dobiš jo iz $y = f(x)$ z izražanjem $x$; $D_{f^{-1}} = Z_f$, graf je zrcaljen čez $y = x$.
+- **Funkcija** $f$ vsakemu $x \in D_f$ priredi natanko eno vrednost $f(x)$.
+- **Zaloga vrednosti** $Z_f$ so vse dosežene vrednosti.
+- **Pogoja za $D_f$**: izraz pod korenom sode stopnje $\ge 0$, imenovalec $\ne 0$.
+- **Ničla** je rešitev enačbe $f(x) = 0$; tam graf seka os $x$.
+- **Narašča**: iz $x_1 < x_2$ sledi $f(x_1) < f(x_2)$.
+- **Pada**: iz $x_1 < x_2$ sledi $f(x_1) > f(x_2)$.
+
+- **Soda**: $f(-x) = f(x)$, simetrična glede na os $y$.
+- **Liha**: $f(-x) = -f(x)$, simetrična glede na izhodišče.
+- Večina funkcij ni ne soda ne liha.
+
+- **Injektivna**: različni $x$ dajo različne vrednosti; vodoravna premica seka graf največ enkrat.
+- **Surjektivna** $f\colon A \to B$: $Z_f = B$.
+- **Bijektivna**: injektivna in surjektivna; vsak $y \in B$ je vrednost natanko enega $x$.
+
+**Sestavljena funkcija** (najprej $f$):
+
+$$(g \circ f)(x) = g(f(x))$$
+
+- **Inverzna funkcija** $f^{-1}$ obstaja natanko za injektivno $f$.
+- Dobiš jo iz $y = f(x)$ z izražanjem $x$; $D_{f^{-1}} = Z_f$.
+- Graf $f^{-1}$ je graf $f$, zrcaljen čez $y = x$.
+- Količino iz formule izraziš kot pri $f^{-1}$: operacije odpravljaš v obratnem vrstnem redu, vsako na obeh straneh.
 
 ## Ponovitev
 

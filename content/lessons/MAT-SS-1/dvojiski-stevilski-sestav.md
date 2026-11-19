@@ -193,11 +193,12 @@ $10 = 8 + 2$, torej $58 = 32 + 16 + 8 + 2$. Mesta $4$ in $1$ dobita ničlo: $111
 
 ## Povzetek
 
-- Dvojiški sestav ima osnovo $2$ in števki $0$, $1$ (bit). Zapis: $1011_{(2)}$.
-- Mestne vrednosti od desne: $1, 2, 4, 8, 16, 32, 64, 128$ …, to je $2^0, 2^1, 2^2, \dots$
-- Iz dvojiškega v desetiški: seštej mestne vrednosti nad enicami.
-- Iz desetiškega v dvojiški: (a) vsota največjih potenc $2$, manjkajoče potence dobijo $0$; (b) zaporedno deljenje z $2$ po izreku $a = q \cdot b + r$, ostanke beri od spodaj navzgor.
-- Zadnja števka je ostanek pri deljenju z $2$: $0$ pri sodem, $1$ pri lihem številu.
+- **Dvojiški sestav** ima osnovo $2$ in števki $0$, $1$ (**bit**). Zapis: $1011_{(2)}$.
+- **Mestne vrednosti** od desne so $1, 2, 4, 8, 16, 32, 64, 128$ …, to je $2^0, 2^1, 2^2, \dots$
+- **Iz dvojiškega v desetiški:** seštej mestne vrednosti nad enicami.
+- **Iz desetiškega v dvojiški**, način (a): zapiši število kot vsoto največjih potenc $2$; manjkajoče potence dobijo $0$.
+- Način (b): zaporedno deli z $2$ po izreku $a = q \cdot b + r$; ostanke beri od spodaj navzgor.
+- **Zadnja števka** je ostanek pri deljenju z $2$: $0$ pri sodem, $1$ pri lihem številu.
 - S $k$ biti zapišeš števila od $0$ do $2^k - 1$.
 
 ## Ponovitev

@@ -1,0 +1,18 @@
+{
+  "np.ask.exam": "Unamaanisha NPZ ipi?",
+  "np.ask.subject": "Swali hili ni la somo gani?",
+  "np.ask.level": "Kiwango cha msingi au cha juu?",
+  "np.ask.year": "Karatasi ni ya mwaka gani?",
+  "np.ask.pola": "Swali la {n} ni la karatasi ipi?",
+  "np.ask.section": "Swali la {n} ni la sehemu ipi ya karatasi?",
+  "np.plain": "Tuma kama swali la kawaida",
+  "np.ours": "Hili ni swali la Evklid kwa mtindo wa karatasi «{paper}», si swali asili la RIC. Karatasi asili inapatikana bure kwenye ric.si.",
+  "np.figure": "Mchoro wa swali uko kwenye karatasi ya Evklid.",
+  "np.openOurs": "Fungua kwenye karatasi ya Evklid",
+  "np.noOurs": "Bado hatuna toleo la Evklid la «{paper}». Pakua karatasi asili kutoka ric.si, ifungue hapa na kwenye swali la {n} gusa «{help}».",
+  "np.missing": "Toleo la Evklid la «{paper}» halina swali la {n}. Angalia namba ya swali.",
+  "np.download": "Pakua asili: {file}",
+  "np.openOriginal": "Fungua asili",
+  "np.pickHint": "Kwanza pakua karatasi asili, kisha kwenye «Fungua asili» chagua faili {name}.",
+  "np.wrongFile": "Hii ni karatasi nyingine. Chagua faili {name}."
+}

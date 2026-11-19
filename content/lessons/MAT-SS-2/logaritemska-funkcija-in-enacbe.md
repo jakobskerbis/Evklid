@@ -257,14 +257,29 @@ podnapis: Premik za 1 v desno in razteg s faktorjem 3 v smeri osi y
 
 ## Povzetek
 
-- $f(x) = \log_a x$, $a > 0$, $a \ne 1$; $D_f = (0, \infty)$, $Z_f = \mathbb{R}$.
-- Graf je zrcalna slika grafa $y = a^x$ čez premico $y = x$; gre skozi $(1, 0)$ in $(a, 1)$, os $y$ je navpična asimptota.
+**Logaritemska funkcija** $f(x) = \log_a x$, $a > 0$, $a \ne 1$:
+
+$$D_f = (0, \infty), \quad Z_f = \mathbb{R}$$
+
+- Graf je zrcalna slika grafa $y = a^x$ čez premico $y = x$.
+- Gre skozi $(1, 0)$ in $(a, 1)$; os $y$ je navpična asimptota.
 - Za $a > 1$ funkcija strogo narašča, za $0 < a < 1$ strogo pada.
 - $g(x) = \log_a (x - p) + q$: asimptota $x = p$, $D_g = (p, \infty)$.
-- $c \log_a x$: razteg v smeri osi $y$; $\log_a (kx) = \log_a k + \log_a x$.
-- $2^x$ raste vse hitreje, $\log_2 x$ vse počasneje: $\log_2 x < x < 2^x$.
-- Definicijsko območje: izraz pod logaritmom mora biti strogo pozitiven.
-- Enačbe: $\log_a A = c \Rightarrow A = a^c$; $\;\log_a A = \log_a B \Rightarrow A = B$; po potrebi $t = \log_a x$.
+- $c \log_a x$: razteg v smeri osi $y$.
+- $\log_a (kx) = \log_a k + \log_a x$.
+- $2^x$ raste vse hitreje, $\log_2 x$ vse počasneje:
+
+$$\log_2 x < x < 2^x$$
+
+- **Definicijsko območje**: izraz pod logaritmom mora biti strogo pozitiven.
+
+**Enačbe:**
+
+$$\log_a A = c \Rightarrow A = a^c$$
+
+$$\log_a A = \log_a B \Rightarrow A = B$$
+
+- Po potrebi uvedeš novo neznanko $t = \log_a x$.
 - Na začetku zapiši pogoje, na koncu naredi preizkus.
 
 ## Ponovitev

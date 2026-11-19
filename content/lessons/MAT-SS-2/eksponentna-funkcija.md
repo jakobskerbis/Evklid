@@ -272,15 +272,25 @@ točka: 1; 0 | (1, 0) | pod desno
 
 ## Povzetek
 
-- Eksponentna funkcija: $f(x) = a^x$, $a > 0$, $a \ne 1$.
-- $D_f = \mathbb{R}$, $Z_f = (0, \infty)$; ničel ni; graf gre skozi $(0, 1)$ in $(1, a)$.
+**Eksponentna funkcija** ($a > 0$, $a \ne 1$):
+
+$$f(x) = a^x$$
+
+- $D_f = \mathbb{R}$, $Z_f = (0, \infty)$; ničel ni.
+- Graf gre skozi $(0, 1)$ in $(1, a)$.
 - Ko se $x$ poveča za $1$, se vrednost pomnoži z $a$.
-- $a > 1$: strogo naraščajoča; $0 < a < 1$: strogo padajoča.
-- Vodoravna asimptota je os $x$ ($y = 0$).
-- $\left(\frac{1}{a}\right)^x = a^{-x}$: graf je zrcalna slika grafa $a^x$ čez os $y$.
-- $y = a^{x - p} + q$: premik za $p$ po osi $x$ in za $q$ po osi $y$; asimptota $y = q$.
-- $y = c \cdot a^x$, $c > 0$: razteg v smeri osi $y$; graf gre skozi $(0, c)$.
-- Naravna eksponentna funkcija: $e^x$, $e \approx 2{,}718$.
+
+Funkcija je **strogo monotona**:
+
+| $a > 1$ | $0 < a < 1$ |
+|:-:|:-:|
+| naraščajoča | padajoča |
+
+- **Vodoravna asimptota** je os $x$ ($y = 0$).
+- Graf $y = \left(\frac{1}{a}\right)^x = a^{-x}$ je zrcalna slika grafa $y = a^x$ čez os $y$.
+- **Premik**: $y = a^{x - p} + q$ je premik za $p$ po osi $x$ in za $q$ po osi $y$; asimptota je $y = q$.
+- **Razteg**: $y = c \cdot a^x$, $c > 0$, je razteg v smeri osi $y$; graf gre skozi $(0, c)$.
+- **Naravna eksponentna funkcija**: $e^x$, $e \approx 2{,}718$.
 
 ## Ponovitev
 

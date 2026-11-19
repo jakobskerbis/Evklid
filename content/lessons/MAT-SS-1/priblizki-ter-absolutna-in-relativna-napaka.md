@@ -193,11 +193,31 @@ $\delta S \approx \dfrac{1}{120} + \dfrac{1}{80} \approx 0{,}021 = 2{,}1\,\%$ in
 
 ## Povzetek
 
-- Približek zapišemo z $\approx$. Zaokrožimo glede na prvo odvrženo števko ($0$–$4$ navzdol, $5$–$9$ navzgor), vedno iz izvirnega števila. Pri zaokroževanju na mesta odrezana mesta nadomestimo z ničlami.
-- Absolutna napaka $\Delta x = |\bar{x} - x|$ ima enoto količine; pri meritvi je meja napake in $x = \bar{x} \pm \Delta x$ pomeni interval $[\bar{x} - \Delta x, \bar{x} + \Delta x]$.
-- Relativna napaka $\delta x = \dfrac{\Delta x}{|x|} \approx \dfrac{\Delta x}{|\bar{x}|}$ je brez enote, pogosto v odstotkih. Z njo primerjamo natančnost.
-- Vsota in razlika: absolutni napaki se seštejeta. Razlika podobnih števil ima veliko relativno napako.
-- Produkt in količnik: relativni napaki se približno seštejeta (ocena; natančna meja je malo večja).
+- **Približek** zapišemo z $\approx$.
+- Zaokrožimo glede na prvo odvrženo števko: $0$–$4$ navzdol, $5$–$9$ navzgor.
+- Zaokrožujemo vedno iz izvirnega števila.
+- Pri zaokroževanju na mesta odrezana mesta nadomestimo z ničlami.
+
+**Absolutna napaka** ima enoto količine:
+
+$$\Delta x = |\bar{x} - x|$$
+
+- Pri meritvi je $\Delta x$ meja napake.
+- $x = \bar{x} \pm \Delta x$ pomeni interval $[\bar{x} - \Delta x, \bar{x} + \Delta x]$.
+
+**Relativna napaka** je brez enote, pogosto v odstotkih:
+
+$$\delta x = \dfrac{\Delta x}{|x|} \approx \dfrac{\Delta x}{|\bar{x}|}$$
+
+- Z relativno napako primerjamo natančnost.
+
+| račun | seštejemo |
+|:-:|:-:|
+| $a \pm b$ | absolutni napaki |
+| $a \cdot b$, $a : b$ | relativni napaki |
+
+- Razlika podobnih števil ima veliko relativno napako.
+- Pri produktu in količniku je vsota relativnih napak le ocena; natančna meja je malo večja.
 
 ## Ponovitev
 

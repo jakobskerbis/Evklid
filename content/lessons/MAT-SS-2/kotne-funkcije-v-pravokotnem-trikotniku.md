@@ -183,12 +183,39 @@ $\tan 6^\circ \approx 0{,}1051$, zato je $h \approx 15\,\text{km} \cdot 0{,}1051
 
 ## Povzetek
 
-- Pravokotni trikotnik: $\gamma = 90^\circ$, hipotenuza $c$, kateti $a$ in $b$, $\alpha + \beta = 90^\circ$.
-- $\sin \alpha = \dfrac{a}{c}$ (nasprotna/hipotenuza), $\cos \alpha = \dfrac{b}{c}$ (priležna/hipotenuza), $\tan \alpha = \dfrac{a}{b}$ (nasprotna/priležna).
-- $\sin^2 \alpha + \cos^2 \alpha = 1$, $\;\tan \alpha = \dfrac{\sin \alpha}{\cos \alpha}$, $\;\sin \alpha = \cos (90^\circ - \alpha)$.
-- Posebne vrednosti: $\sin 30^\circ = \cos 60^\circ = \dfrac{1}{2}$, $\sin 45^\circ = \cos 45^\circ = \dfrac{\sqrt{2}}{2}$, $\tan 45^\circ = 1$, $\tan 60^\circ = \sqrt{3}$.
-- Za ostri kot je $0 < \sin \alpha, \cos \alpha < 1$, $\tan \alpha > 0$.
-- Iz stranice in kota: $a = c \sin \alpha$, $b = c \cos \alpha$, $a = b \tan \alpha$; kot iz razmerja s $\sin^{-1}$, $\cos^{-1}$, $\tan^{-1}$ (računalo v stopinjah).
+- **Pravokotni trikotnik**: $\gamma = 90^\circ$, hipotenuza $c$, kateti $a$ in $b$, $\alpha + \beta = 90^\circ$.
+
+$$\sin \alpha = \frac{a}{c} = \frac{\text{nasprotna}}{\text{hipotenuza}}$$
+
+$$\cos \alpha = \frac{b}{c} = \frac{\text{priležna}}{\text{hipotenuza}}$$
+
+$$\tan \alpha = \frac{a}{b} = \frac{\text{nasprotna}}{\text{priležna}}$$
+
+**Zveze:**
+
+$$\sin^2 \alpha + \cos^2 \alpha = 1$$
+
+$$\tan \alpha = \frac{\sin \alpha}{\cos \alpha}$$
+
+$$\sin \alpha = \cos (90^\circ - \alpha)$$
+
+**Posebne vrednosti:**
+
+$$\sin 30^\circ = \cos 60^\circ = \frac{1}{2}$$
+
+$$\sin 45^\circ = \cos 45^\circ = \frac{\sqrt{2}}{2}$$
+
+$$\tan 45^\circ = 1, \quad \tan 60^\circ = \sqrt{3}$$
+
+- Za ostri kot je $0 < \sin \alpha < 1$, $0 < \cos \alpha < 1$ in $\tan \alpha > 0$.
+
+**Iz stranice in kota:**
+
+$$a = c \sin \alpha, \quad b = c \cos \alpha$$
+
+$$a = b \tan \alpha$$
+
+- Kot iz razmerja dobiš s $\sin^{-1}$, $\cos^{-1}$ ali $\tan^{-1}$ (računalo v stopinjah).
 
 ## Ponovitev
 

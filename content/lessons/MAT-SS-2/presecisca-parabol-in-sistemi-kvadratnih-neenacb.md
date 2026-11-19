@@ -195,12 +195,27 @@ $x \in (-2, 0]$. Del $[4, \infty)$ ne seka intervala $(-2, 3)$. Število $0$ je 
 
 ## Povzetek
 
-- Presečišče grafov je točka, ki leži na obeh; abscise dobiš iz enačbe $f(x) = g(x)$, ordinato iz preprostejše funkcije.
-- Parabola $y = ax^2 + bx + c$ in premica $y = kx + n$: enačba $ax^2 + (b - k)x + (c - n) = 0$, $D = (b - k)^2 - 4a(c - n)$.
-- $D > 0$: sekanta (dve presečišči); $D = 0$: tangenta (dotikališče); $D < 0$: mimobežnica (ni presečišč).
+- **Presečišče** grafov je točka, ki leži na obeh.
+- Abscise dobiš iz enačbe $f(x) = g(x)$, ordinato iz preprostejše funkcije.
+
+**Parabola** $y = ax^2 + bx + c$ in **premica** $y = kx + n$:
+
+$$ax^2 + (b - k)x + (c - n) = 0$$
+
+$$D = (b - k)^2 - 4a(c - n)$$
+
+- $D > 0$: **sekanta**, dve presečišči.
+- $D = 0$: **tangenta**, dotikališče.
+- $D < 0$: **mimobežnica**, ni presečišč.
+
 - Dve paraboli presekaš enako; pri enakem vodilnem koeficientu dobiš linearno enačbo in največ eno presečišče.
-- Ničle parabole so le presečišča z osjo $x$.
-- (višja raven) Sistem kvadratnih neenačb: reši vsako neenačbo posebej (skica parabole), rešitve nariši na isto številsko premico in vzemi presek. Krajišče vključi samo, če ga vključita obe neenačbi.
+- **Ničle** parabole so le presečišča z osjo $x$.
+
+**Sistem kvadratnih neenačb** (višja raven):
+
+- Reši vsako neenačbo posebej (skica parabole).
+- Rešitve nariši na isto številsko premico in vzemi presek.
+- Krajišče vključi samo, če ga vključita obe neenačbi.
 
 ## Ponovitev
 

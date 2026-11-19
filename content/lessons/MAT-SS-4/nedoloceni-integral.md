@@ -177,11 +177,26 @@ $\int u^4\,du = \dfrac{u^5}{5} + C$, torej $\dfrac{(x^3 - 2)^5}{5} + C$. Preverb
 
 ## Povzetek
 
-- $\int f(x)\,dx = F(x) + C$ pomeni $F'(x) = f(x)$; integriranje je odvajanje v obratni smeri.
-- Rezultat je družina funkcij, ki se razlikujejo za konstanto $C$; grafi so navpično premaknjeni, nakloni pri isti abscisi enaki.
-- Osnovni integrali: $\int x^n\,dx = \frac{x^{n+1}}{n+1} + C$ ($n \ne -1$), $\int \frac{1}{x}\,dx = \ln\lvert x\rvert + C$, $\int e^x\,dx = e^x + C$, $\int \cos x\,dx = \sin x + C$, $\int \sin x\,dx = -\cos x + C$.
-- Konstanto nesemo pred integral, vsoto integriramo po členih; za produkt takega pravila ni.
-- Nova spremenljivka (višja raven): $u = g(x)$, $du = g'(x)\,dx$, integriraj po $u$, vrni se k $x$. Pri $u = kx$ deliš s $k$.
+**Nedoločeni integral:**
+
+$$\int f(x)\,dx = F(x) + C$$
+
+- To pomeni $F'(x) = f(x)$: integriranje je odvajanje v obratni smeri.
+- Rezultat je **družina funkcij**, ki se razlikujejo za konstanto $C$.
+- Grafi so navpično premaknjeni, nakloni pri isti abscisi so enaki.
+
+| $f(x)$ | $\int f(x)\,dx$ |
+|:-:|:-:|
+| $x^n$, $n \ne -1$ | $\frac{x^{n+1}}{n+1} + C$ |
+| $\frac{1}{x}$ | $\ln\lvert x\rvert + C$ |
+| $e^x$ | $e^x + C$ |
+| $\cos x$ | $\sin x + C$ |
+| $\sin x$ | $-\cos x + C$ |
+
+- **Konstanto** nesemo pred integral, **vsoto** integriramo po členih.
+- Za **produkt** takega pravila ni.
+- **Nova spremenljivka** (višja raven): $u = g(x)$, $du = g'(x)\,dx$; integriraj po $u$, vrni se k $x$.
+- (višja raven) Pri $u = kx$ deliš s $k$.
 - Vedno preveri z odvajanjem.
 
 ## Ponovitev

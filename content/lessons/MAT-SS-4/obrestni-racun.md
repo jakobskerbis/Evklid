@@ -245,13 +245,32 @@ $r = \sqrt{1{,}0816} = 1{,}04$, zato $\frac{p}{100} = 0{,}04$ in $p = 4\,\%$. Pr
 
 ## Povzetek
 
-- Procentni račun: $d = \dfrac{C \cdot p}{100}$; povečanje za $p\,\%$ je množenje z $1 + \dfrac{p}{100}$, zmanjšanje z $1 - \dfrac{p}{100}$; zaporedne spremembe množimo.
-- Glavnica $G_0$, letna obrestna mera $p$, obresti za eno leto $o = \dfrac{G_0 \cdot p}{100}$.
-- Navadno obrestovanje: obresti vedno od $G_0$; $G_n = G_0 \left(1 + \dfrac{n \cdot p}{100}\right)$; stanja tvorijo aritmetično zaporedje.
-- Obrestno obrestovanje: obresti se pripišejo in obrestujejo naprej; $G_n = G_0 \cdot r^n$, $r = 1 + \dfrac{p}{100}$; stanja tvorijo geometrijsko zaporedje.
+**Procentni račun:**
+
+$$d = \frac{C \cdot p}{100}$$
+
+- Povečanje za $p\,\%$ je množenje z $1 + \frac{p}{100}$, zmanjšanje z $1 - \frac{p}{100}$.
+- Zaporedne spremembe množimo.
+
+**Glavnica** $G_0$, letna **obrestna mera** $p$; obresti za eno leto:
+
+$$o = \frac{G_0 \cdot p}{100}$$
+
+**Navadno obrestovanje:** obresti vedno od $G_0$; stanja tvorijo aritmetično zaporedje.
+
+$$G_n = G_0 \left(1 + \frac{n \cdot p}{100}\right)$$
+
+**Obrestno obrestovanje:** obresti se pripišejo in obrestujejo naprej; stanja tvorijo geometrijsko zaporedje.
+
+$$G_n = G_0 \cdot r^n, \quad r = 1 + \frac{p}{100}$$
+
 - Pri isti meri sta obe po 1. letu enaki, nato obrestno raste hitreje.
-- Nazaj: $G_0 = \dfrac{G_n}{r^n}$; obrestna mera iz $r^n = \dfrac{G_n}{G_0}$.
-- Pripis $m$-krat na leto: relativna mera $\dfrac{p}{m}$ da v letu več kot letni pripis; konformna, $r_m = \sqrt[m]{1 + \dfrac{p}{100}}$, da enako.
+- **Nazaj:** $G_0 = \frac{G_n}{r^n}$; obrestna mera iz $r^n = \frac{G_n}{G_0}$.
+- **Pripis $m$-krat na leto:** relativna mera $\frac{p}{m}$ da v letu več kot letni pripis.
+- **Konformna** mera da enako:
+
+$$r_m = \sqrt[m]{1 + \frac{p}{100}}$$
+
 - Zaokrožuj šele na koncu.
 
 ## Ponovitev

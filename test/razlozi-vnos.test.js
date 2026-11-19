@@ -20,10 +20,10 @@ test("send: on a usage limit the input stays empty, on any other failure text an
   assert.match(send, /userEl = addMessage\("user", text, !!image\);\s*if \(fromInput\) \{\s*\$\("#input"\)\.value = "";\s*autoGrow\(\);\s*clearImage\(\);/);
   // V catch se besedilo in fotografija vrneta samo, kadar napaka ni meja porabe; nobena pot ne piše v polje mimo restoreDraft.
   const tail = send.slice(send.indexOf("const dropped"));
-  assert.match(tail, /if \(!err\.limit && !deep\) restoreDraft\(text, image\);/);
+  assert.match(tail, /if \(!err\.limit && !deep\) restoreDraft\(draft \?\? text, image\);/);
   // »Razloži podrobneje« se na nobeni poti napake ne vrne v polje (kot mobilna).
-  assert.equal((send.match(/restoreDraft\(text, image\);/g) || []).length, 3);
-  assert.equal((send.match(/!deep\) restoreDraft\(text, image\)/g) || []).length, 3);
+  assert.equal((send.match(/restoreDraft\(draft \?\? text, image\);/g) || []).length, 3); // draft: učenčevo besedilo namesto sestavljene naloge pole
+  assert.equal((send.match(/!deep\) restoreDraft\(draft \?\? text, image\)/g) || []).length, 3);
   assert.doesNotMatch(send, /\$\("#input"\)\.value = text/, "nobena pot ne prepiše polja z besedilom");
   // restoreDraft ne prepiše osnutka in vrne fotografijo v predogled.
   const restore = app.slice(app.indexOf("function restoreDraft("), app.indexOf("function checkReplyFits"));

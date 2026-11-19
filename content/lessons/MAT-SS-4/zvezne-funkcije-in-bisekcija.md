@@ -185,12 +185,19 @@ $g(1{,}875) \approx -0{,}033 < 0$, zato je ničla na $(1{,}875; 1{,}88)$ in se z
 
 ## Povzetek
 
-- $f$ je zvezna na $[a, b]$, če je zvezna v vsaki točki; graf je brez skokov in lukenj.
+- $f$ je **zvezna** na $[a, b]$, če je zvezna v vsaki točki; graf je brez skokov in lukenj.
 - Zvezna funkcija na $[a, b]$ doseže najmanjšo in največjo vrednost ter zavzame vse vrednosti vmes.
-- Izrek o ničli: $f$ zvezna na $[a, b]$ in $f(a) \cdot f(b) < 0$ ⇒ vsaj ena ničla na $(a, b)$.
+- **Izrek o ničli:** če je $f$ zvezna na $[a, b]$ in $f(a) \cdot f(b) < 0$, ima vsaj eno ničlo na $(a, b)$.
 - Pri enakih predznakih ali brez zveznosti izrek ne pove ničesar.
-- Bisekcija: $c = \frac{a + b}{2}$, obdrži polovico z različnima predznakoma; po $n$ korakih je dolžina $\frac{b - a}{2^n}$.
-- S tehnologijo: tabela vrednosti s čedalje manjšim korakom ali ukaz za ničlo oz. presečišče v programu za grafe. Točka na krivulji ali presečišče = ničla razlike.
+
+**Bisekcija:**
+
+$$c = \frac{a + b}{2}$$
+
+- Obdrži polovico z različnima predznakoma.
+- Po $n$ korakih je dolžina $\frac{b - a}{2^n}$.
+- **S tehnologijo:** tabela vrednosti s čedalje manjšim korakom ali ukaz za ničlo oz. presečišče v programu za grafe.
+- Točka na krivulji ali presečišče = ničla razlike.
 
 ## Ponovitev
 

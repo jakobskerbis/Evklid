@@ -167,11 +167,20 @@ $\cos\kappa = \dfrac{5{,}76 + 9{,}61 - 12{,}25}{14{,}88} = \dfrac{3{,}12}{14{,}8
 
 ## Povzetek
 
-- Stranico in nasprotni kot imenujemo par; oznake $a$–$\alpha$, $b$–$\beta$, $c$–$\gamma$.
-- Sinusni izrek: $\dfrac{a}{\sin\alpha} = \dfrac{b}{\sin\beta} = \dfrac{c}{\sin\gamma} = 2R$. Uporabiš ga, ko poznaš vsaj en cel par.
-- Kosinusni izrek: $c^2 = a^2 + b^2 - 2ab\cos\gamma$. Uporabiš ga pri treh stranicah ali dveh stranicah z vmesnim kotom.
-- Pri $\gamma = 90^\circ$ preide v Pitagorov izrek; pri topem $\gamma$ je $c^2 > a^2 + b^2$.
-- Kot iz sinusa ima lahko dve vrednosti, $x$ in $180^\circ - x$. Kot iz kosinusa je en sam.
+- **Par** sta stranica in nasprotni kot: $a$–$\alpha$, $b$–$\beta$, $c$–$\gamma$.
+
+**Sinusni izrek** uporabiš, ko poznaš vsaj en cel par:
+
+$$\frac{a}{\sin\alpha} = \frac{b}{\sin\beta} = \frac{c}{\sin\gamma} = 2R$$
+
+**Kosinusni izrek** uporabiš pri treh stranicah ali dveh stranicah z vmesnim kotom:
+
+$$c^2 = a^2 + b^2 - 2ab\cos\gamma$$
+
+- Pri $\gamma = 90^\circ$ preide v Pitagorov izrek.
+- Pri topem $\gamma$ je $c^2 > a^2 + b^2$.
+- Kot iz sinusa ima lahko dve vrednosti, $x$ in $180^\circ - x$.
+- Kot iz kosinusa je en sam.
 - Nasproti največjega kota leži najdaljša stranica; top kot je lahko le tam.
 
 ## Ponovitev

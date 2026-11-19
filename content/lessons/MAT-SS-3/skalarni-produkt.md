@@ -237,14 +237,38 @@ $\vec F_a = \dfrac{\vec a \cdot \vec F}{|\vec a|^2}\,\vec a$, $\quad |\vec F_a| 
 
 ## Povzetek
 
-- $\vec a \cdot \vec b = |\vec a|\,|\vec b|\cos\varphi$; $\varphi$ je kot med vektorjema s skupnim začetkom, $0^\circ \le \varphi \le 180^\circ$.
-- Pomen: dolžina $\vec a$ krat (predznačena) projekcija $\vec b$ na $\vec a$. Rezultat je število.
-- Po komponentah: $\vec a \cdot \vec b = a_x b_x + a_y b_y + a_z b_z$.
-- Kot: $\cos\varphi = \dfrac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$, nato $\arccos$.
-- Predznak: pozitiven pri ostrem, $0$ pri pravem, negativen pri topem kotu.
-- Neničelna vektorja sta pravokotna natanko tedaj, ko je $\vec a \cdot \vec b = 0$. Velja $\vec a \cdot \vec a = |\vec a|^2$.
-- Pravokotna projekcija $\vec b$ na $\vec a$: $\vec b_a = \dfrac{\vec a \cdot \vec b}{|\vec a|^2}\,\vec a$, ostanek $\vec b - \vec b_a$ je pravokoten na $\vec a$.
-- Kosinusni izrek: iz $|\vec a - \vec b|^2 = |\vec a|^2 - 2\,\vec a \cdot \vec b + |\vec b|^2$ sledi $c^2 = a^2 + b^2 - 2ab\cos\gamma$.
+**Skalarni produkt** je število:
+
+$$\vec a \cdot \vec b = |\vec a|\,|\vec b|\cos\varphi$$
+
+- $\varphi$ je kot med vektorjema s skupnim začetkom, $0^\circ \le \varphi \le 180^\circ$.
+- **Pomen**: dolžina $\vec a$ krat (predznačena) projekcija $\vec b$ na $\vec a$.
+
+**Po komponentah:**
+
+$$\vec a \cdot \vec b = a_x b_x + a_y b_y + a_z b_z$$
+
+**Kot** (nato $\arccos$):
+
+$$\cos\varphi = \frac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$$
+
+- **Predznak**: pozitiven pri ostrem, $0$ pri pravem, negativen pri topem kotu.
+- Neničelna vektorja sta **pravokotna** natanko tedaj, ko je $\vec a \cdot \vec b = 0$.
+- Velja $\vec a \cdot \vec a = |\vec a|^2$.
+
+**Pravokotna projekcija** $\vec b$ na $\vec a$:
+
+$$\vec b_a = \frac{\vec a \cdot \vec b}{|\vec a|^2}\,\vec a$$
+
+- Ostanek $\vec b - \vec b_a$ je pravokoten na $\vec a$.
+
+Iz
+
+$$|\vec a - \vec b|^2 = |\vec a|^2 - 2\,\vec a \cdot \vec b + |\vec b|^2$$
+
+sledi **kosinusni izrek**:
+
+$$c^2 = a^2 + b^2 - 2ab\cos\gamma$$
 
 ## Ponovitev
 

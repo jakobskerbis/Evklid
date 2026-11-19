@@ -187,13 +187,29 @@ Kakšen je ulomek in koliko sekund trajata oba dela pri $t = 100$?
 
 ## Povzetek
 
-- Ulomljeni izraz $\dfrac{A}{B}$ je definiran samo, kadar je $B \neq 0$. Pogoje vedno zapiši iz prvotnega imenovalca.
-- Krajšanje: $\dfrac{A \cdot C}{B \cdot C} = \dfrac{A}{B}$. Krajšamo faktorje, ne členov, zato najprej razstavimo.
-- Množenje: $\dfrac{A}{B} \cdot \dfrac{C}{D} = \dfrac{A \cdot C}{B \cdot D}$. Pred množenjem okrajšaj navzkriž.
-- Deljenje: $\dfrac{A}{B} : \dfrac{C}{D} = \dfrac{A}{B} \cdot \dfrac{D}{C}$, pri čemer je $C \neq 0$.
-- Seštevanje in odštevanje: $\dfrac{A}{C} \pm \dfrac{B}{C} = \dfrac{A \pm B}{C}$. Pri različnih imenovalcih poišči skupni imenovalec, ulomke razširi in seštej števce.
-- Pri odštevanju drugi števec zapiši v oklepaju. Na koncu poskusi rezultat še krajšati.
-- Faktorja $a-b$ in $b-a$ sta nasprotna: $b - a = -(a-b)$.
+- **Ulomljeni izraz** $\dfrac{A}{B}$ je definiran samo, kadar je $B \neq 0$.
+- Pogoje vedno zapiši iz prvotnega imenovalca.
+
+**Krajšanje** (krajšamo faktorje, ne členov, zato najprej razstavimo):
+
+$$\dfrac{A \cdot C}{B \cdot C} = \dfrac{A}{B}$$
+
+**Množenje** (pred množenjem okrajšaj navzkriž):
+
+$$\dfrac{A}{B} \cdot \dfrac{C}{D} = \dfrac{A \cdot C}{B \cdot D}$$
+
+**Deljenje** ($C \neq 0$):
+
+$$\dfrac{A}{B} : \dfrac{C}{D} = \dfrac{A}{B} \cdot \dfrac{D}{C}$$
+
+**Seštevanje in odštevanje:**
+
+$$\dfrac{A}{C} \pm \dfrac{B}{C} = \dfrac{A \pm B}{C}$$
+
+- Pri različnih imenovalcih poišči skupni imenovalec, ulomke razširi in seštej števce.
+- Pri odštevanju drugi števec zapiši v oklepaju.
+- Na koncu poskusi rezultat še krajšati.
+- Faktorja $a - b$ in $b - a$ sta nasprotna: $b - a = -(a - b)$.
 
 ## Ponovitev
 

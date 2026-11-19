@@ -187,11 +187,31 @@ $V_{stožec} = \frac{\pi \cdot 16 \cdot 3}{3} = 16\pi\,\mathrm{cm^3}$, zato $V =
 
 ## Povzetek
 
-- Poševno telo: stranski robovi (tvorilke) niso pravokotni na osnovno ploskev.
-- Cavalierijevo načelo: telesi z enako ploščino prerezov na vsaki višini imata enako prostornino.
-- Poševna prizma in valj: $V = O\,v$; poševna piramida in stožec: $V = \frac{O\,v}{3}$. Višina je razdalja med ravninama osnovnih ploskev, $v = s\sin\alpha$, ne stranski rob.
-- Vrtenina nastane z vrtenjem lika okoli osi. Stranica, vzporedna z osjo, da plašč valja; poševna stranica, ki se osi dotika, plašč stožca; stranica, pravokotna na os, krog.
-- Pravokotnik okoli stranice: valj; pravokotni trikotnik okoli katete: stožec, okoli hipotenuze: dvojni stožec z $r = \frac{a\,b}{c}$; pravokotni trapez okoli daljše osnovnice: valj in stožec.
+- **Poševno telo:** stranski robovi (tvorilke) niso pravokotni na osnovno ploskev.
+- **Cavalierijevo načelo:** telesi z enako ploščino prerezov na vsaki višini imata enako prostornino.
+
+**Poševna prizma in valj:**
+
+$$V = O\,v$$
+
+**Poševna piramida in stožec:**
+
+$$V = \frac{O\,v}{3}$$
+
+- **Višina** je razdalja med ravninama osnovnih ploskev, ne stranski rob: $v = s\sin\alpha$.
+- **Vrtenina** nastane z vrtenjem lika okoli osi.
+
+- Stranica, vzporedna z osjo, da **plašč valja**.
+- Poševna stranica, ki se osi dotika, da **plašč stožca**.
+- Stranica, pravokotna na os, da **krog**.
+
+**Vrtenine:**
+
+- Pravokotnik okoli stranice: valj.
+- Pravokotni trikotnik okoli katete: stožec.
+- Pravokotni trikotnik okoli hipotenuze: dvojni stožec z $r = \frac{a\,b}{c}$.
+- Pravokotni trapez okoli daljše osnovnice: valj in stožec.
+
 - Prostornino in površino vrtenine sestaviš iz formul za valj in stožec; notranjih ploskev ne štej.
 
 ## Ponovitev

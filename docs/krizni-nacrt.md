@@ -63,3 +63,43 @@ Kršitev je tudi nenamerno razkritje ali dostop (npr. API vrne podatke drugega r
    gresta samo tehnični popravek in test. Opis PR, sporočilo commita in ime veje opišejo napako v kodi, ne pa,
    čigavi podatki so bili razkriti, koliko oseb, katera šola ali razred.
 5. **Prepreči ponovitev:** test, ki pade na stari kodi (npr. `test/zasebnost-vse-poti.test.js`).
+
+## Oznaka stiske: namen, pravna podlaga in protokol (točka 17 načrta izboljšav, 19. 11. 2026)
+
+Zunanji pregled (Gemini, 18. 11.) je opozoril na Akt o UI čl. 5(1)(f) (prepoved sistemov za prepoznavanje čustev
+na delovnem mestu in v izobraževalnih ustanovah) in na GDPR čl. 9 (podatki o zdravju). Stanje v kodi:
+
+**Kaj Evklid počne in česa ne.**
+- Oznaka `distress` (`server/meta.js`) ima en sam namen: varnost učenca. Postavi jo samo inštruktor (META), ko učenec
+  sam v besedilu omeni samopoškodovanje, samomor, nasilje, nevarnost ali hudo stisko (`prompts/system_prompt.md`,
+  Meje). Učenec takoj dobi potrjeno okno s pomočjo (112, odrasla oseba), skrbnik pa e-mail brez vsebine
+  (`server/stiska-obvestilo.js`). Lokalni zaznavalnik in varnostni pregled (`server/nujno.js`: ZDRAVJE, STISKA,
+  NASILJE, NEVARNOST) učencu pokažeta enako okno, oznake pa ne shranita in skrbnik zanju ne dobi e-maila.
+- Oznaka ne vpliva na ocene, učno pot, ravni, lige, poročila staršem ali karkoli drugega. Ni »zaznave frustracije«
+  kot ločenega sistema: poziv inštruktorju le naroči, naj se odzove na to, kar učenec napiše (»nikoli mi ne bo šlo«),
+  z manjšimi koraki. Nič se ne shrani kot ocena čustev.
+- Ni biometrije: zvoka ne snemamo (govor v besedilo pretvori brskalnik, `public/ustno/ustno.js`), obrazov na
+  fotografijah ne analiziramo. Akt o UI v čl. 3(39) opredeli sistem za prepoznavanje čustev kot sistem, ki čustva
+  sklepa **iz biometričnih podatkov**; Evklid jih ne obdeluje. Evklid tudi ni v izobraževalni ustanovi, dokler šole
+  nimajo licenc (ponudba za šole je zamrznjena, točka 37). Ocena pregledovalca in ta razlaga nista pravni nasvet:
+  potrdi pravnik ob DPIA.
+
+**Podatki.** Oznaka je šifrirana v bazi (`server/crypto-polje.js`, oznake so poravnane, da se iz baze ne vidi, katera
+je stiska), pri stiski se tema pogovora ne shrani (`server/db.js`), oznaka se po 90 dneh izbriše (`server/zasebnost.js`,
+`flagDays`). Oznaka je lahko podatek o zdravju (GDPR čl. 9). **Za pravnika:** podlaga je verjetno čl. 9(2)(c)
+(zaščita življenjskih interesov, ko oseba ne more dati privolitve) za takojšnje okno s pomočjo in obvestilo skrbniku;
+za hrambo 90 dni in pregled skrbnika pa izrecna privolitev staršev ali učenca nad 15 let ob registraciji. To mora v
+DPIA in pogoje.
+
+**Protokol, ko pride e-mail o oznaki stiske.**
+1. V 24 urah odpri `/api/admin/stiske` (prijava skrbnika). Stran pokaže oznake stiske zadnjih 90 dni in označi tiste,
+   ki so čez rok.
+2. Preberi samo pogovor okoli oznake (`node scripts/najdi-sporocilo.js "#koda"`), nič drugega.
+3. Če je oznaka napačna (npr. »umrl bom od dolgčasa« pri nalogi), jo označi kot pregledano. Konec.
+4. Če je učenec morda v nevarnosti zdaj: Evklid nima podatkov za stik z otrokom in ne kliče sam. Pri otroku pod
+   15 let ima račun starš: pošlji staršu kratko sporočilo brez vsebine pogovora (»V Evklidu je otrok napisal nekaj,
+   kar kaže na stisko. Prosimo, pogovorite se z njim. Pomoč: TOM telefon 116 111, v nujnem primeru 112.«). Pri učencu
+   nad 15 let z lastnim računom pošlji isto sporočilo njemu, z enakimi številkami.
+5. Ob neposredni nevarnosti za življenje in znani identiteti pokliči 112 in povej, kar veš. Zapiši v zasebno evidenco
+   (ne v repozitorij), kdaj in komu si sporočil.
+6. Oznako označi kot pregledano. Vsebine pogovora ne kopiraj nikamor.

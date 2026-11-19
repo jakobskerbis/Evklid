@@ -192,13 +192,32 @@ V vrstici PN je $\neg B$ = P, v NP je $\neg A$ = P, v NN sta obe P. Disjunkcija 
 
 ## Povzetek
 
-- Izjava je poved, ki je pravilna (P) ali nepravilna (N).
-- $\neg A$ ima nasprotno vrednost. $A \wedge B$ je P le, ko sta obe P. $A \vee B$ je P, ko je vsaj ena P (vključni »ali«).
-- $A \Rightarrow B$ je N le pri $A$ = P, $B$ = N. $A \Leftrightarrow B$ je P, ko imata enako vrednost.
-- Pravilnostna tabela za $n$ izjav ima $2^n$ vrstic.
-- Tavtologija je pravilna v vseh vrsticah (npr. $A \vee \neg A$), protislovje v nobeni.
-- Enakovredni izjavi ($\equiv$) se ujemata v vseh vrsticah: $A \Rightarrow B \equiv \neg B \Rightarrow \neg A \equiv \neg A \vee B$; obrat $B \Rightarrow A$ ni enakovreden.
-- De Morgan: $\neg(A \wedge B) \equiv \neg A \vee \neg B$ in $\neg(A \vee B) \equiv \neg A \wedge \neg B$.
+**Izjava** je poved, ki je pravilna (P) ali nepravilna (N). Pravilnostna tabela za $n$ izjav ima $2^n$ vrstic; za dve:
+
+| $A$, $B$ | P P | P N | N P | N N |
+|:-:|:-:|:-:|:-:|:-:|
+| $\neg A$ | N | N | P | P |
+| $A \wedge B$ | P | N | N | N |
+| $A \vee B$ | P | P | P | N |
+| $A \Rightarrow B$ | P | N | P | P |
+| $A \Leftrightarrow B$ | P | N | N | P |
+
+- »Ali« je vključni: $A \vee B$ je P tudi, ko sta obe P.
+- $A \Rightarrow B$ je N le, ko je $A$ = P in $B$ = N.
+- **Tavtologija** je pravilna v vseh vrsticah, npr. $A \vee \neg A$.
+- **Protislovje** je nepravilno v vseh vrsticah, npr. $A \wedge \neg A$.
+
+**Enakovredni izjavi** ($\equiv$) imata v vseh vrsticah enako vrednost:
+
+$$(A \Rightarrow B) \equiv (\neg B \Rightarrow \neg A) \equiv (\neg A \vee B)$$
+
+Obrat $B \Rightarrow A$ pa **ni** enakovreden $A \Rightarrow B$.
+
+**De Morgan:**
+
+$$\neg(A \wedge B) \equiv \neg A \vee \neg B$$
+
+$$\neg(A \vee B) \equiv \neg A \wedge \neg B$$
 
 ## Ponovitev
 

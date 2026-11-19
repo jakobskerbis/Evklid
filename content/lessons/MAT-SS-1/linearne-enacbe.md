@@ -189,10 +189,26 @@ $6x - 2x - 3x = x$, torej $x = 900\,\text{ml}$. Preizkus: $900 - 300 - 450 = 150
 
 ## Povzetek
 
-- Izraz ničesar ne trdi, pri danem $x$ ima le vrednost; $x$ je v njem spremenljivka. Enačba je trditev, da sta dva izraza enaka, in je pri danem $x$ resnična ali neresnična; $x$ je v njej neznanka, iščemo vrednosti $x$, pri katerih je resnična.
-- Linearno enačbo z ekvivalentnimi preoblikami prevedemo na $ax = b$.
-- Postopek: odpri oklepaje, odpravi ulomke (množenje s skupnim imenovalcem), zberi člene z $x$ na eni strani, poenostavi, deli z $a$, preveri.
-- Za $a \neq 0$ je rešitev $x = \dfrac{b}{a}$. Za $a = 0$, $b \neq 0$ rešitve ni. Za $a = 0$, $b = 0$ je rešitev vsako realno število.
+- **Izraz** ničesar ne trdi, pri danem $x$ ima le vrednost; $x$ je v njem **spremenljivka**.
+- **Enačba** je trditev, da sta dva izraza enaka; pri danem $x$ je resnična ali neresnična.
+- V enačbi je $x$ **neznanka**: iščemo vrednosti $x$, pri katerih je resnična.
+- **Linearno enačbo** z ekvivalentnimi preoblikami prevedemo na $ax = b$.
+
+**Postopek:**
+
+1. Odpri oklepaje.
+2. Odpravi ulomke (množenje s skupnim imenovalcem).
+3. Zberi člene z $x$ na eni strani in poenostavi.
+4. Deli z $a$ in preveri.
+
+**Rešitve enačbe $ax = b$:**
+
+| primer | rešitev |
+|:-:|:-:|
+| $a \neq 0$ | $x = \dfrac{b}{a}$ |
+| $a = 0$, $b \neq 0$ | ni rešitve |
+| $a = 0$, $b = 0$ | vsak $x \in \mathbb{R}$ |
+
 - (višja raven) Pri enačbi s parametrom obravnavamo primere, kdaj je koeficient pri $x$ enak $0$ in kdaj ni.
 - Rešitev vedno preveri z vstavitvijo.
 

@@ -164,11 +164,14 @@ Delimo z $-2$, zato se znak obrne: $x \le -5$. Interval je $(-\infty, -5]$, kraj
 
 ## Povzetek
 
-- Linearna neenačba ima obliko $ax + b < c$ (ali z znakom $>$, $\le$, $\ge$).
-- Reševanje: prištevanje in odštevanje ne spremeni znaka, množenje in deljenje s pozitivnim številom tudi ne.
+- **Linearna neenačba** ima obliko $ax + b < c$ (ali z znakom $>$, $\le$, $\ge$).
+- Prištevanje in odštevanje znaka **ne spremeni**.
+- Množenje in deljenje s **pozitivnim** številom znaka ne spremeni.
 - Pri množenju ali deljenju z **negativnim** številom se znak **obrne**.
-- Rešitev zapišemo kot interval: okrogel oklepaj pri strogi neenačbi in pri $\pm\infty$, oglati oklepaj pri $\le$, $\ge$.
-- Pri besedilnih nalogah upoštevamo še smiselnost rešitve (npr. $x \ge 0$).
+- Rešitev zapišemo kot **interval**.
+- Okrogel oklepaj pišemo pri strogi neenačbi in pri $\pm\infty$.
+- Oglati oklepaj pišemo pri $\le$, $\ge$.
+- Pri besedilnih nalogah upoštevamo še **smiselnost** rešitve (npr. $x \ge 0$).
 
 ## Ponovitev
 

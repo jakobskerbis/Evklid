@@ -203,13 +203,36 @@ $|u| = u$ za $u \ge 0$ in $|u| = -u$ za $u < 0$; $\;|u| = a$ z $a > 0$ $\iff u =
 
 ## Povzetek
 
-- Realna števila: $\mathbb{R} = \mathbb{Q} \cup \mathbb{I}$. Iracionalna števila ($\sqrt{2}$, $\pi$) imajo neskončen neperiodičen decimalni zapis. Realna števila ustrezajo točkam na številski premici.
-- Absolutna vrednost: $|x| = x$ za $x \ge 0$, $|x| = -x$ za $x < 0$. Pomeni razdaljo od $0$, razdalja med $a$ in $b$ je $|a - b|$.
-- Lastnosti: $|{-x}| = |x|$, $|ab| = |a||b|$, $|a + b| \le |a| + |b|$. Enačba $|x| = a$ ima za $a > 0$ rešitvi $\pm a$, za $a = 0$ le $x = 0$, za $a < 0$ je brez rešitve. Iz $|u| = a$ ($a > 0$) sledi $u = a$ ali $u = -a$.
-- Izraz s spremenljivko: predznak izraza v absolutni vrednosti se spremeni v njegovi ničli. Na intervalu s stalnim predznakom absolutno vrednost odpravimo po definiciji.
-- Intervali: $(a, b)$, $[a, b]$, $[a, b)$, $(a, b]$ in neomejeni. Okrogel oklepaj: krajišče ni vključeno. Oglat: je vključeno. Ob $\infty$ vedno okrogel.
+**Realna števila:**
+
+$$\mathbb{R} = \mathbb{Q} \cup \mathbb{I}$$
+
+- **Iracionalna števila** ($\sqrt{2}$, $\pi$) imajo neskončen neperiodičen decimalni zapis.
+- Realna števila ustrezajo točkam na številski premici.
+- **Absolutna vrednost**: $|x| = x$ za $x \ge 0$, $|x| = -x$ za $x < 0$.
+- $|x|$ je razdalja od $0$; razdalja med $a$ in $b$ je $|a - b|$.
+- Lastnosti: $|{-x}| = |x|$, $|ab| = |a||b|$, $|a + b| \le |a| + |b|$.
+
+**Enačba $|x| = a$:**
+
+| $a > 0$ | $a = 0$ | $a < 0$ |
+|:-:|:-:|:-:|
+| $x = \pm a$ | $x = 0$ | ni rešitve |
+
+- Iz $|u| = a$ ($a > 0$) sledi $u = a$ ali $u = -a$.
+- Izraz v absolutni vrednosti spremeni predznak v svoji ničli.
+- Na intervalu s stalnim predznakom absolutno vrednost odpravimo po definiciji.
+- **Intervali**: $(a, b)$, $[a, b]$, $[a, b)$, $(a, b]$ in neomejeni.
+- Okrogel oklepaj: krajišče ni vključeno; oglat: je vključeno; ob $\infty$ vedno okrogel.
 - Presek, unija in razlika intervalov: nariši na isto premico in preveri krajišča.
-- (višja raven) $|x - c| < r \iff x \in (c - r,\, c + r)$ (med). $|x - c| > r \iff x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$ (zunaj).
+
+**Višja raven** – med:
+
+$$|x - c| < r \iff x \in (c - r,\, c + r)$$
+
+Zunaj: $|x - c| > r$ velja natanko za
+
+$$x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$$
 
 ## Ponovitev
 

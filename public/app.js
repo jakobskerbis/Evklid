@@ -91,7 +91,7 @@ import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from 
 import { heatmapHtml, weeksHtml } from "./aktivnost.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
 import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
-import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
+import { loadPapers, mountPapers, paperLabel, fileText, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 // Pregledovalnik prenesene pole (paper-viewer.js, paper-tasks.js) šele ob odprtju pole: ni del zagona.
 // Ob neuspehu (brez povezave, nova različica) se obljuba pozabi in naslednji poskus gre z drugim naslovom (?r=), kot loadGames.
 let paperViewer = null;
@@ -1048,6 +1048,7 @@ async function selectStudent(id) {
   state.student = target;
   state.aiOut = false; // delež drugega profila ne skrije »Razloži podrobneje« (osveži ga naslednji odgovor)
   keptPaper = null;
+  nalogaPole?.pozabi(); // izbrani izvirniki pol (public/naloga-pole/klepet.js) so od prejšnjega profila
   state.paperCtx = null; // skrit kontekst pole ne gre v pogovor drugega profila
   // Jezik je del profila: ob menjavi učenca se vmesnik preklopi v njegov jezik (stran se naloži znova).
   const want = state.student.settings.language;
@@ -1503,8 +1504,12 @@ function addMessage(role, text, hasImage = false, info = null) {
 // Ustno spraševanje (public/ustno/ustno.js, naloži se ob odprtju).
 const openUstno = (src) => state.student && import("./ustno/ustno.js").then((m) => m.odpri(src, { api, student: state.student, renderRich, openLesson, topic: state.chatFx?.topic?.id }));
 document.addEventListener("click", (e) => (e = e.target.closest?.("[data-ustno]")) && openUstno(e.dataset.ustno));
-async function send(text, { deep = false, image: attached = null } = {}) {
+// paper: skrit kontekst pole za to sporočilo (naloga, omenjena v klepetu); afterUser(el): po učenčevem oblačku
+// (opomba »Evklidova naloga« s povezavo na izvirnik); plain: ne išči omembe pole znova; draft: besedilo, ki se ob
+// neuspehu vrne v polje (namesto sestavljenega sporočila z nalogo).
+async function send(text, { deep = false, image: attached = null, paper: paperOpt = null, afterUser = null, plain = false, draft = null } = {}) {
   if (state.sending) return;
+  if (nalogaPole?.busy() && !plain) return; // Evklid še odpira nalogo pole: novo sporočilo počaka (besedilo ostane v polju)
   if (!attached && !state.image && /^\s*vprašaj me\b/i.test(text)) return ($("#input").value = ""), openUstno({ besedilo: text });
   // Samodejno sestavljeno sporočilo (Razloži, Vprašaj o temi, izbire …) ni iz polja: učenčev osnutek in
   // fotografija v polju ostaneta (ne pošljemo ju zraven in ju ne pobrišemo). Slika samodejnega sporočila
@@ -1519,6 +1524,9 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     if (n) addNujno(n, { meja: true });
     return;
   }
+  // »matura mat OR 2024 pola 1 naloga 5«: Evklid v klepetu odpre našo nalogo s to številko (public/naloga-pole.js).
+  // Ne med reševanjem pole (»Rešuj z inštruktorjem«: učenec dopiše izvirno nalogo).
+  if (fromInput && !image && !plain && !deep && state.student && state.paperCtx?.conv !== state.conversationId && MOZNA_POLA(text)) return odpriNalogoPole(text);
   let userEl = null;
   let bubble = null;
   let pacer = null;
@@ -1549,7 +1557,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     }
     const sentTo = state.conversationId;
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
-    const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
+    const paperCtx = paperOpt || (state.paperCtx?.conv === sentTo ? state.paperCtx : null);
     document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
     const nacin = fromInput && state.dictated ? "glas" : undefined; // narekovano z mikrofonom (strežnik preveri stikalo starša)
     userEl = addMessage("user", text, !!image);
@@ -1559,6 +1567,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
       clearImage();
       state.dictated = false;
     }
+    afterUser?.(userEl);
 
     bubble = addMessage("assistant", "");
     bubble.classList.add("typing");
@@ -1616,6 +1625,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     }
 
     if (paperCtx && state.paperCtx === paperCtx) state.paperCtx = null; // strežnik ga je shranil s sporočilom
+    if (paperOpt && state.paperCtx?.conv === sentTo) state.paperCtx = null; // starejši kontekst pole ne gre k naslednjemu
     let doneData = null;
     let cardsData = null;
     let proposal = null;
@@ -1703,7 +1713,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         bubble.classList.add("error");
         pacer.finish(d.error);
         pacer.skip();
-        if (state.conversationId === sentTo && !deep) restoreDraft(text, image); // vrni besedilo za ponovni poskus
+        if (state.conversationId === sentTo && !deep) restoreDraft(draft ?? text, image); // vrni besedilo za ponovni poskus
       },
     });
     clearTimeout(checkTimer);
@@ -1759,7 +1769,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
       userEl?.remove();
       if (!$("#messages .msg")) renderEmptyChat(); // prazen pogovor spet pokaže pozdrav in predloge
       $("#chat-off").hidden = false;
-      if (!deep) restoreDraft(text, image);
+      if (!deep) restoreDraft(draft ?? text, image);
       return;
     }
     // Prekinjena povezava (npr. med objavo nove različice) je TypeError z »network error« v angleščini: učenec
@@ -1771,7 +1781,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     // Neuspelo pošiljanje (omrežje, strežnik): besedilo in fotografija se vrneta v polje, da se ne izgubita.
     // Meja porabe: ne (sporočilo ostane v oblačku, polje prazno).
     // »Razloži podrobneje« (deep) se ne vrne v polje (kot mobilna): ponovno pošiljanje bi šlo kot navadno vprašanje.
-    if (!err.limit && !deep) restoreDraft(text, image);
+    if (!err.limit && !deep) restoreDraft(draft ?? text, image);
   } finally {
     state.sending = false;
     $("#send").disabled = false;
@@ -4277,6 +4287,13 @@ async function showPapers(c) {
     },
   });
 }
+// Besedilo naloge naše pole za učenčev oblaček: brez slik (SVG), formule v $$…$$ kot $…$ v eni vrstici, ker oblaček
+// (renderUserText) izriše samo $…$.
+const taskMdForChat = (md) =>
+  String(md || "")
+    .replace(/<svg[\s\S]*?<\/svg>/g, "")
+    .replace(/\$\$\s*([\s\S]+?)\s*\$\$/g, (_, tex) => `$${tex.replace(/\s*\n\s*/g, " ")}$`)
+    .trim();
 // »Rešuj z inštruktorjem« pri pretekli poli: nov pogovor z vnaprej napisanim kratkim sporočilom (katera pola);
 // učenec doda nalogo s fotografijo ali prepisom in pošlje sam. Pole RIC ne pošiljamo. Navodilo za inštruktorja
 // (namigi namesto rešitve) gre s prvim sporočilom kot skrit kontekst (state.paperCtx), učenec ga ne vidi.
@@ -4299,7 +4316,7 @@ async function paperTutor(entry, subjectName) {
 // »Reši našo polo v tem slogu« (public/our-paper.js): naloge Evklida z zgradbo izvirne pole. Točke, ki si jih
 // učenec označi, ostanejo v tej napravi. »Vprašaj inštruktorja«: nov pogovor z nalogo, naša rešitev gre
 // inštruktorju kot skrit kontekst (server/paper-context.js), učenec vidi le nalogo.
-async function openOurs(entry, subjectName) {
+async function openOurs(entry, subjectName, focus = null) {
   if (!entry?.ours || paperBusy) return;
   paperBusy = true;
   try {
@@ -4319,6 +4336,7 @@ async function openOurs(entry, subjectName) {
         },
         set: (v) => localStorageSet(key, JSON.stringify(v)),
       },
+      focus,
       onTutor: (task, part) => oursTutor(entry, title, task, part),
       // Šibke točke: deli z odprto rešitvijo ali oznako »Imam prav« (strežnik vsak del šteje enkrat).
       onChecked: (parts) => api(`/api/students/${state.student.id}/paper-check`, { method: "POST", body: { paper: entry.id, parts } }).catch(() => {}),
@@ -4336,7 +4354,7 @@ async function oursTutor(entry, title, task, part) {
     await newTutorChat();
     const n = partLabel(task, part);
     const pola = task.pola ? `${t("pp.oursPola", { n: task.pola })} · ` : "";
-    const strip = (md) => String(md || "").replace(/<svg[\s\S]*?<\/svg>/g, "").trim();
+    const strip = taskMdForChat;
     const choices = part.format === "choice" && part.choices ? part.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
     const body = [strip(task.intro), strip(part.text), choices].filter(Boolean).join("\n\n").slice(0, 1500);
     state.paperCtx = { conv: state.conversationId, paper: title, task: partKey(task, part), ours: entry.id };
@@ -4347,15 +4365,39 @@ async function oursTutor(entry, title, task, part) {
     paperBusy = false;
   }
 }
+// ---------- naloga iz pretekle pole, omenjena v klepetu (j 19. 11. 2026) ----------
+// »matura mat OR 2024 pola 1 naloga 5«: public/naloga-pole/klepet.js (s svojimi besedili) se naloži šele ob prvi
+// omembi pole, ker ni del prvega odprtja (proračun hitrosti, test/hitrost-proracun.test.js).
+// Hiter predpregled (brez nalaganja modula): kratko sporočilo z izpitom in »naloga«; natančno prepozna modul.
+const MOZNA_POLA = (text) => text.length <= 100 && /\b(matur|npz|poklicn|nacionaln)/i.test(text) && /nalog/i.test(text);
+let nalogaPole = null;
+async function odpriNalogoPole(text) {
+  let m;
+  try {
+    m = await import("./naloga-pole/klepet.js");
+  } catch {
+    return send(text, { plain: true }); // modul se ni naložil (brez povezave): navadno vprašanje
+  }
+  if (!nalogaPole) {
+    nalogaPole = m;
+    m.nastavi({
+      state, $, send, api, t, escapeHtml, icon, toast, autoGrow, restoreDraft, prilagodiZdaj, loadPapers, paperLabel, fileText,
+      siExamName, SUBJECT_NAMES, partKey, partLabel, taskMdForChat, openOurs, openLocalPaper,
+    });
+  }
+  if (!m.jeOmemba(text)) return send(text, { plain: true });
+  return m.odpri(text);
+}
 // Prenesena pola ostane v pomnilniku (ta seja, ta učenec): po »Pomoč pri tej nalogi« jo »Odpri preneseno polo« pri isti
 // poli odpre znova pri isti strani, brez ponovne izbire datoteke. Zapiranje pole ali menjava profila jo pozabi.
 let keptPaper = null;
-function openLocalPaper(entry, file, subjectName, page = 0) {
+function openLocalPaper(entry, file, subjectName, page = 0, task = "") {
   const key = paperLabel(entry, subjectName);
   const sid = state.student.id;
   loadPaperViewer().then(({ openPaperViewer }) => openPaperViewer(file, {
     title: key,
     page,
+    task,
     onClose: () => (keptPaper = null),
     onHelp: (task) => {
       keptPaper = { sid, key, file, page: task.page };

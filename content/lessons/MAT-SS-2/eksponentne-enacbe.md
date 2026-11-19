@@ -214,14 +214,24 @@ podnapis: a) krivulja je pod padajočo premico za x < 2; b) pod premico y = x + 
 
 ## Povzetek
 
-- Eksponentna enačba ima neznanko v eksponentu.
-- Za $a > 0$, $a \ne 1$ velja $a^{u} = a^{v} \iff u = v$ (enačenje osnov).
-- Ker je $a^x > 0$, enačbe $a^x = c$ s $c \le 0$ nimajo rešitve.
-- Pomagaj si z $\dfrac{1}{a^n} = a^{-n}$, $\sqrt[n]{a^m} = a^{\frac{m}{n}}$, $(a^m)^n = a^{mn}$, $a^{x+n} = a^n \cdot a^x$.
+- **Eksponentna enačba** ima neznanko v eksponentu.
+
+**Enačenje osnov** (za $a > 0$, $a \ne 1$):
+
+$$a^{u} = a^{v} \iff u = v$$
+
+- Ker je $a^x > 0$, enačba $a^x = c$ s $c \le 0$ nima rešitve.
+
+**Pomagaj si z:**
+
+$$\dfrac{1}{a^n} = a^{-n} \qquad \sqrt[n]{a^m} = a^{\frac{m}{n}}$$
+
+$$(a^m)^n = a^{mn} \qquad a^{x+n} = a^n \cdot a^x$$
+
 - Pri vsoti potenc z isto osnovo izpostavi skupni faktor $a^x$.
 - Če nastopata $a^{2x}$ in $a^x$, vpelji $t = a^x$ s pogojem $t > 0$ in reši kvadratno enačbo.
 - Iz $a^u = b^u$ za različni pozitivni osnovi sledi $u = 0$.
-- Vsako rešitev preveri s preizkusom v prvotni enačbi.
+- Vsako rešitev preveri s **preizkusom** v prvotni enačbi.
 
 ## Ponovitev
 

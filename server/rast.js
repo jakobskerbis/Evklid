@@ -5,6 +5,8 @@
 import { schoolStudents } from "./schools.js";
 import { BOT } from "./pilot.js";
 import { EUR_PER_USD } from "./usage.js";
+import { unseal } from "./crypto-polje.js";
+import { TEST_KINDS } from "./schedule.js";
 
 export const D7_TARGET = 0.4; // pogoj pilota v načrtu rasti: vsaj 40 % se vrne po 7 dneh
 const MIN_D7 = 5; // manj profilov, starejših od 7 dni = premalo za oceno
@@ -101,6 +103,8 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
   const from = addDays(today, -(n - 1));
   const weeks = Math.ceil(n / 7);
   const floor = addDays(today, -(weeks * 7 - 1)); // začetek najstarejšega tedna (≤ from)
+  // Aktivni dnevi se berejo tudi PRED_TESTOM_DNI pred `from` (test na začetku obdobja, vedenjeReport); pri 7 in 90 dneh je floor = from ali le dan prej.
+  const actFloor = [floor, addDays(from, -PRED_TESTOM_DNI)].sort()[0];
 
   const only = schoolId ? new Set(schoolStudents(db, schoolId)) : null;
   const admins = adminStudentIds(db, adminEmails);
@@ -121,7 +125,7 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
          WHERE c.updated_at >= ? AND m.role = 'user' AND m.created_at >= ?
        UNION SELECT student_id, substr(created_at, 1, 10) FROM xp_events WHERE created_at >= ? AND COALESCE(reason, '') NOT LIKE 'pilot:%'`,
     )
-    .all(floor, floor, floor, floor);
+    .all(actFloor, actFloor, actFloor, actFloor);
   for (const { s, d } of acts) {
     if (!counted(s) || d > today) continue;
     if (!active.has(s)) active.set(s, new Set());
@@ -250,6 +254,7 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
     to: today,
     days: n,
     schoolId: schoolId || null,
+    vedenje: vedenjeReport(db, { from, today, active, counted }),
     funnel: accountFunnel(db, { from, today, active, counted, adminEmails, schoolId }),
     newProfiles: cohort.length,
     activation,
@@ -262,6 +267,51 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
     weeks: weekRows,
     sources,
   };
+}
+
+// Merjenje vedenja (točka 8 načrta izboljšav, 19. 11. 2026; Gemini: 7-dnevna vrnitev pri malo učencih pove malo).
+// Samo števila iz podatkov, ki jih baza že ima, za štete profile (active že izloči skrbnike in druge šole):
+// - aktivni dnevi, na katere je učenec rešil vsaj eno nalogo (dan naloge = dan, ko je bila izdana);
+// - testi v obdobju (urnik in priprava na test): pred koliko jih je bil učenec aktiven v 3 dneh pred testom.
+export const PRED_TESTOM_DNI = 3;
+export function vedenjeReport(db, { from, today, active, counted = () => true }) {
+  let activeDays = 0;
+  let solvedDays = 0;
+  const solved = db.prepare("SELECT DISTINCT substr(created_at, 1, 10) AS d FROM tasks WHERE student_id = ? AND solved = 1 AND created_at >= ?");
+  for (const [id, ds] of active) {
+    const v = [...ds].filter((d) => d >= from && d <= today);
+    if (!v.length) continue;
+    activeDays += v.length;
+    const r = new Set(solved.all(id, from).map((x) => x.d));
+    solvedDays += v.filter((d) => r.has(d)).length;
+  }
+  // Testi v obdobju: datumi iz urnika (dogodki vrst TEST_KINDS, šifrirano, preberemo samo datum in vrsto) in iz
+  // priprave na test (test_plans: en, zadnji test na učenca). Par učenec + datum šteje enkrat.
+  const pari = new Set();
+  if (hasTable(db, "schedules")) {
+    for (const { s: id, data } of db.prepare("SELECT student_id AS s, data FROM schedules").all()) {
+      if (!counted(id)) continue;
+      let events = [];
+      try {
+        const ev = JSON.parse(unseal(data))?.events;
+        if (Array.isArray(ev)) events = ev;
+      } catch {}
+      for (const e of events) if (TEST_KINDS.includes(e?.kind) && e.date >= from && e.date <= today) pari.add(`${id}|${e.date}`);
+    }
+  }
+  if (hasTable(db, "test_plans")) {
+    for (const { s: id, d } of db.prepare("SELECT student_id AS s, test_date AS d FROM test_plans WHERE test_date >= ? AND test_date <= ?").all(from, today))
+      if (counted(id)) pari.add(`${id}|${d}`);
+  }
+  let beforeTest = 0;
+  for (const k of pari) {
+    const [id, d] = [Number(k.slice(0, k.indexOf("|"))), k.slice(k.indexOf("|") + 1)];
+    const lo = addDays(d, -PRED_TESTOM_DNI);
+    if ([...(active.get(id) || [])].some((x) => x >= lo && x < d)) beforeTest++;
+  }
+  const tests = pari.size;
+  const p = (a, b) => (b ? Math.round((a / b) * 1000) / 1000 : null);
+  return { activeDays, solvedDays, solvedPct: p(solvedDays, activeDays), tests, beforeTest, beforeTestPct: p(beforeTest, tests), days: PRED_TESTOM_DNI };
 }
 
 // Lijak računov (j 2026-11-15, 1. korak načrta »od povezave do prve naloge«): registracija → potrjen e-naslov →

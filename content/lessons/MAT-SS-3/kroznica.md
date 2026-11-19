@@ -197,13 +197,35 @@ točka: -3; 4 | P_2 | levo
 
 ## Povzetek
 
-- Krožnica s središčem $S(p, q)$ in polmerom $r$: $(x - p)^2 + (y - q)^2 = r^2$. Izhaja iz pogoja, da je razdalja točke od središča enaka $r$.
+**Krožnica** s središčem $S(p, q)$ in polmerom $r$:
+
+$$(x - p)^2 + (y - q)^2 = r^2$$
+
+- Izhaja iz pogoja, da je razdalja točke od središča enaka $r$.
 - V oklepaju je minus koordinata središča, na desni kvadrat polmera.
-- Splošno obliko $x^2 + y^2 + Dx + Ey + F = 0$ prevedeš v središčno z dopolnjevanjem do popolnega kvadrata; krožnica je le, če je desna stran pozitivna.
-- Lega točke: levo stran primerjaj z $r^2$ (manj znotraj, enako na krožnici, več zunaj).
-- Lega premice: vstavi premico v krožnico; diskriminanta pozitivna – sekanta, $0$ – tangenta, negativna – mimobežnica. Enako pove primerjava razdalje $d$ središča od premice s polmerom.
-- Tangenta je pravokotna na polmer v dotikališču.
-- Krožnica je krivulja drugega reda. Presečišča z drugo krivuljo dobiš kot rešitve sistema; vsako rešitev preveri (pri $x^2 < 0$ ni točke).
+
+**Splošna oblika:**
+
+$$x^2 + y^2 + Dx + Ey + F = 0$$
+
+- V središčno jo prevedeš z dopolnjevanjem do popolnega kvadrata.
+- Krožnica je le, če je desna stran pozitivna.
+
+**Lega točke:** levo stran središčne oblike primerjaj z $r^2$.
+
+| $< r^2$ | $= r^2$ | $> r^2$ |
+|:-:|:-:|:-:|
+| znotraj | na krožnici | zunaj |
+
+**Lega premice:** vstavi premico v krožnico ali primerjaj razdaljo $d$ središča od premice s polmerom.
+
+- Diskriminanta $> 0$ ali $d < r$: **sekanta**.
+- Diskriminanta $0$ ali $d = r$: **tangenta**.
+- Diskriminanta $< 0$ ali $d > r$: **mimobežnica**.
+
+- **Tangenta** je pravokotna na polmer v dotikališču.
+- Krožnica je krivulja drugega reda.
+- Presečišča z drugo krivuljo dobiš kot rešitve sistema; vsako rešitev preveri (pri $x^2 < 0$ ni točke).
 
 ## Ponovitev
 

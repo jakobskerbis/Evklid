@@ -1082,6 +1082,32 @@ async function examsView(p, label) {
   await p.waitForTimeout(200);
   if (await p.locator(".pv").count()) throw new Error("Esc ne zapre prenesene pole");
   await p.setViewportSize(size);
+  // Naloga pole, omenjena v klepetu (public/naloga-pole.js): manjkajoča pola → gumbi; nato naša naloga z opombo,
+  // »Odpri v Evklidovi poli« in izvirnik (napačna pola RIC se ne odpre, prava se odpre).
+  await tab(p, "chat");
+  await p.fill("#input", "matura mat OR 2024 naloga B4");
+  await click(p, "#send", { wait: 500 });
+  await expectVisible(p, ".paper-note [data-np-add]", "vprašanje po izpitni poli v klepetu");
+  await screen(p, `naloga-pole-vprasanje-${label}`);
+  await click(p, ".paper-note [data-np-add]:nth-child(2)", { wait: 800 }); // 2. izpitna pola
+  await expectVisible(p, ".paper-note [data-np-ours]", "Evklidova naloga v klepetu", 8000);
+  const asked = await p.locator("#messages .msg.user").last().innerText();
+  if (!/B4\. naloga/.test(asked) || /pola 2/.test(asked)) throw new Error(`naloga pole v klepetu: nepričakovano sporočilo »${asked.slice(0, 120)}«`);
+  await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
+  await screen(p, `naloga-pole-klepet-${label}`);
+  await p.locator(".paper-note [data-np-file]").last().setInputFiles({ ...pdf, name: "M241-401-1-1.pdf" });
+  await p.waitForTimeout(300);
+  if (await p.locator(".pv").count()) throw new Error("izvirnik: odprla se je napačna pola (1 namesto 2)");
+  await p.locator(".paper-note [data-np-file]").last().setInputFiles({ ...pdf, name: "M241-401-1-2.pdf" });
+  await expectVisible(p, ".pv .pv-page", "izvirnik iz klepeta", 15000);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(200);
+  await click(p, ".paper-note [data-np-ours]", { wait: 800 });
+  await expectVisible(p, ".pv.op .op-task", "Evklidova pola iz klepeta", 8000);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(200);
+  if (await p.locator(".pv").count()) throw new Error("Esc ne zapre Evklidove pole, odprte iz klepeta");
+  await tab(p, "exams");
   // Pole sledijo čipom na vrhu; »Druge pretekle pole« odpre izbiro po korakih (drobtine vrnejo korak, izbira ga zapre).
   if (await p.locator("#exam-papers .lp-opt").count()) throw new Error("pri polah je še drug izbirnik šole/izpita");
   await click(p, "#exam-papers [data-pp-other]", { wait: 200 });

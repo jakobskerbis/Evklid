@@ -1555,8 +1555,17 @@ function growthHtml(g, loc) {
       <tbody>${g.sources.map((s) => `<tr><td>${esc(src(s.vir))}</td><td>${nf(s.visits)}</td><td>${nf(s.profiles)}</td><td>${nf(s.firstTask)}</td><td>${s.d7Eligible ? `${nf(s.d7Returned)} / ${nf(s.d7Eligible)}` : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
     ${g.usageBySource?.length ? `<h4>${esc(t("rast.byUse"))}</h4><div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.active")}${th("rast.d1Col")}${th("rast.qCol")}${th("rast.aiCol")}</tr></thead>
       <tbody>${g.usageBySource.map((u) => `<tr><td>${esc(src(u.vir))}</td><td>${nf(u.active)}</td><td>${u.d1Eligible ? `${nf(u.d1Returned)} / ${nf(u.d1Eligible)}` : "–"}</td><td>${u.askerDays ? nf(u.questionsPerAskerDay) : "–"}</td><td>${u.aiUsers ? eurOf(u.aiEurPerUserMonth) : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
+    ${vedenjeHtml(g.vedenje, nf, pc)}
     ${funnelHtml(g.funnel, nf, pct, of)}
     <p class="muted small">${esc(t("rast.note", { link: `\u2066${location.origin}/?vir=facebook\u2069` }))}</p>`;
+}
+
+// Merjenje vedenja (server/rast.js vedenjeReport, točka 8): dnevi z rešeno nalogo, aktivnost pred testom.
+function vedenjeHtml(v, nf, pc) {
+  if (!v) return "";
+  const li = (k, a, b, p, x = {}) => `<li><b>${b ? pc(p) : "–"}</b> ${esc(t(`rast.vedenje.${k}`, { a: nf(a), b: nf(b), ...x }))}</li>`;
+  return `<h4>${esc(t("rast.vedenje.title"))}</h4>
+    <ul class="pilot-sum">${li("solved", v.solvedDays, v.activeDays, v.solvedPct)}${li("beforeTest", v.beforeTest, v.tests, v.beforeTestPct, { n: v.days })}</ul>`;
 }
 
 // Lijak računov (server/rast.js accountFunnel): registracija → e-naslov → prva naloga → 3. in 7. dan → plačilo.

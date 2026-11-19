@@ -191,10 +191,35 @@ Za $a > 0$ delimo s pozitivnim številom in znak ostane: $t \le \dfrac{15}{a}$. 
 
 ## Povzetek
 
-- Parameter je črka za dano, a poljubno število. Rešitev zapišemo po primerih glede na vrednost parametra.
-- Neenačba $ax > b$: za $a > 0$ je $x > \frac{b}{a}$, za $a < 0$ je $x < \frac{b}{a}$ (deljenje z negativnim številom obrne znak), za $a = 0$ preverimo $0 > b$ (velja za vse $x$ ali za nobenega).
-- Enačba $ax = b$: za $a \neq 0$ ena rešitev, za $a = 0$ in $b \neq 0$ nobene, za $a = 0$ in $b = 0$ vsa realna števila.
-- Sistem dveh linearnih enačb s parametrom prevedemo na enačbo $Ax = B$ s parametrom: ena rešitev (premici se sekata), nobene (vzporedni), neskončno (sovpadata).
+- **Parameter** je črka za dano, a poljubno število.
+- Rešitev zapišemo **po primerih** glede na vrednost parametra.
+
+**Enačba $ax = b$:**
+
+| primer | rešitve |
+|:-:|:-:|
+| $a \neq 0$ | ena |
+| $a = 0$, $b \neq 0$ | nobena |
+| $a = 0$, $b = 0$ | vsak $x \in \mathbb{R}$ |
+
+**Neenačba $ax > b$:**
+
+| primer | rešitev |
+|:-:|:-:|
+| $a > 0$ | $x > \frac{b}{a}$ |
+| $a < 0$ | $x < \frac{b}{a}$ |
+| $a = 0$ | vsi $x$ ali noben |
+
+- Pri $a = 0$ preverimo $0 > b$: če velja, so rešitev vsi $x$, sicer noben.
+- Deljenje z negativnim številom obrne znak neenačbe.
+- **Sistem** dveh linearnih enačb s parametrom prevedemo na enačbo $Ax = B$ s parametrom:
+
+| rešitve | premici |
+|:-:|:-:|
+| ena | se sekata |
+| nobena | vzporedni |
+| neskončno | sovpadata |
+
 - Rezultat preverimo z vstavitvijo ene konkretne vrednosti parametra.
 
 ## Ponovitev

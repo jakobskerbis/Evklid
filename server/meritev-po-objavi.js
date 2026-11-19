@@ -168,16 +168,18 @@ function zapisiStanje(file, s) {
 }
 
 // Privzeti zagon skripte: ločen proces z najnižjo prednostjo (nice 19), izpis v dnevnik na disku.
-function zaženiSkripto({ idji, maxUsd, izidFile, logFile, root }) {
+// skripta: samo za test (test/meritev-po-objavi.test.js), sicer scripts/primerjava-modelov.js.
+export function zaženiSkripto({ idji, maxUsd, izidFile, logFile, root, skripta = "scripts/primerjava-modelov.js" }) {
   return new Promise((resolve) => {
     const fd = fs.openSync(logFile, "a");
     // Meja kopice: varovalka pred uhajanjem pomnilnika (stroj GitHub ima dovolj pomnilnika; meritev ni več ob strežniku).
-    const args = ["--disable-warning=ExperimentalWarning", "--max-old-space-size=1024", "scripts/primerjava-modelov.js", "--s-preverjanjem", "--samo", idji.join(","), "--ponovi", String(PONOVI), "--pogoj", "s", "--max-usd", String(maxUsd), "--izid-json", izidFile];
+    const args = ["--disable-warning=ExperimentalWarning", "--max-old-space-size=1024", skripta, "--s-preverjanjem", "--samo", idji.join(","), "--ponovi", String(PONOVI), "--pogoj", "s", "--max-usd", String(maxUsd), "--izid-json", izidFile];
     const child = spawn(process.execPath, args, { cwd: root, stdio: ["ignore", fd, fd], env: { ...process.env, EVKLID_MERITEV_PO_OBJAVI: "0" } });
     try {
       os.setPriority(child.pid, 19);
     } catch {}
-    child.unref();
+    // Brez child.unref(): skripta v GitHubu čaka na otroka. Z unref() Node ni imel več česa čakati, končal je z
+    // izhodno kodo 13 (»unsettled top-level await«), ob izhodu ubil otroka, zato je bil vsak zagon rdeč (točka 11 načrta izboljšav, 19. 11. 2026).
     // Ob izhodu starša (preklic zagona) se ustavi tudi meritev: nič več klicev AI; rezervacija 1 $ ostane šteta.
     const ubij = () => child.kill("SIGTERM");
     // Preklic v GitHubu pošlje SIGINT/SIGTERM, ob katerih Node dogodka »exit« ne sproži: ustavi otroka tudi takrat.

@@ -207,11 +207,20 @@ $C(t) = a_3 t^3 + a_2 t^2 + a_1 t + a_0$; vsaka meritev $(t_i, C_i)$ da enačbo 
 
 ## Povzetek
 
-- V razcepu $p(x) = a\,(x - x_1)^{k_1}(x - x_2)^{k_2}\cdots$ je $k_1$ stopnja ničle $x_1$.
-- Ničla lihe stopnje: graf seka os $x$, predznak se zamenja. Ničla sode stopnje: graf se osi dotakne, predznak ostane.
+**Stopnja ničle:** v razcepu
+
+$$p(x) = a\,(x - x_1)^{k_1}(x - x_2)^{k_2}\cdots$$
+
+je $k_1$ stopnja ničle $x_1$.
+
+- Ničla **lihe stopnje**: graf seka os $x$, predznak se zamenja.
+- Ničla **sode stopnje**: graf se osi dotakne, predznak ostane.
+
 - Med sosednjima ničlama je predznak stalen; določiš ga z eno testno točko.
-- Za velike $|x|$ je $p(x) \approx a_n x^n$. Sod $n$: kraka na isti strani; lih $n$: na nasprotnih. Predznak $a_n$ pove smer desnega kraka.
-- Presečišče z osjo $y$ je $(0, p(0))$.
+- Za velike $|x|$ je $p(x) \approx a_n x^n$.
+- Sod $n$: kraka na isti strani; lih $n$: na nasprotnih.
+- Predznak $a_n$ pove smer desnega kraka.
+- **Presečišče z osjo $y$** je $(0, p(0))$.
 
 ## Ponovitev
 

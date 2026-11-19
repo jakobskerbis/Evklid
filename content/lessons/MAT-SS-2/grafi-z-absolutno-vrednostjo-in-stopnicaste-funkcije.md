@@ -307,14 +307,27 @@ Iz $x^2 - 4 = 3$ sledi $x^2 = 7$, torej $x = -\sqrt{7}$ ali $x = \sqrt{7}$ ($\sq
 
 ## Povzetek
 
-- Stopničasta funkcija je stalna na zaporednih intervalih in med njimi skoči. Graf so vodoravne stopnice.
-- Polna pika: točka je na grafu. Prazen krožec: ni na grafu. Na vsakem skoku je polna natanko ena pika.
-- Celi del $\lfloor x \rfloor$ je največje celo število, ki ni večje od $x$: $\lfloor -2{,}7 \rfloor = -3$. Polna pika je levo.
+- **Stopničasta funkcija** je stalna na zaporednih intervalih in med njimi skoči; graf so vodoravne stopnice.
+- **Polna pika**: točka je na grafu.
+- **Prazen krožec**: točka ni na grafu.
+- Na vsakem skoku je polna natanko ena pika.
+
+**Celi del** $\lfloor x \rfloor$ je največje celo število, ki ni večje od $x$:
+
+$$\lfloor -2{,}7 \rfloor = -3$$
+
+- Pri celem delu je polna pika levo.
 - Tarife »vsaka začeta ura« ali »do $50\,\mathrm{g}$«: polna pika je desno.
-- (višja raven) Funkcijo z več absolutnimi vrednostmi narišeš po primerih: ničle izrazov v $|\ldots|$ razdelijo os, na vsakem intervalu absolutno vrednost odstraniš po definiciji.
-- (višja raven) $|x - 1| + |x + 2|$: korito z dnom $3$ na $[-2, 1]$.
-- (višja raven) $y = |f(x)|$: del pod osjo $x$ prezrcališ navzgor. $y = f(|x|)$: desno polovico prezrcališ na levo.
-- (višja raven) Enačbo ali neenačbo z $|\ldots|$ rešiš z vodoravno premico $y = c$; natančne meje izračunaš iz predpisa ustreznega dela.
+
+**Višja raven:**
+
+- Funkcijo z več absolutnimi vrednostmi narišeš po primerih: ničle izrazov v $|\ldots|$ razdelijo os.
+- Na vsakem intervalu absolutno vrednost odstraniš po definiciji.
+- $y = |x - 1| + |x + 2|$ je korito z dnom $3$ na $[-2, 1]$.
+- $y = |f(x)|$: del pod osjo $x$ prezrcališ navzgor.
+- $y = f(|x|)$: desno polovico prezrcališ na levo.
+- Enačbo ali neenačbo z $|\ldots|$ rešiš z vodoravno premico $y = c$.
+- Natančne meje izračunaš iz predpisa ustreznega dela.
 
 ## Ponovitev
 

@@ -105,7 +105,7 @@ p{margin:0 0 .7em}p:last-child{margin-bottom:0}
 h1,h2,h3,h4{line-height:1.25;margin:1em 0 .4em}
 h3,h4,.sub-head{font-size:1.12em;font-weight:800;line-height:1.3;margin:1.4em 0 .45em;padding-inline-start:10px;border-inline-start:3px solid ${th.accent}}
 #c>:first-child{margin-top:0}
-ul,ol{padding-inline-start:1.4em;margin:.3em 0 .8em}li{margin:.2em 0}
+ul,ol{padding-inline-start:1.4em;margin:.3em 0 .8em}li{margin:.2em 0}li+li{margin-top:.45em}
 a{color:${th.accent}}
 strong{font-weight:700}
 code{font-family:ui-monospace,Menlo,monospace;font-size:.9em;background:${th.surface2};padding:.1em .3em;border-radius:5px}
