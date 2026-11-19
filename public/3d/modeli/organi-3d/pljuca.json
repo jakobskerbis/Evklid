@@ -1,74 +1,27 @@
 {
  "organ": "pljuca",
- "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py; prepona Z-Anatomy (CC BY-SA 4.0) iz telesnega atlasa, scripts/atlas/pljuca-prepona.mjs",
+ "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "pljuca": {
    "hrap": 0.4,
-   "lak": 0.45,
+   "lak": 0.55,
    "lakHrap": 0.25,
    "sijaj": 0.5,
    "ao": 0.5,
-   "zrno": 0.07,
+   "zrno": 0.06,
    "f": 160,
-   "barva": "#d88d88",
+   "barva": "#d98c88",
    "sijajBarva": "#ffd0c8",
    "rob": 0.25,
    "robBarva": "#ffb0a8",
-   "lise": 0.3,
-   "liseBarva": "#b06468",
-   "relief": 0.5,
-   "senca": 0.08,
+   "lise": 0.35,
+   "liseBarva": "#a8585c",
+   "relief": 0.4,
+   "senca": 0.25,
    "sencaBarva": "#6a2a30",
-   "rez": "#c96f6c",
-   "mapa": false,
-   "detajl": true,
-   "lise2": 0.45,
-   "lise2Barva": "#a38d94",
-   "lise2F": 34,
-   "rezPresek": {
-    "vrsta": 0,
-    "polno": true,
-    "rob": 0.0004,
-    "skleni": 0.07
-   },
-   "rezCelice": [
-    {
-     "mera": 0.0011,
-     "jedroMoc": 0.6,
-     "jedro": "#6b262b",
-     "jedroR": 0.46,
-     "moc": 0.4,
-     "stena": "#f2bdb4",
-     "sirina": 0.12,
-     "vdolbina": 0.8,
-     "zvitost": 0.5,
-     "ton": 0.1
-    },
-    {
-     "mera": 0.013,
-     "moc": 0.16,
-     "stena": "#e3b5ad",
-     "sirina": 0.03,
-     "ton": 0.12,
-     "zvitost": 0.7
-    }
-   ],
-   "aoPbr": 0.18,
-   "lakSenca": 1,
-   "normala": 0,
-   "celice": [
-    {
-     "mera": 0.012,
-     "moc": 0.5,
-     "stena": "#8a7780",
-     "sirina": 0.045,
-     "ton": 0.16,
-     "zvitost": 0.7,
-     "relief": 0.00012
-    }
-   ],
-   "orm": false,
-   "aoTekstura": 0.6
+   "rez": "#d07a78",
+   "rezPore": 1400,
+   "rezPoreMoc": 0.45
   },
   "dihalna": {
    "hrap": 0.34,
@@ -79,71 +32,41 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#eadcc6",
-   "rez": "#eadcc6",
+   "rez": "#dccbb0",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
    "robBarva": "#fff4e0",
-   "relief": 0.2,
-   "mapa": false,
-   "detajl": true,
-   "aoTekstura": 0.5,
-   "rezSum": 0.4,
-   "rezLak": 0.4,
-   "brezReza": true
+   "relief": 0.2
   },
   "pljucna-arterija": {
-   "hrap": 0.36,
+   "hrap": 0.34,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.2,
+   "sijaj": 0.45,
    "ao": 0.85,
-   "zrno": 0.05,
+   "zrno": 0.06,
    "f": 70,
-   "barva": "#46589f",
-   "rez": "#c3c9e6",
+   "barva": "#4566b8",
+   "rez": "#36549c",
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
-   "relief": 0.25,
-   "mapa": false,
-   "detajl": true,
-   "aoTekstura": 0.5,
-   "rezSum": 0.4,
-   "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#454b80",
-    "rob": 0.0006,
-    "robBarva": "#c3c9e6",
-    "stena": 0.0018
-   }
+   "relief": 0.3
   },
   "pljucna-vena": {
-   "hrap": 0.36,
+   "hrap": 0.34,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.2,
+   "sijaj": 0.45,
    "ao": 0.85,
-   "zrno": 0.05,
+   "zrno": 0.06,
    "f": 70,
-   "barva": "#ad2521",
-   "rez": "#eab0a6",
+   "barva": "#c4312e",
+   "rez": "#a92a28",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
-   "relief": 0.25,
-   "mapa": false,
-   "detajl": true,
-   "aoTekstura": 0.5,
-   "rezSum": 0.4,
-   "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7a2a26",
-    "rob": 0.0005,
-    "robBarva": "#eab0a6",
-    "stena": 0.0018
-   }
+   "relief": 0.3
   },
   "dihalna-v": {
    "hrap": 0.34,
@@ -154,96 +77,41 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#eadcc6",
-   "rez": "#eadcc6",
+   "rez": "#dccbb0",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
    "robBarva": "#fff4e0",
-   "relief": 0.2,
-   "mapa": false,
-   "detajl": true,
-   "aoTekstura": 0.5,
-   "rezSum": 0.4,
-   "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7d5a52",
-    "rob": 0.0008,
-    "robBarva": "#eadcc6",
-    "stena": 0.0018
-   }
+   "relief": 0.2
   },
   "pljucna-arterija-v": {
-   "hrap": 0.36,
+   "hrap": 0.34,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.2,
+   "sijaj": 0.45,
    "ao": 0.85,
-   "zrno": 0.05,
+   "zrno": 0.06,
    "f": 70,
-   "barva": "#46589f",
-   "rez": "#c3c9e6",
+   "barva": "#4566b8",
+   "rez": "#36549c",
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
-   "relief": 0.25,
-   "mapa": false,
-   "detajl": true,
-   "aoTekstura": 0.5,
-   "rezSum": 0.4,
-   "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#454b80",
-    "rob": 0.0006,
-    "robBarva": "#c3c9e6",
-    "stena": 0.0018
-   }
+   "relief": 0.3
   },
   "pljucna-vena-v": {
-   "hrap": 0.36,
+   "hrap": 0.34,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.2,
+   "sijaj": 0.45,
    "ao": 0.85,
-   "zrno": 0.05,
+   "zrno": 0.06,
    "f": 70,
-   "barva": "#ad2521",
-   "rez": "#eab0a6",
+   "barva": "#c4312e",
+   "rez": "#a92a28",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
-   "relief": 0.25,
-   "mapa": false,
-   "detajl": true,
-   "aoTekstura": 0.5,
-   "rezSum": 0.4,
-   "rezLak": 0.4,
-   "rezPresek": {
-    "vrsta": 2,
-    "luknjaBarva": "#7a2a26",
-    "rob": 0.0005,
-    "robBarva": "#eab0a6",
-    "stena": 0.0018
-   }
-  },
-  "prepona": {
-   "barva": "#9a3a36",
-   "hrap": 0.5,
-   "lak": 0.35,
-   "lakHrap": 0.3,
-   "sijaj": 0.3,
-   "sijajBarva": "#ffb0a0",
-   "ao": 0.7,
-   "zrno": 0.06,
-   "f": 90,
-   "rob": 0.12,
-   "robBarva": "#d06a60",
-   "relief": 0.35,
-   "lise": 0.15,
-   "liseBarva": "#6e2420",
-   "rez": "#8e2f2b",
-   "tekstura": false,
-   "detajl": true
+   "relief": 0.3
   }
  },
  "deli": [
@@ -429,18 +297,6 @@
     "Superior vein of left lung",
     "Superior vein of right lung"
    ]
-  },
-  {
-   "id": "prepona",
-   "ime": "Prepona",
-   "la": "Diaphragma",
-   "barva": "#c0504a",
-   "opisOs": "Mišica pod pljuči. Ko se skrči, se spusti in zrak vdre v pljuča.",
-   "opis": "Kupolasta mišica med prsno in trebušno votlino; ob vdihu se skrči in splošči, prsna votlina se poveča in zrak vdre v pljuča.",
-   "opisStudij": "Glavna vdihovalna mišica: mišični del se steka v središčno kito (centrum tendineum), desna kupola je višje (jetra). Oživčuje jo n. phrenicus (C3–C5). Ob mirnem dihanju se spusti za 1–2 cm, ob globokem vdihu do 10 cm.",
-   "vozlisca": [
-    "Diaphragm"
-   ]
   }
  ],
  "prerez": {
@@ -451,7 +307,7 @@
      0,
      -1
     ],
-    "d": -0.024
+    "d": 0
    }
   ]
  },
@@ -519,8 +375,8 @@
  },
  "velikost": 0.4305,
  "trikotniki": {
-  "racunalnik": 169203,
-  "telefon": 44203
+  "racunalnik": 239922,
+  "telefon": 80315
  },
  "luci": [
   {
@@ -567,6 +423,5 @@
    "ime": "Pregrada zrak–kri",
    "vrednost": "≈ 0,2–0,6 µm"
   }
- ],
- "pbr": true
+ ]
 }
