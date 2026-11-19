@@ -116,7 +116,7 @@ test("meri-preizkus3 --suho nikoli ne kliče API (0 $), tudi s ključem", () => 
 test("plačane meri-*.mjs upoštevajo --max-usd (sicer jih delovni tok zavrne)", () => {
   const vzorec = /arg\("(--)?max-usd"/; // isti vzorec kot korak »Skripta upošteva --max-usd«
   assert.ok(y.includes(`grep -Eq '${vzorec.source}'`));
-  for (const s of ["meri-preizkus3.mjs", "meri-nacin-b.mjs", "meri-hitri-korak.mjs", "meri-natancnost-ss.mjs"]) {
+  for (const s of ["meri-preizkus3.mjs", "meri-nacin-b.mjs", "meri-hitri-korak.mjs", "meri-natancnost-ss.mjs", "meri-napacne-korake.mjs"]) {
     assert.match(fs.readFileSync(new URL(`../scripts/${s}`, import.meta.url), "utf8"), vzorec, s);
   }
 });
