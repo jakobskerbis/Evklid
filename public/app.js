@@ -1469,10 +1469,17 @@ function zgodovinaVidna() {
   if (zgodovina.naDno && box.clientHeight) {
     zgodovina.naDno = false;
     box.scrollTop = box.scrollHeight;
-    // Formule skritega pogovora se prilagodijo šele zdaj (sirina.js, v naslednji sličici): dno še enkrat po tem,
-    // razen če se je učenec medtem pomaknil navzgor.
-    const st = box.scrollTop;
-    requestAnimationFrame(() => requestAnimationFrame(() => box.scrollTop >= st && (box.scrollTop = box.scrollHeight)));
+    // Formule skritega pogovora se prilagodijo šele zdaj (sirina.js; na telefonu tudi ~0,7 s dolgo opravilo, ki
+    // pogovor podaljša): do 2 s ga v vsaki sličici drži na dnu, razen ko se učenec sam pomakne navzgor.
+    let st = box.scrollTop;
+    const konec = performance.now() + 2000;
+    const drzi = () => {
+      if (box.scrollTop < st - 2 || !box.clientHeight) return; // učenec se je pomaknil ali je zapustil Inštruktor
+      box.scrollTop = box.scrollHeight;
+      st = box.scrollTop;
+      if (performance.now() < konec) requestAnimationFrame(drzi);
+    };
+    requestAnimationFrame(drzi);
   }
   dopolniKmalu();
 }
