@@ -1460,7 +1460,10 @@ export function createApp(store, opts = {}) {
       if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text && !stiska) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
         // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
-        const generic = genericAnswer(result.text, student.name);
+        // Model imena ne pozna več (oznaka {{IME}}): ime v odgovoru je beseda iz naloge (»Bor ima 3 elektrone«) ali
+        // učenčevo lastno besedilo, zato odgovor gre v skupni predpomnilnik samo, ko ga maska ne bi spremenila (pregled #845).
+        const g = genericAnswer(result.text, student.name);
+        const generic = g === result.text ? g : null;
         const plain = stripMeta(result.text);
         const live = verifyLive();
         // Preverjanje dveh modelov plača aplikacija (dnevni znesek); brez prostora se odgovor ne shrani za druge.

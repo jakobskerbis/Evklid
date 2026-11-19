@@ -9,7 +9,8 @@ export const IME_OZNAKA = "{{IME}}";
 // Oznaka, tudi v skoraj pravi obliki (»{{ IME }}«, »{{Ime}}«), z morebitno končnico, ki jo je model prilepil
 // nanjo (»{{IME}}u«, »{{IME}}-ju«). Model naj je ne sklanja (server/prompt.js); če jo, glej withName.
 const OZNAKA = "\\{\\{\\s*IME\\s*\\}\\}";
-const OZNAKA_RE = new RegExp(`${OZNAKA}(?:[-:’']?[\\p{L}\\p{M}]+)?`, "giu");
+// Končnica so samo latinične črke: v kitajščini, japonščini, tajščini ipd. besedilo za oznako ni končnica (pregled #845).
+const OZNAKA_RE = new RegExp(`${OZNAKA}(?:[-:’']?[\\p{Script=Latin}\\p{M}]+)?`, "giu");
 const OZNAKA_IN = new RegExp(OZNAKA, "iu");
 // Prazno ime: oznaka gre ven skupaj s sosednjo vejico in presledkom (»Bravo, {{IME}}!« → »Bravo!«).
 const PRAZNO_RE = new RegExp(`[^\\S\\n]*,[^\\S\\n]*${OZNAKA_RE.source}|${OZNAKA_RE.source}[^\\S\\n]*,[^\\S\\n]*|[^\\S\\n]*${OZNAKA_RE.source}(?![^\\S\\n]*,)`, "giu");
@@ -33,7 +34,7 @@ export function withName(text, name = "") {
 }
 
 // Konec besedila, ki je lahko (del) oznake: cela oznaka s končnico, ki se morda nadaljuje, ali začetek oznake.
-const KONEC_CELA = new RegExp(`${OZNAKA}(?:[-:’']?[\\p{L}\\p{M}]*)$`, "iu");
+const KONEC_CELA = new RegExp(`${OZNAKA}(?:[-:’']?[\\p{Script=Latin}\\p{M}]*)$`, "iu");
 const KONEC_ZACETEK = /\{\{?\s*I?M?E?\s*\}?$/iu;
 
 /**
@@ -93,9 +94,11 @@ export function choiceAsToken(typed, choices = [], name = "") {
 // »m« / »z«) ima prednost; sicer ga ugane koda iz imena, ob dvomu »« (neznan: model se izogiba spolnim oblikam).
 
 // Moška imena na -a in ženska imena, ki se ne končajo na -a (brez strešic, male črke).
-const MOSKA_NA_A = new Set("luka jaka miha ziga matija mitja andrija tobija elija jeremija zaharija ilija jona kosta toma sava jasa joza nikita kuzma aleksa jurica jovica perica ivica mihajla".split(" "));
+const MOSKA_NA_A = new Set("luka jaka miha ziga matija mitja andrija tobija elija jeremija zaharija ilija jona kosta toma sava jasa joza nikita kuzma aleksa jurica jovica perica ivica mihajla grega aljosa vasja nemanja sinisa mirza borna ilja jaksa niksa".split(" "));
 const ZENSKA_DRUGA = new Set("ines doris karmen carmen nives ingrid agnes edit judit judith ester esther karin rut ruth mirjam miriam rahel rachel iris dolores mercedes gertrud kristin ellen helen karen megan lauren sarah hannah elizabeth elisabeth isabel mabel abigail carol ann tamar lilit ivon cleo margo juno".split(" "));
-const DVOUMNA = new Set("sasa andrea vanja nikola noa kim jasmin robin alex eli mika".split(" "));
+const DVOUMNA = new Set("sasa andrea vanja nikola noa kim jasmin robin alex eli mika mattia misa luca".split(" "));
+// Pogosta moška imena na -e (sicer neznan spol).
+const MOSKA_NA_E = new Set("jure anze joze lojze tine tone azbe bine pavle nace zane".split(" "));
 
 /** »m«, »z« ali »« (ne vemo) iz imena: prva beseda; -a → ženski, soglasnik ali -o → moški, z izjemami. */
 export function genderFromName(name = "") {
@@ -104,6 +107,7 @@ export function genderFromName(name = "") {
   if (w.length < 2 || !/^[a-z]+$/.test(w)) return ""; // druga pisava, številke, vzdevek
   if (DVOUMNA.has(w)) return "";
   if (ZENSKA_DRUGA.has(w)) return "z";
+  if (MOSKA_NA_E.has(w)) return "m";
   if (w.endsWith("a")) return MOSKA_NA_A.has(w) ? "m" : "z";
   if (/[^aeiouy]$/.test(w) || w.endsWith("o")) return "m";
   return "";

@@ -351,3 +351,18 @@ test("predpomnilnik: shranjen odgovor z oznako, drugi otrok ga dobi s svojim ime
     server.close();
   }
 });
+
+test("pregled #845: končnica oznake so le latinične črke; spol pogostih imen", async () => {
+  const { withName, createNameStream, genderFromName } = await import("../server/ime-oznaka.js");
+  assert.equal(withName("{{IME}}你做得很好！", "Ana"), "Ana你做得很好！");
+  assert.equal(withName("很好，{{IME}}同学。", "Ana"), "很好，Ana同学。");
+  assert.equal(withName("{{IME}}さん、すごい", "Ana"), "Anaさん、すごい");
+  const t = "很好，{{IME}}同学。";
+  for (let i = 1; i < t.length; i++) {
+    const s = createNameStream("Ana");
+    assert.equal(s.push(t.slice(0, i)) + s.push(t.slice(i)) + s.end(), "很好，Ana同学。", `razrez ${i}`);
+  }
+  for (const n of ["Grega", "Aljoša", "Vasja", "Nemanja", "Siniša", "Mirza", "Jure", "Anže", "Luka", "Žiga"]) assert.equal(genderFromName(n), "m", n);
+  for (const n of ["Nika", "Ana", "Ines"]) assert.equal(genderFromName(n), "z", n);
+  for (const n of ["Saša", "Luca", "Mattia"]) assert.equal(genderFromName(n), "", n);
+});
