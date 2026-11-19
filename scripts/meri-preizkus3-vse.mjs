@@ -25,8 +25,9 @@
 //   --hkrati 4  toliko nalog hkrati (1–6; privzeto 4), čas posameznega odgovora se meri posebej
 //   --suho      preizkusni odgovori brez klica modela (0 $), tudi kadar je ključ nastavljen
 //   --nabor slepa-ocena  namesto Preizkusa 3 nabor slepe ocene inštruktorja (j 19. 11. 2026: 64 novih maturitetnih
-//               nalog MAT, eno sporočilo na nalogo): scripts/slepa-ocena-naloge.enc, ključ SLEPA_OCENA_KLJUC, izid
-//               data/meri-slepa-ocena*.json, šifriran z istim ključem. Ocene dijakov niso del skripte.
+//               nalog MAT, eno sporočilo na nalogo). j je izbral javne naloge brez skrivnosti (kartica 19. 11.):
+//               scripts/slepa-ocena-naloge.json v čistem besedilu, izid data/meri-slepa-ocena*.json nešifriran.
+//               Uradne rešitve in ocene ocenjevalcev niso v repozitoriju.
 // Zagon: GitHub Actions > Meritev > Run workflow, skripta scripts/meri-preizkus3-vse.mjs (docs/stroski-ai.md).
 import fs from "node:fs";
 import path from "node:path";
@@ -56,10 +57,11 @@ const PRODUKCIJA = process.argv.includes("--kot-produkcija");
 const PREGLED = process.argv.includes("--s-pregledom");
 const HKRATI = Number(arg("hkrati", 4));
 const DEL = arg("del", "");
-// Nabori nalog: vsak s svojo šifrirano datoteko, ključem (skrivnost v GitHubu) in imenom izida.
+// Nabori nalog: šifriran (datoteka .enc in ključ, skrivnost v GitHubu) ali javen (čisto besedilo), vsak s svojim izidom.
 const NABORI = {
   preizkus3: { enc: "./preizkus3-naloge.enc", kljuc: "PREIZKUS3_KLJUC", izid: "meri-preizkus3-vse", ime: "Preizkus 3 v celoti" },
-  "slepa-ocena": { enc: "./slepa-ocena-naloge.enc", kljuc: "SLEPA_OCENA_KLJUC", izid: "meri-slepa-ocena", ime: "Slepa ocena inštruktorja" },
+  // Javen nabor (kljuc null): naloge v čistem besedilu, izid nešifriran tudi v GitHub Actions.
+  "slepa-ocena": { javno: "./slepa-ocena-naloge.json", kljuc: null, izid: "meri-slepa-ocena", ime: "Slepa ocena inštruktorja" },
 };
 const NABOR = NABORI[arg("nabor", "preizkus3")];
 const OUT = arg("out", `data/${NABOR?.izid}${DEL ? `-${DEL}` : ""}.json`);
@@ -78,17 +80,18 @@ if (PRODUKCIJA && process.env.GITHUB_ACTIONS) napaka("--kot-produkcija ni dovolj
 
 // Naloge: šifrirana datoteka in ključ iz okolja ali lokalna datoteka s čistim besedilom. Ključ se takoj odstrani iz
 // okolja, da ga noben del strežnika ne vidi in ne zapiše.
-// Oba ključa se odstranita ne glede na nabor.
-const KLJUC = process.env[NABOR.kljuc];
-for (const n of Object.values(NABORI)) delete process.env[n.kljuc];
-// V GitHub Actions vedno s ključem: izid v artefaktu mora biti šifriran.
-if (process.env.GITHUB_ACTIONS && !KLJUC) napaka(`Ni ključa ${NABOR.kljuc} (skrivnost v GitHubu): v GitHub Actions mora biti izid šifriran.`);
+// Vsi ključi šifriranih naborov se odstranijo iz okolja ne glede na izbrani nabor.
+const KLJUC = NABOR.kljuc ? process.env[NABOR.kljuc] : null;
+for (const n of Object.values(NABORI)) if (n.kljuc) delete process.env[n.kljuc];
+// V GitHub Actions vedno s ključem: izid šifriranega nabora mora biti v artefaktu šifriran.
+if (process.env.GITHUB_ACTIONS && NABOR.kljuc && !KLJUC) napaka(`Ni ključa ${NABOR.kljuc} (skrivnost v GitHubu): v GitHub Actions mora biti izid šifriran.`);
 let IZID_KLJUC = null;
 let NALOGE;
 try {
   if (KLJUC) IZID_KLJUC = kljucIz(KLJUC);
   const datoteka = arg("naloge-datoteka", "");
   if (datoteka) NALOGE = JSON.parse(fs.readFileSync(datoteka, "utf8")).naloge;
+  else if (NABOR.javno) NALOGE = JSON.parse(fs.readFileSync(new URL(NABOR.javno, import.meta.url), "utf8")).naloge;
   else {
     if (!KLJUC) napaka(`Ni ključa ${NABOR.kljuc} (GitHub Actions: skrivnost ${NABOR.kljuc}; lokalno: --naloge-datoteka <pot>).`);
     NALOGE = JSON.parse(odsifriraj(fs.readFileSync(new URL(NABOR.enc, import.meta.url), "utf8"), IZID_KLJUC)).naloge;

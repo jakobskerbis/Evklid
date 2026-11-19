@@ -9,5 +9,3 @@ __pycache__/
 
 # Preizkus 3: naloge v čistem besedilu nikoli v repozitorij (šifrirane so v scripts/preizkus3-naloge.enc)
 preizkus3-naloge*.json
-# Slepa ocena inštruktorja: čisto besedilo nalog le zunaj repozitorija (scripts/slepa-ocena-naloge.enc)
-slepa-ocena-naloge*.json
