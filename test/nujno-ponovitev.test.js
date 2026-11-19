@@ -839,3 +839,67 @@ test("vrzel porabljeno dobroimetje pri ponudniku: pregleda ni (kot doslej), a je
     assert.equal((await poslji("oče me tepe")).body.nujno.vrsta, "nasilje");
   });
 });
+
+test("pregled #858: prekinitev, preden prvi poskus pregleda novega sporočila konča, pozno okno ostane v vrsti", async () => {
+  let vrataDrugo = null;
+  const cakajo = [];
+  const varnostFn = varnost(async (b, n) => {
+    if (/čudno/.test(b)) {
+      if (n === 1) return "napaka";
+      await new Promise((r) => cakajo.push(r));
+      return "STISKA";
+    }
+    if (/2 \+ 2/.test(b) && vrataDrugo) await vrataDrugo.p;
+    return "NE";
+  });
+  let cakaj = null;
+  const streamFn = async (a) => {
+    if (cakaj) await cakaj.p;
+    return tok("Razumem." + META)(a);
+  };
+  await withServer({ streamFn, varnostFn, varnostCasi: { rokMs: 3000, rokPonovitveMs: 20000, premorMs: 0 } }, async ({ ucenec, stanje, call, base }) => {
+    const { poslji, c } = await ucenec("Hana");
+    assert.deepEqual(okna(await poslji("vse je čudno")), []);
+    await doKler(() => cakajo.length > 0, "ponovitev");
+    for (const r of cakajo.splice(0)) r();
+    await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
+    assert.equal((await call("/api/usage")).body.varnost.pozna_okna_cakajo, 1);
+    cakaj = zapora();
+    vrataDrugo = zapora();
+    const ac = new AbortController();
+    const rp = fetch(`${base}/api/conversations/${c.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "koliko je 2 + 2" }), signal: ac.signal }).catch(() => null);
+    await doKler(() => varnostFn.klici.some((k) => /2 \+ 2/.test(k.b)), "pregled drugega sporočila teče");
+    ac.abort();
+    await rp;
+    await pocakaj(200);
+    vrataDrugo.odpri();
+    await pocakaj(200);
+    cakaj.odpri();
+    cakaj = null;
+    assert.equal((await call("/api/usage")).body.varnost.pozna_okna_cakajo, 1, "okno ostane v vrsti");
+    let ev = null;
+    await doKler(async () => Array.isArray((ev = await poslji("koliko je 3 + 3"))), "prost");
+    assert.deepEqual(okna(ev), ["stiska"], "pozno okno bi moralo priti ob naslednjem odgovoru");
+  });
+});
+
+test("pregled #858: inštruktorjeva oznaka stiske, ko je mesto zasedlo pozno okno druge vrste, pride ob naslednjem odgovoru", async () => {
+  const varnostFn = pozenZadetek(/zaklenil/, "NASILJE");
+  let n = 0;
+  const streamFn = async (a) => {
+    n++;
+    return n === 2 ? tok("Takoj pokliči 112." + metaFlag("distress"))(a) : tok("Razumem." + META)(a);
+  };
+  await withServer({ streamFn, varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, stanje, call }) => {
+    const { poslji } = await ucenec("Ana");
+    assert.deepEqual(okna(await poslji("stric me je zaklenil v sobo")), []);
+    await varnostFn.spusti();
+    await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
+    const ev = await poslji("kaj naj zdaj naredim s prijateljem");
+    assert.deepEqual(okna(ev), ["nasilje"]);
+    assert.equal((await call("/api/usage")).body.varnost.pozna_okna_cakajo, 1, "okno inštruktorja čaka");
+    const naslednje = okna(await poslji("hvala"));
+    assert.equal(naslednje.length, 1);
+    assert.notEqual(naslednje[0], "nasilje");
+  });
+});

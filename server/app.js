@@ -854,14 +854,17 @@ export function createApp(store, opts = {}) {
     let oknoVrsta = null;
     let zaostalo = null;
     const brezZaostalega = odjemalecZeKazeOkno(req, text);
+    // zaprto: povezava je prekinjena; pozno okno, ki ga odgovor še ni rezerviral, ostane v vrsti (pregled #858).
+    let zaprto = false;
     res.once("close", () => {
+      zaprto = true;
       if (!zaostalo) return;
       if (res.writableFinished && oknoVrsta === zaostalo.vrsta) stejNujno(usage, "pozno_naslednji");
       else poznaOkna.vrni(student, zaostalo);
     });
     // Zavrnitev (JSON): okno tega sporočila, sicer čakajoče pozno okno; blažje okno »pogovor« se umakne poznemu.
     const zZaostalim = (n) => {
-      if (!brezZaostalega) zaostalo ||= poznaOkna.vzemi(student);
+      if (!brezZaostalega && !zaprto) zaostalo ||= poznaOkna.vzemi(student);
       const okno = n && n.vrsta !== "pogovor" ? n : poznoOkno(zaostalo, student.settings) || n;
       oknoVrsta = okno?.vrsta ?? null;
       return okno;
@@ -1110,7 +1113,7 @@ export function createApp(store, opts = {}) {
     // Čakajoče pozno okno prejšnjega sporočila gre v prosto mesto tega odgovora: takoj ko prvi poskus pregleda tega
     // sporočila ne najde svojega okna (to ima prednost), in še enkrat pred koncem odgovora (zadetek, ki je prišel vmes).
     const oddajZaostalo = () => {
-      if (brezZaostalega) return;
+      if (brezZaostalega || zaprto || res.writableEnded || res.destroyed) return;
       zaostalo ||= poznaOkna.vzemi(student);
       posljiNujno(poznoOkno(zaostalo, student.settings));
     };
@@ -1549,7 +1552,12 @@ export function createApp(store, opts = {}) {
       // Vrsta iz pregleda B, če ga je našel; sicer iz odgovora inštruktorja (samo 112 brez linije za pogovor →
       // zdravje ali nevarnost, sicer stiska; brez vsake številke blažje okno »pogovor«, j 10. 11.; EVKLID_NUJNO_BLAGO=0 ga izklopi).
       const vrstaB = await pocakajNujno();
-      if (meta?.flag === "distress") posljiNujno(nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings));
+      if (meta?.flag === "distress") {
+        const okno = nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings);
+        // Mesto je že zasedlo pozno okno prejšnjega sporočila druge vrste: okno tega sporočila pride ob naslednjem odgovoru.
+        if (nujnoPoslano && zaostalo && oknoVrsta === zaostalo.vrsta && okno?.vrsta && okno.vrsta !== oknoVrsta) poznaOkna.dodaj(student, { vrsta: okno.vrsta });
+        else posljiNujno(okno);
+      }
       oddajZaostalo(); // pozno okno prejšnjega sporočila pred blažjim oknom tega (server/nujno.js)
       posljiNujno(blagoLokalno);
       finished = true;

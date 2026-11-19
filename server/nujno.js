@@ -341,7 +341,7 @@ export function varnostStanje(usage) {
   try {
     const javno = (d) => ({ rok: d.rok, napaka: d.napaka, nepregledano: d.nepregledano + d.brez_dobroimetja });
     const [d0, d1] = stevci(usage, 2);
-    return { vklopljen: vklop().vklopljen, danes: javno(d0), vceraj: javno(d1), zadnjeNepregledano: d0.zadnje_nepregledano || d1.zadnje_nepregledano || null };
+    return { vklopljen: vklop().vklopljen, danes: javno(d0), vceraj: javno(d1), zadnjeNepregledano: String(d0.zadnje_nepregledano || d1.zadnje_nepregledano || "").slice(0, 10) || null };
   } catch {
     return null; // stanje strežnika ne sme pasti zaradi števca
   }

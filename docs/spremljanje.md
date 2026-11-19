@@ -63,7 +63,7 @@ Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
   **nepregledano**.
 - **Kje to vidiš (enkrat na teden):** https://evklid.app/healthz/stanje → `varnostniPregled`. `vklopljen` mora biti
   `true`, pri `danes` in `vceraj` pa `"nepregledano":0`. `rok` in `napaka` povesta, kolikokrat prvi poskus ni uspel
-  (posamezni so običajni, ponovitev jih večinoma reši); `zadnjeNepregledano` je čas zadnjega nepregledanega sporočila.
+  (posamezni so običajni, ponovitev jih večinoma reši); `zadnjeNepregledano` je datum (brez ure) zadnjega nepregledanega sporočila.
   Javno so samo ta števila o ponudniku, nič o učencih ali zadetkih.
 - **Več (samo skrbnik):** prijavljen odpri https://evklid.app/api/usage → `varnost` → `dnevi` (zadnjih 7 dni, po UTC):
   `pozni_zadetki` (ponovitev je našla nujen primer), `pozno_v_toku` in `pozno_naslednji` (učenec je okno dobil še v
