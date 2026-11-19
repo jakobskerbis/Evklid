@@ -22,8 +22,8 @@ komentar datoteke in znova poženi skripto. Opis je prva vrstica komentarja na v
 | Del | Koda (vrstic) | Podatki (vrstic) | Datotek |
 |---|---:|---:|---:|
 | Strežnik | 110.957 | 61.764 | 209 |
-| Odjemalec (public/*.js, samo vrhnja mapa) | 31.989 | 5647 | 133 |
-| Skripte | 14.492 | 86 | 83 |
+| Odjemalec (public/*.js, samo vrhnja mapa) | 34.535 | 3101 | 133 |
+| Skripte | 14.579 | 0 | 83 |
 
 »Podatki« so datoteke, ki so večinoma tabele (učni načrti, izpitne pole, fakultetni predmeti), ne logika.
 
@@ -259,13 +259,13 @@ komentar datoteke in znova poženi skripto. Opis je prva vrstica komentarja na v
 | `public/datum.js` | 18 | Datumi v besedilu: v slovenščini mesec v rodilniku (»do 23. novembra 2026«, »ponedeljek, 23. novembra«), kot ga |
 | `public/deli-kartico.js` | 195 | Deljiva kartica zbirke (j-jev dokument o kozmetiki: »Deljiva kartica (slika) za družbena omrežja brez osebnih |
 | `public/deli-most.js` | 58 | Most za deljenje slike v mobilni aplikaciji (WebView, mobile/src/app/web.tsx). WebView ne podpira Web Share |
-| `public/demos.js` (podatki) | 666 | Interaktivne demonstracije za učbenik (brez knjižnic, SVG + drsniki). |
+| `public/demos.js` | 666 | Interaktivne demonstracije za učbenik (brez knjižnic, SVG + drsniki). |
 | `public/dialects.js` | 79 | Narečje inštruktorja oziroma različica jezika (nastavitev profila »dialect«). |
 | `public/dotik.js` | 17 | Povezave na dotik (j 2026-11-13): ko na telefonu pridržiš kartico ali gumb, ki je povezava (<a href>, |
 | `public/dropdown.js` | 364 | Spustni meniji v slogu aplikacije (zaobljen seznam namesto sistemskega). |
 | `public/drsniki.js` | 162 | Vrstice, ki se pomikajo vstran (j 2026-11-01: »zdaj se sploh ne vidi, ali je navadna vrstica ali ne«). |
 | `public/enote-izbira.js` | 246 | Izbira enote pri številski nalogi (j, 16. 11. 2026: v »Testu predznanja« je gumb ob polju za odgovor že |
-| `public/exam-papers.js` (podatki) | 169 | Pretekle pole NPZ in mature v razdelku »NPZ in matura«: izbira po korakih kot pri ravni izobrazbe |
+| `public/exam-papers.js` | 169 | Pretekle pole NPZ in mature v razdelku »NPZ in matura«: izbira po korakih kot pri ravni izobrazbe |
 | `public/feedback.js` | 308 | Povratne informacije testerjev: vprašalnik (ocene po področjih + pripombe) ali kratek pogovor |
 | `public/flashcards.js` | 319 | Kartice za ponavljanje: pomembna dejstva iz razlag inštruktorja (in lastne kartice), razdeljena v sklope po temah |
 | `public/fokus-okna.js` | 76 | Okno čez zaslon (role="dialog", aria-modal="true"): fokus gre v okno, Tab in Shift+Tab krožita samo po njem |
@@ -282,7 +282,7 @@ komentar datoteke in znova poženi skripto. Opis je prva vrstica komentarja na v
 | `public/icons.js` | 208 | Ikone Lucide (ISC licenca, https://lucide.dev) in lastne (CUSTOM). Ustvarjeno s scripts/build-icons.js. |
 | `public/ime-skupine.js` | 47 | Ime skupine prijateljev ali razreda vidijo drugi otroci (lestvica, kviz, vitrina), zato v njem ni kontaktov: |
 | `public/install.js` | 254 | Evklid kot aplikacija na napravi. |
-| `public/interests.js` (podatki) | 119 | Kotiček zanimanj: področja, ki jih učenec izbere v vprašalniku, in viri novic zanje. |
+| `public/interests.js` | 119 | Kotiček zanimanj: področja, ki jih učenec izbere v vprašalniku, in viri novic zanje. |
 | `public/izpis-toka.js` | 77 | Izpis odgovora med pretakanjem (točka D5, master brief j 13. 11.): prej se je ob vsaki besedi znova izrisal ves |
 | `public/kalkulator-nastavi.js` | 15 | Stran /kalkulator, pred moduli: tema (?theme=dark/light, sicer nastavitev naprave) in jezik (?lang=xx) |
 | `public/kalkulator.js` | 70 | Samostojni kalkulator za /kalkulator (mobilna aplikacija ga pokaže v WebView): isti moduli kot okno |
@@ -354,8 +354,8 @@ komentar datoteke in znova poženi skripto. Opis je prva vrstica komentarja na v
 | `public/tipkovnica-besede.js` (podatki) | 46 | Predlogi besed nad črkami (Nastavitve → Vnos → Predlogi besed, privzeto izklopljeno). |
 | `public/tipkovnica-data.js` (podatki) | 432 | Evklidova tipkovnica: podatki in čista pravila brez DOM (razporeditve po jeziku, različice črk, |
 | `public/tipkovnica-glide-sl.js` (podatki) | 1064 | Ustvari: node scripts/glide-besede.js (iz content/**/*.md; ne urejaj ročno). Slovenske besede za drsenje po črkah, |
-| `public/tipkovnica-strani.js` (podatki) | 5 | Evklidova tipkovnica tudi na straneh zunaj aplikacije (plačilo, šole, starši, učitelji): j, 1. 11. |
-| `public/tipkovnica.js` (podatki) | 1587 | Evklidova tipkovnica: ena tipkovnica na zaslonu za vso aplikacijo (docs/oblikovanje.md »Evklidova tipkovnica»). |
+| `public/tipkovnica-strani.js` | 5 | Evklidova tipkovnica tudi na straneh zunaj aplikacije (plačilo, šole, starši, učitelji): j, 1. 11. |
+| `public/tipkovnica.js` | 1587 | Evklidova tipkovnica: ena tipkovnica na zaslonu za vso aplikacijo (docs/oblikovanje.md »Evklidova tipkovnica»). |
 | `public/tisk-v-chromu.js` | 14 | Strani za tisk, ki jih aplikacija odpre v privzetem brskalniku telefona (navadno Chrome; mobile/src/app/web.tsx), |
 | `public/ucbenik-priprava.js` | 95 | Učbenik za tiskanje (server/textbook-print.js): pregrada »Pripravljam učbenik …« z napredkom, med tem ko se stran |
 | `public/ucbenik-ravni.js` | 17 | Učbenik, filtri predmet / raven (j 2026-11-14): vrstica predmetov pokaže le predmete, ki imajo učbenik na ravni |
@@ -386,7 +386,7 @@ komentar datoteke in znova poženi skripto. Opis je prva vrstica komentarja na v
 | `scripts/3d-slicice.cjs` | 84 | Sličice modelov za kartice zbirke /3d (public/3d/slicice/<id>.webp, docs/3d.md »Sličice«): vsak model iz kode se |
 | `scripts/bliznjice.js` | 35 | Windows: bližnjice s prejšnjimi imeni aplikacije (brand.json → legacy) na namizju in v samodejnem |
 | `scripts/build-icons.js` | 113 | Iz paketa lucide-static zgradi public/icons.js z ikonami, ki jih uporablja vmesnik. |
-| `scripts/build-pse-extra.js` (podatki) | 86 | Iz podatkov PubChem (NCBI, javna domena) zgradi public/graph/pse-extra.js: |
+| `scripts/build-pse-extra.js` | 86 | Iz podatkov PubChem (NCBI, javna domena) zgradi public/graph/pse-extra.js: |
 | `scripts/check-gradivo.js` | 30 | Preveri obliko napisanih gradiv (docs/gradiva.md): domači poskusi, projekti, videi, miselni vzorci. |
 | `scripts/check-lesson.js` | 56 | Preveri obliko lekcij učbenika (content/lessons/README.md). |
 | `scripts/check-paper.js` | 30 | Preveri našo polo (server/our-papers.js): oblika, točke po delih kot izvirna pola, LaTeX, številski koraki. |
@@ -465,4 +465,4 @@ komentar datoteke in znova poženi skripto. Opis je prva vrstica komentarja na v
 | `scripts/vaja-obnove.mjs` | 420 | Vaja obnove baze na sveži namestitvi (j 2026-11-15, priprava na zaprt pilot; zapis v docs/obnova.md). |
 | `scripts/zaganjalnik.js` | 35 | Zažene scripts/zagon.js ali scripts/telefon.js in ga zažene znova, ko se ta posodobi |
 | `scripts/zagon.js` | 43 | Evklid na tem računalniku: zažene strežnik, ga drži prižganega in ga |
-| `scripts/zemljevid-kode.mjs` | 104 | Zemljevid kode za človeka (zunanji pregled 18. 11. 2026, točki 41 in 42 načrta izboljšav): za vsako datoteko v |
+| `scripts/zemljevid-kode.mjs` | 105 | Zemljevid kode za človeka (zunanji pregled 18. 11. 2026, točki 41 in 42 načrta izboljšav): za vsako datoteko v |

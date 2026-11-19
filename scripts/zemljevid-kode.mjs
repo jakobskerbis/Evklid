@@ -13,7 +13,8 @@ import { fileURLToPath } from "node:url";
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const EXT = /\.(m|c)?js$/;
 // Podatkovne datoteke: ime to pove ali pa so to velike tabele (več kot 3000 vrstic in malo funkcij).
-const DATA_NAME = /(data|extra|razsiritve|vsebina|exam-papers|our-papers|formula-data|tipkovnica|regions|interests|demos)/;
+// Ime se primerja ozko: tipkovnica.js, demos.js, exam-papers.js (vmesnik) in build-pse-extra.js so koda.
+const DATA_NAME = /(^|-)data[-.]|^[a-z]+-extra\.|razsiritve|vsebina|^exam-papers-|^our-papers|^regions\.|^tipkovnica-(data|glide|besede)/;
 
 function files(dir, { recursive = true } = {}) {
   const abs = path.join(root, dir);

@@ -70,10 +70,11 @@ Zunanji pregled (Gemini, 18. 11.) je opozoril na Akt o UI čl. 5(1)(f) (prepoved
 na delovnem mestu in v izobraževalnih ustanovah) in na GDPR čl. 9 (podatki o zdravju). Stanje v kodi:
 
 **Kaj Evklid počne in česa ne.**
-- Oznaka `distress` (`server/meta.js`) ima en sam namen: varnost učenca. Postavi jo inštruktor, ko učenec sam v
-  besedilu omeni samopoškodovanje, samomor, nasilje, nevarnost ali hudo stisko (`prompts/system_prompt.md`, Meje),
-  ali jo najde varnostni pregled (`server/nujno.js`: ZDRAVJE, STISKA, NASILJE, NEVARNOST). Učenec takoj dobi potrjeno
-  okno s pomočjo (112, odrasla oseba), skrbnik pa e-mail brez vsebine (`server/stiska-obvestilo.js`).
+- Oznaka `distress` (`server/meta.js`) ima en sam namen: varnost učenca. Postavi jo samo inštruktor (META), ko učenec
+  sam v besedilu omeni samopoškodovanje, samomor, nasilje, nevarnost ali hudo stisko (`prompts/system_prompt.md`,
+  Meje). Učenec takoj dobi potrjeno okno s pomočjo (112, odrasla oseba), skrbnik pa e-mail brez vsebine
+  (`server/stiska-obvestilo.js`). Lokalni zaznavalnik in varnostni pregled (`server/nujno.js`: ZDRAVJE, STISKA,
+  NASILJE, NEVARNOST) učencu pokažeta enako okno, oznake pa ne shranita in skrbnik zanju ne dobi e-maila.
 - Oznaka ne vpliva na ocene, učno pot, ravni, lige, poročila staršem ali karkoli drugega. Ni »zaznave frustracije«
   kot ločenega sistema: poziv inštruktorju le naroči, naj se odzove na to, kar učenec napiše (»nikoli mi ne bo šlo«),
   z manjšimi koraki. Nič se ne shrani kot ocena čustev.
@@ -91,7 +92,8 @@ za hrambo 90 dni in pregled skrbnika pa izrecna privolitev staršev ali učenca 
 DPIA in pogoje.
 
 **Protokol, ko pride e-mail o oznaki stiske.**
-1. V 24 urah odpri `/api/admin/stiske` (prijava skrbnika). Stran pokaže oznake čez rok.
+1. V 24 urah odpri `/api/admin/stiske` (prijava skrbnika). Stran pokaže oznake stiske zadnjih 90 dni in označi tiste,
+   ki so čez rok.
 2. Preberi samo pogovor okoli oznake (`node scripts/najdi-sporocilo.js "#koda"`), nič drugega.
 3. Če je oznaka napačna (npr. »umrl bom od dolgčasa« pri nalogi), jo označi kot pregledano. Konec.
 4. Če je učenec morda v nevarnosti zdaj: Evklid nima podatkov za stik z otrokom in ne kliče sam. Pri otroku pod
