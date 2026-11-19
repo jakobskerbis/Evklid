@@ -82,6 +82,7 @@ const { isMockMode, modeParams, costUsd, MODEL_DEEP, MODEL_MID } = await import(
 const { callMaxUsd } = await import("../server/meje-ai.js");
 const { normalizeSettings } = await import("../server/settings.js");
 const { askModel } = await import("../server/verify.js");
+const { vrstaOcene } = await import("./ocena-koraka.mjs");
 const { lessonForQuestion, lessonNote } = await import("../server/lekcija-za-vprasanje.js");
 
 const settings = normalizeSettings({ educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik VR", subject: "MAT", solving_mode: "A" });
@@ -122,7 +123,7 @@ async function oceni(p, odgovor) {
   const r = await askModel(MODEL_DEEP, user, null, OCENA);
   ocene += costUsd(r.model || MODEL_DEEP, r.usage || {});
   const t = String(r.text || "").trim().replace(/^[\s*`_]+/, "");
-  const vrsta = /^OK\b/i.test(t) ? "OK" : (/^(POTRDI|ZAVRNE|NAPAKA)/i.exec(t)?.[1] || "NEJASNO").toUpperCase();
+  const vrsta = vrstaOcene(t);
   return { ok: vrsta === "OK", vrsta, besedilo: t.slice(0, 300) };
 }
 
