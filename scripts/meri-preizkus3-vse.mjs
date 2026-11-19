@@ -57,7 +57,7 @@ const PRODUKCIJA = process.argv.includes("--kot-produkcija");
 const PREGLED = process.argv.includes("--s-pregledom");
 const HKRATI = Number(arg("hkrati", 4));
 const DEL = arg("del", "");
-// Nabori nalog: vsak s svojo šifrirano datoteko, ključem (skrivnost v GitHubu) in imenom izida.
+// Nabori nalog: šifriran (datoteka .enc in ključ, skrivnost v GitHubu) ali javen (čisto besedilo), vsak s svojim izidom.
 const NABORI = {
   preizkus3: { enc: "./preizkus3-naloge.enc", kljuc: "PREIZKUS3_KLJUC", izid: "meri-preizkus3-vse", ime: "Preizkus 3 v celoti" },
   // Javen nabor (kljuc null): naloge v čistem besedilu, izid nešifriran tudi v GitHub Actions.
@@ -80,7 +80,7 @@ if (PRODUKCIJA && process.env.GITHUB_ACTIONS) napaka("--kot-produkcija ni dovolj
 
 // Naloge: šifrirana datoteka in ključ iz okolja ali lokalna datoteka s čistim besedilom. Ključ se takoj odstrani iz
 // okolja, da ga noben del strežnika ne vidi in ne zapiše.
-// Oba ključa se odstranita ne glede na nabor.
+// Vsi ključi šifriranih naborov se odstranijo iz okolja ne glede na izbrani nabor.
 const KLJUC = NABOR.kljuc ? process.env[NABOR.kljuc] : null;
 for (const n of Object.values(NABORI)) if (n.kljuc) delete process.env[n.kljuc];
 // V GitHub Actions vedno s ključem: izid šifriranega nabora mora biti v artefaktu šifriran.
