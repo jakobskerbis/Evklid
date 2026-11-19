@@ -8,13 +8,14 @@
 // - dnevna opravila: usklajevanje naročnin s Stripom, opomnik pred koncem kode in pred letno obnovitvijo.
 import express from "express";
 import { randomToken, sha256, Throttle } from "./auth.js";
-import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd, planGuarantee, vatRateFor, eurVatFor, aiCapFromNetEur } from "./plans.js";
+import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, planOfPrice, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd, planGuarantee, vatRateFor, eurVatFor, aiCapFromNetEur } from "./plans.js";
 import { BIRTH_MISSING_PAY } from "./age.js";
 import { Schedules, nowParts, cleanDate, TEST_KINDS } from "../schedule.js";
 import { cleanText } from "../settings.js";
 import { ljNow } from "./goal-reminder.js";
 import { promoEndingEmail, renewalEmail, schoolSubEndEmail, planChangeEmail, allowanceEmail } from "./email.js";
 import { audit } from "../dnevnik-dostopov.js";
+import { rang } from "../../public/stopnja.js";
 import { parentFromMeta, purchaseMismatch, logSafe } from "./ponoven-id.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
@@ -892,6 +893,7 @@ export function mountBilling(app, ctx) {
     // Pred opomnikom o obnovitvi: ta isti dan ne sme reči »se bo obnovila«, če jo tu ustavimo.
     await schoolSubEnd(now, out, appUrl);
     await levelChanges(now, out, appUrl);
+    await priceDrops(now, out);
     const in30 = iso(now.getTime() + 30 * 86400000);
     for (const p of db.prepare("SELECT * FROM parents WHERE sub_period_end > ? AND sub_period_end <= ? AND sub_cancel_at_period_end = 0").all(nowIso, in30)) {
       const plan = planByKey(p.sub_plan);
@@ -937,7 +939,7 @@ export function mountBilling(app, ctx) {
           db.prepare(
             "INSERT INTO plan_changes (parent_id, sub_id, from_key, to_key, effective_at, notified_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(parent_id) DO UPDATE SET sub_id = excluded.sub_id, from_key = excluded.from_key, to_key = excluded.to_key, effective_at = excluded.effective_at, notified_at = excluded.notified_at, applied_at = NULL",
           ).run(p.id, p.sub_id, plan.key, to.key, effective, iso(now.getTime()));
-          const msg = planChangeEmail({ planText: to.label, amountText: fmtMoney(to.amount, "EUR"), dateText: fmtDate(effective), up }, appUrl);
+          const msg = planChangeEmail({ planText: to.label, amountText: fmtMoney(to.amount, "EUR"), dateText: fmtDate(effective), up, same: to.amount === plan.amount, higher: rang(planLevel(to)) > rang(planLevel(plan)) }, appUrl);
           const period = `${to.key}:${effective.slice(0, 10)}`;
           const sent = await remind(p, "plan_change", period, msg);
           // Višja cena brez poslane e-pošte ne sme začeti veljati: jutri znova (z novim rokom vsaj 30 dni).
@@ -963,6 +965,37 @@ export function mountBilling(app, ctx) {
         out.plan_applied++;
       } catch (err) {
         log.error?.("[evklid] prehod stopnje:", p.id, err.message);
+      }
+    }
+  }
+  // Znižana cena paketa (j 2026-11-19: SŠ letno 139 → 99 €): naročnina, ki v Stripu še teče po stari, višji (arhivirani)
+  // ceni, tik pred podaljšanjem (3 dni prej, kot levelChanges) preide na današnjo ceno brez proracije. Tako opomnik o
+  // obnovitvi (plan.amount) in Račun navedeta znesek, ki bo res zaračunan. Višje cene ostanejo za obstoječe naročnine
+  // (plans.js), zato samo navzdol. Prehod stopnje (plan_changes) ima prednost.
+  async function priceDrops(now, out) {
+    out.price_dropped = 0;
+    if (!stripe.enabled) return;
+    for (const p of db.prepare("SELECT * FROM parents WHERE sub_id IS NOT NULL AND sub_cancel_at_period_end = 0").all()) {
+      if ((p.sub_provider || "stripe") !== "stripe" || !String(p.sub_id).startsWith("sub_") || !paidActive(p, now.getTime())) continue;
+      const plan = planByKey(p.sub_plan);
+      if (!plan || plan.legacy || plan.school || (plan.currency && plan.currency !== "EUR")) continue;
+      const left = Date.parse(p.sub_period_end) - now.getTime();
+      if (!(left > 0 && left <= APPLY_BEFORE_MS)) continue;
+      // Prehod stopnje ob TEM podaljšanju ima prednost (isti pogoj kot opomnik o obnovitvi); poznejši ali zastarel ne.
+      const row = changeOf(p.id);
+      if (row && !row.applied_at && row.sub_id === p.sub_id && Math.abs(Date.parse(row.effective_at) - Date.parse(p.sub_period_end)) <= 86400000) continue;
+      try {
+        const sub = await stripe.request("GET", `/subscriptions/${p.sub_id}`);
+        const item = sub.items?.data?.[0];
+        // Samo ista cena paketa v Stripu (zastarela baza ne sme naročnine premakniti na drug paket).
+        if (!item?.id || planOfPrice(item.price)?.key !== plan.key || !(Number(item.price?.unit_amount) > plan.amount)) continue;
+        const { prices } = await stripe.ensurePrices("EUR");
+        if (!prices[plan.key] || prices[plan.key] === item.price.id) continue;
+        const updated = await stripe.request("POST", `/subscriptions/${p.sub_id}`, { items: [{ id: item.id, price: prices[plan.key] }], proration_behavior: "none" });
+        await applySubscription(p.id, updated);
+        out.price_dropped++;
+      } catch (err) {
+        log.error?.("[evklid] znižana cena:", p.id, err.message);
       }
     }
   }

@@ -18,17 +18,19 @@ export const PRIVACY_VERSION = "2026-11-18";
 
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.
 // Cene po stopnjah (j 2026-11-04, »Cene z najmanj 75 % dobička«, Predlog A): cena velja za profil in sledi
-// stopnji profila (public/stopnja.js): OŠ 9,99 € na mesec ali 99 € na leto, SŠ 13,99 / 139 €, faks 19,99 / 199 €.
+// stopnji profila (public/stopnja.js): OŠ 9,99 € na mesec ali 99 € na leto, SŠ 13,99 / 99 €, faks 19,99 / 199 €.
 // Družina (2–4 profili OŠ ali SŠ) 18,99 / 189 €, Družina s študentom (2–4 profili, tudi faks) 27,99 / 269 €.
-// Letna cena ≈ 10 mesečnih plačil. Pravilo j: vsak paket ima v najslabšem primeru (učenec porabi ves zajamčeni
+// Letna cena ≈ 10 mesečnih plačil (SŠ ≈ 7, glej spodaj). Pravilo j: vsak paket ima v najslabšem primeru (učenec porabi ves zajamčeni
 // AI) vsaj 75 % dobička (worstProfit spodaj). Prejšnje cene (1. 11.): OŠ 9,99 / 89, SŠ 12,99 / 119, faks
 // 16,99 / 149, Družina 17,99 / 159, s študentom 24,99 / 219 €.
+// Letna SŠ 99 € (j 2026-11-19, kartica »99 € na leto«; prej 139 €): pod 119,99 €, ≈ 7 mesečnih plačil do mature.
+// OŠ in SŠ letno sta zato enako dragi (prehod med njima: ista cena, server/accounts/email.js planChangeEmail).
 // Paket OŠ obdrži stari lookup_key (<slug>_1_month), da obstoječe naročnine ostanejo pri isti ceni v Stripu.
 // Ob spremembi zneska Stripe sam ustvari novo ceno in staro arhivira (glej ensurePrices); obstoječe
 // naročnine ostanejo pri stari ceni. Naročnina odpre svojo stopnjo in vse nižje (server/placila/pravice.js).
 export const LEVEL_PRICES = {
   OS: { month: 999, year: 9900 },
-  SS: { month: 1399, year: 13900 },
+  SS: { month: 1399, year: 9900 },
   FAKS: { month: 1999, year: 19900 },
 };
 export const FAMILY_PRICES = {
@@ -251,7 +253,7 @@ export const SCHOOL_PLANS = [
 export const schoolPlanFor = (interval) => SCHOOL_PLANS.find((p) => p.interval === interval) || null;
 
 // Darilna koda: eno leto za en profil izbrane stopnje, enkratno plačilo po letni ceni stopnje
-// (j 2026-11-04: 99 / 139 / 199 €; server/placila/darila.js). Zajamčeni AI kot pri letni naročnini stopnje.
+// (j 2026-11-04, SŠ 2026-11-19: 99 / 99 / 199 €; server/placila/darila.js). Zajamčeni AI kot pri letni naročnini stopnje.
 export const giftFor = (level = "OS") => {
   const l = LEVEL_PRICES[level] ? level : "OS";
   return { amount: LEVEL_PRICES[l].year, days: 365, currency: "EUR", level: l, label: `Darilna koda: 1 leto ${LEVEL_LABEL[l]}` };
@@ -264,6 +266,19 @@ export const ALL_PLANS = [...PLANS.map((p) => ({ ...p, currency: "EUR" })), ...L
 // Cene, ustvarjene pod prejšnjim imenom aplikacije (brand.json → legacy), imajo v Stripu lookup_key »<staro>_…«.
 const currentKey = (key) => LEGACY.reduce((k, l) => (k.startsWith(`${l.slug}_`) ? `${BRAND.slug}_${k.slice(l.slug.length + 1)}` : k), String(key ?? ""));
 export const planByKey = (key) => ALL_PLANS.find((p) => p.key === currentKey(key)) || null;
+// Paket cene v Stripu. Ob spremembi zneska (npr. SŠ letno 139 → 99 €, j 2026-11-19) ensurePrices prenese lookup_key na
+// novo ceno in staro arhivira; obstoječe naročnine ostanejo na stari ceni brez lookup_key. Takrat paket po
+// metadata.plan_key (cene od 2026-11-19) ali po nazivu (nickname = label, v drugih valutah »label (VALUTA)«),
+// valuti in obdobju, ki so med paketi enolični.
+export const planOfPrice = (price) => {
+  if (!price) return null;
+  const byKey = planByKey(price.lookup_key) || planByKey(price.metadata?.plan_key);
+  if (byKey) return byKey;
+  const cur = String(price.currency || "").toUpperCase();
+  const interval = price.recurring?.interval;
+  if (!price.nickname || !cur || !interval) return null;
+  return ALL_PLANS.find((p) => p.currency === cur && p.interval === interval && (cur === "EUR" ? p.label : `${p.label} (${cur})`) === price.nickname) || null;
+};
 export const isSchoolPlan = (key) => !!planByKey(key)?.school;
 // Paket za nakup: v evrih 1 profil po stopnji profila, 2 ali več profilov Družina (s študentom, če je stopnja
 // faks); v regijskih valutah kot doslej po številu otrok (1 ali 2).
@@ -330,7 +345,7 @@ export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find
 
 // ---------- poraba AI v naročnini (j 2026-11-01, deleži j 2026-11-04 »Predlog A«) ----------
 // Zajamčeno na profil na mesec (v $, kot zaračunava Claude API): mesečna naročnina OŠ 1,9 $, SŠ 2,9 $, faks 4,5 $;
-// letna OŠ 1,7 $, SŠ 2,6 $, faks 3,8 $. Družina ima en skupen delež za ves račun (vsi profili skupaj): Družina 3,2 $
+// letna OŠ 1,7 $, SŠ 1,7 $ (j 2026-11-19, letna cena 99 €; prej 2,6 $), faks 3,8 $. Družina ima en skupen delež za ves račun (vsi profili skupaj): Družina 3,2 $
 // (letno 2,6 $), Družina s študentom 5,5 $ (letno 4,3 $); obvestila 80 % / 100 % in »še N razlag« veljajo za skupni
 // delež. Osebno ob šolski licenci 0,9 $ (letno 0,6 $). Regijski paketi po pravilu 75 % (regionalGuaranteeUsd).
 // Deleži naročnikov imajo prednost pred brezplačnimi v skupnem mesečnem proračunu (server/usage.js).
@@ -343,7 +358,7 @@ export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find
 // (freeDailyQuestions, 10 na dan, hitri model) in brezplačni rep, razporejen po dnevih (j 2026-11-17; server/usage.js
 // overCeiling/tailToday, server/accounts/index.js dailyLimitFor).
 export const AI_GUARANTEE_USD = { OS: 1.9, SS: 2.9, FAKS: 4.5 };
-export const AI_GUARANTEE_YEAR_USD = { OS: 1.7, SS: 2.6, FAKS: 3.8 };
+export const AI_GUARANTEE_YEAR_USD = { OS: 1.7, SS: 1.7, FAKS: 3.8 };
 export const FAMILY_POOL_USD = { druzina: { month: 3.2, year: 2.6 }, druzina_student: { month: 5.5, year: 4.3 } };
 export const SCHOOL_PLAN_AI_USD = { month: 0.9, year: 0.6 };
 export const FAST_TAIL = 0.15;

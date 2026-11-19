@@ -51,7 +51,7 @@ function prihranekStarsi(pairs) {
       if (d.plans.some(function (pl) { return pl.level; })) {
         document.getElementById("plan-month").innerHTML = "Naročnina na mesec: <b>" + lv("OS", false, "month") + "</b> v osnovni šoli, <b>" + lv("SS", false, "month") + "</b> v srednji šoli, <b>" + lv("FAKS", false, "month") + "</b> na fakulteti. Družina (2–4 profili): <b>" + lv("SS", true, "month") + "</b>, s študentom <b>" + lv("FAKS", true, "month") + "</b>.";
         // Letni paket prvi (j 2026-11-04), s prihrankom glede na 12 mesečnih plačil. Prihranek se med paketi razlikuje
-        // (zunanji pregled 16. 11.: OŠ 17,4 %, Družina s študentom 19,9 %), zato razpon od najmanjšega do največjega,
+        // (OŠ 17,4 %, Družina s študentom 19,9 %, SŠ od 19. 11. 41 %), zato razpon od najmanjšega do največjega,
         // oba navzdol na cel odstotek (nikoli preveč), kot pay.save v account.js.
         var amt = function (level, family, interval) { var x = d.plans.find(function (pl) { return pl.level === level && !!pl.family === family && pl.interval === interval; }); return x ? x.amount : 0; };
         var save = prihranekStarsi([["OS", false], ["SS", false], ["FAKS", false], ["SS", true], ["FAKS", true]].map(function (k) {

@@ -204,7 +204,7 @@ export function mountGifts(app, ctx) {
       return res
         .status(429)
         .json({ error: "Preveč odprtih nakupov. Poskusi jutri." });
-    // Stopnja darila: OŠ (privzeto), SŠ ali faks; cena je letna cena stopnje (99 / 139 / 199 €). Neznana stopnja
+    // Stopnja darila: OŠ (privzeto), SŠ ali faks; cena je letna cena stopnje (99 / 99 / 199 €). Neznana stopnja
     // je napaka (400), ne tiho OŠ, da kupec ne plača in dobi druge stopnje, kot jo je izbral.
     const want = req.body?.level ?? "OS";
     if (!STOPNJE.includes(want)) return res.status(400).json({ error: "Neznana stopnja darila." });
