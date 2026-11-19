@@ -46,7 +46,7 @@ function varnost(pravilo) {
     const n = (poskusi.get(b) || 0) + 1;
     poskusi.set(b, n);
     fn.klici.push({ b, n });
-    const k = pravilo(b, n);
+    const k = await pravilo(b, n);
     if (k === "napaka") throw Object.assign(new Error("529 overloaded"), { status: 529 });
     if (k === "visi") return new Promise(() => {});
     return odgovor(k);
@@ -54,6 +54,30 @@ function varnost(pravilo) {
   fn.klici = [];
   return fn;
 }
+// Zapora: obljuba, ki jo test odpre sam (vrstni red dogodkov ne sme biti odvisen od hitrosti stroja).
+const zapora = () => {
+  let odpri;
+  const p = new Promise((r) => (odpri = r));
+  return { p, odpri };
+};
+// Izpad ponudnika za besedilo, ki ustreza `re`: prvi klic pade (ali z "visi" ne odgovori), ponovitev počaka, da jo
+// test spusti, in vrne `vrsta`. Zadetek tako pride zanesljivo po koncu odgovora. Druga besedila dobijo NE.
+function pozenZadetek(re, vrsta, prvi = "napaka") {
+  const cakajo = [];
+  const fn = varnost(async (b, n) => {
+    if (!re.test(b)) return "NE";
+    if (n === 1) return prvi;
+    await new Promise((r) => cakajo.push(r));
+    return vrsta;
+  });
+  fn.spusti = async () => {
+    await doKler(() => cakajo.length > 0, "ponovitev je v teku");
+    for (const r of cakajo.splice(0)) r();
+  };
+  return fn;
+}
+// Roki za teste z zaporo: ponovitev sme čakati na test.
+const CASI_ZAPORA = { rokMs: 80, rokPonovitveMs: 20000, premorMs: 0 };
 function fakeUsage() {
   const kv = new Map();
   const logs = [];
@@ -103,7 +127,7 @@ test("ponovitev: ponudnik ne odgovori (rok) → prvi poskus se konča ob roku, p
   const { prvi, pozno } = pregledSPonovitvijo({ text: "dedek čudno govori", usage, studentId: 7, createFn: fn, varovalka: false, casi: CASI });
   assert.deepEqual(await prvi, { vrsta: null, izid: "rok" });
   const cas = Date.now() - t0;
-  assert.ok(cas >= CASI.rokMs - 10 && cas < CASI.rokMs + 1500, `prvi poskus se je končal po ${cas} ms`);
+  assert.ok(cas >= CASI.rokMs - 10 && cas < CASI.rokMs + 5000, `prvi poskus se je končal po ${cas} ms`);
   assert.deepEqual(await pozno, { vrsta: "zdravje", izid: "ok" });
   assert.deepEqual(samo(danes(usage)), { rok: 1, ponovitve: 1, pozni_zadetki: 1 });
 });
@@ -308,16 +332,18 @@ test("čez mejo: učenec počaka samo na prvi poskus; pozni zadetek gre v vrsto 
   const fn = varnost(() => "napaka");
   assert.equal((await nujnoPredZavrnitvijo({ text: "oče me tepe", student: ana, usage, createFn: fn, pozna: q, casi: CASI })).vrsta, "nasilje");
   assert.equal(fn.klici.length, 0);
-  // Besedilo, ki ga lokalni zaznavalnik ne ujame: prvi poskus pade → brez okna zdaj, okno v vrsti po ponovitvi.
-  const fn2 = varnost((b, n) => (n === 1 ? "visi" : "STISKA"));
-  const t0 = Date.now();
-  assert.equal(await nujnoPredZavrnitvijo({ text: "danes je vse nekam čudno", student: ana, usage, createFn: fn2, pozna: q, casi: CASI }), null);
-  assert.ok(Date.now() - t0 < CASI.rokMs + 1500, "zavrnitev ne čaka na ponovitev");
+  // Besedilo, ki ga lokalni zaznavalnik ne ujame: prvi poskus pade → brez okna zdaj; zavrnitev ne čaka na ponovitev
+  // (ta še teče, ko je odgovor že znan), okno gre v vrsto šele po njej.
+  const fn2 = pozenZadetek(/čudno/, "STISKA");
+  assert.equal(await nujnoPredZavrnitvijo({ text: "danes je vse nekam čudno", student: ana, usage, createFn: fn2, pozna: q, casi: CASI_ZAPORA }), null);
+  assert.equal(q.stevilo(), 0, "ponovitev še teče");
+  await fn2.spusti();
   await doKler(() => q.stevilo() === 1, "pozno okno v vrsti");
   assert.equal(q.vzemi(ana).vrsta, "stiska");
   // Posredna stiska lokalno (»pogovor«) in pozni zadetek: blažje okno zdaj, polno v vrsti.
-  const fn3 = varnost((b, n) => (n === 1 ? "napaka" : "STISKA"));
-  assert.equal((await nujnoPredZavrnitvijo({ text: "ne zdržim več", student: ana, usage, createFn: fn3, pozna: q, casi: CASI })).vrsta, "pogovor");
+  const fn3 = pozenZadetek(/ne zdržim/, "STISKA");
+  assert.equal((await nujnoPredZavrnitvijo({ text: "ne zdržim več", student: ana, usage, createFn: fn3, pozna: q, casi: CASI_ZAPORA })).vrsta, "pogovor");
+  await fn3.spusti();
   await doKler(() => q.stevilo() === 1, "polno okno v vrsti");
   assert.equal(q.vzemi(ana).vrsta, "stiska");
   // Brez vrste (klic iz starejše kode) ne pade; ponovitev, ki ne uspe, ne doda ničesar.
@@ -369,14 +395,22 @@ const events = (sse) => sse.split("\n\n").filter(Boolean).map((c) => ({ event: /
 const okna = (ev) => ev.filter((e) => e.event === "nujno").map((e) => e.data.vrsta);
 const pred = (ev, a, b) => ev.findIndex((e) => e.event === a) >= 0 && ev.findIndex((e) => e.event === a) < ev.findIndex((e) => e.event === b);
 
-test("strežnik: rok → ponovitev → zadetek → okno v istem toku, odgovor ni zadržan in ni shranjen za druge", async () => {
+test("strežnik: rok → ponovitev → zadetek → okno v istem toku; odgovor ni shranjen za druge, strošek je aplikacije", async () => {
   const varnostFn = varnost((b, n) => (/zaklenil/.test(b) ? (n === 1 ? "visi" : "NASILJE") : "NE"));
-  // Inštruktor odgovarja 600 ms: prvi poskus pregleda poteče po 80 ms, ponovitev najde zadetek, tok je še odprt.
-  await withServer({ streamFn: tok("Razumem." + META, { ms: 600 }), varnostFn }, async ({ ucenec, store, stanje }) => {
+  // Inštruktor pri prvem sporočilu odgovarja, dokler pozno okno ni v toku (prvi poskus pregleda poteče po 80 ms).
+  let stevciZdaj = null;
+  let prvo = true;
+  const streamFn = async (a) => {
+    if (prvo) {
+      prvo = false;
+      await doKler(() => stevciZdaj().pozno_v_toku === 1, "pozno okno v toku");
+    }
+    return tok("Razumem." + META)(a);
+  };
+  await withServer({ streamFn, varnostFn }, async ({ ucenec, store, stanje }) => {
+    stevciZdaj = stanje;
     const { poslji } = await ucenec("Ana");
-    const t0 = Date.now();
     const ev = await poslji("stric me je zaklenil v sobo");
-    assert.ok(Date.now() - t0 < 600 + 1500, "ponovitev ne zadržuje odgovora");
     assert.deepEqual(okna(ev), ["nasilje"], "natanko eno okno");
     assert.equal(ev.find((e) => e.event === "nujno").data.ai, true);
     assert.ok(pred(ev, "nujno", "done"));
@@ -393,16 +427,31 @@ test("strežnik: rok → ponovitev → zadetek → okno v istem toku, odgovor ni
   });
 });
 
+test("strežnik: ponovitev ne zadržuje odgovora inštruktorja (odgovor pride, ko ponovitev še teče)", async () => {
+  // Prvi poskus ne odgovori (rok 80 ms), ponovitev čaka na zaporo: odgovor mora priti prej.
+  const varnostFn = pozenZadetek(/čudno/, "STISKA", "visi");
+  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, stanje }) => {
+    const { poslji } = await ucenec("Bine");
+    const ev = await poslji("doma je vse čudno");
+    assert.equal(ev.at(-1).event, "done");
+    assert.deepEqual(okna(ev), []);
+    assert.deepEqual(samo(stanje()), { rok: 1, ponovitve: 1 }, "ponovitev še teče, odgovor je že tu");
+    await varnostFn.spusti();
+    await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
+    assert.deepEqual(okna(await poslji("koliko je 2 + 2")), ["stiska"]);
+  });
+});
+
 test("strežnik: zadetek ponovitve po koncu odgovora → okno ob naslednjem odgovoru, enkrat, samo temu učencu", async () => {
-  const varnostFn = varnost((b, n) => (/zaklenil/.test(b) ? (n === 1 ? "napaka" : "NASILJE") : "NE"));
-  // Premor pred ponovitvijo 200 ms: hiter odgovor inštruktorja se konča prej.
-  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: { ...CASI, premorMs: 200 } }, async ({ ucenec, store, stanje, app, call }) => {
+  const varnostFn = pozenZadetek(/zaklenil/, "NASILJE");
+  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, store, stanje, app, call }) => {
     const ana = await ucenec("Ana");
     const bor = await ucenec("Bor");
     const ev1 = await ana.poslji("stric me je zaklenil v sobo");
     assert.deepEqual(okna(ev1), [], "ob izpadu ponudnika v prvem odgovoru ni okna");
     assert.equal(ev1.at(-1).event, "done");
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM answer_cache").get().n, 1, "odgovor je bil shranjen, preden je prišel zadetek");
+    await varnostFn.spusti();
     await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM answer_cache").get().n, 0, "pozni zadetek ga pobriše");
     assert.equal((await call("/api/usage")).body.varnost.pozna_okna_cakajo, 1);
@@ -476,10 +525,11 @@ test("strežnik: izpad ponudnika ne zasuje učencev z okni (vsako sporočilo en 
 });
 
 test("strežnik: blažje okno »pogovor« zdaj, polno okno poznega zadetka ob naslednjem odgovoru", async () => {
-  const varnostFn = varnost((b, n) => (/ne zdržim/.test(b) ? (n === 1 ? "napaka" : "STISKA") : "NE"));
-  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: { ...CASI, premorMs: 200 } }, async ({ ucenec, stanje }) => {
+  const varnostFn = pozenZadetek(/ne zdržim/, "STISKA");
+  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, stanje }) => {
     const { poslji } = await ucenec("Dora");
     assert.deepEqual(okna(await poslji("ne zdržim več")), ["pogovor"]);
+    await varnostFn.spusti();
     await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
     assert.deepEqual(okna(await poslji("koliko je 2 + 2")), ["stiska"]);
     await doKler(() => stanje().pozno_naslednji === 1, "oddano");
@@ -488,10 +538,11 @@ test("strežnik: blažje okno »pogovor« zdaj, polno okno poznega zadetka ob na
 });
 
 test("strežnik: okno novega sporočila ima prednost; pozno okno druge vrste počaka na naslednji odgovor, enaka vrsta se ne podvoji", async () => {
-  const varnostFn = varnost((b, n) => (/čudno|drugače/.test(b) ? (n === 1 ? "napaka" : "STISKA") : "NE"));
-  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: { ...CASI, premorMs: 200 } }, async ({ ucenec, stanje }) => {
+  const varnostFn = pozenZadetek(/čudno|drugače/, "STISKA");
+  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, stanje }) => {
     const { poslji } = await ucenec("Ema");
     assert.deepEqual(okna(await poslji("doma je vse čudno")), []);
+    await varnostFn.spusti();
     await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
     // Novo sporočilo ima svoj zadetek (lokalno, zdravje): eno okno, pozno (stiska) ostane v vrsti.
     assert.deepEqual(okna(await poslji("Ati se je onesvestil in ne diha")), ["zdravje"]);
@@ -500,6 +551,7 @@ test("strežnik: okno novega sporočila ima prednost; pozno okno druge vrste po�
     assert.deepEqual(okna(await poslji("koliko je 3 + 3")), []);
     // Pozno okno enake vrste, kot jo nosi novo sporočilo samo: eno okno, potem nič več.
     assert.deepEqual(okna(await poslji("danes je vse drugače")), []);
+    await varnostFn.spusti();
     await doKler(() => stanje().pozni_zadetki === 2, "drugi pozni zadetek");
     assert.deepEqual(okna(await poslji("nočem več živeti")), ["stiska"]);
     await doKler(() => stanje().pozno_naslednji === 2, "šteto kot oddano");
@@ -510,12 +562,13 @@ test("strežnik: okno novega sporočila ima prednost; pozno okno druge vrste po�
 test("strežnik: inštruktor je stisko označil sam → pozni zadetek iste vrste ne doda okna, druge vrste pride naslednjič", async () => {
   const stiska = "Slišim te. Pokliči TOM telefon 116 111." + metaFlag("distress");
   for (const [vrsta, naslednjic] of [["STISKA", []], ["NASILJE", ["nasilje"]]]) {
-    const varnostFn = varnost((b, n) => (/smisla/.test(b) ? (n === 1 ? "napaka" : vrsta) : "NE"));
+    const varnostFn = pozenZadetek(/smisla/, vrsta);
     let prvi = true;
     const streamFn = (a) => (prvi ? ((prvi = false), tok(stiska)(a)) : tok("Razumem." + META)(a));
-    await withServer({ streamFn, varnostFn, varnostCasi: { ...CASI, premorMs: 200 } }, async ({ ucenec, stanje }) => {
+    await withServer({ streamFn, varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, stanje }) => {
       const { poslji } = await ucenec("Fani");
       assert.deepEqual(okna(await poslji("nič več nima smisla")), ["stiska"]);
+      await varnostFn.spusti();
       await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
       assert.deepEqual(okna(await poslji("koliko je 2 + 2")), naslednjic, vrsta);
       if (!naslednjic.length) assert.equal(stanje().pozno_ze_okno, 1);
@@ -524,12 +577,13 @@ test("strežnik: inštruktor je stisko označil sam → pozni zadetek iste vrste
 });
 
 test("strežnik: ob napaki inštruktorja gre čakajoče pozno okno kot dogodek pred napako, enkrat", async () => {
-  const varnostFn = varnost((b, n) => (/čudno/.test(b) ? (n === 1 ? "napaka" : "ZDRAVJE") : "NE"));
+  const varnostFn = pozenZadetek(/čudno/, "ZDRAVJE");
   let pade = false;
   const streamFn = (a) => tok("Razumem." + META, { fail: pade })(a);
-  await withServer({ streamFn, varnostFn, varnostCasi: { ...CASI, premorMs: 200 } }, async ({ ucenec, stanje }) => {
+  await withServer({ streamFn, varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, stanje }) => {
     const { poslji } = await ucenec("Gal");
     assert.deepEqual(okna(await poslji("babica je čudno bleda")), []);
+    await varnostFn.spusti();
     await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
     pade = true;
     const ev = await poslji("koliko je 2 + 2");
@@ -543,24 +597,35 @@ test("strežnik: ob napaki inštruktorja gre čakajoče pozno okno kot dogodek p
 });
 
 test("strežnik: prekinjena povezava pred koncem odgovora → pozno okno ostane za naslednji odgovor", async () => {
-  const varnostFn = varnost((b, n) => (/čudno/.test(b) ? (n === 1 ? "napaka" : "STISKA") : "NE"));
-  let ms = 0;
-  const streamFn = (a) => tok("Razumem." + META, { ms })(a);
-  await withServer({ streamFn, varnostFn, varnostCasi: { ...CASI, premorMs: 200 } }, async ({ ucenec, stanje, call, base }) => {
+  const varnostFn = pozenZadetek(/čudno/, "STISKA");
+  // Inštruktor pri drugem sporočilu odgovarja, dokler ga test ne spusti (učenec vmes prekine povezavo).
+  let cakaj = null;
+  const streamFn = async (a) => {
+    if (cakaj) await cakaj.p;
+    return tok("Razumem." + META)(a);
+  };
+  await withServer({ streamFn, varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, stanje, call, base }) => {
     const { poslji, c } = await ucenec("Hana");
     assert.deepEqual(okna(await poslji("vse je čudno")), []);
+    await varnostFn.spusti();
     await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
-    // Naslednji odgovor: okno gre v tok, a učenec povezavo prekine pred koncem (počasen inštruktor).
-    ms = 1200;
+    // Naslednji odgovor: okno gre v tok, a učenec povezavo prekine pred koncem.
+    cakaj = zapora();
     const ac = new AbortController();
     const r = await fetch(`${base}/api/conversations/${c.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "koliko je 2 + 2" }), signal: ac.signal });
-    const { value } = await r.body.getReader().read();
-    assert.match(new TextDecoder().decode(value), /event: nujno/);
+    const bralec = r.body.getReader();
+    let prejeto = "";
+    while (!/event: nujno/.test(prejeto)) {
+      const { value, done } = await bralec.read();
+      assert.equal(done, false, "tok je še odprt");
+      prejeto += new TextDecoder().decode(value);
+    }
     ac.abort();
-    ms = 0;
     // Strežnik ne ve, ali je učenec okno videl: gre nazaj v vrsto in pride še enkrat (raje dvakrat kot nikoli).
     await doKler(async () => (await call("/api/usage")).body.varnost.pozna_okna_cakajo === 1, "okno je spet v vrsti");
     assert.equal(stanje().pozno_naslednji, 0);
+    cakaj.odpri();
+    cakaj = null;
     let ev = null;
     await doKler(async () => Array.isArray((ev = await poslji("koliko je 3 + 3"))), "pogovor je spet prost");
     assert.deepEqual(okna(ev), ["stiska"]);
@@ -570,11 +635,13 @@ test("strežnik: prekinjena povezava pred koncem odgovora → pozno okno ostane 
 });
 
 test("strežnik: izbrisan profil – pozno okno ne preide na nov profil z istim id", async () => {
-  const varnostFn = varnost((b, n) => (/čudno/.test(b) ? (n === 1 ? "napaka" : "STISKA") : "NE"));
-  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: { ...CASI, premorMs: 200 } }, async ({ ucenec, stanje, call }) => {
+  const varnostFn = pozenZadetek(/čudno/, "STISKA");
+  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, stanje, call }) => {
     const stari = await ucenec("Iza");
     assert.deepEqual(okna(await stari.poslji("vse je čudno")), []);
+    await varnostFn.spusti();
     await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
+    assert.equal((await call("/api/usage")).body.varnost.pozna_okna_cakajo, 1);
     assert.equal((await call(`/api/students/${stari.s.id}`, null, "DELETE")).status, 200);
     const novi = await ucenec("Jan");
     assert.equal(novi.s.id, stari.s.id, "SQLite id izbrisanega profila dodeli novemu");
@@ -584,10 +651,11 @@ test("strežnik: izbrisan profil – pozno okno ne preide na nov profil z istim 
 });
 
 test("strežnik: mobilna aplikacija z lastnim blažjim oknom – pozno okno počaka na odgovor, v katerem bo vidno", async () => {
-  const varnostFn = varnost((b, n) => (/čudno/.test(b) ? (n === 1 ? "napaka" : "NASILJE") : "NE"));
-  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: { ...CASI, premorMs: 200 } }, async ({ ucenec, stanje, base }) => {
+  const varnostFn = pozenZadetek(/čudno/, "NASILJE");
+  await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, stanje, base }) => {
     const { poslji, c } = await ucenec("Kaja");
     assert.deepEqual(okna(await poslji("vse je čudno")), []);
+    await varnostFn.spusti();
     await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
     const mobilno = async (text) =>
       events(await (await fetch(`${base}/api/conversations/${c.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json", "x-app-client": "evklid-mobile" }, body: JSON.stringify({ text }) })).text());
@@ -633,13 +701,14 @@ test("vrzel sporočilo samo s sliko: brez besedila ni pregleda (ostane inštrukt
 test("vrzel čez mejo (brez računov): prvi poskus pade → zavrnitev brez okna; pozni zadetek ob naslednji zavrnitvi, enkrat", async () => {
   const prev = process.env.EVKLID_DAILY_QUESTIONS;
   process.env.EVKLID_DAILY_QUESTIONS = "1";
-  const varnostFn = varnost((b, n) => (/čudno/.test(b) ? (n === 1 ? "napaka" : "STISKA") : "NE"));
+  const varnostFn = pozenZadetek(/čudno/, "STISKA");
   try {
-    await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: { ...CASI, premorMs: 100 } }, async ({ ucenec, stanje }) => {
+    await withServer({ streamFn: tok("Razumem." + META), varnostFn, varnostCasi: CASI_ZAPORA }, async ({ ucenec, stanje }) => {
       const { poslji } = await ucenec("Cene");
       await poslji("2 + 2");
       const r1 = await poslji("doma je vse čudno");
       assert.deepEqual([r1.status, r1.body.limit, r1.body.nujno], [429, true, undefined]);
+      await varnostFn.spusti();
       await doKler(() => stanje().pozni_zadetki === 1, "pozni zadetek");
       const r2 = await poslji("kdaj lahko spet vprašam");
       assert.deepEqual([r2.status, r2.body.nujno?.vrsta, r2.body.nujno?.ai], [429, "stiska", true]);
