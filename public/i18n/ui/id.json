@@ -430,6 +430,7 @@
   "chat.waitDeep": "Menyiapkan penjelasan yang lebih rinci …",
   "chat.waitCheck": "Memeriksa jawaban …",
   "chat.waitThink": "Sedang berpikir …",
+  "chat.waitQueue": "Banyak siswa sekaligus. Kamu sedang dalam antrean (urutan {n}) …",
   "chatMode.A": "Dibimbing",
   "chatMode.B": "Penyelesaian lengkap",
   "subj.MAT": "Matematika",

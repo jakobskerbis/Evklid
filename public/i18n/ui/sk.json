@@ -448,6 +448,7 @@
   "chat.waitDeep": "Pripravujem podrobnejšie vysvetlenie …",
   "chat.waitCheck": "Kontrolujem odpoveď …",
   "chat.waitThink": "Premýšľam …",
+  "chat.waitQueue": "Veľa žiakov naraz. Si v rade (miesto {n}) …",
   "chatMode.A": "S vedením",
   "chatMode.B": "Celé riešenie",
   "subj.MAT": "Matematika",

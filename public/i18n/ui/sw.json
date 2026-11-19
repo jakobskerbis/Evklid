@@ -436,6 +436,7 @@
   "chat.waitDeep": "Ninaandaa maelezo ya kina zaidi …",
   "chat.waitCheck": "Ninakagua jibu …",
   "chat.waitThink": "Ninafikiri …",
+  "chat.waitQueue": "Wanafunzi wengi kwa wakati mmoja. Uko kwenye foleni (nafasi ya {n}) …",
   "chatMode.A": "Kwa uongozi",
   "chatMode.B": "Suluhisho kamili",
   "subj.MAT": "Hisabati",

@@ -103,6 +103,7 @@ import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
 import { startStiskaObvestila, mountStiske } from "./stiska-obvestilo.js";
 import { AI_JSON } from "./ai-oznaka.js";
+import { createVrsta } from "./vrsta-ai.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -596,6 +597,8 @@ export function createApp(store, opts = {}) {
   // funkcija (preizkusi): popravek gre prek streamFn, pregled prek opts.reviewCreateFn.
   const liveFixOn = () => !!opts.streamFn || !isMockMode();
   const liveReviewOn = () => !!opts.reviewCreateFn || !isMockMode();
+  // Čakalna vrsta za AI (server/vrsta-ai.js): meja hkratnih odgovorov inštruktorja (EVKLID_AI_SOCASNO, EVKLID_AI_VRSTA_MS).
+  const vrstaAi = opts.vrstaAi || createVrsta();
   const answerModelOf = (mode, deep) => (mode === "mid" ? MODEL_MID : deep ? MODEL_DEEP : MODEL);
   // Preverjanje odgovorov in kartic iz pogovora (server/verify.js, dva modela) plača APLIKACIJA iz skupnega dnevnega
   // zneska VERIFY_DAILY_USD, ne meja učenca (j 2026-11-06): koristi vsem, tudi brezplačni dobijo kartice.
@@ -1210,6 +1213,8 @@ export function createApp(store, opts = {}) {
     const controller = new AbortController();
     let finished = false;
     let unlogged = null; // plačan, še nezapisan odgovor modela (zapiše se tudi ob prekinitvi)
+    let mestoAi = null; // mesto v vrsti za AI (server/vrsta-ai.js), sprosti se po klicih modela in vedno v finally
+    let vVrsti = false; // zahteva čaka v vrsti za AI (model še ni dobil nobenega klica)
     res.on("close", () => {
       if (!finished) controller.abort();
     });
@@ -1250,6 +1255,18 @@ export function createApp(store, opts = {}) {
       }
       const cached = win ? { text: win.text, hint: true } : hinted ? { text: hinted, hint: true } : key && store.db.prepare("SELECT text FROM answer_cache WHERE key = ? AND verified = 1 AND created_at >= datetime('now','-30 days')").get(key);
       if (note) send("delta", { text: note });
+      // Naval (točka 23): vsi klici modela za to sporočilo čakajo na mesto v vrsti za AI. Med čakanjem učenec vidi svoje
+      // mesto (faza »queue«, public/app.js), ko pride na vrsto, spet »Pripravljam razlago …« (faza »answer«). Predolgo
+      // čakanje vrže napako 529 (spodaj v catch kot pri preobremenjenem ponudniku).
+      if (!cached) {
+        vVrsti = true;
+        mestoAi = await vrstaAi.vstopi({
+          signal: controller.signal,
+          onMesto: (n) => !res.writableEnded && !res.destroyed && send("phase", { phase: "queue", mesto: n }),
+        });
+        vVrsti = false;
+        if (mestoAi.cakal) send("phase", { phase: "answer" });
+      }
       // Naloga, ki jo reši naš preverjeni reševalnik: model dobi pravilen rezultat v skriti opombi.
       const pre = liveCheckOn() && !cached && !image && !win && !hinted ? presolve(text, { first: isFirst }) : null;
       // Zgodovina z zdaj shranjenim sporočilom, isto kot ponovno branje iz baze: med branjem zgoraj in tem mestom ni
@@ -1513,6 +1530,7 @@ export function createApp(store, opts = {}) {
           }
         }
       }
+      mestoAi?.sprosti(); // klici modela za ta odgovor so končani (preverjanje v ozadju ne drži mesta)
 
       phase(false);
       let meta = parseMeta(result.text);
@@ -1682,12 +1700,14 @@ export function createApp(store, opts = {}) {
           console.warn(`[evklid] zapis porabe ni uspel: ${e?.message || e}`);
         }
       }
-      // Napaka strežnika ali API (ne prekinitev): vprašanje ne šteje, učenec lahko poskusi znova.
-      if (!aborted) store.logQuestion(student.id, -1);
+      // Napaka strežnika ali API (ne prekinitev): vprašanje ne šteje, učenec lahko poskusi znova. Prav tako ne, če je
+      // učenec povezavo prekinil še v vrsti za AI (model ni dobil nobenega klica).
+      const neplacano = !aborted || vVrsti;
+      if (neplacano) store.logQuestion(student.id, -1);
       // Neuspelo potezo odstranimo, da zgodovina ostane čista za ponovni poskus.
       store.db.prepare("DELETE FROM messages WHERE id = ?").run(userMsgId);
       // Prekinitev (plačan klic) ne vrne števca zaporednih prošenj: naslednji poskus ne gre spet brezplačno k Opusu.
-      if (again && !aborted) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
+      if (again && neplacano) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
       if (!controller.signal.aborted) {
         console.error("[evklid] napaka pri klicu modela:", err?.status ?? "", err?.message ?? err);
         if (/dobroimetja/.test(apiErrorCode(err) || "")) usage.markCreditOut();
@@ -1699,6 +1719,7 @@ export function createApp(store, opts = {}) {
       }
       res.end();
     } finally {
+      mestoAi?.sprosti();
       busy.delete(conv.id);
       hold.release();
     }

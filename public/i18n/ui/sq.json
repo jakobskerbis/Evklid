@@ -436,6 +436,7 @@
   "chat.waitDeep": "Po përgatis një shpjegim më të hollësishëm …",
   "chat.waitCheck": "Po kontrolloj përgjigjen …",
   "chat.waitThink": "Po mendoj …",
+  "chat.waitQueue": "Shumë nxënës njëkohësisht. Je në radhë (vendi {n}) …",
   "chatMode.A": "Udhëzim",
   "chatMode.B": "Zgjidhje e plotë",
   "subj.MAT": "Matematikë",

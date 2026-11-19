@@ -448,6 +448,7 @@
   "chat.waitDeep": "Przygotowuję dokładniejsze wyjaśnienie …",
   "chat.waitCheck": "Sprawdzam odpowiedź …",
   "chat.waitThink": "Myślę …",
+  "chat.waitQueue": "Wielu uczniów naraz. Jesteś w kolejce (miejsce {n}) …",
   "chatMode.A": "Prowadzenie",
   "chatMode.B": "Pełne rozwiązanie",
   "subj.MAT": "Matematyka",

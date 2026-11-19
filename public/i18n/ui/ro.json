@@ -442,6 +442,7 @@
   "chat.waitDeep": "Pregătesc o explicație mai detaliată …",
   "chat.waitCheck": "Verific răspunsul …",
   "chat.waitThink": "Mă gândesc …",
+  "chat.waitQueue": "Mulți elevi în același timp. Ești la coadă (locul {n}) …",
   "chatMode.A": "Ghidat",
   "chatMode.B": "Rezolvare completă",
   "subj.MAT": "Matematică",

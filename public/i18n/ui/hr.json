@@ -442,6 +442,7 @@
   "chat.waitDeep": "Pripremam detaljnije objašnjenje …",
   "chat.waitCheck": "Provjeravam odgovor …",
   "chat.waitThink": "Razmišljam …",
+  "chat.waitQueue": "Mnogo učenika istodobno. U redu si (mjesto {n}) …",
   "chatMode.A": "Vođenje",
   "chatMode.B": "Cijelo rješenje",
   "subj.MAT": "Matematika",
