@@ -717,7 +717,7 @@ export function ogrej(ms = 8) {
   const konec = performance.now() + ms;
   while (zaOgreti.length && performance.now() < konec) {
     const re = zaOgreti.pop();
-    re.test("a"); // dvakrat: V8 vzorec najprej prevede za tolmač, ob drugi uporabi v strojno kodo
+    re.test("a"); // večkrat: V8 vzorec najprej prevede za tolmač, ob drugi uporabi v strojno kodo
     re.test("a");
     re.test("a");
   }

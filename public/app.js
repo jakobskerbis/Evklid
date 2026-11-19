@@ -1685,6 +1685,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     }
     if (afterUser) naDno(); // opomba pod učenčevim oblačkom (public/naloga-pole/klepet.js) meri sama
     afterUser?.(userEl);
+    if (afterUser) naDnoRaf = requestAnimationFrame(naDno); // še enkrat na dno, ko sta opomba in mehurček odgovora dodana
 
     bubble = addMessage("assistant", "", false, null, { meri: false });
     bubble.classList.add("typing");
