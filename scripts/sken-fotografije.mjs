@@ -62,28 +62,24 @@ const RAZPONI = {
   latin: "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
   "latin-ext": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
 };
-const PREDPOMNILNIK = path.join(os.tmpdir(), "evklid-sken-pisave");
+// Pisave se prenesejo ob vsakem izrisu in gredo v CSS kot data: URL (nič na disk); pred uporabo se preveri SHA-256.
 async function pisava(kljuc) {
   const p = PISAVE[kljuc];
   const pakiran = { caveat: "caveat", kalam: "kalam", patrick: "patrick-hand" }[kljuc];
   const css = [];
   for (const [podnabor, sha] of Object.entries(p.datoteke)) {
     const ime = `${pakiran}-${podnabor}-400-normal.woff2`;
-    const pot = path.join(PREDPOMNILNIK, ime);
-    const ok = () => fs.existsSync(pot) && crypto.createHash("sha256").update(fs.readFileSync(pot)).digest("hex") === sha;
-    if (!ok()) {
-      try {
-        const r = await fetch(`https://cdn.jsdelivr.net/npm/@fontsource/${pakiran}@5.2.8/files/${ime}`);
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        fs.mkdirSync(PREDPOMNILNIK, { recursive: true });
-        fs.writeFileSync(pot, Buffer.from(await r.arrayBuffer()));
-      } catch (e) {
-        console.warn(`Pisave ${p.ime} ni bilo mogoče prenesti (${e.message}); rokopis bo s sistemsko pisavo.`);
-        return { css: "", druzina: "'FreeSans', sans-serif", velikost: 30, posevno: true };
-      }
-      if (!ok()) throw new Error(`${ime}: SHA-256 se ne ujema (pisava na CDN se je spremenila?).`);
+    let buf;
+    try {
+      const r = await fetch(`https://cdn.jsdelivr.net/npm/@fontsource/${pakiran}@5.2.8/files/${ime}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      buf = Buffer.from(await r.arrayBuffer());
+    } catch (e) {
+      console.warn(`Pisave ${p.ime} ni bilo mogoče prenesti (${e.message}); rokopis bo s sistemsko pisavo.`);
+      return { css: "", druzina: "'FreeSans', sans-serif", velikost: 30, posevno: true };
     }
-    css.push(`@font-face{font-family:'Roka ${p.ime}';src:url(${pathToFileURL(pot).href}) format('woff2');unicode-range:${RAZPONI[podnabor]}}`);
+    if (crypto.createHash("sha256").update(buf).digest("hex") !== sha) throw new Error(`${ime}: SHA-256 se ne ujema (pisava na CDN se je spremenila?).`);
+    css.push(`@font-face{font-family:'Roka ${p.ime}';src:url(data:font/woff2;base64,${buf.toString("base64")}) format('woff2');unicode-range:${RAZPONI[podnabor]}}`);
   }
   return { css: css.join("\n"), druzina: `'Roka ${p.ime}', 'FreeSans', sans-serif`, velikost: p.velikost, posevno: false };
 }

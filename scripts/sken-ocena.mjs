@@ -222,7 +222,9 @@ function kandidati({ solutions = [], value = "", answer_tex = "" }) {
     .split(/[;]|,\s+|\s{2,}|\bali\b|\bin\b|\bor\b/)
     .map((x) => x.trim())
     .filter(Boolean);
-  return [...solutions.flatMap((x) => String(x).split(";")), value, ...deli].map((x) => brezSpremenljivke(String(x || ""))).filter(Boolean);
+  // Periodične rešitve (π/6 + 2kπ): reševalnik jih vrne, kadar intervala ni med podatki; šteje osnovna vrednost.
+  const brezPeriode = (x) => x.replace(/\s*\+\s*(?:2\s*\*?\s*)?k\s*\*?\s*(?:\\pi|π|pi)\b|\s*\+\s*(?:2\s*)?(?:\\pi|π|pi)\s*\*?\s*k\b/g, "");
+  return [...solutions.flatMap((x) => String(x).split(";")), value, ...deli].map((x) => brezPeriode(brezSpremenljivke(String(x || "")))).filter(Boolean);
 }
 const decimalna = (t) => stevila(String(t).replace(/(\d)\s+(\d{3})(?!\d)/g, "$1$2")).map(Number);
 
@@ -242,12 +244,30 @@ export function oceniResitev(n, dobljeno) {
       vars = null;
     }
     if (kand.some((k) => enako(k, e, vars))) return true;
-    if (vars && tol > 0) {
+    // Število z enoto (400 €, 32 cm²) ali zaokroženo: števila iz odgovora; brez tolerance v manifestu le zaokrožitev.
+    if (vars && Number.isFinite(Number(e))) {
       const cilj = Number(e);
-      return kand.some((k) => decimalna(k).some((x) => Math.abs(x - cilj) <= tol * Math.max(1, Math.abs(cilj))));
+      const t = tol > 0 ? tol : 1e-6;
+      return kand.some((k) => decimalna(k).some((x) => Math.abs(x - cilj) <= t * Math.max(1, Math.abs(cilj))));
     }
     return false;
   };
+  // Sistem enačb: vrednosti po abecedi neznank (x=2, y=1 ali (2, 1)); zamenjan par ni pravilen.
+  if (/;/.test(n.racun || "") && /=/.test(n.racun)) {
+    const imena = [...new Set(n.racun.match(/\b[a-z]\b/g) || [])].sort();
+    const par = vse.includes(zgostiResitev(`(${n.resitev.join(",")})`));
+    const poImenih = imena.length === n.resitev.length && imena.every((v, i) => vse.includes(zgostiResitev(`${v}=${n.resitev[i]}`)));
+    return par || poImenih;
+  }
+  // Razstavi in poenostavi: številsko enak, a tudi v pravi obliki (ne nerazstavljen ali neokrajšan izvirnik).
+  if (n.goal === "factor" || n.goal === "simplify") {
+    const oklepaji = (t) => (String(t).match(/\(/g) || []).length;
+    const dolzina = (t) => zgostiResitev(t).replace(/[*()]/g, "").length;
+    const oblika = kand.some((k) =>
+      n.resitev.every((e) => enako(k, e, null)) &&
+      (n.goal === "factor" ? oklepaji(k) >= oklepaji(n.resitev[0]) : dolzina(k) <= dolzina(n.resitev[0]) + 4));
+    if (!oblika) return false;
+  }
   const vsi = n.resitev.every(najdi);
   const odvecne = Array.isArray(dobljeno.solutions) && dobljeno.solutions.length > n.resitev.length && /=/.test(n.racun || "") && !/=\s*\?$/.test(n.racun || "");
   return vsi && !odvecne;
