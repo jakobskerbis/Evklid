@@ -10,7 +10,7 @@ const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done
 
 async function pogovor(settings, sporocila, env = {}) {
   const prej = {};
-  for (const [k, v] of Object.entries({ EVKLID_SS_THINK: "0", ...env })) {
+  for (const [k, v] of Object.entries({ EVKLID_SS_THINK: "0", EVKLID_STEP_THINK: "1", ...env })) {
     prej[k] = process.env[k];
     process.env[k] = v;
   }
