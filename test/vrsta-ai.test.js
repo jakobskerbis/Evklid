@@ -137,7 +137,7 @@ test("EVKLID_AI_SOCASNO=0: brez meje", async () => {
 });
 
 test("napis chat.waitQueue v slovenščini in vseh 32 jezikih, z {n}", () => {
-  assert.equal(sl["chat.waitQueue"], "Veliko učencev hkrati. Si v vrsti (mesto {n}) …");
+  assert.equal(sl["chat.waitQueue"], "Veliko učencev hkrati. V vrsti si (mesto\u00a0{n}) …");
   const dir = new URL("../public/i18n/ui/", import.meta.url);
   const langs = readdirSync(dir).filter((f) => f.endsWith(".json"));
   assert.equal(langs.length, 32);

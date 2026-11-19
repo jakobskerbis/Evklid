@@ -217,12 +217,24 @@ export function najblizja(slika, problem) {
 const brezSpremenljivke = (t) => t.replace(/^\s*(?:[a-zA-Z](?:_\{?\w+\}?)?|f'\(x\)|f\(x\)|[A-Z]\w*)\s*(?:=|≈|\\approx)(?!=)\s*/, "").trim();
 const zgostiResitev = (t) => normalizirajBesedilo(t).replace(/[\s·]/g, "").replace(/\\in|∈/g, "").replace(/\\infty/g, "∞").toLowerCase();
 // Kandidati za primerjavo: rešitve in vrednost (AI) ter deli odgovora v LaTeX.
+// Deli odgovora pred odstranitvijo imena količine.
+const surovi = ({ solutions = [], value = "", answer_tex = "" }) =>
+  [...solutions.flatMap((x) => String(x).split(";")), value, ...texToText(String(answer_tex || "")).split(/[;]|,\s+|\s{2,}|\bali\b|\bin\b|\bor\b/)]
+    .map((x) => String(x || "").trim())
+    .filter(Boolean);
 function kandidati({ solutions = [], value = "", answer_tex = "" }) {
   const deli = texToText(String(answer_tex || ""))
     .split(/[;]|,\s+|\s{2,}|\bali\b|\bin\b|\bor\b/)
     .map((x) => x.trim())
     .filter(Boolean);
   return [...solutions.flatMap((x) => String(x).split(";")), value, ...deli].map((x) => brezSpremenljivke(String(x || ""))).filter(Boolean);
+}
+// Rezultat odgovora: prvo število (s predznakom) za zadnjim »=« ali »≈«, sicer prvo število v odgovoru.
+function rezultat(k) {
+  const t = normalizirajBesedilo(k).replace(/−/g, "-").replace(/(\d)\s+(\d{3})(?!\d)/g, "$1$2");
+  const del = t.split(/=|≈|\\approx/).at(-1);
+  const m = /(-\s*)?(\d+(?:[.,]\d+)?)/.exec(del);
+  return m ? Number(`${m[1] ? "-" : ""}${m[2].replace(",", ".")}`) : null;
 }
 const decimalna = (t) => stevila(String(t).replace(/(\d)\s+(\d{3})(?!\d)/g, "$1$2")).map(Number);
 
@@ -233,6 +245,7 @@ export function oceniResitev(n, dobljeno) {
   const kand = kandidati(dobljeno);
   const vse = zgostiResitev(`${(dobljeno.solutions || []).join(";")};${dobljeno.value || ""};${texToText(String(dobljeno.answer_tex || ""))}`);
   const tol = n.toleranca || 0;
+  const besedilna = /=\s*\?$/.test(n.racun || "");
   const najdi = (e) => {
     if (/^[[(].*,.*[\])]$/.test(e) || /i$/.test(e)) return vse.includes(zgostiResitev(e)); // interval, kompleksno število
     let vars;
@@ -241,12 +254,22 @@ export function oceniResitev(n, dobljeno) {
     } catch {
       vars = null;
     }
-    if (kand.some((k) => enako(k, e, vars))) return true;
-    // Število z enoto (400 €, 32 cm²) ali zaokroženo: števila iz odgovora; brez tolerance v manifestu le zaokrožitev.
-    if (vars && Number.isFinite(Number(e))) {
+    if (!(besedilna && vars) && kand.some((k) => enako(k, e, vars))) return true;
+    // Besedilna naloga ali zaokroženo število: rezultat je prvo število za zadnjim »=« ali »≈« (s predznakom), enota
+    // sme slediti (400 €, 32 cm²). Brez tolerance v manifestu le zaokrožitev na 1e-6.
+    if (vars && Number.isFinite(Number(e)) && (tol > 0 || besedilna)) {
       const cilj = Number(e);
       const t = tol > 0 ? tol : 1e-6;
-      return kand.some((k) => decimalna(k).some((x) => Math.abs(x - cilj) <= t * Math.max(1, Math.abs(cilj))));
+      // Del odgovora za drugo količino (»R = 2 Ω« ob iskanem I) ne šteje.
+      const ime = besedilna ? zgostiResitev(n.racun.replace(/=\s*\?$/, "")) : null;
+      const deli = surovi(dobljeno).filter((d) => {
+        const m = /^\s*([^=≈\s]+)\s*(?:=|≈|\\approx)/.exec(normalizirajBesedilo(d));
+        return !ime || !m || zgostiResitev(m[1]) === ime;
+      });
+      return deli.some((k) => {
+        const x = rezultat(k);
+        return x !== null && Math.abs(x - cilj) <= t * Math.max(1, Math.abs(cilj));
+      });
     }
     return false;
   };
@@ -254,7 +277,9 @@ export function oceniResitev(n, dobljeno) {
   if (/;/.test(n.racun || "") && /=/.test(n.racun)) {
     const imena = [...new Set(n.racun.match(/\b[a-z]\b/g) || [])].sort();
     const par = vse.includes(zgostiResitev(`(${n.resitev.join(",")})`));
-    const poImenih = imena.length === n.resitev.length && imena.every((v, i) => vse.includes(zgostiResitev(`${v}=${n.resitev[i]}`)));
+    // Cela vrednost: x=2 ne sme biti začetek x=21 ali x=2/3.
+    const cela = (t) => new RegExp(`(?<![\\w.])${zgostiResitev(t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\d./])`).test(vse);
+    const poImenih = imena.length === n.resitev.length && imena.every((v, i) => cela(`${v}=${n.resitev[i]}`));
     return par || poImenih;
   }
   // Razstavi in poenostavi: številsko enak, a tudi v pravi obliki (ne nerazstavljen ali neokrajšan izvirnik).

@@ -222,3 +222,33 @@ test("sken-fotografije --mapa: prave fotografije pripravi kot aplikacija (≤ 16
   assert.equal(izhod.indexOf("GPS-test"), -1);
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+test("sken: ocena odgovorov AI z enotami, predznakom, sistemom in obliko", () => {
+  const vse = nabor.slike.flatMap((s) => [[s.id, s], ...(s.ostale || []).map((o, i) => [`${s.id}#${i + 1}`, o])]);
+  const n = (id) => vse.find(([i]) => i === id)[1];
+  const prav = [
+    ["s15-odstotki", { answer_tex: "x = 400\\ \\text{€}" }],
+    ["o03-trapez", { answer_tex: "S = 32\\ \\mathrm{cm}^2" }],
+    ["s07-trikotnik", { answer_tex: "\\alpha \\approx 22{,}62^\\circ" }],
+    ["f03-vezje", { answer_tex: "I = 2\\ \\mathrm{A}" }],
+    ["s06-dve-nalogi", { answer_tex: "(x, y) = (2, 1)" }],
+    ["s06-dve-nalogi", { solutions: ["x=2; y=1"] }],
+    ["s16-razstavi", { value: "(x-2)*(x-3)*(x+3)" }],
+    ["s06-dve-nalogi#1", { value: "(x-3)/x" }],
+  ];
+  const narobe = [
+    ["s02-koren", { answer_tex: "x = -2" }],
+    ["s11-integral", { value: "-6", answer_tex: "-6" }],
+    ["f03-vezje", { answer_tex: "I = -2\\ \\mathrm{A}" }],
+    ["f03-vezje", { answer_tex: "I = 0{,}5\\ \\mathrm{A}, R = 2\\ \\Omega" }],
+    ["s06-dve-nalogi", { answer_tex: "x = 1,\\ y = 2" }],
+    ["s06-dve-nalogi", { answer_tex: "x = 21,\\ y = 10" }],
+    ["s06-dve-nalogi", { answer_tex: "x = 2,\\ y = 1/2" }],
+    ["s16-razstavi", { value: "x^3-2*x^2-9*x+18" }],
+    ["s06-dve-nalogi#1", { value: "(x^2-9)/(x^2+3*x)" }],
+    ["s15-odstotki", { answer_tex: "x = 408\\ €" }],
+    ["s12-trigonometrija", { solutions: ["pi/6+2*k*pi", "5*pi/6+2*k*pi"] }],
+  ];
+  for (const [id, d] of prav) assert.equal(oceniResitev(n(id), d), true, `${id} ${JSON.stringify(d)}`);
+  for (const [id, d] of narobe) assert.equal(oceniResitev(n(id), d), false, `${id} ${JSON.stringify(d)}`);
+});
