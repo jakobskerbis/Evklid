@@ -32,10 +32,11 @@ export class Stripe {
   get testMode() {
     return /^(sk|rk)_test_/.test(String(this.key || ""));
   }
-  async request(method, path, params) {
+  // opts.idempotencyKey: Stripe isti ključ v 24 urah izvede enkrat (npr. vračilo ob odstopu po prekinjenem klicu).
+  async request(method, path, params, opts = {}) {
     if (!this.key) throw new Error("STRIPE_SECRET_KEY ni nastavljen.");
     let url = API + path;
-    const init = { method, headers: { Authorization: `Bearer ${this.key}`, "Stripe-Version": "2024-06-20" } };
+    const init = { method, headers: { Authorization: `Bearer ${this.key}`, "Stripe-Version": "2024-06-20", ...(opts.idempotencyKey ? { "Idempotency-Key": String(opts.idempotencyKey) } : {}) } };
     if (params && method === "GET") url += "?" + formEncode(params).toString();
     else if (params) {
       init.headers["Content-Type"] = "application/x-www-form-urlencoded";

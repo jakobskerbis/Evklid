@@ -48,12 +48,15 @@ export function terms(text) {
 }
 
 const SCHOOL_RANK = { OS: 0, SS: 1 };
-function levelOf(settings) {
+export function levelOf(settings) {
   const st = stopnja(settings || {});
   const school = st === "FAKS" ? null : st;
   const grade = Number((String(settings?.curriculum_level || "").match(/([1-9])/) || [])[1]) || (school === "SS" ? 4 : 9);
   return school ? { school, grade } : null;
 }
+
+// Iskanje po učbeniku (in vaja iz testa) deluje za slovensko OŠ in SŠ: stopnja in šolski sistem SI.
+export const searchOn = (settings) => !!levelOf(settings) && (!settings?.school_system || settings.school_system === "SI");
 
 const summaryOf = (lesson) => lesson?.sections?.find((s) => /^povzetek/i.test(s.title))?.md || "";
 

@@ -10,7 +10,7 @@ import { hashPassword, verifyPassword, needsRehash, fakeVerify, unusablePassword
 import { audit, detachAudit, ensureAuditTable } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
-import { unseal, auditSecret } from "../crypto-polje.js";
+import { unseal, auditSecret, openFlag, UNREADABLE } from "../crypto-polje.js";
 import { createHmac } from "node:crypto";
 import { exportOtherTables } from "../zasebnost.js";
 import { pilotSummary, pilotWtp, endAccountPilot } from "../pilot-naloge.js";
@@ -19,9 +19,10 @@ import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, P
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, unverifiedDayUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
-import { Mailer, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail, skrbnikKodaEmail } from "./email.js";
+import { Mailer, inactiveEmail, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail, skrbnikKodaEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT, CREDIT_WITHDRAWAL_TEXT, WITHDRAWAL_VERSION } from "./billing.js";
-import { insertBillingConsent, recordSignupTerms, sendPurchaseConfirmation, subItem, firstChargeText, termsAccepted, TERMS_ERROR } from "./potrdilo.js";
+import { insertBillingConsent, recordSignupTerms, sendPurchaseConfirmation, subItem, firstChargeText, termsAccepted, TERMS_ERROR, TERMS_VERSION, termsNotice, livePayBlocked, LIVE_BLOCKED } from "./potrdilo.js";
+import { mountWithdrawal, contractsFor } from "../placila/odstop.js";
 import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
 import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
 import { Devices, deviceLabel, deviceWarnLimit } from "./devices.js";
@@ -33,6 +34,7 @@ import { promoConfig, createPromo } from "./promo.js";
 import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestInvites, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
 import { eraseAccount, eraseProfiles } from "./izbris.js";
+import { runInactive, neaktivniVklopljeni } from "./neaktivni.js";
 import { AccountLocks, ownerOnly } from "./account-lock.js";
 import { ProfileLocks, checkProfilePassword } from "./profile-lock.js";
 import { rights as rightsOf, lessonInteractive as lessonOpen } from "../placila/pravice.js";
@@ -191,6 +193,7 @@ export function mountAccounts(app, store, opts = {}) {
   if (promoCfg.code) log.info?.(`[evklid] aktivacijska koda ${promoCfg.code}: porabljenih ${promo.used()}/${promoCfg.limit}, ${promoCfg.days} dni`);
   // Število profilov pri aktivacijski kodi je lastnost kode, ki jo je račun porabil.
   const accessOf = (p) => accessFor(p, Date.now(), p.promo_until ? promo.termsOf(p.id).seats : promoCfg.seats);
+  let withdrawals = null; // funkcija za odstop (server/placila/odstop.js)
   let billing = null; // paketi pred testom, povezave za starše (mountBilling spodaj)
   let gifts = null; // darilne kode (mountGifts spodaj)
   let guarantee = null; // garancija »Boljša ocena ali vrnemo denar« (mountGuarantee spodaj)
@@ -285,6 +288,8 @@ export function mountAccounts(app, store, opts = {}) {
     need_birth: !p.is_guest && !p.birth_date && !p.birth_asked_at,
     // Politika zasebnosti se je spremenila po registraciji: aplikacija enkrat pokaže kratko obvestilo s povezavo.
     privacy_notice: !p.is_guest && (p.privacy_seen || p.privacy_version || "") < PRIVACY_VERSION ? PRIVACY_VERSION : null,
+    // Nova različica splošnih pogojev (samo objavljeni pogoji, EVKLID_POGOJI_OBJAVLJENI): imetnik jo potrdi v zavihku Račun.
+    terms_notice: termsNotice(db, p),
     verified: !!p.email_verified_at,
     // Račun brez gesla (prijava z Apple): potrditev imetnika s kodo na e-pošto namesto gesla; splet za izvoz
     // in izbris namesto gesla ponudi nastavitev gesla. (Prej je bil ključ zapisan dvakrat; veljal je ta, z gostom.)
@@ -1057,6 +1062,12 @@ export function mountAccounts(app, store, opts = {}) {
     const token = readCookie(req);
     const pid = sessions.parentId(token);
     req.parent = pid ? getParent(pid) : null;
+    // Zadnja dejavnost (neaktivni računi, ./neaktivni.js): en zapis na dan.
+    if (req.parent && !req.parent.is_guest && String(req.parent.last_active_at || "").slice(0, 10) !== new Date().toISOString().slice(0, 10)) {
+      try {
+        db.prepare("UPDATE parents SET last_active_at = datetime('now') WHERE id = ?").run(req.parent.id);
+      } catch {}
+    }
     // Skrbnik: e-naslov v EVKLID_ADMIN_EMAILS (tudi če je bil dodan po registraciji).
     if (req.parent && isAdminEmail(req.parent)) req.parent.is_admin = 1;
     if (skrbnikKoda && req.parent?.is_admin && !skrbnikPotrjen(token, req.parent.id)) {
@@ -1079,7 +1090,7 @@ export function mountAccounts(app, store, opts = {}) {
     /^\/schools\/join\/?$/i,
   ];
   const SESSIONLESS = [/^\/kozmetika\/prijave\/izvoz$/, /^\/kozmetika\/prijave\/(message|lesson|app)\/\d+\/stanje$/];
-  const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
+  const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/, /^\/withdrawal$/];
   // Nekanonična pot /api (server/app.js, točka A1): 404, le zaklenjen račun ostane 403 (enako kot kanonična pot).
   const ni = (res) => res.status(404).json({ error: "Pot ne obstaja." });
   app.use("/api", (req, res, next) => {
@@ -1805,6 +1816,16 @@ export function mountAccounts(app, store, opts = {}) {
     res.json({ parent: publicParent(getParent(p.id)) });
   });
 
+  // Ponovna potrditev splošnih pogojev ob novi različici (terms_notice): zapis različice in časa v consents (brez
+  // dodatnih osebnih podatkov; e-naslov računa kot pri registraciji). Samo imetnik (OWNER_ONLY v account-lock.js).
+  app.post("/api/account/terms", json, (req, res) => {
+    const p = req.parent;
+    if (p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
+    if (req.body?.version !== TERMS_VERSION || req.body?.accept !== true) return res.status(409).json({ error: "Pogoji so se medtem spremenili. Osveži stran.", version: TERMS_VERSION });
+    recordSignupTerms(db, p.id, p.email);
+    res.json({ parent: publicParent(getParent(p.id)) });
+  });
+
   // Odklep računa na tej napravi z geslom računa (zavihek Račun, nov ali izbrisan profil).
   app.post("/api/account/unlock", json, async (req, res) => {
     const p = req.parent;
@@ -1863,6 +1884,15 @@ export function mountAccounts(app, store, opts = {}) {
     return options.length ? { from: plan.key, options: options.map((o) => ({ key: o.key, level: o.level, family: !!o.family, label: o.label, amount: o.amount, interval: o.interval, currency: "EUR" })) } : null;
   }
 
+  function withdrawalOpen(p) {
+    try {
+      const c = contractsFor(db, p, billing.withdrawalQuote);
+      return c.options.length > 0 || !!c.store;
+    } catch (err) {
+      log.error?.("[evklid] odstop (seznam pogodb):", err.message);
+      return false;
+    }
+  }
   function accountView(req, p) {
     const access = accessOf(p);
     // Skrbniški podatki po seji (req.parent), ne po vrstici v bazi: p je pogosto sveže prebran (is_admin = 1 v bazi).
@@ -1934,6 +1964,9 @@ export function mountAccounts(app, store, opts = {}) {
       // Točka A9: skrbnik mora to sejo še potrditi s kodo na e-pošto (public/account.js skrbnikBox).
       ...(req.skrbnikCaka ? { skrbnik_potrditev: true } : {}),
       consents: { adult: ADULT_TEXT, withdrawal: WITHDRAWAL_TEXT, credit_withdrawal: CREDIT_WITHDRAWAL_TEXT },
+      // Funkcija za odstop (ZVPot-1A): povezava v zavihku Račun, dokler je kaka pogodba v roku 14 dni (ali nakup v trgovini).
+      withdrawal_open: !!billing && withdrawalOpen(p),
+      terms_version: TERMS_VERSION,
       grace_days: GRACE_DAYS,
       referral: { code: p.referral_code, url: `${baseUrl(req)}/?ref=${p.referral_code}`, rewards, days: REFERRAL_DAYS },
       consent_text: CONSENT_TEXT,
@@ -2051,7 +2084,8 @@ export function mountAccounts(app, store, opts = {}) {
           // Sprotni povzetek starejšega dela pogovora (server/povzetek.js), ki ga vidi le inštruktor.
           summary: store.getSummary(conv.id)?.text || null,
         })),
-        events: q("SELECT subject, topic, topic_id, error, mode, flag, created_at FROM events WHERE student_id = ?", c.id),
+        // Oznaka (stiska, nevarna vsebina …) je šifrirana (crypto-polje.js sealFlag): v izvoz gre odšifrirana.
+        events: q("SELECT subject, topic, topic_id, error, mode, flag, created_at FROM events WHERE student_id = ?", c.id).map((e) => ({ ...e, flag: openFlag(e.flag, UNREADABLE) })),
         // Šibke točke iz iger, učbenika, pol, kartic in kviza (server/weaknesses.js): dnevne vsote po temi.
         weak_points: q("SELECT day, source, topic_id, subject, topic, n, wrong FROM skill_results WHERE student_id = ?", c.id),
         weak_points_seen: q("SELECT item, created_at FROM skill_seen WHERE student_id = ?", c.id),
@@ -2427,6 +2461,7 @@ export function mountAccounts(app, store, opts = {}) {
     if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Naročnino plača starš. Pošlji mu povezavo za plačilo.", pay_link: true });
     if (req.body?.adult !== true || req.body?.withdrawal !== true) return res.status(400).json({ error: "Pred plačilom so potrebne vse potrditve.", consent: true });
+    if (livePayBlocked(stripe)) return res.status(409).json(LIVE_BLOCKED);
     if (!termsAccepted(req.body)) return res.status(400).json(TERMS_ERROR);
     try {
       const customer = await ensureCustomer(p);
@@ -2693,7 +2728,38 @@ export function mountAccounts(app, store, opts = {}) {
     const sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
     await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } }, { noFallback: true });
   }
+  // Odstop od pogodbe: prekliče samo naročnino, od katere je kupec odstopil (p.sub_id); že preklicana = uspeh.
+  async function cancelOneSubscription(p) {
+    if (!String(p?.sub_id || "").startsWith("sub_")) return;
+    let sub = null;
+    try {
+      sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
+    } catch (err) {
+      // Že preklicana: samo resource_missing ali naročnina, ki jo Stripe vrne kot canceled.
+      let gone = err?.stripe?.code === "resource_missing";
+      if (!gone) gone = (await stripe.request("GET", `/subscriptions/${p.sub_id}`).catch(() => null))?.status === "canceled";
+      if (!gone) throw err;
+    }
+    await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } }, { noFallback: true });
+  }
   guarantee = mountGuarantee(app, { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, birthMissing, cancelSubscription, addonOf: podari.addonOf });
+  // Funkcija za odstop od pogodbe (ZVPot-1A 138.a člen): /odstop.html, potrdilo o prejemu, vračilo in preklic (server/placila/odstop.js).
+  withdrawals = mountWithdrawal(app, {
+    db,
+    stripe,
+    json,
+    log,
+    getParent,
+    quote: (p, now) => billing.withdrawalQuote(p, now),
+    cancelSub: cancelOneSubscription,
+    passes: billing.passes,
+    credits,
+    sendMail,
+    baseUrl,
+    isMinor,
+    ownerOk: (req) => !lockable(req.parent) || accountLocks.isUnlocked(req.parent.id, req.deviceId),
+  });
+  app.locals.withdrawals = withdrawals; // testi: dnevni ponovni poskus potrdil (retryAcks)
 
   // Naročnina iz dogodka: sveže stanje iz Stripa (dogodki lahko pridejo v napačnem vrstnem redu).
   async function freshSubscription(obj) {
@@ -2942,11 +3008,56 @@ export function mountAccounts(app, store, opts = {}) {
     return sent;
   }
 
+  // --- neaktivni računi (./neaktivni.js; samo z EVKLID_NEAKTIVNI=1, enkrat na dan po 10.00 v Ljubljani) ---
+  const inactiveCtx = () => ({
+    db,
+    sendMail,
+    isMinor,
+    selfOnly,
+    childIds,
+    isAdminEmail,
+    email: inactiveEmail,
+    appUrl: baseUrl(null) + "/",
+    audit: (o) => audit(db, o),
+    log,
+    // Ista pot kot DELETE /api/account (plačane račune neaktivni.js izpusti, zato brez preklica naročnine). check() v
+    // transakciji: ponovno preverjanje mirovanja in zapis v dnevnik dostopov pred izbrisom.
+    erase: (p, check) =>
+      eraseAccount(db, p.id, {
+        guests,
+        transaction: true,
+        before: () => {
+          check();
+          recordPilotDeletion(p);
+          clearPilotLevels(p.id);
+        },
+      }),
+  });
+  async function inactiveDaily(now = new Date(), { force = false } = {}) {
+    if (!neaktivniVklopljeni()) return null;
+    // Brez Resenda ne gre nobeno obvestilo, zato tudi nobenega izbrisa.
+    if (!mailer.enabled) return null;
+    const day = ljNow(now).date;
+    if (!force && (ljNow(now).hour < 10 || db.prepare("SELECT value FROM kv WHERE key = 'neaktivni_dan'").get()?.value === day)) return null;
+    db.prepare("INSERT INTO kv (key, value) VALUES ('neaktivni_dan', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").run(day);
+    const out = await runInactive(inactiveCtx(), { now: now.getTime() });
+    if (out.obvestilo || out.izbris) log.info?.(`[evklid] neaktivni računi: ${JSON.stringify(out)}`);
+    return out;
+  }
+  // Skrbniško poročilo brez e-pošte in izbrisa: koliko računov bi dobilo obvestilo in koliko bi bilo izbrisanih.
+  app.get("/api/admin/neaktivni", async (req, res) => {
+    if (!req.parent?.is_admin) return res.status(403).json({ error: "Samo za skrbnika." });
+    const out = await runInactive(inactiveCtx(), { dryRun: true });
+    res.json({ vklopljeno: neaktivniVklopljeni(), eposta: mailer.enabled, ...out });
+  });
+
   if (opts.scheduler !== false) {
     const timer = setInterval(() => {
+      inactiveDaily().catch((e) => log.error?.("[evklid] neaktivni računi:", e.message));
       if (process.env.EVKLID_WEEKLY_EMAIL !== "0" && isSendTime()) sendWeeklyAll().catch((e) => log.error?.("[evklid] tedenska poročila:", e.message));
       if (process.env.EVKLID_GOAL_EMAIL !== "0" && isNoonTime()) sendGoalRemindersAll().catch((e) => log.error?.("[evklid] opomniki cilja:", e.message));
       billing.billingDaily().catch((e) => log.error?.("[evklid] dnevna opravila plačil:", e.message));
+      withdrawals?.retryAcks().catch((e) => log.error?.("[evklid] potrdila o odstopu (ponovno):", e.message));
       try {
         guests.cleanup();
       } catch (e) {
@@ -2968,6 +3079,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { dropForeignAccess, dropPreConfirm, confirmEmail, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { ageOfStudent, dailyBlock, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { inactiveDaily, ageOfStudent, dailyBlock, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

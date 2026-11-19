@@ -14,7 +14,7 @@ function harness({ answers = [], fixes = [], reviews = [] } = {}) {
   const calls = [];
   const reviewCalls = [];
   const streamFn = async ({ system, messages, mode, onText, canRound }) => {
-    const isFix = typeof system === "string" && system.startsWith("You fix one mistake");
+    const isFix = typeof system === "string" && system.startsWith("You fix the mistakes");
     calls.push({ system, messages, mode, isFix, canRound });
     const text = isFix ? fixes.shift() ?? "OK" : (answers.shift() ?? "Odgovor.") + META;
     if (!isFix) onText(text);
@@ -332,7 +332,7 @@ test("verdict check: when the task from the first message is solvable, the code 
     const sse = await (await fetch(`http://127.0.0.1:${h.port}/api/conversations/${first.c.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "x = 5" }) })).text();
     assert.equal(h.reviewCalls.length, 0, "koda je sodila, model ni potreben");
     const note = h.calls[1].messages.at(-1).content.at(-1).text;
-    assert.match(note, /the student's result x = 5 is WRONG; the exact result of the task is \$2x \+ 3 = 11\$ → \$x = 4\$/);
+    assert.match(note, /the student's result x = 5 is wrong; the exact result of the task is \$2x \+ 3 = 11\$ → \$x = 4\$/);
     assert.match(sse, /Kje se je zalomilo/);
     assert.doesNotMatch(sse, /preverjen_racun/);
   } finally {
@@ -436,11 +436,14 @@ test("live check: SŠ answer with an exercise is reviewed and corrected; without
   try {
     const s = await h.student({ educational_track: "SREDNJA_SOLA", curriculum_level: "2" });
     const r = await h.ask(s, "Koliko je pH raztopine CaO?");
-    assert.equal(h.reviewCalls.length, 1, "odgovor z vajo pregleda model");
-    assert.match(h.reviewCalls[0].system, /practice exercise/, "pregled z navodili za vaje");
+    // Odgovor z vajo: splošni pregled in vzporedni ciljni pregled vaje in načrta (meritev po #844).
+    assert.equal(h.reviewCalls.length, 2, "odgovor z vajo pregleda model (splošni in ciljni pregled)");
+    assert.ok(h.reviewCalls.some((c) => /practice exercise/.test(c.system) && /as strictly as the calculations/.test(c.system)), "splošni pregled z navodili za vaje");
+    assert.ok(h.reviewCalls.some((c) => /^You check only two parts/.test(c.system)), "ciljni pregled vaje");
     assert.match(r.messages.at(-1).display_text, /Popravek:/);
+    assert.equal(h.kinds()["preverjanje-sola"], 1, "oba klica sta en vpis porabe");
     await h.ask(s, "Koliko je pH raztopine CaO?");
-    assert.equal(h.reviewCalls.length, 1, "brez vaje in okvirja pri SŠ ni pregleda");
+    assert.equal(h.reviewCalls.length, 2, "brez vaje in okvirja pri SŠ ni pregleda");
   } finally {
     h.close();
   }
@@ -512,11 +515,11 @@ test("live check (SŠ meritev 18. 11.): the fix adds no new facts and may only w
   // BIO-SS-1/encimi-in-atp: popravek je trdil, da hitrost raste nad optimumom, in dodal termostabilne encime.
   let system = "";
   await (await import("../server/live-check.js")).correction({ streamFn: async (a) => ((system = a.system), { text: "OK" }), mode: "think", answer: "x", issue: "y" });
-  assert.match(system, /^Except for corrected data or a replacement practice exercise, the correction fixes only the statement named in the problem, adds nothing else/m);
+  assert.match(system, /^Except for corrected data or a replacement practice exercise, the correction fixes only the statements named in the problem \(every one of them, briefly\), adds nothing else/m);
   assert.match(system, /withdraw it instead \(Slovenian: "Popravek: trditve »…« ne upoštevaj; za to nalogo ni potrebna\."\)/);
   assert.doesNotMatch(system, /ne drži; za to nalogo/);
   // Pregled PR #833: »poenostavitev« ni izhod za napačno uporabljeno pravilo (K > 1 pri Kc z enoto).
-  assert.match(system, /correctly applied textbook rule of the student's level lacks a rare exception, reply exactly OK\. A rule applied where it does not hold \(for example comparing a quantity with a unit with 1\) is a real mistake\./);
+  assert.match(system, /correctly applied textbook rule of the student's level lacks a rare exception, reply exactly OK \(do not name or fix its flaw\)\. A rule applied where it does not hold \(for example comparing a quantity with a unit with 1\) is a real mistake\./);
   assert.match(LIVE_REVIEW_SYSTEM, /applied where it holds is not an error just because it omits rare exceptions; a rule applied where it does not hold is an error/);
   assert.match(LIVE_REVIEW_SYSTEM, /quote only the wrong words \(at most about ten\)/);
   assert.match(LIVE_REVIEW_SYSTEM, /every written equality true \(a rounded value written with = is fine\)/);
@@ -535,7 +538,7 @@ test("live check (meritev SŠ 18. 11. po #833): review catches generalisations, 
   // BIO-SS-1/encimi-in-atp: vaja pripiše isti amilazi pri isti temperaturi drugo hitrost.
   assert.match(LIVE_REVIEW_SYSTEM, /must not give the object of the task, under the same conditions, a value different from the task's/);
   // BIO-SS-1/raziskovanje-v-biologiji: namenoma pomanjkljiv poskus v vaji je bil popravljen, neenake skupine v načrtu ne.
-  assert.match(LIVE_REVIEW_SYSTEM, /describes a flawed experiment or a wrong claim on purpose and asks the student to find the flaw is fine/);
+  assert.match(LIVE_REVIEW_SYSTEM, /An exercise that on purpose describes a flawed experiment, plan or wrong claim and asks the student to find, judge or improve it is not an error under any of the points above\./);
   assert.match(LIVE_REVIEW_SYSTEM, /every experiment plan: the group counts add up/);
   // KEM-SS-2/sibke-kisline-in-baze, FIZ-SS-3/elektromagnetno-valovanje
   assert.match(LIVE_REVIEW_SYSTEM, /what the task says must match the task \(a claim about what the student's textbook says that is not quoted in the question is an error\), and every warning must be unambiguous/);
@@ -859,3 +862,190 @@ test("ionRatioIssue (round 8): an ion ratio that does not balance the charges", 
   assert.match(codeFindings("Dušik je v 5. skupini. Na 2 iona Mg²⁺ pride en ion O²⁻.").issue, /15.*; ".*does not add up|15.*do not add up/);
 });
 
+
+test("live check (meritev SŠ 18. 11. po #835): all errors in one line, impossible exercise values, notation, swapped words; fix fixes all", async () => {
+  const { reviewAnswer, correction } = await import("../server/live-check.js");
+  // BIO-SS-4/molekularna-genetika#3: vaja s 4 biti na nukleotid
+  assert.match(LIVE_REVIEW_SYSTEM, /every value it assumes must be possible \(a changed number must not contradict known facts or limits/);
+  // BIO-SS-2/nastanek-vrst#2: »mule zaradi lihega števila ne moremo zapisati kot 2n«; molekularna#1: »Bite pretvorimo v bite«
+  assert.match(LIVE_REVIEW_SYSTEM, /statements about notation \(what a symbol such as n, 2n or a unit stands for\) must be correct, every sentence must say what is meant \(a swapped word, unit or quantity that changes the meaning, e\.g\. »bite pretvorimo v bite« for bytes, is an error; spelling, grammar, style and informal but correct wording are not\)/);
+  assert.match(LIVE_REVIEW_SYSTEM, /a value the exercise clearly states as hypothetical is fine\)/);
+  // izjema za namenoma pomanjkljivo vajo je v sklepnem odstavku (velja za vse točke, tudi skupine v načrtu)
+  assert.ok(LIVE_REVIEW_SYSTEM.indexOf("find, judge or improve it") > LIVE_REVIEW_SYSTEM.indexOf("every experiment plan"));
+  assert.match(LIVE_REVIEW_SYSTEM, /If there are several errors, name every one in the same line, separated by »; «/);
+  assert.match(LIVE_REVIEW_SYSTEM, /Reply with exactly one line: OK, or NAPAKA: <short reason>\.$/);
+  // Razlog z več napakami ni odrezan pri 300 znakih (parseVerdict).
+  const long = "»a« ne drži; ".repeat(40).trim();
+  const createFn = async () => ({ content: [{ type: "text", text: `NAPAKA: ${long}` }], stop_reason: "end_turn", usage: {}, model: "m" });
+  const r = await reviewAnswer({ question: "q", answer: "a", createFn });
+  assert.ok(r.reason.length > 300 && r.reason.length <= 600, `razlog ${r.reason.length} znakov`);
+  assert.equal((await reviewAnswer({ question: "q", answer: "a", createFn: async () => ({ content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", usage: {}, model: "m" }) })).reason, null);
+  let system = "", user = "";
+  await correction({ streamFn: async (a) => ((system = a.system), (user = a.messages[0].content[0].text), { text: "OK" }), mode: "think", answer: "x", issue: "y".repeat(900) });
+  assert.match(system, /write a correction of 1 to 4 short sentences/);
+  assert.match(system, /^You fix the mistakes in an AI tutor's answer to a student\. You get the answer and the problems/);
+  assert.match(system, /If only some of the named problems are real, correct only those and ignore the rest\./);
+  assert.match(system, /a clearly hypothetical case \(»če bi …«, »predpostavimo«\), an exercise that on purpose contains a flawed experiment or wrong claim for the student to find, judge or improve,/);
+  assert.match(system, /reply exactly OK \(do not name or fix its flaw\)\./);
+  assert.doesNotMatch(system, /leave it as it is/);
+  assert.ok(user.includes("y".repeat(800)) && !user.includes("y".repeat(801)), "do 800 znakov ugotovitve");
+});
+
+test("live check (pregled #840): all NAPAKA lines are collected; a 4-sentence fix for two errors is shown", async () => {
+  const { reviewReason, reviewVerdict } = await import("../server/live-check.js");
+  const { parseVerdict } = await import("../server/verify.js");
+  const r = (text) => ({ text, verdict: parseVerdict(text) });
+  assert.equal(reviewReason(r("OK")), null);
+  assert.equal(reviewReason(r("Mula je pravilna.\nNAPAKA: x")), null, "NAPAKA ne na začetku ni sodba za popravek");
+  assert.equal(reviewReason(r("NAPAKA: »2n« ne velja; 2n = 63\nNAPAKA: **»4 bite«** – največ 2 bita**")), "»2n« ne velja; 2n = 63; **»4 bite«** – največ 2 bita");
+  assert.equal(reviewReason(r("NAPAKA: " + "a".repeat(700))).length, 600);
+  // sodba uporablja isto pomožno funkcijo
+  const two = "NAPAKA: potrdil je napačen rezultat\nNAPAKA: zavrnil je pravilen korak";
+  const v = await reviewVerdict({ context: "c", student: "s", answer: "a", createFn: async () => ({ content: [{ type: "text", text: two }], stop_reason: "end_turn", usage: {}, model: "m" }) });
+  assert.equal(v.reason, "potrdil je napačen rezultat; zavrnil je pravilen korak");
+  // Realen popravek dveh napak v štirih stavkih (nastanek-vrst#2) ostane prikazan (meja 1600 znakov).
+  const fix = "Popravek: tudi mulo zapišemo kot $2n$: v telesnih celicah ima $2n = 63$ kromosomov, oznaka $2n$ pove le, da je celica telesna in ima po en nabor od vsakega starša, ne pa, da je število sodo. Liho število ni razlog za neplodnost, zato trditve »Če skupno število ni sodo, je križanec neploden« ne upoštevaj. Mula je neplodna, ker kromosomi konja in osla niso homologni in se v mejozi ne morejo pravilno spariti. Zato pri mejozi ne nastanejo normalne spolne celice in mula nima potomcev.";
+  assert.ok(fix.length > 400 && fix.length < 1600);
+  const block = fixBlock(fix);
+  assert.match(block, /^\n\n> \*\*Popravek:\*\* tudi mulo zapišemo kot \$2n\$/);
+  assert.ok(block.includes("se v mejozi ne morejo pravilno spariti"));
+  assert.equal(fixBlock("Popravek: " + "x".repeat(1600)), null, "predolg popravek ni prikazan");
+});
+
+test("live check (meritev SŠ po #844, pregled #848): SŠ answers with an exercise or experiment plan get a focused check with thinking in parallel", async () => {
+  const { reviewAnswer, needsExtraCheck, reviewCalls, hasPlan, EXTRA_SYSTEM, extraReason } = await import("../server/live-check.js");
+  const vaja = "Rešitev je **5 min**.\n\n**Vaja:** Fotografija velikosti 1 MB je zapisana s 4 biti na nukleotid. Koliko nukleotidov potrebujemo?";
+  const plan = "**Boljši načrt:**\n- Vzamemo 6 enakih desk.\n- Tri premazane in tri nepremazane na sonce, tri premazane in tri nepremazane v senco.";
+  assert.equal(needsExtraCheck(vaja, "SS"), true);
+  assert.equal(needsExtraCheck(plan, "SS"), true);
+  assert.equal(hasClaims(plan), true, "odgovor samo z načrtom gre v pregled");
+  assert.equal(hasPlan("Načrt: delimo maso s hitrostjo."), false, "Načrt iz vzorca računske naloge ni načrt poskusa");
+  assert.equal(needsExtraCheck("Rešitev je **5 min**.", "SS"), false);
+  assert.equal(needsExtraCheck(vaja, "FAKS"), false);
+  assert.equal(needsExtraCheck(vaja, "OS"), false, "OŠ le z EVKLID_LIVE_REVIEW_OS=1");
+  assert.equal(reviewCalls(vaja, "SS"), 2);
+  assert.equal(reviewCalls("Rešitev je **5 min**.", "SS"), 1);
+  for (const s of [
+    "list every value and fact it assumes", "agrees with the fixed facts of the task and of nature", "concentrations above solubility, probabilities or fractions above 1",
+    "the given values agree with each other, units included (no extra given value that contradicts the others)", "given to the right object (parent or offspring",
+    "has exactly one correct answer or solution set (several roots, or several items the exercise asks for, are fine), and solve it. An open question (propose, design, give examples, explain, justify) needs no single answer; for it check only that its data are possible and consistent.",
+    "Rounded textbook constants and values (g = 10 m/s², N_A = 6·10²³) are fine.", "count the items it assigns to every group and condition", "must add up to the stated total",
+    "every group or condition that is compared must have the same number of repeats (a plan need not combine every condition with every other). Check only the tutor's own plan; a plan quoted from the student or the task in order to criticise it is fine.",
+    "find, judge or improve it is fine", "clearly states as hypothetical", "Never write the exercise's result; name only the wrong data and the corrected data.",
+  ]) assert.ok(EXTRA_SYSTEM.includes(s), s);
+  assert.match(EXTRA_SYSTEM, /End with one final line: OK, or NAPAKA: /);
+  assert.doesNotMatch(EXTRA_SYSTEM, /in your thinking/);
+  // Sodba ciljnega pregleda je zadnja vrstica.
+  assert.equal(extraReason({ text: "Vaja predpostavlja 4 bite.\nNAPAKA: to je napačno\n\n**NAPAKA: »4 biti« – največ 2 bita**" }), "»4 biti« – največ 2 bita");
+  assert.equal(extraReason({ text: "NAPAKA: to bi bilo napačno, a je hipotetično.\nOK" }), null);
+
+  const systems = [];
+  const params = [];
+  const reply = (text) => ({ content: [{ type: "text", text }], stop_reason: "end_turn", usage: { input_tokens: 100, output_tokens: 10 }, model: "claude-sonnet-5-5" });
+  const createFn = async (p) => (systems.push(p.system), params.push(p), reply(p.system === EXTRA_SYSTEM ? "Preštejem: 1 MB …\nNAPAKA: »4 biti na nukleotid« – največ 2 bita" : "OK"));
+  const logged = [];
+  const usage = { log: (id, model, u, kind) => (logged.push({ u, kind }), 0.01) };
+  const r = await reviewAnswer({ question: "q", answer: vaja, stopnja: "SS", createFn, usage, kind: "preverjanje-sola" });
+  assert.equal(r.reason, "»4 biti na nukleotid« – največ 2 bita");
+  assert.equal(r.extra, true);
+  assert.equal(systems.length, 2);
+  assert.deepEqual(params.find((p) => p.system === EXTRA_SYSTEM).thinking, { type: "adaptive" }, "ciljni pregled z razmislekom");
+  assert.equal(params.find((p) => p.system !== EXTRA_SYSTEM).thinking, undefined, "splošni pregled brez spremembe");
+  assert.equal(logged.length, 1, "en vpis porabe (meja pregledov na učenca šteje en pregled)");
+  assert.equal(logged[0].u.input_tokens, 200);
+  assert.equal(logged[0].u.output_tokens, 20);
+  // Obe najdbi skupaj; enaki razlogi le enkrat
+  const both = async (p) => reply(p.system === EXTRA_SYSTEM ? "NAPAKA: 6 desk, razporejenih 12" : "NAPAKA: »2n« ne velja");
+  assert.equal((await reviewAnswer({ question: "q", answer: plan, stopnja: "SS", createFn: both })).reason, "»2n« ne velja; 6 desk, razporejenih 12");
+  const same = async () => reply("NAPAKA: 6 desk, razporejenih 12");
+  assert.equal((await reviewAnswer({ question: "q", answer: plan, stopnja: "SS", createFn: same })).reason, "6 desk, razporejenih 12");
+  // Brez vaje in načrta en klic; neuspel ciljni pregled ne ustavi splošnega.
+  systems.length = 0;
+  assert.equal((await reviewAnswer({ question: "q", answer: "Rešitev je **5 min**.", stopnja: "SS", createFn })).reason, null);
+  assert.equal(systems.length, 1);
+  const flaky = async (p) => { if (p.system === EXTRA_SYSTEM) throw new Error("rok"); return reply("OK"); };
+  const f = await reviewAnswer({ question: "q", answer: vaja, stopnja: "SS", createFn: flaky });
+  assert.equal(f.reason, null);
+  assert.equal(f.extra, false);
+  // Splošni pregled ne uspe, ciljni uspe: poraba ciljnega je zapisana (en vpis), napaka splošnega gre naprej (rok, preskok).
+  logged.length = 0;
+  const mainFails = async (p) => { if (p.system !== EXTRA_SYSTEM) throw Object.assign(new Error("rok"), { name: "TimeoutError" }); return reply("OK"); };
+  await assert.rejects(reviewAnswer({ question: "q", answer: vaja, stopnja: "SS", createFn: mainFails, usage, kind: "preverjanje-sola" }), { name: "TimeoutError" });
+  assert.equal(logged.length, 1);
+  assert.equal(logged[0].u.input_tokens, 100);
+});
+
+test("live check (pregled #848): two review calls reserve twice in the school pool and in the pupil's limit", async () => {
+  const { Usage } = await import("../server/usage.js");
+  const { checkReserveUsd } = await import("../server/meje-ai.js");
+  const { MODEL_MID } = await import("../server/claude.js");
+  const vaja = "Rešitev je pH = 12, ker je koncentracija 0,01 mol/L hidroksidnih ionov v raztopini.\n\n**Vaja:** V 0,50 L vode raztopimo 0,40 g CaO. Kolikšen je pH?";
+  const box = "**Podatki:** $c = 0{,}01$ mol/L\n**Iščemo:** pH\n\nRešitev je pH = 12, ker je koncentracija 0,01 mol/L.\n\n> 📌 **Zapomni si:** pH + pOH = 14 pri 25 °C.";
+  class Spy extends Usage {
+    constructor(db) {
+      super(db);
+      this.takes = [];
+    }
+    hold(id, capsFn) {
+      const h = super.hold(id, capsFn);
+      const take = h.take;
+      h.take = (usd) => (this.takes.push({ id, usd }), take(usd));
+      return h;
+    }
+  }
+  // Šolski del 0,03 $: dvojna rezerva (0,04 $) ne gre, enojna (0,02 $) gre.
+  process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD = "0.03";
+  const store = openDb(":memory:");
+  const usage = new Spy(store.db);
+  const reviewCalls = [];
+  const answers = [vaja, box];
+  const streamFn = async ({ mode, onText }) => {
+    const text = answers.shift() + META;
+    onText(text);
+    return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
+  };
+  const reviewCreateFn = async (p) => (reviewCalls.push(p), { content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 100, output_tokens: 10 } });
+  const server = createApp(store, { streamFn, reviewCreateFn, usage }).listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const call = async (path, body) => (await fetch(base + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })).json().catch(() => null);
+  try {
+    const s = await call("/api/students", { name: "Ana", settings: { educational_track: "SREDNJA_SOLA", curriculum_level: "2" } });
+    const c1 = await call(`/api/students/${s.id}/conversations`, {});
+    await fetch(`${base}/api/conversations/${c1.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "Koliko je pH?" }) }).then((r) => r.text());
+    assert.equal(reviewCalls.length, 0, "dvojna rezerva je večja od šolskega dela: brez klica");
+    const kv = JSON.parse(store.db.prepare("SELECT value FROM kv WHERE key = ?").get(SKIP_KV).value);
+    assert.equal(Object.values(kv)[0].SS.sola, 1, "preskok »sola«");
+    const c2 = await call(`/api/students/${s.id}/conversations`, {});
+    await fetch(`${base}/api/conversations/${c2.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "Koliko je pH raztopine?" }) }).then((r) => r.text());
+    assert.equal(reviewCalls.length, 1, "en klic gre pod mejo");
+    // Rezerva v meji učenca: 1 × za odgovor brez vaje; za odgovor z vajo bi bila 2 ×.
+    const one = checkReserveUsd(MODEL_MID, "Koliko je pH raztopine?" + box);
+    assert.ok(usage.takes.some((t) => t.id === s.id && Math.abs(t.usd - one) < 1e-12), "enojna rezerva učenca");
+  } finally {
+    delete process.env.EVKLID_LIVE_REVIEW_SS_DAILY_USD;
+    server.close();
+  }
+  // Dvojna rezerva učenca pri vaji (brez šolske meje).
+  const store2 = openDb(":memory:");
+  const usage2 = new Spy(store2.db);
+  const answers2 = [vaja];
+  const streamFn2 = async ({ mode, onText }) => {
+    const text = answers2.shift() + META;
+    onText(text);
+    return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
+  };
+  const calls2 = [];
+  const server2 = createApp(store2, { streamFn: streamFn2, reviewCreateFn: async (p) => (calls2.push(p), { content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 100, output_tokens: 10 } }), usage: usage2 }).listen(0);
+  const base2 = `http://127.0.0.1:${server2.address().port}`;
+  try {
+    const post = (path, body) => fetch(base2 + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const s = await (await post("/api/students", { name: "Ana", settings: { educational_track: "SREDNJA_SOLA", curriculum_level: "2" } })).json();
+    const c = await (await post(`/api/students/${s.id}/conversations`, {})).json();
+    await (await post(`/api/conversations/${c.id}/messages`, { text: "Koliko je pH?" })).text();
+    assert.equal(calls2.length, 2, "splošni in ciljni pregled");
+    const two = 2 * checkReserveUsd(MODEL_MID, "Koliko je pH?" + vaja);
+    assert.ok(usage2.takes.some((t) => t.id === s.id && Math.abs(t.usd - two) < 1e-12), "dvojna rezerva učenca");
+  } finally {
+    server2.close();
+  }
+});

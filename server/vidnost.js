@@ -2,8 +2,8 @@
 // »Euclid« in trdil, da nima slovenščine, kamere in drugih predmetov. Tu so na enem mestu javna dejstva:
 // - /robots.txt, /sitemap.xml, /llms.txt (pravi Content-Type; pred statičnimi datotekami),
 // - /o-evklidu: statična stran brez JavaScripta (public/o-evklidu.html, spremenljivke {{…}} in ikone {{i:ime}}),
-// - /zakaj-evklid: enaka tehnika (public/zakaj-evklid.html): kako Evklid preverja rezultate, izmerjena natančnost
-//   (zadnja meritev iz docs/meritve/, accuracy()) in primerjava pristopa s splošnimi klepetalniki, brez imen in cen tekmecev,
+// - /zakaj-evklid: enaka tehnika (public/zakaj-evklid.html): kako Evklid preverja rezultate, natančnost
+//   (meritev iz docs/meritve/ samo, če je OBJAVI_MERITEV; zdaj ne) in primerjava pristopa s splošnimi klepetalniki, brez imen in cen tekmecev,
 // - structuredData(): schema.org za vstopno stran; public/index.html ga nosi zapisanega, test/vidnost.test.js
 //   preveri, da se ujema s cenikom (server/accounts/plans.js) in jeziki vmesnika.
 // Cene, dnevi preizkusa in število jezikov pridejo iz kode, da se strani ne razidejo s cenikom.
@@ -30,6 +30,8 @@ export const WHY_PATH = "/zakaj-evklid";
 export const PUBLIC_PAGES = ["/", ABOUT_PATH, WHY_PATH, "/starsi.html", "/sole", "/prenesi", "/zasebnost.html"];
 // Osnutki do pregleda pravnika (j 2026-11-16): stran deluje in je povezana v nogi, v zemljevidu strani in llms.txt je ni (meta robots noindex).
 export const DRAFT_PAGES = ["/pogoji.html"];
+// Strani z obrazcem, povezane v nogi, a ne za iskalnike (meta robots noindex): funkcija za odstop od pogodbe (ZVPot-1A).
+export const NOINDEX_PAGES = ["/odstop.html"];
 // Zasebne poti: API, plačilna stran s kodo, prijava testne različice, stanje strežnika, datoteke aplikacije za prenos.
 export const PRIVATE_PATHS = ["/api/", "/placaj.html", "/prijava", "/healthz", "/gradiva/", "/prenesi/"];
 
@@ -88,7 +90,14 @@ function accuracyOf(m) {
   };
 }
 
-export function facts(measurement) {
+// Meritve natančnosti NE objavljamo (j, 18. 11. 2026, po zunanjem pregledu): 3 napake na 91 primerov je premalo
+// (95-% interval približno 1–9 %), primeri so iz lastnih lekcij, ocenjeval je model iste družine, ne človek, razlika
+// »s preverjanjem / brez« pa ni statistično značilna. Strani in llms.txt namesto številk povedo, da natančnost še ni
+// neodvisno izmerjena. Znova vklopi šele po slepi človeški oceni pravih vprašanj učencev (vsaj nekaj sto) in z intervalom.
+// Testi lahko meritev podajo izrecno (facts(m), whyPage(m)), da predloga razdelka ostane preverjena.
+export const OBJAVI_MERITEV = false;
+
+export function facts(measurement = OBJAVI_MERITEV ? latestMeasurement() : null) {
   const acc = accuracy(measurement);
   return {
     accDate: acc?.date ?? "",
@@ -153,7 +162,7 @@ export function llmsTxt(measurement) {
 - Inštruktor naloge ne reši namesto učenca: z namigi in vprašanji ga vodi korak za korakom.
 - Skener nalog: učenec nalogo fotografira s kamero ali jo napiše z roko, ${f.name} jo prebere.
 - Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; račune v enačbah, odvodih in daljših izračunih preveri Evklidov program.
-${f.accAny ? `- Izmerjena natančnost. ${f.accSentence} Natančnosti drugih orodij nismo merili. Podrobno: ${ORIGIN}${WHY_PATH}\n` : ""}- Učbenik s kratkimi lekcijami, učna pot po razredih, vaje z vedno novimi številkami, simulacije, laboratorij, 3D atlas, več kot 30 učnih iger.
+${f.accAny ? `- Izmerjena natančnost. ${f.accSentence} Natančnosti drugih orodij nismo merili. Podrobno: ${ORIGIN}${WHY_PATH}\n` : `- Natančnosti inštruktorja še nismo neodvisno izmerili, zato številk o napakah ne objavljamo. Pri besedni razlagi se umetna inteligenca lahko zmoti.\n`}- Učbenik s kratkimi lekcijami, učna pot po razredih, vaje z vedno novimi številkami, simulacije, laboratorij, 3D atlas, več kot 30 učnih iger.
 - Priprava na NPZ in maturo s preteklimi izpitnimi polami ter naloge v slogu tekmovanj.
 - Naprave: spletni brskalnik in aplikacija za Android.
 - Cena: ${f.trialDays} dni brezplačno brez kartice; nato brezplačni paket (${f.freeDaily} vprašanj inštruktorju na dan) ali naročnina: osnovna šola ${f.osM} na mesec (${f.osY} na leto), srednja šola ${f.ssM} (${f.ssY}), fakulteta ${f.faksM} (${f.faksY}), družina (2–4 profili) ${f.famM} (${f.famY}), družina s študentom (2–4 profili) ${f.famsM} (${f.famsY}). Učiteljski račun je brezplačen. ${f.name} je plačljiva aplikacija z brezplačnim paketom; ni odprtokodni ali študentski projekt.
@@ -167,7 +176,7 @@ ${f.accAny ? `- Izmerjena natančnost. ${f.accSentence} Natančnosti drugih orod
 - The tutor does not hand out the solution: it guides the student step by step with hints and questions.
 - Students can photograph a task with the camera or write it by hand.
 - The tutor's answers are written by Anthropic's Claude models; calculations in equations, derivatives and longer computations are checked by Evklid's own program code.
-${f.accAny ? `- Measured accuracy. ${f.accSentenceEn} Other tools were not measured.\n` : ""}- It also has a textbook with short lessons, a learning path by grade, practice with fresh numbers, simulations, a virtual laboratory, a 3D atlas, more than 30 learning games, past national exam papers (NPZ, matura) and competition-style tasks.
+${f.accAny ? `- Measured accuracy. ${f.accSentenceEn} Other tools were not measured.\n` : `- The tutor's accuracy has not been independently measured yet, so no error rates are published. The AI can make mistakes in verbal explanations.\n`}- It also has a textbook with short lessons, a learning path by grade, practice with fresh numbers, simulations, a virtual laboratory, a 3D atlas, more than 30 learning games, past national exam papers (NPZ, matura) and competition-style tasks.
 - Platforms: web browser and an Android app.
 - Pricing: ${f.trialDays}-day free trial without a card; then a free plan (${f.freeDaily} tutor questions per day) or a subscription from ${dec(LEVEL_PRICES.OS.month)} EUR per month (primary school), ${dec(LEVEL_PRICES.SS.month)} EUR (secondary school), ${dec(LEVEL_PRICES.FAKS.month)} EUR (university). Teacher accounts are free. It is a commercial app with a free plan, not an open-source or student project.
 - Privacy: no ads, data is not sold; the server and database are in the EU (Frankfurt). Anthropic (USA) does not use the data to train models.
@@ -175,7 +184,7 @@ ${f.accAny ? `- Measured accuracy. ${f.accSentenceEn} Other tools were not measu
 ## Strani
 
 - [O Evklidu](${ORIGIN}${ABOUT_PATH}): kaj je ${f.name}, funkcije, cene in pogosta vprašanja
-- [Zakaj Evklid](${ORIGIN}${WHY_PATH}): kako ${f.name} preverja rezultate, izmerjena natančnost, kaj dobite in česa še ne zna
+- [Zakaj Evklid](${ORIGIN}${WHY_PATH}): kako ${f.name} preverja rezultate, kako preverjamo natančnost, kaj dobite in česa še ne zna
 - [Za starše](${ORIGIN}/starsi.html)
 - [Za učitelje in šole](${ORIGIN}/sole)
 - [Aplikacija za telefon](${ORIGIN}/prenesi)
@@ -275,7 +284,7 @@ function staticPage(file, measurement, store = false) {
   return html.replace("</head>", `  ${ldScript(faqData(html))}\n</head>`);
 }
 export const aboutPage = (store = false) => staticPage(PAGE, undefined, store);
-// measurement: samo za teste (stran z drugo meritvijo); strežnik vedno pokaže zadnjo iz docs/meritve/.
+// measurement: samo za teste (stran z meritvijo); strežnik meritev pokaže le, če je OBJAVI_MERITEV (zdaj ne).
 export const whyPage = (measurement, store = false) => staticPage(WHY_PAGE, measurement, store);
 
 // Pred statičnimi datotekami (server/app.js), da predloga /o-evklidu.html ne gre ven s spremenljivkami {{…}}.

@@ -18,7 +18,7 @@ async function withServer(fn) {
 
 test("kratke povezave preusmerijo na stran .html (poizvedba ostane), stran se odpre", async () => {
   await withServer(async (base) => {
-    assert.deepEqual(Object.keys(KRATKE_POTI).sort(), ["/garancija", "/pogoji", "/starsi", "/zasebnost"]);
+    assert.deepEqual(Object.keys(KRATKE_POTI).sort(), ["/garancija", "/odstop", "/pogoji", "/starsi", "/zasebnost"]);
     for (const [kratka, cilj] of Object.entries(KRATKE_POTI)) {
       const r = await fetch(base + kratka, { redirect: "manual" });
       assert.equal(r.status, 301, kratka);

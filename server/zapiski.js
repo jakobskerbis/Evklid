@@ -19,13 +19,14 @@
 // Strošek: vsak klic gre skozi trdo mejo AI (server/meje-ai.js, usage.guard). Zapiski imajo še ločeno mesečno mejo
 // strani po paketu (STRANI), da ne porabijo meje za vprašanja inštruktorju: stran je prebrana fotografija ali
 // prilepljeno besedilo (odločitev j 10. 11., pri vseh paketih enako).
+import { AI_JSON } from "./ai-oznaka.js";
 import crypto from "node:crypto";
 import { getClient, isMockMode, MODEL, MODEL_MID, quickParams, errorText } from "./claude.js";
 import { imageCallReserveUsd, callMaxUsd } from "./meje-ai.js";
 import { seal, unseal, blindIndex, encryptionOn } from "./crypto-polje.js";
 import { codeCheck } from "./verify.js";
 import { checkAnswerClaims } from "./racun.js";
-import { rankLessons, topicForName } from "./lekcija-za-vprasanje.js";
+import { rankLessons, topicForName, searchOn } from "./lekcija-za-vprasanje.js";
 import { getTopic } from "./curriculum.js";
 import { generateTask, hasGenerator } from "./practice/index.js";
 import { toChoice } from "./practice/choice.js";
@@ -33,6 +34,10 @@ import { lokalnaVrsta, nujnoZa } from "./nujno.js";
 import { SCHOOL_SUBJECTS } from "./subjects.js";
 import { stopnja } from "../public/stopnja.js";
 import { MAX_FROM_NOTES } from "./flashcards.js";
+
+// »Vaja iz testa« (server/vaja-iz-lista.js) je privzeto izklopljena (j, 18. 11. 2026): vklopi jo EVKLID_VAJA_IZ_TESTA=1,
+// ko je natančnost prepoznavanja znanja izmerjena. Prebere se ob vsakem zahtevku.
+export const vajaFlag = () => process.env.EVKLID_VAJA_IZ_TESTA === "1";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
 // Rokopis bere Sonnet (odločitev j 2: dokler ne izmerimo Haikuja na ~30 fotografijah zvezkov).
@@ -89,11 +94,11 @@ export function takePage(db, studentId, limit, now = new Date(), n = 1) {
   rowFor(db, studentId, m);
   return db.prepare(`UPDATE zapiski_strani SET strani = strani + ? WHERE student_id = ? AND mesec = ? AND strani + ${ORPHANS} + ? <= ?`).run(n, studentId, m, n, limit).changes > 0;
 }
-const givePage = (db, studentId, n = 1, now = new Date()) =>
+export const givePage = (db, studentId, n = 1, now = new Date()) =>
   db.prepare("UPDATE zapiski_strani SET strani = MAX(0, strani - ?) WHERE student_id = ? AND mesec = ?").run(n, studentId, month(now));
 // Prebrana fotografija: stran je porabljena ob branju, v zapisku je ne štejemo še enkrat (branja = dobropis).
 const addRead = (db, studentId, now = new Date()) => db.prepare("UPDATE zapiski_strani SET branja = branja + 1 WHERE student_id = ? AND mesec = ?").run(studentId, month(now));
-function useReads(db, studentId, want, now = new Date()) {
+export function useReads(db, studentId, want, now = new Date()) {
   if (want <= 0) return 0;
   const m = month(now);
   rowFor(db, studentId, m);
@@ -103,9 +108,9 @@ function useReads(db, studentId, want, now = new Date()) {
   if (n && !db.prepare("UPDATE zapiski_strani SET branja = branja - ? WHERE student_id = ? AND mesec = ? AND branja >= ?").run(n, studentId, m, n).changes) return 0;
   return n;
 }
-const giveReads = (db, studentId, n, now = new Date()) => n > 0 && db.prepare("UPDATE zapiski_strani SET branja = branja + ? WHERE student_id = ? AND mesec = ?").run(n, studentId, month(now));
+export const giveReads = (db, studentId, n, now = new Date()) => n > 0 && db.prepare("UPDATE zapiski_strani SET branja = branja + ? WHERE student_id = ? AND mesec = ?").run(n, studentId, month(now));
 // Prvi dan naslednjega meseca (za besedilo »Nove dobiš …«).
-const nextMonth = (now = new Date()) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString().slice(0, 10);
+export const nextMonth = (now = new Date()) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString().slice(0, 10);
 
 // ---------- zaščita pred navodili v besedilu ----------
 // Prepis gre modelu vedno kot podatek v oznakah <notes>. Iz njega odstranimo naše ukazne bloke (<<…>>, kot
@@ -372,7 +377,8 @@ export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null,
   app.get("/api/students/:id/zapiski", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    res.json({ notes: notesOf(db, s.id).map((r) => noteView(db, s.id, r)), pages: pagesInfo(s) });
+    // vaja: »Vaja iz testa« (server/vaja-iz-lista.js): null = izklopljena (zastavica), false = ni za to stopnjo, true = na voljo.
+    res.json({ notes: notesOf(db, s.id).map((r) => noteView(db, s.id, r)), pages: pagesInfo(s), vaja: vajaFlag() ? searchOn(s.settings) : null });
   });
 
   app.post("/api/students/:id/zapiski/preberi", async (req, res) => {
@@ -405,7 +411,7 @@ export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null,
       const nujno = out.distress ? nujnoZa(out.distress, s.settings) : null;
       if (out.unrelated) return res.status(422).json({ error: "To niso zapiski za šolo.", code: "zapiski_neucno", pages: pagesInfo(s), ...(nujno ? { nujno } : {}) });
       if (out.text) addRead(db, s.id); // stran je plačana z branjem; v zapisku se ne šteje še enkrat
-      res.json({ text: out.text, kind: out.kind, pages: pagesInfo(s), ...(nujno ? { nujno } : {}) });
+      res.json({ text: out.text, kind: out.kind, pages: pagesInfo(s), ...(out.text ? AI_JSON : {}), ...(nujno ? { nujno } : {}) });
     } catch (err) {
       if (!paid) givePage(db, s.id); // neuspelo branje strani ne porabi
       console.error("[evklid] zapiski branje:", err?.message || err);

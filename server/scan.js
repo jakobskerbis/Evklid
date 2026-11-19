@@ -4,6 +4,7 @@
 // Večino nalog reši brez AI že vmesnik (public/scan/solvecore.js). AI pride na vrsto le pri nalogah, ki jih
 // ta ne zna (koreni, logaritmi, trigonometrija, integrali …). AI rešitev strežnik preveri z isto kodo kot vmesnik
 // (public/scan/verify.js); nepreverjena se pokaže z opozorilom, nikoli kot »preverjeno«.
+import { AI_JSON } from "./ai-oznaka.js";
 import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { prep, splitSystem } from "../public/scan/solvecore.js";
@@ -348,7 +349,7 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
       if (out.mock) return res.json({ solution: null, mock: true });
       for (const u of [].concat(out.usage || [])) if (u) usage?.log(s.id, out.model, u, "skeniranje");
       if (!out.solution) return res.status(502).json({ error: "Rešitve ni bilo mogoče sestaviti. Poskusi znova ali vprašaj inštruktorja." });
-      res.json({ solution: out.solution });
+      res.json({ solution: out.solution, ...AI_JSON });
     } catch (err) {
       console.error("[evklid] reševanje:", err?.message || err);
       // Inštruktor (AI) ni na voljo (ni dobroimetja, ključ, preobremenjenost): vmesnik pokaže prijazno

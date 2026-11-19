@@ -185,20 +185,78 @@ function optimizePdf(buf) {
 // Cel predmet z več kot PDF_BOOK_MAX_LESSONS lekcijami: sestavi ga pypdf iz PDF-jev razredov (Chromium ga v enem
 // kosu ne izriše). Zaznamki (vsak razred ena veja) in povezave kazal razredov ostanejo. Vrne Buffer ali vrže napako.
 // Ob spremembi sestave ali pregleda povečaj PDF_MERGE_VERSION (server/ucbenik-pdf.js).
+// Podporni metapodatki AI (server/ai-oznaka.js): Info in XMP (IPTC DigitalSourceType).
+// meta = JSON { info, xmp }; brez meta ostane PDF brez oznake.
+const OZNACI_PY = `
+import json
+from xml.sax.saxutils import escape
+from pypdf.generic import NameObject, DecodedStreamObject
+def oznaci(w, meta, title):
+    if not meta:
+        return
+    m = json.loads(meta)
+    w.add_metadata(m["info"])
+    s = DecodedStreamObject()
+    s.set_data(m["xmp"].replace("{title}", escape(title or "")).encode("utf-8"))
+    s.update({NameObject("/Type"): NameObject("/Metadata"), NameObject("/Subtype"): NameObject("/XML")})
+    w._root_object[NameObject("/Metadata")] = w._add_object(s)
+`;
 const MERGE_PY = `
 import sys
 from pypdf import PdfWriter
-out, title, *ins = sys.argv[1:]
+${OZNACI_PY}
+out, title, meta, *ins = sys.argv[1:]
 w = PdfWriter()
 for f in ins:
     w.append(f)
 if hasattr(w, "compress_identical_objects"):
     w.compress_identical_objects()
 w.add_metadata({"/Title": title})
+oznaci(w, meta, title)
 with open(out, "wb") as fh:
     w.write(fh)
 `;
-function mergePdfs(bufs, title) {
+const MARK_PY = `
+import sys
+from pypdf import PdfReader, PdfWriter
+${OZNACI_PY}
+src, out, meta = sys.argv[1:]
+r = PdfReader(src)
+w = PdfWriter(clone_from=r)
+oznaci(w, meta, (r.metadata or {}).get("/Title", ""))
+with open(out, "wb") as fh:
+    w.write(fh)
+`;
+const aiMetaArg = (meta) => (meta ? JSON.stringify({ info: meta.info, xmp: meta.xmp }) : "");
+
+// PDF iz Chromiuma dobi oznako AI (Info in XMP). Vrne nov Buffer; null, če pypdf ni nameščen ali ne uspe.
+function markAiPdf(buf, meta) {
+  const { spawnSync } = require("node:child_process");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-oznaka-"));
+  try {
+    const [a, b] = [path.join(dir, "a.pdf"), path.join(dir, "b.pdf")];
+    fs.writeFileSync(a, buf);
+    const r = spawnSync("python3", ["-I", "-c", MARK_PY, a, b, aiMetaArg(meta)], { encoding: "utf8", timeout: 300_000, maxBuffer: 16e6 });
+    if (r.error || r.status !== 0 || !fs.existsSync(b)) return null;
+    return fs.readFileSync(b);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+// Ali ima PDF oznako AI (pdf.js: Info in XMP).
+async function hasAiMeta(buf) {
+  const doc = await openPdf(buf);
+  try {
+    const { info, metadata } = await doc.getMetadata();
+    const custom = info?.Custom instanceof Map ? Object.fromEntries(info.Custom) : info?.Custom || {};
+    return custom.AIGenerated === "true" && /AI-generated/.test(info?.Keywords || "") && /trainedAlgorithmicMedia/.test(metadata?.getRaw?.() || "");
+  } finally {
+    await doc.loadingTask.destroy();
+  }
+}
+
+function mergePdfs(bufs, title, meta = null) {
   const { spawnSync } = require("node:child_process");
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-zdruzi-"));
   try {
@@ -208,7 +266,7 @@ function mergePdfs(bufs, title) {
       return f;
     });
     const out = path.join(dir, "out.pdf");
-    const r = spawnSync("python3", ["-I", "-c", MERGE_PY, out, title, ...ins], { encoding: "utf8", timeout: 600_000, maxBuffer: 16e6 });
+    const r = spawnSync("python3", ["-I", "-c", MERGE_PY, out, title, aiMetaArg(meta), ...ins], { encoding: "utf8", timeout: 600_000, maxBuffer: 16e6 });
     if (r.error || r.status !== 0 || !fs.existsSync(out)) throw new Error(`pypdf ni uspel: ${(r.error?.message || r.stderr || "").trim().split("\n").pop()}`);
     return fs.readFileSync(out);
   } finally {
@@ -515,6 +573,8 @@ async function main() {
   const arg = (n) => (args.indexOf(n) >= 0 ? args[args.indexOf(n) + 1] : null);
   const cfg = await esm("server/ucbenik-pdf.js");
   const { BRAND } = await esm("server/brand.js");
+  const { PDF_AI_INFO, PDF_AI_XMP } = await esm("server/ai-oznaka.js");
+  const aiMeta = { info: PDF_AI_INFO, xmp: PDF_AI_XMP };
   const out = path.resolve(arg("--out") || "ucbenik-pdf");
   const only = arg("--samo")?.split(",").map((s) => s.trim()).filter(Boolean);
   const kinds = arg("--vrsta")?.split(",");
@@ -562,11 +622,12 @@ async function main() {
             return e;
           });
           const title = cfg.pdfDownloadName(t.key).replace(/^[^-]+ - /, "").replace(/\.pdf$/, "");
-          const merged = mergePdfs(await Promise.all(parts.map((e) => partPdf(e, out, releaseUrl))), title);
+          const merged = mergePdfs(await Promise.all(parts.map((e) => partPdf(e, out, releaseUrl))), title, aiMeta);
           const small = optimizePdf(merged);
           const buf = small || merged;
           const { errors, pages } = await checkMerged(buf, parts, cfg.PDF_BOOK_MAX_BYTES);
           if (!small && strict) errors.push("qpdf ni nameščen ali ni uspel (stiskanje in linearizacija)");
+          if (strict && !(await hasAiMeta(buf).catch(() => false))) errors.push("PDF nima oznake AI (Info, XMP; pypdf)");
           const file = `${t.base}.${hash}.pdf`;
           res = { id: t.id, vrsta: t.kind, file, hash, bytes: buf.length, pages, lessons: t.lessons, zdruzi: t.zdruzi, ms: Date.now() - t0, errors };
           fs.writeFileSync(path.join(out, (errors.length ? "NAPAKA-" : "") + file), buf);
@@ -593,7 +654,15 @@ async function main() {
           if (!errors.some((e) => e.includes("odrezan košček"))) break;
         }
         const { dom } = made;
+        // Oznaka AI enkrat, po izbiri zamika (ne spremeni izrisa, pregled zgoraj velja); nato znova qpdf.
+        const marked = markAiPdf(made.buf, aiMeta);
+        if (marked) {
+          small = optimizePdf(marked);
+          buf = small || marked;
+          if (buf.length > cfg.PDF_MAX_BYTES) errors.push(`PDF z oznako AI ima ${(buf.length / 1e6).toFixed(1)} MB (meja ${(cfg.PDF_MAX_BYTES / 1e6).toFixed(1)} MB)`);
+        }
         if (!small && strict) errors.push("qpdf ni nameščen ali ni uspel (stiskanje in linearizacija)");
+        if (strict && !(await hasAiMeta(buf).catch(() => false))) errors.push("PDF nima oznake AI (Info, XMP; pypdf)");
         if (dom.lessons.length !== t.lessons) errors.push(`stran za tisk ima ${dom.lessons.length} lekcij, razred jih ima ${t.lessons}`);
         const file = `${t.base}.${hash}.pdf`;
         res = { id: t.id, vrsta: t.kind, file, hash, bytes: buf.length, pages: info.pages, lessons: info.lessons, formulas: info.formulas, fonts: info.fonts, images: dom.images, redke: info.redke, zamik, ms: Date.now() - t0, errors };
@@ -620,5 +689,5 @@ async function main() {
   process.exitCode = failed ? 1 : 0;
 }
 
-module.exports = { PAGE_W, PAGE_H, mergePdfs, checkMerged, sparseEndings, findSlivers, optimizePdf, checkPdf, renderPdf, startServer, servePdfFonts, READ_DOM };
+module.exports = { PAGE_W, PAGE_H, mergePdfs, markAiPdf, hasAiMeta, checkMerged, sparseEndings, findSlivers, optimizePdf, checkPdf, renderPdf, startServer, servePdfFonts, READ_DOM };
 if (require.main === module) main().catch((e) => (console.error(e), process.exit(1)));

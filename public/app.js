@@ -39,7 +39,7 @@ import { offlineApi, offlineBootApi, saveStudents, saveConfig, clearProfile, ref
 import { initFeedback, showFeedback, renderFeedbackCard } from "./feedback.js";
 import { openAdminBug, openMsgReport } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
-import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
+import { initFlashcards, showFlashcards, showNotes, addCardsNote } from "./flashcards.js";
 // Igre (games/, ~0,7 MB kode; naloge predmetov še ~0,1–0,4 MB na predmet, games/subjects/) se naložijo šele, ko jih učenec odpre, ali v mirnem trenutku po
 // zagonu: prvo odprtje Evklida mora prenesti in zagnati pol manj kode (j, 2026-11-04: »stran deluje počasi«).
 let gamesMod = null;
@@ -294,6 +294,9 @@ function renderUserText(text) {
 
 function showView(name) {
   if (name === "games" && state.student && !gamesOn(state.student.settings)) name = "me"; // »Skrij igre«
+  // »Moji zapiski« so del pogleda Kartice (nazaj po vaji iz testa, public/zapiski/vaja.js).
+  const notes = name === "zapiski";
+  if (notes) name = "cards";
   // Učbenik, Laboratorij in 3D svet so zavihki pogleda »Uči se« (public/uci-se.js): stare poti izberejo zavihek.
   if (UCI_TABS.includes(name)) {
     setUciTab(name);
@@ -310,7 +313,7 @@ function showView(name) {
   if (isFloating(name)) {
     if (!fromBack) {
       focusWindow(name);
-      initView(name);
+      initView(name, notes);
       return;
     }
     closeWindow(name, { keep: true });
@@ -343,7 +346,7 @@ function showView(name) {
   document.querySelectorAll(".view").forEach((v) => {
     if (!v.classList.contains("in-okno") && !v.hasAttribute("data-posnetek")) v.hidden = v.id !== `view-${name}`;
   });
-  initView(name);
+  initView(name, notes);
   syncMeBack(name);
   if (away("scan")) leaveScan(), scanFromChat(false);
   if (away("games")) leaveGames();
@@ -494,7 +497,7 @@ function odprto(del) {
     .catch(ne);
 }
 // Priprava pogleda ob prikazu (glavni del ali premično okno); ne spremeni trenutnega pogleda in zgodovine.
-function initView(name) {
+function initView(name, notes = false) {
   odprto(DEL_POGLEDA[name]);
   if (name === "chat") freshChatIfStale();
   if (name === "me") renderMe();
@@ -524,7 +527,8 @@ function initView(name) {
   if (name === "corner") showCorner();
   if (name === "cards") {
     setActiveMode("cards");
-    showFlashcards();
+    if (notes) showNotes();
+    else showFlashcards();
   }
   if (name === "graph") showGraph();
 }
@@ -1176,6 +1180,11 @@ function renderEmptyChat() {
   // Če je učenec že kaj napisal ali dodal fotografijo, predlog gre v polje (da se nič ne izgubi).
   renderState(null);
   if (!ideasPath(state.student)) refreshIdeas();
+  aiOznaka();
+}
+// AI Act čl. 50 (public/ai-oznaka/)
+function aiOznaka() {
+  import("./ai-oznaka/ai-oznaka.js").then((m) => m.oznaciKlepet(state.student)).catch(() => {});
 }
 $("#messages").addEventListener("click", ideaClick); // enkrat: predlogi se ob osvežitvi zamenjajo
 function ideaClick(e) {
@@ -1405,6 +1414,7 @@ async function openConversation(id, { mark = true } = {}) {
   for (const m of conv.messages) addMessage(m.role, m.text, m.has_image, m);
   renderState(conv.state);
   renderConversationList();
+  aiOznaka();
   prilagodiZdaj(); // zložene formule (sirina.js) so višje: na dno šele zdaj
   box.scrollTop = box.scrollHeight;
   refreshBubble();
@@ -1476,6 +1486,7 @@ function addMessage(role, text, hasImage = false, info = null) {
     }
   } else {
     el.innerHTML = chatRich(text);
+    if (!info?.error) el.dataset.aiGenerated = "true";
     if (text) addDeepButton(el, false);
     if (text && info?.full_offer) addFullButton(el);
     if (text && info?.choices) addChoices(el, info.choices);
@@ -3370,7 +3381,7 @@ function syncCompetitionTab() {
 // Gumb »nazaj« na temi oziroma pri seriji nalog vodi tja, od koder je učenec prišel.
 function setBack(view) {
   state.backTo = view;
-  $("#back-to-path").innerHTML = `${icon("arrow-left")}${view === "competition" ? prepLabel() : view === "exams" ? t("nav.examsSi") : t("nav.path")}`;
+  $("#back-to-path").innerHTML = `${icon("arrow-left")}${view === "competition" ? prepLabel() : view === "exams" ? t("nav.examsSi") : view === "zapiski" ? t("cards.notes") : t("nav.path")}`;
 }
 
 async function openTopic(topicId) {
@@ -3498,10 +3509,17 @@ const SESSIONS = {
   tek: { mode: "tek", endpoint: "competition-training", icon: "medal", title: t("session.tek"), intro: t("session.tekIntro") },
   contest: { mode: "contest", icon: "timer", title: t("session.contest"), intro: t("session.contestIntro") },
 };
+// Seje modulov, ki se naložijo šele ob odprtju (»Vaja iz testa«, public/zapiski/vaja.js): modul doda naslov, uvod,
+// povzetek ob koncu (doneHtml) in gumbe povzetka (wire). Glavni slovar teh besedil ne nosi.
+const EXTRA_SESSIONS = {};
+function addSession(kind, cfg) {
+  EXTRA_SESSIONS[kind] = cfg;
+}
+const extraSession = (mode) => Object.values(EXTRA_SESSIONS).find((c) => c.mode === mode) || null;
 const SESSION_DONE = { review: t("sessionDone.review"), daily: t("sessionDone.daily"), unit: t("sessionDone.unit"), test: t("sessionDone.test"), tek: t("sessionDone.tek"), class: t("sessionDone.class") };
 
 async function startSession(kind, body = {}) {
-  let cfg = SESSIONS[kind];
+  let cfg = SESSIONS[kind] || EXTRA_SESSIONS[kind];
   // Izpiti (zunaj Slovenije): isti mehanizem, a z izpitnimi naslovi.
   if (examMode() && kind === "tek") cfg = { ...cfg, icon: "target", title: t("exam.train"), intro: t("exam.trainText") };
   if (examMode() && kind === "contest") cfg = { ...cfg, title: t("exam.mock"), intro: t("exam.mockIntro") };
@@ -3511,11 +3529,11 @@ async function startSession(kind, body = {}) {
   try {
     out = await api(`/api/students/${state.student.id}/${cfg.endpoint || kind}`, { method: "POST", body });
   } catch (err) {
-    toast(err.message);
+    toast(cfg.errorText?.(err) || err.message); // seje modulov prevedejo svoje kode napak (vaja_potekla …)
     return;
   }
   state.topicFx = false; // naloge serije niso iz odprte teme
-  if (kind !== "tek" && kind !== "contest") setBack("path");
+  if (kind !== "tek" && kind !== "contest") setBack(cfg.back || "path");
   showView("topic");
   $("#topic-content").innerHTML = `<div class="session-grid"><div class="session-main"><div class="session-head"><span class="session-icon">${icon(cfg.icon)}</span><div><h1>${cfg.title}</h1><p class="muted">${cfg.intro}</p></div></div><div id="practice"></div></div><aside id="session-side" class="card explanation" hidden></aside></div>`;
   if (kind === "contest") {
@@ -3526,12 +3544,16 @@ async function startSession(kind, body = {}) {
   }
   if (out.finished) {
     $("#practice").innerHTML = out.empty ? `<p>${cfg.empty || t("session.noTasks")}</p>` : sessionDoneCard(cfg.mode, out);
+    cfg.wire?.($("#practice"), out);
+    $("#fb-back")?.addEventListener("click", () => showView(state.backTo || "path"));
     return;
   }
   renderTask(out.task, { mode: cfg.mode, index: out.index, total: out.total });
 }
 
 function sessionDoneCard(mode, n, xp = null) {
+  const extra = extraSession(mode);
+  if (extra?.doneHtml) return extra.doneHtml(n, xp);
   return `<div class="card result celebrate"><div class="result-icon">${icon("trophy")}</div><h2>${SESSION_DONE[mode] || t("common.done")}!</h2>
     <p>${t("result.firstTry", { correct: n.correct, total: n.total })}${n.xp ? ` · +${n.xp.gained} XP` : ""}</p>
     <button class="primary big" id="fb-back">${state.backTo === "competition" || state.backTo === "exams" ? prepBack() : t("result.toPath")}</button>${rewardHtml(mode, n, xp)}</div>`;
@@ -3549,7 +3571,7 @@ function rewardHtml(mode, n, xp) {
 // Slike pri nalogah (graf premice, številska premica): public/slike-nalog.js.
 
 // Na širokem zaslonu je med serijo nalog desno razlaga teme trenutne naloge (ne pri preizkusu znanja in tekmovanju).
-const SIDE_MODES = ["review", "daily", "unit", "test", "tek"];
+const SIDE_MODES = ["review", "daily", "unit", "test", "tek", "list"];
 const topicCache = new Map();
 async function showSideExplanation(task, ctx) {
   const side = $("#session-side");
@@ -3969,6 +3991,7 @@ async function checkTask(task, ctx, value) {
     send(h.text);
   });
   $("#fb-back")?.addEventListener("click", () => showView(state.backTo || "path"));
+  if (r.next?.finished) extraSession(ctx.mode)?.wire?.(fb, r.next);
   $("#fb-next")?.addEventListener("click", () => {
     if (ctx.mode === "practice") return nextPractice();
     const n = r.next;
@@ -5068,7 +5091,7 @@ makeSplitter($("#view-textbook"), splitOpts("lesson"));
 // Kartica: črke dobijo pomen po predmetu in temi kartice ter po drugi strani kartice (vprašanje ↔ odgovor).
 const cardRich = (text, c, other = "") =>
   withFormulaSubject(c?.subject || state.student?.settings?.subject || "MAT", () => renderRich(text), null, [c?.topic, other].filter(Boolean).join("\n"));
-initFlashcards({ api, renderRich, cardRich, escapeHtml, toast, showView, getStudent: () => state.student, getPath: () => state.pathKey, subjectName: () => SUBJECT_NAMES[(state.pathKey && state.pathSubject) || state.student?.settings.subject] || "", onDue: setCardsDue });
+initFlashcards({ api, renderRich, cardRich, escapeHtml, toast, showView, startSession, addSession, getStudent: () => state.student, getPath: () => state.pathKey, subjectName: () => SUBJECT_NAMES[(state.pathKey && state.pathSubject) || state.student?.settings.subject] || "", onDue: setCardsDue });
 
 // Urnik (public/schedule.js): po spremembi se osvežita kartica »Danes imaš …« in Priprava na test.
 function scheduleChanged() {

@@ -11,6 +11,7 @@ import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "../public/vodora
 import { BRAND } from "./brand.js";
 import { dateText } from "../public/datum.js";
 import { IKONE_HEAD } from "./ikone.js";
+import { AI_HEAD } from "./ai-oznaka.js";
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -378,7 +379,7 @@ const joinParts = (parts) => {
 // Lupina okoli kosov vsebine: začetek, kosi (iterator), konec.
 function* shellParts(title, head, body, total = 0) {
   const mark = "<\u0000>"; // esc() v naslovu spremeni »<« v &lt;, zato se oznaka pojavi samo v <main>
-  const page = shell(title, mark, "", total);
+  const page = shell(title, mark, "", total, { ai: true }); // samo lekcije (vse »avtor: AI«)
   const at = page.indexOf(mark);
   const [start, end] = [page.slice(0, at), page.slice(at + mark.length)];
   yield start + head;
@@ -400,10 +401,11 @@ const PRIPRAVA = (total) => `
 <script src="/ucbenik-priprava.js"></script>`;
 
 // Skupna lupina strani za tisk (tudi gradiva: povzetek na eni strani, delovni list); css: dodatna pravila.
-export function shell(title, content, css = "", total = 0) {
+// ai: vsebino je ustvarila AI (lekcije »avtor: AI«) → strojno berljiva oznaka v <head> (server/ai-oznaka.js).
+export function shell(title, content, css = "", total = 0, { ai = false } = {}) {
   return `<!doctype html>
 <html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(title)}</title>${IKONE_HEAD}
+<title>${esc(title)}</title>${IKONE_HEAD}${ai ? AI_HEAD : ""}
 <link rel="stylesheet" href="/vendor/katex/katex.min.css">
 <link rel="stylesheet" href="/risbe.css">
 <style>

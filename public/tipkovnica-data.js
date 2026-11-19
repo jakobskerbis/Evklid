@@ -133,13 +133,13 @@ export const KEM_LETTERS = [
 export const KEM_CHARGE = /^[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]$/;
 export const KEM_ROWS = KEM_GROUPS.flatMap(([, , rows]) => rows);
 
-// Vrstica 123 nad številkami: v matematiki zapisi, drugje pogosti znaki.
-export const NUM_TOP_MATH = [["x²", "²"], ["√", "√(@)"], ["xⁿ", "^(@)"], ["π", "π"], ["( )", "(@)"], ["a/b", "(@)/()"]];
+// Vrstica 123 nad številkami: v matematiki zapisi (z »=«, ker je v mreži namesto njega x), drugje pogosti znaki.
+export const NUM_TOP_MATH = [["x²", "²"], ["=", "="], ["√", "√(@)"], ["xⁿ", "^(@)"], ["π", "π"], ["( )", "(@)"], ["a/b", "(@)/()"]];
 export const NUM_TOP_TEXT = [["( )", "(@)"], ["%", "%"], ["€", "€"], ["/", "/"], ["#", "#"], ["&", "&"]];
-// Pogosti znaki v klepetu z inštruktorjem (vrstica nad tipkami).
+// Pogosti znaki v klepetu z inštruktorjem (vrstica nad tipkami); »=« takoj za ulomkom, da je pri roki (j, 18. 11.).
 // Ulomek, potenca, indeks (zaporedja), integral in vsota se v poslanem sporočilu izrišejo kot formula (public/vnos-formul.js).
 export const TUTOR_CHIPS = [
-  ["a/b", "(@)/()"], ["x²", "²"], ["xⁿ", "^(@)"], ["√", "√(@)"], ["aₙ", "_(@)"], ["∫", "∫ (@) dx"], ["∫ₐᵇ", "∫_(@)^() () dx"], ["∑", "∑_(n=1)^(@) "],
+  ["a/b", "(@)/()"], ["=", "="], ["x²", "²"], ["xⁿ", "^(@)"], ["√", "√(@)"], ["aₙ", "_(@)"], ["∫", "∫ (@) dx"], ["∫ₐᵇ", "∫_(@)^() () dx"], ["∑", "∑_(n=1)^(@) "],
   ["π", "π"], ["∞", "∞"], ["→", "→"], ["≤", "≤"], ["≠", "≠"], ["·", "·"], ["°", "°"],
 ];
 export const URL_CHIPS = [["https://", "https://"], [".com", ".com"], [".si", ".si"], ["/", "/"]];
@@ -307,20 +307,6 @@ export function wordsBack(value, pos, n = 1) {
   for (let k = 0; k < n && p > 0; k++) {
     while (p > 0 && /\s/u.test(v[p - 1])) p--;
     while (p > 0 && !/\s/u.test(v[p - 1])) p--;
-  }
-  return p;
-}
-
-/** Začetek povedi pred kazalcem (troklik na ⌫): za zadnjim ».«, »!«, »?« ali »…« s presledkom ali za novo vrstico. */
-export function sentenceBack(value, pos) {
-  const v = String(value ?? "");
-  let p = Math.max(0, Math.min(pos, v.length));
-  while (p > 0 && /[ \t]/u.test(v[p - 1])) p--; // presledki tik pred kazalcem gredo s povedjo
-  while (p > 0 && /[.!?…]/u.test(v[p - 1])) p--; // ločilo konca te povedi
-  while (p > 0) {
-    const c = v[p - 1];
-    if (c === "\n" || (/\s/u.test(c) && p > 1 && /[.!?…]/u.test(v[p - 2]))) break;
-    p--;
   }
   return p;
 }

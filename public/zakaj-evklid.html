@@ -6,15 +6,15 @@
   <!-- Stran brez JavaScripta za obiskovalce, iskalnike in pomočnike AI. Sestavi jo server/vidnost.js:
        spremenljivke v dvojnih zavitih oklepajih so dejstva iz kode (cene, dnevi preizkusa, število jezikov), z »i:« ikone iz public/icons.js.
        Besedila: docs/besedila.md (vikanje, ker stran berejo starši in obiskovalci). -->
-  <title>Zakaj Evklid – preverjeni računi in izmerjena natančnost | evklid.app</title>
-  <meta name="description" content="Zakaj Evklid (evklid.app): račune v enačbah, odvodih in daljših izračunih preveri program. Izmerjena natančnost, razlike do splošnih klepetalnikov, kaj dobite in česa Evklid še ne zna.">
+  <title>Zakaj Evklid – preverjeni računi in kaj Evklid zna | evklid.app</title>
+  <meta name="description" content="Zakaj Evklid (evklid.app): račune v enačbah, odvodih in daljših izračunih preveri program. Kako preverjamo natančnost, razlike do splošnih klepetalnikov, kaj dobite in česa Evklid še ne zna.">
   <link rel="canonical" href="https://evklid.app/zakaj-evklid">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Evklid">
   <meta property="og:locale" content="sl_SI">
   <meta property="og:url" content="https://evklid.app/zakaj-evklid">
-  <meta property="og:title" content="Zakaj Evklid – preverjeni računi in izmerjena natančnost | evklid.app">
-  <meta property="og:description" content="Kako Evklid skrbi za pravilne rezultate, kaj smo izmerili, kaj dobite in česa še ne zna.">
+  <meta property="og:title" content="Zakaj Evklid – preverjeni računi in kaj Evklid zna | evklid.app">
+  <meta property="og:description" content="Kako Evklid skrbi za pravilne rezultate, kako preverjamo natančnost, kaj dobite in česa še ne zna.">
   <meta property="og:image" content="https://evklid.app/icons/icon-512.png">
   <meta name="twitter:card" content="summary">
   <meta name="color-scheme" content="light dark">
@@ -138,7 +138,7 @@
       <div class="land-hero-text">
         <p class="land-eyebrow">Matematika · Fizika · Kemija · Biologija</p>
         <h1>Zakaj Evklid</h1>
-        <p class="land-lead">Evklid (evklid.app) je slovenski AI inštruktor za šolo. Račune v enačbah, odvodih in daljših izračunih preveri program. Na tej strani preberete, kako to deluje, kaj smo o natančnosti izmerili, kaj dobite in česa Evklid še ne zna.</p>
+        <p class="land-lead">Evklid (evklid.app) je slovenski AI inštruktor za šolo. Račune v enačbah, odvodih in daljših izračunih preveri program. Na tej strani preberete, kako to deluje, kako preverjamo natančnost, kaj dobite in česa Evklid še ne zna.</p>
         <div class="land-actions">
           <a class="btn-primary" href="/">Začnite brezplačno</a>
           <a class="btn-secondary" href="#h-pravilnost">Kako to deluje</a>
@@ -212,6 +212,13 @@
       </ul>
     </section>
 <!--/ce:accAny-->
+<!--ce:!accAny-->
+    <section class="land-sec" aria-labelledby="h-natancnost">
+      <h2 id="h-natancnost">Kako natančen je Evklid</h2>
+      <p class="about-text">Natančnosti Evklida še nismo neodvisno izmerili, zato o njej ne objavljamo številk. Doslej smo jo preverjali sami: na manjšem številu rešenih primerov iz Evklidovih lekcij, odgovore pa je ocenil drug model umetne inteligence, ne človek. Iz tega ni mogoče zanesljivo sklepati, kako pogosto se Evklid zmoti pri pravih vprašanjih učencev.</p>
+      <p class="about-text">Številke bomo objavili šele, ko bodo odgovore na prava vprašanja učencev ocenili ljudje. Račune v enačbah, odvodih in daljših izračunih že zdaj preveri program, pri besedni razlagi pa se umetna inteligenca lahko zmoti.</p>
+    </section>
+<!--/ce:!accAny-->
 
     <section class="land-sec" aria-labelledby="h-klepetalniki">
       <h2 id="h-klepetalniki">Evklid in splošni klepetalniki</h2>
@@ -263,6 +270,9 @@
 <!--ce:accAny-->
         <li>Meritev natančnosti je majhna ({{accTasks}} nalog), zato so številke okvirne.</li>
 <!--/ce:accAny-->
+<!--ce:!accAny-->
+        <li>Natančnosti še nismo neodvisno izmerili, zato številk o napakah ne objavljamo.</li>
+<!--/ce:!accAny-->
       </ul>
     </section>
 
@@ -279,6 +289,12 @@
           <p>{{accSentence}}</p>
         </details>
 <!--/ce:accAny-->
+<!--ce:!accAny-->
+        <details>
+          <summary>Kako natančen je Evklid?</summary>
+          <p>Natančnosti še nismo neodvisno izmerili, zato številk ne navajamo. Račune v enačbah, odvodih in daljših izračunih preveri program. Pri besedni razlagi se umetna inteligenca lahko zmoti; napako lahko učenec prijavi z gumbom »Prijavi napako« pod odgovorom.</p>
+        </details>
+<!--/ce:!accAny-->
         <details>
           <summary>V čem se Evklid razlikuje od splošnih klepetalnikov?</summary>
           <p>Evklid je narejen samo za učenje: sledi slovenskemu učnemu načrtu, učenca vodi do rešitve, namesto da bi jo izdal, račune v enačbah, odvodih in daljših izračunih pa preveri program. Natančnosti drugih orodij nismo merili, zato je ne primerjamo.</p>
@@ -306,6 +322,7 @@
       <!--ce:!trgovina--><a href="/prenesi?lang=sl">Prenesi aplikacijo</a><!--/ce:!trgovina-->
       <a href="/zasebnost.html">Zasebnost</a>
       <a href="/pogoji.html">Pogoji uporabe</a>
+      <a href="/odstop.html" data-i18n="land.withdraw">Odstop od pogodbe</a>
     </footer>
   </main>
 </div>
