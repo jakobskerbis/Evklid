@@ -1,5 +1,6 @@
 /* Prijava staršev in zavihek Račun (account.js) */
-body.auth-mode .tabs, body.auth-mode .xp-badge, body.auth-mode .student-picker, body.auth-mode .tabbar { display: none !important; }
+body.auth-mode .tabs, body.auth-mode .xp-badge, body.auth-mode .student-picker, body.auth-mode .tabbar,
+html[data-pristajalna] .tabs, html[data-pristajalna] .xp-badge, html[data-pristajalna] .student-picker, html[data-pristajalna] .tabbar { display: none !important; }
 .auth-box { max-width: 440px; margin: 24px auto 0; }
 .auth-brand { display: none; }
 @media (min-width: 1000px) {

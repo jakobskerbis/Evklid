@@ -19,6 +19,7 @@ export const END = "<!-- pristajalna-noscript: konec -->";
 // i18n.js ob nalaganju prevede statične napise v strani: v Node strani ni.
 globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
 const { landingHtml } = await import("../public/pristajalna.js");
+const { t } = await import("../public/i18n.js");
 const { plansFor, TRIAL_DAYS } = await import("../server/accounts/plans.js");
 const { minAgeOf } = await import("../server/accounts/age.js");
 const { BRAND } = await import("../server/brand.js");
@@ -33,7 +34,7 @@ const noIcons = (html) =>
 export function noscriptBlock() {
   // Kot /api/account/prices za Slovenijo; garancije tu ni, ker jo strežnik oglašuje samo, ko je vklopljena (prices.guarantee).
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: TRIAL_DAYS, min_age: minAgeOf("SI") };
-  const land = noIcons(landingHtml({ name: BRAND.name, prices, noscript: true }));
+  const land = noIcons(landingHtml(t, { name: BRAND.name, prices, noscript: true }));
   return `${START}
   <noscript>
     <main class="view narrow land-static">
