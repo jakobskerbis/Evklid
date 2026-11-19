@@ -138,6 +138,8 @@ const server = createApp(store, { scheduler: false, ...(PREIZKUS ? preizkusneFun
 await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}`;
 const porabljeno = () => store.db.prepare("SELECT COALESCE(SUM(cost_usd), 0) AS s FROM usage").get().s;
+// Klic, ki še teče (npr. odjemalec je obupal po 300 s, strežnik pa še čaka na model), ima rezervo v ai_holds: šteje.
+const vTeku = () => store.db.prepare("SELECT COALESCE(SUM(usd), 0) AS s FROM ai_holds").get().s;
 async function post(pot, body) {
   const res = await fetch(`${base}${pot}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const out = await res.json().catch(() => ({}));
@@ -156,7 +158,7 @@ const izid = [];
 let ustavljeno = false;
 // Rezervira najslabši strošek klica: če ne gre pod mejo, se meritev ustavi pred klicem.
 function rezerviraj(usd, kaj, id) {
-  if (porabljeno() + usd > MAX_USD) {
+  if (porabljeno() + vTeku() + usd > MAX_USD) {
     ustavljeno = true;
     console.log(`${id}: ${kaj} ustavljeno pred mejo ${MAX_USD} $ (porabljeno ${porabljeno().toFixed(4)} $, rezerva ${usd.toFixed(4)} $)`);
     throw new Ustavi();
@@ -249,6 +251,9 @@ for (const s of slike) {
   zapisi(false);
   if (ustavljeno) break;
 }
+// Pred koncem počaka, da se vsi začeti klici končajo in zapišejo porabo (največ 10 min).
+for (let i = 0; i < 600 && vTeku() > 0; i++) await new Promise((r) => setTimeout(r, 1000));
+if (vTeku() > 0) console.log(`Opozorilo: klic še teče, rezerva ${vTeku().toFixed(4)} $ ni v porabi.`);
 server.close();
 zapisi(true);
 
