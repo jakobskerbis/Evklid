@@ -107,7 +107,8 @@ export function withLanding(html, page) {
 // json je že varen za <script> (varenJson). Stran je osebna: no-store, brez ETag, brez shranjenih različic.
 export function withSession(html, json) {
   if (!json || !html.includes('<meta charset="utf-8">')) return html;
-  return html.replace('<meta charset="utf-8">', `<meta charset="utf-8">\n  <script type="application/json" id="evklid-zacetni">${json}</script>`);
+  // Zamenjava s funkcijo: »$'«, »$&«, »$$« v podatkih (ime, naslov pogovora, LaTeX) niso vzorci String.replace.
+  return html.replace('<meta charset="utf-8">', () => `<meta charset="utf-8">\n  <script type="application/json" id="evklid-zacetni">${json}</script>`);
 }
 
 // Slogi zaslonov, ki jih Učna pot ne uporablja (preverjeno s posnetki: brez njih je Učna pot na telefonu in računalniku

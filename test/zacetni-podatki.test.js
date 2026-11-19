@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import http from "node:http";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { varenJson, zaZacetnePodatke } from "../server/zacetni-podatki.js";
+import { varenJson, zaZacetnePodatke, notranjiGet } from "../server/zacetni-podatki.js";
 import { entryHtml, withSessionStyles, SEJA_POZNEJE } from "../server/vstopna-stran.js";
 
 const quiet = { error() {}, warn() {}, info() {}, log() {} };
@@ -87,9 +87,13 @@ test("varenJson: besedilo iz baze ne konča <script> in ne odpre komentarja; JSO
 });
 
 test("samo navigacija brskalnika s piškotkom seje (ne service worker, ne fetch, ne mobilni odjemalec API)", () => {
-  const req = (h) => ({ method: "GET", headers: { cookie: "sm_session=abc", ...NAV, ...h } });
+  const req = (h) => ({ method: "GET", headers: { cookie: "sm_session=abc; sm_device=d", ...NAV, ...h } });
   assert.equal(zaZacetnePodatke(req({})), true);
   assert.equal(zaZacetnePodatke(req({ cookie: "sm_device=x" })), false);
+  assert.equal(zaZacetnePodatke(req({ cookie: "sm_session=abc" })), false, "brez naprave: vsak notranji klic bi ustvaril svojo");
+  assert.equal(zaZacetnePodatke(req({ "sec-purpose": "prefetch" })), false, "predhodno nalaganje ne zasede profila");
+  assert.equal(zaZacetnePodatke(req({ purpose: "prefetch" })), false);
+  assert.equal(zaZacetnePodatke(req({ "sec-purpose": "prefetch;prerender" })), false);
   assert.equal(zaZacetnePodatke(req({ cookie: "sm_session=" })), false);
   assert.equal(zaZacetnePodatke(req({ "sec-fetch-dest": "empty", "sec-fetch-mode": "cors" })), false, "namestitev service workerja (fetch('/'))");
   assert.equal(zaZacetnePodatke(req({ "sec-fetch-dest": undefined, "sec-fetch-mode": undefined })), false, "brskalnik brez Sec-Fetch: kot prej");
@@ -127,6 +131,31 @@ test("prijavljen učenec: v strani isti odgovori kot API v tej seji, no-store br
     assert.ok(sw.headers.etag);
     assert.ok(!sw.html.includes("data-evklid-slogi"));
   });
+});
+
+test("znaki $ v podatkih (ime, LaTeX) niso vzorci zamenjave: stran cela, podatki enaki API", async () => {
+  await withServer(async ({ signup }) => {
+    const ime = "Ana $$ x $' y $& z $`";
+    const { c, ids } = await signup("ana@primer.si", [ime]);
+    const res = await c.page();
+    assert.equal(res.html.split('id="tabbar"').length, 2, "stran ni podvojena");
+    const p = podatki(res.html);
+    assert.ok(p, "podatki se razčlenijo");
+    assert.equal(p.data.s, ids[0]);
+    assert.equal(p.data.d["/api/students"][0].name, ime);
+  });
+});
+
+test("notranji klic, ki obvisi: po roku null in odgovor zaprt (števec aktivnih zahtev se zmanjša)", async () => {
+  let zaprt = 0;
+  const app = { handle: (r, s) => s.on("close", () => zaprt++) }; // obdelava, ki nikoli ne konča
+  const t0 = Date.now();
+  const drzi = setTimeout(() => {}, 2000); // rok notranjega klica je unref
+  assert.equal(await notranjiGet(app, { headers: {}, socket: {} }, "/api/x", 30), null);
+  assert.ok(Date.now() - t0 < 1000);
+  await new Promise((r) => setImmediate(r));
+  clearTimeout(drzi);
+  assert.equal(zaprt, 1);
 });
 
 test("zasebnost: drug račun dobi samo svoje podatke; brez seje, z neveljavno sejo ali z več profili brez profila", async () => {

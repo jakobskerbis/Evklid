@@ -16,12 +16,13 @@
 //   besedilo iz baze (ime, naslov pogovora) ne more končati elementa (</script>) ali odpreti komentarja.
 // - Piškotek, ki ga notranja zahteva nastavi (npr. nova naprava), gre v odgovor strani, kot bi ga dobil klic API.
 // Strošek: ~10 notranjih klicev na odprtje strani, ki bi jih sicer brskalnik takoj naredil sam (isto delo strežnika,
-// brez TLS in glav HTTP); omejitev časa 1,5 s na klic, nato stran brez podatkov.
+// brez TLS in glav HTTP); skupni rok 1,5 s za vse klice, nato stran z do takrat zbranimi podatki.
 import http from "node:http";
 import { jeFaks } from "../public/stopnja.js";
 import { gamesOn } from "../public/games/stage.js";
 
 const SEJA = /(?:^|;\s*)sm_session=[^;\s]/;
+const NAPRAVA = /(?:^|;\s*)sm_device=[^;\s]/;
 const ROK_MS = 1500;
 const NAJVEC = 256 * 1024; // večji odgovor (npr. zelo dolg seznam pogovorov) ostane klic API
 // Glave prvotne zahteve, ki jih notranja zahteva ne podeduje: pogojne (304 brez telesa), stiskanje (telo je JSON).
@@ -32,7 +33,11 @@ export function zaZacetnePodatke(req) {
   if (req.method !== "GET") return false;
   if (req.headers["sec-fetch-dest"] !== "document" || req.headers["sec-fetch-mode"] !== "navigate") return false;
   if (req.headers["x-app-client"]) return false;
-  return SEJA.test(String(req.headers.cookie || ""));
+  // Predhodno nalaganje (prefetch, prerender) ni odprtje strani: ne zasede profila in ne šteje kot dejavnost.
+  if (/prefetch|prerender/i.test(`${req.headers.purpose || ""} ${req.headers["sec-purpose"] || ""}`)) return false;
+  const piskotki = String(req.headers.cookie || "");
+  // Brez piškotka naprave bi vsak notranji klic ustvaril svojo napravo in profil zasedel za neobstoječo; app.js ga dobi sam.
+  return SEJA.test(piskotki) && NAPRAVA.test(piskotki);
 }
 
 // Notranja zahteva GET skozi aplikacijo z glavami in naslovom prvotne zahteve. Vrne { status, body, cookies } ali null.
@@ -45,7 +50,16 @@ export function notranjiGet(app, req, url, rokMs = ROK_MS) {
       clearTimeout(t);
       resolve(v);
     };
-    const t = setTimeout(() => done(null), rokMs);
+    let s = null;
+    let zaprt = false;
+    const zapri = () => {
+      if (zaprt || !s) return;
+      zaprt = true;
+      s.emit("finish");
+      s.emit("close");
+    };
+    // Po roku: brez podatkov, odgovor pa zaprt (števec aktivnih zahtev v server/app.js se zmanjša tudi, če obdelava obvisi).
+    const t = setTimeout(() => (done(null), zapri()), Math.max(1, rokMs));
     t.unref?.();
     try {
       const sock = req.socket || {};
@@ -63,7 +77,7 @@ export function notranjiGet(app, req, url, rokMs = ROK_MS) {
       r.headers = headers;
       r.complete = true;
       r.push(null);
-      const s = new http.ServerResponse(r);
+      s = new http.ServerResponse(r);
       const chunks = [];
       const add = (c, enc) => {
         if (c == null || typeof c === "function") return;
@@ -78,13 +92,10 @@ export function notranjiGet(app, req, url, rokMs = ROK_MS) {
           done({ status: s.statusCode, type: String(s.getHeader("content-type") || ""), body: Buffer.concat(chunks), cookies });
         }
         // Poslušalci konca odgovora (števec aktivnih zahtev, dnevnik napak) se izvedejo kot pri pravi zahtevi.
-        setImmediate(() => {
-          s.emit("finish");
-          s.emit("close");
-        });
+        setImmediate(zapri);
         return s;
       };
-      app.handle(r, s, () => done(null));
+      app.handle(r, s, () => (done(null), zapri()));
     } catch {
       done(null);
     }
@@ -116,8 +127,11 @@ export function zacetniPodatki(app) {
     if (!zaZacetnePodatke(req)) return null;
     const d = {};
     const cookies = [];
+    const rok = Date.now() + ROK_MS; // en skupni rok za vse klice: stran nikoli ne čaka dlje
     const get = async (url) => {
-      const r = await notranjiGet(app, req, url);
+      const ostane = rok - Date.now();
+      if (ostane <= 0) return null;
+      const r = await notranjiGet(app, req, url, ostane);
       if (!r) return null;
       for (const c of r.cookies) if (!cookies.includes(c)) cookies.push(c);
       if (r.status !== 200 || !/json/i.test(r.type) || r.body.length > NAJVEC) return null;
