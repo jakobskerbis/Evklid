@@ -332,7 +332,7 @@ test("verdict check: when the task from the first message is solvable, the code 
     const sse = await (await fetch(`http://127.0.0.1:${h.port}/api/conversations/${first.c.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "x = 5" }) })).text();
     assert.equal(h.reviewCalls.length, 0, "koda je sodila, model ni potreben");
     const note = h.calls[1].messages.at(-1).content.at(-1).text;
-    assert.match(note, /the student's result x = 5 is WRONG; the exact result of the task is \$2x \+ 3 = 11\$ → \$x = 4\$/);
+    assert.match(note, /the student's result x = 5 is wrong; the exact result of the task is \$2x \+ 3 = 11\$ → \$x = 4\$/);
     assert.match(sse, /Kje se je zalomilo/);
     assert.doesNotMatch(sse, /preverjen_racun/);
   } finally {

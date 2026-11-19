@@ -95,7 +95,7 @@ Strošek zagona: 4,60 $ (aplikacija 0,98 $, ocenjevalec 3,61 $), 77 min.
 
 ## Ročna meritev v GitHub Actions (j, 2026-11-17)
 
-Plačane meritve inštruktorja `scripts/meri-*.mjs` (npr. `meri-preizkus3.mjs`, `meri-nacin-b.mjs`, `meri-hitri-korak.mjs`) se zaženejo brez lupine Renderja, z delovnim tokom `.github/workflows/meri.yml`.
+Plačane meritve inštruktorja `scripts/meri-*.mjs` (npr. `meri-preizkus3.mjs`, `meri-nacin-b.mjs`, `meri-hitri-korak.mjs`, `meri-napacne-korake.mjs`: ali inštruktor potrdi napačen korak, 28 primerov iz `test/fixtures/napacni-koraki.json`, sam model proti poti s sodbo koraka, oceni Opus; brezplačna primerjava prej/potem brez modela je `node scripts/napacni-koraki.js`) se zaženejo brez lupine Renderja, z delovnim tokom `.github/workflows/meri.yml`.
 
 **Zagon s telefona:**
 

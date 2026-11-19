@@ -4,7 +4,7 @@
 // - Neznana pot: stran v slogu aplikacije namesto Expressovega »Cannot GET«; /api dobi JSON, drugo kratko besedilo.
 import { BRAND } from "./brand.js";
 
-export const KRATKE_POTI = { "/pogoji": "/pogoji.html", "/zasebnost": "/zasebnost.html", "/starsi": "/starsi.html", "/garancija": "/garancija.html" };
+export const KRATKE_POTI = { "/pogoji": "/pogoji.html", "/zasebnost": "/zasebnost.html", "/starsi": "/starsi.html", "/garancija": "/garancija.html", "/odstop": "/odstop.html" };
 
 export function mountShortLinks(app) {
   app.get(Object.keys(KRATKE_POTI), (req, res, next) => {

@@ -6,7 +6,7 @@ import SL from "../public/i18n/sl.js";
 // Samo skrbnik (j) vidi te zaslone, zato smejo omenjati modele, API in žetone.
 const ADMIN = /^(meter|admin|usage|pilot)\./;
 // Strani za starše, učitelje in šole vikajo; vse ostalo (učenci, imetnik računa v aplikaciji) tika.
-const VI = /^(payp|tc|orders|sole|starsi)\.|^kv\.joinHow$/;
+const VI = /^(payp|tc|orders|sole|starsi|odstop)\.|^kv\.joinHow$/;
 
 // »kje ste« = ti in bolnik skupaj (množina, ne vikanje); besedilo je j potrdil dobesedno (kartica nujno, 6. 11.).
 const MNOZINA = new Set(["nujno.zdravje.2"]);
