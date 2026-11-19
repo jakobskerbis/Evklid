@@ -2,7 +2,7 @@
 // iskanje pole v katalogu in naloge v naši poli, ime datoteke izvirnika na ric.si.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mentionsPaperTask, parsePaperTask, resolvePaper, findPaperTask, originalFiles, ricFileName, fileMatches } from "../public/naloga-pole.js";
+import { mentionsPaperTask, parsePaperTask, resolvePaper, findPaperTask, originalFiles, ricFileName, fileMatches, looksLikeRicFile } from "../public/naloga-pole.js";
 import { PAPERS_SI } from "../server/exam-papers-si.js";
 import { ourPaperIds, loadOurPaper } from "../server/our-papers.js";
 import { paperContext } from "../server/paper-context.js";
@@ -26,6 +26,17 @@ test("parsePaperTask: izpit, predmet, raven, leto, pola, del, številka in del n
   assert.equal(parsePaperTask("Kaj pride na maturi iz matematike?"), null);
   assert.equal(mentionsPaperTask("matura mat OR 2024 naloga 5"), true);
   assert.equal(mentionsPaperTask("pomagaj mi pri nalogi 5"), false);
+  // številka naloge ni številka pole
+  assert.equal(parsePaperTask("matura mat OR 2024 naloga 1 pola 2").pola, 2);
+  assert.equal(parsePaperTask("matura mat OR 2024 naloga 2 pola 1").pola, 1);
+  assert.deepEqual([parsePaperTask("matura mat OR 2024 pola 1. naloga 5")].map((r) => [r.pola, r.n]), [[1, 5]]);
+  assert.equal(parsePaperTask("matura mat OR 2024 naloga 5 b").part, "b");
+});
+
+test("mentionsPaperTask: samo kratka omemba s predmetom ali letom, ne vprašanje z nalogo", () => {
+  for (const s of ["Koliko časa imam na maturi za 1. nalogo?", "maturantski ples, naloga 3", "Na maturi 2024 iz mat OR je bila 5. naloga taka: koliko je 3/4 od 20?", "Rešujem nalogo 3 iz zbirke za maturo, x^2=4", `matura mat OR 2024 naloga 5 ${"in še nekaj besedila ".repeat(5)}`])
+    assert.equal(mentionsPaperTask(s), false, s);
+  for (const s of ["matura mat OR 2024 pola 1 naloga 5", "matura 2024 naloga 3", "npz 9 fizika naloga 12"]) assert.equal(mentionsPaperTask(s), true, s);
 });
 
 test("resolvePaper: manjkajoče vpraša z gumbi, sicer najde polo (privzeto spomladanski rok)", () => {
@@ -76,6 +87,15 @@ test("izvirnik: povezava na polo (brez navodil za ocenjevanje) in ime datoteke n
   assert.equal(fileMatches("M241-401-1-1 (1).pdf", originalFiles(e, 1)[0].url), true);
   assert.equal(fileMatches("M241-401-1-2.pdf", originalFiles(e, 1)[0].url), false);
   assert.equal(fileMatches("m211-421-1-1-pdf.pdf", "https://www.ric.si/mma/m211-421-1-1-pdf/x/"), true);
+  // stare pole: ric.si da drugačno ime kot povezava
+  assert.equal(fileMatches("N111-401-2-1.pdf", "https://www.ric.si/mma/n111-401mat-2-1/x/"), true);
+  assert.equal(ricFileName("https://www.ric.si/mma/n111-401mat-2-1/x/"), "n111-401-2-1.pdf");
+  assert.equal(fileMatches("P042-C101-1-1.pdf", "https://www.ric.si/mma/m042-c101-1-1/x/"), true);
+  assert.equal(fileMatches("M212-421-2-2 novo .pdf", "https://www.ric.si/mma/M212-421-2-2_novo_.pdf/x/"), true);
+  assert.equal(looksLikeRicFile("P241-C101-1-2.pdf"), true);
+  assert.equal(looksLikeRicFile("moja-pola.pdf"), false);
+  // vsaka pola v katalogu ima prepoznavno ime datoteke
+  for (const e of catalog) for (const f of originalFiles(e)) assert.ok(fileMatches(ricFileName(f.url), f.url), f.url);
 });
 
 test("paperContext: cela naloga z deli da inštruktorju rešitve vseh delov", () => {
@@ -83,4 +103,8 @@ test("paperContext: cela naloga z deli da inštruktorju rešitve vseh delov", ()
   const a = paperContext({ paper: "P", task: "2-B4", ours: "X" }, { loadOurs: () => paper });
   assert.match(a, /worked solution/);
   assert.match(a, /a\)\n\$x = 2\$\nA\nb\)\n\$y = 3\$\nB/);
+  // pole brez naše različice: učenec naloge še ni poslal, inštruktor je ne sme ugibati
+  const none = paperContext({ paper: "Splošna matura – Biologija, 2023", task: "1-7", noText: true });
+  assert.match(none, /has not sent the task text yet/);
+  assert.match(none, /task 1-7/);
 });

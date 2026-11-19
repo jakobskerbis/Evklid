@@ -6,27 +6,38 @@
 
 const low = (s) => String(s ?? "").toLowerCase().replace(/[čć]/g, "c").replace(/š/g, "s").replace(/ž/g, "z");
 
-// Hitro preverjanje pred nalaganjem kataloga: izpit in beseda »naloga« (ali »5. naloga«).
-const EXAM_RE = /\b(matur\w*|npz\w*|poklicn\w*|nacionaln\w* preizkus\w*)/;
-const TASK_RE = /\bnalog\w*\s*(?:st(?:evilka|\.)?\s*)?([abc])?\s*(\d{1,2})(?!\d)(?:\s*\.)?(?:\s*([a-j])\)|([a-j])(?![\wčšž]))?|\b([abc])?\s*(\d{1,2})\s*\.\s*(?:([a-j])\)\s*)?nalog/;
+// Hitro preverjanje pred nalaganjem kataloga: izpit in »naloga 5« ali »5. naloga«.
+const EXAM_RE = /\b(matur[aeiou]?|maturitetn\w*|npz\w*|poklicn\w*|nacionaln\w* preizkus\w*)\b/;
+// »naloga B4b«, »nalogo št. 5«, »naloga 5 b)«, »naloga 5 b« na koncu; nato »5. naloga«, »B4. b) naloga«.
+const TASK_A = /\bnalog\w*\s*(?:st(?:evilka|\.)?\s*)?([abc])?\s*(\d{1,2})(?!\d)(?:\s*\.)?(?:\s*([a-j])\)|([a-j])(?![\wčšž])|\s+([a-j])(?=\s*(?:$|[,.?!])))?/;
+const TASK_B = /\b([abc])?\s*(\d{1,2})\s*\.\s*(?:([a-j])\)\s*)?nalog\w*/;
+// Samo kratka omemba (učenec želi odpreti nalogo), ne vprašanje s svojim besedilom naloge ali računom
+// (»Na maturi 2024 je bila 5. naloga taka: …«): tisto gre inštruktorju kot navadno vprašanje.
+const MAX_REF = 100;
 export const mentionsPaperTask = (text) => {
-  const s = low(text);
-  return EXAM_RE.test(s) && TASK_RE.test(s);
+  const s = String(text ?? "").trim();
+  if (s.length > MAX_REF || /[=$:^*+]/.test(s)) return false;
+  const ref = parsePaperTask(s);
+  return !!ref && !!(ref.subject || ref.year);
 };
 
 // Prebere omembo naloge. Vrne null, kadar sporočilo ne omenja izpita in številke naloge; sicer
 // { exam: MATURA|POKLICNA|NPZ6|NPZ9|NPZ, subject?, level?, year?, term?, pola?, section?, n, part? }.
 export function parsePaperTask(text) {
-  const s = low(text).replace(/\s+/g, " ");
+  let s = low(text).replace(/\s+/g, " ");
   if (!EXAM_RE.test(s)) return null;
-  const tm = s.match(TASK_RE);
+  const a = s.match(TASK_A);
+  const b = a ? null : s.match(TASK_B);
+  const tm = a || b;
   if (!tm) return null;
-  const ref = { n: Number(tm[2] ?? tm[6]) };
+  const ref = { n: Number(tm[2]) };
   if (!ref.n) return null;
-  const sec = tm[1] ?? tm[5];
-  const part = tm[3] ?? tm[4] ?? tm[7];
+  const sec = tm[1];
+  const part = a ? (a[3] ?? a[4] ?? a[5]) : b[3];
   if (sec) ref.section = sec.toUpperCase();
   if (part) ref.part = part;
+  // Številka naloge ni številka pole (»naloga 2 pola 1«, »pola 1. naloga 5«).
+  s = `${s.slice(0, tm.index)} # ${s.slice(tm.index + tm[0].length)}`;
   if (/\bpoklicn/.test(s)) ref.exam = "POKLICNA";
   else if (/\bmatur/.test(s)) ref.exam = "MATURA";
   else {
@@ -46,7 +57,7 @@ export function parsePaperTask(text) {
   else if (/\bzimsk/.test(s)) ref.term = "zimski";
   else if (/\bnaknadn/.test(s)) ref.term = "naknadni";
   else if (/\bredn/.test(s)) ref.term = "redni";
-  const p = s.match(/\b([12])\s*\.?\s*(?:izpitn\w* )?pol[aiou]?\b/) || s.match(/\bpol[aiou]?\s*(?:st\.?\s*)?([12])(?!\d)/);
+  const p = s.match(/\bpol[aiou]?\s*(?:st\.?\s*)?([12])(?!\d)/) || s.match(/\b([12])\s*\.?\s*(?:izpitn\w* )?pol[aiou]?\b/);
   if (p) ref.pola = Number(p[1]);
   else if (/\bprv\w* (?:izpitn\w* )?pol[aiou]?\b/.test(s)) ref.pola = 1;
   else if (/\bdrug\w* (?:izpitn\w* )?pol[aiou]?\b/.test(s)) ref.pola = 2;
@@ -116,13 +127,23 @@ export function originalFiles(entry, pola = null) {
 }
 
 // Ime datoteke, ki jo ric.si da ob prenosu (iz povezave »…/mma/M241-401-1-1.pdf/…« → »M241-401-1-1.pdf«), da učenec
-// ve, katero datoteko izbere; izbrano ime primerjamo s kodo pole (»M241-401-1-1 (1).pdf« šteje).
+// ve, katero datoteko izbere; izbrano ime primerjamo s kodo pole (»M241-401-1-1 (1).pdf« šteje). Pri starih polah
+// se povezava in ime razlikujeta: »n111-401mat-2-1« → »N111-401-2-1.pdf«, »m042-c101…« → »P042-C101-….pdf«,
+// »M212-421-2-2_novo_« → »M212-421-2-2 novo .pdf«: kratica predmeta in »novo« ne štejeta, prva črka tudi ne.
+const RIC_CODE = /^([a-z])(\d{3})-([a-z]?\d{3})(?:mat|bio|fiz|kem)?-?(\d+(?:-\d+){0,2})/;
 export function ricFileName(url) {
   const m = String(url || "").match(/\/mma\/([^/?#]+?)(?:[.-]pdf)?\//i);
-  return m ? `${m[1]}.pdf` : "";
+  if (!m) return "";
+  const c = m[1].match(new RegExp(RIC_CODE.source, "i"));
+  return c ? `${c[1]}${c[2]}-${c[3]}-${c[4]}.pdf` : `${m[1]}.pdf`;
 }
-const code = (name) => low(name).replace(/\.pdf$/, "").replace(/[-_.]?pdf$/, "").replace(/[^a-z0-9]/g, "");
+const code = (name) => {
+  const c = low(name).match(RIC_CODE);
+  return c ? `${c[2]}${c[3]}${c[4]}`.replace(/[^a-z0-9]/g, "") : "";
+};
+// Ime je ime neke pole RIC (za opozorilo »to je druga pola«; preimenovana datoteka ni).
+export const looksLikeRicFile = (fileName) => !!code(fileName);
 export function fileMatches(fileName, url) {
   const want = code(ricFileName(url));
-  return !!want && code(fileName).startsWith(want);
+  return !!want && code(fileName) === want;
 }

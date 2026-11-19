@@ -47,7 +47,12 @@ export function paperContext(p, { loadOurs = null, mode = "A" } = {}) {
   }
   return wrap([
     `The Evklid app opened this task from a past exam paper: ${paper}${where}.`,
-    p.fromPdf ? "The task text in the message comes from the PDF text layer: formulas may be garbled, the picture is authoritative." : "The student sends the task as a photo or typed text.",
+    // noText: učenec je v klepetu le omenil nalogo pole, ki je v naši različici nimamo (public/naloga-pole.js).
+    p.noText
+      ? "The student has not sent the task text yet: ask for a photo or the typed task and never guess what the task says."
+      : p.fromPdf
+        ? "The task text in the message comes from the PDF text layer: formulas may be garbled, the picture is authoritative."
+        : "The student sends the task as a photo or typed text.",
     guide,
     "When the student has solved it, say which topic to practise next.",
   ]);

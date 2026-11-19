@@ -4470,7 +4470,7 @@
   "np.ours": "Ceci est un exercice d'Evklid dans le style de l'épreuve « {paper} », pas l'exercice original du RIC. L'original est librement disponible sur ric.si.",
   "np.figure": "La figure de l'exercice se trouve dans l'épreuve d'Evklid.",
   "np.openOurs": "Ouvrir dans l'épreuve d'Evklid",
-  "np.noOurs": "Nous n'avons pas encore de version Evklid de « {paper} ». Télécharge l'original sur ric.si, ouvre-le ici et, à l'exercice {n}, touche «{help}».",
+  "np.noOurs": "Nous n'avons pas encore de version Evklid de « {paper} ». Télécharge l'original sur ric.si, ouvre-le ici et, à l'exercice {n}, touche « {help} ».",
   "np.missing": "La version Evklid de « {paper} » n'a pas d'exercice {n}. Vérifie le numéro de l'exercice.",
   "np.download": "Télécharger l'original : {file}",
   "np.openOriginal": "Ouvrir l'original",
