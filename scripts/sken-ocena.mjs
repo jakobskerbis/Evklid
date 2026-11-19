@@ -222,9 +222,7 @@ function kandidati({ solutions = [], value = "", answer_tex = "" }) {
     .split(/[;]|,\s+|\s{2,}|\bali\b|\bin\b|\bor\b/)
     .map((x) => x.trim())
     .filter(Boolean);
-  // Periodične rešitve (π/6 + 2kπ): reševalnik jih vrne, kadar intervala ni med podatki; šteje osnovna vrednost.
-  const brezPeriode = (x) => x.replace(/\s*\+\s*(?:2\s*\*?\s*)?k\s*\*?\s*(?:\\pi|π|pi)\b|\s*\+\s*(?:2\s*)?(?:\\pi|π|pi)\s*\*?\s*k\b/g, "");
-  return [...solutions.flatMap((x) => String(x).split(";")), value, ...deli].map((x) => brezPeriode(brezSpremenljivke(String(x || "")))).filter(Boolean);
+  return [...solutions.flatMap((x) => String(x).split(";")), value, ...deli].map((x) => brezSpremenljivke(String(x || ""))).filter(Boolean);
 }
 const decimalna = (t) => stevila(String(t).replace(/(\d)\s+(\d{3})(?!\d)/g, "$1$2")).map(Number);
 
