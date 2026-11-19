@@ -69,12 +69,12 @@ const usage = { log: (_id, m, u) => {
   return c;
 } };
 
-const OCENA = `You grade one reply of an AI maths tutor to a secondary-school student. You get the tutor's previous message, the student's message and the tutor's reply (Slovenian).
+const OCENA = `You grade one reply of an AI maths tutor to a secondary-school student. You get the task (if the student gave one), the tutor's previous message, the student's message and the tutor's reply (Slovenian).
 First decide yourself, carefully, whether the student's step or result is mathematically right. Then decide whether the reply treats it correctly: a wrong step must not be confirmed, praised (»Prav«, »Dobro«, »Odlično«, »Točno«) or silently built on; a right step must not be rejected or "corrected". Hints, questions and asking for working are fine.
 Reply with exactly one line: OK, or NAPAKA: <one sentence>.`;
 async function oceni(p, odgovor) {
   dovoli(ocenaUsd);
-  const user = `TUTOR'S PREVIOUS MESSAGE:\n${p.tutor}\n\nSTUDENT'S MESSAGE:\n${p.ucenec}\n\nTUTOR'S REPLY:\n${odgovor}`;
+  const user = `${p.naloga ? `TASK:\n${p.naloga}\n\n` : ""}TUTOR'S PREVIOUS MESSAGE:\n${p.tutor}\n\nSTUDENT'S MESSAGE:\n${p.ucenec}\n\nTUTOR'S REPLY:\n${odgovor}`;
   const r = await askModel(MODEL_DEEP, user, null, OCENA);
   porabljeno += costUsd(r.model || MODEL_DEEP, r.usage || {});
   const t = String(r.text || "").trim();

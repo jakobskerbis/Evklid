@@ -154,3 +154,26 @@ test("sodba koraka v klepetu: odgovor, ki sledi sodbi kode, gre naprej brez pono
     h.close();
   }
 });
+
+test("sodba koraka: brez lažnega alarma (pregled 2)", () => {
+  // Razcep na prafaktorje, ostanek, oštevilčenje, tekoča veriga, ura s piko.
+  for (const s of ["360 = 2³ · 3² · 5", "7 : 2 = 3, ostanek 1", "2. 3 + 4 = 7", "5 + 3 = 8 - 2 = 6", "8.30 = 8,5"]) assert.deepEqual(arithmeticErrors(s), [], s);
+  assert.equal(arithmeticErrors("3 + 4 = 7. 2 + 2 = 5").length, 1);
+  // Inštruktor sprašuje po drugi količini (Vieta, teme, odvod, vrednost izraza) ali je v igri druga neznanka.
+  assert.equal(verdict("x1 + x2 = 5", { prevTutor: "Enačba $x^2 - 5x + 6 = 0$. Koliko je $x_1 + x_2$?" }), null);
+  assert.equal(verdict("x = 2", { prevTutor: "Ničli enačbe $x^2 - 4x + 3 = 0$ sta 1 in 3. Kje je teme?" }), null);
+  assert.equal(verdict("2x - 4 = 0", { prevTutor: "Imamo $x^2 - 4x + 3 = 0$. Kje ima funkcija ekstrem? Odvajaj." }), null);
+  assert.equal(verdict("x = 6", { prevTutor: "Recimo, da je $2x = 10$. Koliko je $x + 1$?" }), null);
+  assert.equal(verdict("x = 1", { prevTutor: "Iz $t = 9$: $x^2 = 9$. Iz $t = 1$ pa?" }), null);
+  assert.equal(verdict("x = 2", { pre: presolve("Reši enačbo x^2 - 4x + 3 = 0", { first: true }), prevTutor: "Odlično. Zdaj poišči teme parabole." }), null);
+  // Oštevilčen korak in tisočice s piko.
+  assert.equal(verdict("2. x = 3", { prevTutor: "Reši $x + 2 = 5$." }).wrong, false);
+  assert.equal(verdict("x = 1.000", { prevTutor: "Reši $x - 1000 = 0$." }), null);
+  // Ena od dveh rešitev je nepopoln odgovor: »Skoraj, manjka še ena« ne sproži ponovnega odgovora.
+  const v = verdict("x = 3", { pre: presolve("Reši enačbo x^2 = 3x", { first: true }), prevTutor: "Kaj narediš?" });
+  assert.equal(v.wrong, false);
+  assert.equal(verdictIgnored("Skoraj! Manjka še ena rešitev.", v), false);
+  assert.equal(verdictIgnored("Ne pozabi še preizkusa.", { wrong: false }), false);
+  // »Prav, preverimo …« ob napačnem koraku je potrditev, ne opozorilo.
+  for (const a of ["Prav, preverimo še z vstavitvijo.", "Dobro, poglejmo naslednji korak."]) assert.equal(verdictIgnored(a, { wrong: true }), true, a);
+});

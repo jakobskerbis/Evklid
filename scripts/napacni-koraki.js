@@ -17,7 +17,7 @@ const lc = await import(pathToFileURL(path.join(root, "server/live-check.js")));
 const sk = fs.existsSync(path.join(root, "server/sodba-koraka.js")) ? await import(pathToFileURL(path.join(root, "server/sodba-koraka.js"))) : null;
 const { primeri } = JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "../test/fixtures/napacni-koraki.json"), "utf8"));
 
-// Stara pot (pred popravkom): sodba kode samo za končno vrednost, po odgovoru brez preverjanja, ali je ji sledil.
+// Stara pot (pred popravkom): sodba kode samo za končno vrednost, po odgovoru brez preverjanja, ali mu je sledil.
 function verdictOf(p, pre) {
   if (sk) return sk.stepVerdict(p.ucenec, { pre, prevTutor: p.tutor });
   const note = lc.claimNote(p.ucenec, pre);
