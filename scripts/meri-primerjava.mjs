@@ -57,6 +57,10 @@ process.env.EVKLID_VERIFY_DAILY_USD = "0";
 // Brez mesečnega proračuna (server/proracun.js budgetMode): z njim bi prazna baza nadgradila Haiku v Sonnet ali Opus in
 // najslabši primer spodaj ne bi več veljal (lokalni zagon z okoljem strežnika).
 process.env.EVKLID_MONTHLY_BUDGET_USD = "0";
+// Sprotni pregled (Sonnet), ki ga ustavi časovna meja, ne zapiše porabe (server/live-check.js reviewAnswer), plačan pa je
+// lahko vseeno: brez zapisa bi ga porabljeno() spodaj ne videlo. Z daljšo mejo se vsak pregled konča in zapiše. Razlika od
+// produkcije (tam se počasen pregled po 25 s opusti) je zapisana v poročilu primerjave.
+process.env.EVKLID_LIVE_REVIEW_TIMEOUT_MS = "300000";
 const { openDb } = await import("../server/db.js");
 const { createApp } = await import("../server/app.js");
 const { buildSystemPrompt } = await import("../server/prompt.js");
