@@ -6,7 +6,8 @@
 // Privzeto plačljivi paket (Haiku z več razmisleka, »think«); --nacin chat = brezplačni paket.
 // Ocene tu ni: odgovore slepo oceni ločen ocenjevalec skupaj z odgovori drugih orodij (izven repozitorija).
 // Ne piše v pravo bazo in ne v docs/. Ustavi se, preden bi strošek presegel --max-usd.
-//   node scripts/meri-primerjava.mjs [--max-usd 2] [--nacin think|chat] [--suho] [--preizkus]
+//   node scripts/meri-primerjava.mjs [--max-usd 2] [--nacin think|chat] [--model haiku|sonnet] [--suho] [--preizkus]
+//   --model     model inštruktorja (EVKLID_MODEL); sonnet = točka 9 načrta (ali močnejši model kaj prinese), privzeto haiku
 //   --suho      samo ocena najslabšega stroška, brez klica modela (0 $)
 //   --preizkus  preizkusni odgovori namesto modela (samo brez ključa API), za test poti (0 $)
 // Zagon: GitHub Actions > Meritev, skripta scripts/meri-primerjava.mjs. Izid: data/meri-primerjava.json (artefakt
@@ -20,7 +21,7 @@ const arg = (name, d) => {
   const i = process.argv.indexOf(name);
   return i >= 0 ? process.argv[i + 1] : d;
 };
-const ZNANI = { "--max-usd": 1, "--nacin": 1, "--suho": 0, "--preizkus": 0 };
+const ZNANI = { "--max-usd": 1, "--nacin": 1, "--model": 1, "--suho": 0, "--preizkus": 0 };
 for (let i = 2; i < process.argv.length; i++) {
   const a = process.argv[i];
   if (!(a in ZNANI)) {
@@ -38,6 +39,12 @@ if (!(MAX_USD > 0) || MAX_USD > 5) {
   console.error("--max-usd mora biti večji od 0 in največ 5. Nič ni bilo poklicano.");
   process.exit(1);
 }
+const MODELI = { haiku: "claude-haiku-5-5", sonnet: "claude-sonnet-5-5" };
+const MODEL_IME = arg("--model", "haiku");
+if (!(MODEL_IME in MODELI)) {
+  console.error(`--model mora biti haiku ali sonnet (ne »${MODEL_IME}«). Nič ni bilo poklicano.`);
+  process.exit(1);
+}
 if (!["think", "chat"].includes(NACIN)) {
   console.error(`--nacin mora biti think ali chat (ne »${NACIN}«). Nič ni bilo poklicano.`);
   process.exit(1);
@@ -52,6 +59,7 @@ const navodilo = (t) =>
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-primerjava-"));
 process.env.EVKLID_DB = path.join(tmp, "meritev.db");
 if (NACIN === "chat") process.env.EVKLID_SS_THINK = "0";
+process.env.EVKLID_MODEL = MODELI[MODEL_IME];
 // Preverjanje kartic v ozadju (Sonnet + Opus) ni del odgovora, ki ga vidi učenec: izklopljeno, da ostane pod mejo.
 process.env.EVKLID_VERIFY_DAILY_USD = "0";
 // Brez mesečnega proračuna (server/proracun.js budgetMode): z njim bi prazna baza nadgradila Haiku v Sonnet ali Opus in
