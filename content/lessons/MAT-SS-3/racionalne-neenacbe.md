@@ -221,12 +221,16 @@ Ulomek je pozitiven, kjer imata števec in imenovalec enak predznak: na $(-\inft
 
 ## Povzetek
 
-- Z izrazom neznanega predznaka neenačbe ne množimo; vse prenesemo na eno stran, da je na drugi $0$.
-- Levo stran zapišemo kot en ulomek $\frac{p(x)}{q(x)}$ in razstavimo. Ničle števca so ničle, ničle imenovalca so poli.
-- Predznak se lahko zamenja le v ničli ali polu, pa še to le pri lihi stopnji. Na vsakem intervalu zadošča eno testno število.
-- Tabela predznakov: vrstice so intervali, stolpci faktorji in ulomek.
-- Pri $\le$, $\ge$ ničle vključimo, pri $<$, $>$ ne. Polov ne vključimo nikoli.
-- Rešitev $f(x) > 0$ so tisti $x$, kjer je graf racionalne funkcije nad osjo $x$.
+- Z izrazom neznanega predznaka neenačbe **ne množimo**.
+- Vse prenesemo na eno stran, da je na drugi $0$.
+- Levo stran zapišemo kot en ulomek $\frac{p(x)}{q(x)}$ in razstavimo.
+- Ničle števca so **ničle**, ničle imenovalca so **poli**.
+- Predznak se lahko zamenja le v ničli ali polu, pa še to le pri lihi stopnji.
+- Na vsakem intervalu zadošča eno **testno število**.
+- **Tabela predznakov**: vrstice so intervali, stolpci faktorji in ulomek.
+- Pri $\le$, $\ge$ ničle vključimo, pri $<$, $>$ ne.
+- **Polov** ne vključimo nikoli.
+- Rešitve neenačbe $f(x) > 0$ so tisti $x$, kjer je graf racionalne funkcije nad osjo $x$.
 
 ## Ponovitev
 

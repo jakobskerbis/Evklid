@@ -228,13 +228,37 @@ $\Phi(2) - \Phi(-1) = 0{,}4772 + 0{,}3413 = 0{,}8185$, torej približno $82\,\%$
 
 ## Povzetek
 
-- Aritmetična sredina $\bar x$ je vsota podatkov, deljena z $N$; mediana $\mathrm{Me}$ je srednji podatek urejenega niza; modus $\mathrm{Mo}$ je najpogostejši podatek.
+- **Aritmetična sredina** $\bar x$ je vsota podatkov, deljena z $N$.
+- **Mediana** $\mathrm{Me}$ je srednji podatek urejenega niza.
+- **Modus** $\mathrm{Mo}$ je najpogostejši podatek.
 - Osamelec močno premakne sredino, mediane skoraj ne.
-- Standardni odklon: $\sigma^2 = \frac{1}{N}\sum (x_i - \bar x)^2$, $\sigma = \sqrt{\sigma^2}$; $\sigma^2$ je varianca.
-- Škatla z brki: min, $Q_1$, $\mathrm{Me}$, $Q_3$, max; medkvartilni razmik $Q_3 - Q_1$.
-- Normalna porazdelitev: zvonasta, simetrična okoli $\mu$, ploščina pod krivuljo je verjetnost, cela ploščina je $1$.
-- Pravilo $68$–$95$–$99{,}7\,\%$ za $\mu \pm \sigma$, $\mu \pm 2\sigma$, $\mu \pm 3\sigma$.
-- $z = \frac{x - \mu}{\sigma}$; $P(X < x) = 0{,}5 + \Phi(z)$, $P(X > x) = 0{,}5 - \Phi(z)$.
+
+**Varianca** $\sigma^2$ in **standardni odklon** $\sigma$:
+
+$$\sigma^2 = \frac{1}{N}\sum (x_i - \bar x)^2$$
+
+$$\sigma = \sqrt{\sigma^2}$$
+
+- **Škatla z brki:** min, $Q_1$, $\mathrm{Me}$, $Q_3$, max.
+- **Medkvartilni razmik** je $Q_3 - Q_1$.
+- **Normalna porazdelitev** je zvonasta, simetrična okoli $\mu$.
+- Ploščina pod krivuljo je verjetnost; cela ploščina je $1$.
+
+**Pravilo $68$–$95$–$99{,}7\,\%$:**
+
+| Interval | Delež |
+|:-:|:-:|
+| $\mu \pm \sigma$ | $68\,\%$ |
+| $\mu \pm 2\sigma$ | $95\,\%$ |
+| $\mu \pm 3\sigma$ | $99{,}7\,\%$ |
+
+**Standardizacija:**
+
+$$z = \frac{x - \mu}{\sigma}$$
+
+$$P(X < x) = 0{,}5 + \Phi(z)$$
+
+$$P(X > x) = 0{,}5 - \Phi(z)$$
 
 ## Ponovitev
 

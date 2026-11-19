@@ -157,12 +157,25 @@ Iz $x + 8 = 14$ sledi $x = 6$. Preizkus: $2 \cdot 6 + 4 \cdot 8 = 12 + 32 = 44$ 
 
 ## Povzetek
 
-- Sistem dveh linearnih enačb: $\begin{cases} a_1x + b_1y = c_1 \\ a_2x + b_2y = c_2 \end{cases}$. Rešitev je par $(x, y)$, ki ustreza obema enačbama.
-- Grafično: vsaka enačba je premica, rešitev je presečišče. Vedno naredi preizkus.
-- Zamenjava: izrazi eno neznanko, vstavi v drugo enačbo, reši, izračunaj še drugo neznanko.
-- Nasprotni koeficienti: pomnoži (vse člene), da dobiš $+k$ in $-k$ pri isti neznanki, seštej, reši, vstavi nazaj.
-- Premici se sekata (ena rešitev), sta vzporedni (nobene rešitve, npr. $0 = 2$) ali sovpadata (neskončno rešitev, $0 = 0$).
-- Preizkus: rešitev vstavi v obe prvotni enačbi.
+**Sistem dveh linearnih enačb:**
+
+$$a_1x + b_1y = c_1$$
+
+$$a_2x + b_2y = c_2$$
+
+- **Rešitev** je par $(x, y)$, ki ustreza obema enačbama.
+- **Grafično**: vsaka enačba je premica, rešitev je presečišče.
+- **Zamenjava**: izrazi eno neznanko, vstavi v drugo enačbo, reši, izračunaj še drugo neznanko.
+- **Nasprotni koeficienti**: pomnoži (vse člene), da dobiš $+k$ in $-k$ pri isti neznanki, seštej, reši, vstavi nazaj.
+
+| Premici | Rešitev |
+|:-:|:-:|
+| se sekata | ena |
+| sta vzporedni | nobena |
+| sovpadata | neskončno |
+
+- Pri vzporednih premicah račun da nemogočo enakost, npr. $0 = 2$; pri sovpadajočih pa $0 = 0$.
+- Vedno naredi **preizkus**: rešitev vstavi v obe prvotni enačbi.
 
 ## Ponovitev
 

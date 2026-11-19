@@ -211,13 +211,24 @@ $x^2 + 8x = (x + 4)^2 - 16$, teme je $T(-4, -16)$. Števili sta $-4$ in $4$, naj
 
 ## Povzetek
 
-- Ekstremalni problem: iščemo največjo (maksimum) ali najmanjšo (minimum) vrednost količine, npr. ploščine, prihodka ali zmnožka.
-- Spremenljivko $x$ izberemo sami. Z zvezo (vsota, obseg, dolžina ograje, podobnost) izrazimo druge količine z $x$ in dobimo kvadratno funkcijo.
-- Definicijsko območje določi besedilo: dolžine so pozitivne, število ljudi nenegativno, lahko so dodane omejitve.
-- Ekstrem je v temenu, $p = -\dfrac{b}{2a}$ ali iz temenske oblike: maksimum pri $a < 0$, minimum pri $a > 0$.
-- Če teme ni v območju, je ekstrem v krajišču. Na $[m, n]$ primerjamo vrednosti v temenu in v obeh krajiščih.
-- Med pravokotniki z enakim obsegom ima največjo ploščino kvadrat. Pri ograji ob steni je stranica ob steni dvakrat daljša od drugih dveh.
-- Odgovor so mere, cena ali čas z enoto, ne le vrednost $q$.
+- **Ekstremalni problem**: iščemo največjo (**maksimum**) ali najmanjšo (**minimum**) vrednost količine, npr. ploščine, prihodka ali zmnožka.
+- Spremenljivko $x$ izberemo sami.
+- Z zvezo (vsota, obseg, dolžina ograje, podobnost) izrazimo druge količine z $x$ in dobimo kvadratno funkcijo.
+- **Definicijsko območje** določi besedilo: dolžine so pozitivne, število ljudi nenegativno, lahko so dodane omejitve.
+
+**Ekstrem je v temenu** $T(p, q)$ ($p$ preberi iz temenske oblike ali izračunaj):
+
+$$p = -\dfrac{b}{2a}$$
+
+| $a < 0$ | $a > 0$ |
+|:-:|:-:|
+| maksimum | minimum |
+
+- Če teme ni v območju, je ekstrem v krajišču.
+- Na $[m, n]$ primerjamo vrednosti v temenu in v obeh krajiščih.
+- Med pravokotniki z enakim obsegom ima največjo ploščino **kvadrat**.
+- Pri ograji ob steni je stranica ob steni dvakrat daljša od drugih dveh.
+- **Odgovor** so mere, cena ali čas z enoto, ne le vrednost $q$.
 
 ## Ponovitev
 

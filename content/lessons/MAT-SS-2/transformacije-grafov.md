@@ -325,12 +325,18 @@ Enačba je $5 = a \cdot 2^2 - 3$, torej $4a = 8$, $a = 2$ in $g(x) = 2(x + 2)^2 
 
 ## Povzetek
 
-- $f(x) + q$: premik za $q$ navzgor ($q < 0$: navzdol).
+- $f(x) + q$: **premik** za $q$ navzgor ($q < 0$: navzdol).
 - $f(x - p)$: premik za $p$ v desno ($p < 0$: v levo); sprememba v oklepaju deluje »obratno«.
-- $-f(x)$: zrcaljenje čez os $x$; $f(-x)$: zrcaljenje čez os $y$ (soda funkcija se ne spremeni).
-- $a \cdot f(x)$ z $a > 0$: razteg v smeri osi $y$ ($a > 1$ strmejši, $0 < a < 1$ položnejši).
-- $f(kx)$ s $k > 0$: skrčitev v smeri osi $x$ s faktorjem $k$.
-- $a \cdot f(x - p) + q$: točka $(x, y)$ preide v $(x + p,\ ay + q)$; teme $x^2$ gre v $(p, q)$.
+- $-f(x)$: **zrcaljenje** čez os $x$.
+- $f(-x)$: zrcaljenje čez os $y$; soda funkcija se ne spremeni.
+- $a \cdot f(x)$ z $a > 0$: **razteg** v smeri osi $y$ ($a > 1$ strmejši, $0 < a < 1$ položnejši).
+- $f(kx)$ s $k > 0$: **skrčitev** v smeri osi $x$ s faktorjem $k$.
+
+**Vse skupaj:** pri $a \cdot f(x - p) + q$ točka $(x, y)$ preide v
+
+$$(x + p,\ ay + q)$$
+
+- Teme $x^2$ gre v $(p, q)$.
 
 ## Ponovitev
 

@@ -211,11 +211,20 @@ Dobiš $0 = 0$, zato je rešitev neskončno. Izberemo $z = t$: $y = 1 + t$ in $x
 
 ## Povzetek
 
-- Gaussova metoda: z ekvivalentnimi preoblikami spravi sistem v trikotno obliko (odstrani $x$ iz 2. in 3. enačbe, nato $y$ iz 3.), nato vstavljaj nazaj od $z$ do $x$ in naredi preizkus.
-- Vrstica $0 = c$ ($c \neq 0$): sistem nima rešitve. Vrstica $0 = 0$: neskončno rešitev, eno neznanko izberemo kot parameter $t$.
-- Sistem neenačb z eno neznanko: reši vsako, rešitev je presek intervalov (številska premica).
-- Neenačba z dvema neznankama: polravnina z robom $ax + by = c$; stran izbereš s testno točko; rob polno pri $\le$, $\ge$, črtkano pri $<$, $>$.
-- Sistem neenačb z dvema neznankama: presek polravnin; preizkus s točko v notranjosti.
+**Gaussova metoda:**
+
+- Z ekvivalentnimi preoblikami spravi sistem v **trikotno obliko**: odstrani $x$ iz 2. in 3. enačbe, nato $y$ iz 3.
+- Nato vstavljaj nazaj od $z$ do $x$ in naredi preizkus.
+- Vrstica $0 = c$ ($c \neq 0$): sistem **nima rešitve**.
+- Vrstica $0 = 0$: **neskončno rešitev**; eno neznanko izberemo kot parameter $t$.
+
+**Neenačbe:**
+
+- **Sistem neenačb z eno neznanko:** reši vsako; rešitev je presek intervalov (številska premica).
+- **Neenačba z dvema neznankama:** rešitev je polravnina z robom $ax + by = c$.
+- Stran polravnine izbereš s testno točko.
+- Rob rišemo polno pri $\le$, $\ge$ in črtkano pri $<$, $>$.
+- **Sistem neenačb z dvema neznankama:** rešitev je presek polravnin; preizkus s točko v notranjosti.
 
 ## Ponovitev
 

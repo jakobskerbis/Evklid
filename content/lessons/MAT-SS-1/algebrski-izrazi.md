@@ -187,12 +187,28 @@ $6 \cdot 100 - 12 \cdot 10 + 8 = 600 - 120 + 8 = 488$. Preizkus: $1000 - 512 = 4
 
 ## Povzetek
 
-- Algebrski izraz sestavljajo števila, spremenljivke in računske operacije. Vrednost izraza dobiš z vstavljanjem števil, negativna števila v oklepaju.
-- Seštevamo samo podobne člene (enak spremenljivi del): koeficienti se seštejejo. Pri množenju se koeficienti zmnožijo, eksponenti iste spremenljivke pa seštejejo.
-- Minus pred oklepajem spremeni predznak vsem členom v oklepaju.
-- Mnogočlenike množimo tako, da vsak člen pomnožimo z vsakim: $(a + b)(c + d) = ac + ad + bc + bd$.
-- Kvadrat dvočlenika: $(a \pm b)^2 = a^2 \pm 2ab + b^2$. Zmnožek vsote in razlike: $(a + b)(a - b) = a^2 - b^2$.
-- Kub dvočlenika: $(a \pm b)^3 = a^3 \pm 3a^2b + 3ab^2 \pm b^3$, koeficienti so $1, 3, 3, 1$.
+- **Algebrski izraz** sestavljajo števila, spremenljivke in računske operacije.
+- **Vrednost izraza** dobiš z vstavljanjem števil; negativna števila vstavi v oklepaju.
+- **Podobni členi** imajo enak spremenljivi del.
+- Seštevamo samo podobne člene: koeficienti se seštejejo.
+- Pri **množenju** se koeficienti zmnožijo, eksponenti iste spremenljivke pa seštejejo.
+- **Minus pred oklepajem** spremeni predznak vsem členom v oklepaju.
+- **Mnogočlenike** množimo tako, da vsak člen pomnožimo z vsakim:
+
+$$(a + b)(c + d) = ac + ad + bc + bd$$
+
+**Kvadrat dvočlenika:**
+
+$$(a \pm b)^2 = a^2 \pm 2ab + b^2$$
+
+**Zmnožek vsote in razlike:**
+
+$$(a + b)(a - b) = a^2 - b^2$$
+
+**Kub dvočlenika** (koeficienti $1, 3, 3, 1$):
+
+$$(a \pm b)^3 = a^3 \pm 3a^2b + 3ab^2 \pm b^3$$
+
 - Razvit izraz preveri tako, da v oba izraza vstaviš isto majhno število, ki ni $0$.
 
 ## Ponovitev

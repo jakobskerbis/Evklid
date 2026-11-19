@@ -161,12 +161,25 @@ $S = \dfrac{0{,}36}{0{,}99} = \dfrac{36}{99} = \dfrac{4}{11}$. Preizkus: $4 : 11
 
 ## Povzetek
 
-- Geometrijska vrsta: $a_1 + a_1 q + a_1 q^2 + \dots$ (neskončno mnogo členov).
-- $n$-ta delna vsota: $S_n = a_1 \cdot \dfrac{1 - q^n}{1 - q}$; vrsta konvergira, če ima zaporedje $S_n$ limito.
-- Konvergira natanko tedaj, ko je $|q| < 1$; takrat je vsota $S = \dfrac{a_1}{1 - q}$.
-- Pri $|q| \ge 1$ (in $a_1 \ne 0$) vrsta divergira in vsote nima; formule ne smemo uporabiti.
-- Negativen $q$: delne vsote skačejo okoli vsote. Pri $1 - q$ pazi na predznak.
-- Uporaba: Zenonov paradoks, pot odbijajoče se žoge, periodična decimalna števila kot ulomki.
+**Geometrijska vrsta** ima neskončno mnogo členov:
+
+$$a_1 + a_1 q + a_1 q^2 + \dots$$
+
+**$n$-ta delna vsota:**
+
+$$S_n = a_1 \cdot \frac{1 - q^n}{1 - q}$$
+
+- Vrsta **konvergira**, če ima zaporedje $S_n$ limito.
+- Konvergira natanko tedaj, ko je $|q| < 1$.
+
+**Vsota** pri $|q| < 1$:
+
+$$S = \frac{a_1}{1 - q}$$
+
+- Pri $|q| \ge 1$ (in $a_1 \ne 0$) vrsta **divergira** in vsote nima; formule ne smemo uporabiti.
+- Pri negativnem $q$ delne vsote skačejo okoli vsote.
+- Pri $1 - q$ pazi na predznak.
+- **Uporaba**: Zenonov paradoks, pot odbijajoče se žoge, periodična decimalna števila kot ulomki.
 
 ## Ponovitev
 

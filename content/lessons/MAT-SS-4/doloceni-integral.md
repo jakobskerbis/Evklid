@@ -186,13 +186,33 @@ $\int_0^{30} \frac{x^2}{9}\,dx = \frac{x^3}{27}\Big|_0^{30} = \frac{27000}{27} =
 
 ## Povzetek
 
-- Določeni integral $\int_a^b f(x)\,dx$ je limita vsot ploščin pravokotnikov pod grafom; rezultat je število.
-- Newton-Leibnizova formula: $\int_a^b f(x)\,dx = F(b) - F(a)$, kjer je $F$ katera koli primitivna funkcija; $C$ se izniči.
-- Integral šteje dele nad osjo s plusom, pod osjo z minusom. Za ploščino razdeli interval v ničlah in seštej absolutne vrednosti.
-- Lastnosti: $\int_a^a f\,dx = 0$, $\int_b^a f\,dx = -\int_a^b f\,dx$, $\int_a^b f\,dx + \int_b^c f\,dx = \int_a^c f\,dx$; integral vsote je vsota integralov, konstantni faktor izpostavimo.
-- Ploščina med krivuljama: $\int_a^b (g - f)\,dx$, kjer je $g$ zgoraj.
-- (višja raven) Prostornina vrtenine okoli osi $x$: $V = \pi \int_a^b f(x)^2\,dx$.
-- Pot je integral hitrosti po času: $s = \int_{t_1}^{t_2} v(t)\,dt$.
+- **Določeni integral** $\int_a^b f(x)\,dx$ je limita vsot ploščin pravokotnikov pod grafom; rezultat je število.
+
+**Newton-Leibnizova formula** ($F$ je katera koli primitivna funkcija, $C$ se izniči):
+
+$$\int_a^b f(x)\,dx = F(b) - F(a)$$
+
+- Integral šteje dele nad osjo s plusom, pod osjo z minusom.
+- Za **ploščino** razdeli interval v ničlah in seštej absolutne vrednosti.
+- **Ploščina med krivuljama**, kjer je $g$ zgoraj: $\int_a^b (g - f)\,dx$.
+
+**Lastnosti:**
+
+$$\int_a^a f\,dx = 0$$
+
+$$\int_b^a f\,dx = -\int_a^b f\,dx$$
+
+$$\int_a^b f\,dx + \int_b^c f\,dx = \int_a^c f\,dx$$
+
+- Integral vsote je vsota integralov; konstantni faktor izpostavimo.
+
+**Prostornina vrtenine** okoli osi $x$ (višja raven):
+
+$$V = \pi \int_a^b f(x)^2\,dx$$
+
+**Pot** je integral hitrosti po času:
+
+$$s = \int_{t_1}^{t_2} v(t)\,dt$$
 
 ## Ponovitev
 

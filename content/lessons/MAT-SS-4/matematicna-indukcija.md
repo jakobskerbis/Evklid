@@ -150,12 +150,13 @@ $H_{n + 1} = 2(2^n - 1) + 1 = 2^{n + 1} - 2 + 1 = 2^{n + 1} - 1$, kar je $P(n + 
 
 ## Povzetek
 
-- Matematična indukcija dokaže trditev $P(n)$ za vsa naravna števila $n \ge n_0$.
-- Baza: preverimo $P(n_0)$, običajno $n_0 = 1$.
-- Korak: iz predpostavke $P(n)$ izpeljemo $P(n + 1)$; predpostavko res uporabimo.
-- Vsote: prvih $n$ členov zamenjamo po predpostavki, prištejemo $(n + 1)$-ti člen.
-- Deljivost: izraz za $n + 1$ zapišemo kot izraz za $n$ plus očiten večkratnik delitelja.
-- Neenakosti: uporabimo predpostavko, nato pokažemo še pomožno neenakost; baza je tam, kjer korak začne veljati.
+- **Matematična indukcija** dokaže trditev $P(n)$ za vsa naravna števila $n \ge n_0$.
+- **Baza:** preverimo $P(n_0)$, običajno $n_0 = 1$.
+- **Korak:** iz predpostavke $P(n)$ izpeljemo $P(n + 1)$; predpostavko res uporabimo.
+- **Vsote:** prvih $n$ členov zamenjamo po predpostavki, prištejemo $(n + 1)$-ti člen.
+- **Deljivost:** izraz za $n + 1$ zapišemo kot izraz za $n$ plus očiten večkratnik delitelja.
+- **Neenakosti:** uporabimo predpostavko, nato pokažemo še pomožno neenakost.
+- Pri neenakostih je baza tam, kjer korak začne veljati.
 - Nekaj preverjenih primerov ni dokaz.
 
 ## Ponovitev

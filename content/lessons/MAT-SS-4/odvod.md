@@ -235,13 +235,44 @@ $f'(x) = 3(x^2 + 1)^2 \cdot 2x = 6x(x^2 + 1)^2$. Pri $x = 1$: $6 \cdot 1 \cdot 2
 
 ## Povzetek
 
-- Odvod v točki: $f'(a) = \lim\limits_{h \to 0} \dfrac{f(a + h) - f(a)}{h}$, limita diferenčnih količnikov.
-- Pomen: hitrost spremembe v trenutku; smerni koeficient tangente na graf.
-- $(x^n)' = n x^{n-1}$, odvod konstante je $0$; $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$, $(e^x)' = e^x$, $(\ln x)' = \frac{1}{x}$.
-- $(c f)' = c f'$, $(f + g)' = f' + g'$.
-- $(f g)' = f' g + f g'$, $\left(\frac{f}{g}\right)' = \dfrac{f' g - f g'}{g^2}$, $\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$.
-- Najprej odvajaj, nato vstavi točko. $f' > 0$: funkcija narašča, $f' < 0$: pada.
-- (višja raven) Pravila izpeljemo iz definicije (pri produktu v števcu prištejemo in odštejemo $f(a)\,g(a + h)$), iz pravil pa nove odvode, npr. $(\tan x)' = \frac{1}{\cos^2 x}$, $(\cot x)' = -\frac{1}{\sin^2 x}$, $(2^x)' = 2^x \ln 2$.
+**Odvod v točki** je limita diferenčnih količnikov:
+
+$$f'(a) = \lim\limits_{h \to 0} \frac{f(a + h) - f(a)}{h}$$
+
+- **Pomen:** hitrost spremembe v trenutku; smerni koeficient tangente na graf.
+
+| $f(x)$ | $f'(x)$ |
+|:-:|:-:|
+| konstanta | $0$ |
+| $x^n$ | $n x^{n-1}$ |
+| $\sin x$ | $\cos x$ |
+| $\cos x$ | $-\sin x$ |
+| $e^x$ | $e^x$ |
+| $\ln x$ | $\frac{1}{x}$ |
+
+**Pravila:**
+
+$$(c f)' = c f', \quad (f + g)' = f' + g'$$
+
+$$(f g)' = f' g + f g'$$
+
+$$\left(\frac{f}{g}\right)' = \frac{f' g - f g'}{g^2}$$
+
+$$\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)$$
+
+- Najprej odvajaj, nato vstavi točko.
+- $f' > 0$: funkcija narašča; $f' < 0$: pada.
+
+**Višja raven:**
+
+- Pravila izpeljemo iz definicije; pri produktu v števcu prištejemo in odštejemo $f(a)\,g(a + h)$.
+- Iz pravil dobimo nove odvode:
+
+$$(\tan x)' = \frac{1}{\cos^2 x}$$
+
+$$(\cot x)' = -\frac{1}{\sin^2 x}$$
+
+$$(2^x)' = 2^x \ln 2$$
 
 ## Ponovitev
 

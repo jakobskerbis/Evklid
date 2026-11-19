@@ -158,13 +158,34 @@ $9 + 6 + 5 = 20$. Sodelovalo je $36$ dijakov, natanko eno vrsto aplikacij jih up
 
 ## Povzetek
 
-- Množico določajo njeni elementi; zapišemo jo z naštevanjem $\{\dots\}$ ali z lastnostjo $\{x \mid \dots\}$. Velja $a \in A$ ali $a \notin A$.
-- $A \subseteq B$ pomeni, da je vsak element množice $A$ tudi v $B$. Vedno velja $A \subseteq A$ in $\emptyset \subseteq A$. Vse podmnožice sestavljajo potenčno množico $\mathcal{P}(A)$; (višja raven) množica z $n$ elementi ima $2^n$ podmnožic.
-- Operacije: $A \cup B$ (v $A$ ali v $B$), $A \cap B$ (v $A$ in v $B$), $A \setminus B$ (v $A$, ne v $B$), $A^c$ (v $\mathcal{U}$, ne v $A$).
-- Množici sta disjunktni, če je $A \cap B = \emptyset$. Razlika ni zamenljiva, unija in presek sta.
-- (višja raven) De Morgan: $(A \cup B)^c = A^c \cap B^c$ in $(A \cap B)^c = A^c \cup B^c$.
-- Moč unije: $|A \cup B| = |A| + |B| - |A \cap B|$.
-- Pri treh množicah izpolnjuješ Vennov diagram od sredine navzven.
+- **Množico** določajo njeni elementi; velja $a \in A$ ali $a \notin A$.
+- Zapišemo jo z naštevanjem $\{\dots\}$ ali z lastnostjo $\{x \mid \dots\}$.
+- **Podmnožica** $A \subseteq B$: vsak element množice $A$ je tudi v $B$.
+- Vedno velja $A \subseteq A$ in $\emptyset \subseteq A$.
+- Vse podmnožice sestavljajo **potenčno množico** $\mathcal{P}(A)$.
+- (višja raven) Množica z $n$ elementi ima $2^n$ podmnožic.
+
+| operacija | element je |
+|:-:|:-:|
+| $A \cup B$ | v $A$ ali v $B$ |
+| $A \cap B$ | v $A$ in v $B$ |
+| $A \setminus B$ | v $A$, ne v $B$ |
+| $A^c$ | v $\mathcal{U}$, ne v $A$ |
+
+- Množici sta **disjunktni**, če je $A \cap B = \emptyset$.
+- Unija in presek sta zamenljiva, razlika ni.
+
+**De Morgan** (višja raven):
+
+$$(A \cup B)^c = A^c \cap B^c$$
+
+$$(A \cap B)^c = A^c \cup B^c$$
+
+**Moč unije:**
+
+$$|A \cup B| = |A| + |B| - |A \cap B|$$
+
+- Pri treh množicah izpolnjuješ **Vennov diagram** od sredine navzven.
 
 ## Ponovitev
 

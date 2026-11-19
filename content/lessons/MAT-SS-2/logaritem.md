@@ -276,13 +276,34 @@ $v = A + B \log P$; točka $t$ dekade desno od oznake $10^n$ pripada številu $1
 
 ## Povzetek
 
-- $\log_a b = x \iff a^x = b$; pogoji: $a > 0$, $a \ne 1$, $b > 0$. Logaritem je eksponent.
-- $\log_a 1 = 0$, $\log_a a = 1$, $\log_a a^x = x$, $a^{\log_a b} = b$.
-- $\log b = \log_{10} b$ (desetiški), $\ln b = \log_{\mathrm{e}} b$ (naravni).
-- $\log_a (xy) = \log_a x + \log_a y$, $\;\log_a \dfrac{x}{y} = \log_a x - \log_a y$.
-- $\log_a x^n = n \log_a x$, posebej $\log_a \sqrt[n]{x} = \dfrac{1}{n}\log_a x$.
-- Prehod na novo osnovo (višja raven): $\log_a b = \dfrac{\log_c b}{\log_c a} = \dfrac{\log b}{\log a}$.
+**Definicija** ($a > 0$, $a \ne 1$, $b > 0$):
+
+$$\log_a b = x \iff a^x = b$$
+
+- **Logaritem je eksponent.**
+
+$$\log_a 1 = 0, \quad \log_a a = 1$$
+
+$$\log_a a^x = x, \quad a^{\log_a b} = b$$
+
+- **Desetiški**: $\log b = \log_{10} b$.
+- **Naravni**: $\ln b = \log_{\mathrm{e}} b$.
+
+**Pravila:**
+
+$$\log_a (xy) = \log_a x + \log_a y$$
+
+$$\log_a \frac{x}{y} = \log_a x - \log_a y$$
+
+$$\log_a x^n = n \log_a x$$
+
+$$\log_a \sqrt[n]{x} = \frac{1}{n}\log_a x$$
+
 - Za logaritem vsote ali razlike ni pravila.
+
+**Prehod na novo osnovo** (višja raven):
+
+$$\log_a b = \frac{\log_c b}{\log_c a} = \frac{\log b}{\log a}$$
 
 ## Ponovitev
 

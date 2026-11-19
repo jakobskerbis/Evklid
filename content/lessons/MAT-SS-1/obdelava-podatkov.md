@@ -274,14 +274,34 @@ opisni podatki: modus; vrstni: mediana; številski: aritmetična sredina ali med
 
 ## Povzetek
 
-- Aritmetična sredina: $\bar{x} = \dfrac{\sum x_i}{n}$; s frekvencami $\bar{x} = \dfrac{\sum f_i x_i}{\sum f_i}$.
-- Mediana je sredina urejenih podatkov; modus je najpogostejši podatek.
-- Razmah $R = x_{\max} - x_{\min}$; medkvartilni razmik $Q_3 - Q_1$.
-- Varianca $\sigma^2 = \dfrac{\sum (x_i - \bar{x})^2}{n}$, standardni odklon $\sigma = \sqrt{\sigma^2}$.
-- Osamelec: pod $Q_1 - 1{,}5\,(Q_3 - Q_1)$ ali nad $Q_3 + 1{,}5\,(Q_3 - Q_1)$.
-- Osamelci vplivajo na povprečje, mediana in medkvartilni razmik sta odporna.
-- Vrste podatkov: opisni (modus), vrstni (mediana), številski (aritmetična sredina).
-- Prikazi: stolpčni, krožni (kot $\dfrac{f}{n}\cdot 360^\circ$), pozicijski, linijski, krivuljni in razsevni diagram, histogram, škatla z brki.
+**Aritmetična sredina** (brez in s frekvencami):
+
+$$\bar{x} = \dfrac{\sum x_i}{n}$$
+
+$$\bar{x} = \dfrac{\sum f_i x_i}{\sum f_i}$$
+
+- **Mediana** je sredina urejenih podatkov.
+- **Modus** je najpogostejši podatek.
+- **Razmah:** $R = x_{\max} - x_{\min}$.
+- **Medkvartilni razmik:** $Q_3 - Q_1$.
+
+**Varianca** in **standardni odklon:**
+
+$$\sigma^2 = \dfrac{\sum (x_i - \bar{x})^2}{n}$$
+
+$$\sigma = \sqrt{\sigma^2}$$
+
+- **Osamelec** je pod $Q_1 - 1{,}5\,(Q_3 - Q_1)$ ali nad $Q_3 + 1{,}5\,(Q_3 - Q_1)$.
+- Osamelci vplivajo na povprečje; mediana in medkvartilni razmik sta odporna.
+
+| podatki | povzetek |
+|:-:|:-:|
+| opisni | modus |
+| vrstni | mediana |
+| številski | aritmetična sredina |
+
+- **Prikazi:** stolpčni, krožni, pozicijski, linijski, krivuljni in razsevni diagram, histogram, škatla z brki.
+- Kot v krožnem diagramu je $\dfrac{f}{n}\cdot 360^\circ$.
 
 ## Ponovitev
 

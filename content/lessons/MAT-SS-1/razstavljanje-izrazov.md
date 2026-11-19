@@ -185,14 +185,37 @@ Prvi oklepaj je $x + 3 - x + 3 = 6$, drugi $2x$, zato je razlika $6 \cdot 2x = 1
 
 ## Povzetek
 
-- Razstaviti pomeni zapisati vsoto kot produkt. Preizkus je množenje faktorjev nazaj.
-- Izpostavljanje: $ab + ac = a(b+c)$. Vzemi največji skupni delitelj koeficientov in vsako spremenljivko z najmanjšim eksponentom. Pazi na člen, ki postane $1$.
-- Po skupinah: $ax + ay + bx + by = (a+b)(x+y)$.
-- Razlika kvadratov: $a^2 - b^2 = (a-b)(a+b)$. Vsote $x^2 + b^2$ ($b \neq 0$) z realnimi števili ne razstaviš.
-- Popolni kvadrat: $a^2 \pm 2ab + b^2 = (a \pm b)^2$.
-- Vietovo pravilo: $x^2 + px + q = (x+a)(x+b)$, kjer je $a + b = p$ in $a \cdot b = q$.
-- Vrstni red: skupni faktor, nato obrazec glede na število členov, nato preglej vse faktorje in na koncu preizkus.
-- Razcepna enačba: vse na levo, levo stran razstavi, vsak faktor izenači z $0$ (produkt je $0$ natanko tedaj, ko je $0$ vsaj en faktor).
+- **Razstaviti** pomeni zapisati vsoto kot produkt.
+- Preizkus: faktorje zmnoži nazaj.
+
+**Izpostavljanje:**
+
+$$ab + ac = a(b + c)$$
+
+- Vzemi največji skupni delitelj koeficientov in vsako spremenljivko z najmanjšim eksponentom.
+- Pazi na člen, ki postane $1$.
+
+**Po skupinah:**
+
+$$ax + ay + bx + by = (a + b)(x + y)$$
+
+**Razlika kvadratov:**
+
+$$a^2 - b^2 = (a - b)(a + b)$$
+
+- Vsote $x^2 + b^2$ ($b \neq 0$) z realnimi števili ne razstaviš.
+
+**Popolni kvadrat:**
+
+$$a^2 \pm 2ab + b^2 = (a \pm b)^2$$
+
+**Vietovo pravilo** ($a + b = p$, $a \cdot b = q$):
+
+$$x^2 + px + q = (x + a)(x + b)$$
+
+- **Vrstni red**: skupni faktor, nato obrazec glede na število členov, nato preglej vse faktorje, na koncu preizkus.
+- **Razcepna enačba**: vse na levo, levo stran razstavi, vsak faktor izenači z $0$.
+- Produkt je $0$ natanko tedaj, ko je $0$ vsaj en faktor.
 
 ## Ponovitev
 

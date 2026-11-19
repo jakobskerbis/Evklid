@@ -216,13 +216,34 @@ $P(A \mid N) = \dfrac{0{,}012}{0{,}032} = \dfrac{12}{32} = \dfrac{3}{8} = 0{,}37
 
 ## Povzetek
 
-- Dogodek je podmnožica izidov; poskus z $n$ izidi ima $2^n$ dogodkov. Za nasprotni dogodek velja $P(\overline{A}) = 1 - P(A)$.
-- Matematična verjetnost $\frac{m}{n}$ velja za končno mnogo enako verjetnih izidov, empirična je relativna frekvenca, subjektivna je osebna ocena.
-- Vsota $A + B$ pomeni »$A$ ali $B$«, produkt $A \cdot B$ pa »$A$ in $B$«.
-- $P(A + B) = P(A) + P(B) - P(A \cdot B)$. Pri nezdružljivih dogodkih se zmanjša na $P(A) + P(B)$.
-- Pogojna verjetnost (višja raven): $P(A \mid B) = \dfrac{P(A \cdot B)}{P(B)}$.
-- Produkt (višja raven): $P(A \cdot B) = P(B) \cdot P(A \mid B)$. Pri neodvisnih dogodkih $P(A \cdot B) = P(A) \cdot P(B)$.
-- (višja raven) Pri nalogah s koraki si pomagaj z drevesom: verjetnosti vzdolž poti množimo, verjetnosti različnih poti, ki vodijo do istega dogodka, seštevamo.
+- **Dogodek** je podmnožica izidov; poskus z $n$ izidi ima $2^n$ dogodkov.
+
+**Nasprotni dogodek:**
+
+$$P(\overline{A}) = 1 - P(A)$$
+
+- **Matematična** verjetnost $\frac{m}{n}$ velja za končno mnogo enako verjetnih izidov.
+- **Empirična** verjetnost je relativna frekvenca.
+- **Subjektivna** verjetnost je osebna ocena.
+- **Vsota** $A + B$ pomeni »$A$ ali $B$«, **produkt** $A \cdot B$ pa »$A$ in $B$«.
+
+**Verjetnost vsote** $P(A + B)$ je:
+
+$$P(A) + P(B) - P(A \cdot B)$$
+
+- Pri **nezdružljivih** dogodkih je $P(A + B) = P(A) + P(B)$.
+
+**Višja raven:** pogojna verjetnost
+
+$$P(A \mid B) = \frac{P(A \cdot B)}{P(B)}$$
+
+- **Produkt** dogodkov:
+
+$$P(A \cdot B) = P(B) \cdot P(A \mid B)$$
+
+- Pri **neodvisnih** dogodkih je $P(A \cdot B) = P(A) \cdot P(B)$.
+- Pri nalogah s koraki si pomagaj z **drevesom**: verjetnosti vzdolž poti množimo.
+- Verjetnosti različnih poti, ki vodijo do istega dogodka, seštevamo.
 
 ## Ponovitev
 

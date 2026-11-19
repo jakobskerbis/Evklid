@@ -201,13 +201,30 @@ $S_6 = 3 \cdot \dfrac{2^6 - 1}{2 - 1} = 3 \cdot 63 = 189$. Preizkus: $3 + 6 + 12
 
 ## Povzetek
 
-- Aritmetično zaporedje: $a_{n+1} - a_n = d$ (diferenca).
-- $a_n = a_1 + (n-1)\,d$ in $S_n = \dfrac{n}{2}(a_1 + a_n) = \dfrac{n}{2}\bigl(2a_1 + (n-1)d\bigr)$.
-- Geometrijsko zaporedje: $\dfrac{a_{n+1}}{a_n} = q$ (količnik).
-- $a_n = a_1 \cdot q^{\,n-1}$ in za $q \ne 1$: $S_n = a_1 \cdot \dfrac{q^n - 1}{q - 1}$; za $q = 1$: $S_n = n\,a_1$.
-- Od $a_1$ do $a_n$ je $n - 1$ korakov; formulo vedno preveri pri $n = 1$.
+**Aritmetično zaporedje** ($d$ je diferenca):
+
+$$a_{n+1} - a_n = d$$
+
+$$a_n = a_1 + (n-1)\,d$$
+
+$$S_n = \frac{n}{2}(a_1 + a_n)$$
+
+$$S_n = \frac{n}{2}\bigl(2a_1 + (n-1)d\bigr)$$
+
+**Geometrijsko zaporedje** ($q$ je količnik):
+
+$$\frac{a_{n+1}}{a_n} = q$$
+
+$$a_n = a_1 \cdot q^{\,n-1}$$
+
+$$S_n = a_1 \cdot \frac{q^n - 1}{q - 1} \quad (q \ne 1)$$
+
+- Za $q = 1$ je $S_n = n\,a_1$.
+- Od $a_1$ do $a_n$ je $n - 1$ korakov.
+- Formulo vedno preveri pri $n = 1$.
 - Vrsto zaporedja določi šele, ko preveriš razliko oziroma količnik pri vseh danih parih.
-- Zaporedje po vzorcu: išči enake razlike, količnike, vzorec v razlikah ali zvezo z indeksom $n$; domnevo za $a_n$ preveri pri vseh danih členih.
+- **Zaporedje po vzorcu**: išči enake razlike, količnike, vzorec v razlikah ali zvezo z indeksom $n$.
+- Domnevo za $a_n$ preveri pri vseh danih členih.
 
 ## Ponovitev
 

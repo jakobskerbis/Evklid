@@ -181,14 +181,31 @@ $P_n^{k_1, k_2, \ldots, k_r} = \frac{n!}{k_1!\,k_2! \cdots k_r!}$
 
 ## Povzetek
 
-- Osnovni izrek: pri zaporednih izbirah z $m$ in $n$ možnostmi je vseh izbir $m \cdot n$.
-- Permutacije (vsi elementi, vrstni red pomemben): $P_n = n!$; $0! = 1$.
-- Variacije ($k$ od $n$, vrstni red pomemben): $V_n^k = \frac{n!}{(n-k)!}$; s ponavljanjem $n^k$.
-- Kombinacije ($k$ od $n$, vrstni red ni pomemben): $C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!} = \frac{V_n^k}{k!}$.
-- Velja $\binom{n}{k} = \binom{n}{n-k}$.
-- Pravilo vsote: izbereš eno *ali* drugo iz primerov, ki se ne prekrivajo ($m$ in $n$ možnosti), vseh možnosti je $m + n$.
-- Permutacije s ponavljanjem ($n$ elementov, $k_1, \ldots, k_r$ enakih po vrstah): $P_n^{k_1, \ldots, k_r} = \frac{n!}{k_1! \cdots k_r!}$.
+- **Osnovni izrek:** pri zaporednih izbirah z $m$ in $n$ možnostmi je vseh izbir $m \cdot n$.
+- **Pravilo vsote:** izbereš eno *ali* drugo iz primerov, ki se ne prekrivajo ($m$ in $n$ možnosti); vseh možnosti je $m + n$.
 - Pred računanjem vprašaj: vsi ali le nekateri? Je vrstni red pomemben? Je ponavljanje dovoljeno?
+
+**Vrste izborov:**
+
+- **Permutacije:** vsi elementi, vrstni red je pomemben.
+- **Variacije:** $k$ od $n$, vrstni red je pomemben.
+- **Kombinacije:** $k$ od $n$, vrstni red ni pomemben.
+
+$$P_n = n!, \quad 0! = 1$$
+
+$$V_n^k = \frac{n!}{(n-k)!}$$
+
+- Variacij s ponavljanjem je $n^k$.
+
+$$C_n^k = \binom{n}{k} = \frac{n!}{k!\,(n-k)!}$$
+
+$$\binom{n}{k} = \frac{V_n^k}{k!}$$
+
+$$\binom{n}{k} = \binom{n}{n-k}$$
+
+**Permutacije s ponavljanjem** ($n$ elementov, $k_1, \ldots, k_r$ enakih po vrstah):
+
+$$P_n^{k_1, \ldots, k_r} = \frac{n!}{k_1! \cdots k_r!}$$
 
 ## Ponovitev
 

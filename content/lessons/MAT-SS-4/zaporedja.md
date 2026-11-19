@@ -169,12 +169,25 @@ Oba ulomka gresta proti $0$, zato je $\lim\limits_{n \to \infty} a_n = \dfrac{2 
 
 ## Povzetek
 
-- Zaporedje priredi vsakemu naravnemu $n$ člen $a_n$; podamo ga s splošnim členom ali rekurzivno.
-- Strogo naraščajoče: $a_{n+1} > a_n$; strogo padajoče: $a_{n+1} < a_n$ za vsak $n$. Preverimo z razliko $a_{n+1} - a_n$.
-- Omejeno: obstajata $m$ in $M$, da je $m \le a_n \le M$ za vsak $n$.
-- $\lim\limits_{n \to \infty} a_n = L$: v vsaki okolici $(L - \varepsilon, L + \varepsilon)$ so vsi členi od nekega indeksa naprej.
-- Konvergentno zaporedje je omejeno; monotono in omejeno zaporedje je konvergentno.
-- $\lim\limits_{n \to \infty} \dfrac{1}{n} = 0$; pri ulomkih deli z najvišjo potenco $n$ v imenovalcu.
+- **Zaporedje** priredi vsakemu naravnemu $n$ člen $a_n$.
+- Podamo ga s splošnim členom ali rekurzivno.
+- **Strogo naraščajoče:** $a_{n+1} > a_n$ za vsak $n$.
+- **Strogo padajoče:** $a_{n+1} < a_n$ za vsak $n$.
+- Monotonost preverimo z razliko $a_{n+1} - a_n$.
+- **Omejeno:** obstajata $m$ in $M$, da je $m \le a_n \le M$ za vsak $n$.
+
+**Limita:**
+
+$$\lim\limits_{n \to \infty} a_n = L$$
+
+pomeni: v vsaki okolici $(L - \varepsilon, L + \varepsilon)$ so vsi členi od nekega indeksa naprej.
+
+- Konvergentno zaporedje je omejeno.
+- Monotono in omejeno zaporedje je konvergentno.
+
+$$\lim\limits_{n \to \infty} \frac{1}{n} = 0$$
+
+- Pri ulomkih deli z najvišjo potenco $n$ v imenovalcu.
 
 ## Ponovitev
 

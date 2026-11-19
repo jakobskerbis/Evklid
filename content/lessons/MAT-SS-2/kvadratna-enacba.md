@@ -225,13 +225,37 @@ Iz $A \cdot B = 0$ sledi $A = 0$ ali $B = 0$; $\; x^2 - k = (x - \sqrt{k})(x + \
 
 ## Povzetek
 
-- Kvadratna enačba: $ax^2 + bx + c = 0$, $a \ne 0$; rešitve so ničle funkcije $f(x) = ax^2 + bx + c$.
-- Diskriminanta $D = b^2 - 4ac$; rešitve $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$.
-- $D > 0$: dve različni realni rešitvi; $D = 0$: ena dvojna realna; $D < 0$: dve konjugirano kompleksni.
-- Nepopolne enačbe rešuj z izpostavljanjem ($c = 0$) ali s korenjenjem ($b = 0$), ne deli z $x$. Enačbo $x^2 = k$, $k > 0$, rešiš s korenjenjem ali z razcepom $(x - \sqrt{k})(x + \sqrt{k}) = 0$.
-- Razcepna enačba: vse na levo, levo stran razstavi, vsak faktor izenači z $0$. Tako rešiš tudi enačbe višje stopnje.
-- Vietovi formuli: $x_1 + x_2 = -\dfrac{b}{a}$, $x_1 x_2 = \dfrac{c}{a}$.
-- Razcep: $ax^2 + bx + c = a(x - x_1)(x - x_2)$; enačba z rešitvama $x_1$, $x_2$: $x^2 - (x_1 + x_2)x + x_1 x_2 = 0$.
+- **Kvadratna enačba**: $ax^2 + bx + c = 0$, $a \ne 0$.
+- Njene rešitve so ničle funkcije $f(x) = ax^2 + bx + c$.
+
+**Diskriminanta** in rešitvi:
+
+$$D = b^2 - 4ac$$
+
+$$x_{1,2} = \frac{-b \pm \sqrt{D}}{2a}$$
+
+| $D$ | Rešitve |
+|:-:|:-|
+| $> 0$ | dve različni realni |
+| $= 0$ | ena dvojna realna |
+| $< 0$ | dve konjugirano kompleksni |
+
+- **Nepopolne enačbe** rešuj z izpostavljanjem ($c = 0$) ali s korenjenjem ($b = 0$); ne deli z $x$.
+- $x^2 = k$, $k > 0$, rešiš s korenjenjem ali z razcepom $(x - \sqrt{k})(x + \sqrt{k}) = 0$.
+- **Razcepna enačba**: vse na levo, levo stran razstavi, vsak faktor izenači z $0$.
+- Tako rešiš tudi enačbe višje stopnje.
+
+**Vietovi formuli:**
+
+$$x_1 + x_2 = -\frac{b}{a}, \quad x_1 x_2 = \frac{c}{a}$$
+
+**Razcep:**
+
+$$ax^2 + bx + c = a(x - x_1)(x - x_2)$$
+
+**Enačba z rešitvama** $x_1$, $x_2$:
+
+$$x^2 - (x_1 + x_2)x + x_1 x_2 = 0$$
 
 ## Ponovitev
 

@@ -235,13 +235,30 @@ $Z_2(-3, 5)$. V primerjavi z $Z(3, -5)$ sta obe koordinati nasprotni: $(x, y) \m
 
 ## Povzetek
 
-- Togi premik ohranja razdalje in kote; slika lika je z njim skladen lik.
-- Vzporedni premik za $(p, q)$: $(x, y) \mapsto (x + p, y + q)$; nobena točka ne ostane na mestu.
-- Zrcaljenje čez premico: os je simetrala daljice $TT'$. Čez os $x$: $(x, -y)$, čez os $y$: $(-x, y)$, čez $y = x$: $(y, x)$, čez $y = -x$: $(-y, -x)$.
-- Zrcaljenje čez točko $S$: $S$ je razpolovišče $TT'$; čez $O$: $(-x, -y)$; to je vrtež za $180^\circ$.
-- Vrtež okoli $S$ za kot $\varphi$; pozitivna smer je nasprotna urinemu kazalcu. Za $90^\circ$ okoli $O$: $(x, y) \mapsto (-y, x)$.
+- **Togi premik** ohranja razdalje in kote; slika lika je z njim skladen lik.
+
+**Vzporedni premik** za $(p, q)$:
+
+$$(x, y) \mapsto (x + p, y + q)$$
+
+- Pri vzporednem premiku nobena točka ne ostane na mestu.
+
+- **Zrcaljenje čez premico**: os je simetrala daljice $TT'$.
+- **Zrcaljenje čez točko** $S$: $S$ je razpolovišče $TT'$; to je vrtež za $180^\circ$.
+- **Vrtež** okoli $S$ za kot $\varphi$; pozitivna smer je nasprotna urinemu kazalcu.
+
+| zrcaljenje čez | slika $(x, y)$ |
+|:-:|:-:|
+| os $x$ | $(x, -y)$ |
+| os $y$ | $(-x, y)$ |
+| $y = x$ | $(y, x)$ |
+| $y = -x$ | $(-y, -x)$ |
+| točko $O$ | $(-x, -y)$ |
+
+- **Vrtež** za $90^\circ$ okoli $O$: $(x, y) \mapsto (-y, x)$.
+
 - Zrcaljenje čez premico obrne orientacijo trikotnika; premik, vrtež in zrcaljenje čez točko jo ohranijo.
-- Lika sta skladna, če enega s togimi premiki preslikamo na drugega.
+- Lika sta **skladna**, če enega s togimi premiki preslikamo na drugega.
 
 ## Ponovitev
 

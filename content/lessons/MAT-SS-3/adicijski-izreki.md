@@ -217,14 +217,39 @@ $\sin^2\dfrac{\alpha}{2} = \dfrac{1 - \cos\alpha}{2}$, $\quad \cos^2\dfrac{\alph
 
 ## Povzetek
 
-- $\sin(\alpha \pm \beta) = \sin\alpha\cos\beta \pm \cos\alpha\sin\beta$
-- $\cos(\alpha \pm \beta) = \cos\alpha\cos\beta \mp \sin\alpha\sin\beta$ (predznak se obrne)
-- $\tan(\alpha \pm \beta) = \dfrac{\tan\alpha \pm \tan\beta}{1 \mp \tan\alpha\tan\beta}$
-- Dvojni kot: $\sin 2\alpha = 2\sin\alpha\cos\alpha$, $\cos 2\alpha = \cos^2\alpha - \sin^2\alpha = 1 - 2\sin^2\alpha = 2\cos^2\alpha - 1$.
-- $\sin(\alpha + \beta) \neq \sin\alpha + \sin\beta$ in $\sin 2\alpha \neq 2\sin\alpha$.
+**Adicijski izreki:**
+
+$$\sin(\alpha \pm \beta) = \sin\alpha\cos\beta \pm \cos\alpha\sin\beta$$
+
+$$\cos(\alpha \pm \beta) = \cos\alpha\cos\beta \mp \sin\alpha\sin\beta$$
+
+$$\tan(\alpha \pm \beta) = \dfrac{\tan\alpha \pm \tan\beta}{1 \mp \tan\alpha\tan\beta}$$
+
+- Pri kosinusu se predznak obrne ($\mp$).
 - Izreki veljajo v obe smeri: z njimi razstaviš kot ali pa izraz zložiš v krajši zapis.
-- (višja raven) Polovični kot: $\sin^2\frac{\alpha}{2} = \frac{1 - \cos\alpha}{2}$, $\cos^2\frac{\alpha}{2} = \frac{1 + \cos\alpha}{2}$; predznak po kvadrantu $\frac{\alpha}{2}$.
-- (višja raven) Vsota v produkt: $\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$; podobno za ostale tri.
+- **Pazi:** $\sin(\alpha + \beta) \neq \sin\alpha + \sin\beta$ in $\sin 2\alpha \neq 2\sin\alpha$.
+
+**Dvojni kot:**
+
+$$\sin 2\alpha = 2\sin\alpha\cos\alpha$$
+
+$$\cos 2\alpha = \cos^2\alpha - \sin^2\alpha$$
+
+$$\cos 2\alpha = 1 - 2\sin^2\alpha = 2\cos^2\alpha - 1$$
+
+**Polovični kot** (višja raven):
+
+$$\sin^2\frac{\alpha}{2} = \frac{1 - \cos\alpha}{2}$$
+
+$$\cos^2\frac{\alpha}{2} = \frac{1 + \cos\alpha}{2}$$
+
+- Predznak določiš po kvadrantu kota $\frac{\alpha}{2}$.
+
+**Vsota v produkt** (višja raven):
+
+$$\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$$
+
+- Podobno za ostale tri.
 
 ## Ponovitev
 

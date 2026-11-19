@@ -217,16 +217,31 @@ Iz druge enačbe je $a = 2b - 1$. Vstavimo v prvo: $4(2b - 1) - b = 10$, torej $
 
 ## Povzetek
 
-- Imaginarna enota: $i^2 = -1$; kompleksno število $z = a + bi$, $\mathrm{Re}\,z = a$, $\mathrm{Im}\,z = b$ ($a, b \in \mathbb{R}$).
-- Kompleksno število $a + bi$ je točka $(a, b)$ v kompleksni ravnini: realna os vodoravno, imaginarna navpično.
-- Seštevamo in odštevamo ločeno realna in imaginarna dela (premik za premikom); množimo kot dvočlenika in upoštevamo $i^2 = -1$. Množenje z $i$ zasuka točko za pravi kot v levo.
+**Imaginarna enota:** $i^2 = -1$.
+
+- **Kompleksno število** $z = a + bi$ ($a, b \in \mathbb{R}$): $\mathrm{Re}\,z = a$, $\mathrm{Im}\,z = b$.
+- To je točka $(a, b)$ v kompleksni ravnini: realna os vodoravno, imaginarna navpično.
+- **Enakost**: $a + bi = c + di$ natanko tedaj, ko je $a = c$ in $b = d$.
+- Seštevaš in odštevaš ločeno realna in imaginarna dela (premik za premikom).
+- Množiš kot dvočlenika in upoštevaš $i^2 = -1$.
+- Množenje z $i$ zasuka točko za pravi kot v levo.
 - Potence $i$ se ponavljajo s periodo $4$: $i, -1, -i, 1$.
-- Konjugirano število $\bar{z} = a - bi$ je zrcalna slika čez realno os; $z \cdot \bar{z} = a^2 + b^2$.
-- Deljenje: ulomek razširimo s številom, konjugiranim imenovalcu. Obratna vrednost: $\dfrac{1}{a + bi} = \dfrac{a - bi}{a^2 + b^2}$.
-- Grafično: vsota je diagonala paralelograma s stranicama $z_1$ in $z_2$; $z_1 - z_2 = z_1 + (-z_2)$.
+- **Konjugirano število** $\bar{z} = a - bi$ je zrcalna slika čez realno os.
+
+$$z \cdot \bar{z} = a^2 + b^2$$
+
+**Absolutna vrednost** je razdalja točke $(a, b)$ od izhodišča:
+
+$$|z| = \sqrt{a^2 + b^2}$$
+
+- **Deljenje:** ulomek razširiš s številom, konjugiranim imenovalcu.
+
+**Obratna vrednost:**
+
+$$\frac{1}{a + bi} = \frac{a - bi}{a^2 + b^2}$$
+
+- Grafično je vsota diagonala paralelograma s stranicama $z_1$ in $z_2$; $z_1 - z_2 = z_1 + (-z_2)$.
 - Kvadratna enačba z realnimi koeficienti brez realnih rešitev ima dve konjugirani kompleksni rešitvi.
-- Absolutna vrednost: $|z| = \sqrt{a^2 + b^2}$ je razdalja točke $(a, b)$ od izhodišča v kompleksni ravnini.
-- Enakost: $a + bi = c + di$ natanko tedaj, ko je $a = c$ in $b = d$.
 
 ## Ponovitev
 

@@ -223,13 +223,31 @@ $|A'B'|^2 = |AB|^2 - (|BB'| - |AA'|)^2$, ko sta $A$ in $B$ na isti strani premic
 
 ## Povzetek
 
-- Skozi dve različni točki gre natanko ena premica; skozi točko zunaj premice gre natanko ena vzporednica.
-- Premici v ravnini: sekata se, sta vzporedni ($p \parallel q$) ali sovpadata. Pravokotnost: $p \perp q$.
-- Razdalja točke od premice je dolžina pravokotnice. Simetrala daljice je pravokotna na daljico skozi razpolovišče.
-- Pravokotna projekcija daljice $AB$ na $p$ je daljica $A'B'$ med projekcijama krajišč; za krajišči na isti strani $p$ je $|A'B'|^2 = |AB|^2 - (|BB'| - |AA'|)^2$.
-- Vrste kotov: ostri $<90^\circ$, pravi $90^\circ$, topi med $90^\circ$ in $180^\circ$, iztegnjeni $180^\circ$, polni $360^\circ$. Veljata $1^\circ = 60'$ in $1' = 60''$.
-- Sovršna kota sta enaka. Sokota: $\alpha + \beta = 180^\circ$. Komplementarna kota: $\alpha + \beta = 90^\circ$.
-- Pri $p \parallel q$ in prečnici: istoležna in izmenična kota sta enaka, notranja kota na isti strani imata vsoto $180^\circ$.
+- Skozi dve različni točki gre natanko **ena premica**.
+- Skozi točko zunaj premice gre natanko **ena vzporednica**.
+- Premici v ravnini se sekata, sta **vzporedni** ($p \parallel q$) ali sovpadata.
+- **Pravokotnost** zapišemo $p \perp q$.
+- **Razdalja točke od premice** je dolžina pravokotnice.
+- **Simetrala daljice** je pravokotna na daljico skozi razpolovišče.
+- **Pravokotna projekcija** daljice $AB$ na $p$ je daljica $A'B'$ med projekcijama krajišč.
+- Za krajišči na isti strani $p$ velja:
+
+$$|A'B'|^2 = |AB|^2 - (|BB'| - |AA'|)^2$$
+
+| kot | velikost |
+|:-:|:-:|
+| ostri | $<90^\circ$ |
+| pravi | $90^\circ$ |
+| topi | med $90^\circ$ in $180^\circ$ |
+| iztegnjeni | $180^\circ$ |
+| polni | $360^\circ$ |
+
+- Veljata $1^\circ = 60'$ in $1' = 60''$.
+- **Sovršna** kota sta enaka.
+- **Sokota:** $\alpha + \beta = 180^\circ$.
+- **Komplementarna** kota: $\alpha + \beta = 90^\circ$.
+- Pri $p \parallel q$ in prečnici sta **istoležna** in **izmenična** kota enaka.
+- **Notranja** kota na isti strani imata vsoto $180^\circ$.
 - Veljajo tudi obrati teh pravil.
 
 ## Ponovitev
