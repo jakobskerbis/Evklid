@@ -26,7 +26,7 @@ function start(opts = {}) {
   const server = app.listen(0);
   return { server, base: `http://127.0.0.1:${server.address().port}` };
 }
-const LATE_CSS = ["textbook.css", "risbe.css", "games.css", "touch.css", "okna.css", "drsniki.css"];
+const LATE_CSS = ["textbook.css", "risbe.css", "games.css", "okna.css", "drsniki.css"];
 
 test("Accept-Language: oznake po prednosti, jezik samo, ko odloči prva oznaka", () => {
   assert.deepEqual(acceptTags("en-US,en;q=0.9,sl;q=0.95"), ["en-US", "sl", "en"]);
@@ -73,13 +73,14 @@ test("strežnik: obiskovalec brez seje dobi pristajalno stran, enako izrisu v br
     const head = html.slice(0, html.indexOf("</head>"));
     assert.ok(!/^\s*<link rel="modulepreload"/m.test(head), "nobenega modulepreload zunaj <template>");
     for (const f of ["style.css", "ui.css", "account.css", "vendor/katex/katex.min.css"]) assert.ok(head.includes(`<link rel="stylesheet" href="${f}">`), f);
-    const tplSlogi = /<link rel="stylesheet" href="account\.css"><template id="evklid-slogi">(.*?)<\/template>/.exec(head);
-    assert.ok(tplSlogi, "slogi drugih zaslonov v <template> takoj za account.css");
+    const tplSlogi = /<link rel="stylesheet" href="account\.css">\s*<template data-evklid-slogi>(.*?)<\/template>\s*<link rel="stylesheet" href="touch\.css">\s*<template data-evklid-slogi>(.*?)<\/template>/.exec(head);
+    assert.ok(tplSlogi, "slogi drugih zaslonov v <template> na svojem mestu, touch.css (tablice) pred prvim izrisom");
     for (const f of LATE_CSS) {
-      assert.ok(tplSlogi[1].includes(`<link rel="stylesheet" href="${f}">`), f);
+      assert.ok((tplSlogi[1] + tplSlogi[2]).includes(`<link rel="stylesheet" href="${f}">`), f);
       assert.equal(head.split(`href="${f}"`).length, 2, `${f} samo v <template>`);
     }
-    assert.ok(tplSlogi[1].indexOf("textbook.css") < tplSlogi[1].indexOf("drsniki.css"), "vrstni red ostane");
+    assert.match(head, /<link rel="preload" href="\/vendor\/instrument-sans\/files\/instrument-sans-latin-wght-normal\.woff2" as="font" type="font\/woff2" crossorigin>/);
+    assert.ok(tplSlogi[1].includes("textbook.css") && tplSlogi[2].includes("drsniki.css"), "vrstni red ostane");
 
     // Angleščina: stran in pasica »Testna različica« v angleščini.
     const en = await (await fetch(`${base}/`, { headers: { "accept-language": "en-US,en;q=0.9" } })).text();
@@ -90,7 +91,7 @@ test("strežnik: obiskovalec brez seje dobi pristajalno stran, enako izrisu v br
     // Seja, aplikacija za telefon ali brez jezika: navadna stran (z modulepreload v <head>), kot prej.
     for (const headers of [{ "accept-language": "sl", cookie: "sm_session=abc" }, { "accept-language": "sl", "user-agent": "EvklidApp/1.0" }, {}]) {
       const plain = await (await fetch(`${base}/`, { headers })).text();
-      assert.ok(!plain.includes("evklid-pristajalna") && !plain.includes("data-vnaprej") && !plain.includes("evklid-slogi"), JSON.stringify(headers));
+      assert.ok(!plain.includes("evklid-pristajalna") && !plain.includes("data-vnaprej") && !plain.includes("data-evklid-slogi"), JSON.stringify(headers));
       assert.match(plain, /<link rel="modulepreload" href="\/app\.js" fetchpriority="low">/);
     }
     // 304 za isto različico, druga različica (jezik) ima drug ETag.
@@ -108,7 +109,7 @@ test("brez računov ni pristajalne strani: navadna vstopna stran", async () => {
   const { server, base } = start({ accounts: false });
   try {
     const html = await (await fetch(`${base}/`, { headers: { "accept-language": "sl-SI" } })).text();
-    assert.ok(!html.includes("evklid-pristajalna") && !html.includes("evklid-slogi"));
+    assert.ok(!html.includes("evklid-pristajalna") && !html.includes("data-evklid-slogi"));
   } finally {
     server.close();
   }
@@ -145,7 +146,7 @@ test("brskalnik: pristajalna stran vidna brez JavaScripta aplikacije, app.js jo 
       await p.addInitScript(() => document.addEventListener("DOMContentLoaded", () => (window.__land = document.querySelector("#view-auth .land"))));
       await p.goto(base + "/");
       await p.waitForSelector("body.land-mode #view-auth .land", { timeout: 30_000 });
-      await p.waitForFunction(() => !document.getElementById("evklid-slogi") && !document.getElementById("evklid-moduli"));
+      await p.waitForFunction(() => !document.querySelector("template[data-evklid-slogi]") && !document.getElementById("evklid-moduli"));
       const s = await p.evaluate(() => ({
         same: !!window.__land && document.querySelector("#view-auth .land") === window.__land,
         attr: document.documentElement.hasAttribute("data-pristajalna"),
@@ -179,7 +180,7 @@ test("brskalnik: pristajalna stran vidna brez JavaScripta aplikacije, app.js jo 
         document.addEventListener("DOMContentLoaded", () => {
           const h = document.documentElement;
           window.__pre = h.hasAttribute("data-pristajalna");
-          window.__dcl = { slogi: h.hasAttribute("data-zacetek-slogi"), moduli: !!document.getElementById("evklid-moduli"), tpl: !!document.getElementById("evklid-slogi"), vis: getComputedStyle(document.body).visibility };
+          window.__dcl = { slogi: h.hasAttribute("data-zacetek-slogi"), moduli: !!document.getElementById("evklid-moduli"), tpl: !!document.querySelector("template[data-evklid-slogi]"), vis: getComputedStyle(document.body).visibility };
         });
       });
       await p.goto(base + "/");
@@ -189,7 +190,7 @@ test("brskalnik: pristajalna stran vidna brez JavaScripta aplikacije, app.js jo 
         pre: window.__pre,
         land: !!document.querySelector("#view-auth .land"),
         slogi: document.documentElement.hasAttribute("data-zacetek-slogi"),
-        pozneje: document.querySelectorAll("#evklid-slogi").length,
+        pozneje: document.querySelectorAll("template[data-evklid-slogi]").length,
         visible: getComputedStyle(document.body).visibility,
       }));
       assert.deepEqual(s, { pre: false, land: false, slogi: false, pozneje: 0, visible: "visible" });

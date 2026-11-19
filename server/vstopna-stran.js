@@ -47,6 +47,11 @@ export function entryHtml(publicDir, { version = "", preload = true } = {}) {
 
 // Zadnji slog, ki ga pristajalna stran potrebuje za prvi izris (pred njim pisave, KaTeX, style.css, ui.css).
 const ZADNJI_SLOG = "account.css";
+// Za account.css, a vseeno pred prvim izrisom: touch.css ima pravila za zgornjo vrstico na tablicah na dotik (761–1240 px,
+// znak »Evklid«, višina vrstice); brez njega bi vrstica ob prihodu sloga poskočila (pregled 3, 19. 11. 2026).
+const PRVI_IZRIS = ["touch.css"];
+// Pisavi pristajalne strani (vendor/instrument-sans/index.css): latinica in razširjena latinica (č, š, ž).
+const PISAVE = ["/vendor/instrument-sans/files/instrument-sans-latin-wght-normal.woff2", "/vendor/instrument-sans/files/instrument-sans-latin-ext-wght-normal.woff2"];
 
 // Pristajalna stran, izrisana na strežniku (server/pristajalna-takoj.js landingPage): v <main id="view-auth"> ostane
 // skrita (hidden), dokler public/zacetek.js pred prvim izrisom ne potrdi, da bi jo pokazal tudi app.js. <meta> pove jezik,
@@ -61,20 +66,33 @@ export function withLanding(html, page) {
   const links = [];
   html = html.replace(/^ *<link rel="modulepreload"[^>]*>\n/gm, (l) => (links.push(l.trim()), ""));
   const tpl = links.length ? `\n  <template id="evklid-moduli">${links.join("")}</template>` : "";
-  // Slogi za druge zaslone (vsi za account.css, vrstni red ostane) gredo v <template id="evklid-slogi"> takoj za
-  // account.css: zacetek.js ga na istem mestu zamenja z njegovimi povezavami po prvem izrisu pristajalne strani (je ne
-  // spremenijo, test/pristajalna-takoj.test.js) ali takoj, ko je ne pokaže.
+  // Slogi za druge zaslone (vsi za account.css razen PRVI_IZRIS) gredo v <template data-evklid-slogi> na svojem mestu
+  // (zaporedni v isti <template>, vrstni red ostane): zacetek.js vsakega zamenja z njegovimi povezavami po prvem izrisu
+  // pristajalne strani (je ne spremenijo, test/pristajalna-takoj.test.js) ali takoj, ko je ne pokaže.
   const head = html.slice(0, html.indexOf("</head>"));
   const zadnji = `<link rel="stylesheet" href="${ZADNJI_SLOG}">`;
   const last = head.indexOf(zadnji);
   if (last > 0) {
     const from = last + zadnji.length;
-    const slogi = [];
-    const rest = head.slice(from).replace(/\n? *<link rel="stylesheet" href="[^"]+">/g, (l) => (slogi.push(l.trim()), ""));
-    if (slogi.length) html = html.slice(0, from) + `<template id="evklid-slogi">${slogi.join("")}</template>` + rest + html.slice(head.length);
+    const rest = head
+      .slice(from)
+      .replace(/(?:\n? *<link rel="stylesheet" href="[^"]+">)+/g, (run) => {
+        const out = [];
+        let grp = [];
+        const flush = () => grp.length && (out.push(`<template data-evklid-slogi>${grp.join("")}</template>`), (grp = []));
+        for (const [l, href] of run.matchAll(/<link rel="stylesheet" href="([^"]+)">/g)) {
+          if (PRVI_IZRIS.includes(href)) flush(), out.push(l);
+          else grp.push(l);
+        }
+        flush();
+        return out.join("\n  ");
+      });
+    html = html.slice(0, from) + "\n  " + rest.replace(/^\n\s*/, "") + html.slice(head.length);
   }
+  // Pisava pristajalne strani takoj s slogi: brez preloma besedila ob zamenjavi pisave po prvem izrisu (pregled 3).
+  const pisave = PISAVE.map((f) => `\n  <link rel="preload" href="${f}" as="font" type="font/woff2" crossorigin>`).join("");
   // Pred public/zacetek.js (navaden skript v <head>), ki ju prebere pred prvim izrisom.
-  let out = html.replace('<meta charset="utf-8">', `<meta charset="utf-8">\n${meta}${tpl}`).replace(AUTH_MAIN, `<main id="view-auth" class="view narrow" hidden data-vnaprej>${page.html}</main>`);
+  let out = html.replace('<meta charset="utf-8">', `<meta charset="utf-8">\n${meta}${tpl}${pisave}`).replace(AUTH_MAIN, `<main id="view-auth" class="view narrow" hidden data-vnaprej>${page.html}</main>`);
   // Pasici »Preizkusni način« in »Testna različica« v jeziku strani (sicer so v index.html slovenske do applyI18n).
   if (page.lang !== "sl" && page.t)
     for (const id of ["mock-banner", "test-notice"]) {

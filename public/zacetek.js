@@ -348,16 +348,19 @@
     slogiCaka--;
     slogiPreveri();
   }
-  function slogi(cakaj) {
-    var tpl = document.getElementById("evklid-slogi");
-    if (!tpl || !tpl.content) return;
-    var l = tpl.content.querySelectorAll("link");
-    for (var i = 0; cakaj && i < l.length; i++) {
-      slogiCaka++;
-      l[i].addEventListener("load", slogDone);
-      l[i].addEventListener("error", slogDone);
+  function slogi(cakaj, vsi) {
+    var t = document.querySelectorAll("template[data-evklid-slogi]");
+    for (var j = 0; j < t.length; j++) {
+      var tpl = t[j];
+      if (!tpl.content || (!vsi && !tpl.nextSibling)) continue;
+      var l = tpl.content.querySelectorAll("link");
+      for (var i = 0; cakaj && i < l.length; i++) {
+        slogiCaka++;
+        l[i].addEventListener("load", slogDone);
+        l[i].addEventListener("error", slogDone);
+      }
+      tpl.parentNode.replaceChild(tpl.content, tpl);
     }
-    tpl.parentNode.replaceChild(tpl.content, tpl);
   }
   function brezPristajalne(pm) {
     moduli();
@@ -370,12 +373,12 @@
     }, 8000);
     koLupina(
       function () {
-        slogi(true);
+        slogi(true, true);
         slogiVsi = true;
         slogiPreveri();
       },
       function () {
-        if (document.body) slogi(true);
+        slogi(true, !!document.body);
       }
     );
   }
@@ -410,7 +413,7 @@
         }
       });
       poIzrisu.then(function () {
-        slogi(false);
+        slogi(false, true);
         moduli();
       });
       html.setAttribute("data-pristajalna", "");

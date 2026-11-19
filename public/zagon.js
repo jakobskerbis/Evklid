@@ -12,8 +12,7 @@ const mods = (tag?.dataset.moduli || "").split(/\s+/).filter(Boolean).map((m) =>
 // počasni povezavi ne jemljejo pasovne širine slogom in pisavam. Sicer takoj. (Brez top-level await, glej zgoraj.)
 const zacni = () => {
   // Če zacetek.js ni tekel: slogi za druge zaslone in moduli iz <template> (server/vstopna-stran.js withLanding).
-  const slogi = document.getElementById("evklid-slogi");
-  if (slogi) slogi.replaceWith(slogi.content);
+  for (const t of document.querySelectorAll("template[data-evklid-slogi]")) t.replaceWith(t.content);
   const tpl = document.getElementById("evklid-moduli");
   if (tpl) {
     tpl.remove();

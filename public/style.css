@@ -177,7 +177,7 @@ html[data-zacetek-lupina] body { visibility: hidden; }
    zagona app.js je videti kot body.auth-mode (account.css), Učna pot iz index.html se ne pokaže. */
 html[data-pristajalna] body > main.view:not(#view-auth) { display: none !important; }
 /* Ista stran, ko je zacetek.js ne pokaže (npr. že znan obiskovalec): do konca slogov za druge zaslone, ki jih
-   strežnik pošlje v <template id="evklid-slogi">, se stran ne izriše (varovalo 8 s). */
+   strežnik pošlje v <template data-evklid-slogi>, se stran ne izriše (varovalo 8 s). */
 html[data-zacetek-slogi] body { visibility: hidden; }
 /* Ikone, ki jih pošlje strežnik (server/vstopna-stran.js), ob zgodovinskem slogu počakajo ikone obdobja (icons.js). */
 html[data-era]:not([data-ikone]) body > :not(main[data-posnetek]) svg.i[data-zg] { visibility: hidden; }
