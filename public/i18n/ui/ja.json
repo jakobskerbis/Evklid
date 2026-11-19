@@ -430,6 +430,7 @@
   "chat.waitDeep": "もっと詳しい説明を準備しています …",
   "chat.waitCheck": "答えを確認しています …",
   "chat.waitThink": "考えています …",
+  "chat.waitQueue": "同時に使っている生徒が多いです。順番待ち中（{n}番目）…",
   "chatMode.A": "ガイド付き",
   "chatMode.B": "完全な解答",
   "subj.MAT": "数学",

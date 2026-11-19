@@ -1575,6 +1575,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     // Pravo fazo pove strežnik (dogodek phase: »check«, ko koda ali pregled preverja račun); nikoli izmišljene.
     let waitNote = t(deep ? "chat.waitDeep" : "chat.wait");
     let checkTimer = null;
+    let vVrsti = false; // napis »Si v vrsti (mesto N)« (naval, server/vrsta-ai.js)
     const noteHtml = () => (waitNote ? `<p class="wait-note">${escapeHtml(waitNote)}</p>` : "");
     // Takoj, brez čakanja na strežnik (objava nove različice, počasen AI pregled): pregled A V4.
     // Blažje okno »pogovor« (posredna stiska) počaka na strežnik, ki lahko pošlje močnejšo vrsto.
@@ -1649,6 +1650,14 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
       // Strežnik preverja odgovor (server/app.js): napis »Preverjam odgovor …«; pod izpisanim besedilom šele čez 0,6 s,
       // da hitro preverjanje ne utripne.
       phase: (d) => {
+        // Konec čakanja v vrsti (server/vrsta-ai.js): spet »Pripravljam razlago …«, dokler ne pride besedilo.
+        if (d?.phase === "answer" && vVrsti) {
+          vVrsti = false;
+          if (!shownText && !bubble.classList.contains("checking")) {
+            waitNote = t(deep ? "chat.waitDeep" : "chat.wait");
+            return paint("");
+          }
+        }
         // Preverjanje je končano (»answer«): napis izgine pod besedilom; brez besedila spet »Pripravljam …«.
         if (d?.phase === "answer") {
           clearTimeout(checkTimer);
@@ -1660,6 +1669,13 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
         }
         // »Razmišljam …« (server/claude.js onPhase), dokler ne pride prvo besedilo.
         if (d?.phase === "think") return shownText || bubble.classList.contains("checking") || ((waitNote = t("chat.waitThink")), paint(""));
+        // Naval (server/vrsta-ai.js): veliko učencev hkrati, učenec vidi svoje mesto v vrsti namesto zamrznitve.
+        if (d?.phase === "queue") {
+          if (shownText || bubble.classList.contains("checking")) return;
+          vVrsti = true;
+          waitNote = t("chat.waitQueue", { n: Math.max(1, Math.floor(Number(d.mesto)) || 1) });
+          return paint("");
+        }
         if (d?.phase !== "check" || bubble.classList.contains("checking") || checkTimer) return;
         const show = () => {
           checkTimer = null;

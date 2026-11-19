@@ -119,6 +119,8 @@ export function apiErrorCode(err) {
   if (status === 404) return "404 model ne obstaja";
   if (status === 413) return "413 sporočilo je predolgo";
   if (status === 429) return "429 omejitev porabe";
+  // Predolgo čakanje v vrsti za AI (server/vrsta-ai.js): ista napaka za učenca, koda pove skrbniku, da je vzrok naval.
+  if (status === 529 && err?.vrsta) return "529 preveč hkratnih vprašanj";
   if (status === 529 || /overloaded/i.test(msg)) return "529 Anthropic je preobremenjen";
   return `${status} napaka pri Anthropic`;
 }
