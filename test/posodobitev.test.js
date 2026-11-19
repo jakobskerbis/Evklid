@@ -174,7 +174,7 @@ test("Render: v nočnem oknu objava, ko je strežnik miren, ob koncu okna v vsak
 });
 
 test("Render: objave samo ponoči (3.–5. ura po ljubljanskem času), nujne in ročne takoj", async () => {
-  const { decide, ljubljanaMin, doNoci, NUJNO } = await import("../scripts/render-objava.js");
+  const { decide, ljubljanaMin, doNoci, NUJNO, nujnaSprememba } = await import("../scripts/render-objava.js");
   const sha = "abcdef1234567890";
   const miren = { razlicica: "111111111111", aktivni: 0, mirujeMs: null, gorMs: 5 * 3600000 };
   const zaseden = { ...miren, mirujeMs: 60000 };
@@ -203,8 +203,20 @@ test("Render: objave samo ponoči (3.–5. ura po ljubljanskem času), nujne in 
   assert.equal(decide({ stanje: zaseden, mainSha: sha, cakaMin: 1, rocno: true, now: opoldne }).objavi, true);
   assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 1, nujno: true, zadnja: { sha, at: opoldne - 60000 }, now: opoldne }).objavi, false);
   assert.equal(decide({ stanje: { ...miren, razlicica: sha.slice(0, 12) }, mainSha: sha, cakaMin: 1, nujno: true, now: opoldne }).objavi, false);
-  assert.ok(NUJNO.test("Popravek prijave [nujno] (#900)"));
+  assert.ok(NUJNO.test("[nujno] Popravek prijave (#900)"));
   assert.ok(!NUJNO.test("Nujno-ponovitev: test (#901)"));
+  // Šteje le naslov združitve v main po zadnji sproženi objavi; ne commiti iz veje in ne telo sporočila.
+  const c = (sha, date, message, ...parents) => ({ sha, commit: { message, committer: { date } }, parents: parents.map((p) => ({ sha: p })) });
+  const vrsta = [
+    c("b1", "2026-11-20T09:00:00Z", "[nujno] commit v veji", "x"),
+    c("m1", "2026-11-20T10:00:00Z", "[nujno] Popravek prijave (#900)", "x", "b1"),
+    c("m2", "2026-11-20T11:00:00Z", "Opis pravila (#901)\n\n[nujno] na začetku naslova objavi takoj", "m1"),
+    c("m3", "2026-11-20T12:00:00Z", "Lekcija (#902)", "m2", "b1"),
+  ];
+  assert.equal(nujnaSprememba(vrsta, "m3"), true);
+  assert.equal(nujnaSprememba(vrsta, "m3", Date.parse("2026-11-20T10:30:00Z")), false); // nujna je že sprožena
+  assert.equal(nujnaSprememba(vrsta.slice(2), "m3"), false); // telo sporočila se ne šteje
+  assert.equal(nujnaSprememba([c("m4", "2026-11-20T12:00:00Z", "Lekcija (#903)", "x", "b1"), vrsta[0]], "m4"), false); // veja se ne šteje
 });
 
 test("zaseben repozitorij: ključ samo v glavi, brez ključa vse kot prej", () => {

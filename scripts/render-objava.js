@@ -13,7 +13,7 @@ export const NAJDLJE_MIN = 180;
 export const NOC_OD = 3 * 60; // minute od polnoči, Europe/Ljubljana
 export const NOC_DO = 5 * 60;
 export const NOC_ZADNJIH_MIN = 30;
-export const NUJNO = /\[nujno\]/i;
+export const NUJNO = /^\s*\[nujno\]/i; // na začetku naslova PR (prva vrstica sporočila združitve)
 
 const URA_LJ = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Ljubljana", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 // Minute od polnoči po ljubljanskem času (poletni in zimski čas).
@@ -70,6 +70,20 @@ export function pendingSince(commits, head = commits[commits.length - 1]?.sha) {
   return t;
 }
 
+// Ali je med združitvami v main (prva-starševska veriga od head, kot pendingSince) po času poMs kakšna z
+// [nujno] na začetku naslova. Commiti iz vej PR in telo sporočila se ne štejejo; starejše nujne (že sprožene) tudi ne.
+export function nujnaSprememba(commits, head, poMs = -Infinity) {
+  const bySha = new Map(commits.filter((c) => c?.sha).map((c) => [c.sha, c]));
+  const seen = new Set();
+  for (let c = bySha.get(head); c && !seen.has(c); c = bySha.get(c.parents?.[0]?.sha)) {
+    seen.add(c);
+    const d = Date.parse(c.commit?.committer?.date || "");
+    if (Number.isFinite(d) && d <= poMs) break;
+    if (NUJNO.test(String(c.commit?.message || "").split("\n")[0])) return true;
+  }
+  return false;
+}
+
 async function main() {
   const { HOOK, GH_TOKEN, ROCNO } = process.env;
   if (!HOOK) return console.log("RENDER_DEPLOY_HOOK ni nastavljen, preskočeno.");
@@ -106,7 +120,10 @@ async function main() {
       const cmp = stanje?.razlicica ? await gh(`compare/${stanje.razlicica}...main`) : { commits: [await gh("commits/main")] };
       const t = pendingSince(cmp.commits || [], mainSha);
       if (t) cakaMin = (Date.now() - t) / 60000;
-      nujno = (cmp.commits || []).some((c) => NUJNO.test(c?.commit?.message || ""));
+      // Nujna je le združitev po zadnji sproženi objavi (sicer bi vsaka naslednja združitev objavila takoj,
+      // dokler nujna različica ne teče). Brez različice strežnika: zadnjih 30 commitov, največ 1 dan nazaj.
+      const vrsta = stanje?.razlicica ? cmp.commits || [] : await gh(`commits?sha=${mainSha}&per_page=30`);
+      nujno = nujnaSprememba(vrsta, mainSha, Math.max(zadnja?.at ?? 0, stanje?.razlicica ? 0 : Date.now() - 86400000));
     } catch {}
     const d = decide({ stanje, mainSha, cakaMin, rocno: ROCNO === "1", takoj: Date.now() < TAKOJ_DO, nujno, zadnja });
     console.log(`${new Date().toISOString().slice(11, 16)} main ${mainSha.slice(0, 12)}, strežnik ${stanje?.razlicica || "?"}, čaka ${Math.round(cakaMin)} min: ${d.zakaj}`);

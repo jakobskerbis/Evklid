@@ -43,7 +43,7 @@ Renderja; takrat objava ne bo več pomenila izpada in nočno okno ne bo več pot
 | Ponoči, nekdo se ravno uči | počaka na miren trenutek, najkasneje ob 4.30 |
 | Zadnja objava pred manj kot 1 uro | počaka (tudi ob 4.30) |
 | Ista različica je bila že sprožena, a ne teče (objava ni uspela) | ne ponavlja 3 ure |
-| Nujen popravek: `[nujno]` v naslovu PR (sporočilu združitve) | takoj, tudi podnevi |
+| Nujen popravek: `[nujno]` na začetku naslova PR (prva vrstica sporočila združitve v `main`) | takoj, tudi podnevi (enkrat; naslednje združitve spet čakajo na noč) |
 | Ročno: GitHub → Actions → Render → Run workflow | takoj |
 
 Tek ob združitvi počaka na okno le, če se odpre v naslednjih ~3 urah; sicer objavo opravi nočni urnik
