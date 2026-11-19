@@ -473,3 +473,11 @@ test("sought is shown as plain text (breaks between words) and a plain expressio
   assert.equal(soughtNeedsAi(solve("x^2-4", { goal: "factor" }), { sought: "\\text{teme}", goal: "factor" }), false);
   assert.equal(soughtNeedsAi(solve("x^2-4=0", {}), { sought: "\\text{kot}" }), false);
 });
+
+test("integral potrdi le vrsta integral: »derivative« z vrednostjo 0 ni preverjena (meritev skenerja s11)", () => {
+  const t = "∫_0^2 (3*x^2-2*x+1) dx";
+  assert.deepEqual(verifyAi(t, { kind: "derivative", value: "0" }), { verified: false, reason: "kind" });
+  assert.equal(verifyAi(t, { kind: "expression", value: "0" }).verified, false);
+  assert.equal(verifyAi(t, { kind: "integral", value: "0" }).verified, false);
+  assert.equal(verifyAi(t, { kind: "integral", value: "6" }).verified, true);
+});

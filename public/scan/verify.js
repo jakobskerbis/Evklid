@@ -115,6 +115,9 @@ export function verifyAi(problemText, ai) {
 function check(problemText, ai) {
   const kind = ai?.kind;
   const v = /^[a-zA-Z]$/.test(ai?.variable || "") ? ai.variable : "x";
+  // Določeni ali nedoločeni integral preveri le vrsta »integral«: kot »derivative« bi odvod konstante (vrednosti
+  // integrala) dal 0 in napačno rešitev »0« potrdil (meritev skenerja 19. 11., naloga s11).
+  if (/∫|\\int\b/.test(String(problemText)) && kind !== "integral") return { verified: false, reason: "kind" };
   try {
     if (kind === "system") {
       const parts = splitSystem(problemText) || String(problemText).split(/;|\n/).filter((s) => s.includes("="));
