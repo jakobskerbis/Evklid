@@ -230,7 +230,11 @@ test("--nabor slepa-ocena: svoja datoteka, ključ SLEPA_OCENA_KLJUC in izid; nez
   const gh = zagon(["--suho", "--nabor", "slepa-ocena", "--naloge-datoteka", datoteka], { GITHUB_ACTIONS: "true", PREIZKUS3_KLJUC: k });
   assert.equal(gh.status, 1);
   assert.match(gh.stderr, /Ni ključa SLEPA_OCENA_KLJUC .*mora biti izid šifriran/);
-  for (const x of ["toString", "x", ""]) assert.equal(zagon(["--suho", "--naloge-datoteka", datoteka, "--nabor", x]).status, 1, x);
+  for (const x of ["toString", "__proto__", "x"]) {
+    const z = zagon(["--suho", "--naloge-datoteka", datoteka, "--nabor", x]);
+    assert.equal(z.status, 1, x);
+    assert.match(z.stderr, /Neznan --nabor/, x);
+  }
 });
 
 test("prave naloge slepe ocene (le s ključem SLEPA_OCENA_KLJUC): 64, eno sporočilo, nastavitve SŠ MAT matura veljavne", { skip: !process.env.SLEPA_OCENA_KLJUC }, () => {

@@ -218,6 +218,10 @@ async function sporocilo(studentId, convId, text, res) {
   }
 }
 
+// V nešifriran dnevnik le vrsta napake (»HTTP 500«, »rok 300 s«), ne besedilo odgovora strežnika, ki bi lahko
+// navajalo nalogo; cela napaka ostane v (šifriranem) izidu.
+const kratko = (m) => String(m || "").split(":")[0].slice(0, 60);
+
 async function naloga(n) {
   const v = { conv: null, ts: new Date().toISOString(), tsEnd: null, nastavitve: null, out: [] };
   let s;
@@ -248,7 +252,7 @@ async function naloga(n) {
   if (!popolna) v.napake = v.out.length; // delna naloga: pretvornik je ne vzame
   zapisi(false);
   const t = v.out.map((o) => (o.ms / 1000).toFixed(1)).join("+");
-  console.log(`${String(n.id).padStart(3)} ${popolna ? "OK" : `NAPAKA (${v.napaka})`} · ${t} s · ${v.out.reduce((a, o) => a + o.cena, 0).toFixed(4)} $ · ${v.out.map((o) => o.model).join(",")}`);
+  console.log(`${String(n.id).padStart(3)} ${popolna ? "OK" : `NAPAKA (${kratko(v.napaka)})`} · ${t} s · ${v.out.reduce((a, o) => a + o.cena, 0).toFixed(4)} $ · ${v.out.map((o) => o.model).join(",")}`);
 }
 
 console.log(`${NABOR.ime}: ${izbor.length} nalog${DEL ? ` (del ${DEL})` : ""}, hkrati ${HKRATI}, meja ${MAX_USD} $${PRODUKCIJA ? ", kot produkcija (nadgradnje)" : ""}${PREGLED ? ", s pregledom" : ""}${SUHO ? ", suho (brez klicev)" : ""}.`);
@@ -266,7 +270,7 @@ const med = (a) => (a.length ? (a[Math.floor((a.length - 1) / 2)] / 1000).toFixe
 const ok = Object.values(izid).filter((v) => !v.napaka).length;
 console.log(`\nNalog: ${ok}/${izbor.length} brez napake; odgovorov ${vsi.length}; mediana prvega odgovora ${med(prvi)} s, vseh ${med(vsi)} s.`);
 const nap = Object.entries(izid).filter(([, v]) => v.napaka);
-if (nap.length) console.log(`Napake: ${nap.map(([k, v]) => `${k} (${v.napaka})`).join("; ")}`);
+if (nap.length) console.log(`Napake: ${nap.map(([k, v]) => `${k} (${kratko(v.napaka)})`).join("; ")}`);
 const manjka = izbor.filter((n) => !izid[n.id] || izid[n.id].napaka).map((n) => n.id);
 console.log(`Strošek ${stroskek().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}.${manjka.length ? ` Manjkajo: ${manjka.join(",")}.` : ""}`);
 console.log(`Odgovori: ${OUT}${IZID_KLJUC ? " (šifrirano, scripts/preizkus3-sifra.mjs --odsifriraj)" : ""}`);
