@@ -165,7 +165,7 @@
       },
       {
        "title": "Drugače: simetrija",
-       "text": "Ker so vse plezalke enako dobre, je Lara z enako verjetnostjo na kateremkoli od štirih mest. Dogodki »Lara je prva«, »druga«, »tretja«, »četrta« se med seboj izključujejo in skupaj zajamejo vse možnosti, zato je vsota njihovih verjetnosti $1$.\n\nŠtiri enake verjetnosti s vsoto $1$: vsaka je $\\frac{1}{4}$.\n\n**Preizkus s seznamom** (A = Ajda, B = Brina, L = Lara, V = Vita): ugodni vrstni redi (Lara druga) so A L B V, A L V B, B L A V, B L V A, V L A B, V L B A – teh je $6$, kar se ujema s $3! = 6$."
+       "text": "Ker so vse plezalke enako dobre, je Lara z enako verjetnostjo na kateremkoli od štirih mest. Dogodki »Lara je prva«, »druga«, »tretja«, »četrta« se med seboj izključujejo in skupaj zajamejo vse možnosti, zato je vsota njihovih verjetnosti $1$.\n\nŠtiri enake verjetnosti z vsoto $1$: vsaka je $\\frac{1}{4}$.\n\n**Preizkus s seznamom** (A = Ajda, B = Brina, L = Lara, V = Vita): ugodni vrstni redi (Lara druga) so A L B V, A L V B, B L A V, B L V A, V L A B, V L B A – teh je $6$, kar se ujema s $3! = 6$."
       }
      ],
      "scoring": "- 1 točka: število vseh izidov $24$\n- 1 točka: število ugodnih izidov $6$\n- 1 točka: zapis $P = \\frac{6}{24}$\n- 1 točka: rezultat $\\frac{1}{4}$\n\nPri utemeljitvi s simetrijo: 2 točki za utemeljitev, da je Lara na vsakem mestu enako verjetno, 2 točki za rezultat $\\frac{1}{4}$.",
