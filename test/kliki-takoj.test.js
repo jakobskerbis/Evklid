@@ -427,7 +427,10 @@ test("Tema: razlaga se ob ponovnem odprtju ne izriše znova (enak HTML brez Mark
     document.querySelector(`#view-path .node[data-open="${id}"]`).click();
     const vTapu = !document.querySelector("#view-topic").hidden; // izris pride po sliki tapa
     await new Promise((ok) => {
-      const k = () => (document.querySelector("#view-topic:not([hidden]) #topic-content .explanation") ? ok() : setTimeout(k, 20));
+      // Oznake formul (formula-info.js refreshMarks, fx-dup) se osvežijo v naslednji sliki: počakamo dve sliki,
+      // kot je prvi izris zgoraj počakal 500 ms (sicer je primerjava odvisna od trenutka, CI #903).
+      const po = () => requestAnimationFrame(() => requestAnimationFrame(ok));
+      const k = () => (document.querySelector("#view-topic:not([hidden]) #topic-content .explanation") ? po() : setTimeout(k, 20));
       k();
     });
     window.marked = orig;
