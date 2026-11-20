@@ -1,4 +1,5 @@
 // Evklid – odjemalec (brez ogrodja).
+import { vnaprejGotovo } from "./zasloni-vnaprej.js"; // prvi: začne prenos zaslonov, ko so moduli preneseni (pred izvajanjem ostalih)
 import { fetchThroughRestart as fetchRetry } from "./restart-retry.js";
 import { jsonAliNic } from "./odgovor.js";
 import { icon, hydrateIcons } from "./icons.js";
@@ -96,15 +97,6 @@ const lenModul = (url, ob) => {
     }));
   return { load, now: () => mod };
 };
-// Ko app.js teče, so vsi moduli prvega odprtja že preneseni, Učna pot pa se še izrisuje (procesor, ~0,5 s na telefonu):
-// povezava je ta čas prosta. Prijavljenemu učencu takrat začnemo prenašati (brez izvajanja) zaslone, ki jih najverjetneje
-// odpre takoj (tema in vadnica, Račun, Kartice, Kotiček, kalkulator, Urnik) z njihovim delom slovarja, da prvi klik ne
-// čaka omrežja. Pristajalna stran (obiskovalec brez seje) jih ne prenaša.
-const ZASLONI_VNAPREJ = ["./i18n-zasloni.js", "./i18n/zasloni-sl.js", "./vadnica.js", "./pad.js", "./enote-izbira.js", "./slike-nalog.js", "./povabi.js", "./check-progress.js", "./games/reward.js", "./racun.js", "./garancija-ui.js", "./pilot-naloge.js", "./prijave.js", "./odstop-ui.js", "./credit-card.js", "./flashcards.js", "./kartice-sklopi.js", "./corner.js", "./fokus-okna.js", "./interests.js", "./kalkulator-zaslon.js", "./schedule.js", "./pass-offer.js"];
-try {
-  if (!document.querySelector('meta[name="evklid-pristajalna"]') && localStorage.getItem("studentId"))
-    for (const u of ZASLONI_VNAPREJ) document.head.append(Object.assign(document.createElement("link"), { rel: "modulepreload", href: new URL(u, import.meta.url).href }));
-} catch {}
 const viewNote = (sel, key, force = false) => {
   const el = document.querySelector(sel);
   if (el && (force || !el.childElementCount)) el.replaceChildren(Object.assign(document.createElement("p"), { className: "muted", textContent: t(key) }));
@@ -160,11 +152,23 @@ const openMsgReport = prij("openMsgReport");
 const vadMod = lenModul("./vadnica.js");
 const vad = (fn) => (...a) => vadMod.load().then((m) => m[fn](...a));
 const vadPogled = (fn, sel) => (...a) => vadMod.load().then((m) => m[fn](...a), () => vadMod.now() || viewNote(sel, "off.noConnection", true));
-const openTopic = vad("openTopic");
+// Tema z Učne poti, preden je vadnica.js naložena (prvi obisk, klik takoj po izrisu): podatke teme in poti zahtevamo
+// hkrati z modulom, openTopic (vadnica.js) ju prevzame (apiVnaprej) namesto dveh krogov po omrežju za modulom.
+const openTopic = (id, ...a) => {
+  if (!vadMod.now() && state.student?.id) {
+    apiVnaprej(`/api/topic?id=${encodeURIComponent(id)}&lang=${encodeURIComponent(state.student.settings?.language || "")}`);
+    if (state.pathKey) apiVnaprej(`/api/students/${state.student.id}/path?key=${encodeURIComponent(state.pathKey)}`);
+  }
+  return vad("openTopic")(id, ...a);
+};
 const nextPractice = vad("nextPractice");
 const learnWithTutor = vad("learnWithTutor");
 const startSession = vad("startSession");
-const loadCompetition = vadPogled("loadCompetition", "#competition-content");
+const loadCompetition = (...a) => {
+  const key = a.length ? a[0] : state.compKey; // kot loadCompetition v vadnica.js
+  if (!vadMod.now() && state.student?.id) apiVnaprej(`/api/students/${state.student.id}/competition${key ? `?key=${encodeURIComponent(key)}` : ""}`);
+  return vadPogled("loadCompetition", "#competition-content")(...a);
+};
 const loadExams = vadPogled("loadExams", "#exams-content");
 const openOurs = vad("openOurs");
 const paperTask = vad("paperTask");
@@ -199,7 +203,10 @@ const showSchedule = () => {
 const cornerMod = lenModul("./corner.js", (m) => cornerDeps && m.initCorner(cornerDeps));
 let cornerDeps = null;
 const initCorner = (d) => ((cornerDeps = d), cornerMod.now()?.initCorner(d));
-const showCorner = () => cornerMod.load().then((m) => m.showCorner(), () => cornerMod.now() || viewNote("#corner-content", "off.noConnection", true));
+const showCorner = () => {
+  if (!cornerMod.now() && state.student?.id) apiVnaprej(`/api/students/${state.student.id}/corner`); // kot corner.js load()
+  return cornerMod.load().then((m) => m.showCorner(), () => cornerMod.now() || viewNote("#corner-content", "off.noConnection", true));
+};
 const cornerBack = () => cornerMod.now()?.cornerBack() ?? false;
 const closeBoard = (o) => cornerMod.now()?.closeBoard(o);
 const askInterests = (o) => cornerMod.load().then((m) => m.askInterests(o));
@@ -215,6 +222,7 @@ let cardsDeps = null;
 const initFlashcards = (d) => ((cardsDeps = d), cardsMod.now()?.initFlashcards(d));
 const showFlashcards = () => {
   if (!cardsMod.now()) viewNote("#view-cards", "common.loading");
+  if (!cardsMod.now() && state.student?.id) apiVnaprej(`/api/students/${state.student.id}/flashcards${state.pathKey ? `?path=${encodeURIComponent(state.pathKey)}` : ""}`); // kot flashcards.js
   return cardsMod.load().then((m) => m.showFlashcards(), () => cardsMod.now() || viewNote("#view-cards", "off.noConnection", true));
 };
 // Opomba o novih karticah pod odgovorom inštruktorja: ob prihodu modula, če še ni naložen.
@@ -257,7 +265,7 @@ const zasloniPozneje = () => {
   // prvem izrisu v kosih v času mirovanja, ne šele ob prvem odprtju Inštruktorja (prvi »Pošlji« bi sicer čakal nanje).
   pripraviZaznavalnik();
   // Takoj po prvem izrisu (sličica s potjo, nato vrsta; ne šele v mirovanju): najprej zasloni, ki jih učenec najverjetneje odpre (že prenašajo se,
-  // ZASLONI_VNAPREJ; tu se izvedejo), nato cel slovar (moduli, ki dobijo t() od app.js, npr. orodja kalkulatorja),
+  // zasloni-vnaprej.js; tu se izvedejo), nato cel slovar (moduli, ki dobijo t() od app.js, npr. orodja kalkulatorja),
   // tipkovnica, izris formul in ostali zasloni. Med pošiljanjem sporočila inštruktorju vrsta počaka (poPosiljanju), da
   // odgovor dobi vso povezavo. Tap ali lebdenje nad zavihkom modul tega zaslona naloži takoj (vnaprejObDotiku).
   requestAnimationFrame(() => setTimeout(() =>
@@ -397,9 +405,24 @@ const apiOpen = new Set();
 // prebere novo stanje (GET, ki je že v teku, se ne prekine; ostane le zunaj seznama za združevanje).
 const apiInFlight = new Map();
 const kopija = (v) => (v && typeof v === "object" ? structuredClone(v) : v);
+// Klic GET, začet pred nalaganjem modula, ki ga potrebuje (openTopic zgoraj): prvi enak klic v 15 s ga prevzame.
+const apiPrej = new Map();
+const apiVnaprej = (url) => {
+  if (apiPrej.has(url)) return;
+  const p = api(url);
+  p.catch(() => {});
+  apiPrej.set(url, p);
+  setTimeout(() => apiPrej.get(url) === p && apiPrej.delete(url), 15000);
+};
 const api = (url, opts = {}) => {
   const get = !opts.method && !opts.body && !opts.headers && !opts.signal;
+  if (get && apiPrej.has(url)) {
+    const p = apiPrej.get(url);
+    apiPrej.delete(url);
+    return p;
+  }
   if (!get) apiInFlight.clear();
+  if (!get) apiPrej.clear(); // sprememba: vnaprej začeti klici (apiVnaprej) so lahko zastareli
   if (get && apiInFlight.has(url)) return apiInFlight.get(url).then(kopija);
   const p = (async () => {
     const id = ++apiSeq;
@@ -1496,7 +1519,7 @@ function renderEmptyChat() {
 function aiOznaka() {
   const go = () => import("./ai-oznaka/ai-oznaka.js").then((m) => m.oznaciKlepet(state.student)).catch(() => {});
   if (pozneje || currentView === "chat" || isFloating("chat")) return go();
-  return new Promise((ok) => poZagonu(() => go().then(ok)));
+  return new Promise((ok) => poZagonu(() => vnaprejGotovo.then(go).then(ok)));
 }
 $("#messages").addEventListener("click", ideaClick); // enkrat: predlogi se ob osvežitvi zamenjajo
 function ideaClick(e) {
@@ -2496,7 +2519,7 @@ $("#composer").addEventListener("submit", (e) => {
 // le s stikalom starša v Računu (j 10. 11.); nacin "glas" ob pošiljanju preveri tudi strežnik. Tipkanje dela vedno.
 const glasOk = {};
 const glasZa = (id) => api(`/api/students/${id}/ustno`).then((r) => (glasOk[id] = r?.glas?.dovoljen !== false), () => true);
-poZagonu(() => whenIdle(() =>
+poZagonu(() => vnaprejGotovo.then(() => whenIdle(() =>
   import("./speech.js").then((m) =>
     m.attachMic($("#mic-btn"), input, {
       onMessage: (msg) => toast(msg, "mic"),
@@ -2510,7 +2533,7 @@ poZagonu(() => whenIdle(() =>
       onBlocked: () => import("./ustno/ustno.js").then(async (u) => (await u.loadDicts(), toast(u.tt("u.glasStarsKlepet"), "mic"))),
     }),
   ),
-));
+)));
 // Napredna tipkovnica s simboli.
 // Evklidova tipkovnica (public/tipkovnica.js): na dotik za vsa polja, Σ jo odpre na plasti simbolov (tudi na računalniku).
 initKeyboard();
@@ -3672,7 +3695,7 @@ async function loadPath(key = state.pathKey) {
   renderStageHome();
   syncOfflineBanner();
   // Naloge za vadbo brez povezave (enkrat na dan, v ozadju).
-  if (!p.offline) refreshPack(apiOzadje, state.student.id, p.key).then(syncOfflineBanner);
+  if (!p.offline) vnaprejGotovo.then(() => refreshPack(apiOzadje, state.student.id, p.key)).then(syncOfflineBanner);
   // Fakulteta: vir predmetnika in opozorilo, da je osnutek.
   const prog = uni ? programsCache().find((x) => x.id === state.student.settings.study_program) : null;
   // OŠ 1.–5. razred: učne poti še ni, prikažemo snov 6. razreda (igre in inštruktor so prilagojeni razredu).

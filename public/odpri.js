@@ -1,8 +1,7 @@
 // Gumbi pod odgovorom inštruktorja za orodja aplikacije (server/odpri.js, docs/odpri.md): poskus z nastavljenimi
 // vrednostmi (okno nad pogovorom), 3D model ali del telesa, lekcija v učbeniku, igra za snov, formula iz zbirke,
 // premičen graf in preprosta skica kar v sporočilu. Pogovor ostane odprt: okno poskusa se zapre z ×, Esc ali Nazaj.
-// Besedila gumbov (t iz app.js) so v delu slovarja za zaslone (public/i18n-zasloni.js), ki se naloži pred tem modulom.
-import "./i18n-zasloni.js";
+// Besedila gumbov (t iz app.js) so v jedru slovarja (server/i18n-jedro.js ZASLONI_V_JEDRU).
 import { mountSim } from "./sim/index.js";
 import { zadrziFokus } from "./fokus-okna.js";
 

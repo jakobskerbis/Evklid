@@ -3,7 +3,7 @@
 // ga naloži takoj po prvem izrisu (zasloniPozneje) ali ob prvi uporabi (vadMod). Skupno stanje in pomožne funkcije
 // dobi iz app.js (žive vezave ES modulov); cel slovar (i18n.js), ker njegovih besedil ni v jedru.
 import { icon } from "./icons.js";
-import { t, locale, currentLang } from "./i18n-zasloni.js";
+import { t, locale, currentLang } from "./i18n-osnova.js";
 import { figureSvg } from "./slike-nalog.js";
 import { rewardOffer } from "./games/reward.js";
 import { STAGES, stageOf } from "./games/stage.js";

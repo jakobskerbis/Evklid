@@ -19,13 +19,20 @@ const PREDPONA = /[`"'}]([A-Za-z][\w-]*\.[\w.-]*)(?:\$\{|["'`]\s*\+)/g;
 // Varnostni odgovor (nujno.*, public/nujno.js vrstice/opomba): vedno v jedru, da kartica nikoli ne pokaže ključa (pregled #888).
 const VEDNO = ["block.", "gr.", "kv.", "comp.", "chk.", "off.", "common.", "greek.", "era.", "nujno."];
 
+// Zasloni z malo besedila (skupaj ~7 KB stisnjeno): njihova besedila so v jedru, zato ti moduli uvozijo i18n-osnova.js in
+// prvi klik nanje takoj po izrisu Učne poti čaka le na svoj (majhen) modul, ne na /i18n/zasloni-sl.js. Šteje ves statični
+// podgraf vsakega (brez modulov prvega odprtja). Račun s plačili (~9 KB besedil) ostane v delu za zaslone (i18n-zasloni.js).
+export const ZASLONI_V_JEDRU = ["vadnica.js", "flashcards.js", "corner.js", "schedule.js", "kalkulator-zaslon.js", "chat-settings.js", "odpri.js", "laboratorij.js", "prijave.js"];
+
 export function kljuciJedra(publicDir, SL) {
   const vsi = Object.keys(SL);
   const imena = new Set(vsi);
-  const datoteke = startupFiles(publicDir, "index.html").filter((u) => u.endsWith(".js") && !u.startsWith("/vendor/") && u !== "/i18n/sl.js" && u !== "/i18n.js");
+  const zacetne = startupFiles(publicDir, "index.html");
+  const datoteke = zacetne.filter((u) => u.endsWith(".js") && !u.startsWith("/vendor/") && u !== "/i18n/sl.js" && u !== "/i18n.js");
+  const zasloni = [...podgraf(publicDir, ZASLONI_V_JEDRU.map((f) => path.join(publicDir, f)), new Set(zacetne.map((u) => path.join(publicDir, u))))];
   const jedro = new Set();
   const predpone = new Set(VEDNO);
-  for (const u of [...datoteke, "/index.html"]) {
+  for (const u of [...datoteke, "/index.html", ...zasloni.map((f) => "/" + path.relative(publicDir, f).split(path.sep).join("/"))]) {
     let src = "";
     try {
       src = fs.readFileSync(path.join(publicDir, u), "utf8");
@@ -61,10 +68,8 @@ function jsDatoteke(dir, out = []) {
   }
   return out;
 }
-export function kljuciZaslonov(publicDir, SL) {
-  const imena = new Set(Object.keys(SL));
-  const zagon = new Set(startupFiles(publicDir, "index.html").map((u) => path.join(publicDir, u)));
-  const vhodi = jsDatoteke(publicDir).filter((f) => ZASLONI_UVOZ.test(fs.readFileSync(f, "utf8")));
+// Datoteke statičnih podgrafov modulov vhodi (absolutne poti), brez modulov iz zagon in brez slovarjev (i18n*.js).
+function podgraf(publicDir, vhodi, zagon) {
   const videno = new Set();
   const obisci = (f) => {
     if (videno.has(f) || zagon.has(f) || /[\\/]i18n[^\\/]*\.js$/.test(f) || !f.startsWith(publicDir + path.sep) || !fs.existsSync(f)) return;
@@ -72,6 +77,12 @@ export function kljuciZaslonov(publicDir, SL) {
     for (const m of fs.readFileSync(f, "utf8").matchAll(UVOZ)) obisci(path.resolve(path.dirname(f), m[1]));
   };
   for (const f of vhodi) obisci(f);
+  return videno;
+}
+export function kljuciZaslonov(publicDir, SL) {
+  const imena = new Set(Object.keys(SL));
+  const zagon = new Set(startupFiles(publicDir, "index.html").map((u) => path.join(publicDir, u)));
+  const videno = podgraf(publicDir, jsDatoteke(publicDir).filter((f) => ZASLONI_UVOZ.test(fs.readFileSync(f, "utf8"))), zagon);
   const kljuci = new Set();
   const predpone = new Set();
   for (const f of videno) {

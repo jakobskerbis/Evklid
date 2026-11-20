@@ -1,6 +1,6 @@
 // Slike pri nalogah (iz public/app.js, da app.js ostane v proračunu 80 KB stisnjeno na datoteko).
 import { icon } from "./icons.js";
-import { t } from "./i18n-zasloni.js";
+import { t } from "./i18n-osnova.js";
 
 // Slike pri nalogah: graf premice in številska premica. Barve so enake v svetlem
 // in temnem načinu (risba je na belem »listu«).

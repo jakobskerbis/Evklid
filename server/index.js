@@ -6,6 +6,7 @@ import { applyPendingRestore } from "./kopije.js";
 import { createApp } from "./app.js";
 import { isMockMode, MODEL } from "./claude.js";
 import { casCheck, casOn } from "./cas.js";
+import { ogrej as ogrejNujno } from "../public/nujno.js";
 
 // Obnova iz varnostne kopije (scripts/obnovi-kopijo.js) samo ob zagonu strežnika, preden se baza odpre.
 applyPendingRestore(process.env.EVKLID_DB || `data/${BRAND.slug}.db`);
@@ -28,6 +29,10 @@ const server = app.listen(port, () => {
   app.locals.warmStatic?.()
     .then((n) => console.log(`[evklid] pripravljenih ${n} stisnjenih datotek v ${Date.now() - t0} ms`))
     .catch(() => {});
+  // Varnostni zaznavalnik (public/nujno.js) sestavi vzorce šele ob prvi uporabi: tu jih v ozadju pripravi po kosih
+  // (do 15 ms, vmes druge zahteve), da prvo sporočilo po zagonu ne čaka na sestavljanje in prevajanje.
+  const ogrejZaznavalnik = () => ogrejNujno(15) || setTimeout(ogrejZaznavalnik, 5).unref();
+  setTimeout(ogrejZaznavalnik, 1000).unref();
   // Učbenik za tisk: strani razredov v predpomnilnik v ozadju, 15 s po zagonu (ne upočasni zagona).
   setTimeout(() => {
     const t1 = Date.now();

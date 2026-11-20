@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { startupFiles } from "../server/startup-files.js";
-import { kljuciJedra, kljuciZaslonov } from "../server/i18n-jedro.js";
+import { kljuciJedra, kljuciZaslonov, ZASLONI_V_JEDRU } from "../server/i18n-jedro.js";
 import SL from "../public/i18n/sl.js";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -34,15 +34,18 @@ test("prvo odprtje: moduli drugih zaslonov niso v statičnem grafu, varnostni za
   const list = startupFiles(PUB, "index.html");
   for (const u of LENI) assert.ok(!list.includes(u), `${u} je del prvega odprtja`);
   for (const u of ["/nujno.js", "/account.js", "/urnik-kartica.js", "/offline.js"]) assert.ok(list.includes(u), `${u} ni del prvega odprtja`);
-  // Leni moduli z besedili uvozijo svoj del slovarja (i18n-zasloni.js), ne jedra (i18n-osnova.js) in ne celega (i18n.js):
-  // prvi klik ne čaka ~75 KB celega slovarja. Del je zunaj prvega odprtja; vsak ključ iz njih je v jedru ali v delu.
+  // Leni moduli z besedili ne uvozijo celega slovarja (i18n.js, ~75 KB): prvi klik ga ne čaka. Zasloni z malo besedila
+  // (ZASLONI_V_JEDRU) imajo besedila v jedru in uvozijo i18n-osnova.js (prvi klik čaka le svoj modul), Račun s plačili
+  // svoj del slovarja (i18n-zasloni.js, zunaj prvega odprtja). Vsak ključ iz njih je v jedru ali v delu.
   assert.ok(!list.includes("/i18n-zasloni.js"), "i18n-zasloni.js je del prvega odprtja");
+  for (const u of ZASLONI_V_JEDRU) assert.ok(!list.includes(`/${u}`), `${u} je del prvega odprtja`);
+  for (const u of ["/racun.js", "/pilot-naloge.js", "/garancija-ui.js", "/odstop-ui.js", "/credit-card.js"]) assert.match(fs.readFileSync(path.join(PUB, u), "utf8"), /from "\.\/i18n-zasloni\.js"/, `${u}: ne uvozi i18n-zasloni.js`);
   const jedro = new Set(kljuciJedra(PUB, SL));
   const del = new Set(kljuciZaslonov(PUB, SL));
   assert.deepEqual([...del].filter((k) => jedro.has(k)), [], "ključ v delu in v jedru");
   for (const u of LENI) {
     const src = fs.readFileSync(path.join(PUB, u), "utf8");
-    if (/\bt\(/.test(src) && /from "\.\/i18n/.test(src)) assert.match(src, /from "\.\/i18n-zasloni\.js"/, `${u}: ne uvozi i18n-zasloni.js`);
+    assert.doesNotMatch(src, /from "\.\/i18n\.js"/, `${u}: uvozi cel slovar (i18n.js)`);
     for (const m of src.matchAll(/["'`]([A-Za-z][\w-]*(?:\.[\w-]+)+)["'`]/g)) if (SL[m[1]] !== undefined) assert.ok(jedro.has(m[1]) || del.has(m[1]), `${u}: ${m[1]} ni ne v jedru ne v delu`);
   }
   // Strežnik jih po zagonu vnaprej stisne (server/app.js ZASLONI_POZNEJE), kot datoteke prvega odprtja.

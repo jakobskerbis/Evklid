@@ -427,14 +427,15 @@ export function createApp(store, opts = {}) {
   let zasloniSl = null;
   app.get("/i18n/zasloni-sl.js", async (req, res, next) => {
     try {
-      zasloniSl ||= slZasloni(publicDir).then((txt) => {
+      // Stiskanje (~60 ms za br 11) v niti zlib, da ne zadrži drugih zahtev (npr. prvega sporočila).
+      const stisni = (fn, raw, o) => new Promise((ok, ne) => fn(raw, o, (e, b) => (e ? ne(e) : ok(b))));
+      zasloniSl ||= slZasloni(publicDir).then(async (txt) => {
         const raw = Buffer.from(txt);
-        return {
-          raw,
-          etag: `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}`,
-          br: zlib.brotliCompressSync(raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: raw.length } }),
-          gzip: zlib.gzipSync(raw, { level: 9 }),
-        };
+        const [br, gzip] = await Promise.all([
+          stisni(zlib.brotliCompress, raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: raw.length } }),
+          stisni(zlib.gzip, raw, { level: 9 }),
+        ]);
+        return { raw, etag: `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}`, br, gzip };
       });
       const z = await zasloniSl;
       const enc = process.env.EVKLID_COMPRESS === "0" ? null : pickEncoding(req.headers["accept-encoding"]);

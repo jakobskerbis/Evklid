@@ -2,7 +2,7 @@
 // plošča »Piši« je risalna površina. Na telefonu se plošča odpre spodaj (besedilo naloge ostane pripeto zgoraj),
 // na širšem zaslonu ob strani, tako da je naloga ves čas vidna.
 import { icon } from "./icons.js";
-import { t as tr, currentLang } from "./i18n-zasloni.js";
+import { t as tr, currentLang } from "./i18n-osnova.js";
 import { configureKeyboard, openKeyboard, hideKeyboard, keyboardOpenFor, initKeyboard, naloziTipkovnico } from "./tipkovnica-lena.js";
 import { unitAtEnd, withUnit } from "./enote-izbira.js";
 

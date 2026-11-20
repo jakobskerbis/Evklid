@@ -3,7 +3,7 @@
 // se še naprej naložijo ob prvi uporabi; ta modul app.js naloži po prvem izrisu Učne poti (zasloniPozneje) ali ob prvem
 // odprtju kalkulatorja. Skupno stanje dobi iz app.js (žive vezave; zadnje orodje prek nastaviCalcMode); cel slovar.
 import { naloziKnjiznice } from "./rich.js";
-import { naloziVse, t, locale, currentLang } from "./i18n-zasloni.js";
+import { naloziVse, t, locale, currentLang } from "./i18n-osnova.js";
 import { makeSplitter } from "./razdelilnik.js";
 import { icon } from "./icons.js";
 import { stageCode } from "./stopnja.js";

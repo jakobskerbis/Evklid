@@ -3,7 +3,7 @@
 // hrbtu; tap (ali preslednica) kartico obrne, šele nato se oceni (»Še ne znam« / »Znam«). Strežnik določi, kdaj pride
 // kartica znova na vrsto (1, 3, 7, 16, 35, 90 dni). Napačna kartica se v isti vaji vrne še enkrat.
 import { icon } from "./icons.js";
-import { t, locale } from "./i18n-zasloni.js";
+import { t, locale } from "./i18n-osnova.js";
 import { dateText } from "./datum.js";
 import { cardSets, sessionCards, OWN, OTHER } from "./kartice-sklopi.js";
 

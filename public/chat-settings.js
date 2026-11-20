@@ -3,7 +3,7 @@
 // - applyDeviceSettings(): uporabi spremembe, ki jih je inštruktor naredil (videz, hitrost, kalkulator …).
 // - addProposal(): kartica »Spremenim šolo in letnik?« pod odgovorom inštruktorja.
 import { icon } from "./icons.js";
-import { t } from "./i18n-zasloni.js";
+import { t } from "./i18n-osnova.js";
 import { DEVICE_SETTINGS } from "./settings-registry.js";
 import { levelLabel } from "./level-picker.js";
 import { PREF_KEY, parsePrefs } from "./tipkovnica-nastavitve.js";
