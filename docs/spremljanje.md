@@ -22,6 +22,7 @@ Tri poti, neodvisne ena od druge:
 | Nočni preizkus obnove iz kopije ni uspel (4.30–8.00) | da, prvo uro po preizkusu (ne ob prehodni napaki, ki jo strežnik čez 10 min ponovi) | da, enkrat na dan, z razlogom (`server/kopije-preveri.js`) |
 | Nova oznaka stiske (inštruktor `flag=distress`; `server/stiska-obvestilo.js`) | – | da, takoj; v nizu največ en e-mail na 10 min s številom. Brez imena, vsebine in sporočila: vrsta, stopnja, čas in povezava `/api/admin/stiske` (prijava skrbnika), kjer oznako v 24 urah označiš kot pregledano (`pregledano_ob`). Tudi namestniku iz `EVKLID_STISKA_EMAIL_NAMESTNIK`; stran `/api/admin/stiske` odpre samo skrbnik, zato mora biti namestnik, ki naj oznake tudi pregleduje, še v `EVKLID_ADMIN_EMAILS`. E-mail velja za poslan, ko uspe vsaj enemu prejemniku (neuspeh drugemu gre samo v dnevnik). `EVKLID_STISKA_EMAIL=0` izklopi |
 | Dnevna kopija baze ni narejena (`kopije.napaka`) | da, dokler traja | – |
+| Šifriranje osebnih podatkov izklopljeno (`sifriranje: false`; strežnik brez `EVKLID_DATA_KEY` se v produkciji zažene samo z `EVKLID_ALLOW_PLAINTEXT=1`) | da, dokler traja | – |
 | E-pošta ne gre ven (Resend zavrne ključ, preobremenjen, ni omrežja) | da, prvo uro po zadnji neuspeli pošiljki | – (e-pošta ne deluje) |
 | Pomnilnik nad 85 % meje v zadnjih 30 min | da | – |
 | PDF učbenika se ne prenese; kopija v R2 ni nastavljena | samo vrstica »Opozorilo« v dnevniku Straže | – |

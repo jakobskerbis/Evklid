@@ -33,7 +33,7 @@ import { NOPAY_USD, nopayPoolUsd } from "../meje-ai.js";
 import { promoConfig, createPromo } from "./promo.js";
 import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestInvites, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
-import { eraseAccount, eraseProfiles } from "./izbris.js";
+import { eraseAccount, eraseProfiles, posnetekIzbrisa, zapisiIzbris } from "./izbris.js";
 import { runInactive, neaktivniVklopljeni } from "./neaktivni.js";
 import { AccountLocks, ownerOnly } from "./account-lock.js";
 import { ProfileLocks, checkProfilePassword } from "./profile-lock.js";
@@ -247,8 +247,9 @@ export function mountAccounts(app, store, opts = {}) {
   function dropPreConfirm(p, req, how) {
     if (!p || p.is_guest || p.email_verified_at) return 0;
     db.exec("BEGIN IMMEDIATE");
-    let n;
+    let n, z;
     try {
+      z = posnetekIzbrisa(db, { studentIds: childIds(p.id) });
       n = eraseProfiles(db, p.id, { guests });
       update(p.id, { promo_pending: null });
       db.exec("COMMIT");
@@ -256,6 +257,7 @@ export function mountAccounts(app, store, opts = {}) {
       db.exec("ROLLBACK");
       throw err;
     }
+    if (n) zapisiIzbris(db, z, log); // seznam izbrisov: obnova iz kopije profilov ne vrne
     if (n || p.promo_pending) audit(db, { req, parentId: p.id, action: "unverified_takeover_cleared", target: `${how}:${n}` });
     return n;
   }
@@ -2255,11 +2257,58 @@ export function mountAccounts(app, store, opts = {}) {
     // Zapis pilota in izbris v eni transakciji (pregled #477 B3 P3-3): če izbris pade, zapis pilot_prej_* ne ostane.
     // Poraba gosta in nepotrjenega računa ostane šteta za omrežje (server/accounts/izbris.js).
     audit(db, { req, parentId: p.id, action: "account_delete" });
+    const stranka = stripeCustomerToForget(p); // pred izbrisom: odstop od pogodbe izgubi parent_id
     // Dnevnik dostopov ostane brez povezave na izbrisani račun (brez e-naslova).
-    eraseAccount(db, p.id, { guests, transaction: true, before: () => (recordPilotDeletion(p), clearPilotLevels(p.id)) });
+    eraseAccount(db, p.id, { guests, transaction: true, log, before: () => (recordPilotDeletion(p), clearPilotLevels(p.id)) });
     clearSessionCookie(req, res);
     res.json({ ok: true });
+    forgetStripeCustomer(stranka);
   });
+
+  // Po izbrisu računa izbrišemo še stranko v Stripu (e-naslov, ime, metapodatki), v ozadju: napaka izbrisa ne ustavi.
+  // Plačila, vračila in spori ostanejo v Stripu (vezani na plačilo, ne na stranko), zato ročno vračilo po izbrisu še
+  // gre. Izjema: odprt odstop od pogodbe ali zahtevek garancije (vračilo še ni končano) ali stranka, ki jo uporablja še drug račun: takrat
+  // stranka ostane, skrbnik jo izbriše ročno po zaključku (docs/izbris-izvoz.md).
+  function stripeCustomerToForget(p) {
+    const cus = p?.stripe_customer_id;
+    if (!stripe.enabled || !cus) return null;
+    try {
+      const odprt = db
+        .prepare("SELECT id FROM withdrawals WHERE parent_id = ? AND (status IN ('received', 'processing', 'failed') OR refunds LIKE '%\"pending\"%') LIMIT 1")
+        .get(p.id);
+      if (odprt) {
+        // Notranji številki (brez e-naslova in id-ja stranke): stranko skrbnik najde v Stripu po metapodatku parent_id.
+        log.error?.(`[evklid] stranka v Stripu za izbrisani račun ${p.id} ni izbrisana: odprt odstop od pogodbe ${odprt.id} (izbriši jo ročno po zaključku)`);
+        return null;
+      }
+    } catch (err) {
+      if (!/no such table/.test(String(err.message))) return null; // ne vemo, ali je odstop odprt: stranka ostane
+    }
+    // Enako zahtevek garancije, o katerem skrbnik še ni odločil (vračilo morda še pride; server/placila/garancija.js).
+    try {
+      const g = db.prepare("SELECT id FROM guarantees WHERE parent_id = ? AND status = 'claimed'").get(p.id);
+      if (g) {
+        log.error?.(`[evklid] stranka v Stripu za izbrisani račun ${p.id} ni izbrisana: odprt zahtevek garancije ${g.id} (izbriši jo ročno po zaključku)`);
+        return null;
+      }
+    } catch (err) {
+      if (!/no such table/.test(String(err.message))) return null;
+    }
+    return { cus, parentId: p.id };
+  }
+  function forgetStripeCustomer(x) {
+    if (!x) return;
+    if (db.prepare("SELECT 1 FROM parents WHERE stripe_customer_id = ? AND id != ?").get(x.cus, x.parentId)) {
+      log.info?.(`[evklid] stranka v Stripu za izbrisani račun ${x.parentId} ostane: uporablja jo še drug račun`);
+      return;
+    }
+    stripe.request("DELETE", `/customers/${encodeURIComponent(x.cus)}`).catch((err) => {
+      if (err.status === 404) return; // stranke ni več (izbrisana v Stripu ročno ali z drugim klicem)
+      // Brez id-ja stranke in besedila Stripa (lahko vsebuje e-naslov): koda in notranja številka izbrisanega računa
+      // (v Stripu metapodatek parent_id stranke).
+      log.error?.(`[evklid] stranke v Stripu za izbrisani račun ${x.parentId} ni bilo mogoče izbrisati (${err.status || "omrežje"}${err.stripe?.code ? ` ${err.stripe.code}` : ""}); izbriši jo ročno`);
+    });
+  }
 
   app.get("/api/account/unsubscribe", (req, res) => {
     const token = String(req.query.token || "");
@@ -3032,16 +3081,20 @@ export function mountAccounts(app, store, opts = {}) {
     log,
     // Ista pot kot DELETE /api/account (plačane račune neaktivni.js izpusti, zato brez preklica naročnine). check() v
     // transakciji: ponovno preverjanje mirovanja in zapis v dnevnik dostopov pred izbrisom.
-    erase: (p, check) =>
+    erase: (p, check) => {
+      const stranka = stripeCustomerToForget(p);
       eraseAccount(db, p.id, {
         guests,
         transaction: true,
+        log,
         before: () => {
           check();
           recordPilotDeletion(p);
           clearPilotLevels(p.id);
         },
-      }),
+      });
+      forgetStripeCustomer(stranka);
+    },
   });
   async function inactiveDaily(now = new Date(), { force = false } = {}) {
     if (!neaktivniVklopljeni()) return null;
@@ -3089,6 +3142,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { dropForeignAccess, dropPreConfirm, confirmEmail, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { pricesFor, inactiveDaily, ageOfStudent, dailyBlock, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { clearPilotLevels, pricesFor, inactiveDaily, ageOfStudent, dailyBlock, pilotBeforeLevelChange, confirmOwner, noPassword, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 
