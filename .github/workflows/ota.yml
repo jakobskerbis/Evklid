@@ -47,8 +47,10 @@ jobs:
         public/enote-izbira.js
         public/formula-card.js
         public/formula-data.js
+        public/graph/math.js
         public/lesson-steps.js
         public/nujno.js
+        public/offline.js
         public/preveri-se.js
         public/regions.js
         public/rich.js

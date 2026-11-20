@@ -282,16 +282,9 @@ test("#747 splet: registracija → lasten profil brez potrditve → po rešeni n
     const page = await ctx.newPage();
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
-    // Id zadnje naloge iz odgovorov strežnika (Vadnica, test predznanja, preskok).
-    let lastTask = null;
-    page.on("response", async (r) => {
-      if (!r.ok() || !/\/api\/students\/\d+\/(practice\/next|answer|skip|pretest[^/]*|placement)$/.test(new URL(r.url()).pathname)) return;
-      try {
-        const j = await r.json();
-        const t = j.task || j.next?.task;
-        if (t?.id) lastTask = t.id;
-      } catch {}
-    });
+    // Id prikazane naloge iz kartice naloge (renderTask: data-task-id), kot scripts/preveri-aplikacijo.cjs: odgovori
+    // strežnika niso zanesljivi, ker aplikacija naslednjo nalogo prenese že vnaprej (kliki.js, practice/next vnaprej).
+    const shownTask = () => page.evaluate(() => document.querySelector("#practice .card.task[data-task-id]")?.dataset.taskId || null);
     await page.goto(base + "/#registracija");
     await page.waitForSelector("#auth-form");
     const f = page.locator("#auth-form");
@@ -329,6 +322,7 @@ test("#747 splet: registracija → lasten profil brez potrditve → po rešeni n
     // Pravilen odgovor iz baze (kot scripts/preveri-aplikacijo.cjs answerTask), vpisan ali izbran v vmesniku.
     let solved = null; // naloga, ki je bila nazadnje rešena (naslednjo aplikacija prenese že ob preverjanju)
     const solve = async () => {
+      const lastTask = await shownTask();
       assert.ok(lastTask, "id naloge");
       solved = lastTask;
       const db = new DatabaseSync(dbPath, { readOnly: true });
@@ -359,8 +353,8 @@ test("#747 splet: registracija → lasten profil brez potrditve → po rešeni n
     // Naslednja pravilno rešena naloga: po »Pozneje« kartice ni (en dan).
     await page.click("#fb-next");
     await page.locator("#practice .task .task-text").waitFor({ timeout: 15000 });
-    for (let i = 0; i < 50 && lastTask === solved; i++) await page.waitForTimeout(100);
-    assert.notEqual(lastTask, solved, "nova naloga");
+    for (let i = 0; i < 50 && (await shownTask()) === solved; i++) await page.waitForTimeout(100);
+    assert.notEqual(await shownTask(), solved, "nova naloga");
     await solve();
     await page.waitForTimeout(1200);
     assert.equal(await page.locator("#feedback .potrdi-kartica").count(), 0, "po »Pozneje« brez kartice");
