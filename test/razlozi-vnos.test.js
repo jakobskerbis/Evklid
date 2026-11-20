@@ -10,7 +10,7 @@ const langs = readdirSync(UI).filter((f) => f.endsWith(".json"));
 const KEYS = ["tbk.pending", "tbk.pendingDemoPractice", "tbk.pendingDemo", "tbk.pendingPractice", "tbk.pendingAsk", "tbk.askTopic", "block.hintAdult"];
 
 test("send: on a usage limit the input stays empty, on any other failure text and photo come back", () => {
-  const app = read("public/app.js");
+  const app = read("public/app.js") + read("public/vadnica.js"); // paperTask je v vadnica.js (naloga hitrost)
   const send = app.slice(app.indexOf("async function send(text"), app.indexOf("function checkReplyFits"));
   // Strežnik ob meji vrne 429 z limit: true (server/app.js); odjemalec to označi na napaki.
   assert.match(send, /limit: res\.status === 429 && err\.limit === true/);
@@ -47,7 +47,7 @@ test("send: on a usage limit the input stays empty, on any other failure text an
 });
 
 test("prepared questions (calculator, scanner, 3D, corner, suggestion) never overwrite a typed draft", () => {
-  const app = read("public/app.js");
+  const app = read("public/app.js") + read("public/kalkulator-zaslon.js") + read("public/vadnica.js"); // kalkulator in pole: kalkulator-zaslon.js, vadnica.js
   const fill = app.slice(app.indexOf("function fillInput("), app.indexOf("function restoreDraft("));
   assert.match(fill, /box\.value = typed \? `\$\{typed\}\\n\\n\$\{text\}` : text;/);
   // Vse poti askTutor in predlogi uporabijo fillInput.
@@ -97,7 +97,7 @@ test("textbook: a topic without a lesson offers »ask the tutor about this topic
   assert.match(tb, /\$\{pending \? "" : `<button type="button" class="secondary" id="tb-ask">/, "brez »Prebral sem lekcijo …«");
   assert.match(tb, /\$\("#tb-ask-topic"\)\?\.addEventListener\("click", \(\) => ctx\.learnWithTutor\(\{ id: L\.id, name: L\.name \}\)\)/);
   // learnWithTutor brez sporočila pošlje »Začniva s temo: {name}.« (z imenom teme).
-  assert.match(read("public/app.js"), /async function learnWithTutor\(topic, firstMessage = t\("topic\.startMsg", \{ name: topic\.name \}\)\)/);
+  assert.match(read("public/vadnica.js"), /async function learnWithTutor\(topic, firstMessage = t\("topic\.startMsg", \{ name: topic\.name \}\)\)/);
   assert.match(sl["topic.startMsg"], /\{name\}/);
 });
 

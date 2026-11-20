@@ -220,10 +220,8 @@ export function withUnit(value, unit, units = []) {
 }
 
 // ---------- paket za vaje brez povezave (public/offline.js, mobile/src/lib/offline.ts) ----------
-// Paket iz različice pred PR 786 ima pri nalogi z enoto le »unit« (brez hasUnit in units): naloga bi skrila
-// enote, preverjanje pa bi enoto zahtevalo. Tak paket je zastarel (osveži ga, ko je povezava).
-export const isStalePack = (pack) =>
-  Object.values(pack?.tasks || {}).some((list) => Array.isArray(list) && list.some((x) => x?.task && x.task.hasUnit === undefined && !!(x.task.unit || x.answer?.unit)));
+// Zastarel paket (isStalePack) prepozna offline.js sam: ta modul ni del prvega odprtja Učne poti.
+export { isStalePack } from "./offline.js";
 
 // Naloga iz paketa za prikaz: hasUnit ?? !!unit (stari paket); ponudbo enot izračuna odjemalec, kadar je ni;
 // prava enota (»unit«) ne gre naprej. check: checkAnswer (iste enote, kot jih sprejme preverjanje, ne ponudi).

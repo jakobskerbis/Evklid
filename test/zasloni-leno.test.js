@@ -1,0 +1,193 @@
+// Zasloni, ki niso Učna pot, niso del prvega odprtja (naloga hitrost, docs/meritve/prijavljen-mobilno-2026-11-19.md
+// točka 2): vadnica s tekmovanji in NPZ (vadnica.js), zavihek Račun s plačili (racun.js), kalkulator
+// (kalkulator-zaslon.js), stran Urnik (schedule.js), Kartice, Kotiček, Laboratorij, naloge pilota in gumbi orodij.
+// Test preveri, da jih statični graf prvega odprtja nima (nujno.js in kartica urnika na Učni poti ostaneta), da se po
+// prvem izrisu naložijo sami (takojšen kasnejši klik, kopija za delo brez povezave) in da se vsak zaslon prvič odpre
+// pravilno tudi, ko modul še prihaja: takoj »Nalagam …«, nato prava vsebina, brez napak in brez ključev namesto besedil.
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+import { openDb } from "../server/db.js";
+import { createApp } from "../server/app.js";
+import { startupFiles } from "../server/startup-files.js";
+import SL from "../public/i18n/sl.js";
+
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+const PUB = path.join(ROOT, "public");
+const require = createRequire(import.meta.url);
+let chromium = null;
+try {
+  chromium = await require("playwright").chromium.launch();
+} catch {}
+const opts = { skip: chromium ? false : "Playwright Chromium ni nameščen", timeout: 240000 };
+test.after(() => chromium?.close());
+const quiet = { error() {}, warn() {}, info() {}, log() {} };
+
+// Moduli zaslonov, ki se naložijo po prvem izrisu Učne poti ali ob prvi uporabi.
+const LENI = ["/vadnica.js", "/racun.js", "/kalkulator-zaslon.js", "/schedule.js", "/flashcards.js", "/corner.js", "/laboratorij.js", "/pilot-naloge.js", "/odpri.js", "/pad.js", "/enote-izbira.js", "/credit-card.js", "/garancija-ui.js", "/odstop-ui.js", "/pass-offer.js"];
+
+test("prvo odprtje: moduli drugih zaslonov niso v statičnem grafu, varnostni zaznavalnik in kartica urnika sta", () => {
+  const list = startupFiles(PUB, "index.html");
+  for (const u of LENI) assert.ok(!list.includes(u), `${u} je del prvega odprtja`);
+  for (const u of ["/nujno.js", "/account.js", "/urnik-kartica.js", "/offline.js"]) assert.ok(list.includes(u), `${u} ni del prvega odprtja`);
+  // Leni moduli z besedili uvozijo cel slovar (i18n.js): njihovih ključev ni v jedru, ki ga strežnik vstavi v stran.
+  for (const u of LENI) {
+    const src = fs.readFileSync(path.join(PUB, u), "utf8");
+    if (/\bt\(/.test(src) && /from "\.\/i18n/.test(src)) assert.match(src, /from "\.\/i18n\.js"/, `${u}: uvozi i18n-osnova.js namesto i18n.js`);
+  }
+  // Strežnik jih po zagonu vnaprej stisne (server/app.js ZASLONI_POZNEJE), kot datoteke prvega odprtja.
+  const srv = fs.readFileSync(path.join(ROOT, "server", "app.js"), "utf8");
+  const pozneje = srv.match(/const ZASLONI_POZNEJE = \[([^\]]*)\]/)[1];
+  for (const u of ["vadnica.js", "racun.js", "kalkulator-zaslon.js", "schedule.js", "flashcards.js", "corner.js", "laboratorij.js", "pilot-naloge.js", "odpri.js"]) assert.ok(pozneje.includes(`"${u}"`), u);
+});
+
+async function streznik(fn) {
+  const store = openDb(":memory:");
+  const app = createApp(store, { accounts: true, scheduler: false, log: quiet });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const jar = {};
+  const call = async (p, o = {}) => {
+    const res = await fetch(base + p, { method: o.method || "GET", redirect: "manual", headers: { "Content-Type": "application/json", cookie: Object.entries(jar).map(([k, v]) => `${k}=${v}`).join("; ") }, body: o.body ? JSON.stringify(o.body) : undefined });
+    for (const c of res.headers.getSetCookie()) {
+      const [kv] = c.split(";");
+      jar[kv.slice(0, kv.indexOf("="))] = kv.slice(kv.indexOf("=") + 1);
+    }
+    return { status: res.status, body: await res.json().catch(() => null) };
+  };
+  try {
+    const r = await call("/api/auth/register", { method: "POST", body: { email: "zasloni@evklid.test", password: "geslo1234", accept_privacy: true, birth_date: "1985-04-12" } });
+    assert.equal(r.status, 201, JSON.stringify(r.body));
+    const u = new URL(r.body.dev_verify_url);
+    await call(u.pathname + u.search);
+    const s = await call("/api/students", { method: "POST", body: { name: "Lena", birth_year: new Date().getFullYear() - 13, consent: true, settings: { school: "OSNOVNA_SOLA", grade: "8. razred" } } });
+    assert.equal(s.status, 201, JSON.stringify(s.body));
+    await fn({ base, jar });
+  } finally {
+    server.close();
+  }
+}
+
+async function stran(base, jar, viewport = { width: 390, height: 844 }) {
+  const mobile = viewport.width < 700;
+  const ctx = await chromium.newContext({ viewport, hasTouch: mobile, isMobile: mobile, locale: "sl-SI", serviceWorkers: "block" });
+  await ctx.addCookies(Object.entries(jar).map(([name, value]) => ({ name, value, url: base })));
+  await ctx.addInitScript(() => {
+    localStorage.setItem("evklid.tour", "done");
+    localStorage.setItem("evklid.interests.asked", "1");
+  });
+  const page = await ctx.newPage();
+  const napake = [];
+  page.on("pageerror", (e) => napake.push(e.message));
+  return { ctx, page, napake };
+}
+
+const kljuci = (txt) => Object.keys(SL).filter((k) => /^[a-z]+\.[a-zA-Z]+$/.test(k) && txt.includes(k));
+
+test("prvi klik na vsak odložen zaslon, medtem ko modul še prihaja: takoj »Nalagam …«, nato prava vsebina", opts, () =>
+  streznik(async ({ base, jar }) => {
+    const { ctx, page, napake } = await stran(base, jar);
+    try {
+      // Vse lene module zadržimo; vsakega spustimo šele, ko je njegov zaslon že odprt.
+      const cakajo = new Map(LENI.map((u) => [u, Promise.withResolvers()]));
+      await page.route(
+        (url) => cakajo.has(url.pathname),
+        async (route) => {
+          await cakajo.get(new URL(route.request().url()).pathname).promise;
+          await route.continue().catch(() => {});
+        },
+      );
+      const spusti = (...u) => u.forEach((x) => cakajo.get(x).resolve());
+      await page.goto(base + "/", { waitUntil: "commit" });
+      // Učna pot ne čaka nobenega od njih.
+      await page.waitForSelector("#view-path #xp-card .hero", { timeout: 60000 });
+      // Kartice so način na Učni poti (#modebar), drugo zavihki.
+      const zavihek = (v) => page.evaluate((v) => document.querySelector(`#tabbar .tab[data-view="${v}"], .topbar .tab[data-view="${v}"], #modebar [data-mode="${v}"]`).click(), v);
+      const vidno = (sel) => page.waitForSelector(sel, { state: "visible", timeout: 20000 });
+      const nalagam = async (sel) => assert.match(await page.locator(sel).first().innerText(), /Nalagam/, `${sel}: brez »Nalagam …« med nalaganjem`);
+
+      // Tema z Učne poti (vadnica.js): klik počaka modul, nato se tema odpre.
+      await page.evaluate(() => document.querySelector("#view-path [data-open]").click());
+      await page.waitForTimeout(400);
+      assert.ok(await page.locator("#view-path").isVisible(), "tema se ne odpre brez modula");
+      spusti("/vadnica.js", "/pad.js", "/enote-izbira.js");
+      await vidno("#view-topic #topic-content .topic-head h1");
+
+      // Tekmovanja (vadnica.js je zdaj naložen).
+      await zavihek("competition");
+      await vidno("#view-competition");
+      await page.waitForFunction(() => !/Nalagam/.test(document.querySelector("#competition-content").innerText), null, { timeout: 20000 });
+
+      // Račun (racun.js s plačili, garancijo, odstopom): takoj »Nalagam …«, nato zavihek Račun.
+      await zavihek("account");
+      await vidno("#view-account");
+      await nalagam("#view-account");
+      spusti("/racun.js", "/credit-card.js", "/garancija-ui.js", "/odstop-ui.js", "/pilot-naloge.js");
+      await vidno("#view-account h1");
+      assert.equal((await page.locator("#view-account h1").innerText()).trim(), SL["nav.account"]);
+      assert.ok(await page.locator("#view-account .kolone").count(), "stolpci zavihka Račun");
+      assert.deepEqual(kljuci(await page.locator("#view-account").innerText()), [], "ključ namesto besedila v zavihku Račun");
+
+      // Kartice, Urnik, Kotiček, Kalkulator: takoj »Nalagam …«, nato vsebina.
+      for (const [v, mod, sel, gotovo] of [
+        ["cards", ["/flashcards.js"], "#view-cards", "#view-cards > :not(p.muted)"],
+        ["schedule", ["/schedule.js", "/pass-offer.js"], "#view-schedule .sch-body", "#view-schedule .sch-body > :not(p.muted)"],
+        ["corner", ["/corner.js"], "#corner-content", "#corner-content > :not(p.muted)"],
+        ["graph", ["/kalkulator-zaslon.js"], "#graph-slot", "#graph-slot > :not([hidden]):not(p)"],
+      ]) {
+        await zavihek(v);
+        await vidno(`#view-${v}`);
+        await nalagam(sel);
+        spusti(...mod);
+        await vidno(gotovo);
+        assert.deepEqual(kljuci(await page.locator(`#view-${v}`).innerText()), [], `${v}: ključ namesto besedila`);
+      }
+
+      // Uči se → Laboratorij (laboratorij.js).
+      await zavihek("uci");
+      await page.evaluate(() => document.querySelector('#view-uci [data-uci-tab="lab"]').click());
+      await vidno("#view-lab");
+      spusti(...LENI);
+      await page.waitForFunction(() => !/Nalagam/.test(document.querySelector("#lab-content").innerText), null, { timeout: 20000 });
+
+      // Po prvem izrisu se vsi naložijo sami (kasnejši klik takoj, service worker jih shrani za delo brez povezave).
+      await page.waitForFunction((l) => l.every((u) => performance.getEntriesByType("resource").some((e) => new URL(e.name).pathname === u)), LENI.filter((u) => !["/credit-card.js", "/garancija-ui.js", "/odstop-ui.js", "/pass-offer.js"].includes(u)), { timeout: 30000 });
+      assert.deepEqual(napake, []);
+    } finally {
+      await ctx.close();
+    }
+  }),
+);
+
+test("po prvem izrisu: moduli zaslonov pridejo sami, klik na Račun, Kartice in Kalkulator odpre vsebino brez čakanja", opts, () =>
+  streznik(async ({ base, jar }) => {
+    const { ctx, page, napake } = await stran(base, jar, { width: 1280, height: 800 });
+    try {
+      await page.goto(base + "/");
+      await page.waitForSelector("#view-path #xp-card .hero", { timeout: 60000 });
+      await page.waitForFunction((l) => l.every((u) => performance.getEntriesByType("resource").some((e) => new URL(e.name).pathname === u)), ["/vadnica.js", "/racun.js", "/kalkulator-zaslon.js", "/schedule.js", "/flashcards.js"], { timeout: 30000 });
+      await page.waitForLoadState("networkidle");
+      // Modul je že tu: zavihek se izriše brez vmesnega »Nalagam …« (samo klic API).
+      for (const [v, gotovo] of [["account", "#view-account h1"], ["cards", "#view-cards > :not(p.muted)"], ["graph", "#graph-slot > :not([hidden]):not(p)"]]) {
+        const t0 = Date.now();
+        await page.evaluate((v) => document.querySelector(`.topbar .tab[data-view="${v}"], #modebar [data-mode="${v}"]`).click(), v);
+        await page.waitForSelector(gotovo, { state: "visible", timeout: 10000 });
+        assert.ok(Date.now() - t0 < 5000, `${v}: ${Date.now() - t0} ms`);
+      }
+      // Kalkulator čez cel zaslon z Učne poti (gumb .calc-open) in nazaj.
+      await page.evaluate(() => document.querySelector('.topbar .tab[data-view="path"]').click());
+      await page.evaluate(() => document.querySelector("#view-path .calc-open, .calc-open:not([hidden])")?.click());
+      await page.waitForSelector("#graph-overlay:not([hidden])", { timeout: 10000 }).catch(() => null);
+      if (await page.locator("#graph-overlay:not([hidden])").count()) {
+        await page.keyboard.press("Escape");
+        await page.waitForSelector("#graph-overlay[hidden]", { state: "attached", timeout: 10000 });
+      }
+      assert.deepEqual(napake, []);
+    } finally {
+      await ctx.close();
+    }
+  }),
+);

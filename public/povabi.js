@@ -7,7 +7,7 @@
 // - največ enkrat na 7 dni na profil in ne 7 dni po »Ne zdaj« (localStorage evklid.povabi.<id>);
 // - nagrado (mesec brezplačno) omeni le, ko plačila delujejo (acc.billing), račun ni v pilotu in imetnik ni mladoleten.
 // Kartica se pokaže samo po končani nalogi ali preizkusu (app.js), nikoli med njima.
-import { t } from "./i18n-osnova.js";
+import { t } from "./i18n.js";
 import { icon } from "./icons.js";
 
 export const POVABI_DNI = 7;

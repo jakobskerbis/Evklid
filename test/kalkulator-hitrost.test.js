@@ -8,7 +8,7 @@ import fs from "node:fs";
 const src = (p) => fs.readFileSync(new URL(`../public/${p}`, import.meta.url), "utf8");
 
 test("razdelki kalkulatorja se ob preklopu skrijejo, ne odstranijo (stanje ostane)", () => {
-  const app = src("app.js");
+  const app = src("kalkulator-zaslon.js"); // kalkulator iz app.js (naloga hitrost)
   const fn = app.slice(app.indexOf("function showCalcRoot("), app.indexOf("}", app.indexOf("function showCalcRoot(")) + 1);
   assert.match(fn, /el\.hidden = el !== root/, "ostali razdelki samo skriti");
   assert.doesNotMatch(fn, /replaceChildren|innerHTML|\.remove\(/, "preklop ne sme odstraniti drugih razdelkov");
@@ -38,7 +38,7 @@ test("Formule: list se pripravi ob nedejavnosti in izriše po kosih (brez dolge 
   const tools = src("graph/tools.js");
   assert.match(tools, /prepare\(\) \{\s*if \(lastKey\) return;/, "priprava ne prepiše lista, ki ga je učenec že odprl");
   assert.match(tools, /await kos\(\);\s*if \(my !== gen\) return;/, "izris po razdelkih, prekinljiv");
-  const app = src("app.js");
+  const app = src("kalkulator-zaslon.js"); // kalkulator iz app.js (naloga hitrost)
   const fn = app.slice(app.indexOf("function prebuildCalc("), app.indexOf("document.querySelectorAll(\".calc-modes\")"));
   assert.match(fn, /tool\.prepare\?\.\(\)/, "prebuildCalc pripravi list formul");
   assert.match(fn, /saveData/, "ne ob varčevanju s podatki");
@@ -53,7 +53,7 @@ test("drsne vrstice: najprej vse mere, nato zapisi (brez ponavljanja postavitve 
 });
 
 test("velik razdelek ob prvem prikazu: najprej slika z izbranim gumbom, razdelek v naslednji sliki", () => {
-  const app = src("app.js");
+  const app = src("kalkulator-zaslon.js"); // kalkulator iz app.js (naloga hitrost)
   assert.match(app, /!calcShown\.has\(tool\.root\) && tool\.root\.getElementsByTagName\("\*"\)\.length > 2000/);
   assert.match(app, /requestAnimationFrame\(\(\) => setTimeout\(r, 0\)\)\);\s*if \(calcMode !== mode\) return;/);
 });

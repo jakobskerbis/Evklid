@@ -149,7 +149,7 @@ test("si exams: NPZ in matura page shows one maths level and Shrani without a da
   assert.equal(matLevel({ curriculum_level: "4. letnik" }), null, "»še ne vem«");
   assert.equal(matLevel({}), null);
   const { readFileSync } = await import("node:fs");
-  const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  const app = ["app.js", "vadnica.js"].map((f) => readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8")).join("\n"); // NPZ in matura: public/vadnica.js
   // Pripravljenost (»Splošna matura · Višja raven«) in Pretekle pole vzameta raven po istem pravilu.
   assert.match(app, /const raven = c\.exam === "MATURA" && c\.subject === "MAT" \? matLevel\(s\) : null;/);
   assert.match(app, /const level = matLevel\(s\) \|\| "OR";/);
