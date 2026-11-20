@@ -11,6 +11,9 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 
 export const SI_EXAMS = { OSNOVNA_SOLA: ["NPZ6", "NPZ9"], SREDNJA_SOLA: ["MATURA", "POKLICNA"] };
 export const examName = (id) => t(`pp.exam.${id}`);
+// Raven matematike na splošni maturi iz profila (»4. letnik VR«): "VR", "OR" ali null (»še ne vem«). Isto pravilo
+// za Pripravljenost in Pretekle pole, da na isti strani ne pišeta različnih ravni.
+export const matLevel = (s) => / (VR|OR)$/.exec(String(s?.curriculum_level || "").trim())?.[1] || null;
 const SUBS = { MATURA: "pp.sub.MATURA", POKLICNA: "pp.sub.POKLICNA" };
 const SUBJECTS = ["MAT", "FIZ", "KEM", "BIO"];
 const SHOW = 8; // toliko rokov naenkrat, ostali za »Pokaži starejše«

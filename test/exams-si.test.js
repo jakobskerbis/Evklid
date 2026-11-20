@@ -138,3 +138,22 @@ test("API: NPZ and matura view has readiness, the date comes from the goal, pape
     server.close();
   }
 });
+
+test("si exams: NPZ in matura page shows one maths level and Shrani without a date opens the calendar", async () => {
+  // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
+  globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
+  const { matLevel } = await import("../public/exam-papers.js");
+  assert.equal(matLevel({ curriculum_level: "4. letnik VR" }), "VR");
+  assert.equal(matLevel({ curriculum_level: "3. letnik OR" }), "OR");
+  assert.equal(matLevel({ curriculum_level: "4. letnik VR " }), "VR");
+  assert.equal(matLevel({ curriculum_level: "4. letnik" }), null, "»še ne vem«");
+  assert.equal(matLevel({}), null);
+  const { readFileSync } = await import("node:fs");
+  const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  // Pripravljenost (»Splošna matura · Višja raven«) in Pretekle pole vzameta raven po istem pravilu.
+  assert.match(app, /const raven = c\.exam === "MATURA" && c\.subject === "MAT" \? matLevel\(s\) : null;/);
+  assert.match(app, /const level = matLevel\(s\) \|\| "OR";/);
+  // »Shrani« s praznim datumom odpre koledar (na telefonu sam fokus ne naredi nič).
+  assert.match(app, /if \(!validDate\(date\)\) return openDatePicker\(\$\("#er-date"\)\);/);
+  assert.match(app, /input\.showPicker\?\.\(\)/);
+});
