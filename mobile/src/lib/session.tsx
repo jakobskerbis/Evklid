@@ -1,10 +1,15 @@
 // Stanje prijave: račun (starš ali dijak sam), profili in izbrani profil.
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import Storage from "expo-sqlite/kv-store";
+import { Directory, File, Paths } from "expo-file-system";
+import brand from "../../../brand.json";
 import { api, ApiError, clearSession, hasSession, loadSession, onSessionChange } from "./api";
 import { setLanguage } from "./i18n";
 import { key } from "./keys";
 import { cancelReminders, registerPush, reminderTime, unregisterPush } from "./notifications";
+import { forgetOffline, sendAllQueued, setOfflineOwner } from "./offline";
+import { pocistiShrambo } from "./zasebnost.js";
+import { requestWebClear } from "./web-state";
 
 export type Parent = {
   id: number;
@@ -23,6 +28,7 @@ export type Student = {
   needs_password?: boolean;
   birth_year?: number;
   settings?: Record<string, any>;
+  created_at?: string; // čas nastanka profila (ključi vaj brez povezave, src/lib/offline.ts)
 };
 
 type Ctx = {
@@ -41,6 +47,21 @@ type Ctx = {
 const SessionCtx = createContext<Ctx | null>(null);
 const STUDENT_KEY = key("student");
 const CACHE_KEY = key("account"); // zadnji znani račun in profili za zagon brez povezave
+const LEGACY_SLUGS = (brand.legacy || []).map((l: { slug?: string }) => l.slug || "").filter(Boolean);
+
+// Konec seje (odjava, izbris računa, potekla seja; ob zagonu brez seje še ostanki prejšnjih različic): s telefona
+// gre vse, kar je od računa (src/lib/zasebnost.js): izbrani profil, račun in profili, paketi vaj in neposlani
+// odgovori vseh profilov, časi preverjanja, zavihek Uči, slike za deljenje v predpomnilniku; spletna stran
+// v aplikaciji pobriše svoje osebne podatke (web-state.ts requestWebClear). Nastavitve naprave ostanejo.
+function clearDevice() {
+  forgetOffline();
+  pocistiShrambo(Storage, brand.slug, LEGACY_SLUGS);
+  requestWebClear();
+  try {
+    // Slike, deljene s spletne strani (src/app/web.tsx shareImage: <ime>.png na vrhu predpomnilnika).
+    for (const f of new Directory(Paths.cache).list()) if (f instanceof File && /\.png$/i.test(f.name)) f.delete();
+  } catch {}
+}
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
@@ -52,6 +73,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const apply = useCallback(async (p: Parent | null, list: Student[]) => {
     loaded.current = true;
+    setOfflineOwner(p?.id, list);
     setParent(p);
     setStudents(list);
     // Profil brez gesla se ne odpre sam: ob prvem odprtju ga je treba nastaviti (kot na spletu).
@@ -69,22 +91,26 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       const [status, list] = await Promise.all([api("/api/account/status"), api<Student[]>("/api/students")]);
+      // Seja se je med čakanjem končala (odjava): odgovor ne sme znova zapisati računa na telefon.
+      if (!hasSession()) return;
       await Storage.setItem(CACHE_KEY, JSON.stringify({ parent: status.parent, students: list })).catch(() => {});
       await apply(status.parent, list);
     } catch (err) {
       if (!(err instanceof ApiError) || !err.offline) throw err;
       // Brez povezave ostane zadnje znano stanje; ob zagonu brez povezave ga preberemo s telefona,
       // da učna pot in vaje brez povezave delujejo (sicer bi se odprl prazen zaslon s profili).
-      if (loaded.current) return;
+      if (loaded.current || !hasSession()) return;
       const cached = await Storage.getItem(CACHE_KEY).catch(() => null);
       const c = cached ? (JSON.parse(cached) as { parent: Parent | null; students: Student[] }) : null;
-      if (c) await apply(c.parent, c.students || []);
+      if (c && hasSession()) await apply(c.parent, c.students || []);
     }
   }, [apply]);
 
   useEffect(() => {
     (async () => {
       await loadSession();
+      // Brez seje (npr. odjava v starejši različici, ki podatkov ni brisala): ostanki prejšnjega računa gredo.
+      if (!hasSession()) clearDevice();
       setSignedIn(hasSession());
       await refresh().catch(() => {});
       setReady(true);
@@ -101,7 +127,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setParent(null);
         setStudents([]);
         setStudentId(null);
-        Storage.removeItem(CACHE_KEY).catch(() => {});
+        clearDevice();
         cancelReminders();
       }
     });
@@ -117,6 +143,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    // Neposlani odgovori vaj brez povezave gredo pred odjavo na strežnik (nato se pobrišejo s telefona).
+    await sendAllQueued();
     await unregisterPush();
     await api("/api/auth/logout", { body: {} }).catch(() => {});
     await clearSession();

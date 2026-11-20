@@ -4,6 +4,8 @@
 // - Prvi naslov je /api/mobile/web z glavami aplikacije: strežnik isto sejo zapiše v piškotek WebView-a
 //   (server/mobile/web-session.js), zato je stran prijavljena.
 // - Odjava na spletu (»/?odjava=1«) odjavi tudi aplikacijo; povezave na druge strani odpre brskalnik.
+// - Konec seje v aplikaciji (odjava, izbris računa, potekla seja): stran pobriše svoje osebne podatke, odprta
+//   takoj, sicer ob naslednjem nalaganju pred svojimi skripti (src/lib/web-state.ts requestWebClear).
 // - Vrstici telefona (ura zgoraj, gumbi spodaj) dobita barvo roba strani, tudi ko učenec slog zamenja.
 // - Most za deljenje slike (public/deli-most.js): stran pošlje PNG (»Deli zbirko«), aplikacija ga zapiše v
 //   predpomnilnik in odpre sistemski meni za deljenje (expo-sharing). Zastavica window.EvklidNative pove strani,
@@ -27,7 +29,9 @@ import { useSession } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { font, useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui";
-import { setWebPending } from "@/lib/web-state";
+import { setWebCleaner, setWebPending, webClearDone, webClearPending } from "@/lib/web-state";
+import { spletPocistiJs } from "@/lib/zasebnost.js";
+import brand from "../../../brand.json";
 import { checkShareImage, shareResultJs, NATIVE_FLAG_JS } from "../../../public/deli-most.js";
 import { zaTisk as tiskPot } from "../../../public/tisk-v-chromu.js";
 
@@ -69,6 +73,9 @@ const BAR_JS = `(function(){
 
 // Vrnitev v aplikacijo (npr. po plačilu v zavihku brskalnika): stran osveži stanje računa (public/pay-ui.js).
 const SPET_JS = "window.dispatchEvent(new Event('evklid:spet'));true;";
+
+// Osebni podatki strani na tej napravi (kot clearPrivate v public/offline.js).
+const CLEAR_JS = spletPocistiJs(brand.slug);
 
 // Izbrani profil iz aplikacije, če ga splet na tej napravi še nima (public/app.js bere »studentId«).
 const studentJs = (id: number | null) =>
@@ -120,6 +127,12 @@ export default function Web() {
   // le zamenja parametre), zato ob novem parametru nov začetni naslov in nov WebView.
   const { to, n } = useLocalSearchParams<{ to?: string; n?: string }>();
   const [source, setSource] = useState(() => ({ uri: webStart(to), headers: appHeaders() }));
+  // Brisanje osebnih podatkov strani po koncu seje: pred skripti strani, dokler se stran enkrat ne naloži.
+  const [clearFirst, setClearFirst] = useState(webClearPending);
+  useEffect(() => {
+    setWebCleaner(() => ref.current?.injectJavaScript(CLEAR_JS));
+    return () => setWebCleaner(null);
+  }, []);
 
   // Android: gumb nazaj gre nazaj po spletni strani (zgodovina v public/app.js), na začetku zapre aplikacijo.
   useEffect(() => {
@@ -231,7 +244,7 @@ export default function Web() {
                 ref.current?.injectJavaScript(`location.href=${JSON.stringify(u)};true;`);
               else if (/^https?:/.test(u)) openTab(u);
             }}
-            injectedJavaScriptBeforeContentLoaded={NATIVE_FLAG_JS + studentJs(student?.id ?? null)}
+            injectedJavaScriptBeforeContentLoaded={NATIVE_FLAG_JS + (clearFirst ? CLEAR_JS : "") + studentJs(student?.id ?? null)}
             injectedJavaScript={BAR_JS}
             onMessage={(e: { nativeEvent: { data: string; url?: string } }) => {
               try {
@@ -268,6 +281,10 @@ export default function Web() {
             onLoad={(e: { nativeEvent: { url: string } }) => {
               if (e.nativeEvent.url.startsWith(ORIGIN) && !e.nativeEvent.url.includes("/api/mobile/web")) {
                 setWebPending(false);
+                if (clearFirst) {
+                  webClearDone();
+                  setClearFirst(false);
+                }
                 tries.current = 0;
                 busy.current = false;
                 setUpdating(false);
