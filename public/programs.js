@@ -1,5 +1,5 @@
 // Univerzitetni študijski programi (1. stopnja in enoviti magistrski): seznam s strežnika in izbirnik.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 let cache = null;
 
 export async function loadPrograms(api) {

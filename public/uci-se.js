@@ -3,7 +3,7 @@
 // (drevo vej z ikonami, isto kot zbirka /3d iz 3d/drevo.js, spodaj). Gumb odpre zadnji uporabljeni zavihek (shranjen na napravi). Stare poti
 // (showView("textbook"), ?pogled=lab, ukaz inštruktorju »odpri laboratorij«) izberejo pravi zavihek v app.js.
 // Atlas ali model iz 3D sveta se odpre čez cel zaslon: stran /3d v okvirju (isti izvor), Nazaj ali Esc ga zapreta.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { makeRowSortable } from "./vrstice.js";
 

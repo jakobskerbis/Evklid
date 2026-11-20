@@ -2,7 +2,7 @@
 // račun in odjava. Skriti <select id="student-select"> še vedno hrani izbranega učenca
 // (ostala koda bere in nastavlja njega), ta meni je le njegov obraz.
 import { icon } from "./icons.js";
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { mountSubjectSwitch, SUBJECT_KEYS } from "./subject-switch.js";
 
 const $ = (sel) => document.querySelector(sel);

@@ -2,7 +2,7 @@
 // - showSchedule(): stran z urnikom (teden, testi, ročni vnos, fotografija, koledar .ics, urnik UL FMF).
 // - renderScheduleCard(): kartica »Danes imaš …« na Učni poti (ponovitev pred uro, opomnik pred testom).
 import { icon, hydrateIcons } from "./icons.js";
-import { t, locale } from "./i18n.js";
+import { t, locale } from "./i18n-osnova.js";
 import { schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
 import { renderPassOffer } from "./pass-offer.js";
 import { jeFaks } from "./stopnja.js";

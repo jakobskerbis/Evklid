@@ -1,6 +1,6 @@
 // Obvestilo »Testna verzija« pod glavo: kaj v aplikaciji še ne dela. Seznam pošlje strežnik (/api/config → test_notice),
 // ker je odvisen od nastavitev (plačila v živo, e-pošta). Zaprto obvestilo se znova pokaže, ko se seznam spremeni.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 
 const KEY = "evklid.testnaVerzija";
 const ITEMS = { tutorOff: "beta.tutorOff", tutor: "beta.tutor", pay: "beta.pay", email: "beta.email", apps: "beta.apps" };

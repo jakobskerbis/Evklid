@@ -5,8 +5,8 @@
 // Dolg seznam (z iskalnikom) se odpre čez gumb: izbrana možnost je v iskalnem okencu na vrhu,
 // seznam pod njim pa se začne za njo (j, 31. 10.).
 // Iskalnik piše z Evklidovo tipkovnico (j, 1. 11.: telefonova le za prijavne podatke).
-import { t } from "./i18n.js";
-import { hideKeyboard, keyboardOpenFor } from "./tipkovnica.js";
+import { t } from "./i18n-osnova.js";
+import { hideKeyboard, keyboardOpenFor } from "./tipkovnica-lena.js";
 
 const CHEVRON = '<svg class="dd-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
 const CHECK = '<svg class="dd-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';

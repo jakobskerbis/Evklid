@@ -5,9 +5,9 @@ import { zadrziFokus } from "./fokus-okna.js";
 import { attachPad, closePad, openPad, padIsSheet } from "./pad.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
-import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion } from "./i18n.js";
-import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
+import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion, naloziVse } from "./i18n-osnova.js";
 import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba, ogrej as ogrejNujno } from "./nujno.js";
+import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
 import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
@@ -23,18 +23,16 @@ import { initProfileMenu, refreshProfileButton, closeProfileMenu } from "./profi
 import { initQuickStart, closeQuickStart } from "./quick-start.js";
 import { openPrintable, stopReading } from "./gradiva.js";
 import { initSubjectSwitch } from "./subject-switch.js";
-import { initTextbook, showTextbook, openLesson, textbookBack, openTextbookLower, openLessonId } from "./textbook.js";
 import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
 import { createIzrisBlokov, enIzrisNaSlicico } from "./izpis-toka.js";
-import { createRenderer, streamSafe } from "./rich.js";
+import { createRenderer, streamSafe, naloziKnjiznice } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
 import { mountLevelPicker, levelLabel, levelChoices, ravenChoices, schoolSystemOptions } from "./level-picker.js";
-import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
-import { TUTOR_CHIPS } from "./tipkovnica-data.js";
+import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings, naloziTipkovnico, obTipkovnici } from "./tipkovnica-lena.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
 import { attachPrettify } from "./lepi-zapis.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
-import { offlineApi, offlineBootApi, saveStudents, saveConfig, clearProfile, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
+import { offlineApi, offlineBootApi, pripraviPreverjanje, saveStudents, saveConfig, clearProfile, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback, renderFeedbackCard } from "./feedback.js";
 import { openAdminBug, openMsgReport } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
@@ -82,8 +80,6 @@ import { initAnketa, preveriAnketo } from "./anketa-teden.js";
 import { initLab, showLab, labBack, openLabExperiment } from "./laboratorij.js";
 import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, UCI_TABS } from "./uci-se.js";
 import { initTestNotice } from "./testna-verzija.js";
-import { initFormulaInfo, closeFormulaPop, annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-info.js";
-import { plainTex } from "./formula-data.js";
 import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
 import { heatmapHtml, weeksHtml } from "./aktivnost.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
@@ -117,6 +113,7 @@ const viewNote = (sel, key, force = false) => {
 let scanDeps = null;
 let scanSeq = 0; // skener, zapuščen pred prihodom modula, se ne odpre (ne zažene kamere) za drugim zaslonom
 const scanMod = lenModul("./scan/scan.js", (m) => scanDeps && m.initScan(scanDeps));
+const scanLoad = () => Promise.all([scanMod.load(), naloziKnjiznice()]).then(([m]) => m); // skener izriše formule s KaTeX
 const initScan = (deps) => {
   scanDeps = deps;
   scanMod.now()?.initScan(deps);
@@ -124,15 +121,15 @@ const initScan = (deps) => {
 const showScan = (o) => {
   const n = ++scanSeq;
   if (!scanMod.now()) viewNote("#view-scan .scan-body", "common.loading");
-  return scanMod.load().then((m) => n === scanSeq && m.showScan(o)).catch(() => scanMod.now() || viewNote("#view-scan .scan-body", "off.noConnection", true));
+  return scanLoad().then((m) => n === scanSeq && m.showScan(o)).catch(() => scanMod.now() || viewNote("#view-scan .scan-body", "off.noConnection", true));
 };
 const leaveScan = () => {
   scanSeq++;
   scanMod.now()?.leaveScan();
 };
 const scanBack = () => scanMod.now()?.scanBack() ?? false;
-const startPilotScan = (task) => scanMod.load().then((m) => m.startPilotScan(task)).catch(() => {});
-const startTutorScan = (onSend) => scanMod.load().then((m) => m.startTutorScan(onSend)).catch(() => {});
+const startPilotScan = (task) => scanLoad().then((m) => m.startPilotScan(task)).catch(() => {});
+const startTutorScan = (onSend) => scanLoad().then((m) => m.startTutorScan(onSend)).catch(() => {});
 let zbCtx = null;
 const zbMod = lenModul("./zbirke-view.js", (m) => zbCtx && m.initZbirke(zbCtx));
 const initZbirke = (c) => {
@@ -151,13 +148,19 @@ const loadLeague = (id) => {
   return leagueMod.load().then((m) => m.loadLeague(id)).catch(() => leagueMod.now() || viewNote("#league-content", "off.noConnection", true));
 };
 let pozneje = false;
+// Delo, ki ni za prvi izris Učne poti (moduli, ki jih ta ne rabi): po njem (zasloniPozneje), sicer takoj.
+const poZagonuVrsta = [];
+const poZagonu = (fn) => (pozneje ? fn() : void poZagonuVrsta.push(fn));
 const zasloniPozneje = () => {
   if (pozneje) return;
   pozneje = true;
+  for (const fn of poZagonuVrsta.splice(0)) fn();
   const idle = window.requestIdleCallback || ((f) => setTimeout(f, 200));
   idle(
     () =>
-      [scanMod, zbMod, leagueMod]
+      // Najprej izris formul (rabi ga skoraj vsak drug zaslon), nato moduli zaslonov po verjetnosti uporabe.
+      // Najprej cel slovar (public/i18n.js): moduli, ki dobijo t() od app.js (kalkulator), ga rabijo takoj.
+      [{ load: naloziVse }, { load: naloziTipkovnico }, { load: pripraviIzris }, tbMod, scanMod, zbMod, leagueMod, ourMod, { load: pripraviPreverjanje }]
         .reduce((p, x) => p.then(() => x.load().catch(() => null)), Promise.resolve())
         // Za delo brez povezave: service worker shrani tudi te module (ob prvem obisku je seznam »precache« že poslan).
         .then(() => navigator.serviceWorker?.ready)
@@ -179,10 +182,8 @@ const loadPaperViewer = () =>
       throw err;
     }));
 const closePaperViewer = () => paperViewer?.closePaperViewer() || false;
-import { openOurPaper, closeOurPaper } from "./our-paper.js";
 import { partKey, partLabel } from "./our-paper-key.js";
 import { initDrsniki } from "./drsniki.js";
-import { initSirina, prilagodiZdaj } from "./sirina.js";
 import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
 import { chatIdeas as pickIdeas } from "./predlogi.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
@@ -198,7 +199,18 @@ const whenIdle = (fn, timeout = 2000) => (window.requestIdleCallback ? requestId
 const whenQuiet = (fn) => whenIdle(() => (Date.now() - lastInput < 800 ? setTimeout(() => whenQuiet(fn), 400) : fn()));
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
 // Za zagon brez povezave še seznam profilov (osebni odgovori API niso v predpomnilniku, P7).
-const fromPack = (url, opts) => (state.student ? offlineApi(state.student.id, url, opts) : undefined) ?? offlineBootApi(url, opts);
+// Naloga ali odgovor iz paketa lahko čaka na check.js (offline.js pripraviPreverjanje vrne obljubo): če klica paket ne
+// zna (undefined) ali se check.js ne naloži (brez povezave in brez kopije), klicatelj dobi isto prevedeno sporočilo
+// brez povezave (offline: true) kot pri vsakem drugem klicu, nikoli undefined ali surove napake uvoza.
+const fromPack = (url, opts, napaka) => {
+  const v = (state.student ? offlineApi(state.student.id, url, opts) : undefined) ?? offlineBootApi(url, opts);
+  if (!(v instanceof Promise)) return v;
+  return v.then(
+    (r) => (r === undefined ? Promise.reject(napaka()) : r),
+    () => Promise.reject(napaka()),
+  );
+};
+const brezPovezave = (msg) => () => Object.assign(new Error(msg()), { offline: true });
 // Računalnik z Evklidom je ugasnjen ali okno ni odprto: ngrok ali Cloudflare vrneta
 // svojo napako. Takrat delamo kot brez povezave (vaje iz shranjenega paketa).
 // Napaka v JSON pride od našega strežnika (npr. 502, ko branje rokopisa ne uspe):
@@ -245,6 +257,14 @@ const serverError = (err, status) => {
   return hint && hint !== err.hint ? `${own} ${hint}` : own;
 };
 
+// Obljuba, ki jo konec zagona počaka kot klic pogleda (finishStart), npr. klic brez api().
+const sledi = (p) => {
+  const id = ++apiSeq;
+  apiOpen.add(id);
+  Promise.resolve(p).finally(() => apiOpen.delete(id)).catch(() => {});
+};
+// Klic v ozadju (api(url, { ozadje: true })): prenos, ki ga pogled ne prikaže (paket za vaje brez povezave).
+const apiOzadje = (url, opts = {}) => api(url, { ...opts, ozadje: true });
 // Klici v teku (zaporedna številka): konec zagona počaka, da se prvi pogled napolni, preden zamenja posnetek
 // zadnjega zaslona (finishStart).
 let apiSeq = 0;
@@ -261,7 +281,7 @@ const api = (url, opts = {}) => {
   if (get && apiInFlight.has(url)) return apiInFlight.get(url).then(kopija);
   const p = (async () => {
     const id = ++apiSeq;
-    apiOpen.add(id);
+    if (!opts.ozadje) apiOpen.add(id); // klic v ozadju (paket za vaje brez povezave) ne zadrži konca zagona
     try {
       return await apiCall(url, opts);
     } finally {
@@ -281,9 +301,10 @@ const apiCall = async (url, opts = {}) => {
     if (early != null) return early;
   }
   if (/\/tasks\/off-/.test(url)) {
-    const local = fromPack(url, opts);
+    const napaka = brezPovezave(() => t("off.noConnection"));
+    const local = fromPack(url, opts, napaka);
     if (local !== undefined) return local;
-    throw Object.assign(new Error(t("off.noConnection")), { offline: true });
+    throw napaka();
   }
   const res = await fetchThroughRestart(url, {
     ...opts,
@@ -291,11 +312,12 @@ const apiCall = async (url, opts = {}) => {
     body: opts.body && typeof opts.body !== "string" ? JSON.stringify(opts.body) : opts.body,
   });
   if (!res || (res.status === 503 && res.headers.get("X-Offline")) || serverDown(res)) {
-    const local = fromPack(url, opts);
-    if (local !== undefined) return local;
     // Gostitelj odgovori, naš strežnik pa ne (npr. med objavo nove različice): ne pišemo »Ni povezave z internetom«.
     // offline: sporočilo je že prevedeno in pove, ali manjka povezava ali odgovor strežnika (npr. 502 med objavo).
-    throw Object.assign(new Error(!res || navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy")), { offline: true });
+    const napaka = brezPovezave(() => (!res || navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy")));
+    const local = fromPack(url, opts, napaka);
+    if (local !== undefined) return local;
+    throw napaka();
   }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -321,7 +343,84 @@ const state = {
 // ---------- izris matematike in markdowna ----------
 
 // Klikljive formule (formula-info.js): znani simboli in enote dobijo data-fx; renderMath(…, false) za gumbe.
-const { renderMath, renderRich } = createRenderer({ annotate: (tex, o) => annotateTex(tex, undefined, o) });
+// Izris formul (KaTeX, marked, DOMPurify v rich.js in oznake formul formula-info.js + formula-data.js, ~130 KB stisnjeno)
+// ni del prvega izrisa Učne poti: naloži se takoj po njem (zasloniPozneje) ali ob prvi potrebi (pripraviIzris). Izris
+// pred tem da nadomestek, ki ga rich.js zamenja, ko je vse naloženo; predmet formul (withFormulaSubject) se ohrani.
+let fxDeps = null;
+let fxSubject = null; // zadnji setFormulaSubject pred prihodom modula
+const fxMod = lenModul("./formula-info.js", (m) => {
+  if (fxSubject) m.setFormulaSubject(...fxSubject);
+  if (fxDeps) m.initFormulaInfo(fxDeps);
+});
+const initFormulaInfo = (deps) => {
+  fxDeps = deps;
+  fxMod.now()?.initFormulaInfo(deps);
+};
+const closeFormulaPop = () => fxMod.now()?.closeFormulaPop() || false;
+const setFormulaSubject = (...a) => {
+  fxSubject = a;
+  fxMod.now()?.setFormulaSubject(...a);
+};
+const subjectWithGlossary = (subject, glossary) => fxMod.now()?.subjectWithGlossary(subject, glossary) ?? subject;
+let fxOkolje; // argumenti withFormulaSubject med izrisom pred prihodom modula (za nadomestek)
+const withFormulaSubject = (...a) => {
+  const m = fxMod.now();
+  if (m) return m.withFormulaSubject(...a);
+  const prej = fxOkolje;
+  fxOkolje = a;
+  try {
+    return a[1]();
+  } finally {
+    fxOkolje = prej;
+  }
+};
+// Prilagajanje širine formul (sirina.js) opazuje stran šele, ko so formule lahko izrisane (prej jih ni).
+const sirinaMod = lenModul("./sirina.js", (m) => m.initSirina());
+const prilagodiZdaj = () => sirinaMod.now()?.prilagodiZdaj();
+const pripraviIzris = () => Promise.all([naloziKnjiznice(), fxMod.load(), sirinaMod.load()]);
+// »Reši našo polo« (our-paper.js) šele ob odprtju.
+const ourMod = lenModul("./our-paper.js");
+const closeOurPaper = () => ourMod.now()?.closeOurPaper() || false;
+// Učbenik (textbook.js s simulacijami in koraki lekcije) ni del prvega izrisa Učne poti: naloži se po njem
+// (zasloniPozneje) ali ob prvem odprtju; lekcija počaka še izris formul.
+let tbDeps = null;
+let tbSeq = 0; // lekcija ali kazalo, zahtevano pred prihodom modula: velja zadnja zahteva
+const tbMod = lenModul("./textbook.js", (m) => tbDeps && m.initTextbook(tbDeps));
+const tbReady = () => Promise.all([tbMod.load(), pripraviIzris()]).then(([m]) => m);
+const initTextbook = (deps) => {
+  tbDeps = deps;
+  tbMod.now()?.initTextbook(deps);
+};
+const showTextbook = () => {
+  const n = ++tbSeq;
+  if (!tbMod.now()) viewNote("#view-textbook", "common.loading");
+  return tbReady()
+    .then((m) => n === tbSeq && m.showTextbook())
+    .catch(() => tbMod.now() || viewNote("#view-textbook", "off.noConnection", true));
+};
+const openLesson = (id) => {
+  const m = tbMod.now();
+  if (m && fxMod.now() && sirinaMod.now()) return m.openLesson(id);
+  const n = ++tbSeq; // novejša zahteva (druga lekcija, kazalo) med čakanjem na modul prevlada
+  return tbReady()
+    .then((x) => n === tbSeq && x.openLesson(id))
+    .catch(() => n === tbSeq && viewNote("#view-textbook", "off.noConnection", true));
+};
+const textbookBack = () => tbMod.now()?.textbookBack() ?? false;
+const openLessonId = () => tbMod.now()?.openLessonId() ?? null;
+const openTextbookLower = () => {
+  const m = tbMod.now();
+  if (m) return m.openTextbookLower();
+  // Klicatelj takoj pokaže Učbenik (showView): ta čaka isti modul in pride za tem klicem.
+  return tbReady().then((x) => x.openTextbookLower()).catch(() => {});
+};
+const { renderMath, renderRich, odlozi: odloziIzris } = createRenderer({
+  annotate: (tex, o) => fxMod.now().annotateTex(tex, undefined, o),
+  pripravljen: () => !!fxMod.now(),
+  pripravi: pripraviIzris,
+  kontekst: () => fxOkolje || null,
+  vKontekstu: (a, fn) => (a ? fxMod.now().withFormulaSubject(a[0], fn, a[2], ...a.slice(3)) : fn()),
+});
 // Predmet za pomen simbolov: tema naloge (FIZ-OS-9 …), sicer predmet učenca.
 const subjectOfId = (id) => (/^([A-Z]{3})-/.exec(id || "") || [])[1];
 // Predmet teme: fakultetne teme (UNI-…) imajo predmet v podatkih, šolske ga imajo v oznaki.
@@ -355,13 +454,17 @@ const topicRich = (tp, text) => withFormulaSubject(topicSubject(tp) || state.stu
 // public/vnos-formul.js) se izrišeta kot formula.
 function renderUserText(text) {
   const parts = String(text).split(/(\$[^$\n]+?\$)/g);
-  return parts
-    .map((p, i) =>
-      i % 2
-        ? renderMath(plainTex(p.slice(1, -1)), false, false) // starejša sporočila iz »Razloži« imajo še \htmlData
-        : splitFormulas(p).map((x) => ("tex" in x ? renderMath(`\\displaystyle ${x.tex}`, false, false) : escapeHtml(x.text))).join(""), // ulomek v polni velikosti
-    )
-    .join("");
+  return odloziIzris(
+    () =>
+      parts
+        .map((p, i) =>
+          i % 2
+            ? renderMath(fxMod.now().plainTex(p.slice(1, -1)), false, false) // starejša sporočila iz »Razloži« imajo še \htmlData
+            : splitFormulas(p).map((x) => ("tex" in x ? renderMath(`\\displaystyle ${x.tex}`, false, false) : escapeHtml(x.text))).join(""), // ulomek v polni velikosti
+        )
+        .join(""),
+    String(text),
+  );
 }
 
 // ---------- pogledi ----------
@@ -534,6 +637,7 @@ function startScreen() {
   return { v, l: v === "uci" && uciTab() === "textbook" && typeof rec.l === "string" ? rec.l : null };
 }
 async function openStartScreen(z) {
+  await pripraviIzris().catch(() => null); // zadnji zaslon ima skoraj vedno formule: brez nadomestkov
   if (z.v === "topic") {
     try {
       await openTopic(z.p);
@@ -1107,6 +1211,7 @@ async function onboard(name = "") {
   });
 }
 
+let zagonIzbira = false; // izbira profila v start (zagon ali prijava), ki nato sam pokaže Učno pot
 async function selectStudent(id) {
   const target = state.students.find((s) => s.id === Number(id));
   // Vsak profil ima svoje geslo (z računi): zaklenjen profil najprej odklenemo, profil brez gesla ga dobi.
@@ -1162,7 +1267,8 @@ async function selectStudent(id) {
   state.modes = null; // »Nadaljuj z učenjem« in goNew ne smeta pokazati naslednje teme prejšnjega profila
   clearLevelCard();
   maybeTour.done = false; // vodič je za vsak profil posebej (settings.tour_version)
-  if (!$("#view-path").hidden || !$("#view-topic").hidden) showView("path");
+  // Ob zagonu Učno pot pokaže start (showView takoj za izbiro profila): brez dvojnega izrisa poti pred prvim prikazom.
+  if (!zagonIzbira && (!$("#view-path").hidden || !$("#view-topic").hidden)) showView("path");
   // Tekmovanja, Izpiti ter NPZ in matura: izbira in rezultati prejšnjega profila ne ostanejo na zaslonu.
   state.examKey = state.compKey = null;
   if (!$("#view-exams").hidden) showView(siExams() ? "exams" : "path");
@@ -1264,8 +1370,11 @@ function renderEmptyChat() {
   aiOznaka();
 }
 // AI Act čl. 50 (public/ai-oznaka/)
+// Oznaka je v Inštruktorju: ob zagonu (Učna pot) šele po prvem izrisu, sicer takoj.
 function aiOznaka() {
-  return import("./ai-oznaka/ai-oznaka.js").then((m) => m.oznaciKlepet(state.student)).catch(() => {});
+  const go = () => import("./ai-oznaka/ai-oznaka.js").then((m) => m.oznaciKlepet(state.student)).catch(() => {});
+  if (pozneje || currentView === "chat" || isFloating("chat")) return go();
+  return new Promise((ok) => poZagonu(() => go().then(ok)));
 }
 $("#messages").addEventListener("click", ideaClick); // enkrat: predlogi se ob osvežitvi zamenjajo
 function ideaClick(e) {
@@ -1532,6 +1641,8 @@ function dopolniKmalu() {
 // sprožil nalaganje starejših); kratek pogovor, ki ne napolni zaslona, dobi starejša sporočila.
 // Varnostni zaznavalnik (public/nujno.js ogrej) prevede svoje vzorce vnaprej, ko se Inštruktor prvič pokaže, v kosih po
 // 8 ms v času mirovanja: prvi tap »Pošlji« je sicer čakal nanj (telefon ~0,8 s, docs/meritve/prijavljen-mobilno-2026-11-19.md).
+// Modul zaznavalnika je namenoma statično uvožen (del prvega odprtja): varnostni odgovor mora biti na voljo vedno,
+// tudi brez povezave in ob zavrnitvi strežnika (pregled varnosti #888: varnost pred ~32 KB).
 let zaznavalnikPripravljen = false;
 function pripraviZaznavalnik() {
   if (zaznavalnikPripravljen) return;
@@ -2253,7 +2364,7 @@ $("#composer").addEventListener("submit", (e) => {
 // le s stikalom starša v Računu (j 10. 11.); nacin "glas" ob pošiljanju preveri tudi strežnik. Tipkanje dela vedno.
 const glasOk = {};
 const glasZa = (id) => api(`/api/students/${id}/ustno`).then((r) => (glasOk[id] = r?.glas?.dovoljen !== false), () => true);
-whenIdle(() =>
+poZagonu(() => whenIdle(() =>
   import("./speech.js").then((m) =>
     m.attachMic($("#mic-btn"), input, {
       onMessage: (msg) => toast(msg, "mic"),
@@ -2267,16 +2378,20 @@ whenIdle(() =>
       onBlocked: () => import("./ustno/ustno.js").then(async (u) => (await u.loadDicts(), toast(u.tt("u.glasStarsKlepet"), "mic"))),
     }),
   ),
-);
+));
 // Napredna tipkovnica s simboli.
 // Evklidova tipkovnica (public/tipkovnica.js): na dotik za vsa polja, Σ jo odpre na plasti simbolov (tudi na računalniku).
 initKeyboard();
-initSirina();
 initDrsniki();
 document.addEventListener("input", (e) => hasFormula(e.target.value || "") && import("./predogled-vnosa.js").then((m) => m.initPredogledVnosa(e.target)), true);
 setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapter });
 mountKeyboardSettings($("#tipkovnica-card"));
-configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx: TUTOR_CHIPS });
+// Predlogi nad tipkovnico (TUTOR_CHIPS) so v tipkovnica-data.js, ki pride s tipkovnico (tipkovnica-lena.js).
+obTipkovnici(() =>
+  import("./tipkovnica-data.js")
+    .then(({ TUTOR_CHIPS }) => configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx: TUTOR_CHIPS }))
+    .catch(() => {}),
+);
 $("#sym-btn").addEventListener("click", () => toggleKeyboard(input, { layer: "sym" }));
 window.addEventListener("evklid:tipkovnica", () => {
   const on = keyboardOpenFor(input) && keyboardLayer() === "sym";
@@ -3420,7 +3535,7 @@ async function loadPath(key = state.pathKey) {
   renderStageHome();
   syncOfflineBanner();
   // Naloge za vadbo brez povezave (enkrat na dan, v ozadju).
-  if (!p.offline) refreshPack(api, state.student.id, p.key).then(syncOfflineBanner);
+  if (!p.offline) refreshPack(apiOzadje, state.student.id, p.key).then(syncOfflineBanner);
   // Fakulteta: vir predmetnika in opozorilo, da je osnutek.
   const prog = uni ? programsCache().find((x) => x.id === state.student.settings.study_program) : null;
   // OŠ 1.–5. razred: učne poti še ni, prikažemo snov 6. razreda (igre in inštruktor so prilagojeni razredu).
@@ -4543,7 +4658,8 @@ async function openOurs(entry, subjectName, focus = null) {
   if (!entry?.ours || paperBusy) return;
   paperBusy = true;
   try {
-    const paper = await api(`/api/exam-papers/ours/${encodeURIComponent(entry.id)}`);
+    const [paper, op] = await Promise.all([api(`/api/exam-papers/ours/${encodeURIComponent(entry.id)}`), ourMod.load(), pripraviIzris()]);
+    const { openOurPaper } = op;
     const title = t("pp.oursTitle", { paper: paperLabel(entry, subjectName) });
     const key = `evklid.ours.${state.student.id}.${entry.id}`;
     openOurPaper(paper, {
@@ -4982,7 +5098,8 @@ function calcSlot() {
 }
 
 function graphCalc() {
-  calcP ||= import("./graph/calc.js").catch((e) => {
+  // Kalkulator izriše formule s KaTeX (rich.js naloziKnjiznice), ki ni del prvega izrisa.
+  calcP ||= Promise.all([import("./graph/calc.js"), naloziKnjiznice(), naloziVse()]).then(([m]) => m).catch((e) => {
     calcP = null; // neuspel prenos (brez povezave): naslednji dotik poskusi znova
     throw e;
   }).then(({ createCalculator }) => {
@@ -5028,7 +5145,7 @@ async function insertIntoCalc(text, o) {
 }
 function calcTool(mode) {
   if (mode === "graph") return graphCalc();
-  calcTools[mode] ||= (mode === "sci" ? import("./graph/sci.js") : import("./graph/tools.js")).catch((e) => {
+  calcTools[mode] ||= Promise.all([mode === "sci" ? import("./graph/sci.js") : import("./graph/tools.js"), naloziKnjiznice(), naloziVse()]).then(([m]) => m).catch((e) => {
     delete calcTools[mode]; // neuspel prenos (brez povezave): naslednji dotik poskusi znova
     throw e;
   }).then((m) => {
@@ -5552,9 +5669,15 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
             syncBugButton();
           })
           .catch(() => {});
-    await loadStudents();
+    zagonIzbira = !o?.keepView;
+    try {
+      await loadStudents();
+    } finally {
+      zagonIzbira = false;
+    }
     await admin; // števec porabe šele, ko vemo, ali je skrbnik (sicer 403)
-    if (first) initUsageMeter({ escapeHtml, showView, toast, allowed: () => usageAdmin });
+    // Števec porabe (samo skrbnik) je v glavi: konec zagona počaka njegov prvi odgovor kot klic pogleda (brez premika).
+    if (first) sledi(initUsageMeter({ escapeHtml, showView, toast, allowed: () => usageAdmin }));
     else refreshUsageMeter();
     // Prvo odprtje: bližnjica (?pogled=) ali zadnji zaslon (≤ 12 ur); Učna pot se pripravi pod njim.
     const z = first && !o?.keepView && !START_VIEW && !START_ACCOUNT ? startScreen() : null;

@@ -2,7 +2,7 @@
 // različici splošnih pogojev (terms_notice, samo objavljeni pogoji) in skrbniška kartica obvestil o odstopu
 // (server/placila/odstop.js). Skrbniška kartica je samo za skrbnika, zato je v slovenščini (kot garancija-ui.js).
 import { icon } from "./icons.js";
-import { t, locale } from "./i18n.js";
+import { t, locale } from "./i18n-osnova.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const $ = (sel, root = document) => root.querySelector(sel);

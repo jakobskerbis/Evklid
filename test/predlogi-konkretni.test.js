@@ -76,6 +76,7 @@ test("konkretna vprašanja: razred, raven, predmet, fakulteta, drug sistem; brez
 
 test("glava: razredi v izbiri imajo ime (»8. razred«), ne številke (#793 je dal indeks map kot napis)", async () => {
   globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
+  await import("../public/i18n.js"); // cel slovar: level-picker.js uvozi i18n-osnova.js (v aplikaciji slovar naloži zagon.js)
   const { levelChoices } = await import("../public/level-picker.js");
   assert.deepEqual(levelChoices({ educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred" }).map((x) => x.label).slice(6, 9), ["7. razred", "8. razred", "9. razred"]);
   assert.deepEqual(levelChoices({ educational_track: "UNIVERZA", study_program: "UL-FKKT-KEM", curriculum_level: "1. letnik" }).map((x) => x.label)[0], "1. letnik");

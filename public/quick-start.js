@@ -3,7 +3,7 @@
 // Zdaj z enim dotikom, s katerega koli zaslona, pokaže naslednji korak učenja: tema, kjer je
 // ostal, današnji trening in kar je danes na vrsti (ponavljanje, bližnji test, kartice).
 import { icon } from "./icons.js";
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { mountSubjectSwitch, SUBJECT_KEYS } from "./subject-switch.js";
 
 const $ = (sel) => document.querySelector(sel);

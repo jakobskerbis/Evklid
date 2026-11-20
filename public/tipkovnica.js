@@ -1585,3 +1585,8 @@ export function mountKeyboardSettings(box) {
     savePrefs();
   });
 }
+
+// Lena različica (tipkovnica-lena.js, za prvi izris aplikacije) izve, da je tipkovnica naložena, kdorkoli jo je uvozil.
+import * as jaz from "./tipkovnica.js";
+import { prijaviTipkovnico } from "./tipkovnica-lena.js";
+prijaviTipkovnico(jaz);

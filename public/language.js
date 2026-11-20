@@ -1,6 +1,6 @@
 // Izbira jezika (Nastavitve in prvi zagon). Seznam ima iskalnik (dropdown.js pri dolgih seznamih).
 import { icon } from "./icons.js";
-import { t, currentLang, languageOptions, setLanguage } from "./i18n.js";
+import { t, currentLang, languageOptions, setLanguage } from "./i18n-osnova.js";
 import { langInfo, uiLanguage, UI_LANGUAGES } from "./i18n/languages.js";
 
 // onChange(code) shrani jezik v profil (če obstaja); nato se stran naloži znova v novem jeziku.

@@ -161,7 +161,11 @@ test("an inline formula never overlaps the lines around it and keeps line spacin
 // j 2026-11-04: »Predolge zapise ustrezno prelomi v drugo vrstico. Če je mogoče, ne uporabljaj scrollanja. To naj velja
 // za vse enačbe.« Celoten videz v simulacijah, klepetu in nalogah preverja scripts/preveri-formule.cjs.
 test("every equation in the app is fitted: sims, chat, exercises, formula cards (not only lessons)", async () => {
-  for (const f of ["app.js", "kalkulator.js"]) assert.match(pub(f), /import \{ initSirina(?:, prilagodiZdaj)? \} from "\.\/sirina\.js";[\s\S]*\ninitSirina\(\);\ninitDrsniki\(\);/, f);
+  assert.match(pub("kalkulator.js"), /import \{ initSirina(?:, prilagodiZdaj)? \} from "\.\/sirina\.js";[\s\S]*\ninitSirina\(\);\ninitDrsniki\(\);/);
+  // app.js: sirina.js se naloži z izrisom formul (pripraviIzris, rich.js), ne pred Učno potjo (test/zacetek-leno.test.js).
+  assert.match(pub("app.js"), /const sirinaMod = lenModul\("\.\/sirina\.js", \(m\) => m\.initSirina\(\)\);/);
+  assert.match(pub("app.js"), /const pripraviIzris = \(\) => Promise\.all\(\[naloziKnjiznice\(\), fxMod\.load\(\), sirinaMod\.load\(\)\]\);/);
+  assert.match(pub("app.js"), /\ninitDrsniki\(\);/);
   const js = pub("sirina.js");
   assert.match(js, /mo\.observe\(document\.body, \{ childList: true, subtree: true \}\)/);
   // simulacija ob vsakem premiku drsnika: rešitev za isto obliko formule brez merjenja (drsnik ostane gladek)

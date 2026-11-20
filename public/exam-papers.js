@@ -4,7 +4,7 @@
 // »Druge pretekle pole« odpre celotno izbiro (npr. pole druge šole).
 // Katalog (server/exam-papers-si.js) ima samo povezave na ric.si: pole so last Državnega izpitnega centra,
 // zato jih ne kopiramo in ne prenašamo; vsaka povezava odpre dokument na ric.si v novem zavihku.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);

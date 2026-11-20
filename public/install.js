@@ -7,7 +7,7 @@
 // - Odprto v Instagramu, Messengerju …: najprej odpri v brskalniku.
 // Kartica je na Učni poti (dokler je ne skriješ), vrstica v »Jaz« in kartica v Nastavitvah ostaneta.
 import { icon } from "./icons.js";
-import { t, currentLang } from "./i18n.js";
+import { t, currentLang } from "./i18n-osnova.js";
 import { jsonAliNic } from "./odgovor.js";
 
 const KEY = "evklid.install"; // čas, ko je bila kartica na Učni poti skrita

@@ -1,6 +1,6 @@
 // Povratne informacije testerjev: vprašalnik (ocene po področjih + pripombe) ali kratek pogovor
 // z inštruktorjem. Na računalniku, kjer teče strežnik, še zbrana mnenja in povzetek.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { createRenderer } from "./rich.js";
 import { renderAdminReports } from "./prijave.js";
