@@ -1815,7 +1815,7 @@ const DOG = [
 // Empirična verjetnost: besedilo s številoma poskusov n in uspehov k; dogodek in nasprotni dogodek.
 const EMP = [
   { t: (n, k) => `Risalni žebljiček smo vrgli $${n}$-krat in $${k}$-krat je padel s konico navzgor.`, q: "žebljiček pade s konico navzgor", qn: "žebljiček pade na bok" },
-  { t: (n, k) => `Kontrolorka je pregledala $${n}$ naključno izbranih izdelkov in med njimi našla $${k}$ pokvarjenih.`, q: "je naključno izbrani izdelek pokvarjen", qn: "je naključno izbrani izdelek brezhiben", e: "naključno izbrani izdelek je pokvarjen", en: "naključno izbrani izdelek je brezhiben" },
+  { t: (n, k) => `Kontrolorka je pregledala $${n}$ naključno izbranih izdelkov in med njimi našla $${k}$ pokvarjenih.`, q: "je naključno izbrani izdelek pokvarjen", qn: "je naključno izbrani izdelek brezhiben" },
   { t: (n, k) => `Na križišču so prešteli $${n}$ avtomobilov in $${k}$ jih je zavilo levo.`, q: "naslednji avtomobil zavije levo", qn: "naslednji avtomobil ne zavije levo" },
 ];
 // Nasprotni dogodek z dano verjetnostjo: [uvod, dogodek A, nasprotni dogodek].
@@ -1838,21 +1838,21 @@ const IZB = [
     setup: (a, b, k) => `V škatli so rdeče in modre kroglice: rdečih je $${a}$, modrih $${b}$. Hkrati naključno izvlečemo ${nw(k, "kroglico", "kroglici", "kroglice", "kroglic")}.`,
     j: (j) => `${verbOf(j, "je", "sta", "so")} med njimi natanko ${nw(j, "rdeča", "rdeči", "rdeče", "rdečih")}`,
     atl: "je med njimi vsaj ena rdeča",
-    none: "vse izvlečene kroglice so modre",
+    none: "so vse izvlečene kroglice modre",
     data: (a, b, k) => [`n_{\\text{rdeče}} = ${a}`, `n_{\\text{modre}} = ${b}`, `k = ${k}`],
   },
   {
     setup: (a, b, k) => `V razredu je $${a}$ deklet in $${b}$ fantov. Z žrebom izberejo $${k}$-člansko delegacijo.`,
     j: (j) => `${verbOf(j, "je", "sta", "so")} v delegaciji natanko ${nw(j, "dekle", "dekleti", "dekleta", "deklet")}`,
     atl: "je v delegaciji vsaj eno dekle",
-    none: "v delegaciji so sami fantje",
+    none: "so v delegaciji sami fantje",
     data: (a, b, k) => [`n_{\\text{dekleta}} = ${a}`, `n_{\\text{fantje}} = ${b}`, `k = ${k}`],
   },
   {
     setup: (a, b, k) => `Med $${a + b}$ žarnicami v škatli je $${a}$ pokvarjenih. Naključno vzamemo ${nw(k, "žarnico", "žarnici", "žarnice", "žarnic")}.`,
     j: (j) => `${verbOf(j, "je", "sta", "so")} med njimi natanko ${nw(j, "pokvarjena", "pokvarjeni", "pokvarjene", "pokvarjenih")}`,
     atl: "je med njimi vsaj ena pokvarjena",
-    none: "vse vzete žarnice so brezhibne",
+    none: "so vse vzete žarnice brezhibne",
     data: (a, b, k) => [`n = ${a + b}`, `n_{\\text{pokvarjene}} = ${a}`, `k = ${k}`],
   },
 ];
@@ -1868,7 +1868,7 @@ function dog2(r) {
   if (c === 2) return { t: "je produkt pik sod", d: "\\text{produkt pik je sod}", ok: ([a, b]) => (a * b) % 2 === 0, ms: [[1 / 2, "Produkt je sod, če je sodo število na vsaj eni kocki, ne le na eni določeni."], [9 / 36, "To je verjetnost, da je produkt lih (obe števili lihi)."]] };
   if (c === 3) return { t: "je vsota pik praštevilo", d: "\\text{vsota pik je praštevilo}", ok: ([a, b]) => [2, 3, 5, 7, 11].includes(a + b), ms: [[5 / 11, "Vsote od $2$ do $12$ niso enako verjetne: štej urejene pare pik."], [8 / 21, "Kocki ločimo: vseh izidov je $36$, izid $(1, 2)$ ni isti kot $(2, 1)$."]] };
   if (c === 4) return { t: "padeta različni števili pik", d: "\\text{različni števili pik}", ok: ([a, b]) => a !== b, ms: [[1 / 6, "To je verjetnost, da padeta enaki števili."], [15 / 36, "Izida $(1, 2)$ in $(2, 1)$ sta različna: šteti moraš oba vrstna reda."]] };
-  return { t: "je večje od obeh števil pik vsaj $5$", d: "\\text{večje število pik je vsaj } 5", ok: ([a, b]) => Math.max(a, b) >= 5, ms: [[16 / 36, "To je verjetnost nasprotnega dogodka (na obeh kockah največ $4$)."], [2 / 6, "Verjetnosti za posamezno kocko ne smeš kar seštevati: izid $(5, 6)$ bi štel dvakrat."]] };
+  return { t: "je večje od obeh števil pik vsaj $5$", d: "\\text{večje število pik je vsaj } 5", ok: ([a, b]) => Math.max(a, b) >= 5, ms: [[16 / 36, "To je verjetnost nasprotnega dogodka (na obeh kockah največ $4$)."], [4 / 6, "Verjetnosti za posamezno kocko ne smeš kar sešteti ($\\frac{2}{6} + \\frac{2}{6}$): izide, kot je $(5, 6)$, bi štel dvakrat."]] };
 }
 
 const VERJETNOST = [
@@ -1909,7 +1909,7 @@ const VERJETNOST = [
             return {
               text: `${KUP} Kolikšna je verjetnost, da izvlečena karta ni ${what}? Vpiši okrajšan ulomek.`,
               answer: frA(52 - k, 52, [
-                { value: k / 52, why: `To je verjetnost, da je karta ${what}. Iščemo nasprotni dogodek: $P(\\overline{A}) = 1 - P(A)$.` },
+                { value: k / 52, why: `To je verjetnost, da karta je ${what}. Iščemo nasprotni dogodek: $P(\\overline{A}) = 1 - P(A)$.` },
                 { value: 51 / 52, why: `Dogodek »karta je ${what}« zajema ${nw(k, "karto", "karti", "karte", "kart")}, ne ene same.` },
               ]),
               hint: `Najprej izračunaj verjetnost, da je karta ${what}, nato uporabi nasprotni dogodek.`,
@@ -1950,7 +1950,7 @@ const VERJETNOST = [
             hint: up ? "Empirična verjetnost je relativna frekvenca: delež poskusov, v katerih se je dogodek zgodil." : "Najprej ugotovi, v koliko poskusih se je iskani dogodek zgodil, nato izračunaj relativno frekvenco.",
             data: { given: [`n = ${n}`, `k = ${k}`], find: ["P(A)"] },
             formula: "P(A) \\approx f(A) = \\dfrac{k_A}{n}",
-            solution: `Dogodek $A$: ${up ? c.e ?? c.q : c.en ?? c.qn}.\n${up ? `Zgodil se je v $${k}$ od $${n}$ poskusov.` : `Zgodil se je v $${n} - ${k} = ${m}$ od $${n}$ poskusov.`}\n$P(A) \\approx \\dfrac{${m}}{${n}} = ${tx(cl(m / n))}$`,
+            solution: `Dogodek $A$: ${up ? c.q : c.qn}.\n${up ? `Zgodil se je v $${k}$ od $${n}$ poskusov.` : `Zgodil se je v $${n} - ${k} = ${m}$ od $${n}$ poskusov.`}\n$P(A) \\approx \\dfrac{${m}}{${n}} = ${tx(cl(m / n))}$`,
           };
         }
         if (t === 3) {
@@ -2108,7 +2108,7 @@ const VERJETNOST = [
             hint: "Nasprotni dogodek dogodka »vsaj ena« je »nobena«. Ga je lažje prešteti?",
             data: { given: c.data(a, b, k), find: ["P(A)"] },
             formula: ["P(A) = 1 - P(\\overline{A})", "P(\\overline{A}) = \\dfrac{\\dbinom{b}{k}}{\\dbinom{n}{k}}"],
-            solution: `Vseh izbir je $\\dbinom{${n}}{${k}} = ${tot}$.\nNasprotni dogodek: ${c.none}; takih izbir je $\\dbinom{${b}}{${k}} = ${nf}$.\n$P(\\overline{A}) = ${fq(nf, tot)}$\n$P(A) = 1 - ${ft(nf, tot)} = ${ft(tot - nf, tot)}$`,
+            solution: `Vseh izbir je $\\dbinom{${n}}{${k}} = ${tot}$.\nNasprotni dogodek: ${c.none}; takih izbir je $\\dbinom{${b}}{${k}} = ${nf}$.\n$P(A) = 1 - ${ft(nf, tot)} = ${ft(tot - nf, tot)}$`,
           };
         }
         // Dve kocki: dogodek, ki ga je lažje šteti z nasprotnim dogodkom ali s tabelo.
@@ -2321,7 +2321,7 @@ const VERJETNOST = [
           const pAB = cl(pB * pc);
           if (Math.abs(pAB * 1000 - Math.round(pAB * 1000)) > 1e-6) return null;
           const c = r.pick([
-            [`bo v soboto sončno`, `bo v soboto sončno in bo ${X} ${g(X, "šel", "šla")} na izlet`, `bo ${X} ${g(X, "šel", "šla")} na izlet, če bo v soboto sončno`, "v soboto bo sončno", `v soboto bo sončno in ${X} bo ${g(X, "šel", "šla")} na izlet`],
+            [`bo v soboto sončno`, `bo v soboto sončno in bo ${X} ${g(X, "šel", "šla")} na izlet`, `gre ${X} na izlet, če je v soboto sončno`],
             ["naključno izbrani obiskovalec spletne trgovine doda izdelek v košarico", "obiskovalec doda izdelek v košarico in ga tudi kupi", "obiskovalec izdelek kupi, če ga je dodal v košarico"],
             ["zjutraj dežuje", `zjutraj dežuje in ${X} zamudi pouk`, `${X} zamudi pouk, če zjutraj dežuje`],
             ["naključno izbrani maturant piše maturo iz fizike", "maturant piše fiziko in jo opravi z oceno odlično", "jo maturant, ki piše fiziko, opravi z oceno odlično"],
@@ -2336,7 +2336,7 @@ const VERJETNOST = [
             hint: "Kateri dogodek je pogoj? Verjetnost, da se zgodita oba, deli z verjetnostjo pogoja.",
             data: { given: [`P(B) = ${tx(pB)}`, `P(A \\cdot B) = ${tx(pAB)}`], find: ["P(A \\mid B)"] },
             formula: PPO,
-            solution: `$B$: ${c[3] ?? c[0]}; $A \\cdot B$: ${c[4] ?? c[1]}.\n$P(A \\mid B) = \\dfrac{P(A \\cdot B)}{P(B)} = \\dfrac{${tx(pAB)}}{${tx(pB)}} = ${tx(pc)}$`,
+            solution: `$B$: ${c[0]}; $A \\cdot B$: ${c[1]}.\n$P(A \\mid B) = \\dfrac{P(A \\cdot B)}{P(B)} = \\dfrac{${tx(pAB)}}{${tx(pB)}} = ${tx(pc)}$`,
           };
         }
         if (t === 2) {
@@ -2508,6 +2508,8 @@ const VERJETNOST = [
           let pAB = cs === 0 ? prod : cs === 1 ? 0 : cl(prod + r.pick([-0.1, -0.05, 0.05, 0.1]));
           if (cs === 1 && pA + pB > 1) return null;
           if (cs === 2 && (pAB <= 0 || pAB >= Math.min(pA, pB) || pAB === prod)) return null;
+          // P(A + B) = P(A) + P(B) - P(A · B) ne sme preseči 1 (sicer podatki niso mogoči).
+          if (pA + pB - pAB > 1 + 1e-9) return null;
           const O = ["Dogodka sta neodvisna.", "Dogodka sta nezdružljiva.", "Dogodka sta odvisna, a se lahko zgodita hkrati.", "Dogodka sta neodvisna in nezdružljiva."];
           const both = "Dogodka s pozitivnima verjetnostma ne moreta biti hkrati neodvisna in nezdružljiva.";
           const W = [
@@ -2561,7 +2563,7 @@ const VERJETNOST = [
         const q = cl(1 - p);
         const val = Pn(n, k, p);
         return {
-          text: `${VR}Na poti v šolo se ${nm} pelje mimo $${n}$ semaforjev. Na vsakem neodvisno od drugih ujame rdečo luč z verjetnostjo $${tx(p)}$. Kolikšna je verjetnost, da ujame rdečo luč na natanko $${k}$ ${k === 1 ? "semaforju" : "semaforjih"}? Zaokroži na štiri decimalke.`,
+          text: `${VR}Na poti v šolo ${nm} pelje mimo $${n}$ semaforjev. Na vsakem neodvisno od drugih ujame rdečo luč z verjetnostjo $${tx(p)}$. Kolikšna je verjetnost, da ujame rdečo luč na natanko $${k}$ ${k === 1 ? "semaforju" : "semaforjih"}? Zaokroži na štiri decimalke.`,
           answer: num(val, 4, [
             { value: p ** k * q ** (n - k), why: "To je verjetnost enega samega zaporedja; pomnoži še z binomskim simbolom." },
             { value: C(n, k) * p ** k, why: "Manjka verjetnost, da na ostalih semaforjih ni rdeče: $q^{n-k}$." },

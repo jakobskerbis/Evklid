@@ -154,3 +154,16 @@ test("linearne enačbe SŠ: rešitev zadošča enačbi", () => {
   }
   assert.ok(n > 50);
 });
+
+test("pogojna verjetnost: podatki pri »neodvisna ali nezdružljiva« so mogoči (P(A + B) ≤ 1)", () => {
+  const g = gen("mat-ss4-matura-pogojna-verjetnost");
+  let n = 0;
+  for (let seed = 1; seed <= 4000; seed++) {
+    const t = g.gen(2, makeRng(seed), g.topics[0]);
+    if (!/^\(višja raven\) Za dogodka/.test(t.text)) continue;
+    const [pA, pB, pAB] = [...t.text.matchAll(/= (\d)\{,\}(\d+)\$|= (0)\$/g)].map((m) => (m[3] ? 0 : Number(`${m[1]}.${m[2]}`)));
+    assert.ok(pAB <= Math.min(pA, pB) + 1e-9 && pA + pB - pAB <= 1 + 1e-9, t.text);
+    n++;
+  }
+  assert.ok(n > 100);
+});
