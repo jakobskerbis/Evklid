@@ -1953,7 +1953,8 @@ let chatSplit = null;
 $("#toggle-sidebar").addEventListener("click", () => (chatSplit?.collapsed ? chatSplit.expand() : setSidebar(!$(".sidebar").classList.contains("open"))));
 // V fazi zajema (pred klikom vrstice): seznam se zapre, preden se pogovor (morda že prenesen vnaprej) izriše in
 // pomakne na dno; sicer bi se glava klepeta na telefonu povečala šele po pomiku in zadnje sporočilo bi bilo pod poljem.
-$("#conversation-list").addEventListener("click", () => setSidebar(false), { capture: true });
+// Gumbi v vrstici (npr. izbriši) seznama ne zaprejo, kot prej (njihov stopPropagation je ustavil zapiranje).
+$("#conversation-list").addEventListener("click", (e) => e.target.closest("button") || setSidebar(false), { capture: true });
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && $(".sidebar").classList.contains("open")) setSidebar(false);
 });

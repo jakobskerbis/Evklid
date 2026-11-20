@@ -487,7 +487,7 @@ test("pregled #902: naloga vnaprej največ 60 s, seznam pogovorov se zapre pred 
   }
   const fs = await import("node:fs");
   const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(app, /\$\("#conversation-list"\)\.addEventListener\("click", \(\) => setSidebar\(false\), \{ capture: true \}\);/);
+  assert.match(app, /\$\("#conversation-list"\)\.addEventListener\("click", \(e\) => e\.target\.closest\("button"\) \|\| setSidebar\(false\), \{ capture: true \}\);/);
   const vad = fs.readFileSync(new URL("../public/vadnica.js", import.meta.url), "utf8");
   assert.match(vad, /err\.message === "Naloga ne obstaja\." && state\.topic\) \{\n\s+nextPractice\(\);/);
   const enote = fs.readFileSync(new URL("../public/enote-izbira.js", import.meta.url), "utf8");
