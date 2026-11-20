@@ -47,9 +47,9 @@ export function teme({ api, kopija, jezik, ucenec, gen }) {
     }
     return e;
   }
-  let pot = null; // { key, sid, gen, units }
+  let pot = null; // { key, sid, gen, t, units }: velja 60 s kot topli (stanje teme se lahko spremeni drugje)
   const keepPath = (p, sid, g) => {
-    if (p?.key && Array.isArray(p.units) && g === gen() && ucenec() === sid) pot = { key: p.key, sid, gen: g, units: structuredClone(p.units) };
+    if (p?.key && Array.isArray(p.units) && g === gen() && ucenec() === sid) pot = { key: p.key, sid, gen: g, t: Date.now(), units: structuredClone(p.units) };
     return p;
   };
   return {
@@ -63,7 +63,7 @@ export function teme({ api, kopija, jezik, ucenec, gen }) {
     },
     unitsFor(topicId) {
       const c = pot;
-      if (!c || c.gen !== gen() || c.sid !== ucenec() || !c.units.some((u) => u.topics.some((x) => x.id === topicId))) return null;
+      if (!c || c.gen !== gen() || c.sid !== ucenec() || Date.now() - c.t > 60_000 || !c.units.some((u) => u.topics.some((x) => x.id === topicId))) return null;
       return structuredClone(c.units);
     },
   };

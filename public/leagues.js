@@ -15,6 +15,8 @@ const api = async (url, opts = {}) => {
     headers: { "Content-Type": "application/json" },
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
+  // Sprememba mimo app.js api(): vnaprej prenesene kopije (public/kliki.js topli) niso več sveže.
+  if (opts.method && opts.method !== "GET") dispatchEvent(new Event("evklid:sprememba"));
   const data = await res.json().catch(() => ({}));
   // Napaka s ključem prevoda (npr. lg.nameContact): v jeziku učenca, ne v slovenščini strežnika.
   if (!res.ok) throw new Error((data.code === "lg.nameContact" && t(data.code)) || data.error || t("lg.error", { status: res.status }));

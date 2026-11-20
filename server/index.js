@@ -32,6 +32,8 @@ const server = app.listen(port, () => {
   // Besedila zaslonov (/i18n/zasloni-sl.js): sestavljena takoj po zagonu, ne ob prvi zahtevi (prebere vse datoteke JS,
   // ~75 ms zasedene niti, ki bi sicer zadržala prvi klik po vsakem ponovnem zagonu).
   setImmediate(() => app.locals.pripraviZasloniSl?.().catch((e) => console.warn(`[evklid] besedila zaslonov: ${e?.message || e}`)));
+  // Seznam odvisnosti lenih modulov (/lene-odvisnosti.js) prav tako takoj po zagonu, ne ob prvi zahtevi.
+  setImmediate(() => app.locals.pripraviOdvisnosti?.().catch((e) => console.warn(`[evklid] odvisnosti modulov: ${e?.message || e}`)));
   // Varnostni zaznavalnik (public/nujno.js) sestavi vzorce šele ob prvi uporabi: tu jih v ozadju pripravi po kosih
   // (do 15 ms, vmes druge zahteve), da prvo sporočilo po zagonu ne čaka na sestavljanje in prevajanje.
   const ogrejZaznavalnik = () => ogrejNujno(15) || setTimeout(ogrejZaznavalnik, 5).unref();

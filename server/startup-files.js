@@ -56,18 +56,22 @@ export function startupFiles(publicDir, entry = "index.html", later = []) {
 
 // Leni modul in vse njegove statične odvisnosti (poti URL, npr. "/graph/sci.js"), za vzporedno nalaganje v brskalniku
 // (public/kliki.js vzporedno: <link rel="modulepreload"> za vse naenkrat namesto ravni za ravnijo uvozov).
-export function moduleDeps(publicDir, entry) {
+// beri: skupen predpomnilnik vsebine (abs → besedilo ali null) za več vstopnih modulov hkrati (vsaka datoteka enkrat).
+export function moduleDeps(publicDir, entry, beri = new Map()) {
   const out = [];
   const seen = new Set();
   const visit = (abs) => {
     if (seen.has(abs) || !abs.startsWith(publicDir + path.sep)) return;
     seen.add(abs);
-    let src;
-    try {
-      src = fs.readFileSync(abs, "utf8");
-    } catch {
-      return;
+    if (!beri.has(abs)) {
+      try {
+        beri.set(abs, fs.readFileSync(abs, "utf8"));
+      } catch {
+        beri.set(abs, null);
+      }
     }
+    const src = beri.get(abs);
+    if (src == null) return;
     out.push("/" + path.relative(publicDir, abs).split(path.sep).join("/"));
     for (const m of src.matchAll(IMPORT)) {
       const spec = m[1];

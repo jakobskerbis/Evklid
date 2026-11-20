@@ -472,12 +472,40 @@ export function createApp(store, opts = {}) {
     next();
   });
   // Odvisnosti lenih modulov (kalkulator, igre …): brskalnik jih naloži vse hkrati, ne raven za ravnijo uvozov (na Slow 4G
-  // ~0,6 s na raven; kalkulator in igre imata 4 ravni). Izračun ob prvi zahtevi za vsako različico datotek.
-  let odvisnosti = null;
-  app.get("/lene-odvisnosti.js", (_req, res) => {
+  // ~0,6 s na raven; kalkulator in igre imata 4 ravni). Sestavi se takoj po zagonu (server/index.js, kot besedila
+  // zaslonov; branje datotek ~70 ms zasedene niti, vsaka datoteka enkrat) in ob novi različici datotek; stisnjeno.
+  let odvisnosti = null; // { v, p: Promise<{ raw, br, gzip, etag }> }
+  const pripraviOdvisnosti = () => {
     const v = filesVersion();
-    if (odvisnosti?.v !== v) odvisnosti = { v, js: `export default ${JSON.stringify(Object.fromEntries(LENI_MODULI.map((m) => [m, moduleDeps(publicDir, m)])))};\n` };
-    res.type("text/javascript").set("Cache-Control", "no-cache").send(odvisnosti.js);
+    if (odvisnosti?.v === v) return odvisnosti.p;
+    const beri = new Map();
+    const raw = Buffer.from(`export default ${JSON.stringify(Object.fromEntries(LENI_MODULI.map((m) => [m, moduleDeps(publicDir, m, beri)])))};\n`);
+    const p = Promise.all([
+      stisni(zlib.brotliCompress, raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: raw.length } }),
+      stisni(zlib.gzip, raw, { level: 9 }),
+    ]).then(([br, gzip]) => ({ raw, br, gzip, etag: `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}` }));
+    p.catch(() => odvisnosti?.p === p && (odvisnosti = null));
+    odvisnosti = { v, p };
+    return p;
+  };
+  app.locals.pripraviOdvisnosti = pripraviOdvisnosti;
+  app.get("/lene-odvisnosti.js", async (req, res, next) => {
+    try {
+      const z = await pripraviOdvisnosti();
+      const enc = process.env.EVKLID_COMPRESS === "0" ? null : pickEncoding(req.headers["accept-encoding"]);
+      const etag = `${z.etag}${enc ? `-${enc}` : ""}"`;
+      res.setHeader("Content-Type", "text/javascript; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Vary", "Accept-Encoding");
+      res.setHeader("ETag", etag);
+      if (req.headers["if-none-match"] === etag) return res.status(304).end();
+      const body = enc ? z[enc] : z.raw;
+      if (enc) res.setHeader("Content-Encoding", enc);
+      res.setHeader("Content-Length", body.length);
+      return res.end(body);
+    } catch (e) {
+      return next(e);
+    }
   });
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {

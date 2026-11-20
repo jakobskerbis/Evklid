@@ -434,6 +434,8 @@ const sprememba = () => {
   apiWarm.clear();
   apiGen++;
 };
+// Zapisi mimo api() (leagues.js, kviz.js, 3d/atlas.js s svojim fetch) to sporočijo z dogodkom.
+addEventListener("evklid:sprememba", sprememba);
 const api = (url, opts = {}) => {
   const get = !opts.method && !opts.body && !opts.headers && !opts.signal;
   if (!get) apiInFlight.clear();

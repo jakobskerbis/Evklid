@@ -76,14 +76,33 @@ test("strežnik: naloga vadnice vnaprej ne pokaže zgleda in ne spremeni nove te
     assert.ok(!st() || (st().status === "new" && !st().seen_example), JSON.stringify(st()));
     // Klik pokaže zgled kot prej.
     assert.ok((await post(`/api/students/${s.id}/practice/next`, { topic_id: tp.id })).example);
-    // Zdaj vnaprej da nalogo, klik pa isto nalogo (nerešena naloga počaka), brez nove vrstice.
+    // Zdaj vnaprej da nalogo (tema v učenju: stanje teme ostane enako), klik pa isto nalogo (nerešena naloga počaka),
+    // brez nove vrstice; čas naloge je čas klika, ne priprave (tedensko poročilo, server/rast.js štejeta po created_at).
+    const vse = () => store.db.prepare("SELECT * FROM topic_state WHERE student_id = ? AND topic_id = ?").get(s.id, tp.id);
+    const stanjePrej = JSON.stringify(vse());
     const a = await post(`/api/students/${s.id}/practice/next`, { topic_id: tp.id, vnaprej: true });
     assert.ok(a.task?.id);
+    assert.equal(JSON.stringify(vse()), stanjePrej, "vnaprej ne spremeni stanja teme");
+    store.db.prepare("UPDATE tasks SET created_at = '2000-01-01 00:00:00' WHERE id = ?").run(a.task.id);
     const n = () => store.db.prepare("SELECT COUNT(*) AS n FROM tasks WHERE student_id = ?").get(s.id).n;
     const prej = n();
     const b = await post(`/api/students/${s.id}/practice/next`, { topic_id: tp.id });
     assert.equal(b.task.id, a.task.id);
     assert.equal(n(), prej);
+    const cas = store.db.prepare("SELECT created_at FROM tasks WHERE id = ?").get(a.task.id).created_at;
+    assert.ok(cas > "2020", `čas naloge ob kliku (${cas})`);
+    // Nedotaknjena naloga za drugo stopnjo (npr. po preizkusu predznanja): klik da novo nalogo za trenutno stopnjo.
+    const stopnja = store.db.prepare("SELECT level FROM tasks WHERE id = ?").get(a.task.id).level;
+    store.db.prepare("UPDATE tasks SET level = level + 1 WHERE id = ?").run(a.task.id);
+    const c = await post(`/api/students/${s.id}/practice/next`, { topic_id: tp.id });
+    assert.equal(store.db.prepare("SELECT level FROM tasks WHERE id = ?").get(c.task.id).level, stopnja, "nova naloga za trenutno stopnjo");
+    assert.notEqual(c.task.id, a.task.id, "nova naloga z drugo številko");
+    assert.equal(n(), prej);
+    // Naloga s poskusom ostane taka, kot je (čas in naloga).
+    store.db.prepare("UPDATE tasks SET attempts = 1, created_at = '2000-01-01 00:00:00' WHERE id = ?").run(c.task.id);
+    const d = await post(`/api/students/${s.id}/practice/next`, { topic_id: tp.id });
+    assert.equal(d.task.id, c.task.id);
+    assert.equal(store.db.prepare("SELECT created_at FROM tasks WHERE id = ?").get(c.task.id).created_at, "2000-01-01 00:00:00");
   } finally {
     server.close();
   }
