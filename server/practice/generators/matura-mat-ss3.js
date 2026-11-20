@@ -1676,4 +1676,412 @@ function lineT(kn, kd, nn, nd) {
   return a === 0 ? kx : `${kx} ${a < 0 ? "-" : "+"} ${ft(Math.abs(nn), nd)}`;
 }
 
-export const MATURA_MAT_SS3 = wrapGens(GENS);
+// ================= površina in prostornina teles (MAT-SS-3/povrsina-in-prostornina-teles) =================
+// Pokončna prizma, valj, piramida, stožec, krogla (katalog 2026: obe ravni). Zapisi kot v lekciji: O osnovna
+// ploskev, pl plašč, v višina telesa, s stranski rob ali stranica stožca, v_a višina stranske ploskve.
+const uT = (x, u) => `${tx(x)}\\ \\mathrm{${u}}`;
+const cl = (x) => Math.round(x * 1e9) / 1e9;
+// Rezultat, zaokrožen na d decimalk, z »=« ali »≈«.
+const rz = (x, u, d = 1) => `${ap(x, d)} ${uT(roundHalfUp(x, d), u)}`;
+// Večkratnik π: kπ(12) → "12\pi", kπ(1) → "\pi", kπ(2.25) → "2{,}25\pi".
+const kpi = (k) => (k === 1 ? "\\pi" : `${tx(cl(k))}\\pi`);
+const S3 = Math.sqrt(3);
+const L_ALT = ["L", "litrov", "litra", "liter", "litre", "dm³", "dm3"];
+
+const TELESA = [
+  {
+    id: P + "telesa",
+    topics: [T("povrsina-in-prostornina-teles"), "MAT-SS-3/mesane-naloge-3-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
+    gen(level, r) {
+      const t = r.int(0, 4);
+      if (level === 1) {
+        if (t === 0) {
+          // Valj: prostornina ali površina (polmer ali premer).
+          const [what, rr, v, u] = r.pick([
+            ["Pločevinka v obliki valja", r.int(30, 45) / 10, r.int(10, 16), "cm"],
+            ["Valjast kozarec za svinčnike", r.int(30, 50) / 10, r.int(9, 14), "cm"],
+            ["Valjast rezervoar za vodo", r.int(5, 15) / 10, r.int(15, 30) / 10, "m"],
+            ["Valj", r.int(2, 9), r.int(4, 20), "cm"],
+          ]);
+          const useD = r.next() < 0.5;
+          const askV = r.next() < 0.5;
+          const V = Math.PI * rr * rr * v;
+          const Pv = 2 * Math.PI * rr * (rr + v);
+          const dim = useD ? `premer osnovne ploskve $d = ${uT(2 * rr, u)}$` : `polmer osnovne ploskve $r = ${uT(rr, u)}$`;
+          return {
+            text: `${what} ima ${dim} in višino $v = ${uT(v, u)}$. Izračunaj ${askV ? "prostornino" : "površino"} valja. Zaokroži na desetinko.`,
+            answer: num(cl(askV ? V : Pv), 1, askV
+              ? [
+                  useD ? { value: Math.PI * 4 * rr * rr * v, why: "V obrazec vstavi polmer, ne premera: $r = \\frac{d}{2}$." } : null,
+                  { value: 2 * Math.PI * rr * v, why: "To je ploščina plašča. Prostornina je $V = O \\cdot v = \\pi r^2 v$." },
+                  { value: V / 3, why: "Valj ni stožec: tretjina tu ne sodi." },
+                ]
+              : [
+                  useD ? { value: 2 * Math.PI * 2 * rr * (2 * rr + v), why: "V obrazec vstavi polmer, ne premera: $r = \\frac{d}{2}$." } : null,
+                  { value: 2 * Math.PI * rr * v, why: "To je le plašč; prištej še obe osnovni ploskvi." },
+                  { value: Math.PI * rr * rr + 2 * Math.PI * rr * v, why: "Valj ima dve osnovni ploskvi (dno in pokrov)." },
+                ], `${u}${askV ? "³" : "²"}`),
+            hint: useD ? "Najprej iz premera izračunaj polmer." : askV ? "Prostornina valja je ploščina osnovne ploskve, pomnožena z višino." : "Površina valja: dve osnovni ploskvi in plašč (pravokotnik z dolžino $2\\pi r$).",
+            data: { given: [useD ? `d = ${uT(2 * rr, u)}` : `r = ${uT(rr, u)}`, `v = ${uT(v, u)}`], find: [askV ? "V" : "P"] },
+            formula: askV ? "V = \\pi r^2 v" : "P = 2\\pi r^2 + 2\\pi r v",
+            solution: `${useD ? `$r = \\dfrac{d}{2} = ${uT(rr, u)}$\n` : ""}${askV ? `$V = \\pi \\cdot ${tx(rr)}^2 \\cdot ${tx(v)} = ${kpi(rr * rr * v)} ${rz(V, `${u}^3`)}$` : `$P = 2\\pi \\cdot ${tx(rr)}^2 + 2\\pi \\cdot ${tx(rr)} \\cdot ${tx(v)} = ${kpi(2 * rr * (rr + v))} ${rz(Pv, `${u}^2`)}$`}`,
+          };
+        }
+        if (t === 1) {
+          // Krogla: prostornina ali površina.
+          const [what, d, u] = r.pick([
+            ["Žoga za košarko ima premer", r.int(23, 25), "cm"],
+            ["Žogica za namizni tenis ima premer", 4, "cm"],
+            ["Steklena frnikola ima premer", r.int(14, 25) / 10, "cm"],
+            ["Okrogla lubenica ima premer približno", r.int(20, 32), "cm"],
+            ["Kovinska krogla za balinanje ima premer", r.int(10, 11), "cm"],
+          ]);
+          const rr = d / 2;
+          const askV = r.next() < 0.5;
+          const V = (4 / 3) * Math.PI * rr ** 3;
+          const Pk = 4 * Math.PI * rr * rr;
+          return {
+            text: `${what} $${uT(d, u)}$. Izračunaj njeno ${askV ? "prostornino" : "površino"}. Zaokroži na desetinko.`,
+            answer: num(cl(askV ? V : Pk), 1, askV
+              ? [
+                  { value: (4 / 3) * Math.PI * d ** 3, why: "V obrazec vstavi polmer, ne premera: $r = \\frac{d}{2}$." },
+                  { value: Math.PI * rr ** 3, why: "Manjka faktor $\\frac{4}{3}$: $V = \\frac{4}{3}\\pi r^3$." },
+                  { value: Pk, why: "To je površina krogle; prostornina je $\\frac{4}{3}\\pi r^3$." },
+                ]
+              : [
+                  { value: 4 * Math.PI * d * d, why: "V obrazec vstavi polmer, ne premera: $r = \\frac{d}{2}$." },
+                  { value: Math.PI * rr * rr, why: "To je ploščina kroga; površina krogle je štirikrat večja." },
+                  { value: V, why: "To je prostornina; površina je $4\\pi r^2$." },
+                ], `${u}${askV ? "³" : "²"}`),
+            hint: "Najprej iz premera izračunaj polmer.",
+            data: { given: [`d = ${uT(d, u)}`], find: [askV ? "V" : "P"] },
+            formula: askV ? "V = \\dfrac{4}{3}\\pi r^3" : "P = 4\\pi r^2",
+            solution: `$r = \\dfrac{d}{2} = ${uT(rr, u)}$\n${askV ? `$V = \\dfrac{4}{3}\\pi \\cdot ${tx(rr)}^3 ${rz(V, `${u}^3`)}$` : `$P = 4\\pi \\cdot ${tx(rr)}^2 = ${kpi(4 * rr * rr)} ${rz(Pk, `${u}^2`)}$`}`,
+          };
+        }
+        if (t === 2) {
+          // Stožec: prostornina.
+          const [what, rr, v, u] = r.pick([
+            ["Kornet za sladoled ima obliko stožca s polmerom osnovne ploskve", r.int(20, 30) / 10, r.int(10, 14), "cm"],
+            ["Kup peska ima obliko stožca s polmerom osnovne ploskve", r.int(10, 25) / 10, r.int(8, 15) / 10, "m"],
+            ["Stožec ima polmer osnovne ploskve", r.int(2, 10), r.int(3, 18), "cm"],
+            ["Lijak ima obliko stožca s polmerom osnovne ploskve", r.int(4, 8), r.int(6, 12), "cm"],
+          ]);
+          const V = (Math.PI * rr * rr * v) / 3;
+          return {
+            text: `${what} $r = ${uT(rr, u)}$ in višino $v = ${uT(v, u)}$. Izračunaj prostornino. Zaokroži na desetinko.`,
+            answer: num(cl(V), 1, [
+              { value: Math.PI * rr * rr * v, why: "Prostornina stožca je tretjina prostornine valja z enako osnovno ploskvijo in višino." },
+              { value: (Math.PI * rr * v) / 3, why: "Ploščina osnovne ploskve je $\\pi r^2$: polmer kvadriraj." },
+              { value: (Math.PI * 4 * rr * rr * v) / 3, why: "V obrazec vstavi polmer, ne premera." },
+            ], `${u}³`),
+            hint: "Prostornina stožca je tretjina zmnožka ploščine osnovne ploskve in višine.",
+            data: { given: [`r = ${uT(rr, u)}`, `v = ${uT(v, u)}`], find: ["V"] },
+            formula: "V = \\dfrac{\\pi r^2 v}{3}",
+            solution: `$O = \\pi r^2 = ${kpi(rr * rr)}\\ \\mathrm{${u}^2}$\n$V = \\dfrac{O \\cdot v}{3} = \\dfrac{${kpi(rr * rr)} \\cdot ${tx(v)}}{3} ${rz(V, `${u}^3`)}$`,
+          };
+        }
+        if (t === 3) {
+          // Pravilna štiristrana piramida: prostornina.
+          const [what, a, v, u] = r.pick([
+            ["Steklena utež za papir ima obliko pravilne štiristrane piramide z osnovnim robom", r.int(40, 80) / 10, r.int(30, 60) / 10, "cm"],
+            ["Streha stolpa ima obliko pravilne štiristrane piramide z osnovnim robom", r.int(30, 80) / 10, r.int(30, 60) / 10, "m"],
+            ["Pravilna štiristrana piramida ima osnovni rob", r.int(3, 15), r.int(4, 20), "cm"],
+          ]);
+          const V = (a * a * v) / 3;
+          return {
+            text: `${what} $a = ${uT(a, u)}$ in višino $v = ${uT(v, u)}$. Izračunaj prostornino.${Math.abs(V - roundHalfUp(V, 1)) > 1e-9 ? " Zaokroži na desetinko." : ""}`,
+            answer: num(cl(V), Math.abs(V - roundHalfUp(V, 1)) > 1e-9 ? 1 : null, [
+              { value: a * a * v, why: "To bi bila prostornina prizme; piramida ima tretjino." },
+              { value: (a * v) / 3, why: "Osnovna ploskev je kvadrat s ploščino $a^2$." },
+              { value: (4 * a * v) / 3, why: "Osnovna ploskev je kvadrat: $O = a^2$, ne $4a$." },
+            ], `${u}³`),
+            hint: "Osnovna ploskev je kvadrat. Prostornina piramide je tretjina zmnožka $O \\cdot v$.",
+            data: { given: [`a = ${uT(a, u)}`, `v = ${uT(v, u)}`], find: ["V"] },
+            formula: "V = \\dfrac{O \\cdot v}{3} = \\dfrac{a^2 v}{3}",
+            solution: `$O = a^2 = ${tx(a)}^2 = ${uT(cl(a * a), `${u}^2`)}$\n$V = \\dfrac{${tx(cl(a * a))} \\cdot ${tx(v)}}{3} ${rz(V, `${u}^3`)}$`,
+          };
+        }
+        // Kvader: površina (koliko kartona, lepenke …).
+        const [what, a, b, c, u] = r.pick([
+          ["Škatla za čevlje ima obliko kvadra z robovi", r.int(28, 34), r.int(18, 22), r.int(10, 13), "cm"],
+          ["Akvarij brez pokrova ima obliko kvadra z robovi", r.int(5, 10) / 10, r.int(3, 5) / 10, r.int(3, 6) / 10, "m"],
+          ["Kvader ima robove", r.int(2, 12), r.int(2, 12), r.int(2, 12), "cm"],
+        ]);
+        const open = what.startsWith("Akvarij");
+        const Pq = 2 * (a * b + b * c + c * a) - (open ? a * b : 0);
+        return {
+          text: `${what} $a = ${uT(a, u)}$, $b = ${uT(b, u)}$ in $c = ${uT(c, u)}$${open ? " (dno ima robova $a$ in $b$)" : ""}. ${open ? "Koliko stekla potrebujemo zanj?" : what.startsWith("Škatla") ? "Koliko kartona potrebujemo zanjo, če prekrivanje zanemarimo?" : "Izračunaj površino kvadra."}`,
+          answer: num(cl(Pq), null, [
+            { value: cl(a * b * c), why: "To je prostornina; iščemo površino (ploščine vseh ploskev)." },
+            { value: cl(a * b + b * c + c * a), why: "Vsaka ploskev ima nasproti še eno enako: vsoto podvoji." },
+            open ? { value: cl(2 * (a * b + b * c + c * a)), why: "Akvarij nima pokrova: ena ploskev $a \\cdot b$ manj." } : { value: cl(4 * (a + b + c)), why: "To je vsota dolžin vseh robov, ne ploščina." },
+          ], `${u}²`),
+          hint: open ? "Seštej ploščine dna in štirih stranskih ploskev." : "Kvader ima tri pare enakih pravokotnikov.",
+          data: { given: [`a = ${uT(a, u)}`, `b = ${uT(b, u)}`, `c = ${uT(c, u)}`], find: ["P"] },
+          formula: open ? "P = ab + 2bc + 2ac" : "P = 2(ab + bc + ac)",
+          solution: open
+            ? `Dno: $${tx(a)} \\cdot ${tx(b)} = ${tx(cl(a * b))}$; stranske ploskve: $2 \\cdot ${tx(b)} \\cdot ${tx(c)} + 2 \\cdot ${tx(a)} \\cdot ${tx(c)} = ${tx(cl(2 * b * c + 2 * a * c))}$\n$P = ${uT(cl(Pq), `${u}^2`)}$`
+            : `$P = 2(${tx(a)} \\cdot ${tx(b)} + ${tx(b)} \\cdot ${tx(c)} + ${tx(a)} \\cdot ${tx(c)})$\n$P = 2 \\cdot ${tx(cl(a * b + b * c + c * a))} = ${uT(cl(Pq), `${u}^2`)}$`,
+        };
+      }
+      if (level === 2) {
+        if (t === 0) {
+          // Stožec: najprej stranica s, nato površina ali plašč.
+          const [rr, v] = r.pick([[3, 4], [5, 12], [6, 8], [8, 15], [9, 12], [7, 24], [2, 5], [4, 7], [5, 9], [6, 10]]);
+          const s = Math.hypot(rr, v);
+          const mantle = r.next() < 0.4;
+          const val = mantle ? Math.PI * rr * s : Math.PI * rr * (rr + s);
+          return {
+            text: mantle
+              ? `Kornet ima obliko stožca s polmerom osnovne ploskve $${uT(rr, "cm")}$ in višino $${uT(v, "cm")}$. Koliko papirja potrebujemo za njegov plašč (brez prekrivanja)? Zaokroži na desetinko.`
+              : `Stožec ima polmer osnovne ploskve $r = ${uT(rr, "cm")}$ in višino $v = ${uT(v, "cm")}$. Izračunaj njegovo površino. Zaokroži na desetinko.`,
+            answer: num(cl(val), 1, mantle
+              ? [
+                  { value: Math.PI * rr * v, why: "V obrazec za plašč sodi stranica stožca $s$, ne višina $v$." },
+                  { value: Math.PI * rr * (rr + s), why: "To je cela površina; plašč nima osnovne ploskve." },
+                  { value: 2 * Math.PI * rr * s, why: "Plašč stožca je krožni izsek s ploščino $\\pi r s$, ne $2\\pi r s$." },
+                ]
+              : [
+                  { value: Math.PI * rr * (rr + v), why: "V obrazec za plašč sodi stranica stožca $s$, ne višina $v$." },
+                  { value: Math.PI * rr * s, why: "To je le plašč; prištej še osnovno ploskev." },
+                  { value: Math.PI * rr * rr + 2 * Math.PI * rr * s, why: "Plašč stožca je $\\pi r s$, ne $2\\pi r s$." },
+                ], "cm²"),
+            hint: "Najprej s Pitagorovim izrekom izračunaj stranico stožca $s$ (hipotenuza trikotnika z $r$ in $v$).",
+            data: { given: [`r = ${uT(rr, "cm")}`, `v = ${uT(v, "cm")}`], find: [mantle ? "pl" : "P"] },
+            formula: mantle ? ["s^2 = r^2 + v^2", "pl = \\pi r s"] : ["s^2 = r^2 + v^2", "P = \\pi r^2 + \\pi r s"],
+            solution: `$s = \\sqrt{${rr}^2 + ${v}^2} = \\sqrt{${rr * rr + v * v}} ${rz(s, "cm", 3)}$\n${mantle ? `$pl = \\pi \\cdot ${rr} \\cdot ${txr(s, 3)} ${rz(val, "cm^2")}$` : `$P = \\pi \\cdot ${rr}^2 + \\pi \\cdot ${rr} \\cdot ${txr(s, 3)} ${rz(val, "cm^2")}$`}`,
+          };
+        }
+        if (t === 1) {
+          // Pravilna štiristrana piramida: višina stranske ploskve, nato površina.
+          const a = 2 * r.int(2, 8);
+          const v = r.int(3, 15);
+          const va = Math.hypot(v, a / 2);
+          const Pp = a * a + 2 * a * va;
+          return {
+            text: `Pravilna štiristrana piramida ima osnovni rob $a = ${uT(a, "cm")}$ in višino $v = ${uT(v, "cm")}$. Izračunaj njeno površino. Zaokroži na desetinko.`,
+            answer: num(cl(Pp), 1, [
+              { value: a * a + 2 * a * v, why: "Višina stranske ploskve $v_a$ ni višina piramide $v$: izračunaj jo s Pitagorovim izrekom." },
+              { value: 2 * a * va, why: "To je le plašč; prištej še osnovno ploskev $a^2$." },
+              { value: a * a + 4 * a * va, why: "Stranska ploskev je trikotnik s ploščino $\\frac{a \\cdot v_a}{2}$." },
+            ], "cm²"),
+            hint: "Višina piramide, polovica osnovnega roba in višina stranske ploskve tvorijo pravokotni trikotnik.",
+            data: { given: [`a = ${uT(a, "cm")}`, `v = ${uT(v, "cm")}`], find: ["P"] },
+            formula: ["v_a^2 = v^2 + \\left(\\dfrac{a}{2}\\right)^2", "P = a^2 + 4 \\cdot \\dfrac{a v_a}{2} = a^2 + 2 a v_a"],
+            solution: `$v_a = \\sqrt{${v}^2 + ${a / 2}^2} = \\sqrt{${v * v + (a * a) / 4}} ${rz(va, "cm", 3)}$\n$P = ${a}^2 + 2 \\cdot ${a} \\cdot ${txr(va, 3)} ${rz(Pp, "cm^2")}$`,
+          };
+        }
+        if (t === 2) {
+          // Valjasta posoda: prostornina v litrih (premer, pretvorba enot).
+          const [what, d, v] = r.pick([
+            ["Valjast lonec ima notranji premer", r.int(16, 28), r.int(10, 20)],
+            ["Valjasto vedro ima notranji premer", r.int(24, 32), r.int(25, 35)],
+            ["Valjast sod ima notranji premer", r.int(50, 70), r.int(80, 100)],
+            ["Valjasta steklenica za sok ima notranji premer", r.int(6, 9), r.int(18, 26)],
+          ]);
+          const rr = d / 2;
+          const L = (Math.PI * rr * rr * v) / 1000;
+          return {
+            text: `${what} $${uT(d, "cm")}$ in notranjo višino $${uT(v, "cm")}$. Koliko litrov tekočine lahko največ vsebuje? Zaokroži na desetinko litra.`,
+            answer: { ...num(cl(L), 1, [
+              { value: (Math.PI * d * d * v) / 1000, why: "V obrazec vstavi polmer: $r = \\frac{d}{2}$." },
+              { value: Math.PI * rr * rr * v, why: "Rezultat je v $\\mathrm{cm^3}$; pretvori v litre ($1\\ \\mathrm{l} = 1\\ \\mathrm{dm^3} = 1000\\ \\mathrm{cm^3}$)." },
+              { value: (2 * Math.PI * rr * v) / 1000, why: "Prostornina je $\\pi r^2 v$, ne $2\\pi r v$." },
+            ], "l"), unitAlternatives: L_ALT },
+            hint: "Izračunaj prostornino v $\\mathrm{cm^3}$ in jo pretvori v litre.",
+            data: { given: [`d = ${uT(d, "cm")}`, `v = ${uT(v, "cm")}`], find: ["V"] },
+            formula: ["V = \\pi r^2 v", "1\\ \\mathrm{l} = 1\\ \\mathrm{dm^3} = 1000\\ \\mathrm{cm^3}"],
+            solution: `$r = \\dfrac{d}{2} = ${uT(rr, "cm")}$\n$V = \\pi \\cdot ${tx(rr)}^2 \\cdot ${v} ${rz(Math.PI * rr * rr * v, "cm^3")}$\n$V ${rz(L, "l")}$`,
+          };
+        }
+        if (t === 3) {
+          // Pravilna tristrana ali šeststrana prizma: osnovna ploskev iz enakostraničnih trikotnikov.
+          const six = r.next() < 0.5;
+          const a = r.int(2, 10);
+          const v = r.int(4, 20);
+          const O = (six ? 6 : 1) * ((a * a * S3) / 4);
+          const V = O * v;
+          return {
+            text: `Pravilna ${six ? "šeststrana" : "tristrana"} prizma ima osnovni rob $a = ${uT(a, "cm")}$ in višino $v = ${uT(v, "cm")}$. Izračunaj njeno prostornino. Zaokroži na desetinko.`,
+            answer: num(cl(V), 1, [
+              { value: (six ? 6 : 1) * a * a * v, why: "Osnovna ploskev ni kvadrat: enakostranični trikotnik ima ploščino $\\frac{a^2\\sqrt{3}}{4}$." },
+              { value: V / 3, why: "Prizma ni piramida: tretjina tu ne sodi." },
+              six ? { value: V / 6, why: "Pravilni šestkotnik sestavlja šest enakostraničnih trikotnikov." } : { value: (a * a * S3 * v) / 2, why: "Ploščina enakostraničnega trikotnika je $\\frac{a^2\\sqrt{3}}{4}$, ne $\\frac{a^2\\sqrt{3}}{2}$." },
+            ], "cm³"),
+            hint: six ? "Pravilni šestkotnik razdeli na šest enakostraničnih trikotnikov." : "Osnovna ploskev je enakostranični trikotnik.",
+            data: { given: [`a = ${uT(a, "cm")}`, `v = ${uT(v, "cm")}`], find: ["V"] },
+            formula: six ? ["O = 6 \\cdot \\dfrac{a^2\\sqrt{3}}{4}", "V = O \\cdot v"] : ["O = \\dfrac{a^2\\sqrt{3}}{4}", "V = O \\cdot v"],
+            solution: `$O = ${six ? "6 \\cdot " : ""}\\dfrac{${a}^2\\sqrt{3}}{4} ${rz(O, "cm^2", 3)}$\n$V = ${txr(O, 3)} \\cdot ${v} ${rz(V, "cm^3")}$`,
+          };
+        }
+        // Krogla: iz prostornine polmer (obratna naloga).
+        const rr = r.int(2, 12);
+        const V = Math.round((4 / 3) * Math.PI * rr ** 3);
+        const rc = Math.cbrt((3 * V) / (4 * Math.PI));
+        return {
+          text: `Kovinska krogla ima prostornino $${uT(V, "cm^3")}$. Kolikšen je njen polmer? Zaokroži na stotinko.`,
+          answer: num(cl(rc), 2, [
+            { value: Math.sqrt((3 * V) / (4 * Math.PI)), why: "Iz $r^3$ izračunaš $r$ s tretjim korenom, ne s kvadratnim." },
+            { value: (3 * V) / (4 * Math.PI), why: "To je $r^3$; na koncu še izračunaj tretji koren." },
+            { value: Math.cbrt(V / Math.PI), why: "Pozabil si na faktor $\\frac{4}{3}$: $r^3 = \\frac{3V}{4\\pi}$." },
+          ], "cm"),
+          hint: "Iz obrazca za prostornino krogle izrazi $r^3$.",
+          data: { given: [`V = ${uT(V, "cm^3")}`], find: ["r"] },
+          formula: ["V = \\dfrac{4}{3}\\pi r^3", "r = \\sqrt[3]{\\dfrac{3V}{4\\pi}}"],
+          solution: `$r^3 = \\dfrac{3V}{4\\pi} = \\dfrac{3 \\cdot ${V}}{4\\pi} ${ap((3 * V) / (4 * Math.PI), 3)} ${txr((3 * V) / (4 * Math.PI), 3)}$\n$r = \\sqrt[3]{${txr((3 * V) / (4 * Math.PI), 3)}} ${rz(rc, "cm", 2)}$`,
+        };
+      }
+      // raven 3
+      if (t === 0) {
+        // Pretapljanje: enaka prostornina.
+        if (r.next() < 0.5) {
+          const R = r.int(3, 9);
+          const rr = r.int(2, 8);
+          const h = (4 * R ** 3) / (3 * rr * rr);
+          return {
+            text: `Kovinsko kroglo s polmerom $${uT(R, "cm")}$ pretalimo in ulijemo valj s polmerom osnovne ploskve $${uT(rr, "cm")}$. Kolikšna je višina valja? Zaokroži na desetinko.`,
+            answer: num(cl(h), 1, [
+              { value: R ** 3 / (rr * rr), why: "Prostornina krogle je $\\frac{4}{3}\\pi R^3$: upoštevaj faktor $\\frac{4}{3}$." },
+              { value: (4 * R ** 3) / (rr * rr), why: "Manjka deljenje s $3$: $\\frac{4}{3}\\pi R^3 = \\pi r^2 v$." },
+              { value: (4 * R * R) / (rr * rr), why: "Prostornina krogle vsebuje $R^3$, ne $R^2$." },
+            ], "cm"),
+            hint: "Pri pretapljanju se prostornina ohrani: izenači prostornini krogle in valja.",
+            data: { given: [`R = ${uT(R, "cm")}`, `r = ${uT(rr, "cm")}`], find: ["v"] },
+            formula: ["\\dfrac{4}{3}\\pi R^3 = \\pi r^2 v", "v = \\dfrac{4R^3}{3r^2}"],
+            solution: `$\\dfrac{4}{3}\\pi \\cdot ${R}^3 = \\pi \\cdot ${rr}^2 \\cdot v$\n$v = \\dfrac{4 \\cdot ${R ** 3}}{3 \\cdot ${rr * rr}} ${rz(h, "cm")}$`,
+          };
+        }
+        const rv = r.int(2, 5);
+        const vv = r.int(10, 30);
+        const rk = r.pick([0.5, 0.6, 0.75, 0.8, 1]);
+        const Vv = Math.PI * rv * rv * vv;
+        const Vk = (4 / 3) * Math.PI * rk ** 3;
+        const n = Math.floor(cl(Vv / Vk));
+        if (Math.abs(Vv / Vk - Math.round(Vv / Vk)) < 1e-6) return null;
+        return {
+          text: `Svinčeni valj s polmerom $${uT(rv, "cm")}$ in višino $${uT(vv, "cm")}$ pretalimo v kroglice s polmerom $${uT(rk, "cm")}$. Največ koliko celih kroglic dobimo?`,
+          answer: num(n, null, [
+            { value: n + 1, why: "Zadnje kroglice ne moremo uliti v celoti: rezultat zaokroži navzdol." },
+            { value: Math.floor((rv * rv * vv) / rk ** 3), why: "Prostornina krogle je $\\frac{4}{3}\\pi r^3$: upoštevaj faktor $\\frac{4}{3}$." },
+            { value: Math.floor((rv * rv * vv) / (rk * rk)), why: "Prostornina krogle vsebuje $r^3$." },
+          ]),
+          hint: "Primerjaj prostornino valja s prostornino ene kroglice.",
+          data: { given: [`r_v = ${uT(rv, "cm")}`, `v = ${uT(vv, "cm")}`, `r_k = ${uT(rk, "cm")}`], find: ["n"] },
+          formula: ["V_v = \\pi r_v^2 v", "V_k = \\dfrac{4}{3}\\pi r_k^3", "n \\le \\dfrac{V_v}{V_k}"],
+          solution: `$V_v = \\pi \\cdot ${rv}^2 \\cdot ${vv} ${rz(Vv, "cm^3", 2)}$\n$V_k = \\dfrac{4}{3}\\pi \\cdot ${tx(rk)}^3 ${rz(Vk, "cm^3", 4)}$\n$\\dfrac{V_v}{V_k} ${ap(Vv / Vk, 2)} ${txr(Vv / Vk, 2)}$, zato dobimo $${n}$ celih kroglic.`,
+        };
+      }
+      if (t === 1) {
+        // Valjasta posoda brez pokrova: iz prostornine višina, nato površina.
+        const rr = r.int(5, 15);
+        const Lt = r.pick([2, 3, 4, 5, 6, 8, 10]);
+        const v = (Lt * 1000) / (Math.PI * rr * rr);
+        if (v < 4 || v > 60) return null;
+        const Po = Math.PI * rr * rr + 2 * Math.PI * rr * v;
+        return {
+          text: `Valjasta posoda brez pokrova ima notranji polmer $${uT(rr, "cm")}$ in drži natanko $${uT(Lt, "l")}$. Koliko pločevine potrebujemo zanjo (dno in plašč)? Debelino pločevine zanemari. Zaokroži na cel $\\mathrm{cm^2}$.`,
+          answer: num(cl(Po), 0, [
+            { value: Po + Math.PI * rr * rr, why: "Posoda nima pokrova: le ena osnovna ploskev." },
+            { value: 2 * Math.PI * rr * v, why: "Prištej še dno posode." },
+            { value: Math.PI * rr * rr + 2 * Math.PI * rr * (Lt / (Math.PI * rr * rr)), why: "Litre pretvori v $\\mathrm{cm^3}$: $1\\ \\mathrm{l} = 1000\\ \\mathrm{cm^3}$." },
+          ], "cm²"),
+          hint: "Najprej pretvori litre v $\\mathrm{cm^3}$ in iz prostornine izračunaj višino. Nato izračunaj dno in plašč.",
+          data: { given: [`r = ${uT(rr, "cm")}`, `V = ${uT(Lt, "l")}`], find: ["P"] },
+          formula: ["V = \\pi r^2 v", "P = \\pi r^2 + 2\\pi r v"],
+          solution: `$V = ${uT(Lt * 1000, "cm^3")}$\n$v = \\dfrac{V}{\\pi r^2} = \\dfrac{${Lt * 1000}}{\\pi \\cdot ${rr}^2} ${rz(v, "cm", 3)}$\n$P = \\pi \\cdot ${rr}^2 + 2\\pi \\cdot ${rr} \\cdot ${txr(v, 3)} ${rz(Po, "cm^2", 0)}$`,
+        };
+      }
+      if (t === 2) {
+        // Enakostranični valj ali stožec iz ploščine osnega preseka.
+        const rr = r.int(2, 9);
+        if (r.next() < 0.5) {
+          const S = 4 * rr * rr;
+          const V = 2 * Math.PI * rr ** 3;
+          return {
+            text: `Osni presek enakostraničnega valja (višina je enaka premeru) je kvadrat s ploščino $${uT(S, "cm^2")}$. Izračunaj prostornino valja. Zaokroži na desetinko.`,
+            answer: num(cl(V), 1, [
+              { value: Math.PI * rr ** 3, why: "Višina enakostraničnega valja je $2r$, ne $r$." },
+              { value: 2 * Math.PI * (2 * rr) ** 3, why: "Stranica kvadrata je premer $2r$, ne polmer." },
+              { value: Math.PI * S * Math.sqrt(S), why: "Stranica kvadrata je premer: $r = \\frac{\\sqrt{S}}{2}$." },
+            ], "cm³"),
+            hint: "Stranica kvadrata je hkrati premer in višina valja.",
+            data: { given: [`S = ${uT(S, "cm^2")}`], find: ["V"] },
+            formula: ["S = (2r)^2", "V = \\pi r^2 \\cdot 2r"],
+            solution: `$2r = \\sqrt{${S}} = ${2 * rr}$, $r = ${uT(rr, "cm")}$, $v = ${uT(2 * rr, "cm")}$\n$V = \\pi \\cdot ${rr}^2 \\cdot ${2 * rr} = ${kpi(2 * rr ** 3)} ${rz(V, "cm^3")}$`,
+          };
+        }
+        const V = (Math.PI * rr ** 3 * S3) / 3;
+        return {
+          text: `Osni presek enakostraničnega stožca je enakostranični trikotnik s ploščino $${rr * rr}\\sqrt{3}\\ \\mathrm{cm^2}$. Izračunaj prostornino stožca. Zaokroži na desetinko.`,
+          answer: num(cl(V), 1, [
+            { value: Math.PI * rr ** 3 * S3, why: "Prostornina stožca je tretjina zmnožka $O \\cdot v$." },
+            { value: (Math.PI * rr ** 3) / 3, why: "Višina enakostraničnega stožca je $r\\sqrt{3}$, ne $r$." },
+            { value: (Math.PI * (2 * rr) ** 3 * S3) / 3, why: "Stranica trikotnika je premer $2r$, ne polmer." },
+          ], "cm³"),
+          hint: "Stranica osnega preseka je $s = 2r$. Iz ploščine enakostraničnega trikotnika izračunaj $r$, višina je $r\\sqrt{3}$.",
+          data: { given: [`S = ${rr * rr}\\sqrt{3}\\ \\mathrm{cm^2}`], find: ["V"] },
+          formula: ["S = \\dfrac{(2r)^2\\sqrt{3}}{4} = r^2\\sqrt{3}", "v = r\\sqrt{3}", "V = \\dfrac{\\pi r^2 v}{3}"],
+          solution: `$r^2\\sqrt{3} = ${rr * rr}\\sqrt{3}$, zato $r = ${uT(rr, "cm")}$ in $v = ${rr}\\sqrt{3}\\ \\mathrm{cm}$\n$V = \\dfrac{\\pi \\cdot ${rr}^2 \\cdot ${rr}\\sqrt{3}}{3} ${rz(V, "cm^3")}$`,
+        };
+      }
+      if (t === 3) {
+        // Pravilna štiristrana piramida iz osnovnega in stranskega roba.
+        const a = r.int(4, 14);
+        const s = r.int(Math.ceil(a * 0.75), a + 8);
+        const v2 = s * s - (a * a) / 2;
+        if (v2 <= 1) return null;
+        const v = Math.sqrt(v2);
+        const V = (a * a * v) / 3;
+        return {
+          text: `Pravilna štiristrana piramida ima osnovni rob $a = ${uT(a, "cm")}$ in stranski rob $s = ${uT(s, "cm")}$. Izračunaj njeno prostornino. Zaokroži na desetinko.`,
+          answer: num(cl(V), 1, [
+            { value: (a * a * s) / 3, why: "Stranski rob ni višina piramide: višino izračunaj s Pitagorovim izrekom." },
+            { value: (a * a * Math.sqrt(s * s - (a * a) / 4)) / 3, why: "Nožišče višine je v središču kvadrata: pri $v$ odštej kvadrat polovice diagonale $\\frac{a\\sqrt{2}}{2}$, ne $\\frac{a}{2}$." },
+            { value: a * a * v, why: "Piramida ima tretjino prostornine prizme." },
+          ], "cm³"),
+          hint: "Višina, polovica diagonale osnovne ploskve in stranski rob tvorijo pravokotni trikotnik.",
+          data: { given: [`a = ${uT(a, "cm")}`, `s = ${uT(s, "cm")}`], find: ["V"] },
+          formula: ["v^2 = s^2 - \\left(\\dfrac{a\\sqrt{2}}{2}\\right)^2", "V = \\dfrac{a^2 v}{3}"],
+          solution: `$\\left(\\dfrac{a\\sqrt{2}}{2}\\right)^2 = \\dfrac{a^2}{2} = ${tx(cl((a * a) / 2))}$\n$v = \\sqrt{${s}^2 - ${tx(cl((a * a) / 2))}} = \\sqrt{${tx(cl(v2))}} ${rz(v, "cm", 3)}$\n$V = \\dfrac{${a}^2 \\cdot ${txr(v, 3)}}{3} ${rz(V, "cm^3")}$`,
+        };
+      }
+      // Odpadek pri struženju ali masa betonskega stebra.
+      if (r.next() < 0.5) {
+        const a = r.int(4, 20);
+        const W = a ** 3 * (1 - Math.PI / 4);
+        return {
+          text: `Iz lesene kocke z robom $${uT(a, "cm")}$ izstružimo največji možni valj. Koliko lesa odpade? Zaokroži na desetinko.`,
+          answer: num(cl(W), 1, [
+            { value: (Math.PI * a ** 3) / 4, why: "To je prostornina valja; odpadek je razlika med kocko in valjem." },
+            { value: a ** 3 * (Math.PI - 1), why: "Polmer valja je polovica roba: $r = \\frac{a}{2}$." },
+            { value: a ** 3 * (1 - Math.PI / 12), why: "Valj ni stožec: prostornina valja nima faktorja $\\frac{1}{3}$." },
+          ], "cm³"),
+          hint: "Največji valj ima premer in višino enaka robu kocke.",
+          data: { given: [`a = ${uT(a, "cm")}`], find: ["V_{\\text{odpadek}}"] },
+          formula: ["V_{\\text{odpadek}} = a^3 - \\pi r^2 v", "r = \\dfrac{a}{2},\\ v = a"],
+          solution: `$r = ${uT(cl(a / 2), "cm")}$, $v = ${uT(a, "cm")}$\n$V_{\\text{valj}} = \\pi \\cdot ${tx(cl(a / 2))}^2 \\cdot ${a} ${rz((Math.PI * a ** 3) / 4, "cm^3")}$\n$V_{\\text{odpadek}} = ${a ** 3} - ${txr((Math.PI * a ** 3) / 4, 1)} ${rz(W, "cm^3")}$`,
+        };
+      }
+      const d = r.pick([30, 35, 40, 45, 50, 60]);
+      const h = r.pick([2.4, 2.5, 2.8, 3, 3.2, 3.5]);
+      const rho = 2400;
+      const Vm = Math.PI * (d / 200) ** 2 * h;
+      const m = Vm * rho;
+      return {
+        text: `Betonski steber ima obliko valja s premerom $${uT(d, "cm")}$ in višino $${uT(h, "m")}$. Gostota betona je $${rho}\\ \\mathrm{kg/m^3}$. Kolikšna je masa stebra? Zaokroži na cel kilogram.`,
+        answer: num(cl(m), 0, [
+          { value: Math.PI * (d / 100) ** 2 * h * rho, why: "V obrazec vstavi polmer: $r = \\frac{d}{2}$." },
+          { value: Math.PI * (d / 2) ** 2 * h * rho, why: "Pred računanjem pretvori centimetre v metre." },
+          { value: (Math.PI * (d / 200) ** 2 * h * rho) / 3, why: "Steber je valj, ne stožec." },
+        ], "kg"),
+        hint: "Pretvori premer v metre, izračunaj prostornino valja v $\\mathrm{m^3}$ in jo pomnoži z gostoto.",
+        data: { given: [`d = ${uT(d, "cm")}`, `v = ${uT(h, "m")}`, `\\rho = ${rho}\\ \\mathrm{kg/m^3}`], find: ["m"] },
+        formula: ["V = \\pi r^2 v", "m = \\rho V"],
+        solution: `$r = \\dfrac{d}{2} = ${uT(d / 2, "cm")} = ${uT(d / 200, "m")}$\n$V = \\pi \\cdot ${tx(d / 200)}^2 \\cdot ${tx(h)} ${rz(Vm, "m^3", 4)}$\n$m = ${rho} \\cdot ${txr(Vm, 4)} ${rz(m, "kg", 0)}$`,
+      };
+    },
+  },
+];
+
+export const MATURA_MAT_SS3 = wrapGens([...GENS, ...TELESA]);
