@@ -863,6 +863,16 @@ async function okna(p, label) {
   await screen(p, `klepet-prijava-${label}`);
   await click(p, "#view-chat .bug-box .rep-send", { wait: 400 });
   if (await p.locator("#view-chat .bug-box").count()) throw new Error("skrbnikova prijava napake se ni poslala");
+  // Skrbnik: »Predlagaj novo funkcijo« (žarnica) zamenja odprt obrazec za napako in pošlje zahtevo (kind = feature).
+  await click(p, "#chat-bug", { wait: 150 });
+  await click(p, "#chat-idea", { wait: 150 });
+  if ((await p.locator("#view-chat .bug-box").count()) !== 1 || !(await p.locator('#view-chat .bug-box[data-kind="idea"]').count())) throw new Error("žarnica ni zamenjala obrazca za napako z obrazcem za novo funkcijo");
+  await click(p, "#view-chat .bug-box .rep-send", { wait: 100 });
+  await expectVisible(p, "#view-chat .bug-box .rep-err", "opozorilo, da je treba opisati novo funkcijo");
+  await p.fill("#view-chat .bug-box textarea", "Preizkus: zahteva za novo funkcijo");
+  await screen(p, `klepet-funkcija-${label}`);
+  await click(p, "#view-chat .bug-box .rep-send", { wait: 400 });
+  if (await p.locator("#view-chat .bug-box").count()) throw new Error("skrbnikova zahteva za novo funkcijo se ni poslala");
   await p.fill("#input", "Pokaži periodni sistem");
   await click(p, "#send", { wait: 300 });
   await expectVisible(p, '.okno[data-view="graph"] #graph-slot .pse, .okno[data-view="graph"] #graph-slot > *', "kalkulator v oknu po ukazu inštruktorju", 8000);
