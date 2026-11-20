@@ -1,12 +1,12 @@
 // Generatorji za teme 1. letnika gimnazije, ki jih zahteva maturitetna pot (MAT-SS-1): kartezični produkt in
 // potenčna množica, dvojiški sestav, približki in napake, vsota in razlika potenc, enačbe in sistemi s parametrom,
-// Gaussova metoda in sistemi linearnih neenačb. Merila: docs/kakovost.md §2. Vsi rezultati so izračunani v kodi
-// iz istih števil, ki jih vidi dijak. Izvirne naloge, ne prepisane maturitetne. Zapisi kot v lekcijah MAT-SS-1
+// Gaussova metoda in sistemi linearnih neenačb ter linearne enačbe, linearna funkcija in linearne neenačbe.
+// Merila: docs/kakovost.md §2. Vsi rezultati so izračunani v kodi iz istih števil, ki jih vidi dijak. Izvirne naloge, ne prepisane maturitetne. Zapisi kot v lekcijah MAT-SS-1
 // (|A × B|, \mathcal{P}(A), 1011_{(2)}, \bar{x}, \Delta x, \delta x).
 import { g } from "../rng.js";
 import { roundHalfUp } from "../check.js";
 import { tx } from "./mat.js";
-import { num, sg, pickAns, name, wrapGens } from "./matura-util.js";
+import { fr, num, frA, ft, sg, pickAns, name, wrapGens } from "./matura-util.js";
 
 const P = "mat-ss1-matura-";
 const T = (s) => `MAT-SS-1/${s}`;
@@ -1658,4 +1658,1353 @@ const GENS = [
   },
 ];
 
-export const MATURA_MAT_SS1 = wrapGens(GENS);
+// ================= linearne enačbe, linearna funkcija in linearne neenačbe (maturitetna raven) =================
+// Vsaka naloga je sestavljena od rešitve nazaj (izberemo x0, nato koeficiente), zato so rešitve »lepe«,
+// a račun ni trivialen. Intervali kot v lekciji MAT-SS-1/linearne-neenacbe: (-\infty, a], krajišča kot ulomki.
+const VR = "(višja raven) ";
+const gcdI = (a, b) => (b ? gcdI(b, a % b) : Math.abs(a));
+const lcmI = (...xs) => xs.reduce((a, b) => (a * b) / gcdI(a, b));
+// Odgovor kot celo število ali okrajšan ulomek.
+const qA = (n, d, ms = []) => {
+  const [a, b] = fr(n, d);
+  return b === 1 ? num(a, null, ms) : frA(a, b, ms);
+};
+const qT = (n, d = 1) => ft(n, d);
+// k·x z ulomljenim koeficientom: kxT(-2, 3) → "-\frac{2}{3}x".
+function kxT(p, q = 1, v = "x") {
+  const [a, b] = fr(p, q);
+  if (b === 1) return lin([a], [v]);
+  return `${a < 0 ? "-" : ""}\\frac{${Math.abs(a)}}{${b}}${v}`;
+}
+const fT = (p, q, n) => `${kxT(p, q)}${n ? ` ${sg(n)}` : ""}`;
+// Člen z x s predznakom za nadaljevanje izraza: tX(-3) → "- 3x", tX(1) → "+ x".
+const tX = (c, v = "x") => (c < 0 ? `- ${lin([-c], [v])}` : `+ ${lin([c], [v])}`);
+// Koeficient pred x, tudi 0: lhsX(0) → "0 \cdot x".
+const lhsX = (c) => (c === 0 ? "0 \\cdot x" : lin([c], ["x"]));
+const xm = (p) => `x ${sg(-p)}`;
+const mul = (k, inner) => (k === 1 ? `(${inner})` : `${k}(${inner})`);
+const INF = "\\infty";
+// Interval rešitev neenačbe »x rel e«, e = n/d.
+function ivT(rel, n, d = 1) {
+  const e = qT(n, d);
+  return rel === "<" ? `(-${INF}, ${e})` : rel === "<=" ? `(-${INF}, ${e}]` : rel === ">" ? `(${e}, ${INF})` : `[${e}, ${INF})`;
+}
+const STRICT = { "<": "<=", "<=": "<", ">": ">=", ">=": ">" };
+const WHY_FLIP_NEG = "Pri deljenju z negativnim številom se znak neenačbe obrne.";
+const WHY_FLIP_POS = "Znak neenačbe se obrne le pri množenju ali deljenju z negativnim številom.";
+const WHY_BR = (rel) => (rel.length === 1 ? "Pri strogi neenačbi krajišče ni rešitev: tam je okrogel oklepaj." : "Pri $\\le$ ali $\\ge$ je krajišče rešitev: tam je oglati oklepaj.");
+// Napačni intervali: obrnjena smer, napačen oklepaj, napačen predznak krajišča.
+const ivWrong = (rel, n, d, neg) => [
+  [ivT(FLIP[rel], n, d), neg ? "Znak neenačbe se je pri deljenju z negativnim številom obrnil; preveri smer intervala." : WHY_FLIP_POS],
+  [ivT(STRICT[rel], n, d), WHY_BR(rel)],
+  [ivT(rel, -n, d), "Pri prenašanju člena na drugo stran pazi na predznak."],
+  [ivT(FLIP[STRICT[rel]], n, d), "Preveri smer intervala in vrsto oklepaja."],
+];
+const relOut = (rel, A) => (A > 0 ? rel : FLIP[rel]);
+const divLine = (A) => (A < 0 ? `Delimo z negativnim številom $${A}$, zato se znak obrne.` : `Delimo s pozitivnim številom $${A}$, znak ostane.`);
+const eur = (x) => tx(x, Number.isInteger(x) ? null : 2);
+const EUR_A = (v, ms = []) => ({ ...num(v, 2, ms, "€"), unitAlternatives: ["eur", "evrov", "evra", "evre"] });
+// Sklanjatev »leto«: čez $2$ leti, $3$ leta, $5$ let.
+const let_ = (n) => (n % 100 === 1 ? "leto" : n % 100 === 2 ? "leti" : n % 100 === 3 || n % 100 === 4 ? "leta" : "let");
+const GIV = (L, R) => [`\\text{leva stran} = ${L}`, `\\text{desna stran} = ${R}`];
+const FE = "ax = b,\\ a \\ne 0 \\;\\Rightarrow\\; x = \\dfrac{b}{a}";
+const FN = ["ax < b,\\ a > 0 \\;\\Rightarrow\\; x < \\dfrac{b}{a}", "ax < b,\\ a < 0 \\;\\Rightarrow\\; x > \\dfrac{b}{a}"];
+
+const LINEARNE = [
+  // ---------------- linearne enačbe ----------------
+  {
+    id: P + "linearne-enacbe",
+    topics: [T("linearne-enacbe"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
+    gen(level, r) {
+      const t = r.int(0, 4);
+      if (level === 1) {
+        if (t === 0) {
+          // ax + b = cx + d
+          const x0 = r.nonZero(-9, 9);
+          const a = r.nonZero(-6, 9);
+          const c = r.nonZero(-6, 9);
+          const b = r.nonZero(-15, 15);
+          if (a === c) return null;
+          const d = (a - c) * x0 + b;
+          if (d === 0) return null;
+          const E = `${ax(a, b)} = ${ax(c, d)}`;
+          return {
+            text: `Reši enačbo $${E}$.`,
+            answer: qA(x0, 1, [
+              { value: (d + b) / (a - c), why: "Število, ki ga preneseš na drugo stran, spremeni predznak." },
+              { value: (d - b) / (a + c), why: "Tudi člen z $x$ pri prenosu na levo stran spremeni predznak." },
+              { value: (a - c) / (d - b), why: "Iz $ax = b$ sledi $x = \\frac{b}{a}$, ne $\\frac{a}{b}$." },
+            ]),
+            hint: "Člene z $x$ zberi na levi, števila na desni, nato deli s koeficientom pred $x$.",
+            data: { given: GIV(ax(a, b), ax(c, d)), find: ["x"] },
+            formula: FE,
+            solution: `$${lin([a], ["x"])} ${tX(-c)} = ${tx(d)} ${sg(-b)}$\n$${lin([a - c], ["x"])} = ${d - b}$${a - c === 1 ? "" : `\n$x = ${x0}$`}\nPreizkus: obe strani sta enaki $${a * x0 + b}$.`,
+          };
+        }
+        if (t === 1) {
+          // p(x - q) - s(rx + t) = u
+          const x0 = r.nonZero(-8, 8);
+          const p = r.int(2, 5);
+          const q = r.nonZero(-6, 6);
+          const s = r.int(2, 4);
+          const k = r.int(1, 3);
+          const tt = r.nonZero(-6, 6);
+          const A = p - s * k;
+          if (A === 0) return null;
+          const u = p * (x0 - q) - s * (k * x0 + tt);
+          const B = u + p * q + s * tt;
+          return {
+            text: `Reši enačbo $${p}(${xm(q)}) - ${s}(${ax(k, tt)}) = ${u}$.`,
+            answer: qA(x0, 1, [
+              { value: (u + p * q - s * tt) / A, why: "Minus pred oklepajem spremeni predznak obema členoma v oklepaju." },
+              { value: (u + q + s * tt) / A, why: "Število pred oklepajem pomnoži z vsakim členom v oklepaju." },
+              { value: B / (p + s * k), why: "Pri $-" + s + "(\\ldots)$ je tudi člen z $x$ negativen." },
+            ]),
+            hint: "Najprej odpravi oklepaja. Minus pred drugim oklepajem spremeni predznak obema členoma.",
+            data: { given: GIV(`${p}(${xm(q)}) - ${s}(${ax(k, tt)})`, `${u}`), find: ["x"] },
+            formula: FE,
+            solution: `$${p}x ${sg(-p * q)} ${tX(-s * k)} ${sg(-s * tt)} = ${u}$${p * q + s * tt === 0 ? "" : `\n$${lin([A], ["x"])} = ${u} ${sg(p * q + s * tt)}$`}\n$${lin([A], ["x"])} = ${B}$\n$x = ${x0}$`,
+          };
+        }
+        if (t === 2) {
+          // (x + a)/m - (x - b)/n = c
+          const [m, n] = r.shuffle([2, 3, 4, 5, 6]).slice(0, 2);
+          const L = lcmI(m, n);
+          const a = r.nonZero(-5, 5);
+          const b = r.nonZero(-5, 5);
+          const c = r.nonZero(-4, 6);
+          const coef = L / m - L / n;
+          const rhs = c * L - (L / m) * a - (L / n) * b;
+          if (rhs % coef !== 0 || rhs === 0) return null;
+          const x0 = rhs / coef;
+          if (Math.abs(x0) > 40) return null;
+          const E = `\\dfrac{x ${sg(a)}}{${m}} - \\dfrac{x ${sg(-b)}}{${n}} = ${c}`;
+          return {
+            text: `Reši enačbo $${E}$.`,
+            answer: qA(x0, 1, [
+              { value: (c - (L / m) * a - (L / n) * b) / coef, why: `Z $${L}$ pomnoži vse člene, tudi desno stran.` },
+              { value: (c * L - (L / m) * a + (L / n) * b) / coef, why: "Minus pred ulomkom velja za ves števec: $-(x - b) = -x + b$." },
+            ]),
+            hint: "Enačbo pomnoži z najmanjšim skupnim večkratnikom imenovalcev. Števca pri tem zapiši v oklepaju.",
+            data: { given: GIV(`\\dfrac{x ${sg(a)}}{${m}} - \\dfrac{x ${sg(-b)}}{${n}}`, `${c}`), find: ["x"] },
+            formula: FE,
+            solution: `Pomnožimo z $${L}$:\n$${mul(L / m, `x ${sg(a)}`)} - ${mul(L / n, `x ${sg(-b)}`)} = ${c * L}$\n$${lin([L / m], ["x"])} ${sg((L / m) * a)} ${tX(-(L / n))} ${sg((L / n) * b)} = ${c * L}$\n$${lin([coef], ["x"])} = ${rhs}$\n$x = ${x0}$`,
+          };
+        }
+        if (t === 3) {
+          if (r.next() < 0.5) {
+            // zaporedna števila
+            const cnt = r.pick([3, 4, 5]);
+            const [kind, step] = r.pick([["naravnih", 1], ["sodih", 2], ["lihih", 2]]);
+            const x0 = kind === "naravnih" ? r.int(5, 60) : kind === "sodih" ? 2 * r.int(3, 40) : 2 * r.int(3, 40) + 1;
+            const add = (step * cnt * (cnt - 1)) / 2;
+            const S = cnt * x0 + add;
+            const askMax = r.next() < 0.5;
+            const ans = askMax ? x0 + step * (cnt - 1) : x0;
+            const cntW = { 3: "treh", 4: "štirih", 5: "petih" }[cnt];
+            const terms = Array.from({ length: cnt }, (_, i) => (i ? `x + ${i * step}` : "x")).join(", ");
+            return {
+              text: `Vsota ${cntW} zaporednih ${kind} števil je $${S}$. Katero je ${askMax ? "največje" : "najmanjše"} od teh števil?`,
+              answer: num(ans, null, [
+                { value: S / cnt, why: "To je povprečje števil (vsota, deljena s številom členov), ne iskano število." },
+                { value: askMax ? x0 : x0 + step * (cnt - 1), why: `Vprašanje sprašuje po ${askMax ? "največjem" : "najmanjšem"} številu.` },
+                { value: askMax ? x0 + cnt - 1 : null, why: step === 2 ? "Zaporedna soda (liha) števila se razlikujejo za 2." : "" },
+              ]),
+              hint: `Najmanjše število označi z $x$. Vsako naslednje je za $${step}$ večje.`,
+              data: { given: [`S = ${S}`], find: [askMax ? "\\text{največje število}" : "\\text{najmanjše število}"] },
+              formula: `x + (x + ${step}) + \\ldots = S`,
+              solution: `Števila so $${terms}$.\n$${cnt}x + ${add} = ${S}$\n$${cnt}x = ${S - add}$\n$x = ${x0}$${askMax ? `\nNajvečje število je $x + ${step * (cnt - 1)} = ${ans}$.` : ""}`,
+            };
+          }
+          // starost: čez koliko let bo starš k-krat starejši
+          const [par, star, older] = r.pick([["Oče", "star", "starejši"], ["Mama", "stara", "starejša"]]);
+          const [ch, chG] = r.pick([["sin", "sina"], ["hči", "hčere"]]);
+          const k = r.pick([2, 3]);
+          const S = r.int(5, 12);
+          const x0 = r.int(2, 12);
+          const A = k * (S + x0) - x0;
+          if (A < 26 || A > 55) return null;
+          return {
+            text: `${par} je ${star} $${A}$ let, ${ch} pa $${S}$ let. Čez koliko let bo ${par.toLowerCase()} natanko $${k}$-krat ${older} od ${chG}?`,
+            answer: num(x0, null, [
+              { value: (A - k * S) / k, why: `Čez $x$ let bosta oba starejša za $x$: $${A} + x = ${k}(${S} + x)$.` },
+              { value: A - k * S, why: `Po odpravi oklepaja ostane na desni $${k}x$; zberi člene z $x$ na eni strani.` },
+              { value: A / k - S, why: `Tudi starost ${par === "Oče" ? "očeta" : "mame"} se poveča za $x$.` },
+            ]),
+            hint: `Čez $x$ let bo ${par.toLowerCase()} ${star} $${A} + x$, ${ch} pa $${S} + x$ let.`,
+            data: { given: [`A = ${A}`, `S = ${S}`, `k = ${k}`], find: ["x"] },
+            formula: "A + x = k\\,(S + x)",
+            solution: `$${A} + x = ${k}(${S} + x)$\n$${A} + x = ${k * S} + ${k}x$\n$${A - k * S} = ${k - 1 === 1 ? "" : k - 1}x$\n$x = ${x0}$\nPreizkus: čez $${x0}$ ${let_(x0)} bo ${par.toLowerCase()} ${star} $${A + x0}$, ${ch} pa $${S + x0}$ let; $${A + x0} = ${k} \\cdot ${S + x0}$.`,
+          };
+        }
+        // koliko rešitev: ena, nobena, vsa realna števila
+        const p = r.int(2, 5);
+        const q = r.nonZero(-6, 6);
+        const s = r.nonZero(-9, 9);
+        const kind = r.int(0, 2);
+        const C0 = p * q + s;
+        const p2 = kind === 0 ? p + r.pick([-2, -1, 1, 2]) : p;
+        const w = kind === 2 ? C0 : kind === 1 ? C0 + r.nonZero(-6, 6) : r.int(-9, 9);
+        if (p2 === 0) return null;
+        const OPT = ["Natanko eno rešitev.", "Nobene rešitve.", "Neskončno mnogo: rešitev je vsako realno število.", "Natanko dve rešitvi."];
+        const WHY = [
+          "Koeficient pred $x$ se je odštel; ostane enakost brez $x$.",
+          kind === 2 ? "Enakost $0 = 0$ je resnična za vsak $x$." : "Koeficient pred $x$ ni $0$, zato lahko delimo in dobimo eno rešitev.",
+          kind === 1 ? "Enakost brez $x$ je neresnična, zato je ne izpolni noben $x$." : "Koeficient pred $x$ ni $0$, zato lahko delimo in dobimo eno rešitev.",
+          "Linearna enačba nima nikoli natanko dveh rešitev.",
+        ];
+        const E = `${p}(${`x ${sg(q)}`}) ${sg(s)} = ${ax(p2, w)}`;
+        const ans = pickAns(r, OPT[kind], OPT.map((o, i) => [o, WHY[i]]).filter((_, i) => i !== kind));
+        return {
+          text: `Koliko rešitev ima enačba $${E}$?`,
+          answer: ans,
+          hint: "Odpravi oklepaj in zberi člene z $x$ na levi. Poglej, ali koeficient pred $x$ ostane različen od $0$.",
+          data: { given: GIV(`${p}(x ${sg(q)}) ${sg(s)}`, ax(p2, w)), find: ["\\text{število rešitev}"] },
+          formula: ["a \\ne 0: \\text{ ena rešitev}", "0 \\cdot x = b,\\ b \\ne 0: \\text{ ni rešitve}", "0 \\cdot x = 0: x \\in \\mathbb{R}"],
+          solution: `$${ax(p, C0)} = ${ax(p2, w)}$\n$${lhsX(p - p2)} = ${w - C0}$\n${kind === 0 ? `Koeficient $${p - p2} \\ne 0$, zato je rešitev ena: $x = ${qT(w - C0, p - p2)}$.` : kind === 1 ? `Enakost $0 = ${w - C0}$ ni resnična: enačba nima rešitve.` : "Enakost $0 = 0$ velja za vsak $x$: rešitev je vsako realno število."}`,
+        };
+      }
+      if (level === 2) {
+        if (t === 0) {
+          // tri ulomki: (u1x + v1)/m - (u2x + v2)/n = (u3x + v3)/k
+          const [m, n, k] = r.shuffle([2, 3, 4, 6]).slice(0, 3);
+          const L = lcmI(m, n, k);
+          const [u1, u2, u3] = [r.int(1, 3), r.int(1, 3), r.int(1, 3)];
+          const [v1, v2, v3] = [r.nonZero(-5, 5), r.nonZero(-5, 5), r.nonZero(-5, 5)];
+          const coef = (L / m) * u1 - (L / n) * u2 - (L / k) * u3;
+          const rhs = (L / k) * v3 - (L / m) * v1 + (L / n) * v2;
+          if (coef === 0 || rhs === 0) return null;
+          const [xn, xd] = fr(rhs, coef);
+          if (xd > 9 || Math.abs(xn / xd) > 20) return null;
+          const N = (u, v) => ax(u, v);
+          return {
+            text: `Reši enačbo $\\dfrac{${N(u1, v1)}}{${m}} - \\dfrac{${N(u2, v2)}}{${n}} = \\dfrac{${N(u3, v3)}}{${k}}$.`,
+            answer: qA(rhs, coef, [
+              { value: (rhs - 2 * (L / n) * v2) / coef, why: "Minus pred ulomkom spremeni predznak vsem členom števca." },
+              { value: (v3 - v1 + v2) / (u1 - u2 - u3), why: `Ko enačbo pomnožiš z $${L}$, se vsak števec pomnoži s svojim faktorjem.` },
+            ]),
+            hint: "Pomnoži z najmanjšim skupnim večkratnikom imenovalcev; vsak števec zapiši v oklepaju.",
+            data: { given: GIV(`\\dfrac{${N(u1, v1)}}{${m}} - \\dfrac{${N(u2, v2)}}{${n}}`, `\\dfrac{${N(u3, v3)}}{${k}}`), find: ["x"] },
+            formula: FE,
+            solution: `Pomnožimo z $${L}$:\n$${mul(L / m, N(u1, v1))} - ${mul(L / n, N(u2, v2))} = ${mul(L / k, N(u3, v3))}$\n$${ax((L / m) * u1, (L / m) * v1)} ${tX(-(L / n) * u2)} ${sg(-(L / n) * v2)} = ${ax((L / k) * u3, (L / k) * v3)}$\n$${lin([coef], ["x"])} = ${rhs}$\n$x = ${qT(rhs, coef)}$`,
+          };
+        }
+        if (t === 1) {
+          const x0 = r.nonZero(-7, 7);
+          const a = r.nonZero(-6, 6);
+          const b = r.nonZero(-6, 6);
+          if (r.next() < 0.5) {
+            // (x + a)^2 - (x - b)^2 = c
+            if (a + b === 0) return null;
+            const c = (x0 + a) ** 2 - (x0 - b) ** 2;
+            const C2 = a * a - b * b;
+            return {
+              text: `Reši enačbo $(x ${sg(a)})^2 - (x ${sg(-b)})^2 = ${c}$.`,
+              answer: qA(x0, 1, [
+                { value: a !== b ? (c - a * a - b * b) / (2 * (a - b)) : null, why: "Minus pred kvadratom spremeni predznak vsem trem členom razvitega kvadrata." },
+                { value: (c - C2) / (a + b), why: "Pri kvadratu dvočlenika je srednji člen $2ab$, ne $ab$." },
+              ]),
+              hint: "Razvij oba kvadrata: $(x \\pm a)^2 = x^2 \\pm 2ax + a^2$. Člena $x^2$ se odštejeta.",
+              data: { given: GIV(`(x ${sg(a)})^2 - (x ${sg(-b)})^2`, `${c}`), find: ["x"] },
+              formula: "(x \\pm a)^2 = x^2 \\pm 2ax + a^2",
+              solution: `$x^2 ${tX(2 * a)} + ${a * a} - (x^2 ${tX(-2 * b)} + ${b * b}) = ${c}$\n$${ax(2 * (a + b), C2)} = ${c}$\n$${lin([2 * (a + b)], ["x"])} = ${c - C2}$\n$x = ${x0}$`,
+            };
+          }
+          // (x + a)(x - b) - x(x + c) = d
+          const c = r.nonZero(-6, 6);
+          const A = a - b - c;
+          if (A === 0) return null;
+          const d = A * x0 - a * b;
+          return {
+            text: `Reši enačbo $(x ${sg(a)})(x ${sg(-b)}) - x(x ${sg(c)}) = ${d}$.`,
+            answer: qA(x0, 1, [
+              { value: a - b + c !== 0 ? (d + a * b) / (a - b + c) : null, why: "Minus pred $x(x + c)$ spremeni predznak obema členoma." },
+              { value: (d - a * b) / A, why: `Prosti člen produkta je $${pt(a)} \\cdot ${pt(-b)} = ${-a * b}$.` },
+            ]),
+            hint: "Zmnoži oklepaje; člena $x^2$ se odštejeta in ostane linearna enačba.",
+            data: { given: GIV(`(x ${sg(a)})(x ${sg(-b)}) - x(x ${sg(c)})`, `${d}`), find: ["x"] },
+            formula: "(x + a)(x + b) = x^2 + (a + b)x + ab",
+            solution: `$x^2 ${tX(a - b)} ${sg(-a * b)} - x^2 ${tX(-c)} = ${d}$`.replace("+ 0x ", "") + `\n$${ax(A, -a * b)} = ${d}$\n$${lin([A], ["x"])} = ${d + a * b}$\n$x = ${x0}$`,
+          };
+        }
+        if (t === 2) {
+          // mešanje raztopin
+          const p1 = r.pick([5, 10, 15, 20]);
+          const p2 = r.pick([30, 40, 50, 60]);
+          const V1 = r.int(2, 12);
+          const x0 = r.int(1, 12);
+          const pp = (V1 * p1 + x0 * p2) / (V1 + x0);
+          if (!Number.isInteger(pp) || pp <= p1 || pp >= p2) return null;
+          const sub = r.pick(["soli", "sladkorja"]);
+          return {
+            text: `V posodi imamo $${V1}\\ \\mathrm{l}$ $${p1}$-odstotne raztopine ${sub}. Koliko litrov $${p2}$-odstotne raztopine ${sub} moramo doliti, da dobimo $${pp}$-odstotno raztopino?`,
+            answer: { ...num(x0, null, [
+              { value: (V1 * (p2 - pp)) / (pp - p1), why: "Odstotka sta zamenjana: več močne raztopine pomeni višji odstotek mešanice." },
+              { value: (V1 * (pp - p1)) / p2, why: "Na desni je tudi dolita raztopina: končna količina je $V_1 + x$." },
+            ], "l"), unitAlternatives: ["L", "litrov", "litra", "liter", "litre", "dm³", "dm3"] },
+            hint: `Količina ${sub} se ohrani: ${sub === "soli" ? "sol" : "sladkor"} v prvi raztopini in v doliti raztopini skupaj je ${sub === "soli" ? "sol" : "sladkor"} v mešanici.`,
+            data: { given: [`V_1 = ${V1}\\ \\mathrm{l}`, `p_1 = ${p1}\\ \\%`, `p_2 = ${p2}\\ \\%`, `p = ${pp}\\ \\%`], find: ["x"] },
+            formula: "p_1 V_1 + p_2\\,x = p\\,(V_1 + x)",
+            solution: `$${tx(p1 / 100)} \\cdot ${V1} + ${tx(p2 / 100)}\\,x = ${tx(pp / 100)}\\,(${V1} + x)$\nPomnožimo s $100$: $${p1 * V1} + ${p2}x = ${pp * V1} + ${pp}x$\n$${p2 - pp}x = ${pp * V1 - p1 * V1}$\n$x = ${x0}\\ \\mathrm{l}$`,
+          };
+        }
+        if (t === 3) {
+          if (r.next() < 0.5) {
+            // skupno delo
+            const [a, b, T] = r.pick([[3, 6, 2], [4, 12, 3], [6, 12, 4], [10, 15, 6], [12, 24, 8], [20, 30, 12], [5, 20, 4], [8, 24, 6], [9, 18, 6], [2, 6, 1.5], [6, 10, 3.75], [4, 6, 2.4], [3, 12, 2.4], [10, 40, 8]]);
+            const sw = r.next() < 0.5;
+            const [A, B] = sw ? [b, a] : [a, b];
+            const [s1, s2, q] = r.pick([
+              ["Prva cev napolni bazen", "druga", "V kolikšnem času napolnita bazen, če sta odprti obe cevi hkrati?"],
+              ["Prvi tiskalnik natisne vse letake", "drugi", "V kolikšnem času natisneta letake, če tiskata hkrati?"],
+              ["Prvi kombajn požanje njivo", "drugi", "V kolikšnem času požanjeta njivo, če delata hkrati?"],
+            ]);
+            return {
+              text: `${s1} v $${A}$ urah, ${s2} v $${B}$ urah. ${q} Rezultat zapiši v urah.`,
+              answer: num(T, null, [
+                { value: (A + B) / 2, why: "Skupaj delata hitreje kot vsak zase: čas mora biti krajši od obeh." },
+                { value: A + B, why: "Skupaj delata hitreje kot vsak zase: čas mora biti krajši od obeh." },
+                { value: Math.abs(A - B), why: `V eni uri opravita skupaj $\\frac{1}{${A}} + \\frac{1}{${B}}$ dela.` },
+              ], "h"),
+              hint: `${s2 === "druga" ? "Prva" : "Prvi"} v eni uri opravi $\\frac{1}{${A}}$ dela, ${s2} $\\frac{1}{${B}}$. V $x$ urah skupaj opravita celo delo.`,
+              data: { given: [`t_1 = ${A}\\ \\mathrm{h}`, `t_2 = ${B}\\ \\mathrm{h}`], find: ["t"] },
+              formula: "\\dfrac{t}{t_1} + \\dfrac{t}{t_2} = 1",
+              solution: `$\\dfrac{x}{${A}} + \\dfrac{x}{${B}} = 1$\nPomnožimo z $${lcmI(A, B)}$: $${lin([lcmI(A, B) / A], ["x"])} + ${lin([lcmI(A, B) / B], ["x"])} = ${lcmI(A, B)}$\n$${lcmI(A, B) / A + lcmI(A, B) / B}x = ${lcmI(A, B)}$\n$x = ${tx(T)}\\ \\mathrm{h}$`,
+            };
+          }
+          // srečanje
+          const v1 = r.int(12, 24);
+          const v2 = 5 * r.int(8, 16);
+          const tm = r.pick([20, 30, 40, 45, 50, 60, 75, 90]);
+          const d = ((v1 + v2) * tm) / 60;
+          if (!Number.isInteger(d)) return null;
+          return {
+            text: `Kraja $A$ in $B$ sta oddaljena $${d}\\ \\mathrm{km}$. Iz $A$ proti $B$ odpelje kolesar s stalno hitrostjo $${v1}\\ \\mathrm{km/h}$, ob istem času pa iz $B$ proti $A$ avtomobil s stalno hitrostjo $${v2}\\ \\mathrm{km/h}$. Čez koliko minut se srečata?`,
+            answer: num(tm, null, [
+              { value: (d / (v1 + v2)), why: "To je čas v urah; pretvori ga v minute." },
+              { value: (60 * d) / (v2 - v1), why: "Vozita drug proti drugemu, zato se razdalja med njima manjša z vsoto hitrosti." },
+            ], "min"),
+            hint: "Do srečanja skupaj prevozita celo razdaljo: $v_1 t + v_2 t = d$.",
+            data: { given: [`d = ${d}\\ \\mathrm{km}`, `v_1 = ${v1}\\ \\mathrm{km/h}`, `v_2 = ${v2}\\ \\mathrm{km/h}`], find: ["t"] },
+            formula: "v_1 t + v_2 t = d",
+            solution: `$${v1}t + ${v2}t = ${d}$\n$${v1 + v2}t = ${d}$\n$t = ${qT(d, v1 + v2)}\\ \\mathrm{h} = ${tm}\\ \\mathrm{min}$`,
+          };
+        }
+        // izražanje iz obrazca
+        if (r.next() < 0.5) {
+          const a = r.int(6, 20);
+          const c = r.int(2, a - 2);
+          const v = r.int(3, 12);
+          const S = ((a + c) * v) / 2;
+          return {
+            text: `Ploščina trapeza je $S = \\dfrac{(a + c) \\cdot v}{2}$. Iz obrazca izrazi $c$ in izračunaj $c$, če je $S = ${tx(S)}\\ \\mathrm{cm^2}$, $a = ${a}\\ \\mathrm{cm}$ in $v = ${v}\\ \\mathrm{cm}$.`,
+            answer: num(c, null, [
+              { value: S / v - a, why: "Pred deljenjem z $v$ pomnoži z $2$: $a + c = \\frac{2S}{v}$." },
+              { value: (2 * S - a) / v, why: "Najprej deli z $v$, šele nato odštej $a$." },
+              { value: (2 * S) / v + a, why: "Ko $a$ preneseš na drugo stran, spremeni predznak." },
+            ], "cm"),
+            hint: "Obrazec pomnoži z $2$, deli z $v$ in odštej $a$.",
+            data: { given: [`S = ${tx(S)}\\ \\mathrm{cm^2}`, `a = ${a}\\ \\mathrm{cm}`, `v = ${v}\\ \\mathrm{cm}`], find: ["c"] },
+            formula: "S = \\dfrac{(a + c)\\,v}{2} \\;\\Rightarrow\\; c = \\dfrac{2S}{v} - a",
+            solution: `$2S = (a + c)\\,v$\n$a + c = \\dfrac{2S}{v}$\n$c = \\dfrac{2S}{v} - a = \\dfrac{2 \\cdot ${tx(S)}}{${v}} - ${a} = ${tx((2 * S) / v)} - ${a} = ${c}\\ \\mathrm{cm}$`,
+          };
+        }
+        const C = 5 * r.int(-6, 9);
+        if (C === 0) return null;
+        const F = 1.8 * C + 32;
+        const Fi = Math.round(F);
+        return {
+          text: `Temperaturo v stopinjah Fahrenheita izračunamo po obrazcu $F = 1{,}8\\,C + 32$, kjer je $C$ temperatura v stopinjah Celzija. Iz obrazca izrazi $C$ in izračunaj, koliko stopinj Celzija je $${Fi}\\ ^\\circ\\mathrm{F}$.`,
+          answer: num(C, null, [
+            { value: Fi / 1.8 - 32, why: "Najprej odštej $32$, šele nato deli z $1{,}8$." },
+            { value: (Fi + 32) / 1.8, why: "Ko $32$ preneseš na drugo stran, spremeni predznak." },
+            { value: 1.8 * Fi + 32, why: "Iz obrazca izrazi $C$; ne vstavljaj $F$ namesto $C$." },
+          ]),
+          hint: "Na obeh straneh odštej $32$, nato deli z $1{,}8$.",
+          data: { given: [`F = ${Fi}`], find: ["C"] },
+          formula: "C = \\dfrac{F - 32}{1{,}8}",
+          solution: `$1{,}8\\,C = F - 32$\n$C = \\dfrac{F - 32}{1{,}8} = \\dfrac{${Fi} - 32}{1{,}8} = \\dfrac{${Fi - 32}}{1{,}8} = ${C}$\n$${Fi}\\ ^\\circ\\mathrm{F}$ je $${C}\\ ^\\circ\\mathrm{C}$.`,
+        };
+      }
+      // ---------- 3. raven ----------
+      if (t === 0) {
+        // parameter (višja raven): mx + p = cx + m
+        const km = r.pick([1, 2, 3]);
+        const p = r.nonZero(-6, 6);
+        const c = r.nonZero(-6, 8);
+        const E = `${km === 1 ? "" : km}mx ${sg(p)} = ${lin([c], ["x"])} + m`;
+        const kmT = `${km === 1 ? "" : km}m ${sg(-c)}`;
+        if (r.next() < 0.5) {
+          if (c === p * km) return null;
+          return {
+            text: `${VR}Za katero vrednost parametra $m$ enačba $${E}$ nima rešitve?`,
+            answer: qA(c, km, [
+              { value: p, why: "Pri tej vrednosti je desna stran enaka $0$; enačba nima rešitve, ko je koeficient pred $x$ enak $0$." },
+              { value: -c / km, why: "Pazi na predznak: koeficient pred $x$ je $" + kmT + "$." },
+              { value: c, why: km === 1 ? "" : `Koeficient pred $x$ je $${km}m ${sg(-c)}$; deli tudi z $${km}$.` },
+            ]),
+            hint: "Člene z $x$ zberi na levi, ostalo na desni. Enačba $ax = b$ nima rešitve, ko je $a = 0$ in $b \\ne 0$.",
+            data: { given: GIV(`${km === 1 ? "" : km}mx ${sg(p)}`, `${lin([c], ["x"])} + m`), find: ["m"] },
+            formula: "ax = b:\\ a = 0,\\ b \\ne 0 \\Rightarrow \\text{ni rešitve}",
+            solution: `$(${kmT})\\,x = m ${sg(-p)}$\nRešitve ni, ko je koeficient pred $x$ enak $0$, desna stran pa ne.\n$${kmT} = 0 \\;\\Rightarrow\\; m = ${qT(c, km)}$\nTedaj je desna stran $${qT(c, km)} ${sg(-p)} = ${qT(c - p * km, km)} \\ne 0$, zato enačba res nima rešitve.`,
+          };
+        }
+        const x0 = r.nonZero(-5, 5);
+        const den = km * x0 - 1;
+        if (den === 0) return null;
+        const mn = c * x0 - p;
+        if (mn === 0 || fr(mn, den)[1] > 12) return null;
+        // pri tej vrednosti m mora biti koeficient pred x različen od 0 (ena sama rešitev)
+        if (Math.abs((km * mn) / den - c) < 1e-9) return null;
+        return {
+          text: `${VR}Za katero vrednost parametra $m$ ima enačba $${E}$ rešitev $x = ${x0}$?`,
+          answer: qA(mn, den, [
+            { value: (c * x0 + p) / den, why: "Pri prenosu $p$ na drugo stran pazi na predznak." },
+            { value: mn / (km * x0), why: "Tudi člen $m$ na desni prenesi na levo: $m$ nastopa na obeh straneh." },
+          ]),
+          hint: "Vstavi dano rešitev namesto $x$ in reši linearno enačbo za $m$.",
+          data: { given: [...GIV(`${km === 1 ? "" : km}mx ${sg(p)}`, `${lin([c], ["x"])} + m`), `x = ${x0}`], find: ["m"] },
+          formula: "\\text{rešitev } x_0 \\text{ vstavimo v enačbo}",
+          solution: `$${km === 1 ? "" : km}m \\cdot ${pt(x0)} ${sg(p)} = ${c} \\cdot ${pt(x0)} + m$\n$${lin([km * x0], ["m"])} - m = ${c * x0} ${sg(-p)}$\n$${lin([den], ["m"])} = ${mn}$\n$m = ${qT(mn, den)}$`,
+        };
+      }
+      if (t === 1) {
+        if (r.next() < 0.5) {
+          // a/(x - p) = b/(x - q)
+          const [a, b] = r.shuffle([1, 2, 3, 4, 5, 6, 7, 8]).slice(0, 2);
+          const p = r.nonZero(-6, 6);
+          const q = r.nonZero(-6, 6);
+          if (p === q) return null;
+          const N = a * q - b * p;
+          const D = a - b;
+          if (N === 0) return null;
+          const [xn, xd] = fr(N, D);
+          if (xd > 6) return null;
+          return {
+            text: `Reši enačbo $\\dfrac{${a}}{${xm(p)}} = \\dfrac{${b}}{${xm(q)}}$.`,
+            answer: qA(N, D, [
+              { value: (a * p - b * q) / D, why: "Navzkrižno množimo: števec leve z imenovalcem desne strani." },
+              { value: (a * q + b * p) / D, why: "Pri odpravi oklepaja pazi na predznak." },
+            ]),
+            hint: "Določi definicijsko območje, nato pomnoži s produktom imenovalcev.",
+            data: { given: GIV(`\\dfrac{${a}}{${xm(p)}}`, `\\dfrac{${b}}{${xm(q)}}`), find: ["x"] },
+            formula: "\\dfrac{a}{b} = \\dfrac{c}{d} \\;\\Rightarrow\\; ad = bc",
+            solution: `Definicijsko območje: $x \\ne ${p}$ in $x \\ne ${q}$.\n$${a}(${xm(q)}) = ${b}(${xm(p)})$\n$${a}x ${sg(-a * q)} = ${b}x ${sg(-b * p)}$\n$${lin([D], ["x"])} = ${N}$\n$x = ${qT(N, D)}$, ki je v definicijskem območju.`,
+          };
+        }
+        // (kx + s)/(x - p) = k + c/(x - q)
+        const k = r.int(1, 3);
+        const c = r.int(1, 9);
+        const p = r.nonZero(-5, 5);
+        const q = r.nonZero(-5, 5);
+        const x0 = r.int(-8, 8);
+        if (p === q || x0 === p || x0 === q || x0 === 0) return null;
+        const sN = k * p * (q - x0) + c * (x0 - p);
+        if (sN % (x0 - q) !== 0) return null;
+        const s = sN / (x0 - q);
+        if (s === 0 || Math.abs(s) > 30 || s === -k * p) return null;
+        const A = s + k * p - c;
+        const B = s * q + k * p * q - c * p;
+        if (A === 0) return null;
+        const kxs = ax(k, s);
+        return {
+          text: `Reši enačbo $\\dfrac{${kxs}}{${xm(p)}} = ${k} + \\dfrac{${c}}{${xm(q)}}$.`,
+          answer: qA(B, A, [
+            { value: A + 2 * c !== 0 ? (s * q + k * p * q + c * p) / (s + k * p + c) : null, why: `Člen $${c}(${xm(p)})$ odpravi pravilno: $${c}x ${sg(-c * p)}$.` },
+            { value: p, why: `Pri $x = ${p}$ je imenovalec $0$: to število ni v definicijskem območju.` },
+          ]),
+          hint: "Zapiši definicijsko območje in enačbo pomnoži s produktom imenovalcev. Člena z $x^2$ se odštejeta.",
+          data: { given: GIV(`\\dfrac{${kxs}}{${xm(p)}}`, `${k} + \\dfrac{${c}}{${xm(q)}}`), find: ["x"] },
+          formula: "\\text{pomnožimo s skupnim imenovalcem; preverimo definicijsko območje}",
+          solution: `Definicijsko območje: $x \\ne ${p}$ in $x \\ne ${q}$.\n$(${kxs})(${xm(q)}) = ${k === 1 ? "" : k}(${xm(p)})(${xm(q)}) + ${c}(${xm(p)})$\n$${k === 1 ? "" : k}x^2 ${tX(s - k * q)} ${sg(-s * q)} = ${k === 1 ? "" : k}x^2 ${tX(-k * (p + q) + c)} ${sg(k * p * q - c * p)}$`.replace(/ \+ 0x| - 0x/g, "").replace(/ \+ 0\$/g, "$").replace(/ \+ 0 =/g, " =") + `\n$${lin([A], ["x"])} = ${B}$\n$x = ${x0}$, ki je v definicijskem območju.`,
+        };
+      }
+      if (t === 2) {
+        // starostna razmerja
+        const [par, older] = r.pick([["Oče", "starejši"], ["Mama", "starejša"]]);
+        const [ch, chG] = r.pick([["sin", "sina"], ["hči", "hčere"]]);
+        const [k, m] = r.pick([[3, 2], [4, 2], [5, 2], [5, 3], [4, 3]]);
+        const x0 = r.int(4, 14);
+        const nN = x0 * (k - m);
+        if (nN % (m - 1) !== 0) return null;
+        const n = nN / (m - 1);
+        if (k * x0 < 24 || k * x0 > 58 || n < 2 || n > 30) return null;
+        return {
+          text: `${par} je zdaj $${k}$-krat ${older} od ${chG}. Čez $${n}$ ${let_(n)} bo le še $${m}$-krat ${older}. Koliko let ima ${ch} zdaj?`,
+          answer: num(x0, null, [
+            { value: k * x0, why: `To je starost ${par === "Oče" ? "očeta" : "mame"}; vprašanje sprašuje po starosti ${chG}.` },
+            { value: x0 + n, why: `To je starost ${chG} čez $${n}$ ${let_(n)}.` },
+            { value: (n * (m + 1)) / (k - m), why: `Ko $${n}$ preneseš na desno stran, spremeni predznak: $${k - m === 1 ? "" : k - m}x = ${m * n} - ${n}$.` },
+          ]),
+          hint: `Zdajšnjo starost ${chG} označi z $x$. Zdaj je ${par === "Oče" ? "oče star" : "mama stara"} $${k}x$, čez $${n}$ ${let_(n)} pa bosta stara $${k}x + ${n}$ in $x + ${n}$.`,
+          data: { given: [`k = ${k}`, `n = ${n}`, `m = ${m}`], find: ["x"] },
+          formula: "kx + n = m\\,(x + n)",
+          solution: `$${k}x + ${n} = ${m}(x + ${n})$\n$${k}x + ${n} = ${m}x + ${m * n}$\n$${lin([k - m], ["x"])} = ${m * n - n}$\n$x = ${x0}$\nPreizkus: zdaj $${k * x0}$ in $${x0}$, čez $${n}$ ${let_(n)} $${k * x0 + n} = ${m} \\cdot ${x0 + n}$.`,
+        };
+      }
+      if (t === 3) {
+        // dohitevanje
+        const v1 = r.pick([40, 50, 60, 70, 80]);
+        const v2 = v1 + r.pick([10, 20, 30, 40]);
+        const dt = r.pick([0.5, 1, 1.5, 2]);
+        const tt = (v1 * dt) / (v2 - v1);
+        if (!Number.isInteger(tt * 4) || tt > 8) return null;
+        const askS = r.next() < 0.5;
+        const S = v2 * tt;
+        const base = `Tovornjak odpelje iz skladišča s stalno hitrostjo $${v1}\\ \\mathrm{km/h}$. Po $${tx(dt)}\\ \\mathrm{h}$ za njim iz istega skladišča odpelje kombi s stalno hitrostjo $${v2}\\ \\mathrm{km/h}$.`;
+        return {
+          text: `${base} ${askS ? "Koliko kilometrov od skladišča kombi dohiti tovornjak?" : "Koliko ur po svojem odhodu kombi dohiti tovornjak?"}`,
+          answer: askS
+            ? num(S, null, [
+                { value: v1 * dt, why: "To je le prednost tovornjaka ob odhodu kombija." },
+                { value: v2 * (tt + dt), why: "Kombi vozi manj časa kot tovornjak: za $t$ ur, tovornjak za $t + \\Delta t$." },
+                { value: v1 * tt, why: "Tovornjak vozi dlje kot kombi: $t + \\Delta t$ ur." },
+              ], "km")
+            : num(tt, null, [
+                { value: tt + dt, why: "To je čas od odhoda tovornjaka; vprašanje šteje od odhoda kombija." },
+                { value: (v1 * dt) / v2, why: "Kombi se tovornjaku približuje z razliko hitrosti $v_2 - v_1$." },
+                { value: (v1 * dt) / (v1 + v2), why: "Vozita v isto smer, zato se razdalja zmanjšuje z razliko hitrosti." },
+              ], "h"),
+          hint: "Ko ga dohiti, sta prevozila enako pot. Kombi vozi $t$ ur, tovornjak $t + \\Delta t$ ur.",
+          data: { given: [`v_1 = ${v1}\\ \\mathrm{km/h}`, `\\Delta t = ${tx(dt)}\\ \\mathrm{h}`, `v_2 = ${v2}\\ \\mathrm{km/h}`], find: [askS ? "s" : "t"] },
+          formula: "v_2\\,t = v_1\\,(t + \\Delta t)",
+          solution: `$${v2}t = ${v1}(t + ${tx(dt)})$\n$${v2}t = ${v1}t + ${tx(v1 * dt)}$\n$${v2 - v1}t = ${tx(v1 * dt)}$\n$t = ${tx(tt)}\\ \\mathrm{h}$${askS ? `\n$s = v_2\\,t = ${v2} \\cdot ${tx(tt)} = ${tx(S)}\\ \\mathrm{km}$` : ""}`,
+        };
+      }
+      // sprememba cene
+      const [gen, nom, past] = r.pick([["kolesa", "kolo", "stalo"], ["prenosnika", "prenosnik", "stal"], ["plašča", "plašč", "stal"], ["telefona", "telefon", "stal"], ["kavča", "kavč", "stal"]]);
+      const x0 = 10 * r.int(4, 60);
+      const p = r.pick([10, 20, 25, 30, 50]);
+      const q = r.pick([10, 20, 25, 40]);
+      const up = r.next() < 0.5;
+      const f1 = up ? 1 + p / 100 : 1 - p / 100;
+      const f2 = up ? 1 - q / 100 : 1 + q / 100;
+      const C = Math.round(x0 * f1 * f2 * 100) / 100;
+      if (Math.abs(C - x0 * f1 * f2) > 1e-9 || Math.abs(C - x0) < 1e-9) return null;
+      const net = up ? p - q : q - p;
+      return {
+        text: `Cena ${gen} se je najprej ${up ? "zvišala" : "znižala"} za $${p}\\ \\%$, nato pa ${up ? "znižala" : "zvišala"} za $${q}\\ \\%$. Zdaj ${nom} stane $${eur(C)}\\ \\text{€}$. Koliko je ${past} pred obema spremembama?`,
+        answer: EUR_A(x0, [
+          { value: net !== 0 ? C / (1 + net / 100) : null, why: "Odstotkov ne smemo seštevati: druga sprememba se računa od že spremenjene cene." },
+          { value: C * (up ? (1 - p / 100) * (1 + q / 100) : (1 + p / 100) * (1 - q / 100)), why: "Spremembe razveljavimo z deljenjem s faktorjem, ne z obratno spremembo v odstotkih." },
+          { value: C, why: "Ceni pred in po spremembah nista enaki." },
+        ]),
+        hint: `Prvotno ceno označi z $x$. ${up ? "Zvišanje" : "Znižanje"} za $${p}\\ \\%$ pomeni množenje s $${tx(f1)}$.`,
+        data: { given: [`p = ${p}\\ \\%`, `q = ${q}\\ \\%`, `C = ${eur(C)}\\ \\text{€}`], find: ["x"] },
+        formula: "x \\cdot \\left(1 \\pm \\dfrac{p}{100}\\right)\\left(1 \\pm \\dfrac{q}{100}\\right) = C",
+        solution: `$x \\cdot ${tx(f1)} \\cdot ${tx(f2)} = ${eur(C)}$\n$${tx(cl(f1 * f2))}\\,x = ${eur(C)}$\n$x = \\dfrac{${eur(C)}}{${tx(cl(f1 * f2))}} = ${x0}\\ \\text{€}$`,
+      };
+    },
+  },
+
+  // ---------------- linearna funkcija ----------------
+  {
+    id: P + "linearna-funkcija",
+    topics: [T("linearna-funkcija"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
+    gen(level, r) {
+      const t = r.int(0, 4);
+      const FK = "k = \\dfrac{y_2 - y_1}{x_2 - x_1}";
+      if (level === 1) {
+        if (t === 0) {
+          const x1 = r.int(-5, 3);
+          const x2 = x1 + r.int(1, 6);
+          const y1 = r.int(-8, 8);
+          const y2 = r.int(-8, 8);
+          if (y1 === y2) return null;
+          const dy = y2 - y1;
+          const dx = x2 - x1;
+          return {
+            text: `Graf linearne funkcije $f$ poteka skozi točki $A(${x1}, ${y1})$ in $B(${x2}, ${y2})$. Izračunaj smerni koeficient $k$.`,
+            answer: qA(dy, dx, [
+              { value: dx / dy, why: "V števcu je razlika $y$, v imenovalcu razlika $x$." },
+              { value: -dy / dx, why: "Obe razliki odštej v istem vrstnem redu." },
+            ]),
+            hint: "Smerni koeficient je sprememba $y$, deljena s spremembo $x$.",
+            data: { given: [`x_1 = ${x1}`, `y_1 = ${y1}`, `x_2 = ${x2}`, `y_2 = ${y2}`], find: ["k"] },
+            formula: FK,
+            solution: `$k = \\dfrac{${y2} - ${pt(y1)}}{${x2} - ${pt(x1)}} = \\dfrac{${dy}}{${dx}}${fr(dy, dx)[1] === dx ? "" : ` = ${qT(dy, dx)}`}$`,
+          };
+        }
+        if (t === 1) {
+          // graf na sliki: preberi k in n, izračunaj f(a) daleč od slike
+          const k = r.nonZero(-3, 3);
+          const n = r.int(-4, 4);
+          const a = r.pick([-12, -10, 10, 12, 15, 20]);
+          const fa = k * a + n;
+          return {
+            text: `Na sliki je graf linearne funkcije $f$. Iz grafa določi predpis funkcije in izračunaj $f(${a})$.`,
+            figure: { type: "line", k, n },
+            answer: num(fa, null, [
+              { value: n * a + k, why: "Zamenjana sta $k$ in $n$: $n$ je presečišče z osjo $y$, $k$ sprememba $y$ na enoto $x$." },
+              { value: -k * a + n, why: "Preveri predznak smernega koeficienta: ali graf narašča ali pada?" },
+              { value: k * a, why: "Ne pozabi prišteti začetne vrednosti $n$." },
+            ]),
+            hint: "Začetna vrednost $n$ je presečišče grafa z osjo $y$. Za $k$ poglej, za koliko se spremeni $y$, ko se $x$ poveča za $1$.",
+            data: { given: ["f(x) = kx + n\\ (\\text{graf na sliki})"], find: [`f(${a})`] },
+            formula: ["n = f(0)", FK],
+            solution: `Graf seka os $y$ v točki $(0, ${n})$, zato je $n = ${n}$.\nKo se $x$ poveča za $1$, se $y$ ${k > 0 ? "poveča" : "zmanjša"} za $${Math.abs(k)}$, zato je $k = ${k}$.\n$f(x) = ${fT(k, 1, n)}$\n$f(${a}) = ${k} \\cdot ${pt(a)} ${sg(n)} = ${fa}$`.replace(` ${sg(0)} = `, " = "),
+          };
+        }
+        if (t === 2) {
+          // ničla funkcije z ulomljenim k
+          const q = r.pick([2, 3, 4, 5]);
+          const p = r.nonZero(-5, 5);
+          if (gcdI(p, q) !== 1) return null;
+          const x0 = q * r.nonZero(-4, 4);
+          const n = (-p * x0) / q;
+          return {
+            text: `Izračunaj ničlo funkcije $f(x) = ${fT(p, q, n)}$.`,
+            answer: num(x0, null, [
+              { value: -x0, why: "Ko $n$ preneseš na drugo stran, spremeni predznak." },
+              { value: n, why: "To je začetna vrednost (presečišče z osjo $y$), ne ničla." },
+              { value: (-n * p) / q, why: `Delimo z $${qT(p, q)}$, kar pomeni množenje z obratno vrednostjo $${qT(q, p)}$.` },
+            ]),
+            hint: "Ničla je tisti $x$, pri katerem je $f(x) = 0$.",
+            data: { given: [`f(x) = ${fT(p, q, n)}`], find: ["x_0"] },
+            formula: "f(x_0) = 0 \\;\\Rightarrow\\; x_0 = -\\dfrac{n}{k}",
+            solution: `$${fT(p, q, n)} = 0$\n$${kxT(p, q)} = ${-n}$\n$x = ${pt(-n)} \\cdot ${qT(q, p).startsWith("-") ? `\\left(${qT(q, p)}\\right)` : qT(q, p)} = ${x0}$`,
+          };
+        }
+        if (t === 3) {
+          // izbira pravilne trditve
+          const k = r.nonZero(-4, 4);
+          const n = r.nonZero(-6, 6);
+          const z = qT(-n, k);
+          const TR = [
+            `Graf seka os $y$ v točki $(0, ${n})$.`,
+            `Funkcija je ${k > 0 ? "naraščajoča" : "padajoča"}.`,
+            `Ničla funkcije je $${z}$.`,
+          ];
+          const FA = [
+            k !== n ? [`Graf seka os $y$ v točki $(0, ${k})$.`, "Os $y$ seka graf pri $x = 0$, torej v točki $(0, n)$."] : null,
+            [`Funkcija je ${k > 0 ? "padajoča" : "naraščajoča"}.`, `Smerni koeficient je $${k}$, ${k > 0 ? "pozitiven: funkcija narašča" : "negativen: funkcija pada"}.`],
+            qT(n, k) !== z ? [`Ničla funkcije je $${qT(n, k)}$.`, "Iz $kx + n = 0$ sledi $x = -\\frac{n}{k}$: pazi na predznak."] : null,
+            -n / k !== n ? [`Graf seka os $x$ v točki $(${n}, 0)$.`, "Presečišče z osjo $x$ je ničla $-\\frac{n}{k}$, ne $n$."] : null,
+            [`Graf je vzporeden osi $x$.`, "Vzporeden osi $x$ je graf le pri $k = 0$."],
+          ].filter(Boolean);
+          const pick = r.int(0, 2);
+          const ans = pickAns(r, TR[pick], r.shuffle(FA));
+          if (ans.options.length < 4) return null;
+          return {
+            text: `Dana je funkcija $f(x) = ${fT(k, 1, n)}$. Katera trditev je pravilna?`,
+            answer: ans,
+            hint: "Določi $k$ in $n$, nato še ničlo $x_0 = -\\frac{n}{k}$.",
+            data: { given: [`f(x) = ${fT(k, 1, n)}`], find: ["\\text{pravilna trditev}"] },
+            formula: ["n = f(0)", "x_0 = -\\dfrac{n}{k}"],
+            solution: `$k = ${k}$, zato je funkcija ${k > 0 ? "naraščajoča" : "padajoča"}.\n$n = ${n}$: graf seka os $y$ v točki $(0, ${n})$.\nNičla: $x_0 = -\\dfrac{${n}}{${k}} = ${z}$.\nPravilna je trditev: ${TR[pick]}`,
+          };
+        }
+        // f(a) ali f(x) = c pri ulomljenem k
+        const q = r.pick([2, 3, 4]);
+        const p = r.nonZero(-5, 5);
+        if (gcdI(p, q) !== 1) return null;
+        const n = r.int(-6, 6);
+        const j = r.nonZero(-4, 4);
+        const xs = q * j;
+        const val = p * j + n;
+        if (r.next() < 0.5) {
+          return {
+            text: `Dana je funkcija $f(x) = ${fT(p, q, n)}$. Izračunaj $f(${xs})$.`,
+            answer: num(val, null, [
+              { value: (q * xs) / p + n, why: `Pomnoži z $${qT(p, q)}$, ne z obratno vrednostjo.` },
+              { value: p * j - n, why: "Preveri predznak začetne vrednosti." },
+            ]),
+            hint: "Namesto $x$ vstavi dano število.",
+            data: { given: [`f(x) = ${fT(p, q, n)}`, `x = ${xs}`], find: [`f(${xs})`] },
+            formula: "f(x) = kx + n",
+            solution: `$f(${xs}) = ${qT(p, q)} \\cdot ${pt(xs)}${n ? ` ${sg(n)}` : ""} = ${p * j}${n ? ` ${sg(n)} = ${val}` : ""}$`,
+          };
+        }
+        return {
+          text: `Dana je funkcija $f(x) = ${fT(p, q, n)}$. Za kateri $x$ je $f(x) = ${val}$?`,
+          answer: num(xs, null, [
+            { value: ((val - n) * p) / q, why: `Delimo z $${qT(p, q)}$, kar pomeni množenje z $${qT(q, p)}$.` },
+            { value: ((val + n) * q) / p, why: "Ko $n$ preneseš na drugo stran, spremeni predznak." },
+            { value: (p * val) / q + n, why: "To je vrednost $f$ pri danem številu; iščemo $x$, pri katerem je $f(x)$ enak danemu številu." },
+          ]),
+          hint: "Reši enačbo $kx + n = c$.",
+          data: { given: [`f(x) = ${fT(p, q, n)}`, `f(x) = ${val}`], find: ["x"] },
+          formula: "kx + n = c \\;\\Rightarrow\\; x = \\dfrac{c - n}{k}",
+          solution: `$${fT(p, q, n)} = ${val}$\n$${kxT(p, q)} = ${val - n}$\n$x = ${pt(val - n)} \\cdot ${qT(q, p).startsWith("-") ? `\\left(${qT(q, p)}\\right)` : qT(q, p)} = ${xs}$`,
+        };
+      }
+      if (level === 2) {
+        if (t === 0) {
+          // predpis iz dveh točk, vprašanje po n
+          const x1 = r.int(-6, 4);
+          const x2 = x1 + r.int(2, 6);
+          const y1 = r.int(-8, 8);
+          const y2 = r.int(-8, 8);
+          if (y1 === y2 || x1 === 0) return null;
+          const dy = y2 - y1;
+          const dx = x2 - x1;
+          const nN = y1 * dx - dy * x1;
+          const [kn, kd] = fr(dy, dx);
+          return {
+            text: `Graf linearne funkcije $f(x) = kx + n$ poteka skozi točki $A(${x1}, ${y1})$ in $B(${x2}, ${y2})$. Izračunaj začetno vrednost $n$.`,
+            answer: qA(nN, dx, [
+              { value: y1 + (dy / dx) * x1, why: "Iz $y_1 = kx_1 + n$ sledi $n = y_1 - kx_1$." },
+              { value: dy / dx, why: "To je smerni koeficient $k$." },
+              { value: y1 - (dx / dy) * x1, why: "Smerni koeficient je $\\frac{\\Delta y}{\\Delta x}$, ne obratno." },
+            ]),
+            hint: "Najprej izračunaj $k$, nato v $y = kx + n$ vstavi koordinati ene točke.",
+            data: { given: [`x_1 = ${x1}`, `y_1 = ${y1}`, `x_2 = ${x2}`, `y_2 = ${y2}`], find: ["n"] },
+            formula: [FK, "n = y_1 - k x_1"],
+            solution: `$k = \\dfrac{${y2} - ${pt(y1)}}{${x2} - ${pt(x1)}} = ${qT(dy, dx)}$\n$n = y_1 - k x_1 = ${y1} - ${kd === 1 ? pt(kn) : `\\left(${qT(dy, dx)}\\right)`} \\cdot ${pt(x1)} = ${qT(nN, dx)}$\nPredpis: $f(x) = ${kxT(dy, dx)}${nN ? ` ${nN > 0 ? "+" : "-"} ${qT(Math.abs(nN), dx)}` : ""}$`,
+          };
+        }
+        if (t === 1) {
+          // vzporednica ali pravokotnica skozi točko
+          const q = r.pick([1, 1, 2, 3]);
+          const p = r.nonZero(-4, 4);
+          if (gcdI(p, q) !== 1) return null;
+          const n = r.int(-5, 5);
+          const x0 = r.nonZero(-6, 6);
+          const y0 = r.int(-6, 6);
+          const par = r.next() < 0.5;
+          // vzporedna: k' = p/q, pravokotna: k' = -q/p
+          const [kn, kd] = par ? [p, q] : fr(-q, p);
+          const nN = y0 * kd - kn * x0;
+          return {
+            text: `Premica $p$ poteka skozi točko $T(${x0}, ${y0})$ in je ${par ? "vzporedna premici" : "pravokotna na premico"} $y = ${fT(p, q, n)}$. Zapiši enačbo premice $p$ v obliki $y = kx + n$. Koliko je $n$?`,
+            answer: qA(nN, kd, [
+              par ? { value: y0 + (kn / kd) * x0, why: "Iz $y_0 = kx_0 + n$ sledi $n = y_0 - kx_0$." } : { value: y0 - (q / p) * x0, why: "Pravokotna premica ima smerni koeficient $-\\frac{1}{k}$: pazi na minus." },
+              par ? { value: n, why: "Vzporedna premica ima enak smerni koeficient, začetna vrednost pa je drugačna." } : { value: y0 + (p / q) * x0, why: "Pravokotna premica ima smerni koeficient $-\\frac{1}{k}$, ne $-k$." },
+              { value: y0 - (p / q) * (par ? -x0 : x0), why: par ? "Pri vstavljanju točke pazi na predznak koordinate." : "Za pravokotnico vzemi $k' = -\\frac{1}{k}$." },
+            ]),
+            hint: par ? "Vzporedni premici imata enak smerni koeficient." : "Za pravokotni premici velja $k_1 \\cdot k_2 = -1$.",
+            data: { given: [`y = ${fT(p, q, n)}`, `x_0 = ${x0}`, `y_0 = ${y0}`], find: ["n"] },
+            formula: [par ? "k_1 = k_2" : "k_1 \\cdot k_2 = -1", "n = y_0 - k x_0"],
+            solution: `$k' = ${par ? qT(p, q) : `-\\dfrac{1}{${qT(p, q)}} = ${qT(-q, p)}`}$\n$n = y_0 - k' x_0 = ${y0} - ${kd === 1 ? pt(kn) : `\\left(${qT(kn, kd)}\\right)`} \\cdot ${pt(x0)} = ${qT(nN, kd)}$\nPremica $p$: $y = ${fT(kn, kd, 0)}${nN ? ` ${nN > 0 ? "+" : "-"} ${qT(Math.abs(nN), kd)}` : ""}$`,
+          };
+        }
+        if (t === 2) {
+          // taksi: cena kot linearna funkcija razdalje
+          const kc = r.pick([80, 90, 110, 120, 125, 150, 160]);
+          const nc = r.pick([200, 250, 300, 350, 400]);
+          const d1 = r.int(3, 9);
+          const d2 = d1 + r.int(3, 10);
+          const C1 = (nc + kc * d1) / 100;
+          const C2 = (nc + kc * d2) / 100;
+          const ask = r.int(0, 2);
+          const d3 = d2 + r.int(2, 12);
+          const C3 = (nc + kc * d3) / 100;
+          const Q = ["Koliko stane začetek vožnje, torej cena pri $0\\ \\mathrm{km}$?", "Koliko stane vsak prevoženi kilometer?", `Koliko bi plačali za vožnjo dolžine $${d3}\\ \\mathrm{km}$?`][ask];
+          const val = [nc / 100, kc / 100, C3][ask];
+          return {
+            text: `Za vožnjo s taksijem dolžine $${d1}\\ \\mathrm{km}$ plačamo $${eur(C1)}\\ \\text{€}$, za vožnjo dolžine $${d2}\\ \\mathrm{km}$ pa $${eur(C2)}\\ \\text{€}$. Cena je linearna funkcija prevožene razdalje. ${Q}`,
+            answer: EUR_A(val, [
+              ask === 0 ? { value: C1 - C1 / d1, why: "Najprej izračunaj ceno kilometra iz razlike obeh voženj." } : null,
+              ask === 1 ? { value: C2 / d2, why: "Cena ni sorazmerna z razdaljo: vsebuje še začetni znesek." } : null,
+              ask === 2 ? { value: (C2 / d2) * d3, why: "Cena ni sorazmerna z razdaljo: vsebuje še začetni znesek." } : null,
+              ask === 1 ? { value: (C2 - C1) / (d2 + d1), why: "Razliko cen deli z razliko razdalj." } : null,
+              ask === 0 ? { value: kc / 100, why: "To je cena kilometra $k$, ne začetni znesek $n$." } : null,
+              ask === 2 ? { value: C2 + C1, why: "Ceni voženj se ne seštejeta; uporabi predpis $C(d) = kd + n$." } : null,
+            ]),
+            hint: "Cena kilometra je razlika cen, deljena z razliko razdalj. Začetni znesek dobiš z vstavitvijo ene vožnje.",
+            data: { given: [`d_1 = ${d1}\\ \\mathrm{km}`, `C_1 = ${eur(C1)}\\ \\text{€}`, `d_2 = ${d2}\\ \\mathrm{km}`, `C_2 = ${eur(C2)}\\ \\text{€}`], find: [["n", "k", "C"][ask]] },
+            formula: ["C(d) = kd + n", "k = \\dfrac{C_2 - C_1}{d_2 - d_1}"],
+            solution: `$k = \\dfrac{${eur(C2)} - ${eur(C1)}}{${d2} - ${d1}} = \\dfrac{${eur(cl(C2 - C1))}}{${d2 - d1}} = ${eur(kc / 100)}\\ \\text{€/km}$\n$n = C_1 - k d_1 = ${eur(C1)} - ${eur(kc / 100)} \\cdot ${d1} = ${eur(nc / 100)}\\ \\text{€}$${ask === 2 ? `\n$C(${d3}) = ${eur(kc / 100)} \\cdot ${d3} + ${eur(nc / 100)} = ${eur(C3)}\\ \\text{€}$` : ""}`,
+          };
+        }
+        if (t === 3) {
+          // ploščina trikotnika, ki ga graf oklepa s koordinatnima osema
+          const n = r.nonZero(-8, 8);
+          const x0 = r.nonZero(-9, 9);
+          const S = Math.abs(n * x0) / 2;
+          const [kn, kd] = fr(-n, x0);
+          return {
+            text: `Graf funkcije $f(x) = ${fT(kn, kd, n)}$ in koordinatni osi omejujejo trikotnik. Izračunaj njegovo ploščino.`,
+            answer: num(S, null, [
+              { value: 2 * S, why: "Ploščina pravokotnega trikotnika je polovica produkta katet." },
+              { value: (n * n) / 2, why: "Kateti sta dolgi $|n|$ in $|x_0|$; ničlo izračunaj." },
+              { value: Math.abs(n * kn / kd) / 2, why: "Druga kateta je ničla $|x_0|$, ne smerni koeficient." },
+            ]),
+            hint: "Trikotnik je pravokoten; kateti sta odseka na oseh: $|n|$ in $|x_0|$.",
+            data: { given: [`f(x) = ${fT(kn, kd, n)}`], find: ["S"] },
+            formula: ["x_0 = -\\dfrac{n}{k}", "S = \\dfrac{|n| \\cdot |x_0|}{2}"],
+            solution: `Odsek na osi $y$: $n = ${n}$.\nNičla: $${fT(kn, kd, n)} = 0 \\;\\Rightarrow\\; x_0 = ${x0}$\n$S = \\dfrac{|${n}| \\cdot |${x0}|}{2} = ${tx(S)}$`,
+          };
+        }
+        // presečišče grafov
+        const k1 = r.nonZero(-4, 4);
+        const k2 = r.nonZero(-4, 4);
+        if (k1 === k2) return null;
+        const X = r.nonZero(-5, 5);
+        const Y = r.nonZero(-8, 8);
+        const n1 = Y - k1 * X;
+        const n2 = Y - k2 * X;
+        const askX = r.next() < 0.5;
+        return {
+          text: `Izračunaj ${askX ? "absciso" : "ordinato"} presečišča grafov funkcij $f(x) = ${fT(k1, 1, n1)}$ in $g(x) = ${fT(k2, 1, n2)}$.`,
+          answer: num(askX ? X : Y, null, [
+            { value: askX ? Y : X, why: askX ? "Abscisa je koordinata $x$, ordinata koordinata $y$." : "Ordinata je koordinata $y$; vstavi $x$ v eno od funkcij." },
+            { value: askX ? -X : k1 * -X + n1, why: "Pri prenašanju členov pazi na predznak." },
+          ]),
+          hint: "V presečišču je $f(x) = g(x)$. Reši enačbo in izračunaj še $y$.",
+          data: { given: [`f(x) = ${fT(k1, 1, n1)}`, `g(x) = ${fT(k2, 1, n2)}`], find: [askX ? "x" : "y"] },
+          formula: "f(x) = g(x)",
+          solution: `$${fT(k1, 1, n1)} = ${fT(k2, 1, n2)}$\n$${lin([k1 - k2], ["x"])} = ${n2 - n1}$\n$x = ${X}$\n$y = f(${X}) = ${k1} \\cdot ${pt(X)}${n1 ? ` ${sg(n1)}` : ""} = ${Y}$\nPresečišče: $P(${X}, ${Y})$.`,
+        };
+      }
+      // ---------- 3. raven ----------
+      if (t === 0) {
+        // parameter v predpisu funkcije
+        const a = r.int(1, 3);
+        const b = r.nonZero(-5, 5);
+        const c = r.int(0, 2);
+        const d = r.nonZero(-6, 6);
+        const mE = (u, v) => `${u === 1 ? "" : u}m ${sg(v)}`;
+        const fx = `(${mE(a, b)})x ${c === 0 ? sg(d) : `+ ${mE(c, d)}`}`;
+        const kind = r.int(0, 3);
+        let N, D, cond, sol, ms;
+        if (kind === 0) {
+          const K = r.nonZero(-5, 5);
+          const NN = r.int(-5, 5);
+          N = K - b; D = a;
+          cond = `je graf funkcije $f$ vzporeden premici $y = ${fT(K, 1, NN)}$`;
+          sol = `Vzporedni premici imata enak smerni koeficient:\n$${mE(a, b)} = ${K}$\n$${a === 1 ? "" : a}m = ${K - b}$`;
+          ms = [{ value: (K + b) / a, why: "Pri prenosu števila na drugo stran pazi na predznak." }, { value: (-1 / K - b) / a, why: "Vzporedni premici imata enak smerni koeficient; $-\\frac{1}{k}$ velja za pravokotni." }];
+        } else if (kind === 1) {
+          const K = r.pick([-3, -2, 2, 3]);
+          N = -1 - b * K; D = a * K;
+          cond = `je graf funkcije $f$ pravokoten na premico $y = ${lin([K], ["x"])}$`;
+          sol = `Za pravokotni premici velja $k_1 \\cdot k_2 = -1$:\n$(${mE(a, b)}) \\cdot ${pt(K)} = -1$\n$${mE(a, b)} = ${qT(-1, K)}$`;
+          ms = [{ value: (K - b) / a, why: "Enak smerni koeficient imata vzporedni premici; pravokotni imata $k_1 k_2 = -1$." }, { value: (1 / K - b) / a, why: "Pravokotna premica ima smerni koeficient $-\\frac{1}{k}$: pazi na minus." }];
+        } else {
+          const x0 = r.nonZero(-4, 4);
+          const y0 = kind === 2 ? r.int(-8, 8) : 0;
+          N = y0 - b * x0 - d; D = a * x0 + c;
+          if (D === 0) return null;
+          // pri ničli mora biti funkcija res linearna z ničlo (k ≠ 0)
+          if (kind === 3 && Math.abs(a * (N / D) + b) < 1e-9) return null;
+          cond = kind === 2 ? `poteka graf funkcije $f$ skozi točko $T(${x0}, ${y0})$` : `je ničla funkcije $f$ enaka $${x0}$`;
+          sol = `Vstavimo $x = ${x0}$ in $f(${x0}) = ${y0}$:\n$(${mE(a, b)}) \\cdot ${pt(x0)} ${c === 0 ? sg(d) : `+ ${mE(c, d)}`} = ${y0}$\n$${lin([a * x0 + c], ["m"])} ${sg(b * x0 + d)} = ${y0}$`.replace(" + 0 =", " =");
+          ms = [{ value: (y0 + b * x0 + d) / D, why: "Pri prenosu števil na drugo stran pazi na predznak." }, { value: D !== c ? N / (a * x0) : null, why: "Tudi začetna vrednost vsebuje $m$." }];
+        }
+        if (N === 0) return null;
+        return {
+          text: `Dana je funkcija $f(x) = ${fx}$, kjer je $m$ realno število. Za katero vrednost $m$ ${cond}?`,
+          answer: qA(N, D, ms),
+          hint: kind <= 1 ? "Smerni koeficient funkcije $f$ je izraz v oklepaju pred $x$." : "Vstavi koordinati točke v predpis in reši linearno enačbo za $m$.",
+          data: { given: [`f(x) = ${fx}`], find: ["m"] },
+          formula: kind === 0 ? "k_1 = k_2" : kind === 1 ? "k_1 \\cdot k_2 = -1" : "y_0 = f(x_0)",
+          solution: `${sol}\n$m = ${qT(N, D)}$`,
+        };
+      }
+      if (t === 1) {
+        // ničla in ena vrednost → druga vrednost
+        const x0 = r.int(-6, 6);
+        const a = r.int(-6, 8);
+        const b = r.nonZero(-9, 9);
+        const c = r.int(-8, 10);
+        if (a === x0 || c === x0 || c === a || a === 0) return null;
+        const [kn, kd] = fr(b, a - x0);
+        if (kd > 4) return null;
+        const N = b * (c - x0);
+        const D = a - x0;
+        return {
+          text: `Linearna funkcija $f$ ima ničlo $x_0 = ${x0}$ in velja $f(${a}) = ${b}$. Izračunaj $f(${c})$.`,
+          answer: qA(N, D, [
+            { value: (b * c) / a, why: "Funkcija ni premo sorazmerna: graf ne gre nujno skozi izhodišče." },
+            { value: (b * (c + x0)) / (a + x0), why: "Ničla je točka $(x_0, 0)$: $k = \\frac{f(a) - 0}{a - x_0}$." },
+          ]),
+          hint: "Graf poteka skozi točki $(x_0, 0)$ in $(a, f(a))$. Iz njiju izračunaj $k$ in $n$.",
+          data: { given: [`x_0 = ${x0}`, `f(${a}) = ${b}`], find: [`f(${c})`] },
+          formula: [FK, "f(x) = k\\,(x - x_0)"],
+          solution: `Graf poteka skozi $(${x0}, 0)$ in $(${a}, ${b})$.\n$k = \\dfrac{${b} - 0}{${a} - ${pt(x0)}} = ${qT(b, a - x0)}$\n$f(x) = k(x - x_0) = ${qT(b, a - x0)}\\,(${xm(x0)})$`.replace("(x - 0)", "x") + `\n$f(${c}) = ${qT(b, a - x0)} \\cdot ${pt(c - x0)} = ${qT(N, D)}$`,
+        };
+      }
+      if (t === 2) {
+        // linearni model: sveča ali rezervoar, kdaj je prazno
+        const candle = r.next() < 0.5;
+        const v = candle ? r.pick([0.5, 1, 1.5, 2, 2.5]) : r.pick([20, 25, 30, 40, 50]);
+        const T0 = candle ? r.int(6, 24) : r.int(10, 40);
+        const h0 = v * T0;
+        if (candle && (h0 > 30 || h0 < 8 || !Number.isInteger(h0))) return null;
+        const t1 = r.int(1, Math.floor(T0 / 2));
+        const t2 = t1 + r.int(2, Math.max(2, Math.floor(T0 / 2) - 1));
+        if (t2 >= T0) return null;
+        const h1 = h0 - v * t1;
+        const h2 = h0 - v * t2;
+        const askT = r.next() < 0.6;
+        const U = candle ? ["h", "ur", "cm"] : ["min", "minut", "l"];
+        // Oznaka količine: višina sveče h, prostornina vode V.
+        const H = candle ? "h" : "V";
+        const lead = candle
+          ? `Sveča enakomerno gori. Po $${t1}\\ \\mathrm{h}$ je visoka $${tx(h1)}\\ \\mathrm{cm}$, po $${t2}\\ \\mathrm{h}$ pa $${tx(h2)}\\ \\mathrm{cm}$.`
+          : `Iz rezervoarja enakomerno odteka voda. Po $${t1}\\ \\mathrm{min}$ je v njem $${h1}\\ \\mathrm{l}$ vode, po $${t2}\\ \\mathrm{min}$ pa $${h2}\\ \\mathrm{l}$.`;
+        const Q = askT
+          ? candle ? "Po koliko urah od prižiga sveča dogori?" : "Po koliko minutah od začetka iztekanja je rezervoar prazen?"
+          : candle ? "Kako visoka je bila sveča pred prižigom?" : "Koliko vode je bilo v rezervoarju na začetku?";
+        return {
+          text: `${lead} ${Q}`,
+          answer: askT
+            ? num(T0, null, [
+                { value: h2 / v, why: `To je čas od trenutka $t_2$ naprej; prištej še $${t2}$.` },
+                { value: h1 / v, why: `To je čas od trenutka $t_1$ naprej; prištej še $${t1}$.` },
+                { value: h0 / (h1 - h2), why: "Smerni koeficient je sprememba na enoto časa: razliko deli še s $t_2 - t_1$." },
+              ], U[0])
+            : num(h0, null, [
+                { value: h1 + v * t2, why: `Začetna vrednost je $${H}(0) = ${H}_1 + v t_1$.` },
+                { value: h1 + h2, why: "Količina se zmanjšuje enakomerno; izračunaj, koliko se zmanjša na enoto časa." },
+                { value: h1, why: `To je vrednost po $${t1}$ ${candle ? "h" : "min"}, ne na začetku.` },
+              ], U[2]),
+          hint: "Količina je linearna funkcija časa. Iz dveh meritev izračunaj smerni koeficient (ta je negativen) in začetno vrednost.",
+          data: { given: [`t_1 = ${t1}\\ \\mathrm{${U[0]}}`, `${H}_1 = ${tx(h1)}\\ \\mathrm{${U[2]}}`, `t_2 = ${t2}\\ \\mathrm{${U[0]}}`, `${H}_2 = ${tx(h2)}\\ \\mathrm{${U[2]}}`], find: [askT ? "t" : `${H}(0)`] },
+          formula: [`${H}(t) = kt + n`, `k = \\dfrac{${H}_2 - ${H}_1}{t_2 - t_1}`],
+          solution: `$k = \\dfrac{${tx(h2)} - ${tx(h1)}}{${t2} - ${t1}} = ${tx(-v)}$\n$n = ${H}_1 - k t_1 = ${tx(h1)} + ${tx(v)} \\cdot ${t1} = ${tx(h0)}$\n$${H}(t) = ${tx(-v)}t + ${tx(h0)}$${askT ? `\n$${H}(t) = 0 \\;\\Rightarrow\\; t = \\dfrac{${tx(h0)}}{${tx(v)}} = ${T0}\\ \\mathrm{${U[0]}}$` : `\nNa začetku: $${H}(0) = ${tx(h0)}\\ \\mathrm{${U[2]}}$`}`,
+        };
+      }
+      if (t === 3) {
+        // n iz ploščine trikotnika z osema
+        const q = r.pick([1, 2, 3, 4]);
+        const p = r.nonZero(-4, 4);
+        if (gcdI(p, q) !== 1) return null;
+        const n = r.int(2, 9);
+        const S2 = (n * n * q) / Math.abs(p); // 2S
+        if (!Number.isInteger(S2)) return null;
+        const S = S2 / 2;
+        return {
+          text: `Graf funkcije $f(x) = ${kxT(p, q)} + n$, kjer je $n > 0$, in koordinatni osi omejujejo trikotnik s ploščino $${tx(S)}$. Izračunaj $n$.`,
+          answer: num(n, null, [
+            { value: n * n, why: "Iz $n^2 = \\ldots$ izračunaj še kvadratni koren." },
+            { value: Math.sqrt(S * Math.abs(p) / q), why: "Ploščina je $\\frac{|n| \\cdot |x_0|}{2}$: ne pozabi faktorja $2$." },
+            { value: (2 * S * Math.abs(p)) / q, why: "Ničla je $-\\frac{n}{k}$, zato ploščina vsebuje $n^2$." },
+          ]),
+          hint: "Ničla je $x_0 = -\\frac{n}{k}$. Ploščina trikotnika je $\\frac{|n| \\cdot |x_0|}{2}$.",
+          data: { given: [`f(x) = ${kxT(p, q)} + n`, `S = ${tx(S)}`], find: ["n"] },
+          formula: ["x_0 = -\\dfrac{n}{k}", "S = \\dfrac{|n| \\cdot |x_0|}{2} = \\dfrac{n^2}{2|k|}"],
+          solution: `$|x_0| = \\dfrac{n}{|k|} = ${q === 1 ? (Math.abs(p) === 1 ? "n" : `\\dfrac{n}{${Math.abs(p)}}`) : `\\dfrac{${q}n}{${Math.abs(p)}}`}$`.replace("\\dfrac{n}{1}", "n") + `\n$S = \\dfrac{n^2}{2|k|} = ${tx(S)} \\;\\Rightarrow\\; n^2 = ${tx(S)} \\cdot 2 \\cdot ${qT(Math.abs(p), q)} = ${n * n}$\n$n = ${n}$ (ker je $n > 0$)`,
+        };
+      }
+      // pravokotnica na premico v splošni obliki skozi točko
+      const A = r.nonZero(-5, 5);
+      const B = r.nonZero(-5, 5);
+      const C = r.int(-9, 9);
+      if (gcdI(gcdI(A, B), C) !== 1) return null;
+      const x0 = r.nonZero(-6, 6);
+      const y0 = r.int(-6, 6);
+      // premica Ax + By + C = 0 ima k = -A/B, pravokotnica k' = B/A
+      const [kn, kd] = fr(B, A);
+      const nN = y0 * kd - kn * x0;
+      return {
+        text: `Graf linearne funkcije $f$ je pravokoten na premico $${lin([A, B], ["x", "y"])}${C ? ` ${sg(C)}` : ""} = 0$ in poteka skozi točko $T(${x0}, ${y0})$. Izračunaj začetno vrednost $n$ funkcije $f$.`,
+        answer: qA(nN, kd, [
+          { value: y0 + (A / B) * x0, why: "To je vzporednica: smerni koeficient dane premice je $-\\frac{A}{B}$, pravokotnice pa $\\frac{B}{A}$." },
+          { value: y0 + (B / A) * x0, why: "Iz $y_0 = kx_0 + n$ sledi $n = y_0 - kx_0$." },
+        ]),
+        hint: "Dano premico zapiši v eksplicitni obliki $y = kx + n$, nato uporabi $k_1 \\cdot k_2 = -1$.",
+        data: { given: [`x_0 = ${x0}`, `y_0 = ${y0}`], find: ["n"] },
+        formula: ["Ax + By + C = 0 \\;\\Rightarrow\\; k = -\\dfrac{A}{B}", "k_1 \\cdot k_2 = -1"],
+        solution: `$${lin([B], ["y"])} = ${lin([-A], ["x"])}${C ? ` ${sg(-C)}` : ""}$, zato je $k = ${qT(-A, B)}$.\nPravokotnica: $k' = -\\dfrac{1}{k} = ${qT(B, A)}$\n$n = y_0 - k' x_0 = ${y0} - ${kd === 1 ? pt(kn) : `\\left(${qT(kn, kd)}\\right)`} \\cdot ${pt(x0)} = ${qT(nN, kd)}$`,
+      };
+    },
+  },
+
+  // ---------------- linearne neenačbe ----------------
+  {
+    id: P + "linearne-neenacbe",
+    topics: [T("linearne-neenacbe"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
+    gen(level, r) {
+      const t = r.int(0, 4);
+      const ivAns = (rel, n, d, neg) => {
+        const ch = pickAns(r, ivT(rel, n, d), ivWrong(rel, n, d, neg));
+        return ch.options.length >= 3 ? ch : null;
+      };
+      if (level === 1) {
+        if (t === 0) {
+          // ax + b rel cx + d → interval
+          const a = r.nonZero(-5, 6);
+          const c = r.nonZero(-5, 6);
+          const A = a - c;
+          if (A === 0) return null;
+          const e = r.int(-7, 7);
+          const b = r.nonZero(-9, 9);
+          const d = A * e + b;
+          const rel = r.pick(["<", "<=", ">", ">="]);
+          const relR = relOut(rel, A);
+          const ans = ivAns(relR, e, 1, A < 0);
+          if (!ans) return null;
+          return {
+            text: `Reši neenačbo $${ax(a, b)} ${REL[rel]} ${ax(c, d)}$. Rešitev zapiši kot interval.`,
+            answer: ans,
+            options_tex: true,
+            hint: "Člene z $x$ zberi na levi. Če deliš z negativnim številom, obrni znak neenačbe.",
+            data: { given: GIV(ax(a, b), ax(c, d)), find: ["x"] },
+            formula: FN,
+            solution: `$${lin([a], ["x"])} ${tX(-c)} ${REL[rel]} ${tx(d)} ${sg(-b)}$\n$${lin([A], ["x"])} ${REL[rel]} ${d - b}$\n${divLine(A)}\n$x ${REL[relR]} ${e}$, torej $x \\in ${ivT(relR, e)}$.`,
+          };
+        }
+        if (t === 1) {
+          // najmanjše ali največje celo število
+          const p = r.int(2, 5);
+          const q = r.nonZero(-5, 5);
+          const c = r.nonZero(-6, 6);
+          const s = r.int(-9, 9);
+          // p(x + q) rel (p + c)x + s → -c·x rel s - pq
+          const rel = r.pick(["<", ">", "<=", ">="]);
+          const A = -c;
+          const R = s - p * q;
+          const [en, ed] = fr(R, A);
+          const relR = relOut(rel, A);
+          const up = relR === ">" || relR === ">=";
+          const e = R / A;
+          let ans;
+          if (up) ans = relR === ">=" ? Math.ceil(e - 1e-12) : Math.floor(e + 1e-12) + 1;
+          else ans = relR === "<=" ? Math.floor(e + 1e-12) : Math.ceil(e - 1e-12) - 1;
+          const RHS = ax(p + c, s);
+          return {
+            text: `Katero je ${up ? "najmanjše" : "največje"} celo število, ki reši neenačbo $${p}(x ${sg(q)}) ${REL[rel]} ${RHS}$?`,
+            answer: num(ans, null, [
+              { value: up ? ans - 1 : ans + 1, why: up ? "Preveri, ali to število res reši neenačbo (krajišče, strog znak)." : "Preveri, ali to število res reši neenačbo (krajišče, strog znak)." },
+              { value: Math.round(e), why: "Krajišče ni nujno rešitev: preveri smer in strogost neenačbe." },
+              { value: -ans, why: "Pri prenašanju členov pazi na predznak." },
+            ]),
+            hint: "Reši neenačbo, nato poišči ustrezno celo število ob krajišču. Pazi, ali je krajišče rešitev.",
+            data: { given: GIV(`${p}(x ${sg(q)})`, RHS), find: [up ? "x_{\\min}" : "x_{\\max}"] },
+            formula: FN,
+            solution: `$${p}x ${sg(p * q)} ${REL[rel]} ${RHS}$\n$${lin([A], ["x"])} ${REL[rel]} ${R}$\n${divLine(A)}\n$x ${REL[relR]} ${qT(R, A)}$${ed === 1 ? "" : ` \\approx ${tx(roundHalfUp(e, 2))}`}\n${up ? "Najmanjše" : "Največje"} celo število v $${ivT(relR, R, A)}$ je $${ans}$.`,
+          };
+        }
+        if (t === 2) {
+          // številska premica → interval
+          const x0 = r.int(-5, 6);
+          const rel = r.pick(["<", ">", "<=", ">="]);
+          const closed = rel.length === 2;
+          const dir = rel[0] === "<" ? -1 : 1;
+          const ans = pickAns(r, ivT(rel, x0), [
+            [ivT(FLIP[rel], x0), "Pobarvani del kaže smer: levo so manjša števila, desno večja."],
+            [ivT(STRICT[rel], x0), closed ? "Poln krožec pomeni, da krajišče spada zraven: oglati oklepaj." : "Prazen krožec pomeni, da krajišče ne spada zraven: okrogel oklepaj."],
+            [dir < 0 ? `(${x0}, -${INF})` : `(${INF}, ${x0})`,"Interval pišemo od manjšega števila k večjemu, $-\\infty$ je vedno na levi."],
+            [ivT(rel, -x0), "Preberi, pri katerem številu je krožec."],
+          ]);
+          return {
+            text: `Na številski premici je prikazana množica rešitev neenačbe. Krožec je pri $${x0}$. Kateri interval je prikazan?`,
+            figure: { type: "numberline", x0, dir, closed },
+            answer: ans,
+            options_tex: true,
+            hint: "Poln krožec: krajišče spada zraven (oglati oklepaj). Prazen krožec: ne spada zraven (okrogel oklepaj). Pri $\\pm\\infty$ je oklepaj vedno okrogel.",
+            data: { given: [`x_0 = ${x0}\\ (\\text{krožec na sliki})`], find: ["\\text{interval}"] },
+            formula: ["x < a: (-\\infty, a)", "x \\ge a: [a, \\infty)"],
+            solution: `Krožec pri $${x0}$ je ${closed ? "poln, zato krajišče spada zraven" : "prazen, zato krajišče ne spada zraven"}.\nPobarvano je ${dir < 0 ? "levo" : "desno"}: $x ${REL[rel]} ${x0}$.\nInterval: $${ivT(rel, x0)}$`,
+          };
+        }
+        if (t === 3) {
+          // negativni ulomljeni koeficient
+          const q = r.pick([2, 3, 4, 5]);
+          const p = r.int(1, 4);
+          if (gcdI(p, q) !== 1) return null;
+          const e = q * r.nonZero(-4, 4);
+          const b = r.nonZero(-8, 8);
+          const c = (-p * e) / q + b;
+          const rel = r.pick(["<", "<=", ">", ">="]);
+          const relR = FLIP[rel];
+          const ans = ivAns(relR, e, 1, true);
+          if (!ans) return null;
+          return {
+            text: `Reši neenačbo $${fT(-p, q, b)} ${REL[rel]} ${c}$. Rešitev zapiši kot interval.`,
+            answer: ans,
+            options_tex: true,
+            hint: "Najprej odštej prosti člen, nato pomnoži z obratno vrednostjo koeficienta. Ta je negativna.",
+            data: { given: GIV(fT(-p, q, b), `${c}`), find: ["x"] },
+            formula: FN,
+            solution: `$${kxT(-p, q)} ${REL[rel]} ${c} ${sg(-b)} = ${c - b}$\nPomnožimo z $${qT(-q, p)}$, ki je negativno, zato se znak obrne.\n$x ${REL[relR]} ${pt(c - b)} \\cdot \\left(${qT(-q, p)}\\right) = ${e}$\n$x \\in ${ivT(relR, e)}$`,
+          };
+        }
+        // besedilna: naročnina in poraba
+        const base = r.pick([5, 6, 8, 9, 10, 12]);
+        const per = r.pick([0.5, 0.8, 1.2, 1.5, 2, 2.5]);
+        const maxN = r.int(4, 20);
+        // meja je celo število evrov med ceno za maxN in maxN + 1 GB
+        const cLo = Math.ceil(cl(base + per * maxN));
+        const cHi = Math.ceil(cl(base + per * (maxN + 1))) - 1;
+        if (cHi < cLo) return null;
+        const C = r.int(cLo, cHi);
+        const lim = (C - base) / per;
+        const who = name(r);
+        return {
+          text: `Mobilni paket stane $${eur(base)}\\ \\text{€}$ na mesec, vsak dodatni gigabajt prenosa pa $${eur(per)}\\ \\text{€}$. ${who} želi, da mesečni račun ne preseže $${eur(C)}\\ \\text{€}$. Največ koliko dodatnih gigabajtov lahko porabi?`,
+          answer: num(maxN, null, [
+            { value: Math.floor(C / per), why: "Od zneska najprej odštej mesečno naročnino." },
+            { value: Math.ceil(lim - 1e-9) === maxN ? maxN + 1 : Math.ceil(lim - 1e-9), why: "Rezultat zaokroži navzdol: z enim gigabajtom več bi račun presegel mejo." },
+          ]),
+          hint: "Za $x$ gigabajtov je račun $" + eur(base) + " + " + eur(per) + "x$. Ta mora biti manjši ali enak meji.",
+          data: { given: [`n = ${eur(base)}\\ \\text{€}`, `k = ${eur(per)}\\ \\text{€/GB}`, `C = ${eur(C)}\\ \\text{€}`], find: ["x_{\\max}"] },
+          formula: "n + kx \\le C",
+          solution: `$${eur(base)} + ${eur(per)}x \\le ${eur(C)}$\n$${eur(per)}x \\le ${eur(cl(C - base))}$\n$x \\le ${tx(roundHalfUp(lim, 3))}$\nNajveč $${maxN}$ GB.`,
+        };
+      }
+      if (level === 2) {
+        if (t === 0) {
+          // dvojna neenačba
+          const a = r.pick([-5, -4, -3, -2, 2, 3, 4, 5]);
+          const b = r.int(-9, 9);
+          const L = r.int(-6, 3);
+          const U = L + r.int(2, 7);
+          const [lo, hi] = a > 0 ? [a * L + b, a * U + b] : [a * U + b, a * L + b];
+          const r1 = r.pick(["<", "<="]);
+          const r2 = r.pick(["<", "<="]);
+          // za x: pri a > 0 r1 velja pri L, r2 pri U; pri a < 0 obratno
+          const [rL, rU] = a > 0 ? [r1, r2] : [r2, r1];
+          const ints = [];
+          for (let x = L - 1; x <= U + 1; x++) if (holds(lo, a * x + b, r1) && holds(a * x + b, hi, r2)) ints.push(x);
+          const iv = `${rL === "<" ? "(" : "["}${L}, ${U}${rU === "<" ? ")" : "]"}`;
+          const E = `${lo} ${REL[r1]} ${ax(a, b)} ${REL[r2]} ${hi}`;
+          const sol = `$${lo} ${sg(-b)} ${REL[r1]} ${lin([a], ["x"])} ${REL[r2]} ${hi} ${sg(-b)}$\n$${lo - b} ${REL[r1]} ${lin([a], ["x"])} ${REL[r2]} ${hi - b}$\n${divLine(a)}\n$${L} ${REL[rL]} x ${REL[rU]} ${U}$, torej $x \\in ${iv}$.`;
+          if (r.next() < 0.5) {
+            return {
+              text: `Koliko celih števil reši neenačbo $${E}$?`,
+              answer: num(ints.length, null, [
+                { value: U - L + 1, why: "Preveri krajišči: pri strogem znaku krajišče ni rešitev." },
+                { value: U - L - 1, why: "Preveri krajišči: pri $\\le$ je krajišče rešitev." },
+                { value: U - L, why: "Preštej cela števila na intervalu, upoštevaj krajišči." },
+              ]),
+              hint: "Od vseh treh delov odštej isto število, nato vse dele deli s koeficientom pred $x$. Pri negativnem obrni oba znaka.",
+              data: { given: [`\\text{leva meja} = ${lo}`, `\\text{desna meja} = ${hi}`], find: ["\\text{število celih rešitev}"] },
+              formula: FN,
+              solution: `${sol}\nCela števila: $${ints.join(", ")}$, skupaj $${ints.length}$.`,
+            };
+          }
+          const wrongs = [
+            [`${rL === "<" ? "[" : "("}${L}, ${U}${rU === "<" ? ")" : "]"}`, "Preveri oklepaj pri levem krajišču: ali je znak strog?"],
+            [`${rL === "<" ? "(" : "["}${L}, ${U}${rU === "<" ? "]" : ")"}`, "Preveri oklepaj pri desnem krajišču: ali je znak strog?"],
+            [`${rL === "<" ? "(" : "["}${-U}, ${-L}${rU === "<" ? ")" : "]"}`, a < 0 ? "Pri deljenju z negativnim številom se zamenjata tudi meji." : "Pazi na predznak pri deljenju."],
+          ];
+          return {
+            text: `Reši neenačbo $${E}$. Rešitev zapiši kot interval.`,
+            answer: pickAns(r, iv, wrongs),
+            options_tex: true,
+            hint: "Od vseh treh delov odštej isto število, nato vse dele deli s koeficientom pred $x$. Pri negativnem obrni oba znaka.",
+            data: { given: [`\\text{leva meja} = ${lo}`, `\\text{desna meja} = ${hi}`], find: ["x"] },
+            formula: FN,
+            solution: sol,
+          };
+        }
+        if (t === 1) {
+          // ulomki
+          const [m, n] = r.shuffle([2, 3, 4, 5, 6]).slice(0, 2);
+          const L = lcmI(m, n);
+          const a = r.nonZero(-5, 5);
+          const b = r.nonZero(-5, 5);
+          const c = r.int(-3, 4);
+          const A = L / m - L / n;
+          const R = c * L - (L / m) * a + (L / n) * b;
+          const rel = r.pick(["<", "<=", ">", ">="]);
+          const relR = relOut(rel, A);
+          const [en, ed] = fr(R, A);
+          if (ed > 6) return null;
+          const ans = ivAns(relR, en, ed, A < 0);
+          if (!ans) return null;
+          return {
+            text: `Reši neenačbo $\\dfrac{x ${sg(a)}}{${m}} - \\dfrac{x ${sg(b)}}{${n}} ${REL[rel]} ${c}$. Rešitev zapiši kot interval.`,
+            answer: ans,
+            options_tex: true,
+            hint: "Pomnoži z najmanjšim skupnim večkratnikom imenovalcev (pozitivno število: znak ostane). Minus pred ulomkom velja za ves števec.",
+            data: { given: GIV(`\\dfrac{x ${sg(a)}}{${m}} - \\dfrac{x ${sg(b)}}{${n}}`, `${c}`), find: ["x"] },
+            formula: FN,
+            solution: `Pomnožimo z $${L}$ (znak ostane):\n$${mul(L / m, `x ${sg(a)}`)} - ${mul(L / n, `x ${sg(b)}`)} ${REL[rel]} ${c * L}$\n$${lin([L / m], ["x"])} ${sg((L / m) * a)} ${tX(-(L / n))} ${sg(-(L / n) * b)} ${REL[rel]} ${c * L}$\n$${lin([A], ["x"])} ${REL[rel]} ${R}$\n${divLine(A)}\n$x ${REL[relR]} ${qT(R, A)}$, torej $x \\in ${ivT(relR, en, ed)}$.`,
+          };
+        }
+        if (t === 2) {
+          // kvadrati se odštejejo
+          const a = r.nonZero(-5, 5);
+          const b = r.nonZero(-5, 5);
+          const c = r.int(-20, 20);
+          if (a === b) return null;
+          // (x + a)^2 rel (x + b)^2 + c → 2(a - b)x rel c + b^2 - a^2
+          const A = 2 * (a - b);
+          const R = c + b * b - a * a;
+          const rel = r.pick(["<", "<=", ">", ">="]);
+          const relR = relOut(rel, A);
+          const [en, ed] = fr(R, A);
+          const ans = ivAns(relR, en, ed, A < 0);
+          if (!ans) return null;
+          const RHS = `(x ${sg(b)})^2${c ? ` ${sg(c)}` : ""}`;
+          return {
+            text: `Reši neenačbo $(x ${sg(a)})^2 ${REL[rel]} ${RHS}$. Rešitev zapiši kot interval.`,
+            answer: ans,
+            options_tex: true,
+            hint: "Razvij kvadrata. Člena $x^2$ se odštejeta in ostane linearna neenačba.",
+            data: { given: GIV(`(x ${sg(a)})^2`, RHS), find: ["x"] },
+            formula: ["(x + a)^2 = x^2 + 2ax + a^2", ...FN],
+            solution: `$x^2 ${tX(2 * a)} + ${a * a} ${REL[rel]} x^2 ${tX(2 * b)} + ${b * b}${c ? ` ${sg(c)}` : ""}$\n$${lin([A], ["x"])} ${REL[rel]} ${R}$\n${divLine(A)}\n$x ${REL[relR]} ${qT(R, A)}$, torej $x \\in ${ivT(relR, en, ed)}$.`,
+          };
+        }
+        // primerjava ponudb
+        const [ctx, unit, uG] = r.pick([["Izposoja kombija", "h", "uro"], ["Najem dvorane", "h", "uro"], ["Izposoja kolesa", "dan", "dan"]]);
+        const nA = r.int(5, 30);
+        const kA = r.int(3, 12);
+        const kB = kA + r.int(2, 8);
+        const nB = r.int(0, nA - 1);
+        // A: nA + kA x, B: nB + kB x; A cenejša, ko (kB - kA) x > nA - nB
+        const lim = (nA - nB) / (kB - kA);
+        const ans = Math.floor(lim + 1e-12) + 1;
+        const uw = unit === "h" ? "ur" : "dni";
+        return {
+          text: `${ctx} pri ponudniku A stane $${nA}\\ \\text{€}$ in $${kA}\\ \\text{€}$ za vsak${unit === "h" ? "o" : ""} ${uG}, pri ponudniku B pa ${nB ? `$${nB}\\ \\text{€}$ in ` : ""}$${kB}\\ \\text{€}$ za vsak${unit === "h" ? "o" : ""} ${uG}. Najmanj koliko celih ${uw} mora trajati najem, da je ponudnik A cenejši?`,
+          answer: num(ans, null, [
+            { value: Number.isInteger(lim) ? lim : Math.floor(lim), why: "Pri tej vrednosti A ni cenejši; vzemi prvo celo število, pri katerem je neenačba stroga in izpolnjena." },
+            { value: nB ? Math.ceil((nA + nB) / (kB - kA)) : null, why: `Ko osnovno ceno ponudnika B ($${nB}\\ \\text{€}$) preneseš na drugo stran, ji spremeni predznak.` },
+          ]),
+          hint: "Zapiši ceni kot linearni funkciji časa in reši neenačbo $A(x) < B(x)$.",
+          data: { given: [`n_A = ${nA}\\ \\text{€}`, `k_A = ${kA}\\ \\text{€}`, ...(nB ? [`n_B = ${nB}\\ \\text{€}`] : []), `k_B = ${kB}\\ \\text{€}`], find: ["x_{\\min}"] },
+          formula: "n_A + k_A x < n_B + k_B x",
+          solution: `$${nA} + ${kA}x < ${nB ? `${nB} + ` : ""}${kB}x$\n$${nA - nB} < ${kB - kA}x$\n$x > ${qT(nA - nB, kB - kA)}$\nNajmanjše celo število: $${ans}$.`,
+        };
+      }
+      // ---------- 3. raven ----------
+      if (t === 0) {
+        // koliko naravnih števil reši neenačbo
+        const [m, n] = r.shuffle([2, 3, 4, 5, 6]).slice(0, 2);
+        const L = lcmI(m, n);
+        const a = r.nonZero(-4, 4);
+        const b = r.nonZero(-4, 4);
+        const c = r.int(1, 5);
+        const A = L / m - L / n;
+        const R = c * L - (L / m) * a + (L / n) * b;
+        const rel = r.pick(["<", "<="]);
+        const relR = relOut(rel, A);
+        if (relR[0] !== "<") return null;
+        const e = R / A;
+        const ints = [];
+        for (let x = 1; x <= 200; x++) if (holds(A * x, R, rel)) ints.push(x);
+        if (ints.length < 1 || ints.length > 30) return null;
+        return {
+          text: `Koliko naravnih števil reši neenačbo $\\dfrac{x ${sg(a)}}{${m}} - \\dfrac{x ${sg(b)}}{${n}} ${REL[rel]} ${c}$?`,
+          answer: num(ints.length, null, [
+            { value: ints.length + 1, why: "Naravna števila se začnejo z $1$; $0$ ni naravno število." },
+            { value: Number.isInteger(e) ? (rel === "<" ? ints.length + 1 : ints.length - 1) : null, why: "Preveri krajišče: ali je pri danem znaku rešitev?" },
+            { value: Math.floor(e), why: "Prešteti moraš vsa naravna števila v intervalu rešitev." },
+          ]),
+          hint: "Reši neenačbo, nato preštej naravna števila ($1, 2, 3, \\ldots$) v intervalu rešitev.",
+          data: { given: GIV(`\\dfrac{x ${sg(a)}}{${m}} - \\dfrac{x ${sg(b)}}{${n}}`, `${c}`), find: ["\\text{število naravnih rešitev}"] },
+          formula: FN,
+          solution: `Pomnožimo z $${L}$:\n$${mul(L / m, `x ${sg(a)}`)} - ${mul(L / n, `x ${sg(b)}`)} ${REL[rel]} ${c * L}$\n$${lin([A], ["x"])} ${REL[rel]} ${R}$\n${divLine(A)}\n$x ${REL[relR]} ${qT(R, A)}$\nNaravne rešitve: $${ints.length <= 6 ? ints.join(", ") : `1, 2, \\ldots, ${ints[ints.length - 1]}`}$, skupaj $${ints.length}$.`,
+        };
+      }
+      if (t === 1) {
+        // povprečje točk
+        const who = name(r);
+        const k = r.int(3, 5);
+        const goal = r.pick([70, 75, 80, 85, 90]);
+        const sc = Array.from({ length: k }, () => r.int(55, 98));
+        const sum = sc.reduce((u, v) => u + v, 0);
+        const need = goal * (k + 1) - sum;
+        if (need <= 40 || need > 100) return null;
+        const scT = sc.slice(0, -1).map((x) => `$${x}$`).join(", ") + ` in $${sc[k - 1]}$`;
+        return {
+          text: `${who} je na ${k === 3 ? "treh" : k === 4 ? "štirih" : "petih"} testih ${g(who, "dosegel", "dosegla")} ${scT} točk (od $100$). Najmanj koliko točk mora doseči na naslednjem testu, da bo povprečje vseh testov vsaj $${goal}$ točk?`,
+          answer: num(need, null, [
+            { value: Math.ceil(2 * goal - sum / k), why: "Dosedanjega povprečja in zadnjega testa ne smeš povprečiti kot dve števili: vsak test šteje enako." },
+            { value: goal, why: "Zadnji test mora nadomestiti tudi primanjkljaj prejšnjih testov." },
+            { value: goal * k - sum, why: `Testov je skupaj $${k + 1}$, ne $${k}$.` },
+          ]),
+          hint: "Povprečje je vsota vseh točk, deljena s številom testov. Zapiši neenačbo za točke $x$ na zadnjem testu.",
+          data: { given: [`\\text{vsota dosedanjih} = ${sc.join(" + ")}`, `\\bar{x} = ${goal}`], find: ["x_{\\min}"] },
+          formula: "\\dfrac{\\text{vsota} + x}{n + 1} \\ge \\bar{x}",
+          solution: `$\\dfrac{${sum} + x}{${k + 1}} \\ge ${goal}$\n$${sum} + x \\ge ${goal * (k + 1)}$\n$x \\ge ${need}$\nNajmanj $${need}$ točk.`,
+        };
+      }
+      if (t === 2) {
+        // definicijsko območje korena
+        const a = r.nonZero(-5, 5);
+        const e = r.int(-6, 6);
+        const b = -a * e;
+        const inv = r.next() < 0.4;
+        const rel = inv ? ">" : ">=";
+        const relR = relOut(rel, a);
+        const inner = ax(a, b);
+        const ans = pickAns(r, ivT(relR, e), [
+          [ivT(FLIP[relR], e), a < 0 ? WHY_FLIP_NEG : "Pod korenom mora biti nenegativno število: preveri smer."],
+          [ivT(STRICT[relR], e), inv ? "Ker je koren v imenovalcu, ne sme biti enak $0$: krajišče ni vključeno." : "Koren iz $0$ obstaja: krajišče je vključeno."],
+          [ivT(relR, -e), "Pazi na predznak pri reševanju neenačbe."],
+        ]);
+        return {
+          text: `Določi definicijsko območje funkcije $f(x) = ${inv ? `\\dfrac{1}{\\sqrt{${inner}}}` : `\\sqrt{${inner}}`}$.`,
+          answer: ans,
+          options_tex: true,
+          hint: inv ? "Izraz pod korenom mora biti nenegativen, v imenovalcu pa ne sme biti $0$: torej strogo pozitiven." : "Izraz pod kvadratnim korenom mora biti nenegativen.",
+          data: { given: [`f(x) = ${inv ? `\\dfrac{1}{\\sqrt{${inner}}}` : `\\sqrt{${inner}}`}`], find: ["D_f"] },
+          formula: inv ? "\\dfrac{1}{\\sqrt{g(x)}}: g(x) > 0" : "\\sqrt{g(x)}: g(x) \\ge 0",
+          solution: `$${inner} ${REL[rel]} 0$\n$${lin([a], ["x"])} ${REL[rel]} ${-b}$\n${divLine(a)}\n$x ${REL[relR]} ${e}$\n$D_f = ${ivT(relR, e)}$`.replace(" - 0$", "$"),
+        };
+      }
+      if (t === 3) {
+        // f(x) > g(x)
+        const q1 = r.pick([1, 2, 3]);
+        const p1 = r.nonZero(-4, 4);
+        const k2 = r.nonZero(-3, 3);
+        const n1 = r.int(-6, 6);
+        const n2 = r.int(-6, 6);
+        // f - g = (p1/q1 - k2) x + (n1 - n2)
+        const An = p1 - k2 * q1; // koeficient * q1
+        if (An === 0) return null;
+        const Rn = (n2 - n1) * q1;
+        const above = r.next() < 0.5;
+        const rel = above ? ">" : "<";
+        const relR = relOut(rel, An);
+        const [en, ed] = fr(Rn, An);
+        if (ed > 6) return null;
+        const ans = ivAns(relR, en, ed, An < 0);
+        if (!ans) return null;
+        return {
+          text: `Dani sta funkciji $f(x) = ${fT(p1, q1, n1)}$ in $g(x) = ${fT(k2, 1, n2)}$. Za katere $x$ leži graf funkcije $f$ ${above ? "nad" : "pod"} grafom funkcije $g$?`,
+          answer: ans,
+          options_tex: true,
+          hint: `Reši neenačbo $f(x) ${above ? ">" : "<"} g(x)$.`,
+          data: { given: [`f(x) = ${fT(p1, q1, n1)}`, `g(x) = ${fT(k2, 1, n2)}`], find: ["x"] },
+          formula: `f(x) ${above ? ">" : "<"} g(x)`,
+          solution: `$${fT(p1, q1, n1)} ${rel} ${fT(k2, 1, n2)}$\n${q1 > 1 ? `Pomnožimo s $${q1}$: $${ax(p1, n1 * q1)} ${rel} ${ax(k2 * q1, n2 * q1)}$\n` : ""}$${lin([An], ["x"])} ${rel} ${Rn}$\n${divLine(An)}\n$x ${REL[relR]} ${qT(Rn, An)}$, torej $x \\in ${ivT(relR, en, ed)}$.`,
+        };
+      }
+      // poseben primer: prazna množica ali vsa realna števila
+      const p = r.int(2, 5);
+      const q = r.nonZero(-6, 6);
+      const s = r.int(1, 4);
+      const w = r.nonZero(-9, 9);
+      // p(x + q) + s·x  rel  (p + s)x + w  →  0·x rel w - pq
+      const rel = r.pick(["<", "<=", ">", ">="]);
+      const R = w - p * q;
+      const all = holds(0, R, rel);
+      const E = `${p}(x ${sg(q)}) + ${lin([s], ["x"])} ${REL[rel]} ${ax(p + s, w)}`;
+      const OPT = ["\\emptyset", "\\mathbb{R} = (-\\infty, \\infty)", ivT(rel, R, 1), ivT(FLIP[rel], R, 1)];
+      const WHY = [
+        "Trditev brez $x$ je resnična, zato jo izpolni vsak $x$.",
+        "Trditev brez $x$ je neresnična, zato je ne izpolni noben $x$.",
+        "Člen z $x$ se odšteje: ostane trditev brez $x$, ki je resnična za vse ali za noben $x$.",
+        "Člen z $x$ se odšteje: ostane trditev brez $x$, ki je resnična za vse ali za noben $x$.",
+      ];
+      const ci = all ? 1 : 0;
+      return {
+        text: `Reši neenačbo $${E}$.`,
+        answer: pickAns(r, OPT[ci], OPT.map((o, i) => [o, WHY[i]]).filter((_, i) => i !== ci)),
+        options_tex: true,
+        hint: "Odpravi oklepaj in zberi člene z $x$ na levi. Kaj ostane?",
+        data: { given: GIV(`${p}(x ${sg(q)}) + ${lin([s], ["x"])}`, ax(p + s, w)), find: ["x"] },
+        formula: ["0 \\cdot x < b,\\ b > 0: x \\in \\mathbb{R}", "0 \\cdot x < b,\\ b \\le 0: x \\in \\emptyset"],
+        solution: `$${ax(p + s, p * q)} ${REL[rel]} ${ax(p + s, w)}$\n$0 \\cdot x ${REL[rel]} ${R}$\nTrditev $0 ${REL[rel]} ${R}$ je ${all ? "resnična" : "neresnična"}, zato ${all ? "neenačbo reši vsako realno število: $x \\in \\mathbb{R}$" : "neenačba nima rešitve: $\\emptyset$"}.`,
+      };
+    },
+  },
+];
+
+// Deljenje z 1 ni korak rešitve: vrstico izpustimo, prav tako enako vrstico tik pred njo.
+const brezDeljenjaZ1 = (s) => {
+  const L = s.split("\n");
+  const i = L.indexOf(divLine(1));
+  if (i < 1) return s;
+  const dup = (L[i + 1] || "").startsWith(L[i - 1]);
+  L.splice(dup ? i - 1 : i, dup ? 2 : 1);
+  return L.join("\n");
+};
+const LINEARNE_CISTE = LINEARNE.map((g) => ({
+  ...g,
+  gen(level, r, topic) {
+    const t = g.gen(level, r, topic);
+    if (t && typeof t.solution === "string") t.solution = brezDeljenjaZ1(t.solution);
+    return t;
+  },
+}));
+
+export const MATURA_MAT_SS1 = wrapGens([...GENS, ...LINEARNE_CISTE]);
