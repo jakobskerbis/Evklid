@@ -7,6 +7,7 @@ import helmet from "helmet";
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "./prompt.js";
 import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, stripMeta, stripLeadPhrase } from "./meta.js";
@@ -58,6 +59,7 @@ import { competitionInfo, competitionKeyFor, isCompetitionPath } from "./competi
 import { PAPERS_SI, PAPERS_SOURCE } from "./exam-papers-si.js";
 import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, localizeExamView, localizeExamTopic, examRaven } from "./exams.js";
 import { compressedStatic, compressedJson, pickEncoding } from "./compress.js";
+import { slZasloni } from "./i18n-jedro.js";
 import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
@@ -89,7 +91,7 @@ import { landingPage } from "./pristajalna-takoj.js";
 import { zacetniPodatki } from "./zacetni-podatki.js";
 // Moduli drugih zaslonov, ki jih app.js naloži po prvem izrisu (public/app.js lenModul): stisnemo jih ob zagonu kot igre.
 // Tudi knjižnice za izris formul (public/rich.js naloziKnjiznice) in moduli Učbenika, oznak formul, preverjanja, cel slovar (i18n.js) in tipkovnica.
-const ZASLONI_POZNEJE = ["vendor/katex/katex.min.js", "vendor/marked/lib/marked.umd.js", "vendor/dompurify/purify.min.js", "formula-info.js", "sirina.js", "textbook.js", "scan/scan.js", "zbirke-view.js", "leagues.js", "our-paper.js", "practice/check.js", "graph/math.js", "i18n.js", "tipkovnica.js", "tipkovnica-data.js"];
+const ZASLONI_POZNEJE = ["vendor/katex/katex.min.js", "vendor/marked/lib/marked.umd.js", "vendor/dompurify/purify.min.js", "formula-info.js", "sirina.js", "textbook.js", "vadnica.js", "kalkulator-zaslon.js", "schedule.js", "racun.js", "flashcards.js", "odpri.js", "laboratorij.js", "corner.js", "pilot-naloge.js", "chat-settings.js", "prijave.js", "i18n-zasloni.js", "scan/scan.js", "zbirke-view.js", "leagues.js", "our-paper.js", "practice/check.js", "graph/math.js", "i18n.js", "tipkovnica.js", "tipkovnica-data.js"];
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { blockStoreAppPurchases, storeAppRequest, storeAppPages } from "./mobile/trgovina.js";
@@ -420,6 +422,38 @@ export function createApp(store, opts = {}) {
   // zagonu app.js. EVKLID_ZACETNI_PODATKI=0 jih izklopi (primerjava hitrosti).
   const seja = accounts && process.env.EVKLID_ZACETNI_PODATKI !== "0" ? zacetniPodatki(app) : null;
   app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0", landing, seja })); // =0: brez seznama (primerjava)
+  // Besedila zaslonov po prvem izrisu (public/i18n-zasloni.js, server/i18n-jedro.js slZasloni): modul, sestavljen iz kode
+  // enkrat ob prvi zahtevi, stisnjen enkrat (brotli 11, ~45 KB surovo → ~15 KB). Kot datoteke aplikacije: no-cache + ETag.
+  let zasloniSl = null;
+  app.get("/i18n/zasloni-sl.js", async (req, res, next) => {
+    try {
+      // Stiskanje (~60 ms za br 11) v niti zlib, da ne zadrži drugih zahtev (npr. prvega sporočila).
+      const stisni = (fn, raw, o) => new Promise((ok, ne) => fn(raw, o, (e, b) => (e ? ne(e) : ok(b))));
+      zasloniSl ||= slZasloni(publicDir).then(async (txt) => {
+        const raw = Buffer.from(txt);
+        const [br, gzip] = await Promise.all([
+          stisni(zlib.brotliCompress, raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: raw.length } }),
+          stisni(zlib.gzip, raw, { level: 9 }),
+        ]);
+        return { raw, etag: `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}`, br, gzip };
+      });
+      const z = await zasloniSl;
+      const enc = process.env.EVKLID_COMPRESS === "0" ? null : pickEncoding(req.headers["accept-encoding"]);
+      const etag = `${z.etag}${enc ? `-${enc}` : ""}"`;
+      res.setHeader("Content-Type", "text/javascript; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Vary", "Accept-Encoding");
+      res.setHeader("ETag", etag);
+      if (req.headers["if-none-match"] === etag) return res.status(304).end();
+      const body = enc ? z[enc] : z.raw;
+      if (enc) res.setHeader("Content-Encoding", enc);
+      res.setHeader("Content-Length", body.length);
+      return res.end(body);
+    } catch (e) {
+      zasloniSl = null;
+      return next(e);
+    }
+  });
   // Ikone vej drevesa 3D sveta in sličice modelov (slike, ki se spremenijo le z novim izrisom): brskalnik jih dan
   // vzame iz svojega predpomnilnika brez vprašanja strežniku, nato še teden prikaže staro in v ozadju preveri novo.
   // Prej max-age=0: po vsaki objavi (service worker zavrže kopije stare različice) je vsaka ikona čakala na

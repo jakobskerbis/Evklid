@@ -23,7 +23,7 @@ test("odjemalec: openConversation ne meri po sporočilu, send meri v naslednji s
   const open = app.slice(app.indexOf("async function openConversation("), app.indexOf("// Telefon: seznam pogovorov"));
   assert.doesNotMatch(open, /for \(const m of conv\.messages\) addMessage/, "ne addMessage z meritvami za vsako sporočilo");
   assert.match(open, /addMessage\(m\.role, m\.text, m\.has_image, m, \{ meri: false \}\)/);
-  assert.equal(open.match(/prilagodiZdaj\(\)/g).length, 2, "enkrat ob odprtju in enkrat na kos starejših");
+  assert.equal(open.match(/prilagodiZdaj\(\)/g).length, 3, "enkrat ob odprtju, enkrat po prihodu knjižnic za formule (samo, če so še prihajale) in enkrat na kos starejših");
   const send = app.slice(app.indexOf("async function send(text"), app.indexOf("// --- varnostni odgovor"));
   assert.match(send, /userEl = addMessage\("user", text, !!image, null, \{ meri: false \}\);\n\s+naDnoRaf = requestAnimationFrame\(naDno\);/);
   assert.match(send, /bubble = addMessage\("assistant", "", false, null, \{ meri: false \}\);/);
@@ -51,7 +51,8 @@ test("zaznavalnik: ogrej() po kosih prevede vzorce, rezultati zaznavanja ostanej
   assert.equal(rezultati(m), brez);
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   assert.match(app, /if \(name === "chat"\) \{[^}]*pripraviZaznavalnik\(\);/);
-  assert.match(app, /const kos = \(\) => whenIdle\(\(\) => ogrejNujno\(8\) \|\| kos\(\)\);/);
+  // Kos 8–20 ms v času mirovanja; ko čaka dotik ali tipka, ga izpusti (nikoli dolgo opravilo ob interakciji).
+  assert.match(app, /const kos = \(\) => whenIdle\(\(d\) => \(navigator\.scheduling\?\.isInputPending\?\.\(\) \? kos\(\) : ogrejNujno\(Math\.min\(20, Math\.max\(8, \(d\?\.timeRemaining\?\.\(\) \?\? 0\) - 2\)\)\) \|\| kos\(\)\)\);/);
   // Zaznavalnik je statično uvožen (pregled varnosti #888): na voljo takoj ob pošiljanju, brez povezave in ob zavrnitvi.
   assert.match(app, /^import \{ zaznajNujno,[^\n]*\} from "\.\/nujno\.js";$/m);
   assert.doesNotMatch(app, /lenModul\("\.\/nujno\.js"\)/);

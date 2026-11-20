@@ -4,19 +4,20 @@
 // in jih preverja v brskalniku (isti check.js kot strežnik). Odgovori čakajo v vrsti in
 // se ob ponovni povezavi pošljejo strežniku, ki vsako nalogo iz semena ustvari znova,
 // odgovor preveri še enkrat in podeli XP.
-import { isStalePack, offlineTask } from "./enote-izbira.js";
 
 // Preverjanje (check.js) in razčlenjevalnik izrazov za cel zapis (»5√7« pri iskanem b) nista del prvega izrisa Učne poti
 // (~30 KB stisnjeno): app.js ju naloži po njem (zasloniPozneje), da ju service worker shrani za delo brez povezave.
 // Klic iz paketa pred tem ju počaka (offlineApi vrne obljubo). Brez razčlenjevalnika preverjanje dela kot prej.
 let checkAnswer = null;
+let offlineTask = null; // enote pri nalogi iz paketa (public/enote-izbira.js), skupaj s check.js
 let MATH = null;
 let preverjanje = null;
 export const pripraviPreverjanje = () =>
-  (preverjanje ||= Promise.all([import("/practice/check.js"), import("./graph/math.js").catch(() => null)]).then(
-    ([c, m]) => {
+  (preverjanje ||= Promise.all([import("/practice/check.js"), import("./graph/math.js").catch(() => null), import("./enote-izbira.js")]).then(
+    ([c, m, e]) => {
       checkAnswer = c.checkAnswer;
       MATH = m;
+      offlineTask = e.offlineTask;
     },
     (err) => {
       preverjanje = null; // brez povezave in brez kopije: naslednji klic poskusi znova
@@ -41,6 +42,10 @@ const QUEUE = (sid) => `evklid.offline.queue.${sid}`;
 const LIMIT = (sid) => `evklid.offline.limit.${sid}`;
 const LIMIT_MS = 6 * 3600e3;
 const DAY = 86400000;
+// Paket iz različice pred PR 786 ima pri nalogi z enoto le »unit« (brez hasUnit in units): naloga bi skrila
+// enote, preverjanje pa bi enoto zahtevalo. Tak paket je zastarel (osveži ga, ko je povezava).
+export const isStalePack = (pack) =>
+  Object.values(pack?.tasks || {}).some((list) => Array.isArray(list) && list.some((x) => x?.task && x.task.hasUnit === undefined && !!(x.task.unit || x.answer?.unit)));
 
 const read = (key, fallback) => {
   try {

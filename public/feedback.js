@@ -3,7 +3,6 @@
 import { t } from "./i18n-osnova.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { createRenderer } from "./rich.js";
-import { renderAdminReports } from "./prijave.js";
 
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -304,5 +303,6 @@ async function renderAdmin(box) {
     <div class="card"><h2>${icon("flag")} ${esc(t("adm.rep.title"))}</h2><div class="fb-reports"></div></div>`;
   hydrateIcons(box);
   // Prijave napak (lekcije, odgovori inštruktorja, skrbnik) tudi na računalniku s strežnikom brez računov.
-  renderAdminReports(box.querySelector(".fb-reports"), { api: ctx.api, toast: ctx.toast });
+  // Modul prijav se naloži šele tu (ni del prvega odprtja aplikacije).
+  import("./prijave.js").then((m) => m.renderAdminReports(box.querySelector(".fb-reports"), { api: ctx.api, toast: ctx.toast }), () => ctx.toast(t("off.noConnection")));
 }

@@ -14,15 +14,20 @@ const KEY = "evklid.lang";
 let lang = DEFAULT_LANGUAGE;
 let SL = {}; // slovenska besedila: jedro s strežnika ali cel public/i18n/sl.js
 let vse = false; // cel slovar je naložen
-let dicts = [SL]; // od izbranega jezika proti izvirniku
+// Del slovarja za zaslone po prvem izrisu (public/i18n-zasloni.js): za jedrom, dokler ni celega slovarja.
+const DEL = {};
+let dicts = [SL, DEL]; // od izbranega jezika proti izvirniku
 let prevodi = []; // naloženi prevodi izbranega jezika (pred slovenščino)
 // Ključi, ki jih je kdo zahteval pred celim slovarjem in jih ni bilo v jedru (test/zacetek-leno.test.js preveri, da jih ni).
 const manjka = new Set();
 export const manjkajoci = () => [...manjka];
 const zamenjajSL = (d) => {
   SL = d;
-  dicts = [...prevodi, SL];
+  dicts = [...prevodi, SL, DEL];
 };
+export function dodajDel(del) {
+  if (!vse && del && typeof del === "object") Object.assign(DEL, del);
+}
 // public/i18n.js ob nalaganju: cel slovar. Ključi, ki jih zagon ni našel v jedru, so s tem tu (statični napisi znova).
 let celP = null;
 let celOk = null;
@@ -102,7 +107,7 @@ async function load(code) {
   const [loaded] = await Promise.all([Promise.all(chain.map(fetchDict)), jedro && lang === "sl" ? null : naloziVse()]);
   prevodi = loaded.filter(Boolean);
   if (!vse) zamenjajSL(jedro || {});
-  else dicts = [...prevodi, SL];
+  else dicts = [...prevodi, SL, DEL];
   const html = document.documentElement;
   html.lang = lang;
   html.dir = langInfo(lang).rtl ? "rtl" : "ltr";

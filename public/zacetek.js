@@ -340,7 +340,7 @@
       if (el) el.hidden = false;
     }
   }
-  window.evklidZacetek = { KEY: KEY, POSNETEK: POSNETEK, PRENOS: PRENOS, OWNER: OWNER, MAX: MAX, JEZIK: JEZIK, izberi: izberi, beri: beri, vnaprej: vnaprej, pozabiVnaprej: pozabiVnaprej, konec: konec, pozabi: pozabi, lahkoShrani: lahkoShrani, znova: znova, ociscen: ociscen };
+  window.evklidZacetek = { KEY: KEY, POSNETEK: POSNETEK, PRENOS: PRENOS, OWNER: OWNER, MAX: MAX, JEZIK: JEZIK, izberi: izberi, beri: beri, vnaprej: vnaprej, pozabiVnaprej: pozabiVnaprej, konec: konec, pozabi: pozabi, lahkoShrani: lahkoShrani, znova: znova, ociscen: ociscen, ucenec: !!(zp && zp.s != null) };
   try {
     var z = beri();
     var sid = localStorage.getItem("studentId");
